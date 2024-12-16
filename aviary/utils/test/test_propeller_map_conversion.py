@@ -65,8 +65,10 @@ class TestPropellerMapConversion(unittest.TestCase):
                     self.assertEqual(line_no_whitespace.count(expected_line), 1)
 
                 except:
-                    exc_string = f'Error:  {filename}\nFound: {
-                        line_no_whitespace}\nExpected:  {expected_line}'
+                    exc_string = (
+                        f'Error:  {filename}\nFound: {line_no_whitespace}'
+                        f'\nExpected:  {expected_line}'
+                    )
                     raise Exception(exc_string)
 
     def test_PM_conversion(self):

@@ -161,8 +161,10 @@ class TestAeroTableConversion(unittest.TestCase):
                     self.assertEqual(line_no_whitespace.count(expected_line), 1)
 
                 except Exception as error:
-                    exc_string = f'Error:  {args.output_file}\nFound: {
-                        line_no_whitespace}\nExpected:  {expected_line}'
+                    exc_string = (
+                        f'Error:  {args.output_file}\nFound: '
+                        f'{line_no_whitespace}\nExpected:  {expected_line}'
+                    )
                     raise Exception(exc_string)
 
     def test_FLOPS_file(self):
