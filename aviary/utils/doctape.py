@@ -29,6 +29,8 @@ get_value recursively get a value from a dict of dicts
 glue_variable Glue a variable for later use in markdown cells of notebooks (can auto format for code)
 glue_keys recursively glue all of the keys from a dict of dicts
 get_previous_line returns the previous n line(s) of code as a string
+get_class_names return the class names in a file as a set
+get_function_names returns the function names in a file as a set
 """
 
 
