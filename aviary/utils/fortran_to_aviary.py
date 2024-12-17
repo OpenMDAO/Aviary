@@ -517,6 +517,13 @@ def update_gasp_options(vehicle_data):
     if input_values.get_val(Aircraft.Strut.FUSELAGE_INTERFERENCE_FACTOR)[0] < 0:
         input_values.delete(Aircraft.Strut.FUSELAGE_INTERFERENCE_FACTOR)
 
+    # GASP-converted engine decks have uneven throttle ranges, which require the enabling
+    # of global throttle range. This will result in extrapolation of the engine deck,
+    # but provides closer matches to legacy results. To remove use of global throttle
+    # (and therefore eliminate extrapolation), a T4 limit needs to be manually set for
+    # the mission
+    input_values.set_val(Aircraft.Engine.GLOBAL_THROTTLE, [True])
+
     vehicle_data['input_values'] = input_values
     return vehicle_data
 
