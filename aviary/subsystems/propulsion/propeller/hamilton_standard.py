@@ -249,7 +249,7 @@ def _biquad(T, i, xi, yi):
     return z, lmt
 
 
-# DO NOT AUTO-FORMAT TABLES
+# block auto-formatting of tables
 # autopep8: off
 # fmt: off
 CP_Angle_table = np.array([

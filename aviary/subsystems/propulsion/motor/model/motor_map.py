@@ -4,7 +4,7 @@ import openmdao.api as om
 
 from aviary.variable_info.variables import Dynamic, Aircraft
 
-# DO NOT AUTO-FORMAT TABLES
+# block auto-formatting of tables
 # autopep8: off
 # fmt: off
 motor_map = np.array([
