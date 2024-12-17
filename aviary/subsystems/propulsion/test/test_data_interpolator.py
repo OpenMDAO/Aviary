@@ -13,6 +13,7 @@ from aviary.variable_info.variables import Dynamic
 from aviary.validation_cases.validation_data.flops_data.FLOPS_Test_Data import \
     FLOPS_Test_Data
 from aviary.subsystems.propulsion.utils import build_engine_deck
+from aviary.variable_info.variables import Aircraft
 
 
 class DataInterpolationTest(unittest.TestCase):
@@ -20,6 +21,7 @@ class DataInterpolationTest(unittest.TestCase):
         tol = 1e-6
 
         aviary_values = FLOPS_Test_Data['LargeSingleAisle2FLOPS']['inputs']
+        aviary_values.set_val(Aircraft.Engine.GLOBAL_THROTTLE, True)
 
         model = build_engine_deck(aviary_values)[0]
 

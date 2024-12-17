@@ -22,6 +22,8 @@ class ClimbODETestCase(unittest.TestCase):
         self.prob = om.Problem()
 
         aviary_options = get_option_defaults()
+        aviary_options.set_val(Aircraft.Engine.GLOBAL_THROTTLE, True)
+
         default_mission_subsystems = get_default_mission_subsystems(
             'GASP', build_engine_deck(aviary_options))
 
@@ -29,7 +31,7 @@ class ClimbODETestCase(unittest.TestCase):
             num_nodes=1,
             EAS_target=250,
             mach_cruise=0.8,
-            aviary_options=get_option_defaults(),
+            aviary_options=aviary_options,
             core_subsystems=default_mission_subsystems
         )
 
