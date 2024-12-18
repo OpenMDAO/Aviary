@@ -7,7 +7,7 @@ from aviary.variable_info.variables import Aircraft
 
 
 # TODO should additional misc mass be separated out into a separate component?
-
+# TODO include estimation for baseline (unscaled) mass if not provided (NTRS paper on FLOPS equations pg. 30)
 
 class EngineMass(om.ExplicitComponent):
     '''
