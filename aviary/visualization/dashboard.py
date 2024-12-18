@@ -5,6 +5,7 @@ import importlib.util
 import json
 import os
 import pathlib
+from pathlib import Path
 import re
 import shutil
 import warnings
@@ -26,7 +27,7 @@ from openmdao.utils.general_utils import env_truthy
 from openmdao.utils.units import conversion_to_base_units
 try:
     from openmdao.utils.gui_testing_utils import get_free_port
-except:
+except BaseException:
     # If get_free_port is unavailable, the default port will be used
     def get_free_port():
         return 5000
@@ -42,8 +43,8 @@ try:
     from openmdao.utils.array_utils import convert_ndarray_to_support_nans_in_json
 except ImportError:
     from openmdao.visualization.n2_viewer.n2_viewer import (
-        _convert_ndarray_to_support_nans_in_json as convert_ndarray_to_support_nans_in_json,
-    )
+        _convert_ndarray_to_support_nans_in_json
+        as convert_ndarray_to_support_nans_in_json,)
 
 import aviary.api as av
 
@@ -135,12 +136,16 @@ def _dashboard_setup_parser(parser):
     )
 
     parser.add_argument(
-        "--save", nargs='?', const=True, default=False,
+        "--save",
+        nargs='?',
+        const=True,
+        default=False,
         help="Name of zip file in which dashboard files are saved. If no argument given, use the script name to name the zip file",
     )
 
     parser.add_argument(
-        "--force", action='store_true',
+        "--force",
+        action='store_true',
         help="When displaying data from a shared zip file, if the directory in the reports directory exists, overrite if this is True",
     )
 
@@ -172,15 +177,18 @@ def _dashboard_cmd(options, user_args):
     # if yes, then unzip into reports directory and run dashboard on it
     if zipfile.is_zipfile(options.script_name):
         report_dir_name = Path(options.script_name).stem
-        report_dir_path = Path("reports") / report_dir_name
+        report_dir_path = Path(f"{report_dir_name}_out")
         # need to check to see if that directory already exists
         if not options.force and report_dir_path.is_dir():
             raise RuntimeError(
-                f"The reports directory {report_dir_name} already exists. If you wish to overrite the existing directory, use the --force option")
-        if report_dir_path.is_dir():  # need to delete it. The unpacking will just add to what is there, not do a clean unpack
+                f"The reports directory {report_dir_path} already exists. If you wish "
+                "to overrite the existing directory, use the --force option"
+            )
+        if report_dir_path.is_dir(
+        ):  # need to delete it. The unpacking will just add to what is there, not do a clean unpack
             shutil.rmtree(report_dir_path)
 
-        shutil.unpack_archive(options.script_name, f"reports/{report_dir_name}")
+        shutil.unpack_archive(options.script_name, report_dir_path)
         dashboard(
             report_dir_name,
             options.problem_recorder,
@@ -197,7 +205,7 @@ def _dashboard_cmd(options, user_args):
         else:
             save_filename_stem = Path(options.save).stem
         print(f"Saving to {save_filename_stem}.zip")
-        shutil.make_archive(save_filename_stem, "zip", f"reports/{options.script_name}")
+        shutil.make_archive(save_filename_stem, "zip", f"{options.script_name}_out")
         return
 
     dashboard(
@@ -209,7 +217,7 @@ def _dashboard_cmd(options, user_args):
     )
 
 
-def create_table_pane_from_json(json_filepath):
+def create_table_pane_from_json(json_filepath, documentation):
     """
     Create a Tabulator Pane with Name and Value columns using tabular data
     from a JSON file.
@@ -239,10 +247,20 @@ def create_table_pane_from_json(json_filepath):
                                               'Name': '',
                                               'Value': '',
                                           })
+        table_pane_with_doc = pn.Column(
+            pn.pane.HTML(f"<p>{documentation}</p>",
+                         styles={'text-align': documentation_text_align}),
+            table_pane
+        )
     except Exception as err:
-        warnings.warn(f"Unable to generate table due to: {err}.")
-        table_pane = None
-    return table_pane
+        table_pane_with_doc = pn.Column(
+            pn.pane.HTML(f"<p>{documentation}</p>",
+                         styles={'text-align': documentation_text_align}),
+            pn.pane.Markdown(
+                f"# Table not shown because data source JSON file, '{json_filepath}', not found.")
+        )
+
+    return table_pane_with_doc
 
 
 # functions for creating Panel Panes given different kinds of
@@ -463,7 +481,7 @@ def create_aviary_variables_table_data_nested(script_name, recorder_file):
             )
 
     aviary_variables_file_path = (
-        f"reports/{script_name}/aviary_vars/{aviary_variables_json_file_name}"
+        f"{script_name}_out/reports/aviary_vars/{aviary_variables_json_file_name}"
     )
     with open(aviary_variables_file_path, "w") as fp:
         json.dump(table_data_nested, fp)
@@ -557,7 +575,7 @@ def create_aircraft_3d_file(recorder_file, reports_dir, outfilepath):
         The path to the location where the file should be created.
     """
     # Get the location of the HTML template file for this HTML file
-    aviary_dir = pathlib.Path(importlib.util.find_spec("aviary").origin).parent
+    aviary_dir = Path(importlib.util.find_spec("aviary").origin).parent
     aircraft_3d_template_filepath = aviary_dir.joinpath(
         "visualization/assets/aircraft_3d_file_template.html"
     )
@@ -566,7 +584,7 @@ def create_aircraft_3d_file(recorder_file, reports_dir, outfilepath):
     #  next to the HTML file
     shutil.copy(
         aviary_dir.joinpath("visualization/assets/aviary_airlines.png"),
-        f"{reports_dir}/aviary_airlines.png",
+        Path(reports_dir) / "aviary_airlines.png",
     )
 
     aircraft_3d_model = Aircraft3DModel(recorder_file)
@@ -576,7 +594,8 @@ def create_aircraft_3d_file(recorder_file, reports_dir, outfilepath):
     aircraft_3d_model.write_file(aircraft_3d_template_filepath, outfilepath)
 
 
-def _get_interactive_plot_sources(data_by_varname_and_phase, x_varname, y_varname, phase):
+def _get_interactive_plot_sources(
+        data_by_varname_and_phase, x_varname, y_varname, phase):
     x = data_by_varname_and_phase[x_varname][phase]
     y = data_by_varname_and_phase[y_varname][phase]
     if len(x) > 0 and len(x) == len(y):
@@ -650,7 +669,8 @@ def create_optimization_history_plot(case_recorder, df):
     #    as users select variables to be plotted
     legend = Legend(items=[], location=(-50, -5), border_line_width=0)
 
-    # make the legend items in Python. Pass them to JavaScript where they can be added to the Legend
+    # make the legend items in Python. Pass them to JavaScript where they can
+    # be added to the Legend
     legend_items = []
     for variable_name in variable_names:
         units = case_recorder.problem_metadata['variables'][variable_name]['units']
@@ -662,8 +682,8 @@ def create_optimization_history_plot(case_recorder, df):
 
     # make the list of variables with checkboxes
     data_source = ColumnDataSource(
-        data=dict(options=variable_names, checked=[False]*len(variable_names)))
-   # Create a Div to act as a scrollable container
+        data=dict(options=variable_names, checked=[False] * len(variable_names)))
+    # Create a Div to act as a scrollable container
     variable_scroll_box = Div(
         styles={
             'overflow-y': 'scroll',
@@ -683,12 +703,12 @@ def create_optimization_history_plot(case_recorder, df):
                                                     legend=legend,
                                                     legend_items=legend_items),
                                           code="""
-    // Three things happen in this code. 
+    // Three things happen in this code.
     //   1. turn on/off the plot lines
     //   2. show the legend items for the items being plotted
     //   3. show the y axes for each of the lines being plotted
     // The incoming Legend is empty. The items are passed in separately
-   
+
     // 1. Plots
     // turn off or on the line plot for the clicked on variable
     const checkedIndex = cb_obj.index;
@@ -697,14 +717,14 @@ def create_optimization_history_plot(case_recorder, df):
     renderers[data_source.data['options'][checkedIndex]].visible = isChecked;
 
     // 2. Legend
-    // empty the Legend items and then add in the ones for the variables that are checked         
+    // empty the Legend items and then add in the ones for the variables that are checked
     legend.items = [];
     for (let i =0; i < legend_items.length; i++){
        if ( data_source.data['checked'][i] ) {
             legend.items.push(legend_items[i]);
         }
     }
-    
+
     // 3. Y axes
     // first hide all of them
     for (let i =0; i < legend_items.length; i++){
@@ -727,24 +747,26 @@ def create_optimization_history_plot(case_recorder, df):
             put_on_left_side = ! put_on_left_side ;
         }
     }
-    data_source.change.emit();    
+    data_source.change.emit();
     """)
 
     # CustomJS callback for the variable filtering
-    filter_variables_callback = CustomJS(args=dict(data_source=data_source,
-                                                   variable_scroll_box=variable_scroll_box,
-                                                   variable_checkbox_callback=variable_checkbox_callback),
-                                         code="""
-                        
+    filter_variables_callback = CustomJS(
+        args=dict(
+            data_source=data_source,
+            variable_scroll_box=variable_scroll_box,
+            variable_checkbox_callback=variable_checkbox_callback),
+        code="""
+
         const filter_text = cb_obj.value.toLowerCase();
         const all_options = data_source.data['options'];
         const checked_states = data_source.data['checked'];
-        
+
         // Filter options
-        const filtered_options = all_options.filter(option => 
+        const filtered_options = all_options.filter(option =>
             option.toLowerCase().includes(filter_text)
         );
-        
+
         // Update the scroll box content
         let checkboxes_html = '';
         filtered_options.forEach((label) => {
@@ -763,13 +785,16 @@ def create_optimization_history_plot(case_recorder, df):
     filter_variables_text_box.js_on_change('value', filter_variables_callback)
 
     # Initial population of the scroll box
-    initial_html = ''.join(f"""
+    initial_html = ''.join(
+        f"""
         <label style="display:block; margin-bottom:5px;">
             <input type="checkbox" value="{variable_name}"
-                onchange="Bokeh.documents[0].get_model_by_id('{variable_checkbox_callback.id}').execute({{index: {i}, checked: this.checked}})">
+                onchange="Bokeh.documents[0].get_model_by_id('{variable_checkbox_callback.id}').execute({index: {i}, checked: this.checked} )">
             {variable_name}
         </label>
-    """ for i, variable_name in enumerate(variable_names))
+    """
+        for i, variable_name in enumerate(variable_names)
+    )
     variable_scroll_box.text = initial_html
 
     # Arrange the layout using Panel
@@ -781,7 +806,8 @@ def create_optimization_history_plot(case_recorder, df):
 # The main script that generates all the tabs in the dashboard
 
 
-def dashboard(script_name, problem_recorder, driver_recorder, port, run_in_background=False):
+def dashboard(script_name, problem_recorder, driver_recorder,
+              port, run_in_background=False):
     """
     Generate the dashboard app display.
 
@@ -796,27 +822,29 @@ def dashboard(script_name, problem_recorder, driver_recorder, port, run_in_backg
     port : int
         HTTP port used for the dashboard webapp. If 0, use any free port
     """
-    if "reports/" not in script_name:
-        reports_dir = f"reports/{script_name}"
-    else:
-        reports_dir = script_name
+    reports_dir = f"{script_name}_out/reports/"
+    out_dir = f"{script_name}_out/"
 
-    if not pathlib.Path(reports_dir).is_dir():
+    if not Path(reports_dir).is_dir():
         raise ValueError(
-            f"The script name, '{script_name}', does not have a reports folder associated with it. "
-            f"The directory '{reports_dir}' does not exist."
+            f"The script name, '{script_name}', does not have a reports folder "
+            f"associated with it. The directory '{reports_dir}' does not exist."
         )
 
-    if not os.path.isfile(problem_recorder):
+    problem_recorder_path = Path(out_dir) / problem_recorder
+    driver_recorder_path = Path(out_dir) / driver_recorder
+
+    if not os.path.isfile(problem_recorder_path):
         issue_warning(
-            f"Given Problem case recorder file {problem_recorder} does not exist.")
+            f"Given Problem case recorder file {problem_recorder_path} does not exist.")
 
     # TODO - use lists and functions to do this with a lot less code
     ####### Model Tab #######
     model_tabs_list = []
 
     #  Debug Input List
-    input_list_pane = create_report_frame("text", "input_list.txt", '''
+    input_list_pane = create_report_frame(
+        "text", Path(reports_dir) / "input_list.txt", '''
        A plain text display of the model inputs. Recommended for beginners. Only created if Settings.VERBOSITY is set to at least 2 in the input deck.
         The variables are listed in a tree structure. There are three columns. The left column is a list of variable names,
         the middle column is the value, and the right column is the
@@ -827,7 +855,8 @@ def dashboard(script_name, problem_recorder, driver_recorder, port, run_in_backg
     model_tabs_list.append(("Debug Input List", input_list_pane))
 
     #  Debug Output List
-    output_list_pane = create_report_frame("text", "output_list.txt", '''
+    output_list_pane = create_report_frame(
+        "text", Path(reports_dir) / "output_list.txt", '''
        A plain text display of the model outputs. Recommended for beginners. Only created if Settings.VERBOSITY is set to at least 2 in the input deck.
         The variables are listed in a tree structure. There are three columns. The left column is a list of variable names,
         the middle column is the value, and the right column is the
@@ -839,11 +868,13 @@ def dashboard(script_name, problem_recorder, driver_recorder, port, run_in_backg
 
     # Inputs
     inputs_pane = create_report_frame(
-        "html", f"{reports_dir}/inputs.html", "Detailed report on the model inputs.")
+        "html",
+        Path(reports_dir) / "inputs.html",
+        "Detailed report on the model inputs.")
     model_tabs_list.append(("Inputs", inputs_pane))
 
     # N2
-    n2_pane = create_report_frame("html", f"{reports_dir}/n2.html", '''
+    n2_pane = create_report_frame("html", Path(reports_dir) / "n2.html", '''
         The N2 diagram, sometimes referred to as an eXtended Design Structure Matrix (XDSM), is a
         powerful tool for understanding your model in OpenMDAO. It is an N-squared diagram in the
         shape of a matrix representing functional or physical interfaces between system elements.
@@ -853,7 +884,7 @@ def dashboard(script_name, problem_recorder, driver_recorder, port, run_in_backg
 
     # Trajectory Linkage
     traj_linkage_report_pane = create_report_frame(
-        "html", f"{reports_dir}/traj_linkage_report.html", '''
+        "html", Path(reports_dir) / "traj_linkage_report.html", '''
         This is a Dymos linkage report in a customized N2 diagram. It provides a report detailing how phases
         are linked together via constraint or connection. The diagram clearly shows how mission phases are linked.
         It can be used to identify errant linkages between fixed quantities.
@@ -863,7 +894,7 @@ def dashboard(script_name, problem_recorder, driver_recorder, port, run_in_backg
 
     # Driver scaling
     driver_scaling_report_pane = create_report_frame(
-        "html", f"{reports_dir}/driver_scaling_report.html", '''
+        "html", Path(reports_dir) / "driver_scaling_report.html", '''
             This report is a summary of driver scaling information. After all design variables, objectives, and constraints
             are declared and the problem has been set up, this report presents all the design variables and constraints
             in all phases as well as the objectives. It also shows Jacobian information showing responses with respect to
@@ -884,77 +915,81 @@ def dashboard(script_name, problem_recorder, driver_recorder, port, run_in_backg
             optimization_tabs_list.append(("Optimization History", opt_history_pane))
 
     # IPOPT report
-    if os.path.isfile(f"{reports_dir}/IPOPT.out"):
-        ipopt_pane = create_report_frame("text", f"{reports_dir}/IPOPT.out", '''
+    if os.path.isfile(Path(reports_dir) / "IPOPT.out"):
+        ipopt_pane = create_report_frame("text", Path(reports_dir) / "IPOPT.out", '''
             This report is generated by the IPOPT optimizer.
                                         ''')
         optimization_tabs_list.append(("IPOPT Output", ipopt_pane))
 
     # Optimization report
-    opt_report_pane = create_report_frame("html", f"{reports_dir}/opt_report.html", '''
+    opt_report_pane = create_report_frame(
+        "html", Path(reports_dir) / "opt_report.html", '''
         This report is an OpenMDAO optimization report. All values are in unscaled, physical units.
         On the top is a summary of the optimization, followed by the objective, design variables, constraints,
         and optimizer settings. This report is important when dissecting optimal results produced by Aviary.''')
     optimization_tabs_list.append(("Summary", opt_report_pane))
 
     # PyOpt report
-    if os.path.isfile(f"{reports_dir}/pyopt_solution.out"):
+    if os.path.isfile(Path(reports_dir) / "pyopt_solution.out"):
         pyopt_solution_pane = create_report_frame(
-            "text", f"{reports_dir}/pyopt_solution.txt", '''
+            "text", Path(reports_dir) / "pyopt_solution.txt", '''
             This report is generated by the pyOptSparse optimizer.
         '''
         )
         optimization_tabs_list.append(("PyOpt Solution", pyopt_solution_pane))
 
     # SNOPT report
-    if os.path.isfile(f"{reports_dir}/SNOPT_print.out"):
-        snopt_pane = create_report_frame("text", f"{reports_dir}/SNOPT_print.out", '''
+    if os.path.isfile(Path(reports_dir) / "SNOPT_print.out"):
+        snopt_pane = create_report_frame(
+            "text", Path(reports_dir) / "SNOPT_print.out", '''
             This report is generated by the SNOPT optimizer.
                                         ''')
         optimization_tabs_list.append(("SNOPT Output", snopt_pane))
 
     # SNOPT summary
-    if os.path.isfile(f"{reports_dir}/SNOPT_summary.out"):
-        snopt_summary_pane = create_report_frame("text", f"{reports_dir}/SNOPT_summary.out", '''
+    if os.path.isfile(Path(reports_dir) / "SNOPT_summary.out"):
+        snopt_summary_pane = create_report_frame(
+            "text", Path(reports_dir) / "SNOPT_summary.out", '''
             This is a report generated by the SNOPT optimizer that summarizes the optimization results.''')
         optimization_tabs_list.append(("SNOPT Summary", snopt_summary_pane))
 
     # Coloring report
     coloring_report_pane = create_report_frame(
-        "html", f"{reports_dir}/total_coloring.html", "The report shows metadata associated with the creation of the coloring."
-    )
+        "html", Path(reports_dir) / "total_coloring.html",
+        "The report shows metadata associated with the creation of the coloring.")
     optimization_tabs_list.append(("Total Coloring", coloring_report_pane))
 
     ####### Results Tab #######
     results_tabs_list = []
 
     # Aircraft 3d model display
-    if problem_recorder:
-        if os.path.isfile(problem_recorder):
+    if problem_recorder_path:
+        if os.path.isfile(problem_recorder_path):
             try:
+                aircraft_3d_file = Path(reports_dir) / "aircraft_3d.html"
                 create_aircraft_3d_file(
-                    problem_recorder, reports_dir, f"{reports_dir}/aircraft_3d.html"
+                    problem_recorder_path, reports_dir, aircraft_3d_file
                 )
                 aircraft_3d_pane = create_report_frame(
-                    "html", f"{reports_dir}/aircraft_3d.html",
+                    "html", aircraft_3d_file,
                     "3D model view of designed aircraft."
                 )
             except Exception as e:
                 aircraft_3d_pane = create_report_frame(
-                    "simple_message", f"Unable to create aircraft 3D model display due to error: {e}",
-                    "3D model view of designed aircraft."
-                )
+                    "simple_message",
+                    f"Unable to create aircraft 3D model display due to error: {e}",
+                    "3D model view of designed aircraft.")
             results_tabs_list.append(("Aircraft 3d model", aircraft_3d_pane))
 
     # Make the Aviary variables table pane
-    if os.path.isfile(problem_recorder):
+    if os.path.isfile(problem_recorder_path):
 
         # Make dir reports/script_name/aviary_vars if needed
-        aviary_vars_dir = pathlib.Path(f"reports/{script_name}/aviary_vars")
+        aviary_vars_dir = Path(reports_dir) / "aviary_vars"
         aviary_vars_dir.mkdir(parents=True, exist_ok=True)
 
         # copy index.html file to reports/script_name/aviary_vars/index.html
-        aviary_dir = pathlib.Path(importlib.util.find_spec("aviary").origin).parent
+        aviary_dir = Path(importlib.util.find_spec("aviary").origin).parent
 
         shutil.copy(
             aviary_dir.joinpath("visualization/assets/aviary_vars/index.html"),
@@ -966,35 +1001,38 @@ def dashboard(script_name, problem_recorder, driver_recorder, port, run_in_backg
         )
         # copy script.js file to reports/script_name/aviary_vars/index.html.
         # mod the script.js file to point at the json file
-        # create the json file and put it in reports/script_name/aviary_vars/aviary_vars.json
+        # create the json file and put it in
+        # reports/script_name/aviary_vars/aviary_vars.json
         try:
             create_aviary_variables_table_data_nested(
-                script_name, problem_recorder
+                script_name, problem_recorder_path
             )  # create the json file
 
             aviary_vars_pane = create_report_frame(
-                "html", f"{reports_dir}/aviary_vars/index.html",
+                "html", Path(reports_dir) / "aviary_vars/index.html",
                 "Table showing Aviary variables"
             )
             results_tabs_list.append(("Aviary Variables", aviary_vars_pane))
         except Exception as e:
             issue_warning(
-                f'Unable to create Aviary Variables tab in dashboard due to the error: {e}'
-            )
+                f'Unable to create Aviary Variables tab in dashboard due to the error: {e}')
 
     # Mission Summary
     mission_summary_pane = create_report_frame(
-        "markdown", f"{reports_dir}/mission_summary.md", "A report of mission results from an Aviary problem")
+        "markdown", Path(reports_dir) / "mission_summary.md",
+        "A report of mission results from an Aviary problem")
     results_tabs_list.append(("Mission Summary", mission_summary_pane))
 
     # Run status pane
-    status_pane = create_table_pane_from_json(f"{reports_dir}/status.json")
+    status_pane = create_table_pane_from_json(
+        Path(reports_dir) / "status.json",
+        "A high level overview of the status of the run")
     results_tabs_list.append(("Run status pane", status_pane))
     run_status_pane_tab_number = len(results_tabs_list) - 1
 
     # Timeseries Mission Output Report
     mission_timeseries_pane = create_csv_frame(
-        f"{reports_dir}/mission_timeseries_data.csv", '''
+        Path(reports_dir) / "mission_timeseries_data.csv", '''
         The outputs of the aircraft trajectory.
         Any value that is included in the timeseries data is included in this report.
         This data is useful for post-processing, especially those used for acoustic analysis.
@@ -1005,7 +1043,7 @@ def dashboard(script_name, problem_recorder, driver_recorder, port, run_in_backg
 
     # Trajectory results
     traj_results_report_pane = create_report_frame(
-        "html", f"{reports_dir}/traj_results_report.html", '''
+        "html", Path(reports_dir) / "traj_results_report.html", '''
             This is one of the most important reports produced by Aviary. It will help you visualize and
             understand the optimal trajectory produced by Aviary.
             Users should play with it and try to grasp all possible features.
@@ -1020,17 +1058,21 @@ def dashboard(script_name, problem_recorder, driver_recorder, port, run_in_backg
     )
 
     # Interactive XY plot of mission variables
-    if problem_recorder:
-        if os.path.exists(problem_recorder):
-            cr = om.CaseReader(problem_recorder)
+    if problem_recorder_path:
+        if os.path.exists(problem_recorder_path):
+            cr = om.CaseReader(problem_recorder_path)
 
             # determine what trajectories there are
-            traj_nodes = [n for n in _meta_tree_subsys_iter(
-                cr.problem_metadata['tree'], cls='dymos.trajectory.trajectory:Trajectory')]
+            traj_nodes = [
+                n
+                for n in _meta_tree_subsys_iter(
+                    cr.problem_metadata['tree'],
+                    cls='dymos.trajectory.trajectory:Trajectory')]
 
             if len(traj_nodes) == 0:
-                raise ValueError("No trajectories available in case recorder file for use "
-                                 "in generating interactive XY plot of mission variables")
+                raise ValueError(
+                    "No trajectories available in case recorder file for use "
+                    "in generating interactive XY plot of mission variables")
             traj_name = traj_nodes[0]["name"]
             if len(traj_nodes) > 1:
                 issue_warning("More than one trajectory found in problem case recorder file. Only using "
@@ -1087,8 +1129,8 @@ def dashboard(script_name, problem_recorder, driver_recorder, port, run_in_backg
             # need to create ColumnDataSource for each phase
             sources = {}
             for phase in phases:
-                x, y = _get_interactive_plot_sources(data_by_varname_and_phase,
-                                                     x_varname_default, y_varname_default, phase)
+                x, y = _get_interactive_plot_sources(
+                    data_by_varname_and_phase, x_varname_default, y_varname_default, phase)
                 sources[phase] = ColumnDataSource(data=dict(
                     x=x,
                     y=y))
@@ -1121,7 +1163,8 @@ def dashboard(script_name, problem_recorder, driver_recorder, port, run_in_backg
             # Make the Legend
             legend = Legend(items=legend_data, location='center',
                             label_text_font_size='8pt')
-            # so users can click on the dot in the legend to turn off/on that phase in the plot
+            # so users can click on the dot in the legend to turn off/on that phase in
+            # the plot
             legend.click_policy = "hide"
             p.add_layout(legend, 'right')
 
@@ -1159,29 +1202,34 @@ def dashboard(script_name, problem_recorder, driver_recorder, port, run_in_backg
             )
         else:
             interactive_mission_var_plot_pane = pn.pane.Markdown(
-                f"# Recorder file '{problem_recorder}' not found.")
+                f"# Recorder file '{problem_recorder_path}' not found.")
 
         interactive_mission_var_plot_pane_with_doc = pn.Column(
-            pn.pane.HTML(f"<p>Plot of mission variables allowing user to select X and Y plot values.</p>",
-                         styles={'text-align': documentation_text_align}),
-            interactive_mission_var_plot_pane
-        )
+            pn.pane.HTML(
+                f"<p>Plot of mission variables allowing user to select X and Y plot values.</p>",
+                styles={
+                    'text-align': documentation_text_align}),
+            interactive_mission_var_plot_pane)
         results_tabs_list.append(
-            ("Interactive Mission Variable Plot", interactive_mission_var_plot_pane_with_doc)
-        )
+            ("Interactive Mission Variable Plot",
+             interactive_mission_var_plot_pane_with_doc))
 
     ####### Subsystems Tab #######
     subsystem_tabs_list = []
 
     # Look through subsystems directory for markdown files
-    # The subsystems report tab shows selected results for every major subsystem in the Aviary problem
+    # The subsystems report tab shows selected results for every major
+    # subsystem in the Aviary problem
 
-    for md_file in sorted(pathlib.Path(f"{reports_dir}subsystems").glob("*.md"), key=str):
-        subsystems_pane = create_report_frame("markdown", str(
-            md_file),
+    for md_file in sorted(Path(f"{reports_dir}subsystems").glob("*.md"), key=str):
+        subsystems_pane = create_report_frame(
+            "markdown", str(md_file),
             f'''
+
         The subsystems report tab shows selected results for every major subsystem in the Aviary problem.
-        This report is for the {md_file.stem} subsystem. Reports available currently are mass, geometry, and propulsion.
+        This report is for the
+            {md_file.stem}
+             subsystem. Reports available currently are mass, geometry, and propulsion.
             ''')
         subsystem_tabs_list.append((md_file.stem, subsystems_pane))
 
@@ -1220,14 +1268,14 @@ def dashboard(script_name, problem_recorder, driver_recorder, port, run_in_backg
 
     def save_dashboard(event):
         print(f"Saving dashboard files to {script_name}.zip")
-        shutil.make_archive(script_name, "zip", f"reports/{script_name}")
+        shutil.make_archive(script_name, "zip", f"{script_name}_out")
 
     save_dashboard_button.on_click(save_dashboard)
 
     tabs.active = 0  # make the Results tab active initially
 
     # get status of run for display in the header of each page
-    status_string_for_header = get_run_status(f"{reports_dir}/status.json")
+    status_string_for_header = get_run_status(Path(reports_dir) / "status.json")
 
     template = pn.template.FastListTemplate(
         title=f"Aviary Dashboard for {script_name}:  {status_string_for_header}",
@@ -1255,7 +1303,7 @@ def dashboard(script_name, problem_recorder, driver_recorder, port, run_in_backg
     if run_in_background:
         show = False
 
-    assets_dir = pathlib.Path(
+    assets_dir = Path(
         importlib.util.find_spec("aviary").origin
     ).parent.joinpath("visualization/assets/")
     home_dir = "."

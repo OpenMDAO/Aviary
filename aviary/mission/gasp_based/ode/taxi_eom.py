@@ -18,7 +18,7 @@ class TaxiFuelComponent(om.ExplicitComponent):
 
     def setup(self):
         self.add_input(
-            Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
+            Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
             val=1.0,
             units="lbm/s",
             desc="fuel flow rate",
@@ -32,7 +32,7 @@ class TaxiFuelComponent(om.ExplicitComponent):
             desc="taxi_fuel_consumed",
         )
         self.add_output(
-            Dynamic.Mission.MASS,
+            Dynamic.Vehicle.MASS,
             val=175000.0,
             units="lbm",
             desc="mass after taxi",
@@ -40,22 +40,30 @@ class TaxiFuelComponent(om.ExplicitComponent):
 
     def setup_partials(self):
         self.declare_partials(
-            "taxi_fuel_consumed", [
-                Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL])
+            "taxi_fuel_consumed",
+            [Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL],
+        )
         self.declare_partials(
-            Dynamic.Mission.MASS, Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL)
-        self.declare_partials(
-            Dynamic.Mission.MASS, Mission.Summary.GROSS_MASS, val=1)
+            Dynamic.Vehicle.MASS,
+            Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
+        )
+        self.declare_partials(Dynamic.Vehicle.MASS, Mission.Summary.GROSS_MASS, val=1)
 
     def compute(self, inputs, outputs):
         fuelflow, takeoff_mass = inputs.values()
         dt_taxi = self.options['aviary_options'].get_val(Mission.Taxi.DURATION, 's')
         outputs["taxi_fuel_consumed"] = -fuelflow * dt_taxi
-        outputs[Dynamic.Mission.MASS] = takeoff_mass - outputs["taxi_fuel_consumed"]
+        outputs[Dynamic.Vehicle.MASS] = takeoff_mass - outputs["taxi_fuel_consumed"]
 
     def compute_partials(self, inputs, J):
         dt_taxi = self.options['aviary_options'].get_val(Mission.Taxi.DURATION, 's')
 
-        J["taxi_fuel_consumed", Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL] = -dt_taxi
+        J[
+            "taxi_fuel_consumed",
+            Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
+        ] = -dt_taxi
 
-        J[Dynamic.Mission.MASS, Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL] = dt_taxi
+        J[
+            Dynamic.Vehicle.MASS,
+            Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
+        ] = dt_taxi

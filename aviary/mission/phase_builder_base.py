@@ -483,14 +483,14 @@ class PhaseBuilderBase(ABC):
         mass_ref0 = user_options.get_val('mass_ref0', units='lbm')
         mass_defect_ref = user_options.get_val('mass_defect_ref', units='lbm')
         self.phase.add_state(
-            Dynamic.Mission.MASS,
+            Dynamic.Vehicle.MASS,
             fix_initial=user_options.get_val('fix_initial'),
             fix_final=False,
             lower=mass_lower,
             upper=mass_upper,
             units="lbm",
-            rate_source=Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
-            targets=Dynamic.Mission.MASS,
+            rate_source=Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
+            targets=Dynamic.Vehicle.MASS,
             ref=mass_ref,
             ref0=mass_ref0,
             defect_ref=mass_defect_ref,
