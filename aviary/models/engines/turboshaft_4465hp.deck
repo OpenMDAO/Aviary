@@ -12,7 +12,7 @@
 # torque_limit: 22976.2
 # sls_corrected_airflow: 30.5
 
-        Mach_Number, Altitude (ft),   Throttle,           Shaft_Power (hp), Tailpipe_Thrust (lbf),    Fuel_Flow (lb/h)
+        Mach_Number, Altitude (ft),   Throttle, Shaft_Power_Corrected (hp), Tailpipe_Thrust (lbf),    Fuel_Flow (lb/h)
                 0.0,           0.0,       0.52,          794.3999999999999,     618.3999999999999,  1035.8999999999999
                 0.0,           0.0,       0.56,         1191.5999999999997,                 651.7,  1194.4999999999995
                 0.0,           0.0,        0.6,         1588.8999999999996,     684.8000000000001,  1353.7999999999993
