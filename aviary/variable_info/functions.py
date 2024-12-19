@@ -1,4 +1,5 @@
 import dymos as dm
+import numpy as np
 import openmdao.api as om
 from dymos.utils.misc import _unspecified
 from openmdao.core.component import Component
@@ -34,6 +35,11 @@ def add_aviary_input(comp, varname, val=None, units=None, desc=None, shape_by_co
         input_desc = meta['desc']
     if val is None:
         val = meta['default_value']
+        if val is None:
+            if shape is None:
+                val = 0.0
+            else:
+                val = np.zeros(shape)
     comp.add_input(varname, val=val, units=input_units,
                    desc=input_desc, shape_by_conn=shape_by_conn, shape=shape)
 
@@ -58,6 +64,10 @@ def add_aviary_output(comp, varname, val, units=None, desc=None, shape_by_conn=F
         output_desc = desc
     else:
         output_desc = meta['desc']
+    if val is None:
+        val = meta['default_value']
+        if val is None:
+            val = 0.0
     comp.add_output(varname, val=val, units=output_units,
                     desc=output_desc, shape_by_conn=shape_by_conn)
 
