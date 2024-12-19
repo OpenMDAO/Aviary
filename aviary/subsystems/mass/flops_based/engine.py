@@ -24,16 +24,12 @@ class EngineMass(om.ExplicitComponent):
         num_engine_type = len(self.options['aviary_options'].get_val(
             Aircraft.Engine.NUM_ENGINES))
 
-        add_aviary_input(self, Aircraft.Engine.SCALED_SLS_THRUST,
-                         val=np.zeros(num_engine_type))
+        add_aviary_input(self, Aircraft.Engine.SCALED_SLS_THRUST, shape=num_engine_type)
+        add_aviary_input(self, Aircraft.Engine.MASS_SCALER, shape=num_engine_type)
 
-        add_aviary_input(self, Aircraft.Engine.MASS_SCALER,
-                         val=np.zeros(num_engine_type))
-
-        add_aviary_output(self, Aircraft.Engine.MASS, val=np.zeros(num_engine_type))
-        add_aviary_output(self, Aircraft.Engine.ADDITIONAL_MASS,
-                          val=np.zeros(num_engine_type))
-        add_aviary_output(self, Aircraft.Propulsion.TOTAL_ENGINE_MASS, val=0.0)
+        add_aviary_output(self, Aircraft.Engine.MASS, shape=num_engine_type)
+        add_aviary_output(self, Aircraft.Engine.ADDITIONAL_MASS, shape=num_engine_type)
+        add_aviary_output(self, Aircraft.Propulsion.TOTAL_ENGINE_MASS)
 
     def compute(self, inputs, outputs):
         aviary_options: AviaryValues = self.options['aviary_options']

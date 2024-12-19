@@ -25,19 +25,14 @@ class LandingGearMass(om.ExplicitComponent):
             desc='collection of Aircraft/Mission specific options')
 
     def setup(self):
-        add_aviary_input(self, Aircraft.LandingGear.MAIN_GEAR_OLEO_LENGTH, val=0.0)
+        add_aviary_input(self, Aircraft.LandingGear.MAIN_GEAR_OLEO_LENGTH)
+        add_aviary_input(self, Aircraft.LandingGear.MAIN_GEAR_MASS_SCALER)
+        add_aviary_input(self, Aircraft.LandingGear.NOSE_GEAR_OLEO_LENGTH)
+        add_aviary_input(self, Aircraft.LandingGear.NOSE_GEAR_MASS_SCALER)
+        add_aviary_input(self, Aircraft.Design.TOUCHDOWN_MASS)
 
-        add_aviary_input(self, Aircraft.LandingGear.MAIN_GEAR_MASS_SCALER, val=1.0)
-
-        add_aviary_input(self, Aircraft.LandingGear.NOSE_GEAR_OLEO_LENGTH, val=0.0)
-
-        add_aviary_input(self, Aircraft.LandingGear.NOSE_GEAR_MASS_SCALER, val=1.0)
-
-        add_aviary_input(self, Aircraft.Design.TOUCHDOWN_MASS, val=0.0)
-
-        add_aviary_output(self, Aircraft.LandingGear.MAIN_GEAR_MASS, val=0.0)
-
-        add_aviary_output(self, Aircraft.LandingGear.NOSE_GEAR_MASS, val=0.0)
+        add_aviary_output(self, Aircraft.LandingGear.MAIN_GEAR_MASS)
+        add_aviary_output(self, Aircraft.LandingGear.NOSE_GEAR_MASS)
 
         # TODO landing weight is not a landing_gear component level variable
         # self.add_input('aircraft:landing_gear:weights:landing_weight', val=0.0, desc='design landing weight', units='lbf')
@@ -142,19 +137,14 @@ class AltLandingGearMass(om.ExplicitComponent):
             desc='collection of Aircraft/Mission specific options')
 
     def setup(self):
-        add_aviary_input(self, Aircraft.LandingGear.MAIN_GEAR_OLEO_LENGTH, val=0.0)
+        add_aviary_input(self, Aircraft.LandingGear.MAIN_GEAR_OLEO_LENGTH)
+        add_aviary_input(self, Aircraft.LandingGear.MAIN_GEAR_MASS_SCALER)
+        add_aviary_input(self, Aircraft.LandingGear.NOSE_GEAR_OLEO_LENGTH)
+        add_aviary_input(self, Aircraft.LandingGear.NOSE_GEAR_MASS_SCALER)
+        add_aviary_input(self, Mission.Design.GROSS_MASS)
 
-        add_aviary_input(self, Aircraft.LandingGear.MAIN_GEAR_MASS_SCALER, val=1.0)
-
-        add_aviary_input(self, Aircraft.LandingGear.NOSE_GEAR_OLEO_LENGTH, val=0.0)
-
-        add_aviary_input(self, Aircraft.LandingGear.NOSE_GEAR_MASS_SCALER, val=1.0)
-
-        add_aviary_input(self, Mission.Design.GROSS_MASS, val=0.0)
-
-        add_aviary_output(self, Aircraft.LandingGear.MAIN_GEAR_MASS, val=0.0)
-
-        add_aviary_output(self, Aircraft.LandingGear.NOSE_GEAR_MASS, val=0.0)
+        add_aviary_output(self, Aircraft.LandingGear.MAIN_GEAR_MASS)
+        add_aviary_output(self, Aircraft.LandingGear.NOSE_GEAR_MASS)
 
     def setup_partials(self):
         self.declare_partials(Aircraft.LandingGear.MAIN_GEAR_MASS, [

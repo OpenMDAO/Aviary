@@ -21,13 +21,11 @@ class TransportFuselageMass(om.ExplicitComponent):
             desc='collection of Aircraft/Mission specific options')
 
     def setup(self):
-        add_aviary_input(self, Aircraft.Fuselage.LENGTH, val=0.0)
+        add_aviary_input(self, Aircraft.Fuselage.LENGTH)
+        add_aviary_input(self, Aircraft.Fuselage.MASS_SCALER)
+        add_aviary_input(self, Aircraft.Fuselage.AVG_DIAMETER)
 
-        add_aviary_input(self, Aircraft.Fuselage.MASS_SCALER, val=1.0)
-
-        add_aviary_input(self, Aircraft.Fuselage.AVG_DIAMETER, val=0.0)
-
-        add_aviary_output(self, Aircraft.Fuselage.MASS, val=0.0)
+        add_aviary_output(self, Aircraft.Fuselage.MASS)
 
     def setup_partials(self):
         self.declare_partials(Aircraft.Fuselage.MASS, "*")

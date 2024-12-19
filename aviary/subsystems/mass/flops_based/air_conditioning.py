@@ -21,15 +21,12 @@ class TransportAirCondMass(om.ExplicitComponent):
             desc='collection of Aircraft/Mission specific options')
 
     def setup(self):
-        add_aviary_input(self, Aircraft.AirConditioning.MASS_SCALER, val=1.0)
+        add_aviary_input(self, Aircraft.AirConditioning.MASS_SCALER)
+        add_aviary_input(self, Aircraft.Avionics.MASS)
+        add_aviary_input(self, Aircraft.Fuselage.MAX_HEIGHT)
+        add_aviary_input(self, Aircraft.Fuselage.PLANFORM_AREA)
 
-        add_aviary_input(self, Aircraft.Avionics.MASS, val=0.0)
-
-        add_aviary_input(self, Aircraft.Fuselage.MAX_HEIGHT, val=0.0)
-
-        add_aviary_input(self, Aircraft.Fuselage.PLANFORM_AREA, val=0.0)
-
-        add_aviary_output(self, Aircraft.AirConditioning.MASS, val=0.0)
+        add_aviary_output(self, Aircraft.AirConditioning.MASS)
 
     def setup_partials(self):
         self.declare_partials('*', '*')
@@ -91,9 +88,9 @@ class AltAirCondMass(om.ExplicitComponent):
             desc='collection of Aircraft/Mission specific options')
 
     def setup(self):
-        add_aviary_input(self, Aircraft.AirConditioning.MASS_SCALER, val=1.0)
+        add_aviary_input(self, Aircraft.AirConditioning.MASS_SCALER)
 
-        add_aviary_output(self, Aircraft.AirConditioning.MASS, val=0.0)
+        add_aviary_output(self, Aircraft.AirConditioning.MASS)
 
     def setup_partials(self):
         self.declare_partials(of=Aircraft.AirConditioning.MASS, wrt='*')

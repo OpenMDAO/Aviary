@@ -23,8 +23,8 @@ class TransportInstrumentMass(om.ExplicitComponent):
             desc='collection of Aircraft/Mission specific options')
 
     def setup(self):
-        add_aviary_input(self, Aircraft.Fuselage.PLANFORM_AREA, 0.0)
-        add_aviary_input(self, Aircraft.Instruments.MASS_SCALER, 1.0)
+        add_aviary_input(self, Aircraft.Fuselage.PLANFORM_AREA)
+        add_aviary_input(self, Aircraft.Instruments.MASS_SCALER)
 
         add_aviary_output(self, Aircraft.Instruments.MASS, 0.0)
 

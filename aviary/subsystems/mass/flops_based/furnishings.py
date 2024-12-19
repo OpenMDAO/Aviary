@@ -19,15 +19,12 @@ class TransportFurnishingsGroupMass(om.ExplicitComponent):
             desc='collection of Aircraft/Mission specific options')
 
     def setup(self):
-        add_aviary_input(self, Aircraft.Furnishings.MASS_SCALER, val=1.0)
+        add_aviary_input(self, Aircraft.Furnishings.MASS_SCALER)
+        add_aviary_input(self, Aircraft.Fuselage.PASSENGER_COMPARTMENT_LENGTH)
+        add_aviary_input(self, Aircraft.Fuselage.MAX_WIDTH)
+        add_aviary_input(self, Aircraft.Fuselage.MAX_HEIGHT)
 
-        add_aviary_input(self, Aircraft.Fuselage.PASSENGER_COMPARTMENT_LENGTH, val=0.0)
-
-        add_aviary_input(self, Aircraft.Fuselage.MAX_WIDTH, val=0.0)
-
-        add_aviary_input(self, Aircraft.Fuselage.MAX_HEIGHT, val=0.0)
-
-        add_aviary_output(self, Aircraft.Furnishings.MASS, val=0.0)
+        add_aviary_output(self, Aircraft.Furnishings.MASS)
 
     def setup_partials(self):
         self.declare_partials(of=Aircraft.Furnishings.MASS, wrt='*')
@@ -114,19 +111,13 @@ class BWBFurnishingsGroupMass(om.ExplicitComponent):
             desc='collection of Aircraft/Mission specific options')
 
     def setup(self):
-        add_aviary_input(self, Aircraft.Furnishings.MASS_SCALER, val=1.0)
+        add_aviary_input(self, Aircraft.Furnishings.MASS_SCALER)
+        add_aviary_input(self, Aircraft.BWB.CABIN_AREA)
+        add_aviary_input(self, Aircraft.Fuselage.MAX_WIDTH)
+        add_aviary_input(self, Aircraft.Fuselage.MAX_HEIGHT)
+        add_aviary_input(self, Aircraft.BWB.PASSENGER_LEADING_EDGE_SWEEP)
 
-        add_aviary_input(self, Aircraft.BWB.CABIN_AREA, val=100.0)
-
-        add_aviary_input(self, Aircraft.Fuselage.MAX_WIDTH, val=30.0)
-
-        add_aviary_input(self, Aircraft.Fuselage.MAX_HEIGHT, val=15.0)
-
-        add_aviary_input(
-            self, Aircraft.BWB.PASSENGER_LEADING_EDGE_SWEEP, val=45.0
-        )
-
-        add_aviary_output(self, Aircraft.Furnishings.MASS, val=0.0)
+        add_aviary_output(self, Aircraft.Furnishings.MASS)
 
     def setup_partials(self):
         self.declare_partials(of=Aircraft.Furnishings.MASS, wrt='*')
@@ -267,9 +258,9 @@ class AltFurnishingsGroupMassBase(om.ExplicitComponent):
             desc='collection of Aircraft/Mission specific options')
 
     def setup(self):
-        add_aviary_input(self, Aircraft.Furnishings.MASS_SCALER, val=1.0)
+        add_aviary_input(self, Aircraft.Furnishings.MASS_SCALER)
 
-        add_aviary_output(self, Aircraft.Furnishings.MASS_BASE, val=0.0)
+        add_aviary_output(self, Aircraft.Furnishings.MASS_BASE)
 
     def setup_partials(self):
         self.declare_partials(of=Aircraft.Furnishings.MASS_BASE, wrt='*')
@@ -309,15 +300,12 @@ class AltFurnishingsGroupMass(om.ExplicitComponent):
             desc='collection of Aircraft/Mission specific options')
 
     def setup(self):
-        add_aviary_input(self, Aircraft.Furnishings.MASS_BASE, val=0.0)
+        add_aviary_input(self, Aircraft.Furnishings.MASS_BASE)
+        add_aviary_input(self, Aircraft.Design.STRUCTURE_MASS)
+        add_aviary_input(self, Aircraft.Propulsion.MASS)
+        add_aviary_input(self, Aircraft.Design.SYSTEMS_EQUIP_MASS_BASE)
 
-        add_aviary_input(self, Aircraft.Design.STRUCTURE_MASS, val=0.0)
-
-        add_aviary_input(self, Aircraft.Propulsion.MASS, val=0.0)
-
-        add_aviary_input(self, Aircraft.Design.SYSTEMS_EQUIP_MASS_BASE, val=0.0)
-
-        add_aviary_output(self, Aircraft.Furnishings.MASS, val=0.0)
+        add_aviary_output(self, Aircraft.Furnishings.MASS)
 
     def setup_partials(self):
         self.declare_partials(
