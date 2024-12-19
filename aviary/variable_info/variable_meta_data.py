@@ -3778,7 +3778,7 @@ add_meta_data(
     },
     units='psi',
     desc='hydraulic system pressure',
-    default_value=3000.0,
+    default_value=0.0,
 )
 
 #
