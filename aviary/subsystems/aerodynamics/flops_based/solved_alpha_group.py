@@ -40,8 +40,10 @@ class SolvedAlphaGroup(om.Group):
         self.options.declare('structured', types=bool, default=True,
                              desc='Flag that sets if data is a structured grid')
 
-        self.options.declare('extrapolate', default=True, desc='Flag that sets if drag '
-                                                               'data can be extrapolated')
+        self.options.declare(
+            'extrapolate', default=True,
+            desc='Flag that sets if drag '
+            'data can be extrapolated')
 
     def setup(self):
         options = self.options
@@ -52,9 +54,14 @@ class SolvedAlphaGroup(om.Group):
         extrapolate = options['extrapolate']
 
         self.add_subsystem(
-            'DynamicPressure', DynamicPressure(num_nodes=nn),
-            promotes_inputs=[Dynamic.Mission.MACH, Dynamic.Mission.STATIC_PRESSURE],
-            promotes_outputs=[Dynamic.Mission.DYNAMIC_PRESSURE])
+            'DynamicPressure',
+            DynamicPressure(num_nodes=nn),
+            promotes_inputs=[
+                Dynamic.Atmosphere.MACH,
+                Dynamic.Atmosphere.STATIC_PRESSURE,
+            ],
+            promotes_outputs=[Dynamic.Atmosphere.DYNAMIC_PRESSURE],
+        )
 
         aero = TabularCruiseAero(num_nodes=nn,
                                  aero_data=aero_data,
@@ -68,12 +75,19 @@ class SolvedAlphaGroup(om.Group):
         else:
             extra_promotes = []
 
-        self.add_subsystem("tabular_aero", aero,
-                           promotes_inputs=[Dynamic.Mission.ALTITUDE, Dynamic.Mission.MACH,
-                                            Aircraft.Wing.AREA, Dynamic.Mission.MACH,
-                                            Dynamic.Mission.DYNAMIC_PRESSURE]
-                           + extra_promotes,
-                           promotes_outputs=['CD', Dynamic.Mission.LIFT, Dynamic.Mission.DRAG])
+        self.add_subsystem(
+            "tabular_aero",
+            aero,
+            promotes_inputs=[
+                Dynamic.Mission.ALTITUDE,
+                Dynamic.Atmosphere.MACH,
+                Aircraft.Wing.AREA,
+                Dynamic.Atmosphere.MACH,
+                Dynamic.Atmosphere.DYNAMIC_PRESSURE,
+            ]
+            + extra_promotes,
+            promotes_outputs=['CD', Dynamic.Vehicle.LIFT, Dynamic.Vehicle.DRAG],
+        )
 
         balance = self.add_subsystem('balance', om.BalanceComp())
         balance.add_balance('alpha', val=np.ones(nn), units='deg', res_ref=1.0e6)
@@ -81,16 +95,21 @@ class SolvedAlphaGroup(om.Group):
         self.connect('balance.alpha', 'tabular_aero.alpha')
         self.connect('needed_lift.lift_resid', 'balance.lhs:alpha')
 
-        self.add_subsystem('needed_lift',
-                           om.ExecComp('lift_resid = mass * grav_metric - computed_lift',
-                                       grav_metric={'val': grav_metric},
-                                       mass={'units': 'kg', 'shape': nn},
-                                       computed_lift={'units': 'N', 'shape': nn},
-                                       lift_resid={'shape': nn},
-                                       ),
-                           promotes_inputs=[('mass', Dynamic.Mission.MASS),
-                                            ('computed_lift', Dynamic.Mission.LIFT)]
-                           )
+        self.add_subsystem(
+            'needed_lift',
+            om.ExecComp(
+                'lift_resid = mass * grav_metric - computed_lift',
+                grav_metric={'val': grav_metric},
+                mass={'units': 'kg', 'shape': nn},
+                computed_lift={'units': 'N', 'shape': nn},
+                lift_resid={'shape': nn},
+                has_diag_partials=True,
+            ),
+            promotes_inputs=[
+                ('mass', Dynamic.Vehicle.MASS),
+                ('computed_lift', Dynamic.Vehicle.LIFT),
+            ],
+        )
 
         self.linear_solver = om.DirectSolver()
         newton = self.nonlinear_solver = om.NewtonSolver(solve_subsystems=True)

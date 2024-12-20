@@ -1,4 +1,3 @@
-
 import numpy as np
 import openmdao.api as om
 from openmdao.components.interp_util.interp import InterpND
@@ -22,10 +21,8 @@ class CompressibilityDrag(om.ExplicitComponent):
 
         # Simulation inputs
         self.add_input(
-            Dynamic.Mission.MACH,
-            shape=(nn),
-            units='unitless',
-            desc="Mach number")
+            Dynamic.Atmosphere.MACH, shape=(nn), units='unitless', desc="Mach number"
+        )
 
         # Aero design inputs
         add_aviary_input(self, Mission.Design.MACH, 0.0)
@@ -50,8 +47,12 @@ class CompressibilityDrag(om.ExplicitComponent):
         nn = self.options["num_nodes"]
 
         row_col = np.arange(nn)
-        self.declare_partials(of='compress_drag_coeff', wrt=[Dynamic.Mission.MACH],
-                              rows=row_col, cols=row_col)
+        self.declare_partials(
+            of='compress_drag_coeff',
+            wrt=[Dynamic.Atmosphere.MACH],
+            rows=row_col,
+            cols=row_col,
+        )
 
         wrt2 = [Aircraft.Wing.THICKNESS_TO_CHORD, Aircraft.Wing.ASPECT_RATIO,
                 Aircraft.Wing.SWEEP, Aircraft.Wing.MAX_CAMBER_AT_70_SEMISPAN,
@@ -67,7 +68,7 @@ class CompressibilityDrag(om.ExplicitComponent):
         Calculate compressibility drag.
         """
 
-        del_mach = inputs[Dynamic.Mission.MACH] - inputs[Mission.Design.MACH]
+        del_mach = inputs[Dynamic.Atmosphere.MACH] - inputs[Mission.Design.MACH]
 
         idx_super = np.where(del_mach > 0.05)
         idx_sub = np.where(del_mach <= 0.05)
@@ -84,7 +85,7 @@ class CompressibilityDrag(om.ExplicitComponent):
         Calculate compressibility drag for supersonic speeds.
         """
 
-        mach = inputs[Dynamic.Mission.MACH][idx]
+        mach = inputs[Dynamic.Atmosphere.MACH][idx]
         nn = len(mach)
         del_mach = mach - inputs[Mission.Design.MACH]
         AR = inputs[Aircraft.Wing.ASPECT_RATIO]
@@ -166,7 +167,7 @@ class CompressibilityDrag(om.ExplicitComponent):
         Calculate compressibility drag for subsonic speeds.
         """
 
-        mach = inputs[Dynamic.Mission.MACH][idx]
+        mach = inputs[Dynamic.Atmosphere.MACH][idx]
         nn = len(mach)
         del_mach = mach - inputs[Mission.Design.MACH]
         TC = inputs[Aircraft.Wing.THICKNESS_TO_CHORD]
@@ -224,7 +225,7 @@ class CompressibilityDrag(om.ExplicitComponent):
         :type partials: _type_
         """
 
-        del_mach = inputs[Dynamic.Mission.MACH] - inputs[Mission.Design.MACH]
+        del_mach = inputs[Dynamic.Atmosphere.MACH] - inputs[Mission.Design.MACH]
 
         idx_super = np.where(del_mach > 0.05)
         idx_sub = np.where(del_mach <= 0.05)
@@ -235,7 +236,7 @@ class CompressibilityDrag(om.ExplicitComponent):
 
     def _compute_partials_supersonic(self, inputs, partials, idx):
 
-        mach = inputs[Dynamic.Mission.MACH][idx]
+        mach = inputs[Dynamic.Atmosphere.MACH][idx]
         nn = len(mach)
         AR = inputs[Aircraft.Wing.ASPECT_RATIO]
         TC = inputs[Aircraft.Wing.THICKNESS_TO_CHORD]
@@ -353,7 +354,7 @@ class CompressibilityDrag(om.ExplicitComponent):
             dCd_dwing_taper_ratio = dCd3_dCD3 * dCD3_dART * dART_dwing_taper_ratio
             dCd_dsweep25 = dCd3_dsweep25
 
-        partials["compress_drag_coeff", Dynamic.Mission.MACH][idx] = dCd_dMach
+        partials["compress_drag_coeff", Dynamic.Atmosphere.MACH][idx] = dCd_dMach
         partials["compress_drag_coeff", Mission.Design.MACH][idx, 0] = dCd_ddesign_Mach
         partials["compress_drag_coeff", Aircraft.Wing.THICKNESS_TO_CHORD][idx, 0] = dCd_dTC
         partials["compress_drag_coeff",
@@ -377,7 +378,7 @@ class CompressibilityDrag(om.ExplicitComponent):
 
     def _compute_partials_subsonic(self, inputs, partials, idx):
 
-        mach = inputs[Dynamic.Mission.MACH][idx]
+        mach = inputs[Dynamic.Atmosphere.MACH][idx]
         nn = len(mach)
         TC = inputs[Aircraft.Wing.THICKNESS_TO_CHORD]
         max_camber_70 = inputs[Aircraft.Wing.MAX_CAMBER_AT_70_SEMISPAN]
@@ -417,7 +418,7 @@ class CompressibilityDrag(om.ExplicitComponent):
         # wrt max_camber_70
         dCd_dmax_camber_70 = CD1 * (1.0 / 10.0) * TC**(5.0 / 3.0)
 
-        partials["compress_drag_coeff", Dynamic.Mission.MACH][idx] = dCd_dMach
+        partials["compress_drag_coeff", Dynamic.Atmosphere.MACH][idx] = dCd_dMach
         partials["compress_drag_coeff", Mission.Design.MACH][idx, 0] = dCd_ddesign_Mach
         partials["compress_drag_coeff", Aircraft.Wing.THICKNESS_TO_CHORD][idx, 0] = dCd_dTC
         partials["compress_drag_coeff",

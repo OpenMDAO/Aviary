@@ -116,7 +116,9 @@ def run_aviary(
     prob.set_initial_guesses()
 
     prob.run_aviary_problem(
-        record_filename, restart_filename=restart_filename, run_driver=run_driver, make_plots=make_plots, optimization_history_filename=optimization_history_filename)
+        record_filename, restart_filename=restart_filename, run_driver=run_driver,
+        make_plots=make_plots,
+        optimization_history_filename=optimization_history_filename)
 
     return prob
 
@@ -127,6 +129,7 @@ def run_level_1(
     optimizer='SNOPT',
     phase_info=None,
     max_iter=50,
+    verbosity=1,
     analysis_scheme=AnalysisScheme.COLLOCATION,
 ):
     '''
@@ -144,6 +147,7 @@ def run_level_1(
     #     kwargs['optimizer'] = 'IPOPT'
     # else:
     kwargs['optimizer'] = optimizer
+    kwargs['verbosity'] = Verbosity(verbosity)
 
     if isinstance(phase_info, str):
         phase_info_path = get_path(phase_info)
@@ -170,9 +174,8 @@ def run_level_1(
 
 def _setup_level1_parser(parser):
     def_outdir = os.path.join(os.getcwd(), "output")
-    parser.add_argument(
-        'input_deck', metavar='indeck', type=str, nargs=1, help='Name of vehicle input deck file'
-    )
+    parser.add_argument('input_deck', metavar='indeck', type=str,
+                        nargs=1, help='Name of vehicle input deck file')
     parser.add_argument(
         "-o", "--outdir", default=def_outdir, help="Directory to write outputs"
     )
@@ -199,6 +202,12 @@ def _setup_level1_parser(parser):
         action="store_true",
         help="Use shooting instead of collocation",
     )
+    parser.add_argument(
+        "--verbosity",
+        type=int,
+        default=1,
+        help="verbosity settings: 0=quiet, 1=brief, 2=verbose, 3=debug",
+        choices=(0, 1, 2, 3))
 
 
 def _exec_level1(args, user_args):
@@ -225,5 +234,6 @@ def _exec_level1(args, user_args):
         optimizer=args.optimizer,
         phase_info=args.phase_info,
         max_iter=args.max_iter,
+        verbosity=args.verbosity,
         analysis_scheme=analysis_scheme,
     )

@@ -8,7 +8,7 @@ import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials
 
 from aviary.mission.gasp_based.ode.params import set_params_for_unit_tests
-from aviary.mission.gasp_based.phases.landing_group import LandingSegment
+from aviary.mission.gasp_based.ode.landing_ode import LandingSegment
 from aviary.subsystems.propulsion.utils import build_engine_deck
 from aviary.utils.test_utils.default_subsystems import get_default_mission_subsystems
 from aviary.utils.test_utils.IO_test_util import check_prob_outputs
@@ -48,7 +48,7 @@ class DLandTestCase(unittest.TestCase):
         self.prob.set_val(Mission.Landing.TOUCHDOWN_SINK_RATE, 5, units="ft/s")
         self.prob.set_val(Mission.Landing.BRAKING_DELAY, 1, units="s")
         self.prob.set_val("mass", 165279, units="lbm")
-        self.prob.set_val(Dynamic.Mission.THROTTLE, 0.0, units='unitless')
+        self.prob.set_val(Dynamic.Vehicle.Propulsion.THROTTLE, 0.0, units='unitless')
 
         self.prob.run_model()
 

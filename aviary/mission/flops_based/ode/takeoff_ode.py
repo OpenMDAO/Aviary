@@ -110,7 +110,7 @@ class TakeoffODE(om.Group):
             StallSpeed(num_nodes=nn),
             promotes_inputs=[
                 "mass",
-                Dynamic.Mission.DENSITY,
+                Dynamic.Atmosphere.DENSITY,
                 ('area', Aircraft.Wing.AREA),
                 ("lift_coefficient_max", self.stall_speed_lift_coefficient_name),
             ],
@@ -176,10 +176,10 @@ class TakeoffODE(om.Group):
             promotes_inputs=[
                 Dynamic.Mission.FLIGHT_PATH_ANGLE,
                 Dynamic.Mission.VELOCITY,
-                Dynamic.Mission.MASS,
-                Dynamic.Mission.LIFT,
-                Dynamic.Mission.THRUST_TOTAL,
-                Dynamic.Mission.DRAG,
+                Dynamic.Vehicle.MASS,
+                Dynamic.Vehicle.LIFT,
+                Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
+                Dynamic.Vehicle.DRAG,
                 'angle_of_attack',
             ],
             promotes_outputs=[
@@ -198,6 +198,7 @@ class TakeoffODE(om.Group):
                 v={'units': 'm/s', 'shape': nn},
                 # NOTE: FLOPS detailed takeoff stall speed is not dynamic - see above
                 v_stall={'units': 'm/s', 'shape': nn},
+                has_diag_partials=True,
             ),
             promotes_inputs=[('v', Dynamic.Mission.VELOCITY), 'v_stall'],
             promotes_outputs=['v_over_v_stall'],

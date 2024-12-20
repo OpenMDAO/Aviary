@@ -27,8 +27,7 @@ jobs:
             SCIPY: 1
             PYOPTSPARSE: 'latest'
             SNOPT: '7.7'
-            #OPENMDAO: 'dev'
-            OPENMDAO: '3.34.2'
+            OPENMDAO: 'dev'
             DYMOS: 'dev'
 
     steps:
@@ -63,7 +62,6 @@ jobs:
           testflo . -n 1 --timeout=200 --show_skipped --coverage --coverpkg aviary
 
       - name: Checkout actions (again)
-        if: failure()
         uses: actions/checkout@v3
         with:
           sparse-checkout: |
