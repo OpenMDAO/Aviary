@@ -42,25 +42,31 @@ from aviary.mission.gasp_based.ode.taxi_ode import TaxiSegment
 from aviary.mission.gasp_based.phases.v_rotate_comp import VRotateComp
 from aviary.mission.gasp_based.polynomial_fit import PolynomialFit
 from aviary.mission.phase_builder_base import PhaseBuilderBase
+from aviary.mission.problem_builder_2DOF import AviaryProblemBuilder_2DOF
+from aviary.mission.problem_builder_height_energy import AviaryProblemBuilder_HE
 
 from aviary.subsystems.aerodynamics.aerodynamics_builder import CoreAerodynamicsBuilder
 from aviary.subsystems.geometry.geometry_builder import CoreGeometryBuilder
 from aviary.subsystems.mass.mass_builder import CoreMassBuilder
 from aviary.subsystems.premission import CorePreMission
-from aviary.subsystems.propulsion.utils import build_engine_deck
 from aviary.subsystems.propulsion.propulsion_builder import CorePropulsionBuilder
 
 from aviary.utils.aviary_values import AviaryValues
-from aviary.utils.functions import create_opts2vals, add_opts2vals, promote_aircraft_and_mission_vars, wrapped_convert_units
+from aviary.utils.functions import create_opts2vals, add_opts2vals, wrapped_convert_units
 from aviary.utils.functions import convert_strings_to_data, set_value
 from aviary.utils.merge_variable_metadata import merge_meta_data
 from aviary.utils.preprocessors import preprocess_options
-from aviary.utils.process_input_decks import create_vehicle, update_GASP_options, initialization_guessing
+from aviary.utils.process_input_decks import create_vehicle
 
 from aviary.variable_info.enums import AnalysisScheme, ProblemType, EquationsOfMotion, LegacyCode, Verbosity
-from aviary.variable_info.functions import setup_trajectory_params, override_aviary_vars
+from aviary.variable_info.functions import setup_trajectory_params
 from aviary.variable_info.variables import Aircraft, Mission, Dynamic, Settings
 from aviary.variable_info.variable_meta_data import _MetaData as BaseMetaData
+
+from aviary.core.PostMissionGroup import PostMissionGroup
+from aviary.core.PreMissionGroup import PreMissionGroup
+from aviary.core.AviaryGroup import AviaryGroup
+from aviary.utils.process_input_decks import initialization_guessing, update_GASP_options
 
 FLOPS = LegacyCode.FLOPS
 GASP = LegacyCode.GASP
@@ -68,155 +74,12 @@ GASP = LegacyCode.GASP
 TWO_DEGREES_OF_FREEDOM = EquationsOfMotion.TWO_DEGREES_OF_FREEDOM
 HEIGHT_ENERGY = EquationsOfMotion.HEIGHT_ENERGY
 SOLVED_2DOF = EquationsOfMotion.SOLVED_2DOF
+CUSTOM = EquationsOfMotion.CUSTOM
 
 if hasattr(TranscriptionBase, 'setup_polynomial_controls'):
     use_new_dymos_syntax = False
 else:
     use_new_dymos_syntax = True
-
-
-class PreMissionGroup(om.Group):
-    """OpenMDAO group that holds all pre-mission systems"""
-
-    def configure(self):
-        """
-        Configure this group for pre-mission.
-        Promote aircraft and mission variables.
-        Override output aviary variables.
-        """
-        external_outputs = promote_aircraft_and_mission_vars(self)
-
-        pre_mission = self.core_subsystems
-        override_aviary_vars(
-            pre_mission,
-            pre_mission.options["aviary_options"],
-            external_overrides=external_outputs,
-            manual_overrides=pre_mission.manual_overrides,
-        )
-
-
-class PostMissionGroup(om.Group):
-    """OpenMDAO group that holds all post-mission systems"""
-
-    def configure(self):
-        """
-        Congigure this group for post-mission.
-        Promote aircraft and mission variables.
-        """
-        promote_aircraft_and_mission_vars(self)
-
-
-class AviaryGroup(om.Group):
-    """
-    A standard OpenMDAO group that handles Aviary's promotions in the configure
-    method. This assures that we only call set_input_defaults on variables
-    that are present in the model.
-    """
-
-    def initialize(self):
-        """declare options"""
-        self.options.declare(
-            'aviary_options', types=AviaryValues,
-            desc='collection of Aircraft/Mission specific options')
-        self.options.declare(
-            'aviary_metadata', types=dict,
-            desc='metadata dictionary of the full aviary problem.')
-        self.options.declare(
-            'phase_info', types=dict,
-            desc='phase-specific settings.')
-
-    def configure(self):
-        """
-        Configure the Aviary group
-        """
-        aviary_options = self.options['aviary_options']
-        aviary_metadata = self.options['aviary_metadata']
-
-        # Find promoted name of every input in the model.
-        all_prom_inputs = []
-
-        # We can call list_inputs on the subsystems.
-        for system in self.system_iter(recurse=False):
-            var_abs = system.list_inputs(out_stream=None, val=False)
-            var_prom = [v['prom_name'] for k, v in var_abs]
-            all_prom_inputs.extend(var_prom)
-
-            # Calls to promotes aren't handled until this group resolves.
-            # Here, we address anything promoted with an alias in AviaryProblem.
-            input_meta = system._var_promotes['input']
-            var_prom = [v[0][1] for v in input_meta if isinstance(v[0], tuple)]
-            all_prom_inputs.extend(var_prom)
-            var_prom = [v[0] for v in input_meta if not isinstance(v[0], tuple)]
-            all_prom_inputs.extend(var_prom)
-
-        if MPI and self.comm.size > 1:
-            # Under MPI, promotion info only lives on rank 0, so broadcast.
-            all_prom_inputs = self.comm.bcast(all_prom_inputs, root=0)
-
-        for key in aviary_metadata:
-
-            if ':' not in key or key.startswith('dynamic:'):
-                continue
-
-            if aviary_metadata[key]['option']:
-                continue
-
-            # Skip anything that is not presently an input.
-            if key not in all_prom_inputs:
-                continue
-
-            if key in aviary_options:
-                val, units = aviary_options.get_item(key)
-            else:
-                val = aviary_metadata[key]['default_value']
-                units = aviary_metadata[key]['units']
-
-                if val is None:
-                    # optional, but no default value
-                    continue
-
-            self.set_input_defaults(key, val=val, units=units)
-
-        # The section below this contains some manipulations of the dymos solver
-        # structure for height energy.
-        if aviary_options.get_val(Settings.EQUATIONS_OF_MOTION) is not HEIGHT_ENERGY:
-            return
-
-        phase_info = self.options['phase_info']
-
-        # Set a more appropriate solver for dymos when the phases are linked.
-        if MPI and isinstance(self.traj.phases.linear_solver, om.PETScKrylov):
-
-            # When any phase is connected with input_initial = True, dymos puts
-            # a jacobi solver in the phases group. This is necessary in case
-            # the phases are cyclic. However, this causes some problems
-            # with the newton solvers in Aviary, exacerbating issues with
-            # solver tolerances at multiple levels. Since Aviary's phases
-            # are basically in series, the jacobi solver is a much better
-            # choice and should be able to handle it in a couple of
-            # iterations.
-            self.traj.phases.linear_solver = om.LinearBlockJac(maxiter=5)
-
-        # Due to recent changes in dymos, there is now a solver in any phase
-        # that has connected initial states. It is not clear that this solver
-        # is necessary except in certain corner cases that do not apply to the
-        # Aviary trajectory. In our case, this solver merely addresses a lag
-        # in the state input component. Since this solver can cause some
-        # numerical problems, and can slow things down, we need to move it down
-        # into the state interp component.
-        # TODO: Future updates to dymos may make this unneccesary.
-        for phase in self.traj.phases.system_iter(recurse=False):
-
-            # Don't move the solvers if we are using solve segements.
-            if phase_info[phase.name]['user_options'].get('solve_for_distance'):
-                continue
-
-            phase.nonlinear_solver = om.NonlinearRunOnce()
-            phase.linear_solver = om.LinearRunOnce()
-            if isinstance(phase.indep_states, om.ImplicitComponent):
-                phase.indep_states.nonlinear_solver = \
-                    om.NewtonSolver(solve_subsystems=True)
-                phase.indep_states.linear_solver = om.DirectSolver(rhs_checking=True)
 
 
 class AviaryProblem(om.Problem):
@@ -258,9 +121,11 @@ class AviaryProblem(om.Problem):
 
         self.regular_phases = []
         self.reserve_phases = []
+        self.builder = None
 
     def load_inputs(
             self, aviary_inputs, phase_info=None, engine_builders=None,
+            problem_builder=None,
             meta_data=BaseMetaData, verbosity=Verbosity.BRIEF):
         """
         This method loads the aviary_values inputs and options that the
@@ -277,20 +142,28 @@ class AviaryProblem(om.Problem):
         ## LOAD INPUT FILE ###
         # Create AviaryValues object from file (or process existing AviaryValues object
         # with default values from metadata) and generate initial guesses
-        aviary_inputs, initialization_guesses = create_vehicle(
+        self.aviary_inputs, self.initialization_guesses = create_vehicle(
             aviary_inputs, meta_data=meta_data, verbosity=verbosity)
 
         # pull which methods will be used for subsystems and mission
-        self.mission_method = mission_method = aviary_inputs.get_val(
+        self.mission_method = mission_method = self.aviary_inputs.get_val(
             Settings.EQUATIONS_OF_MOTION)
-        self.mass_method = mass_method = aviary_inputs.get_val(Settings.MASS_METHOD)
 
-        if mission_method is TWO_DEGREES_OF_FREEDOM or mass_method is GASP:
-            aviary_inputs = update_GASP_options(aviary_inputs)
-        initialization_guesses = initialization_guessing(aviary_inputs, initialization_guesses,
-                                                         engine_builders)
-        self.aviary_inputs = aviary_inputs
-        self.initialization_guesses = initialization_guesses
+        # Determine which problem builder to use based on mission_method
+        if mission_method is HEIGHT_ENERGY:
+            self.builder = AviaryProblemBuilder_HE()
+        elif mission_method is TWO_DEGREES_OF_FREEDOM:
+            self.builder = AviaryProblemBuilder_2DOF()
+        elif mission_method is CUSTOM:
+            if problem_builder:
+                self.builder = problem_builder()
+                # TODO: make draft / example custom builder
+            else:
+                raise ValueError(
+                    f'When using "settings:equations_of_motion,custom", a problem_builder must be specified in load_inputs().')
+        else:
+            raise ValueError(
+                f'settings:equations_of_motion must be one of: height_energy, 2DOF, or custom')
 
         ## LOAD PHASE_INFO ###
         if phase_info is None:
@@ -311,19 +184,9 @@ class AviaryProblem(om.Problem):
                 # if verbosity level is BRIEF or higher, print that we're using the outputted phase info
                 if verbosity is not None and verbosity >= Verbosity.BRIEF:
                     print('Using outputted phase_info from current working directory')
-
             else:
-                if self.mission_method is TWO_DEGREES_OF_FREEDOM:
-                    if self.analysis_scheme is AnalysisScheme.COLLOCATION:
-                        from aviary.interface.default_phase_info.two_dof import phase_info
-                    elif self.analysis_scheme is AnalysisScheme.SHOOTING:
-                        from aviary.interface.default_phase_info.two_dof_fiti import phase_info, \
-                            phase_info_parameterization
-                        phase_info, _ = phase_info_parameterization(
-                            phase_info, None, self.aviary_inputs)
 
-                elif self.mission_method is HEIGHT_ENERGY:
-                    from aviary.interface.default_phase_info.height_energy import phase_info
+                phase_info = self.builder.phase_info_default_location(self)
 
                 if verbosity is not None and verbosity >= Verbosity.BRIEF:
                     print('Loaded default phase_info for '
@@ -343,66 +206,22 @@ class AviaryProblem(om.Problem):
         if 'pre_mission' in phase_info:
             self.pre_mission_info = phase_info['pre_mission']
         else:
-            self.pre_mission_info = {'include_takeoff': True,
-                                     'external_subsystems': []}
+            self.pre_mission_info = None
 
         if 'post_mission' in phase_info:
             self.post_mission_info = phase_info['post_mission']
         else:
-            self.post_mission_info = {'include_landing': True,
-                                      'external_subsystems': []}
+            self.post_mission_info = None
 
-        if engine_builders is None:
-            engine_builders = build_engine_deck(aviary_inputs)
-        self.engine_builders = engine_builders
+        self.problem_type = self.aviary_inputs.get_val(Settings.PROBLEM_TYPE)
 
-        self.aviary_inputs = aviary_inputs
+        self.builder.initial_guesses(self, engine_builders)
+        # This function sets all the following defaults if they were not already set
+        # self.engine_builders, self.mass_method, self.pre_mission_info, self_post_mission_info
+        # self.require_range_residual, self.target_range
+        # other specific self.*** are defined in here as well that are specific to each builder
 
-        if mission_method is TWO_DEGREES_OF_FREEDOM:
-            aviary_inputs.set_val(Mission.Summary.CRUISE_MASS_FINAL,
-                                  val=self.initialization_guesses['cruise_mass_final'], units='lbm')
-            aviary_inputs.set_val(Mission.Summary.GROSS_MASS,
-                                  val=self.initialization_guesses['actual_takeoff_mass'], units='lbm')
-
-            # Commonly referenced values
-            self.cruise_alt = aviary_inputs.get_val(
-                Mission.Design.CRUISE_ALTITUDE, units='ft')
-            self.problem_type = aviary_inputs.get_val(Settings.PROBLEM_TYPE)
-            self.mass_defect = aviary_inputs.get_val('mass_defect', units='lbm')
-
-            self.cruise_mass_final = aviary_inputs.get_val(
-                Mission.Summary.CRUISE_MASS_FINAL, units='lbm')
-
-            if self.post_mission_info is True and 'target_range' in self.post_mission_info:
-                self.target_range = wrapped_convert_units(
-                    phase_info['post_mission']['target_range'], 'NM')
-                aviary_inputs.set_val(Mission.Summary.RANGE,
-                                      self.target_range, units='NM')
-            else:
-                self.target_range = aviary_inputs.get_val(
-                    Mission.Design.RANGE, units='NM')
-                aviary_inputs.set_val(Mission.Summary.RANGE, aviary_inputs.get_val(
-                    Mission.Design.RANGE, units='NM'), units='NM')
-            self.cruise_mach = aviary_inputs.get_val(Mission.Design.MACH)
-            self.require_range_residual = True
-
-        elif mission_method is HEIGHT_ENERGY:
-            self.problem_type = aviary_inputs.get_val(Settings.PROBLEM_TYPE)
-            aviary_inputs.set_val(Mission.Summary.GROSS_MASS,
-                                  val=self.initialization_guesses['actual_takeoff_mass'], units='lbm')
-            if 'target_range' in self.post_mission_info:
-                aviary_inputs.set_val(Mission.Summary.RANGE, wrapped_convert_units(
-                    phase_info['post_mission']['target_range'], 'NM'), units='NM')
-                self.require_range_residual = True
-                self.target_range = wrapped_convert_units(
-                    phase_info['post_mission']['target_range'], 'NM')
-            else:
-                self.require_range_residual = False
-                # still instantiate target_range because it is used for default guesses for phase comps
-                self.target_range = aviary_inputs.get_val(
-                    Mission.Design.RANGE, units='NM')
-
-        return aviary_inputs
+        return self.aviary_inputs
 
     def _update_metadata_from_subsystems(self):
         self.meta_data = BaseMetaData.copy()
