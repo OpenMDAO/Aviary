@@ -236,7 +236,9 @@ class AviaryProblem(om.Problem):
     additional methods to help users create and solve Aviary problems.
     """
 
-    def __init__(self, analysis_scheme=AnalysisScheme.COLLOCATION, **kwargs):
+    def __init__(
+        self, analysis_scheme=AnalysisScheme.COLLOCATION, verbosity=None, **kwargs
+    ):
         # Modify OpenMDAO's default_reports for this session.
         new_reports = ['subsystems', 'mission', 'timeseries_csv', 'run_status']
         for report in new_reports:
@@ -246,6 +248,7 @@ class AviaryProblem(om.Problem):
         super().__init__(**kwargs)
 
         self.timestamp = datetime.now()
+        self.verbosity = verbosity
 
         self.model = AviaryGroup()
         self.pre_mission = PreMissionGroup()
@@ -260,7 +263,14 @@ class AviaryProblem(om.Problem):
         self.regular_phases = []
         self.reserve_phases = []
 
-    def load_inputs(self, aviary_inputs, phase_info=None, engine_builders=None, meta_data=BaseMetaData, verbosity=Verbosity.BRIEF):
+    def load_inputs(
+        self,
+        aircraft_data,
+        phase_info=None,
+        engine_builders=None,
+        meta_data=BaseMetaData,
+        verbosity=None,
+    ):
         """
         This method loads the aviary_values inputs and options that the
         user specifies. They could specify files to load and values to
@@ -271,13 +281,22 @@ class AviaryProblem(om.Problem):
         This method is not strictly necessary; a user could also supply
         an AviaryValues object and/or phase_info dict of their own.
         """
-        # compatibility with being passed int for verbosity
-        verbosity = Verbosity(verbosity)
+        # We haven't read the input file yet, so by default self.verbosity is None
+        if self.verbosity is None:
+            # compatibility with being passed int for verbosity
+            verbosity = Verbosity(verbosity)
+        else:
+            verbosity = self.verbosity
+
         ## LOAD INPUT FILE ###
         # Create AviaryValues object from file (or process existing AviaryValues object
         # with default values from metadata) and generate initial guesses
         aviary_inputs, initialization_guesses = create_vehicle(
-            aviary_inputs, meta_data=meta_data, verbosity=verbosity)
+            aircraft_data, meta_data=meta_data, verbosity=verbosity
+        )
+
+        # Now that the input file has been read, we have the desired verbosity for this
+        # run stored in aviary_inputs. Save this to self.
 
         # pull which methods will be used for subsystems and mission
         self.mission_method = mission_method = aviary_inputs.get_val(
@@ -1633,7 +1652,9 @@ class AviaryProblem(om.Problem):
             for source, target in connect_map.items():
                 connect_with_common_params(self, source, target)
 
-    def add_driver(self, optimizer=None, use_coloring=None, max_iter=50, verbosity=Verbosity.BRIEF):
+    def add_driver(
+        self, optimizer=None, use_coloring=None, max_iter=50, verbosity=None
+    ):
         """
         Add an optimization driver to the Aviary problem.
 
@@ -1662,12 +1683,16 @@ class AviaryProblem(om.Problem):
         -------
         None
         """
-        # compatibility with being passed int for verbosity
-        verbosity = Verbosity(verbosity)
+        # override verbosity for this function call if user desired
+        if verbosity is None:
+            verbsity = self.verbosity
+        else:
+            # compatibility with being passed int for verbosity
+            verbosity = Verbosity(verbosity)
 
         # Set defaults for optimizer and use_coloring based on analysis scheme
         if optimizer is None:
-            optimizer = 'IPOPT' if self.analysis_scheme is AnalysisScheme.SHOOTING else 'SNOPT'
+            optimizer = 'IPOPT'  # if self.analysis_scheme is AnalysisScheme.SHOOTING else 'SNOPT'
         if use_coloring is None:
             use_coloring = False if self.analysis_scheme is AnalysisScheme.SHOOTING else True
 
@@ -1679,59 +1704,78 @@ class AviaryProblem(om.Problem):
 
         driver.options["optimizer"] = optimizer
         if use_coloring:
-            driver.declare_coloring()
+            # define coloring options by verbosity
+            if verbosity <= Verbosity.VERBOSE:  # if QUIET, BRIEF
+                driver.declare_coloring(show_summary=False)
+            elif verbosity == Verbosity.DEBUG:
+                driver.declare_coloring(show_summary=True, show_sparsity=True)
+            else:  # if VERBOSE
+                driver.declare_coloring(show_summary=True)
 
         if driver.options["optimizer"] == "SNOPT":
+            # Print Options #
             if verbosity == Verbosity.QUIET:
                 isumm, iprint = 0, 0
             elif verbosity == Verbosity.BRIEF:
                 isumm, iprint = 6, 0
             elif verbosity > Verbosity.BRIEF:
                 isumm, iprint = 6, 9
+            driver.opt_settings["iSumm"] = isumm
+            driver.opt_settings["iPrint"] = iprint
+            # Optimizer Settings #
             driver.opt_settings["Major iterations limit"] = max_iter
             driver.opt_settings["Major optimality tolerance"] = 1e-4
             driver.opt_settings["Major feasibility tolerance"] = 1e-7
-            driver.opt_settings["iSumm"] = isumm
-            driver.opt_settings["iPrint"] = iprint
+
         elif driver.options["optimizer"] == "IPOPT":
+            # Print Options #
             if verbosity == Verbosity.QUIET:
-                print_level = 3  # minimum to get exit status
+                # print_level = 3  # minimum to get exit status
+                print_level = 0
                 driver.opt_settings['print_user_options'] = 'no'
             elif verbosity == Verbosity.BRIEF:
-                print_level = 5
+                # print_level = 5
+                print_level = 3
                 driver.opt_settings['print_user_options'] = 'no'
                 driver.opt_settings['print_frequency_iter'] = 10
             elif verbosity == Verbosity.VERBOSE:
                 print_level = 5
             else:  # DEBUG
                 print_level = 7
+            driver.opt_settings['print_level'] = print_level
+            # Optimizer Settings #
             driver.opt_settings['tol'] = 1.0E-6
             driver.opt_settings['mu_init'] = 1e-5
             driver.opt_settings['max_iter'] = max_iter
-            driver.opt_settings['print_level'] = print_level
             # for faster convergence
             driver.opt_settings['nlp_scaling_method'] = 'gradient-based'
             driver.opt_settings['alpha_for_y'] = 'safer-min-dual-infeas'
             driver.opt_settings['mu_strategy'] = 'monotone'
+
         elif driver.options["optimizer"] == "SLSQP":
+            # Print Options #
             if verbosity == Verbosity.QUIET:
                 disp = False
             else:
                 disp = True
+            driver.options["disp"] = disp
+            # Optimizer Settings #
             driver.options["tol"] = 1e-9
             driver.options["maxiter"] = max_iter
-            driver.options["disp"] = disp
+
+        # pyoptsparse print settings, optimizer agnostic
+        # if optimizer in ("SNOPT", "IPOPT"):
+        if verbosity == Verbosity.QUIET:
+            driver.options['print_results'] = False
+        elif verbosity < Verbosity.DEBUG:
+            driver.options['print_results'] = 'minimal'
 
         if verbosity > Verbosity.QUIET:
             if isinstance(verbosity, list):
-                driver.options['debug_print'] = verbosity
+                driver.options['debug_print'] = ['desvars']
             elif verbosity == Verbosity.DEBUG:
                 driver.options['debug_print'] = ['desvars', 'ln_cons', 'nl_cons', 'objs']
-        if optimizer in ("SNOPT", "IPOPT"):
-            if verbosity == Verbosity.QUIET:
-                driver.options['print_results'] = False
-            elif verbosity < Verbosity.DEBUG:
-                driver.options['print_results'] = 'minimal'
+                driver.options['print_opt_prob'] = True
 
     def add_design_variables(self):
         """
@@ -2343,8 +2387,8 @@ class AviaryProblem(om.Problem):
         make_plots : bool, optional
             If True (default), Dymos html plots will be generated as part of the output.
         """
-
-        if self.aviary_inputs.get_val(Settings.VERBOSITY).value >= 2:
+        verbosity = self.aviary_inputs.get_val(Settings.VERBOSITY)
+        if verbosity >= Verbosity.VERBOSE:  # VERBOSE, DEBUG
             self.final_setup()
             with open('input_list.txt', 'w') as outfile:
                 self.model.list_inputs(out_stream=outfile)
@@ -2366,11 +2410,20 @@ class AviaryProblem(om.Problem):
             failed = self.run_model()
             warnings.filterwarnings('default', category=UserWarning)
 
-        if self.aviary_inputs.get_val(Settings.VERBOSITY).value >= 2:
+        if verbosity >= Verbosity.VERBOSE:  # VERBOSE, DEBUG
             with open('output_list.txt', 'w') as outfile:
                 self.model.list_outputs(out_stream=outfile)
 
+        # TODO use failed.exit_status or failed.sucess for better query?
+        # TODO this is only used in a single test. Either this should be removed, or
+        #      rework this option to be more helpful (store entired "failed" object?)
+        #      and implement more rigorously in benchmark tests
         self.problem_ran_successfully = not failed
+        # Manually print out a failure message for low verbosity modes that suppress
+        # optimizer printouts, which may include the results message. Assumes success,
+        # alerts user on a failure
+        if failed.exit_status == "FAIL" and verbosity <= Verbosity.BRIEF:  # QUIT, BRIEF
+            print("Aviary run failed. See the dashboard for more details.")
 
     def alternate_mission(self, run_mission=True,
                           json_filename='sizing_problem.json',

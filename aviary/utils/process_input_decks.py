@@ -43,11 +43,16 @@ def create_vehicle(vehicle_deck='', meta_data=_MetaData, verbosity=None):
 
     Parameters
     ----------
-    vehicle_deck (str):
-        Path to the vehicle deck file. Default is an empty string.
+    vehicle_deck (str, AviaryValues):
+        Path to the vehicle deck file, or an AviaryValues object that contains aircraft
+        inputs. Default is an empty string.
     meta_data (dict):
         Variable metadata used when reading input file for unit validation,
-        default values, and other checks
+        default values, and other checks.
+    verbosity (int, Verbosity):
+        Verbosity level for the AviaryProblem. If provided, this overrides verbosity
+        specified in the aircraft data. Default is None, and verbosity will be taken
+        from aircraft data or defaulted to Verbosity.BRIEF is not found.
 
     Returns
     -------
@@ -89,7 +94,7 @@ def create_vehicle(vehicle_deck='', meta_data=_MetaData, verbosity=None):
             vehicle_deck=vehicle_deck, aircraft_values=aircraft_values, initialization_guesses=initialization_guesses, meta_data=meta_data)
 
     # make sure verbosity is always set
-    # if verbosity set via parameter, use that
+    # if verbosity set via parameter, use that - override what is in the file
     if verbosity is not None:
         # Enum conversion here, so user can pass either number or actual Enum as parameter
         aircraft_values.set_val(Settings.VERBOSITY, Verbosity(verbosity))
@@ -117,7 +122,6 @@ def parse_inputs(vehicle_deck, aircraft_values: AviaryValues = None, initializat
     """
     if aircraft_values is None:
         aircraft_values = AviaryValues()
-        aircraft_values.set_val(Settings.VERBOSITY, Verbosity.BRIEF)
 
     if initialization_guesses is None:
         initialization_guesses = {}
@@ -166,7 +170,7 @@ def parse_inputs(vehicle_deck, aircraft_values: AviaryValues = None, initializat
                 continue
 
             elif var_name.startswith('initialization_guesses:'):
-                # get values labelled as initialization_guesses in .csv input file
+                # get values labeled as initialization_guesses in .csv input file
                 initialization_guesses[var_name.removeprefix(
                     'initialization_guesses:')] = float(var_values[0])
                 continue

@@ -11,11 +11,21 @@ from aviary.interface.methods_for_level2 import AviaryProblem
 from aviary.utils.functions import get_path
 
 
-def run_aviary(aircraft_filename, phase_info, optimizer=None,
-               analysis_scheme=AnalysisScheme.COLLOCATION, objective_type=None,
-               record_filename='problem_history.db', restart_filename=None, max_iter=50,
-               run_driver=True, make_plots=True, phase_info_parameterization=None,
-               optimization_history_filename=None, verbosity=Verbosity.BRIEF):
+def run_aviary(
+    aircraft_data,
+    phase_info,
+    optimizer=None,
+    analysis_scheme=AnalysisScheme.COLLOCATION,
+    objective_type=None,
+    record_filename='problem_history.db',
+    restart_filename=None,
+    max_iter=50,
+    run_driver=True,
+    make_plots=True,
+    phase_info_parameterization=None,
+    optimization_history_filename=None,
+    verbosity=None,
+):
     """
     Run the Aviary optimization problem for a specified aircraft configuration and mission.
 
@@ -26,8 +36,9 @@ def run_aviary(aircraft_filename, phase_info, optimizer=None,
 
     Parameters
     ----------
-    aircraft_filename : str
-        Filename from which to load the aircraft and options data.
+    aircraft_data: str, Path, AviaryValues
+        Filename from which to load the aircraft and options data, either as a string or
+        Path object, or an AviaryValues object containing that information.
     phase_info : dict
         Information about the phases of the mission.
     optimizer : str
@@ -52,8 +63,9 @@ def run_aviary(aircraft_filename, phase_info, optimizer=None,
     optimization_history_filename : str or Path
         The name of the database file where the driver iterations are to be recorded. The
         default is None.
-    verbosity : Verbosity or int
+    verbosity : Verbosity or int, optional
         Sets level of information outputted to the terminal during model execution.
+        If provided, overwrites verbosity specified in aircraft_filename.
 
     Returns
     -------
@@ -66,15 +78,18 @@ def run_aviary(aircraft_filename, phase_info, optimizer=None,
     It raises warnings or errors if there are clashing user inputs.
     Users can modify or add methods to alter the Aviary problem's behavior.
     """
-    # compatibility with being passed int for verbosity
-    verbosity = Verbosity(verbosity)
+    # If loading from a file, use filename as problem name. Else, use OpenMDAO default
+    if isinstance(aircraft_data, (str, Path)):
+        name = Path(aircraft_data).stem
+    else:
+        name = None
 
     # Build problem
-    prob = AviaryProblem(analysis_scheme, name=Path(aircraft_filename).stem)
+    prob = AviaryProblem(analysis_scheme, name=name, verbosity=verbosity)
 
     # Load aircraft and options data from user
     # Allow for user overrides here
-    prob.load_inputs(aircraft_filename, phase_info, verbosity=verbosity)
+    prob.load_inputs(aircraft_data, phase_info, verbosity=verbosity)
 
     # Preprocess inputs
     prob.check_and_preprocess_inputs()
