@@ -197,6 +197,7 @@ inputs.set_val(
 inputs.set_val(Aircraft.Engine.THRUST_REVERSERS_MASS_SCALER, 0.0)
 num_engines = 2
 inputs.set_val(Aircraft.Engine.NUM_ENGINES, num_engines)
+inputs.set_val(Aircraft.Engine.NUM_WING_ENGINES, 2)
 num_fuselage_engines = 0
 inputs.set_val(Aircraft.Engine.NUM_FUSELAGE_ENGINES, num_fuselage_engines)
 num_wing_engines = num_engines

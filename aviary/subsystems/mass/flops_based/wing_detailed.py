@@ -226,7 +226,9 @@ class DetailedWingBendingFact(om.ExplicitComponent):
 
                 bte = 8 * np.sum((ea[:-1] + ea[1:]) * dy[:-1] * 0.5)
 
-                inertia_factor[i] = 1 - bte / bt * pod_mass[i] / gross_mass
+                inertia_factor_i = 1 - bte / bt * pod_mass[i] / gross_mass
+                # avoid passing an array into specific index of inertia_factor
+                inertia_factor[i] = inertia_factor_i[0]
 
             # increment idx to next engine set
             idx = idx2
