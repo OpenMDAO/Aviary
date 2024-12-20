@@ -32,14 +32,14 @@ class ThrustReverserMass(om.ExplicitComponent):
             Aircraft.Engine.NUM_ENGINES))
 
         add_aviary_input(
-            self, Aircraft.Engine.THRUST_REVERSERS_MASS_SCALER, val=np.zeros(num_engine_type))
+            self, Aircraft.Engine.THRUST_REVERSERS_MASS_SCALER, shape=num_engine_type)
         add_aviary_input(
-            self, Aircraft.Engine.SCALED_SLS_THRUST, val=np.zeros(num_engine_type))
+            self, Aircraft.Engine.SCALED_SLS_THRUST, shape=num_engine_type)
 
         add_aviary_output(
-            self, Aircraft.Engine.THRUST_REVERSERS_MASS, val=np.zeros(num_engine_type))
+            self, Aircraft.Engine.THRUST_REVERSERS_MASS, shape=num_engine_type)
         add_aviary_output(
-            self, Aircraft.Propulsion.TOTAL_THRUST_REVERSERS_MASS, val=0)
+            self, Aircraft.Propulsion.TOTAL_THRUST_REVERSERS_MASS)
 
     def setup_partials(self):
         # derivatives w.r.t vectorized engine inputs have known sparsity pattern

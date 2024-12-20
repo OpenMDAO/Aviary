@@ -23,23 +23,10 @@ class PassengerServiceMass(om.ExplicitComponent):
             desc='collection of Aircraft/Mission specific options')
 
     def setup(self):
-        add_aviary_input(
-            self,
-            Aircraft.CrewPayload.PASSENGER_SERVICE_MASS_SCALER,
-            val=1.,
-        )
+        add_aviary_input(self, Aircraft.CrewPayload.PASSENGER_SERVICE_MASS_SCALER)
+        add_aviary_input(self, Mission.Design.RANGE)
 
-        add_aviary_input(
-            self,
-            Mission.Design.RANGE,
-            val=0.0,
-        )
-
-        add_aviary_output(
-            self,
-            Aircraft.CrewPayload.PASSENGER_SERVICE_MASS,
-            val=0.0,
-        )
+        add_aviary_output(self, Aircraft.CrewPayload.PASSENGER_SERVICE_MASS)
 
     def setup_partials(self):
         self.declare_partials('*', '*')

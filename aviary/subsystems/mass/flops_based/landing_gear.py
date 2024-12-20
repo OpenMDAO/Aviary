@@ -251,8 +251,8 @@ class NoseGearLength(om.ExplicitComponent):
             desc='collection of Aircraft/Mission specific options')
 
     def setup(self):
-        add_aviary_input(self, Aircraft.LandingGear.MAIN_GEAR_OLEO_LENGTH, val=0.0)
-        add_aviary_output(self, Aircraft.LandingGear.NOSE_GEAR_OLEO_LENGTH, val=0.0)
+        add_aviary_input(self, Aircraft.LandingGear.MAIN_GEAR_OLEO_LENGTH)
+        add_aviary_output(self, Aircraft.LandingGear.NOSE_GEAR_OLEO_LENGTH)
 
     def setup_partials(self):
         self.declare_partials(Aircraft.LandingGear.NOSE_GEAR_OLEO_LENGTH,
@@ -280,16 +280,16 @@ class MainGearLength(om.ExplicitComponent):
         num_wing_engines = self.options['aviary_options'].get_val(
             Aircraft.Engine.NUM_WING_ENGINES)
 
-        add_aviary_input(self, Aircraft.Fuselage.LENGTH, val=0.0)
-        add_aviary_input(self, Aircraft.Fuselage.MAX_WIDTH, val=0.0)
-        add_aviary_input(self, Aircraft.Nacelle.AVG_DIAMETER,
-                         val=np.zeros(num_engine_type))
+        add_aviary_input(self, Aircraft.Fuselage.LENGTH)
+        add_aviary_input(self, Aircraft.Fuselage.MAX_WIDTH)
+        add_aviary_input(self, Aircraft.Nacelle.AVG_DIAMETER, shape=num_engine_type)
+        # XJ: shape=(num_engine_type, int(num_wing_engines[0]/2))
         add_aviary_input(self, Aircraft.Engine.WING_LOCATIONS,
                          val=np.zeros((num_engine_type, int(num_wing_engines[0]/2))))
-        add_aviary_input(self, Aircraft.Wing.DIHEDRAL, val=0.0)
-        add_aviary_input(self, Aircraft.Wing.SPAN, val=0.0)
+        add_aviary_input(self, Aircraft.Wing.DIHEDRAL)
+        add_aviary_input(self, Aircraft.Wing.SPAN)
 
-        add_aviary_output(self, Aircraft.LandingGear.MAIN_GEAR_OLEO_LENGTH, val=0.0)
+        add_aviary_output(self, Aircraft.LandingGear.MAIN_GEAR_OLEO_LENGTH)
 
     def setup_partials(self):
         self.declare_partials('*', '*')

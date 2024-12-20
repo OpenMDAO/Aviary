@@ -34,36 +34,24 @@ class DetailedWingBendingFact(om.ExplicitComponent):
         # wing_location_default[:] = [np.array([0]*int(num)) for num in num_wing_engines/2]
 
         add_aviary_input(self, Aircraft.Wing.LOAD_PATH_SWEEP_DIST,
-                         val=np.zeros(num_input_stations - 1))
-
+                         shape=num_input_stations - 1)
         add_aviary_input(self, Aircraft.Wing.THICKNESS_TO_CHORD_DIST,
-                         val=np.zeros(num_input_stations))
-
+                         shape=num_input_stations)
         add_aviary_input(self, Aircraft.Wing.CHORD_PER_SEMISPAN_DIST,
-                         val=np.zeros(num_input_stations))
-
-        add_aviary_input(self, Mission.Design.GROSS_MASS, val=0.0)
-
-        add_aviary_input(self, Aircraft.Engine.POD_MASS, val=np.zeros(num_engine_type))
-
-        add_aviary_input(self, Aircraft.Wing.ASPECT_RATIO, val=0.0)
-
-        add_aviary_input(self, Aircraft.Wing.ASPECT_RATIO_REF, val=0.0)
-
-        add_aviary_input(self, Aircraft.Wing.STRUT_BRACING_FACTOR, val=0.0)
-
-        add_aviary_input(self, Aircraft.Wing.AEROELASTIC_TAILORING_FACTOR, val=0.0)
-
+                         shape=num_input_stations)
+        add_aviary_input(self, Mission.Design.GROSS_MASS)
+        add_aviary_input(self, Aircraft.Engine.POD_MASS, shape=num_engine_type)
+        add_aviary_input(self, Aircraft.Wing.ASPECT_RATIO)
+        add_aviary_input(self, Aircraft.Wing.ASPECT_RATIO_REF)
+        add_aviary_input(self, Aircraft.Wing.STRUT_BRACING_FACTOR)
+        add_aviary_input(self, Aircraft.Wing.AEROELASTIC_TAILORING_FACTOR)
         add_aviary_input(self, Aircraft.Engine.WING_LOCATIONS,
-                         val=np.zeros(int(total_num_wing_engines/2)))
+                         shape=int(total_num_wing_engines/2))
+        add_aviary_input(self, Aircraft.Wing.THICKNESS_TO_CHORD)
+        add_aviary_input(self, Aircraft.Wing.THICKNESS_TO_CHORD_REF)
 
-        add_aviary_input(self, Aircraft.Wing.THICKNESS_TO_CHORD, val=0.0)
-
-        add_aviary_input(self, Aircraft.Wing.THICKNESS_TO_CHORD_REF, val=0.0)
-
-        add_aviary_output(self, Aircraft.Wing.BENDING_FACTOR, val=0.0)
-
-        add_aviary_output(self, Aircraft.Wing.ENG_POD_INERTIA_FACTOR, val=0.0)
+        add_aviary_output(self, Aircraft.Wing.BENDING_FACTOR)
+        add_aviary_output(self, Aircraft.Wing.ENG_POD_INERTIA_FACTOR)
 
     def setup_partials(self):
         # TODO: Analytic derivs will be challenging, but possible.

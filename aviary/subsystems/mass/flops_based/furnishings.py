@@ -113,7 +113,9 @@ class BWBFurnishingsGroupMass(om.ExplicitComponent):
     def setup(self):
         add_aviary_input(self, Aircraft.Furnishings.MASS_SCALER)
         add_aviary_input(self, Aircraft.BWB.CABIN_AREA)
+
         add_aviary_input(self, Aircraft.Fuselage.MAX_WIDTH)
+
         add_aviary_input(self, Aircraft.Fuselage.MAX_HEIGHT)
         add_aviary_input(self, Aircraft.BWB.PASSENGER_LEADING_EDGE_SWEEP)
 

@@ -7,7 +7,7 @@ import openmdao.api as om
 
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.functions import add_aviary_input, add_aviary_output
-from aviary.variable_info.variables import Aircraft, Mission
+from aviary.variable_info.variables import Aircraft
 
 
 class CargoMass(om.ExplicitComponent):
@@ -24,7 +24,6 @@ class CargoMass(om.ExplicitComponent):
     def setup(self):
         add_aviary_input(self, Aircraft.CrewPayload.WING_CARGO)
         add_aviary_input(self, Aircraft.CrewPayload.MISC_CARGO)
-
         add_aviary_output(self, Aircraft.CrewPayload.PASSENGER_MASS)
         add_aviary_output(self, Aircraft.CrewPayload.BAGGAGE_MASS)
         add_aviary_output(self, Aircraft.CrewPayload.PASSENGER_PAYLOAD_MASS)

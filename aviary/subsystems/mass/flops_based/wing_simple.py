@@ -18,25 +18,17 @@ class SimpleWingBendingFact(om.ExplicitComponent):
             desc='collection of Aircraft/Mission specific options')
 
     def setup(self):
-        add_aviary_input(self, Aircraft.Wing.AREA, val=0.0)
+        add_aviary_input(self, Aircraft.Wing.AREA)
+        add_aviary_input(self, Aircraft.Wing.SPAN)
+        add_aviary_input(self, Aircraft.Wing.TAPER_RATIO)
+        add_aviary_input(self, Aircraft.Wing.THICKNESS_TO_CHORD)
+        add_aviary_input(self, Aircraft.Wing.STRUT_BRACING_FACTOR)
+        add_aviary_input(self, Aircraft.Wing.AEROELASTIC_TAILORING_FACTOR)
+        add_aviary_input(self, Aircraft.Wing.ASPECT_RATIO)
+        add_aviary_input(self, Aircraft.Wing.SWEEP)
 
-        add_aviary_input(self, Aircraft.Wing.SPAN, val=0.0)
-
-        add_aviary_input(self, Aircraft.Wing.TAPER_RATIO, val=0.0)
-
-        add_aviary_input(self, Aircraft.Wing.THICKNESS_TO_CHORD, val=0.0)
-
-        add_aviary_input(self, Aircraft.Wing.STRUT_BRACING_FACTOR, val=0.0)
-
-        add_aviary_input(self, Aircraft.Wing.AEROELASTIC_TAILORING_FACTOR, val=0.0)
-
-        add_aviary_input(self, Aircraft.Wing.ASPECT_RATIO, val=0.0)
-
-        add_aviary_input(self, Aircraft.Wing.SWEEP, val=0.0)
-
-        add_aviary_output(self, Aircraft.Wing.BENDING_FACTOR, val=0.0)
-
-        add_aviary_output(self, Aircraft.Wing.ENG_POD_INERTIA_FACTOR, val=0.0)
+        add_aviary_output(self, Aircraft.Wing.BENDING_FACTOR)
+        add_aviary_output(self, Aircraft.Wing.ENG_POD_INERTIA_FACTOR)
 
     def setup_partials(self):
         self.declare_partials(of=Aircraft.Wing.BENDING_FACTOR,

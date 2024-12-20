@@ -29,9 +29,7 @@ class TransportHydraulicsGroupMass(om.ExplicitComponent):
 
     def setup(self):
         add_aviary_input(self, Aircraft.Fuselage.PLANFORM_AREA)
-
         add_aviary_input(self, Aircraft.Hydraulics.SYSTEM_PRESSURE)
-
         add_aviary_input(self, Aircraft.Hydraulics.MASS_SCALER)
         add_aviary_input(self, Aircraft.Wing.AREA)
         add_aviary_input(self, Aircraft.Wing.VAR_SWEEP_MASS_PENALTY)

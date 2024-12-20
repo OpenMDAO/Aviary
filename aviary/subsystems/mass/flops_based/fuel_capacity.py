@@ -137,9 +137,7 @@ class WingFuelCapacity(om.ExplicitComponent):
         add_aviary_input(self, Aircraft.Fuel.WING_REF_CAPACITY_AREA)
         add_aviary_input(self, Aircraft.Fuel.WING_REF_CAPACITY_TERM_A)
         add_aviary_input(self, Aircraft.Fuel.WING_REF_CAPACITY_TERM_B)
-
-        add_aviary_input(self, Aircraft.Fuel.CAPACITY_FACTOR, 23.0)
-
+        add_aviary_input(self, Aircraft.Fuel.CAPACITY_FACTOR)
         add_aviary_input(self, Aircraft.Wing.AREA)
         add_aviary_input(self, Aircraft.Wing.SPAN)
         add_aviary_input(self, Aircraft.Wing.TAPER_RATIO)

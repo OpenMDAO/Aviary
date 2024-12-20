@@ -127,7 +127,10 @@ class BWBFurnishingsGroupMassTest2(unittest.TestCase):
         flops_inputs = get_flops_inputs("N3CC", preprocess=True)
         flops_inputs.update({
             Aircraft.Fuselage.MILITARY_CARGO_FLOOR: (False, 'unitless'),
-            Aircraft.BWB.NUM_BAYS: (5, 'unitless')
+            Aircraft.BWB.NUM_BAYS: (5, 'unitless'),
+            Aircraft.BWB.CABIN_AREA: (100, 'ft**2'),
+            Aircraft.Fuselage.MAX_WIDTH: (30, 'ft'),
+            Aircraft.Fuselage.MAX_HEIGHT: (15, 'ft'),
         })
         prob.model.add_subsystem(
             'furnishings',
@@ -135,6 +138,12 @@ class BWBFurnishingsGroupMassTest2(unittest.TestCase):
             promotes_outputs=['*'],
             promotes_inputs=['*']
         )
+        prob.model.set_input_defaults(
+            Aircraft.BWB.CABIN_AREA, val=100., units="ft**2")
+        prob.model.set_input_defaults(
+            Aircraft.Fuselage.MAX_WIDTH, val=30., units="ft")
+        prob.model.set_input_defaults(
+            Aircraft.Fuselage.MAX_HEIGHT, val=15., units="ft")
         prob.setup(check=False, force_alloc_complex=True)
 
         partial_data = prob.check_partials(out_stream=None, method="cs")
@@ -215,4 +224,8 @@ class AltFurnishingsGroupMassTest(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    unittest.main()
+    #unittest.main()
+    test = BWBFurnishingsGroupMassTest2()
+    test.setUp()
+    test.test_case()
+

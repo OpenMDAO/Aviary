@@ -19,23 +19,23 @@ class WingBendingMass(om.ExplicitComponent):
             desc='collection of Aircraft/Mission specific options')
 
     def setup(self):
-        add_aviary_input(self, Mission.Design.GROSS_MASS, val=0.0)
-        add_aviary_input(self, Aircraft.Wing.AEROELASTIC_TAILORING_FACTOR, val=0.0)
-        add_aviary_input(self, Aircraft.Wing.BENDING_FACTOR, val=0.0)
-        add_aviary_input(self, Aircraft.Wing.BENDING_MASS_SCALER, val=1.0)
-        add_aviary_input(self, Aircraft.Wing.COMPOSITE_FRACTION, val=0.0)
-        add_aviary_input(self, Aircraft.Wing.ENG_POD_INERTIA_FACTOR, val=0.0)
-        add_aviary_input(self, Aircraft.Wing.LOAD_FRACTION, val=0.0)
-        add_aviary_input(self, Aircraft.Wing.MISC_MASS, val=0.0)
-        add_aviary_input(self, Aircraft.Wing.MISC_MASS_SCALER, val=1.0)
-        add_aviary_input(self, Aircraft.Wing.SHEAR_CONTROL_MASS, val=0.0)
-        add_aviary_input(self, Aircraft.Wing.SHEAR_CONTROL_MASS_SCALER, val=1.0)
-        add_aviary_input(self, Aircraft.Wing.SPAN, val=0.0)
-        add_aviary_input(self, Aircraft.Wing.SWEEP, val=0.0)
-        add_aviary_input(self, Aircraft.Wing.ULTIMATE_LOAD_FACTOR, val=3.75)
-        add_aviary_input(self, Aircraft.Wing.VAR_SWEEP_MASS_PENALTY, val=0.0)
+        add_aviary_input(self, Mission.Design.GROSS_MASS)
+        add_aviary_input(self, Aircraft.Wing.AEROELASTIC_TAILORING_FACTOR)
+        add_aviary_input(self, Aircraft.Wing.BENDING_FACTOR)
+        add_aviary_input(self, Aircraft.Wing.BENDING_MASS_SCALER)
+        add_aviary_input(self, Aircraft.Wing.COMPOSITE_FRACTION)
+        add_aviary_input(self, Aircraft.Wing.ENG_POD_INERTIA_FACTOR)
+        add_aviary_input(self, Aircraft.Wing.LOAD_FRACTION)
+        add_aviary_input(self, Aircraft.Wing.MISC_MASS)
+        add_aviary_input(self, Aircraft.Wing.MISC_MASS_SCALER)
+        add_aviary_input(self, Aircraft.Wing.SHEAR_CONTROL_MASS)
+        add_aviary_input(self, Aircraft.Wing.SHEAR_CONTROL_MASS_SCALER)
+        add_aviary_input(self, Aircraft.Wing.SPAN)
+        add_aviary_input(self, Aircraft.Wing.SWEEP)
+        add_aviary_input(self, Aircraft.Wing.ULTIMATE_LOAD_FACTOR)
+        add_aviary_input(self, Aircraft.Wing.VAR_SWEEP_MASS_PENALTY)
 
-        add_aviary_output(self, Aircraft.Wing.BENDING_MASS, val=0.0)
+        add_aviary_output(self, Aircraft.Wing.BENDING_MASS)
 
         self.A1 = 8.80
         self.A2 = 6.25
@@ -200,15 +200,12 @@ class WingShearControlMass(om.ExplicitComponent):
             desc='Aircfaft type: Tranpsport, HWB, or GA')
 
     def setup(self):
-        add_aviary_input(self, Aircraft.Wing.COMPOSITE_FRACTION, val=0.0)
+        add_aviary_input(self, Aircraft.Wing.COMPOSITE_FRACTION)
+        add_aviary_input(self, Aircraft.Wing.CONTROL_SURFACE_AREA)
+        add_aviary_input(self, Mission.Design.GROSS_MASS)
+        add_aviary_input(self, Aircraft.Wing.SHEAR_CONTROL_MASS_SCALER)
 
-        add_aviary_input(self, Aircraft.Wing.CONTROL_SURFACE_AREA, val=0.0)
-
-        add_aviary_input(self, Mission.Design.GROSS_MASS, val=0.0)
-
-        add_aviary_input(self, Aircraft.Wing.SHEAR_CONTROL_MASS_SCALER, val=1.0)
-
-        add_aviary_output(self, Aircraft.Wing.SHEAR_CONTROL_MASS, val=0.0)
+        add_aviary_output(self, Aircraft.Wing.SHEAR_CONTROL_MASS)
 
         if (
             (self.options['aircraft_type'] == 'Transport')
@@ -281,13 +278,11 @@ class WingMiscMass(om.ExplicitComponent):
             desc='Aircfaft type: Tranpsport, HWB, or GA')
 
     def setup(self):
-        add_aviary_input(self, Aircraft.Wing.COMPOSITE_FRACTION, val=0.0)
+        add_aviary_input(self, Aircraft.Wing.COMPOSITE_FRACTION)
+        add_aviary_input(self, Aircraft.Wing.AREA)
+        add_aviary_input(self, Aircraft.Wing.MISC_MASS_SCALER)
 
-        add_aviary_input(self, Aircraft.Wing.AREA, val=0.0)
-
-        add_aviary_input(self, Aircraft.Wing.MISC_MASS_SCALER, val=1.0)
-
-        add_aviary_output(self, Aircraft.Wing.MISC_MASS, val=0.0)
+        add_aviary_output(self, Aircraft.Wing.MISC_MASS)
 
         if (
             (self.options['aircraft_type'] == 'Transport')
@@ -336,17 +331,13 @@ class WingTotalMass(om.ExplicitComponent):
             desc='collection of Aircraft/Mission specific options')
 
     def setup(self):
-        add_aviary_input(self, Aircraft.Wing.BENDING_MASS, val=0.0)
+        add_aviary_input(self, Aircraft.Wing.BENDING_MASS)
+        add_aviary_input(self, Aircraft.Wing.SHEAR_CONTROL_MASS)
+        add_aviary_input(self, Aircraft.Wing.MISC_MASS)
+        add_aviary_input(self, Aircraft.Wing.BWB_AFTBODY_MASS)
+        add_aviary_input(self, Aircraft.Wing.MASS_SCALER)
 
-        add_aviary_input(self, Aircraft.Wing.SHEAR_CONTROL_MASS, val=0.0)
-
-        add_aviary_input(self, Aircraft.Wing.MISC_MASS, val=0.0)
-
-        add_aviary_input(self, Aircraft.Wing.BWB_AFTBODY_MASS, val=0.0)
-
-        add_aviary_input(self, Aircraft.Wing.MASS_SCALER, val=1.0)
-
-        add_aviary_output(self, Aircraft.Wing.MASS, val=0)
+        add_aviary_output(self, Aircraft.Wing.MASS)
 
     def setup_partials(self):
         self.declare_partials("*", "*")
