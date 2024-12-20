@@ -88,15 +88,12 @@ class AltFuselageMass(om.ExplicitComponent):
             desc='collection of Aircraft/Mission specific options')
 
     def setup(self):
-        add_aviary_input(self, Aircraft.Fuselage.MASS_SCALER, 1.0)
+        add_aviary_input(self, Aircraft.Fuselage.MASS_SCALER)
+        add_aviary_input(self, Aircraft.Fuselage.WETTED_AREA)
+        add_aviary_input(self, Aircraft.Fuselage.MAX_HEIGHT)
+        add_aviary_input(self, Aircraft.Fuselage.MAX_WIDTH)
 
-        add_aviary_input(self, Aircraft.Fuselage.WETTED_AREA, 0.0)
-
-        add_aviary_input(self, Aircraft.Fuselage.MAX_HEIGHT, 0.0)
-
-        add_aviary_input(self, Aircraft.Fuselage.MAX_WIDTH, 0.0)
-
-        add_aviary_output(self, Aircraft.Fuselage.MASS, 1.0)
+        add_aviary_output(self, Aircraft.Fuselage.MASS)
 
     def setup_partials(self):
         self.declare_partials(of='*', wrt='*')
