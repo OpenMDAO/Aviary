@@ -302,12 +302,14 @@ class AviaryProblem(om.Problem):
         This method is not strictly necessary; a user could also supply
         an AviaryValues object and/or phase_info dict of their own.
         """
-        # We haven't read the input file yet, so by default self.verbosity is None
-        if self.verbosity is None:
+        # We haven't read the input data yet, we don't know what desired run verbosity is
+        # `self.verbosity` = "true" verbosity for entire run. `verbosity` = verbosity
+        # override for just this method
+        if verbosity is not None:
             # compatibility with being passed int for verbosity
             verbosity = Verbosity(verbosity)
         else:
-            verbosity = self.verbosity
+            verbosity = self.verbosity  # usually None
 
         ## LOAD INPUT FILE ###
         # Create AviaryValues object from file (or process existing AviaryValues object
@@ -315,6 +317,12 @@ class AviaryProblem(om.Problem):
         aviary_inputs, initialization_guesses = create_vehicle(
             aircraft_data, meta_data=meta_data, verbosity=verbosity
         )
+
+        # update verbosity now that we have read the input data
+        self.verbosity = aviary_inputs.get_val(Settings.VERBOSITY)
+        # if user did not ask for verbosity override for this method, use value from data
+        if verbosity is None:
+            verbosity = aviary_inputs.get_val(Settings.VERBOSITY)
 
         # Now that the input file has been read, we have the desired verbosity for this
         # run stored in aviary_inputs. Save this to self.
@@ -352,7 +360,7 @@ class AviaryProblem(om.Problem):
 
                 # if verbosity level is BRIEF or higher, print that we're using the
                 # outputted phase info
-                if verbosity is not None and verbosity >= Verbosity.BRIEF:
+                if verbosity >= Verbosity.BRIEF:
                     print('Using outputted phase_info from current working directory')
 
             else:
@@ -376,7 +384,7 @@ class AviaryProblem(om.Problem):
                         phase_info,
                     )
 
-                if verbosity is not None and verbosity >= Verbosity.BRIEF:
+                if verbosity >= Verbosity.BRIEF:
                     print(
                         'Loaded default phase_info for '
                         f'{self.mission_method.value.lower()} equations of motion'
@@ -542,11 +550,19 @@ class AviaryProblem(om.Problem):
                 if descent:
                     self.descent_phases[name] = info
 
-    def check_and_preprocess_inputs(self):
+    def check_and_preprocess_inputs(self, verbosity=None):
         """
         This method checks the user-supplied input values for any potential problems
         and preprocesses the inputs to prepare them for use in the Aviary problem.
         """
+        # `self.verbosity` = "true" verbosity for entire run. `verbosity` = verbosity
+        # override for just this method
+        if verbosity is not None:
+            # compatibility with being passed int for verbosity
+            verbosity = Verbosity(verbosity)
+        else:
+            verbosity = self.verbosity  # defaults to BRIEF
+
         aviary_inputs = self.aviary_inputs
         # Target_distance verification for all phases
         # Checks to make sure target_distance is positive,
@@ -706,7 +722,7 @@ class AviaryProblem(om.Problem):
         if self.mission_method in (HEIGHT_ENERGY, SOLVED_2DOF, TWO_DEGREES_OF_FREEDOM):
             self.phase_separator()
 
-    def add_pre_mission_systems(self):
+    def add_pre_mission_systems(self, verbosity=None):
         """
         Add pre-mission systems to the Aviary problem. These systems are executed before the mission.
 
@@ -719,6 +735,14 @@ class AviaryProblem(om.Problem):
 
         A user can override this method with their own pre-mission systems as desired.
         """
+        # `self.verbosity` = "true" verbosity for entire run. `verbosity` = verbosity
+        # override for just this method
+        if verbosity is not None:
+            # compatibility with being passed int for verbosity
+            verbosity = Verbosity(verbosity)
+        else:
+            verbosity = self.verbosity  # defaults to BRIEF
+
         pre_mission = self.pre_mission
         self.model.add_subsystem(
             'pre_mission',
@@ -1187,7 +1211,7 @@ class AviaryProblem(om.Problem):
 
         return phase
 
-    def add_phases(self, phase_info_parameterization=None):
+    def add_phases(self, phase_info_parameterization=None, verbosity=None):
         """
         Add the mission phases to the problem trajectory based on the user-specified
         phase_info dictionary.
@@ -1201,6 +1225,14 @@ class AviaryProblem(om.Problem):
         -------
         traj: The Dymos Trajectory object containing the added mission phases.
         """
+        # `self.verbosity` = "true" verbosity for entire run. `verbosity` = verbosity
+        # override for just this method
+        if verbosity is not None:
+            # compatibility with being passed int for verbosity
+            verbosity = Verbosity(verbosity)
+        else:
+            verbosity = self.verbosity  # defaults to BRIEF
+
         if phase_info_parameterization is not None:
             self.phase_info, self.post_mission_info = phase_info_parameterization(
                 self.phase_info, self.post_mission_info, self.aviary_inputs
@@ -1351,7 +1383,7 @@ class AviaryProblem(om.Problem):
 
         return traj
 
-    def add_post_mission_systems(self, include_landing=True):
+    def add_post_mission_systems(self, include_landing=True, verbosity=None):
         """
         Add post-mission systems to the aircraft model. This is akin to the pre-mission group
         or the "premission_systems", but occurs after the mission in the execution order.
@@ -1370,6 +1402,13 @@ class AviaryProblem(om.Problem):
 
         A user can override this with their own postmission systems.
         """
+        # `self.verbosity` = "true" verbosity for entire run. `verbosity` = verbosity
+        # override for just this method
+        if verbosity is not None:
+            # compatibility with being passed int for verbosity
+            verbosity = Verbosity(verbosity)
+        else:
+            verbosity = self.verbosity  # defaults to BRIEF
 
         if (
             self.pre_mission_info['include_takeoff']
@@ -1698,7 +1737,7 @@ class AviaryProblem(om.Problem):
             if len(phases_to_link) > 1:
                 self.traj.link_phases(phases=phases_to_link, vars=[var], **kwargs)
 
-    def link_phases(self):
+    def link_phases(self, verbosity=None):
         """
         Link phases together after they've been added.
 
@@ -1706,6 +1745,14 @@ class AviaryProblem(om.Problem):
         special logic to do the Dymos linkages correctly. Some of those
         connections for the simple GASP and FLOPS mission are shown here.
         """
+        # `self.verbosity` = "true" verbosity for entire run. `verbosity` = verbosity
+        # override for just this method
+        if verbosity is not None:
+            # compatibility with being passed int for verbosity
+            verbosity = Verbosity(verbosity)
+        else:
+            verbosity = self.verbosity  # defaults to BRIEF
+
         self._add_bus_variables_and_connect()
 
         phases = list(self.phase_info.keys())
@@ -2118,7 +2165,7 @@ class AviaryProblem(om.Problem):
                 ]
                 driver.options['print_opt_prob'] = True
 
-    def add_design_variables(self):
+    def add_design_variables(self, verbosity=None):
         """
         Adds design variables to the Aviary problem.
 
@@ -2143,6 +2190,14 @@ class AviaryProblem(om.Problem):
         In all cases, a design variable is added for the final cruise mass of the aircraft, with no upper bound, and a residual mass constraint is added to ensure that the mass balances.
 
         """
+        # `self.verbosity` = "true" verbosity for entire run. `verbosity` = verbosity
+        # override for just this method
+        if verbosity is not None:
+            # compatibility with being passed int for verbosity
+            verbosity = Verbosity(verbosity)
+        else:
+            verbosity = self.verbosity  # defaults to BRIEF
+
         # add the engine builder `get_design_vars` dict to a collected dict from
         # the external subsystems
 
@@ -2283,7 +2338,7 @@ class AviaryProblem(om.Problem):
                     "h_fit.h_init_flaps", equals=400.0, units="ft", ref=400.0
                 )
 
-    def add_objective(self, objective_type=None, ref=None):
+    def add_objective(self, objective_type=None, ref=None, verbosity=None):
         """
         Add the objective function based on the given objective_type and ref.
 
@@ -2299,12 +2354,22 @@ class AviaryProblem(om.Problem):
         ref : float
             The reference value for the objective. If None, a default value will be used based on the objective type. Please see the
             `default_ref_values` dict for these default values.
+        verbosity : Verbosity or int
+            Controls the level of printouts for this method. If None, uses the value of Settings.VERBOSITY in provided aircraft data.
 
         Raises
         ------
             ValueError: If an invalid problem type is provided.
 
         """
+        # `self.verbosity` = "true" verbosity for entire run. `verbosity` = verbosity
+        # override for just this method
+        if verbosity is not None:
+            # compatibility with being passed int for verbosity
+            verbosity = Verbosity(verbosity)
+        else:
+            verbosity = self.verbosity  # defaults to BRIEF
+
         # Dictionary for default reference values
         default_ref_values = {
             'mass': -5e4,
@@ -2449,7 +2514,7 @@ class AviaryProblem(om.Problem):
             warnings.simplefilter("ignore", om.PromotionWarning)
             super().setup(**kwargs)
 
-    def set_initial_guesses(self, parent_prob=None, parent_prefix=""):
+    def set_initial_guesses(self, parent_prob=None, parent_prefix="", verbosity=None):
         """
         Call `set_val` on the trajectory for states and controls to seed
         the problem with reasonable initial guesses. This is especially
@@ -2463,6 +2528,14 @@ class AviaryProblem(om.Problem):
         guesses for states and controls according to the information available
         in the 'initial_guesses' attribute of the phase.
         """
+        # `self.verbosity` = "true" verbosity for entire run. `verbosity` = verbosity
+        # override for just this method
+        if verbosity is not None:
+            # compatibility with being passed int for verbosity
+            verbosity = Verbosity(verbosity)
+        else:
+            verbosity = self.verbosity  # defaults to BRIEF
+
         setvalprob = self
         if parent_prob is not None and parent_prefix != "":
             setvalprob = parent_prob
@@ -2930,12 +3003,21 @@ class AviaryProblem(om.Problem):
         # TODO this is only used in a single test. Either this should be removed, or
         #      rework this option to be more helpful (store entired "failed" object?)
         #      and implement more rigorously in benchmark tests
-        self.problem_ran_successfully = not failed
+        if self.analysis_scheme is AnalysisScheme.SHOOTING:
+            self.problem_ran_successfully = not failed
+        else:
+            if failed.exit_status == "FAIL":
+                self.problem_ran_successfully = False
+            else:
+                self.problem_ran_successfully = True
         # Manually print out a failure message for low verbosity modes that suppress
         # optimizer printouts, which may include the results message. Assumes success,
         # alerts user on a failure
-        if failed.exit_status == "FAIL" and verbosity <= Verbosity.BRIEF:  # QUIT, BRIEF
-            print("Aviary run failed. See the dashboard for more details.")
+        if (
+            not self.problem_ran_successfully
+            and verbosity <= Verbosity.BRIEF  # QUIET, BRIEF
+        ):
+            print("\nAviary run failed. See the dashboard for more details.\n")
 
     def alternate_mission(
         self,
