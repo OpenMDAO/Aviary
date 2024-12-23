@@ -100,7 +100,9 @@ def create_vehicle(vehicle_deck='', meta_data=_MetaData, verbosity=None):
         aircraft_values.set_val(Settings.VERBOSITY, Verbosity(verbosity))
     # else, if verbosity not specified anywhere, use default of BRIEF
     elif verbosity is None and Settings.VERBOSITY not in aircraft_values:
-        aircraft_values.set_val(Settings.VERBOSITY, Verbosity.BRIEF)
+        aircraft_values.set_val(
+            Settings.VERBOSITY, _MetaData[Settings.VERBOSITY]['default_value']
+        )
 
     return aircraft_values, initialization_guesses
 

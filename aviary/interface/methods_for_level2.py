@@ -652,7 +652,9 @@ class AviaryProblem(om.Problem):
 
         # PREPROCESSORS #
         # Fill in anything missing in the options with computed defaults.
-        preprocess_options(aviary_inputs, engine_models=self.engine_builders)
+        preprocess_options(
+            aviary_inputs, engine_models=self.engine_builders, verbosity=verbosity
+        )
 
         mission_method = aviary_inputs.get_val(Settings.EQUATIONS_OF_MOTION)
         mass_method = aviary_inputs.get_val(Settings.MASS_METHOD)

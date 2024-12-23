@@ -7,9 +7,11 @@ from aviary.utils.aviary_values import AviaryValues
 from aviary.utils.named_values import get_keys
 from aviary.variable_info.variable_meta_data import _MetaData
 from aviary.variable_info.variables import Aircraft, Mission, Settings
+from aviary.variable_info.enums import Verbosity
 from aviary.utils.test_utils.variable_test import get_names_from_hierarchy
 
 
+# TODO kwargs seems overkill/unnecessary here, just use arguments?
 def preprocess_options(aviary_options: AviaryValues, **kwargs):
     """
     Run all preprocessors on provided AviaryValues object
@@ -24,22 +26,35 @@ def preprocess_options(aviary_options: AviaryValues, **kwargs):
     except KeyError:
         engine_models = None
 
+    try:
+        verbosity = kwargs['verbosity']
+    except KeyError:
+        if Settings.VERBOSITY in aviary_options:
+            verbosity = aviary_options.get_val(Settings.VERBOSITY)
+        else:
+            aviary_options.set_val(
+                Settings.VERBOSITY, _MetaData[Settings.VERBOSITY]['default_value']
+            )
+
     if Settings.VERBOSITY not in aviary_options:
-        aviary_options.set_val(
-            Settings.VERBOSITY, _MetaData[Settings.VERBOSITY]['default_value'])
+        verbosity = _MetaData[Settings.VERBOSITY]['default_value']
+        aviary_options.set_val(Settings.VERBOSITY, verbosity)
 
-    preprocess_crewpayload(aviary_options)
-    preprocess_propulsion(aviary_options, engine_models)
+    preprocess_crewpayload(aviary_options, verbosity)
+    preprocess_propulsion(aviary_options, engine_models, verbosity)
 
 
-def preprocess_crewpayload(aviary_options: AviaryValues):
+def preprocess_crewpayload(aviary_options: AviaryValues, verbosity=None):
     """
     Calculates option values that are derived from other options, and are not direct inputs.
     This function modifies the entries in the supplied collection, and for convenience also
     returns the modified collection.
     """
-
-    verbosity = aviary_options.get_val(Settings.VERBOSITY)
+    if verbosity is not None:
+        # compatibility with being passed int for verbosity
+        verbosity = Verbosity(verbosity)
+    else:
+        verbosity = aviary_options.get_val(Settings.VERBOSITY)
 
     # Some tests, but not all, do not correctly set default values
     # # so we need to ensure all these values are available.
@@ -72,12 +87,12 @@ def preprocess_crewpayload(aviary_options: AviaryValues):
     # or if it was set to it's default value of zero
     if passenger_count != 0 and aviary_options.get_val(Aircraft.CrewPayload.NUM_PASSENGERS) == 0:
         aviary_options.set_val(Aircraft.CrewPayload.NUM_PASSENGERS, passenger_count)
-        if verbosity >= 2:
+        if verbosity >= Verbosity.VERBOSE:
             print("User has specified supporting values for NUM_PASSENGERS but has left NUM_PASSENGERS=0. Replacing NUM_PASSENGERS with passenger_count.")
     if design_passenger_count != 0 and aviary_options.get_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS) == 0:
         aviary_options.set_val(
             Aircraft.CrewPayload.Design.NUM_PASSENGERS, design_passenger_count)
-        if verbosity >= 2:
+        if verbosity >= Verbosity.VERBOSE:
             print("User has specified supporting values for Design.NUM_PASSENGERS but has left Design.NUM_PASSENGERS=0. Replacing Design.NUM_PASSENGERS with design_passenger_count.")
 
     num_pax = aviary_options.get_val(Aircraft.CrewPayload.NUM_PASSENGERS)
@@ -109,7 +124,7 @@ def preprocess_crewpayload(aviary_options: AviaryValues):
     # Copy data over if only one set of data exists
     # User has given detailed values for 1TB as flow and NO design values at all
     if passenger_count != 0 and design_num_pax == 0 and design_passenger_count == 0:
-        if verbosity >= 2:
+        if verbosity >= Verbosity.VERBOSE:
             print(
                 "User has not input design passengers data. Assuming design is equal to as-flow passenger data.")
         aviary_options.set_val(
@@ -208,7 +223,9 @@ def preprocess_crewpayload(aviary_options: AviaryValues):
     return aviary_options
 
 
-def preprocess_propulsion(aviary_options: AviaryValues, engine_models: list = None):
+def preprocess_propulsion(
+    aviary_options: AviaryValues, engine_models: list = None, verbosity=None
+):
     '''
     Updates AviaryValues object with values taken from provided EngineModels.
 
@@ -235,7 +252,12 @@ def preprocess_propulsion(aviary_options: AviaryValues, engine_models: list = No
         EngineModel objects to be added to aviary_options. Replaced existing EngineModels
         in aviary_options
     '''
-    # TODO add verbosity check to warnings
+    if verbosity is not None:
+        # compatibility with being passed int for verbosity
+        verbosity = Verbosity(verbosity)
+    else:
+        verbosity = aviary_options.get_val(Settings.VERBOSITY)
+
     ##############################
     # Vectorize Engine Variables #
     ##############################
@@ -372,27 +394,34 @@ def preprocess_propulsion(aviary_options: AviaryValues, engine_models: list = No
             num_wing_engines_all[i] = num_engines
             # TODO is a warning overkill here? It can be documented wing mounted engines
             # are assumed default
-            warnings.warn(
-                f'Mount location for engines of type <{eng_name}> not specified. '
-                'Wing-mounted engines are assumed.')
+            if verbosity >= Verbosity.VERBOSE:
+                warnings.warn(
+                    f'Mount location for engines of type <{eng_name}> not specified. '
+                    'Wing-mounted engines are assumed.'
+                )
 
         # If wing mount type are specified but inconsistent, handle it
         elif total_engines_calc > num_engines:
             # more defined engine locations than number of engines - increase num engines
             eng_name = engine.name
             num_engines_all[i] = total_engines_calc
-            warnings.warn(
-                'Sum of aircraft:engine:num_fueslage_engines and '
-                'aircraft:engine:num_wing_engines do not match '
-                f'aircraft:engine:num_engines for EngineModel <{eng_name}>. Overwriting '
-                'with the sum of wing and fuselage mounted engines.')
+            if verbosity >= Verbosity.VERBOSE:
+                warnings.warn(
+                    'Sum of aircraft:engine:num_fueslage_engines and '
+                    'aircraft:engine:num_wing_engines do not match '
+                    f'aircraft:engine:num_engines for EngineModel <{
+                        eng_name}>. Overwriting '
+                    'with the sum of wing and fuselage mounted engines.'
+                )
         elif total_engines_calc < num_engines:
             # fewer defined locations than num_engines - assume rest are wing mounted
             eng_name = engine.name
             num_wing_engines_all[i] = num_engines - num_fuse_engines
-            warnings.warn(
-                'Mount location was not defined for all engines of EngineModel '
-                f'<{eng_name}> - unspecified engines are assumed wing-mounted.')
+            if verbosity >= Verbosity.BRIEF:
+                warnings.warn(
+                    'Mount location was not defined for all engines of EngineModel '
+                    f'<{eng_name}> - unspecified engines are assumed wing-mounted.'
+                )
 
     aviary_options.set_val(Aircraft.Engine.NUM_ENGINES, num_engines_all)
     aviary_options.set_val(Aircraft.Engine.NUM_WING_ENGINES, num_wing_engines_all)
