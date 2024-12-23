@@ -224,8 +224,5 @@ class AltFurnishingsGroupMassTest(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    #unittest.main()
-    test = BWBFurnishingsGroupMassTest2()
-    test.setUp()
-    test.test_case()
+    unittest.main()
 
