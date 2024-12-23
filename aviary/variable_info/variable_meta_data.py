@@ -1221,11 +1221,11 @@ add_meta_data(
     historical_name={
         "GASP": None,
         # ['&DEFMSS.MISSIN.DOWE', '&FLOPS.RERUN.DOWE', 'ESB.DOWE'],
-        "FLOPS": 'MISSIN.DOWE',
-        "LEAPS1": 'aircraft.inputs.L0_mission.fixed_operating_weight_empty',
+        "FLOPS": None,
+        "LEAPS1": None,
     },
     units='lbm',
-    desc='fixed operating empty mass',
+    desc='empty mass of the aircraft',
     default_value=0.0,
 )
 
@@ -1405,14 +1405,16 @@ add_meta_data(
     historical_name={
         "GASP": 'INGASP.OWE',
         # ['WTS.WSP(33, 2)', '~WEIGHT.WOWE', '~WTSTAT.WSP(33, 2)'],
-        "FLOPS": None,
+        "FLOPS": 'MISSIN.DOWE',
         "LEAPS1": [
             '(WeightABC)self._operating_weight_empty',
             'aircraft.outputs.L0_weights_summary.operating_weight_empty',
         ],
     },
     units='lbm',
-    desc='operating mass empty of the aircraft',
+    desc='operating mass of the aircraft, or aircraft mass without mission fuel, or '
+    'passengers. Includes crew, unusable fuel, oil, and operational items like '
+    'cargo containers and passenger service mass.',
 )
 
 add_meta_data(
@@ -1541,6 +1543,8 @@ add_meta_data(
     desc='Total systems & equipment group mass',
 )
 
+# TODO intermediate calculated values with no uses by other systems may not belong in the
+#      variable hierarchy
 add_meta_data(
     # Note in FLOPS/LEAPS1, this is the same variable as
     # Aircraft.Design.SYSTEMS_EQUIP_MASS, because FLOPS/LEAPS1 overwrite the
