@@ -32,9 +32,8 @@ def preprocess_options(aviary_options: AviaryValues, **kwargs):
         if Settings.VERBOSITY in aviary_options:
             verbosity = aviary_options.get_val(Settings.VERBOSITY)
         else:
-            aviary_options.set_val(
-                Settings.VERBOSITY, _MetaData[Settings.VERBOSITY]['default_value']
-            )
+            verbosity = _MetaData[Settings.VERBOSITY]['default_value']
+            aviary_options.set_val(Settings.VERBOSITY, verbosity)
 
     if Settings.VERBOSITY not in aviary_options:
         verbosity = _MetaData[Settings.VERBOSITY]['default_value']
