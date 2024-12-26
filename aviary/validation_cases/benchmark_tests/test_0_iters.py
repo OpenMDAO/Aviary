@@ -16,7 +16,7 @@ class BaseProblemPhaseTestCase(unittest.TestCase):
 
     def build_and_run_problem(self, input_filename, phase_info, objective_type=None):
         # Build problem
-        prob = AviaryProblem()
+        prob = AviaryProblem(verbosity=0)
 
         prob.load_inputs(input_filename, phase_info)
 

@@ -2068,7 +2068,7 @@ class AviaryProblem(om.Problem):
         """
         # override verbosity for this function call if user desired
         if verbosity is None:
-            verbsity = self.verbosity
+            verbosity = self.verbosity
         else:
             # compatibility with being passed int for verbosity
             verbosity = Verbosity(verbosity)

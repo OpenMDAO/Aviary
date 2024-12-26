@@ -131,6 +131,7 @@ dmypy.json
 
 # Test and spec generated
 reports/
+aviary/reports/
 *.out
 *.png
 *.sql
