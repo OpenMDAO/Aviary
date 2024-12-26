@@ -303,7 +303,7 @@ class AviaryProblem(om.Problem):
         an AviaryValues object and/or phase_info dict of their own.
         """
         # We haven't read the input data yet, we don't know what desired run verbosity is
-        # `self.verbosity` = "true" verbosity for entire run. `verbosity` = verbosity
+        # `self.verbosity` is "true" verbosity for entire run. `verbosity` is verbosity
         # override for just this method
         if verbosity is not None:
             # compatibility with being passed int for verbosity
@@ -555,7 +555,7 @@ class AviaryProblem(om.Problem):
         This method checks the user-supplied input values for any potential problems
         and preprocesses the inputs to prepare them for use in the Aviary problem.
         """
-        # `self.verbosity` = "true" verbosity for entire run. `verbosity` = verbosity
+        # `self.verbosity` is "true" verbosity for entire run. `verbosity` is verbosity
         # override for just this method
         if verbosity is not None:
             # compatibility with being passed int for verbosity
@@ -737,7 +737,7 @@ class AviaryProblem(om.Problem):
 
         A user can override this method with their own pre-mission systems as desired.
         """
-        # `self.verbosity` = "true" verbosity for entire run. `verbosity` = verbosity
+        # `self.verbosity` is "true" verbosity for entire run. `verbosity` is verbosity
         # override for just this method
         if verbosity is not None:
             # compatibility with being passed int for verbosity
@@ -1227,7 +1227,7 @@ class AviaryProblem(om.Problem):
         -------
         traj: The Dymos Trajectory object containing the added mission phases.
         """
-        # `self.verbosity` = "true" verbosity for entire run. `verbosity` = verbosity
+        # `self.verbosity` is "true" verbosity for entire run. `verbosity` is verbosity
         # override for just this method
         if verbosity is not None:
             # compatibility with being passed int for verbosity
@@ -1404,7 +1404,7 @@ class AviaryProblem(om.Problem):
 
         A user can override this with their own postmission systems.
         """
-        # `self.verbosity` = "true" verbosity for entire run. `verbosity` = verbosity
+        # `self.verbosity` is "true" verbosity for entire run. `verbosity` is verbosity
         # override for just this method
         if verbosity is not None:
             # compatibility with being passed int for verbosity
@@ -1747,7 +1747,7 @@ class AviaryProblem(om.Problem):
         special logic to do the Dymos linkages correctly. Some of those
         connections for the simple GASP and FLOPS mission are shown here.
         """
-        # `self.verbosity` = "true" verbosity for entire run. `verbosity` = verbosity
+        # `self.verbosity` is "true" verbosity for entire run. `verbosity` is verbosity
         # override for just this method
         if verbosity is not None:
             # compatibility with being passed int for verbosity
@@ -2193,7 +2193,7 @@ class AviaryProblem(om.Problem):
         In all cases, a design variable is added for the final cruise mass of the aircraft, with no upper bound, and a residual mass constraint is added to ensure that the mass balances.
 
         """
-        # `self.verbosity` = "true" verbosity for entire run. `verbosity` = verbosity
+        # `self.verbosity` is "true" verbosity for entire run. `verbosity` is verbosity
         # override for just this method
         if verbosity is not None:
             # compatibility with being passed int for verbosity
@@ -2365,7 +2365,7 @@ class AviaryProblem(om.Problem):
             ValueError: If an invalid problem type is provided.
 
         """
-        # `self.verbosity` = "true" verbosity for entire run. `verbosity` = verbosity
+        # `self.verbosity` is "true" verbosity for entire run. `verbosity` is verbosity
         # override for just this method
         if verbosity is not None:
             # compatibility with being passed int for verbosity
@@ -2531,7 +2531,7 @@ class AviaryProblem(om.Problem):
         guesses for states and controls according to the information available
         in the 'initial_guesses' attribute of the phase.
         """
-        # `self.verbosity` = "true" verbosity for entire run. `verbosity` = verbosity
+        # `self.verbosity` is "true" verbosity for entire run. `verbosity` is verbosity
         # override for just this method
         if verbosity is not None:
             # compatibility with being passed int for verbosity
