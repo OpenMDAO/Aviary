@@ -2090,12 +2090,12 @@ class AviaryProblem(om.Problem):
         driver.options["optimizer"] = optimizer
         if use_coloring:
             # define coloring options by verbosity
-            if verbosity <= Verbosity.VERBOSE:  # if QUIET, BRIEF
+            if verbosity < Verbosity.VERBOSE:  # QUIET, BRIEF
                 driver.declare_coloring(show_summary=False)
-            elif verbosity == Verbosity.DEBUG:
-                driver.declare_coloring(show_summary=True, show_sparsity=True)
-            else:  # if VERBOSE
+            elif verbosity == Verbosity.VERBOSE:
                 driver.declare_coloring(show_summary=True)
+            else:  # DEBUG
+                driver.declare_coloring(show_summary=True, show_sparsity=True)
 
         if driver.options["optimizer"] == "SNOPT":
             # Print Options #
@@ -2103,7 +2103,7 @@ class AviaryProblem(om.Problem):
                 isumm, iprint = 0, 0
             elif verbosity == Verbosity.BRIEF:
                 isumm, iprint = 6, 0
-            elif verbosity > Verbosity.BRIEF:
+            elif verbosity > Verbosity.BRIEF:  # VERBOSE, DEBUG
                 isumm, iprint = 6, 9
             driver.opt_settings["iSumm"] = isumm
             driver.opt_settings["iPrint"] = iprint
@@ -2152,11 +2152,11 @@ class AviaryProblem(om.Problem):
         if optimizer in ("SNOPT", "IPOPT"):
             if verbosity == Verbosity.QUIET:
                 driver.options['print_results'] = False
-            elif verbosity < Verbosity.DEBUG:
+            elif verbosity < Verbosity.DEBUG:  # QUIET, BRIEF, VERBOSE
                 driver.options['print_results'] = 'minimal'
 
         # optimizer agnostic settings
-        if verbosity > Verbosity.QUIET:
+        if verbosity > Verbosity.QUIET:  # BRIEF, VERBOSE, QUIET
             if isinstance(verbosity, list):
                 driver.options['debug_print'] = ['desvars']
             elif verbosity == Verbosity.DEBUG:
