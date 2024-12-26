@@ -35,10 +35,6 @@ def preprocess_options(aviary_options: AviaryValues, **kwargs):
             verbosity = _MetaData[Settings.VERBOSITY]['default_value']
             aviary_options.set_val(Settings.VERBOSITY, verbosity)
 
-    if Settings.VERBOSITY not in aviary_options:
-        verbosity = _MetaData[Settings.VERBOSITY]['default_value']
-        aviary_options.set_val(Settings.VERBOSITY, verbosity)
-
     preprocess_crewpayload(aviary_options, verbosity)
     preprocess_propulsion(aviary_options, engine_models, verbosity)
 
@@ -136,11 +132,11 @@ def preprocess_crewpayload(aviary_options: AviaryValues, verbosity=None):
                                aviary_options.get_val(Aircraft.CrewPayload.NUM_TOURIST_CLASS))
     # user has not supplied detailed information on design but has supplied summary information on passengers
     elif num_pax != 0 and design_num_pax == 0:
-        if verbosity >= 2:
+        if verbosity >= Verbosity.VERBOSE:
             print("User has specified as-flown NUM_PASSENGERS but not how many passengers the aircraft was designed for in Design.NUM_PASSENGERS. Assuming they are equal.")
         aviary_options.set_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS, num_pax)
     elif design_passenger_count != 0 and num_pax == 0 and passenger_count == 0:
-        if verbosity >= 1:
+        if verbosity >= Verbosity.BRIEF:
             print("User has specified Design.NUM_* passenger values but CrewPyaload.NUM_* has been left blank or set to zero.")
             print(
                 "Assuming they are equal to maintain backwards compatibility with GASP and FLOPS output files.")
@@ -155,7 +151,7 @@ def preprocess_crewpayload(aviary_options: AviaryValues, verbosity=None):
                                aviary_options.get_val(Aircraft.CrewPayload.Design.NUM_TOURIST_CLASS))
     # user has not supplied detailed information on design but has supplied summary information on passengers
     elif design_num_pax != 0 and num_pax == 0:
-        if verbosity >= 1:
+        if verbosity >= Verbosity.BRIEF:
             print("User has specified Design.NUM_PASSENGERS but CrewPayload.NUM_PASSENGERS has been left blank or set to zero.")
             print(
                 "Assuming they are equal to maintain backwards compatibility with GASP and FLOPS output files.")

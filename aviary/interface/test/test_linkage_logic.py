@@ -181,7 +181,7 @@ class AircraftMissionTestSuite(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    # unittest.main()
-    test = AircraftMissionTestSuite()
-    test.setUp()
-    test.test_linkages()
+    unittest.main()
+    # test = AircraftMissionTestSuite()
+    # test.setUp()
+    # test.test_linkages()
