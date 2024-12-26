@@ -303,7 +303,7 @@ class AviaryProblem(om.Problem):
         an AviaryValues object and/or phase_info dict of their own.
         """
         # We haven't read the input data yet, we don't know what desired run verbosity is
-        # `self.verbosity` = "true" verbosity for entire run. `verbosity` = verbosity
+        # `self.verbosity` is "true" verbosity for entire run. `verbosity` is verbosity
         # override for just this method
         if verbosity is not None:
             # compatibility with being passed int for verbosity
