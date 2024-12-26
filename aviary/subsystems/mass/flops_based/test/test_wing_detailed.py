@@ -65,6 +65,7 @@ class DetailedWingBendingTest(unittest.TestCase):
         prob = self.prob
 
         aviary_options = get_flops_inputs('LargeSingleAisle1FLOPS')
+        aviary_options.set_val(Settings.VERBOSITY, 0)
 
         engine_options = AviaryValues()
         engine_options.set_val(Aircraft.Engine.NUM_ENGINES, 2)
@@ -127,6 +128,7 @@ class DetailedWingBendingTest(unittest.TestCase):
     def test_extreme_engine_loc(self):
 
         aviary_options = get_flops_inputs('LargeSingleAisle1FLOPS')
+        aviary_options.set_val(Settings.VERBOSITY, 0)
 
         engine_options = AviaryValues()
         engine_options.set_val(Aircraft.Engine.NUM_ENGINES, 2)

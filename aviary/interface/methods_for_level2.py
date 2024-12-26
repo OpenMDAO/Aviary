@@ -2992,35 +2992,35 @@ class AviaryProblem(om.Problem):
                 solution_record_file=record_filename,
                 restart=restart_filename,
             )
+
+            # TODO this is only used in a single test. Either self.problem_ran_sucessfully
+            #      should be removed, or rework this option to be more helpful (store
+            #      entired "failed" object?) and implement more rigorously in benchmark tests
+            if self.analysis_scheme is AnalysisScheme.SHOOTING:
+                self.problem_ran_successfully = not failed
+            else:
+                if failed.exit_status == "FAIL":
+                    self.problem_ran_successfully = False
+                else:
+                    self.problem_ran_successfully = True
+            # Manually print out a failure message for low verbosity modes that suppress
+            # optimizer printouts, which may include the results message. Assumes success,
+            # alerts user on a failure
+            if (
+                not self.problem_ran_successfully
+                and verbosity <= Verbosity.BRIEF  # QUIET, BRIEF
+            ):
+                print("\nAviary run failed. See the dashboard for more details.\n")
         else:
             # prevent UserWarning that is displayed when an event is triggered
             warnings.filterwarnings('ignore', category=UserWarning)
+            # TODO failed doesn't exist for run_model(), no return from method
             failed = self.run_model()
             warnings.filterwarnings('default', category=UserWarning)
 
-        if verbosity >= Verbosity.VERBOSE:  # VERBOSE, DEBUG
+        if verbosity >= Verbosity.DEBUG:  # DEBUG
             with open('output_list.txt', 'w') as outfile:
                 self.model.list_outputs(out_stream=outfile)
-
-        # TODO use failed.exit_status or failed.sucess for better query?
-        # TODO this is only used in a single test. Either this should be removed, or
-        #      rework this option to be more helpful (store entired "failed" object?)
-        #      and implement more rigorously in benchmark tests
-        if self.analysis_scheme is AnalysisScheme.SHOOTING:
-            self.problem_ran_successfully = not failed
-        else:
-            if failed.exit_status == "FAIL":
-                self.problem_ran_successfully = False
-            else:
-                self.problem_ran_successfully = True
-        # Manually print out a failure message for low verbosity modes that suppress
-        # optimizer printouts, which may include the results message. Assumes success,
-        # alerts user on a failure
-        if (
-            not self.problem_ran_successfully
-            and verbosity <= Verbosity.BRIEF  # QUIET, BRIEF
-        ):
-            print("\nAviary run failed. See the dashboard for more details.\n")
 
     def alternate_mission(
         self,

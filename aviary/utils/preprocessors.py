@@ -11,7 +11,7 @@ from aviary.variable_info.enums import Verbosity
 from aviary.utils.test_utils.variable_test import get_names_from_hierarchy
 
 
-# TODO kwargs seems overkill/unnecessary here, just use arguments?
+# TODO document what kwargs are used, and by which preprocessors in docstring?
 def preprocess_options(aviary_options: AviaryValues, **kwargs):
     """
     Run all preprocessors on provided AviaryValues object
