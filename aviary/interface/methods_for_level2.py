@@ -2148,13 +2148,14 @@ class AviaryProblem(om.Problem):
             driver.options["tol"] = 1e-9
             driver.options["maxiter"] = max_iter
 
-        # pyoptsparse print settings, optimizer agnostic
-        # if optimizer in ("SNOPT", "IPOPT"):
-        if verbosity == Verbosity.QUIET:
-            driver.options['print_results'] = False
-        elif verbosity < Verbosity.DEBUG:
-            driver.options['print_results'] = 'minimal'
+        # pyoptsparse print settings for both SNOPT, IPOPT
+        if optimizer in ("SNOPT", "IPOPT"):
+            if verbosity == Verbosity.QUIET:
+                driver.options['print_results'] = False
+            elif verbosity < Verbosity.DEBUG:
+                driver.options['print_results'] = 'minimal'
 
+        # optimizer agnostic settings
         if verbosity > Verbosity.QUIET:
             if isinstance(verbosity, list):
                 driver.options['debug_print'] = ['desvars']
