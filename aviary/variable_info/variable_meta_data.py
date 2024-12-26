@@ -1909,11 +1909,11 @@ add_meta_data(
     option=True,
     default_value=False,
     types=bool,
-    desc='If True, generate flight idle data by extrapolating from engine deck. Flight '
+    desc='If True, generate flight idle data by extrapolating from engine data. Flight '
     'idle is defined as engine performance when thrust is reduced to the level '
-    'defined by Aircraft.Engine.FLIGHT_IDLE_THRUST_FRACTION. Engine outputs are '
+    'defined by Aircraft.Engine.FLIGHT_IDLE_THRUST_FRACTION. Other engine outputs are '
     'extrapolated to this thrust level, bounded by '
-    'Aircraft.Engine.FLIGHT_IDLE_MIN_FRACT and Aircraft.Engine.FLIGHT_IDLE_MIN_FRACT',
+    'Aircraft.Engine.FLIGHT_IDLE_MIN_FRACT and Aircraft.Engine.FLIGHT_IDLE_MAX_FRACT',
 )
 
 add_meta_data(
