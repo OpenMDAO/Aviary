@@ -136,7 +136,7 @@ def preprocess_crewpayload(aviary_options: AviaryValues, verbosity=None):
             print("User has specified as-flown NUM_PASSENGERS but not how many passengers the aircraft was designed for in Design.NUM_PASSENGERS. Assuming they are equal.")
         aviary_options.set_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS, num_pax)
     elif design_passenger_count != 0 and num_pax == 0 and passenger_count == 0:
-        if verbosity >= Verbosity.BRIEF:
+        if verbosity >= Verbosity.VERBOSE:
             print("User has specified Design.NUM_* passenger values but CrewPyaload.NUM_* has been left blank or set to zero.")
             print(
                 "Assuming they are equal to maintain backwards compatibility with GASP and FLOPS output files.")
@@ -151,7 +151,7 @@ def preprocess_crewpayload(aviary_options: AviaryValues, verbosity=None):
                                aviary_options.get_val(Aircraft.CrewPayload.Design.NUM_TOURIST_CLASS))
     # user has not supplied detailed information on design but has supplied summary information on passengers
     elif design_num_pax != 0 and num_pax == 0:
-        if verbosity >= Verbosity.BRIEF:
+        if verbosity >= Verbosity.VERBOSE:
             print("User has specified Design.NUM_PASSENGERS but CrewPayload.NUM_PASSENGERS has been left blank or set to zero.")
             print(
                 "Assuming they are equal to maintain backwards compatibility with GASP and FLOPS output files.")
