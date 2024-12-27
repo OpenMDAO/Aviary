@@ -23,11 +23,11 @@ class PropellerMapTest(unittest.TestCase):
         aviary_options = get_option_defaults()
         prop_file_path = 'models/engines/propellers/general_aviation.prop'
         aviary_options.set_val(
-            Aircraft.Engine.PROPELLER_DATA_FILE, val=prop_file_path, units='unitless')
+            Aircraft.Engine.Propeller.DATA_FILE, val=prop_file_path, units='unitless'
+        )
         aviary_options.set_val(
-            Aircraft.Engine.INTERPOLATION_METHOD, val='slinear', units='unitless')
-        aviary_options.set_val(
-            Aircraft.Engine.USE_PROPELLER_MAP, val=True, units='unitless')
+            Aircraft.Engine.INTERPOLATION_METHOD, val='slinear', units='unitless'
+        )
         prop_model = PropellerMap('prop', aviary_options)
         prop_model.build_propeller_interpolator(3, aviary_options)
 
@@ -48,11 +48,11 @@ class PropellerMapTest(unittest.TestCase):
         aviary_options = get_option_defaults()
         prop_file_path = 'models/engines/propellers/PropFan.prop'
         aviary_options.set_val(
-            Aircraft.Engine.PROPELLER_DATA_FILE, val=prop_file_path, units='unitless')
+            Aircraft.Engine.Propeller.DATA_FILE, val=prop_file_path, units='unitless'
+        )
         aviary_options.set_val(
-            Aircraft.Engine.INTERPOLATION_METHOD, val='slinear', units='unitless')
-        aviary_options.set_val(
-            Aircraft.Engine.USE_PROPELLER_MAP, val=True, units='unitless')
+            Aircraft.Engine.INTERPOLATION_METHOD, val='slinear', units='unitless'
+        )
         prop_model = PropellerMap('prop', aviary_options)
         prop_model.build_propeller_interpolator(3, aviary_options)
 
@@ -72,11 +72,11 @@ class PropellerMapTest(unittest.TestCase):
         aviary_options = get_option_defaults()
         prop_file_path = 'models/engines/propellers/general_aviation.prop'
         aviary_options.set_val(
-            Aircraft.Engine.PROPELLER_DATA_FILE, val=prop_file_path, units='unitless')
+            Aircraft.Engine.Propeller.DATA_FILE, val=prop_file_path, units='unitless'
+        )
         aviary_options.set_val(
-            Aircraft.Engine.INTERPOLATION_METHOD, val='slinear', units='unitless')
-        aviary_options.set_val(
-            Aircraft.Engine.USE_PROPELLER_MAP, val=True, units='unitless')
+            Aircraft.Engine.INTERPOLATION_METHOD, val='slinear', units='unitless'
+        )
         prop_model = PropellerMap('prop', aviary_options)
         out_mach_type = prop_model.read_and_set_mach_type(prop_file_path)
         self.assertEqual(out_mach_type, OutMachType.HELICAL_MACH)

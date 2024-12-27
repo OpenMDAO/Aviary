@@ -153,5 +153,9 @@ coloring_files/
 # OpenMDAO N2 diagrams
 n2.html
 
+# Input and output lists
+input_list.txt
+output_list.txt
+
 # Windows downloads
 *:Zone.Identifier

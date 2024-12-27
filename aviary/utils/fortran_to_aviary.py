@@ -132,6 +132,7 @@ def fortran_to_aviary(
         vehicle_data = update_gasp_options(vehicle_data)
     elif legacy_code is FLOPS:
         vehicle_data = update_flops_options(vehicle_data)
+    vehicle_data = update_aviary_options(vehicle_data)
 
     # Add settings
     if legacy_code is FLOPS:
@@ -143,9 +144,8 @@ def fortran_to_aviary(
     vehicle_data['input_values'].set_val(Settings.EQUATIONS_OF_MOTION, eom)
     vehicle_data['input_values'].set_val(Settings.MASS_METHOD, mass)
 
-    if (
-        not out_file.is_file()
-    ):  # default outputted file to be in same directory as input
+    if not out_file.is_file():
+        # default outputted file to be in same directory as input
         out_file = fortran_deck.parent / out_file
 
     if out_file.is_file():
@@ -335,7 +335,8 @@ def process_and_store_data(
     data_list = [dat for dat in data.split(',') if dat != '']
     if len(data_list) > 0:
         if valid_units(data_list[-1]):
-            # if the last element is a unit, remove it from the list and update the variable's units
+            # if the last element is a unit, remove it from the list and update the
+            # variable's units
             data_units = data_list.pop()
         var_values = convert_strings_to_data(data_list)
     else:
@@ -350,6 +351,17 @@ def process_and_store_data(
     fortran_offset = 1 if current_namelist else 0
     if var_ind is not None:
         var_ind -= fortran_offset
+
+    # Aviary has a reduction gearbox which is 1/gear ratio of GASP gearbox
+    if current_namelist + var_name == 'INPROP.GR':
+        var_values = [1 / var for var in var_values]
+        vehicle_data['input_values'] = set_value(
+            Aircraft.Engine.Gearbox.GEAR_RATIO,
+            var_values,
+            vehicle_data['input_values'],
+            var_ind=var_ind,
+            units=data_units,
+        )
 
     for name in list_of_equivalent_aviary_names:
         if not skip_variable:
@@ -408,7 +420,7 @@ def set_value(
     if not units:
         units = 'unitless'
 
-    if var_ind != None:
+    if var_ind is not None:
         # if an index is specified, use it, otherwise store the input as the whole value
         if isinstance(current_value, list):
             max_ind = len(current_value) - 1
@@ -419,8 +431,9 @@ def set_value(
         current_value[var_ind] = var_value[0]
         value_dict.set_val(var_name, current_value, units)
     else:
-        if current_value != None and isinstance(current_value[0], bool):
-            # if a variable is defined as boolean but is read in as number, set as boolean
+        if current_value is not None and isinstance(current_value[0], bool):
+            # if a variable is defined as boolean but is read in as number, set as
+            # boolean
             if var_value[0] == 1:
                 var_value = ['True']
             elif var_value[0] == 0:
@@ -502,7 +515,8 @@ def update_gasp_options(vehicle_data):
     ]
 
     ## PROBLEM TYPE ##
-    # if multiple values of target_range are specified, use the one that corresponds to the problem_type
+    # if multiple values of target_range are specified, use the one that
+    # corresponds to the problem_type
     design_range, distance_units = input_values.get_item(Mission.Design.RANGE)
     try:
         problem_type = input_values.get_val(Settings.PROBLEM_TYPE)[0]
@@ -700,6 +714,30 @@ def update_flops_options(vehicle_data):
     return vehicle_data
 
 
+def update_aviary_options(vehicle_data):
+    """
+    Special handling for variables that occurs for either legacy code
+    """
+    input_values: NamedValues = vehicle_data['input_values']
+
+    # if reference + scaled thrust both provided, set scale factor
+    try:
+        ref_thrust = input_values.get_val(Aircraft.Engine.REFERENCE_SLS_THRUST, 'lbf')[
+            0
+        ]
+        scaled_thrust = input_values.get_val(Aircraft.Engine.SCALED_SLS_THRUST, 'lbf')[
+            0
+        ]
+    except KeyError:
+        pass
+    else:
+        scale_factor = scaled_thrust / ref_thrust
+        input_values.set_val(Aircraft.Engine.SCALE_FACTOR, [scale_factor])
+
+    vehicle_data['input_values'] = input_values
+    return vehicle_data
+
+
 def update_flops_scaler_variables(var_name, input_values: NamedValues):
     """
     The following parameters are used to modify or override
@@ -799,7 +837,8 @@ gasp_scaler_variables = [
 ]
 
 initialization_guesses = {
-    # initialization_guesses is a dictionary that contains values used to initialize the trajectory
+    # initialization_guesses is a dictionary that contains values used to
+    # initialize the trajectory
     'actual_takeoff_mass': 0,
     'rotation_mass': 0,
     'fuel_burn_per_passenger_mile': 0,
