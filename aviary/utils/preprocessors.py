@@ -402,11 +402,11 @@ def preprocess_propulsion(
             num_engines_all[i] = total_engines_calc
             if verbosity >= Verbosity.VERBOSE:
                 warnings.warn(
-                    'Sum of aircraft:engine:num_fueslage_engines and '
+                    'Sum of aircraft:engine:num_fuselage_engines and '
                     'aircraft:engine:num_wing_engines do not match '
-                    f'aircraft:engine:num_engines for EngineModel <{
-                        eng_name}>. Overwriting '
-                    'with the sum of wing and fuselage mounted engines.'
+                    'aircraft:engine:num_engines for EngineModel '
+                    f'<{eng_name}>. Overwriting with the sum of wing and fuselage '
+                    'mounted engines.'
                 )
         elif total_engines_calc < num_engines:
             # fewer defined locations than num_engines - assume rest are wing mounted

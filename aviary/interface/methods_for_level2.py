@@ -2472,8 +2472,8 @@ class AviaryProblem(om.Problem):
 
                                     self.model.connect(
                                         f'pre_mission.{bus_variable}',
-                                        f'traj.{phase_name}.parameters:{
-                                            mission_var_name}',
+                                        f'traj.{phase_name}.parameters:'
+                                        f'{mission_var_name}',
                                     )
 
                             else:
