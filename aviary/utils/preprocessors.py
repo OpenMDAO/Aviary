@@ -251,7 +251,10 @@ def preprocess_propulsion(
         # compatibility with being passed int for verbosity
         verbosity = Verbosity(verbosity)
     else:
-        verbosity = aviary_options.get_val(Settings.VERBOSITY)
+        if verbosity in aviary_options:
+            verbosity = aviary_options.get_val(Settings.VERBOSITY)
+        else:
+            verbosity = Verbosity.BRIEF
 
     ##############################
     # Vectorize Engine Variables #

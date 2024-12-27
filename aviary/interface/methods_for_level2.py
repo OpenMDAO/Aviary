@@ -3018,7 +3018,7 @@ class AviaryProblem(om.Problem):
             failed = self.run_model()
             warnings.filterwarnings('default', category=UserWarning)
 
-        if verbosity >= Verbosity.DEBUG:  # DEBUG
+        if verbosity >= Verbosity.VERBOSE:  # VERBOSE, DEBUG
             with open('output_list.txt', 'w') as outfile:
                 self.model.list_outputs(out_stream=outfile)
 
