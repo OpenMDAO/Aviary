@@ -110,7 +110,6 @@ def run_aviary(aircraft_filename, phase_info, optimizer=None,
 
 def run_level_1(
     input_deck,
-    # outdir='output',
     optimizer='SNOPT',
     phase_info=None,
     max_iter=50,
@@ -158,11 +157,13 @@ def run_level_1(
 
 def _setup_level1_parser(parser):
     def_outdir = os.path.join(os.getcwd(), "output")
-    parser.add_argument('input_deck', metavar='indeck', type=str,
-                        nargs=1, help='Name of vehicle input deck file')
-    # parser.add_argument(
-    #     "-o", "--outdir", default=def_outdir, help="Directory to write outputs"
-    # )
+    parser.add_argument(
+        'input_deck',
+        metavar='indeck',
+        type=str,
+        nargs=1,
+        help='Name of vehicle input deck file',
+    )
     parser.add_argument(
         "--optimizer",
         type=str,
@@ -177,10 +178,8 @@ def _setup_level1_parser(parser):
         help="Path to phase info file"
     )
     parser.add_argument(
-        "--max_iter",
-        type=int,
-        default=50,
-        help="maximum number of iterations")
+        "--max_iter", type=int, default=50, help="maximum number of iterations"
+    )
     parser.add_argument(
         "--shooting",
         action="store_true",
@@ -191,7 +190,8 @@ def _setup_level1_parser(parser):
         type=int,
         default=1,
         help="verbosity settings: 0=quiet, 1=brief, 2=verbose, 3=debug",
-        choices=(0, 1, 2, 3))
+        choices=(0, 1, 2, 3),
+    )
 
 
 def _exec_level1(args, user_args):
@@ -207,14 +207,8 @@ def _exec_level1(args, user_args):
     if isinstance(args.input_deck, list):
         args.input_deck = args.input_deck[0]
 
-    # if args.outdir == os.path.join(os.getcwd(), "output"):
-    #     # if default outdir, add the input deck name
-    #     file_name_stem = Path(args.input_deck).stem
-    #     args.outdir = args.outdir + os.sep + file_name_stem
-
     prob = run_level_1(
         input_deck=args.input_deck,
-        # outdir=args.outdir,
         optimizer=args.optimizer,
         phase_info=args.phase_info,
         max_iter=args.max_iter,
