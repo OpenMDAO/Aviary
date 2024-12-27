@@ -353,7 +353,7 @@ def process_and_store_data(
         var_ind -= fortran_offset
 
     # Aviary has a reduction gearbox which is 1/gear ratio of GASP gearbox
-    if current_namelist + var_name == 'INPROP.GR':
+    if current_namelist + '.' + var_name == 'INPROP.GR':
         var_values = [1 / var for var in var_values]
         vehicle_data['input_values'] = set_value(
             Aircraft.Engine.Gearbox.GEAR_RATIO,
