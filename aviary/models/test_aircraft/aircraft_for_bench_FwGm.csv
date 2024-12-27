@@ -14,6 +14,7 @@ aircraft:design:structural_mass_increment,0,lbm
 aircraft:design:supercritical_drag_shift,0.033,unitless
 aircraft:engine:constant_fuel_consumption,0.,lbm/h
 aircraft:engine:data_file,models/engines/turbofan_23k_1.deck,unitless
+aircraft:engine:global_throttle, True, unitless
 aircraft:engine:enable_sizing,False,unitless
 aircraft:engine:mass_specific,0.21366,lbm/lbf
 aircraft:engine:fuel_flow_scaler_constant_term,0.,unitless
@@ -177,12 +178,10 @@ aircraft:crew_and_payload:passenger_service_mass_scaler,1.0,unitless
 aircraft:crew_and_payload:wing_cargo,0.0,lbm
 aircraft:design:base_area,0.0,ft**2
 aircraft:design:empty_mass_margin_scaler,0.0,unitless
-aircraft:design:lift_dependent_drag_coeff_factor,0.909839381134961,unitless
 aircraft:design:touchdown_mass,152800.0,lbm
 aircraft:design:subsonic_drag_coeff_factor,1.0,unitless
 aircraft:design:supersonic_drag_coeff_factor,1.0,unitless
 aircraft:design:use_alt_mass,False,unitless
-aircraft:design:zero_lift_drag_coeff_factor,0.930890028006548,unitless
 aircraft:electrical:mass_scaler,1.25,unitless
 aircraft:fins:area,0.0,ft**2
 aircraft:fins:mass_scaler,1.0,unitless
