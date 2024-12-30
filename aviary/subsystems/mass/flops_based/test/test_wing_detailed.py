@@ -117,7 +117,6 @@ class DetailedWingBendingTest(unittest.TestCase):
         bending_factor = prob.get_val(Aircraft.Wing.BENDING_FACTOR)
         pod_inertia = prob.get_val(Aircraft.Wing.ENG_POD_INERTIA_FACTOR)
 
-        # manual computation of expected thrust reverser mass
         bending_factor_expected = 11.59165669761
         # 0.9600334354133278 if the factors are additive
         pod_inertia_expected = 0.9604608395586276
@@ -180,7 +179,6 @@ class DetailedWingBendingTest(unittest.TestCase):
         bending_factor = prob.get_val(Aircraft.Wing.BENDING_FACTOR)
         pod_inertia = prob.get_val(Aircraft.Wing.ENG_POD_INERTIA_FACTOR)
 
-        # manual computation of expected thrust reverser mass
         bending_factor_expected = 11.59165669761
         pod_inertia_expected = 0.84
         assert_near_equal(bending_factor, bending_factor_expected, tolerance=1e-10)
@@ -240,7 +238,6 @@ class DetailedWingBendingTest(unittest.TestCase):
         bending_factor = prob.get_val(Aircraft.Wing.BENDING_FACTOR)
         pod_inertia = prob.get_val(Aircraft.Wing.ENG_POD_INERTIA_FACTOR)
 
-        # manual computation of expected thrust reverser mass
         bending_factor_expected = 11.59165669761
         pod_inertia_expected = 0.84
         assert_near_equal(bending_factor, bending_factor_expected, tolerance=1e-10)
@@ -306,8 +303,8 @@ class DetailedWingBendingTest(unittest.TestCase):
 
 
 if __name__ == "__main__":
-    unittest.main()
-    # test = DetailedWingBendingTest()
-    # test.setUp()
+    # unittest.main()
+    test = DetailedWingBendingTest()
+    test.setUp()
     # test.test_case(case_name='LargeSingleAisle1FLOPS')
-    # test.test_extreme_engine_loc()
+    test.test_case_multiengine()

@@ -201,25 +201,27 @@ class DetailedWingBendingFact(om.ExplicitComponent):
             # idx2 is the last index for the range of engines of this type
             idx2 = idx + int(num_wing_engines[i] / 2)
             if num_wing_engines[i] > 0:
-                eng_loc = engine_locations[idx:idx2][0]
+                # engine locations must be in order from wing root to tip
+                eng_loc = np.sort(engine_locations[idx:idx2])
+
             else:
                 continue
 
-            if eng_loc <= integration_stations[0]:
+            if all(eng_loc <= integration_stations[0]):
                 inertia_factor[i] = 1.0
 
-            elif eng_loc >= integration_stations[-1]:
+            elif all(eng_loc >= integration_stations[-1]):
                 inertia_factor[i] = 0.84
 
             else:
                 eel[:] = 0.0
-                loc = np.where(integration_stations < eng_loc)[0]
+                # Find all points on integration station before first engine
+                loc = np.where(integration_stations < eng_loc[0])[0]
                 eel[loc] = 1.0
 
                 delme = dy * eel[1:]
 
-                delme[loc[-1]] = engine_locations[idx:idx2][0] - \
-                    integration_stations[loc[-1]]
+                delme[loc[-1]] = eng_loc[0] - integration_stations[loc[-1]]
 
                 eem = delme * csw
                 eem = np.cumsum(eem[::-1])[::-1]
