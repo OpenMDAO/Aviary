@@ -209,7 +209,7 @@ class WingBendingMassTest2(unittest.TestCase):
         )
         prob.setup(check=False, force_alloc_complex=True)
         prob.set_val(Aircraft.Wing.AEROELASTIC_TAILORING_FACTOR, 0.333, 'unitless')
-        prob.set_val(Aircraft.Wing.BENDING_FACTOR, 10, 'unitless')
+        prob.set_val(Aircraft.Wing.BENDING_MATERIAL_FACTOR, 10, 'unitless')
         prob.set_val(Aircraft.Wing.COMPOSITE_FRACTION, 0.333, 'unitless')
         prob.set_val(Aircraft.Wing.ENG_POD_INERTIA_FACTOR, 1, 'unitless')
         prob.set_val(Mission.Design.GROSS_MASS, 100000, 'lbm')

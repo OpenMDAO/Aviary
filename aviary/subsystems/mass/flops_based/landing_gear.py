@@ -294,7 +294,7 @@ class MainGearLength(om.ExplicitComponent):
         add_aviary_input(self, Aircraft.Fuselage.MAX_WIDTH, val=0.0)
         add_aviary_input(self, Aircraft.Nacelle.AVG_DIAMETER,
                          val=np.zeros(num_engine_type))
-        if num_wing_engines > 0:
+        if any(num_wing_engines) > 0:
             add_aviary_input(self, Aircraft.Engine.WING_LOCATIONS, val=np.zeros(
                 (num_engine_type, int(num_wing_engines[0] / 2))))
         else:
