@@ -21,19 +21,17 @@ class StrutGeom(om.ExplicitComponent):
 
     def setup(self):
 
-        add_aviary_input(self, Aircraft.Wing.AREA, val=150)
-        add_aviary_input(self, Aircraft.Strut.AREA_RATIO, val=.2)
-
-        add_aviary_input(self, Aircraft.Strut.ATTACHMENT_LOCATION, val=0, units="ft")
-
-        add_aviary_input(self, Aircraft.Fuselage.AVG_DIAMETER, val=10.0)
+        add_aviary_input(self, Aircraft.Wing.AREA)
+        add_aviary_input(self, Aircraft.Strut.AREA_RATIO)
+        add_aviary_input(self, Aircraft.Strut.ATTACHMENT_LOCATION)
+        add_aviary_input(self, Aircraft.Fuselage.AVG_DIAMETER)
 
         self.add_output(
             "strut_y", val=30, units="ft", desc="YSTRUT: attachment location of strut"
         )
-        add_aviary_output(self, Aircraft.Strut.LENGTH, val=1.0)
-        add_aviary_output(self, Aircraft.Strut.AREA, val=30)
-        add_aviary_output(self, Aircraft.Strut.CHORD, val=1.0)
+        add_aviary_output(self, Aircraft.Strut.LENGTH)
+        add_aviary_output(self, Aircraft.Strut.AREA)
+        add_aviary_output(self, Aircraft.Strut.CHORD)
 
     def setup_partials(self):
 
