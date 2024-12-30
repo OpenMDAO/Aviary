@@ -2335,7 +2335,8 @@ add_meta_data(
     units='unitless',
     desc='Engine wing mount locations as fractions of semispan; (NUM_WING_ENGINES)/2 values '
     'are input',
-    default_value=np.array([0.0]),  # In mass/gasp_based/fixed.py and geometry/gasp_based/electric.py, default was [0.35]
+    # In mass/gasp_based/fixed.py and geometry/gasp_based/electric.py, default was [0.35]
+    default_value=np.array([0.0]),
 )
 
 #   ___                      _
@@ -2852,7 +2853,8 @@ add_meta_data(
     historical_name={"GASP": 'INGASP.SKWF', "FLOPS": None, "LEAPS1": None},
     units='unitless',
     desc='fraction of total theoretical wing volume used for wing fuel',
-    default_value=0.0,  # added. In geometry/gasp_based/wing.py, it was 0.6. In /mass/gasp_based/equipment_and_useful_load.py, it was 0.5.
+    # added. In geometry/gasp_based/wing.py, it was 0.6. In /mass/gasp_based/equipment_and_useful_load.py, it was 0.5.
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -3068,7 +3070,7 @@ add_meta_data(
     historical_name={"GASP": 'INGASP.HCK', "FLOPS": None, "LEAPS1": None},
     units='ft',
     desc='mean fuselage cabin diameter minus mean fuselage nose diameter',
-    default_value=0.0,  # In geometry/gasp_based/fuselage.py, it was 4.5. 
+    default_value=0.0,  # In geometry/gasp_based/fuselage.py, it was 4.5.
 )
 
 add_meta_data(
@@ -4971,7 +4973,7 @@ add_meta_data(
     },
     units='ft**2',
     desc='reference wing area',
-    default_value=0.0,  # In several components, it was set to 100, 150, 200, 1370.3 or other values.
+    default_value=0.0,  # In several components, it was set to 100, 150, 200, 1370.3 etc.
 )
 
 add_meta_data(
@@ -5353,7 +5355,8 @@ add_meta_data(
     historical_name={"GASP": 'INGASP.YWFOLD', "FLOPS": None, "LEAPS1": None},
     units='ft',
     desc='folded wingspan',
-    default_value=0,  # In geometry/gasp_based/non_dimensional_conversion.py and geometry/gasp_based/wing.py, it was 25.
+    # In geometry/gasp_based/non_dimensional_conversion.py and geometry/gasp_based/wing.py, it was 25.
+    default_value=0,
 )
 
 add_meta_data(
@@ -5860,7 +5863,8 @@ add_meta_data(
     },
     units='ft',
     desc='span of main wing',
-    default_value=0.0,  # in several components, it was set to 128, or 117.8 but there are other values.
+    # in several components, it was set to 128, or 117.8 but there are other values.
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -5974,7 +5978,8 @@ add_meta_data(
     },
     units='deg',
     desc='quarter-chord sweep angle of the wing',
-    default_value=0.0,  # TODO required. In several components, it was 0.436 (rad) or 25 (deg).
+    # In several components, it was 0.436 (rad) or 25 (deg).
+    default_value=0.0,  # TODO required.
 )
 
 add_meta_data(
@@ -6769,7 +6774,8 @@ add_meta_data(
     },
     units='lbm',
     desc='design gross mass of the aircraft',
-    default_value=0.0,  # changed form None. In several components, it was set to 20000, 152000 or 175400.
+    # changed form None. In several components, it was set to 20000, 152000 or 175400.
+    default_value=0.0,
 )
 
 add_meta_data(
