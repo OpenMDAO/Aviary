@@ -4996,11 +4996,6 @@ add_meta_data(
         "FLOPS": 'WTIN.ARREF',  # ['&DEFINE.WTIN.ARREF'],
         "LEAPS1": 'aircraft.inputs.L0_detailed_wing.ref_aspect_ratio',
     },
-    historical_name={
-        "GASP": None,
-        "FLOPS": 'WTIN.ARREF',  # ['&DEFINE.WTIN.ARREF'],
-        "LEAPS1": 'aircraft.inputs.L0_detailed_wing.ref_aspect_ratio',
-    },
     units='unitless',
     desc='Reference aspect ratio, used for detailed wing mass estimation.',
 )
