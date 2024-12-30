@@ -58,6 +58,15 @@ class WingSizeTestCase2(unittest.TestCase):
     def test_case1(self):
         self.prob = om.Problem()
         self.prob.model.add_subsystem("size", WingSize(), promotes=["*"])
+        self.prob.model.set_input_defaults(
+            Mission.Design.GROSS_MASS, 175400, units="lbm"
+        )
+        self.prob.model.set_input_defaults(
+            Aircraft.Wing.LOADING, 128, units="lbf/ft**2"
+        )
+        self.prob.model.set_input_defaults(
+            Aircraft.Wing.ASPECT_RATIO, 10.13, units="unitless"
+        )
         self.prob.setup(check=False, force_alloc_complex=True)
 
         partial_data = self.prob.check_partials(out_stream=None, method="cs")
@@ -578,6 +587,21 @@ class WingGroupTestCase4(unittest.TestCase):
         )
         self.prob.model.set_input_defaults(
             Aircraft.Strut.ATTACHMENT_LOCATION, val=0, units="ft"
+        )
+        self.prob.model.set_input_defaults(
+            Aircraft.Strut.AREA_RATIO, val=.2, units='unitless'
+        )
+        self.prob.model.set_input_defaults(
+            Aircraft.Fuselage.AVG_DIAMETER, val=10.0, units='ft'
+        )
+        self.prob.model.set_input_defaults(
+            Mission.Design.GROSS_MASS, val=152000.0, units='lbm'
+        )
+        self.prob.model.set_input_defaults(
+            Aircraft.Wing.LOADING, 128, units="lbf/ft**2"
+        )
+        self.prob.model.set_input_defaults(
+            Aircraft.Fuel.WING_FUEL_FRACTION, val=.6, units='unitless'
         )
 
         self.prob.setup(check=False, force_alloc_complex=True)
