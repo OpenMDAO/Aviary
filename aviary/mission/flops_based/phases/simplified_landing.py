@@ -7,13 +7,17 @@ from aviary.variable_info.variables import Aircraft, Mission, Dynamic
 
 
 class LandingCalc(om.ExplicitComponent):
+    """
+    Calculate the distance covered over the ground and approach velocity during landing
+    """
+
     def setup(self):
 
         add_aviary_input(self, Mission.Landing.TOUCHDOWN_MASS, val=150_000)
 
         add_aviary_input(
             self,
-            Dynamic.Mission.DENSITY,
+            Dynamic.Atmosphere.DENSITY,
             val=1.225,
             units="kg/m**3",
             desc="atmospheric density",
@@ -36,7 +40,7 @@ class LandingCalc(om.ExplicitComponent):
         rho_SL = RHO_SEA_LEVEL_METRIC
         landing_weight = inputs[Mission.Landing.TOUCHDOWN_MASS] * \
             GRAV_ENGLISH_LBM
-        rho = inputs[Dynamic.Mission.DENSITY]
+        rho = inputs[Dynamic.Atmosphere.DENSITY]
         planform_area = inputs[Aircraft.Wing.AREA]
         Cl_ldg_max = inputs[Mission.Landing.LIFT_COEFFICIENT_MAX]
 
@@ -59,7 +63,7 @@ class LandingCalc(om.ExplicitComponent):
         rho_SL = RHO_SEA_LEVEL_METRIC
         landing_weight = inputs[Mission.Landing.TOUCHDOWN_MASS] * \
             GRAV_ENGLISH_LBM
-        rho = inputs[Dynamic.Mission.DENSITY]
+        rho = inputs[Dynamic.Atmosphere.DENSITY]
         planform_area = inputs[Aircraft.Wing.AREA]
         Cl_ldg_max = inputs[Mission.Landing.LIFT_COEFFICIENT_MAX]
 
@@ -102,7 +106,7 @@ class LandingCalc(om.ExplicitComponent):
             / (planform_area * rho_ratio * Cl_app ** 2 * 1.69)
             / 1.3 ** 2
         )
-        J[Mission.Landing.GROUND_DISTANCE, Dynamic.Mission.DENSITY] = (
+        J[Mission.Landing.GROUND_DISTANCE, Dynamic.Atmosphere.DENSITY] = (
             -105
             * landing_weight
             / (planform_area * rho_ratio**2 * Cl_app * 1.69)
@@ -111,6 +115,11 @@ class LandingCalc(om.ExplicitComponent):
 
 
 class LandingGroup(om.Group):
+    """
+    Calculate the distance covered over the ground and approach velocity
+    during landing with atmosphere is included.
+    """
+
     def setup(self):
 
         self.add_subsystem(
@@ -127,7 +136,7 @@ class LandingGroup(om.Group):
             LandingCalc(),
             promotes_inputs=[
                 Mission.Landing.TOUCHDOWN_MASS,
-                Dynamic.Mission.DENSITY,
+                Dynamic.Atmosphere.DENSITY,
                 Aircraft.Wing.AREA,
                 Mission.Landing.LIFT_COEFFICIENT_MAX,
             ],

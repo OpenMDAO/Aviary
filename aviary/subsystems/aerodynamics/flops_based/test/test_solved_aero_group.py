@@ -3,7 +3,9 @@ This test validates passing a drag polar into the solved aero in the mission.
 Computed lift and drag should be the same as reading the same polar in from
 a file.
 """
+from copy import deepcopy
 import unittest
+
 import numpy as np
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_near_equal
@@ -15,8 +17,6 @@ from aviary.utils.csv_data_file import read_data_file
 from aviary.utils.named_values import NamedValues
 from aviary.interface.default_phase_info.height_energy import phase_info
 from aviary.variable_info.variables import Aircraft
-
-from copy import deepcopy
 
 
 # The drag-polar-generating component reads this in, instead of computing the polars.
@@ -72,7 +72,7 @@ class TestSolvedAero(unittest.TestCase):
         CL_base = prob.get_val("traj.cruise.rhs_all.core_aerodynamics.tabular_aero.CL")
         CD_base = prob.get_val("traj.cruise.rhs_all.core_aerodynamics.tabular_aero.CD")
 
-        # Lift and Drag polars passed from external component in static.
+        # Lift and Drag polars passed from external component in pre-mission.
 
         ph_in = deepcopy(phase_info)
 
@@ -148,7 +148,7 @@ class TestSolvedAero(unittest.TestCase):
         CL_base = prob.get_val("traj.cruise.rhs_all.core_aerodynamics.tabular_aero.CL")
         CD_base = prob.get_val("traj.cruise.rhs_all.core_aerodynamics.tabular_aero.CD")
 
-        # Lift and Drag polars passed from external component in static.
+        # Lift and Drag polars passed from external component in pre-mission.
 
         ph_in = deepcopy(phase_info)
 
@@ -272,7 +272,7 @@ class FakeDragPolarBuilder(SubsystemBuilderBase):
         -------
         pre_mission_sys : openmdao.core.Group
             An OpenMDAO group containing all computations that need to happen in
-            the pre-mission (formerly statics) part of the Aviary problem. This
+            the pre-mission part of the Aviary problem. This
             includes sizing, design, and other non-mission parameters.
         """
 

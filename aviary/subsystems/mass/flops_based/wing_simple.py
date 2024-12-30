@@ -7,6 +7,10 @@ from aviary.variable_info.variables import Aircraft
 
 
 class SimpleWingBendingFact(om.ExplicitComponent):
+    """
+    Simplified computation of wing bending factor and engine inertia relief factor
+    for FLOPS-based mass.
+    """
 
     def initialize(self):
         self.options.declare(

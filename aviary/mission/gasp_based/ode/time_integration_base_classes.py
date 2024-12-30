@@ -1,7 +1,9 @@
 import numpy as np
+from scipy import interpolate
+
 import openmdao.api as om
 from openmdao.utils import units
-from scipy import interpolate
+
 from simupy.block_diagram import DEFAULT_INTEGRATOR_OPTIONS, SimulationMixin
 from simupy.systems import DynamicalSystem
 
@@ -11,6 +13,13 @@ from aviary.variable_info.variable_meta_data import _MetaData
 
 
 def add_SGM_required_inputs(group: om.Group, inputs_to_add: dict):
+    """
+    This is a simple utility that can be used to add inputs that are necessary for SGM but not collocation.
+    The SGM integrator expects that all states are inputs to the ODE. If any states aren't required by the EOM
+    they can be added to the ODE with this function, in order to minimize the differences between ODEs that are
+    used for both SGM and collocation.
+    """
+
     blank_component = om.ExplicitComponent()
     for input, details in inputs_to_add.items():
         blank_component.add_input(input, **details)
@@ -21,6 +30,13 @@ def add_SGM_required_inputs(group: om.Group, inputs_to_add: dict):
 
 
 def add_SGM_required_outputs(group: om.Group, outputs_to_add: dict):
+    """
+    This is a simple utility that can be used to add inputs that are necessary for SGM but not collocation.
+    The SGM integrator expects that all state rates are outputs from the ODE. If any state rates aren't
+    calculated by the EOM they can be added to the ODE with this function, in order to minimize the
+    differences between ODEs that are used for both SGM and collocation.
+    """
+
     iv_comp = om.IndepVarComp()
     for output, details in outputs_to_add.items():
         iv_comp.add_output(output, **details)
@@ -31,6 +47,14 @@ def add_SGM_required_outputs(group: om.Group, outputs_to_add: dict):
 
 
 class event_trigger():
+    """
+    event_trigger is used by SimuPyProblem to track the information that is required to trigger events during phases.
+    The state name, trigger value, and trigger units are required. Optionally a channel_name can be specified if it is
+    different from the state name.
+    Users are expect to interact with triggers primarily through SimuPyProblem.add_trigger() and
+    SimuPyProblem.clear_triggers(), but may want more detailed control over the triggers.
+    """
+
     def __init__(
             self,
             state: str,
@@ -47,7 +71,10 @@ class event_trigger():
 
 
 class SimuPyProblem(SimulationMixin):
-    # Subproblem used as a basis for forward in time integration phases.
+    """
+    Subproblem used as a basis for forward in time integration phases.
+    """
+
     def __init__(
         self,
         ode,
@@ -108,6 +135,14 @@ class SimuPyProblem(SimulationMixin):
 
         self.prob = prob
         prob.setup(check=False, force_alloc_complex=True)
+
+        # TODO - This is a hack to mimic the behavior of the old paramport, which
+        # contains some initial default values. It is unclear how actual "parameter"
+        # values are supposed to propagate from the pre-mission and top ivcs into
+        # the SGM phases.
+        from aviary.mission.gasp_based.ode.params import set_params_for_unit_tests
+        set_params_for_unit_tests(prob)
+
         prob.final_setup()
 
         if triggers is None:
@@ -229,7 +264,7 @@ class SimuPyProblem(SimulationMixin):
         self.dim_parameters = len(parameters)
         # TODO: add defensive checks to make sure dimensions match in both setup and
         # calls
-        if verbosity.value >= 2:
+        if verbosity >= Verbosity.VERBOSE:
             if problem_name:
                 problem_name = '_'+problem_name
             om.n2(prob, outfile="n2_simupy_problem" +
@@ -237,6 +272,10 @@ class SimuPyProblem(SimulationMixin):
             with open('input_list_simupy'+problem_name+'.txt', 'w') as outfile:
                 prob.model.list_inputs(out_stream=outfile,)
             print(states)
+
+    def add_parameter(self, name, units, **kwargs):
+        self.parameters[name] = units
+        self.dim_parameters = len(self.parameters)
 
     @property
     def time(self):
@@ -427,6 +466,13 @@ class SimuPyProblem(SimulationMixin):
 
 
 class SGMTrajBase(om.ExplicitComponent):
+    """
+    SGMTrajBase is intended to mimic the dymos trajectory used in collocation problems as closely as possible.
+    Users are expected to mostly use FlexibleTraj which has some additions and helper functions that are more
+    specific to Aviary and aircraft simulation, whereas this base class is intended to be more generic and
+    provides a framework for any sort of SGM based trajectory.
+    """
+
     def initialize(self, verbosity=Verbosity.QUIET):
         # needs to get passed to each ODE
         # TODO: param_dict
@@ -437,6 +483,10 @@ class SGMTrajBase(om.ExplicitComponent):
         self.adjoint_int_opts = DEFAULT_INTEGRATOR_OPTIONS.copy()
         self.adjoint_int_opts['nsteps'] = 5000
         self.adjoint_int_opts['name'] = "dop853"
+        self.additional_parameters = {}
+
+    def add_parameter(self, name, units=None, **kwargs):
+        self.additional_parameters['parameters:'+name] = {'units': units}
 
     def setup_params(
             self,
@@ -490,8 +540,18 @@ class SGMTrajBase(om.ExplicitComponent):
                         continue
                     traj_promote_initial_input[prom_name] = data
 
+            # TODO - This is a hack to mimic the behavior of the old paramport, which
+            # contains some initial default values. It is unclear how actual "parameter"
+            # values are supposed to propagate from the pre-mission and top ivcs into
+            # the SGM phases.
+            from aviary.mission.gasp_based.ode.params import params_for_unit_tests
+            traj_promote_initial_input = {
+                **params_for_unit_tests,
+                **traj_promote_initial_input
+            }
+
         self.traj_promote_initial_input = {
-            **self.options["param_dict"], **traj_promote_initial_input}
+            **self.options["param_dict"], **traj_promote_initial_input, **self.additional_parameters}
         for name, kwargs in self.traj_promote_initial_input.items():
             self.add_input(name, **kwargs)
 
@@ -597,9 +657,9 @@ class SGMTrajBase(om.ExplicitComponent):
         for input in self.traj_promote_initial_input.keys():
             for ode in self.ODEs:
                 try:
-                    ode.set_val(input, inputs[input])
+                    ode.set_val(input.removeprefix('parameters:'), inputs[input])
                 except KeyError:
-                    if self.verbosity.value >= 2:
+                    if self.verbosity >= Verbosity.VERBOSE:
                         print(
                             "*** Input not found:",
                             ode,
@@ -608,7 +668,7 @@ class SGMTrajBase(om.ExplicitComponent):
                     pass
 
     def compute_traj_loop(self, first_problem, inputs, outputs, t0=0., state0=None):
-        if self.verbosity.value >= 2:
+        if self.verbosity >= Verbosity.VERBOSE:
             print("initializing compute_traj_loop")
         sim_results = []
         sim_problems = [first_problem]
@@ -649,7 +709,7 @@ class SGMTrajBase(om.ExplicitComponent):
             try:
                 try_next_problem = (yield current_problem, sim_result)
             except GeneratorExit:
-                if self.verbosity.value >= 2:
+                if self.verbosity >= 2:
                     print("stop iteration 1")
                 break
 
@@ -659,11 +719,11 @@ class SGMTrajBase(om.ExplicitComponent):
                 try:
                     next_problem = (yield current_problem, sim_result)
                 except GeneratorExit:
-                    if self.verbosity.value >= 2:
+                    if self.verbosity >= Verbosity.VERBOSE:
                         print("stop iteration 2")
                     break
 
-                if self.verbosity.value >= 2:
+                if self.verbosity >= Verbosity.VERBOSE:
                     print(" was on problem:", current_problem,
                           "\n got back:", next_problem)
             # compute the output at the final condition to make sure all outputs are current
@@ -676,7 +736,7 @@ class SGMTrajBase(om.ExplicitComponent):
             ).squeeze()
             sim_problems.append(next_problem)
 
-        if self.verbosity.value >= 2:
+        if self.verbosity >= Verbosity.VERBOSE:
             print("ended loop")
 
         # wrap main loop
@@ -935,7 +995,7 @@ class SGMTrajBase(om.ExplicitComponent):
             else:
                 df_dparams.append(None)
 
-        if self.verbosity is Verbosity.DEBUG:
+        if self.verbosity == Verbosity.DEBUG:
             print("data....")
             print("dgs", dg_dxs)
             print("f-", f_minuses)
@@ -954,7 +1014,7 @@ class SGMTrajBase(om.ExplicitComponent):
             lamda_dot_plus = np.zeros_like(costate)
 
             # self.sim_results[-1].x[-1, next_prob.state_names.index(output)]
-            if self.verbosity.value >= 2:
+            if self.verbosity >= Verbosity.VERBOSE:
                 print("\nstarting partial for %s" % output, costate)
 
             dg_dt = 0.
@@ -1004,7 +1064,7 @@ class SGMTrajBase(om.ExplicitComponent):
                     if channel_name != prob.t_name:
                         lamda_dot = df_dx(res.t[-1]) @ costate
                         # lamda_dot_plus = lamda_dot
-                        if self.verbosity is Verbosity.DEBUG:
+                        if self.verbosity == Verbosity.DEBUG:
                             if np.any(state_disc):
                                 print("update is non-zero!", prob, prob.state_names,
                                       state_disc, costate, lamda_dot)
@@ -1036,7 +1096,7 @@ class SGMTrajBase(om.ExplicitComponent):
                         in self.traj_event_trigger_input
                     ):
                         event_trigger_name = self.traj_event_trigger_input[event_key]["name"]
-                        if self.verbosity.value >= 2:
+                        if self.verbosity >= Verbosity.VERBOSE:
                             print("setting event trigger data", event_trigger_name)
                         J[output_name, event_trigger_name] = (
                             + costate[None, :] @ (f_minus - f_plus) /
@@ -1053,7 +1113,7 @@ class SGMTrajBase(om.ExplicitComponent):
                 def co_state_rate(t, costate, *args):
                     return df_dx(t) @ costate
 
-                if self.verbosity.value >= 2:
+                if self.verbosity >= Verbosity.VERBOSE:
                     print('dim_state:', prob.dim_state, "ic:", costate)
 
                 costate_sys = DynamicalSystem(state_equation_function=co_state_rate,

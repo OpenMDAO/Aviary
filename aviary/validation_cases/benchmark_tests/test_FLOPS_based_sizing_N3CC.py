@@ -1,42 +1,43 @@
-'''
-NOTES:
+"""
+Sizing the N3CC using the level 3 API.
+
 Includes:
-Takeoff, Climb, Cruise, Descent, Landing
-Computed Aero
-N3CC data
-'''
+  Takeoff, Climb, Cruise, Descent, Landing
+  Computed Aero
+  N3CC data
+"""
 import unittest
 
-import dymos as dm
 import numpy as np
-import openmdao.api as om
 import scipy.constants as _units
+
+import dymos as dm
+import openmdao.api as om
 from openmdao.utils.assert_utils import assert_near_equal
 from openmdao.utils.testing_utils import use_tempdirs
 from openmdao.utils.testing_utils import require_pyoptsparse
 
+from aviary.mission.energy_phase import EnergyPhase
 from aviary.mission.flops_based.phases.build_landing import Landing
 from aviary.mission.flops_based.phases.build_takeoff import Takeoff
-from aviary.utils.functions import set_aviary_initial_values
-from aviary.utils.test_utils.assert_utils import warn_timeseries_near_equal
-from aviary.validation_cases.validation_tests import get_flops_inputs
-from aviary.variable_info.functions import setup_trajectory_params
-from aviary.utils.aviary_values import AviaryValues
-from aviary.variable_info.variables_in import VariablesIn
-from aviary.mission.energy_phase import EnergyPhase
-
-from aviary.variable_info.variables import Aircraft, Dynamic, Mission
-from aviary.variable_info.variable_meta_data import _MetaData as BaseMetaData
-from aviary.variable_info.enums import LegacyCode
-
 from aviary.subsystems.premission import CorePreMission
 from aviary.subsystems.propulsion.propulsion_builder import CorePropulsionBuilder
 from aviary.subsystems.geometry.geometry_builder import CoreGeometryBuilder
 from aviary.subsystems.mass.mass_builder import CoreMassBuilder
 from aviary.subsystems.aerodynamics.aerodynamics_builder import CoreAerodynamicsBuilder
 from aviary.subsystems.propulsion.utils import build_engine_deck
+from aviary.utils.aviary_values import AviaryValues
+from aviary.utils.functions import set_aviary_input_defaults
+from aviary.utils.functions import set_aviary_initial_values
+from aviary.utils.preprocessors import preprocess_crewpayload, preprocess_propulsion
+from aviary.utils.test_utils.assert_utils import warn_timeseries_near_equal
 from aviary.utils.test_utils.default_subsystems import get_default_mission_subsystems
-from aviary.utils.preprocessors import preprocess_crewpayload
+from aviary.validation_cases.validation_tests import get_flops_inputs
+from aviary.variable_info.enums import LegacyCode
+from aviary.variable_info.functions import setup_trajectory_params
+from aviary.variable_info.variables import Aircraft, Dynamic, Mission
+from aviary.variable_info.variable_meta_data import _MetaData as BaseMetaData
+
 
 try:
     import pyoptsparse
@@ -157,6 +158,8 @@ def run_trajectory(sim=True):
 
     prob.model.add_design_var(Mission.Design.GROSS_MASS, units='lbm',
                               lower=100000.0, upper=200000.0, ref=135000)
+    prob.model.add_design_var(Mission.Summary.GROSS_MASS, units='lbm',
+                              lower=100000.0, upper=200000.0, ref=135000)
 
     takeoff_options = Takeoff(
         airport_altitude=alt_airport,  # ft
@@ -185,6 +188,7 @@ def run_trajectory(sim=True):
 
     # default subsystems
     engine = build_engine_deck(aviary_inputs)
+    preprocess_propulsion(aviary_inputs, engine)
     default_mission_subsystems = get_default_mission_subsystems('FLOPS', engine)
 
     climb_options = EnergyPhase(
@@ -305,8 +309,11 @@ def run_trajectory(sim=True):
         'landing', landing, promotes_inputs=['aircraft:*', 'mission:*'],
         promotes_outputs=['mission:*'])
 
-    traj.link_phases(["climb", "cruise", "descent"], [
-                     "time", Dynamic.Mission.MASS, Dynamic.Mission.DISTANCE], connected=strong_couple)
+    traj.link_phases(
+        ["climb", "cruise", "descent"],
+        ["time", Dynamic.Vehicle.MASS, Dynamic.Mission.DISTANCE],
+        connected=strong_couple,
+    )
 
     # Need to declare dymos parameters for every input that is promoted out of the missions.
     externs = {'climb': {}, 'cruise': {}, 'descent': {}}
@@ -384,6 +391,20 @@ def run_trajectory(sim=True):
 
     prob.model.add_constraint('mass_resid', equals=0.0, ref=1.0)
 
+    prob.model.add_subsystem(
+        'gtow_constraint',
+        om.EQConstraintComp(
+            'GTOW',
+            eq_units='lbm',
+            normalize=True,
+            add_constraint=True,
+        ),
+        promotes_inputs=[
+            ('lhs:GTOW', Mission.Design.GROSS_MASS),
+            ('rhs:GTOW', Mission.Summary.GROSS_MASS),
+        ],
+    )
+
     ##########################
     # Add Objective Function #
     ##########################
@@ -406,17 +427,19 @@ def run_trajectory(sim=True):
 
     prob.model.add_objective('reg_objective', ref=1)
 
-    # Set initial default values for all LEAPS aircraft variables.
-    set_aviary_initial_values(prob.model, aviary_inputs)
-
-    prob.model.add_subsystem(
-        'input_sink',
-        VariablesIn(aviary_options=aviary_inputs),
-        promotes_inputs=['*'],
-        promotes_outputs=['*']
-    )
+    varnames = [
+        Aircraft.Wing.MAX_CAMBER_AT_70_SEMISPAN,
+        Aircraft.Wing.SWEEP,
+        Aircraft.Wing.TAPER_RATIO,
+        Aircraft.Wing.THICKNESS_TO_CHORD,
+        Mission.Design.GROSS_MASS,
+        Mission.Summary.GROSS_MASS,
+    ]
+    set_aviary_input_defaults(prob.model, varnames, aviary_inputs)
 
     prob.setup(force_alloc_complex=True)
+
+    set_aviary_initial_values(prob, aviary_inputs)
 
     ############################################
     # Initial Settings for States and Controls #
@@ -425,13 +448,21 @@ def run_trajectory(sim=True):
     prob.set_val('traj.climb.t_initial', t_i_climb, units='s')
     prob.set_val('traj.climb.t_duration', t_duration_climb, units='s')
 
-    prob.set_val('traj.climb.controls:altitude', climb.interp(
-        Dynamic.Mission.ALTITUDE, ys=[alt_i_climb, alt_f_climb]), units='m')
     prob.set_val(
-        'traj.climb.controls:mach', climb.interp(
-            Dynamic.Mission.MACH, ys=[mach_i_climb, mach_f_climb]), units='unitless')
-    prob.set_val('traj.climb.states:mass', climb.interp(
-        Dynamic.Mission.MASS, ys=[mass_i_climb, mass_f_climb]), units='kg')
+        'traj.climb.controls:altitude',
+        climb.interp(Dynamic.Mission.ALTITUDE, ys=[alt_i_climb, alt_f_climb]),
+        units='m',
+    )
+    prob.set_val(
+        'traj.climb.controls:mach',
+        climb.interp(Dynamic.Atmosphere.MACH, ys=[mach_i_climb, mach_f_climb]),
+        units='unitless',
+    )
+    prob.set_val(
+        'traj.climb.states:mass',
+        climb.interp(Dynamic.Vehicle.MASS, ys=[mass_i_climb, mass_f_climb]),
+        units='kg',
+    )
     prob.set_val('traj.climb.states:distance', climb.interp(
         Dynamic.Mission.DISTANCE, ys=[distance_i_climb, distance_f_climb]), units='m')
 
@@ -443,26 +474,42 @@ def run_trajectory(sim=True):
     else:
         controls_str = 'polynomial_controls'
 
-    prob.set_val(f'traj.cruise.{controls_str}:altitude', cruise.interp(
-        Dynamic.Mission.ALTITUDE, ys=[alt_i_cruise, alt_f_cruise]), units='m')
     prob.set_val(
-        f'traj.cruise.{controls_str}:mach', cruise.interp(
-            Dynamic.Mission.MACH, ys=[cruise_mach, cruise_mach]), units='unitless')
-    prob.set_val('traj.cruise.states:mass', cruise.interp(
-        Dynamic.Mission.MASS, ys=[mass_i_cruise, mass_f_cruise]), units='kg')
+        f'traj.cruise.{controls_str}:altitude',
+        cruise.interp(Dynamic.Mission.ALTITUDE, ys=[alt_i_cruise, alt_f_cruise]),
+        units='m',
+    )
+    prob.set_val(
+        f'traj.cruise.{controls_str}:mach',
+        cruise.interp(Dynamic.Atmosphere.MACH, ys=[cruise_mach, cruise_mach]),
+        units='unitless',
+    )
+    prob.set_val(
+        'traj.cruise.states:mass',
+        cruise.interp(Dynamic.Vehicle.MASS, ys=[mass_i_cruise, mass_f_cruise]),
+        units='kg',
+    )
     prob.set_val('traj.cruise.states:distance', cruise.interp(
         Dynamic.Mission.DISTANCE, ys=[distance_i_cruise, distance_f_cruise]), units='m')
 
     prob.set_val('traj.descent.t_initial', t_i_descent, units='s')
     prob.set_val('traj.descent.t_duration', t_duration_descent, units='s')
 
-    prob.set_val('traj.descent.controls:altitude', descent.interp(
-        Dynamic.Mission.ALTITUDE, ys=[alt_i_descent, alt_f_descent]), units='m')
     prob.set_val(
-        'traj.descent.controls:mach', descent.interp(
-            Dynamic.Mission.MACH, ys=[mach_i_descent, mach_f_descent]), units='unitless')
-    prob.set_val('traj.descent.states:mass', descent.interp(
-        Dynamic.Mission.MASS, ys=[mass_i_descent, mass_f_descent]), units='kg')
+        'traj.descent.controls:altitude',
+        descent.interp(Dynamic.Mission.ALTITUDE, ys=[alt_i_descent, alt_f_descent]),
+        units='m',
+    )
+    prob.set_val(
+        'traj.descent.controls:mach',
+        descent.interp(Dynamic.Atmosphere.MACH, ys=[mach_i_descent, mach_f_descent]),
+        units='unitless',
+    )
+    prob.set_val(
+        'traj.descent.states:mass',
+        descent.interp(Dynamic.Vehicle.MASS, ys=[mass_i_descent, mass_f_descent]),
+        units='kg',
+    )
     prob.set_val('traj.descent.states:distance', descent.interp(
         Dynamic.Mission.DISTANCE, ys=[distance_i_descent, distance_f_descent]), units='m')
 
@@ -483,6 +530,9 @@ def run_trajectory(sim=True):
 
 @use_tempdirs
 class ProblemPhaseTestCase(unittest.TestCase):
+    """
+    Test sizing using N3CC data.
+    """
 
     @require_pyoptsparse(optimizer="SNOPT")
     def bench_test_sizing_N3CC(self):

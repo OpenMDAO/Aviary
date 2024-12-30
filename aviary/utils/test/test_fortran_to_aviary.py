@@ -1,9 +1,10 @@
 import unittest
 from pathlib import Path
+from datetime import datetime
 
-from aviary.utils.functions import get_path
 from openmdao.utils.testing_utils import use_tempdirs
 
+from aviary.utils.functions import get_path
 from aviary.utils.fortran_to_aviary import LegacyCode, _exec_F2A
 
 
@@ -14,11 +15,15 @@ class DummyArgs(object):
         self.legacy_code = None
         self.defaults_deck = False
         self.force = False
-        self.verbosity = 1
+        self.verbosity = 0
 
 
 @use_tempdirs
 class TestFortranToAviary(unittest.TestCase):
+    """
+    Test fortran_to_aviary legacy code input file conversion utility by comparing against already converted input files.
+    """
+
     def prepare_and_run(self, filepath, out_file=None, legacy_code=LegacyCode.GASP):
         args = DummyArgs()
 
@@ -36,7 +41,7 @@ class TestFortranToAviary(unittest.TestCase):
         # Execute the conversion
         _exec_F2A(args, None)
 
-    def compare_files(self, filepath, skip_list=[]):
+    def compare_files(self, filepath, skip_list=['# created ']):
         """
         Compares the converted file with a validation file.
 
@@ -53,6 +58,7 @@ class TestFortranToAviary(unittest.TestCase):
             for line in f_in:
                 if any(s in line for s in skip_list):
                     break
+
                 # Remove whitespace and compare
                 expected_line = ''.join(expected.readline().split())
                 line_no_whitespace = ''.join(line.split())
@@ -62,7 +68,11 @@ class TestFortranToAviary(unittest.TestCase):
                     self.assertEqual(line_no_whitespace.count(expected_line), 1)
 
                 except Exception as error:
-                    exc_string = f'Error:  {filename}\nFound: {line_no_whitespace}\nExpected:  {expected_line}'
+                    exc_string = (
+                        f'Error: {filename}\n'
+                        f'Found: {line_no_whitespace}\n'
+                        f'Expected: {expected_line}'
+                    )
                     raise Exception(exc_string)
 
     def test_large_single_aisle(self):

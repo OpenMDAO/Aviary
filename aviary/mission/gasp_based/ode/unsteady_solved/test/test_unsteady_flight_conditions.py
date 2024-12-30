@@ -10,10 +10,13 @@ from aviary.constants import RHO_SEA_LEVEL_METRIC
 from aviary.mission.gasp_based.ode.unsteady_solved.unsteady_solved_flight_conditions import \
     UnsteadySolvedFlightConditions
 from aviary.variable_info.enums import SpeedType
-from aviary.variable_info.variables import Dynamic, Mission
+from aviary.variable_info.variables import Dynamic
 
 
 class TestUnsteadyFlightConditions(unittest.TestCase):
+    """
+    Unit test for UnsteadySolvedFlightConditions
+    """
 
     def _test_unsteady_flight_conditions(self, ground_roll=False, input_speed_type=SpeedType.TAS):
         nn = 5
@@ -25,10 +28,10 @@ class TestUnsteadyFlightConditions(unittest.TestCase):
             subsys=Atmosphere(num_nodes=nn, output_dsos_dh=True),
             promotes_inputs=[Dynamic.Mission.ALTITUDE],
             promotes_outputs=[
-                Dynamic.Mission.DENSITY,
-                Dynamic.Mission.SPEED_OF_SOUND,
-                Dynamic.Mission.TEMPERATURE,
-                Dynamic.Mission.STATIC_PRESSURE,
+                Dynamic.Atmosphere.DENSITY,
+                Dynamic.Atmosphere.SPEED_OF_SOUND,
+                Dynamic.Atmosphere.TEMPERATURE,
+                Dynamic.Atmosphere.STATIC_PRESSURE,
                 "viscosity",
                 "drhos_dh",
                 "dsos_dh",
@@ -56,24 +59,22 @@ class TestUnsteadyFlightConditions(unittest.TestCase):
             p.set_val("dEAS_dr", np.zeros(nn), units="kn/km")
         else:
             p.set_val(Dynamic.Mission.ALTITUDE, 37500, units="ft")
-            p.set_val(Dynamic.Mission.MACH, 0.78, units="unitless")
+            p.set_val(Dynamic.Atmosphere.MACH, 0.78, units="unitless")
             p.set_val("dmach_dr", np.zeros(nn), units="unitless/km")
 
         p.run_model()
 
-        mach = p.get_val(Dynamic.Mission.MACH)
+        mach = p.get_val(Dynamic.Atmosphere.MACH)
         eas = p.get_val("EAS")
         tas = p.get_val(Dynamic.Mission.VELOCITY, units="m/s")
-        sos = p.get_val(Dynamic.Mission.SPEED_OF_SOUND, units="m/s")
-        rho = p.get_val(Dynamic.Mission.DENSITY, units="kg/m**3")
+        sos = p.get_val(Dynamic.Atmosphere.SPEED_OF_SOUND, units="m/s")
+        rho = p.get_val(Dynamic.Atmosphere.DENSITY, units="kg/m**3")
         rho_sl = RHO_SEA_LEVEL_METRIC
         dTAS_dt_approx = p.get_val("dTAS_dt_approx")
 
         assert_near_equal(mach, tas/sos)
         assert_near_equal(eas, tas * np.sqrt(rho / rho_sl))
         assert_near_equal(dTAS_dt_approx, np.zeros(nn))
-
-        p.run_model()
 
         with np.printoptions(linewidth=1024):
             cpd = p.check_partials(method="cs")

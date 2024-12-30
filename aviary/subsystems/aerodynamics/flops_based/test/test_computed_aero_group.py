@@ -5,14 +5,12 @@ import openmdao.api as om
 from openmdao.utils.assert_utils import assert_near_equal
 
 from aviary.subsystems.premission import CorePreMission
-from aviary.utils.aviary_values import get_items
+from aviary.subsystems.propulsion.utils import build_engine_deck
 from aviary.utils.functions import set_aviary_initial_values
+from aviary.utils.preprocessors import preprocess_options
+from aviary.utils.test_utils.default_subsystems import get_default_premission_subsystems
 from aviary.validation_cases.validation_tests import get_flops_inputs, get_flops_outputs
 from aviary.variable_info.variables import Aircraft, Dynamic, Settings
-from aviary.variable_info.variables_in import VariablesIn
-from aviary.subsystems.propulsion.utils import build_engine_deck
-from aviary.utils.test_utils.default_subsystems import get_default_premission_subsystems
-from aviary.utils.preprocessors import preprocess_options
 
 
 class MissionDragTest(unittest.TestCase):
@@ -67,13 +65,15 @@ class MissionDragTest(unittest.TestCase):
         prob = om.Problem()
         model = prob.model
 
-        # Upstream static analysis for aero
+        # Upstream pre-mission analysis for aero
         prob.model.add_subsystem(
             'pre_mission',
-            CorePreMission(aviary_options=flops_inputs,
-                           subsystems=default_premission_subsystems),
-            promotes_inputs=['aircraft:*', 'mission:*'],
-            promotes_outputs=['aircraft:*', 'mission:*'])
+            CorePreMission(
+                aviary_options=flops_inputs, subsystems=default_premission_subsystems
+            ),
+            promotes_inputs=['aircraft:*'],
+            promotes_outputs=['aircraft:*', 'mission:*'],
+        )
 
         model.add_subsystem(
             'aero', aero.build_mission(num_nodes=nn,
@@ -82,46 +82,22 @@ class MissionDragTest(unittest.TestCase):
             promotes=['*']
         )
 
-        prob.model.add_subsystem(
-            'input_sink',
-            VariablesIn(aviary_options=flops_inputs),
-            promotes_inputs=['*'],
-            promotes_outputs=['*']
-        )
-
-        # keys = [Aircraft.Engine.SCALED_SLS_THRUST, Aircraft.Nacelle.WETTED_AREA,
-        #         Aircraft.Nacelle.FINENESS, Aircraft.Nacelle.CHARACTERISTIC_LENGTH]
-
-        # for key in keys:
-        #     val, units = flops_inputs.get_item(key)
-        #     # TODO temp line to ignore dynamic mission variables, will not work
-        #     #      if names change to 'dynamic:mission:*'
-        #     if ':' not in key:
-        #         continue
-        #     prob.model.pre_mission.set_input_defaults(key, val, units)
-
-        set_aviary_initial_values(prob.model, flops_inputs)
+        prob.model.set_input_defaults(Aircraft.Engine.SCALE_FACTOR, np.ones(1))
 
         prob.setup(force_alloc_complex=True)
         prob.set_solver_print(level=2)
 
         # Mission params
-        prob.set_val(Dynamic.Mission.MACH, val=mach)
-        prob.set_val(Dynamic.Mission.STATIC_PRESSURE, val=P, units='lbf/ft**2')
-        prob.set_val(Dynamic.Mission.TEMPERATURE, val=T, units='degR')
-        prob.set_val(Dynamic.Mission.MASS, val=mass, units='lbm')
+        prob.set_val(Dynamic.Atmosphere.MACH, val=mach)
+        prob.set_val(Dynamic.Atmosphere.STATIC_PRESSURE, val=P, units='lbf/ft**2')
+        prob.set_val(Dynamic.Atmosphere.TEMPERATURE, val=T, units='degR')
+        prob.set_val(Dynamic.Vehicle.MASS, val=mass, units='lbm')
 
-        for (key, (val, units)) in get_items(flops_inputs):
-            try:
-                prob.set_val(key, val, units)
-
-            except:
-                # Should be an option or an overridden output.
-                continue
+        set_aviary_initial_values(prob, flops_inputs)
 
         prob.run_model()
 
-        D = prob.get_val(Dynamic.Mission.DRAG, 'lbf')
+        D = prob.get_val(Dynamic.Vehicle.DRAG, 'lbf')
         CD = D / (Sref * 0.5 * 1.4 * P * mach ** 2)
 
         data = np.array([
@@ -203,13 +179,15 @@ class MissionDragTest(unittest.TestCase):
         prob = om.Problem()
         model = prob.model
 
-        # Upstream static analysis for aero
+        # Upstream pre-mission analysis for aero
         prob.model.add_subsystem(
             'pre_mission',
-            CorePreMission(aviary_options=flops_inputs,
-                           subsystems=default_premission_subsystems),
-            promotes_inputs=['aircraft:*', 'mission:*'],
-            promotes_outputs=['aircraft:*', 'mission:*'])
+            CorePreMission(
+                aviary_options=flops_inputs, subsystems=default_premission_subsystems
+            ),
+            promotes_inputs=['aircraft:*'],
+            promotes_outputs=['aircraft:*', 'mission:*'],
+        )
 
         model.add_subsystem(
             'aero', aero.build_mission(num_nodes=nn,
@@ -218,34 +196,21 @@ class MissionDragTest(unittest.TestCase):
             promotes=['*']
         )
 
-        prob.model.add_subsystem(
-            'input_sink',
-            VariablesIn(aviary_options=flops_inputs),
-            promotes_inputs=['*'],
-            promotes_outputs=['*']
-        )
-
-        set_aviary_initial_values(prob.model, flops_inputs)
+        prob.model.set_input_defaults(Aircraft.Engine.SCALE_FACTOR, np.ones(1))
 
         prob.setup()
 
         # Mission params
-        prob.set_val(Dynamic.Mission.MACH, val=mach)
-        prob.set_val(Dynamic.Mission.STATIC_PRESSURE, val=P, units='lbf/ft**2')
-        prob.set_val(Dynamic.Mission.TEMPERATURE, val=T, units='degR')
-        prob.set_val(Dynamic.Mission.MASS, val=mass, units='lbm')
+        prob.set_val(Dynamic.Atmosphere.MACH, val=mach)
+        prob.set_val(Dynamic.Atmosphere.STATIC_PRESSURE, val=P, units='lbf/ft**2')
+        prob.set_val(Dynamic.Atmosphere.TEMPERATURE, val=T, units='degR')
+        prob.set_val(Dynamic.Vehicle.MASS, val=mass, units='lbm')
 
-        for (key, (val, units)) in get_items(flops_inputs):
-            try:
-                prob.set_val(key, val, units)
-
-            except:
-                # Should be an option or an overridden output.
-                continue
+        set_aviary_initial_values(prob, flops_inputs)
 
         prob.run_model()
 
-        D = prob.get_val(Dynamic.Mission.DRAG, 'lbf')
+        D = prob.get_val(Dynamic.Vehicle.DRAG, 'lbf')
         CD = D / (Sref * 0.5 * 1.4 * P * mach ** 2)
 
         data = np.array([
@@ -327,13 +292,15 @@ class MissionDragTest(unittest.TestCase):
         prob = om.Problem()
         model = prob.model
 
-        # Upstream static analysis for aero
+        # Upstream pre-mission analysis for aero
         prob.model.add_subsystem(
             'pre_mission',
-            CorePreMission(aviary_options=flops_inputs,
-                           subsystems=default_premission_subsystems),
-            promotes_inputs=['aircraft:*', 'mission:*'],
-            promotes_outputs=['aircraft:*', 'mission:*'])
+            CorePreMission(
+                aviary_options=flops_inputs, subsystems=default_premission_subsystems
+            ),
+            promotes_inputs=['aircraft:*'],
+            promotes_outputs=['aircraft:*', 'mission:*'],
+        )
 
         model.add_subsystem(
             'aero', aero.build_mission(num_nodes=nn,
@@ -342,38 +309,21 @@ class MissionDragTest(unittest.TestCase):
             promotes=['*']
         )
 
-        prob.model.add_subsystem(
-            'input_sink',
-            VariablesIn(aviary_options=flops_inputs),
-            promotes_inputs=['*'],
-            promotes_outputs=['*']
-        )
-
-        set_aviary_initial_values(prob.model, flops_inputs)
-
-        # key = Aircraft.Engine.SCALED_SLS_THRUST
-        # val, units = flops_inputs.get_item(key)
-        # prob.model.pre_mission.set_input_defaults(key, val, units)
+        prob.model.set_input_defaults(Aircraft.Engine.SCALE_FACTOR, np.ones(1))
 
         prob.setup()
 
         # Mission params
-        prob.set_val(Dynamic.Mission.MACH, val=mach)
-        prob.set_val(Dynamic.Mission.STATIC_PRESSURE, val=P, units='lbf/ft**2')
-        prob.set_val(Dynamic.Mission.TEMPERATURE, val=T, units='degR')
-        prob.set_val(Dynamic.Mission.MASS, val=mass, units='lbm')
+        prob.set_val(Dynamic.Atmosphere.MACH, val=mach)
+        prob.set_val(Dynamic.Atmosphere.STATIC_PRESSURE, val=P, units='lbf/ft**2')
+        prob.set_val(Dynamic.Atmosphere.TEMPERATURE, val=T, units='degR')
+        prob.set_val(Dynamic.Vehicle.MASS, val=mass, units='lbm')
 
-        for (key, (val, units)) in get_items(flops_inputs):
-            try:
-                prob.set_val(key, val, units)
-
-            except:
-                # Should be an option or an overridden output.
-                continue
+        set_aviary_initial_values(prob, flops_inputs)
 
         prob.run_model()
 
-        D = prob.get_val(Dynamic.Mission.DRAG, 'lbf')
+        D = prob.get_val(Dynamic.Vehicle.DRAG, 'lbf')
         CD = D / (Sref * 0.5 * 1.4 * P * mach ** 2)
 
         data = np.array([

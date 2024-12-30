@@ -347,6 +347,9 @@ class WingMiscMass(om.ExplicitComponent):
 
 
 class WingTotalMass(om.ExplicitComponent):
+    """
+    Computation of wing mass using FLOPS-based detailed wing mass equations.
+    """
 
     def initialize(self):
         self.options.declare(
@@ -374,9 +377,9 @@ class WingTotalMass(om.ExplicitComponent):
         m2 = inputs[Aircraft.Wing.SHEAR_CONTROL_MASS]
         m3 = inputs[Aircraft.Wing.MISC_MASS]
         m4 = inputs[Aircraft.Wing.BWB_AFTBODY_MASS]
-        m_scalar = inputs[Aircraft.Wing.MASS_SCALER]
+        m_scaler = inputs[Aircraft.Wing.MASS_SCALER]
 
-        outputs[Aircraft.Wing.MASS] = (m1 + m2 + m3 + m4) * m_scalar
+        outputs[Aircraft.Wing.MASS] = (m1 + m2 + m3 + m4) * m_scaler
 
     def compute_partials(self, inputs, J):
         m1 = inputs[Aircraft.Wing.BENDING_MATERIAL_MASS]

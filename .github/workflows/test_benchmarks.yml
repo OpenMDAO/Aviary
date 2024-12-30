@@ -33,7 +33,7 @@ jobs:
         uses: ./actions/.github/actions/prepare_environment
         with:
             NAME: 'latest'
-            PY: 3
+            PY: 3.12
             NUMPY: 1
             SCIPY: 1
             PYOPTSPARSE: 'v2.9.1'

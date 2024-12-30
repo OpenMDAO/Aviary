@@ -12,38 +12,39 @@ phase_info = deepcopy(av.default_height_energy_phase_info)
 # Here we just add the simple weight system to only the pre-mission
 phase_info['pre_mission']['external_subsystems'] = [WingWeightBuilder()]
 
-prob = av.AviaryProblem()
+if __name__ == '__main__':
+    prob = av.AviaryProblem()
 
-# Load aircraft and options data from user
-# Allow for user overrides here
-prob.load_inputs('models/test_aircraft/aircraft_for_bench_FwFm.csv', phase_info)
+    # Load aircraft and options data from user
+    # Allow for user overrides here
+    prob.load_inputs('models/test_aircraft/aircraft_for_bench_FwFm.csv', phase_info)
 
-# Preprocess inputs
-prob.check_and_preprocess_inputs()
+    # Preprocess inputs
+    prob.check_and_preprocess_inputs()
 
-prob.add_pre_mission_systems()
+    prob.add_pre_mission_systems()
 
-prob.add_phases()
+    prob.add_phases()
 
-prob.add_post_mission_systems()
+    prob.add_post_mission_systems()
 
-# Link phases and variables
-prob.link_phases()
+    # Link phases and variables
+    prob.link_phases()
 
-prob.add_driver("SLSQP")
+    prob.add_driver("SLSQP")
 
-prob.add_design_variables()
+    prob.add_design_variables()
 
-prob.add_objective()
+    prob.add_objective()
 
-prob.setup()
+    prob.setup()
 
-prob.set_initial_guesses()
+    prob.set_initial_guesses()
 
-prob.run_aviary_problem(suppress_solver_print=True)
+    prob.run_aviary_problem(suppress_solver_print=True)
 
-print('Engine Mass', prob.get_val(av.Aircraft.Engine.MASS))
-print('Wing Mass', prob.get_val(av.Aircraft.Wing.MASS))
-print('Horizontal Tail Mass', prob.get_val(av.Aircraft.HorizontalTail.MASS))
+    print('Engine Mass', prob.get_val(av.Aircraft.Engine.MASS))
+    print('Wing Mass', prob.get_val(av.Aircraft.Wing.MASS))
+    print('Horizontal Tail Mass', prob.get_val(av.Aircraft.HorizontalTail.MASS))
 
-print('done')
+    print('done')

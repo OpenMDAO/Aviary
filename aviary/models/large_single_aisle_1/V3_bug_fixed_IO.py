@@ -13,6 +13,10 @@ V3_bug_fixed_options = get_option_defaults()
 V3_bug_fixed_options.set_val(Aircraft.Electrical.HAS_HYBRID_SYSTEM,
                              val=False, units='unitless')
 V3_bug_fixed_options.set_val(
+    Aircraft.CrewPayload.Design.NUM_PASSENGERS, val=180, units='unitless')
+# we keep CrewPayload.NUM_PASSENGERS here because preprocess_crewpayload is often not run in these
+# tests which prevents these values being assigned from Design.NUM_PASSENGERS as would normally happen
+V3_bug_fixed_options.set_val(
     Aircraft.CrewPayload.NUM_PASSENGERS, val=180, units='unitless')
 V3_bug_fixed_options.set_val(Mission.Design.CRUISE_ALTITUDE, val=37500, units='ft')
 V3_bug_fixed_options.set_val(
@@ -117,7 +121,7 @@ V3_bug_fixed_options.set_val(
     Aircraft.Fuselage.TAIL_FINENESS, 3, units="unitless"
 )
 V3_bug_fixed_options.set_val(
-    Aircraft.Fuselage.WETTED_AREA_FACTOR, 4000, units="unitless"
+    Aircraft.Fuselage.WETTED_AREA, 4000, units="ft**2"
 )
 V3_bug_fixed_options.set_val(
     Aircraft.VerticalTail.MOMENT_RATIO, 2.362, units="unitless"

@@ -1,12 +1,28 @@
+from aviary.mission.gasp_based.ode.descent_ode import DescentODE
 from aviary.mission.phase_builder_base import PhaseBuilderBase
 from aviary.mission.initial_guess_builders import InitialGuessState, InitialGuessIntegrationVariable, InitialGuessControl
 from aviary.utils.aviary_values import AviaryValues
-from aviary.variable_info.variables import Dynamic
 from aviary.variable_info.enums import SpeedType
-from aviary.mission.gasp_based.ode.descent_ode import DescentODE
+from aviary.variable_info.variables import Dynamic
 
 
 class DescentPhase(PhaseBuilderBase):
+    """
+    A phase builder for an descent phase in a mission simulation.
+
+    This class extends the PhaseBuilderBase class, providing specific implementations for
+    the descent phase of a 2-degree of freedom flight mission.
+
+    Attributes
+    ----------
+    Inherits all attributes from PhaseBuilderBase.
+
+    Methods
+    -------
+    Inherits all methods from PhaseBuilderBase.
+    Additional method overrides and new methods specific to the descent phase are included.
+    """
+
     default_name = 'descent_phase'
     default_ode_class = DescentODE
 
@@ -37,18 +53,29 @@ class DescentPhase(PhaseBuilderBase):
 
         # Add timeseries outputs
         phase.add_timeseries_output(
-            Dynamic.Mission.MACH, output_name=Dynamic.Mission.MACH, units="unitless")
+            Dynamic.Atmosphere.MACH,
+            output_name=Dynamic.Atmosphere.MACH,
+            units="unitless",
+        )
         phase.add_timeseries_output("EAS", output_name="EAS", units="kn")
         phase.add_timeseries_output(
-            Dynamic.Mission.VELOCITY, output_name=Dynamic.Mission.VELOCITY, units="kn"
+            Dynamic.Mission.VELOCITY,
+            output_name=Dynamic.Mission.VELOCITY,
+            units="kn",
         )
-        phase.add_timeseries_output(Dynamic.Mission.FLIGHT_PATH_ANGLE,
-                                    output_name=Dynamic.Mission.FLIGHT_PATH_ANGLE, units="deg")
+        phase.add_timeseries_output(
+            Dynamic.Mission.FLIGHT_PATH_ANGLE,
+            output_name=Dynamic.Mission.FLIGHT_PATH_ANGLE,
+            units="deg",
+        )
         phase.add_timeseries_output("alpha", output_name="alpha", units="deg")
         phase.add_timeseries_output("theta", output_name="theta", units="deg")
         phase.add_timeseries_output("aero.CL", output_name="CL", units="unitless")
         phase.add_timeseries_output(
-            Dynamic.Mission.THRUST_TOTAL, output_name=Dynamic.Mission.THRUST_TOTAL, units="lbf")
+            Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
+            output_name=Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
+            units="lbf",
+        )
         phase.add_timeseries_output("aero.CD", output_name="CD", units="unitless")
 
         return phase

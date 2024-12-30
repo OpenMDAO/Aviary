@@ -21,7 +21,8 @@ from aviary.variable_info.variables import Aircraft, Mission
 
 
 class MassParametersTestCase1(unittest.TestCase):
-    # this is large single aisle 1 v3 bug fixed test case
+    """this is large single aisle 1 v3 bug fixed test case"""
+
     def setUp(self):
 
         options = get_option_defaults()
@@ -1681,7 +1682,7 @@ class FixedMassGroupTestCase3(unittest.TestCase):
 
 
 if __name__ == "__main__":
-    unittest.main()
+    # unittest.main()
     # test = GearTestCaseMultiengine()
-    # test = EngineTestCaseMultiEngine()
-    # test.test_case_1()
+    test = EngineTestCaseMultiEngine()
+    test.test_case_1()

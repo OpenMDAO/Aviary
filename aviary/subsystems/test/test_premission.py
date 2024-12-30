@@ -16,7 +16,6 @@ from aviary.variable_info.variables import Aircraft, Mission
 from aviary.variable_info.variable_meta_data import _MetaData as BaseMetaData
 from aviary.models.large_single_aisle_1.V3_bug_fixed_IO import V3_bug_fixed_options, V3_bug_fixed_non_metadata
 from aviary.utils.functions import set_aviary_initial_values
-from aviary.variable_info.variables_in import VariablesIn
 from aviary.variable_info.enums import LegacyCode
 from aviary.subsystems.propulsion.utils import build_engine_deck
 
@@ -103,15 +102,10 @@ class PreMissionTestCase(unittest.TestCase):
         for (key, (val, units)) in get_items(V3_bug_fixed_non_metadata):
             self.prob.model.set_input_defaults(key, val=val, units=units)
 
-        self.prob.model.add_subsystem(
-            'input_sink',
-            VariablesIn(aviary_options=input_options),
-            promotes_inputs=['*'],
-            promotes_outputs=['*']
-        )
+        self.prob.model.set_input_defaults(Aircraft.Wing.SPAN, val=1.0, units='ft')
 
-        set_aviary_initial_values(self.prob.model, input_options)
         self.prob.setup(check=False, force_alloc_complex=True)
+
         self.prob.set_solver_print(2)
 
         # Initial guess for gross mass.
@@ -119,11 +113,11 @@ class PreMissionTestCase(unittest.TestCase):
         self.prob.set_val(Mission.Design.GROSS_MASS, val=1000.0)
 
         # Set inital values for all variables.
-        for (key, (val, units)) in get_items(input_options):
-            try:
-                self.prob.set_val(key, val, units)
-            except KeyError:
-                continue
+        set_aviary_initial_values(self.prob, input_options)
+
+        # Adjust WETTED_AREA_SCALER such that WETTED_AREA = 4000.0
+        self.prob.set_val(
+            Aircraft.Fuselage.WETTED_AREA_SCALER, val=0.86215, units="unitless")
 
     def test_GASP_mass_FLOPS_everything_else(self):
         self.prob.run_model()
@@ -214,9 +208,14 @@ class PreMissionTestCase(unittest.TestCase):
         )
         assert_near_equal(
             self.prob["fuel_mass.max_wingfuel_mass"], 57066.3, tol)
-        assert_near_equal(
-            self.prob[Aircraft.Fuel.AUXILIARY_FUEL_CAPACITY], 0, tol
-        )  # always zero when no body tank
+
+        # This is not in the model because it has been overridden, but is not an
+        # input to any other component in the GASP premission model.
+        err_text = '\'<model> <class Group>: Variable "aircraft:fuel:auxiliary_fuel_capacity" not found.\''
+        with self.assertRaises(KeyError) as cm:
+            self.prob.get_val(Aircraft.Fuel.AUXILIARY_FUEL_CAPACITY)
+        self.assertEqual(str(cm.exception), err_text)
+
         assert_near_equal(
             self.prob["fuel_mass.body_tank.extra_fuel_volume"], 0, tol
         )  # always zero when no body tank
@@ -310,15 +309,6 @@ class PreMissionTestCase(unittest.TestCase):
 
         for (key, (val, units)) in get_items(V3_bug_fixed_non_metadata):
             prob.model.set_input_defaults(key, val=val, units=units)
-
-        prob.model.add_subsystem(
-            'input_sink',
-            VariablesIn(aviary_options=aviary_inputs),
-            promotes_inputs=['*'],
-            promotes_outputs=['*']
-        )
-
-        set_aviary_initial_values(prob.model, aviary_inputs)
 
         prob.setup()
 

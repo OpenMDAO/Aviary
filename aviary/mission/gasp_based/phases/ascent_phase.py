@@ -8,6 +8,22 @@ from aviary.mission.gasp_based.ode.ascent_ode import AscentODE
 
 
 class AscentPhase(PhaseBuilderBase):
+    """
+    A phase builder for an ascent phase in a 2-degree of freedom mission simulation.
+
+    This class extends the PhaseBuilderBase class, providing specific implementations for
+    the ascent phase of a flight mission.
+
+    Attributes
+    ----------
+    Inherits all attributes from PhaseBuilderBase.
+
+    Methods
+    -------
+    Inherits all methods from PhaseBuilderBase.
+    Additional method overrides and new methods specific to the ascent phase are included.
+    """
+
     default_name = 'ascent_phase'
     default_ode_class = AscentODE
 
@@ -70,11 +86,13 @@ class AscentPhase(PhaseBuilderBase):
         phase.add_parameter("t_init_flaps", units="s",
                             static_target=True, opt=False, val=48.21)
 
-        phase.add_timeseries_output(Dynamic.Mission.THRUST_TOTAL, units="lbf")
+        phase.add_timeseries_output(
+            Dynamic.Vehicle.Propulsion.THRUST_TOTAL, units="lbf"
+        )
         phase.add_timeseries_output("normal_force")
-        phase.add_timeseries_output(Dynamic.Mission.MACH)
+        phase.add_timeseries_output(Dynamic.Atmosphere.MACH)
         phase.add_timeseries_output("EAS", units="kn")
-        phase.add_timeseries_output(Dynamic.Mission.LIFT)
+        phase.add_timeseries_output(Dynamic.Vehicle.LIFT)
         phase.add_timeseries_output("CL")
         phase.add_timeseries_output("CD")
 

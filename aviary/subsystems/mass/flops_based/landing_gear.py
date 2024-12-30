@@ -250,6 +250,10 @@ class AltLandingGearMass(om.ExplicitComponent):
 
 
 class NoseGearLength(om.ExplicitComponent):
+    """
+    Computation of nose gear oleo strut length from main gear oleo strut length:
+    NOSE_GEAR_OLEO_LENGTH = 0.7 * MAIN_GEAR_OLEO_LENGTH
+    """
 
     def initialize(self):
         self.options.declare(
@@ -271,6 +275,9 @@ class NoseGearLength(om.ExplicitComponent):
 
 
 class MainGearLength(om.ExplicitComponent):
+    """
+    Computation of main gear length.
+    """
 
     def initialize(self):
         self.options.declare(

@@ -8,8 +8,8 @@ from aviary.variable_info.variables import Aircraft
 
 class SizeEngine(om.ExplicitComponent):
     '''
-    Calculates thrust scaling factors for dynamic mission parameters. Designed for use
-    with EngineDecks.
+    Calculates thrust scaling factors for mission performance parameters. Designed for
+    use with EngineDecks.
 
     Can be vectorized for all unique engines present on aircraft. Each index represents a
     single instance of an engine model.
@@ -21,9 +21,9 @@ class SizeEngine(om.ExplicitComponent):
             desc='collection of Aircraft/Mission specific options')
 
     def setup(self):
-        add_aviary_input(self, Aircraft.Engine.SCALED_SLS_THRUST, val=0.0)
+        add_aviary_input(self, Aircraft.Engine.SCALE_FACTOR, val=1.0)
 
-        add_aviary_output(self, Aircraft.Engine.SCALE_FACTOR, val=0.0)
+        add_aviary_output(self, Aircraft.Engine.SCALED_SLS_THRUST, val=0.0)
 
         # variables that also may require scaling
         # TODO - inlet_weight <input>
@@ -41,29 +41,27 @@ class SizeEngine(om.ExplicitComponent):
         reference_sls_thrust = options.get_val(Aircraft.Engine.REFERENCE_SLS_THRUST,
                                                units='lbf')
 
-        scaled_sls_thrust = inputs[Aircraft.Engine.SCALED_SLS_THRUST]
+        engine_scale_factor = inputs[Aircraft.Engine.SCALE_FACTOR]
 
         # Engine is only scaled if required
         # engine scale factor is ratio of scaled thrust target and reference thrust
-        engine_scale_factor = 1
         if scale_engine:
-            engine_scale_factor = scaled_sls_thrust / reference_sls_thrust
+            scaled_sls_thrust = engine_scale_factor * reference_sls_thrust
+        else:
+            scaled_sls_thrust = reference_sls_thrust
 
-        outputs[Aircraft.Engine.SCALE_FACTOR] = engine_scale_factor
+        outputs[Aircraft.Engine.SCALED_SLS_THRUST] = scaled_sls_thrust
 
     def setup_partials(self):
-        self.declare_partials(Aircraft.Engine.SCALE_FACTOR,
-                              Aircraft.Engine.SCALED_SLS_THRUST)
+        self.declare_partials(
+            Aircraft.Engine.SCALED_SLS_THRUST, Aircraft.Engine.SCALE_FACTOR
+        )
 
     def compute_partials(self, inputs, J):
         options: AviaryValues = self.options['aviary_options']
-        scale_engine = options.get_val(Aircraft.Engine.SCALE_PERFORMANCE)
         reference_sls_thrust = options.get_val(
             Aircraft.Engine.REFERENCE_SLS_THRUST, units='lbf')
 
-        deriv_scale_factor = 0
-        if scale_engine:
-            deriv_scale_factor = 1.0 / reference_sls_thrust
-
-        J[Aircraft.Engine.SCALE_FACTOR,
-            Aircraft.Engine.SCALED_SLS_THRUST] = deriv_scale_factor
+        J[Aircraft.Engine.SCALED_SLS_THRUST, Aircraft.Engine.SCALE_FACTOR] = (
+            reference_sls_thrust
+        )

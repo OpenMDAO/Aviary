@@ -12,6 +12,10 @@ from aviary.variable_info.variables import Dynamic
 
 class RangeRateTest(unittest.TestCase):
     def setUp(self):
+        """
+        test using data from validation_cases/validation_data/flops_data/full_mission_test_data.py
+        """
+
         prob = self.prob = om.Problem()
 
         time, _ = data.get_item('time')
@@ -27,14 +31,15 @@ class RangeRateTest(unittest.TestCase):
 
     def test_case1(self):
 
-        do_validation_test(self.prob,
-                           'full_mission_test_data',
-                           input_validation_data=data,
-                           output_validation_data=data,
-                           input_keys=[Dynamic.Mission.ALTITUDE_RATE,
-                                       Dynamic.Mission.VELOCITY],
-                           output_keys=Dynamic.Mission.DISTANCE_RATE,
-                           tol=1e-12)
+        do_validation_test(
+            self.prob,
+            'full_mission_test_data',
+            input_validation_data=data,
+            output_validation_data=data,
+            input_keys=[Dynamic.Mission.ALTITUDE_RATE, Dynamic.Mission.VELOCITY],
+            output_keys=Dynamic.Mission.DISTANCE_RATE,
+            tol=1e-12,
+        )
 
     def test_IO(self):
         assert_match_varnames(self.prob.model)

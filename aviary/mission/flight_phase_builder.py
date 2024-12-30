@@ -2,16 +2,15 @@ import numpy as np
 
 import dymos as dm
 
+from aviary.mission.initial_guess_builders import InitialGuessState
+from aviary.mission.flops_based.ode.mission_ODE import MissionODE
+from aviary.mission.flops_based.phases.phase_utils import add_subsystem_variables_to_phase, get_initial
 from aviary.mission.phase_builder_base import PhaseBuilderBase, register
-from aviary.mission.initial_guess_builders import InitialGuessState, InitialGuessIntegrationVariable, InitialGuessControl
 
 from aviary.utils.aviary_values import AviaryValues
-from aviary.variable_info.variable_meta_data import _MetaData
-from aviary.mission.flops_based.phases.phase_utils import add_subsystem_variables_to_phase, get_initial
-from aviary.variable_info.variables import Aircraft, Dynamic
-from aviary.mission.flops_based.ode.mission_ODE import MissionODE
 from aviary.variable_info.enums import EquationsOfMotion, ThrottleAllocation
-from aviary.variable_info.variables import Aircraft
+from aviary.variable_info.variable_meta_data import _MetaData
+from aviary.variable_info.variables import Aircraft, Dynamic
 
 
 # TODO: support/handle the following in the base class
@@ -21,6 +20,10 @@ from aviary.variable_info.variables import Aircraft
 # - self.meta_data, with cls.default_meta_data customization point
 @register
 class FlightPhaseBase(PhaseBuilderBase):
+    """
+    The base class for flight phase
+    """
+
     __slots__ = ('external_subsystems', 'meta_data')
 
     # region : derived type customization points
@@ -102,8 +105,8 @@ class FlightPhaseBase(PhaseBuilderBase):
         ##############
         # TODO: critically think about how we should handle fix_initial and input_initial defaults.
         # In keeping with Dymos standards, the default should be False instead of True.
-        input_initial_mass = get_initial(input_initial, Dynamic.Mission.MASS)
-        fix_initial_mass = get_initial(fix_initial, Dynamic.Mission.MASS, True)
+        input_initial_mass = get_initial(input_initial, Dynamic.Vehicle.MASS)
+        fix_initial_mass = get_initial(fix_initial, Dynamic.Vehicle.MASS, True)
 
         # Experiment: use a constraint for mass instead of connected initial.
         # This is due to some problems in mpi.
@@ -115,15 +118,15 @@ class FlightPhaseBase(PhaseBuilderBase):
             input_initial_mass = False
 
         if phase_type is EquationsOfMotion.HEIGHT_ENERGY:
-            rate_source = Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL
+            rate_source = Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL
         else:
             rate_source = "dmass_dr"
 
         phase.add_state(
-            Dynamic.Mission.MASS, fix_initial=fix_initial_mass, fix_final=False,
+            Dynamic.Vehicle.MASS, fix_initial=fix_initial_mass, fix_final=False,
             lower=0.0, ref=1e4, defect_ref=1e6, units='kg',
             rate_source=rate_source,
-            targets=Dynamic.Mission.MASS,
+            targets=Dynamic.Vehicle.MASS,
             input_initial=input_initial_mass,
         )
 
@@ -146,23 +149,30 @@ class FlightPhaseBase(PhaseBuilderBase):
         # Add Controls #
         ################
         if phase_type is EquationsOfMotion.HEIGHT_ENERGY:
-            rate_targets = [Dynamic.Mission.MACH_RATE]
+            rate_targets = [Dynamic.Atmosphere.MACH_RATE]
         else:
             rate_targets = ['dmach_dr']
 
         if use_polynomial_control:
             phase.add_polynomial_control(
-                Dynamic.Mission.MACH,
-                targets=Dynamic.Mission.MACH, units=mach_bounds[1],
-                opt=optimize_mach, lower=mach_bounds[0][0], upper=mach_bounds[0][1],
+                Dynamic.Atmosphere.MACH,
+                targets=Dynamic.Atmosphere.MACH,
+                units=mach_bounds[1],
+                opt=optimize_mach,
+                lower=mach_bounds[0][0],
+                upper=mach_bounds[0][1],
                 rate_targets=rate_targets,
-                order=polynomial_control_order, ref=0.5,
+                order=polynomial_control_order,
+                ref=0.5,
             )
         else:
             phase.add_control(
-                Dynamic.Mission.MACH,
-                targets=Dynamic.Mission.MACH, units=mach_bounds[1],
-                opt=optimize_mach, lower=mach_bounds[0][0], upper=mach_bounds[0][1],
+                Dynamic.Atmosphere.MACH,
+                targets=Dynamic.Atmosphere.MACH,
+                units=mach_bounds[1],
+                opt=optimize_mach,
+                lower=mach_bounds[0][0],
+                upper=mach_bounds[0][1],
                 rate_targets=rate_targets,
                 ref=0.5,
             )
@@ -208,25 +218,39 @@ class FlightPhaseBase(PhaseBuilderBase):
 
         ground_roll = user_options.get_val('ground_roll')
         if ground_roll:
-            phase.add_polynomial_control(Dynamic.Mission.ALTITUDE,
-                                         order=1, val=0, opt=False,
-                                         fix_initial=fix_initial,
-                                         rate_targets=['dh_dr'], rate2_targets=['d2h_dr2'])
+            phase.add_polynomial_control(
+                Dynamic.Mission.ALTITUDE,
+                order=1,
+                val=0,
+                opt=False,
+                fix_initial=fix_initial,
+                rate_targets=['dh_dr'],
+                rate2_targets=['d2h_dr2'],
+            )
         else:
             if use_polynomial_control:
                 phase.add_polynomial_control(
                     Dynamic.Mission.ALTITUDE,
-                    targets=Dynamic.Mission.ALTITUDE, units=altitude_bounds[1],
-                    opt=optimize_altitude, lower=altitude_bounds[0][0], upper=altitude_bounds[0][1],
-                    rate_targets=rate_targets, rate2_targets=rate2_targets,
-                    order=polynomial_control_order, ref=altitude_bounds[0][1],
+                    targets=Dynamic.Mission.ALTITUDE,
+                    units=altitude_bounds[1],
+                    opt=optimize_altitude,
+                    lower=altitude_bounds[0][0],
+                    upper=altitude_bounds[0][1],
+                    rate_targets=rate_targets,
+                    rate2_targets=rate2_targets,
+                    order=polynomial_control_order,
+                    ref=altitude_bounds[0][1],
                 )
             else:
                 phase.add_control(
                     Dynamic.Mission.ALTITUDE,
-                    targets=Dynamic.Mission.ALTITUDE, units=altitude_bounds[1],
-                    opt=optimize_altitude, lower=altitude_bounds[0][0], upper=altitude_bounds[0][1],
-                    rate_targets=rate_targets, rate2_targets=rate2_targets,
+                    targets=Dynamic.Mission.ALTITUDE,
+                    units=altitude_bounds[1],
+                    opt=optimize_altitude,
+                    lower=altitude_bounds[0][0],
+                    upper=altitude_bounds[0][1],
+                    rate_targets=rate_targets,
+                    rate2_targets=rate2_targets,
                     ref=altitude_bounds[0][1],
                 )
 
@@ -234,46 +258,53 @@ class FlightPhaseBase(PhaseBuilderBase):
         # Add Timeseries #
         ##################
         phase.add_timeseries_output(
-            Dynamic.Mission.MACH, output_name=Dynamic.Mission.MACH, units='unitless'
+            Dynamic.Atmosphere.MACH,
+            output_name=Dynamic.Atmosphere.MACH,
+            units='unitless',
         )
 
         phase.add_timeseries_output(
-            Dynamic.Mission.THRUST_TOTAL,
-            output_name=Dynamic.Mission.THRUST_TOTAL, units='lbf'
+            Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
+            output_name=Dynamic.Vehicle.Propulsion.THRUST_TOTAL, units='lbf'
         )
 
         phase.add_timeseries_output(
-            Dynamic.Mission.DRAG, output_name=Dynamic.Mission.DRAG, units='lbf'
+            Dynamic.Vehicle.DRAG, output_name=Dynamic.Vehicle.DRAG, units='lbf'
         )
 
         phase.add_timeseries_output(
             Dynamic.Mission.SPECIFIC_ENERGY_RATE_EXCESS,
-            output_name=Dynamic.Mission.SPECIFIC_ENERGY_RATE_EXCESS, units='m/s'
+            output_name=Dynamic.Mission.SPECIFIC_ENERGY_RATE_EXCESS,
+            units='m/s',
         )
 
         phase.add_timeseries_output(
-            Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
-            output_name=Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL, units='lbm/h'
+            Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
+            output_name=Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
+            units='lbm/h',
         )
 
         phase.add_timeseries_output(
-            Dynamic.Mission.ELECTRIC_POWER_IN_TOTAL,
-            output_name=Dynamic.Mission.ELECTRIC_POWER_IN_TOTAL, units='kW'
+            Dynamic.Vehicle.Propulsion.ELECTRIC_POWER_IN_TOTAL,
+            output_name=Dynamic.Vehicle.Propulsion.ELECTRIC_POWER_IN_TOTAL,
+            units='kW',
         )
 
         phase.add_timeseries_output(
             Dynamic.Mission.ALTITUDE_RATE,
-            output_name=Dynamic.Mission.ALTITUDE_RATE, units='ft/s'
+            output_name=Dynamic.Mission.ALTITUDE_RATE,
+            units='ft/s',
         )
 
         phase.add_timeseries_output(
-            Dynamic.Mission.THROTTLE,
-            output_name=Dynamic.Mission.THROTTLE, units='unitless'
+            Dynamic.Vehicle.Propulsion.THROTTLE,
+            output_name=Dynamic.Vehicle.Propulsion.THROTTLE, units='unitless'
         )
 
         phase.add_timeseries_output(
             Dynamic.Mission.VELOCITY,
-            output_name=Dynamic.Mission.VELOCITY, units='m/s'
+            output_name=Dynamic.Mission.VELOCITY,
+            units='m/s',
         )
 
         phase.add_timeseries_output(Dynamic.Mission.ALTITUDE)
@@ -290,24 +321,48 @@ class FlightPhaseBase(PhaseBuilderBase):
         ###################
         # Add Constraints #
         ###################
-        if optimize_mach and fix_initial and not Dynamic.Mission.MACH in constraints:
+        if optimize_mach and fix_initial and not Dynamic.Atmosphere.MACH in constraints:
             phase.add_boundary_constraint(
-                Dynamic.Mission.MACH, loc='initial', equals=initial_mach,
+                Dynamic.Atmosphere.MACH,
+                loc='initial',
+                equals=initial_mach,
             )
 
-        if optimize_mach and constrain_final and not Dynamic.Mission.MACH in constraints:
+        if (
+            optimize_mach
+            and constrain_final
+            and not Dynamic.Atmosphere.MACH in constraints
+        ):
             phase.add_boundary_constraint(
-                Dynamic.Mission.MACH, loc='final', equals=final_mach,
+                Dynamic.Atmosphere.MACH,
+                loc='final',
+                equals=final_mach,
             )
 
-        if optimize_altitude and fix_initial and not Dynamic.Mission.ALTITUDE in constraints:
+        if (
+            optimize_altitude
+            and fix_initial
+            and not Dynamic.Mission.ALTITUDE in constraints
+        ):
             phase.add_boundary_constraint(
-                Dynamic.Mission.ALTITUDE, loc='initial', equals=initial_altitude, units=altitude_bounds[1], ref=1.e4,
+                Dynamic.Mission.ALTITUDE,
+                loc='initial',
+                equals=initial_altitude,
+                units=altitude_bounds[1],
+                ref=1.0e4,
             )
 
-        if optimize_altitude and constrain_final and not Dynamic.Mission.ALTITUDE in constraints:
+        if (
+            optimize_altitude
+            and constrain_final
+            and not Dynamic.Mission.ALTITUDE in constraints
+        ):
             phase.add_boundary_constraint(
-                Dynamic.Mission.ALTITUDE, loc='final', equals=final_altitude, units=altitude_bounds[1], ref=1.e4,
+                Dynamic.Mission.ALTITUDE,
+                loc='final',
+                equals=final_altitude,
+                units=altitude_bounds[1],
+                ref=1.0e4,
             )
 
         if no_descent and not Dynamic.Mission.ALTITUDE_RATE in constraints:
@@ -319,23 +374,27 @@ class FlightPhaseBase(PhaseBuilderBase):
         required_available_climb_rate, units = user_options.get_item(
             'required_available_climb_rate')
 
-        if required_available_climb_rate is not None and not Dynamic.Mission.ALTITUDE_RATE_MAX in constraints:
+        if (
+            required_available_climb_rate is not None
+            and not Dynamic.Mission.ALTITUDE_RATE_MAX in constraints
+        ):
             phase.add_path_constraint(
                 Dynamic.Mission.ALTITUDE_RATE_MAX,
-                lower=required_available_climb_rate, units=units
+                lower=required_available_climb_rate,
+                units=units,
             )
 
-        if not Dynamic.Mission.THROTTLE in constraints:
+        if not Dynamic.Vehicle.Propulsion.THROTTLE in constraints:
             if throttle_enforcement == 'boundary_constraint':
                 phase.add_boundary_constraint(
-                    Dynamic.Mission.THROTTLE, loc='initial', lower=0.0, upper=1.0, units='unitless',
+                    Dynamic.Vehicle.Propulsion.THROTTLE, loc='initial', lower=0.0, upper=1.0, units='unitless',
                 )
                 phase.add_boundary_constraint(
-                    Dynamic.Mission.THROTTLE, loc='final', lower=0.0, upper=1.0, units='unitless',
+                    Dynamic.Vehicle.Propulsion.THROTTLE, loc='final', lower=0.0, upper=1.0, units='unitless',
                 )
             elif throttle_enforcement == 'path_constraint':
                 phase.add_path_constraint(
-                    Dynamic.Mission.THROTTLE, lower=0.0, upper=1.0, units='unitless',
+                    Dynamic.Vehicle.Propulsion.THROTTLE, lower=0.0, upper=1.0, units='unitless',
                 )
 
         self._add_user_defined_constraints(phase, constraints)

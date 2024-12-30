@@ -1,19 +1,21 @@
 import numpy as np
 import openmdao.api as om
-from aviary.subsystems.atmosphere.atmosphere import Atmosphere
 
 from aviary.mission.gasp_based.ode.base_ode import BaseODE
 from aviary.mission.gasp_based.ode.params import ParamPort
-from aviary.mission.gasp_based.phases.breguet import RangeComp
+from aviary.mission.gasp_based.ode.breguet_cruise_eom import RangeComp
+from aviary.mission.ode.specific_energy_rate import SpecificEnergyRate
+from aviary.mission.ode.altitude_rate import AltitudeRate
+from aviary.subsystems.atmosphere.atmosphere import Atmosphere
 from aviary.subsystems.mass.mass_to_weight import MassToWeight
 from aviary.subsystems.propulsion.propulsion_builder import PropulsionBuilderBase
 from aviary.variable_info.enums import SpeedType
 from aviary.variable_info.variables import Dynamic
-from aviary.mission.ode.specific_energy_rate import SpecificEnergyRate
-from aviary.mission.ode.altitude_rate import AltitudeRate
 
 
 class BreguetCruiseODESolution(BaseODE):
+    """The GASP based cruise ODE"""
+
     def setup(self):
         nn = self.options["num_nodes"]
         aviary_options = self.options['aviary_options']
@@ -56,13 +58,13 @@ class BreguetCruiseODESolution(BaseODE):
                                        promotes_outputs=subsystem.mission_outputs(**kwargs))
 
         bal = om.BalanceComp(
-            name=Dynamic.Mission.THROTTLE,
+            name=Dynamic.Vehicle.Propulsion.THROTTLE,
             val=np.ones(nn),
             upper=1.0,
             lower=0.0,
             units="unitless",
-            lhs_name=Dynamic.Mission.THRUST_TOTAL,
-            rhs_name=Dynamic.Mission.DRAG,
+            lhs_name=Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
+            rhs_name=Dynamic.Vehicle.DRAG,
             eq_units="lbf",
         )
 
@@ -102,39 +104,54 @@ class BreguetCruiseODESolution(BaseODE):
                 ("cruise_distance_initial", "initial_distance"),
                 ("cruise_time_initial", "initial_time"),
                 "mass",
-                Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
+                Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
                 ("TAS_cruise", Dynamic.Mission.VELOCITY),
             ],
-            promotes_outputs=[("cruise_range", Dynamic.Mission.DISTANCE),
-                              ("cruise_time", "time")],
+            promotes_outputs=[
+                ("cruise_range", Dynamic.Mission.DISTANCE),
+                ("cruise_time", "time"),
+            ],
         )
 
         self.add_subsystem(
             name='SPECIFIC_ENERGY_RATE_EXCESS',
             subsys=SpecificEnergyRate(num_nodes=nn),
-            promotes_inputs=[Dynamic.Mission.VELOCITY, Dynamic.Mission.MASS,
-                             (Dynamic.Mission.THRUST_TOTAL, Dynamic.Mission.THRUST_MAX_TOTAL),
-                             Dynamic.Mission.DRAG],
-            promotes_outputs=[(Dynamic.Mission.SPECIFIC_ENERGY_RATE,
-                               Dynamic.Mission.SPECIFIC_ENERGY_RATE_EXCESS)]
+            promotes_inputs=[
+                Dynamic.Mission.VELOCITY,
+                Dynamic.Vehicle.MASS,
+                (
+                    Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
+                    Dynamic.Vehicle.Propulsion.THRUST_MAX_TOTAL,
+                ),
+                Dynamic.Vehicle.DRAG,
+            ],
+            promotes_outputs=[
+                (
+                    Dynamic.Mission.SPECIFIC_ENERGY_RATE,
+                    Dynamic.Mission.SPECIFIC_ENERGY_RATE_EXCESS,
+                )
+            ],
         )
 
         self.add_subsystem(
             name='ALTITUDE_RATE_MAX',
             subsys=AltitudeRate(num_nodes=nn),
             promotes_inputs=[
-                (Dynamic.Mission.SPECIFIC_ENERGY_RATE,
-                 Dynamic.Mission.SPECIFIC_ENERGY_RATE_EXCESS),
+                (
+                    Dynamic.Mission.SPECIFIC_ENERGY_RATE,
+                    Dynamic.Mission.SPECIFIC_ENERGY_RATE_EXCESS,
+                ),
                 Dynamic.Mission.VELOCITY_RATE,
-                Dynamic.Mission.VELOCITY],
+                Dynamic.Mission.VELOCITY,
+            ],
             promotes_outputs=[
-                (Dynamic.Mission.ALTITUDE_RATE,
-                 Dynamic.Mission.ALTITUDE_RATE_MAX)])
+                (Dynamic.Mission.ALTITUDE_RATE, Dynamic.Mission.ALTITUDE_RATE_MAX)
+            ],
+        )
 
         ParamPort.set_default_vals(self)
         self.set_input_defaults(
-            Dynamic.Mission.ALTITUDE,
-            val=37500 * np.ones(nn),
-            units="ft")
+            Dynamic.Mission.ALTITUDE, val=37500 * np.ones(nn), units="ft"
+        )
         self.set_input_defaults("mass", val=np.linspace(
             171481, 171581 - 10000, nn), units="lbm")

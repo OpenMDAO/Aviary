@@ -1,5 +1,4 @@
 import unittest
-import os
 
 import numpy as np
 import openmdao.api as om
@@ -12,6 +11,10 @@ from aviary.variable_info.variables import Dynamic
 
 
 class SpeedConstraintTestCase1(unittest.TestCase):
+    """
+    Test speed constraint at MACH = 0.6 with targeted MACH at 0.8
+    """
+
     def setUp(self):
 
         self.prob = om.Problem()
@@ -23,7 +26,7 @@ class SpeedConstraintTestCase1(unittest.TestCase):
 
         self.prob.model.set_input_defaults("EAS", np.array([229, 229, 229]), units="kn")
         self.prob.model.set_input_defaults(
-            Dynamic.Mission.MACH, np.array([0.6, 0.6, 0.6]), units="unitless"
+            Dynamic.Atmosphere.MACH, np.array([0.6, 0.6, 0.6]), units="unitless"
         )
 
         self.prob.setup(check=False, force_alloc_complex=True)
@@ -44,6 +47,10 @@ class SpeedConstraintTestCase1(unittest.TestCase):
 
 
 class SpeedConstraintTestCase2(unittest.TestCase):
+    """
+    Test speed constraint at MACH = 0.9 with targeted Mach at 0.8
+    """
+
     def setUp(self):
 
         self.prob = om.Problem()
@@ -55,7 +62,7 @@ class SpeedConstraintTestCase2(unittest.TestCase):
 
         self.prob.model.set_input_defaults("EAS", np.array([229, 229, 229]), units="kn")
         self.prob.model.set_input_defaults(
-            Dynamic.Mission.MACH, np.array([0.9, 0.9, 0.9]), units="unitless"
+            Dynamic.Atmosphere.MACH, np.array([0.9, 0.9, 0.9]), units="unitless"
         )
 
         self.prob.setup(check=False, force_alloc_complex=True)

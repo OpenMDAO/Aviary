@@ -8,11 +8,15 @@ from openmdao.core.problem import _clear_problem_names
 from aviary.interface.default_phase_info.two_dof import phase_info
 from aviary.interface.methods_for_level1 import run_aviary
 from aviary.variable_info.variables import Aircraft, Mission
-from aviary.variable_info.enums import Verbosity
 
 
 @use_tempdirs
 class ProblemPhaseTestCase(unittest.TestCase):
+    """
+    Test the setup and run of a large single aisle commercial transport aircraft using 
+    FLOPS mass method and TWO_DEGREES_OF_FREEDOM mission method. Expected outputs
+    based on 'models/test_aircraft/aircraft_for_bench_FwFm.csv' model.
+    """
 
     def setUp(self):
         _clear_problem_names()  # need to reset these to simulate separate runs
@@ -20,23 +24,28 @@ class ProblemPhaseTestCase(unittest.TestCase):
     @require_pyoptsparse(optimizer="IPOPT")
     def bench_test_swap_3_FwGm_IPOPT(self):
         local_phase_info = deepcopy(phase_info)
-        prob = run_aviary('models/test_aircraft/aircraft_for_bench_FwGm.csv', local_phase_info,
-                          max_iter=100, verbosity=Verbosity.QUIET, optimizer='IPOPT')
+        prob = run_aviary(
+            'models/test_aircraft/aircraft_for_bench_FwGm.csv',
+            local_phase_info,
+            max_iter=100,
+            verbosity=0,
+            optimizer='IPOPT',
+        )
 
         rtol = 1e-2
 
         # There are no truth values for these.
         assert_near_equal(prob.get_val(Mission.Design.GROSS_MASS),
-                          184533., tolerance=rtol)
+                          179391., tolerance=rtol)
 
         assert_near_equal(prob.get_val(Aircraft.Design.OPERATING_MASS),
-                          104530., tolerance=rtol)
+                          101556., tolerance=rtol)
 
         assert_near_equal(prob.get_val(Mission.Summary.TOTAL_FUEL_MASS),
-                          42444., tolerance=rtol)
+                          39979., tolerance=rtol)
 
         assert_near_equal(prob.get_val('landing.' + Mission.Landing.GROUND_DISTANCE),
-                          2528., tolerance=rtol)
+                          2595., tolerance=rtol)
 
         assert_near_equal(prob.get_val("traj.desc2.timeseries.distance")[-1],
                           3675.0, tolerance=rtol)
@@ -44,23 +53,27 @@ class ProblemPhaseTestCase(unittest.TestCase):
     @require_pyoptsparse(optimizer="SNOPT")
     def bench_test_swap_3_FwGm_SNOPT(self):
         local_phase_info = deepcopy(phase_info)
-        prob = run_aviary('models/test_aircraft/aircraft_for_bench_FwGm.csv',
-                          local_phase_info, verbosity=Verbosity.QUIET, optimizer='SNOPT')
+        prob = run_aviary(
+            'models/test_aircraft/aircraft_for_bench_FwGm.csv',
+            local_phase_info,
+            verbosity=0,
+            optimizer='SNOPT',
+        )
 
         rtol = 1e-2
 
         # There are no truth values for these.
         assert_near_equal(prob.get_val(Mission.Design.GROSS_MASS),
-                          186418., tolerance=rtol)
+                          179390., tolerance=rtol)
 
         assert_near_equal(prob.get_val(Aircraft.Design.OPERATING_MASS),
-                          104530., tolerance=rtol)
+                          101556., tolerance=rtol)
 
         assert_near_equal(prob.get_val(Mission.Summary.TOTAL_FUEL_MASS),
-                          42942., tolerance=rtol)
+                          39979., tolerance=rtol)
 
         assert_near_equal(prob.get_val('landing.' + Mission.Landing.GROUND_DISTANCE),
-                          2528., tolerance=rtol)
+                          2595., tolerance=rtol)
 
         assert_near_equal(prob.get_val("traj.desc2.timeseries.distance")[-1],
                           3675.0, tolerance=rtol)
@@ -69,5 +82,5 @@ class ProblemPhaseTestCase(unittest.TestCase):
 if __name__ == "__main__":
     test = ProblemPhaseTestCase()
     test.setUp()
-    test.bench_test_swap_3_FwGm_IPOPT()
     test.bench_test_swap_3_FwGm_SNOPT()
+    # test.bench_test_swap_3_FwGm_IPOPT()

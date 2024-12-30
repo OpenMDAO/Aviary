@@ -1,5 +1,4 @@
 import unittest
-import os
 
 import numpy as np
 import openmdao.api as om
@@ -22,15 +21,18 @@ class ClimbTestCase(unittest.TestCase):
         self.prob.model.add_subsystem("group", ClimbRates(num_nodes=2), promotes=["*"])
 
         self.prob.model.set_input_defaults(
-            Dynamic.Mission.VELOCITY, np.array([459, 459]), units="kn")
-        self.prob.model.set_input_defaults(
-            Dynamic.Mission.THRUST_TOTAL, np.array([10473, 10473]), units="lbf"
+            Dynamic.Mission.VELOCITY, np.array([459, 459]), units="kn"
         )
         self.prob.model.set_input_defaults(
-            Dynamic.Mission.DRAG, np.array([9091.517, 9091.517]), units="lbf"
+            Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
+            np.array([10473, 10473]),
+            units="lbf",
         )
         self.prob.model.set_input_defaults(
-            Dynamic.Mission.MASS, np.array([171481, 171481]), units="lbm"
+            Dynamic.Vehicle.DRAG, np.array([9091.517, 9091.517]), units="lbf"
+        )
+        self.prob.model.set_input_defaults(
+            Dynamic.Vehicle.MASS, np.array([171481, 171481]), units="lbm"
         )
 
         self.prob.setup(check=False, force_alloc_complex=True)
@@ -41,8 +43,9 @@ class ClimbTestCase(unittest.TestCase):
         self.prob.run_model()
 
         assert_near_equal(
-            self.prob[Dynamic.Mission.ALTITUDE_RATE], np.array(
-                [6.24116612, 6.24116612]), tol
+            self.prob[Dynamic.Mission.ALTITUDE_RATE],
+            np.array([6.24116612, 6.24116612]),
+            tol,
         )  # note: values from GASP are: np.array([5.9667, 5.9667])
         assert_near_equal(
             self.prob[Dynamic.Mission.DISTANCE_RATE], np.array(
@@ -55,11 +58,47 @@ class ClimbTestCase(unittest.TestCase):
             tol,
         )  # note: values from GASP are: np.array([170316.2, 170316.2])
         assert_near_equal(
-            self.prob[Dynamic.Mission.FLIGHT_PATH_ANGLE], np.array(
-                [0.00805627, 0.00805627]), tol
+            self.prob[Dynamic.Mission.FLIGHT_PATH_ANGLE],
+            np.array([0.00805627, 0.00805627]),
+            tol,
         )  # note: values from GASP are:np.array([.0076794487, .0076794487])
 
         partial_data = self.prob.check_partials(out_stream=None, method="cs")
+        assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
+
+
+class ClimbTestCase2(unittest.TestCase):
+    """
+    Test mass-weight conversion
+    """
+
+    def setUp(self):
+        import aviary.mission.gasp_based.ode.climb_eom as climb
+        climb.GRAV_ENGLISH_LBM = 1.1
+
+    def tearDown(self):
+        import aviary.mission.gasp_based.ode.climb_eom as climb
+        climb.GRAV_ENGLISH_LBM = 1.0
+
+    def test_case1(self):
+        prob = om.Problem()
+        prob.model.add_subsystem("group", ClimbRates(num_nodes=2), promotes=["*"])
+        prob.model.set_input_defaults(
+            Dynamic.Mission.VELOCITY, np.array([459, 459]), units="kn")
+        prob.model.set_input_defaults(
+            Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
+            np.array([10473, 10473]),
+            units="lbf",
+        )
+        prob.model.set_input_defaults(
+            Dynamic.Vehicle.DRAG, np.array([9091.517, 9091.517]), units="lbf"
+        )
+        prob.model.set_input_defaults(
+            Dynamic.Vehicle.MASS, np.array([171481, 171481]), units="lbm"
+        )
+        prob.setup(check=False, force_alloc_complex=True)
+
+        partial_data = prob.check_partials(out_stream=None, method="cs")
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
 
 

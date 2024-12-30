@@ -11,6 +11,10 @@ from aviary.variable_info.variables import Aircraft, Mission, Dynamic
 
 
 class LandingCalcTest(unittest.TestCase):
+    """
+    Test computation in LandingCalc class (the simplified landing)
+    """
+
     def setUp(self):
 
         self.prob = om.Problem()
@@ -24,7 +28,9 @@ class LandingCalcTest(unittest.TestCase):
             Mission.Landing.TOUCHDOWN_MASS, val=152800.0, units="lbm"
         )  # check (this is the design landing mass)
         self.prob.model.set_input_defaults(
-            Dynamic.Mission.DENSITY, val=constants.RHO_SEA_LEVEL_METRIC, units="kg/m**3"
+            Dynamic.Atmosphere.DENSITY,
+            val=constants.RHO_SEA_LEVEL_METRIC,
+            units="kg/m**3",
         )  # not exact value but should be close enough
         self.prob.model.set_input_defaults(
             Aircraft.Wing.AREA, val=1370.0, units="ft**2"
@@ -50,7 +56,37 @@ class LandingCalcTest(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
 
 
+class LandingCalcTest2(unittest.TestCase):
+    """
+    Test mass-weight conversion
+    """
+
+    def setUp(self):
+        import aviary.mission.flops_based.phases.simplified_landing as landing
+        landing.GRAV_ENGLISH_LBM = 1.1
+
+    def tearDown(self):
+        import aviary.mission.flops_based.phases.simplified_landing as landing
+        landing.GRAV_ENGLISH_LBM = 1.0
+
+    def test_case1(self):
+        prob = om.Problem()
+        prob.model.add_subsystem(
+            "land",
+            LandingCalc(),
+            promotes=["*"],
+        )
+        prob.setup(check=False, force_alloc_complex=True)
+
+        partial_data = prob.check_partials(out_stream=None, method="cs")
+        assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
+
+
 class LandingGroupTest(unittest.TestCase):
+    """
+    Test the computation of LandingGroup
+    """
+
     def setUp(self):
 
         self.prob = om.Problem()

@@ -7,6 +7,7 @@ from aviary.variable_info.variables import Dynamic
 class Takeoff:
     """
     Define user constraints for a climb phase.
+
     Parameters
     ----------
     airport_altitude : float (None)
@@ -51,7 +52,7 @@ class Takeoff:
             a group in OpenMDAO
         """
 
-        if use_detailed:
+        if use_detailed:  # TODO
             raise om.AnalysisError(
                 "Must set takeoff method to `use_detailed=False`, detailed takeoff is"
                 " not currently enabled."
@@ -63,8 +64,7 @@ class Takeoff:
 
         takeoff = TakeoffGroup(num_engines=self.num_engines)
         takeoff.set_input_defaults(
-            Dynamic.Mission.ALTITUDE,
-            val=self.airport_altitude,
-            units="ft")
+            Dynamic.Mission.ALTITUDE, val=self.airport_altitude, units="ft"
+        )
 
         return takeoff

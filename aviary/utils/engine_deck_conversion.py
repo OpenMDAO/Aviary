@@ -22,7 +22,7 @@ from aviary.utils.named_values import NamedValues
 class EngineDeckType(Enum):
     FLOPS = 'FLOPS'
     GASP = 'GASP'
-    GASP_TP = 'GASP_TP'
+    GASP_TS = 'GASP_TS'
 
     def __str__(self):
         return self.value
@@ -100,7 +100,7 @@ def EngineDeckConverter(input_file, output_file, data_format: EngineDeckType):
     comments.append(f'# created {timestamp} by {user}')
     legacy_code = data_format.value
     engine_type = 'engine'
-    if legacy_code == 'GASP_TP':
+    if legacy_code == 'GASP_TS':
         engine_type = 'turboshaft engine'
         legacy_code = 'GASP'
 
@@ -132,8 +132,8 @@ def EngineDeckConverter(input_file, output_file, data_format: EngineDeckType):
                 data[NOX_RATE] = np.append(data[NOX_RATE], line[6])
                 # data[EXIT_AREA].append(line[7])
 
-    elif data_format in (EngineDeckType.GASP, EngineDeckType.GASP_TP):
-        is_turbo_prop = True if data_format == EngineDeckType.GASP_TP else False
+    elif data_format in (EngineDeckType.GASP, EngineDeckType.GASP_TS):
+        is_turbo_prop = True if data_format == EngineDeckType.GASP_TS else False
         temperature = gasp_keys.pop()
         fuelflow = gasp_keys.pop()
         if is_turbo_prop:
@@ -214,34 +214,32 @@ def EngineDeckConverter(input_file, output_file, data_format: EngineDeckType):
                                      promotes=['*'])
 
             prob.model.add_subsystem(
-                Dynamic.Mission.MACH,
-                om.IndepVarComp(
-                    Dynamic.Mission.MACH,
-                    data[MACH],
-                    units='unitless'),
-                promotes=['*'])
+                Dynamic.Atmosphere.MACH,
+                om.IndepVarComp(Dynamic.Atmosphere.MACH, data[MACH], units='unitless'),
+                promotes=['*'],
+            )
 
             prob.model.add_subsystem(
                 Dynamic.Mission.ALTITUDE,
-                om.IndepVarComp(
-                    Dynamic.Mission.ALTITUDE,
-                    data[ALTITUDE],
-                    units='ft'),
-                promotes=['*'])
+                om.IndepVarComp(Dynamic.Mission.ALTITUDE, data[ALTITUDE], units='ft'),
+                promotes=['*'],
+            )
 
             prob.model.add_subsystem(
                 name='atmosphere',
                 subsys=Atmosphere(num_nodes=len(data[MACH])),
                 promotes_inputs=[Dynamic.Mission.ALTITUDE],
-                promotes_outputs=[Dynamic.Mission.TEMPERATURE],
+                promotes_outputs=[Dynamic.Atmosphere.TEMPERATURE],
             )
 
             prob.model.add_subsystem(
                 name='conversion',
                 subsys=AtmosCalc(num_nodes=len(data[MACH])),
-                promotes_inputs=[Dynamic.Mission.MACH,
-                                 Dynamic.Mission.TEMPERATURE],
-                promotes_outputs=['t2']
+                promotes_inputs=[
+                    Dynamic.Atmosphere.MACH,
+                    Dynamic.Atmosphere.TEMPERATURE,
+                ],
+                promotes_outputs=['t2'],
             )
 
             prob.setup()
@@ -254,28 +252,32 @@ def EngineDeckConverter(input_file, output_file, data_format: EngineDeckType):
             # By always keeping minimum T4 zero for normalization, throttle stays
             #   consistent with fraction of T4max
             # TODO flight condition dependent throttle range?
-            # NOTE this often leaves max throttles less than 1 in the deck - this caues
+            # NOTE this often leaves max throttles less than 1 in the deck - this causes
             #     problems when finding reference SLS thrust, as there is often no max
-            #     power data at that point in the engine deck. It is reccomended GASP
+            #     power data at that point in the engine deck. It is recommended GASP
             #     engine decks override Aircraft.Engine.REFERENCE_THRUST in EngineDecks
             data[THROTTLE] = normalize(data[TEMPERATURE], minimum=0.0, maximum=t4max)
 
-            # remove all points above T4max
-            # TODO save these points as commented out?
-            valid_idx = np.where(data[THROTTLE] <= 1.0)
-            data[MACH] = data[MACH][valid_idx]
-            data[ALTITUDE] = data[ALTITUDE][valid_idx]
-            data[THROTTLE] = data[THROTTLE][valid_idx]
-            data[FUEL_FLOW] = data[FUEL_FLOW][valid_idx]
-            data[TEMPERATURE] = data[TEMPERATURE][valid_idx]
-            if is_turbo_prop:
-                data[SHAFT_POWER_CORRECTED] = data[SHAFT_POWER_CORRECTED][valid_idx]
-                data[TAILPIPE_THRUST] = data[TAILPIPE_THRUST][valid_idx]
-            else:
-                data[THRUST] = data[THRUST][valid_idx]
-
         else:
-            data[THROTTLE] = T4T2
+            # data[THROTTLE] = normalize(
+            #     T4T2, minimum=scalars['t4flight_idle'], maximum=t4max
+            # )
+            data[THROTTLE] = normalize(T4T2, minimum=0.0, maximum=t4max)
+
+        # TODO save these points as commented out?
+        # remove points above T4max
+        valid_idx = np.where(data[THROTTLE] <= 1.0)
+        data[MACH] = data[MACH][valid_idx]
+        data[ALTITUDE] = data[ALTITUDE][valid_idx]
+        data[THROTTLE] = data[THROTTLE][valid_idx]
+        data[FUEL_FLOW] = data[FUEL_FLOW][valid_idx]
+        if compute_T4:
+            data[TEMPERATURE] = data[TEMPERATURE][valid_idx]
+        if is_turbo_prop:
+            data[SHAFT_POWER_CORRECTED] = data[SHAFT_POWER_CORRECTED][valid_idx]
+            data[TAILPIPE_THRUST] = data[TAILPIPE_THRUST][valid_idx]
+        else:
+            data[THRUST] = data[THRUST][valid_idx]
 
         # data needs to be string so column length can be easily found later
         for var in data:
@@ -368,8 +370,8 @@ def _read_gasp_engine(fp, is_turbo_prop=False):
     Each table consists of both the independent variables and the dependent variable for
     the corresponding field. The table is a "tidy format" 2D array where the first three
     columns are the independent varaiables (altitude, T4/T2, and Mach number) and the
-    final column is the dependent variable (one of thrust, fuelflow, or airflow for TurboFans or 
-    shaft_power_corrected, fuelflow, or tailpipe_thrust for TurboProps).
+    final column is the dependent variable (one of thrust, fuelflow, or airflow for
+    turbofans or shaft_power_corrected, fuelflow, or tailpipe_thrust for turboshafts).
     """
     with open(fp, "r") as f:
         if is_turbo_prop:
@@ -435,8 +437,8 @@ def _read_table(f, is_turbo_prop=False):
     """Read an entire table from a GASP engine deck file.
     The table data is returned as a "tidy format" array with three columns for the
     independent variables (altitude, T4/T2, and Mach number) and the final column for
-    the table field (one of thrust, fuelflow, or airflow for TurboFans or 
-    shaft_power_corrected, fuelflow, or tailpipe_thrust for TurboProps).
+    the table field (one of thrust, fuelflow, or airflow for turbofans or
+    shaft_power_corrected, fuelflow, or tailpipe_thrust for turboshafts).
     """
     tab_data = None
 
@@ -501,6 +503,13 @@ def _make_structured_grid(data, method="lagrange3", fields=["thrust", "fuelflow"
 
             # would explicitly use lagrange3 here to mimic GASP, but some engine
             # decks may not have enough points per dimension
+            # For GASP engine deck, try to provide at least 4 Mach numbers.
+            # For GASP_TP engine deck, try to provide at least 4 Mach numbers
+            # avoid devide-by-zero RuntimeWarning
+            if len(mach) == 3 and method == "lagrange3":
+                method = "lagrange2"
+            elif len(mach) == 2:
+                method = "slinear"
             interp = InterpND(
                 method="2D-" + method, points=(t4t2, mach), values=f, extrapolate=True
             )
@@ -533,39 +542,37 @@ def _generate_flight_idle(data, T4T2, ref_sls_airflow, ref_sfn_idle):
     prob = om.Problem()
 
     prob.model.add_subsystem(
-        Dynamic.Mission.MACH,
-        om.IndepVarComp(
-            Dynamic.Mission.MACH,
-            mach_list,
-            units='unitless'),
-        promotes=['*'])
+        Dynamic.Atmosphere.MACH,
+        om.IndepVarComp(Dynamic.Atmosphere.MACH, mach_list, units='unitless'),
+        promotes=['*'],
+    )
 
     prob.model.add_subsystem(
         Dynamic.Mission.ALTITUDE,
-        om.IndepVarComp(
-            Dynamic.Mission.ALTITUDE,
-            alt_list,
-            units='ft'),
-        promotes=['*'])
+        om.IndepVarComp(Dynamic.Mission.ALTITUDE, alt_list, units='ft'),
+        promotes=['*'],
+    )
 
     prob.model.add_subsystem(
         name='atmosphere',
         subsys=Atmosphere(num_nodes=nn),
         promotes_inputs=[Dynamic.Mission.ALTITUDE],
-        promotes_outputs=[Dynamic.Mission.TEMPERATURE, Dynamic.Mission.STATIC_PRESSURE],
+        promotes_outputs=[
+            Dynamic.Atmosphere.TEMPERATURE,
+            Dynamic.Atmosphere.STATIC_PRESSURE,
+        ],
     )
 
     prob.model.add_subsystem(
         name='conversion',
-        subsys=AtmosCalc(
-            num_nodes=nn),
+        subsys=AtmosCalc(num_nodes=nn),
         promotes_inputs=[
-            Dynamic.Mission.MACH,
-            Dynamic.Mission.TEMPERATURE,
-            Dynamic.Mission.STATIC_PRESSURE],
-        promotes_outputs=[
-            't2',
-            'p2'])
+            Dynamic.Atmosphere.MACH,
+            Dynamic.Atmosphere.TEMPERATURE,
+            Dynamic.Atmosphere.STATIC_PRESSURE,
+        ],
+        promotes_outputs=['t2', 'p2'],
+    )
 
     prob.model.add_subsystem(
         name='flight_idle',
@@ -678,12 +685,16 @@ class AtmosCalc(om.ExplicitComponent):
 
     def setup(self):
         nn = self.options['num_nodes']
-        self.add_input(Dynamic.Mission.MACH, val=np.zeros(nn),
-                       desc='current Mach number', units='unitless')
-        self.add_input(Dynamic.Mission.TEMPERATURE, val=np.zeros(nn),
+        self.add_input(
+            Dynamic.Atmosphere.MACH,
+            val=np.zeros(nn),
+            desc='current Mach number',
+            units='unitless',
+        )
+        self.add_input(Dynamic.Atmosphere.TEMPERATURE, val=np.zeros(nn),
                        desc='current atmospheric temperature', units='degR')
         self.add_input(
-            Dynamic.Mission.STATIC_PRESSURE,
+            Dynamic.Atmosphere.STATIC_PRESSURE,
             _PSLS_PSF,
             units="psf",
             shape=nn,

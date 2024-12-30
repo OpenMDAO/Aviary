@@ -5,6 +5,10 @@ from aviary.variable_info.variables import Dynamic
 
 
 class SpeedConstraints(om.ExplicitComponent):
+    """
+    Compute speed constraint to be driven to zero in order to control speed
+    """
+
     def initialize(self):
         self.options.declare("num_nodes", types=int)
         self.options.declare(
@@ -28,7 +32,7 @@ class SpeedConstraints(om.ExplicitComponent):
             desc="equivalent airspeed",
         )
         self.add_input(
-            Dynamic.Mission.MACH,
+            Dynamic.Atmosphere.MACH,
             val=np.ones(nn),
             units="unitless",
             desc="mach number",
@@ -46,7 +50,7 @@ class SpeedConstraints(om.ExplicitComponent):
         )
         self.declare_partials(
             "speed_constraint",
-            Dynamic.Mission.MACH,
+            Dynamic.Atmosphere.MACH,
             rows=arange * 2 + 1,
             cols=arange,
             val=self.options["EAS_target"],
@@ -56,7 +60,7 @@ class SpeedConstraints(om.ExplicitComponent):
 
         EAS = inputs["EAS"]
         EAS_target = self.options["EAS_target"]
-        mach = inputs[Dynamic.Mission.MACH]
+        mach = inputs[Dynamic.Atmosphere.MACH]
         mach_cruise = self.options["mach_cruise"]
 
         EAS_constraint = EAS - EAS_target

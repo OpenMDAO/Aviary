@@ -2,7 +2,7 @@ import numpy as np
 
 from aviary.utils.aviary_values import AviaryValues
 from aviary.utils.functions import get_path
-from aviary.variable_info.enums import EquationsOfMotion, LegacyCode, Verbosity
+from aviary.variable_info.enums import EquationsOfMotion, LegacyCode
 from aviary.variable_info.variables import Aircraft, Mission, Settings
 
 MultiEngineSingleAisle = {}
@@ -45,20 +45,24 @@ inputs.set_val(Aircraft.Canard.THICKNESS_TO_CHORD, 0.0)
 
 # Crew and Payload
 # ---------------------------
-inputs.set_val(Aircraft.CrewPayload.BAGGAGE_MASS_PER_PASSENGER, 35., 'lbm')
+inputs.set_val(Aircraft.CrewPayload.Design.NUM_BUSINESS_CLASS, 0)
+inputs.set_val(Aircraft.CrewPayload.Design.NUM_FIRST_CLASS, 12)
+inputs.set_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS, 162, units='unitless')
+inputs.set_val(Aircraft.CrewPayload.Design.NUM_TOURIST_CLASS, 150)
 inputs.set_val(Aircraft.CrewPayload.NUM_BUSINESS_CLASS, 0)
+inputs.set_val(Aircraft.CrewPayload.NUM_FIRST_CLASS, 12)
+inputs.set_val(Aircraft.CrewPayload.NUM_PASSENGERS, 162, units='unitless')
+inputs.set_val(Aircraft.CrewPayload.NUM_TOURIST_CLASS, 150)
+
+inputs.set_val(Aircraft.CrewPayload.BAGGAGE_MASS_PER_PASSENGER, 35., 'lbm')
 inputs.set_val(Aircraft.CrewPayload.CARGO_CONTAINER_MASS_SCALER, 1.0)
 inputs.set_val(Aircraft.CrewPayload.NUM_FLIGHT_ATTENDANTS, 5)
 inputs.set_val(Aircraft.CrewPayload.NUM_FLIGHT_CREW, 2)
 inputs.set_val(Aircraft.CrewPayload.FLIGHT_CREW_MASS_SCALER, 1.0)
-inputs.set_val(Aircraft.CrewPayload.NUM_FIRST_CLASS, 12)
 inputs.set_val(Aircraft.CrewPayload.NUM_GALLEY_CREW, 1)
-inputs.set_val(Aircraft.CrewPayload.NUM_BUSINESS_CLASS, 0)
 inputs.set_val(Aircraft.CrewPayload.MISC_CARGO, 4077., 'lbm')
 inputs.set_val(Aircraft.CrewPayload.NON_FLIGHT_CREW_MASS_SCALER, 1.0)
-inputs.set_val(Aircraft.CrewPayload.NUM_PASSENGERS, 162, units='unitless')
 inputs.set_val(Aircraft.CrewPayload.PASSENGER_SERVICE_MASS_SCALER, 1.)
-inputs.set_val(Aircraft.CrewPayload.NUM_TOURIST_CLASS, 150)
 inputs.set_val(Aircraft.CrewPayload.MASS_PER_PASSENGER, 165., 'lbm')
 inputs.set_val(Aircraft.CrewPayload.WING_CARGO, 0., 'lbm')
 
@@ -152,7 +156,8 @@ engine_1_inputs = AviaryValues()
 engine_1_inputs.set_val(Aircraft.Engine.DATA_FILE, filename)
 engine_1_inputs.set_val(Aircraft.Engine.MASS, 7400, 'lbm')
 engine_1_inputs.set_val(Aircraft.Engine.REFERENCE_MASS, 7400, 'lbm')
-engine_1_inputs.set_val(Aircraft.Engine.SCALED_SLS_THRUST, 28928.1/2, 'lbf')
+# engine_1_inputs.set_val(Aircraft.Engine.SCALED_SLS_THRUST, 28928.1/2, 'lbf')
+engine_1_inputs.set_val(Aircraft.Engine.SCALE_FACTOR, 0.3837186)
 # engine_1_inputs.set_val(Aircraft.Engine.REFERENCE_SLS_THRUST, 28928.1, 'lbf')
 engine_1_inputs.set_val(Aircraft.Engine.NUM_ENGINES, 2)
 engine_1_inputs.set_val(Aircraft.Engine.NUM_FUSELAGE_ENGINES, 0)
@@ -184,7 +189,8 @@ engine_2_inputs = AviaryValues()
 engine_2_inputs.set_val(Aircraft.Engine.DATA_FILE, filename)
 engine_2_inputs.set_val(Aircraft.Engine.MASS, 6293.8, 'lbm')
 engine_2_inputs.set_val(Aircraft.Engine.REFERENCE_MASS, 6293.8, 'lbm')
-engine_2_inputs.set_val(Aircraft.Engine.SCALED_SLS_THRUST, 22200.5/2, 'lbf')
+# engine_2_inputs.set_val(Aircraft.Engine.SCALED_SLS_THRUST, 22200.5/2, 'lbf')
+engine_2_inputs.set_val(Aircraft.Engine.SCALE_FACTOR, 0.65151911)
 # engine_2_inputs.set_val(Aircraft.Engine.REFERENCE_SLS_THRUST, 22200.5, 'lbf')
 engine_2_inputs.set_val(Aircraft.Engine.THRUST_REVERSERS_MASS_SCALER, 0.0)
 engine_2_inputs.set_val(Aircraft.Engine.NUM_ENGINES, 2)
@@ -283,7 +289,7 @@ inputs.set_val(Mission.Design.THRUST_TAKEOFF_PER_ENG, 24555.5, 'lbf')
 # ---------------------------
 inputs.set_val(Settings.EQUATIONS_OF_MOTION, EquationsOfMotion.HEIGHT_ENERGY)
 inputs.set_val(Settings.MASS_METHOD, LegacyCode.FLOPS)
-inputs.set_val(Settings.VERBOSITY, Verbosity.BRIEF)
+inputs.set_val(Settings.VERBOSITY, 0)
 
 # ---------------------------
 #          OUTPUTS

@@ -115,8 +115,7 @@ class PrepGeom(om.Group):
 
 class _Prelim(om.ExplicitComponent):
     '''
-    Calculate internal derived values for of aircraft geometry for aerodynamics
-    analysis.
+    Calculate internal derived values of aircraft geometry for FLOPS-based aerodynamics analysis.
     '''
 
     def initialize(self):
@@ -129,8 +128,10 @@ class _Prelim(om.ExplicitComponent):
         add_aviary_input(self, Aircraft.Fuselage.MAX_WIDTH, 0.0)
 
         add_aviary_input(self, Aircraft.HorizontalTail.AREA, 0.0)
-        add_aviary_input(self, Aircraft.HorizontalTail.ASPECT_RATIO, 0.0)
-        add_aviary_input(self, Aircraft.HorizontalTail.TAPER_RATIO, 0.0)
+        add_aviary_input(self, Aircraft.HorizontalTail.ASPECT_RATIO,
+                         4.75, units="unitless")
+        add_aviary_input(self, Aircraft.HorizontalTail.TAPER_RATIO,
+                         0.352, units="unitless")
         add_aviary_input(self, Aircraft.HorizontalTail.THICKNESS_TO_CHORD, 0.0)
 
         add_aviary_input(self, Aircraft.VerticalTail.AREA, 0.0)
@@ -487,6 +488,10 @@ class _Prelim(om.ExplicitComponent):
 
 
 class _Wing(om.ExplicitComponent):
+    """
+    Calculate wing wetted area of aircraft geometry for FLOPS-based aerodynamics analysis.
+    """
+
     def initialize(self):
         self.options.declare(
             'aviary_options', types=AviaryValues,
@@ -562,6 +567,10 @@ class _Wing(om.ExplicitComponent):
 
 
 class _Tail(om.ExplicitComponent):
+    """
+    Calculate horizontal wing and vertical wing wetted areas of aircraft geometry
+    for FLOPS-based aerodynamics analysis.
+    """
 
     def initialize(self):
         self.options.declare(
@@ -720,6 +729,12 @@ class _Tail(om.ExplicitComponent):
 
 
 class _Fuselage(om.ExplicitComponent):
+    """
+    Calculate fuselage cross sectional area, fuselage diameter to wing span ratio,
+    fuselage length to diameter ratio, and fuselage wetted area of aircraft geometry
+    for FLOPS-based aerodynamics analysis.
+    """
+
     def initialize(self):
         self.options.declare(
             'aviary_options', types=AviaryValues,

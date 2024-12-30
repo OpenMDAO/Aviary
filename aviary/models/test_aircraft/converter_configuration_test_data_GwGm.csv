@@ -9,7 +9,7 @@ aircraft:controls:stability_augmentation_system_mass,0,lbm
 aircraft:controls:stability_augmentation_system_mass_scaler,1,unitless
 aircraft:crew_and_payload:cargo_mass,15970,lbm
 aircraft:crew_and_payload:catering_items_mass_per_passenger,10,lbm
-aircraft:crew_and_payload:num_passengers,154,unitless
+aircraft:crew_and_payload:design:num_passengers,154,unitless
 aircraft:crew_and_payload:passenger_mass_with_bags,200,lbm
 aircraft:crew_and_payload:passenger_service_mass_per_passenger,5,lbm
 aircraft:crew_and_payload:water_mass_per_occupant,3,lbm
@@ -26,6 +26,7 @@ aircraft:design:structural_mass_increment,0,lbm
 aircraft:design:supercritical_drag_shift,0.033,unitless
 aircraft:engine:additional_mass_fraction,0.165,unitless
 aircraft:engine:data_file,models/engines/turbofan_23k_1.deck,unitless
+aircraft:engine:global_throttle,True
 aircraft:engine:mass_scaler,1,unitless
 aircraft:engine:mass_specific,0.21366,lbm/lbf
 aircraft:engine:num_engines,2,unitless
@@ -33,6 +34,7 @@ aircraft:engine:pod_mass_scaler,1,unitless
 aircraft:engine:pylon_factor,1.25,unitless
 aircraft:engine:reference_diameter,6.15,ft
 aircraft:engine:reference_sls_thrust,28690,lbf
+aircraft:engine:scale_factor,0.7376089229696758,unitless
 aircraft:engine:scaled_sls_thrust,21162,lbf
 aircraft:engine:type,7,unitless
 aircraft:engine:wing_locations,0.2143,unitless
@@ -56,7 +58,7 @@ aircraft:fuselage:pressure_differential,7.5,psi
 aircraft:fuselage:seat_pitch,44.2,inch
 aircraft:fuselage:seat_width,20.2,inch
 aircraft:fuselage:tail_fineness,1.18,unitless
-aircraft:fuselage:wetted_area_factor,1,unitless
+aircraft:fuselage:wetted_area_scaler,1,unitless
 aircraft:horizontal_tail:area,0,ft**2
 aircraft:horizontal_tail:aspect_ratio,4.025,unitless
 aircraft:horizontal_tail:form_factor,1.7,unitless
@@ -109,7 +111,6 @@ aircraft:wing:flap_type,double_slotted,unitless
 aircraft:wing:fold_dimensional_location_specified,True,unitless
 aircraft:wing:fold_mass_coefficient,0.2,unitless
 aircraft:wing:folded_span,0,ft
-aircraft:wing:form_factor,1.667,unitless
 aircraft:wing:fuselage_interference_factor,1.21,unitless
 aircraft:wing:has_fold,True,unitless
 aircraft:wing:has_strut,True,unitless
@@ -155,14 +156,14 @@ mission:taxi:duration,0.1677,h
 settings:equations_of_motion,2DOF
 settings:mass_method,GASP
 
-# Initial Guesses
+# Initialization Guesses
 actual_takeoff_mass,0
 climb_range,0
 cruise_mass_final,0
 flight_duration,0
-fuel_burn_per_passenger_mile,0.1
+fuel_burn_per_passenger_mile,0
 reserves,0
-rotation_mass,0.99
+rotation_mass,0
 time_to_climb,0
 	 
 # Unconverted Values

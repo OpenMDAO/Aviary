@@ -27,18 +27,21 @@ class SpecificEnergyRateTest(unittest.TestCase):
 
     def test_case1(self):
 
-        do_validation_test(self.prob,
-                           'full_mission_test_data',
-                           input_validation_data=data,
-                           output_validation_data=data,
-                           input_keys=[Dynamic.Mission.DRAG,
-                                       Dynamic.Mission.MASS,
-                                       Dynamic.Mission.THRUST_TOTAL,
-                                       Dynamic.Mission.VELOCITY],
-                           output_keys=Dynamic.Mission.SPECIFIC_ENERGY_RATE,
-                           tol=1e-12)
+        do_validation_test(
+            self.prob,
+            'full_mission_test_data',
+            input_validation_data=data,
+            output_validation_data=data,
+            input_keys=[
+                Dynamic.Vehicle.DRAG,
+                Dynamic.Vehicle.MASS,
+                Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
+                Dynamic.Mission.VELOCITY,
+            ],
+            output_keys=Dynamic.Mission.SPECIFIC_ENERGY_RATE,
+            tol=1e-12,
+        )
 
-    # TODO IO test will fail until mission variable hirerarchy implemented
     def test_IO(self):
         assert_match_varnames(self.prob.model)
 

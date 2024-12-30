@@ -3,14 +3,16 @@ import unittest
 
 from openmdao.utils.testing_utils import require_pyoptsparse, use_tempdirs
 
-from aviary.interface.methods_for_level2 import AviaryProblem
-from aviary.variable_info.enums import Verbosity
 from aviary.interface.default_phase_info.two_dof import phase_info as two_dof_phase_info
 from aviary.interface.default_phase_info.height_energy import phase_info as height_energy_phase_info
+from aviary.interface.methods_for_level2 import AviaryProblem
 from aviary.models.N3CC.N3CC_data import inputs
 
 
 class BaseProblemPhaseTestCase(unittest.TestCase):
+    """
+    Test the setup and run of a simple energy method and 2DOF mission (no optimization, single iteration)
+    """
 
     def build_and_run_problem(self, input_filename, phase_info, objective_type=None):
         # Build problem
@@ -23,7 +25,7 @@ class BaseProblemPhaseTestCase(unittest.TestCase):
         prob.add_phases()
         prob.add_post_mission_systems()
         prob.link_phases()
-        prob.add_driver("SLSQP", max_iter=0, verbosity=Verbosity.QUIET)
+        prob.add_driver("SLSQP", max_iter=0, verbosity=0)
         prob.add_design_variables()
         prob.add_objective(objective_type if objective_type else None)
         prob.setup()

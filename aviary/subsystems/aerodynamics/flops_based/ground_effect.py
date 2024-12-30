@@ -18,7 +18,9 @@ class GroundEffect(om.ExplicitComponent):
     '''
     Define a component for adjusting lift and drag to accomodate ground effect.
 
-    Note, it is an error (no diagnostic) to try to calculate ground effect for an
+    Note
+    ----
+    It is an error (no diagnostic) to try to calculate ground effect for an
     aircraft flying "underground" - current `altitude` must ALWAYS be greater than or
     equal to `ground_altitude`.
     '''
@@ -40,8 +42,9 @@ class GroundEffect(om.ExplicitComponent):
 
         add_aviary_input(self, Dynamic.Mission.ALTITUDE, np.zeros(nn), units='m')
 
-        add_aviary_input(self, Dynamic.Mission.FLIGHT_PATH_ANGLE,
-                         val=np.zeros(nn), units='rad')
+        add_aviary_input(
+            self, Dynamic.Mission.FLIGHT_PATH_ANGLE, val=np.zeros(nn), units='rad'
+        )
 
         self.add_input(
             'minimum_drag_coefficient', 0.0,
@@ -81,17 +84,21 @@ class GroundEffect(om.ExplicitComponent):
         )
 
         self.declare_partials(
-            'lift_coefficient', [Dynamic.Mission.ALTITUDE, 'base_lift_coefficient'],
-            rows=rows_cols, cols=rows_cols
+            'lift_coefficient',
+            [Dynamic.Mission.ALTITUDE, 'base_lift_coefficient'],
+            rows=rows_cols,
+            cols=rows_cols,
         )
 
         self.declare_partials(
             'lift_coefficient',
             [
-                'angle_of_attack', Dynamic.Mission.FLIGHT_PATH_ANGLE, 'minimum_drag_coefficient',
+                'angle_of_attack',
+                Dynamic.Mission.FLIGHT_PATH_ANGLE,
+                'minimum_drag_coefficient',
                 'base_drag_coefficient',
             ],
-            dependent=False
+            dependent=False,
         )
 
         self.declare_partials(
@@ -102,10 +109,14 @@ class GroundEffect(om.ExplicitComponent):
         self.declare_partials(
             'drag_coefficient',
             [
-                'angle_of_attack', Dynamic.Mission.ALTITUDE, Dynamic.Mission.FLIGHT_PATH_ANGLE,
-                'base_drag_coefficient', 'base_lift_coefficient'
+                'angle_of_attack',
+                Dynamic.Mission.ALTITUDE,
+                Dynamic.Mission.FLIGHT_PATH_ANGLE,
+                'base_drag_coefficient',
+                'base_lift_coefficient',
             ],
-            rows=rows_cols, cols=rows_cols
+            rows=rows_cols,
+            cols=rows_cols,
         )
 
         self.declare_partials('drag_coefficient', 'minimum_drag_coefficient',
@@ -222,7 +233,9 @@ class GroundEffect(om.ExplicitComponent):
             (d_hf_alt * lift_coeff_factor_denom) - (height_factor * d_lcfd_alt)
         ) / lift_coeff_factor_denom**2
 
-        J['lift_coefficient', Dynamic.Mission.ALTITUDE] = base_lift_coefficient * d_lcf_alt
+        J['lift_coefficient', Dynamic.Mission.ALTITUDE] = (
+            base_lift_coefficient * d_lcf_alt
+        )
 
         J['lift_coefficient', 'base_lift_coefficient'] = lift_coeff_factor
         # endregion lift_coefficient wrt [altitude, base_lift_coefficient]

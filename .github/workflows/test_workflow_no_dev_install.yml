@@ -67,6 +67,9 @@ jobs:
           echo "============================================================="
           echo "Install Aviary"
           echo "============================================================="
+          echo ""
+          echo "Temporarily install specific versions for now."
+          pip install "numpy<2"
           pip install packaging
           pip install .[all]
 

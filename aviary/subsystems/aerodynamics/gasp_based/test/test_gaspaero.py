@@ -19,7 +19,7 @@ setup_data = json.load(open(os.path.join(here, "data", "aero_data_setup.json")))
 
 
 class GASPAeroTest(unittest.TestCase):
-    """Test overall static and dynamic aero systems in cruise and near-ground flight"""
+    """Test overall pre-mission and mission aero systems in cruise and near-ground flight"""
 
     cruise_tol = 1.5e-3
     ground_tol = 0.5e-3
@@ -29,7 +29,11 @@ class GASPAeroTest(unittest.TestCase):
     def test_cruise(self):
         prob = om.Problem()
         prob.model.add_subsystem(
-            "aero", CruiseAero(num_nodes=2, aviary_options=get_option_defaults(), input_atmos=True), promotes=["*"]
+            "aero",
+            CruiseAero(
+                num_nodes=2, aviary_options=get_option_defaults(), input_atmos=True
+            ),
+            promotes=["*"],
         )
         prob.setup(check=False, force_alloc_complex=True)
 
@@ -48,10 +52,10 @@ class GASPAeroTest(unittest.TestCase):
 
             with self.subTest(alt=alt, mach=mach, alpha=alpha):
                 # prob.set_val(Dynamic.Mission.ALTITUDE, alt)
-                prob.set_val(Dynamic.Mission.MACH, mach)
+                prob.set_val(Dynamic.Atmosphere.MACH, mach)
                 prob.set_val("alpha", alpha)
-                prob.set_val(Dynamic.Mission.SPEED_OF_SOUND, row["sos"])
-                prob.set_val("nu", row["nu"])
+                prob.set_val(Dynamic.Atmosphere.SPEED_OF_SOUND, row["sos"])
+                prob.set_val(Dynamic.Atmosphere.KINEMATIC_VISCOSITY, row["nu"])
 
                 prob.run_model()
 
@@ -65,7 +69,11 @@ class GASPAeroTest(unittest.TestCase):
     def test_ground(self):
         prob = om.Problem()
         prob.model.add_subsystem(
-            "aero", LowSpeedAero(num_nodes=2, aviary_options=get_option_defaults(), input_atmos=True), promotes=["*"]
+            "aero",
+            LowSpeedAero(
+                num_nodes=2, aviary_options=get_option_defaults(), input_atmos=True
+            ),
+            promotes=["*"],
         )
         prob.setup(check=False, force_alloc_complex=True)
 
@@ -85,11 +93,11 @@ class GASPAeroTest(unittest.TestCase):
             alpha = row["alpha"]
 
             with self.subTest(ilift=ilift, alt=alt, mach=mach, alpha=alpha):
-                prob.set_val(Dynamic.Mission.MACH, mach)
+                prob.set_val(Dynamic.Atmosphere.MACH, mach)
                 prob.set_val(Dynamic.Mission.ALTITUDE, alt)
                 prob.set_val("alpha", alpha)
-                prob.set_val(Dynamic.Mission.SPEED_OF_SOUND, row["sos"])
-                prob.set_val("nu", row["nu"])
+                prob.set_val(Dynamic.Atmosphere.SPEED_OF_SOUND, row["sos"])
+                prob.set_val(Dynamic.Atmosphere.KINEMATIC_VISCOSITY, row["nu"])
 
                 # note we're just letting the time ramps for flaps/gear default to the
                 # takeoff config such that the default times correspond to full flap and
@@ -100,8 +108,8 @@ class GASPAeroTest(unittest.TestCase):
                     prob.set_val("CL_max_flaps", setup_data["clmwto"])
                     prob.set_val("dCL_flaps_model", setup_data["dclto"])
                     prob.set_val("dCD_flaps_model", setup_data["dcdto"])
-                    prob.set_val("aero_ramps.flap_factor:final_val", 1.)
-                    prob.set_val("aero_ramps.gear_factor:final_val", 1.)
+                    prob.set_val("aero_ramps.flap_factor:final_val", 1.0)
+                    prob.set_val("aero_ramps.gear_factor:final_val", 1.0)
                 else:
                     # landing flaps config
                     prob.set_val("flap_defl", setup_data["delfld"])
@@ -118,13 +126,13 @@ class GASPAeroTest(unittest.TestCase):
                 assert_check_partials(partial_data, atol=4.5, rtol=5e-3)
 
     def test_ground_alpha_out(self):
-        """Test that drag output matches between alpha in/out cases"""
+        # Test that drag output matches between alpha in/out cases
         prob = om.Problem()
         prob.model.add_subsystem(
             "alpha_in",
             LowSpeedAero(aviary_options=get_option_defaults()),
             promotes_inputs=["*", ("alpha", "alpha_in")],
-            promotes_outputs=[(Dynamic.Mission.LIFT, "lift_req")],
+            promotes_outputs=[(Dynamic.Vehicle.LIFT, "lift_req")],
         )
 
         prob.model.add_subsystem(
@@ -144,7 +152,7 @@ class GASPAeroTest(unittest.TestCase):
         prob.set_val(Aircraft.Wing.FLAP_CHORD_RATIO, setup_data["cfoc"])
         prob.set_val(Mission.Design.GROSS_MASS, setup_data["wgto"])
 
-        prob.set_val(Dynamic.Mission.MACH, 0.1)
+        prob.set_val(Dynamic.Atmosphere.MACH, 0.1)
         prob.set_val(Dynamic.Mission.ALTITUDE, 10)
         prob.set_val("alpha_in", 5)
         prob.run_model()
@@ -157,6 +165,8 @@ class GASPAeroTest(unittest.TestCase):
 
 def _init_geom(prob):
     """Initialize user inputs and geometry/sizing data"""
+    prob.set_val("interference_independent_of_shielded_area", 1.89927266)
+    prob.set_val("drag_loss_due_to_shielded_wing_area", 68.02065834)
     # i.e. common auto IVC vars for the setup + cruise and ground aero models
     prob.set_val(Aircraft.Wing.AREA, setup_data["sw"])
     prob.set_val(Aircraft.Wing.SPAN, setup_data["b"])
@@ -170,14 +180,14 @@ def _init_geom(prob):
     prob.set_val(Aircraft.HorizontalTail.AREA, setup_data["sht"])
     prob.set_val(Aircraft.HorizontalTail.AVERAGE_CHORD, setup_data["cbarht"])
     prob.set_val(Aircraft.Fuselage.AVG_DIAMETER, setup_data["swf"])
-    # ground & cruise, dynamic: mach
+    # ground & cruise, mission: mach
     prob.set_val(Aircraft.Design.STATIC_MARGIN, setup_data["stmarg"])
     prob.set_val(Aircraft.Design.CG_DELTA, setup_data["delcg"])
     prob.set_val(Aircraft.Wing.ASPECT_RATIO, setup_data["ar"])
     prob.set_val(Aircraft.Wing.SWEEP, setup_data["dlmc4"])
     prob.set_val(Aircraft.HorizontalTail.SWEEP, setup_data["dwpqch"])
     prob.set_val(Aircraft.HorizontalTail.MOMENT_RATIO, setup_data["coelth"])
-    # ground & cruise, dynamic: alt
+    # ground & cruise, mission: alt
     prob.set_val(Aircraft.Wing.FORM_FACTOR, setup_data["ckw"])
     prob.set_val(Aircraft.Fuselage.FORM_FACTOR, setup_data["ckf"])
     prob.set_val(Aircraft.Nacelle.FORM_FACTOR, setup_data["ckn"])
@@ -187,13 +197,11 @@ def _init_geom(prob):
     prob.set_val(Aircraft.Strut.FUSELAGE_INTERFERENCE_FACTOR, setup_data["ckstrt"])
     prob.set_val(Aircraft.Design.DRAG_COEFFICIENT_INCREMENT, setup_data["delcd"])
     prob.set_val(Aircraft.Fuselage.FLAT_PLATE_AREA_INCREMENT, setup_data["delfe"])
-    prob.set_val(Aircraft.Wing.CENTER_DISTANCE, setup_data["xwqlf"])
     prob.set_val(Aircraft.Wing.MIN_PRESSURE_LOCATION, setup_data["xcps"])
     prob.set_val(
         Aircraft.Wing.MAX_THICKNESS_LOCATION, 0.4
     )  # overriden in standalone code
     prob.set_val(Aircraft.Strut.AREA_RATIO, setup_data["sstqsw"])
-    prob.set_val(Aircraft.Wing.THICKNESS_TO_CHORD_TIP, setup_data["tct"])
     prob.set_val(Aircraft.VerticalTail.AVERAGE_CHORD, setup_data["cbarvt"])
     prob.set_val(Aircraft.Fuselage.LENGTH, setup_data["elf"])
     prob.set_val(Aircraft.Nacelle.AVG_LENGTH, setup_data["eln"])
@@ -202,7 +210,7 @@ def _init_geom(prob):
     prob.set_val(Aircraft.VerticalTail.AREA, setup_data["svt"])
     prob.set_val(Aircraft.Wing.THICKNESS_TO_CHORD_UNWEIGHTED, setup_data["tc"])
     prob.set_val(Aircraft.Strut.CHORD, 0)  # not defined in standalone aero
-    # ground & cruise, dynamic: alpha
+    # ground & cruise, mission: alpha
     prob.set_val(Aircraft.Wing.ZERO_LIFT_ANGLE, setup_data["alphl0"])
     # ground & cruise, config-specific: CL_max_flaps
     # ground: wing_height
@@ -218,7 +226,7 @@ def _init_geom(prob):
     # ground: dCD_flaps_model
     # ground: t_init_gear
     # ground: dt_gear
-    # ground & cruise, dynamic: q
+    # ground & cruise, mission: q
 
 
 if __name__ == "__main__":

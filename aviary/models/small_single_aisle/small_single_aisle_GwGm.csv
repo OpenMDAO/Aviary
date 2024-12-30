@@ -9,7 +9,7 @@ aircraft:controls:stability_augmentation_system_mass,0,lbm
 aircraft:controls:stability_augmentation_system_mass_scaler,1,unitless
 aircraft:crew_and_payload:cargo_mass,8598,lbm
 aircraft:crew_and_payload:catering_items_mass_per_passenger,6,lbm
-aircraft:crew_and_payload:num_passengers,96,unitless
+aircraft:crew_and_payload:design:num_passengers,96,unitless
 aircraft:crew_and_payload:passenger_mass_with_bags,210,lbm
 aircraft:crew_and_payload:passenger_service_mass_per_passenger,7.6,lbm
 aircraft:crew_and_payload:water_mass_per_occupant,3,lbm
@@ -26,6 +26,7 @@ aircraft:design:structural_mass_increment,0,lbm
 aircraft:design:supercritical_drag_shift,0.025,unitless
 aircraft:engine:additional_mass_fraction,0.14,unitless
 aircraft:engine:data_file,models/engines/turbofan_23k_1.deck,unitless
+aircraft:engine:global_throttle, True, unitless
 aircraft:engine:mass_scaler,1,unitless
 aircraft:engine:mass_specific,0.2153,lbm/lbf
 aircraft:engine:num_engines,2,unitless
@@ -33,6 +34,7 @@ aircraft:engine:pod_mass_scaler,1,unitless
 aircraft:engine:pylon_factor,0.6,unitless
 aircraft:engine:reference_diameter,6.04,ft
 aircraft:engine:reference_sls_thrust,28690,lbf
+aircraft:engine:scale_factor,0.8295573370512374,unitless
 aircraft:engine:scaled_sls_thrust,23800,lbf
 aircraft:engine:type,7,unitless
 aircraft:engine:wing_locations,0.272,unitless
@@ -56,7 +58,7 @@ aircraft:fuselage:pressure_differential,7.5,psi
 aircraft:fuselage:seat_pitch,31,inch
 aircraft:fuselage:seat_width,24,inch
 aircraft:fuselage:tail_fineness,3.368,unitless
-aircraft:fuselage:wetted_area_factor,1,unitless
+aircraft:fuselage:wetted_area_scaler,1,unitless
 aircraft:horizontal_tail:area,0,ft**2
 aircraft:horizontal_tail:aspect_ratio,4.26,unitless
 aircraft:horizontal_tail:form_factor,1.55,unitless
@@ -156,14 +158,14 @@ mission:taxi:duration,0.3333,h
 settings:equations_of_motion,2DOF
 settings:mass_method,GASP
 
-# Initial Guesses
+# Initialization Guesses
 actual_takeoff_mass,0
 climb_range,0
 cruise_mass_final,0
 flight_duration,0
-fuel_burn_per_passenger_mile,0.1
+fuel_burn_per_passenger_mile,0
 reserves,0
-rotation_mass,0.99
+rotation_mass,0
 time_to_climb,0
 
 # Unconverted Values

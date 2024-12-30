@@ -30,14 +30,23 @@ from aviary.variable_info.variable_meta_data import _MetaData
 from aviary.variable_info.variables import Aircraft, Mission, Settings
 from aviary.variable_info.enums import LegacyCode, Verbosity, ProblemType
 from aviary.utils.functions import get_path
-from aviary.utils.legacy_code_data.deprecated_vars import flops_deprecated_vars, gasp_deprecated_vars
+from aviary.utils.legacy_code_data.deprecated_vars import (
+    flops_deprecated_vars,
+    gasp_deprecated_vars,
+)
 
 FLOPS = LegacyCode.FLOPS
 GASP = LegacyCode.GASP
 
 
-def create_aviary_deck(fortran_deck: str, legacy_code=None, defaults_deck=None,
-                       out_file=None, force=False, verbosity=Verbosity.BRIEF):
+def create_aviary_deck(
+    fortran_deck: str,
+    legacy_code=None,
+    defaults_deck=None,
+    out_file=None,
+    force=False,
+    verbosity=Verbosity.BRIEF,
+):
     '''
     Create an Aviary CSV file from a Fortran input deck
     Required input is the filepath to the input deck and legacy code. Optionally, a
@@ -46,10 +55,17 @@ def create_aviary_deck(fortran_deck: str, legacy_code=None, defaults_deck=None,
     If an invalid filepath is given, pre-packaged resources will be checked for
     input decks with a matching name.
     '''
+    # compatibility with being passed int for verbosity
+    verbosity = Verbosity(verbosity)
+
     # TODO generate both an Aviary input file and a phase_info file
 
-    vehicle_data = {'input_values': NamedValues(), 'unused_values': NamedValues(),
-                    'initial_guesses': initial_guesses, 'verbosity': verbosity}
+    vehicle_data = {
+        'input_values': NamedValues(),
+        'unused_values': NamedValues(),
+        'initialization_guesses': initialization_guesses,
+        'verbosity': verbosity,
+    }
 
     fortran_deck: Path = get_path(fortran_deck, verbose=False)
 
@@ -59,7 +75,9 @@ def create_aviary_deck(fortran_deck: str, legacy_code=None, defaults_deck=None,
 
     comments.append(f'# created {timestamp} by {user}')
     comments.append(
-        f'# {legacy_code.value}-derived aircraft input deck converted from {fortran_deck.name}')
+        f'# {legacy_code.value}-derived aircraft input deck converted from '
+        f'{fortran_deck.name}'
+    )
 
     if out_file:
         out_file = Path(out_file)
@@ -75,49 +93,71 @@ def create_aviary_deck(fortran_deck: str, legacy_code=None, defaults_deck=None,
         deprecated_vars = flops_deprecated_vars
 
     if not defaults_deck:
-        defaults_filename = legacy_code.value.lower() + '_default_values' + default_extension
-        defaults_deck = Path(__file__).parent.resolve().joinpath(
-            'legacy_code_data', defaults_filename)
+        defaults_filename = (
+            legacy_code.value.lower() + '_default_values' + default_extension
+        )
+        defaults_deck = (
+            Path(__file__)
+            .parent.resolve()
+            .joinpath('legacy_code_data', defaults_filename)
+        )
 
     # create dictionary to convert legacy code variables to Aviary variables
     # key: variable name, value: either None or relevant historical_name
     aviary_variable_dict = generate_aviary_names([legacy_code.value])
 
     if defaults_deck:  # If defaults are specified, initialize the vehicle with them
-        vehicle_data = input_parser(defaults_deck, vehicle_data,
-                                    aviary_variable_dict, deprecated_vars, legacy_code)
+        vehicle_data = input_parser(
+            defaults_deck,
+            vehicle_data,
+            aviary_variable_dict,
+            deprecated_vars,
+            legacy_code,
+        )
 
-    vehicle_data = input_parser(fortran_deck, vehicle_data,
-                                aviary_variable_dict, deprecated_vars, legacy_code)
+    vehicle_data = input_parser(
+        fortran_deck, vehicle_data, aviary_variable_dict, deprecated_vars, legacy_code
+    )
     if legacy_code is GASP:
         vehicle_data = update_gasp_options(vehicle_data)
     elif legacy_code is FLOPS:
         vehicle_data = update_flops_options(vehicle_data)
+    vehicle_data = update_aviary_options(vehicle_data)
 
-    if not out_file.is_file():  # default outputted file to be in same directory as input
+    if (
+        not out_file.is_file()
+    ):  # default outputted file to be in same directory as input
         out_file = fortran_deck.parent / out_file
 
     if out_file.is_file():
         if not force:
-            raise RuntimeError(f'{out_file} already exists. Choose a new name or enable '
-                               '--force')
-        elif verbosity.value >= 1:
+            raise RuntimeError(
+                f'{out_file} already exists. Choose a new name or enable ' '--force'
+            )
+        elif verbosity >= Verbosity.BRIEF:
             print(f'Overwriting existing file: {out_file.name}')
 
     else:
         # create any directories defined by the new filename if they don't already exist
         out_file.parent.mkdir(parents=True, exist_ok=True)
-        if verbosity.value >= 2:
+        if verbosity >= Verbosity.VERBOSE:
             print('Writing to:', out_file)
 
+    # TODO Use the existing utilities to write this input file? It will be much more
+    #      human-readable
     # open the file in write mode
     with open(out_file, 'w', newline='') as f:
         writer = csv.writer(f)
-
+        # Write header info and comments
+        for comment in comments:
+            writer.writerow([comment])
+        writer.writerow([])
         # Values that have been successfully translated to Aviary variables
         writer.writerow(['# Input Values'])
         for var, (val, units) in sorted(vehicle_data['input_values']):
             writer.writerow([var] + val + [units])
+
+        # TODO these should just get directly added to vehicle_data
         if legacy_code is FLOPS:
             EOM = 'height_energy'
             mass = 'FLOPS'
@@ -130,9 +170,9 @@ def create_aviary_deck(fortran_deck: str, legacy_code=None, defaults_deck=None,
         if legacy_code is GASP:
             # Values used in initial guessing of the trajectory
             writer.writerow([])
-            writer.writerow(['# Initial Guesses'])
-            for var_name in sorted(vehicle_data['initial_guesses']):
-                row = [var_name, vehicle_data['initial_guesses'][var_name]]
+            writer.writerow(['# Initialization Guesses'])
+            for var_name in sorted(vehicle_data['initialization_guesses']):
+                row = [var_name, vehicle_data['initialization_guesses'][var_name]]
                 writer.writerow(row)
 
         # Values that were not successfully converted
@@ -179,12 +219,22 @@ def input_parser(fortran_deck, vehicle_data, alternate_names, unused_vars, legac
                 data = line.split('=')[1]
                 try:
                     vehicle_data = process_and_store_data(
-                        data, var_name, legacy_code, current_namelist, alternate_names, vehicle_data, unused_vars, comment)
+                        data,
+                        var_name,
+                        legacy_code,
+                        current_namelist,
+                        alternate_names,
+                        vehicle_data,
+                        unused_vars,
+                        comment,
+                    )
                 except Exception as err:
                     if current_namelist == '':
-                        raise RuntimeError(line + ' could not be parsed successfully.'
-                                           '\nIf this was intended as a comment, '
-                                           'add an "!" at the beginning of the line.') from err
+                        raise RuntimeError(
+                            line + ' could not be parsed successfully.'
+                            '\nIf this was intended as a comment, '
+                            'add an "!" at the beginning of the line.'
+                        ) from err
                     else:
                         raise err
             elif number_of_variables > 1:
@@ -193,24 +243,36 @@ def input_parser(fortran_deck, vehicle_data, alternate_names, unused_vars, legac
                 for ii in range(number_of_variables):
                     # Each of the following elements contains all of the data for the current variable
                     # and the last element is the name of the next variable
-                    sub_list = sub_line[ii+1].split(',')
-                    if ii+1 < number_of_variables:
+                    sub_list = sub_line[ii + 1].split(',')
+                    if ii + 1 < number_of_variables:
                         next_var_name = sub_list.pop()
                         if not next_var_name[0].isalpha():
-                            index = next((i for i, c in enumerate(
-                                next_var_name) if c.isalpha()), len(next_var_name))
+                            index = next(
+                                (i for i, c in enumerate(next_var_name) if c.isalpha()),
+                                len(next_var_name),
+                            )
                             sub_list.append(next_var_name[:index])
                             next_var_name = next_var_name[index:]
 
                     data = ','.join(sub_list)
                     try:
                         vehicle_data = process_and_store_data(
-                            data, var_name, legacy_code, current_namelist, alternate_names, vehicle_data, unused_vars, comment)
+                            data,
+                            var_name,
+                            legacy_code,
+                            current_namelist,
+                            alternate_names,
+                            vehicle_data,
+                            unused_vars,
+                            comment,
+                        )
                     except Exception as err:
                         if current_namelist == '':
-                            raise RuntimeError(line + ' could not be parsed successfully.'
-                                               '\nIf this was intended as a comment, '
-                                               'add an "!" at the beginning of the line.') from err
+                            raise RuntimeError(
+                                line + ' could not be parsed successfully.'
+                                '\nIf this was intended as a comment, '
+                                'add an "!" at the beginning of the line.'
+                            ) from err
                         else:
                             raise err
                     var_name = next_var_name
@@ -221,7 +283,16 @@ def input_parser(fortran_deck, vehicle_data, alternate_names, unused_vars, legac
     return vehicle_data
 
 
-def process_and_store_data(data, var_name, legacy_code, current_namelist, alternate_names, vehicle_data, unused_vars, comment=''):
+def process_and_store_data(
+    data,
+    var_name,
+    legacy_code,
+    current_namelist,
+    alternate_names,
+    vehicle_data,
+    unused_vars,
+    comment='',
+):
     '''
     process_and_store_data takes in a string that contains the data, the current variable's name and
     namelist, the dictionary of alternate names, and the current vehicle data.
@@ -230,17 +301,18 @@ def process_and_store_data(data, var_name, legacy_code, current_namelist, altern
     The variables are also sorted based on whether they will set an Aviary variable or they are for initial guessing
     '''
 
-    guess_names = list(initial_guesses.keys())
+    guess_names = list(initialization_guesses.keys())
     var_ind = data_units = None
     skip_variable = False
     # skip any variables that shouldn't get converted
-    if re.search(current_namelist+var_name+'\Z', str(unused_vars), re.IGNORECASE):
+    if re.search(current_namelist + var_name + '\\Z', str(unused_vars), re.IGNORECASE):
         return vehicle_data
     # remove any elements that are empty (caused by trailing commas or extra commas)
     data_list = [dat for dat in data.split(',') if dat != '']
     if len(data_list) > 0:
         if valid_units(data_list[-1]):
-            # if the last element is a unit, remove it from the list and update the variable's units
+            # if the last element is a unit, remove it from the list and update the
+            # variable's units
             data_units = data_list.pop()
         var_values = convert_strings_to_data(data_list)
     else:
@@ -248,35 +320,57 @@ def process_and_store_data(data, var_name, legacy_code, current_namelist, altern
         var_values = []
 
     list_of_equivalent_aviary_names, var_ind = update_name(
-        alternate_names, current_namelist+var_name, vehicle_data['verbosity'])
+        alternate_names, current_namelist + var_name, vehicle_data['verbosity']
+    )
 
     # Fortran uses 1 indexing, Python uses 0 indexing
     fortran_offset = 1 if current_namelist else 0
     if var_ind is not None:
         var_ind -= fortran_offset
 
+    # Aviary has a reduction gearbox which is 1/gear ratio of GASP gearbox
+    if current_namelist + var_name == 'INPROP.GR':
+        var_values = [1 / var for var in var_values]
+        vehicle_data['input_values'] = set_value(
+            Aircraft.Engine.Gearbox.GEAR_RATIO,
+            var_values,
+            vehicle_data['input_values'],
+            var_ind=var_ind,
+            units=data_units,
+        )
+
     for name in list_of_equivalent_aviary_names:
         if not skip_variable:
             if name in guess_names and legacy_code is GASP:
                 # all initial guesses take only a single value
-                vehicle_data['initial_guesses'][name] = float(var_values[0])
+                vehicle_data['initialization_guesses'][name] = float(var_values[0])
                 continue
 
             elif name in _MetaData:
-                vehicle_data['input_values'] = set_value(name, var_values, vehicle_data['input_values'],
-                                                         var_ind=var_ind, units=data_units)
+                vehicle_data['input_values'] = set_value(
+                    name,
+                    var_values,
+                    vehicle_data['input_values'],
+                    var_ind=var_ind,
+                    units=data_units,
+                )
                 continue
 
-        vehicle_data['unused_values'] = set_value(name, var_values, vehicle_data['unused_values'],
-                                                  var_ind=var_ind, units=data_units)
-        if vehicle_data['verbosity'].value >= 2:
+        vehicle_data['unused_values'] = set_value(
+            name,
+            var_values,
+            vehicle_data['unused_values'],
+            var_ind=var_ind,
+            units=data_units,
+        )
+        if vehicle_data['verbosity'].value >= Verbosity.VERBOSE:
             print('Unused:', name, var_values, comment)
 
     return vehicle_data
 
 
 def set_value(var_name, var_value, value_dict: NamedValues, var_ind=None, units=None):
-    ''' 
+    '''
     set_value will update the current value of a variable in a value dictionary that contains a value
     and it's associated units.
     If units are specified for the new value, they will be used, otherwise the current units in the
@@ -295,19 +389,20 @@ def set_value(var_name, var_value, value_dict: NamedValues, var_ind=None, units=
     if not units:
         units = 'unitless'
 
-    if var_ind != None:
+    if var_ind is not None:
         # if an index is specified, use it, otherwise store the input as the whole value
         if isinstance(current_value, list):
             max_ind = len(current_value) - 1
             if var_ind > max_ind:
-                current_value.extend((var_ind-max_ind)*[0])
+                current_value.extend((var_ind - max_ind) * [0])
         else:
-            current_value = [current_value]+[0]*var_ind
+            current_value = [current_value] + [0] * var_ind
         current_value[var_ind] = var_value[0]
         value_dict.set_val(var_name, current_value, units)
     else:
-        if current_value != None and isinstance(current_value[0], bool):
-            # if a variable is defined as boolean but is read in as number, set as boolean
+        if current_value is not None and isinstance(current_value[0], bool):
+            # if a variable is defined as boolean but is read in as number, set as
+            # boolean
             if var_value[0] == 1:
                 var_value = ['True']
             elif var_value[0] == 0:
@@ -357,14 +452,16 @@ def update_name(alternate_names, var_name, verbosity=Verbosity.BRIEF):
                     if altname.endswith(var_name.lower()):
                         all_equivalent_names.append(key)
                         continue
-                    elif var_ind is not None and altname.endswith(f'{var_name.lower()}({var_ind})'):
+                    elif var_ind is not None and altname.endswith(
+                        f'{var_name.lower()}({var_ind})'
+                    ):
                         all_equivalent_names.append(key)
                         var_ind = None
                         continue
 
     # if there are no equivalent variable names, return the original name
     if len(all_equivalent_names) == 0:
-        if verbosity.value >= 2:
+        if verbosity >= Verbosity.VERBOSE:
             print('passing: ', var_name)
         all_equivalent_names = [var_name]
 
@@ -377,11 +474,22 @@ def update_gasp_options(vehicle_data):
     """
     input_values: NamedValues = vehicle_data['input_values']
 
-    flap_types = ["plain", "split", "single_slotted", "double_slotted",
-                  "triple_slotted", "fowler", "double_slotted_fowler"]
+    for var_name in gasp_scaler_variables:
+        update_gasp_scaler_variables(var_name, input_values)
+
+    flap_types = [
+        "plain",
+        "split",
+        "single_slotted",
+        "double_slotted",
+        "triple_slotted",
+        "fowler",
+        "double_slotted_fowler",
+    ]
 
     ## PROBLEM TYPE ##
-    # if multiple values of target_range are specified, use the one that corresponds to the problem_type
+    # if multiple values of target_range are specified, use the one that
+    # corresponds to the problem_type
     design_range, distance_units = input_values.get_item(Mission.Design.RANGE)
     try:
         problem_type = input_values.get_val(Settings.PROBLEM_TYPE)[0]
@@ -424,60 +532,104 @@ def update_gasp_options(vehicle_data):
         strut_loc = abs(strut_loc)
 
     if strut_loc < 1:
-        input_values.set_val(Aircraft.Strut.ATTACHMENT_LOCATION_DIMENSIONLESS,
-                             [strut_loc], 'unitless')
-        input_values.set_val(Aircraft.Strut.DIMENSIONAL_LOCATION_SPECIFIED, [
-                             False], 'unitless')
+        input_values.set_val(
+            Aircraft.Strut.ATTACHMENT_LOCATION_DIMENSIONLESS, [strut_loc], 'unitless'
+        )
+        input_values.set_val(
+            Aircraft.Strut.DIMENSIONAL_LOCATION_SPECIFIED, [False], 'unitless'
+        )
     else:
         input_values.set_val(Aircraft.Strut.ATTACHMENT_LOCATION, [strut_loc], 'ft')
         input_values.set_val(
-            Aircraft.Strut.DIMENSIONAL_LOCATION_SPECIFIED, [True], 'unitless')
+            Aircraft.Strut.DIMENSIONAL_LOCATION_SPECIFIED, [True], 'unitless'
+        )
 
     if input_values.get_val(Aircraft.Wing.HAS_FOLD)[0]:
         if not input_values.get_val(Aircraft.Wing.CHOOSE_FOLD_LOCATION)[0]:
-            input_values.set_val(Aircraft.Wing.FOLD_DIMENSIONAL_LOCATION_SPECIFIED,
-                                 [True], 'unitless')
+            input_values.set_val(
+                Aircraft.Wing.FOLD_DIMENSIONAL_LOCATION_SPECIFIED, [True], 'unitless'
+            )
         else:
             if input_values.get_val(Aircraft.Wing.FOLDED_SPAN, 'ft')[0] > 1:
-                input_values.set_val(Aircraft.Wing.FOLD_DIMENSIONAL_LOCATION_SPECIFIED,
-                                     [True], 'unitless')
+                input_values.set_val(
+                    Aircraft.Wing.FOLD_DIMENSIONAL_LOCATION_SPECIFIED,
+                    [True],
+                    'unitless',
+                )
             else:
-                input_values.set_val(Aircraft.Wing.FOLD_DIMENSIONAL_LOCATION_SPECIFIED,
-                                     [False], 'unitless')
+                input_values.set_val(
+                    Aircraft.Wing.FOLD_DIMENSIONAL_LOCATION_SPECIFIED,
+                    [False],
+                    'unitless',
+                )
     else:
         input_values.set_val(Aircraft.Wing.CHOOSE_FOLD_LOCATION, [True], 'unitless')
-        input_values.set_val(Aircraft.Wing.FOLD_DIMENSIONAL_LOCATION_SPECIFIED, [
-                             False], 'unitless')
+        input_values.set_val(
+            Aircraft.Wing.FOLD_DIMENSIONAL_LOCATION_SPECIFIED, [False], 'unitless'
+        )
 
     ## FLAPS ##
     flap_type = input_values.get_val(Aircraft.Wing.FLAP_TYPE)[0]
     if not isinstance(flap_type, str):
-        flap_type = flap_types[flap_type-1]
+        flap_type = flap_types[flap_type - 1]
         input_values.set_val(Aircraft.Wing.FLAP_TYPE, [flap_type])
     flap_ind = flap_types.index(flap_type)
     if input_values.get_val(Aircraft.Wing.HIGH_LIFT_MASS_COEFFICIENT)[0] <= 0:
-        input_values.set_val(Aircraft.Wing.HIGH_LIFT_MASS_COEFFICIENT,
-                             [[0.62, 1.0, 0.733, 1.2, 1.32, 0.633, 0.678][flap_ind]])
+        input_values.set_val(
+            Aircraft.Wing.HIGH_LIFT_MASS_COEFFICIENT,
+            [[0.62, 1.0, 0.733, 1.2, 1.32, 0.633, 0.678][flap_ind]],
+        )
     if input_values.get_val(Aircraft.Wing.OPTIMUM_FLAP_DEFLECTION, 'deg')[0] == 0:
-        input_values.set_val(Aircraft.Wing.OPTIMUM_FLAP_DEFLECTION,
-                             [[60, 60, 40, 55, 55, 30, 30][flap_ind]], 'deg')
+        input_values.set_val(
+            Aircraft.Wing.OPTIMUM_FLAP_DEFLECTION,
+            [[60, 60, 40, 55, 55, 30, 30][flap_ind]],
+            'deg',
+        )
     if input_values.get_val(Aircraft.Wing.FLAP_LIFT_INCREMENT_OPTIMUM)[0] == 0:
-        input_values.set_val(Aircraft.Wing.FLAP_LIFT_INCREMENT_OPTIMUM,
-                             [[.9, .8, 1.18, 1.4, 1.6, 1.67, 2.25][flap_ind]])
+        input_values.set_val(
+            Aircraft.Wing.FLAP_LIFT_INCREMENT_OPTIMUM,
+            [[0.9, 0.8, 1.18, 1.4, 1.6, 1.67, 2.25][flap_ind]],
+        )
     if input_values.get_val(Aircraft.Wing.FLAP_DRAG_INCREMENT_OPTIMUM)[0] == 0:
-        input_values.set_val(Aircraft.Wing.FLAP_DRAG_INCREMENT_OPTIMUM,
-                             [[.12, .23, .13, .23, .23, .1, .15][flap_ind]])
+        input_values.set_val(
+            Aircraft.Wing.FLAP_DRAG_INCREMENT_OPTIMUM,
+            [[0.12, 0.23, 0.13, 0.23, 0.23, 0.1, 0.15][flap_ind]],
+        )
 
     res = input_values.get_val(Aircraft.Design.RESERVE_FUEL_ADDITIONAL, units='lbm')[0]
     if res <= 0:
         input_values.set_val(Aircraft.Design.RESERVE_FUEL_ADDITIONAL, [0], units='lbm')
-        input_values.set_val(Aircraft.Design.RESERVE_FUEL_FRACTION,
-                             [-res], units='unitless')
+        input_values.set_val(
+            Aircraft.Design.RESERVE_FUEL_FRACTION, [-res], units='unitless'
+        )
     elif res >= 10:
-        input_values.set_val(Aircraft.Design.RESERVE_FUEL_FRACTION,
-                             [0], units='unitless')
+        input_values.set_val(
+            Aircraft.Design.RESERVE_FUEL_FRACTION, [0], units='unitless'
+        )
     else:
         ValueError('"FRESF" is not valid between 0 and 10.')
+
+    # if the value is negative, we are asking the code to calculate it
+    # if it is positive, then we are going to use it as an override
+    if input_values.get_val(Aircraft.Wing.FORM_FACTOR)[0] < 0:
+        input_values.delete(Aircraft.Wing.FORM_FACTOR)
+    if input_values.get_val(Aircraft.HorizontalTail.FORM_FACTOR)[0] < 0:
+        input_values.delete(Aircraft.HorizontalTail.FORM_FACTOR)
+    if input_values.get_val(Aircraft.VerticalTail.FORM_FACTOR)[0] < 0:
+        input_values.delete(Aircraft.VerticalTail.FORM_FACTOR)
+    if input_values.get_val(Aircraft.Fuselage.FORM_FACTOR)[0] < 0:
+        input_values.delete(Aircraft.Fuselage.FORM_FACTOR)
+    if input_values.get_val(Aircraft.Nacelle.FORM_FACTOR)[0] < 0:
+        input_values.delete(Aircraft.Nacelle.FORM_FACTOR)
+    if input_values.get_val(Aircraft.Strut.FUSELAGE_INTERFERENCE_FACTOR)[0] < 0:
+        input_values.delete(Aircraft.Strut.FUSELAGE_INTERFERENCE_FACTOR)
+
+    # GASP-converted engine decks have uneven throttle ranges, which require the enabling
+    # of global throttle range. This will result in extrapolation of the engine deck,
+    # but provides closer matches to legacy results. To remove use of global throttle
+    # (and therefore eliminate extrapolation), a T4 limit needs to be manually set for
+    # the mission
+    input_values.set_val(Aircraft.Engine.GLOBAL_THROTTLE, [True])
 
     vehicle_data['input_values'] = input_values
     return vehicle_data
@@ -489,8 +641,8 @@ def update_flops_options(vehicle_data):
     """
     input_values: NamedValues = vehicle_data['input_values']
 
-    for var_name in flops_scalar_variables:
-        update_flops_scalar_variables(var_name, input_values)
+    for var_name in flops_scaler_variables:
+        update_flops_scaler_variables(var_name, input_values)
 
     # TWR <= 0 is not valid in Aviary (parametric variation)
     if Aircraft.Design.THRUST_TO_WEIGHT_RATIO in input_values:
@@ -499,55 +651,111 @@ def update_flops_options(vehicle_data):
 
     # WSR
 
-    # Additional mass fraction scalar set to zero to not add mass twice
+    # Additional mass fraction scaler set to zero to not add mass twice
     if Aircraft.Engine.ADDITIONAL_MASS_FRACTION in input_values:
         if input_values.get_val(Aircraft.Engine.ADDITIONAL_MASS_FRACTION)[0] >= 1:
-            input_values.set_val(Aircraft.Engine.ADDITIONAL_MASS,
-                                 input_values.get_val(
-                                     Aircraft.Engine.ADDITIONAL_MASS_FRACTION),
-                                 'lbm')
+            input_values.set_val(
+                Aircraft.Engine.ADDITIONAL_MASS,
+                input_values.get_val(Aircraft.Engine.ADDITIONAL_MASS_FRACTION),
+                'lbm',
+            )
             input_values.set_val(Aircraft.Engine.ADDITIONAL_MASS_FRACTION, [0.0])
 
     # Miscellaneous propulsion mass trigger point 1 instead of 5
     if Aircraft.Propulsion.MISC_MASS_SCALER in input_values:
         if input_values.get_val(Aircraft.Propulsion.MISC_MASS_SCALER)[0] >= 1:
-            input_values.set_val(Aircraft.Propulsion.TOTAL_MISC_MASS,
-                                 input_values.get_val(
-                                     Aircraft.Propulsion.MISC_MASS_SCALER),
-                                 'lbm')
+            input_values.set_val(
+                Aircraft.Propulsion.TOTAL_MISC_MASS,
+                input_values.get_val(Aircraft.Propulsion.MISC_MASS_SCALER),
+                'lbm',
+            )
             input_values.set_val(Aircraft.Propulsion.MISC_MASS_SCALER, [0.0])
 
     vehicle_data['input_values'] = input_values
     return vehicle_data
 
 
-def update_flops_scalar_variables(var_name, input_values: NamedValues):
-    # The following parameters are used to modify or override
-    # internally computed weights for various components as follows:
-    # < 0., negative of starting weight which will be modified
-    #   as appropriate during optimization or parametric
-    #   variation, lb
-    # = 0., no weight for that component
-    # > 0. but < 5., scale factor applied to internally
-    #   computed weight
-    # > 5., actual fixed weight for component, lb
-    # Same rules also applied to various other FLOPS scalar parameters
-    scalar_name = var_name + '_scaler'
-    if scalar_name not in input_values:
+def update_aviary_options(vehicle_data):
+    """
+    Special handling for variables that occurs for either legacy code
+    """
+    input_values: NamedValues = vehicle_data['input_values']
+
+    # if reference + scaled thrust both provided, set scale factor
+    try:
+        ref_thrust = input_values.get_val(Aircraft.Engine.REFERENCE_SLS_THRUST, 'lbf')[
+            0
+        ]
+        scaled_thrust = input_values.get_val(Aircraft.Engine.SCALED_SLS_THRUST, 'lbf')[
+            0
+        ]
+    except KeyError:
+        pass
+    else:
+        scale_factor = scaled_thrust / ref_thrust
+        input_values.set_val(Aircraft.Engine.SCALE_FACTOR, [scale_factor])
+
+    vehicle_data['input_values'] = input_values
+    return vehicle_data
+
+
+def update_flops_scaler_variables(var_name, input_values: NamedValues):
+    """
+    The following parameters are used to modify or override
+    internally computed weights and areas for various components as follows:
+    < 0., negative of starting weight which will be modified
+    as appropriate during optimization or parametric variation, lb or ft**2
+    = 0., no weight for that component
+    > 0. but < 5., scale factor applied to internally computed weight or area
+    > 5., actual fixed weight for component, lb or ft**2
+    Same rules also applied to various other FLOPS scaler parameters
+    """
+    scaler_name = var_name + '_scaler'
+    if scaler_name not in input_values:
         return
-    scalar_value = input_values.get_val(scalar_name)[0]
-    if scalar_value <= 0:
-        input_values.delete(scalar_name)
-    elif scalar_value < 5:
+    scaler_value = input_values.get_val(scaler_name)[0]
+    if scaler_value <= 0:
+        input_values.delete(scaler_name)
+    elif scaler_value < 5:
         return
-    elif scalar_value > 5:
-        input_values.set_val(var_name, [scalar_value], 'lbm')
-        input_values.set_val(scalar_name, [1.0])
+    elif scaler_value > 5:
+        if "area" in var_name.lower():
+            input_values.set_val(var_name, [scaler_value], 'ft**2')
+        else:
+            input_values.set_val(var_name, [scaler_value], 'lbm')
+        input_values.delete(scaler_name)
+
+
+def update_gasp_scaler_variables(var_name, input_values: NamedValues):
+    """
+    The following parameters are used to modify or override
+    internally computed weights and areas for various components as follows:
+    < 0., negative of starting weight which will be modified
+    as appropriate during optimization or parametric variation, lb or ft**2
+    = 0., no weight/area for that component
+    > 0. but < 10., scale factor applied to internally computed weight
+    > 10., actual fixed weight for component, lb or ft**2
+    Same rules also applied to various other FLOPS scaler parameters
+    """
+    scaler_name = var_name + '_scaler'
+    if scaler_name not in input_values:
+        return
+    scaler_value = input_values.get_val(scaler_name)[0]
+    if scaler_value <= 0:
+        input_values.delete(scaler_name)
+    elif scaler_value < 10:
+        return
+    elif scaler_value > 10:
+        if "area" in var_name.lower():
+            input_values.set_val(var_name, [scaler_value], 'ft**2')
+        else:
+            input_values.set_val(var_name, [scaler_value], 'lbm')
+        input_values.delete(scaler_name)
 
 
 # list storing information on Aviary variables that are split from single
 # FLOPS variables that use the same value-based branching behavior
-flops_scalar_variables = [
+flops_scaler_variables = [
     Aircraft.AirConditioning.MASS,
     Aircraft.AntiIcing.MASS,
     Aircraft.APU.MASS,
@@ -574,25 +782,32 @@ flops_scalar_variables = [
     Aircraft.LandingGear.MAIN_GEAR_MASS,
     Aircraft.LandingGear.NOSE_GEAR_MASS,
     Aircraft.Nacelle.MASS,
+    Aircraft.Nacelle.WETTED_AREA,
     Aircraft.Propulsion.TOTAL_ENGINE_OIL_MASS,
     Aircraft.VerticalTail.MASS_SCALER,
-    Aircraft.VerticalTail.WETTED_AREA_SCALER,
+    Aircraft.VerticalTail.WETTED_AREA,
     Aircraft.Wing.MASS,
     Aircraft.Wing.SHEAR_CONTROL_MASS,
     Aircraft.Wing.SURFACE_CONTROL_MASS,
     Aircraft.Wing.WETTED_AREA,
 ]
 
-initial_guesses = {
-    # initial_guesses is a dictionary that contains values used to initialize the trajectory
+# GASP variables that use the same value-based branching behavior
+gasp_scaler_variables = [
+    Aircraft.Fuselage.WETTED_AREA,
+]
+
+initialization_guesses = {
+    # initialization_guesses is a dictionary that contains values used to
+    # initialize the trajectory
     'actual_takeoff_mass': 0,
-    'rotation_mass': .99,
-    'fuel_burn_per_passenger_mile': 0.1,
+    'rotation_mass': 0,
+    'fuel_burn_per_passenger_mile': 0,
     'cruise_mass_final': 0,
     'flight_duration': 0,
     'time_to_climb': 0,
     'climb_range': 0,
-    'reserves': 0
+    'reserves': 0,
 }
 
 
@@ -615,7 +830,7 @@ def _setup_F2A_parser(parser):
         "-o",
         "--out_file",
         default=None,
-        help="Filename for converted input deck, including partial or complete path."
+        help="Filename for converted input deck, including partial or complete path.",
     )
     parser.add_argument(
         "-l",
@@ -623,13 +838,13 @@ def _setup_F2A_parser(parser):
         type=LegacyCode,
         help="Name of the legacy code the deck originated from",
         choices=set(LegacyCode),
-        required=True
+        required=True,
     )
     parser.add_argument(
         "-d",
         "--defaults_deck",
         default=None,
-        help="Deck of default values for unspecified variables"
+        help="Deck of default values for unspecified variables",
     )
     parser.add_argument(
         "--force",
@@ -652,8 +867,14 @@ def _exec_F2A(args, user_args):
         args.input_deck = args.input_deck[0]
     filepath = args.input_deck
 
-    # convert verbosity from number to enum
+    # convert verbosity from int to enum
     verbosity = Verbosity(args.verbosity)
 
-    create_aviary_deck(filepath, args.legacy_code, args.defaults_deck,
-                       args.out_file, args.force, verbosity)
+    create_aviary_deck(
+        filepath,
+        args.legacy_code,
+        args.defaults_deck,
+        args.out_file,
+        args.force,
+        verbosity,
+    )
