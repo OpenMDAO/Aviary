@@ -61,7 +61,7 @@ class DetailedWingBendingFact(om.ExplicitComponent):
 
         add_aviary_input(self, Aircraft.Wing.THICKNESS_TO_CHORD_REF, val=0.0)
 
-        add_aviary_output(self, Aircraft.Wing.BENDING_FACTOR, val=0.0)
+        add_aviary_output(self, Aircraft.Wing.BENDING_MATERIAL_FACTOR, val=0.0)
 
         add_aviary_output(self, Aircraft.Wing.ENG_POD_INERTIA_FACTOR, val=0.0)
 
@@ -189,7 +189,7 @@ class DetailedWingBendingFact(om.ExplicitComponent):
 
         bt = btb / (ar**(0.25 * fstrt) * (1.0 + (0.5 * faert - 0.16 * fstrt)
                     * sa**2 + 0.03 * caya * (1.0 - 0.5 * faert) * sa))
-        outputs[Aircraft.Wing.BENDING_FACTOR] = bt
+        outputs[Aircraft.Wing.BENDING_MATERIAL_FACTOR] = bt
 
         inertia_factor = np.zeros(num_engine_type, dtype=chord.dtype)
         eel = np.zeros(len(dy) + 1, dtype=chord.dtype)

@@ -4984,12 +4984,13 @@ add_meta_data(
 add_meta_data(
     Aircraft.Wing.ASPECT_RATIO_REF,
     meta_data=_MetaData,
-    historical_name={"GASP": None,
-                     "FLOPS": 'WTIN.ARREF',  # ['&DEFINE.WTIN.ARREF'],
-                     "LEAPS1": 'aircraft.inputs.L0_detailed_wing.ref_aspect_ratio'
-                     },
+    historical_name={
+        "GASP": None,
+        "FLOPS": 'WTIN.ARREF',  # ['&DEFINE.WTIN.ARREF'],
+        "LEAPS1": 'aircraft.inputs.L0_detailed_wing.ref_aspect_ratio',
+    },
     units='unitless',
-    desc='Reference aspect ratio, used for detailed wing bending.'
+    desc='Reference aspect ratio, used for detailed wing mass estimation.',
 )
 
 add_meta_data(
@@ -5004,37 +5005,41 @@ add_meta_data(
 )
 
 add_meta_data(
-    Aircraft.Wing.BENDING_FACTOR,
+    Aircraft.Wing.BENDING_MATERIAL_FACTOR,
     meta_data=_MetaData,
-    historical_name={"GASP": None,
-                     "FLOPS": None,  # ['~WWGHT.BT', '~BNDMAT.W'],
-                     "LEAPS1": 'aircraft.outputs.L0_wing.bending_material_factor'
-                     },
+    historical_name={
+        "GASP": None,
+        "FLOPS": None,  # ['~WWGHT.BT', '~BNDMAT.W'],
+        "LEAPS1": 'aircraft.outputs.L0_wing.bending_material_factor',
+    },
     units='unitless',
-    desc='wing bending factor'
+    desc='Wing bending material factor with sweep adjustment. Used to compute '
+    'Aircraft.Wing.BENDING_MATERIAL_MASS',
 )
 
 add_meta_data(
     # Note user override
-    #    - see also: Aircraft.Wing.BENDING_MASS_SCALER
-    Aircraft.Wing.BENDING_MASS,
+    #    - see also: Aircraft.Wing.BENDING_MATERIAL_MASS_SCALER
+    Aircraft.Wing.BENDING_MATERIAL_MASS,
     meta_data=_MetaData,
-    historical_name={"GASP": None,
-                     "FLOPS": None,  # '~WWGHT.W1',
-                     "LEAPS1": 'aircraft.outputs.L0_wing.bending_mat_weight'
-                     },
+    historical_name={
+        "GASP": None,
+        "FLOPS": None,  # '~WWGHT.W1',
+        "LEAPS1": 'aircraft.outputs.L0_wing.bending_mat_weight',
+    },
     units='lbm',
     desc='wing mass breakdown term 1',
     default_value=None,
 )
 
 add_meta_data(
-    Aircraft.Wing.BENDING_MASS_SCALER,
+    Aircraft.Wing.BENDING_MATERIAL_MASS_SCALER,
     meta_data=_MetaData,
-    historical_name={"GASP": None,
-                     "FLOPS": 'WTIN.FRWI1',  # ['&DEFINE.WTIN.FRWI1', 'WIOR3.FRWI1'],
-                     "LEAPS1": 'aircraft.inputs.L0_overrides.wing_bending_mat_weight'
-                     },
+    historical_name={
+        "GASP": None,
+        "FLOPS": 'WTIN.FRWI1',  # ['&DEFINE.WTIN.FRWI1', 'WIOR3.FRWI1'],
+        "LEAPS1": 'aircraft.inputs.L0_overrides.wing_bending_mat_weight',
+    },
     units='unitless',
     desc='mass scaler of the bending wing mass term',
     default_value=1.0,
@@ -5207,12 +5212,14 @@ add_meta_data(
 add_meta_data(
     Aircraft.Wing.ENG_POD_INERTIA_FACTOR,
     meta_data=_MetaData,
-    historical_name={"GASP": None,
-                     "FLOPS": None,  # '~WWGHT.CAYE',
-                     "LEAPS1": 'aircraft.outputs.L0_wing.engine_inertia_relief_factor'
-                     },
+    historical_name={
+        "GASP": None,
+        "FLOPS": None,  # '~WWGHT.CAYE',
+        "LEAPS1": 'aircraft.outputs.L0_wing.engine_inertia_relief_factor',
+    },
     units='unitless',
-    desc='engine inertia relief factor'
+    desc='Engine inertia relief factor for wingspan inboard of engine locations. Used '
+    'to compute Aircraft.Wing.BENDING_MATERIAL_MASS',
 )
 
 add_meta_data(
@@ -6093,13 +6100,14 @@ add_meta_data(
 add_meta_data(
     Aircraft.Wing.THICKNESS_TO_CHORD_REF,
     meta_data=_MetaData,
-    historical_name={"GASP": None,
-                     "FLOPS": 'WTIN.TCREF',  # ['&DEFINE.WTIN.TCREF'],
-                     "LEAPS1": 'aircraft.inputs.L0_detailed_wing.ref_thickness_to_chord_ratio'
-                     },
+    historical_name={
+        "GASP": None,
+        "FLOPS": 'WTIN.TCREF',  # ['&DEFINE.WTIN.TCREF'],
+        "LEAPS1": 'aircraft.inputs.L0_detailed_wing.ref_thickness_to_chord_ratio',
+    },
     units='unitless',
-    desc='Reference thickness-to-chord ratio, used for detailed wing bending.',
-    default_value=0.0
+    desc='Reference thickness-to-chord ratio, used for detailed wing mass estimation.',
+    default_value=0.0,
 )
 
 add_meta_data(

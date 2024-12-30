@@ -241,7 +241,7 @@ inputs.set_val(Aircraft.Wing.AIRFOIL_TECHNOLOGY, 1.6)
 inputs.set_val(Aircraft.Wing.AREA, 1220.0, 'ft**2')
 inputs.set_val(Aircraft.Wing.ASPECT_RATIO, 11.5587605382765)
 inputs.set_val(Aircraft.Wing.ASPECT_RATIO_REF, 11.5587605382765)
-inputs.set_val(Aircraft.Wing.BENDING_MASS_SCALER, 1.0)
+inputs.set_val(Aircraft.Wing.BENDING_MATERIAL_MASS_SCALER, 1.0)
 inputs.set_val(
     Aircraft.Wing.CHORD_PER_SEMISPAN_DIST,
     np.array(
@@ -426,8 +426,8 @@ outputs.set_val(Aircraft.VerticalTail.CHARACTERISTIC_LENGTH, 11.25, 'ft')
 outputs.set_val(Aircraft.VerticalTail.FINENESS, 0.1000)
 outputs.set_val(Aircraft.VerticalTail.MASS, 1175.0, 'lbm')
 
-outputs.set_val(Aircraft.Wing.BENDING_FACTOR, 11.9602)
-outputs.set_val(Aircraft.Wing.BENDING_MASS, 5410.5, 'lbm')
+outputs.set_val(Aircraft.Wing.BENDING_MATERIAL_FACTOR, 11.9602)
+outputs.set_val(Aircraft.Wing.BENDING_MATERIAL_MASS, 5410.5, 'lbm')
 outputs.set_val(Aircraft.Wing.CHARACTERISTIC_LENGTH, 10.27, 'ft')
 outputs.set_val(Aircraft.Wing.CONTROL_SURFACE_AREA, 0.333 * 1220, 'ft**2')
 outputs.set_val(Aircraft.Wing.ENG_POD_INERTIA_FACTOR, 0.960516)

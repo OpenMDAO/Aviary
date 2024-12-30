@@ -47,23 +47,28 @@ class DetailedWingBendingTest(unittest.TestCase):
         flops_validation_test(
             prob,
             case_name,
-            input_keys=[Aircraft.Wing.LOAD_PATH_SWEEP_DIST,
-                        Aircraft.Wing.THICKNESS_TO_CHORD_DIST,
-                        Aircraft.Wing.CHORD_PER_SEMISPAN_DIST,
-                        Mission.Design.GROSS_MASS,
-                        Aircraft.Engine.POD_MASS,
-                        Aircraft.Wing.ASPECT_RATIO,
-                        Aircraft.Wing.ASPECT_RATIO_REF,
-                        Aircraft.Wing.STRUT_BRACING_FACTOR,
-                        Aircraft.Wing.AEROELASTIC_TAILORING_FACTOR,
-                        Aircraft.Engine.WING_LOCATIONS,
-                        Aircraft.Wing.THICKNESS_TO_CHORD,
-                        Aircraft.Wing.THICKNESS_TO_CHORD_REF],
-            output_keys=[Aircraft.Wing.BENDING_FACTOR,
-                         Aircraft.Wing.ENG_POD_INERTIA_FACTOR],
+            input_keys=[
+                Aircraft.Wing.LOAD_PATH_SWEEP_DIST,
+                Aircraft.Wing.THICKNESS_TO_CHORD_DIST,
+                Aircraft.Wing.CHORD_PER_SEMISPAN_DIST,
+                Mission.Design.GROSS_MASS,
+                Aircraft.Engine.POD_MASS,
+                Aircraft.Wing.ASPECT_RATIO,
+                Aircraft.Wing.ASPECT_RATIO_REF,
+                Aircraft.Wing.STRUT_BRACING_FACTOR,
+                Aircraft.Wing.AEROELASTIC_TAILORING_FACTOR,
+                Aircraft.Engine.WING_LOCATIONS,
+                Aircraft.Wing.THICKNESS_TO_CHORD,
+                Aircraft.Wing.THICKNESS_TO_CHORD_REF,
+            ],
+            output_keys=[
+                Aircraft.Wing.BENDING_MATERIAL_FACTOR,
+                Aircraft.Wing.ENG_POD_INERTIA_FACTOR,
+            ],
             method='fd',
             atol=1e-3,
-            rtol=1e-5)
+            rtol=1e-5,
+        )
 
     def test_case_multiengine(self):
         prob = self.prob
@@ -114,13 +119,15 @@ class DetailedWingBendingTest(unittest.TestCase):
 
         prob.run_model()
 
-        bending_factor = prob.get_val(Aircraft.Wing.BENDING_FACTOR)
+        BENDING_MATERIAL_FACTOR = prob.get_val(Aircraft.Wing.BENDING_MATERIAL_FACTOR)
         pod_inertia = prob.get_val(Aircraft.Wing.ENG_POD_INERTIA_FACTOR)
 
-        bending_factor_expected = 11.59165669761
+        BENDING_MATERIAL_FACTOR_expected = 11.59165669761
         # 0.9600334354133278 if the factors are additive
         pod_inertia_expected = 0.9604608395586276
-        assert_near_equal(bending_factor, bending_factor_expected, tolerance=1e-10)
+        assert_near_equal(
+            BENDING_MATERIAL_FACTOR, BENDING_MATERIAL_FACTOR_expected, tolerance=1e-10
+        )
         assert_near_equal(pod_inertia, pod_inertia_expected, tolerance=1e-10)
 
         partial_data = prob.check_partials(
@@ -176,12 +183,14 @@ class DetailedWingBendingTest(unittest.TestCase):
 
         prob.run_model()
 
-        bending_factor = prob.get_val(Aircraft.Wing.BENDING_FACTOR)
+        BENDING_MATERIAL_FACTOR = prob.get_val(Aircraft.Wing.BENDING_MATERIAL_FACTOR)
         pod_inertia = prob.get_val(Aircraft.Wing.ENG_POD_INERTIA_FACTOR)
 
-        bending_factor_expected = 11.59165669761
+        BENDING_MATERIAL_FACTOR_expected = 11.59165669761
         pod_inertia_expected = 0.84
-        assert_near_equal(bending_factor, bending_factor_expected, tolerance=1e-10)
+        assert_near_equal(
+            BENDING_MATERIAL_FACTOR, BENDING_MATERIAL_FACTOR_expected, tolerance=1e-10
+        )
         assert_near_equal(pod_inertia, pod_inertia_expected, tolerance=1e-10)
 
     def test_case_fuselage_multiengine(self):
@@ -235,12 +244,14 @@ class DetailedWingBendingTest(unittest.TestCase):
 
         prob.run_model()
 
-        bending_factor = prob.get_val(Aircraft.Wing.BENDING_FACTOR)
+        BENDING_MATERIAL_FACTOR = prob.get_val(Aircraft.Wing.BENDING_MATERIAL_FACTOR)
         pod_inertia = prob.get_val(Aircraft.Wing.ENG_POD_INERTIA_FACTOR)
 
-        bending_factor_expected = 11.59165669761
+        BENDING_MATERIAL_FACTOR_expected = 11.59165669761
         pod_inertia_expected = 0.84
-        assert_near_equal(bending_factor, bending_factor_expected, tolerance=1e-10)
+        assert_near_equal(
+            BENDING_MATERIAL_FACTOR, BENDING_MATERIAL_FACTOR_expected, tolerance=1e-10
+        )
         assert_near_equal(pod_inertia, pod_inertia_expected, tolerance=1e-10)
 
     def test_extreme_engine_loc(self):
@@ -303,8 +314,8 @@ class DetailedWingBendingTest(unittest.TestCase):
 
 
 if __name__ == "__main__":
-    # unittest.main()
-    test = DetailedWingBendingTest()
-    test.setUp()
+    unittest.main()
+    # test = DetailedWingBendingTest()
+    # test.setUp()
     # test.test_case(case_name='LargeSingleAisle1FLOPS')
-    test.test_case_multiengine()
+    # test.test_case_multiengine()

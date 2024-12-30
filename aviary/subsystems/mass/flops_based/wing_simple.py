@@ -30,20 +30,24 @@ class SimpleWingBendingFact(om.ExplicitComponent):
 
         add_aviary_input(self, Aircraft.Wing.SWEEP, val=0.0)
 
-        add_aviary_output(self, Aircraft.Wing.BENDING_FACTOR, val=0.0)
+        add_aviary_output(self, Aircraft.Wing.BENDING_MATERIAL_FACTOR, val=0.0)
 
         add_aviary_output(self, Aircraft.Wing.ENG_POD_INERTIA_FACTOR, val=0.0)
 
     def setup_partials(self):
-        self.declare_partials(of=Aircraft.Wing.BENDING_FACTOR,
-                              wrt=[Aircraft.Wing.STRUT_BRACING_FACTOR,
-                                   Aircraft.Wing.SPAN,
-                                   Aircraft.Wing.TAPER_RATIO,
-                                   Aircraft.Wing.AREA,
-                                   Aircraft.Wing.THICKNESS_TO_CHORD,
-                                   Aircraft.Wing.AEROELASTIC_TAILORING_FACTOR,
-                                   Aircraft.Wing.ASPECT_RATIO,
-                                   Aircraft.Wing.SWEEP])
+        self.declare_partials(
+            of=Aircraft.Wing.BENDING_MATERIAL_FACTOR,
+            wrt=[
+                Aircraft.Wing.STRUT_BRACING_FACTOR,
+                Aircraft.Wing.SPAN,
+                Aircraft.Wing.TAPER_RATIO,
+                Aircraft.Wing.AREA,
+                Aircraft.Wing.THICKNESS_TO_CHORD,
+                Aircraft.Wing.AEROELASTIC_TAILORING_FACTOR,
+                Aircraft.Wing.ASPECT_RATIO,
+                Aircraft.Wing.SWEEP,
+            ],
+        )
 
     def compute(self, inputs, outputs):
         aviary_options: AviaryValues = self.options['aviary_options']
@@ -73,8 +77,9 @@ class SimpleWingBendingFact(om.ExplicitComponent):
 
         ems = 1.0 - 0.25 * fstrt
 
-        outputs[Aircraft.Wing.BENDING_FACTOR] = \
-            0.215 * (0.37 + 0.7 * tr) * (span**2 / area)**ems / (cayl * tca)
+        outputs[Aircraft.Wing.BENDING_MATERIAL_FACTOR] = (
+            0.215 * (0.37 + 0.7 * tr) * (span**2 / area) ** ems / (cayl * tca)
+        )
 
         outputs[Aircraft.Wing.ENG_POD_INERTIA_FACTOR] = 1.0 - 0.03 * num_wing_eng
 
@@ -130,26 +135,37 @@ class SimpleWingBendingFact(om.ExplicitComponent):
         dbend_tr = 0.215 * 0.7 * term2 * term3
         dbend_cayl = -0.215 * term1 * term2 * tca * term3**2
 
-        J[Aircraft.Wing.BENDING_FACTOR, Aircraft.Wing.STRUT_BRACING_FACTOR] = \
+        J[Aircraft.Wing.BENDING_MATERIAL_FACTOR, Aircraft.Wing.STRUT_BRACING_FACTOR] = (
             dbend_exp + dbend_cayl * dcayl_fstrt
+        )
 
-        J[Aircraft.Wing.BENDING_FACTOR, Aircraft.Wing.SPAN] = \
-            2.0 * 0.215 * term1 * ems * term2a**(ems - 1) * term3 * span / area
+        J[Aircraft.Wing.BENDING_MATERIAL_FACTOR, Aircraft.Wing.SPAN] = (
+            2.0 * 0.215 * term1 * ems * term2a ** (ems - 1) * term3 * span / area
+        )
 
-        J[Aircraft.Wing.BENDING_FACTOR, Aircraft.Wing.TAPER_RATIO] = \
+        J[Aircraft.Wing.BENDING_MATERIAL_FACTOR, Aircraft.Wing.TAPER_RATIO] = (
             dbend_tr + dbend_cayl * (dcayl_slam * dslam * dtlam_tr)
+        )
 
-        J[Aircraft.Wing.BENDING_FACTOR, Aircraft.Wing.AREA] = \
-            -0.215 * term1 * ems * term2a**(ems - 1) * term3 * term2a / area
+        J[Aircraft.Wing.BENDING_MATERIAL_FACTOR, Aircraft.Wing.AREA] = (
+            -0.215 * term1 * ems * term2a ** (ems - 1) * term3 * term2a / area
+        )
 
-        J[Aircraft.Wing.BENDING_FACTOR, Aircraft.Wing.THICKNESS_TO_CHORD] = \
+        J[Aircraft.Wing.BENDING_MATERIAL_FACTOR, Aircraft.Wing.THICKNESS_TO_CHORD] = (
             -0.215 * term1 * term2 * cayl * term3**2
+        )
 
-        J[Aircraft.Wing.BENDING_FACTOR, Aircraft.Wing.AEROELASTIC_TAILORING_FACTOR] = \
+        J[
+            Aircraft.Wing.BENDING_MATERIAL_FACTOR,
+            Aircraft.Wing.AEROELASTIC_TAILORING_FACTOR,
+        ] = (
             dbend_cayl * dcayl_faert
+        )
 
-        J[Aircraft.Wing.BENDING_FACTOR, Aircraft.Wing.ASPECT_RATIO] = \
+        J[Aircraft.Wing.BENDING_MATERIAL_FACTOR, Aircraft.Wing.ASPECT_RATIO] = (
             dbend_cayl * (dcayl_ar + dcayl_slam * dslam * dtlam_ar)
+        )
 
-        J[Aircraft.Wing.BENDING_FACTOR, Aircraft.Wing.SWEEP] = \
-            dbend_cayl * (dcayl_slam * dslam * dtlam_sweep)
+        J[Aircraft.Wing.BENDING_MATERIAL_FACTOR, Aircraft.Wing.SWEEP] = dbend_cayl * (
+            dcayl_slam * dslam * dtlam_sweep
+        )
