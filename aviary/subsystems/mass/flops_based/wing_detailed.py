@@ -163,8 +163,8 @@ class DetailedWingBendingFact(om.ExplicitComponent):
             load_intensity = np.ones(num_integration_stations + 1)
         else:
             raise om.AnalysisError(
-                f'{load_distribution_factor} is not a valid value for {
-                    Aircraft.Wing.LOAD_DISTRIBUTION_CONTROL}, it must be "1", "2", or "3".'
+                f'{load_distribution_factor} is not a valid value for '
+                f'{Aircraft.Wing.LOAD_DISTRIBUTION_CONTROL}, it must be "1", "2", or "3".'
             )
 
         chord_interp = InterpND(
