@@ -33,10 +33,10 @@ class FuselageParameters(om.ExplicitComponent):
 
     def setup(self):
 
-        add_aviary_input(self, Aircraft.Fuselage.DELTA_DIAMETER, val=4.5)
-        add_aviary_input(self, Aircraft.Fuselage.PILOT_COMPARTMENT_LENGTH, val=9.5)
+        add_aviary_input(self, Aircraft.Fuselage.DELTA_DIAMETER)
+        add_aviary_input(self, Aircraft.Fuselage.PILOT_COMPARTMENT_LENGTH)
 
-        add_aviary_output(self, Aircraft.Fuselage.AVG_DIAMETER, val=0, units='inch')
+        add_aviary_output(self, Aircraft.Fuselage.AVG_DIAMETER, units='inch')
         self.add_output("cabin_height", val=0, units="ft", desc="HC: height of cabin")
         self.add_output("cabin_len", val=0, units="ft", desc="LC: length of cabin")
         self.add_output("nose_height", val=0, units="ft", desc="HN: height of nose")
