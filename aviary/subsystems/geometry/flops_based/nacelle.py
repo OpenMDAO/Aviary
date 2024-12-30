@@ -24,7 +24,8 @@ class Nacelles(om.ExplicitComponent):
             Aircraft.Engine.NUM_ENGINES))
         add_aviary_input(self, Aircraft.Nacelle.AVG_DIAMETER, shape=num_engine_type)
         add_aviary_input(self, Aircraft.Nacelle.AVG_LENGTH, shape=num_engine_type)
-        add_aviary_input(self, Aircraft.Nacelle.WETTED_AREA_SCALER, shape=num_engine_type)
+        add_aviary_input(self, Aircraft.Nacelle.WETTED_AREA_SCALER,
+                         shape=num_engine_type)
 
         add_aviary_output(self, Aircraft.Nacelle.TOTAL_WETTED_AREA)
         add_aviary_output(self, Aircraft.Nacelle.WETTED_AREA, shape=num_engine_type)
