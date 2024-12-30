@@ -38,13 +38,13 @@ class TailVolCoef(om.ExplicitComponent):
         else:
             self.k = [0.43, 0.38, 0.85]
 
-        add_aviary_input(self, Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION, val=0)
+        add_aviary_input(self, Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION)
 
-        add_aviary_input(self, Aircraft.Fuselage.LENGTH, val=129.4)
+        add_aviary_input(self, Aircraft.Fuselage.LENGTH)
 
         self.add_input("cab_w", 13.1, units="ft", desc="SWF: Cabin width")
 
-        add_aviary_input(self, Aircraft.Wing.AREA, val=1370)
+        add_aviary_input(self, Aircraft.Wing.AREA)
 
         self.add_input(
             "wing_ref",
@@ -107,7 +107,7 @@ class TailSize(om.ExplicitComponent):
             desc="VBARH | VBARV: Horizontal tail volume coefficient"
         )
 
-        add_aviary_input(self, Aircraft.Wing.AREA, val=1370)
+        add_aviary_input(self, Aircraft.Wing.AREA)
 
         self.add_input(
             "r_arm",
