@@ -146,10 +146,12 @@ class TailSize(om.ExplicitComponent):
         self.declare_partials("area", ["vol_coef", Aircraft.Wing.AREA, "r_arm"])
         self.declare_partials("span", ["vol_coef", Aircraft.Wing.AREA, "r_arm", "ar"])
         self.declare_partials(
-            "rchord", ["vol_coef", Aircraft.Wing.AREA, "r_arm", "ar", Aircraft.HorizontalTail.TAPER_RATIO]
+            "rchord", ["vol_coef", Aircraft.Wing.AREA, "r_arm",
+                       "ar", Aircraft.HorizontalTail.TAPER_RATIO]
         )
         self.declare_partials(
-            "chord", ["vol_coef", Aircraft.Wing.AREA, "r_arm", "ar", Aircraft.HorizontalTail.TAPER_RATIO]
+            "chord", ["vol_coef", Aircraft.Wing.AREA, "r_arm",
+                      "ar", Aircraft.HorizontalTail.TAPER_RATIO]
         )
         self.declare_partials("arm", ["r_arm", "wing_ref"])
 
@@ -186,14 +188,16 @@ class TailSize(om.ExplicitComponent):
         J["rchord", Aircraft.Wing.AREA] = vol_coef * r_arm / cse2
         J["rchord", "r_arm"] = wing_area * vol_coef / cse2
         J["rchord", "ar"] = -vol_coef * wing_area * r_arm / (ar * cse2)
-        J["rchord", Aircraft.HorizontalTail.TAPER_RATIO] = -2 * vol_coef * wing_area * r_arm / (cse2 * (tr + 1))
+        J["rchord", Aircraft.HorizontalTail.TAPER_RATIO] = - \
+            2 * vol_coef * wing_area * r_arm / (cse2 * (tr + 1))
 
         cse3 = tr - (tr / (tr + 1)) + 1
         J["chord", "vol_coef"] = 2 / 3.0 * wing_area * r_arm * cse3 / cse2
         J["chord", Aircraft.Wing.AREA] = 2 / 3.0 * vol_coef * r_arm * cse3 / cse2
         J["chord", "r_arm"] = 2 / 3.0 * vol_coef * wing_area * cse3 / cse2
         J["chord", "ar"] = -2 / 3.0 * vol_coef * wing_area * r_arm * cse3 / (ar * cse2)
-        J["chord", Aircraft.HorizontalTail.TAPER_RATIO] = 4 / 3.0 * cse1 * (tr - 1) / (ar * (tr + 1) ** 3)
+        J["chord", Aircraft.HorizontalTail.TAPER_RATIO] = 4 / \
+            3.0 * cse1 * (tr - 1) / (ar * (tr + 1) ** 3)
 
         J["arm", "r_arm"] = -wing_ref / r_arm**2
         J["arm", "wing_ref"] = 1.0 / r_arm
