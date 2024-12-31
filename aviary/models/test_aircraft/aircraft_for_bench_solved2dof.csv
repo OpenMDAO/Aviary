@@ -115,7 +115,7 @@ aircraft:wing:aeroelastic_tailoring_factor,0.0,unitless
 aircraft:wing:airfoil_technology,1.92669766647637,unitless
 aircraft:wing:area,1370.0,ft**2
 aircraft:wing:aspect_ratio,11.22091,unitless
-aircraft:wing:bending_mass_scaler,1.0,unitless
+aircraft:wing:BENDING_MATERIAL_MASS_SCALER,1.0,unitless
 aircraft:wing:chord_per_semispan,0.31,0.23,0.084,unitless
 aircraft:wing:composite_fraction,0.2,unitless
 aircraft:wing:control_surface_area,137,ft**2

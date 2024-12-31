@@ -17,6 +17,7 @@ from aviary.utils.aviary_values import AviaryValues
 from aviary.utils.named_values import NamedValues, get_keys, get_items
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 from aviary.variable_info.variable_meta_data import _MetaData
+from aviary.variable_info.enums import GASPEngineType
 
 
 class EngineModelVariables(Enum):
@@ -24,21 +25,21 @@ class EngineModelVariables(Enum):
     Define constants that map to supported variable names in an engine model.
     """
 
-    MACH = Dynamic.Mission.MACH
+    MACH = Dynamic.Atmosphere.MACH
     ALTITUDE = Dynamic.Mission.ALTITUDE
-    THROTTLE = Dynamic.Mission.THROTTLE
-    HYBRID_THROTTLE = Dynamic.Mission.HYBRID_THROTTLE
-    THRUST = Dynamic.Mission.THRUST
+    THROTTLE = Dynamic.Vehicle.Propulsion.THROTTLE
+    HYBRID_THROTTLE = Dynamic.Vehicle.Propulsion.HYBRID_THROTTLE
+    THRUST = Dynamic.Vehicle.Propulsion.THRUST
     TAILPIPE_THRUST = 'tailpipe_thrust'
     GROSS_THRUST = 'gross_thrust'
-    SHAFT_POWER = Dynamic.Mission.SHAFT_POWER
+    SHAFT_POWER = Dynamic.Vehicle.Propulsion.SHAFT_POWER
     SHAFT_POWER_CORRECTED = 'shaft_power_corrected'
     RAM_DRAG = 'ram_drag'
-    FUEL_FLOW = Dynamic.Mission.FUEL_FLOW_RATE
-    ELECTRIC_POWER_IN = Dynamic.Mission.ELECTRIC_POWER_IN
-    NOX_RATE = Dynamic.Mission.NOX_RATE
-    TEMPERATURE_T4 = Dynamic.Mission.TEMPERATURE_T4
-    TORQUE = Dynamic.Mission.TORQUE
+    FUEL_FLOW = Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE
+    ELECTRIC_POWER_IN = Dynamic.Vehicle.Propulsion.ELECTRIC_POWER_IN
+    NOX_RATE = Dynamic.Vehicle.Propulsion.NOX_RATE
+    TEMPERATURE_T4 = Dynamic.Vehicle.Propulsion.TEMPERATURE_T4
+    TORQUE = Dynamic.Vehicle.Propulsion.TORQUE
     # EXIT_AREA = auto()
 
 
@@ -63,8 +64,8 @@ default_units = {
 
 # variables that have an accompanying max value
 max_variables = {
-    EngineModelVariables.THRUST: Dynamic.Mission.THRUST_MAX,
-    EngineModelVariables.SHAFT_POWER: Dynamic.Mission.SHAFT_POWER_MAX,
+    EngineModelVariables.THRUST: Dynamic.Vehicle.Propulsion.THRUST_MAX,
+    EngineModelVariables.SHAFT_POWER: Dynamic.Vehicle.Propulsion.SHAFT_POWER_MAX,
 }
 
 
@@ -173,7 +174,7 @@ def build_engine_deck(aviary_options: AviaryValues, meta_data=_MetaData):
                     if val_dim > expected_dim + 1:
                         UserWarning(
                             f'Provided vector for {var} has too many dimensions: '
-                            'expecting a {expected_dim+1}D array ({expected_dim}D '
+                            f'expecting a {expected_dim+1}D array ({expected_dim}D '
                             'per engine)'
                         )
                 # if neither metadata nor aviary_val are numpy arrays, cannot check dimensions
@@ -202,6 +203,7 @@ def build_engine_deck(aviary_options: AviaryValues, meta_data=_MetaData):
         except (KeyError, TypeError):
             continue
 
+    # name engine deck after filename
     # local import to avoid circular import
     from aviary.subsystems.propulsion.engine_deck import EngineDeck
 
@@ -376,8 +378,8 @@ class UncorrectData(om.Group):
                 has_diag_partials=True,
             ),
             promotes_inputs=[
-                ('P0', Dynamic.Mission.STATIC_PRESSURE),
-                ('mach', Dynamic.Mission.MACH),
+                ('P0', Dynamic.Atmosphere.STATIC_PRESSURE),
+                ('mach', Dynamic.Atmosphere.MACH),
             ],
             promotes_outputs=['delta_T'],
         )
@@ -396,8 +398,8 @@ class UncorrectData(om.Group):
                 has_diag_partials=True,
             ),
             promotes_inputs=[
-                ('T0', Dynamic.Mission.TEMPERATURE),
-                ('mach', Dynamic.Mission.MACH),
+                ('T0', Dynamic.Atmosphere.TEMPERATURE),
+                ('mach', Dynamic.Atmosphere.MACH),
             ],
             promotes_outputs=['theta_T'],
         )
@@ -405,7 +407,7 @@ class UncorrectData(om.Group):
         self.add_subsystem(
             'uncorrection',
             om.ExecComp(
-                'uncorrected_data = corrected_data * (delta_T + theta_T**.5)',
+                'uncorrected_data = corrected_data * (delta_T * theta_T**.5)',
                 uncorrected_data={'units': "hp", 'shape': num_nodes},
                 delta_T={'units': "unitless", 'shape': num_nodes},
                 theta_T={'units': "unitless", 'shape': num_nodes},

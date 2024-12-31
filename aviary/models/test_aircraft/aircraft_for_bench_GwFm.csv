@@ -205,7 +205,7 @@ aircraft:wing:airfoil_technology,1.92669766647637,unitless
 aircraft:wing:area,1370.0,ft**2
 aircraft:wing:aspect_ratio,10.13,unitless
 aircraft:wing:average_chord,12.615,ft
-aircraft:wing:bending_mass_scaler,1.0,unitless
+aircraft:wing:BENDING_MATERIAL_MASS_SCALER,1.0,unitless
 aircraft:wing:center_distance,0.463,unitless
 aircraft:wing:choose_fold_location,True,unitless
 aircraft:wing:chord_per_semispan,0.31,0.23,0.084,unitless

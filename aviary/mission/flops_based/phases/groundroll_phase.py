@@ -78,9 +78,14 @@ class GroundrollPhase(PhaseBuilderBase):
         duration_ref = user_options.get_val('duration_ref', units='kn')
         constraints = user_options.get_val('constraints')
 
-        phase.set_time_options(fix_initial=True, fix_duration=False,
-                               units="kn", name=Dynamic.Mission.VELOCITY,
-                               duration_bounds=duration_bounds, duration_ref=duration_ref)
+        phase.set_time_options(
+            fix_initial=True,
+            fix_duration=False,
+            units="kn",
+            name=Dynamic.Mission.VELOCITY,
+            duration_bounds=duration_bounds,
+            duration_ref=duration_ref,
+        )
 
         phase.set_state_options("time", rate_source="dt_dv", units="s",
                                 fix_initial=True, fix_final=False, ref=1., defect_ref=1., solve_segments='forward')
@@ -100,20 +105,20 @@ class GroundrollPhase(PhaseBuilderBase):
 
         self._add_user_defined_constraints(phase, constraints)
 
-        phase.add_timeseries_output(Dynamic.Mission.THRUST_TOTAL, units="lbf")
+        phase.add_timeseries_output(Dynamic.Vehicle.Propulsion.THRUST_TOTAL, units="lbf")
         phase.add_timeseries_output("thrust_req", units="lbf")
         phase.add_timeseries_output("normal_force")
-        phase.add_timeseries_output(Dynamic.Mission.MACH)
+        phase.add_timeseries_output(Dynamic.Atmosphere.MACH)
         phase.add_timeseries_output("EAS", units="kn")
         phase.add_timeseries_output(Dynamic.Mission.VELOCITY, units="kn")
-        phase.add_timeseries_output(Dynamic.Mission.LIFT)
-        phase.add_timeseries_output(Dynamic.Mission.DRAG)
+        phase.add_timeseries_output(Dynamic.Vehicle.LIFT)
+        phase.add_timeseries_output(Dynamic.Vehicle.DRAG)
         phase.add_timeseries_output("time")
         phase.add_timeseries_output("mass")
         phase.add_timeseries_output(Dynamic.Mission.ALTITUDE)
         phase.add_timeseries_output("alpha")
         phase.add_timeseries_output(Dynamic.Mission.FLIGHT_PATH_ANGLE)
-        phase.add_timeseries_output(Dynamic.Mission.THROTTLE)
+        phase.add_timeseries_output(Dynamic.Vehicle.Propulsion.THROTTLE)
 
         return phase
 
