@@ -258,10 +258,10 @@ class DetailedWingBendingFact(om.ExplicitComponent):
             else:
                 continue
 
-            if all(eng_loc <= integration_stations[0]):
+            if eng_loc[0] <= integration_stations[0]:
                 inertia_factor[i] = 1.0
 
-            elif all(eng_loc >= integration_stations[-1]):
+            elif eng_loc[0] >= integration_stations[-1]:
                 inertia_factor[i] = 0.84
 
             else:

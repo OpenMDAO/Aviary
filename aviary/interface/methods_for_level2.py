@@ -2364,8 +2364,8 @@ class AviaryProblem(om.Problem):
                 # are not consistent
                 if initial_bounds[1] != duration_bounds[1]:
                     raise ValueError(
-                        f"Initial and duration bounds for {
-                            phase_name} are not consistent."
+                        f"Initial and duration bounds for {phase_name} "
+                        "are not consistent."
                     )
                 guesses["time"] = ([np.mean(initial_bounds[0]), np.mean(
                     duration_bounds[0])], initial_bounds[1])
