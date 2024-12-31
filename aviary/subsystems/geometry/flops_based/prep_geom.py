@@ -129,7 +129,7 @@ class _Prelim(om.ExplicitComponent):
 
         add_aviary_input(self, Aircraft.HorizontalTail.AREA)
         add_aviary_input(self, Aircraft.HorizontalTail.ASPECT_RATIO)
-        add_aviary_input(self, Aircraft.HorizontalTail.TAPER_RATIO)
+        add_aviary_input(self, Aircraft.HorizontalTail.TAPER_RATIO, 0.352)
         add_aviary_input(self, Aircraft.HorizontalTail.THICKNESS_TO_CHORD)
 
         add_aviary_input(self, Aircraft.VerticalTail.AREA)
