@@ -38,18 +38,23 @@ class TailVolCoef(om.ExplicitComponent):
         else:
             self.k = [0.43, 0.38, 0.85]
 
-        add_aviary_input(self, Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION)
+        add_aviary_input(self, Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION, val=0)
 
-        add_aviary_input(self, Aircraft.Fuselage.LENGTH)
+        add_aviary_input(self, Aircraft.Fuselage.LENGTH, val=129.4)
 
         self.add_input("cab_w", 13.1, units="ft", desc="SWF: Cabin width")
 
-        add_aviary_input(self, Aircraft.Wing.AREA)
+        add_aviary_input(self, Aircraft.Wing.AREA, val=1370)
 
-        self.add_input("wing_ref", 12.615, units="ft", desc=(
-                       "CBARW | B: Wing reference parameter. Wing chord for a "
-                       "horizontal tail. Wing span for a vertical tail."),
-                       )
+        self.add_input(
+            "wing_ref",
+            12.615,
+            units="ft",
+            desc=(
+                "CBARW | B: Wing reference parameter. Wing chord for a "
+                "horizontal tail. Wing span for a vertical tail."
+            ),
+        )
 
         self.add_output(
             "vol_coef", units="unitless", desc="VBARH | VBARV: Tail volume coefficient")
@@ -102,23 +107,32 @@ class TailSize(om.ExplicitComponent):
             desc="VBARH | VBARV: Horizontal tail volume coefficient"
         )
 
-        add_aviary_input(self, Aircraft.Wing.AREA)
+        add_aviary_input(self, Aircraft.Wing.AREA, val=1370)
 
-        self.add_input("r_arm", 0.2307, units="unitless",
-                       desc=("COELTH | BOELTV: For a horizontal tail, the ratio of "
-                             "wing chord to tail moment arm. For a vertical tail, the "
-                             "ratio of wing span to vertical tail moment arm."),
-                       )
-        self.add_input("wing_ref", 12.615, units="ft",
-                       desc=("CBARW | B: Reference wing parameter for tail moment arm. "
-                             "For a horizontal tail, the mean wing chord. For a "
-                             "vertical tail, the wing span."),
-                       )
+        self.add_input(
+            "r_arm",
+            0.2307,
+            units="unitless",
+            desc=(
+                "COELTH | BOELTV: For a horizontal tail, the ratio of "
+                "wing chord to tail moment arm. For a vertical tail, the "
+                "ratio of wing span to vertical tail moment arm."
+            ),
+        )
+        self.add_input(
+            "wing_ref",
+            12.615,
+            units="ft",
+            desc=(
+                "CBARW | B: Reference wing parameter for tail moment arm. "
+                "For a horizontal tail, the mean wing chord. For a "
+                "vertical tail, the wing span."
+            ),
+        )
         self.add_input(
             "ar", 4.75, units="unitless", desc="ARHT | ARVT: Tail aspect ratio.")
         self.add_input(
-            Aircraft.HorizontalTail.TAPER_RATIO, 0.352, units="unitless",
-            desc="SLMH | SLMV: Tail taper ratio.")
+            "tr", 0.352, units="unitless", desc="SLMH | SLMV: Tail taper ratio.")
 
         self.add_output("area", units="ft**2", desc="SHT | SVT: Tail area")
         self.add_output("span", units="ft", desc="BHT | BVT: Tail span")
@@ -132,12 +146,10 @@ class TailSize(om.ExplicitComponent):
         self.declare_partials("area", ["vol_coef", Aircraft.Wing.AREA, "r_arm"])
         self.declare_partials("span", ["vol_coef", Aircraft.Wing.AREA, "r_arm", "ar"])
         self.declare_partials(
-            "rchord", ["vol_coef", Aircraft.Wing.AREA, "r_arm",
-                       "ar", Aircraft.HorizontalTail.TAPER_RATIO]
+            "rchord", ["vol_coef", Aircraft.Wing.AREA, "r_arm", "ar", "tr"]
         )
         self.declare_partials(
-            "chord", ["vol_coef", Aircraft.Wing.AREA, "r_arm",
-                      "ar", Aircraft.HorizontalTail.TAPER_RATIO]
+            "chord", ["vol_coef", Aircraft.Wing.AREA, "r_arm", "ar", "tr"]
         )
         self.declare_partials("arm", ["r_arm", "wing_ref"])
 
@@ -174,16 +186,14 @@ class TailSize(om.ExplicitComponent):
         J["rchord", Aircraft.Wing.AREA] = vol_coef * r_arm / cse2
         J["rchord", "r_arm"] = wing_area * vol_coef / cse2
         J["rchord", "ar"] = -vol_coef * wing_area * r_arm / (ar * cse2)
-        J["rchord", Aircraft.HorizontalTail.TAPER_RATIO] = - \
-            2 * vol_coef * wing_area * r_arm / (cse2 * (tr + 1))
+        J["rchord", "tr"] = -2 * vol_coef * wing_area * r_arm / (cse2 * (tr + 1))
 
         cse3 = tr - (tr / (tr + 1)) + 1
         J["chord", "vol_coef"] = 2 / 3.0 * wing_area * r_arm * cse3 / cse2
         J["chord", Aircraft.Wing.AREA] = 2 / 3.0 * vol_coef * r_arm * cse3 / cse2
         J["chord", "r_arm"] = 2 / 3.0 * vol_coef * wing_area * cse3 / cse2
         J["chord", "ar"] = -2 / 3.0 * vol_coef * wing_area * r_arm * cse3 / (ar * cse2)
-        J["chord", Aircraft.HorizontalTail.TAPER_RATIO] = 4 / \
-            3.0 * cse1 * (tr - 1) / (ar * (tr + 1) ** 3)
+        J["chord", "tr"] = 4 / 3.0 * cse1 * (tr - 1) / (ar * (tr + 1) ** 3)
 
         J["arm", "r_arm"] = -wing_ref / r_arm**2
         J["arm", "wing_ref"] = 1.0 / r_arm
@@ -223,8 +233,7 @@ class EmpennageSize(om.Group):
         ]
         higher_level_inputs_htail = [
             ("wing_ref", Aircraft.Wing.AVERAGE_CHORD),
-            # ("tr", Aircraft.HorizontalTail.TAPER_RATIO),
-            Aircraft.HorizontalTail.TAPER_RATIO,
+            ("tr", Aircraft.HorizontalTail.TAPER_RATIO),
         ]
         higher_level_inputs_vtail = [
             ("wing_ref", Aircraft.Wing.SPAN),
@@ -238,8 +247,7 @@ class EmpennageSize(om.Group):
         ]
         rename_inputs_vtail = [
             ("r_arm", Aircraft.VerticalTail.MOMENT_RATIO),
-            # ("tr", Aircraft.VerticalTail.TAPER_RATIO),
-            Aircraft.HorizontalTail.TAPER_RATIO,
+            ("tr", Aircraft.VerticalTail.TAPER_RATIO),
         ]
 
         # outputs that are used in groups other than this one
