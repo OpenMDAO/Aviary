@@ -1376,7 +1376,7 @@ class EngineDeck(EngineModel):
 
     def _sort_data(self):
         """
-        Sort unpacked engine data in order of mach number, altitude, throttle,
+        Sort unpacked engine data in order of Mach number, altitude, throttle,
         hybrid throttle.
         """
         engine_data = self.data
@@ -1448,10 +1448,10 @@ class EngineDeck(EngineModel):
             number.
         """
         mach_count = 0
-        # First mach number must have at least one altitude associated with it
+        # First Mach number must have at least one altitude associated with it
         alt_count = 1
         max_alt_count = 0
-        # First mach number must have at least one data point associated with it
+        # First Mach number must have at least one data point associated with it
         data_count = 1
         max_data_count = 0
 
@@ -1478,7 +1478,7 @@ class EngineDeck(EngineModel):
                     data_count += 1
 
                 else:
-                    # new altitude for this mach number, count it
+                    # new altitude for this Mach number, count it
                     curr_alt = alt
                     alt_count += 1
                     data_indices = extend_array(data_indices, [mach_count, alt_count])
@@ -1501,7 +1501,7 @@ class EngineDeck(EngineModel):
                         f'<{self.get_val(Aircraft.Engine.DATA_FILE).name}>'
                     )
 
-                # record and count mach numbers
+                # record and count Mach numbers
                 curr_mach = mach_num
                 mach_count += 1
 

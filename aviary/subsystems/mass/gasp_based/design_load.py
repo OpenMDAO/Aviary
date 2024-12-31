@@ -377,7 +377,7 @@ class LoadSpeeds(om.ExplicitComponent):
 
 class LoadParameters(om.ExplicitComponent):
     """
-    Computation of load parameters (such as maximum operating mach number,
+    Computation of load parameters (such as maximum operating Mach number,
     density ratio, etc.)
     """
 
@@ -404,7 +404,10 @@ class LoadParameters(om.ExplicitComponent):
         )
 
         self.add_output(
-            "max_mach", val=0, units="unitless", desc="EMM0: maximum operating mach number"
+            "max_mach",
+            val=0,
+            units="unitless",
+            desc="EMM0: maximum operating Mach number",
         )
         self.add_output(
             "density_ratio",
@@ -650,7 +653,7 @@ class LoadParameters(om.ExplicitComponent):
 
 class LiftCurveSlopeAtCruise(om.ExplicitComponent):
     """
-    Computation of lift curve slope at cruise mach number
+    Computation of lift curve slope at cruise Mach number
     """
 
     def setup(self):

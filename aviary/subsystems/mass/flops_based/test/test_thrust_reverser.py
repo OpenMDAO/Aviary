@@ -51,17 +51,20 @@ class ThrustReverserMassTest(unittest.TestCase):
         aviary_options = get_flops_inputs('LargeSingleAisle1FLOPS')
 
         engine_options = AviaryValues()
-        engine_options.set_val(Aircraft.Engine.NUM_ENGINES, 2)
-        engine_options.set_val(Aircraft.Engine.DATA_FILE,
-                               'models/engines/turbofan_28k.deck')
         engine_options.set_val(Settings.VERBOSITY, 0)
+        engine_options.set_val(Aircraft.Engine.NUM_ENGINES, 2)
+        engine_options.set_val(
+            Aircraft.Engine.DATA_FILE, 'models/engines/turbofan_28k.deck'
+        )
         engineModel1 = EngineDeck(options=engine_options)
         engine_options.set_val(Aircraft.Engine.NUM_ENGINES, 2)
         engineModel2 = EngineDeck(options=engine_options)
         engine_options.set_val(Aircraft.Engine.NUM_ENGINES, 4)
         engineModel3 = EngineDeck(options=engine_options)
 
-        preprocess_propulsion(aviary_options, [engineModel1, engineModel2, engineModel3])
+        preprocess_propulsion(
+            aviary_options, [engineModel1, engineModel2, engineModel3], verbosity=0
+        )
 
         prob.model.add_subsystem('thrust_reverser_mass', ThrustReverserMass(
             aviary_options=aviary_options), promotes=['*'])

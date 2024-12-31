@@ -45,8 +45,10 @@ class MassParameters(om.ExplicitComponent):
         add_aviary_input(self, Aircraft.Wing.SPAN, val=117.8)
 
         self.add_input(
-            "max_mach", val=0.9, units="unitless",
-            desc="EMM0: maximum operating mach number"
+            "max_mach",
+            val=0.9,
+            units="unitless",
+            desc="EMM0: maximum operating Mach number",
         )
 
         add_aviary_input(

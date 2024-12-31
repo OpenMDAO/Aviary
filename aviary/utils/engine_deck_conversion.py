@@ -469,7 +469,7 @@ def _make_structured_grid(data, method="lagrange3", fields=["thrust", "fuelflow"
     # step size in t4/t2 ratio used in generating the structured grid
     # t2t2_step = 0.5 # original value
     t4t2_step = throttle_step
-    # step size in mach number used in generating the structured grid
+    # step size in Mach number used in generating the structured grid
     # mach_step = 0.02 # original value
     mach_step = 0.05
 
@@ -504,7 +504,7 @@ def _make_structured_grid(data, method="lagrange3", fields=["thrust", "fuelflow"
             # would explicitly use lagrange3 here to mimic GASP, but some engine
             # decks may not have enough points per dimension
             # For GASP engine deck, try to provide at least 4 Mach numbers.
-            # For GASP_TP engine deck, try to provide at least 4 Mach numbers
+            # For GASP_TS engine deck, try to provide at least 4 Mach numbers
             # avoid devide-by-zero RuntimeWarning
             if len(mach) == 3 and method == "lagrange3":
                 method = "lagrange2"

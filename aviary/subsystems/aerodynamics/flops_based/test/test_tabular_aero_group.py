@@ -95,7 +95,7 @@ class TabularAeroGroupFileTest(unittest.TestCase):
         local_phase_info.pop('climb')
         local_phase_info.pop('descent')
 
-        prob = AviaryProblem()
+        prob = AviaryProblem(verbosity=0)
 
         prob.load_inputs(
             "subsystems/aerodynamics/flops_based/test/data/high_wing_single_aisle.csv",
