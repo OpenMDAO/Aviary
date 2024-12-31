@@ -46,11 +46,7 @@ class TailVolCoef(om.ExplicitComponent):
 
         add_aviary_input(self, Aircraft.Wing.AREA)
 
-        self.add_input(
-            "wing_ref",
-            12.615,
-            units="ft",
-            desc=(
+        self.add_input("wing_ref", 12.615, units="ft", desc=(
                 "CBARW | B: Wing reference parameter. Wing chord for a "
                 "horizontal tail. Wing span for a vertical tail."
             ),
@@ -109,20 +105,14 @@ class TailSize(om.ExplicitComponent):
 
         add_aviary_input(self, Aircraft.Wing.AREA)
 
-        self.add_input(
-            "r_arm",
-            0.2307,
-            units="unitless",
+        self.add_input("r_arm", 0.2307, units="unitless",
             desc=(
                 "COELTH | BOELTV: For a horizontal tail, the ratio of "
                 "wing chord to tail moment arm. For a vertical tail, the "
                 "ratio of wing span to vertical tail moment arm."
             ),
         )
-        self.add_input(
-            "wing_ref",
-            12.615,
-            units="ft",
+        self.add_input("wing_ref", 12.615, units="ft",
             desc=(
                 "CBARW | B: Reference wing parameter for tail moment arm. "
                 "For a horizontal tail, the mean wing chord. For a "

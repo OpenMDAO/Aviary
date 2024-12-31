@@ -529,12 +529,8 @@ class WingFold(om.ExplicitComponent):
         )
 
     def setup(self):
-
         if not self.options["aviary_options"].get_val(Aircraft.Wing.CHOOSE_FOLD_LOCATION, units='unitless'):
-            self.add_input(
-                "strut_y",
-                val=25,
-                units="ft",
+            self.add_input("strut_y", val=25, units="ft",
                 desc="YSTRUT: attachment location of strut",
             )
 
@@ -563,31 +559,19 @@ class WingFold(om.ExplicitComponent):
         add_aviary_input(self, Aircraft.Wing.THICKNESS_TO_CHORD_TIP)
         add_aviary_input(self, Aircraft.Fuel.WING_FUEL_FRACTION, val=0.6)
 
-        self.add_output(
-            "nonfolded_taper_ratio",
-            val=0.1,
-            units="unitless",
+        self.add_output("nonfolded_taper_ratio", val=0.1, units="unitless",
             desc="SLM_NF: taper ratio between wing root and fold location",
         )
 
         add_aviary_output(self, Aircraft.Wing.FOLDING_AREA, val=50)
 
-        self.add_output(
-            "nonfolded_wing_area",
-            val=150,
-            units="ft**2",
+        self.add_output("nonfolded_wing_area", val=150, units="ft**2",
             desc="SW_NF: wing area of part of wings that does not fold",
         )
-        self.add_output(
-            "tc_ratio_mean_folded",
-            val=0.12,
-            units="unitless",
+        self.add_output("tc_ratio_mean_folded", val=0.12, units="unitless",
             desc="TCM: mean value of thickess to chord ratio between root and fold",
         )
-        self.add_output(
-            "nonfolded_AR",
-            val=10,
-            units="unitless",
+        self.add_output("nonfolded_AR", val=10, units="unitless",
             desc="AR_NF: aspect ratio of non-folding part of wing",
         )
 

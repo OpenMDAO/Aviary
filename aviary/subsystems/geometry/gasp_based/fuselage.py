@@ -117,7 +117,6 @@ class FuselageSize(om.ExplicitComponent):
         )
 
     def setup(self):
-
         add_aviary_input(self, Aircraft.Fuselage.NOSE_FINENESS, val=1)
         self.add_input("nose_height", val=0, units="ft", desc="HN: height of nose")
         add_aviary_input(self, Aircraft.Fuselage.PILOT_COMPARTMENT_LENGTH, val=9.5)

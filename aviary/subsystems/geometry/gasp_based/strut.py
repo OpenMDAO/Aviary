@@ -20,7 +20,6 @@ class StrutGeom(om.ExplicitComponent):
         )
 
     def setup(self):
-
         add_aviary_input(self, Aircraft.Wing.AREA)
         add_aviary_input(self, Aircraft.Strut.AREA_RATIO)
         add_aviary_input(self, Aircraft.Strut.ATTACHMENT_LOCATION)
