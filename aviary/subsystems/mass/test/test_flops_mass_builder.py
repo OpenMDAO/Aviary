@@ -26,9 +26,12 @@ class TestFLOPSMassBuilder(av.TestSubsystemBuilderBase):
             'test_core_mass', meta_data=BaseMetaData, code_origin=FLOPS)
         self.aviary_values = av.AviaryValues()
         self.aviary_values.set_val(Aircraft.Design.USE_ALT_MASS, False, units='unitless')
-        self.aviary_values.set_val(Aircraft.Engine.NUM_ENGINES, [1], units='unitless')
         self.aviary_values.set_val(
-            Aircraft.Engine.NUM_WING_ENGINES, [2], units='unitless')
+            Aircraft.Engine.NUM_ENGINES, np.array([1]), units='unitless'
+        )
+        self.aviary_values.set_val(
+            Aircraft.Engine.NUM_WING_ENGINES, np.array([2]), units='unitless'
+        )
 
 
 class TestFLOPSMassBuilderAltMass(av.TestSubsystemBuilderBase):
@@ -43,9 +46,12 @@ class TestFLOPSMassBuilderAltMass(av.TestSubsystemBuilderBase):
             'test_core_mass', meta_data=BaseMetaData, code_origin=FLOPS)
         self.aviary_values = av.AviaryValues()
         self.aviary_values.set_val(Aircraft.Design.USE_ALT_MASS, True, units='unitless')
-        self.aviary_values.set_val(Aircraft.Engine.NUM_ENGINES, [1], units='unitless')
         self.aviary_values.set_val(
-            Aircraft.Engine.NUM_WING_ENGINES, [2], units='unitless')
+            Aircraft.Engine.NUM_ENGINES, np.array([1]), units='unitless'
+        )
+        self.aviary_values.set_val(
+            Aircraft.Engine.NUM_WING_ENGINES, np.array([2]), units='unitless'
+        )
 
 
 if __name__ == '__main__':
