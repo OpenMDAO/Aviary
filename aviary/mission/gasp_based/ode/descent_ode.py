@@ -29,14 +29,17 @@ class DescentODE(BaseODE):
 
     def initialize(self):
         super().initialize()
-        self.options.declare("input_speed_type", types=SpeedType,
-                             desc="Whether the speed is given as a equivalent airspeed, true airspeed, or mach number")
+        self.options.declare(
+            "input_speed_type",
+            types=SpeedType,
+            desc="Whether the speed is given as a equivalent airspeed, true airspeed, or Mach number",
+        )
         self.options.declare("alt_trigger_units", default='ft',
                              desc='The units that the altitude trigger is provided in')
         self.options.declare("speed_trigger_units", default='kn',
                              desc='The units that the speed trigger is provided in.')
         self.options.declare(
-            "mach_cruise", default=0, desc="targeted cruise mach number"
+            "mach_cruise", default=0, desc="targeted cruise Mach number"
         )
         self.options.declare(
             "EAS_limit", default=0, desc="maximum descending EAS in knots"

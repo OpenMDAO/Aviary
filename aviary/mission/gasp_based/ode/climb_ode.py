@@ -31,7 +31,7 @@ class ClimbODE(BaseODE):
             "input_speed_type",
             default=SpeedType.EAS,
             types=SpeedType,
-            desc="Whether the speed is given as a equivalent airspeed, true airspeed, or mach number",
+            desc="Whether the speed is given as a equivalent airspeed, true airspeed, or Mach number",
         )
         self.options.declare(
             "alt_trigger_units",
@@ -47,11 +47,11 @@ class ClimbODE(BaseODE):
             "input_speed_type",
             default=SpeedType.EAS,
             types=SpeedType,
-            desc="Whether the speed is given as a equivalent airspeed, true airspeed, or mach number",
+            desc="Whether the speed is given as a equivalent airspeed, true airspeed, or Mach number",
         )
         self.options.declare("EAS_target", desc="target climbing EAS in knots")
         self.options.declare(
-            "mach_cruise", default=0, desc="targeted cruise mach number"
+            "mach_cruise", default=0, desc="targeted cruise Mach number"
         )
 
     def setup(self):

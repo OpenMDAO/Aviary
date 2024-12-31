@@ -1355,7 +1355,7 @@ add_meta_data(
     meta_data=_MetaData,
     historical_name={"GASP": 'INGASP.CLALPH', "FLOPS": None, "LEAPS1": None},
     units="1/rad",
-    desc='lift curve slope at cruise mach number',
+    desc='lift curve slope at cruise Mach number',
 )
 
 add_meta_data(
@@ -6637,7 +6637,7 @@ add_meta_data(
         ],
     },
     units='unitless',
-    desc='aircraft cruise mach number',
+    desc='aircraft cruise Mach number',
     # TODO: derived default value: Mission.Summary.CRUISE_MACH ???
     default_value=None,
     option=True,
@@ -6972,7 +6972,7 @@ add_meta_data(
     meta_data=_MetaData,
     historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
     units="unitless",
-    desc='approach mach number',
+    desc='approach Mach number',
     default_value=0.1,
 )
 
@@ -7172,7 +7172,7 @@ add_meta_data(
         ],
     },
     units='unitless',
-    desc='aircraft cruise mach number',
+    desc='aircraft cruise Mach number',
     default_value=0.0,  # TODO: required
 )
 

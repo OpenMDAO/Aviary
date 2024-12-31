@@ -794,7 +794,7 @@ class MetaModelGroup(om.Group):
             0.17522,
             training_data=[0.0, 0.2, 0.4, 0.6, 0.8, 1.0],
             units="unitless",
-            desc="mach number",
+            desc="Mach number",
         )
 
         VLAM14_interp.add_output(
@@ -802,7 +802,7 @@ class MetaModelGroup(om.Group):
             0.99124,
             training_data=[1.0, 0.99, 0.94, 0.87, 0.78, 0.66],
             units="unitless",
-            desc="mach number correction factor",
+            desc="Mach number correction factor",
             ref=100,
         )
 

@@ -214,8 +214,12 @@ class FakeCalcDragPolar(om.ExplicitComponent):
         """
         self.options.declare("altitude", default=None, allow_none=True,
                              desc="List of altitudes in ascending order.")
-        self.options.declare("mach", default=None, allow_none=True,
-                             desc="List of mach numbers in ascending order.")
+        self.options.declare(
+            "mach",
+            default=None,
+            allow_none=True,
+            desc="List of Mach numbers in ascending order.",
+        )
         self.options.declare("alpha", default=None, allow_none=True,
                              desc="List of angles of attack in ascending order.")
 
@@ -252,7 +256,7 @@ class FakeDragPolarBuilder(SubsystemBuilderBase):
     altitude : list or None
         List of altitudes in ascending order. (Optional)
     mach : list or None
-        List of mach numbers in ascending order. (Optional)
+        List of Mach numbers in ascending order. (Optional)
     alpha : list or None
         List of angles of attack in ascending order. (Optional)
     """

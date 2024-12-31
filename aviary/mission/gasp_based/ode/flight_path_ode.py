@@ -21,8 +21,12 @@ class FlightPathODE(BaseODE):
     def initialize(self):
         super().initialize()
         self.options.declare("alpha_mode", default=AlphaModes.DEFAULT, types=AlphaModes)
-        self.options.declare("input_speed_type", default=SpeedType.TAS, types=SpeedType,
-                             desc="Whether the speed is given as a equivalent airspeed, true airspeed, or mach number")
+        self.options.declare(
+            "input_speed_type",
+            default=SpeedType.TAS,
+            types=SpeedType,
+            desc="Whether the speed is given as a equivalent airspeed, true airspeed, or Mach number",
+        )
         self.options.declare(
             "ground_roll",
             types=bool,
