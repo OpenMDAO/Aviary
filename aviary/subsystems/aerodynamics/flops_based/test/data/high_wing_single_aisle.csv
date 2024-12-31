@@ -98,7 +98,7 @@ aircraft:wing:aeroelastic_tailoring_factor,0.01,unitless   #check
 aircraft:wing:airfoil_technology,1.01,unitless   #check
 aircraft:wing:area,1480,ft**2
 aircraft:wing:aspect_ratio_reference,0.01,unitless   #check
-aircraft:wing:bending_mass_scaler,1.01,unitless   #check
+aircraft:wing:BENDING_MATERIAL_MASS_SCALER,1.01,unitless   #check
 aircraft:wing:chord_per_semispan,0.13,0.115,0.06,unitless
 aircraft:wing:composite_fraction,0.01,unitless   #check
 aircraft:wing:dihedral,-1.0,deg
