@@ -3649,7 +3649,7 @@ add_meta_data(
     },
     units='unitless',
     desc='horizontal tail theoretical taper ratio',
-    default_value=0.0,  # changed from None
+    default_value=0.0,  # changed from None. In geometry/flops_based/prep_geom.py and mass/gasp_based/empennage.py, it was 0.352.
 )
 
 add_meta_data(
