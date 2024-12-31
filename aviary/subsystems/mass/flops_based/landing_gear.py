@@ -294,8 +294,12 @@ class MainGearLength(om.ExplicitComponent):
         add_aviary_input(self, Aircraft.Fuselage.MAX_WIDTH, val=0.0)
         add_aviary_input(self, Aircraft.Nacelle.AVG_DIAMETER,
                          val=np.zeros(num_engine_type))
-        add_aviary_input(self, Aircraft.Engine.WING_LOCATIONS,
-                         val=np.zeros((num_engine_type, int(num_wing_engines[0]/2))))
+        if any(num_wing_engines) > 0:
+            add_aviary_input(self, Aircraft.Engine.WING_LOCATIONS, val=np.zeros(
+                (num_engine_type, int(num_wing_engines[0] / 2))))
+        else:
+            add_aviary_input(self, Aircraft.Engine.WING_LOCATIONS,
+                             val=[[0.0]])
         add_aviary_input(self, Aircraft.Wing.DIHEDRAL, val=0.0)
         add_aviary_input(self, Aircraft.Wing.SPAN, val=0.0)
 
@@ -309,7 +313,6 @@ class MainGearLength(om.ExplicitComponent):
         # TODO temp using first engine, heterogeneous engines not supported
         num_eng = options.get_val(Aircraft.Engine.NUM_ENGINES)[0]
         num_wing_eng = options.get_val(Aircraft.Engine.NUM_WING_ENGINES)[0]
-
         y_eng_fore = inputs[Aircraft.Engine.WING_LOCATIONS][0][0]
 
         # TODO: high engine-count configuation.
@@ -349,7 +352,6 @@ class MainGearLength(om.ExplicitComponent):
         # TODO temp using first engine, heterogeneous engines not supported
         num_eng = options.get_val(Aircraft.Engine.NUM_ENGINES)[0]
         num_wing_eng = options.get_val(Aircraft.Engine.NUM_WING_ENGINES)[0]
-
         y_eng_fore = inputs[Aircraft.Engine.WING_LOCATIONS][0][0]
         y_eng_aft = 0
 

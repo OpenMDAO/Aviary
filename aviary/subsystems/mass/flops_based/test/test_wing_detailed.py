@@ -25,8 +25,12 @@ class DetailedWingBendingTest(unittest.TestCase):
         self.prob = om.Problem()
 
     # Skip model that doesn't use detailed wing.
-    @parameterized.expand(get_flops_case_names(omit=['LargeSingleAisle2FLOPS', 'LargeSingleAisle2FLOPSalt']),
-                          name_func=print_case)
+    @parameterized.expand(
+        get_flops_case_names(
+            omit=[
+                'LargeSingleAisle2FLOPS',
+                'LargeSingleAisle2FLOPSalt']),
+        name_func=print_case)
     def test_case(self, case_name):
 
         prob = self.prob
@@ -43,23 +47,28 @@ class DetailedWingBendingTest(unittest.TestCase):
         flops_validation_test(
             prob,
             case_name,
-            input_keys=[Aircraft.Wing.LOAD_PATH_SWEEP_DIST,
-                        Aircraft.Wing.THICKNESS_TO_CHORD_DIST,
-                        Aircraft.Wing.CHORD_PER_SEMISPAN_DIST,
-                        Mission.Design.GROSS_MASS,
-                        Aircraft.Engine.POD_MASS,
-                        Aircraft.Wing.ASPECT_RATIO,
-                        Aircraft.Wing.ASPECT_RATIO_REF,
-                        Aircraft.Wing.STRUT_BRACING_FACTOR,
-                        Aircraft.Wing.AEROELASTIC_TAILORING_FACTOR,
-                        Aircraft.Engine.WING_LOCATIONS,
-                        Aircraft.Wing.THICKNESS_TO_CHORD,
-                        Aircraft.Wing.THICKNESS_TO_CHORD_REF],
-            output_keys=[Aircraft.Wing.BENDING_FACTOR,
-                         Aircraft.Wing.ENG_POD_INERTIA_FACTOR],
+            input_keys=[
+                Aircraft.Wing.LOAD_PATH_SWEEP_DIST,
+                Aircraft.Wing.THICKNESS_TO_CHORD_DIST,
+                Aircraft.Wing.CHORD_PER_SEMISPAN_DIST,
+                Mission.Design.GROSS_MASS,
+                Aircraft.Engine.POD_MASS,
+                Aircraft.Wing.ASPECT_RATIO,
+                Aircraft.Wing.ASPECT_RATIO_REF,
+                Aircraft.Wing.STRUT_BRACING_FACTOR,
+                Aircraft.Wing.AEROELASTIC_TAILORING_FACTOR,
+                Aircraft.Engine.WING_LOCATIONS,
+                Aircraft.Wing.THICKNESS_TO_CHORD,
+                Aircraft.Wing.THICKNESS_TO_CHORD_REF,
+            ],
+            output_keys=[
+                Aircraft.Wing.BENDING_MATERIAL_FACTOR,
+                Aircraft.Wing.ENG_POD_INERTIA_FACTOR,
+            ],
             method='fd',
             atol=1e-3,
-            rtol=1e-5)
+            rtol=1e-5,
+        )
 
     def test_case_multiengine(self):
         prob = self.prob
@@ -110,19 +119,140 @@ class DetailedWingBendingTest(unittest.TestCase):
 
         prob.run_model()
 
-        bending_factor = prob.get_val(Aircraft.Wing.BENDING_FACTOR)
+        BENDING_MATERIAL_FACTOR = prob.get_val(Aircraft.Wing.BENDING_MATERIAL_FACTOR)
         pod_inertia = prob.get_val(Aircraft.Wing.ENG_POD_INERTIA_FACTOR)
 
-        # manual computation of expected thrust reverser mass
-        bending_factor_expected = 11.59165669761
+        BENDING_MATERIAL_FACTOR_expected = 11.59165669761
         # 0.9600334354133278 if the factors are additive
         pod_inertia_expected = 0.9604608395586276
-        assert_near_equal(bending_factor, bending_factor_expected, tolerance=1e-10)
+        assert_near_equal(
+            BENDING_MATERIAL_FACTOR, BENDING_MATERIAL_FACTOR_expected, tolerance=1e-10
+        )
         assert_near_equal(pod_inertia, pod_inertia_expected, tolerance=1e-10)
 
         partial_data = prob.check_partials(
-            out_stream=None, compact_print=True, show_only_incorrect=True, form='central', method="fd")
+            out_stream=None,
+            compact_print=True,
+            show_only_incorrect=True,
+            form='central',
+            method="fd")
         assert_check_partials(partial_data, atol=1e-5, rtol=1e-5)
+
+    def test_case_fuselage_engines(self):
+        prob = self.prob
+
+        aviary_options = get_flops_inputs('LargeSingleAisle1FLOPS')
+
+        engine_options = AviaryValues()
+        engine_options.set_val(Settings.VERBOSITY, 0)
+        engine_options.set_val(Aircraft.Engine.DATA_FILE,
+                               'models/engines/turbofan_28k.deck')
+        engine_options.set_val(Aircraft.Engine.NUM_ENGINES, 2)
+        engine_options.set_val(Aircraft.Engine.NUM_WING_ENGINES, 0)
+        engine_options.set_val(Aircraft.Engine.NUM_FUSELAGE_ENGINES, 2)
+        engineModel = EngineDeck(options=engine_options)
+
+        preprocess_propulsion(aviary_options, [engineModel])
+
+        prob.model.add_subsystem('detailed_wing', DetailedWingBendingFact(
+            aviary_options=aviary_options), promotes=['*'])
+
+        prob.setup(force_alloc_complex=True)
+
+        input_keys = [Aircraft.Wing.LOAD_PATH_SWEEP_DIST,
+                      Aircraft.Wing.THICKNESS_TO_CHORD_DIST,
+                      Aircraft.Wing.CHORD_PER_SEMISPAN_DIST,
+                      Mission.Design.GROSS_MASS,
+                      Aircraft.Wing.ASPECT_RATIO,
+                      Aircraft.Wing.ASPECT_RATIO_REF,
+                      Aircraft.Wing.STRUT_BRACING_FACTOR,
+                      Aircraft.Wing.AEROELASTIC_TAILORING_FACTOR,
+                      Aircraft.Wing.THICKNESS_TO_CHORD,
+                      Aircraft.Wing.THICKNESS_TO_CHORD_REF]
+
+        for key in input_keys:
+            val, units = aviary_options.get_item(key)
+            prob.set_val(key, val, units)
+
+        prob.set_val(Aircraft.Engine.POD_MASS, np.array([0]), units='lbm')
+
+        wing_location = np.zeros(0)
+        wing_location = np.append(wing_location, [0.0])
+
+        prob.set_val(Aircraft.Engine.WING_LOCATIONS, wing_location)
+
+        prob.run_model()
+
+        BENDING_MATERIAL_FACTOR = prob.get_val(Aircraft.Wing.BENDING_MATERIAL_FACTOR)
+        pod_inertia = prob.get_val(Aircraft.Wing.ENG_POD_INERTIA_FACTOR)
+
+        BENDING_MATERIAL_FACTOR_expected = 11.59165669761
+        pod_inertia_expected = 0.84
+        assert_near_equal(
+            BENDING_MATERIAL_FACTOR, BENDING_MATERIAL_FACTOR_expected, tolerance=1e-10
+        )
+        assert_near_equal(pod_inertia, pod_inertia_expected, tolerance=1e-10)
+
+    def test_case_fuselage_multiengine(self):
+        prob = self.prob
+
+        aviary_options = get_flops_inputs('LargeSingleAisle1FLOPS')
+
+        engine_options = AviaryValues()
+        engine_options.set_val(Aircraft.Engine.DATA_FILE,
+                               'models/engines/turbofan_28k.deck')
+        engine_options.set_val(Aircraft.Engine.NUM_ENGINES, 2)
+        engine_options.set_val(Aircraft.Engine.NUM_WING_ENGINES, 2)
+        engine_options.set_val(Aircraft.Engine.NUM_FUSELAGE_ENGINES, 0)
+        engineModel1 = EngineDeck(options=engine_options)
+
+        engine_options.set_val(Aircraft.Engine.DATA_FILE,
+                               'models/engines/turbofan_22k.deck')
+        engine_options.set_val(Aircraft.Engine.NUM_ENGINES, 2)
+        engine_options.set_val(Aircraft.Engine.NUM_WING_ENGINES, 0)
+        engine_options.set_val(Aircraft.Engine.NUM_FUSELAGE_ENGINES, 2)
+        engineModel2 = EngineDeck(options=engine_options)
+
+        preprocess_propulsion(aviary_options, [engineModel1, engineModel2])
+
+        prob.model.add_subsystem('detailed_wing', DetailedWingBendingFact(
+            aviary_options=aviary_options), promotes=['*'])
+
+        prob.setup(force_alloc_complex=True)
+
+        input_keys = [Aircraft.Wing.LOAD_PATH_SWEEP_DIST,
+                      Aircraft.Wing.THICKNESS_TO_CHORD_DIST,
+                      Aircraft.Wing.CHORD_PER_SEMISPAN_DIST,
+                      Mission.Design.GROSS_MASS,
+                      Aircraft.Wing.ASPECT_RATIO,
+                      Aircraft.Wing.ASPECT_RATIO_REF,
+                      Aircraft.Wing.STRUT_BRACING_FACTOR,
+                      Aircraft.Wing.AEROELASTIC_TAILORING_FACTOR,
+                      Aircraft.Wing.THICKNESS_TO_CHORD,
+                      Aircraft.Wing.THICKNESS_TO_CHORD_REF]
+
+        for key in input_keys:
+            val, units = aviary_options.get_item(key)
+            prob.set_val(key, val, units)
+
+        prob.set_val(Aircraft.Engine.POD_MASS, np.array([1130, 0]), units='lbm')
+
+        wing_locations = np.zeros(0)
+        wing_locations = np.append(wing_locations, [0.5])
+
+        prob.set_val(Aircraft.Engine.WING_LOCATIONS, wing_locations)
+
+        prob.run_model()
+
+        BENDING_MATERIAL_FACTOR = prob.get_val(Aircraft.Wing.BENDING_MATERIAL_FACTOR)
+        pod_inertia = prob.get_val(Aircraft.Wing.ENG_POD_INERTIA_FACTOR)
+
+        BENDING_MATERIAL_FACTOR_expected = 11.59165669761
+        pod_inertia_expected = 0.84
+        assert_near_equal(
+            BENDING_MATERIAL_FACTOR, BENDING_MATERIAL_FACTOR_expected, tolerance=1e-10
+        )
+        assert_near_equal(pod_inertia, pod_inertia_expected, tolerance=1e-10)
 
     def test_extreme_engine_loc(self):
 
@@ -188,4 +318,4 @@ if __name__ == "__main__":
     # test = DetailedWingBendingTest()
     # test.setUp()
     # test.test_case(case_name='LargeSingleAisle1FLOPS')
-    # test.test_extreme_engine_loc()
+    # test.test_case_multiengine()
