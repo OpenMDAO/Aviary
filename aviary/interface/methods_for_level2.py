@@ -2428,8 +2428,8 @@ class AviaryProblem(om.Problem):
                 else:
                     # raise error if the guess key is not recognized
                     raise ValueError(
-                        f"Initial guess key {guess_key} in {
-                            phase_name} is not recognized."
+                        f"Initial guess key {guess_key} in {phase_name} is not "
+                        "recognized."
                     )
 
         if self.mission_method is SOLVED_2DOF:
