@@ -159,24 +159,27 @@ class WingBendingMassTest(unittest.TestCase):
         flops_validation_test(
             prob,
             case_name,
-            input_keys=[Aircraft.Wing.AEROELASTIC_TAILORING_FACTOR,
-                        Aircraft.Wing.BENDING_FACTOR,
-                        Aircraft.Wing.BENDING_MASS_SCALER,
-                        Aircraft.Wing.COMPOSITE_FRACTION,
-                        Aircraft.Wing.ENG_POD_INERTIA_FACTOR,
-                        Mission.Design.GROSS_MASS,
-                        Aircraft.Wing.LOAD_FRACTION,
-                        Aircraft.Wing.MISC_MASS,
-                        Aircraft.Wing.MISC_MASS_SCALER,
-                        Aircraft.Wing.SHEAR_CONTROL_MASS,
-                        Aircraft.Wing.SHEAR_CONTROL_MASS_SCALER,
-                        Aircraft.Wing.SPAN,
-                        Aircraft.Wing.SWEEP,
-                        Aircraft.Wing.ULTIMATE_LOAD_FACTOR,
-                        Aircraft.Wing.VAR_SWEEP_MASS_PENALTY],
-            output_keys=Aircraft.Wing.BENDING_MASS,
+            input_keys=[
+                Aircraft.Wing.AEROELASTIC_TAILORING_FACTOR,
+                Aircraft.Wing.BENDING_MATERIAL_FACTOR,
+                Aircraft.Wing.BENDING_MATERIAL_MASS_SCALER,
+                Aircraft.Wing.COMPOSITE_FRACTION,
+                Aircraft.Wing.ENG_POD_INERTIA_FACTOR,
+                Mission.Design.GROSS_MASS,
+                Aircraft.Wing.LOAD_FRACTION,
+                Aircraft.Wing.MISC_MASS,
+                Aircraft.Wing.MISC_MASS_SCALER,
+                Aircraft.Wing.SHEAR_CONTROL_MASS,
+                Aircraft.Wing.SHEAR_CONTROL_MASS_SCALER,
+                Aircraft.Wing.SPAN,
+                Aircraft.Wing.SWEEP,
+                Aircraft.Wing.ULTIMATE_LOAD_FACTOR,
+                Aircraft.Wing.VAR_SWEEP_MASS_PENALTY,
+            ],
+            output_keys=Aircraft.Wing.BENDING_MATERIAL_MASS,
             atol=1e-11,
-            rtol=1e-11)
+            rtol=1e-11,
+        )
 
     def test_IO(self):
         assert_match_varnames(self.prob.model)
@@ -206,7 +209,7 @@ class WingBendingMassTest2(unittest.TestCase):
         )
         prob.setup(check=False, force_alloc_complex=True)
         prob.set_val(Aircraft.Wing.AEROELASTIC_TAILORING_FACTOR, 0.333, 'unitless')
-        prob.set_val(Aircraft.Wing.BENDING_FACTOR, 10, 'unitless')
+        prob.set_val(Aircraft.Wing.BENDING_MATERIAL_FACTOR, 10, 'unitless')
         prob.set_val(Aircraft.Wing.COMPOSITE_FRACTION, 0.333, 'unitless')
         prob.set_val(Aircraft.Wing.ENG_POD_INERTIA_FACTOR, 1, 'unitless')
         prob.set_val(Mission.Design.GROSS_MASS, 100000, 'lbm')
