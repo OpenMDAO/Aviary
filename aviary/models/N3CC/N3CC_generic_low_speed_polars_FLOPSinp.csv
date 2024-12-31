@@ -116,7 +116,7 @@ aircraft:wing:airfoil_technology,1.6,unitless
 aircraft:wing:area,1220,1,0,0,0,0,ft**2
 aircraft:wing:aspect_ratio,11.5587605382765,1,0,0,0,0,unitless
 aircraft:wing:aspect_ratio_reference,11.5587605382765,unitless
-aircraft:wing:bending_mass_scaler,1,unitless
+aircraft:wing:BENDING_MATERIAL_MASS_SCALER,1,unitless
 aircraft:wing:bwb_aft_body_mass_scaler,1,unitless
 aircraft:wing:chord_per_semispan,0.273522534166506,0.204274849507037,0.0888152947868224,0.0725353313595661,unitless
 aircraft:wing:composite_fraction,0.33333,unitless
