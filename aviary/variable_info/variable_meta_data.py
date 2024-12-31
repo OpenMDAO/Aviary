@@ -728,10 +728,11 @@ add_meta_data(
 add_meta_data(
     Aircraft.CrewPayload.Design.NUM_BUSINESS_CLASS,
     meta_data=_MetaData,
-    historical_name={"GASP": None,
-                     "FLOPS": 'WTIN.NPB',  # ['&DEFINE.WTIN.NPB', 'WTS.NPB'],
-                     "LEAPS1": 'aircraft.inputs.L0_crew_and_payload.business_class_count'
-                     },
+    historical_name={
+        "GASP": None,
+        "FLOPS": 'WTIN.NPB',  # ['&DEFINE.WTIN.NPB', 'WTS.NPB'],
+        "LEAPS1": 'aircraft.inputs.L0_crew_and_payload.business_class_count',
+    },
     units='unitless',
     desc='number of business class passengers that the aircraft is designed to accommodate',
     types=int,
@@ -742,10 +743,11 @@ add_meta_data(
 add_meta_data(
     Aircraft.CrewPayload.Design.NUM_FIRST_CLASS,
     meta_data=_MetaData,
-    historical_name={"GASP": None,
-                     "FLOPS": 'WTIN.NPF',  # ['&DEFINE.WTIN.NPF', 'WTS.NPF'],
-                     "LEAPS1": 'aircraft.inputs.L0_crew_and_payload.first_class_count'
-                     },
+    historical_name={
+        "GASP": None,
+        "FLOPS": 'WTIN.NPF',  # ['&DEFINE.WTIN.NPF', 'WTS.NPF'],
+        "LEAPS1": 'aircraft.inputs.L0_crew_and_payload.first_class_count',
+    },
     units='unitless',
     desc='number of first class passengers that the aircraft is designed to accommodate',
     types=int,
@@ -756,10 +758,11 @@ add_meta_data(
 add_meta_data(
     Aircraft.CrewPayload.Design.NUM_PASSENGERS,
     meta_data=_MetaData,
-    historical_name={"GASP": 'INGASP.PAX',  # number of passenger seats excluding crew
-                     "FLOPS": None,  # ['CSTDAT.NSV', '~WEIGHT.NPASS', '~WTSTAT.NPASS'],
-                     "LEAPS1": 'aircraft.outputs.L0_crew_and_payload.passenger_count'
-                     },
+    historical_name={
+        "GASP": 'INGASP.PAX',  # number of passenger seats excluding crew
+        "FLOPS": None,  # ['CSTDAT.NSV', '~WEIGHT.NPASS', '~WTSTAT.NPASS'],
+        "LEAPS1": 'aircraft.outputs.L0_crew_and_payload.passenger_count',
+    },
     units='unitless',
     desc='total number of passengers that the aircraft is designed to accommodate',
     option=True,
@@ -772,10 +775,11 @@ add_meta_data(
 add_meta_data(
     Aircraft.CrewPayload.Design.NUM_TOURIST_CLASS,
     meta_data=_MetaData,
-    historical_name={"GASP": None,
-                     "FLOPS": 'WTIN.NPT',  # ['&DEFINE.WTIN.NPT', 'WTS.NPT'],
-                     "LEAPS1": 'aircraft.inputs.L0_crew_and_payload.tourist_class_count'
-                     },
+    historical_name={
+        "GASP": None,
+        "FLOPS": 'WTIN.NPT',  # ['&DEFINE.WTIN.NPT', 'WTS.NPT'],
+        "LEAPS1": 'aircraft.inputs.L0_crew_and_payload.tourist_class_count',
+    },
     units='unitless',
     desc='number of tourist class passengers that the aircraft is designed to accommodate',
     types=int,
@@ -1023,10 +1027,7 @@ add_meta_data(
     meta_data=_MetaData,
     # note: this GASP variable does not include cargo, but it does include
     # passenger baggage
-    historical_name={"GASP": 'INGASP.WPL',
-                     "FLOPS": None,
-                     "LEAPS1": None
-                     },
+    historical_name={"GASP": 'INGASP.WPL', "FLOPS": None, "LEAPS1": None},
     units='lbm',
     desc='mass of passenger payload, including passengers, passenger baggage',
 )
@@ -1304,11 +1305,13 @@ add_meta_data(
 )
 
 add_meta_data(
-    Aircraft.Design.IJEFF, meta_data=_MetaData,
+    Aircraft.Design.IJEFF,
+    meta_data=_MetaData,
     historical_name={"GASP": 'INGASP.IJEFF', "FLOPS": None, "LEAPS1": None},
     desc="A flag used by Jeff V. Bowles to debug GASP code during his 53 years supporting the development of GASP. "
     "This flag is planted here to thank him for his hard work and dedication, Aviary wouldn't be what it is today "
-    "without his help.",)
+    "without his help.",
+)
 
 add_meta_data(
     Aircraft.Design.LAMINAR_FLOW_LOWER,
@@ -1439,15 +1442,18 @@ add_meta_data(
 )
 
 add_meta_data(
-    Aircraft.Design.RESERVE_FUEL_FRACTION, meta_data=_MetaData,
+    Aircraft.Design.RESERVE_FUEL_FRACTION,
+    meta_data=_MetaData,
     historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
-    option=True, units="unitless",
+    option=True,
+    units="unitless",
     desc='required fuel reserves: given as a proportion of mission fuel. This value must be nonnegative. '
     'Mission fuel only includes normal phases and excludes reserve phases. '
     'If it is 0.5, the reserve fuel is half of the mission fuel (one third of the total fuel). Note '
     'it can be greater than 1. If it is 2, there would be twice as much reserve fuel as mission fuel '
     '(the total fuel carried would be 1/3 for the mission and 2/3 for the reserve)',
-    default_value=0,)
+    default_value=0,
+)
 
 add_meta_data(
     Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES,
@@ -1935,7 +1941,8 @@ add_meta_data(
 # Global hybrid throttle is also False by default to account for parallel-hybrid engines
 # that can't operate at every power level at every condition due to other constraints
 add_meta_data(
-    Aircraft.Engine.GLOBAL_HYBRID_THROTTLE, meta_data=_MetaData,
+    Aircraft.Engine.GLOBAL_HYBRID_THROTTLE,
+    meta_data=_MetaData,
     historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
     units='unitless',
     desc='Flag for engine decks if the range of provided hybrid throttles is consistent '
@@ -1946,7 +1953,7 @@ add_meta_data(
     'individually normalized from 0 to 1 independent of other points on the deck).',
     default_value=False,
     types=bool,
-    option=True
+    option=True,
 )
 
 # TODO Disabling global throttle ranges is preferred (therefore default) to prevent
@@ -1955,29 +1962,31 @@ add_meta_data(
 add_meta_data(
     Aircraft.Engine.GLOBAL_THROTTLE,
     meta_data=_MetaData,
-    historical_name={"GASP": None,
-                     "FLOPS": None,
-                     "LEAPS1": None
-                     },
+    historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
     units='unitless',
     desc='Flag for engine decks if the range of provided throttles is consistent '
-         'across all flight conditions (e.g. the maximum throttle seen in the entire '
-         'deck is 1.0, but a given flight condition only goes to 0.9 -> GLOBAL_THROTTLE '
-         '= TRUE means the engine can be extrapolated out to 1.0 at that point. If '
-         "GLOBAL_THROTTLE is False, then each flight condition's throttle range is "
-         'individually normalized from 0 to 1 independent of other points on the deck).',
+    'across all flight conditions (e.g. the maximum throttle seen in the entire '
+    'deck is 1.0, but a given flight condition only goes to 0.9 -> GLOBAL_THROTTLE '
+    '= TRUE means the engine can be extrapolated out to 1.0 at that point. If '
+    "GLOBAL_THROTTLE is False, then each flight condition's throttle range is "
+    'individually normalized from 0 to 1 independent of other points on the deck).',
     default_value=False,
     types=bool,
-    option=True
+    option=True,
 )
 
 # TODO dependency on NTYE? Does this var need preprocessing? Can this mention be removed?
 add_meta_data(
-    Aircraft.Engine.HAS_PROPELLERS, meta_data=_MetaData,
+    Aircraft.Engine.HAS_PROPELLERS,
+    meta_data=_MetaData,
     historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
-    option=True, units="unitless", default_value=False, types=bool,
+    option=True,
+    units="unitless",
+    default_value=False,
+    types=bool,
     desc='if True, the aircraft has propellers, otherwise aircraft is assumed to have no '
-    'propellers. In GASP this depended on NTYE',)
+    'propellers. In GASP this depended on NTYE',
+)
 
 add_meta_data(
     Aircraft.Engine.IGNORE_NEGATIVE_THRUST,
@@ -1996,11 +2005,16 @@ add_meta_data(
 )
 
 add_meta_data(
-    Aircraft.Engine.INTERPOLATION_METHOD, meta_data=_MetaData,
+    Aircraft.Engine.INTERPOLATION_METHOD,
+    meta_data=_MetaData,
     historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
-    units="unitless", option=True, default_value='slinear', types=str,
+    units="unitless",
+    option=True,
+    default_value='slinear',
+    types=str,
     desc="method used for interpolation on an engine deck's data file, allowable values are "
-    'table methods from openmdao.components.interp_util.interp',)
+    'table methods from openmdao.components.interp_util.interp',
+)
 
 add_meta_data(
     Aircraft.Engine.MASS,
@@ -4987,7 +5001,7 @@ add_meta_data(
         "LEAPS1": 'aircraft.inputs.L0_detailed_wing.ref_aspect_ratio',
     },
     units='unitless',
-    desc='Reference aspect ratio, used for detailed wing bending.',
+    desc='Reference aspect ratio, used for detailed wing mass estimation.',
 )
 
 add_meta_data(
@@ -4999,7 +5013,7 @@ add_meta_data(
 )
 
 add_meta_data(
-    Aircraft.Wing.BENDING_FACTOR,
+    Aircraft.Wing.BENDING_MATERIAL_FACTOR,
     meta_data=_MetaData,
     historical_name={
         "GASP": None,
@@ -5007,13 +5021,14 @@ add_meta_data(
         "LEAPS1": 'aircraft.outputs.L0_wing.bending_material_factor',
     },
     units='unitless',
-    desc='wing bending factor',
+    desc='Wing bending material factor with sweep adjustment. Used to compute '
+    'Aircraft.Wing.BENDING_MATERIAL_MASS',
 )
 
 add_meta_data(
     # Note user override
-    #    - see also: Aircraft.Wing.BENDING_MASS_SCALER
-    Aircraft.Wing.BENDING_MASS,
+    #    - see also: Aircraft.Wing.BENDING_MATERIAL_MASS_SCALER
+    Aircraft.Wing.BENDING_MATERIAL_MASS,
     meta_data=_MetaData,
     historical_name={
         "GASP": None,
@@ -5026,7 +5041,7 @@ add_meta_data(
 )
 
 add_meta_data(
-    Aircraft.Wing.BENDING_MASS_SCALER,
+    Aircraft.Wing.BENDING_MATERIAL_MASS_SCALER,
     meta_data=_MetaData,
     historical_name={
         "GASP": None,
@@ -5211,7 +5226,8 @@ add_meta_data(
         "LEAPS1": 'aircraft.outputs.L0_wing.engine_inertia_relief_factor',
     },
     units='unitless',
-    desc='engine inertia relief factor',
+    desc='Engine inertia relief factor for wingspan inboard of engine locations. Used '
+    'to compute Aircraft.Wing.BENDING_MATERIAL_MASS',
 )
 
 add_meta_data(
@@ -6021,7 +6037,7 @@ add_meta_data(
         "LEAPS1": 'aircraft.inputs.L0_detailed_wing.ref_thickness_to_chord_ratio',
     },
     units='unitless',
-    desc='Reference thickness-to-chord ratio, used for detailed wing bending.',
+    desc='Reference thickness-to-chord ratio, used for detailed wing mass estimation.',
     default_value=0.0,
 )
 
@@ -6161,12 +6177,9 @@ add_meta_data(
 add_meta_data(
     Dynamic.Atmosphere.KINEMATIC_VISCOSITY,
     meta_data=_MetaData,
-    historical_name={"GASP": 'XKV',
-                     "FLOPS": None,
-                     "LEAPS1": None
-                     },
+    historical_name={"GASP": 'XKV', "FLOPS": None, "LEAPS1": None},
     units='ft**2/s',
-    desc="Atmospheric kinematic viscosity at the vehicle's current flight condition"
+    desc="Atmospheric kinematic viscosity at the vehicle's current flight condition",
 )
 
 add_meta_data(
@@ -6245,23 +6258,17 @@ add_meta_data(
 add_meta_data(
     Dynamic.Mission.DISTANCE,
     meta_data=_MetaData,
-    historical_name={"GASP": None,
-                     "FLOPS": 'range',
-                     "LEAPS1": None
-                     },
+    historical_name={"GASP": None, "FLOPS": 'range', "LEAPS1": None},
     units='NM',
-    desc="The total distance the vehicle has traveled since brake release at the current time"
+    desc="The total distance the vehicle has traveled since brake release at the current time",
 )
 
 add_meta_data(
     Dynamic.Mission.DISTANCE_RATE,
     meta_data=_MetaData,
-    historical_name={"GASP": None,
-                     "FLOPS": 'range_rate',
-                     "LEAPS1": None
-                     },
+    historical_name={"GASP": None, "FLOPS": 'range_rate', "LEAPS1": None},
     units='NM/s',
-    desc="The rate at which the distance traveled is changing at the current time"
+    desc="The rate at which the distance traveled is changing at the current time",
 )
 
 add_meta_data(
@@ -7634,14 +7641,18 @@ add_meta_data(
 )
 
 add_meta_data(
-    Settings.VERBOSITY, meta_data=_MetaData,
+    Settings.VERBOSITY,
+    meta_data=_MetaData,
     historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
     desc='Sets how much information Aviary outputs when run. Options include:'
     '0. QUIET: All output except errors are suppressed'
     '1. BRIEF: Only important information is output, in human-readable format'
     '2. VERBOSE: All user-relevant information is output, in human-readable format'
     '3. DEBUG: Any information can be outtputed, including warnings, intermediate calculations, etc., with no formatting requirement',
-    option=True, types=Verbosity, default_value=Verbosity.BRIEF,)
+    option=True,
+    types=Verbosity,
+    default_value=Verbosity.BRIEF,
+)
 
 # here we create a copy of the Aviary-core metadata. The reason for this
 # copy is that if we simply imported the Aviary _MetaData in all the
