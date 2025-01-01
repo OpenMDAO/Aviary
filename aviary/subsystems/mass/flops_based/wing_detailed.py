@@ -57,7 +57,7 @@ class DetailedWingBendingFact(om.ExplicitComponent):
 
         add_aviary_input(self, Aircraft.Wing.THICKNESS_TO_CHORD)
         add_aviary_input(self, Aircraft.Wing.THICKNESS_TO_CHORD_REF)
-        
+
         add_aviary_output(self, Aircraft.Wing.BENDING_MATERIAL_FACTOR)
         add_aviary_output(self, Aircraft.Wing.BENDING_FACTOR)
         add_aviary_output(self, Aircraft.Wing.ENG_POD_INERTIA_FACTOR)
