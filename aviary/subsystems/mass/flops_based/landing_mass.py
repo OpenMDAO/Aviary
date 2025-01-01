@@ -17,11 +17,10 @@ class LandingTakeoffMassRatio(om.ExplicitComponent):
             desc='collection of Aircraft/Mission specific options')
 
     def setup(self):
-        add_aviary_input(self, Mission.Summary.CRUISE_MACH, val=0.0)
+        add_aviary_input(self, Mission.Summary.CRUISE_MACH)
+        add_aviary_input(self, Mission.Design.RANGE)
 
-        add_aviary_input(self, Mission.Design.RANGE, val=0.0)
-
-        add_aviary_output(self, Aircraft.Design.LANDING_TO_TAKEOFF_MASS_RATIO, val=0.0)
+        add_aviary_output(self, Aircraft.Design.LANDING_TO_TAKEOFF_MASS_RATIO)
 
     def setup_partials(self):
         self.declare_partials('*', '*')
@@ -64,11 +63,10 @@ class LandingMass(om.ExplicitComponent):
             desc='collection of Aircraft/Mission specific options')
 
     def setup(self):
-        add_aviary_input(self, Mission.Design.GROSS_MASS, val=0.0)
+        add_aviary_input(self, Mission.Design.GROSS_MASS)
+        add_aviary_input(self, Aircraft.Design.LANDING_TO_TAKEOFF_MASS_RATIO)
 
-        add_aviary_input(self, Aircraft.Design.LANDING_TO_TAKEOFF_MASS_RATIO, val=0.0)
-
-        add_aviary_output(self, Aircraft.Design.TOUCHDOWN_MASS, val=0.0)
+        add_aviary_output(self, Aircraft.Design.TOUCHDOWN_MASS)
 
     def setup_partials(self):
         self.declare_partials('*', '*')

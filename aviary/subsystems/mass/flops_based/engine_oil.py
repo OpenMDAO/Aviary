@@ -27,11 +27,10 @@ class TransportEngineOilMass(om.ExplicitComponent):
             desc='collection of Aircraft/Mission specific options')
 
     def setup(self):
-        add_aviary_input(self, Aircraft.Propulsion.ENGINE_OIL_MASS_SCALER, val=1.0)
+        add_aviary_input(self, Aircraft.Propulsion.ENGINE_OIL_MASS_SCALER)
+        add_aviary_input(self, Aircraft.Propulsion.TOTAL_SCALED_SLS_THRUST)
 
-        add_aviary_input(self, Aircraft.Propulsion.TOTAL_SCALED_SLS_THRUST, val=0.0)
-
-        add_aviary_output(self, Aircraft.Propulsion.TOTAL_ENGINE_OIL_MASS, val=0.0)
+        add_aviary_output(self, Aircraft.Propulsion.TOTAL_ENGINE_OIL_MASS)
 
     def setup_partials(self):
         self.declare_partials('*', '*')
@@ -77,9 +76,9 @@ class AltEngineOilMass(om.ExplicitComponent):
             desc='collection of Aircraft/Mission specific options')
 
     def setup(self):
-        add_aviary_input(self, Aircraft.Propulsion.ENGINE_OIL_MASS_SCALER, val=1.0)
+        add_aviary_input(self, Aircraft.Propulsion.ENGINE_OIL_MASS_SCALER)
 
-        add_aviary_output(self, Aircraft.Propulsion.TOTAL_ENGINE_OIL_MASS, val=0.0)
+        add_aviary_output(self, Aircraft.Propulsion.TOTAL_ENGINE_OIL_MASS)
 
     def setup_partials(self):
         self.declare_partials('*', '*')

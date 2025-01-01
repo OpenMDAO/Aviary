@@ -1,6 +1,5 @@
 import numpy as np
 import openmdao.api as om
-import numpy as np
 
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.functions import add_aviary_input, add_aviary_output
@@ -28,13 +27,12 @@ class EngineMiscMass(om.ExplicitComponent):
         num_engine_type = len(self.options['aviary_options'].get_val(
             Aircraft.Engine.NUM_ENGINES))
 
-        add_aviary_input(
-            self, Aircraft.Engine.ADDITIONAL_MASS, val=np.zeros(num_engine_type))
-        add_aviary_input(self, Aircraft.Propulsion.MISC_MASS_SCALER, val=0.0)
-        add_aviary_input(self, Aircraft.Propulsion.TOTAL_ENGINE_CONTROLS_MASS, val=0.0)
-        add_aviary_input(self, Aircraft.Propulsion.TOTAL_STARTER_MASS, val=0.0)
+        add_aviary_input(self, Aircraft.Engine.ADDITIONAL_MASS, shape=num_engine_type)
+        add_aviary_input(self, Aircraft.Propulsion.MISC_MASS_SCALER)
+        add_aviary_input(self, Aircraft.Propulsion.TOTAL_ENGINE_CONTROLS_MASS)
+        add_aviary_input(self, Aircraft.Propulsion.TOTAL_STARTER_MASS)
 
-        add_aviary_output(self, Aircraft.Propulsion.TOTAL_MISC_MASS, val=0.0)
+        add_aviary_output(self, Aircraft.Propulsion.TOTAL_MISC_MASS)
 
         self.declare_partials(
             of=Aircraft.Propulsion.TOTAL_MISC_MASS,

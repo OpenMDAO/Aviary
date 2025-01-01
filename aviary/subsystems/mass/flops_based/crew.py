@@ -20,10 +20,9 @@ class NonFlightCrewMass(om.ExplicitComponent):
             desc='collection of Aircraft/Mission specific options')
 
     def setup(self):
-        add_aviary_input(
-            self, Aircraft.CrewPayload.NON_FLIGHT_CREW_MASS_SCALER, 1.)
+        add_aviary_input(self, Aircraft.CrewPayload.NON_FLIGHT_CREW_MASS_SCALER)
 
-        add_aviary_output(self, Aircraft.CrewPayload.NON_FLIGHT_CREW_MASS, 0)
+        add_aviary_output(self, Aircraft.CrewPayload.NON_FLIGHT_CREW_MASS)
 
     def setup_partials(self):
         self.declare_partials(
@@ -84,10 +83,9 @@ class FlightCrewMass(om.ExplicitComponent):
             desc='collection of Aircraft/Mission specific options')
 
     def setup(self):
-        add_aviary_input(
-            self, Aircraft.CrewPayload.FLIGHT_CREW_MASS_SCALER, 1.)
+        add_aviary_input(self, Aircraft.CrewPayload.FLIGHT_CREW_MASS_SCALER)
 
-        add_aviary_output(self, Aircraft.CrewPayload.FLIGHT_CREW_MASS, 0.)
+        add_aviary_output(self, Aircraft.CrewPayload.FLIGHT_CREW_MASS)
 
     def setup_partials(self):
         self.declare_partials(

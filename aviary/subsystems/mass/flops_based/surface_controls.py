@@ -18,12 +18,12 @@ class SurfaceControlMass(om.ExplicitComponent):
             desc='collection of Aircraft/Mission specific options')
 
     def setup(self):
-        add_aviary_input(self, Aircraft.Wing.SURFACE_CONTROL_MASS_SCALER, val=1.0)
-        add_aviary_input(self, Mission.Design.GROSS_MASS, val=0.0)
-        add_aviary_input(self, Aircraft.Wing.CONTROL_SURFACE_AREA_RATIO, val=0.0)
-        add_aviary_input(self, Aircraft.Wing.AREA, val=0.0)
+        add_aviary_input(self, Aircraft.Wing.SURFACE_CONTROL_MASS_SCALER)
+        add_aviary_input(self, Mission.Design.GROSS_MASS)
+        add_aviary_input(self, Aircraft.Wing.CONTROL_SURFACE_AREA_RATIO)
+        add_aviary_input(self, Aircraft.Wing.AREA)
 
-        add_aviary_output(self, Aircraft.Wing.SURFACE_CONTROL_MASS, val=10)
+        add_aviary_output(self, Aircraft.Wing.SURFACE_CONTROL_MASS)
         add_aviary_output(self, Aircraft.Wing.CONTROL_SURFACE_AREA, val=2)
 
         self.declare_partials(Aircraft.Wing.SURFACE_CONTROL_MASS, '*')

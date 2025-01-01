@@ -16,11 +16,10 @@ class PaintMass(om.ExplicitComponent):
             desc='collection of Aircraft/Mission specific options')
 
     def setup(self):
-        add_aviary_input(self, Aircraft.Design.TOTAL_WETTED_AREA, val=0.0)
+        add_aviary_input(self, Aircraft.Design.TOTAL_WETTED_AREA)
+        add_aviary_input(self, Aircraft.Paint.MASS_PER_UNIT_AREA)
 
-        add_aviary_input(self, Aircraft.Paint.MASS_PER_UNIT_AREA, val=0.0)
-
-        add_aviary_output(self, Aircraft.Paint.MASS, val=0.0)
+        add_aviary_output(self, Aircraft.Paint.MASS)
 
     def setup_partials(self):
         self.declare_partials('*', '*')

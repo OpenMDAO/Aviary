@@ -20,14 +20,11 @@ class TransportCargoContainersMass(om.ExplicitComponent):
             desc='collection of Aircraft/Mission specific options')
 
     def setup(self):
-        add_aviary_input(
-            self, Aircraft.CrewPayload.CARGO_CONTAINER_MASS_SCALER, val=1.0)
+        add_aviary_input(self, Aircraft.CrewPayload.CARGO_CONTAINER_MASS_SCALER)
+        add_aviary_input(self, Aircraft.CrewPayload.CARGO_MASS)
+        add_aviary_input(self, Aircraft.CrewPayload.BAGGAGE_MASS)
 
-        add_aviary_input(self, Aircraft.CrewPayload.CARGO_MASS, val=0.0)
-
-        add_aviary_input(self, Aircraft.CrewPayload.BAGGAGE_MASS, val=0.0)
-
-        add_aviary_output(self, Aircraft.CrewPayload.CARGO_CONTAINER_MASS, val=0.0)
+        add_aviary_output(self, Aircraft.CrewPayload.CARGO_CONTAINER_MASS)
 
     def setup_partials(self):
         self.declare_partials('*', '*')
