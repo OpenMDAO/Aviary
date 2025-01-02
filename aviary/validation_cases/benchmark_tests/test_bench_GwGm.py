@@ -235,4 +235,3 @@ if __name__ == '__main__':
     # test = ProblemPhaseTestCase()
     # test.setUp()
     # test.test_bench_GwGm_SNOPT()
-
