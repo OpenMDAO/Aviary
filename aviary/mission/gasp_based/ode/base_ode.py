@@ -94,9 +94,11 @@ class BaseODE(om.Group):
                 gamma=dict(val=0., units='deg'),
                 i_wing=dict(val=0., units='deg'),
             )
-            alpha_comp_inputs = [("max_fus_angle", Aircraft.Design.MAX_FUSELAGE_PITCH_ANGLE),
-                                 ("gamma", Dynamic.Mission.FLIGHT_PATH_ANGLE),
-                                 ("i_wing", Aircraft.Wing.INCIDENCE)]
+            alpha_comp_inputs = [
+                ("max_fus_angle", Aircraft.Design.MAX_FUSELAGE_PITCH_ANGLE),
+                ("gamma", Dynamic.Mission.FLIGHT_PATH_ANGLE),
+                ("i_wing", Aircraft.Wing.INCIDENCE),
+            ]
 
         elif alpha_mode is AlphaModes.DECELERATION:
             alpha_comp = om.BalanceComp(
@@ -107,8 +109,8 @@ class BaseODE(om.Group):
                 rhs_name='target_tas_rate',
                 rhs_val=target_tas_rate,
                 eq_units="kn/s",
-                upper=25.,
-                lower=-2.,
+                upper=25.0,
+                lower=-2.0,
             )
             alpha_comp_inputs = [Dynamic.Mission.VELOCITY_RATE]
 
@@ -118,12 +120,12 @@ class BaseODE(om.Group):
                 val=8.0 * np.ones(nn),
                 units="deg",
                 rhs_name="required_lift",
-                lhs_name=Dynamic.Mission.LIFT,
+                lhs_name=Dynamic.Vehicle.LIFT,
                 eq_units="lbf",
                 upper=12.0,
                 lower=-2,
             )
-            alpha_comp_inputs = ["required_lift", Dynamic.Mission.LIFT]
+            alpha_comp_inputs = ["required_lift", Dynamic.Vehicle.LIFT]
 
         # Future controller modes
         # elif alpha_mode is AlphaModes.FLIGHT_PATH_ANGLE:
@@ -198,21 +200,24 @@ class BaseODE(om.Group):
         nn = num_nodes
 
         thrust_bal = om.BalanceComp(
-            name=Dynamic.Mission.THROTTLE,
+            name=Dynamic.Vehicle.Propulsion.THROTTLE,
             val=np.ones(nn),
             upper=1.0,
             lower=0.0,
             units='unitless',
-            lhs_name=Dynamic.Mission.THRUST_TOTAL,
+            lhs_name=Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
             rhs_name="required_thrust",
             eq_units="lbf",
         )
-        prop_group.add_subsystem("thrust_balance",
-                                 thrust_bal,
-                                 promotes_inputs=[
-                                     Dynamic.Mission.THRUST_TOTAL, 'required_thrust'],
-                                 promotes_outputs=[Dynamic.Mission.THROTTLE],
-                                 )
+        prop_group.add_subsystem(
+            "thrust_balance",
+            thrust_bal,
+            promotes_inputs=[
+                Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
+                'required_thrust',
+            ],
+            promotes_outputs=[Dynamic.Vehicle.Propulsion.THROTTLE],
+        )
 
         if add_default_solver:
             prop_group.linear_solver = om.DirectSolver()
@@ -248,21 +253,35 @@ class BaseODE(om.Group):
         self.add_subsystem(
             name='SPECIFIC_ENERGY_RATE_EXCESS',
             subsys=SpecificEnergyRate(num_nodes=nn),
-            promotes_inputs=[Dynamic.Mission.VELOCITY, Dynamic.Mission.MASS,
-                             (Dynamic.Mission.THRUST_TOTAL, Dynamic.Mission.THRUST_MAX_TOTAL),
-                             Dynamic.Mission.DRAG],
-            promotes_outputs=[(Dynamic.Mission.SPECIFIC_ENERGY_RATE,
-                               Dynamic.Mission.SPECIFIC_ENERGY_RATE_EXCESS)]
+            promotes_inputs=[
+                Dynamic.Mission.VELOCITY,
+                Dynamic.Vehicle.MASS,
+                (
+                    Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
+                    Dynamic.Vehicle.Propulsion.THRUST_MAX_TOTAL,
+                ),
+                Dynamic.Vehicle.DRAG,
+            ],
+            promotes_outputs=[
+                (
+                    Dynamic.Mission.SPECIFIC_ENERGY_RATE,
+                    Dynamic.Mission.SPECIFIC_ENERGY_RATE_EXCESS,
+                )
+            ],
         )
 
         self.add_subsystem(
             name='ALTITUDE_RATE_MAX',
             subsys=AltitudeRate(num_nodes=nn),
             promotes_inputs=[
-                (Dynamic.Mission.SPECIFIC_ENERGY_RATE,
-                 Dynamic.Mission.SPECIFIC_ENERGY_RATE_EXCESS),
+                (
+                    Dynamic.Mission.SPECIFIC_ENERGY_RATE,
+                    Dynamic.Mission.SPECIFIC_ENERGY_RATE_EXCESS,
+                ),
                 Dynamic.Mission.VELOCITY_RATE,
-                Dynamic.Mission.VELOCITY],
+                Dynamic.Mission.VELOCITY,
+            ],
             promotes_outputs=[
-                (Dynamic.Mission.ALTITUDE_RATE,
-                 Dynamic.Mission.ALTITUDE_RATE_MAX)])
+                (Dynamic.Mission.ALTITUDE_RATE, Dynamic.Mission.ALTITUDE_RATE_MAX)
+            ],
+        )
