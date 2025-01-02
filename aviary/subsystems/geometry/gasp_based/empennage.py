@@ -319,11 +319,11 @@ class EmpennageSize(om.Group):
             promotes_outputs=higher_level_outputs_vtail + rename_outputs_vtail,
         )
 
-        self.set_input_defaults(Aircraft.Wing.AVERAGE_CHORD, 12.615, units="ft")
-        self.set_input_defaults(Aircraft.Wing.SPAN, 117.8054, units="ft")
+        # self.set_input_defaults(Aircraft.Wing.AVERAGE_CHORD, 12.615, units="ft")
+        # self.set_input_defaults(Aircraft.Wing.SPAN, 117.8054, units="ft")
 
         # override horizontal tail defaults
-        self.set_input_defaults(Aircraft.VerticalTail.VOLUME_COEFFICIENT, 0.145)
-        self.set_input_defaults(Aircraft.VerticalTail.MOMENT_RATIO, 2.362)
-        self.set_input_defaults(Aircraft.VerticalTail.ASPECT_RATIO, 1.67)
-        self.set_input_defaults(Aircraft.VerticalTail.TAPER_RATIO, 0.801)
+        # self.set_input_defaults(Aircraft.VerticalTail.VOLUME_COEFFICIENT, 0.145)
+        # self.set_input_defaults(Aircraft.VerticalTail.MOMENT_RATIO, 2.362)
+        # self.set_input_defaults(Aircraft.VerticalTail.ASPECT_RATIO, 1.67)
+        # self.set_input_defaults(Aircraft.VerticalTail.TAPER_RATIO, 0.801)
