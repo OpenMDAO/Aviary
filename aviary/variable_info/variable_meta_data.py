@@ -3097,6 +3097,7 @@ add_meta_data(
     },
     units='unitless',
     desc='fuselage diameter to wing span ratio',
+    default_value=0.0,  # added
 )
 
 add_meta_data(
@@ -3194,6 +3195,7 @@ add_meta_data(
     },
     units='unitless',
     desc='fuselage length to diameter ratio',
+    default_value=0.0,  # added
 )
 
 add_meta_data(
