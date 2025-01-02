@@ -604,8 +604,10 @@ class WingGroupTestCase4(unittest.TestCase):
             Aircraft.Fuel.WING_FUEL_FRACTION, val=.6, units='unitless'
         )
 
-        self.prob.model.set_input_defaults(Aircraft.Wing.ASPECT_RATIO, val=10.13, units="unitless")
-        self.prob.model.set_input_defaults(Aircraft.Wing.TAPER_RATIO, val=0.33, units="unitless")
+        self.prob.model.set_input_defaults(
+            Aircraft.Wing.ASPECT_RATIO, val=10.13, units="unitless")
+        self.prob.model.set_input_defaults(
+            Aircraft.Wing.TAPER_RATIO, val=0.33, units="unitless")
         self.prob.model.set_input_defaults(
             Aircraft.Wing.THICKNESS_TO_CHORD_ROOT, val=0.11, units="unitless"
         )
