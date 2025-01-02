@@ -1,4 +1,5 @@
 import dymos as dm
+import numpy as np
 import openmdao.api as om
 from dymos.utils.misc import _unspecified
 from openmdao.core.component import Component
@@ -33,12 +34,21 @@ def add_aviary_input(comp, varname, val=None, units=None, desc=None, shape_by_co
     else:
         input_desc = meta['desc']
     if val is None:
-        val = meta['default_value']
+        if shape is None:
+            val = meta['default_value']
+            if val is None:
+                val = 0.0
+        else:
+            val = meta['default_value']
+            if val is None:
+                val = np.zeros(shape)
+            else:
+                val = np.ones(shape) * val
     comp.add_input(varname, val=val, units=input_units,
                    desc=input_desc, shape_by_conn=shape_by_conn, shape=shape)
 
 
-def add_aviary_output(comp, varname, val, units=None, desc=None, shape_by_conn=False, meta_data=_MetaData):
+def add_aviary_output(comp, varname, val=None, units=None, desc=None, shape_by_conn=False, meta_data=_MetaData, shape=None):
     '''
     This function provides a clean way to add variables from the
     variable hierarchy into components as Aviary outputs. It takes
@@ -58,6 +68,17 @@ def add_aviary_output(comp, varname, val, units=None, desc=None, shape_by_conn=F
         output_desc = desc
     else:
         output_desc = meta['desc']
+    if val is None:
+        if shape is None:
+            val = meta['default_value']
+            if val is None:
+                val = 0.0
+        else:
+            val = meta['default_value']
+            if val is None:
+                val = np.zeros(shape)
+            else:
+                val = np.ones(shape) * val
     comp.add_output(varname, val=val, units=output_units,
                     desc=output_desc, shape_by_conn=shape_by_conn)
 

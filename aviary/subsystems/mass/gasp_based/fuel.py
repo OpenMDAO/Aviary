@@ -58,12 +58,12 @@ class BodyTankCalculations(om.ExplicitComponent):
         add_aviary_input(self, Mission.Design.FUEL_MASS, val=3000)
         add_aviary_input(self, Aircraft.Design.OPERATING_MASS, val=94417)
 
-        self.add_output(
-            Aircraft.Fuel.AUXILIARY_FUEL_CAPACITY,
-            val=0,
-            units="lbm",
-            desc="WFXTRA: extra amount of fuel that is required but does not fit in wings",
-        )
+        add_aviary_output(self, Aircraft.Fuel.AUXILIARY_FUEL_CAPACITY, val=0,
+                          desc="WFXTRA: extra amount of fuel that is required but does not fit in wings")
+        # self.add_output(
+        #     Aircraft.Fuel.AUXILIARY_FUEL_CAPACITY, val=0, units="lbm",
+        #     desc="WFXTRA: extra amount of fuel that is required but does not fit in wings",
+        # )
         self.add_output(
             "extra_fuel_volume",
             val=0,
