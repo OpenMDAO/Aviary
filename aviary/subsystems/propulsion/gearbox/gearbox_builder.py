@@ -43,15 +43,14 @@ class GearboxBuilder(SubsystemBuilderBase):
 
         DVs = {
             Aircraft.Engine.Gearbox.GEAR_RATIO: {
-                'opt': True,
                 'units': 'unitless',
                 'lower': 1.0,
                 'upper': 20.0,
-                'val':  10  # initial value
+                # 'val':  10  # initial value
             },
             # This var appears in both mission and pre-mission
             Aircraft.Engine.Gearbox.SHAFT_POWER_DESIGN: {
-                'val': 10000,
+                # 'val': 10000,
                 'units': 'kW',
                 'lower': 1.0,
                 'upper': None,
@@ -62,11 +61,11 @@ class GearboxBuilder(SubsystemBuilderBase):
     def get_parameters(self, aviary_inputs=None, phase_info=None):
         """
         Parameters are only tested to see if they exist in mission.
-        A value the doesn't change throught the mission mission
-        Returns a dictionary of fixed values for the gearbox subsystem, where the keys are the names
-        of the fixed values, and the values are dictionaries that contain the fixed value for the
-        variable, the units for the variable, and any additional keyword arguments required by
-        OpenMDAO for the variable.
+        The value doesn't change throughout the mission.
+        Returns a dictionary of fixed values for the gearbox subsystem, where the keys
+        are the names of the fixed values, and the values are dictionaries that contain
+        the fixed value for the variable, the units for the variable, and any additional
+        keyword arguments required by OpenMDAO for the variable.
 
         Returns
         -------
@@ -75,9 +74,21 @@ class GearboxBuilder(SubsystemBuilderBase):
         """
         parameters = {
             Aircraft.Engine.Gearbox.EFFICIENCY: {
-                'val': 0.98,
+                'val': 1.0,
                 'units': 'unitless',
+                'static_target': True,
             },
+            Aircraft.Engine.Gearbox.GEAR_RATIO: {
+                'val': 1.0,
+                'units': 'unitless',
+                'static_target': True,
+            },
+            Aircraft.Engine.Gearbox.SHAFT_POWER_DESIGN: {
+                'val': 1.0,
+                'units': 'kW',
+                'lower': 1.0,
+                'upper': None,
+            }
         }
 
         return parameters
@@ -87,10 +98,10 @@ class GearboxBuilder(SubsystemBuilderBase):
 
     def get_outputs(self):
         return [
-            Dynamic.Mission.SHAFT_POWER + '_out',
-            Dynamic.Mission.SHAFT_POWER_MAX + '_out',
-            Dynamic.Mission.RPM + '_out',
-            Dynamic.Mission.TORQUE + '_out',
+            Dynamic.Vehicle.Propulsion.SHAFT_POWER + '_out',
+            Dynamic.Vehicle.Propulsion.SHAFT_POWER_MAX + '_out',
+            Dynamic.Vehicle.Propulsion.RPM + '_out',
+            Dynamic.Vehicle.Propulsion.TORQUE + '_out',
             Mission.Constraints.GEARBOX_SHAFT_POWER_RESIDUAL,
         ]
 

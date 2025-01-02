@@ -1704,7 +1704,7 @@ class FixedMassGroupTestCase3(unittest.TestCase):
 
 
 if __name__ == "__main__":
-    unittest.main()
+    # unittest.main()
     # test = GearTestCaseMultiengine()
-    # test = EngineTestCaseMultiEngine()
-    # test.test_case_1()
+    test = EngineTestCaseMultiEngine()
+    test.test_case_1()

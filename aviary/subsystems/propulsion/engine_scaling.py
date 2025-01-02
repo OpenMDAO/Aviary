@@ -58,8 +58,12 @@ class EngineScaling(om.ExplicitComponent):
 
         add_aviary_input(self, Aircraft.Engine.SCALE_FACTOR, val=1.0)
 
-        self.add_input(Dynamic.Mission.MACH, val=np.zeros(nn),
-                       desc='current Mach number', units='unitless')
+        self.add_input(
+            Dynamic.Atmosphere.MACH,
+            val=np.zeros(nn),
+            desc='current Mach number',
+            units='unitless',
+        )
 
         # loop through all variables, special handling for fuel flow to output negative version
         # add outputs for 'max' counterpart of variables that have them
@@ -73,7 +77,7 @@ class EngineScaling(om.ExplicitComponent):
 
                 if variable is FUEL_FLOW:
                     self.add_output(
-                        Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE,
+                        Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE,
                         val=np.zeros(nn),
                         units=engine_variables[variable],
                     )
@@ -112,7 +116,7 @@ class EngineScaling(om.ExplicitComponent):
 
         # thrust-based engine scaling factor
         engine_scale_factor = inputs[Aircraft.Engine.SCALE_FACTOR]
-        mach_number = inputs[Dynamic.Mission.MACH]
+        mach_number = inputs[Dynamic.Atmosphere.MACH]
 
         scale_factor = 1
         fuel_flow_scale_factor = np.ones(nn, dtype=engine_scale_factor.dtype)
@@ -143,7 +147,7 @@ class EngineScaling(om.ExplicitComponent):
         for variable in engine_variables:
             if variable not in skip_variables:
                 if variable is FUEL_FLOW:
-                    outputs[Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE] = -(
+                    outputs[Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE] = -(
                         inputs['fuel_flow_rate_unscaled'] * fuel_flow_scale_factor
                         + constant_fuel_flow
                     )
@@ -169,13 +173,13 @@ class EngineScaling(om.ExplicitComponent):
             if variable not in skip_variables:
                 if variable is FUEL_FLOW:
                     self.declare_partials(
-                        Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE,
+                        Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE,
                         Aircraft.Engine.SCALE_FACTOR,
                         rows=r,
                         cols=c,
                     )
                     self.declare_partials(
-                        Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE,
+                        Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE,
                         'fuel_flow_rate_unscaled',
                         rows=r,
                         cols=r,
@@ -220,7 +224,7 @@ class EngineScaling(om.ExplicitComponent):
         linear_fuel_term = options[Aircraft.Engine.FUEL_FLOW_SCALER_LINEAR_TERM]
         mission_fuel_scaler = options[Mission.Summary.FUEL_FLOW_SCALER]
 
-        mach_number = inputs[Dynamic.Mission.MACH]
+        mach_number = inputs[Dynamic.Atmosphere.MACH]
         engine_scale_factor = inputs[Aircraft.Engine.SCALE_FACTOR]
 
         # determine which mach-based fuel flow scaler is applied at each node
@@ -267,11 +271,11 @@ class EngineScaling(om.ExplicitComponent):
             if variable not in skip_variables:
                 if variable is FUEL_FLOW:
                     J[
-                        Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE,
+                        Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE,
                         'fuel_flow_rate_unscaled',
                     ] = fuel_flow_deriv
                     J[
-                        Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE,
+                        Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE,
                         Aircraft.Engine.SCALE_FACTOR,
                     ] = fuel_flow_scale_deriv
                 else:

@@ -31,7 +31,7 @@ class FlapsGroupTestCaseTripleSlotted(unittest.TestCase):
         self.prob.setup()
 
         self.prob.set_val(Aircraft.Wing.SWEEP, 25.0, units="deg")
-        self.prob.set_val(Dynamic.Mission.TEMPERATURE, 518.67, units="degR")
+        self.prob.set_val(Dynamic.Atmosphere.TEMPERATURE, 518.67, units="degR")
         self.prob.set_val(Aircraft.Wing.ASPECT_RATIO, 10.13)
         self.prob.set_val(Aircraft.Wing.FLAP_CHORD_RATIO, 0.3)
         self.prob.set_val(Aircraft.Wing.TAPER_RATIO, 0.33)
@@ -67,13 +67,17 @@ class FlapsGroupTestCaseTripleSlotted(unittest.TestCase):
         self.prob.set_val("VDEL4", 0.93578)
         self.prob.set_val("VDEL5", 0.90761)
 
-        self.prob.set_val(Dynamic.Mission.SPEED_OF_SOUND, 1118.21948771, units="ft/s")
+        self.prob.set_val(
+            Dynamic.Atmosphere.SPEED_OF_SOUND, 1118.21948771, units="ft/s"
+        )
         self.prob.set_val(Aircraft.Wing.LOADING, 128.0, units="lbf/ft**2")
-        self.prob.set_val(Dynamic.Mission.STATIC_PRESSURE,
-                          (14.696 * 144), units="lbf/ft**2")
+        self.prob.set_val(
+            Dynamic.Atmosphere.STATIC_PRESSURE, (14.696 * 144), units="lbf/ft**2"
+        )
         self.prob.set_val(Aircraft.Wing.AVERAGE_CHORD, 12.61, units="ft")
-        self.prob.set_val(Dynamic.Mission.KINEMATIC_VISCOSITY,
-                          0.15723e-3, units="ft**2/s")
+        self.prob.set_val(
+            Dynamic.Atmosphere.KINEMATIC_VISCOSITY, 0.15723e-3, units="ft**2/s"
+        )
         self.prob.set_val(Aircraft.Wing.MAX_LIFT_REF, 1.150)
         self.prob.set_val(Aircraft.Wing.SLAT_LIFT_INCREMENT_OPTIMUM, 0.930)
         self.prob.set_val("fus_lift", 0.05498)
@@ -100,7 +104,7 @@ class FlapsGroupTestCaseTripleSlotted(unittest.TestCase):
         assert_near_equal(ans, reg_data, tol)
 
         reg_data = 0.17522
-        ans = self.prob[Dynamic.Mission.MACH]
+        ans = self.prob[Dynamic.Atmosphere.MACH]
         assert_near_equal(ans, reg_data, tol)
 
         reg_data = 157.1111
@@ -136,7 +140,7 @@ class FlapsGroupTestCaseSplit(unittest.TestCase):
         self.prob.setup()
 
         self.prob.set_val(Aircraft.Wing.SWEEP, 25.0, units="deg")
-        self.prob.set_val(Dynamic.Mission.TEMPERATURE, 518.67, units="degR")
+        self.prob.set_val(Dynamic.Atmosphere.TEMPERATURE, 518.67, units="degR")
         self.prob.set_val(Aircraft.Wing.ASPECT_RATIO, 10.13)
         self.prob.set_val(Aircraft.Wing.FLAP_CHORD_RATIO, 0.3)
         self.prob.set_val(Aircraft.Wing.TAPER_RATIO, 0.33)
@@ -172,13 +176,17 @@ class FlapsGroupTestCaseSplit(unittest.TestCase):
         self.prob.set_val("VDEL4", 0.93578)
         self.prob.set_val("VDEL5", 0.90761)
 
-        self.prob.set_val(Dynamic.Mission.SPEED_OF_SOUND, 1118.21948771, units="ft/s")
+        self.prob.set_val(
+            Dynamic.Atmosphere.SPEED_OF_SOUND, 1118.21948771, units="ft/s"
+        )
         self.prob.set_val(Aircraft.Wing.LOADING, 128.0, units="lbf/ft**2")
-        self.prob.set_val(Dynamic.Mission.STATIC_PRESSURE,
-                          (14.696 * 144), units="lbf/ft**2")
+        self.prob.set_val(
+            Dynamic.Atmosphere.STATIC_PRESSURE, (14.696 * 144), units="lbf/ft**2"
+        )
         self.prob.set_val(Aircraft.Wing.AVERAGE_CHORD, 12.61, units="ft")
-        self.prob.set_val(Dynamic.Mission.KINEMATIC_VISCOSITY,
-                          0.15723e-3, units="ft**2/s")
+        self.prob.set_val(
+            Dynamic.Atmosphere.KINEMATIC_VISCOSITY, 0.15723e-3, units="ft**2/s"
+        )
         self.prob.set_val(Aircraft.Wing.MAX_LIFT_REF, 1.150)
         self.prob.set_val(Aircraft.Wing.SLAT_LIFT_INCREMENT_OPTIMUM, 0.930)
         self.prob.set_val("fus_lift", 0.05498)
@@ -205,7 +213,7 @@ class FlapsGroupTestCaseSplit(unittest.TestCase):
         assert_near_equal(ans, reg_data, tol)
 
         reg_data = 0.18368
-        ans = self.prob[Dynamic.Mission.MACH]
+        ans = self.prob[Dynamic.Atmosphere.MACH]
         assert_near_equal(ans, reg_data, tol)
 
         reg_data = 164.78406
@@ -242,7 +250,7 @@ class FlapsGroupTestCaseSingleSlotted(unittest.TestCase):
         self.prob.setup()
 
         self.prob.set_val(Aircraft.Wing.SWEEP, 25.0, units="deg")
-        self.prob.set_val(Dynamic.Mission.TEMPERATURE, 518.67, units="degR")
+        self.prob.set_val(Dynamic.Atmosphere.TEMPERATURE, 518.67, units="degR")
         self.prob.set_val(Aircraft.Wing.ASPECT_RATIO, 10.13)
         self.prob.set_val(Aircraft.Wing.FLAP_CHORD_RATIO, 0.3)
         self.prob.set_val(Aircraft.Wing.TAPER_RATIO, 0.33)
@@ -279,13 +287,17 @@ class FlapsGroupTestCaseSingleSlotted(unittest.TestCase):
         self.prob.set_val("VDEL4", 0.93578)
         self.prob.set_val("VDEL5", 0.90761)
 
-        self.prob.set_val(Dynamic.Mission.SPEED_OF_SOUND, 1118.21948771, units="ft/s")
+        self.prob.set_val(
+            Dynamic.Atmosphere.SPEED_OF_SOUND, 1118.21948771, units="ft/s"
+        )
         self.prob.set_val(Aircraft.Wing.LOADING, 128.0, units="lbf/ft**2")
-        self.prob.set_val(Dynamic.Mission.STATIC_PRESSURE,
-                          (14.696 * 144), units="lbf/ft**2")
+        self.prob.set_val(
+            Dynamic.Atmosphere.STATIC_PRESSURE, (14.696 * 144), units="lbf/ft**2"
+        )
         self.prob.set_val(Aircraft.Wing.AVERAGE_CHORD, 12.61, units="ft")
-        self.prob.set_val(Dynamic.Mission.KINEMATIC_VISCOSITY,
-                          0.15723e-3, units="ft**2/s")
+        self.prob.set_val(
+            Dynamic.Atmosphere.KINEMATIC_VISCOSITY, 0.15723e-3, units="ft**2/s"
+        )
         self.prob.set_val(Aircraft.Wing.MAX_LIFT_REF, 1.150)
         self.prob.set_val(Aircraft.Wing.SLAT_LIFT_INCREMENT_OPTIMUM, 0.930)
         self.prob.set_val("fus_lift", 0.05498)
@@ -312,7 +324,7 @@ class FlapsGroupTestCaseSingleSlotted(unittest.TestCase):
         assert_near_equal(ans, reg_data, tol)
 
         reg_data = 0.17522
-        ans = self.prob[Dynamic.Mission.MACH]
+        ans = self.prob[Dynamic.Atmosphere.MACH]
         assert_near_equal(ans, reg_data, tol)
 
         reg_data = 157.1111
@@ -348,7 +360,7 @@ class FlapsGroupTestCasePlain(unittest.TestCase):
         self.prob.setup()
 
         self.prob.set_val(Aircraft.Wing.SWEEP, 25.0, units="deg")
-        self.prob.set_val(Dynamic.Mission.TEMPERATURE, 518.67, units="degR")
+        self.prob.set_val(Dynamic.Atmosphere.TEMPERATURE, 518.67, units="degR")
         self.prob.set_val(Aircraft.Wing.ASPECT_RATIO, 10.13)
         self.prob.set_val(Aircraft.Wing.FLAP_CHORD_RATIO, 0.3)
         self.prob.set_val(Aircraft.Wing.TAPER_RATIO, 0.33)
@@ -384,13 +396,17 @@ class FlapsGroupTestCasePlain(unittest.TestCase):
         self.prob.set_val("VDEL4", 0.93578)
         self.prob.set_val("VDEL5", 0.90761)
 
-        self.prob.set_val(Dynamic.Mission.SPEED_OF_SOUND, 1118.21948771, units="ft/s")
+        self.prob.set_val(
+            Dynamic.Atmosphere.SPEED_OF_SOUND, 1118.21948771, units="ft/s"
+        )
         self.prob.set_val(Aircraft.Wing.LOADING, 128.0, units="lbf/ft**2")
-        self.prob.set_val(Dynamic.Mission.STATIC_PRESSURE,
-                          (14.696 * 144), units="lbf/ft**2")
+        self.prob.set_val(
+            Dynamic.Atmosphere.STATIC_PRESSURE, (14.696 * 144), units="lbf/ft**2"
+        )
         self.prob.set_val(Aircraft.Wing.AVERAGE_CHORD, 12.61, units="ft")
-        self.prob.set_val(Dynamic.Mission.KINEMATIC_VISCOSITY,
-                          0.15723e-3, units="ft**2/s")
+        self.prob.set_val(
+            Dynamic.Atmosphere.KINEMATIC_VISCOSITY, 0.15723e-3, units="ft**2/s"
+        )
         self.prob.set_val(Aircraft.Wing.MAX_LIFT_REF, 1.150)
         self.prob.set_val(Aircraft.Wing.SLAT_LIFT_INCREMENT_OPTIMUM, 0.930)
         self.prob.set_val("fus_lift", 0.05498)
@@ -417,7 +433,7 @@ class FlapsGroupTestCasePlain(unittest.TestCase):
         assert_near_equal(ans, reg_data, tol)
 
         reg_data = 0.18368
-        ans = self.prob[Dynamic.Mission.MACH]
+        ans = self.prob[Dynamic.Atmosphere.MACH]
         assert_near_equal(ans, reg_data, tol)
 
         reg_data = 164.78406
@@ -453,7 +469,7 @@ class FlapsGroupTestCaseFowler(unittest.TestCase):
         self.prob.setup()
 
         self.prob.set_val(Aircraft.Wing.SWEEP, 25.0, units="deg")
-        self.prob.set_val(Dynamic.Mission.TEMPERATURE, 518.67, units="degR")
+        self.prob.set_val(Dynamic.Atmosphere.TEMPERATURE, 518.67, units="degR")
         self.prob.set_val(Aircraft.Wing.ASPECT_RATIO, 10.13)
         self.prob.set_val(Aircraft.Wing.FLAP_CHORD_RATIO, 0.3)
         self.prob.set_val(Aircraft.Wing.TAPER_RATIO, 0.33)
@@ -489,13 +505,17 @@ class FlapsGroupTestCaseFowler(unittest.TestCase):
         self.prob.set_val("VDEL4", 0.93578)
         self.prob.set_val("VDEL5", 0.90761)
 
-        self.prob.set_val(Dynamic.Mission.SPEED_OF_SOUND, 1118.21948771, units="ft/s")
+        self.prob.set_val(
+            Dynamic.Atmosphere.SPEED_OF_SOUND, 1118.21948771, units="ft/s"
+        )
         self.prob.set_val(Aircraft.Wing.LOADING, 128.0, units="lbf/ft**2")
-        self.prob.set_val(Dynamic.Mission.STATIC_PRESSURE,
-                          (14.696 * 144), units="lbf/ft**2")
+        self.prob.set_val(
+            Dynamic.Atmosphere.STATIC_PRESSURE, (14.696 * 144), units="lbf/ft**2"
+        )
         self.prob.set_val(Aircraft.Wing.AVERAGE_CHORD, 12.61, units="ft")
-        self.prob.set_val(Dynamic.Mission.KINEMATIC_VISCOSITY,
-                          0.15723e-3, units="ft**2/s")
+        self.prob.set_val(
+            Dynamic.Atmosphere.KINEMATIC_VISCOSITY, 0.15723e-3, units="ft**2/s"
+        )
         self.prob.set_val(Aircraft.Wing.MAX_LIFT_REF, 1.150)
         self.prob.set_val(Aircraft.Wing.SLAT_LIFT_INCREMENT_OPTIMUM, 0.930)
         self.prob.set_val("fus_lift", 0.05498)
@@ -522,7 +542,7 @@ class FlapsGroupTestCaseFowler(unittest.TestCase):
         assert_near_equal(ans, reg_data, tol)
 
         reg_data = 0.17168
-        ans = self.prob[Dynamic.Mission.MACH]
+        ans = self.prob[Dynamic.Atmosphere.MACH]
         assert_near_equal(ans, reg_data, tol)
 
         reg_data = 154.02686
@@ -559,7 +579,7 @@ class FlapsGroupTestCaseDoubleFowler(unittest.TestCase):
         self.prob.setup()
 
         self.prob.set_val(Aircraft.Wing.SWEEP, 25.0, units="deg")
-        self.prob.set_val(Dynamic.Mission.TEMPERATURE, 518.67, units="degR")
+        self.prob.set_val(Dynamic.Atmosphere.TEMPERATURE, 518.67, units="degR")
         self.prob.set_val(Aircraft.Wing.ASPECT_RATIO, 10.13)
         self.prob.set_val(Aircraft.Wing.FLAP_CHORD_RATIO, 0.3)
         self.prob.set_val(Aircraft.Wing.TAPER_RATIO, 0.33)
@@ -595,13 +615,17 @@ class FlapsGroupTestCaseDoubleFowler(unittest.TestCase):
         self.prob.set_val("VDEL4", 0.93578)
         self.prob.set_val("VDEL5", 0.90761)
 
-        self.prob.set_val(Dynamic.Mission.SPEED_OF_SOUND, 1118.21948771, units="ft/s")
+        self.prob.set_val(
+            Dynamic.Atmosphere.SPEED_OF_SOUND, 1118.21948771, units="ft/s"
+        )
         self.prob.set_val(Aircraft.Wing.LOADING, 128.0, units="lbf/ft**2")
-        self.prob.set_val(Dynamic.Mission.STATIC_PRESSURE,
-                          (14.696 * 144), units="lbf/ft**2")
+        self.prob.set_val(
+            Dynamic.Atmosphere.STATIC_PRESSURE, (14.696 * 144), units="lbf/ft**2"
+        )
         self.prob.set_val(Aircraft.Wing.AVERAGE_CHORD, 12.61, units="ft")
-        self.prob.set_val(Dynamic.Mission.KINEMATIC_VISCOSITY,
-                          0.15723e-3, units="ft**2/s")
+        self.prob.set_val(
+            Dynamic.Atmosphere.KINEMATIC_VISCOSITY, 0.15723e-3, units="ft**2/s"
+        )
         self.prob.set_val(Aircraft.Wing.MAX_LIFT_REF, 1.150)
         self.prob.set_val(Aircraft.Wing.SLAT_LIFT_INCREMENT_OPTIMUM, 0.930)
         self.prob.set_val("fus_lift", 0.05498)
@@ -628,7 +652,7 @@ class FlapsGroupTestCaseDoubleFowler(unittest.TestCase):
         assert_near_equal(ans, reg_data, tol)
 
         reg_data = 0.17168
-        ans = self.prob[Dynamic.Mission.MACH]
+        ans = self.prob[Dynamic.Atmosphere.MACH]
         assert_near_equal(ans, reg_data, tol)
 
         reg_data = 154.02686

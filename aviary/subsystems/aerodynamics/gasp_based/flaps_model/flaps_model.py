@@ -1,13 +1,17 @@
 import openmdao.api as om
 
-from aviary.subsystems.aerodynamics.gasp_based.flaps_model.basic_calculations import \
-    BasicFlapsCalculations
-from aviary.subsystems.aerodynamics.gasp_based.flaps_model.Cl_max import \
-    CLmaxCalculation
-from aviary.subsystems.aerodynamics.gasp_based.flaps_model.L_and_D_increments import \
-    LiftAndDragIncrements
-from aviary.subsystems.aerodynamics.gasp_based.flaps_model.meta_model import \
-    MetaModelGroup
+from aviary.subsystems.aerodynamics.gasp_based.flaps_model.basic_calculations import (
+    BasicFlapsCalculations,
+)
+from aviary.subsystems.aerodynamics.gasp_based.flaps_model.Cl_max import (
+    CLmaxCalculation,
+)
+from aviary.subsystems.aerodynamics.gasp_based.flaps_model.L_and_D_increments import (
+    LiftAndDragIncrements,
+)
+from aviary.subsystems.aerodynamics.gasp_based.flaps_model.meta_model import (
+    MetaModelGroup,
+)
 from aviary.variable_info.enums import FlapType
 from aviary.variable_info.variables import Aircraft, Dynamic
 from aviary.variable_info.functions import add_aviary_option
@@ -51,9 +55,9 @@ class FlapsGroup(om.Group):
             "CLmaxCalculation",
             CLmaxCalculation(),
             promotes_inputs=[
-                Dynamic.Mission.SPEED_OF_SOUND,
-                Dynamic.Mission.STATIC_PRESSURE,
-                Dynamic.Mission.KINEMATIC_VISCOSITY,
+                Dynamic.Atmosphere.SPEED_OF_SOUND,
+                Dynamic.Atmosphere.STATIC_PRESSURE,
+                Dynamic.Atmosphere.KINEMATIC_VISCOSITY,
                 "VLAM1",
                 "VLAM2",
                 "VLAM3",
@@ -69,10 +73,10 @@ class FlapsGroup(om.Group):
                 "VLAM13",
                 "VLAM14",
                 "fus_lift",
-                Dynamic.Mission.TEMPERATURE,
+                Dynamic.Atmosphere.TEMPERATURE,
             ]
             + ["aircraft:*"],
-            promotes_outputs=["CL_max", Dynamic.Mission.MACH, "reynolds"],
+            promotes_outputs=["CL_max", Dynamic.Atmosphere.MACH, "reynolds"],
         )
 
         self.add_subsystem(
@@ -83,7 +87,7 @@ class FlapsGroup(om.Group):
                 "flap_defl",
                 "slat_defl_ratio",
                 "reynolds",
-                Dynamic.Mission.MACH,
+                Dynamic.Atmosphere.MACH,
                 "body_to_span_ratio",
                 "chord_to_body_ratio",
             ]

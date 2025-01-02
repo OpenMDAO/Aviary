@@ -29,7 +29,9 @@ class GASPAeroTest(unittest.TestCase):
     def test_cruise(self):
         prob = om.Problem()
         prob.model.add_subsystem(
-            "aero", CruiseAero(num_nodes=2, input_atmos=True), promotes=["*"]
+            "aero",
+            CruiseAero(num_nodes=2, input_atmos=True),
+            promotes=["*"],
         )
         prob.setup(check=False, force_alloc_complex=True)
 
@@ -48,10 +50,10 @@ class GASPAeroTest(unittest.TestCase):
 
             with self.subTest(alt=alt, mach=mach, alpha=alpha):
                 # prob.set_val(Dynamic.Mission.ALTITUDE, alt)
-                prob.set_val(Dynamic.Mission.MACH, mach)
+                prob.set_val(Dynamic.Atmosphere.MACH, mach)
                 prob.set_val("alpha", alpha)
-                prob.set_val(Dynamic.Mission.SPEED_OF_SOUND, row["sos"])
-                prob.set_val(Dynamic.Mission.KINEMATIC_VISCOSITY, row["nu"])
+                prob.set_val(Dynamic.Atmosphere.SPEED_OF_SOUND, row["sos"])
+                prob.set_val(Dynamic.Atmosphere.KINEMATIC_VISCOSITY, row["nu"])
 
                 prob.run_model()
 
@@ -65,7 +67,12 @@ class GASPAeroTest(unittest.TestCase):
     def test_ground(self):
         prob = om.Problem()
         prob.model.add_subsystem(
-            "aero", LowSpeedAero(num_nodes=2, input_atmos=True), promotes=["*"]
+            "aero",
+            LowSpeedAero(
+                num_nodes=2,
+                input_atmos=True,
+            ),
+            promotes=["*"],
         )
         prob.setup(check=False, force_alloc_complex=True)
 
@@ -85,11 +92,11 @@ class GASPAeroTest(unittest.TestCase):
             alpha = row["alpha"]
 
             with self.subTest(ilift=ilift, alt=alt, mach=mach, alpha=alpha):
-                prob.set_val(Dynamic.Mission.MACH, mach)
+                prob.set_val(Dynamic.Atmosphere.MACH, mach)
                 prob.set_val(Dynamic.Mission.ALTITUDE, alt)
                 prob.set_val("alpha", alpha)
-                prob.set_val(Dynamic.Mission.SPEED_OF_SOUND, row["sos"])
-                prob.set_val(Dynamic.Mission.KINEMATIC_VISCOSITY, row["nu"])
+                prob.set_val(Dynamic.Atmosphere.SPEED_OF_SOUND, row["sos"])
+                prob.set_val(Dynamic.Atmosphere.KINEMATIC_VISCOSITY, row["nu"])
 
                 # note we're just letting the time ramps for flaps/gear default to the
                 # takeoff config such that the default times correspond to full flap and
@@ -100,8 +107,8 @@ class GASPAeroTest(unittest.TestCase):
                     prob.set_val("CL_max_flaps", setup_data["clmwto"])
                     prob.set_val("dCL_flaps_model", setup_data["dclto"])
                     prob.set_val("dCD_flaps_model", setup_data["dcdto"])
-                    prob.set_val("aero_ramps.flap_factor:final_val", 1.)
-                    prob.set_val("aero_ramps.gear_factor:final_val", 1.)
+                    prob.set_val("aero_ramps.flap_factor:final_val", 1.0)
+                    prob.set_val("aero_ramps.gear_factor:final_val", 1.0)
                 else:
                     # landing flaps config
                     prob.set_val("flap_defl", setup_data["delfld"])
@@ -124,7 +131,7 @@ class GASPAeroTest(unittest.TestCase):
             "alpha_in",
             LowSpeedAero(),
             promotes_inputs=["*", ("alpha", "alpha_in")],
-            promotes_outputs=[(Dynamic.Mission.LIFT, "lift_req")],
+            promotes_outputs=[(Dynamic.Vehicle.LIFT, "lift_req")],
         )
 
         prob.model.add_subsystem(
@@ -144,7 +151,7 @@ class GASPAeroTest(unittest.TestCase):
         prob.set_val(Aircraft.Wing.FLAP_CHORD_RATIO, setup_data["cfoc"])
         prob.set_val(Mission.Design.GROSS_MASS, setup_data["wgto"])
 
-        prob.set_val(Dynamic.Mission.MACH, 0.1)
+        prob.set_val(Dynamic.Atmosphere.MACH, 0.1)
         prob.set_val(Dynamic.Mission.ALTITUDE, 10)
         prob.set_val("alpha_in", 5)
         prob.run_model()

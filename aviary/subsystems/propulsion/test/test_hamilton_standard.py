@@ -35,15 +35,26 @@ class PreHamiltonStandardTest(unittest.TestCase):
 
     def test_preHS(self):
         prob = self.prob
-        prob.set_val(Aircraft.Engine.PROPELLER_DIAMETER, 10, units="ft")
-        prob.set_val(Dynamic.Mission.PROPELLER_TIP_SPEED,
-                     [700.0, 750.0, 800.0], units="ft/s")
-        prob.set_val(Dynamic.Mission.SHAFT_POWER, [1850.0, 1850.0, 900.0], units="hp")
-        prob.set_val(Dynamic.Mission.DENSITY,
-                     [0.00237717, 0.00237717, 0.00106526], units="slug/ft**3")
+        prob.set_val(Aircraft.Engine.Propeller.DIAMETER, 10, units="ft")
+        prob.set_val(
+            Dynamic.Vehicle.Propulsion.PROPELLER_TIP_SPEED,
+            [700.0, 750.0, 800.0],
+            units="ft/s",
+        )
+        prob.set_val(
+            Dynamic.Vehicle.Propulsion.SHAFT_POWER, [1850.0, 1850.0, 900.0], units="hp"
+        )
+        prob.set_val(
+            Dynamic.Atmosphere.DENSITY,
+            [0.00237717, 0.00237717, 0.00106526],
+            units="slug/ft**3",
+        )
         prob.set_val(Dynamic.Mission.VELOCITY, [100.0, 100, 100], units="ft/s")
-        prob.set_val(Dynamic.Mission.SPEED_OF_SOUND,
-                     [661.46474547, 661.46474547, 601.93668333], units="knot")
+        prob.set_val(
+            Dynamic.Atmosphere.SPEED_OF_SOUND,
+            [661.46474547, 661.46474547, 601.93668333],
+            units="knot",
+        )
 
         prob.run_model()
 
@@ -79,7 +90,7 @@ class HamiltonStandardTest(unittest.TestCase):
 
     def setUp(self):
         options = get_option_defaults()
-        options.set_val(Aircraft.Engine.NUM_PROPELLER_BLADES, val=4, units='unitless')
+        options.set_val(Aircraft.Engine.Propeller.NUM_BLADES, val=4, units='unitless')
 
         prob = om.Problem()
 
@@ -101,10 +112,12 @@ class HamiltonStandardTest(unittest.TestCase):
         prob = self.prob
         prob.set_val("power_coefficient", [0.2352, 0.2352, 0.2553], units="unitless")
         prob.set_val("advance_ratio", [0.0066, 0.8295, 1.9908], units="unitless")
-        prob.set_val(Dynamic.Mission.MACH, [0.001509, 0.1887, 0.4976], units="unitless")
+        prob.set_val(
+            Dynamic.Atmosphere.MACH, [0.001509, 0.1887, 0.4976], units="unitless"
+        )
         prob.set_val("tip_mach", [1.2094, 1.2094, 1.3290], units="unitless")
-        prob.set_val(Aircraft.Engine.PROPELLER_ACTIVITY_FACTOR, 114.0, units="unitless")
-        prob.set_val(Aircraft.Engine.PROPELLER_INTEGRATED_LIFT_COEFFICIENT,
+        prob.set_val(Aircraft.Engine.Propeller.ACTIVITY_FACTOR, 114.0, units="unitless")
+        prob.set_val(Aircraft.Engine.Propeller.INTEGRATED_LIFT_COEFFICIENT,
                      0.5, units="unitless")
 
         prob.run_model()
@@ -152,14 +165,14 @@ class PostHamiltonStandardTest(unittest.TestCase):
         prob = self.prob
         prob.set_val("power_coefficient", [0.3871, 0.3147, 0.2815], units="unitless")
         prob.set_val("advance_ratio", [0.4494, 0.4194, 0.3932], units="unitless")
-        prob.set_val(Dynamic.Mission.PROPELLER_TIP_SPEED,
+        prob.set_val(Dynamic.Vehicle.Propulsion.PROPELLER_TIP_SPEED,
                      [700.0, 750.0, 800.0], units="ft/s")
         prob.set_val(
-            Dynamic.Mission.DENSITY,
+            Dynamic.Atmosphere.DENSITY,
             np.array([1.0001, 1.0001, 0.4482]) * RHO_SEA_LEVEL_ENGLISH,
             units="slug/ft**3",
         )
-        prob.set_val(Aircraft.Engine.PROPELLER_DIAMETER, 10.0, units="ft")
+        prob.set_val(Aircraft.Engine.Propeller.DIAMETER, 10.0, units="ft")
         prob.set_val("thrust_coefficient", [0.2765, 0.2052, 0.1158], units="unitless")
         prob.set_val("install_loss_factor", [0.0133, 0.0200, 0.0325], units="unitless")
         prob.set_val("comp_tip_loss_factor", [1.0, 1.0, 0.9819], units="unitless")
@@ -169,8 +182,11 @@ class PostHamiltonStandardTest(unittest.TestCase):
         tol = 5e-4
         assert_near_equal(prob.get_val("thrust_coefficient_comp_loss"),
                           [0.2765, 0.2052, 0.1137], tolerance=tol)
-        assert_near_equal(prob.get_val(Dynamic.Mission.THRUST),
-                          [3218.9508, 2723.7294, 759.7543], tolerance=tol)
+        assert_near_equal(
+            prob.get_val(Dynamic.Vehicle.Propulsion.THRUST),
+            [3218.9508, 2723.7294, 759.7543],
+            tolerance=tol,
+        )
         assert_near_equal(prob.get_val("propeller_efficiency"),
                           [0.321, 0.2735, 0.1588], tolerance=tol)
         assert_near_equal(prob.get_val("install_efficiency"),

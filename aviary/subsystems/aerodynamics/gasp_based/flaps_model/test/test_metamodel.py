@@ -35,7 +35,7 @@ class MetaModelTestCasePlain(unittest.TestCase):
         self.prob.set_val("slat_defl_ratio", 10 / 20)
         self.prob.set_val(Aircraft.Wing.SLAT_SPAN_RATIO, 0.89761)
         self.prob.set_val("reynolds", 164.78406)
-        self.prob.set_val(Dynamic.Mission.MACH, 0.18368)
+        self.prob.set_val(Dynamic.Atmosphere.MACH, 0.18368)
         self.prob.set_val(Aircraft.Wing.TAPER_RATIO, 0.33)
         self.prob.set_val(Aircraft.Wing.SLAT_SPAN_RATIO, 0.89761)
         self.prob.set_val("body_to_span_ratio", 0.09239)

@@ -29,8 +29,11 @@ class TaxiFuelComponentTestCase(unittest.TestCase):
     def test_fuel_consumed(self):
         self.prob.setup(force_alloc_complex=True)
 
-        self.prob.set_val(Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
-                          -1512, units="lbm/h")
+        self.prob.set_val(
+            Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
+            -1512,
+            units="lbm/h",
+        )
         self.prob.set_val(Mission.Summary.GROSS_MASS, 175400.0, units="lbm")
 
         self.prob.run_model()

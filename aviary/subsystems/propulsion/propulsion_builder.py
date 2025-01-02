@@ -10,6 +10,8 @@ CorePropulsionBuilder : the interface for Aviary's core propulsion subsystem bui
 
 import numpy as np
 
+from openmdao.utils.units import convert_units as _convert_units
+
 from aviary.interface.utils.markdown_utils import write_markdown_variable_table
 
 from aviary.subsystems.subsystem_builder_base import SubsystemBuilderBase
@@ -152,11 +154,23 @@ class CorePropulsionBuilder(PropulsionBuilderBase):
         # collect all the parameters for engines
         for engine in self.engine_models:
             engine_params = engine.get_parameters()
+            # for param in engine_params:
+            #     # For any parameters that need to be vectorized for multiple engines,
+            #     # apply correct shape
+            #     if param in params:
+            #         try:
+            #             shape_old = params[param]['shape'][0]
+            #         except KeyError:
+            #             # If shape is not defined yet, this is the first time there is
+            #             # a duplicate
+            #             shape_old = 1
+            #         engine_params[param]['shape'] = (shape_old + 1,)
+
             params.update(engine_params)
 
         # for any parameters that need to be vectorized for multiple engines, apply
         # correct shape
-        engine_vars = _get_engine_variables()
+        engine_vars = [var for var in _get_engine_variables()]
         for var in params:
             if var in engine_vars:
                 # TODO shape for variables that are supposed to be vectors, like wing

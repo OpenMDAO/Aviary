@@ -25,14 +25,20 @@ class WingMassGroup(om.Group):
                            promotes_inputs=['*'], promotes_outputs=['*'])
 
         if self.options[Aircraft.Wing.INPUT_STATION_DIST] is not None:
-            self.add_subsystem('wing_bending_factor',
-                               DetailedWingBendingFact(),
-                               promotes_inputs=['*'], promotes_outputs=['*'])
+            self.add_subsystem(
+                'wing_BENDING_MATERIAL_FACTOR',
+                DetailedWingBendingFact(),
+                promotes_inputs=['*'],
+                promotes_outputs=['*'],
+            )
 
         else:
-            self.add_subsystem('wing_bending_factor',
-                               SimpleWingBendingFact(),
-                               promotes_inputs=['*'], promotes_outputs=['*'])
+            self.add_subsystem(
+                'wing_BENDING_MATERIAL_FACTOR',
+                SimpleWingBendingFact(),
+                promotes_inputs=['*'],
+                promotes_outputs=['*'],
+            )
 
         self.add_subsystem('wing_misc',
                            WingMiscMass(),

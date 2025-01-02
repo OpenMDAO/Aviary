@@ -27,14 +27,24 @@ class TaxiTestCase(unittest.TestCase):
         options = get_option_defaults()
         options.set_val(Mission.Taxi.DURATION, 0.1677, units="h")
         default_mission_subsystems = get_default_mission_subsystems(
-            'GASP', build_engine_deck(options))
+            'GASP', build_engine_deck(options)
+        )
 
         self.prob.model = TaxiSegment(
-            aviary_options=options, core_subsystems=default_mission_subsystems)
+            aviary_options=options, core_subsystems=default_mission_subsystems
+        )
 
         setup_model_options(self.prob, options)
 
-    @unittest.skipIf(version.parse(openmdao.__version__) < version.parse("3.26"), "Skipping due to OpenMDAO version being too low (<3.26)")
+        self.prob.model.set_input_defaults(
+            Mission.Takeoff.AIRPORT_ALTITUDE,
+            0.0,
+        )
+
+    @unittest.skipIf(
+        version.parse(openmdao.__version__) < version.parse("3.26"),
+        "Skipping due to OpenMDAO version being too low (<3.26)",
+    )
     def test_taxi(self):
         self.prob.setup(check=False, force_alloc_complex=True)
 
@@ -43,12 +53,15 @@ class TaxiTestCase(unittest.TestCase):
         self.prob.set_val(Mission.Takeoff.AIRPORT_ALTITUDE, 0, units="ft")
         self.prob.set_val(Mission.Taxi.MACH, 0.1, units="unitless")
         self.prob.set_val(
-            Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL, -1512, units="lbm/h")
+            Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
+            -1512,
+            units="lbm/h",
+        )
 
         self.prob.run_model()
 
         testvals = {
-            Dynamic.Mission.MASS: 175190.3,  # lbm
+            Dynamic.Vehicle.MASS: 175190.3,  # lbm
         }
         check_prob_outputs(self.prob, testvals, rtol=1e-6)
 

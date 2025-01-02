@@ -27,7 +27,9 @@ class IdleDescentTestCase(unittest.TestCase):
         aviary_inputs, _ = create_vehicle(input_deck)
         aviary_inputs.set_val(Settings.VERBOSITY, 0)
         aviary_inputs.set_val(Aircraft.Engine.SCALED_SLS_THRUST, val=28690, units="lbf")
-        aviary_inputs.set_val(Dynamic.Mission.THROTTLE, val=0, units="unitless")
+        aviary_inputs.set_val(
+            Dynamic.Vehicle.Propulsion.THROTTLE, val=0, units="unitless"
+        )
 
         engine = build_engine_deck(aviary_options=aviary_inputs)
         preprocess_propulsion(aviary_inputs, engine)
@@ -76,8 +78,8 @@ class IdleDescentTestCase(unittest.TestCase):
         warnings.filterwarnings('default', category=UserWarning)
 
         # Values obtained by running idle_descent_estimation
-        assert_near_equal(prob.get_val('descent_range', 'NM'), 98.38026813, self.tol)
-        assert_near_equal(prob.get_val('descent_fuel', 'lbm'), 250.84809336, self.tol)
+        assert_near_equal(prob.get_val('descent_range', 'NM'), 98.3445738, self.tol)
+        assert_near_equal(prob.get_val('descent_fuel', 'lbm'), 250.79875356, self.tol)
 
         # TODO: check_partials() call results in runtime error: Jacobian in 'ODE_group' is not full rank.
         # partial_data = prob.check_partials(out_stream=None, method="cs")

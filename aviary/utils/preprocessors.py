@@ -318,6 +318,7 @@ def preprocess_propulsion(aviary_options: AviaryValues, engine_models: list = No
                         # if aviary_val is an iterable, just grab val for this engine
                         if isinstance(aviary_val, (list, np.ndarray, tuple)):
                             aviary_val = aviary_val[i]
+                        # add aviary_val to vec using type-appropriate syntax
                         if isinstance(default_value, (list, np.ndarray)):
                             vec = np.append(vec, aviary_val)
                         elif isinstance(default_value, tuple):

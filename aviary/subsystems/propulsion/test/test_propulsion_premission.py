@@ -24,14 +24,17 @@ class PropulsionPreMissionTest(unittest.TestCase):
         options.set_val(Settings.VERBOSITY, 0)
         options.set_val(Aircraft.Engine.NUM_ENGINES, np.array([2]))
 
-        self.prob.model = PropulsionPreMission(aviary_options=options,
-                                               engine_models=build_engine_deck(options))
+        self.prob.model = PropulsionPreMission(
+            aviary_options=options, engine_models=build_engine_deck(options)
+        )
+
+        self.prob.model.set_input_defaults(Aircraft.Engine.SCALE_FACTOR, np.ones(1))
 
         setup_model_options(self.prob, options)
 
         self.prob.setup(force_alloc_complex=True)
-        self.prob.set_val(Aircraft.Engine.SCALED_SLS_THRUST, options.get_val(
-            Aircraft.Engine.SCALED_SLS_THRUST, units='lbf'))
+        # self.prob.set_val(Aircraft.Engine.SCALED_SLS_THRUST, options.get_val(
+        #     Aircraft.Engine.SCALED_SLS_THRUST, units='lbf'))
 
         self.prob.run_model()
 
@@ -62,6 +65,10 @@ class PropulsionPreMissionTest(unittest.TestCase):
                             promotes=['*'])
 
         setup_model_options(self.prob, options, engine_models=engine_models)
+
+        self.prob.model.set_input_defaults(
+            Aircraft.Engine.SCALE_FACTOR, np.ones(2) * 0.5
+        )
 
         self.prob.setup(force_alloc_complex=True)
         self.prob.set_val(Aircraft.Engine.SCALED_SLS_THRUST, options.get_val(

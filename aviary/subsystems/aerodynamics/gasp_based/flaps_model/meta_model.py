@@ -778,7 +778,7 @@ class MetaModelGroup(om.Group):
             "VLAM14_interp",
             om.MetaModelStructuredComp(method="1D-slinear", extrapolate=True),
             promotes_inputs=[
-                Dynamic.Mission.MACH,
+                Dynamic.Atmosphere.MACH,
             ],
             promotes_outputs=[
                 "VLAM14",
@@ -786,7 +786,7 @@ class MetaModelGroup(om.Group):
         )
 
         VLAM14_interp.add_input(
-            Dynamic.Mission.MACH,
+            Dynamic.Atmosphere.MACH,
             0.17522,
             training_data=[0.0, 0.2, 0.4, 0.6, 0.8, 1.0],
             units="unitless",

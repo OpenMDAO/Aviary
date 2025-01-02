@@ -19,9 +19,9 @@ class SizeEngine(om.ExplicitComponent):
         add_aviary_option(self, Aircraft.Engine.SCALE_PERFORMANCE)
 
     def setup(self):
-        add_aviary_input(self, Aircraft.Engine.SCALED_SLS_THRUST, val=0.0)
+        add_aviary_input(self, Aircraft.Engine.SCALE_FACTOR, val=1.0)
 
-        add_aviary_output(self, Aircraft.Engine.SCALE_FACTOR, val=0.0)
+        add_aviary_output(self, Aircraft.Engine.SCALED_SLS_THRUST, val=0.0)
 
         # variables that also may require scaling
         # TODO - inlet_weight <input>
@@ -36,27 +36,28 @@ class SizeEngine(om.ExplicitComponent):
         scale_engine = self.options[Aircraft.Engine.SCALE_PERFORMANCE]
         reference_sls_thrust, _ = self.options[Aircraft.Engine.REFERENCE_SLS_THRUST]
 
-        scaled_sls_thrust = inputs[Aircraft.Engine.SCALED_SLS_THRUST]
+        engine_scale_factor = inputs[Aircraft.Engine.SCALE_FACTOR]
 
         # Engine is only scaled if required
         # engine scale factor is ratio of scaled thrust target and reference thrust
-        engine_scale_factor = 1
         if scale_engine:
-            engine_scale_factor = scaled_sls_thrust / reference_sls_thrust
+            scaled_sls_thrust = engine_scale_factor * reference_sls_thrust
+        else:
+            scaled_sls_thrust = reference_sls_thrust
 
-        outputs[Aircraft.Engine.SCALE_FACTOR] = engine_scale_factor
+        outputs[Aircraft.Engine.SCALED_SLS_THRUST] = scaled_sls_thrust
 
     def setup_partials(self):
-        self.declare_partials(Aircraft.Engine.SCALE_FACTOR,
-                              Aircraft.Engine.SCALED_SLS_THRUST)
+        scale_engine = self.options[Aircraft.Engine.SCALE_PERFORMANCE]
+
+        if scale_engine:
+            self.declare_partials(
+                Aircraft.Engine.SCALED_SLS_THRUST, Aircraft.Engine.SCALE_FACTOR
+            )
 
     def compute_partials(self, inputs, J):
-        scale_engine = self.options[Aircraft.Engine.SCALE_PERFORMANCE]
         reference_sls_thrust, _ = self.options[Aircraft.Engine.REFERENCE_SLS_THRUST]
 
-        deriv_scale_factor = 0
-        if scale_engine:
-            deriv_scale_factor = 1.0 / reference_sls_thrust
-
-        J[Aircraft.Engine.SCALE_FACTOR,
-            Aircraft.Engine.SCALED_SLS_THRUST] = deriv_scale_factor
+        J[Aircraft.Engine.SCALED_SLS_THRUST, Aircraft.Engine.SCALE_FACTOR] = (
+            reference_sls_thrust
+        )

@@ -33,14 +33,23 @@ class DetailedWingBendingFact(om.ExplicitComponent):
         # wing_location_default = np.empty(num_engine_type, object)
         # wing_location_default[:] = [np.array([0]*int(num)) for num in num_wing_engines/2]
 
-        add_aviary_input(self, Aircraft.Wing.LOAD_PATH_SWEEP_DIST,
-                         val=np.zeros(num_input_stations - 1))
+        add_aviary_input(
+            self,
+            Aircraft.Wing.LOAD_PATH_SWEEP_DIST,
+            val=np.zeros(num_input_stations - 1),
+        )
 
-        add_aviary_input(self, Aircraft.Wing.THICKNESS_TO_CHORD_DIST,
-                         val=np.zeros(num_input_stations))
+        add_aviary_input(
+            self,
+            Aircraft.Wing.THICKNESS_TO_CHORD_DIST,
+            val=np.zeros(num_input_stations),
+        )
 
-        add_aviary_input(self, Aircraft.Wing.CHORD_PER_SEMISPAN_DIST,
-                         val=np.zeros(num_input_stations))
+        add_aviary_input(
+            self,
+            Aircraft.Wing.CHORD_PER_SEMISPAN_DIST,
+            val=np.zeros(num_input_stations),
+        )
 
         add_aviary_input(self, Mission.Design.GROSS_MASS, val=0.0)
 
@@ -54,14 +63,20 @@ class DetailedWingBendingFact(om.ExplicitComponent):
 
         add_aviary_input(self, Aircraft.Wing.AEROELASTIC_TAILORING_FACTOR, val=0.0)
 
-        add_aviary_input(self, Aircraft.Engine.WING_LOCATIONS,
-                         val=np.zeros(int(total_num_wing_engines/2)))
+        if total_num_wing_engines > 0:
+            add_aviary_input(
+                self,
+                Aircraft.Engine.WING_LOCATIONS,
+                val=np.zeros(int(total_num_wing_engines / 2)),
+            )
+        else:
+            add_aviary_input(self, Aircraft.Engine.WING_LOCATIONS, val=[[0.0]])
 
         add_aviary_input(self, Aircraft.Wing.THICKNESS_TO_CHORD, val=0.0)
 
         add_aviary_input(self, Aircraft.Wing.THICKNESS_TO_CHORD_REF, val=0.0)
 
-        add_aviary_output(self, Aircraft.Wing.BENDING_FACTOR, val=0.0)
+        add_aviary_output(self, Aircraft.Wing.BENDING_MATERIAL_FACTOR, val=0.0)
 
         add_aviary_output(self, Aircraft.Wing.ENG_POD_INERTIA_FACTOR, val=0.0)
 
@@ -118,53 +133,77 @@ class DetailedWingBendingFact(om.ExplicitComponent):
             per_section = int(stations_per_section[i])
             integration_stations = np.append(
                 integration_stations,
-                np.linspace(inp_stations[i], val, per_section, endpoint=endpoint))
-            sweep_int_stations = np.append(sweep_int_stations,
-                                           load_path_sweep[i] * np.ones(per_section))
+                np.linspace(inp_stations[i], val, per_section, endpoint=endpoint),
+            )
+            sweep_int_stations = np.append(
+                sweep_int_stations, load_path_sweep[i] * np.ones(per_section)
+            )
 
         dy = np.diff(integration_stations)
-        avg_sweep = np.sum((dy[1:] + 2.0 * integration_stations[1:-1]) * dy[1:] *
-                           sweep_int_stations[1:-1])
+        avg_sweep = np.sum(
+            (dy[1:] + 2.0 * integration_stations[1:-1])
+            * dy[1:]
+            * sweep_int_stations[1:-1]
+        )
 
         # TODO: add all load_distribution_factor options
         if load_distribution_factor == 1:
             load_intensity = 1.0 - integration_stations
         elif load_distribution_factor == 2:
-            load_intensity = np.sqrt(1.0 - integration_stations ** 2)
+            load_intensity = np.sqrt(1.0 - integration_stations**2)
         elif load_distribution_factor == 3:
             load_intensity = np.ones(num_integration_stations + 1)
         else:
             raise om.AnalysisError(
-                f'{load_distribution_factor} is not a valid value for {Aircraft.Wing.LOAD_DISTRIBUTION_CONTROL}, it must be "1", "2", or "3".')
+                f'{load_distribution_factor} is not a valid value for '
+                f'{Aircraft.Wing.LOAD_DISTRIBUTION_CONTROL}, it must be "1", "2", or "3".'
+            )
 
-        chord_interp = InterpND(method='slinear', points=(inp_stations),
-                                x_interp=integration_stations)
+        chord_interp = InterpND(
+            method='slinear', points=(inp_stations), x_interp=integration_stations
+        )
         chord_int_stations = chord_interp.evaluate_spline(
-            chord, compute_derivative=False)
+            chord, compute_derivative=False
+        )
         if arref > 0.0:
             # Scale
             chord_int_stations *= arref / ar
 
-        del_load = dy * (
-            chord_int_stations[:-1] * (2*load_intensity[:-1] + load_intensity[1:]) +
-            chord_int_stations[1:] * (2*load_intensity[1:] + load_intensity[:-1])) / 6
+        del_load = (
+            dy
+            * (
+                chord_int_stations[:-1] * (2 * load_intensity[:-1] + load_intensity[1:])
+                + chord_int_stations[1:]
+                * (2 * load_intensity[1:] + load_intensity[:-1])
+            )
+            / 6
+        )
 
         el = np.sum(del_load)
 
-        del_moment = dy**2 * (
-            chord_int_stations[:-1] * (load_intensity[:-1]+load_intensity[1:]) +
-            chord_int_stations[1:] * (3*load_intensity[1:]+load_intensity[:-1])) / 12
+        del_moment = (
+            dy**2
+            * (
+                chord_int_stations[:-1] * (load_intensity[:-1] + load_intensity[1:])
+                + chord_int_stations[1:]
+                * (3 * load_intensity[1:] + load_intensity[:-1])
+            )
+            / 12
+        )
 
         load_path_length = np.flip(
-            np.append(np.zeros(1, chord.dtype), np.cumsum(np.flip(del_load)[:-1])))
-        csw = 1. / np.cos(sweep_int_stations[:-1] * np.pi/180.)
+            np.append(np.zeros(1, chord.dtype), np.cumsum(np.flip(del_load)[:-1]))
+        )
+        csw = 1.0 / np.cos(sweep_int_stations[:-1] * np.pi / 180.0)
         emi = (del_moment + dy * load_path_length) * csw
         # em = np.sum(emi)
 
-        tc_interp = InterpND(method='slinear', points=(inp_stations),
-                             x_interp=integration_stations)
+        tc_interp = InterpND(
+            method='slinear', points=(inp_stations), x_interp=integration_stations
+        )
         tc_int_stations = tc_interp.evaluate_spline(
-            thickness_to_chord, compute_derivative=False)
+            thickness_to_chord, compute_derivative=False
+        )
         if tcref > 0.0:
             tc_int_stations *= tc / tcref
 
@@ -178,16 +217,22 @@ class DetailedWingBendingFact(om.ExplicitComponent):
 
         btb = 4 * pm / el
 
-        sa = np.sin(avg_sweep * np.pi / 180.)
+        sa = np.sin(avg_sweep * np.pi / 180.0)
         if ar <= 5.0:
             caya = 0.0
         else:
             caya = ar - 5.0
 
-        bt = btb / (ar**(0.25*fstrt) * (1.0 + (0.5*faert - 0.16*fstrt)
-                    * sa**2 + 0.03*caya * (1.0-0.5*faert)*sa))
+        bt = btb / (
+            ar ** (0.25 * fstrt)
+            * (
+                1.0
+                + (0.5 * faert - 0.16 * fstrt) * sa**2
+                + 0.03 * caya * (1.0 - 0.5 * faert) * sa
+            )
+        )
 
-        outputs[Aircraft.Wing.BENDING_FACTOR] = bt
+        outputs[Aircraft.Wing.BENDING_MATERIAL_FACTOR] = bt
 
         inertia_factor = np.zeros(num_engine_type, dtype=chord.dtype)
         eel = np.zeros(len(dy) + 1, dtype=chord.dtype)
@@ -197,25 +242,29 @@ class DetailedWingBendingFact(om.ExplicitComponent):
         # i is the counter for which engine model we are checking
         for i in range(num_engine_type):
             # idx2 is the last index for the range of engines of this type
-            idx2 = idx + int(num_wing_engines[i]/2)
+            idx2 = idx + int(num_wing_engines[i] / 2)
+            if num_wing_engines[i] > 0:
+                # engine locations must be in order from wing root to tip
+                eng_loc = np.sort(engine_locations[idx:idx2])
 
-            eng_loc = engine_locations[idx:idx2][0]
+            else:
+                continue
 
-            if eng_loc <= integration_stations[0]:
+            if eng_loc[0] <= integration_stations[0]:
                 inertia_factor[i] = 1.0
 
-            elif eng_loc >= integration_stations[-1]:
+            elif eng_loc[0] >= integration_stations[-1]:
                 inertia_factor[i] = 0.84
 
             else:
                 eel[:] = 0.0
-                loc = np.where(integration_stations < eng_loc)[0]
+                # Find all points on integration station before first engine
+                loc = np.where(integration_stations < eng_loc[0])[0]
                 eel[loc] = 1.0
 
                 delme = dy * eel[1:]
 
-                delme[loc[-1]] = engine_locations[idx:idx2][0] - \
-                    integration_stations[loc[-1]]
+                delme[loc[-1]] = eng_loc[0] - integration_stations[loc[-1]]
 
                 eem = delme * csw
                 eem = np.cumsum(eem[::-1])[::-1]

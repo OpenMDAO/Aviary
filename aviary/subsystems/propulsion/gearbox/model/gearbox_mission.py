@@ -27,10 +27,10 @@ class GearboxMission(om.Group):
                 has_diag_partials=True,
             ),
             promotes_inputs=[
-                ('rpm_in', Dynamic.Mission.RPM + '_in'),
+                ('rpm_in', Dynamic.Vehicle.Propulsion.RPM + '_in'),
                 ('gear_ratio', Aircraft.Engine.Gearbox.GEAR_RATIO),
             ],
-            promotes_outputs=[('rpm_out', Dynamic.Mission.RPM + '_out')],
+            promotes_outputs=[('rpm_out', Dynamic.Vehicle.Propulsion.RPM + '_out')],
         )
 
         self.add_subsystem(
@@ -43,11 +43,11 @@ class GearboxMission(om.Group):
                 has_diag_partials=True,
             ),
             promotes_inputs=[
-                ('shaft_power_in', Dynamic.Mission.SHAFT_POWER + '_in'),
+                ('shaft_power_in', Dynamic.Vehicle.Propulsion.SHAFT_POWER + '_in'),
                 ('efficiency', Aircraft.Engine.Gearbox.EFFICIENCY),
             ],
             promotes_outputs=[
-                ('shaft_power_out', Dynamic.Mission.SHAFT_POWER + '_out')
+                ('shaft_power_out', Dynamic.Vehicle.Propulsion.SHAFT_POWER + '_out')
             ],
         )
 
@@ -60,15 +60,16 @@ class GearboxMission(om.Group):
                 rpm_out={'val': np.ones(n), 'units': 'rad/s'},
                 has_diag_partials=True,
             ),
-            promotes_outputs=[('torque_out', Dynamic.Mission.TORQUE + '_out')],
+            promotes_outputs=[
+                ('torque_out', Dynamic.Vehicle.Propulsion.TORQUE + '_out')],
         )
         self.connect(
-            f'{Dynamic.Mission.SHAFT_POWER}_out',
+            f'{Dynamic.Vehicle.Propulsion.SHAFT_POWER}_out',
             f'torque_comp.shaft_power_out',
         )
 
         self.connect(
-            f'{Dynamic.Mission.RPM}_out',
+            f'{Dynamic.Vehicle.Propulsion.RPM}_out',
             f'torque_comp.rpm_out',
         )
 
@@ -84,11 +85,11 @@ class GearboxMission(om.Group):
                 has_diag_partials=True,
             ),
             promotes_inputs=[
-                ('shaft_power_in', Dynamic.Mission.SHAFT_POWER_MAX + '_in'),
+                ('shaft_power_in', Dynamic.Vehicle.Propulsion.SHAFT_POWER_MAX + '_in'),
                 ('efficiency', Aircraft.Engine.Gearbox.EFFICIENCY),
             ],
             promotes_outputs=[
-                ('shaft_power_out', Dynamic.Mission.SHAFT_POWER_MAX + '_out')
+                ('shaft_power_out', Dynamic.Vehicle.Propulsion.SHAFT_POWER_MAX + '_out')
             ],
         )
 
@@ -107,7 +108,7 @@ class GearboxMission(om.Group):
                 has_diag_partials=True,
             ),
             promotes_inputs=[
-                ('shaft_power_max', Dynamic.Mission.SHAFT_POWER_MAX + '_in'),
+                ('shaft_power_max', Dynamic.Vehicle.Propulsion.SHAFT_POWER_MAX + '_in'),
                 ('shaft_power_design', Aircraft.Engine.Gearbox.SHAFT_POWER_DESIGN),
             ],
             promotes_outputs=[

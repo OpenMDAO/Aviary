@@ -28,9 +28,12 @@ class AccelODE(BaseODE):
                 't_curr': {'units': 's'},
                 Dynamic.Mission.DISTANCE: {'units': 'ft'},
             })
-            add_SGM_required_outputs(self, {
-                Dynamic.Mission.ALTITUDE_RATE: {'units': 'ft/s'},
-            })
+            add_SGM_required_outputs(
+                self,
+                {
+                    Dynamic.Mission.ALTITUDE_RATE: {'units': 'ft/s'},
+                },
+            )
 
         # TODO: paramport
         self.add_subsystem("params", ParamPort(), promotes=["*"])
@@ -40,8 +43,8 @@ class AccelODE(BaseODE):
         self.add_subsystem(
             "calc_weight",
             MassToWeight(num_nodes=nn),
-            promotes_inputs=[("mass", Dynamic.Mission.MASS)],
-            promotes_outputs=["weight"]
+            promotes_inputs=[("mass", Dynamic.Vehicle.MASS)],
+            promotes_outputs=["weight"],
         )
 
         kwargs = {'num_nodes': nn, 'aviary_inputs': aviary_options,
@@ -58,21 +61,26 @@ class AccelODE(BaseODE):
             "accel_eom",
             AccelerationRates(num_nodes=nn),
             promotes_inputs=[
-                Dynamic.Mission.MASS,
+                Dynamic.Vehicle.MASS,
                 Dynamic.Mission.VELOCITY,
-                Dynamic.Mission.DRAG,
-                Dynamic.Mission.THRUST_TOTAL, ],
+                Dynamic.Vehicle.DRAG,
+                Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
+            ],
             promotes_outputs=[
                 Dynamic.Mission.VELOCITY_RATE,
-                Dynamic.Mission.DISTANCE_RATE, ],
+                Dynamic.Mission.DISTANCE_RATE,
+            ],
         )
 
         self.add_excess_rate_comps(nn)
 
         ParamPort.set_default_vals(self)
-        self.set_input_defaults(Dynamic.Mission.MASS, val=14e4 *
-                                np.ones(nn), units="lbm")
-        self.set_input_defaults(Dynamic.Mission.ALTITUDE,
-                                val=500 * np.ones(nn), units="ft")
-        self.set_input_defaults(Dynamic.Mission.VELOCITY, val=200*np.ones(nn),
-                                units="m/s")  # val here is nominal
+        self.set_input_defaults(
+            Dynamic.Vehicle.MASS, val=14e4 * np.ones(nn), units="lbm"
+        )
+        self.set_input_defaults(
+            Dynamic.Mission.ALTITUDE, val=500 * np.ones(nn), units="ft"
+        )
+        self.set_input_defaults(
+            Dynamic.Mission.VELOCITY, val=200 * np.ones(nn), units="m/s"
+        )  # val here is nominal
