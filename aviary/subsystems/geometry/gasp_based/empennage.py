@@ -319,7 +319,6 @@ class EmpennageSize(om.Group):
             promotes_outputs=higher_level_outputs_vtail + rename_outputs_vtail,
         )
 
-
         # override vertical tail defaults
         self.set_input_defaults(Aircraft.VerticalTail.ASPECT_RATIO, 0.0)  # 1.67
         self.set_input_defaults(Aircraft.VerticalTail.TAPER_RATIO, 0.0)  # 0.801
