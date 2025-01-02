@@ -98,37 +98,28 @@ class TailSize(om.ExplicitComponent):
 
     def setup(self):
         # defaults here for Large Single Aisle 1 horizontal tail
-        self.add_input(
-            "vol_coef", 1.189, units="unitless",
-            desc="VBARH | VBARV: Horizontal tail volume coefficient"
-        )
+        self.add_input("vol_coef", 1.189, units="unitless",
+                       desc="VBARH | VBARV: Horizontal tail volume coefficient"
+                       )
 
         add_aviary_input(self, Aircraft.Wing.AREA, val=1370)
 
-        self.add_input(
-            "r_arm",
-            0.2307,
-            units="unitless",
-            desc=(
-                "COELTH | BOELTV: For a horizontal tail, the ratio of "
-                "wing chord to tail moment arm. For a vertical tail, the "
-                "ratio of wing span to vertical tail moment arm."
-            ),
-        )
-        self.add_input(
-            "wing_ref",
-            12.615,
-            units="ft",
-            desc=(
-                "CBARW | B: Reference wing parameter for tail moment arm. "
-                "For a horizontal tail, the mean wing chord. For a "
-                "vertical tail, the wing span."
-            ),
-        )
-        self.add_input(
-            "ar", 4.75, units="unitless", desc="ARHT | ARVT: Tail aspect ratio.")
-        self.add_input(
-            "tr", 0.352, units="unitless", desc="SLMH | SLMV: Tail taper ratio.")
+        self.add_input("r_arm", 0.2307, units="unitless",
+                       desc=(
+                           "COELTH | BOELTV: For a horizontal tail, the ratio of "
+                           "wing chord to tail moment arm. For a vertical tail, the "
+                           "ratio of wing span to vertical tail moment arm.")
+                       )
+        self.add_input("wing_ref", 12.615, units="ft",
+                       desc=(
+                           "CBARW | B: Reference wing parameter for tail moment arm. "
+                           "For a horizontal tail, the mean wing chord. For a "
+                           "vertical tail, the wing span.")
+                       )
+        self.add_input("ar", 4.75, units="unitless",
+                       desc="ARHT | ARVT: Tail aspect ratio.")
+        self.add_input("tr", 0.352, units="unitless",
+                       desc="SLMH | SLMV: Tail taper ratio.")
 
         self.add_output("area", units="ft**2", desc="SHT | SVT: Tail area")
         self.add_output("span", units="ft", desc="BHT | BVT: Tail span")

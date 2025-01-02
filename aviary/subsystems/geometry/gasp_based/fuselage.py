@@ -281,6 +281,3 @@ class FuselageGroup(om.Group):
             promotes_inputs=connected_input_outputs + ["aircraft:*"],
             promotes_outputs=["aircraft:*"],
         )
-
-        # self.set_input_defaults(
-        #     Aircraft.Fuselage.PILOT_COMPARTMENT_LENGTH, val=9.5, units="ft")
