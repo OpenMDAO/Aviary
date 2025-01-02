@@ -1011,11 +1011,11 @@ class WingGroup(om.Group):
                 self.promotes("strut", outputs=["strut_y"])
                 self.promotes("fold", inputs=["strut_y"])
 
-        self.set_input_defaults(Aircraft.Wing.ASPECT_RATIO, val=10.13, units="unitless")
-        self.set_input_defaults(Aircraft.Wing.TAPER_RATIO, val=0.33, units="unitless")
-        self.set_input_defaults(
-            Aircraft.Wing.THICKNESS_TO_CHORD_ROOT, val=0.11, units="unitless"
-        )
-        self.set_input_defaults(
-            Aircraft.Wing.THICKNESS_TO_CHORD_TIP, val=0.1, units="unitless"
-        )
+        # self.set_input_defaults(Aircraft.Wing.ASPECT_RATIO, val=10.13, units="unitless")
+        # self.set_input_defaults(Aircraft.Wing.TAPER_RATIO, val=0.33, units="unitless")
+        # self.set_input_defaults(
+        #     Aircraft.Wing.THICKNESS_TO_CHORD_ROOT, val=0.11, units="unitless"
+        # )
+        # self.set_input_defaults(
+        #     Aircraft.Wing.THICKNESS_TO_CHORD_TIP, val=0.1, units="unitless"
+        # )
