@@ -491,7 +491,6 @@ class OAStructures(om.ExplicitComponent):
         prob.driver = om.ScipyOptimizeDriver()
         prob.driver.options['optimizer'] = 'SLSQP'
         prob.driver.options['tol'] = 1e-8
-
         # Set up the problem
         with warnings.catch_warnings():
             warnings.filterwarnings("ignore", category=om.PromotionWarning)

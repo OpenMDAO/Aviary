@@ -230,8 +230,7 @@ class MissionODE(om.Group):
                 "throttle_allocator",
                 ThrottleAllocator(
                     num_nodes=nn,
-                    aviary_options=aviary_options,
-                    throttle_allocation=self.options['throttle_allocation'],
+                    throttle_allocation=self.options['throttle_allocation']
                 ),
                 promotes_inputs=['*'],
                 promotes_outputs=['*'],

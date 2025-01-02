@@ -13,6 +13,7 @@ from aviary.utils.aviary_values import AviaryValues
 from aviary.utils.preprocessors import preprocess_propulsion
 from aviary.utils.functions import get_path
 from aviary.validation_cases.validation_tests import get_flops_inputs
+from aviary.variable_info.functions import setup_model_options
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission, Settings
 from aviary.subsystems.propulsion.utils import build_engine_deck
 
@@ -67,6 +68,8 @@ class PropulsionMissionTest(unittest.TestCase):
             units='unitless',
         )
         self.prob.model.add_subsystem('IVC', IVC, promotes=['*'])
+
+        setup_model_options(self.prob, options)
 
         self.prob.setup(force_alloc_complex=True)
         self.prob.set_val(Aircraft.Engine.SCALE_FACTOR, options.get_val(
@@ -136,12 +139,13 @@ class PropulsionMissionTest(unittest.TestCase):
 
     def test_propulsion_sum(self):
         nn = 2
-        options = self.options
-        options.set_val(Aircraft.Engine.NUM_ENGINES, np.array([3, 2]))
+        options = {
+            Aircraft.Engine.NUM_ENGINES: np.array([3, 2]),
+        }
         self.prob.model = om.Group()
         self.prob.model.add_subsystem('propsum',
                                       PropulsionSum(num_nodes=nn,
-                                                    aviary_options=options),
+                                                    **options),
                                       promotes=['*'])
 
         self.prob.setup(force_alloc_complex=True)
@@ -204,8 +208,14 @@ class PropulsionMissionTest(unittest.TestCase):
         engine_models = [engine, engine2]
         preprocess_propulsion(options, engine_models=engine_models)
 
-        self.prob.model = PropulsionMission(
-            num_nodes=20, aviary_options=options, engine_models=engine_models)
+        model = self.prob.model
+        prop = PropulsionMission(
+            num_nodes=20,
+            aviary_options=options,
+            engine_models=engine_models,
+        )
+        model.add_subsystem('core_propulsion', prop,
+                            promotes=['*'])
 
         self.prob.model.add_subsystem(
             Dynamic.Atmosphere.MACH,
@@ -232,6 +242,8 @@ class PropulsionMissionTest(unittest.TestCase):
             ),
             promotes=['*'],
         )
+
+        setup_model_options(self.prob, options, engine_models=engine_models)
 
         self.prob.setup(force_alloc_complex=True)
         self.prob.set_val(Aircraft.Engine.SCALE_FACTOR, [0.975, 0.975], units='unitless')

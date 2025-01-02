@@ -58,7 +58,7 @@ from aviary.utils.preprocessors import preprocess_options
 from aviary.utils.process_input_decks import create_vehicle, update_GASP_options, initialization_guessing
 
 from aviary.variable_info.enums import AnalysisScheme, ProblemType, EquationsOfMotion, LegacyCode, Verbosity
-from aviary.variable_info.functions import setup_trajectory_params, override_aviary_vars
+from aviary.variable_info.functions import setup_trajectory_params, override_aviary_vars, setup_model_options
 from aviary.variable_info.variables import Aircraft, Mission, Dynamic, Settings
 from aviary.variable_info.variable_meta_data import _MetaData as BaseMetaData
 
@@ -677,7 +677,8 @@ class AviaryProblem(om.Problem):
         # Create options to values
         OptionsToValues = create_opts2vals(
             [Aircraft.CrewPayload.NUM_PASSENGERS,
-                Mission.Design.CRUISE_ALTITUDE, ])
+             Mission.Design.CRUISE_ALTITUDE, ])
+
         add_opts2vals(self.model, OptionsToValues, self.aviary_inputs)
 
         if self.analysis_scheme is AnalysisScheme.SHOOTING:
@@ -2099,6 +2100,9 @@ class AviaryProblem(om.Problem):
         """
         Lightly wrapped setup() method for the problem.
         """
+        # Use OpenMDAO's model options to pass all options through the system hierarchy.
+        setup_model_options(self, self.aviary_inputs, self.meta_data)
+
         # suppress warnings:
         # "input variable '...' promoted using '*' was already promoted using 'aircraft:*'
         with warnings.catch_warnings():
@@ -2109,6 +2113,7 @@ class AviaryProblem(om.Problem):
 
             warnings.simplefilter("ignore", om.OpenMDAOWarning)
             warnings.simplefilter("ignore", om.PromotionWarning)
+
             super().setup(**kwargs)
 
     def set_initial_guesses(self, parent_prob=None, parent_prefix=""):

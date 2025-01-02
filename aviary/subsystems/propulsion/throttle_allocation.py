@@ -4,6 +4,7 @@ import openmdao.api as om
 
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.enums import ThrottleAllocation
+from aviary.variable_info.functions import add_aviary_option
 from aviary.variable_info.variables import Aircraft, Dynamic
 
 
@@ -20,20 +21,16 @@ class ThrottleAllocator(om.ExplicitComponent):
             lower=0
         )
         self.options.declare(
-            'aviary_options',
-            types=AviaryValues,
-            desc='collection of Aircraft/Mission specific options'
-        )
-        self.options.declare(
             'throttle_allocation', default=ThrottleAllocation.FIXED,
             types=ThrottleAllocation,
             desc='Flag that determines how to handle throttles for multiple engines.'
         )
 
+        add_aviary_option(self, Aircraft.Engine.NUM_ENGINES)
+
     def setup(self):
-        options: AviaryValues = self.options['aviary_options']
         nn = self.options['num_nodes']
-        num_engine_type = len(options.get_val(Aircraft.Engine.NUM_ENGINES))
+        num_engine_type = len(self.options[Aircraft.Engine.NUM_ENGINES])
         alloc_mode = self.options['throttle_allocation']
 
         self.add_input(
@@ -110,7 +107,6 @@ class ThrottleAllocator(om.ExplicitComponent):
                                   val=1.0)
 
     def compute(self, inputs, outputs, discrete_inputs=None, discrete_outputs=None):
-        nn = self.options['num_nodes']
         alloc_mode = self.options['throttle_allocation']
 
         agg_throttle = inputs["aggregate_throttle"]
@@ -134,10 +130,9 @@ class ThrottleAllocator(om.ExplicitComponent):
         outputs["throttle_allocation_sum"] = sum_alloc
 
     def compute_partials(self, inputs, partials, discrete_inputs=None):
-        options: AviaryValues = self.options['aviary_options']
         nn = self.options['num_nodes']
         alloc_mode = self.options['throttle_allocation']
-        num_engine_type = len(options.get_val(Aircraft.Engine.NUM_ENGINES))
+        num_engine_type = len(self.options[Aircraft.Engine.NUM_ENGINES])
 
         agg_throttle = inputs["aggregate_throttle"]
         allocation = inputs["throttle_allocations"]

@@ -34,7 +34,7 @@ from aviary.utils.test_utils.assert_utils import warn_timeseries_near_equal
 from aviary.utils.test_utils.default_subsystems import get_default_mission_subsystems
 from aviary.validation_cases.validation_tests import get_flops_inputs
 from aviary.variable_info.enums import LegacyCode
-from aviary.variable_info.functions import setup_trajectory_params
+from aviary.variable_info.functions import setup_trajectory_params, setup_model_options
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 from aviary.variable_info.variable_meta_data import _MetaData as BaseMetaData
 
@@ -436,6 +436,8 @@ def run_trajectory(sim=True):
         Mission.Summary.GROSS_MASS,
     ]
     set_aviary_input_defaults(prob.model, varnames, aviary_inputs)
+
+    setup_model_options(prob, aviary_inputs)
 
     prob.setup(force_alloc_complex=True)
 

@@ -3,8 +3,7 @@ import openmdao.api as om
 from aviary.constants import GRAV_ENGLISH_LBM
 from aviary.subsystems.mass.flops_based.distributed_prop import \
     distributed_engine_count_factor
-from aviary.utils.aviary_values import AviaryValues
-from aviary.variable_info.functions import add_aviary_input, add_aviary_output
+from aviary.variable_info.functions import add_aviary_input, add_aviary_output, add_aviary_option
 from aviary.variable_info.variables import Aircraft, Mission
 
 # TODO: update non-transport components to new standard to remove these variables
@@ -23,9 +22,9 @@ class TransportHydraulicsGroupMass(om.ExplicitComponent):
     '''
 
     def initialize(self):
-        self.options.declare(
-            'aviary_options', types=AviaryValues,
-            desc='collection of Aircraft/Mission specific options')
+        add_aviary_option(self, Aircraft.Propulsion.TOTAL_NUM_FUSELAGE_ENGINES)
+        add_aviary_option(self, Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES)
+        add_aviary_option(self, Mission.Constraints.MAX_MACH)
 
     def setup(self):
         add_aviary_input(self, Aircraft.Fuselage.PLANFORM_AREA, val=0.0)
@@ -44,11 +43,8 @@ class TransportHydraulicsGroupMass(om.ExplicitComponent):
         self.declare_partials('*', '*')
 
     def compute(self, inputs, outputs, discrete_inputs=None, discrete_outputs=None):
-        aviary_options: AviaryValues = self.options['aviary_options']
-        num_wing_eng = aviary_options.get_val(
-            Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES)
-        num_fuse_eng = aviary_options.get_val(
-            Aircraft.Propulsion.TOTAL_NUM_FUSELAGE_ENGINES)
+        num_wing_eng = self.options[Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES]
+        num_fuse_eng = self.options[Aircraft.Propulsion.TOTAL_NUM_FUSELAGE_ENGINES]
         num_wing_eng_fact = distributed_engine_count_factor(num_wing_eng)
         num_fuse_eng_fact = distributed_engine_count_factor(num_fuse_eng)
 
@@ -57,7 +53,7 @@ class TransportHydraulicsGroupMass(om.ExplicitComponent):
         scaler = inputs[Aircraft.Hydraulics.MASS_SCALER]
         area = inputs[Aircraft.Wing.AREA]
         var_sweep = inputs[Aircraft.Wing.VAR_SWEEP_MASS_PENALTY]
-        max_mach = aviary_options.get_val(Mission.Constraints.MAX_MACH)
+        max_mach = self.options[Mission.Constraints.MAX_MACH]
 
         outputs[Aircraft.Hydraulics.MASS] = (
             0.57 * (planform + 0.27 * area)
@@ -66,11 +62,8 @@ class TransportHydraulicsGroupMass(om.ExplicitComponent):
             * scaler / GRAV_ENGLISH_LBM)
 
     def compute_partials(self, inputs, J):
-        aviary_options: AviaryValues = self.options['aviary_options']
-        num_wing_eng = aviary_options.get_val(
-            Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES)
-        num_fuse_eng = aviary_options.get_val(
-            Aircraft.Propulsion.TOTAL_NUM_FUSELAGE_ENGINES)
+        num_wing_eng = self.options[Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES]
+        num_fuse_eng = self.options[Aircraft.Propulsion.TOTAL_NUM_FUSELAGE_ENGINES]
         num_wing_eng_fact = distributed_engine_count_factor(num_wing_eng)
         num_fuse_eng_fact = distributed_engine_count_factor(num_fuse_eng)
 
@@ -79,7 +72,7 @@ class TransportHydraulicsGroupMass(om.ExplicitComponent):
         scaler = inputs[Aircraft.Hydraulics.MASS_SCALER]
         area = inputs[Aircraft.Wing.AREA]
         var_sweep = inputs[Aircraft.Wing.VAR_SWEEP_MASS_PENALTY]
-        max_mach = aviary_options.get_val(Mission.Constraints.MAX_MACH)
+        max_mach = self.options[Mission.Constraints.MAX_MACH]
 
         term1 = (planform + 0.27 * area)
         term2 = (1.0 + 0.03 * num_wing_eng_fact + 0.05 * num_fuse_eng_fact)
@@ -110,11 +103,6 @@ class AltHydraulicsGroupMass(om.ExplicitComponent):
     The methodology is based on the FLOPS weight equations, modified to
     output mass instead of weight.
     '''
-
-    def initialize(self):
-        self.options.declare(
-            'aviary_options', types=AviaryValues,
-            desc='collection of Aircraft/Mission specific options')
 
     def setup(self):
         add_aviary_input(self, Aircraft.Wing.AREA, val=0.0)

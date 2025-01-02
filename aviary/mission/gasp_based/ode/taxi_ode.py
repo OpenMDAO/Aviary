@@ -80,7 +80,7 @@ class TaxiSegment(BaseODE):
                 )
 
         self.add_subsystem(
-            "taxifuel", TaxiFuelComponent(aviary_options=options), promotes=["*"]
+            "taxifuel", TaxiFuelComponent(), promotes=["*"]
         )
 
         ParamPort.set_default_vals(self)

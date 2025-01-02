@@ -1,7 +1,7 @@
 import numpy as np
 import openmdao.api as om
 
-from aviary.utils.aviary_values import AviaryValues
+from aviary.variable_info.functions import add_aviary_option
 from aviary.variable_info.variables import Aircraft, Dynamic
 
 
@@ -35,21 +35,17 @@ class SkinFriction(om.ImplicitComponent):
         self.options.declare(
             'num_nodes', types=int, default=1,
             desc='The number of points at which the cross product is computed.')
-        self.options.declare(
-            'aviary_options', types=AviaryValues,
-            desc='collection of Aircraft/Mission specific options')
+
+        add_aviary_option(self, Aircraft.Engine.NUM_ENGINES)
+        add_aviary_option(self, Aircraft.Fuselage.NUM_FUSELAGES)
+        add_aviary_option(self, Aircraft.VerticalTail.NUM_TAILS)
 
     def setup(self):
         nn = self.options['num_nodes']
-        aviary_options: AviaryValues = self.options['aviary_options']
-        zero_count = (0, None)
-        num_tails, _ = aviary_options.get_item(
-            Aircraft.VerticalTail.NUM_TAILS, zero_count)
-        num_fuselages, _ = aviary_options.get_item(
-            Aircraft.Fuselage.NUM_FUSELAGES, zero_count)
-        # TODO does not used vectorized heterogeneous engines. Temp using single engine
-        num_engines, _ = aviary_options.get_item(
-            Aircraft.Engine.NUM_ENGINES, zero_count)
+        num_engines = self.options[Aircraft.Engine.NUM_ENGINES]
+        num_fuselages = self.options[Aircraft.Fuselage.NUM_FUSELAGES]
+        num_tails = self.options[Aircraft.VerticalTail.NUM_TAILS]
+
         self.nc = nc = 2 + num_tails + num_fuselages + int(sum(num_engines))
 
         # Simulation inputs

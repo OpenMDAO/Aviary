@@ -14,7 +14,7 @@ from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 @use_tempdirs
 class ProblemPhaseTestCase(unittest.TestCase):
     """
-    Test the setup and run of a large single aisle commercial transport aircraft using 
+    Test the setup and run of a large single aisle commercial transport aircraft using
     GASP mass method and TWO_DEGREES_OF_FREEDOM mission method. Expected outputs
     based on 'models/test_aircraft/aircraft_for_bench_FwFm.csv' model.
     """

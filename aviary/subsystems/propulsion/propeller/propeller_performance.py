@@ -12,8 +12,9 @@ from aviary.subsystems.propulsion.propeller.hamilton_standard import (
 )
 from aviary.subsystems.propulsion.propeller.propeller_map import PropellerMap
 from aviary.utils.aviary_values import AviaryValues
-from aviary.utils.functions import add_aviary_input, add_aviary_output
+
 from aviary.variable_info.enums import OutMachType
+from aviary.variable_info.functions import add_aviary_input, add_aviary_output, add_aviary_option
 from aviary.variable_info.variables import Aircraft, Dynamic
 
 
@@ -611,11 +612,6 @@ class InstallLoss(om.Group):
             default=1,
             desc='Number of nodes to be evaluated in the RHS',
         )
-        self.options.declare(
-            'aviary_options',
-            types=AviaryValues,
-            desc='collection of Aircraft/Mission specific options',
-        )
 
     def setup(self):
         nn = self.options['num_nodes']
@@ -721,6 +717,9 @@ class PropellerPerformance(om.Group):
             desc='collection of Aircraft/Mission specific options',
         )
 
+        add_aviary_option(self, Aircraft.Engine.Propeller.COMPUTE_INSTALLATION_LOSS)
+        add_aviary_option(self, Aircraft.Engine.Propeller.DATA_FILE)
+
     def setup(self):
         options = self.options
         nn = options['num_nodes']
@@ -728,9 +727,10 @@ class PropellerPerformance(om.Group):
 
         # TODO options are lists here when using full Aviary problem - need
         # further investigation
-        compute_installation_loss = aviary_options.get_val(
+        compute_installation_loss = options[
             Aircraft.Engine.Propeller.COMPUTE_INSTALLATION_LOSS
-        )
+        ]
+
         if isinstance(compute_installation_loss, (list, np.ndarray)):
             compute_installation_loss = compute_installation_loss[0]
 
@@ -831,7 +831,7 @@ class PropellerPerformance(om.Group):
         else:
             self.add_subsystem(
                 name='hamilton_standard',
-                subsys=HamiltonStandard(num_nodes=nn, aviary_options=aviary_options),
+                subsys=HamiltonStandard(num_nodes=nn),
                 promotes_inputs=[
                     Dynamic.Atmosphere.MACH,
                     "power_coefficient",
