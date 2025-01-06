@@ -11,8 +11,9 @@ from openmdao.utils.reports_system import register_report
 from openmdao.visualization.tables.table_builder import generate_table
 
 from aviary.interface.utils.markdown_utils import write_markdown_variable_table
-from aviary.utils.named_values import NamedValues
 from aviary.utils.functions import wrapped_convert_units
+from aviary.utils.named_values import NamedValues
+from aviary.variable_info.variable_meta_data import CoreMetaData
 
 
 def register_custom_reports():
@@ -53,6 +54,14 @@ def register_custom_reports():
                     desc='Generates a report on the status of the run',
                     class_name='AviaryProblem',
                     method='run_driver',
+                    pre_or_post='post',
+                    )
+
+    register_report(name='input_checks',
+                    func=input_check_report,
+                    desc='Generates a report on the aviary inputs',
+                    class_name='AviaryProblem',
+                    method='final_setup',
                     pre_or_post='post',
                     )
 
@@ -215,6 +224,92 @@ def mission_report(prob, **kwargs):
                                           {'Fuel Burn': {'units': 'lbm'},
                                            'Elapsed Time': {'units': 'min'},
                                            'Ground Distance': {'units': 'nmi'}})
+
+
+def input_check_report(prob, **kwargs):
+    """
+    Creates a basic input checking report.
+
+    This report informs the user which aviary inputs were not specified by the user.
+
+    Parameters
+    ----------
+    prob : AviaryProblem
+        The AviaryProblem used to generate this report
+    """
+    reports_folder = Path(prob.get_reports_dir())
+    report_file = reports_folder / 'input_checks.md'
+
+    model = prob.model
+    abs2prom = model._var_allprocs_abs2prom['input']
+    prom2abs = model._var_allprocs_prom2abs_list['input']
+
+    # Find all unconnected inputs.
+    all_ivc_abs = [k for k, v in model._conn_abs_in2out.items() if 'ivc' in v]
+    all_ivc_prom = [abs2prom[v] for v in all_ivc_abs]
+
+    aviary_inputs = prob.aviary_inputs
+    bare_inputs = {v for v in all_ivc_prom if v not in aviary_inputs}
+    bare_hierarchy_inputs = {
+        v for v in bare_inputs if v.startswith('mission:') or v.startswith('aircraft:')
+    }
+    bare_local_inputs = bare_inputs - bare_hierarchy_inputs
+
+    # There are no more collective calls, so we can exit.
+    if MPI and MPI.COMM_WORLD.rank != 0:
+        return
+
+    with open(report_file, mode='w') as f:
+
+        f.write('# Unspecified Hierarchy Variables\n')
+        f.write("These aviary inputs are unspecified, and are using default values "
+                "specified in the Aviary metadata.\n\n")
+
+        if bare_hierarchy_inputs:
+
+            f.write('| Name | Value | Units | Description | Absolute Paths\n')
+            f.write('| :- |  :- |  :- | :- | :- |\n')
+
+            for var in sorted(bare_hierarchy_inputs):
+                metadata = CoreMetaData.get(var)
+                units = metadata['units']
+                val = model.get_val(var, units=units)
+                desc =  metadata["desc"]
+                abs_paths = prom2abs[var]
+
+                f.write(f'| **{var}** | {val} | {units} | {desc} | {abs_paths}|\n')
+
+            f.write("\n")
+
+        else:
+            f.write("None\n")
+
+        f.write('# Unspecified Local Variables\n')
+        f.write("These local subsystem inputs are unspecified, and are using default "
+                "values specified in the component.\n\n")
+
+        if bare_local_inputs:
+
+            f.write('| Name | Value | Units | Absolute Paths\n')
+            f.write('| :- |  :- |  :- | :- |\n')
+
+            for var in sorted(bare_local_inputs):
+
+                # Filter out dymos internals.
+                if var.startswith('traj') and '.rhs_all.' not in var:
+                    continue
+
+                abs_paths =  prom2abs[var]
+                val = model.get_val(var)
+                meta =  model._var_allprocs_abs2meta['input'][abs_paths[0]]
+                units = meta['units']
+
+                f.write(f'| **{var}** | {val} | {units} | {abs_paths}|\n')
+
+            f.write("\n\n")
+
+        else:
+            f.write("None")
 
 
 def timeseries_csv(prob, **kwargs):

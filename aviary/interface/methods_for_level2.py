@@ -237,7 +237,8 @@ class AviaryProblem(om.Problem):
 
     def __init__(self, analysis_scheme=AnalysisScheme.COLLOCATION, **kwargs):
         # Modify OpenMDAO's default_reports for this session.
-        new_reports = ['subsystems', 'mission', 'timeseries_csv', 'run_status']
+        new_reports = ['subsystems', 'mission', 'timeseries_csv', 'run_status',
+                       'input_checks']
         for report in new_reports:
             if report not in _default_reports:
                 _default_reports.append(report)

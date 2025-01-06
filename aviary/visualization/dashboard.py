@@ -842,6 +842,13 @@ def dashboard(script_name, problem_recorder, driver_recorder,
     ####### Model Tab #######
     model_tabs_list = []
 
+    # Input Checks
+    input_checks_pane = create_report_frame(
+        "markdown",
+        Path(reports_dir) / "input_checks.md",
+        "Detailed checks on the model inputs.")
+    model_tabs_list.append(("Input Checkss", input_checks_pane))
+
     #  Debug Input List
     input_list_pane = create_report_frame(
         "text", Path(reports_dir) / "input_list.txt", '''
