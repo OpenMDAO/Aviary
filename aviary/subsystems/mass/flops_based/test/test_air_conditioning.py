@@ -10,7 +10,7 @@ from aviary.utils.test_utils.variable_test import assert_match_varnames
 from aviary.validation_cases.validation_tests import (Version,
                                                       flops_validation_test,
                                                       get_flops_case_names,
-                                                      get_flops_inputs,
+                                                      get_flops_options,
                                                       print_case)
 from aviary.variable_info.variables import Aircraft
 
@@ -28,10 +28,12 @@ class TransportAirCondMassTest(unittest.TestCase):
 
         prob.model.add_subsystem(
             "air_cond",
-            TransportAirCondMass(aviary_options=get_flops_inputs(case_name)),
+            TransportAirCondMass(),
             promotes_inputs=['*'],
             promotes_outputs=['*'],
         )
+
+        prob.model_options['*'] = get_flops_options(case_name)
 
         prob.setup(check=False, force_alloc_complex=True)
 
@@ -67,12 +69,16 @@ class TransportAirCondMassTest2(unittest.TestCase):
 
     def test_case(self):
         prob = om.Problem()
+
         prob.model.add_subsystem(
             "air_cond",
-            TransportAirCondMass(aviary_options=get_flops_inputs("N3CC")),
+            TransportAirCondMass(),
             promotes_inputs=['*'],
             promotes_outputs=['*'],
         )
+
+        prob.model_options['*'] = get_flops_options("N3CC")
+
         prob.model.set_input_defaults(
             Aircraft.AirConditioning.MASS_SCALER, val=0.98094, units="unitless")
         prob.model.set_input_defaults(
@@ -81,6 +87,7 @@ class TransportAirCondMassTest2(unittest.TestCase):
             Aircraft.Fuselage.MAX_HEIGHT, val=13., units="ft")
         prob.model.set_input_defaults(
             Aircraft.Fuselage.PLANFORM_AREA, val=1537.5, units="ft**2")
+
         prob.setup(check=False, force_alloc_complex=True)
 
         partial_data = prob.check_partials(out_stream=None, method="cs")
@@ -103,10 +110,12 @@ class AltAirCondMassTest(unittest.TestCase):
 
         prob.model.add_subsystem(
             'air_cond',
-            AltAirCondMass(aviary_options=get_flops_inputs(case_name)),
+            AltAirCondMass(),
             promotes_inputs=['*'],
             promotes_outputs=['*'],
         )
+
+        prob.model_options['*'] = get_flops_options(case_name)
 
         prob.setup(check=False, force_alloc_complex=True)
 
@@ -137,12 +146,16 @@ class AltAirCondMassTest2(unittest.TestCase):
 
     def test_case(self):
         prob = om.Problem()
+
         prob.model.add_subsystem(
             'air_cond',
-            AltAirCondMass(aviary_options=get_flops_inputs("N3CC")),
+            AltAirCondMass(),
             promotes_inputs=['*'],
             promotes_outputs=['*'],
         )
+
+        prob.model_options['*'] = get_flops_options("N3CC")
+
         prob.model.set_input_defaults(
             Aircraft.AirConditioning.MASS_SCALER, val=0.98094, units="unitless")
         prob.setup(check=False, force_alloc_complex=True)
