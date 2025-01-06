@@ -55,6 +55,8 @@ class MassSummationTestCase1(unittest.TestCase):
         # Adjust WETTED_AREA_SCALER such that WETTED_AREA = 4000.0
         self.prob.model.set_input_defaults(
             Aircraft.Fuselage.WETTED_AREA_SCALER, val=0.86215, units="unitless")
+        self.prob.model.set_input_defaults(Aircraft.Wing.SLAT_CHORD_RATIO, val=.15)
+        self.prob.model.set_input_defaults(Aircraft.Wing.SLAT_SPAN_RATIO, val=.9)
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
@@ -447,6 +449,9 @@ class MassSummationTestCase2(unittest.TestCase):
             Aircraft.Fuel.FUEL_MARGIN, val=0, units="unitless")
 
         self.prob.model.set_input_defaults(Aircraft.Wing.SPAN, val=0.0, units="ft")
+        self.prob.model.set_input_defaults(Aircraft.Wing.SLAT_CHORD_RATIO, val=.15)
+        self.prob.model.set_input_defaults(Aircraft.Wing.FLAP_CHORD_RATIO, val=.3)
+        self.prob.model.set_input_defaults(Aircraft.Wing.SLAT_SPAN_RATIO, val=.9)
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
@@ -839,6 +844,9 @@ class MassSummationTestCase3(unittest.TestCase):
             Aircraft.Fuel.FUEL_MARGIN, val=0, units="unitless")
 
         self.prob.model.set_input_defaults(Aircraft.Wing.SPAN, val=0.0, units="ft")
+        self.prob.model.set_input_defaults(Aircraft.Wing.SLAT_CHORD_RATIO, val=.15)
+        self.prob.model.set_input_defaults(Aircraft.Wing.FLAP_CHORD_RATIO, val=.3)
+        self.prob.model.set_input_defaults(Aircraft.Wing.SLAT_SPAN_RATIO, val=.9)
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
@@ -1222,6 +1230,9 @@ class MassSummationTestCase4(unittest.TestCase):
         )
 
         self.prob.model.set_input_defaults(Aircraft.Wing.SPAN, val=0.0, units="ft")
+        self.prob.model.set_input_defaults(Aircraft.Wing.SLAT_CHORD_RATIO, val=.15)
+        self.prob.model.set_input_defaults(Aircraft.Wing.FLAP_CHORD_RATIO, val=.3)
+        self.prob.model.set_input_defaults(Aircraft.Wing.SLAT_SPAN_RATIO, val=.9)
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
@@ -1605,6 +1616,9 @@ class MassSummationTestCase5(unittest.TestCase):
         )
 
         self.prob.model.set_input_defaults(Aircraft.Wing.SPAN, val=0.0, units="ft")
+        self.prob.model.set_input_defaults(Aircraft.Wing.SLAT_CHORD_RATIO, val=.15)
+        self.prob.model.set_input_defaults(Aircraft.Wing.FLAP_CHORD_RATIO, val=.3)
+        self.prob.model.set_input_defaults(Aircraft.Wing.SLAT_SPAN_RATIO, val=.9)
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
@@ -1987,6 +2001,9 @@ class MassSummationTestCase6(unittest.TestCase):
         )
 
         self.prob.model.set_input_defaults(Aircraft.Wing.SPAN, val=0.0, units="ft")
+        self.prob.model.set_input_defaults(Aircraft.Wing.SLAT_CHORD_RATIO, val=.15)
+        self.prob.model.set_input_defaults(Aircraft.Wing.FLAP_CHORD_RATIO, val=.3)
+        self.prob.model.set_input_defaults(Aircraft.Wing.SLAT_SPAN_RATIO, val=.9)
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
@@ -2374,6 +2391,12 @@ class MassSummationTestCase7(unittest.TestCase):
         )
 
         self.prob.model.set_input_defaults(Aircraft.Wing.SPAN, val=0.0, units="ft")
+        self.prob.model.set_input_defaults(
+            Mission.Design.MACH, val=0.8, units="unitless"
+        )
+        self.prob.model.set_input_defaults(Aircraft.Wing.SLAT_CHORD_RATIO, val=.15)
+        self.prob.model.set_input_defaults(Aircraft.Wing.FLAP_CHORD_RATIO, val=.3)
+        self.prob.model.set_input_defaults(Aircraft.Wing.SLAT_SPAN_RATIO, val=.9)
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
@@ -2775,6 +2798,12 @@ class MassSummationTestCase8(unittest.TestCase):
         )
 
         self.prob.model.set_input_defaults(Aircraft.Wing.SPAN, val=0.0, units="ft")
+        self.prob.model.set_input_defaults(
+            Mission.Design.MACH, val=0.8, units="unitless"
+        )
+        self.prob.model.set_input_defaults(Aircraft.Wing.SLAT_CHORD_RATIO, val=.15)
+        self.prob.model.set_input_defaults(Aircraft.Wing.FLAP_CHORD_RATIO, val=.3)
+        self.prob.model.set_input_defaults(Aircraft.Wing.SLAT_SPAN_RATIO, val=.9)
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
@@ -3216,6 +3245,12 @@ class MassSummationTestCase9(unittest.TestCase):
         )
 
         self.prob.model.set_input_defaults(Aircraft.Wing.SPAN, val=0.0, units="ft")
+        self.prob.model.set_input_defaults(
+            Mission.Design.MACH, val=0.8, units="unitless"
+        )
+        self.prob.model.set_input_defaults(Aircraft.Wing.SLAT_CHORD_RATIO, val=.15)
+        self.prob.model.set_input_defaults(Aircraft.Wing.FLAP_CHORD_RATIO, val=.3)
+        self.prob.model.set_input_defaults(Aircraft.Wing.SLAT_SPAN_RATIO, val=.9)
 
         self.prob.setup(check=False, force_alloc_complex=True)
 

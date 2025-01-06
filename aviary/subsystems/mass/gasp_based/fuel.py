@@ -40,21 +40,16 @@ class BodyTankCalculations(om.ExplicitComponent):
 
     def setup(self):
 
-        add_aviary_input(self, Aircraft.Fuel.WING_VOLUME_DESIGN, val=2)
-        add_aviary_input(self, Aircraft.Fuel.WING_VOLUME_STRUCTURAL_MAX, val=3)
-        self.add_input(
-            "fuel_mass_min",
-            val=2000,
-            units="lbm",
-            desc="WFAMIN: minimum value of fuel mass (set when max payload is carried)",
-        )
-        add_aviary_input(self, Mission.Design.FUEL_MASS_REQUIRED, val=7)
-        self.add_input(
-            "max_wingfuel_mass", val=6, units="lbm", desc="WFWMX: maximum wingfuel mass"
-        )
-        add_aviary_input(self, Aircraft.Fuel.WING_VOLUME_GEOMETRIC_MAX, val=5000)
-        add_aviary_input(self, Aircraft.Fuel.DENSITY, val=6.687, units="lbm/ft**3")
-        add_aviary_input(self, Mission.Design.GROSS_MASS, val=175400)
+        add_aviary_input(self, Aircraft.Fuel.WING_VOLUME_DESIGN)
+        add_aviary_input(self, Aircraft.Fuel.WING_VOLUME_STRUCTURAL_MAX)
+        self.add_input("fuel_mass_min", val=2000, units="lbm",
+                       desc="WFAMIN: minimum value of fuel mass (set when max payload is carried)")
+        add_aviary_input(self, Mission.Design.FUEL_MASS_REQUIRED)
+        self.add_input("max_wingfuel_mass", val=6, units="lbm",
+                       desc="WFWMX: maximum wingfuel mass")
+        add_aviary_input(self, Aircraft.Fuel.WING_VOLUME_GEOMETRIC_MAX)
+        add_aviary_input(self, Aircraft.Fuel.DENSITY, units="lbm/ft**3")
+        add_aviary_input(self, Mission.Design.GROSS_MASS)
         add_aviary_input(self, Mission.Design.FUEL_MASS, val=3000)
         add_aviary_input(self, Aircraft.Design.OPERATING_MASS, val=94417)
 
@@ -377,7 +372,7 @@ class FuelAndOEMOutputs(om.ExplicitComponent):
         add_aviary_input(self, Aircraft.Design.FIXED_EQUIPMENT_MASS, val=21089.0)
         add_aviary_input(self, Aircraft.Design.FIXED_USEFUL_LOAD, val=4932.0)
         add_aviary_input(self, Mission.Design.FUEL_MASS_REQUIRED, val=42892.0)
-        add_aviary_input(self, Aircraft.Fuel.WING_VOLUME_GEOMETRIC_MAX, val=5000)
+        add_aviary_input(self, Aircraft.Fuel.WING_VOLUME_GEOMETRIC_MAX)
         add_aviary_input(self, Aircraft.Fuel.FUEL_MARGIN, val=10)
         add_aviary_input(self, Aircraft.Fuel.TOTAL_CAPACITY, val=46000)
 
@@ -883,7 +878,7 @@ class FuselageAndStructMass(om.ExplicitComponent):
         )
         add_aviary_input(self, Aircraft.Fuselage.MASS_COEFFICIENT, val=128)
         add_aviary_input(self, Aircraft.Fuselage.WETTED_AREA, val=4000)
-        add_aviary_input(self, Aircraft.Fuselage.AVG_DIAMETER, val=13.1)
+        add_aviary_input(self, Aircraft.Fuselage.AVG_DIAMETER)
         add_aviary_input(self, Aircraft.TailBoom.LENGTH, val=129.4)
         self.add_input(
             "pylon_len",
@@ -894,7 +889,7 @@ class FuselageAndStructMass(om.ExplicitComponent):
         self.add_input(
             "min_dive_vel", val=419.75918333, units="kn", desc="VDMIN: dive velocity"
         )
-        add_aviary_input(self, Aircraft.Fuselage.PRESSURE_DIFFERENTIAL, val=7.5)
+        add_aviary_input(self, Aircraft.Fuselage.PRESSURE_DIFFERENTIAL)
         add_aviary_input(self, Aircraft.Wing.ULTIMATE_LOAD_FACTOR, val=3.893)
         self.add_input(
             "MAT",

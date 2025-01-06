@@ -54,6 +54,8 @@ class MassParametersTestCase1(unittest.TestCase):
         self.prob.model.set_input_defaults(
             "max_mach", val=0.9, units="unitless"
         )  # bug fixed value
+        self.prob.model.set_input_defaults(
+            Aircraft.LandingGear.MAIN_GEAR_LOCATION, val=0.15)
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
@@ -951,6 +953,9 @@ class GearTestCaseMultiengine(unittest.TestCase):
         self.prob.model.set_input_defaults(
             Aircraft.Nacelle.AVG_DIAMETER, val=[7.5, 8.22], units='ft'
         )
+        self.prob.model.set_input_defaults(Aircraft.LandingGear.MASS_COEFFICIENT, val=0.04)
+        self.prob.model.set_input_defaults(Aircraft.LandingGear.MAIN_GEAR_MASS_COEFFICIENT, val=0.85)
+        self.prob.model.set_input_defaults(Mission.Design.GROSS_MASS, val=152000)
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
@@ -1143,6 +1148,13 @@ class FixedMassGroupTestCase1(unittest.TestCase):
         self.prob.model.set_input_defaults(
             Aircraft.LandingGear.MAIN_GEAR_LOCATION, val=0.15, units="unitless"
         )  # bug fixed value and original value
+        self.prob.model.set_input_defaults(Aircraft.Fuselage.AVG_DIAMETER, val=13.1)
+        self.prob.model.set_input_defaults(Aircraft.Wing.SLAT_CHORD_RATIO, val=.15)
+        self.prob.model.set_input_defaults(Aircraft.Wing.FLAP_CHORD_RATIO, val=.3)
+        self.prob.model.set_input_defaults(Aircraft.Wing.SLAT_SPAN_RATIO, val=.9)
+        self.prob.model.set_input_defaults(Aircraft.Wing.LOADING, val=128)
+        self.prob.model.set_input_defaults(Aircraft.Wing.THICKNESS_TO_CHORD_ROOT, val=.15)
+        self.prob.model.set_input_defaults(Aircraft.Wing.CENTER_CHORD, val=17.48974)
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
@@ -1449,6 +1461,13 @@ class FixedMassGroupTestCase2(unittest.TestCase):
         self.prob.model.set_input_defaults(
             "engine.prop_mass", val=0, units="lbm"
         )  # bug fixed value and original value
+        self.prob.model.set_input_defaults(Aircraft.Fuselage.AVG_DIAMETER, val=13.1)
+        self.prob.model.set_input_defaults(Aircraft.Wing.SLAT_CHORD_RATIO, val=.15)
+        self.prob.model.set_input_defaults(Aircraft.Wing.FLAP_CHORD_RATIO, val=.3)
+        self.prob.model.set_input_defaults(Aircraft.Wing.SLAT_SPAN_RATIO, val=.9)
+        self.prob.model.set_input_defaults(Aircraft.Wing.LOADING, val=128)
+        self.prob.model.set_input_defaults(Aircraft.Wing.THICKNESS_TO_CHORD_ROOT, val=.15)
+        self.prob.model.set_input_defaults(Aircraft.Wing.CENTER_CHORD, val=17.48974)
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
@@ -1538,6 +1557,12 @@ class FixedMassGroupTestCase3(unittest.TestCase):
             'fixed_mass',
             FixedMassGroup(aviary_options=data),
             promotes=['*'],
+        )
+        prob.model.set_input_defaults(
+            Aircraft.Wing.TAPER_RATIO, val=0.33, units="unitless"
+        )
+        prob.model.set_input_defaults(
+            Aircraft.LandingGear.MAIN_GEAR_LOCATION, val=0.15, units="unitless"
         )
         prob.setup(force_alloc_complex=True)
 

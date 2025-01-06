@@ -937,6 +937,15 @@ class DesignLoadGroupTestCase2smooth(unittest.TestCase):
         self.prob.model.set_input_defaults(
             Aircraft.Wing.AVERAGE_CHORD, val=12.71, units="ft"
         )  # bug fixed value
+        self.prob.model.set_input_defaults(
+            Aircraft.Wing.ASPECT_RATIO, val=10.13, units="unitless"
+        )
+        self.prob.model.set_input_defaults(
+            Aircraft.Wing.SWEEP, val=0.436, units="rad"
+        )
+        self.prob.model.set_input_defaults(
+            Mission.Design.MACH, val=0.8, units="unitless"
+        )
 
         self.prob.setup(check=False, force_alloc_complex=True)
 

@@ -42,9 +42,9 @@ class WingMassSolve(om.ImplicitComponent):
             units="unitless",
             desc="SKGEAR: landing gear location factor",
         )
-        add_aviary_input(self, Aircraft.Wing.SPAN, val=117.8)
-        add_aviary_input(self, Aircraft.Wing.TAPER_RATIO, val=0.33)
-        add_aviary_input(self, Aircraft.Wing.THICKNESS_TO_CHORD_ROOT, val=0.15)
+        add_aviary_input(self, Aircraft.Wing.SPAN)
+        add_aviary_input(self, Aircraft.Wing.TAPER_RATIO)
+        add_aviary_input(self, Aircraft.Wing.THICKNESS_TO_CHORD_ROOT)
         self.add_input(
             "half_sweep",
             val=0.3947081519,
@@ -318,7 +318,7 @@ class WingMassTotal(om.ExplicitComponent):
 
         if self.options["aviary_options"].get_val(Aircraft.Wing.HAS_FOLD, units='unitless') == True:
 
-            add_aviary_input(self, Aircraft.Wing.AREA, val=100)
+            add_aviary_input(self, Aircraft.Wing.AREA)
             add_aviary_input(self, Aircraft.Wing.FOLDING_AREA, val=50)
             add_aviary_input(self, Aircraft.Wing.FOLD_MASS_COEFFICIENT, val=0.2)
 

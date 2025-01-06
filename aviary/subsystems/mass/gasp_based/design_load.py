@@ -34,33 +34,20 @@ class LoadSpeeds(om.ExplicitComponent):
 
     def setup(self):
 
-        add_aviary_input(self, Aircraft.Design.MAX_STRUCTURAL_SPEED,
-                         val=200, units="mi/h")
+        add_aviary_input(self, Aircraft.Design.MAX_STRUCTURAL_SPEED)
 
         if self.options["aviary_options"].get_val(Aircraft.Design.PART25_STRUCTURAL_CATEGORY, units='unitless') < 3:
 
-            add_aviary_input(self, Aircraft.Wing.LOADING, val=128)
+            add_aviary_input(self, Aircraft.Wing.LOADING)
 
-        self.add_output(
-            "max_airspeed",
-            val=0,
-            units="kn",
-            desc="VM0: maximum operating equivalent airspeed",
-        )
-        self.add_output(
-            "vel_c",
-            val=0,
-            units="kn",
-            desc="VGC: Velocity used in Gust Load Factor calculation at cruise conditions.\
-                This is Minimum Design Cruise Speed for Part 23 aircraft and VM0 for Part 25 aircraft",
-        )
-        self.add_output(
-            "max_maneuver_factor",
-            val=0,
-            units="unitless",
-            desc="EMLF: maximum maneuver load factor, units are in g`s",
-        )
-        self.add_output("min_dive_vel", val=0, units="kn", desc="VDMIN: dive velocity")
+        self.add_output("max_airspeed", units="kn",
+                        desc="VM0: maximum operating equivalent airspeed")
+        self.add_output("vel_c", units="kn",
+                        desc="VGC: Velocity used in Gust Load Factor calculation at cruise conditions.\
+                        This is Minimum Design Cruise Speed for Part 23 aircraft and VM0 for Part 25 aircraft")
+        self.add_output("max_maneuver_factor", units="unitless",
+                        desc="EMLF: maximum maneuver load factor, units are in g`s")
+        self.add_output("min_dive_vel", units="kn", desc="VDMIN: dive velocity")
 
         self.declare_partials("*", "*")
 
@@ -389,32 +376,18 @@ class LoadParameters(om.ExplicitComponent):
 
     def setup(self):
 
-        self.add_input(
-            "vel_c",
-            val=100,
-            units="kn",
-            desc="VGC: Velocity used in Gust Load Factor calculation at cruise conditions.\
-                This is Minimum Design Cruise Speed for Part 23 aircraft and VM0 for Part 25 aircraft",
-        )
-        self.add_input(
-            "max_airspeed",
-            val=200,
-            units="kn",
-            desc="VM0: maximum operating equivalent airspeed",
-        )
+        self.add_input("vel_c", val=100, units="kn",
+                       desc="VGC: Velocity used in Gust Load Factor calculation at cruise conditions.\
+                       This is Minimum Design Cruise Speed for Part 23 aircraft and VM0 for Part 25 aircraft")
+        self.add_input("max_airspeed", val=200, units="kn",
+                       desc="VM0: maximum operating equivalent airspeed")
 
-        self.add_output(
-            "max_mach", val=0, units="unitless", desc="EMM0: maximum operating mach number"
-        )
-        self.add_output(
-            "density_ratio",
-            val=0,
-            units="unitless",
-            desc="SIGMA (in GASP): density ratio = density at Altitude / density at Sea level",
-        )
-        self.add_output(
-            "V9", val=0, units="kn", desc="V9: intermediate value. Typically it is maximum flight speed."
-        )
+        self.add_output("max_mach", units="unitless",
+                        desc="EMM0: maximum operating mach number")
+        self.add_output("density_ratio", units="unitless",
+                        desc="SIGMA (in GASP): density ratio = density at Altitude / density at Sea level")
+        self.add_output("V9", units="kn",
+                        desc="V9: intermediate value. Typically it is maximum flight speed.")
 
         self.declare_partials("max_mach", "max_airspeed")
         self.declare_partials("density_ratio", "max_airspeed")
@@ -654,9 +627,9 @@ class LiftCurveSlopeAtCruise(om.ExplicitComponent):
     """
 
     def setup(self):
-        add_aviary_input(self, Aircraft.Wing.ASPECT_RATIO, val=10.13)
-        add_aviary_input(self, Aircraft.Wing.SWEEP, val=0.436, units="rad")
-        add_aviary_input(self, Mission.Design.MACH, val=0.8)
+        add_aviary_input(self, Aircraft.Wing.ASPECT_RATIO)
+        add_aviary_input(self, Aircraft.Wing.SWEEP, units="rad")
+        add_aviary_input(self, Mission.Design.MACH)
 
         add_aviary_output(self, Aircraft.Design.LIFT_CURVE_SLOPE, val=7.1765)
 
@@ -699,32 +672,20 @@ class LoadFactors(om.ExplicitComponent):
 
     def setup(self):
 
-        add_aviary_input(self, Aircraft.Wing.LOADING, val=128)
+        add_aviary_input(self, Aircraft.Wing.LOADING)
 
-        self.add_input(
-            "density_ratio",
-            val=0.5,
-            units="unitless",
-            desc="SIGMA (in GASP): density ratio = density at Altitude / density at Sea level",
-        )
-        self.add_input(
-            "V9",
-            val=100,
-            units="kn",
-            desc="V9: intermediate value. Typically it is maximum flight speed.",
-        )
+        self.add_input("density_ratio", val=0.5, units="unitless",
+                       desc="SIGMA (in GASP): density ratio = density at Altitude / density at Sea level")
+        self.add_input("V9", val=100, units="kn",
+                       desc="V9: intermediate value. Typically it is maximum flight speed.")
         self.add_input("min_dive_vel", val=250, units="kn", desc="VDMIN: dive velocity")
-        self.add_input(
-            "max_maneuver_factor",
-            val=0.72,
-            units="unitless",
-            desc="EMLF: maximum maneuver load factor, units are in g`s",
-        )
+        self.add_input("max_maneuver_factor", val=0.72, units="unitless",
+                       desc="EMLF: maximum maneuver load factor, units are in g`s")
 
-        add_aviary_input(self, Aircraft.Wing.AVERAGE_CHORD, val=12.6131)
-        add_aviary_input(self, Aircraft.Design.LIFT_CURVE_SLOPE, val=7.1765)
+        add_aviary_input(self, Aircraft.Wing.AVERAGE_CHORD)
+        add_aviary_input(self, Aircraft.Design.LIFT_CURVE_SLOPE)
 
-        add_aviary_output(self, Aircraft.Wing.ULTIMATE_LOAD_FACTOR, val=3.5)
+        add_aviary_output(self, Aircraft.Wing.ULTIMATE_LOAD_FACTOR)
 
         self.declare_partials(Aircraft.Wing.ULTIMATE_LOAD_FACTOR, "*")
 
@@ -1305,4 +1266,3 @@ class DesignLoadGroup(om.Group):
                 "aircraft:*"
             ],
         )
-        self.set_input_defaults(Aircraft.Wing.LOADING, val=128, units="lbf/ft**2")
