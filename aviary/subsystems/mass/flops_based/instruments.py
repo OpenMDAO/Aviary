@@ -3,8 +3,7 @@ import openmdao.api as om
 from aviary.constants import GRAV_ENGLISH_LBM
 from aviary.subsystems.mass.flops_based.distributed_prop import \
     distributed_engine_count_factor
-from aviary.utils.aviary_values import AviaryValues
-from aviary.variable_info.functions import add_aviary_input, add_aviary_output
+from aviary.variable_info.functions import add_aviary_input, add_aviary_output, add_aviary_option
 from aviary.variable_info.variables import Aircraft, Mission
 
 
@@ -18,9 +17,10 @@ class TransportInstrumentMass(om.ExplicitComponent):
     '''
 
     def initialize(self):
-        self.options.declare(
-            'aviary_options', types=AviaryValues,
-            desc='collection of Aircraft/Mission specific options')
+        add_aviary_option(self, Aircraft.CrewPayload.NUM_FLIGHT_CREW)
+        add_aviary_option(self, Aircraft.Propulsion.TOTAL_NUM_FUSELAGE_ENGINES)
+        add_aviary_option(self, Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES)
+        add_aviary_option(self, Mission.Constraints.MAX_MACH)
 
     def setup(self):
         add_aviary_input(self, Aircraft.Fuselage.PLANFORM_AREA)
@@ -31,17 +31,14 @@ class TransportInstrumentMass(om.ExplicitComponent):
         self.declare_partials("*", "*")
 
     def compute(self, inputs, outputs):
-        aviary_options: AviaryValues = self.options['aviary_options']
-        num_crew = aviary_options.get_val(Aircraft.CrewPayload.NUM_FLIGHT_CREW)
-        num_wing_eng = aviary_options.get_val(
-            Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES)
-        num_fuse_eng = aviary_options.get_val(
-            Aircraft.Propulsion.TOTAL_NUM_FUSELAGE_ENGINES)
+        num_crew = self.options[Aircraft.CrewPayload.NUM_FLIGHT_CREW]
+        num_wing_eng = self.options[Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES]
+        num_fuse_eng = self.options[Aircraft.Propulsion.TOTAL_NUM_FUSELAGE_ENGINES]
         num_wing_eng_fact = distributed_engine_count_factor(num_wing_eng)
         num_fuse_eng_fact = distributed_engine_count_factor(num_fuse_eng)
 
         fuse_area = inputs[Aircraft.Fuselage.PLANFORM_AREA]
-        max_mach = aviary_options.get_val(Mission.Constraints.MAX_MACH)
+        max_mach = self.options[Mission.Constraints.MAX_MACH]
         mass_scaler = inputs[Aircraft.Instruments.MASS_SCALER]
 
         instrument_weight = (
@@ -53,17 +50,14 @@ class TransportInstrumentMass(om.ExplicitComponent):
             mass_scaler / GRAV_ENGLISH_LBM
 
     def compute_partials(self, inputs, J):
-        aviary_options: AviaryValues = self.options['aviary_options']
-        num_crew = aviary_options.get_val(Aircraft.CrewPayload.NUM_FLIGHT_CREW)
-        num_wing_eng = aviary_options.get_val(
-            Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES)
-        num_fuse_eng = aviary_options.get_val(
-            Aircraft.Propulsion.TOTAL_NUM_FUSELAGE_ENGINES)
+        num_crew = self.options[Aircraft.CrewPayload.NUM_FLIGHT_CREW]
+        num_wing_eng = self.options[Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES]
+        num_fuse_eng = self.options[Aircraft.Propulsion.TOTAL_NUM_FUSELAGE_ENGINES]
         num_wing_eng_fact = distributed_engine_count_factor(num_wing_eng)
         num_fuse_eng_fact = distributed_engine_count_factor(num_fuse_eng)
 
         fuse_area = inputs[Aircraft.Fuselage.PLANFORM_AREA]
-        max_mach = aviary_options.get_val(Mission.Constraints.MAX_MACH)
+        max_mach = self.options[Mission.Constraints.MAX_MACH]
         mass_scaler = inputs[Aircraft.Instruments.MASS_SCALER]
 
         fact = (10.0 + 2.5 * num_crew + num_wing_eng_fact + 1.5 * num_fuse_eng_fact)

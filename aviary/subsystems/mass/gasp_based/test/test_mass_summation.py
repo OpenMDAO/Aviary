@@ -7,6 +7,7 @@ from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 from aviary.subsystems.geometry.gasp_based.size_group import SizeGroup
 from aviary.subsystems.mass.gasp_based.mass_premission import MassPremission
 from aviary.utils.aviary_values import get_items
+from aviary.variable_info.functions import setup_model_options
 from aviary.variable_info.options import get_option_defaults, is_option
 from aviary.models.large_single_aisle_1.V3_bug_fixed_IO import (
     V3_bug_fixed_non_metadata, V3_bug_fixed_options)
@@ -25,9 +26,7 @@ class MassSummationTestCase1(unittest.TestCase):
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
             "gasp_based_geom",
-            SizeGroup(
-                aviary_options=V3_bug_fixed_options,
-            ),
+            SizeGroup(),
             promotes_inputs=["aircraft:*", "mission:*"],
             promotes_outputs=[
                 "aircraft:*",
@@ -35,9 +34,7 @@ class MassSummationTestCase1(unittest.TestCase):
         )
         self.prob.model.add_subsystem(
             "total_mass",
-            MassPremission(
-                aviary_options=V3_bug_fixed_options,
-            ),
+            MassPremission(),
             promotes=['*'],
         )
 
@@ -57,6 +54,8 @@ class MassSummationTestCase1(unittest.TestCase):
             Aircraft.Fuselage.WETTED_AREA_SCALER, val=0.86215, units="unitless")
         self.prob.model.set_input_defaults(Aircraft.Wing.SLAT_CHORD_RATIO, val=.15)
         self.prob.model.set_input_defaults(Aircraft.Wing.SLAT_SPAN_RATIO, val=.9)
+
+        setup_model_options(self.prob, V3_bug_fixed_options)
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
@@ -198,9 +197,7 @@ class MassSummationTestCase2(unittest.TestCase):
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
             "size",
-            SizeGroup(
-                aviary_options=options,
-            ),
+            SizeGroup(),
             promotes_inputs=["aircraft:*", "mission:*"],
             promotes_outputs=[
                 "aircraft:*",
@@ -208,9 +205,7 @@ class MassSummationTestCase2(unittest.TestCase):
         )
         self.prob.model.add_subsystem(
             "GASP_mass",
-            MassPremission(
-                aviary_options=options,
-            ),
+            MassPremission(),
             promotes=["*"],
         )
 
@@ -453,6 +448,8 @@ class MassSummationTestCase2(unittest.TestCase):
         self.prob.model.set_input_defaults(Aircraft.Wing.FLAP_CHORD_RATIO, val=.3)
         self.prob.model.set_input_defaults(Aircraft.Wing.SLAT_SPAN_RATIO, val=.9)
 
+        setup_model_options(self.prob, options)
+
         self.prob.setup(check=False, force_alloc_complex=True)
 
     def test_case1(self):
@@ -592,9 +589,7 @@ class MassSummationTestCase3(unittest.TestCase):
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
             "size",
-            SizeGroup(
-                aviary_options=options,
-            ),
+            SizeGroup(),
             promotes_inputs=["aircraft:*", "mission:*"],
             promotes_outputs=[
                 "aircraft:*",
@@ -602,9 +597,7 @@ class MassSummationTestCase3(unittest.TestCase):
         )
         self.prob.model.add_subsystem(
             "GASP_mass",
-            MassPremission(
-                aviary_options=options,
-            ),
+            MassPremission(),
             promotes=["*"],
         )
 
@@ -848,6 +841,8 @@ class MassSummationTestCase3(unittest.TestCase):
         self.prob.model.set_input_defaults(Aircraft.Wing.FLAP_CHORD_RATIO, val=.3)
         self.prob.model.set_input_defaults(Aircraft.Wing.SLAT_SPAN_RATIO, val=.9)
 
+        setup_model_options(self.prob, options)
+
         self.prob.setup(check=False, force_alloc_complex=True)
 
     def test_case1(self):
@@ -977,9 +972,7 @@ class MassSummationTestCase4(unittest.TestCase):
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
             "size",
-            SizeGroup(
-                aviary_options=options,
-            ),
+            SizeGroup(),
             promotes_inputs=["aircraft:*", "mission:*"],
             promotes_outputs=[
                 "aircraft:*",
@@ -987,9 +980,7 @@ class MassSummationTestCase4(unittest.TestCase):
         )
         self.prob.model.add_subsystem(
             "GASP_mass",
-            MassPremission(
-                aviary_options=options,
-            ),
+            MassPremission(),
             promotes=["*"],
         )
 
@@ -1234,6 +1225,8 @@ class MassSummationTestCase4(unittest.TestCase):
         self.prob.model.set_input_defaults(Aircraft.Wing.FLAP_CHORD_RATIO, val=.3)
         self.prob.model.set_input_defaults(Aircraft.Wing.SLAT_SPAN_RATIO, val=.9)
 
+        setup_model_options(self.prob, options)
+
         self.prob.setup(check=False, force_alloc_complex=True)
 
     def test_case1(self):
@@ -1363,9 +1356,7 @@ class MassSummationTestCase5(unittest.TestCase):
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
             "size",
-            SizeGroup(
-                aviary_options=options,
-            ),
+            SizeGroup(),
             promotes_inputs=["aircraft:*", "mission:*"],
             promotes_outputs=[
                 "aircraft:*",
@@ -1373,9 +1364,7 @@ class MassSummationTestCase5(unittest.TestCase):
         )
         self.prob.model.add_subsystem(
             "GASP_mass",
-            MassPremission(
-                aviary_options=options,
-            ),
+            MassPremission(),
             promotes=["*"],
         )
 
@@ -1620,6 +1609,8 @@ class MassSummationTestCase5(unittest.TestCase):
         self.prob.model.set_input_defaults(Aircraft.Wing.FLAP_CHORD_RATIO, val=.3)
         self.prob.model.set_input_defaults(Aircraft.Wing.SLAT_SPAN_RATIO, val=.9)
 
+        setup_model_options(self.prob, options)
+
         self.prob.setup(check=False, force_alloc_complex=True)
 
     def test_case1(self):
@@ -1748,9 +1739,7 @@ class MassSummationTestCase6(unittest.TestCase):
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
             "size",
-            SizeGroup(
-                aviary_options=options,
-            ),
+            SizeGroup(),
             promotes_inputs=["aircraft:*", "mission:*"],
             promotes_outputs=[
                 "aircraft:*",
@@ -1758,9 +1747,7 @@ class MassSummationTestCase6(unittest.TestCase):
         )
         self.prob.model.add_subsystem(
             "GASP_mass",
-            MassPremission(
-                aviary_options=options,
-            ),
+            MassPremission(),
             promotes=["*"],
         )
 
@@ -2005,6 +1992,8 @@ class MassSummationTestCase6(unittest.TestCase):
         self.prob.model.set_input_defaults(Aircraft.Wing.FLAP_CHORD_RATIO, val=.3)
         self.prob.model.set_input_defaults(Aircraft.Wing.SLAT_SPAN_RATIO, val=.9)
 
+        setup_model_options(self.prob, options)
+
         self.prob.setup(check=False, force_alloc_complex=True)
 
     def test_case1(self):
@@ -2134,9 +2123,7 @@ class MassSummationTestCase7(unittest.TestCase):
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
             "size",
-            SizeGroup(
-                aviary_options=options,
-            ),
+            SizeGroup(),
             promotes_inputs=["aircraft:*", "mission:*"],
             promotes_outputs=[
                 "aircraft:*",
@@ -2144,9 +2131,7 @@ class MassSummationTestCase7(unittest.TestCase):
         )
         self.prob.model.add_subsystem(
             "GASP_mass",
-            MassPremission(
-                aviary_options=options,
-            ),
+            MassPremission(),
             promotes=["*"],
         )
 
@@ -2398,6 +2383,8 @@ class MassSummationTestCase7(unittest.TestCase):
         self.prob.model.set_input_defaults(Aircraft.Wing.FLAP_CHORD_RATIO, val=.3)
         self.prob.model.set_input_defaults(Aircraft.Wing.SLAT_SPAN_RATIO, val=.9)
 
+        setup_model_options(self.prob, options)
+
         self.prob.setup(check=False, force_alloc_complex=True)
 
     def test_case1(self):
@@ -2533,9 +2520,7 @@ class MassSummationTestCase8(unittest.TestCase):
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
             "size",
-            SizeGroup(
-                aviary_options=options,
-            ),
+            SizeGroup(),
             promotes_inputs=["aircraft:*", "mission:*"],
             promotes_outputs=[
                 "aircraft:*",
@@ -2543,9 +2528,7 @@ class MassSummationTestCase8(unittest.TestCase):
         )
         self.prob.model.add_subsystem(
             "GASP_mass",
-            MassPremission(
-                aviary_options=options,
-            ),
+            MassPremission(),
             promotes=["*"],
         )
 
@@ -2805,6 +2788,8 @@ class MassSummationTestCase8(unittest.TestCase):
         self.prob.model.set_input_defaults(Aircraft.Wing.FLAP_CHORD_RATIO, val=.3)
         self.prob.model.set_input_defaults(Aircraft.Wing.SLAT_SPAN_RATIO, val=.9)
 
+        setup_model_options(self.prob, options)
+
         self.prob.setup(check=False, force_alloc_complex=True)
 
     def test_case1(self):
@@ -2935,9 +2920,7 @@ class MassSummationTestCase9(unittest.TestCase):
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
             "size",
-            SizeGroup(
-                aviary_options=options,
-            ),
+            SizeGroup(),
             promotes_inputs=["aircraft:*", "mission:*"],
             promotes_outputs=[
                 "aircraft:*",
@@ -2945,9 +2928,7 @@ class MassSummationTestCase9(unittest.TestCase):
         )
         self.prob.model.add_subsystem(
             "GASP_mass",
-            MassPremission(
-                aviary_options=options,
-            ),
+            MassPremission(),
             promotes=["*"],
         )
 
@@ -3251,6 +3232,8 @@ class MassSummationTestCase9(unittest.TestCase):
         self.prob.model.set_input_defaults(Aircraft.Wing.SLAT_CHORD_RATIO, val=.15)
         self.prob.model.set_input_defaults(Aircraft.Wing.FLAP_CHORD_RATIO, val=.3)
         self.prob.model.set_input_defaults(Aircraft.Wing.SLAT_SPAN_RATIO, val=.9)
+
+        setup_model_options(self.prob, options)
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
