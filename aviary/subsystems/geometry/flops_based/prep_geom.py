@@ -5,8 +5,9 @@ aerodynamics analysis.
 TODO: blended-wing-body support
 TODO: multiple engine model support
 '''
-import openmdao.api as om
 from numpy import pi
+
+import openmdao.api as om
 
 from aviary.subsystems.geometry.flops_based.canard import Canard
 from aviary.subsystems.geometry.flops_based.characteristic_lengths import \
@@ -18,8 +19,7 @@ from aviary.subsystems.geometry.flops_based.utils import (
     d_calc_fuselage_adjustment, thickness_to_chord_scaler)
 from aviary.subsystems.geometry.flops_based.wetted_area_total import TotalWettedArea
 from aviary.subsystems.geometry.flops_based.wing import WingPrelim
-from aviary.utils.aviary_values import AviaryValues
-from aviary.variable_info.functions import add_aviary_input, add_aviary_output
+from aviary.variable_info.functions import add_aviary_input, add_aviary_output, add_aviary_option
 from aviary.variable_info.variables import Aircraft
 
 
@@ -28,33 +28,27 @@ class PrepGeom(om.Group):
     Prepare derived values of aircraft geometry for aerodynamics analysis.
     '''
 
-    def initialize(self):
-        self.options.declare(
-            'aviary_options', types=AviaryValues,
-            desc='collection of Aircraft/Mission specific options')
-
     def setup(self):
-        aviary_options = self.options['aviary_options']
 
         self.add_subsystem(
-            'fuselage_prelim', FuselagePrelim(aviary_options=aviary_options),
+            'fuselage_prelim', FuselagePrelim(),
             promotes_inputs=['*'],
             promotes_outputs=['*']
         )
 
         self.add_subsystem(
-            'wing_prelim', WingPrelim(aviary_options=aviary_options),
+            'wing_prelim', WingPrelim(),
             promotes_inputs=['*'],
             promotes_outputs=['*']
         )
 
         self.add_subsystem(
-            'prelim', _Prelim(aviary_options=aviary_options),
+            'prelim', _Prelim(),
             promotes_inputs=['*'],
         )
 
         self.add_subsystem(
-            'wing', _Wing(aviary_options=aviary_options),
+            'wing', _Wing(),
             promotes_inputs=['aircraft*'],
             promotes_outputs=['*']
         )
@@ -65,7 +59,7 @@ class PrepGeom(om.Group):
         self.connect(f'prelim.{Names.XMULT}', f'wing.{Names.XMULT}')
 
         self.add_subsystem(
-            'tail', _Tail(aviary_options=aviary_options),
+            'tail', _Tail(),
             promotes_inputs=['aircraft*'],
             promotes_outputs=['*']
         )
@@ -74,7 +68,7 @@ class PrepGeom(om.Group):
         self.connect(f'prelim.{Names.XMULTV}', f'tail.{Names.XMULTV}')
 
         self.add_subsystem(
-            'fuselage', _Fuselage(aviary_options=aviary_options),
+            'fuselage', _Fuselage(),
             promotes_inputs=['aircraft*'],
             promotes_outputs=['*']
         )
@@ -84,20 +78,20 @@ class PrepGeom(om.Group):
         self.connect(f'prelim.{Names.CRTHTB}', f'fuselage.{Names.CRTHTB}')
 
         self.add_subsystem(
-            'nacelles', Nacelles(aviary_options=aviary_options),
+            'nacelles', Nacelles(),
             promotes_inputs=['aircraft*'],
             promotes_outputs=['*']
         )
 
         self.add_subsystem(
-            'canard', Canard(aviary_options=aviary_options),
+            'canard', Canard(),
             promotes_inputs=['aircraft*'],
             promotes_outputs=['*']
         )
 
         self.add_subsystem(
             'characteristic_lengths',
-            CharacteristicLengths(aviary_options=aviary_options),
+            CharacteristicLengths(),
             promotes_inputs=['aircraft*'],
             promotes_outputs=['*']
         )
@@ -107,7 +101,7 @@ class PrepGeom(om.Group):
         )
 
         self.add_subsystem(
-            'total_wetted_area', TotalWettedArea(aviary_options=aviary_options),
+            'total_wetted_area', TotalWettedArea(),
             promotes_inputs=['*'],
             promotes_outputs=['*']
         )
@@ -119,9 +113,7 @@ class _Prelim(om.ExplicitComponent):
     '''
 
     def initialize(self):
-        self.options.declare(
-            'aviary_options', types=AviaryValues,
-            desc='collection of Aircraft/Mission specific options')
+        add_aviary_option(self, Aircraft.Wing.SPAN_EFFICIENCY_REDUCTION)
 
     def setup(self):
         add_aviary_input(self, Aircraft.Fuselage.AVG_DIAMETER)
@@ -477,9 +469,8 @@ class _Prelim(om.ExplicitComponent):
         Define the variable name associated with XDX.
         '''
         value = Aircraft.Fuselage.AVG_DIAMETER
-        aviary_options: AviaryValues = self.options['aviary_options']
 
-        if aviary_options.get_val(Aircraft.Wing.SPAN_EFFICIENCY_REDUCTION):
+        if self.options[Aircraft.Wing.SPAN_EFFICIENCY_REDUCTION]:
             value = Aircraft.Fuselage.MAX_WIDTH
 
         return value
@@ -491,9 +482,7 @@ class _Wing(om.ExplicitComponent):
     """
 
     def initialize(self):
-        self.options.declare(
-            'aviary_options', types=AviaryValues,
-            desc='collection of Aircraft/Mission specific options')
+        add_aviary_option(self, Aircraft.Fuselage.NUM_FUSELAGES)
 
     def setup(self):
         self.add_input(Names.CROOT, 0.0, units='unitless')
@@ -518,8 +507,7 @@ class _Wing(om.ExplicitComponent):
     def compute(
         self, inputs, outputs, discrete_inputs=None, discrete_outputs=None
     ):
-        aviary_options: AviaryValues = self.options['aviary_options']
-        num_fuselage = aviary_options.get_val(Aircraft.Fuselage.NUM_FUSELAGES)
+        num_fuselage = self.options[Aircraft.Fuselage.NUM_FUSELAGES]
 
         area = inputs[Aircraft.Wing.AREA]
         CROOT = inputs[Names.CROOT]
@@ -536,8 +524,7 @@ class _Wing(om.ExplicitComponent):
         outputs[Aircraft.Wing.WETTED_AREA] = wetted_area
 
     def compute_partials(self, inputs, J, discrete_inputs=None):
-        aviary_options: AviaryValues = self.options['aviary_options']
-        num_fuselage = aviary_options.get_val(Aircraft.Fuselage.NUM_FUSELAGES)
+        num_fuselage = self.options[Aircraft.Fuselage.NUM_FUSELAGES]
 
         area = inputs[Aircraft.Wing.AREA]
         CROOT = inputs[Names.CROOT]
@@ -571,9 +558,8 @@ class _Tail(om.ExplicitComponent):
     """
 
     def initialize(self):
-        self.options.declare(
-            'aviary_options', types=AviaryValues,
-            desc='collection of Aircraft/Mission specific options')
+        add_aviary_option(self, Aircraft.Propulsion.TOTAL_NUM_FUSELAGE_ENGINES)
+        add_aviary_option(self, Aircraft.Wing.SPAN_EFFICIENCY_REDUCTION)
 
     def setup(self):
         self.add_input(Names.XMULTH, 0.0, units='unitless')
@@ -608,8 +594,7 @@ class _Tail(om.ExplicitComponent):
             ]
         )
 
-        aviary_options: AviaryValues = self.options['aviary_options']
-        redux = aviary_options.get_val(Aircraft.Wing.SPAN_EFFICIENCY_REDUCTION)
+        redux = self.options[Aircraft.Wing.SPAN_EFFICIENCY_REDUCTION]
 
         if not redux:
             self.declare_partials(
@@ -627,12 +612,11 @@ class _Tail(om.ExplicitComponent):
 
         wetted_area = scaler * XMULTH * area
 
-        aviary_options: AviaryValues = self.options['aviary_options']
-        redux = aviary_options.get_val(Aircraft.Wing.SPAN_EFFICIENCY_REDUCTION)
+        redux = self.options[Aircraft.Wing.SPAN_EFFICIENCY_REDUCTION]
 
         if not redux:
             num_fuselage_engines = \
-                aviary_options.get_val(Aircraft.Propulsion.TOTAL_NUM_FUSELAGE_ENGINES)
+                self.options[Aircraft.Propulsion.TOTAL_NUM_FUSELAGE_ENGINES]
 
             vertical_tail_fraction = \
                 inputs[Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION]
@@ -654,8 +638,7 @@ class _Tail(om.ExplicitComponent):
         outputs[Aircraft.VerticalTail.WETTED_AREA] = wetted_area
 
     def compute_partials(self, inputs, J, discrete_inputs=None):
-        aviary_options: AviaryValues = self.options['aviary_options']
-        redux = aviary_options.get_val(Aircraft.Wing.SPAN_EFFICIENCY_REDUCTION)
+        redux = self.options[Aircraft.Wing.SPAN_EFFICIENCY_REDUCTION]
 
         # horizontal tail
         XMULTH = inputs[Names.XMULTH]
@@ -663,8 +646,8 @@ class _Tail(om.ExplicitComponent):
         scaler = inputs[Aircraft.HorizontalTail.WETTED_AREA_SCALER]
 
         if not redux:
-            num_fuselage_engines = aviary_options.get_val(
-                Aircraft.Propulsion.TOTAL_NUM_FUSELAGE_ENGINES)
+            num_fuselage_engines = \
+                self.options[Aircraft.Propulsion.TOTAL_NUM_FUSELAGE_ENGINES]
 
             vertical_tail_fraction = \
                 inputs[Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION]
@@ -732,9 +715,8 @@ class _Fuselage(om.ExplicitComponent):
     """
 
     def initialize(self):
-        self.options.declare(
-            'aviary_options', types=AviaryValues,
-            desc='collection of Aircraft/Mission specific options')
+        add_aviary_option(self, Aircraft.Wing.SPAN_EFFICIENCY_REDUCTION)
+        add_aviary_option(self, Aircraft.Fuselage.NUM_FUSELAGES)
 
     def setup(self):
         self.add_input(Names.CROOTB, 0.0, units='unitless')
@@ -803,8 +785,7 @@ class _Fuselage(om.ExplicitComponent):
     def compute(
         self, inputs, outputs, discrete_inputs=None, discrete_outputs=None
     ):
-        aviary_options: AviaryValues = self.options['aviary_options']
-        num_fuselages = aviary_options.get_val(Aircraft.Fuselage.NUM_FUSELAGES)
+        num_fuselages = self.options[Aircraft.Fuselage.NUM_FUSELAGES]
 
         area = inputs[Aircraft.Wing.AREA]
         aspect_ratio = inputs[Aircraft.Wing.ASPECT_RATIO]
@@ -862,8 +843,7 @@ class _Fuselage(om.ExplicitComponent):
         outputs[Aircraft.Fuselage.WETTED_AREA] = wetted_area
 
     def compute_partials(self, inputs, J, discrete_inputs=None):
-        aviary_options: AviaryValues = self.options['aviary_options']
-        num_fuselages = aviary_options.get_val(Aircraft.Fuselage.NUM_FUSELAGES)
+        num_fuselages = self.options[Aircraft.Fuselage.NUM_FUSELAGES]
 
         area = inputs[Aircraft.Wing.AREA]
         aspect_ratio = inputs[Aircraft.Wing.ASPECT_RATIO]
