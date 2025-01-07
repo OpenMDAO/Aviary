@@ -1,7 +1,6 @@
 import numpy as np
 import openmdao.api as om
 
-from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.functions import add_aviary_input, add_aviary_output
 from aviary.variable_info.variables import Aircraft, Mission
 
@@ -10,11 +9,6 @@ class LandingTakeoffMassRatio(om.ExplicitComponent):
     '''
     Calculate the ratio of maximum landing mass to maximum takeoff gross mass.
     '''
-
-    def initialize(self):
-        self.options.declare(
-            'aviary_options', types=AviaryValues,
-            desc='collection of Aircraft/Mission specific options')
 
     def setup(self):
         add_aviary_input(self, Mission.Summary.CRUISE_MACH)
@@ -56,11 +50,6 @@ class LandingMass(om.ExplicitComponent):
     '''
     Maximum landing mass is maximum takeoff gross mass times the ratio of landing/takeoff mass.
     '''
-
-    def initialize(self):
-        self.options.declare(
-            'aviary_options', types=AviaryValues,
-            desc='collection of Aircraft/Mission specific options')
 
     def setup(self):
         add_aviary_input(self, Mission.Design.GROSS_MASS)

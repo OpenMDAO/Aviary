@@ -11,6 +11,7 @@ from aviary.utils.test_utils.variable_test import assert_match_varnames
 from aviary.validation_cases.validation_tests import (Version,
                                                       flops_validation_test,
                                                       get_flops_case_names,
+                                                      get_flops_options,
                                                       get_flops_inputs,
                                                       print_case)
 from aviary.variable_info.variables import Aircraft, Mission
@@ -32,11 +33,12 @@ class TransportFurnishingsGroupMassTest(unittest.TestCase):
 
         prob.model.add_subsystem(
             'furnishings',
-            TransportFurnishingsGroupMass(
-                aviary_options=get_flops_inputs(case_name, preprocess=True)),
+            TransportFurnishingsGroupMass(),
             promotes_outputs=['*'],
             promotes_inputs=['*']
         )
+
+        prob.model_options['*'] = get_flops_options(case_name, preprocess=True)
 
         prob.setup(check=False, force_alloc_complex=True)
 
@@ -68,17 +70,24 @@ class BWBFurnishingsGroupMassTest(unittest.TestCase):
 
         prob = self.prob
         flops_inputs = get_flops_inputs(case_name, preprocess=True)
-        flops_inputs.update({
-            Aircraft.Fuselage.MILITARY_CARGO_FLOOR: (False, 'unitless'),
-            Aircraft.BWB.NUM_BAYS: (5, 'unitless')
-        })
+
+        opts = {
+            Aircraft.BWB.NUM_BAYS: 5,
+            Aircraft.CrewPayload.Design.NUM_BUSINESS_CLASS: flops_inputs.get_val(Aircraft.CrewPayload.Design.NUM_BUSINESS_CLASS),
+            Aircraft.CrewPayload.NUM_FLIGHT_CREW: flops_inputs.get_val(Aircraft.CrewPayload.NUM_FLIGHT_CREW),
+            Aircraft.CrewPayload.Design.NUM_FIRST_CLASS: flops_inputs.get_val(Aircraft.CrewPayload.Design.NUM_FIRST_CLASS),
+            Aircraft.CrewPayload.Design.NUM_TOURIST_CLASS: flops_inputs.get_val(Aircraft.CrewPayload.Design.NUM_TOURIST_CLASS),
+            Aircraft.Fuselage.MILITARY_CARGO_FLOOR: False,
+        }
 
         prob.model.add_subsystem(
             'furnishings',
-            BWBFurnishingsGroupMass(aviary_options=flops_inputs),
+            BWBFurnishingsGroupMass(**opts),
             promotes_outputs=['*'],
             promotes_inputs=['*']
         )
+
+        prob.model_options['*'] = get_flops_options(case_name, preprocess=True)
 
         prob.setup(check=False, force_alloc_complex=True)
 
@@ -124,17 +133,21 @@ class BWBFurnishingsGroupMassTest2(unittest.TestCase):
 
     def test_case(self):
         prob = om.Problem()
+
         flops_inputs = get_flops_inputs("N3CC", preprocess=True)
-        flops_inputs.update({
-            Aircraft.Fuselage.MILITARY_CARGO_FLOOR: (False, 'unitless'),
-            Aircraft.BWB.NUM_BAYS: (5, 'unitless'),
-            Aircraft.BWB.CABIN_AREA: (100, 'ft**2'),
-            Aircraft.Fuselage.MAX_WIDTH: (30, 'ft'),
-            Aircraft.Fuselage.MAX_HEIGHT: (15, 'ft'),
-        })
+
+        opts = {
+            Aircraft.BWB.NUM_BAYS: 5,
+            Aircraft.CrewPayload.Design.NUM_BUSINESS_CLASS: flops_inputs.get_val(Aircraft.CrewPayload.Design.NUM_BUSINESS_CLASS),
+            Aircraft.CrewPayload.NUM_FLIGHT_CREW: flops_inputs.get_val(Aircraft.CrewPayload.NUM_FLIGHT_CREW),
+            Aircraft.CrewPayload.Design.NUM_FIRST_CLASS: flops_inputs.get_val(Aircraft.CrewPayload.Design.NUM_FIRST_CLASS),
+            Aircraft.CrewPayload.Design.NUM_TOURIST_CLASS: flops_inputs.get_val(Aircraft.CrewPayload.Design.NUM_TOURIST_CLASS),
+            Aircraft.Fuselage.MILITARY_CARGO_FLOOR: False,
+        }
+
         prob.model.add_subsystem(
             'furnishings',
-            BWBFurnishingsGroupMass(aviary_options=flops_inputs),
+            BWBFurnishingsGroupMass(**opts),
             promotes_outputs=['*'],
             promotes_inputs=['*']
         )
@@ -166,11 +179,12 @@ class AltFurnishingsGroupMassBaseTest(unittest.TestCase):
 
         prob.model.add_subsystem(
             'furnishings',
-            AltFurnishingsGroupMassBase(
-                aviary_options=get_flops_inputs(case_name, preprocess=True)),
+            AltFurnishingsGroupMassBase(),
             promotes_outputs=['*'],
             promotes_inputs=['*']
         )
+
+        prob.model_options['*'] = get_flops_options(case_name, preprocess=True)
 
         prob.setup(check=False, force_alloc_complex=True)
 
@@ -201,11 +215,12 @@ class AltFurnishingsGroupMassTest(unittest.TestCase):
 
         prob.model.add_subsystem(
             'furnishings',
-            AltFurnishingsGroupMass(
-                aviary_options=get_flops_inputs(case_name, preprocess=True)),
+            AltFurnishingsGroupMass(),
             promotes_outputs=['*'],
             promotes_inputs=['*']
         )
+
+        prob.model_options['*'] = get_flops_options(case_name, preprocess=True)
 
         prob.setup(check=False, force_alloc_complex=True)
 

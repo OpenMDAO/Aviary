@@ -1,3 +1,7 @@
+import warnings
+import unittest
+import importlib
+
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_near_equal
 
@@ -12,12 +16,9 @@ from aviary.utils.preprocessors import preprocess_propulsion
 from aviary.utils.process_input_decks import create_vehicle
 from aviary.utils.test_utils.default_subsystems import get_default_premission_subsystems
 from aviary.variable_info.enums import EquationsOfMotion
+from aviary.variable_info.functions import setup_model_options
 from aviary.variable_info.variable_meta_data import _MetaData as BaseMetaData
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission, Settings
-
-import warnings
-import unittest
-import importlib
 
 
 @unittest.skipUnless(importlib.util.find_spec("pyoptsparse") is not None, "pyoptsparse is not installed")
@@ -107,6 +108,8 @@ class HE_SGMDescentTestCase(unittest.TestCase):
         )
 
         prob.model.add_objective(Mission.Objectives.FUEL, ref=1e4)
+
+        setup_model_options(prob, aviary_options)
 
         with warnings.catch_warnings():
 
