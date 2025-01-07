@@ -1,8 +1,7 @@
 import numpy as np
 import openmdao.api as om
 
-from aviary.utils.aviary_values import AviaryValues
-from aviary.variable_info.functions import add_aviary_input
+from aviary.variable_info.functions import add_aviary_input, add_aviary_option
 from aviary.variable_info.variables import Aircraft
 
 
@@ -17,10 +16,6 @@ class TailVolCoef(om.ExplicitComponent):
     """
 
     def initialize(self):
-        self.options.declare(
-            'aviary_options', types=AviaryValues,
-            desc='collection of Aircraft/Mission specific options'
-        )
         self.options.declare(
             "vertical",
             default=False,
@@ -88,13 +83,6 @@ class TailSize(om.ExplicitComponent):
     input for tail moment arm calculation. For a vertical tail, the ratio of wing span
     to tail moment arm and the wing span are input.
     """
-
-    def initialize(self):
-
-        self.options.declare(
-            'aviary_options', types=AviaryValues,
-            desc='collection of Aircraft/Mission specific options'
-        )
 
     def setup(self):
         # defaults here for Large Single Aisle 1 horizontal tail
@@ -194,10 +182,8 @@ class EmpennageSize(om.Group):
     """
 
     def initialize(self):
-        self.options.declare(
-            'aviary_options', types=AviaryValues,
-            desc='collection of Aircraft/Mission specific options'
-        )
+        add_aviary_option(self, Aircraft.Design.COMPUTE_HTAIL_VOLUME_COEFF)
+        add_aviary_option(self, Aircraft.Design.COMPUTE_VTAIL_VOLUME_COEFF)
 
     def setup(self):
         # TODO: For cruciform/T-tail configurations, GASP checks to make sure the V tail
@@ -206,8 +192,6 @@ class EmpennageSize(om.Group):
         # chord greater than the H tail tip chord, it sets the taper ratio to 1 and
         # overrides the H tail aspect ratio. H tail taper ratio is used in landing gear
         # mass calculation.
-
-        aviary_options = self.options['aviary_options']
 
         # higher inputs that are input to groups other than this one, or calculated in groups other than this one
         higher_level_inputs_htail_vc = [
@@ -275,24 +259,24 @@ class EmpennageSize(om.Group):
             ("vol_coef", Aircraft.VerticalTail.VOLUME_COEFFICIENT),
         ]
 
-        if self.options["aviary_options"].get_val(Aircraft.Design.COMPUTE_HTAIL_VOLUME_COEFF, units='unitless'):
+        if self.options[Aircraft.Design.COMPUTE_HTAIL_VOLUME_COEFF]:
             self.add_subsystem(
                 "htail_vc",
-                TailVolCoef(aviary_options=aviary_options),
+                TailVolCoef(),
                 promotes_inputs=higher_level_inputs_htail_vc + ["aircraft:*"],
                 promotes_outputs=connected_outputs_htail_vc,
             )
-        if self.options["aviary_options"].get_val(Aircraft.Design.COMPUTE_VTAIL_VOLUME_COEFF, units='unitless'):
+        if self.options[Aircraft.Design.COMPUTE_VTAIL_VOLUME_COEFF]:
             self.add_subsystem(
                 "vtail_vc",
-                TailVolCoef(aviary_options=aviary_options, vertical=True),
+                TailVolCoef(vertical=True),
                 promotes_inputs=higher_level_inputs_vtail_vc + ["aircraft:*"],
                 promotes_outputs=connected_outputs_vtail_vc,
             )
 
         self.add_subsystem(
             "htail",
-            TailSize(aviary_options=aviary_options,),
+            TailSize(),
             promotes_inputs=higher_level_inputs_htail
             + rename_inputs_htail
             + connected_inputs_htail
@@ -302,7 +286,7 @@ class EmpennageSize(om.Group):
 
         self.add_subsystem(
             "vtail",
-            TailSize(aviary_options=aviary_options,),
+            TailSize(),
             promotes_inputs=higher_level_inputs_vtail
             + rename_inputs_vtail
             + connected_inputs_vtail

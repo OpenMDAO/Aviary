@@ -2,8 +2,7 @@ import numpy as np
 import openmdao.api as om
 
 from aviary.constants import RHO_SEA_LEVEL_ENGLISH
-from aviary.utils.aviary_values import AviaryValues
-from aviary.variable_info.functions import add_aviary_input, add_aviary_output
+from aviary.variable_info.functions import add_aviary_input, add_aviary_output, add_aviary_option
 from aviary.variable_info.variables import Aircraft, Mission
 
 
@@ -27,17 +26,16 @@ class LoadSpeeds(om.ExplicitComponent):
     """
 
     def initialize(self):
-        self.options.declare(
-            'aviary_options', types=AviaryValues,
-            desc='collection of Aircraft/Mission specific options'
-        )
+        add_aviary_option(self, Aircraft.Design.PART25_STRUCTURAL_CATEGORY)
+        add_aviary_option(self, Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES)
+        add_aviary_option(self, Aircraft.Wing.LOADING_ABOVE_20)
 
     def setup(self):
 
         add_aviary_input(self, Aircraft.Design.MAX_STRUCTURAL_SPEED,
                          val=200, units="mi/h")
 
-        if self.options["aviary_options"].get_val(Aircraft.Design.PART25_STRUCTURAL_CATEGORY, units='unitless') < 3:
+        if self.options[Aircraft.Design.PART25_STRUCTURAL_CATEGORY] < 3:
 
             add_aviary_input(self, Aircraft.Wing.LOADING, val=128)
 
@@ -59,12 +57,9 @@ class LoadSpeeds(om.ExplicitComponent):
 
         max_struct_speed_mph = inputs[Aircraft.Design.MAX_STRUCTURAL_SPEED]
 
-        CATD = self.options["aviary_options"].get_val(
-            Aircraft.Design.PART25_STRUCTURAL_CATEGORY, units='unitless')
-        smooth = self.options["aviary_options"].get_val(
-            Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES, units='unitless')
-        WGS_greater_than_20_flag = self.options["aviary_options"].get_val(
-            Aircraft.Wing.LOADING_ABOVE_20, units='unitless')
+        CATD = self.options[Aircraft.Design.PART25_STRUCTURAL_CATEGORY]
+        smooth = self.options[Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES]
+        WGS_greater_than_20_flag = self.options[Aircraft.Wing.LOADING_ABOVE_20]
 
         max_struct_speed_kts = max_struct_speed_mph / 1.15
 
@@ -147,12 +142,9 @@ class LoadSpeeds(om.ExplicitComponent):
 
         max_struct_speed_mph = inputs[Aircraft.Design.MAX_STRUCTURAL_SPEED]
 
-        CATD = self.options["aviary_options"].get_val(
-            Aircraft.Design.PART25_STRUCTURAL_CATEGORY, units='unitless')
-        smooth = self.options["aviary_options"].get_val(
-            Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES, units='unitless')
-        WGS_greater_than_20_flag = self.options["aviary_options"].get_val(
-            Aircraft.Wing.LOADING_ABOVE_20, units='unitless')
+        CATD = self.options[Aircraft.Design.PART25_STRUCTURAL_CATEGORY]
+        smooth = self.options[Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES]
+        WGS_greater_than_20_flag = self.options[Aircraft.Wing.LOADING_ABOVE_20]
 
         max_struct_speed_kts = max_struct_speed_mph / 1.15
         dmax_struct_speed_kts_dmax_struct_speed_mph = 1 / 1.15
@@ -373,10 +365,9 @@ class LoadParameters(om.ExplicitComponent):
     """
 
     def initialize(self):
-        self.options.declare(
-            'aviary_options', types=AviaryValues,
-            desc='collection of Aircraft/Mission specific options'
-        )
+        add_aviary_option(self, Aircraft.Design.PART25_STRUCTURAL_CATEGORY)
+        add_aviary_option(self, Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES)
+        add_aviary_option(self, Mission.Design.CRUISE_ALTITUDE, units='ft')
 
     def setup(self):
 
@@ -416,12 +407,9 @@ class LoadParameters(om.ExplicitComponent):
         vel_c = inputs["vel_c"]
         max_airspeed = inputs["max_airspeed"]
 
-        cruise_alt = self.options["aviary_options"].get_val(
-            Mission.Design.CRUISE_ALTITUDE, units='ft')
-        CATD = self.options["aviary_options"].get_val(
-            Aircraft.Design.PART25_STRUCTURAL_CATEGORY, units='unitless')
-        smooth = self.options["aviary_options"].get_val(
-            Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES, units='unitless')
+        cruise_alt, _ = self.options[Mission.Design.CRUISE_ALTITUDE]
+        CATD = self.options[Aircraft.Design.PART25_STRUCTURAL_CATEGORY]
+        smooth = self.options[Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES]
 
         if cruise_alt <= 22500.0:
             max_mach = max_airspeed / 486.33
@@ -487,12 +475,9 @@ class LoadParameters(om.ExplicitComponent):
         vel_c = inputs["vel_c"]
         max_airspeed = inputs["max_airspeed"]
 
-        cruise_alt = self.options["aviary_options"].get_val(
-            Mission.Design.CRUISE_ALTITUDE, units='ft')
-        CATD = self.options["aviary_options"].get_val(
-            Aircraft.Design.PART25_STRUCTURAL_CATEGORY, units='unitless')
-        smooth = self.options["aviary_options"].get_val(
-            Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES, units='unitless')
+        cruise_alt, _ = self.options[Mission.Design.CRUISE_ALTITUDE]
+        CATD = self.options[Aircraft.Design.PART25_STRUCTURAL_CATEGORY]
+        smooth = self.options[Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES]
 
         if cruise_alt <= 22500.0:
             max_mach = max_airspeed / 486.33
@@ -683,10 +668,8 @@ class LoadFactors(om.ExplicitComponent):
     """
 
     def initialize(self):
-        self.options.declare(
-            'aviary_options', types=AviaryValues,
-            desc='collection of Aircraft/Mission specific options'
-        )
+        add_aviary_option(self, Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES)
+        add_aviary_option(self, Aircraft.Design.ULF_CALCULATED_FROM_MANEUVER)
 
     def setup(self):
 
@@ -729,10 +712,8 @@ class LoadFactors(om.ExplicitComponent):
         avg_chord = inputs[Aircraft.Wing.AVERAGE_CHORD]
         Cl_alpha = inputs[Aircraft.Design.LIFT_CURVE_SLOPE]
 
-        ULF_from_maneuver = self.options["aviary_options"].get_val(
-            Aircraft.Design.ULF_CALCULATED_FROM_MANEUVER, units='unitless')
-        smooth = self.options["aviary_options"].get_val(
-            Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES, units='unitless')
+        ULF_from_maneuver = self.options[Aircraft.Design.ULF_CALCULATED_FROM_MANEUVER]
+        smooth = self.options[Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES]
 
         mass_ratio = (
             2.0 * wing_loading /
@@ -791,10 +772,8 @@ class LoadFactors(om.ExplicitComponent):
         avg_chord = inputs[Aircraft.Wing.AVERAGE_CHORD]
         Cl_alpha = inputs[Aircraft.Design.LIFT_CURVE_SLOPE]
 
-        ULF_from_maneuver = self.options["aviary_options"].get_val(
-            Aircraft.Design.ULF_CALCULATED_FROM_MANEUVER, units='unitless')
-        smooth = self.options["aviary_options"].get_val(
-            Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES, units='unitless')
+        ULF_from_maneuver = self.options[Aircraft.Design.ULF_CALCULATED_FROM_MANEUVER]
+        smooth = self.options[Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES]
 
         mass_ratio = (
             2.0 * wing_loading /
@@ -1239,22 +1218,11 @@ class DesignLoadGroup(om.Group):
     Design load group for GASP-based mass.
     """
 
-    def initialize(self):
-
-        self.options.declare(
-            'aviary_options', types=AviaryValues,
-            desc='collection of Aircraft/Mission specific options'
-        )
-
     def setup(self):
-
-        aviary_options = self.options['aviary_options']
 
         self.add_subsystem(
             "speeds",
-            LoadSpeeds(
-                aviary_options=aviary_options,
-            ),
+            LoadSpeeds(),
             promotes_inputs=['aircraft:*'],
             promotes_outputs=[
                 "max_airspeed",
@@ -1266,10 +1234,11 @@ class DesignLoadGroup(om.Group):
 
         self.add_subsystem(
             "params",
-            LoadParameters(
-                aviary_options=aviary_options,
-            ),
-            promotes_inputs=["max_airspeed", "vel_c"],
+            LoadParameters(),
+            promotes_inputs=[
+                "max_airspeed",
+                "vel_c",
+            ],
             promotes_outputs=["density_ratio", "V9", "max_mach"],
         )
 
@@ -1282,9 +1251,7 @@ class DesignLoadGroup(om.Group):
 
         self.add_subsystem(
             "factors",
-            LoadFactors(
-                aviary_options=aviary_options,
-            ),
+            LoadFactors(),
             promotes_inputs=[
                 "max_maneuver_factor",
                 "min_dive_vel",

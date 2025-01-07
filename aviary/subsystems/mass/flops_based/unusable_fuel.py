@@ -3,8 +3,7 @@ import openmdao.api as om
 from aviary.constants import GRAV_ENGLISH_LBM
 from aviary.subsystems.mass.flops_based.distributed_prop import (
     distributed_engine_count_factor, distributed_thrust_factor)
-from aviary.utils.aviary_values import AviaryValues
-from aviary.variable_info.functions import add_aviary_input, add_aviary_output
+from aviary.variable_info.functions import add_aviary_input, add_aviary_output, add_aviary_option
 from aviary.variable_info.variables import Aircraft
 
 
@@ -21,9 +20,8 @@ class TransportUnusableFuelMass(om.ExplicitComponent):
     '''
 
     def initialize(self):
-        self.options.declare(
-            'aviary_options', types=AviaryValues,
-            desc='collection of Aircraft/Mission specific options')
+        add_aviary_option(self, Aircraft.Fuel.NUM_TANKS)
+        add_aviary_option(self, Aircraft.Propulsion.TOTAL_NUM_ENGINES)
 
     def setup(self):
         add_aviary_input(
@@ -55,12 +53,11 @@ class TransportUnusableFuelMass(om.ExplicitComponent):
                 Aircraft.Fuel.TOTAL_CAPACITY, Aircraft.Fuel.DENSITY_RATIO])
 
     def compute(self, inputs, outputs, discrete_inputs=None, discrete_outputs=None):
-        aviary_options: AviaryValues = self.options['aviary_options']
-        tank_count = aviary_options.get_val(Aircraft.Fuel.NUM_TANKS)
+        tank_count = self.options[Aircraft.Fuel.NUM_TANKS]
         scaler = inputs[Aircraft.Fuel.UNUSABLE_FUEL_MASS_SCALER]
         density_ratio = inputs[Aircraft.Fuel.DENSITY_RATIO]
         total_capacity = inputs[Aircraft.Fuel.TOTAL_CAPACITY]
-        num_eng = aviary_options.get_val(Aircraft.Propulsion.TOTAL_NUM_ENGINES)
+        num_eng = self.options[Aircraft.Propulsion.TOTAL_NUM_ENGINES]
         num_eng_fact = distributed_engine_count_factor(num_eng)
         max_sls_thrust = inputs[Aircraft.Propulsion.TOTAL_SCALED_SLS_THRUST]
         thrust_factor = distributed_thrust_factor(max_sls_thrust, num_eng)
@@ -74,12 +71,11 @@ class TransportUnusableFuelMass(om.ExplicitComponent):
              total_capacity**0.28) * density_ratio) * scaler / GRAV_ENGLISH_LBM
 
     def compute_partials(self, inputs, J):
-        aviary_options: AviaryValues = self.options['aviary_options']
-        tank_count = aviary_options.get_val(Aircraft.Fuel.NUM_TANKS)
+        tank_count = self.options[Aircraft.Fuel.NUM_TANKS]
         scaler = inputs[Aircraft.Fuel.UNUSABLE_FUEL_MASS_SCALER]
         density_ratio = inputs[Aircraft.Fuel.DENSITY_RATIO]
         total_capacity = inputs[Aircraft.Fuel.TOTAL_CAPACITY]
-        num_eng = aviary_options.get_val(Aircraft.Propulsion.TOTAL_NUM_ENGINES)
+        num_eng = self.options[Aircraft.Propulsion.TOTAL_NUM_ENGINES]
         num_eng_fact = distributed_engine_count_factor(num_eng)
         max_sls_thrust = inputs[Aircraft.Propulsion.TOTAL_SCALED_SLS_THRUST]
         thrust_factor = distributed_thrust_factor(max_sls_thrust, num_eng)
@@ -119,11 +115,6 @@ class AltUnusableFuelMass(om.ExplicitComponent):
     The methodology is based on the FLOPS weight equations, modified
     to output mass instead of weight.
     '''
-
-    def initialize(self):
-        self.options.declare(
-            'aviary_options', types=AviaryValues,
-            desc='collection of Aircraft/Mission specific options')
 
     def setup(self):
         add_aviary_input(self, Aircraft.Fuel.UNUSABLE_FUEL_MASS_SCALER, val=1.0)
