@@ -2682,7 +2682,7 @@ add_meta_data(
     historical_name={"GASP": 'INGASP.FUELD', "FLOPS": None, "LEAPS1": None},
     units='lbm/galUS',
     desc='fuel density',
-    default_value=0.0,  # 6.687
+    default_value=0.0,  # changed from 6.687
 )
 
 # TODO replace with actual fuel density
@@ -2709,6 +2709,7 @@ add_meta_data(
     units='unitless',  # percent
     desc='excess fuel volume required, essentially the amount of fuel above '
     'the design point that there has to be volume to carry',
+    default_value=0.0,  # added
 )
 
 add_meta_data(
@@ -2736,6 +2737,7 @@ add_meta_data(
     historical_name={"GASP": 'INGASP.SKFS', "FLOPS": None, "LEAPS1": None},
     units="unitless",
     desc='mass trend coefficient of fuel system',
+    default_value=0.0,  # added
 )
 
 add_meta_data(
@@ -3400,7 +3402,7 @@ add_meta_data(
     historical_name={"GASP": 'INGASP.DELP', "FLOPS": None, "LEAPS1": None},
     units='psi',
     desc='fuselage pressure differential during cruise',
-    default_value=0.0,  # 7.5
+    default_value=0.0,  # changed from 7.5
 )
 
 add_meta_data(
@@ -4421,6 +4423,7 @@ add_meta_data(
     historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
     units='lbm',
     desc='total engine pod mass for all engines on aircraft',
+    default_value=0.0,  # added
 )
 
 add_meta_data(
@@ -5405,6 +5408,7 @@ add_meta_data(
     historical_name={"GASP": 'INGASP.SWFOLD', "FLOPS": None, "LEAPS1": None},
     units='ft**2',
     desc='wing area of folding part of wings',
+    default_value=0.0,  # added
 )
 
 add_meta_data(
@@ -5641,7 +5645,7 @@ add_meta_data(
     historical_name={"GASP": 'INGASP.SKWW', "FLOPS": None, "LEAPS1": None},
     units="unitless",
     desc='mass trend coefficient of the wing without high lift devices',
-    default_value=133.4,
+    default_value=0.0,  # changed from 133.4
 )
 
 add_meta_data(
