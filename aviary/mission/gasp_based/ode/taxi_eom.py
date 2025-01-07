@@ -1,8 +1,7 @@
 import numpy as np
 import openmdao.api as om
 
-from aviary.utils.aviary_values import AviaryValues
-from aviary.variable_info.functions import add_aviary_input
+from aviary.variable_info.functions import add_aviary_input, add_aviary_option
 from aviary.variable_info.variables import Dynamic, Mission
 
 
@@ -12,9 +11,7 @@ class TaxiFuelComponent(om.ExplicitComponent):
     """
 
     def initialize(self):
-        self.options.declare(
-            'aviary_options', types=AviaryValues,
-            desc='collection of Aircraft/Mission specific options')
+        add_aviary_option(self, Mission.Taxi.DURATION, units='s')
 
     def setup(self):
         self.add_input(
@@ -51,12 +48,12 @@ class TaxiFuelComponent(om.ExplicitComponent):
 
     def compute(self, inputs, outputs):
         fuelflow, takeoff_mass = inputs.values()
-        dt_taxi = self.options['aviary_options'].get_val(Mission.Taxi.DURATION, 's')
+        dt_taxi, _ = self.options[Mission.Taxi.DURATION]
         outputs["taxi_fuel_consumed"] = -fuelflow * dt_taxi
         outputs[Dynamic.Vehicle.MASS] = takeoff_mass - outputs["taxi_fuel_consumed"]
 
     def compute_partials(self, inputs, J):
-        dt_taxi = self.options['aviary_options'].get_val(Mission.Taxi.DURATION, 's')
+        dt_taxi, _ = self.options[Mission.Taxi.DURATION]
 
         J[
             "taxi_fuel_consumed",

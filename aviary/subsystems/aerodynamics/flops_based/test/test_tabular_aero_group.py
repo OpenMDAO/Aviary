@@ -21,6 +21,7 @@ from aviary.validation_cases.validation_tests import (get_flops_inputs,
                                                       get_flops_outputs,
                                                       print_case)
 from aviary.variable_info.enums import LegacyCode
+from aviary.variable_info.functions import setup_model_options
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission, Settings
 
 FLOPS = LegacyCode.FLOPS
@@ -49,6 +50,8 @@ class TabularAeroGroupFileTest(unittest.TestCase):
             promotes_inputs=['*'],
             promotes_outputs=['*'],
         )
+
+        setup_model_options(self.prob, aviary_options)
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
@@ -162,6 +165,8 @@ class TabularAeroGroupDataTest(unittest.TestCase):
             promotes_inputs=['*'],
             promotes_outputs=['*'],
         )
+
+        setup_model_options(self.prob, aviary_options)
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
@@ -282,6 +287,8 @@ class ComputedVsTabularTest(unittest.TestCase):
             promotes_inputs=['*'],
             promotes_outputs=['*'],
         )
+
+        setup_model_options(prob, flops_inputs)
 
         prob.setup(check=False, force_alloc_complex=True)
 
@@ -580,6 +587,8 @@ def _get_computed_aero_data_at_altitude(altitude, units):
 def _run_computed_aero_harness(flops_inputs, dynamic_inputs, num_nodes):
     prob = om.Problem(
         _ComputedAeroHarness(num_nodes=num_nodes, aviary_options=flops_inputs))
+
+    setup_model_options(prob, flops_inputs)
 
     prob.setup()
 
