@@ -446,7 +446,7 @@ outputs.set_val(Mission.Design.MACH, 0.779)
 outputs.set_val(Mission.Design.LIFT_COEFFICIENT, 0.583)
 
 # Create engine model
-engine = build_engine_deck(aviary_options=inputs)
+engine = build_engine_deck(options=inputs)
 # Calls to preprocess_options() in this location should be avoided because they
 # # will trigger when get_flops_inputs() is imported
 # preprocess_options(inputs, engine_models=engine)

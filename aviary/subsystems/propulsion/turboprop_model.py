@@ -13,6 +13,7 @@ from aviary.variable_info.variables import Aircraft, Dynamic, Settings
 from aviary.variable_info.enums import Verbosity
 from aviary.subsystems.propulsion.propeller.propeller_builder import PropellerBuilder
 from aviary.subsystems.propulsion.gearbox.gearbox_builder import GearboxBuilder
+from aviary.subsystems.propulsion.utils import build_engine_deck
 
 
 class TurbopropModel(EngineModel):
@@ -26,9 +27,6 @@ class TurbopropModel(EngineModel):
         Object label.
     options : AviaryValues (<empty>)
         Inputs and options related to engine model.
-    data : NamedVaues (<empty>)
-        If using an engine deck, engine performance data (optional). If provided, used
-        instead of tabular data file.
     shaft_power_model : SubsystemBuilderBase (<empty>)
         Subsystem builder for the shaft power generating component. If None, an
         EngineDeck built using provided options is used.
@@ -53,7 +51,6 @@ class TurbopropModel(EngineModel):
         self,
         name='turboprop_model',
         options: AviaryValues = None,
-        data: NamedValues = None,
         shaft_power_model: SubsystemBuilderBase = None,
         propeller_model: SubsystemBuilderBase = None,
         gearbox_model: SubsystemBuilderBase = None,
@@ -68,10 +65,9 @@ class TurbopropModel(EngineModel):
 
         # Initialize turboshaft engine deck. New required variable set w/o thrust
         if shaft_power_model is None:
-            self.shaft_power_model = EngineDeck(
-                name=name + '_engine_deck',
+            self.shaft_power_model = build_engine_deck(
+                name='engine_deck',
                 options=options,
-                data=data,
                 required_variables={
                     EngineModelVariables.ALTITUDE,
                     EngineModelVariables.MACH,
@@ -86,11 +82,11 @@ class TurbopropModel(EngineModel):
             # TODO where can we bring in include_constraints? kwargs in init is an option,
             # but that still requires the L2 interface
             self.gearbox_model = GearboxBuilder(
-                name=name + '_gearbox', include_constraints=True
+                name='gearbox', include_constraints=True
             )
 
         if propeller_model is None:
-            self.propeller_model = PropellerBuilder(name=name + '_propeller')
+            self.propeller_model = PropellerBuilder(name='propeller')
 
     # BUG if using both custom subsystems that happen to share a kwarg but
     # need different values, this breaks
@@ -308,7 +304,7 @@ class TurbopropMission(om.Group):
                      Dynamic.Vehicle.Propulsion.THRUST_MAX)],
             )
 
-            self.add_subsystem('propeller_model', propeller_group)
+            self.add_subsystem(propeller_model.name, propeller_group)
 
         else:
             if propeller_model_mission is not None:
@@ -461,10 +457,10 @@ class TurbopropMission(om.Group):
             )
             gearbox_outputs = []
 
-        if isinstance(self.options['propeller_model'], PropellerBuilder):
-            propeller_model_name = 'propeller_model'
-        else:
-            propeller_model_name = self.options['propeller_model'].name
+        # if isinstance(self.options['propeller_model'], PropellerBuilder):
+        #     propeller_model_name = 'propeller_model'
+        # else:
+        propeller_model_name = self.options['propeller_model'].name
         propeller_model = self._get_subsystem(propeller_model_name)
         propeller_input_dict = propeller_model.list_inputs(
             return_format='dict', units=True, out_stream=None, all_procs=True

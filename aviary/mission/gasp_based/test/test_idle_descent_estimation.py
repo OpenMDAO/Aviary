@@ -31,7 +31,7 @@ class IdleDescentTestCase(unittest.TestCase):
             Dynamic.Vehicle.Propulsion.THROTTLE, val=0, units="unitless"
         )
 
-        engine = build_engine_deck(aviary_options=aviary_inputs)
+        engine = build_engine_deck(options=aviary_inputs)
         preprocess_propulsion(aviary_inputs, engine)
 
         default_mission_subsystems = get_default_mission_subsystems(

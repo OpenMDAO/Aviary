@@ -121,19 +121,24 @@ def convert_geopotential_altitude(altitude):
 
 # TODO build test for this function
 # TODO upgrade to be able to turn vectorized AviaryValues into multiple engine decks
-def build_engine_deck(aviary_options: AviaryValues, meta_data=_MetaData):
+def build_engine_deck(
+    options: AviaryValues,
+    name: str = None,
+    required_variables=None,
+    meta_data=_MetaData,
+):
     """
     Creates an EngineDeck using avaliable inputs and options in aviary_options.
 
     Parameter
     ----------
-    aviary_options : AviaryValues
+    options : AviaryValues
         Options to use in creation of EngineDecks.
 
     Returns
     ----------
     engine_models : <list of EngineDecks>
-        List of EngineDecks created using provided aviary_options.
+        List of EngineDecks created using provided options.
     """
 
     # Required engine vars include one setting from Mission.Summary.
@@ -148,13 +153,13 @@ def build_engine_deck(aviary_options: AviaryValues, meta_data=_MetaData):
         try:
             units = _MetaData[var]['units']
             try:
-                aviary_val = aviary_options.get_val(var, units)
+                aviary_val = options.get_val(var, units)
                 default_value = meta_data[var]['default_value']
             # if not, use default value from _MetaData?
             except KeyError:
                 # engine_options.set_val(var, _MetaData[var]['default_value'], units)
                 continue
-            # add value from aviary_options to engine_options
+            # add value from options to engine_options
             else:
                 # special handling for numpy arrays - check if they are multidimensional,
                 # which implies multiple engine models, and only use the value intended
@@ -203,17 +208,23 @@ def build_engine_deck(aviary_options: AviaryValues, meta_data=_MetaData):
         except (KeyError, TypeError):
             continue
 
-    # name engine deck after filename
+    # Build EngineDeck object
+    # gather arguments for building EngineDeck
+    kwargs = {'options': engine_options}
+
+    # name engine deck after filename if name is not provided
+    if name is None:
+        kwargs['name'] = Path(engine_options.get_val(Aircraft.Engine.DATA_FILE)).stem
+    else:
+        kwargs['name'] = name
+
+    if required_variables is not None:
+        kwargs['required_variables'] = required_variables
+
     # local import to avoid circular import
     from aviary.subsystems.propulsion.engine_deck import EngineDeck
 
-    # name engine deck after filename
-    return [
-        EngineDeck(
-            Path(engine_options.get_val(Aircraft.Engine.DATA_FILE)).stem,
-            options=engine_options,
-        )
-    ]
+    return EngineDeck(**kwargs)
 
 
 # TODO combine with aviary/utils/data_interpolator_builder.py build_data_interpolator
