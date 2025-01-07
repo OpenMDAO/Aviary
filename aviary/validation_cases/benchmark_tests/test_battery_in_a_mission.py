@@ -56,8 +56,7 @@ class TestSubsystemsMission(unittest.TestCase):
         prob = av.AviaryProblem()
 
         prob.load_inputs(
-            "models/test_aircraft/aircraft_for_bench_FwFm_with_electric.csv", phase_info
-        )
+            "models/test_aircraft/aircraft_for_bench_FwFm_with_electric.csv", phase_info)
 
         # Preprocess inputs
         prob.check_and_preprocess_inputs()
@@ -84,34 +83,54 @@ class TestSubsystemsMission(unittest.TestCase):
         prob.set_val(av.Aircraft.Battery.PACK_ENERGY_DENSITY, 550, units='kJ/kg')
         prob.set_val(av.Aircraft.Battery.PACK_MASS, 1000, units='lbm')
         prob.set_val(av.Aircraft.Battery.ADDITIONAL_MASS, 115, units='lbm')
-        prob.set_val(av.Aircraft.Battery.EFFICIENCY, 0.95, units='unitless')
 
         prob.run_aviary_problem()
 
         electric_energy_used = prob.get_val(
             'traj.cruise.timeseries.'
-            f'{av.Dynamic.Mission.CUMULATIVE_ELECTRIC_ENERGY_USED}',
+            f'{av.Dynamic.Vehicle.CUMULATIVE_ELECTRIC_ENERGY_USED}',
             units='kW*h',
         )
-        fuel_burned = prob.get_val(av.Mission.Summary.FUEL_BURNED, units='lbm')
         soc = prob.get_val(
-            'traj.cruise.rhs_all.battery.battery_state_of_charge', units='unitless'
+            'traj.cruise.timeseries.'
+            f'{av.Dynamic.Vehicle.BATTERY_STATE_OF_CHARGE}',
         )
+        fuel_burned = prob.get_val(av.Mission.Summary.FUEL_BURNED, units='lbm')
 
         # Check outputs
         # indirectly check mission trajectory by checking total fuel/electric split
-        assert_near_equal(electric_energy_used[-1], 38.60538132, 1.e-7)
-        assert_near_equal(fuel_burned, 676.87235486, 1.e-7)
+        assert_near_equal(electric_energy_used[-1], 38.60747069, 1.e-7)
+        assert_near_equal(fuel_burned, 676.93670291, 1.e-7)
         # check battery state-of-charge over mission
+
         assert_near_equal(
-            soc,
-            [0.99999578, 0.97551324, 0.94173584, 0.93104625, 0.93104625,
-             0.8810605, 0.81210498, 0.79028433, 0.79028433, 0.73088701,
-             0.64895148, 0.62302415, 0.62302415, 0.57309323, 0.50421334,
-             0.48241661, 0.48241661, 0.45797918, 0.42426402, 0.41359413],
+            soc.ravel(),
+            [0.9999957806265609,
+             0.975511918724275,
+             0.9417326925421843,
+             0.931042529806735,
+             0.931042529806735,
+             0.8810540781831623,
+             0.8120948314123136,
+             0.7902729948636958,
+             0.7902729948636958,
+             0.7308724676601358,
+             0.6489324990486358,
+             0.6230037623262401,
+             0.6230037623262401,
+             0.5730701397031007,
+             0.5041865153698425,
+             0.4823886057245942,
+             0.4823886057245942,
+             0.4579498542268948,
+             0.4242328589510152,
+             0.4135623891269744],
             1e-7,
         )
 
 
 if __name__ == "__main__":
-    unittest.main()
+    # unittest.main()
+    test = TestSubsystemsMission()
+    test.setUp()
+    test.test_subsystems_in_a_mission()
