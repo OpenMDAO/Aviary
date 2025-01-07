@@ -7,7 +7,6 @@ from aviary.subsystems.mass.gasp_based.fixed import FixedMassGroup
 from aviary.subsystems.mass.gasp_based.fuel import FuelMassGroup
 from aviary.subsystems.mass.gasp_based.wing import WingMassGroup
 from aviary.utils.aviary_values import AviaryValues
-from aviary.variable_info.variables import Aircraft
 
 
 class MassPremission(om.Group):
