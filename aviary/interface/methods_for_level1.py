@@ -144,7 +144,7 @@ def run_level_1(
     prob = run_aviary(input_deck, phase_info, **kwargs)
 
     # update n2 diagram after run.
-    outdir = Path(prob.get_reports_dir())
+    outdir = Path(prob.get_reports_dir(force=True))
     outfile = os.path.join(outdir, "n2.html")
     om.n2(
         prob,
@@ -156,7 +156,6 @@ def run_level_1(
 
 
 def _setup_level1_parser(parser):
-    def_outdir = os.path.join(os.getcwd(), "output")
     parser.add_argument(
         'input_deck',
         metavar='indeck',
