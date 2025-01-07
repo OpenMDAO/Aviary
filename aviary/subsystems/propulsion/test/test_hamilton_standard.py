@@ -7,7 +7,7 @@ from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 from aviary.subsystems.propulsion.propeller.hamilton_standard import (
     HamiltonStandard, PreHamiltonStandard, PostHamiltonStandard,
 )
-from aviary.variable_info.variables import Aircraft, Dynamic
+from aviary.variable_info.functions import setup_model_options
 from aviary.variable_info.options import get_option_defaults
 from aviary.variable_info.variables import Aircraft, Dynamic
 from aviary.constants import RHO_SEA_LEVEL_ENGLISH
@@ -98,10 +98,12 @@ class HamiltonStandardTest(unittest.TestCase):
 
         prob.model.add_subsystem(
             'hs',
-            HamiltonStandard(num_nodes=num_nodes, aviary_options=options),
+            HamiltonStandard(num_nodes=num_nodes),
             promotes_inputs=['*'],
             promotes_outputs=["*"],
         )
+
+        setup_model_options(prob, options)
 
         prob.setup()
         self.prob = prob

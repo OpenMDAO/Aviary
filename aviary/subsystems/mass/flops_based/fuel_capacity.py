@@ -1,6 +1,5 @@
 import openmdao.api as om
 
-from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.functions import add_aviary_input, add_aviary_output
 from aviary.variable_info.variables import Aircraft
 
@@ -10,17 +9,11 @@ class FuelCapacityGroup(om.Group):
     Compute the maximum fuel that can be carried.
     """
 
-    def initialize(self):
-        self.options.declare(
-            'aviary_options', types=AviaryValues,
-            desc='collection of Aircraft/Mission specific options')
-
     def setup(self):
-        aviary_options = self.options['aviary_options']
 
         self.add_subsystem(
             'wing_fuel_capacity',
-            WingFuelCapacity(aviary_options=aviary_options),
+            WingFuelCapacity(),
             promotes_inputs=['*'], promotes_outputs=['*'])
 
         self.add_subsystem(
@@ -125,11 +118,6 @@ class WingFuelCapacity(om.ExplicitComponent):
     """
     Compute the maximum fuel that can be carried in the wing's enclosed space.
     """
-
-    def initialize(self):
-        self.options.declare(
-            'aviary_options', types=AviaryValues,
-            desc='collection of Aircraft/Mission specific options')
 
     def setup(self):
         add_aviary_input(self, Aircraft.Fuel.DENSITY_RATIO, 1.0)

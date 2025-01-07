@@ -7,6 +7,7 @@ from openmdao.core.system import System
 
 from aviary.subsystems.subsystem_builder_base import SubsystemBuilderBase
 from aviary.utils.aviary_values import AviaryValues
+from aviary.variable_info.functions import setup_model_options
 
 
 def skipIfMissingDependencies(builder):
@@ -249,6 +250,9 @@ class TestSubsystemBuilderBase(unittest.TestCase):
         group = om.Group()
         group.add_subsystem('mission', mission_sys, promotes=['*'])
         prob = om.Problem(group)
+
+        setup_model_options(prob, self.aviary_values)
+
         prob.setup()
         prob.final_setup()
 
@@ -273,6 +277,9 @@ class TestSubsystemBuilderBase(unittest.TestCase):
         group = om.Group()
         group.add_subsystem('pre_mission_sys', pre_mission_sys)
         prob = om.Problem(group)
+
+        setup_model_options(prob, self.aviary_values)
+
         prob.setup()
         prob.final_setup()
 
@@ -305,6 +312,9 @@ class TestSubsystemBuilderBase(unittest.TestCase):
         group = om.Group()
         group.add_subsystem('mission', mission_sys, promotes=['*'])
         prob = om.Problem(group)
+
+        setup_model_options(prob, self.aviary_values)
+
         prob.setup()
         prob.final_setup()
 
@@ -330,6 +340,9 @@ class TestSubsystemBuilderBase(unittest.TestCase):
         group = om.Group()
         group.add_subsystem('mission', mission_sys, promotes=['*'])
         prob = om.Problem(group)
+
+        setup_model_options(prob, self.aviary_values)
+
         prob.setup()
         prob.final_setup()
 
@@ -359,6 +372,9 @@ class TestSubsystemBuilderBase(unittest.TestCase):
         group = om.Group()
         group.add_subsystem('pre_mission', pre_mission_sys, promotes=['*'])
         prob = om.Problem(group)
+
+        setup_model_options(prob, self.aviary_values)
+
         prob.setup()
         prob.final_setup()
 
@@ -385,6 +401,9 @@ class TestSubsystemBuilderBase(unittest.TestCase):
         group = om.Group()
         group.add_subsystem('mission', mission_sys, promotes=['*'])
         prob = om.Problem(group)
+
+        setup_model_options(prob, self.aviary_values)
+
         prob.setup()
         prob.final_setup()
 
