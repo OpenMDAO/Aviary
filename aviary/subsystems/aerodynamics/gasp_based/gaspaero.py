@@ -10,13 +10,11 @@ from aviary.subsystems.aerodynamics.gasp_based.common import (
     CLFromLift,
     TanhRampComp,
 )
-from aviary.utils.aviary_values import AviaryValues
 from aviary.utils.functions import sigmoidX
 from aviary.variable_info.enums import Verbosity
-from aviary.variable_info.functions import add_aviary_input
+from aviary.variable_info.functions import add_aviary_input, add_aviary_option
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission, Settings
-from aviary.utils.aviary_values import AviaryValues
-from aviary.subsystems.aerodynamics.gasp_based.interference import WingFuselageInterferenceMission
+
 
 
 #
@@ -388,17 +386,12 @@ class AeroGeom(om.ExplicitComponent):
 
     def initialize(self):
         self.options.declare("num_nodes", default=1, types=int)
-        self.options.declare(
-            'aviary_options',
-            types=AviaryValues,
-            desc='collection of Aircraft/Mission specific options',
-        )
+        add_aviary_option(self, Aircraft.Engine.NUM_ENGINES)
+        add_aviary_option(self, Aircraft.Wing.HAS_STRUT)
 
     def setup(self):
         nn = self.options["num_nodes"]
-        num_engine_type = len(
-            self.options['aviary_options'].get_val(Aircraft.Engine.NUM_ENGINES)
-        )
+        num_engine_type = len(self.options[Aircraft.Engine.NUM_ENGINES])
 
         self.add_input(
             Dynamic.Atmosphere.MACH,
@@ -713,9 +706,7 @@ class AeroGeom(om.ExplicitComponent):
         fnre[good_mask] = (np.log10(reli[good_mask] * nac_len) / 7) ** -2.6
         fvtre[good_mask] = (np.log10(reli[good_mask] * vtail_chord) / 7) ** -2.6
         fhtre[good_mask] = (np.log10(reli[good_mask] * htail_chord) / 7) ** -2.6
-        include_strut = self.options["aviary_options"].get_val(
-            Aircraft.Wing.HAS_STRUT, units='unitless'
-        )
+        include_strut = self.options[Aircraft.Wing.HAS_STRUT]
         if include_strut:
             fstrtre = (np.log10(reli[good_mask] * strut_chord) / 7) ** -2.6
 
@@ -792,26 +783,15 @@ class AeroSetup(om.Group):
     def initialize(self):
         self.options.declare("num_nodes", default=1, types=int)
         self.options.declare(
-            'aviary_options',
-            types=AviaryValues,
-            desc='collection of Aircraft/Mission specific options',
-        )
-        self.options.declare(
             "input_atmos",
             default=False,
             types=bool,
             desc="Directly input speed of sound and kinematic viscosity instead of "
             "computing them with an atmospherics component. For testing.",
         )
-        self.options.declare(
-            'aviary_options',
-            types=AviaryValues,
-            desc='collection of Aircraft/Mission specific options',
-        )
 
     def setup(self):
         nn = self.options["num_nodes"]
-        aviary_options = self.options['aviary_options']
 
         self.add_subsystem("ratios", WingTailRatios(), promotes=["*"])
         self.add_subsystem("xlifts", Xlifts(num_nodes=nn), promotes=["*"])
@@ -860,8 +840,8 @@ class AeroSetup(om.Group):
 
         self.add_subsystem(
             "geom",
-            AeroGeom(num_nodes=nn, aviary_options=aviary_options),
-            promotes=["*"],
+            AeroGeom(num_nodes=nn),
+            promotes=["*"]
         )
 
 
@@ -1396,11 +1376,6 @@ class CruiseAero(om.Group):
 
     def initialize(self):
         self.options.declare("num_nodes", default=1, types=int)
-        self.options.declare(
-            'aviary_options',
-            types=AviaryValues,
-            desc='collection of Aircraft/Mission specific options',
-        )
 
         self.options.declare(
             "output_alpha",
@@ -1415,20 +1390,13 @@ class CruiseAero(om.Group):
             desc="Directly input speed of sound and kinematic viscosity instead of "
             "computing them with an atmospherics component. For testing.",
         )
-        self.options.declare(
-            'aviary_options',
-            types=AviaryValues,
-            desc='collection of Aircraft/Mission specific options',
-        )
 
     def setup(self):
         nn = self.options["num_nodes"]
-        aviary_options = self.options["aviary_options"]
         self.add_subsystem(
             "aero_setup",
             AeroSetup(
                 num_nodes=nn,
-                aviary_options=aviary_options,
                 input_atmos=self.options["input_atmos"],
             ),
             promotes=["*"],
@@ -1450,11 +1418,6 @@ class LowSpeedAero(om.Group):
 
     def initialize(self):
         self.options.declare("num_nodes", default=1, types=int)
-        self.options.declare(
-            'aviary_options',
-            types=AviaryValues,
-            desc='collection of Aircraft/Mission specific options',
-        )
         self.options.declare(
             "retract_gear",
             default=True,
@@ -1483,21 +1446,14 @@ class LowSpeedAero(om.Group):
             desc="Directly input speed of sound and kinematic viscosity instead of "
             "computing them with an atmospherics component. For testing.",
         )
-        self.options.declare(
-            'aviary_options',
-            types=AviaryValues,
-            desc='collection of Aircraft/Mission specific options',
-        )
 
     def setup(self):
         nn = self.options["num_nodes"]
         output_alpha = self.options["output_alpha"]
-        aviary_options = self.options["aviary_options"]
         self.add_subsystem(
             "aero_setup",
             AeroSetup(
                 num_nodes=nn,
-                aviary_options=aviary_options,
                 input_atmos=self.options["input_atmos"],
             ),
             promotes=["*"],

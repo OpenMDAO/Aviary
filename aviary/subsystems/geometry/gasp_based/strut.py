@@ -3,7 +3,6 @@ import warnings
 import numpy as np
 import openmdao.api as om
 
-from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.functions import add_aviary_input, add_aviary_output
 from aviary.variable_info.variables import Aircraft
 
@@ -12,12 +11,6 @@ class StrutGeom(om.ExplicitComponent):
     """
     Computation of strut length, strut area, and strut chord for GASP-based geometry.
     """
-
-    def initialize(self):
-        self.options.declare(
-            'aviary_options', types=AviaryValues,
-            desc='collection of Aircraft/Mission specific options'
-        )
 
     def setup(self):
 

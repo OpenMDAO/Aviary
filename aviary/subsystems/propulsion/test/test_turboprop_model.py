@@ -14,6 +14,7 @@ from aviary.subsystems.propulsion.propeller.propeller_performance import (
 )
 from aviary.utils.preprocessors import preprocess_propulsion
 from aviary.utils.functions import get_path
+from aviary.variable_info.functions import setup_model_options
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 from aviary.variable_info.enums import SpeedType
 from aviary.variable_info.options import get_option_defaults
@@ -97,6 +98,8 @@ class TurbopropMissionTest(unittest.TestCase):
             promotes_inputs=['*'],
             promotes_outputs=['*'],
         )
+
+        setup_model_options(self.prob, options)
 
         self.prob.setup(force_alloc_complex=False)
         self.prob.set_val(Aircraft.Engine.SCALE_FACTOR, 1, units='unitless')
