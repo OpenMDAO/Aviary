@@ -45,6 +45,9 @@ class WingMassSolveTestCase(unittest.TestCase):
         self.prob.model.set_input_defaults(
             "half_sweep", val=0.3947081519145335, units="rad"
         )
+        self.prob.model.set_input_defaults(
+            Aircraft.Strut.MASS_COEFFICIENT, val=0.000000000001, units="unitless"
+        )
 
         newton = self.prob.model.nonlinear_solver = om.NewtonSolver()
         newton.options["atol"] = 1e-9
@@ -109,6 +112,9 @@ class WingMassSolveTestCase2(unittest.TestCase):
             Aircraft.Wing.THICKNESS_TO_CHORD_ROOT, val=0.15, units="unitless")
         prob.model.set_input_defaults(
             "half_sweep", val=0.3947, units="rad")
+        self.prob.model.set_input_defaults(
+            Aircraft.Strut.MASS_COEFFICIENT, val=0.000000000001, units="unitless"
+        )
 
         newton = prob.model.nonlinear_solver = om.NewtonSolver()
         newton.options["atol"] = 1e-9

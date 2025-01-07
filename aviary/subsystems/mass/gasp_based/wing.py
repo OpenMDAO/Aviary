@@ -23,41 +23,24 @@ class WingMassSolve(om.ImplicitComponent):
         num_engine_type = len(self.options['aviary_options'].get_val(
             Aircraft.Engine.NUM_ENGINES))
 
-        add_aviary_input(self, Mission.Design.GROSS_MASS, val=175400)
-        add_aviary_input(self, Aircraft.Wing.HIGH_LIFT_MASS, val=3645)
-        self.add_input(
-            "c_strut_braced",
-            val=1.00000001,
-            units="unitless",
-            desc="SKSTR: reduction in bending moment factor for strut braced wing",
-        )
-        add_aviary_input(self, Aircraft.Wing.ULTIMATE_LOAD_FACTOR, val=3.75)
-        add_aviary_input(self, Aircraft.Wing.MASS_COEFFICIENT, val=102.5)
-        add_aviary_input(self, Aircraft.Wing.MATERIAL_FACTOR, val=1.22130632)
-        add_aviary_input(self, Aircraft.Engine.POSITION_FACTOR,
-                         val=np.full(num_engine_type, 0.98))
-        self.add_input(
-            "c_gear_loc",
-            val=1.000000001,
-            units="unitless",
-            desc="SKGEAR: landing gear location factor",
-        )
+        add_aviary_input(self, Mission.Design.GROSS_MASS)
+        add_aviary_input(self, Aircraft.Wing.HIGH_LIFT_MASS)
+        self.add_input("c_strut_braced", val=1.00000001, units="unitless",
+                       desc="SKSTR: reduction in bending moment factor for strut braced wing")
+        add_aviary_input(self, Aircraft.Wing.ULTIMATE_LOAD_FACTOR)
+        add_aviary_input(self, Aircraft.Wing.MASS_COEFFICIENT)
+        add_aviary_input(self, Aircraft.Wing.MATERIAL_FACTOR)
+        add_aviary_input(self, Aircraft.Engine.POSITION_FACTOR, shape=num_engine_type)
+        self.add_input("c_gear_loc", val=1.000000001, units="unitless",
+                       desc="SKGEAR: landing gear location factor")
         add_aviary_input(self, Aircraft.Wing.SPAN)
         add_aviary_input(self, Aircraft.Wing.TAPER_RATIO)
         add_aviary_input(self, Aircraft.Wing.THICKNESS_TO_CHORD_ROOT)
-        self.add_input(
-            "half_sweep",
-            val=0.3947081519,
-            units="rad",
-            desc="SWC2: wing half-chord sweep angle",
-        )
+        self.add_input("half_sweep", val=0.3947081519, units="rad",
+                       desc="SWC2: wing half-chord sweep angle")
 
-        self.add_output(
-            "isolated_wing_mass",
-            val=17670,
-            units="lbm",
-            desc="WW: wing mass including high lift devices (but excluding struts and fold effects)",
-        )
+        self.add_output("isolated_wing_mass", val=17670, units="lbm",
+                        desc="WW: wing mass including high lift devices (but excluding struts and fold effects)")
 
         self.declare_partials("isolated_wing_mass", "*")
 
@@ -306,25 +289,21 @@ class WingMassTotal(om.ExplicitComponent):
 
     def setup(self):
 
-        self.add_input(
-            "isolated_wing_mass",
-            val=1500,
-            units="lbm",
-            desc="WW: wing mass including high lift devices (but excluding struts and fold effects)",
-        )
+        self.add_input("isolated_wing_mass", val=1500, units="lbm",
+                       desc="WW: wing mass including high lift devices (but excluding struts and fold effects)")
 
         if self.options["aviary_options"].get_val(Aircraft.Wing.HAS_STRUT, units='unitless'):
-            add_aviary_input(self, Aircraft.Strut.MASS_COEFFICIENT, val=0.000000000001)
+            add_aviary_input(self, Aircraft.Strut.MASS_COEFFICIENT)
 
         if self.options["aviary_options"].get_val(Aircraft.Wing.HAS_FOLD, units='unitless') == True:
 
             add_aviary_input(self, Aircraft.Wing.AREA)
-            add_aviary_input(self, Aircraft.Wing.FOLDING_AREA, val=50)
-            add_aviary_input(self, Aircraft.Wing.FOLD_MASS_COEFFICIENT, val=0.2)
+            add_aviary_input(self, Aircraft.Wing.FOLDING_AREA)
+            add_aviary_input(self, Aircraft.Wing.FOLD_MASS_COEFFICIENT)
 
-        add_aviary_output(self, Aircraft.Wing.MASS, val=0)
-        add_aviary_output(self, Aircraft.Strut.MASS, val=0)
-        add_aviary_output(self, Aircraft.Wing.FOLD_MASS, val=0)
+        add_aviary_output(self, Aircraft.Wing.MASS)
+        add_aviary_output(self, Aircraft.Strut.MASS)
+        add_aviary_output(self, Aircraft.Wing.FOLD_MASS)
 
         self.declare_partials(Aircraft.Wing.MASS, "*")
         if self.options["aviary_options"].get_val(Aircraft.Wing.HAS_STRUT, units='unitless'):

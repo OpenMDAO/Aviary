@@ -109,6 +109,6 @@ class MassPremission(om.Group):
             ],
         )
 
-        self.set_input_defaults(Aircraft.Fuselage.LENGTH, 200, 'ft')
-        self.set_input_defaults(Aircraft.HorizontalTail.AREA, 20, 'ft**2')
-        self.set_input_defaults(Aircraft.VerticalTail.AREA, 20, 'ft**2')
+        #self.set_input_defaults(Aircraft.Fuselage.LENGTH, 200, 'ft')
+        #self.set_input_defaults(Aircraft.HorizontalTail.AREA, 20, 'ft**2')
+        #self.set_input_defaults(Aircraft.VerticalTail.AREA, 20, 'ft**2')
