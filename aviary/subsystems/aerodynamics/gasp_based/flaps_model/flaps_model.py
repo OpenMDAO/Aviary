@@ -12,9 +12,9 @@ from aviary.subsystems.aerodynamics.gasp_based.flaps_model.L_and_D_increments im
 from aviary.subsystems.aerodynamics.gasp_based.flaps_model.meta_model import (
     MetaModelGroup,
 )
-from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.enums import FlapType
 from aviary.variable_info.variables import Aircraft, Dynamic
+from aviary.variable_info.functions import add_aviary_option
 
 
 class FlapsGroup(om.Group):
@@ -25,11 +25,7 @@ class FlapsGroup(om.Group):
     """
 
     def initialize(self):
-        self.options.declare(
-            'aviary_options',
-            types=AviaryValues,
-            desc='collection of Aircraft/Mission specific options',
-        )
+        add_aviary_option(self, Aircraft.Wing.FLAP_TYPE)
 
         # optimum trailing edge flap deflection angle defaults (ADELTO table in GASP)
         self.optimum_flap_defls = {
@@ -43,8 +39,6 @@ class FlapsGroup(om.Group):
         }
 
     def setup(self):
-
-        aviary_options = self.options['aviary_options']
 
         self.add_subsystem(
             "BasicFlapsCalculations",
@@ -87,7 +81,7 @@ class FlapsGroup(om.Group):
 
         self.add_subsystem(
             "LookupTables",
-            MetaModelGroup(aviary_options=aviary_options),
+            MetaModelGroup(),
             promotes_inputs=[
                 "flap_defl_ratio",
                 "flap_defl",
@@ -151,10 +145,6 @@ class FlapsGroup(om.Group):
         # set default trailing edge deflection angle per GASP
         self.set_input_defaults(
             Aircraft.Wing.OPTIMUM_FLAP_DEFLECTION,
-            self.optimum_flap_defls[
-                self.options["aviary_options"].get_val(
-                    Aircraft.Wing.FLAP_TYPE, units='unitless'
-                )
-            ],
+            self.optimum_flap_defls[self.options[Aircraft.Wing.FLAP_TYPE]],
             units="deg",
         )

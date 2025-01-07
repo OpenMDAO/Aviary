@@ -1,9 +1,8 @@
 import numpy as np
 import openmdao.api as om
 
-from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.enums import Verbosity
-from aviary.variable_info.functions import add_aviary_input, add_aviary_output
+from aviary.variable_info.functions import add_aviary_input, add_aviary_output, add_aviary_option
 from aviary.variable_info.variables import Aircraft, Settings
 
 
@@ -25,11 +24,13 @@ class FuselageParameters(om.ExplicitComponent):
     """
 
     def initialize(self):
-
-        self.options.declare(
-            'aviary_options', types=AviaryValues,
-            desc='collection of Aircraft/Mission specific options'
-        )
+        add_aviary_option(self, Aircraft.CrewPayload.Design.NUM_PASSENGERS)
+        add_aviary_option(self, Aircraft.Fuselage.AISLE_WIDTH, units='inch')
+        add_aviary_option(self, Aircraft.Fuselage.NUM_AISLES)
+        add_aviary_option(self, Aircraft.Fuselage.NUM_SEATS_ABREAST)
+        add_aviary_option(self, Aircraft.Fuselage.SEAT_PITCH, units='inch')
+        add_aviary_option(self, Aircraft.Fuselage.SEAT_WIDTH, units='inch')
+        add_aviary_option(self, Settings.VERBOSITY)
 
     def setup(self):
 
@@ -55,14 +56,15 @@ class FuselageParameters(om.ExplicitComponent):
         )
 
     def compute(self, inputs, outputs):
-        verbosity = self.options['aviary_options'].get_val(Settings.VERBOSITY)
-        aviary_options: AviaryValues = self.options['aviary_options']
-        seats_abreast = aviary_options.get_val(Aircraft.Fuselage.NUM_SEATS_ABREAST)
-        seat_width = aviary_options.get_val(Aircraft.Fuselage.SEAT_WIDTH, units='inch')
-        num_aisle = aviary_options.get_val(Aircraft.Fuselage.NUM_AISLES)
-        aisle_width = aviary_options.get_val(Aircraft.Fuselage.AISLE_WIDTH, units='inch')
-        PAX = aviary_options.get_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS)
-        seat_pitch = aviary_options.get_val(Aircraft.Fuselage.SEAT_PITCH, units='inch')
+        options = self.options
+        verbosity = options[Settings.VERBOSITY]
+        seats_abreast = options[Aircraft.Fuselage.NUM_SEATS_ABREAST]
+        seat_width, _ = options[Aircraft.Fuselage.SEAT_WIDTH]
+        num_aisle = options[Aircraft.Fuselage.NUM_AISLES]
+        aisle_width, _ = options[Aircraft.Fuselage.AISLE_WIDTH]
+        PAX = options[Aircraft.CrewPayload.Design.NUM_PASSENGERS]
+        seat_pitch, _ = options[Aircraft.Fuselage.SEAT_PITCH]
+
         delta_diameter = inputs[Aircraft.Fuselage.DELTA_DIAMETER]
 
         cabin_width = seats_abreast * seat_width + num_aisle * aisle_width + 12
@@ -94,8 +96,8 @@ class FuselageParameters(om.ExplicitComponent):
             nose_height_b*sigX(100*(seats_abreast-1.5))
 
     def compute_partials(self, inputs, J):
-        aviary_options: AviaryValues = self.options['aviary_options']
-        seats_abreast = aviary_options.get_val(Aircraft.Fuselage.NUM_SEATS_ABREAST)
+        options = self.options
+        seats_abreast = options[Aircraft.Fuselage.NUM_SEATS_ABREAST]
 
         J["nose_height", Aircraft.Fuselage.DELTA_DIAMETER] = sigX(
             100*(seats_abreast-1.5))*(-1)
@@ -106,15 +108,8 @@ class FuselageParameters(om.ExplicitComponent):
 class FuselageSize(om.ExplicitComponent):
     """
     Computation of fuselage length, fuselage wetted area, and cabin length
-    for the tail boom fuselage. 
+    for the tail boom fuselage.
     """
-
-    def initialize(self):
-
-        self.options.declare(
-            'aviary_options', types=AviaryValues,
-            desc='collection of Aircraft/Mission specific options'
-        )
 
     def setup(self):
 
@@ -254,32 +249,21 @@ class FuselageGroup(om.Group):
     Group to pull together FuselageParameters and FuselageSize.
     """
 
-    def initialize(self):
-
-        self.options.declare(
-            'aviary_options', types=AviaryValues,
-            desc='collection of Aircraft/Mission specific options'
-        )
-
     def setup(self):
-
-        aviary_options = self.options['aviary_options']
 
         # outputs from parameters that are used in size but not outside of this group
         connected_input_outputs = ["cabin_height", "cabin_len", "nose_height"]
 
         parameters = self.add_subsystem(
             "parameters",
-            FuselageParameters(
-                aviary_options=aviary_options,
-            ),
+            FuselageParameters(),
             promotes_inputs=["aircraft:*"],
             promotes_outputs=["aircraft:*"] + connected_input_outputs,
         )
 
         size = self.add_subsystem(
             "size",
-            FuselageSize(aviary_options=aviary_options,),
+            FuselageSize(),
             promotes_inputs=connected_input_outputs + ["aircraft:*"],
             promotes_outputs=["aircraft:*"],
         )
