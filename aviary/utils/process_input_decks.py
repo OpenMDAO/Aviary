@@ -451,19 +451,21 @@ def initialization_guessing(
         num_engines = aircraft_values.get_val(Aircraft.Engine.NUM_ENGINES)
 
         # This happens before preprocessing, and we end up with the default when unspecified.
-        if isinstance(num_engines, list):
-            num_engines = num_engines[0]
+        # num_engines = np.array(num_engines)
 
         if aircraft_values.get_val(Aircraft.Engine.HAS_PROPELLERS):
             # For large turboprops, 1 pound of thrust per hp at takeoff seems to be close enough
-            total_thrust = aircraft_values.get_val(
-                Aircraft.Engine.Gearbox.SHAFT_POWER_DESIGN, 'hp'
-            ) * aircraft_values.get_val(Aircraft.Engine.NUM_ENGINES)
+            total_thrust = np.dot(
+                aircraft_values.get_val(
+                    Aircraft.Engine.Gearbox.SHAFT_POWER_DESIGN, 'hp'
+                ),
+                aircraft_values.get_val(Aircraft.Engine.NUM_ENGINES),
+            )
         else:
-            total_thrust = (
+            total_thrust = np.dot(
                 aircraft_values.get_val(Aircraft.Engine.REFERENCE_SLS_THRUST, 'lbf')
-                * aircraft_values.get_val(Aircraft.Engine.SCALE_FACTOR)
-                * aircraft_values.get_val(Aircraft.Engine.NUM_ENGINES)
+                * aircraft_values.get_val(Aircraft.Engine.SCALE_FACTOR),
+                aircraft_values.get_val(Aircraft.Engine.NUM_ENGINES),
             )
 
     except KeyError:
