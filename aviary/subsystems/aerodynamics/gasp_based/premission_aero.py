@@ -8,7 +8,6 @@ import openmdao.api as om
 from aviary.subsystems.atmosphere.atmosphere import Atmosphere
 
 from aviary.subsystems.aerodynamics.gasp_based.flaps_model import FlapsGroup
-from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 from aviary.variable_info.enums import SpeedType
 from aviary.subsystems.aerodynamics.gasp_based.gasp_aero_coeffs import AeroFormfactors
@@ -21,16 +20,7 @@ from aviary.subsystems.aerodynamics.gasp_based.interference import WingFuselageI
 class PreMissionAero(om.Group):
     """Takeoff and landing flaps modeling"""
 
-    def initialize(self):
-        self.options.declare(
-            'aviary_options',
-            types=AviaryValues,
-            desc='collection of Aircraft/Mission specific options',
-        )
-
     def setup(self):
-
-        aviary_options = self.options['aviary_options']
 
         self.add_subsystem("wing_fus_interference_premission",
                            WingFuselageInterferencePremission(),
@@ -70,7 +60,7 @@ class PreMissionAero(om.Group):
 
         self.add_subsystem(
             "flaps_up",
-            FlapsGroup(aviary_options=aviary_options),
+            FlapsGroup(),
             promotes_inputs=[
                 "*",
                 ("flap_defl", "flap_defl_up"),
@@ -80,7 +70,7 @@ class PreMissionAero(om.Group):
         )
         self.add_subsystem(
             "flaps_takeoff",
-            FlapsGroup(aviary_options=aviary_options),
+            FlapsGroup(),
             # slat deflection same for takeoff and landing
             promotes_inputs=[
                 "*",
@@ -101,7 +91,7 @@ class PreMissionAero(om.Group):
         )
         self.add_subsystem(
             "flaps_landing",
-            FlapsGroup(aviary_options=aviary_options),
+            FlapsGroup(),
             promotes_inputs=[
                 "*",
                 ("flap_defl", Aircraft.Wing.FLAP_DEFLECTION_LANDING),
