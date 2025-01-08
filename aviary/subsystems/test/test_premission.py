@@ -16,7 +16,9 @@ from aviary.variable_info.variables import Aircraft, Mission
 from aviary.variable_info.variable_meta_data import _MetaData as BaseMetaData
 from aviary.models.large_single_aisle_1.V3_bug_fixed_IO import V3_bug_fixed_options, V3_bug_fixed_non_metadata
 from aviary.utils.functions import set_aviary_initial_values
+from aviary.utils.preprocessors import preprocess_options
 from aviary.variable_info.enums import LegacyCode
+from aviary.variable_info.functions import setup_model_options
 from aviary.subsystems.propulsion.utils import build_engine_deck
 
 
@@ -103,6 +105,8 @@ class PreMissionTestCase(unittest.TestCase):
             self.prob.model.set_input_defaults(key, val=val, units=units)
 
         self.prob.model.set_input_defaults(Aircraft.Wing.SPAN, val=1.0, units='ft')
+
+        setup_model_options(self.prob, input_options)
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
@@ -274,6 +278,7 @@ class PreMissionTestCase(unittest.TestCase):
 
         aviary_inputs.delete(Aircraft.Fuselage.WETTED_AREA)
         engine = build_engine_deck(aviary_inputs)
+        preprocess_options(aviary_inputs, engine_models=engine)
 
         prob = om.Problem()
         model = prob.model
@@ -309,6 +314,8 @@ class PreMissionTestCase(unittest.TestCase):
 
         for (key, (val, units)) in get_items(V3_bug_fixed_non_metadata):
             prob.model.set_input_defaults(key, val=val, units=units)
+
+        setup_model_options(prob, aviary_inputs)
 
         prob.setup()
 

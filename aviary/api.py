@@ -23,7 +23,7 @@ from aviary.variable_info.variables import Aircraft, Mission, Dynamic, Settings
 from aviary.variable_info.options import get_option_defaults, is_option
 from aviary.utils.develop_metadata import add_meta_data, update_meta_data
 from aviary.variable_info.variable_meta_data import CoreMetaData
-from aviary.variable_info.functions import add_aviary_input, add_aviary_output, get_units, override_aviary_vars, setup_trajectory_params
+from aviary.variable_info.functions import add_aviary_input, add_aviary_output, get_units, override_aviary_vars, setup_trajectory_params, setup_model_options
 from aviary.utils.merge_hierarchies import merge_hierarchies
 from aviary.utils.merge_variable_metadata import merge_meta_data
 from aviary.utils.named_values import NamedValues, get_keys, get_items, get_values

@@ -448,6 +448,12 @@ def initialization_guessing(
 
     # TODO this does not work at all for mixed-type engines (some propeller and some not)
     try:
+        num_engines = aircraft_values.get_val(Aircraft.Engine.NUM_ENGINES)
+
+        # This happens before preprocessing, and we end up with the default when unspecified.
+        if isinstance(num_engines, list):
+            num_engines = num_engines[0]
+
         if aircraft_values.get_val(Aircraft.Engine.HAS_PROPELLERS):
             # For large turboprops, 1 pound of thrust per hp at takeoff seems to be close enough
             total_thrust = aircraft_values.get_val(

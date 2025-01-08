@@ -6,17 +6,14 @@ from parameterized import parameterized
 from aviary.subsystems.mass.flops_based.cargo import CargoMass
 from aviary.utils.aviary_values import AviaryValues
 from aviary.utils.test_utils.variable_test import assert_match_varnames
-from aviary.validation_cases.validation_tests import do_validation_test, print_case
+from aviary.validation_cases.validation_tests import do_validation_test, print_case, get_flops_options
 from aviary.variable_info.variables import Aircraft
 
 cargo_test_data = {}
 cargo_test_data['1'] = AviaryValues({
-    Aircraft.CrewPayload.BAGGAGE_MASS_PER_PASSENGER: (50, 'lbm'),
     Aircraft.CrewPayload.MISC_CARGO: (2000., 'lbm'),  # custom
-    Aircraft.CrewPayload.MASS_PER_PASSENGER: (180., 'lbm'),
     Aircraft.CrewPayload.WING_CARGO: (1000., 'lbm'),  # custom
     Aircraft.CrewPayload.BAGGAGE_MASS: (9200., 'lbm'),  # custom
-    Aircraft.CrewPayload.NUM_PASSENGERS: (184, 'unitless'),  # custom
     Aircraft.CrewPayload.PASSENGER_MASS: (33120., 'lbm'),  # custom
     Aircraft.CrewPayload.CARGO_MASS: (3000., 'lbm'),  # custom
     Aircraft.CrewPayload.TOTAL_PAYLOAD_MASS: (45320., 'lbm')  # custom
@@ -38,10 +35,16 @@ class CargoMassTest(unittest.TestCase):
 
         prob.model.add_subsystem(
             'cargo_passenger',
-            CargoMass(aviary_options=validation_data),
+            CargoMass(),
             promotes_inputs=['*'],
             promotes_outputs=['*'],
         )
+
+        prob.model_options['*'] = {
+            Aircraft.CrewPayload.BAGGAGE_MASS_PER_PASSENGER: (50, 'lbm'),
+            Aircraft.CrewPayload.MASS_PER_PASSENGER: (180., 'lbm'),
+            Aircraft.CrewPayload.NUM_PASSENGERS: 184,  # custom
+        }
 
         prob.setup(check=False, force_alloc_complex=True)
 

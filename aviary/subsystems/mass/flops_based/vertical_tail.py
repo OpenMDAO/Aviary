@@ -1,8 +1,7 @@
 import openmdao.api as om
 
 from aviary.constants import GRAV_ENGLISH_LBM
-from aviary.utils.aviary_values import AviaryValues
-from aviary.variable_info.functions import add_aviary_input, add_aviary_output
+from aviary.variable_info.functions import add_aviary_input, add_aviary_output, add_aviary_option
 from aviary.variable_info.variables import Aircraft, Mission
 
 
@@ -13,9 +12,7 @@ class VerticalTailMass(om.ExplicitComponent):
     '''
 
     def initialize(self):
-        self.options.declare(
-            'aviary_options', types=AviaryValues,
-            desc='collection of Aircraft/Mission specific options')
+        add_aviary_option(self, Aircraft.VerticalTail.NUM_TAILS)
 
     def setup(self):
         add_aviary_input(self, Aircraft.VerticalTail.AREA, val=0.0)
@@ -32,8 +29,7 @@ class VerticalTailMass(om.ExplicitComponent):
         self.declare_partials("*", "*")
 
     def compute(self, inputs, outputs):
-        aviary_options: AviaryValues = self.options['aviary_options']
-        num_tails = aviary_options.get_val(Aircraft.VerticalTail.NUM_TAILS)
+        num_tails = self.options[Aircraft.VerticalTail.NUM_TAILS]
 
         area = inputs[Aircraft.VerticalTail.AREA]
         taper_ratio = inputs[Aircraft.VerticalTail.TAPER_RATIO]
@@ -45,8 +41,7 @@ class VerticalTailMass(om.ExplicitComponent):
             num_tails ** 0.7 / GRAV_ENGLISH_LBM
 
     def compute_partials(self, inputs, J):
-        aviary_options: AviaryValues = self.options['aviary_options']
-        num_tails = aviary_options.get_val(Aircraft.VerticalTail.NUM_TAILS)
+        num_tails = self.options[Aircraft.VerticalTail.NUM_TAILS]
 
         area = inputs[Aircraft.VerticalTail.AREA]
         gross_weight = inputs[Mission.Design.GROSS_MASS] * GRAV_ENGLISH_LBM
@@ -80,11 +75,6 @@ class AltVerticalTailMass(om.ExplicitComponent):
     The methodology is based on the FLOPS weight- equations, modified to
     output mass instead of weight.
     '''
-
-    def initialize(self):
-        self.options.declare(
-            'aviary_options', types=AviaryValues,
-            desc='collection of Aircraft/Mission specific options')
 
     def setup(self):
         add_aviary_input(self, Aircraft.VerticalTail.AREA, val=0.0)

@@ -2,8 +2,7 @@ import numpy as np
 import openmdao.api as om
 
 from aviary.subsystems.mass.flops_based.distributed_prop import nacelle_count_factor
-from aviary.utils.aviary_values import AviaryValues
-from aviary.variable_info.functions import add_aviary_input, add_aviary_output
+from aviary.variable_info.functions import add_aviary_input, add_aviary_output, add_aviary_option
 from aviary.variable_info.variables import Aircraft
 
 
@@ -18,13 +17,10 @@ class EnginePodMass(om.ExplicitComponent):
     '''
 
     def initialize(self):
-        self.options.declare(
-            'aviary_options', types=AviaryValues,
-            desc='collection of Aircraft/Mission specific options')
+        add_aviary_option(self, Aircraft.Engine.NUM_ENGINES)
 
     def setup(self):
-        num_engine_type = len(self.options['aviary_options'].get_val(
-            Aircraft.Engine.NUM_ENGINES))
+        num_engine_type = len(self.options[Aircraft.Engine.NUM_ENGINES])
 
         add_aviary_input(self, Aircraft.Electrical.MASS, val=0.0)
         add_aviary_input(self, Aircraft.Fuel.FUEL_SYSTEM_MASS, val=0.0)
@@ -46,8 +42,7 @@ class EnginePodMass(om.ExplicitComponent):
         self.declare_partials('*', '*')
 
         # derivatives w.r.t vectorized engine inputs have known sparsity pattern
-        num_engine_type = len(self.options['aviary_options'].get_val(
-            Aircraft.Engine.NUM_ENGINES))
+        num_engine_type = len(self.options[Aircraft.Engine.NUM_ENGINES])
         shape = np.arange(num_engine_type)
 
         self.declare_partials(Aircraft.Engine.POD_MASS,
@@ -67,8 +62,7 @@ class EnginePodMass(om.ExplicitComponent):
         # BUG this methodology completely ignores miscellaneous mass. There is a discrepency between this calculation
         #     and miscellaneous mass. Engine control, starter, and additional mass have a scaler applied to them, and
         #     if their calculated values are used directly this scaler is skipped
-        aviary_options: AviaryValues = self.options['aviary_options']
-        num_eng = aviary_options.get_val(Aircraft.Engine.NUM_ENGINES)
+        num_eng = self.options[Aircraft.Engine.NUM_ENGINES]
         nacelle_count = nacelle_count_factor(num_eng)
 
         eng_thrust = inputs[Aircraft.Engine.SCALED_SLS_THRUST]
@@ -113,8 +107,7 @@ class EnginePodMass(om.ExplicitComponent):
         outputs[Aircraft.Engine.POD_MASS] = pod_mass
 
     def compute_partials(self, inputs, partials, discrete_inputs=None):
-        aviary_options: AviaryValues = self.options['aviary_options']
-        num_eng = aviary_options.get_val(Aircraft.Engine.NUM_ENGINES)
+        num_eng = self.options[Aircraft.Engine.NUM_ENGINES]
         count_factor = nacelle_count_factor(num_eng)
 
         m_start = inputs[Aircraft.Propulsion.TOTAL_STARTER_MASS]

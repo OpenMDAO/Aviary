@@ -5,6 +5,7 @@ import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 
 from aviary.subsystems.geometry.gasp_based.size_group import SizeGroup
+from aviary.variable_info.functions import setup_model_options
 from aviary.variable_info.options import get_option_defaults
 from aviary.variable_info.variables import Aircraft, Mission
 
@@ -28,9 +29,7 @@ class SizeGroupTestCase1(unittest.TestCase):
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
             "size",
-            SizeGroup(
-                aviary_options=options,
-            ),
+            SizeGroup(),
             promotes=["*"],
         )
 
@@ -97,6 +96,8 @@ class SizeGroupTestCase1(unittest.TestCase):
             Aircraft.Nacelle.CORE_DIAMETER_RATIO, 1.25, units="unitless")
         self.prob.model.set_input_defaults(
             Aircraft.Nacelle.FINENESS, 2, units="unitless")
+
+        setup_model_options(self.prob, options)
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
@@ -181,9 +182,7 @@ class SizeGroupTestCase2(unittest.TestCase):
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
             "size",
-            SizeGroup(
-                aviary_options=options,
-            ),
+            SizeGroup(),
             promotes=["*"],
         )
 
@@ -253,6 +252,8 @@ class SizeGroupTestCase2(unittest.TestCase):
             Aircraft.Nacelle.CORE_DIAMETER_RATIO, 1.25, units="unitless")
         self.prob.model.set_input_defaults(
             Aircraft.Nacelle.FINENESS, 2, units="unitless")
+
+        setup_model_options(self.prob, options)
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
@@ -399,9 +400,7 @@ class SizeGroupTestCase3(unittest.TestCase):
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
             "size",
-            SizeGroup(
-                aviary_options=options,
-            ),
+            SizeGroup(),
             promotes=["*"],
         )
 
@@ -477,6 +476,8 @@ class SizeGroupTestCase3(unittest.TestCase):
             Aircraft.Nacelle.CORE_DIAMETER_RATIO, 1.25, units="unitless")
         self.prob.model.set_input_defaults(
             Aircraft.Nacelle.FINENESS, 2, units="unitless")
+
+        setup_model_options(self.prob, options)
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
@@ -621,9 +622,7 @@ class SizeGroupTestCase4(unittest.TestCase):
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
             "size",
-            SizeGroup(
-                aviary_options=options,
-            ),
+            SizeGroup(),
             promotes=["*"],
         )
 
@@ -699,6 +698,8 @@ class SizeGroupTestCase4(unittest.TestCase):
             Aircraft.Nacelle.CORE_DIAMETER_RATIO, 1.25, units="unitless")
         self.prob.model.set_input_defaults(
             Aircraft.Nacelle.FINENESS, 2, units="unitless")
+
+        setup_model_options(self.prob, options)
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
