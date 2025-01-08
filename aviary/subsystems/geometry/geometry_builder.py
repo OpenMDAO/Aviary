@@ -90,15 +90,16 @@ class CoreGeometryBuilder(GeometryBuilderBase):
         geom_group = None
 
         if both_geom:
-            geom_group = CombinedGeometry(aviary_options=aviary_inputs,
-                                          code_origin_to_prioritize=code_origin_to_prioritize)
+            geom_group = CombinedGeometry(
+                code_origin_to_prioritize=code_origin_to_prioritize
+            )
 
         elif code_origin is GASP:
-            geom_group = SizeGroup(aviary_options=aviary_inputs)
+            geom_group = SizeGroup()
             geom_group.manual_overrides = None
 
         elif code_origin is FLOPS:
-            geom_group = PrepGeom(aviary_options=aviary_inputs)
+            geom_group = PrepGeom()
             geom_group.manual_overrides = None
 
         return geom_group
@@ -111,10 +112,11 @@ class CoreGeometryBuilder(GeometryBuilderBase):
         params = {}
 
         for entry in Aircraft.Nacelle.__dict__:
-            var = getattr(Aircraft.Nacelle, entry)
-            if var in aviary_inputs:
-                if 'total' not in var:
-                    params[var] = {'shape': (num_engine_type), 'static_target': True}
+            if entry != "__dict__":  # cannot get attribute from mappingproxy
+                var = getattr(Aircraft.Nacelle, entry)
+                if var in aviary_inputs:
+                    if 'total' not in var:
+                        params[var] = {'shape': (num_engine_type), 'static_target': True}
 
         return params
 

@@ -21,6 +21,7 @@ from aviary.validation_cases.validation_tests import (get_flops_inputs,
                                                       get_flops_outputs,
                                                       print_case)
 from aviary.variable_info.enums import LegacyCode
+from aviary.variable_info.functions import setup_model_options
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission, Settings
 
 FLOPS = LegacyCode.FLOPS
@@ -50,6 +51,8 @@ class TabularAeroGroupFileTest(unittest.TestCase):
             promotes_outputs=['*'],
         )
 
+        setup_model_options(self.prob, aviary_options)
+
         self.prob.setup(check=False, force_alloc_complex=True)
 
     def test_case(self):
@@ -57,16 +60,15 @@ class TabularAeroGroupFileTest(unittest.TestCase):
         # test data from large_single_aisle_2 climb profile
         # tabular aero was set to large_single_aisle_1, expected value adjusted accordingly
         self.prob.set_val(
-            Dynamic.Mission.VELOCITY,
-            val=115,
-            units='m/s')  # convert from knots to ft/s
+            Dynamic.Mission.VELOCITY, val=115, units='m/s'
+        )  # convert from knots to ft/s
         self.prob.set_val(Dynamic.Mission.ALTITUDE, val=10582, units='m')
-        self.prob.set_val(Dynamic.Mission.MASS, val=80442, units='kg')
-        self.prob.set_val(Dynamic.Mission.MACH, val=0.3876, units='unitless')
+        self.prob.set_val(Dynamic.Vehicle.MASS, val=80442, units='kg')
+        self.prob.set_val(Dynamic.Atmosphere.MACH, val=0.3876, units='unitless')
         # 1344.5? 'reference' vs 'calculated'?
         self.prob.set_val(Aircraft.Wing.AREA, val=1341, units='ft**2')
         # calculated from online atmospheric table
-        self.prob.set_val(Dynamic.Mission.DENSITY, val=0.88821, units='kg/m**3')
+        self.prob.set_val(Dynamic.Atmosphere.DENSITY, val=0.88821, units='kg/m**3')
 
         self.prob.run_model()
 
@@ -75,7 +77,7 @@ class TabularAeroGroupFileTest(unittest.TestCase):
         tol = .03
 
         assert_near_equal(
-            self.prob.get_val(Dynamic.Mission.DRAG, units='N'), 53934.78861492, tol
+            self.prob.get_val(Dynamic.Vehicle.DRAG, units='N'), 53934.78861492, tol
         )  # check the value of each output
 
         # TODO resolve partials wrt gravity (decide on implementation of gravity)
@@ -187,6 +189,8 @@ class TabularAeroGroupDataTest(unittest.TestCase):
             promotes_outputs=['*'],
         )
 
+        setup_model_options(self.prob, aviary_options)
+
         self.prob.setup(check=False, force_alloc_complex=True)
 
     def test_case(self):
@@ -194,16 +198,15 @@ class TabularAeroGroupDataTest(unittest.TestCase):
         # test data from large_single_aisle_2 climb profile
         # tabular aero was set to large_single_aisle_1 data, expected value adjusted accordingly
         self.prob.set_val(
-            Dynamic.Mission.VELOCITY,
-            val=115,
-            units='m/s')  # convert from knots to ft/s
+            Dynamic.Mission.VELOCITY, val=115, units='m/s'
+        )  # convert from knots to ft/s
         self.prob.set_val(Dynamic.Mission.ALTITUDE, val=10582, units='m')
-        self.prob.set_val(Dynamic.Mission.MASS, val=80442, units='kg')
-        self.prob.set_val(Dynamic.Mission.MACH, val=0.3876, units='unitless')
+        self.prob.set_val(Dynamic.Vehicle.MASS, val=80442, units='kg')
+        self.prob.set_val(Dynamic.Atmosphere.MACH, val=0.3876, units='unitless')
         # 1344.5? 'reference' vs 'calculated'?
         self.prob.set_val(Aircraft.Wing.AREA, val=1341, units='ft**2')
         # calculated from online atmospheric table
-        self.prob.set_val(Dynamic.Mission.DENSITY, val=0.88821, units='kg/m**3')
+        self.prob.set_val(Dynamic.Atmosphere.DENSITY, val=0.88821, units='kg/m**3')
 
         self.prob.run_model()
 
@@ -212,7 +215,7 @@ class TabularAeroGroupDataTest(unittest.TestCase):
         tol = .03
 
         assert_near_equal(
-            self.prob.get_val(Dynamic.Mission.DRAG, units='N'), 53934.78861492, tol
+            self.prob.get_val(Dynamic.Vehicle.DRAG, units='N'), 53934.78861492, tol
         )  # check the value of each output
 
         # TODO resolve partials wrt gravity (decide on implementation of gravity)
@@ -309,28 +312,28 @@ class ComputedVsTabularTest(unittest.TestCase):
 
         dynamic_inputs.set_val(Dynamic.Mission.VELOCITY, val=vel, units=vel_units)
         dynamic_inputs.set_val(Dynamic.Mission.ALTITUDE, val=alt, units=alt_units)
-        dynamic_inputs.set_val(Dynamic.Mission.MASS, val=mass, units=units)
+        dynamic_inputs.set_val(Dynamic.Vehicle.MASS, val=mass, units=units)
 
         prob = _get_computed_aero_data_at_altitude(alt, alt_units)
 
-        sos = prob.get_val(Dynamic.Mission.SPEED_OF_SOUND, vel_units)
+        sos = prob.get_val(Dynamic.Atmosphere.SPEED_OF_SOUND, vel_units)
         mach = vel / sos
 
-        dynamic_inputs.set_val(Dynamic.Mission.MACH, val=mach, units='unitless')
+        dynamic_inputs.set_val(Dynamic.Atmosphere.MACH, val=mach, units='unitless')
 
-        key = Dynamic.Mission.DENSITY
+        key = Dynamic.Atmosphere.DENSITY
         units = 'kg/m**3'
         val = prob.get_val(key, units)
 
         dynamic_inputs.set_val(key, val=val, units=units)
 
-        key = Dynamic.Mission.TEMPERATURE
+        key = Dynamic.Atmosphere.TEMPERATURE
         units = 'degR'
         val = prob.get_val(key, units)
 
         dynamic_inputs.set_val(key, val=val, units=units)
 
-        key = Dynamic.Mission.STATIC_PRESSURE
+        key = Dynamic.Atmosphere.STATIC_PRESSURE
         units = 'N/m**2'
         val = prob.get_val(key, units)
 
@@ -338,7 +341,7 @@ class ComputedVsTabularTest(unittest.TestCase):
 
         prob = _run_computed_aero_harness(flops_inputs, dynamic_inputs, 1)
 
-        computed_drag = prob.get_val(Dynamic.Mission.DRAG, 'N')
+        computed_drag = prob.get_val(Dynamic.Vehicle.DRAG, 'N')
 
         CDI_data, CD0_data = _computed_aero_drag_data(
             flops_inputs, *_design_altitudes.get_item(case_name))
@@ -358,6 +361,8 @@ class ComputedVsTabularTest(unittest.TestCase):
             promotes_outputs=['*'],
         )
 
+        setup_model_options(prob, flops_inputs)
+
         prob.setup(check=False, force_alloc_complex=True)
 
         for (key, (val, units)) in dynamic_inputs:
@@ -371,7 +376,7 @@ class ComputedVsTabularTest(unittest.TestCase):
 
         prob.run_model()
 
-        tabular_drag = prob.get_val(Dynamic.Mission.DRAG, 'N')
+        tabular_drag = prob.get_val(Dynamic.Vehicle.DRAG, 'N')
 
         assert_near_equal(tabular_drag, computed_drag, 0.005)
 
@@ -449,7 +454,7 @@ def _default_CD0_data():
 
     CD0_data = NamedValues()
     CD0_data.set_val(Dynamic.Mission.ALTITUDE, alt_range, 'ft')
-    CD0_data.set_val(Dynamic.Mission.MACH, mach_range)
+    CD0_data.set_val(Dynamic.Atmosphere.MACH, mach_range)
     CD0_data.set_val('zero_lift_drag_coefficient', CD0)
 
     return CD0_data
@@ -515,7 +520,7 @@ def _default_CDI_data():
     # cl_list = np.array(cl_list).flatten()
     # mach_list = np.array(mach_list).flatten()
     CDI_data = NamedValues()
-    CDI_data.set_val(Dynamic.Mission.MACH, mach_range)
+    CDI_data.set_val(Dynamic.Atmosphere.MACH, mach_range)
     CDI_data.set_val('lift_coefficient', cl_range)
     CDI_data.set_val('lift_dependent_drag_coefficient', CDI)
 
@@ -574,8 +579,8 @@ def _computed_aero_drag_data(flops_inputs: AviaryValues, design_altitude, units)
     # calculate temperature (degR), static pressure (lbf/ft**2), and mass (lbm) at design
     # altitude from lift coefficients and Mach numbers
     prob: om.Problem = _get_computed_aero_data_at_altitude(design_altitude, units)
-    T = prob.get_val(Dynamic.Mission.TEMPERATURE, 'degR')
-    P = prob.get_val(Dynamic.Mission.STATIC_PRESSURE, 'lbf/ft**2')
+    T = prob.get_val(Dynamic.Atmosphere.TEMPERATURE, 'degR')
+    P = prob.get_val(Dynamic.Atmosphere.STATIC_PRESSURE, 'lbf/ft**2')
 
     mass = lift = CL * S * 0.5 * 1.4 * P * mach**2  # lbf -> lbm * 1g
 
@@ -584,10 +589,10 @@ def _computed_aero_drag_data(flops_inputs: AviaryValues, design_altitude, units)
 
     dynamic_inputs = AviaryValues()
 
-    dynamic_inputs.set_val(Dynamic.Mission.MACH, val=mach)
-    dynamic_inputs.set_val(Dynamic.Mission.STATIC_PRESSURE, val=P, units='lbf/ft**2')
-    dynamic_inputs.set_val(Dynamic.Mission.TEMPERATURE, val=T, units='degR')
-    dynamic_inputs.set_val(Dynamic.Mission.MASS, val=mass, units='lbm')
+    dynamic_inputs.set_val(Dynamic.Atmosphere.MACH, val=mach)
+    dynamic_inputs.set_val(Dynamic.Atmosphere.STATIC_PRESSURE, val=P, units='lbf/ft**2')
+    dynamic_inputs.set_val(Dynamic.Atmosphere.TEMPERATURE, val=T, units='degR')
+    dynamic_inputs.set_val(Dynamic.Vehicle.MASS, val=mass, units='lbm')
 
     prob = _run_computed_aero_harness(flops_inputs, dynamic_inputs, nn)
 
@@ -595,7 +600,7 @@ def _computed_aero_drag_data(flops_inputs: AviaryValues, design_altitude, units)
     CDI = np.reshape(CDI.flatten(), (nsteps, nsteps))
 
     CDI_data = NamedValues()
-    CDI_data.set_val(Dynamic.Mission.MACH, seed)
+    CDI_data.set_val(Dynamic.Atmosphere.MACH, seed)
     CDI_data.set_val('lift_coefficient', seed)
     CDI_data.set_val('lift_dependent_drag_coefficient', CDI)
 
@@ -608,18 +613,19 @@ def _computed_aero_drag_data(flops_inputs: AviaryValues, design_altitude, units)
 
     dynamic_inputs = AviaryValues()
 
-    dynamic_inputs.set_val(Dynamic.Mission.MACH, val=mach)
-    dynamic_inputs.set_val(Dynamic.Mission.MASS, val=mass, units=units)
+    dynamic_inputs.set_val(Dynamic.Atmosphere.MACH, val=mach)
+    dynamic_inputs.set_val(Dynamic.Vehicle.MASS, val=mass, units=units)
 
     CD0 = []
 
     for h in alt:
         prob: om.Problem = _get_computed_aero_data_at_altitude(h, 'ft')
-        T = prob.get_val(Dynamic.Mission.TEMPERATURE, 'degR')
-        P = prob.get_val(Dynamic.Mission.STATIC_PRESSURE, 'lbf/ft**2')
+        T = prob.get_val(Dynamic.Atmosphere.TEMPERATURE, 'degR')
+        P = prob.get_val(Dynamic.Atmosphere.STATIC_PRESSURE, 'lbf/ft**2')
 
-        dynamic_inputs.set_val(Dynamic.Mission.STATIC_PRESSURE, val=P, units='lbf/ft**2')
-        dynamic_inputs.set_val(Dynamic.Mission.TEMPERATURE, val=T, units='degR')
+        dynamic_inputs.set_val(Dynamic.Atmosphere.STATIC_PRESSURE,
+                               val=P, units='lbf/ft**2')
+        dynamic_inputs.set_val(Dynamic.Atmosphere.TEMPERATURE, val=T, units='degR')
 
         prob = _run_computed_aero_harness(flops_inputs, dynamic_inputs, nn)
 
@@ -629,7 +635,7 @@ def _computed_aero_drag_data(flops_inputs: AviaryValues, design_altitude, units)
 
     CD0_data = NamedValues()
     CD0_data.set_val(Dynamic.Mission.ALTITUDE, alt, 'ft')
-    CD0_data.set_val(Dynamic.Mission.MACH, seed)
+    CD0_data.set_val(Dynamic.Atmosphere.MACH, seed)
     CD0_data.set_val('zero_lift_drag_coefficient', CD0)
 
     return (CDI_data, CD0_data)
@@ -654,6 +660,8 @@ def _get_computed_aero_data_at_altitude(altitude, units):
 def _run_computed_aero_harness(flops_inputs, dynamic_inputs, num_nodes):
     prob = om.Problem(
         _ComputedAeroHarness(num_nodes=num_nodes, aviary_options=flops_inputs))
+
+    setup_model_options(prob, flops_inputs)
 
     prob.setup()
 

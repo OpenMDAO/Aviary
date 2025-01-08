@@ -23,10 +23,15 @@ class SimpleWingBendingFactTest(unittest.TestCase):
 
         prob = self.prob
 
+        inputs = get_flops_inputs(case_name, preprocess=True)
+
+        options = {
+            Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES: inputs.get_val(Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES),
+        }
+
         prob.model.add_subsystem(
             "wing",
-            SimpleWingBendingFact(aviary_options=get_flops_inputs(
-                case_name, preprocess=True)),
+            SimpleWingBendingFact(**options),
             promotes_inputs=['*'],
             promotes_outputs=['*'],
         )
@@ -36,18 +41,23 @@ class SimpleWingBendingFactTest(unittest.TestCase):
         flops_validation_test(
             prob,
             case_name,
-            input_keys=[Aircraft.Wing.AREA,
-                        Aircraft.Wing.SPAN,
-                        Aircraft.Wing.TAPER_RATIO,
-                        Aircraft.Wing.THICKNESS_TO_CHORD,
-                        Aircraft.Wing.STRUT_BRACING_FACTOR,
-                        Aircraft.Wing.AEROELASTIC_TAILORING_FACTOR,
-                        Aircraft.Wing.ASPECT_RATIO,
-                        Aircraft.Wing.SWEEP],
-            output_keys=[Aircraft.Wing.BENDING_FACTOR,
-                         Aircraft.Wing.ENG_POD_INERTIA_FACTOR],
+            input_keys=[
+                Aircraft.Wing.AREA,
+                Aircraft.Wing.SPAN,
+                Aircraft.Wing.TAPER_RATIO,
+                Aircraft.Wing.THICKNESS_TO_CHORD,
+                Aircraft.Wing.STRUT_BRACING_FACTOR,
+                Aircraft.Wing.AEROELASTIC_TAILORING_FACTOR,
+                Aircraft.Wing.ASPECT_RATIO,
+                Aircraft.Wing.SWEEP,
+            ],
+            output_keys=[
+                Aircraft.Wing.BENDING_MATERIAL_FACTOR,
+                Aircraft.Wing.ENG_POD_INERTIA_FACTOR,
+            ],
             atol=1e-11,
-            rtol=1e-11)
+            rtol=1e-11,
+        )
 
     def test_IO(self):
         assert_match_varnames(self.prob.model)

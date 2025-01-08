@@ -18,7 +18,7 @@ jobs:
 
   pre_commit:
     # run pre-commit checks
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
 
     steps:
     - uses: actions/checkout@v4
@@ -28,19 +28,20 @@ jobs:
     - uses: pre-commit/action@v3.0.1
 
   test_ubuntu:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     strategy:
       fail-fast: false
       matrix:
         include:
           # oldest versions of openmdao/dymos
+          # Note: bugfixes sometimes require incrementing the minimal version of openmdao or dymos.
           - NAME: oldest
             PY: '3.9'
             NUMPY: '1.20'
             SCIPY: '1.6'
             PYOPTSPARSE: 'v2.9.1'
             SNOPT: '7.7'
-            OPENMDAO: '3.33.0'
+            OPENMDAO: '3.35.0'
             DYMOS: '1.8.0'
 
           # latest versions of openmdao/dymos
@@ -50,8 +51,7 @@ jobs:
             SCIPY: 1
             PYOPTSPARSE: 'v2.9.1'
             SNOPT: '7.7'
-            #OPENMDAO: 'latest'
-            OPENMDAO: '3.34.2'
+            OPENMDAO: 'latest'
             DYMOS: 'latest'
 
     steps:

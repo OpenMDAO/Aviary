@@ -1,3 +1,7 @@
+import warnings
+import unittest
+import importlib
+
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_near_equal
 
@@ -12,12 +16,9 @@ from aviary.utils.preprocessors import preprocess_propulsion
 from aviary.utils.process_input_decks import create_vehicle
 from aviary.utils.test_utils.default_subsystems import get_default_premission_subsystems
 from aviary.variable_info.enums import EquationsOfMotion
+from aviary.variable_info.functions import setup_model_options
 from aviary.variable_info.variable_meta_data import _MetaData as BaseMetaData
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission, Settings
-
-import warnings
-import unittest
-import importlib
 
 
 @unittest.skipUnless(importlib.util.find_spec("pyoptsparse") is not None, "pyoptsparse is not installed")
@@ -31,7 +32,8 @@ class HE_SGMDescentTestCase(unittest.TestCase):
         aviary_inputs, initialization_guesses = create_vehicle(
             'models/test_aircraft/aircraft_for_bench_FwFm.csv')
         aviary_inputs.set_val(Aircraft.Engine.SCALED_SLS_THRUST, val=28690, units="lbf")
-        aviary_inputs.set_val(Dynamic.Mission.THROTTLE, val=0, units="unitless")
+        aviary_inputs.set_val(Dynamic.Vehicle.Propulsion.THROTTLE,
+                              val=0, units="unitless")
         aviary_inputs.set_val(Mission.Takeoff.ROLLING_FRICTION_COEFFICIENT,
                               val=0.0175, units="unitless")
         aviary_inputs.set_val(Mission.Takeoff.BRAKING_FRICTION_COEFFICIENT,
@@ -69,11 +71,13 @@ class HE_SGMDescentTestCase(unittest.TestCase):
         traj = FlexibleTraj(
             Phases=phases,
             promote_all_auto_ivc=True,
-            traj_final_state_output=[Dynamic.Mission.MASS,
-                                     Dynamic.Mission.DISTANCE,
-                                     Dynamic.Mission.ALTITUDE],
+            traj_final_state_output=[
+                Dynamic.Vehicle.MASS,
+                Dynamic.Mission.DISTANCE,
+                Dynamic.Mission.ALTITUDE,
+            ],
             traj_initial_state_input=[
-                Dynamic.Mission.MASS,
+                Dynamic.Vehicle.MASS,
                 Dynamic.Mission.DISTANCE,
                 Dynamic.Mission.ALTITUDE,
             ],
@@ -104,6 +108,8 @@ class HE_SGMDescentTestCase(unittest.TestCase):
         )
 
         prob.model.add_objective(Mission.Objectives.FUEL, ref=1e4)
+
+        setup_model_options(prob, aviary_options)
 
         with warnings.catch_warnings():
 

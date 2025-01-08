@@ -30,12 +30,20 @@ class EnginePodMassTest(unittest.TestCase):
 
         prob = self.prob
 
+        inputs = get_flops_inputs(case_name, preprocess=True)
+
+        options = {
+            Aircraft.Engine.NUM_ENGINES: inputs.get_val(Aircraft.Engine.NUM_ENGINES),
+        }
+
         prob.model.add_subsystem(
             'engine_pod',
-            EnginePodMass(aviary_options=get_flops_inputs(case_name, preprocess=True)),
+            EnginePodMass(),
             promotes_outputs=['*'],
             promotes_inputs=['*']
         )
+
+        prob.model_options['*'] = options
 
         prob.setup(check=False, force_alloc_complex=True)
 
@@ -62,13 +70,13 @@ class EnginePodMassTest(unittest.TestCase):
         # test with multiple engine types
         prob = self.prob
 
-        aviary_options = get_flops_inputs('LargeSingleAisle1FLOPS')
-        aviary_options.set_val(Aircraft.Engine.NUM_ENGINES, np.array([2, 2, 3]))
-        aviary_options.set_val(Aircraft.Propulsion.TOTAL_NUM_ENGINES, 7)
+        options = {
+            Aircraft.Engine.NUM_ENGINES: np.array([2, 2, 3]),
+        }
 
         prob.model.add_subsystem(
             'engine_pod',
-            EnginePodMass(aviary_options=aviary_options),
+            EnginePodMass(**options),
             promotes_outputs=['*'],
             promotes_inputs=['*']
         )

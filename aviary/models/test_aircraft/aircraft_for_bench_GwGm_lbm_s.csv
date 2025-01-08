@@ -8,7 +8,7 @@ aircraft:controls:stability_augmentation_system_mass,0,lbm
 aircraft:controls:stability_augmentation_system_mass_scaler,1,unitless
 aircraft:crew_and_payload:cargo_mass,10040,lbm
 aircraft:crew_and_payload:catering_items_mass_per_passenger,7.6,lbm
-aircraft:crew_and_payload:num_passengers,180,unitless
+aircraft:crew_and_payload:design:num_passengers,180,unitless
 aircraft:crew_and_payload:passenger_mass_with_bags,200,lbm
 aircraft:crew_and_payload:passenger_service_mass_per_passenger,5,lbm
 aircraft:crew_and_payload:water_mass_per_occupant,3,lbm
@@ -25,6 +25,7 @@ aircraft:design:structural_mass_increment,0,lbm
 aircraft:design:supercritical_drag_shift,0.033,unitless
 aircraft:engine:additional_mass_fraction,0.135,unitless
 aircraft:engine:data_file,models/engines/turbofan_23k_1_lbm_s.deck,unitless
+aircraft:engine:global_throttle, True, unitless
 aircraft:engine:mass_scaler,1,unitless
 aircraft:engine:mass_specific,0.21366,lbm/lbf
 aircraft:engine:mass_scaler,1,unitless

@@ -20,10 +20,10 @@ from aviary.mission.flops_based.phases.detailed_takeoff_phases import (
 from aviary.subsystems.propulsion.utils import build_engine_deck
 from aviary.utils.aviary_values import AviaryValues
 from aviary.utils.test_utils.default_subsystems import get_default_premission_subsystems, get_default_mission_subsystems
-from aviary.utils.preprocessors import preprocess_options
 from aviary.utils.functions import get_path
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission, Settings
 from aviary.variable_info.enums import EquationsOfMotion, LegacyCode
+# from aviary.utils.preprocessors import preprocess_options
 
 N3CC = {}
 inputs = N3CC['inputs'] = AviaryValues()
@@ -62,15 +62,20 @@ inputs.set_val(Aircraft.Avionics.MASS_SCALER, 1.123226)
 
 # Crew and Payload
 # ---------------------------
+inputs.set_val(Aircraft.CrewPayload.Design.NUM_BUSINESS_CLASS, 20)
+inputs.set_val(Aircraft.CrewPayload.Design.NUM_FIRST_CLASS, 16)
+inputs.set_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS, 154, units='unitless')
+inputs.set_val(Aircraft.CrewPayload.Design.NUM_TOURIST_CLASS, 118)
+inputs.set_val(Aircraft.CrewPayload.NUM_BUSINESS_CLASS, 20)
+inputs.set_val(Aircraft.CrewPayload.NUM_FIRST_CLASS, 16)
+inputs.set_val(Aircraft.CrewPayload.NUM_PASSENGERS, 154, units='unitless')
+inputs.set_val(Aircraft.CrewPayload.NUM_TOURIST_CLASS, 118)
+
 inputs.set_val(Aircraft.CrewPayload.BAGGAGE_MASS_PER_PASSENGER, 35.0, 'lbm')
 inputs.set_val(Aircraft.CrewPayload.CARGO_CONTAINER_MASS_SCALER, 0.0)
 inputs.set_val(Aircraft.CrewPayload.FLIGHT_CREW_MASS_SCALER, 1.0)
 inputs.set_val(Aircraft.CrewPayload.NON_FLIGHT_CREW_MASS_SCALER, 1.0)
-inputs.set_val(Aircraft.CrewPayload.NUM_BUSINESS_CLASS, 20)
-inputs.set_val(Aircraft.CrewPayload.NUM_FIRST_CLASS, 16)
 inputs.set_val(Aircraft.CrewPayload.MISC_CARGO, 0., 'lbm')
-inputs.set_val(Aircraft.CrewPayload.NUM_PASSENGERS, 154, units='unitless')
-inputs.set_val(Aircraft.CrewPayload.NUM_TOURIST_CLASS, 118)
 inputs.set_val(Aircraft.CrewPayload.PASSENGER_SERVICE_MASS_SCALER, 1.)
 inputs.set_val(Aircraft.CrewPayload.MASS_PER_PASSENGER, 165., 'lbm')
 inputs.set_val(Aircraft.CrewPayload.WING_CARGO, 0., 'lbm')
@@ -241,7 +246,7 @@ inputs.set_val(Aircraft.Wing.AIRFOIL_TECHNOLOGY, 1.6)
 inputs.set_val(Aircraft.Wing.AREA, 1220.0, 'ft**2')
 inputs.set_val(Aircraft.Wing.ASPECT_RATIO, 11.5587605382765)
 inputs.set_val(Aircraft.Wing.ASPECT_RATIO_REF, 11.5587605382765)
-inputs.set_val(Aircraft.Wing.BENDING_MASS_SCALER, 1.0)
+inputs.set_val(Aircraft.Wing.BENDING_MATERIAL_MASS_SCALER, 1.0)
 inputs.set_val(
     Aircraft.Wing.CHORD_PER_SEMISPAN_DIST,
     np.array(
@@ -426,8 +431,8 @@ outputs.set_val(Aircraft.VerticalTail.CHARACTERISTIC_LENGTH, 11.25, 'ft')
 outputs.set_val(Aircraft.VerticalTail.FINENESS, 0.1000)
 outputs.set_val(Aircraft.VerticalTail.MASS, 1175.0, 'lbm')
 
-outputs.set_val(Aircraft.Wing.BENDING_FACTOR, 11.9602)
-outputs.set_val(Aircraft.Wing.BENDING_MASS, 5410.5, 'lbm')
+outputs.set_val(Aircraft.Wing.BENDING_MATERIAL_FACTOR, 11.9602)
+outputs.set_val(Aircraft.Wing.BENDING_MATERIAL_MASS, 5410.5, 'lbm')
 outputs.set_val(Aircraft.Wing.CHARACTERISTIC_LENGTH, 10.27, 'ft')
 outputs.set_val(Aircraft.Wing.CONTROL_SURFACE_AREA, 0.333 * 1220, 'ft**2')
 outputs.set_val(Aircraft.Wing.ENG_POD_INERTIA_FACTOR, 0.960516)
@@ -442,7 +447,9 @@ outputs.set_val(Mission.Design.LIFT_COEFFICIENT, 0.583)
 
 # Create engine model
 engine = build_engine_deck(aviary_options=inputs)
-preprocess_options(inputs, engine_models=engine)
+# Calls to preprocess_options() in this location should be avoided because they
+# # will trigger when get_flops_inputs() is imported
+# preprocess_options(inputs, engine_models=engine)
 
 # build subsystems
 default_premission_subsystems = get_default_premission_subsystems('FLOPS', engine)
@@ -452,29 +459,44 @@ default_mission_subsystems = get_default_mission_subsystems('FLOPS', engine)
 takeoff_trajectory_builder = TakeoffTrajectory('detailed_takeoff')
 
 # region - takeoff aero
-takeoff_subsystem_options = {'core_aerodynamics':
-                             {'method': 'low_speed',
-                              'ground_altitude': 0.,  # units='m'
-                              'angles_of_attack': [
-                                  0.0, 1.0, 2.0, 3.0, 4.0, 5.0,
-                                  6.0, 7.0, 8.0, 9.0, 10.0, 11.0,
-                                  12.0, 13.0, 14.0, 15.0],  # units='deg'
-                              'lift_coefficients': [
-                                  0.5178, 0.6, 0.75, 0.85, 0.95, 1.05,
-                                  1.15, 1.25, 1.35, 1.5, 1.6, 1.7,
-                                  1.8, 1.85, 1.9, 1.95],
-                              'drag_coefficients': [
-                                  0.0674, 0.065, 0.065, 0.07, 0.072, 0.076,
-                                  0.084, 0.09, 0.10, 0.11, 0.12, 0.13,
-                                  0.15, 0.16, 0.18, 0.20],
-                              'lift_coefficient_factor': 1.,
-                              'drag_coefficient_factor': 1.}}
+# block auto-formatting of tables
+# autopep8: off
+# fmt: off
+takeoff_subsystem_options = {
+    'core_aerodynamics': {
+        'method': 'low_speed',
+        'ground_altitude': 0.0,  # units='m'
+        'angles_of_attack': [
+            0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0,
+            9.0, 10.0, 11.0, 12.0, 13.0, 14.0, 15.0,
+        ],  # units='deg'
+        'lift_coefficients': [
+            0.5178, 0.6, 0.75, 0.85, 0.95, 1.05, 1.15, 1.25,
+            1.35, 1.5, 1.6, 1.7, 1.8, 1.85, 1.9, 1.95,
+        ],
+        'drag_coefficients': [
+            0.0674, 0.065, 0.065, 0.07, 0.072, 0.076, 0.084, 0.09,
+            0.10, 0.11, 0.12, 0.13, 0.15, 0.16, 0.18, 0.20,
+        ],
+        'lift_coefficient_factor': 1.0,
+        'drag_coefficient_factor': 1.0,
+    }
+}
+# autopep8: on
+# fmt: on
 
-takeoff_subsystem_options_spoilers = {'core_aerodynamics':
-                                      {**takeoff_subsystem_options['core_aerodynamics'],
-                                       'use_spoilers': True,
-                                       'spoiler_drag_coefficient': inputs.get_val(Mission.Takeoff.SPOILER_DRAG_COEFFICIENT),
-                                       'spoiler_lift_coefficient': inputs.get_val(Mission.Takeoff.SPOILER_LIFT_COEFFICIENT)}}
+takeoff_subsystem_options_spoilers = {
+    'core_aerodynamics': {
+        **takeoff_subsystem_options['core_aerodynamics'],
+        'use_spoilers': True,
+        'spoiler_drag_coefficient': inputs.get_val(
+            Mission.Takeoff.SPOILER_DRAG_COEFFICIENT
+        ),
+        'spoiler_lift_coefficient': inputs.get_val(
+            Mission.Takeoff.SPOILER_LIFT_COEFFICIENT
+        ),
+    }
+}
 
 # endregion - takeoff aero
 
@@ -589,7 +611,8 @@ takeoff_liftoff_initial_guesses.set_val('velocity', [160, 167.0], 'kn')
 takeoff_liftoff_initial_guesses.set_val('throttle', 1.)
 takeoff_liftoff_initial_guesses.set_val('altitude', [0, 35.0], 'ft')
 takeoff_liftoff_initial_guesses.set_val(
-    Dynamic.Mission.FLIGHT_PATH_ANGLE, [0, 6.0], 'deg')
+    Dynamic.Mission.FLIGHT_PATH_ANGLE, [0, 6.0], 'deg'
+)
 takeoff_liftoff_initial_guesses.set_val('angle_of_attack', 8.117, 'deg')
 takeoff_liftoff_initial_guesses.set_val('mass', gross_mass, gross_mass_units)
 
@@ -632,7 +655,8 @@ takeoff_mic_p2_initial_guesses.set_val('velocity', [167, 167.0], 'kn')
 takeoff_mic_p2_initial_guesses.set_val('throttle', 1.)
 takeoff_mic_p2_initial_guesses.set_val('altitude', [35, 985.0], 'ft')
 takeoff_mic_p2_initial_guesses.set_val(
-    Dynamic.Mission.FLIGHT_PATH_ANGLE, [7.0, 10.0], 'deg')
+    Dynamic.Mission.FLIGHT_PATH_ANGLE, [7.0, 10.0], 'deg'
+)
 takeoff_mic_p2_initial_guesses.set_val('angle_of_attack', 8.117, 'deg')
 takeoff_mic_p2_initial_guesses.set_val('mass', gross_mass, gross_mass_units)
 
@@ -687,7 +711,8 @@ takeoff_mic_p2_to_engine_cutback_initial_guesses.set_val('throttle', 1.0)
 takeoff_mic_p2_to_engine_cutback_initial_guesses.set_val('altitude', [985, 2500.0], 'ft')
 
 takeoff_mic_p2_to_engine_cutback_initial_guesses.set_val(
-    Dynamic.Mission.FLIGHT_PATH_ANGLE, [11.0, 10.0], 'deg')
+    Dynamic.Mission.FLIGHT_PATH_ANGLE, [11.0, 10.0], 'deg'
+)
 
 takeoff_mic_p2_to_engine_cutback_initial_guesses.set_val('angle_of_attack', 5.0, 'deg')
 
@@ -742,7 +767,8 @@ takeoff_engine_cutback_initial_guesses.set_val('throttle', [1.0, cutback_throttl
 takeoff_engine_cutback_initial_guesses.set_val('altitude', [2500.0, 2600.0], 'ft')
 
 takeoff_engine_cutback_initial_guesses.set_val(
-    Dynamic.Mission.FLIGHT_PATH_ANGLE, [10.0, 10.0], 'deg')
+    Dynamic.Mission.FLIGHT_PATH_ANGLE, [10.0, 10.0], 'deg'
+)
 
 takeoff_engine_cutback_initial_guesses.set_val('angle_of_attack', 5.0, 'deg')
 takeoff_engine_cutback_initial_guesses.set_val('mass', gross_mass, gross_mass_units)
@@ -803,7 +829,8 @@ takeoff_engine_cutback_to_mic_p1_initial_guesses.set_val(
     'altitude', [2600, 2700.0], 'ft')
 
 takeoff_engine_cutback_to_mic_p1_initial_guesses.set_val(
-    Dynamic.Mission.FLIGHT_PATH_ANGLE, 2.29, 'deg')
+    Dynamic.Mission.FLIGHT_PATH_ANGLE, 2.29, 'deg'
+)
 takeoff_engine_cutback_to_mic_p1_initial_guesses.set_val('angle_of_attack', 5.0, 'deg')
 
 takeoff_engine_cutback_to_mic_p1_initial_guesses.set_val(
@@ -850,7 +877,8 @@ takeoff_mic_p1_to_climb_initial_guesses.set_val('velocity', [167, 167.0], 'kn')
 takeoff_mic_p1_to_climb_initial_guesses.set_val('throttle', cutback_throttle)
 takeoff_mic_p1_to_climb_initial_guesses.set_val('altitude', [2700, 3200.0], 'ft')
 takeoff_mic_p1_to_climb_initial_guesses.set_val(
-    Dynamic.Mission.FLIGHT_PATH_ANGLE, 2.29, 'deg')
+    Dynamic.Mission.FLIGHT_PATH_ANGLE, 2.29, 'deg'
+)
 takeoff_mic_p1_to_climb_initial_guesses.set_val('angle_of_attack', 5.0, 'deg')
 takeoff_mic_p1_to_climb_initial_guesses.set_val('mass', gross_mass, gross_mass_units)
 
@@ -876,14 +904,15 @@ detailed_takeoff.set_val(Dynamic.Mission.DISTANCE, [
 detailed_takeoff.set_val(Dynamic.Mission.ALTITUDE, [0.00, 0.00, 0.64, 27.98], 'ft')
 velocity = np.array([4.74, 157.58, 160.99, 166.68])
 detailed_takeoff.set_val(Dynamic.Mission.VELOCITY, velocity, 'kn')
-detailed_takeoff.set_val(Dynamic.Mission.MACH, [0.007, 0.2342, 0.2393, 0.2477])
+detailed_takeoff.set_val(Dynamic.Atmosphere.MACH, [0.007, 0.2342, 0.2393, 0.2477])
 
 detailed_takeoff.set_val(
-    Dynamic.Mission.THRUST_TOTAL, [44038.8, 34103.4, 33929.0, 33638.2], 'lbf')
+    Dynamic.Vehicle.Propulsion.THRUST_TOTAL, [44038.8, 34103.4, 33929.0, 33638.2], 'lbf')
 
 detailed_takeoff.set_val('angle_of_attack', [0.000, 3.600, 8.117, 8.117], 'deg')
-detailed_takeoff.set_val(Dynamic.Mission.FLIGHT_PATH_ANGLE, [
-                         0.000, 0.000, 0.612, 4.096], 'deg')
+detailed_takeoff.set_val(
+    Dynamic.Mission.FLIGHT_PATH_ANGLE, [0.000, 0.000, 0.612, 4.096], 'deg'
+)
 
 # missing from the default FLOPS output generated by hand
 # RANGE_RATE = VELOCITY * cos(flight_path_angle)
@@ -901,7 +930,7 @@ detailed_takeoff.set_val(Dynamic.Mission.VELOCITY_RATE, velocity_rate, 'ft/s**2'
 
 # NOTE FLOPS output is based on "constant" takeoff mass - assume gross weight
 #    - currently neglecting taxi
-detailed_takeoff.set_val(Dynamic.Mission.MASS, [
+detailed_takeoff.set_val(Dynamic.Vehicle.MASS, [
                          129734., 129734., 129734., 129734.], 'lbm')
 
 lift_coeff = np.array([0.5580, 0.9803, 1.4831, 1.3952])
@@ -915,10 +944,10 @@ rho = 1.18391  # kg/m**3
 RHV2 = 0.5 * rho * v * v * S
 
 lift = RHV2 * lift_coeff  # N
-detailed_takeoff.set_val(Dynamic.Mission.LIFT, lift, 'N')
+detailed_takeoff.set_val(Dynamic.Vehicle.LIFT, lift, 'N')
 
 drag = RHV2 * drag_coeff  # N
-detailed_takeoff.set_val(Dynamic.Mission.DRAG, drag, 'N')
+detailed_takeoff.set_val(Dynamic.Vehicle.DRAG, drag, 'N')
 
 
 def _split_aviary_values(aviary_values, slicing):
@@ -1043,7 +1072,8 @@ balanced_liftoff_initial_guesses.set_val('velocity', [160., 167.], 'kn')
 balanced_liftoff_initial_guesses.set_val('throttle', engine_out_throttle)
 balanced_liftoff_initial_guesses.set_val('altitude', [0., 35.], 'ft')
 balanced_liftoff_initial_guesses.set_val(
-    Dynamic.Mission.FLIGHT_PATH_ANGLE, [0., 5.], 'deg')
+    Dynamic.Mission.FLIGHT_PATH_ANGLE, [0.0, 5.0], 'deg'
+)
 balanced_liftoff_initial_guesses.set_val('angle_of_attack', 8.117, 'deg')
 balanced_liftoff_initial_guesses.set_val('mass', gross_mass, gross_mass_units)
 
@@ -1151,105 +1181,127 @@ landing_subsystem_options_spoilers = {'core_aerodynamics': {
 
 detailed_landing = AviaryValues()
 
-values = np.array([
-    -4.08, -4.08, -3.92, -3.76, -3.59, -3.43, -3.27, -3.1, -2.94, -2.78,
-    -2.61, -2.45, -2.29, -2.12, -1.96, -1.8, -1.63, -1.47, -1.31, -1.14,
-    -0.98, -0.82, -0.65, -0.49, -0.33, -0.16, 0, 0.16, 0.33, 0.49,
-    0.65, 0.82, 0.98, 1.14, 1.31, 1.47, 1.63, 1.8, 1.96, 2.12,
-    2.29, 2.45, 2.61, 2.78, 2.94, 3.1, 3.13, 3.92, 4.97, 5.68,
-    5.93, 6.97, 7.97, 8.97, 9.97, 10.97, 11.97, 12.97, 13.97, 14.97,
-    15.97, 16.97, 17.97, 18.97, 19.97, 20.97, 21.97, 22.97, 23.97, 24.49])
+# block auto-formatting of tables
+# autopep8: off
+# fmt: off
+values = np.array(
+    [
+        -4.08, -4.08, -3.92, -3.76, -3.59, -3.43, -3.27, -3.1, -2.94, -2.78, -2.61,
+        -2.45, -2.29, -2.12, -1.96, -1.8, -1.63, -1.47, -1.31, -1.14, -0.98, -0.82,
+        -0.65, -0.49, -0.33, -0.16, 0, 0.16, 0.33, 0.49, 0.65, 0.82, 0.98, 1.14, 1.31,
+        1.47, 1.63, 1.8, 1.96, 2.12, 2.29, 2.45, 2.61, 2.78, 2.94, 3.1, 3.13, 3.92, 4.97,
+        5.68, 5.93, 6.97, 7.97, 8.97, 9.97, 10.97, 11.97, 12.97, 13.97, 14.97, 15.97,
+        16.97, 17.97, 18.97, 19.97, 20.97, 21.97, 22.97, 23.97, 24.49
+    ]
+)
 
 base = values[0]
 values = values - base
 detailed_landing.set_val('time', values, 's')
 
-values = np.array([
-    -954.08, -954.06, -915.89, -877.73, -839.57, -801.41, -763.25, -725.08,
-    -686.92, -648.76, -610.6, -572.43, -534.27, -496.11, -457.95, -419.78,
-    -381.62, -343.46, -305.3, -267.14, -228.97, -190.81, -152.65, -114.49,
-    -76.32, -38.16, 0, 38.16, 76.32, 114.49, 152.65, 190.81,
-    228.97, 267.14, 305.3, 343.46, 381.62, 419.78, 457.95, 496.11,
-    534.27, 572.43, 610.6, 648.76, 686.92, 725.08, 731.46, 917.22,
-    1160.47, 1324.21, 1381.29, 1610.61, 1817.53, 2010.56, 2190, 2356.17,
-    2509.36, 2649.84, 2777.85, 2893.6, 2997.28, 3089.05, 3169.07, 3237.45,
-    3294.31, 3339.73, 3373.78, 3396.51, 3407.96, 3409.47])
+values = np.array(
+    [
+        -954.08, -954.06, -915.89, -877.73, -839.57, -801.41, -763.25, -725.08, -686.92,
+        -648.76, -610.6, -572.43, -534.27, -496.11, -457.95, -419.78, -381.62, -343.46,
+        -305.3, -267.14, -228.97, -190.81, -152.65, -114.49, -76.32, -38.16, 0, 38.16,
+        76.32, 114.49, 152.65, 190.81, 228.97, 267.14, 305.3, 343.46, 381.62, 419.78,
+        457.95, 496.11, 534.27, 572.43, 610.6, 648.76, 686.92, 725.08, 731.46, 917.22,
+        1160.47, 1324.21, 1381.29, 1610.61, 1817.53, 2010.56, 2190, 2356.17,
+        2509.36, 2649.84, 2777.85, 2893.6, 2997.28, 3089.05, 3169.07, 3237.45,
+        3294.31, 3339.73, 3373.78, 3396.51, 3407.96, 3409.47
+    ]
+)
+# autopep8: on
+# fmt: on
 
 base = values[0]
 values = values - base
 detailed_landing.set_val(Dynamic.Mission.DISTANCE, values, 'ft')
 
+# block auto-formatting of tables
+# autopep8: off
+# fmt: off
 detailed_landing.set_val(
     Dynamic.Mission.ALTITUDE,
     [
-        100, 100, 98, 96, 94, 92, 90, 88, 86, 84,
-        82, 80, 78, 76, 74, 72, 70, 68, 66, 64,
-        62, 60, 58, 56, 54, 52, 50, 48, 46, 44,
-        42, 40, 38, 36, 34, 32, 30, 28, 26, 24,
-        22, 20, 18, 16, 14, 12, 11.67, 2.49, 0, 0,
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    'ft')
+        100, 100, 98, 96, 94, 92, 90, 88, 86, 84, 80, 78, 76, 74, 72, 70, 68, 66, 64, 62,
+        60, 58, 56, 54, 52, 50, 48, 46, 44, 42, 40, 38, 36, 34, 32, 30, 28, 26, 24, 22,
+        20, 18, 16, 14, 12, 11.67, 2.49, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0,
+    ],
+    'ft',
+)
 
 detailed_landing.set_val(
     Dynamic.Mission.VELOCITY,
-    np.array([
-        138.65, 138.65, 138.65, 138.65, 138.65, 138.65, 138.65, 138.65, 138.65, 138.65,
-        138.65, 138.65, 138.65, 138.65, 138.65, 138.65, 138.65, 138.65, 138.65, 138.65,
-        138.65, 138.65, 138.65, 138.65, 138.65, 138.65, 138.65, 138.65, 138.65, 138.65,
-        138.65, 138.65, 138.65, 138.65, 138.65, 138.65, 138.65, 138.65, 138.65, 138.65,
-        138.65, 138.65, 138.65, 138.65, 138.65, 138.65, 138.65, 138.6, 137.18, 136.12,
-        134.43, 126.69, 118.46, 110.31, 102.35, 94.58, 86.97, 79.52, 72.19, 64.99,
-        57.88, 50.88, 43.95, 37.09, 30.29, 23.54, 16.82, 10.12, 3.45, 0]),
-    'kn')
+    np.array(
+        [
+            138.65, 138.65, 138.65, 138.65, 138.65, 138.65, 138.65, 138.65, 138.65,
+            138.65, 138.65, 138.65, 138.65, 138.65, 138.65, 138.65, 138.65, 138.65, 
+            138.65, 138.65, 138.65, 138.65, 138.65, 138.65, 138.65, 138.65, 138.65,
+            138.65, 138.65, 138.65, 138.65, 138.65, 138.65, 138.65, 138.65, 138.65,
+            138.65, 138.65, 138.65, 138.65, 138.65, 138.65, 138.65, 138.65, 138.65,
+            138.65, 138.65, 138.60, 137.18, 136.12, 134.43, 126.69, 118.46, 110.31,
+            102.35, 94.58, 86.97, 79.52, 72.19, 64.99, 57.88, 50.88, 43.95, 37.09,
+            30.29, 23.54, 16.82, 10.12, 3.45, 0
+        ]
+    ),
+    'kn',
+)
 
 detailed_landing.set_val(
-    Dynamic.Mission.MACH,
+    Dynamic.Atmosphere.MACH,
     [
         0.2061, 0.2061, 0.2061, 0.2061, 0.2061, 0.2061, 0.2061, 0.2061, 0.2061, 0.2061,
         0.2061, 0.2061, 0.2061, 0.2061, 0.2061, 0.2061, 0.2061, 0.2061, 0.2061, 0.2061,
         0.2061, 0.2061, 0.2061, 0.2061, 0.2061, 0.2061, 0.2061, 0.2061, 0.2061, 0.2061,
         0.2061, 0.2061, 0.2061, 0.2061, 0.2061, 0.2061, 0.2061, 0.2061, 0.2061, 0.2061,
-        0.2061, 0.2061, 0.2061, 0.2061, 0.2061, 0.2061, 0.2061, 0.206, 0.2039, 0.2023,
+        0.2061, 0.2061, 0.2061, 0.2061, 0.2061, 0.2061, 0.2061, 0.2060, 0.2039, 0.2023,
         0.1998, 0.1883, 0.1761, 0.1639, 0.1521, 0.1406, 0.1293, 0.1182, 0.1073, 0.0966,
-        0.086, 0.0756, 0.0653, 0.0551, 0.045, 0.035, 0.025, 0.015, 0.0051, 0])
+        0.086, 0.0756, 0.0653, 0.0551, 0.045, 0.035, 0.025, 0.015, 0.0051, 0,
+    ],
+)
 
 detailed_landing.set_val(
-    Dynamic.Mission.THRUST_TOTAL,
+    Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
     [
-        7614, 7614, 7607.7, 7601, 7593.9, 7586.4, 7578.5, 7570.2, 7561.3, 7551.8,
-        7541.8, 7531.1, 7519.7, 7507.6, 7494.6, 7480.6, 7465.7, 7449.7, 7432.5, 7414,
-        7394, 7372.3, 7348.9, 7323.5, 7295.9, 7265.8, 7233, 7197.1, 7157.7, 7114.3,
+        7614.0, 7614.0, 7607.7, 7601.0, 7593.9, 7586.4, 7578.5, 7570.2, 7561.3, 7551.8,
+        7541.8, 7531.1, 7519.7, 7507.6, 7494.6, 7480.6, 7465.7, 7449.7, 7432.5, 7414.0,
+        7394.0, 7372.3, 7348.9, 7323.5, 7295.9, 7265.8, 7233.0, 7197.1, 7157.7, 7114.3,
         7066.6, 7013.8, 6955.3, 6890.2, 6817.7, 6736.7, 6645.8, 6543.5, 6428.2, 6297.6,
-        6149.5, 5980.9, 5788.7, 5569.3, 5318.5, 5032, 4980.3, 4102, 0, 0,
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    'lbf')
+        6149.5, 5980.9, 5788.7, 5569.3, 5318.5, 5032.0, 4980.3, 4102, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    ],
+    'lbf',
+)
 
 detailed_landing.set_val(
     'angle_of_attack',
     [
-        5.231, 5.231, 5.231, 5.23, 5.23, 5.23, 5.23, 5.23, 5.229, 5.229,
-        5.229, 5.229, 5.228, 5.228, 5.227, 5.227, 5.227, 5.226, 5.226, 5.225,
-        5.224, 5.224, 5.223, 5.222, 5.221, 5.22, 5.219, 5.218, 5.217, 5.215,
-        5.214, 5.212, 5.21, 5.207, 5.204, 5.201, 5.197, 5.193, 5.187, 5.181,
-        5.173, 5.163, 5.151, 5.136, 5.117, 5.091, 5.086, 6.834, 5.585, 4.023,
-        3.473, 1.185, 0, 0, 0, 0, 0, 0, 0, 0,
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        5.231, 5.231, 5.231, 5.23, 5.23, 5.23, 5.23, 5.23, 5.229, 5.229, 5.229, 5.229,
+        5.228, 5.228, 5.227, 5.227, 5.227, 5.226, 5.226, 5.225, 5.224, 5.224, 5.223,
+        5.222, 5.221, 5.22, 5.219, 5.218, 5.217, 5.215, 5.214, 5.212, 5.21, 5.207, 5.204,
+        5.201, 5.197, 5.193, 5.187, 5.181, 5.173, 5.163, 5.151, 5.136, 5.117, 5.091,
+        5.086, 6.834, 5.585, 4.023, 3.473, 1.185, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0
+    ],
     'deg')
 
 # glide slope == flight path angle?
 detailed_landing.set_val(
     Dynamic.Mission.FLIGHT_PATH_ANGLE,
-    np.array([
-        -3, -3, -3, -3, -3, -3, -3, -3, -3, -3,
-        -3, -3, -3, -3, -3, -3, -3, -3, -3, -3,
-        -3, -3, -3, -3, -3, -3, -3, -3, -3, -3,
-        -3, -3, -3, -3, -3, -3, -3, -3, -3, -3,
-        -3, -3, -3, -3, -3, -3, -3, -2.47, 0, 0,
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0]),
-    'deg')
+    np.array(
+        [
+            -3, -3, -3, -3, -3, -3, -3, -3, -3, -3, -3, -3, -3, -3, -3, -3, -3, -3, -3,
+            -3, -3, -3, -3, -3, -3, -3, -3, -3, -3, -3, -3, -3, -3, -3, -3, -3, -3, -3,
+            -3, -3, -3, -3, -3, -3, -3, -3, -3, -2.47, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+        ]
+    ),
+    'deg',
+)
+# autopep8: on
+# fmt: on
 
 # missing from the default FLOPS output generated by script
 # RANGE_RATE = VELOCITY * cos(flight_path_angle)
@@ -1270,26 +1322,37 @@ detailed_landing.set_val(Dynamic.Mission.ALTITUDE_RATE, altitude_rate, 'kn')
 detailed_landing_mass = 106292.  # units='lbm'
 
 detailed_landing.set_val(
-    Dynamic.Mission.MASS, np.full(velocity.shape, detailed_landing_mass), 'lbm')
+    Dynamic.Vehicle.MASS, np.full(velocity.shape, detailed_landing_mass), 'lbm')
 
+# block auto-formatting of tables
+# autopep8: off
+# fmt: off
 # lift/drag is calculated very close to landing altitude (sea level, in this case)...
-lift_coeff = np.array([
-    1.4091, 1.4091, 1.4091, 1.4091, 1.4092, 1.4092, 1.4092, 1.4092, 1.4092, 1.4092,
-    1.4092, 1.4092, 1.4092, 1.4093, 1.4093, 1.4093, 1.4093, 1.4093, 1.4094, 1.4094,
-    1.4094, 1.4094, 1.4095, 1.4095, 1.4095, 1.4096, 1.4096, 1.4096, 1.4097, 1.4097,
-    1.4098, 1.4099, 1.4099, 1.41, 1.4101, 1.4102, 1.4103, 1.4105, 1.4106, 1.4108,
-    1.4109, 1.4112, 1.4114, 1.4117, 1.412, 1.4124, 1.4124, 1.6667, 1.595, 1.397,
-    0.5237, 0.2338, 0.046, 0.046, 0.046, 0.046, 0.046, 0.046, 0.046, 0.046,
-    0.046, 0.046, 0.046, 0.046, 0.046, 0.046, 0.046, 0.046, 0.046, 0.046])
+lift_coeff = np.array(
+    [
+        1.4091, 1.4091, 1.4091, 1.4091, 1.4092, 1.4092, 1.4092, 1.4092, 1.4092, 1.4092,
+        1.4092, 1.4092, 1.4092, 1.4093, 1.4093, 1.4093, 1.4093, 1.4093, 1.4094, 1.4094,
+        1.4094, 1.4094, 1.4095, 1.4095, 1.4095, 1.4096, 1.4096, 1.4096, 1.4097, 1.4097,
+        1.4098, 1.4099, 1.4099, 1.41, 1.4101, 1.4102, 1.4103, 1.4105, 1.4106, 1.4108,
+        1.4109, 1.4112, 1.4114, 1.4117, 1.412, 1.4124, 1.4124, 1.6667, 1.595, 1.397,
+        0.5237, 0.2338, 0.046, 0.046, 0.046, 0.046, 0.046, 0.046, 0.046, 0.046,
+        0.046, 0.046, 0.046, 0.046, 0.046, 0.046, 0.046, 0.046, 0.046, 0.046
+    ]
+)
 
-drag_coeff = np.array([
-    0.1731, 0.1731, 0.173, 0.173, 0.1729, 0.1728, 0.1727, 0.1726, 0.1724, 0.1723,
-    0.1722, 0.1721, 0.1719, 0.1718, 0.1716, 0.1714, 0.1712, 0.171, 0.1708, 0.1705,
-    0.1703, 0.17, 0.1697, 0.1694, 0.169, 0.1686, 0.1682, 0.1677, 0.1672, 0.1666,
-    0.166, 0.1653, 0.1646, 0.1637, 0.1628, 0.1618, 0.1606, 0.1592, 0.1577, 0.1561,
-    0.1541, 0.1519, 0.1495, 0.1466, 0.1434, 0.1396, 0.139, 0.13, 0.1207, 0.1099,
-    0.1922, 0.1827, 0.1785, 0.1785, 0.1785, 0.1785, 0.1785, 0.1785, 0.1785, 0.1785,
-    0.1785, 0.1785, 0.1785, 0.1785, 0.1785, 0.1785, 0.1785, 0.1785, 0.1785, 0.1785])
+drag_coeff = np.array(
+    [
+        0.1731, 0.1731, 0.173, 0.173, 0.1729, 0.1728, 0.1727, 0.1726, 0.1724, 0.1723,
+        0.1722, 0.1721, 0.1719, 0.1718, 0.1716, 0.1714, 0.1712, 0.171, 0.1708, 0.1705,
+        0.1703, 0.17, 0.1697, 0.1694, 0.169, 0.1686, 0.1682, 0.1677, 0.1672, 0.1666,
+        0.166, 0.1653, 0.1646, 0.1637, 0.1628, 0.1618, 0.1606, 0.1592, 0.1577, 0.1561,
+        0.1541, 0.1519, 0.1495, 0.1466, 0.1434, 0.1396, 0.139, 0.13, 0.1207, 0.1099,
+        0.1922, 0.1827, 0.1785, 0.1785, 0.1785, 0.1785, 0.1785, 0.1785, 0.1785, 0.1785,
+        0.1785, 0.1785, 0.1785, 0.1785, 0.1785, 0.1785, 0.1785, 0.1785, 0.1785, 0.1785
+    ]
+)
+# autopep8: on
+# fmt: on
 
 S = inputs.get_val(Aircraft.Wing.AREA, 'm**2')
 v = detailed_landing.get_val(Dynamic.Mission.VELOCITY, 'm/s')
@@ -1299,10 +1362,10 @@ rho = 1.18391  # kg/m**3
 RHV2 = 0.5 * rho * v * v * S
 
 lift = RHV2 * lift_coeff  # N
-detailed_landing.set_val(Dynamic.Mission.LIFT, lift, 'N')
+detailed_landing.set_val(Dynamic.Vehicle.LIFT, lift, 'N')
 
 drag = RHV2 * drag_coeff  # N
-detailed_landing.set_val(Dynamic.Mission.DRAG, drag, 'N')
+detailed_landing.set_val(Dynamic.Vehicle.DRAG, drag, 'N')
 
 # Flops variable APRANG
 apr_angle = -3.0  # deg
@@ -1343,7 +1406,8 @@ landing_approach_to_mic_p3_initial_guesses.set_val('throttle', throttle)
 landing_approach_to_mic_p3_initial_guesses.set_val('altitude', [600., 394.], 'ft')
 
 landing_approach_to_mic_p3_initial_guesses.set_val(
-    Dynamic.Mission.FLIGHT_PATH_ANGLE, [apr_angle, apr_angle], 'deg')
+    Dynamic.Mission.FLIGHT_PATH_ANGLE, [apr_angle, apr_angle], 'deg'
+)
 
 landing_approach_to_mic_p3_initial_guesses.set_val('angle_of_attack', 5.25, 'deg')
 
@@ -1394,7 +1458,8 @@ landing_mic_p3_to_obstacle_initial_guesses.set_val('throttle', throttle)
 landing_mic_p3_to_obstacle_initial_guesses.set_val('altitude', [394., 50.], 'ft')
 
 landing_mic_p3_to_obstacle_initial_guesses.set_val(
-    Dynamic.Mission.FLIGHT_PATH_ANGLE, [apr_angle, apr_angle], 'deg')
+    Dynamic.Mission.FLIGHT_PATH_ANGLE, [apr_angle, apr_angle], 'deg'
+)
 
 landing_mic_p3_to_obstacle_initial_guesses.set_val('angle_of_attack', 5.25, 'deg')
 
@@ -1432,7 +1497,8 @@ landing_obstacle_initial_guesses.set_val('throttle', throttle)
 landing_obstacle_initial_guesses.set_val('altitude', [50., 15.], 'ft')
 
 landing_obstacle_initial_guesses.set_val(
-    Dynamic.Mission.FLIGHT_PATH_ANGLE, [apr_angle, apr_angle], 'deg')
+    Dynamic.Mission.FLIGHT_PATH_ANGLE, [apr_angle, apr_angle], 'deg'
+)
 
 landing_obstacle_initial_guesses.set_val('angle_of_attack', 5.2, 'deg')
 
@@ -1473,7 +1539,8 @@ landing_flare_initial_guesses.set_val('mass', detailed_landing_mass, 'lbm')
 landing_flare_initial_guesses.set_val('throttle', [throttle, throttle*4/7])
 landing_flare_initial_guesses.set_val('altitude', [15., 0.], 'ft')
 landing_flare_initial_guesses.set_val(
-    Dynamic.Mission.FLIGHT_PATH_ANGLE, [apr_angle, 0.], 'deg')
+    Dynamic.Mission.FLIGHT_PATH_ANGLE, [apr_angle, 0.0], 'deg'
+)
 landing_flare_initial_guesses.set_val('angle_of_attack', [5.2, 7.5], 'deg')
 
 landing_flare_builder = LandingFlareToTouchdown(
