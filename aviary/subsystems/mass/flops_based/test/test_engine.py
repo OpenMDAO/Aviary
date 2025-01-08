@@ -38,7 +38,8 @@ class EngineMassTest(unittest.TestCase):
         prob.model_options['*'] = get_flops_options(case_name, preprocess=True)
 
         prob.setup(check=False, force_alloc_complex=True)
-        prob.set_val(Aircraft.Engine.MASS_SCALER, val=np.zeros(1))  # TODO: should we test MASS_SCALER = 1?
+        # TODO: should we test MASS_SCALER = 1?
+        prob.set_val(Aircraft.Engine.MASS_SCALER, val=np.zeros(1))
 
         flops_validation_test(
             prob,

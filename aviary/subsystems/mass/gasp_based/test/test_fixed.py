@@ -970,8 +970,10 @@ class GearTestCaseMultiengine(unittest.TestCase):
         self.prob.model.set_input_defaults(
             Aircraft.Nacelle.AVG_DIAMETER, val=[7.5, 8.22], units='ft'
         )
-        self.prob.model.set_input_defaults(Aircraft.LandingGear.MASS_COEFFICIENT, val=0.04)
-        self.prob.model.set_input_defaults(Aircraft.LandingGear.MAIN_GEAR_MASS_COEFFICIENT, val=0.85)
+        self.prob.model.set_input_defaults(
+            Aircraft.LandingGear.MASS_COEFFICIENT, val=0.04)
+        self.prob.model.set_input_defaults(
+            Aircraft.LandingGear.MAIN_GEAR_MASS_COEFFICIENT, val=0.85)
         self.prob.model.set_input_defaults(Mission.Design.GROSS_MASS, val=152000)
 
         self.prob.model_options['*'] = extract_options(options)
@@ -1170,7 +1172,8 @@ class FixedMassGroupTestCase1(unittest.TestCase):
         self.prob.model.set_input_defaults(Aircraft.Wing.FLAP_CHORD_RATIO, val=.3)
         self.prob.model.set_input_defaults(Aircraft.Wing.SLAT_SPAN_RATIO, val=.9)
         self.prob.model.set_input_defaults(Aircraft.Wing.LOADING, val=128)
-        self.prob.model.set_input_defaults(Aircraft.Wing.THICKNESS_TO_CHORD_ROOT, val=.15)
+        self.prob.model.set_input_defaults(
+            Aircraft.Wing.THICKNESS_TO_CHORD_ROOT, val=.15)
         self.prob.model.set_input_defaults(Aircraft.Wing.CENTER_CHORD, val=17.48974)
 
         setup_model_options(self.prob, options)
@@ -1483,7 +1486,8 @@ class FixedMassGroupTestCase2(unittest.TestCase):
         self.prob.model.set_input_defaults(Aircraft.Wing.FLAP_CHORD_RATIO, val=.3)
         self.prob.model.set_input_defaults(Aircraft.Wing.SLAT_SPAN_RATIO, val=.9)
         self.prob.model.set_input_defaults(Aircraft.Wing.LOADING, val=128)
-        self.prob.model.set_input_defaults(Aircraft.Wing.THICKNESS_TO_CHORD_ROOT, val=.15)
+        self.prob.model.set_input_defaults(
+            Aircraft.Wing.THICKNESS_TO_CHORD_ROOT, val=.15)
         self.prob.model.set_input_defaults(Aircraft.Wing.CENTER_CHORD, val=17.48974)
 
         setup_model_options(self.prob, options)

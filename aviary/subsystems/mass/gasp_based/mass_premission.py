@@ -6,8 +6,6 @@ from aviary.subsystems.mass.gasp_based.equipment_and_useful_load import \
 from aviary.subsystems.mass.gasp_based.fixed import FixedMassGroup
 from aviary.subsystems.mass.gasp_based.fuel import FuelMassGroup
 from aviary.subsystems.mass.gasp_based.wing import WingMassGroup
-from aviary.variable_info.variables import Aircraft
-
 
 
 class MassPremission(om.Group):
@@ -91,7 +89,3 @@ class MassPremission(om.Group):
                 "aircraft:*", "mission:*"
             ],
         )
-
-        #self.set_input_defaults(Aircraft.Fuselage.LENGTH, 200, 'ft')
-        #self.set_input_defaults(Aircraft.HorizontalTail.AREA, 20, 'ft**2')
-        #self.set_input_defaults(Aircraft.VerticalTail.AREA, 20, 'ft**2')
