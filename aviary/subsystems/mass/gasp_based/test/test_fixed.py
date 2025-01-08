@@ -1580,7 +1580,7 @@ class FixedMassGroupTestCase3(unittest.TestCase):
 
         setup_model_options(prob, data)
 
-          prob.model.set_input_defaults(
+        prob.model.set_input_defaults(
             Aircraft.Wing.TAPER_RATIO, val=0.33, units="unitless"
         )
         prob.model.set_input_defaults(
