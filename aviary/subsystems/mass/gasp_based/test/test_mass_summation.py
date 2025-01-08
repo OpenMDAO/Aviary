@@ -1,5 +1,4 @@
 import unittest
-import os
 
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
@@ -54,6 +53,8 @@ class MassSummationTestCase1(unittest.TestCase):
             Aircraft.Fuselage.WETTED_AREA_SCALER, val=0.86215, units="unitless")
         self.prob.model.set_input_defaults(Aircraft.Wing.SLAT_CHORD_RATIO, val=.15)
         self.prob.model.set_input_defaults(Aircraft.Wing.SLAT_SPAN_RATIO, val=.9)
+        self.prob.model.set_input_defaults(Aircraft.Engine.ADDITIONAL_MASS_FRACTION,
+                                           val=0.14)
 
         setup_model_options(self.prob, V3_bug_fixed_options)
 
