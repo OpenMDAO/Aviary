@@ -11,6 +11,7 @@ from aviary.utils.test_utils.variable_test import assert_match_varnames
 from aviary.validation_cases.validation_tests import (flops_validation_test,
                                                       get_flops_case_names,
                                                       get_flops_inputs,
+                                                      get_flops_options,
                                                       print_case)
 from aviary.variable_info.variables import Aircraft
 
@@ -28,10 +29,12 @@ class AntiIcingMassTest(unittest.TestCase):
 
         prob.model.add_subsystem(
             "anti_icing",
-            AntiIcingMass(aviary_options=get_flops_inputs(case_name, preprocess=True)),
+            AntiIcingMass(),
             promotes_inputs=['*'],
             promotes_outputs=['*'],
         )
+
+        prob.model_options['*'] = get_flops_options(case_name, preprocess=True)
 
         prob.setup(check=False, force_alloc_complex=True)
 
@@ -50,16 +53,18 @@ class AntiIcingMassTest(unittest.TestCase):
         # test with more than four engines
         prob = self.prob
 
-        aviary_options = get_flops_inputs('LargeSingleAisle1FLOPS')
-        aviary_options.set_val(Aircraft.Engine.NUM_ENGINES, np.array([5]))
-        aviary_options.set_val(Aircraft.Propulsion.TOTAL_NUM_ENGINES, 5)
+        options = get_flops_options('LargeSingleAisle1FLOPS')
+        options[Aircraft.Engine.NUM_ENGINES] = np.array([5])
+        options[Aircraft.Propulsion.TOTAL_NUM_ENGINES] = 5
 
         prob.model.add_subsystem(
             "anti_icing",
-            AntiIcingMass(aviary_options=aviary_options),
+            AntiIcingMass(),
             promotes_inputs=['*'],
             promotes_outputs=['*'],
         )
+
+        prob.model_options['*'] = options
 
         prob.setup(check=False, force_alloc_complex=True)
 
@@ -83,16 +88,18 @@ class AntiIcingMassTest(unittest.TestCase):
         # test with multiple engine types
         prob = self.prob
 
-        aviary_options = get_flops_inputs('LargeSingleAisle1FLOPS')
-        aviary_options.set_val(Aircraft.Engine.NUM_ENGINES, np.array([2, 2, 4]))
-        aviary_options.set_val(Aircraft.Propulsion.TOTAL_NUM_ENGINES, 8)
+        options = get_flops_options('LargeSingleAisle1FLOPS')
+        options[Aircraft.Engine.NUM_ENGINES] = np.array([2, 2, 4])
+        options[Aircraft.Propulsion.TOTAL_NUM_ENGINES] = 8
 
         prob.model.add_subsystem(
             "anti_icing",
-            AntiIcingMass(aviary_options=aviary_options),
+            AntiIcingMass(),
             promotes_inputs=['*'],
             promotes_outputs=['*'],
         )
+
+        prob.model_options['*'] = options
 
         prob.setup(check=False, force_alloc_complex=True)
 
@@ -132,15 +139,20 @@ class AntiIcingMassTest2(unittest.TestCase):
 
     def test_case_2(self):
         prob = om.Problem()
-        aviary_options = get_flops_inputs('N3CC')
-        aviary_options.set_val(Aircraft.Engine.NUM_ENGINES, np.array([5]))
-        aviary_options.set_val(Aircraft.Propulsion.TOTAL_NUM_ENGINES, 5)
+
+        options = get_flops_options('N3CC')
+        options[Aircraft.Engine.NUM_ENGINES] = np.array([5])
+        options[Aircraft.Propulsion.TOTAL_NUM_ENGINES] = 5
+
         prob.model.add_subsystem(
             "anti_icing",
-            AntiIcingMass(aviary_options=aviary_options),
+            AntiIcingMass(),
             promotes_inputs=['*'],
             promotes_outputs=['*'],
         )
+
+        prob.model_options['*'] = options
+
         prob.setup(check=False, force_alloc_complex=True)
         prob.set_val(Aircraft.AntiIcing.MASS_SCALER, 1.0)
         prob.set_val(Aircraft.Fuselage.MAX_WIDTH, 12.33, 'ft')

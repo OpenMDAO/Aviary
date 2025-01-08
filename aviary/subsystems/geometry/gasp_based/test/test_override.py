@@ -10,6 +10,7 @@ from aviary.subsystems.propulsion.utils import build_engine_deck
 from aviary.subsystems.aerodynamics.gasp_based.gaspaero import AeroGeom
 from aviary.utils.process_input_decks import create_vehicle
 from aviary.utils.preprocessors import preprocess_propulsion
+from aviary.variable_info.functions import setup_model_options
 from aviary.variable_info.variable_meta_data import _MetaData as BaseMetaData
 
 import warnings
@@ -54,6 +55,8 @@ class GASPOverrideTestCase(unittest.TestCase):
         self.aviary_inputs.set_val(
             Aircraft.Fuselage.WETTED_AREA, val=4000.0, units="ft**2")
 
+        setup_model_options(prob, self.aviary_inputs)
+
         with warnings.catch_warnings():
             warnings.simplefilter("ignore", om.PromotionWarning)
             prob.setup()
@@ -67,6 +70,8 @@ class GASPOverrideTestCase(unittest.TestCase):
         prob = self.prob
 
         # self.aviary_inputs.set_val(Aircraft.Fuselage.WETTED_AREA, val=4000, units="ft**2")
+
+        setup_model_options(prob, self.aviary_inputs)
 
         with warnings.catch_warnings():
             warnings.simplefilter("ignore", om.PromotionWarning)
@@ -83,6 +88,8 @@ class GASPOverrideTestCase(unittest.TestCase):
         # self.aviary_inputs.set_val(Aircraft.Fuselage.WETTED_AREA, val=4000, units="ft**2")
         self.aviary_inputs.set_val(
             Aircraft.Fuselage.WETTED_AREA_SCALER, val=0.5, units="unitless")
+
+        setup_model_options(prob, self.aviary_inputs)
 
         with warnings.catch_warnings():
             warnings.simplefilter("ignore", om.PromotionWarning)
@@ -101,6 +108,8 @@ class GASPOverrideTestCase(unittest.TestCase):
         self.aviary_inputs.set_val(
             Aircraft.Fuselage.WETTED_AREA_SCALER, val=0.5, units="unitless")
 
+        setup_model_options(prob, self.aviary_inputs)
+
         with warnings.catch_warnings():
             warnings.simplefilter("ignore", om.PromotionWarning)
             prob.setup()
@@ -115,9 +124,10 @@ class GASPOverrideTestCase(unittest.TestCase):
         Also checks non-overriden (wing) and default (strut)
         """
         prob = self.prob
-        prob.model.add_subsystem("geom", AeroGeom(
-            aviary_options=self.aviary_inputs), promotes=["*"])
+        prob.model.add_subsystem("geom", AeroGeom(), promotes=["*"])
         self.aviary_inputs.set_val(Aircraft.HorizontalTail.FORM_FACTOR, val=1.5)
+
+        setup_model_options(prob, self.aviary_inputs)
 
         with warnings.catch_warnings():
             warnings.simplefilter("ignore", om.PromotionWarning)

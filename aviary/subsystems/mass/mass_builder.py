@@ -59,10 +59,10 @@ class CoreMassBuilder(MassBuilderBase):
         code_origin = self.code_origin
 
         if code_origin is GASP:
-            mass_premission = MassPremissionGASP(aviary_options=aviary_inputs,)
+            mass_premission = MassPremissionGASP()
 
         elif code_origin is FLOPS:
-            mass_premission = MassPremissionFLOPS(aviary_options=aviary_inputs)
+            mass_premission = MassPremissionFLOPS()
 
         return mass_premission
 

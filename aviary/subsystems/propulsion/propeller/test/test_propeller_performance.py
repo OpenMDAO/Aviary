@@ -14,9 +14,9 @@ from aviary.subsystems.propulsion.propeller.propeller_performance import (
     AdvanceRatio,
 )
 from aviary.variable_info.enums import OutMachType
-from aviary.variable_info.variables import Aircraft, Dynamic, Settings
+from aviary.variable_info.functions import setup_model_options
 from aviary.variable_info.options import get_option_defaults
-from aviary.variable_info.variables import Aircraft, Dynamic
+from aviary.variable_info.variables import Aircraft, Dynamic, Settings
 
 # Setting up truth values from GASP (The first 12 are actual truth values, the rest are intelligent guesses)
 # test values now are slightly different due to setup - max tip speed was limited to test
@@ -215,7 +215,8 @@ class PropellerPerformanceTest(unittest.TestCase):
 
         pp = prob.model.add_subsystem(
             'pp',
-            PropellerPerformance(num_nodes=num_nodes, aviary_options=options),
+            PropellerPerformance(num_nodes=num_nodes,
+                                 aviary_options=options),
             promotes_inputs=['*'],
             promotes_outputs=["*"],
         )
@@ -238,6 +239,9 @@ class PropellerPerformanceTest(unittest.TestCase):
             val=True,
             units='unitless',
         )
+
+        setup_model_options(prob, options)
+
         prob.setup()
 
         prob.set_val(Aircraft.Engine.Propeller.DIAMETER, 10.5, units="ft")
@@ -314,6 +318,9 @@ class PropellerPerformanceTest(unittest.TestCase):
             val=False,
             units='unitless',
         )
+
+        setup_model_options(prob, options)
+
         prob.setup()
         prob.set_val('install_loss_factor', [0.0, 0.05, 0.05], units="unitless")
         prob.set_val(Aircraft.Engine.Propeller.DIAMETER, 12.0, units="ft")
@@ -364,6 +371,9 @@ class PropellerPerformanceTest(unittest.TestCase):
             val=False,
             units='unitless',
         )
+
+        setup_model_options(prob, options)
+
         prob.setup()
         prob.set_val('install_loss_factor', [0.0, 0.05, 0.05], units="unitless")
         prob.set_val(Aircraft.Engine.Propeller.DIAMETER, 12.0, units="ft")
@@ -496,6 +506,8 @@ class PropellerPerformanceTest(unittest.TestCase):
         options.set_val(
             Aircraft.Engine.INTERPOLATION_METHOD, val='slinear', units='unitless'
         )
+
+        setup_model_options(prob, options)
 
         prob.setup(force_alloc_complex=True)
         prob.set_val('install_loss_factor', [0.0, 0.05, 0.05], units="unitless")
