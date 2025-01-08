@@ -97,11 +97,13 @@ class RotationPhase(PhaseBuilderBase):
         )
 
         # Add timeseries outputs
-        phase.add_timeseries_output(Dynamic.Mission.THRUST_TOTAL, units="lbf")
+        phase.add_timeseries_output(
+            Dynamic.Vehicle.Propulsion.THRUST_TOTAL, units="lbf"
+        )
         phase.add_timeseries_output("normal_force")
-        phase.add_timeseries_output(Dynamic.Mission.MACH)
+        phase.add_timeseries_output(Dynamic.Atmosphere.MACH)
         phase.add_timeseries_output("EAS", units="kn")
-        phase.add_timeseries_output(Dynamic.Mission.LIFT)
+        phase.add_timeseries_output(Dynamic.Vehicle.LIFT)
         phase.add_timeseries_output("CL")
         phase.add_timeseries_output("CD")
         phase.add_timeseries_output("fuselage_pitch", output_name="theta", units="deg")

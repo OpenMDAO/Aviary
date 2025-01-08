@@ -58,7 +58,7 @@ from aviary.utils.preprocessors import preprocess_options
 from aviary.utils.process_input_decks import create_vehicle, update_GASP_options, initialization_guessing
 
 from aviary.variable_info.enums import AnalysisScheme, ProblemType, EquationsOfMotion, LegacyCode, Verbosity
-from aviary.variable_info.functions import setup_trajectory_params, override_aviary_vars
+from aviary.variable_info.functions import setup_trajectory_params, override_aviary_vars, setup_model_options
 from aviary.variable_info.variables import Aircraft, Mission, Dynamic, Settings
 from aviary.variable_info.variable_meta_data import _MetaData as BaseMetaData
 
@@ -286,9 +286,10 @@ class AviaryProblem(om.Problem):
         self.mass_method = mass_method = aviary_inputs.get_val(Settings.MASS_METHOD)
 
         if mission_method is TWO_DEGREES_OF_FREEDOM or mass_method is GASP:
+            # TODO this should be a preprocessor step if it is required here
             aviary_inputs = update_GASP_options(aviary_inputs)
-        initialization_guesses = initialization_guessing(aviary_inputs, initialization_guesses,
-                                                         engine_builders)
+        initialization_guesses = initialization_guessing(
+            aviary_inputs, initialization_guesses, engine_builders)
         self.aviary_inputs = aviary_inputs
         self.initialization_guesses = initialization_guesses
 
@@ -308,7 +309,8 @@ class AviaryProblem(om.Problem):
                 # Access the phase_info variable from the loaded module
                 phase_info = outputted_phase_info.phase_info
 
-                # if verbosity level is BRIEF or higher, print that we're using the outputted phase info
+                # if verbosity level is BRIEF or higher, print that we're using the
+                # outputted phase info
                 if verbosity is not None and verbosity >= Verbosity.BRIEF:
                     print('Using outputted phase_info from current working directory')
 
@@ -359,10 +361,14 @@ class AviaryProblem(om.Problem):
         self.aviary_inputs = aviary_inputs
 
         if mission_method is TWO_DEGREES_OF_FREEDOM:
-            aviary_inputs.set_val(Mission.Summary.CRUISE_MASS_FINAL,
-                                  val=self.initialization_guesses['cruise_mass_final'], units='lbm')
-            aviary_inputs.set_val(Mission.Summary.GROSS_MASS,
-                                  val=self.initialization_guesses['actual_takeoff_mass'], units='lbm')
+            aviary_inputs.set_val(
+                Mission.Summary.CRUISE_MASS_FINAL,
+                val=self.initialization_guesses['cruise_mass_final'],
+                units='lbm')
+            aviary_inputs.set_val(
+                Mission.Summary.GROSS_MASS,
+                val=self.initialization_guesses['actual_takeoff_mass'],
+                units='lbm')
 
             # Commonly referenced values
             self.cruise_alt = aviary_inputs.get_val(
@@ -388,8 +394,10 @@ class AviaryProblem(om.Problem):
 
         elif mission_method is HEIGHT_ENERGY:
             self.problem_type = aviary_inputs.get_val(Settings.PROBLEM_TYPE)
-            aviary_inputs.set_val(Mission.Summary.GROSS_MASS,
-                                  val=self.initialization_guesses['actual_takeoff_mass'], units='lbm')
+            aviary_inputs.set_val(
+                Mission.Summary.GROSS_MASS,
+                val=self.initialization_guesses['actual_takeoff_mass'],
+                units='lbm')
             if 'target_range' in self.post_mission_info:
                 aviary_inputs.set_val(Mission.Summary.RANGE, wrapped_convert_units(
                     phase_info['post_mission']['target_range'], 'NM'), units='NM')
@@ -398,7 +406,8 @@ class AviaryProblem(om.Problem):
                     phase_info['post_mission']['target_range'], 'NM')
             else:
                 self.require_range_residual = False
-                # still instantiate target_range because it is used for default guesses for phase comps
+                # still instantiate target_range because it is used for default guesses
+                # for phase comps
                 self.target_range = aviary_inputs.get_val(
                     Mission.Design.RANGE, units='NM')
 
@@ -483,13 +492,15 @@ class AviaryProblem(om.Problem):
         for idx, phase_name in enumerate(self.phase_info):
             if 'user_options' in self.phase_info[phase_name]:
                 analytic = False
-                if (self.analysis_scheme is AnalysisScheme.COLLOCATION) and (self.mission_method is EquationsOfMotion.TWO_DEGREES_OF_FREEDOM):
+                if (self.analysis_scheme is AnalysisScheme.COLLOCATION) and (
+                        self.mission_method is EquationsOfMotion.TWO_DEGREES_OF_FREEDOM):
                     try:
                         # if the user provided an option, use it
                         analytic = self.phase_info[phase_name]["user_options"][
                             'analytic']
                     except KeyError:
-                        # if it isn't specified, only the default 2DOF cruise for collocation is analytic
+                        # if it isn't specified, only the default 2DOF cruise for
+                        # collocation is analytic
                         if 'cruise' in phase_name:
                             analytic = self.phase_info[phase_name]["user_options"][
                                 'analytic'] = True
@@ -515,8 +526,9 @@ class AviaryProblem(om.Problem):
                         self.phase_info[phase_name].update({"initial_guesses": {"time": (
                             (target_duration[0], target_duration[0]), target_duration[1])}})
                         # Set Fixed_duration to true:
-                        self.phase_info[phase_name]["user_options"].update({
-                            "fix_duration": True})
+                        self.phase_info[phase_name]["user_options"].update(
+                            {"fix_duration": True}
+                        )
 
         if self.analysis_scheme is AnalysisScheme.COLLOCATION:
             check_phase_info(self.phase_info, self.mission_method)
@@ -665,7 +677,8 @@ class AviaryProblem(om.Problem):
         # Create options to values
         OptionsToValues = create_opts2vals(
             [Aircraft.CrewPayload.NUM_PASSENGERS,
-                Mission.Design.CRUISE_ALTITUDE, ])
+             Mission.Design.CRUISE_ALTITUDE, ])
+
         add_opts2vals(self.model, OptionsToValues, self.aviary_inputs)
 
         if self.analysis_scheme is AnalysisScheme.SHOOTING:
@@ -873,8 +886,8 @@ class AviaryProblem(om.Problem):
             if 'phase_builder' in phase_options:
                 phase_builder = phase_options['phase_builder']
                 if not issubclass(phase_builder, PhaseBuilderBase):
-                    raise TypeError(
-                        f"phase_builder for the phase called {phase_name} must be a PhaseBuilderBase object.")
+                    raise TypeError(f"phase_builder for the phase called "
+                                    "{phase_name} must be a PhaseBuilderBase object.")
             else:
                 phase_builder = EnergyPhase
 
@@ -894,7 +907,8 @@ class AviaryProblem(om.Problem):
 
         # TODO: add logic to filter which phases get which controls.
         # right now all phases get all controls added from every subsystem.
-        # for example, we might only want ELECTRIC_SHAFT_POWER applied during the climb phase.
+        # for example, we might only want ELECTRIC_SHAFT_POWER applied during the
+        # climb phase.
         all_subsystems = self._get_all_subsystems(
             phase_options['external_subsystems'])
 
@@ -985,7 +999,8 @@ class AviaryProblem(om.Problem):
             if fix_initial or input_initial:
 
                 if self.comm.size > 1:
-                    # Phases are disconnected to run in parallel, so initial ref is valid.
+                    # Phases are disconnected to run in parallel, so initial ref is
+                    # valid.
                     initial_ref = user_options.get_val("initial_ref", time_units)
                 else:
                     # Redundant on a fixed input; raises a warning if specified.
@@ -1016,8 +1031,11 @@ class AviaryProblem(om.Problem):
 
         if 'cruise' not in phase_name and self.mission_method is TWO_DEGREES_OF_FREEDOM:
             phase.add_control(
-                Dynamic.Mission.THROTTLE, targets=Dynamic.Mission.THROTTLE,
-                units='unitless', opt=False,)
+                Dynamic.Vehicle.Propulsion.THROTTLE,
+                targets=Dynamic.Vehicle.Propulsion.THROTTLE,
+                units='unitless',
+                opt=False,
+            )
 
         return phase
 
@@ -1052,11 +1070,11 @@ class AviaryProblem(om.Problem):
             full_traj = FlexibleTraj(
                 Phases=self.phase_info,
                 traj_final_state_output=[
-                    Dynamic.Mission.MASS,
+                    Dynamic.Vehicle.MASS,
                     Dynamic.Mission.DISTANCE,
                 ],
                 traj_initial_state_input=[
-                    Dynamic.Mission.MASS,
+                    Dynamic.Vehicle.MASS,
                     Dynamic.Mission.DISTANCE,
                     Dynamic.Mission.ALTITUDE,
                 ],
@@ -1064,17 +1082,30 @@ class AviaryProblem(om.Problem):
                     # specify ODE, output_name, with units that SimuPyProblem expects
                     # assume event function is of form ODE.output_name - value
                     # third key is event_idx associated with input
-                    ('groundroll', Dynamic.Mission.VELOCITY, 0,),
-                    ('climb3', Dynamic.Mission.ALTITUDE, 0,),
-                    ('cruise', Dynamic.Mission.MASS, 0,),
+                    (
+                        'groundroll',
+                        Dynamic.Mission.VELOCITY,
+                        0,
+                    ),
+                    (
+                        'climb3',
+                        Dynamic.Mission.ALTITUDE,
+                        0,
+                    ),
+                    (
+                        'cruise',
+                        Dynamic.Vehicle.MASS,
+                        0,
+                    ),
                 ],
                 traj_intermediate_state_output=[
                     ('cruise', Dynamic.Mission.DISTANCE),
-                    ('cruise', Dynamic.Mission.MASS),
-                ]
+                    ('cruise', Dynamic.Vehicle.MASS),
+                ],
             )
-            traj = self.model.add_subsystem('traj', full_traj, promotes_inputs=[
-                                            ('altitude_initial', Mission.Design.CRUISE_ALTITUDE)])
+            traj = self.model.add_subsystem(
+                'traj', full_traj, promotes_inputs=[
+                    ('altitude_initial', Mission.Design.CRUISE_ALTITUDE)])
 
             self.model.add_subsystem(
                 'actual_descent_fuel', om.ExecComp(
@@ -1148,8 +1179,9 @@ class AviaryProblem(om.Problem):
                 if not self.pre_mission_info['include_takeoff']:
                     first_flight_phase_name = list(phase_info.keys())[0]
                     first_flight_phase = traj._phases[first_flight_phase_name]
-                    first_flight_phase.set_state_options(Dynamic.Mission.MASS,
-                                                         fix_initial=False)
+                    first_flight_phase.set_state_options(
+                        Dynamic.Vehicle.MASS, fix_initial=False
+                    )
 
         self.traj = traj
 
@@ -1202,7 +1234,7 @@ class AviaryProblem(om.Problem):
             # Check if regular_phases[] is accessible
             try:
                 self.regular_phases[0]
-            except:
+            except BaseException:
                 raise ValueError(
                     f"regular_phases[] dictionary is not accessible."
                     f" For HEIGHT_ENERGY and SOLVED_2DOF missions, check_and_preprocess_inputs()"
@@ -1230,7 +1262,8 @@ class AviaryProblem(om.Problem):
                         ('initial_mass', Mission.Summary.GROSS_MASS),
                     ])
                 else:
-                    # timeseries has to be used because Breguet cruise phases don't have states
+                    # timeseries has to be used because Breguet cruise phases don't have
+                    # states
                     self.model.connect(f"traj.{self.regular_phases[0]}.timeseries.mass",
                                        "fuel_burned.initial_mass", src_indices=[0])
 
@@ -1244,8 +1277,9 @@ class AviaryProblem(om.Problem):
                                     mass_final={'units': 'lbm'},
                                     reserve_fuel_burned={'units': 'lbm'})
 
-                self.post_mission.add_subsystem('reserve_fuel_burned', ecomp, promotes=[
-                                                ('reserve_fuel_burned', Mission.Summary.RESERVE_FUEL_BURNED)])
+                self.post_mission.add_subsystem(
+                    'reserve_fuel_burned', ecomp, promotes=[
+                        ('reserve_fuel_burned', Mission.Summary.RESERVE_FUEL_BURNED)])
 
                 if self.analysis_scheme is AnalysisScheme.SHOOTING:
                     # shooting method currently doesn't have timeseries
@@ -1256,7 +1290,8 @@ class AviaryProblem(om.Problem):
                         f"traj.{self.reserve_phases[-1]}.states:mass",
                         "reserve_fuel_burned.mass_final", src_indices=[-1])
                 else:
-                    # timeseries has to be used because Breguet cruise phases don't have states
+                    # timeseries has to be used because Breguet cruise phases don't have
+                    # states
                     self.model.connect(
                         f"traj.{self.reserve_phases[0]}.timeseries.mass",
                         "reserve_fuel_burned.initial_mass", src_indices=[0])
@@ -1268,7 +1303,8 @@ class AviaryProblem(om.Problem):
 
             # TODO: need to add some sort of check that this value is less than the fuel capacity
             # TODO: the overall_fuel variable is the burned fuel plus the reserve, but should
-            # also include the unused fuel, and the hierarchy variable name should be more clear
+            # also include the unused fuel, and the hierarchy variable name should be
+            # more clear
             ecomp = om.ExecComp('overall_fuel = (1 + fuel_margin/100)*fuel_burned + reserve_fuel',
                                 overall_fuel={'units': 'lbm', 'shape': 1},
                                 fuel_margin={"units": "unitless", 'val': 0},
@@ -1285,7 +1321,8 @@ class AviaryProblem(om.Problem):
                 promotes_outputs=[('overall_fuel', Mission.Summary.TOTAL_FUEL_MASS)])
 
             # If a target distance (or time) has been specified for this phase
-            # distance (or time) is measured from the start of this phase to the end of this phase
+            # distance (or time) is measured from the start of this phase to the end
+            # of this phase
             for phase_name in self.phase_info:
                 if 'target_distance' in self.phase_info[phase_name]["user_options"]:
                     target_distance = wrapped_convert_units(
@@ -1368,10 +1405,9 @@ class AviaryProblem(om.Problem):
             # connect summary mass to the initial guess of mass in the first phase
             if not self.pre_mission_info['include_takeoff']:
                 first_flight_phase_name = list(self.phase_info.keys())[0]
-                eq = self.model.add_subsystem(f'link_{first_flight_phase_name}_mass',
-                                              om.EQConstraintComp(),
-                                              promotes_inputs=[('rhs:mass',
-                                                                Mission.Summary.GROSS_MASS)])
+                eq = self.model.add_subsystem(
+                    f'link_{first_flight_phase_name}_mass', om.EQConstraintComp(),
+                    promotes_inputs=[('rhs:mass', Mission.Summary.GROSS_MASS)])
                 eq.add_eq_output('mass', eq_units='lbm', normalize=False,
                                  ref=100000., add_constraint=True)
                 self.model.connect(
@@ -1409,7 +1445,8 @@ class AviaryProblem(om.Problem):
 
         # Loop through each group and determine the phases to link
         for group in groups_to_link:
-            # Extend the group to include the phase before the first True option and after the last True option, if applicable
+            # Extend the group to include the phase before the first True option and
+            # after the last True option, if applicable
             if group[0] > 0:
                 group.insert(0, group[0] - 1)
             if group[-1] < len(phases) - 1:
@@ -1475,22 +1512,33 @@ class AviaryProblem(om.Problem):
         if self.mission_method in (HEIGHT_ENERGY, SOLVED_2DOF):
             # connect regular_phases with each other if you are optimizing alt or mach
             self._link_phases_helper_with_options(
-                self.regular_phases, 'optimize_altitude', Dynamic.Mission.ALTITUDE, ref=1.e4)
+                self.regular_phases,
+                'optimize_altitude',
+                Dynamic.Mission.ALTITUDE,
+                ref=1.0e4,
+            )
             self._link_phases_helper_with_options(
-                self.regular_phases, 'optimize_mach', Dynamic.Mission.MACH)
+                self.regular_phases, 'optimize_mach', Dynamic.Atmosphere.MACH
+            )
 
             # connect reserve phases with each other if you are optimizing alt or mach
             self._link_phases_helper_with_options(
-                self.reserve_phases, 'optimize_altitude', Dynamic.Mission.ALTITUDE, ref=1.e4)
+                self.reserve_phases,
+                'optimize_altitude',
+                Dynamic.Mission.ALTITUDE,
+                ref=1.0e4,
+            )
             self._link_phases_helper_with_options(
-                self.reserve_phases, 'optimize_mach', Dynamic.Mission.MACH)
+                self.reserve_phases, 'optimize_mach', Dynamic.Atmosphere.MACH
+            )
 
             if self.mission_method is HEIGHT_ENERGY:
-                # connect mass and distance between all phases regardless of reserve / non-reserve status
+                # connect mass and distance between all phases regardless of reserve /
+                # non-reserve status
                 self.traj.link_phases(phases, ["time"],
                                       ref=None if true_unless_mpi else 1e3,
                                       connected=true_unless_mpi)
-                self.traj.link_phases(phases, [Dynamic.Mission.MASS],
+                self.traj.link_phases(phases, [Dynamic.Vehicle.MASS],
                                       ref=None if true_unless_mpi else 1e6,
                                       connected=true_unless_mpi)
                 self.traj.link_phases(phases, [Dynamic.Mission.DISTANCE],
@@ -1502,7 +1550,7 @@ class AviaryProblem(om.Problem):
                                    src_indices=[-1], flat_src_indices=True)
 
             elif self.mission_method is SOLVED_2DOF:
-                self.traj.link_phases(phases, [Dynamic.Mission.MASS], connected=True)
+                self.traj.link_phases(phases, [Dynamic.Vehicle.MASS], connected=True)
                 self.traj.link_phases(
                     phases, [Dynamic.Mission.DISTANCE],
                     units='ft', ref=1.e3, connected=False)
@@ -1514,8 +1562,8 @@ class AviaryProblem(om.Problem):
 
         elif self.mission_method is TWO_DEGREES_OF_FREEDOM:
             if self.analysis_scheme is AnalysisScheme.COLLOCATION:
-                for ii in range(len(phases)-1):
-                    phase1, phase2 = phases[ii:ii+2]
+                for ii in range(len(phases) - 1):
+                    phase1, phase2 = phases[ii:ii + 2]
                     analytic1 = self.phase_info[phase1]['user_options']['analytic']
                     analytic2 = self.phase_info[phase2]['user_options']['analytic']
 
@@ -1524,7 +1572,7 @@ class AviaryProblem(om.Problem):
                         states_to_link = {
                             'time': true_unless_mpi,
                             Dynamic.Mission.DISTANCE: true_unless_mpi,
-                            Dynamic.Mission.MASS: False,
+                            Dynamic.Vehicle.MASS: False,
                         }
 
                         # if both phases are reserve phases or neither is a reserve phase
@@ -1548,11 +1596,13 @@ class AviaryProblem(om.Problem):
                                 states_to_link['alpha'] = False
 
                         for state, connected in states_to_link.items():
-                            # in initial guesses, all of the states, other than time use the same name
+                            # in initial guesses, all of the states, other than time use
+                            # the same name
                             initial_guesses1 = self.phase_info[phase1]['initial_guesses']
                             initial_guesses2 = self.phase_info[phase2]['initial_guesses']
 
-                            # if a state is in the initial guesses, get the units of the initial guess
+                            # if a state is in the initial guesses, get the units of the
+                            # initial guess
                             kwargs = {}
                             if not connected:
                                 if state in initial_guesses1:
@@ -1565,14 +1615,15 @@ class AviaryProblem(om.Problem):
 
                     # if either phase is analytic we have to use a linkage_constraint
                     else:
-                        # analytic phases use the prefix "initial" for time and distance, but not mass
+                        # analytic phases use the prefix "initial" for time and distance,
+                        # but not mass
                         if analytic2:
                             prefix = 'initial_'
                         else:
                             prefix = ''
 
                         self.traj.add_linkage_constraint(
-                            phase1, phase2, 'time', prefix+'time', connected=True)
+                            phase1, phase2, 'time', prefix + 'time', connected=True)
                         self.traj.add_linkage_constraint(
                             phase1, phase2, 'distance', prefix + 'distance',
                             connected=True)
@@ -1782,7 +1833,8 @@ class AviaryProblem(om.Problem):
         In all cases, a design variable is added for the final cruise mass of the aircraft, with no upper bound, and a residual mass constraint is added to ensure that the mass balances.
 
         """
-        # add the engine builder `get_design_vars` dict to a collected dict from the external subsystems
+        # add the engine builder `get_design_vars` dict to a collected dict from
+        # the external subsystems
 
         # TODO : maybe in the most general case we need to handle DVs in the mission and post-mission as well.
         # for right now we just handle pre_mission
@@ -1802,7 +1854,8 @@ class AviaryProblem(om.Problem):
 
         elif self.mission_method in (HEIGHT_ENERGY, TWO_DEGREES_OF_FREEDOM):
             # vehicle sizing problem
-            # size the vehicle (via design GTOW) to meet a target range using all fuel capacity
+            # size the vehicle (via design GTOW) to meet a target range using all fuel
+            # capacity
             if self.problem_type is ProblemType.SIZING:
                 self.model.add_design_var(
                     Mission.Design.GROSS_MASS,
@@ -1839,7 +1892,8 @@ class AviaryProblem(om.Problem):
                     )
 
             # target range problem
-            # fixed vehicle (design GTOW) but variable actual GTOW for off-design mission range
+            # fixed vehicle (design GTOW) but variable actual GTOW for off-design
+            # mission range
             elif self.problem_type is ProblemType.ALTERNATE:
                 self.model.add_design_var(
                     Mission.Summary.GROSS_MASS,
@@ -1945,12 +1999,14 @@ class AviaryProblem(om.Problem):
             if objective_type == 'mass':
                 if self.analysis_scheme is AnalysisScheme.COLLOCATION:
                     self.model.add_objective(
-                        f"traj.{final_phase_name}.timeseries.{Dynamic.Mission.MASS}",
-                        index=-1, ref=ref)
+                        f"traj.{final_phase_name}.timeseries.{Dynamic.Vehicle.MASS}",
+                        index=-1,
+                        ref=ref
+                    )
                 else:
                     last_phase = self.traj._phases.items()[final_phase_name]
                     last_phase.add_objective(
-                        Dynamic.Mission.MASS, loc='final', ref=ref)
+                        Dynamic.Vehicle.MASS, loc='final', ref=ref)
             elif objective_type == 'time':
                 self.model.add_objective(
                     f"traj.{final_phase_name}.timeseries.time", index=-1, ref=ref)
@@ -1994,7 +2050,8 @@ class AviaryProblem(om.Problem):
                     if not isinstance(mission_variable_name, list):
                         mission_variable_name = [mission_variable_name]
 
-                    # loop over the mission_variable_name list and add each variable to the trajectory
+                    # loop over the mission_variable_name list and add each variable to
+                    # the trajectory
                     for mission_var_name in mission_variable_name:
                         if mission_var_name not in self.meta_data:
                             # base_units = self.model.get_io_metadata(includes=f'pre_mission.{external_subsystem.name}.{bus_variable}')[f'pre_mission.{external_subsystem.name}.{bus_variable}']['units']
@@ -2013,28 +2070,39 @@ class AviaryProblem(om.Problem):
                                 for phase_name in variable_data['phases']:
                                     phase = getattr(self.traj.phases, phase_name)
 
-                                    phase.add_parameter(mission_var_name, opt=False, static_target=True,
-                                                        units=base_units, shape=shape, targets=targets)
+                                    phase.add_parameter(
+                                        mission_var_name, opt=False, static_target=True,
+                                        units=base_units, shape=shape, targets=targets)
 
-                                    self.model.connect(f'pre_mission.{bus_variable}',
-                                                       f'traj.{phase_name}.parameters:{mission_var_name}')
+                                    self.model.connect(
+                                        f'pre_mission.{bus_variable}',
+                                        f'traj.{phase_name}.parameters:{mission_var_name}')
 
                             else:
-                                self.traj.add_parameter(mission_var_name, opt=False, static_target=True,
-                                                        units=base_units, shape=shape, targets={
-                                                            phase_name: [mission_var_name] for phase_name in base_phases})
+                                self.traj.add_parameter(
+                                    mission_var_name, opt=False, static_target=True,
+                                    units=base_units, shape=shape,
+                                    targets={phase_name: [mission_var_name]
+                                             for phase_name in base_phases})
 
                                 self.model.connect(
-                                    f'pre_mission.{bus_variable}', f'traj.parameters:'+mission_var_name)
+                                    f'pre_mission.{bus_variable}',
+                                    f'traj.parameters:' + mission_var_name)
 
                         if 'post_mission_name' in variable_data:
-                            self.model.connect(f'pre_mission.{external_subsystem.name}.{bus_variable}',
-                                               f'post_mission.{external_subsystem.name}.{variable_data["post_mission_name"]}')
+                            self.model.connect(
+                                f'pre_mission.{external_subsystem.name}.{bus_variable}',
+                                f'post_mission.{external_subsystem.name}.'
+                                f'{variable_data["post_mission_name"]}',
+                            )
 
     def setup(self, **kwargs):
         """
         Lightly wrapped setup() method for the problem.
         """
+        # Use OpenMDAO's model options to pass all options through the system hierarchy.
+        setup_model_options(self, self.aviary_inputs, self.meta_data)
+
         # suppress warnings:
         # "input variable '...' promoted using '*' was already promoted using 'aircraft:*'
         with warnings.catch_warnings():
@@ -2045,6 +2113,7 @@ class AviaryProblem(om.Problem):
 
             warnings.simplefilter("ignore", om.OpenMDAOWarning)
             warnings.simplefilter("ignore", om.PromotionWarning)
+
             super().setup(**kwargs)
 
     def set_initial_guesses(self, parent_prob=None, parent_prefix=""):
@@ -2067,11 +2136,14 @@ class AviaryProblem(om.Problem):
         # Grab the trajectory object from the model
         if self.analysis_scheme is AnalysisScheme.SHOOTING:
             if self.problem_type is ProblemType.SIZING:
-                setvalprob.set_val(parent_prefix+Mission.Summary.GROSS_MASS,
+                setvalprob.set_val(parent_prefix + Mission.Summary.GROSS_MASS,
                                    self.get_val(Mission.Design.GROSS_MASS))
 
-            setvalprob.set_val(parent_prefix+"traj.SGMClimb_"+Dynamic.Mission.ALTITUDE +
-                               "_trigger", val=self.cruise_alt, units="ft")
+            setvalprob.set_val(parent_prefix +
+                               "traj.SGMClimb_" + Dynamic.Mission.ALTITUDE + "_trigger",
+                               val=self.cruise_alt,
+                               units="ft",
+                               )
 
             return
 
@@ -2080,7 +2152,8 @@ class AviaryProblem(om.Problem):
         # Determine which phases to loop over, fetching them from the trajectory
         phase_items = traj._phases.items()
 
-        # Loop over each phase and set initial guesses for the state and control variables
+        # Loop over each phase and set initial guesses for the state and control
+        # variables
         for idx, (phase_name, phase) in enumerate(phase_items):
             if self.mission_method is SOLVED_2DOF:
                 self.phase_objects[idx].apply_initial_guesses(self, 'traj', phase)
@@ -2102,13 +2175,20 @@ class AviaryProblem(om.Problem):
                     if 'mass' == guess_key:
                         # Set initial and duration mass for the analytic cruise phase.
                         # Note we are integrating over mass, not time for this phase.
-                        setvalprob.set_val(parent_prefix+f'traj.{phase_name}.t_initial',
-                                           val[0], units=units)
-                        setvalprob.set_val(parent_prefix+f'traj.{phase_name}.t_duration',
-                                           val[1], units=units)
+                        setvalprob.set_val(
+                            parent_prefix +
+                            f'traj.{phase_name}.t_initial',
+                            val[0],
+                            units=units)
+                        setvalprob.set_val(
+                            parent_prefix +
+                            f'traj.{phase_name}.t_duration',
+                            val[1],
+                            units=units)
 
                     else:
-                        # Otherwise, set the value of the parameter in the trajectory phase
+                        # Otherwise, set the value of the parameter in the trajectory
+                        # phase
                         setvalprob.set_val(
                             parent_prefix + f'traj.{phase_name}.parameters:{guess_key}',
                             val, units=units)
@@ -2157,13 +2237,15 @@ class AviaryProblem(om.Problem):
 
                 # Check if the key indicates a control or state variable
                 if "controls:" in key or "states:" in key:
-                    # If so, strip the first part of the key to match the variable name in phase
+                    # If so, strip the first part of the key to match the variable name
+                    # in phase
                     stripped_key = ":".join(key.split(":")[1:])
 
                     # Interpolate the initial guess values across the phase's domain
                     val = phase.interp(stripped_key, xs=xs, ys=val)
                 else:
-                    # If not a control or state variable, interpolate the initial guess values directly
+                    # If not a control or state variable, interpolate the initial guess
+                    # values directly
                     val = phase.interp(key, xs=xs, ys=val)
 
         # Return the processed guess value(s)
@@ -2208,7 +2290,7 @@ class AviaryProblem(om.Problem):
 
                 # Set the initial guess in the problem
                 setvalprob.set_val(
-                    parent_prefix+f'traj.{phase_name}.{path_string}:{key}', **val)
+                    parent_prefix + f'traj.{phase_name}.{path_string}:{key}', **val)
 
     def _add_guesses(self, phase_name, phase, guesses, setvalprob, parent_prefix):
         """
@@ -2227,7 +2309,8 @@ class AviaryProblem(om.Problem):
         guesses : dict
             A dictionary containing the initial guesses for the phase.
         """
-        # If using the GASP model, set initial guesses for the rotation mass and flight duration
+        # If using the GASP model, set initial guesses for the rotation mass and
+        # flight duration
         if self.mission_method is TWO_DEGREES_OF_FREEDOM:
             rotation_mass = self.initialization_guesses['rotation_mass']
             flight_duration = self.initialization_guesses['flight_duration']
@@ -2237,15 +2320,22 @@ class AviaryProblem(om.Problem):
             state_keys = ["mass", Dynamic.Mission.DISTANCE]
         else:
             control_keys = ["velocity_rate", "throttle"]
-            state_keys = ["altitude", "mass", Dynamic.Mission.DISTANCE,
-                          Dynamic.Mission.VELOCITY, "flight_path_angle", "alpha"]
+            state_keys = [
+                "altitude",
+                "mass",
+                Dynamic.Mission.DISTANCE,
+                Dynamic.Mission.VELOCITY,
+                "flight_path_angle",
+                "alpha",
+            ]
             if self.mission_method is TWO_DEGREES_OF_FREEDOM and phase_name == 'ascent':
                 # Alpha is a control for ascent.
                 control_keys.append('alpha')
 
         prob_keys = ["tau_gear", "tau_flaps"]
 
-        # for the simple mission method, use the provided initial and final mach and altitude values from phase_info
+        # for the simple mission method, use the provided initial and final mach
+        # and altitude values from phase_info
         if self.mission_method in (HEIGHT_ENERGY, SOLVED_2DOF):
             initial_altitude = wrapped_convert_units(
                 self.phase_info[phase_name]['user_options']['initial_altitude'], 'ft')
@@ -2258,7 +2348,8 @@ class AviaryProblem(om.Problem):
             guesses["altitude"] = ([initial_altitude, final_altitude], 'ft')
 
         if self.mission_method is HEIGHT_ENERGY:
-            # if time not in initial guesses, set it to the average of the initial_bounds and the duration_bounds
+            # if time not in initial guesses, set it to the average of the
+            # initial_bounds and the duration_bounds
             if 'time' not in guesses:
                 initial_bounds = wrapped_convert_units(
                     self.phase_info[phase_name]['user_options']['initial_bounds'], 's')
@@ -2267,16 +2358,20 @@ class AviaryProblem(om.Problem):
                 guesses["time"] = ([np.mean(initial_bounds[0]), np.mean(
                     duration_bounds[0])], 's')
 
-            # if time not in initial guesses, set it to the average of the initial_bounds and the duration_bounds
+            # if time not in initial guesses, set it to the average of the
+            # initial_bounds and the duration_bounds
             if 'time' not in guesses:
                 initial_bounds = self.phase_info[phase_name]['user_options'][
                     'initial_bounds']
                 duration_bounds = self.phase_info[phase_name]['user_options'][
                     'duration_bounds']
-                # Add a check for the initial and duration bounds, raise an error if they are not consistent
+                # Add a check for the initial and duration bounds, raise an error if they
+                # are not consistent
                 if initial_bounds[1] != duration_bounds[1]:
                     raise ValueError(
-                        f"Initial and duration bounds for {phase_name} are not consistent.")
+                        f"Initial and duration bounds for {phase_name} "
+                        "are not consistent."
+                    )
                 guesses["time"] = ([np.mean(initial_bounds[0]), np.mean(
                     duration_bounds[0])], initial_bounds[1])
 
@@ -2285,9 +2380,9 @@ class AviaryProblem(om.Problem):
 
             # Set initial guess for time variables
             if 'time' == guess_key and self.mission_method is not SOLVED_2DOF:
-                setvalprob.set_val(parent_prefix+f'traj.{phase_name}.t_initial',
+                setvalprob.set_val(parent_prefix + f'traj.{phase_name}.t_initial',
                                    val[0], units=units)
-                setvalprob.set_val(parent_prefix+f'traj.{phase_name}.t_duration',
+                setvalprob.set_val(parent_prefix + f'traj.{phase_name}.t_duration',
                                    val[1], units=units)
 
             else:
@@ -2325,16 +2420,22 @@ class AviaryProblem(om.Problem):
                                        _process_guess_var(val, guess_key, phase),
                                        units=units)
                 elif guess_key in prob_keys:
-                    setvalprob.set_val(parent_prefix+guess_key, val, units=units)
+                    setvalprob.set_val(parent_prefix + guess_key, val, units=units)
                 elif ":" in guess_key:
-                    setvalprob.set_val(parent_prefix +
-                                       f'traj.{phase_name}.{guess_key}', self._process_guess_var(
-                                           val, guess_key, phase),
-                                       units=units)
+                    setvalprob.set_val(
+                        parent_prefix +
+                        f'traj.{phase_name}.{guess_key}',
+                        self._process_guess_var(
+                            val,
+                            guess_key,
+                            phase),
+                        units=units)
                 else:
                     # raise error if the guess key is not recognized
                     raise ValueError(
-                        f"Initial guess key {guess_key} in {phase_name} is not recognized.")
+                        f"Initial guess key {guess_key} in {phase_name} is not "
+                        "recognized."
+                    )
 
         if self.mission_method is SOLVED_2DOF:
             return
@@ -2360,31 +2461,33 @@ class AviaryProblem(om.Problem):
                 mass_guess = self.aviary_inputs.get_val(
                     Mission.Design.GROSS_MASS, units='lbm')
             # Set the mass guess as the initial value for the mass state variable
-            setvalprob.set_val(parent_prefix+f'traj.{phase_name}.states:mass',
+            setvalprob.set_val(parent_prefix + f'traj.{phase_name}.states:mass',
                                mass_guess, units='lbm')
 
         if 'time' not in guesses:
             # Determine initial time and duration guesses depending on the phase name
             if 'desc1' == base_phase:
-                t_initial = flight_duration*.9
-                t_duration = flight_duration*.04
+                t_initial = flight_duration * .9
+                t_duration = flight_duration * .04
             elif 'desc2' in base_phase:
-                t_initial = flight_duration*.94
+                t_initial = flight_duration * .94
                 t_duration = 5000
-            # Set the time guesses as the initial values for the time-related trajectory variables
-            setvalprob.set_val(parent_prefix+f"traj.{phase_name}.t_initial",
+            # Set the time guesses as the initial values for the time-related
+            # trajectory variables
+            setvalprob.set_val(parent_prefix + f"traj.{phase_name}.t_initial",
                                t_initial, units='s')
-            setvalprob.set_val(parent_prefix+f"traj.{phase_name}.t_duration",
+            setvalprob.set_val(parent_prefix + f"traj.{phase_name}.t_duration",
                                t_duration, units='s')
 
         if self.mission_method is TWO_DEGREES_OF_FREEDOM:
             if 'distance' not in guesses:
                 # Determine initial distance guesses depending on the phase name
                 if 'desc1' == base_phase:
-                    ys = [self.target_range*.97, self.target_range*.99]
+                    ys = [self.target_range * .97, self.target_range * .99]
                 elif 'desc2' in base_phase:
-                    ys = [self.target_range*.99, self.target_range]
-                # Set the distance guesses as the initial values for the distance state variable
+                    ys = [self.target_range * .99, self.target_range]
+                # Set the distance guesses as the initial values for the distance state
+                # variable
                 setvalprob.set_val(parent_prefix +
                                    f"traj.{phase_name}.states:distance", phase.interp(
                                        Dynamic.Mission.DISTANCE, ys=ys)
@@ -2480,8 +2583,13 @@ class AviaryProblem(om.Problem):
         mission_mass = self.get_val(Mission.Design.GROSS_MASS)
         optimizer = self.driver.options["optimizer"]
 
-        prob_alternate = _load_off_design(json_filename, ProblemType.ALTERNATE,
-                                          phase_info, payload_mass, design_range, mission_mass)
+        prob_alternate = _load_off_design(
+            json_filename,
+            ProblemType.ALTERNATE,
+            phase_info,
+            payload_mass,
+            design_range,
+            mission_mass)
 
         prob_alternate.check_and_preprocess_inputs()
         prob_alternate.add_pre_mission_systems()
@@ -2571,7 +2679,8 @@ class AviaryProblem(om.Problem):
                 (name, (value, units)) = data
                 type_value = type(value)
 
-                # Get the gross mass value from the sizing problem and add it to input list
+                # Get the gross mass value from the sizing problem and add it to input
+                # list
                 if name == Mission.Summary.GROSS_MASS or name == Mission.Design.GROSS_MASS:
                     Mission_Summary_GROSS_MASS_val = self.get_val(
                         Mission.Summary.GROSS_MASS, units=units)
@@ -2723,8 +2832,7 @@ class AviaryProblem(om.Problem):
                     'optimize_altitude', False):
                 # Similar steps for altitude difference
                 alt_diff_comp = om.ExecComp(
-                    'altitude_resid_for_connecting_takeoff = final_altitude - initial_altitude',
-                    units='ft')
+                    'altitude_resid_for_connecting_takeoff = final_altitude - initial_altitude', units='ft')
                 self.model.add_subsystem('alt_diff_comp', alt_diff_comp)
 
                 self.model.connect(Mission.Takeoff.FINAL_ALTITUDE,
@@ -2742,7 +2850,7 @@ class AviaryProblem(om.Problem):
             LandingSegment(
                 **(self.ode_args)),
             promotes_inputs=['aircraft:*', 'mission:*',
-                             (Dynamic.Mission.MASS, Mission.Landing.TOUCHDOWN_MASS)],
+                             (Dynamic.Vehicle.MASS, Mission.Landing.TOUCHDOWN_MASS)],
             promotes_outputs=['mission:*'],
         )
         self.model.connect(
@@ -2824,11 +2932,15 @@ class AviaryProblem(om.Problem):
         if RESERVE_FUEL_FRACTION != 0:
             reserve_fuel_frac = om.ExecComp(
                 'reserve_fuel_frac_mass = reserve_fuel_fraction * (takeoff_mass - final_mass)',
-                reserve_fuel_frac_mass={"units": "lbm"},
-                reserve_fuel_fraction={"units": "unitless",
-                                       "val": RESERVE_FUEL_FRACTION},
-                final_mass={"units": "lbm"},
-                takeoff_mass={"units": "lbm"})
+                reserve_fuel_frac_mass={
+                    "units": "lbm"},
+                reserve_fuel_fraction={
+                    "units": "unitless",
+                    "val": RESERVE_FUEL_FRACTION},
+                final_mass={
+                    "units": "lbm"},
+                takeoff_mass={
+                    "units": "lbm"})
 
             reserve_calc_location.add_subsystem(
                 "reserve_fuel_frac", reserve_fuel_frac,
@@ -2840,22 +2952,25 @@ class AviaryProblem(om.Problem):
 
         RESERVE_FUEL_ADDITIONAL = self.aviary_inputs.get_val(
             Aircraft.Design.RESERVE_FUEL_ADDITIONAL, units='lbm')
-        reserve_fuel = om.ExecComp('reserve_fuel = reserve_fuel_frac_mass + reserve_fuel_additional + reserve_fuel_burned',
-                                   reserve_fuel={"units": "lbm", 'shape': 1},
-                                   reserve_fuel_frac_mass={"units": "lbm", "val": 0},
-                                   reserve_fuel_additional={
-                                       "units": "lbm", "val": RESERVE_FUEL_ADDITIONAL},
-                                   reserve_fuel_burned={"units": "lbm", "val": 0})
+        reserve_fuel = om.ExecComp(
+            'reserve_fuel = reserve_fuel_frac_mass + reserve_fuel_additional + reserve_fuel_burned',
+            reserve_fuel={"units": "lbm", 'shape': 1},
+            reserve_fuel_frac_mass={"units": "lbm", "val": 0},
+            reserve_fuel_additional={"units": "lbm", "val": RESERVE_FUEL_ADDITIONAL},
+            reserve_fuel_burned={"units": "lbm", "val": 0})
 
-        reserve_calc_location.add_subsystem("reserve_fuel", reserve_fuel,
-                                            promotes_inputs=["reserve_fuel_frac_mass",
-                                                             ("reserve_fuel_additional",
-                                                              Aircraft.Design.RESERVE_FUEL_ADDITIONAL),
-                                                             ("reserve_fuel_burned",
-                                                              Mission.Summary.RESERVE_FUEL_BURNED)],
-                                            promotes_outputs=[
-                                                ("reserve_fuel", reserves_name)]
-                                            )
+        reserve_calc_location.add_subsystem(
+            "reserve_fuel",
+            reserve_fuel,
+            promotes_inputs=[
+                "reserve_fuel_frac_mass",
+                ("reserve_fuel_additional",
+                 Aircraft.Design.RESERVE_FUEL_ADDITIONAL),
+                ("reserve_fuel_burned",
+                 Mission.Summary.RESERVE_FUEL_BURNED)],
+            promotes_outputs=[
+                ("reserve_fuel",
+                 reserves_name)])
 
 
 def _read_sizing_json(aviary_problem, json_filename):
@@ -2928,14 +3043,34 @@ def _read_sizing_json(aviary_problem, json_filename):
                 aviary_problem.aviary_inputs = set_value(
                     var_name, var_values, aviary_problem.aviary_inputs, units=var_units,
                     is_array=is_array, meta_data=BaseMetaData)
-            except:
+            except BaseException:
                 # Print helpful error
-                print("FAILURE: list_num = ", counter, "Input String = ", inputs,
-                      "Attempted to set_value(", var_name, ",", var_values, ",", var_units, ")")
+                print(
+                    "FAILURE: list_num = ",
+                    counter,
+                    "Input String = ",
+                    inputs,
+                    "Attempted to set_value(",
+                    var_name,
+                    ",",
+                    var_values,
+                    ",",
+                    var_units,
+                    ")")
         else:
             # Not in the MetaData
-            print("Name not found in MetaData: list_num =", counter, "Input String =",
-                  inputs, "Attempted set_value(", var_name, ",", var_values, ",", var_units, ")")
+            print(
+                "Name not found in MetaData: list_num =",
+                counter,
+                "Input String =",
+                inputs,
+                "Attempted set_value(",
+                var_name,
+                ",",
+                var_values,
+                ",",
+                var_units,
+                ")")
 
         counter = counter + 1  # increment index tracker
     return aviary_problem

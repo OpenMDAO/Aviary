@@ -274,6 +274,8 @@ def preprocess_propulsion(aviary_options: AviaryValues, engine_models: list = No
                 # if default value is a list/tuple, find type inside that
                 if isinstance(default_value, (list, tuple)):
                     dtype = type(default_value[0])
+                elif isinstance(default_value, np.ndarray):
+                    dtype = default_value.dtype
                 elif default_value is None:
                     # With no default value, we cannot determine a dtype.
                     dtype = None
@@ -316,6 +318,7 @@ def preprocess_propulsion(aviary_options: AviaryValues, engine_models: list = No
                         # if aviary_val is an iterable, just grab val for this engine
                         if isinstance(aviary_val, (list, np.ndarray, tuple)):
                             aviary_val = aviary_val[i]
+                        # add aviary_val to vec using type-appropriate syntax
                         if isinstance(default_value, (list, np.ndarray)):
                             vec = np.append(vec, aviary_val)
                         elif isinstance(default_value, tuple):
@@ -396,6 +399,21 @@ def preprocess_propulsion(aviary_options: AviaryValues, engine_models: list = No
     aviary_options.set_val(Aircraft.Engine.NUM_ENGINES, num_engines_all)
     aviary_options.set_val(Aircraft.Engine.NUM_WING_ENGINES, num_wing_engines_all)
     aviary_options.set_val(Aircraft.Engine.NUM_FUSELAGE_ENGINES, num_fuse_engines_all)
+
+    # Update nacelle-related variables in aero to be sized to the number of
+    # engine types.
+    if num_engine_type > 1:
+
+        keys = [
+            Aircraft.Nacelle.LAMINAR_FLOW_LOWER,
+            Aircraft.Nacelle.LAMINAR_FLOW_UPPER
+        ]
+
+        for var in keys:
+            try:
+                aviary_options.get_val(var)
+            except KeyError:
+                aviary_options.set_val(var, np.zeros(num_engine_type))
 
     if Mission.Summary.FUEL_FLOW_SCALER not in aviary_options:
         aviary_options.set_val(Mission.Summary.FUEL_FLOW_SCALER, 1.0)
