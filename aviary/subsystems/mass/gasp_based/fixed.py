@@ -56,7 +56,7 @@ class MassParameters(om.ExplicitComponent):
         self.add_output("c_gear_loc", val=0, units="unitless",
                         desc="SKGEAR: landing gear location factor")
         add_aviary_output(self, Aircraft.Engine.POSITION_FACTOR,
-                          val=np.zeros(num_engine_type))
+                          shape=num_engine_type)
         self.add_output("half_sweep", val=0, units="rad",
                         desc="SWC2: wing chord half sweep angle")
 
@@ -532,12 +532,12 @@ class EngineMass(om.ExplicitComponent):
                            desc="WEAUG: mass of electrical augmentation system")
 
         add_aviary_output(self, Aircraft.Propulsion.TOTAL_ENGINE_MASS)
-        add_aviary_output(self, Aircraft.Nacelle.MASS, val=np.zeros(num_engine_type))
+        add_aviary_output(self, Aircraft.Nacelle.MASS, shape=num_engine_type)
         self.add_output('pylon_mass', units='lbm',
                         desc='WPYLON: mass of each pylon', val=np.zeros(num_engine_type))
         add_aviary_output(self, Aircraft.Propulsion.TOTAL_ENGINE_POD_MASS, val=0)
         add_aviary_output(self, Aircraft.Engine.ADDITIONAL_MASS,
-                          val=np.zeros(num_engine_type))
+                          shape=num_engine_type)
         self.add_output("eng_comb_mass", val=0, units="lbm",
                         desc="WPSTAR: combined mass of dry engine and engine installation,"
                         " includes mass of electrical augmentation system")
