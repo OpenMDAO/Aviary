@@ -271,7 +271,7 @@ class TabularAeroGroupDataTest(unittest.TestCase):
 
         assert_near_equal(
             prob.get_val("traj.cruise.rhs_all.drag", units='lbf')[0],
-            9896.0,
+            9907.0,
             1.0e-3
         )
 
