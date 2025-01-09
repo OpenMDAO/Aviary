@@ -73,7 +73,7 @@ def add_aviary_input(comp, varname, val=None, units=None, desc=None, shape_by_co
                    desc=input_desc, shape_by_conn=shape_by_conn, shape=shape)
 
 
-def add_aviary_output(comp, varname, val, units=None, desc=None, shape_by_conn=False,
+def add_aviary_output(comp, varname, val=None, units=None, desc=None, shape_by_conn=False,
                       meta_data=_MetaData, shape=None):
     """
     This function provides a clean way to add variables from the
