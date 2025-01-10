@@ -535,7 +535,7 @@ class EngineMass(om.ExplicitComponent):
         add_aviary_output(self, Aircraft.Nacelle.MASS, shape=num_engine_type)
         self.add_output('pylon_mass', units='lbm',
                         desc='WPYLON: mass of each pylon', val=np.zeros(num_engine_type))
-        add_aviary_output(self, Aircraft.Propulsion.TOTAL_ENGINE_POD_MASS, val=0)
+        add_aviary_output(self, Aircraft.Propulsion.TOTAL_ENGINE_POD_MASS)
         add_aviary_output(self, Aircraft.Engine.ADDITIONAL_MASS,
                           shape=num_engine_type)
         self.add_output("eng_comb_mass", val=0, units="lbm",

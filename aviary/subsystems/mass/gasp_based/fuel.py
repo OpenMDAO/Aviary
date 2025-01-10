@@ -337,7 +337,7 @@ class FuelAndOEMOutputs(om.ExplicitComponent):
 
     def setup(self):
 
-        add_aviary_input(self, Aircraft.Fuel.DENSITY, val=6.687, units="lbm/ft**3")
+        add_aviary_input(self, Aircraft.Fuel.DENSITY, units="lbm/ft**3")
         add_aviary_input(self, Mission.Design.GROSS_MASS)
         add_aviary_input(self, Aircraft.Propulsion.MASS)
         add_aviary_input(self, Aircraft.Controls.TOTAL_MASS)
@@ -823,10 +823,10 @@ class FuselageAndStructMass(om.ExplicitComponent):
 
         self.add_input("fus_mass_full", val=4000, units="lbm",
                        desc="WX: mass of fuselage and contents, including empennage")
-        add_aviary_input(self, Aircraft.Fuselage.MASS_COEFFICIENT, val=128)
-        add_aviary_input(self, Aircraft.Fuselage.WETTED_AREA, val=4000)
+        add_aviary_input(self, Aircraft.Fuselage.MASS_COEFFICIENT)
+        add_aviary_input(self, Aircraft.Fuselage.WETTED_AREA)
         add_aviary_input(self, Aircraft.Fuselage.AVG_DIAMETER)
-        add_aviary_input(self, Aircraft.TailBoom.LENGTH, val=129.4)
+        add_aviary_input(self, Aircraft.TailBoom.LENGTH)
         self.add_input("pylon_len", val=0, units="ft",
                        desc="ELRW: length of pylon for fuselage mounted engines")
         self.add_input("min_dive_vel", val=419.75918333, units="kn",

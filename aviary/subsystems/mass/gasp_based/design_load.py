@@ -616,7 +616,7 @@ class LiftCurveSlopeAtCruise(om.ExplicitComponent):
         add_aviary_input(self, Aircraft.Wing.SWEEP, units="rad")
         add_aviary_input(self, Mission.Design.MACH)
 
-        add_aviary_output(self, Aircraft.Design.LIFT_CURVE_SLOPE, val=7.1765)
+        add_aviary_output(self, Aircraft.Design.LIFT_CURVE_SLOPE)
 
         self.declare_partials(Aircraft.Design.LIFT_CURVE_SLOPE, "*")
 
