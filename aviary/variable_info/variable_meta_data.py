@@ -1170,6 +1170,7 @@ add_meta_data(
     historical_name={"GASP": 'INGASP.SKCC', "FLOPS": None, "LEAPS1": None},
     units="unitless",
     desc='mass trend coefficient of cockpit controls',
+    default_value=0.0,  # added
 )
 
 add_meta_data(
