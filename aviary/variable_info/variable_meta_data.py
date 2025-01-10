@@ -619,6 +619,7 @@ add_meta_data(
     historical_name={"GASP": 'INGASP.WFC', "FLOPS": None, "LEAPS1": None},
     units='lbm',
     desc='total mass of cockpit controls, fixed wing controls, and SAS',
+    default_value=0.0,  # added
 )
 
 #   _____                            _____                    _                       _
