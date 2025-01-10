@@ -418,7 +418,7 @@ add_meta_data(
     },
     units='unitless',
     desc='canard theoretical aspect ratio',
-    default_value=None,
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -3513,7 +3513,7 @@ add_meta_data(
     },
     units='unitless',
     desc='horizontal tail theoretical aspect ratio',
-    default_value=None,
+    default_value=0.0,
 )
 
 add_meta_data(
