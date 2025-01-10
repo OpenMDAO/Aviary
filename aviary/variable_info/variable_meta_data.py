@@ -418,7 +418,7 @@ add_meta_data(
     },
     units='unitless',
     desc='canard theoretical aspect ratio',
-    default_value=0.0,  # changed from None
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -434,7 +434,7 @@ add_meta_data(
     },
     units='ft',
     desc='Reynolds characteristic length for the canard',
-    default_value=0.0,  # added
+    default_value=0.0
 )
 
 add_meta_data(
@@ -450,7 +450,7 @@ add_meta_data(
     },
     units='unitless',
     desc='canard fineness ratio',
-    default_value=0.0,  # added
+    default_value=0.0
 )
 
 add_meta_data(
@@ -555,7 +555,7 @@ add_meta_data(
     },
     units='ft**2',
     desc='canard wetted area',
-    default_value=0.0,  # changed from None
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -1582,7 +1582,7 @@ add_meta_data(
     },
     units='ft**2',
     desc='total aircraft wetted area',
-    default_value=0.0,  # added
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -1706,7 +1706,7 @@ add_meta_data(
     historical_name={"GASP": 'INGASP.LCABLE', "FLOPS": None, "LEAPS1": None},
     units='ft',
     desc='length of cable for hybrid electric augmented system',
-    default_value=0.0,  # added
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -2151,7 +2151,7 @@ add_meta_data(
     historical_name={"GASP": 'INGASP.DIAM_REF', "FLOPS": None, "LEAPS1": None},
     units='ft',
     desc='engine reference diameter',
-    default_value=0.0,  # In geometry/gasp_based/engine.py, it was 5.8
+    default_value=0.0,
 )
 
 # NOTE This unscaled turbine (engine) weight is an input provided by the user, and is not
@@ -2358,7 +2358,6 @@ add_meta_data(
     units='unitless',
     desc='Engine wing mount locations as fractions of semispan; (NUM_WING_ENGINES)/2 values '
     'are input',
-    # In mass/gasp_based/fixed.py and geometry/gasp_based/electric.py, default was [0.35]
     default_value=np.array([0.0]),
 )
 
@@ -2878,7 +2877,6 @@ add_meta_data(
     historical_name={"GASP": 'INGASP.SKWF', "FLOPS": None, "LEAPS1": None},
     units='unitless',
     desc='fraction of total theoretical wing volume used for wing fuel',
-    # added. In geometry/gasp_based/wing.py, it was 0.6. In /mass/gasp_based/equipment_and_useful_load.py, it was 0.5.
     default_value=0.0,
 )
 
@@ -2962,7 +2960,7 @@ add_meta_data(
     historical_name={"GASP": 'INGASP.FVOLW_GEOM', "FLOPS": None, "LEAPS1": None},
     units='ft**3',
     desc='wing tank fuel volume based on geometry',
-    default_value=0.0,  # added
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -3058,7 +3056,7 @@ add_meta_data(
     },
     units='ft',
     desc='average fuselage diameter',
-    default_value=0.0,  # added. In several components, it was set to 10 or 13.1.
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -3074,7 +3072,7 @@ add_meta_data(
     },
     units='ft',
     desc='Reynolds characteristic length for the fuselage',
-    default_value=0.0,  # added
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -3095,7 +3093,7 @@ add_meta_data(
     historical_name={"GASP": 'INGASP.HCK', "FLOPS": None, "LEAPS1": None},
     units='ft',
     desc='mean fuselage cabin diameter minus mean fuselage nose diameter',
-    default_value=0.0,  # In geometry/gasp_based/fuselage.py, it was 4.5.
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -3108,7 +3106,7 @@ add_meta_data(
     },
     units='unitless',
     desc='fuselage diameter to wing span ratio',
-    default_value=0.0,  # added
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -3124,7 +3122,7 @@ add_meta_data(
     },
     units='unitless',
     desc='fuselage fineness ratio',
-    default_value=0.0,  # added
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -3193,7 +3191,7 @@ add_meta_data(
     desc='Define the Fuselage total length. If total_length is not input for a '
     'passenger transport, LEAPS will calculate the fuselage length, width and '
     'depth and the length of the passenger compartment.',
-    default_value=0.0,  # in several components, it was set to 129.4 or 200.
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -3206,7 +3204,7 @@ add_meta_data(
     },
     units='unitless',
     desc='fuselage length to diameter ratio',
-    default_value=0.0,  # added
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -3260,7 +3258,7 @@ add_meta_data(
     },
     units='ft',
     desc='maximum fuselage height',
-    default_value=0.0,  # added
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -3378,7 +3376,7 @@ add_meta_data(
     historical_name={"GASP": 'INGASP.ELPC', "FLOPS": None, "LEAPS1": None},
     units='ft',
     desc='length of the pilot compartment',
-    default_value=0.0,  # added. # In geometry/gasp_based/fuselage.py, it was 9.5
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -3391,7 +3389,7 @@ add_meta_data(
     },
     units='ft**2',
     desc='fuselage planform area',
-    default_value=0.0,  # added
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -3449,7 +3447,7 @@ add_meta_data(
     },
     units='ft**2',
     desc='fuselage wetted area',
-    default_value=0.0,  # changed from None
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -3500,7 +3498,7 @@ add_meta_data(
     },
     units='unitless',
     desc='horizontal tail theoretical aspect ratio',
-    default_value=4.75,  # changed from None
+    default_value=4.75,
 )
 
 add_meta_data(
@@ -3524,7 +3522,7 @@ add_meta_data(
     },
     units='ft',
     desc='Reynolds characteristic length for the horizontal tail',
-    default_value=0.0,  # added
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -3540,7 +3538,7 @@ add_meta_data(
     },
     units='unitless',
     desc='horizontal tail fineness ratio',
-    default_value=0.0,  # added
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -3676,8 +3674,7 @@ add_meta_data(
     },
     units='unitless',
     desc='horizontal tail theoretical taper ratio',
-    # In geometry/flops_based/prep_geom.py and mass/gasp_based/empennage.py, it was 0.352.
-    default_value=0.0,  # changed from None.
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -3707,7 +3704,7 @@ add_meta_data(
     'tail is mounted. Defaults: 0.0 == for body mounted (default for '
     'transport with all engines on wing); 1.0 == for T tail '
     '(default for transport with multiple engines on fuselage)',
-    default_value=0.0,  # added
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -3735,7 +3732,7 @@ add_meta_data(
     },
     units='ft**2',
     desc='horizontal tail wetted area',
-    default_value=0.0,  # changed from None
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -4090,7 +4087,7 @@ add_meta_data(
     },
     units='ft',
     desc='Average diameter of engine nacelles for each engine model',
-    default_value=0.0,  # added
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -4105,7 +4102,7 @@ add_meta_data(
     },
     units='ft',
     desc='Average length of nacelles for each engine model',
-    default_value=0.0,  # added
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -4121,7 +4118,7 @@ add_meta_data(
     },
     units='ft',
     desc='Reynolds characteristic length for nacelle for each engine model',
-    default_value=0.0,  # added
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -4139,7 +4136,7 @@ add_meta_data(
     historical_name={"GASP": 'INGASP.DNQDE', "FLOPS": None, "LEAPS1": None},
     units="unitless",
     desc='ratio of nacelle diameter to engine core diameter',
-    default_value=1.25,  # In geometry/gasp_based/engine.py, it was 1.25
+    default_value=1.25,
 )
 
 add_meta_data(
@@ -4155,7 +4152,7 @@ add_meta_data(
     },
     units='unitless',
     desc='nacelle fineness ratio',
-    default_value=0.0,  # added. # In geometry/gasp_based/engine.py, it was 2.
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -4253,7 +4250,7 @@ add_meta_data(
     },
     units='ft**2',
     desc='total nacelles wetted area',
-    default_value=0.0,  # added
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -4269,7 +4266,7 @@ add_meta_data(
     },
     units='ft**2',
     desc='wetted area of a single nacelle for each engine model',
-    default_value=0.0,  # added
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -4528,7 +4525,7 @@ add_meta_data(
     historical_name={"GASP": 'INGASP.SSTQSW', "FLOPS": None, "LEAPS1": None},
     units='unitless',
     desc='ratio of strut area to wing area',
-    default_value=0.0,  # added. In geometry/gasp_based/strut.py, it was set to .2.
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -4541,7 +4538,7 @@ add_meta_data(
     },
     units='ft',
     desc='attachment location of strut the full attachment-to-attachment span',
-    default_value=0.0,  # added
+    default_value=0.0,
 )
 
 # related to Aircraft.Strut.ATTACHMENT_LOCATION
@@ -4551,7 +4548,7 @@ add_meta_data(
     historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
     units='unitless',
     desc='attachment location of strut as fraction of the half-span',
-    default_value=0.0,  # added
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -4560,7 +4557,7 @@ add_meta_data(
     historical_name={"GASP": 'INGASP.STRTCHD', "FLOPS": None, "LEAPS1": None},
     units='ft',
     desc='chord of the strut',
-    default_value=0.0,  # added
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -4678,7 +4675,7 @@ add_meta_data(
     },
     units='unitless',
     desc='vertical tail theoretical aspect ratio',
-    default_value=0.0,  # changed from None
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -4702,7 +4699,7 @@ add_meta_data(
     },
     units='ft',
     desc='Reynolds characteristic length for the vertical tail',
-    default_value=0.0,  # added
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -4718,7 +4715,7 @@ add_meta_data(
     },
     units='unitless',
     desc='vertical tail fineness ratio',
-    default_value=0.0,  # added
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -4869,7 +4866,7 @@ add_meta_data(
     },
     units='unitless',
     desc='vertical tail theoretical taper ratio',
-    default_value=0.0,  # changed from None
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -4912,7 +4909,7 @@ add_meta_data(
     },
     units='ft**2',
     desc='vertical tails wetted area',
-    default_value=0.0,  # changed from None
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -5002,7 +4999,7 @@ add_meta_data(
     },
     units='ft**2',
     desc='reference wing area',
-    default_value=0.0,  # In several components, it was set to 100, 150, 200, 1370.3 etc.
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -5028,7 +5025,7 @@ add_meta_data(
     },
     units='unitless',
     desc='ratio of the wing span to its mean chord',
-    default_value=0.0,  # in several components, it was 1 or 10.13.
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -5049,7 +5046,7 @@ add_meta_data(
     historical_name={"GASP": 'INGASP.CBARW', "FLOPS": None, "LEAPS1": None},
     units='ft',
     desc='mean aerodynamic chord of the wing',
-    default_value=0.0,  # added
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -5127,7 +5124,7 @@ add_meta_data(
     historical_name={"GASP": 'INGASP.CRCLW', "FLOPS": None, "LEAPS1": None},
     units='ft',
     desc='wing chord at fuselage centerline',
-    default_value=0.0,  # added
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -5152,7 +5149,7 @@ add_meta_data(
     },
     units='ft',
     desc='Reynolds characteristic length for the wing',
-    default_value=0.0,  # added
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -5285,7 +5282,7 @@ add_meta_data(
     },
     units='unitless',
     desc='wing fineness ratio',
-    default_value=0.0,  # added
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -5387,7 +5384,6 @@ add_meta_data(
     historical_name={"GASP": 'INGASP.YWFOLD', "FLOPS": None, "LEAPS1": None},
     units='ft',
     desc='folded wingspan',
-    # In geometry/gasp_based/non_dimensional_conversion.py and geometry/gasp_based/wing.py, it was 25.
     default_value=0,
 )
 
@@ -5547,7 +5543,7 @@ add_meta_data(
     historical_name={"GASP": 'INGASP.SWPLE', "FLOPS": None, "LEAPS1": None},
     units='rad',
     desc='sweep angle at leading edge of wing',
-    default_value=0.0,  # added
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -5602,7 +5598,7 @@ add_meta_data(
     },
     units='lbf/ft**2',
     desc='wing loading',
-    default_value=0.0,  # added. In several components, it was 128.
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -5819,7 +5815,7 @@ add_meta_data(
     },
     units='ft',
     desc='wing chord length at wing root',
-    default_value=0.0,  # added
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -5895,7 +5891,6 @@ add_meta_data(
     },
     units='ft',
     desc='span of main wing',
-    # in several components, it was set to 128, or 117.8 but there are other values.
     default_value=0.0,
 )
 
@@ -6010,7 +6005,6 @@ add_meta_data(
     },
     units='deg',
     desc='quarter-chord sweep angle of the wing',
-    # In several components, it was 0.436 (rad) or 25 (deg).
     default_value=0.0,  # TODO required.
 )
 
@@ -6036,7 +6030,7 @@ add_meta_data(
     },
     units='unitless',
     desc='taper ratio of the wing',
-    default_value=0.0,  # TODO required. In several components, it was .33.
+    default_value=0.0,  # TODO required.
 )
 
 add_meta_data(
@@ -6097,7 +6091,7 @@ add_meta_data(
     historical_name={"GASP": 'INGASP.TCR', "FLOPS": None, "LEAPS1": None},
     units='unitless',
     desc='thickness-to-chord ratio at the root of the wing',
-    default_value=0.0,  # added. In several components, it was 0.11 or 0.15.
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -6106,7 +6100,7 @@ add_meta_data(
     historical_name={"GASP": 'INGASP.TCT', "FLOPS": None, "LEAPS1": None},
     units='unitless',
     desc='thickness-to-chord ratio at the tip of the wing',
-    default_value=0.0,  # added. In geometry/gasp_based/wing.py, it was 0.1
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -6115,7 +6109,7 @@ add_meta_data(
     historical_name={"GASP": 'INGASP.TC', "FLOPS": None, "LEAPS1": None},
     units='unitless',
     desc='wing thickness-chord ratio at the wing station of the mean aerodynamic chord',
-    default_value=0.0,  # added. In geometry/gasp_based/wing.py, it was 0.1.
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -6163,7 +6157,7 @@ add_meta_data(
     },
     units='ft**2',
     desc='wing wetted area',
-    default_value=0.0,  # changed from None
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -6797,7 +6791,6 @@ add_meta_data(
     },
     units='lbm',
     desc='design gross mass of the aircraft',
-    # changed form None. In several components, it was set to 20000, 152000 or 175400.
     default_value=0.0,
 )
 
