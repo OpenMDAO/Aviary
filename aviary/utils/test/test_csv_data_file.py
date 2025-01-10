@@ -21,7 +21,7 @@ class TestAviaryCSV(unittest.TestCase):
     """
 
     def setUp(self):
-        self.filename = get_path('utils/test/csv_test.csv')
+        self.filename = get_path('utils/test/data/csv_test.csv')
         # what will get written to the csv
         self.data = NamedValues({'aircraft:wing:span': ([15.24, 118, 90, 171], 'ft'),
                                  'aircraft:crew_and_payload:num_passengers': ([125, 28, 0.355, 44],

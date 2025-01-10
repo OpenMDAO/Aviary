@@ -24,7 +24,7 @@ class TestPropellerMapConversion(unittest.TestCase):
         args = DummyArgs()
 
         # Specify the input file
-        args.input_file = filepath = get_path('models/propellers/'+filename)
+        args.input_file = filepath = get_path('models/engines/propellers/' + filename)
 
         # Specify the output file
         if not output_file:
@@ -49,7 +49,7 @@ class TestPropellerMapConversion(unittest.TestCase):
         """
         filename = filepath.split('.')[0]+'.prop'
 
-        validation_data = get_path('models/propellers/'+filename)
+        validation_data = get_path('models/engines/propellers/' + filename)
 
         # Open the converted and validation files
         with open('TEST_'+filename, 'r') as f_in, open(validation_data, 'r') as expected:
@@ -65,7 +65,10 @@ class TestPropellerMapConversion(unittest.TestCase):
                     self.assertEqual(line_no_whitespace.count(expected_line), 1)
 
                 except:
-                    exc_string = f'Error:  {filename}\nFound: {line_no_whitespace}\nExpected:  {expected_line}'
+                    exc_string = (
+                        f'Error:  {filename}\nFound: {line_no_whitespace}'
+                        f'\nExpected:  {expected_line}'
+                    )
                     raise Exception(exc_string)
 
     def test_PM_conversion(self):

@@ -51,33 +51,38 @@ class run_missionTestCases(CommandEntryPointsTestCases):
 class fortran_to_aviaryTestCases(CommandEntryPointsTestCases):
     def test_diff_configuration_conversion(self):
         filepath = get_aviary_resource_path(
-            'models/test_aircraft/converter_configuration_test_data_GwGm.dat')
-        outfile = Path.cwd() / 'test_aircraft/converter_configuration_test_data_GwGm' / 'output.dat'
+            'utils/test/data/configuration_test_data_GASP.dat'
+        )
+        outfile = Path.cwd() / 'utils/test/data/configuration_test_data_GASP' / 'output.dat'
         cmd = f'aviary fortran_to_aviary {filepath} -o {outfile} -l GASP'
         self.run_and_test_cmd(cmd)
 
     def test_small_single_aisle_conversion(self):
         filepath = get_aviary_resource_path(
-            'models/small_single_aisle/small_single_aisle_GwGm.dat')
+            'models/small_single_aisle/small_single_aisle_GASP.dat'
+        )
         outfile = Path.cwd() / 'small_single_aisle' / 'output.dat'
         cmd = f'aviary fortran_to_aviary {filepath} -o {outfile} -l GASP'
         self.run_and_test_cmd(cmd)
 
     def test_FLOPS_conversion(self):
         filepath = get_aviary_resource_path(
-            'models/N3CC/N3CC_generic_low_speed_polars_FLOPSinp.txt')
+            'models/N3CC/N3CC_generic_low_speed_polars_FLOPS.txt'
+        )
         outfile = Path.cwd() / 'N3CC' / 'output.dat'
         cmd = f'aviary fortran_to_aviary {filepath} -o {outfile} -l FLOPS'
         self.run_and_test_cmd(cmd)
 
     def test_force_conversion(self):
         filepath = get_aviary_resource_path(
-            'models/test_aircraft/converter_configuration_test_data_GwGm.dat')
+            'models/small_single_aisle/small_single_aisle_GASP.dat'
+        )
         outfile = Path.cwd() / 'output.dat'
         cmd1 = f'aviary fortran_to_aviary {filepath} -o {outfile} -l GASP'
         self.run_and_test_cmd(cmd1)
         filepath = get_aviary_resource_path(
-            'models/test_aircraft/converter_configuration_test_data_GwGm.dat')
+            'models/small_single_aisle/small_single_aisle_GASP.dat'
+        )
         cmd2 = f'aviary fortran_to_aviary {filepath} -o {outfile} --force -l GASP'
         self.run_and_test_cmd(cmd2)
 
@@ -96,12 +101,12 @@ class hangarTestCases(CommandEntryPointsTestCases):
         self.run_and_test_cmd(cmd)
 
     def test_copy_multiple(self):
-        cmd = f'aviary hangar small_single_aisle_GwGm.dat small_single_aisle_GwGm.csv'
+        cmd = f'aviary hangar small_single_aisle_GASP.dat small_single_aisle_GASP.csv'
         self.run_and_test_cmd(cmd)
 
     def test_copy_to(self):
         outfile = Path.cwd() / 'example_files'
-        cmd = f'aviary hangar small_single_aisle_GwGm.dat -o {outfile}'
+        cmd = f'aviary hangar small_single_aisle_GASP.dat -o {outfile}'
         self.run_and_test_cmd(cmd)
 
 

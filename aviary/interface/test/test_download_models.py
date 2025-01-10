@@ -40,7 +40,7 @@ class CommandEntryPointsTestCases(unittest.TestCase):
         self.run_and_test_hangar(filename)
 
     def test_multiple_files(self):
-        filenames = ['small_single_aisle_GwGm.dat', 'small_single_aisle_GwGm.csv']
+        filenames = ['small_single_aisle_GASP.dat', 'small_single_aisle_GASP.csv']
         self.run_and_test_hangar(filenames)
 
     def test_folder(self):
@@ -48,16 +48,17 @@ class CommandEntryPointsTestCases(unittest.TestCase):
         self.run_and_test_hangar(filename)
 
     def test_single_file_custom_outdir(self):
-        filename = 'small_single_aisle_GwGm.csv'
+        filename = 'small_single_aisle_GASP.csv'
         out_dir = '~/test_hangar'
         self.run_and_test_hangar(filename, out_dir)
         shutil.rmtree(out_dir)
 
     def test_expected_path(self):
-        aviary_path = get_model('converter_configuration_test_data_GwGm.dat')
+        aviary_path = get_model('large_single_aisle_1_GASP.dat')
 
         expected_path = get_aviary_resource_path(
-            'models/test_aircraft/converter_configuration_test_data_GwGm.dat')
+            'models/large_single_aisle_1/large_single_aisle_1_GASP.dat'
+        )
         self.assertTrue(str(aviary_path) == str(expected_path))
 
 
