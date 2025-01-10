@@ -1498,7 +1498,7 @@ class FuelMassGroup(om.Group):
             promotes_outputs=connected_outputs5 + ["aircraft:*"],
         )
 
-        self.set_input_defaults(Aircraft.Fuel.DENSITY, val=6.687, units="lbm/galUS")
+        self.set_input_defaults(Aircraft.Fuel.DENSITY, units="lbm/galUS")
 
         newton = self.nonlinear_solver = om.NewtonSolver()
         newton.options["atol"] = 1e-9
