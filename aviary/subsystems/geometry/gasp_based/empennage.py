@@ -90,7 +90,7 @@ class TailSize(om.ExplicitComponent):
                        desc="VBARH | VBARV: Horizontal tail volume coefficient"
                        )
 
-        add_aviary_input(self, Aircraft.Wing.AREA, val=1370)
+        add_aviary_input(self, Aircraft.Wing.AREA)
 
         self.add_input("r_arm", 0.2307, units="unitless",
                        desc=(

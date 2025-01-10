@@ -14,7 +14,7 @@ class StrutCalcs(om.ExplicitComponent):
         add_aviary_option(self, Aircraft.Wing.HAS_STRUT)
 
     def setup(self):
-        add_aviary_input(self, Aircraft.Wing.SPAN, val=0)
+        add_aviary_input(self, Aircraft.Wing.SPAN)
 
         if self.options[Aircraft.Strut.DIMENSIONAL_LOCATION_SPECIFIED]:
             add_aviary_input(self, Aircraft.Strut.ATTACHMENT_LOCATION)
@@ -70,7 +70,7 @@ class FoldCalcs(om.ExplicitComponent):
         add_aviary_option(self, Aircraft.Wing.FOLD_DIMENSIONAL_LOCATION_SPECIFIED)
 
     def setup(self):
-        add_aviary_input(self, Aircraft.Wing.SPAN, val=0)
+        add_aviary_input(self, Aircraft.Wing.SPAN)
 
         if self.options[Aircraft.Wing.FOLD_DIMENSIONAL_LOCATION_SPECIFIED]:
             add_aviary_input(self, Aircraft.Wing.FOLDED_SPAN)

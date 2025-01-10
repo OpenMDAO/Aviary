@@ -548,7 +548,7 @@ class WingFold(om.ExplicitComponent):
                         desc="SLM_NF: taper ratio between wing root and fold location",
                         )
 
-        add_aviary_output(self, Aircraft.Wing.FOLDING_AREA, val=50)
+        add_aviary_output(self, Aircraft.Wing.FOLDING_AREA)
 
         self.add_output("nonfolded_wing_area", val=150, units="ft**2",
                         desc="SW_NF: wing area of part of wings that does not fold",
@@ -560,7 +560,7 @@ class WingFold(om.ExplicitComponent):
                         desc="AR_NF: aspect ratio of non-folding part of wing",
                         )
 
-        add_aviary_output(self, Aircraft.Fuel.WING_VOLUME_GEOMETRIC_MAX, val=0)
+        add_aviary_output(self, Aircraft.Fuel.WING_VOLUME_GEOMETRIC_MAX)
 
         self.declare_partials(
             "nonfolded_taper_ratio",
