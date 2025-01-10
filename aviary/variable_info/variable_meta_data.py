@@ -70,7 +70,7 @@ add_meta_data(
     },
     units='lbm',
     desc='air conditioning system mass',
-    default_value=0.0,  # changed from None
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -122,7 +122,7 @@ add_meta_data(
     },
     units='lbm',
     desc='mass of anti-icing system (auxiliary gear)',
-    default_value=0.0,  # changed from None
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -163,7 +163,7 @@ add_meta_data(
     },
     units='lbm',
     desc='mass of auxiliary power unit',
-    default_value=0.0,  # changed from None
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -204,7 +204,7 @@ add_meta_data(
     },
     units='lbm',
     desc='avionics mass',
-    default_value=0.0,  # changed from None
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -493,7 +493,7 @@ add_meta_data(
     },
     units='lbm',
     desc='mass of canards',
-    default_value=0.0,  # changed from None
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -519,7 +519,7 @@ add_meta_data(
     },
     units='unitless',
     desc='canard theoretical taper ratio',
-    default_value=0.0,  # changed from None
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -645,7 +645,7 @@ add_meta_data(
     },
     units='lbm',
     desc='mass of passenger baggage',
-    default_value=0.0,  # added
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -678,7 +678,7 @@ add_meta_data(
     },
     units='lbm',
     desc='mass of cargo containers',
-    default_value=0.0,  # changed from None
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -709,7 +709,7 @@ add_meta_data(
     },
     units='lbm',
     desc='total mass of cargo',
-    default_value=0.0,  # added
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -805,7 +805,7 @@ add_meta_data(
     },
     units='lbm',
     desc='total mass of the flight crew and their baggage',
-    default_value=0.0,  # changed from None
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -865,7 +865,7 @@ add_meta_data(
     },
     units='lbm',
     desc='total mass of the non-flight crew and their baggage',
-    default_value=0.0,  # changed from None
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -1012,7 +1012,7 @@ add_meta_data(
     },
     units='lbm',
     desc='TBD: total mass of all passengers without their baggage',
-    default_value=0.0,  # added
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -1033,7 +1033,7 @@ add_meta_data(
     historical_name={"GASP": 'INGASP.WPL', "FLOPS": None, "LEAPS1": None},
     units='lbm',
     desc='mass of passenger payload, including passengers, passenger baggage',
-    default_value=0.0,  # added
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -1052,7 +1052,7 @@ add_meta_data(
     },
     units='lbm',
     desc='mass of passenger service equipment',
-    default_value=0.0,  # changed from None
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -1246,7 +1246,7 @@ add_meta_data(
     },
     units='lbm',
     desc='empty mass margin',
-    default_value=0.0,  # changed from None
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -1261,7 +1261,7 @@ add_meta_data(
     },
     units='unitless',
     desc='empty mass margin scaler',
-    default_value=0.0,  # Note: not 1.0 here
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -1274,7 +1274,7 @@ add_meta_data(
     meta_data=_MetaData,
     units='lbm',
     desc='total mass of all user-defined external subsystems',
-    default_value=0.0,  # added
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -1421,7 +1421,7 @@ add_meta_data(
     },
     units='lbm',
     desc='operating mass empty of the aircraft',
-    default_value=0.0,  # added
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -1501,7 +1501,7 @@ add_meta_data(
     },
     units='lbm',
     desc='Total structural group mass',
-    default_value=0.0,  # added
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -1552,7 +1552,7 @@ add_meta_data(
     },
     units='lbm',
     desc='Total systems & equipment group mass',
-    default_value=0.0,  # added
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -1564,7 +1564,7 @@ add_meta_data(
     historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
     units='lbm',
     desc='Total systems & equipment group mass without additional 1% of ' 'empty mass',
-    default_value=0.0,  # added
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -1589,7 +1589,7 @@ add_meta_data(
     },
     units='ft**2',
     desc='total aircraft wetted area',
-    default_value=0.0,  # added
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -1611,7 +1611,7 @@ add_meta_data(
     },
     units='lbm',
     desc='design landing mass',
-    default_value=0.0,  # changed from None
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -1672,7 +1672,7 @@ add_meta_data(
     },
     units='lbm',
     desc='zero fuel mass',
-    default_value=0.0,  # added
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -1732,7 +1732,7 @@ add_meta_data(
     },
     units='lbm',
     desc='mass of the electrical system',
-    default_value=0.0,  # changed from None
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -2594,7 +2594,7 @@ add_meta_data(
     },
     units='lbm',
     desc='mass of vertical fins',
-    default_value=0.0,  # changed from None
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -2635,7 +2635,7 @@ add_meta_data(
     },
     units='unitless',
     desc='vertical fin theoretical taper ratio',
-    default_value=0.0,  # changed from None
+    default_value=0.0,
 )
 
 #  ______                  _
@@ -2656,7 +2656,7 @@ add_meta_data(
     },
     units='lbm',
     desc='fuel capacity of the auxiliary tank',
-    default_value=0.0,  # changed from None
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -2677,7 +2677,7 @@ add_meta_data(
     },
     units='unitless',
     desc='fuel capacity factor',
-    default_value=1.0,  # changed from 23.0
+    default_value=1.0,
 )
 
 add_meta_data(
@@ -2731,7 +2731,7 @@ add_meta_data(
     },
     units='lbm',
     desc='fuel system mass',
-    default_value=0.0,  # changed from None
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -2770,7 +2770,7 @@ add_meta_data(
     },
     units='lbm',
     desc='fuel capacity of the fuselage',
-    default_value=0.0,  # changed from None
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -2803,7 +2803,7 @@ add_meta_data(
     desc='Total fuel capacity of the aircraft including wing, fuselage and '
     'auxiliary tanks. Used in generating payload-range diagram (Default = '
     'wing_capacity + fuselage_capacity + aux_capacity)',
-    default_value=0.0,  # changed from None
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -2821,7 +2821,7 @@ add_meta_data(
     },
     units='galUS',  # need to check this
     desc='Total fuel volume',
-    default_value=0.0,  # added
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -2840,7 +2840,7 @@ add_meta_data(
     },
     units='lbm',
     desc='unusable fuel mass',
-    default_value=0.0,  # changed from None
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -2876,7 +2876,7 @@ add_meta_data(
     },
     units='lbm',
     desc='fuel capacity of the auxiliary tank',
-    default_value=0.0,  # changed from None
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -3005,7 +3005,7 @@ add_meta_data(
     },
     units='lbm',
     desc='Total furnishings system mass',
-    default_value=0.0,  # changed form None
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -3014,7 +3014,7 @@ add_meta_data(
     historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
     units='lbm',
     desc='Base furnishings system mass without additional 1% empty mass',
-    default_value=0.0,  # added
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -3063,7 +3063,7 @@ add_meta_data(
     },
     units='ft',
     desc='average fuselage diameter',
-    default_value=0.0,  # added
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -3226,7 +3226,7 @@ add_meta_data(
     },
     units='lbm',
     desc='mass of the fuselage structure',
-    default_value=0.0,  # changed from None
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -3261,7 +3261,7 @@ add_meta_data(
     },
     units='ft',
     desc='maximum fuselage height',
-    default_value=0.0,  # added
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -3391,7 +3391,7 @@ add_meta_data(
     },
     units='ft**2',
     desc='fuselage planform area',
-    default_value=0.0,  # added
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -3449,7 +3449,7 @@ add_meta_data(
     },
     units='ft**2',
     desc='fuselage wetted area',
-    default_value=0.0,  # changed from None
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -3592,7 +3592,7 @@ add_meta_data(
     },
     units='lbm',
     desc='mass of horizontal tail',
-    default_value=0.0,  # changed from None
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -3732,7 +3732,7 @@ add_meta_data(
     },
     units='ft**2',
     desc='horizontal tail wetted area',
-    default_value=0.0,  # changed from None
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -3792,7 +3792,7 @@ add_meta_data(
     },
     units='lbm',
     desc='mass of hydraulic system',
-    default_value=0.0,  # changed from None
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -3948,7 +3948,7 @@ add_meta_data(
     },
     units='lbm',
     desc='mass of main landing gear',
-    default_value=0,  # added
+    default_value=0,
 )
 
 add_meta_data(
@@ -4010,7 +4010,7 @@ add_meta_data(
     },
     units='lbm',
     desc='mass of nose landing gear',
-    default_value=0.0,  # changed from None
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -4088,7 +4088,7 @@ add_meta_data(
     },
     units='ft',
     desc='Average diameter of engine nacelles for each engine model',
-    default_value=0.0,  # added
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -4103,7 +4103,7 @@ add_meta_data(
     },
     units='ft',
     desc='Average length of nacelles for each engine model',
-    default_value=0.0,  # added
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -4300,7 +4300,7 @@ add_meta_data(
     },
     units='lbm',
     desc='mass of paint for all wetted area',
-    default_value=0.0,  # added
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -4355,7 +4355,7 @@ add_meta_data(
     },
     units='lbm',
     desc='Total propulsion group mass',
-    default_value=0.0,  # added
+    default_value=0.0,
 )
 
 # TODO clash with per-engine scaling, need to resolve w/ heterogeneous engine
@@ -4380,7 +4380,7 @@ add_meta_data(
     historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
     units='lbm',
     desc='total estimated mass of the engine controls for all engines on aircraft',
-    default_value=0.0,  # added
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -4389,7 +4389,7 @@ add_meta_data(
     historical_name={"GASP": 'INGASP.WEP', "FLOPS": None, "LEAPS1": None},
     units='lbm',
     desc='total mass of all engines on aircraft',
-    default_value=0.0,  # added
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -4408,7 +4408,7 @@ add_meta_data(
     },
     units='lbm',
     desc='engine oil mass',
-    default_value=0.0,  # changed from None
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -4428,7 +4428,7 @@ add_meta_data(
     units='lbm',
     desc='sum of engine control, starter, and additional mass for all engines '
     'on aircraft',
-    default_value=0.0,  # changed from None
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -4500,7 +4500,7 @@ add_meta_data(
     historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
     units='lbm',
     desc='total mass of thrust reversers for all engines on aircraft',
-    default_value=0.0,  # changed from None
+    default_value=0.0,
 )
 
 #   _____   _                    _
@@ -4764,7 +4764,7 @@ add_meta_data(
     },
     units='lbm',
     desc='mass of vertical tail',
-    default_value=0.0,  # changed from None
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -4861,7 +4861,7 @@ add_meta_data(
     },
     units='unitless',
     desc='vertical tail theoretical taper ratio',
-    default_value=0.0,  # changed from None
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -5033,7 +5033,7 @@ add_meta_data(
     },
     units='unitless',
     desc='Reference aspect ratio, used for detailed wing mass estimation.',
-    default_value=0.0,  # added
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -5053,8 +5053,9 @@ add_meta_data(
         "LEAPS1": 'aircraft.outputs.L0_wing.bending_material_factor',
     },
     units='unitless',
-    desc='Wing bending material factor with sweep adjustment. Used to compute',
-    default_value=0.0,  # added
+    desc='Wing bending material factor with sweep adjustment. Used to compute '
+    'Aircraft.Wing.BENDING_MATERIAL_MASS',
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -5069,7 +5070,7 @@ add_meta_data(
     },
     units='lbm',
     desc='wing mass breakdown term 1',
-    default_value=0.0,  # changed from None
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -5097,7 +5098,7 @@ add_meta_data(
     },
     units='lbm',
     desc='wing mass breakdown term 4',
-    default_value=0.0,  # changed from None
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -5169,7 +5170,7 @@ add_meta_data(
     units='unitless',
     desc='chord lengths as fractions of semispan at station locations; '
     'overwrites station_chord_lengths',
-    default_value=0.0,  # changed from None
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -5204,7 +5205,7 @@ add_meta_data(
     },
     units='ft**2',
     desc='area of wing control surfaces',
-    default_value=0.0,  # added
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -5219,7 +5220,7 @@ add_meta_data(
     units='unitless',
     desc='Defines the ratio of total moveable wing control surface areas '
     '(flaps, elevators, spoilers, etc.) to reference wing area.',
-    default_value=0.0,  # changed from 0.333
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -5261,7 +5262,7 @@ add_meta_data(
     units='unitless',
     desc='Engine inertia relief factor for wingspan inboard of engine locations. Used '
     'to compute Aircraft.Wing.BENDING_MATERIAL_MASS',
-    default_value=0.0,  # added
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -5578,7 +5579,7 @@ add_meta_data(
     desc='Define the sweep of load path at station locations. Typically '
     'parallel to rear spar tending toward max t/c of airfoil. The Ith value '
     'is used between wing stations I and I+1.',
-    default_value=0.0,  # changed from None
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -5620,7 +5621,7 @@ add_meta_data(
     },
     units='lbm',
     desc='wing total mass',
-    default_value=0.0,  # changed from None
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -5729,7 +5730,7 @@ add_meta_data(
     },
     units='lbm',
     desc='wing mass breakdown term 3',
-    default_value=0.0,  # changed from None
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -5821,7 +5822,7 @@ add_meta_data(
     },
     units='lbm',
     desc='wing mass breakdown term 2',
-    default_value=0.0,  # changed from None
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -5948,7 +5949,7 @@ add_meta_data(
     },
     units='lbm',
     desc='mass of surface controls',
-    default_value=0.0,  # changed from None
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -6060,7 +6061,7 @@ add_meta_data(
     },
     units='unitless',
     desc='the thickeness-chord ratios at station locations',
-    default_value=0.0,  # changed from None
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -6749,7 +6750,7 @@ add_meta_data(
     units='lbm',
     desc='fuel carried by the aircraft when it is on the ramp at the '
     'beginning of the design mission',
-    default_value=0.0,  # added
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -6780,7 +6781,7 @@ add_meta_data(
     },
     units='lbm',
     desc='design gross mass of the aircraft',
-    default_value=0.0,  # changed from None
+    default_value=0.0,
 )
 
 add_meta_data(
