@@ -542,7 +542,7 @@ class WingFold(om.ExplicitComponent):
         add_aviary_input(self, Aircraft.Wing.TAPER_RATIO)
         add_aviary_input(self, Aircraft.Wing.THICKNESS_TO_CHORD_ROOT)
         add_aviary_input(self, Aircraft.Wing.THICKNESS_TO_CHORD_TIP)
-        add_aviary_input(self, Aircraft.Fuel.WING_FUEL_FRACTION, val=0.6)
+        add_aviary_input(self, Aircraft.Fuel.WING_FUEL_FRACTION)
 
         self.add_output("nonfolded_taper_ratio", val=0.1, units="unitless",
                         desc="SLM_NF: taper ratio between wing root and fold location",

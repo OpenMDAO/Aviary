@@ -104,7 +104,7 @@ class TailSize(om.ExplicitComponent):
                            "For a horizontal tail, the mean wing chord. For a "
                            "vertical tail, the wing span.")
                        )
-        self.add_input("ar", 4.75, units="unitless",
+        self.add_input("ar", 0.0, units="unitless",
                        desc="ARHT | ARVT: Tail aspect ratio.")
         self.add_input("tr", 0.352, units="unitless",
                        desc="SLMH | SLMV: Tail taper ratio.")
