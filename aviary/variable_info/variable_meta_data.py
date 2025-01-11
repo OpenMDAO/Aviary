@@ -521,7 +521,7 @@ add_meta_data(
     },
     units='unitless',
     desc='canard theoretical taper ratio',
-    default_value=None,
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -2628,7 +2628,7 @@ add_meta_data(
     },
     units='unitless',
     desc='vertical fin theoretical taper ratio',
-    default_value=None,
+    default_value=0.0,
 )
 
 #  ______                  _
@@ -3498,7 +3498,7 @@ add_meta_data(
     },
     units='unitless',
     desc='horizontal tail theoretical aspect ratio',
-    default_value=4.75,
+    default_value=0.0,
 )
 
 add_meta_data(
