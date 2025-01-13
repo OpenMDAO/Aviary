@@ -38,9 +38,9 @@ class FuselageFuelCapacity(om.ExplicitComponent):
     """
 
     def setup(self):
-        add_aviary_input(self, Aircraft.Fuel.TOTAL_CAPACITY, 0.0),
-        add_aviary_input(self, Aircraft.Fuel.WING_FUEL_CAPACITY, 0.0),
-        add_aviary_output(self, Aircraft.Fuel.FUSELAGE_FUEL_CAPACITY, 0.0),
+        add_aviary_input(self, Aircraft.Fuel.TOTAL_CAPACITY),
+        add_aviary_input(self, Aircraft.Fuel.WING_FUEL_CAPACITY),
+        add_aviary_output(self, Aircraft.Fuel.FUSELAGE_FUEL_CAPACITY),
 
     def setup_partials(self):
         self.declare_partials(
@@ -62,10 +62,10 @@ class AuxFuelCapacity(om.ExplicitComponent):
     """
 
     def setup(self):
-        add_aviary_input(self, Aircraft.Fuel.TOTAL_CAPACITY, 0.0),
-        add_aviary_input(self, Aircraft.Fuel.WING_FUEL_CAPACITY, 0.0),
-        add_aviary_input(self, Aircraft.Fuel.FUSELAGE_FUEL_CAPACITY, 0.0),
-        add_aviary_output(self, Aircraft.Fuel.AUXILIARY_FUEL_CAPACITY, 0.0),
+        add_aviary_input(self, Aircraft.Fuel.TOTAL_CAPACITY),
+        add_aviary_input(self, Aircraft.Fuel.WING_FUEL_CAPACITY),
+        add_aviary_input(self, Aircraft.Fuel.FUSELAGE_FUEL_CAPACITY),
+        add_aviary_output(self, Aircraft.Fuel.AUXILIARY_FUEL_CAPACITY),
 
     def setup_partials(self):
         self.declare_partials(
@@ -91,10 +91,10 @@ class TotalFuelCapacity(om.ExplicitComponent):
     """
 
     def setup(self):
-        add_aviary_input(self, Aircraft.Fuel.WING_FUEL_CAPACITY, 0.0),
-        add_aviary_input(self, Aircraft.Fuel.FUSELAGE_FUEL_CAPACITY, 0.0),
-        add_aviary_input(self, Aircraft.Fuel.AUXILIARY_FUEL_CAPACITY, 0.0),
-        add_aviary_output(self, Aircraft.Fuel.TOTAL_CAPACITY, 0.0),
+        add_aviary_input(self, Aircraft.Fuel.WING_FUEL_CAPACITY),
+        add_aviary_input(self, Aircraft.Fuel.FUSELAGE_FUEL_CAPACITY),
+        add_aviary_input(self, Aircraft.Fuel.AUXILIARY_FUEL_CAPACITY),
+        add_aviary_output(self, Aircraft.Fuel.TOTAL_CAPACITY),
 
     def setup_partials(self):
         self.declare_partials(
@@ -120,20 +120,18 @@ class WingFuelCapacity(om.ExplicitComponent):
     """
 
     def setup(self):
-        add_aviary_input(self, Aircraft.Fuel.DENSITY_RATIO, 1.0)
-        add_aviary_input(self, Aircraft.Fuel.WING_REF_CAPACITY, 0.0)
-        add_aviary_input(self, Aircraft.Fuel.WING_REF_CAPACITY_AREA, 0.0)
-        add_aviary_input(self, Aircraft.Fuel.WING_REF_CAPACITY_TERM_A, 0.0)
-        add_aviary_input(self, Aircraft.Fuel.WING_REF_CAPACITY_TERM_B, 0.0)
+        add_aviary_input(self, Aircraft.Fuel.DENSITY_RATIO)
+        add_aviary_input(self, Aircraft.Fuel.WING_REF_CAPACITY)
+        add_aviary_input(self, Aircraft.Fuel.WING_REF_CAPACITY_AREA)
+        add_aviary_input(self, Aircraft.Fuel.WING_REF_CAPACITY_TERM_A)
+        add_aviary_input(self, Aircraft.Fuel.WING_REF_CAPACITY_TERM_B)
+        add_aviary_input(self, Aircraft.Fuel.CAPACITY_FACTOR)
+        add_aviary_input(self, Aircraft.Wing.AREA)
+        add_aviary_input(self, Aircraft.Wing.SPAN)
+        add_aviary_input(self, Aircraft.Wing.TAPER_RATIO)
+        add_aviary_input(self, Aircraft.Wing.THICKNESS_TO_CHORD)
 
-        add_aviary_input(self, Aircraft.Fuel.CAPACITY_FACTOR, 23.0)
-
-        add_aviary_input(self, Aircraft.Wing.AREA, 0.0)
-        add_aviary_input(self, Aircraft.Wing.SPAN, 0.0)
-        add_aviary_input(self, Aircraft.Wing.TAPER_RATIO, 0.0)
-        add_aviary_input(self, Aircraft.Wing.THICKNESS_TO_CHORD, 0.0)
-
-        add_aviary_output(self, Aircraft.Fuel.WING_FUEL_CAPACITY, 0.0)
+        add_aviary_output(self, Aircraft.Fuel.WING_FUEL_CAPACITY)
 
     def setup_partials(self):
         self.declare_partials('*', '*')
