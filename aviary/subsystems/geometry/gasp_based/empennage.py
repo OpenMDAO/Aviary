@@ -106,7 +106,7 @@ class TailSize(om.ExplicitComponent):
                        )
         self.add_input("ar", 0.0, units="unitless",
                        desc="ARHT | ARVT: Tail aspect ratio.")
-        self.add_input("tr", 0.352, units="unitless",
+        self.add_input("tr", 0.0, units="unitless",
                        desc="SLMH | SLMV: Tail taper ratio.")
 
         self.add_output("area", units="ft**2", desc="SHT | SVT: Tail area")
