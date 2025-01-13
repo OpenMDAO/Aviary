@@ -253,10 +253,12 @@ class PayloadMass(om.ExplicitComponent):
         add_aviary_option(self, Aircraft.CrewPayload.NUM_PASSENGERS)
         add_aviary_option(self, Aircraft.CrewPayload.PASSENGER_MASS_WITH_BAGS,
                           units='lbm')
+        add_aviary_option(self, Aircraft.CrewPayload.Design.NUM_PASSENGERS)
+        add_aviary_option(self, Aircraft.CrewPayload.MAX_CARGO_MASS)
 
     def setup(self):
         add_aviary_input(self, Aircraft.CrewPayload.CARGO_MASS, val=10040)
-        add_aviary_input(self,Aircraft.CrewPayload.Design.CARGO_MASS, val=0)
+        add_aviary_input(self, Aircraft.CrewPayload.Design.CARGO_MASS, val=0)
 
         add_aviary_output(self, Aircraft.CrewPayload.PASSENGER_PAYLOAD_MASS, val=0)
         add_aviary_output(self, Aircraft.CrewPayload.TOTAL_PAYLOAD_MASS, val=0)
