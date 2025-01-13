@@ -1,10 +1,14 @@
+import numpy as np
+
 from aviary.subsystems.atmosphere.atmosphere import Atmosphere
 
 from aviary.mission.gasp_based.ode.base_ode import BaseODE
 from aviary.mission.gasp_based.ode.params import ParamPort
 from aviary.mission.gasp_based.ode.landing_eom import (
-    GlideConditionComponent, LandingAltitudeComponent,
-    LandingGroundRollComponent)
+    GlideConditionComponent,
+    LandingAltitudeComponent,
+    LandingGroundRollComponent,
+)
 from aviary.subsystems.aerodynamics.aerodynamics_builder import AerodynamicsBuilderBase
 from aviary.subsystems.propulsion.propulsion_builder import PropulsionBuilderBase
 from aviary.variable_info.enums import SpeedType
@@ -38,15 +42,15 @@ class LandingSegment(BaseODE):
             subsys=Atmosphere(num_nodes=1, input_speed_type=SpeedType.MACH),
             promotes_inputs=[
                 (Dynamic.Mission.ALTITUDE, Mission.Landing.INITIAL_ALTITUDE),
-                (Dynamic.Mission.MACH, Mission.Landing.INITIAL_MACH),
+                (Dynamic.Atmosphere.MACH, Mission.Landing.INITIAL_MACH),
             ],
             promotes_outputs=[
-                Dynamic.Mission.DENSITY,
-                Dynamic.Mission.SPEED_OF_SOUND,
-                Dynamic.Mission.TEMPERATURE,
-                Dynamic.Mission.STATIC_PRESSURE,
+                Dynamic.Atmosphere.DENSITY,
+                Dynamic.Atmosphere.SPEED_OF_SOUND,
+                Dynamic.Atmosphere.TEMPERATURE,
+                Dynamic.Atmosphere.STATIC_PRESSURE,
                 "viscosity",
-                Dynamic.Mission.DYNAMIC_PRESSURE,
+                Dynamic.Atmosphere.DYNAMIC_PRESSURE,
             ],
         )
 
@@ -55,21 +59,24 @@ class LandingSegment(BaseODE):
             if isinstance(subsystem, AerodynamicsBuilderBase):
                 kwargs = {'method': 'low_speed'}
                 aero_builder = subsystem
-                aero_system = subsystem.build_mission(num_nodes=1,
-                                                      aviary_inputs=aviary_options,
-                                                      **kwargs)
+                aero_system = subsystem.build_mission(
+                    num_nodes=1, aviary_inputs=aviary_options, **kwargs
+                )
                 self.add_subsystem(
                     subsystem.name,
                     aero_system,
                     promotes_inputs=[
                         "*",
-                        (Dynamic.Mission.ALTITUDE, Mission.Landing.INITIAL_ALTITUDE),
-                        Dynamic.Mission.DENSITY,
-                        Dynamic.Mission.SPEED_OF_SOUND,
+                        (
+                            Dynamic.Mission.ALTITUDE,
+                            Mission.Landing.INITIAL_ALTITUDE,
+                        ),
+                        Dynamic.Atmosphere.DENSITY,
+                        Dynamic.Atmosphere.SPEED_OF_SOUND,
                         "viscosity",
                         ("airport_alt", Mission.Landing.AIRPORT_ALTITUDE),
-                        (Dynamic.Mission.MACH, Mission.Landing.INITIAL_MACH),
-                        Dynamic.Mission.DYNAMIC_PRESSURE,
+                        (Dynamic.Atmosphere.MACH, Mission.Landing.INITIAL_MACH),
+                        Dynamic.Atmosphere.DYNAMIC_PRESSURE,
                         ("flap_defl", Aircraft.Wing.FLAP_DEFLECTION_LANDING),
                         ("t_init_flaps", "t_init_flaps_app"),
                         ("t_init_gear", "t_init_gear_app"),
@@ -89,20 +96,26 @@ class LandingSegment(BaseODE):
             if isinstance(subsystem, PropulsionBuilderBase):
                 propulsion_system = subsystem.build_mission(
                     num_nodes=1, aviary_inputs=aviary_options)
-                propulsion_mission = self.add_subsystem(subsystem.name,
-                                                        propulsion_system,
-                                                        promotes_inputs=[
-                                                            "*", (Dynamic.Mission.ALTITUDE, Mission.Landing.INITIAL_ALTITUDE), (Dynamic.Mission.MACH, Mission.Landing.INITIAL_MACH)],
-                                                        promotes_outputs=[(Dynamic.Mission.THRUST_TOTAL, "thrust_idle")])
-                propulsion_mission.set_input_defaults(Dynamic.Mission.THROTTLE, 0.0)
+                propulsion_mission = self.add_subsystem(
+                    subsystem.name,
+                    propulsion_system,
+                    promotes_inputs=[
+                        "*",
+                        (Dynamic.Atmosphere.MACH, Mission.Landing.INITIAL_MACH),
+                    ],
+                    promotes_outputs=[
+                        (Dynamic.Vehicle.Propulsion.THRUST_TOTAL, "thrust_idle")],
+                )
+                propulsion_mission.set_input_defaults(
+                    Dynamic.Vehicle.Propulsion.THROTTLE, 0.0)
 
         self.add_subsystem(
             "glide",
             GlideConditionComponent(),
             promotes_inputs=[
-                Dynamic.Mission.DENSITY,
+                Dynamic.Atmosphere.DENSITY,
                 Mission.Landing.MAXIMUM_SINK_RATE,
-                Dynamic.Mission.MASS,
+                Dynamic.Vehicle.MASS,
                 Aircraft.Wing.AREA,
                 Mission.Landing.GLIDE_TO_STALL_RATIO,
                 "CL_max",
@@ -129,22 +142,20 @@ class LandingSegment(BaseODE):
             name='atmosphere_td',
             subsys=Atmosphere(num_nodes=1),
             promotes_inputs=[
-                (Dynamic.Mission.ALTITUDE, Mission.Landing.AIRPORT_ALTITUDE),
+                Dynamic.Mission.ALTITUDE,
                 (Dynamic.Mission.VELOCITY, "TAS_touchdown"),
             ],
             promotes_outputs=[
-                (Dynamic.Mission.DENSITY, "rho_td"),
-                (Dynamic.Mission.SPEED_OF_SOUND, "sos_td"),
-                (Dynamic.Mission.TEMPERATURE, "T_td"),
+                (Dynamic.Atmosphere.DENSITY, "rho_td"),
+                (Dynamic.Atmosphere.SPEED_OF_SOUND, "sos_td"),
+                (Dynamic.Atmosphere.TEMPERATURE, "T_td"),
                 ("viscosity", "viscosity_td"),
-                (Dynamic.Mission.DYNAMIC_PRESSURE, "q_td"),
-                (Dynamic.Mission.MACH, "mach_td"),
+                (Dynamic.Atmosphere.DYNAMIC_PRESSURE, "q_td"),
+                (Dynamic.Atmosphere.MACH, "mach_td"),
             ],
         )
 
-        kwargs = {'method': 'low_speed',
-                  'retract_flaps': True,
-                  'retract_gear': False}
+        kwargs = {'method': 'low_speed', 'retract_flaps': True, 'retract_gear': False}
 
         self.add_subsystem(
             "aero_td",
@@ -153,13 +164,13 @@ class LandingSegment(BaseODE):
             ),
             promotes_inputs=[
                 "*",
-                (Dynamic.Mission.ALTITUDE, Mission.Landing.AIRPORT_ALTITUDE),
-                (Dynamic.Mission.DENSITY, "rho_td"),
-                (Dynamic.Mission.SPEED_OF_SOUND, "sos_td"),
+                Dynamic.Mission.ALTITUDE,
+                (Dynamic.Atmosphere.DENSITY, "rho_td"),
+                (Dynamic.Atmosphere.SPEED_OF_SOUND, "sos_td"),
                 ("viscosity", "viscosity_td"),
                 ("airport_alt", Mission.Landing.AIRPORT_ALTITUDE),
-                (Dynamic.Mission.MACH, "mach_td"),
-                (Dynamic.Mission.DYNAMIC_PRESSURE, "q_td"),
+                (Dynamic.Atmosphere.MACH, "mach_td"),
+                (Dynamic.Atmosphere.DYNAMIC_PRESSURE, "q_td"),
                 ("alpha", Aircraft.Wing.INCIDENCE),
                 ("flap_defl", Aircraft.Wing.FLAP_DEFLECTION_LANDING),
                 ("CL_max_flaps", Mission.Landing.LIFT_COEFFICIENT_MAX),
@@ -194,11 +205,14 @@ class LandingSegment(BaseODE):
                 "tr_distance",
                 "delay_distance",
                 "CL_max",
-                Dynamic.Mission.MASS,
-                'mission:*'
+                Dynamic.Vehicle.MASS,
+                'mission:*',
             ],
             promotes_outputs=[
-                "ground_roll_distance", "average_acceleration", 'mission:*'],
+                "ground_roll_distance",
+                "average_acceleration",
+                'mission:*',
+            ],
         )
 
         ParamPort.set_default_vals(self)
@@ -208,11 +222,16 @@ class LandingSegment(BaseODE):
         # landing doesn't change flap or gear position
         self.set_input_defaults("t_init_flaps_app", val=1e10)
         self.set_input_defaults("t_init_gear_app", val=1e10)
-        self.set_input_defaults(
-            Mission.Landing.INITIAL_ALTITUDE, val=50, units="ft")
-        self.set_input_defaults('aero_ramps.flap_factor:final_val', val=1.)
-        self.set_input_defaults('aero_ramps.gear_factor:final_val', val=1.)
-        self.set_input_defaults('aero_ramps.flap_factor:initial_val', val=0.)
-        self.set_input_defaults('aero_ramps.gear_factor:initial_val', val=0.)
+        self.set_input_defaults(Mission.Landing.INITIAL_ALTITUDE, val=50, units="ft")
+        self.set_input_defaults('aero_ramps.flap_factor:final_val', val=1.0)
+        self.set_input_defaults('aero_ramps.gear_factor:final_val', val=1.0)
+        self.set_input_defaults('aero_ramps.flap_factor:initial_val', val=0.0)
+        self.set_input_defaults('aero_ramps.gear_factor:initial_val', val=0.0)
 
         self.set_input_defaults(Aircraft.Wing.AREA, val=1.0, units="ft**2")
+
+        # Throttle Idle
+        num_engine_types = len(aviary_options.get_val(Aircraft.Engine.NUM_ENGINES))
+        self.set_input_defaults(
+            Dynamic.Vehicle.Propulsion.THROTTLE, np.zeros((1, num_engine_types))
+        )

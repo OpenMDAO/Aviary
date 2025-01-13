@@ -9,7 +9,7 @@ from aviary.mission.gasp_based.ode.params import set_params_for_unit_tests
 from aviary.subsystems.propulsion.utils import build_engine_deck
 from aviary.utils.test_utils.default_subsystems import get_default_mission_subsystems
 from aviary.variable_info.options import get_option_defaults
-from aviary.variable_info.variables import Dynamic
+from aviary.variable_info.variables import Aircraft, Dynamic
 
 
 class AscentODETestCase(unittest.TestCase):
@@ -17,6 +17,7 @@ class AscentODETestCase(unittest.TestCase):
         self.prob = om.Problem()
 
         aviary_options = get_option_defaults()
+        aviary_options.set_val(Aircraft.Engine.GLOBAL_THROTTLE, True)
         default_mission_subsystems = get_default_mission_subsystems(
             'GASP', build_engine_deck(aviary_options))
 
@@ -39,14 +40,18 @@ class AscentODETestCase(unittest.TestCase):
 
         tol = tol = 1e-6
         assert_near_equal(
-            self.prob[Dynamic.Mission.VELOCITY_RATE], np.array(
-                [641174.75, 641174.75]), tol)
+            self.prob[Dynamic.Mission.VELOCITY_RATE],
+            np.array([641174.75, 641174.75]),
+            tol,
+        )
         assert_near_equal(
-            self.prob[Dynamic.Mission.FLIGHT_PATH_ANGLE_RATE], np.array(
-                [2260.644, 2260.644]), tol)
+            self.prob[Dynamic.Mission.FLIGHT_PATH_ANGLE_RATE],
+            np.array([2260.644, 2260.644]),
+            tol,
+        )
         assert_near_equal(
-            self.prob[Dynamic.Mission.ALTITUDE_RATE], np.array(
-                [0.0, 0.0]), tol)
+            self.prob[Dynamic.Mission.ALTITUDE_RATE], np.array([0.0, 0.0]), tol
+        )
         assert_near_equal(
             self.prob[Dynamic.Mission.DISTANCE_RATE], np.array(
                 [168.781, 168.781]), tol)

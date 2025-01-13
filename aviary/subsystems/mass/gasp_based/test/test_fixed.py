@@ -16,6 +16,7 @@ from aviary.subsystems.mass.gasp_based.fixed import (ControlMass,
                                                      MassParameters,
                                                      PayloadMass, TailMass)
 from aviary.utils.aviary_values import AviaryValues, get_keys
+from aviary.variable_info.functions import setup_model_options, extract_options
 from aviary.variable_info.options import get_option_defaults
 from aviary.variable_info.variables import Aircraft, Mission
 
@@ -33,9 +34,7 @@ class MassParametersTestCase1(unittest.TestCase):
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
             "parameters",
-            MassParameters(
-                aviary_options=options
-            ),
+            MassParameters(),
             promotes=["*"],
         )
 
@@ -54,6 +53,8 @@ class MassParametersTestCase1(unittest.TestCase):
         self.prob.model.set_input_defaults(
             "max_mach", val=0.9, units="unitless"
         )  # bug fixed value
+
+        setup_model_options(self.prob, options)
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
@@ -86,9 +87,7 @@ class MassParametersTestCase2(unittest.TestCase):
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
             "parameters",
-            MassParameters(
-                aviary_options=options,
-            ),
+            MassParameters(),
             promotes=["*"],
         )
 
@@ -108,6 +107,8 @@ class MassParametersTestCase2(unittest.TestCase):
         self.prob.model.set_input_defaults(
             Aircraft.LandingGear.MAIN_GEAR_LOCATION, val=0
         )
+
+        setup_model_options(self.prob, options)
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
@@ -141,9 +142,7 @@ class MassParametersTestCase3(unittest.TestCase):
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
             "parameters",
-            MassParameters(
-                aviary_options=options,
-            ),
+            MassParameters(),
             promotes=["*"],
         )
 
@@ -163,6 +162,8 @@ class MassParametersTestCase3(unittest.TestCase):
         self.prob.model.set_input_defaults(
             Aircraft.LandingGear.MAIN_GEAR_LOCATION, val=0
         )
+
+        setup_model_options(self.prob, options)
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
@@ -197,9 +198,7 @@ class MassParametersTestCase4(unittest.TestCase):
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
             "parameters",
-            MassParameters(
-                aviary_options=options,
-            ),
+            MassParameters(),
             promotes=["*"],
         )
 
@@ -219,6 +218,8 @@ class MassParametersTestCase4(unittest.TestCase):
         self.prob.model.set_input_defaults(
             Aircraft.LandingGear.MAIN_GEAR_LOCATION, val=0
         )
+
+        setup_model_options(self.prob, options)
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
@@ -253,9 +254,7 @@ class MassParametersTestCase5(unittest.TestCase):
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
             "parameters",
-            MassParameters(
-                aviary_options=options,
-            ),
+            MassParameters(),
             promotes=["*"],
         )
 
@@ -275,6 +274,8 @@ class MassParametersTestCase5(unittest.TestCase):
         self.prob.model.set_input_defaults(
             Aircraft.LandingGear.MAIN_GEAR_LOCATION, val=0
         )
+
+        setup_model_options(self.prob, options)
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
@@ -309,11 +310,12 @@ class PayloadMassTestCase(unittest.TestCase):
                         val=200, units="lbm")  # bug fixed value and original value
 
         self.prob = om.Problem()
-        self.prob.model.add_subsystem("payload", PayloadMass(
-            aviary_options=options), promotes=["*"])
+        self.prob.model.add_subsystem("payload", PayloadMass(), promotes=["*"])
         self.prob.model.set_input_defaults(
             Aircraft.CrewPayload.CARGO_MASS, val=10040, units="lbm"
         )  # bug fixed value and original value
+
+        setup_model_options(self.prob, options)
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
@@ -340,8 +342,12 @@ class ElectricAugmentationTestCase(unittest.TestCase):
     def setUp(self):
 
         self.prob = om.Problem()
+
+        options = {
+            Aircraft.Propulsion.TOTAL_NUM_ENGINES: 2,
+        }
         self.prob.model.add_subsystem(
-            "aug", ElectricAugmentationMass(aviary_options=get_option_defaults()), promotes=["*"]
+            "aug", ElectricAugmentationMass(**options), promotes=["*"]
         )
 
         self.prob.model.set_input_defaults(
@@ -392,6 +398,7 @@ class ElectricAugmentationTestCase(unittest.TestCase):
         self.prob.model.set_input_defaults(
             "TMS_spec_mass", val=0.125, units="lbm/kW"
         )  # electrified diff configuration value v3.6
+
         self.prob.setup(check=False, force_alloc_complex=True)
 
     def test_case1(self):
@@ -417,7 +424,7 @@ class EngineTestCase1(unittest.TestCase):  # this is the large single aisle 1 V3
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
             "engine",
-            EngineMass(aviary_options=options),
+            EngineMass(),
             promotes=["*"],
         )
 
@@ -455,6 +462,8 @@ class EngineTestCase1(unittest.TestCase):  # this is the large single aisle 1 V3
             Aircraft.LandingGear.MAIN_GEAR_LOCATION, val=0.15, units="unitless"
         )  # bug fixed value and original value
 
+        setup_model_options(self.prob, options)
+
         self.prob.setup(check=False, force_alloc_complex=True)
 
     def test_case1(self):
@@ -491,7 +500,7 @@ class EngineTestCase2(unittest.TestCase):
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
             "engine",
-            EngineMass(aviary_options=options),
+            EngineMass(),
             promotes=["*"],
         )
 
@@ -534,6 +543,8 @@ class EngineTestCase2(unittest.TestCase):
         self.prob.model.set_input_defaults(
             Aircraft.LandingGear.MAIN_GEAR_LOCATION, val=0.15, units="unitless"
         )  # bug fixed value and original value
+
+        setup_model_options(self.prob, options)
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
@@ -579,7 +590,7 @@ class EngineTestCaseMultiEngine(unittest.TestCase):
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
             "engine",
-            EngineMass(aviary_options=options),
+            EngineMass(),
             promotes=["*"],
         )
 
@@ -605,6 +616,8 @@ class EngineTestCaseMultiEngine(unittest.TestCase):
             Aircraft.LandingGear.MAIN_GEAR_MASS, val=6384.35, units="lbm")
         self.prob.model.set_input_defaults(
             Aircraft.LandingGear.MAIN_GEAR_LOCATION, val=0.15, units="unitless")
+
+        self.prob.model_options['*'] = extract_options(options)
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
@@ -636,7 +649,7 @@ class TailTestCase(unittest.TestCase):  # this is the large single aisle 1 V3 te
 
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
-            "tail", TailMass(aviary_options=get_option_defaults()), promotes=["*"]
+            "tail", TailMass(), promotes=["*"]
         )
 
         self.prob.model.set_input_defaults(
@@ -735,7 +748,7 @@ class HighLiftTestCase(unittest.TestCase):
         aviary_options.set_val(Aircraft.Wing.NUM_FLAP_SEGMENTS, val=2)
 
         self.prob.model.add_subsystem(
-            "HL", HighLiftMass(aviary_options=aviary_options), promotes=["*"]
+            "HL", HighLiftMass(), promotes=["*"]
         )
 
         self.prob.model.set_input_defaults(
@@ -778,6 +791,8 @@ class HighLiftTestCase(unittest.TestCase):
             Mission.Landing.LIFT_COEFFICIENT_MAX, val=2.3648, units="unitless"
         )
 
+        setup_model_options(self.prob, aviary_options)
+
         self.prob.setup(check=False, force_alloc_complex=True)
 
     def test_case1(self):
@@ -798,8 +813,8 @@ class ControlMassTestCase(unittest.TestCase):
     def setUp(self):
 
         self.prob = om.Problem()
-        self.prob.model.add_subsystem("payload", ControlMass(
-            aviary_options=get_option_defaults()), promotes=["*"])
+        self.prob.model.add_subsystem("payload", ControlMass(),
+                                      promotes=["*"])
 
         self.prob.model.set_input_defaults(
             Aircraft.Wing.SURFACE_CONTROL_MASS_COEFFICIENT, val=0.95, units="unitless"
@@ -854,7 +869,7 @@ class GearTestCase1(unittest.TestCase):  # this is the large single aisle 1 V3 t
 
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
-            "payload", GearMass(aviary_options=get_option_defaults()), promotes=["*"]
+            "payload", GearMass(), promotes=["*"]
         )
 
         self.prob.model.set_input_defaults(
@@ -899,7 +914,7 @@ class GearTestCase2(unittest.TestCase):
         options = get_option_defaults()
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
-            "payload", GearMass(aviary_options=options), promotes=["*"]
+            "payload", GearMass(), promotes=["*"]
         )
 
         self.prob.model.set_input_defaults(
@@ -913,6 +928,8 @@ class GearTestCase2(unittest.TestCase):
         )  # bug fixed value and original value
         self.prob.model.set_input_defaults(
             Aircraft.Wing.MOUNTING_TYPE, val=0.1, units="unitless")
+
+        setup_model_options(self.prob, options)
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
@@ -941,7 +958,7 @@ class GearTestCaseMultiengine(unittest.TestCase):
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
             "gear_mass",
-            GearMass(aviary_options=options),
+            GearMass(),
             promotes=["*"],
         )
 
@@ -951,6 +968,8 @@ class GearTestCaseMultiengine(unittest.TestCase):
         self.prob.model.set_input_defaults(
             Aircraft.Nacelle.AVG_DIAMETER, val=[7.5, 8.22], units='ft'
         )
+
+        self.prob.model_options['*'] = extract_options(options)
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
@@ -979,9 +998,7 @@ class FixedMassGroupTestCase1(unittest.TestCase):
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
             "group",
-            FixedMassGroup(
-                aviary_options=options,
-            ),
+            FixedMassGroup(),
             promotes=["*"],
         )
 
@@ -1144,6 +1161,8 @@ class FixedMassGroupTestCase1(unittest.TestCase):
             Aircraft.LandingGear.MAIN_GEAR_LOCATION, val=0.15, units="unitless"
         )  # bug fixed value and original value
 
+        setup_model_options(self.prob, options)
+
         self.prob.setup(check=False, force_alloc_complex=True)
 
     def test_case1(self):
@@ -1234,9 +1253,7 @@ class FixedMassGroupTestCase2(unittest.TestCase):
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
             "group",
-            FixedMassGroup(
-                aviary_options=options,
-            ),
+            FixedMassGroup(),
             promotes=["*"],
         )
 
@@ -1450,6 +1467,8 @@ class FixedMassGroupTestCase2(unittest.TestCase):
             "engine.prop_mass", val=0, units="lbm"
         )  # bug fixed value and original value
 
+        setup_model_options(self.prob, options)
+
         self.prob.setup(check=False, force_alloc_complex=True)
 
     def test_case1(self):
@@ -1536,9 +1555,12 @@ class FixedMassGroupTestCase3(unittest.TestCase):
         prob = om.Problem()
         prob.model.add_subsystem(
             'fixed_mass',
-            FixedMassGroup(aviary_options=data),
+            FixedMassGroup(),
             promotes=['*'],
         )
+
+        setup_model_options(prob, data)
+
         prob.setup(force_alloc_complex=True)
 
         for key in get_keys(data):
@@ -1682,7 +1704,7 @@ class FixedMassGroupTestCase3(unittest.TestCase):
 
 
 if __name__ == "__main__":
-    unittest.main()
+    # unittest.main()
     # test = GearTestCaseMultiengine()
-    # test = EngineTestCaseMultiEngine()
-    # test.test_case_1()
+    test = EngineTestCaseMultiEngine()
+    test.test_case_1()

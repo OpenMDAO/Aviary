@@ -3,8 +3,7 @@ import openmdao.api as om
 from aviary.constants import GRAV_ENGLISH_LBM
 from aviary.subsystems.mass.flops_based.distributed_prop import (
     distributed_engine_count_factor, distributed_thrust_factor)
-from aviary.utils.aviary_values import AviaryValues
-from aviary.variable_info.functions import add_aviary_input, add_aviary_output
+from aviary.variable_info.functions import add_aviary_input, add_aviary_output, add_aviary_option
 from aviary.variable_info.variables import Aircraft
 
 
@@ -25,9 +24,7 @@ class TransportEngineCtrlsMass(om.ExplicitComponent):
     '''
 
     def initialize(self):
-        self.options.declare(
-            'aviary_options', types=AviaryValues,
-            desc='collection of Aircraft/Mission specific options')
+        add_aviary_option(self, Aircraft.Propulsion.TOTAL_NUM_ENGINES)
 
     def setup(self):
         add_aviary_input(
@@ -41,9 +38,7 @@ class TransportEngineCtrlsMass(om.ExplicitComponent):
                               [Aircraft.Propulsion.TOTAL_SCALED_SLS_THRUST])
 
     def compute(self, inputs, outputs):
-        aviary_options: AviaryValues = self.options['aviary_options']
-
-        num_engines = aviary_options.get_val(Aircraft.Propulsion.TOTAL_NUM_ENGINES)
+        num_engines = self.options[Aircraft.Propulsion.TOTAL_NUM_ENGINES]
         num_engines_factor = distributed_engine_count_factor(num_engines)
 
         max_sls_thrust = inputs[Aircraft.Propulsion.TOTAL_SCALED_SLS_THRUST]
@@ -55,9 +50,7 @@ class TransportEngineCtrlsMass(om.ExplicitComponent):
             total_controls_weight / GRAV_ENGLISH_LBM
 
     def compute_partials(self, inputs, J, discrete_inputs=None):
-        aviary_options: AviaryValues = self.options['aviary_options']
-
-        num_engines = aviary_options.get_val(Aircraft.Propulsion.TOTAL_NUM_ENGINES)
+        num_engines = self.options[Aircraft.Propulsion.TOTAL_NUM_ENGINES]
         max_sls_thrust = inputs[Aircraft.Propulsion.TOTAL_SCALED_SLS_THRUST]
         thrust_factor = distributed_thrust_factor(max_sls_thrust, num_engines)
 
