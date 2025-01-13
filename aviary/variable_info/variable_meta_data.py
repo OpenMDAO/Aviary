@@ -5724,7 +5724,7 @@ add_meta_data(
     meta_data=_MetaData,
     historical_name={"GASP": 'INGASP.HWING', "FLOPS": None, "LEAPS1": None},
     units='unitless',
-    desc='wing location on fuselage (0 = low wing, 1 = high wing)',
+    desc='wing mount location on fuselage (0 = low wing, 1 = high wing)',
     default_value=0.0,
 )
 
