@@ -1384,7 +1384,8 @@ class AviaryProblem(om.Problem):
             mass_resid={'units': 'lbm'})
 
         if self.mass_method is GASP:
-            payload_mass_src = Aircraft.CrewPayload.PASSENGER_PAYLOAD_MASS
+            #payload_mass_src = Aircraft.CrewPayload.PASSENGER_PAYLOAD_MASS
+            payload_mass_src = Aircraft.CrewPayload.TOTAL_PAYLOAD_MASS
         else:
             payload_mass_src = Aircraft.CrewPayload.TOTAL_PAYLOAD_MASS
 
@@ -1546,7 +1547,7 @@ class AviaryProblem(om.Problem):
                                       connected=true_unless_mpi)
 
                 self.model.connect(f'traj.{self.regular_phases[-1]}.timeseries.distance',
-                                   'actual_range',
+                                   Mission.Summary.RANGE,
                                    src_indices=[-1], flat_src_indices=True)
 
             elif self.mission_method is SOLVED_2DOF:
@@ -1672,14 +1673,14 @@ class AviaryProblem(om.Problem):
                                    Mission.Landing.TOUCHDOWN_MASS, src_indices=[-1])
 
                 connect_map = {
-                    f"traj.{self.regular_phases[-1]}.timeseries.distance": 'actual_range',
+                    f"traj.{self.regular_phases[-1]}.timeseries.distance": Mission.Summary.RANGE,
                 }
 
             else:
                 connect_map = {
                     "taxi.mass": "traj.mass_initial",
                     Mission.Takeoff.ROTATION_VELOCITY: "traj.SGMGroundroll_velocity_trigger",
-                    "traj.distance_final": 'actual_range',
+                    "traj.distance_final": Mission.Summary.RANGE,
                     "traj.mass_final": Mission.Landing.TOUCHDOWN_MASS,
                 }
 
@@ -2887,7 +2888,7 @@ class AviaryProblem(om.Problem):
                     "val": self.target_range, "units": "NM"},
             ),
             promotes_inputs=[
-                "actual_range",
+                ("actual_range", Mission.Summary.RANGE),
                 ("ascent_duration", Mission.Takeoff.ASCENT_DURATION),
             ],
             promotes_outputs=[("reg_objective", Mission.Objectives.RANGE)],
@@ -2913,8 +2914,8 @@ class AviaryProblem(om.Problem):
                 range_resid={"val": 30, "units": "NM"},
             ),
             promotes_inputs=[
-                "actual_range",
-                ("target_range", Mission.Summary.RANGE),
+                ("actual_range", Mission.Summary.RANGE),
+                "target_range",
             ],
             promotes_outputs=[
                 ("range_resid", Mission.Constraints.RANGE_RESIDUAL)],
@@ -3077,7 +3078,7 @@ def _read_sizing_json(aviary_problem, json_filename):
 
 
 def _load_off_design(json_filename, ProblemType, phase_info,
-                     payload, mission_range, mission_gross_mass):
+                     num_pax, cargo_mass, mission_range, mission_gross_mass):
     """
     This function loads a sized aircraft, and sets up an aviary problem
     for a specified off design mission.
@@ -3090,8 +3091,10 @@ def _load_off_design(json_filename, ProblemType, phase_info,
         Alternate or Fallout. Alternate requires mission_range input and
          Fallout requires mission_fuel input
     phase_info:     phase_info dictionary for off design mission
-    payload:            float
-        Aircraft.CrewPayload.PASSENGER_PAYLOAD_MASS
+    num_pax:            integer
+        Aircraft.CrewPayload.NUM_PASSENGERS
+    cargo_mass:         float
+        Aircraft.CrewPayload.CARGO_MASS
     mission_range       float
         Mission.Summary.RANGE 'NM'
     mission_gross_mass  float
@@ -3114,7 +3117,8 @@ def _load_off_design(json_filename, ProblemType, phase_info,
 
     # Set Payload
     prob.aviary_inputs.set_val(
-        Aircraft.CrewPayload.PASSENGER_PAYLOAD_MASS, payload, units='lbm')
+        Aircraft.CrewPayload.NUM_PASSENGERS, num_pax, units='unitless')
+    prob.aviary_inputs.set_val(Aircraft.CrewPayload.CARGO_MASS, cargo_mass, 'lbm')
 
     if ProblemType == ProblemType.ALTERNATE:
         # Set mission range, aviary will calculate required fuel

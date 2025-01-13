@@ -253,11 +253,15 @@ class PayloadMass(om.ExplicitComponent):
         add_aviary_option(self, Aircraft.CrewPayload.NUM_PASSENGERS)
         add_aviary_option(self, Aircraft.CrewPayload.PASSENGER_MASS_WITH_BAGS,
                           units='lbm')
+        add_aviary_option(self, Aircraft.CrewPayload.Design.NUM_PASSENGERS)
+        add_aviary_option(self, Aircraft.CrewPayload.MAX_CARGO_MASS)
 
     def setup(self):
         add_aviary_input(self, Aircraft.CrewPayload.CARGO_MASS, val=10040)
+        add_aviary_input(self, Aircraft.CrewPayload.Design.CARGO_MASS, val=0)
 
         add_aviary_output(self, Aircraft.CrewPayload.PASSENGER_PAYLOAD_MASS, val=0)
+        add_aviary_output(self, Aircraft.CrewPayload.TOTAL_PAYLOAD_MASS, val=0)
 
         self.add_output(
             "payload_mass_des", val=0, units="lbm", desc="WPLDES: design payload"
@@ -278,12 +282,16 @@ class PayloadMass(om.ExplicitComponent):
     def compute(self, inputs, outputs):
         pax_mass, _ = self.options[Aircraft.CrewPayload.PASSENGER_MASS_WITH_BAGS]
         PAX = self.options[Aircraft.CrewPayload.NUM_PASSENGERS]
+        PAX_des = self.options[Aircraft.CrewPayload.Design.NUM_PASSENGERS]
         cargo_mass = inputs[Aircraft.CrewPayload.CARGO_MASS]
+        cargo_mass_des = inputs[Aircraft.CrewPayload.Design.CARGO_MASS]
+        cargo_mass_max = self.options[Aircraft.CrewPayload.MAX_CARGO_MASS]
 
         outputs[Aircraft.CrewPayload.PASSENGER_PAYLOAD_MASS] = \
             payload_mass = pax_mass * PAX
-        outputs["payload_mass_des"] = payload_mass
-        outputs["payload_mass_max"] = pax_mass * PAX + cargo_mass
+        outputs["payload_mass_des"] = pax_mass * PAX_des + cargo_mass_des
+        outputs["payload_mass_max"] = pax_mass * PAX_des + cargo_mass_max
+        outputs[Aircraft.CrewPayload.TOTAL_PAYLOAD_MASS] = pax_mass * PAX + cargo_mass
 
 
 class ElectricAugmentationMass(om.ExplicitComponent):
