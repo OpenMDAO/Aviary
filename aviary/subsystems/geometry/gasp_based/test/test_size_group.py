@@ -192,6 +192,9 @@ class SizeGroupTestCase2(unittest.TestCase):
         self.prob.model.set_input_defaults(
             Aircraft.Wing.TAPER_RATIO, val=0.33, units="unitless"
         )
+        self.prob.model.set_input_defaults(
+            Aircraft.HorizontalTail.TAPER_RATIO, val=0.352, units="unitless"
+        )
         self.prob.model.set_input_defaults(Aircraft.Wing.SWEEP, val=25, units="deg")
         self.prob.model.set_input_defaults(
             Aircraft.Wing.THICKNESS_TO_CHORD_ROOT, val=0.15, units="unitless"
