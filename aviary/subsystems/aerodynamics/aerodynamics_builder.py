@@ -598,7 +598,7 @@ AERO_2DOF_INPUTS = [
     Aircraft.Wing.FUSELAGE_INTERFERENCE_FACTOR,
     Aircraft.Wing.MAX_THICKNESS_LOCATION,
     Aircraft.Wing.MIN_PRESSURE_LOCATION,
-    Aircraft.Wing.MOUNTING_TYPE,
+    Aircraft.Wing.MOUNT_LOCATION,
     Aircraft.Wing.SPAN,
     Aircraft.Wing.SWEEP,
     Aircraft.Wing.TAPER_RATIO,

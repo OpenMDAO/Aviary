@@ -5720,11 +5720,12 @@ add_meta_data(
 )
 
 add_meta_data(
-    Aircraft.Wing.MOUNTING_TYPE,
+    Aircraft.Wing.MOUNT_LOCATION,
     meta_data=_MetaData,
     historical_name={"GASP": 'INGASP.HWING', "FLOPS": None, "LEAPS1": None},
     units='unitless',
     desc='wing location on fuselage (0 = low wing, 1 = high wing)',
+    default_value=0.0,
 )
 
 add_meta_data(
