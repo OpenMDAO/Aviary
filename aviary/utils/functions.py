@@ -361,6 +361,7 @@ def promote_aircraft_and_mission_vars(group):
                     break
 
         group.promotes(comp.name, outputs=promote_out, inputs=promote_in)
+        print(comp.name, promote_in, promote_out)
 
     return external_outputs
 
