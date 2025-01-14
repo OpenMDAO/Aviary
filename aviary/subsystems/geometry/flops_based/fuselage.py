@@ -16,12 +16,12 @@ class FuselagePrelim(om.ExplicitComponent):
     """
 
     def setup(self):
-        add_aviary_input(self, Aircraft.Fuselage.LENGTH, val=0.0)
-        add_aviary_input(self, Aircraft.Fuselage.MAX_HEIGHT, val=0.0)
-        add_aviary_input(self, Aircraft.Fuselage.MAX_WIDTH, val=0.0)
+        add_aviary_input(self, Aircraft.Fuselage.LENGTH)
+        add_aviary_input(self, Aircraft.Fuselage.MAX_HEIGHT)
+        add_aviary_input(self, Aircraft.Fuselage.MAX_WIDTH)
 
-        add_aviary_output(self, Aircraft.Fuselage.AVG_DIAMETER, val=0.0)
-        add_aviary_output(self, Aircraft.Fuselage.PLANFORM_AREA, val=0.0)
+        add_aviary_output(self, Aircraft.Fuselage.AVG_DIAMETER)
+        add_aviary_output(self, Aircraft.Fuselage.PLANFORM_AREA)
 
     def setup_partials(self):
         self.declare_partials(of=[Aircraft.Fuselage.AVG_DIAMETER],

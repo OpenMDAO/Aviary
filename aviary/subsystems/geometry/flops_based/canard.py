@@ -18,11 +18,11 @@ class Canard(om.ExplicitComponent):
             desc='collection of Aircraft/Mission specific options')
 
     def setup(self):
-        add_aviary_input(self, Aircraft.Canard.AREA, 0.0)
-        add_aviary_input(self, Aircraft.Canard.THICKNESS_TO_CHORD, 0.0)
-        add_aviary_input(self, Aircraft.Canard.WETTED_AREA_SCALER, 1.0)
+        add_aviary_input(self, Aircraft.Canard.AREA)
+        add_aviary_input(self, Aircraft.Canard.THICKNESS_TO_CHORD)
+        add_aviary_input(self, Aircraft.Canard.WETTED_AREA_SCALER)
 
-        add_aviary_output(self, Aircraft.Canard.WETTED_AREA, 0.0)
+        add_aviary_output(self, Aircraft.Canard.WETTED_AREA)
 
     def setup_partials(self):
         self.declare_partials(

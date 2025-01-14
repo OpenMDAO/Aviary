@@ -11,14 +11,14 @@ class TotalWettedArea(om.ExplicitComponent):
     """
 
     def setup(self):
-        add_aviary_input(self, Aircraft.Canard.WETTED_AREA, 0.0)
-        add_aviary_input(self, Aircraft.Fuselage.WETTED_AREA, 0.0)
-        add_aviary_input(self, Aircraft.HorizontalTail.WETTED_AREA, 0.0)
-        add_aviary_input(self, Aircraft.Nacelle.TOTAL_WETTED_AREA, 0.0)
-        add_aviary_input(self, Aircraft.VerticalTail.WETTED_AREA, 0.0)
-        add_aviary_input(self, Aircraft.Wing.WETTED_AREA, 0.0)
+        add_aviary_input(self, Aircraft.Canard.WETTED_AREA)
+        add_aviary_input(self, Aircraft.Fuselage.WETTED_AREA)
+        add_aviary_input(self, Aircraft.HorizontalTail.WETTED_AREA)
+        add_aviary_input(self, Aircraft.Nacelle.TOTAL_WETTED_AREA)
+        add_aviary_input(self, Aircraft.VerticalTail.WETTED_AREA)
+        add_aviary_input(self, Aircraft.Wing.WETTED_AREA)
 
-        add_aviary_output(self, Aircraft.Design.TOTAL_WETTED_AREA, 0.0)
+        add_aviary_output(self, Aircraft.Design.TOTAL_WETTED_AREA)
 
     def setup_partials(self):
         self.declare_partials('*', '*', val=1.0)
