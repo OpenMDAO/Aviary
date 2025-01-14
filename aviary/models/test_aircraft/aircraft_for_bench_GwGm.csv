@@ -123,6 +123,7 @@ aircraft:wing:mass_coefficient,102.5,unitless
 aircraft:wing:max_lift_ref,1.15,unitless
 aircraft:wing:max_slat_deflection_landing,10,deg
 aircraft:wing:max_slat_deflection_takeoff,10,deg
+aircraft:wing:slat_span_ratio,0.9,unitless
 aircraft:wing:max_thickness_location,0.4,unitless
 aircraft:wing:min_pressure_location,0.3,unitless
 aircraft:wing:mounting_type,0,unitless

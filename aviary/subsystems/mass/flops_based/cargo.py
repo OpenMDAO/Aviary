@@ -22,15 +22,13 @@ class CargoMass(om.ExplicitComponent):
         add_aviary_option(self, Aircraft.CrewPayload.NUM_PASSENGERS)
 
     def setup(self):
-        add_aviary_output(self, Aircraft.CrewPayload.PASSENGER_MASS, 0.)
-        add_aviary_output(self, Aircraft.CrewPayload.BAGGAGE_MASS, 0.)
-        add_aviary_output(self, Aircraft.CrewPayload.PASSENGER_PAYLOAD_MASS, 0.)
-
-        add_aviary_input(self, Aircraft.CrewPayload.WING_CARGO, 0.)
-        add_aviary_input(self, Aircraft.CrewPayload.MISC_CARGO, 0.)
-
-        add_aviary_output(self, Aircraft.CrewPayload.CARGO_MASS, 0.)
-        add_aviary_output(self, Aircraft.CrewPayload.TOTAL_PAYLOAD_MASS, 0.)
+        add_aviary_input(self, Aircraft.CrewPayload.WING_CARGO)
+        add_aviary_input(self, Aircraft.CrewPayload.MISC_CARGO)
+        add_aviary_output(self, Aircraft.CrewPayload.PASSENGER_MASS)
+        add_aviary_output(self, Aircraft.CrewPayload.BAGGAGE_MASS)
+        add_aviary_output(self, Aircraft.CrewPayload.PASSENGER_PAYLOAD_MASS)
+        add_aviary_output(self, Aircraft.CrewPayload.CARGO_MASS)
+        add_aviary_output(self, Aircraft.CrewPayload.TOTAL_PAYLOAD_MASS)
 
     def setup_partials(self):
 
