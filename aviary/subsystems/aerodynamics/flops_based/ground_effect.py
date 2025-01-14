@@ -40,10 +40,10 @@ class GroundEffect(om.ExplicitComponent):
 
         self.add_input('angle_of_attack', val=np.zeros(nn), units='rad')
 
-        add_aviary_input(self, Dynamic.Mission.ALTITUDE, np.zeros(nn), units='m')
+        add_aviary_input(self, Dynamic.Mission.ALTITUDE, shape=(nn), units='m')
 
         add_aviary_input(
-            self, Dynamic.Mission.FLIGHT_PATH_ANGLE, val=np.zeros(nn), units='rad'
+            self, Dynamic.Mission.FLIGHT_PATH_ANGLE, shape=(nn), units='rad'
         )
 
         self.add_input(
@@ -62,8 +62,8 @@ class GroundEffect(om.ExplicitComponent):
         )
 
         add_aviary_input(self, Aircraft.Wing.ASPECT_RATIO)
-        add_aviary_input(self, Aircraft.Wing.HEIGHT, val=1., units='m')
-        add_aviary_input(self, Aircraft.Wing.SPAN, val=1., units='m')
+        add_aviary_input(self, Aircraft.Wing.HEIGHT, units='m')
+        add_aviary_input(self, Aircraft.Wing.SPAN, units='m')
 
         self.add_output(
             'lift_coefficient', val=np.ones(nn),

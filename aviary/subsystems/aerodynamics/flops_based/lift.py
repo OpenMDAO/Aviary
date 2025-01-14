@@ -72,18 +72,11 @@ class LiftEqualsWeight(om.ExplicitComponent):
     def setup(self):
         nn = self.options['num_nodes']
 
-        add_aviary_input(self, varname=Aircraft.Wing.AREA, val=1.0, units='m**2')
+        add_aviary_input(self, varname=Aircraft.Wing.AREA, units='m**2')
 
-        self.add_input(
-            name=Dynamic.Vehicle.MASS, val=np.ones(nn), desc='current aircraft mass',
-            units='kg')
+        add_aviary_input(self, Dynamic.Vehicle.MASS, shape=(nn), units='kg')
 
-        self.add_input(
-            Dynamic.Atmosphere.DYNAMIC_PRESSURE,
-            val=np.ones(nn),
-            units='N/m**2',
-            desc='pressure caused by fluid motion',
-        )
+        add_aviary_input(self, Dynamic.Atmosphere.DYNAMIC_PRESSURE, shape=(nn), units='N/m**2')
 
         self.add_output(
             name='cl', val=np.ones(nn), desc='current coefficient of lift',
