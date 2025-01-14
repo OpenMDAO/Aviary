@@ -1,3 +1,4 @@
+import ast
 import inspect
 import subprocess
 import tempfile
@@ -27,6 +28,9 @@ get_all_keys recursively get all of the keys from a dict of dicts
 get_value recursively get a value from a dict of dicts
 glue_variable Glue a variable for later use in markdown cells of notebooks (can auto format for code)
 glue_keys recursively glue all of the keys from a dict of dicts
+get_previous_line returns the previous n line(s) of code as a string
+get_class_names return the class names in a file as a set
+get_function_names returns the function names in a file as a set
 """
 
 
@@ -435,3 +439,53 @@ def glue_keys(dict_of_dicts: dict, display=True) -> list:
     for key in all_keys:
         glue_variable(key, md_code=True, display=display)
     return all_keys
+
+
+def get_class_names(file_path) -> set:
+    """
+    Retrieve all class names from a given file and return as a set
+
+    Parameters
+    ----------
+    file_path: str or Path
+        file path
+    """
+    # Read the content of the file
+    with open(file_path, 'r') as file:
+        file_content = file.read()
+
+    # Parse the file content into an AST
+    tree = ast.parse(file_content)
+
+    # Extract class names
+    class_names = [
+        node.name for node in ast.walk(tree)
+        if isinstance(node, ast.ClassDef)
+    ]
+
+    return set(class_names)
+
+
+def get_function_names(file_path) -> set:
+    """
+    Get all function names in a given file and return as a set.
+
+    Parameters
+    ----------
+    file_path: str or Path
+        file path
+    """
+    # Read the content of the file
+    with open(file_path, 'r') as file:
+        file_content = file.read()
+
+    # Parse the file content into an AST
+    tree = ast.parse(file_content)
+
+    # Extract function names
+    function_names = [
+        node.name for node in ast.walk(tree)
+        if isinstance(node, ast.FunctionDef)
+    ]
+
+    return set(function_names)
