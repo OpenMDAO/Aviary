@@ -11,6 +11,7 @@ from aviary.subsystems.propulsion.utils import build_engine_deck
 from aviary.utils.preprocessors import preprocess_options
 from aviary.validation_cases.validation_data.flops_data.FLOPS_Test_Data import \
     FLOPS_Test_Data, FLOPS_Lacking_Test_Data
+from aviary.variable_info.functions import extract_options
 from aviary.variable_info.variables import Aircraft
 
 Version = Enum('Version', ['ALL', 'TRANSPORT', 'ALTERNATE', 'BWB'])
@@ -271,6 +272,9 @@ def get_flops_data(case_name: str, keys: str = None, preprocess: bool = False) -
     keys : str, or iter of str
         List of variables whose values will be transferred from the validation data.
         The default is all variables.
+    preprocess: bool
+        If true, the input data will be passed through preprocess_options() to
+        fill in any missing options before being returned. The default is False.
     """
     flops_data_copy: AviaryValues = get_flops_inputs(case_name, preprocess=preprocess)
     flops_data_copy.update(get_flops_outputs(case_name))
@@ -314,6 +318,40 @@ def get_flops_inputs(case_name: str, keys: str = None, preprocess: bool = False)
     keys_list = _assure_is_list(keys)
 
     return AviaryValues({key: flops_inputs_copy.get_item(key) for key in keys_list})
+
+
+def get_flops_options(case_name: str, keys: str = None, preprocess: bool = False) -> AviaryValues:
+    """
+    Returns a dictionary containing options for the named FLOPS validation case.
+
+    Parameters
+    ----------
+    case_name : str
+        Name of the case being run. Input data will be looked up from
+        the corresponding case in the FLOPS validation data collection.
+    keys : str, or iter of str
+        List of variables whose values will be transferred from the input data.
+        The default is all variables.
+    preprocess: bool
+        If true, the input data will be passed through preprocess_options() to
+        fill in any missing options before being returned. The default is False.
+    """
+    try:
+        flops_data: dict = FLOPS_Test_Data[case_name]
+    except KeyError:
+        flops_data: dict = FLOPS_Lacking_Test_Data[case_name]
+
+    flops_inputs_copy: AviaryValues = flops_data['inputs'].deepcopy()
+    if preprocess:
+        preprocess_options(flops_inputs_copy,
+                           engine_models=build_engine_deck(flops_inputs_copy))
+
+    if keys is None:
+        options = extract_options(flops_inputs_copy)
+    else:
+        options = extract_options(keys)
+
+    return options
 
 
 def get_flops_outputs(case_name: str, keys: str = None) -> AviaryValues:

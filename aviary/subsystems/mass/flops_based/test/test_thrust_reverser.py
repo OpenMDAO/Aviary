@@ -28,10 +28,15 @@ class ThrustReverserMassTest(unittest.TestCase):
 
         prob = self.prob
 
+        inputs = get_flops_inputs(case_name, preprocess=True)
+
+        options = {
+            Aircraft.Engine.NUM_ENGINES: inputs.get_val(Aircraft.Engine.NUM_ENGINES),
+        }
+
         prob.model.add_subsystem(
             "thrust_rev",
-            ThrustReverserMass(aviary_options=get_flops_inputs(
-                case_name, preprocess=True)),
+            ThrustReverserMass(**options),
             promotes=['*']
         )
 
@@ -66,8 +71,12 @@ class ThrustReverserMassTest(unittest.TestCase):
             aviary_options, [engineModel1, engineModel2, engineModel3], verbosity=0
         )
 
-        prob.model.add_subsystem('thrust_reverser_mass', ThrustReverserMass(
-            aviary_options=aviary_options), promotes=['*'])
+        options = {
+            Aircraft.Engine.NUM_ENGINES: aviary_options.get_val(Aircraft.Engine.NUM_ENGINES),
+        }
+
+        prob.model.add_subsystem('thrust_reverser_mass', ThrustReverserMass(**options),
+                                 promotes=['*'])
 
         prob.setup(force_alloc_complex=True)
 
@@ -113,10 +122,16 @@ class ThrustReverserMassTest2(unittest.TestCase):
 
     def test_case(self):
         prob = om.Problem()
+
+        inputs = get_flops_inputs("N3CC", preprocess=True)
+
+        options = {
+            Aircraft.Engine.NUM_ENGINES: inputs.get_val(Aircraft.Engine.NUM_ENGINES),
+        }
+
         prob.model.add_subsystem(
             "thrust_rev",
-            ThrustReverserMass(aviary_options=get_flops_inputs(
-                "N3CC", preprocess=True)),
+            ThrustReverserMass(**options),
             promotes=['*']
         )
         prob.setup(check=False, force_alloc_complex=True)

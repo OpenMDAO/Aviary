@@ -9,6 +9,7 @@ from aviary.subsystems.propulsion.engine_scaling import EngineScaling
 from aviary.utils.aviary_values import AviaryValues
 from aviary.utils.preprocessors import preprocess_propulsion
 from aviary.utils.functions import get_path
+from aviary.variable_info.functions import setup_model_options
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission, Settings
 from aviary.subsystems.propulsion.utils import EngineModelVariables
 
@@ -57,12 +58,14 @@ class EngineScalingTest(unittest.TestCase):
 
         self.prob.model.add_subsystem(
             'engine',
-            EngineScaling(
-                num_nodes=nn, aviary_options=options, engine_variables=engine_variables
-            ),
+            EngineScaling(num_nodes=nn, engine_variables=engine_variables),
             promotes=['*'],
         )
+
+        setup_model_options(self.prob, options)
+
         self.prob.setup(force_alloc_complex=True)
+
         self.prob.set_val(
             'thrust_net_unscaled', np.ones([nn, count]) * 1000, units='lbf'
         )

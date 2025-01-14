@@ -294,6 +294,8 @@ def preprocess_propulsion(
                 # if default value is a list/tuple, find type inside that
                 if isinstance(default_value, (list, tuple)):
                     dtype = type(default_value[0])
+                elif isinstance(default_value, np.ndarray):
+                    dtype = default_value.dtype
                 elif default_value is None:
                     # With no default value, we cannot determine a dtype.
                     dtype = None

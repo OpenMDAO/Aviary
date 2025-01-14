@@ -3,8 +3,7 @@ import openmdao.api as om
 from aviary.constants import GRAV_ENGLISH_LBM
 from aviary.subsystems.mass.flops_based.distributed_prop import (
     distributed_engine_count_factor, distributed_thrust_factor)
-from aviary.utils.aviary_values import AviaryValues
-from aviary.variable_info.functions import add_aviary_input, add_aviary_output
+from aviary.variable_info.functions import add_aviary_input, add_aviary_output, add_aviary_option
 from aviary.variable_info.variables import Aircraft, Mission
 
 
@@ -16,9 +15,8 @@ class TransportAirCondMass(om.ExplicitComponent):
     '''
 
     def initialize(self):
-        self.options.declare(
-            'aviary_options', types=AviaryValues,
-            desc='collection of Aircraft/Mission specific options')
+        add_aviary_option(self, Aircraft.CrewPayload.Design.NUM_PASSENGERS)
+        add_aviary_option(self, Mission.Constraints.MAX_MACH)
 
     def setup(self):
         add_aviary_input(self, Aircraft.AirConditioning.MASS_SCALER, val=1.0)
@@ -35,30 +33,26 @@ class TransportAirCondMass(om.ExplicitComponent):
         self.declare_partials('*', '*')
 
     def compute(self, inputs, outputs, discrete_inputs=None, discrete_outputs=None):
-        aviary_options: AviaryValues = self.options['aviary_options']
-        pax = aviary_options.get_val(
-            Aircraft.CrewPayload.Design.NUM_PASSENGERS, units='unitless')
+        pax = self.options[Aircraft.CrewPayload.Design.NUM_PASSENGERS]
 
         scaler = inputs[Aircraft.AirConditioning.MASS_SCALER]
         avionics_wt = inputs[Aircraft.Avionics.MASS] * GRAV_ENGLISH_LBM
         height = inputs[Aircraft.Fuselage.MAX_HEIGHT]
         planform = inputs[Aircraft.Fuselage.PLANFORM_AREA]
-        max_mach = aviary_options.get_val(Mission.Constraints.MAX_MACH)
+        max_mach = self.options[Mission.Constraints.MAX_MACH]
 
         outputs[Aircraft.AirConditioning.MASS] = \
             ((3.2 * (planform * height)**0.6 + 9 * pax**0.83)
              * max_mach + 0.075 * avionics_wt) * scaler / GRAV_ENGLISH_LBM
 
     def compute_partials(self, inputs, J):
-        aviary_options: AviaryValues = self.options['aviary_options']
-        pax = aviary_options.get_val(
-            Aircraft.CrewPayload.Design.NUM_PASSENGERS, units='unitless')
+        pax = self.options[Aircraft.CrewPayload.Design.NUM_PASSENGERS]
 
         scaler = inputs[Aircraft.AirConditioning.MASS_SCALER]
         avionics_wt = inputs[Aircraft.Avionics.MASS] * GRAV_ENGLISH_LBM
         height = inputs[Aircraft.Fuselage.MAX_HEIGHT]
         planform = inputs[Aircraft.Fuselage.PLANFORM_AREA]
-        max_mach = aviary_options.get_val(Mission.Constraints.MAX_MACH)
+        max_mach = self.options[Mission.Constraints.MAX_MACH]
 
         planform_exp = planform**0.6
         height_exp = height**0.6
@@ -86,9 +80,7 @@ class AltAirCondMass(om.ExplicitComponent):
     '''
 
     def initialize(self):
-        self.options.declare(
-            'aviary_options', types=AviaryValues,
-            desc='collection of Aircraft/Mission specific options')
+        add_aviary_option(self, Aircraft.CrewPayload.Design.NUM_PASSENGERS)
 
     def setup(self):
         add_aviary_input(self, Aircraft.AirConditioning.MASS_SCALER, val=1.0)
@@ -99,9 +91,7 @@ class AltAirCondMass(om.ExplicitComponent):
         self.declare_partials(of=Aircraft.AirConditioning.MASS, wrt='*')
 
     def compute(self, inputs, outputs, discrete_inputs=None, discrete_outputs=None):
-        aviary_options: AviaryValues = self.options['aviary_options']
-        num_pax = aviary_options.get_val(
-            Aircraft.CrewPayload.Design.NUM_PASSENGERS, units='unitless')
+        num_pax = self.options[Aircraft.CrewPayload.Design.NUM_PASSENGERS]
 
         scaler = inputs[Aircraft.AirConditioning.MASS_SCALER]
 
@@ -109,9 +99,7 @@ class AltAirCondMass(om.ExplicitComponent):
             26.0 * num_pax * scaler / GRAV_ENGLISH_LBM
 
     def compute_partials(self, inputs, J):
-        aviary_options: AviaryValues = self.options['aviary_options']
-        num_pax = aviary_options.get_val(
-            Aircraft.CrewPayload.Design.NUM_PASSENGERS, units='unitless')
+        num_pax = self.options[Aircraft.CrewPayload.Design.NUM_PASSENGERS]
 
         J[Aircraft.AirConditioning.MASS, Aircraft.AirConditioning.MASS_SCALER] = \
             26.0 * num_pax / GRAV_ENGLISH_LBM

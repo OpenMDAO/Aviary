@@ -1,8 +1,7 @@
 import numpy as np
 import openmdao.api as om
 
-from aviary.utils.aviary_values import AviaryValues
-from aviary.variable_info.functions import add_aviary_input, add_aviary_output
+from aviary.variable_info.functions import add_aviary_input, add_aviary_output, add_aviary_option
 from aviary.variable_info.variables import Aircraft
 
 
@@ -16,9 +15,8 @@ class SizeEngine(om.ExplicitComponent):
     '''
 
     def initialize(self):
-        self.options.declare(
-            'aviary_options', types=AviaryValues,
-            desc='collection of Aircraft/Mission specific options')
+        add_aviary_option(self, Aircraft.Engine.REFERENCE_SLS_THRUST, units='lbf')
+        add_aviary_option(self, Aircraft.Engine.SCALE_PERFORMANCE)
 
     def setup(self):
         add_aviary_input(self, Aircraft.Engine.SCALE_FACTOR, val=1.0)
@@ -34,12 +32,9 @@ class SizeEngine(om.ExplicitComponent):
         # TODO - nacelle_wetted_area: if length, diam get scaled - this should be covered by geom
 
     def compute(self, inputs, outputs):
-        options: AviaryValues = self.options['aviary_options']
 
-        scale_engine = options.get_val(Aircraft.Engine.SCALE_PERFORMANCE)
-
-        reference_sls_thrust = options.get_val(Aircraft.Engine.REFERENCE_SLS_THRUST,
-                                               units='lbf')
+        scale_engine = self.options[Aircraft.Engine.SCALE_PERFORMANCE]
+        reference_sls_thrust, _ = self.options[Aircraft.Engine.REFERENCE_SLS_THRUST]
 
         engine_scale_factor = inputs[Aircraft.Engine.SCALE_FACTOR]
 
@@ -53,14 +48,15 @@ class SizeEngine(om.ExplicitComponent):
         outputs[Aircraft.Engine.SCALED_SLS_THRUST] = scaled_sls_thrust
 
     def setup_partials(self):
-        self.declare_partials(
-            Aircraft.Engine.SCALED_SLS_THRUST, Aircraft.Engine.SCALE_FACTOR
-        )
+        scale_engine = self.options[Aircraft.Engine.SCALE_PERFORMANCE]
+
+        if scale_engine:
+            self.declare_partials(
+                Aircraft.Engine.SCALED_SLS_THRUST, Aircraft.Engine.SCALE_FACTOR
+            )
 
     def compute_partials(self, inputs, J):
-        options: AviaryValues = self.options['aviary_options']
-        reference_sls_thrust = options.get_val(
-            Aircraft.Engine.REFERENCE_SLS_THRUST, units='lbf')
+        reference_sls_thrust, _ = self.options[Aircraft.Engine.REFERENCE_SLS_THRUST]
 
         J[Aircraft.Engine.SCALED_SLS_THRUST, Aircraft.Engine.SCALE_FACTOR] = (
             reference_sls_thrust

@@ -21,6 +21,7 @@ class UnsteadyControlIterGroup(om.Group):
                                   "output and adjusts the TAS rate equation.")
         self.options.declare("clean", types=bool, default=False,
                              desc="If true then no flaps or gear are included. Useful for high-speed flight phases.")
+
         self.options.declare(
             'aviary_options', types=AviaryValues, default=None,
             desc='collection of Aircraft/Mission specific options'
