@@ -888,7 +888,7 @@ class GearTestCase1(unittest.TestCase):  # this is the large single aisle 1 V3 t
             Aircraft.Nacelle.AVG_DIAMETER, val=7.35, units="ft"
         )  # bug fixed value and original value
         self.prob.model.set_input_defaults(
-            Aircraft.Wing.MOUNTING_TYPE, val=0, units="unitless")
+            Aircraft.Wing.MOUNT_LOCATION, val=0, units="unitless")
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
@@ -927,7 +927,7 @@ class GearTestCase2(unittest.TestCase):
             Aircraft.LandingGear.MAIN_GEAR_MASS_COEFFICIENT, val=0.85, units="unitless"
         )  # bug fixed value and original value
         self.prob.model.set_input_defaults(
-            Aircraft.Wing.MOUNTING_TYPE, val=0.1, units="unitless")
+            Aircraft.Wing.MOUNT_LOCATION, val=0.1, units="unitless")
 
         setup_model_options(self.prob, options)
 
@@ -1261,7 +1261,7 @@ class FixedMassGroupTestCase2(unittest.TestCase):
             Aircraft.Wing.SPAN, val=117.8, units="ft"
         )  # original GASP value
         self.prob.model.set_input_defaults(
-            Aircraft.Wing.MOUNTING_TYPE, val=.1, units="unitless")
+            Aircraft.Wing.MOUNT_LOCATION, val=.1, units="unitless")
         self.prob.model.set_input_defaults(
             Mission.Design.GROSS_MASS, val=175400, units="lbm"
         )  # bug fixed value and original value
@@ -1600,7 +1600,7 @@ class FixedMassGroupTestCase3(unittest.TestCase):
             Aircraft.Engine.HAS_PROPELLERS: ([False], 'unitless'),
             Aircraft.Wing.FLAP_TYPE: ('plain', 'unitless'),
             Aircraft.Wing.SWEEP: (30.0, 'deg'),
-            Aircraft.Wing.MOUNTING_TYPE: (0, 'unitless'),
+            Aircraft.Wing.MOUNT_LOCATION: (0, 'unitless'),
             Aircraft.Wing.TAPER_RATIO: (0.25, 'unitless'),
             Aircraft.Wing.ASPECT_RATIO: (11.0, 'unitless'),
             Aircraft.Wing.SPAN: (100.0, 'ft'),

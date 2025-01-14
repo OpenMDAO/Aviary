@@ -2601,7 +2601,7 @@ class MassSummationTestCase8(unittest.TestCase):
         )
         self.prob.model.set_input_defaults(Aircraft.Wing.SWEEP, val=22.47, units="deg")
         self.prob.model.set_input_defaults(
-            Aircraft.Wing.MOUNTING_TYPE, val=.1, units="unitless")
+            Aircraft.Wing.MOUNT_LOCATION, val=.1, units="unitless")
         self.prob.model.set_input_defaults(
             Aircraft.Wing.ASPECT_RATIO, val=19.565, units="unitless"
         )
@@ -2995,7 +2995,7 @@ class MassSummationTestCase9(unittest.TestCase):
         )
         self.prob.model.set_input_defaults(Aircraft.Wing.SWEEP, val=22.47, units="deg")
         self.prob.model.set_input_defaults(
-            Aircraft.Wing.MOUNTING_TYPE, val=.1, units="unitless")
+            Aircraft.Wing.MOUNT_LOCATION, val=.1, units="unitless")
         self.prob.model.set_input_defaults(
             Aircraft.Wing.ASPECT_RATIO, val=19.565, units="unitless"
         )

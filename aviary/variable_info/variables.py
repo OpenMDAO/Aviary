@@ -572,7 +572,7 @@ class Aircraft:
         MIN_PRESSURE_LOCATION = 'aircraft:wing:min_pressure_location'
         MISC_MASS = 'aircraft:wing:misc_mass'
         MISC_MASS_SCALER = 'aircraft:wing:misc_mass_scaler'
-        MOUNTING_TYPE = 'aircraft:wing:mounting_type'
+        MOUNT_LOCATION = 'aircraft:wing:mount_location'
         NUM_FLAP_SEGMENTS = 'aircraft:wing:num_flap_segments'
         NUM_INTEGRATION_STATIONS = 'aircraft:wing:num_integration_stations'
         OPTIMUM_FLAP_DEFLECTION = 'aircraft:wing:optimum_flap_deflection'

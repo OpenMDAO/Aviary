@@ -36,7 +36,7 @@ class TestPreMissionSubComponents(unittest.TestCase):
         prob.setup(force_alloc_complex=True)
 
         prob.set_val('CROOT', 12)
-        prob.set_val(Aircraft.Wing.MOUNTING_TYPE, .1)
+        prob.set_val(Aircraft.Wing.MOUNT_LOCATION, .1)
         prob.set_val(Aircraft.Wing.THICKNESS_TO_CHORD_ROOT, .12)
         prob.set_val(Aircraft.Fuselage.AVG_DIAMETER, 10)
 
@@ -121,7 +121,7 @@ class TestPreMission(unittest.TestCase):
         prob.set_val(Aircraft.Wing.AREA, 1400)
         prob.set_val(Aircraft.Wing.SPAN, 118)
         prob.set_val(Aircraft.Wing.TAPER_RATIO, .9)
-        prob.set_val(Aircraft.Wing.MOUNTING_TYPE, .1)
+        prob.set_val(Aircraft.Wing.MOUNT_LOCATION, .1)
         prob.set_val(Aircraft.Wing.THICKNESS_TO_CHORD_ROOT, .12)
         prob.set_val(Aircraft.Wing.THICKNESS_TO_CHORD_TIP, .1)
         prob.set_val(Aircraft.Fuselage.AVG_DIAMETER, 12)

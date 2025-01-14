@@ -51,7 +51,7 @@ class CommonVariables(om.ExplicitComponent):
 
     def setup(self):
         self.add_input('CROOT')
-        add_aviary_input(self, Aircraft.Wing.MOUNTING_TYPE)
+        add_aviary_input(self, Aircraft.Wing.MOUNT_LOCATION)
         add_aviary_input(self, Aircraft.Wing.THICKNESS_TO_CHORD_ROOT)
         add_aviary_input(self, Aircraft.Fuselage.AVG_DIAMETER)
 
@@ -65,7 +65,7 @@ class CommonVariables(om.ExplicitComponent):
         outputs['wtofd'] = TCR*CROOT/SWF  # wing_thickness_over_fuselage_diameter
 
     def setup_partials(self):
-        self.declare_partials('ZW_RF', [Aircraft.Wing.MOUNTING_TYPE], val=2)
+        self.declare_partials('ZW_RF', [Aircraft.Wing.MOUNT_LOCATION], val=2)
         self.declare_partials(
             'wtofd', [
                 Aircraft.Wing.THICKNESS_TO_CHORD_ROOT,

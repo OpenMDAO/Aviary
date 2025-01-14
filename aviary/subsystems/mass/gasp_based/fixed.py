@@ -2270,7 +2270,7 @@ class GearMass(om.ExplicitComponent):
     def setup(self):
         num_engine_type = len(self.options[Aircraft.Engine.NUM_ENGINES])
 
-        add_aviary_input(self, Aircraft.Wing.MOUNTING_TYPE, val=0)
+        add_aviary_input(self, Aircraft.Wing.MOUNT_LOCATION, val=0)
         add_aviary_input(self, Aircraft.LandingGear.MASS_COEFFICIENT, val=0.04)
         add_aviary_input(self, Mission.Design.GROSS_MASS, val=152000)
         add_aviary_input(self, Aircraft.LandingGear.MAIN_GEAR_MASS_COEFFICIENT, val=0.85)
@@ -2291,7 +2291,7 @@ class GearMass(om.ExplicitComponent):
         self.declare_partials(Aircraft.LandingGear.MAIN_GEAR_MASS, "*")
 
     def compute(self, inputs, outputs):
-        wing_loc = inputs[Aircraft.Wing.MOUNTING_TYPE]
+        wing_loc = inputs[Aircraft.Wing.MOUNT_LOCATION]
         c_gear_mass = inputs[Aircraft.LandingGear.MASS_COEFFICIENT]
         gross_wt_initial = inputs[Mission.Design.GROSS_MASS] * GRAV_ENGLISH_LBM
         c_main_gear = inputs[Aircraft.LandingGear.MAIN_GEAR_MASS_COEFFICIENT]
@@ -2331,7 +2331,7 @@ class GearMass(om.ExplicitComponent):
         c_gear_mass = inputs[Aircraft.LandingGear.MASS_COEFFICIENT]
         gross_wt_initial = inputs[Mission.Design.GROSS_MASS] * GRAV_ENGLISH_LBM
         c_main_gear = inputs[Aircraft.LandingGear.MAIN_GEAR_MASS_COEFFICIENT]
-        wing_loc = inputs[Aircraft.Wing.MOUNTING_TYPE]
+        wing_loc = inputs[Aircraft.Wing.MOUNT_LOCATION]
         clearance_ratio = inputs[Aircraft.Nacelle.CLEARANCE_RATIO]
         nacelle_diam = inputs[Aircraft.Nacelle.AVG_DIAMETER]
 

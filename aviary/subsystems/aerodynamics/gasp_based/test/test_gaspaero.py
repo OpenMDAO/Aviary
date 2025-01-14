@@ -172,7 +172,7 @@ def _init_geom(prob):
     prob.set_val(Aircraft.Wing.AVERAGE_CHORD, setup_data["cbarw"])
     prob.set_val(Aircraft.Wing.TAPER_RATIO, setup_data["slm"])
     prob.set_val(Aircraft.Wing.THICKNESS_TO_CHORD_ROOT, setup_data["tcr"])
-    prob.set_val(Aircraft.Wing.MOUNTING_TYPE, setup_data["hwing"])
+    prob.set_val(Aircraft.Wing.MOUNT_LOCATION, setup_data["hwing"])
     prob.set_val(Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION, setup_data["sah"])
     prob.set_val(Aircraft.HorizontalTail.SPAN, setup_data["bht"])
     prob.set_val(Aircraft.VerticalTail.SPAN, setup_data["bvt"])
