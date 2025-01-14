@@ -19,26 +19,10 @@ class DynamicPressure(om.ExplicitComponent):
     def setup(self):
         nn = self.options['num_nodes']
 
-        self.add_input(
-            Dynamic.Atmosphere.STATIC_PRESSURE,
-            np.ones(nn),
-            units='lbf/ft**2',
-            desc='Static pressure at each evaulation point.',
-        )
+        self.add_input(Dynamic.Atmosphere.STATIC_PRESSURE, shape=nn)
+        self.add_input(Dynamic.Atmosphere.MACH, shape=nn)
 
-        self.add_input(
-            Dynamic.Atmosphere.MACH,
-            np.ones(nn),
-            units='unitless',
-            desc='Mach at each evaulation point.',
-        )
-
-        self.add_output(
-            Dynamic.Atmosphere.DYNAMIC_PRESSURE,
-            val=np.ones(nn),
-            units='lbf/ft**2',
-            desc='pressure caused by fluid motion',
-        )
+        self.add_output(Dynamic.Atmosphere.DYNAMIC_PRESSURE, shape=nn)
 
     def setup_partials(self):
         nn = self.options['num_nodes']

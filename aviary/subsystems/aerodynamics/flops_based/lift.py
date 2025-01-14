@@ -2,7 +2,7 @@ import numpy as np
 import openmdao.api as om
 
 import aviary.constants as constants
-from aviary.variable_info.functions import add_aviary_input
+from aviary.variable_info.functions import add_aviary_input, add_aviary_output
 from aviary.variable_info.variables import Aircraft, Dynamic
 
 grav_metric = constants.GRAV_METRIC_FLOPS
@@ -21,19 +21,13 @@ class SimpleLift(om.ExplicitComponent):
 
         add_aviary_input(self, Aircraft.Wing.AREA, val=1., units='m**2')
 
-        self.add_input(
-            Dynamic.Atmosphere.DYNAMIC_PRESSURE,
-            val=np.ones(nn),
-            units='N/m**2',
-            desc='pressure caused by fluid motion',
-        )
+        add_aviary_input(self, Dynamic.Atmosphere.DYNAMIC_PRESSURE, val=np.ones(nn), units='N/m**2')
 
         self.add_input(
             name='cl', val=np.ones(nn), desc='current coefficient of lift',
             units='unitless')
 
-        self.add_output(name=Dynamic.Vehicle.LIFT,
-                        val=np.ones(nn), desc='Lift', units='N')
+        add_aviary_output(self, Dynamic.Vehicle.LIFT, val=np.ones(nn), units='N')
 
     def setup_partials(self):
         nn = self.options['num_nodes']

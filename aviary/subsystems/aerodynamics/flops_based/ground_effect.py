@@ -61,7 +61,7 @@ class GroundEffect(om.ExplicitComponent):
             desc='coefficient of drag without ground effect', units='unitless'
         )
 
-        add_aviary_input(self, Aircraft.Wing.ASPECT_RATIO, val=1.)
+        add_aviary_input(self, Aircraft.Wing.ASPECT_RATIO)
         add_aviary_input(self, Aircraft.Wing.HEIGHT, val=1., units='m')
         add_aviary_input(self, Aircraft.Wing.SPAN, val=1., units='m')
 

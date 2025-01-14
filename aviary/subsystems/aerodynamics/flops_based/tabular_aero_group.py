@@ -9,6 +9,7 @@ from aviary.utils.csv_data_file import read_data_file
 from aviary.utils.data_interpolator_builder import build_data_interpolator
 from aviary.utils.functions import get_path
 from aviary.utils.named_values import NamedValues
+from aviary.variable_info.functions import add_aviary_input, add_aviary_output
 from aviary.variable_info.variables import Aircraft, Dynamic
 
 
@@ -183,15 +184,10 @@ class _DynamicPressure(om.ExplicitComponent):
     def setup(self):
         nn = self.options['num_nodes']
 
-        self.add_input(Dynamic.Mission.VELOCITY, val=np.ones(nn), units='m/s')
-        self.add_input(Dynamic.Atmosphere.DENSITY, val=np.ones(nn), units='kg/m**3')
+        add_aviary_input(self, Dynamic.Mission.VELOCITY, np.ones(nn), units='m/s')
+        add_aviary_input(self, Dynamic.Atmosphere.DENSITY, np.ones(nn), units='kg/m**3')
 
-        self.add_output(
-            Dynamic.Atmosphere.DYNAMIC_PRESSURE,
-            val=np.ones(nn),
-            units='N/m**2',
-            desc='pressure caused by fluid motion',
-        )
+        add_aviary_output(self, Dynamic.Atmosphere.DYNAMIC_PRESSURE, val=np.ones(nn), units='N/m**2')
 
     def setup_partials(self):
         nn = self.options['num_nodes']

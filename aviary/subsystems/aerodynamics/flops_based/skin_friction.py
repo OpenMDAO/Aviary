@@ -1,9 +1,8 @@
 import numpy as np
 import openmdao.api as om
 
-from aviary.variable_info.functions import add_aviary_option
+from aviary.variable_info.functions import add_aviary_input, add_aviary_option
 from aviary.variable_info.variables import Aircraft, Dynamic
-
 
 class SkinFriction(om.ImplicitComponent):
     """
@@ -49,10 +48,9 @@ class SkinFriction(om.ImplicitComponent):
         self.nc = nc = 2 + num_tails + num_fuselages + int(sum(num_engines))
 
         # Simulation inputs
-        self.add_input(Dynamic.Atmosphere.TEMPERATURE, np.ones(nn), units='degR')
-        self.add_input(Dynamic.Atmosphere.STATIC_PRESSURE,
-                       np.ones(nn), units='lbf/ft**2')
-        self.add_input(Dynamic.Atmosphere.MACH, np.ones(nn), units='unitless')
+        add_aviary_input(self, Dynamic.Atmosphere.TEMPERATURE, np.ones(nn))
+        add_aviary_input(self, Dynamic.Atmosphere.STATIC_PRESSURE, np.ones(nn))
+        add_aviary_input(self, Dynamic.Atmosphere.MACH, np.ones(nn))
 
         # Aero subsystem inputs
         self.add_input('characteristic_lengths', np.ones(nc), units='ft')

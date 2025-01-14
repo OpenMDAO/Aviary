@@ -434,6 +434,7 @@ add_meta_data(
     },
     units='ft',
     desc='Reynolds characteristic length for the canard',
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -449,6 +450,7 @@ add_meta_data(
     },
     units='unitless',
     desc='canard fineness ratio',
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -553,7 +555,7 @@ add_meta_data(
     },
     units='ft**2',
     desc='canard wetted area',
-    default_value=None,
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -3065,6 +3067,7 @@ add_meta_data(
     },
     units='ft',
     desc='Reynolds characteristic length for the fuselage',
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -3077,6 +3080,7 @@ add_meta_data(
     },
     units='ft**2',
     desc='fuselage cross sectional area',
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -3113,6 +3117,7 @@ add_meta_data(
     },
     units='unitless',
     desc='fuselage fineness ratio',
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -3194,6 +3199,7 @@ add_meta_data(
     },
     units='unitless',
     desc='fuselage length to diameter ratio',
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -3433,7 +3439,7 @@ add_meta_data(
     },
     units='ft**2',
     desc='fuselage wetted area',
-    default_value=None,
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -3508,6 +3514,7 @@ add_meta_data(
     },
     units='ft',
     desc='Reynolds characteristic length for the horizontal tail',
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -3523,6 +3530,7 @@ add_meta_data(
     },
     units='unitless',
     desc='horizontal tail fineness ratio',
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -3716,7 +3724,7 @@ add_meta_data(
     },
     units='ft**2',
     desc='horizontal tail wetted area',
-    default_value=None,
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -4100,6 +4108,7 @@ add_meta_data(
     },
     units='ft',
     desc='Reynolds characteristic length for nacelle for each engine model',
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -4133,6 +4142,7 @@ add_meta_data(
     },
     units='unitless',
     desc='nacelle fineness ratio',
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -4245,6 +4255,7 @@ add_meta_data(
     },
     units='ft**2',
     desc='wetted area of a single nacelle for each engine model',
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -4673,6 +4684,7 @@ add_meta_data(
     },
     units='ft',
     desc='Reynolds characteristic length for the vertical tail',
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -4688,6 +4700,7 @@ add_meta_data(
     },
     units='unitless',
     desc='vertical tail fineness ratio',
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -4881,7 +4894,7 @@ add_meta_data(
     },
     units='ft**2',
     desc='vertical tails wetted area',
-    default_value=None,
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -5119,6 +5132,7 @@ add_meta_data(
     },
     units='ft',
     desc='Reynolds characteristic length for the wing',
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -5251,6 +5265,7 @@ add_meta_data(
     },
     units='unitless',
     desc='wing fineness ratio',
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -5435,6 +5450,7 @@ add_meta_data(
     units='ft',
     desc='wing height above ground during ground run, measured at roughly '
     'location of mean aerodynamic chord at the mid plane of the wing',
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -6119,7 +6135,7 @@ add_meta_data(
     },
     units='ft**2',
     desc='wing wetted area',
-    default_value=None,
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -6173,6 +6189,7 @@ add_meta_data(
     historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
     units='lbm/ft**3',
     desc="Atmospheric density at the vehicle's current altitude",
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -6180,7 +6197,8 @@ add_meta_data(
     meta_data=_MetaData,
     historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
     units='lbf/ft**2',
-    desc="Atmospheric dynamic pressure at the vehicle's current flight condition",
+    desc="Atmospheric dynamic pressure (caused by fluid motion) at the vehicle's current flight condition",
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -6197,6 +6215,7 @@ add_meta_data(
     historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
     units='unitless',
     desc='Current Mach number of the vehicle',
+    default_value=1.0,  # XJ
 )
 
 add_meta_data(
@@ -6221,6 +6240,7 @@ add_meta_data(
     historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
     units='lbf/ft**2',
     desc="Atmospheric static pressure at the vehicle's current flight condition",
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -6229,6 +6249,7 @@ add_meta_data(
     historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
     units='degR',
     desc="Atmospheric temperature at vehicle's current flight condition",
+    default_value=0.0,
 )
 
 
@@ -6245,6 +6266,7 @@ add_meta_data(
     historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
     units='ft',
     desc='Current altitude of the vehicle',
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -6286,6 +6308,7 @@ add_meta_data(
     historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
     units='rad',
     desc='Current flight path angle',
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -6329,6 +6352,7 @@ add_meta_data(
     historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
     units='ft/s',
     desc='Current velocity of the vehicle along its body axis',
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -6370,6 +6394,7 @@ add_meta_data(
     historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
     units='lbf',
     desc='Current total drag experienced by the vehicle',
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -6378,6 +6403,7 @@ add_meta_data(
     historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
     units='lbf',
     desc='Current total lift produced by the vehicle',
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -6776,7 +6802,7 @@ add_meta_data(
     units='unitless',
     desc='Fixed design lift coefficient. If input, overrides design lift '
     'coefficient computed by EDET.',
-    default_value=None,
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -6811,6 +6837,7 @@ add_meta_data(
     },
     units='unitless',
     desc='aircraft design Mach number',
+    default_value=0.0,
 )
 
 add_meta_data(

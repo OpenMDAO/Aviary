@@ -22,18 +22,16 @@ class BuffetLift(om.ExplicitComponent):
         nn = self.options["num_nodes"]
 
         # Simulation inputs
-        self.add_input(
-            Dynamic.Atmosphere.MACH, shape=(nn), units='unitless', desc="Mach number"
-        )
+        add_aviary_input(self, Dynamic.Atmosphere.MACH, shape=(nn))
 
         # Aero design inputs
-        add_aviary_input(self, Mission.Design.MACH, 0.0)
+        add_aviary_input(self, Mission.Design.MACH)
 
         # Aircraft design inputs
-        add_aviary_input(self, Aircraft.Wing.ASPECT_RATIO, 0.0)
-        add_aviary_input(self, Aircraft.Wing.MAX_CAMBER_AT_70_SEMISPAN, 0.0)
-        add_aviary_input(self, Aircraft.Wing.SWEEP, 0.0)
-        add_aviary_input(self, Aircraft.Wing.THICKNESS_TO_CHORD, 0.0)
+        add_aviary_input(self, Aircraft.Wing.ASPECT_RATIO)
+        add_aviary_input(self, Aircraft.Wing.MAX_CAMBER_AT_70_SEMISPAN)
+        add_aviary_input(self, Aircraft.Wing.SWEEP)
+        add_aviary_input(self, Aircraft.Wing.THICKNESS_TO_CHORD)
 
         # Declare outputs
         self.add_output("DELCLB", shape=(nn), units='unitless',
