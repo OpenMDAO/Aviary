@@ -6,7 +6,6 @@ from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 
 from aviary.subsystems.aerodynamics.flops_based.skin_friction_drag import \
     SkinFrictionDrag
-from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.variables import Aircraft
 
 
@@ -28,14 +27,15 @@ class SkinFrictionDragTest(unittest.TestCase):
         prob = om.Problem()
         model = prob.model
 
-        options = AviaryValues()
-        options.set_val(Aircraft.Fuselage.NUM_FUSELAGES, 1)
-        options.set_val(Aircraft.Engine.NUM_ENGINES, [2])
-        options.set_val(Aircraft.VerticalTail.NUM_TAILS, 1)
-        options.set_val(Aircraft.Wing.AIRFOIL_TECHNOLOGY, 1.93)
+        options = {
+            Aircraft.Fuselage.NUM_FUSELAGES: 1,
+            Aircraft.Engine.NUM_ENGINES: [2],
+            Aircraft.VerticalTail.NUM_TAILS: 1,
+            Aircraft.Wing.AIRFOIL_TECHNOLOGY: 1.93,
+        }
 
         model.add_subsystem(
-            'CDf', SkinFrictionDrag(num_nodes=nn, aviary_options=options),
+            'CDf', SkinFrictionDrag(num_nodes=nn, **options),
             promotes_inputs=[Aircraft.Wing.AREA],
             promotes_outputs=['skin_friction_drag_coeff'])
 
@@ -77,14 +77,15 @@ class SkinFrictionDragTest(unittest.TestCase):
         prob = om.Problem()
         model = prob.model
 
-        options = AviaryValues()
-        options.set_val(Aircraft.Fuselage.NUM_FUSELAGES, 1)
-        options.set_val(Aircraft.Engine.NUM_ENGINES, [2, 4])
-        options.set_val(Aircraft.VerticalTail.NUM_TAILS, 1)
-        options.set_val(Aircraft.Wing.AIRFOIL_TECHNOLOGY, 1.93)
+        options = {
+            Aircraft.Fuselage.NUM_FUSELAGES: 1,
+            Aircraft.Engine.NUM_ENGINES: [2, 4],
+            Aircraft.VerticalTail.NUM_TAILS: 1,
+            Aircraft.Wing.AIRFOIL_TECHNOLOGY: 1.93,
+        }
 
         model.add_subsystem(
-            'CDf', SkinFrictionDrag(num_nodes=nn, aviary_options=options),
+            'CDf', SkinFrictionDrag(num_nodes=nn, **options),
             promotes_inputs=[Aircraft.Wing.AREA],
             promotes_outputs=['skin_friction_drag_coeff'])
 

@@ -367,16 +367,35 @@ def initialization_guessing(aircraft_values: AviaryValues, initialization_guesse
         initialization_guesses['flight_duration'] = initialization_guesses['flight_duration'] * \
             (60 * 60)
 
+    # TODO this does not work at all for mixed-type engines (some propeller and some not)
     try:
-        total_thrust = aircraft_values.get_val(
-            Aircraft.Engine.SCALED_SLS_THRUST, 'lbf') * aircraft_values.get_val(Aircraft.Engine.NUM_ENGINES)
+        num_engines = aircraft_values.get_val(Aircraft.Engine.NUM_ENGINES)
+
+        # This happens before preprocessing, and we end up with the default when unspecified.
+        if isinstance(num_engines, list):
+            num_engines = num_engines[0]
+
+        if aircraft_values.get_val(Aircraft.Engine.HAS_PROPELLERS):
+            # For large turboprops, 1 pound of thrust per hp at takeoff seems to be close enough
+            total_thrust = aircraft_values.get_val(
+                Aircraft.Engine.Gearbox.SHAFT_POWER_DESIGN, 'hp') * num_engines
+        else:
+            total_thrust = aircraft_values.get_val(
+                Aircraft.Engine.SCALED_SLS_THRUST, 'lbf') * num_engines
+
     except KeyError:
-        # heterogeneous engine-model case. Get thrust from the engine decks instead.
-        total_thrust = 0
-        for model in engine_builders:
-            thrust = model.get_val(Aircraft.Engine.SCALED_SLS_THRUST, 'lbf')
-            num_engines = model.get_val(Aircraft.Engine.NUM_ENGINES)
-            total_thrust += thrust * num_engines
+        if engine_builders is not None and len(engine_builders) > 1:
+
+            # heterogeneous engine-model case. Get thrust from the engine models instead.
+            total_thrust = 0
+            for model in engine_builders:
+                thrust = model.get_val(Aircraft.Engine.SCALED_SLS_THRUST, 'lbf')
+                num_engines = model.get_val(Aircraft.Engine.NUM_ENGINES)
+                total_thrust += thrust * num_engines
+
+        else:
+            total_thrust = aircraft_values.get_val(
+                Aircraft.Engine.SCALED_SLS_THRUST, 'lbf') * aircraft_values.get_val(Aircraft.Engine.NUM_ENGINES)
 
     gamma_guess = np.arcsin(.5*total_thrust / mission_mass)
     avg_speed_guess = (.5 * 667 * cruise_mach)  # kts
@@ -433,7 +452,7 @@ dependent_options = [
     [Aircraft.Design.PART25_STRUCTURAL_CATEGORY, {
         'val': 0, 'relation': '<', 'target': Aircraft.Design.ULF_CALCULATED_FROM_MANEUVER, 'result': True, 'alternate': False}],
     [Aircraft.Engine.TYPE, {
-        'val': [1, 2, 3, 4, 11, 12, 13, 14], 'relation': 'in', 'target': Aircraft.Engine.HAS_PROPELLERS, 'result': True, 'alternate': False}],
+        'val': [1, 2, 3, 4, 6, 11, 12, 13, 14], 'relation': 'in', 'target': Aircraft.Engine.HAS_PROPELLERS, 'result': True, 'alternate': False}],
     ['JENGSZ', {
         'val': 4, 'relation': '!=', 'target': Aircraft.Engine.SCALE_PERFORMANCE, 'result': True, 'alternate': False}],
     [Aircraft.HorizontalTail.VOLUME_COEFFICIENT, {

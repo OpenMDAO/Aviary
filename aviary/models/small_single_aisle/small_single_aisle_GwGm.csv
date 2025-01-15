@@ -26,6 +26,7 @@ aircraft:design:structural_mass_increment,0,lbm
 aircraft:design:supercritical_drag_shift,0.025,unitless
 aircraft:engine:additional_mass_fraction,0.14,unitless
 aircraft:engine:data_file,models/engines/turbofan_23k_1.deck,unitless
+aircraft:engine:global_throttle, True, unitless
 aircraft:engine:mass_scaler,1,unitless
 aircraft:engine:mass_specific,0.2153,lbm/lbf
 aircraft:engine:num_engines,2,unitless
@@ -33,6 +34,7 @@ aircraft:engine:pod_mass_scaler,1,unitless
 aircraft:engine:pylon_factor,0.6,unitless
 aircraft:engine:reference_diameter,6.04,ft
 aircraft:engine:reference_sls_thrust,28690,lbf
+aircraft:engine:scale_factor,0.8295573370512374,unitless
 aircraft:engine:scaled_sls_thrust,23800,lbf
 aircraft:engine:type,7,unitless
 aircraft:engine:wing_locations,0.272,unitless

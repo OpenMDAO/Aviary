@@ -100,7 +100,6 @@ default_required_variables = {
 
 # EngineDecks internally require these options to have values. Input checks will set
 # these options to default values in self.options if they are not provided
-# TODO should this instead be a set to prevent duplicates?
 required_options = (
     Aircraft.Engine.SCALE_PERFORMANCE,
     Aircraft.Engine.IGNORE_NEGATIVE_THRUST,
@@ -109,7 +108,7 @@ required_options = (
     # TODO fuel flow scaler is required for the EngineScaling component but does not need
     #      to be defined on a per-engine basis, so it could exist only in the problem-
     #      level aviary_options without issue. Is this a propulsion_preprocessor task?
-    Mission.Summary.FUEL_FLOW_SCALER
+    Mission.Summary.FUEL_FLOW_SCALER,
 )
 
 # options that are only required based on the value of another option
@@ -146,9 +145,14 @@ class EngineDeck(EngineModel):
     update
     """
 
-    def __init__(self, name='engine_deck', options: AviaryValues = None,
-                 data: NamedValues = None,
-                 required_variables: set = default_required_variables):
+    def __init__(
+        self,
+        name='engine_deck',
+        options: AviaryValues = None,
+        data: NamedValues = None,
+        required_variables: set = default_required_variables,
+        meta_data: dict = _MetaData,
+    ):
         if data is not None:
             self.read_from_file = False
         else:
@@ -156,7 +160,7 @@ class EngineDeck(EngineModel):
             # TODO update default name to be based on filename
 
         # also calls _preprocess_inputs() as part of EngineModel __init__
-        super().__init__(name, options)
+        super().__init__(name, options, meta_data=meta_data)
 
         # copy of raw data read from data_file or memory, never modified or used outside
         #     EngineDeck
@@ -180,12 +184,20 @@ class EngineDeck(EngineModel):
         # Create dict for variables present in engine data with associated units
         self.engine_variables = {}
 
-        # TODO make this an option - disabling global throttle ranges is better to
-        #      prevent unintended extrapolation, but breaks missions using GASP-based
-        #      engines that have uneven throttle ranges (need t4 constraint on mission
-        #      to truly fix)
-        self.global_throttle = True
-        self.global_hybrid_throttle = True
+        if Aircraft.Engine.GLOBAL_THROTTLE in options:
+            self.global_throttle = self.options.get_val(Aircraft.Engine.GLOBAL_THROTTLE)
+        else:
+            default = meta_data[Aircraft.Engine.GLOBAL_THROTTLE]['default_value']
+            self.options.set_val(Aircraft.Engine.GLOBAL_THROTTLE, default)
+            self.global_throttle = default
+        if Aircraft.Engine.GLOBAL_HYBRID_THROTTLE in options:
+            self.global_hybrid_throttle = self.options.get_val(
+                Aircraft.Engine.GLOBAL_HYBRID_THROTTLE
+            )
+        else:
+            default = meta_data[Aircraft.Engine.GLOBAL_HYBRID_THROTTLE]['default_value']
+            self.options.set_val(Aircraft.Engine.GLOBAL_HYBRID_THROTTLE, default)
+            self.global_hybrid_throttle = default
 
         # ensure required variables are a set
         self.required_variables = {*required_variables}
@@ -216,8 +228,8 @@ class EngineDeck(EngineModel):
 
         for key in additional_options + required_options:
             if key not in options:
-                val = _MetaData[key]['default_value']
-                units = _MetaData[key]['units']
+                val = self.meta_data[key]['default_value']
+                units = self.meta_data[key]['units']
 
                 if self.get_val(Settings.VERBOSITY) >= Verbosity.BRIEF:
                     warnings.warn(
@@ -232,8 +244,8 @@ class EngineDeck(EngineModel):
             if self.get_val(key):
                 for item in dependent_options[key]:
                     if item not in options:
-                        val = _MetaData[item]['default_value']
-                        units = _MetaData[item]['units']
+                        val = self.meta_data[item]['default_value']
+                        units = self.meta_data[item]['units']
                         self.set_val(item, val, units)
 
         # LOGIC CHECKS
@@ -772,7 +784,7 @@ class EngineDeck(EngineModel):
             scaling factors.
         """
 
-        return SizeEngine(aviary_options=self.options)
+        return SizeEngine()
 
     def _build_engine_interpolator(self, num_nodes, aviary_inputs):
         """
@@ -881,14 +893,18 @@ class EngineDeck(EngineModel):
                                 alt_table, packed_data[ALTITUDE][M, A, 0])
 
                 # add inputs and outputs to interpolator
-                interp_throttles.add_input(Dynamic.Mission.MACH,
-                                           mach_table,
-                                           units='unitless',
-                                           desc='Current flight Mach number')
-                interp_throttles.add_input(Dynamic.Mission.ALTITUDE,
-                                           alt_table,
-                                           units=units[ALTITUDE],
-                                           desc='Current flight altitude')
+                interp_throttles.add_input(
+                    Dynamic.Atmosphere.MACH,
+                    mach_table,
+                    units='unitless',
+                    desc='Current flight Mach number',
+                )
+                interp_throttles.add_input(
+                    Dynamic.Mission.ALTITUDE,
+                    alt_table,
+                    units=units[ALTITUDE],
+                    desc='Current flight altitude',
+                )
                 if not self.global_throttle:
                     interp_throttles.add_output('throttle_max',
                                                 self.throttle_max,
@@ -907,14 +923,18 @@ class EngineDeck(EngineModel):
             max_thrust_engine = om.MetaModelSemiStructuredComp(
                 method=interp_method, extrapolate=False, vec_size=num_nodes)
 
-            max_thrust_engine.add_input(Dynamic.Mission.MACH,
-                                        self.data[MACH],
-                                        units='unitless',
-                                        desc='Current flight Mach number')
-            max_thrust_engine.add_input(Dynamic.Mission.ALTITUDE,
-                                        self.data[ALTITUDE],
-                                        units=units[ALTITUDE],
-                                        desc='Current flight altitude')
+            max_thrust_engine.add_input(
+                Dynamic.Atmosphere.MACH,
+                self.data[MACH],
+                units='unitless',
+                desc='Current flight Mach number',
+            )
+            max_thrust_engine.add_input(
+                Dynamic.Mission.ALTITUDE,
+                self.data[ALTITUDE],
+                units=units[ALTITUDE],
+                desc='Current flight altitude',
+            )
             # replace throttle coming from mission with max value based on flight condition
             max_thrust_engine.add_input('throttle_max',
                                         self.data[THROTTLE],
@@ -946,7 +966,7 @@ class EngineDeck(EngineModel):
         # add created subsystems to engine_group
         outputs = []
         if getattr(self, 'use_t4', False):
-            outputs.append(Dynamic.Mission.TEMPERATURE_T4)
+            outputs.append(Dynamic.Vehicle.Propulsion.TEMPERATURE_T4)
 
         engine_group.add_subsystem('interpolation',
                                    engine,
@@ -960,11 +980,11 @@ class EngineDeck(EngineModel):
             uncorrect_shp = True
             engine_group.add_subsystem(
                 'uncorrect_shaft_power',
-                subsys=UncorrectData(num_nodes=num_nodes, aviary_options=self.options),
+                subsys=UncorrectData(num_nodes=num_nodes),
                 promotes_inputs=[
-                    Dynamic.Mission.TEMPERATURE,
-                    Dynamic.Mission.STATIC_PRESSURE,
-                    Dynamic.Mission.MACH,
+                    Dynamic.Atmosphere.TEMPERATURE,
+                    Dynamic.Atmosphere.STATIC_PRESSURE,
+                    Dynamic.Atmosphere.MACH,
                 ],
             )
 
@@ -994,12 +1014,12 @@ class EngineDeck(EngineModel):
                 engine_group.add_subsystem(
                     'uncorrect_max_shaft_power',
                     subsys=UncorrectData(
-                        num_nodes=num_nodes, aviary_options=self.options
+                        num_nodes=num_nodes,
                     ),
                     promotes_inputs=[
-                        Dynamic.Mission.TEMPERATURE,
-                        Dynamic.Mission.STATIC_PRESSURE,
-                        Dynamic.Mission.MACH,
+                        Dynamic.Atmosphere.TEMPERATURE,
+                        Dynamic.Atmosphere.STATIC_PRESSURE,
+                        Dynamic.Atmosphere.MACH,
                     ],
                 )
 
@@ -1015,10 +1035,9 @@ class EngineDeck(EngineModel):
             'engine_scaling',
             subsys=EngineScaling(
                 num_nodes=num_nodes,
-                aviary_options=self.options,
                 engine_variables=engine_outputs,
             ),
-            promotes_inputs=[Aircraft.Engine.SCALE_FACTOR, Dynamic.Mission.MACH],
+            promotes_inputs=[Aircraft.Engine.SCALE_FACTOR, Dynamic.Atmosphere.MACH],
             promotes_outputs=['*'],
         )
 
@@ -1058,7 +1077,13 @@ class EngineDeck(EngineModel):
         return engine_group
 
     def get_parameters(self):
-        params = {Aircraft.Engine.SCALE_FACTOR: {'static_target': True}}
+        params = {
+            Aircraft.Engine.SCALE_FACTOR: {
+                'val': 1.0,
+                'units': 'unitless',
+                'static_target': True,
+            }
+        }
         return params
 
     def report(self, problem, reports_file, **kwargs):
