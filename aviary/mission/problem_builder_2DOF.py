@@ -17,21 +17,28 @@ class AviaryProblemBuilder_2DOF():
         # Defines how the problem should build it's initial guesses for load_inputs()
         # this modifies mass_method, initialization_guesses, and aviary_values
 
-        prob.mass_method = prob.aviary_inputs.get_val(Settings.MASS_METHOD)
+        aviary_inputs = prob.aviary_inputs
+        prob.mass_method = aviary_inputs.get_val(Settings.MASS_METHOD)
 
         if engine_builders is None:
-            engine_builders = build_engine_deck(prob.aviary_inputs)
+            engine_builders = build_engine_deck(aviary_inputs)
         prob.engine_builders = engine_builders
 
-        prob.aviary_inputs = update_GASP_options(prob.aviary_inputs)
+        aviary_inputs = update_GASP_options(aviary_inputs)
 
         prob.initialization_guesses = initialization_guessing(
-            prob.aviary_inputs, prob.initialization_guesses, prob.engine_builders)
+            aviary_inputs, prob.initialization_guesses, prob.engine_builders)
 
-        prob.aviary_inputs.set_val(Mission.Summary.CRUISE_MASS_FINAL,
-                                   val=prob.initialization_guesses['cruise_mass_final'], units='lbm')
-        prob.aviary_inputs.set_val(Mission.Summary.GROSS_MASS,
-                                   val=prob.initialization_guesses['actual_takeoff_mass'], units='lbm')
+        aviary_inputs.set_val(
+            Mission.Summary.CRUISE_MASS_FINAL,
+            val=prob.initialization_guesses['cruise_mass_final'],
+            units='lbm',
+        )
+        aviary_inputs.set_val(
+            Mission.Summary.GROSS_MASS,
+            val=prob.initialization_guesses['actual_takeoff_mass'],
+            units='lbm',
+        )
 
         # Deal with missing defaults in phase info:
         if prob.pre_mission_info is None:
@@ -42,24 +49,24 @@ class AviaryProblemBuilder_2DOF():
                                       'external_subsystems': []}
 
         # Commonly referenced values
-        prob.cruise_alt = prob.aviary_inputs.get_val(
+        prob.cruise_alt = aviary_inputs.get_val(
             Mission.Design.CRUISE_ALTITUDE, units='ft')
-        prob.mass_defect = prob.aviary_inputs.get_val('mass_defect', units='lbm')
+        prob.mass_defect = aviary_inputs.get_val('mass_defect', units='lbm')
 
-        prob.cruise_mass_final = prob.aviary_inputs.get_val(
+        prob.cruise_mass_final = aviary_inputs.get_val(
             Mission.Summary.CRUISE_MASS_FINAL, units='lbm')
 
         if 'target_range' in prob.post_mission_info:
             prob.target_range = wrapped_convert_units(
                 prob.post_mission_info['post_mission']['target_range'], 'NM')
-            prob.aviary_inputs.set_val(Mission.Summary.RANGE,
+            aviary_inputs.set_val(Mission.Summary.RANGE,
                                        prob.target_range, units='NM')
         else:
-            prob.target_range = prob.aviary_inputs.get_val(
+            prob.target_range = aviary_inputs.get_val(
                 Mission.Design.RANGE, units='NM')
-            prob.aviary_inputs.set_val(Mission.Summary.RANGE, prob.aviary_inputs.get_val(
+            aviary_inputs.set_val(Mission.Summary.RANGE, aviary_inputs.get_val(
                 Mission.Design.RANGE, units='NM'), units='NM')
-        prob.cruise_mach = prob.aviary_inputs.get_val(Mission.Design.MACH)
+        prob.cruise_mach = aviary_inputs.get_val(Mission.Design.MACH)
         prob.require_range_residual = True
 
     def phase_info_default_location(self, prob):

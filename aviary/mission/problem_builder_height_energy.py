@@ -18,18 +18,19 @@ class AviaryProblemBuilder_HE():
         # Defines how the problem should build it's initial guesses for load_inputs()
         # this modifies mass_method, initialization_guesses, and aviary_values
 
-        prob.mass_method = prob.aviary_inputs.get_val(Settings.MASS_METHOD)
+        aviary_inputs = prob.aviary_inputs
+        prob.mass_method = aviary_inputs.get_val(Settings.MASS_METHOD)
 
         if prob.mass_method is LegacyCode.GASP:
             # Support for GASP mass methods with HE.
-            prob.aviary_inputs = update_GASP_options(prob.aviary_inputs)
+            aviary_inputs = update_GASP_options(aviary_inputs)
 
         if engine_builders is None:
-            engine_builders = build_engine_deck(prob.aviary_inputs)
+            engine_builders = build_engine_deck(aviary_inputs)
         prob.engine_builders = engine_builders
 
         prob.initialization_guesses = initialization_guessing(
-            prob.aviary_inputs, prob.initialization_guesses, prob.engine_builders)
+            aviary_inputs, prob.initialization_guesses, prob.engine_builders)
 
         # Deal with missing defaults in phase info:
         if prob.pre_mission_info is None:
@@ -40,19 +41,23 @@ class AviaryProblemBuilder_HE():
                                       'external_subsystems': []}
 
         # Commonly referenced values
-        prob.aviary_inputs.set_val(
-            Mission.Summary.GROSS_MASS, val=prob.initialization_guesses['actual_takeoff_mass'], units='lbm')
+        aviary_inputs.set_val(
+            Mission.Summary.GROSS_MASS,
+            val=prob.initialization_guesses['actual_takeoff_mass'],
+            units='lbm'
+        )
 
         if 'target_range' in prob.post_mission_info:
-            prob.aviary_inputs.set_val(Mission.Summary.RANGE, wrapped_convert_units(
+            aviary_inputs.set_val(Mission.Summary.RANGE, wrapped_convert_units(
                 prob.post_mission_info['target_range'], 'NM'), units='NM')
             prob.require_range_residual = True
             prob.target_range = wrapped_convert_units(
                 prob.post_mission_info['target_range'], 'NM')
         else:
             prob.require_range_residual = False
-            # still instantiate target_range because it is used for default guesses for phase comps
-            prob.target_range = prob.aviary_inputs.get_val(
+            # still instantiate target_range because it is used for default guesses
+            # for phase comps
+            prob.target_range = aviary_inputs.get_val(
                 Mission.Design.RANGE, units='NM')
 
     def phase_info_default_location(self, prob):
