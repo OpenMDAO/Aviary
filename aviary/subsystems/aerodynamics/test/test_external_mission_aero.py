@@ -18,7 +18,7 @@ class TestBattery(av.TestSubsystemBuilderBase):
     subsystems in mission are correctly promoting inputs/outputs.
     """
 
-    @require_pyoptsparse(optimizer="SNOPT")
+    @require_pyoptsparse(optimizer="IPOPT")
     def test_external_drag(self):
 
         # Just do cruise in this example.
