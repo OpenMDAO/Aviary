@@ -44,7 +44,8 @@ if __name__ == '__main__':
     # Link phases and variables
     prob.link_phases()
 
-    prob.add_driver("IPOPT")
+    # Note, SLSQP might have troubles here.
+    prob.add_driver("SLSQP")
 
     prob.add_design_variables()
 

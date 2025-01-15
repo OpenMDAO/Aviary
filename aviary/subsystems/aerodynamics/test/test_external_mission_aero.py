@@ -2,6 +2,7 @@ from copy import deepcopy
 import unittest
 
 from openmdao.utils.assert_utils import assert_near_equal
+from openmdao.utils.testing_utils import require_pyoptsparse
 
 import aviary.api as av
 from aviary.examples.external_subsystems.custom_aero.custom_aero_builder import CustomAeroBuilder
@@ -17,6 +18,7 @@ class TestBattery(av.TestSubsystemBuilderBase):
     subsystems in mission are correctly promoting inputs/outputs.
     """
 
+    @require_pyoptsparse(optimizer="SNOPT")
     def test_external_drag(self):
 
         # Just do cruise in this example.
