@@ -1,8 +1,11 @@
 import openmdao.api as om
-from aviary.utils.aviary_values import AviaryValues
 from openmdao.utils.mpi import MPI
+
+from aviary.utils.aviary_values import AviaryValues
+from aviary.variable_info.enums import EquationsOfMotion
 from aviary.variable_info.variables import Aircraft, Mission, Dynamic, Settings
-from aviary.variable_info.enums import AnalysisScheme, ProblemType, EquationsOfMotion
+
+HEIGHT_ENERGY = EquationsOfMotion.HEIGHT_ENERGY
 
 
 class AviaryGroup(om.Group):
@@ -83,7 +86,7 @@ class AviaryGroup(om.Group):
             Settings.EQUATIONS_OF_MOTION)
 
         # Temporarily add extra stuff here, probably patched soon
-        if mission_method is 'height_energy':
+        if mission_method is HEIGHT_ENERGY:
             phase_info = self.options['phase_info']
 
             # Set a more appropriate solver for dymos when the phases are linked.
