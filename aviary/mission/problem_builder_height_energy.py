@@ -73,6 +73,9 @@ class AviaryProblemBuilder_HE():
         # Build and add takeoff subsystem
         takeoff = takeoff_options.build_phase(False)
         prob.model.add_subsystem(
-            'takeoff', takeoff, promotes_inputs=['aircraft:*', 'mission:*'],
-            promotes_outputs=['mission:*'])
+            'takeoff',
+            takeoff,
+            promotes_inputs=['aircraft:*', 'mission:*'],
+            promotes_outputs=['mission:*'],
+        )
 
