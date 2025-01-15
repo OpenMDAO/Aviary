@@ -1,18 +1,14 @@
-from aviary.variable_info.variables import Settings
-# from aviary.utils.functions import wrapped_convert_units
-# from aviary.variable_info.enums import LegacyCode
-from aviary.variable_info.enums import AnalysisScheme
-from aviary.utils.process_input_decks import update_GASP_options
-from aviary.utils.process_input_decks import initialization_guessing
-# from aviary.utils.aviary_values import AviaryValues
-from aviary.variable_info.variables import Aircraft, Mission, Dynamic, Settings
+from aviary.mission.gasp_based.ode.taxi_ode import TaxiSegment
 from aviary.subsystems.propulsion.utils import build_engine_deck
 from aviary.utils.functions import create_opts2vals, add_opts2vals, wrapped_convert_units
+from aviary.utils.process_input_decks import initialization_guessing, update_GASP_options
+from aviary.variable_info.enums import AnalysisScheme
+from aviary.variable_info.variables import Aircraft, Mission, Dynamic, Settings
 
 
 class AviaryProblemBuilder_2DOF():
     """
-    A 2DOF specific builder that customizes AviaryProblem() for use with 
+    A 2DOF specific builder that customizes AviaryProblem() for use with
      two degree of freedom phases.
     """
 
@@ -78,3 +74,100 @@ class AviaryProblemBuilder_2DOF():
                 phase_info, None, prob.aviary_inputs)
 
         return phase_info
+
+    def add_takeoff_systems(self, prob):
+        # Create options to values
+        OptionsToValues = create_opts2vals(
+            [Aircraft.CrewPayload.NUM_PASSENGERS,
+             Mission.Design.CRUISE_ALTITUDE, ])
+
+        add_opts2vals(prob.model, OptionsToValues, prob.aviary_inputs)
+
+        if prob.analysis_scheme is AnalysisScheme.SHOOTING:
+            prob._add_fuel_reserve_component(
+                post_mission=False, reserves_name='reserve_fuel_estimate')
+            add_default_sgm_args(prob.descent_phases, prob.ode_args)
+            add_descent_estimation_as_submodel(
+                prob,
+                phases=prob.descent_phases,
+                cruise_mach=prob.cruise_mach,
+                cruise_alt=prob.cruise_alt,
+                reserve_fuel='reserve_fuel_estimate',
+                all_subsystems=prob._get_all_subsystems(),
+            )
+
+        # Add thrust-to-weight ratio subsystem
+        prob.model.add_subsystem(
+            'tw_ratio',
+            om.ExecComp(
+                f'TW_ratio = Fn_SLS / (takeoff_mass * {GRAV_ENGLISH_LBM})',
+                TW_ratio={'units': "unitless"},
+                Fn_SLS={'units': 'lbf'},
+                takeoff_mass={'units': 'lbm'},
+            ),
+            promotes_inputs=[('Fn_SLS', Aircraft.Propulsion.TOTAL_SCALED_SLS_THRUST),
+                             ('takeoff_mass', Mission.Summary.GROSS_MASS)],
+            promotes_outputs=[('TW_ratio', Aircraft.Design.THRUST_TO_WEIGHT_RATIO)],
+        )
+
+        prob.cruise_alt = prob.aviary_inputs.get_val(
+            Mission.Design.CRUISE_ALTITUDE, units='ft')
+
+        if prob.analysis_scheme is AnalysisScheme.COLLOCATION:
+            # Add event transformation subsystem
+            prob.model.add_subsystem(
+                "event_xform",
+                om.ExecComp(
+                    ["t_init_gear=m*tau_gear+b", "t_init_flaps=m*tau_flaps+b"],
+                    t_init_gear={"units": "s"},  # initial time that gear comes up
+                    t_init_flaps={"units": "s"},  # initial time that flaps retract
+                    tau_gear={"units": "unitless"},
+                    tau_flaps={"units": "unitless"},
+                    m={"units": "s"},
+                    b={"units": "s"},
+                ),
+                promotes_inputs=[
+                    "tau_gear",  # design var
+                    "tau_flaps",  # design var
+                    ("m", Mission.Takeoff.ASCENT_DURATION),
+                    ("b", Mission.Takeoff.ASCENT_T_INTIIAL),
+                ],
+                promotes_outputs=["t_init_gear", "t_init_flaps"],  # link to h_fit
+            )
+
+        # Add taxi subsystem
+        prob.model.add_subsystem(
+            "taxi", TaxiSegment(**(prob.ode_args)),
+            promotes_inputs=['aircraft:*', 'mission:*'],
+        )
+
+        # Calculate speed at which to initiate rotation
+        prob.model.add_subsystem(
+            "vrot",
+            om.ExecComp(
+                "Vrot = ((2 * mass * g) / (rho * wing_area * CLmax))**0.5 + dV1 + dVR",
+                Vrot={"units": "ft/s"},
+                mass={"units": "lbm"},
+                CLmax={"units": "unitless"},
+                g={"units": "lbf/lbm", "val": GRAV_ENGLISH_LBM},
+                rho={"units": "slug/ft**3", "val": RHO_SEA_LEVEL_ENGLISH},
+                wing_area={"units": "ft**2"},
+                dV1={
+                    "units": "ft/s",
+                    "desc": "Increment of engine failure decision speed above stall",
+                },
+                dVR={
+                    "units": "ft/s",
+                    "desc": "Increment of takeoff rotation speed above engine failure "
+                    "decision speed",
+                },
+            ),
+            promotes_inputs=[
+                ("wing_area", Aircraft.Wing.AREA),
+                ("dV1", Mission.Takeoff.DECISION_SPEED_INCREMENT),
+                ("dVR", Mission.Takeoff.ROTATION_SPEED_INCREMENT),
+                ("CLmax", Mission.Takeoff.LIFT_COEFFICIENT_MAX),
+            ],
+            promotes_outputs=[('Vrot', Mission.Takeoff.ROTATION_VELOCITY)]
+        )
+

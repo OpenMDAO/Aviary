@@ -1,4 +1,3 @@
-from dymos.transcriptions.transcription_base import TranscriptionBase
 import csv
 import warnings
 import inspect
@@ -12,6 +11,7 @@ import enum
 import numpy as np
 
 import dymos as dm
+from dymos.transcriptions.transcription_base import TranscriptionBase
 from dymos.utils.misc import _unspecified
 
 import openmdao.api as om
@@ -24,7 +24,6 @@ from aviary.interface.default_phase_info.two_dof_fiti import add_default_sgm_arg
 from aviary.interface.utils.check_phase_info import check_phase_info
 from aviary.mission.energy_phase import EnergyPhase
 from aviary.mission.flops_based.phases.build_landing import Landing
-from aviary.mission.flops_based.phases.build_takeoff import Takeoff
 from aviary.mission.twodof_phase import TwoDOFPhase
 from aviary.mission.gasp_based.idle_descent_estimation import add_descent_estimation_as_submodel
 from aviary.mission.gasp_based.ode.params import ParamPort
@@ -38,7 +37,6 @@ from aviary.mission.gasp_based.phases.accel_phase import AccelPhase
 from aviary.mission.gasp_based.phases.ascent_phase import AscentPhase
 from aviary.mission.gasp_based.phases.descent_phase import DescentPhase
 from aviary.mission.gasp_based.ode.landing_ode import LandingSegment
-from aviary.mission.gasp_based.ode.taxi_ode import TaxiSegment
 from aviary.mission.gasp_based.phases.v_rotate_comp import VRotateComp
 from aviary.mission.gasp_based.polynomial_fit import PolynomialFit
 from aviary.mission.phase_builder_base import PhaseBuilderBase
@@ -66,7 +64,6 @@ from aviary.variable_info.variable_meta_data import _MetaData as BaseMetaData
 from aviary.core.PostMissionGroup import PostMissionGroup
 from aviary.core.PreMissionGroup import PreMissionGroup
 from aviary.core.AviaryGroup import AviaryGroup
-from aviary.utils.process_input_decks import initialization_guessing, update_GASP_options
 
 FLOPS = LegacyCode.FLOPS
 GASP = LegacyCode.GASP
@@ -139,6 +136,7 @@ class AviaryProblem(om.Problem):
         """
         # compatibility with being passed int for verbosity
         verbosity = Verbosity(verbosity)
+
         ## LOAD INPUT FILE ###
         # Create AviaryValues object from file (or process existing AviaryValues object
         # with default values from metadata) and generate initial guesses
@@ -149,7 +147,6 @@ class AviaryProblem(om.Problem):
         self.mission_method = mission_method = self.aviary_inputs.get_val(
             Settings.EQUATIONS_OF_MOTION)
 
-<<<<<<< HEAD
         # Determine which problem builder to use based on mission_method
         if mission_method is HEIGHT_ENERGY:
             self.builder = AviaryProblemBuilder_HE()
@@ -165,15 +162,6 @@ class AviaryProblem(om.Problem):
         else:
             raise ValueError(
                 f'settings:equations_of_motion must be one of: height_energy, 2DOF, or custom')
-=======
-        if mission_method is TWO_DEGREES_OF_FREEDOM or mass_method is GASP:
-            # TODO this should be a preprocessor step if it is required here
-            aviary_inputs = update_GASP_options(aviary_inputs)
-        initialization_guesses = initialization_guessing(
-            aviary_inputs, initialization_guesses, engine_builders)
-        self.aviary_inputs = aviary_inputs
-        self.initialization_guesses = initialization_guesses
->>>>>>> d4cc805780fef8012d81b48886b46f2b9e3a20b2
 
         ## LOAD PHASE_INFO ###
         if phase_info is None:
@@ -232,116 +220,7 @@ class AviaryProblem(om.Problem):
         # self.require_range_residual, self.target_range
         # other specific self.*** are defined in here as well that are specific to each builder
 
-<<<<<<< HEAD
         return self.aviary_inputs
-=======
-        if mission_method is TWO_DEGREES_OF_FREEDOM:
-            aviary_inputs.set_val(
-                Mission.Summary.CRUISE_MASS_FINAL,
-                val=self.initialization_guesses['cruise_mass_final'],
-                units='lbm')
-            aviary_inputs.set_val(
-                Mission.Summary.GROSS_MASS,
-                val=self.initialization_guesses['actual_takeoff_mass'],
-                units='lbm')
-
-            # Commonly referenced values
-            self.cruise_alt = aviary_inputs.get_val(
-                Mission.Design.CRUISE_ALTITUDE, units='ft')
-            self.problem_type = aviary_inputs.get_val(Settings.PROBLEM_TYPE)
-            self.mass_defect = aviary_inputs.get_val('mass_defect', units='lbm')
-
-            self.cruise_mass_final = aviary_inputs.get_val(
-                Mission.Summary.CRUISE_MASS_FINAL, units='lbm')
-
-            if self.post_mission_info is True and 'target_range' in self.post_mission_info:
-                self.target_range = wrapped_convert_units(
-                    phase_info['post_mission']['target_range'], 'NM')
-                aviary_inputs.set_val(Mission.Summary.RANGE,
-                                      self.target_range, units='NM')
-            else:
-                self.target_range = aviary_inputs.get_val(
-                    Mission.Design.RANGE, units='NM')
-                aviary_inputs.set_val(Mission.Summary.RANGE, aviary_inputs.get_val(
-                    Mission.Design.RANGE, units='NM'), units='NM')
-            self.cruise_mach = aviary_inputs.get_val(Mission.Design.MACH)
-            self.require_range_residual = True
-
-        elif mission_method is HEIGHT_ENERGY:
-            self.problem_type = aviary_inputs.get_val(Settings.PROBLEM_TYPE)
-            aviary_inputs.set_val(
-                Mission.Summary.GROSS_MASS,
-                val=self.initialization_guesses['actual_takeoff_mass'],
-                units='lbm')
-            if 'target_range' in self.post_mission_info:
-                aviary_inputs.set_val(Mission.Summary.RANGE, wrapped_convert_units(
-                    phase_info['post_mission']['target_range'], 'NM'), units='NM')
-                self.require_range_residual = True
-                self.target_range = wrapped_convert_units(
-                    phase_info['post_mission']['target_range'], 'NM')
-            else:
-                self.require_range_residual = False
-                # still instantiate target_range because it is used for default guesses
-                # for phase comps
-                self.target_range = aviary_inputs.get_val(
-                    Mission.Design.RANGE, units='NM')
-
-        return aviary_inputs
->>>>>>> d4cc805780fef8012d81b48886b46f2b9e3a20b2
-
-    def _update_metadata_from_subsystems(self):
-        self.meta_data = BaseMetaData.copy()
-
-        # loop through phase_info and external subsystems
-        for phase_name in self.phase_info:
-            external_subsystems = self._get_all_subsystems(
-                self.phase_info[phase_name]['external_subsystems'])
-            for subsystem in external_subsystems:
-                meta_data = subsystem.meta_data.copy()
-                self.meta_data = merge_meta_data([self.meta_data, meta_data])
-
-    def phase_separator(self):
-        """
-        This method checks for reserve=True & False
-        Returns an error if a non-reserve phase is specified after a reserve phase.
-        return two dictionaries of phases: regular_phases and reserve_phases
-        For shooting trajectories, this will also check if a phase is part of the descent
-        """
-
-        # Check to ensure no non-reserve phases are specified after reserve phases
-        start_reserve = False
-        raise_error = False
-        for idx, phase_name in enumerate(self.phase_info):
-            if 'user_options' in self.phase_info[phase_name]:
-                if 'reserve' in self.phase_info[phase_name]["user_options"]:
-                    if self.phase_info[phase_name]["user_options"]["reserve"] is False:
-                        # This is a regular phase
-                        self.regular_phases.append(phase_name)
-                        if start_reserve is True:
-                            raise_error = True
-                    else:
-                        # This is a reserve phase
-                        self.reserve_phases.append(phase_name)
-                        start_reserve = True
-                else:
-                    # This is a regular phase by default
-                    self.regular_phases.append(phase_name)
-                    if start_reserve is True:
-                        raise_error = True
-
-        if raise_error is True:
-            raise ValueError(
-                f'In phase_info, reserve=False cannot be specified after a phase where reserve=True. '
-                f'All reserve phases must happen after non-reserve phases. '
-                f'Regular Phases : {self.regular_phases} | '
-                f'Reserve Phases : {self.reserve_phases} ')
-
-        if self.analysis_scheme is AnalysisScheme.SHOOTING:
-            self.descent_phases = {}
-            for name, info in self.phase_info.items():
-                descent = info.get('descent_phase', False)
-                if descent:
-                    self.descent_phases[name] = info
 
     def check_and_preprocess_inputs(self):
         """
@@ -472,9 +351,66 @@ class AviaryProblem(om.Problem):
                          'core_subsystems': default_mission_subsystems}
 
         self._update_metadata_from_subsystems()
+        self._check_reserve_phase_separation()
 
-        if self.mission_method in (HEIGHT_ENERGY, SOLVED_2DOF, TWO_DEGREES_OF_FREEDOM):
-            self.phase_separator()
+    def _update_metadata_from_subsystems(self):
+        """
+        Merge metadata from user-defined subsystems into problem metadata.
+        """
+        self.meta_data = BaseMetaData.copy()
+
+        # loop through phase_info and external subsystems
+        for phase_name in self.phase_info:
+
+            external_subsystems = self._get_all_subsystems(
+                self.phase_info[phase_name]['external_subsystems'])
+
+            for subsystem in external_subsystems:
+                meta_data = subsystem.meta_data.copy()
+                self.meta_data = merge_meta_data([self.meta_data, meta_data])
+
+    def _check_reserve_phase_separation(self):
+        """
+        This method checks for reserve=True & False
+        Returns an error if a non-reserve phase is specified after a reserve phase.
+        return two dictionaries of phases: regular_phases and reserve_phases
+        For shooting trajectories, this will also check if a phase is part of the descent
+        """
+
+        # Check to ensure no non-reserve phases are specified after reserve phases
+        start_reserve = False
+        raise_error = False
+        for idx, phase_name in enumerate(self.phase_info):
+            if 'user_options' in self.phase_info[phase_name]:
+                if 'reserve' in self.phase_info[phase_name]["user_options"]:
+                    if self.phase_info[phase_name]["user_options"]["reserve"] is False:
+                        # This is a regular phase
+                        self.regular_phases.append(phase_name)
+                        if start_reserve is True:
+                            raise_error = True
+                    else:
+                        # This is a reserve phase
+                        self.reserve_phases.append(phase_name)
+                        start_reserve = True
+                else:
+                    # This is a regular phase by default
+                    self.regular_phases.append(phase_name)
+                    if start_reserve is True:
+                        raise_error = True
+
+        if raise_error is True:
+            raise ValueError(
+                f'In phase_info, reserve=False cannot be specified after a phase where reserve=True. '
+                f'All reserve phases must happen after non-reserve phases. '
+                f'Regular Phases : {self.regular_phases} | '
+                f'Reserve Phases : {self.reserve_phases} ')
+
+        if self.analysis_scheme is AnalysisScheme.SHOOTING:
+            self.descent_phases = {}
+            for name, info in self.phase_info.items():
+                descent = info.get('descent_phase', False)
+                if descent:
+                    self.descent_phases[name] = info
 
     def add_pre_mission_systems(self):
         """
@@ -524,126 +460,8 @@ class AviaryProblem(om.Problem):
             promotes_inputs=['*'],
             promotes_outputs=['*'])
 
-        if not self.pre_mission_info['include_takeoff']:
-            return
-
-        # Check for 2DOF mission method
-        # NOTE should solved trigger this as well?
-        if self.mission_method is TWO_DEGREES_OF_FREEDOM:
-            self._add_two_dof_takeoff_systems()
-
-        # Check for HE mission method
-        elif self.mission_method is HEIGHT_ENERGY:
-            self._add_height_energy_takeoff_systems()
-
-    def _add_height_energy_takeoff_systems(self):
-        # Initialize takeoff options
-        takeoff_options = Takeoff(
-            airport_altitude=0.,  # ft
-            num_engines=self.aviary_inputs.get_val(Aircraft.Engine.NUM_ENGINES)
-        )
-
-        # Build and add takeoff subsystem
-        takeoff = takeoff_options.build_phase(False)
-        self.model.add_subsystem(
-            'takeoff', takeoff, promotes_inputs=['aircraft:*', 'mission:*'],
-            promotes_outputs=['mission:*'])
-
-    def _add_two_dof_takeoff_systems(self):
-        # Create options to values
-        OptionsToValues = create_opts2vals(
-            [Aircraft.CrewPayload.NUM_PASSENGERS,
-             Mission.Design.CRUISE_ALTITUDE, ])
-
-        add_opts2vals(self.model, OptionsToValues, self.aviary_inputs)
-
-        if self.analysis_scheme is AnalysisScheme.SHOOTING:
-            self._add_fuel_reserve_component(
-                post_mission=False, reserves_name='reserve_fuel_estimate')
-            add_default_sgm_args(self.descent_phases, self.ode_args)
-            add_descent_estimation_as_submodel(
-                self,
-                phases=self.descent_phases,
-                cruise_mach=self.cruise_mach,
-                cruise_alt=self.cruise_alt,
-                reserve_fuel='reserve_fuel_estimate',
-                all_subsystems=self._get_all_subsystems(),
-            )
-
-        # Add thrust-to-weight ratio subsystem
-        self.model.add_subsystem(
-            'tw_ratio',
-            om.ExecComp(
-                f'TW_ratio = Fn_SLS / (takeoff_mass * {GRAV_ENGLISH_LBM})',
-                TW_ratio={'units': "unitless"},
-                Fn_SLS={'units': 'lbf'},
-                takeoff_mass={'units': 'lbm'},
-            ),
-            promotes_inputs=[('Fn_SLS', Aircraft.Propulsion.TOTAL_SCALED_SLS_THRUST),
-                             ('takeoff_mass', Mission.Summary.GROSS_MASS)],
-            promotes_outputs=[('TW_ratio', Aircraft.Design.THRUST_TO_WEIGHT_RATIO)],
-        )
-
-        self.cruise_alt = self.aviary_inputs.get_val(
-            Mission.Design.CRUISE_ALTITUDE, units='ft')
-
-        if self.analysis_scheme is AnalysisScheme.COLLOCATION:
-            # Add event transformation subsystem
-            self.model.add_subsystem(
-                "event_xform",
-                om.ExecComp(
-                    ["t_init_gear=m*tau_gear+b", "t_init_flaps=m*tau_flaps+b"],
-                    t_init_gear={"units": "s"},  # initial time that gear comes up
-                    t_init_flaps={"units": "s"},  # initial time that flaps retract
-                    tau_gear={"units": "unitless"},
-                    tau_flaps={"units": "unitless"},
-                    m={"units": "s"},
-                    b={"units": "s"},
-                ),
-                promotes_inputs=[
-                    "tau_gear",  # design var
-                    "tau_flaps",  # design var
-                    ("m", Mission.Takeoff.ASCENT_DURATION),
-                    ("b", Mission.Takeoff.ASCENT_T_INTIIAL),
-                ],
-                promotes_outputs=["t_init_gear", "t_init_flaps"],  # link to h_fit
-            )
-
-        # Add taxi subsystem
-        self.model.add_subsystem(
-            "taxi", TaxiSegment(**(self.ode_args)),
-            promotes_inputs=['aircraft:*', 'mission:*'],
-        )
-
-        # Calculate speed at which to initiate rotation
-        self.model.add_subsystem(
-            "vrot",
-            om.ExecComp(
-                "Vrot = ((2 * mass * g) / (rho * wing_area * CLmax))**0.5 + dV1 + dVR",
-                Vrot={"units": "ft/s"},
-                mass={"units": "lbm"},
-                CLmax={"units": "unitless"},
-                g={"units": "lbf/lbm", "val": GRAV_ENGLISH_LBM},
-                rho={"units": "slug/ft**3", "val": RHO_SEA_LEVEL_ENGLISH},
-                wing_area={"units": "ft**2"},
-                dV1={
-                    "units": "ft/s",
-                    "desc": "Increment of engine failure decision speed above stall",
-                },
-                dVR={
-                    "units": "ft/s",
-                    "desc": "Increment of takeoff rotation speed above engine failure "
-                    "decision speed",
-                },
-            ),
-            promotes_inputs=[
-                ("wing_area", Aircraft.Wing.AREA),
-                ("dV1", Mission.Takeoff.DECISION_SPEED_INCREMENT),
-                ("dVR", Mission.Takeoff.ROTATION_SPEED_INCREMENT),
-                ("CLmax", Mission.Takeoff.LIFT_COEFFICIENT_MAX),
-            ],
-            promotes_outputs=[('Vrot', Mission.Takeoff.ROTATION_VELOCITY)]
-        )
+        if self.pre_mission_info['include_takeoff']:
+            self.builder.add_takeoff_systems(self)
 
     def _add_premission_external_subsystems(self):
         """

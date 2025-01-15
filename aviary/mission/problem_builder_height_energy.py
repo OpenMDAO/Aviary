@@ -1,23 +1,16 @@
-from aviary.variable_info.variables import Settings
-# from aviary.utils.functions import wrapped_convert_units
-# from dymos.transcriptions.transcription_base import TranscriptionBase
-# from aviary.mission.flops_based.phases.build_landing import Landing
-# import openmdao.api as om
-# from openmdao.utils.mpi import MPI
-# from aviary.mission.phase_builder_base import PhaseBuilderBase
-# from aviary.mission.energy_phase import EnergyPhase
-from aviary.utils.process_input_decks import update_GASP_options, initialization_guessing
-from aviary.variable_info.enums import LegacyCode
-from aviary.variable_info.enums import AnalysisScheme
+from aviary.mission.flops_based.phases.build_takeoff import Takeoff
 from aviary.subsystems.propulsion.utils import build_engine_deck
+from aviary.utils.functions import wrapped_convert_units
+from aviary.utils.process_input_decks import update_GASP_options, initialization_guessing
+from aviary.variable_info.enums import AnalysisScheme
+from aviary.variable_info.enums import LegacyCode
 from aviary.variable_info.variables import Aircraft, Mission, Dynamic, Settings
-from aviary.utils.functions import create_opts2vals, add_opts2vals, wrapped_convert_units
 
 
 class AviaryProblemBuilder_HE():
     """
-    A Height-Energy specific builder that customizes AviaryProblem() for use with 
-     height energy phases.
+    A Height-Energy specific builder that customizes AviaryProblem() for use with
+    height energy phases.
     """
 
     def initial_guesses(self, prob, engine_builders):
@@ -28,6 +21,7 @@ class AviaryProblemBuilder_HE():
         prob.mass_method = prob.aviary_inputs.get_val(Settings.MASS_METHOD)
 
         if prob.mass_method is LegacyCode.GASP:
+            # Support for GASP mass methods with HE.
             prob.aviary_inputs = update_GASP_options(prob.aviary_inputs)
 
         if engine_builders is None:
@@ -68,3 +62,17 @@ class AviaryProblemBuilder_HE():
             from aviary.interface.default_phase_info.height_energy import phase_info
 
         return phase_info
+
+    def add_takeoff_systems(self, prob):
+        # Initialize takeoff options
+        takeoff_options = Takeoff(
+            airport_altitude=0.,  # ft
+            num_engines=prob.aviary_inputs.get_val(Aircraft.Engine.NUM_ENGINES)
+        )
+
+        # Build and add takeoff subsystem
+        takeoff = takeoff_options.build_phase(False)
+        prob.model.add_subsystem(
+            'takeoff', takeoff, promotes_inputs=['aircraft:*', 'mission:*'],
+            promotes_outputs=['mission:*'])
+
