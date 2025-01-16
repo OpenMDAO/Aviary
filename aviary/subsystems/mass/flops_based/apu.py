@@ -15,11 +15,10 @@ class TransportAPUMass(om.ExplicitComponent):
         add_aviary_option(self, Aircraft.CrewPayload.Design.NUM_PASSENGERS)
 
     def setup(self):
-        add_aviary_input(self, Aircraft.APU.MASS_SCALER, val=1.0)
+        add_aviary_input(self, Aircraft.APU.MASS_SCALER)
+        add_aviary_input(self, Aircraft.Fuselage.PLANFORM_AREA)
 
-        add_aviary_input(self, Aircraft.Fuselage.PLANFORM_AREA, val=0.0)
-
-        add_aviary_output(self, Aircraft.APU.MASS, val=0.0)
+        add_aviary_output(self, Aircraft.APU.MASS)
 
     def setup_partials(self):
         self.declare_partials('*', '*')
