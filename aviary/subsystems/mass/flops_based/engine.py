@@ -25,9 +25,6 @@ class EngineMass(om.ExplicitComponent):
         num_engine_type = len(self.options[Aircraft.Engine.NUM_ENGINES])
 
         add_aviary_input(self, Aircraft.Engine.SCALED_SLS_THRUST, shape=num_engine_type)
-
-        # add_aviary_input(self, Aircraft.Engine.MASS_SCALER,
-        #                  val=np.zeros(num_engine_type))
         add_aviary_input(self, Aircraft.Engine.MASS_SCALER, shape=num_engine_type)
 
         add_aviary_output(self, Aircraft.Engine.MASS, shape=num_engine_type)
