@@ -3,8 +3,7 @@ import openmdao.api as om
 from aviary.constants import GRAV_ENGLISH_LBM
 from aviary.subsystems.mass.flops_based.distributed_prop import (
     distributed_engine_count_factor, distributed_thrust_factor)
-from aviary.utils.aviary_values import AviaryValues
-from aviary.variable_info.functions import add_aviary_input, add_aviary_output
+from aviary.variable_info.functions import add_aviary_input, add_aviary_output, add_aviary_option
 from aviary.variable_info.variables import Aircraft
 
 
@@ -22,24 +21,20 @@ class TransportEngineOilMass(om.ExplicitComponent):
     '''
 
     def initialize(self):
-        self.options.declare(
-            'aviary_options', types=AviaryValues,
-            desc='collection of Aircraft/Mission specific options')
+        add_aviary_option(self, Aircraft.Propulsion.TOTAL_NUM_ENGINES)
 
     def setup(self):
-        add_aviary_input(self, Aircraft.Propulsion.ENGINE_OIL_MASS_SCALER, val=1.0)
+        add_aviary_input(self, Aircraft.Propulsion.ENGINE_OIL_MASS_SCALER)
+        add_aviary_input(self, Aircraft.Propulsion.TOTAL_SCALED_SLS_THRUST)
 
-        add_aviary_input(self, Aircraft.Propulsion.TOTAL_SCALED_SLS_THRUST, val=0.0)
-
-        add_aviary_output(self, Aircraft.Propulsion.TOTAL_ENGINE_OIL_MASS, val=0.0)
+        add_aviary_output(self, Aircraft.Propulsion.TOTAL_ENGINE_OIL_MASS)
 
     def setup_partials(self):
         self.declare_partials('*', '*')
 
     def compute(self, inputs, outputs, discrete_inputs=None, discrete_outputs=None):
-        aviary_options: AviaryValues = self.options['aviary_options']
         scaler = inputs[Aircraft.Propulsion.ENGINE_OIL_MASS_SCALER]
-        num_eng = aviary_options.get_val(Aircraft.Propulsion.TOTAL_NUM_ENGINES)
+        num_eng = self.options[Aircraft.Propulsion.TOTAL_NUM_ENGINES]
         num_eng_fact = distributed_engine_count_factor(num_eng)
         max_sls_thrust = inputs[Aircraft.Propulsion.TOTAL_SCALED_SLS_THRUST]
         thrust_factor = distributed_thrust_factor(max_sls_thrust, num_eng)
@@ -48,9 +43,8 @@ class TransportEngineOilMass(om.ExplicitComponent):
             0.082 * num_eng_fact * thrust_factor**0.65 * scaler / GRAV_ENGLISH_LBM
 
     def compute_partials(self, inputs, J):
-        aviary_options: AviaryValues = self.options['aviary_options']
         scaler = inputs[Aircraft.Propulsion.ENGINE_OIL_MASS_SCALER]
-        num_eng = aviary_options.get_val(Aircraft.Propulsion.TOTAL_NUM_ENGINES)
+        num_eng = self.options[Aircraft.Propulsion.TOTAL_NUM_ENGINES]
         num_eng_fact = distributed_engine_count_factor(num_eng)
         max_sls_thrust = inputs[Aircraft.Propulsion.TOTAL_SCALED_SLS_THRUST]
         thrust_factor = distributed_thrust_factor(max_sls_thrust, num_eng)
@@ -72,22 +66,18 @@ class AltEngineOilMass(om.ExplicitComponent):
     '''
 
     def initialize(self):
-        self.options.declare(
-            'aviary_options', types=AviaryValues,
-            desc='collection of Aircraft/Mission specific options')
+        add_aviary_option(self, Aircraft.CrewPayload.Design.NUM_PASSENGERS)
 
     def setup(self):
-        add_aviary_input(self, Aircraft.Propulsion.ENGINE_OIL_MASS_SCALER, val=1.0)
+        add_aviary_input(self, Aircraft.Propulsion.ENGINE_OIL_MASS_SCALER)
 
-        add_aviary_output(self, Aircraft.Propulsion.TOTAL_ENGINE_OIL_MASS, val=0.0)
+        add_aviary_output(self, Aircraft.Propulsion.TOTAL_ENGINE_OIL_MASS)
 
     def setup_partials(self):
         self.declare_partials('*', '*')
 
     def compute(self, inputs, outputs, discrete_inputs=None, discrete_outputs=None):
-        aviary_options: AviaryValues = self.options['aviary_options']
-        pax = aviary_options.get_val(
-            Aircraft.CrewPayload.Design.NUM_PASSENGERS, units='unitless')
+        pax = self.options[Aircraft.CrewPayload.Design.NUM_PASSENGERS]
 
         scaler = inputs[Aircraft.Propulsion.ENGINE_OIL_MASS_SCALER]
 
@@ -95,9 +85,7 @@ class AltEngineOilMass(om.ExplicitComponent):
             240.0 * ((pax + 39) // 40) * scaler / GRAV_ENGLISH_LBM
 
     def compute_partials(self, inputs, J):
-        aviary_options: AviaryValues = self.options['aviary_options']
-        pax = aviary_options.get_val(
-            Aircraft.CrewPayload.Design.NUM_PASSENGERS, units='unitless')
+        pax = self.options[Aircraft.CrewPayload.Design.NUM_PASSENGERS]
 
         J[Aircraft.Propulsion.TOTAL_ENGINE_OIL_MASS,
           Aircraft.Propulsion.ENGINE_OIL_MASS_SCALER

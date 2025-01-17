@@ -1,7 +1,6 @@
 import openmdao.api as om
 
 from aviary.constants import GRAV_ENGLISH_LBM
-from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.functions import add_aviary_input, add_aviary_output
 from aviary.variable_info.variables import Aircraft, Mission
 
@@ -12,18 +11,13 @@ class CanardMass(om.ExplicitComponent):
     equations, modified to output mass instead of weight.
     '''
 
-    def initialize(self):
-        self.options.declare(
-            'aviary_options', types=AviaryValues,
-            desc='collection of Aircraft/Mission specific options')
-
     def setup(self):
-        add_aviary_input(self, Mission.Design.GROSS_MASS, val=0.0)
-        add_aviary_input(self, Aircraft.Canard.AREA, val=0.0)
-        add_aviary_input(self, Aircraft.Canard.TAPER_RATIO, val=00)
-        add_aviary_input(self, Aircraft.Canard.MASS_SCALER, val=1.0)
+        add_aviary_input(self, Mission.Design.GROSS_MASS)
+        add_aviary_input(self, Aircraft.Canard.AREA)
+        add_aviary_input(self, Aircraft.Canard.TAPER_RATIO)
+        add_aviary_input(self, Aircraft.Canard.MASS_SCALER)
 
-        add_aviary_output(self, Aircraft.Canard.MASS, val=0.0)
+        add_aviary_output(self, Aircraft.Canard.MASS)
 
     def setup_partials(self):
         self.declare_partials("*", "*")

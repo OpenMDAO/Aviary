@@ -58,7 +58,7 @@ from aviary.utils.preprocessors import preprocess_options
 from aviary.utils.process_input_decks import create_vehicle, update_GASP_options, initialization_guessing
 
 from aviary.variable_info.enums import AnalysisScheme, ProblemType, EquationsOfMotion, LegacyCode, Verbosity
-from aviary.variable_info.functions import setup_trajectory_params, override_aviary_vars
+from aviary.variable_info.functions import setup_trajectory_params, override_aviary_vars, setup_model_options
 from aviary.variable_info.variables import Aircraft, Mission, Dynamic, Settings
 from aviary.variable_info.variable_meta_data import _MetaData as BaseMetaData
 
@@ -286,6 +286,7 @@ class AviaryProblem(om.Problem):
         self.mass_method = mass_method = aviary_inputs.get_val(Settings.MASS_METHOD)
 
         if mission_method is TWO_DEGREES_OF_FREEDOM or mass_method is GASP:
+            # TODO this should be a preprocessor step if it is required here
             aviary_inputs = update_GASP_options(aviary_inputs)
         initialization_guesses = initialization_guessing(
             aviary_inputs, initialization_guesses, engine_builders)
@@ -676,7 +677,8 @@ class AviaryProblem(om.Problem):
         # Create options to values
         OptionsToValues = create_opts2vals(
             [Aircraft.CrewPayload.NUM_PASSENGERS,
-                Mission.Design.CRUISE_ALTITUDE, ])
+             Mission.Design.CRUISE_ALTITUDE, ])
+
         add_opts2vals(self.model, OptionsToValues, self.aviary_inputs)
 
         if self.analysis_scheme is AnalysisScheme.SHOOTING:
@@ -2090,13 +2092,17 @@ class AviaryProblem(om.Problem):
                         if 'post_mission_name' in variable_data:
                             self.model.connect(
                                 f'pre_mission.{external_subsystem.name}.{bus_variable}',
-                                f'post_mission.{external_subsystem.name}.{variable_data["post_mission_name"]}'
+                                f'post_mission.{external_subsystem.name}.'
+                                f'{variable_data["post_mission_name"]}',
                             )
 
     def setup(self, **kwargs):
         """
         Lightly wrapped setup() method for the problem.
         """
+        # Use OpenMDAO's model options to pass all options through the system hierarchy.
+        setup_model_options(self, self.aviary_inputs, self.meta_data)
+
         # suppress warnings:
         # "input variable '...' promoted using '*' was already promoted using 'aircraft:*'
         with warnings.catch_warnings():
@@ -2107,6 +2113,7 @@ class AviaryProblem(om.Problem):
 
             warnings.simplefilter("ignore", om.OpenMDAOWarning)
             warnings.simplefilter("ignore", om.PromotionWarning)
+
             super().setup(**kwargs)
 
     def set_initial_guesses(self, parent_prob=None, parent_prefix=""):
@@ -2362,7 +2369,8 @@ class AviaryProblem(om.Problem):
                 # are not consistent
                 if initial_bounds[1] != duration_bounds[1]:
                     raise ValueError(
-                        f"Initial and duration bounds for {phase_name} are not consistent."
+                        f"Initial and duration bounds for {phase_name} "
+                        "are not consistent."
                     )
                 guesses["time"] = ([np.mean(initial_bounds[0]), np.mean(
                     duration_bounds[0])], initial_bounds[1])
@@ -2425,7 +2433,8 @@ class AviaryProblem(om.Problem):
                 else:
                     # raise error if the guess key is not recognized
                     raise ValueError(
-                        f"Initial guess key {guess_key} in {phase_name} is not recognized."
+                        f"Initial guess key {guess_key} in {phase_name} is not "
+                        "recognized."
                     )
 
         if self.mission_method is SOLVED_2DOF:

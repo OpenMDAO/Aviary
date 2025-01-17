@@ -1,8 +1,7 @@
 import openmdao.api as om
 
 from aviary.constants import GRAV_ENGLISH_LBM
-from aviary.utils.aviary_values import AviaryValues
-from aviary.variable_info.functions import add_aviary_input, add_aviary_output
+from aviary.variable_info.functions import add_aviary_input, add_aviary_output, add_aviary_option
 from aviary.variable_info.variables import Aircraft, Mission
 
 
@@ -13,17 +12,15 @@ class SurfaceControlMass(om.ExplicitComponent):
     '''
 
     def initialize(self):
-        self.options.declare(
-            'aviary_options', types=AviaryValues,
-            desc='collection of Aircraft/Mission specific options')
+        add_aviary_option(self, Mission.Constraints.MAX_MACH)
 
     def setup(self):
-        add_aviary_input(self, Aircraft.Wing.SURFACE_CONTROL_MASS_SCALER, val=1.0)
-        add_aviary_input(self, Mission.Design.GROSS_MASS, val=0.0)
-        add_aviary_input(self, Aircraft.Wing.CONTROL_SURFACE_AREA_RATIO, val=0.0)
-        add_aviary_input(self, Aircraft.Wing.AREA, val=0.0)
+        add_aviary_input(self, Aircraft.Wing.SURFACE_CONTROL_MASS_SCALER)
+        add_aviary_input(self, Mission.Design.GROSS_MASS)
+        add_aviary_input(self, Aircraft.Wing.CONTROL_SURFACE_AREA_RATIO)
+        add_aviary_input(self, Aircraft.Wing.AREA)
 
-        add_aviary_output(self, Aircraft.Wing.SURFACE_CONTROL_MASS, val=10)
+        add_aviary_output(self, Aircraft.Wing.SURFACE_CONTROL_MASS)
         add_aviary_output(self, Aircraft.Wing.CONTROL_SURFACE_AREA, val=2)
 
         self.declare_partials(Aircraft.Wing.SURFACE_CONTROL_MASS, '*')
@@ -31,9 +28,8 @@ class SurfaceControlMass(om.ExplicitComponent):
                               Aircraft.Wing.CONTROL_SURFACE_AREA_RATIO, Aircraft.Wing.AREA])
 
     def compute(self, inputs, outputs):
-        aviary_options: AviaryValues = self.options['aviary_options']
         scaler = inputs[Aircraft.Wing.SURFACE_CONTROL_MASS_SCALER]
-        max_mach = aviary_options.get_val(Mission.Constraints.MAX_MACH)
+        max_mach = self.options[Mission.Constraints.MAX_MACH]
         gross_weight = inputs[Mission.Design.GROSS_MASS] * GRAV_ENGLISH_LBM
         flap_ratio = inputs[Aircraft.Wing.CONTROL_SURFACE_AREA_RATIO]
         wing_area = inputs[Aircraft.Wing.AREA]
@@ -49,9 +45,8 @@ class SurfaceControlMass(om.ExplicitComponent):
             GRAV_ENGLISH_LBM
 
     def compute_partials(self, inputs, J):
-        aviary_options: AviaryValues = self.options['aviary_options']
         scaler = inputs[Aircraft.Wing.SURFACE_CONTROL_MASS_SCALER]
-        max_mach = aviary_options.get_val(Mission.Constraints.MAX_MACH)
+        max_mach = self.options[Mission.Constraints.MAX_MACH]
         gross_weight = inputs[Mission.Design.GROSS_MASS] * GRAV_ENGLISH_LBM
         flap_ratio = inputs[Aircraft.Wing.CONTROL_SURFACE_AREA_RATIO]
         wing_area = inputs[Aircraft.Wing.AREA]
@@ -92,11 +87,6 @@ class AltSurfaceControlMass(om.ExplicitComponent):
     The methodology is based on the FLOPS weight equations, modified to
     output mass instead of weight.
     '''
-
-    def initialize(self):
-        self.options.declare(
-            'aviary_options', types=AviaryValues,
-            desc='collection of Aircraft/Mission specific options')
 
     def setup(self):
         add_aviary_input(self, Aircraft.Wing.SURFACE_CONTROL_MASS_SCALER, val=1.0)

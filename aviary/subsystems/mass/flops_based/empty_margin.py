@@ -1,6 +1,5 @@
 import openmdao.api as om
 
-from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.functions import add_aviary_input, add_aviary_output
 from aviary.variable_info.variables import Aircraft
 
@@ -10,21 +9,13 @@ class EmptyMassMargin(om.ExplicitComponent):
     Calculates the empty mass margin.
     """
 
-    def initialize(self):
-        self.options.declare(
-            'aviary_options', types=AviaryValues,
-            desc='collection of Aircraft/Mission specific options')
-
     def setup(self):
-        add_aviary_input(self, Aircraft.Propulsion.MASS, val=0.)
+        add_aviary_input(self, Aircraft.Propulsion.MASS)
+        add_aviary_input(self, Aircraft.Design.STRUCTURE_MASS)
+        add_aviary_input(self, Aircraft.Design.SYSTEMS_EQUIP_MASS)
+        add_aviary_input(self, Aircraft.Design.EMPTY_MASS_MARGIN_SCALER)
 
-        add_aviary_input(self, Aircraft.Design.STRUCTURE_MASS, val=0.)
-
-        add_aviary_input(self, Aircraft.Design.SYSTEMS_EQUIP_MASS, val=0.)
-
-        add_aviary_input(self, Aircraft.Design.EMPTY_MASS_MARGIN_SCALER, val=0.0)
-
-        add_aviary_output(self, Aircraft.Design.EMPTY_MASS_MARGIN, val=0.0)
+        add_aviary_output(self, Aircraft.Design.EMPTY_MASS_MARGIN)
 
     def setup_partials(self):
         self.declare_partials('*', '*')
