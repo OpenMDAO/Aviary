@@ -174,7 +174,7 @@ class FlareODE(om.Group):
                 Dynamic.Vehicle.LIFT,
                 Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
                 Dynamic.Vehicle.DRAG,
-                'angle_of_attack',
+                Dynamic.Vehicle.ANGLE_OF_ATTACK,
                 'angle_of_attack_rate',
                 Mission.Landing.FLARE_RATE,
             ],

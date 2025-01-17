@@ -29,7 +29,7 @@ class TakeoffEOMTest(unittest.TestCase):
             input_validation_data=detailed_takeoff_ground,
             output_validation_data=detailed_takeoff_ground,
             input_keys=[
-                'angle_of_attack',
+                Dynamic.Vehicle.ANGLE_OF_ATTACK,
                 Dynamic.Mission.FLIGHT_PATH_ANGLE,
                 Dynamic.Mission.VELOCITY,
                 Dynamic.Vehicle.MASS,
@@ -54,7 +54,7 @@ class TakeoffEOMTest(unittest.TestCase):
             input_validation_data=detailed_takeoff_climbing,
             output_validation_data=detailed_takeoff_climbing,
             input_keys=[
-                'angle_of_attack',
+                Dynamic.Vehicle.ANGLE_OF_ATTACK,
                 Dynamic.Mission.FLIGHT_PATH_ANGLE,
                 Dynamic.Mission.VELOCITY,
                 Dynamic.Vehicle.MASS,
@@ -395,7 +395,7 @@ class TakeoffEOMTest(unittest.TestCase):
             Dynamic.Mission.FLIGHT_PATH_ANGLE, np.array([0.612, 4.096]), units="rad"
         )
         prob.model.set_input_defaults(
-            "angle_of_attack", np.array([5.086, 6.834]), units="rad"
+            Dynamic.Vehicle.ANGLE_OF_ATTACK, np.array([5.086, 6.834]), units="rad"
         )
 
         prob.setup(check=False, force_alloc_complex=True)

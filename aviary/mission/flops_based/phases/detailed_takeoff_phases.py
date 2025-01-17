@@ -212,7 +212,7 @@ class TakeoffBrakeReleaseToDecisionSpeed(PhaseBuilderBase):
             opt=False
         )
 
-        phase.add_parameter('angle_of_attack', val=0.0, opt=False, units='deg')
+        phase.add_parameter(Dynamic.Vehicle.ANGLE_OF_ATTACK, val=0.0, opt=False, units='deg')
 
         phase.add_timeseries_output(
             Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
@@ -252,7 +252,7 @@ TakeoffBrakeReleaseToDecisionSpeed._add_meta_data(
     'max_velocity', val=100.0, units='ft/s')
 
 TakeoffBrakeReleaseToDecisionSpeed._add_initial_guess_meta_data(
-    InitialGuessParameter('angle_of_attack'))
+    InitialGuessParameter(Dynamic.Vehicle.ANGLE_OF_ATTACK))
 
 
 @_init_initial_guess_meta_data
@@ -393,7 +393,7 @@ class TakeoffDecisionSpeedToRotate(PhaseBuilderBase):
 
         phase.add_boundary_constraint('v_over_v_stall', loc='final', lower=1.2, ref=1.2)
 
-        phase.add_parameter('angle_of_attack', val=0.0, opt=False, units='deg')
+        phase.add_parameter(Dynamic.Vehicle.ANGLE_OF_ATTACK, val=0.0, opt=False, units='deg')
 
         phase.add_timeseries_output(
             Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
@@ -438,7 +438,7 @@ TakeoffDecisionSpeedToRotate._add_meta_data('distance_max', val=1000.0, units='f
 TakeoffDecisionSpeedToRotate._add_meta_data('max_velocity', val=100.0, units='ft/s')
 
 TakeoffDecisionSpeedToRotate._add_initial_guess_meta_data(
-    InitialGuessParameter('angle_of_attack'))
+    InitialGuessParameter(Dynamic.Vehicle.ANGLE_OF_ATTACK))
 
 
 @_init_initial_guess_meta_data
@@ -539,7 +539,7 @@ TakeoffDecisionSpeedBrakeDelay._add_meta_data('distance_max', val=1000.0, units=
 TakeoffDecisionSpeedBrakeDelay._add_meta_data('max_velocity', val=100.0, units='ft/s')
 
 TakeoffDecisionSpeedBrakeDelay._add_initial_guess_meta_data(
-    InitialGuessParameter('angle_of_attack'))
+    InitialGuessParameter(Dynamic.Vehicle.ANGLE_OF_ATTACK))
 
 
 @_init_initial_guess_meta_data
@@ -680,7 +680,7 @@ class TakeoffRotateToLiftoff(PhaseBuilderBase):
         )
 
         phase.add_polynomial_control(
-            'angle_of_attack', opt=True, units=units, order=1,
+            Dynamic.Vehicle.ANGLE_OF_ATTACK, opt=True, units=units, order=1,
             lower=0, upper=max_angle_of_attack,
             ref=max_angle_of_attack)
 
@@ -729,7 +729,7 @@ TakeoffRotateToLiftoff._add_meta_data('max_velocity', val=100.0, units='ft/s')
 TakeoffRotateToLiftoff._add_meta_data('max_angle_of_attack', val=10.0, units='deg')
 
 TakeoffRotateToLiftoff._add_initial_guess_meta_data(
-    InitialGuessPolynomialControl('angle_of_attack'))
+    InitialGuessPolynomialControl(Dynamic.Vehicle.ANGLE_OF_ATTACK))
 
 
 @_init_initial_guess_meta_data
@@ -905,7 +905,7 @@ class TakeoffLiftoffToObstacle(PhaseBuilderBase):
         angle_of_attack_ref = user_options.get_val('angle_of_attack_ref', units)
 
         phase.add_control(
-            'angle_of_attack', opt=True, units=units,
+            Dynamic.Vehicle.ANGLE_OF_ATTACK, opt=True, units=units,
             lower=lower_angle_of_attack, upper=upper_angle_of_attack,
             ref=angle_of_attack_ref)
 
@@ -985,7 +985,7 @@ TakeoffLiftoffToObstacle._add_meta_data('upper_angle_of_attack', val=15., units=
 TakeoffLiftoffToObstacle._add_meta_data('angle_of_attack_ref', val=10., units='deg')
 
 TakeoffLiftoffToObstacle._add_initial_guess_meta_data(
-    InitialGuessControl('angle_of_attack'))
+    InitialGuessControl(Dynamic.Vehicle.ANGLE_OF_ATTACK))
 
 TakeoffLiftoffToObstacle._add_initial_guess_meta_data(InitialGuessState('altitude'))
 
@@ -1166,7 +1166,7 @@ class TakeoffObstacleToMicP2(PhaseBuilderBase):
         angle_of_attack_ref = user_options.get_val('angle_of_attack_ref', units)
 
         phase.add_control(
-            'angle_of_attack', opt=True, units=units,
+            Dynamic.Vehicle.ANGLE_OF_ATTACK, opt=True, units=units,
             lower=lower_angle_of_attack, upper=upper_angle_of_attack,
             ref=angle_of_attack_ref)
 
@@ -1242,7 +1242,7 @@ TakeoffObstacleToMicP2._add_meta_data('angle_of_attack_ref', val=10., units='deg
 TakeoffObstacleToMicP2._add_meta_data('mic_altitude', val=1.0, units='ft')
 
 TakeoffObstacleToMicP2._add_initial_guess_meta_data(
-    InitialGuessControl('angle_of_attack'))
+    InitialGuessControl(Dynamic.Vehicle.ANGLE_OF_ATTACK))
 
 TakeoffObstacleToMicP2._add_initial_guess_meta_data(InitialGuessState('altitude'))
 
@@ -1423,7 +1423,7 @@ class TakeoffMicP2ToEngineCutback(PhaseBuilderBase):
         angle_of_attack_ref = user_options.get_val('angle_of_attack_ref', units)
 
         phase.add_control(
-            'angle_of_attack', opt=True, units=units,
+            Dynamic.Vehicle.ANGLE_OF_ATTACK, opt=True, units=units,
             lower=lower_angle_of_attack, upper=upper_angle_of_attack,
             ref=angle_of_attack_ref)
 
@@ -1494,7 +1494,7 @@ TakeoffMicP2ToEngineCutback._add_meta_data('angle_of_attack_ref', val=10., units
 TakeoffMicP2ToEngineCutback._add_meta_data('final_range', val=1000., units='ft')
 
 TakeoffMicP2ToEngineCutback._add_initial_guess_meta_data(
-    InitialGuessControl('angle_of_attack'))
+    InitialGuessControl(Dynamic.Vehicle.ANGLE_OF_ATTACK))
 
 TakeoffMicP2ToEngineCutback._add_initial_guess_meta_data(InitialGuessState('altitude'))
 
@@ -1670,7 +1670,7 @@ class TakeoffEngineCutback(PhaseBuilderBase):
         angle_of_attack_ref = user_options.get_val('angle_of_attack_ref', units)
 
         phase.add_control(
-            'angle_of_attack', opt=True, units=units,
+            Dynamic.Vehicle.ANGLE_OF_ATTACK, opt=True, units=units,
             lower=lower_angle_of_attack, upper=upper_angle_of_attack,
             ref=angle_of_attack_ref)
 
@@ -1724,7 +1724,7 @@ TakeoffEngineCutback._add_meta_data('upper_angle_of_attack', val=15., units='deg
 TakeoffEngineCutback._add_meta_data('angle_of_attack_ref', val=10., units='deg')
 
 TakeoffEngineCutback._add_initial_guess_meta_data(
-    InitialGuessControl('angle_of_attack'))
+    InitialGuessControl(Dynamic.Vehicle.ANGLE_OF_ATTACK))
 
 TakeoffEngineCutback._add_initial_guess_meta_data(InitialGuessState('altitude'))
 
@@ -1905,7 +1905,7 @@ class TakeoffEngineCutbackToMicP1(PhaseBuilderBase):
         angle_of_attack_ref = user_options.get_val('angle_of_attack_ref', units)
 
         phase.add_control(
-            'angle_of_attack', opt=True, units=units,
+            Dynamic.Vehicle.ANGLE_OF_ATTACK, opt=True, units=units,
             lower=lower_angle_of_attack, upper=upper_angle_of_attack,
             ref=angle_of_attack_ref)
 
@@ -1972,7 +1972,7 @@ TakeoffEngineCutbackToMicP1._add_meta_data('angle_of_attack_ref', val=10., units
 TakeoffEngineCutbackToMicP1._add_meta_data('mic_range', val=1000.0, units='ft')
 
 TakeoffEngineCutbackToMicP1._add_initial_guess_meta_data(
-    InitialGuessControl('angle_of_attack'))
+    InitialGuessControl(Dynamic.Vehicle.ANGLE_OF_ATTACK))
 
 TakeoffEngineCutbackToMicP1._add_initial_guess_meta_data(InitialGuessState('altitude'))
 
@@ -2153,7 +2153,7 @@ class TakeoffMicP1ToClimb(PhaseBuilderBase):
         angle_of_attack_ref = user_options.get_val('angle_of_attack_ref', units)
 
         phase.add_control(
-            'angle_of_attack', opt=True, units=units,
+            Dynamic.Vehicle.ANGLE_OF_ATTACK, opt=True, units=units,
             lower=lower_angle_of_attack, upper=upper_angle_of_attack,
             ref=angle_of_attack_ref)
 
@@ -2219,7 +2219,7 @@ TakeoffMicP1ToClimb._add_meta_data('angle_of_attack_ref', val=10., units='deg')
 TakeoffMicP1ToClimb._add_meta_data('mic_range', val=1000., units='ft')
 
 TakeoffMicP1ToClimb._add_initial_guess_meta_data(
-    InitialGuessControl('angle_of_attack'))
+    InitialGuessControl(Dynamic.Vehicle.ANGLE_OF_ATTACK))
 
 TakeoffMicP1ToClimb._add_initial_guess_meta_data(InitialGuessState('altitude'))
 
@@ -2364,7 +2364,7 @@ class TakeoffBrakeToAbort(PhaseBuilderBase):
             opt=False
         )
 
-        phase.add_parameter('angle_of_attack', val=0.0, opt=False, units='deg')
+        phase.add_parameter(Dynamic.Vehicle.ANGLE_OF_ATTACK, val=0.0, opt=False, units='deg')
 
         return phase
 
@@ -2396,7 +2396,7 @@ TakeoffBrakeToAbort._add_meta_data('distance_max', val=1000.0, units='ft')
 TakeoffBrakeToAbort._add_meta_data('max_velocity', val=100.0, units='ft/s')
 
 TakeoffBrakeToAbort._add_initial_guess_meta_data(
-    InitialGuessParameter('angle_of_attack'))
+    InitialGuessParameter(Dynamic.Vehicle.ANGLE_OF_ATTACK))
 
 
 class TakeoffTrajectory:

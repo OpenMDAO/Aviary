@@ -649,6 +649,7 @@ class Dynamic:
     class Vehicle:
         """Vehicle properties and states in a vehicle-fixed reference frame."""
 
+        ANGLE_OF_ATTACK = 'angle_of_attack'
         BATTERY_STATE_OF_CHARGE = 'battery_state_of_charge'
         CUMULATIVE_ELECTRIC_ENERGY_USED = 'cumulative_electric_energy_used'
         DRAG = 'drag'

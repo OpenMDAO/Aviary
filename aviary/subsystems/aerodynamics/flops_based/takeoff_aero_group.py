@@ -98,7 +98,7 @@ class TakeoffAeroGroup(om.Group):
         drag_coefficients = \
             np.array(options['drag_coefficients']) * drag_coefficient_factor
 
-        inputs = ['angle_of_attack']
+        inputs = [Dynamic.Vehicle.ANGLE_OF_ATTACK]
 
         takeoff_polar: om.MetaModelSemiStructuredComp = self.add_subsystem(
             'takeoff_polar',
@@ -108,7 +108,7 @@ class TakeoffAeroGroup(om.Group):
             promotes_inputs=inputs,
         )
 
-        takeoff_polar.add_input('angle_of_attack', angles_of_attack, units='rad')
+        takeoff_polar.add_input(Dynamic.Vehicle.ANGLE_OF_ATTACK, angles_of_attack, units='rad')
 
         takeoff_polar.add_output('lift_coefficient', lift_coefficients, units='unitless')
         takeoff_polar.add_output('drag_coefficient', drag_coefficients, units='unitless')
@@ -121,7 +121,7 @@ class TakeoffAeroGroup(om.Group):
         }
 
         inputs = [
-            'angle_of_attack',
+            Dynamic.Vehicle.ANGLE_OF_ATTACK,
             Dynamic.Mission.ALTITUDE,
             Dynamic.Mission.FLIGHT_PATH_ANGLE,
             ('minimum_drag_coefficient', Mission.Takeoff.DRAG_COEFFICIENT_MIN),
@@ -190,4 +190,4 @@ class TakeoffAeroGroup(om.Group):
             promotes_inputs=inputs, promotes_outputs=outputs
         )
 
-        self.set_input_defaults('angle_of_attack', np.zeros(nn), 'rad')
+        self.set_input_defaults(Dynamic.Vehicle.ANGLE_OF_ATTACK, np.zeros(nn), 'rad')

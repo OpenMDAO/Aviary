@@ -6329,6 +6329,14 @@ add_meta_data(
 # ================================================
 
 add_meta_data(
+    Dynamic.Vehicle.ANGLE_OF_ATTACK,
+    meta_data=_MetaData,
+    historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
+    units='deg',
+    desc="Angle between aircraft wing cord and relative wind",
+)
+
+add_meta_data(
     Dynamic.Vehicle.BATTERY_STATE_OF_CHARGE,
     meta_data=_MetaData,
     historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
