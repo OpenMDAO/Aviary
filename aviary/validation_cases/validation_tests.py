@@ -110,7 +110,6 @@ def do_validation_test(prob: om.Problem,
         prob.set_val(key, desired, units)
 
     prob.run_model()
-    print(case_name)
 
     if list_options:
         list_options_func(prob.model, aviary_keys=aviary_option_key_list)

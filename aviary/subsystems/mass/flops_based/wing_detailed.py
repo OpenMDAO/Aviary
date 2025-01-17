@@ -275,7 +275,7 @@ class DetailedWingBendingFact(om.ExplicitComponent):
 
                 inertia_factor_i = 1 - bte / bt * pod_mass[i] / gross_mass
                 # avoid passing an array into specific index of inertia_factor
-                inertia_factor[i] = inertia_factor_i[0]
+                inertia_factor[i] = inertia_factor_i
 
             # increment idx to next engine set
             idx = idx2
