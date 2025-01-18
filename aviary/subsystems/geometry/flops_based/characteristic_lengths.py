@@ -21,66 +21,60 @@ class CharacteristicLengths(om.ExplicitComponent):
 
         self.add_input(Names.CROOT, 0.0, units='unitless')
 
-        add_aviary_input(self, Aircraft.Canard.AREA, 0.0)
-        add_aviary_input(self, Aircraft.Canard.ASPECT_RATIO, 0.0)
+        add_aviary_input(self, Aircraft.Canard.AREA)
+        add_aviary_input(self, Aircraft.Canard.ASPECT_RATIO)
         # add_aviary_input(self, Aircraft.Canard.LAMINAR_FLOW_LOWER, 0.0)
         # add_aviary_input(self, Aircraft.Canard.LAMINAR_FLOW_UPPER, 0.0)
-        add_aviary_input(self, Aircraft.Canard.THICKNESS_TO_CHORD, 0.0)
+        add_aviary_input(self, Aircraft.Canard.THICKNESS_TO_CHORD)
 
-        add_aviary_input(self, Aircraft.Fuselage.AVG_DIAMETER, 0.0)
+        add_aviary_input(self, Aircraft.Fuselage.AVG_DIAMETER)
         # add_aviary_input(self, Aircraft.Fuselage.LAMINAR_FLOW_LOWER, 0.0)
         # add_aviary_input(self, Aircraft.Fuselage.LAMINAR_FLOW_UPPER, 0.0)
-        add_aviary_input(self, Aircraft.Fuselage.LENGTH, 0.0)
+        add_aviary_input(self, Aircraft.Fuselage.LENGTH)
 
-        add_aviary_input(self, Aircraft.HorizontalTail.AREA, 0.0)
-        add_aviary_input(self, Aircraft.HorizontalTail.ASPECT_RATIO, 4.75)
+        add_aviary_input(self, Aircraft.HorizontalTail.AREA)
+        add_aviary_input(self, Aircraft.HorizontalTail.ASPECT_RATIO)
         # add_aviary_input(self, Aircraft.HorizontalTail.LAMINAR_FLOW_LOWER, 0.0)
         # add_aviary_input(self, Aircraft.HorizontalTail.LAMINAR_FLOW_UPPER, 0.0)
-        add_aviary_input(self, Aircraft.HorizontalTail.THICKNESS_TO_CHORD, 0.0)
+        add_aviary_input(self, Aircraft.HorizontalTail.THICKNESS_TO_CHORD)
 
-        add_aviary_input(self, Aircraft.Nacelle.AVG_DIAMETER, np.zeros(num_engine_type))
-        add_aviary_input(self, Aircraft.Nacelle.AVG_LENGTH, np.zeros(num_engine_type))
+        add_aviary_input(self, Aircraft.Nacelle.AVG_DIAMETER, shape=num_engine_type)
+        add_aviary_input(self, Aircraft.Nacelle.AVG_LENGTH, shape=num_engine_type)
         # add_aviary_input(self, Aircraft.Nacelle.LAMINAR_FLOW_LOWER, 0.0)
         # add_aviary_input(self, Aircraft.Nacelle.LAMINAR_FLOW_UPPER, 0.0)
 
-        add_aviary_input(self, Aircraft.VerticalTail.AREA, 0.0)
-        add_aviary_input(self, Aircraft.VerticalTail.ASPECT_RATIO, 0.0)
+        add_aviary_input(self, Aircraft.VerticalTail.AREA)
+        add_aviary_input(self, Aircraft.VerticalTail.ASPECT_RATIO)
         # add_aviary_input(self, Aircraft.VerticalTail.LAMINAR_FLOW_LOWER, 0.0)
         # add_aviary_input(self, Aircraft.VerticalTail.LAMINAR_FLOW_UPPER, 0.0)
-        add_aviary_input(self, Aircraft.VerticalTail.THICKNESS_TO_CHORD, 0.0)
+        add_aviary_input(self, Aircraft.VerticalTail.THICKNESS_TO_CHORD)
 
-        add_aviary_input(self, Aircraft.Wing.AREA, 0.0)
-        add_aviary_input(self, Aircraft.Wing.ASPECT_RATIO, 0.0)
-        add_aviary_input(self, Aircraft.Wing.GLOVE_AND_BAT, 0.0)
-        add_aviary_input(self, Aircraft.Wing.TAPER_RATIO, 0.0)
-        add_aviary_input(self, Aircraft.Wing.THICKNESS_TO_CHORD, 0.0)
+        add_aviary_input(self, Aircraft.Wing.AREA)
+        add_aviary_input(self, Aircraft.Wing.ASPECT_RATIO)
+        add_aviary_input(self, Aircraft.Wing.GLOVE_AND_BAT)
+        add_aviary_input(self, Aircraft.Wing.TAPER_RATIO)
+        add_aviary_input(self, Aircraft.Wing.THICKNESS_TO_CHORD)
         # add_aviary_input(self, Aircraft.Wing.LAMINAR_FLOW_LOWER, 0.0)
         # add_aviary_input(self, Aircraft.Wing.LAMINAR_FLOW_UPPER, 0.0)
 
-        add_aviary_output(self, Aircraft.Canard.CHARACTERISTIC_LENGTH, 0.0)
-        add_aviary_output(self, Aircraft.Canard.FINENESS, 0.0)
+        add_aviary_output(self, Aircraft.Canard.CHARACTERISTIC_LENGTH)
+        add_aviary_output(self, Aircraft.Canard.FINENESS)
 
-        add_aviary_output(self, Aircraft.Fuselage.CHARACTERISTIC_LENGTH, 0.0)
-        add_aviary_output(self, Aircraft.Fuselage.FINENESS, 0.0)
+        add_aviary_output(self, Aircraft.Fuselage.CHARACTERISTIC_LENGTH)
+        add_aviary_output(self, Aircraft.Fuselage.FINENESS)
 
-        add_aviary_output(
-            self, Aircraft.HorizontalTail.CHARACTERISTIC_LENGTH, 0.0
-        )
-
-        add_aviary_output(self, Aircraft.HorizontalTail.FINENESS, 0.0)
+        add_aviary_output(self, Aircraft.HorizontalTail.CHARACTERISTIC_LENGTH)
+        add_aviary_output(self, Aircraft.HorizontalTail.FINENESS)
 
         add_aviary_output(self, Aircraft.Nacelle.CHARACTERISTIC_LENGTH,
-                          np.zeros(num_engine_type))
-        add_aviary_output(self, Aircraft.Nacelle.FINENESS, np.zeros(num_engine_type))
+                          shape=num_engine_type)
+        add_aviary_output(self, Aircraft.Nacelle.FINENESS, shape=num_engine_type)
 
-        add_aviary_output(
-            self, Aircraft.VerticalTail.CHARACTERISTIC_LENGTH, 0.0
-        )
+        add_aviary_output(self, Aircraft.VerticalTail.CHARACTERISTIC_LENGTH)
+        add_aviary_output(self, Aircraft.VerticalTail.FINENESS)
 
-        add_aviary_output(self, Aircraft.VerticalTail.FINENESS, 0.0)
-
-        add_aviary_output(self, Aircraft.Wing.CHARACTERISTIC_LENGTH, 0.0)
-        add_aviary_output(self, Aircraft.Wing.FINENESS, 0.0)
+        add_aviary_output(self, Aircraft.Wing.CHARACTERISTIC_LENGTH)
+        add_aviary_output(self, Aircraft.Wing.FINENESS)
 
     def setup_partials(self):
         self._setup_partials_wing()

@@ -18,16 +18,13 @@ class Nacelles(om.ExplicitComponent):
 
     def setup(self):
         num_engine_type = len(self.options[Aircraft.Engine.NUM_ENGINES])
-        add_aviary_input(self, Aircraft.Nacelle.AVG_DIAMETER,
-                         val=np.zeros(num_engine_type))
-        add_aviary_input(self, Aircraft.Nacelle.AVG_LENGTH,
-                         val=np.zeros(num_engine_type))
+        add_aviary_input(self, Aircraft.Nacelle.AVG_DIAMETER, shape=num_engine_type)
+        add_aviary_input(self, Aircraft.Nacelle.AVG_LENGTH, shape=num_engine_type)
         add_aviary_input(self, Aircraft.Nacelle.WETTED_AREA_SCALER,
-                         val=np.zeros(num_engine_type))
+                         shape=num_engine_type)
 
-        add_aviary_output(self, Aircraft.Nacelle.TOTAL_WETTED_AREA, 0.0)
-        add_aviary_output(self, Aircraft.Nacelle.WETTED_AREA,
-                          val=np.zeros(num_engine_type))
+        add_aviary_output(self, Aircraft.Nacelle.TOTAL_WETTED_AREA)
+        add_aviary_output(self, Aircraft.Nacelle.WETTED_AREA, shape=num_engine_type)
 
     def setup_partials(self):
         # derivatives w.r.t vectorized engine inputs have known sparsity pattern

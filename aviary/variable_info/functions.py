@@ -100,6 +100,8 @@ def add_aviary_output(comp, varname, val=None, units=None, desc=None, shape_by_c
     meta_data: dict
         (Optional) Aviary metadata dictionary. If unspecified, the built-in metadata will
         be used.
+    shape: tuple
+        (Optional) shape for this input.
     """
     meta = meta_data[varname]
     if units:
