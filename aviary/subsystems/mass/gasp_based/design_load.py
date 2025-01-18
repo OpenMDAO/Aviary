@@ -46,7 +46,6 @@ class LoadSpeeds(om.ExplicitComponent):
         self.add_output("max_maneuver_factor", units="unitless",
                         desc="EMLF: maximum maneuver load factor, units are in g`s")
         self.add_output("min_dive_vel", units="kn", desc="VDMIN: dive velocity")
-
         self.declare_partials("*", "*")
 
     def compute(self, inputs, outputs):

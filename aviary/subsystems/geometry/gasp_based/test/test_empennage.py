@@ -49,9 +49,6 @@ class TestTailVolCoef(
             Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION, val=0, units="unitless"
         )
         self.prob.model.set_input_defaults("vvc.cab_w", val=13.1, units="ft")
-        self.prob.model.set_input_defaults(
-            Aircraft.Wing.AREA, val=1370.3, units="ft**2"
-        )
         self.prob.model.set_input_defaults("vvc.wing_ref", 117.8054, units="ft")
         self.prob.setup(check=False, force_alloc_complex=True)
 
@@ -75,7 +72,6 @@ class TestTailComp(
     def setUp(self):
         self.prob = om.Problem()
         self.prob.model.add_subsystem("tail", TailSize(), promotes=["*"])
-        self.prob.setup(check=False, force_alloc_complex=True)
 
         # values for horizontal tail
         self.prob.model.set_input_defaults("vol_coef", val=1.189, units="unitless")
@@ -86,6 +82,7 @@ class TestTailComp(
         self.prob.model.set_input_defaults("wing_ref", val=12.615, units="ft")
         self.prob.model.set_input_defaults("ar", val=4.75, units="unitless")
         self.prob.model.set_input_defaults("tr", val=0.352, units="unitless")
+        self.prob.setup(check=False, force_alloc_complex=True)
 
     def test_large_sinle_aisle_1_htail(self):
         self.prob.set_val("tr", 0.352, units="unitless")
@@ -102,7 +99,6 @@ class TestTailComp(
     def test_large_sinle_aisle_1_vtail(self):
         # override horizontal tail defaults for vertical tail
         self.prob.set_val("vol_coef", 0.145, units="unitless")
-        self.prob.set_val(Aircraft.Wing.AREA, 1370.3, units="ft**2")
         self.prob.set_val("r_arm", 2.362, units="unitless")
         self.prob.set_val("wing_ref", 117.8, units="ft")
         self.prob.set_val("ar", 1.67, units="unitless")

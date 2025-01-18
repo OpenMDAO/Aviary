@@ -116,26 +116,25 @@ class _Prelim(om.ExplicitComponent):
         add_aviary_option(self, Aircraft.Wing.SPAN_EFFICIENCY_REDUCTION)
 
     def setup(self):
-        add_aviary_input(self, Aircraft.Fuselage.AVG_DIAMETER, 0.0)
-        add_aviary_input(self, Aircraft.Fuselage.MAX_WIDTH, 0.0)
+        add_aviary_input(self, Aircraft.Fuselage.AVG_DIAMETER)
+        add_aviary_input(self, Aircraft.Fuselage.MAX_WIDTH)
 
-        add_aviary_input(self, Aircraft.HorizontalTail.AREA, 0.0)
-        add_aviary_input(self, Aircraft.HorizontalTail.ASPECT_RATIO,
-                         4.75, units="unitless")
+        add_aviary_input(self, Aircraft.HorizontalTail.AREA)
+        add_aviary_input(self, Aircraft.HorizontalTail.ASPECT_RATIO)
         add_aviary_input(self, Aircraft.HorizontalTail.TAPER_RATIO)
-        add_aviary_input(self, Aircraft.HorizontalTail.THICKNESS_TO_CHORD, 0.0)
+        add_aviary_input(self, Aircraft.HorizontalTail.THICKNESS_TO_CHORD)
 
-        add_aviary_input(self, Aircraft.VerticalTail.AREA, 0.0)
-        add_aviary_input(self, Aircraft.VerticalTail.ASPECT_RATIO, 0.0)
-        add_aviary_input(self, Aircraft.VerticalTail.TAPER_RATIO, 0.0)
-        add_aviary_input(self, Aircraft.VerticalTail.THICKNESS_TO_CHORD, 0.0)
+        add_aviary_input(self, Aircraft.VerticalTail.AREA)
+        add_aviary_input(self, Aircraft.VerticalTail.ASPECT_RATIO)
+        add_aviary_input(self, Aircraft.VerticalTail.TAPER_RATIO)
+        add_aviary_input(self, Aircraft.VerticalTail.THICKNESS_TO_CHORD)
 
-        add_aviary_input(self, Aircraft.Wing.AREA, 0.0)
-        add_aviary_input(self, Aircraft.Wing.GLOVE_AND_BAT, 0.0)
+        add_aviary_input(self, Aircraft.Wing.AREA)
+        add_aviary_input(self, Aircraft.Wing.GLOVE_AND_BAT)
         # NOTE: FLOPS/aviary1 calculate span locally
-        add_aviary_input(self, Aircraft.Wing.SPAN, 0.0)
-        add_aviary_input(self, Aircraft.Wing.TAPER_RATIO, 0.0)
-        add_aviary_input(self, Aircraft.Wing.THICKNESS_TO_CHORD, 0.0)
+        add_aviary_input(self, Aircraft.Wing.SPAN)
+        add_aviary_input(self, Aircraft.Wing.TAPER_RATIO)
+        add_aviary_input(self, Aircraft.Wing.THICKNESS_TO_CHORD)
 
         self.add_output(Names.CROOT, 1.0, units='unitless')
         self.add_output(Names.CROOTB, 1.0, units='unitless')
@@ -491,10 +490,10 @@ class _Wing(om.ExplicitComponent):
         self.add_input(Names.XDX, 0.0, units='unitless')
         self.add_input(Names.XMULT, 0.0, units='unitless')
 
-        add_aviary_input(self, Aircraft.Wing.AREA, 0.0)
-        add_aviary_input(self, Aircraft.Wing.WETTED_AREA_SCALER, 1.0)
+        add_aviary_input(self, Aircraft.Wing.AREA)
+        add_aviary_input(self, Aircraft.Wing.WETTED_AREA_SCALER)
 
-        add_aviary_output(self, Aircraft.Wing.WETTED_AREA, 0.0)
+        add_aviary_output(self, Aircraft.Wing.WETTED_AREA)
 
     def setup_partials(self):
         self.declare_partials(
@@ -566,19 +565,17 @@ class _Tail(om.ExplicitComponent):
         self.add_input(Names.XMULTH, 0.0, units='unitless')
         self.add_input(Names.XMULTV, 0.0, units='unitless')
 
-        add_aviary_input(self, Aircraft.HorizontalTail.AREA, 0.0)
+        add_aviary_input(self, Aircraft.HorizontalTail.AREA)
 
-        add_aviary_input(
-            self, Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION, 0.0
-        )
+        add_aviary_input(self, Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION)
 
-        add_aviary_input(self, Aircraft.HorizontalTail.WETTED_AREA_SCALER, 1.0)
+        add_aviary_input(self, Aircraft.HorizontalTail.WETTED_AREA_SCALER)
 
-        add_aviary_input(self, Aircraft.VerticalTail.AREA, 0.0)
-        add_aviary_input(self, Aircraft.VerticalTail.WETTED_AREA_SCALER, 1.0)
+        add_aviary_input(self, Aircraft.VerticalTail.AREA)
+        add_aviary_input(self, Aircraft.VerticalTail.WETTED_AREA_SCALER)
 
-        add_aviary_output(self, Aircraft.HorizontalTail.WETTED_AREA, 0.0)
-        add_aviary_output(self, Aircraft.VerticalTail.WETTED_AREA, 0.0)
+        add_aviary_output(self, Aircraft.HorizontalTail.WETTED_AREA)
+        add_aviary_output(self, Aircraft.VerticalTail.WETTED_AREA)
 
     def setup_partials(self):
         self.declare_partials(
@@ -726,27 +723,24 @@ class _Fuselage(om.ExplicitComponent):
         self.add_input(Names.CROTVT, 0.0, units='unitless')
         self.add_input(Names.CRTHTB, 0.0, units='unitless')
 
-        add_aviary_input(self, Aircraft.Fuselage.AVG_DIAMETER, 0.0)
-        add_aviary_input(self, Aircraft.Fuselage.LENGTH, 0.0)
-        add_aviary_input(self, Aircraft.Fuselage.WETTED_AREA_SCALER, 1.0)
+        add_aviary_input(self, Aircraft.Fuselage.AVG_DIAMETER)
+        add_aviary_input(self, Aircraft.Fuselage.LENGTH)
+        add_aviary_input(self, Aircraft.Fuselage.WETTED_AREA_SCALER)
 
-        add_aviary_input(self, Aircraft.HorizontalTail.THICKNESS_TO_CHORD, 0.0)
+        add_aviary_input(self, Aircraft.HorizontalTail.THICKNESS_TO_CHORD)
+        add_aviary_input(self, Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION)
 
-        add_aviary_input(
-            self, Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION, 0.0
-        )
+        add_aviary_input(self, Aircraft.VerticalTail.THICKNESS_TO_CHORD)
 
-        add_aviary_input(self, Aircraft.VerticalTail.THICKNESS_TO_CHORD, 0.0)
+        add_aviary_input(self, Aircraft.Wing.AREA)
+        add_aviary_input(self, Aircraft.Wing.ASPECT_RATIO)
+        add_aviary_input(self, Aircraft.Wing.GLOVE_AND_BAT)
+        add_aviary_input(self, Aircraft.Wing.THICKNESS_TO_CHORD)
 
-        add_aviary_input(self, Aircraft.Wing.AREA, 0.0)
-        add_aviary_input(self, Aircraft.Wing.ASPECT_RATIO, 0.0)
-        add_aviary_input(self, Aircraft.Wing.GLOVE_AND_BAT, 0.0)
-        add_aviary_input(self, Aircraft.Wing.THICKNESS_TO_CHORD, 0.0)
-
-        add_aviary_output(self, Aircraft.Fuselage.CROSS_SECTION, 0.0)
-        add_aviary_output(self, Aircraft.Fuselage.DIAMETER_TO_WING_SPAN, 0.0)
-        add_aviary_output(self, Aircraft.Fuselage.LENGTH_TO_DIAMETER, 0.0)
-        add_aviary_output(self, Aircraft.Fuselage.WETTED_AREA, 0.0)
+        add_aviary_output(self, Aircraft.Fuselage.CROSS_SECTION)
+        add_aviary_output(self, Aircraft.Fuselage.DIAMETER_TO_WING_SPAN)
+        add_aviary_output(self, Aircraft.Fuselage.LENGTH_TO_DIAMETER)
+        add_aviary_output(self, Aircraft.Fuselage.WETTED_AREA)
 
     def setup_partials(self):
         self.declare_partials(

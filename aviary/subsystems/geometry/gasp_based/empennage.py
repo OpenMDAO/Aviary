@@ -33,23 +33,19 @@ class TailVolCoef(om.ExplicitComponent):
         else:
             self.k = [0.43, 0.38, 0.85]
 
-        add_aviary_input(self, Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION, val=0)
+        add_aviary_input(self, Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION)
 
-        add_aviary_input(self, Aircraft.Fuselage.LENGTH, val=129.4)
+        add_aviary_input(self, Aircraft.Fuselage.LENGTH)
 
         self.add_input("cab_w", 13.1, units="ft", desc="SWF: Cabin width")
 
-        add_aviary_input(self, Aircraft.Wing.AREA, val=1370)
+        add_aviary_input(self, Aircraft.Wing.AREA)
 
-        self.add_input(
-            "wing_ref",
-            12.615,
-            units="ft",
-            desc=(
-                "CBARW | B: Wing reference parameter. Wing chord for a "
-                "horizontal tail. Wing span for a vertical tail."
-            ),
-        )
+        self.add_input("wing_ref", 12.615, units="ft",
+                       desc=(
+                           "CBARW | B: Wing reference parameter. Wing chord for a "
+                           "horizontal tail. Wing span for a vertical tail.")
+                       )
 
         self.add_output(
             "vol_coef", units="unitless", desc="VBARH | VBARV: Tail volume coefficient")
@@ -90,37 +86,28 @@ class TailSize(om.ExplicitComponent):
 
     def setup(self):
         # defaults here for Large Single Aisle 1 horizontal tail
-        self.add_input(
-            "vol_coef", 1.189, units="unitless",
-            desc="VBARH | VBARV: Horizontal tail volume coefficient"
-        )
+        self.add_input("vol_coef", 1.189, units="unitless",
+                       desc="VBARH | VBARV: Horizontal tail volume coefficient"
+                       )
 
-        add_aviary_input(self, Aircraft.Wing.AREA, val=1370)
+        add_aviary_input(self, Aircraft.Wing.AREA)
 
-        self.add_input(
-            "r_arm",
-            0.2307,
-            units="unitless",
-            desc=(
-                "COELTH | BOELTV: For a horizontal tail, the ratio of "
-                "wing chord to tail moment arm. For a vertical tail, the "
-                "ratio of wing span to vertical tail moment arm."
-            ),
-        )
-        self.add_input(
-            "wing_ref",
-            12.615,
-            units="ft",
-            desc=(
-                "CBARW | B: Reference wing parameter for tail moment arm. "
-                "For a horizontal tail, the mean wing chord. For a "
-                "vertical tail, the wing span."
-            ),
-        )
-        self.add_input(
-            "ar", 4.75, units="unitless", desc="ARHT | ARVT: Tail aspect ratio.")
-        self.add_input(
-            "tr", 0.0, units="unitless", desc="SLMH | SLMV: Tail taper ratio.")
+        self.add_input("r_arm", 0.2307, units="unitless",
+                       desc=(
+                           "COELTH | BOELTV: For a horizontal tail, the ratio of "
+                           "wing chord to tail moment arm. For a vertical tail, the "
+                           "ratio of wing span to vertical tail moment arm.")
+                       )
+        self.add_input("wing_ref", 12.615, units="ft",
+                       desc=(
+                           "CBARW | B: Reference wing parameter for tail moment arm. "
+                           "For a horizontal tail, the mean wing chord. For a "
+                           "vertical tail, the wing span.")
+                       )
+        self.add_input("ar", 0.0, units="unitless",
+                       desc="ARHT | ARVT: Tail aspect ratio.")
+        self.add_input("tr", 0.0, units="unitless",
+                       desc="SLMH | SLMV: Tail taper ratio.")
 
         self.add_output("area", units="ft**2", desc="SHT | SVT: Tail area")
         self.add_output("span", units="ft", desc="BHT | BVT: Tail span")
@@ -307,11 +294,6 @@ class EmpennageSize(om.Group):
             promotes_outputs=higher_level_outputs_vtail + rename_outputs_vtail,
         )
 
-        self.set_input_defaults(Aircraft.Wing.AVERAGE_CHORD, 12.615, units="ft")
-        self.set_input_defaults(Aircraft.Wing.SPAN, 117.8054, units="ft")
-
-        # override horizontal tail defaults
-        self.set_input_defaults(Aircraft.VerticalTail.VOLUME_COEFFICIENT, 0.145)
-        self.set_input_defaults(Aircraft.VerticalTail.MOMENT_RATIO, 2.362)
-        self.set_input_defaults(Aircraft.VerticalTail.ASPECT_RATIO, 1.67)
-        self.set_input_defaults(Aircraft.VerticalTail.TAPER_RATIO, 0.801)
+        # override vertical tail defaults
+        self.set_input_defaults(Aircraft.VerticalTail.ASPECT_RATIO, 0.0)
+        self.set_input_defaults(Aircraft.VerticalTail.TAPER_RATIO, 0.0)
