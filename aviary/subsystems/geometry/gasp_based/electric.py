@@ -17,13 +17,11 @@ class CableSize(om.ExplicitComponent):
         total_num_wing_engines = self.options[Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES]
 
         add_aviary_input(self, Aircraft.Engine.WING_LOCATIONS,
-                         val=np.full(int(total_num_wing_engines/2), 0.35))
+                         shape=int(total_num_wing_engines/2))
+        add_aviary_input(self, Aircraft.Wing.SPAN)
+        add_aviary_input(self, Aircraft.Fuselage.AVG_DIAMETER)
 
-        add_aviary_input(self, Aircraft.Wing.SPAN, val=128)
-
-        add_aviary_input(self, Aircraft.Fuselage.AVG_DIAMETER, val=10)
-
-        add_aviary_output(self, Aircraft.Electrical.HYBRID_CABLE_LENGTH, val=0)
+        add_aviary_output(self, Aircraft.Electrical.HYBRID_CABLE_LENGTH)
 
         self.declare_partials(
             Aircraft.Electrical.HYBRID_CABLE_LENGTH,

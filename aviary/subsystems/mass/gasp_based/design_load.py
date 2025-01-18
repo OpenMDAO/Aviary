@@ -33,25 +33,16 @@ class LoadSpeeds(om.ExplicitComponent):
 
             add_aviary_input(self, Aircraft.Wing.LOADING, val=128)
 
-        self.add_output(
-            "max_airspeed",
-            val=0,
-            units="kn",
-            desc="VM0: maximum operating equivalent airspeed",
-        )
-        self.add_output(
-            "vel_c",
-            val=0,
-            units="kn",
-            desc="VGC: Velocity used in Gust Load Factor calculation at cruise conditions.\
-                This is Minimum Design Cruise Speed for Part 23 aircraft and VM0 for Part 25 aircraft",
-        )
-        self.add_output(
-            "max_maneuver_factor",
-            val=0,
-            units="unitless",
-            desc="EMLF: maximum maneuver load factor, units are in g`s",
-        )
+        self.add_output("max_airspeed", val=0, units="kn",
+                        desc="VM0: maximum operating equivalent airspeed",
+                        )
+        self.add_output("vel_c", val=0, units="kn",
+                        desc="VGC: Velocity used in Gust Load Factor calculation at cruise conditions.\
+                        This is Minimum Design Cruise Speed for Part 23 aircraft and VM0 for Part 25 aircraft",
+                        )
+        self.add_output("max_maneuver_factor", val=0, units="unitless",
+                        desc="EMLF: maximum maneuver load factor, units are in g`s",
+                        )
         self.add_output("min_dive_vel", val=0, units="kn", desc="VDMIN: dive velocity")
 
         self.declare_partials("*", "*")
