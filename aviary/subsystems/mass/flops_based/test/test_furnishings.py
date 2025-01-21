@@ -151,6 +151,12 @@ class BWBFurnishingsGroupMassTest2(unittest.TestCase):
             promotes_outputs=['*'],
             promotes_inputs=['*']
         )
+        prob.model.set_input_defaults(
+            Aircraft.BWB.CABIN_AREA, val=100., units="ft**2")
+        prob.model.set_input_defaults(
+            Aircraft.Fuselage.MAX_WIDTH, val=30., units="ft")
+        prob.model.set_input_defaults(
+            Aircraft.Fuselage.MAX_HEIGHT, val=15., units="ft")
         prob.setup(check=False, force_alloc_complex=True)
 
         partial_data = prob.check_partials(out_stream=None, method="cs")

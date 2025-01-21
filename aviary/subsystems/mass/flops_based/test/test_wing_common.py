@@ -223,6 +223,7 @@ class WingBendingMassTest2(unittest.TestCase):
         prob.set_val(Aircraft.Wing.SHEAR_CONTROL_MASS, 4000, 'lbm')
         prob.set_val(Aircraft.Wing.SPAN, 100, 'ft')
         prob.set_val(Aircraft.Wing.SWEEP, 20, 'deg')
+        prob.set_val(Aircraft.Wing.ULTIMATE_LOAD_FACTOR, 3.75, 'unitless')
 
         partial_data = prob.check_partials(out_stream=None, method="cs")
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
