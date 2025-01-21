@@ -900,7 +900,7 @@ class AviaryProblem(om.Problem):
         """
 
         if self.pre_mission_info['include_takeoff']:
-            self.builder.add_post_mission_takeoff_systems()
+            self.builder.add_post_mission_takeoff_systems(self)
 
         if include_landing and self.post_mission_info['include_landing']:
             self.builder.add_landing_systems(self)
