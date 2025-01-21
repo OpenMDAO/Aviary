@@ -1,3 +1,7 @@
+import openmdao.api as om
+
+from dymos.transcriptions.transcription_base import TranscriptionBase
+
 from aviary.mission.flops_based.phases.build_landing import Landing
 from aviary.mission.flops_based.phases.build_takeoff import Takeoff
 from aviary.subsystems.propulsion.utils import build_engine_deck
@@ -6,6 +10,11 @@ from aviary.utils.process_input_decks import update_GASP_options, initialization
 from aviary.variable_info.enums import AnalysisScheme
 from aviary.variable_info.enums import LegacyCode
 from aviary.variable_info.variables import Aircraft, Mission, Dynamic, Settings
+
+if hasattr(TranscriptionBase, 'setup_polynomial_controls'):
+    use_new_dymos_syntax = False
+else:
+    use_new_dymos_syntax = True
 
 
 class AviaryProblemBuilder_HE():

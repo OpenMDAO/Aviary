@@ -11,7 +11,6 @@ import enum
 import numpy as np
 
 import dymos as dm
-from dymos.transcriptions.transcription_base import TranscriptionBase
 from dymos.utils.misc import _unspecified
 
 import openmdao.api as om
@@ -19,12 +18,10 @@ from openmdao.core.component import Component
 from openmdao.utils.mpi import MPI
 from openmdao.utils.reports_system import _default_reports
 
-from aviary.constants import GRAV_ENGLISH_LBM, RHO_SEA_LEVEL_ENGLISH
 from aviary.interface.default_phase_info.two_dof_fiti import add_default_sgm_args
 from aviary.interface.utils.check_phase_info import check_phase_info
 from aviary.mission.energy_phase import EnergyPhase
 from aviary.mission.twodof_phase import TwoDOFPhase
-from aviary.mission.gasp_based.idle_descent_estimation import add_descent_estimation_as_submodel
 from aviary.mission.gasp_based.ode.params import ParamPort
 from aviary.mission.gasp_based.phases.time_integration_traj import FlexibleTraj
 from aviary.mission.gasp_based.phases.groundroll_phase import GroundrollPhase
@@ -70,11 +67,6 @@ TWO_DEGREES_OF_FREEDOM = EquationsOfMotion.TWO_DEGREES_OF_FREEDOM
 HEIGHT_ENERGY = EquationsOfMotion.HEIGHT_ENERGY
 SOLVED_2DOF = EquationsOfMotion.SOLVED_2DOF
 CUSTOM = EquationsOfMotion.CUSTOM
-
-if hasattr(TranscriptionBase, 'setup_polynomial_controls'):
-    use_new_dymos_syntax = False
-else:
-    use_new_dymos_syntax = True
 
 
 class AviaryProblem(om.Problem):
