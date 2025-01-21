@@ -23,7 +23,6 @@ from aviary.constants import GRAV_ENGLISH_LBM, RHO_SEA_LEVEL_ENGLISH
 from aviary.interface.default_phase_info.two_dof_fiti import add_default_sgm_args
 from aviary.interface.utils.check_phase_info import check_phase_info
 from aviary.mission.energy_phase import EnergyPhase
-from aviary.mission.flops_based.phases.build_landing import Landing
 from aviary.mission.twodof_phase import TwoDOFPhase
 from aviary.mission.gasp_based.idle_descent_estimation import add_descent_estimation_as_submodel
 from aviary.mission.gasp_based.ode.params import ParamPort
@@ -36,7 +35,6 @@ from aviary.mission.gasp_based.phases.cruise_phase import CruisePhase
 from aviary.mission.gasp_based.phases.accel_phase import AccelPhase
 from aviary.mission.gasp_based.phases.ascent_phase import AscentPhase
 from aviary.mission.gasp_based.phases.descent_phase import DescentPhase
-from aviary.mission.gasp_based.ode.landing_ode import LandingSegment
 from aviary.mission.gasp_based.phases.v_rotate_comp import VRotateComp
 from aviary.mission.gasp_based.polynomial_fit import PolynomialFit
 from aviary.mission.phase_builder_base import PhaseBuilderBase
@@ -901,14 +899,11 @@ class AviaryProblem(om.Problem):
         A user can override this with their own postmission systems.
         """
 
-        if self.pre_mission_info['include_takeoff'] and self.mission_method is HEIGHT_ENERGY:
-            self._add_post_mission_takeoff_systems()
+        if self.pre_mission_info['include_takeoff']:
+            self.builder.add_post_mission_takeoff_systems()
 
         if include_landing and self.post_mission_info['include_landing']:
-            if self.mission_method is HEIGHT_ENERGY:
-                self._add_height_energy_landing_systems()
-            elif self.mission_method is TWO_DEGREES_OF_FREEDOM:
-                self._add_two_dof_landing_systems()
+            self.builder.add_landing_systems(self)
 
         self.model.add_subsystem('post_mission', self.post_mission,
                                  promotes_inputs=['*'],
@@ -1506,9 +1501,11 @@ class AviaryProblem(om.Problem):
         """
         Adds design variables to the Aviary problem.
 
-        Depending on the mission model and problem type, different design variables and constraints are added.
+        Depending on the mission model and problem type, different design variables and constraints
+        are added.
 
-        If using the FLOPS model, a design variable is added for the gross mass of the aircraft, with a lower bound of 10 lbm and an upper bound of 900,000 lbm.
+        If using the FLOPS model, a design variable is added for the gross mass of the aircraft,
+        with a lower bound of 10 lbm and an upper bound of 900,000 lbm.
 
         If using the GASP model, the following design variables are added depending on the mission type:
             - the initial thrust-to-weight ratio of the aircraft during ascent
@@ -1520,11 +1517,16 @@ class AviaryProblem(om.Problem):
             - the initial altitude of the aircraft with gear extended is constrained to be 50 ft
             - the initial altitude of the aircraft with flaps extended is constrained to be 400 ft
 
-        If solving a sizing problem, a design variable is added for the gross mass of the aircraft, and another for the gross mass of the aircraft computed during the mission. A constraint is also added to ensure that the residual range is zero.
+        If solving a sizing problem, a design variable is added for the gross mass of the aircraft,
+        and another for the gross mass of the aircraft computed during the mission. A constraint
+        is also added to ensure that the residual range is zero.
 
-        If solving an alternate problem, only a design variable for the gross mass of the aircraft computed during the mission is added. A constraint is also added to ensure that the residual range is zero.
+        If solving an alternate problem, only a design variable for the gross mass of the aircraft
+        computed during the mission is added. A constraint is also added to ensure that the residual
+        range is zero.
 
-        In all cases, a design variable is added for the final cruise mass of the aircraft, with no upper bound, and a residual mass constraint is added to ensure that the mass balances.
+        In all cases, a design variable is added for the final cruise mass of the aircraft, with
+        no upper bound, and a residual mass constraint is added to ensure that the mass balances.
 
         """
         # add the engine builder `get_design_vars` dict to a collected dict from
@@ -2459,100 +2461,6 @@ class AviaryProblem(om.Problem):
         all_subsystems.append(self.core_subsystems['propulsion'])
 
         return all_subsystems
-
-    def _add_height_energy_landing_systems(self):
-        landing_options = Landing(
-            ref_wing_area=self.aviary_inputs.get_val(
-                Aircraft.Wing.AREA, units='ft**2'),
-            Cl_max_ldg=self.aviary_inputs.get_val(
-                Mission.Landing.LIFT_COEFFICIENT_MAX)  # no units
-        )
-
-        landing = landing_options.build_phase(False)
-        self.model.add_subsystem(
-            'landing', landing, promotes_inputs=['aircraft:*', 'mission:*'],
-            promotes_outputs=['mission:*'])
-
-        last_flight_phase_name = list(self.phase_info.keys())[-1]
-        control_type_string = 'control_values'
-        if self.phase_info[last_flight_phase_name]['user_options'].get(
-                'use_polynomial_control', True):
-            if not use_new_dymos_syntax:
-                control_type_string = 'polynomial_control_values'
-
-        last_regular_phase = self.regular_phases[-1]
-        self.model.connect(f'traj.{last_regular_phase}.states:mass',
-                           Mission.Landing.TOUCHDOWN_MASS, src_indices=[-1])
-        self.model.connect(f'traj.{last_regular_phase}.{control_type_string}:altitude',
-                           Mission.Landing.INITIAL_ALTITUDE,
-                           src_indices=[0])
-
-    def _add_post_mission_takeoff_systems(self):
-        first_flight_phase_name = list(self.phase_info.keys())[0]
-        connect_takeoff_to_climb = not self.phase_info[first_flight_phase_name][
-            'user_options'].get('add_initial_mass_constraint', True)
-
-        if connect_takeoff_to_climb:
-            self.model.connect(Mission.Takeoff.FINAL_MASS,
-                               f'traj.{first_flight_phase_name}.initial_states:mass')
-            self.model.connect(Mission.Takeoff.GROUND_DISTANCE,
-                               f'traj.{first_flight_phase_name}.initial_states:distance')
-
-            control_type_string = 'control_values'
-            if self.phase_info[first_flight_phase_name]['user_options'].get(
-                    'use_polynomial_control', True):
-                if not use_new_dymos_syntax:
-                    control_type_string = 'polynomial_control_values'
-
-            if self.phase_info[first_flight_phase_name]['user_options'].get(
-                    'optimize_mach', False):
-                # Create an ExecComp to compute the difference in mach
-                mach_diff_comp = om.ExecComp(
-                    'mach_resid_for_connecting_takeoff = final_mach - initial_mach')
-                self.model.add_subsystem('mach_diff_comp', mach_diff_comp)
-
-                # Connect the inputs to the mach difference component
-                self.model.connect(Mission.Takeoff.FINAL_MACH,
-                                   'mach_diff_comp.final_mach')
-                self.model.connect(
-                    f'traj.{first_flight_phase_name}.{control_type_string}:mach',
-                    'mach_diff_comp.initial_mach', src_indices=[0])
-
-                # Add constraint for mach difference
-                self.model.add_constraint(
-                    'mach_diff_comp.mach_resid_for_connecting_takeoff', equals=0.0)
-
-            if self.phase_info[first_flight_phase_name]['user_options'].get(
-                    'optimize_altitude', False):
-                # Similar steps for altitude difference
-                alt_diff_comp = om.ExecComp(
-                    'altitude_resid_for_connecting_takeoff = final_altitude - initial_altitude', units='ft')
-                self.model.add_subsystem('alt_diff_comp', alt_diff_comp)
-
-                self.model.connect(Mission.Takeoff.FINAL_ALTITUDE,
-                                   'alt_diff_comp.final_altitude')
-                self.model.connect(
-                    f'traj.{first_flight_phase_name}.{control_type_string}:altitude',
-                    'alt_diff_comp.initial_altitude', src_indices=[0])
-
-                self.model.add_constraint(
-                    'alt_diff_comp.altitude_resid_for_connecting_takeoff', equals=0.0)
-
-    def _add_two_dof_landing_systems(self):
-        self.model.add_subsystem(
-            "landing",
-            LandingSegment(
-                **(self.ode_args)),
-            promotes_inputs=['aircraft:*', 'mission:*',
-                             (Dynamic.Vehicle.MASS, Mission.Landing.TOUCHDOWN_MASS)],
-            promotes_outputs=['mission:*'],
-        )
-        self.model.connect(
-            'pre_mission.interference_independent_of_shielded_area',
-            'landing.interference_independent_of_shielded_area')
-        self.model.connect(
-            'pre_mission.drag_loss_due_to_shielded_wing_area',
-            'landing.drag_loss_due_to_shielded_wing_area')
 
     def _add_objectives(self):
         "add objectives and some constraints"

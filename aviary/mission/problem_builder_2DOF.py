@@ -1,3 +1,4 @@
+from aviary.mission.gasp_based.ode.landing_ode import LandingSegment
 from aviary.mission.gasp_based.ode.taxi_ode import TaxiSegment
 from aviary.subsystems.propulsion.utils import build_engine_deck
 from aviary.utils.functions import create_opts2vals, add_opts2vals, wrapped_convert_units
@@ -177,4 +178,25 @@ class AviaryProblemBuilder_2DOF():
             ],
             promotes_outputs=[('Vrot', Mission.Takeoff.ROTATION_VELOCITY)]
         )
+
+    def add_post_mission_takeoff_systems(self, prob):
+        pass
+
+    def add_landing_systems(self, prob):
+
+        prob.model.add_subsystem(
+            "landing",
+            LandingSegment(
+                **(prob.ode_args)),
+            promotes_inputs=['aircraft:*', 'mission:*',
+                             (Dynamic.Vehicle.MASS, Mission.Landing.TOUCHDOWN_MASS)],
+            promotes_outputs=['mission:*'],
+        )
+
+        prob.model.connect(
+            'pre_mission.interference_independent_of_shielded_area',
+            'landing.interference_independent_of_shielded_area')
+        prob.model.connect(
+            'pre_mission.drag_loss_due_to_shielded_wing_area',
+            'landing.drag_loss_due_to_shielded_wing_area')
 
