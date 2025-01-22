@@ -1531,35 +1531,7 @@ class AviaryProblem(om.Problem):
             else:
                 guesses = {}
 
-            if self.mission_method is TWO_DEGREES_OF_FREEDOM and \
-                    self.phase_info[phase_name]["user_options"].get("analytic", False):
-                for guess_key, guess_data in guesses.items():
-                    val, units = guess_data
-
-                    if 'mass' == guess_key:
-                        # Set initial and duration mass for the analytic cruise phase.
-                        # Note we are integrating over mass, not time for this phase.
-                        target_prob.set_val(
-                            parent_prefix +
-                            f'traj.{phase_name}.t_initial',
-                            val[0],
-                            units=units)
-                        target_prob.set_val(
-                            parent_prefix +
-                            f'traj.{phase_name}.t_duration',
-                            val[1],
-                            units=units)
-
-                    else:
-                        # Otherwise, set the value of the parameter in the trajectory
-                        # phase
-                        target_prob.set_val(
-                            parent_prefix + f'traj.{phase_name}.parameters:{guess_key}',
-                            val, units=units)
-
-                continue
-
-            # If not cruise and GASP, add subsystem guesses
+            # Add subsystem guesses
             self._add_subsystem_guesses(phase_name, phase, target_prob, parent_prefix)
 
             # Set initial guesses for states and controls for each phase
