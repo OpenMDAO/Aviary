@@ -359,8 +359,10 @@ def preprocess_propulsion(
             # update aviary options and outputs with new vectors
             # if data is numerical, store in a numpy array
             # keep tuples as tuples, lists get converted to numpy arrays
-            if type(vec[0]) in (int, float, np.int64, np.float64)\
-               and type(vec) is not tuple:
+            if (
+                type(vec[0]) in (int, float, np.int32, np.int64, np.float32, np.float64)
+                and type(vec) is not tuple
+            ):
                 vec = np.array(vec, dtype=dtype)
             aviary_options.set_val(var, vec, units)
 

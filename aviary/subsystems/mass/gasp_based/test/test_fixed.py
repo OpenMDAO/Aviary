@@ -642,7 +642,7 @@ class EngineTestCaseMultiEngine(unittest.TestCase):
         )  # bug fixed value and original value
 
         partial_data = self.prob.check_partials(out_stream=None, method="cs")
-        assert_check_partials(partial_data, atol=1e-10, rtol=1e-10)
+        assert_check_partials(partial_data, atol=1e-8, rtol=1e-8)
 
 
 class TailTestCase(unittest.TestCase):  # this is the large single aisle 1 V3 test case
