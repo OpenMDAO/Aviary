@@ -14,7 +14,7 @@ with open(Path(__file__).parent / "README.md", encoding="utf-8") as f:
 
 pkgname = "aviary"
 extras_require = {
-    "test": ["testflo", "pre-commit", "sphinx_book_theme==1.1.0"],
+    "test": ["testflo", "pre-commit", "sphinx_book_theme==1.1.0", "myst-nb"],
     "examples": ["openaerostruct", "ambiance", "itables"],
 }
 
@@ -31,7 +31,7 @@ setup(
     version=__version__,
     packages=find_packages(),
     install_requires=[
-        "openmdao>=3.33.0",
+        "openmdao>=3.36.0",
         "dymos>=1.8.1",
         "hvplot",
         "importlib_resources",
@@ -68,7 +68,7 @@ setup(
             "models/small_single_aisle/*",
             "models/test_aircraft/*",
             "visualization/assets/*",
-            "visualization/assets/aviary_vars/*"
+            "visualization/assets/aviary_vars/*",
         ],
         f"{pkgname}.docs": [
             "*.py",
@@ -87,6 +87,6 @@ setup(
         ],
         'openmdao_report': [
             'aviary_reports=aviary.interface.reports:register_custom_reports',
-        ]
-    }
+        ],
+    },
 )
