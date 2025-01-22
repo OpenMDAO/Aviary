@@ -219,6 +219,20 @@ class SubsystemBuilderBase(ABC):
         """
         return None
 
+    def mission_inputs(self, **kwargs):
+        """
+        Returns list of mission inputs to be promoted out of the external subsystem. By
+        default, all aircraft:* and mission:* inputs are promoted.
+        """
+        return []
+
+    def mission_outputs(self, **kwargs):
+        """
+        Returns list of mission outputs to be promoted out of the external subsystem. By
+        default, all  aircraft:* and mission:* outputs are promoted.
+        """
+        return []
+
     def define_order(self):
         """
         Return a list of subsystem names that must be defined before this one. E.g., must go before or after aero or prop.
