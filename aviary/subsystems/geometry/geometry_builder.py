@@ -82,30 +82,45 @@ class CoreGeometryBuilder(GeometryBuilderBase):
 
         super().__init__(name=name, meta_data=meta_data)
 
-    def build_pre_mission(self, aviary_inputs):
+    def build_pre_mission(self, aviary_inputs, **kwargs):
         code_origin = self.code_origin
         both_geom = self.use_both_geometries
         code_origin_to_prioritize = self.code_origin_to_prioritize
+        try:
+            method = kwargs.pop('method')
+        except KeyError:
+            method = None
 
         geom_group = None
 
-        if both_geom:
-            geom_group = CombinedGeometry(
-                code_origin_to_prioritize=code_origin_to_prioritize
-            )
+        if method != 'external':
+            if both_geom:
+                geom_group = CombinedGeometry(
+                    code_origin_to_prioritize=code_origin_to_prioritize
+                )
 
-        elif code_origin is GASP:
-            geom_group = SizeGroup()
-            geom_group.manual_overrides = None
+            elif code_origin is GASP:
+                geom_group = SizeGroup()
+                geom_group.manual_overrides = None
 
-        elif code_origin is FLOPS:
-            geom_group = PrepGeom()
-            geom_group.manual_overrides = None
+            elif code_origin is FLOPS:
+                geom_group = PrepGeom()
+                geom_group.manual_overrides = None
 
         return geom_group
 
     def build_mission(self, num_nodes, aviary_inputs, **kwargs):
-        super().build_mission(num_nodes, aviary_inputs)
+        # by default there is no geom mission, but call super for safety/future-proofing
+        try:
+            method = kwargs.pop('method')
+        except KeyError:
+            method = None
+        geom_group = None
+
+        if method != 'external':
+            geom_group = super().build_mission(num_nodes, aviary_inputs)
+
+        geom_group
 
     def get_parameters(self, aviary_inputs=None, phase_info=None):
         num_engine_type = len(aviary_inputs.get_val(Aircraft.Engine.NUM_ENGINES))
