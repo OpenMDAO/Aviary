@@ -165,7 +165,10 @@ class MissionODE(om.Group):
                     target = external_subsystem_group
 
                 target.add_subsystem(
-                    subsystem.name, subsystem_mission
+                    subsystem.name,
+                    subsystem_mission,
+                    promotes_inputs=subsystem.mission_inputs(**kwargs),
+                    promotes_outputs=subsystem.mission_outputs(**kwargs),
                 )
 
         # Only add the external subsystem group if it has at least one subsystem.
