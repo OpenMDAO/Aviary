@@ -141,6 +141,10 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
                                               CDI_data=kwargs.pop('CDI_data'),
                                               **kwargs)
 
+            elif method == 'external':
+                # Aero completely replaced by external group.
+                aero_group = None
+
             else:
                 raise ValueError('FLOPS-based aero method is not one of the following: '
                                  '(computed, low_speed, solved_alpha, tabular)')
