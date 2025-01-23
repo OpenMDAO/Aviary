@@ -123,7 +123,7 @@ params_for_unit_tests = {
     Aircraft.Wing.SWEEP: dict(units="deg", val=25),
     Aircraft.HorizontalTail.SWEEP: dict(units="deg", val=25),
     Aircraft.HorizontalTail.MOMENT_RATIO: dict(units="unitless", val=0.2307),
-    Aircraft.Wing.MOUNT_LOCATION: dict(units="unitless", val=0),
+    Aircraft.Wing.VERTICAL_MOUNT_LOCATION: dict(units="unitless", val=0),
     Aircraft.Design.STATIC_MARGIN: dict(units="unitless", val=0.03),
     Aircraft.Design.CG_DELTA: dict(units="unitless", val=0.25),
     Aircraft.Fuselage.FORM_FACTOR: dict(units="unitless", val=1.25),

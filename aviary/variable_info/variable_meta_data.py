@@ -5775,15 +5775,6 @@ add_meta_data(
 )
 
 add_meta_data(
-    Aircraft.Wing.MOUNT_LOCATION,
-    meta_data=_MetaData,
-    historical_name={"GASP": 'INGASP.HWING', "FLOPS": None, "LEAPS1": None},
-    units='unitless',
-    desc='wing mount location on fuselage (0 = low wing, 1 = high wing)',
-    default_value=0.0,
-)
-
-add_meta_data(
     Aircraft.Wing.NUM_FLAP_SEGMENTS,
     meta_data=_MetaData,
     historical_name={"GASP": 'INGASP.FLAPN', "FLOPS": None, "LEAPS1": None},
@@ -6160,6 +6151,15 @@ add_meta_data(
     units='unitless',
     desc='Define the fraction of wing variable sweep mass penalty where: '
     '0.0 == fixed-geometry wing; 1.0 == full variable-sweep wing.',
+    default_value=0.0,
+)
+
+add_meta_data(
+    Aircraft.Wing.VERTICAL_MOUNT_LOCATION,
+    meta_data=_MetaData,
+    historical_name={"GASP": 'INGASP.HWING', "FLOPS": None, "LEAPS1": None},
+    units='unitless',
+    desc='wing mount location on fuselage (0 = low wing, 1 = high wing). Values between 0 and 1 are acceptable.',
     default_value=0.0,
 )
 
