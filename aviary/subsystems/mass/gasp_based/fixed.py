@@ -959,7 +959,7 @@ class TailMass(om.ExplicitComponent):
         add_aviary_input(self, Aircraft.Fuselage.LENGTH, val=200)
         add_aviary_input(self, Aircraft.HorizontalTail.SPAN, val=7)
         add_aviary_input(self, Aircraft.LandingGear.TAIL_HOOK_MASS_SCALER, val=1)
-        add_aviary_input(self, Aircraft.HorizontalTail.TAPER_RATIO, val=0.352)
+        add_aviary_input(self, Aircraft.HorizontalTail.TAPER_RATIO)
         add_aviary_input(self, Aircraft.VerticalTail.MASS_COEFFICIENT, val=0.289)
         add_aviary_input(self, Aircraft.Wing.SPAN, val=118)
         add_aviary_input(self, Aircraft.HorizontalTail.AREA, val=15)
