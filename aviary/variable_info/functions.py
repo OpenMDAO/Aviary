@@ -72,15 +72,17 @@ def add_aviary_input(comp, varname, val=None, units=None, desc=None, shape_by_co
                 val = np.zeros(shape)
             else:
                 val = np.ones(shape) * val
-    else:
-        try:
-            # convert the default units to requested units
-            val = convert_units(val, default_units, input_units)
-        except ValueError:
-            raise ValueError(
-                f'The requested units {units} for input {varname} in component '
-                f'{comp.name} are invalid.'
-            )
+
+        # val was not provided but different units were
+        if input_units != default_units:
+            try:
+                # convert the default units to requested units
+                val = convert_units(val, default_units, input_units)
+            except ValueError:
+                raise ValueError(
+                    f'The requested units {units} for input {varname} in component '
+                    f'{comp.name} are invalid.'
+                )
 
     comp.add_input(varname, val=val, units=input_units,
                    desc=input_desc, shape_by_conn=shape_by_conn, shape=shape)
@@ -143,15 +145,16 @@ def add_aviary_output(comp, varname, val=None, units=None, desc=None, shape_by_c
             else:
                 val = np.ones(shape) * val
 
-    else:
-        try:
-            # convert the default units to requested units
-            val = convert_units(val, default_units, output_units)
-        except ValueError:
-            raise ValueError(
-                f'The requested units {units} for output {varname} in component '
-                f'{comp.name} are invalid.'
-            )
+        # val was not provided but different units were
+        if output_units != default_units:
+            try:
+                # convert the default units to requested units
+                val = convert_units(val, default_units, output_units)
+            except ValueError:
+                raise ValueError(
+                    f'The requested units {units} for output {varname} in component '
+                    f'{comp.name} are invalid.'
+                )
 
     comp.add_output(varname, val=val, units=output_units,
                     desc=output_desc, shape_by_conn=shape_by_conn)
