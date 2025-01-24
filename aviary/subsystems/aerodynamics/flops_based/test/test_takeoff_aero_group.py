@@ -76,7 +76,7 @@ def make_problem(subsystem_options={}):
 
     dynamic_inputs = AviaryValues(
         {
-            'angle_of_attack': (np.array([0.0, 2.0, 6.0]), 'deg'),
+            Dynamic.Vehicle.ANGLE_OF_ATTACK: (np.array([0.0, 2.0, 6.0]), 'deg'),
             Dynamic.Mission.ALTITUDE: (np.array([0.0, 32.0, 55.0]), 'm'),
             Dynamic.Mission.FLIGHT_PATH_ANGLE: (np.array([0.0, 0.5, 1.0]), 'deg'),
         }

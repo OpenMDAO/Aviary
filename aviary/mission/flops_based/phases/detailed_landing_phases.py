@@ -205,7 +205,7 @@ class LandingApproachToMicP3(PhaseBuilderBase):
         angle_of_attack_ref = user_options.get_val('angle_of_attack_ref', units)
 
         phase.add_control(
-            'angle_of_attack', opt=True, units=units,
+            Dynamic.Vehicle.ANGLE_OF_ATTACK, opt=True, units=units,
             upper=upper_angle_of_attack, lower=lower_angle_of_attack,
             ref=angle_of_attack_ref
         )
@@ -275,7 +275,7 @@ LandingApproachToMicP3._add_meta_data('angle_of_attack_ref', val=10., units='deg
 LandingApproachToMicP3._add_meta_data('initial_height', val=1., units='ft')
 
 LandingApproachToMicP3._add_initial_guess_meta_data(
-    InitialGuessControl('angle_of_attack'))
+    InitialGuessControl(Dynamic.Vehicle.ANGLE_OF_ATTACK))
 
 LandingApproachToMicP3._add_initial_guess_meta_data(InitialGuessState('altitude'))
 
@@ -530,7 +530,7 @@ class LandingObstacleToFlare(PhaseBuilderBase):
             opt=False
         )
 
-        phase.add_control('angle_of_attack', opt=False, units='deg')
+        phase.add_control(Dynamic.Vehicle.ANGLE_OF_ATTACK, opt=False, units='deg')
 
         phase.add_timeseries_output(
             Dynamic.Vehicle.DRAG, output_name=Dynamic.Vehicle.DRAG, units='lbf'
@@ -590,7 +590,7 @@ LandingObstacleToFlare._add_meta_data('max_velocity', val=100., units='ft/s')
 LandingObstacleToFlare._add_meta_data('altitude_ref', val=1., units='ft')
 
 LandingObstacleToFlare._add_initial_guess_meta_data(
-    InitialGuessControl('angle_of_attack'))
+    InitialGuessControl(Dynamic.Vehicle.ANGLE_OF_ATTACK))
 
 LandingObstacleToFlare._add_initial_guess_meta_data(InitialGuessState('altitude'))
 
@@ -763,7 +763,7 @@ class LandingFlareToTouchdown(PhaseBuilderBase):
         angle_of_attack_ref = user_options.get_val('angle_of_attack_ref', units)
 
         phase.add_polynomial_control(
-            'angle_of_attack', opt=True, units=units, order=1,
+            Dynamic.Vehicle.ANGLE_OF_ATTACK, opt=True, units=units, order=1,
             lower=lower_angle_of_attack, upper=upper_angle_of_attack,
             ref=angle_of_attack_ref,
             rate_targets="angle_of_attack_rate"
@@ -829,7 +829,7 @@ LandingFlareToTouchdown._add_meta_data('upper_angle_of_attack', val=15., units='
 LandingFlareToTouchdown._add_meta_data('angle_of_attack_ref', val=10., units='deg')
 
 LandingFlareToTouchdown._add_initial_guess_meta_data(
-    InitialGuessPolynomialControl('angle_of_attack'))
+    InitialGuessPolynomialControl(Dynamic.Vehicle.ANGLE_OF_ATTACK))
 
 LandingFlareToTouchdown._add_initial_guess_meta_data(InitialGuessState('altitude'))
 
@@ -974,7 +974,7 @@ class LandingTouchdownToNoseDown(PhaseBuilderBase):
         max_angle_of_attack = user_options.get_val('max_angle_of_attack', units)
 
         phase.add_polynomial_control(
-            'angle_of_attack', opt=True, units=units, order=1,
+            Dynamic.Vehicle.ANGLE_OF_ATTACK, opt=True, units=units, order=1,
             lower=0, upper=max_angle_of_attack, fix_final=True,
             fix_initial=False, ref=max_angle_of_attack)
 
@@ -1019,7 +1019,7 @@ LandingTouchdownToNoseDown._add_meta_data('max_velocity', val=100.0, units='ft/s
 LandingTouchdownToNoseDown._add_meta_data('max_angle_of_attack', val=10.0, units='deg')
 
 LandingTouchdownToNoseDown._add_initial_guess_meta_data(
-    InitialGuessPolynomialControl('angle_of_attack'))
+    InitialGuessPolynomialControl(Dynamic.Vehicle.ANGLE_OF_ATTACK))
 
 
 @_init_initial_guess_meta_data
@@ -1155,7 +1155,7 @@ class LandingNoseDownToStop(PhaseBuilderBase):
             opt=False
         )
 
-        phase.add_parameter('angle_of_attack', val=0.0, opt=False, units='deg')
+        phase.add_parameter(Dynamic.Vehicle.ANGLE_OF_ATTACK, val=0.0, opt=False, units='deg')
 
         phase.add_timeseries_output(
             Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
@@ -1196,7 +1196,7 @@ LandingNoseDownToStop._add_meta_data('distance_max', val=1000.0, units='ft')
 LandingNoseDownToStop._add_meta_data('max_velocity', val=100.0, units='ft/s')
 
 LandingNoseDownToStop._add_initial_guess_meta_data(
-    InitialGuessParameter('angle_of_attack'))
+    InitialGuessParameter(Dynamic.Vehicle.ANGLE_OF_ATTACK))
 
 
 class LandingTrajectory:

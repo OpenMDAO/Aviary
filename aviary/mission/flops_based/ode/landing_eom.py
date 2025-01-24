@@ -57,7 +57,7 @@ class FlareEOM(om.Group):
             Dynamic.Vehicle.LIFT,
             Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
             Dynamic.Vehicle.DRAG,
-            'angle_of_attack',
+            Dynamic.Vehicle.ANGLE_OF_ATTACK,
             Dynamic.Mission.FLIGHT_PATH_ANGLE,
         ]
 
@@ -113,7 +113,7 @@ class FlareEOM(om.Group):
             Dynamic.Vehicle.MASS,
             Dynamic.Vehicle.LIFT,
             Dynamic.Vehicle.DRAG,
-            'angle_of_attack',
+            Dynamic.Vehicle.ANGLE_OF_ATTACK,
             Dynamic.Mission.FLIGHT_PATH_ANGLE,
         ]
 
@@ -165,7 +165,7 @@ class GlideSlopeForces(om.ExplicitComponent):
         add_aviary_input(self, Dynamic.Vehicle.LIFT, val=np.ones(nn), units='N')
         add_aviary_input(self, Dynamic.Vehicle.DRAG, val=np.ones(nn), units='N')
 
-        self.add_input('angle_of_attack', val=np.zeros(nn), units='rad')
+        self.add_input(Dynamic.Vehicle.ANGLE_OF_ATTACK, val=np.zeros(nn), units='rad')
 
         add_aviary_input(
             self, Dynamic.Mission.FLIGHT_PATH_ANGLE, val=np.zeros(nn), units='rad'
@@ -204,7 +204,7 @@ class GlideSlopeForces(om.ExplicitComponent):
 
         weight = mass * grav_metric
 
-        alpha = inputs['angle_of_attack']
+        alpha = inputs[Dynamic.Vehicle.ANGLE_OF_ATTACK]
         gamma = inputs[Dynamic.Mission.FLIGHT_PATH_ANGLE]
 
         # FLOPS measures glideslope below horizontal
@@ -242,7 +242,7 @@ class GlideSlopeForces(om.ExplicitComponent):
 
         weight = mass * grav_metric
 
-        alpha = inputs['angle_of_attack']
+        alpha = inputs[Dynamic.Vehicle.ANGLE_OF_ATTACK]
         gamma = inputs[Dynamic.Mission.FLIGHT_PATH_ANGLE]
 
         # FLOPS measures glideslope below horizontal
@@ -284,8 +284,8 @@ class GlideSlopeForces(om.ExplicitComponent):
         f_h = t_angle * (drag - weight * s_gamma) / c_angle
         f_v = -(weight * c_gamma - lift) / (s_angle * t_angle)
 
-        J[forces_key, 'angle_of_attack'] = f_h - f_v
-        J[thrust_key, 'angle_of_attack'] = (f_h + f_v) / (2.)
+        J[forces_key, Dynamic.Vehicle.ANGLE_OF_ATTACK] = f_h - f_v
+        J[thrust_key, Dynamic.Vehicle.ANGLE_OF_ATTACK] = (f_h + f_v) / (2.)
 
         f_h = -weight * c_gamma / c_angle
         f_v = -weight * s_gamma / s_angle
@@ -320,7 +320,7 @@ class FlareSumForces(om.ExplicitComponent):
                          val=np.ones(nn), units='N')
         add_aviary_input(self, Dynamic.Vehicle.DRAG, val=np.ones(nn), units='N')
 
-        self.add_input('angle_of_attack', val=np.zeros(nn), units='rad')
+        self.add_input(Dynamic.Vehicle.ANGLE_OF_ATTACK, val=np.zeros(nn), units='rad')
 
         add_aviary_input(
             self, Dynamic.Mission.FLIGHT_PATH_ANGLE, val=np.zeros(nn), units='rad'
@@ -351,7 +351,7 @@ class FlareSumForces(om.ExplicitComponent):
             Dynamic.Vehicle.LIFT,
             Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
             Dynamic.Vehicle.DRAG,
-            'angle_of_attack',
+            Dynamic.Vehicle.ANGLE_OF_ATTACK,
             Dynamic.Mission.FLIGHT_PATH_ANGLE,
         ]
 
@@ -370,7 +370,7 @@ class FlareSumForces(om.ExplicitComponent):
         thrust = inputs[Dynamic.Vehicle.Propulsion.THRUST_TOTAL]
         drag = inputs[Dynamic.Vehicle.DRAG]
 
-        alpha = inputs['angle_of_attack']
+        alpha = inputs[Dynamic.Vehicle.ANGLE_OF_ATTACK]
         gamma = inputs[Dynamic.Mission.FLIGHT_PATH_ANGLE]
 
         # FLOPS measures glideslope below horizontal
@@ -408,7 +408,7 @@ class FlareSumForces(om.ExplicitComponent):
         thrust = inputs[Dynamic.Vehicle.Propulsion.THRUST_TOTAL]
         drag = inputs[Dynamic.Vehicle.DRAG]
 
-        alpha = inputs['angle_of_attack']
+        alpha = inputs[Dynamic.Vehicle.ANGLE_OF_ATTACK]
         gamma = inputs[Dynamic.Mission.FLIGHT_PATH_ANGLE]
 
         # FLOPS measures glideslope below horizontal
@@ -434,8 +434,8 @@ class FlareSumForces(om.ExplicitComponent):
         J[f_h_key, Dynamic.Vehicle.DRAG] = c_gamma
         J[f_v_key, Dynamic.Vehicle.DRAG] = s_gamma
 
-        J[f_h_key, 'angle_of_attack'] = thrust * s_angle
-        J[f_v_key, 'angle_of_attack'] = thrust * c_angle
+        J[f_h_key, Dynamic.Vehicle.ANGLE_OF_ATTACK] = thrust * s_angle
+        J[f_v_key, Dynamic.Vehicle.ANGLE_OF_ATTACK] = thrust * c_angle
 
         f_h = -drag * s_gamma - lift * c_gamma - thrust * s_angle
         J[f_h_key, Dynamic.Mission.FLIGHT_PATH_ANGLE] = -f_h
