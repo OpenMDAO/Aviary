@@ -75,7 +75,7 @@ def add_aviary_input(comp, varname, val=None, units=None, desc=None, shape_by_co
     else:
         try:
             # convert the default units to requested units
-            convert_units(val, default_units, input_units)
+            val = convert_units(val, default_units, input_units)
         except ValueError:
             raise ValueError(
                 f'The requested units {units} for input {
@@ -146,7 +146,7 @@ def add_aviary_output(comp, varname, val=None, units=None, desc=None, shape_by_c
     else:
         try:
             # convert the default units to requested units
-            convert_units(val, default_units, output_units)
+            val = convert_units(val, default_units, output_units)
         except ValueError:
             raise ValueError(
                 f'The requested units {units} for output {varname} in component '
