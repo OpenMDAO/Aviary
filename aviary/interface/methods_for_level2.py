@@ -121,6 +121,7 @@ class AviaryProblem(om.Problem):
         # with default values from metadata) and generate initial guesses
         aviary_inputs, self.initialization_guesses = create_vehicle(
             aviary_inputs, meta_data=meta_data, verbosity=verbosity)
+        self.aviary_inputs = aviary_inputs
 
         # pull which methods will be used for subsystems and mission
         self.mission_method = mission_method = aviary_inputs.get_val(
@@ -203,7 +204,6 @@ class AviaryProblem(om.Problem):
         self.engine_builders = engine_builders
 
         self.problem_type = aviary_inputs.get_val(Settings.PROBLEM_TYPE)
-        self.aviary_inputs = aviary_inputs
 
         self.builder.initial_guesses(self)
         # This function sets all the following defaults if they were not already set
