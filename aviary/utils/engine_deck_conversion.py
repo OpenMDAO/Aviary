@@ -4,6 +4,7 @@ import argparse
 import getpass
 from datetime import datetime
 from enum import Enum
+from copy import deepcopy
 
 import numpy as np
 import openmdao.api as om
@@ -43,17 +44,18 @@ NOX_RATE = EngineModelVariables.NOX_RATE
 TEMPERATURE = EngineModelVariables.TEMPERATURE_T4
 # EXIT_AREA = EngineModelVariables.EXIT_AREA
 
-flops_keys = [
+_flops_keys = [
     MACH,
     ALTITUDE,
     THROTTLE,
     GROSS_THRUST,
     RAM_DRAG,
     FUEL_FLOW,
-    NOX_RATE]  # , EXIT_AREA]
+    NOX_RATE,
+]  # , EXIT_AREA]
 
 # later code assumes T4 is last item in keys
-gasp_keys = [MACH, ALTITUDE, THROTTLE, FUEL_FLOW, TEMPERATURE]
+_gasp_keys = [MACH, ALTITUDE, THROTTLE, FUEL_FLOW, TEMPERATURE]
 
 header_names = {
     MACH: 'Mach_Number',
@@ -108,8 +110,8 @@ def EngineDeckConverter(input_file, output_file, data_format: EngineDeckType):
         f'# {legacy_code}-derived {engine_type} deck converted from {data_file.name}')
 
     if data_format == EngineDeckType.FLOPS:
-        header = {key: default_units[key] for key in flops_keys}
-        data = {key: np.array([]) for key in flops_keys}
+        header = {key: default_units[key] for key in _flops_keys}
+        data = {key: np.array([]) for key in _flops_keys}
 
         with open(data_file, newline='', encoding='utf-8-sig') as file:
             reader = _read_flops_engine(file)
@@ -133,6 +135,9 @@ def EngineDeckConverter(input_file, output_file, data_format: EngineDeckType):
                 # data[EXIT_AREA].append(line[7])
 
     elif data_format in (EngineDeckType.GASP, EngineDeckType.GASP_TS):
+        # prevent modifications to gasp_keys from overwriting base _gasp_keys, to avoid
+        # errors when `EngineDeckConverter()` is ran multiple times in a row
+        gasp_keys = deepcopy(_gasp_keys)
         is_turbo_prop = True if data_format == EngineDeckType.GASP_TS else False
         temperature = gasp_keys.pop()
         fuelflow = gasp_keys.pop()

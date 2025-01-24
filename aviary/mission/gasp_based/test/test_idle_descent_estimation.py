@@ -23,7 +23,7 @@ class IdleDescentTestCase(unittest.TestCase):
     """
 
     def setUp(self):
-        input_deck = 'models/large_single_aisle_1/large_single_aisle_1_GwGm.csv'
+        input_deck = 'models/large_single_aisle_1/large_single_aisle_1_GASP.csv'
         aviary_inputs, _ = create_vehicle(input_deck)
         aviary_inputs.set_val(Settings.VERBOSITY, 0)
         aviary_inputs.set_val(Aircraft.Engine.SCALED_SLS_THRUST, val=28690, units="lbf")
