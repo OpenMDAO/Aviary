@@ -83,7 +83,7 @@ class CLmaxCalculation(om.ExplicitComponent):
 
         add_aviary_input(self, Aircraft.Wing.LOADING, val=128)
 
-        add_aviary_input(self, Dynamic.Atmosphere.STATIC_PRESSURE, val=(14.696 * 144))
+        add_aviary_input(self, Dynamic.Atmosphere.STATIC_PRESSURE)
 
         add_aviary_input(self, Aircraft.Wing.AVERAGE_CHORD, val=12.61)
 
@@ -130,7 +130,7 @@ class CLmaxCalculation(om.ExplicitComponent):
             desc="CLMAX: maximum lift coefficient",
             units="unitless",
         )
-        add_aviary_output(self, Dynamic.Atmosphere.MACH, val=0.17522, desc="SMN: mach number")
+        add_aviary_output(self, Dynamic.Atmosphere.MACH, desc="SMN: mach number")
         self.add_output(
             "reynolds", val=157.1111, units='unitless', desc="RNW: reynolds number"
         )

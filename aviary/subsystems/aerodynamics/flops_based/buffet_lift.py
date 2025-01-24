@@ -22,7 +22,7 @@ class BuffetLift(om.ExplicitComponent):
         nn = self.options["num_nodes"]
 
         # Simulation inputs
-        add_aviary_input(self, Dynamic.Atmosphere.MACH, val=np.ones(nn))
+        add_aviary_input(self, Dynamic.Atmosphere.MACH, shape=nn)
 
         # Aero design inputs
         add_aviary_input(self, Mission.Design.MACH, 0.0)
