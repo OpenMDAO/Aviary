@@ -123,7 +123,6 @@ class ProblemBuilderSolved2DOF():
             prob.traj.link_phases(
                 phases[1:], ["alpha"], units='rad', connected=False)
 
-
     def add_post_mission_takeoff_systems(self, prob):
         pass
 

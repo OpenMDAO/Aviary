@@ -68,7 +68,7 @@ class ProblemBuilder2DOF():
             prob.target_range = wrapped_convert_units(
                 prob.post_mission_info['post_mission']['target_range'], 'NM')
             aviary_inputs.set_val(Mission.Summary.RANGE,
-                                       prob.target_range, units='NM')
+                                  prob.target_range, units='NM')
         else:
             prob.target_range = aviary_inputs.get_val(
                 Mission.Design.RANGE, units='NM')
@@ -673,4 +673,3 @@ class ProblemBuilder2DOF():
                 parent_prefix + f"traj.{phase_name}.states:distance",
                 phase.interp(Dynamic.Mission.DISTANCE, ys=ys),
             )
-

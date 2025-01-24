@@ -441,4 +441,3 @@ class ProblemBuilderHeightEnergy():
             # Set the mass guess as the initial value for the mass state variable
             target_prob.set_val(parent_prefix + f'traj.{phase_name}.states:mass',
                                 mass_guess, units='lbm')
-

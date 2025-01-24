@@ -1500,13 +1500,13 @@ class AviaryProblem(om.Problem):
         if self.analysis_scheme is AnalysisScheme.SHOOTING:
             if self.problem_type is ProblemType.SIZING:
                 target_prob.set_val(parent_prefix + Mission.Summary.GROSS_MASS,
-                                   self.get_val(Mission.Design.GROSS_MASS))
+                                    self.get_val(Mission.Design.GROSS_MASS))
 
-            target_prob.set_val(parent_prefix +
-                               "traj.SGMClimb_" + Dynamic.Mission.ALTITUDE + "_trigger",
-                               val=self.cruise_alt,
-                               units="ft",
-                               )
+            target_prob.set_val(
+                parent_prefix + "traj.SGMClimb_" + Dynamic.Mission.ALTITUDE + "_trigger",
+                val=self.cruise_alt,
+                units="ft",
+            )
 
             return
 
