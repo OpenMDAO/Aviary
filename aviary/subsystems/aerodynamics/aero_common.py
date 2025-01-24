@@ -1,6 +1,6 @@
 import numpy as np
 import openmdao.api as om
-
+from aviary.variable_info.functions import add_aviary_input, add_aviary_output
 from aviary.variable_info.variables import Dynamic
 
 
@@ -19,26 +19,11 @@ class DynamicPressure(om.ExplicitComponent):
     def setup(self):
         nn = self.options['num_nodes']
 
-        self.add_input(
-            Dynamic.Atmosphere.STATIC_PRESSURE,
-            np.ones(nn),
-            units='lbf/ft**2',
-            desc='Static pressure at each evaulation point.',
-        )
+        add_aviary_input(self, Dynamic.Atmosphere.STATIC_PRESSURE, np.ones(nn))
 
-        self.add_input(
-            Dynamic.Atmosphere.MACH,
-            np.ones(nn),
-            units='unitless',
-            desc='Mach at each evaulation point.',
-        )
+        add_aviary_input(self, Dynamic.Atmosphere.MACH, np.ones(nn))
 
-        self.add_output(
-            Dynamic.Atmosphere.DYNAMIC_PRESSURE,
-            val=np.ones(nn),
-            units='lbf/ft**2',
-            desc='pressure caused by fluid motion',
-        )
+        add_aviary_output(self, Dynamic.Atmosphere.DYNAMIC_PRESSURE, np.ones(nn))
 
     def setup_partials(self):
         nn = self.options['num_nodes']
