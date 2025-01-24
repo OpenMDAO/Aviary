@@ -26,7 +26,6 @@ class AeroFormfactors(om.ExplicitComponent):
         add_aviary_input(self, Aircraft.Nacelle.AVG_LENGTH)
 
         add_aviary_output(self, Aircraft.Wing.FORM_FACTOR, 1.23456)
-        # add_aviary_output(self, Aircraft.Winglet.FORM_FACTOR)
         add_aviary_output(self, Aircraft.VerticalTail.FORM_FACTOR, 1.23456)
         add_aviary_output(self, Aircraft.HorizontalTail.FORM_FACTOR, 1.23456)
         add_aviary_output(self, Aircraft.Strut.FUSELAGE_INTERFERENCE_FACTOR, 1.23456)
@@ -73,7 +72,6 @@ class AeroFormfactors(om.ExplicitComponent):
         ckn = 1.5*(1.+.35/(xln/dbarn))
 
         outputs[Aircraft.Wing.FORM_FACTOR] = ckw
-        # outputs[Aircraft.Winglet.FORM_FACTOR] = ckwglt
         outputs[Aircraft.VerticalTail.FORM_FACTOR] = ckvt
         outputs[Aircraft.HorizontalTail.FORM_FACTOR] = ckht
         outputs[Aircraft.Strut.FUSELAGE_INTERFERENCE_FACTOR] = ckstrt

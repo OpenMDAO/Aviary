@@ -1,7 +1,7 @@
 import numpy as np
 import openmdao.api as om
 
-from aviary.variable_info.functions import add_aviary_input
+from aviary.variable_info.functions import add_aviary_input, add_aviary_output
 from aviary.variable_info.variable_meta_data import _MetaData as _meta_data
 from aviary.variable_info.variables import Aircraft, Dynamic
 
@@ -23,12 +23,7 @@ class SimpleCD(om.ExplicitComponent):
         add_aviary_input(self, Aircraft.Design.SUBSONIC_DRAG_COEFF_FACTOR, val=1.)
         add_aviary_input(self, Aircraft.Design.SUPERSONIC_DRAG_COEFF_FACTOR, val=1.)
 
-        self.add_input(
-            Dynamic.Atmosphere.MACH,
-            val=np.ones(nn),
-            units='unitless',
-            desc='ratio of local fluid speed to local speed of sound',
-        )
+        add_aviary_input(self, Dynamic.Atmosphere.MACH, val=np.ones(nn))
 
         self.add_input(
             'CD_prescaled', val=np.ones(nn), units='unitless',
@@ -103,20 +98,14 @@ class SimpleDrag(om.ExplicitComponent):
 
         add_aviary_input(self, Aircraft.Wing.AREA, val=1., units='m**2')
 
-        self.add_input(
-            Dynamic.Atmosphere.DYNAMIC_PRESSURE,
-            val=np.ones(nn),
-            units='N/m**2',
-            desc='pressure caused by fluid motion',
-        )
+        add_aviary_input(self, Dynamic.Atmosphere.DYNAMIC_PRESSURE, val=np.ones(nn),
+                         units='N/m**2')
 
         self.add_input(
             'CD', val=np.ones(nn), units='unitless',
             desc='total drag coefficient')
 
-        self.add_output(
-            Dynamic.Vehicle.DRAG, val=np.ones(nn), units='N', desc='total drag'
-        )
+        add_aviary_output(self, Dynamic.Vehicle.DRAG, val=np.ones(nn), units='N')
 
     def setup_partials(self):
         nn = self.options['num_nodes']

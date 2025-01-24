@@ -20,9 +20,7 @@ class CompressibilityDrag(om.ExplicitComponent):
         nn = self.options["num_nodes"]
 
         # Simulation inputs
-        self.add_input(
-            Dynamic.Atmosphere.MACH, shape=(nn), units='unitless', desc="Mach number"
-        )
+        add_aviary_input(self, Dynamic.Atmosphere.MACH, val=np.ones(nn))
 
         # Aero design inputs
         add_aviary_input(self, Mission.Design.MACH, 0.0)

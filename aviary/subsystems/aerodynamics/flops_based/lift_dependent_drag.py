@@ -22,18 +22,9 @@ class LiftDependentDrag(om.ExplicitComponent):
         nn = self.options["num_nodes"]
 
         # Simulation inputs
-        self.add_input(
-            Dynamic.Atmosphere.MACH, shape=(nn), units='unitless', desc="Mach number"
-        )
-        self.add_input(
-            Dynamic.Vehicle.LIFT, shape=(nn), units="lbf", desc="Lift magnitude"
-        )
-        self.add_input(
-            Dynamic.Atmosphere.STATIC_PRESSURE,
-            np.ones(nn),
-            units='lbf/ft**2',
-            desc='Static pressure at each evaulation point.',
-        )
+        add_aviary_input(self, Dynamic.Atmosphere.MACH, val=np.ones(nn))
+        add_aviary_input(self, Dynamic.Vehicle.LIFT, shape=(nn))
+        add_aviary_input(self, Dynamic.Atmosphere.STATIC_PRESSURE, val=np.ones(nn))
 
         # Aero design inputs
         add_aviary_input(self, Mission.Design.LIFT_COEFFICIENT, 0.0)
