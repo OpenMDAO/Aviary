@@ -36,11 +36,10 @@ class BasicFlapsCalculations(om.ExplicitComponent):
             units="deg",
             desc="DFLPTO | DFLPLD: takeoff or landing flap deflection",
         )
-        add_aviary_input(self, Aircraft.Wing.OPTIMUM_FLAP_DEFLECTION, val=55.0)
-        add_aviary_input(self, Aircraft.Wing.ROOT_CHORD, val=16.406626)
-        add_aviary_input(self, Aircraft.Fuselage.LENGTH, val=129.4)
-        add_aviary_input(self, Aircraft.Wing.LEADING_EDGE_SWEEP,
-                         val=0.47639, units="rad")
+        add_aviary_input(self, Aircraft.Wing.OPTIMUM_FLAP_DEFLECTION)
+        add_aviary_input(self, Aircraft.Wing.ROOT_CHORD)
+        add_aviary_input(self, Aircraft.Fuselage.LENGTH)
+        add_aviary_input(self, Aircraft.Wing.LEADING_EDGE_SWEEP)
 
         # outputs
 

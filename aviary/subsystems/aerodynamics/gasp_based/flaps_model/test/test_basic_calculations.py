@@ -38,6 +38,7 @@ class BasicFlapsCalculationsTestCase(unittest.TestCase):
         self.prob.set_val(Aircraft.Wing.ROOT_CHORD, 16.41, units="ft")
         self.prob.set_val(Aircraft.Fuselage.LENGTH, 129.4, units="ft")
         self.prob.set_val(Aircraft.Wing.LEADING_EDGE_SWEEP, 0.47639, units="rad")
+        self.prob.set_val(Aircraft.Wing.OPTIMUM_FLAP_DEFLECTION, 55.0, units="deg")
 
     def test_case(self):
 

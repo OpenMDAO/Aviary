@@ -119,8 +119,8 @@ class CLmaxCalculation(om.ExplicitComponent):
             units='unitless',
             desc="DELCLF: fuselage lift increment",
         )
-        add_aviary_input(self, Dynamic.Atmosphere.KINEMATIC_VISCOSITY, val=0.15723e-03, desc="XKV: kinematic viscosity")
-        add_aviary_input(self, Dynamic.Atmosphere.TEMPERATURE, val=518.67, desc="T0: static temperature of air cross wing")
+        add_aviary_input(self, Dynamic.Atmosphere.KINEMATIC_VISCOSITY, desc="XKV: kinematic viscosity")
+        add_aviary_input(self, Dynamic.Atmosphere.TEMPERATURE, desc="T0: static temperature of air cross wing")
 
         # outputs
 
