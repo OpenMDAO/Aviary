@@ -78,8 +78,8 @@ def add_aviary_input(comp, varname, val=None, units=None, desc=None, shape_by_co
             val = convert_units(val, default_units, input_units)
         except ValueError:
             raise ValueError(
-                f'The requested units {units} for input {
-                    varname} in component {comp.name} are invalid.'
+                f'The requested units {units} for input {varname} in component '
+                f'{comp.name} are invalid.'
             )
 
     comp.add_input(varname, val=val, units=input_units,
