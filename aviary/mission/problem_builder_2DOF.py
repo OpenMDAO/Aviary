@@ -431,14 +431,14 @@ class ProblemBuilder2DOF():
                                Mission.Landing.TOUCHDOWN_MASS, src_indices=[-1])
 
             connect_map = {
-                f"traj.{prob.regular_phases[-1]}.timeseries.distance": 'actual_range',
+                f"traj.{prob.regular_phases[-1]}.timeseries.distance": Mission.Summary.RANGE,
             }
 
         else:
             connect_map = {
                 "taxi.mass": "traj.mass_initial",
                 Mission.Takeoff.ROTATION_VELOCITY: "traj.SGMGroundroll_velocity_trigger",
-                "traj.distance_final": 'actual_range',
+                "traj.distance_final": Mission.Summary.RANGE,
                 "traj.mass_final": Mission.Landing.TOUCHDOWN_MASS,
             }
 

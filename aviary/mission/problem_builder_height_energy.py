@@ -209,7 +209,7 @@ class ProblemBuilderHeightEnergy():
                               connected=direct_links)
 
         prob.model.connect(f'traj.{prob.regular_phases[-1]}.timeseries.distance',
-                           'actual_range',
+                           Mission.Summary.RANGE,
                            src_indices=[-1], flat_src_indices=True)
 
     def add_post_mission_takeoff_systems(self, prob):
