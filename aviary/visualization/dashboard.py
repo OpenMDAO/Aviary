@@ -756,7 +756,7 @@ def create_optimization_history_plot(case_recorder, df):
             data_source=data_source,
             variable_scroll_box=variable_scroll_box,
             variable_checkbox_callback=variable_checkbox_callback),
-        code=r"""
+        code="""
 
         const filter_text = cb_obj.value.toLowerCase();
         const all_options = data_source.data['options'];
