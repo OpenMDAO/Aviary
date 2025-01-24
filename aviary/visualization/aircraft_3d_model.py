@@ -539,7 +539,7 @@ class HorizontalWing(object):
         Chord at the top of the wing.
     _position_along_fuselage : float
         Position of the wing along the fuselage.
-    _mounting_type : float
+    _mount_location : float
         wing location on fuselage (0 = low wing, 1 = high wing, can be fractions).
     _fuselage : Fuselage
         The Fuselage object used to represent the fuselage of the aircraft.
@@ -556,7 +556,7 @@ class HorizontalWing(object):
         self._sweep_angle = None
         self._chord_tip = None
         self._position_along_fuselage = None
-        self._mounting_type = None
+        self._mount_location = None
         self._fuselage = fuselage
         self._wing_type = wing_type
 
@@ -601,13 +601,13 @@ class HorizontalWing(object):
             self._chord_tip = self._chord * taper_ratio
             if self._wing_type == WingType.WING:
                 try:
-                    mounting_type = self._reader.get_variable_from_case(
-                        "aircraft:wing:mounting_type"
+                    mount_location = self._reader.get_variable_from_case(
+                        "aircraft:wing:mount_location"
                     )
                 except AircraftModelReaderError:
-                    mounting_type = 0.0
+                    mount_location = 0.0
                 self._vertical_position = (
-                    2.0 * (mounting_type - 0.5) * self._fuselage.radius
+                    2.0 * (mount_location - 0.5) * self._fuselage.radius
                 )
                 self._position_along_fuselage = 0.0
             elif self._wing_type == WingType.HORIZONTAL_TAIL:
