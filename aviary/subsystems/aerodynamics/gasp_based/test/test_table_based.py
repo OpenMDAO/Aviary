@@ -98,12 +98,14 @@ class TestLowSpeedAero(unittest.TestCase):
             flaps_aero_data=self.flaps_data,
             ground_aero_data=self.ground_data,
             extrapolate=True)
+        prob.model.set_input_defaults(Aircraft.Wing.AREA, val=1370.3)
         prob.setup()
 
         prob.set_val("t_curr", [0.0, 1.0, 2.0, 3.0])
         prob.set_val(Dynamic.Mission.ALTITUDE, 0)
         prob.set_val(Dynamic.Atmosphere.MACH, [0.0, 0.009, 0.018, 0.026])
         prob.set_val("alpha", 0)
+        prob.set_val(Mission.Design.GROSS_MASS, 175400.0)
         # TODO set q if we want to test lift/drag forces
 
         prob.set_val("flap_defl", self.flap_defl_to)
@@ -134,6 +136,7 @@ class TestLowSpeedAero(unittest.TestCase):
             flaps_aero_data=self.flaps_data,
             ground_aero_data=self.ground_data,
             extrapolate=True)
+        prob.model.set_input_defaults(Aircraft.Wing.AREA, val=1370.3)
         prob.setup()
 
         prob.set_val(
@@ -150,12 +153,12 @@ class TestLowSpeedAero(unittest.TestCase):
         prob.set_val("alpha", [8.94, 8.74, 8.44, 8.24, 6.45, 6.34, 6.76, 7.59])
         # TODO set q if we want to test lift/drag forces
 
-        prob.set_val(Aircraft.Wing.AREA, 1370)
         prob.set_val(Aircraft.Wing.SPAN, 117.8)
 
         prob.set_val("flap_defl", self.flap_defl_to)
         prob.set_val("t_init_gear", self.t_init_gear_to)
         prob.set_val("t_init_flaps", self.t_init_flaps_to)
+        prob.set_val(Mission.Design.GROSS_MASS, 175400.0)
         prob.run_model()
 
         cl_exp = np.array(
@@ -192,6 +195,7 @@ class GearDragIncrementTest(unittest.TestCase):
             promotes_inputs=['*'],
             promotes_outputs=['*'],
         )
+        #prob.model.set_input_defaults(Aircraft.Wing.AREA, val=1370.3)
         prob.setup(check=False, force_alloc_complex=True)
         prob.set_val(Mission.Design.GROSS_MASS, 175000, 'lbm')
         prob.set_val(Aircraft.Wing.AREA, 1000, 'ft**2')
@@ -224,7 +228,9 @@ class GearDragIncrementTest2(unittest.TestCase):
             promotes_inputs=['*'],
             promotes_outputs=['*'],
         )
+        prob.model.set_input_defaults(Aircraft.Wing.AREA, val=1370.3)
         prob.setup(check=False, force_alloc_complex=True)
+        prob.set_val(Mission.Design.GROSS_MASS, 175400.0)
 
         partial_data = prob.check_partials(out_stream=None, method="cs")
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
