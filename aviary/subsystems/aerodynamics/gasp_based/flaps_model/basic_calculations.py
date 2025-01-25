@@ -79,7 +79,7 @@ class BasicFlapsCalculations(om.ExplicitComponent):
             units='unitless',
             desc="RDELF: ratio of trailing edge flap deflection to optimum deflection angle",
         )
-        add_aviary_output(self, Aircraft.Wing.SLAT_SPAN_RATIO, 0.89759603)
+        add_aviary_output(self, Aircraft.Wing.SLAT_SPAN_RATIO)
         self.add_output(
             "chord_to_body_ratio",
             val=0.12679,
