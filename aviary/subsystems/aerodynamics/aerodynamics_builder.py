@@ -7,12 +7,10 @@ AerodynamicsBuilderBase : the interface for an aerodynamics subsystem builder.
 
 CoreAerodynamicsBuilder : the interface for Aviary's core aerodynamics subsystem builder
 """
+import numpy as np
 from itertools import chain
 
-import numpy as np
-
-import openmdao.api as om
-from dymos.utils.misc import _unspecified
+# from dymos.utils.misc import _unspecified
 
 from aviary.subsystems.aerodynamics.flops_based.computed_aero_group import \
     ComputedAeroGroup
@@ -39,7 +37,7 @@ from aviary.variable_info.variables import Aircraft, Mission, Dynamic
 GASP = LegacyCode.GASP
 FLOPS = LegacyCode.FLOPS
 
-_default_name = 'aerodynamics'
+default_name = 'aerodynamics'
 
 
 class AerodynamicsBuilderBase(SubsystemBuilderBase):
@@ -58,7 +56,7 @@ class AerodynamicsBuilderBase(SubsystemBuilderBase):
 
     def __init__(self, name=None, meta_data=None):
         if name is None:
-            name = _default_name
+            name = default_name
 
         super().__init__(name=name, meta_data=meta_data)
 
@@ -337,7 +335,7 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
                 aero_opt = phase_info['subsystem_options'][self.name]
                 method = aero_opt['method']
             except KeyError:
-                method = 'computed'
+                method = None
 
             if phase_info is not None:
                 # Only solved_alpha has connectable inputs.
@@ -387,7 +385,7 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
 
                     val = meta['default_value']
                     if val is None:
-                        val = _unspecified
+                        val = 0.0  # _unspecified
                     units = meta['units']
 
                     if var in aviary_inputs:
@@ -397,6 +395,7 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
                             val = aviary_inputs.get_val(var)
 
                     params[var] = {'val': val,
+                                   'units': units,
                                    'static_target': True}
 
                 for var in ENGINE_SIZED_INPUTS:
@@ -410,7 +409,7 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
 
                     val = meta['default_value']
                     if val is None:
-                        val = _unspecified
+                        val = 0.0  # _unspecified
                     units = meta['units']
 
                     if var in aviary_inputs:
@@ -420,6 +419,7 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
                             val = aviary_inputs.get_val(var)
 
                     params[var] = {'val': val,
+                                   'units': units,
                                    'static_target': True}
 
             elif method == "low_speed":
@@ -430,7 +430,7 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
 
                     val = meta['default_value']
                     if val is None:
-                        val = _unspecified
+                        val = 0.0  # _unspecified
                     units = meta['units']
 
                     if var in aviary_inputs:
@@ -440,6 +440,7 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
                             val = aviary_inputs.get_val(var)
 
                     params[var] = {'val': val,
+                                   'units': units,
                                    'static_target': True}
 
         else:
@@ -447,7 +448,7 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
             # TODO: 2DOF/Gasp decided on phases based on phase names. We used
             # a saved phase_name to determine the correct aero variables to
             # promote. Ideally, this should all be refactored.
-            if phase_info['phase_type'] in ['ascent', 'groundroll', 'rotation']:
+            if bool(phase_info) and phase_info['phase_type'] in ['ascent', 'groundroll', 'rotation']:
                 all_vars = (AERO_2DOF_INPUTS, AERO_LS_2DOF_INPUTS)
             else:
                 all_vars = (AERO_2DOF_INPUTS, AERO_CLEAN_2DOF_INPUTS)
@@ -458,7 +459,7 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
 
                 val = meta['default_value']
                 if val is None:
-                    val = _unspecified
+                    val = 0.0  # _unspecified
                 units = meta['units']
 
                 if var in aviary_inputs:
@@ -468,6 +469,7 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
                         val = aviary_inputs.get_val(var)
 
                 params[var] = {'val': val,
+                               'units': units,
                                'static_target': True}
 
         return params
