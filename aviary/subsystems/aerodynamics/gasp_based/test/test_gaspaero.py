@@ -33,6 +33,7 @@ class GASPAeroTest(unittest.TestCase):
             CruiseAero(num_nodes=2, input_atmos=True),
             promotes=["*"],
         )
+        prob.model.set_input_defaults(Aircraft.Wing.AREA, val=1370.3)
         prob.setup(check=False, force_alloc_complex=True)
 
         _init_geom(prob)
@@ -74,6 +75,7 @@ class GASPAeroTest(unittest.TestCase):
             ),
             promotes=["*"],
         )
+        prob.model.set_input_defaults(Aircraft.Wing.AREA, val=1370.3)
         prob.setup(check=False, force_alloc_complex=True)
 
         _init_geom(prob)
@@ -140,6 +142,7 @@ class GASPAeroTest(unittest.TestCase):
             promotes_inputs=["*", "lift_req"],
         )
 
+        prob.model.set_input_defaults(Aircraft.Wing.AREA, val=1370.3)
         prob.setup(check=False, force_alloc_complex=True)
 
         _init_geom(prob)
