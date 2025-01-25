@@ -6251,6 +6251,7 @@ add_meta_data(
     historical_name={"GASP": 'XKV', "FLOPS": None, "LEAPS1": None},
     units='ft**2/s',
     desc="Atmospheric kinematic viscosity at the vehicle's current flight condition",
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -6276,6 +6277,7 @@ add_meta_data(
     historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
     units='ft/s',
     desc="Atmospheric speed of sound at vehicle's current flight condition",
+    default_value=0.0,
 )
 
 add_meta_data(

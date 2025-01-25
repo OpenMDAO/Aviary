@@ -305,7 +305,7 @@ class WingFuselageInterferenceMission(om.ExplicitComponent):
     def setup(self):
         nn = self.options["num_nodes"]
 
-        add_aviary_input(self, Aircraft.Wing.FORM_FACTOR, 1.25)
+        add_aviary_input(self, Aircraft.Wing.FORM_FACTOR)
         add_aviary_input(self, Aircraft.Wing.AVERAGE_CHORD)
         add_aviary_input(self, Dynamic.Atmosphere.MACH, shape=nn)
         add_aviary_input(self, Dynamic.Atmosphere.TEMPERATURE, shape=nn)
