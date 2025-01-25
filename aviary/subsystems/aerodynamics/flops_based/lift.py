@@ -21,7 +21,8 @@ class SimpleLift(om.ExplicitComponent):
 
         add_aviary_input(self, Aircraft.Wing.AREA, val=1., units='m**2')
 
-        add_aviary_input(self, Dynamic.Atmosphere.DYNAMIC_PRESSURE, shape=nn, units='N/m**2')
+        add_aviary_input(self, Dynamic.Atmosphere.DYNAMIC_PRESSURE, shape=nn,
+                         units='N/m**2')
 
         self.add_input(
             name='cl', val=np.ones(nn), desc='current coefficient of lift',
@@ -76,7 +77,8 @@ class LiftEqualsWeight(om.ExplicitComponent):
 
         add_aviary_input(self, Dynamic.Vehicle.MASS, shape=(nn), units='kg')
 
-        add_aviary_input(self, Dynamic.Atmosphere.DYNAMIC_PRESSURE, shape=nn, units='N/m**2')
+        add_aviary_input(self, Dynamic.Atmosphere.DYNAMIC_PRESSURE, shape=nn,
+                         units='N/m**2')
 
         self.add_output(
             name='cl', val=np.ones(nn), desc='current coefficient of lift',

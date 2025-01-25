@@ -73,7 +73,8 @@ class CLFromLift(om.ExplicitComponent):
     def setup(self):
         nn = self.options["num_nodes"]
         self.add_input("lift_req", 1, units="lbf", shape=nn, desc="Lift force")
-        add_aviary_input(self, Dynamic.Atmosphere.DYNAMIC_PRESSURE, units="psf", shape=nn)
+        add_aviary_input(self, Dynamic.Atmosphere.DYNAMIC_PRESSURE, units="psf",
+                         shape=nn)
 
         add_aviary_input(self, Aircraft.Wing.AREA)
 

@@ -195,7 +195,6 @@ class GearDragIncrementTest(unittest.TestCase):
             promotes_inputs=['*'],
             promotes_outputs=['*'],
         )
-        #prob.model.set_input_defaults(Aircraft.Wing.AREA, val=1370.3)
         prob.setup(check=False, force_alloc_complex=True)
         prob.set_val(Mission.Design.GROSS_MASS, 175000, 'lbm')
         prob.set_val(Aircraft.Wing.AREA, 1000, 'ft**2')
