@@ -1382,6 +1382,28 @@ add_meta_data(
 )
 
 add_meta_data(
+    Aircraft.Design.LIFT_DEPENDENT_DRAG_POLAR,
+    meta_data=_MetaData,
+    historical_name={"GASP": None,
+                     "FLOPS": None,
+                     "LEAPS1": None
+                     },
+    units='unitless',
+    desc='Lift dependent drag polar computed during Aviary pre-mission.',
+)
+
+add_meta_data(
+    Aircraft.Design.LIFT_INDEPENDENT_DRAG_POLAR,
+    meta_data=_MetaData,
+    historical_name={"GASP": None,
+                     "FLOPS": None,
+                     "LEAPS1": None
+                     },
+    units='unitless',
+    desc='Lift independent drag polar computed during Aviary pre-mission.',
+)
+
+add_meta_data(
     Aircraft.Design.LIFT_POLAR,
     meta_data=_MetaData,
     historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
