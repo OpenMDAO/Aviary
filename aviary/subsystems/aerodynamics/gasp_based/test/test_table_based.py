@@ -148,7 +148,8 @@ class TestLowSpeedAero(unittest.TestCase):
             Dynamic.Atmosphere.MACH,
             [0.257, 0.260, 0.263, 0.265, 0.276, 0.277, 0.279, 0.280],
         )
-        prob.set_val(Dynamic.Vehicle.ANGLE_OF_ATTACK, [8.94, 8.74, 8.44, 8.24, 6.45, 6.34, 6.76, 7.59])
+        prob.set_val(Dynamic.Vehicle.ANGLE_OF_ATTACK,
+                     [8.94, 8.74, 8.44, 8.24, 6.45, 6.34, 6.76, 7.59])
         # TODO set q if we want to test lift/drag forces
 
         prob.set_val(Aircraft.Wing.AREA, 1370)

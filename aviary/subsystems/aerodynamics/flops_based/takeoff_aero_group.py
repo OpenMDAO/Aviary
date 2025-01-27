@@ -108,7 +108,8 @@ class TakeoffAeroGroup(om.Group):
             promotes_inputs=inputs,
         )
 
-        takeoff_polar.add_input(Dynamic.Vehicle.ANGLE_OF_ATTACK, angles_of_attack, units='rad')
+        takeoff_polar.add_input(Dynamic.Vehicle.ANGLE_OF_ATTACK,
+                                angles_of_attack, units='rad')
 
         takeoff_polar.add_output('lift_coefficient', lift_coefficients, units='unitless')
         takeoff_polar.add_output('drag_coefficient', drag_coefficients, units='unitless')

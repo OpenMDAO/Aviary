@@ -90,7 +90,8 @@ class SolvedAlphaGroup(om.Group):
         )
 
         balance = self.add_subsystem('balance', om.BalanceComp())
-        balance.add_balance('angle_of_attack', val=np.ones(nn), units='deg', res_ref=1.0e6)
+        balance.add_balance('angle_of_attack', val=np.ones(nn),
+                            units='deg', res_ref=1.0e6)
 
         self.connect('balance.angle_of_attack', 'tabular_aero.angle_of_attack')
         self.connect('needed_lift.lift_resid', 'balance.lhs:angle_of_attack')

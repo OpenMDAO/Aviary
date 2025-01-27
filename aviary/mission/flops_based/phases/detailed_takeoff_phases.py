@@ -212,7 +212,8 @@ class TakeoffBrakeReleaseToDecisionSpeed(PhaseBuilderBase):
             opt=False
         )
 
-        phase.add_parameter(Dynamic.Vehicle.ANGLE_OF_ATTACK, val=0.0, opt=False, units='deg')
+        phase.add_parameter(Dynamic.Vehicle.ANGLE_OF_ATTACK,
+                            val=0.0, opt=False, units='deg')
 
         phase.add_timeseries_output(
             Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
@@ -393,7 +394,8 @@ class TakeoffDecisionSpeedToRotate(PhaseBuilderBase):
 
         phase.add_boundary_constraint('v_over_v_stall', loc='final', lower=1.2, ref=1.2)
 
-        phase.add_parameter(Dynamic.Vehicle.ANGLE_OF_ATTACK, val=0.0, opt=False, units='deg')
+        phase.add_parameter(Dynamic.Vehicle.ANGLE_OF_ATTACK,
+                            val=0.0, opt=False, units='deg')
 
         phase.add_timeseries_output(
             Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
@@ -2364,7 +2366,8 @@ class TakeoffBrakeToAbort(PhaseBuilderBase):
             opt=False
         )
 
-        phase.add_parameter(Dynamic.Vehicle.ANGLE_OF_ATTACK, val=0.0, opt=False, units='deg')
+        phase.add_parameter(Dynamic.Vehicle.ANGLE_OF_ATTACK,
+                            val=0.0, opt=False, units='deg')
 
         return phase
 

@@ -489,7 +489,8 @@ def _build_flaps_aero_interp(num_nodes=0, aero_data=None, connect_training_data=
 
     interp_data = _structure_special_grid(interp_data)
 
-    required_inputs = {'flap_deflection', Dynamic.Atmosphere.MACH, Dynamic.Vehicle.ANGLE_OF_ATTACK}
+    required_inputs = {'flap_deflection',
+                       Dynamic.Atmosphere.MACH, Dynamic.Vehicle.ANGLE_OF_ATTACK}
     required_outputs = {'delta_lift_coefficient', 'delta_drag_coefficient'}
 
     missing_variables = []
