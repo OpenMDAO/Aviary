@@ -1155,7 +1155,8 @@ class LandingNoseDownToStop(PhaseBuilderBase):
             opt=False
         )
 
-        phase.add_parameter(Dynamic.Vehicle.ANGLE_OF_ATTACK, val=0.0, opt=False, units='deg')
+        phase.add_parameter(Dynamic.Vehicle.ANGLE_OF_ATTACK,
+                            val=0.0, opt=False, units='deg')
 
         phase.add_timeseries_output(
             Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
