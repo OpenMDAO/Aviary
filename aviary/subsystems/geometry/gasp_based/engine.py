@@ -1,8 +1,7 @@
 import numpy as np
 import openmdao.api as om
 
-from aviary.utils.aviary_values import AviaryValues
-from aviary.variable_info.functions import add_aviary_input, add_aviary_output
+from aviary.variable_info.functions import add_aviary_input, add_aviary_output, add_aviary_option
 from aviary.variable_info.variables import Aircraft
 
 
@@ -13,34 +12,28 @@ class EngineSize(om.ExplicitComponent):
     """
 
     def initialize(self):
-
-        self.options.declare(
-            'aviary_options', types=AviaryValues,
-            desc='collection of Aircraft/Mission specific options'
-        )
+        add_aviary_option(self, Aircraft.Engine.NUM_ENGINES)
 
     def setup(self):
-        num_engine_type = len(self.options['aviary_options'].get_val(
-            Aircraft.Engine.NUM_ENGINES))
+        num_engine_type = len(self.options[Aircraft.Engine.NUM_ENGINES])
 
         add_aviary_input(self, Aircraft.Engine.REFERENCE_DIAMETER,
-                         np.full(num_engine_type, 5.8))
-        add_aviary_input(self, Aircraft.Engine.SCALE_FACTOR, np.ones(num_engine_type))
+                         shape=num_engine_type)
+        add_aviary_input(self, Aircraft.Engine.SCALE_FACTOR, shape=num_engine_type)
         add_aviary_input(self, Aircraft.Nacelle.CORE_DIAMETER_RATIO,
-                         np.full(num_engine_type, 1.25))
-        add_aviary_input(self, Aircraft.Nacelle.FINENESS, np.full(num_engine_type, 2))
+                         shape=num_engine_type)
+        add_aviary_input(self, Aircraft.Nacelle.FINENESS, shape=num_engine_type)
 
         add_aviary_output(self, Aircraft.Nacelle.AVG_DIAMETER,
-                          val=np.zeros(num_engine_type))
+                          shape=num_engine_type)
         add_aviary_output(self, Aircraft.Nacelle.AVG_LENGTH,
-                          val=np.zeros(num_engine_type))
+                          shape=num_engine_type)
         add_aviary_output(self, Aircraft.Nacelle.SURFACE_AREA,
-                          val=np.zeros(num_engine_type))
+                          shape=num_engine_type)
 
     def setup_partials(self):
         # derivatives w.r.t vectorized engine inputs have known sparsity pattern
-        num_engine_type = len(self.options['aviary_options'].get_val(
-            Aircraft.Engine.NUM_ENGINES))
+        num_engine_type = len(self.options[Aircraft.Engine.NUM_ENGINES])
         shape = np.arange(num_engine_type)
 
         innames = [

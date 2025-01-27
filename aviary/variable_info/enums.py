@@ -68,7 +68,7 @@ class GASPEngineType(Enum):
     """
     Defines the type of engine to use in GASP-based mass calculations.
     Note that only the value for the first engine model will be used.
-    Currenly only the TURBOJET option is implemented, but other types of engines will be added in the future.
+    Currenly only the TURBOJET and TURBOPROP options are implemented, but other types of engines will be added in the future.
     """
     # Reciprocating engine with carburator
     RECIP_CARB = 1
@@ -151,10 +151,18 @@ class ProblemType(Enum):
     weight and empty weight constant. Using the specified actual
     gross weight, it will then find the maximum distance the off-design
     aircraft can fly.
+
+    MULTI_MISSION: Similar to a SIZING mission, however it varies the 
+    design gross weight and actual gross weight across multiple missions 
+    to and closes design range for each mission. This causes the empty 
+    weight and the fuel weight to change. The final result will be a 
+    single empty weight, for all the different missions, and multiple
+    values for fuel weight, unique to each mission.
     """
     SIZING = 'sizing'
     ALTERNATE = 'alternate'
     FALLOUT = 'fallout'
+    MULTI_MISSION = 'multimission'
 
 
 class SpeedType(Enum):

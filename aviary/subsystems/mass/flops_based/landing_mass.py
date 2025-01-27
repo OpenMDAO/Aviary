@@ -1,7 +1,6 @@
 import numpy as np
 import openmdao.api as om
 
-from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.functions import add_aviary_input, add_aviary_output
 from aviary.variable_info.variables import Aircraft, Mission
 
@@ -11,17 +10,11 @@ class LandingTakeoffMassRatio(om.ExplicitComponent):
     Calculate the ratio of maximum landing mass to maximum takeoff gross mass.
     '''
 
-    def initialize(self):
-        self.options.declare(
-            'aviary_options', types=AviaryValues,
-            desc='collection of Aircraft/Mission specific options')
-
     def setup(self):
-        add_aviary_input(self, Mission.Summary.CRUISE_MACH, val=0.0)
+        add_aviary_input(self, Mission.Summary.CRUISE_MACH)
+        add_aviary_input(self, Mission.Design.RANGE)
 
-        add_aviary_input(self, Mission.Design.RANGE, val=0.0)
-
-        add_aviary_output(self, Aircraft.Design.LANDING_TO_TAKEOFF_MASS_RATIO, val=0.0)
+        add_aviary_output(self, Aircraft.Design.LANDING_TO_TAKEOFF_MASS_RATIO)
 
     def setup_partials(self):
         self.declare_partials('*', '*')
@@ -58,17 +51,11 @@ class LandingMass(om.ExplicitComponent):
     Maximum landing mass is maximum takeoff gross mass times the ratio of landing/takeoff mass.
     '''
 
-    def initialize(self):
-        self.options.declare(
-            'aviary_options', types=AviaryValues,
-            desc='collection of Aircraft/Mission specific options')
-
     def setup(self):
-        add_aviary_input(self, Mission.Design.GROSS_MASS, val=0.0)
+        add_aviary_input(self, Mission.Design.GROSS_MASS)
+        add_aviary_input(self, Aircraft.Design.LANDING_TO_TAKEOFF_MASS_RATIO)
 
-        add_aviary_input(self, Aircraft.Design.LANDING_TO_TAKEOFF_MASS_RATIO, val=0.0)
-
-        add_aviary_output(self, Aircraft.Design.TOUCHDOWN_MASS, val=0.0)
+        add_aviary_output(self, Aircraft.Design.TOUCHDOWN_MASS)
 
     def setup_partials(self):
         self.declare_partials('*', '*')

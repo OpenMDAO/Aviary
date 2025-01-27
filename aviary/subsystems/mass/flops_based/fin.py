@@ -1,8 +1,7 @@
 import openmdao.api as om
 
 from aviary.constants import GRAV_ENGLISH_LBM
-from aviary.utils.aviary_values import AviaryValues
-from aviary.variable_info.functions import add_aviary_input, add_aviary_output
+from aviary.variable_info.functions import add_aviary_input, add_aviary_output, add_aviary_option
 from aviary.variable_info.variables import Aircraft, Mission
 
 
@@ -13,24 +12,21 @@ class FinMass(om.ExplicitComponent):
     '''
 
     def initialize(self):
-        self.options.declare(
-            'aviary_options', types=AviaryValues,
-            desc='collection of Aircraft/Mission specific options')
+        add_aviary_option(self, Aircraft.Fins.NUM_FINS)
 
     def setup(self):
-        add_aviary_input(self, Mission.Design.GROSS_MASS, val=0.0)
-        add_aviary_input(self, Aircraft.Fins.AREA, val=0.0)
-        add_aviary_input(self, Aircraft.Fins.TAPER_RATIO, val=0.0)
-        add_aviary_input(self, Aircraft.Fins.MASS_SCALER, val=1.0)
+        add_aviary_input(self, Mission.Design.GROSS_MASS)
+        add_aviary_input(self, Aircraft.Fins.AREA)
+        add_aviary_input(self, Aircraft.Fins.TAPER_RATIO)
+        add_aviary_input(self, Aircraft.Fins.MASS_SCALER)
 
-        add_aviary_output(self, Aircraft.Fins.MASS, val=0.0)
+        add_aviary_output(self, Aircraft.Fins.MASS)
 
     def setup_partials(self):
         self.declare_partials("*", "*")
 
     def compute(self, inputs, outputs):
-        aviary_options: AviaryValues = self.options['aviary_options']
-        num_fins = aviary_options.get_val(Aircraft.Fins.NUM_FINS)
+        num_fins = self.options[Aircraft.Fins.NUM_FINS]
         if num_fins > 0:
             togw = inputs[Mission.Design.GROSS_MASS] * GRAV_ENGLISH_LBM
             area = inputs[Aircraft.Fins.AREA]
@@ -41,8 +37,7 @@ class FinMass(om.ExplicitComponent):
                 inputs[Aircraft.Fins.MASS_SCALER] / GRAV_ENGLISH_LBM
 
     def compute_partials(self, inputs, J):
-        aviary_options: AviaryValues = self.options['aviary_options']
-        num_fins = aviary_options.get_val(Aircraft.Fins.NUM_FINS)
+        num_fins = self.options[Aircraft.Fins.NUM_FINS]
         if num_fins > 0:
             area = inputs[Aircraft.Fins.AREA]
             taper_ratio = inputs[Aircraft.Fins.TAPER_RATIO]

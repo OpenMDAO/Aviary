@@ -30,7 +30,7 @@ class TotalSummationTest(unittest.TestCase):
 
         prob.model.add_subsystem(
             "tot",
-            MassSummation(aviary_options=get_flops_inputs(case_name, preprocess=True)),
+            MassSummation(),
             promotes_inputs=['*'],
             promotes_outputs=['*'],
         )
@@ -99,9 +99,15 @@ class AltTotalSummationTest(unittest.TestCase):
 
         prob = self.prob
 
+        inputs = get_flops_inputs(case_name, preprocess=True)
+
+        options = {
+            Aircraft.Design.USE_ALT_MASS: inputs.get_val(Aircraft.Design.USE_ALT_MASS),
+        }
+
         prob.model.add_subsystem(
             "tot",
-            MassSummation(aviary_options=get_flops_inputs(case_name, preprocess=True)),
+            MassSummation(**options),
             promotes_inputs=['*'],
             promotes_outputs=['*'],
         )
@@ -180,8 +186,12 @@ class StructureMassTest(unittest.TestCase):
 
         preprocess_propulsion(options, [engineModel1, engineModel2, engineModel3])
 
-        prob.model.add_subsystem('structure_mass', StructureMass(
-            aviary_options=options), promotes=['*'])
+        comp_options = {
+            Aircraft.Engine.NUM_ENGINES: options.get_val(Aircraft.Engine.NUM_ENGINES),
+        }
+
+        prob.model.add_subsystem('structure_mass', StructureMass(**comp_options),
+                                 promotes=['*'])
         prob.setup(force_alloc_complex=True)
 
         prob.set_val(Aircraft.Canard.MASS, val=10.0, units='lbm')

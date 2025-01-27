@@ -18,7 +18,7 @@ on:
 jobs:
 
   latest_benchmarks:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     timeout-minutes: 90
 
     steps:
@@ -38,8 +38,7 @@ jobs:
             SCIPY: 1
             PYOPTSPARSE: 'v2.9.1'
             SNOPT: '7.7'
-            #OPENMDAO: 'latest'
-            OPENMDAO: '3.34.2'
+            OPENMDAO: 'latest'
             DYMOS: 'latest'
             SSH_PRIVATE_KEY: ${{secrets.SSH_PRIVATE_KEY}}
             SSH_KNOWN_HOSTS: ${{secrets.SSH_KNOWN_HOSTS}}
