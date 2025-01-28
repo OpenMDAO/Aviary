@@ -3,6 +3,7 @@ import numpy as np
 import openmdao.api as om
 
 from dymos.transcriptions.transcription_base import TranscriptionBase
+from dymos.utils.misc import _unspecified
 
 from aviary.mission.energy_phase import EnergyPhase
 from aviary.mission.flops_based.phases.build_landing import Landing
@@ -112,10 +113,6 @@ class ProblemBuilderHeightEnergy():
         except KeyError:
             fix_duration = False
 
-        # The rest of the phases includes all Height Energy method phases
-        # and any 2DOF phases that don't fall into the naming patterns
-        # above.
-        input_initial = False
         time_units = phase.time_options['units']
 
         # Make a good guess for a reasonable intitial time scaler.
@@ -136,8 +133,11 @@ class ProblemBuilderHeightEnergy():
             'duration_ref', (duration_bounds[0] + duration_bounds[1]) / 2.,
             time_units
         )
-        if phase_idx > 0:
-            input_initial = True
+
+        # The rest of the phases includes all Height Energy method phases
+        # and any 2DOF phases that don't fall into the naming patterns
+        # above.
+        input_initial = phase_idx > 0
 
         if fix_initial or input_initial:
 
@@ -147,23 +147,17 @@ class ProblemBuilderHeightEnergy():
                 initial_ref = user_options.get_val("initial_ref", time_units)
             else:
                 # Redundant on a fixed input; raises a warning if specified.
-                initial_ref = None
+                initial_ref = _unspecified
+                initial_bounds = _unspecified
 
             phase.set_time_options(
                 fix_initial=fix_initial, fix_duration=fix_duration, units=time_units,
                 duration_bounds=user_options.get_val("duration_bounds", time_units),
                 duration_ref=user_options.get_val("duration_ref", time_units),
+                initial_bounds=initial_bounds,
                 initial_ref=initial_ref,
             )
-        elif phase_name == 'descent':  # TODO: generalize this logic for all phases
-            phase.set_time_options(
-                fix_initial=False, fix_duration=False, units=time_units,
-                duration_bounds=user_options.get_val("duration_bounds", time_units),
-                duration_ref=user_options.get_val("duration_ref", time_units),
-                initial_bounds=initial_bounds,
-                initial_ref=user_options.get_val("initial_ref", time_units),
-            )
-        else:  # TODO: figure out how to handle this now that fix_initial is dict
+        else:
             phase.set_time_options(
                 fix_initial=fix_initial, fix_duration=fix_duration, units=time_units,
                 duration_bounds=user_options.get_val("duration_bounds", time_units),

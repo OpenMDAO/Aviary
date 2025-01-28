@@ -144,7 +144,7 @@ class AviaryProblem(om.Problem):
                     f'When using "settings:equations_of_motion,custom", a problem_builder must be specified in load_inputs().')
         else:
             raise ValueError(
-                f'settings:equations_of_motion must be one of: height_energy, 2DOF, or custom')
+                f'settings:equations_of_motion must be one of: height_energy, 2DOF, solved_2DOF, or custom')
 
         # TODO this should be a preprocessor step if it is required here
         if mission_method is TWO_DEGREES_OF_FREEDOM or mass_method is GASP:
