@@ -3,7 +3,6 @@ import numpy as np
 import openmdao.api as om
 
 from dymos.transcriptions.transcription_base import TranscriptionBase
-from dymos.utils.misc import _unspecified
 
 from aviary.mission.energy_phase import EnergyPhase
 from aviary.mission.flops_based.phases.build_landing import Landing
@@ -147,14 +146,13 @@ class ProblemBuilderHeightEnergy():
                 initial_ref = user_options.get_val("initial_ref", time_units)
             else:
                 # Redundant on a fixed input; raises a warning if specified.
-                initial_ref = _unspecified
-                initial_bounds = _unspecified
+                initial_ref = None
+                initial_bounds = (None, None)
 
             phase.set_time_options(
                 fix_initial=fix_initial, fix_duration=fix_duration, units=time_units,
                 duration_bounds=user_options.get_val("duration_bounds", time_units),
                 duration_ref=user_options.get_val("duration_ref", time_units),
-                initial_bounds=initial_bounds,
                 initial_ref=initial_ref,
             )
         else:
