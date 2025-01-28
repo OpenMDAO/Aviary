@@ -27,4 +27,4 @@ identifiers:
 repository-code: 'https://github.com/OpenMDAO/Aviary'
 repository: 'https://github.com/OpenMDAO/Aviary_Community'
 license: Apache-2.0
-version: 0.9.7
+version: 0.9.7-dev
