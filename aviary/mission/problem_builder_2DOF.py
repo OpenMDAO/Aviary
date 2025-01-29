@@ -21,6 +21,7 @@ from aviary.variable_info.enums import AnalysisScheme
 from aviary.variable_info.variables import Aircraft, Mission, Dynamic, Settings
 from aviary.utils.process_input_decks import update_GASP_options
 from aviary.subsystems.propulsion.utils import build_engine_deck
+from aviary.mission.gasp_based.polynomial_fit import PolynomialFit
 
 
 class ProblemBuilder2DOF():
@@ -193,9 +194,6 @@ class ProblemBuilder2DOF():
             promotes_outputs=[('Vrot', Mission.Takeoff.ROTATION_VELOCITY)]
         )
 
-    def add_post_mission_takeoff_systems(self, prob):
-        pass
-
     def get_phase_builder(self, prob, phase_name, phase_options):
 
         if 'groundroll' in phase_name:
@@ -324,6 +322,9 @@ class ProblemBuilder2DOF():
                 units='unitless',
                 opt=False,
             )
+
+        # TODO: This seems like a hack. We might want to find a better way.
+        prob.phase_info[phase_name]['phase_type'] = phase_name
 
     def link_phases(self, prob, phases, direct_links=True):
 
@@ -469,7 +470,71 @@ class ProblemBuilder2DOF():
                 flat_src_indices=True,
             )
 
-    def add_landing_systems(self, prob):
+        if prob.analysis_scheme is AnalysisScheme.COLLOCATION:
+            if 'ascent' in prob.phase_info:
+                self._add_groundroll_eq_constraint(prob)
+
+    def _add_groundroll_eq_constraint(self, prob):
+        """
+        Add an equality constraint to the problem to ensure that the TAS at the end of the
+        groundroll phase is equal to the rotation velocity at the start of the rotation phase.
+        """
+        prob.model.add_subsystem(
+            "groundroll_boundary",
+            om.EQConstraintComp(
+                "velocity",
+                eq_units="ft/s",
+                normalize=True,
+                add_constraint=True,
+            ),
+        )
+        prob.model.connect(Mission.Takeoff.ROTATION_VELOCITY,
+                           "groundroll_boundary.rhs:velocity")
+        prob.model.connect(
+            "traj.groundroll.states:velocity",
+            "groundroll_boundary.lhs:velocity",
+            src_indices=[-1],
+            flat_src_indices=True,
+        )
+
+    def add_post_mission_systems(self, prob, include_landing=True):
+
+        if include_landing and prob.post_mission_info['include_landing']:
+            self._add_landing_systems(prob)
+
+        prob.post_mission.add_constraint(
+            Mission.Constraints.MASS_RESIDUAL, equals=0.0, ref=1.e5)
+
+        if prob.analysis_scheme is AnalysisScheme.COLLOCATION:
+            ascent_phase = getattr(prob.traj.phases, 'ascent')
+            ascent_tx = ascent_phase.options["transcription"]
+            ascent_num_nodes = ascent_tx.grid_data.num_nodes
+            prob.model.add_subsystem(
+                "h_fit",
+                PolynomialFit(N_cp=ascent_num_nodes),
+                promotes_inputs=["t_init_gear", "t_init_flaps"],
+            )
+
+        prob.model.add_subsystem(
+            "range_constraint",
+            om.ExecComp(
+                "range_resid = target_range - actual_range",
+                target_range={"val": prob.target_range, "units": "NM"},
+                actual_range={"val": prob.target_range, "units": "NM"},
+                range_resid={"val": 30, "units": "NM"},
+            ),
+            promotes_inputs=[
+                ("actual_range", Mission.Summary.RANGE),
+                "target_range",
+            ],
+            promotes_outputs=[
+                ("range_resid", Mission.Constraints.RANGE_RESIDUAL)],
+        )
+
+        prob.post_mission.add_constraint(
+            Mission.Constraints.MASS_RESIDUAL, equals=0.0, ref=1.e5)
+
+    def _add_landing_systems(self, prob):
 
         prob.model.add_subsystem(
             "landing",
@@ -680,34 +745,3 @@ class ProblemBuilder2DOF():
                 parent_prefix + f"traj.{phase_name}.states:distance",
                 phase.interp(Dynamic.Mission.DISTANCE, ys=ys),
             )
-
-    def add_post_mission_systems(self, prob):
-
-        if self.analysis_scheme is AnalysisScheme.COLLOCATION:
-            ascent_phase = getattr(self.traj.phases, 'ascent')
-            ascent_tx = ascent_phase.options["transcription"]
-            ascent_num_nodes = ascent_tx.grid_data.num_nodes
-            self.model.add_subsystem(
-                "h_fit",
-                PolynomialFit(N_cp=ascent_num_nodes),
-                promotes_inputs=["t_init_gear", "t_init_flaps"],
-            )
-
-        self.model.add_subsystem(
-            "range_constraint",
-            om.ExecComp(
-                "range_resid = target_range - actual_range",
-                target_range={"val": self.target_range, "units": "NM"},
-                actual_range={"val": self.target_range, "units": "NM"},
-                range_resid={"val": 30, "units": "NM"},
-            ),
-            promotes_inputs=[
-                ("actual_range", Mission.Summary.RANGE),
-                "target_range",
-            ],
-            promotes_outputs=[
-                ("range_resid", Mission.Constraints.RANGE_RESIDUAL)],
-        )
-
-        self.post_mission.add_constraint(
-            Mission.Constraints.MASS_RESIDUAL, equals=0.0, ref=1.e5)
