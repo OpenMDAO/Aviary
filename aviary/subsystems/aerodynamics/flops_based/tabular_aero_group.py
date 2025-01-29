@@ -143,15 +143,32 @@ class TabularAeroGroup(om.Group):
                 Aircraft.Wing.AREA,
                 Dynamic.Atmosphere.DYNAMIC_PRESSURE,
             ],
-            promotes_outputs=[('cl', 'lift_coefficient'), Dynamic.Vehicle.LIFT],
-        )
+            promotes_outputs=[('cl', 'lift_coefficient'), Dynamic.Vehicle.LIFT])
+
+        if connect_training_data:
+            extra_promotes = [('zero_lift_drag_coefficient_train',
+                               Aircraft.Design.LIFT_INDEPENDENT_DRAG_POLAR)]
+        else:
+            extra_promotes = []
 
         self.add_subsystem(
-            'CD0_interp', CD0_interp, promotes_inputs=['*'], promotes_outputs=['*']
+            'CD0_interp',
+            CD0_interp,
+            promotes_inputs=['*'] + extra_promotes,
+            promotes_outputs=['*'],
         )
 
+        if connect_training_data:
+            extra_promotes = [('lift_dependent_drag_coefficient_train',
+                               Aircraft.Design.LIFT_DEPENDENT_DRAG_POLAR)]
+        else:
+            extra_promotes = []
+
         self.add_subsystem(
-            'CDI_interp', CDI_interp, promotes_inputs=['*'], promotes_outputs=['*']
+            'CDI_interp',
+            CDI_interp,
+            promotes_inputs=['*'] + extra_promotes,
+            promotes_outputs=['*'],
         )
 
         self.add_subsystem(
