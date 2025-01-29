@@ -234,7 +234,8 @@ class RangeComp(om.ExplicitComponent):
 
 class E_RangeComp(om.ExplicitComponent):
     """
-    Compute the cruise range and time for the electrical breguet range component
+    Compute the cruise range and time for all-electrical aircraft.
+    Assume the battery mass does not change during the cruise.
     """
 
     def initialize(self):
