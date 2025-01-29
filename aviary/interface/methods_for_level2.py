@@ -927,8 +927,6 @@ class AviaryProblem(om.Problem):
             promotes_outputs=[("reg_objective", Mission.Objectives.RANGE)],
         )
 
-        self.builder.add_post_mission_systems(self)
-
     def _link_phases_helper_with_options(self, phases, option_name, var, **kwargs):
         # Initialize a list to keep track of indices where option_name is True
         true_option_indices = []
