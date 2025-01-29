@@ -331,7 +331,6 @@ class ProblemBuilder2DOF():
 
         else:
 
-            input_initial = False
             time_units = phase.time_options['units']
 
             # Make a good guess for a reasonable intitial time scaler.
@@ -352,8 +351,7 @@ class ProblemBuilder2DOF():
                 'duration_ref', (duration_bounds[0] + duration_bounds[1]) / 2.,
                 time_units
             )
-            if phase_idx > 0:
-                input_initial = True
+            input_initial = phase_idx > 0
 
             if fix_initial or input_initial:
 
