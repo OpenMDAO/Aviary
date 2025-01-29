@@ -1003,7 +1003,7 @@ class AviaryProblem(om.Problem):
             if len(phases_to_link) > 1:  # TODO: hack
                 self.traj.link_phases(phases=phases_to_link, vars=[var], connected=True)
 
-        self.builder.link_phases(self, phases, connected=true_unless_mpi)
+        self.builder.link_phases(self, phases, connect_directly=true_unless_mpi)
 
     def add_driver(
             self, optimizer=None, use_coloring=None, max_iter=50,

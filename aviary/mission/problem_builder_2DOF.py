@@ -390,7 +390,7 @@ class ProblemBuilder2DOF():
         # TODO: This seems like a hack. We might want to find a better way.
         prob.phase_info[phase_name]['phase_type'] = phase_name
 
-    def link_phases(self, prob, phases, connected=True):
+    def link_phases(self, prob, phases, connect_directly=True):
         """
         Apply any additional phase linking.
 
@@ -405,7 +405,7 @@ class ProblemBuilder2DOF():
             Problem that owns this builder.
         phases : Phase
             Phases to be linked.
-        connected : bool
+        connect_directly : bool
             When True, then connected=True. This allows the connections to be
             handled by constraints if `phases` is a parallel group under MPI.
         """
@@ -419,8 +419,8 @@ class ProblemBuilder2DOF():
                 if not (analytic1 or analytic2):
                     # we always want time, distance, and mass to be continuous
                     states_to_link = {
-                        'time': connected,
-                        Dynamic.Mission.DISTANCE: connected,
+                        'time': connect_directly,
+                        Dynamic.Mission.DISTANCE: connect_directly,
                         Dynamic.Vehicle.MASS: False,
                     }
 
@@ -431,7 +431,7 @@ class ProblemBuilder2DOF():
                     if ((phase1 in prob.reserve_phases) == (phase2 in prob.reserve_phases)) and \
                             not ({"groundroll", "rotation"} & {phase1, phase2}) and \
                             not ('accel', 'climb1') == (phase1, phase2):  # required for convergence of FwGm
-                        states_to_link[Dynamic.Mission.ALTITUDE] = connected
+                        states_to_link[Dynamic.Mission.ALTITUDE] = connect_directly
 
                     # if either phase is rotation, we need to connect velocity
                     # ascent to accel also requires velocity
@@ -439,7 +439,7 @@ class ProblemBuilder2DOF():
                             phase1, phase2) or (
                             'ascent', 'accel') == (
                             phase1, phase2):
-                        states_to_link[Dynamic.Mission.VELOCITY] = connected
+                        states_to_link[Dynamic.Mission.VELOCITY] = connect_directly
                         # if the first phase is rotation, we also need alpha
                         if phase1 == 'rotation':
                             states_to_link['alpha'] = False
