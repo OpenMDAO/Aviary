@@ -581,6 +581,20 @@ class ProblemBuilder2DOF():
         )
 
     def add_post_mission_systems(self, prob, include_landing=True):
+        """
+        Apply any post mission systems.
+
+        These may include any post-mission take off and landing systems.
+
+        This is called from AviaryProblem.add_post_mission_systems
+
+        Parameters
+        ----------
+        prob : AviaryProblem
+            Problem that owns this builder.
+        include_landing : bool
+            When True, include the landing systems.
+        """
 
         if include_landing and prob.post_mission_info['include_landing']:
             self._add_landing_systems(prob)

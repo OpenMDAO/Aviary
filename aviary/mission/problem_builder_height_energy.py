@@ -293,6 +293,20 @@ class ProblemBuilderHeightEnergy():
                            src_indices=[-1], flat_src_indices=True)
 
     def add_post_mission_systems(self, prob, include_landing=True):
+        """
+        Apply any post mission systems.
+
+        These may include any post-mission take off and landing systems.
+
+        This is called from AviaryProblem.add_post_mission_systems
+
+        Parameters
+        ----------
+        prob : AviaryProblem
+            Problem that owns this builder.
+        include_landing : bool
+            When True, include the landing systems.
+        """
 
         if prob.pre_mission_info['include_takeoff']:
             self._add_post_mission_takeoff_systems(prob)
