@@ -911,22 +911,6 @@ class AviaryProblem(om.Problem):
             promotes_outputs=[("reg_objective", Mission.Objectives.FUEL)],
         )
 
-        self.model.add_subsystem(
-            "range_obj",
-            om.ExecComp(
-                "reg_objective = -actual_range/1000 + ascent_duration/30.",
-                reg_objective={"val": 0.0, "units": "unitless"},
-                ascent_duration={"units": "s", "shape": 1},
-                actual_range={
-                    "val": self.target_range, "units": "NM"},
-            ),
-            promotes_inputs=[
-                ("actual_range", Mission.Summary.RANGE),
-                ("ascent_duration", Mission.Takeoff.ASCENT_DURATION),
-            ],
-            promotes_outputs=[("reg_objective", Mission.Objectives.RANGE)],
-        )
-
     def _link_phases_helper_with_options(self, phases, option_name, var, **kwargs):
         # Initialize a list to keep track of indices where option_name is True
         true_option_indices = []
