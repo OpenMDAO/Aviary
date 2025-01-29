@@ -339,12 +339,12 @@ class ProblemBuilderHeightEnergy():
                 flat_src_indices=True,
             )
 
-        self.model.add_subsystem(
+        prob.model.add_subsystem(
             "range_constraint",
             om.ExecComp(
                 "range_resid = target_range - actual_range",
-                target_range={"val": self.target_range, "units": "NM"},
-                actual_range={"val": self.target_range, "units": "NM"},
+                target_range={"val": prob.target_range, "units": "NM"},
+                actual_range={"val": prob.target_range, "units": "NM"},
                 range_resid={"val": 30, "units": "NM"},
             ),
             promotes_inputs=[
@@ -355,7 +355,7 @@ class ProblemBuilderHeightEnergy():
                 ("range_resid", Mission.Constraints.RANGE_RESIDUAL)],
         )
 
-        self.post_mission.add_constraint(
+        prob.post_mission.add_constraint(
             Mission.Constraints.MASS_RESIDUAL, equals=0.0, ref=1.e5)
 
     def _add_post_mission_takeoff_systems(self, prob):
