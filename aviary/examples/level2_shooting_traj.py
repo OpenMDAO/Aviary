@@ -139,6 +139,6 @@ def custom_run_aviary(aircraft_filename, optimizer=None,
 
 
 if __name__ == "__main__":
-    input_deck = 'models/large_single_aisle_1/large_single_aisle_1_GwGm.csv'
+    input_deck = 'models/large_single_aisle_1/large_single_aisle_1_GASP.csv'
     custom_run_aviary(
         input_deck, analysis_scheme=AnalysisScheme.SHOOTING, run_driver=False)

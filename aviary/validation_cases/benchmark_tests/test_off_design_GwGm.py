@@ -141,7 +141,8 @@ class TestOffDesign(TwoDOFTestCase):
 
 
 if __name__ == '__main__':
-    test = TestOffDesign()
-    test.setUp()
-    test.test_off_design_SNOPT()
-    test.test_off_design_IPOPT()
+    unittest.main()
+    # test = TestOffDesign()
+    # test.setUp()
+    # test.test_off_design_SNOPT()
+    # test.test_off_design_IPOPT()
