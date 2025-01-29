@@ -193,9 +193,6 @@ class ProblemBuilder2DOF():
             promotes_outputs=[('Vrot', Mission.Takeoff.ROTATION_VELOCITY)]
         )
 
-    def add_post_mission_takeoff_systems(self, prob):
-        pass
-
     def get_phase_builder(self, prob, phase_name, phase_options):
 
         if 'groundroll' in phase_name:
@@ -324,6 +321,9 @@ class ProblemBuilder2DOF():
                 units='unitless',
                 opt=False,
             )
+
+        # TODO: This seems like a hack. We might want to find a better way.
+        prob.phase_info[phase_name]['phase_type'] = phase_name
 
     def link_phases(self, prob, phases, direct_links=True):
 
@@ -469,7 +469,42 @@ class ProblemBuilder2DOF():
                 flat_src_indices=True,
             )
 
-    def add_landing_systems(self, prob):
+        if prob.analysis_scheme is AnalysisScheme.COLLOCATION:
+            if 'ascent' in prob.phase_info:
+                self._add_groundroll_eq_constraint(prob)
+
+    def _add_groundroll_eq_constraint(self, prob):
+        """
+        Add an equality constraint to the problem to ensure that the TAS at the end of the
+        groundroll phase is equal to the rotation velocity at the start of the rotation phase.
+        """
+        prob.model.add_subsystem(
+            "groundroll_boundary",
+            om.EQConstraintComp(
+                "velocity",
+                eq_units="ft/s",
+                normalize=True,
+                add_constraint=True,
+            ),
+        )
+        prob.model.connect(Mission.Takeoff.ROTATION_VELOCITY,
+                           "groundroll_boundary.rhs:velocity")
+        prob.model.connect(
+            "traj.groundroll.states:velocity",
+            "groundroll_boundary.lhs:velocity",
+            src_indices=[-1],
+            flat_src_indices=True,
+        )
+
+    def add_post_mission_systems(self, prob, include_landing=True):
+
+        if include_landing and prob.post_mission_info['include_landing']:
+            self._add_landing_systems(prob)
+
+        prob.post_mission.add_constraint(
+            Mission.Constraints.MASS_RESIDUAL, equals=0.0, ref=1.e5)
+
+    def _add_landing_systems(self, prob):
 
         prob.model.add_subsystem(
             "landing",

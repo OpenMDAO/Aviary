@@ -128,10 +128,7 @@ class ProblemBuilderSolved2DOF():
             prob.traj.link_phases(
                 phases[1:], ["alpha"], units='rad', connected=False)
 
-    def add_post_mission_takeoff_systems(self, prob):
-        pass
-
-    def add_landing_systems(self, prob):
+    def add_post_mission_systems(self, prob, include_landing=True):
         pass
 
     def add_guesses(self, prob, phase_name, phase, guesses, target_prob, parent_prefix):

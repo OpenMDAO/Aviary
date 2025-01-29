@@ -208,7 +208,39 @@ class ProblemBuilderHeightEnergy():
                            Mission.Summary.RANGE,
                            src_indices=[-1], flat_src_indices=True)
 
-    def add_post_mission_takeoff_systems(self, prob):
+    def add_post_mission_systems(self, prob, include_landing=True):
+
+        if prob.pre_mission_info['include_takeoff']:
+            self._add_post_mission_takeoff_systems(prob)
+
+        if include_landing and prob.post_mission_info['include_landing']:
+            self._add_landing_systems(prob)
+
+        prob.post_mission.add_constraint(
+            Mission.Constraints.MASS_RESIDUAL, equals=0.0, ref=1.e5)
+
+        # connect summary mass to the initial guess of mass in the first phase
+        if not prob.pre_mission_info['include_takeoff']:
+
+            first_flight_phase_name = list(prob.phase_info.keys())[0]
+
+            eq = prob.model.add_subsystem(
+                f'link_{first_flight_phase_name}_mass',
+                om.EQConstraintComp(),
+                promotes_inputs=[('rhs:mass', Mission.Summary.GROSS_MASS)],
+            )
+
+            eq.add_eq_output('mass', eq_units='lbm', normalize=False,
+                             ref=100000., add_constraint=True)
+
+            prob.model.connect(
+                f'traj.{first_flight_phase_name}.states:mass',
+                f'link_{first_flight_phase_name}_mass.lhs:mass',
+                src_indices=[0],
+                flat_src_indices=True,
+            )
+
+    def _add_post_mission_takeoff_systems(self, prob):
 
         first_flight_phase_name = list(prob.phase_info.keys())[0]
         connect_takeoff_to_climb = not prob.phase_info[first_flight_phase_name][
@@ -260,7 +292,7 @@ class ProblemBuilderHeightEnergy():
                 prob.model.add_constraint(
                     'alt_diff_comp.altitude_resid_for_connecting_takeoff', equals=0.0)
 
-    def add_landing_systems(self, prob):
+    def _add_landing_systems(self, prob):
 
         landing_options = Landing(
             ref_wing_area=prob.aviary_inputs.get_val(

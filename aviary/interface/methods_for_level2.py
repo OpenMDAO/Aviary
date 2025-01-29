@@ -504,29 +504,6 @@ class AviaryProblem(om.Problem):
                 promotes_outputs=[('subsystem_mass', Aircraft.Design.
                                    EXTERNAL_SUBSYSTEMS_MASS)])
 
-    def _add_groundroll_eq_constraint(self):
-        """
-        Add an equality constraint to the problem to ensure that the TAS at the end of the
-        groundroll phase is equal to the rotation velocity at the start of the rotation phase.
-        """
-        self.model.add_subsystem(
-            "groundroll_boundary",
-            om.EQConstraintComp(
-                "velocity",
-                eq_units="ft/s",
-                normalize=True,
-                add_constraint=True,
-            ),
-        )
-        self.model.connect(Mission.Takeoff.ROTATION_VELOCITY,
-                           "groundroll_boundary.rhs:velocity")
-        self.model.connect(
-            "traj.groundroll.states:velocity",
-            "groundroll_boundary.lhs:velocity",
-            src_indices=[-1],
-            flat_src_indices=True,
-        )
-
     def _get_phase(self, phase_name, phase_idx):
         base_phase_options = self.phase_info[phase_name]
 
@@ -689,16 +666,6 @@ class AviaryProblem(om.Problem):
                     phase_name, self._get_phase(phase_name, phase_idx))
                 add_subsystem_timeseries_outputs(phase, phase_name)
 
-                if self.mission_method is TWO_DEGREES_OF_FREEDOM:
-
-                    # In GASP, we still use the phase name to infer the phase type.
-                    # We need this information to be available in the builders.
-                    # TODO - Ultimately we should overhaul all of this.
-                    self.phase_info[phase_name]['phase_type'] = phase_name
-
-                    if phase_name == 'ascent':
-                        self._add_groundroll_eq_constraint()
-
         # loop through phase_info and external subsystems
         external_parameters = {}
         for phase_name in self.phase_info:
@@ -749,15 +716,11 @@ class AviaryProblem(om.Problem):
         A user can override this with their own postmission systems.
         """
 
-        if self.pre_mission_info['include_takeoff']:
-            self.builder.add_post_mission_takeoff_systems(self)
-
-        if include_landing and self.post_mission_info['include_landing']:
-            self.builder.add_landing_systems(self)
-
         self.model.add_subsystem('post_mission', self.post_mission,
                                  promotes_inputs=['*'],
                                  promotes_outputs=['*'])
+
+        self.builder.add_post_mission_systems(self, include_landing)
 
         # Add all post-mission external subsystems.
         for external_subsystem in self.post_mission_info['external_subsystems']:
@@ -933,26 +896,6 @@ class AviaryProblem(om.Problem):
                 ('payload_mass', payload_mass_src),
                 ('initial_mass', Mission.Summary.GROSS_MASS)],
             promotes_outputs=[("mass_resid", Mission.Constraints.MASS_RESIDUAL)])
-
-        if self.mission_method in (HEIGHT_ENERGY, TWO_DEGREES_OF_FREEDOM):
-            self.post_mission.add_constraint(
-                Mission.Constraints.MASS_RESIDUAL, equals=0.0, ref=1.e5)
-
-        if self.mission_method is HEIGHT_ENERGY:
-            # connect summary mass to the initial guess of mass in the first phase
-            if not self.pre_mission_info['include_takeoff']:
-                first_flight_phase_name = list(self.phase_info.keys())[0]
-                eq = self.model.add_subsystem(
-                    f'link_{first_flight_phase_name}_mass', om.EQConstraintComp(),
-                    promotes_inputs=[('rhs:mass', Mission.Summary.GROSS_MASS)])
-                eq.add_eq_output('mass', eq_units='lbm', normalize=False,
-                                 ref=100000., add_constraint=True)
-                self.model.connect(
-                    f'traj.{first_flight_phase_name}.states:mass',
-                    f'link_{first_flight_phase_name}_mass.lhs:mass',
-                    src_indices=[0],
-                    flat_src_indices=True,
-                )
 
     def _link_phases_helper_with_options(self, phases, option_name, var, **kwargs):
         # Initialize a list to keep track of indices where option_name is True
@@ -1863,21 +1806,6 @@ class AviaryProblem(om.Problem):
                            "obj_comp.final_mass", src_indices=[-1])
         self.model.connect(f"traj.{final_phase_name}.timeseries.time",
                            "obj_comp.final_time", src_indices=[-1])
-
-    def _add_vrotate_comp(self):
-        self.model.add_subsystem("vrot_comp", VRotateComp())
-        self.model.connect('traj.groundroll.states:mass',
-                           'vrot_comp.mass', src_indices=om.slicer[0, ...])
-
-        vrot_eq_comp = self.model.add_subsystem("vrot_eq_comp", om.EQConstraintComp())
-        vrot_eq_comp.add_eq_output(
-            "v_rotate_error", eq_units="kn", lhs_name="v_rot_computed",
-            rhs_name="groundroll_v_final", add_constraint=True)
-
-        self.model.connect('vrot_comp.Vrot', 'vrot_eq_comp.v_rot_computed')
-        self.model.connect(
-            'traj.groundroll.timeseries.velocity', 'vrot_eq_comp.groundroll_v_final',
-            src_indices=om.slicer[-1, ...])
 
     def _save_to_csv_file(self, filename):
         with open(filename, 'w', newline='') as csvfile:
