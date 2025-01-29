@@ -582,7 +582,7 @@ class ProblemBuilder2DOF():
 
     def add_post_mission_systems(self, prob, include_landing=True):
         """
-        Apply any post mission systems.
+        Add any post mission systems.
 
         These may include any post-mission take off and landing systems.
 
