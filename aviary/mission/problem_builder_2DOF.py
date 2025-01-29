@@ -31,6 +31,17 @@ class ProblemBuilder2DOF():
     """
 
     def initial_guesses(self, prob):
+        """
+        Set any initial guesses for variables in the aviary problem.
+
+        This is called at the end of AivaryProblem.load_inputs.
+
+        Parameters
+        ----------
+        prob : AviaryProblem
+            Problem that owns this builder.
+        """
+
         # TODO: This should probably be moved to the set_initial_guesses() method in AviaryProblem class
         # Defines how the problem should build it's initial guesses for load_inputs()
         # this modifies mass_method, initialization_guesses, and aviary_values
@@ -85,11 +96,29 @@ class ProblemBuilder2DOF():
         prob.cruise_mach = aviary_inputs.get_val(Mission.Design.MACH)
         prob.require_range_residual = True
 
-    def phase_info_default_location(self, prob):
-        # Set the location of the default phase info for the EOM if no phase_info is specified
+    def get_default_phase_info(self, prob):
+        """
+        Return a default phase_info for this type or problem.
+
+        The default phase_info is used in the level 1 and 2 interfaces when no
+        phase_info is specified.
+
+        This is called during load_inputs.
+
+        Parameters
+        ----------
+        prob : AviaryProblem
+            Problem that owns this builder.
+
+        Returns
+        -------
+        AviaryValues
+            General default phase_info.
+        """
 
         if prob.analysis_scheme is AnalysisScheme.COLLOCATION:
             from aviary.interface.default_phase_info.two_dof import phase_info
+
         elif prob.analysis_scheme is AnalysisScheme.SHOOTING:
             from aviary.interface.default_phase_info.two_dof_fiti import phase_info, \
                 phase_info_parameterization
@@ -195,6 +224,25 @@ class ProblemBuilder2DOF():
         )
 
     def get_phase_builder(self, prob, phase_name, phase_options):
+        """
+        Return a phase_builder for the requested phase.
+
+        This is called from _get_phase in AviaryProblem.add_phases
+
+        Parameters
+        ----------
+        prob : AviaryProblem
+            Problem that owns this builder.
+        phase_name : str
+            Name of the requested phase.
+        phase_options : dict
+            Phase options for the requested phase.
+
+        Returns
+        -------
+        PhaseBuilderBase
+            Phase builder for requested phase.
+        """
 
         if 'groundroll' in phase_name:
             phase_builder = GroundrollPhase
@@ -218,6 +266,24 @@ class ProblemBuilder2DOF():
         return phase_builder
 
     def set_phase_options(self, prob, phase_name, phase_idx, phase, user_options):
+        """
+        Set any necessary problem-related options on the phase.
+
+        This is called from _get_phase in AviaryProblem.add_phases
+
+        Parameters
+        ----------
+        prob : AviaryProblem
+            Problem that owns this builder.
+        phase_name : str
+            Name of the requested phase.
+        phase_idx : int
+            Phase position in prob.phases. Can be used to identify first phase.
+        phase : Phase
+            Instantiated phase object.
+        user_options : dict
+            Subdictionary "user_options" from the phase_info.
+        """
 
         try:
             fix_initial = user_options.get_val('fix_initial')
@@ -326,7 +392,25 @@ class ProblemBuilder2DOF():
         # TODO: This seems like a hack. We might want to find a better way.
         prob.phase_info[phase_name]['phase_type'] = phase_name
 
-    def link_phases(self, prob, phases, direct_links=True):
+    def link_phases(self, prob, phases, connected=True):
+        """
+        Apply any additional phase linking.
+
+        Note that some phase variables are handled in the AviaryProblem. Only
+        problem-specific ones need to be linked here.
+
+        This is called from AviaryProblem.link_phases
+
+        Parameters
+        ----------
+        prob : AviaryProblem
+            Problem that owns this builder.
+        phases : Phase
+            Phases to be linked.
+        connected : bool
+            When True, then connected=True. This allows the connections to be
+            handled by constraints if `phases` is a parallel group under MPI.
+        """
 
         if prob.analysis_scheme is AnalysisScheme.COLLOCATION:
             for ii in range(len(phases) - 1):
@@ -337,8 +421,8 @@ class ProblemBuilder2DOF():
                 if not (analytic1 or analytic2):
                     # we always want time, distance, and mass to be continuous
                     states_to_link = {
-                        'time': direct_links,
-                        Dynamic.Mission.DISTANCE: direct_links,
+                        'time': connected,
+                        Dynamic.Mission.DISTANCE: connected,
                         Dynamic.Vehicle.MASS: False,
                     }
 
@@ -349,7 +433,7 @@ class ProblemBuilder2DOF():
                     if ((phase1 in prob.reserve_phases) == (phase2 in prob.reserve_phases)) and \
                             not ({"groundroll", "rotation"} & {phase1, phase2}) and \
                             not ('accel', 'climb1') == (phase1, phase2):  # required for convergence of FwGm
-                        states_to_link[Dynamic.Mission.ALTITUDE] = direct_links
+                        states_to_link[Dynamic.Mission.ALTITUDE] = connected
 
                     # if either phase is rotation, we need to connect velocity
                     # ascent to accel also requires velocity
@@ -357,7 +441,7 @@ class ProblemBuilder2DOF():
                             phase1, phase2) or (
                             'ascent', 'accel') == (
                             phase1, phase2):
-                        states_to_link[Dynamic.Mission.VELOCITY] = direct_links
+                        states_to_link[Dynamic.Mission.VELOCITY] = connected
                         # if the first phase is rotation, we also need alpha
                         if phase1 == 'rotation':
                             states_to_link['alpha'] = False
@@ -498,6 +582,20 @@ class ProblemBuilder2DOF():
         )
 
     def add_post_mission_systems(self, prob, include_landing=True):
+        """
+        Add any post mission systems.
+
+        These may include any post-mission take off and landing systems.
+
+        This is called from AviaryProblem.add_post_mission_systems
+
+        Parameters
+        ----------
+        prob : AviaryProblem
+            Problem that owns this builder.
+        include_landing : bool
+            When True, include the landing systems.
+        """
 
         if include_landing and prob.post_mission_info['include_landing']:
             self._add_landing_systems(prob)
