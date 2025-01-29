@@ -159,6 +159,7 @@ class AviaryProblem(om.Problem):
             phase_info_module_path = Path.cwd() / 'outputted_phase_info.py'
 
             if phase_info_module_path.exists():
+
                 spec = importlib.util.spec_from_file_location(
                     'outputted_phase_info', phase_info_module_path)
                 outputted_phase_info = importlib.util.module_from_spec(spec)
@@ -174,7 +175,7 @@ class AviaryProblem(om.Problem):
                     print('Using outputted phase_info from current working directory')
             else:
 
-                phase_info = self.builder.phase_info_default_location(self)
+                phase_info = self.builder.get_default_phase_info(self)
 
                 if verbosity is not None and verbosity >= Verbosity.BRIEF:
                     print('Loaded default phase_info for '
@@ -555,6 +556,7 @@ class AviaryProblem(om.Problem):
 
         user_options = AviaryValues(phase_options.get('user_options', ()))
 
+        # TODO: Should some of this stuff be moved into the phase builder?
         self.builder.set_phase_options(self, phase_name, phase_idx, phase, user_options)
 
         return phase
@@ -989,7 +991,7 @@ class AviaryProblem(om.Problem):
             if len(phases_to_link) > 1:  # TODO: hack
                 self.traj.link_phases(phases=phases_to_link, vars=[var], connected=True)
 
-        self.builder.link_phases(self, phases, direct_links=true_unless_mpi)
+        self.builder.link_phases(self, phases, connected=true_unless_mpi)
 
     def add_driver(
             self, optimizer=None, use_coloring=None, max_iter=50,

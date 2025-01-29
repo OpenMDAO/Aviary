@@ -28,6 +28,17 @@ class ProblemBuilderHeightEnergy():
     """
 
     def initial_guesses(self, prob):
+        """
+        Set any initial guesses for variables in the aviary problem.
+
+        This is called at the end of AivaryProblem.load_inputs.
+
+        Parameters
+        ----------
+        prob : AviaryProblem
+            Problem that owns this builder.
+        """
+
         # TODO: This should probably be moved to the set_initial_guesses() method in AviaryProblem class
         # Defines how the problem should build it's initial guesses for load_inputs()
         # this modifies mass_method, initialization_guesses, and aviary_values
@@ -68,11 +79,29 @@ class ProblemBuilderHeightEnergy():
             prob.target_range = aviary_inputs.get_val(
                 Mission.Design.RANGE, units='NM')
 
-    def phase_info_default_location(self, prob):
-        # Set the location of the default phase info for the EOM if no phase_info is specified
+    def get_default_phase_info(self, prob):
+        """
+        Return a default phase_info for this type or problem.
 
+        The default phase_info is used in the level 1 and 2 interfaces when no
+        phase_info is specified.
+
+        This is called during load_inputs.
+
+        Parameters
+        ----------
+        prob : AviaryProblem
+            Problem that owns this builder.
+
+        Returns
+        -------
+        AviaryValues
+            General default phase_info.
+        """
         if prob.analysis_scheme is AnalysisScheme.COLLOCATION:
             from aviary.interface.default_phase_info.height_energy import phase_info
+        else:
+            raise RuntimeError("Height Energy requires that a phase_info is specified.")
 
         return phase_info
 
@@ -93,6 +122,25 @@ class ProblemBuilderHeightEnergy():
         )
 
     def get_phase_builder(self, prob, phase_name, phase_options):
+        """
+        Return a phase_builder for the requested phase.
+
+        This is called from _get_phase in AviaryProblem.add_phases
+
+        Parameters
+        ----------
+        prob : AviaryProblem
+            Problem that owns this builder.
+        phase_name : str
+            Name of the requested phase.
+        phase_options : dict
+            Phase options for the requested phase.
+
+        Returns
+        -------
+        PhaseBuilderBase
+            Phase builder for requested phase.
+        """
 
         if 'phase_builder' in phase_options:
             phase_builder = phase_options['phase_builder']
@@ -105,6 +153,24 @@ class ProblemBuilderHeightEnergy():
         return phase_builder
 
     def set_phase_options(self, prob, phase_name, phase_idx, phase, user_options):
+        """
+        Set any necessary problem-related options on the phase.
+
+        This is called from _get_phase in AviaryProblem.add_phases
+
+        Parameters
+        ----------
+        prob : AviaryProblem
+            Problem that owns this builder.
+        phase_name : str
+            Name of the requested phase.
+        phase_idx : int
+            Phase position in prob.phases. Can be used to identify first phase.
+        phase : Phase
+            Instantiated phase object.
+        user_options : dict
+            Subdictionary "user_options" from the phase_info.
+        """
 
         try:
             fix_initial = user_options.get_val('fix_initial')
@@ -168,7 +234,25 @@ class ProblemBuilderHeightEnergy():
                 initial_ref=user_options.get_val("initial_ref", time_units),
             )
 
-    def link_phases(self, prob, phases, direct_links=True):
+    def link_phases(self, prob, phases, connected=True):
+        """
+        Apply any additional phase linking.
+
+        Note that some phase variables are handled in the AviaryProblem. Only
+        problem-specific ones need to be linked here.
+
+        This is called from AviaryProblem.link_phases
+
+        Parameters
+        ----------
+        prob : AviaryProblem
+            Problem that owns this builder.
+        phases : Phase
+            Phases to be linked.
+        connected : bool
+            When True, then connected=True. This allows the connections to be
+            handled by constraints if `phases` is a parallel group under MPI.
+        """
 
         # connect regular_phases with each other if you are optimizing alt or mach
         prob._link_phases_helper_with_options(
@@ -195,14 +279,14 @@ class ProblemBuilderHeightEnergy():
         # connect mass and distance between all phases regardless of reserve /
         # non-reserve status
         prob.traj.link_phases(phases, ["time"],
-                              ref=None if direct_links else 1e3,
-                              connected=direct_links)
+                              ref=None if connected else 1e3,
+                              connected=connected)
         prob.traj.link_phases(phases, [Dynamic.Vehicle.MASS],
-                              ref=None if direct_links else 1e6,
-                              connected=direct_links)
+                              ref=None if connected else 1e6,
+                              connected=connected)
         prob.traj.link_phases(phases, [Dynamic.Mission.DISTANCE],
-                              ref=None if direct_links else 1e3,
-                              connected=direct_links)
+                              ref=None if connected else 1e3,
+                              connected=connected)
 
         prob.model.connect(f'traj.{prob.regular_phases[-1]}.timeseries.distance',
                            Mission.Summary.RANGE,
