@@ -199,3 +199,6 @@ class ProblemBuilderSolved2DOF():
                             prob._process_guess_var(val, guess_key, phase),
                             units=units
                         )
+
+    def add_post_mission_systems(self, prob):
+        pass

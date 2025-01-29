@@ -908,9 +908,6 @@ class AviaryProblem(om.Problem):
                 self.model.add_constraint(
                     f"{phase_name}_duration_constraint.duration_resid", equals=0.0, ref=1e2)
 
-        if self.mission_method in (TWO_DEGREES_OF_FREEDOM, HEIGHT_ENERGY):
-            self._add_comps_for_objs_and_cons()
-
         ecomp = om.ExecComp(
             'mass_resid = operating_empty_mass + overall_fuel + payload_mass -'
             ' initial_mass',
@@ -934,25 +931,39 @@ class AviaryProblem(om.Problem):
                 ('initial_mass', Mission.Summary.GROSS_MASS)],
             promotes_outputs=[("mass_resid", Mission.Constraints.MASS_RESIDUAL)])
 
-        if self.mission_method in (HEIGHT_ENERGY, TWO_DEGREES_OF_FREEDOM):
-            self.post_mission.add_constraint(
-                Mission.Constraints.MASS_RESIDUAL, equals=0.0, ref=1.e5)
+        # Objectives should be calculated here
+        self.model.add_subsystem(
+            "fuel_obj",
+            om.ExecComp(
+                "reg_objective = overall_fuel/10000 + ascent_duration/30.",
+                reg_objective={"val": 0.0, "units": "unitless"},
+                ascent_duration={"units": "s", "shape": 1},
+                overall_fuel={"units": "lbm"},
+            ),
+            promotes_inputs=[
+                ("ascent_duration", Mission.Takeoff.ASCENT_DURATION),
+                ("overall_fuel", Mission.Summary.TOTAL_FUEL_MASS),
+            ],
+            promotes_outputs=[("reg_objective", Mission.Objectives.FUEL)],
+        )
 
-        if self.mission_method is HEIGHT_ENERGY:
-            # connect summary mass to the initial guess of mass in the first phase
-            if not self.pre_mission_info['include_takeoff']:
-                first_flight_phase_name = list(self.phase_info.keys())[0]
-                eq = self.model.add_subsystem(
-                    f'link_{first_flight_phase_name}_mass', om.EQConstraintComp(),
-                    promotes_inputs=[('rhs:mass', Mission.Summary.GROSS_MASS)])
-                eq.add_eq_output('mass', eq_units='lbm', normalize=False,
-                                 ref=100000., add_constraint=True)
-                self.model.connect(
-                    f'traj.{first_flight_phase_name}.states:mass',
-                    f'link_{first_flight_phase_name}_mass.lhs:mass',
-                    src_indices=[0],
-                    flat_src_indices=True,
-                )
+        self.model.add_subsystem(
+            "range_obj",
+            om.ExecComp(
+                "reg_objective = -actual_range/1000 + ascent_duration/30.",
+                reg_objective={"val": 0.0, "units": "unitless"},
+                ascent_duration={"units": "s", "shape": 1},
+                actual_range={
+                    "val": self.target_range, "units": "NM"},
+            ),
+            promotes_inputs=[
+                ("actual_range", Mission.Summary.RANGE),
+                ("ascent_duration", Mission.Takeoff.ASCENT_DURATION),
+            ],
+            promotes_outputs=[("reg_objective", Mission.Objectives.RANGE)],
+        )
+
+        self.builder.add_post_mission_systems(self)
 
     def _link_phases_helper_with_options(self, phases, option_name, var, **kwargs):
         # Initialize a list to keep track of indices where option_name is True
@@ -1899,66 +1910,6 @@ class AviaryProblem(om.Problem):
         all_subsystems.append(self.core_subsystems['propulsion'])
 
         return all_subsystems
-
-    def _add_comps_for_objs_and_cons(self):
-        "add objectives and some constraints"
-        self.model.add_subsystem(
-            "fuel_obj",
-            om.ExecComp(
-                "reg_objective = overall_fuel/10000 + ascent_duration/30.",
-                reg_objective={"val": 0.0, "units": "unitless"},
-                ascent_duration={"units": "s", "shape": 1},
-                overall_fuel={"units": "lbm"},
-            ),
-            promotes_inputs=[
-                ("ascent_duration", Mission.Takeoff.ASCENT_DURATION),
-                ("overall_fuel", Mission.Summary.TOTAL_FUEL_MASS),
-            ],
-            promotes_outputs=[("reg_objective", Mission.Objectives.FUEL)],
-        )
-
-        self.model.add_subsystem(
-            "range_obj",
-            om.ExecComp(
-                "reg_objective = -actual_range/1000 + ascent_duration/30.",
-                reg_objective={"val": 0.0, "units": "unitless"},
-                ascent_duration={"units": "s", "shape": 1},
-                actual_range={
-                    "val": self.target_range, "units": "NM"},
-            ),
-            promotes_inputs=[
-                ("actual_range", Mission.Summary.RANGE),
-                ("ascent_duration", Mission.Takeoff.ASCENT_DURATION),
-            ],
-            promotes_outputs=[("reg_objective", Mission.Objectives.RANGE)],
-        )
-
-        if self.analysis_scheme is AnalysisScheme.COLLOCATION:
-            if self.mission_method is TWO_DEGREES_OF_FREEDOM:
-                ascent_phase = getattr(self.traj.phases, 'ascent')
-                ascent_tx = ascent_phase.options["transcription"]
-                ascent_num_nodes = ascent_tx.grid_data.num_nodes
-                self.model.add_subsystem(
-                    "h_fit",
-                    PolynomialFit(N_cp=ascent_num_nodes),
-                    promotes_inputs=["t_init_gear", "t_init_flaps"],
-                )
-
-        self.model.add_subsystem(
-            "range_constraint",
-            om.ExecComp(
-                "range_resid = target_range - actual_range",
-                target_range={"val": self.target_range, "units": "NM"},
-                actual_range={"val": self.target_range, "units": "NM"},
-                range_resid={"val": 30, "units": "NM"},
-            ),
-            promotes_inputs=[
-                ("actual_range", Mission.Summary.RANGE),
-                "target_range",
-            ],
-            promotes_outputs=[
-                ("range_resid", Mission.Constraints.RANGE_RESIDUAL)],
-        )
 
     def _add_fuel_reserve_component(self, post_mission=True,
                                     reserves_name=Mission.Design.RESERVE_FUEL):

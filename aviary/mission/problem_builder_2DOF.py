@@ -680,3 +680,34 @@ class ProblemBuilder2DOF():
                 parent_prefix + f"traj.{phase_name}.states:distance",
                 phase.interp(Dynamic.Mission.DISTANCE, ys=ys),
             )
+
+    def add_post_mission_systems(self, prob):
+
+        if self.analysis_scheme is AnalysisScheme.COLLOCATION:
+            ascent_phase = getattr(self.traj.phases, 'ascent')
+            ascent_tx = ascent_phase.options["transcription"]
+            ascent_num_nodes = ascent_tx.grid_data.num_nodes
+            self.model.add_subsystem(
+                "h_fit",
+                PolynomialFit(N_cp=ascent_num_nodes),
+                promotes_inputs=["t_init_gear", "t_init_flaps"],
+            )
+
+        self.model.add_subsystem(
+            "range_constraint",
+            om.ExecComp(
+                "range_resid = target_range - actual_range",
+                target_range={"val": self.target_range, "units": "NM"},
+                actual_range={"val": self.target_range, "units": "NM"},
+                range_resid={"val": 30, "units": "NM"},
+            ),
+            promotes_inputs=[
+                ("actual_range", Mission.Summary.RANGE),
+                "target_range",
+            ],
+            promotes_outputs=[
+                ("range_resid", Mission.Constraints.RANGE_RESIDUAL)],
+        )
+
+        self.post_mission.add_constraint(
+            Mission.Constraints.MASS_RESIDUAL, equals=0.0, ref=1.e5)

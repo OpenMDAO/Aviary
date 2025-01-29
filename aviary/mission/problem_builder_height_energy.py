@@ -437,3 +437,39 @@ class ProblemBuilderHeightEnergy():
             # Set the mass guess as the initial value for the mass state variable
             target_prob.set_val(parent_prefix + f'traj.{phase_name}.states:mass',
                                 mass_guess, units='lbm')
+
+    def add_post_mission_systems(self, prob):
+
+        self.model.add_subsystem(
+            "range_constraint",
+            om.ExecComp(
+                "range_resid = target_range - actual_range",
+                target_range={"val": self.target_range, "units": "NM"},
+                actual_range={"val": self.target_range, "units": "NM"},
+                range_resid={"val": 30, "units": "NM"},
+            ),
+            promotes_inputs=[
+                ("actual_range", Mission.Summary.RANGE),
+                "target_range",
+            ],
+            promotes_outputs=[
+                ("range_resid", Mission.Constraints.RANGE_RESIDUAL)],
+        )
+
+        self.post_mission.add_constraint(
+            Mission.Constraints.MASS_RESIDUAL, equals=0.0, ref=1.e5)
+
+        # connect summary mass to the initial guess of mass in the first phase
+        if not self.pre_mission_info['include_takeoff']:
+            first_flight_phase_name = list(self.phase_info.keys())[0]
+            eq = self.model.add_subsystem(
+                f'link_{first_flight_phase_name}_mass', om.EQConstraintComp(),
+                promotes_inputs=[('rhs:mass', Mission.Summary.GROSS_MASS)])
+            eq.add_eq_output('mass', eq_units='lbm', normalize=False,
+                             ref=100000., add_constraint=True)
+            self.model.connect(
+                f'traj.{first_flight_phase_name}.states:mass',
+                f'link_{first_flight_phase_name}_mass.lhs:mass',
+                src_indices=[0],
+                flat_src_indices=True,
+            )
