@@ -1,3 +1,5 @@
+# GASP-derived aircraft input deck converted from configuration_test_data_GASP.dat
+
 # Input Values
 aircraft:air_conditioning:mass_coefficient,1.65,unitless
 aircraft:anti_icing:mass,126,lbm
@@ -17,6 +19,7 @@ aircraft:design:cg_delta,0.25,unitless
 aircraft:design:cockpit_control_mass_coefficient,30,unitless
 aircraft:design:drag_increment,0.0014,unitless
 aircraft:design:emergency_equipment_mass,0,lbm
+aircraft:design:lift_curve_slope,7.1765,1/rad
 aircraft:design:max_structural_speed,440,mi/h
 aircraft:design:part25_structural_category,3,unitless
 aircraft:design:reserve_fuel_additional,0,lbm
@@ -25,14 +28,13 @@ aircraft:design:static_margin,0.05,unitless
 aircraft:design:structural_mass_increment,0,lbm
 aircraft:design:supercritical_drag_shift,0.033,unitless
 aircraft:engine:additional_mass_fraction,0.165,unitless
-aircraft:engine:data_file,models/engines/turbofan_23k_1.deck,unitless
-aircraft:engine:global_throttle,True
+aircraft:engine:global_throttle,True,unitless
 aircraft:engine:mass_scaler,1,unitless
 aircraft:engine:mass_specific,0.21366,lbm/lbf
 aircraft:engine:num_engines,2,unitless
 aircraft:engine:pod_mass_scaler,1,unitless
 aircraft:engine:pylon_factor,1.25,unitless
-aircraft:engine:reference_diameter,6.15,ft
+aircraft:engine:reference_diameter,5.8,ft
 aircraft:engine:reference_sls_thrust,28690,lbf
 aircraft:engine:scale_factor,0.7376089229696758,unitless
 aircraft:engine:scaled_sls_thrust,21162,lbf
@@ -49,6 +51,7 @@ aircraft:fuselage:aisle_width,24,inch
 aircraft:fuselage:delta_diameter,4.5,ft
 aircraft:fuselage:flat_plate_area_increment,0.25,ft**2
 aircraft:fuselage:form_factor,1.146,unitless
+aircraft:fuselage:length,0,ft
 aircraft:fuselage:mass_coefficient,102.82,unitless
 aircraft:fuselage:nose_fineness,1,unitless
 aircraft:fuselage:num_aisles,1,unitless
@@ -99,6 +102,7 @@ aircraft:vertical_tail:taper_ratio,0.801,unitless
 aircraft:vertical_tail:thickness_to_chord,0.1,unitless
 aircraft:vertical_tail:volume_coefficient,0.066,unitless
 aircraft:wing:aspect_ratio,19.565,unitless
+aircraft:wing:average_chord,12.615,ft
 aircraft:wing:center_distance,0.463,unitless
 aircraft:wing:choose_fold_location,False,unitless
 aircraft:wing:flap_chord_ratio,0.25,unitless
@@ -124,13 +128,14 @@ aircraft:wing:max_slat_deflection_landing,10,deg
 aircraft:wing:max_slat_deflection_takeoff,10,deg
 aircraft:wing:max_thickness_location,0.35,unitless
 aircraft:wing:min_pressure_location,0.3,unitless
-aircraft:wing:mount_location,1,unitless
+aircraft:wing:mounting_type,1,unitless
 aircraft:wing:num_flap_segments,2,unitless
 aircraft:wing:optimum_flap_deflection,55,deg
 aircraft:wing:optimum_slat_deflection,20,deg
 aircraft:wing:slat_chord_ratio,0.1,unitless
 aircraft:wing:slat_lift_increment_optimum,0.93,unitless
 aircraft:wing:slat_span_ratio,0.9,unitless
+aircraft:wing:span,117.8,ft
 aircraft:wing:surface_ctrl_mass_coefficient,0.5936,unitless
 aircraft:wing:sweep,22.47,deg
 aircraft:wing:taper_ratio,0.346,unitless
@@ -170,12 +175,6 @@ time_to_climb,0
 INGASP.ALR,1.11
 INGASP.BENGOB,0.05
 INGASP.CINP,0.11
-INGASP.CK10,1
-INGASP.CK11,1
-INGASP.CK18,1
-INGASP.CK7,1
-INGASP.CK8,1
-INGASP.CK9,1
 INGASP.CLIAB,1984
 INGASP.CMF,15
 INGASP.CMV,0.15
@@ -187,7 +186,6 @@ INGASP.FCSF,2.5
 INGASP.HBTP,0.472
 INGASP.HIR,0.015
 INGASP.HNCRU,36000
-INGASP.HPORT,0
 INGASP.HRI,2500
 INGASP.HSCREQ,25000
 INGASP.ICLM,3
