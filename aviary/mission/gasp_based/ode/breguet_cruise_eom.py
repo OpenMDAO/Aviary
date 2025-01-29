@@ -431,7 +431,8 @@ class E_RangeComp(om.ExplicitComponent):
             * 6076.1
         )
         J["cruise_time", Dynamic.Vehicle.CUMULATIVE_ELECTRIC_ENERGY_USED][1:] = \
-            J["cruise_range", Dynamic.Vehicle.CUMULATIVE_ELECTRIC_ENERGY_USED][1:] / vx_m[self._tril_rs[1:] - 1] * 6076.1
+            J["cruise_range", Dynamic.Vehicle.CUMULATIVE_ELECTRIC_ENERGY_USED][1:] / \
+            vx_m[self._tril_rs[1:] - 1] * 6076.1
 
         f = np.cumsum(e_drange_cruise)[:, np.newaxis]
         df_du = self._d_cumsum_dx @ self._scratch_nn_x_nn

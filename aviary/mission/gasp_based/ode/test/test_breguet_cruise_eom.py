@@ -185,7 +185,8 @@ class TestElectricBreguetResults(unittest.TestCase):
         self.prob.setup(check=False, force_alloc_complex=True)
 
         self.prob.set_val("TAS_cruise", 458.8, units="kn")
-        self.prob.set_val(Dynamic.Vehicle.CUMULATIVE_ELECTRIC_ENERGY_USED, np.linspace(19390, 5843, nn), units="kW*h")
+        self.prob.set_val(Dynamic.Vehicle.CUMULATIVE_ELECTRIC_ENERGY_USED,
+                          np.linspace(19390, 5843, nn), units="kW*h")
         self.prob.set_val(Dynamic.Vehicle.Propulsion.ELECTRIC_POWER_IN_TOTAL, -
                           10079.422 * np.ones(nn,), units="kW")
 
