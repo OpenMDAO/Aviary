@@ -19,6 +19,8 @@ from aviary.utils.functions import create_opts2vals, add_opts2vals, wrapped_conv
 from aviary.utils.process_input_decks import initialization_guessing
 from aviary.variable_info.enums import AnalysisScheme
 from aviary.variable_info.variables import Aircraft, Mission, Dynamic, Settings
+from aviary.utils.process_input_decks import update_GASP_options
+from aviary.subsystems.propulsion.utils import build_engine_deck
 
 
 class ProblemBuilder2DOF():
@@ -33,6 +35,11 @@ class ProblemBuilder2DOF():
         # this modifies mass_method, initialization_guesses, and aviary_values
 
         aviary_inputs = prob.aviary_inputs
+
+        aviary_inputs = update_GASP_options(aviary_inputs)
+
+        if prob.engine_builders is None:
+            prob.engine_builders = build_engine_deck(aviary_inputs)
 
         prob.initialization_guesses = initialization_guessing(
             aviary_inputs, prob.initialization_guesses, prob.engine_builders)

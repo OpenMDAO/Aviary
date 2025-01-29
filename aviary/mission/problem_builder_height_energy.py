@@ -13,6 +13,7 @@ from aviary.utils.process_input_decks import initialization_guessing
 from aviary.variable_info.enums import AnalysisScheme
 from aviary.variable_info.enums import LegacyCode
 from aviary.variable_info.variables import Aircraft, Mission, Dynamic, Settings
+from aviary.subsystems.propulsion.utils import build_engine_deck
 
 if hasattr(TranscriptionBase, 'setup_polynomial_controls'):
     use_new_dymos_syntax = False
@@ -32,6 +33,9 @@ class ProblemBuilderHeightEnergy():
         # this modifies mass_method, initialization_guesses, and aviary_values
 
         aviary_inputs = prob.aviary_inputs
+
+        if prob.engine_builders is None:
+            prob.engine_builders = build_engine_deck(aviary_inputs)
 
         prob.initialization_guesses = initialization_guessing(
             aviary_inputs, prob.initialization_guesses, prob.engine_builders)

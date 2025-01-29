@@ -3,6 +3,7 @@ from aviary.mission.flops_based.phases.groundroll_phase import GroundrollPhase a
 from aviary.mission.twodof_phase import TwoDOFPhase
 from aviary.utils.functions import wrapped_convert_units
 from aviary.variable_info.variables import Dynamic
+from aviary.subsystems.propulsion.utils import build_engine_deck
 
 
 class ProblemBuilderSolved2DOF():
@@ -11,6 +12,10 @@ class ProblemBuilderSolved2DOF():
     """
 
     def initial_guesses(self, prob):
+
+        if prob.engine_builders is None:
+            prob.engine_builders = build_engine_deck(prob.aviary_inputs)
+
         pass
 
     def phase_info_default_location(self, prob):

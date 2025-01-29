@@ -31,7 +31,6 @@ from aviary.subsystems.geometry.geometry_builder import CoreGeometryBuilder
 from aviary.subsystems.mass.mass_builder import CoreMassBuilder
 from aviary.subsystems.premission import CorePreMission
 from aviary.subsystems.propulsion.propulsion_builder import CorePropulsionBuilder
-from aviary.subsystems.propulsion.utils import build_engine_deck
 
 from aviary.utils.aviary_values import AviaryValues
 from aviary.utils.functions import wrapped_convert_units
@@ -128,6 +127,9 @@ class AviaryProblem(om.Problem):
             Settings.EQUATIONS_OF_MOTION)
         self.mass_method = mass_method = aviary_inputs.get_val(Settings.MASS_METHOD)
 
+        # Create engine_builder
+        self.engine_builders = engine_builders
+
         # Determine which problem builder to use based on mission_method
         if mission_method is HEIGHT_ENERGY:
             self.builder = ProblemBuilderHeightEnergy()
@@ -147,7 +149,7 @@ class AviaryProblem(om.Problem):
                 f'settings:equations_of_motion must be one of: height_energy, 2DOF, solved_2DOF, or custom')
 
         # TODO this should be a preprocessor step if it is required here
-        if mission_method is TWO_DEGREES_OF_FREEDOM or mass_method is GASP:
+        if mass_method is GASP:
             aviary_inputs = update_GASP_options(aviary_inputs)
 
         ## LOAD PHASE_INFO ###
@@ -198,10 +200,6 @@ class AviaryProblem(om.Problem):
             self.post_mission_info = phase_info['post_mission']
         else:
             self.post_mission_info = None
-
-        if engine_builders is None:
-            engine_builders = build_engine_deck(aviary_inputs)
-        self.engine_builders = engine_builders
 
         self.problem_type = aviary_inputs.get_val(Settings.PROBLEM_TYPE)
 
