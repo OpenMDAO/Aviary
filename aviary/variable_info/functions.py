@@ -256,10 +256,18 @@ def add_aviary_option(comp, name, val=_unspecified, units=None, desc=None, meta_
         be used.
     """
     meta = meta_data[name]
+    # units of None are overwritten with defaults. Overwriting units with None is
+    # unnecessary as it will cause errors down the line if the default is not already
+    # None
+    default_units = meta['units']
+
+    if units:
+        option_units = units
+    else:
+        option_units = default_units
+
     if not desc:
         desc = meta['desc']
-    if val is _unspecified:
-        val = meta['default_value']
 
     types = meta['types']
     if meta['multivalue']:
@@ -267,6 +275,20 @@ def add_aviary_option(comp, name, val=_unspecified, units=None, desc=None, meta_
             types = (list, *types)
         else:
             types = (list, types)
+
+    if val is _unspecified:
+        val = meta['default_value']
+
+        # val was not provided but different units were
+        if option_units != default_units:
+            try:
+                # convert the default units to requested units
+                val = convert_units(val, default_units, option_units)
+            except ValueError:
+                raise ValueError(
+                    f'The requested units {units} for output {name} in component '
+                    f'{comp.name} are invalid.'
+                )
 
     if units not in [None, 'unitless']:
         types = tuple
