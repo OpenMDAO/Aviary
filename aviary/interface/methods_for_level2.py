@@ -286,8 +286,6 @@ class AviaryProblem(om.Problem):
         # Fill in anything missing in the options with computed defaults.
         preprocess_options(aviary_inputs, engine_models=self.engine_builders)
 
-        mass_method = aviary_inputs.get_val(Settings.MASS_METHOD)
-
         ## Set Up Core Subsystems ##
         everything_else_origin = self.builder.get_computed_defaults(self)
 
@@ -303,9 +301,9 @@ class AviaryProblem(om.Problem):
 
         # which geometry methods should be used, or both?
         geom_code_origin = None
-        if (everything_else_origin is FLOPS) and (mass_method is FLOPS):
+        if (everything_else_origin is FLOPS) and (self.mass_method is FLOPS):
             geom_code_origin = FLOPS
-        elif (everything_else_origin is GASP) and (mass_method is GASP):
+        elif (everything_else_origin is GASP) and (self.mass_method is GASP):
             geom_code_origin = GASP
         else:
             both_geom = True
@@ -866,6 +864,8 @@ class AviaryProblem(om.Problem):
             initial_mass={'units': 'lbm'},
             mass_resid={'units': 'lbm'})
 
+        # TBD: This should be removed and updated with get_default_payload_mass()
+        # # HEIGHT_ENERGY
         if self.mass_method is GASP:
             payload_mass_src = Aircraft.CrewPayload.PASSENGER_PAYLOAD_MASS
         else:
