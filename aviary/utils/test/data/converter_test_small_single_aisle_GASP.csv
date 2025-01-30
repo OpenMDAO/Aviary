@@ -129,7 +129,6 @@ aircraft:wing:max_slat_deflection_landing,10,deg
 aircraft:wing:max_slat_deflection_takeoff,10,deg
 aircraft:wing:max_thickness_location,0.35,unitless
 aircraft:wing:min_pressure_location,0.3,unitless
-aircraft:wing:vertical_mount_location,0,unitless
 aircraft:wing:num_flap_segments,2,unitless
 aircraft:wing:optimum_flap_deflection,20,deg
 aircraft:wing:optimum_slat_deflection,20,deg
@@ -142,6 +141,7 @@ aircraft:wing:sweep,26.34,deg
 aircraft:wing:taper_ratio,0.301,unitless
 aircraft:wing:thickness_to_chord_root,0.1125,unitless
 aircraft:wing:thickness_to_chord_tip,0.12,unitless
+aircraft:wing:vertical_mount_location,0,unitless
 aircraft:wing:zero_lift_angle,-1.2,deg
 mission:design:cruise_altitude,37000,ft
 mission:design:gross_mass,124780,lbm
