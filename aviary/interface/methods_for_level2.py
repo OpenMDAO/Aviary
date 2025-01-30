@@ -286,17 +286,10 @@ class AviaryProblem(om.Problem):
         # Fill in anything missing in the options with computed defaults.
         preprocess_options(aviary_inputs, engine_models=self.engine_builders)
 
-        mission_method = aviary_inputs.get_val(Settings.EQUATIONS_OF_MOTION)
         mass_method = aviary_inputs.get_val(Settings.MASS_METHOD)
 
         ## Set Up Core Subsystems ##
-        if mission_method in (HEIGHT_ENERGY, SOLVED_2DOF):
-            everything_else_origin = FLOPS
-        elif mission_method is TWO_DEGREES_OF_FREEDOM:
-            everything_else_origin = GASP
-        else:
-            # Custom
-            everything_else_origin = None
+        everything_else_origin = self.builder.get_computed_defaults(self)
 
         prop = CorePropulsionBuilder(
             'core_propulsion', engine_models=self.engine_builders)
@@ -1732,7 +1725,6 @@ class AviaryProblem(om.Problem):
             phase_info = self.phase_info
         if mission_mass is None:
             mission_mass = self.get_val(Mission.Design.GROSS_MASS)
-
         if payload_mass is None:
             payload_mass = self.builder.get_default_payload_mass(self)
 

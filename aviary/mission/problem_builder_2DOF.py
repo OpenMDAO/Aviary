@@ -17,8 +17,8 @@ from aviary.mission.gasp_based.phases.descent_phase import DescentPhase
 
 from aviary.utils.functions import create_opts2vals, add_opts2vals, wrapped_convert_units
 from aviary.utils.process_input_decks import initialization_guessing
-from aviary.variable_info.enums import AnalysisScheme
-from aviary.variable_info.variables import Aircraft, Mission, Dynamic, Settings
+from aviary.variable_info.enums import AnalysisScheme, LegacyCode
+from aviary.variable_info.variables import Aircraft, Mission, Dynamic
 from aviary.utils.process_input_decks import update_GASP_options
 from aviary.subsystems.propulsion.utils import build_engine_deck
 from aviary.mission.gasp_based.polynomial_fit import PolynomialFit
@@ -132,6 +132,11 @@ class ProblemBuilder2DOF():
         payload_mass = self.get_val(Aircraft.CrewPayload.PASSENGER_PAYLOAD_MASS)
 
         return payload_mass
+
+    def get_computed_defaults(self, prob):
+        # Fill in anything missing in the options with computed defaults.
+
+        return LegacyCode.GASP
 
     def add_takeoff_systems(self, prob):
         # Create options to values

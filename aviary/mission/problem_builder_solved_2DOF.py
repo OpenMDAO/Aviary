@@ -4,6 +4,7 @@ from aviary.mission.twodof_phase import TwoDOFPhase
 from aviary.utils.functions import wrapped_convert_units
 from aviary.variable_info.variables import Dynamic
 from aviary.subsystems.propulsion.utils import build_engine_deck
+from aviary.variable_info.enums import LegacyCode
 
 
 class ProblemBuilderSolved2DOF():
@@ -49,6 +50,11 @@ class ProblemBuilderSolved2DOF():
     def get_default_payload_mass(self, prob):
 
         return None
+
+    def get_computed_defaults(self, prob):
+        # Fill in anything missing in the options with computed defaults.
+
+        return LegacyCode.FLOPS
 
     def add_takeoff_systems(self, prob):
         pass

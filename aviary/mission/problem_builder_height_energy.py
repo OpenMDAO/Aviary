@@ -10,11 +10,9 @@ from aviary.mission.flops_based.phases.build_takeoff import Takeoff
 from aviary.mission.phase_builder_base import PhaseBuilderBase
 from aviary.utils.functions import wrapped_convert_units
 from aviary.utils.process_input_decks import initialization_guessing
-from aviary.variable_info.enums import AnalysisScheme
-from aviary.variable_info.enums import LegacyCode
+from aviary.variable_info.enums import AnalysisScheme, LegacyCode
 from aviary.variable_info.variables import Aircraft, Mission, Dynamic, Settings
 from aviary.subsystems.propulsion.utils import build_engine_deck
-from aviary.mission.gasp_based.polynomial_fit import PolynomialFit
 
 if hasattr(TranscriptionBase, 'setup_polynomial_controls'):
     use_new_dymos_syntax = False
@@ -111,6 +109,11 @@ class ProblemBuilderHeightEnergy():
         payload_mass = prob.get_val(Aircraft.CrewPayload.TOTAL_PAYLOAD_MASS)
 
         return payload_mass
+
+    def get_computed_defaults(self, prob):
+        # Fill in anything missing in the options with computed defaults.
+
+        return LegacyCode.FLOPS
 
     def add_takeoff_systems(self, prob):
         # Initialize takeoff options
