@@ -46,10 +46,10 @@ jobs:
 
           # latest versions of openmdao/dymos
           - NAME: latest
-            PY: '3.10'
+            PY: '3.12'
             NUMPY: 1
             SCIPY: 1
-            PYOPTSPARSE: 'v2.9.1'
+            PYOPTSPARSE: 'v2.12.0'
             SNOPT: '7.7'
             OPENMDAO: 'latest'
             DYMOS: 'latest'
