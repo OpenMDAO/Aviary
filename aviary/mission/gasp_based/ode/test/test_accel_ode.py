@@ -9,7 +9,7 @@ from aviary.subsystems.propulsion.utils import build_engine_deck
 from aviary.utils.test_utils.default_subsystems import get_default_mission_subsystems
 from aviary.utils.test_utils.IO_test_util import check_prob_outputs
 from aviary.variable_info.options import get_option_defaults
-from aviary.variable_info.variables import Dynamic
+from aviary.variable_info.variables import Aircraft, Dynamic
 
 
 class AccelerationODETestCase(unittest.TestCase):
@@ -21,6 +21,7 @@ class AccelerationODETestCase(unittest.TestCase):
         self.prob = om.Problem()
 
         aviary_options = get_option_defaults()
+        aviary_options.set_val(Aircraft.Engine.GLOBAL_THROTTLE, True)
         default_mission_subsystems = get_default_mission_subsystems(
             'GASP', build_engine_deck(aviary_options))
 
@@ -35,18 +36,22 @@ class AccelerationODETestCase(unittest.TestCase):
         throttle_climb = 0.956
         self.prob.set_val(Dynamic.Mission.ALTITUDE, [500, 500], units="ft")
         self.prob.set_val(
-            Dynamic.Mission.THROTTLE, [
-                throttle_climb, throttle_climb], units='unitless')
+            Dynamic.Vehicle.Propulsion.THROTTLE,
+            [throttle_climb, throttle_climb],
+            units='unitless',
+        )
         self.prob.set_val(Dynamic.Mission.VELOCITY, [185, 252], units="kn")
-        self.prob.set_val(Dynamic.Mission.MASS, [174974, 174878], units="lbm")
+        self.prob.set_val(Dynamic.Vehicle.MASS, [174974, 174878], units="lbm")
 
         set_params_for_unit_tests(self.prob)
 
         self.prob.run_model()
         testvals = {
-            Dynamic.Mission.LIFT: [174974, 174878],
-            Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL: [
-                -13262.73, -13567.53]  # lbm/h
+            Dynamic.Vehicle.LIFT: [174974, 174878],
+            Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL: [
+                -13262.73,
+                -13567.53,
+            ],  # lbm/h
         }
         check_prob_outputs(self.prob, testvals, rtol=1e-6)
 

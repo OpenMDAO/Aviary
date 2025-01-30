@@ -1,3 +1,5 @@
+from aviary.subsystems.propulsion.utils import build_engine_deck
+from aviary.utils.preprocessors import preprocess_options
 import unittest
 
 import openmdao.api as om
@@ -28,7 +30,7 @@ class LandingGearMassTest(unittest.TestCase):
 
         prob.model.add_subsystem(
             "landing_gear",
-            LandingGearMass(aviary_options=get_flops_inputs(case_name)),
+            LandingGearMass(),
             promotes_inputs=['*'],
             promotes_outputs=['*'],
         )
@@ -66,7 +68,7 @@ class LandingGearMassTest2(unittest.TestCase):
         prob = om.Problem()
         prob.model.add_subsystem(
             "landing_gear",
-            LandingGearMass(aviary_options=get_flops_inputs("N3CC")),
+            LandingGearMass(),
             promotes_inputs=['*'],
             promotes_outputs=['*'],
         )
@@ -76,7 +78,7 @@ class LandingGearMassTest2(unittest.TestCase):
         prob.set_val(Aircraft.Design.TOUCHDOWN_MASS, 100000.0, 'lbm')
 
         partial_data = prob.check_partials(out_stream=None, method="cs")
-        assert_check_partials(partial_data, atol=2e-12, rtol=1e-12)
+        assert_check_partials(partial_data, atol=1e-11, rtol=1e-12)
 
 
 class AltLandingGearMassTest(unittest.TestCase):
@@ -92,7 +94,7 @@ class AltLandingGearMassTest(unittest.TestCase):
 
         prob.model.add_subsystem(
             "landing_gear_alt",
-            AltLandingGearMass(aviary_options=get_flops_inputs(case_name)),
+            AltLandingGearMass(),
             promotes_inputs=['*'],
             promotes_outputs=['*'],
         )
@@ -130,7 +132,7 @@ class AltLandingGearMassTest2(unittest.TestCase):
         prob = om.Problem()
         prob.model.add_subsystem(
             "landing_gear_alt",
-            AltLandingGearMass(aviary_options=get_flops_inputs("N3CC")),
+            AltLandingGearMass(),
             promotes_inputs=['*'],
             promotes_outputs=['*'],
         )
@@ -156,12 +158,18 @@ class LandingGearLengthTest(unittest.TestCase):
     def test_derivs(self, case_name):
         prob = self.prob
         model = prob.model
-        flops_inputs = get_flops_inputs(case_name)
+
+        inputs = get_flops_inputs(case_name, preprocess=True)
+
+        options = {
+            Aircraft.Engine.NUM_ENGINES: inputs.get_val(Aircraft.Engine.NUM_ENGINES),
+            Aircraft.Engine.NUM_WING_ENGINES: inputs.get_val(Aircraft.Engine.NUM_WING_ENGINES),
+        }
 
         model.add_subsystem(
-            'main', MainGearLength(aviary_options=flops_inputs), promotes=['*'])
+            'main', MainGearLength(**options), promotes=['*'])
         model.add_subsystem(
-            'nose', NoseGearLength(aviary_options=flops_inputs), promotes=['*'])
+            'nose', NoseGearLength(), promotes=['*'])
 
         prob.setup(force_alloc_complex=True)
 

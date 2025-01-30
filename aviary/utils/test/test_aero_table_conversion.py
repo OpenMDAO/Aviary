@@ -115,7 +115,7 @@ class TestAeroTableConversion(unittest.TestCase):
                                 0.02848, 0.03093, 0.03398, 0.0374, 0.04091, 0.04479, 0.04904, 0.05377, 0.05891, 0.01965, 0.02021, 0.02122, 0.02265, 0.02451, 0.02647, 0.02862, 0.0311, 0.03411, 0.03749, 0.04103, 0.04504, 0.04954, 0.05461, 0.06022, 0.01997, 0.0205, 0.02149, 0.02293, 0.02484, 0.02678, 0.0289, 0.03138, 0.03439, 0.03774, 0.04173, 0.04658, 0.05226, 0.05893, 0.06653, 0.02069, 0.0211, 0.02206, 0.02355, 0.02556, 0.02756, 0.02973, 0.03226, 0.0356, 0.03965, 0.04498, 0.0511, 0.05799, 0.06558, 0.07388, 0.02252, 0.02265, 0.02352, 0.02511, 0.02742, 0.02979, 0.03244, 0.03596, 0.04021, 0.04641, 0.05251, 0.05976, 0.06817, 0.07769, 0.08832, 0.03669, 0.03593, 0.03651, 0.0384, 0.04164, 0.04582, 0.05105, 0.05619, 0.06639, 0.07341, 0.081, 0.08847, 0.0958, 0.10335, 0.11098])
         expected_cdi_comments = ['# lift-dependent drag polar, function of Mach & CL']
 
-        input = get_path('utils/test/flops_test_polar.txt')
+        input = get_path('utils/test/data/flops_test_polar.txt')
         cdi_data, cdi_comments, cd0_data, cd0_comments = _load_flops_aero_table(input)
 
         # test CDi
@@ -161,13 +161,16 @@ class TestAeroTableConversion(unittest.TestCase):
                     self.assertEqual(line_no_whitespace.count(expected_line), 1)
 
                 except Exception as error:
-                    exc_string = f'Error:  {args.output_file}\nFound: {line_no_whitespace}\nExpected:  {expected_line}'
+                    exc_string = (
+                        f'Error:  {args.output_file}\nFound: '
+                        f'{line_no_whitespace}\nExpected:  {expected_line}'
+                    )
                     raise Exception(exc_string)
 
     def test_FLOPS_file(self):
         tempdir = tempfile.mkdtemp(prefix='testdir-')
         def args(): return None
-        args.input_file = 'utils/test/flops_test_polar.txt'
+        args.input_file = 'utils/test/data/flops_test_polar.txt'
         args.output_file = str(Path(tempdir, 'TEST_'+Path(args.input_file).name))
         args.data_format = 'FLOPS'
         _exec_ATC(args, None)

@@ -21,6 +21,7 @@ class UnsteadyControlIterGroup(om.Group):
                                   "output and adjusts the TAS rate equation.")
         self.options.declare("clean", types=bool, default=False,
                              desc="If true then no flaps or gear are included. Useful for high-speed flight phases.")
+
         self.options.declare(
             'aviary_options', types=AviaryValues, default=None,
             desc='collection of Aircraft/Mission specific options'
@@ -61,10 +62,15 @@ class UnsteadyControlIterGroup(om.Group):
 
         eom_comp = UnsteadySolvedEOM(num_nodes=nn, ground_roll=ground_roll)
 
-        self.add_subsystem("eom", subsys=eom_comp,
-                           promotes_inputs=["*",
-                                            (Dynamic.Mission.THRUST_TOTAL, "thrust_req")],
-                           promotes_outputs=["*"])
+        self.add_subsystem(
+            "eom",
+            subsys=eom_comp,
+            promotes_inputs=[
+                "*",
+                (Dynamic.Vehicle.Propulsion.THRUST_TOTAL, "thrust_req"),
+            ],
+            promotes_outputs=["*"],
+        )
 
         thrust_alpha_bal = om.BalanceComp()
         if not self.options['ground_roll']:
@@ -97,17 +103,17 @@ class UnsteadyControlIterGroup(om.Group):
         # Set common default values for promoted inputs
         onn = np.ones(nn)
         self.set_input_defaults(
-            name=Dynamic.Mission.DENSITY,
+            name=Dynamic.Atmosphere.DENSITY,
             val=RHO_SEA_LEVEL_ENGLISH * onn,
             units="slug/ft**3",
         )
         self.set_input_defaults(
-            name=Dynamic.Mission.SPEED_OF_SOUND,
-            val=1116.4 * onn,
-            units="ft/s")
+            name=Dynamic.Atmosphere.SPEED_OF_SOUND, val=1116.4 * onn, units="ft/s"
+        )
         if not self.options['ground_roll']:
-            self.set_input_defaults(name=Dynamic.Mission.FLIGHT_PATH_ANGLE,
-                                    val=0.0 * onn, units="rad")
+            self.set_input_defaults(
+                name=Dynamic.Mission.FLIGHT_PATH_ANGLE, val=0.0 * onn, units="rad"
+            )
         self.set_input_defaults(
             name=Dynamic.Mission.VELOCITY, val=250.0 * onn, units="kn"
         )

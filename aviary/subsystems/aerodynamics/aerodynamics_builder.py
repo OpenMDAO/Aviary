@@ -104,10 +104,10 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
         code_origin = self.code_origin
 
         if code_origin is GASP:
-            aero_group = PreMissionAero(aviary_options=aviary_inputs)
+            aero_group = PreMissionAero()
 
         elif code_origin is FLOPS:
-            aero_group = Design(aviary_options=aviary_inputs)
+            aero_group = Design()
 
         return aero_group
 
@@ -118,12 +118,10 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
             method = None
         if self.code_origin is FLOPS:
             if method is None:
-                aero_group = ComputedAeroGroup(num_nodes=num_nodes,
-                                               aviary_options=aviary_inputs)
+                aero_group = ComputedAeroGroup(num_nodes=num_nodes)
 
             elif method == 'computed':
                 aero_group = ComputedAeroGroup(num_nodes=num_nodes,
-                                               aviary_options=aviary_inputs,
                                                **kwargs)
 
             elif method == 'low_speed':
@@ -145,6 +143,10 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
                                               CDI_data=kwargs.pop('CDI_data'),
                                               **kwargs)
 
+            elif method == 'external':
+                # Aero completely replaced by external group.
+                aero_group = None
+
             else:
                 raise ValueError('FLOPS-based aero method is not one of the following: '
                                  '(computed, low_speed, solved_alpha, tabular)')
@@ -162,7 +164,6 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
                                                    **kwargs)
                 else:
                     aero_group = CruiseAero(num_nodes=num_nodes,
-                                            aviary_options=aviary_inputs,
                                             **kwargs)
 
             elif method == 'low_speed':
@@ -180,7 +181,6 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
 
                 else:
                     aero_group = LowSpeedAero(num_nodes=num_nodes,
-                                              aviary_options=aviary_inputs,
                                               **kwargs)
 
             else:
@@ -201,37 +201,46 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
 
         if self.code_origin is FLOPS:
             if method == 'computed':
-                promotes = [Dynamic.Mission.STATIC_PRESSURE,
-                            Dynamic.Mission.MACH,
-                            Dynamic.Mission.TEMPERATURE,
-                            Dynamic.Mission.MASS,
-                            'aircraft:*', 'mission:*']
+                promotes = [
+                    Dynamic.Atmosphere.STATIC_PRESSURE,
+                    Dynamic.Atmosphere.MACH,
+                    Dynamic.Atmosphere.TEMPERATURE,
+                    Dynamic.Vehicle.MASS,
+                    'aircraft:*',
+                    'mission:*',
+                ]
 
             elif method == 'solved_alpha':
-                promotes = [Dynamic.Mission.ALTITUDE,
-                            Dynamic.Mission.MACH,
-                            Dynamic.Mission.MASS,
-                            Dynamic.Mission.STATIC_PRESSURE,
-                            'aircraft:*']
+                promotes = [
+                    Dynamic.Mission.ALTITUDE,
+                    Dynamic.Atmosphere.MACH,
+                    Dynamic.Vehicle.MASS,
+                    Dynamic.Atmosphere.STATIC_PRESSURE,
+                    'aircraft:*',
+                ]
 
             elif method == 'low_speed':
-                promotes = ['angle_of_attack',
-                            Dynamic.Mission.ALTITUDE,
-                            Dynamic.Mission.FLIGHT_PATH_ANGLE,
-                            Mission.Takeoff.DRAG_COEFFICIENT_MIN,
-                            Aircraft.Wing.ASPECT_RATIO,
-                            Aircraft.Wing.HEIGHT,
-                            Aircraft.Wing.SPAN,
-                            Dynamic.Mission.DYNAMIC_PRESSURE,
-                            Aircraft.Wing.AREA]
+                promotes = [
+                    'angle_of_attack',
+                    Dynamic.Mission.ALTITUDE,
+                    Dynamic.Mission.FLIGHT_PATH_ANGLE,
+                    Mission.Takeoff.DRAG_COEFFICIENT_MIN,
+                    Aircraft.Wing.ASPECT_RATIO,
+                    Aircraft.Wing.HEIGHT,
+                    Aircraft.Wing.SPAN,
+                    Dynamic.Atmosphere.DYNAMIC_PRESSURE,
+                    Aircraft.Wing.AREA,
+                ]
 
             elif method == 'tabular':
-                promotes = [Dynamic.Mission.ALTITUDE,
-                            Dynamic.Mission.MACH,
-                            Dynamic.Mission.MASS,
-                            Dynamic.Mission.VELOCITY,
-                            Dynamic.Mission.DENSITY,
-                            'aircraft:*']
+                promotes = [
+                    Dynamic.Mission.ALTITUDE,
+                    Dynamic.Atmosphere.MACH,
+                    Dynamic.Vehicle.MASS,
+                    Dynamic.Mission.VELOCITY,
+                    Dynamic.Atmosphere.DENSITY,
+                    'aircraft:*',
+                ]
 
             else:
                 raise ValueError('FLOPS-based aero method is not one of the following: '
@@ -262,24 +271,25 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
         promotes = ['*']
 
         if self.code_origin is FLOPS:
-            promotes = [Dynamic.Mission.DRAG, Dynamic.Mission.LIFT]
+            promotes = [Dynamic.Vehicle.DRAG, Dynamic.Vehicle.LIFT]
 
         elif self.code_origin is GASP:
             if method == 'low_speed':
-                promotes = [Dynamic.Mission.DRAG,
-                            Dynamic.Mission.LIFT,
-                            'CL', 'CD', 'flap_factor', 'gear_factor']
+                promotes = [
+                    Dynamic.Vehicle.DRAG,
+                    Dynamic.Vehicle.LIFT,
+                    'CL',
+                    'CD',
+                    'flap_factor',
+                    'gear_factor',
+                ]
 
             elif method == 'cruise':
                 if 'output_alpha' in kwargs:
                     if kwargs['output_alpha']:
-                        promotes = [Dynamic.Mission.DRAG,
-                                    Dynamic.Mission.LIFT,
-                                    'alpha']
+                        promotes = [Dynamic.Vehicle.DRAG, Dynamic.Vehicle.LIFT, 'alpha']
                 else:
-                    promotes = [Dynamic.Mission.DRAG,
-                                Dynamic.Mission.LIFT,
-                                'CL_max']
+                    promotes = [Dynamic.Vehicle.DRAG, Dynamic.Vehicle.LIFT, 'CL_max']
 
             else:
                 raise ValueError('GASP-based aero method is not one of the following: '
@@ -330,7 +340,8 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
                 method = 'computed'
 
             if phase_info is not None:
-                # Only solved_alpha has connectable inputs.
+
+                # Only some methods have connectable training inputs.
                 if method == 'solved_alpha':
                     aero_data = aero_opt['aero_data']
 
@@ -368,6 +379,63 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
 
                         params[Aircraft.Design.LIFT_POLAR] = lift_opts
                         params[Aircraft.Design.DRAG_POLAR] = drag_opts
+
+                elif method == 'tabular':
+                    CD0_data = aero_opt['CD0_data']
+
+                    if isinstance(CD0_data, NamedValues):
+                        altitude = CD0_data.get_item('altitude')[0]
+                        mach = CD0_data.get_item('mach')[0]
+
+                        n1 = altitude.size
+                        n2 = mach.size
+                        n1u = np.unique(altitude).size
+
+                        if n1 > n1u:
+                            # Data is free-format instead of pre-formatted.
+                            n1 = n1u
+                            n2 = np.unique(mach).size
+
+                        shape = (n1, n2)
+
+                        if aviary_inputs is not None and Aircraft.Design.LIFT_INDEPENDENT_DRAG_POLAR in aviary_inputs:
+                            opts = {
+                                'val': aviary_inputs.get_val(Aircraft.Design.LIFT_INDEPENDENT_DRAG_POLAR),
+                                'static_target': True
+                            }
+                        else:
+                            opts = {'shape': shape,
+                                    'static_target': True}
+
+                        params[Aircraft.Design.LIFT_INDEPENDENT_DRAG_POLAR] = opts
+
+                    CDI_data = aero_opt['CDI_data']
+
+                    if isinstance(CDI_data, NamedValues):
+                        mach = CDI_data.get_item('mach')[0]
+                        cl = CDI_data.get_item('lift_coefficient')[0]
+
+                        n1 = mach.size
+                        n2 = cl.size
+                        n1u = np.unique(mach).size
+
+                        if n1 > n1u:
+                            # Data is free-format instead of pre-formatted.
+                            n1 = n1u
+                            n2 = np.unique(cl).size
+
+                        shape = (n1, n2)
+
+                        if aviary_inputs is not None and Aircraft.Design.LIFT_DEPENDENT_DRAG_POLAR in aviary_inputs:
+                            opts = {
+                                'val': aviary_inputs.get_val(Aircraft.Design.LIFT_DEPENDENT_DRAG_POLAR),
+                                'static_target': True
+                            }
+                        else:
+                            opts = {'shape': shape,
+                                    'static_target': True}
+
+                        params[Aircraft.Design.LIFT_DEPENDENT_DRAG_POLAR] = opts
 
             if method == 'computed':
 
@@ -564,7 +632,7 @@ ENGINE_SIZED_INPUTS = [
 
 AERO_2DOF_INPUTS = [
     Aircraft.Design.CG_DELTA,
-    Aircraft.Design.DRAG_COEFFICIENT_INCREMENT,   # drag increment?
+    Aircraft.Design.DRAG_COEFFICIENT_INCREMENT,  # drag increment?
     Aircraft.Design.STATIC_MARGIN,
     Aircraft.Fuselage.AVG_DIAMETER,
     Aircraft.Fuselage.FLAT_PLATE_AREA_INCREMENT,
@@ -609,4 +677,8 @@ AERO_LS_2DOF_INPUTS = [
 AERO_CLEAN_2DOF_INPUTS = [
     Aircraft.Design.SUPERCRITICAL_DIVERGENCE_SHIFT,  # super drag shift?
     Mission.Design.LIFT_COEFFICIENT_MAX_FLAPS_UP,
+    Aircraft.Design.LIFT_DEPENDENT_DRAG_COEFF_FACTOR,
+    Aircraft.Design.SUBSONIC_DRAG_COEFF_FACTOR,
+    Aircraft.Design.SUPERSONIC_DRAG_COEFF_FACTOR,
+    Aircraft.Design.ZERO_LIFT_DRAG_COEFF_FACTOR,
 ]

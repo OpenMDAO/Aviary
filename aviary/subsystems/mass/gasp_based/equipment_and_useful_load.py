@@ -2,9 +2,8 @@ import numpy as np
 import openmdao.api as om
 
 from aviary.constants import GRAV_ENGLISH_LBM
-from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.enums import GASPEngineType
-from aviary.variable_info.functions import add_aviary_input, add_aviary_output
+from aviary.variable_info.functions import add_aviary_input, add_aviary_output, add_aviary_option
 from aviary.variable_info.variables import Aircraft, Mission
 
 
@@ -22,15 +21,15 @@ class EquipAndUsefulLoadMass(om.ExplicitComponent):
     """
 
     def initialize(self):
-
-        self.options.declare(
-            'aviary_options', types=AviaryValues,
-            desc='collection of Aircraft/Mission specific options'
-        )
+        add_aviary_option(self, Aircraft.CrewPayload.Design.NUM_PASSENGERS)
+        add_aviary_option(self, Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES)
+        add_aviary_option(self, Aircraft.Engine.NUM_ENGINES)
+        add_aviary_option(self, Aircraft.Engine.TYPE)
+        add_aviary_option(self, Aircraft.LandingGear.FIXED_GEAR)
+        add_aviary_option(self, Aircraft.Propulsion.TOTAL_NUM_ENGINES)
 
     def setup(self):
-        num_engine_type = len(self.options['aviary_options'].get_val(
-            Aircraft.Engine.NUM_ENGINES))
+        num_engine_type = len(self.options[Aircraft.Engine.NUM_ENGINES])
 
         add_aviary_input(
             self, Aircraft.AirConditioning.MASS_COEFFICIENT, val=1, units="unitless")
@@ -80,20 +79,13 @@ class EquipAndUsefulLoadMass(om.ExplicitComponent):
 
     def compute(self, inputs, outputs):
 
-        options: AviaryValues = self.options["aviary_options"]
-        PAX = options.get_val(Aircraft.CrewPayload.NUM_PASSENGERS, units='unitless')
-        smooth = options.get_val(
-            Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES, units='unitless')
+        PAX = self.options[Aircraft.CrewPayload.Design.NUM_PASSENGERS]
+        smooth = self.options[Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES]
 
         gross_wt_initial = inputs[Mission.Design.GROSS_MASS] * GRAV_ENGLISH_LBM
-        num_engines = self.options['aviary_options'].get_val(
-            Aircraft.Propulsion.TOTAL_NUM_ENGINES, units='unitless')
+        num_engines = self.options[Aircraft.Propulsion.TOTAL_NUM_ENGINES]
         fus_len = inputs[Aircraft.Fuselage.LENGTH]
         wingspan = inputs[Aircraft.Wing.SPAN]
-        if options.get_val(Aircraft.LandingGear.FIXED_GEAR, units='unitless'):
-            gear_type = 1
-        else:
-            gear_type = 0
 
         landing_gear_wt = inputs[Aircraft.LandingGear.TOTAL_MASS] * \
             GRAV_ENGLISH_LBM
@@ -107,7 +99,7 @@ class EquipAndUsefulLoadMass(om.ExplicitComponent):
         fuel_vol_frac = inputs[Aircraft.Fuel.WING_FUEL_FRACTION]
         subsystems_wt = inputs[Aircraft.Design.EXTERNAL_SUBSYSTEMS_MASS]
 
-        engine_type = options.get_val(Aircraft.Engine.TYPE, units='unitless')[0]
+        engine_type = self.options[Aircraft.Engine.TYPE][0]
 
         APU_wt = 0.0
         if PAX > 35.0:
@@ -133,11 +125,10 @@ class EquipAndUsefulLoadMass(om.ExplicitComponent):
             * fus_len**0.05
             * wingspan**0.696
         )
-        gear_val = 1 - gear_type
         hydraulic_wt = (
             inputs[Aircraft.Hydraulics.FLIGHT_CONTROL_MASS_COEFFICIENT] * control_wt +
             inputs[Aircraft.Hydraulics.GEAR_MASS_COEFFICIENT] *
-            landing_gear_wt * gear_val
+            landing_gear_wt * (not self.options[Aircraft.LandingGear.FIXED_GEAR])
         )
 
         electrical_wt = 16.0 * PAX + 170.0
@@ -391,19 +382,14 @@ class EquipAndUsefulLoadMass(om.ExplicitComponent):
             GRAV_ENGLISH_LBM
 
     def compute_partials(self, inputs, partials):
-        options = self.options['aviary_options']
-        PAX = options.get_val(Aircraft.CrewPayload.NUM_PASSENGERS, units='unitless')
-        smooth = options.get_val(
-            Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES, units='unitless')
+        PAX = self.options[Aircraft.CrewPayload.Design.NUM_PASSENGERS]
+        smooth = self.options[Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES]
+
         gross_wt_initial = inputs[Mission.Design.GROSS_MASS] * GRAV_ENGLISH_LBM
-        num_engines = self.options['aviary_options'].get_val(
-            Aircraft.Propulsion.TOTAL_NUM_ENGINES, units='unitless')
+        num_engines = self.options[Aircraft.Propulsion.TOTAL_NUM_ENGINES]
         fus_len = inputs[Aircraft.Fuselage.LENGTH]
         wingspan = inputs[Aircraft.Wing.SPAN]
-        if options.get_val(Aircraft.LandingGear.FIXED_GEAR, units='unitless'):
-            gear_type = 1
-        else:
-            gear_type = 0
+
         landing_gear_wt = inputs[Aircraft.LandingGear.TOTAL_MASS] * \
             GRAV_ENGLISH_LBM
         control_wt = inputs[Aircraft.Controls.TOTAL_MASS] * GRAV_ENGLISH_LBM
@@ -414,7 +400,7 @@ class EquipAndUsefulLoadMass(om.ExplicitComponent):
         cabin_width = inputs[Aircraft.Fuselage.AVG_DIAMETER]
         fuel_vol_frac = inputs[Aircraft.Fuel.WING_FUEL_FRACTION]
 
-        engine_type = options.get_val(Aircraft.Engine.TYPE, units='unitless')[0]
+        engine_type = self.options[Aircraft.Engine.TYPE][0]
 
         dAPU_wt_dmass_coeff_0 = 0.0
         if ~(
@@ -465,7 +451,7 @@ class EquipAndUsefulLoadMass(om.ExplicitComponent):
             * wingspan ** (0.696 - 1)
         )
 
-        gear_val = 1 - gear_type
+        gear_val = not self.options[Aircraft.LandingGear.FIXED_GEAR]
 
         dhydraulic_wt_dmass_coeff_2 = control_wt
         dhydraulic_wt_dcontrol_wt = inputs[Aircraft.Hydraulics.FLIGHT_CONTROL_MASS_COEFFICIENT]

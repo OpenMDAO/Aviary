@@ -1,3 +1,5 @@
+# GASP-derived aircraft input deck converted from small_single_aisle_GASP.dat
+
 # Input Values
 aircraft:air_conditioning:mass_coefficient,1.65,unitless
 aircraft:anti_icing:mass,397,lbm
@@ -9,7 +11,7 @@ aircraft:controls:stability_augmentation_system_mass,0,lbm
 aircraft:controls:stability_augmentation_system_mass_scaler,1,unitless
 aircraft:crew_and_payload:cargo_mass,8598,lbm
 aircraft:crew_and_payload:catering_items_mass_per_passenger,6,lbm
-aircraft:crew_and_payload:num_passengers,96,unitless
+aircraft:crew_and_payload:design:num_passengers,96,unitless
 aircraft:crew_and_payload:passenger_mass_with_bags,210,lbm
 aircraft:crew_and_payload:passenger_service_mass_per_passenger,7.6,lbm
 aircraft:crew_and_payload:water_mass_per_occupant,3,lbm
@@ -17,6 +19,7 @@ aircraft:design:cg_delta,0.25,unitless
 aircraft:design:cockpit_control_mass_coefficient,16.5,unitless
 aircraft:design:drag_increment,0.0018,unitless
 aircraft:design:emergency_equipment_mass,50,lbm
+aircraft:design:lift_curve_slope,7.1765,1/rad
 aircraft:design:max_structural_speed,402.5,mi/h
 aircraft:design:part25_structural_category,3,unitless
 aircraft:design:reserve_fuel_additional,0,lbm
@@ -25,14 +28,15 @@ aircraft:design:static_margin,0.05,unitless
 aircraft:design:structural_mass_increment,0,lbm
 aircraft:design:supercritical_drag_shift,0.025,unitless
 aircraft:engine:additional_mass_fraction,0.14,unitless
-aircraft:engine:data_file,models/engines/turbofan_23k_1.deck,unitless
+aircraft:engine:global_throttle,True,unitless
 aircraft:engine:mass_scaler,1,unitless
 aircraft:engine:mass_specific,0.2153,lbm/lbf
 aircraft:engine:num_engines,2,unitless
 aircraft:engine:pod_mass_scaler,1,unitless
 aircraft:engine:pylon_factor,0.6,unitless
-aircraft:engine:reference_diameter,6.04,ft
+aircraft:engine:reference_diameter,5.8,ft
 aircraft:engine:reference_sls_thrust,28690,lbf
+aircraft:engine:scale_factor,0.8295573370512374,unitless
 aircraft:engine:scaled_sls_thrust,23800,lbf
 aircraft:engine:type,7,unitless
 aircraft:engine:wing_locations,0.272,unitless
@@ -47,6 +51,7 @@ aircraft:fuselage:aisle_width,19,inch
 aircraft:fuselage:delta_diameter,4.25,ft
 aircraft:fuselage:flat_plate_area_increment,0.25,ft**2
 aircraft:fuselage:form_factor,1.55,unitless
+aircraft:fuselage:length,0,ft
 aircraft:fuselage:mass_coefficient,121.2,unitless
 aircraft:fuselage:nose_fineness,0.845,unitless
 aircraft:fuselage:num_aisles,1,unitless
@@ -97,6 +102,7 @@ aircraft:vertical_tail:taper_ratio,0.267,unitless
 aircraft:vertical_tail:thickness_to_chord,0.13,unitless
 aircraft:vertical_tail:volume_coefficient,0.08105,unitless
 aircraft:wing:aspect_ratio,11.03,unitless
+aircraft:wing:average_chord,12.615,ft
 aircraft:wing:center_distance,0.463,unitless
 aircraft:wing:choose_fold_location,True,unitless
 aircraft:wing:flap_chord_ratio,0.15,unitless
@@ -130,6 +136,7 @@ aircraft:wing:optimum_slat_deflection,20,deg
 aircraft:wing:slat_chord_ratio,0.1,unitless
 aircraft:wing:slat_lift_increment_optimum,0.93,unitless
 aircraft:wing:slat_span_ratio,0.9,unitless
+aircraft:wing:span,117.8,ft
 aircraft:wing:surface_ctrl_mass_coefficient,0.845,unitless
 aircraft:wing:sweep,26.34,deg
 aircraft:wing:taper_ratio,0.301,unitless
@@ -149,7 +156,6 @@ mission:landing:maximum_sink_rate,900,ft/min
 mission:landing:obstacle_height,50,ft
 mission:landing:touchdown_sink_rate,5,ft/s
 mission:summary:fuel_flow_scaler,1,unitless
-mission:summary:gross_mass,124780
 mission:takeoff:decision_speed_increment,10,kn
 mission:takeoff:rotation_speed_increment,5,kn
 mission:taxi:duration,0.3333,h
@@ -170,12 +176,6 @@ time_to_climb,0
 INGASP.ALR,1.11
 INGASP.BENGOB,0
 INGASP.CINP,0.11
-INGASP.CK10,1
-INGASP.CK11,1
-INGASP.CK18,1
-INGASP.CK7,1
-INGASP.CK8,1
-INGASP.CK9,1
 INGASP.CLIAB,2021
 INGASP.CMF,15
 INGASP.CMV,0.15
@@ -187,7 +187,6 @@ INGASP.FCSF,4.66
 INGASP.HBTP,0.45
 INGASP.HIR,0.015
 INGASP.HNCRU,37000
-INGASP.HPORT,0
 INGASP.HQBWGLT,0
 INGASP.HRI,5000000
 INGASP.HSCREQ,0

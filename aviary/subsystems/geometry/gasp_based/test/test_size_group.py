@@ -5,6 +5,7 @@ import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 
 from aviary.subsystems.geometry.gasp_based.size_group import SizeGroup
+from aviary.variable_info.functions import setup_model_options
 from aviary.variable_info.options import get_option_defaults
 from aviary.variable_info.variables import Aircraft, Mission
 
@@ -17,7 +18,8 @@ class SizeGroupTestCase1(unittest.TestCase):
         options = get_option_defaults()
         options.set_val(Aircraft.Electrical.HAS_HYBRID_SYSTEM,
                         val=False, units='unitless')
-        options.set_val(Aircraft.CrewPayload.NUM_PASSENGERS, val=180, units='unitless')
+        options.set_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS,
+                        val=180, units='unitless')
         options.set_val(Aircraft.Fuselage.AISLE_WIDTH, 24, units="inch")
         options.set_val(Aircraft.Fuselage.NUM_AISLES, 1)
         options.set_val(Aircraft.Fuselage.NUM_SEATS_ABREAST, 6)
@@ -27,9 +29,7 @@ class SizeGroupTestCase1(unittest.TestCase):
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
             "size",
-            SizeGroup(
-                aviary_options=options,
-            ),
+            SizeGroup(),
             promotes=["*"],
         )
 
@@ -96,6 +96,8 @@ class SizeGroupTestCase1(unittest.TestCase):
             Aircraft.Nacelle.CORE_DIAMETER_RATIO, 1.25, units="unitless")
         self.prob.model.set_input_defaults(
             Aircraft.Nacelle.FINENESS, 2, units="unitless")
+
+        setup_model_options(self.prob, options)
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
@@ -164,7 +166,8 @@ class SizeGroupTestCase2(unittest.TestCase):
         options.set_val(Aircraft.Wing.HAS_STRUT, val=True, units='unitless')
         options.set_val(Aircraft.Electrical.HAS_HYBRID_SYSTEM,
                         val=False, units='unitless')
-        options.set_val(Aircraft.CrewPayload.NUM_PASSENGERS, val=180, units='unitless')
+        options.set_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS,
+                        val=180, units='unitless')
         options.set_val(Aircraft.Wing.CHOOSE_FOLD_LOCATION, val=False, units='unitless')
         options.set_val(Aircraft.Wing.FOLD_DIMENSIONAL_LOCATION_SPECIFIED,
                         val=True, units='unitless')
@@ -179,9 +182,7 @@ class SizeGroupTestCase2(unittest.TestCase):
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
             "size",
-            SizeGroup(
-                aviary_options=options,
-            ),
+            SizeGroup(),
             promotes=["*"],
         )
 
@@ -242,6 +243,9 @@ class SizeGroupTestCase2(unittest.TestCase):
             Aircraft.HorizontalTail.MOMENT_RATIO, val=0.2307, units="unitless"
         )
         self.prob.model.set_input_defaults(
+            Aircraft.HorizontalTail.TAPER_RATIO, val=0.352, units="unitless"
+        )
+        self.prob.model.set_input_defaults(
             Aircraft.VerticalTail.MOMENT_RATIO, 2.362, units="unitless")
         self.prob.model.set_input_defaults(
             Aircraft.HorizontalTail.ASPECT_RATIO, val=4.75, units="unitless")
@@ -251,6 +255,8 @@ class SizeGroupTestCase2(unittest.TestCase):
             Aircraft.Nacelle.CORE_DIAMETER_RATIO, 1.25, units="unitless")
         self.prob.model.set_input_defaults(
             Aircraft.Nacelle.FINENESS, 2, units="unitless")
+
+        setup_model_options(self.prob, options)
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
@@ -384,7 +390,8 @@ class SizeGroupTestCase3(unittest.TestCase):
                         val=True, units='unitless')
         options.set_val(Aircraft.Design.COMPUTE_VTAIL_VOLUME_COEFF,
                         val=True, units='unitless')
-        options.set_val(Aircraft.CrewPayload.NUM_PASSENGERS, val=180, units='unitless')
+        options.set_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS,
+                        val=180, units='unitless')
         options.set_val(Aircraft.Wing.FOLD_DIMENSIONAL_LOCATION_SPECIFIED,
                         val=True, units='unitless')
         options.set_val(Aircraft.Fuselage.AISLE_WIDTH, 24, units="inch")
@@ -396,9 +403,7 @@ class SizeGroupTestCase3(unittest.TestCase):
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
             "size",
-            SizeGroup(
-                aviary_options=options,
-            ),
+            SizeGroup(),
             promotes=["*"],
         )
 
@@ -474,6 +479,8 @@ class SizeGroupTestCase3(unittest.TestCase):
             Aircraft.Nacelle.CORE_DIAMETER_RATIO, 1.25, units="unitless")
         self.prob.model.set_input_defaults(
             Aircraft.Nacelle.FINENESS, 2, units="unitless")
+
+        setup_model_options(self.prob, options)
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
@@ -607,7 +614,8 @@ class SizeGroupTestCase4(unittest.TestCase):
                         val=False, units='unitless')
         options.set_val(Aircraft.Electrical.HAS_HYBRID_SYSTEM,
                         val=False, units='unitless')
-        options.set_val(Aircraft.CrewPayload.NUM_PASSENGERS, val=180, units='unitless')
+        options.set_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS,
+                        val=180, units='unitless')
         options.set_val(Aircraft.Fuselage.AISLE_WIDTH, 24, units="inch")
         options.set_val(Aircraft.Fuselage.NUM_AISLES, 1)
         options.set_val(Aircraft.Fuselage.NUM_SEATS_ABREAST, 1)
@@ -617,9 +625,7 @@ class SizeGroupTestCase4(unittest.TestCase):
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
             "size",
-            SizeGroup(
-                aviary_options=options,
-            ),
+            SizeGroup(),
             promotes=["*"],
         )
 
@@ -695,6 +701,8 @@ class SizeGroupTestCase4(unittest.TestCase):
             Aircraft.Nacelle.CORE_DIAMETER_RATIO, 1.25, units="unitless")
         self.prob.model.set_input_defaults(
             Aircraft.Nacelle.FINENESS, 2, units="unitless")
+
+        setup_model_options(self.prob, options)
 
         self.prob.setup(check=False, force_alloc_complex=True)
 

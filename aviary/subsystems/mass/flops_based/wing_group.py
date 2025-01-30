@@ -6,7 +6,7 @@ from aviary.subsystems.mass.flops_based.wing_common import (
     WingBendingMass, WingMiscMass, WingShearControlMass, WingTotalMass)
 from aviary.subsystems.mass.flops_based.wing_detailed import DetailedWingBendingFact
 from aviary.subsystems.mass.flops_based.wing_simple import SimpleWingBendingFact
-from aviary.utils.aviary_values import AviaryValues
+from aviary.variable_info.functions import add_aviary_option
 from aviary.variable_info.variables import Aircraft
 
 
@@ -16,39 +16,42 @@ class WingMassGroup(om.Group):
     """
 
     def initialize(self):
-        self.options.declare(
-            'aviary_options', types=AviaryValues,
-            desc='collection of Aircraft/Mission specific options')
+        add_aviary_option(self, Aircraft.Wing.INPUT_STATION_DIST)
 
     def setup(self):
-        aviary_options: AviaryValues = self.options['aviary_options']
 
         self.add_subsystem('engine_pod_mass',
-                           EnginePodMass(aviary_options=aviary_options),
+                           EnginePodMass(),
                            promotes_inputs=['*'], promotes_outputs=['*'])
 
-        if Aircraft.Wing.INPUT_STATION_DIST in aviary_options:
-            self.add_subsystem('wing_bending_factor',
-                               DetailedWingBendingFact(aviary_options=aviary_options),
-                               promotes_inputs=['*'], promotes_outputs=['*'])
+        if self.options[Aircraft.Wing.INPUT_STATION_DIST] is not None:
+            self.add_subsystem(
+                'wing_BENDING_MATERIAL_FACTOR',
+                DetailedWingBendingFact(),
+                promotes_inputs=['*'],
+                promotes_outputs=['*'],
+            )
 
         else:
-            self.add_subsystem('wing_bending_factor',
-                               SimpleWingBendingFact(aviary_options=aviary_options),
-                               promotes_inputs=['*'], promotes_outputs=['*'])
+            self.add_subsystem(
+                'wing_BENDING_MATERIAL_FACTOR',
+                SimpleWingBendingFact(),
+                promotes_inputs=['*'],
+                promotes_outputs=['*'],
+            )
 
         self.add_subsystem('wing_misc',
-                           WingMiscMass(aviary_options=aviary_options),
+                           WingMiscMass(),
                            promotes_inputs=['*'], promotes_outputs=['*'])
 
         self.add_subsystem('wing_shear_control',
-                           WingShearControlMass(aviary_options=aviary_options),
+                           WingShearControlMass(),
                            promotes_inputs=['*'], promotes_outputs=['*'])
 
         self.add_subsystem('wing_bending',
-                           WingBendingMass(aviary_options=aviary_options),
+                           WingBendingMass(),
                            promotes_inputs=['*'], promotes_outputs=['*'])
 
         self.add_subsystem('wing_total',
-                           WingTotalMass(aviary_options=aviary_options),
+                           WingTotalMass(),
                            promotes_inputs=['*'], promotes_outputs=['*'])
