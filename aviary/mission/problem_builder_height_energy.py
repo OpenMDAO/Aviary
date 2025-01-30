@@ -584,3 +584,10 @@ class ProblemBuilderHeightEnergy():
             # Set the mass guess as the initial value for the mass state variable
             target_prob.set_val(parent_prefix + f'traj.{phase_name}.states:mass',
                                 mass_guess, units='lbm')
+
+        if not self.pre_mission_info['include_takeoff']:
+            first_flight_phase_name = list(prob.phase_info.keys())[0]
+            first_flight_phase = prob.traj._phases[first_flight_phase_name]
+            first_flight_phase.set_state_options(
+                Dynamic.Vehicle.MASS, fix_initial=False
+            )
