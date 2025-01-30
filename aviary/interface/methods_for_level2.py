@@ -866,6 +866,9 @@ class AviaryProblem(om.Problem):
 
         # TBD: This should be removed and updated with get_default_payload_mass()
         # # HEIGHT_ENERGY
+        # This is very strange code. Are we saying that HE doesn't work with GASP?
+        # Or is there an oversite in alternative mission and fallout mission formulations
+        # where get_default_payload_mass was being called based on mission method???
         if self.mass_method is GASP:
             payload_mass_src = Aircraft.CrewPayload.PASSENGER_PAYLOAD_MASS
         else:
@@ -1667,10 +1670,7 @@ class AviaryProblem(om.Problem):
         if mission_range is None:
             design_range = self.get_val(Mission.Design.RANGE)
         if payload_mass is None:
-            if self.mission_method is HEIGHT_ENERGY:
-                payload_mass = self.get_val(Aircraft.CrewPayload.TOTAL_PAYLOAD_MASS)
-            elif self.mission_method is TWO_DEGREES_OF_FREEDOM:
-                payload_mass = self.get_val(Aircraft.CrewPayload.PASSENGER_PAYLOAD_MASS)
+            payload_mass = self.get_val(self.builder.get_default_payload_mass(self))
 
         mission_mass = self.get_val(Mission.Design.GROSS_MASS)
         optimizer = self.driver.options["optimizer"]
@@ -1726,7 +1726,7 @@ class AviaryProblem(om.Problem):
         if mission_mass is None:
             mission_mass = self.get_val(Mission.Design.GROSS_MASS)
         if payload_mass is None:
-            payload_mass = self.builder.get_default_payload_mass(self)
+            payload_mass = self.get_val(self.builder.get_default_payload_mass(self))
 
         design_range = self.get_val(Mission.Design.RANGE)
         optimizer = self.driver.options["optimizer"]

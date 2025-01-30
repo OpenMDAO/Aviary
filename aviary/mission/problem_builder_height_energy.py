@@ -106,7 +106,7 @@ class ProblemBuilderHeightEnergy():
 
     def get_default_payload_mass(self, prob):
 
-        payload_mass = prob.get_val(Aircraft.CrewPayload.TOTAL_PAYLOAD_MASS)
+        payload_mass = Aircraft.CrewPayload.TOTAL_PAYLOAD_MASS
 
         return payload_mass
 

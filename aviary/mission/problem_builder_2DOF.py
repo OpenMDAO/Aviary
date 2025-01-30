@@ -129,7 +129,7 @@ class ProblemBuilder2DOF():
 
     def get_default_payload_mass(self, prob):
 
-        payload_mass = self.get_val(Aircraft.CrewPayload.PASSENGER_PAYLOAD_MASS)
+        payload_mass = Aircraft.CrewPayload.PASSENGER_PAYLOAD_MASS
 
         return payload_mass
 
