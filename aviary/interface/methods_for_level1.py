@@ -1,11 +1,10 @@
 """
 This file contains functions needed to run Aviary using the Level 1 interface.
 """
-import os
+
 from importlib.machinery import SourceFileLoader
 from pathlib import Path
 
-import openmdao.api as om
 from aviary.variable_info.enums import AnalysisScheme, Verbosity
 from aviary.interface.methods_for_level2 import AviaryProblem
 from aviary.utils.functions import get_path
@@ -142,15 +141,6 @@ def run_level_1(
             phase_info_file, 'phase_info_parameterization', None)
 
     prob = run_aviary(input_deck, phase_info, **kwargs)
-
-    # update n2 diagram after run.
-    outdir = Path(prob.get_reports_dir(force=True))
-    outfile = os.path.join(outdir, "n2.html")
-    om.n2(
-        prob,
-        outfile=outfile,
-        show_browser=False,
-    )
 
     return prob
 
