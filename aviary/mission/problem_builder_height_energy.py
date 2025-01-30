@@ -110,8 +110,6 @@ class ProblemBuilderHeightEnergy():
 
         payload_mass = prob.get_val(Aircraft.CrewPayload.TOTAL_PAYLOAD_MASS)
 
-        payload_mass = self.get_val(Aircraft.CrewPayload.PASSENGER_PAYLOAD_MASS)
-
         return payload_mass
 
     def add_takeoff_systems(self, prob):
