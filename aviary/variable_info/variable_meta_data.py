@@ -5012,7 +5012,6 @@ add_meta_data(
     'conventional technology wing (Default); 2.0 represents advanced '
     'technology wing.',
     default_value=1.0,
-    types=float,
     option=True,
 )
 
