@@ -495,7 +495,6 @@ def get_path(path: Union[str, Path], verbose: bool = False) -> Path:
 top_dir = Path(get_aviary_resource_path(''))
 
 
-
 def wrapped_convert_units(val_unit_tuple, new_units):
     """
     Wrapper for OpenMDAO's convert_units function.

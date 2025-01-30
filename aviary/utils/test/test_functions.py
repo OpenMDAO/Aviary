@@ -9,6 +9,7 @@ from openmdao.utils.assert_utils import assert_near_equal
 from aviary.variable_info.options import get_option_defaults
 from aviary.variable_info.variables import Aircraft, Mission
 from aviary.utils.functions import add_opts2vals, create_opts2vals, get_path
+from aviary.api import top_dir
 
 
 class TestOpts2Vals(unittest.TestCase):
@@ -102,6 +103,12 @@ class TestGetPath(unittest.TestCase):
     def test_non_existent_path(self):
         with self.assertRaises(FileNotFoundError):
             get_path('nonexistentfile.txt')
+
+
+class TestTopDir(unittest.TestCase):
+    def test_top_dir(self):
+        result = Path(__file__).parent.parent.parent
+        self.assertEqual(result, top_dir)
 
 
 if __name__ == "__main__":

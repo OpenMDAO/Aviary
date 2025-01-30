@@ -1,11 +1,10 @@
 """
 This file contains functions needed to run Aviary using the Level 1 interface.
 """
-import os
+
 from importlib.machinery import SourceFileLoader
 from pathlib import Path
 
-import openmdao.api as om
 from aviary.variable_info.enums import AnalysisScheme, Verbosity
 from aviary.interface.methods_for_level2 import AviaryProblem
 from aviary.utils.functions import get_path
@@ -110,7 +109,6 @@ def run_aviary(aircraft_filename, phase_info, optimizer=None,
 
 def run_level_1(
     input_deck,
-    outdir='output',
     optimizer='SNOPT',
     phase_info=None,
     max_iter=50,
@@ -144,35 +142,23 @@ def run_level_1(
 
     prob = run_aviary(input_deck, phase_info, **kwargs)
 
-    # update n2 diagram after run.
-    outfile = os.path.join(outdir, "n2.html")
-    if outdir != '':
-        os.makedirs(outdir, exist_ok=True)
-    om.n2(
-        prob,
-        outfile=outfile,
-        show_browser=False,
-    )
-
     return prob
 
 
 def _setup_level1_parser(parser):
-    def_outdir = os.path.join(os.getcwd(), "output")
     parser.add_argument(
-        'input_deck', metavar='indeck',
-        type=str, nargs=1,
-        help='Name of vehicle input deck file'
-    )
-    parser.add_argument(
-        "-o", "--outdir", default=def_outdir, help="Directory to write outputs"
+        'input_deck',
+        metavar='indeck',
+        type=str,
+        nargs=1,
+        help='Name of vehicle input deck file',
     )
     parser.add_argument(
         "--optimizer",
         type=str,
-        default='SNOPT',
+        default='IPOPT',
         help="Name of optimizer",
-        choices=("SNOPT", "IPOPT", "SLSQP", "None")
+        choices=("SNOPT", "IPOPT", "SLSQP", "None"),
     )
     parser.add_argument(
         "--phase_info",
@@ -196,7 +182,8 @@ def _setup_level1_parser(parser):
         type=int,
         default=1,
         help="verbosity settings: 0=quiet, 1=brief, 2=verbose, 3=debug",
-        choices=(0, 1, 2, 3))
+        choices=(0, 1, 2, 3),
+    )
 
 
 def _exec_level1(args, user_args):
@@ -212,14 +199,8 @@ def _exec_level1(args, user_args):
     if isinstance(args.input_deck, list):
         args.input_deck = args.input_deck[0]
 
-    if args.outdir == os.path.join(os.getcwd(), "output"):
-        # if default outdir, add the input deck name
-        file_name_stem = Path(args.input_deck).stem
-        args.outdir = args.outdir + os.sep + file_name_stem
-
     prob = run_level_1(
         input_deck=args.input_deck,
-        outdir=args.outdir,
         optimizer=args.optimizer,
         phase_info=args.phase_info,
         max_iter=args.max_iter,
