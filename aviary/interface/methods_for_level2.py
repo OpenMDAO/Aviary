@@ -1851,7 +1851,7 @@ class AviaryProblem(om.Problem):
 
                 self.model.connect(
                     f'traj.{self.regular_phases[-1]}.timeseries.distance',
-                    'actual_range',
+                    Mission.Summary.RANGE,
                     src_indices=[-1],
                     flat_src_indices=True,
                 )
@@ -1875,7 +1875,7 @@ class AviaryProblem(om.Problem):
         elif self.mission_method is TWO_DEGREES_OF_FREEDOM:
             if self.analysis_scheme is AnalysisScheme.COLLOCATION:
                 for ii in range(len(phases) - 1):
-                    phase1, phase2 = phases[ii: ii + 2]
+                    phase1, phase2 = phases[ii : ii + 2]
                     analytic1 = self.phase_info[phase1]['user_options']['analytic']
                     analytic2 = self.phase_info[phase2]['user_options']['analytic']
 
@@ -2006,14 +2006,14 @@ class AviaryProblem(om.Problem):
                 )
 
                 connect_map = {
-                    f"traj.{self.regular_phases[-1]}.timeseries.distance": 'actual_range',
+                    f"traj.{self.regular_phases[-1]}.timeseries.distance": Mission.Summary.RANGE,
                 }
 
             else:
                 connect_map = {
                     "taxi.mass": "traj.mass_initial",
                     Mission.Takeoff.ROTATION_VELOCITY: "traj.SGMGroundroll_velocity_trigger",
-                    "traj.distance_final": 'actual_range',
+                    "traj.distance_final": Mission.Summary.RANGE,
                     "traj.mass_final": Mission.Landing.TOUCHDOWN_MASS,
                 }
 
@@ -3451,7 +3451,7 @@ class AviaryProblem(om.Problem):
                 actual_range={"val": self.target_range, "units": "NM"},
             ),
             promotes_inputs=[
-                "actual_range",
+                ("actual_range", Mission.Summary.RANGE),
                 ("ascent_duration", Mission.Takeoff.ASCENT_DURATION),
             ],
             promotes_outputs=[("reg_objective", Mission.Objectives.RANGE)],
@@ -3477,8 +3477,8 @@ class AviaryProblem(om.Problem):
                 range_resid={"val": 30, "units": "NM"},
             ),
             promotes_inputs=[
-                "actual_range",
-                ("target_range", Mission.Summary.RANGE),
+                ("actual_range", Mission.Summary.RANGE),
+                "target_range",
             ],
             promotes_outputs=[("range_resid", Mission.Constraints.RANGE_RESIDUAL)],
         )
