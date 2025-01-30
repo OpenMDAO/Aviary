@@ -598,22 +598,6 @@ class ProblemBuilder2DOF():
         if include_landing and prob.post_mission_info['include_landing']:
             self._add_landing_systems(prob)
 
-        prob.model.add_subsystem(
-            "range_obj",
-            om.ExecComp(
-                "reg_objective = -actual_range/1000 + ascent_duration/30.",
-                reg_objective={"val": 0.0, "units": "unitless"},
-                ascent_duration={"units": "s", "shape": 1},
-                actual_range={
-                    "val": prob.target_range, "units": "NM"},
-            ),
-            promotes_inputs=[
-                ("actual_range", Mission.Summary.RANGE),
-                ("ascent_duration", Mission.Takeoff.ASCENT_DURATION),
-            ],
-            promotes_outputs=[("reg_objective", Mission.Objectives.RANGE)],
-        )
-
         if prob.analysis_scheme is AnalysisScheme.COLLOCATION:
             ascent_phase = getattr(prob.traj.phases, 'ascent')
             ascent_tx = ascent_phase.options["transcription"]

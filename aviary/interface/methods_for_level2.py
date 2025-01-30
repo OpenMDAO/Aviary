@@ -895,22 +895,6 @@ class AviaryProblem(om.Problem):
                 ('initial_mass', Mission.Summary.GROSS_MASS)],
             promotes_outputs=[("mass_resid", Mission.Constraints.MASS_RESIDUAL)])
 
-        # Objectives should be calculated here
-        self.model.add_subsystem(
-            "fuel_obj",
-            om.ExecComp(
-                "reg_objective = overall_fuel/10000 + ascent_duration/30.",
-                reg_objective={"val": 0.0, "units": "unitless"},
-                ascent_duration={"units": "s", "shape": 1},
-                overall_fuel={"units": "lbm"},
-            ),
-            promotes_inputs=[
-                ("ascent_duration", Mission.Takeoff.ASCENT_DURATION),
-                ("overall_fuel", Mission.Summary.TOTAL_FUEL_MASS),
-            ],
-            promotes_outputs=[("reg_objective", Mission.Objectives.FUEL)],
-        )
-
     def _link_phases_helper_with_options(self, phases, option_name, var, **kwargs):
         # Initialize a list to keep track of indices where option_name is True
         true_option_indices = []
@@ -1291,6 +1275,38 @@ class AviaryProblem(om.Problem):
             ValueError: If an invalid problem type is provided.
 
         """
+
+        self.model.add_subsystem(
+            "fuel_obj",
+            om.ExecComp(
+                "reg_objective = overall_fuel/10000 + ascent_duration/30.",
+                reg_objective={"val": 0.0, "units": "unitless"},
+                ascent_duration={"units": "s", "shape": 1},
+                overall_fuel={"units": "lbm"},
+            ),
+            promotes_inputs=[
+                ("ascent_duration", Mission.Takeoff.ASCENT_DURATION),
+                ("overall_fuel", Mission.Summary.TOTAL_FUEL_MASS),
+            ],
+            promotes_outputs=[("reg_objective", Mission.Objectives.FUEL)],
+        )
+
+        self.model.add_subsystem(
+            "range_obj",
+            om.ExecComp(
+                "reg_objective = -actual_range/1000 + ascent_duration/30.",
+                reg_objective={"val": 0.0, "units": "unitless"},
+                ascent_duration={"units": "s", "shape": 1},
+                actual_range={
+                    "val": self.target_range, "units": "NM"},
+            ),
+            promotes_inputs=[
+                ("actual_range", Mission.Summary.RANGE),
+                ("ascent_duration", Mission.Takeoff.ASCENT_DURATION),
+            ],
+            promotes_outputs=[("reg_objective", Mission.Objectives.RANGE)],
+        )
+
         # Dictionary for default reference values
         default_ref_values = {
             'mass': -5e4,
