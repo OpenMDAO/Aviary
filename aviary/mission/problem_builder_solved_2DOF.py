@@ -46,6 +46,10 @@ class ProblemBuilderSolved2DOF():
         """
         raise RuntimeError("Solved 2DOF requires that a phase_info is specified.")
 
+    def get_default_payload_mass(self, prob):
+
+        return None
+
     def add_takeoff_systems(self, prob):
         pass
 

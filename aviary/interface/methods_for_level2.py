@@ -1732,11 +1732,9 @@ class AviaryProblem(om.Problem):
             phase_info = self.phase_info
         if mission_mass is None:
             mission_mass = self.get_val(Mission.Design.GROSS_MASS)
+
         if payload_mass is None:
-            if self.mission_method is HEIGHT_ENERGY:
-                payload_mass = self.get_val(Aircraft.CrewPayload.TOTAL_PAYLOAD_MASS)
-            elif self.mission_method is TWO_DEGREES_OF_FREEDOM:
-                payload_mass = self.get_val(Aircraft.CrewPayload.PASSENGER_PAYLOAD_MASS)
+            payload_mass = self.builder.get_default_payload_mass(self)
 
         design_range = self.get_val(Mission.Design.RANGE)
         optimizer = self.driver.options["optimizer"]

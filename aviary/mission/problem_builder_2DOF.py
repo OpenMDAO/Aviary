@@ -127,6 +127,12 @@ class ProblemBuilder2DOF():
 
         return phase_info
 
+    def get_default_payload_mass(self, prob):
+
+        payload_mass = self.get_val(Aircraft.CrewPayload.PASSENGER_PAYLOAD_MASS)
+
+        return payload_mass
+
     def add_takeoff_systems(self, prob):
         # Create options to values
         OptionsToValues = create_opts2vals(
