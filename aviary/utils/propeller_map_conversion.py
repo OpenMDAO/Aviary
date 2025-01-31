@@ -146,13 +146,16 @@ def _read_pm_table(f, cmts):
 
 
 def _setup_PMC_parser(parser):
-    parser.add_argument('input_file', type=str,
-                        help='path to propeller map file to be converted')
-    parser.add_argument('output_file', type=str, nargs='?',
-                        help='path to file where new converted data will be written')
-    parser.add_argument('-f', '--data_format', type=PropMapType, choices=list(PropMapType),
-                        nargs='?', default='GASP',
-                        help='data format used by input_file')
+    parser.add_argument(
+        'input_file', type=str,
+        help='path to propeller map file to be converted')
+    parser.add_argument(
+        'output_file', type=str, nargs='?',
+        help='path to file where new converted data will be written')
+    parser.add_argument(
+        '-f',
+        '--data_format', type=PropMapType, choices=list(PropMapType),
+        nargs='?', default='GASP', help='data format used by input_file')
 
 
 def _exec_PMC(args, user_args):
