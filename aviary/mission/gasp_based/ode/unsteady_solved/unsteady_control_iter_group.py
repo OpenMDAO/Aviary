@@ -74,13 +74,15 @@ class UnsteadyControlIterGroup(om.Group):
 
         thrust_alpha_bal = om.BalanceComp()
         if not self.options['ground_roll']:
-            thrust_alpha_bal.add_balance("alpha",
-                                         units="rad",
-                                         val=np.zeros(nn),
-                                         lhs_name="dgam_dt_approx",
-                                         rhs_name="dgam_dt",
-                                         eq_units="rad/s",
-                                         normalize=False)
+            thrust_alpha_bal.add_balance(
+                Dynamic.Vehicle.ANGLE_OF_ATTACK,
+                units="rad",
+                val=np.zeros(nn),
+                lhs_name="dgam_dt_approx",
+                rhs_name="dgam_dt",
+                eq_units="rad/s",
+                normalize=False,
+            )
 
         thrust_alpha_bal.add_balance("thrust_req",
                                      units="N",

@@ -43,7 +43,9 @@ class DLandTestCase(unittest.TestCase):
 
         self.prob.set_val(Mission.Landing.AIRPORT_ALTITUDE, 0, units="ft")
         self.prob.set_val(Mission.Landing.INITIAL_MACH, 0.1, units="unitless")
-        self.prob.set_val("alpha", 0, units="deg")  # doesn't matter
+        self.prob.set_val(
+            Dynamic.Vehicle.ANGLE_OF_ATTACK, 0, units="deg"
+        )  # doesn't matter
         self.prob.set_val(Mission.Landing.MAXIMUM_SINK_RATE, 900, units="ft/min")
         self.prob.set_val(Mission.Landing.GLIDE_TO_STALL_RATIO, 1.3, units="unitless")
         self.prob.set_val(Mission.Landing.MAXIMUM_FLARE_LOAD_FACTOR,

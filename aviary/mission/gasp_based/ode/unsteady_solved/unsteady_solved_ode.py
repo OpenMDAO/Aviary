@@ -173,7 +173,8 @@ class UnsteadySolvedODE(BaseODE):
                     mission_inputs = subsystem.mission_inputs(**kwargs)
                     if subsystem.code_origin is LegacyCode.FLOPS and 'angle_of_attack' in mission_inputs:
                         mission_inputs.remove('angle_of_attack')
-                        mission_inputs.append(('angle_of_attack', 'alpha'))
+                        mission_inputs.append(
+                            ('angle_of_attack', Dynamic.Vehicle.ANGLE_OF_ATTACK))
                     control_iter_group.add_subsystem(subsystem.name,
                                                      system,
                                                      promotes_inputs=mission_inputs,
@@ -204,15 +205,17 @@ class UnsteadySolvedODE(BaseODE):
 
         thrust_alpha_bal = om.BalanceComp()
         if not self.options['ground_roll']:
-            thrust_alpha_bal.add_balance("alpha",
-                                         units="rad",
-                                         val=np.zeros(nn),
-                                         lhs_name="dgam_dt_approx",
-                                         rhs_name="dgam_dt",
-                                         eq_units="rad/s",
-                                         lower=-np.pi/12,
-                                         upper=np.pi/12,
-                                         normalize=False)
+            thrust_alpha_bal.add_balance(
+                Dynamic.Vehicle.ANGLE_OF_ATTACK,
+                units="rad",
+                val=np.zeros(nn),
+                lhs_name="dgam_dt_approx",
+                rhs_name="dgam_dt",
+                eq_units="rad/s",
+                lower=-np.pi / 12,
+                upper=np.pi / 12,
+                normalize=False,
+            )
 
         thrust_alpha_bal.add_balance("thrust_req",
                                      units="N",

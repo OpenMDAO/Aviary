@@ -75,14 +75,14 @@ class BaseODE(om.Group):
 
         elif alpha_mode is AlphaModes.LOAD_FACTOR:
             alpha_comp = om.BalanceComp(
-                name="alpha",
+                name=Dynamic.Vehicle.ANGLE_OF_ATTACK,
                 val=np.full(nn, 10),  # initial guess
                 units="deg",
                 eq_units="unitless",
                 lhs_name="load_factor",
                 rhs_val=target_load_factor,
-                upper=25.,
-                lower=-2.,
+                upper=25.0,
+                lower=-2.0,
             )
             alpha_comp_inputs = ["load_factor"]
 
@@ -102,7 +102,7 @@ class BaseODE(om.Group):
 
         elif alpha_mode is AlphaModes.DECELERATION:
             alpha_comp = om.BalanceComp(
-                name="alpha",
+                name=Dynamic.Vehicle.ANGLE_OF_ATTACK,
                 val=np.full(nn, 10),  # initial guess
                 units="deg",
                 lhs_name=Dynamic.Mission.VELOCITY_RATE,
@@ -116,7 +116,7 @@ class BaseODE(om.Group):
 
         elif alpha_mode is AlphaModes.REQUIRED_LIFT:
             alpha_comp = om.BalanceComp(
-                name="alpha",
+                name=Dynamic.Vehicle.ANGLE_OF_ATTACK,
                 val=8.0 * np.ones(nn),
                 units="deg",
                 rhs_name="required_lift",
@@ -130,7 +130,7 @@ class BaseODE(om.Group):
         # Future controller modes
         # elif alpha_mode is AlphaModes.FLIGHT_PATH_ANGLE:
         #     alpha_comp = om.BalanceComp(
-        #         name="alpha",
+        #         name=Dynamic.Vehicle.ANGLE_OF_ATTACK,
         #         val=np.full(nn, 1),
         #         units="deg",
         #         lhs_name=Dynamic.Mission.FLIGHT_PATH_ANGLE,
@@ -144,7 +144,7 @@ class BaseODE(om.Group):
 
         # elif alpha_mode is AlphaModes.ALTITUDE_RATE:
         #     alpha_comp = om.BalanceComp(
-        #         name="alpha",
+        #         name=Dynamic.Vehicle.ANGLE_OF_ATTACK,
         #         val=np.full(nn, 1),
         #         units="deg",
         #         lhs_name=Dynamic.Mission.ALTITUDE_RATE,
@@ -157,7 +157,7 @@ class BaseODE(om.Group):
 
         # elif alpha_mode is AlphaModes.CONSTANT_ALTITUDE:
         #     alpha_comp = om.BalanceComp(
-        #         name="alpha",
+        #         name=Dynamic.Vehicle.ANGLE_OF_ATTACK,
         #         val=np.full(nn, 1),
         #         units="deg",
         #         lhs_name=Dynamic.Mission.ALTITUDE,
@@ -169,11 +169,12 @@ class BaseODE(om.Group):
         #     alpha_comp_inputs = [Dynamic.Mission.ALTITUDE]
 
         if alpha_mode is not AlphaModes.DEFAULT:
-            alpha_group.add_subsystem("alpha_comp",
-                                      alpha_comp,
-                                      promotes_inputs=alpha_comp_inputs,
-                                      promotes_outputs=["alpha"],
-                                      )
+            alpha_group.add_subsystem(
+                "alpha_comp",
+                alpha_comp,
+                promotes_inputs=alpha_comp_inputs,
+                promotes_outputs=[Dynamic.Vehicle.ANGLE_OF_ATTACK],
+            )
 
             if add_default_solver and alpha_mode not in (AlphaModes.ROTATION,):
                 alpha_group.nonlinear_solver = om.NewtonSolver()

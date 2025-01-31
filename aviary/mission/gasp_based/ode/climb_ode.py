@@ -225,7 +225,7 @@ class ClimbODE(BaseODE):
             "constraints",
             FlightConstraints(num_nodes=nn),
             promotes_inputs=[
-                "alpha",
+                Dynamic.Vehicle.ANGLE_OF_ATTACK,
                 Dynamic.Atmosphere.DENSITY,
                 "CL_max",
                 Dynamic.Mission.FLIGHT_PATH_ANGLE,

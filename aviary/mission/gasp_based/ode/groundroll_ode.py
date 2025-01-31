@@ -65,7 +65,10 @@ class GroundrollODE(BaseODE):
                 i_wing={"units": "deg", "val": 1.1},
                 alpha={"units": "deg", "val": 1.1 * np.ones(nn)},
             ),
-            promotes=[("i_wing", Aircraft.Wing.INCIDENCE), "alpha"],
+            promotes=[
+                ("i_wing", Aircraft.Wing.INCIDENCE),
+                ("alpha", Dynamic.Vehicle.ANGLE_OF_ATTACK),
+            ],
         )
 
         kwargs = {
@@ -88,7 +91,7 @@ class GroundrollODE(BaseODE):
             if type(subsystem) is AerodynamicsBuilderBase:
                 self.promotes(
                     subsystem.name,
-                    inputs=["alpha"],
+                    inputs=[Dynamic.Vehicle.ANGLE_OF_ATTACK],
                     src_indices=np.zeros(nn, dtype=int),
                 )
 

@@ -97,7 +97,11 @@ class ClimbPhase(PhaseBuilderBase):
             Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL, units="lbm/s"
         )
         phase.add_timeseries_output("theta", output_name="theta", units="deg")
-        phase.add_timeseries_output("alpha", output_name="alpha", units="deg")
+        phase.add_timeseries_output(
+            Dynamic.Vehicle.ANGLE_OF_ATTACK,
+            output_name=Dynamic.Vehicle.ANGLE_OF_ATTACK,
+            units="deg",
+        )
         phase.add_timeseries_output(
             Dynamic.Mission.FLIGHT_PATH_ANGLE,
             output_name=Dynamic.Mission.FLIGHT_PATH_ANGLE,

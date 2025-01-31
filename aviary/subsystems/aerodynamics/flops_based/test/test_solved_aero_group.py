@@ -16,7 +16,7 @@ from aviary.subsystems.subsystem_builder_base import SubsystemBuilderBase
 from aviary.utils.csv_data_file import read_data_file
 from aviary.utils.named_values import NamedValues
 from aviary.interface.default_phase_info.height_energy import phase_info
-from aviary.variable_info.variables import Aircraft
+from aviary.variable_info.variables import Aircraft, Dynamic
 
 
 # The drag-polar-generating component reads this in, instead of computing the polars.
@@ -216,13 +216,17 @@ class FakeCalcDragPolar(om.ExplicitComponent):
                              desc="List of altitudes in ascending order.")
         self.options.declare("mach", default=None, allow_none=True,
                              desc="List of mach numbers in ascending order.")
-        self.options.declare("alpha", default=None, allow_none=True,
-                             desc="List of angles of attack in ascending order.")
+        self.options.declare(
+            "alpha",
+            default=None,
+            allow_none=True,
+            desc="List of angles of attack in ascending order.",
+        )
 
     def setup(self):
         altitude = self.options['altitude']
         mach = self.options['mach']
-        alpha = self.options['alpha']
+        alpha = self.options["alpha"]
 
         self.add_input(Aircraft.Wing.AREA, 1.0, units='ft**2')
         self.add_input(Aircraft.Wing.SPAN, 1.0, units='ft')

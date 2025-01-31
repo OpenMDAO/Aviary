@@ -63,7 +63,7 @@ class DescentODETestCase(unittest.TestCase):
         self.prob.run_model()
 
         testvals = {
-            "alpha": np.array([3.22047, 1.20346]),
+            Dynamic.Vehicle.ANGLE_OF_ATTACK: np.array([3.22047, 1.20346]),
             "CL": np.array([0.5169255, 0.25908651]),
             "CD": np.array([0.02786507, 0.01862951]),
             # ft/s
@@ -105,7 +105,7 @@ class DescentODETestCase(unittest.TestCase):
         self.prob.run_model()
 
         testvals = {
-            "alpha": 4.19956,
+            Dynamic.Vehicle.ANGLE_OF_ATTACK: 4.19956,
             "CL": 0.507578,
             "CD": 0.0268404,
             Dynamic.Mission.ALTITUDE_RATE: -18.97635475,

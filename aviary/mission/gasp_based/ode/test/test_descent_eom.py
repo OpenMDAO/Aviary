@@ -34,7 +34,9 @@ class DescentTestCase(unittest.TestCase):
         self.prob.model.set_input_defaults(
             Dynamic.Vehicle.MASS, np.array([147661, 147661]), units="lbm"
         )
-        self.prob.model.set_input_defaults("alpha", np.array([3.2, 3.2]), units="deg")
+        self.prob.model.set_input_defaults(
+            Dynamic.Vehicle.ANGLE_OF_ATTACK, np.array([3.2, 3.2]), units="deg"
+        )
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
@@ -98,7 +100,9 @@ class DescentTestCase2(unittest.TestCase):
         prob.model.set_input_defaults(
             Dynamic.Vehicle.MASS, np.array([147661, 147661]), units="lbm"
         )
-        prob.model.set_input_defaults("alpha", np.array([3.2, 3.2]), units="deg")
+        prob.model.set_input_defaults(
+            Dynamic.Vehicle.ANGLE_OF_ATTACK, np.array([3.2, 3.2]), units="deg"
+        )
         prob.setup(check=False, force_alloc_complex=True)
 
         partial_data = prob.check_partials(out_stream=None, method="cs")

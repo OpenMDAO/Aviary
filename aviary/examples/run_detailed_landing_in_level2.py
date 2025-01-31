@@ -1,5 +1,3 @@
-
-
 import openmdao.api as om
 import aviary.api as av
 
@@ -200,9 +198,11 @@ if __name__ == '__main__':
     output_data[point_name]['true_airspeed'] = case.get_val(
         f'traj.{phase_name}.timeseries.velocity', units='kn')[-1][0]
     output_data[point_name]['angle_of_attack'] = case.get_val(
-        f'traj.{phase_name}.timeseries.alpha', units='deg')[-1][0]
+        f'traj.{phase_name}.timeseries.angle_of_attack', units='deg'
+    )[-1][0]
     output_data[point_name]['flight_path_angle'] = case.get_val(
-        f'traj.{phase_name}.timeseries.flight_path_angle', units='deg')[-1][0]
+        f'traj.{phase_name}.timeseries.flight_path_angle', units='deg'
+    )[-1][0]
     output_data[point_name]['altitude'] = case.get_val(
         f'traj.{phase_name}.timeseries.altitude', units='ft')[-1][0]
     output_data[point_name]['distance'] = case.get_val(

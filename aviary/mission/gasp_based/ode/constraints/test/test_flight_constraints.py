@@ -34,7 +34,9 @@ class FlightConstraintTestCase(unittest.TestCase):
             Dynamic.Mission.FLIGHT_PATH_ANGLE, 7.76 * np.ones(2), units="deg"
         )
         self.prob.model.set_input_defaults(Aircraft.Wing.INCIDENCE, 0.0, units="deg")
-        self.prob.model.set_input_defaults("alpha", 5.19 * np.ones(2), units="deg")
+        self.prob.model.set_input_defaults(
+            Dynamic.Vehicle.ANGLE_OF_ATTACK, 5.19 * np.ones(2), units="deg"
+        )
         self.prob.model.set_input_defaults(
             Dynamic.Mission.VELOCITY, 252 * np.ones(2), units="kn"
         )
