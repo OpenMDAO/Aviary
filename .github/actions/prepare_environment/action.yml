@@ -159,7 +159,7 @@ runs:
         conda env export --file ${{ inputs.NAME }}_environment.yml
 
     - name: 'Upload environment artifact'
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: ${{ inputs.NAME }}_environment
         path: ${{ inputs.NAME }}_environment.yml

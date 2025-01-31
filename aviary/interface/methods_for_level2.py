@@ -8,6 +8,7 @@ import importlib.util
 import sys
 import json
 import enum
+import os
 
 import numpy as np
 
@@ -3026,6 +3027,15 @@ class AviaryProblem(om.Problem):
             # TODO failed doesn't exist for run_model(), no return from method
             failed = self.run_model()
             warnings.filterwarnings('default', category=UserWarning)
+
+        # update n2 diagram after run.
+        outdir = Path(self.get_reports_dir(force=True))
+        outfile = os.path.join(outdir, "n2.html")
+        om.n2(
+            self,
+            outfile=outfile,
+            show_browser=False,
+        )
 
         if verbosity >= Verbosity.VERBOSE:  # VERBOSE, DEBUG
             with open('output_list.txt', 'w') as outfile:
