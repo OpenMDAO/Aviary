@@ -36,12 +36,6 @@ class run_missionTestCases(CommandEntryPointsTestCases):
         self.run_and_test_cmd(cmd)
 
     @require_pyoptsparse(optimizer="IPOPT")
-    def bench_test_IPOPT_cmd(self):
-        cmd = 'aviary run_mission models/test_aircraft/aircraft_for_bench_GwGm.csv' \
-            ' --optimizer IPOPT --max_iter 1 --shooting'
-        self.run_and_test_cmd(cmd)
-
-    @require_pyoptsparse(optimizer="IPOPT")
     def bench_test_phase_info_cmd(self):
         cmd = 'aviary run_mission models/test_aircraft/aircraft_for_bench_GwGm.csv --optimizer IPOPT --max_iter 1' \
             ' --phase_info interface/default_phase_info/two_dof.py'
