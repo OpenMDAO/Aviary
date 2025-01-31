@@ -2101,7 +2101,7 @@ add_meta_data(
     types=(np.ndarray, int),
     multivalue=True,
     option=True,
-    default_value=[2]
+    default_value=2
 )
 
 add_meta_data(
@@ -2518,7 +2518,7 @@ add_meta_data(
     historical_name={"GASP": 'INPROP.DPROP', "FLOPS": None, "LEAPS1": None},
     units='ft',
     desc='propeller diameter',
-    default_value=0.0,
+    default_value=8.0,
 )
 
 add_meta_data(

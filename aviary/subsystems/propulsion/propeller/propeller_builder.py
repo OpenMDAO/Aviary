@@ -43,19 +43,19 @@ class PropellerBuilder(SubsystemBuilderBase):
 
         # TODO bounds are rough placeholders
         DVs = {
-            Aircraft.Engine.PROPELLER_ACTIVITY_FACTOR: {
+            Aircraft.Engine.Propeller.ACTIVITY_FACTOR: {
                 'units': 'unitless',
                 'lower': 100,
                 'upper': 200,
                 # 'val': 100,  # initial value
             },
-            Aircraft.Engine.PROPELLER_DIAMETER: {
+            Aircraft.Engine.Propeller.DIAMETER: {
                 'units': 'ft',
                 'lower': 0.0,
                 'upper': None,
                 # 'val': 8,  # initial value
             },
-            Aircraft.Engine.PROPELLER_INTEGRATED_LIFT_COEFFICIENT: {
+            Aircraft.Engine.Propeller.INTEGRATED_LIFT_COEFFICIENT: {
                 'units': 'unitless',
                 'lower': 0.0,
                 'upper': 0.5,
@@ -79,28 +79,24 @@ class PropellerBuilder(SubsystemBuilderBase):
         A dict of names for the propeller subsystem.
         """
         parameters = {
-            Aircraft.Engine.PROPELLER_TIP_MACH_MAX: {
+            Aircraft.Engine.Propeller.TIP_MACH_MAX: {
                 'val': 1.0,
                 'units': 'unitless',
             },
-            Aircraft.Engine.PROPELLER_TIP_SPEED_MAX: {
-                'val': 0.0,
-                'units': 'unitless',
-            },
-            Aircraft.Engine.PROPELLER_TIP_SPEED_MAX: {
+            Aircraft.Engine.Propeller.TIP_SPEED_MAX: {
                 'val': 0.0,
                 'units': 'ft/s',
             },
-            Aircraft.Engine.PROPELLER_INTEGRATED_LIFT_COEFFICIENT: {
-                'val': 0.0,
+            Aircraft.Engine.Propeller.INTEGRATED_LIFT_COEFFICIENT: {
+                'val': 0.5,
                 'units': 'unitless',
             },
-            Aircraft.Engine.PROPELLER_ACTIVITY_FACTOR: {
-                'val': 0.0,
+            Aircraft.Engine.Propeller.ACTIVITY_FACTOR: {
+                'val': 10.0,
                 'units': 'unitless',
             },
-            Aircraft.Engine.PROPELLER_DIAMETER: {
-                'val': 0.0,
+            Aircraft.Engine.Propeller.DIAMETER: {
+                'val': 8.0,
                 'units': 'ft',
             },
             Aircraft.Nacelle.AVG_DIAMETER: {
