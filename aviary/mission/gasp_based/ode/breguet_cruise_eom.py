@@ -5,6 +5,9 @@ from aviary.constants import GRAV_ENGLISH_LBM
 from aviary.variable_info.variables import Dynamic
 
 
+ft_to_nm = 6076.1
+
+
 class RangeComp(om.ExplicitComponent):
     """
     Compute the cruise range and time for the breguet range component
@@ -115,8 +118,8 @@ class RangeComp(om.ExplicitComponent):
         vx_2 = v_x[1:]  # Final airspeed across each two-node pair
         vx_m = (vx_1 + vx_2) / 2  # Average airspeed across each two-node pair.
 
-        breg_1 = vx_1 * W1 * 3600 / (FF_1 * 6076.1)
-        breg_2 = vx_2 * W2 * 3600 / (FF_2 * 6076.1)
+        breg_1 = vx_1 * W1 * 3600 / (FF_1 * ft_to_nm)
+        breg_2 = vx_2 * W2 * 3600 / (FF_2 * ft_to_nm)
         bregA = (breg_1 + breg_2) / 2
 
         drange_cruise = bregA * np.log(1. / (1. - (W1 - W2) / W1))
@@ -124,7 +127,7 @@ class RangeComp(om.ExplicitComponent):
         outputs["cruise_range"][0] = r0
         outputs["cruise_range"][1:] = r0 + np.cumsum(drange_cruise)
         outputs["cruise_time"][0] = t0
-        outputs["cruise_time"][1:] = t0 + np.cumsum(drange_cruise) / vx_m * 6076.1
+        outputs["cruise_time"][1:] = t0 + np.cumsum(drange_cruise) / vx_m * ft_to_nm
 
     def compute_partials(self, inputs, J):
         v_x = inputs["TAS_cruise"]
@@ -141,18 +144,18 @@ class RangeComp(om.ExplicitComponent):
         FF_1 = FF[:-1]  # Initial fuel flow across each two-node pair
         FF_2 = FF[1:]  # Final fuel flow across each two_node pair
 
-        breg_1 = vx_1 * W1 * 3600 / (FF_1 * 6076.1)
-        breg_2 = vx_2 * W2 * 3600 / (FF_2 * 6076.1)
+        breg_1 = vx_1 * W1 * 3600 / (FF_1 * ft_to_nm)
+        breg_2 = vx_2 * W2 * 3600 / (FF_2 * ft_to_nm)
         bregA = (breg_1 + breg_2) / 2
         star = np.log(1 / (1 - (W1 - W2) / W1))
 
-        dBreg1_dVx1 = W1 * 3600 / (FF_1 * 6076.1)
-        dBreg1_dW1 = vx_1 * 3600 / (FF_1 * 6076.1)
-        dBreg1_dFF1 = vx_1 * W1 * 3600 / (FF_1**2 * 6076.1)
+        dBreg1_dVx1 = W1 * 3600 / (FF_1 * ft_to_nm)
+        dBreg1_dW1 = vx_1 * 3600 / (FF_1 * ft_to_nm)
+        dBreg1_dFF1 = vx_1 * W1 * 3600 / (FF_1**2 * ft_to_nm)
 
-        dBreg2_dVx2 = W2 * 3600 / (FF_2 * 6076.1)
-        dBreg2_dW2 = vx_2 * 3600 / (FF_2 * 6076.1)
-        dBreg2_dFF2 = vx_2 * W2 * 3600 / (FF_2**2 * 6076.1)
+        dBreg2_dVx2 = W2 * 3600 / (FF_2 * ft_to_nm)
+        dBreg2_dW2 = vx_2 * 3600 / (FF_2 * ft_to_nm)
+        dBreg2_dFF2 = vx_2 * W2 * 3600 / (FF_2**2 * ft_to_nm)
 
         dStar_dW1 = 1.0 / W1
         dStar_dW2 = -1.0 / W2
@@ -210,10 +213,10 @@ class RangeComp(om.ExplicitComponent):
                 1:
             ]
             / vx_m[self._tril_rs[1:] - 1]
-            * 6076.1
+            * ft_to_nm
         )
         J["cruise_time", "mass"][1:] = \
-            J["cruise_range", "mass"][1:] / vx_m[self._tril_rs[1:] - 1] * 6076.1
+            J["cruise_range", "mass"][1:] / vx_m[self._tril_rs[1:] - 1] * ft_to_nm
 
         drange_cruise = bregA * star
 
@@ -226,7 +229,7 @@ class RangeComp(om.ExplicitComponent):
         g = vx_m[:, np.newaxis]
         dg_du = self._scratch_nn_x_nn
 
-        dt_dvx = 6076.1 * ((df_du[1:, ...] * g) - (dg_du[1:, ...] * f)) / g**2
+        dt_dvx = ft_to_nm * ((df_du[1:, ...] * g) - (dg_du[1:, ...] * f)) / g**2
 
         J["cruise_time", "TAS_cruise"][1:] = \
             dt_dvx[self._tril_rs[1:] - 1, self._tril_cs[1:]]
@@ -347,14 +350,14 @@ class E_RangeComp(om.ExplicitComponent):
         vx_2 = v_x[1:]  # Final airspeed across each two-node pair
         vx_m = (vx_1 + vx_2) / 2  # Average airspeed across each two-node pair.
 
-        e_breg_1 = vx_1 * E_1 * 3600 / (P_1 * 6076.1)  # NM
-        e_breg_2 = vx_2 * E_2 * 3600 / (P_2 * 6076.1)
+        e_breg_1 = vx_1 * E_1 * 3600 / (P_1 * ft_to_nm)  # NM
+        e_breg_2 = vx_2 * E_2 * 3600 / (P_2 * ft_to_nm)
         e_drange_cruise = e_breg_2 - e_breg_1
 
         outputs["cruise_range"][0] = r0
         outputs["cruise_range"][1:] = r0 + np.cumsum(e_drange_cruise)
         outputs["cruise_time"][0] = t0
-        outputs["cruise_time"][1:] = t0 + np.cumsum(e_drange_cruise) / vx_m * 6076.1
+        outputs["cruise_time"][1:] = t0 + np.cumsum(e_drange_cruise) / vx_m * ft_to_nm
 
     def compute_partials(self, inputs, J):
         v_x = inputs["TAS_cruise"]
@@ -371,17 +374,17 @@ class E_RangeComp(om.ExplicitComponent):
         EP_1 = EP[:-1]  # Initial power across each two-node pair
         EP_2 = EP[1:]  # Final power across each two-node pair
 
-        e_breg_1 = vx_1 * E_1 * 3600 / (EP_1 * 6076.1)
-        e_breg_2 = vx_2 * E_2 * 3600 / (EP_2 * 6076.1)
+        e_breg_1 = vx_1 * E_1 * 3600 / (EP_1 * ft_to_nm)
+        e_breg_2 = vx_2 * E_2 * 3600 / (EP_2 * ft_to_nm)
         e_drange_cruise = e_breg_2 - e_breg_1
 
-        dBreg1_dVx1 = E_1 * 3600 / (EP_1 * 6076.1)
-        dBreg1_dE1 = vx_1 * 3600 / (EP_1 * 6076.1)
-        dBreg1_dP1 = -vx_1 * E_1 * 3600 / (EP_1**2 * 6076.1)
+        dBreg1_dVx1 = E_1 * 3600 / (EP_1 * ft_to_nm)
+        dBreg1_dE1 = vx_1 * 3600 / (EP_1 * ft_to_nm)
+        dBreg1_dP1 = -vx_1 * E_1 * 3600 / (EP_1**2 * ft_to_nm)
 
-        dBreg2_dVx2 = E_2 * 3600 / (EP_2 * 6076.1)
-        dBreg2_dE2 = vx_2 * 3600 / (EP_2 * 6076.1)
-        dBreg2_dP2 = -vx_2 * E_2 * 3600 / (EP_2**2 * 6076.1)
+        dBreg2_dVx2 = E_2 * 3600 / (EP_2 * ft_to_nm)
+        dBreg2_dE2 = vx_2 * 3600 / (EP_2 * ft_to_nm)
+        dBreg2_dP2 = -vx_2 * E_2 * 3600 / (EP_2**2 * ft_to_nm)
 
         dRange_dVx1 = -dBreg1_dVx1
         dRange_dVx2 = dBreg2_dVx2
@@ -429,11 +432,11 @@ class E_RangeComp(om.ExplicitComponent):
                 1:
             ]
             / vx_m[self._tril_rs[1:] - 1]
-            * 6076.1
+            * ft_to_nm
         )
         J["cruise_time", Dynamic.Vehicle.CUMULATIVE_ELECTRIC_ENERGY_USED][1:] = \
             J["cruise_range", Dynamic.Vehicle.CUMULATIVE_ELECTRIC_ENERGY_USED][1:] / \
-            vx_m[self._tril_rs[1:] - 1] * 6076.1
+            vx_m[self._tril_rs[1:] - 1] * ft_to_nm
 
         f = np.cumsum(e_drange_cruise)[:, np.newaxis]
         df_du = self._d_cumsum_dx @ self._scratch_nn_x_nn
@@ -444,7 +447,7 @@ class E_RangeComp(om.ExplicitComponent):
         g = vx_m[:, np.newaxis]
         dg_du = self._scratch_nn_x_nn
 
-        dt_dvx = 6076.1 * ((df_du[1:, ...] * g) - (dg_du[1:, ...] * f)) / g**2
+        dt_dvx = ft_to_nm * ((df_du[1:, ...] * g) - (dg_du[1:, ...] * f)) / g**2
 
         J["cruise_time", "TAS_cruise"][1:] = \
             dt_dvx[self._tril_rs[1:] - 1, self._tril_cs[1:]]
