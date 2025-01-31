@@ -17,11 +17,11 @@ class BodyCalculationTestCase1(unittest.TestCase):
 
     def setUp(self):
 
-        aviary_options=get_option_defaults()
+        aviary_options = get_option_defaults()
         aviary_options.set_val(Settings.VERBOSITY, 0)
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
-            "wing_calcs", BodyTankCalculations(aviary_options=get_option_defaults(), ), promotes=["*"]
+            "wing_calcs", BodyTankCalculations(aviary_options=aviary_options, ), promotes=["*"]
         )
 
         self.prob.model.set_input_defaults(
@@ -75,12 +75,12 @@ class BodyCalculationTestCase2(
     unittest.TestCase
 ):  # this is v 3.6 large single aisle 1 test case with wing loading of 150 psf and fuel margin of 10%
     def setUp(self):
-        aviary_options=get_option_defaults()
+        aviary_options = get_option_defaults()
         aviary_options.set_val(Settings.VERBOSITY, 0)
 
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
-            "wing_calcs", BodyTankCalculations(aviary_options=get_option_defaults(), ), promotes=["*"]
+            "wing_calcs", BodyTankCalculations(aviary_options=aviary_options, ), promotes=["*"]
         )
 
         self.prob.model.set_input_defaults(
@@ -136,11 +136,11 @@ class BodyCalculationTestCase3(unittest.TestCase):
         fuel.GRAV_ENGLISH_LBM = 1.0
 
     def test_case1(self):
-        aviary_options=get_option_defaults()
+        aviary_options = get_option_defaults()
         aviary_options.set_val(Settings.VERBOSITY, 0)
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
-            "wing_calcs", BodyTankCalculations(aviary_options=get_option_defaults(), ), promotes=["*"]
+            "wing_calcs", BodyTankCalculations(aviary_options=aviary_options, ), promotes=["*"]
         )
         self.prob.model.set_input_defaults(
             Aircraft.Fuel.WING_VOLUME_DESIGN, val=989.2, units="ft**3")
@@ -800,7 +800,7 @@ class FuelMassGroupTestCase2(
 
         self.prob = om.Problem()
         self.prob.model.add_subsystem("group", FuelMassGroup(
-            aviary_options=get_option_defaults(), ), promotes=["*"])
+            aviary_options=aviary_options, ), promotes=["*"])
 
         # top level
         self.prob.model.set_input_defaults(
@@ -942,7 +942,7 @@ class FuelMassGroupTestCase3(
 
         self.prob = om.Problem()
         self.prob.model.add_subsystem("group", FuelMassGroup(
-            aviary_options=get_option_defaults(), ), promotes=["*"])
+            aviary_options=aviary_options, ), promotes=["*"])
 
         # top level
         self.prob.model.set_input_defaults(

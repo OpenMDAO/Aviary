@@ -16,7 +16,6 @@ from aviary.variable_info.functions import add_aviary_input, add_aviary_option
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission, Settings
 
 
-
 #
 # data from EAERO
 #
