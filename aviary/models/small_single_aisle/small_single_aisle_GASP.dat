@@ -1,11 +1,5 @@
  Small Single Aisle / turbofan_24k_2                                      -1                        
 
- aircraft:engine:data_file=models/engines/turbofan_24k_2.deck 
- aircraft:engine:data_file=models/engines/turbofan_23k_1.deck !temporary
- mission:summary:gross_mass=124780
- aircraft:engine:reference_diameter=6.04
- 
-
  $INGASP
  AS=1.,		! Number of aisles in the cabin
  AR=11.03,	! Wing aspect ratio
