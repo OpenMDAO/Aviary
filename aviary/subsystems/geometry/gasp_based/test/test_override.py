@@ -20,7 +20,8 @@ import unittest
 class GASPOverrideTestCase(unittest.TestCase):
     def setUp(self):
         aviary_inputs, initial_guesses = create_vehicle(
-            'models/test_aircraft/converter_configuration_test_data_GwGm.csv')
+            'models/test_aircraft/configuration_test_GASP.csv'
+        )
 
         engines = build_engine_deck(aviary_inputs)
 
