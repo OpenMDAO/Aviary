@@ -8,6 +8,7 @@ import importlib.util
 import sys
 import json
 import enum
+import os
 
 import numpy as np
 
@@ -2540,6 +2541,15 @@ class AviaryProblem(om.Problem):
             warnings.filterwarnings('ignore', category=UserWarning)
             failed = self.run_model()
             warnings.filterwarnings('default', category=UserWarning)
+
+        # update n2 diagram after run.
+        outdir = Path(self.get_reports_dir(force=True))
+        outfile = os.path.join(outdir, "n2.html")
+        om.n2(
+            self,
+            outfile=outfile,
+            show_browser=False,
+        )
 
         if self.aviary_inputs.get_val(Settings.VERBOSITY).value >= 2:
             with open('output_list.txt', 'w') as outfile:
