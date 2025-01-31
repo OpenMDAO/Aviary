@@ -302,13 +302,6 @@ class ProblemBuilderHeightEnergy():
                            Mission.Summary.RANGE,
                            src_indices=[-1], flat_src_indices=True)
 
-        if not prob.pre_mission_info['include_takeoff']:
-            first_flight_phase_name = list(prob.phase_info.keys())[0]
-            first_flight_phase = prob.traj._phases[first_flight_phase_name]
-            first_flight_phase.set_state_options(
-                Dynamic.Vehicle.MASS, fix_initial=False
-            )
-
     def add_post_mission_systems(self, prob, include_landing=True):
         """
         Add any post mission systems.
@@ -452,6 +445,22 @@ class ProblemBuilderHeightEnergy():
         prob.model.connect(f'traj.{last_regular_phase}.{control_type_string}:altitude',
                            Mission.Landing.INITIAL_ALTITUDE,
                            src_indices=[0])
+
+    def add_objective(self, prob):
+        """
+        Add any additional components related to objectives.
+
+        Parameters
+        ----------
+        prob : AviaryProblem
+            Problem that owns this builder.
+        """
+        if not prob.pre_mission_info['include_takeoff']:
+            first_flight_phase_name = list(prob.phase_info.keys())[0]
+            first_flight_phase = prob.traj._phases[first_flight_phase_name]
+            first_flight_phase.set_state_options(
+                Dynamic.Vehicle.MASS, fix_initial=False
+            )
 
     def add_guesses(self, prob, phase_name, phase, guesses, target_prob, parent_prefix):
         """

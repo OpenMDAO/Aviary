@@ -1263,6 +1263,7 @@ class AviaryProblem(om.Problem):
             ValueError: If an invalid problem type is provided.
 
         """
+        self.builder.add_objective(self)
 
         self.model.add_subsystem(
             "fuel_obj",

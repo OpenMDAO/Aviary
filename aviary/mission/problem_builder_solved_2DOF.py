@@ -1,10 +1,10 @@
 
 from aviary.mission.flops_based.phases.groundroll_phase import GroundrollPhase as GroundrollPhaseVelocityIntegrated
 from aviary.mission.twodof_phase import TwoDOFPhase
-from aviary.utils.functions import wrapped_convert_units
-from aviary.variable_info.variables import Dynamic
 from aviary.subsystems.propulsion.utils import build_engine_deck
+from aviary.utils.functions import wrapped_convert_units
 from aviary.variable_info.enums import LegacyCode
+from aviary.variable_info.variables import Dynamic, Mission
 
 
 class ProblemBuilderSolved2DOF():
@@ -25,6 +25,12 @@ class ProblemBuilderSolved2DOF():
         """
         if prob.engine_builders is None:
             prob.engine_builders = build_engine_deck(prob.aviary_inputs)
+
+        # This doesn't really have much value, but is needed for initializing
+        # an objective-related component that still lives in level 2.
+        prob.target_range = prob.aviary_inputs.get_val(
+            Mission.Design.RANGE, units='NM'
+        )
 
     def get_default_phase_info(self, prob):
         """
@@ -232,6 +238,17 @@ class ProblemBuilderSolved2DOF():
             Problem that owns this builder.
         include_landing : bool
             When True, include the landing systems.
+        """
+        pass
+
+    def add_objective(self, prob):
+        """
+        Add any additional components related to objectives.
+
+        Parameters
+        ----------
+        prob : AviaryProblem
+            Problem that owns this builder.
         """
         pass
 

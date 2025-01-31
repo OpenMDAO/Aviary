@@ -93,6 +93,7 @@ class ProblemBuilder2DOF():
                 Mission.Design.RANGE, units='NM')
             aviary_inputs.set_val(Mission.Summary.RANGE, aviary_inputs.get_val(
                 Mission.Design.RANGE, units='NM'), units='NM')
+
         prob.cruise_mach = aviary_inputs.get_val(Mission.Design.MACH)
         prob.require_range_residual = True
 
@@ -655,6 +656,17 @@ class ProblemBuilder2DOF():
         prob.model.connect(
             'pre_mission.drag_loss_due_to_shielded_wing_area',
             'landing.drag_loss_due_to_shielded_wing_area')
+
+    def add_objective(self, prob):
+        """
+        Add any additional components related to objectives.
+
+        Parameters
+        ----------
+        prob : AviaryProblem
+            Problem that owns this builder.
+        """
+        pass
 
     def add_guesses(self, prob, phase_name, phase, guesses, target_prob, parent_prefix):
         """
