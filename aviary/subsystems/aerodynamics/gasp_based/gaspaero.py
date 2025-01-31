@@ -1495,9 +1495,7 @@ class LowSpeedAero(om.Group):
                 # so ensure this is what's passed to DragCoef
                 promotes_outputs=[("CL", "CL_full_flaps")],
             )
-            verbosity = self.options['aviary_options'].get_val(Settings.VERBOSITY)
-            if verbosity >= Verbosity.BRIEF:
-                warnings.warn("Alpha is NOT an output from LowSpeedAero.")
+            warnings.warn("Alpha is NOT an output from LowSpeedAero.")
         else:
             self.add_subsystem(
                 "lift_coef",
