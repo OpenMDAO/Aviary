@@ -244,7 +244,7 @@ class ProblemBuilderHeightEnergy():
                 initial_ref=user_options.get_val("initial_ref", time_units),
             )
 
-    def link_phases(self, prob, phases, connected=True):
+    def link_phases(self, prob, phases, connect_directly=True):
         """
         Apply any additional phase linking.
 
@@ -259,7 +259,7 @@ class ProblemBuilderHeightEnergy():
             Problem that owns this builder.
         phases : Phase
             Phases to be linked.
-        connected : bool
+        connect_directly : bool
             When True, then connected=True. This allows the connections to be
             handled by constraints if `phases` is a parallel group under MPI.
         """
@@ -289,18 +289,25 @@ class ProblemBuilderHeightEnergy():
         # connect mass and distance between all phases regardless of reserve /
         # non-reserve status
         prob.traj.link_phases(phases, ["time"],
-                              ref=None if connected else 1e3,
-                              connected=connected)
+                              ref=None if connect_directly else 1e3,
+                              connected=connect_directly)
         prob.traj.link_phases(phases, [Dynamic.Vehicle.MASS],
-                              ref=None if connected else 1e6,
-                              connected=connected)
+                              ref=None if connect_directly else 1e6,
+                              connected=connect_directly)
         prob.traj.link_phases(phases, [Dynamic.Mission.DISTANCE],
-                              ref=None if connected else 1e3,
-                              connected=connected)
+                              ref=None if connect_directly else 1e3,
+                              connected=connect_directly)
 
         prob.model.connect(f'traj.{prob.regular_phases[-1]}.timeseries.distance',
                            Mission.Summary.RANGE,
                            src_indices=[-1], flat_src_indices=True)
+
+        if not prob.pre_mission_info['include_takeoff']:
+            first_flight_phase_name = list(prob.phase_info.keys())[0]
+            first_flight_phase = prob.traj._phases[first_flight_phase_name]
+            first_flight_phase.set_state_options(
+                Dynamic.Vehicle.MASS, fix_initial=False
+            )
 
     def add_post_mission_systems(self, prob, include_landing=True):
         """
@@ -593,10 +600,3 @@ class ProblemBuilderHeightEnergy():
             # Set the mass guess as the initial value for the mass state variable
             target_prob.set_val(parent_prefix + f'traj.{phase_name}.states:mass',
                                 mass_guess, units='lbm')
-
-        if not self.pre_mission_info['include_takeoff']:
-            first_flight_phase_name = list(prob.phase_info.keys())[0]
-            first_flight_phase = prob.traj._phases[first_flight_phase_name]
-            first_flight_phase.set_state_options(
-                Dynamic.Vehicle.MASS, fix_initial=False
-            )

@@ -166,7 +166,7 @@ class ProblemBuilderSolved2DOF():
                 initial_ref=user_options.get_val("initial_ref", time_units),
             )
 
-    def link_phases(self, prob, phases, connected=True):
+    def link_phases(self, prob, phases, connect_directly=True):
         """
         Apply any additional phase linking.
 
@@ -181,7 +181,7 @@ class ProblemBuilderSolved2DOF():
             Problem that owns this builder.
         phases : Phase
             Phases to be linked.
-        connected : bool
+        connect_directly : bool
             When True, then connected=True. This allows the connections to be
             handled by constraints if `phases` is a parallel group under MPI.
         """
