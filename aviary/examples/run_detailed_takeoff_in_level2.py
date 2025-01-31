@@ -82,7 +82,7 @@ phase_info = {
             'distance': [(2.0e3, 1.0e3), 'ft'],
             'time': [(20.0, 25.0), 's'],
             'mass': [(174.85e3, 174.84e3), 'lbm'],
-            Dynamic.Vehicle.ANGLE_OF_ATTACK: [(0.0, 12.0), 'deg'],
+            'angle_of_attack': [(0.0, 12.0), 'deg'],
         },
     },
     'BC': {
@@ -373,7 +373,8 @@ if __name__ == '__main__':
         output_data[point_name]['true_airspeed'] = case.get_val(
             f'traj.{phase_name}.timeseries.velocity', units='kn')[-1][0]
         output_data[point_name]['angle_of_attack'] = case.get_val(
-            f'traj.{phase_name}.timeseries.alpha', units='deg')[-1][0]
+            f'traj.{phase_name}.timeseries.angle_of_attack', units='deg'
+        )[-1][0]
         output_data[point_name]['flight_path_angle'] = case.get_val(
             f'traj.{phase_name}.timeseries.flight_path_angle', units='deg')[-1][0]
         output_data[point_name]['altitude'] = case.get_val(
