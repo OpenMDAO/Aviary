@@ -158,7 +158,7 @@ class BreguetCruiseODESolution(BaseODE):
 
 
 class E_BreguetCruiseODESolution(BaseODE):
-    """The GASP based cruise ODE"""
+    """The GASP based cruise ODE by electrical aircraft"""
 
     def setup(self):
         nn = self.options["num_nodes"]
