@@ -168,7 +168,10 @@ def preprocess_crewpayload(aviary_options: AviaryValues):
     input_max_cargo = Aircraft.CrewPayload.MAX_CARGO_MASS in aviary_options
     input_des_cargo = Aircraft.CrewPayload.Design.CARGO_MASS in aviary_options
 
-    problem_type = aviary_options.get_val(Settings.PROBLEM_TYPE)
+    if Settings.PROBLEM_TYPE in aviary_options:
+        problem_type = aviary_options.get_val(Settings.PROBLEM_TYPE)
+    else:
+        problem_type = ProblemType.SIZING
 
     if input_cargo:
         cargo = aviary_options.get_val(Aircraft.CrewPayload.CARGO_MASS, 'lbm')
