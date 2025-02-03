@@ -721,7 +721,7 @@ add_meta_data(
         ],
     },
     units='lbm',
-    desc='Maximum mass of cargo'
+    desc='Maximum mass of cargo',
     default_value=0.0,
 )
 
