@@ -1385,7 +1385,6 @@ class AviaryProblem(om.Problem):
             mass_resid={'units': 'lbm'})
 
         if self.mass_method is GASP:
-            #payload_mass_src = Aircraft.CrewPayload.PASSENGER_PAYLOAD_MASS
             payload_mass_src = Aircraft.CrewPayload.TOTAL_PAYLOAD_MASS
         else:
             payload_mass_src = Aircraft.CrewPayload.TOTAL_PAYLOAD_MASS
