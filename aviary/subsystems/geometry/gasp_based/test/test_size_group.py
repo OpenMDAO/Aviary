@@ -243,6 +243,9 @@ class SizeGroupTestCase2(unittest.TestCase):
             Aircraft.HorizontalTail.MOMENT_RATIO, val=0.2307, units="unitless"
         )
         self.prob.model.set_input_defaults(
+            Aircraft.HorizontalTail.TAPER_RATIO, val=0.352, units="unitless"
+        )
+        self.prob.model.set_input_defaults(
             Aircraft.VerticalTail.MOMENT_RATIO, 2.362, units="unitless")
         self.prob.model.set_input_defaults(
             Aircraft.HorizontalTail.ASPECT_RATIO, val=4.75, units="unitless")

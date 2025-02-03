@@ -3,15 +3,8 @@ from pathlib import Path
 
 from openmdao.utils.testing_utils import use_tempdirs
 
-from aviary.utils.engine_deck_conversion import EngineDeckType, _exec_EDC
+from aviary.utils.engine_deck_conversion import EngineDeckType, EngineDeckConverter
 from aviary.utils.functions import get_path
-
-
-class DummyArgs(object):
-    def __init__(self):
-        self.input_file = None
-        self.output_file = None
-        self.data_format = None
 
 
 @use_tempdirs
@@ -20,27 +13,23 @@ class TestEngineDeckConversion(unittest.TestCase):
     Test engine deck conversion utility by comparing against previously converted engine deck files
     """
 
-    def prepare_and_run(self, filename, output_file=None, data_format=EngineDeckType.GASP):
-        args = DummyArgs()
-
+    def prepare_and_run(
+        self, filename, output_file=None, data_format=EngineDeckType.GASP
+    ):
         # Specify the input file
-        args.input_file = filepath = get_path('models/engines/'+filename)
+        input_file = get_path('utils/test/data/' + filename)
 
         # Specify the output file
         if not output_file:
-            filename = filepath.stem+'.deck'
-            args.output_file = Path.cwd() / Path('TEST_'+filename)
+            filename = input_file.stem + '.deck'
+            output_file = Path.cwd() / Path('TEST_' + filename)
         else:
-            args.output_file = str(Path(output_file))
-
-        # Specify the legacy code and engine type
-        args.data_format = data_format
+            output_file = str(Path(output_file))
 
         # Execute the conversion
-        _exec_EDC(args, None)
-        return args
+        EngineDeckConverter(input_file, output_file, data_format)
 
-    def compare_files(self, filepath, skip_list=[]):
+    def compare_files(self, filepath, skip_list=['# created']):
         """
         Compares the converted file with a validation file.
 
@@ -73,16 +62,26 @@ class TestEngineDeckConversion(unittest.TestCase):
                     )
                     raise Exception(exc_string)
 
-    # TODO currently untested!!
-    # def test_TF_conversion(self):
-    #     return
+    def test_TF_conversion_FLOPS(self):
+        filename = 'turbofan_22k.txt'
+
+        self.prepare_and_run(filename, data_format=EngineDeckType.FLOPS)
+        self.compare_files(filename)
+
+    def test_TF_conversion_GASP(self):
+        filename = 'turbofan_23k_1.eng'
+
+        self.prepare_and_run(filename, data_format=EngineDeckType.GASP)
+        self.compare_files(filename)
 
     def test_TP_conversion(self):
         filename = 'turboshaft_4465hp.eng'
 
-        args = self.prepare_and_run(filename, data_format=EngineDeckType.GASP_TS)
-        self.compare_files(filename, skip_list=['# created'])
+        self.prepare_and_run(filename, data_format=EngineDeckType.GASP_TS)
+        self.compare_files(filename)
 
 
 if __name__ == "__main__":
     unittest.main()
+    # test = TestEngineDeckConversion()
+    # test.test_TP_conversion()

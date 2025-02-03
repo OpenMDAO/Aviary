@@ -20,11 +20,11 @@ class ElectricalMass(om.ExplicitComponent):
         add_aviary_option(self, Aircraft.Propulsion.TOTAL_NUM_ENGINES)
 
     def setup(self):
-        add_aviary_input(self, Aircraft.Fuselage.LENGTH, 0.0)
-        add_aviary_input(self, Aircraft.Fuselage.MAX_WIDTH, 0.0)
-        add_aviary_input(self, Aircraft.Electrical.MASS_SCALER, 1.0)
+        add_aviary_input(self, Aircraft.Fuselage.LENGTH)
+        add_aviary_input(self, Aircraft.Fuselage.MAX_WIDTH)
+        add_aviary_input(self, Aircraft.Electrical.MASS_SCALER)
 
-        add_aviary_output(self, Aircraft.Electrical.MASS, 1.0)
+        add_aviary_output(self, Aircraft.Electrical.MASS)
 
     def setup_partials(self):
         self.declare_partials(of='*', wrt='*')
@@ -81,9 +81,9 @@ class AltElectricalMass(om.ExplicitComponent):
         add_aviary_option(self, Aircraft.CrewPayload.Design.NUM_PASSENGERS)
 
     def setup(self):
-        add_aviary_input(self, Aircraft.Electrical.MASS_SCALER, 1.0)
+        add_aviary_input(self, Aircraft.Electrical.MASS_SCALER)
 
-        add_aviary_output(self, Aircraft.Electrical.MASS, 1.0)
+        add_aviary_output(self, Aircraft.Electrical.MASS)
 
     def setup_partials(self):
         self.declare_partials(of='*', wrt='*')

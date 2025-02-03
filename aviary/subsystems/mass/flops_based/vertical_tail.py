@@ -16,14 +16,11 @@ class VerticalTailMass(om.ExplicitComponent):
 
     def setup(self):
         add_aviary_input(self, Aircraft.VerticalTail.AREA, val=0.0)
-
         add_aviary_input(self, Aircraft.VerticalTail.TAPER_RATIO, val=0.0)
+        add_aviary_input(self, Aircraft.VerticalTail.MASS_SCALER)
+        add_aviary_input(self, Mission.Design.GROSS_MASS)
 
-        add_aviary_input(self, Aircraft.VerticalTail.MASS_SCALER, val=1.0)
-
-        add_aviary_input(self, Mission.Design.GROSS_MASS, val=0.0)
-
-        add_aviary_output(self, Aircraft.VerticalTail.MASS, val=0.0)
+        add_aviary_output(self, Aircraft.VerticalTail.MASS)
 
     def setup_partials(self):
         self.declare_partials("*", "*")

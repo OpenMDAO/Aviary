@@ -14,11 +14,11 @@ class WingPrelim(om.ExplicitComponent):
     """
 
     def setup(self):
-        add_aviary_input(self, Aircraft.Wing.AREA, val=0.0)
-        add_aviary_input(self, Aircraft.Wing.GLOVE_AND_BAT, val=0.0)
-        add_aviary_input(self, Aircraft.Wing.SPAN, val=0.0)
+        add_aviary_input(self, Aircraft.Wing.AREA)
+        add_aviary_input(self, Aircraft.Wing.GLOVE_AND_BAT)
+        add_aviary_input(self, Aircraft.Wing.SPAN)
 
-        add_aviary_output(self, Aircraft.Wing.ASPECT_RATIO, val=0.0)
+        add_aviary_output(self, Aircraft.Wing.ASPECT_RATIO)
 
     def setup_partials(self):
         self.declare_partials('*', '*')

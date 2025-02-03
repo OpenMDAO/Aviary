@@ -15,12 +15,12 @@ class FinMass(om.ExplicitComponent):
         add_aviary_option(self, Aircraft.Fins.NUM_FINS)
 
     def setup(self):
-        add_aviary_input(self, Mission.Design.GROSS_MASS, val=0.0)
-        add_aviary_input(self, Aircraft.Fins.AREA, val=0.0)
-        add_aviary_input(self, Aircraft.Fins.TAPER_RATIO, val=0.0)
-        add_aviary_input(self, Aircraft.Fins.MASS_SCALER, val=1.0)
+        add_aviary_input(self, Mission.Design.GROSS_MASS)
+        add_aviary_input(self, Aircraft.Fins.AREA)
+        add_aviary_input(self, Aircraft.Fins.TAPER_RATIO)
+        add_aviary_input(self, Aircraft.Fins.MASS_SCALER)
 
-        add_aviary_output(self, Aircraft.Fins.MASS, val=0.0)
+        add_aviary_output(self, Aircraft.Fins.MASS)
 
     def setup_partials(self):
         self.declare_partials("*", "*")

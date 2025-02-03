@@ -14,16 +14,16 @@ class StrutCalcs(om.ExplicitComponent):
         add_aviary_option(self, Aircraft.Wing.HAS_STRUT)
 
     def setup(self):
-        add_aviary_input(self, Aircraft.Wing.SPAN, val=0)
+        add_aviary_input(self, Aircraft.Wing.SPAN)
 
         if self.options[Aircraft.Strut.DIMENSIONAL_LOCATION_SPECIFIED]:
-            add_aviary_input(self, Aircraft.Strut.ATTACHMENT_LOCATION, val=0)
+            add_aviary_input(self, Aircraft.Strut.ATTACHMENT_LOCATION)
             add_aviary_output(
-                self, Aircraft.Strut.ATTACHMENT_LOCATION_DIMENSIONLESS, val=0)
+                self, Aircraft.Strut.ATTACHMENT_LOCATION_DIMENSIONLESS)
         else:
             add_aviary_input(
-                self, Aircraft.Strut.ATTACHMENT_LOCATION_DIMENSIONLESS, val=0)
-            add_aviary_output(self, Aircraft.Strut.ATTACHMENT_LOCATION, val=0)
+                self, Aircraft.Strut.ATTACHMENT_LOCATION_DIMENSIONLESS)
+            add_aviary_output(self, Aircraft.Strut.ATTACHMENT_LOCATION)
 
     def setup_partials(self):
 
@@ -70,14 +70,14 @@ class FoldCalcs(om.ExplicitComponent):
         add_aviary_option(self, Aircraft.Wing.FOLD_DIMENSIONAL_LOCATION_SPECIFIED)
 
     def setup(self):
-        add_aviary_input(self, Aircraft.Wing.SPAN, val=0)
+        add_aviary_input(self, Aircraft.Wing.SPAN)
 
         if self.options[Aircraft.Wing.FOLD_DIMENSIONAL_LOCATION_SPECIFIED]:
-            add_aviary_input(self, Aircraft.Wing.FOLDED_SPAN, val=25)
-            add_aviary_output(self, Aircraft.Wing.FOLDED_SPAN_DIMENSIONLESS, val=0)
+            add_aviary_input(self, Aircraft.Wing.FOLDED_SPAN)
+            add_aviary_output(self, Aircraft.Wing.FOLDED_SPAN_DIMENSIONLESS)
         else:
-            add_aviary_input(self, Aircraft.Wing.FOLDED_SPAN_DIMENSIONLESS, val=0)
-            add_aviary_output(self, Aircraft.Wing.FOLDED_SPAN, val=0)
+            add_aviary_input(self, Aircraft.Wing.FOLDED_SPAN_DIMENSIONLESS)
+            add_aviary_output(self, Aircraft.Wing.FOLDED_SPAN)
 
     def setup_partials(self):
 
