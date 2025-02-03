@@ -254,11 +254,12 @@ class PayloadMass(om.ExplicitComponent):
         add_aviary_option(self, Aircraft.CrewPayload.PASSENGER_MASS_WITH_BAGS,
                           units='lbm')
         add_aviary_option(self, Aircraft.CrewPayload.Design.NUM_PASSENGERS)
-        add_aviary_option(self, Aircraft.CrewPayload.MAX_CARGO_MASS)
+        # add_aviary_option(self, Aircraft.CrewPayload.MAX_CARGO_MASS)
 
     def setup(self):
         add_aviary_input(self, Aircraft.CrewPayload.CARGO_MASS, val=10040)
         add_aviary_input(self, Aircraft.CrewPayload.Design.CARGO_MASS, val=0)
+        add_aviary_input(self, Aircraft.CrewPayload.MAX_CARGO_MASS)
 
         add_aviary_output(self, Aircraft.CrewPayload.PASSENGER_PAYLOAD_MASS, val=0)
         add_aviary_output(self, Aircraft.CrewPayload.TOTAL_PAYLOAD_MASS, val=0)
@@ -273,11 +274,12 @@ class PayloadMass(om.ExplicitComponent):
             desc="WPLMAX: maximum payload that the aircraft is being asked to carry"
             " (design payload + cargo)",
         )
-
-        self.declare_partials(
-            "payload_mass_max", [
-                Aircraft.CrewPayload.CARGO_MASS],
-            val=1.0)
+        self.declare_partials(Aircraft.CrewPayload.TOTAL_PAYLOAD_MASS, [
+                              Aircraft.CrewPayload.CARGO_MASS], val=1.0)
+        self.declare_partials("payload_mass_des", [
+                              Aircraft.CrewPayload.Design.CARGO_MASS], val=1.0)
+        self.declare_partials("payload_mass_max", [
+                              Aircraft.CrewPayload.MAX_CARGO_MASS], val=1.0)
 
     def compute(self, inputs, outputs):
         pax_mass, _ = self.options[Aircraft.CrewPayload.PASSENGER_MASS_WITH_BAGS]
@@ -285,7 +287,8 @@ class PayloadMass(om.ExplicitComponent):
         PAX_des = self.options[Aircraft.CrewPayload.Design.NUM_PASSENGERS]
         cargo_mass = inputs[Aircraft.CrewPayload.CARGO_MASS]
         cargo_mass_des = inputs[Aircraft.CrewPayload.Design.CARGO_MASS]
-        cargo_mass_max = self.options[Aircraft.CrewPayload.MAX_CARGO_MASS]
+        # cargo_mass_max = self.options[Aircraft.CrewPayload.MAX_CARGO_MASS]
+        cargo_mass_max = inputs[Aircraft.CrewPayload.MAX_CARGO_MASS]
 
         outputs[Aircraft.CrewPayload.PASSENGER_PAYLOAD_MASS] = \
             payload_mass = pax_mass * PAX
