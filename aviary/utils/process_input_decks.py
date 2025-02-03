@@ -483,7 +483,7 @@ def initialization_guessing(
         else:
             total_thrust = np.dot(aircraft_values.get_val(
                 Aircraft.Engine.SCALED_SLS_THRUST, 'lbf'
-            ) , aircraft_values.get_val(Aircraft.Engine.NUM_ENGINES))
+            ), aircraft_values.get_val(Aircraft.Engine.NUM_ENGINES))
 
     gamma_guess = np.arcsin(0.5 * total_thrust / mission_mass)
     avg_speed_guess = 0.5 * 667 * cruise_mach  # kts
