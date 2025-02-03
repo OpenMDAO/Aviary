@@ -72,6 +72,7 @@ class BaseODE(om.Group):
             )
             alpha_comp_inputs = ["rotation_rate", "t_curr", "start_rotation",
                                  ("alpha_init", Aircraft.Wing.INCIDENCE)]
+            alpha_comp_outputs = [('alpha', Dynamic.Vehicle.ANGLE_OF_ATTACK)]
 
         elif alpha_mode is AlphaModes.LOAD_FACTOR:
             alpha_comp = om.BalanceComp(
@@ -85,6 +86,7 @@ class BaseODE(om.Group):
                 lower=-2.0,
             )
             alpha_comp_inputs = ["load_factor"]
+            alpha_comp_outputs = [Dynamic.Vehicle.ANGLE_OF_ATTACK]
 
         elif alpha_mode is AlphaModes.FUSELAGE_PITCH:
             alpha_comp = om.ExecComp(
@@ -99,6 +101,7 @@ class BaseODE(om.Group):
                 ("gamma", Dynamic.Mission.FLIGHT_PATH_ANGLE),
                 ("i_wing", Aircraft.Wing.INCIDENCE),
             ]
+            alpha_comp_outputs = [('alpha', Dynamic.Vehicle.ANGLE_OF_ATTACK)]
 
         elif alpha_mode is AlphaModes.DECELERATION:
             alpha_comp = om.BalanceComp(
@@ -113,6 +116,7 @@ class BaseODE(om.Group):
                 lower=-2.0,
             )
             alpha_comp_inputs = [Dynamic.Mission.VELOCITY_RATE]
+            alpha_comp_outputs = [Dynamic.Vehicle.ANGLE_OF_ATTACK]
 
         elif alpha_mode is AlphaModes.REQUIRED_LIFT:
             alpha_comp = om.BalanceComp(
@@ -126,6 +130,7 @@ class BaseODE(om.Group):
                 lower=-2,
             )
             alpha_comp_inputs = ["required_lift", Dynamic.Vehicle.LIFT]
+            alpha_comp_outputs = [Dynamic.Vehicle.ANGLE_OF_ATTACK]
 
         # Future controller modes
         # elif alpha_mode is AlphaModes.FLIGHT_PATH_ANGLE:
@@ -173,7 +178,7 @@ class BaseODE(om.Group):
                 "alpha_comp",
                 alpha_comp,
                 promotes_inputs=alpha_comp_inputs,
-                promotes_outputs=[Dynamic.Vehicle.ANGLE_OF_ATTACK],
+                promotes_outputs=alpha_comp_outputs,
             )
 
             if add_default_solver and alpha_mode not in (AlphaModes.ROTATION,):
