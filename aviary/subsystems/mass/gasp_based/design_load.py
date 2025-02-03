@@ -37,7 +37,7 @@ class LoadSpeeds(om.ExplicitComponent):
 
         if self.options[Aircraft.Design.PART25_STRUCTURAL_CATEGORY] < 3:
 
-            add_aviary_input(self, Aircraft.Wing.LOADING, val=128)
+            add_aviary_input(self, Aircraft.Wing.LOADING, val=128, units='lbf/ft**2')
 
         self.add_output("max_airspeed", val=0, units="kn",
                         desc="VM0: maximum operating equivalent airspeed",
@@ -634,7 +634,9 @@ class LiftCurveSlopeAtCruise(om.ExplicitComponent):
         add_aviary_input(self, Aircraft.Wing.SWEEP, val=0.436, units="rad")
         add_aviary_input(self, Mission.Design.MACH, val=0.8)
 
-        add_aviary_output(self, Aircraft.Design.LIFT_CURVE_SLOPE, val=7.1765)
+        add_aviary_output(
+            self, Aircraft.Design.LIFT_CURVE_SLOPE, val=7.1765, units='1/rad'
+        )
 
         self.declare_partials(Aircraft.Design.LIFT_CURVE_SLOPE, "*")
 
@@ -673,7 +675,7 @@ class LoadFactors(om.ExplicitComponent):
 
     def setup(self):
 
-        add_aviary_input(self, Aircraft.Wing.LOADING, val=128)
+        add_aviary_input(self, Aircraft.Wing.LOADING, val=128, units='lbf/ft**2')
 
         self.add_input(
             "density_ratio",
@@ -695,8 +697,10 @@ class LoadFactors(om.ExplicitComponent):
             desc="EMLF: maximum maneuver load factor, units are in g`s",
         )
 
-        add_aviary_input(self, Aircraft.Wing.AVERAGE_CHORD, val=12.6131)
-        add_aviary_input(self, Aircraft.Design.LIFT_CURVE_SLOPE, val=7.1765)
+        add_aviary_input(self, Aircraft.Wing.AVERAGE_CHORD, val=12.6131, units='ft')
+        add_aviary_input(
+            self, Aircraft.Design.LIFT_CURVE_SLOPE, val=7.1765, units='1/rad'
+        )
 
         add_aviary_output(self, Aircraft.Wing.ULTIMATE_LOAD_FACTOR, val=3.5)
 
