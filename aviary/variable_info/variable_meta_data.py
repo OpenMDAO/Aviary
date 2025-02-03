@@ -2101,7 +2101,7 @@ add_meta_data(
     types=(np.ndarray, int),
     multivalue=True,
     option=True,
-    default_value=2
+    default_value=[2]
 )
 
 add_meta_data(
