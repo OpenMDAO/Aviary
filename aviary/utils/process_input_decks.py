@@ -69,6 +69,9 @@ def create_vehicle(vehicle_deck='', meta_data=_MetaData, verbosity=Verbosity.BRI
     (aircraft_values, initialization_guesses): (tuple)
         Returns a tuple containing aircraft values and initial guesses.
     """
+    if verbosity is None:
+        verbosity = Verbosity.BRIEF
+
     aircraft_values = get_option_defaults(engine=False)
 
     # TODO remove all hardcoded GASP values here, find appropriate place for them
@@ -101,7 +104,7 @@ def create_vehicle(vehicle_deck='', meta_data=_MetaData, verbosity=Verbosity.BRI
                 )
         aircraft_values.update(vehicle_deck)
     else:
-        if verbosity >= 1:  # BRIEF
+        if verbosity >= Verbosity.BRIEF:
             verbose = True
         else:
             verbose = False
