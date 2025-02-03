@@ -22,7 +22,7 @@ from aviary.utils.aviary_values import AviaryValues
 from aviary.utils.test_utils.default_subsystems import get_default_premission_subsystems, get_default_mission_subsystems
 from aviary.utils.functions import get_path
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission, Settings
-from aviary.variable_info.enums import EquationsOfMotion, LegacyCode
+from aviary.variable_info.enums import EquationsOfMotion, LegacyCode, ProblemType
 # from aviary.utils.preprocessors import preprocess_options
 
 N3CC = {}
@@ -305,6 +305,7 @@ inputs.set_val(Mission.Takeoff.FUEL_SIMPLE, 577., 'lbm')
 inputs.set_val(Settings.EQUATIONS_OF_MOTION, EquationsOfMotion.HEIGHT_ENERGY)
 inputs.set_val(Settings.MASS_METHOD, LegacyCode.FLOPS)
 inputs.set_val(Settings.VERBOSITY, 0)
+inputs.set_val(Settings.PROBLEM_TYPE, ProblemType.Sizing)
 
 # ---------------------------
 #          OUTPUTS
