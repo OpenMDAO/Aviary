@@ -236,13 +236,23 @@ def preprocess_crewpayload(aviary_options: AviaryValues):
         raise om.AnalysisError(
             f"ERROR: In preprocesssors.py: Aircraft.CrewPayload.CARGO_MASS {cargo} and/or Aircraft.CrewPayload.Design.CARGO_MASS {des_cargo} > Aircraft.CrewPayload.MAX_CARGO_MASS {max_cargo}")
 
+    # calculate passenger mass with bags based on user inputs.
+    if Aircraft.CrewPayload.PASSENGER_MASS_WITH_BAGS not in aviary_options:
+        pax_mass = aviary_options.get_val(Aircraft.CrewPayload.MASS_PER_PASSENGER, 'lbm')
+        bag_mass = aviary_options.get_val(
+            Aircraft.CrewPayload.BAGGAGE_MASS_PER_PASSENGER, 'lbm')
+        pax_mass_with_bag = pax_mass + bag_mass
+        aviary_options.set_val(
+            Aircraft.CrewPayload.PASSENGER_MASS_WITH_BAGS, pax_mass_with_bag, 'lbm')
+    else:
+        pax_mass_with_bag = aviary_options.get_val(
+            Aircraft.CrewPayload.PASSENGER_MASS_WITH_BAGS, 'lbm')
+
     # calculate and check total payload NOTE this is only used for error messaging the calculations for analysis are subsystems/mass/gasp_based:
-    pax_mass = aviary_options.get_val(
-        Aircraft.CrewPayload.PASSENGER_MASS_WITH_BAGS, 'lbm')
-    design_passenger_payload_mass = design_num_pax * pax_mass
+    design_passenger_payload_mass = design_num_pax * pax_mass_with_bag
     des_payload = design_passenger_payload_mass + des_cargo
     num_pax = aviary_options.get_val(Aircraft.CrewPayload.NUM_PASSENGERS)
-    as_flown_passenger_payload_mass = num_pax * pax_mass
+    as_flown_passenger_payload_mass = num_pax * pax_mass_with_bag
     as_flown_payload = as_flown_passenger_payload_mass + cargo
     if as_flown_payload > des_payload:
         print('WARNING! as flown payload > design payload! Please re-design the aircraft!')
