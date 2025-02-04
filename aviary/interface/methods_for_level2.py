@@ -2585,7 +2585,7 @@ class AviaryProblem(om.Problem):
         if mission_range is None:
             design_range = self.get_val(Mission.Design.RANGE)
         if num_pax is None:
-            num_pax = self.get_val(Aircraft.CrewPayload.NUM_PASSENGERS)
+            num_pax = self.aviary_inputs.get_val(Aircraft.CrewPayload.NUM_PASSENGERS)
         if cargo_mass is None:
             cargo_mass = self.get_val(Aircraft.CrewPayload.CARGO_MASS)
         # if payload_mass is None:
@@ -2623,7 +2623,7 @@ class AviaryProblem(om.Problem):
 
     def fallout_mission(self, run_mission=True,
                         json_filename='sizing_problem.json',
-                        mission_mass=None, payload_mass=None,
+                        num_pax=None, cargo_mass=None, mission_mass=None,
                         phase_info=None, verbosity=Verbosity.BRIEF):
         """
         This function runs a fallout mission based on a sizing mission output.
@@ -2649,7 +2649,8 @@ class AviaryProblem(om.Problem):
         if mission_mass is None:
             mission_mass = self.get_val(Mission.Design.GROSS_MASS)
         if num_pax is None:
-            num_pax = self.get_val(Aircraft.CrewPayload.NUM_PASSENGERS)
+            num_pax = self.aviary_inputs.get_val(
+                Aircraft.CrewPayload.Design.NUM_PASSENGERS)
         if cargo_mass is None:
             cargo_mass = self.get_val(Aircraft.CrewPayload.CARGO_MASS)
         # if payload_mass is None:
