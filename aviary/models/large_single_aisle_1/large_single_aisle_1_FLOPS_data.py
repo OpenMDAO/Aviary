@@ -63,7 +63,7 @@ inputs.set_val(Aircraft.CrewPayload.MISC_CARGO, 0., 'lbm')
 inputs.set_val(Aircraft.CrewPayload.NON_FLIGHT_CREW_MASS_SCALER, 1.0)
 inputs.set_val(Aircraft.CrewPayload.PASSENGER_SERVICE_MASS_SCALER, 1.)
 inputs.set_val(Aircraft.CrewPayload.MASS_PER_PASSENGER, 180., 'lbm')
-inputs.set_val(Aircraft.CrewPayload.BAGGAGE_MASS_PER_PASSENGER, 0, 'lbm')
+inputs.set_val(Aircraft.CrewPayload.BAGGAGE_MASS_PER_PASSENGER, 44, 'lbm')
 inputs.set_val(Aircraft.CrewPayload.WING_CARGO, 0., 'lbm')
 
 # Electrical
