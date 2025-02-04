@@ -169,27 +169,7 @@ def preprocess_crewpayload(aviary_options: AviaryValues):
     else:
         print('ERROR! mass_method not specified cannot preprocess cargo inputs')
 
-    if mass_method == LegacyCode.FLOPS:
-        if Aircraft.CrewPayload.WING_CARGO in aviary_options:
-            wing_cargo = aviary_options.get_val(Aircraft.CrewPayload.WING_CARGO, 'lbm')
-        else:
-            wing_cargo = 0
-        if Aircraft.CrewPayload.MISC_CARGO in aviary_options:
-            misc_cargo = aviary_options.get_val(Aircraft.CrewPayload.MISC_CARGO, 'lbm')
-        else:
-            misc_cargo = 0
-        tot_cargo = wing_cargo + misc_cargo
-        if Aircraft.CrewPayload.CARGO_MASS in aviary_options:
-            cargo = aviary_options.get_val(Aircraft.CrewPayload.CARGO_MASS, 'lbm')
-            if cargo != tot_cargo:
-                print('Error: WING_CARGO +  MISC_CARGO != CARGO_MASS')
-        else:
-            print('Calculating CARGO_MASS = WING_CARGO + MISC_CARGO')
-            aviary_options.set_val(Aircraft.CrewPayload.CARGO_MASS, tot_cargo, 'lbm')
-
-        # insert code here for max & design mission cargo
-
-    elif mass_method == LegacyCode.GASP:
+    if mass_method == LegacyCode.GASP:
         input_cargo = Aircraft.CrewPayload.CARGO_MASS in aviary_options
         input_max_cargo = Aircraft.CrewPayload.MAX_CARGO_MASS in aviary_options
         input_des_cargo = Aircraft.CrewPayload.Design.CARGO_MASS in aviary_options
