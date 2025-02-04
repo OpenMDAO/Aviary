@@ -709,23 +709,6 @@ add_meta_data(
 )
 
 add_meta_data(
-    Aircraft.CrewPayload.MAX_CARGO_MASS,
-    meta_data=_MetaData,
-    historical_name={
-        "GASP": 'INGASP.WCARGO',
-        # ['WTS.WSP(36,2)', '~WEIGHT.WCARGO', '~WTSTAT.WSP(36,2)', '~INERT.WCARGO',],
-        "FLOPS": None,
-        "LEAPS1": [
-            '(WeightABC)self._cargo_weight',
-            'aircraft.outputs.L0_weights_summary.cargo_weight',
-        ],
-    },
-    units='lbm',
-    desc='Maximum mass of cargo',
-    default_value=0.0,
-)
-
-add_meta_data(
     Aircraft.CrewPayload.CATERING_ITEMS_MASS_PER_PASSENGER,
     meta_data=_MetaData,
     historical_name={"GASP": 'INGASP.CW(12)', "FLOPS": None, "LEAPS1": None},
@@ -739,6 +722,17 @@ add_meta_data(
 #  | |) | / -_) (_-< | | / _` | | ' \
 #  |___/  \___| /__/ |_| \__, | |_||_|
 #  ====================== |___/ ======
+
+add_meta_data(
+    Aircraft.CrewPayload.Design.CARGO_MASS,
+    meta_data=_MetaData,
+    historical_name={"GASP": None,
+                     "FLOPS": None,
+                     "LEAPS1": None
+                     },
+    units='lbm',
+    desc='total mass of cargo flown on design mission'
+)
 
 add_meta_data(
     Aircraft.CrewPayload.Design.NUM_BUSINESS_CLASS,
@@ -803,17 +797,6 @@ add_meta_data(
 )
 
 add_meta_data(
-    Aircraft.CrewPayload.Design.CARGO_MASS,
-    meta_data=_MetaData,
-    historical_name={"GASP": None,
-                     "FLOPS": None,
-                     "LEAPS1": None
-                     },
-    units='lbm',
-    desc='total mass of cargo flown on design mission'
-)
-
-add_meta_data(
     # Note user override
     #    - see also: Aircraft.CrewPayload.FLIGHT_CREW_MASS_SCALER
     Aircraft.CrewPayload.FLIGHT_CREW_MASS,
@@ -858,6 +841,23 @@ add_meta_data(
     desc='mass per passenger',
     option=True,
     default_value=165.0,
+)
+
+add_meta_data(
+    Aircraft.CrewPayload.MAX_CARGO_MASS,
+    meta_data=_MetaData,
+    historical_name={
+        "GASP": 'INGASP.WCARGO',
+        # ['WTS.WSP(36,2)', '~WEIGHT.WCARGO', '~WTSTAT.WSP(36,2)', '~INERT.WCARGO',],
+        "FLOPS": None,
+        "LEAPS1": [
+            '(WeightABC)self._cargo_weight',
+            'aircraft.outputs.L0_weights_summary.cargo_weight',
+        ],
+    },
+    units='lbm',
+    desc='Maximum mass of cargo',
+    default_value=0.0,
 )
 
 add_meta_data(
