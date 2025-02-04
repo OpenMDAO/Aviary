@@ -28,8 +28,11 @@ run_command_no_file_error executes a CLI command but won't fail if a FileNotFoun
 get_attribute_name gets the name of an object's attribute based on it's value
 get_all_keys recursively get all of the keys from a dict of dicts
 get_value recursively get a value from a dict of dicts
-glue_variable Glue a variable for later use in markdown cells of notebooks (can auto format for code)
+glue_variable glue a variable for later use in markdown cells of notebooks (can auto format for code)
 glue_keys recursively glue all of the keys from a dict of dicts
+glue_actions glue all Aviary CLI options for a given command
+glue_class_functions glue all class functions for a gen class
+glue_function_arguments glue all function arguments for a given function
 get_previous_line returns the previous n line(s) of code as a string
 get_class_names return the class names in a file as a set
 get_function_names returns the function names in a file as a set
@@ -546,7 +549,7 @@ def glue_class_functions(obj, curr_glued=[], pre_fix=None, display=True):
 
 def glue_function_arguments(func, curr_glued=[], md_code=False, display=True):
     """
-    Glue all class functions
+    Glue all function arguments for a given function
 
     Parameters
     ----------
