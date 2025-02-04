@@ -508,7 +508,7 @@ def glue_actions(cmd, curr_glued=[], glue_default=False, display=True):
     """
     parser = argparse.ArgumentParser()
     _command_map[cmd][0](parser)
-    actions = [*parser._get_optional_actions(),*parser._get_positional_actions()]
+    actions = [*parser._get_optional_actions(), *parser._get_positional_actions()]
     for action in actions:
         opt_list = action.option_strings
         for opt in opt_list:
