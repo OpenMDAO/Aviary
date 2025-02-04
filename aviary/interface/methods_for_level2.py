@@ -3175,13 +3175,14 @@ def _load_off_design(json_filename, ProblemType, Mass_Method, phase_info, num_fi
             Aircraft.CrewPayload.NUM_BUSINESS_CLASS, num_business, units='unitless')
         prob.aviary_inputs.set_val(
             Aircraft.CrewPayload.NUM_TOURIST_CLASS, num_tourist, units='unitless')
+        num_pax = num_first + num_business + num_tourist
         prob.aviary_inputs.set_val(Aircraft.CrewPayload.MISC_CARGO, misc_cargo, 'lbm')
         prob.aviary_inputs.set_val(Aircraft.CrewPayload.WING_CARGO, wing_cargo, 'lbm')
+        cargo_mass = misc_cargo + wing_cargo
 
-    elif Mass_Method == LegacyCode.GASP:
-        prob.aviary_inputs.set_val(
-            Aircraft.CrewPayload.NUM_PASSENGERS, num_pax, units='unitless')
-        prob.aviary_inputs.set_val(Aircraft.CrewPayload.CARGO_MASS, cargo_mass, 'lbm')
+    prob.aviary_inputs.set_val(
+        Aircraft.CrewPayload.NUM_PASSENGERS, num_pax, units='unitless')
+    prob.aviary_inputs.set_val(Aircraft.CrewPayload.CARGO_MASS, cargo_mass, 'lbm')
 
     if ProblemType == ProblemType.ALTERNATE:
         # Set mission range, aviary will calculate required fuel
@@ -3190,6 +3191,12 @@ def _load_off_design(json_filename, ProblemType, Mass_Method, phase_info, num_fi
                 'ERROR in _load_off_design - Alternate problem type requested with no specified Range')
         else:
             prob.aviary_inputs.set_val(Mission.Design.RANGE, mission_range, units='NM')
+            prob.aviary_inputs.set_val(Mission.Summary.RANGE, mission_range, units='NM')
+            try:
+                target_range = phase_info['post_mission']['target_range']
+                phase_info['post_mission']['target_range'] = (mission_range, 'nmi')
+            except KeyError:
+                print('no target range to update')
 
     elif ProblemType == ProblemType.FALLOUT:
         # Set mission fuel and calculate gross weight, aviary will calculate range
