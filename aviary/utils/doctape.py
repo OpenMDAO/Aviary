@@ -547,10 +547,10 @@ def glue_class_functions(obj, curr_glued=[], pre_fix=None, md_code=True):
     methods = inspect.getmembers(obj, predicate=inspect.isfunction)
     for func_name, func in methods:
         if pre_fix is not None:
-            if pre_fix + '.' + func_name not in curr_glued:
+            if pre_fix + '.' + func_name + '()' not in curr_glued:
                 glue_variable(pre_fix + '.' + func_name + '()', md_code=md_code)
                 curr_glued.append(pre_fix + '.' + func_name + '()')
-        if func_name not in curr_glued:
+        if func_name + '()' not in curr_glued:
             glue_variable(func_name + '()', md_code=md_code)
             curr_glued.append(func_name + '()')
 
