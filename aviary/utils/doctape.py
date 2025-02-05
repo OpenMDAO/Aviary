@@ -34,7 +34,7 @@ glue_actions glue all Aviary CLI options for a given command
 glue_class_functions glue all class functions for a gen class
 glue_function_arguments glue all function arguments for a given function
 get_previous_line returns the previous n line(s) of code as a string
-get_class_names return the class names in a file as a set
+get_class_names returns the class names in a file as a set
 get_function_names returns the function names in a file as a set
 """
 
