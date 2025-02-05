@@ -1,8 +1,7 @@
 import numpy as np
 import openmdao.api as om
 
-from aviary.utils.aviary_values import AviaryValues
-from aviary.variable_info.functions import add_aviary_input, add_aviary_output
+from aviary.variable_info.functions import add_aviary_input, add_aviary_output, add_aviary_option
 from aviary.variable_info.variables import Aircraft
 
 
@@ -13,30 +12,20 @@ class SimpleWingBendingFact(om.ExplicitComponent):
     """
 
     def initialize(self):
-        self.options.declare(
-            'aviary_options', types=AviaryValues,
-            desc='collection of Aircraft/Mission specific options')
+        add_aviary_option(self, Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES)
 
     def setup(self):
-        add_aviary_input(self, Aircraft.Wing.AREA, val=0.0)
+        add_aviary_input(self, Aircraft.Wing.AREA)
+        add_aviary_input(self, Aircraft.Wing.SPAN)
+        add_aviary_input(self, Aircraft.Wing.TAPER_RATIO)
+        add_aviary_input(self, Aircraft.Wing.THICKNESS_TO_CHORD)
+        add_aviary_input(self, Aircraft.Wing.STRUT_BRACING_FACTOR)
+        add_aviary_input(self, Aircraft.Wing.AEROELASTIC_TAILORING_FACTOR)
+        add_aviary_input(self, Aircraft.Wing.ASPECT_RATIO)
+        add_aviary_input(self, Aircraft.Wing.SWEEP)
 
-        add_aviary_input(self, Aircraft.Wing.SPAN, val=0.0)
-
-        add_aviary_input(self, Aircraft.Wing.TAPER_RATIO, val=0.0)
-
-        add_aviary_input(self, Aircraft.Wing.THICKNESS_TO_CHORD, val=0.0)
-
-        add_aviary_input(self, Aircraft.Wing.STRUT_BRACING_FACTOR, val=0.0)
-
-        add_aviary_input(self, Aircraft.Wing.AEROELASTIC_TAILORING_FACTOR, val=0.0)
-
-        add_aviary_input(self, Aircraft.Wing.ASPECT_RATIO, val=0.0)
-
-        add_aviary_input(self, Aircraft.Wing.SWEEP, val=0.0)
-
-        add_aviary_output(self, Aircraft.Wing.BENDING_MATERIAL_FACTOR, val=0.0)
-
-        add_aviary_output(self, Aircraft.Wing.ENG_POD_INERTIA_FACTOR, val=0.0)
+        add_aviary_output(self, Aircraft.Wing.BENDING_MATERIAL_FACTOR)
+        add_aviary_output(self, Aircraft.Wing.ENG_POD_INERTIA_FACTOR)
 
     def setup_partials(self):
         self.declare_partials(
@@ -54,8 +43,7 @@ class SimpleWingBendingFact(om.ExplicitComponent):
         )
 
     def compute(self, inputs, outputs):
-        aviary_options: AviaryValues = self.options['aviary_options']
-        num_wing_eng = aviary_options.get_val(Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES)
+        num_wing_eng = self.options[Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES]
         fstrt = inputs[Aircraft.Wing.STRUT_BRACING_FACTOR]
         span = inputs[Aircraft.Wing.SPAN]
         tr = inputs[Aircraft.Wing.TAPER_RATIO]
@@ -88,8 +76,6 @@ class SimpleWingBendingFact(om.ExplicitComponent):
         outputs[Aircraft.Wing.ENG_POD_INERTIA_FACTOR] = 1.0 - 0.03 * num_wing_eng
 
     def compute_partials(self, inputs, J):
-        aviary_options: AviaryValues = self.options['aviary_options']
-        num_wing_eng = aviary_options.get_val(Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES)
         fstrt = inputs[Aircraft.Wing.STRUT_BRACING_FACTOR]
         span = inputs[Aircraft.Wing.SPAN]
         tr = inputs[Aircraft.Wing.TAPER_RATIO]

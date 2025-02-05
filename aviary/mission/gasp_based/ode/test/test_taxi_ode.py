@@ -10,6 +10,7 @@ from aviary.mission.gasp_based.ode.taxi_ode import TaxiSegment
 from aviary.subsystems.propulsion.utils import build_engine_deck
 from aviary.utils.test_utils.default_subsystems import get_default_mission_subsystems
 from aviary.utils.test_utils.IO_test_util import check_prob_outputs
+from aviary.variable_info.functions import setup_model_options
 from aviary.variable_info.options import get_option_defaults
 from aviary.variable_info.variables import Dynamic, Mission
 
@@ -32,6 +33,8 @@ class TaxiTestCase(unittest.TestCase):
         self.prob.model = TaxiSegment(
             aviary_options=options, core_subsystems=default_mission_subsystems
         )
+
+        setup_model_options(self.prob, options)
 
         self.prob.model.set_input_defaults(
             Mission.Takeoff.AIRPORT_ALTITUDE,

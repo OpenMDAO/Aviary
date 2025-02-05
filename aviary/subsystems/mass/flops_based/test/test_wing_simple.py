@@ -23,10 +23,15 @@ class SimpleWingBendingFactTest(unittest.TestCase):
 
         prob = self.prob
 
+        inputs = get_flops_inputs(case_name, preprocess=True)
+
+        options = {
+            Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES: inputs.get_val(Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES),
+        }
+
         prob.model.add_subsystem(
             "wing",
-            SimpleWingBendingFact(aviary_options=get_flops_inputs(
-                case_name, preprocess=True)),
+            SimpleWingBendingFact(**options),
             promotes_inputs=['*'],
             promotes_outputs=['*'],
         )

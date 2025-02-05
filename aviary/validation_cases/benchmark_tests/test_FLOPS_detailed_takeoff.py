@@ -19,6 +19,7 @@ from aviary.utils.functions import \
     set_aviary_initial_values, set_aviary_input_defaults
 from aviary.utils.test_utils.default_subsystems import get_default_mission_subsystems
 from aviary.utils.preprocessors import preprocess_options
+from aviary.variable_info.functions import setup_model_options
 from aviary.variable_info.variables import Aircraft, Dynamic
 
 
@@ -113,8 +114,10 @@ class TestFLOPSDetailedTakeoff(unittest.TestCase):
             'traj.takeoff_decision_speed.states:velocity',
             equals=155.36, units='kn', ref=159.0, indices=[-1])
 
-        varnames = [Aircraft.Wing.ASPECT_RATIO]
+        varnames = [Aircraft.Wing.ASPECT_RATIO, Aircraft.Engine.SCALE_FACTOR]
         set_aviary_input_defaults(takeoff.model, varnames, aviary_options)
+
+        setup_model_options(takeoff, aviary_options)
 
         # suppress warnings:
         # "input variable '...' promoted using '*' was already promoted using 'aircraft:*'

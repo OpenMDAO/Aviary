@@ -7,12 +7,16 @@ from openmdao.core.constants import _DEFAULT_OUT_STREAM, _UNDEFINED
 
 from aviary.subsystems.atmosphere.atmosphere import Atmosphere
 from aviary.subsystems.propulsion.propeller.propeller_performance import (
-    OutMachs, PropellerPerformance, TipSpeed, AreaSquareRatio, AdvanceRatio
+    OutMachs,
+    PropellerPerformance,
+    TipSpeed,
+    AreaSquareRatio,
+    AdvanceRatio,
 )
 from aviary.variable_info.enums import OutMachType
-from aviary.variable_info.variables import Aircraft, Dynamic, Settings
+from aviary.variable_info.functions import setup_model_options
 from aviary.variable_info.options import get_option_defaults
-from aviary.variable_info.variables import Aircraft, Dynamic
+from aviary.variable_info.variables import Aircraft, Dynamic, Settings
 
 # Setting up truth values from GASP (The first 12 are actual truth values, the rest are intelligent guesses)
 # test values now are slightly different due to setup - max tip speed was limited to test
@@ -42,8 +46,26 @@ CT = np.array(
     ]
 )
 XFT = np.array(
-    [1.0, 1.0, 0.9976, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0,
-     1.0, 1.0, 1.0, 1.0, 1.0, 0.9976, 1.0, 1.0, 1.0,]
+    [
+        1.0,
+        1.0,
+        0.9976,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        0.9976,
+        1.0,
+        1.0,
+        1.0,
+    ]
 )
 # CTX = np.array([0.27651, 0.20518, 0.13062, 0.10236, 0.10236, 0.19331,
 #                0.10189, 0.10189, 0.18123, 0.08523, 0.06463, 0.02800])
@@ -193,7 +215,8 @@ class PropellerPerformanceTest(unittest.TestCase):
 
         pp = prob.model.add_subsystem(
             'pp',
-            PropellerPerformance(num_nodes=num_nodes, aviary_options=options),
+            PropellerPerformance(num_nodes=num_nodes,
+                                 aviary_options=options),
             promotes_inputs=['*'],
             promotes_outputs=["*"],
         )
@@ -216,6 +239,9 @@ class PropellerPerformanceTest(unittest.TestCase):
             val=True,
             units='unitless',
         )
+
+        setup_model_options(prob, options)
+
         prob.setup()
 
         prob.set_val(Aircraft.Engine.Propeller.DIAMETER, 10.5, units="ft")
@@ -292,6 +318,9 @@ class PropellerPerformanceTest(unittest.TestCase):
             val=False,
             units='unitless',
         )
+
+        setup_model_options(prob, options)
+
         prob.setup()
         prob.set_val('install_loss_factor', [0.0, 0.05, 0.05], units="unitless")
         prob.set_val(Aircraft.Engine.Propeller.DIAMETER, 12.0, units="ft")
@@ -342,6 +371,9 @@ class PropellerPerformanceTest(unittest.TestCase):
             val=False,
             units='unitless',
         )
+
+        setup_model_options(prob, options)
+
         prob.setup()
         prob.set_val('install_loss_factor', [0.0, 0.05, 0.05], units="unitless")
         prob.set_val(Aircraft.Engine.Propeller.DIAMETER, 12.0, units="ft")
@@ -467,11 +499,15 @@ class PropellerPerformanceTest(unittest.TestCase):
             val=False,
             units='unitless',
         )
-        prop_file_path = 'models/propellers/PropFan.prop'
-        options.set_val(Aircraft.Engine.Propeller.DATA_FILE,
-                        val=prop_file_path, units='unitless')
-        options.set_val(Aircraft.Engine.INTERPOLATION_METHOD,
-                        val='slinear', units='unitless')
+        prop_file_path = 'models/engines/propellers/PropFan.prop'
+        options.set_val(
+            Aircraft.Engine.Propeller.DATA_FILE, val=prop_file_path, units='unitless'
+        )
+        options.set_val(
+            Aircraft.Engine.INTERPOLATION_METHOD, val='slinear', units='unitless'
+        )
+
+        setup_model_options(prob, options)
 
         prob.setup(force_alloc_complex=True)
         prob.set_val('install_loss_factor', [0.0, 0.05, 0.05], units="unitless")
@@ -495,11 +531,13 @@ class PropellerPerformanceTest(unittest.TestCase):
             out_stream=None,
             compact_print=True,
             show_only_incorrect=True,
-            form='central', method="fd",
+            form='central',
+            method="fd",
             minimum_step=1e-12,
-            abs_err_tol=5.0E-4,
-            rel_err_tol=5.0E-5,
-            includes=["*selectedMach*"])
+            abs_err_tol=5.0e-4,
+            rel_err_tol=5.0e-5,
+            includes=["*selectedMach*"],
+        )
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
 
 
@@ -534,8 +572,9 @@ class OutMachsTest(unittest.TestCase):
             form='central',
             method="fd",
             minimum_step=1e-12,
-            abs_err_tol=5.0E-4,
-            rel_err_tol=5.0E-5)
+            abs_err_tol=5.0e-4,
+            rel_err_tol=5.0e-5,
+        )
         assert_check_partials(partial_data, atol=1e-4, rtol=1e-4)
 
     def test_mach(self):
@@ -563,8 +602,9 @@ class OutMachsTest(unittest.TestCase):
             form='central',
             method="fd",
             minimum_step=1e-12,
-            abs_err_tol=5.0E-4,
-            rel_err_tol=5.0E-5)
+            abs_err_tol=5.0e-4,
+            rel_err_tol=5.0e-5,
+        )
         assert_check_partials(partial_data, atol=1e-4, rtol=1e-4)
 
     def test_tip_mach(self):
@@ -592,8 +632,9 @@ class OutMachsTest(unittest.TestCase):
             form='central',
             method="fd",
             minimum_step=1e-12,
-            abs_err_tol=5.0E-4,
-            rel_err_tol=5.0E-5)
+            abs_err_tol=5.0e-4,
+            rel_err_tol=5.0e-5,
+        )
         assert_check_partials(partial_data, atol=1e-4, rtol=1e-4)
 
 
@@ -622,7 +663,9 @@ class TipSpeedLimitTest(unittest.TestCase):
             val=[1116.42671, 1116.42671, 1015.95467],
             units='ft/s',
         )
-        prob.set_val(Aircraft.Engine.Propeller.TIP_MACH_MAX, val=[0.8], units='unitless')
+        prob.set_val(
+            Aircraft.Engine.Propeller.TIP_MACH_MAX, val=[0.8], units='unitless'
+        )
         prob.set_val(Aircraft.Engine.Propeller.TIP_SPEED_MAX, val=[800], units='ft/s')
         prob.set_val(Aircraft.Engine.Propeller.DIAMETER, val=[10.5], units='ft')
 
@@ -662,8 +705,7 @@ class SquareRatioTest(unittest.TestCase):
         prob.run_model()
 
         sqa_ratio = prob.get_val("sqa_array", units='unitless')
-        assert_near_equal(sqa_ratio, [
-            0.08337656, 0.08337656], tolerance=1e-5)
+        assert_near_equal(sqa_ratio, [0.08337656, 0.08337656], tolerance=1e-5)
 
         partial_data = prob.check_partials(out_stream=None, method="cs")
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
@@ -721,14 +763,17 @@ class AdvanceRatioTest(unittest.TestCase):
             promotes=["*"],
         )
         prob.setup(force_alloc_complex=True)
-        prob.set_val("vtas", val=[0.1, 125., 300., 1000.], units='knot')
-        prob.set_val("tipspd", val=[800., 800., 750., 500.], units='ft/s')
+        prob.set_val("vtas", val=[0.1, 125.0, 300.0, 1000.0], units='knot')
+        prob.set_val("tipspd", val=[800.0, 800.0, 750.0, 500.0], units='ft/s')
         prob.set_val("sqa_array", val=[0.0756, 0.0756, 0.0756, 1.0], units='unitless')
         prob.run_model()
 
         equiv_adv_ratio = prob.get_val("equiv_adv_ratio", units='unitless')
-        assert_near_equal(equiv_adv_ratio, [
-            6.50074004e-04, 8.12592505e-01, 2.08023681e+00, 5.0], tolerance=1e-5)
+        assert_near_equal(
+            equiv_adv_ratio,
+            [6.50074004e-04, 8.12592505e-01, 2.08023681e00, 5.0],
+            tolerance=1e-5,
+        )
 
         partial_data = prob.check_partials(out_stream=None, method="cs")
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
@@ -741,16 +786,16 @@ class AdvanceRatioTest(unittest.TestCase):
             promotes=["*"],
         )
         prob.setup(force_alloc_complex=True)
-        prob.set_val("vtas", val=[0.1, 125., 300., 1000.], units='knot')
-        prob.set_val("tipspd", val=[800., 800., 750., 500.], units='ft/s')
+        prob.set_val("vtas", val=[0.1, 125.0, 300.0, 1000.0], units='knot')
+        prob.set_val("tipspd", val=[800.0, 800.0, 750.0, 500.0], units='ft/s')
         prob.set_val("sqa_array", val=[0.0756, 0.0756, 0.0756, 1.0], units='unitless')
         prob.run_model()
 
         equiv_adv_ratio = prob.get_val("equiv_adv_ratio", units='unitless')
         assert_near_equal(
             equiv_adv_ratio,
-            [6.50074004e-04, 8.12592505e-01, 2.08023681e+00, 5.0],
-            tolerance=1e-5
+            [6.50074004e-04, 8.12592505e-01, 2.08023681e00, 5.0],
+            tolerance=1e-5,
         )
 
         partial_data = prob.check_partials(out_stream=None, method="cs")

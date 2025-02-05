@@ -17,7 +17,6 @@ from aviary.subsystems.aerodynamics.flops_based.mux_component import MuxComponen
 from aviary.subsystems.aerodynamics.flops_based.skin_friction import SkinFriction
 from aviary.subsystems.aerodynamics.flops_based.skin_friction_drag import \
     SkinFrictionDrag
-from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 
 
@@ -33,16 +32,12 @@ class ComputedAeroGroup(om.Group):
         self.options.declare(
             'gamma', default=1.4,
             desc='Ratio of specific heats for air.')
-        self.options.declare(
-            'aviary_options', types=AviaryValues,
-            desc='collection of Aircraft/Mission specific options')
 
     def setup(self):
         num_nodes = self.options["num_nodes"]
         gamma = self.options['gamma']
-        aviary_options: AviaryValues = self.options['aviary_options']
 
-        comp = MuxComponent(aviary_options=aviary_options)
+        comp = MuxComponent()
         self.add_subsystem(
             'Mux', comp,
             promotes_inputs=['aircraft:*'],
@@ -91,7 +86,7 @@ class ComputedAeroGroup(om.Group):
         )
 
         comp = InducedDrag(
-            num_nodes=num_nodes, gamma=gamma, aviary_options=aviary_options)
+            num_nodes=num_nodes, gamma=gamma)
         self.add_subsystem(
             'InducedDrag',
             comp,
@@ -127,7 +122,7 @@ class ComputedAeroGroup(om.Group):
             ],
         )
 
-        comp = SkinFriction(num_nodes=num_nodes, aviary_options=aviary_options)
+        comp = SkinFriction(num_nodes=num_nodes)
         self.add_subsystem(
             'SkinFrictionCoef',
             comp,
@@ -140,7 +135,7 @@ class ComputedAeroGroup(om.Group):
             promotes_outputs=['skin_friction_coeff', 'Re'],
         )
 
-        comp = SkinFrictionDrag(num_nodes=num_nodes, aviary_options=aviary_options)
+        comp = SkinFrictionDrag(num_nodes=num_nodes)
         self.add_subsystem(
             'SkinFrictionDrag', comp,
             promotes_inputs=[

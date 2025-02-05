@@ -5,7 +5,6 @@ import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 
 from aviary.subsystems.aerodynamics.flops_based.induced_drag import InducedDrag
-from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.variables import Aircraft, Dynamic
 
 
@@ -21,13 +20,13 @@ class InducedDragTest(unittest.TestCase):
 
         nn = len(CL)
 
-        prob = om.Problem(model=om.Group())
+        prob = om.Problem()
 
         options = {}
-        options[Aircraft.Wing.SPAN_EFFICIENCY_REDUCTION] = (False, 'unitless')
+        options[Aircraft.Wing.SPAN_EFFICIENCY_REDUCTION] = False
 
         prob.model.add_subsystem('induced_drag', InducedDrag(
-            num_nodes=nn, aviary_options=AviaryValues(options)), promotes=['*'])
+            num_nodes=nn, **options), promotes=['*'])
         prob.setup(force_alloc_complex=True)
 
         prob.set_val(Dynamic.Atmosphere.MACH, val=mach)
@@ -60,13 +59,13 @@ class InducedDragTest(unittest.TestCase):
 
         # High factor
 
-        prob = om.Problem(model=om.Group())
+        prob = om.Problem()
 
         options = {}
-        options[Aircraft.Wing.SPAN_EFFICIENCY_REDUCTION] = (True, 'unitless')
+        options[Aircraft.Wing.SPAN_EFFICIENCY_REDUCTION] = True
 
         prob.model.add_subsystem('drag', InducedDrag(
-            num_nodes=nn, aviary_options=AviaryValues(options)), promotes=['*'])
+            num_nodes=nn, **options), promotes=['*'])
         prob.setup(force_alloc_complex=True)
 
         prob.set_val(Dynamic.Atmosphere.MACH, val=mach)
@@ -92,10 +91,10 @@ class InducedDragTest(unittest.TestCase):
         prob = om.Problem(model=om.Group())
 
         options = {}
-        options[Aircraft.Wing.SPAN_EFFICIENCY_REDUCTION] = (True, 'unitless')
+        options[Aircraft.Wing.SPAN_EFFICIENCY_REDUCTION] = True
 
         prob.model.add_subsystem('drag', InducedDrag(
-            num_nodes=nn, aviary_options=AviaryValues(options)), promotes=['*'])
+            num_nodes=nn, **options), promotes=['*'])
         prob.setup(force_alloc_complex=True)
 
         prob.set_val(Dynamic.Atmosphere.MACH, val=mach)

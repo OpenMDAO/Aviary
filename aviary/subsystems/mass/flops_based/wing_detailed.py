@@ -3,8 +3,7 @@ import numpy as np
 import openmdao.api as om
 from openmdao.components.interp_util.interp import InterpND
 
-from aviary.utils.aviary_values import AviaryValues
-from aviary.variable_info.functions import add_aviary_input, add_aviary_output
+from aviary.variable_info.functions import add_aviary_input, add_aviary_output, add_aviary_option
 from aviary.variable_info.variables import Aircraft, Mission
 
 
@@ -15,20 +14,18 @@ class DetailedWingBendingFact(om.ExplicitComponent):
     """
 
     def initialize(self):
-        self.options.declare(
-            'aviary_options',
-            types=AviaryValues,
-            desc='collection of Aircraft/Mission specific options',
-        )
+        add_aviary_option(self, Aircraft.Engine.NUM_ENGINES)
+        add_aviary_option(self, Aircraft.Engine.NUM_WING_ENGINES)
+        add_aviary_option(self, Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES)
+        add_aviary_option(self, Aircraft.Wing.INPUT_STATION_DIST)
+        add_aviary_option(self, Aircraft.Wing.LOAD_DISTRIBUTION_CONTROL)
+        add_aviary_option(self, Aircraft.Wing.NUM_INTEGRATION_STATIONS)
 
     def setup(self):
-        aviary_options: AviaryValues = self.options['aviary_options']
-        input_station_dist = aviary_options.get_val(Aircraft.Wing.INPUT_STATION_DIST)
+        input_station_dist = self.options[Aircraft.Wing.INPUT_STATION_DIST]
         num_input_stations = len(input_station_dist)
-        total_num_wing_engines = aviary_options.get_val(
-            Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES
-        )
-        num_engine_type = len(aviary_options.get_val(Aircraft.Engine.NUM_ENGINES))
+        total_num_wing_engines = self.options[Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES]
+        num_engine_type = len(self.options[Aircraft.Engine.NUM_ENGINES])
 
         # wing locations are different for each engine type - ragged array!
         # this "tricks" numpy into allowing a ragged array, with limitations (each index
@@ -36,65 +33,40 @@ class DetailedWingBendingFact(om.ExplicitComponent):
         # wing_location_default = np.empty(num_engine_type, object)
         # wing_location_default[:] = [np.array([0]*int(num)) for num in num_wing_engines/2]
 
-        add_aviary_input(
-            self,
-            Aircraft.Wing.LOAD_PATH_SWEEP_DIST,
-            val=np.zeros(num_input_stations - 1),
-        )
-
-        add_aviary_input(
-            self,
-            Aircraft.Wing.THICKNESS_TO_CHORD_DIST,
-            val=np.zeros(num_input_stations),
-        )
-
-        add_aviary_input(
-            self,
-            Aircraft.Wing.CHORD_PER_SEMISPAN_DIST,
-            val=np.zeros(num_input_stations),
-        )
-
-        add_aviary_input(self, Mission.Design.GROSS_MASS, val=0.0)
-
-        add_aviary_input(self, Aircraft.Engine.POD_MASS, val=np.zeros(num_engine_type))
-
-        add_aviary_input(self, Aircraft.Wing.ASPECT_RATIO, val=0.0)
-
-        add_aviary_input(self, Aircraft.Wing.ASPECT_RATIO_REF, val=0.0)
-
-        add_aviary_input(self, Aircraft.Wing.STRUT_BRACING_FACTOR, val=0.0)
-
-        add_aviary_input(self, Aircraft.Wing.AEROELASTIC_TAILORING_FACTOR, val=0.0)
+        add_aviary_input(self, Aircraft.Wing.LOAD_PATH_SWEEP_DIST,
+                         shape=num_input_stations - 1)
+        add_aviary_input(self, Aircraft.Wing.THICKNESS_TO_CHORD_DIST,
+                         shape=num_input_stations)
+        add_aviary_input(self, Aircraft.Wing.CHORD_PER_SEMISPAN_DIST,
+                         shape=num_input_stations)
+        add_aviary_input(self, Mission.Design.GROSS_MASS)
+        add_aviary_input(self, Aircraft.Engine.POD_MASS, shape=num_engine_type)
+        add_aviary_input(self, Aircraft.Wing.ASPECT_RATIO)
+        add_aviary_input(self, Aircraft.Wing.ASPECT_RATIO_REF)
+        add_aviary_input(self, Aircraft.Wing.STRUT_BRACING_FACTOR)
+        add_aviary_input(self, Aircraft.Wing.AEROELASTIC_TAILORING_FACTOR)
 
         if total_num_wing_engines > 0:
-            add_aviary_input(
-                self,
-                Aircraft.Engine.WING_LOCATIONS,
-                val=np.zeros(int(total_num_wing_engines / 2)),
-            )
+            add_aviary_input(self, Aircraft.Engine.WING_LOCATIONS,
+                             shape=int(total_num_wing_engines/2))
         else:
-            add_aviary_input(self, Aircraft.Engine.WING_LOCATIONS, val=[[0.0]])
+            add_aviary_input(self, Aircraft.Engine.WING_LOCATIONS)
 
-        add_aviary_input(self, Aircraft.Wing.THICKNESS_TO_CHORD, val=0.0)
+        add_aviary_input(self, Aircraft.Wing.THICKNESS_TO_CHORD)
+        add_aviary_input(self, Aircraft.Wing.THICKNESS_TO_CHORD_REF)
 
-        add_aviary_input(self, Aircraft.Wing.THICKNESS_TO_CHORD_REF, val=0.0)
-
-        add_aviary_output(self, Aircraft.Wing.BENDING_MATERIAL_FACTOR, val=0.0)
-
-        add_aviary_output(self, Aircraft.Wing.ENG_POD_INERTIA_FACTOR, val=0.0)
+        add_aviary_output(self, Aircraft.Wing.BENDING_MATERIAL_FACTOR)
+        add_aviary_output(self, Aircraft.Wing.ENG_POD_INERTIA_FACTOR)
 
     def setup_partials(self):
         # TODO: Analytic derivs will be challenging, but possible.
         self.declare_partials("*", "*", method='cs')
 
     def compute(self, inputs, outputs):
-        aviary_options: AviaryValues = self.options['aviary_options']
-        input_station_dist = aviary_options.get_val(Aircraft.Wing.INPUT_STATION_DIST)
+        input_station_dist = self.options[Aircraft.Wing.INPUT_STATION_DIST]
         inp_stations = np.array(input_station_dist)
-        num_integration_stations = aviary_options.get_val(
-            Aircraft.Wing.NUM_INTEGRATION_STATIONS
-        )
-        num_wing_engines = aviary_options.get_val(Aircraft.Engine.NUM_WING_ENGINES)
+        num_integration_stations = self.options[Aircraft.Wing.NUM_INTEGRATION_STATIONS]
+        num_wing_engines = self.options[Aircraft.Engine.NUM_WING_ENGINES]
         num_engine_type = len(num_wing_engines)
 
         # TODO: Support all options for this parameter.
@@ -104,9 +76,7 @@ class DetailedWingBendingFact(om.ExplicitComponent):
         # 3.0 : rectangular distribution
         # 1.0-2.0 : blend of triangular and elliptical
         # 2.0-3.0 : blend of elliptical and rectangular
-        load_distribution_factor = aviary_options.get_val(
-            Aircraft.Wing.LOAD_DISTRIBUTION_CONTROL
-        )
+        load_distribution_factor = self.options[Aircraft.Wing.LOAD_DISTRIBUTION_CONTROL]
 
         load_path_sweep = inputs[Aircraft.Wing.LOAD_PATH_SWEEP_DIST]
         thickness_to_chord = inputs[Aircraft.Wing.THICKNESS_TO_CHORD_DIST]

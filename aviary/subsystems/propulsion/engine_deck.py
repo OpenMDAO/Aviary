@@ -784,7 +784,7 @@ class EngineDeck(EngineModel):
             scaling factors.
         """
 
-        return SizeEngine(aviary_options=self.options)
+        return SizeEngine()
 
     def _build_engine_interpolator(self, num_nodes, aviary_inputs):
         """
@@ -980,7 +980,7 @@ class EngineDeck(EngineModel):
             uncorrect_shp = True
             engine_group.add_subsystem(
                 'uncorrect_shaft_power',
-                subsys=UncorrectData(num_nodes=num_nodes, aviary_options=self.options),
+                subsys=UncorrectData(num_nodes=num_nodes),
                 promotes_inputs=[
                     Dynamic.Atmosphere.TEMPERATURE,
                     Dynamic.Atmosphere.STATIC_PRESSURE,
@@ -1014,7 +1014,7 @@ class EngineDeck(EngineModel):
                 engine_group.add_subsystem(
                     'uncorrect_max_shaft_power',
                     subsys=UncorrectData(
-                        num_nodes=num_nodes, aviary_options=self.options
+                        num_nodes=num_nodes,
                     ),
                     promotes_inputs=[
                         Dynamic.Atmosphere.TEMPERATURE,
@@ -1035,7 +1035,6 @@ class EngineDeck(EngineModel):
             'engine_scaling',
             subsys=EngineScaling(
                 num_nodes=num_nodes,
-                aviary_options=self.options,
                 engine_variables=engine_outputs,
             ),
             promotes_inputs=[Aircraft.Engine.SCALE_FACTOR, Dynamic.Atmosphere.MACH],

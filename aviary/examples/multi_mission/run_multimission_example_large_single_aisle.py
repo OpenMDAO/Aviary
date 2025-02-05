@@ -2,17 +2,18 @@
 authors: Jatin Soni, Eliot Aretskin
 Multi Mission Optimization Example using Aviary
 
-In this example, a monolithic optimization is created by instantiating two aviary problems 
-using typical AviaryProblem calls like load_inputs(), check_and_preprocess_payload(), 
-etc. Once those problems are setup and all of their phases are linked together, we copy 
-those problems as group into a super_problem. We then promote GROSS_MASS, RANGE, and 
-wing SWEEP from each of those sub-groups (group1 and group2) up to the super_probem so 
-the optimizer can control them. The fuel_burn results from each of the group1 and group2 
+In this example, a monolithic optimization is created by instantiating two aviary problems
+using typical AviaryProblem calls like load_inputs(), check_and_preprocess_payload(),
+etc. Once those problems are setup and all of their phases are linked together, we copy
+those problems as group into a super_problem. We then promote GROSS_MASS, RANGE, and
+wing SWEEP from each of those sub-groups (group1 and group2) up to the super_probem so
+the optimizer can control them. The fuel_burn results from each of the group1 and group2
 dymos missions are summed and weighted to create the objective function the optimizer sees.
 
 """
 import copy as copy
 from aviary.examples.example_phase_info import phase_info
+from aviary.variable_info.functions import setup_model_options
 from aviary.variable_info.variables import Mission, Aircraft, Settings
 from aviary.variable_info.enums import ProblemType
 import aviary.api as av
@@ -146,10 +147,15 @@ class MultiMissionProblem(om.Problem):
 
     def setup_wrapper(self):
         """Wrapper for om.Problem setup with warning ignoring and setting options"""
-        for prob in self.probs:
+        for i, prob in enumerate(self.probs):
             prob.model.options['aviary_options'] = prob.aviary_inputs
             prob.model.options['aviary_metadata'] = prob.meta_data
             prob.model.options['phase_info'] = prob.phase_info
+
+            # Use OpenMDAO's model options to pass all options through the system hierarchy.
+            prefix = self.group_prefix + f'_{i}'
+            setup_model_options(self, prob.aviary_inputs, prob.meta_data,
+                                prefix=f'{prefix}.')
 
         # Aviary's problem setup wrapper uses these ignored warnings to suppress
         # some warnings related to variable promotion. Replicating that here with

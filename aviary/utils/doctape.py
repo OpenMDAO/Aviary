@@ -1,8 +1,8 @@
 import inspect
 import subprocess
 import tempfile
-import os
 import numpy as np
+import re
 
 
 """
@@ -89,6 +89,7 @@ def get_previous_line(n=1) -> str:
 def get_variable_name(*variables) -> str:
     """
     returns the name of the variable passed to the function as a string
+    # NOTE: You cannot call this function multiple times on one line
 
     Parameters
     ----------
@@ -107,8 +108,20 @@ def get_variable_name(*variables) -> str:
     # get the line number that called this function
     lineno = pframe.f_lineno - first_line if first_line else pframe.f_lineno - 1
     # extract the argument and remove all whitespace
-    arg: str = ''.join(lines[lineno].split(
-        'get_variable_name(')[1].split(')')[0].split())
+    arg = ''.join(lines[lineno].split()).split('get_variable_name(', 1)[1]
+
+    # Use regex to match balanced parentheses
+    match = re.match(r'([^()]*\([^()]*\))*[^()]*', arg)
+    if match:
+        arg = match.group(0)
+
+    # # Requires Python 3.11, but allows this to be called multiple times on one line
+    # positions = inspect.getframeinfo(pframe).positions
+    # calling_lines = lines[positions.lineno-1:positions.end_lineno]
+    # calling_lines[-1] = calling_lines[-1][:positions.end_col_offset-1]
+    # calling_lines[0] = calling_lines[0][positions.col_offset:].removeprefix('get_variable_name(')
+    # arg = ''.join([l.strip() for l in calling_lines])
+
     if ',' in arg:
         return arg.split(',')
     else:
@@ -295,6 +308,7 @@ def get_attribute_name(object: object, attribute, error_type=AttributeError) -> 
 def get_all_keys(dict_of_dicts: dict, track_layers=False, all_keys=None) -> list:
     """
     Recursively get all of the keys from a dict of dicts
+    This can also be used to recursively get all of the attributes from a complex object, like the Aircraft hierarchy
     Note: this will not add duplicates of keys, but will
     continue deeper even if a key is duplicated
 
@@ -314,9 +328,14 @@ def get_all_keys(dict_of_dicts: dict, track_layers=False, all_keys=None) -> list
     all_keys : list
         A list of all the keys in the dict_of_dicts
     """
+    if not isinstance(dict_of_dicts, dict):
+        dict_of_dicts = dict_of_dicts.__dict__
     if all_keys is None:
         all_keys = []
+
     for key, val in dict_of_dicts.items():
+        if key.startswith('__') and key.endswith('__'):
+            continue
         if track_layers is True:
             current_layer = ''
         elif track_layers:
@@ -325,7 +344,7 @@ def get_all_keys(dict_of_dicts: dict, track_layers=False, all_keys=None) -> list
             key = current_layer+'.'+key
         if key not in all_keys:
             all_keys.append(key)
-        if isinstance(val, dict):
+        if isinstance(val, dict) or hasattr(val, '__dict__'):
             if track_layers:
                 current_layer = key
             else:
@@ -352,6 +371,8 @@ def get_value(dict_of_dicts: dict, comlpete_key: str):
     """
 
     for key in comlpete_key.split('.'):
+        if not isinstance(dict_of_dicts, dict):
+            dict_of_dicts = dict_of_dicts.__dict__
         dict_of_dicts = dict_of_dicts[key]
     return dict_of_dicts
 
@@ -377,13 +398,18 @@ def glue_variable(name: str, val=None, md_code=False, display=True):
     # local import so myst isn't required unless glue is being used
     from myst_nb import glue
     from IPython.display import Markdown
+    from IPython.utils import io
     if val is None:
         val = name
     if md_code:
         val = Markdown('`'+val+'`')
     else:
         val = Markdown(val)
-    glue(name, val, display)
+
+    with io.capture_output() as captured:
+        glue(name, val, display)
+    # if display:
+    captured.show()
 
 
 def glue_keys(dict_of_dicts: dict, display=True) -> list:
@@ -400,7 +426,12 @@ def glue_keys(dict_of_dicts: dict, display=True) -> list:
     all_keys : list
         A list of all the keys that were glued
     """
-    all_keys = get_all_keys(dict_of_dicts)
+    if not isinstance(dict_of_dicts, dict):
+        track_layers = dict_of_dicts.__name__
+    else:
+        track_layers = False
+    all_keys = get_all_keys(dict_of_dicts, track_layers)
+
     for key in all_keys:
         glue_variable(key, md_code=True, display=display)
     return all_keys

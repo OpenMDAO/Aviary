@@ -22,6 +22,7 @@ from aviary.utils.test_utils.default_subsystems import get_default_mission_subsy
 from aviary.utils.functions import \
     set_aviary_initial_values, set_aviary_input_defaults
 from aviary.utils.preprocessors import preprocess_options
+from aviary.variable_info.functions import setup_model_options
 from aviary.variable_info.variables import Dynamic, Aircraft
 
 
@@ -104,8 +105,10 @@ class TestFLOPSBalancedFieldLength(unittest.TestCase):
         liftoff.add_objective(
             Dynamic.Mission.DISTANCE, loc='final', ref=distance_max, units=units)
 
-        varnames = [Aircraft.Wing.ASPECT_RATIO]
+        varnames = [Aircraft.Wing.ASPECT_RATIO, Aircraft.Engine.SCALE_FACTOR]
         set_aviary_input_defaults(takeoff.model, varnames, aviary_options)
+
+        setup_model_options(takeoff, aviary_options)
 
         # suppress warnings:
         # "input variable '...' promoted using '*' was already promoted using 'aircraft:*'

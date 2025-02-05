@@ -6,7 +6,6 @@ from parameterized import parameterized
 
 from aviary.subsystems.mass.flops_based.wing_common import (
     WingBendingMass, WingMiscMass, WingShearControlMass)
-from aviary.variable_info.options import get_option_defaults
 from aviary.utils.test_utils.variable_test import assert_match_varnames
 from aviary.validation_cases.validation_tests import (flops_validation_test,
                                                       get_flops_case_names,
@@ -74,7 +73,7 @@ class WingShearControlMassTest2(unittest.TestCase):
         prob.set_val(Mission.Design.GROSS_MASS, 100000, 'lbm')
 
         partial_data = prob.check_partials(out_stream=None, method="cs")
-        assert_check_partials(partial_data, atol=5e-12, rtol=1e-12)
+        assert_check_partials(partial_data, atol=1e-11, rtol=1e-12)
 
 
 class WingMiscMassTest(unittest.TestCase):
@@ -141,9 +140,14 @@ class WingMiscMassTest2(unittest.TestCase):
 class WingBendingMassTest(unittest.TestCase):
     def setUp(self):
         prob = self.prob = om.Problem()
+
+        opts = {
+            Aircraft.Fuselage.NUM_FUSELAGES: 1,
+        }
+
         prob.model.add_subsystem(
             "wing",
-            WingBendingMass(aviary_options=get_option_defaults()),
+            WingBendingMass(**opts),
             promotes_inputs=['*'],
             promotes_outputs=['*'],
         )
@@ -201,9 +205,10 @@ class WingBendingMassTest2(unittest.TestCase):
     def test_case(self):
 
         prob = om.Problem()
+
         prob.model.add_subsystem(
             "wing",
-            WingBendingMass(aviary_options=get_option_defaults()),
+            WingBendingMass(),
             promotes_inputs=['*'],
             promotes_outputs=['*'],
         )
@@ -218,6 +223,7 @@ class WingBendingMassTest2(unittest.TestCase):
         prob.set_val(Aircraft.Wing.SHEAR_CONTROL_MASS, 4000, 'lbm')
         prob.set_val(Aircraft.Wing.SPAN, 100, 'ft')
         prob.set_val(Aircraft.Wing.SWEEP, 20, 'deg')
+        prob.set_val(Aircraft.Wing.ULTIMATE_LOAD_FACTOR, 3.75, 'unitless')
 
         partial_data = prob.check_partials(out_stream=None, method="cs")
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)

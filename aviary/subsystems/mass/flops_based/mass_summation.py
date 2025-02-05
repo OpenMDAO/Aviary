@@ -3,8 +3,7 @@ import numpy as np
 import openmdao.api as om
 
 from aviary.subsystems.mass.flops_based.empty_margin import EmptyMassMargin
-from aviary.utils.aviary_values import AviaryValues
-from aviary.variable_info.functions import add_aviary_input, add_aviary_output
+from aviary.variable_info.functions import add_aviary_input, add_aviary_output, add_aviary_option
 from aviary.variable_info.variables import Aircraft, Mission
 
 
@@ -19,90 +18,83 @@ class MassSummation(om.Group):
     """
 
     def initialize(self):
-        self.options.declare(
-            'aviary_options', types=AviaryValues,
-            desc='collection of Aircraft/Mission specific options')
+        add_aviary_option(self, Aircraft.Design.USE_ALT_MASS)
 
     def setup(self):
-        aviary_options: AviaryValues = self.options['aviary_options']
-        alt_mass = aviary_options.get_val(Aircraft.Design.USE_ALT_MASS)
+        alt_mass = self.options[Aircraft.Design.USE_ALT_MASS]
 
         self.add_subsystem(
-            'structure_mass', StructureMass(aviary_options=aviary_options),
+            'structure_mass', StructureMass(),
             promotes_inputs=['*'], promotes_outputs=['*'])
 
         self.add_subsystem(
-            'propulsion_mass', PropulsionMass(aviary_options=aviary_options),
+            'propulsion_mass', PropulsionMass(),
             promotes_inputs=['*'], promotes_outputs=['*'])
 
         if alt_mass:
             self.add_subsystem(
                 'system_equip_mass_base',
-                AltSystemsEquipMassBase(aviary_options=aviary_options),
+                AltSystemsEquipMassBase(),
                 promotes_inputs=['*'], promotes_outputs=['*'])
 
             self.add_subsystem(
                 'system_equip_mass',
-                AltSystemsEquipMass(aviary_options=aviary_options),
+                AltSystemsEquipMass(),
                 promotes_inputs=['*'], promotes_outputs=['*'])
 
         else:
             self.add_subsystem(
-                'system_equip_mass', SystemsEquipMass(aviary_options=aviary_options),
+                'system_equip_mass', SystemsEquipMass(),
                 promotes_inputs=['*'], promotes_outputs=['*'])
 
         self.add_subsystem(
-            'empty_mass_margin', EmptyMassMargin(aviary_options=aviary_options),
+            'empty_mass_margin', EmptyMassMargin(),
             promotes_inputs=['*'], promotes_outputs=['*'])
 
         if alt_mass:
             self.add_subsystem(
-                'empty_mass', AltEmptyMass(aviary_options=aviary_options),
+                'empty_mass', AltEmptyMass(),
                 promotes_inputs=['*'], promotes_outputs=['*'])
 
         else:
-            self.add_subsystem('empty_mass', EmptyMass(aviary_options=aviary_options),
+            self.add_subsystem('empty_mass', EmptyMass(),
                                promotes_inputs=['*'], promotes_outputs=['*'])
 
         self.add_subsystem(
-            'operating_mass', OperatingMass(aviary_options=aviary_options),
+            'operating_mass', OperatingMass(),
             promotes_inputs=['*'], promotes_outputs=['*'])
 
         self.add_subsystem(
-            'zero_fuel_mass', ZeroFuelMass(aviary_options=aviary_options),
+            'zero_fuel_mass', ZeroFuelMass(),
             promotes_inputs=['*'], promotes_outputs=['*'])
 
-        self.add_subsystem('fuel_mass', FuelMass(aviary_options=aviary_options),
+        self.add_subsystem('fuel_mass', FuelMass(),
                            promotes_inputs=['*'], promotes_outputs=['*'])
 
 
 class StructureMass(om.ExplicitComponent):
 
     def initialize(self):
-        self.options.declare(
-            'aviary_options', types=AviaryValues,
-            desc='collection of Aircraft/Mission specific options')
+        add_aviary_option(self, Aircraft.Engine.NUM_ENGINES)
 
     def setup(self):
-        num_engine_type = len(self.options['aviary_options'].get_val(
-            Aircraft.Engine.NUM_ENGINES))
+        num_engine_type = len(self.options[Aircraft.Engine.NUM_ENGINES])
 
-        add_aviary_input(self, Aircraft.Canard.MASS, val=0.0)
-        add_aviary_input(self, Aircraft.Fins.MASS, val=0.0)
-        add_aviary_input(self, Aircraft.Fuselage.MASS, val=0.0)
-        add_aviary_input(self, Aircraft.HorizontalTail.MASS, val=0.0)
-        add_aviary_input(self, Aircraft.LandingGear.MAIN_GEAR_MASS, val=0.0)
-        add_aviary_input(self, Aircraft.LandingGear.NOSE_GEAR_MASS, val=0.0)
-        add_aviary_input(self, Aircraft.Nacelle.MASS, val=np.zeros(num_engine_type))
-        add_aviary_input(self, Aircraft.Paint.MASS, val=0.0)
-        add_aviary_input(self, Aircraft.VerticalTail.MASS, val=0.0)
-        add_aviary_input(self, Aircraft.Wing.MASS, val=0.0)
+        add_aviary_input(self, Aircraft.Canard.MASS)
+        add_aviary_input(self, Aircraft.Fins.MASS)
+        add_aviary_input(self, Aircraft.Fuselage.MASS)
+        add_aviary_input(self, Aircraft.HorizontalTail.MASS)
+        add_aviary_input(self, Aircraft.LandingGear.MAIN_GEAR_MASS)
+        add_aviary_input(self, Aircraft.LandingGear.NOSE_GEAR_MASS)
+        add_aviary_input(self, Aircraft.Nacelle.MASS, shape=num_engine_type)
+        add_aviary_input(self, Aircraft.Paint.MASS)
+        add_aviary_input(self, Aircraft.VerticalTail.MASS)
+        add_aviary_input(self, Aircraft.Wing.MASS)
 
-        add_aviary_output(self, Aircraft.Design.STRUCTURE_MASS, val=0.0)
+        add_aviary_output(self, Aircraft.Design.STRUCTURE_MASS)
 
     def setup_partials(self):
-        num_engine_type = len(self.options['aviary_options'].get_val(
-            Aircraft.Engine.NUM_ENGINES))
+        num_engine_type = len(self.options[Aircraft.Engine.NUM_ENGINES])
 
         self.declare_partials(Aircraft.Design.STRUCTURE_MASS, '*', val=1)
         self.declare_partials(Aircraft.Design.STRUCTURE_MASS, Aircraft.Nacelle.MASS,
@@ -127,19 +119,13 @@ class StructureMass(om.ExplicitComponent):
 
 class PropulsionMass(om.ExplicitComponent):
 
-    def initialize(self):
-        self.options.declare(
-            'aviary_options', types=AviaryValues,
-            desc='collection of Aircraft/Mission specific options')
-
     def setup(self):
-        add_aviary_input(self, Aircraft.Fuel.FUEL_SYSTEM_MASS, val=0.0)
-        add_aviary_input(self, Aircraft.Propulsion.TOTAL_MISC_MASS, val=0.0)
-        add_aviary_input(
-            self, Aircraft.Propulsion.TOTAL_THRUST_REVERSERS_MASS, val=0.0)
-        add_aviary_input(self, Aircraft.Propulsion.TOTAL_ENGINE_MASS, val=0.0)
+        add_aviary_input(self, Aircraft.Fuel.FUEL_SYSTEM_MASS)
+        add_aviary_input(self, Aircraft.Propulsion.TOTAL_MISC_MASS)
+        add_aviary_input(self, Aircraft.Propulsion.TOTAL_THRUST_REVERSERS_MASS)
+        add_aviary_input(self, Aircraft.Propulsion.TOTAL_ENGINE_MASS)
 
-        add_aviary_output(self, Aircraft.Propulsion.MASS, val=0.0)
+        add_aviary_output(self, Aircraft.Propulsion.MASS)
 
     def setup_partials(self):
         prop_wrt = [
@@ -162,24 +148,19 @@ class PropulsionMass(om.ExplicitComponent):
 
 class SystemsEquipMass(om.ExplicitComponent):
 
-    def initialize(self):
-        self.options.declare(
-            'aviary_options', types=AviaryValues,
-            desc='collection of Aircraft/Mission specific options')
-
     def setup(self):
-        add_aviary_input(self, Aircraft.AirConditioning.MASS, val=0.0)
-        add_aviary_input(self, Aircraft.AntiIcing.MASS, val=0.0)
-        add_aviary_input(self, Aircraft.APU.MASS, val=0.0)
-        add_aviary_input(self, Aircraft.Avionics.MASS, val=0.0)
-        add_aviary_input(self, Aircraft.Electrical.MASS, val=0.0)
-        add_aviary_input(self, Aircraft.Furnishings.MASS, val=0.0)
-        add_aviary_input(self, Aircraft.Hydraulics.MASS, val=0.0)
-        add_aviary_input(self, Aircraft.Instruments.MASS, val=0.0)
-        add_aviary_input(self, Aircraft.Wing.SURFACE_CONTROL_MASS, val=0.0)
-        add_aviary_input(self, Aircraft.Design.EXTERNAL_SUBSYSTEMS_MASS, val=0.0)
+        add_aviary_input(self, Aircraft.AirConditioning.MASS)
+        add_aviary_input(self, Aircraft.AntiIcing.MASS)
+        add_aviary_input(self, Aircraft.APU.MASS)
+        add_aviary_input(self, Aircraft.Avionics.MASS)
+        add_aviary_input(self, Aircraft.Electrical.MASS)
+        add_aviary_input(self, Aircraft.Furnishings.MASS)
+        add_aviary_input(self, Aircraft.Hydraulics.MASS)
+        add_aviary_input(self, Aircraft.Instruments.MASS)
+        add_aviary_input(self, Aircraft.Wing.SURFACE_CONTROL_MASS)
+        add_aviary_input(self, Aircraft.Design.EXTERNAL_SUBSYSTEMS_MASS)
 
-        add_aviary_output(self, Aircraft.Design.SYSTEMS_EQUIP_MASS, val=0.0)
+        add_aviary_output(self, Aircraft.Design.SYSTEMS_EQUIP_MASS)
 
     def setup_partials(self):
         self.declare_partials(Aircraft.Design.SYSTEMS_EQUIP_MASS, '*', val=1)
@@ -204,24 +185,19 @@ class SystemsEquipMass(om.ExplicitComponent):
 
 class AltSystemsEquipMassBase(om.ExplicitComponent):
 
-    def initialize(self):
-        self.options.declare(
-            'aviary_options', types=AviaryValues,
-            desc='collection of Aircraft/Mission specific options')
-
     def setup(self):
-        add_aviary_input(self, Aircraft.AirConditioning.MASS, val=0.0)
-        add_aviary_input(self, Aircraft.AntiIcing.MASS, val=0.0)
-        add_aviary_input(self, Aircraft.APU.MASS, val=0.0)
-        add_aviary_input(self, Aircraft.Avionics.MASS, val=0.0)
-        add_aviary_input(self, Aircraft.Electrical.MASS, val=0.0)
-        add_aviary_input(self, Aircraft.Furnishings.MASS_BASE, val=0.0)
-        add_aviary_input(self, Aircraft.Hydraulics.MASS, val=0.0)
-        add_aviary_input(self, Aircraft.Instruments.MASS, val=0.0)
-        add_aviary_input(self, Aircraft.Wing.SURFACE_CONTROL_MASS, val=0.0)
-        add_aviary_input(self, Aircraft.Design.EXTERNAL_SUBSYSTEMS_MASS, val=0.0)
+        add_aviary_input(self, Aircraft.AirConditioning.MASS)
+        add_aviary_input(self, Aircraft.AntiIcing.MASS)
+        add_aviary_input(self, Aircraft.APU.MASS)
+        add_aviary_input(self, Aircraft.Avionics.MASS)
+        add_aviary_input(self, Aircraft.Electrical.MASS)
+        add_aviary_input(self, Aircraft.Furnishings.MASS_BASE)
+        add_aviary_input(self, Aircraft.Hydraulics.MASS)
+        add_aviary_input(self, Aircraft.Instruments.MASS)
+        add_aviary_input(self, Aircraft.Wing.SURFACE_CONTROL_MASS)
+        add_aviary_input(self, Aircraft.Design.EXTERNAL_SUBSYSTEMS_MASS)
 
-        add_aviary_output(self, Aircraft.Design.SYSTEMS_EQUIP_MASS_BASE, val=0.0)
+        add_aviary_output(self, Aircraft.Design.SYSTEMS_EQUIP_MASS_BASE)
 
     def setup_partials(self):
         self.declare_partials(Aircraft.Design.SYSTEMS_EQUIP_MASS_BASE, '*', val=1)
@@ -246,17 +222,12 @@ class AltSystemsEquipMassBase(om.ExplicitComponent):
 
 class AltSystemsEquipMass(om.ExplicitComponent):
 
-    def initialize(self):
-        self.options.declare(
-            'aviary_options', types=AviaryValues,
-            desc='collection of Aircraft/Mission specific options')
-
     def setup(self):
-        add_aviary_input(self, Aircraft.Design.SYSTEMS_EQUIP_MASS_BASE, val=0.0)
-        add_aviary_input(self, Aircraft.Design.STRUCTURE_MASS, val=0.0)
-        add_aviary_input(self, Aircraft.Propulsion.MASS, val=0.0)
+        add_aviary_input(self, Aircraft.Design.SYSTEMS_EQUIP_MASS_BASE)
+        add_aviary_input(self, Aircraft.Design.STRUCTURE_MASS)
+        add_aviary_input(self, Aircraft.Propulsion.MASS)
 
-        add_aviary_output(self, Aircraft.Design.SYSTEMS_EQUIP_MASS, val=0.0)
+        add_aviary_output(self, Aircraft.Design.SYSTEMS_EQUIP_MASS)
 
     def setup_partials(self):
         self.declare_partials(
@@ -283,18 +254,13 @@ class AltSystemsEquipMass(om.ExplicitComponent):
 
 class EmptyMass(om.ExplicitComponent):
 
-    def initialize(self):
-        self.options.declare(
-            'aviary_options', types=AviaryValues,
-            desc='collection of Aircraft/Mission specific options')
-
     def setup(self):
-        add_aviary_input(self, Aircraft.Design.EMPTY_MASS_MARGIN, val=0.0)
-        add_aviary_input(self, Aircraft.Design.STRUCTURE_MASS, val=0.0)
-        add_aviary_input(self, Aircraft.Propulsion.MASS, val=0.0)
-        add_aviary_input(self, Aircraft.Design.SYSTEMS_EQUIP_MASS, val=0.0)
+        add_aviary_input(self, Aircraft.Design.EMPTY_MASS_MARGIN)
+        add_aviary_input(self, Aircraft.Design.STRUCTURE_MASS)
+        add_aviary_input(self, Aircraft.Propulsion.MASS)
+        add_aviary_input(self, Aircraft.Design.SYSTEMS_EQUIP_MASS)
 
-        add_aviary_output(self, Aircraft.Design.EMPTY_MASS, val=0.0)
+        add_aviary_output(self, Aircraft.Design.EMPTY_MASS)
 
     def setup_partials(self):
         self.declare_partials(Aircraft.Design.EMPTY_MASS, '*', val=1)
@@ -311,18 +277,13 @@ class EmptyMass(om.ExplicitComponent):
 
 class AltEmptyMass(om.ExplicitComponent):
 
-    def initialize(self):
-        self.options.declare(
-            'aviary_options', types=AviaryValues,
-            desc='collection of Aircraft/Mission specific options')
-
     def setup(self):
-        add_aviary_input(self, Aircraft.Design.EMPTY_MASS_MARGIN, val=0.0)
-        add_aviary_input(self, Aircraft.Design.STRUCTURE_MASS, val=0.0)
-        add_aviary_input(self, Aircraft.Propulsion.MASS, val=0.0)
-        add_aviary_input(self, Aircraft.Design.SYSTEMS_EQUIP_MASS_BASE, val=0.0)
+        add_aviary_input(self, Aircraft.Design.EMPTY_MASS_MARGIN)
+        add_aviary_input(self, Aircraft.Design.STRUCTURE_MASS)
+        add_aviary_input(self, Aircraft.Propulsion.MASS)
+        add_aviary_input(self, Aircraft.Design.SYSTEMS_EQUIP_MASS_BASE)
 
-        add_aviary_output(self, Aircraft.Design.EMPTY_MASS, val=0.0)
+        add_aviary_output(self, Aircraft.Design.EMPTY_MASS)
 
     def setup_partials(self):
         self.declare_partials(Aircraft.Design.EMPTY_MASS,
@@ -346,21 +307,16 @@ class AltEmptyMass(om.ExplicitComponent):
 
 class OperatingMass(om.ExplicitComponent):
 
-    def initialize(self):
-        self.options.declare(
-            'aviary_options', types=AviaryValues,
-            desc='collection of Aircraft/Mission specific options')
-
     def setup(self):
-        add_aviary_input(self, Aircraft.CrewPayload.CARGO_CONTAINER_MASS, val=0.0)
-        add_aviary_input(self, Aircraft.CrewPayload.NON_FLIGHT_CREW_MASS, val=0.0)
-        add_aviary_input(self, Aircraft.CrewPayload.FLIGHT_CREW_MASS, val=0.0)
-        add_aviary_input(self, Aircraft.CrewPayload.PASSENGER_SERVICE_MASS, val=0.0)
-        add_aviary_input(self, Aircraft.Design.EMPTY_MASS, val=0.0)
-        add_aviary_input(self, Aircraft.Fuel.UNUSABLE_FUEL_MASS, val=0.0)
-        add_aviary_input(self, Aircraft.Propulsion.TOTAL_ENGINE_OIL_MASS, val=0.0)
+        add_aviary_input(self, Aircraft.CrewPayload.CARGO_CONTAINER_MASS)
+        add_aviary_input(self, Aircraft.CrewPayload.NON_FLIGHT_CREW_MASS)
+        add_aviary_input(self, Aircraft.CrewPayload.FLIGHT_CREW_MASS)
+        add_aviary_input(self, Aircraft.CrewPayload.PASSENGER_SERVICE_MASS)
+        add_aviary_input(self, Aircraft.Design.EMPTY_MASS)
+        add_aviary_input(self, Aircraft.Fuel.UNUSABLE_FUEL_MASS)
+        add_aviary_input(self, Aircraft.Propulsion.TOTAL_ENGINE_OIL_MASS)
 
-        add_aviary_output(self, Aircraft.Design.OPERATING_MASS, val=0.0)
+        add_aviary_output(self, Aircraft.Design.OPERATING_MASS)
 
     def setup_partials(self):
         self.declare_partials(Aircraft.Design.OPERATING_MASS, '*', val=1)
@@ -381,18 +337,13 @@ class OperatingMass(om.ExplicitComponent):
 
 class ZeroFuelMass(om.ExplicitComponent):
 
-    def initialize(self):
-        self.options.declare(
-            'aviary_options', types=AviaryValues,
-            desc='collection of Aircraft/Mission specific options')
-
     def setup(self):
-        add_aviary_input(self, Aircraft.CrewPayload.PASSENGER_MASS, val=0.0)
-        add_aviary_input(self, Aircraft.CrewPayload.BAGGAGE_MASS, val=0.0)
-        add_aviary_input(self, Aircraft.CrewPayload.CARGO_MASS, val=0.0)
-        add_aviary_input(self, Aircraft.Design.OPERATING_MASS, val=0.0)
+        add_aviary_input(self, Aircraft.CrewPayload.PASSENGER_MASS)
+        add_aviary_input(self, Aircraft.CrewPayload.BAGGAGE_MASS)
+        add_aviary_input(self, Aircraft.CrewPayload.CARGO_MASS)
+        add_aviary_input(self, Aircraft.Design.OPERATING_MASS)
 
-        add_aviary_output(self, Aircraft.Design.ZERO_FUEL_MASS, val=0.0)
+        add_aviary_output(self, Aircraft.Design.ZERO_FUEL_MASS)
 
     def setup_partials(self):
         self.declare_partials(Aircraft.Design.ZERO_FUEL_MASS, '*', val=1)
@@ -409,16 +360,11 @@ class ZeroFuelMass(om.ExplicitComponent):
 
 class FuelMass(om.ExplicitComponent):
 
-    def initialize(self):
-        self.options.declare(
-            'aviary_options', types=AviaryValues,
-            desc='collection of Aircraft/Mission specific options')
-
     def setup(self):
-        add_aviary_input(self, Mission.Design.GROSS_MASS, val=0.0)
-        add_aviary_input(self, Aircraft.Design.ZERO_FUEL_MASS, val=0.0)
+        add_aviary_input(self, Mission.Design.GROSS_MASS)
+        add_aviary_input(self, Aircraft.Design.ZERO_FUEL_MASS)
 
-        add_aviary_output(self, Mission.Design.FUEL_MASS, val=0.0)
+        add_aviary_output(self, Mission.Design.FUEL_MASS)
 
     def setup_partials(self):
         self.declare_partials(Mission.Design.FUEL_MASS,

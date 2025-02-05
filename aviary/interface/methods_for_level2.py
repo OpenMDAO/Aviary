@@ -8,6 +8,7 @@ import importlib.util
 import sys
 import json
 import enum
+import os
 
 import numpy as np
 
@@ -58,7 +59,7 @@ from aviary.utils.preprocessors import preprocess_options
 from aviary.utils.process_input_decks import create_vehicle, update_GASP_options, initialization_guessing
 
 from aviary.variable_info.enums import AnalysisScheme, ProblemType, EquationsOfMotion, LegacyCode, Verbosity
-from aviary.variable_info.functions import setup_trajectory_params, override_aviary_vars
+from aviary.variable_info.functions import setup_trajectory_params, override_aviary_vars, setup_model_options
 from aviary.variable_info.variables import Aircraft, Mission, Dynamic, Settings
 from aviary.variable_info.variable_meta_data import _MetaData as BaseMetaData
 
@@ -678,7 +679,8 @@ class AviaryProblem(om.Problem):
         # Create options to values
         OptionsToValues = create_opts2vals(
             [Aircraft.CrewPayload.NUM_PASSENGERS,
-                Mission.Design.CRUISE_ALTITUDE, ])
+             Mission.Design.CRUISE_ALTITUDE, ])
+
         add_opts2vals(self.model, OptionsToValues, self.aviary_inputs)
 
         if self.analysis_scheme is AnalysisScheme.SHOOTING:
@@ -1546,7 +1548,7 @@ class AviaryProblem(om.Problem):
                                       connected=true_unless_mpi)
 
                 self.model.connect(f'traj.{self.regular_phases[-1]}.timeseries.distance',
-                                   'actual_range',
+                                   Mission.Summary.RANGE,
                                    src_indices=[-1], flat_src_indices=True)
 
             elif self.mission_method is SOLVED_2DOF:
@@ -1672,14 +1674,14 @@ class AviaryProblem(om.Problem):
                                    Mission.Landing.TOUCHDOWN_MASS, src_indices=[-1])
 
                 connect_map = {
-                    f"traj.{self.regular_phases[-1]}.timeseries.distance": 'actual_range',
+                    f"traj.{self.regular_phases[-1]}.timeseries.distance": Mission.Summary.RANGE,
                 }
 
             else:
                 connect_map = {
                     "taxi.mass": "traj.mass_initial",
                     Mission.Takeoff.ROTATION_VELOCITY: "traj.SGMGroundroll_velocity_trigger",
-                    "traj.distance_final": 'actual_range',
+                    "traj.distance_final": Mission.Summary.RANGE,
                     "traj.mass_final": Mission.Landing.TOUCHDOWN_MASS,
                 }
 
@@ -2100,6 +2102,9 @@ class AviaryProblem(om.Problem):
         """
         Lightly wrapped setup() method for the problem.
         """
+        # Use OpenMDAO's model options to pass all options through the system hierarchy.
+        setup_model_options(self, self.aviary_inputs, self.meta_data)
+
         # suppress warnings:
         # "input variable '...' promoted using '*' was already promoted using 'aircraft:*'
         with warnings.catch_warnings():
@@ -2110,6 +2115,7 @@ class AviaryProblem(om.Problem):
 
             warnings.simplefilter("ignore", om.OpenMDAOWarning)
             warnings.simplefilter("ignore", om.PromotionWarning)
+
             super().setup(**kwargs)
 
     def set_initial_guesses(self, parent_prob=None, parent_prefix=""):
@@ -2537,6 +2543,15 @@ class AviaryProblem(om.Problem):
             failed = self.run_model()
             warnings.filterwarnings('default', category=UserWarning)
 
+        # update n2 diagram after run.
+        outdir = Path(self.get_reports_dir(force=True))
+        outfile = os.path.join(outdir, "n2.html")
+        om.n2(
+            self,
+            outfile=outfile,
+            show_browser=False,
+        )
+
         if self.aviary_inputs.get_val(Settings.VERBOSITY).value >= 2:
             with open('output_list.txt', 'w') as outfile:
                 self.model.list_outputs(out_stream=outfile)
@@ -2883,7 +2898,7 @@ class AviaryProblem(om.Problem):
                     "val": self.target_range, "units": "NM"},
             ),
             promotes_inputs=[
-                "actual_range",
+                ("actual_range", Mission.Summary.RANGE),
                 ("ascent_duration", Mission.Takeoff.ASCENT_DURATION),
             ],
             promotes_outputs=[("reg_objective", Mission.Objectives.RANGE)],
@@ -2909,8 +2924,8 @@ class AviaryProblem(om.Problem):
                 range_resid={"val": 30, "units": "NM"},
             ),
             promotes_inputs=[
-                "actual_range",
-                ("target_range", Mission.Summary.RANGE),
+                ("actual_range", Mission.Summary.RANGE),
+                "target_range",
             ],
             promotes_outputs=[
                 ("range_resid", Mission.Constraints.RANGE_RESIDUAL)],

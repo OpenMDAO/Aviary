@@ -4,11 +4,10 @@ import warnings
 import numpy as np
 import openmdao.api as om
 
-from aviary.utils.aviary_values import AviaryValues
+from aviary.constants import RHO_SEA_LEVEL_ENGLISH
 from aviary.variable_info.enums import Verbosity
 from aviary.variable_info.variables import Aircraft, Dynamic, Settings
-from aviary.constants import RHO_SEA_LEVEL_ENGLISH
-from aviary.utils.functions import add_aviary_input, add_aviary_output
+from aviary.variable_info.functions import add_aviary_input, add_aviary_output, add_aviary_option
 
 
 def _unint(xa, ya, x):
@@ -626,10 +625,10 @@ class HamiltonStandard(om.ExplicitComponent):
     """
 
     def initialize(self):
-        self.options.declare(
-            'aviary_options', types=AviaryValues,
-            desc='collection of Aircraft/Mission specific options')
         self.options.declare('num_nodes', default=1, types=int)
+
+        add_aviary_option(self, Aircraft.Engine.Propeller.NUM_BLADES)
+        add_aviary_option(self, Settings.VERBOSITY)
 
     def setup(self):
         nn = self.options['num_nodes']
@@ -657,12 +656,12 @@ class HamiltonStandard(om.ExplicitComponent):
         self.declare_partials('*', '*', method='fd', form='forward')
 
     def compute(self, inputs, outputs):
-        verbosity = self.options['aviary_options'].get_val(Settings.VERBOSITY)
+        verbosity = self.options[Settings.VERBOSITY]
+        num_blades = self.options[Aircraft.Engine.Propeller.NUM_BLADES]
+
         act_factor = inputs[Aircraft.Engine.Propeller.ACTIVITY_FACTOR][0]
         cli = inputs[Aircraft.Engine.Propeller.INTEGRATED_LIFT_COEFFICIENT][0]
-        num_blades = self.options['aviary_options'].get_val(
-            Aircraft.Engine.Propeller.NUM_BLADES
-        )
+
         # TODO verify this works with multiple engine models (i.e. prop mission is
         #      properly slicing these inputs)
         # ensure num_blades is an int, so it can be used as array index later

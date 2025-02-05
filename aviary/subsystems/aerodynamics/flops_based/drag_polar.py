@@ -6,7 +6,7 @@ import numpy as np
 import openmdao.api as om
 
 from aviary.utils.aviary_values import AviaryValues
-from aviary.variable_info.functions import add_aviary_input
+from aviary.variable_info.functions import add_aviary_input, add_aviary_option
 from aviary.variable_info.variables import Aircraft, Mission
 
 
@@ -20,13 +20,10 @@ class DragPolar(om.ExplicitComponent):
     """
 
     def initialize(self):
-        self.options.declare(
-            'aviary_options', types=AviaryValues,
-            desc='collection of Aircraft/Mission specific options')
+        add_aviary_option(self, Aircraft.Engine.NUM_ENGINES)
 
     def setup(self):
-        aviary_options = self.options['aviary_options']
-        num_engine_type = len(aviary_options.get_val(Aircraft.Engine.NUM_ENGINES))
+        num_engine_type = len(self.options[Aircraft.Engine.NUM_ENGINES])
 
         add_aviary_input(self, Aircraft.Canard.WETTED_AREA, 0.0)
         add_aviary_input(self, Aircraft.Fuselage.WETTED_AREA, 0.0)
