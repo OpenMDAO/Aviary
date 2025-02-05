@@ -33,6 +33,7 @@ glue_keys recursively glue all of the keys from a dict of dicts
 glue_actions glue all Aviary CLI options for a given command
 glue_class_functions glue all class functions for a gen class
 glue_function_arguments glue all function arguments for a given function
+glue_class_options glue all class options for a given class
 get_previous_line returns the previous n line(s) of code as a string
 get_class_names return the class names in a file as a set
 get_function_names returns the function names in a file as a set
@@ -496,7 +497,7 @@ def get_function_names(file_path) -> set:
     return set(function_names)
 
 
-def glue_actions(cmd, curr_glued=[], glue_default=False, glue_choices=False, md_code=True):
+def glue_actions(cmd, curr_glued=None, glue_default=False, glue_choices=False, md_code=True):
     """
     Glue all Aviary CLI options
 
@@ -509,6 +510,8 @@ def glue_actions(cmd, curr_glued=[], glue_default=False, glue_choices=False, md_
     glue_default: boolean
         flag whether the default values should be glued.
     """
+    if curr_glued is None:
+        curr_glued = []
     parser = argparse.ArgumentParser()
     _command_map[cmd][0](parser)
     actions = [*parser._get_optional_actions(), *parser._get_positional_actions()]
@@ -533,7 +536,7 @@ def glue_actions(cmd, curr_glued=[], glue_default=False, glue_choices=False, md_
                         curr_glued.append(str(choice))
 
 
-def glue_class_functions(obj, curr_glued=[], pre_fix=None, md_code=True):
+def glue_class_functions(obj, curr_glued=None, pre_fix=None, md_code=True):
     """
     Glue all class functions
 
@@ -544,6 +547,8 @@ def glue_class_functions(obj, curr_glued=[], pre_fix=None, md_code=True):
     curr_glued: list
         the parameters that have been glued
     """
+    if curr_glued is None:
+        curr_glued = []
     methods = inspect.getmembers(obj, predicate=inspect.isfunction)
     for func_name, func in methods:
         if pre_fix is not None:
@@ -555,7 +560,7 @@ def glue_class_functions(obj, curr_glued=[], pre_fix=None, md_code=True):
             curr_glued.append(func_name + '()')
 
 
-def glue_function_arguments(func, curr_glued=[], md_code=False):
+def glue_function_arguments(func, curr_glued=None, md_code=False):
     """
     Glue all function arguments for a given function
 
@@ -566,6 +571,8 @@ def glue_function_arguments(func, curr_glued=[], md_code=False):
     curr_glued: list
         the parameters that have been glued
     """
+    if curr_glued is None:
+        curr_glued = []
     sig = inspect.signature(func)
     arguments = [param.name for param in sig.parameters.values()]
     try:
@@ -579,7 +586,7 @@ def glue_function_arguments(func, curr_glued=[], md_code=False):
             curr_glued.append(arg)
 
 
-def glue_class_options(obj,  curr_glued=[], md_code=False):
+def glue_class_options(obj,  curr_glued=None, md_code=False):
     """
     Glue all class options for a given class
 
@@ -590,6 +597,8 @@ def glue_class_options(obj,  curr_glued=[], md_code=False):
     curr_glued: list
         the parameters that have been glued
     """
+    if curr_glued is None:
+        curr_glued = []
     obj = obj()
     opts = list(obj.options)
     for opt in opts:
