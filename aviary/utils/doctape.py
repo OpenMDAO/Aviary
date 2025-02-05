@@ -496,7 +496,7 @@ def get_function_names(file_path) -> set:
     return set(function_names)
 
 
-def glue_actions(cmd, curr_glued=[], glue_default=False, display=True):
+def glue_actions(cmd, curr_glued=[], glue_default=False, glue_choices=False, md_code=True):
     """
     Glue all Aviary CLI options
 
@@ -516,18 +516,24 @@ def glue_actions(cmd, curr_glued=[], glue_default=False, display=True):
         opt_list = action.option_strings
         for opt in opt_list:
             if opt not in curr_glued:
-                glue_variable(opt, md_code=display)
+                glue_variable(opt, md_code=md_code)
                 curr_glued.append(opt)
         if action.dest not in curr_glued:
-            glue_variable(action.dest, md_code=display)
+            glue_variable(action.dest, md_code=md_code)
             curr_glued.append(action.dest)
         if glue_default:
             if str(action.default) not in curr_glued:
                 glue_variable(str(action.default), md_code=True)
                 curr_glued.append(str(action.default))
+        if glue_choices:
+            if action.choices is not None:
+                for choice in action.choices:
+                    if str(choice) not in curr_glued:
+                        glue_variable(str(choice), md_code=True)
+                        curr_glued.append(str(choice))
 
 
-def glue_class_functions(obj, curr_glued=[], pre_fix=None, display=True):
+def glue_class_functions(obj, curr_glued=[], pre_fix=None, md_code=True):
     """
     Glue all class functions
 
@@ -540,14 +546,16 @@ def glue_class_functions(obj, curr_glued=[], pre_fix=None, display=True):
     """
     methods = inspect.getmembers(obj, predicate=inspect.isfunction)
     for func_name, func in methods:
+        if pre_fix is not None:
+            if pre_fix + '.' + func_name not in curr_glued:
+                glue_variable(pre_fix + '.' + func_name + '()', md_code=md_code)
+                curr_glued.append(pre_fix + '.' + func_name + '()')
         if func_name not in curr_glued:
-            if pre_fix is not None:
-                glue_variable(pre_fix + '.' + func_name + '()', md_code=display)
-            glue_variable(func_name + '()', md_code=display)
-            curr_glued.append(func_name)
+            glue_variable(func_name + '()', md_code=md_code)
+            curr_glued.append(func_name + '()')
 
 
-def glue_function_arguments(func, curr_glued=[], md_code=False, display=True):
+def glue_function_arguments(func, curr_glued=[], md_code=False):
     """
     Glue all function arguments for a given function
 
@@ -569,3 +577,21 @@ def glue_function_arguments(func, curr_glued=[], md_code=False, display=True):
         if arg not in curr_glued:
             glue_variable(arg, md_code=md_code)
             curr_glued.append(arg)
+
+def glue_class_options(obj,  curr_glued=[], md_code=False):
+    """
+    Glue all class options for a given class
+
+    Parameters
+    ----------
+    obj: class
+        class
+    curr_glued: list
+        the parameters that have been glued
+    """
+    obj = obj()
+    opts = list(obj.options)
+    for opt in opts:
+        if opt not in curr_glued:
+            glue_variable(opt, md_code=md_code)
+            curr_glued.append(opt)
