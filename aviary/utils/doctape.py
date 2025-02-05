@@ -578,6 +578,7 @@ def glue_function_arguments(func, curr_glued=[], md_code=False):
             glue_variable(arg, md_code=md_code)
             curr_glued.append(arg)
 
+
 def glue_class_options(obj,  curr_glued=[], md_code=False):
     """
     Glue all class options for a given class
