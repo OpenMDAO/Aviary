@@ -262,8 +262,8 @@ def input_check_report(prob, **kwargs):
     with open(report_file, mode='w') as f:
 
         f.write('# Unspecified Hierarchy Variables\n')
-        f.write("These aviary inputs are unspecified, and are using default values "
-                "specified in the Aviary metadata.\n\n")
+        f.write("These aviary inputs are unspecified in aviary_inputs, and may be using default values "
+                "defined in the Aviary metadata.\n\n")
 
         if bare_hierarchy_inputs:
 
@@ -285,7 +285,7 @@ def input_check_report(prob, **kwargs):
             f.write("None\n")
 
         f.write('# Unspecified Local Variables\n')
-        f.write("These local subsystem inputs are unspecified, and are using default "
+        f.write("These local subsystem inputs are unconnected, and may be using default "
                 "values specified in the component.\n\n")
 
         if bare_local_inputs:
