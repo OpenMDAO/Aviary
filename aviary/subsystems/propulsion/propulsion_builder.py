@@ -119,7 +119,7 @@ class CorePropulsionBuilder(PropulsionBuilderBase):
                                  aviary_options=aviary_inputs,
                                  engine_models=self.engine_models)
 
-    # NOTE untested!
+    # NOTE no unittests!
     def get_states(self):
         """
         Call get_states() on all engine models and return combined result.
@@ -142,7 +142,7 @@ class CorePropulsionBuilder(PropulsionBuilderBase):
 
         return controls
 
-    # NOTE untested!
+    # NOTE no unittests!
     def get_parameters(self, aviary_inputs=None, phase_info=None):
         """
         Set expected shape of all variables that need to be vectorized for multiple
@@ -180,7 +180,7 @@ class CorePropulsionBuilder(PropulsionBuilderBase):
 
         return params
 
-    # NOTE untested!
+    # NOTE no unittests!
     def get_constraints(self):
         """
         Call get_constraints() on all engine models and return combined result.
@@ -192,7 +192,7 @@ class CorePropulsionBuilder(PropulsionBuilderBase):
 
         return constraints
 
-    # NOTE untested!
+    # NOTE no unittests!
     def get_linked_variables(self):
         """
         Call get_linked_variables() on all engine models and return combined result.
@@ -222,7 +222,7 @@ class CorePropulsionBuilder(PropulsionBuilderBase):
 
         return complete_bus_vars
 
-    # NOTE untested!
+    # NOTE no unittests!
     def define_order(self):
         """
         Call define_order() on all engine models and return combined result.
@@ -234,7 +234,7 @@ class CorePropulsionBuilder(PropulsionBuilderBase):
 
         return subsys_order
 
-    # NOTE untested!
+    # NOTE no unittests!
     def get_design_vars(self):
         """
         Call get_design_vars() on all engine models and return combined result.
@@ -257,7 +257,7 @@ class CorePropulsionBuilder(PropulsionBuilderBase):
 
         return initial_guesses
 
-    # NOTE untested!
+    # NOTE no unittests!
     def get_mass_names(self):
         """
         Call get_mass_names() on all engine models and return combined result.
@@ -269,7 +269,7 @@ class CorePropulsionBuilder(PropulsionBuilderBase):
 
         return mass_names
 
-    # NOTE untested!
+    # NOTE no unittests!
     def preprocess_inputs(self):
         """
         Call get_mass_names() on all engine models and return combined result.
@@ -281,7 +281,7 @@ class CorePropulsionBuilder(PropulsionBuilderBase):
 
         return mass_names
 
-    # NOTE untested!
+    # NOTE no unittests!
     def get_outputs(self):
         """
         Call get_outputs() on all engine models and return combined result.
