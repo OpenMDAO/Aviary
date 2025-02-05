@@ -124,10 +124,10 @@ def run_aviary(
 
 def run_level_1(
     input_deck,
-    optimizer='SNOPT',
+    optimizer='IPOPT',
     phase_info=None,
     max_iter=50,
-    verbosity=1,
+    verbosity=Verbosity.BRIEF,
     analysis_scheme=AnalysisScheme.COLLOCATION,
 ):
     '''
