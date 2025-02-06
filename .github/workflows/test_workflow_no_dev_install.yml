@@ -81,7 +81,7 @@ jobs:
           conda env export --file ${{ matrix.NAME }}_environment.yml
 
       - name: 'Upload environment artifact'
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.NAME }}_environment
           path: ${{ matrix.NAME }}_environment.yml
