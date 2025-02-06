@@ -29,10 +29,10 @@ class LargeElectrifiedTurbopropFreighterBenchmark(unittest.TestCase):
 
         # load inputs from .csv to build engine
         options, guesses = create_vehicle(
-            "models/large_turboprop_freighter/large_turboprop_freighter.csv"
+            "models/large_turboprop_freighter/large_turboprop_freighter_GASP.csv"
         )
 
-        options.set_val(Settings.EQUATIONS_OF_MOTION, 'height_energy')
+        options.set_val(Settings.EQUATIONS_OF_MOTION, 'two_degrees_of_freedom')
         # options.set_val(Aircraft.Engine.NUM_ENGINES, 2)
         # options.set_val(Aircraft.Engine.WING_LOCATIONS, 0.385)
         scale_factor = 3
@@ -61,7 +61,7 @@ class LargeElectrifiedTurbopropFreighterBenchmark(unittest.TestCase):
         # load_inputs needs to be updated to accept an already existing aviary options
         prob.load_inputs(
             options,  # "models/large_turboprop_freighter/large_turboprop_freighter.csv",
-            energy_phase_info,
+            two_dof_phase_info,
             engine_builders=[electroprop],
         )
         prob.aviary_inputs.set_val(Settings.VERBOSITY, 2)
@@ -88,12 +88,12 @@ class LargeElectrifiedTurbopropFreighterBenchmark(unittest.TestCase):
 
         prob.setup()
         # prob.model.list_vars(units=True, print_arrays=True)
-        om.n2(prob)
+        # om.n2(prob)
 
         prob.set_initial_guesses()
         prob.run_aviary_problem("dymos_solution.db")
 
-        om.n2(prob)
+        # om.n2(prob)
 
 
 if __name__ == '__main__':
