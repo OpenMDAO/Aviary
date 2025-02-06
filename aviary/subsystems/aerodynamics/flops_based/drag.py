@@ -20,11 +20,10 @@ class SimpleCD(om.ExplicitComponent):
     def setup(self):
         nn = self.options['num_nodes']
 
-        add_aviary_input(self, Aircraft.Design.SUBSONIC_DRAG_COEFF_FACTOR, val=1.)
-        add_aviary_input(self, Aircraft.Design.SUPERSONIC_DRAG_COEFF_FACTOR, val=1.)
+        add_aviary_input(self, Aircraft.Design.SUBSONIC_DRAG_COEFF_FACTOR)
+        add_aviary_input(self, Aircraft.Design.SUPERSONIC_DRAG_COEFF_FACTOR)
 
-        add_aviary_input(self, Dynamic.Atmosphere.MACH,
-                         val=np.ones(nn), units='unitless')
+        add_aviary_input(self, Dynamic.Atmosphere.MACH, np.ones(nn))
 
         self.add_input(
             'CD_prescaled', val=np.ones(nn), units='unitless',
@@ -106,8 +105,7 @@ class SimpleDrag(om.ExplicitComponent):
             'CD', val=np.ones(nn), units='unitless',
             desc='total drag coefficient')
 
-        add_aviary_output(self, Dynamic.Vehicle.DRAG,
-                          val=np.ones(nn), units='N', desc='total drag')
+        add_aviary_output(self, Dynamic.Vehicle.DRAG, shape=nn, units='N')
 
     def setup_partials(self):
         nn = self.options['num_nodes']
