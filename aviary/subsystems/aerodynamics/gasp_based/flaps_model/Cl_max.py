@@ -81,7 +81,7 @@ class CLmaxCalculation(om.ExplicitComponent):
             "VLAM14",
             val=0.99124,
             units='unitless',
-            desc="VLAM14: mach number correction factor ",
+            desc="VLAM14: Mach number correction factor ",
         )
 
         # other inputs
@@ -154,7 +154,7 @@ class CLmaxCalculation(om.ExplicitComponent):
             Dynamic.Atmosphere.MACH,
             val=0.17522,
             units='unitless',
-            desc="SMN: mach number",
+            desc="SMN: Mach number",
         )
         self.add_output(
             "reynolds", val=157.1111, units='unitless', desc="RNW: reynolds number"
