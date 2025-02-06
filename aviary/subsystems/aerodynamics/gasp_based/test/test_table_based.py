@@ -111,7 +111,7 @@ class TestLowSpeedAero(unittest.TestCase):
         prob.set_val("t_init_flaps", self.t_init_flaps_to)
 
         prob.set_val(Aircraft.Wing.AREA, 1370)
-        
+
         prob.run_model()
 
         cl_exp = 0.5597 * np.ones(4)
