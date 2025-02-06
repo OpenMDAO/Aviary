@@ -30,39 +30,39 @@ class MuxComponent(om.ExplicitComponent):
         nc = 2
 
         # Wing (Always 1)
-        add_aviary_input(self, Aircraft.Wing.WETTED_AREA)
-        add_aviary_input(self, Aircraft.Wing.FINENESS)
-        add_aviary_input(self, Aircraft.Wing.CHARACTERISTIC_LENGTH)
-        add_aviary_input(self, Aircraft.Wing.LAMINAR_FLOW_UPPER)
-        add_aviary_input(self, Aircraft.Wing.LAMINAR_FLOW_LOWER)
+        add_aviary_input(self, Aircraft.Wing.WETTED_AREA, 1.0)
+        add_aviary_input(self, Aircraft.Wing.FINENESS, 1.0)
+        add_aviary_input(self, Aircraft.Wing.CHARACTERISTIC_LENGTH, 1.0)
+        add_aviary_input(self, Aircraft.Wing.LAMINAR_FLOW_UPPER, 0.0)
+        add_aviary_input(self, Aircraft.Wing.LAMINAR_FLOW_LOWER, 0.0)
 
         # Horizontal Tail (Always 1)
-        add_aviary_input(self, Aircraft.HorizontalTail.WETTED_AREA)
-        add_aviary_input(self, Aircraft.HorizontalTail.FINENESS)
-        add_aviary_input(self, Aircraft.HorizontalTail.CHARACTERISTIC_LENGTH)
-        add_aviary_input(self, Aircraft.HorizontalTail.LAMINAR_FLOW_UPPER)
-        add_aviary_input(self, Aircraft.HorizontalTail.LAMINAR_FLOW_LOWER)
+        add_aviary_input(self, Aircraft.HorizontalTail.WETTED_AREA, 1.0)
+        add_aviary_input(self, Aircraft.HorizontalTail.FINENESS, 1.0)
+        add_aviary_input(self, Aircraft.HorizontalTail.CHARACTERISTIC_LENGTH, 1.0)
+        add_aviary_input(self, Aircraft.HorizontalTail.LAMINAR_FLOW_UPPER, 0.0)
+        add_aviary_input(self, Aircraft.HorizontalTail.LAMINAR_FLOW_LOWER, 0.0)
 
         num = self.options[Aircraft.VerticalTail.NUM_TAILS]
 
         self.num_tails = num
         if num > 0:
-            add_aviary_input(self, Aircraft.VerticalTail.WETTED_AREA)
-            add_aviary_input(self, Aircraft.VerticalTail.FINENESS)
-            add_aviary_input(self, Aircraft.VerticalTail.CHARACTERISTIC_LENGTH)
-            add_aviary_input(self, Aircraft.VerticalTail.LAMINAR_FLOW_UPPER)
-            add_aviary_input(self, Aircraft.VerticalTail.LAMINAR_FLOW_LOWER)
+            add_aviary_input(self, Aircraft.VerticalTail.WETTED_AREA, 1.0)
+            add_aviary_input(self, Aircraft.VerticalTail.FINENESS, 1.0)
+            add_aviary_input(self, Aircraft.VerticalTail.CHARACTERISTIC_LENGTH, 1.0)
+            add_aviary_input(self, Aircraft.VerticalTail.LAMINAR_FLOW_UPPER, 0.0)
+            add_aviary_input(self, Aircraft.VerticalTail.LAMINAR_FLOW_LOWER, 0.0)
             nc += num
 
         # Fuselage
         num = self.options[Aircraft.Fuselage.NUM_FUSELAGES]
         self.num_fuselages = num
         if num > 0:
-            add_aviary_input(self, Aircraft.Fuselage.WETTED_AREA)
-            add_aviary_input(self, Aircraft.Fuselage.FINENESS)
-            add_aviary_input(self, Aircraft.Fuselage.CHARACTERISTIC_LENGTH)
-            add_aviary_input(self, Aircraft.Fuselage.LAMINAR_FLOW_UPPER)
-            add_aviary_input(self, Aircraft.Fuselage.LAMINAR_FLOW_LOWER)
+            add_aviary_input(self, Aircraft.Fuselage.WETTED_AREA, 1.0)
+            add_aviary_input(self, Aircraft.Fuselage.FINENESS, 1.0)
+            add_aviary_input(self, Aircraft.Fuselage.CHARACTERISTIC_LENGTH, 1.0)
+            add_aviary_input(self, Aircraft.Fuselage.LAMINAR_FLOW_UPPER, 0.0)
+            add_aviary_input(self, Aircraft.Fuselage.LAMINAR_FLOW_LOWER, 0.0)
             nc += num
 
         num_engines = self.options[Aircraft.Engine.NUM_ENGINES]
@@ -70,14 +70,16 @@ class MuxComponent(om.ExplicitComponent):
         self.num_nacelles = int(sum(num_engines))
 
         if self.num_nacelles > 0:
-            add_aviary_input(self, Aircraft.Nacelle.WETTED_AREA, shape=num_engine_models)
-            add_aviary_input(self, Aircraft.Nacelle.FINENESS, shape=num_engine_models)
+            add_aviary_input(self, Aircraft.Nacelle.WETTED_AREA,
+                             np.zeros(num_engine_models))
+            add_aviary_input(self, Aircraft.Nacelle.FINENESS,
+                             np.zeros(num_engine_models))
             add_aviary_input(self, Aircraft.Nacelle.CHARACTERISTIC_LENGTH,
-                             shape=num_engine_models)
+                             np.zeros(num_engine_models))
             add_aviary_input(self, Aircraft.Nacelle.LAMINAR_FLOW_UPPER,
-                             shape=num_engine_models)
+                             np.zeros(num_engine_models))
             add_aviary_input(self, Aircraft.Nacelle.LAMINAR_FLOW_LOWER,
-                             shape=num_engine_models)
+                             np.zeros(num_engine_models))
             nc += self.num_nacelles
 
         self.add_output(
