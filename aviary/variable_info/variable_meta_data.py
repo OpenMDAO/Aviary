@@ -3542,6 +3542,7 @@ add_meta_data(
     historical_name={"GASP": 'INGASP.CBARHT', "FLOPS": None, "LEAPS1": None},
     units='ft',
     desc='mean aerodynamic chord of horizontal tail',
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -5367,6 +5368,7 @@ add_meta_data(
     historical_name={"GASP": 'INGASP.DCLMTE', "FLOPS": None, "LEAPS1": None},
     units="unitless",
     desc='lift coefficient increment due to optimally deflected trailing edge flaps (default depends on flap type)',
+    default_value=0.0,
 )
 
 add_meta_data(

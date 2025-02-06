@@ -16,13 +16,7 @@ class AeroForces(om.ExplicitComponent):
 
         self.add_input("CL", 1.0, units="unitless", shape=nn, desc="Lift coefficient")
         self.add_input("CD", 1.0, units="unitless", shape=nn, desc="Drag coefficient")
-        self.add_input(
-            Dynamic.Atmosphere.DYNAMIC_PRESSURE,
-            1.0,
-            units="psf",
-            shape=nn,
-            desc="Dynamic pressure",
-        )
+        add_aviary_input(self, Dynamic.Atmosphere.DYNAMIC_PRESSURE, 1.0, units="psf", shape=nn)
 
         add_aviary_input(self, Aircraft.Wing.AREA, val=1370.3)
 

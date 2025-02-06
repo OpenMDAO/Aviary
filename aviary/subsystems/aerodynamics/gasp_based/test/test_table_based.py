@@ -109,6 +109,9 @@ class TestLowSpeedAero(unittest.TestCase):
         prob.set_val("flap_defl", self.flap_defl_to)
         prob.set_val("t_init_gear", self.t_init_gear_to)
         prob.set_val("t_init_flaps", self.t_init_flaps_to)
+
+        prob.set_val(Aircraft.Wing.AREA, 1370)
+        
         prob.run_model()
 
         cl_exp = 0.5597 * np.ones(4)
@@ -225,6 +228,7 @@ class GearDragIncrementTest2(unittest.TestCase):
             promotes_outputs=['*'],
         )
         prob.setup(check=False, force_alloc_complex=True)
+        prob.set_val(Aircraft.Wing.AREA, 1000, 'ft**2')
 
         partial_data = prob.check_partials(out_stream=None, method="cs")
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)

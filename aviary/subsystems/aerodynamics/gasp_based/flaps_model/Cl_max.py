@@ -20,11 +20,10 @@ class CLmaxCalculation(om.ExplicitComponent):
             units='unitless',
             desc="VLAM8: sensitivity of flap clean wing maximum lift coefficient to wing sweep angle",
         )
-        add_aviary_input(self, Dynamic.Atmosphere.SPEED_OF_SOUND, val=1118.21948771,
-                         units="ft/s", desc="SA: speed of sound at sea level")
+        add_aviary_input(self, Dynamic.Atmosphere.SPEED_OF_SOUND, desc="INGASP.SA")
 
         # from component 3 outputs
-        add_aviary_input(self, Aircraft.Wing.FLAP_LIFT_INCREMENT_OPTIMUM, val=1.5)
+        add_aviary_input(self, Aircraft.Wing.FLAP_LIFT_INCREMENT_OPTIMUM)
         self.add_input(
             "VLAM1",
             val=0.97217,
@@ -82,10 +81,10 @@ class CLmaxCalculation(om.ExplicitComponent):
 
         # other inputs
 
-        add_aviary_input(self, Aircraft.Wing.LOADING, val=128)
+        add_aviary_input(self, Aircraft.Wing.LOADING)
 
         add_aviary_input(self, Dynamic.Atmosphere.STATIC_PRESSURE, val=(14.696 * 144),
-                         units="lbf/ft**2", desc="P0: static pressure")
+                         units="lbf/ft**2", desc="INGASP.P0")
 
         add_aviary_input(self, Aircraft.Wing.AVERAGE_CHORD, val=12.61)
 
