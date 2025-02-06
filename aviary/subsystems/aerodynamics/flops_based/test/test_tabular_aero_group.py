@@ -53,7 +53,8 @@ class TabularAeroGroupFileTest(unittest.TestCase):
 
         setup_model_options(self.prob, aviary_options)
 
-        self.prob.model.set_input_defaults(Dynamic.Atmosphere.MACH, val=0.3876, units='unitless')
+        self.prob.model.set_input_defaults(Dynamic.Atmosphere.MACH,
+                                           val=0.3876, units='unitless')
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
@@ -193,7 +194,8 @@ class TabularAeroGroupDataTest(unittest.TestCase):
 
         setup_model_options(self.prob, aviary_options)
 
-        self.prob.model.set_input_defaults(Dynamic.Atmosphere.MACH, val=0.3876, units='unitless')
+        self.prob.model.set_input_defaults(Dynamic.Atmosphere.MACH,
+                                           val=0.3876, units='unitless')
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
@@ -367,7 +369,8 @@ class ComputedVsTabularTest(unittest.TestCase):
 
         setup_model_options(prob, flops_inputs)
 
-        prob.model.set_input_defaults(Dynamic.Atmosphere.MACH, val=0.3876, units='unitless')
+        prob.model.set_input_defaults(Dynamic.Atmosphere.MACH,
+                                      val=0.3876, units='unitless')
 
         prob.setup(check=False, force_alloc_complex=True)
 

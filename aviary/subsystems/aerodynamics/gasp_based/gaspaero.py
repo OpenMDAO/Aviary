@@ -258,7 +258,8 @@ class Xlifts(om.ExplicitComponent):
         nn = self.options["num_nodes"]
 
         # mission inputs
-        add_aviary_input(self, Dynamic.Atmosphere.MACH, val=0.0, units="unitless", shape=nn)
+        add_aviary_input(self, Dynamic.Atmosphere.MACH,
+                         val=0.0, units="unitless", shape=nn)
 
         # stability inputs
 
@@ -391,9 +392,12 @@ class AeroGeom(om.ExplicitComponent):
         nn = self.options["num_nodes"]
         num_engine_type = len(self.options[Aircraft.Engine.NUM_ENGINES])
 
-        add_aviary_input(self, Dynamic.Atmosphere.MACH, val=0.0, units="unitless", shape=nn)
-        add_aviary_input(self, Dynamic.Atmosphere.SPEED_OF_SOUND, val=1.0, units="ft/s", shape=nn)
-        add_aviary_input(self, Dynamic.Atmosphere.KINEMATIC_VISCOSITY, val=1.0, units="ft**2/s", shape=nn)
+        add_aviary_input(self, Dynamic.Atmosphere.MACH,
+                         val=0.0, units="unitless", shape=nn)
+        add_aviary_input(self, Dynamic.Atmosphere.SPEED_OF_SOUND,
+                         val=1.0, units="ft/s", shape=nn)
+        add_aviary_input(self, Dynamic.Atmosphere.KINEMATIC_VISCOSITY,
+                         val=1.0, units="ft**2/s", shape=nn)
 
         self.add_input("ufac", units="unitless", shape=nn, desc="UFAC")
 
@@ -999,7 +1003,8 @@ class DragCoefClean(om.ExplicitComponent):
         nn = self.options["num_nodes"]
 
         # mission inputs
-        add_aviary_input(self, Dynamic.Atmosphere.MACH, val=0.0, units="unitless", shape=nn)
+        add_aviary_input(self, Dynamic.Atmosphere.MACH,
+                         val=0.0, units="unitless", shape=nn)
         self.add_input(
             "CL", val=1.0, units="unitless", shape=nn, desc="Lift coefficient"
         )

@@ -20,12 +20,8 @@ class CLmaxCalculation(om.ExplicitComponent):
             units='unitless',
             desc="VLAM8: sensitivity of flap clean wing maximum lift coefficient to wing sweep angle",
         )
-        add_aviary_input(self, 
-            Dynamic.Atmosphere.SPEED_OF_SOUND,
-            val=1118.21948771,
-            units="ft/s",
-            desc="SA: speed of sound at sea level",
-        )
+        add_aviary_input(self, Dynamic.Atmosphere.SPEED_OF_SOUND, val=1118.21948771,
+                         units="ft/s", desc="SA: speed of sound at sea level")
 
         # from component 3 outputs
         add_aviary_input(self, Aircraft.Wing.FLAP_LIFT_INCREMENT_OPTIMUM, val=1.5)
@@ -88,12 +84,8 @@ class CLmaxCalculation(om.ExplicitComponent):
 
         add_aviary_input(self, Aircraft.Wing.LOADING, val=128)
 
-        add_aviary_input(self, 
-            Dynamic.Atmosphere.STATIC_PRESSURE,
-            val=(14.696 * 144),
-            units="lbf/ft**2",
-            desc="P0: static pressure",
-        )
+        add_aviary_input(self, Dynamic.Atmosphere.STATIC_PRESSURE, val=(14.696 * 144),
+                         units="lbf/ft**2", desc="P0: static pressure")
 
         add_aviary_input(self, Aircraft.Wing.AVERAGE_CHORD, val=12.61)
 
@@ -129,18 +121,10 @@ class CLmaxCalculation(om.ExplicitComponent):
             units='unitless',
             desc="DELCLF: fuselage lift increment",
         )
-        add_aviary_input(self, 
-            Dynamic.Atmosphere.KINEMATIC_VISCOSITY,
-            val=0.15723e-03,
-            units="ft**2/s",
-            desc="XKV: kinematic viscosity",
-        )
-        add_aviary_input(self, 
-            Dynamic.Atmosphere.TEMPERATURE,
-            val=518.67,
-            units="degR",
-            desc="T0: static temperature of air cross wing",
-        )
+        add_aviary_input(self, Dynamic.Atmosphere.KINEMATIC_VISCOSITY, val=0.15723e-03,
+                         units="ft**2/s", desc="XKV: kinematic viscosity")
+        add_aviary_input(self, Dynamic.Atmosphere.TEMPERATURE, val=518.67,
+                         units="degR", desc="T0: static temperature of air cross wing")
 
         # outputs
 
@@ -150,12 +134,8 @@ class CLmaxCalculation(om.ExplicitComponent):
             desc="CLMAX: maximum lift coefficient",
             units="unitless",
         )
-        add_aviary_output(self, 
-            Dynamic.Atmosphere.MACH,
-            val=0.17522,
-            units='unitless',
-            desc="SMN: mach number",
-        )
+        add_aviary_output(self, Dynamic.Atmosphere.MACH, val=0.17522,
+                          units='unitless', desc="SMN: mach number")
         self.add_output(
             "reynolds", val=157.1111, units='unitless', desc="RNW: reynolds number"
         )
