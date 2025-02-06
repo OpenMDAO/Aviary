@@ -82,7 +82,6 @@ class SolvedAlphaGroup(om.Group):
                 Dynamic.Mission.ALTITUDE,
                 Dynamic.Atmosphere.MACH,
                 Aircraft.Wing.AREA,
-                Dynamic.Atmosphere.MACH,
                 Dynamic.Atmosphere.DYNAMIC_PRESSURE,
             ]
             + extra_promotes,
