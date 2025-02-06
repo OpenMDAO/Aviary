@@ -69,13 +69,17 @@ class TwoDOFPhase(FlightPhaseBase):
                                 fix_initial=fix_initial, fix_final=False, ref=100., defect_ref=100.)
 
         if rotation:
-            phase.add_polynomial_control("alpha",
-                                         order=control_order,
-                                         fix_initial=True,
-                                         lower=0, upper=15,
-                                         units='deg', ref=10.,
-                                         val=0.,
-                                         opt=True)
+            phase.add_polynomial_control(
+                Dynamic.Vehicle.ANGLE_OF_ATTACK,
+                order=control_order,
+                fix_initial=True,
+                lower=0,
+                upper=15,
+                units='deg',
+                ref=10.0,
+                val=0.0,
+                opt=True,
+            )
 
         phase.add_timeseries_output("EAS", units="kn")
         phase.add_timeseries_output(Dynamic.Mission.VELOCITY, units="kn")
@@ -128,8 +132,9 @@ TwoDOFPhase._add_initial_guess_meta_data(
     desc='initial guess for initial distance and duration specified as a tuple')
 
 TwoDOFPhase._add_initial_guess_meta_data(
-    InitialGuessPolynomialControl('alpha'),
-    desc='initial guess for alpha')
+    InitialGuessPolynomialControl('angle_of_attack'),
+    desc='initial guess for angle of attack',
+)
 
 TwoDOFPhase._add_initial_guess_meta_data(
     InitialGuessState('time'),

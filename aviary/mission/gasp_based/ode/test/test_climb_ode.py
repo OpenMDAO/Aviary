@@ -61,7 +61,7 @@ class ClimbODETestCase(unittest.TestCase):
         self.prob.run_model()
 
         testvals = {
-            "alpha": 5.16398,
+            Dynamic.Vehicle.ANGLE_OF_ATTACK: 5.16398,
             "CL": 0.59766664,
             "CD": 0.03070836,
             Dynamic.Mission.ALTITUDE_RATE: 3414.624 / 60,  # ft/s
@@ -106,7 +106,7 @@ class ClimbODETestCase(unittest.TestCase):
         self.prob.run_model()
 
         testvals = {
-            "alpha": [4.0557, 4.06615],
+            Dynamic.Vehicle.ANGLE_OF_ATTACK: [4.0557, 4.06615],
             "CL": [0.512628, 0.615819],
             "CD": [0.02692759, 0.03299578],
             Dynamic.Mission.ALTITUDE_RATE: [3053.64 / 60, 430.746 / 60],  # ft/s

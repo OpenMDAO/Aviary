@@ -71,7 +71,7 @@ class AscentODE(BaseODE):
                 Dynamic.Vehicle.DRAG,
                 Dynamic.Mission.VELOCITY,
                 Dynamic.Mission.FLIGHT_PATH_ANGLE,
-                "alpha",
+                Dynamic.Vehicle.ANGLE_OF_ATTACK,
             ]
             + ["aircraft:*"],
             promotes_outputs=[
@@ -91,7 +91,9 @@ class AscentODE(BaseODE):
         ParamPort.set_default_vals(self)
         self.set_input_defaults("t_init_flaps", val=47.5)
         self.set_input_defaults("t_init_gear", val=37.3)
-        self.set_input_defaults("alpha", val=np.zeros(nn), units="deg")
+        self.set_input_defaults(
+            Dynamic.Vehicle.ANGLE_OF_ATTACK, val=np.zeros(nn), units="deg"
+        )
         self.set_input_defaults(
             Dynamic.Mission.FLIGHT_PATH_ANGLE, val=np.zeros(nn), units="deg"
         )

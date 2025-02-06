@@ -30,7 +30,7 @@ class TakeoffODETest(unittest.TestCase):
             input_validation_data=detailed_takeoff_ground,
             output_validation_data=detailed_takeoff_ground,
             input_keys=[
-                'angle_of_attack',
+                Dynamic.Vehicle.ANGLE_OF_ATTACK,
                 Dynamic.Mission.FLIGHT_PATH_ANGLE,
                 Dynamic.Mission.ALTITUDE,
                 Dynamic.Mission.VELOCITY,
@@ -60,7 +60,7 @@ class TakeoffODETest(unittest.TestCase):
             input_validation_data=detailed_takeoff_climbing,
             output_validation_data=detailed_takeoff_climbing,
             input_keys=[
-                'angle_of_attack',
+                Dynamic.Vehicle.ANGLE_OF_ATTACK,
                 Dynamic.Mission.FLIGHT_PATH_ANGLE,
                 Dynamic.Mission.ALTITUDE,
                 Dynamic.Mission.VELOCITY,

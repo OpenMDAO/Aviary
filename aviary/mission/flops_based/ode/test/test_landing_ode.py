@@ -54,7 +54,7 @@ class FlareODETest(unittest.TestCase):
             input_validation_data=detailed_landing_flare,
             output_validation_data=detailed_landing_flare,
             input_keys=[
-                'angle_of_attack',
+                Dynamic.Vehicle.ANGLE_OF_ATTACK,
                 Dynamic.Mission.FLIGHT_PATH_ANGLE,
                 Dynamic.Mission.VELOCITY,
                 Dynamic.Vehicle.MASS,

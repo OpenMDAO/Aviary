@@ -51,7 +51,7 @@ class RotationPhase(PhaseBuilderBase):
 
         # Add states
         phase.add_state(
-            "alpha",
+            Dynamic.Vehicle.ANGLE_OF_ATTACK,
             fix_initial=True,
             fix_final=False,
             lower=angle_lower,
@@ -155,8 +155,8 @@ RotationPhase._add_initial_guess_meta_data(
     InitialGuessIntegrationVariable(),
     desc='initial guess for time options')
 RotationPhase._add_initial_guess_meta_data(
-    InitialGuessState('alpha'),
-    desc='initial guess for angle of attack state')
+    InitialGuessState('angle_of_attack'), desc='initial guess for angle of attack state'
+)
 RotationPhase._add_initial_guess_meta_data(
     InitialGuessState('velocity'),
     desc='initial guess for true airspeed state')
