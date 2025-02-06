@@ -1,6 +1,6 @@
 import openmdao.api as om
 
-from aviary.variable_info.functions import add_aviary_input
+from aviary.variable_info.functions import add_aviary_input, add_aviary_output
 from aviary.variable_info.variables import Aircraft, Dynamic
 
 
@@ -20,7 +20,7 @@ class CLmaxCalculation(om.ExplicitComponent):
             units='unitless',
             desc="VLAM8: sensitivity of flap clean wing maximum lift coefficient to wing sweep angle",
         )
-        self.add_input(
+        add_aviary_input(self, 
             Dynamic.Atmosphere.SPEED_OF_SOUND,
             val=1118.21948771,
             units="ft/s",
@@ -88,7 +88,7 @@ class CLmaxCalculation(om.ExplicitComponent):
 
         add_aviary_input(self, Aircraft.Wing.LOADING, val=128)
 
-        self.add_input(
+        add_aviary_input(self, 
             Dynamic.Atmosphere.STATIC_PRESSURE,
             val=(14.696 * 144),
             units="lbf/ft**2",
@@ -129,13 +129,13 @@ class CLmaxCalculation(om.ExplicitComponent):
             units='unitless',
             desc="DELCLF: fuselage lift increment",
         )
-        self.add_input(
+        add_aviary_input(self, 
             Dynamic.Atmosphere.KINEMATIC_VISCOSITY,
             val=0.15723e-03,
             units="ft**2/s",
             desc="XKV: kinematic viscosity",
         )
-        self.add_input(
+        add_aviary_input(self, 
             Dynamic.Atmosphere.TEMPERATURE,
             val=518.67,
             units="degR",
@@ -150,7 +150,7 @@ class CLmaxCalculation(om.ExplicitComponent):
             desc="CLMAX: maximum lift coefficient",
             units="unitless",
         )
-        self.add_output(
+        add_aviary_output(self, 
             Dynamic.Atmosphere.MACH,
             val=0.17522,
             units='unitless',
