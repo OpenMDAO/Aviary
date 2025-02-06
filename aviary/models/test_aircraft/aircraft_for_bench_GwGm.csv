@@ -29,6 +29,7 @@ aircraft:engine:mass_scaler,1,unitless
 aircraft:engine:mass_specific,0.21366,lbm/lbf
 aircraft:engine:mass_scaler,1,unitless
 aircraft:engine:num_engines,2,unitless
+aircraft:engine:num_wing_engines,2,unitless
 aircraft:engine:pod_mass_scaler,1,unitless
 aircraft:engine:pylon_factor,1.25,unitless
 aircraft:engine:reference_diameter,5.8,ft
