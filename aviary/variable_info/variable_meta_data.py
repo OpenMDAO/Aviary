@@ -5511,6 +5511,7 @@ add_meta_data(
     units='ft',
     desc='wing height above ground during ground run, measured at roughly '
     'location of mean aerodynamic chord at the mid plane of the wing',
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -6375,6 +6376,7 @@ add_meta_data(
     historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
     units='rad',
     desc='Current flight path angle',
+    default_value=0.0,
 )
 
 add_meta_data(

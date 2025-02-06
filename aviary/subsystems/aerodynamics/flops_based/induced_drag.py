@@ -25,17 +25,16 @@ class InducedDrag(om.ExplicitComponent):
         nn = self.options["num_nodes"]
 
         # Simulation inputs
-        add_aviary_input(self, Dynamic.Atmosphere.MACH, np.ones(nn), units='unitless')
-        add_aviary_input(self, Dynamic.Vehicle.LIFT, shape=(nn), units="lbf")
-        add_aviary_input(self, Dynamic.Atmosphere.STATIC_PRESSURE,
-                         np.ones(nn), units='lbf/ft**2')
+        add_aviary_input(self, Dynamic.Atmosphere.MACH, np.ones(nn))
+        add_aviary_input(self, Dynamic.Vehicle.LIFT, shape=(nn))
+        add_aviary_input(self, Dynamic.Atmosphere.STATIC_PRESSURE, np.ones(nn))
 
         # Aero design inputs
-        add_aviary_input(self, Aircraft.Wing.AREA, 0.0)
-        add_aviary_input(self, Aircraft.Wing.ASPECT_RATIO, 0.0)
-        add_aviary_input(self, Aircraft.Wing.SPAN_EFFICIENCY_FACTOR, 0.0)
-        add_aviary_input(self, Aircraft.Wing.SWEEP, 0.0)
-        add_aviary_input(self, Aircraft.Wing.TAPER_RATIO, 0.0)
+        add_aviary_input(self, Aircraft.Wing.AREA)
+        add_aviary_input(self, Aircraft.Wing.ASPECT_RATIO)
+        add_aviary_input(self, Aircraft.Wing.SPAN_EFFICIENCY_FACTOR)
+        add_aviary_input(self, Aircraft.Wing.SWEEP)
+        add_aviary_input(self, Aircraft.Wing.TAPER_RATIO)
 
         # Declare outputs
         self.add_output(
