@@ -217,7 +217,7 @@ two_dof_phase_info = {
             'num_segments': 1,
             'order': 3,
             'fix_initial': False,
-            'EAS_target': (150, 'kn'),
+            'EAS_target': (250, 'kn'),
             'mach_cruise': 0.475,
             'target_mach': False,
             'final_altitude': (10.0e3, 'ft'),
