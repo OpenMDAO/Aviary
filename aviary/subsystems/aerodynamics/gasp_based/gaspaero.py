@@ -849,7 +849,7 @@ class DragCoef(om.ExplicitComponent):
 
         # user inputs
 
-        add_aviary_input(self, Mission.Design.GROSS_MASS, val=175400.0)
+        add_aviary_input(self, Mission.Design.GROSS_MASS)
 
         self.add_input("flap_defl", val=10.0, units="deg", desc="Full flap deflection")
 
