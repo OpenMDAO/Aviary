@@ -74,7 +74,6 @@ class ClimbODETestCase(unittest.TestCase):
         }
         check_prob_outputs(self.prob, testvals, rtol=1e-6)
 
-        self.prob.setup(check=False, force_alloc_complex=True)
         partial_data = self.prob.check_partials(
             out_stream=None, method="cs", excludes=["*params*", "*aero*"]
         )
