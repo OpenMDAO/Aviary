@@ -20,16 +20,16 @@ class BasicFlapsCalculations(om.ExplicitComponent):
         add_aviary_input(self, Aircraft.Wing.TAPER_RATIO, val=0.33)
         add_aviary_input(self, Aircraft.Wing.CENTER_CHORD, val=17.48974)
         add_aviary_input(self, Aircraft.Fuselage.AVG_DIAMETER)
-        add_aviary_input(self, Aircraft.Wing.THICKNESS_TO_CHORD_ROOT, val=0.15)
+        add_aviary_input(self, Aircraft.Wing.THICKNESS_TO_CHORD_ROOT)
         add_aviary_input(self, Aircraft.Wing.SPAN)
-        add_aviary_input(self, Aircraft.Wing.SLAT_CHORD_RATIO, val=0.15)
+        add_aviary_input(self, Aircraft.Wing.SLAT_CHORD_RATIO)
         self.add_input(
             "slat_defl",
             val=10.0,
             units="deg",
             desc="DELLED: leading edge slat deflection",
         )
-        add_aviary_input(self, Aircraft.Wing.OPTIMUM_SLAT_DEFLECTION, val=20.0)
+        add_aviary_input(self, Aircraft.Wing.OPTIMUM_SLAT_DEFLECTION)
         self.add_input(
             "flap_defl",
             val=10.0,
