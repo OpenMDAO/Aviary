@@ -34,7 +34,9 @@ class GroundrollEOMTestCase(unittest.TestCase):
             Dynamic.Mission.FLIGHT_PATH_ANGLE, val=np.zeros(2), units="rad"
         )
         self.prob.model.set_input_defaults(Aircraft.Wing.INCIDENCE, val=0, units="deg")
-        self.prob.model.set_input_defaults("alpha", val=np.zeros(2), units="deg")
+        self.prob.model.set_input_defaults(
+            Dynamic.Vehicle.ANGLE_OF_ATTACK, val=np.zeros(2), units="deg"
+        )
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
@@ -102,7 +104,9 @@ class GroundrollEOMTestCase2(unittest.TestCase):
         prob.model.set_input_defaults(
             Dynamic.Mission.FLIGHT_PATH_ANGLE, val=np.zeros(2), units="rad")
         prob.model.set_input_defaults(Aircraft.Wing.INCIDENCE, val=0, units="deg")
-        prob.model.set_input_defaults("alpha", val=np.zeros(2), units="deg")
+        prob.model.set_input_defaults(
+            Dynamic.Vehicle.ANGLE_OF_ATTACK, val=np.zeros(2), units="deg"
+        )
         prob.setup(check=False, force_alloc_complex=True)
 
         partial_data = prob.check_partials(out_stream=None, method="cs")

@@ -60,7 +60,7 @@ class FlightPathODE(BaseODE):
             Dynamic.Mission.FLIGHT_PATH_ANGLE,
         ] + ['aircraft:*']
         if not self.options['ground_roll']:
-            EOM_inputs.append('alpha')
+            EOM_inputs.append(Dynamic.Vehicle.ANGLE_OF_ATTACK)
 
         if analysis_scheme is AnalysisScheme.SHOOTING:
             SGM_required_inputs = {
@@ -121,7 +121,7 @@ class FlightPathODE(BaseODE):
                     promotes_inputs=[
                         'weight',
                         ('thrust', Dynamic.Vehicle.Propulsion.THRUST_TOTAL),
-                        'alpha',
+                        ('alpha', Dynamic.Vehicle.ANGLE_OF_ATTACK),
                         ('gamma', Dynamic.Mission.FLIGHT_PATH_ANGLE),
                         ('i_wing', Aircraft.Wing.INCIDENCE),
                     ],
@@ -165,7 +165,7 @@ class FlightPathODE(BaseODE):
                 promotes_inputs=[
                     ('drag', Dynamic.Vehicle.DRAG),
                     # 'weight',
-                    # 'alpha',
+                    # Dynamic.Vehicle.ANGLE_OF_ATTACK,
                     # ('gamma', Dynamic.Mission.FLIGHT_PATH_ANGLE),
                     ('i_wing', Aircraft.Wing.INCIDENCE),
                 ],
@@ -207,7 +207,9 @@ class FlightPathODE(BaseODE):
             self.set_input_defaults("t_init_flaps", val=47.5)
             self.set_input_defaults("t_init_gear", val=37.3)
             self.set_input_defaults("t_curr", val=np.zeros(nn), units="s")
-        self.set_input_defaults("alpha", val=np.zeros(nn), units="rad")
+        self.set_input_defaults(
+            Dynamic.Vehicle.ANGLE_OF_ATTACK, val=np.zeros(nn), units="rad"
+        )
         self.set_input_defaults(
             Dynamic.Mission.FLIGHT_PATH_ANGLE, val=np.zeros(nn), units="deg"
         )
