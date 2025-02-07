@@ -6320,6 +6320,7 @@ add_meta_data(
     historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
     units='degR',
     desc="Atmospheric temperature at vehicle's current flight condition",
+    default_value=0.0,
 )
 
 

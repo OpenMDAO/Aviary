@@ -258,8 +258,7 @@ class Xlifts(om.ExplicitComponent):
         nn = self.options["num_nodes"]
 
         # mission inputs
-        add_aviary_input(self, Dynamic.Atmosphere.MACH,
-                         val=0.0, units="unitless", shape=nn)
+        add_aviary_input(self, Dynamic.Atmosphere.MACH, shape=nn)
 
         # stability inputs
 
@@ -395,10 +394,9 @@ class AeroGeom(om.ExplicitComponent):
         add_aviary_input(self, Dynamic.Atmosphere.MACH,
                          val=0.0, units="unitless", shape=nn)
         add_aviary_input(self, Dynamic.Atmosphere.SPEED_OF_SOUND, shape=nn)
-        add_aviary_input(self, Dynamic.Atmosphere.KINEMATIC_VISCOSITY,
-                         val=1.0, units="ft**2/s", shape=nn)
+        add_aviary_input(self, Dynamic.Atmosphere.KINEMATIC_VISCOSITY, shape=nn)
 
-        self.add_input("ufac", units="unitless", shape=nn, desc="UFAC")
+        self.add_input("ufac", units="unitless", shape=nn, desc="INGASP.UFAC")
 
         # form factors
         # user could input these directly or use functions to estimate from geometry
@@ -407,26 +405,25 @@ class AeroGeom(om.ExplicitComponent):
 
         add_aviary_input(self, Aircraft.Fuselage.FORM_FACTOR)
 
-        add_aviary_input(
-            self, Aircraft.Nacelle.FORM_FACTOR, shape=num_engine_type)
+        add_aviary_input(self, Aircraft.Nacelle.FORM_FACTOR, shape=num_engine_type)
 
         add_aviary_input(self, Aircraft.VerticalTail.FORM_FACTOR)
 
         add_aviary_input(self, Aircraft.HorizontalTail.FORM_FACTOR)
 
-        add_aviary_input(self, Aircraft.Wing.FUSELAGE_INTERFERENCE_FACTOR, val=1.1)
+        add_aviary_input(self, Aircraft.Wing.FUSELAGE_INTERFERENCE_FACTOR)
 
-        add_aviary_input(self, Aircraft.Strut.FUSELAGE_INTERFERENCE_FACTOR, val=0.0)
+        add_aviary_input(self, Aircraft.Strut.FUSELAGE_INTERFERENCE_FACTOR)
 
         # miscellaneous top-level inputs
 
-        add_aviary_input(self, Aircraft.Design.DRAG_COEFFICIENT_INCREMENT, val=0.00175)
+        add_aviary_input(self, Aircraft.Design.DRAG_COEFFICIENT_INCREMENT)
 
-        add_aviary_input(self, Aircraft.Fuselage.FLAT_PLATE_AREA_INCREMENT, val=0.25)
+        add_aviary_input(self, Aircraft.Fuselage.FLAT_PLATE_AREA_INCREMENT)
 
-        add_aviary_input(self, Aircraft.Wing.MIN_PRESSURE_LOCATION, val=0.3)
+        add_aviary_input(self, Aircraft.Wing.MIN_PRESSURE_LOCATION)
 
-        add_aviary_input(self, Aircraft.Wing.MAX_THICKNESS_LOCATION, val=0.4)
+        add_aviary_input(self, Aircraft.Wing.MAX_THICKNESS_LOCATION)
 
         # geometric user inputs
 
@@ -436,7 +433,7 @@ class AeroGeom(om.ExplicitComponent):
 
         add_aviary_input(self, Aircraft.Wing.TAPER_RATIO, val=0.33)
 
-        add_aviary_input(self, Aircraft.Strut.AREA_RATIO, val=0.0)
+        add_aviary_input(self, Aircraft.Strut.AREA_RATIO)
 
         # geometric data from sizing
 
@@ -446,21 +443,17 @@ class AeroGeom(om.ExplicitComponent):
 
         add_aviary_input(self, Aircraft.HorizontalTail.AVERAGE_CHORD)
 
-        add_aviary_input(self, Aircraft.VerticalTail.AVERAGE_CHORD, val=0.0)
+        add_aviary_input(self, Aircraft.VerticalTail.AVERAGE_CHORD)
 
-        add_aviary_input(self, Aircraft.Fuselage.LENGTH, val=0.0)
+        add_aviary_input(self, Aircraft.Fuselage.LENGTH)
 
-        add_aviary_input(
-            self, Aircraft.Nacelle.AVG_LENGTH, val=np.zeros(num_engine_type)
-        )
+        add_aviary_input(self, Aircraft.Nacelle.AVG_LENGTH, shape=num_engine_type)
 
         add_aviary_input(self, Aircraft.HorizontalTail.AREA)
 
         add_aviary_input(self, Aircraft.Fuselage.WETTED_AREA)
 
-        add_aviary_input(
-            self, Aircraft.Nacelle.SURFACE_AREA, val=np.zeros(num_engine_type)
-        )
+        add_aviary_input(self, Aircraft.Nacelle.SURFACE_AREA, shape=num_engine_type)
 
         add_aviary_input(self, Aircraft.Wing.AREA, val=1370.3)
 
@@ -842,24 +835,24 @@ class DragCoef(om.ExplicitComponent):
         nn = self.options["num_nodes"]
 
         # mission inputs
-        add_aviary_input(self, Dynamic.Mission.ALTITUDE, val=0.0, units="ft", shape=nn)
+        add_aviary_input(self, Dynamic.Mission.ALTITUDE, shape=nn)
         self.add_input(
             "CL", val=1.0, units="unitless", shape=nn, desc="Lift coefficient"
         )
 
         # user inputs
 
-        add_aviary_input(self, Mission.Design.GROSS_MASS, val=175400.0)
+        add_aviary_input(self, Mission.Design.GROSS_MASS)
 
         self.add_input("flap_defl", val=10.0, units="deg", desc="Full flap deflection")
 
-        add_aviary_input(self, Aircraft.Wing.HEIGHT, val=8.0)
+        add_aviary_input(self, Aircraft.Wing.HEIGHT)
 
         self.add_input(
             "airport_alt", val=0.0, units="ft", desc="HPORT: Airport altitude"
         )
 
-        add_aviary_input(self, Aircraft.Wing.FLAP_CHORD_RATIO, val=0.3)
+        add_aviary_input(self, Aircraft.Wing.FLAP_CHORD_RATIO)
 
         # from flaps
         self.add_input(
@@ -1008,13 +1001,11 @@ class DragCoefClean(om.ExplicitComponent):
         )
 
         # user inputs
-        add_aviary_input(self, Aircraft.Design.SUPERCRITICAL_DIVERGENCE_SHIFT, val=0.033)
-        add_aviary_input(self, Aircraft.Design.SUBSONIC_DRAG_COEFF_FACTOR, val=1.0)
-        add_aviary_input(self, Aircraft.Design.SUPERSONIC_DRAG_COEFF_FACTOR, val=1.0)
-        add_aviary_input(
-            self, Aircraft.Design.LIFT_DEPENDENT_DRAG_COEFF_FACTOR, val=1.0
-        )
-        add_aviary_input(self, Aircraft.Design.ZERO_LIFT_DRAG_COEFF_FACTOR, val=1.0)
+        add_aviary_input(self, Aircraft.Design.SUPERCRITICAL_DIVERGENCE_SHIFT)
+        add_aviary_input(self, Aircraft.Design.SUBSONIC_DRAG_COEFF_FACTOR)
+        add_aviary_input(self, Aircraft.Design.SUPERSONIC_DRAG_COEFF_FACTOR)
+        add_aviary_input(self, Aircraft.Design.LIFT_DEPENDENT_DRAG_COEFF_FACTOR)
+        add_aviary_input(self, Aircraft.Design.ZERO_LIFT_DRAG_COEFF_FACTOR)
 
         # from aero setup
         self.add_input(
@@ -1097,7 +1088,7 @@ class LiftCoeff(om.ExplicitComponent):
 
         # mission inputs
         self.add_input("alpha", val=0.0, units="deg", shape=nn, desc="Angle of attack")
-        add_aviary_input(self, Dynamic.Mission.ALTITUDE, val=0.0, units="ft", shape=nn)
+        add_aviary_input(self, Dynamic.Mission.ALTITUDE, shape=nn)
         self.add_input(
             "lift_curve_slope", units="unitless", shape=nn, desc="Lift-curve slope"
         )
@@ -1105,13 +1096,13 @@ class LiftCoeff(om.ExplicitComponent):
 
         # user inputs
 
-        add_aviary_input(self, Aircraft.Wing.ZERO_LIFT_ANGLE, val=-1.2)
+        add_aviary_input(self, Aircraft.Wing.ZERO_LIFT_ANGLE)
 
         add_aviary_input(self, Aircraft.Wing.SWEEP)
 
         add_aviary_input(self, Aircraft.Wing.ASPECT_RATIO, val=10.13)
 
-        add_aviary_input(self, Aircraft.Wing.HEIGHT, val=8.0)
+        add_aviary_input(self, Aircraft.Wing.HEIGHT)
 
         self.add_input(
             "airport_alt", val=0.0, units="ft", desc="HPORT: Airport altitude"
@@ -1119,7 +1110,7 @@ class LiftCoeff(om.ExplicitComponent):
 
         self.add_input("flap_defl", val=10.0, units="deg", desc="Full flap deflection")
 
-        add_aviary_input(self, Aircraft.Wing.FLAP_CHORD_RATIO, val=0.3)
+        add_aviary_input(self, Aircraft.Wing.FLAP_CHORD_RATIO)
 
         add_aviary_input(self, Aircraft.Wing.TAPER_RATIO, val=0.33)
 
@@ -1270,9 +1261,9 @@ class LiftCoeffClean(om.ExplicitComponent):
         )
         self.add_input("lift_ratio", units="unitless", shape=nn, desc="Lift ratio")
 
-        add_aviary_input(self, Aircraft.Wing.ZERO_LIFT_ANGLE, val=-1.2)
+        add_aviary_input(self, Aircraft.Wing.ZERO_LIFT_ANGLE)
 
-        add_aviary_input(self, Mission.Design.LIFT_COEFFICIENT_MAX_FLAPS_UP, val=0.0)
+        add_aviary_input(self, Mission.Design.LIFT_COEFFICIENT_MAX_FLAPS_UP)
 
         self.add_output("alpha_stall", shape=nn, desc="Stall angle of attack")
         self.add_output(

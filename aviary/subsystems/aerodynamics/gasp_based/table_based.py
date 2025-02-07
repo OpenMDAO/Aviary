@@ -343,7 +343,7 @@ class GearDragIncrement(om.ExplicitComponent):
     def setup(self):
         nn = self.options["num_nodes"]
 
-        add_aviary_input(self, Mission.Design.GROSS_MASS, val=175400.0)
+        add_aviary_input(self, Mission.Design.GROSS_MASS)
 
         add_aviary_input(self, Aircraft.Wing.AREA, val=1370.3)
 
