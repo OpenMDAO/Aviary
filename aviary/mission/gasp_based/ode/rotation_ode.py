@@ -57,7 +57,7 @@ class RotationODE(BaseODE):
                 "alpha_comp",
                 alpha_comp,
                 promotes_inputs=alpha_comp_inputs,
-                promotes_outputs=[Dynamic.Vehicle.ANGLE_OF_ATTACK],
+                promotes_outputs=[('alpha', Dynamic.Vehicle.ANGLE_OF_ATTACK)],
             )
 
         self.add_subsystem("rotation_eom", RotationEOM(num_nodes=nn), promotes=["*"])

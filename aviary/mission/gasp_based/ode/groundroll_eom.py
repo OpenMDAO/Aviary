@@ -146,10 +146,10 @@ class GroundrollEOM(om.ExplicitComponent):
 
         if analysis_scheme is AnalysisScheme.COLLOCATION:
             self.add_output(
-                "alpha_rate", val=np.ones(nn), desc="angle of attack rate", units="deg/s"
+                "angle_of_attack_rate", val=np.ones(nn), desc="angle of attack rate", units="deg/s"
             )
 
-            self.declare_partials("alpha_rate", ["*"])
+            self.declare_partials("angle_of_attack_rate", ["*"])
 
     def compute(self, inputs, outputs):
         analysis_scheme = self.options["analysis_scheme"]
@@ -191,7 +191,7 @@ class GroundrollEOM(om.ExplicitComponent):
         outputs["fuselage_pitch"] = gamma * 180 / np.pi - i_wing + alpha
 
         if analysis_scheme is AnalysisScheme.COLLOCATION:
-            outputs["alpha_rate"] = np.zeros(nn)
+            outputs["angle_of_attack_rate"] = np.zeros(nn)
 
     def compute_partials(self, inputs, J):
         mu = MU_TAKEOFF

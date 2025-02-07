@@ -91,10 +91,10 @@ class RotationEOM(om.ExplicitComponent):
 
         if analysis_scheme is AnalysisScheme.COLLOCATION:
             self.add_output(
-                "alpha_rate", val=np.ones(nn), desc="angle of attack rate", units="deg/s"
+                "angle_of_attack_rate", val=np.ones(nn), desc="angle of attack rate", units="deg/s"
             )
 
-            self.declare_partials("alpha_rate", ["*"])
+            self.declare_partials("angle_of_attack_rate", ["*"])
 
     def setup_partials(self):
         arange = np.arange(self.options["num_nodes"])
@@ -195,7 +195,7 @@ class RotationEOM(om.ExplicitComponent):
         outputs["fuselage_pitch"] = gamma * 180 / np.pi - i_wing + alpha
 
         if analysis_scheme is AnalysisScheme.COLLOCATION:
-            outputs['alpha_rate'] = np.full(nn, 3.33)
+            outputs['angle_of_attack_rate'] = np.full(nn, 3.33)
 
     def compute_partials(self, inputs, J):
 

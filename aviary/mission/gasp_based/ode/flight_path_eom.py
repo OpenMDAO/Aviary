@@ -199,7 +199,7 @@ class FlightPathEOM(om.ExplicitComponent):
             rows=arange,
             cols=arange,
         )
-        # self.declare_partials("alpha_rate", ["*"], val=0.0)
+        # self.declare_partials("angle_of_attack_rate", ["*"], val=0.0)
         self.declare_partials(
             "normal_force",
             [

@@ -57,7 +57,7 @@ class RotationPhase(PhaseBuilderBase):
             lower=angle_lower,
             upper=angle_upper,
             units="rad",
-            rate_source="alpha_rate",
+            rate_source="angle_of_attack_rate",
             ref=angle_ref,
             ref0=angle_ref0,
             defect_ref=angle_defect_ref,

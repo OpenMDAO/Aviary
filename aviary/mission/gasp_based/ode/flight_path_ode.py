@@ -121,7 +121,7 @@ class FlightPathODE(BaseODE):
                     promotes_inputs=[
                         'weight',
                         ('thrust', Dynamic.Vehicle.Propulsion.THRUST_TOTAL),
-                        Dynamic.Vehicle.ANGLE_OF_ATTACK,
+                        ('alpha', Dynamic.Vehicle.ANGLE_OF_ATTACK),
                         ('gamma', Dynamic.Mission.FLIGHT_PATH_ANGLE),
                         ('i_wing', Aircraft.Wing.INCIDENCE),
                     ],

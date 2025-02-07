@@ -8,7 +8,7 @@ from aviary.variable_info.variables import Aircraft, Dynamic
 
 class AscentEOM(om.ExplicitComponent):
     """
-    Ascent equation of motion: Compute the velocity rate, flight path angle rate, 
+    Ascent equation of motion: Compute the velocity rate, flight path angle rate,
     altitude rate, distance rate, normal forces, fuselage pitch angle, load factor
     and angle of attack rate.
     """
@@ -88,7 +88,7 @@ class AscentEOM(om.ExplicitComponent):
         self.add_output(
             "load_factor", val=np.ones(nn), desc="load factor", units="unitless")
         self.add_output(
-            "alpha_rate", val=np.ones(nn), desc="angle of attack rate", units="deg/s"
+            "angle_of_attack_rate", val=np.ones(nn), desc="angle of attack rate", units="deg/s"
         )
 
     def setup_partials(self):
@@ -219,7 +219,7 @@ class AscentEOM(om.ExplicitComponent):
         outputs["normal_force"] = normal_force
         outputs["fuselage_pitch"] = gamma * 180 / np.pi - i_wing + alpha
 
-        outputs["alpha_rate"] = np.zeros(nn)
+        outputs["angle_of_attack_rate"] = np.zeros(nn)
 
         load_factor = (incremented_lift + thrust_across_flightpath) / (
             weight * np.cos(gamma)

@@ -79,7 +79,7 @@ class AscentODE(BaseODE):
                 Dynamic.Mission.FLIGHT_PATH_ANGLE_RATE,
                 Dynamic.Mission.ALTITUDE_RATE,
                 Dynamic.Mission.DISTANCE_RATE,
-                "alpha_rate",
+                "angle_of_attack_rate",
                 "normal_force",
                 "fuselage_pitch",
                 "load_factor",
