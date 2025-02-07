@@ -163,9 +163,9 @@ class WingTailRatios(om.ExplicitComponent):
 
         add_aviary_input(self, Aircraft.Wing.TAPER_RATIO, val=0.33)
 
-        add_aviary_input(self, Aircraft.Wing.THICKNESS_TO_CHORD_ROOT, val=0.15)
+        add_aviary_input(self, Aircraft.Wing.THICKNESS_TO_CHORD_ROOT)
 
-        add_aviary_input(self, Aircraft.Wing.MOUNTING_TYPE, val=0.0)
+        add_aviary_input(self, Aircraft.Wing.MOUNTING_TYPE)
 
         add_aviary_input(self, Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION)
 
@@ -275,7 +275,7 @@ class Xlifts(om.ExplicitComponent):
 
         add_aviary_input(self, Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION)
 
-        add_aviary_input(self, Aircraft.HorizontalTail.SWEEP, val=25.0)
+        add_aviary_input(self, Aircraft.HorizontalTail.SWEEP)
 
         add_aviary_input(self, Aircraft.HorizontalTail.MOMENT_RATIO)
 
