@@ -15,7 +15,7 @@ class RootChord(om.ExplicitComponent):
     """Calculates the wing root chord"""
 
     def setup(self):
-        add_aviary_input(self, Aircraft.Wing.AREA, val=1370.3)
+        add_aviary_input(self, Aircraft.Wing.AREA)
         add_aviary_input(self, Aircraft.Wing.SPAN)
         add_aviary_input(self, Aircraft.Wing.TAPER_RATIO)
 
