@@ -120,9 +120,10 @@ class CLmaxCalculation(om.ExplicitComponent):
             units='unitless',
             desc="DELCLF: fuselage lift increment",
         )
-        add_aviary_input(self, Dynamic.Atmosphere.KINEMATIC_VISCOSITY, desc="INGASP.XKV")
-        add_aviary_input(self, Dynamic.Atmosphere.TEMPERATURE,
-                         units="degR", desc="INGASP.T0")
+        add_aviary_input(self, Dynamic.Atmosphere.KINEMATIC_VISCOSITY, val=0.15723e-03,
+                         units="ft**2/s", desc="XKV: kinematic viscosity")
+        add_aviary_input(self, Dynamic.Atmosphere.TEMPERATURE, val=518.67,
+                         units="degR", desc="T0: static temperature of air cross wing")
 
         # outputs
 
@@ -132,7 +133,8 @@ class CLmaxCalculation(om.ExplicitComponent):
             desc="CLMAX: maximum lift coefficient",
             units="unitless",
         )
-        add_aviary_output(self, Dynamic.Atmosphere.MACH, desc="INGASP.SMN")
+        add_aviary_output(self, Dynamic.Atmosphere.MACH, val=0.17522,
+                          units='unitless', desc="SMN: mach number")
         self.add_output(
             "reynolds", val=157.1111, units='unitless', desc="RNW: reynolds number"
         )
