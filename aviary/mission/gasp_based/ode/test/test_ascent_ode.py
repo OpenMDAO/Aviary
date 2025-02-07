@@ -56,7 +56,7 @@ class AscentODETestCase(unittest.TestCase):
             self.prob[Dynamic.Mission.DISTANCE_RATE], np.array(
                 [168.781, 168.781]), tol)
         assert_near_equal(
-            self.prob["alpha_rate"], np.array(
+            self.prob["angle_of_attack_rate"], np.array(
                 [0.0, 0.0]), tol)
         assert_near_equal(
             self.prob["normal_force"], np.array(
