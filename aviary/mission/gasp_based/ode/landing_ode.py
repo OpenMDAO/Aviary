@@ -171,7 +171,7 @@ class LandingSegment(BaseODE):
                 ("airport_alt", Mission.Landing.AIRPORT_ALTITUDE),
                 (Dynamic.Atmosphere.MACH, "mach_td"),
                 (Dynamic.Atmosphere.DYNAMIC_PRESSURE, "q_td"),
-                ("alpha", Aircraft.Wing.INCIDENCE),
+                (Dynamic.Vehicle.ANGLE_OF_ATTACK, Aircraft.Wing.INCIDENCE),
                 ("flap_defl", Aircraft.Wing.FLAP_DEFLECTION_LANDING),
                 ("CL_max_flaps", Mission.Landing.LIFT_COEFFICIENT_MAX),
                 (

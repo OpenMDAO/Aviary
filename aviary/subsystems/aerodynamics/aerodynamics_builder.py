@@ -221,7 +221,7 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
 
             elif method == 'low_speed':
                 promotes = [
-                    'angle_of_attack',
+                    Dynamic.Vehicle.ANGLE_OF_ATTACK,
                     Dynamic.Mission.ALTITUDE,
                     Dynamic.Mission.FLIGHT_PATH_ANGLE,
                     Mission.Takeoff.DRAG_COEFFICIENT_MIN,
@@ -287,7 +287,11 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
             elif method == 'cruise':
                 if 'output_alpha' in kwargs:
                     if kwargs['output_alpha']:
-                        promotes = [Dynamic.Vehicle.DRAG, Dynamic.Vehicle.LIFT, 'alpha']
+                        promotes = [
+                            Dynamic.Vehicle.DRAG,
+                            Dynamic.Vehicle.LIFT,
+                            Dynamic.Vehicle.ANGLE_OF_ATTACK,
+                        ]
                 else:
                     promotes = [Dynamic.Vehicle.DRAG, Dynamic.Vehicle.LIFT, 'CL_max']
 
