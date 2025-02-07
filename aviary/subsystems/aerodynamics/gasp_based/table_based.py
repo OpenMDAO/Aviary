@@ -345,7 +345,7 @@ class GearDragIncrement(om.ExplicitComponent):
 
         add_aviary_input(self, Mission.Design.GROSS_MASS, val=175400.0)
 
-        add_aviary_input(self, Aircraft.Wing.AREA)
+        add_aviary_input(self, Aircraft.Wing.AREA, val=1370.3)
 
         # note flap_defl should be a constant (scalar) but interpolation breaks with
         # mixed scalar/vector inputs so you can just ``prob.set_val("flap_defl", 10)``
