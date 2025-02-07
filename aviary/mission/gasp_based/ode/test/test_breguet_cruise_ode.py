@@ -101,7 +101,7 @@ class ElectricCruiseODETestCase(unittest.TestCase):
 
         set_params_for_unit_tests(self.prob)
 
-        self.prob.run_model() 
+        self.prob.run_model()
 
         tol = tol = 1e-6
         assert_near_equal(
@@ -129,7 +129,7 @@ class ElectricCruiseODETestCase(unittest.TestCase):
 
 
 if __name__ == "__main__":
-    #unittest.main()
+    # unittest.main()
     import pdb
     test = ElectricCruiseODETestCase()
     pdb.set_trace()
