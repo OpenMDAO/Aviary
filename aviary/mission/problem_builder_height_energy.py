@@ -13,6 +13,7 @@ from aviary.utils.process_input_decks import initialization_guessing
 from aviary.variable_info.enums import AnalysisScheme, LegacyCode
 from aviary.variable_info.variables import Aircraft, Mission, Dynamic, Settings
 from aviary.subsystems.propulsion.utils import build_engine_deck
+from flight_phase_builder import OptionsDictionary
 
 if hasattr(TranscriptionBase, 'setup_polynomial_controls'):
     use_new_dymos_syntax = False
@@ -25,6 +26,12 @@ class ProblemBuilderHeightEnergy():
     A Height-Energy specific builder that customizes AviaryProblem() for use with
     height energy phases.
     """
+
+    def get_phase_options(self, prob):
+        "Returns the Options Dictionary used to instantiate the phases used by this ODE."
+        " This will be used by check_and_preprocess_inputs in M4L2 to ensure that the "
+        " required inputs are in the phase_info."
+        return OptionsDictionary
 
     def initial_guesses(self, prob):
         """

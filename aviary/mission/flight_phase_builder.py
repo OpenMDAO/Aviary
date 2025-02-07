@@ -2,6 +2,8 @@ import numpy as np
 
 import dymos as dm
 
+import openmdao.api as om
+
 from aviary.mission.initial_guess_builders import InitialGuessState
 from aviary.mission.flops_based.ode.mission_ODE import MissionODE
 from aviary.mission.flops_based.phases.phase_utils import add_subsystem_variables_to_phase, get_initial
@@ -13,11 +15,15 @@ from aviary.variable_info.variable_meta_data import _MetaData
 from aviary.variable_info.variables import Aircraft, Dynamic
 
 
+# Height Energy and Solved2DOF use this builder
+
 # TODO: support/handle the following in the base class
 # - phase.set_time_options()
 #     - currently handled in level 3 interface implementation
 # - self.external_subsystems
 # - self.meta_data, with cls.default_meta_data customization point
+
+
 @register
 class FlightPhaseBase(PhaseBuilderBase):
     """
@@ -349,6 +355,8 @@ class FlightPhaseBase(PhaseBuilderBase):
                 loc='initial',
                 equals=initial_altitude,
                 units=altitude_bounds[1],
+                # TODO: This units assignment is incorrect and instead should be:
+                units=user_options.get_item('initial_altitude')[1],
                 ref=1.0e4,
             )
 
@@ -432,76 +440,104 @@ class FlightPhaseBase(PhaseBuilderBase):
         }
 
 
-FlightPhaseBase._add_meta_data(
-    'reserve', val=False, desc='this phase is part of the reserve mission.')
+class OptionsDictionary(om.OptionsDictionary):
+    def __init__(self, read_only=False):
+        super(OptionsDictionary, self).__init__(read_only)
 
-FlightPhaseBase._add_meta_data(
-    'target_distance', val={}, desc='the amount of distance traveled in this phase added as a constraint')
+        self.declare('reserve', type=bool, default=False,
+                     desc='Designate this phase as a reserve phase and contributes its fuel burn towards the reserve mission fuel requirements. Reserve phases should be created after all non-reserve phases.')
 
-FlightPhaseBase._add_meta_data(
-    'target_duration', val={}, desc='the amount of time taken by this phase added as a constraint')
+        self.declare(name='target_distance', types=tuple,
+                     desc='The total distance traveled by the aircraft from takeoff to landing of the primary mission, not including reserve missions. This value must be positive.')
 
-FlightPhaseBase._add_meta_data(
-    'num_segments', val=5, desc='transcription: number of segments')
+        self.declare('target_duration', type=tuple, default=None,
+                     desc='The amount of time taken by this phase added as a constraint.')
 
-FlightPhaseBase._add_meta_data(
-    'order', val=3,
-    desc='transcription: order of the state transcription; the order of the control'
-    ' transcription is `order - 1`')
+        self.declare(name='num_segments', types=int, default=1,
+                     desc='The number of segments in transcription creation in Dymos. The minimum value is 1.')
 
-FlightPhaseBase._add_meta_data('polynomial_control_order', val=3)
+        self.declare(name='order', types=int, default=3,
+                     desc='The order of polynomials for interpolation in the transcription created in Dymos. The minimum value is 3.')
 
-FlightPhaseBase._add_meta_data('use_polynomial_control', val=True)
+        self.declare(name='polynomial_control_order', types=int, default=3,
+                     desc='The order of the polynomial fit to control values. Only used if polynomial_control = True')
 
-FlightPhaseBase._add_meta_data('ground_roll', val=False)
+        self.declare(name='polynomial_control', types=bool, default=True,
+                     desc='Use polynomial control in this phase. Setting to True smooths control inputs.')
 
-FlightPhaseBase._add_meta_data('add_initial_mass_constraint', val=False)
+        self.declare(name='ground_roll', types=bool, default=False,
+                     desc='Set to true only for phases where the aircraft is rolling on the ground. All other phases of flight (climb, cruise, descent) this must be set to false.')
 
-FlightPhaseBase._add_meta_data('fix_initial', val=True)
+        self.declare(name='add_initial_mass_constraint', types=bool, default=False,
+                     desc='Use a constraint for mass instead of connected initial mass for this phase. Overwrites input_initial=True and sets it to False.')
 
-FlightPhaseBase._add_meta_data('fix_duration', val=False)
+        self.decalre(name='input_initial', types=bool, default=False,
+                     desc='Links all states (mass, distance) to a calculation external to this phase.')
 
-FlightPhaseBase._add_meta_data('optimize_mach', val=False)
+        self.declare(name='fix_initial', types=bool, default=True,
+                     desc='Fixes the initial states (mass, distance) and does not allow them to change during the optimization.')
 
-FlightPhaseBase._add_meta_data('optimize_altitude', val=False)
+        self.declare(name='fix_duration', types=bool, default=True,
+                     desc='If True, the time duration of the phase is not treated as a design variable for the optimization problem.')
 
-FlightPhaseBase._add_meta_data('initial_bounds', val=(0., 100.), units='s')
+        self.declare(name='optimize_mach', types=bool, default=False,
+                     desc='Adds the Mach number as a design variable controlled by the optimizer.')
 
-FlightPhaseBase._add_meta_data('duration_bounds', val=(0., 100.), units='s')
+        self.declare(name='optimize_altitude', types=bool, default=False,
+                     desc='Adds the Altitude as a design variable controlled by the optimizer.')
 
-FlightPhaseBase._add_meta_data(
-    'required_available_climb_rate', val=None, units='m/s',
-    desc='minimum avaliable climb rate')
+        self.declare('initial_bounds', type=tuple, default=None,
+                     desc='Bounds on when this phase can start relative to the start of the first phase in the mission. i.e. ((25, 45), "min") means this phase must start between 25 to 45 minutes after the start of the mission.')
 
-FlightPhaseBase._add_meta_data(
-    'no_climb', val=False, desc='aircraft is not allowed to climb during phase')
+        self.declare(name='duration_bounds', type=tuple, default=None,
+                     desc='The maximum time that this phase is allowed to take from the start of this phase to the end of thise phase i.e. ((20, 36), "min") means this phase must take between 20 and 36 minutes.')
 
-FlightPhaseBase._add_meta_data(
-    'no_descent', val=False, desc='aircraft is not allowed to descend during phase')
+        self.declare(name='required_available_climb_rate', types=float, units='m/s',  # default=(300, 'ft/s'),
+                     desc='Adds a constraint requiring Dynamic.Mission.ALTITUDE_RATE_MAX to be no smaller than required_available_climb_rate. This helps to ensure that the propulsion system is large enough to handle emergency maneuvers at all points throughout the flight envelope.')
 
-FlightPhaseBase._add_meta_data('constrain_final', val=False)
+        self.declare(name='no_climb', type=bool, default=False,
+                     desc='Set to True to prevent the aircraft from climb during phase. Turn this on if the aircraft is unexpectedly climbing during a descent phase.')
 
-FlightPhaseBase._add_meta_data('input_initial', val=False)
+        self.declare(name='no_descent', type=bool, default=False,
+                     desc='Set to True to prevent the aircraft from descending during this phase. Turn this on if the aircraft is unexpectedly descending during a climb phase.')
 
-FlightPhaseBase._add_meta_data('initial_mach', val=None, units='unitless')
+        self.declare(name='constrain_final', types=bool, defaul=False,
+                     desc='Fixes the final states (mach and altitude) to the values of final_altitude and final_mach. These values will be unable to change during the optimization.')
 
-FlightPhaseBase._add_meta_data('final_mach', val=None, units='unitless')
+        self.declare(name='initial_mach', types=tuple, default=None,
+                     desc='The initial Mach number at the start of the phase i.e. (0.72, "unitless")')
 
-FlightPhaseBase._add_meta_data('initial_altitude', val=None, units='ft')
+        self.declare(name='final_mach', types=tuple, default=None,
+                     desc='The final Mach number at the end of the phase i.e. (0.72, "unitless")')
 
-FlightPhaseBase._add_meta_data('final_altitude', val=None, units='ft')
+        self.declare(name='initial_altitude', types=tuple, default=None,
+                     desc='The initial altitude at the start of the phase i.e. (32000.0, "ft")')
 
-FlightPhaseBase._add_meta_data('throttle_enforcement', val=None)
+        self.declare(name='final_altitude', types=tuple, default=None,
+                     desc='The final altitude at the end of the phase i.e. (32000.0, "ft")')
 
-FlightPhaseBase._add_meta_data('throttle_allocation', val=ThrottleAllocation.FIXED)
+        self.declare(name='throttle_enforcement', types=str, default='path_constraint',
+                     values=['path_constraint', 'boundary_constraint', 'bounded', None],
+                     desc='Flag to enforce engine throttle constraints on the path or at the segment boundaries or using solver bounds.')
 
-FlightPhaseBase._add_meta_data('mach_bounds', val=(0., 2.), units='unitless')
+        # this might need to be changes to value=[1,2,3]
+        self.declare(name='throttle_allocation', types=int, default=ThrottleAllocation.FIXED,
+                     values=[ThrottleAllocation.FIXED,
+                             ThrottleAllocation.STATIC, ThrottleAllocation.DYNAMIC],
+                     desc='Specifies how to handle the throttles for multiple engines. FIXED is a user-specified value. STATIC is specified by the optimizer as one value for the whole phase. DYNAMIC is specified by the optimizer at each point in the phase.')
 
-FlightPhaseBase._add_meta_data('altitude_bounds', val=(0., 60.e3), units='ft')
+        self.declare(name='mach_bounds', types=tuple, default=None,
+                     desc='The lower and upper constraints on mach during this phase i.e. ((0.18, 0.74), "unitless"). The optimizer is never allowed choose mach values outside of these bounds constraints.')
 
-FlightPhaseBase._add_meta_data('solve_for_distance', val=False)
+        self.declare(name='altitude_bounds', types=tuple, default=None,
+                     desc='The lower and upper constraints on altitude during this phase i.e. ((0.0, 34000.0), "ft"). The optimizer is never allowed choose mach values outside of these bounds constraints.')
 
-FlightPhaseBase._add_meta_data('constraints', val={})
+        self.declare(name='solve_for_distance', types=bool, default=False,
+                     desc='if True, use a nonlinear solver to converge the distance state variable to the desired value. Otherwise uses the optimizer to converge the distance state.')
+
+        self.declare(name='constraints', types=dict, default={},
+                     desc="Add in custom constraints i.e. 'flight_path_angle': {'equals': -3.,'loc': 'initial','units': 'deg','type': 'boundary',}. For more details see _add_user_defined_constraints().")
+
 
 FlightPhaseBase._add_initial_guess_meta_data(
     InitialGuessState('altitude'),
