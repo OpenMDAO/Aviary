@@ -33,7 +33,7 @@ class MetaModelGroup(om.Group):
 
         VDEL1_interp.add_input(
             Aircraft.Wing.FLAP_CHORD_RATIO,
-            0.0,
+            0.3,
             training_data=[0.0, 0.1, 0.2, 0.3, 0.4, 0.5],
             units="unitless",
             desc="ratio of flap chord to wing chord",
@@ -440,7 +440,7 @@ class MetaModelGroup(om.Group):
 
         VLAM5_interp.add_input(
             Aircraft.Wing.FLAP_CHORD_RATIO,
-            0.0,
+            0.3,
             training_data=[0.0, 0.1, 0.2, 0.3, 0.4, 0.5],
             units="unitless",
             desc="ratio of flap chord to wing chord",

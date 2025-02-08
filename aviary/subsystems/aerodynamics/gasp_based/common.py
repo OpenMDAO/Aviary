@@ -1,7 +1,7 @@
 import numpy as np
 import openmdao.api as om
 
-from aviary.variable_info.functions import add_aviary_input, add_aviary_output
+from aviary.variable_info.functions import add_aviary_input
 from aviary.variable_info.variables import Aircraft, Dynamic
 
 
@@ -16,13 +16,18 @@ class AeroForces(om.ExplicitComponent):
 
         self.add_input("CL", 1.0, units="unitless", shape=nn, desc="Lift coefficient")
         self.add_input("CD", 1.0, units="unitless", shape=nn, desc="Drag coefficient")
-        add_aviary_input(self, Dynamic.Atmosphere.DYNAMIC_PRESSURE,
-                         1.0, units="psf", shape=nn)
+        self.add_input(
+            Dynamic.Atmosphere.DYNAMIC_PRESSURE,
+            1.0,
+            units="psf",
+            shape=nn,
+            desc="Dynamic pressure",
+        )
 
         add_aviary_input(self, Aircraft.Wing.AREA, val=1370.3)
 
-        add_aviary_output(self, Dynamic.Vehicle.LIFT, units="lbf", shape=nn)
-        add_aviary_output(self, Dynamic.Vehicle.DRAG, units="lbf", shape=nn)
+        self.add_output(Dynamic.Vehicle.LIFT, units="lbf", shape=nn, desc="Lift force")
+        self.add_output(Dynamic.Vehicle.DRAG, units="lbf", shape=nn, desc="Drag force")
 
     def setup_partials(self):
         nn = self.options["num_nodes"]
@@ -68,8 +73,13 @@ class CLFromLift(om.ExplicitComponent):
     def setup(self):
         nn = self.options["num_nodes"]
         self.add_input("lift_req", 1, units="lbf", shape=nn, desc="Lift force")
-        add_aviary_input(self, Dynamic.Atmosphere.DYNAMIC_PRESSURE,
-                         np.ones(nn), units="psf")
+        self.add_input(
+            Dynamic.Atmosphere.DYNAMIC_PRESSURE,
+            1.0,
+            units="psf",
+            shape=nn,
+            desc="Dynamic pressure",
+        )
 
         add_aviary_input(self, Aircraft.Wing.AREA, val=1370.3)
 
