@@ -424,21 +424,20 @@ class AeroGeom(om.ExplicitComponent):
         # form factors
         # user could input these directly or use functions to estimate from geometry
 
-        add_aviary_input(self, Aircraft.Wing.FORM_FACTOR, val=1.25)
+        add_aviary_input(self, Aircraft.Wing.FORM_FACTOR)
 
-        add_aviary_input(self, Aircraft.Fuselage.FORM_FACTOR, val=1.25)
+        add_aviary_input(self, Aircraft.Fuselage.FORM_FACTOR)
 
         add_aviary_input(
-            self, Aircraft.Nacelle.FORM_FACTOR, val=np.full(num_engine_type, 1.5)
-        )
+            self, Aircraft.Nacelle.FORM_FACTOR, shape=num_engine_type)
 
-        add_aviary_input(self, Aircraft.VerticalTail.FORM_FACTOR, val=1.25)
+        add_aviary_input(self, Aircraft.VerticalTail.FORM_FACTOR)
 
-        add_aviary_input(self, Aircraft.HorizontalTail.FORM_FACTOR, val=1.25)
+        add_aviary_input(self, Aircraft.HorizontalTail.FORM_FACTOR)
 
-        add_aviary_input(self, Aircraft.Wing.FUSELAGE_INTERFERENCE_FACTOR, val=1.1)
+        add_aviary_input(self, Aircraft.Wing.FUSELAGE_INTERFERENCE_FACTOR)
 
-        add_aviary_input(self, Aircraft.Strut.FUSELAGE_INTERFERENCE_FACTOR, val=0.0)
+        add_aviary_input(self, Aircraft.Strut.FUSELAGE_INTERFERENCE_FACTOR)
 
         # miscellaneous top-level inputs
 
