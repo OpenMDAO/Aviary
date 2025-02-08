@@ -20,7 +20,7 @@ class BasicFlapsCalculations(om.ExplicitComponent):
         add_aviary_input(self, Aircraft.Wing.TAPER_RATIO, val=0.33)
         add_aviary_input(self, Aircraft.Wing.CENTER_CHORD, val=17.48974)
         add_aviary_input(self, Aircraft.Fuselage.AVG_DIAMETER, val=13.1)
-        add_aviary_input(self, Aircraft.Wing.THICKNESS_TO_CHORD_ROOT, val=0.15)
+        add_aviary_input(self, Aircraft.Wing.THICKNESS_TO_CHORD_ROOT)
         add_aviary_input(self, Aircraft.Wing.SPAN, val=117.8)
         add_aviary_input(self, Aircraft.Wing.SLAT_CHORD_RATIO, val=0.15)
         self.add_input(
