@@ -271,9 +271,9 @@ class Xlifts(om.ExplicitComponent):
 
         add_aviary_input(self, Aircraft.Wing.ASPECT_RATIO, val=10.13)
 
-        add_aviary_input(self, Aircraft.Wing.SWEEP, val=25.0)
+        add_aviary_input(self, Aircraft.Wing.SWEEP)
 
-        add_aviary_input(self, Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION, val=0.0)
+        add_aviary_input(self, Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION)
 
         add_aviary_input(self, Aircraft.HorizontalTail.SWEEP, val=25.0)
 
@@ -432,7 +432,7 @@ class AeroGeom(om.ExplicitComponent):
 
         add_aviary_input(self, Aircraft.Wing.ASPECT_RATIO, val=10.13)
 
-        add_aviary_input(self, Aircraft.Wing.SWEEP, val=25.0)
+        add_aviary_input(self, Aircraft.Wing.SWEEP)
 
         add_aviary_input(self, Aircraft.Wing.TAPER_RATIO, val=0.33)
 
@@ -853,7 +853,7 @@ class DragCoef(om.ExplicitComponent):
 
         self.add_input("flap_defl", val=10.0, units="deg", desc="Full flap deflection")
 
-        add_aviary_input(self, Aircraft.Wing.HEIGHT, val=8.0)
+        add_aviary_input(self, Aircraft.Wing.HEIGHT)
 
         self.add_input(
             "airport_alt", val=0.0, units="ft", desc="HPORT: Airport altitude"
@@ -1105,13 +1105,13 @@ class LiftCoeff(om.ExplicitComponent):
 
         # user inputs
 
-        add_aviary_input(self, Aircraft.Wing.ZERO_LIFT_ANGLE, val=-1.2)
+        add_aviary_input(self, Aircraft.Wing.ZERO_LIFT_ANGLE)
 
-        add_aviary_input(self, Aircraft.Wing.SWEEP, val=25.0)
+        add_aviary_input(self, Aircraft.Wing.SWEEP)
 
         add_aviary_input(self, Aircraft.Wing.ASPECT_RATIO, val=10.13)
 
-        add_aviary_input(self, Aircraft.Wing.HEIGHT, val=8.0)
+        add_aviary_input(self, Aircraft.Wing.HEIGHT)
 
         self.add_input(
             "airport_alt", val=0.0, units="ft", desc="HPORT: Airport altitude"
@@ -1266,7 +1266,7 @@ class LiftCoeffClean(om.ExplicitComponent):
         )
         self.add_input("lift_ratio", units="unitless", shape=nn, desc="Lift ratio")
 
-        add_aviary_input(self, Aircraft.Wing.ZERO_LIFT_ANGLE, val=-1.2)
+        add_aviary_input(self, Aircraft.Wing.ZERO_LIFT_ANGLE)
 
         add_aviary_input(self, Mission.Design.LIFT_COEFFICIENT_MAX_FLAPS_UP, val=0.0)
 
