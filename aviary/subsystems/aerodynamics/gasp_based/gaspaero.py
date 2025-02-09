@@ -271,7 +271,7 @@ class Xlifts(om.ExplicitComponent):
 
         add_aviary_input(self, Aircraft.Wing.ASPECT_RATIO, val=10.13)
 
-        add_aviary_input(self, Aircraft.Wing.SWEEP)
+        add_aviary_input(self, Aircraft.Wing.SWEEP, val=25.0)
 
         add_aviary_input(self, Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION)
 
@@ -432,7 +432,7 @@ class AeroGeom(om.ExplicitComponent):
 
         add_aviary_input(self, Aircraft.Wing.ASPECT_RATIO, val=10.13)
 
-        add_aviary_input(self, Aircraft.Wing.SWEEP)
+        add_aviary_input(self, Aircraft.Wing.SWEEP, val=25.0)
 
         add_aviary_input(self, Aircraft.Wing.TAPER_RATIO, val=0.33)
 
@@ -1107,7 +1107,7 @@ class LiftCoeff(om.ExplicitComponent):
 
         add_aviary_input(self, Aircraft.Wing.ZERO_LIFT_ANGLE)
 
-        add_aviary_input(self, Aircraft.Wing.SWEEP)
+        add_aviary_input(self, Aircraft.Wing.SWEEP, val=25.0)
 
         add_aviary_input(self, Aircraft.Wing.ASPECT_RATIO, val=10.13)
 
