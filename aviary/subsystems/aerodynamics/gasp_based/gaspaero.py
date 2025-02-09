@@ -840,7 +840,7 @@ class DragCoef(om.ExplicitComponent):
         nn = self.options["num_nodes"]
 
         # mission inputs
-        add_aviary_input(self, Dynamic.Mission.ALTITUDE, units="ft", shape=nn)
+        add_aviary_input(self, Dynamic.Mission.ALTITUDE, shape=nn)
         self.add_input(
             "CL", val=1.0, units="unitless", shape=nn, desc="Lift coefficient"
         )
@@ -1005,13 +1005,11 @@ class DragCoefClean(om.ExplicitComponent):
         )
 
         # user inputs
-        add_aviary_input(self, Aircraft.Design.SUPERCRITICAL_DIVERGENCE_SHIFT, val=0.033)
-        add_aviary_input(self, Aircraft.Design.SUBSONIC_DRAG_COEFF_FACTOR, val=1.0)
-        add_aviary_input(self, Aircraft.Design.SUPERSONIC_DRAG_COEFF_FACTOR, val=1.0)
-        add_aviary_input(
-            self, Aircraft.Design.LIFT_DEPENDENT_DRAG_COEFF_FACTOR, val=1.0
-        )
-        add_aviary_input(self, Aircraft.Design.ZERO_LIFT_DRAG_COEFF_FACTOR, val=1.0)
+        add_aviary_input(self, Aircraft.Design.SUPERCRITICAL_DIVERGENCE_SHIFT)
+        add_aviary_input(self, Aircraft.Design.SUBSONIC_DRAG_COEFF_FACTOR)
+        add_aviary_input(self, Aircraft.Design.SUPERSONIC_DRAG_COEFF_FACTOR)
+        add_aviary_input(self, Aircraft.Design.LIFT_DEPENDENT_DRAG_COEFF_FACTOR)
+        add_aviary_input(self, Aircraft.Design.ZERO_LIFT_DRAG_COEFF_FACTOR)
 
         # from aero setup
         self.add_input(
