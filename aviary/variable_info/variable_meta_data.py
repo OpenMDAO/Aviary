@@ -1548,6 +1548,7 @@ add_meta_data(
     historical_name={"GASP": 'INGASP.SCFAC', "FLOPS": None, "LEAPS1": None},
     units='unitless',
     desc='shift in drag divergence Mach number due to ' 'supercritical design',
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -5843,6 +5844,7 @@ add_meta_data(
     historical_name={"GASP": 'INGASP.DELTEO', "FLOPS": None, "LEAPS1": None},
     units='deg',
     desc='optimum flap deflection angle (default depends on flap type)',
+    default_value=0.0,
 )
 
 add_meta_data(
