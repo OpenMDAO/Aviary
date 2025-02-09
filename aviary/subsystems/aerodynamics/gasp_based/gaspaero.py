@@ -412,19 +412,19 @@ class AeroGeom(om.ExplicitComponent):
 
         add_aviary_input(self, Aircraft.HorizontalTail.FORM_FACTOR)
 
-        add_aviary_input(self, Aircraft.Wing.FUSELAGE_INTERFERENCE_FACTOR, val=1.1)
+        add_aviary_input(self, Aircraft.Wing.FUSELAGE_INTERFERENCE_FACTOR)
 
         add_aviary_input(self, Aircraft.Strut.FUSELAGE_INTERFERENCE_FACTOR)
 
         # miscellaneous top-level inputs
 
-        add_aviary_input(self, Aircraft.Design.DRAG_COEFFICIENT_INCREMENT, val=0.00175)
+        add_aviary_input(self, Aircraft.Design.DRAG_COEFFICIENT_INCREMENT)
 
-        add_aviary_input(self, Aircraft.Fuselage.FLAT_PLATE_AREA_INCREMENT, val=0.25)
+        add_aviary_input(self, Aircraft.Fuselage.FLAT_PLATE_AREA_INCREMENT)
 
-        add_aviary_input(self, Aircraft.Wing.MIN_PRESSURE_LOCATION, val=0.3)
+        add_aviary_input(self, Aircraft.Wing.MIN_PRESSURE_LOCATION)
 
-        add_aviary_input(self, Aircraft.Wing.MAX_THICKNESS_LOCATION, val=0.4)
+        add_aviary_input(self, Aircraft.Wing.MAX_THICKNESS_LOCATION)
 
         # geometric user inputs
 

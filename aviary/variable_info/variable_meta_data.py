@@ -1203,6 +1203,7 @@ add_meta_data(
     historical_name={"GASP": 'INGASP.DELCD', "FLOPS": None, "LEAPS1": None},
     units='unitless',
     desc='increment to the profile drag coefficient',
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -3166,6 +3167,7 @@ add_meta_data(
     historical_name={"GASP": 'INGASP.DELFE', "FLOPS": None, "LEAPS1": None},
     units='ft**2',
     desc='increment to fuselage flat plate area',
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -6897,6 +6899,7 @@ add_meta_data(
     units='unitless',
     desc='maximum lift coefficient from flaps model when flaps are up '
     '(not deployed)',
+    default_value=0.0,
 )
 
 add_meta_data(
