@@ -31,7 +31,7 @@ class LiftAndDragIncrements(om.ExplicitComponent):
             units='unitless',
             desc="VDEL4: sensitivity of minimum drag coefficient to fuselage width to span ratio",
         )
-        add_aviary_input(self, Aircraft.Wing.FLAP_DRAG_INCREMENT_OPTIMUM, val=0.1)
+        add_aviary_input(self, Aircraft.Wing.FLAP_DRAG_INCREMENT_OPTIMUM)
         self.add_input(
             "VDEL1",
             val=1.0,
