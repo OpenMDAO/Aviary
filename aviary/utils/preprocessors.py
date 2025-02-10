@@ -167,7 +167,8 @@ def preprocess_crewpayload(aviary_options: AviaryValues):
     if Settings.MASS_METHOD in aviary_options:
         mass_method = aviary_options.get_val(Settings.MASS_METHOD)
     else:
-        print('ERROR! mass_method not specified cannot preprocess cargo inputs')
+        raise om.AnalysisError(
+            f'ERROR: In preprocessors.py: MASS_METHOD not specified. Cannot preprocess cargo inputs.')
 
     if mass_method == LegacyCode.GASP:
         input_cargo = Aircraft.CrewPayload.CARGO_MASS in aviary_options
@@ -189,7 +190,7 @@ def preprocess_crewpayload(aviary_options: AviaryValues):
                         Aircraft.CrewPayload.Design.CARGO_MASS, 'lbm')
                     if problem_type == ProblemType.SIZING and cargo != des_cargo:
                         cargo = des_cargo
-                        print('Warning! Aircraft.CrewPayload.CARGO_MASS != Aircraft.CrewPayload.Design.CARGO_MASS for sizing mission. Setting as-flown CARGO_MASS = Design.CARGO_MASS')
+                        print('WARNING: Aircraft.CrewPayload.CARGO_MASS != Aircraft.CrewPayload.Design.CARGO_MASS for sizing mission. Setting as-flown CARGO_MASS = Design.CARGO_MASS')
                     # user has set all three check if consistent
                 else:
                     # user has set cargo & max: assume des = max
@@ -268,7 +269,7 @@ def preprocess_crewpayload(aviary_options: AviaryValues):
         as_flown_passenger_payload_mass = num_pax * pax_mass_with_bag
         as_flown_payload = as_flown_passenger_payload_mass + cargo
         if as_flown_payload > des_payload:
-            print('WARNING! as flown payload > design payload! Please re-design the aircraft!')
+            print('WARNING: as flown payload > design payload! Please re-design the aircraft!')
             # raise om.AnalysisError(
             #    f"ERROR: In preprocesssors.py: as_flown payload {as_flown_payload} = passenger_payload_mass {as_flown_passenger_payload_mass} + cargo_mass {cargo} is larger than the design payload {des_payload} = design_passenger_payload {design_passenger_payload_mass} + Design.cargo_mass {des_cargo} : Aricraft must be re-designed")
 
