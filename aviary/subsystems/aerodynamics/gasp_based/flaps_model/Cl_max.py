@@ -133,7 +133,7 @@ class CLmaxCalculation(om.ExplicitComponent):
             units="unitless",
         )
         add_aviary_output(self, Dynamic.Atmosphere.MACH,
-            val=0.17522, desc="INGASP.SMN")
+                          val=0.17522, desc="INGASP.SMN")
         self.add_output(
             "reynolds", val=157.1111, units='unitless', desc="RNW: reynolds number"
         )
