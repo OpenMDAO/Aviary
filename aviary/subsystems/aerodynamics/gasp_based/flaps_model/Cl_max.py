@@ -83,12 +83,8 @@ class CLmaxCalculation(om.ExplicitComponent):
 
         add_aviary_input(self, Aircraft.Wing.LOADING)
 
-        self.add_input(
-            Dynamic.Atmosphere.STATIC_PRESSURE,
-            val=(14.696 * 144),
-            units="lbf/ft**2",
-            desc="P0: static pressure",
-        )
+        add_aviary_input(self, Dynamic.Atmosphere.STATIC_PRESSURE, val=(14.696 * 144),
+                         desc="INGASP.P0")
 
         add_aviary_input(self, Aircraft.Wing.AVERAGE_CHORD, val=12.61)
 
@@ -124,18 +120,11 @@ class CLmaxCalculation(om.ExplicitComponent):
             units='unitless',
             desc="DELCLF: fuselage lift increment",
         )
-        self.add_input(
-            Dynamic.Atmosphere.KINEMATIC_VISCOSITY,
-            val=0.15723e-03,
-            units="ft**2/s",
-            desc="XKV: kinematic viscosity",
-        )
-        self.add_input(
-            Dynamic.Atmosphere.TEMPERATURE,
-            val=518.67,
-            units="degR",
-            desc="T0: static temperature of air cross wing",
-        )
+        add_aviary_input(self,
+                         Dynamic.Atmosphere.KINEMATIC_VISCOSITY, val=0.15723e-03,
+                         desc="INGASP.XKV")
+        add_aviary_input(self, Dynamic.Atmosphere.TEMPERATURE,
+                         val=518.67, desc="INGASP.T0")
 
         # outputs
 
@@ -145,12 +134,8 @@ class CLmaxCalculation(om.ExplicitComponent):
             desc="CLMAX: maximum lift coefficient",
             units="unitless",
         )
-        self.add_output(
-            Dynamic.Atmosphere.MACH,
-            val=0.17522,
-            units='unitless',
-            desc="SMN: mach number",
-        )
+        add_aviary_output(self, Dynamic.Atmosphere.MACH,
+                          val=0.17522, desc="INGASP.SMN")
         self.add_output(
             "reynolds", val=157.1111, units='unitless', desc="RNW: reynolds number"
         )
