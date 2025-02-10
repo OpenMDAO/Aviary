@@ -13,7 +13,7 @@ from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.enums import EquationsOfMotion, ThrottleAllocation
 from aviary.variable_info.variable_meta_data import _MetaData
 from aviary.variable_info.variables import Aircraft, Dynamic
-
+from aviary.variable_info.functions import units_setter
 
 # Height Energy and Solved2DOF use this builder
 
@@ -62,6 +62,11 @@ class FlightPhaseBase(PhaseBuilderBase):
             meta_data = self.default_meta_data
 
         self.meta_data = meta_data
+
+        self.user_options = PhaseOptionsDictionary()
+
+        for name, val in user_options.items():
+            self.user_options[name] = val
 
     def build_phase(self, aviary_options: AviaryValues = None, phase_type=EquationsOfMotion.HEIGHT_ENERGY):
         '''
@@ -440,17 +445,17 @@ class FlightPhaseBase(PhaseBuilderBase):
         }
 
 
-class OptionsDictionary(om.OptionsDictionary):
+class PhaseOptionsDictionary(om.OptionsDictionary):
     def __init__(self, read_only=False):
-        super(OptionsDictionary, self).__init__(read_only)
+        super(PhaseOptionsDictionary, self).__init__(read_only)
 
         self.declare('reserve', type=bool, default=False,
                      desc='Designate this phase as a reserve phase and contributes its fuel burn towards the reserve mission fuel requirements. Reserve phases should be created after all non-reserve phases.')
 
-        self.declare(name='target_distance', types=tuple,
+        self.declare(name='target_distance', types=tuple, default=(None, 'm'), set_function=units_setter,
                      desc='The total distance traveled by the aircraft from takeoff to landing of the primary mission, not including reserve missions. This value must be positive.')
 
-        self.declare('target_duration', type=tuple, default=None,
+        self.declare('target_duration', type=tuple, default=(None, 's'), set_function=units_setter,
                      desc='The amount of time taken by this phase added as a constraint.')
 
         self.declare(name='num_segments', types=int, default=1,
@@ -486,13 +491,13 @@ class OptionsDictionary(om.OptionsDictionary):
         self.declare(name='optimize_altitude', types=bool, default=False,
                      desc='Adds the Altitude as a design variable controlled by the optimizer.')
 
-        self.declare('initial_bounds', type=tuple, default=None,
+        self.declare('initial_bounds', type=tuple, default=((None, None), 'min'), set_function=units_setter,
                      desc='Bounds on when this phase can start relative to the start of the first phase in the mission. i.e. ((25, 45), "min") means this phase must start between 25 to 45 minutes after the start of the mission.')
 
-        self.declare(name='duration_bounds', type=tuple, default=None,
+        self.declare(name='duration_bounds', type=tuple, default=(None, 'sec'), set_function=units_setter,
                      desc='The maximum time that this phase is allowed to take from the start of this phase to the end of thise phase i.e. ((20, 36), "min") means this phase must take between 20 and 36 minutes.')
 
-        self.declare(name='required_available_climb_rate', types=float, units='m/s',  # default=(300, 'ft/s'),
+        self.declare(name='required_available_climb_rate', types=tuple, default=(300, 'ft/s'), set_function=units_setter,
                      desc='Adds a constraint requiring Dynamic.Mission.ALTITUDE_RATE_MAX to be no smaller than required_available_climb_rate. This helps to ensure that the propulsion system is large enough to handle emergency maneuvers at all points throughout the flight envelope.')
 
         self.declare(name='no_climb', type=bool, default=False,
@@ -504,16 +509,16 @@ class OptionsDictionary(om.OptionsDictionary):
         self.declare(name='constrain_final', types=bool, defaul=False,
                      desc='Fixes the final states (mach and altitude) to the values of final_altitude and final_mach. These values will be unable to change during the optimization.')
 
-        self.declare(name='initial_mach', types=tuple, default=None,
+        self.declare(name='initial_mach', types=tuple, default=(None, "unitless"), set_function=units_setter,
                      desc='The initial Mach number at the start of the phase i.e. (0.72, "unitless")')
 
-        self.declare(name='final_mach', types=tuple, default=None,
+        self.declare(name='final_mach', types=tuple, default=(None, "unitless"), set_function=units_setter,
                      desc='The final Mach number at the end of the phase i.e. (0.72, "unitless")')
 
-        self.declare(name='initial_altitude', types=tuple, default=None,
+        self.declare(name='initial_altitude', types=tuple, default=(None, "ft"), set_function=units_setter,
                      desc='The initial altitude at the start of the phase i.e. (32000.0, "ft")')
 
-        self.declare(name='final_altitude', types=tuple, default=None,
+        self.declare(name='final_altitude', types=tuple, default=(None, "ft"), set_function=units_setter,
                      desc='The final altitude at the end of the phase i.e. (32000.0, "ft")')
 
         self.declare(name='throttle_enforcement', types=str, default='path_constraint',
@@ -526,10 +531,10 @@ class OptionsDictionary(om.OptionsDictionary):
                              ThrottleAllocation.STATIC, ThrottleAllocation.DYNAMIC],
                      desc='Specifies how to handle the throttles for multiple engines. FIXED is a user-specified value. STATIC is specified by the optimizer as one value for the whole phase. DYNAMIC is specified by the optimizer at each point in the phase.')
 
-        self.declare(name='mach_bounds', types=tuple, default=None,
+        self.declare(name='mach_bounds', types=tuple, default=((None, None), "unitless"), set_function=units_setter,
                      desc='The lower and upper constraints on mach during this phase i.e. ((0.18, 0.74), "unitless"). The optimizer is never allowed choose mach values outside of these bounds constraints.')
 
-        self.declare(name='altitude_bounds', types=tuple, default=None,
+        self.declare(name='altitude_bounds', types=tuple, default=((None, None), 'ft'), set_function=units_setter,
                      desc='The lower and upper constraints on altitude during this phase i.e. ((0.0, 34000.0), "ft"). The optimizer is never allowed choose mach values outside of these bounds constraints.')
 
         self.declare(name='solve_for_distance', types=bool, default=False,
@@ -537,6 +542,9 @@ class OptionsDictionary(om.OptionsDictionary):
 
         self.declare(name='constraints', types=dict, default={},
                      desc="Add in custom constraints i.e. 'flight_path_angle': {'equals': -3.,'loc': 'initial','units': 'deg','type': 'boundary',}. For more details see _add_user_defined_constraints().")
+
+# Previous implementation:
+# FlightPhaseBase._add_meta_data('initial_altitude', val=None, units='ft')
 
 
 FlightPhaseBase._add_initial_guess_meta_data(
