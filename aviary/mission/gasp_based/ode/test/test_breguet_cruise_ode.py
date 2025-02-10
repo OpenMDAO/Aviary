@@ -75,6 +75,7 @@ class ElectricCruiseODETestCase(unittest.TestCase):
     def setUp(self):
         self.prob = om.Problem()
 
+        # add electrical motor
         motor_model = MotorBuilder()
         options = get_option_defaults()
         options.set_val(Aircraft.Engine.NUM_ENGINES, 2)
