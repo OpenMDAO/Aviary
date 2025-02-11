@@ -2,11 +2,11 @@ import numpy as np
 import openmdao.api as om
 from aviary.subsystems.atmosphere.atmosphere import Atmosphere
 
-from aviary.mission.gasp_based.ode.two_dof_ode import BaseODE
+from aviary.mission.gasp_based.ode.two_dof_ode import TwoDOFODE
 from aviary.mission.gasp_based.ode.params import ParamPort
 from aviary.mission.gasp_based.ode.descent_eom import DescentRates
 from aviary.subsystems.atmosphere.flight_conditions import FlightConditions
-from aviary.mission.gasp_based.ode.two_dof_ode import BaseODE
+from aviary.mission.gasp_based.ode.two_dof_ode import TwoDOFODE
 from aviary.mission.gasp_based.ode.constraints.flight_constraints import FlightConstraints
 from aviary.mission.gasp_based.ode.constraints.speed_constraints import SpeedConstraints
 
@@ -17,7 +17,7 @@ from aviary.subsystems.propulsion.propulsion_builder import PropulsionBuilderBas
 from aviary.mission.gasp_based.ode.time_integration_base_classes import add_SGM_required_inputs
 
 
-class DescentODE(BaseODE):
+class DescentODE(TwoDOFODE):
     """ODE for quasi-steady descent.
 
     This ODE has a ``KSComp`` which allows for the switching of obeying an EAS

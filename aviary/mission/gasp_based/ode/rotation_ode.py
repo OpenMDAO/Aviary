@@ -1,7 +1,7 @@
 import numpy as np
 import openmdao.api as om
 
-from aviary.mission.gasp_based.ode.two_dof_ode import BaseODE
+from aviary.mission.gasp_based.ode.two_dof_ode import TwoDOFODE
 from aviary.mission.gasp_based.ode.params import ParamPort
 from aviary.mission.gasp_based.ode.rotation_eom import RotationEOM
 from aviary.variable_info.enums import AnalysisScheme
@@ -9,7 +9,7 @@ from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 from aviary.mission.gasp_based.ode.time_integration_base_classes import add_SGM_required_inputs
 
 
-class RotationODE(BaseODE):
+class RotationODE(TwoDOFODE):
     """ODE for takeoff rotation.
 
     This phase spans the time from when the aircraft is touching the runway but has

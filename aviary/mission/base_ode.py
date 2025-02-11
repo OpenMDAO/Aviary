@@ -67,7 +67,17 @@ class BaseODE(om.Group):
         )
 
     def add_external_subsystems(self, solver_group=None):
-        """Adds all specified external subsystems to ODE"""
+        """
+        Adds all specified external subsystems to ODE in their own group
+
+        Parameters
+        ----------
+        solver_group : om.Group
+            If not None, external subsystems that require a solver
+            (subsystem.needs_mission_solver() == True) are placed inside solver_group.
+            If None, all external subsystems are added to self regardless of if they
+            request a solver. TODO add solver capability to all ODEs
+        """
 
         nn = self.options['num_nodes']
         aviary_options = self.options['aviary_options']

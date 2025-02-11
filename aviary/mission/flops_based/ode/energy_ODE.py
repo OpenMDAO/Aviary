@@ -65,11 +65,7 @@ class EnergyODE(_BaseODE):
             }
             add_SGM_required_inputs(self, SGM_required_inputs)
 
-        self.add_subsystem(
-            name='atmosphere',
-            subsys=Atmosphere(num_nodes=nn, input_speed_type=SpeedType.MACH),
-            promotes=['*'],
-        )
+        self.add_atmosphere()
 
         # add execcomp to compute velocity_rate based off mach_rate and sos
         self.add_subsystem(

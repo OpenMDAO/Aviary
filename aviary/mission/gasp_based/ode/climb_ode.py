@@ -3,7 +3,7 @@ import openmdao.api as om
 
 from aviary.subsystems.atmosphere.atmosphere import Atmosphere
 from aviary.subsystems.atmosphere.flight_conditions import FlightConditions
-from aviary.mission.gasp_based.ode.two_dof_ode import BaseODE
+from aviary.mission.gasp_based.ode.two_dof_ode import TwoDOFODE
 from aviary.mission.gasp_based.ode.climb_eom import ClimbRates
 from aviary.mission.gasp_based.ode.constraints.flight_constraints import (
     FlightConstraints,
@@ -18,7 +18,7 @@ from aviary.mission.gasp_based.ode.time_integration_base_classes import (
 )
 
 
-class ClimbODE(BaseODE):
+class ClimbODE(TwoDOFODE):
     """ODE for quasi-steady climb.
 
     This ODE has a ``KSComp`` which allows for the switching of obeying an EAS

@@ -1,7 +1,7 @@
 import numpy as np
 import openmdao.api as om
 
-from aviary.mission.gasp_based.ode.two_dof_ode import BaseODE
+from aviary.mission.gasp_based.ode.two_dof_ode import TwoDOFODE
 from aviary.mission.gasp_based.ode.groundroll_eom import GroundrollEOM
 from aviary.mission.gasp_based.ode.params import ParamPort
 from aviary.variable_info.variables import Aircraft, Dynamic
@@ -13,7 +13,7 @@ from aviary.mission.gasp_based.ode.time_integration_base_classes import (
 )
 
 
-class GroundrollODE(BaseODE):
+class GroundrollODE(TwoDOFODE):
     """ODE for takeoff ground roll.
 
     This phase begins at the point when the aircraft begins accelerating down the runway
