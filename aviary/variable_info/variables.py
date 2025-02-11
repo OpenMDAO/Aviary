@@ -171,6 +171,10 @@ class Aircraft:
         LIFT_DEPENDENT_DRAG_COEFF_FACTOR = (
             'aircraft:design:lift_dependent_drag_coeff_factor'
         )
+
+        LIFT_DEPENDENT_DRAG_POLAR = 'aircraft:design:lift_dependent_drag_polar'
+        LIFT_INDEPENDENT_DRAG_POLAR = 'aircraft:design:lift_independent_drag_polar'
+
         LIFT_POLAR = 'aircraft:design:lift_polar'
 
         MAX_FUSELAGE_PITCH_ANGLE = 'aircraft:design:max_fuselage_pitch_angle'
@@ -649,6 +653,7 @@ class Dynamic:
     class Vehicle:
         """Vehicle properties and states in a vehicle-fixed reference frame."""
 
+        ANGLE_OF_ATTACK = 'angle_of_attack'
         BATTERY_STATE_OF_CHARGE = 'battery_state_of_charge'
         CUMULATIVE_ELECTRIC_ENERGY_USED = 'cumulative_electric_energy_used'
         DRAG = 'drag'

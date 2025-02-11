@@ -1382,6 +1382,28 @@ add_meta_data(
 )
 
 add_meta_data(
+    Aircraft.Design.LIFT_DEPENDENT_DRAG_POLAR,
+    meta_data=_MetaData,
+    historical_name={"GASP": None,
+                     "FLOPS": None,
+                     "LEAPS1": None
+                     },
+    units='unitless',
+    desc='Lift dependent drag polar computed during Aviary pre-mission.',
+)
+
+add_meta_data(
+    Aircraft.Design.LIFT_INDEPENDENT_DRAG_POLAR,
+    meta_data=_MetaData,
+    historical_name={"GASP": None,
+                     "FLOPS": None,
+                     "LEAPS1": None
+                     },
+    units='unitless',
+    desc='Lift independent drag polar computed during Aviary pre-mission.',
+)
+
+add_meta_data(
     Aircraft.Design.LIFT_POLAR,
     meta_data=_MetaData,
     historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
@@ -6406,6 +6428,14 @@ add_meta_data(
 #     \  /    |  __/ | | | | | | | (__  | | |  __/
 #      \/      \___| |_| |_| |_|  \___| |_|  \___|
 # ================================================
+
+add_meta_data(
+    Dynamic.Vehicle.ANGLE_OF_ATTACK,
+    meta_data=_MetaData,
+    historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
+    units='deg',
+    desc="Angle between aircraft wing cord and relative wind",
+)
 
 add_meta_data(
     Dynamic.Vehicle.BATTERY_STATE_OF_CHARGE,

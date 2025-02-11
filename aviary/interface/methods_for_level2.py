@@ -8,6 +8,7 @@ import importlib.util
 import sys
 import json
 import enum
+import os
 
 import numpy as np
 
@@ -1558,7 +1559,11 @@ class AviaryProblem(om.Problem):
 
                 if len(phases) > 2:
                     self.traj.link_phases(
-                        phases[1:], ["alpha"], units='rad', connected=False)
+                        phases[1:],
+                        [Dynamic.Vehicle.ANGLE_OF_ATTACK],
+                        units='rad',
+                        connected=False,
+                    )
 
         elif self.mission_method is TWO_DEGREES_OF_FREEDOM:
             if self.analysis_scheme is AnalysisScheme.COLLOCATION:
@@ -1593,7 +1598,7 @@ class AviaryProblem(om.Problem):
                             states_to_link[Dynamic.Mission.VELOCITY] = true_unless_mpi
                             # if the first phase is rotation, we also need alpha
                             if phase1 == 'rotation':
-                                states_to_link['alpha'] = False
+                                states_to_link[Dynamic.Vehicle.ANGLE_OF_ATTACK] = False
 
                         for state, connected in states_to_link.items():
                             # in initial guesses, all of the states, other than time use
@@ -2326,11 +2331,11 @@ class AviaryProblem(om.Problem):
                 Dynamic.Mission.DISTANCE,
                 Dynamic.Mission.VELOCITY,
                 "flight_path_angle",
-                "alpha",
+                Dynamic.Vehicle.ANGLE_OF_ATTACK,
             ]
             if self.mission_method is TWO_DEGREES_OF_FREEDOM and phase_name == 'ascent':
                 # Alpha is a control for ascent.
-                control_keys.append('alpha')
+                control_keys.append(Dynamic.Vehicle.ANGLE_OF_ATTACK)
 
         prob_keys = ["tau_gear", "tau_flaps"]
 
@@ -2540,6 +2545,15 @@ class AviaryProblem(om.Problem):
             warnings.filterwarnings('ignore', category=UserWarning)
             failed = self.run_model()
             warnings.filterwarnings('default', category=UserWarning)
+
+        # update n2 diagram after run.
+        outdir = Path(self.get_reports_dir(force=True))
+        outfile = os.path.join(outdir, "n2.html")
+        om.n2(
+            self,
+            outfile=outfile,
+            show_browser=False,
+        )
 
         if self.aviary_inputs.get_val(Settings.VERBOSITY).value >= 2:
             with open('output_list.txt', 'w') as outfile:
