@@ -140,6 +140,7 @@ class TakeoffBrakeReleaseToDecisionSpeed(PhaseBuilderBase):
     assign_default_options
     '''
 
+    _meta_data_ = {}
     default_name = 'takeoff_brake_release'
     default_ode_class = TakeoffODE
 
