@@ -163,13 +163,14 @@ def preprocess_crewpayload(aviary_options: AviaryValues):
         raise om.AnalysisError(
             f"ERROR: In preprocesssors.py: NUM_PASSENGERS ({aviary_options.get_val(Aircraft.CrewPayload.NUM_PASSENGERS)}) is larger than the number of seats set by Design.NUM_PASSENGERS ({aviary_options.get_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS)}) .")
 
-    # Check and process cargo variables from FLOPS
+    # Check and process cargo variables - confirm mass method
     if Settings.MASS_METHOD in aviary_options:
         mass_method = aviary_options.get_val(Settings.MASS_METHOD)
     else:
         raise om.AnalysisError(
             f'ERROR: In preprocessors.py: MASS_METHOD not specified. Cannot preprocess cargo inputs.')
 
+    # Process GASP based cargo variables
     if mass_method == LegacyCode.GASP:
         try:
             cargo = aviary_options.get_val(Aircraft.CrewPayload.CARGO_MASS, 'lbm')
@@ -197,52 +198,61 @@ def preprocess_crewpayload(aviary_options: AviaryValues):
                     if problem_type == ProblemType.SIZING and cargo != des_cargo:
                         # user has set all three check if self consistent
                         cargo = des_cargo
-                        print(f"WARNING: Aircraft.CrewPayload.CARGO_MASS ({cargo}) != Aircraft.CrewPayload.Design.CARGO_MASS \
-                            ({des_cargo}) for SIZING mission. Setting as-flown CARGO_MASS = Design.CARGO_MASS ({des_cargo})")
+                        if verbosity >= 1:
+                            print(f"WARNING: Aircraft.CrewPayload.CARGO_MASS ({cargo}) != Aircraft.CrewPayload.Design.CARGO_MASS \
+                                ({des_cargo}) for SIZING mission. Setting as-flown CARGO_MASS = Design.CARGO_MASS ({des_cargo})")
                 else:
                     # user has set cargo & max: assume des = max
                     des_cargo = max_cargo
-                    print(f"Aircraft.CrewPayload.Design.CARGO_MASS missing, \
-                        assume Design.CARGO_MASS = MAX_CARGO_MASS ({max_cargo})")
+                    if verbosity >= 1:
+                        print(f"Aircraft.CrewPayload.Design.CARGO_MASS missing, \
+                            assume Design.CARGO_MASS = MAX_CARGO_MASS ({max_cargo})")
             elif des_cargo is not None:
                 # user has set cargo & des: assume max = des
                 max_cargo = des_cargo
-                print(f"Aircraft.CrewPayload.MAX_CARGO_MASS missing, \
-                    assume MAX_CARGO_MASS = Design.CARGO_MASS ({des_cargo})")
+                if verbosity >= 1:
+                    print(f"Aircraft.CrewPayload.MAX_CARGO_MASS missing, \
+                        assume MAX_CARGO_MASS = Design.CARGO_MASS ({des_cargo})")
             else:
                 # user has set cargo only: assume intention to set max only for backwards compatability.
-                print(f"WARNING: User has only set Aircraft.CrewPayload.CARGO_MASS {cargo}. \
-                    For backwards compatiability, Aviary is assuming user intended to set MAX_CARGO_MASS = ({cargo}). \
-                    Setting Aircraft.CrewPayload.CARGO_MASS and Aircraft.CrewPayload.Design.CARGO_MASS = 0")
                 max_cargo = cargo
                 cargo = des_cargo = 0
+                if verbosity >= 1:
+                    print(f"WARNING: User has only set Aircraft.CrewPayload.CARGO_MASS {cargo}. \
+                        For backwards compatiability, Aviary is assuming user intended to set MAX_CARGO_MASS = ({cargo}). \
+                        Setting Aircraft.CrewPayload.CARGO_MASS and Aircraft.CrewPayload.Design.CARGO_MASS = 0")
 
         elif max_cargo is not None:
             if des_cargo is not None:
                 # user has set max & des: assume flown = 0
                 cargo = 0
-                print(f"Aircraft.CrewPayload.CARGO_MASS missing, assume CARGO_MASS = 0")
+                if verbosity >= 1:
+                    print(f"Aircraft.CrewPayload.CARGO_MASS missing, assume CARGO_MASS = 0")
             else:
                 # user has set max only: assume flown = des = 0
                 cargo = des_cargo = 0
-                print(f"Aircraft.CrewPayload.CARGO_MASS and Aircraft.CrewPayload.Design.CARGO_MASS missing, assume CARGO_MASS and Design.CARGO_MASS = 0. No Cargo is flown on any mission")
+                if verbosity >= 1:
+                    print(f"Aircraft.CrewPayload.CARGO_MASS and Aircraft.CrewPayload.Design.CARGO_MASS missing, assume CARGO_MASS and Design.CARGO_MASS = 0. No Cargo is flown on any mission")
 
         elif des_cargo is not None:
             # user has only input des: assume max = des and flown = 0
             max_cargo = des_cargo
             cargo = 0
-            print(f"Aircraft.CrewPayload.CARGO_MASS and Aircraft.CrewPayload.MAX_CARGO_MASS missing, \
-                assume CARGO_MASS = 0 and MAX_CARGO_MASS = Design.CARGO_MASS ({des_cargo})")
+            if verbosity >= 1:
+                print(f"Aircraft.CrewPayload.CARGO_MASS and Aircraft.CrewPayload.MAX_CARGO_MASS missing, \
+                    assume CARGO_MASS = 0 and MAX_CARGO_MASS = Design.CARGO_MASS ({des_cargo})")
 
         else:
             # user has input no cargo information
             cargo = max_cargo = des_cargo = 0
-            print(
-                f"No CARGO variables detected, assume CARGO_MASS = MAX_CARGO_MASS = Design.CARGO_MASS = 0")
+            if verbosity >= 1:
+                print(
+                    f"No CARGO variables detected, assume CARGO_MASS = MAX_CARGO_MASS = Design.CARGO_MASS = 0")
 
         # check for potential cargo errors:
         if cargo > des_cargo:
-            print(f"WARNING! as flown cargo ({cargo}) > design cargo ({des_cargo})")
+            if verbosity >= 1:
+                print(f"WARNING! as flown cargo ({cargo}) > design cargo ({des_cargo})")
 
         if cargo > max_cargo or des_cargo > max_cargo:
             raise om.AnalysisError(
@@ -267,7 +277,7 @@ def preprocess_crewpayload(aviary_options: AviaryValues):
         num_pax = aviary_options.get_val(Aircraft.CrewPayload.NUM_PASSENGERS)
         as_flown_passenger_payload_mass = num_pax * pax_mass_with_bag
         as_flown_payload = as_flown_passenger_payload_mass + cargo
-        if as_flown_payload > des_payload:
+        if as_flown_payload > des_payload and verbosity >= 1:
             print(f"WARNING: as flown payload ({as_flown_payload}) > design payload \
                 ({des_payload}) . Consider potential need to re-design the aircraft!")
 
