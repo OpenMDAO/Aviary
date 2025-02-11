@@ -19,10 +19,9 @@ class DynamicPressure(om.ExplicitComponent):
     def setup(self):
         nn = self.options['num_nodes']
 
-        add_aviary_input(self, Dynamic.Atmosphere.STATIC_PRESSURE,
-                         np.ones(nn), units='lbf/ft**2')
+        add_aviary_input(self, Dynamic.Atmosphere.STATIC_PRESSURE, np.ones(nn))
 
-        add_aviary_input(self, Dynamic.Atmosphere.MACH, np.ones(nn), units='unitless')
+        add_aviary_input(self, Dynamic.Atmosphere.MACH, np.ones(nn))
 
         add_aviary_output(self, Dynamic.Atmosphere.DYNAMIC_PRESSURE,
                           val=np.ones(nn), units='lbf/ft**2')
