@@ -86,10 +86,10 @@ class CLmaxCalculation(om.ExplicitComponent):
         add_aviary_input(self, Dynamic.Atmosphere.STATIC_PRESSURE, val=(14.696 * 144),
                          desc="INGASP.P0")
 
-        add_aviary_input(self, Aircraft.Wing.AVERAGE_CHORD, val=12.61)
+        add_aviary_input(self, Aircraft.Wing.AVERAGE_CHORD)
 
-        add_aviary_input(self, Aircraft.Wing.MAX_LIFT_REF, val=1.15)
-        add_aviary_input(self, Aircraft.Wing.SLAT_LIFT_INCREMENT_OPTIMUM, val=0.93)
+        add_aviary_input(self, Aircraft.Wing.MAX_LIFT_REF)
+        add_aviary_input(self, Aircraft.Wing.SLAT_LIFT_INCREMENT_OPTIMUM)
         self.add_input(
             "VLAM9",
             val=0.9975,

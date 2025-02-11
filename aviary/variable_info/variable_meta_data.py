@@ -5339,6 +5339,7 @@ add_meta_data(
     historical_name={"GASP": 'INGASP.CFOC', "FLOPS": None, "LEAPS1": None},
     units='unitless',
     desc='ratio of flap chord to wing chord',
+    default_value=0.0,
 )
 
 add_meta_data(

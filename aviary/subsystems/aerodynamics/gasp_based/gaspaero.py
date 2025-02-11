@@ -857,7 +857,7 @@ class DragCoef(om.ExplicitComponent):
             "airport_alt", val=0.0, units="ft", desc="HPORT: Airport altitude"
         )
 
-        add_aviary_input(self, Aircraft.Wing.FLAP_CHORD_RATIO, val=0.3)
+        add_aviary_input(self, Aircraft.Wing.FLAP_CHORD_RATIO)
 
         # from flaps
         self.add_input(
@@ -1114,7 +1114,7 @@ class LiftCoeff(om.ExplicitComponent):
 
         self.add_input("flap_defl", val=10.0, units="deg", desc="Full flap deflection")
 
-        add_aviary_input(self, Aircraft.Wing.FLAP_CHORD_RATIO, val=0.3)
+        add_aviary_input(self, Aircraft.Wing.FLAP_CHORD_RATIO)
 
         add_aviary_input(self, Aircraft.Wing.TAPER_RATIO, val=0.33)
 
