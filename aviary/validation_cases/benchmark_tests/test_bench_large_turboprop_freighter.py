@@ -30,14 +30,14 @@ class LargeTurbopropFreighterBenchmark(unittest.TestCase):
 
         # load inputs from .csv to build engine
         options, _ = create_vehicle(
-            "models/large_turboprop_freighter/large_turboprop_freighter.csv"
+            "models/large_turboprop_freighter/large_turboprop_freighter_GASP.csv"
         )
 
         turboprop = TurbopropModel('turboprop', options=options)
 
         # load_inputs needs to be updated to accept an already existing aviary options
         prob.load_inputs(
-            "models/large_turboprop_freighter/large_turboprop_freighter.csv",
+            "models/large_turboprop_freighter/large_turboprop_freighter_GASP.csv",
             two_dof_phase_info,
             engine_builders=[turboprop],
         )
