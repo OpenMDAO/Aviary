@@ -3920,24 +3920,6 @@ add_meta_data(
 #                                                __/ |
 #                                               |___/
 # ===================================================================================
-# TODO obsolete w/o fighter equations?
-add_meta_data(
-    Aircraft.LandingGear.CARRIER_BASED,
-    meta_data=_MetaData,
-    historical_name={
-        "GASP": None,
-        "FLOPS": 'WTIN.CARBAS',  # ['&DEFINE.WTIN.CARBAS', 'FAWT.CARBAS'],
-        "LEAPS1": 'aircraft.inputs.L0_landing_gear.carrier_based',
-    },
-    units='unitless',
-    desc='carrier based aircraft switch, affects mass of flight crew, '
-    'avionics, and nose gear where true is carrier based and false is land '
-    'based',
-    option=True,
-    types=bool,
-    default_value=False,
-)
-
 add_meta_data(
     Aircraft.LandingGear.DRAG_COEFFICIENT,
     meta_data=_MetaData,

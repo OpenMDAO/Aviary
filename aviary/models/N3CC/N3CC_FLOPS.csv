@@ -87,7 +87,6 @@ aircraft:horizontal_tail:wetted_area,576.571192,ft**2
 aircraft:hydraulics:mass_scaler,0.95543,unitless
 aircraft:hydraulics:system_pressure,5000,psi
 aircraft:instruments:mass_scaler,1.66955,unitless
-aircraft:landing_gear:carrier_based,False,unitless
 aircraft:landing_gear:drag_coefficient,0.024,unitless
 aircraft:landing_gear:main_gear_mass_scaler,0.8846,unitless
 aircraft:landing_gear:main_gear_oleo_length,0,inch

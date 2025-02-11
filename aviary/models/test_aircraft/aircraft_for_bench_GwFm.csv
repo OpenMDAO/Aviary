@@ -155,7 +155,6 @@ aircraft:hydraulics:mass_scaler,1.0,unitless
 aircraft:hydraulics:system_pressure,3000.0,psi
 aircraft:instruments:mass_coefficient,0.0736,unitless
 aircraft:instruments:mass_scaler,1.25,unitless
-aircraft:landing_gear:carrier_based,False,unitless
 aircraft:landing_gear:fixed_gear,True,unitless
 aircraft:landing_gear:main_gear_location,0.15,unitless
 aircraft:landing_gear:main_gear_mass_coefficient,0.85,unitless

@@ -169,7 +169,6 @@ inputs.set_val(Aircraft.Instruments.MASS_SCALER, 1.66955)
 
 # Landing Gear
 # ---------------------------
-inputs.set_val(Aircraft.LandingGear.CARRIER_BASED, False)
 inputs.set_val(Aircraft.LandingGear.DRAG_COEFFICIENT, 0.024)
 inputs.set_val(Aircraft.LandingGear.MAIN_GEAR_MASS_SCALER, 0.8846)
 inputs.set_val(Aircraft.LandingGear.NOSE_GEAR_MASS_SCALER, 0.8846)
