@@ -23,12 +23,7 @@ class SimpleCD(om.ExplicitComponent):
         add_aviary_input(self, Aircraft.Design.SUBSONIC_DRAG_COEFF_FACTOR)
         add_aviary_input(self, Aircraft.Design.SUPERSONIC_DRAG_COEFF_FACTOR)
 
-        self.add_input(
-            Dynamic.Atmosphere.MACH,
-            val=np.ones(nn),
-            units='unitless',
-            desc='ratio of local fluid speed to local speed of sound',
-        )
+        add_aviary_input(self, Dynamic.Atmosphere.MACH, np.ones(nn))
 
         self.add_input(
             'CD_prescaled', val=np.ones(nn), units='unitless',
