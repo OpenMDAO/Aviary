@@ -85,23 +85,7 @@ class EnergyODE(_BaseODE):
         sub1 = self.add_subsystem('solver_sub', om.Group(),
                                   promotes=['*'])
 
-        for subsystem in core_subsystems:
-            # check if subsystem_options has entry for a subsystem of this name
-            if subsystem.name in subsystem_options:
-                kwargs = subsystem_options[subsystem.name]
-            else:
-                kwargs = {}
-
-            kwargs.update(base_options)
-            system = subsystem.build_mission(**kwargs)
-
-            if system is not None:
-                sub1.add_subsystem(
-                    subsystem.name,
-                    system,
-                    promotes_inputs=subsystem.mission_inputs(**kwargs),
-                    promotes_outputs=subsystem.mission_outputs(**kwargs),
-                )
+        self.add_core_subsystems(solver_group=sub1)
 
         self.add_external_subsystems(solver_group=sub1)
 
