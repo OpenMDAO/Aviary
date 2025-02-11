@@ -122,7 +122,7 @@ class CLmaxCalculation(om.ExplicitComponent):
         )
         add_aviary_input(self, Dynamic.Atmosphere.KINEMATIC_VISCOSITY, desc="INGASP.XKV")
         add_aviary_input(self, Dynamic.Atmosphere.TEMPERATURE,
-                         val=518.67, desc="INGASP.T0")
+                         desc="INGASP.T0")
 
         # outputs
 
