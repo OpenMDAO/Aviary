@@ -1,24 +1,10 @@
-import numpy as np
-
 import openmdao.api as om
 
-from aviary.mission.ode.specific_energy_rate import SpecificEnergyRate
-from aviary.mission.ode.altitude_rate import AltitudeRate
 from aviary.subsystems.atmosphere.atmosphere import Atmosphere
 from aviary.utils.aviary_values import AviaryValues
-from aviary.variable_info.enums import AnalysisScheme, AlphaModes, SpeedType
-
-from aviary.mission.flops_based.ode.mission_EOM import MissionEOM
-from aviary.mission.gasp_based.ode.time_integration_base_classes import (
-    add_SGM_required_inputs,
-    add_SGM_required_outputs,
-)
-from aviary.subsystems.propulsion.throttle_allocation import ThrottleAllocator
-from aviary.utils.aviary_values import AviaryValues
 from aviary.utils.functions import promote_aircraft_and_mission_vars
-from aviary.variable_info.enums import AnalysisScheme, ThrottleAllocation, SpeedType
+from aviary.variable_info.enums import AnalysisScheme
 from aviary.variable_info.variable_meta_data import _MetaData
-from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 
 
 class ExternalSubsystemGroup(om.Group):
@@ -61,6 +47,12 @@ class BaseODE(om.Group):
             'meta_data',
             default=_MetaData,
             desc='metadata associated with the variables to be passed into the ODE',
+        )
+        self.options.declare(
+            "analysis_scheme",
+            default=AnalysisScheme.COLLOCATION,
+            types=AnalysisScheme,
+            desc="The analysis method that will be used to close the trajectory; for example collocation or time integration",
         )
 
     def add_atmosphere(self, kwargs):
