@@ -87,7 +87,12 @@ class FlightPathEOM(om.ExplicitComponent):
                     'dymos.state_units:rad',
                 ],
             )
-            self.add_input("alpha", val=np.ones(nn), desc="angle of attack", units="deg")
+            self.add_input(
+                Dynamic.Vehicle.ANGLE_OF_ATTACK,
+                val=np.ones(nn),
+                desc="angle of attack",
+                units="deg",
+            )
 
         self.add_output(
             Dynamic.Mission.DISTANCE_RATE,
@@ -148,7 +153,7 @@ class FlightPathEOM(om.ExplicitComponent):
                 Dynamic.Mission.FLIGHT_PATH_ANGLE_RATE,
                 [
                     Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
-                    "alpha",
+                    Dynamic.Vehicle.ANGLE_OF_ATTACK,
                     Dynamic.Vehicle.LIFT,
                     Dynamic.Vehicle.MASS,
                     Dynamic.Mission.FLIGHT_PATH_ANGLE,
@@ -162,17 +167,20 @@ class FlightPathEOM(om.ExplicitComponent):
             )
             self.declare_partials(
                 "normal_force",
-                "alpha",
+                Dynamic.Vehicle.ANGLE_OF_ATTACK,
                 rows=arange,
                 cols=arange,
             )
             self.declare_partials(
-                "fuselage_pitch", "alpha", rows=arange, cols=arange
+                "fuselage_pitch",
+                Dynamic.Vehicle.ANGLE_OF_ATTACK,
+                rows=arange,
+                cols=arange,
             )
 
             self.declare_partials(
                 "load_factor",
-                "alpha",
+                Dynamic.Vehicle.ANGLE_OF_ATTACK,
                 rows=arange,
                 cols=arange,
             )
@@ -180,7 +188,7 @@ class FlightPathEOM(om.ExplicitComponent):
 
             self.declare_partials(
                 Dynamic.Mission.VELOCITY_RATE,
-                "alpha",
+                Dynamic.Vehicle.ANGLE_OF_ATTACK,
                 rows=arange,
                 cols=arange,
             )
@@ -191,7 +199,7 @@ class FlightPathEOM(om.ExplicitComponent):
             rows=arange,
             cols=arange,
         )
-        # self.declare_partials("alpha_rate", ["*"], val=0.0)
+        # self.declare_partials("angle_of_attack_rate", ["*"], val=0.0)
         self.declare_partials(
             "normal_force",
             [
@@ -226,7 +234,7 @@ class FlightPathEOM(om.ExplicitComponent):
         if self.options["ground_roll"]:
             alpha = inputs[Aircraft.Wing.INCIDENCE]
         else:
-            alpha = inputs["alpha"]
+            alpha = inputs[Dynamic.Vehicle.ANGLE_OF_ATTACK]
 
         thrust_along_flightpath = thrust * np.cos((alpha - i_wing) * np.pi / 180)
         thrust_across_flightpath = thrust * np.sin((alpha - i_wing) * np.pi / 180)
@@ -276,7 +284,7 @@ class FlightPathEOM(om.ExplicitComponent):
         if self.options["ground_roll"]:
             alpha = i_wing
         else:
-            alpha = inputs["alpha"]
+            alpha = inputs[Dynamic.Vehicle.ANGLE_OF_ATTACK]
 
         nn = self.options["num_nodes"]
 
@@ -362,9 +370,9 @@ class FlightPathEOM(om.ExplicitComponent):
             ] = (
                 dTAcF_dThrust * GRAV_ENGLISH_GASP / (TAS * weight)
             )
-            J[Dynamic.Mission.FLIGHT_PATH_ANGLE_RATE, "alpha"] = (
-                dTAcF_dAlpha * GRAV_ENGLISH_GASP / (TAS * weight)
-            )
+            J[
+                Dynamic.Mission.FLIGHT_PATH_ANGLE_RATE, Dynamic.Vehicle.ANGLE_OF_ATTACK
+            ] = (dTAcF_dAlpha * GRAV_ENGLISH_GASP / (TAS * weight))
             J[Dynamic.Mission.FLIGHT_PATH_ANGLE_RATE, Aircraft.Wing.INCIDENCE] = (
                 dTAcF_dIwing * GRAV_ENGLISH_GASP / (TAS * weight)
             )
@@ -390,12 +398,14 @@ class FlightPathEOM(om.ExplicitComponent):
 
             dNF_dAlpha = -np.ones(nn) * dTAcF_dAlpha
             # dNF_dAlpha[normal_force1 < 0] = 0
-            J[Dynamic.Mission.VELOCITY_RATE, "alpha"] = (
+            J[Dynamic.Mission.VELOCITY_RATE, Dynamic.Vehicle.ANGLE_OF_ATTACK] = (
                 (dTAlF_dAlpha - mu * dNF_dAlpha) * GRAV_ENGLISH_GASP / weight
             )
-            J["normal_force", "alpha"] = dNF_dAlpha
-            J["fuselage_pitch", "alpha"] = 1
-            J["load_factor", "alpha"] = dTAcF_dAlpha / (weight * np.cos(gamma))
+            J["normal_force", Dynamic.Vehicle.ANGLE_OF_ATTACK] = dNF_dAlpha
+            J["fuselage_pitch", Dynamic.Vehicle.ANGLE_OF_ATTACK] = 1
+            J["load_factor", Dynamic.Vehicle.ANGLE_OF_ATTACK] = dTAcF_dAlpha / (
+                weight * np.cos(gamma)
+            )
             J[Dynamic.Mission.VELOCITY_RATE, Aircraft.Wing.INCIDENCE] = (
                 (dTAlF_dIwing - mu * dNF_dIwing) * GRAV_ENGLISH_GASP / weight
             )

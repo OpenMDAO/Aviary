@@ -88,15 +88,15 @@ class PropellerBuilder(SubsystemBuilderBase):
                 'units': 'ft/s',
             },
             Aircraft.Engine.Propeller.INTEGRATED_LIFT_COEFFICIENT: {
-                'val': 0.5,
+                'val': 0.0,
                 'units': 'unitless',
             },
             Aircraft.Engine.Propeller.ACTIVITY_FACTOR: {
-                'val': 10.0,
+                'val': 0.0,
                 'units': 'unitless',
             },
             Aircraft.Engine.Propeller.DIAMETER: {
-                'val': 8.0,
+                'val': 0.0,
                 'units': 'ft',
             },
             Aircraft.Nacelle.AVG_DIAMETER: {
@@ -112,9 +112,9 @@ class PropellerBuilder(SubsystemBuilderBase):
 
     def get_outputs(self):
         return [
-            Dynamic.Mission.SHAFT_POWER + '_out',
-            Dynamic.Mission.SHAFT_POWER_MAX + '_out',
-            Dynamic.Mission.RPM + '_out',
-            Dynamic.Mission.TORQUE + '_out',
+            Dynamic.Vehicle.Propulsion.SHAFT_POWER + '_out',
+            Dynamic.Vehicle.Propulsion.SHAFT_POWER_MAX + '_out',
+            Dynamic.Vehicle.Propulsion.RPM + '_out',
+            Dynamic.Vehicle.Propulsion.TORQUE + '_out',
             Mission.Constraints.GEARBOX_SHAFT_POWER_RESIDUAL,
         ]
