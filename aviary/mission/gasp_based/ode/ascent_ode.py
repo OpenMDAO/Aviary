@@ -43,10 +43,9 @@ class AscentODE(TwoDOFODE):
             })
         self.add_subsystem("params", ascent_params, promotes=["*"])
 
-        self.add_atmosphere(nn)
+        self.add_atmosphere()
 
-        kwargs = {'num_nodes': nn, 'aviary_inputs': aviary_options,
-                  'method': 'low_speed', 'retract_gear': True, 'retract_flaps': True}
+        kwargs = {'method': 'low_speed', 'retract_gear': True, 'retract_flaps': True}
         for subsystem in core_subsystems:
             system = subsystem.build_mission(**kwargs)
             if system is not None:
@@ -59,7 +58,7 @@ class AscentODE(TwoDOFODE):
             # alpha as input
             pass
         else:
-            self.AddAlphaControl(alpha_mode=alpha_mode, num_nodes=nn)
+            self.add_alpha_control(alpha_mode=alpha_mode, num_nodes=nn)
 
         self.add_subsystem(
             "ascent_eom",

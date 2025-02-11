@@ -6,6 +6,7 @@ import unittest
 
 import numpy as np
 import openmdao.api as om
+from openmdao.utils.testing_utils import use_tempdirs
 from openmdao.utils.assert_utils import assert_near_equal
 
 from aviary.interface.methods_for_level2 import AviaryProblem
@@ -27,6 +28,7 @@ phase_info.pop('climb')
 phase_info.pop('descent')
 
 
+@use_tempdirs
 class TestSolvedAero(unittest.TestCase):
 
     def test_mission_solver(self):
@@ -121,7 +123,7 @@ class NoSolverBuilder(SubsystemBuilderBase):
 
 class SolverBuilder(SubsystemBuilderBase):
     """
-    Mission only. No solver.
+    Mission only. Solver.
     """
 
     def needs_mission_solver(self, aviary_options):

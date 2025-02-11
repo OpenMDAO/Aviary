@@ -30,7 +30,7 @@ class RotationODE(TwoDOFODE):
         # TODO: paramport
         self.add_subsystem("params", ParamPort(), promotes=["*"])
 
-        self.add_atmosphere(nn)
+        self.add_atmosphere()
 
         kwargs = {'num_nodes': nn, 'aviary_inputs': aviary_options,
                   'method': 'low_speed'}

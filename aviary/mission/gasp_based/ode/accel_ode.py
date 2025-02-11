@@ -38,7 +38,7 @@ class AccelODE(TwoDOFODE):
         # TODO: paramport
         self.add_subsystem("params", ParamPort(), promotes=["*"])
 
-        self.add_atmosphere(nn)
+        self.add_atmosphere()
 
         self.add_subsystem(
             "calc_weight",

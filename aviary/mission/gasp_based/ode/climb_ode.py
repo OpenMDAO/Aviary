@@ -188,7 +188,7 @@ class ClimbODE(TwoDOFODE):
                         promotes_outputs=subsystem.mission_outputs(**kwargs),
                     )
 
-        # maybe replace this with the solver in AddAlphaControl?
+        # maybe replace this with the solver in add_alpha_control?
         lift_balance_group.nonlinear_solver = om.NewtonSolver()
         lift_balance_group.nonlinear_solver.options["solve_subsystems"] = True
         lift_balance_group.nonlinear_solver.options["iprint"] = 0
@@ -214,7 +214,7 @@ class ClimbODE(TwoDOFODE):
             ],
         )
 
-        self.AddAlphaControl(
+        self.add_alpha_control(
             alpha_group=lift_balance_group,
             alpha_mode=AlphaModes.REQUIRED_LIFT,
             add_default_solver=False,

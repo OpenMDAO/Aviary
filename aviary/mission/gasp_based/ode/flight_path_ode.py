@@ -127,10 +127,14 @@ class FlightPathODE(TwoDOFODE):
                     ],
                     promotes_outputs=['required_lift'],
                 )
-            self.AddAlphaControl(
+            self.add_alpha_control(
                 alpha_mode=alpha_mode,
                 target_load_factor=1,
-                atol=1e-6, rtol=1e-12, num_nodes=nn, print_level=print_level)
+                atol=1e-6,
+                rtol=1e-12,
+                num_nodes=nn,
+                print_level=print_level,
+            )
 
         for subsystem in core_subsystems:
             system = subsystem.build_mission(**kwargs)
@@ -172,8 +176,9 @@ class FlightPathODE(TwoDOFODE):
                 promotes_outputs=['required_thrust'],
             )
 
-            self.AddThrottleControl(prop_group=prop_group,
-                                    atol=1e-8, print_level=print_level)
+            self.add_throttle_control(
+                prop_group=prop_group, atol=1e-8, print_level=print_level
+            )
 
         self.add_subsystem(
             "flight_path_eom",

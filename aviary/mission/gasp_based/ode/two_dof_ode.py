@@ -18,7 +18,7 @@ class TwoDOFODE(_BaseODE):
     def initialize(self):
         super().initialize()
 
-    def AddAlphaControl(
+    def add_alpha_control(
         self,
         alpha_group=None,
         alpha_mode: AlphaModes = AlphaModes.DEFAULT,
@@ -169,7 +169,7 @@ class TwoDOFODE(_BaseODE):
                 alpha_group.nonlinear_solver.linesearch = om.BoundsEnforceLS()
                 alpha_group.linear_solver = om.DirectSolver(assemble_jac=True)
 
-    def AddThrottleControl(
+    def add_throttle_control(
         self,
         prop_group=om.Group(),
         num_nodes=1,

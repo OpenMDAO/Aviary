@@ -1,7 +1,6 @@
 import numpy as np
 
 import openmdao.api as om
-from aviary.subsystems.atmosphere.atmosphere import Atmosphere
 
 from aviary.mission.flops_based.ode.mission_EOM import MissionEOM
 from aviary.mission.gasp_based.ode.time_integration_base_classes import (
@@ -9,10 +8,7 @@ from aviary.mission.gasp_based.ode.time_integration_base_classes import (
     add_SGM_required_outputs,
 )
 from aviary.subsystems.propulsion.throttle_allocation import ThrottleAllocator
-from aviary.utils.aviary_values import AviaryValues
-from aviary.utils.functions import promote_aircraft_and_mission_vars
 from aviary.variable_info.enums import AnalysisScheme, ThrottleAllocation, SpeedType
-from aviary.variable_info.variable_meta_data import _MetaData
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 from aviary.mission.base_ode import BaseODE as _BaseODE
 
@@ -65,7 +61,7 @@ class EnergyODE(_BaseODE):
             }
             add_SGM_required_inputs(self, SGM_required_inputs)
 
-        self.add_atmosphere()
+        self.add_atmosphere(input_speed_type=SpeedType.MACH)
 
         # add execcomp to compute velocity_rate based off mach_rate and sos
         self.add_subsystem(

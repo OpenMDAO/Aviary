@@ -153,7 +153,7 @@ class DescentODE(TwoDOFODE):
             ],  # [Dynamic.Atmosphere.DYNAMIC_PRESSURE] + speed_outputs,
         )
 
-        # maybe replace this with the solver in AddAlphaControl?
+        # maybe replace this with the solver in add_alpha_control?
         lift_balance_group.nonlinear_solver = om.NewtonSolver()
         lift_balance_group.nonlinear_solver.options["solve_subsystems"] = True
         lift_balance_group.nonlinear_solver.options["iprint"] = 0
@@ -214,11 +214,12 @@ class DescentODE(TwoDOFODE):
                                            **kwargs),
                                        promotes_outputs=subsystem.mission_outputs(**kwargs))
 
-        self.AddAlphaControl(
+        self.add_alpha_control(
             alpha_group=lift_balance_group,
             alpha_mode=AlphaModes.REQUIRED_LIFT,
             add_default_solver=False,
-            num_nodes=nn)
+            num_nodes=nn,
+        )
 
         # the last two subsystems will also be used for constraints
         self.add_excess_rate_comps(nn)

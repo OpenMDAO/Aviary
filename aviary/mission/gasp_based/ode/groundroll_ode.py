@@ -55,7 +55,7 @@ class GroundrollODE(TwoDOFODE):
         # TODO: paramport
         self.add_subsystem("params", ParamPort(), promotes=["*"])
 
-        self.add_atmosphere(nn)
+        self.add_atmosphere()
 
         # broadcast scalar i_wing to alpha for aero
         self.add_subsystem(
