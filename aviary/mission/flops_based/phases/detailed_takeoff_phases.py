@@ -139,15 +139,9 @@ class TakeoffBrakeReleaseToDecisionSpeed(PhaseBuilderBase):
     validate_options
     assign_default_options
     '''
-    __slots__ = ()
-
-    # region : derived type customization points
-    _meta_data_ = {}
 
     default_name = 'takeoff_brake_release'
-
     default_ode_class = TakeoffODE
-    # endregion : derived type customization points
 
     def build_phase(self, aviary_options=None):
         '''
@@ -2451,7 +2445,7 @@ class TakeoffTrajectory:
         KeyError
             if the specified base name is not found
         '''
-        mapped_phase: self.MappedPhase = self._phases[key]
+        mapped_phase = self._phases[key]
 
         return mapped_phase.phase
 

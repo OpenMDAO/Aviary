@@ -47,19 +47,14 @@ class AccelODE(TwoDOFODE):
             promotes_outputs=["weight"],
         )
 
-        kwargs = {
-            'num_nodes': nn,
-            'aviary_inputs': aviary_options,
+        self.options['subsystem_options']['core_aerodynamics'] = {
             'method': 'cruise',
             'output_alpha': True,
         }
-        for subsystem in core_subsystems:
-            system = subsystem.build_mission(**kwargs)
-            if system is not None:
-                self.add_subsystem(subsystem.name,
-                                   system,
-                                   promotes_inputs=subsystem.mission_inputs(**kwargs),
-                                   promotes_outputs=subsystem.mission_outputs(**kwargs))
+
+        self.add_core_subsystems()
+
+        self.add_external_subsystems()
 
         self.add_subsystem(
             "accel_eom",

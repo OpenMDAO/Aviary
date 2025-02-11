@@ -45,14 +45,15 @@ class AscentODE(TwoDOFODE):
 
         self.add_atmosphere()
 
-        kwargs = {'method': 'low_speed', 'retract_gear': True, 'retract_flaps': True}
-        for subsystem in core_subsystems:
-            system = subsystem.build_mission(**kwargs)
-            if system is not None:
-                self.add_subsystem(subsystem.name,
-                                   system,
-                                   promotes_inputs=subsystem.mission_inputs(**kwargs),
-                                   promotes_outputs=subsystem.mission_outputs(**kwargs))
+        self.options['subsystem_options']['core_aerodynamics'] = {
+            'method': 'low_speed',
+            'retract_gear': True,
+            'retract_flaps': True,
+        }
+
+        self.add_core_subsystems()
+
+        self.add_external_subsystems()
 
         if alpha_mode is AlphaModes.DEFAULT:
             # alpha as input

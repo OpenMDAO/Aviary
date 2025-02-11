@@ -23,10 +23,10 @@ from openmdao.utils.reports_system import _default_reports
 from aviary.constants import GRAV_ENGLISH_LBM, RHO_SEA_LEVEL_ENGLISH
 from aviary.interface.default_phase_info.two_dof_fiti import add_default_sgm_args
 from aviary.interface.utils.check_phase_info import check_phase_info
-from aviary.mission.energy_phase import EnergyPhase
+from aviary.mission.flops_based.phases.energy_phase import EnergyPhase
 from aviary.mission.flops_based.phases.build_landing import Landing
 from aviary.mission.flops_based.phases.build_takeoff import Takeoff
-from aviary.mission.twodof_phase import TwoDOFPhase
+from aviary.mission.gasp_based.phases.twodof_phase import TwoDOFPhase
 from aviary.mission.gasp_based.idle_descent_estimation import add_descent_estimation_as_submodel
 from aviary.mission.gasp_based.ode.params import ParamPort
 from aviary.mission.gasp_based.phases.time_integration_traj import FlexibleTraj

@@ -192,6 +192,8 @@ class UnsteadySolvedODE(TwoDOFODE):
                                            **kwargs),
                                        promotes_outputs=subsystem.mission_outputs(**kwargs))
 
+        self.add_external_subsystems()
+
         eom_comp = UnsteadySolvedEOM(num_nodes=nn, ground_roll=ground_roll)
 
         input_list = [

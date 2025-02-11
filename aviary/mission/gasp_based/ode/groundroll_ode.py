@@ -24,16 +24,6 @@ class GroundrollODE(TwoDOFODE):
     def initialize(self):
         super().initialize()
         self.options.declare(
-            'external_subsystems',
-            default=[],
-            desc='list of external subsystem builder instances to be added to the ODE',
-        )
-        self.options.declare(
-            'meta_data',
-            default=_MetaData,
-            desc='metadata associated with the variables to be passed into the ODE',
-        )
-        self.options.declare(
             'set_input_defaults', default=True, desc='set input defaults for the ODE'
         )
 
@@ -94,6 +84,8 @@ class GroundrollODE(TwoDOFODE):
                     inputs=[Dynamic.Vehicle.ANGLE_OF_ATTACK],
                     src_indices=np.zeros(nn, dtype=int),
                 )
+
+        self.add_external_subsystems()
 
         self.add_subsystem(
             "groundroll_eom", GroundrollEOM(num_nodes=nn), promotes=["*"]

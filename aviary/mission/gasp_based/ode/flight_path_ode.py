@@ -90,11 +90,7 @@ class FlightPathODE(TwoDOFODE):
             })
         self.add_subsystem("params", flight_path_params, promotes=["*"])
 
-        self.add_subsystem(
-            name='atmosphere',
-            subsys=Atmosphere(num_nodes=nn, input_speed_type=input_speed_type),
-            promotes=['*'],
-        )
+        self.add_atmosphere(input_speed_type=input_speed_type)
 
         if alpha_mode is AlphaModes.DEFAULT:
             # alpha as input
@@ -151,6 +147,8 @@ class FlightPathODE(TwoDOFODE):
                                        promotes_inputs=subsystem.mission_inputs(
                                            **kwargs),
                                        promotes_outputs=subsystem.mission_outputs(**kwargs))
+
+        self.add_external_subsystems()
 
         if analysis_scheme is AnalysisScheme.SHOOTING:
             prop_group.add_subsystem(

@@ -24,11 +24,7 @@ class BreguetCruiseODESolution(TwoDOFODE):
         # TODO: paramport
         self.add_subsystem("params", ParamPort(), promotes=["*"])
 
-        self.add_subsystem(
-            name='atmosphere',
-            subsys=Atmosphere(num_nodes=nn, input_speed_type=SpeedType.MACH),
-            promotes=['*'],
-        )
+        self.add_atmosphere(input_speed_type=SpeedType.MACH)
 
         self.add_subsystem(
             "calc_weight",
@@ -56,6 +52,8 @@ class BreguetCruiseODESolution(TwoDOFODE):
                                        promotes_inputs=subsystem.mission_inputs(
                                            **kwargs),
                                        promotes_outputs=subsystem.mission_outputs(**kwargs))
+
+        self.add_external_subsystems()
 
         bal = om.BalanceComp(
             name=Dynamic.Vehicle.Propulsion.THROTTLE,

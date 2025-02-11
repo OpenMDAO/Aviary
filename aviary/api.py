@@ -85,7 +85,9 @@ from aviary.mission.gasp_based.ode.taxi_ode import TaxiSegment as AnalyticTaxi
 # Phase builders
 from aviary.mission.phase_builder_base import PhaseBuilderBase
 # note that this is only for simplified right now
-from aviary.mission.energy_phase import EnergyPhase as HeightEnergyPhaseBuilder
+from aviary.mission.flops_based.phases.energy_phase import (
+    EnergyPhase as HeightEnergyPhaseBuilder,
+)
 from aviary.mission.flops_based.phases.build_landing import Landing as HeightEnergyLandingPhaseBuilder
 # note that this is only for simplified right now
 from aviary.mission.flops_based.phases.build_takeoff import Takeoff as HeightEnergyTakeoffPhaseBuilder

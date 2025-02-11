@@ -32,15 +32,13 @@ class RotationODE(TwoDOFODE):
 
         self.add_atmosphere()
 
-        kwargs = {'num_nodes': nn, 'aviary_inputs': aviary_options,
-                  'method': 'low_speed'}
-        for subsystem in core_subsystems:
-            system = subsystem.build_mission(**kwargs)
-            if system is not None:
-                self.add_subsystem(subsystem.name,
-                                   system,
-                                   promotes_inputs=subsystem.mission_inputs(**kwargs),
-                                   promotes_outputs=subsystem.mission_outputs(**kwargs))
+        self.options['subsystem_options']['core_aerodynamics'] = {
+            'method': 'low_speed',
+        }
+
+        self.add_core_subsystems()
+
+        self.add_external_subsystems()
 
         if analysis_scheme is AnalysisScheme.SHOOTING:
             alpha_comp = om.ExecComp(

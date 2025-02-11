@@ -56,13 +56,7 @@ class TaxiSegment(TwoDOFODE):
             ],
         )
 
-        self.add_subsystem(
-            name='atmosphere',
-            subsys=Atmosphere(num_nodes=1, input_speed_type=SpeedType.MACH),
-            promotes=[
-                '*',
-            ],
-        )
+        self.add_atmosphere(input_speed_type=SpeedType.MACH)
 
         for subsystem in core_subsystems:
             if isinstance(subsystem, PropulsionBuilderBase):
@@ -78,6 +72,8 @@ class TaxiSegment(TwoDOFODE):
                     ],
                     promotes_outputs=['*'],
                 )
+
+        self.add_external_subsystems()
 
         self.add_subsystem(
             "taxifuel", TaxiFuelComponent(), promotes=["*"]

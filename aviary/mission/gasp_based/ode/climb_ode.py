@@ -188,6 +188,8 @@ class ClimbODE(TwoDOFODE):
                         promotes_outputs=subsystem.mission_outputs(**kwargs),
                     )
 
+        self.add_external_subsystems()
+
         # maybe replace this with the solver in add_alpha_control?
         lift_balance_group.nonlinear_solver = om.NewtonSolver()
         lift_balance_group.nonlinear_solver.options["solve_subsystems"] = True
