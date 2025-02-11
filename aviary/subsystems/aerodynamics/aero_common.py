@@ -21,7 +21,7 @@ class DynamicPressure(om.ExplicitComponent):
 
         add_aviary_input(self, Dynamic.Atmosphere.STATIC_PRESSURE, np.ones(nn))
 
-        add_aviary_input(self, Dynamic.Atmosphere.MACH, np.ones(nn))
+        add_aviary_input(self, Dynamic.Atmosphere.MACH, shape=nn)
 
         add_aviary_output(self, Dynamic.Atmosphere.DYNAMIC_PRESSURE, val=np.ones(nn))
 

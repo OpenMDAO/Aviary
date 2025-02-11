@@ -25,7 +25,7 @@ class InducedDrag(om.ExplicitComponent):
         nn = self.options["num_nodes"]
 
         # Simulation inputs
-        add_aviary_input(self, Dynamic.Atmosphere.MACH, np.ones(nn))
+        add_aviary_input(self, Dynamic.Atmosphere.MACH, shape=nn)
         add_aviary_input(self, Dynamic.Vehicle.LIFT, shape=(nn))
         add_aviary_input(self, Dynamic.Atmosphere.STATIC_PRESSURE, np.ones(nn))
 
