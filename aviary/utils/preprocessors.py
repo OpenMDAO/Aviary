@@ -172,15 +172,17 @@ def preprocess_crewpayload(aviary_options: AviaryValues):
 
     if mass_method == LegacyCode.GASP:
         try:
-            cargo = Aircraft.CrewPayload.CARGO_MASS
+            cargo = aviary_options.get_val(Aircraft.CrewPayload.CARGO_MASS, 'lbm')
         except KeyError:
             cargo = None
         try:
-            max_cargo = Aircraft.CrewPayload.MAX_CARGO_MASS
+            max_cargo = aviary_options.get_val(
+                Aircraft.CrewPayload.MAX_CARGO_MASS, 'lbm')
         except KeyError:
             max_cargo = None
         try:
-            des_cargo = Aircraft.CrewPayload.Design.CARGO_MASS
+            des_cargo = aviary_options.get_val(
+                Aircraft.CrewPayload.Design.CARGO_MASS, 'lbm')
         except KeyError:
             des_cargo = None
 
