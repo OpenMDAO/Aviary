@@ -1,7 +1,7 @@
 import numpy as np
 import openmdao.api as om
 
-from aviary.mission.gasp_based.ode.base_ode import BaseODE
+from aviary.mission.gasp_based.ode.two_dof_ode import BaseODE
 from aviary.mission.gasp_based.ode.params import ParamPort
 from aviary.mission.gasp_based.ode.breguet_cruise_eom import RangeComp
 from aviary.mission.ode.specific_energy_rate import SpecificEnergyRate

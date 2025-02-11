@@ -11,7 +11,7 @@ from collections import namedtuple
 import dymos as dm
 import openmdao.api as om
 
-from aviary.mission.flops_based.ode.mission_ODE import MissionODE
+from aviary.mission.flops_based.ode.energy_ODE import EnergyODE
 from aviary.mission.initial_guess_builders import InitialGuess
 from aviary.utils.aviary_values import AviaryValues, get_keys
 from aviary.variable_info.variables import Dynamic
@@ -90,7 +90,7 @@ class PhaseBuilderBase(ABC):
 
     default_name = '<unknown phase>'
 
-    default_ode_class = MissionODE
+    default_ode_class = EnergyODE
 
     default_meta_data = _MetaData
     # endregion : derived type customization points

@@ -3,7 +3,7 @@ import openmdao.api as om
 
 from aviary.subsystems.atmosphere.atmosphere import Atmosphere
 from aviary.subsystems.atmosphere.flight_conditions import FlightConditions
-from aviary.mission.gasp_based.ode.base_ode import BaseODE
+from aviary.mission.gasp_based.ode.two_dof_ode import BaseODE
 from aviary.mission.gasp_based.ode.climb_eom import ClimbRates
 from aviary.mission.gasp_based.ode.constraints.flight_constraints import (
     FlightConstraints,

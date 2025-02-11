@@ -1,15 +1,15 @@
 import numpy as np
 
 from aviary.mission.gasp_based.ode.accel_eom import AccelerationRates
-from aviary.mission.gasp_based.ode.base_ode import BaseODE
+from aviary.mission.gasp_based.ode.two_dof_ode import TwoDOFODE
 from aviary.mission.gasp_based.ode.params import ParamPort
 from aviary.subsystems.mass.mass_to_weight import MassToWeight
 from aviary.variable_info.enums import AnalysisScheme, AnalysisScheme
-from aviary.variable_info.variables import Aircraft, Dynamic, Mission
+from aviary.variable_info.variables import Dynamic
 from aviary.mission.gasp_based.ode.time_integration_base_classes import add_SGM_required_inputs, add_SGM_required_outputs
 
 
-class AccelODE(BaseODE):
+class AccelODE(TwoDOFODE):
     """ODE for level acceleration.
 
     In level acceleration, there are only nonzero net forces in the direction of motion.

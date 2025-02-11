@@ -4,7 +4,7 @@ from aviary.subsystems.mass.mass_to_weight import MassToWeight
 
 from aviary.variable_info.enums import AlphaModes, AnalysisScheme, SpeedType
 from aviary.subsystems.atmosphere.atmosphere import Atmosphere
-from aviary.mission.gasp_based.ode.base_ode import BaseODE
+from aviary.mission.gasp_based.ode.two_dof_ode import BaseODE
 from aviary.mission.gasp_based.ode.flight_path_eom import FlightPathEOM
 from aviary.mission.gasp_based.ode.params import ParamPort
 from aviary.subsystems.propulsion.propulsion_builder import PropulsionBuilderBase

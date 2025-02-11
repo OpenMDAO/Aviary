@@ -62,10 +62,14 @@ from aviary.utils.preprocessors import preprocess_crewpayload
 
 # ODEs
 # TODO: check and see if this works with both sides, or just GASP
-from aviary.mission.gasp_based.ode.base_ode import BaseODE
+from aviary.mission.base_ode import BaseODE
+from aviary.mission.flops_based.ode.energy_ODE import EnergyODE
 from aviary.mission.flops_based.ode.landing_ode import LandingODE as DetailedLandingODE
 from aviary.mission.flops_based.ode.landing_ode import FlareODE as DetailedFlareODE
 from aviary.mission.flops_based.ode.takeoff_ode import TakeoffODE as DetailedTakeoffODE
+from aviary.mission.flops_based.phases.simplified_takeoff import TakeoffGroup as HeightEnergySimplifiedTakeoff
+from aviary.mission.flops_based.phases.simplified_landing import LandingGroup as HeightEnergySimplifiedLanding
+from aviary.mission.gasp_based.ode.two_dof_ode import TwoDOFODE
 from aviary.mission.gasp_based.ode.accel_ode import AccelODE as TwoDOFAccelerationODE
 from aviary.mission.gasp_based.ode.ascent_ode import AscentODE as TwoDOFAscentODE
 from aviary.mission.gasp_based.ode.breguet_cruise_ode import BreguetCruiseODESolution
@@ -76,8 +80,6 @@ from aviary.mission.gasp_based.ode.groundroll_ode import GroundrollODE as TwoDOF
 from aviary.mission.gasp_based.ode.rotation_ode import RotationODE as TwoDOFRotationODE
 from aviary.mission.gasp_based.ode.landing_ode import LandingSegment as TwoDOFSimplifiedLanding
 from aviary.mission.gasp_based.ode.taxi_ode import TaxiSegment as AnalyticTaxi
-from aviary.mission.flops_based.phases.simplified_takeoff import TakeoffGroup as HeightEnergySimplifiedTakeoff
-from aviary.mission.flops_based.phases.simplified_landing import LandingGroup as HeightEnergySimplifiedLanding
 
 
 # Phase builders

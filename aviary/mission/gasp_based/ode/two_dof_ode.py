@@ -4,40 +4,19 @@ import openmdao.api as om
 
 from aviary.mission.ode.specific_energy_rate import SpecificEnergyRate
 from aviary.mission.ode.altitude_rate import AltitudeRate
-from aviary.subsystems.atmosphere.atmosphere import Atmosphere
 from aviary.utils.aviary_values import AviaryValues
-from aviary.variable_info.enums import AnalysisScheme, AlphaModes, SpeedType
+from aviary.variable_info.enums import AnalysisScheme, AlphaModes
 from aviary.variable_info.variables import Aircraft, Dynamic
+from aviary.mission.base_ode import BaseODE as _BaseODE
 
 
-class BaseODE(om.Group):
+class TwoDOFODE(_BaseODE):
     """
-    The base class for all GASP based ODE components.
+    The base class for all 2 Degree-of-Freedom ODE components.
     """
 
     def initialize(self):
-        self.options.declare("num_nodes", default=1, types=int)
-        self.options.declare(
-            "analysis_scheme",
-            default=AnalysisScheme.COLLOCATION,
-            types=AnalysisScheme,
-            desc="The analysis method that will be used to close the trajectory; for example collocation or time integration",
-        )
-
-        self.options.declare(
-            'aviary_options', types=AviaryValues,
-            desc='collection of Aircraft/Mission specific options'
-        )
-
-        self.options.declare(
-            'core_subsystems',
-            desc='list of core subsystems'
-        )
-
-        self.options.declare(
-            'subsystem_options', types=dict, default={},
-            desc='dictionary of parameters to be passed to the subsystem builders'
-        )
+        super().initialize()
 
     def AddAlphaControl(
         self,
@@ -65,7 +44,7 @@ class BaseODE(om.Group):
             alpha_comp = om.ExecComp(
                 'alpha=rotation_rate*(t_curr-start_rotation)+alpha_init',
                 alpha=dict(val=0., units='deg'),
-                rotation_rate=dict(val=10.0/3.0, units='deg/s'),
+                rotation_rate=dict(val=10.0 / 3.0, units='deg/s'),
                 t_curr=dict(val=0., units='s'),
                 start_rotation=dict(val=0., units='s'),
                 alpha_init=dict(val=0., units='deg'),
@@ -245,14 +224,6 @@ class BaseODE(om.Group):
                 prop_group,
                 promotes=['*']
             )
-
-    def add_atmosphere(self, nn, input_speed_type=SpeedType.TAS):
-        """Add atmosphere component"""
-        self.add_subsystem(
-            name='atmosphere',
-            subsys=Atmosphere(num_nodes=nn, input_speed_type=input_speed_type),
-            promotes=['*'],
-        )
 
     def add_excess_rate_comps(self, nn):
         """Add SpecificEnergyRate and AltitudeRate components"""

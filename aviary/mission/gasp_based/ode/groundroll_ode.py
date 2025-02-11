@@ -1,7 +1,7 @@
 import numpy as np
 import openmdao.api as om
 
-from aviary.mission.gasp_based.ode.base_ode import BaseODE
+from aviary.mission.gasp_based.ode.two_dof_ode import BaseODE
 from aviary.mission.gasp_based.ode.groundroll_eom import GroundrollEOM
 from aviary.mission.gasp_based.ode.params import ParamPort
 from aviary.variable_info.variables import Aircraft, Dynamic

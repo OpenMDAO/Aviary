@@ -3,7 +3,7 @@ import openmdao.api as om
 from aviary.subsystems.atmosphere.atmosphere import Atmosphere
 
 from aviary.constants import RHO_SEA_LEVEL_ENGLISH as rho_sl
-from aviary.mission.gasp_based.ode.base_ode import BaseODE
+from aviary.mission.gasp_based.ode.two_dof_ode import TwoDOFODE
 from aviary.mission.gasp_based.ode.params import ParamPort
 from aviary.mission.gasp_based.ode.unsteady_solved.gamma_comp import GammaComp
 from aviary.mission.gasp_based.ode.unsteady_solved.unsteady_solved_flight_conditions import \
@@ -16,7 +16,7 @@ from aviary.subsystems.propulsion.propulsion_builder import PropulsionBuilderBas
 from aviary.variable_info.variable_meta_data import _MetaData
 
 
-class UnsteadySolvedODE(BaseODE):
+class UnsteadySolvedODE(TwoDOFODE):
     """
     This 2D aircraft ODE provides the rate of change of time per unit range covered.
 

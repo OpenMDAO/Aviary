@@ -14,58 +14,32 @@ from aviary.utils.functions import promote_aircraft_and_mission_vars
 from aviary.variable_info.enums import AnalysisScheme, ThrottleAllocation, SpeedType
 from aviary.variable_info.variable_meta_data import _MetaData
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
+from aviary.mission.base_ode import BaseODE as _BaseODE
 
 
-class ExternalSubsystemGroup(om.Group):
+class EnergyODE(_BaseODE):
     """
-    For external subsystem group, promote relevant aircraft and mission variables.
+    The base class for all energy method ODE components.
     """
-
-    def configure(self):
-        promote_aircraft_and_mission_vars(self)
-
-
-class MissionODE(om.Group):
-    """Define the ODE of motion"""
 
     def initialize(self):
-        self.options.declare(
-            'num_nodes', types=int, desc='Number of nodes to be evaluated in the RHS'
-        )
-        self.options.declare(
-            'subsystem_options',
-            types=dict,
-            default={},
-            desc='dictionary of parameters to be passed to the subsystem builders',
-        )
-        self.options.declare(
-            'aviary_options',
-            types=AviaryValues,
-            desc='collection of Aircraft/Mission specific options',
-        )
-        self.options.declare(
-            'core_subsystems',
-            desc='list of core subsystem builder instances to be added to the ODE',
-        )
-        self.options.declare(
-            'external_subsystems',
-            default=[],
-            desc='list of external subsystem builder instances to be added to the ODE',
-        )
-        self.options.declare(
-            'meta_data',
-            default=_MetaData,
-            desc='metadata associated with the variables to be passed into the ODE',
-        )
+        super().initialize()
+
         self.options.declare(
             'use_actual_takeoff_mass',
             default=False,
             desc='flag to use actual takeoff mass in the climb phase, otherwise assume 100 kg fuel burn',
         )
+        # TODO throttle enforcement & allocation should be moved to BaseODE for
+        # use in 2DOF
         self.options.declare(
             'throttle_enforcement',
             default='path_constraint',
-            values=['path_constraint', 'boundary_constraint', 'bounded', None],
+            values=[
+                'path_constraint',
+                'boundary_constraint',
+                'bounded',
+                None],
             desc='flag to enforce throttle constraints on the path or at the segment boundaries or using solver bounds',
         )
         self.options.declare(
@@ -73,12 +47,6 @@ class MissionODE(om.Group):
             default=ThrottleAllocation.FIXED,
             types=ThrottleAllocation,
             desc='Flag that determines how to handle throttles for multiple engines.',
-        )
-        self.options.declare(
-            "analysis_scheme",
-            default=AnalysisScheme.COLLOCATION,
-            types=AnalysisScheme,
-            desc="The analysis method that will be used to close the trajectory; for example collocation or time integration",
         )
 
     def setup(self):
@@ -143,50 +111,7 @@ class MissionODE(om.Group):
                     promotes_outputs=subsystem.mission_outputs(**kwargs),
                 )
 
-        # Create a lightly modified version of an OM group to add external subsystems
-        # to the ODE with a special configure() method that promotes
-        # all aircraft:* and mission:* variables to the ODE.
-        external_subsystem_group = ExternalSubsystemGroup()
-        external_subsystem_group_solver = ExternalSubsystemGroup()
-        add_subsystem_group = False
-        add_subsystem_group_solver = False
-
-        for subsystem in self.options['external_subsystems']:
-            subsystem_mission = subsystem.build_mission(
-                num_nodes=nn, aviary_inputs=aviary_options
-            )
-            if subsystem_mission is not None:
-
-                if subsystem.needs_mission_solver(aviary_options):
-                    add_subsystem_group_solver = True
-                    target = external_subsystem_group_solver
-                else:
-                    add_subsystem_group = True
-                    target = external_subsystem_group
-
-                target.add_subsystem(
-                    subsystem.name,
-                    subsystem_mission,
-                    promotes_inputs=subsystem.mission_inputs(**kwargs),
-                    promotes_outputs=subsystem.mission_outputs(**kwargs),
-                )
-
-        # Only add the external subsystem group if it has at least one subsystem.
-        # Without this logic there'd be an empty OM group added to the ODE.
-        if add_subsystem_group:
-            self.add_subsystem(
-                name='external_subsystems',
-                subsys=external_subsystem_group,
-                promotes_inputs=['*'],
-                promotes_outputs=['*'],
-            )
-        if add_subsystem_group_solver:
-            sub1.add_subsystem(
-                name='external_subsystems',
-                subsys=external_subsystem_group_solver,
-                promotes_inputs=['*'],
-                promotes_outputs=['*'],
-            )
+        self.add_external_subsystems(solver_group=sub1)
 
         sub1.add_subsystem(
             name='mission_EOM',
@@ -283,7 +208,8 @@ class MissionODE(om.Group):
             exec_comp_string = 'initial_mass_residual = initial_mass - mass[0] - 100.'
             initial_mass_string = Mission.Summary.GROSS_MASS
 
-        # Experimental: Add a component to constrain the initial mass to be equal to design gross weight.
+        # Experimental: Add a component to constrain the initial mass to be equal
+        # to design gross weight.
         initial_mass_residual_constraint = om.ExecComp(
             exec_comp_string,
             initial_mass={'units': 'kg'},
