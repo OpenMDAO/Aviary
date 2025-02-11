@@ -21,11 +21,11 @@ class GroundrollPhase(PhaseBuilderBase):
     __slots__ = ('external_subsystems', 'meta_data')
 
     _meta_data_ = {}
-
     _initial_guesses_meta_data_ = {}
 
     default_name = 'groundroll'
     default_ode_class = GroundrollODE
+    default_meta_data = _MetaData
 
     def build_phase(self, aviary_options: AviaryValues = None):
         '''

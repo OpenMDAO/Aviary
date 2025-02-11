@@ -7,9 +7,12 @@ from aviary.variable_info.enums import AnalysisScheme
 from aviary.variable_info.variable_meta_data import _MetaData
 
 
+#
 class ExternalSubsystemGroup(om.Group):
     """
-    For external subsystem group, promote relevant aircraft and mission variables.
+    Create a lightly modified version of an OM group to add external subsystems to the
+    ODE with a special configure() method that promotes all 'aircraft:*' and 'mission:*'
+    variables to the ODE.
     """
 
     def configure(self):
@@ -124,9 +127,6 @@ class BaseODE(om.Group):
         external_subsystems = self.options['external_subsystems']
         subsystem_options = self.options['subsystem_options']
 
-        # Create a lightly modified version of an OM group to add external subsystems
-        # to the ODE with a special configure() method that promotes
-        # all aircraft:* and mission:* variables to the ODE.
         external_subsystem_group = ExternalSubsystemGroup()
         external_subsystem_group_solver = ExternalSubsystemGroup()
         add_subsystem_group = False
