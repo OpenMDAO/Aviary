@@ -649,8 +649,13 @@ class AviaryProblem(om.Problem):
             promotes_inputs=['*'],
             promotes_outputs=['*'])
 
-        if not self.pre_mission_info['include_takeoff']:
+        try:
+            include_takeoff = self.pre_mission_info['include_takeoff']
+        except KeyError:
             return
+        else:
+            if not include_takeoff:
+                return
 
         # Check for 2DOF mission method
         # NOTE should solved trigger this as well?
@@ -1208,8 +1213,9 @@ class AviaryProblem(om.Problem):
         A user can override this with their own postmission systems.
         """
 
-        if self.pre_mission_info['include_takeoff'] and self.mission_method is HEIGHT_ENERGY:
-            self._add_post_mission_takeoff_systems()
+        if self.mission_method is HEIGHT_ENERGY:
+            if self.pre_mission_info['include_takeoff']:
+                self._add_post_mission_takeoff_systems()
 
         if include_landing and self.post_mission_info['include_landing']:
             if self.mission_method is HEIGHT_ENERGY:
@@ -1258,7 +1264,7 @@ class AviaryProblem(om.Problem):
                     ('mass_final', Mission.Landing.TOUCHDOWN_MASS),
                 ])
             else:
-                if self.pre_mission_info['include_takeoff']:
+                if self.mission_method is HEIGHT_ENERGY and self.pre_mission_info['include_takeoff']:
                     self.post_mission.promotes('fuel_burned', [
                         ('initial_mass', Mission.Summary.GROSS_MASS),
                     ])

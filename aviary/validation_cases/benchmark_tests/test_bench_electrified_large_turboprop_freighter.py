@@ -2,7 +2,7 @@ import numpy as np
 import unittest
 import openmdao.api as om
 
-
+from copy import deepcopy
 from numpy.testing import assert_almost_equal
 from openmdao.utils.testing_utils import use_tempdirs
 
@@ -12,7 +12,7 @@ from aviary.subsystems.propulsion.motor.motor_builder import MotorBuilder
 from aviary.utils.process_input_decks import create_vehicle
 from aviary.variable_info.variables import Aircraft, Mission, Settings
 
-from aviary.models.large_turboprop_freighter.phase_info import (
+from aviary.models.large_turboprop_freighter.electrified_phase_info import (
     two_dof_phase_info,
     energy_phase_info,
 )
@@ -23,6 +23,8 @@ from aviary.models.large_turboprop_freighter.phase_info import (
 class LargeElectrifiedTurbopropFreighterBenchmark(unittest.TestCase):
 
     def build_and_run_problem(self):
+        # modify phase_info
+        phase_info = deepcopy(two_dof_phase_info)
 
         # Build problem
         prob = AviaryProblem()
@@ -35,9 +37,10 @@ class LargeElectrifiedTurbopropFreighterBenchmark(unittest.TestCase):
         options.set_val(Settings.EQUATIONS_OF_MOTION, 'two_degrees_of_freedom')
         # options.set_val(Aircraft.Engine.NUM_ENGINES, 2)
         # options.set_val(Aircraft.Engine.WING_LOCATIONS, 0.385)
-        scale_factor = 3
-        options.set_val(Aircraft.Engine.RPM_DESIGN, 6000, 'rpm')
+        scale_factor = 17.77  # target is ~32 kN*m torque
+        options.set_val(Aircraft.Engine.RPM_DESIGN, 6000, 'rpm')  # max RPM of motor map
         options.set_val(Aircraft.Engine.FIXED_RPM, 6000, 'rpm')
+        # match propeller RPM of gas turboprop
         options.set_val(Aircraft.Engine.Gearbox.GEAR_RATIO, 5.88)
         options.set_val(Aircraft.Engine.Gearbox.EFFICIENCY, 1.0)
         options.set_val(Aircraft.Engine.SCALE_FACTOR, scale_factor)  # 11.87)
@@ -46,6 +49,7 @@ class LargeElectrifiedTurbopropFreighterBenchmark(unittest.TestCase):
             options.get_val(Aircraft.Engine.REFERENCE_SLS_THRUST, 'lbf') * scale_factor,
             'lbf',
         )
+        options.set_val(Aircraft.Battery.PACK_ENERGY_DENSITY, 1000, 'kW*h/kg')
 
         # turboprop = TurbopropModel('turboprop', options=options)
         # turboprop2 = TurbopropModel('turboprop2', options=options)

@@ -3,7 +3,7 @@ import openmdao.api as om
 
 from aviary.mission.gasp_based.ode.base_ode import BaseODE
 from aviary.mission.gasp_based.ode.params import ParamPort
-from aviary.mission.gasp_based.ode.breguet_cruise_eom import RangeComp, E_RangeComp
+from aviary.mission.gasp_based.ode.breguet_cruise_eom import RangeComp, ElectricRangeComp
 from aviary.mission.ode.specific_energy_rate import SpecificEnergyRate
 from aviary.mission.ode.altitude_rate import AltitudeRate
 from aviary.subsystems.atmosphere.atmosphere import Atmosphere
@@ -157,8 +157,8 @@ class BreguetCruiseODESolution(BaseODE):
             171481, 171581 - 10000, nn), units="lbm")
 
 
-class E_BreguetCruiseODESolution(BaseODE):
-    """The GASP based cruise ODE by electrical aircraft"""
+class ElectricBreguetCruiseODESolution(BaseODE):
+    """The GASP based cruise ODE for electrical aircraft"""
 
     def setup(self):
         nn = self.options["num_nodes"]
@@ -243,7 +243,7 @@ class E_BreguetCruiseODESolution(BaseODE):
         #
         self.add_subsystem(
             "e_breguet_eom",
-            E_RangeComp(num_nodes=nn),
+            ElectricRangeComp(num_nodes=nn),
             promotes_inputs=[
                 ("cruise_distance_initial", "initial_distance"),
                 ("cruise_time_initial", "initial_time"),

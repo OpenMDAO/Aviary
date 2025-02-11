@@ -235,9 +235,9 @@ class RangeComp(om.ExplicitComponent):
             dt_dvx[self._tril_rs[1:] - 1, self._tril_cs[1:]]
 
 
-class E_RangeComp(om.ExplicitComponent):
+class ElectricRangeComp(om.ExplicitComponent):
     """
-    Compute the cruise range and time for all-electrical aircraft.
+    Compute the cruise range and time for all-electric aircraft.
     Assume the battery mass does not change during the cruise.
     """
 
