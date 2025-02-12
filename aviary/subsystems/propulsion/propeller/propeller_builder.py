@@ -85,10 +85,6 @@ class PropellerBuilder(SubsystemBuilderBase):
             },
             Aircraft.Engine.Propeller.TIP_SPEED_MAX: {
                 'val': 0.0,
-                'units': 'unitless',
-            },
-            Aircraft.Engine.Propeller.TIP_SPEED_MAX: {
-                'val': 0.0,
                 'units': 'ft/s',
             },
             Aircraft.Engine.Propeller.INTEGRATED_LIFT_COEFFICIENT: {
