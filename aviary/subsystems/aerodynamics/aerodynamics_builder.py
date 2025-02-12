@@ -37,7 +37,7 @@ from aviary.variable_info.variables import Aircraft, Mission, Dynamic
 GASP = LegacyCode.GASP
 FLOPS = LegacyCode.FLOPS
 
-default_name = 'aerodynamics'
+_default_name = 'aerodynamics'
 
 
 class AerodynamicsBuilderBase(SubsystemBuilderBase):
@@ -56,7 +56,7 @@ class AerodynamicsBuilderBase(SubsystemBuilderBase):
 
     def __init__(self, name=None, meta_data=None):
         if name is None:
-            name = default_name
+            name = _default_name
 
         super().__init__(name=name, meta_data=meta_data)
 
