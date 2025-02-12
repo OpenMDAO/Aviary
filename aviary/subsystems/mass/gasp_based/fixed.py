@@ -2186,7 +2186,7 @@ class GearMass(om.ExplicitComponent):
         self.declare_partials(Aircraft.LandingGear.MAIN_GEAR_MASS, "*")
 
     def compute(self, inputs, outputs):
-        wing_loc = inputs[Aircraft.Wing.MOUNTING_TYPE]
+        wing_loc = inputs[Aircraft.Wing.VERTICAL_MOUNT_LOCATION]
         c_gear_mass = inputs[Aircraft.LandingGear.MASS_COEFFICIENT]
         gross_wt_initial = inputs[Mission.Design.GROSS_MASS] * GRAV_ENGLISH_LBM
         c_main_gear = inputs[Aircraft.LandingGear.MAIN_GEAR_MASS_COEFFICIENT]
@@ -2226,7 +2226,7 @@ class GearMass(om.ExplicitComponent):
         c_gear_mass = inputs[Aircraft.LandingGear.MASS_COEFFICIENT]
         gross_wt_initial = inputs[Mission.Design.GROSS_MASS] * GRAV_ENGLISH_LBM
         c_main_gear = inputs[Aircraft.LandingGear.MAIN_GEAR_MASS_COEFFICIENT]
-        wing_loc = inputs[Aircraft.Wing.MOUNTING_TYPE]
+        wing_loc = inputs[Aircraft.Wing.VERTICAL_MOUNT_LOCATION]
         clearance_ratio = inputs[Aircraft.Nacelle.CLEARANCE_RATIO]
         nacelle_diam = inputs[Aircraft.Nacelle.AVG_DIAMETER]
 
