@@ -43,7 +43,10 @@ class TestAeroBuilderGasp(unittest.TestCase):
         prob.run_model()
 
         # verify that we are promoting the parameters.
-        wing_height = prob.get_val("traj.rotation.rhs_all.aircraft:wing:height", units='ft')
+        wing_height = prob.get_val(
+            "traj.rotation.rhs_all.aircraft:wing:height",
+            units='ft',
+        )
         actual_wing_height = prob.aviary_inputs.get_val(Aircraft.Wing.HEIGHT, units='ft')
         assert_near_equal(wing_height, actual_wing_height)
 
