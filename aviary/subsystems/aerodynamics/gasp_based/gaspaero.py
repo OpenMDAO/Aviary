@@ -155,7 +155,7 @@ class WingTailRatios(om.ExplicitComponent):
 
     def setup(self):
 
-        add_aviary_input(self, Aircraft.Wing.AREA, val=1370.3)
+        add_aviary_input(self, Aircraft.Wing.AREA)
 
         add_aviary_input(self, Aircraft.Wing.SPAN)
 
@@ -460,7 +460,7 @@ class AeroGeom(om.ExplicitComponent):
             self, Aircraft.Nacelle.SURFACE_AREA, val=np.zeros(num_engine_type)
         )
 
-        add_aviary_input(self, Aircraft.Wing.AREA, val=1370.3)
+        add_aviary_input(self, Aircraft.Wing.AREA)
 
         add_aviary_input(self, Aircraft.Fuselage.AVG_DIAMETER)
 
@@ -891,7 +891,7 @@ class DragCoef(om.ExplicitComponent):
 
         add_aviary_input(self, Aircraft.Wing.SPAN)
 
-        add_aviary_input(self, Aircraft.Wing.AREA, val=1370.3)
+        add_aviary_input(self, Aircraft.Wing.AREA)
 
         # from aero setup
         self.add_input(

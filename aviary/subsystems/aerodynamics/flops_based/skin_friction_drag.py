@@ -66,7 +66,7 @@ class SkinFrictionDrag(om.ExplicitComponent):
             desc='Vector of component lower-surface laminar-flow fractions.')
 
         # Aircraft design inputs
-        add_aviary_input(self, Aircraft.Wing.AREA, 0.0)
+        add_aviary_input(self, Aircraft.Wing.AREA)
 
         # Output
         self.add_output(

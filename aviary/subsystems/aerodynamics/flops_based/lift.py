@@ -19,7 +19,7 @@ class SimpleLift(om.ExplicitComponent):
     def setup(self):
         nn = self.options['num_nodes']
 
-        add_aviary_input(self, Aircraft.Wing.AREA, val=1., units='m**2')
+        add_aviary_input(self, Aircraft.Wing.AREA, units='m**2')
 
         add_aviary_input(self, Dynamic.Atmosphere.DYNAMIC_PRESSURE,
                          val=np.ones(nn), units='N/m**2')
