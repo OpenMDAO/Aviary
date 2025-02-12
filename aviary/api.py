@@ -74,8 +74,8 @@ from aviary.mission.gasp_based.ode.descent_ode import DescentODE as TwoDOFDescen
 from aviary.mission.gasp_based.ode.flight_path_ode import FlightPathODE as TwoDOFFlightPathODE
 from aviary.mission.gasp_based.ode.groundroll_ode import GroundrollODE as TwoDOFGroundrollODE
 from aviary.mission.gasp_based.ode.rotation_ode import RotationODE as TwoDOFRotationODE
-from aviary.mission.gasp_based.phases.landing_group import LandingSegment as TwoDOFSimplifiedLanding
-from aviary.mission.gasp_based.phases.taxi_group import TaxiSegment as AnalyticTaxi
+from aviary.mission.gasp_based.ode.landing_ode import LandingSegment as TwoDOFSimplifiedLanding
+from aviary.mission.gasp_based.ode.taxi_ode import TaxiSegment as AnalyticTaxi
 from aviary.mission.flops_based.phases.simplified_takeoff import TakeoffGroup as HeightEnergySimplifiedTakeoff
 from aviary.mission.flops_based.phases.simplified_landing import LandingGroup as HeightEnergySimplifiedLanding
 

@@ -53,19 +53,26 @@ class TestGearbox(unittest.TestCase):
 
         prob.setup(force_alloc_complex=True)
 
-        prob.set_val(av.Aircraft.Engine.RPM_DESIGN, [5000, 6195, 6195], units='rpm')
-        prob.set_val(av.Dynamic.Mission.SHAFT_POWER, [100, 200, 375], units='hp')
-        prob.set_val(av.Dynamic.Mission.SHAFT_POWER_MAX, [375, 300, 375], units='hp')
+        prob.set_val(av.Dynamic.Mission.RPM + '_in', [5000, 6195, 6195], units='rpm')
+        prob.set_val(
+            av.Dynamic.Mission.SHAFT_POWER + '_in', [100, 200, 375], units='hp'
+        )
+        prob.set_val(
+            av.Dynamic.Mission.SHAFT_POWER_MAX + '_in', [375, 300, 375], units='hp'
+        )
         prob.set_val(av.Aircraft.Engine.Gearbox.GEAR_RATIO, 12.6, units=None)
         prob.set_val(av.Aircraft.Engine.Gearbox.EFFICIENCY, 0.98, units=None)
 
         prob.run_model()
 
-        SHAFT_POWER_GEARBOX = prob.get_val(av.Dynamic.Mission.SHAFT_POWER_GEARBOX, 'hp')
-        RPM_GEARBOX = prob.get_val(av.Dynamic.Mission.RPM_GEARBOX, 'rpm')
-        TORQUE_GEARBOX = prob.get_val(av.Dynamic.Mission.TORQUE_GEARBOX, 'ft*lbf')
+        SHAFT_POWER_GEARBOX = prob.get_val(
+            av.Dynamic.Mission.SHAFT_POWER + '_out', 'hp'
+        )
+        RPM_GEARBOX = prob.get_val(av.Dynamic.Mission.RPM + '_out', 'rpm')
+        TORQUE_GEARBOX = prob.get_val(av.Dynamic.Mission.TORQUE + '_out', 'ft*lbf')
         SHAFT_POWER_MAX_GEARBOX = prob.get_val(
-            av.Dynamic.Mission.SHAFT_POWER_MAX_GEARBOX, 'hp')
+            av.Dynamic.Mission.SHAFT_POWER_MAX + '_out', 'hp'
+        )
 
         SHAFT_POWER_GEARBOX_expected = [98.,  196.,  367.5]
         RPM_GEARBOX_expected = [396.82539683, 491.66666667, 491.66666667]

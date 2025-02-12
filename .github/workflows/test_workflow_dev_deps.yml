@@ -63,7 +63,6 @@ jobs:
           testflo . -n 1 --timeout=200 --show_skipped --coverage --coverpkg aviary
 
       - name: Checkout actions (again)
-        if: failure()
         uses: actions/checkout@v3
         with:
           sparse-checkout: |

@@ -8,7 +8,6 @@ from aviary.utils.named_values import get_keys
 from aviary.variable_info.variable_meta_data import _MetaData
 from aviary.variable_info.variables import Aircraft, Mission, Settings
 from aviary.utils.test_utils.variable_test import get_names_from_hierarchy
-from aviary.variable_info.variable_meta_data import _MetaData as BaseMetaData
 
 
 def preprocess_options(aviary_options: AviaryValues, **kwargs):
@@ -24,6 +23,11 @@ def preprocess_options(aviary_options: AviaryValues, **kwargs):
         engine_models = kwargs['engine_models']
     except KeyError:
         engine_models = None
+
+    if Settings.VERBOSITY not in aviary_options:
+        aviary_options.set_val(
+            Settings.VERBOSITY, _MetaData[Settings.VERBOSITY]['default_value']
+        )
 
     preprocess_crewpayload(aviary_options)
     preprocess_propulsion(aviary_options, engine_models)
@@ -216,7 +220,8 @@ def preprocess_crewpayload(aviary_options: AviaryValues):
                 flight_attendants_count = design_pax // 40 + 1
 
         aviary_options.set_val(
-            Aircraft.CrewPayload.NUM_FLIGHT_ATTENDANTS, flight_attendants_count)
+            Aircraft.CrewPayload.NUM_FLIGHT_ATTENDANTS, flight_attendants_count
+        )
 
     if Aircraft.CrewPayload.NUM_GALLEY_CREW not in aviary_options:
         galley_crew_count = 0  # assume no passengers
@@ -234,8 +239,10 @@ def preprocess_crewpayload(aviary_options: AviaryValues):
 
         aviary_options.set_val(Aircraft.CrewPayload.NUM_FLIGHT_CREW, flight_crew_count)
 
-    if (Aircraft.CrewPayload.BAGGAGE_MASS_PER_PASSENGER not in aviary_options and
-            Mission.Design.RANGE in aviary_options):
+    if (
+        Aircraft.CrewPayload.BAGGAGE_MASS_PER_PASSENGER not in aviary_options
+        and Mission.Design.RANGE in aviary_options
+    ):
         design_range = aviary_options.get_val(Mission.Design.RANGE, 'nmi')
 
         if design_range <= 900.0:
@@ -245,8 +252,11 @@ def preprocess_crewpayload(aviary_options: AviaryValues):
         else:
             baggage_mass_per_pax = 44.0
 
-        aviary_options.set_val(Aircraft.CrewPayload.BAGGAGE_MASS_PER_PASSENGER,
-                               val=baggage_mass_per_pax, units='lbm')
+        aviary_options.set_val(
+            Aircraft.CrewPayload.BAGGAGE_MASS_PER_PASSENGER,
+            val=baggage_mass_per_pax,
+            units='lbm',
+        )
 
     return aviary_options
 
@@ -379,8 +389,10 @@ def preprocess_propulsion(aviary_options: AviaryValues, engine_models: list = No
             # update aviary options and outputs with new vectors
             # if data is numerical, store in a numpy array
             # keep tuples as tuples, lists get converted to numpy arrays
-            if type(vec[0]) in (int, float, np.int64, np.float64)\
-               and type(vec) is not tuple:
+            if (
+                type(vec[0]) in (int, float, np.int64, np.float64)
+                and type(vec) is not tuple
+            ):
                 vec = np.array(vec, dtype=dtype)
             aviary_options.set_val(var, vec, units)
 
@@ -394,7 +406,8 @@ def preprocess_propulsion(aviary_options: AviaryValues, engine_models: list = No
         num_engines_all = np.zeros(num_engine_type).astype(int)
     try:
         num_fuse_engines_all = aviary_options.get_val(
-            Aircraft.Engine.NUM_FUSELAGE_ENGINES)
+            Aircraft.Engine.NUM_FUSELAGE_ENGINES
+        )
     except KeyError:
         num_fuse_engines_all = np.zeros(num_engine_type).astype(int)
     try:
@@ -416,7 +429,8 @@ def preprocess_propulsion(aviary_options: AviaryValues, engine_models: list = No
             # are assumed default
             warnings.warn(
                 f'Mount location for engines of type <{eng_name}> not specified. '
-                'Wing-mounted engines are assumed.')
+                'Wing-mounted engines are assumed.'
+            )
 
         # If wing mount type are specified but inconsistent, handle it
         elif total_engines_calc > num_engines:
@@ -427,14 +441,16 @@ def preprocess_propulsion(aviary_options: AviaryValues, engine_models: list = No
                 'Sum of aircraft:engine:num_fueslage_engines and '
                 'aircraft:engine:num_wing_engines do not match '
                 f'aircraft:engine:num_engines for EngineModel <{eng_name}>. Overwriting '
-                'with the sum of wing and fuselage mounted engines.')
+                'with the sum of wing and fuselage mounted engines.'
+            )
         elif total_engines_calc < num_engines:
             # fewer defined locations than num_engines - assume rest are wing mounted
             eng_name = engine.name
             num_wing_engines_all[i] = num_engines - num_fuse_engines
             warnings.warn(
                 'Mount location was not defined for all engines of EngineModel '
-                f'<{eng_name}> - unspecified engines are assumed wing-mounted.')
+                f'<{eng_name}> - unspecified engines are assumed wing-mounted.'
+            )
 
     aviary_options.set_val(Aircraft.Engine.NUM_ENGINES, num_engines_all)
     aviary_options.set_val(Aircraft.Engine.NUM_WING_ENGINES, num_wing_engines_all)
@@ -449,12 +465,13 @@ def preprocess_propulsion(aviary_options: AviaryValues, engine_models: list = No
     total_num_wing_engines = int(sum(num_wing_engines_all))
 
     # compute propulsion-level engine count totals here
+    aviary_options.set_val(Aircraft.Propulsion.TOTAL_NUM_ENGINES, total_num_engines)
     aviary_options.set_val(
-        Aircraft.Propulsion.TOTAL_NUM_ENGINES, total_num_engines)
+        Aircraft.Propulsion.TOTAL_NUM_FUSELAGE_ENGINES, total_num_fuse_engines
+    )
     aviary_options.set_val(
-        Aircraft.Propulsion.TOTAL_NUM_FUSELAGE_ENGINES, total_num_fuse_engines)
-    aviary_options.set_val(
-        Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES, total_num_wing_engines)
+        Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES, total_num_wing_engines
+    )
 
 
 def _get_engine_variables():

@@ -10,7 +10,7 @@ copyright: '2023'
 # See https://jupyterbook.org/content/execute.html
 execute:
   execute_notebooks: force
-  timeout: 120
+  timeout: 240
   # execute_notebooks: auto
 
 exclude_patterns: ["*/reports/*"]

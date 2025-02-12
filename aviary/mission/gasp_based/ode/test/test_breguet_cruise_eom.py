@@ -6,7 +6,7 @@ from openmdao.utils.assert_utils import (assert_check_partials,
                                          assert_near_equal)
 
 from aviary.constants import GRAV_ENGLISH_LBM
-from aviary.mission.gasp_based.phases.breguet import RangeComp
+from aviary.mission.gasp_based.ode.breguet_cruise_eom import RangeComp
 from aviary.variable_info.variables import Dynamic
 
 
@@ -92,11 +92,11 @@ class TestBreguetPartials2(unittest.TestCase):
     """
 
     def setUp(self):
-        import aviary.mission.gasp_based.phases.breguet as breguet
+        import aviary.mission.gasp_based.ode.breguet_cruise_eom as breguet
         breguet.GRAV_ENGLISH_LBM = 1.1
 
     def tearDown(self):
-        import aviary.mission.gasp_based.phases.breguet as breguet
+        import aviary.mission.gasp_based.ode.breguet_cruise_eom as breguet
         breguet.GRAV_ENGLISH_LBM = 1.0
 
     def test_partials(self):

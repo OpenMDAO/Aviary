@@ -128,8 +128,10 @@ class _Prelim(om.ExplicitComponent):
         add_aviary_input(self, Aircraft.Fuselage.MAX_WIDTH, 0.0)
 
         add_aviary_input(self, Aircraft.HorizontalTail.AREA, 0.0)
-        add_aviary_input(self, Aircraft.HorizontalTail.ASPECT_RATIO, 0.0)
-        add_aviary_input(self, Aircraft.HorizontalTail.TAPER_RATIO, 0.0)
+        add_aviary_input(self, Aircraft.HorizontalTail.ASPECT_RATIO,
+                         4.75, units="unitless")
+        add_aviary_input(self, Aircraft.HorizontalTail.TAPER_RATIO,
+                         0.352, units="unitless")
         add_aviary_input(self, Aircraft.HorizontalTail.THICKNESS_TO_CHORD, 0.0)
 
         add_aviary_input(self, Aircraft.VerticalTail.AREA, 0.0)

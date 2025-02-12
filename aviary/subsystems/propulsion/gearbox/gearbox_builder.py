@@ -6,15 +6,15 @@ from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 
 class GearboxBuilder(SubsystemBuilderBase):
     """
-    Define the builder for a single gearbox subsystem that provides methods 
-    to define the gearbox subsystem's states, design variables, fixed values, 
-    initial guesses, and mass names. It also provides methods to build OpenMDAO 
-    systems for the pre-mission and mission computations of the subsystem, 
+    Define the builder for a single gearbox subsystem that provides methods
+    to define the gearbox subsystem's states, design variables, fixed values,
+    initial guesses, and mass names. It also provides methods to build OpenMDAO
+    systems for the pre-mission and mission computations of the subsystem,
     to get the constraints for the subsystem, and to preprocess the inputs for
-    the subsystem. 
+    the subsystem.
 
-    This is meant to be computations for a single gearbox, so there is no notion 
-    of "num_gearboxs" in this code.
+    This is meant to be computations for a single gearbox, so there is no notion
+    of "num_gearboxes" in this code.
 
     This is a reduction gearbox, so gear ratio is input_RPM/output_RPM.
     """
@@ -87,17 +87,17 @@ class GearboxBuilder(SubsystemBuilderBase):
 
     def get_outputs(self):
         return [
-            Dynamic.Mission.RPM_GEARBOX,
-            Dynamic.Mission.SHAFT_POWER_GEARBOX,
-            Dynamic.Mission.SHAFT_POWER_MAX_GEARBOX,
-            Dynamic.Mission.TORQUE_GEARBOX,
-            Mission.Constraints.SHAFT_POWER_RESIDUAL,
+            Dynamic.Mission.SHAFT_POWER + '_out',
+            Dynamic.Mission.SHAFT_POWER_MAX + '_out',
+            Dynamic.Mission.RPM + '_out',
+            Dynamic.Mission.TORQUE + '_out',
+            Mission.Constraints.GEARBOX_SHAFT_POWER_RESIDUAL,
         ]
 
     def get_constraints(self):
         if self.include_constraints:
             constraints = {
-                Mission.Constraints.SHAFT_POWER_RESIDUAL: {
+                Mission.Constraints.GEARBOX_SHAFT_POWER_RESIDUAL: {
                     'lower': 0.0,
                     'type': 'path',
                     'units': 'kW',

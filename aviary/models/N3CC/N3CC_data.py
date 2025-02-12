@@ -20,10 +20,10 @@ from aviary.mission.flops_based.phases.detailed_takeoff_phases import (
 from aviary.subsystems.propulsion.utils import build_engine_deck
 from aviary.utils.aviary_values import AviaryValues
 from aviary.utils.test_utils.default_subsystems import get_default_premission_subsystems, get_default_mission_subsystems
-from aviary.utils.preprocessors import preprocess_options
 from aviary.utils.functions import get_path
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission, Settings
 from aviary.variable_info.enums import EquationsOfMotion, LegacyCode
+# from aviary.utils.preprocessors import preprocess_options
 
 N3CC = {}
 inputs = N3CC['inputs'] = AviaryValues()
@@ -447,7 +447,9 @@ outputs.set_val(Mission.Design.LIFT_COEFFICIENT, 0.583)
 
 # Create engine model
 engine = build_engine_deck(aviary_options=inputs)
-preprocess_options(inputs, engine_models=engine)
+# Calls to preprocess_options() in this location should be avoided because they
+# # will trigger when get_flops_inputs() is imported
+# preprocess_options(inputs, engine_models=engine)
 
 # build subsystems
 default_premission_subsystems = get_default_premission_subsystems('FLOPS', engine)

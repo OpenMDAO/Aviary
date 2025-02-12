@@ -256,26 +256,26 @@ def EngineDeckConverter(input_file, output_file, data_format: EngineDeckType):
             # TODO flight condition dependent throttle range?
             # NOTE this often leaves max throttles less than 1 in the deck - this caues
             #     problems when finding reference SLS thrust, as there is often no max
-            #     power data at that point in the engine deck. It is reccomended GASP
+            #     power data at that point in the engine deck. It is recommended GASP
             #     engine decks override Aircraft.Engine.REFERENCE_THRUST in EngineDecks
             data[THROTTLE] = normalize(data[TEMPERATURE], minimum=0.0, maximum=t4max)
 
-            # remove all points above T4max
-            # TODO save these points as commented out?
-            valid_idx = np.where(data[THROTTLE] <= 1.0)
-            data[MACH] = data[MACH][valid_idx]
-            data[ALTITUDE] = data[ALTITUDE][valid_idx]
-            data[THROTTLE] = data[THROTTLE][valid_idx]
-            data[FUEL_FLOW] = data[FUEL_FLOW][valid_idx]
-            data[TEMPERATURE] = data[TEMPERATURE][valid_idx]
-            if is_turbo_prop:
-                data[SHAFT_POWER_CORRECTED] = data[SHAFT_POWER_CORRECTED][valid_idx]
-                data[TAILPIPE_THRUST] = data[TAILPIPE_THRUST][valid_idx]
-            else:
-                data[THRUST] = data[THRUST][valid_idx]
-
         else:
-            data[THROTTLE] = T4T2
+            data[THROTTLE] = normalize(T4T2, minimum=0.0, maximum=t4max)
+
+        # TODO save these points as commented out?
+        valid_idx = np.where(data[THROTTLE] <= 1.0)
+        data[MACH] = data[MACH][valid_idx]
+        data[ALTITUDE] = data[ALTITUDE][valid_idx]
+        data[THROTTLE] = data[THROTTLE][valid_idx]
+        data[FUEL_FLOW] = data[FUEL_FLOW][valid_idx]
+        if compute_T4:
+            data[TEMPERATURE] = data[TEMPERATURE][valid_idx]
+        if is_turbo_prop:
+            data[SHAFT_POWER_CORRECTED] = data[SHAFT_POWER_CORRECTED][valid_idx]
+            data[TAILPIPE_THRUST] = data[TAILPIPE_THRUST][valid_idx]
+        else:
+            data[THRUST] = data[THRUST][valid_idx]
 
         # data needs to be string so column length can be easily found later
         for var in data:

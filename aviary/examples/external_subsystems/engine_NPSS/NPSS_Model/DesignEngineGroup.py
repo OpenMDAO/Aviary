@@ -118,10 +118,11 @@ class DesignEngineGroup(om.Group):
                            promotes_outputs=[('Fn_SLS', Aircraft.Engine.SCALED_SLS_THRUST), ('thrust_training_data', 'Fn_train'),
                                              ('thrustmax_training_data', 'Fn_max_train'), ('Wf_training_data', 'Wf_td')])
 
-        self.add_subsystem('negative_fuel_rate', om.ExecComp('y=-x',
-                                                             x={'val': np.ones(
-                                                                 vec_size), 'units': 'lbm/s'},
-                                                             y={'val': np.ones(vec_size), 'units': 'lbm/s'}),
+        self.add_subsystem('negative_fuel_rate',
+                           om.ExecComp('y=-x',
+                                       x={'val': np.ones(vec_size), 'units': 'lbm/s'},
+                                       y={'val': np.ones(vec_size), 'units': 'lbm/s'},
+                                       has_diag_partials=True,),
                            promotes_inputs=[('x', 'Wf_td')],
                            promotes_outputs=[('y', 'Wf_inv_train')])
 

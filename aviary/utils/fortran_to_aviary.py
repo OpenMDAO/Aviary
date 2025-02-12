@@ -115,14 +115,21 @@ def create_aviary_deck(fortran_deck: str, legacy_code=None, defaults_deck=None,
         if verbosity >= Verbosity.VERBOSE:
             print('Writing to:', out_file)
 
+    # TODO Use the existing utilities to write this input file? It will be much more
+    #      human-readable
     # open the file in write mode
     with open(out_file, 'w', newline='') as f:
         writer = csv.writer(f)
-
+        # Write header info and comments
+        for comment in comments:
+            writer.writerow([comment])
+        writer.writerow([])
         # Values that have been successfully translated to Aviary variables
         writer.writerow(['# Input Values'])
         for var, (val, units) in sorted(vehicle_data['input_values']):
             writer.writerow([var] + val + [units])
+
+        # TODO these should just get directly added to vehicle_data
         if legacy_code is FLOPS:
             EOM = 'height_energy'
             mass = 'FLOPS'
@@ -239,7 +246,7 @@ def process_and_store_data(data, var_name, legacy_code, current_namelist, altern
     var_ind = data_units = None
     skip_variable = False
     # skip any variables that shouldn't get converted
-    if re.search(current_namelist+var_name+'\Z', str(unused_vars), re.IGNORECASE):
+    if re.search(current_namelist + var_name + '\\Z', str(unused_vars), re.IGNORECASE):
         return vehicle_data
     # remove any elements that are empty (caused by trailing commas or extra commas)
     data_list = [dat for dat in data.split(',') if dat != '']

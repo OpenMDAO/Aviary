@@ -111,10 +111,11 @@ class CoreGeometryBuilder(GeometryBuilderBase):
         params = {}
 
         for entry in Aircraft.Nacelle.__dict__:
-            var = getattr(Aircraft.Nacelle, entry)
-            if var in aviary_inputs:
-                if 'total' not in var:
-                    params[var] = {'shape': (num_engine_type), 'static_target': True}
+            if entry != "__dict__":  # cannot get attribute from mappingproxy
+                var = getattr(Aircraft.Nacelle, entry)
+                if var in aviary_inputs:
+                    if 'total' not in var:
+                        params[var] = {'shape': (num_engine_type), 'static_target': True}
 
         return params
 

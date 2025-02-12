@@ -1,3 +1,6 @@
+# created unknown date
+# FLOPS-derived aircraft input deck converted from N3CC_generic_low_speed_polars_FLOPSinp.txt
+
 # Input Values
 aircraft:air_conditioning:mass_scaler,0.98094,unitless
 aircraft:anti_icing:mass_scaler,0.53202,unitless

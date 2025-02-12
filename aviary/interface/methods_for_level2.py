@@ -37,8 +37,8 @@ from aviary.mission.gasp_based.phases.cruise_phase import CruisePhase
 from aviary.mission.gasp_based.phases.accel_phase import AccelPhase
 from aviary.mission.gasp_based.phases.ascent_phase import AscentPhase
 from aviary.mission.gasp_based.phases.descent_phase import DescentPhase
-from aviary.mission.gasp_based.phases.landing_group import LandingSegment
-from aviary.mission.gasp_based.phases.taxi_group import TaxiSegment
+from aviary.mission.gasp_based.ode.landing_ode import LandingSegment
+from aviary.mission.gasp_based.ode.taxi_ode import TaxiSegment
 from aviary.mission.gasp_based.phases.v_rotate_comp import VRotateComp
 from aviary.mission.gasp_based.polynomial_fit import PolynomialFit
 from aviary.mission.phase_builder_base import PhaseBuilderBase
@@ -141,9 +141,8 @@ class AviaryGroup(om.Group):
             var_prom = [v['prom_name'] for k, v in var_abs]
             all_prom_inputs.extend(var_prom)
 
-        # Component promotes aren't handled until this group resolves.
-        # Here, we address anything promoted with an alias in AviaryProblem.
-        for system in self.system_iter(recurse=False, typ=Component):
+            # Calls to promotes aren't handled until this group resolves.
+            # Here, we address anything promoted with an alias in AviaryProblem.
             input_meta = system._var_promotes['input']
             var_prom = [v[0][1] for v in input_meta if isinstance(v[0], tuple)]
             all_prom_inputs.extend(var_prom)
@@ -699,33 +698,33 @@ class AviaryProblem(om.Problem):
         self.cruise_alt = self.aviary_inputs.get_val(
             Mission.Design.CRUISE_ALTITUDE, units='ft')
 
-        # Add taxi subsystem
-        self.model.add_subsystem(
-            "taxi", TaxiSegment(**(self.ode_args)),
-            promotes_inputs=['aircraft:*', 'mission:*'],
-        )
-
         if self.analysis_scheme is AnalysisScheme.COLLOCATION:
             # Add event transformation subsystem
             self.model.add_subsystem(
                 "event_xform",
                 om.ExecComp(
                     ["t_init_gear=m*tau_gear+b", "t_init_flaps=m*tau_flaps+b"],
-                    t_init_gear={"units": "s"},
-                    t_init_flaps={"units": "s"},
+                    t_init_gear={"units": "s"},  # initial time that gear comes up
+                    t_init_flaps={"units": "s"},  # initial time that flaps retract
                     tau_gear={"units": "unitless"},
                     tau_flaps={"units": "unitless"},
                     m={"units": "s"},
                     b={"units": "s"},
                 ),
                 promotes_inputs=[
-                    "tau_gear",
-                    "tau_flaps",
+                    "tau_gear",  # design var
+                    "tau_flaps",  # design var
                     ("m", Mission.Takeoff.ASCENT_DURATION),
                     ("b", Mission.Takeoff.ASCENT_T_INTIIAL),
                 ],
-                promotes_outputs=["t_init_gear", "t_init_flaps"],
+                promotes_outputs=["t_init_gear", "t_init_flaps"],  # link to h_fit
             )
+
+        # Add taxi subsystem
+        self.model.add_subsystem(
+            "taxi", TaxiSegment(**(self.ode_args)),
+            promotes_inputs=['aircraft:*', 'mission:*'],
+        )
 
         # Calculate speed at which to initiate rotation
         self.model.add_subsystem(
@@ -808,7 +807,7 @@ class AviaryProblem(om.Problem):
                 promotes_outputs=[('subsystem_mass', Aircraft.Design.
                                    EXTERNAL_SUBSYSTEMS_MASS)])
 
-    def _add_groundroll_eq_constraint(self, phase):
+    def _add_groundroll_eq_constraint(self):
         """
         Add an equality constraint to the problem to ensure that the TAS at the end of the
         groundroll phase is equal to the rotation velocity at the start of the rotation phase.
@@ -829,14 +828,6 @@ class AviaryProblem(om.Problem):
             "groundroll_boundary.lhs:velocity",
             src_indices=[-1],
             flat_src_indices=True,
-        )
-
-        ascent_tx = phase.options["transcription"]
-        ascent_num_nodes = ascent_tx.grid_data.num_nodes
-        self.model.add_subsystem(
-            "h_fit",
-            PolynomialFit(N_cp=ascent_num_nodes),
-            promotes_inputs=["t_init_gear", "t_init_flaps"],
         )
 
     def _get_phase(self, phase_name, phase_idx):
@@ -1133,7 +1124,7 @@ class AviaryProblem(om.Problem):
                         self.phase_info[phase_name]['phase_type'] = phase_name
 
                         if phase_name == 'ascent':
-                            self._add_groundroll_eq_constraint(phase)
+                            self._add_groundroll_eq_constraint()
 
             # loop through phase_info and external subsystems
             external_parameters = {}
@@ -1610,13 +1601,14 @@ class AviaryProblem(om.Problem):
 
                 # imitate input_initial for taxi -> groundroll
                 eq = self.model.add_subsystem(
-                    "link_taxi_groundroll", om.EQConstraintComp())
+                    "taxi_groundroll_mass_constraint", om.EQConstraintComp())
                 eq.add_eq_output("mass", eq_units="lbm", normalize=False,
                                  ref=10000., add_constraint=True)
-                self.model.connect("taxi.mass", "link_taxi_groundroll.rhs:mass")
+                self.model.connect(
+                    "taxi.mass", "taxi_groundroll_mass_constraint.rhs:mass")
                 self.model.connect(
                     "traj.groundroll.states:mass",
-                    "link_taxi_groundroll.lhs:mass",
+                    "taxi_groundroll_mass_constraint.lhs:mass",
                     src_indices=[0],
                     flat_src_indices=True,
                 )
@@ -1771,7 +1763,7 @@ class AviaryProblem(om.Problem):
 
         Depending on the mission model and problem type, different design variables and constraints are added.
 
-        If using the FLOPS model, a design variable is added for the gross mass of the aircraft, with a lower bound of 100,000 lbm and an upper bound of 200,000 lbm.
+        If using the FLOPS model, a design variable is added for the gross mass of the aircraft, with a lower bound of 10 lbm and an upper bound of 900,000 lbm.
 
         If using the GASP model, the following design variables are added depending on the mission type:
             - the initial thrust-to-weight ratio of the aircraft during ascent
@@ -1806,7 +1798,7 @@ class AviaryProblem(om.Problem):
             optimize_mass = self.pre_mission_info.get('optimize_mass')
             if optimize_mass:
                 self.model.add_design_var(Mission.Design.GROSS_MASS, units='lbm',
-                                          lower=100.e2, upper=900.e3, ref=135.e3)
+                                          lower=10, upper=900.e3, ref=175.e3)
 
         elif self.mission_method in (HEIGHT_ENERGY, TWO_DEGREES_OF_FREEDOM):
             # vehicle sizing problem
@@ -1815,14 +1807,14 @@ class AviaryProblem(om.Problem):
                 self.model.add_design_var(
                     Mission.Design.GROSS_MASS,
                     lower=10.0,
-                    upper=900e3,
+                    upper=None,
                     units='lbm',
                     ref=175e3,
                 )
                 self.model.add_design_var(
                     Mission.Summary.GROSS_MASS,
                     lower=10.0,
-                    upper=900e3,
+                    upper=None,
                     units='lbm',
                     ref=175e3,
                 )
@@ -1863,6 +1855,42 @@ class AviaryProblem(om.Problem):
 
             elif self.problem_type is ProblemType.FALLOUT:
                 print('No design variables for Fallout missions')
+
+            elif self.problem_type is ProblemType.MULTI_MISSION:
+                self.model.add_design_var(
+                    Mission.Summary.GROSS_MASS,
+                    lower=10.,
+                    upper=900e3,
+                    units='lbm',
+                    ref=175e3,
+                )
+
+                self.model.add_constraint(
+                    Mission.Constraints.RANGE_RESIDUAL, equals=0, ref=10
+                )
+
+                # We must ensure that design.gross_mass is greater than mission.summary.gross_mass
+                # and this must hold true for each of the different missions that is flown
+                # the result will be the design.gross_mass should be equal to the mission.summary.gross_mass
+                # of the heaviest mission
+                self.model.add_subsystem(
+                    "GROSS_MASS_constraint",
+                    om.ExecComp(
+                        "gross_mass_resid = design_mass - actual_mass",
+                        design_mass={"val": 1, "units": "kg"},
+                        actual_mass={"val": 0, "units": "kg"},
+                        gross_mass_resid={"val": 30, "units": "kg"},
+                    ),
+                    promotes_inputs=[
+                        ("design_mass", Mission.Design.GROSS_MASS),
+                        ("actual_mass", Mission.Summary.GROSS_MASS),
+                    ],
+                    promotes_outputs=["gross_mass_resid"],
+                )
+
+                self.model.add_constraint(
+                    "gross_mass_resid", lower=0
+                )
 
             if self.mission_method is TWO_DEGREES_OF_FREEDOM and self.analysis_scheme is AnalysisScheme.COLLOCATION:
                 # problem formulation to make the trajectory work
@@ -2560,12 +2588,12 @@ class AviaryProblem(om.Problem):
 
                     # Lists are fine except if they contain enums
                     if type_value == list:
-                        if type(type(value[0])) == enum.EnumType:
+                        if isinstance(value[0], enum.Enum):
                             for i in range(len(value)):
                                 value[i] = str([value[i]])
 
                     # Enums need converting to a string
-                    if type(type(value)) == enum.EnumType:
+                    if isinstance(value, enum.Enum):
                         value = str([value])
 
                 # Append the data to the list
@@ -2725,6 +2753,7 @@ class AviaryProblem(om.Problem):
             'landing.drag_loss_due_to_shielded_wing_area')
 
     def _add_objectives(self):
+        "add objectives and some constraints"
         self.model.add_subsystem(
             "fuel_obj",
             om.ExecComp(
@@ -2755,6 +2784,17 @@ class AviaryProblem(om.Problem):
             ],
             promotes_outputs=[("reg_objective", Mission.Objectives.RANGE)],
         )
+
+        if self.analysis_scheme is AnalysisScheme.COLLOCATION:
+            if self.mission_method is TWO_DEGREES_OF_FREEDOM:
+                ascent_phase = getattr(self.traj.phases, 'ascent')
+                ascent_tx = ascent_phase.options["transcription"]
+                ascent_num_nodes = ascent_tx.grid_data.num_nodes
+                self.model.add_subsystem(
+                    "h_fit",
+                    PolynomialFit(N_cp=ascent_num_nodes),
+                    promotes_inputs=["t_init_gear", "t_init_flaps"],
+                )
 
         self.model.add_subsystem(
             "range_constraint",

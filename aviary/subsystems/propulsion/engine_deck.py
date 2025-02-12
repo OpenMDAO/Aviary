@@ -11,8 +11,9 @@ accepted_headers : dict
     The strings that are accepted as valid header names after converted to all lowercase
     with all whitespace removed, mapped to the enum EngineModelVariables.
 
-required_variables : set
-    Variables that must be present in an EngineDeck's DATA_FILE (Mach, altitude, etc.)
+default_required_variables : set
+    Variables that must be present in an EngineDeck's DATA_FILE (Mach, altitude, etc.).
+    Can be replaced by user-provided list.
 
 required_options : tuple
     Options that must be present in an EngineDeck's options attribute.
@@ -99,6 +100,7 @@ default_required_variables = {
 
 # EngineDecks internally require these options to have values. Input checks will set
 # these options to default values in self.options if they are not provided
+# TODO should this instead be a set to prevent duplicates?
 required_options = (
     Aircraft.Engine.SCALE_PERFORMANCE,
     Aircraft.Engine.IGNORE_NEGATIVE_THRUST,

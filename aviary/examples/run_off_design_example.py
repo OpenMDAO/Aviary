@@ -8,6 +8,7 @@ Here we have climb, cruise, and descent phases.
 We then call the correct methods in order to set up and run an Aviary optimization problem.
 This performs a coupled design-mission optimization and outputs the results from Aviary into the `reports` folder.
 """
+from openmdao.utils.general_utils import env_truthy
 import aviary.api as av
 
 from aviary.interface.default_phase_info.height_energy import phase_info_parameterization
@@ -117,7 +118,10 @@ prob.add_post_mission_systems()
 
 # Link phases and variables
 prob.link_phases()
-prob.add_driver('SNOPT', max_iter=100)
+if env_truthy("TESTFLO_RUNNING"):
+    prob.add_driver('SLSQP', max_iter=100)
+else:
+    prob.add_driver('SNOPT', max_iter=100)
 prob.add_design_variables()
 
 # Load optimization problem formulation

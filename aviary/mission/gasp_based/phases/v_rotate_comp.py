@@ -8,6 +8,7 @@ from aviary.variable_info.variables import Aircraft, Dynamic
 class VRotateComp(om.ExplicitComponent):
     """
     Component that computes V_rotate based on vehicle properties and speed buffers.
+    Note: This component is not used.
     """
 
     def setup(self):

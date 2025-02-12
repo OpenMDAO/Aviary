@@ -12,6 +12,8 @@ from aviary.models.N3CC.N3CC_data import (
 from aviary.utils.test_utils.variable_test import assert_match_varnames
 from aviary.validation_cases.validation_tests import do_validation_test
 from aviary.variable_info.variables import Dynamic
+from aviary.subsystems.propulsion.utils import build_engine_deck
+from aviary.utils.preprocessors import preprocess_options
 
 
 class FlareEOMTest(unittest.TestCase):
@@ -25,6 +27,8 @@ class FlareEOMTest(unittest.TestCase):
         time, _ = detailed_landing_flare.get_item('time')
         nn = len(time)
         aviary_options = inputs
+        engine = build_engine_deck(aviary_options)
+        preprocess_options(aviary_options, engine_models=engine)
 
         prob.model.add_subsystem(
             "landing_flare_eom",

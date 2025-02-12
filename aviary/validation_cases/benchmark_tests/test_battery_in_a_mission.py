@@ -41,13 +41,13 @@ class TestSubsystemsMission(unittest.TestCase):
                     "constrain_final": False,
                     "fix_duration": False,
                     "initial_bounds": ((0.0, 0.0), "min"),
-                    "duration_bounds": ((10., 30.), "min"),
+                    "duration_bounds": ((10.0, 30.0), "min"),
                 },
             },
             'post_mission': {
                 'include_landing': False,
                 'external_subsystems': [],
-            }
+            },
         }
 
     def test_subsystems_in_a_mission(self):
@@ -87,7 +87,10 @@ class TestSubsystemsMission(unittest.TestCase):
         prob.run_aviary_problem()
 
         electric_energy_used = prob.get_val(
-            f'traj.cruise.timeseries.{av.Dynamic.Mission.CUMULATIVE_ELECTRIC_ENERGY_USED}', units='kW*h')
+            'traj.cruise.timeseries.'
+            f'{av.Dynamic.Mission.CUMULATIVE_ELECTRIC_ENERGY_USED}',
+            units='kW*h',
+        )
         fuel_burned = prob.get_val(av.Mission.Summary.FUEL_BURNED, units='lbm')
 
         # Check outputs
