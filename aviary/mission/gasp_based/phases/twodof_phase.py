@@ -21,6 +21,7 @@ class TwoDOFPhase(FlightPhaseBase):
     '''
     A phase builder for a two degree of freedom (2DOF) phase.
     '''
+
     def __init__(
         self,
         name=None,
