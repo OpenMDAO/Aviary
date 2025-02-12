@@ -121,6 +121,40 @@ class TestSolvedAero(unittest.TestCase):
         assert_near_equal(CL_pass, CL_base, 1e-6)
         assert_near_equal(CD_pass, CD_base, 1e-6)
 
+    def test_parameters(self):
+
+        local_phase_info = deepcopy(phase_info)
+
+        prob = AviaryProblem()
+
+        prob.load_inputs(
+            "subsystems/aerodynamics/flops_based/test/data/high_wing_single_aisle.csv",
+            local_phase_info,
+        )
+
+        # Change value just to be certain.
+        prob.aviary_inputs.set_val(Aircraft.Wing.AREA, 7777, units='ft**2')
+
+        # Preprocess inputs
+        prob.check_and_preprocess_inputs()
+
+        prob.add_pre_mission_systems()
+        prob.add_phases()
+        prob.add_post_mission_systems()
+
+        prob.link_phases()
+
+        prob.setup()
+
+        prob.set_initial_guesses()
+
+        prob.run_model()
+
+        # verify that we are promoting the parameters.
+        wing_area = prob.get_val("traj.cruise.rhs_all.aircraft:wing:area", units='ft**2')
+        actual_wing_area = prob.aviary_inputs.get_val(Aircraft.Wing.AREA, units='ft**2')
+        assert_near_equal(wing_area, actual_wing_area)
+
     def test_solved_aero_pass_polar_unique_abscissa(self):
         # Solved Aero with shortened lists of table abscissa.
         local_phase_info = deepcopy(phase_info)
@@ -293,6 +327,6 @@ class FakeDragPolarBuilder(SubsystemBuilderBase):
 
 
 if __name__ == "__main__":
-    # unittest.main()
-    test = TestSolvedAero()
-    test.test_solved_aero_pass_polar_unique_abscissa()
+    unittest.main()
+    # test = TestSolvedAero()
+    # test.test_solved_aero_pass_polar_unique_abscissa()
