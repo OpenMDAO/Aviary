@@ -14,6 +14,8 @@ from aviary.variable_info.variables import Aircraft
 class TestAeroBuilderGasp(unittest.TestCase):
 
     def test_parameters(self):
+        # This test is to make sure that the aero builder creates a parameter
+        # for wing height. It addreses a bug where this was absent.
 
         local_phase_info = deepcopy(phase_info)
 

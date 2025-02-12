@@ -122,6 +122,8 @@ class TestSolvedAero(unittest.TestCase):
         assert_near_equal(CD_pass, CD_base, 1e-6)
 
     def test_parameters(self):
+        # This test is to make sure that the aero builder creates a parameter
+        # for wing area. It addreses a bug where this was absent.
 
         local_phase_info = deepcopy(phase_info)
 
