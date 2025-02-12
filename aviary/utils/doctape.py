@@ -496,7 +496,7 @@ def get_function_names(file_path) -> set:
     return set(function_names)
 
 
-def glue_actions(cmd, curr_glued=[], glue_default=False, glue_choices=False, md_code=True):
+def glue_actions(cmd, curr_glued=None, glue_default=False, glue_choices=False, md_code=True):
     """
     Glue all Aviary CLI options
 
@@ -533,7 +533,7 @@ def glue_actions(cmd, curr_glued=[], glue_default=False, glue_choices=False, md_
                         curr_glued.append(str(choice))
 
 
-def glue_class_functions(obj, curr_glued=[], pre_fix=None, md_code=True):
+def glue_class_functions(obj, curr_glued=None, pre_fix=None, md_code=True):
     """
     Glue all class functions
 
@@ -555,7 +555,7 @@ def glue_class_functions(obj, curr_glued=[], pre_fix=None, md_code=True):
             curr_glued.append(func_name + '()')
 
 
-def glue_function_arguments(func, curr_glued=[], md_code=False):
+def glue_function_arguments(func, curr_glued=None, md_code=False):
     """
     Glue all function arguments for a given function
 
@@ -577,6 +577,31 @@ def glue_function_arguments(func, curr_glued=[], md_code=False):
         if arg not in curr_glued:
             glue_variable(arg, md_code=md_code)
             curr_glued.append(arg)
+
+
+def glue_function_arguments_and_defaults(func, curr_glued=None, glue_default=False, md_code=False):
+    """
+    Glue all function arguments for a given function
+
+    Parameters
+    ----------
+    func: function
+        function
+    curr_glued: list
+        the parameters that have been glued
+    """
+    if curr_glued is None:
+        curr_glued = []
+    sig = inspect.signature(func)
+    for param_name, param in sig.parameters.items():
+        if param_name not in curr_glued and param_name != 'self':
+            glue_variable(param_name, md_code=md_code)
+            curr_glued.append(param_name)
+            if glue_default:
+                if str(param.default) is not param.empty:
+                    if str(param.default) not in curr_glued:
+                        glue_variable(str(param.default), md_code=md_code)
+                        curr_glued.append(str(param.default))
 
 
 def glue_class_options(obj,  curr_glued=[], md_code=False):
