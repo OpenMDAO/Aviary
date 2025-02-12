@@ -73,7 +73,7 @@ class LiftEqualsWeight(om.ExplicitComponent):
     def setup(self):
         nn = self.options['num_nodes']
 
-        add_aviary_input(self, varname=Aircraft.Wing.AREA, val=1.0, units='m**2')
+        add_aviary_input(self, Aircraft.Wing.AREA, units='m**2')
 
         add_aviary_input(self, Dynamic.Vehicle.MASS, shape=(nn), units='kg')
 
