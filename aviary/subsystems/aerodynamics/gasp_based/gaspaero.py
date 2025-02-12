@@ -160,7 +160,7 @@ class WingTailRatios(om.ExplicitComponent):
 
         add_aviary_input(self, Aircraft.Wing.THICKNESS_TO_CHORD_ROOT, val=0.15)
 
-        add_aviary_input(self, Aircraft.Wing.MOUNTING_TYPE, val=0.0)
+        add_aviary_input(self, Aircraft.Wing.VERTICAL_MOUNT_LOCATION, val=0.0)
 
         add_aviary_input(self, Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION, val=0.0)
 
@@ -197,7 +197,7 @@ class WingTailRatios(om.ExplicitComponent):
                 Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION,
                 Aircraft.VerticalTail.SPAN,
                 Aircraft.Fuselage.AVG_DIAMETER,
-                Aircraft.Wing.MOUNTING_TYPE,
+                Aircraft.Wing.VERTICAL_MOUNT_LOCATION,
                 Aircraft.Wing.THICKNESS_TO_CHORD_ROOT,
                 Aircraft.Wing.AREA,
                 Aircraft.Wing.SPAN,
