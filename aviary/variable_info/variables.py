@@ -91,6 +91,7 @@ class Aircraft:
         FLIGHT_CREW_MASS_SCALER = 'aircraft:crew_and_payload:flight_crew_mass_scaler'
 
         MASS_PER_PASSENGER = 'aircraft:crew_and_payload:mass_per_passenger'
+        MAX_CARGO_MASS = 'aircraft:crew_and_payload:max_cargo_mass'
 
         MISC_CARGO = 'aircraft:crew_and_payload:misc_cargo'
 
@@ -131,6 +132,7 @@ class Aircraft:
         WING_CARGO = 'aircraft:crew_and_payload:wing_cargo'
 
         class Design:
+            CARGO_MASS = 'aircraft:crew_and_payload:design:cargo_mass'
             NUM_BUSINESS_CLASS = 'aircraft:crew_and_payload:design:num_business_class'
             NUM_FIRST_CLASS = 'aircraft:crew_and_payload:design:num_first_class'
             NUM_TOURIST_CLASS = 'aircraft:crew_and_payload:design:num_tourist_class'

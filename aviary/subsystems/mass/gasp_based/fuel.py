@@ -1256,8 +1256,8 @@ class FuelMass(om.ExplicitComponent):
                 Aircraft.Controls.TOTAL_MASS,
                 Aircraft.Design.FIXED_EQUIPMENT_MASS,
                 Aircraft.Design.FIXED_USEFUL_LOAD,
-                Aircraft.CrewPayload.PASSENGER_PAYLOAD_MASS,
                 Aircraft.Fuel.FUEL_SYSTEM_MASS,
+                "payload_mass_des",
             ],
             val=-1,
         )
@@ -1317,7 +1317,7 @@ class FuelMass(om.ExplicitComponent):
             - control_wt
             - fixed_equip_wt
             - useful_wt
-            - payload_wt
+            - payload_wt_des
             - fuel_sys_wt
         ) / GRAV_ENGLISH_LBM
         outputs["fuel_mass_min"] = (
