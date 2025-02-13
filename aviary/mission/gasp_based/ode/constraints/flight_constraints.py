@@ -56,7 +56,7 @@ class FlightConstraints(om.ExplicitComponent):
         add_aviary_input(self, Aircraft.Wing.INCIDENCE, val=1.0, units="rad")
 
         self.add_input(
-            "alpha",
+            Dynamic.Vehicle.ANGLE_OF_ATTACK,
             val=np.ones(nn),
             units="rad",
             desc="angle of attack",
@@ -86,7 +86,7 @@ class FlightConstraints(om.ExplicitComponent):
 
         self.declare_partials(
             "theta",
-            [Dynamic.Mission.FLIGHT_PATH_ANGLE, "alpha"],
+            [Dynamic.Mission.FLIGHT_PATH_ANGLE, Dynamic.Vehicle.ANGLE_OF_ATTACK],
             rows=arange,
             cols=arange,
         )
@@ -134,7 +134,7 @@ class FlightConstraints(om.ExplicitComponent):
         CL_max = inputs["CL_max"]
         gamma = inputs[Dynamic.Mission.FLIGHT_PATH_ANGLE]
         i_wing = inputs[Aircraft.Wing.INCIDENCE]
-        alpha = inputs["alpha"]
+        alpha = inputs[Dynamic.Vehicle.ANGLE_OF_ATTACK]
         TAS = inputs[Dynamic.Mission.VELOCITY]
 
         V_stall = (2 * weight / (wing_area * rho * CL_max)) ** 0.5  # stall speed
@@ -154,11 +154,11 @@ class FlightConstraints(om.ExplicitComponent):
         CL_max = inputs["CL_max"]
         gamma = inputs[Dynamic.Mission.FLIGHT_PATH_ANGLE]
         i_wing = inputs[Aircraft.Wing.INCIDENCE]
-        alpha = inputs["alpha"]
+        alpha = inputs[Dynamic.Vehicle.ANGLE_OF_ATTACK]
         TAS = inputs[Dynamic.Mission.VELOCITY]
 
         J["theta", Dynamic.Mission.FLIGHT_PATH_ANGLE] = 1
-        J["theta", "alpha"] = 1
+        J["theta", Dynamic.Vehicle.ANGLE_OF_ATTACK] = 1
         J["theta", Aircraft.Wing.INCIDENCE] = -1
 
         J["TAS_violation", Dynamic.Vehicle.MASS] = (

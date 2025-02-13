@@ -36,7 +36,7 @@ class DescentRates(om.ExplicitComponent):
             desc="mass of aircraft",
         )
         self.add_input(
-            "alpha",
+            Dynamic.Vehicle.ANGLE_OF_ATTACK,
             val=np.ones(nn),
             units="rad",
             desc="angle of attack of aircraft",
@@ -95,7 +95,7 @@ class DescentRates(om.ExplicitComponent):
                 Dynamic.Vehicle.MASS,
                 Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
                 Dynamic.Vehicle.DRAG,
-                "alpha",
+                Dynamic.Vehicle.ANGLE_OF_ATTACK,
             ],
             rows=arange,
             cols=arange,
@@ -117,7 +117,7 @@ class DescentRates(om.ExplicitComponent):
         thrust = inputs[Dynamic.Vehicle.Propulsion.THRUST_TOTAL]
         drag = inputs[Dynamic.Vehicle.DRAG]
         weight = inputs[Dynamic.Vehicle.MASS] * GRAV_ENGLISH_LBM
-        alpha = inputs["alpha"]
+        alpha = inputs[Dynamic.Vehicle.ANGLE_OF_ATTACK]
 
         gamma = (thrust - drag) / weight
 
@@ -132,7 +132,7 @@ class DescentRates(om.ExplicitComponent):
         thrust = inputs[Dynamic.Vehicle.Propulsion.THRUST_TOTAL]
         drag = inputs[Dynamic.Vehicle.DRAG]
         weight = inputs[Dynamic.Vehicle.MASS] * GRAV_ENGLISH_LBM
-        alpha = inputs["alpha"]
+        alpha = inputs[Dynamic.Vehicle.ANGLE_OF_ATTACK]
 
         gamma = (thrust - drag) / weight
 
@@ -167,7 +167,7 @@ class DescentRates(om.ExplicitComponent):
         ) / weight - np.sin(alpha)
         J["required_lift", Dynamic.Vehicle.DRAG] = - \
             weight * np.sin(gamma) * (-1 / weight)
-        J["required_lift", "alpha"] = -thrust * np.cos(alpha)
+        J["required_lift", Dynamic.Vehicle.ANGLE_OF_ATTACK] = -thrust * np.cos(alpha)
 
         J[
             Dynamic.Mission.FLIGHT_PATH_ANGLE, Dynamic.Vehicle.Propulsion.THRUST_TOTAL

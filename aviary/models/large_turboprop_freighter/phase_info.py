@@ -134,7 +134,7 @@ two_dof_phase_info = {
         },
         'initial_guesses': {
             'time': ([40.0, 5.0], 's'),
-            'alpha': ([0.0, 2.5], 'deg'),
+            'angle_of_attack': ([0.0, 2.5], 'deg'),
             'velocity': ([143, 150.0], 'kn'),
             'distance': ([3680.37217765, 4000], 'ft'),
             'throttle': ([0.956, 0.956], 'unitless'),
@@ -174,7 +174,7 @@ two_dof_phase_info = {
         'initial_guesses': {
             'time': ([45.0, 25.0], 's'),
             'flight_path_angle': ([0.0, 8.0], 'deg'),
-            'alpha': ([2.5, 1.5], 'deg'),
+            'angle_of_attack': ([2.5, 1.5], 'deg'),
             'velocity': ([150.0, 185.0], 'kn'),
             'distance': ([4.0e3, 10.0e3], 'ft'),
             'altitude': ([0.0, 500.0], 'ft'),
