@@ -30,20 +30,26 @@ class TakeoffODETest(unittest.TestCase):
             input_validation_data=detailed_takeoff_ground,
             output_validation_data=detailed_takeoff_ground,
             input_keys=[
-                'angle_of_attack',
+                Dynamic.Vehicle.ANGLE_OF_ATTACK,
                 Dynamic.Mission.FLIGHT_PATH_ANGLE,
                 Dynamic.Mission.ALTITUDE,
                 Dynamic.Mission.VELOCITY,
-                Dynamic.Mission.MASS,
-                Dynamic.Mission.LIFT,
-                Dynamic.Mission.THRUST_TOTAL,
-                Dynamic.Mission.DRAG],
+                Dynamic.Vehicle.MASS,
+                Dynamic.Vehicle.LIFT,
+                Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
+                Dynamic.Vehicle.DRAG,
+            ],
             output_keys=[
                 Dynamic.Mission.DISTANCE_RATE,
                 Dynamic.Mission.ALTITUDE_RATE,
-                Dynamic.Mission.VELOCITY_RATE],
-            tol=1e-2, atol=1e-9, rtol=1e-11,
-            check_values=False, check_partials=True)
+                Dynamic.Mission.VELOCITY_RATE,
+            ],
+            tol=1e-2,
+            atol=1e-9,
+            rtol=1e-11,
+            check_values=False,
+            check_partials=True,
+        )
 
     def test_case_climbing(self):
         prob = self._make_prob(climbing=True)
@@ -54,20 +60,26 @@ class TakeoffODETest(unittest.TestCase):
             input_validation_data=detailed_takeoff_climbing,
             output_validation_data=detailed_takeoff_climbing,
             input_keys=[
-                'angle_of_attack',
+                Dynamic.Vehicle.ANGLE_OF_ATTACK,
                 Dynamic.Mission.FLIGHT_PATH_ANGLE,
                 Dynamic.Mission.ALTITUDE,
                 Dynamic.Mission.VELOCITY,
-                Dynamic.Mission.MASS,
-                Dynamic.Mission.LIFT,
-                Dynamic.Mission.THRUST_TOTAL,
-                Dynamic.Mission.DRAG],
+                Dynamic.Vehicle.MASS,
+                Dynamic.Vehicle.LIFT,
+                Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
+                Dynamic.Vehicle.DRAG,
+            ],
             output_keys=[
                 Dynamic.Mission.DISTANCE_RATE,
                 Dynamic.Mission.ALTITUDE_RATE,
-                Dynamic.Mission.VELOCITY_RATE],
-            tol=1e-2, atol=1e-9, rtol=1e-11,
-            check_values=False, check_partials=True)
+                Dynamic.Mission.VELOCITY_RATE,
+            ],
+            tol=1e-2,
+            atol=1e-9,
+            rtol=1e-11,
+            check_values=False,
+            check_partials=True,
+        )
 
     @staticmethod
     def _make_prob(climbing):

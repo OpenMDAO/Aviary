@@ -59,8 +59,7 @@ class TestGASPGeomBuilderHybrid(av.TestSubsystemBuilderBase):
         self.subsystem_builder = CoreGeometryBuilder(
             'core_geometry',
             BaseMetaData,
-            use_both_geometries=False,
-            code_origin=GASP,
+            use_both_geometries=True,
             code_origin_to_prioritize=GASP)
         self.aviary_values = av.AviaryValues()
         self.aviary_values.set_val(Aircraft.Engine.NUM_ENGINES, [1], units='unitless')

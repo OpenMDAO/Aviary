@@ -4,7 +4,6 @@ Contains any preliminary calculations on the wing.
 
 import openmdao.api as om
 
-from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.functions import add_aviary_input, add_aviary_output
 from aviary.variable_info.variables import Aircraft
 
@@ -14,17 +13,12 @@ class WingPrelim(om.ExplicitComponent):
     preliminary calculations of wing aspect ratio
     """
 
-    def initialize(self):
-        self.options.declare(
-            'aviary_options', types=AviaryValues,
-            desc='collection of Aircraft/Mission specific options')
-
     def setup(self):
-        add_aviary_input(self, Aircraft.Wing.AREA, val=0.0)
-        add_aviary_input(self, Aircraft.Wing.GLOVE_AND_BAT, val=0.0)
-        add_aviary_input(self, Aircraft.Wing.SPAN, val=0.0)
+        add_aviary_input(self, Aircraft.Wing.AREA)
+        add_aviary_input(self, Aircraft.Wing.GLOVE_AND_BAT)
+        add_aviary_input(self, Aircraft.Wing.SPAN)
 
-        add_aviary_output(self, Aircraft.Wing.ASPECT_RATIO, val=0.0)
+        add_aviary_output(self, Aircraft.Wing.ASPECT_RATIO)
 
     def setup_partials(self):
         self.declare_partials('*', '*')

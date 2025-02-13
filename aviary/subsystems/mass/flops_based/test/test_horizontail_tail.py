@@ -10,7 +10,6 @@ from aviary.utils.test_utils.variable_test import assert_match_varnames
 from aviary.validation_cases.validation_tests import (Version,
                                                       flops_validation_test,
                                                       get_flops_case_names,
-                                                      get_flops_inputs,
                                                       print_case)
 from aviary.variable_info.variables import Aircraft, Mission
 
@@ -28,7 +27,7 @@ class ExplicitHorizontalTailMassTest(unittest.TestCase):
 
         prob.model.add_subsystem(
             "horizontal_tail",
-            HorizontalTailMass(aviary_options=get_flops_inputs(case_name)),
+            HorizontalTailMass(),
             promotes_inputs=['*'],
             promotes_outputs=['*'],
         )
@@ -67,7 +66,7 @@ class ExplicitHorizontalTailMassTest2(unittest.TestCase):
         prob = om.Problem()
         prob.model.add_subsystem(
             "horizontal_tail",
-            HorizontalTailMass(aviary_options=get_flops_inputs("N3CC")),
+            HorizontalTailMass(),
             promotes_inputs=['*'],
             promotes_outputs=['*'],
         )
@@ -93,7 +92,7 @@ class ExplicitAltHorizontalTailMassTest(unittest.TestCase):
 
         prob.model.add_subsystem(
             "horizontal_tail",
-            AltHorizontalTailMass(aviary_options=get_flops_inputs(case_name)),
+            AltHorizontalTailMass(),
             promotes_inputs=['*'],
             promotes_outputs=['*'],
         )
@@ -129,7 +128,7 @@ class ExplicitAltHorizontalTailMassTest2(unittest.TestCase):
         prob = om.Problem()
         prob.model.add_subsystem(
             "horizontal_tail",
-            AltHorizontalTailMass(aviary_options=get_flops_inputs("N3CC")),
+            AltHorizontalTailMass(),
             promotes_inputs=['*'],
             promotes_outputs=['*'],
         )

@@ -14,7 +14,7 @@ on:
 jobs:
 
   test_ubuntu:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     strategy:
       fail-fast: false
       matrix:
@@ -27,8 +27,7 @@ jobs:
             SCIPY: 1
             PYOPTSPARSE: 'latest'
             SNOPT: '7.7'
-            #OPENMDAO: 'dev'
-            OPENMDAO: '3.34.2'
+            OPENMDAO: 'dev'
             DYMOS: 'dev'
 
     steps:

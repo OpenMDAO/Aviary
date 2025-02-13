@@ -31,11 +31,10 @@ class FuelCapacityGroupTest(unittest.TestCase):
                     desc='Aircraft options dictionary')
 
             def setup(self):
-                aviary_options = self.options['aviary_options']
 
                 self.add_subsystem(
                     'fuel_capacity_group',
-                    FuelCapacityGroup(aviary_options=aviary_options),
+                    FuelCapacityGroup(),
                     promotes_inputs=['*'],
                     promotes_outputs=['*'],
                 )

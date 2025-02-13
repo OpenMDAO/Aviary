@@ -32,7 +32,7 @@ class StallSpeedTest(unittest.TestCase):
 
         self.prob.model.set_input_defaults("mass", val=181200.0, units="lbm")  # check
         self.prob.model.set_input_defaults(
-            Dynamic.Mission.DENSITY, val=constants.RHO_SEA_LEVEL_METRIC, units="kg/m**3"
+            Dynamic.Atmosphere.DENSITY, val=constants.RHO_SEA_LEVEL_METRIC, units="kg/m**3"
         )  # check
         self.prob.model.set_input_defaults(
             "planform_area", val=1370.0, units="ft**2"
@@ -104,7 +104,7 @@ class FinalConditionsTest(unittest.TestCase):
             Mission.Takeoff.FUEL_SIMPLE, val=577, units="lbm"
         )  # check
         self.prob.model.set_input_defaults(
-            Dynamic.Mission.DENSITY,
+            Dynamic.Atmosphere.DENSITY,
             val=constants.RHO_SEA_LEVEL_ENGLISH,
             units="slug/ft**3",
         )  # check
@@ -197,7 +197,8 @@ class TakeoffGroupTest(unittest.TestCase):
         self.prob.model.set_input_defaults(
             Mission.Takeoff.LIFT_OVER_DRAG, val=17.354, units='unitless')  # check
         self.prob.model.set_input_defaults(
-            Dynamic.Mission.ALTITUDE, val=0, units="ft")  # check
+            Dynamic.Mission.ALTITUDE, val=0, units="ft"
+        )  # check
 
         self.prob.setup(check=False, force_alloc_complex=True)
 

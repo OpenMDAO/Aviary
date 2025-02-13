@@ -51,13 +51,13 @@ class RotationPhase(PhaseBuilderBase):
 
         # Add states
         phase.add_state(
-            "alpha",
+            Dynamic.Vehicle.ANGLE_OF_ATTACK,
             fix_initial=True,
             fix_final=False,
             lower=angle_lower,
             upper=angle_upper,
             units="rad",
-            rate_source="alpha_rate",
+            rate_source="angle_of_attack_rate",
             ref=angle_ref,
             ref0=angle_ref0,
             defect_ref=angle_defect_ref,
@@ -97,11 +97,13 @@ class RotationPhase(PhaseBuilderBase):
         )
 
         # Add timeseries outputs
-        phase.add_timeseries_output(Dynamic.Mission.THRUST_TOTAL, units="lbf")
+        phase.add_timeseries_output(
+            Dynamic.Vehicle.Propulsion.THRUST_TOTAL, units="lbf"
+        )
         phase.add_timeseries_output("normal_force")
-        phase.add_timeseries_output(Dynamic.Mission.MACH)
+        phase.add_timeseries_output(Dynamic.Atmosphere.MACH)
         phase.add_timeseries_output("EAS", units="kn")
-        phase.add_timeseries_output(Dynamic.Mission.LIFT)
+        phase.add_timeseries_output(Dynamic.Vehicle.LIFT)
         phase.add_timeseries_output("CL")
         phase.add_timeseries_output("CD")
         phase.add_timeseries_output("fuselage_pitch", output_name="theta", units="deg")
@@ -153,8 +155,8 @@ RotationPhase._add_initial_guess_meta_data(
     InitialGuessIntegrationVariable(),
     desc='initial guess for time options')
 RotationPhase._add_initial_guess_meta_data(
-    InitialGuessState('alpha'),
-    desc='initial guess for angle of attack state')
+    InitialGuessState('angle_of_attack'), desc='initial guess for angle of attack state'
+)
 RotationPhase._add_initial_guess_meta_data(
     InitialGuessState('velocity'),
     desc='initial guess for true airspeed state')

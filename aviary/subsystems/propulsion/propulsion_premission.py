@@ -4,7 +4,7 @@ import numpy as np
 import openmdao.api as om
 
 from aviary.utils.aviary_values import AviaryValues
-from aviary.variable_info.functions import add_aviary_input, add_aviary_output
+from aviary.variable_info.functions import add_aviary_input, add_aviary_output, add_aviary_option
 from aviary.variable_info.variables import Aircraft, Settings
 from aviary.variable_info.enums import Verbosity
 
@@ -17,12 +17,15 @@ class PropulsionPreMission(om.Group):
 
     def initialize(self):
         self.options.declare(
-            'aviary_options', types=AviaryValues,
-            desc='collection of Aircraft/Mission specific options')
-        self.options.declare(
-            'engine_models', types=list,
-            desc='list of EngineModels on aircraft'
+            'aviary_options',
+            types=AviaryValues,
+            desc='collection of Aircraft/Mission specific options',
         )
+        self.options.declare(
+            'engine_models', types=list, desc='list of EngineModels on aircraft'
+        )
+        add_aviary_option(self, Aircraft.Engine.NUM_ENGINES)
+        add_aviary_option(self, Settings.VERBOSITY)
 
     def setup(self):
         options = self.options['aviary_options']
@@ -33,7 +36,7 @@ class PropulsionPreMission(om.Group):
         # value relevant to that variable - this group's configure step will handle
         # promoting/connecting just the relevant index in vectorized inputs/outputs for
         # each component here
-        # Promotions are handled in self.configure()
+        # Promotions are handled in configure()
         for engine in engine_models:
             subsys = engine.build_pre_mission(options)
             if subsys:
@@ -41,26 +44,24 @@ class PropulsionPreMission(om.Group):
                     proms = None
                 else:
                     proms = ['*']
-                self.add_subsystem(engine.name,
-                                   subsys=subsys,
-                                   promotes_outputs=proms,
-                                   )
+                self.add_subsystem(
+                    engine.name,
+                    subsys=subsys,
+                    promotes_outputs=proms,
+                )
 
         if num_engine_type > 1:
             # Add an empty mux comp, which will be customized to handle all required
-            # outputs in self.configure()
+            # outputs in configure()
             self.add_subsystem(
-                'pre_mission_mux',
-                subsys=om.MuxComp(),
-                promotes_outputs=['*']
+                'pre_mission_mux', subsys=om.MuxComp(), promotes_outputs=['*']
             )
 
         self.add_subsystem(
             'propulsion_sum',
-            subsys=PropulsionSum(
-                aviary_options=options),
+            subsys=PropulsionSum(),
             promotes_inputs=['*'],
-            promotes_outputs=['*']
+            promotes_outputs=['*'],
         )
 
     def configure(self):
@@ -69,88 +70,109 @@ class PropulsionPreMission(om.Group):
         # so vectorized inputs/outputs are a problem. Slice all needed vector inputs and pass
         # pre_mission components only the value they need, then mux all the outputs back together
 
-        num_engine_type = len(self.options['aviary_options'].get_val(
-            Aircraft.Engine.NUM_ENGINES))
+        engine_models = self.options['engine_models']
+        num_engine_type = len(engine_models)
 
         # determine if openMDAO messages and warnings should be suppressed
-        verbosity = self.options['aviary_options'].get_val(Settings.VERBOSITY)
+        verbosity = self.options[Settings.VERBOSITY]
         out_stream = None
 
         # DEBUG
         if verbosity > Verbosity.VERBOSE:
             out_stream = sys.stdout
 
-        comp_list = [
-            self._get_subsystem(group)
-            for group in dir(self)
-            if self._get_subsystem(group)
-            and group not in ['pre_mission_mux', 'propulsion_sum']
-        ]
+        # Patterns to identify which inputs/outputs are vectorized and need to be
+        # split then re-muxed
+        pattern = ['engine:', 'nacelle:']
 
         # Dictionary of all unique inputs/outputs from all new components, keys are
         # units for each var
         unique_outputs = {}
-        unique_inputs = {}
+        # unique_inputs = {}
 
-        # dictionaries of inputs/outputs for each added component in prop pre-mission
+        # dictionaries of inputs/outputs for engine in prop pre-mission
         input_dict = {}
         output_dict = {}
 
-        for idx, comp in enumerate(comp_list):
+        for idx, engine_model in enumerate(engine_models):
+            engine = self._get_subsystem(engine_model.name)
             # Patterns to identify which inputs/outputs are vectorized and need to be
             # split then re-muxed
             pattern = ['engine:', 'nacelle:']
 
             # pull out all inputs (in dict format) in component
-            comp_inputs = comp.list_inputs(
-                return_format='dict', units=True, out_stream=out_stream, all_procs=True
+            eng_inputs = engine.list_inputs(
+                return_format='dict',
+                units=True,
+                out_stream=out_stream,
+                all_procs=True,
+            )
+            # switch dictionary keys to promoted name rather than full path
+            # only handle variables that were top-level promoted inside engine model
+            eng_inputs = dict(
+                [
+                    (eng_inputs[key]['prom_name'], eng_inputs[key])
+                    for key in eng_inputs
+                    if '.' not in eng_inputs[key]['prom_name']
+                ]
             )
             # only keep inputs if they contain the pattern
-            input_dict[comp.name] = dict(
-                (key, comp_inputs[key])
-                for key in comp_inputs
+            input_dict[engine.name] = dict(
+                (key, eng_inputs[key])
+                for key in eng_inputs
                 if any([x in key for x in pattern])
             )
-            # Track list of ALL inputs present in prop pre-mission in a "flat" dict.
-            # Repeating inputs will just override what's already in the dict - we don't
-            # care if units get overridden, if they differ openMDAO will convert
-            # (if they aren't compatible, then a component specified the wrong units and
-            # needs to be fixed there)
-            unique_inputs.update([(key, input_dict[comp.name][key]['units'])
-                                 for key in input_dict[comp.name]])
 
             # do the same thing with outputs
-            comp_outputs = comp.list_outputs(
+            eng_outputs = engine.list_outputs(
                 return_format='dict', units=True, out_stream=out_stream, all_procs=True
             )
-            output_dict[comp.name] = dict(
-                (key, comp_outputs[key])
-                for key in comp_outputs
+            eng_outputs = dict(
+                [
+                    (eng_outputs[key]['prom_name'], eng_outputs[key])
+                    for key in eng_outputs
+                    if '.' not in eng_outputs[key]['prom_name']
+                ]
+            )
+            output_dict[engine.name] = dict(
+                (key, eng_outputs[key])
+                for key in eng_outputs
                 if any([x in key for x in pattern])
             )
             unique_outputs.update(
                 [
-                    (key, output_dict[comp.name][key]['units'])
-                    for key in output_dict[comp.name]
+                    (
+                        key,
+                        output_dict[engine.name][key]['units'],
+                    )
+                    for key in output_dict[engine.name]
                 ]
             )
 
-            # slice incoming inputs for this component, so it only gets the correct index
-            self.promotes(
-                comp.name, inputs=input_dict[comp.name].keys(), src_indices=om.slicer[idx])
+            # slice incoming inputs for this engine, so it only gets the correct index
+            if num_engine_type > 1:
+                src_indices = om.slicer[idx]
+            else:
+                src_indices = None
 
-            # promote all other inputs/outputs for this component normally (handle vectorized outputs later)
             self.promotes(
-                comp.name,
+                engine.name,
+                inputs=[*input_dict[engine.name]],
+                src_indices=src_indices,
+            )
+
+            # promote all other inputs/outputs for this engine normally (handle vectorized outputs later)
+            self.promotes(
+                engine.name,
                 inputs=[
-                    comp_inputs[input]['prom_name']
-                    for input in comp_inputs
-                    if input not in input_dict[comp.name]
+                    input
+                    for input in eng_inputs
+                    if input not in input_dict[engine.name]
                 ],
                 outputs=[
-                    comp_outputs[output]['prom_name']
-                    for output in comp_outputs
-                    if output not in output_dict[comp.name]
+                    output
+                    for output in eng_outputs
+                    if output not in output_dict[engine.name]
                 ],
             )
 
@@ -160,11 +182,11 @@ class PropulsionPreMission(om.Group):
             for output in unique_outputs:
                 self.pre_mission_mux.add_var(output, units=unique_outputs[output])
                 # promote/alias outputs for each comp that has relevant outputs
-                for i, comp in enumerate(output_dict):
-                    if output in output_dict[comp]:
+                for i, engine in enumerate(output_dict):
+                    if output in output_dict[engine]:
                         # if this component provides the output, connect it to the correct mux input
                         self.connect(
-                            comp + '.' + output,
+                            engine + '.' + output,
                             'pre_mission_mux.' + output + '_' + str(i),
                         )
                     else:
@@ -183,30 +205,31 @@ class PropulsionSum(om.ExplicitComponent):
     '''
 
     def initialize(self):
-        self.options.declare(
-            'aviary_options', types=AviaryValues,
-            desc='collection of Aircraft/Mission specific options')
+        add_aviary_option(self, Aircraft.Engine.NUM_ENGINES)
 
     def setup(self):
-        num_engine_type = len(self.options['aviary_options'].get_val(
-            Aircraft.Engine.NUM_ENGINES))
+        num_engine_type = len(self.options[Aircraft.Engine.NUM_ENGINES])
 
-        add_aviary_input(self, Aircraft.Engine.SCALED_SLS_THRUST,
-                         val=np.zeros(num_engine_type))
+        add_aviary_input(
+            self, Aircraft.Engine.SCALED_SLS_THRUST, val=np.zeros(num_engine_type)
+        )
 
-        add_aviary_output(
-            self, Aircraft.Propulsion.TOTAL_SCALED_SLS_THRUST, val=0.0)
+        add_aviary_output(self, Aircraft.Propulsion.TOTAL_SCALED_SLS_THRUST, val=0.0)
 
     def setup_partials(self):
-        num_engines = self.options['aviary_options'].get_val(Aircraft.Engine.NUM_ENGINES)
+        num_engines = self.options[Aircraft.Engine.NUM_ENGINES]
 
-        self.declare_partials(Aircraft.Propulsion.TOTAL_SCALED_SLS_THRUST,
-                              Aircraft.Engine.SCALED_SLS_THRUST, val=num_engines)
+        self.declare_partials(
+            Aircraft.Propulsion.TOTAL_SCALED_SLS_THRUST,
+            Aircraft.Engine.SCALED_SLS_THRUST,
+            val=num_engines,
+        )
 
     def compute(self, inputs, outputs):
-        num_engines = self.options['aviary_options'].get_val(Aircraft.Engine.NUM_ENGINES)
+        num_engines = self.options[Aircraft.Engine.NUM_ENGINES]
 
         thrust = inputs[Aircraft.Engine.SCALED_SLS_THRUST]
 
         outputs[Aircraft.Propulsion.TOTAL_SCALED_SLS_THRUST] = np.dot(
-            thrust, num_engines)
+            thrust, num_engines
+        )

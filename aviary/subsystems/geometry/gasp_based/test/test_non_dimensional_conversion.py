@@ -8,6 +8,7 @@ from aviary.subsystems.geometry.gasp_based.non_dimensional_conversion import \
 from aviary.variable_info.variables import Aircraft
 
 from aviary.subsystems.geometry.gasp_based.non_dimensional_conversion import DimensionalNonDimensionalInterchange
+from aviary.variable_info.functions import setup_model_options
 from aviary.variable_info.options import get_option_defaults
 
 
@@ -20,8 +21,7 @@ class FoldOnlyTestCase1(unittest.TestCase):
 
         self.prob = om.Problem()
         self.prob.model.add_subsystem("dimensionless_calcs",
-                                      DimensionalNonDimensionalInterchange(
-                                          aviary_options=options),
+                                      DimensionalNonDimensionalInterchange(),
                                       promotes_inputs=["aircraft:*"],
                                       promotes_outputs=["aircraft:*"]
                                       )
@@ -32,6 +32,8 @@ class FoldOnlyTestCase1(unittest.TestCase):
         self.prob.model.set_input_defaults(
             Aircraft.Wing.FOLDED_SPAN, val=118.0, units="ft"
         )  # not actual GASP value
+
+        setup_model_options(self.prob, options)
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
@@ -55,8 +57,7 @@ class FoldOnlyTestCase2(unittest.TestCase):
 
         self.prob = om.Problem()
         self.prob.model.add_subsystem("dimensionless_calcs",
-                                      DimensionalNonDimensionalInterchange(
-                                          aviary_options=options),
+                                      DimensionalNonDimensionalInterchange(),
                                       promotes_inputs=["aircraft:*"],
                                       promotes_outputs=["aircraft:*"]
                                       )
@@ -67,6 +68,8 @@ class FoldOnlyTestCase2(unittest.TestCase):
         self.prob.model.set_input_defaults(
             Aircraft.Wing.FOLDED_SPAN_DIMENSIONLESS, val=0.5, units="unitless"
         )  # not actual GASP value
+
+        setup_model_options(self.prob, options)
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
@@ -90,8 +93,7 @@ class StrutOnlyTestCase1(unittest.TestCase):
 
         self.prob = om.Problem()
         self.prob.model.add_subsystem("dimensionless_calcs",
-                                      DimensionalNonDimensionalInterchange(
-                                          aviary_options=options),
+                                      DimensionalNonDimensionalInterchange(),
                                       promotes_inputs=["aircraft:*"],
                                       promotes_outputs=["aircraft:*"]
                                       )
@@ -102,6 +104,8 @@ class StrutOnlyTestCase1(unittest.TestCase):
         self.prob.model.set_input_defaults(
             Aircraft.Strut.ATTACHMENT_LOCATION, val=118.0, units="ft"
         )  # not actual GASP value
+
+        setup_model_options(self.prob, options)
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
@@ -125,8 +129,7 @@ class StrutOnlyTestCase2(unittest.TestCase):
 
         self.prob = om.Problem()
         self.prob.model.add_subsystem("dimensionless_calcs",
-                                      DimensionalNonDimensionalInterchange(
-                                          aviary_options=options),
+                                      DimensionalNonDimensionalInterchange(),
                                       promotes_inputs=["aircraft:*"],
                                       promotes_outputs=["aircraft:*"]
                                       )
@@ -137,6 +140,8 @@ class StrutOnlyTestCase2(unittest.TestCase):
         self.prob.model.set_input_defaults(
             Aircraft.Strut.ATTACHMENT_LOCATION_DIMENSIONLESS, val=0.5, units="unitless"
         )  # not actual GASP value
+
+        setup_model_options(self.prob, options)
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
@@ -163,8 +168,7 @@ class FoldAndStrutTestCase1(unittest.TestCase):
 
         self.prob = om.Problem()
         self.prob.model.add_subsystem("dimensionless_calcs",
-                                      DimensionalNonDimensionalInterchange(
-                                          aviary_options=options),
+                                      DimensionalNonDimensionalInterchange(),
                                       promotes_inputs=["aircraft:*"],
                                       promotes_outputs=["aircraft:*"]
                                       )
@@ -178,6 +182,8 @@ class FoldAndStrutTestCase1(unittest.TestCase):
         self.prob.model.set_input_defaults(
             Aircraft.Strut.ATTACHMENT_LOCATION_DIMENSIONLESS, val=0.5, units="unitless"
         )  # not actual GASP value
+
+        setup_model_options(self.prob, options)
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
@@ -207,8 +213,7 @@ class FoldAndStrutTestCase2(unittest.TestCase):
 
         self.prob = om.Problem()
         self.prob.model.add_subsystem("dimensionless_calcs",
-                                      DimensionalNonDimensionalInterchange(
-                                          aviary_options=options),
+                                      DimensionalNonDimensionalInterchange(),
                                       promotes_inputs=["aircraft:*"],
                                       promotes_outputs=["aircraft:*"]
                                       )
@@ -222,6 +227,8 @@ class FoldAndStrutTestCase2(unittest.TestCase):
         self.prob.model.set_input_defaults(
             Aircraft.Strut.ATTACHMENT_LOCATION, val=90.0, units="ft"
         )  # not actual GASP value
+
+        setup_model_options(self.prob, options)
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
@@ -251,8 +258,7 @@ class FoldAndStrutTestCase3(unittest.TestCase):
 
         self.prob = om.Problem()
         self.prob.model.add_subsystem("dimensionless_calcs",
-                                      DimensionalNonDimensionalInterchange(
-                                          aviary_options=options),
+                                      DimensionalNonDimensionalInterchange(),
                                       promotes_inputs=["aircraft:*"],
                                       promotes_outputs=["aircraft:*"]
                                       )
@@ -266,6 +272,8 @@ class FoldAndStrutTestCase3(unittest.TestCase):
         self.prob.model.set_input_defaults(
             Aircraft.Strut.ATTACHMENT_LOCATION, val=108.0, units="ft"
         )  # not actual GASP value
+
+        setup_model_options(self.prob, options)
 
         self.prob.setup(check=False, force_alloc_complex=True)
 

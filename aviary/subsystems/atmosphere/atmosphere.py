@@ -21,7 +21,7 @@ class Atmosphere(om.Group):
         self.options.declare(
             'h_def',
             values=('geopotential', 'geodetic'),
-            default='geopotential',
+            default='geodetic',
             desc='The definition of altitude provided as input to the component. If '
             '"geodetic", it will be converted to geopotential based on Equation 19 in '
             'the original standard.',
@@ -57,10 +57,10 @@ class Atmosphere(om.Group):
             promotes_inputs=[('h', Dynamic.Mission.ALTITUDE)],
             promotes_outputs=[
                 '*',
-                ('sos', Dynamic.Mission.SPEED_OF_SOUND),
-                ('rho', Dynamic.Mission.DENSITY),
-                ('temp', Dynamic.Mission.TEMPERATURE),
-                ('pres', Dynamic.Mission.STATIC_PRESSURE),
+                ('sos', Dynamic.Atmosphere.SPEED_OF_SOUND),
+                ('rho', Dynamic.Atmosphere.DENSITY),
+                ('temp', Dynamic.Atmosphere.TEMPERATURE),
+                ('pres', Dynamic.Atmosphere.STATIC_PRESSURE),
             ],
         )
 

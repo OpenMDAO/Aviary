@@ -23,16 +23,20 @@ class DescentTestCase(unittest.TestCase):
         )
 
         self.prob.model.set_input_defaults(
-            Dynamic.Mission.VELOCITY, np.array([459, 459]), units="kn")
+            Dynamic.Mission.VELOCITY, np.array([459, 459]), units="kn"
+        )
         self.prob.model.set_input_defaults(
-            Dynamic.Mission.THRUST_TOTAL, np.array([452, 452]), units="lbf")
+            Dynamic.Vehicle.Propulsion.THRUST_TOTAL, np.array([452, 452]), units="lbf"
+        )
         self.prob.model.set_input_defaults(
-            Dynamic.Mission.DRAG, np.array([7966.927, 7966.927]), units="lbf"
+            Dynamic.Vehicle.DRAG, np.array([7966.927, 7966.927]), units="lbf"
         )  # estimated from GASP values
         self.prob.model.set_input_defaults(
-            Dynamic.Mission.MASS, np.array([147661, 147661]), units="lbm"
+            Dynamic.Vehicle.MASS, np.array([147661, 147661]), units="lbm"
         )
-        self.prob.model.set_input_defaults("alpha", np.array([3.2, 3.2]), units="deg")
+        self.prob.model.set_input_defaults(
+            Dynamic.Vehicle.ANGLE_OF_ATTACK, np.array([3.2, 3.2]), units="deg"
+        )
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
@@ -42,8 +46,9 @@ class DescentTestCase(unittest.TestCase):
         self.prob.run_model()
 
         assert_near_equal(
-            self.prob[Dynamic.Mission.ALTITUDE_RATE], np.array(
-                [-39.41011217, -39.41011217]), tol
+            self.prob[Dynamic.Mission.ALTITUDE_RATE],
+            np.array([-39.41011217, -39.41011217]),
+            tol,
         )  # note: values from GASP are: np.array([-39.75, -39.75])
         assert_near_equal(
             self.prob[Dynamic.Mission.DISTANCE_RATE], np.array(
@@ -54,10 +59,12 @@ class DescentTestCase(unittest.TestCase):
             self.prob["required_lift"],
             np.array([147444.58096139, 147444.58096139]),
             tol,
-        )  # note: values from GASP are: np.array([146288.8, 146288.8]) (estimated based on GASP values)
+            # note: values from GASP are: np.array([146288.8, 146288.8]) (estimated based on GASP values)
+        )
         assert_near_equal(
-            self.prob[Dynamic.Mission.FLIGHT_PATH_ANGLE], np.array(
-                [-0.05089311, -0.05089311]), tol
+            self.prob[Dynamic.Mission.FLIGHT_PATH_ANGLE],
+            np.array([-0.05089311, -0.05089311]),
+            tol,
         )  # note: values from GASP are: np.array([-.0513127, -.0513127])
 
         partial_data = self.prob.check_partials(out_stream=None, method="cs")
@@ -85,14 +92,17 @@ class DescentTestCase2(unittest.TestCase):
         prob.model.set_input_defaults(
             Dynamic.Mission.VELOCITY, np.array([459, 459]), units="kn")
         prob.model.set_input_defaults(
-            Dynamic.Mission.THRUST_TOTAL, np.array([452, 452]), units="lbf")
-        prob.model.set_input_defaults(
-            Dynamic.Mission.DRAG, np.array([7966.927, 7966.927]), units="lbf"
+            Dynamic.Vehicle.Propulsion.THRUST_TOTAL, np.array([452, 452]), units="lbf"
         )
         prob.model.set_input_defaults(
-            Dynamic.Mission.MASS, np.array([147661, 147661]), units="lbm"
+            Dynamic.Vehicle.DRAG, np.array([7966.927, 7966.927]), units="lbf"
         )
-        prob.model.set_input_defaults("alpha", np.array([3.2, 3.2]), units="deg")
+        prob.model.set_input_defaults(
+            Dynamic.Vehicle.MASS, np.array([147661, 147661]), units="lbm"
+        )
+        prob.model.set_input_defaults(
+            Dynamic.Vehicle.ANGLE_OF_ATTACK, np.array([3.2, 3.2]), units="deg"
+        )
         prob.setup(check=False, force_alloc_complex=True)
 
         partial_data = prob.check_partials(out_stream=None, method="cs")

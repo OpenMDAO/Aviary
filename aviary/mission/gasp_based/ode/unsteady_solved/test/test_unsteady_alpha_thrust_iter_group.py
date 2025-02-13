@@ -41,7 +41,6 @@ class TestUnsteadyAlphaThrustIterGroup(unittest.TestCase):
         g = UnsteadyControlIterGroup(num_nodes=nn,
                                      ground_roll=ground_roll,
                                      clean=True,
-                                     aviary_options=get_option_defaults(),
                                      core_subsystems=[aero])
 
         ig = p.model.add_subsystem("iter_group",
@@ -50,7 +49,9 @@ class TestUnsteadyAlphaThrustIterGroup(unittest.TestCase):
                                    promotes_outputs=["*"])
 
         if ground_roll:
-            ig.set_input_defaults("alpha", np.zeros(nn), units="deg")
+            ig.set_input_defaults(
+                Dynamic.Vehicle.ANGLE_OF_ATTACK, np.zeros(nn), units="deg"
+            )
 
         p.setup(force_alloc_complex=True)
 
@@ -58,9 +59,11 @@ class TestUnsteadyAlphaThrustIterGroup(unittest.TestCase):
 
         p.final_setup()
 
-        p.set_val(Dynamic.Mission.SPEED_OF_SOUND, 968.076 * np.ones(nn), units="ft/s")
         p.set_val(
-            Dynamic.Mission.DENSITY, 0.000659904 * np.ones(nn), units="slug/ft**3"
+            Dynamic.Atmosphere.SPEED_OF_SOUND, 968.076 * np.ones(nn), units="ft/s"
+        )
+        p.set_val(
+            Dynamic.Atmosphere.DENSITY, 0.000659904 * np.ones(nn), units="slug/ft**3"
         )
         p.set_val(Dynamic.Mission.VELOCITY, 487 * np.ones(nn), units="kn")
         p.set_val("mass", 170_000 * np.ones(nn), units="lbm")
@@ -68,7 +71,7 @@ class TestUnsteadyAlphaThrustIterGroup(unittest.TestCase):
 
         if not ground_roll:
             p.set_val(Dynamic.Mission.FLIGHT_PATH_ANGLE, 0.0 * np.ones(nn), units="rad")
-            p.set_val("alpha", 4 * np.ones(nn), units="deg")
+            p.set_val(Dynamic.Vehicle.ANGLE_OF_ATTACK, 4 * np.ones(nn), units="deg")
             p.set_val("dh_dr", 0.0 * np.ones(nn), units=None)
             p.set_val("d2h_dr2", 0.0 * np.ones(nn), units="1/NM")
 
@@ -76,14 +79,21 @@ class TestUnsteadyAlphaThrustIterGroup(unittest.TestCase):
 
         p.run_model()
 
-        drag = p.model.get_val(Dynamic.Mission.DRAG, units="lbf")
-        lift = p.model.get_val(Dynamic.Mission.LIFT, units="lbf")
+        drag = p.model.get_val(Dynamic.Vehicle.DRAG, units="lbf")
+        lift = p.model.get_val(Dynamic.Vehicle.LIFT, units="lbf")
         thrust_req = p.model.get_val("thrust_req", units="lbf")
-        gamma = 0 if ground_roll else p.model.get_val(
-            Dynamic.Mission.FLIGHT_PATH_ANGLE, units="deg")
+        gamma = (
+            0
+            if ground_roll
+            else p.model.get_val(Dynamic.Mission.FLIGHT_PATH_ANGLE, units="deg")
+        )
         weight = p.model.get_val("mass", units="lbm") * GRAV_ENGLISH_LBM
         iwing = p.model.get_val(Aircraft.Wing.INCIDENCE, units="deg")
-        alpha = iwing if ground_roll else p.model.get_val("alpha", units="deg")
+        alpha = (
+            iwing
+            if ground_roll
+            else p.model.get_val(Dynamic.Vehicle.ANGLE_OF_ATTACK, units="deg")
+        )
 
         c_alphai = np.cos(np.radians(alpha - iwing))
         s_alphai = np.sin(np.radians(alpha - iwing))

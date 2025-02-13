@@ -1,8 +1,8 @@
 import numpy as np
 import openmdao.api as om
 
-from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.enums import FlapType
+from aviary.variable_info.functions import add_aviary_option
 from aviary.variable_info.variables import Aircraft, Dynamic
 
 
@@ -13,15 +13,11 @@ class MetaModelGroup(om.Group):
     """
 
     def initialize(self):
-        self.options.declare(
-            'aviary_options', types=AviaryValues,
-            desc='collection of Aircraft/Mission specific options'
-        )
+        add_aviary_option(self, Aircraft.Wing.FLAP_TYPE)
 
     def setup(self):
 
-        flap_type = self.options["aviary_options"].get_val(
-            Aircraft.Wing.FLAP_TYPE, units='unitless')
+        flap_type = self.options[Aircraft.Wing.FLAP_TYPE]
 
         # VDEL1
         VDEL1_interp = self.add_subsystem(
@@ -782,7 +778,7 @@ class MetaModelGroup(om.Group):
             "VLAM14_interp",
             om.MetaModelStructuredComp(method="1D-slinear", extrapolate=True),
             promotes_inputs=[
-                Dynamic.Mission.MACH,
+                Dynamic.Atmosphere.MACH,
             ],
             promotes_outputs=[
                 "VLAM14",
@@ -790,7 +786,7 @@ class MetaModelGroup(om.Group):
         )
 
         VLAM14_interp.add_input(
-            Dynamic.Mission.MACH,
+            Dynamic.Atmosphere.MACH,
             0.17522,
             training_data=[0.0, 0.2, 0.4, 0.6, 0.8, 1.0],
             units="unitless",

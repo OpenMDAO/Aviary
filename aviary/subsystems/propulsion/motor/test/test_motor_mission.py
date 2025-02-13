@@ -23,19 +23,19 @@ class TestMotorMission(unittest.TestCase):
 
         prob.setup(force_alloc_complex=True)
 
-        prob.set_val(Dynamic.Mission.THROTTLE, np.linspace(0, 1, nn))
-        prob.set_val(Dynamic.Mission.RPM, np.linspace(0, 6000, nn))
+        prob.set_val(Dynamic.Vehicle.Propulsion.THROTTLE, np.linspace(0, 1, nn))
+        prob.set_val(Dynamic.Vehicle.Propulsion.RPM, np.linspace(0, 6000, nn))
         # prob.set_val('torque_unscaled', np.linspace(0, 1800, nn), 'N*m')
         prob.set_val(Aircraft.Engine.SCALE_FACTOR, 1.12)
 
         prob.run_model()
 
-        torque = prob.get_val(Dynamic.Mission.TORQUE, 'N*m')
-        max_torque = prob.get_val(Dynamic.Mission.TORQUE_MAX, 'N*m')
+        torque = prob.get_val(Dynamic.Vehicle.Propulsion.TORQUE, 'N*m')
+        max_torque = prob.get_val(Dynamic.Vehicle.Propulsion.TORQUE_MAX, 'N*m')
         efficiency = prob.get_val('motor_efficiency')
-        shp = prob.get_val(Dynamic.Mission.SHAFT_POWER)
-        max_shp = prob.get_val(Dynamic.Mission.SHAFT_POWER_MAX)
-        power = prob.get_val(Dynamic.Mission.ELECTRIC_POWER_IN, 'kW')
+        shp = prob.get_val(Dynamic.Vehicle.Propulsion.SHAFT_POWER)
+        max_shp = prob.get_val(Dynamic.Vehicle.Propulsion.SHAFT_POWER_MAX)
+        power = prob.get_val(Dynamic.Vehicle.Propulsion.ELECTRIC_POWER_IN, 'kW')
 
         torque_expected = np.array([0.0, 900.0, 1800.0]) * 1.12
         max_torque_expected = [2016, 2016, 2016]

@@ -1,8 +1,7 @@
 import numpy as np
 import openmdao.api as om
 
-from aviary.utils.aviary_values import AviaryValues
-from aviary.variable_info.functions import add_aviary_input, add_aviary_output
+from aviary.variable_info.functions import add_aviary_input, add_aviary_output, add_aviary_option
 from aviary.variable_info.variables import Aircraft
 
 
@@ -12,25 +11,17 @@ class CableSize(om.ExplicitComponent):
     """
 
     def initialize(self):
-
-        self.options.declare(
-            'aviary_options', types=AviaryValues,
-            desc='collection of Aircraft/Mission specific options'
-        )
+        add_aviary_option(self, Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES)
 
     def setup(self):
-        aviary_options = self.options['aviary_options']
-        total_num_wing_engines = aviary_options.get_val(
-            Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES)
+        total_num_wing_engines = self.options[Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES]
 
         add_aviary_input(self, Aircraft.Engine.WING_LOCATIONS,
-                         val=np.full(int(total_num_wing_engines/2), 0.35))
+                         shape=int(total_num_wing_engines/2))
+        add_aviary_input(self, Aircraft.Wing.SPAN)
+        add_aviary_input(self, Aircraft.Fuselage.AVG_DIAMETER)
 
-        add_aviary_input(self, Aircraft.Wing.SPAN, val=128)
-
-        add_aviary_input(self, Aircraft.Fuselage.AVG_DIAMETER, val=10)
-
-        add_aviary_output(self, Aircraft.Electrical.HYBRID_CABLE_LENGTH, val=0)
+        add_aviary_output(self, Aircraft.Electrical.HYBRID_CABLE_LENGTH)
 
         self.declare_partials(
             Aircraft.Electrical.HYBRID_CABLE_LENGTH,

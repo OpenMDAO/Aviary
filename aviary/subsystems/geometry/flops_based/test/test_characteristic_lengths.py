@@ -20,13 +20,16 @@ class CharacteristicLengthsTest(unittest.TestCase):
         # test with multiple engine types
         prob = self.prob
 
-        aviary_options = get_flops_inputs('LargeSingleAisle1FLOPS')
-        aviary_options.set_val(Aircraft.Engine.NUM_ENGINES, np.array([2, 2, 3]))
-        aviary_options.set_val(Aircraft.Propulsion.TOTAL_NUM_ENGINES, 7)
+        aviary_inputs = get_flops_inputs('LargeSingleAisle1FLOPS')
+
+        aviary_options = {
+            Aircraft.Engine.NUM_ENGINES: np.array([2, 2, 3]),
+            Aircraft.Wing.SPAN_EFFICIENCY_REDUCTION: aviary_inputs.get_val(Aircraft.Wing.SPAN_EFFICIENCY_REDUCTION),
+        }
 
         prob.model.add_subsystem(
             'char_lengths',
-            CharacteristicLengths(aviary_options=aviary_options),
+            CharacteristicLengths(**aviary_options),
             promotes_outputs=['*'],
             promotes_inputs=['*']
         )
@@ -52,7 +55,7 @@ class CharacteristicLengthsTest(unittest.TestCase):
             (Aircraft.Wing.THICKNESS_TO_CHORD, 'unitless')
         ]
         for var, units in input_list:
-            prob.set_val(var, aviary_options.get_val(var, units))
+            prob.set_val(var, aviary_inputs.get_val(var, units))
 
         # this is another component's output
         prob.set_val(Aircraft.Fuselage.AVG_DIAMETER, val=12.75)

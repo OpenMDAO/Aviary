@@ -3,9 +3,8 @@ import numpy as np
 import openmdao.api as om
 
 from aviary.constants import GRAV_ENGLISH_LBM
-from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.enums import Verbosity
-from aviary.variable_info.functions import add_aviary_input, add_aviary_output
+from aviary.variable_info.functions import add_aviary_input, add_aviary_output, add_aviary_option
 from aviary.variable_info.variables import Aircraft, Mission, Settings
 
 check = 1
@@ -33,10 +32,8 @@ class BodyTankCalculations(om.ExplicitComponent):
     """
 
     def initialize(self):
-        self.options.declare(
-            'aviary_options', types=AviaryValues,
-            desc='collection of Aircraft/Mission specific options'
-        )
+        add_aviary_option(self, Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES)
+        add_aviary_option(self, Settings.VERBOSITY)
 
     def setup(self):
 
@@ -58,12 +55,12 @@ class BodyTankCalculations(om.ExplicitComponent):
         add_aviary_input(self, Mission.Design.FUEL_MASS, val=3000)
         add_aviary_input(self, Aircraft.Design.OPERATING_MASS, val=94417)
 
-        self.add_output(
-            Aircraft.Fuel.AUXILIARY_FUEL_CAPACITY,
-            val=0,
-            units="lbm",
-            desc="WFXTRA: extra amount of fuel that is required but does not fit in wings",
-        )
+        add_aviary_output(self, Aircraft.Fuel.AUXILIARY_FUEL_CAPACITY, val=0,
+                          desc="WFXTRA: extra amount of fuel that is required but does not fit in wings")
+        # self.add_output(
+        #     Aircraft.Fuel.AUXILIARY_FUEL_CAPACITY, val=0, units="lbm",
+        #     desc="WFXTRA: extra amount of fuel that is required but does not fit in wings",
+        # )
         self.add_output(
             "extra_fuel_volume",
             val=0,
@@ -135,14 +132,13 @@ class BodyTankCalculations(om.ExplicitComponent):
         fuel_wt_des = inputs[Mission.Design.FUEL_MASS] * GRAV_ENGLISH_LBM
         OEW = inputs[Aircraft.Design.OPERATING_MASS] * GRAV_ENGLISH_LBM
 
-        smooth = self.options["aviary_options"].get_val(
-            Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES, units='unitless')
+        smooth = self.options[Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES]
 
         extra_fuel_volume = sigX(design_fuel_vol - max_wingfuel_vol) * (
             design_fuel_vol - geometric_fuel_vol
         )
 
-        verbosity = self.options['aviary_options'].get_val(Settings.VERBOSITY)
+        verbosity = self.options[Settings.VERBOSITY]
         if verbosity >= Verbosity.BRIEF:
             if (req_fuel_wt > max_wingfuel_wt) and (design_fuel_vol > max_wingfuel_vol):
                 print("Warning: req_fuel_mass > max_wingfuel_mass, adding a body tank")
@@ -187,8 +183,7 @@ class BodyTankCalculations(om.ExplicitComponent):
         fuel_wt_des = inputs[Mission.Design.FUEL_MASS] * GRAV_ENGLISH_LBM
         OEW = inputs[Aircraft.Design.OPERATING_MASS] * GRAV_ENGLISH_LBM
 
-        smooth = self.options["aviary_options"].get_val(
-            Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES, units='unitless')
+        smooth = self.options[Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES]
 
         extra_fuel_volume = sigX(design_fuel_vol - max_wingfuel_vol) * (
             design_fuel_vol - geometric_fuel_vol
@@ -360,12 +355,6 @@ class FuelAndOEMOutputs(om.ExplicitComponent):
     based on volume, maximum wingfuel mass, and wing tank volume based on maximum
     wing fuel weight).
     """
-
-    def initialize(self):
-        self.options.declare(
-            'aviary_options', types=AviaryValues,
-            desc='collection of Aircraft/Mission specific options'
-        )
 
     def setup(self):
 
@@ -732,12 +721,6 @@ class FuelSysAndFullFuselageMass(om.ExplicitComponent):
     Computation of fuselage mass and fuel system mass
     """
 
-    def initialize(self):
-        self.options.declare(
-            'aviary_options', types=AviaryValues,
-            desc='collection of Aircraft/Mission specific options'
-        )
-
     def setup(self):
 
         add_aviary_input(self, Mission.Design.GROSS_MASS, val=175400)
@@ -866,14 +849,10 @@ class FuselageAndStructMass(om.ExplicitComponent):
     """
 
     def initialize(self):
-        self.options.declare(
-            'aviary_options', types=AviaryValues,
-            desc='collection of Aircraft/Mission specific options'
-        )
+        add_aviary_option(self, Aircraft.Engine.NUM_ENGINES)
 
     def setup(self):
-        num_engine_type = len(self.options['aviary_options'].get_val(
-            Aircraft.Engine.NUM_ENGINES))
+        num_engine_type = len(self.options[Aircraft.Engine.NUM_ENGINES])
 
         self.add_input(
             "fus_mass_full",
@@ -1208,12 +1187,6 @@ class FuelMass(om.ExplicitComponent):
     and minimum value of fuel mass.
     """
 
-    def initialize(self):
-        self.options.declare(
-            'aviary_options', types=AviaryValues,
-            desc='collection of Aircraft/Mission specific options'
-        )
-
     def setup(self):
 
         add_aviary_input(self, Aircraft.Design.STRUCTURE_MASS, val=50461.0)
@@ -1514,15 +1487,7 @@ class FuelMassGroup(om.Group):
     FuselageAndStructMass, FuelMass, FuelAndOEMOutputs, and BodyTankCalculations.
     """
 
-    def initialize(self):
-        self.options.declare(
-            'aviary_options', types=AviaryValues,
-            desc='collection of Aircraft/Mission specific options'
-        )
-
     def setup(self):
-
-        aviary_options = self.options['aviary_options']
 
         # variables that are calculated at a higher level
         higher_level_inputs1 = ["wing_mounted_mass"]
@@ -1556,7 +1521,7 @@ class FuelMassGroup(om.Group):
 
         self.add_subsystem(
             "sys_and_full_fus",
-            FuelSysAndFullFuselageMass(aviary_options=aviary_options),
+            FuelSysAndFullFuselageMass(),
             promotes_inputs=connected_inputs1
             + higher_level_inputs1
             + ["aircraft:*", "mission:*"],
@@ -1565,14 +1530,14 @@ class FuelMassGroup(om.Group):
 
         self.add_subsystem(
             "fus_and_struct",
-            FuselageAndStructMass(aviary_options=aviary_options),
+            FuselageAndStructMass(),
             promotes_inputs=connected_inputs2 + higher_level_inputs2 + ["aircraft:*"],
             promotes_outputs=["aircraft:*"],
         )
 
         self.add_subsystem(
             "fuel",
-            FuelMass(aviary_options=aviary_options),
+            FuelMass(),
             promotes_inputs=higher_level_inputs3
             + ["aircraft:*", "mission:*"],
             promotes_outputs=connected_outputs3 + ["aircraft:*", "mission:*"],
@@ -1580,14 +1545,14 @@ class FuelMassGroup(om.Group):
 
         self.add_subsystem(
             "fuel_and_oem",
-            FuelAndOEMOutputs(aviary_options=aviary_options),
+            FuelAndOEMOutputs(),
             promotes_inputs=["aircraft:*", "mission:*"],
             promotes_outputs=connected_outputs4 + ["aircraft:*"],
         )
 
         self.add_subsystem(
             "body_tank",
-            BodyTankCalculations(aviary_options=aviary_options),
+            BodyTankCalculations(),
             promotes_inputs=connected_inputs5
             + ["aircraft:*", "mission:*"],
             promotes_outputs=connected_outputs5 + ["aircraft:*"],

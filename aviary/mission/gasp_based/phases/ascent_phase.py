@@ -71,7 +71,7 @@ class AscentPhase(PhaseBuilderBase):
         )
 
         phase.add_control(
-            "alpha",
+            Dynamic.Vehicle.ANGLE_OF_ATTACK,
             val=0,
             lower=alpha_constraint_lower,
             upper=alpha_constraint_upper,
@@ -86,11 +86,13 @@ class AscentPhase(PhaseBuilderBase):
         phase.add_parameter("t_init_flaps", units="s",
                             static_target=True, opt=False, val=48.21)
 
-        phase.add_timeseries_output(Dynamic.Mission.THRUST_TOTAL, units="lbf")
+        phase.add_timeseries_output(
+            Dynamic.Vehicle.Propulsion.THRUST_TOTAL, units="lbf"
+        )
         phase.add_timeseries_output("normal_force")
-        phase.add_timeseries_output(Dynamic.Mission.MACH)
+        phase.add_timeseries_output(Dynamic.Atmosphere.MACH)
         phase.add_timeseries_output("EAS", units="kn")
-        phase.add_timeseries_output(Dynamic.Mission.LIFT)
+        phase.add_timeseries_output(Dynamic.Vehicle.LIFT)
         phase.add_timeseries_output("CL")
         phase.add_timeseries_output("CD")
 
@@ -170,8 +172,9 @@ AscentPhase._add_initial_guess_meta_data(
     desc='initial guess for distance state')
 
 AscentPhase._add_initial_guess_meta_data(
-    InitialGuessControl('alpha'),
-    desc='initial guess for angle of attack control')
+    InitialGuessControl('angle_of_attack'),
+    desc='initial guess for angle of attack control',
+)
 
 AscentPhase._add_initial_guess_meta_data(
     InitialGuessControl('tau_gear'),

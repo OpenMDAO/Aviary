@@ -62,7 +62,7 @@ def custom_run_aviary(aircraft_filename, optimizer=None,
                 'alt_trigger': (10000, 'ft'),
                 'mach': (0, 'unitless'),
                 'speed_trigger': (350, 'kn'),
-                Dynamic.Mission.THROTTLE: (0, 'unitless'),
+                Dynamic.Vehicle.Propulsion.THROTTLE: (0, 'unitless'),
             },
             'descent_phase': True,
         },
@@ -86,18 +86,30 @@ def custom_run_aviary(aircraft_filename, optimizer=None,
     traj = FlexibleTraj(
         Phases=phase_info,
         traj_final_state_output=[
-            Dynamic.Mission.MASS,
+            Dynamic.Vehicle.MASS,
             Dynamic.Mission.DISTANCE,
         ],
         traj_initial_state_input=[
-            Dynamic.Mission.MASS,
+            Dynamic.Vehicle.MASS,
             Dynamic.Mission.DISTANCE,
             Dynamic.Mission.ALTITUDE,
         ],
         traj_event_trigger_input=[
-            ('groundroll', Dynamic.Mission.VELOCITY, 0,),
-            ('climb3', Dynamic.Mission.ALTITUDE, 0,),
-            ('cruise', Dynamic.Mission.DISTANCE, 0,),
+            (
+                'groundroll',
+                Dynamic.Mission.VELOCITY,
+                0,
+            ),
+            (
+                'climb3',
+                Dynamic.Mission.ALTITUDE,
+                0,
+            ),
+            (
+                'cruise',
+                Dynamic.Mission.DISTANCE,
+                0,
+            ),
         ],
     )
     prob.traj = prob.model.add_subsystem('traj', traj)
@@ -127,6 +139,6 @@ def custom_run_aviary(aircraft_filename, optimizer=None,
 
 
 if __name__ == "__main__":
-    input_deck = 'models/large_single_aisle_1/large_single_aisle_1_GwGm.csv'
+    input_deck = 'models/large_single_aisle_1/large_single_aisle_1_GASP.csv'
     custom_run_aviary(
         input_deck, analysis_scheme=AnalysisScheme.SHOOTING, run_driver=False)

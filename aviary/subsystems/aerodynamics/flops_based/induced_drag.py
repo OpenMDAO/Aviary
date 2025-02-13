@@ -2,8 +2,7 @@ import numpy as np
 import openmdao.api as om
 import scipy.constants as _units
 
-from aviary.utils.aviary_values import AviaryValues
-from aviary.variable_info.functions import add_aviary_input
+from aviary.variable_info.functions import add_aviary_input, add_aviary_option
 from aviary.variable_info.variables import Aircraft, Dynamic
 
 
@@ -19,21 +18,25 @@ class InducedDrag(om.ExplicitComponent):
         self.options.declare(
             'gamma', default=1.4,
             desc='Ratio of specific heats for air.')
-        self.options.declare(
-            'aviary_options', types=AviaryValues,
-            desc='collection of Aircraft/Mission specific options')
+
+        add_aviary_option(self, Aircraft.Wing.SPAN_EFFICIENCY_REDUCTION)
 
     def setup(self):
         nn = self.options["num_nodes"]
 
         # Simulation inputs
         self.add_input(
-            Dynamic.Mission.MACH, shape=(nn), units='unitless', desc="Mach number")
+            Dynamic.Atmosphere.MACH, shape=(nn), units='unitless', desc="Mach number"
+        )
         self.add_input(
-            Dynamic.Mission.LIFT, shape=(nn), units="lbf", desc="Lift magnitude")
+            Dynamic.Vehicle.LIFT, shape=(nn), units="lbf", desc="Lift magnitude"
+        )
         self.add_input(
-            Dynamic.Mission.STATIC_PRESSURE, np.ones(nn), units='lbf/ft**2',
-            desc='Static pressure at each evaulation point.')
+            Dynamic.Atmosphere.STATIC_PRESSURE,
+            np.ones(nn),
+            units='lbf/ft**2',
+            desc='Static pressure at each evaulation point.',
+        )
 
         # Aero design inputs
         add_aviary_input(self, Aircraft.Wing.AREA, 0.0)
@@ -53,8 +56,14 @@ class InducedDrag(om.ExplicitComponent):
         row_col = np.arange(nn)
         self.declare_partials(
             'induced_drag_coeff',
-            [Dynamic.Mission.MACH, Dynamic.Mission.LIFT, Dynamic.Mission.STATIC_PRESSURE],
-            rows=row_col, cols=row_col)
+            [
+                Dynamic.Atmosphere.MACH,
+                Dynamic.Vehicle.LIFT,
+                Dynamic.Atmosphere.STATIC_PRESSURE,
+            ],
+            rows=row_col,
+            cols=row_col,
+        )
 
         wrt = [
             Aircraft.Wing.AREA,
@@ -68,13 +77,11 @@ class InducedDrag(om.ExplicitComponent):
     def compute(self, inputs, outputs):
         options = self.options
         gamma = options['gamma']
-        aviary_options: AviaryValues = options['aviary_options']
         mach, lift, P, Sref, AR, span_efficiency_factor, SW25, TR = inputs.values()
 
         CL = 2.0 * lift / (Sref * gamma * P * mach ** 2)
 
-        redux, _ = aviary_options.get_item(
-            Aircraft.Wing.SPAN_EFFICIENCY_REDUCTION, (False, None))
+        redux = self.options[Aircraft.Wing.SPAN_EFFICIENCY_REDUCTION]
 
         if redux:
             # Adjustment for extreme taper ratios.
@@ -113,10 +120,8 @@ class InducedDrag(om.ExplicitComponent):
     def compute_partials(self, inputs, partials):
         options = self.options
         gamma = options['gamma']
-        aviary_options: AviaryValues = options['aviary_options']
         mach, lift, P, Sref, AR, span_efficiency_factor, SW25, TR = inputs.values()
-        redux, _ = aviary_options.get_item(
-            Aircraft.Wing.SPAN_EFFICIENCY_REDUCTION, (False, None))
+        redux = self.options[Aircraft.Wing.SPAN_EFFICIENCY_REDUCTION]
 
         if redux:
             sqrt_AR = np.sqrt(AR)
@@ -143,9 +148,11 @@ class InducedDrag(om.ExplicitComponent):
         dCDi_dAR = -CL ** 2 / (np.pi * AR ** 2 * span_efficiency)
         dCDi_dspan = -CL ** 2 / (np.pi * AR * span_efficiency ** 2)
 
-        partials['induced_drag_coeff', Dynamic.Mission.MACH] = dCDi_dCL * dCL_dmach
-        partials['induced_drag_coeff', Dynamic.Mission.LIFT] = dCDi_dCL * dCL_dL
-        partials['induced_drag_coeff', Dynamic.Mission.STATIC_PRESSURE] = dCDi_dCL * dCL_dP
+        partials['induced_drag_coeff', Dynamic.Atmosphere.MACH] = dCDi_dCL * dCL_dmach
+        partials['induced_drag_coeff', Dynamic.Vehicle.LIFT] = dCDi_dCL * dCL_dL
+        partials['induced_drag_coeff', Dynamic.Atmosphere.STATIC_PRESSURE] = (
+            dCDi_dCL * dCL_dP
+        )
         partials['induced_drag_coeff', Aircraft.Wing.ASPECT_RATIO] = dCDi_dAR
         partials['induced_drag_coeff', Aircraft.Wing.SPAN_EFFICIENCY_FACTOR] = 0.0
         partials['induced_drag_coeff', Aircraft.Wing.SWEEP] = 0.0
@@ -207,17 +214,19 @@ class InducedDrag(om.ExplicitComponent):
             dCDi_dCAYT = CL ** 2
             dCDi_dCL = 2.0 * CAYT * CL
 
-            partials['induced_drag_coeff', Dynamic.Mission.MACH] += \
+            partials['induced_drag_coeff', Dynamic.Atmosphere.MACH] += (
                 dCDi_dCL * dCL_dmach + dCDi_dCAYT * dCAYT_dmach
-            partials['induced_drag_coeff', Dynamic.Mission.LIFT] += dCDi_dCL * dCL_dL
+            )
+            partials['induced_drag_coeff', Dynamic.Vehicle.LIFT] += dCDi_dCL * dCL_dL
             partials['induced_drag_coeff', Aircraft.Wing.ASPECT_RATIO] += (
                 dCDi_dCAYT * dTH_dAR
                 * (dCAYT_dCOSA * dCOSA_dTH + dCAYT_dCOSB * dCOSB_dTH))
             partials['induced_drag_coeff', Aircraft.Wing.SWEEP] += (
                 dCDi_dCAYT * dtansw_dsw
                 * (dCAYT_dCOSA * dCOSA_dtansw + dCAYT_dCOSB * dCOSB_dtansw))
-            partials['induced_drag_coeff',
-                     Dynamic.Mission.STATIC_PRESSURE] += dCDi_dCL * dCL_dP
+            partials['induced_drag_coeff', Dynamic.Atmosphere.STATIC_PRESSURE] += (
+                dCDi_dCL * dCL_dP
+            )
             partials['induced_drag_coeff', Aircraft.Wing.TAPER_RATIO] += (
                 dCDi_dCAYT * dTH_dTR
                 * (dCAYT_dCOSA * dCOSA_dTH + dCAYT_dCOSB * dCOSB_dTH))

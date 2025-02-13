@@ -44,14 +44,14 @@ class SimpleDragTest(unittest.TestCase):
         # dynamic pressure = 4 digits precision
         # drag coefficient = 5 digits precision
         mission_keys = (
-            Dynamic.Mission.DYNAMIC_PRESSURE,
+            Dynamic.Atmosphere.DYNAMIC_PRESSURE,
             'CD_prescaled',
             'CD',
-            Dynamic.Mission.MACH,
+            Dynamic.Atmosphere.MACH,
         )
 
         # drag = 4 digits precision
-        outputs_keys = (Dynamic.Mission.DRAG,)
+        outputs_keys = (Dynamic.Vehicle.DRAG,)
 
         # using lowest precision from all available data should "always" work
         # - will a higher precision comparison work? find a practical tolerance that fits
@@ -61,7 +61,7 @@ class SimpleDragTest(unittest.TestCase):
         prob = om.Problem()
         model = prob.model
 
-        q, _ = mission_data.get_item(Dynamic.Mission.DYNAMIC_PRESSURE)
+        q, _ = mission_data.get_item(Dynamic.Atmosphere.DYNAMIC_PRESSURE)
         nn = len(q)
         model.add_subsystem('simple_drag', SimpleDrag(num_nodes=nn), promotes=['*'])
         model.add_subsystem('simple_cd', SimpleCD(num_nodes=nn), promotes=['*'])
@@ -95,7 +95,7 @@ class SimpleDragTest(unittest.TestCase):
 
         assert_near_equal(prob.get_val("CD"), mission_simple_CD[case_name], 1e-6)
         assert_near_equal(
-            prob.get_val(Dynamic.Mission.DRAG), mission_simple_drag[case_name], 1e-6
+            prob.get_val(Dynamic.Vehicle.DRAG), mission_simple_drag[case_name], 1e-6
         )
 
 
@@ -121,14 +121,14 @@ class TotalDragTest(unittest.TestCase):
         # dynamic pressure = 4 digits precision
         # drag coefficient = 5 digits precision
         mission_keys = (
-            Dynamic.Mission.DYNAMIC_PRESSURE,
-            Dynamic.Mission.MACH,
+            Dynamic.Atmosphere.DYNAMIC_PRESSURE,
+            Dynamic.Atmosphere.MACH,
             'CD0',
             'CDI',
         )
 
         # drag = 4 digits precision
-        outputs_keys = ('CD_prescaled', 'CD', Dynamic.Mission.DRAG)
+        outputs_keys = ('CD_prescaled', 'CD', Dynamic.Vehicle.DRAG)
 
         # using lowest precision from all available data should "always" work
         # - will a higher precision comparison work? find a practical tolerance that fits
@@ -138,7 +138,7 @@ class TotalDragTest(unittest.TestCase):
         prob = om.Problem()
         model = prob.model
 
-        q, _ = mission_data.get_item(Dynamic.Mission.DYNAMIC_PRESSURE)
+        q, _ = mission_data.get_item(Dynamic.Atmosphere.DYNAMIC_PRESSURE)
         nn = len(q)
         model.add_subsystem('total_drag', TotalDrag(num_nodes=nn), promotes=['*'])
 
@@ -171,7 +171,7 @@ class TotalDragTest(unittest.TestCase):
 
         assert_near_equal(prob.get_val("CD"), mission_total_CD[case_name], 1e-6)
         assert_near_equal(
-            prob.get_val(Dynamic.Mission.DRAG), mission_total_drag[case_name], 1e-6
+            prob.get_val(Dynamic.Vehicle.DRAG), mission_total_drag[case_name], 1e-6
         )
 
 
@@ -193,7 +193,7 @@ class ComputedDragTest(unittest.TestCase):
             'computed_drag',
             ComputedDrag(num_nodes=nn),
             promotes_inputs=['*'],
-            promotes_outputs=['CD', Dynamic.Mission.DRAG],
+            promotes_outputs=['CD', Dynamic.Vehicle.DRAG],
         )
 
         prob.setup(force_alloc_complex=True)
@@ -202,14 +202,14 @@ class ComputedDragTest(unittest.TestCase):
         prob.set_val('pressure_drag_coeff', 0.01 * cdp)
         prob.set_val('compress_drag_coeff', 0.01 * cdc)
         prob.set_val('induced_drag_coeff', 0.01 * cdi)
-        prob.set_val(Dynamic.Mission.MACH, M)
+        prob.set_val(Dynamic.Atmosphere.MACH, M)
 
         prob.set_val(Aircraft.Design.ZERO_LIFT_DRAG_COEFF_FACTOR, 0.7)
         prob.set_val(Aircraft.Design.LIFT_DEPENDENT_DRAG_COEFF_FACTOR, 0.3)
         prob.set_val(Aircraft.Design.SUBSONIC_DRAG_COEFF_FACTOR, 1.4)
         prob.set_val(Aircraft.Design.SUPERSONIC_DRAG_COEFF_FACTOR, 1.1)
         prob.set_val(Aircraft.Wing.AREA, 1370, units="ft**2")
-        prob.set_val(Dynamic.Mission.DYNAMIC_PRESSURE, [206.0, 205.6], 'lbf/ft**2')
+        prob.set_val(Dynamic.Atmosphere.DYNAMIC_PRESSURE, [206.0, 205.6], 'lbf/ft**2')
 
         prob.run_model()
 
@@ -217,7 +217,7 @@ class ComputedDragTest(unittest.TestCase):
         assert_check_partials(derivs, atol=1e-12, rtol=1e-12)
 
         assert_near_equal(prob.get_val("CD"), [0.0249732, 0.0297451], 1e-6)
-        assert_near_equal(prob.get_val(Dynamic.Mission.DRAG), [31350.8, 37268.8], 1e-6)
+        assert_near_equal(prob.get_val(Dynamic.Vehicle.DRAG), [31350.8, 37268.8], 1e-6)
 
 
 # region - mission test data taken from the baseline FLOPS output for each case
@@ -267,19 +267,19 @@ mission_total_drag = {}
 key = 'LargeSingleAisle1FLOPS'
 mission_test_data[key] = _mission_data = AviaryValues()
 _mission_data.set_val(
-    Dynamic.Mission.DYNAMIC_PRESSURE, np.array([206.0, 205.6, 205.4]), 'lbf/ft**2'
+    Dynamic.Atmosphere.DYNAMIC_PRESSURE, np.array([206.0, 205.6, 205.4]), 'lbf/ft**2'
 )
 _mission_data.set_val(
-    Dynamic.Mission.MASS, np.array([176751.0, 176400.0, 176185.0]), 'lbm'
+    Dynamic.Vehicle.MASS, np.array([176751.0, 176400.0, 176185.0]), 'lbm'
 )
-_mission_data.set_val(Dynamic.Mission.DRAG, np.array([9350.0, 9333.0, 9323.0]), 'lbf')
+_mission_data.set_val(Dynamic.Vehicle.DRAG, np.array([9350.0, 9333.0, 9323.0]), 'lbf')
 
 M = np.array([0.7750, 0.7750, 0.7750])
 CD_scaled = np.array([0.03313, 0.03313, 0.03313])
 CD0_scaled = np.array([0.02012, 0.02013, 0.02013])
 CDI_scaled = np.array([0.01301, 0.01301, 0.01300])
 
-_mission_data.set_val(Dynamic.Mission.MACH, M)
+_mission_data.set_val(Dynamic.Atmosphere.MACH, M)
 _add_drag_coefficients(key, _mission_data, M, CD_scaled, CD0_scaled, CDI_scaled)
 
 mission_simple_CD[key] = np.array([0.03313, 0.03313, 0.03313])
@@ -290,17 +290,17 @@ mission_total_drag[key] = np.array([41590.64350841, 41522.41437213, 41469.505711
 key = 'LargeSingleAisle2FLOPS'
 mission_test_data[key] = _mission_data = AviaryValues()
 _mission_data.set_val(
-    Dynamic.Mission.DYNAMIC_PRESSURE, [215.4, 215.4, 215.4], 'lbf/ft**2'
+    Dynamic.Atmosphere.DYNAMIC_PRESSURE, [215.4, 215.4, 215.4], 'lbf/ft**2'
 )
-_mission_data.set_val(Dynamic.Mission.MASS, [169730.0, 169200.0, 167400.0], 'lbm')
-_mission_data.set_val(Dynamic.Mission.DRAG, [9542.0, 9512.0, 9411.0], 'lbf')
+_mission_data.set_val(Dynamic.Vehicle.MASS, [169730.0, 169200.0, 167400.0], 'lbm')
+_mission_data.set_val(Dynamic.Vehicle.DRAG, [9542.0, 9512.0, 9411.0], 'lbf')
 
 M = np.array([0.7850, 0.7850, 0.7850])
 CD_scaled = np.array([0.03304, 0.03293, 0.03258])
 CD0_scaled = np.array([0.02016, 0.02016, 0.02016])
 CDI_scaled = np.array([0.01288, 0.01277, 0.01242])
 
-_mission_data.set_val(Dynamic.Mission.MACH, M)
+_mission_data.set_val(Dynamic.Atmosphere.MACH, M)
 _add_drag_coefficients(key, _mission_data, M, CD_scaled, CD0_scaled, CDI_scaled)
 
 mission_simple_CD[key] = np.array([0.03304, 0.03293, 0.03258])
@@ -311,17 +311,17 @@ mission_total_drag[key] = np.array([42452.27140246, 42310.93514779, 41861.228882
 key = 'N3CC'
 mission_test_data[key] = _mission_data = AviaryValues()
 _mission_data.set_val(
-    Dynamic.Mission.DYNAMIC_PRESSURE, [208.4, 288.5, 364.0], 'lbf/ft**2'
+    Dynamic.Atmosphere.DYNAMIC_PRESSURE, [208.4, 288.5, 364.0], 'lbf/ft**2'
 )
-_mission_data.set_val(Dynamic.Mission.MASS, [128777.0, 128721.0, 128667.0], 'lbm')
-_mission_data.set_val(Dynamic.Mission.DRAG, [5837.0, 6551.0, 7566.0], 'lbf')
+_mission_data.set_val(Dynamic.Vehicle.MASS, [128777.0, 128721.0, 128667.0], 'lbm')
+_mission_data.set_val(Dynamic.Vehicle.DRAG, [5837.0, 6551.0, 7566.0], 'lbf')
 
 M = np.array([0.4522, 0.5321, 0.5985])
 CD_scaled = np.array([0.02296, 0.01861, 0.01704])
 CD0_scaled = np.array([0.01611, 0.01569, 0.01556])
 CDI_scaled = np.array([0.00806, 0.00390, 0.00237])
 
-_mission_data.set_val(Dynamic.Mission.MACH, M)
+_mission_data.set_val(Dynamic.Atmosphere.MACH, M)
 _add_drag_coefficients(key, _mission_data, M, CD_scaled, CD0_scaled, CDI_scaled)
 # endregion - mission test data taken from the baseline FLOPS output for each case
 

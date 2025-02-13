@@ -52,14 +52,14 @@ class GroundrollPhase(PhaseBuilderBase):
         self.add_velocity_state(user_options)
 
         phase.add_state(
-            Dynamic.Mission.MASS,
+            Dynamic.Vehicle.MASS,
             fix_initial=fix_initial_mass,
             input_initial=connect_initial_mass,
             fix_final=False,
             lower=mass_lower,
             upper=mass_upper,
             units="lbm",
-            rate_source=Dynamic.Mission.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
+            rate_source=Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
             ref=mass_ref,
             defect_ref=mass_defect_ref,
             ref0=mass_ref0,
@@ -88,13 +88,15 @@ class GroundrollPhase(PhaseBuilderBase):
         # phase
 
         phase.add_timeseries_output("time", units="s", output_name="time")
-        phase.add_timeseries_output(Dynamic.Mission.THRUST_TOTAL, units="lbf")
+        phase.add_timeseries_output(
+            Dynamic.Vehicle.Propulsion.THRUST_TOTAL, units="lbf"
+        )
 
         phase.add_timeseries_output("normal_force")
-        phase.add_timeseries_output(Dynamic.Mission.MACH)
+        phase.add_timeseries_output(Dynamic.Atmosphere.MACH)
         phase.add_timeseries_output("EAS", units="kn")
 
-        phase.add_timeseries_output(Dynamic.Mission.LIFT)
+        phase.add_timeseries_output(Dynamic.Vehicle.LIFT)
         phase.add_timeseries_output("CL")
         phase.add_timeseries_output("CD")
         phase.add_timeseries_output("fuselage_pitch", output_name="theta", units="deg")

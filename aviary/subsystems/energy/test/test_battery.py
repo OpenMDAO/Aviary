@@ -54,15 +54,18 @@ class TestBatteryDerivs(unittest.TestCase):
             av.Aircraft.Battery.ENERGY_CAPACITY, 10_000, units='kJ')
         prob.model.set_input_defaults(
             av.Aircraft.Battery.EFFICIENCY, efficiency, units='unitless')
-        prob.model.set_input_defaults(av.Dynamic.Mission.CUMULATIVE_ELECTRIC_ENERGY_USED, [
-                                      0, 2_000, 5_000, 9_500], units='kJ')
+        prob.model.set_input_defaults(
+            av.Dynamic.Vehicle.CUMULATIVE_ELECTRIC_ENERGY_USED,
+            [0, 2_000, 5_000, 9_500],
+            units='kJ',
+        )
 
         prob.setup(force_alloc_complex=True)
 
         prob.run_model()
 
         soc_expected = np.array([1., 0.7894736842105263, 0.4736842105263159, 0.])
-        soc = prob.get_val(av.Dynamic.Mission.BATTERY_STATE_OF_CHARGE, 'unitless')
+        soc = prob.get_val(av.Dynamic.Vehicle.BATTERY_STATE_OF_CHARGE, 'unitless')
 
         assert_near_equal(soc, soc_expected, tolerance=1e-10)
 

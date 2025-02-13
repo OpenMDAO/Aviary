@@ -6,7 +6,6 @@ from aviary.subsystems.mass.gasp_based.equipment_and_useful_load import \
 from aviary.subsystems.mass.gasp_based.fixed import FixedMassGroup
 from aviary.subsystems.mass.gasp_based.fuel import FuelMassGroup
 from aviary.subsystems.mass.gasp_based.wing import WingMassGroup
-from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.variables import Aircraft
 
 
@@ -15,16 +14,7 @@ class MassPremission(om.Group):
     Pre-mission mass group for GASP-based mass.
     """
 
-    def initialize(self):
-
-        self.options.declare(
-            'aviary_options', types=AviaryValues,
-            desc='collection of Aircraft/Mission specific options'
-        )
-
     def setup(self):
-
-        aviary_options = self.options['aviary_options']
 
         # output values from design_load that are connected to fixed_mass via promotion
         fixed_mass_design_load_values = [
@@ -66,43 +56,35 @@ class MassPremission(om.Group):
 
         self.add_subsystem(
             "design_load",
-            DesignLoadGroup(
-                aviary_options=aviary_options,
-            ),
+            DesignLoadGroup(),
             promotes_inputs=["aircraft:*", "mission:*"],
             promotes_outputs=["*"],
         )
 
         self.add_subsystem(
             "fixed_mass",
-            FixedMassGroup(
-                aviary_options=aviary_options,
-            ),
+            FixedMassGroup(),
             promotes_inputs=fixed_mass_inputs + ["aircraft:*", "mission:*"],
             promotes_outputs=fixed_mass_outputs + ["aircraft:*"],
         )
 
         self.add_subsystem(
             "equip_and_useful_mass",
-            EquipAndUsefulLoadMass(
-                aviary_options=aviary_options,
-            ),
+            EquipAndUsefulLoadMass(),
             promotes_inputs=["aircraft:*", "mission:*"],
             promotes_outputs=["aircraft:*"],
         )
 
         self.add_subsystem(
             "wing_mass",
-            WingMassGroup(
-                aviary_options=aviary_options,
-            ),
+            WingMassGroup(),
             promotes_inputs=wing_mass_inputs + ["aircraft:*", "mission:*"],
             promotes_outputs=["aircraft:*"],
         )
 
         self.add_subsystem(
             "fuel_mass",
-            FuelMassGroup(aviary_options=aviary_options),
+            FuelMassGroup(),
             promotes_inputs=fuel_mass_inputs + ["aircraft:*", "mission:*"],
             promotes_outputs=[
                 "aircraft:*", "mission:*"

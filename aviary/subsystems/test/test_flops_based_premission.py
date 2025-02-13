@@ -5,15 +5,21 @@ import openmdao.api as om
 from openmdao.utils.assert_utils import assert_near_equal, assert_check_partials
 
 from aviary.subsystems.premission import CorePreMission
+from aviary.subsystems.propulsion.utils import build_engine_deck
 from aviary.utils.aviary_values import AviaryValues
 from aviary.utils.functions import set_aviary_initial_values
-from aviary.validation_cases.validation_tests import (
-    flops_validation_test, get_flops_inputs, get_flops_outputs, get_flops_case_names, print_case
-)
-from aviary.variable_info.variables import Aircraft, Mission, Settings
-from aviary.subsystems.propulsion.utils import build_engine_deck
-from aviary.utils.test_utils.default_subsystems import get_default_premission_subsystems
 from aviary.utils.preprocessors import preprocess_options
+from aviary.utils.test_utils.default_subsystems import get_default_premission_subsystems
+from aviary.validation_cases.validation_tests import (
+    flops_validation_test,
+    get_flops_inputs,
+    get_flops_outputs,
+    get_flops_case_names,
+    print_case,
+)
+
+from aviary.variable_info.functions import setup_model_options
+from aviary.variable_info.variables import Aircraft, Mission, Settings
 
 
 class PreMissionGroupTest(unittest.TestCase):
@@ -21,29 +27,39 @@ class PreMissionGroupTest(unittest.TestCase):
 
         self.prob = om.Problem()
 
-    @parameterized.expand(get_flops_case_names(),
-                          name_func=print_case)
+    @parameterized.expand(get_flops_case_names(), name_func=print_case)
     def test_case(self, case_name):
         flops_inputs = get_flops_inputs(case_name)
         flops_outputs = get_flops_outputs(case_name)
-        flops_inputs.set_val(Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES,
-                             flops_outputs.get_val(Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES))
+        flops_inputs.set_val(
+            Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES,
+            flops_outputs.get_val(Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES),
+        )
         flops_inputs.set_val(Settings.VERBOSITY, 0)
 
         engine = build_engine_deck(flops_inputs)
         preprocess_options(flops_inputs, engine_models=engine)
         default_premission_subsystems = get_default_premission_subsystems(
-            'FLOPS', engine)
+            'FLOPS', engine
+        )
 
         prob = self.prob
 
         prob.model.add_subsystem(
             "pre_mission",
-            CorePreMission(aviary_options=flops_inputs,
-                           subsystems=default_premission_subsystems),
+            CorePreMission(
+                aviary_options=flops_inputs, subsystems=default_premission_subsystems
+            ),
             promotes_inputs=['*'],
             promotes_outputs=['*'],
         )
+
+        setup_model_options(prob, flops_inputs)
+
+        # prob.model.set_input_defaults(
+        #     Aircraft.Engine.SCALE_FACTOR,
+        #     flops_inputs.get_val(
+        #         Aircraft.Engine.SCALE_FACTOR))
 
         prob.setup(check=False, force_alloc_complex=True)
         prob.set_solver_print(2)
@@ -58,32 +74,41 @@ class PreMissionGroupTest(unittest.TestCase):
             # We set these so that their derivatives are defined.
             # The ref values are not set in our test models.
             prob[Aircraft.Wing.ASPECT_RATIO_REF] = prob[Aircraft.Wing.ASPECT_RATIO]
-            prob[Aircraft.Wing.THICKNESS_TO_CHORD_REF] = prob[Aircraft.Wing.THICKNESS_TO_CHORD]
+            prob[Aircraft.Wing.THICKNESS_TO_CHORD_REF] = prob[
+                Aircraft.Wing.THICKNESS_TO_CHORD
+            ]
 
         prob[Aircraft.Propulsion.TOTAL_ENGINE_MASS] = flops_outputs.get_val(
-            Aircraft.Propulsion.TOTAL_ENGINE_MASS, units='lbm')
+            Aircraft.Propulsion.TOTAL_ENGINE_MASS, units='lbm'
+        )
         prob[Aircraft.Propulsion.TOTAL_ENGINE_CONTROLS_MASS] = flops_outputs.get_val(
-            Aircraft.Propulsion.TOTAL_ENGINE_CONTROLS_MASS, units='lbm')
+            Aircraft.Propulsion.TOTAL_ENGINE_CONTROLS_MASS, units='lbm'
+        )
 
         flops_validation_test(
             prob,
             case_name,
             input_keys=[],
-            output_keys=[Aircraft.Design.STRUCTURE_MASS,
-                         Aircraft.Propulsion.MASS,
-                         Aircraft.Design.SYSTEMS_EQUIP_MASS,
-                         Aircraft.Design.EMPTY_MASS,
-                         Aircraft.Design.OPERATING_MASS,
-                         Aircraft.Design.ZERO_FUEL_MASS,
-                         Mission.Design.FUEL_MASS],
+            output_keys=[
+                Aircraft.Design.STRUCTURE_MASS,
+                Aircraft.Propulsion.MASS,
+                Aircraft.Design.SYSTEMS_EQUIP_MASS,
+                Aircraft.Design.EMPTY_MASS,
+                Aircraft.Design.OPERATING_MASS,
+                Aircraft.Design.ZERO_FUEL_MASS,
+                Mission.Design.FUEL_MASS,
+            ],
             step=1.01e-40,
             atol=1e-8,
-            rtol=1e-10)
+            rtol=1e-10,
+        )
 
     def test_diff_configuration_mass(self):
         # This standalone test provides coverage for some features unique to this
         # model.
-        from aviary.models.large_single_aisle_2.large_single_aisle_2_FLOPS_data import LargeSingleAisle2FLOPS
+        from aviary.models.large_single_aisle_2.large_single_aisle_2_FLOPS_data import (
+            LargeSingleAisle2FLOPS,
+        )
 
         prob = om.Problem()
 
@@ -94,15 +119,19 @@ class PreMissionGroupTest(unittest.TestCase):
         engine = build_engine_deck(flops_inputs)
         preprocess_options(flops_inputs, engine_models=engine)
         default_premission_subsystems = get_default_premission_subsystems(
-            'FLOPS', engine)
+            'FLOPS', engine
+        )
 
         prob.model.add_subsystem(
             "pre_mission",
-            CorePreMission(aviary_options=flops_inputs,
-                           subsystems=default_premission_subsystems),
+            CorePreMission(
+                aviary_options=flops_inputs, subsystems=default_premission_subsystems
+            ),
             promotes_inputs=['*'],
             promotes_outputs=['*'],
         )
+
+        setup_model_options(prob, flops_inputs)
 
         prob.setup(check=False)
 
@@ -117,7 +146,8 @@ class PreMissionGroupTest(unittest.TestCase):
             rtol=1e-4,
             check_partials=False,
             flops_inputs=flops_inputs,
-            flops_outputs=flops_outputs)
+            flops_outputs=flops_outputs,
+        )
 
 
 if __name__ == "__main__":

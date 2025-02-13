@@ -50,7 +50,7 @@ class PropellerMap(om.ExplicitComponent):
         # Create dict for variables present in propeller data with associated units
         self.propeller_variables = {}
 
-        data_file = options.get_val(Aircraft.Engine.PROPELLER_DATA_FILE)
+        data_file = options.get_val(Aircraft.Engine.Propeller.DATA_FILE)
         self._read_data(data_file)
 
     def _read_data(self, data_file):
@@ -122,7 +122,7 @@ class PropellerMap(om.ExplicitComponent):
             method=interp_method, extrapolate=True, vec_size=num_nodes)
 
         # add inputs and outputs to interpolator
-        # depending on p, selected_mach can be Mach number (Dynamic.Mission.MACH) or helical Mach number
+        # depending on p, selected_mach can be Mach number (Dynamic.Atmosphere.MACH) or helical Mach number
         propeller.add_input('selected_mach',
                             self.data[MACH],
                             units='unitless',
