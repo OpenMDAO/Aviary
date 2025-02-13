@@ -32,8 +32,7 @@ glue_variable Glue a variable for later use in markdown cells of notebooks (can 
 glue_keys recursively glue all of the keys from a dict of dicts
 glue_actions glue all Aviary CLI options for a given command
 glue_class_functions glue all class functions for a gen class
-glue_function_arguments glue all function arguments for a given function
-glue_function_arguments_and_defaults glue all function arguments and default values for a given function
+glue_function_arguments glue all function arguments and default values for a given function
 get_previous_line returns the previous n line(s) of code as a string
 get_class_names returns the class names in a file as a set
 get_function_names returns the function names in a file as a set
@@ -556,33 +555,9 @@ def glue_class_functions(obj, curr_glued=None, pre_fix=None, md_code=True):
             curr_glued.append(func_name + '()')
 
 
-def glue_function_arguments(func, curr_glued=None, md_code=False):
+def glue_function_arguments(func, curr_glued=None, glue_default=False, md_code=False):
     """
-    Glue all function arguments for a given function
-
-    Parameters
-    ----------
-    func: function
-        function
-    curr_glued: list
-        the parameters that have been glued
-    """
-    sig = inspect.signature(func)
-    arguments = [param.name for param in sig.parameters.values()]
-    try:
-        arguments.remove('self')
-        arguments.remove('kwargs')
-    except:
-        pass
-    for arg in arguments:
-        if arg not in curr_glued:
-            glue_variable(arg, md_code=md_code)
-            curr_glued.append(arg)
-
-
-def glue_function_arguments_and_defaults(func, curr_glued=None, glue_default=False, md_code=False):
-    """
-    Glue all function arguments for a given function
+    Glue all function arguments and default values for a given function
 
     Parameters
     ----------
