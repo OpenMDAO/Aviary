@@ -120,7 +120,7 @@ class MetaModelGroup(om.Group):
 
         VDEL3_interp.add_input(
             Aircraft.Wing.TAPER_RATIO,
-            0.33,
+            0.0,
             training_data=[0.0, 0.33, 1.0],
             units="unitless",
             desc="taper ratio of wing",
@@ -161,7 +161,7 @@ class MetaModelGroup(om.Group):
 
         VLAM1_interp.add_input(
             Aircraft.Wing.ASPECT_RATIO,
-            10.13,
+            0.0,
             training_data=[
                 0.0,
                 0.2,
@@ -285,7 +285,7 @@ class MetaModelGroup(om.Group):
 
         VLAM3_interp.add_input(
             Aircraft.Wing.ASPECT_RATIO,
-            10.13,
+            0.0,
             training_data=[
                 0.0,
                 0.2,

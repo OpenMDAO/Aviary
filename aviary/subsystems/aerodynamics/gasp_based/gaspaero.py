@@ -161,7 +161,7 @@ class WingTailRatios(om.ExplicitComponent):
 
         add_aviary_input(self, Aircraft.Wing.AVERAGE_CHORD)
 
-        add_aviary_input(self, Aircraft.Wing.TAPER_RATIO, val=0.33)
+        add_aviary_input(self, Aircraft.Wing.TAPER_RATIO)
 
         add_aviary_input(self, Aircraft.Wing.THICKNESS_TO_CHORD_ROOT)
 
@@ -268,7 +268,7 @@ class Xlifts(om.ExplicitComponent):
 
         # geometry inputs
 
-        add_aviary_input(self, Aircraft.Wing.ASPECT_RATIO, val=10.13)
+        add_aviary_input(self, Aircraft.Wing.ASPECT_RATIO)
 
         add_aviary_input(self, Aircraft.Wing.SWEEP)
 
@@ -428,11 +428,11 @@ class AeroGeom(om.ExplicitComponent):
 
         # geometric user inputs
 
-        add_aviary_input(self, Aircraft.Wing.ASPECT_RATIO, val=10.13)
+        add_aviary_input(self, Aircraft.Wing.ASPECT_RATIO)
 
         add_aviary_input(self, Aircraft.Wing.SWEEP)
 
-        add_aviary_input(self, Aircraft.Wing.TAPER_RATIO, val=0.33)
+        add_aviary_input(self, Aircraft.Wing.TAPER_RATIO)
 
         add_aviary_input(self, Aircraft.Strut.AREA_RATIO)
 
@@ -1104,7 +1104,7 @@ class LiftCoeff(om.ExplicitComponent):
 
         add_aviary_input(self, Aircraft.Wing.SWEEP)
 
-        add_aviary_input(self, Aircraft.Wing.ASPECT_RATIO, val=10.13)
+        add_aviary_input(self, Aircraft.Wing.ASPECT_RATIO)
 
         add_aviary_input(self, Aircraft.Wing.HEIGHT)
 
@@ -1116,7 +1116,7 @@ class LiftCoeff(om.ExplicitComponent):
 
         add_aviary_input(self, Aircraft.Wing.FLAP_CHORD_RATIO)
 
-        add_aviary_input(self, Aircraft.Wing.TAPER_RATIO, val=0.33)
+        add_aviary_input(self, Aircraft.Wing.TAPER_RATIO)
 
         # from flaps
         self.add_input(
