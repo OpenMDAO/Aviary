@@ -11,9 +11,9 @@ from aviary.mission.phase_builder_base import PhaseBuilderBase, register
 
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.enums import EquationsOfMotion, ThrottleAllocation
+from aviary.variable_info.functions import units_setter
 from aviary.variable_info.variable_meta_data import _MetaData
 from aviary.variable_info.variables import Aircraft, Dynamic
-from aviary.variable_info.functions import units_setter
 
 # Height Energy and Solved2DOF use this builder
 
@@ -50,7 +50,10 @@ class FlightPhaseBase(PhaseBuilderBase):
         external_subsystems=None, meta_data=None
     ):
         super().__init__(
-            name=name, core_subsystems=core_subsystems, subsystem_options=subsystem_options, user_options=user_options, initial_guesses=initial_guesses, ode_class=ode_class, transcription=transcription)
+            name=name, core_subsystems=core_subsystems, subsystem_options=subsystem_options,
+            user_options=user_options, initial_guesses=initial_guesses, ode_class=ode_class,
+            transcription=transcription,
+        )
 
         # TODO: support external_subsystems and meta_data in the base class
         if external_subsystems is None:
@@ -63,7 +66,7 @@ class FlightPhaseBase(PhaseBuilderBase):
 
         self.meta_data = meta_data
 
-        self.user_options = PhaseOptionsDictionary()
+        self.user_options = FlightPhaseOptions()
 
         for name, val in user_options.items():
             self.user_options[name] = val
@@ -445,9 +448,9 @@ class FlightPhaseBase(PhaseBuilderBase):
         }
 
 
-class PhaseOptionsDictionary(om.OptionsDictionary):
+class FlightPhaseOptions(om.OptionsDictionary):
     def __init__(self, read_only=False):
-        super(PhaseOptionsDictionary, self).__init__(read_only)
+        super(FlightPhaseOptions, self).__init__(read_only)
 
         self.declare('reserve', type=bool, default=False,
                      desc='Designate this phase as a reserve phase and contributes its fuel burn towards the reserve mission fuel requirements. Reserve phases should be created after all non-reserve phases.')
