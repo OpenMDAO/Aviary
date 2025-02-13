@@ -54,7 +54,12 @@ class RotationEOM(om.ExplicitComponent):
         )
 
         add_aviary_input(self, Aircraft.Wing.INCIDENCE, val=0.0, units="deg")
-        self.add_input("alpha", val=np.ones(nn), desc="angle of attack", units="deg")
+        self.add_input(
+            Dynamic.Vehicle.ANGLE_OF_ATTACK,
+            val=np.ones(nn),
+            desc="angle of attack",
+            units="deg",
+        )
 
         self.add_output(
             Dynamic.Mission.VELOCITY_RATE,
@@ -86,10 +91,10 @@ class RotationEOM(om.ExplicitComponent):
 
         if analysis_scheme is AnalysisScheme.COLLOCATION:
             self.add_output(
-                "alpha_rate", val=np.ones(nn), desc="angle of attack rate", units="deg/s"
+                "angle_of_attack_rate", val=np.ones(nn), desc="angle of attack rate", units="deg/s"
             )
 
-            self.declare_partials("alpha_rate", ["*"])
+            self.declare_partials("angle_of_attack_rate", ["*"])
 
     def setup_partials(self):
         arange = np.arange(self.options["num_nodes"])
@@ -99,7 +104,7 @@ class RotationEOM(om.ExplicitComponent):
             Dynamic.Mission.VELOCITY_RATE,
             [
                 Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
-                "alpha",
+                Dynamic.Vehicle.ANGLE_OF_ATTACK,
                 Dynamic.Vehicle.DRAG,
                 Dynamic.Vehicle.MASS,
                 Dynamic.Mission.FLIGHT_PATH_ANGLE,
@@ -128,7 +133,7 @@ class RotationEOM(om.ExplicitComponent):
                 Dynamic.Vehicle.MASS,
                 Dynamic.Vehicle.LIFT,
                 Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
-                "alpha",
+                Dynamic.Vehicle.ANGLE_OF_ATTACK,
             ],
             rows=arange,
             cols=arange,
@@ -141,7 +146,13 @@ class RotationEOM(om.ExplicitComponent):
             cols=arange,
             val=180 / np.pi,
         )
-        self.declare_partials("fuselage_pitch", "alpha", rows=arange, cols=arange, val=1)
+        self.declare_partials(
+            "fuselage_pitch",
+            Dynamic.Vehicle.ANGLE_OF_ATTACK,
+            rows=arange,
+            cols=arange,
+            val=1,
+        )
         self.declare_partials("fuselage_pitch", Aircraft.Wing.INCIDENCE, val=-1)
 
     def compute(self, inputs, outputs):
@@ -154,7 +165,7 @@ class RotationEOM(om.ExplicitComponent):
         TAS = inputs[Dynamic.Mission.VELOCITY]
         gamma = inputs[Dynamic.Mission.FLIGHT_PATH_ANGLE]
         i_wing = inputs[Aircraft.Wing.INCIDENCE]
-        alpha = inputs["alpha"]
+        alpha = inputs[Dynamic.Vehicle.ANGLE_OF_ATTACK]
 
         mu = MU_TAKEOFF
 
@@ -184,7 +195,7 @@ class RotationEOM(om.ExplicitComponent):
         outputs["fuselage_pitch"] = gamma * 180 / np.pi - i_wing + alpha
 
         if analysis_scheme is AnalysisScheme.COLLOCATION:
-            outputs['alpha_rate'] = np.full(nn, 3.33)
+            outputs['angle_of_attack_rate'] = np.full(nn, 3.33)
 
     def compute_partials(self, inputs, J):
 
@@ -197,7 +208,7 @@ class RotationEOM(om.ExplicitComponent):
         TAS = inputs[Dynamic.Mission.VELOCITY]
         gamma = inputs[Dynamic.Mission.FLIGHT_PATH_ANGLE]
         i_wing = inputs[Aircraft.Wing.INCIDENCE]
-        alpha = inputs["alpha"]
+        alpha = inputs[Dynamic.Vehicle.ANGLE_OF_ATTACK]
 
         nn = self.options["num_nodes"]
 
@@ -233,7 +244,7 @@ class RotationEOM(om.ExplicitComponent):
         J[Dynamic.Mission.VELOCITY_RATE, Dynamic.Vehicle.Propulsion.THRUST_TOTAL] = (
             (dTAlF_dThrust - mu * dNF_dThrust) * GRAV_ENGLISH_GASP / weight
         )
-        J[Dynamic.Mission.VELOCITY_RATE, "alpha"] = (
+        J[Dynamic.Mission.VELOCITY_RATE, Dynamic.Vehicle.ANGLE_OF_ATTACK] = (
             (dTAlF_dAlpha - mu * dNF_dAlpha) * GRAV_ENGLISH_GASP / weight
         )
         J[Dynamic.Mission.VELOCITY_RATE, Aircraft.Wing.INCIDENCE] = (
@@ -276,5 +287,5 @@ class RotationEOM(om.ExplicitComponent):
         J["normal_force", Dynamic.Vehicle.MASS] = dNF_dWeight * GRAV_ENGLISH_LBM
         J["normal_force", Dynamic.Vehicle.LIFT] = dNF_dLift
         J["normal_force", Dynamic.Vehicle.Propulsion.THRUST_TOTAL] = dNF_dThrust
-        J["normal_force", "alpha"] = dNF_dAlpha
+        J["normal_force", Dynamic.Vehicle.ANGLE_OF_ATTACK] = dNF_dAlpha
         J["normal_force", Aircraft.Wing.INCIDENCE] = dNF_dIwing

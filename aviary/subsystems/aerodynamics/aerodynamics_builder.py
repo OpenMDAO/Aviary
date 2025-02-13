@@ -221,7 +221,7 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
 
             elif method == 'low_speed':
                 promotes = [
-                    'angle_of_attack',
+                    Dynamic.Vehicle.ANGLE_OF_ATTACK,
                     Dynamic.Mission.ALTITUDE,
                     Dynamic.Mission.FLIGHT_PATH_ANGLE,
                     Mission.Takeoff.DRAG_COEFFICIENT_MIN,
@@ -287,7 +287,11 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
             elif method == 'cruise':
                 if 'output_alpha' in kwargs:
                     if kwargs['output_alpha']:
-                        promotes = [Dynamic.Vehicle.DRAG, Dynamic.Vehicle.LIFT, 'alpha']
+                        promotes = [
+                            Dynamic.Vehicle.DRAG,
+                            Dynamic.Vehicle.LIFT,
+                            Dynamic.Vehicle.ANGLE_OF_ATTACK,
+                        ]
                 else:
                     promotes = [Dynamic.Vehicle.DRAG, Dynamic.Vehicle.LIFT, 'CL_max']
 
@@ -460,7 +464,7 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
                 for var in ENGINE_SIZED_INPUTS:
                     params[var] = {'shape': (num_engine_type, ), 'static_target': True}
 
-            elif method == 'tabular':
+            elif method in ['tabular', 'solved_alpha']:
 
                 for var in TABULAR_CORE_INPUTS:
 
@@ -660,11 +664,11 @@ AERO_2DOF_INPUTS = [
     Aircraft.Wing.FUSELAGE_INTERFERENCE_FACTOR,
     Aircraft.Wing.MAX_THICKNESS_LOCATION,
     Aircraft.Wing.MIN_PRESSURE_LOCATION,
-    Aircraft.Wing.MOUNTING_TYPE,
     Aircraft.Wing.SPAN,
     Aircraft.Wing.SWEEP,
     Aircraft.Wing.TAPER_RATIO,
     Aircraft.Wing.THICKNESS_TO_CHORD_UNWEIGHTED,
+    Aircraft.Wing.VERTICAL_MOUNT_LOCATION,
     Aircraft.Wing.ZERO_LIFT_ANGLE,
 ]
 
@@ -672,6 +676,7 @@ AERO_LS_2DOF_INPUTS = [
     Mission.Takeoff.DRAG_COEFFICIENT_FLAP_INCREMENT,
     Mission.Takeoff.LIFT_COEFFICIENT_FLAP_INCREMENT,
     Mission.Takeoff.LIFT_COEFFICIENT_MAX,
+    Aircraft.Wing.HEIGHT,
 ]
 
 AERO_CLEAN_2DOF_INPUTS = [

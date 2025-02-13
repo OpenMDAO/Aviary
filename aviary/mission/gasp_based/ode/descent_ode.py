@@ -173,7 +173,7 @@ class DescentODE(BaseODE):
                 Dynamic.Mission.VELOCITY,
                 Dynamic.Vehicle.DRAG,
                 Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
-                "alpha",
+                Dynamic.Vehicle.ANGLE_OF_ATTACK,
             ],
             promotes_outputs=[
                 Dynamic.Mission.ALTITUDE_RATE,
@@ -188,7 +188,7 @@ class DescentODE(BaseODE):
             FlightConstraints(num_nodes=nn),
             promotes_inputs=[
                 Dynamic.Vehicle.MASS,
-                "alpha",
+                Dynamic.Vehicle.ANGLE_OF_ATTACK,
                 Dynamic.Atmosphere.DENSITY,
                 "CL_max",
                 Dynamic.Mission.FLIGHT_PATH_ANGLE,

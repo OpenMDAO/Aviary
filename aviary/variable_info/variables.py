@@ -575,7 +575,6 @@ class Aircraft:
         MIN_PRESSURE_LOCATION = 'aircraft:wing:min_pressure_location'
         MISC_MASS = 'aircraft:wing:misc_mass'
         MISC_MASS_SCALER = 'aircraft:wing:misc_mass_scaler'
-        MOUNTING_TYPE = 'aircraft:wing:mounting_type'
         NUM_FLAP_SEGMENTS = 'aircraft:wing:num_flap_segments'
         NUM_INTEGRATION_STATIONS = 'aircraft:wing:num_integration_stations'
         OPTIMUM_FLAP_DEFLECTION = 'aircraft:wing:optimum_flap_deflection'
@@ -607,6 +606,7 @@ class Aircraft:
         THICKNESS_TO_CHORD_UNWEIGHTED = 'aircraft:wing:thickness_to_chord_unweighted'
         ULTIMATE_LOAD_FACTOR = 'aircraft:wing:ultimate_load_factor'
         VAR_SWEEP_MASS_PENALTY = 'aircraft:wing:var_sweep_mass_penalty'
+        VERTICAL_MOUNT_LOCATION = 'aircraft:wing:vertical_mount_location'
         WETTED_AREA = 'aircraft:wing:wetted_area'
         WETTED_AREA_SCALER = 'aircraft:wing:wetted_area_scaler'
         ZERO_LIFT_ANGLE = 'aircraft:wing:zero_lift_angle'
@@ -652,6 +652,7 @@ class Dynamic:
     class Vehicle:
         """Vehicle properties and states in a vehicle-fixed reference frame."""
 
+        ANGLE_OF_ATTACK = 'angle_of_attack'
         BATTERY_STATE_OF_CHARGE = 'battery_state_of_charge'
         CUMULATIVE_ELECTRIC_ENERGY_USED = 'cumulative_electric_energy_used'
         DRAG = 'drag'
