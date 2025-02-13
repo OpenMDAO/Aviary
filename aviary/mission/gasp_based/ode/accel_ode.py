@@ -47,8 +47,12 @@ class AccelODE(BaseODE):
             promotes_outputs=["weight"],
         )
 
-        kwargs = {'num_nodes': nn, 'aviary_inputs': aviary_options,
-                  'method': 'cruise', 'output_alpha': True}
+        kwargs = {
+            'num_nodes': nn,
+            'aviary_inputs': aviary_options,
+            'method': 'cruise',
+            'output_alpha': True,
+        }
         for subsystem in core_subsystems:
             system = subsystem.build_mission(**kwargs)
             if system is not None:

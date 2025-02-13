@@ -35,7 +35,7 @@ def add_aviary_input(comp, varname, val=None, units=None, desc=None, shape_by_co
     val: float or ndarray
         Default value for variable.
     units: str
-        (Optional) when speficying val, units should also be specified.
+        (Optional) when specifying val, units should also be specified.
     desc: str
         (Optional) description text for the variable.
     shape_by_conn: bool
@@ -47,13 +47,16 @@ def add_aviary_input(comp, varname, val=None, units=None, desc=None, shape_by_co
         (Optional) shape for this input.
     """
     meta = meta_data[varname]
+    # units of None are overwritten with defaults. Overwriting units with None is
+    # unnecessary as it will cause errors down the line if the default is not already
+    # None
+    default_units = meta['units']
+
     if units:
         input_units = units
     else:
-        # units of None are overwritten with defaults. Overwriting units with None is
-        # unecessary as it will cause errors down the line if the default is not already
-        # None
-        input_units = meta['units']
+        input_units = default_units
+
     if desc:
         input_desc = desc
     else:
@@ -69,6 +72,18 @@ def add_aviary_input(comp, varname, val=None, units=None, desc=None, shape_by_co
                 val = np.zeros(shape)
             else:
                 val = np.ones(shape) * val
+
+        # val was not provided but different units were
+        if input_units != default_units:
+            try:
+                # convert the default units to requested units
+                val = convert_units(val, default_units, input_units)
+            except ValueError:
+                raise ValueError(
+                    f'The requested units {units} for input {varname} in component '
+                    f'{comp.name} are invalid.'
+                )
+
     comp.add_input(varname, val=val, units=input_units,
                    desc=input_desc, shape_by_conn=shape_by_conn, shape=shape)
 
@@ -104,13 +119,16 @@ def add_aviary_output(comp, varname, val=None, units=None, desc=None, shape_by_c
         (Optional) shape for this input.
     """
     meta = meta_data[varname]
+    # units of None are overwritten with defaults. Overwriting units with None is
+    # unnecessary as it will cause errors down the line if the default is not already
+    # None
+    default_units = meta['units']
+
     if units:
         output_units = units
     else:
-        # units of None are overwritten with defaults. Overwriting units with None is
-        # unecessary as it will cause errors down the line if the default is not already
-        # None
-        output_units = meta['units']
+        output_units = default_units
+
     if desc:
         output_desc = desc
     else:
@@ -126,6 +144,18 @@ def add_aviary_output(comp, varname, val=None, units=None, desc=None, shape_by_c
                 val = np.zeros(shape)
             else:
                 val = np.ones(shape) * val
+
+        # val was not provided but different units were
+        if output_units != default_units:
+            try:
+                # convert the default units to requested units
+                val = convert_units(val, default_units, output_units)
+            except ValueError:
+                raise ValueError(
+                    f'The requested units {units} for output {varname} in component '
+                    f'{comp.name} are invalid.'
+                )
+
     comp.add_output(varname, val=val, units=output_units,
                     desc=output_desc, shape_by_conn=shape_by_conn)
 
@@ -226,10 +256,18 @@ def add_aviary_option(comp, name, val=_unspecified, units=None, desc=None, meta_
         be used.
     """
     meta = meta_data[name]
+    # units of None are overwritten with defaults. Overwriting units with None is
+    # unnecessary as it will cause errors down the line if the default is not already
+    # None
+    default_units = meta['units']
+
+    if units:
+        option_units = units
+    else:
+        option_units = default_units
+
     if not desc:
         desc = meta['desc']
-    if val is _unspecified:
-        val = meta['default_value']
 
     types = meta['types']
     if meta['multivalue']:
@@ -237,6 +275,20 @@ def add_aviary_option(comp, name, val=_unspecified, units=None, desc=None, meta_
             types = (list, *types)
         else:
             types = (list, types)
+
+    if val is _unspecified:
+        val = meta['default_value']
+
+        # val was not provided but different units were
+        if option_units != default_units:
+            try:
+                # convert the default units to requested units
+                val = convert_units(val, default_units, option_units)
+            except ValueError:
+                raise ValueError(
+                    f'The requested units {units} for output {name} in component '
+                    f'{comp.name} are invalid.'
+                )
 
     if units not in [None, 'unitless']:
         types = tuple

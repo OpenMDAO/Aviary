@@ -35,7 +35,7 @@ class RotationODETestCase(unittest.TestCase):
 
         self.prob.set_val(Aircraft.Wing.INCIDENCE, 1.5, units="deg")
         self.prob.set_val(Dynamic.Vehicle.MASS, [100000, 100000], units="lbm")
-        self.prob.set_val("alpha", [1.5, 1.5], units="deg")
+        self.prob.set_val(Dynamic.Vehicle.ANGLE_OF_ATTACK, [1.5, 1.5], units="deg")
         self.prob.set_val(Dynamic.Mission.VELOCITY, [100, 100], units="kn")
         self.prob.set_val("t_curr", [1, 2], units="s")
         self.prob.set_val("interference_independent_of_shielded_area", 1.89927266)
