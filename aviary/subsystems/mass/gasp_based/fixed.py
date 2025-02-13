@@ -2167,7 +2167,7 @@ class GearMass(om.ExplicitComponent):
     def setup(self):
         num_engine_type = len(self.options[Aircraft.Engine.NUM_ENGINES])
 
-        add_aviary_input(self, Aircraft.Wing.MOUNTING_TYPE)
+        add_aviary_input(self, Aircraft.Wing.VERTICAL_MOUNT_LOCATION)
         add_aviary_input(self, Aircraft.LandingGear.MASS_COEFFICIENT)
         add_aviary_input(self, Mission.Design.GROSS_MASS)
         add_aviary_input(self, Aircraft.LandingGear.MAIN_GEAR_MASS_COEFFICIENT)
