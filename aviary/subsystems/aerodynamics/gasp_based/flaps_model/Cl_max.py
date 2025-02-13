@@ -83,7 +83,7 @@ class CLmaxCalculation(om.ExplicitComponent):
 
         add_aviary_input(self, Aircraft.Wing.LOADING)
 
-        add_aviary_input(self, Dynamic.Atmosphere.STATIC_PRESSURE, val=(14.696 * 144),
+        add_aviary_input(self, Dynamic.Atmosphere.STATIC_PRESSURE,
                          desc="INGASP.P0")
 
         add_aviary_input(self, Aircraft.Wing.AVERAGE_CHORD)
