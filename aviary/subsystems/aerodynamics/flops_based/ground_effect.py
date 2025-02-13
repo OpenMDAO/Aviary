@@ -42,9 +42,8 @@ class GroundEffect(om.ExplicitComponent):
 
         add_aviary_input(self, Dynamic.Mission.ALTITUDE, shape=(nn), units='m')
 
-        add_aviary_input(
-            self, Dynamic.Mission.FLIGHT_PATH_ANGLE, shape=(nn), units='rad'
-        )
+        add_aviary_input(self, Dynamic.Mission.FLIGHT_PATH_ANGLE, shape=(nn),
+                         units='rad')
 
         self.add_input(
             'minimum_drag_coefficient', 0.0,

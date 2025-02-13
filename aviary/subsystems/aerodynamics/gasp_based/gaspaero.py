@@ -448,17 +448,13 @@ class AeroGeom(om.ExplicitComponent):
 
         add_aviary_input(self, Aircraft.Fuselage.LENGTH)
 
-        add_aviary_input(
-            self, Aircraft.Nacelle.AVG_LENGTH, val=np.zeros(num_engine_type)
-        )
+        add_aviary_input(self, Aircraft.Nacelle.AVG_LENGTH, shape=num_engine_type)
 
         add_aviary_input(self, Aircraft.HorizontalTail.AREA)
 
         add_aviary_input(self, Aircraft.Fuselage.WETTED_AREA)
 
-        add_aviary_input(
-            self, Aircraft.Nacelle.SURFACE_AREA, val=np.zeros(num_engine_type)
-        )
+        add_aviary_input(self, Aircraft.Nacelle.SURFACE_AREA, shape=num_engine_type)
 
         add_aviary_input(self, Aircraft.Wing.AREA)
 
