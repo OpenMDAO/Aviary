@@ -99,7 +99,7 @@ class SimpleDrag(om.ExplicitComponent):
         add_aviary_input(self, Aircraft.Wing.AREA, units='m**2')
 
         add_aviary_input(self, Dynamic.Atmosphere.DYNAMIC_PRESSURE,
-                         val=np.ones(nn), units='N/m**2')
+                         shape=nn, units='N/m**2')
 
         self.add_input(
             'CD', val=np.ones(nn), units='unitless',
