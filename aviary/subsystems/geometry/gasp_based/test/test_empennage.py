@@ -85,6 +85,7 @@ class TestTailComp(
         self.prob.setup(check=False, force_alloc_complex=True)
 
     def test_large_sinle_aisle_1_htail(self):
+        self.prob.set_val("tr", 0.352, units="unitless")
         self.prob.run_model()
 
         assert_near_equal(self.prob["area"], 375.9, tol)
