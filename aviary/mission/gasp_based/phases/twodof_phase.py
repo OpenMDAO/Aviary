@@ -37,11 +37,13 @@ class TwoDOFPhase(FlightPhaseBase):
         super().__init__(
             name=name,
             core_subsystems=core_subsystems,
+            external_subsystems=external_subsystems,
             subsystem_options=subsystem_options,
             user_options=user_options,
             initial_guesses=initial_guesses,
             ode_class=ode_class,
             transcription=transcription,
+            meta_data=meta_data,
         )
 
         self._add_meta_data(

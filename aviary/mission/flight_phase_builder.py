@@ -26,36 +26,11 @@ class FlightPhaseBase(PhaseBuilderBase):
 
     __slots__ = ('external_subsystems', 'meta_data')
 
-    # region : derived type customization points
     _meta_data_ = {}
-
     _initial_guesses_meta_data_ = {}
-
     default_name = 'cruise'
-
     default_ode_class = EnergyODE
-
     default_meta_data = _MetaData
-    # endregion : derived type customization points
-
-    def __init__(
-        self, name=None, subsystem_options=None, user_options=None, initial_guesses=None,
-        ode_class=None, transcription=None, core_subsystems=None,
-        external_subsystems=None, meta_data=None
-    ):
-        super().__init__(
-            name=name, core_subsystems=core_subsystems, subsystem_options=subsystem_options, user_options=user_options, initial_guesses=initial_guesses, ode_class=ode_class, transcription=transcription)
-
-        # TODO: support external_subsystems and meta_data in the base class
-        if external_subsystems is None:
-            external_subsystems = []
-
-        self.external_subsystems = external_subsystems
-
-        if meta_data is None:
-            meta_data = self.default_meta_data
-
-        self.meta_data = meta_data
 
     def build_phase(self, aviary_options: AviaryValues = None, phase_type=EquationsOfMotion.HEIGHT_ENERGY):
         '''
