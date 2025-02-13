@@ -19,8 +19,6 @@ class RotationODE(TwoDOFODE):
     def setup(self):
         nn = self.options["num_nodes"]
         analysis_scheme = self.options["analysis_scheme"]
-        aviary_options = self.options['aviary_options']
-        core_subsystems = self.options['core_subsystems']
 
         if analysis_scheme is AnalysisScheme.SHOOTING:
             add_SGM_required_inputs(self, {
@@ -32,9 +30,7 @@ class RotationODE(TwoDOFODE):
 
         self.add_atmosphere()
 
-        self.options['subsystem_options']['core_aerodynamics'] = {
-            'method': 'low_speed',
-        }
+        self.options['subsystem_options']['core_aerodynamics'] = {'method': 'low_speed'}
 
         self.add_core_subsystems()
 
