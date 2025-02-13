@@ -464,7 +464,7 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
                 for var in ENGINE_SIZED_INPUTS:
                     params[var] = {'shape': (num_engine_type, ), 'static_target': True}
 
-            elif method == 'tabular':
+            elif method in ['tabular', 'solved_alpha']:
 
                 for var in TABULAR_CORE_INPUTS:
 
@@ -676,6 +676,7 @@ AERO_LS_2DOF_INPUTS = [
     Mission.Takeoff.DRAG_COEFFICIENT_FLAP_INCREMENT,
     Mission.Takeoff.LIFT_COEFFICIENT_FLAP_INCREMENT,
     Mission.Takeoff.LIFT_COEFFICIENT_MAX,
+    Aircraft.Wing.HEIGHT,
 ]
 
 AERO_CLEAN_2DOF_INPUTS = [
