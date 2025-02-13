@@ -3,7 +3,7 @@ import dymos as dm
 from aviary.mission.flight_phase_builder import FlightPhaseBase, register
 from aviary.mission.initial_guess_builders import InitialGuessIntegrationVariable, InitialGuessState
 
-from aviary.mission.flops_based.ode.mission_ODE import MissionODE
+from aviary.mission.flops_based.ode.energy_ODE import EnergyODE
 
 
 # TODO: support/handle the following in the base class
@@ -14,7 +14,7 @@ from aviary.mission.flops_based.ode.mission_ODE import MissionODE
 @register
 class EnergyPhase(FlightPhaseBase):
 
-    default_ode_class = MissionODE
+    default_ode_class = EnergyODE
 
 
 EnergyPhase._add_initial_guess_meta_data(

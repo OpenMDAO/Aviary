@@ -1,14 +1,14 @@
 import numpy as np
 
 from aviary.variable_info.enums import AlphaModes, AnalysisScheme
-from aviary.variable_info.variables import Aircraft, Mission, Dynamic
+from aviary.variable_info.variables import Aircraft, Dynamic
 from aviary.mission.gasp_based.ode.ascent_eom import AscentEOM
-from aviary.mission.gasp_based.ode.base_ode import BaseODE
+from aviary.mission.gasp_based.ode.two_dof_ode import TwoDOFODE
 from aviary.mission.gasp_based.ode.params import ParamPort
 from aviary.mission.gasp_based.ode.time_integration_base_classes import add_SGM_required_inputs
 
 
-class AscentODE(BaseODE):
+class AscentODE(TwoDOFODE):
     """ODE for initial ascent.
 
     This phase is intended to model the portion of aircraft flight starting when the
@@ -43,23 +43,23 @@ class AscentODE(BaseODE):
             })
         self.add_subsystem("params", ascent_params, promotes=["*"])
 
-        self.add_atmosphere(nn)
+        self.add_atmosphere()
 
-        kwargs = {'num_nodes': nn, 'aviary_inputs': aviary_options,
-                  'method': 'low_speed', 'retract_gear': True, 'retract_flaps': True}
-        for subsystem in core_subsystems:
-            system = subsystem.build_mission(**kwargs)
-            if system is not None:
-                self.add_subsystem(subsystem.name,
-                                   system,
-                                   promotes_inputs=subsystem.mission_inputs(**kwargs),
-                                   promotes_outputs=subsystem.mission_outputs(**kwargs))
+        self.options['subsystem_options']['core_aerodynamics'] = {
+            'method': 'low_speed',
+            'retract_gear': True,
+            'retract_flaps': True,
+        }
+
+        self.add_core_subsystems()
+
+        self.add_external_subsystems()
 
         if alpha_mode is AlphaModes.DEFAULT:
             # alpha as input
             pass
         else:
-            self.AddAlphaControl(alpha_mode=alpha_mode, num_nodes=nn)
+            self.add_alpha_control(alpha_mode=alpha_mode, num_nodes=nn)
 
         self.add_subsystem(
             "ascent_eom",

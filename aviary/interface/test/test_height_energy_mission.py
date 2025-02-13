@@ -10,7 +10,7 @@ from openmdao.utils.reports_system import clear_reports
 from aviary.interface.methods_for_level1 import run_aviary
 from aviary.interface.methods_for_level2 import AviaryProblem
 from aviary.subsystems.test.test_dummy_subsystem import ArrayGuessSubsystemBuilder
-from aviary.mission.energy_phase import EnergyPhase
+from aviary.mission.flops_based.phases.energy_phase import EnergyPhase
 from aviary.variable_info.variables import Dynamic
 
 

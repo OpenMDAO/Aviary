@@ -33,9 +33,16 @@ class CruisePhase(PhaseBuilderBase):
         external_subsystems=None, meta_data=None
     ):
         super().__init__(
-            name=name, subsystem_options=subsystem_options, user_options=user_options,
-            initial_guesses=initial_guesses, ode_class=ode_class, transcription=transcription,
-            core_subsystems=core_subsystems, is_analytic_phase=True,
+            name=name,
+            subsystem_options=subsystem_options,
+            user_options=user_options,
+            initial_guesses=initial_guesses,
+            ode_class=ode_class,
+            transcription=transcription,
+            core_subsystems=core_subsystems,
+            external_subsystems=external_subsystems,
+            meta_data=meta_data,
+            is_analytic_phase=True,
         )
 
     def build_phase(self, aviary_options: AviaryValues = None):

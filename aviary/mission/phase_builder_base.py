@@ -11,7 +11,7 @@ from collections import namedtuple
 import dymos as dm
 import openmdao.api as om
 
-from aviary.mission.flops_based.ode.mission_ODE import MissionODE
+from aviary.mission.flops_based.ode.energy_ODE import EnergyODE
 from aviary.mission.initial_guess_builders import InitialGuess
 from aviary.utils.aviary_values import AviaryValues, get_keys
 from aviary.variable_info.variables import Dynamic
@@ -78,9 +78,17 @@ class PhaseBuilderBase(ABC):
     assign_default_options
     '''
     __slots__ = (
-        'name',  'core_subsystems', 'subsystem_options', 'user_options',
-        'initial_guesses', 'ode_class', 'transcription',
-        'is_analytic_phase', 'num_nodes', 'external_subsystems', 'meta_data',
+        'name',
+        'core_subsystems',
+        'external_subsystems',
+        'subsystem_options',
+        'user_options',
+        'initial_guesses',
+        'ode_class',
+        'transcription',
+        'is_analytic_phase',
+        'num_nodes',
+        'meta_data',
     )
 
     # region : derived type customization points
@@ -90,14 +98,24 @@ class PhaseBuilderBase(ABC):
 
     default_name = '<unknown phase>'
 
-    default_ode_class = MissionODE
+    default_ode_class = EnergyODE
 
     default_meta_data = _MetaData
     # endregion : derived type customization points
 
     def __init__(
-        self, name=None, core_subsystems=None, user_options=None, initial_guesses=None,
-        ode_class=None, transcription=None, subsystem_options=None, is_analytic_phase=False, num_nodes=5, external_subsystems=None, meta_data=None,
+        self,
+        name=None,
+        core_subsystems=None,
+        external_subsystems=None,
+        user_options=None,
+        initial_guesses=None,
+        ode_class=None,
+        transcription=None,
+        subsystem_options=None,
+        is_analytic_phase=False,
+        num_nodes=5,
+        meta_data=None,
     ):
         if name is None:
             name = self.default_name
@@ -106,8 +124,11 @@ class PhaseBuilderBase(ABC):
 
         if core_subsystems is None:
             core_subsystems = []
+        if external_subsystems is None:
+            external_subsystems = []
 
         self.core_subsystems = core_subsystems
+        self.external_subsystems = external_subsystems
 
         if subsystem_options is None:
             subsystem_options = {}
@@ -183,6 +204,7 @@ class PhaseBuilderBase(ABC):
             kwargs['subsystem_options'] = subsystem_options
 
         kwargs['core_subsystems'] = self.core_subsystems
+        kwargs['external_subsystems'] = self.external_subsystems
 
         if self.is_analytic_phase:
             phase = dm.AnalyticPhase(

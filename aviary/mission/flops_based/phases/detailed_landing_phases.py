@@ -105,13 +105,10 @@ class LandingApproachToMicP3(PhaseBuilderBase):
     '''
     __slots__ = ()
 
-    # region : derived type customization points
     _meta_data_ = {}
 
     default_name = 'landing_approach'
-
     default_ode_class = LandingODE
-    # endregion : derived type customization points
 
     def build_phase(self, aviary_options: AviaryValues = None):
         '''
@@ -1244,7 +1241,7 @@ class LandingTrajectory:
         KeyError
             if the specified base name is not found
         '''
-        mapped_phase: self.MappedPhase = self._phases[key]
+        mapped_phase = self._phases[key]
 
         return mapped_phase.phase
 

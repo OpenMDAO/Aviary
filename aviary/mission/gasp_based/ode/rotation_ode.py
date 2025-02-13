@@ -1,7 +1,7 @@
 import numpy as np
 import openmdao.api as om
 
-from aviary.mission.gasp_based.ode.base_ode import BaseODE
+from aviary.mission.gasp_based.ode.two_dof_ode import TwoDOFODE
 from aviary.mission.gasp_based.ode.params import ParamPort
 from aviary.mission.gasp_based.ode.rotation_eom import RotationEOM
 from aviary.variable_info.enums import AnalysisScheme
@@ -9,7 +9,7 @@ from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 from aviary.mission.gasp_based.ode.time_integration_base_classes import add_SGM_required_inputs
 
 
-class RotationODE(BaseODE):
+class RotationODE(TwoDOFODE):
     """ODE for takeoff rotation.
 
     This phase spans the time from when the aircraft is touching the runway but has
@@ -30,17 +30,15 @@ class RotationODE(BaseODE):
         # TODO: paramport
         self.add_subsystem("params", ParamPort(), promotes=["*"])
 
-        self.add_atmosphere(nn)
+        self.add_atmosphere()
 
-        kwargs = {'num_nodes': nn, 'aviary_inputs': aviary_options,
-                  'method': 'low_speed'}
-        for subsystem in core_subsystems:
-            system = subsystem.build_mission(**kwargs)
-            if system is not None:
-                self.add_subsystem(subsystem.name,
-                                   system,
-                                   promotes_inputs=subsystem.mission_inputs(**kwargs),
-                                   promotes_outputs=subsystem.mission_outputs(**kwargs))
+        self.options['subsystem_options']['core_aerodynamics'] = {
+            'method': 'low_speed',
+        }
+
+        self.add_core_subsystems()
+
+        self.add_external_subsystems()
 
         if analysis_scheme is AnalysisScheme.SHOOTING:
             alpha_comp = om.ExecComp(

@@ -3,7 +3,7 @@ import numpy as np
 import dymos as dm
 
 from aviary.mission.initial_guess_builders import InitialGuessState
-from aviary.mission.flops_based.ode.mission_ODE import MissionODE
+from aviary.mission.flops_based.ode.energy_ODE import EnergyODE
 from aviary.mission.flops_based.phases.phase_utils import add_subsystem_variables_to_phase, get_initial
 from aviary.mission.phase_builder_base import PhaseBuilderBase, register
 
@@ -33,7 +33,7 @@ class FlightPhaseBase(PhaseBuilderBase):
 
     default_name = 'cruise'
 
-    default_ode_class = MissionODE
+    default_ode_class = EnergyODE
 
     default_meta_data = _MetaData
     # endregion : derived type customization points
