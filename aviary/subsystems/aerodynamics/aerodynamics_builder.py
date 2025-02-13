@@ -106,16 +106,15 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
             method = kwargs.pop('method')
         except KeyError:
             method = None
-        aero_group = None
 
-        if method != 'external':
-            if code_origin is GASP:
-                aero_group = PreMissionAero()
+        if method is 'external':
+            return None
 
-            elif code_origin is FLOPS:
-                aero_group = Design()
+        if code_origin is GASP:
+            return PreMissionAero()
 
-        return aero_group
+        elif code_origin is FLOPS:
+            return Design()
 
     def build_mission(self, num_nodes, aviary_inputs, **kwargs):
         try:
@@ -125,86 +124,88 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
 
         aero_group = None
 
-        if method != 'external':
-            if self.code_origin is FLOPS:
-                if method is None:
-                    aero_group = ComputedAeroGroup(num_nodes=num_nodes)
+        if method is 'external':
+            return None
 
-                elif method == 'computed':
-                    aero_group = ComputedAeroGroup(num_nodes=num_nodes, **kwargs)
+        if self.code_origin is FLOPS:
+            if method is None:
+                aero_group = ComputedAeroGroup(num_nodes=num_nodes)
 
-                elif method == 'low_speed':
-                    aero_group = TakeoffAeroGroup(
-                        num_nodes=num_nodes, aviary_options=aviary_inputs, **kwargs
-                    )
+            elif method == 'computed':
+                aero_group = ComputedAeroGroup(num_nodes=num_nodes, **kwargs)
 
-                # TODO solved alpha belongs in the GASP side, rolled into tabular aero
-                #      It is currently only here because it is not possible to define
-                #      per-subsystem code origins in AviaryProblem yet
-                elif method == 'solved_alpha':
-                    aero_group = SolvedAlphaGroup(
-                        num_nodes=num_nodes, aero_data=kwargs.pop('aero_data'), **kwargs
-                    )
+            elif method == 'low_speed':
+                aero_group = TakeoffAeroGroup(
+                    num_nodes=num_nodes, aviary_options=aviary_inputs, **kwargs
+                )
 
-                elif method == 'tabular':
-                    aero_group = TabularAeroGroup(
+            # TODO solved alpha belongs in the GASP side, rolled into tabular aero
+            #      It is currently only here because it is not possible to define
+            #      per-subsystem code origins in AviaryProblem yet
+            elif method == 'solved_alpha':
+                aero_group = SolvedAlphaGroup(
+                    num_nodes=num_nodes, aero_data=kwargs.pop('aero_data'), **kwargs
+                )
+
+            elif method == 'tabular':
+                aero_group = TabularAeroGroup(
+                    num_nodes=num_nodes,
+                    CD0_data=kwargs.pop('CD0_data'),
+                    CDI_data=kwargs.pop('CDI_data'),
+                    **kwargs
+                )
+
+            else:
+                raise ValueError(
+                    'FLOPS-based aero method is not one of the following: '
+                    '(computed, low_speed, solved_alpha, tabular)'
+                )
+
+        elif self.code_origin is GASP:
+            if method is None:
+                aero_group = CruiseAero(
+                    num_nodes=num_nodes, aviary_options=aviary_inputs
+                )
+
+            elif method == 'cruise':
+                if 'aero_data' in kwargs:
+                    aero_group = TabularCruiseAero(
                         num_nodes=num_nodes,
-                        CD0_data=kwargs.pop('CD0_data'),
-                        CDI_data=kwargs.pop('CDI_data'),
+                        aviary_options=aviary_inputs,
+                        aero_data=kwargs.pop('aero_data'),
+                        **kwargs
+                    )
+                else:
+                    aero_group = CruiseAero(num_nodes=num_nodes, **kwargs)
+
+            elif method == 'low_speed':
+                if (
+                    any(
+                        key in kwargs
+                        for key in [
+                            'free_aero_data',
+                            'free_flaps_data',
+                            'free_ground_data',
+                        ]
+                    )
+                    in kwargs
+                ):
+                    aero_group = TabularLowSpeedAero(
+                        num_nodes=num_nodes,
+                        free_aero_data=kwargs.pop('free_aero_data'),
+                        free_flaps_data=kwargs.pop('free_flaps_data'),
+                        free_ground_data=kwargs.pop('free_ground_data'),
                         **kwargs
                     )
 
                 else:
-                    raise ValueError(
-                        'FLOPS-based aero method is not one of the following: '
-                        '(computed, low_speed, solved_alpha, tabular)'
-                    )
+                    aero_group = LowSpeedAero(num_nodes=num_nodes, **kwargs)
 
-            elif self.code_origin is GASP:
-                if method is None:
-                    aero_group = CruiseAero(
-                        num_nodes=num_nodes, aviary_options=aviary_inputs
-                    )
-
-                elif method == 'cruise':
-                    if 'aero_data' in kwargs:
-                        aero_group = TabularCruiseAero(
-                            num_nodes=num_nodes,
-                            aviary_options=aviary_inputs,
-                            aero_data=kwargs.pop('aero_data'),
-                            **kwargs
-                        )
-                    else:
-                        aero_group = CruiseAero(num_nodes=num_nodes, **kwargs)
-
-                elif method == 'low_speed':
-                    if (
-                        any(
-                            key in kwargs
-                            for key in [
-                                'free_aero_data',
-                                'free_flaps_data',
-                                'free_ground_data',
-                            ]
-                        )
-                        in kwargs
-                    ):
-                        aero_group = TabularLowSpeedAero(
-                            num_nodes=num_nodes,
-                            free_aero_data=kwargs.pop('free_aero_data'),
-                            free_flaps_data=kwargs.pop('free_flaps_data'),
-                            free_ground_data=kwargs.pop('free_ground_data'),
-                            **kwargs
-                        )
-
-                    else:
-                        aero_group = LowSpeedAero(num_nodes=num_nodes, **kwargs)
-
-                else:
-                    raise ValueError(
-                        'GASP-based aero method is not one of the following: '
-                        '(cruise, low_speed)'
-                    )
+            else:
+                raise ValueError(
+                    'GASP-based aero method is not one of the following: '
+                    '(cruise, low_speed)'
+                )
 
         return aero_group
 
