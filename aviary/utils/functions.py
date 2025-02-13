@@ -528,11 +528,19 @@ def sigmoidX(x, x0, alpha=1.0):
     """
     Sigmoid used to smoothly transition between piecewise functions
 
-    Inputs
-    ------
-    x: independent variable
-    x0: the center of symmetry. When x = x0, sigmoidX = 1/2.
-    alpha: steepness parameter.
+    Parameters
+    ----------
+    x: float or array
+        independent variable
+    x0: float
+        the center of symmetry. When x = x0, sigmoidX = 1/2.
+    alpha: float
+        steepness parameter.
+
+    returns
+    -------
+    float or array
+        smoothed value from input parameter x.
     """
     if alpha == 0:
         raise ValueError("alpha must be non-zero")
@@ -564,11 +572,18 @@ def dSigmoidXdx(x, x0, alpha=1.0):
     """
     Derivative of sigmoid function
 
-    Inputs
-    ------
-    x: independent variable
-    x0: the center of symmetry. When x = x0, sigmoidX = 1/2.
-    alpha: steepness parameter.
+    Parameters
+    ----------
+    x: float or array
+        independent variable
+    x0: float
+        the center of symmetry. When x = x0, sigmoidX = 1/2.
+    alpha: float
+        steepness parameter.
+    returns
+    -------
+    float or array
+        smoothed derivative value from input parameter x.
     """
     if alpha == 0:
         raise ValueError("alpha must be non-zero")
