@@ -402,9 +402,9 @@ def glue_variable(name: str, val=None, md_code=False, display=True):
     if val is None:
         val = name
     if md_code:
-        val = Markdown('`'+val+'`')
+        val = Markdown(f'`{val}`')
     else:
-        val = Markdown(val)
+        val = Markdown(f'{val}')
 
     with io.capture_output() as captured:
         glue(name, val, display)
