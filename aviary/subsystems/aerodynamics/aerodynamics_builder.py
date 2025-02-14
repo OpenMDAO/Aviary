@@ -339,7 +339,7 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
                 aero_opt = phase_info['subsystem_options'][self.name]
                 method = aero_opt['method']
             except KeyError:
-                method = None
+                method = 'computed'
 
             if phase_info is not None:
 
@@ -461,7 +461,14 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
                                    'static_target': True}
 
                 for var in ENGINE_SIZED_INPUTS:
-                    params[var] = {'shape': (num_engine_type, ), 'static_target': True}
+                    val = meta['default_value']
+                    if val is None:
+                        val = [0.0]  # _unspecified
+                    units = meta['units']
+                    params[var] = {'val': val,
+                                   'units': units,
+                                   'shape': (num_engine_type, ),
+                                   'static_target': True}
 
             elif method in ['tabular', 'solved_alpha']:
 
@@ -609,7 +616,7 @@ COMPUTED_CORE_INPUTS = [
     Aircraft.Wing.TAPER_RATIO,
     Aircraft.Wing.THICKNESS_TO_CHORD,
     Aircraft.Wing.WETTED_AREA,
-    Mission.Summary.GROSS_MASS,
+    #Mission.Summary.GROSS_MASS,
     Mission.Design.LIFT_COEFFICIENT,
     Mission.Design.MACH,
 ]
