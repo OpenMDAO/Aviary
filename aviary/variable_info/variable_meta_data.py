@@ -4153,7 +4153,7 @@ add_meta_data(
     },
     units='ft',
     desc='Reynolds characteristic length for nacelle for each engine model',
-    default_value=0.0,
+    default_value=[0.0],
 )
 
 add_meta_data(
@@ -4187,7 +4187,7 @@ add_meta_data(
     },
     units='unitless',
     desc='nacelle fineness ratio',
-    default_value=0.0,
+    default_value=[0.0],
 )
 
 add_meta_data(
@@ -4209,7 +4209,7 @@ add_meta_data(
     },
     units='unitless',
     desc='define percent laminar flow for nacelle lower surface for each engine model',
-    default_value=0.0,
+    default_value=[0.0],
 )
 
 add_meta_data(
@@ -4222,7 +4222,7 @@ add_meta_data(
     },
     units='unitless',
     desc='define percent laminar flow for nacelle upper surface for each engine model',
-    default_value=0.0,
+    default_value=[0.0],
 )
 
 add_meta_data(
@@ -4301,7 +4301,7 @@ add_meta_data(
     },
     units='ft**2',
     desc='wetted area of a single nacelle for each engine model',
-    default_value=0.0,
+    default_value=[0.0],
 )
 
 add_meta_data(
