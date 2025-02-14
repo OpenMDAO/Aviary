@@ -3,7 +3,6 @@ import openmdao.api as om
 from aviary.subsystems.mass.mass_to_weight import MassToWeight
 
 from aviary.variable_info.enums import AlphaModes, AnalysisScheme, SpeedType
-from aviary.subsystems.atmosphere.atmosphere import Atmosphere
 from aviary.mission.gasp_based.ode.two_dof_ode import TwoDOFODE
 from aviary.mission.gasp_based.ode.flight_path_eom import FlightPathEOM
 from aviary.mission.gasp_based.ode.params import ParamPort
