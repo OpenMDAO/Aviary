@@ -85,7 +85,10 @@ class LiftAndDragIncrements(om.ExplicitComponent):
             "VLAM13", val=1.03512, units='unitless', desc="VLAM13: reynolds number correction factor"
         )
         self.add_input(
-            "VLAM14", val=0.99124, units='unitless', desc="VLAM14: mach number correction factor "
+            "VLAM14",
+            val=0.99124,
+            units='unitless',
+            desc="VLAM14: Mach number correction factor ",
         )
 
         # outputs

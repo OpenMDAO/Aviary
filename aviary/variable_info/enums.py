@@ -215,7 +215,7 @@ class Verbosity(IntEnum):
 
 class OutMachType(Enum):
     '''
-    OutMachType is an indicator which mach number to output.
+    OutMachType is an indicator which Mach number to output.
     helical_mach = sqrt(mach*mach + tip_mach*tip_mach)
     '''
     MACH = 'mach'

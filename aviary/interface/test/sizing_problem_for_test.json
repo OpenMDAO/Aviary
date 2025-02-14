@@ -334,12 +334,6 @@
         "<class 'int'>"
     ],
     [
-        "aircraft:landing_gear:carrier_based",
-        false,
-        "unitless",
-        "<class 'bool'>"
-    ],
-    [
         "aircraft:landing_gear:drag_coefficient",
         0.0,
         "unitless",
