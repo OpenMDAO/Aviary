@@ -2163,6 +2163,8 @@ class AviaryProblem(om.Problem):
                 driver.options['print_results'] = False
             elif verbosity < Verbosity.DEBUG:  # QUIET, BRIEF, VERBOSE
                 driver.options['print_results'] = 'minimal'
+            elif verbosity >= Verbosity.DEBUG:
+                driver.options['print_opt_prob'] = True
 
         # optimizer agnostic settings
         if verbosity > Verbosity.QUIET:  # BRIEF, VERBOSE, QUIET
@@ -2175,7 +2177,6 @@ class AviaryProblem(om.Problem):
                     'nl_cons',
                     'objs',
                 ]
-                driver.options['print_opt_prob'] = True
 
     def add_design_variables(self, verbosity=None):
         """
