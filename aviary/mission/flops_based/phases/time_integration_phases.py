@@ -1,4 +1,4 @@
-from aviary.mission.flops_based.ode.mission_ODE import MissionODE
+from aviary.mission.flops_based.ode.energy_ODE import EnergyODE
 from aviary.mission.flops_based.ode.landing_ode import LandingODE
 from aviary.mission.flops_based.ode.takeoff_ode import TakeoffODE
 from aviary.mission.gasp_based.ode.time_integration_base_classes import SimuPyProblem
@@ -21,7 +21,7 @@ class SGMHeightEnergy(SimuPyProblem):
         mass_trigger=(150000, 'lbm')
     ):
         super().__init__(
-            MissionODE(analysis_scheme=AnalysisScheme.SHOOTING, **ode_args),
+            EnergyODE(analysis_scheme=AnalysisScheme.SHOOTING, **ode_args),
             problem_name=phase_name,
             outputs=[],
             states=[
