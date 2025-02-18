@@ -7,6 +7,7 @@ from aviary.utils.aviary_values import AviaryValues
 from aviary.utils.named_values import get_keys
 from aviary.variable_info.variable_meta_data import _MetaData
 from aviary.variable_info.variables import Aircraft, Mission, Settings
+from aviary.variable_info.enums import ProblemType, LegacyCode
 from aviary.utils.test_utils.variable_test import get_names_from_hierarchy
 
 
@@ -161,6 +162,130 @@ def preprocess_crewpayload(aviary_options: AviaryValues):
     if aviary_options.get_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS) < aviary_options.get_val(Aircraft.CrewPayload.NUM_PASSENGERS):
         raise om.AnalysisError(
             f"ERROR: In preprocesssors.py: NUM_PASSENGERS ({aviary_options.get_val(Aircraft.CrewPayload.NUM_PASSENGERS)}) is larger than the number of seats set by Design.NUM_PASSENGERS ({aviary_options.get_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS)}) .")
+
+    # Check and process cargo variables - confirm mass method
+    if Settings.MASS_METHOD in aviary_options:
+        mass_method = aviary_options.get_val(Settings.MASS_METHOD)
+    else:
+        raise om.AnalysisError(
+            f'ERROR: In preprocessors.py: MASS_METHOD not specified. Cannot preprocess cargo inputs.')
+
+    # Process GASP based cargo variables
+    if mass_method == LegacyCode.GASP:
+        try:
+            cargo = aviary_options.get_val(Aircraft.CrewPayload.CARGO_MASS, 'lbm')
+        except KeyError:
+            cargo = None
+        try:
+            max_cargo = aviary_options.get_val(
+                Aircraft.CrewPayload.Design.MAX_CARGO_MASS, 'lbm')
+        except KeyError:
+            max_cargo = None
+        try:
+            des_cargo = aviary_options.get_val(
+                Aircraft.CrewPayload.Design.CARGO_MASS, 'lbm')
+        except KeyError:
+            des_cargo = None
+
+        if Settings.PROBLEM_TYPE in aviary_options:
+            problem_type = aviary_options.get_val(Settings.PROBLEM_TYPE)
+        else:
+            problem_type = ProblemType.SIZING
+
+        if cargo is not None:
+            if max_cargo is not None:
+                if des_cargo is not None:
+                    if problem_type == ProblemType.SIZING and cargo != des_cargo:
+                        # user has set all three check if self consistent
+                        cargo = des_cargo
+                        if verbosity >= 1:
+                            print(f"WARNING: Aircraft.CrewPayload.CARGO_MASS ({cargo}) != Aircraft.CrewPayload.Design.CARGO_MASS \
+                                ({des_cargo}) for SIZING mission. Setting as-flown CARGO_MASS = Design.CARGO_MASS ({des_cargo})")
+                else:
+                    # user has set cargo & max: assume des = max
+                    des_cargo = max_cargo
+                    if verbosity >= 1:
+                        print(f"Aircraft.CrewPayload.Design.CARGO_MASS missing, \
+                            assume Design.CARGO_MASS = Design.MAX_CARGO_MASS ({max_cargo})")
+            elif des_cargo is not None:
+                # user has set cargo & des: assume max = des
+                max_cargo = des_cargo
+                if verbosity >= 1:
+                    print(f"Aircraft.CrewPayload.Design.MAX_CARGO_MASS missing, \
+                        assume Design.MAX_CARGO_MASS = Design.CARGO_MASS ({des_cargo})")
+            else:
+                # user has set cargo only: assume intention to set max only for backwards compatability.
+                max_cargo = cargo
+                cargo = des_cargo = 0
+                if verbosity >= 1:
+                    print(f"WARNING: User has only set Aircraft.CrewPayload.CARGO_MASS {cargo}. \
+                        For backwards compatiability, Aviary is assuming user intended to set Design.MAX_CARGO_MASS = ({cargo}). \
+                        Setting Aircraft.CrewPayload.CARGO_MASS and Aircraft.CrewPayload.Design.CARGO_MASS = 0")
+
+        elif max_cargo is not None:
+            if des_cargo is not None:
+                # user has set max & des: assume flown = 0
+                cargo = 0
+                if verbosity >= 1:
+                    print(f"Aircraft.CrewPayload.CARGO_MASS missing, assume CARGO_MASS = 0")
+            else:
+                # user has set max only: assume flown = des = 0
+                cargo = des_cargo = 0
+                if verbosity >= 1:
+                    print(f"Aircraft.CrewPayload.CARGO_MASS and Aircraft.CrewPayload.Design.CARGO_MASS missing, assume CARGO_MASS and Design.CARGO_MASS = 0. No Cargo is flown on any mission")
+
+        elif des_cargo is not None:
+            # user has only input des: assume max = des and flown = 0
+            max_cargo = des_cargo
+            cargo = 0
+            if verbosity >= 1:
+                print(f"Aircraft.CrewPayload.CARGO_MASS and Aircraft.CrewPayload.Design.MAX_CARGO_MASS missing, \
+                    assume CARGO_MASS = 0 and Design.MAX_CARGO_MASS = Design.CARGO_MASS ({des_cargo})")
+
+        else:
+            # user has input no cargo information
+            cargo = max_cargo = des_cargo = 0
+            if verbosity >= 1:
+                print(
+                    f"No CARGO variables detected, assume CARGO_MASS = Design.MAX_CARGO_MASS = Design.CARGO_MASS = 0")
+
+        # check for potential cargo errors:
+        if cargo > des_cargo:
+            if verbosity >= 1:
+                print(f"WARNING! as flown cargo ({cargo}) > design cargo ({des_cargo})")
+
+        if cargo > max_cargo or des_cargo > max_cargo:
+            raise om.AnalysisError(
+                f"ERROR: In preprocesssors.py: Aircraft.CrewPayload.CARGO_MASS ({cargo}) and/or Aircraft.CrewPayload.Design.CARGO_MASS ({des_cargo}) > Aircraft.CrewPayload.Design.MAX_CARGO_MASS ({max_cargo})")
+
+        # calculate passenger mass with bags based on user inputs.
+        try:
+            pax_mass_with_bag = aviary_options.get_val(
+                Aircraft.CrewPayload.PASSENGER_MASS_WITH_BAGS, 'lbm')
+        except KeyError:
+            pax_mass = aviary_options.get_val(
+                Aircraft.CrewPayload.MASS_PER_PASSENGER, 'lbm')
+            bag_mass = aviary_options.get_val(
+                Aircraft.CrewPayload.BAGGAGE_MASS_PER_PASSENGER, 'lbm')
+            pax_mass_with_bag = pax_mass + bag_mass
+            aviary_options.set_val(
+                Aircraft.CrewPayload.PASSENGER_MASS_WITH_BAGS, pax_mass_with_bag, 'lbm')
+
+        # calculate and check total payload NOTE this is only used for error messaging the calculations for analysis are subsystems/mass/gasp_based:
+        design_passenger_payload_mass = design_num_pax * pax_mass_with_bag
+        des_payload = design_passenger_payload_mass + des_cargo
+        num_pax = aviary_options.get_val(Aircraft.CrewPayload.NUM_PASSENGERS)
+        as_flown_passenger_payload_mass = num_pax * pax_mass_with_bag
+        as_flown_payload = as_flown_passenger_payload_mass + cargo
+        if as_flown_payload > des_payload and verbosity >= 1:
+            print(f"WARNING: as flown payload ({as_flown_payload}) > design payload \
+                ({des_payload}) . Consider potential need to re-design the aircraft!")
+
+        # set assumed cargo mass variables:
+        aviary_options.set_val(Aircraft.CrewPayload.CARGO_MASS, cargo, 'lbm')
+        aviary_options.set_val(
+            Aircraft.CrewPayload.Design.MAX_CARGO_MASS, max_cargo, 'lbm')
+        aviary_options.set_val(Aircraft.CrewPayload.Design.CARGO_MASS, des_cargo, 'lbm')
 
     if Aircraft.CrewPayload.NUM_FLIGHT_ATTENDANTS not in aviary_options:
         flight_attendants_count = 0  # assume no passengers
