@@ -1,21 +1,10 @@
 import numpy as np
 import openmdao.api as om
 
+from aviary.utils.functions import sigmoidX
 from aviary.variable_info.enums import Verbosity
 from aviary.variable_info.functions import add_aviary_input, add_aviary_output, add_aviary_option
 from aviary.variable_info.variables import Aircraft, Settings
-
-
-def sigX(x):
-    sig = 1 / (1 + np.exp(-x))
-
-    return sig
-
-
-def dSigXdX(x):
-    derivative = -1 / (1 + np.exp(-x)) ** 2 * (-1 * np.exp(-x))
-
-    return derivative
 
 
 class FuselageParameters(om.ExplicitComponent):
@@ -88,21 +77,20 @@ class FuselageParameters(om.ExplicitComponent):
         # Here and in compute_partials, these equations are smoothed using a sigmoid fnuction centered at
         # 1.5 seats, the sigmoid function is steep enough that there should be no noticable difference
         # between the smoothed function and the stepwise function at 1 and 2 seats.
-        outputs["cabin_height"] = cabin_height_a * sigX(100*(1.5-seats_abreast)) + \
-            cabin_height_b*sigX(100*(seats_abreast-1.5))
-        outputs["cabin_len"] = cabin_len_a * sigX(100*(1.5-seats_abreast)) + \
-            cabin_len_b*sigX(100*(seats_abreast-1.5))
-        outputs["nose_height"] = nose_height_a * sigX(100*(1.5-seats_abreast)) + \
-            nose_height_b*sigX(100*(seats_abreast-1.5))
+        sig1 = sigmoidX(seats_abreast, 1.5, -0.01)
+        sig2 = sigmoidX(seats_abreast, 1.5, 0.01)
+        outputs["cabin_height"] = cabin_height_a * sig1 + cabin_height_b*sig2
+        outputs["cabin_len"] = cabin_len_a * sig1 + cabin_len_b*sig2
+        outputs["nose_height"] = nose_height_a * sig1 + nose_height_b*sig2
 
     def compute_partials(self, inputs, J):
         options = self.options
         seats_abreast = options[Aircraft.Fuselage.NUM_SEATS_ABREAST]
 
-        J["nose_height", Aircraft.Fuselage.DELTA_DIAMETER] = sigX(
-            100*(seats_abreast-1.5))*(-1)
-        J["cabin_height", Aircraft.Fuselage.DELTA_DIAMETER] = sigX(
-            100*(1.5-seats_abreast))*1
+        J["nose_height", Aircraft.Fuselage.DELTA_DIAMETER] = -sigmoidX(
+            seats_abreast, 1.5, 0.01)
+        J["cabin_height", Aircraft.Fuselage.DELTA_DIAMETER] = sigmoidX(
+            seats_abreast, 1.5, -0.01)
 
 
 class FuselageSize(om.ExplicitComponent):

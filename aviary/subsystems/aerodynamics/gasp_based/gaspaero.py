@@ -10,8 +10,10 @@ from aviary.subsystems.aerodynamics.gasp_based.common import (
     CLFromLift,
     TanhRampComp,
 )
+from aviary.utils.functions import sigmoidX
+from aviary.variable_info.enums import Verbosity
 from aviary.variable_info.functions import add_aviary_input, add_aviary_option, add_aviary_output
-from aviary.variable_info.variables import Aircraft, Dynamic, Mission
+from aviary.variable_info.variables import Aircraft, Dynamic, Mission, Settings
 
 
 #
@@ -141,13 +143,6 @@ def cla(ar, sweep, mach):
             )
         )
     )
-
-
-def sigmoid(x, x0, alpha=0.1):
-    """Sigmoid used to smoothly transition between piecewise functions"""
-    if alpha == 0:
-        raise ValueError("alpha must be non-zero")
-    return 1 / (1 + np.exp(-(x - x0) / alpha))
 
 
 class WingTailRatios(om.ExplicitComponent):
@@ -663,7 +658,7 @@ class AeroGeom(om.ExplicitComponent):
         # isn't a problem.
         reli_y1 = 700000 * np.ones(self.options["num_nodes"])
         reli_y2 = sos * mach / nu
-        sig = sigmoid(mach, 0.1, alpha=0.005)
+        sig = sigmoidX(mach, 0.1, alpha=0.005)
         reli = (1 - sig) * reli_y1 + sig * reli_y2
 
         # Re correction factors: fuselage, wing, nacelle, vtail, htail, strut, tip tank
@@ -1054,7 +1049,7 @@ class DragCoefClean(om.ExplicitComponent):
 
         mach_div = SA1 + SA2 * CL + div_drag_supercrit
 
-        sig = sigmoid(mach, mach_div, alpha=0.005)
+        sig = sigmoidX(mach, mach_div, alpha=0.005)
         delcdm = sig * (10 * (mach - mach_div) ** 3)
 
         # delcdm = np.zeros_like(mach)
