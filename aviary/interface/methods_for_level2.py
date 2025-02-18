@@ -1384,10 +1384,7 @@ class AviaryProblem(om.Problem):
             initial_mass={'units': 'lbm'},
             mass_resid={'units': 'lbm'})
 
-        if self.mass_method is GASP:
-            payload_mass_src = Aircraft.CrewPayload.PASSENGER_PAYLOAD_MASS
-        else:
-            payload_mass_src = Aircraft.CrewPayload.TOTAL_PAYLOAD_MASS
+        payload_mass_src = Aircraft.CrewPayload.TOTAL_PAYLOAD_MASS
 
         self.post_mission.add_subsystem(
             'mass_constraint', ecomp,
@@ -2563,7 +2560,8 @@ class AviaryProblem(om.Problem):
 
     def alternate_mission(self, run_mission=True,
                           json_filename='sizing_problem.json',
-                          payload_mass=None, mission_range=None,
+                          num_first=None, num_business=None, num_tourist=None, num_pax=None,
+                          wing_cargo=None, misc_cargo=None, cargo_mass=None, mission_range=None,
                           phase_info=None, verbosity=Verbosity.BRIEF):
         """
         This function runs an alternate mission based on a sizing mission output.
@@ -2584,26 +2582,43 @@ class AviaryProblem(om.Problem):
             If Verbosity.DEBUG, debug print options ['desvars','ln_cons','nl_cons','objs'] will be set.
             If a list is provided, it will be used as the debug print options.
         """
+        mass_method = self.aviary_inputs.get_val(Settings.MASS_METHOD)
+        if mass_method == LegacyCode.FLOPS:
+            if num_first is None or num_business is None or num_tourist is None:
+                print('Incomplete PAX numbers for FLOPS fallout - assume same as design')
+                num_first = self.aviary_inputs.get_val(
+                    Aircraft.CrewPayload.Design.NUM_FIRST_CLASS)
+                num_business = self.aviary_inputs.get_val(
+                    Aircraft.CrewPayload.Design.NUM_BUSINESS_CLASS)
+                num_tourist = self.aviary_inputs.get_val(
+                    Aircraft.CrewPayload.Design.NUM_TOURIST_CLASS)
+            if wing_cargo is None or misc_cargo is None:
+                print('Incomplete Cargo masses for FLOPS fallout - assume same as design')
+                wing_cargo = self.aviary_inputs.get_val(
+                    Aircraft.CrewPayload.WING_CARGO, 'lbm')
+                misc_cargo = self.aviary_inputs.get_val(
+                    Aircraft.CrewPayload.MISC_CARGO, 'lbm')
+            num_pax = cargo_mass = 0
+        elif mass_method == LegacyCode.GASP:
+            if num_pax is None:
+                print('Unspecifed PAX number for GASP fallout - assume same as design')
+                num_pax = self.aviary_inputs.get_val(
+                    Aircraft.CrewPayload.Design.NUM_PASSENGERS)
+            if cargo_mass is None:
+                print('Unspecifed Cargo mass for GASP fallout - assume same as design')
+                cargo_mass = self.get_val(Aircraft.CrewPayload.CARGO_MASS, 'lbm')
+            num_first = num_business = num_tourist = wing_cargo = misc_cargo = 0
+
         if phase_info is None:
             phase_info = self.phase_info
         if mission_range is None:
-            design_range = self.get_val(Mission.Design.RANGE)
-        if payload_mass is None:
-            if self.mission_method is HEIGHT_ENERGY:
-                payload_mass = self.get_val(Aircraft.CrewPayload.TOTAL_PAYLOAD_MASS)
-            elif self.mission_method is TWO_DEGREES_OF_FREEDOM:
-                payload_mass = self.get_val(Aircraft.CrewPayload.PASSENGER_PAYLOAD_MASS)
+            mission_range = self.get_val(Mission.Design.RANGE)
 
         mission_mass = self.get_val(Mission.Design.GROSS_MASS)
         optimizer = self.driver.options["optimizer"]
 
-        prob_alternate = _load_off_design(
-            json_filename,
-            ProblemType.ALTERNATE,
-            phase_info,
-            payload_mass,
-            design_range,
-            mission_mass)
+        prob_alternate = _load_off_design(json_filename, ProblemType.ALTERNATE, mass_method, phase_info, num_first,
+                                          num_business, num_tourist, num_pax, wing_cargo, misc_cargo, cargo_mass, mission_range, mission_mass)
 
         prob_alternate.check_and_preprocess_inputs()
         prob_alternate.add_pre_mission_systems()
@@ -2622,7 +2637,8 @@ class AviaryProblem(om.Problem):
 
     def fallout_mission(self, run_mission=True,
                         json_filename='sizing_problem.json',
-                        mission_mass=None, payload_mass=None,
+                        num_first=None, num_business=None, num_tourist=None, num_pax=None,
+                        wing_cargo=None, misc_cargo=None, cargo_mass=None, mission_mass=None,
                         phase_info=None, verbosity=Verbosity.BRIEF):
         """
         This function runs a fallout mission based on a sizing mission output.
@@ -2643,21 +2659,42 @@ class AviaryProblem(om.Problem):
             If Verbosity.DEBUG, debug print options ['desvars','ln_cons','nl_cons','objs'] will be set.
             If a list is provided, it will be used as the debug print options.
         """
+        mass_method = self.aviary_inputs.get_val(Settings.MASS_METHOD)
+        if mass_method == LegacyCode.FLOPS:
+            if num_first is None or num_business is None or num_tourist is None:
+                print('Incomplete PAX numbers for FLOPS fallout - assume same as design')
+                num_first = self.aviary_inputs.get_val(
+                    Aircraft.CrewPayload.Design.NUM_FIRST_CLASS)
+                num_business = self.aviary_inputs.get_val(
+                    Aircraft.CrewPayload.Design.NUM_BUSINESS_CLASS)
+                num_tourist = self.aviary_inputs.get_val(
+                    Aircraft.CrewPayload.Design.NUM_TOURIST_CLASS)
+            if wing_cargo is None or misc_cargo is None:
+                print('Incomplete Cargo masses for FLOPS fallout - assume same as design')
+                wing_cargo = self.aviary_inputs.get_val(
+                    Aircraft.CrewPayload.WING_CARGO, 'lbm')
+                misc_cargo = self.aviary_inputs.get_val(
+                    Aircraft.CrewPayload.MISC_CARGO, 'lbm')
+            num_pax = cargo_mass = 0
+        elif mass_method == LegacyCode.GASP:
+            if num_pax is None:
+                print('Unspecifed PAX number for GASP fallout - assume same as design')
+                num_pax = self.aviary_inputs.get_val(
+                    Aircraft.CrewPayload.Design.NUM_PASSENGERS)
+            if cargo_mass is None:
+                print('Unspecifed Cargo mass for GASP fallout - assume same as design')
+                cargo_mass = self.get_val(Aircraft.CrewPayload.CARGO_MASS, 'lbm')
+            num_first = num_business = num_tourist = wing_cargo = misc_cargo = 0
+
         if phase_info is None:
             phase_info = self.phase_info
         if mission_mass is None:
             mission_mass = self.get_val(Mission.Design.GROSS_MASS)
-        if payload_mass is None:
-            if self.mission_method is HEIGHT_ENERGY:
-                payload_mass = self.get_val(Aircraft.CrewPayload.TOTAL_PAYLOAD_MASS)
-            elif self.mission_method is TWO_DEGREES_OF_FREEDOM:
-                payload_mass = self.get_val(Aircraft.CrewPayload.PASSENGER_PAYLOAD_MASS)
 
-        design_range = self.get_val(Mission.Design.RANGE)
         optimizer = self.driver.options["optimizer"]
 
-        prob_fallout = _load_off_design(json_filename, ProblemType.FALLOUT, phase_info,
-                                        payload_mass, design_range, mission_mass)
+        prob_fallout = _load_off_design(json_filename, ProblemType.FALLOUT, mass_method, phase_info, num_first,
+                                        num_business, num_tourist, num_pax, wing_cargo, misc_cargo, cargo_mass, None, mission_mass)
 
         prob_fallout.check_and_preprocess_inputs()
         prob_fallout.add_pre_mission_systems()
@@ -3090,8 +3127,8 @@ def _read_sizing_json(aviary_problem, json_filename):
     return aviary_problem
 
 
-def _load_off_design(json_filename, ProblemType, phase_info,
-                     payload, mission_range, mission_gross_mass):
+def _load_off_design(json_filename, ProblemType, Mass_Method, phase_info, num_first, num_business, num_tourist,
+                     num_pax, wing_cargo, misc_cargo, cargo_mass, mission_range=None, mission_gross_mass=None):
     """
     This function loads a sized aircraft, and sets up an aviary problem
     for a specified off design mission.
@@ -3101,11 +3138,19 @@ def _load_off_design(json_filename, ProblemType, phase_info,
     json_filename:      string
         User specified name and relative path of json file containing the sized aircraft data
     ProblemType:        enum
-        Alternate or Fallout. Alternate requires mission_range input and
-         Fallout requires mission_fuel input
+        Alternate or Fallout. Alternate requires mission_range input and fallout requires mission_fuel input
+    MassMethod:         enum
+        FLOPS or GASP. FLOPS requires num_first, num_business, num_tourist, wing_cargo and misc cargo inputs. GASP requires num_pax and cargo_mass inputs
     phase_info:     phase_info dictionary for off design mission
-    payload:            float
-        Aircraft.CrewPayload.PASSENGER_PAYLOAD_MASS
+    num_first:          integer             (FLOPS only)  
+    num_business:       integer             (FLOPS only)
+    num_tourist:        integer             (FLOPS only)
+    num_pax:            integer
+        Aircraft.CrewPayload.NUM_PASSENGERS (GASP only)
+    wing_cargo:         float               (FLOPS only)
+    misc_cargo:         float               (FLOPS only)
+    cargo_mass:         float
+        Aircraft.CrewPayload.CARGO_MASS     (GASP only)
     mission_range       float
         Mission.Summary.RANGE 'NM'
     mission_gross_mass  float
@@ -3126,18 +3171,45 @@ def _load_off_design(json_filename, ProblemType, phase_info,
     prob.problem_type = ProblemType
     prob.aviary_inputs.set_val('settings:problem_type', ProblemType, units='unitless')
 
-    # Set Payload
+    # Setup Payload
+    if Mass_Method == LegacyCode.FLOPS:
+        prob.aviary_inputs.set_val(
+            Aircraft.CrewPayload.NUM_FIRST_CLASS, num_first, units='unitless')
+        prob.aviary_inputs.set_val(
+            Aircraft.CrewPayload.NUM_BUSINESS_CLASS, num_business, units='unitless')
+        prob.aviary_inputs.set_val(
+            Aircraft.CrewPayload.NUM_TOURIST_CLASS, num_tourist, units='unitless')
+        num_pax = num_first + num_business + num_tourist
+        prob.aviary_inputs.set_val(Aircraft.CrewPayload.MISC_CARGO, misc_cargo, 'lbm')
+        prob.aviary_inputs.set_val(Aircraft.CrewPayload.WING_CARGO, wing_cargo, 'lbm')
+        cargo_mass = misc_cargo + wing_cargo
+
     prob.aviary_inputs.set_val(
-        Aircraft.CrewPayload.PASSENGER_PAYLOAD_MASS, payload, units='lbm')
+        Aircraft.CrewPayload.NUM_PASSENGERS, num_pax, units='unitless')
+    prob.aviary_inputs.set_val(Aircraft.CrewPayload.CARGO_MASS, cargo_mass, 'lbm')
 
     if ProblemType == ProblemType.ALTERNATE:
         # Set mission range, aviary will calculate required fuel
-        prob.aviary_inputs.set_val(Mission.Design.RANGE, mission_range, units='NM')
+        if mission_range is None:
+            print(
+                'ERROR in _load_off_design - Alternate problem type requested with no specified Range')
+        else:
+            prob.aviary_inputs.set_val(Mission.Design.RANGE, mission_range, units='NM')
+            prob.aviary_inputs.set_val(Mission.Summary.RANGE, mission_range, units='NM')
+            try:
+                target_range = phase_info['post_mission']['target_range']
+                phase_info['post_mission']['target_range'] = (mission_range, 'nmi')
+            except KeyError:
+                print('no target range to update')
 
     elif ProblemType == ProblemType.FALLOUT:
         # Set mission fuel and calculate gross weight, aviary will calculate range
-        prob.aviary_inputs.set_val(Mission.Summary.GROSS_MASS,
-                                   mission_gross_mass, units='lbm')
+        if mission_gross_mass is None:
+            print(
+                'Error in _load_off_design - Fallout problem type requested with no specified Gross Mass')
+        else:
+            prob.aviary_inputs.set_val(
+                Mission.Summary.GROSS_MASS, mission_gross_mass, units='lbm')
 
     # Load inputs
     prob.load_inputs(prob.aviary_inputs, phase_info)
