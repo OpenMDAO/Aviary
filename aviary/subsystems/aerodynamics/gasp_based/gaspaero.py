@@ -405,8 +405,7 @@ class AeroGeom(om.ExplicitComponent):
 
         add_aviary_input(self, Aircraft.Fuselage.FORM_FACTOR)
 
-        add_aviary_input(
-            self, Aircraft.Nacelle.FORM_FACTOR, shape=num_engine_type)
+        add_aviary_input(self, Aircraft.Nacelle.FORM_FACTOR, shape=num_engine_type)
 
         add_aviary_input(self, Aircraft.VerticalTail.FORM_FACTOR)
 
