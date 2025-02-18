@@ -27,6 +27,7 @@ class TakeoffODE(_BaseODE):
     # endregion : derived type customization points
 
     def initialize(self):
+        super().initialize()
         self.options.declare(
             'friction_key',
             desc='current friction coefficient key, '
