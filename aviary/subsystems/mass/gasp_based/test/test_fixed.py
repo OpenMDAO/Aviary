@@ -18,7 +18,7 @@ from aviary.subsystems.mass.gasp_based.fixed import (ControlMass,
 from aviary.utils.aviary_values import AviaryValues, get_keys
 from aviary.variable_info.functions import setup_model_options, extract_options
 from aviary.variable_info.options import get_option_defaults
-from aviary.variable_info.variables import Aircraft, Mission
+from aviary.variable_info.variables import Aircraft, Mission, Settings
 
 
 class MassParametersTestCase1(unittest.TestCase):
@@ -1001,6 +1001,7 @@ class FixedMassGroupTestCase1(unittest.TestCase):
                         val=180, units='unitless')
         options.set_val(Aircraft.CrewPayload.PASSENGER_MASS_WITH_BAGS,
                         val=200, units="lbm")  # bug fixed value and original value
+        options.set_val(Settings.VERBOSITY, 0)
 
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
