@@ -115,8 +115,8 @@ class PhaseBuilderBase(ABC):
         self.subsystem_options = subsystem_options
 
         self.user_options = user_options
-        self.validate_options()
-        self.assign_default_options()
+        #self.validate_options()
+        #self.assign_default_options()
 
         if initial_guesses is None:
             initial_guesses = AviaryValues()
@@ -360,7 +360,7 @@ class PhaseBuilderBase(ABC):
 
         subsystem_options = phase_info.get(
             'subsystem_options', {})  # TODO: aero info?
-        user_options = AviaryValues(phase_info.get('user_options', ()))
+        user_options = phase_info.get('user_options', ())
         initial_guesses = AviaryValues(phase_info.get('initial_guesses', ()))
         external_subsystems = phase_info.get('external_subsystems', [])
         # TODO core subsystems in phase info?

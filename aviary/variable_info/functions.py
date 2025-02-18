@@ -162,7 +162,7 @@ def add_aviary_output(comp, varname, val=None, units=None, desc=None, shape_by_c
 
 def units_setter(opt_meta, value):
     """
-    Check and convert new units tuple into
+    Convert units for a tuple with form (val, "unitstring").
 
     Parameters
     ----------
@@ -181,6 +181,39 @@ def units_setter(opt_meta, value):
 
     converted_val = convert_units(new_val, new_units, units)
     return (converted_val, units)
+
+
+def bounds_units_setter(opt_meta, value):
+    """
+    Convert units for a tuple with form ((val1, val2), "unitstring").
+
+    Parameters
+    ----------
+    opt_meta : dict
+        Dictionary of entries for the option.
+    value : any
+        New value for the option.
+
+    Returns
+    -------
+    any
+        Post processed value to set into the option.
+    """
+    val_tuple, new_units = value
+    lower, upper = val_tuple
+    _, units = opt_meta['val']
+
+    if lower is None:
+        converted_lower = lower
+    else:
+        converted_lower = convert_units(lower, new_units, units)
+
+    if upper is None:
+        converted_upper = upper
+    else:
+        converted_upper = convert_units(upper, new_units, units)
+
+    return ((converted_lower, converted_upper), units)
 
 
 def int_enum_setter(opt_meta, value):
