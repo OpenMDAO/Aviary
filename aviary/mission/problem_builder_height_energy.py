@@ -5,6 +5,7 @@ import openmdao.api as om
 from dymos.transcriptions.transcription_base import TranscriptionBase
 
 from aviary.mission.energy_phase import EnergyPhase
+from aviary.mission.flight_phase_builder import FlightPhaseOptions
 from aviary.mission.flops_based.phases.build_landing import Landing
 from aviary.mission.flops_based.phases.build_takeoff import Takeoff
 from aviary.mission.phase_builder_base import PhaseBuilderBase
@@ -13,7 +14,6 @@ from aviary.utils.process_input_decks import initialization_guessing
 from aviary.variable_info.enums import AnalysisScheme, LegacyCode
 from aviary.variable_info.variables import Aircraft, Mission, Dynamic, Settings
 from aviary.subsystems.propulsion.utils import build_engine_deck
-from flight_phase_builder import PhaseOptionsDictionary
 
 if hasattr(TranscriptionBase, 'setup_polynomial_controls'):
     use_new_dymos_syntax = False
@@ -31,7 +31,7 @@ class ProblemBuilderHeightEnergy():
         "Returns the Options Dictionary used to instantiate the phases used by this ODE."
         " This will be used by check_and_preprocess_inputs in M4L2 to ensure that the "
         " required inputs are in the phase_info."
-        return PhaseOptionsDictionary
+        return FlightPhaseOptions
 
     def initial_guesses(self, prob):
         """
