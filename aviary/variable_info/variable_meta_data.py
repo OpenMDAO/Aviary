@@ -701,18 +701,12 @@ add_meta_data(
 add_meta_data(
     Aircraft.CrewPayload.CARGO_MASS,
     meta_data=_MetaData,
-    historical_name={
-        "GASP": 'INGASP.WCARGO',
-        # ['WTS.WSP(36,2)', '~WEIGHT.WCARGO', '~WTSTAT.WSP(36,2)', '~INERT.WCARGO',],
-        "FLOPS": None,
-        "LEAPS1": [
-            '(WeightABC)self._cargo_weight',
-            'aircraft.outputs.L0_weights_summary.cargo_weight',
-        ],
-    },
+    historical_name={"GASP": None,
+                     "FLOPS": None,
+                     "LEAPS1": None
+                     },
     units='lbm',
-    desc='total mass of cargo',
-    default_value=0.0,
+    desc='total mass of as-flown cargo'
 )
 
 add_meta_data(
@@ -729,6 +723,34 @@ add_meta_data(
 #  | |) | / -_) (_-< | | / _` | | ' \
 #  |___/  \___| /__/ |_| \__, | |_||_|
 #  ====================== |___/ ======
+
+add_meta_data(
+    Aircraft.CrewPayload.Design.CARGO_MASS,
+    meta_data=_MetaData,
+    historical_name={"GASP": None,
+                     "FLOPS": None,
+                     "LEAPS1": None
+                     },
+    units='lbm',
+    desc='total mass of cargo flown on design mission'
+)
+
+add_meta_data(
+    Aircraft.CrewPayload.Design.MAX_CARGO_MASS,
+    meta_data=_MetaData,
+    historical_name={
+        "GASP": 'INGASP.WCARGO',
+        # ['WTS.WSP(36,2)', '~WEIGHT.WCARGO', '~WTSTAT.WSP(36,2)', '~INERT.WCARGO',],
+        "FLOPS": None,
+        "LEAPS1": [
+            '(WeightABC)self._cargo_weight',
+            'aircraft.outputs.L0_weights_summary.cargo_weight',
+        ],
+    },
+    units='lbm',
+    desc='maximum mass of cargo',
+    default_value=0.0,
+)
 
 add_meta_data(
     Aircraft.CrewPayload.Design.NUM_BUSINESS_CLASS,

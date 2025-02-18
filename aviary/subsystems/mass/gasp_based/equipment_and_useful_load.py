@@ -2,17 +2,10 @@ import numpy as np
 import openmdao.api as om
 
 from aviary.constants import GRAV_ENGLISH_LBM
+from aviary.utils.functions import sigmoidX, dSigmoidXdx
 from aviary.variable_info.enums import GASPEngineType
 from aviary.variable_info.functions import add_aviary_input, add_aviary_output, add_aviary_option
 from aviary.variable_info.variables import Aircraft, Mission
-
-
-def sig(x):
-    return 1 / (1 + np.exp(-100 * x))
-
-
-def dsig(x):
-    return 100 * np.exp(-100 * x) / (np.exp(-100 * x) + 1) ** 2
 
 
 class EquipAndUsefulLoadMass(om.ExplicitComponent):
@@ -70,8 +63,8 @@ class EquipAndUsefulLoadMass(om.ExplicitComponent):
         add_aviary_output(self, Aircraft.Design.FIXED_USEFUL_LOAD)
         add_aviary_output(self, Aircraft.Design.FIXED_EQUIPMENT_MASS)
 
-        self.declare_partials(Aircraft.Design.FIXED_USEFUL_LOAD, '*', val=0.0)
-        self.declare_partials(Aircraft.Design.FIXED_EQUIPMENT_MASS, '*', val=0.0)
+        self.declare_partials(Aircraft.Design.FIXED_USEFUL_LOAD, '*')
+        self.declare_partials(Aircraft.Design.FIXED_EQUIPMENT_MASS, '*')
         self.declare_partials(Aircraft.Design.FIXED_EQUIPMENT_MASS,
                               Aircraft.Design.EXTERNAL_SUBSYSTEMS_MASS, val=1./GRAV_ENGLISH_LBM)
 
@@ -197,7 +190,7 @@ class EquipAndUsefulLoadMass(om.ExplicitComponent):
         aux_wt = 0.0
 
         if smooth:
-            aux_wt = 3 * sig((gross_wt_initial - 3000) / 3000)
+            aux_wt = 3 * sigmoidX(gross_wt_initial/3000, 1.0, 0.01)
 
         else:
             if (
@@ -216,9 +209,9 @@ class EquipAndUsefulLoadMass(om.ExplicitComponent):
 
         if smooth:
             CPX = (
-                28 * sig((28 - CPX) / 28)
-                + CPX * sig((CPX - 28) / 28) * sig((62 - CPX) / 62)
-                + 62 * sig((CPX - 62) / 62)
+                28 * sigmoidX(CPX/28, 1, -0.01)
+                + CPX * sigmoidX(CPX/28, 1, 0.01) * sigmoidX(CPX/62, 1, -0.01)
+                + 62 * sigmoidX(CPX/62, 1, 0.01)
             )
 
         else:
@@ -561,7 +554,7 @@ class EquipAndUsefulLoadMass(om.ExplicitComponent):
 
         if smooth:
             d_aux_wt_dgross_wt_initial = (
-                3 * dsig((gross_wt_initial - 3000) / 3000) * 1 / 3000
+                3 * dSigmoidXdx(gross_wt_initial / 3000, 1, 0.01) * 1 / 3000
             )
         else:
             if (
@@ -581,23 +574,23 @@ class EquipAndUsefulLoadMass(om.ExplicitComponent):
 
         if smooth:
             CPX_1 = (
-                28 * sig((28 - CPX) / 28)
-                + CPX * sig((CPX - 28) / 28) * sig((62 - CPX) / 62)
-                + 62 * sig((CPX - 62) / 62)
+                28 * sigmoidX(CPX/28, 1, -0.01)
+                + CPX * sigmoidX(CPX/28, 1, 0.01) * sigmoidX(CPX/62, 1, -0.01)
+                + 62 * sigmoidX(CPX/62, 1, 0.01)
             )
 
             dCPX_dcabin_width = (
-                28 * dsig((28 - CPX) / 28) * -dCPX_dcabin_width
+                28 * dSigmoidXdx(CPX/28, 1, 0.01) * -dCPX_dcabin_width
                 + (
-                    dCPX_dcabin_width * sig((CPX - 28) / 28)
-                    + CPX * dsig((CPX - 28) / 28) * dCPX_dcabin_width
+                    dCPX_dcabin_width * sigmoidX(CPX/28, 1, 0.01)
+                    + CPX * dSigmoidXdx(CPX/28, 1, 0.01) * dCPX_dcabin_width
                 )
-                * sig((62 - CPX) / 62)
+                * sigmoidX(CPX/62, 1, 0.01)
                 + CPX
-                * sig((CPX - 28) / 28)
-                * dsig((62 - CPX) / 62)
+                * sigmoidX(CPX/28, 1, 0.01)
+                * dSigmoidXdx(CPX/62, 1, 0.01)
                 * -dCPX_dcabin_width
-                + 62 * dsig((CPX - 62) / 62) * dCPX_dcabin_width
+                + 62 * dSigmoidXdx(CPX/62, 1, 0.01) * dCPX_dcabin_width
             )
 
             CPX = CPX_1
