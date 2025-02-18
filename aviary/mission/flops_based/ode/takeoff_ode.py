@@ -180,7 +180,7 @@ class TakeoffODE(om.Group):
                 Dynamic.Vehicle.LIFT,
                 Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
                 Dynamic.Vehicle.DRAG,
-                'angle_of_attack',
+                Dynamic.Vehicle.ANGLE_OF_ATTACK,
             ],
             promotes_outputs=[
                 Dynamic.Mission.DISTANCE_RATE,
