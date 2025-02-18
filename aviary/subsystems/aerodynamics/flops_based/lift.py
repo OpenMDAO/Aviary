@@ -28,7 +28,7 @@ class SimpleLift(om.ExplicitComponent):
             name='cl', val=np.ones(nn), desc='current coefficient of lift',
             units='unitless')
 
-        add_aviary_output(self, Dynamic.Vehicle.LIFT, val=np.ones(nn), units='N')
+        add_aviary_output(self, Dynamic.Vehicle.LIFT, shape=nn, units='N')
 
     def setup_partials(self):
         nn = self.options['num_nodes']
