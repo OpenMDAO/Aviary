@@ -416,7 +416,7 @@ def glue_variable(name: str, val=None, md_code=False, display=True):
         val = Markdown(f'{val}')
 
     with io.capture_output() as captured:
-        glue(name, val, display)
+        glue(f'{name}', val, display)
     # if display:
     captured.show()
 
