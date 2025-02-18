@@ -509,6 +509,8 @@ def glue_actions(cmd, curr_glued=None, glue_default=False, glue_choices=False, m
     glue_default: boolean
         flag whether the default values should be glued.
     """
+    if curr_glued is None:
+        curr_glued = []
     parser = argparse.ArgumentParser()
     _command_map[cmd][0](parser)
     actions = [*parser._get_optional_actions(), *parser._get_positional_actions()]
@@ -544,6 +546,8 @@ def glue_class_functions(obj, curr_glued=None, pre_fix=None, md_code=True):
     curr_glued: list
         the parameters that have been glued
     """
+    if curr_glued is None:
+        curr_glued = []
     methods = inspect.getmembers(obj, predicate=inspect.isfunction)
     for func_name, func in methods:
         if pre_fix is not None:
@@ -573,14 +577,13 @@ def glue_function_arguments(func, curr_glued=None, glue_default=False, md_code=F
         if param_name not in curr_glued and param_name != 'self':
             glue_variable(param_name, md_code=md_code)
             curr_glued.append(param_name)
-            if glue_default:
-                if str(param.default) is not param.empty:
+            if glue_default and str(param.default) is not param.empty:
                     if str(param.default) not in curr_glued:
                         glue_variable(str(param.default), md_code=md_code)
                         curr_glued.append(str(param.default))
 
 
-def glue_class_options(obj,  curr_glued=[], md_code=False):
+def glue_class_options(obj,  curr_glued=None, md_code=False):
     """
     Glue all class options for a given class
 
@@ -591,6 +594,8 @@ def glue_class_options(obj,  curr_glued=[], md_code=False):
     curr_glued: list
         the parameters that have been glued
     """
+    if curr_glued is None:
+        curr_glued = []
     obj = obj()
     opts = list(obj.options)
     for opt in opts:
