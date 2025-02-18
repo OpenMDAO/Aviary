@@ -461,6 +461,7 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
                                    'static_target': True}
 
                 for var in ENGINE_SIZED_INPUTS:
+                    meta = _MetaData[var]
                     val = meta['default_value']
                     if val is None:
                         val = [0.0]  # _unspecified
