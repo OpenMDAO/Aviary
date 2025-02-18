@@ -464,7 +464,7 @@ class FlightPhaseOptions(om.OptionsDictionary):
             default=False,
             desc='Designate this phase as a reserve phase and contributes its fuel burn '
             'towards the reserve mission fuel requirements. Reserve phases should be '
-            'created after all non-reserve phases.'
+            'be placed after all non-reserve phases in the phase_info.'
         )
 
         self.declare(
@@ -473,7 +473,7 @@ class FlightPhaseOptions(om.OptionsDictionary):
             default=(None, 'm'),
             set_function=units_setter,
             desc='The total distance traveled by the aircraft from takeoff to landing '
-            'of the primary mission, not including reserve missions. This value must '
+            'for the primary mission, not including reserve missions. This value must '
             'be positive.'
         )
 
@@ -490,7 +490,7 @@ class FlightPhaseOptions(om.OptionsDictionary):
             types=int,
             default=1,
             desc='The number of segments in transcription creation in Dymos. '
-            'The minimum value is 1.'
+            'The default value is 1.'
         )
 
         self.declare(
@@ -498,7 +498,7 @@ class FlightPhaseOptions(om.OptionsDictionary):
             types=int,
             default=3,
             desc='The order of polynomials for interpolation in the transcription '
-            'created in Dymos. The minimum value is 3.'
+            'created in Dymos. The default value is 3.'
         )
 
         self.declare(
@@ -513,7 +513,7 @@ class FlightPhaseOptions(om.OptionsDictionary):
             name='use_polynomial_control',
             types=bool,
             default=True,
-            desc='Use polynomial control in this phase. Setting to True smooths '
+            desc='Set fo True to use polynomial controls in this phase, which smooths the '
             'control inputs.'
         )
 
@@ -521,8 +521,8 @@ class FlightPhaseOptions(om.OptionsDictionary):
             name='ground_roll',
             types=bool,
             default=False,
-            desc='Set to true only for phases where the aircraft is rolling on the ground. '
-            'All other phases of flight (climb, cruise, descent) this must be set to false.'
+            desc='Set to True only for phases where the aircraft is rolling on the ground. '
+            'All other phases of flight (climb, cruise, descent) this must be set to False.'
         )
 
         self.declare(
@@ -575,9 +575,9 @@ class FlightPhaseOptions(om.OptionsDictionary):
             types=tuple,
             default=((None, None), 'min'),
             set_function=bounds_units_setter,
-            desc='Bounds on when this phase can start relative to the start of the first phase '
-            'in the mission. i.e. ((25, 45), "min") means this phase must start between 25 to '
-            '45 minutes after the start of the mission.'
+            desc='Lower and upper bounds on the starting time for this phase relative to the '
+            'starting time of the mission, i.e., ((25, 45), "min") constrians this phase to '
+            'start between 25 and 45 minutes after the start of the mission.'
         )
 
         self.declare(
@@ -585,36 +585,35 @@ class FlightPhaseOptions(om.OptionsDictionary):
             types=tuple,
             default=((None, None), 'min'),
             set_function=bounds_units_setter,
-            desc='The maximum time that this phase is allowed to take from the start of this '
-            'phase to the end of thise phase i.e. ((20, 36), "min") means this phase must '
-            'take between 20 and 36 minutes.'
+            desc='Lower and upper bounds on the phase duration, in the form of a nested tuple: '
+            'i.e. ((20, 36), "min") This constrains the duration to be between 20 and 36 min.'
         )
 
         self.declare(
             name='required_available_climb_rate',
             types=tuple,
-            default=(300, 'ft/s'),
+            default=(None, 'ft/s'),
             set_function=units_setter,
             desc='Adds a constraint requiring Dynamic.Mission.ALTITUDE_RATE_MAX to be no '
             'smaller than required_available_climb_rate. This helps to ensure that the '
             'propulsion system is large enough to handle emergency maneuvers at all points '
-            'throughout the flight envelope.'
+            'throughout the flight envelope. Default value is None for no constraint.'
         )
 
         self.declare(
             name='no_climb',
             types=bool,
             default=False,
-            desc='Set to True to prevent the aircraft from climb during phase. Turn this on '
-            'if the aircraft is unexpectedly climbing during a descent phase.'
+            desc='Set to True to prevent the aircraft from climbing during the phase. This option '
+            'can be used to prevent unexpected climb during a descent phase.'
         )
 
         self.declare(
             name='no_descent',
             types=bool,
             default=False,
-            desc='Set to True to prevent the aircraft from descending during this phase. '
-            'Turn this on if the aircraft is unexpectedly descending during a climb phase.'
+            desc='Set to True to prevent the aircraft from descending during the phase. This '
+            'can be used to prevent unexpected descent during a climb phase.'
         )
 
         self.declare(
@@ -630,7 +629,8 @@ class FlightPhaseOptions(om.OptionsDictionary):
             types=float,
             allow_none=True,
             default=None,
-            desc='The initial Mach number at the start of the phase i.e. (0.72, "unitless")'
+            desc='The initial Mach number at the start of the phase. This option is only valid '
+            'when fix_initial is True.'
         )
 
         self.declare(
@@ -638,7 +638,8 @@ class FlightPhaseOptions(om.OptionsDictionary):
             types=float,
             allow_none=True,
             default=None,
-            desc='The final Mach number at the end of the phase i.e. (0.72, "unitless")'
+            desc='The final Mach number at the end of the phase. This option is only valid '
+            'when fix_initial is True.'
         )
 
         self.declare(
@@ -646,7 +647,8 @@ class FlightPhaseOptions(om.OptionsDictionary):
             types=tuple,
             default=(None, "ft"),
             set_function=units_setter,
-            desc='The initial altitude at the start of the phase i.e. (32000.0, "ft")'
+            desc='The initial altitude at the start of the phase. This option is only valid '
+            'when fix_initial is True.'
         )
 
         self.declare(
@@ -654,7 +656,8 @@ class FlightPhaseOptions(om.OptionsDictionary):
             types=tuple,
             default=(None, "ft"),
             set_function=units_setter,
-            desc='The final altitude at the end of the phase i.e. (32000.0, "ft")'
+            desc='The final altitude at the end of the phase. This option is only valid '
+            'when fix_initial is True.'
         )
 
         self.declare(
