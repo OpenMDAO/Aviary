@@ -5797,14 +5797,6 @@ add_meta_data(
 )
 
 add_meta_data(
-    Aircraft.Wing.MOUNTING_TYPE,
-    meta_data=_MetaData,
-    historical_name={"GASP": 'INGASP.HWING', "FLOPS": None, "LEAPS1": None},
-    units='unitless',
-    desc='wing location on fuselage (0 = low wing, 1 = high wing)',
-)
-
-add_meta_data(
     Aircraft.Wing.NUM_FLAP_SEGMENTS,
     meta_data=_MetaData,
     historical_name={"GASP": 'INGASP.FLAPN', "FLOPS": None, "LEAPS1": None},
@@ -6185,6 +6177,15 @@ add_meta_data(
 )
 
 add_meta_data(
+    Aircraft.Wing.VERTICAL_MOUNT_LOCATION,
+    meta_data=_MetaData,
+    historical_name={"GASP": 'INGASP.HWING', "FLOPS": None, "LEAPS1": None},
+    units='unitless',
+    desc='vertical wing mount location on fuselage (0 = low wing, 1 = high wing). It is continuous variable between 0 and 1 are acceptable.',
+    default_value=0.0,
+)
+
+add_meta_data(
     # Note user override
     #    - see also: Aircraft.Wing.WETTED_AREA_SCALER
     Aircraft.Wing.WETTED_AREA,
@@ -6428,6 +6429,14 @@ add_meta_data(
 #     \  /    |  __/ | | | | | | | (__  | | |  __/
 #      \/      \___| |_| |_| |_|  \___| |_|  \___|
 # ================================================
+
+add_meta_data(
+    Dynamic.Vehicle.ANGLE_OF_ATTACK,
+    meta_data=_MetaData,
+    historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
+    units='deg',
+    desc="Angle between aircraft wing cord and relative wind",
+)
 
 add_meta_data(
     Dynamic.Vehicle.BATTERY_STATE_OF_CHARGE,

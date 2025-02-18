@@ -49,7 +49,9 @@ class TestUnsteadyAlphaThrustIterGroup(unittest.TestCase):
                                    promotes_outputs=["*"])
 
         if ground_roll:
-            ig.set_input_defaults("alpha", np.zeros(nn), units="deg")
+            ig.set_input_defaults(
+                Dynamic.Vehicle.ANGLE_OF_ATTACK, np.zeros(nn), units="deg"
+            )
 
         p.setup(force_alloc_complex=True)
 
@@ -69,7 +71,7 @@ class TestUnsteadyAlphaThrustIterGroup(unittest.TestCase):
 
         if not ground_roll:
             p.set_val(Dynamic.Mission.FLIGHT_PATH_ANGLE, 0.0 * np.ones(nn), units="rad")
-            p.set_val("alpha", 4 * np.ones(nn), units="deg")
+            p.set_val(Dynamic.Vehicle.ANGLE_OF_ATTACK, 4 * np.ones(nn), units="deg")
             p.set_val("dh_dr", 0.0 * np.ones(nn), units=None)
             p.set_val("d2h_dr2", 0.0 * np.ones(nn), units="1/NM")
 
@@ -87,7 +89,11 @@ class TestUnsteadyAlphaThrustIterGroup(unittest.TestCase):
         )
         weight = p.model.get_val("mass", units="lbm") * GRAV_ENGLISH_LBM
         iwing = p.model.get_val(Aircraft.Wing.INCIDENCE, units="deg")
-        alpha = iwing if ground_roll else p.model.get_val("alpha", units="deg")
+        alpha = (
+            iwing
+            if ground_roll
+            else p.model.get_val(Dynamic.Vehicle.ANGLE_OF_ATTACK, units="deg")
+        )
 
         c_alphai = np.cos(np.radians(alpha - iwing))
         s_alphai = np.sin(np.radians(alpha - iwing))

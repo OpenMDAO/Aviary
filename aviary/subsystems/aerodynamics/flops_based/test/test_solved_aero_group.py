@@ -16,7 +16,7 @@ from aviary.subsystems.subsystem_builder_base import SubsystemBuilderBase
 from aviary.utils.csv_data_file import read_data_file
 from aviary.utils.named_values import NamedValues
 from aviary.interface.default_phase_info.height_energy import phase_info
-from aviary.variable_info.variables import Aircraft
+from aviary.variable_info.variables import Aircraft, Dynamic
 
 
 # The drag-polar-generating component reads this in, instead of computing the polars.
@@ -121,6 +121,42 @@ class TestSolvedAero(unittest.TestCase):
         assert_near_equal(CL_pass, CL_base, 1e-6)
         assert_near_equal(CD_pass, CD_base, 1e-6)
 
+    def test_parameters(self):
+        # This test is to make sure that the aero builder creates a parameter
+        # for wing area. It addreses a bug where this was absent.
+
+        local_phase_info = deepcopy(phase_info)
+
+        prob = AviaryProblem()
+
+        prob.load_inputs(
+            "subsystems/aerodynamics/flops_based/test/data/high_wing_single_aisle.csv",
+            local_phase_info,
+        )
+
+        # Change value just to be certain.
+        prob.aviary_inputs.set_val(Aircraft.Wing.AREA, 7777, units='ft**2')
+
+        # Preprocess inputs
+        prob.check_and_preprocess_inputs()
+
+        prob.add_pre_mission_systems()
+        prob.add_phases()
+        prob.add_post_mission_systems()
+
+        prob.link_phases()
+
+        prob.setup()
+
+        prob.set_initial_guesses()
+
+        prob.run_model()
+
+        # verify that we are promoting the parameters.
+        wing_area = prob.get_val("traj.cruise.rhs_all.aircraft:wing:area", units='ft**2')
+        actual_wing_area = prob.aviary_inputs.get_val(Aircraft.Wing.AREA, units='ft**2')
+        assert_near_equal(wing_area, actual_wing_area)
+
     def test_solved_aero_pass_polar_unique_abscissa(self):
         # Solved Aero with shortened lists of table abscissa.
         local_phase_info = deepcopy(phase_info)
@@ -216,13 +252,17 @@ class FakeCalcDragPolar(om.ExplicitComponent):
                              desc="List of altitudes in ascending order.")
         self.options.declare("mach", default=None, allow_none=True,
                              desc="List of mach numbers in ascending order.")
-        self.options.declare("alpha", default=None, allow_none=True,
-                             desc="List of angles of attack in ascending order.")
+        self.options.declare(
+            "alpha",
+            default=None,
+            allow_none=True,
+            desc="List of angles of attack in ascending order.",
+        )
 
     def setup(self):
         altitude = self.options['altitude']
         mach = self.options['mach']
-        alpha = self.options['alpha']
+        alpha = self.options["alpha"]
 
         self.add_input(Aircraft.Wing.AREA, 1.0, units='ft**2')
         self.add_input(Aircraft.Wing.SPAN, 1.0, units='ft')
@@ -289,6 +329,6 @@ class FakeDragPolarBuilder(SubsystemBuilderBase):
 
 
 if __name__ == "__main__":
-    # unittest.main()
-    test = TestSolvedAero()
-    test.test_solved_aero_pass_polar_unique_abscissa()
+    unittest.main()
+    # test = TestSolvedAero()
+    # test.test_solved_aero_pass_polar_unique_abscissa()

@@ -222,7 +222,11 @@ class ProblemBuilderSolved2DOF():
 
         if len(phases) > 2:
             prob.traj.link_phases(
-                phases[1:], ["alpha"], units='rad', connected=False)
+                phases[1:],
+                [Dynamic.Vehicle.ANGLE_OF_ATTACK],
+                units='rad',
+                connected=False,
+            )
 
     def add_post_mission_systems(self, prob, include_landing=True):
         """

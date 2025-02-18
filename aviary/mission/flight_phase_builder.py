@@ -325,7 +325,7 @@ class FlightPhaseBase(PhaseBuilderBase):
 
         if phase_type is EquationsOfMotion.SOLVED_2DOF:
             phase.add_timeseries_output(Dynamic.Mission.FLIGHT_PATH_ANGLE)
-            phase.add_timeseries_output("alpha")
+            phase.add_timeseries_output(Dynamic.Vehicle.ANGLE_OF_ATTACK)
             phase.add_timeseries_output(
                 "fuselage_pitch", output_name="theta", units="deg")
             phase.add_timeseries_output("thrust_req", units="lbf")

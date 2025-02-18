@@ -454,7 +454,7 @@ class ProblemBuilder2DOF():
                         states_to_link[Dynamic.Mission.VELOCITY] = connect_directly
                         # if the first phase is rotation, we also need alpha
                         if phase1 == 'rotation':
-                            states_to_link['alpha'] = False
+                            states_to_link[Dynamic.Vehicle.ANGLE_OF_ATTACK] = False
 
                     for state, connected in states_to_link.items():
                         # in initial guesses, all of the states, other than time use
@@ -732,12 +732,12 @@ class ProblemBuilder2DOF():
             Dynamic.Mission.DISTANCE,
             Dynamic.Mission.VELOCITY,
             "flight_path_angle",
-            "alpha",
+            Dynamic.Vehicle.ANGLE_OF_ATTACK,
         ]
 
         if phase_name == 'ascent':
             # Alpha is a control for ascent.
-            control_keys.append('alpha')
+            control_keys.append(Dynamic.Vehicle.ANGLE_OF_ATTACK)
 
         prob_keys = ["tau_gear", "tau_flaps"]
 
