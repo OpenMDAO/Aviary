@@ -735,6 +735,23 @@ add_meta_data(
 )
 
 add_meta_data(
+    Aircraft.CrewPayload.Design.MAX_CARGO_MASS,
+    meta_data=_MetaData,
+    historical_name={
+        "GASP": 'INGASP.WCARGO',
+        # ['WTS.WSP(36,2)', '~WEIGHT.WCARGO', '~WTSTAT.WSP(36,2)', '~INERT.WCARGO',],
+        "FLOPS": None,
+        "LEAPS1": [
+            '(WeightABC)self._cargo_weight',
+            'aircraft.outputs.L0_weights_summary.cargo_weight',
+        ],
+    },
+    units='lbm',
+    desc='maximum mass of cargo',
+    default_value=0.0,
+)
+
+add_meta_data(
     Aircraft.CrewPayload.Design.NUM_BUSINESS_CLASS,
     meta_data=_MetaData,
     historical_name={
@@ -841,23 +858,6 @@ add_meta_data(
     desc='mass per passenger',
     option=True,
     default_value=165.0,
-)
-
-add_meta_data(
-    Aircraft.CrewPayload.MAX_CARGO_MASS,
-    meta_data=_MetaData,
-    historical_name={
-        "GASP": 'INGASP.WCARGO',
-        # ['WTS.WSP(36,2)', '~WEIGHT.WCARGO', '~WTSTAT.WSP(36,2)', '~INERT.WCARGO',],
-        "FLOPS": None,
-        "LEAPS1": [
-            '(WeightABC)self._cargo_weight',
-            'aircraft.outputs.L0_weights_summary.cargo_weight',
-        ],
-    },
-    units='lbm',
-    desc='Maximum mass of cargo',
-    default_value=0.0,
 )
 
 add_meta_data(

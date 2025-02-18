@@ -317,7 +317,7 @@ class PayloadMassTestCase(unittest.TestCase):
             Aircraft.CrewPayload.CARGO_MASS, val=0, units="lbm"
         )
         self.prob.model.set_input_defaults(
-            Aircraft.CrewPayload.MAX_CARGO_MASS, val=10040, units="lbm"
+            Aircraft.CrewPayload.Design.MAX_CARGO_MASS, val=10040, units="lbm"
         )
 
         setup_model_options(self.prob, options)
@@ -1038,7 +1038,7 @@ class FixedMassGroupTestCase1(unittest.TestCase):
             Aircraft.CrewPayload.CARGO_MASS, val=0, units="lbm"
         )  # bug fixed value and original value
         self.prob.model.set_input_defaults(
-            Aircraft.CrewPayload.MAX_CARGO_MASS, val=10040, units="lbm"
+            Aircraft.CrewPayload.Design.MAX_CARGO_MASS, val=10040, units="lbm"
         )
         self.prob.model.set_input_defaults(
             Aircraft.VerticalTail.TAPER_RATIO, val=0.801, units="unitless"
@@ -1301,7 +1301,7 @@ class FixedMassGroupTestCase2(unittest.TestCase):
             Aircraft.CrewPayload.CARGO_MASS, val=0, units="lbm"
         )  # bug fixed value and original value
         self.prob.model.set_input_defaults(
-            Aircraft.CrewPayload.MAX_CARGO_MASS, val=10040, units="lbm"
+            Aircraft.CrewPayload.Design.MAX_CARGO_MASS, val=10040, units="lbm"
         )
         self.prob.model.set_input_defaults(
             Aircraft.VerticalTail.TAPER_RATIO, val=0.801, units="unitless"
@@ -1624,7 +1624,7 @@ class FixedMassGroupTestCase3(unittest.TestCase):
             Aircraft.LandingGear.MAIN_GEAR_LOCATION: (0.2, 'unitless'),
             Aircraft.CrewPayload.PASSENGER_MASS_WITH_BAGS: (200.0, 'lbm'),
             Aircraft.CrewPayload.CARGO_MASS: (0.0, 'lbm'),
-            Aircraft.CrewPayload.MAX_CARGO_MASS: (10040.0, 'lbm'),
+            Aircraft.CrewPayload.Design.MAX_CARGO_MASS: (10040.0, 'lbm'),
             'wire_area': (0.0015, 'ft**2'),
             'rho_wire': (1.1, 'lbm/ft**3'),
             'battery_energy': (0.0, 'MJ'),

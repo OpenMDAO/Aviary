@@ -147,7 +147,7 @@ V3_bug_fixed_options.set_val(
     Aircraft.CrewPayload.CARGO_MASS, val=0, units="lbm"
 )
 V3_bug_fixed_options.set_val(
-    Aircraft.CrewPayload.MAX_CARGO_MASS, val=10040, units="lbm"
+    Aircraft.CrewPayload.Design.MAX_CARGO_MASS, val=10040, units="lbm"
 )
 V3_bug_fixed_options.set_val(
     Aircraft.VerticalTail.SWEEP, val=0, units='deg'
