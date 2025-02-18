@@ -283,18 +283,18 @@ class PayloadMass(om.ExplicitComponent):
 
     def compute(self, inputs, outputs):
         pax_mass, _ = self.options[Aircraft.CrewPayload.PASSENGER_MASS_WITH_BAGS]
-        PAX = self.options[Aircraft.CrewPayload.NUM_PASSENGERS]
-        PAX_des = self.options[Aircraft.CrewPayload.Design.NUM_PASSENGERS]
+        pax = self.options[Aircraft.CrewPayload.NUM_PASSENGERS]
+        pax_des = self.options[Aircraft.CrewPayload.Design.NUM_PASSENGERS]
         cargo_mass = inputs[Aircraft.CrewPayload.CARGO_MASS]
         cargo_mass_des = inputs[Aircraft.CrewPayload.Design.CARGO_MASS]
         # cargo_mass_max = self.options[Aircraft.CrewPayload.MAX_CARGO_MASS]
         cargo_mass_max = inputs[Aircraft.CrewPayload.MAX_CARGO_MASS]
 
         outputs[Aircraft.CrewPayload.PASSENGER_PAYLOAD_MASS] = \
-            payload_mass = pax_mass * PAX
-        outputs["payload_mass_des"] = pax_mass * PAX_des + cargo_mass_des
-        outputs["payload_mass_max"] = pax_mass * PAX_des + cargo_mass_max
-        outputs[Aircraft.CrewPayload.TOTAL_PAYLOAD_MASS] = pax_mass * PAX + cargo_mass
+            payload_mass = pax_mass * pax
+        outputs["payload_mass_des"] = pax_mass * pax_des + cargo_mass_des
+        outputs["payload_mass_max"] = pax_mass * pax_des + cargo_mass_max
+        outputs[Aircraft.CrewPayload.TOTAL_PAYLOAD_MASS] = pax_mass * pax + cargo_mass
 
 
 class ElectricAugmentationMass(om.ExplicitComponent):
