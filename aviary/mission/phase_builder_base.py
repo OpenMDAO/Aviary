@@ -32,13 +32,13 @@ class PhaseBuilderBase(ABC):
 
     Attributes
     ----------
-    name : str ('<unknown phase>')
+    name : str ('_unknown phase_')
         object label
 
     core_subsystems : (None)
         list of SubsystemBuilderBase objects that will be added to the phase ODE
 
-    user_options : AviaryValues (<empty>)
+    user_options : OptionsDictionary (<empty>)
         state/path constraint values and flags
 
     initial_guesses : AviaryValues (<empty>)
@@ -61,6 +61,10 @@ class PhaseBuilderBase(ABC):
     default_ode_class : type
         class attribute: derived type customization point; the default value
         for ode_class used by build_phase
+
+    default_options_class : type
+        class attribute: derived type customization point; the default class
+        containing the phase options options_dictionary
 
     is_analytic_phase : bool (False)
         class attribute: derived type customization point; if True, build_phase
@@ -86,10 +90,10 @@ class PhaseBuilderBase(ABC):
 
     _initial_guesses_meta_data_ = _require_new_initial_guesses_meta_data_class_attr_()
 
-    default_name = '<unknown phase>'
+    default_name = '_unknown phase_'
 
     default_ode_class = MissionODE
-
+    default_options_class = om.OptionsDictionary
     default_meta_data = _MetaData
     # endregion : derived type customization points
 
@@ -112,7 +116,19 @@ class PhaseBuilderBase(ABC):
 
         self.subsystem_options = subsystem_options
 
-        self.user_options = user_options
+
+        self.user_options = self.default_options_class()
+
+        for name, val in user_options.items():
+
+            # TODO: Phase_info 2.0 should not have units defined for unitless things.
+            # When that goes away, we can remove this.
+            if (isinstance(val, tuple) and
+                self.user_options._dict[name]['set_function'] is None and
+                val[1] == "unitless"):
+                    val = val[0]
+
+            self.user_options[name] = val
 
         if initial_guesses is None:
             initial_guesses = AviaryValues()
@@ -201,8 +217,8 @@ class PhaseBuilderBase(ABC):
         '''
         user_options = self.user_options
 
-        num_segments, _ = user_options.get_item('num_segments')
-        order, _ = user_options.get_item('order')
+        num_segments = user_options['num_segments']
+        order = user_options['order']
 
         transcription = dm.Radau(
             num_segments=num_segments, order=order, compressed=True)
@@ -212,6 +228,7 @@ class PhaseBuilderBase(ABC):
     def validate_initial_guesses(self):
         '''
         Raise TypeError if an unsupported initial guess is found.
+
         Users can call this method when updating initial guesses after initialization.
         '''
         initial_guesses = self.initial_guesses

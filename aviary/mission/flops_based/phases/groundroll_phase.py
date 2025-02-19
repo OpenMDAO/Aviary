@@ -1,12 +1,15 @@
+import openmdao.api as om
+
 import dymos as dm
 
-from aviary.mission.phase_builder_base import PhaseBuilderBase, register
+from aviary.mission.gasp_based.ode.groundroll_ode import GroundrollODE
 from aviary.mission.initial_guess_builders import InitialGuessState, InitialGuessIntegrationVariable, InitialGuessPolynomialControl
+from aviary.mission.phase_builder_base import PhaseBuilderBase, register
 
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.variable_meta_data import _MetaData
+from aviary.variable_info.functions import units_setter, bounds_units_setter
 from aviary.variable_info.variables import Dynamic
-from aviary.mission.gasp_based.ode.groundroll_ode import GroundrollODE
 
 
 # TODO: support/handle the following in the base class
@@ -14,6 +17,89 @@ from aviary.mission.gasp_based.ode.groundroll_ode import GroundrollODE
 #     - currently handled in level 3 interface implementation
 # - self.external_subsystems
 # - self.meta_data, with cls.default_meta_data customization point
+
+class GroundrollPhaseOptions(om.OptionsDictionary):
+
+    def __init__(self, read_only=False):
+        super(GroundrollPhaseOptions, self).__init__(read_only)
+
+        self.declare(
+            name='num_segments',
+            types=int,
+            default=5,
+            desc='The number of segments in transcription creation in Dymos. '
+            'The default value is 5.'
+        )
+
+        self.declare(
+            name='order',
+            types=int,
+            default=3,
+            desc='The order of polynomials for interpolation in the transcription '
+            'created in Dymos. The default value is 3.'
+        )
+
+        self.declare(
+            name='fix_initial',
+            types=bool,
+            default=False,
+            desc='Fixes the initial states (mass, distance) and does not allow them to '
+            'change during the optimization.'
+        )
+
+        self.declare(
+            name='fix_duration',
+            types=bool,
+            default=False,
+            desc='If True, the time duration of the phase is not treated as a design '
+            'variable for the optimization problem.'
+        )
+
+        self.declare(
+            'initial_bounds',
+            types=tuple,
+            default=((0.0, 100.0), 'min'),
+            set_function=bounds_units_setter,
+            desc='Lower and upper bounds on the starting time for this phase relative to the '
+            'starting time of the mission, i.e., ((25, 45), "min") constrians this phase to '
+            'start between 25 and 45 minutes after the start of the mission.'
+        )
+
+        self.declare(
+            name='duration_bounds',
+            types=tuple,
+            default=((0.0, 3600.0), 's'),
+            set_function=bounds_units_setter,
+            desc='Lower and upper bounds on the phase duration, in the form of a nested tuple: '
+            'i.e. ((20, 36), "min") This constrains the duration to be between 20 and 36 min.'
+        )
+
+        self.declare(
+            name='initial_ref',
+            types=tuple,
+            default=(100.0, 's'),
+            set_function=units_setter,
+            desc='Scale factor ref for the phase starting time.'
+        )
+
+        self.declare(
+            name='duration_ref',
+            types=tuple,
+            default=(100.0, 's'),
+            set_function=units_setter,
+            desc='Scale factor ref for duration.'
+        )
+
+        self.declare(
+            name='constraints',
+            types=dict,
+            default={},
+            desc="Add in custom constraints i.e. 'flight_path_angle': {'equals': -3., "
+            "'loc': 'initial', 'units': 'deg', 'type': 'boundary',}. For more details see "
+            "_add_user_defined_constraints()."
+        )
+
+
 @register
 class GroundrollPhase(PhaseBuilderBase):
     '''
@@ -29,6 +115,7 @@ class GroundrollPhase(PhaseBuilderBase):
     default_name = 'groundroll'
 
     default_ode_class = GroundrollODE
+    default_options_class = GroundrollPhaseOptions
 
     default_meta_data = _MetaData
     # endregion : derived type customization points
@@ -151,38 +238,6 @@ class GroundrollPhase(PhaseBuilderBase):
             'set_input_defaults': False,
         }
 
-
-GroundrollPhase._add_meta_data(
-    'num_segments', val=5, desc='transcription: number of segments')
-
-GroundrollPhase._add_meta_data(
-    'order', val=3,
-    desc='transcription: order of the state transcription; the order of the control'
-    ' transcription is `order - 1`')
-
-GroundrollPhase._add_meta_data('fix_initial', val=False)
-
-GroundrollPhase._add_meta_data('fix_duration', val=False)
-
-GroundrollPhase._add_meta_data('optimize_mach', val=False)
-
-GroundrollPhase._add_meta_data('optimize_altitude', val=False)
-
-GroundrollPhase._add_meta_data('initial_bounds', val=(0., 100.),
-                               units='s', desc='initial bounds')
-GroundrollPhase._add_meta_data('duration_bounds', val=(
-    0., 3600.), units='s', desc='duration bounds')
-GroundrollPhase._add_meta_data('initial_ref', val=100.,
-                               units='s', desc='initial reference')
-GroundrollPhase._add_meta_data('duration_ref', val=1000.,
-                               units='s', desc='duration reference')
-GroundrollPhase._add_meta_data('control_order', val=1, desc='control order')
-GroundrollPhase._add_meta_data('opt', val=True, desc='opt')
-GroundrollPhase._add_meta_data('input_speed_type', val='TAS', desc='input speed type')
-GroundrollPhase._add_meta_data('ground_roll', val=True)
-GroundrollPhase._add_meta_data('rotation', val=False)
-GroundrollPhase._add_meta_data('clean', val=False)
-GroundrollPhase._add_meta_data('constraints', val={})
 
 GroundrollPhase._add_initial_guess_meta_data(
     InitialGuessIntegrationVariable(key='velocity'),

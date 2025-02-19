@@ -1,8 +1,216 @@
+import openmdao.api as om
+
 from aviary.mission.gasp_based.ode.groundroll_ode import GroundrollODE
 from aviary.mission.initial_guess_builders import InitialGuessState, InitialGuessIntegrationVariable, InitialGuessControl
 from aviary.mission.phase_builder_base import PhaseBuilderBase
 from aviary.utils.aviary_values import AviaryValues
+from aviary.variable_info.functions import units_setter, bounds_units_setter
 from aviary.variable_info.variables import Dynamic
+
+
+class GroundrollPhaseOptions(om.OptionsDictionary):
+
+    def __init__(self, read_only=False):
+        super(GroundrollPhaseOptions, self).__init__(read_only)
+
+        self.declare(
+            'analytic',
+            types=bool,
+            default=False,
+            desc='When set to True, this is an analytic phase.'
+        )
+
+        self.declare(
+            name='fix_initial',
+            types=bool,
+            default=True,
+            desc='Fixes the initial state (distance only) and does not allow it to '
+            'change during the optimization.'
+        )
+
+        self.declare(
+            name='fix_initial_mass',
+            types=bool,
+            default=False,
+            desc='Fixes the initial state for mass and does not allow it to '
+            'change during the optimization.'
+        )
+
+        self.declare(
+            name='connect_initial_mass',
+            types=bool,
+            default=True,
+            desc='When true, initial mass is connected to an outside value.'
+        )
+
+        self.declare(
+            name='duration_bounds',
+            types=tuple,
+            default=((1.0, 100.0), 's'),
+            set_function=bounds_units_setter,
+            desc='Lower and upper bounds on the phase duration, in the form of a nested tuple: '
+            'i.e. ((20, 36), "min") This constrains the duration to be between 20 and 36 min.'
+        )
+
+        self.declare(
+            name='duration_ref',
+            types=tuple,
+            default=(1.0, 's'),
+            set_function=units_setter,
+            desc='Scale factor ref for duration.'
+        )
+
+        self.declare(
+            name='velocity_lower',
+            types=tuple,
+            default=(0.0, 'kn'),
+            set_function=units_setter,
+            desc='Lower bound for velocity.'
+        )
+
+        self.declare(
+            name='velocity_upper',
+            types=tuple,
+            default=(1000.0, 'kn'),
+            set_function=units_setter,
+            desc='Upper bound for velocity.'
+        )
+
+        self.declare(
+            name='velocity_ref',
+            types=tuple,
+            default=(100.0, 'kn'),
+            set_function=units_setter,
+            desc='Scale factor ref for velocity.'
+        )
+
+        self.declare(
+            name='velocity_ref0',
+            types=tuple,
+            default=(0.0, 'kn'),
+            set_function=units_setter,
+            desc='Scale factor ref0 for velocity.'
+        )
+
+        self.declare(
+            name='velocity_defect_ref',
+            types=tuple,
+            default=(None, 'kn'),
+            set_function=units_setter,
+            desc='Scale factor ref0 for velocity.'
+        )
+
+        self.declare(
+            name='mass_lower',
+            types=tuple,
+            default=(0.0, 'lbm'),
+            set_function=units_setter,
+            desc='Lower bound for mass.'
+        )
+
+        self.declare(
+            name='mass_upper',
+            types=tuple,
+            default=(200_000.0, 'lbm'),
+            set_function=units_setter,
+            desc='Upper bound for mass.'
+        )
+
+        self.declare(
+            name='mass_ref',
+            types=tuple,
+            default=(100_000.0, 'lbm'),
+            set_function=units_setter,
+            desc='Scale factor ref for mass.'
+        )
+
+        self.declare(
+            name='mass_ref0',
+            types=tuple,
+            default=(0.0, 'lbm'),
+            set_function=units_setter,
+            desc='Scale factor ref0 for mass.'
+        )
+
+        self.declare(
+            name='mass_defect_ref',
+            types=tuple,
+            default=(100.0, 'lbm'),
+            set_function=units_setter,
+            desc='Scale factor ref0 for mass.'
+        )
+
+        self.declare(
+            name='distance_lower',
+            types=tuple,
+            default=(0.0, 'ft'),
+            set_function=units_setter,
+            desc='Lower bound for distance.'
+        )
+
+        self.declare(
+            name='distance_upper',
+            types=tuple,
+            default=(4000.0, 'ft'),
+            set_function=units_setter,
+            desc='Upper bound for distance.'
+        )
+
+        self.declare(
+            name='distance_ref',
+            types=tuple,
+            default=(3000.0, 'ft'),
+            set_function=units_setter,
+            desc='Scale factor ref for distance.'
+        )
+
+        self.declare(
+            name='distance_ref0',
+            types=tuple,
+            default=(0.0, 'ft'),
+            set_function=units_setter,
+            desc='Scale factor ref0 for distance.'
+        )
+
+        self.declare(
+            name='distance_defect_ref',
+            types=tuple,
+            default=(3000.0, 'ft'),
+            set_function=units_setter,
+            desc='Scale factor ref0 for distance.'
+        )
+
+        self.declare(
+            name='t_init_gear',
+            types=tuple,
+            default=(100.0, 's'),
+            set_function=units_setter,
+            desc='Time where landing gear is lifted.'
+        )
+
+        self.declare(
+            name='t_init_flaps',
+            types=tuple,
+            default=(100.0, 's'),
+            set_function=units_setter,
+            desc='Time where flaps are retracted.'
+        )
+
+        self.declare(
+            name='num_segments',
+            types=int,
+            default=1,
+            desc='The number of segments in transcription creation in Dymos. '
+            'The default value is 1.'
+        )
+
+        self.declare(
+            name='order',
+            types=int,
+            default=3,
+            desc='The order of polynomials for interpolation in the transcription '
+            'created in Dymos. The default value is 3.'
+        )
 
 
 class GroundrollPhase(PhaseBuilderBase):
@@ -24,6 +232,7 @@ class GroundrollPhase(PhaseBuilderBase):
 
     default_name = 'groundroll_phase'
     default_ode_class = GroundrollODE
+    default_options_class= GroundrollPhaseOptions
 
     _meta_data_ = {}
     _initial_guesses_meta_data_ = {}
@@ -33,20 +242,19 @@ class GroundrollPhase(PhaseBuilderBase):
 
         # Retrieve user options values
         user_options = self.user_options
-        # Add the necessary get_val calls for each parameter, e.g.,
-        fix_initial = user_options.get_val('fix_initial')
-        fix_initial_mass = user_options.get_val('fix_initial_mass')
-        connect_initial_mass = user_options.get_val('connect_initial_mass')
-        mass_lower = user_options.get_val('mass_lower', units='lbm')
-        mass_upper = user_options.get_val('mass_upper', units='lbm')
-        mass_ref = user_options.get_val('mass_ref', units='lbm')
-        mass_ref0 = user_options.get_val('mass_ref0', units='lbm')
-        mass_defect_ref = user_options.get_val('mass_defect_ref', units='lbm')
-        distance_lower = user_options.get_val('distance_lower', units='ft')
-        distance_upper = user_options.get_val('distance_upper', units='ft')
-        distance_ref = user_options.get_val('distance_ref', units='ft')
-        distance_ref0 = user_options.get_val('distance_ref0', units='ft')
-        distance_defect_ref = user_options.get_val('distance_defect_ref', units='ft')
+        fix_initial = user_options['fix_initial']
+        fix_initial_mass = user_options['fix_initial_mass']
+        connect_initial_mass = user_options['connect_initial_mass']
+        mass_lower = user_options['mass_lower'][0]
+        mass_upper = user_options['mass_upper'][0]
+        mass_ref = user_options['mass_ref'][0]
+        mass_ref0 = user_options['mass_ref0'][0]
+        mass_defect_ref = user_options['mass_defect_ref'][0]
+        distance_lower = user_options['distance_lower'][0]
+        distance_upper = user_options['distance_upper'][0]
+        distance_ref = user_options['distance_ref'][0]
+        distance_ref0 = user_options['distance_ref0'][0]
+        distance_defect_ref = user_options['distance_defect_ref'][0]
 
         # Add states
         self.add_velocity_state(user_options)
@@ -103,34 +311,6 @@ class GroundrollPhase(PhaseBuilderBase):
 
         return phase
 
-
-# Adding metadata for the GroundrollPhase
-GroundrollPhase._add_meta_data(
-    'analytic', val=False, desc='this is an analytic phase (no states).')
-GroundrollPhase._add_meta_data('fix_initial', val=True)
-GroundrollPhase._add_meta_data('fix_initial_mass', val=False)
-GroundrollPhase._add_meta_data('connect_initial_mass', val=True)
-GroundrollPhase._add_meta_data('duration_bounds', val=(1, 100), units='s')
-GroundrollPhase._add_meta_data('duration_ref', val=1, units='s')
-GroundrollPhase._add_meta_data('velocity_lower', val=0, units='kn')
-GroundrollPhase._add_meta_data('velocity_upper', val=1000, units='kn')
-GroundrollPhase._add_meta_data('velocity_ref', val=100, units='kn')
-GroundrollPhase._add_meta_data('velocity_ref0', val=0, units='kn')
-GroundrollPhase._add_meta_data('velocity_defect_ref', val=None, units='kn')
-GroundrollPhase._add_meta_data('mass_lower', val=0, units='lbm')
-GroundrollPhase._add_meta_data('mass_upper', val=200_000, units='lbm')
-GroundrollPhase._add_meta_data('mass_ref', val=100_000, units='lbm')
-GroundrollPhase._add_meta_data('mass_ref0', val=0, units='lbm')
-GroundrollPhase._add_meta_data('mass_defect_ref', val=100, units='lbm')
-GroundrollPhase._add_meta_data('distance_lower', val=0, units='ft')
-GroundrollPhase._add_meta_data('distance_upper', val=4000, units='ft')
-GroundrollPhase._add_meta_data('distance_ref', val=3000, units='ft')
-GroundrollPhase._add_meta_data('distance_ref0', val=0, units='ft')
-GroundrollPhase._add_meta_data('distance_defect_ref', val=3000, units='ft')
-GroundrollPhase._add_meta_data('t_init_gear', val=100, units='s')
-GroundrollPhase._add_meta_data('t_init_flaps', val=100, units='s')
-GroundrollPhase._add_meta_data('num_segments', val=None, units='unitless')
-GroundrollPhase._add_meta_data('order', val=None, units='unitless')
 
 # Adding initial guess metadata
 GroundrollPhase._add_initial_guess_meta_data(
