@@ -1170,6 +1170,7 @@ add_meta_data(
     units='unitless',
     desc='allowable center-of-gravity (cg) travel as a fraction of '
     'the mean aerodynamic chord',
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -1523,6 +1524,7 @@ add_meta_data(
     historical_name={"GASP": 'INGASP.STATIC', "FLOPS": None, "LEAPS1": None},
     units='unitless',
     desc='aircraft static margin as a fraction of mean aerodynamic chord',
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -3723,8 +3725,9 @@ add_meta_data(
     },
     units='deg',
     desc='quarter-chord sweep of horizontal tail',
+    default_value=0.0,
 )
-
+Aircraft.HorizontalTail.MOMENT_RATIO
 add_meta_data(
     Aircraft.HorizontalTail.TAPER_RATIO,
     meta_data=_MetaData,
@@ -4750,6 +4753,7 @@ add_meta_data(
     historical_name={"GASP": 'INGASP.CBARVT', "FLOPS": None, "LEAPS1": None},
     units='ft',
     desc='mean aerodynamic chord of vertical tail',
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -5788,6 +5792,7 @@ add_meta_data(
     historical_name={"GASP": 'INGASP.XCTCMX', "FLOPS": None, "LEAPS1": None},
     units='unitless',
     desc='location (percent chord) of max wing thickness',
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -5796,6 +5801,7 @@ add_meta_data(
     historical_name={"GASP": 'INGASP.XCPS', "FLOPS": None, "LEAPS1": None},
     units='unitless',
     desc='location (percent chord) of peak suction',
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -6254,6 +6260,7 @@ add_meta_data(
     historical_name={"GASP": 'INGASP.ALPHL0', "FLOPS": None, "LEAPS1": None},
     units='deg',
     desc='zero lift angle of attack',
+    default_value=0.0,
 )
 
 # ============================================================================================================================================
