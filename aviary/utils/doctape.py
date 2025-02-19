@@ -579,10 +579,10 @@ def glue_function_arguments(func, curr_glued=None, glue_default=False, md_code=F
             glue_variable(param_name, md_code=md_code)
             curr_glued.append(param_name)
             if glue_default and str(param.default) is not param.empty:
-                    param_default = param_name + '_default'
-                    if param_default not in curr_glued:
-                        glue_variable(param_default, str(param.default), md_code=md_code)
-                        curr_glued.append(param_default)
+                param_default = param_name + '_default'
+                if param_default not in curr_glued:
+                    glue_variable(param_default, str(param.default), md_code=md_code)
+                    curr_glued.append(param_default)
 
 
 def glue_class_options(obj,  curr_glued=None, md_code=False):
