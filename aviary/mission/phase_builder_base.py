@@ -195,6 +195,39 @@ class PhaseBuilderBase(ABC):
         # overrides should add state, controls, etc.
         return phase
 
+    def make_default_transcription(self):
+        '''
+        Return a transcription object to be used by default in build_phase.
+        '''
+        user_options = self.user_options
+
+        num_segments, _ = user_options.get_item('num_segments')
+        order, _ = user_options.get_item('order')
+
+        transcription = dm.Radau(
+            num_segments=num_segments, order=order, compressed=True)
+
+        return transcription
+
+    def validate_initial_guesses(self):
+        '''
+        Raise TypeError if an unsupported initial guess is found.
+        Users can call this method when updating initial guesses after initialization.
+        '''
+        initial_guesses = self.initial_guesses
+
+        if not initial_guesses:
+            return  # acceptable
+
+        meta_data = self._initial_guesses_meta_data_
+
+        for key in get_keys(initial_guesses):
+            if key not in meta_data:
+                raise TypeError(
+                    f'{self.__class__.__name__}: {self.name}:'
+                    f' unsupported initial guess: {key}'
+                )
+
     def apply_initial_guesses(
         self, prob: om.Problem, traj_name, phase: dm.Phase
     ):
