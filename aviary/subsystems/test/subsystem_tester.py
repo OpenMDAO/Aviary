@@ -72,7 +72,7 @@ class TestSubsystemBuilderBase(unittest.TestCase):
 
             # Check that the values of the keys are the expected types
             self.assertIsInstance(
-                values['mission_name'], (str, type(None)), f'Bus Variable "{name}"\'s "mission_name" value should be a string or None')
+                values['mission_name'], (str, list, type(None)), f'Bus Variable "{name}"\'s "mission_name" value should be a string or None')
             self.assertIsInstance(
                 values['units'], str, f'Bus Variable "{name}"\'s "units" value should be a string')
 
