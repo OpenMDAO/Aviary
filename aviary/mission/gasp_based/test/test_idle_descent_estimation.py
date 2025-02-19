@@ -30,6 +30,7 @@ class IdleDescentTestCase(unittest.TestCase):
         aviary_inputs.set_val(
             Dynamic.Vehicle.Propulsion.THROTTLE, val=0, units="unitless"
         )
+        aviary_inputs.set_val(Aircraft.Wing.FORM_FACTOR, 1.25)
 
         engine = build_engine_deck(aviary_options=aviary_inputs)
         preprocess_propulsion(aviary_inputs, engine)
@@ -70,6 +71,7 @@ class IdleDescentTestCase(unittest.TestCase):
         prob.model.promotes('idle_descent_estimation', inputs=['parameters:*'])
 
         prob.setup()
+        prob.set_val(Aircraft.Wing.FORM_FACTOR, 1.25)
 
         set_params_for_unit_tests(prob)
 
