@@ -70,7 +70,7 @@ class TestSubsystemBuilderBase(unittest.TestCase):
             self.assertIn('units', values.keys(),
                           f'Bus Variable "{name}" is missing the "units" key')
 
-            # Check that the values of the keys are the expected types
+            # Check that the values of the keys are the expected types (allow list)
             self.assertIsInstance(
                 values['mission_name'], (str, list, type(None)), f'Bus Variable "{name}"\'s "mission_name" value should be a string or None')
             self.assertIsInstance(
