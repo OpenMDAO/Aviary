@@ -43,6 +43,7 @@ class GroundrollODETestCase(unittest.TestCase):
         self.prob.set_val("aircraft:wing:incidence", 0, units="deg")
         self.prob.set_val("interference_independent_of_shielded_area", 1.89927266)
         self.prob.set_val("drag_loss_due_to_shielded_wing_area", 68.02065834)
+        self.prob.set_val(Aircraft.Wing.FORM_FACTOR, 1.25)
 
         self.prob.run_model()
 
