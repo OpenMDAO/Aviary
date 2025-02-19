@@ -670,6 +670,7 @@ AERO_2DOF_INPUTS = [
     Aircraft.Wing.AVERAGE_CHORD,
     Aircraft.Wing.AREA,
     Aircraft.Wing.ASPECT_RATIO,
+    Aircraft.Wing.FORM_FACTOR,
     Aircraft.Wing.FUSELAGE_INTERFERENCE_FACTOR,
     Aircraft.Wing.MAX_THICKNESS_LOCATION,
     Aircraft.Wing.MIN_PRESSURE_LOCATION,

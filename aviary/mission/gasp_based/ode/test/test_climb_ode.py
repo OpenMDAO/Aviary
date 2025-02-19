@@ -55,6 +55,7 @@ class ClimbODETestCase(unittest.TestCase):
         self.prob.set_val(Aircraft.Wing.INCIDENCE, 0.0000001, units="deg")
         self.prob.set_val("interference_independent_of_shielded_area", 1.89927266)
         self.prob.set_val("drag_loss_due_to_shielded_wing_area", 68.02065834)
+        self.prob.set_val(Aircraft.Wing.FORM_FACTOR, 1.25)
 
         set_params_for_unit_tests(self.prob)
 
@@ -99,6 +100,7 @@ class ClimbODETestCase(unittest.TestCase):
         self.prob.set_val("EAS", np.array([270, 270]), units="kn")
         self.prob.set_val("interference_independent_of_shielded_area", 1.89927266)
         self.prob.set_val("drag_loss_due_to_shielded_wing_area", 68.02065834)
+        self.prob.set_val(Aircraft.Wing.FORM_FACTOR, 1.25)
 
         set_params_for_unit_tests(self.prob)
 
