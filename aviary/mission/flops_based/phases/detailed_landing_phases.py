@@ -100,8 +100,6 @@ class LandingApproachToMicP3(PhaseBuilderBase):
     -------
     build_phase
     make_default_transcription
-    validate_options
-    assign_default_options
     '''
     __slots__ = ()
 
@@ -343,8 +341,6 @@ class LandingMicP3ToObstacle(LandingApproachToMicP3):
     -------
     build_phase
     make_default_transcription
-    validate_options
-    assign_default_options
     '''
     __slots__ = ()
 
@@ -436,8 +432,6 @@ class LandingObstacleToFlare(PhaseBuilderBase):
     -------
     build_phase
     make_default_transcription
-    validate_options
-    assign_default_options
     '''
     __slots__ = ()
 
@@ -656,8 +650,6 @@ class LandingFlareToTouchdown(PhaseBuilderBase):
     -------
     build_phase
     make_default_transcription
-    validate_options
-    assign_default_options
     '''
     __slots__ = ()
 
@@ -889,8 +881,6 @@ class LandingTouchdownToNoseDown(PhaseBuilderBase):
     -------
     build_phase
     make_default_transcription
-    validate_options
-    assign_default_options
     '''
     __slots__ = ()
 
@@ -1071,8 +1061,6 @@ class LandingNoseDownToStop(PhaseBuilderBase):
     -------
     build_phase
     make_default_transcription
-    validate_options
-    assign_default_options
     '''
     __slots__ = ()
 

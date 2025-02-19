@@ -101,7 +101,7 @@ class FlightPhaseBase(PhaseBuilderBase):
 
         num_engine_type = len(aviary_options.get_val(Aircraft.Engine.NUM_ENGINES))
 
-        user_options: AviaryValues = self.user_options
+        user_options = self.user_options
 
         fix_initial = user_options['fix_initial']
         constrain_final = user_options['constrain_final']

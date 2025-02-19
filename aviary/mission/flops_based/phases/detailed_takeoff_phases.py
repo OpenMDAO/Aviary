@@ -136,8 +136,6 @@ class TakeoffBrakeReleaseToDecisionSpeed(PhaseBuilderBase):
     -------
     build_phase
     make_default_transcription
-    validate_options
-    assign_default_options
     '''
     __slots__ = ()
 
@@ -307,8 +305,6 @@ class TakeoffDecisionSpeedToRotate(PhaseBuilderBase):
     -------
     build_phase
     make_default_transcription
-    validate_options
-    assign_default_options
     '''
     __slots__ = ()
 
@@ -494,8 +490,6 @@ class TakeoffDecisionSpeedBrakeDelay(TakeoffDecisionSpeedToRotate):
     -------
     build_phase
     make_default_transcription
-    validate_options
-    assign_default_options
     '''
     __slots__ = ()
 
@@ -595,8 +589,6 @@ class TakeoffRotateToLiftoff(PhaseBuilderBase):
     -------
     build_phase
     make_default_transcription
-    validate_options
-    assign_default_options
     '''
     __slots__ = ()
 
@@ -792,8 +784,6 @@ class TakeoffLiftoffToObstacle(PhaseBuilderBase):
     -------
     build_phase
     make_default_transcription
-    validate_options
-    assign_default_options
     '''
     __slots__ = ()
 
@@ -1055,8 +1045,6 @@ class TakeoffObstacleToMicP2(PhaseBuilderBase):
     -------
     build_phase
     make_default_transcription
-    validate_options
-    assign_default_options
     '''
     __slots__ = ()
 
@@ -1312,8 +1300,6 @@ class TakeoffMicP2ToEngineCutback(PhaseBuilderBase):
     -------
     build_phase
     make_default_transcription
-    validate_options
-    assign_default_options
     '''
     __slots__ = ()
 
@@ -1561,8 +1547,6 @@ class TakeoffEngineCutback(PhaseBuilderBase):
     -------
     build_phase
     make_default_transcription
-    validate_options
-    assign_default_options
     '''
     __slots__ = ()
 
@@ -1794,8 +1778,6 @@ class TakeoffEngineCutbackToMicP1(PhaseBuilderBase):
     -------
     build_phase
     make_default_transcription
-    validate_options
-    assign_default_options
     '''
     __slots__ = ()
 
@@ -2042,8 +2024,6 @@ class TakeoffMicP1ToClimb(PhaseBuilderBase):
     -------
     build_phase
     make_default_transcription
-    validate_options
-    assign_default_options
     '''
     __slots__ = ()
 
@@ -2281,8 +2261,6 @@ class TakeoffBrakeToAbort(PhaseBuilderBase):
     -------
     build_phase
     make_default_transcription
-    validate_options
-    assign_default_options
     '''
     __slots__ = ()
 
