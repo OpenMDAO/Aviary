@@ -879,6 +879,13 @@ class AviaryProblem(om.Problem):
                 phase_builder = AscentPhase
             elif 'climb' in phase_name:
                 phase_builder = ClimbPhase
+            elif 'electric_cruise' in phase_name:
+                phase_builder = CruisePhase
+                from aviary.mission.gasp_based.ode.breguet_cruise_ode import (
+                    ElectricBreguetCruiseODESolution,
+                )
+
+                phase_builder.default_ode_class = ElectricBreguetCruiseODESolution
             elif 'cruise' in phase_name:
                 phase_builder = CruisePhase
             elif 'desc' in phase_name:

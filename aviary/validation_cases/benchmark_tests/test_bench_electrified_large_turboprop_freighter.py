@@ -22,7 +22,7 @@ from aviary.models.large_turboprop_freighter.electrified_phase_info import (
 # TODO need to add asserts with "truth" values
 class LargeElectrifiedTurbopropFreighterBenchmark(unittest.TestCase):
 
-    def build_and_run_problem(self):
+    def build_and_run_problem(self, mission_method):
         # modify phase_info
         phase_info = deepcopy(two_dof_phase_info)
 
@@ -34,9 +34,11 @@ class LargeElectrifiedTurbopropFreighterBenchmark(unittest.TestCase):
             "models/large_turboprop_freighter/large_turboprop_freighter_GASP.csv"
         )
 
-        options.set_val(Settings.EQUATIONS_OF_MOTION, 'two_degrees_of_freedom')
-        # options.set_val(Aircraft.Engine.NUM_ENGINES, 2)
-        # options.set_val(Aircraft.Engine.WING_LOCATIONS, 0.385)
+        if mission_method == 'energy':
+            options.set_val(Settings.EQUATIONS_OF_MOTION, 'height_energy')
+
+        # set up electric propulsions
+        # TODO make separate input file for electroprop freighter?
         scale_factor = 17.77  # target is ~32 kN*m torque
         options.set_val(Aircraft.Engine.RPM_DESIGN, 6000, 'rpm')  # max RPM of motor map
         options.set_val(Aircraft.Engine.FIXED_RPM, 6000, 'rpm')
@@ -50,9 +52,6 @@ class LargeElectrifiedTurbopropFreighterBenchmark(unittest.TestCase):
             'lbf',
         )
         options.set_val(Aircraft.Battery.PACK_ENERGY_DENSITY, 1000, 'kW*h/kg')
-
-        # turboprop = TurbopropModel('turboprop', options=options)
-        # turboprop2 = TurbopropModel('turboprop2', options=options)
 
         motor = MotorBuilder(
             'motor',
@@ -68,38 +67,45 @@ class LargeElectrifiedTurbopropFreighterBenchmark(unittest.TestCase):
             phase_info,
             engine_builders=[electroprop],
         )
-        prob.aviary_inputs.set_val(Settings.VERBOSITY, 2)
+        prob.aviary_inputs.set_val(Settings.VERBOSITY, 0)
 
-        # FLOPS aero specific stuff? Best guesses for values here
-        prob.aviary_inputs.set_val(Mission.Constraints.MAX_MACH, 0.5)
-        prob.aviary_inputs.set_val(Aircraft.Wing.AREA, 1744.59, 'ft**2')
-        # prob.aviary_inputs.set_val(Aircraft.Wing.ASPECT_RATIO, 10.078)
-        prob.aviary_inputs.set_val(
-            Aircraft.Wing.THICKNESS_TO_CHORD,
-            0.1500)  # average between root and chord T/C
-        prob.aviary_inputs.set_val(Aircraft.Fuselage.MAX_WIDTH, 4.3, 'm')
-        prob.aviary_inputs.set_val(Aircraft.Fuselage.MAX_HEIGHT, 3.95, 'm')
-        prob.aviary_inputs.set_val(Aircraft.Fuselage.AVG_DIAMETER, 4.125, 'm')
+        if mission_method == 'energy':
+            # FLOPS aero specific stuff? Best guesses for values here
+            prob.aviary_inputs.set_val(Mission.Constraints.MAX_MACH, 0.5)
+            prob.aviary_inputs.set_val(Aircraft.Wing.AREA, 1744.59, 'ft**2')
+            # prob.aviary_inputs.set_val(Aircraft.Wing.ASPECT_RATIO, 10.078)
+            prob.aviary_inputs.set_val(
+                Aircraft.Wing.THICKNESS_TO_CHORD, 0.1500
+            )  # average between root and chord T/C
+            prob.aviary_inputs.set_val(Aircraft.Fuselage.MAX_WIDTH, 4.3, 'm')
+            prob.aviary_inputs.set_val(Aircraft.Fuselage.MAX_HEIGHT, 3.95, 'm')
+            prob.aviary_inputs.set_val(Aircraft.Fuselage.AVG_DIAMETER, 4.125, 'm')
 
         prob.check_and_preprocess_inputs()
         prob.add_pre_mission_systems()
         prob.add_phases()
         prob.add_post_mission_systems()
         prob.link_phases()
-        prob.add_driver("IPOPT", max_iter=0, verbosity=0)
+        prob.add_driver("IPOPT")
         prob.add_design_variables()
         prob.add_objective()
 
         prob.setup()
-        # prob.model.list_vars(units=True, print_arrays=True)
-        # om.n2(prob)
 
         prob.set_initial_guesses()
         prob.run_aviary_problem("dymos_solution.db")
 
-        # om.n2(prob)
+    def test_bench_2DOF(self):
+        prob = self.build_and_run_problem('2DOF')
+        # TODO asserts
+
+    @unittest.skip("Skipping until all builders are updated with get_parameters()")
+    def test_bench_energy(self):
+        prob = self.build_and_run_problem('energy')
+        # TODO asserts
 
 
 if __name__ == '__main__':
-    test = LargeElectrifiedTurbopropFreighterBenchmark()
-    test.build_and_run_problem()
+    unittest.main()
+    # test = LargeElectrifiedTurbopropFreighterBenchmark()
+    # test.build_and_run_problem()

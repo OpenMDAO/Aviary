@@ -22,7 +22,7 @@ class CruisePhase(PhaseBuilderBase):
     Additional method overrides and new methods specific to the cruise phase are included.
     """
     default_name = 'cruise_phase'
-    default_ode_class = ElectricBreguetCruiseODESolution
+    default_ode_class = BreguetCruiseODESolution
 
     _meta_data_ = {}
     _initial_guesses_meta_data_ = {}
