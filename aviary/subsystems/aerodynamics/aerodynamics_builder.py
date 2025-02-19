@@ -661,6 +661,7 @@ AERO_2DOF_INPUTS = [
     Aircraft.Wing.AVERAGE_CHORD,
     Aircraft.Wing.AREA,
     Aircraft.Wing.ASPECT_RATIO,
+    Aircraft.Wing.FORM_FACTOR,
     Aircraft.Wing.FUSELAGE_INTERFERENCE_FACTOR,
     Aircraft.Wing.MAX_THICKNESS_LOCATION,
     Aircraft.Wing.MIN_PRESSURE_LOCATION,
@@ -677,9 +678,6 @@ AERO_LS_2DOF_INPUTS = [
     Mission.Takeoff.LIFT_COEFFICIENT_FLAP_INCREMENT,
     Mission.Takeoff.LIFT_COEFFICIENT_MAX,
     Aircraft.Wing.HEIGHT,
-    Aircraft.Wing.FORM_FACTOR,
-    Aircraft.Fuselage.FORM_FACTOR,
-    Aircraft.Nacelle.FORM_FACTOR,
 ]
 
 AERO_CLEAN_2DOF_INPUTS = [
