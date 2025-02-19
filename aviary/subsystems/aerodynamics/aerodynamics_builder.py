@@ -677,6 +677,9 @@ AERO_LS_2DOF_INPUTS = [
     Mission.Takeoff.LIFT_COEFFICIENT_FLAP_INCREMENT,
     Mission.Takeoff.LIFT_COEFFICIENT_MAX,
     Aircraft.Wing.HEIGHT,
+    Aircraft.Wing.FORM_FACTOR,
+    Aircraft.Fuselage.FORM_FACTOR,
+    Aircraft.Nacelle.FORM_FACTOR,
 ]
 
 AERO_CLEAN_2DOF_INPUTS = [
