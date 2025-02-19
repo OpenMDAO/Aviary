@@ -28,13 +28,14 @@ run_command_no_file_error executes a CLI command but won't fail if a FileNotFoun
 get_attribute_name gets the name of an object's attribute based on it's value
 get_all_keys recursively get all of the keys from a dict of dicts
 get_value recursively get a value from a dict of dicts
-glue_variable Glue a variable for later use in markdown cells of notebooks (can auto format for code)
+glue_variable glue a variable for later use in markdown cells of notebooks (can auto format for code)
 glue_keys recursively glue all of the keys from a dict of dicts
 glue_actions glue all Aviary CLI options for a given command
 glue_class_functions glue all class functions for a gen class
 glue_function_arguments glue all function arguments and default values for a given function
+glue_class_options glue all class options for a given class
 get_previous_line returns the previous n line(s) of code as a string
-get_class_names returns the class names in a file as a set
+get_class_names return the class names in a file as a set
 get_function_names returns the function names in a file as a set
 """
 
@@ -578,9 +579,10 @@ def glue_function_arguments(func, curr_glued=None, glue_default=False, md_code=F
             glue_variable(param_name, md_code=md_code)
             curr_glued.append(param_name)
             if glue_default and str(param.default) is not param.empty:
-                    if str(param.default) not in curr_glued:
-                        glue_variable(str(param.default), md_code=md_code)
-                        curr_glued.append(str(param.default))
+                    param_default = param_name + '_default'
+                    if param_default not in curr_glued:
+                        glue_variable(param_default, str(param.default), md_code=md_code)
+                        curr_glued.append(param_default)
 
 
 def glue_class_options(obj,  curr_glued=None, md_code=False):
