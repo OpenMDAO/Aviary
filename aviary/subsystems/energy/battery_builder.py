@@ -113,3 +113,7 @@ class BatteryBuilder(SubsystemBuilderBase):
             },
         }
         return params
+
+    def get_linked_variables(self):
+        # link cumulative electric energy between phases
+        return [Dynamic.Vehicle.CUMULATIVE_ELECTRIC_ENERGY_USED]
