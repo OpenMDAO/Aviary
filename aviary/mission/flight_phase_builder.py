@@ -2,16 +2,14 @@ import numpy as np
 
 import dymos as dm
 
-import openmdao.api as om
-
 from aviary.mission.initial_guess_builders import InitialGuessState
 from aviary.mission.flops_based.ode.mission_ODE import MissionODE
 from aviary.mission.flops_based.phases.phase_utils import add_subsystem_variables_to_phase, get_initial
 from aviary.mission.phase_builder_base import PhaseBuilderBase, register
 
+from aviary.utils.aviary_options_dict import AviaryOptionsDictionary
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.enums import EquationsOfMotion, ThrottleAllocation
-from aviary.variable_info.functions import units_setter, bounds_units_setter
 from aviary.variable_info.variable_meta_data import _MetaData
 from aviary.variable_info.variables import Aircraft, Dynamic
 
@@ -24,10 +22,9 @@ from aviary.variable_info.variables import Aircraft, Dynamic
 # - self.meta_data, with cls.default_meta_data customization point
 
 
-class FlightPhaseOptions(om.OptionsDictionary):
+class FlightPhaseOptions(AviaryOptionsDictionary):
 
-    def __init__(self, read_only=False):
-        super(FlightPhaseOptions, self).__init__(read_only)
+    def declare_options(self):
 
         self.declare(
             'reserve',
@@ -40,9 +37,8 @@ class FlightPhaseOptions(om.OptionsDictionary):
 
         self.declare(
             name='target_distance',
-            types=tuple,
-            default=(None, 'm'),
-            set_function=units_setter,
+            default=None,
+            units='m',
             desc='The total distance traveled by the aircraft from takeoff to landing '
             'for the primary mission, not including reserve missions. This value must '
             'be positive.'
@@ -51,8 +47,8 @@ class FlightPhaseOptions(om.OptionsDictionary):
         self.declare(
             'target_duration',
             types=tuple,
-            default=(None, 's'),
-            set_function=units_setter,
+            default=None,
+            units='s',
             desc='The amount of time taken by this phase added as a constraint.'
         )
 
@@ -144,8 +140,8 @@ class FlightPhaseOptions(om.OptionsDictionary):
         self.declare(
             'initial_bounds',
             types=tuple,
-            default=((None, None), 'min'),
-            set_function=bounds_units_setter,
+            default=(None, None),
+            units='min',
             desc='Lower and upper bounds on the starting time for this phase relative to the '
             'starting time of the mission, i.e., ((25, 45), "min") constrians this phase to '
             'start between 25 and 45 minutes after the start of the mission.'
@@ -154,8 +150,8 @@ class FlightPhaseOptions(om.OptionsDictionary):
         self.declare(
             name='duration_bounds',
             types=tuple,
-            default=((None, None), 'min'),
-            set_function=bounds_units_setter,
+            default=(None, None),
+            units='min',
             desc='Lower and upper bounds on the phase duration, in the form of a nested tuple: '
             'i.e. ((20, 36), "min") This constrains the duration to be between 20 and 36 min.'
         )
@@ -163,8 +159,8 @@ class FlightPhaseOptions(om.OptionsDictionary):
         self.declare(
             name='required_available_climb_rate',
             types=tuple,
-            default=(None, 'ft/s'),
-            set_function=units_setter,
+            default=None,
+            units='ft/s',
             desc='Adds a constraint requiring Dynamic.Mission.ALTITUDE_RATE_MAX to be no '
             'smaller than required_available_climb_rate. This helps to ensure that the '
             'propulsion system is large enough to handle emergency maneuvers at all points '
@@ -216,8 +212,8 @@ class FlightPhaseOptions(om.OptionsDictionary):
         self.declare(
             name='initial_altitude',
             types=tuple,
-            default=(None, "ft"),
-            set_function=units_setter,
+            default=None,
+            units='ft',
             desc='The initial altitude at the start of the phase. This option is only valid '
             'when fix_initial is True.'
         )
@@ -225,8 +221,8 @@ class FlightPhaseOptions(om.OptionsDictionary):
         self.declare(
             name='final_altitude',
             types=tuple,
-            default=(None, "ft"),
-            set_function=units_setter,
+            default=None,
+            units='ft',
             desc='The final altitude at the end of the phase. This option is only valid '
             'when fix_initial is True.'
         )
@@ -251,8 +247,7 @@ class FlightPhaseOptions(om.OptionsDictionary):
         self.declare(
             name='mach_bounds',
             types=tuple,
-            default=((None, None), "unitless"),
-            set_function=bounds_units_setter,
+            default=(None, None),
             desc='The lower and upper constraints on mach during this phase i.e., '
             '((0.18, 0.74), "unitless"). The optimizer is never allowed choose mach values '
             'outside of these bounds constraints.'
@@ -261,8 +256,8 @@ class FlightPhaseOptions(om.OptionsDictionary):
         self.declare(
             name='altitude_bounds',
             types=tuple,
-            default=((None, None), 'ft'),
-            set_function=bounds_units_setter,
+            default=(None, None),
+            units='ft',
             desc='The lower and upper constraints on altitude during this phase i.e., '
             '((0.0, 34000.0), "ft"). The optimizer is never allowed choose mach values '
             'outside of these bounds constraints.'

@@ -117,18 +117,7 @@ class PhaseBuilderBase(ABC):
         self.subsystem_options = subsystem_options
 
 
-        self.user_options = self.default_options_class()
-
-        for name, val in user_options.items():
-
-            # TODO: Phase_info 2.0 should not have units defined for unitless things.
-            # When that goes away, we can remove this.
-            if (isinstance(val, tuple) and
-                self.user_options._dict[name]['set_function'] is None and
-                val[1] == "unitless"):
-                    val = val[0]
-
-            self.user_options[name] = val
+        self.user_options = self.default_options_class(user_options)
 
         if initial_guesses is None:
             initial_guesses = AviaryValues()
