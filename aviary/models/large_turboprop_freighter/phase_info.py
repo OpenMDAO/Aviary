@@ -332,7 +332,7 @@ two_dof_phase_info = {
             'fix_initial': False,
             'input_initial': False,
             'EAS_limit': (250, 'kn'),
-            'mach_cruise': 0.80,
+            'mach_cruise': 0.475,
             'input_speed_type': SpeedType.EAS,
             'final_altitude': (1000, 'ft'),
             'duration_bounds': ((100.0, 5000), 's'),
