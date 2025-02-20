@@ -151,8 +151,7 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
 
         elif self.code_origin is GASP:
             if method is None:
-                aero_group = CruiseAero(num_nodes=num_nodes,
-                                        aviary_options=aviary_inputs)
+                aero_group = CruiseAero(num_nodes=num_nodes)
 
             elif method == 'cruise':
                 if 'aero_data' in kwargs:
