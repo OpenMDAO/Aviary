@@ -3610,7 +3610,7 @@ add_meta_data(
     historical_name={"GASP": 'INGASP.CKHT', "FLOPS": None, "LEAPS1": None},
     units='unitless',
     desc='horizontal tail form factor',
-    default_value=1.25,
+    default_value=0.0,  # 1.25,
 )
 
 add_meta_data(
@@ -4794,7 +4794,7 @@ add_meta_data(
     historical_name={"GASP": 'INGASP.CKVT', "FLOPS": None, "LEAPS1": None},
     units='unitless',
     desc='vertical tail form factor',
-    default_value=1.25,
+    default_value=0.0,  # 1.25,
 )
 
 add_meta_data(
@@ -5486,7 +5486,7 @@ add_meta_data(
     historical_name={"GASP": 'INGASP.CKW', "FLOPS": None, "LEAPS1": None},
     units='unitless',
     desc='wing form factor',
-    default_value=0.0,
+    default_value=1.25,
 )
 
 add_meta_data(
@@ -5495,7 +5495,7 @@ add_meta_data(
     historical_name={"GASP": 'INGASP.CKI', "FLOPS": None, "LEAPS1": None},
     units='unitless',
     desc='wing/fuselage interference factor',
-    default_value=1.1,
+    default_value=0.0,  # 1.1,
 )
 
 add_meta_data(

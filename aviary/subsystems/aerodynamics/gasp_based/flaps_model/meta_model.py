@@ -225,7 +225,7 @@ class MetaModelGroup(om.Group):
 
         VLAM2_interp.add_input(
             Aircraft.Wing.THICKNESS_TO_CHORD_UNWEIGHTED,
-            0.13966,
+            0.0,
             training_data=[
                 0.0,
                 0.04,
@@ -351,7 +351,7 @@ class MetaModelGroup(om.Group):
 
         VLAM4_interp.add_input(
             Aircraft.Wing.THICKNESS_TO_CHORD_UNWEIGHTED,
-            0.13966,
+            0.0,
             training_data=[
                 0.0,
                 0.04,
