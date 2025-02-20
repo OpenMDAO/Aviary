@@ -31,6 +31,9 @@ class IdleDescentTestCase(unittest.TestCase):
             Dynamic.Vehicle.Propulsion.THROTTLE, val=0, units="unitless"
         )
         aviary_inputs.set_val(Aircraft.Wing.FORM_FACTOR, 1.25)
+        aviary_inputs.set_val(Aircraft.VerticalTail.FORM_FACTOR, 1.25)
+        aviary_inputs.set_val(Aircraft.HorizontalTail.FORM_FACTOR, 1.25)
+        aviary_inputs.set_val(Aircraft.Wing.FUSELAGE_INTERFERENCE_FACTOR, 1.1)
 
         engine = build_engine_deck(aviary_options=aviary_inputs)
         preprocess_propulsion(aviary_inputs, engine)
