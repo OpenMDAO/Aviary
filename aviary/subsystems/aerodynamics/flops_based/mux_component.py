@@ -32,7 +32,7 @@ class MuxComponent(om.ExplicitComponent):
         # Wing (Always 1)
         add_aviary_input(self, Aircraft.Wing.WETTED_AREA)
         add_aviary_input(self, Aircraft.Wing.FINENESS)
-        add_aviary_input(self, Aircraft.Wing.CHARACTERISTIC_LENGTH)
+        add_aviary_input(self, Aircraft.Wing.CHARACTERISTIC_LENGTH, 1.0)
         add_aviary_input(self, Aircraft.Wing.LAMINAR_FLOW_UPPER)
         add_aviary_input(self, Aircraft.Wing.LAMINAR_FLOW_LOWER)
 
