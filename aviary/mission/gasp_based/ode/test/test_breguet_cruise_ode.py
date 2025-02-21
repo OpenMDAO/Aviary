@@ -13,6 +13,7 @@ from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 
 from aviary.subsystems.propulsion.motor.motor_builder import MotorBuilder
 from aviary.subsystems.propulsion.turboprop_model import TurbopropModel
+from aviary.utils.preprocessors import preprocess_propulsion
 
 class CruiseODETestCase(unittest.TestCase):
     def setUp(self):
@@ -97,9 +98,11 @@ class ElectricCruiseODETestCase(unittest.TestCase):
         options.set_val(Aircraft.Engine.FIXED_RPM, 1455.13090827, units='rpm')
         options.set_val(Aircraft.Engine.Propeller.COMPUTE_INSTALLATION_LOSS, val=True)
         options.set_val(Aircraft.Engine.Propeller.NUM_BLADES, val=4, units='unitless')
+
         engine = TurbopropModel(
             options=options, shaft_power_model=motor_model, propeller_model=None
         )
+        preprocess_propulsion(options, [engine])
 
         aviary_options = get_option_defaults()
         aviary_options.set_val(Aircraft.Engine.GLOBAL_THROTTLE, True)
@@ -114,7 +117,7 @@ class ElectricCruiseODETestCase(unittest.TestCase):
         )
 
         self.prob.model.set_input_defaults(
-            Dynamic.Atmosphere.MACH, np.array([0, 0]), units="unitless"
+            Dynamic.Atmosphere.MACH, 0 * np.ones(2), units="unitless"
         )
 
     def test_cruise(self):
@@ -132,15 +135,22 @@ class ElectricCruiseODETestCase(unittest.TestCase):
         )
         self.prob.set_val(Aircraft.Engine.Propeller.TIP_SPEED_MAX, 800, units="ft/s")
 
-        self.prob.set_val(Dynamic.Atmosphere.MACH, [0.7, 0.7], units="unitless")
-        self.prob.set_val("interference_independent_of_shielded_area", 1.89927266)
-        self.prob.set_val("drag_loss_due_to_shielded_wing_area", 68.02065834)
-        self.prob.set_val(Dynamic.Vehicle.Propulsion.ELECTRIC_POWER_IN_TOTAL,
-                          10079.422 * np.ones(2,), units="kW")
+        self.prob.set_val(Dynamic.Atmosphere.SPEED_OF_SOUND, 344 * np.ones(2), units="ft/s")
+        self.prob.set_val(Dynamic.Atmosphere.DENSITY, 1.05 * np.ones(2), units="kg/m**3")
+        #self.prob.set_val("interference_independent_of_shielded_area", 1.89927266)
+        #self.prob.set_val("drag_loss_due_to_shielded_wing_area", 68.02065834)
+        #self.prob.set_val(Dynamic.Vehicle.Propulsion.ELECTRIC_POWER_IN,
+        #                  10079.422 * np.ones(2), units="kW")
+        self.prob.set_val(Dynamic.Atmosphere.MACH, 0.7 * np.ones(2), units="unitless")
 
         set_params_for_unit_tests(self.prob)
 
         self.prob.run_model()
+
+        print(f"test: {self.prob[Dynamic.Vehicle.Propulsion.ELECTRIC_POWER_IN_TOTAL]}")
+        print(f"test: {self.prob[Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL]}")
+        print(f"test: {self.prob[Dynamic.Mission.VELOCITY_RATE]}")
+        print(f"test: {self.prob[Dynamic.Mission.DISTANCE]}")
 
         tol = tol = 1e-6
         assert_near_equal(
@@ -169,8 +179,6 @@ class ElectricCruiseODETestCase(unittest.TestCase):
 
 if __name__ == "__main__":
     # unittest.main()
-    import pdb
     test = ElectricCruiseODETestCase()
-    pdb.set_trace()
     test.setUp()
     test.test_cruise()
