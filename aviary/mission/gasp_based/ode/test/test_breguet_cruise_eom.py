@@ -188,7 +188,7 @@ class TestElectricBreguetResults(unittest.TestCase):
         self.prob.set_val(Dynamic.Vehicle.CUMULATIVE_ELECTRIC_ENERGY_USED,
                           np.linspace(5843, 19390, nn), units="kW*h")
         self.prob.set_val(Dynamic.Vehicle.Propulsion.ELECTRIC_POWER_IN_TOTAL,
-                          10079.422 * np.ones(nn,), units="kW")
+                          7531.64 * np.ones(nn,), units="kW")  # 10100.1 hp in GASP
 
     def test_case1(self):
         tol = 1e-6
@@ -197,8 +197,8 @@ class TestElectricBreguetResults(unittest.TestCase):
         cruise_range = self.prob.get_val("cruise_range", units="NM")
         cruise_time = self.prob.get_val("cruise_time", units="s")
 
-        t_expected = 4838.4917
-        r_expected = 616.64046
+        t_expected = 6475.243
+        r_expected = 825.2359
 
         assert_near_equal(cruise_range[-1, ...], r_expected, tolerance=tol)
         assert_near_equal(cruise_time[-1, ...], t_expected, tolerance=tol)
