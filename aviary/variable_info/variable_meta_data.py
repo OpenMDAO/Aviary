@@ -5486,7 +5486,7 @@ add_meta_data(
     historical_name={"GASP": 'INGASP.CKW', "FLOPS": None, "LEAPS1": None},
     units='unitless',
     desc='wing form factor',
-    default_value=0,
+    default_value=1.25,
 )
 
 add_meta_data(
