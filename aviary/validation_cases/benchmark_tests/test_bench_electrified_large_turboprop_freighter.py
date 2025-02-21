@@ -23,14 +23,17 @@ from aviary.models.large_turboprop_freighter.electrified_phase_info import (
 class LargeElectrifiedTurbopropFreighterBenchmark(unittest.TestCase):
 
     def build_and_run_problem(self, mission_method):
-        # modify phase_info
-        phase_info = deepcopy(two_dof_phase_info)
+        if mission_method == 'energy':
+            phase_info = deepcopy(energy_phase_info)
+
+        elif mission_method == '2DOF':
+            phase_info = deepcopy(two_dof_phase_info)
 
         # Build problem
         prob = AviaryProblem()
 
         # load inputs from .csv to build engine
-        options, guesses = create_vehicle(
+        options, _ = create_vehicle(
             "models/large_turboprop_freighter/large_turboprop_freighter_GASP.csv"
         )
 
@@ -86,7 +89,7 @@ class LargeElectrifiedTurbopropFreighterBenchmark(unittest.TestCase):
         prob.add_phases()
         prob.add_post_mission_systems()
         prob.link_phases()
-        prob.add_driver("IPOPT")
+        prob.add_driver("SNOPT")
         prob.add_design_variables()
         prob.add_objective()
 
@@ -106,6 +109,6 @@ class LargeElectrifiedTurbopropFreighterBenchmark(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    unittest.main()
-    # test = LargeElectrifiedTurbopropFreighterBenchmark()
-    # test.build_and_run_problem()
+    # unittest.main()
+    test = LargeElectrifiedTurbopropFreighterBenchmark()
+    test.build_and_run_problem("2DOF")
