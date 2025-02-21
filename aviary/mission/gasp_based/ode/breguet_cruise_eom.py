@@ -247,6 +247,8 @@ class E_RangeComp(om.ExplicitComponent):
     def setup(self):
 
         nn = self.options["num_nodes"]
+        if nn < 2:
+            raise Exception("num_nodes should be at least 2.")
 
         self.add_input("cruise_time_initial", val=0.0, units="s",
                        desc="time at which cruise begins")
