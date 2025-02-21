@@ -14,7 +14,6 @@ class RunScriptTest(unittest.TestCase):
     """
     A test case class that uses unittest to run and test scripts with a timeout.
 
-    ...
 
     Attributes
     ----------
