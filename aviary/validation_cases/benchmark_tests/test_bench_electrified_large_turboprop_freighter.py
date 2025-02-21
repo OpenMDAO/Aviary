@@ -1,6 +1,4 @@
-import numpy as np
 import unittest
-import openmdao.api as om
 
 from copy import deepcopy
 from numpy.testing import assert_almost_equal
@@ -18,7 +16,7 @@ from aviary.models.large_turboprop_freighter.electrified_phase_info import (
 )
 
 
-@use_tempdirs
+# @use_tempdirs
 # TODO need to add asserts with "truth" values
 class LargeElectrifiedTurbopropFreighterBenchmark(unittest.TestCase):
 
@@ -102,6 +100,7 @@ class LargeElectrifiedTurbopropFreighterBenchmark(unittest.TestCase):
         prob = self.build_and_run_problem('2DOF')
         # TODO asserts
 
+    # NOTE unknown if this is still the primary issue breaking energy method
     @unittest.skip("Skipping until all builders are updated with get_parameters()")
     def test_bench_energy(self):
         prob = self.build_and_run_problem('energy')

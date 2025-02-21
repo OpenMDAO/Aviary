@@ -155,7 +155,7 @@ class BreguetCruiseODESolution(TwoDOFODE):
             171481, 171581 - 10000, nn), units="lbm")
 
 
-class ElectricBreguetCruiseODESolution(BaseODE):
+class ElectricBreguetCruiseODESolution(TwoDOFODE):
     """The GASP based cruise ODE for electrical aircraft"""
 
     def setup(self):
@@ -166,11 +166,7 @@ class ElectricBreguetCruiseODESolution(BaseODE):
         # TODO: paramport
         self.add_subsystem("params", ParamPort(), promotes=["*"])
 
-        self.add_subsystem(
-            name='atmosphere',
-            subsys=Atmosphere(num_nodes=nn, input_speed_type=SpeedType.MACH),
-            promotes=['*'],
-        )
+        self.add_atmosphere(input_speed_type=SpeedType.MACH)
 
         self.add_subsystem(
             "calc_weight",
@@ -198,6 +194,8 @@ class ElectricBreguetCruiseODESolution(BaseODE):
                                        promotes_inputs=subsystem.mission_inputs(
                                            **kwargs),
                                        promotes_outputs=subsystem.mission_outputs(**kwargs))
+
+        self.add_external_subsystems()
 
         bal = om.BalanceComp(
             name=Dynamic.Vehicle.Propulsion.THROTTLE,

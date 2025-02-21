@@ -1,6 +1,4 @@
-import numpy as np
 import unittest
-import openmdao.api as om
 
 from copy import deepcopy
 from numpy.testing import assert_almost_equal
@@ -17,7 +15,7 @@ from aviary.models.large_turboprop_freighter.phase_info import (
 )
 
 
-@use_tempdirs
+# @use_tempdirs
 # TODO need to add asserts with "truth" values
 class LargeTurbopropFreighterBenchmark(unittest.TestCase):
 
@@ -90,4 +88,4 @@ class LargeTurbopropFreighterBenchmark(unittest.TestCase):
 if __name__ == '__main__':
     # unittest.main()
     test = LargeTurbopropFreighterBenchmark()
-    test.build_and_run_problem('energy')
+    test.build_and_run_problem('2DOF')

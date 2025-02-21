@@ -107,8 +107,8 @@ class PropellerBuilder(SubsystemBuilderBase):
 
         return parameters
 
-    def get_mass_names(self):
-        return [Aircraft.Engine.Gearbox.MASS]
+    # def get_mass_names(self):
+    #     return []
 
     def get_outputs(self):
         return [
