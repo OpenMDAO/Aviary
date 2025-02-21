@@ -61,6 +61,10 @@ class DocTAPETests(unittest.TestCase):
         glue_variable('plain_text', display=False)
 
     # requires IPython shell
+    def test_glue_variable_non_str(self):
+        glue_variable((9, 'ft'), display=False)
+
+    # requires IPython shell
     def test_glue_keys(self):
         glue_keys({'d1': {'d2': 2}}, display=False)
 
