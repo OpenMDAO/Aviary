@@ -155,7 +155,7 @@ class BreguetCruiseODESolution(TwoDOFODE):
             171481, 171581 - 10000, nn), units="lbm")
 
 
-class E_BreguetCruiseODESolution(BaseODE):
+class E_BreguetCruiseODESolution(TwoDOFODE):
     """The GASP based cruise ODE by electrical aircraft"""
 
     def setup(self):
