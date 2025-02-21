@@ -1,3 +1,7 @@
+from enum import Enum
+
+import numpy as np
+
 import openmdao.api as om
 from openmdao.core.constants import _UNDEFINED
 from openmdao.utils.units import convert_units
@@ -128,7 +132,7 @@ class AviaryOptionsDictionary(om.OptionsDictionary):
 
         if data is None:
             return
-        
+
         # Loop over all user_options and set them.
         for name, val in data.items():
 
@@ -197,7 +201,7 @@ class AviaryOptionsDictionary(om.OptionsDictionary):
 
         else:
             set_function = None
-            
+
         super().declare(
             name,
             default=default,
@@ -231,9 +235,9 @@ class AviaryOptionsDictionary(om.OptionsDictionary):
         if units is not None:
 
             if self._dict[key]['set_function'] is None:
-                self._raise(f"Option '{key}' does not have declared units.", 
+                self._raise(f"Option '{key}' does not have declared units.",
                             exc_type=AttributeError)
-                
+
             val, base_units = self[key]
 
             if units != base_units:

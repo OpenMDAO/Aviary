@@ -424,10 +424,10 @@ class FlightPhaseBase(PhaseBuilderBase):
             phase.add_polynomial_control(
                 Dynamic.Atmosphere.MACH,
                 targets=Dynamic.Atmosphere.MACH,
-                units=mach_bounds[1],
+                units='unitless',
                 opt=optimize_mach,
-                lower=mach_bounds[0][0],
-                upper=mach_bounds[0][1],
+                lower=mach_bounds[0],
+                upper=mach_bounds[1],
                 rate_targets=rate_targets,
                 order=polynomial_control_order,
                 ref=0.5,
@@ -436,10 +436,10 @@ class FlightPhaseBase(PhaseBuilderBase):
             phase.add_control(
                 Dynamic.Atmosphere.MACH,
                 targets=Dynamic.Atmosphere.MACH,
-                units=mach_bounds[1],
+                units='unitless',
                 opt=optimize_mach,
-                lower=mach_bounds[0][0],
-                upper=mach_bounds[0][1],
+                lower=mach_bounds[0],
+                upper=mach_bounds[1],
                 rate_targets=rate_targets,
                 ref=0.5,
             )
