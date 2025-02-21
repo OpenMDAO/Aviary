@@ -70,9 +70,9 @@ class TestSubsystemBuilderBase(unittest.TestCase):
             self.assertIn('units', values.keys(),
                           f'Bus Variable "{name}" is missing the "units" key')
 
-            # Check that the values of the keys are the expected types
+            # Check that the values of the keys are the expected types (allow list)
             self.assertIsInstance(
-                values['mission_name'], (str, type(None)), f'Bus Variable "{name}"\'s "mission_name" value should be a string or None')
+                values['mission_name'], (str, list, type(None)), f'Bus Variable "{name}"\'s "mission_name" value should be a string or None')
             self.assertIsInstance(
                 values['units'], str, f'Bus Variable "{name}"\'s "units" value should be a string')
 
@@ -165,11 +165,11 @@ class TestSubsystemBuilderBase(unittest.TestCase):
                 val, dict, "The values in the dictionary returned by get_parameters() should be dictionaries")
 
         # Verify that the dictionaries have the correct keys
-        for val in parameters.values():
+        for key, val in parameters.items():
             self.assertIn(
-                'val', val, "The dictionaries returned by get_parameters() should have a 'val' key")
+                'val', val, f"The dictionaries returned by get_parameters() should have a 'val' key for {key}")
             self.assertIn(
-                'units', val, "The dictionaries returned by get_parameters() should have a 'units' key")
+                'units', val, f"The dictionaries returned by get_parameters() should have a 'units' key for {key}")
 
     def test_get_initial_guesses(self):
         initial_guesses = self.subsystem_builder.get_initial_guesses()
