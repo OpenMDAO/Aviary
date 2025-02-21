@@ -294,10 +294,10 @@ class MassSummationTestCase2(unittest.TestCase):
         self.prob.model.set_input_defaults(
             Aircraft.Design.MAX_STRUCTURAL_SPEED, val=402.5, units="mi/h"
         )
-
         self.prob.model.set_input_defaults(
-            Aircraft.CrewPayload.CARGO_MASS, val=10040, units="lbm"
-        )
+            Aircraft.CrewPayload.CARGO_MASS, val=0, units="lbm")
+        self.prob.model.set_input_defaults(
+            Aircraft.CrewPayload.Design.MAX_CARGO_MASS, val=10040, units="lbm")
         self.prob.model.set_input_defaults(
             Aircraft.VerticalTail.SWEEP, val=0, units='deg'
         )
@@ -686,8 +686,9 @@ class MassSummationTestCase3(unittest.TestCase):
         )
 
         self.prob.model.set_input_defaults(
-            Aircraft.CrewPayload.CARGO_MASS, val=10040, units="lbm"
-        )
+            Aircraft.CrewPayload.CARGO_MASS, val=0, units="lbm")
+        self.prob.model.set_input_defaults(
+            Aircraft.CrewPayload.Design.MAX_CARGO_MASS, val=10040, units="lbm")
         self.prob.model.set_input_defaults(
             Aircraft.VerticalTail.SWEEP, val=0, units='deg'
         )
@@ -1066,8 +1067,9 @@ class MassSummationTestCase4(unittest.TestCase):
         )
 
         self.prob.model.set_input_defaults(
-            Aircraft.CrewPayload.CARGO_MASS, val=10040, units="lbm"
-        )
+            Aircraft.CrewPayload.CARGO_MASS, val=0, units="lbm")
+        self.prob.model.set_input_defaults(
+            Aircraft.CrewPayload.Design.MAX_CARGO_MASS, val=10040, units="lbm")
         self.prob.model.set_input_defaults(
             Aircraft.VerticalTail.SWEEP, val=0, units='deg'
         )
@@ -1447,8 +1449,9 @@ class MassSummationTestCase5(unittest.TestCase):
         )
 
         self.prob.model.set_input_defaults(
-            Aircraft.CrewPayload.CARGO_MASS, val=10040, units="lbm"
-        )
+            Aircraft.CrewPayload.CARGO_MASS, val=0, units="lbm")
+        self.prob.model.set_input_defaults(
+            Aircraft.CrewPayload.Design.MAX_CARGO_MASS, val=10040, units="lbm")
         self.prob.model.set_input_defaults(
             Aircraft.VerticalTail.SWEEP, val=0, units='deg'
         )
@@ -1827,8 +1830,9 @@ class MassSummationTestCase6(unittest.TestCase):
         )
 
         self.prob.model.set_input_defaults(
-            Aircraft.CrewPayload.CARGO_MASS, val=10040, units="lbm"
-        )
+            Aircraft.CrewPayload.CARGO_MASS, val=0, units="lbm")
+        self.prob.model.set_input_defaults(
+            Aircraft.CrewPayload.Design.MAX_CARGO_MASS, val=10040, units="lbm")
         self.prob.model.set_input_defaults(
             Aircraft.VerticalTail.SWEEP, val=0, units='deg'
         )
@@ -2207,10 +2211,10 @@ class MassSummationTestCase7(unittest.TestCase):
         self.prob.model.set_input_defaults(
             Aircraft.Design.MAX_STRUCTURAL_SPEED, val=402.5, units="mi/h"
         )
-
         self.prob.model.set_input_defaults(
-            Aircraft.CrewPayload.CARGO_MASS, val=15970.0, units="lbm"
-        )
+            Aircraft.CrewPayload.CARGO_MASS, val=0, units="lbm")
+        self.prob.model.set_input_defaults(
+            Aircraft.CrewPayload.Design.MAX_CARGO_MASS, val=15970.0, units="lbm")
         self.prob.model.set_input_defaults(
             Aircraft.VerticalTail.SWEEP, val=0, units='deg'
         )
@@ -2609,8 +2613,9 @@ class MassSummationTestCase8(unittest.TestCase):
             Aircraft.Strut.ATTACHMENT_LOCATION, val=118, units="ft"
         )
         self.prob.model.set_input_defaults(
-            Aircraft.CrewPayload.CARGO_MASS, val=15970.0, units="lbm"
-        )
+            Aircraft.CrewPayload.CARGO_MASS, val=0, units="lbm")
+        self.prob.model.set_input_defaults(
+            Aircraft.CrewPayload.Design.MAX_CARGO_MASS, val=15970.0, units="lbm")
         self.prob.model.set_input_defaults(
             Aircraft.Engine.MASS_SPECIFIC, val=0.2470, units="lbm/lbf"
         )
@@ -3003,8 +3008,9 @@ class MassSummationTestCase9(unittest.TestCase):
             Aircraft.Strut.ATTACHMENT_LOCATION, val=118.0, units="ft"
         )
         self.prob.model.set_input_defaults(
-            Aircraft.CrewPayload.CARGO_MASS, val=15970.0, units="lbm"
-        )
+            Aircraft.CrewPayload.CARGO_MASS, val=0, units="lbm")
+        self.prob.model.set_input_defaults(
+            Aircraft.CrewPayload.Design.MAX_CARGO_MASS, val=15970.0, units="lbm")
         self.prob.model.set_input_defaults(
             Aircraft.Engine.MASS_SPECIFIC, val=0.2744, units="lbm/lbf"
         )

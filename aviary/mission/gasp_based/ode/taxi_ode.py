@@ -6,7 +6,7 @@ from aviary.utils.aviary_values import AviaryValues
 from aviary.utils.functions import add_opts2vals, create_opts2vals
 
 from aviary.variable_info.enums import SpeedType
-from aviary.mission.gasp_based.ode.base_ode import BaseODE
+from aviary.mission.gasp_based.ode.two_dof_ode import TwoDOFODE
 from aviary.mission.gasp_based.ode.params import ParamPort
 from aviary.mission.gasp_based.ode.taxi_eom import TaxiFuelComponent
 from aviary.subsystems.atmosphere.atmosphere import Atmosphere
@@ -16,7 +16,7 @@ from aviary.utils.functions import add_opts2vals, create_opts2vals
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 
 
-class TaxiSegment(BaseODE):
+class TaxiSegment(TwoDOFODE):
     """ODE for taxi phase of a 2DOF mission"""
 
     def setup(self):
@@ -56,13 +56,7 @@ class TaxiSegment(BaseODE):
             ],
         )
 
-        self.add_subsystem(
-            name='atmosphere',
-            subsys=Atmosphere(num_nodes=1, input_speed_type=SpeedType.MACH),
-            promotes=[
-                '*',
-            ],
-        )
+        self.add_atmosphere(input_speed_type=SpeedType.MACH)
 
         for subsystem in core_subsystems:
             if isinstance(subsystem, PropulsionBuilderBase):
@@ -78,6 +72,8 @@ class TaxiSegment(BaseODE):
                     ],
                     promotes_outputs=['*'],
                 )
+
+        self.add_external_subsystems()
 
         self.add_subsystem(
             "taxifuel", TaxiFuelComponent(), promotes=["*"]
