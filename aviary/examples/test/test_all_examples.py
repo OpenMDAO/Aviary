@@ -35,6 +35,7 @@ def find_examples():
                 run_files.append(Path(root) / file)
     return run_files
 
+
 def example_name(testcase_func, param_num, param):
     """
     Returns a formatted case name for unit testing with decorator @parameterized.expand().
