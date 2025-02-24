@@ -3,8 +3,7 @@ import openmdao.api as om
 from aviary.subsystems.mass.mass_to_weight import MassToWeight
 
 from aviary.variable_info.enums import AlphaModes, AnalysisScheme, SpeedType
-from aviary.subsystems.atmosphere.atmosphere import Atmosphere
-from aviary.mission.gasp_based.ode.base_ode import BaseODE
+from aviary.mission.gasp_based.ode.two_dof_ode import TwoDOFODE
 from aviary.mission.gasp_based.ode.flight_path_eom import FlightPathEOM
 from aviary.mission.gasp_based.ode.params import ParamPort
 from aviary.subsystems.propulsion.propulsion_builder import PropulsionBuilderBase
@@ -12,7 +11,7 @@ from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 from aviary.mission.gasp_based.ode.time_integration_base_classes import add_SGM_required_inputs
 
 
-class FlightPathODE(BaseODE):
+class FlightPathODE(TwoDOFODE):
     """ ODE using 2D aircraft equations of motion with states distance, alt, TAS, and gamma.
 
     Control is managed via angle-of-attack (alpha).
@@ -94,11 +93,7 @@ class FlightPathODE(BaseODE):
             })
         self.add_subsystem("params", flight_path_params, promotes=["*"])
 
-        self.add_subsystem(
-            name='atmosphere',
-            subsys=Atmosphere(num_nodes=nn, input_speed_type=input_speed_type),
-            promotes=['*'],
-        )
+        self.add_atmosphere(input_speed_type=input_speed_type)
 
         if alpha_mode is AlphaModes.DEFAULT:
             # alpha as input
@@ -131,10 +126,14 @@ class FlightPathODE(BaseODE):
                     ],
                     promotes_outputs=['required_lift'],
                 )
-            self.AddAlphaControl(
+            self.add_alpha_control(
                 alpha_mode=alpha_mode,
                 target_load_factor=1,
-                atol=1e-6, rtol=1e-12, num_nodes=nn, print_level=print_level)
+                atol=1e-6,
+                rtol=1e-12,
+                num_nodes=nn,
+                print_level=print_level,
+            )
 
         for subsystem in core_subsystems:
             system = subsystem.build_mission(**kwargs)
@@ -151,6 +150,8 @@ class FlightPathODE(BaseODE):
                                        promotes_inputs=subsystem.mission_inputs(
                                            **kwargs),
                                        promotes_outputs=subsystem.mission_outputs(**kwargs))
+
+        self.add_external_subsystems()
 
         if analysis_scheme is AnalysisScheme.SHOOTING:
             prop_group.add_subsystem(
@@ -176,8 +177,9 @@ class FlightPathODE(BaseODE):
                 promotes_outputs=['required_thrust'],
             )
 
-            self.AddThrottleControl(prop_group=prop_group,
-                                    atol=1e-8, print_level=print_level)
+            self.add_throttle_control(
+                prop_group=prop_group, atol=1e-8, print_level=print_level
+            )
 
         self.add_subsystem(
             "flight_path_eom",

@@ -4,7 +4,6 @@ from aviary.mission.flight_phase_builder import FlightPhaseBase, register
 from aviary.mission.initial_guess_builders import InitialGuessState, InitialGuessIntegrationVariable, InitialGuessControl, InitialGuessPolynomialControl
 
 from aviary.utils.aviary_values import AviaryValues
-from aviary.variable_info.variable_meta_data import _MetaData
 from aviary.variable_info.variables import Dynamic
 from aviary.mission.gasp_based.ode.unsteady_solved.unsteady_solved_ode import UnsteadySolvedODE
 from aviary.variable_info.enums import SpeedType, EquationsOfMotion
@@ -120,16 +119,20 @@ class TwoDOFPhase(FlightPhaseBase):
         }
 
 
-TwoDOFPhase._add_meta_data('initial_ref', val=100., units='s', desc='initial reference')
-TwoDOFPhase._add_meta_data('duration_ref', val=1000.,
-                           units='s', desc='duration reference')
+TwoDOFPhase._add_meta_data(
+    'initial_ref', val=100.0, units='s', desc='initial reference'
+)
+TwoDOFPhase._add_meta_data(
+    'duration_ref', val=1000.0, units='s', desc='duration reference'
+)
 TwoDOFPhase._add_meta_data('control_order', val=1, desc='control order')
 TwoDOFPhase._add_meta_data('rotation', val=False)
 TwoDOFPhase._add_meta_data('clean', val=False)
 
 TwoDOFPhase._add_initial_guess_meta_data(
     InitialGuessIntegrationVariable(key='distance'),
-    desc='initial guess for initial distance and duration specified as a tuple')
+    desc='initial guess for initial distance and duration specified as a tuple',
+)
 
 TwoDOFPhase._add_initial_guess_meta_data(
     InitialGuessPolynomialControl('angle_of_attack'),
@@ -137,5 +140,5 @@ TwoDOFPhase._add_initial_guess_meta_data(
 )
 
 TwoDOFPhase._add_initial_guess_meta_data(
-    InitialGuessState('time'),
-    desc='initial guess for time')
+    InitialGuessState('time'), desc='initial guess for time'
+)
