@@ -129,10 +129,11 @@ class FlightPhaseBase(PhaseBuilderBase):
             rate_targets = ['dmach_dr']
 
         if use_polynomial_control:
-            phase.add_polynomial_control(
+            phase.add_control(
                 Dynamic.Atmosphere.MACH,
                 targets=Dynamic.Atmosphere.MACH,
                 units=mach_bounds[1],
+                control_type='polynomial',
                 opt=optimize_mach,
                 lower=mach_bounds[0][0],
                 upper=mach_bounds[0][1],
@@ -193,8 +194,9 @@ class FlightPhaseBase(PhaseBuilderBase):
 
         ground_roll = user_options.get_val('ground_roll')
         if ground_roll:
-            phase.add_polynomial_control(
+            phase.add_control(
                 Dynamic.Mission.ALTITUDE,
+                control_type='polynomial',
                 order=1,
                 val=0,
                 opt=False,
@@ -204,9 +206,10 @@ class FlightPhaseBase(PhaseBuilderBase):
             )
         else:
             if use_polynomial_control:
-                phase.add_polynomial_control(
+                phase.add_control(
                     Dynamic.Mission.ALTITUDE,
                     targets=Dynamic.Mission.ALTITUDE,
+                    control_type='polynomial',
                     units=altitude_bounds[1],
                     opt=optimize_altitude,
                     lower=altitude_bounds[0][0],

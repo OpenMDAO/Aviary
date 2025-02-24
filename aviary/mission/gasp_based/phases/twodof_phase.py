@@ -68,8 +68,9 @@ class TwoDOFPhase(FlightPhaseBase):
                                 fix_initial=fix_initial, fix_final=False, ref=100., defect_ref=100.)
 
         if rotation:
-            phase.add_polynomial_control(
+            phase.add_control(
                 Dynamic.Vehicle.ANGLE_OF_ATTACK,
+                control_type='polynomial',
                 order=control_order,
                 fix_initial=True,
                 lower=0,
