@@ -26,8 +26,10 @@ def units_setter(opt_meta, value):
     new_val, new_units = value
     old_val, units = opt_meta['val']
 
-    converted_val = convert_units(new_val, new_units, units)
-    return (converted_val, units)
+    if new_val is not None:
+        new_val = convert_units(new_val, new_units, units)
+
+    return (new_val, units)
 
 
 def bounds_units_setter(opt_meta, value):
@@ -253,9 +255,6 @@ class AviaryOptionsDictionary(om.OptionsDictionary):
 
                 else:
                     val = convert_units(val, base_units, units)
-
-            else:
-                val = base_val
 
         else:
             val = self[key]

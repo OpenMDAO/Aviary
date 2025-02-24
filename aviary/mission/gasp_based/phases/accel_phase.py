@@ -104,7 +104,7 @@ class AccelPhaseOptions(AviaryOptionsDictionary):
             name='velocity_defect_ref',
             default=None,
             units='kn',
-            desc='Scale factor ref0 for velocity.'
+            desc='Scale factor ref for velocity defect.'
         )
 
         self.declare(
@@ -140,7 +140,7 @@ class AccelPhaseOptions(AviaryOptionsDictionary):
             name='mass_defect_ref',
             default=0.0,
             units='lbm',
-            desc='Scale factor ref0 for mass.'
+            desc='Scale factor ref for mass defect.'
         )
 
         self.declare(
@@ -153,29 +153,29 @@ class AccelPhaseOptions(AviaryOptionsDictionary):
         self.declare(
             name='distance_upper',
             default=0.0,
-            units='NM',
+            units='ft',
             desc='Upper bound for distance.'
         )
 
         self.declare(
             name='distance_ref',
             default=1.0,
-            units='NM',
+            units='ft',
             desc='Scale factor ref for distance.'
         )
 
         self.declare(
             name='distance_ref0',
             default=0.0,
-            units='NM',
+            units='ft',
             desc='Scale factor ref0 for distance.'
         )
 
         self.declare(
             name='distance_defect_ref',
             default=None,
-            units='NM',
-            desc='Scale factor ref0 for distance.'
+            units='ft',
+            desc='Scale factor ref for distance defect.'
         )
 
         self.declare(

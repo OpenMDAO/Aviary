@@ -158,7 +158,6 @@ class FlightPhaseOptions(AviaryOptionsDictionary):
 
         self.declare(
             name='required_available_climb_rate',
-            types=tuple,
             default=None,
             units='ft/s',
             desc='Adds a constraint requiring Dynamic.Mission.ALTITUDE_RATE_MAX to be no '

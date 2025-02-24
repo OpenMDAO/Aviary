@@ -88,7 +88,7 @@ class GroundrollPhaseOptions(AviaryOptionsDictionary):
             name='velocity_defect_ref',
             default=None,
             units='kn',
-            desc='Scale factor ref0 for velocity.'
+            desc='Scale factor ref for velocity defect.'
         )
 
         self.declare(
@@ -123,7 +123,7 @@ class GroundrollPhaseOptions(AviaryOptionsDictionary):
             name='mass_defect_ref',
             default=100.0,
             units='lbm',
-            desc='Scale factor ref0 for mass.'
+            desc='Scale factor ref for mass defect.'
         )
 
         self.declare(
@@ -158,7 +158,7 @@ class GroundrollPhaseOptions(AviaryOptionsDictionary):
             name='distance_defect_ref',
             default=3000.0,
             units='ft',
-            desc='Scale factor ref0 for distance.'
+            desc='Scale factor ref for distance defect.'
         )
 
         self.declare(
