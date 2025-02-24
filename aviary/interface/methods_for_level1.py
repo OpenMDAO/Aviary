@@ -167,10 +167,7 @@ def _setup_level1_parser(parser):
         help="Path to phase info file"
     )
     parser.add_argument(
-        "--max_iter",
-        type=int,
-        default=50,
-        help="maximum number of iterations"
+        "--max_iter", type=int, default=50, help="maximum number of iterations"
     )
     parser.add_argument(
         "--shooting",
