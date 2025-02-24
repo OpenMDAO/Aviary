@@ -1,14 +1,12 @@
-import openmdao.api as om
-
 import dymos as dm
 
 from aviary.mission.gasp_based.ode.groundroll_ode import GroundrollODE
 from aviary.mission.initial_guess_builders import InitialGuessState, InitialGuessIntegrationVariable, InitialGuessPolynomialControl
 from aviary.mission.phase_builder_base import PhaseBuilderBase, register
 
+from aviary.utils.aviary_options_dict import AviaryOptionsDictionary
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.variable_meta_data import _MetaData
-from aviary.variable_info.functions import units_setter, bounds_units_setter
 from aviary.variable_info.variables import Dynamic
 
 
@@ -18,7 +16,7 @@ from aviary.variable_info.variables import Dynamic
 # - self.external_subsystems
 # - self.meta_data, with cls.default_meta_data customization point
 
-class GroundrollPhaseOptions(om.OptionsDictionary):
+class GroundrollPhaseOptions(AviaryOptionsDictionary):
 
     def __init__(self, read_only=False):
         super(GroundrollPhaseOptions, self).__init__(read_only)
@@ -58,8 +56,8 @@ class GroundrollPhaseOptions(om.OptionsDictionary):
         self.declare(
             'initial_bounds',
             types=tuple,
-            default=((0.0, 100.0), 'min'),
-            set_function=bounds_units_setter,
+            default=(0.0, 100.0),
+            units='min',
             desc='Lower and upper bounds on the starting time for this phase relative to the '
             'starting time of the mission, i.e., ((25, 45), "min") constrians this phase to '
             'start between 25 and 45 minutes after the start of the mission.'
@@ -68,25 +66,24 @@ class GroundrollPhaseOptions(om.OptionsDictionary):
         self.declare(
             name='duration_bounds',
             types=tuple,
-            default=((0.0, 3600.0), 's'),
-            set_function=bounds_units_setter,
+            default=(0.0, 3600.0),
+            units='s',
             desc='Lower and upper bounds on the phase duration, in the form of a nested tuple: '
             'i.e. ((20, 36), "min") This constrains the duration to be between 20 and 36 min.'
         )
 
         self.declare(
             name='initial_ref',
-            types=tuple,
-            default=(100.0, 's'),
-            set_function=units_setter,
+            default=100.0,
+            units='s',
             desc='Scale factor ref for the phase starting time.'
         )
 
         self.declare(
             name='duration_ref',
             types=tuple,
-            default=(100.0, 's'),
-            set_function=units_setter,
+            default=100.0,
+            units='s',
             desc='Scale factor ref for duration.'
         )
 
