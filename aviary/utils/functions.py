@@ -13,6 +13,7 @@ from aviary.utils.aviary_values import AviaryValues, get_items
 from aviary.variable_info.enums import ProblemType, EquationsOfMotion, LegacyCode
 from aviary.variable_info.functions import add_aviary_output, add_aviary_input
 from aviary.variable_info.variable_meta_data import _MetaData
+from aviary.variable_info.enums import Verbosity
 
 
 class Null:
@@ -45,6 +46,7 @@ def get_aviary_resource_path(resource_name: str) -> str:
         importlib_resources.as_file(ref))
     return path
 
+top_dir = Path(get_aviary_resource_path(''))
 
 def set_aviary_initial_values(prob, aviary_inputs: AviaryValues):
     """
@@ -369,7 +371,88 @@ def promote_aircraft_and_mission_vars(group):
 # "str | Path" which is cleaner but Aviary still supports older versions
 
 
-def get_model(file_name: str, verbose=False) -> Path:
+def get_path(path: Union[str, Path], verbosity=Verbosity.BRIEF) -> Path:
+    """
+    Convert a string or Path object to an absolute Path object, prioritizing different locations.
+
+    This function attempts to find the existence of a path in the following order:
+    1. As an absolute path.
+    2. Relative to the current working directory.
+    3. Relative to the Aviary package.
+
+    If the path cannot be found in any of the locations, a FileNotFoundError is raised.
+
+    Parameters
+    ----------
+    path : str or Path
+        The input path, either as a string or a Path object.
+    verbosity : Verbosity, optional
+        Sets level of printouts for this function.
+
+    Returns
+    -------
+    Path
+        The absolute path to the file.
+
+    Raises
+    ------
+    FileNotFoundError
+        If the path is not found in any of the prioritized locations.
+    """
+
+    # Store the original path for reference in error messages.
+    original_path = path
+
+    # If the input is a string, convert it to a Path object.
+    if isinstance(path, str):
+        path = Path(path)
+
+    # Check if the path exists as an absolute path.
+    if not path.exists():
+        # If not, try finding the path relative to the current working directory.
+        relative_path = Path.cwd() / path
+        path = relative_path
+
+    # If the path still doesn't exist, attempt to find it relative to the Aviary package.
+    if not path.exists():
+        if verbosity > Verbosity.BRIEF:  # VERBOSE, DEBUG
+            print(
+                f"Unable to locate '{original_path}' as an absolute or relative path. Trying Aviary package path."
+            )
+        # Determine the path relative to the Aviary package.
+        aviary_based_path = Path(
+            get_aviary_resource_path(original_path))
+
+        path = aviary_based_path
+
+    # If the path still doesn't exist, attempt to find it in the models directory.
+    if not path.exists():
+        if verbosity > Verbosity.BRIEF:
+            print(
+                f"Unable to locate '{aviary_based_path}' as an Aviary package path, checking built-in models"
+            )
+        try:
+            hangar_based_path = get_model(original_path)
+            path = hangar_based_path
+        except FileNotFoundError:
+            pass
+
+    # If the path still doesn't exist in any of the prioritized locations, raise an error.
+    if not path.exists():
+        raise FileNotFoundError(
+            f'File not found in absolute path: {original_path}, relative path: '
+            f'{relative_path}, or Aviary-based path: '
+            f'{Path(get_aviary_resource_path(original_path))}'
+        )
+
+    # Print the path being used.
+    if verbosity > Verbosity.BRIEF:
+        print(f'Found {path}')
+
+    return path
+
+
+def get_model(file_name: str) -> Path:
     '''
     This function attempts to find the path to a file or folder in aviary/models
     If the path cannot be found in any of the locations, a FileNotFoundError is raised.
@@ -406,93 +489,8 @@ def get_model(file_name: str, verbose=False) -> Path:
 
     # If the path still doesn't exist, raise an error.
     if not aviary_path.exists():
-        raise FileNotFoundError(
-            f"File or Folder not found in Aviary's hangar"
-        )
-    if verbose:
-        print('found', aviary_path, '\n')
+        raise FileNotFoundError(f"File or Folder not found in Aviary's hangar")
     return aviary_path
-
-
-def get_path(path: Union[str, Path], verbose: bool = False) -> Path:
-    """
-    Convert a string or Path object to an absolute Path object, prioritizing different locations.
-
-    This function attempts to find the existence of a path in the following order:
-    1. As an absolute path.
-    2. Relative to the current working directory.
-    3. Relative to the Aviary package.
-
-    If the path cannot be found in any of the locations, a FileNotFoundError is raised.
-
-    Parameters
-    ----------
-    path : str or Path
-        The input path, either as a string or a Path object.
-    verbose : bool, optional
-        If True, prints the final path being used. Default is False.
-
-    Returns
-    -------
-    Path
-        The absolute path to the file.
-
-    Raises
-    ------
-    FileNotFoundError
-        If the path is not found in any of the prioritized locations.
-    """
-
-    # Store the original path for reference in error messages.
-    original_path = path
-
-    # If the input is a string, convert it to a Path object.
-    if isinstance(path, str):
-        path = Path(path)
-
-    # Check if the path exists as an absolute path.
-    if not path.exists():
-        # If not, try finding the path relative to the current working directory.
-        relative_path = Path.cwd() / path
-        path = relative_path
-
-    # If the path still doesn't exist, attempt to find it relative to the Aviary package.
-    if not path.exists():
-        # Determine the path relative to the Aviary package.
-        aviary_based_path = Path(
-            get_aviary_resource_path(original_path))
-        if verbose:
-            print(
-                f"Unable to locate '{original_path}' as an absolute or relative path. Trying Aviary package path: {aviary_based_path}")
-        path = aviary_based_path
-
-    # If the path still doesn't exist, attempt to find it in the models directory.
-    if not path.exists():
-        try:
-            hangar_based_path = get_model(original_path, verbose=verbose)
-            if verbose:
-                print(
-                    f"Unable to locate '{aviary_based_path}' as an Aviary package path, checking built-in models")
-            path = hangar_based_path
-        except FileNotFoundError:
-            pass
-
-    # If the path still doesn't exist in any of the prioritized locations, raise an error.
-    if not path.exists():
-        raise FileNotFoundError(
-            f'File not found in absolute path: {original_path}, relative path: '
-            f'{relative_path}, or Aviary-based path: '
-            f'{Path(get_aviary_resource_path(original_path))}'
-        )
-
-    # If verbose is True, print the path being used.
-    if verbose:
-        print(f'Using {path} for file.')
-
-    return path
-
-
-top_dir = Path(get_aviary_resource_path(''))
 
 
 def wrapped_convert_units(val_unit_tuple, new_units):

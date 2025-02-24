@@ -2064,7 +2064,7 @@ class AviaryProblem(om.Problem):
             The maximum number of iterations allowed for the optimization process. Default is 50. This option is
             applicable to "SNOPT", "IPOPT", and "SLSQP" optimizers.
 
-        verbosity : Verbosity, int or list, optional
+        verbosity : Verbosity or int, optional
             Controls the level of printouts for this method. If None, uses the value of
             Settings.VERBOSITY in provided aircraft data.
 
@@ -2364,7 +2364,7 @@ class AviaryProblem(om.Problem):
         ref : float
             The reference value for the objective. If None, a default value will be used based on the objective type. Please see the
             `default_ref_values` dict for these default values.
-        verbosity : Verbosity or int
+        verbosity : Verbosity or int, optional
             Controls the level of printouts for this method. If None, uses the value of
             Settings.VERBOSITY in provided aircraft data.
 
@@ -3077,7 +3077,7 @@ class AviaryProblem(om.Problem):
             Mass of the payload for the mission.
         phase_info : dict, optional
             Dictionary containing the phases and their required parameters.
-        verbosity : Verbosity or list, optional
+        verbosity : Verbosity or int, optional
             Controls the level of printouts for this method. If None, uses the value of
             Settings.VERBOSITY in provided aircraft data.
         """
@@ -3204,7 +3204,7 @@ class AviaryProblem(om.Problem):
             Mass of the payload for the mission.
         phase_info : dict, optional
             Dictionary containing the phases and their required parameters.
-        verbosity : Verbosity or list, optional
+        verbosity : Verbosity or int, optional
             Controls the level of printouts for this method. If None, uses the value of
             Settings.VERBOSITY in provided aircraft data.
         """
