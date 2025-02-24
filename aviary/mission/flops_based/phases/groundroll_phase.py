@@ -18,8 +18,7 @@ from aviary.variable_info.variables import Dynamic
 
 class GroundrollPhaseOptions(AviaryOptionsDictionary):
 
-    def __init__(self, read_only=False):
-        super(GroundrollPhaseOptions, self).__init__(read_only)
+    def declare_options(self):
 
         self.declare(
             name='num_segments',
