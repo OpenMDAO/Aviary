@@ -131,6 +131,8 @@ class Aircraft:
         WING_CARGO = 'aircraft:crew_and_payload:wing_cargo'
 
         class Design:
+            CARGO_MASS = 'aircraft:crew_and_payload:design:cargo_mass'
+            MAX_CARGO_MASS = 'aircraft:crew_and_payload:design:max_cargo_mass'
             NUM_BUSINESS_CLASS = 'aircraft:crew_and_payload:design:num_business_class'
             NUM_FIRST_CLASS = 'aircraft:crew_and_payload:design:num_first_class'
             NUM_TOURIST_CLASS = 'aircraft:crew_and_payload:design:num_tourist_class'
