@@ -213,7 +213,6 @@ class GroundrollPhase(PhaseBuilderBase):
     default_ode_class = GroundrollODE
     default_options_class= GroundrollPhaseOptions
 
-    _meta_data_ = {}
     _initial_guesses_meta_data_ = {}
 
     def build_phase(self, aviary_options: AviaryValues = None):

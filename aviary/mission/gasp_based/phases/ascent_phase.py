@@ -338,7 +338,6 @@ class AscentPhase(PhaseBuilderBase):
     default_ode_class = AscentODE
     default_options_class = AscentPhaseOptions
 
-    _meta_data_ = {}
     _initial_guesses_meta_data_ = {}
 
     def build_phase(self, aviary_options: AviaryValues = None):

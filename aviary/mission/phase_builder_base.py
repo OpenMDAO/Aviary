@@ -18,10 +18,6 @@ from aviary.variable_info.variables import Dynamic
 from aviary.variable_info.variable_meta_data import _MetaData
 
 
-_require_new_meta_data_class_attr_ = \
-    namedtuple('_require_new_meta_data_class_attr_', ())
-
-
 _require_new_initial_guesses_meta_data_class_attr_ = \
     namedtuple('_require_new_initial_guesses_meta_data_class_attr_', ())
 
@@ -92,9 +88,6 @@ class PhaseBuilderBase(ABC):
         'num_nodes',
         'meta_data',
     )
-
-    # region : derived type customization points
-    _meta_data_ = _require_new_meta_data_class_attr_()
 
     _initial_guesses_meta_data_ = _require_new_initial_guesses_meta_data_class_attr_()
 

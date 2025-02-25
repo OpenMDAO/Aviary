@@ -247,7 +247,6 @@ class ClimbPhase(PhaseBuilderBase):
     default_ode_class = ClimbODE
     default_options_class = ClimbPhaseOptions
 
-    _meta_data_ = {}
     _initial_guesses_meta_data_ = {}
 
     def build_phase(self, aviary_options: AviaryValues = None):

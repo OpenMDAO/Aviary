@@ -259,7 +259,6 @@ class DescentPhase(PhaseBuilderBase):
     default_ode_class = DescentODE
     default_options_class = DescentPhaseOptions
 
-    _meta_data_ = {}
     _initial_guesses_meta_data_ = {}
 
     def build_phase(self, aviary_options: AviaryValues = None):

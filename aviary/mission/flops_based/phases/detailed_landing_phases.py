@@ -35,11 +35,88 @@ from aviary.mission.flops_based.phases.detailed_takeoff_phases import \
 from aviary.mission.phase_builder_base import PhaseBuilderBase
 from aviary.mission.initial_guess_builders import InitialGuessControl, InitialGuessParameter, InitialGuessPolynomialControl, InitialGuessState, InitialGuessIntegrationVariable
 from aviary.subsystems.aerodynamics.aerodynamics_builder import CoreAerodynamicsBuilder
+from aviary.utils.aviary_options_dict import AviaryOptionsDictionary
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.enums import LegacyCode
 from aviary.variable_info.functions import setup_trajectory_params
 from aviary.variable_info.variables import Dynamic, Mission
 from aviary.variable_info.variable_meta_data import _MetaData as BaseMetaData
+
+
+class LandingApproachToMicP3Options(AviaryOptionsDictionary):
+
+    def declare_options(self):
+
+        self.declare(
+            name='max_duration',
+            default=100.0,
+            units='s',
+            desc='Upper bound on duration for this phase.'
+        )
+
+        self.declare(
+            name='duration_ref',
+            default=1.0,
+            units='s',
+            desc='Scale factor ref for duration.'
+        )
+
+        self.declare(
+            name='initial_ref',
+            default=10.0,
+            units='s',
+            desc='Scale factor ref for the phase starting time.'
+        )
+
+        self.declare(
+            name='distance_max',
+            default=1000.0,
+            units='ft',
+            desc='Upper bound for distance.'
+        )
+
+        self.declare(
+            name='max_velocity',
+            default=100.0,
+            units='ft/s',
+            desc='Upper bound for velocity.'
+        )
+
+        self.declare(
+            name='altitude_ref',
+            default=1.0,
+            units='ft',
+            desc='Scale factor ref for altitude.'
+        )
+
+        self.declare(
+            name='lower_angle_of_attack',
+            types=tuple,
+            default=-10.0,
+            units='deg',
+            desc='Lower bound for angle of attack.'
+        )
+
+        self.declare(
+            name='upper_angle_of_attack',
+            default=15.0,
+            units='deg',
+            desc='Upper bound for angle of attack.'
+        )
+
+        self.declare(
+            name='angle_of_attack_ref',
+            default=10.0,
+            units='deg',
+            desc='Scale factor ref for angle of attack.'
+        )
+
+        self.declare(
+            name='initial_height',
+            default=1.0,
+            units='ft',
+            desc='Starting altitude for thie phase.'
+        )
 
 
 @_init_initial_guess_meta_data
@@ -107,6 +184,7 @@ class LandingApproachToMicP3(PhaseBuilderBase):
 
     default_name = 'landing_approach'
     default_ode_class = LandingODE
+    default_options_class = LandingApproachToMicP3Options
 
     def build_phase(self, aviary_options: AviaryValues = None):
         '''
@@ -249,26 +327,6 @@ class LandingApproachToMicP3(PhaseBuilderBase):
             'friction_key': Mission.Takeoff.ROLLING_FRICTION_COEFFICIENT}
 
 
-LandingApproachToMicP3._add_meta_data('max_duration', val=100., units='s')
-
-LandingApproachToMicP3._add_meta_data('duration_ref', val=1., units='s')
-
-LandingApproachToMicP3._add_meta_data('initial_ref', val=10.0, units='s')
-
-LandingApproachToMicP3._add_meta_data('distance_max', val=1000., units='ft')
-
-LandingApproachToMicP3._add_meta_data('max_velocity', val=100., units='ft/s')
-
-LandingApproachToMicP3._add_meta_data('altitude_ref', val=1., units='ft')
-
-LandingApproachToMicP3._add_meta_data('lower_angle_of_attack', val=-10., units='deg')
-
-LandingApproachToMicP3._add_meta_data('upper_angle_of_attack', val=15., units='deg')
-
-LandingApproachToMicP3._add_meta_data('angle_of_attack_ref', val=10., units='deg')
-
-LandingApproachToMicP3._add_meta_data('initial_height', val=1., units='ft')
-
 LandingApproachToMicP3._add_initial_guess_meta_data(
     InitialGuessControl(Dynamic.Vehicle.ANGLE_OF_ATTACK))
 
@@ -376,6 +434,39 @@ class LandingMicP3ToObstacle(LandingApproachToMicP3):
         return phase
 
 
+class LandingObstacleToFlareOptions(AviaryOptionsDictionary):
+
+    def declare_options(self):
+
+        self.declare(
+            name='max_duration',
+            default=100.0,
+            units='s',
+            desc='Upper bound on duration for this phase.'
+        )
+
+        self.declare(
+            name='distance_max',
+            default=1000.0,
+            units='ft',
+            desc='Upper bound for distance.'
+        )
+
+        self.declare(
+            name='max_velocity',
+            default=100.0,
+            units='ft/s',
+            desc='Upper bound for velocity.'
+        )
+
+        self.declare(
+            name='altitude_ref',
+            default=1.0,
+            units='ft',
+            desc='Scale factor ref for altitude.'
+        )
+
+
 @_init_initial_guess_meta_data
 class LandingObstacleToFlare(PhaseBuilderBase):
     '''
@@ -432,13 +523,10 @@ class LandingObstacleToFlare(PhaseBuilderBase):
     '''
     __slots__ = ()
 
-    # region : derived type customization points
-    _meta_data_ = {}
-
     default_name = 'landing_obstacle'
 
     default_ode_class = LandingODE
-    # endregion : derived type customization points
+    default_options_class = LandingObstacleToFlareOptions
 
     def build_phase(self, aviary_options: AviaryValues = None):
         '''
@@ -572,14 +660,6 @@ class LandingObstacleToFlare(PhaseBuilderBase):
             'friction_key': Mission.Takeoff.ROLLING_FRICTION_COEFFICIENT}
 
 
-LandingObstacleToFlare._add_meta_data('max_duration', val=100., units='s')
-
-LandingObstacleToFlare._add_meta_data('distance_max', val=1000., units='ft')
-
-LandingObstacleToFlare._add_meta_data('max_velocity', val=100., units='ft/s')
-
-LandingObstacleToFlare._add_meta_data('altitude_ref', val=1., units='ft')
-
 LandingObstacleToFlare._add_initial_guess_meta_data(
     InitialGuessControl(Dynamic.Vehicle.ANGLE_OF_ATTACK))
 
@@ -588,6 +668,75 @@ LandingObstacleToFlare._add_initial_guess_meta_data(InitialGuessState('altitude'
 LandingObstacleToFlare._add_initial_guess_meta_data(
     InitialGuessControl(Dynamic.Mission.FLIGHT_PATH_ANGLE)
 )
+
+
+class LandingFlareToTouchdownOptions(AviaryOptionsDictionary):
+
+    def declare_options(self):
+
+        self.declare(
+            name='max_duration',
+            default=100.0,
+            units='s',
+            desc='Upper bound on duration for this phase.'
+        )
+
+        self.declare(
+            name='duration_ref',
+            default=1.0,
+            units='s',
+            desc='Scale factor ref for duration.'
+        )
+
+        self.declare(
+            name='initial_ref',
+            default=10.0,
+            units='s',
+            desc='Scale factor ref for the phase starting time.'
+        )
+
+        self.declare(
+            name='distance_max',
+            default=1000.0,
+            units='ft',
+            desc='Upper bound for distance.'
+        )
+
+        self.declare(
+            name='max_velocity',
+            default=100.0,
+            units='ft/s',
+            desc='Upper bound for velocity.'
+        )
+
+        self.declare(
+            name='altitude_ref',
+            default=1.0,
+            units='ft',
+            desc='Scale factor ref for altitude.'
+        )
+
+        self.declare(
+            name='lower_angle_of_attack',
+            types=tuple,
+            default=-10.0,
+            units='deg',
+            desc='Lower bound for angle of attack.'
+        )
+
+        self.declare(
+            name='upper_angle_of_attack',
+            default=15.0,
+            units='deg',
+            desc='Upper bound for angle of attack.'
+        )
+
+        self.declare(
+            name='angle_of_attack_ref',
+            default=10.0,
+            units='deg',
+            desc='Scale factor ref for angle of attack.'
+        )
 
 
 @_init_initial_guess_meta_data
@@ -650,13 +799,10 @@ class LandingFlareToTouchdown(PhaseBuilderBase):
     '''
     __slots__ = ()
 
-    # region : derived type customization points
-    _meta_data_ = {}
-
     default_name = 'landing_flare'
 
     default_ode_class = FlareODE
-    # endregion : derived type customization points
+    default_options_class = LandingFlareToTouchdownOptions
 
     def build_phase(self, aviary_options: AviaryValues = None):
         '''
@@ -798,24 +944,6 @@ class LandingFlareToTouchdown(PhaseBuilderBase):
         """
         return {}
 
-
-LandingFlareToTouchdown._add_meta_data('max_duration', val=100., units='s')
-
-LandingFlareToTouchdown._add_meta_data('duration_ref', val=1., units='s')
-
-LandingFlareToTouchdown._add_meta_data('initial_ref', val=10.0, units='s')
-
-LandingFlareToTouchdown._add_meta_data('distance_max', val=1000., units='ft')
-
-LandingFlareToTouchdown._add_meta_data('max_velocity', val=100., units='ft/s')
-
-LandingFlareToTouchdown._add_meta_data('altitude_ref', val=1., units='ft')
-
-LandingFlareToTouchdown._add_meta_data('lower_angle_of_attack', val=-10., units='deg')
-
-LandingFlareToTouchdown._add_meta_data('upper_angle_of_attack', val=15., units='deg')
-
-LandingFlareToTouchdown._add_meta_data('angle_of_attack_ref', val=10., units='deg')
 
 LandingFlareToTouchdown._add_initial_guess_meta_data(
     InitialGuessPolynomialControl(Dynamic.Vehicle.ANGLE_OF_ATTACK))

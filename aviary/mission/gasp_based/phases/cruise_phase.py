@@ -101,7 +101,6 @@ class CruisePhase(PhaseBuilderBase):
     default_ode_class = BreguetCruiseODESolution
     default_options_class = CruisePhaseOptions
 
-    _meta_data_ = {}
     _initial_guesses_meta_data_ = {}
 
     def __init__(

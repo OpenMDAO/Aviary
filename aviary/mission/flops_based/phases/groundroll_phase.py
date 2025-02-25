@@ -102,7 +102,6 @@ class GroundrollPhase(PhaseBuilderBase):
     '''
     __slots__ = ('external_subsystems', 'meta_data')
 
-    _meta_data_ = {}
     _initial_guesses_meta_data_ = {}
 
     default_name = 'groundroll'
