@@ -9,6 +9,7 @@ from aviary.mission.flops_based.phases.build_landing import Landing
 from aviary.mission.flops_based.phases.build_takeoff import Takeoff
 from aviary.mission.flops_based.phases.energy_phase import EnergyPhase
 from aviary.mission.phase_builder_base import PhaseBuilderBase
+from aviary.mission.problem_configurator import ProblemConfiguratorBase
 from aviary.utils.functions import wrapped_convert_units
 from aviary.utils.process_input_decks import initialization_guessing
 from aviary.variable_info.enums import AnalysisScheme, LegacyCode
@@ -21,7 +22,7 @@ else:
     use_new_dymos_syntax = True
 
 
-class ProblemBuilderHeightEnergy():
+class HeightEnergyProblemConfigurator(ProblemConfiguratorBase):
     """
     A Height-Energy specific builder that customizes AviaryProblem() for use with
     height energy phases.
@@ -111,19 +112,31 @@ class ProblemBuilderHeightEnergy():
 
         return phase_info
 
-    def get_default_payload_mass(self, prob):
+    def get_code_origin(self, prob):
+        """
+        Return the legacy of this problem configurator.
 
-        payload_mass = Aircraft.CrewPayload.TOTAL_PAYLOAD_MASS
+        Parameters
+        ----------
+        prob : AviaryProblem
+            Problem that owns this builder.
 
-        return payload_mass
-
-    def get_computed_defaults(self, prob):
-        # Fill in anything missing in the options with computed defaults.
-
+        Returns
+        -------
+        LegacyCode
+            Code origin enum.
+        """
         return LegacyCode.FLOPS
 
     def add_takeoff_systems(self, prob):
-        # Initialize takeoff options
+        """
+        Adds takeoff systems to the model in prob.
+
+        Parameters
+        ----------
+        prob : AviaryProblem
+            Problem that owns this builder.
+        """
         takeoff_options = Takeoff(
             airport_altitude=0.,  # ft
             num_engines=prob.aviary_inputs.get_val(Aircraft.Engine.NUM_ENGINES)

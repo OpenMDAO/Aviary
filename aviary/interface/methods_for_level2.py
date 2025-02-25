@@ -22,9 +22,9 @@ from aviary.interface.utils.check_phase_info import check_phase_info
 from aviary.mission.gasp_based.phases.time_integration_traj import FlexibleTraj
 
 from aviary.mission.gasp_based.ode.v_rotate_comp import VRotateComp
-from aviary.mission.problem_builder_2DOF import ProblemBuilder2DOF
-from aviary.mission.problem_builder_height_energy import ProblemBuilderHeightEnergy
-from aviary.mission.problem_builder_solved_2DOF import ProblemBuilderSolved2DOF
+from aviary.mission.height_energy_problem_configurator import HeightEnergyProblemConfigurator
+from aviary.mission.two_dof_problem_configurator import TwoDOFProblemConfigurator
+from aviary.mission.solved_two_dof_problem_configurator import SolvedTwoDOFProblemConfigurator
 
 from aviary.subsystems.aerodynamics.aerodynamics_builder import CoreAerodynamicsBuilder
 from aviary.subsystems.geometry.geometry_builder import CoreGeometryBuilder
@@ -100,7 +100,7 @@ class AviaryProblem(om.Problem):
 
     def load_inputs(
             self, aviary_inputs, phase_info=None, engine_builders=None,
-            problem_builder=None,
+            problem_configurator=None,
             meta_data=BaseMetaData, verbosity=Verbosity.BRIEF):
         """
         This method loads the aviary_values inputs and options that the
@@ -130,20 +130,20 @@ class AviaryProblem(om.Problem):
         # Create engine_builder
         self.engine_builders = engine_builders
 
-        # Determine which problem builder to use based on mission_method
+        # Determine which problem configurator to use based on mission_method
         if mission_method is HEIGHT_ENERGY:
-            self.builder = ProblemBuilderHeightEnergy()
+            self.builder = HeightEnergyProblemConfigurator()
         elif mission_method is TWO_DEGREES_OF_FREEDOM:
-            self.builder = ProblemBuilder2DOF()
+            self.builder = TwoDOFProblemConfigurator()
         elif mission_method is SOLVED_2DOF:
-            self.builder = ProblemBuilderSolved2DOF()
+            self.builder = SolvedTwoDOFProblemConfigurator()
         elif mission_method is CUSTOM:
-            if problem_builder:
-                self.builder = problem_builder()
+            if problem_configurator:
+                self.builder = problem_configurator()
                 # TODO: make draft / example custom builder
             else:
                 raise ValueError(
-                    f'When using "settings:equations_of_motion,custom", a problem_builder must be specified in load_inputs().')
+                    f'When using "settings:equations_of_motion,custom", a problem_configurator must be specified in load_inputs().')
         else:
             raise ValueError(
                 f'settings:equations_of_motion must be one of: height_energy, 2DOF, solved_2DOF, or custom')
@@ -288,7 +288,7 @@ class AviaryProblem(om.Problem):
         preprocess_options(aviary_inputs, engine_models=self.engine_builders)
 
         ## Set Up Core Subsystems ##
-        everything_else_origin = self.builder.get_computed_defaults(self)
+        everything_else_origin = self.builder.get_code_origin(self)
 
         prop = CorePropulsionBuilder(
             'core_propulsion', engine_models=self.engine_builders)
