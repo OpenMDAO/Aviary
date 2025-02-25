@@ -243,8 +243,8 @@ class AccelPhase(PhaseBuilderBase):
         user_options = self.user_options
 
         # Extracting and setting options
-        EAS_constraint_eq = user_options['EAS_constraint_eq']
-        alt = user_options['alt']
+        EAS_constraint_eq = user_options.get_val('EAS_constraint_eq', 'kn')
+        alt = user_options.get_val('alt', 'ft')
 
         # States
         self.add_velocity_state(user_options)
