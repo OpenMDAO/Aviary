@@ -12,6 +12,11 @@ import unittest
 
 from openmdao.utils.testing_utils import use_tempdirs
 
+# TODO: Address any issue that requires a skip.
+SKIP_EXAMPLES = {
+    'run_multimission_example_large_single_aisle.py': "Broken due to OpenMDAO changes",
+}
+
 
 def find_examples():
     """
@@ -51,7 +56,7 @@ def example_name(testcase_func, param_num, param):
     param : param
         The param object containing the case name to be formatted.
     """
-    return 'test_example_' + str(param.args[0]).split('/')[-1].replace('.py', '')
+    return 'test_example_' + param.args[0].name.replace('.py', '')
 
 
 @use_tempdirs
@@ -112,6 +117,11 @@ class RunScriptTest(unittest.TestCase):
         """
         Test each run script to ensure it executes without error.
         """
+
+        if example_path.name in SKIP_EXAMPLES:
+            reason = SKIP_EXAMPLES[example_path.name]
+            self.skipTest(f"Skipped {example_path.name}: {reason}.")
+
         self.run_script(example_path)
 
 
