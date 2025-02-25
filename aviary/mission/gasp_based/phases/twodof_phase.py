@@ -3,8 +3,8 @@ import dymos as dm
 from aviary.mission.flight_phase_builder import FlightPhaseBase, register
 from aviary.mission.initial_guess_builders import InitialGuessState, InitialGuessIntegrationVariable, InitialGuessControl, InitialGuessPolynomialControl
 
+from aviary.utils.aviary_options_dict import AviaryOptionsDictionary
 from aviary.utils.aviary_values import AviaryValues
-from aviary.variable_info.variable_meta_data import _MetaData
 from aviary.variable_info.variables import Dynamic
 from aviary.mission.gasp_based.ode.unsteady_solved.unsteady_solved_ode import UnsteadySolvedODE
 from aviary.variable_info.enums import SpeedType, EquationsOfMotion
@@ -16,11 +16,53 @@ from aviary.variable_info.enums import SpeedType, EquationsOfMotion
 # - self.meta_data, with cls.default_meta_data customization point
 
 
+class TwoDOFPhaseOptions(AviaryOptionsDictionary):
+
+    def declare_options(self):
+
+        self.declare(
+            name='initial_ref',
+            default=100.0,
+            units='s',
+            desc='Scale factor ref for the phase starting time.'
+        )
+
+        self.declare(
+            name='duration_ref',
+            types=tuple,
+            default=1000.0,
+            units='s',
+            desc='Scale factor ref for duration.'
+        )
+
+        self.declare(
+            name='control_order',
+            types=int,
+            default=1,
+            desc='The polynomial order for the angle of attack control.'
+        )
+
+        self.declare(
+            name='rotation',
+            types=bool,
+            default=False,
+            desc='Set to true if this is a rotation phase.'
+        )
+
+        self.declare(
+            name='clean',
+            types=bool,
+            default=False,
+            desc='Set to true to use clean aero with no ground effects.'
+        )
+
+
 @register
 class TwoDOFPhase(FlightPhaseBase):
     '''
     A phase builder for a two degree of freedom (2DOF) phase.
     '''
+    default_options_class = TwoDOFPhaseOptions
 
     def build_phase(self, aviary_options: AviaryValues = None):
         '''
@@ -120,16 +162,10 @@ class TwoDOFPhase(FlightPhaseBase):
         }
 
 
-TwoDOFPhase._add_meta_data('initial_ref', val=100., units='s', desc='initial reference')
-TwoDOFPhase._add_meta_data('duration_ref', val=1000.,
-                           units='s', desc='duration reference')
-TwoDOFPhase._add_meta_data('control_order', val=1, desc='control order')
-TwoDOFPhase._add_meta_data('rotation', val=False)
-TwoDOFPhase._add_meta_data('clean', val=False)
-
 TwoDOFPhase._add_initial_guess_meta_data(
     InitialGuessIntegrationVariable(key='distance'),
-    desc='initial guess for initial distance and duration specified as a tuple')
+    desc='initial guess for initial distance and duration specified as a tuple',
+)
 
 TwoDOFPhase._add_initial_guess_meta_data(
     InitialGuessPolynomialControl('angle_of_attack'),
@@ -137,5 +173,5 @@ TwoDOFPhase._add_initial_guess_meta_data(
 )
 
 TwoDOFPhase._add_initial_guess_meta_data(
-    InitialGuessState('time'),
-    desc='initial guess for time')
+    InitialGuessState('time'), desc='initial guess for time'
+)

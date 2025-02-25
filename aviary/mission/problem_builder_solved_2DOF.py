@@ -1,6 +1,6 @@
 
 from aviary.mission.flops_based.phases.groundroll_phase import GroundrollPhase as GroundrollPhaseVelocityIntegrated
-from aviary.mission.twodof_phase import TwoDOFPhase
+from aviary.mission.gasp_based.phases.twodof_phase import TwoDOFPhase
 from aviary.subsystems.propulsion.utils import build_engine_deck
 from aviary.utils.functions import wrapped_convert_units
 from aviary.variable_info.enums import LegacyCode
