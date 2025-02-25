@@ -128,30 +128,25 @@ class FlightPhaseBase(PhaseBuilderBase):
         else:
             rate_targets = ['dmach_dr']
 
+        # dictionary of options for Mach control
+        control_dict = {
+            'name': Dynamic.Atmosphere.MACH,
+            'targets': Dynamic.Atmosphere.MACH,
+            'units': mach_bounds[1],
+            'rate_targets': rate_targets,
+            'opt': optimize_mach,
+        }
+
+        if optimize_mach:
+            control_dict['lower'] = mach_bounds[0][0]
+            control_dict['upper'] = mach_bounds[0][1]
+            control_dict['ref'] = 0.5
+
         if use_polynomial_control:
-            phase.add_control(
-                Dynamic.Atmosphere.MACH,
-                targets=Dynamic.Atmosphere.MACH,
-                units=mach_bounds[1],
-                control_type='polynomial',
-                opt=optimize_mach,
-                lower=mach_bounds[0][0],
-                upper=mach_bounds[0][1],
-                rate_targets=rate_targets,
-                order=polynomial_control_order,
-                ref=0.5,
-            )
-        else:
-            phase.add_control(
-                Dynamic.Atmosphere.MACH,
-                targets=Dynamic.Atmosphere.MACH,
-                units=mach_bounds[1],
-                opt=optimize_mach,
-                lower=mach_bounds[0][0],
-                upper=mach_bounds[0][1],
-                rate_targets=rate_targets,
-                ref=0.5,
-            )
+            control_dict['control_type'] = 'polynomial'
+            control_dict['order'] = polynomial_control_order
+
+        phase.add_control(**control_dict)
 
         # Add altitude rate as a control
         if phase_type is EquationsOfMotion.HEIGHT_ENERGY:
@@ -192,45 +187,37 @@ class FlightPhaseBase(PhaseBuilderBase):
                     opt=opt, lower=0.0, upper=1.0,
                 )
 
+        # dictionary of options for altitude control
+        control_dict = {
+            'name': Dynamic.Mission.ALTITUDE,
+            'targets': Dynamic.Mission.ALTITUDE,
+            'units': altitude_bounds[1],
+            'rate_targets': rate_targets,
+            'rate2_targets': rate2_targets,
+            'opt': optimize_altitude,
+        }
+
+        if optimize_altitude:
+            control_dict['lower'] = altitude_bounds[0][0]
+            control_dict['upper'] = altitude_bounds[0][1]
+            control_dict['ref'] = altitude_bounds[0][1]
+
+        if use_polynomial_control:
+            control_dict['control_type'] = 'polynomial'
+            control_dict['order'] = polynomial_control_order
+
+        # ground_roll uses some hardcoded settings that overwrite user-provided ones
         ground_roll = user_options.get_val('ground_roll')
         if ground_roll:
-            phase.add_control(
-                Dynamic.Mission.ALTITUDE,
-                control_type='polynomial',
-                order=1,
-                val=0,
-                opt=False,
-                fix_initial=fix_initial,
-                rate_targets=['dh_dr'],
-                rate2_targets=['d2h_dr2'],
-            )
-        else:
-            if use_polynomial_control:
-                phase.add_control(
-                    Dynamic.Mission.ALTITUDE,
-                    targets=Dynamic.Mission.ALTITUDE,
-                    control_type='polynomial',
-                    units=altitude_bounds[1],
-                    opt=optimize_altitude,
-                    lower=altitude_bounds[0][0],
-                    upper=altitude_bounds[0][1],
-                    rate_targets=rate_targets,
-                    rate2_targets=rate2_targets,
-                    order=polynomial_control_order,
-                    ref=altitude_bounds[0][1],
-                )
-            else:
-                phase.add_control(
-                    Dynamic.Mission.ALTITUDE,
-                    targets=Dynamic.Mission.ALTITUDE,
-                    units=altitude_bounds[1],
-                    opt=optimize_altitude,
-                    lower=altitude_bounds[0][0],
-                    upper=altitude_bounds[0][1],
-                    rate_targets=rate_targets,
-                    rate2_targets=rate2_targets,
-                    ref=altitude_bounds[0][1],
-                )
+            control_dict['control_type'] = 'polynomial'
+            control_dict['order'] = 1
+            control_dict['val'] = 0
+            control_dict['opt'] = False
+            control_dict['fix_initial'] = fix_initial
+            control_dict['rate_targets'] = ['dh_dr']
+            control_dict['rate2_targets'] = ['d2h_dr2']
+
+        phase.add_control(**control_dict)
 
         ##################
         # Add Timeseries #
