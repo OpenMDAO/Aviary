@@ -1,13 +1,14 @@
 
 from aviary.mission.flops_based.phases.groundroll_phase import GroundrollPhase as GroundrollPhaseVelocityIntegrated
 from aviary.mission.gasp_based.phases.twodof_phase import TwoDOFPhase
+from aviary.mission.problem_configurator import ProblemConfiguratorBase
 from aviary.subsystems.propulsion.utils import build_engine_deck
 from aviary.utils.functions import wrapped_convert_units
 from aviary.variable_info.enums import LegacyCode
 from aviary.variable_info.variables import Dynamic, Mission
 
 
-class ProblemBuilderSolved2DOF():
+class SolvedTwoDOFProblemConfigurator(ProblemConfiguratorBase):
     """
     The Solved 2DOF builder is used for detailed take-off and landing.
     """
@@ -53,16 +54,31 @@ class ProblemBuilderSolved2DOF():
         """
         raise RuntimeError("Solved 2DOF requires that a phase_info is specified.")
 
-    def get_default_payload_mass(self, prob):
+    def get_code_origin(self, prob):
+        """
+        Return the legacy of this problem configurator.
 
-        return None
+        Parameters
+        ----------
+        prob : AviaryProblem
+            Problem that owns this builder.
 
-    def get_computed_defaults(self, prob):
-        # Fill in anything missing in the options with computed defaults.
-
+        Returns
+        -------
+        LegacyCode
+            Code origin enum.
+        """
         return LegacyCode.FLOPS
 
     def add_takeoff_systems(self, prob):
+        """
+        Adds takeoff systems to the model in prob.
+
+        Parameters
+        ----------
+        prob : AviaryProblem
+            Problem that owns this builder.
+        """
         pass
 
     def get_phase_builder(self, prob, phase_name, phase_options):

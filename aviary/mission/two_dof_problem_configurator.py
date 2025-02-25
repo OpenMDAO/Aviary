@@ -14,6 +14,7 @@ from aviary.mission.gasp_based.phases.cruise_phase import CruisePhase
 from aviary.mission.gasp_based.phases.accel_phase import AccelPhase
 from aviary.mission.gasp_based.phases.ascent_phase import AscentPhase
 from aviary.mission.gasp_based.phases.descent_phase import DescentPhase
+from aviary.mission.problem_configurator import ProblemConfiguratorBase
 
 from aviary.utils.functions import create_opts2vals, add_opts2vals, wrapped_convert_units
 from aviary.utils.process_input_decks import initialization_guessing
@@ -24,7 +25,7 @@ from aviary.subsystems.propulsion.utils import build_engine_deck
 from aviary.mission.gasp_based.polynomial_fit import PolynomialFit
 
 
-class ProblemBuilder2DOF():
+class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
     """
     A 2DOF specific builder that customizes AviaryProblem() for use with
      two degree of freedom phases.
@@ -128,19 +129,31 @@ class ProblemBuilder2DOF():
 
         return phase_info
 
-    def get_default_payload_mass(self, prob):
+    def get_code_origin(self, prob):
+        """
+        Return the legacy of this problem configurator.
 
-        payload_mass = Aircraft.CrewPayload.PASSENGER_PAYLOAD_MASS
+        Parameters
+        ----------
+        prob : AviaryProblem
+            Problem that owns this builder.
 
-        return payload_mass
-
-    def get_computed_defaults(self, prob):
-        # Fill in anything missing in the options with computed defaults.
-
+        Returns
+        -------
+        LegacyCode
+            Code origin enum.
+        """
         return LegacyCode.GASP
 
     def add_takeoff_systems(self, prob):
-        # Create options to values
+        """
+        Adds takeoff systems to the model in prob.
+
+        Parameters
+        ----------
+        prob : AviaryProblem
+            Problem that owns this builder.
+        """
         OptionsToValues = create_opts2vals(
             [Aircraft.CrewPayload.NUM_PASSENGERS,
              Mission.Design.CRUISE_ALTITUDE, ])
