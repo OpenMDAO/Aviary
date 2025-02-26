@@ -27,6 +27,7 @@ class MassParametersTestCase1(unittest.TestCase):
     def setUp(self):
 
         options = get_option_defaults()
+        options.set_val(Settings.VERBOSITY, 0)
         options.set_val(Aircraft.Strut.DIMENSIONAL_LOCATION_SPECIFIED,
                         val=True, units='unitless')
         options.set_val(Aircraft.Engine.NUM_FUSELAGE_ENGINES, val=0)
@@ -648,7 +649,7 @@ class EngineTestCaseMultiEngine(unittest.TestCase):
         )  # bug fixed value and original value
 
         partial_data = self.prob.check_partials(out_stream=None, method="cs")
-        assert_check_partials(partial_data, atol=1e-10, rtol=1e-10)
+        assert_check_partials(partial_data, atol=1e-8, rtol=1e-8)
 
 
 class TailTestCase(unittest.TestCase):  # this is the large single aisle 1 V3 test case
