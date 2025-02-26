@@ -148,7 +148,7 @@ def convert_strings_to_data(string_list, data_type=None):
                         except:
                             err_msg += f'Expected data type is: {data_type}, but the data is {dat}.\n'
                 if len(err_msg) > 0:
-                    raise(err_msg)
+                    raise (err_msg)
             else:
                 # store value as a logical if it is a string that represents True or False
                 if dat.lower() == 'true':
