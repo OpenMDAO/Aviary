@@ -1876,7 +1876,10 @@ class AviaryProblem(om.Problem):
         elif self.mission_method is TWO_DEGREES_OF_FREEDOM:
             if self.analysis_scheme is AnalysisScheme.COLLOCATION:
                 for ii in range(len(phases) - 1):
-                    phase1, phase2 = phases[ii : ii + 2]
+                    # NOTE temporarily needed to prevent conflicts with pre-commit check
+                    # fmt: off
+                    phase1, phase2 = phases[ii: ii + 2]
+                    # fmt: on
                     analytic1 = self.phase_info[phase1]['user_options']['analytic']
                     analytic2 = self.phase_info[phase2]['user_options']['analytic']
 
@@ -3762,34 +3765,17 @@ def _read_sizing_json(aviary_problem, json_filename):
                     meta_data=BaseMetaData,
                 )
             except BaseException:
-                # Print helpful error
+                # Print helpful warning
+                # TODO "FAILURE" implies something more serious, should this be a raised exception?
                 warnings.warn(
-                    "FAILURE: list_num = ",
-                    counter,
-                    "Input String = ",
-                    inputs,
-                    "Attempted to set_value(",
-                    var_name,
-                    ",",
-                    var_values,
-                    ",",
-                    var_units,
-                    ")",
+                    f"FAILURE: list_num = {counter}, Input String = {inputs}, Attempted "
+                    f"to set_value({var_name}, {var_values}, {var_units})",
                 )
         else:
             # Not in the MetaData
             warnings.warn(
-                "Name not found in MetaData: list_num =",
-                counter,
-                "Input String =",
-                inputs,
-                "Attempted set_value(",
-                var_name,
-                ",",
-                var_values,
-                ",",
-                var_units,
-                ")",
+                f"Name not found in MetaData: list_num = {counter}, Input String = "
+                f"{inputs}, Attempted set_value({var_name}, {var_values}, {var_units})"
             )
 
         counter = counter + 1  # increment index tracker
