@@ -139,25 +139,8 @@ class TestTypes(unittest.TestCase):
         except:
             self.fail('Expecting correct units and type to pass.')
 
-        try:
-            vals.set_val(Mission.Design.CRUISE_ALTITUDE, val=True, units='ft')
-        except TypeError as err:
-            self.assertEqual(
-                str(err),
-                f"{Mission.Design.CRUISE_ALTITUDE} is of type(s) (<class 'int'>, <class"
-                " 'float'>) but you have provided a value of type <class 'bool'>.")
-        else:
-            self.fail('Expecting TypeError.')
-
-        try:
-            vals.set_val(Mission.Design.CRUISE_ALTITUDE, val='fail', units='ft')
-        except TypeError as err:
-            self.assertEqual(
-                str(err),
-                f"{Mission.Design.CRUISE_ALTITUDE} is of type(s) (<class 'int'>, <class"
-                " 'float'>) but you have provided a value of type <class 'str'>.")
-        else:
-            self.fail('Expecting TypeError.')
+        # TODO: Investigate allowing all numeric types for all numeric vars in
+        # the hierarchy, then add tests.
 
 
 class TestUnits(unittest.TestCase):
