@@ -982,7 +982,7 @@ class EngineMass(om.ExplicitComponent):
         wing_mass_vec = (dry_wt_eng + eng_instl_wt + pod_wt + prop_wt) * num_engines
         for i in range(num_engine_type):
             span_frac_factor_sum[i] = sum(span_frac_factor[idx : idx + num_engines[i]])
-            wing_mass_deriv[idx : idx + num_engines[i]] = wing_mass_vec[i]
+            wing_mass_deriv[idx: idx + num_engines[i]] = wing_mass_vec[i]
             idx = idx + num_engines[i]
 
         J["wing_mounted_mass", Aircraft.Engine.WING_LOCATIONS] = (

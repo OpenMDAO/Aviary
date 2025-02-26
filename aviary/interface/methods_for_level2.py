@@ -1876,10 +1876,7 @@ class AviaryProblem(om.Problem):
         elif self.mission_method is TWO_DEGREES_OF_FREEDOM:
             if self.analysis_scheme is AnalysisScheme.COLLOCATION:
                 for ii in range(len(phases) - 1):
-                    # NOTE temporarily needed to prevent conflicts with pre-commit check
-                    # fmt: off
                     phase1, phase2 = phases[ii: ii + 2]
-                    # fmt: on
                     analytic1 = self.phase_info[phase1]['user_options']['analytic']
                     analytic2 = self.phase_info[phase2]['user_options']['analytic']
 
