@@ -76,6 +76,72 @@ class ElectricCruiseODETestCase(unittest.TestCase):
     def setUp(self):
         self.prob = om.Problem()
 
+        aviary_options = get_option_defaults()
+        aviary_options.set_val(Aircraft.Engine.GLOBAL_THROTTLE, True)
+        aviary_options.set_val(
+            Aircraft.Engine.DATA_FILE,
+            'mission/gasp_based/ode/test/test_data/turbofan_23k_electrified.deck',
+        )
+        default_mission_subsystems = get_default_mission_subsystems(
+            'GASP', build_engine_deck(aviary_options)
+        )
+
+        self.prob.model = E_BreguetCruiseODESolution(
+            num_nodes=2,
+            aviary_options=aviary_options,
+            core_subsystems=default_mission_subsystems,
+        )
+
+        self.prob.model.set_input_defaults(
+            Dynamic.Atmosphere.MACH, np.array([0, 0]), units="unitless"
+        )
+
+    def test_cruise(self):
+        # test partial derivatives
+        self.prob.setup(check=False, force_alloc_complex=True)
+
+        self.prob.set_val(Dynamic.Atmosphere.MACH, [0.7, 0.7], units="unitless")
+        self.prob.set_val("interference_independent_of_shielded_area", 1.89927266)
+        self.prob.set_val("drag_loss_due_to_shielded_wing_area", 68.02065834)
+
+        set_params_for_unit_tests(self.prob)
+
+        self.prob.run_model()
+
+        tol = tol = 1e-6
+        assert_near_equal(
+            self.prob[Dynamic.Mission.VELOCITY_RATE], np.array([1.0, 1.0]), tol
+        )
+        assert_near_equal(
+            self.prob[Dynamic.Mission.DISTANCE], np.array([0.0, 66.66771412]), tol
+        )
+        assert_near_equal(self.prob["time"], np.array([0, 597.78110206]), tol)
+        assert_near_equal(
+            self.prob[Dynamic.Mission.SPECIFIC_ENERGY_RATE_EXCESS],
+            np.array([3.439203, 4.440962]),
+            tol,
+        )
+        assert_near_equal(
+            self.prob[Dynamic.Mission.ALTITUDE_RATE_MAX],
+            np.array([-17.622456, -16.62070]),
+            tol,
+        )
+        assert_near_equal(
+            self.prob[Dynamic.Vehicle.Propulsion.ELECTRIC_POWER_IN_TOTAL],
+            np.array([4.67455501, 4.33784647]),
+            tol,
+        )
+
+        partial_data = self.prob.check_partials(
+            out_stream=None, method="cs", excludes=["*USatm*", "*params*", "*aero*"]
+        )
+        assert_check_partials(partial_data, atol=1e-8, rtol=1e-8)
+
+
+class ElectricCruiseODETestCase2(unittest.TestCase):
+    def setUp(self):
+        self.prob = om.Problem()
+
         # add electrical motor
         motor_model = MotorBuilder()
         options = get_option_defaults()
