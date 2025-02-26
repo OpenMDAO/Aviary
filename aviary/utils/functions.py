@@ -128,46 +128,35 @@ def convert_strings_to_data(string_list, data_type=None):
                     value_list[ii] = dat
             except Exception as e:
                 print('Exception', e)
-        else:
+        else:  # only when reading from .csv file
+            if not isinstance(data_type, tuple):
+                data_type = (data_type, )
             err_msg = ''
-            if isinstance(data_type, tuple):
-                for dtype in data_type:
-                    if dtype is np.ndarray:  # It's always coupled with int or float
-                        pass
-                    elif dtype is Path:  # It's always coupled with str
-                        pass
-                    elif dtype is GASPEngineType:  # This case is not treated
-                        pass
-                    elif dtype is FlapType:  # This case is not treated
-                        pass
-                    else:
-                        try:
-                            value_list[ii] = dtype(dat.strip())
-                            err_msg = ''
-                            break
-                        except:
-                            err_msg += f'Expected data type: {data_type}, but the data is {dat}.\n'
-            else:
-                # store value as a logical if it is a string that represents True or False
-                if dat.lower() == 'true':
-                    value_list[ii] = True
-                elif dat.lower() == 'false':
-                    value_list[ii] = False
-                elif data_type is float:
-                    try:
-                        value_list[ii] = float(dat)
-                    except:
-                        err_msg += f'Expected data type: {data_type}, but the data is {dat}.\n'
-                elif data_type is int:
-                    try:
-                        value_list[ii] = int(dat)
-                    except:
-                        err_msg += f'Expected data type: {data_type}, but the data is {dat}.\n'
+
+            for dtype in data_type:
+                if dtype is np.ndarray:  # It's always coupled with int or float
+                    pass
+                elif dtype is Path:  # In .csv file, it is always a string
+                    pass
+                elif dtype is GASPEngineType:  # This case is not treated
+                    pass
+                elif dtype is FlapType:  # This case is not treated
+                    pass
                 else:
-                    # if the value isn't a number or a logial, store it as a string
-                    value_list[ii] = dat
+                    try:
+                        if dat.lower() == 'true':
+                            value_list[ii] = True
+                        elif dat.lower() == 'false':
+                            value_list[ii] = False
+                        else:
+                            value_list[ii] = dtype(dat.strip())
+                        err_msg = ''
+                        break
+                    except:
+                        err_msg += f'Expected data type: {data_type}, but the data is {dat}.\n'
+
             if len(err_msg) > 0:
-                raise (err_msg)
+                print(err_msg)
 
     return value_list
 
