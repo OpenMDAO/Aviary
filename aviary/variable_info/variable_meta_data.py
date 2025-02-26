@@ -6808,7 +6808,7 @@ add_meta_data(
     units='ft',
     option=True,
     default_value=25000.0,
-    types=(int, float),
+    types=float,
     desc='design mission cruise altitude',
 )
 
