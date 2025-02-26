@@ -146,9 +146,7 @@ def convert_strings_to_data(string_list, data_type=None):
                             err_msg = ''
                             break
                         except:
-                            err_msg += f'Expected data type is: {data_type}, but the data is {dat}.\n'
-                if len(err_msg) > 0:
-                    raise (err_msg)
+                            err_msg += f'Expected data type: {data_type}, but the data is {dat}.\n'
             else:
                 # store value as a logical if it is a string that represents True or False
                 if dat.lower() == 'true':
@@ -156,12 +154,20 @@ def convert_strings_to_data(string_list, data_type=None):
                 elif dat.lower() == 'false':
                     value_list[ii] = False
                 elif data_type is float:
-                    value_list[ii] = float(dat)
+                    try:
+                        value_list[ii] = float(dat)
+                    except:
+                        err_msg += f'Expected data type: {data_type}, but the data is {dat}.\n'
                 elif data_type is int:
-                    value_list[ii] = int(dat)
+                    try:
+                        value_list[ii] = int(dat)
+                    except:
+                        err_msg += f'Expected data type: {data_type}, but the data is {dat}.\n'
                 else:
                     # if the value isn't a number or a logial, store it as a string
                     value_list[ii] = dat
+            if len(err_msg) > 0:
+                raise (err_msg)
 
     return value_list
 
