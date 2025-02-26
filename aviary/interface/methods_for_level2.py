@@ -206,7 +206,7 @@ class AviaryProblem(om.Problem):
 
         self.builder.initial_guesses(self)
         # This function sets all the following defaults if they were not already set
-        # self.engine_builders, self.mass_method, self.pre_mission_info, self_post_mission_info
+        # self.engine_builders, self.pre_mission_info, self_post_mission_info
         # self.require_range_residual, self.target_range
         # other specific self.*** are defined in here as well that are specific to each builder
 
