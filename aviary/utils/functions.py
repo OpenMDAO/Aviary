@@ -10,7 +10,9 @@ import numpy as np
 from openmdao.utils.units import convert_units
 
 from aviary.utils.aviary_values import AviaryValues, get_items
-from aviary.variable_info.enums import ProblemType, EquationsOfMotion, LegacyCode
+from aviary.variable_info.enums import (
+    FlapType, GASPEngineType, ProblemType, EquationsOfMotion, LegacyCode
+)
 from aviary.variable_info.functions import add_aviary_output, add_aviary_input
 from aviary.variable_info.variable_meta_data import _MetaData
 
@@ -100,7 +102,7 @@ def set_aviary_input_defaults(model, inputs, aviary_inputs: AviaryValues,
         model.set_input_defaults(key, val=val, units=units)
 
 
-def convert_strings_to_data(string_list):
+def convert_strings_to_data(string_list, data_type=None):
     """
     convert_strings_to_data will convert a list of strings to usable data.
     Strings that can't be converted to numbers will attempt to store as a logical,
@@ -109,22 +111,58 @@ def convert_strings_to_data(string_list):
     value_list = [0]*len(string_list)
     for ii, dat in enumerate(string_list):
         dat = dat.strip('[]')
-        try:
-            # if the value is a number store it as a float or an int as appropriate
-            # BUG this returns floats that can be converted to int (e.g. 1.0) as an int (1), even if the variable requires floats
-            value_list[ii] = int(float(dat)) if float(
-                dat).is_integer() else float(dat)
-        except ValueError:
-            # store value as a logical if it is a string that represents True or False
-            if dat.lower() == 'true':
-                value_list[ii] = True
-            elif dat.lower() == 'false':
-                value_list[ii] = False
+        if data_type is None:
+            try:
+                # if the value is a number store it as a float or an int as appropriate
+                # BUG this returns floats that can be converted to int (e.g. 1.0) as an int (1), even if the variable requires floats
+                value_list[ii] = int(float(dat)) if float(
+                    dat).is_integer() else float(dat)
+            except ValueError:
+                # store value as a logical if it is a string that represents True or False
+                if dat.lower() == 'true':
+                    value_list[ii] = True
+                elif dat.lower() == 'false':
+                    value_list[ii] = False
+                else:
+                    # if the value isn't a number or a logial, store it as a string
+                    value_list[ii] = dat
+            except Exception as e:
+                print('Exception', e)
+        else:
+            err_msg = ''
+            if isinstance(data_type, tuple):
+                for dtype in data_type:
+                    if dtype is np.ndarray:  # It's always coupled with int or float
+                        pass
+                    elif dtype is Path:  # It's always coupled with str
+                        pass
+                    elif dtype is GASPEngineType:  # This case is not treated
+                        pass
+                    elif dtype is FlapType:  # This case is not treated
+                        pass
+                    else:
+                        try:
+                            value_list[ii] = dtype(dat.strip())
+                            err_msg = ''
+                            break
+                        except:
+                            err_msg += f'Expected data type is: {data_type}, but the data is {dat}.\n'
+                if len(err_msg) > 0:
+                    raise(err_msg)
             else:
-                # if the value isn't a number or a logial, store it as a string
-                value_list[ii] = dat
-        except Exception as e:
-            print('Exception', e)
+                # store value as a logical if it is a string that represents True or False
+                if dat.lower() == 'true':
+                    value_list[ii] = True
+                elif dat.lower() == 'false':
+                    value_list[ii] = False
+                elif data_type is float:
+                    value_list[ii] = float(dat)
+                elif data_type is int:
+                    value_list[ii] = int(dat)
+                else:
+                    # if the value isn't a number or a logial, store it as a string
+                    value_list[ii] = dat
+
     return value_list
 
 
