@@ -14,32 +14,32 @@ class BasicFlapsCalculations(om.ExplicitComponent):
 
         # inputs
 
-        add_aviary_input(self, Aircraft.Wing.SWEEP)
-        add_aviary_input(self, Aircraft.Wing.ASPECT_RATIO)
-        add_aviary_input(self, Aircraft.Wing.FLAP_CHORD_RATIO)
-        add_aviary_input(self, Aircraft.Wing.TAPER_RATIO)
-        add_aviary_input(self, Aircraft.Wing.CENTER_CHORD)
-        add_aviary_input(self, Aircraft.Fuselage.AVG_DIAMETER)
-        add_aviary_input(self, Aircraft.Wing.THICKNESS_TO_CHORD_ROOT)
-        add_aviary_input(self, Aircraft.Wing.SPAN)
-        add_aviary_input(self, Aircraft.Wing.SLAT_CHORD_RATIO)
+        add_aviary_input(self, Aircraft.Wing.SWEEP, units='deg')
+        add_aviary_input(self, Aircraft.Wing.ASPECT_RATIO, units='unitless')
+        add_aviary_input(self, Aircraft.Wing.FLAP_CHORD_RATIO, units='unitless')
+        add_aviary_input(self, Aircraft.Wing.TAPER_RATIO, units='unitless')
+        add_aviary_input(self, Aircraft.Wing.CENTER_CHORD, units='ft')
+        add_aviary_input(self, Aircraft.Fuselage.AVG_DIAMETER, units='ft')
+        add_aviary_input(self, Aircraft.Wing.THICKNESS_TO_CHORD_ROOT, units='unitless')
+        add_aviary_input(self, Aircraft.Wing.SPAN, units='ft')
+        add_aviary_input(self, Aircraft.Wing.SLAT_CHORD_RATIO, units='unitless')
         self.add_input(
             "slat_defl",
             val=10.0,
             units="deg",
             desc="DELLED: leading edge slat deflection",
         )
-        add_aviary_input(self, Aircraft.Wing.OPTIMUM_SLAT_DEFLECTION)
+        add_aviary_input(self, Aircraft.Wing.OPTIMUM_SLAT_DEFLECTION, units='deg')
         self.add_input(
             "flap_defl",
             val=10.0,
             units="deg",
             desc="DFLPTO | DFLPLD: takeoff or landing flap deflection",
         )
-        add_aviary_input(self, Aircraft.Wing.OPTIMUM_FLAP_DEFLECTION)
-        add_aviary_input(self, Aircraft.Wing.ROOT_CHORD)
-        add_aviary_input(self, Aircraft.Fuselage.LENGTH)
-        add_aviary_input(self, Aircraft.Wing.LEADING_EDGE_SWEEP)
+        add_aviary_input(self, Aircraft.Wing.OPTIMUM_FLAP_DEFLECTION, units='deg')
+        add_aviary_input(self, Aircraft.Wing.ROOT_CHORD, units='ft')
+        add_aviary_input(self, Aircraft.Fuselage.LENGTH, units='ft')
+        add_aviary_input(self, Aircraft.Wing.LEADING_EDGE_SWEEP, units='rad')
 
         # outputs
 
@@ -79,7 +79,7 @@ class BasicFlapsCalculations(om.ExplicitComponent):
             units='unitless',
             desc="RDELF: ratio of trailing edge flap deflection to optimum deflection angle",
         )
-        add_aviary_output(self, Aircraft.Wing.SLAT_SPAN_RATIO)
+        add_aviary_output(self, Aircraft.Wing.SLAT_SPAN_RATIO, units='unitless')
         self.add_output(
             "chord_to_body_ratio",
             val=0.12679,
