@@ -32,16 +32,22 @@ class MuxComponent(om.ExplicitComponent):
         # Wing (Always 1)
         add_aviary_input(self, Aircraft.Wing.WETTED_AREA, units='ft**2')
         add_aviary_input(self, Aircraft.Wing.FINENESS, units='unitless')
-        add_aviary_input(self, Aircraft.Wing.CHARACTERISTIC_LENGTH, 1.0, units='ft')
-        add_aviary_input(self, Aircraft.Wing.LAMINAR_FLOW_UPPER, units='unitless')
-        add_aviary_input(self, Aircraft.Wing.LAMINAR_FLOW_LOWER, units='unitless')
+        add_aviary_input(self, Aircraft.Wing.CHARACTERISTIC_LENGTH,
+                         1.0, units='ft')
+        add_aviary_input(self, Aircraft.Wing.LAMINAR_FLOW_UPPER,
+                         units='unitless')
+        add_aviary_input(self, Aircraft.Wing.LAMINAR_FLOW_LOWER,
+                         units='unitless')
 
         # Horizontal Tail (Always 1)
         add_aviary_input(self, Aircraft.HorizontalTail.WETTED_AREA, units='ft**2')
         add_aviary_input(self, Aircraft.HorizontalTail.FINENESS, units='unitless')
-        add_aviary_input(self, Aircraft.HorizontalTail.CHARACTERISTIC_LENGTH, 1.0, units='ft')
-        add_aviary_input(self, Aircraft.HorizontalTail.LAMINAR_FLOW_UPPER, units='unitless')
-        add_aviary_input(self, Aircraft.HorizontalTail.LAMINAR_FLOW_LOWER, units='unitless')
+        add_aviary_input(self, Aircraft.HorizontalTail.CHARACTERISTIC_LENGTH,
+                         1.0, units='ft')
+        add_aviary_input(self, Aircraft.HorizontalTail.LAMINAR_FLOW_UPPER,
+                         units='unitless')
+        add_aviary_input(self, Aircraft.HorizontalTail.LAMINAR_FLOW_LOWER,
+                         units='unitless')
 
         num = self.options[Aircraft.VerticalTail.NUM_TAILS]
 
@@ -49,9 +55,12 @@ class MuxComponent(om.ExplicitComponent):
         if num > 0:
             add_aviary_input(self, Aircraft.VerticalTail.WETTED_AREA, units='ft**2')
             add_aviary_input(self, Aircraft.VerticalTail.FINENESS, units='unitless')
-            add_aviary_input(self, Aircraft.VerticalTail.CHARACTERISTIC_LENGTH, 1.0, units='ft')
-            add_aviary_input(self, Aircraft.VerticalTail.LAMINAR_FLOW_UPPER, units='unitless')
-            add_aviary_input(self, Aircraft.VerticalTail.LAMINAR_FLOW_LOWER, units='unitless')
+            add_aviary_input(self, Aircraft.VerticalTail.CHARACTERISTIC_LENGTH,
+                             1.0, units='ft')
+            add_aviary_input(self, Aircraft.VerticalTail.LAMINAR_FLOW_UPPER,
+                             units='unitless')
+            add_aviary_input(self, Aircraft.VerticalTail.LAMINAR_FLOW_LOWER,
+                             units='unitless')
             nc += num
 
         # Fuselage

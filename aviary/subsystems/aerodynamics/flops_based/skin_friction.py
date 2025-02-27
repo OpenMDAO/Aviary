@@ -50,7 +50,8 @@ class SkinFriction(om.ImplicitComponent):
 
         # Simulation inputs
         add_aviary_input(self, Dynamic.Atmosphere.TEMPERATURE, shape=nn, units='degR')
-        add_aviary_input(self, Dynamic.Atmosphere.STATIC_PRESSURE, shape=nn, units='lbf/ft**2')
+        add_aviary_input(self, Dynamic.Atmosphere.STATIC_PRESSURE,
+                         shape=nn, units='lbf/ft**2')
         add_aviary_input(self, Dynamic.Atmosphere.MACH, shape=nn, units='unitless')
 
         # Aero subsystem inputs

@@ -28,14 +28,16 @@ class DragPolar(om.ExplicitComponent):
         add_aviary_input(self, Aircraft.Canard.WETTED_AREA, units='ft**2')
         add_aviary_input(self, Aircraft.Fuselage.WETTED_AREA, units='ft**2')
         add_aviary_input(self, Aircraft.HorizontalTail.WETTED_AREA, units='ft**2')
-        add_aviary_input(self, Aircraft.Nacelle.WETTED_AREA, shape=num_engine_type, units='ft**2')
+        add_aviary_input(self, Aircraft.Nacelle.WETTED_AREA,
+                         shape=num_engine_type, units='ft**2')
         add_aviary_input(self, Aircraft.VerticalTail.WETTED_AREA, units='ft**2')
         add_aviary_input(self, Aircraft.Wing.WETTED_AREA, units='ft**2')
 
         add_aviary_input(self, Aircraft.Canard.FINENESS, units='unitless')
         add_aviary_input(self, Aircraft.Fuselage.FINENESS, units='unitless')
         add_aviary_input(self, Aircraft.HorizontalTail.FINENESS, units='unitless')
-        add_aviary_input(self, Aircraft.Nacelle.FINENESS, shape=num_engine_type, units='unitless')
+        add_aviary_input(self, Aircraft.Nacelle.FINENESS,
+                         shape=num_engine_type, units='unitless')
         add_aviary_input(self, Aircraft.VerticalTail.FINENESS, units='unitless')
         add_aviary_input(self, Aircraft.Wing.FINENESS, units='unitless')
 
