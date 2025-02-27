@@ -69,9 +69,12 @@ class MuxComponent(om.ExplicitComponent):
         if num > 0:
             add_aviary_input(self, Aircraft.Fuselage.WETTED_AREA, units='ft**2')
             add_aviary_input(self, Aircraft.Fuselage.FINENESS, units='unitless')
-            add_aviary_input(self, Aircraft.Fuselage.CHARACTERISTIC_LENGTH, 1.0, units='ft')
-            add_aviary_input(self, Aircraft.Fuselage.LAMINAR_FLOW_UPPER, units='unitless')
-            add_aviary_input(self, Aircraft.Fuselage.LAMINAR_FLOW_LOWER, units='unitless')
+            add_aviary_input(self, Aircraft.Fuselage.CHARACTERISTIC_LENGTH,
+                             1.0, units='ft')
+            add_aviary_input(self, Aircraft.Fuselage.LAMINAR_FLOW_UPPER,
+                             units='unitless')
+            add_aviary_input(self, Aircraft.Fuselage.LAMINAR_FLOW_LOWER,
+                             units='unitless')
             nc += num
 
         num_engines = self.options[Aircraft.Engine.NUM_ENGINES]
@@ -80,15 +83,15 @@ class MuxComponent(om.ExplicitComponent):
 
         if self.num_nacelles > 0:
             add_aviary_input(self, Aircraft.Nacelle.WETTED_AREA,
-                             np.zeros(num_engine_models))
+                             np.zeros(num_engine_models), units='ft**2')
             add_aviary_input(self, Aircraft.Nacelle.FINENESS,
-                             np.zeros(num_engine_models))
+                             np.zeros(num_engine_models), units='unitless')
             add_aviary_input(self, Aircraft.Nacelle.CHARACTERISTIC_LENGTH,
-                             np.zeros(num_engine_models))
+                             np.zeros(num_engine_models), units='ft')
             add_aviary_input(self, Aircraft.Nacelle.LAMINAR_FLOW_UPPER,
-                             np.zeros(num_engine_models))
+                             np.zeros(num_engine_models), units='unitless')
             add_aviary_input(self, Aircraft.Nacelle.LAMINAR_FLOW_LOWER,
-                             np.zeros(num_engine_models))
+                             np.zeros(num_engine_models), units='unitless')
             nc += self.num_nacelles
 
         self.add_output(
