@@ -525,9 +525,10 @@ def glue_actions(cmd, curr_glued=None, glue_default=False, glue_choices=False, m
             glue_variable(action.dest, md_code=md_code)
             curr_glued.append(action.dest)
         if glue_default:
-            if str(action.default) not in curr_glued:
-                glue_variable(str(action.default), md_code=True)
-                curr_glued.append(str(action.default))
+            action_default = f'{action.dest}_default'
+            if action_default not in curr_glued:
+                glue_variable(action_default, str(action.default), md_code=True)
+                curr_glued.append(action_default)
         if glue_choices:
             if action.choices is not None:
                 for choice in action.choices:
