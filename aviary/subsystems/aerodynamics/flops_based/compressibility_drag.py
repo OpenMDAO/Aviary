@@ -20,22 +20,22 @@ class CompressibilityDrag(om.ExplicitComponent):
         nn = self.options["num_nodes"]
 
         # Simulation inputs
-        add_aviary_input(self, Dynamic.Atmosphere.MACH, shape=nn)
+        add_aviary_input(self, Dynamic.Atmosphere.MACH, shape=nn, units='unitless')
 
         # Aero design inputs
-        add_aviary_input(self, Mission.Design.MACH)
+        add_aviary_input(self, Mission.Design.MACH, units='unitless')
 
         # Aircraft design inputs
-        add_aviary_input(self, Aircraft.Design.BASE_AREA)
-        add_aviary_input(self, Aircraft.Wing.AREA)
-        add_aviary_input(self, Aircraft.Wing.ASPECT_RATIO)
-        add_aviary_input(self, Aircraft.Wing.MAX_CAMBER_AT_70_SEMISPAN)
-        add_aviary_input(self, Aircraft.Wing.SWEEP)
-        add_aviary_input(self, Aircraft.Wing.TAPER_RATIO)
-        add_aviary_input(self, Aircraft.Wing.THICKNESS_TO_CHORD)
-        add_aviary_input(self, Aircraft.Fuselage.CROSS_SECTION)
-        add_aviary_input(self, Aircraft.Fuselage.DIAMETER_TO_WING_SPAN)
-        add_aviary_input(self, Aircraft.Fuselage.LENGTH_TO_DIAMETER)
+        add_aviary_input(self, Aircraft.Design.BASE_AREA, units='ft**2')
+        add_aviary_input(self, Aircraft.Wing.AREA, units='ft**2')
+        add_aviary_input(self, Aircraft.Wing.ASPECT_RATIO, units='unitless')
+        add_aviary_input(self, Aircraft.Wing.MAX_CAMBER_AT_70_SEMISPAN, units='unitless')
+        add_aviary_input(self, Aircraft.Wing.SWEEP, units='deg')
+        add_aviary_input(self, Aircraft.Wing.TAPER_RATIO, units='unitless')
+        add_aviary_input(self, Aircraft.Wing.THICKNESS_TO_CHORD, units='unitless')
+        add_aviary_input(self, Aircraft.Fuselage.CROSS_SECTION, units='ft**2')
+        add_aviary_input(self, Aircraft.Fuselage.DIAMETER_TO_WING_SPAN, units='unitless')
+        add_aviary_input(self, Aircraft.Fuselage.LENGTH_TO_DIAMETER, units='unitless')
 
         # Outputs
         self.add_output('compress_drag_coeff', shape=(nn, ), units='unitless',
