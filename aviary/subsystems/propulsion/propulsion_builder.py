@@ -110,14 +110,20 @@ class CorePropulsionBuilder(PropulsionBuilderBase):
 
         self.engine_models = engine_models
 
-    def build_pre_mission(self, aviary_inputs):
-        return PropulsionPreMission(aviary_options=aviary_inputs,
-                                    engine_models=self.engine_models)
+    def build_pre_mission(self, aviary_inputs, **kwargs):
+        return PropulsionPreMission(
+            aviary_options=aviary_inputs,
+            engine_models=self.engine_models,
+            engine_options=kwargs
+        )
 
     def build_mission(self, num_nodes, aviary_inputs, **kwargs):
-        return PropulsionMission(num_nodes=num_nodes,
-                                 aviary_options=aviary_inputs,
-                                 engine_models=self.engine_models)
+        return PropulsionMission(
+            num_nodes=num_nodes,
+            aviary_options=aviary_inputs,
+            engine_models=self.engine_models,
+            engine_options=kwargs
+        )
 
     # NOTE untested!
     def get_states(self):
