@@ -30,14 +30,14 @@ class Design(om.ExplicitComponent):
 
     def setup(self):
         # Aircraft design inputs
-        add_aviary_input(self, Aircraft.Wing.ASPECT_RATIO)
-        add_aviary_input(self, Aircraft.Wing.MAX_CAMBER_AT_70_SEMISPAN)
-        add_aviary_input(self, Aircraft.Wing.SWEEP)
-        add_aviary_input(self, Aircraft.Wing.THICKNESS_TO_CHORD)
+        add_aviary_input(self, Aircraft.Wing.ASPECT_RATIO, units='unitless')
+        add_aviary_input(self, Aircraft.Wing.MAX_CAMBER_AT_70_SEMISPAN, units='unitless')
+        add_aviary_input(self, Aircraft.Wing.SWEEP, units='deg')
+        add_aviary_input(self, Aircraft.Wing.THICKNESS_TO_CHORD, units='unitless')
 
         # Declare outputs
-        add_aviary_output(self, Mission.Design.MACH)
-        add_aviary_output(self, Mission.Design.LIFT_COEFFICIENT)
+        add_aviary_output(self, Mission.Design.MACH, units='unitless')
+        add_aviary_output(self, Mission.Design.LIFT_COEFFICIENT, units='unitless')
 
     def setup_partials(self):
         self.declare_partials(of='*', wrt='*')
