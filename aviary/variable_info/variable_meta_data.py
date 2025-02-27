@@ -5062,7 +5062,6 @@ add_meta_data(
     'conventional technology wing (Default); 2.0 represents advanced '
     'technology wing.',
     default_value=1.0,
-    types=float,
     option=True,
 )
 
@@ -6859,7 +6858,6 @@ add_meta_data(
     units='ft',
     option=True,
     default_value=25000.0,
-    types=(int, float),
     desc='design mission cruise altitude',
 )
 
