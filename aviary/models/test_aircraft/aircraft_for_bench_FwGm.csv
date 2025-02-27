@@ -204,7 +204,7 @@ aircraft:fuselage:passenger_compartment_length,85.5,ft
 aircraft:fuselage:planform_area,1578.24,ft**2
 aircraft:horizontal_tail:mass_scaler,1.2,unitless
 aircraft:hydraulics:mass_scaler,1.0,unitless
-aircraft:hydraulics:system_pressure,3000.0,psi
+aircraft:hydraulics:system_pressure,3000.0,lbf/ft**2
 aircraft:instruments:mass_scaler,1.25,unitless
 aircraft:landing_gear:carrier_based,False,unitless
 aircraft:landing_gear:main_gear_mass_scaler,1.1,unitless
