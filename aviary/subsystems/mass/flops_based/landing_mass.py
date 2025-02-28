@@ -11,10 +11,10 @@ class LandingTakeoffMassRatio(om.ExplicitComponent):
     '''
 
     def setup(self):
-        add_aviary_input(self, Mission.Summary.CRUISE_MACH)
-        add_aviary_input(self, Mission.Design.RANGE)
+        add_aviary_input(self, Mission.Summary.CRUISE_MACH, units='unitless')
+        add_aviary_input(self, Mission.Design.RANGE, units='NM')
 
-        add_aviary_output(self, Aircraft.Design.LANDING_TO_TAKEOFF_MASS_RATIO)
+        add_aviary_output(self, Aircraft.Design.LANDING_TO_TAKEOFF_MASS_RATIO, units='unitless')
 
     def setup_partials(self):
         self.declare_partials('*', '*')

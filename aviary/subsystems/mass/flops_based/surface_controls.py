@@ -15,13 +15,13 @@ class SurfaceControlMass(om.ExplicitComponent):
         add_aviary_option(self, Mission.Constraints.MAX_MACH)
 
     def setup(self):
-        add_aviary_input(self, Aircraft.Wing.SURFACE_CONTROL_MASS_SCALER)
-        add_aviary_input(self, Mission.Design.GROSS_MASS)
-        add_aviary_input(self, Aircraft.Wing.CONTROL_SURFACE_AREA_RATIO)
-        add_aviary_input(self, Aircraft.Wing.AREA)
+        add_aviary_input(self, Aircraft.Wing.SURFACE_CONTROL_MASS_SCALER, units='unitless')
+        add_aviary_input(self, Mission.Design.GROSS_MASS, units='lbm')
+        add_aviary_input(self, Aircraft.Wing.CONTROL_SURFACE_AREA_RATIO, units='unitless')
+        add_aviary_input(self, Aircraft.Wing.AREA, units='ft**2')
 
-        add_aviary_output(self, Aircraft.Wing.SURFACE_CONTROL_MASS)
-        add_aviary_output(self, Aircraft.Wing.CONTROL_SURFACE_AREA, val=2)
+        add_aviary_output(self, Aircraft.Wing.SURFACE_CONTROL_MASS, units='lbm')
+        add_aviary_output(self, Aircraft.Wing.CONTROL_SURFACE_AREA, units='ft**2')
 
         self.declare_partials(Aircraft.Wing.SURFACE_CONTROL_MASS, '*')
         self.declare_partials(Aircraft.Wing.CONTROL_SURFACE_AREA, [
@@ -89,15 +89,15 @@ class AltSurfaceControlMass(om.ExplicitComponent):
     '''
 
     def setup(self):
-        add_aviary_input(self, Aircraft.Wing.SURFACE_CONTROL_MASS_SCALER, val=1.0)
-        add_aviary_input(self, Aircraft.Wing.AREA, val=0.0)
-        add_aviary_input(self, Aircraft.Wing.CONTROL_SURFACE_AREA_RATIO, val=0.0)
-        add_aviary_input(self, Aircraft.HorizontalTail.WETTED_AREA, val=0.0)
-        add_aviary_input(self, Aircraft.HorizontalTail.THICKNESS_TO_CHORD, val=0.0)
-        add_aviary_input(self, Aircraft.VerticalTail.AREA, val=0.0)
+        add_aviary_input(self, Aircraft.Wing.SURFACE_CONTROL_MASS_SCALER, units='unitless')
+        add_aviary_input(self, Aircraft.Wing.AREA, units='ft**2')
+        add_aviary_input(self, Aircraft.Wing.CONTROL_SURFACE_AREA_RATIO, units='unitless')
+        add_aviary_input(self, Aircraft.HorizontalTail.WETTED_AREA, units='ft**2')
+        add_aviary_input(self, Aircraft.HorizontalTail.THICKNESS_TO_CHORD, units='unitless')
+        add_aviary_input(self, Aircraft.VerticalTail.AREA, units='ft**2')
 
-        add_aviary_output(self, Aircraft.Wing.CONTROL_SURFACE_AREA, val=2)
-        add_aviary_output(self, Aircraft.Wing.SURFACE_CONTROL_MASS, val=0.0)
+        add_aviary_output(self, Aircraft.Wing.CONTROL_SURFACE_AREA, units='ft**2')
+        add_aviary_output(self, Aircraft.Wing.SURFACE_CONTROL_MASS, units='lbm')
 
         self.declare_partials('*', '*')
 
