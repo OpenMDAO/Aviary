@@ -3,7 +3,7 @@ import openmdao.api as om
 from aviary.subsystems.atmosphere.atmosphere import Atmosphere
 
 from aviary.constants import RHO_SEA_LEVEL_ENGLISH as rho_sl
-from aviary.mission.gasp_based.ode.base_ode import BaseODE
+from aviary.mission.gasp_based.ode.two_dof_ode import TwoDOFODE
 from aviary.mission.gasp_based.ode.params import ParamPort
 from aviary.mission.gasp_based.ode.unsteady_solved.gamma_comp import GammaComp
 from aviary.mission.gasp_based.ode.unsteady_solved.unsteady_solved_flight_conditions import \
@@ -16,7 +16,7 @@ from aviary.subsystems.propulsion.propulsion_builder import PropulsionBuilderBas
 from aviary.variable_info.variable_meta_data import _MetaData
 
 
-class UnsteadySolvedODE(BaseODE):
+class UnsteadySolvedODE(TwoDOFODE):
     """
     This 2D aircraft ODE provides the rate of change of time per unit range covered.
 
@@ -173,7 +173,8 @@ class UnsteadySolvedODE(BaseODE):
                     mission_inputs = subsystem.mission_inputs(**kwargs)
                     if subsystem.code_origin is LegacyCode.FLOPS and 'angle_of_attack' in mission_inputs:
                         mission_inputs.remove('angle_of_attack')
-                        mission_inputs.append(('angle_of_attack', 'alpha'))
+                        mission_inputs.append(
+                            ('angle_of_attack', Dynamic.Vehicle.ANGLE_OF_ATTACK))
                     control_iter_group.add_subsystem(subsystem.name,
                                                      system,
                                                      promotes_inputs=mission_inputs,
@@ -191,6 +192,8 @@ class UnsteadySolvedODE(BaseODE):
                                            **kwargs),
                                        promotes_outputs=subsystem.mission_outputs(**kwargs))
 
+        self.add_external_subsystems()
+
         eom_comp = UnsteadySolvedEOM(num_nodes=nn, ground_roll=ground_roll)
 
         input_list = [
@@ -204,15 +207,17 @@ class UnsteadySolvedODE(BaseODE):
 
         thrust_alpha_bal = om.BalanceComp()
         if not self.options['ground_roll']:
-            thrust_alpha_bal.add_balance("alpha",
-                                         units="rad",
-                                         val=np.zeros(nn),
-                                         lhs_name="dgam_dt_approx",
-                                         rhs_name="dgam_dt",
-                                         eq_units="rad/s",
-                                         lower=-np.pi/12,
-                                         upper=np.pi/12,
-                                         normalize=False)
+            thrust_alpha_bal.add_balance(
+                Dynamic.Vehicle.ANGLE_OF_ATTACK,
+                units="rad",
+                val=np.zeros(nn),
+                lhs_name="dgam_dt_approx",
+                rhs_name="dgam_dt",
+                eq_units="rad/s",
+                lower=-np.pi / 12,
+                upper=np.pi / 12,
+                normalize=False,
+            )
 
         thrust_alpha_bal.add_balance("thrust_req",
                                      units="N",

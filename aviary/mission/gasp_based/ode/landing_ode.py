@@ -2,7 +2,7 @@ import numpy as np
 
 from aviary.subsystems.atmosphere.atmosphere import Atmosphere
 
-from aviary.mission.gasp_based.ode.base_ode import BaseODE
+from aviary.mission.gasp_based.ode.two_dof_ode import TwoDOFODE
 from aviary.mission.gasp_based.ode.params import ParamPort
 from aviary.mission.gasp_based.ode.landing_eom import (
     GlideConditionComponent,
@@ -15,7 +15,7 @@ from aviary.variable_info.enums import SpeedType
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 
 
-class LandingSegment(BaseODE):
+class LandingSegment(TwoDOFODE):
     """
     Group for a 2-degree of freedom landing ODE.
     """
@@ -109,6 +109,8 @@ class LandingSegment(BaseODE):
                 propulsion_mission.set_input_defaults(
                     Dynamic.Vehicle.Propulsion.THROTTLE, 0.0)
 
+        self.add_external_subsystems()
+
         self.add_subsystem(
             "glide",
             GlideConditionComponent(),
@@ -171,7 +173,7 @@ class LandingSegment(BaseODE):
                 ("airport_alt", Mission.Landing.AIRPORT_ALTITUDE),
                 (Dynamic.Atmosphere.MACH, "mach_td"),
                 (Dynamic.Atmosphere.DYNAMIC_PRESSURE, "q_td"),
-                ("alpha", Aircraft.Wing.INCIDENCE),
+                (Dynamic.Vehicle.ANGLE_OF_ATTACK, Aircraft.Wing.INCIDENCE),
                 ("flap_defl", Aircraft.Wing.FLAP_DEFLECTION_LANDING),
                 ("CL_max_flaps", Mission.Landing.LIFT_COEFFICIENT_MAX),
                 (

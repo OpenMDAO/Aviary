@@ -18,7 +18,7 @@ from aviary.subsystems.mass.gasp_based.fixed import (ControlMass,
 from aviary.utils.aviary_values import AviaryValues, get_keys
 from aviary.variable_info.functions import setup_model_options, extract_options
 from aviary.variable_info.options import get_option_defaults
-from aviary.variable_info.variables import Aircraft, Mission
+from aviary.variable_info.variables import Aircraft, Mission, Settings
 
 
 class MassParametersTestCase1(unittest.TestCase):
@@ -53,6 +53,8 @@ class MassParametersTestCase1(unittest.TestCase):
         self.prob.model.set_input_defaults(
             "max_mach", val=0.9, units="unitless"
         )  # bug fixed value
+        self.prob.model.set_input_defaults(
+            Aircraft.LandingGear.MAIN_GEAR_LOCATION, val=0.15)
 
         setup_model_options(self.prob, options)
 
@@ -306,14 +308,19 @@ class PayloadMassTestCase(unittest.TestCase):
 
         options = get_option_defaults()
         options.set_val(Aircraft.CrewPayload.NUM_PASSENGERS, val=180, units='unitless')
+        options.set_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS,
+                        val=180, units='unitless')
         options.set_val(Aircraft.CrewPayload.PASSENGER_MASS_WITH_BAGS,
                         val=200, units="lbm")  # bug fixed value and original value
 
         self.prob = om.Problem()
         self.prob.model.add_subsystem("payload", PayloadMass(), promotes=["*"])
         self.prob.model.set_input_defaults(
-            Aircraft.CrewPayload.CARGO_MASS, val=10040, units="lbm"
-        )  # bug fixed value and original value
+            Aircraft.CrewPayload.CARGO_MASS, val=0, units="lbm"
+        )
+        self.prob.model.set_input_defaults(
+            Aircraft.CrewPayload.Design.MAX_CARGO_MASS, val=10040, units="lbm"
+        )
 
         setup_model_options(self.prob, options)
 
@@ -888,7 +895,7 @@ class GearTestCase1(unittest.TestCase):  # this is the large single aisle 1 V3 t
             Aircraft.Nacelle.AVG_DIAMETER, val=7.35, units="ft"
         )  # bug fixed value and original value
         self.prob.model.set_input_defaults(
-            Aircraft.Wing.MOUNTING_TYPE, val=0, units="unitless")
+            Aircraft.Wing.VERTICAL_MOUNT_LOCATION, val=0, units="unitless")
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
@@ -927,7 +934,7 @@ class GearTestCase2(unittest.TestCase):
             Aircraft.LandingGear.MAIN_GEAR_MASS_COEFFICIENT, val=0.85, units="unitless"
         )  # bug fixed value and original value
         self.prob.model.set_input_defaults(
-            Aircraft.Wing.MOUNTING_TYPE, val=0.1, units="unitless")
+            Aircraft.Wing.VERTICAL_MOUNT_LOCATION, val=0.1, units="unitless")
 
         setup_model_options(self.prob, options)
 
@@ -968,6 +975,11 @@ class GearTestCaseMultiengine(unittest.TestCase):
         self.prob.model.set_input_defaults(
             Aircraft.Nacelle.AVG_DIAMETER, val=[7.5, 8.22], units='ft'
         )
+        self.prob.model.set_input_defaults(
+            Aircraft.LandingGear.MASS_COEFFICIENT, val=0.04)
+        self.prob.model.set_input_defaults(
+            Aircraft.LandingGear.MAIN_GEAR_MASS_COEFFICIENT, val=0.85)
+        self.prob.model.set_input_defaults(Mission.Design.GROSS_MASS, val=152000)
 
         self.prob.model_options['*'] = extract_options(options)
 
@@ -992,8 +1004,11 @@ class FixedMassGroupTestCase1(unittest.TestCase):
         options.set_val(Aircraft.Electrical.HAS_HYBRID_SYSTEM,
                         val=False, units='unitless')
         options.set_val(Aircraft.CrewPayload.NUM_PASSENGERS, val=180, units='unitless')
+        options.set_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS,
+                        val=180, units='unitless')
         options.set_val(Aircraft.CrewPayload.PASSENGER_MASS_WITH_BAGS,
                         val=200, units="lbm")  # bug fixed value and original value
+        options.set_val(Settings.VERBOSITY, 0)
 
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
@@ -1028,9 +1043,11 @@ class FixedMassGroupTestCase1(unittest.TestCase):
             "max_mach", val=0.9, units="unitless"
         )  # bug fixed value and original value
         self.prob.model.set_input_defaults(
-            Aircraft.CrewPayload.CARGO_MASS, val=10040, units="lbm"
+            Aircraft.CrewPayload.CARGO_MASS, val=0, units="lbm"
         )  # bug fixed value and original value
-
+        self.prob.model.set_input_defaults(
+            Aircraft.CrewPayload.Design.MAX_CARGO_MASS, val=10040, units="lbm"
+        )
         self.prob.model.set_input_defaults(
             Aircraft.VerticalTail.TAPER_RATIO, val=0.801, units="unitless"
         )  # bug fixed value and original value
@@ -1160,6 +1177,14 @@ class FixedMassGroupTestCase1(unittest.TestCase):
         self.prob.model.set_input_defaults(
             Aircraft.LandingGear.MAIN_GEAR_LOCATION, val=0.15, units="unitless"
         )  # bug fixed value and original value
+        self.prob.model.set_input_defaults(Aircraft.Fuselage.AVG_DIAMETER, val=13.1)
+        self.prob.model.set_input_defaults(Aircraft.Wing.SLAT_CHORD_RATIO, val=.15)
+        self.prob.model.set_input_defaults(Aircraft.Wing.FLAP_CHORD_RATIO, val=.3)
+        self.prob.model.set_input_defaults(Aircraft.Wing.SLAT_SPAN_RATIO, val=.9)
+        self.prob.model.set_input_defaults(Aircraft.Wing.LOADING, val=128)
+        self.prob.model.set_input_defaults(
+            Aircraft.Wing.THICKNESS_TO_CHORD_ROOT, val=.15)
+        self.prob.model.set_input_defaults(Aircraft.Wing.CENTER_CHORD, val=17.48974)
 
         setup_model_options(self.prob, options)
 
@@ -1242,6 +1267,8 @@ class FixedMassGroupTestCase2(unittest.TestCase):
 
         options = get_option_defaults()
         options.set_val(Aircraft.CrewPayload.NUM_PASSENGERS, val=180, units='unitless')
+        options.set_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS,
+                        val=180, units='unitless')
         options.set_val(Aircraft.Engine.NUM_FUSELAGE_ENGINES, val=2, units='unitless')
         options.set_val(Aircraft.Engine.HAS_PROPELLERS, val=[True], units='unitless')
         options.set_val(Aircraft.Wing.HAS_STRUT, val=True, units='unitless')
@@ -1261,7 +1288,7 @@ class FixedMassGroupTestCase2(unittest.TestCase):
             Aircraft.Wing.SPAN, val=117.8, units="ft"
         )  # original GASP value
         self.prob.model.set_input_defaults(
-            Aircraft.Wing.MOUNTING_TYPE, val=.1, units="unitless")
+            Aircraft.Wing.VERTICAL_MOUNT_LOCATION, val=.1, units="unitless")
         self.prob.model.set_input_defaults(
             Mission.Design.GROSS_MASS, val=175400, units="lbm"
         )  # bug fixed value and original value
@@ -1287,8 +1314,11 @@ class FixedMassGroupTestCase2(unittest.TestCase):
             Aircraft.Strut.ATTACHMENT_LOCATION_DIMENSIONLESS, val=10/117.8, units='unitless'
         )  # bug fixed value and original value
         self.prob.model.set_input_defaults(
-            Aircraft.CrewPayload.CARGO_MASS, val=10040, units="lbm"
+            Aircraft.CrewPayload.CARGO_MASS, val=0, units="lbm"
         )  # bug fixed value and original value
+        self.prob.model.set_input_defaults(
+            Aircraft.CrewPayload.Design.MAX_CARGO_MASS, val=10040, units="lbm"
+        )
         self.prob.model.set_input_defaults(
             Aircraft.VerticalTail.TAPER_RATIO, val=0.801, units="unitless"
         )  # bug fixed value and original value
@@ -1466,6 +1496,14 @@ class FixedMassGroupTestCase2(unittest.TestCase):
         self.prob.model.set_input_defaults(
             "engine.prop_mass", val=0, units="lbm"
         )  # bug fixed value and original value
+        self.prob.model.set_input_defaults(Aircraft.Fuselage.AVG_DIAMETER, val=13.1)
+        self.prob.model.set_input_defaults(Aircraft.Wing.SLAT_CHORD_RATIO, val=.15)
+        self.prob.model.set_input_defaults(Aircraft.Wing.FLAP_CHORD_RATIO, val=.3)
+        self.prob.model.set_input_defaults(Aircraft.Wing.SLAT_SPAN_RATIO, val=.9)
+        self.prob.model.set_input_defaults(Aircraft.Wing.LOADING, val=128)
+        self.prob.model.set_input_defaults(
+            Aircraft.Wing.THICKNESS_TO_CHORD_ROOT, val=.15)
+        self.prob.model.set_input_defaults(Aircraft.Wing.CENTER_CHORD, val=17.48974)
 
         setup_model_options(self.prob, options)
 
@@ -1561,6 +1599,13 @@ class FixedMassGroupTestCase3(unittest.TestCase):
 
         setup_model_options(prob, data)
 
+        prob.model.set_input_defaults(
+            Aircraft.Wing.TAPER_RATIO, val=0.33, units="unitless"
+        )
+        prob.model.set_input_defaults(
+            Aircraft.LandingGear.MAIN_GEAR_LOCATION, val=0.15, units="unitless"
+        )
+
         prob.setup(force_alloc_complex=True)
 
         for key in get_keys(data):
@@ -1596,11 +1641,12 @@ class FixedMassGroupTestCase3(unittest.TestCase):
             Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES: (False, 'unitless'),
             Aircraft.Engine.NUM_FUSELAGE_ENGINES: (0, 'unitless'),
             Aircraft.CrewPayload.NUM_PASSENGERS: (150, 'unitless'),
+            Aircraft.CrewPayload.Design.NUM_PASSENGERS: (150, 'unitless'),
             Aircraft.Electrical.HAS_HYBRID_SYSTEM: (False, 'unitless'),
             Aircraft.Engine.HAS_PROPELLERS: ([False], 'unitless'),
             Aircraft.Wing.FLAP_TYPE: ('plain', 'unitless'),
             Aircraft.Wing.SWEEP: (30.0, 'deg'),
-            Aircraft.Wing.MOUNTING_TYPE: (0, 'unitless'),
+            Aircraft.Wing.VERTICAL_MOUNT_LOCATION: (0, 'unitless'),
             Aircraft.Wing.TAPER_RATIO: (0.25, 'unitless'),
             Aircraft.Wing.ASPECT_RATIO: (11.0, 'unitless'),
             Aircraft.Wing.SPAN: (100.0, 'ft'),
@@ -1608,7 +1654,8 @@ class FixedMassGroupTestCase3(unittest.TestCase):
             Aircraft.Strut.ATTACHMENT_LOCATION: (10.0, 'ft'),
             Aircraft.LandingGear.MAIN_GEAR_LOCATION: (0.2, 'unitless'),
             Aircraft.CrewPayload.PASSENGER_MASS_WITH_BAGS: (200.0, 'lbm'),
-            Aircraft.CrewPayload.CARGO_MASS: (10040.0, 'lbm'),
+            Aircraft.CrewPayload.CARGO_MASS: (0.0, 'lbm'),
+            Aircraft.CrewPayload.Design.MAX_CARGO_MASS: (10040.0, 'lbm'),
             'wire_area': (0.0015, 'ft**2'),
             'rho_wire': (1.1, 'lbm/ft**3'),
             'battery_energy': (0.0, 'MJ'),

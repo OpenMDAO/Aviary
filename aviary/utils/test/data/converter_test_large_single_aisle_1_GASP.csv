@@ -9,8 +9,8 @@ aircraft:controls:cockpit_control_mass_scaler,1,unitless
 aircraft:controls:control_mass_increment,0,lbm
 aircraft:controls:stability_augmentation_system_mass,0,lbm
 aircraft:controls:stability_augmentation_system_mass_scaler,1,unitless
-aircraft:crew_and_payload:cargo_mass,10040,lbm
 aircraft:crew_and_payload:catering_items_mass_per_passenger,7.6,lbm
+aircraft:crew_and_payload:design:max_cargo_mass,10040,lbm
 aircraft:crew_and_payload:design:num_passengers,180,unitless
 aircraft:crew_and_payload:passenger_mass_with_bags,200,lbm
 aircraft:crew_and_payload:passenger_service_mass_per_passenger,5,lbm
@@ -130,7 +130,6 @@ aircraft:wing:max_slat_deflection_landing,10,deg
 aircraft:wing:max_slat_deflection_takeoff,10,deg
 aircraft:wing:max_thickness_location,0.4,unitless
 aircraft:wing:min_pressure_location,0.3,unitless
-aircraft:wing:mounting_type,0,unitless
 aircraft:wing:num_flap_segments,2,unitless
 aircraft:wing:optimum_flap_deflection,55,deg
 aircraft:wing:optimum_slat_deflection,20,deg
@@ -143,6 +142,7 @@ aircraft:wing:sweep,25,deg
 aircraft:wing:taper_ratio,0.33,unitless
 aircraft:wing:thickness_to_chord_root,0.15,unitless
 aircraft:wing:thickness_to_chord_tip,0.12,unitless
+aircraft:wing:vertical_mount_location,0,unitless 
 aircraft:wing:zero_lift_angle,-1.2,deg
 mission:design:cruise_altitude,37500,ft
 mission:design:gross_mass,175400,lbm

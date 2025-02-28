@@ -65,7 +65,7 @@ class SGMRotation(SimuPyProblem):
         super().__init__(
             RotationODE(analysis_scheme=AnalysisScheme.SHOOTING, **ode_args),
             problem_name=phase_name,
-            outputs=["normal_force", "alpha"],
+            outputs=["normal_force", Dynamic.Vehicle.ANGLE_OF_ATTACK],
             states=[
                 Dynamic.Vehicle.MASS,
                 Dynamic.Mission.DISTANCE,
@@ -120,7 +120,7 @@ class SGMAscent(SimuPyProblem):
                 "load_factor",
                 "fuselage_pitch",
                 "normal_force",
-                "alpha",
+                Dynamic.Vehicle.ANGLE_OF_ATTACK,
             ],
             states=[
                 Dynamic.Vehicle.MASS,
@@ -128,7 +128,7 @@ class SGMAscent(SimuPyProblem):
                 Dynamic.Mission.ALTITUDE,
                 Dynamic.Mission.VELOCITY,
                 Dynamic.Mission.FLIGHT_PATH_ANGLE,
-                "alpha",
+                Dynamic.Vehicle.ANGLE_OF_ATTACK,
             ],
             # state_units=['lbm','nmi','ft'],
             alternate_state_rate_names={
@@ -154,7 +154,7 @@ class SGMAscent(SimuPyProblem):
 
     def event_equation_function(self, t, x):
         alpha = self.get_alpha(t, x)
-        self.ode0.set_val("alpha", alpha)
+        self.ode0.set_val(Dynamic.Vehicle.ANGLE_OF_ATTACK, alpha)
         self.ode0.output_equation_function(t, x)
         alt = self.ode0.get_val(Dynamic.Mission.ALTITUDE).squeeze()
         return np.array(
@@ -250,7 +250,9 @@ class SGMAscentCombined(SGMAscent):
             ode.set_val(*args, **kwargs)
 
     def compute_alpha(self, ode, t, x):
-        return ode.output_equation_function(t, x)[list(ode.outputs.keys()).index("alpha")]
+        return ode.output_equation_function(t, x)[
+            list(ode.outputs.keys()).index(Dynamic.Vehicle.ANGLE_OF_ATTACK)
+        ]
 
     def get_alpha(self, t, x):
         a_key = (t,) + tuple(x)
@@ -327,7 +329,7 @@ class SGMAscentCombined(SGMAscent):
             return np.ones(self.dim_output) * np.nan
         alpha = self.get_alpha(t, x)
         prob = self.get_prob(t, x)
-        prob.set_val("alpha", alpha)
+        prob.set_val(Dynamic.Vehicle.ANGLE_OF_ATTACK, alpha)
         return prob.state_equation_function(t, x)
 
     @property
@@ -345,7 +347,7 @@ class SGMAscentCombined(SGMAscent):
         # using solver may introduce slight variations depending on how it's walking or
         # not? and need to have a real compute before compute totals - or does that mean
         # use problem?
-        prob.set_val("alpha", alpha)
+        prob.set_val(Dynamic.Vehicle.ANGLE_OF_ATTACK, alpha)
         self.time = t
         self.state = x
         return prob.output_equation_function(t, x)
@@ -369,7 +371,7 @@ class SGMAccel(SimuPyProblem):
         super().__init__(
             ode,
             problem_name=phase_name,
-            outputs=["EAS", "mach", "alpha"],
+            outputs=["EAS", "mach", Dynamic.Vehicle.ANGLE_OF_ATTACK],
             states=[
                 Dynamic.Vehicle.MASS,
                 Dynamic.Mission.DISTANCE,
@@ -424,7 +426,7 @@ class SGMClimb(SimuPyProblem):
             ode,
             problem_name=phase_name,
             outputs=[
-                "alpha",
+                Dynamic.Vehicle.ANGLE_OF_ATTACK,
                 Dynamic.Mission.FLIGHT_PATH_ANGLE,
                 "required_lift",
                 "lift",
@@ -486,7 +488,7 @@ class SGMCruise(SimuPyProblem):
             ode,
             problem_name=phase_name,
             outputs=[
-                "alpha",  # ?
+                Dynamic.Vehicle.ANGLE_OF_ATTACK,  # ?
                 "lift",
                 "EAS",
                 Dynamic.Mission.VELOCITY,
@@ -549,7 +551,7 @@ class SGMDescent(SimuPyProblem):
             ode,
             problem_name=phase_name,
             outputs=[
-                "alpha",
+                Dynamic.Vehicle.ANGLE_OF_ATTACK,
                 "required_lift",
                 "lift",
                 "EAS",

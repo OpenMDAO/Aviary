@@ -1,7 +1,7 @@
 import numpy as np
 import openmdao.api as om
 
-from aviary.mission.gasp_based.ode.base_ode import BaseODE
+from aviary.mission.gasp_based.ode.two_dof_ode import TwoDOFODE
 from aviary.mission.gasp_based.ode.groundroll_eom import GroundrollEOM
 from aviary.mission.gasp_based.ode.params import ParamPort
 from aviary.variable_info.variables import Aircraft, Dynamic
@@ -13,7 +13,7 @@ from aviary.mission.gasp_based.ode.time_integration_base_classes import (
 )
 
 
-class GroundrollODE(BaseODE):
+class GroundrollODE(TwoDOFODE):
     """ODE for takeoff ground roll.
 
     This phase begins at the point when the aircraft begins accelerating down the runway
@@ -23,16 +23,6 @@ class GroundrollODE(BaseODE):
 
     def initialize(self):
         super().initialize()
-        self.options.declare(
-            'external_subsystems',
-            default=[],
-            desc='list of external subsystem builder instances to be added to the ODE',
-        )
-        self.options.declare(
-            'meta_data',
-            default=_MetaData,
-            desc='metadata associated with the variables to be passed into the ODE',
-        )
         self.options.declare(
             'set_input_defaults', default=True, desc='set input defaults for the ODE'
         )
@@ -55,7 +45,7 @@ class GroundrollODE(BaseODE):
         # TODO: paramport
         self.add_subsystem("params", ParamPort(), promotes=["*"])
 
-        self.add_atmosphere(nn)
+        self.add_atmosphere()
 
         # broadcast scalar i_wing to alpha for aero
         self.add_subsystem(
@@ -65,7 +55,10 @@ class GroundrollODE(BaseODE):
                 i_wing={"units": "deg", "val": 1.1},
                 alpha={"units": "deg", "val": 1.1 * np.ones(nn)},
             ),
-            promotes=[("i_wing", Aircraft.Wing.INCIDENCE), "alpha"],
+            promotes=[
+                ("i_wing", Aircraft.Wing.INCIDENCE),
+                ("alpha", Dynamic.Vehicle.ANGLE_OF_ATTACK),
+            ],
         )
 
         kwargs = {
@@ -88,9 +81,11 @@ class GroundrollODE(BaseODE):
             if type(subsystem) is AerodynamicsBuilderBase:
                 self.promotes(
                     subsystem.name,
-                    inputs=["alpha"],
+                    inputs=[Dynamic.Vehicle.ANGLE_OF_ATTACK],
                     src_indices=np.zeros(nn, dtype=int),
                 )
+
+        self.add_external_subsystems()
 
         self.add_subsystem(
             "groundroll_eom", GroundrollEOM(num_nodes=nn), promotes=["*"]
