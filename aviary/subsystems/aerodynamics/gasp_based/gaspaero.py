@@ -412,9 +412,11 @@ class AeroGeom(om.ExplicitComponent):
 
         add_aviary_input(self, Aircraft.HorizontalTail.FORM_FACTOR, units='unitless')
 
-        add_aviary_input(self, Aircraft.Wing.FUSELAGE_INTERFERENCE_FACTOR, units='unitless')
+        add_aviary_input(self, Aircraft.Wing.FUSELAGE_INTERFERENCE_FACTOR,
+                         units='unitless')
 
-        add_aviary_input(self, Aircraft.Strut.FUSELAGE_INTERFERENCE_FACTOR, units='unitless')
+        add_aviary_input(self, Aircraft.Strut.FUSELAGE_INTERFERENCE_FACTOR,
+                         units='unitless')
 
         # miscellaneous top-level inputs
 

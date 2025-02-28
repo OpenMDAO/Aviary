@@ -33,7 +33,8 @@ class AeroFormfactors(om.ExplicitComponent):
         add_aviary_output(self, Aircraft.Wing.FORM_FACTOR, units='unitless')
         add_aviary_output(self, Aircraft.VerticalTail.FORM_FACTOR, units='unitless')
         add_aviary_output(self, Aircraft.HorizontalTail.FORM_FACTOR, units='unitless')
-        add_aviary_output(self, Aircraft.Strut.FUSELAGE_INTERFERENCE_FACTOR, units='unitless')
+        add_aviary_output(self, Aircraft.Strut.FUSELAGE_INTERFERENCE_FACTOR,
+                          units='unitless')
         add_aviary_output(self, Aircraft.Nacelle.FORM_FACTOR, units='unitless')
 
     def setup_partials(self):
