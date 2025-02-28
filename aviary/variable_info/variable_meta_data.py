@@ -3886,7 +3886,7 @@ add_meta_data(
         "FLOPS": 'WTIN.HYDPR',  # ['&DEFINE.WTIN.HYDPR', 'WTS.HYDPR'],
         "LEAPS1": 'aircraft.inputs.L0_weights.hydraulic_sys_press',
     },
-    units='psi',
+    units='lbf/ft**2',
     desc='hydraulic system pressure',
     default_value=0.0,
 )

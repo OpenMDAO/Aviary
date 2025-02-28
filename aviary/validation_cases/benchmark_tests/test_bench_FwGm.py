@@ -13,7 +13,7 @@ from aviary.variable_info.variables import Aircraft, Mission
 @use_tempdirs
 class ProblemPhaseTestCase(unittest.TestCase):
     """
-    Test the setup and run of a large single aisle commercial transport aircraft using 
+    Test the setup and run of a large single aisle commercial transport aircraft using
     FLOPS mass method and TWO_DEGREES_OF_FREEDOM mission method. Expected outputs
     based on 'models/test_aircraft/aircraft_for_bench_FwFm.csv' model.
     """
@@ -36,16 +36,16 @@ class ProblemPhaseTestCase(unittest.TestCase):
 
         # There are no truth values for these.
         assert_near_equal(prob.get_val(Mission.Design.GROSS_MASS),
-                          179391., tolerance=rtol)
+                          179930., tolerance=rtol)
 
         assert_near_equal(prob.get_val(Aircraft.Design.OPERATING_MASS),
-                          101556., tolerance=rtol)
+                          101640., tolerance=rtol)
 
         assert_near_equal(prob.get_val(Mission.Summary.TOTAL_FUEL_MASS),
-                          39979., tolerance=rtol)
+                          40100., tolerance=rtol)
 
         assert_near_equal(prob.get_val('landing.' + Mission.Landing.GROUND_DISTANCE),
-                          2595., tolerance=rtol)
+                          2590., tolerance=rtol)
 
         assert_near_equal(prob.get_val("traj.desc2.timeseries.distance")[-1],
                           3675.0, tolerance=rtol)
@@ -64,16 +64,16 @@ class ProblemPhaseTestCase(unittest.TestCase):
 
         # There are no truth values for these.
         assert_near_equal(prob.get_val(Mission.Design.GROSS_MASS),
-                          179390., tolerance=rtol)
+                          179930., tolerance=rtol)
 
         assert_near_equal(prob.get_val(Aircraft.Design.OPERATING_MASS),
-                          101556., tolerance=rtol)
+                          101640., tolerance=rtol)
 
         assert_near_equal(prob.get_val(Mission.Summary.TOTAL_FUEL_MASS),
-                          39979., tolerance=rtol)
+                          40100., tolerance=rtol)
 
         assert_near_equal(prob.get_val('landing.' + Mission.Landing.GROUND_DISTANCE),
-                          2595., tolerance=rtol)
+                          2590., tolerance=rtol)
 
         assert_near_equal(prob.get_val("traj.desc2.timeseries.distance")[-1],
                           3675.0, tolerance=rtol)
