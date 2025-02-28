@@ -91,7 +91,8 @@ class CLmaxCalculation(om.ExplicitComponent):
         add_aviary_input(self, Aircraft.Wing.AVERAGE_CHORD, units='ft')
 
         add_aviary_input(self, Aircraft.Wing.MAX_LIFT_REF, units='unitless')
-        add_aviary_input(self, Aircraft.Wing.SLAT_LIFT_INCREMENT_OPTIMUM, units='unitless')
+        add_aviary_input(self, Aircraft.Wing.SLAT_LIFT_INCREMENT_OPTIMUM,
+                         units='unitless')
         self.add_input(
             "VLAM9",
             val=0.9975,

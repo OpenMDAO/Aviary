@@ -12,24 +12,29 @@ class AeroFormfactors(om.ExplicitComponent):
     """Compute aero form factors"""
 
     def setup(self):
-        add_aviary_input(self, Aircraft.Wing.THICKNESS_TO_CHORD_UNWEIGHTED)
+        add_aviary_input(self, Aircraft.Wing.THICKNESS_TO_CHORD_UNWEIGHTED,
+                         units='unitless')
         # add_aviary_input(self, Aircraft.Wing.THICKNESS_TO_CHORD_TIP)
-        add_aviary_input(self, Aircraft.VerticalTail.THICKNESS_TO_CHORD)
-        add_aviary_input(self, Aircraft.HorizontalTail.THICKNESS_TO_CHORD)
-        add_aviary_input(self, Aircraft.Strut.THICKNESS_TO_CHORD)
+        add_aviary_input(self, Aircraft.VerticalTail.THICKNESS_TO_CHORD,
+                         units='unitless')
+        add_aviary_input(self, Aircraft.HorizontalTail.THICKNESS_TO_CHORD,
+                         units='unitless')
+        add_aviary_input(self, Aircraft.Strut.THICKNESS_TO_CHORD,
+                         units='unitless')
         add_aviary_input(self, Aircraft.Wing.SWEEP, units='rad')
         add_aviary_input(self, Aircraft.VerticalTail.SWEEP, units='rad')
         add_aviary_input(self, Aircraft.HorizontalTail.SWEEP, units='rad')
-        add_aviary_input(self, Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION)
-        add_aviary_input(self, Mission.Design.MACH)
-        add_aviary_input(self, Aircraft.Nacelle.AVG_DIAMETER)
-        add_aviary_input(self, Aircraft.Nacelle.AVG_LENGTH)
+        add_aviary_input(self, Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION,
+                         units='unitless')
+        add_aviary_input(self, Mission.Design.MACH, units='unitless')
+        add_aviary_input(self, Aircraft.Nacelle.AVG_DIAMETER, units='ft')
+        add_aviary_input(self, Aircraft.Nacelle.AVG_LENGTH, units='ft')
 
-        add_aviary_output(self, Aircraft.Wing.FORM_FACTOR)
-        add_aviary_output(self, Aircraft.VerticalTail.FORM_FACTOR)
-        add_aviary_output(self, Aircraft.HorizontalTail.FORM_FACTOR)
-        add_aviary_output(self, Aircraft.Strut.FUSELAGE_INTERFERENCE_FACTOR)
-        add_aviary_output(self, Aircraft.Nacelle.FORM_FACTOR)
+        add_aviary_output(self, Aircraft.Wing.FORM_FACTOR, units='unitless')
+        add_aviary_output(self, Aircraft.VerticalTail.FORM_FACTOR, units='unitless')
+        add_aviary_output(self, Aircraft.HorizontalTail.FORM_FACTOR, units='unitless')
+        add_aviary_output(self, Aircraft.Strut.FUSELAGE_INTERFERENCE_FACTOR, units='unitless')
+        add_aviary_output(self, Aircraft.Nacelle.FORM_FACTOR, units='unitless')
 
     def setup_partials(self):
         self.declare_partials(

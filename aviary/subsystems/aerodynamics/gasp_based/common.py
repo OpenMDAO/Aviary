@@ -19,7 +19,7 @@ class AeroForces(om.ExplicitComponent):
         add_aviary_input(self, Dynamic.Atmosphere.DYNAMIC_PRESSURE, units="psf",
                          shape=nn)
 
-        add_aviary_input(self, Aircraft.Wing.AREA)
+        add_aviary_input(self, Aircraft.Wing.AREA, units='ft**2')
 
         add_aviary_output(self, Dynamic.Vehicle.LIFT, units="lbf", shape=nn)
         add_aviary_output(self, Dynamic.Vehicle.DRAG, units="lbf", shape=nn)
@@ -71,7 +71,7 @@ class CLFromLift(om.ExplicitComponent):
         add_aviary_input(self, Dynamic.Atmosphere.DYNAMIC_PRESSURE, shape=nn,
                          units="psf")
 
-        add_aviary_input(self, Aircraft.Wing.AREA)
+        add_aviary_input(self, Aircraft.Wing.AREA, units='ft**2')
 
         self.add_output("CL", shape=nn, units='unitless', desc="Lift coefficient")
 

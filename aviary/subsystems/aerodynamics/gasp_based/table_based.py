@@ -343,9 +343,9 @@ class GearDragIncrement(om.ExplicitComponent):
     def setup(self):
         nn = self.options["num_nodes"]
 
-        add_aviary_input(self, Mission.Design.GROSS_MASS)
+        add_aviary_input(self, Mission.Design.GROSS_MASS, units='lbm')
 
-        add_aviary_input(self, Aircraft.Wing.AREA)
+        add_aviary_input(self, Aircraft.Wing.AREA, units='ft**2')
 
         # note flap_defl should be a constant (scalar) but interpolation breaks with
         # mixed scalar/vector inputs so you can just ``prob.set_val("flap_defl", 10)``
