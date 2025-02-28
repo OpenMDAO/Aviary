@@ -24,7 +24,8 @@ class TransportEngineOilMass(om.ExplicitComponent):
         add_aviary_option(self, Aircraft.Propulsion.TOTAL_NUM_ENGINES)
 
     def setup(self):
-        add_aviary_input(self, Aircraft.Propulsion.ENGINE_OIL_MASS_SCALER, units='unitless')
+        add_aviary_input(self, Aircraft.Propulsion.ENGINE_OIL_MASS_SCALER,
+                         units='unitless')
         add_aviary_input(self, Aircraft.Propulsion.TOTAL_SCALED_SLS_THRUST, units='lbf')
 
         add_aviary_output(self, Aircraft.Propulsion.TOTAL_ENGINE_OIL_MASS, units='lbm')
