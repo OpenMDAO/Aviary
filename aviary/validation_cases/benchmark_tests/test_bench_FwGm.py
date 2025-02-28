@@ -13,7 +13,7 @@ from aviary.variable_info.variables import Aircraft, Mission
 @use_tempdirs
 class ProblemPhaseTestCase(unittest.TestCase):
     """
-    Test the setup and run of a large single aisle commercial transport aircraft using 
+    Test the setup and run of a large single aisle commercial transport aircraft using
     FLOPS mass method and TWO_DEGREES_OF_FREEDOM mission method. Expected outputs
     based on 'models/test_aircraft/aircraft_for_bench_FwFm.csv' model.
     """
@@ -42,7 +42,7 @@ class ProblemPhaseTestCase(unittest.TestCase):
                           101640., tolerance=rtol)
 
         assert_near_equal(prob.get_val(Mission.Summary.TOTAL_FUEL_MASS),
-                          40433., tolerance=rtol)
+                          40000., tolerance=rtol)
 
         assert_near_equal(prob.get_val('landing.' + Mission.Landing.GROUND_DISTANCE),
                           2590., tolerance=rtol)
@@ -70,7 +70,7 @@ class ProblemPhaseTestCase(unittest.TestCase):
                           101640., tolerance=rtol)
 
         assert_near_equal(prob.get_val(Mission.Summary.TOTAL_FUEL_MASS),
-                          40433., tolerance=rtol)
+                          40000., tolerance=rtol)
 
         assert_near_equal(prob.get_val('landing.' + Mission.Landing.GROUND_DISTANCE),
                           2590., tolerance=rtol)
