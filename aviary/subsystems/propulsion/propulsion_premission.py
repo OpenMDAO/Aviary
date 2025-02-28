@@ -21,15 +21,26 @@ class PropulsionPreMission(om.Group):
             types=AviaryValues,
             desc='collection of Aircraft/Mission specific options',
         )
+
         self.options.declare(
             'engine_models', types=list, desc='list of EngineModels on aircraft'
         )
+
+        # engine options is optional
+        self.options.declare(
+            'engine_options',
+            types=dict,
+            default={},
+            desc='dictionary of options for each EngineModel'
+        )
+
         add_aviary_option(self, Aircraft.Engine.NUM_ENGINES)
         add_aviary_option(self, Settings.VERBOSITY)
 
     def setup(self):
-        options = self.options['aviary_options']
+        aviary_options = self.options['aviary_options']
         engine_models = self.options['engine_models']
+        engine_options = self.options['engine_options']
         num_engine_type = len(engine_models)
 
         # Each engine model pre_mission component only needs to accept and output single
@@ -38,7 +49,10 @@ class PropulsionPreMission(om.Group):
         # each component here
         # Promotions are handled in configure()
         for engine in engine_models:
-            subsys = engine.build_pre_mission(options)
+            options = {}
+            if engine.name in engine_options:
+                options = engine_options[engine.name]
+            subsys = engine.build_pre_mission(aviary_options, **options)
             if subsys:
                 if num_engine_type > 1:
                     proms = None
