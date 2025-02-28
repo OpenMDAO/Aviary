@@ -274,7 +274,7 @@ def input_check_report(prob, **kwargs):
                 metadata = CoreMetaData.get(var)
                 units = metadata['units']
                 val = model.get_val(var, units=units)
-                desc =  metadata["desc"]
+                desc = metadata["desc"]
                 abs_paths = prom2abs[var]
 
                 f.write(f'| **{var}** | {val} | {units} | {desc} | {abs_paths}|\n')
@@ -299,9 +299,9 @@ def input_check_report(prob, **kwargs):
                 if var.startswith('traj') and '.rhs_all.' not in var:
                     continue
 
-                abs_paths =  prom2abs[var]
+                abs_paths = prom2abs[var]
                 val = model.get_val(var)
-                meta =  model._var_allprocs_abs2meta['input'][abs_paths[0]]
+                meta = model._var_allprocs_abs2meta['input'][abs_paths[0]]
                 units = meta['units']
 
                 f.write(f'| **{var}** | {val} | {units} | {abs_paths}|\n')
