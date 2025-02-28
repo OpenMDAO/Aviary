@@ -27,13 +27,13 @@ class TransportHydraulicsGroupMass(om.ExplicitComponent):
         add_aviary_option(self, Mission.Constraints.MAX_MACH)
 
     def setup(self):
-        add_aviary_input(self, Aircraft.Fuselage.PLANFORM_AREA)
-        add_aviary_input(self, Aircraft.Hydraulics.SYSTEM_PRESSURE)
-        add_aviary_input(self, Aircraft.Hydraulics.MASS_SCALER)
-        add_aviary_input(self, Aircraft.Wing.AREA)
-        add_aviary_input(self, Aircraft.Wing.VAR_SWEEP_MASS_PENALTY)
+        add_aviary_input(self, Aircraft.Fuselage.PLANFORM_AREA, units='ft**2')
+        add_aviary_input(self, Aircraft.Hydraulics.SYSTEM_PRESSURE, units='psi')
+        add_aviary_input(self, Aircraft.Hydraulics.MASS_SCALER, units='unitless')
+        add_aviary_input(self, Aircraft.Wing.AREA, units='ft**2')
+        add_aviary_input(self, Aircraft.Wing.VAR_SWEEP_MASS_PENALTY, units='unitless')
 
-        add_aviary_output(self, Aircraft.Hydraulics.MASS)
+        add_aviary_output(self, Aircraft.Hydraulics.MASS, units='lbm')
 
     def setup_partials(self):
         self.declare_partials('*', '*')
@@ -101,13 +101,13 @@ class AltHydraulicsGroupMass(om.ExplicitComponent):
     '''
 
     def setup(self):
-        add_aviary_input(self, Aircraft.Wing.AREA)
-        add_aviary_input(self, Aircraft.HorizontalTail.WETTED_AREA)
-        add_aviary_input(self, Aircraft.HorizontalTail.THICKNESS_TO_CHORD)
-        add_aviary_input(self, Aircraft.VerticalTail.AREA)
-        add_aviary_input(self, Aircraft.Hydraulics.MASS_SCALER)
+        add_aviary_input(self, Aircraft.Wing.AREA, units='ft**2')
+        add_aviary_input(self, Aircraft.HorizontalTail.WETTED_AREA, units='ft**2')
+        add_aviary_input(self, Aircraft.HorizontalTail.THICKNESS_TO_CHORD, units='unitless')
+        add_aviary_input(self, Aircraft.VerticalTail.AREA, units='ft**2')
+        add_aviary_input(self, Aircraft.Hydraulics.MASS_SCALER, units='unitless')
 
-        add_aviary_output(self, Aircraft.Hydraulics.MASS)
+        add_aviary_output(self, Aircraft.Hydraulics.MASS, units='lbm')
 
     def setup_partials(self):
         self.declare_partials('*', '*')
