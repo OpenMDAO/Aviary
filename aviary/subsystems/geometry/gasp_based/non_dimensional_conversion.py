@@ -14,16 +14,16 @@ class StrutCalcs(om.ExplicitComponent):
         add_aviary_option(self, Aircraft.Wing.HAS_STRUT)
 
     def setup(self):
-        add_aviary_input(self, Aircraft.Wing.SPAN)
+        add_aviary_input(self, Aircraft.Wing.SPAN, units='ft')
 
         if self.options[Aircraft.Strut.DIMENSIONAL_LOCATION_SPECIFIED]:
-            add_aviary_input(self, Aircraft.Strut.ATTACHMENT_LOCATION)
-            add_aviary_output(
-                self, Aircraft.Strut.ATTACHMENT_LOCATION_DIMENSIONLESS)
+            add_aviary_input(self, Aircraft.Strut.ATTACHMENT_LOCATION, units='ft')
+            add_aviary_output(self, Aircraft.Strut.ATTACHMENT_LOCATION_DIMENSIONLESS,
+                              units='unitless')
         else:
-            add_aviary_input(
-                self, Aircraft.Strut.ATTACHMENT_LOCATION_DIMENSIONLESS)
-            add_aviary_output(self, Aircraft.Strut.ATTACHMENT_LOCATION)
+            add_aviary_input(self, Aircraft.Strut.ATTACHMENT_LOCATION_DIMENSIONLESS,
+                             units='unitless')
+            add_aviary_output(self, Aircraft.Strut.ATTACHMENT_LOCATION, units='ft')
 
     def setup_partials(self):
 
@@ -70,14 +70,14 @@ class FoldCalcs(om.ExplicitComponent):
         add_aviary_option(self, Aircraft.Wing.FOLD_DIMENSIONAL_LOCATION_SPECIFIED)
 
     def setup(self):
-        add_aviary_input(self, Aircraft.Wing.SPAN)
+        add_aviary_input(self, Aircraft.Wing.SPAN, units='ft')
 
         if self.options[Aircraft.Wing.FOLD_DIMENSIONAL_LOCATION_SPECIFIED]:
-            add_aviary_input(self, Aircraft.Wing.FOLDED_SPAN)
-            add_aviary_output(self, Aircraft.Wing.FOLDED_SPAN_DIMENSIONLESS)
+            add_aviary_input(self, Aircraft.Wing.FOLDED_SPAN, units='ft')
+            add_aviary_output(self, Aircraft.Wing.FOLDED_SPAN_DIMENSIONLESS, units='unitless')
         else:
-            add_aviary_input(self, Aircraft.Wing.FOLDED_SPAN_DIMENSIONLESS)
-            add_aviary_output(self, Aircraft.Wing.FOLDED_SPAN)
+            add_aviary_input(self, Aircraft.Wing.FOLDED_SPAN_DIMENSIONLESS, units='unitless')
+            add_aviary_output(self, Aircraft.Wing.FOLDED_SPAN, units='ft')
 
     def setup_partials(self):
 
