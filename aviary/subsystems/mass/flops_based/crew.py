@@ -18,7 +18,8 @@ class NonFlightCrewMass(om.ExplicitComponent):
         add_aviary_option(self, Aircraft.CrewPayload.NUM_GALLEY_CREW)
 
     def setup(self):
-        add_aviary_input(self, Aircraft.CrewPayload.NON_FLIGHT_CREW_MASS_SCALER, units='unitless')
+        add_aviary_input(self, Aircraft.CrewPayload.NON_FLIGHT_CREW_MASS_SCALER,
+                         units='unitless')
 
         add_aviary_output(self, Aircraft.CrewPayload.NON_FLIGHT_CREW_MASS, units='lbm')
 
@@ -74,7 +75,8 @@ class FlightCrewMass(om.ExplicitComponent):
         add_aviary_option(self, Aircraft.LandingGear.CARRIER_BASED)
 
     def setup(self):
-        add_aviary_input(self, Aircraft.CrewPayload.FLIGHT_CREW_MASS_SCALER, units='unitless')
+        add_aviary_input(self, Aircraft.CrewPayload.FLIGHT_CREW_MASS_SCALER,
+                         units='unitless')
 
         add_aviary_output(self, Aircraft.CrewPayload.FLIGHT_CREW_MASS, units='lbm')
 

@@ -20,9 +20,11 @@ class LandingGearMass(om.ExplicitComponent):
 
     def setup(self):
         add_aviary_input(self, Aircraft.LandingGear.MAIN_GEAR_OLEO_LENGTH, units='inch')
-        add_aviary_input(self, Aircraft.LandingGear.MAIN_GEAR_MASS_SCALER, units='unitless')
+        add_aviary_input(self, Aircraft.LandingGear.MAIN_GEAR_MASS_SCALER,
+                         units='unitless')
         add_aviary_input(self, Aircraft.LandingGear.NOSE_GEAR_OLEO_LENGTH, units='inch')
-        add_aviary_input(self, Aircraft.LandingGear.NOSE_GEAR_MASS_SCALER, units='unitless')
+        add_aviary_input(self, Aircraft.LandingGear.NOSE_GEAR_MASS_SCALER,
+                         units='unitless')
         add_aviary_input(self, Aircraft.Design.TOUCHDOWN_MASS, units='lbm')
 
         add_aviary_output(self, Aircraft.LandingGear.MAIN_GEAR_MASS, units='lbm')
@@ -127,9 +129,11 @@ class AltLandingGearMass(om.ExplicitComponent):
 
     def setup(self):
         add_aviary_input(self, Aircraft.LandingGear.MAIN_GEAR_OLEO_LENGTH, units='inch')
-        add_aviary_input(self, Aircraft.LandingGear.MAIN_GEAR_MASS_SCALER, units='unitless')
+        add_aviary_input(self, Aircraft.LandingGear.MAIN_GEAR_MASS_SCALER,
+                         units='unitless')
         add_aviary_input(self, Aircraft.LandingGear.NOSE_GEAR_OLEO_LENGTH, units='inch')
-        add_aviary_input(self, Aircraft.LandingGear.NOSE_GEAR_MASS_SCALER, units='unitless')
+        add_aviary_input(self, Aircraft.LandingGear.NOSE_GEAR_MASS_SCALER,
+                         units='unitless')
         add_aviary_input(self, Mission.Design.GROSS_MASS, units='lbm')
 
         add_aviary_output(self, Aircraft.LandingGear.MAIN_GEAR_MASS, units='lbm')
@@ -263,13 +267,13 @@ class MainGearLength(om.ExplicitComponent):
 
         add_aviary_input(self, Aircraft.Fuselage.LENGTH, units='ft')
         add_aviary_input(self, Aircraft.Fuselage.MAX_WIDTH, units='ft')
-        add_aviary_input(self, Aircraft.Nacelle.AVG_DIAMETER, shape=num_engine_type, units='ft')
+        add_aviary_input(self, Aircraft.Nacelle.AVG_DIAMETER,
+                         shape=num_engine_type, units='ft')
         if any(num_wing_engines) > 0:
             add_aviary_input(self, Aircraft.Engine.WING_LOCATIONS,
-                             #val=np.zeros((num_engine_type, int(num_wing_engines[0] / 2))),
                              shape=(num_engine_type, int(num_wing_engines[0]/2)),
                              units='unitless')
-        else: # this case is not tested
+        else:  # this case is not tested
             add_aviary_input(self, Aircraft.Engine.WING_LOCATIONS, units='unitless')
         add_aviary_input(self, Aircraft.Wing.DIHEDRAL, units='deg')
         add_aviary_input(self, Aircraft.Wing.SPAN, units='ft')

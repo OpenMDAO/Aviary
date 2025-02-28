@@ -20,7 +20,8 @@ class SimpleWingBendingFact(om.ExplicitComponent):
         add_aviary_input(self, Aircraft.Wing.TAPER_RATIO, units='unitless')
         add_aviary_input(self, Aircraft.Wing.THICKNESS_TO_CHORD, units='unitless')
         add_aviary_input(self, Aircraft.Wing.STRUT_BRACING_FACTOR, units='unitless')
-        add_aviary_input(self, Aircraft.Wing.AEROELASTIC_TAILORING_FACTOR, units='unitless')
+        add_aviary_input(self, Aircraft.Wing.AEROELASTIC_TAILORING_FACTOR,
+                         units='unitless')
         add_aviary_input(self, Aircraft.Wing.ASPECT_RATIO, units='unitless')
         add_aviary_input(self, Aircraft.Wing.SWEEP, units='deg')
 

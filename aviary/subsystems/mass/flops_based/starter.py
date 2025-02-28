@@ -24,7 +24,8 @@ class TransportStarterMass(om.ExplicitComponent):
     def setup(self):
         num_engine_type = len(self.options[Aircraft.Engine.NUM_ENGINES])
 
-        add_aviary_input(self, Aircraft.Nacelle.AVG_DIAMETER, shape=num_engine_type, units='ft')
+        add_aviary_input(self, Aircraft.Nacelle.AVG_DIAMETER,
+                         shape=num_engine_type, units='ft')
 
         add_aviary_output(self, Aircraft.Propulsion.TOTAL_STARTER_MASS, units='lbm')
 

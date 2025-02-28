@@ -74,9 +74,11 @@ class FoldCalcs(om.ExplicitComponent):
 
         if self.options[Aircraft.Wing.FOLD_DIMENSIONAL_LOCATION_SPECIFIED]:
             add_aviary_input(self, Aircraft.Wing.FOLDED_SPAN, units='ft')
-            add_aviary_output(self, Aircraft.Wing.FOLDED_SPAN_DIMENSIONLESS, units='unitless')
+            add_aviary_output(self, Aircraft.Wing.FOLDED_SPAN_DIMENSIONLESS,
+                              units='unitless')
         else:
-            add_aviary_input(self, Aircraft.Wing.FOLDED_SPAN_DIMENSIONLESS, units='unitless')
+            add_aviary_input(self, Aircraft.Wing.FOLDED_SPAN_DIMENSIONLESS,
+                             units='unitless')
             add_aviary_output(self, Aircraft.Wing.FOLDED_SPAN, units='ft')
 
     def setup_partials(self):

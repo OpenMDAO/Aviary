@@ -122,7 +122,8 @@ class PropulsionMass(om.ExplicitComponent):
     def setup(self):
         add_aviary_input(self, Aircraft.Fuel.FUEL_SYSTEM_MASS, units='lbm')
         add_aviary_input(self, Aircraft.Propulsion.TOTAL_MISC_MASS, units='lbm')
-        add_aviary_input(self, Aircraft.Propulsion.TOTAL_THRUST_REVERSERS_MASS, units='lbm')
+        add_aviary_input(self, Aircraft.Propulsion.TOTAL_THRUST_REVERSERS_MASS,
+                         units='lbm')
         add_aviary_input(self, Aircraft.Propulsion.TOTAL_ENGINE_MASS, units='lbm')
 
         add_aviary_output(self, Aircraft.Propulsion.MASS, units='lbm')

@@ -27,7 +27,8 @@ class EngineMiscMass(om.ExplicitComponent):
         add_aviary_input(self, Aircraft.Engine.ADDITIONAL_MASS,
                          shape=num_engine_type, units='lbm')
         add_aviary_input(self, Aircraft.Propulsion.MISC_MASS_SCALER, units='unitless')
-        add_aviary_input(self, Aircraft.Propulsion.TOTAL_ENGINE_CONTROLS_MASS, units='lbm')
+        add_aviary_input(self, Aircraft.Propulsion.TOTAL_ENGINE_CONTROLS_MASS,
+                         units='lbm')
         add_aviary_input(self, Aircraft.Propulsion.TOTAL_STARTER_MASS, units='lbm')
 
         add_aviary_output(self, Aircraft.Propulsion.TOTAL_MISC_MASS, units='lbm')

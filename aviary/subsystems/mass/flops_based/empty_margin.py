@@ -13,7 +13,8 @@ class EmptyMassMargin(om.ExplicitComponent):
         add_aviary_input(self, Aircraft.Propulsion.MASS, units='lbm')
         add_aviary_input(self, Aircraft.Design.STRUCTURE_MASS, units='lbm')
         add_aviary_input(self, Aircraft.Design.SYSTEMS_EQUIP_MASS, units='lbm')
-        add_aviary_input(self, Aircraft.Design.EMPTY_MASS_MARGIN_SCALER, units='unitless')
+        add_aviary_input(self, Aircraft.Design.EMPTY_MASS_MARGIN_SCALER,
+                         units='unitless')
 
         add_aviary_output(self, Aircraft.Design.EMPTY_MASS_MARGIN, units='lbm')
 

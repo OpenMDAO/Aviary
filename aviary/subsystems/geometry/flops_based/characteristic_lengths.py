@@ -36,7 +36,8 @@ class CharacteristicLengths(om.ExplicitComponent):
         add_aviary_input(self, Aircraft.HorizontalTail.ASPECT_RATIO, units='unitless')
         # add_aviary_input(self, Aircraft.HorizontalTail.LAMINAR_FLOW_LOWER, 0.0)
         # add_aviary_input(self, Aircraft.HorizontalTail.LAMINAR_FLOW_UPPER, 0.0)
-        add_aviary_input(self, Aircraft.HorizontalTail.THICKNESS_TO_CHORD, units='unitless')
+        add_aviary_input(self, Aircraft.HorizontalTail.THICKNESS_TO_CHORD,
+                         units='unitless')
 
         add_aviary_input(self, Aircraft.Nacelle.AVG_DIAMETER,
                          shape=num_engine_type, units='ft')
@@ -49,7 +50,8 @@ class CharacteristicLengths(om.ExplicitComponent):
         add_aviary_input(self, Aircraft.VerticalTail.ASPECT_RATIO, units='unitless')
         # add_aviary_input(self, Aircraft.VerticalTail.LAMINAR_FLOW_LOWER, 0.0)
         # add_aviary_input(self, Aircraft.VerticalTail.LAMINAR_FLOW_UPPER, 0.0)
-        add_aviary_input(self, Aircraft.VerticalTail.THICKNESS_TO_CHORD, units='unitless')
+        add_aviary_input(self, Aircraft.VerticalTail.THICKNESS_TO_CHORD,
+                         units='unitless')
 
         add_aviary_input(self, Aircraft.Wing.AREA, units='ft**2')
         add_aviary_input(self, Aircraft.Wing.ASPECT_RATIO, units='unitless')

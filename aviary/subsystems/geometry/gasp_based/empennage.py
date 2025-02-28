@@ -33,7 +33,8 @@ class TailVolCoef(om.ExplicitComponent):
         else:
             self.k = [0.43, 0.38, 0.85]
 
-        add_aviary_input(self, Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION, units='unitless')
+        add_aviary_input(self, Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION,
+                         units='unitless')
 
         add_aviary_input(self, Aircraft.Fuselage.LENGTH, units='ft')
 

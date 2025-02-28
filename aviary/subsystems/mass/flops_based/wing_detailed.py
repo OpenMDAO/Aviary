@@ -40,11 +40,13 @@ class DetailedWingBendingFact(om.ExplicitComponent):
         add_aviary_input(self, Aircraft.Wing.CHORD_PER_SEMISPAN_DIST,
                          shape=num_input_stations, units='unitless')
         add_aviary_input(self, Mission.Design.GROSS_MASS, units='lbm')
-        add_aviary_input(self, Aircraft.Engine.POD_MASS, shape=num_engine_type, units='lbm')
+        add_aviary_input(self, Aircraft.Engine.POD_MASS,
+                         shape=num_engine_type, units='lbm')
         add_aviary_input(self, Aircraft.Wing.ASPECT_RATIO, units='unitless')
         add_aviary_input(self, Aircraft.Wing.ASPECT_RATIO_REF, units='unitless')
         add_aviary_input(self, Aircraft.Wing.STRUT_BRACING_FACTOR, units='unitless')
-        add_aviary_input(self, Aircraft.Wing.AEROELASTIC_TAILORING_FACTOR, units='unitless')
+        add_aviary_input(self, Aircraft.Wing.AEROELASTIC_TAILORING_FACTOR,
+                         units='unitless')
 
         if total_num_wing_engines > 0:
             add_aviary_input(self, Aircraft.Engine.WING_LOCATIONS,

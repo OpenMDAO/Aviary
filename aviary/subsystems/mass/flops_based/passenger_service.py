@@ -23,7 +23,8 @@ class PassengerServiceMass(om.ExplicitComponent):
         add_aviary_option(self, Mission.Constraints.MAX_MACH)
 
     def setup(self):
-        add_aviary_input(self, Aircraft.CrewPayload.PASSENGER_SERVICE_MASS_SCALER, units='unitless')
+        add_aviary_input(self, Aircraft.CrewPayload.PASSENGER_SERVICE_MASS_SCALER,
+                         units='unitless')
         add_aviary_input(self, Mission.Design.RANGE, units='NM')
 
         add_aviary_output(self, Aircraft.CrewPayload.PASSENGER_SERVICE_MASS, units='lbm')

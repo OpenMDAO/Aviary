@@ -14,7 +14,8 @@ class TransportCargoContainersMass(om.ExplicitComponent):
     '''
 
     def setup(self):
-        add_aviary_input(self, Aircraft.CrewPayload.CARGO_CONTAINER_MASS_SCALER, units='unitless')
+        add_aviary_input(self, Aircraft.CrewPayload.CARGO_CONTAINER_MASS_SCALER,
+                         units='unitless')
         add_aviary_input(self, Aircraft.CrewPayload.CARGO_MASS, units='lbm')
         add_aviary_input(self, Aircraft.CrewPayload.BAGGAGE_MASS, units='lbm')
 

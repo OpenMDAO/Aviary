@@ -95,7 +95,8 @@ class WingParameters(om.ExplicitComponent):
         if not self.options[Aircraft.Wing.HAS_FOLD]:
 
             add_aviary_input(self, Aircraft.Fuel.WING_FUEL_FRACTION, units='unitless')
-            add_aviary_output(self, Aircraft.Fuel.WING_VOLUME_GEOMETRIC_MAX, units='ft**3')
+            add_aviary_output(self, Aircraft.Fuel.WING_VOLUME_GEOMETRIC_MAX,
+                              units='ft**3')
 
             self.declare_partials(
                 Aircraft.Fuel.WING_VOLUME_GEOMETRIC_MAX,
@@ -114,7 +115,8 @@ class WingParameters(om.ExplicitComponent):
         add_aviary_output(self, Aircraft.Wing.CENTER_CHORD, units='ft')
         add_aviary_output(self, Aircraft.Wing.AVERAGE_CHORD, units='ft')
         add_aviary_output(self, Aircraft.Wing.ROOT_CHORD, units='ft')
-        add_aviary_output(self, Aircraft.Wing.THICKNESS_TO_CHORD_UNWEIGHTED, units='unitless')
+        add_aviary_output(self, Aircraft.Wing.THICKNESS_TO_CHORD_UNWEIGHTED,
+                          units='unitless')
         add_aviary_output(self, Aircraft.Wing.LEADING_EDGE_SWEEP, units='rad')
 
         self.declare_partials(

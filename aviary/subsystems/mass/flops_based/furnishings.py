@@ -21,7 +21,8 @@ class TransportFurnishingsGroupMass(om.ExplicitComponent):
 
     def setup(self):
         add_aviary_input(self, Aircraft.Furnishings.MASS_SCALER, units='unitless')
-        add_aviary_input(self, Aircraft.Fuselage.PASSENGER_COMPARTMENT_LENGTH, units='ft')
+        add_aviary_input(self, Aircraft.Fuselage.PASSENGER_COMPARTMENT_LENGTH,
+                         units='ft')
         add_aviary_input(self, Aircraft.Fuselage.MAX_WIDTH, units='ft')
         add_aviary_input(self, Aircraft.Fuselage.MAX_HEIGHT, units='ft')
 

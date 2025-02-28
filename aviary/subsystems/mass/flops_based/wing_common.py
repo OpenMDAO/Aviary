@@ -17,9 +17,11 @@ class WingBendingMass(om.ExplicitComponent):
 
     def setup(self):
         add_aviary_input(self, Mission.Design.GROSS_MASS, units='lbm')
-        add_aviary_input(self, Aircraft.Wing.AEROELASTIC_TAILORING_FACTOR, units='unitless')
+        add_aviary_input(self, Aircraft.Wing.AEROELASTIC_TAILORING_FACTOR,
+                         units='unitless')
         add_aviary_input(self, Aircraft.Wing.BENDING_MATERIAL_FACTOR, units='unitless')
-        add_aviary_input(self, Aircraft.Wing.BENDING_MATERIAL_MASS_SCALER, units='unitless')
+        add_aviary_input(self, Aircraft.Wing.BENDING_MATERIAL_MASS_SCALER,
+                         units='unitless')
         add_aviary_input(self, Aircraft.Wing.COMPOSITE_FRACTION, units='unitless')
         add_aviary_input(self, Aircraft.Wing.ENG_POD_INERTIA_FACTOR, units='unitless')
         add_aviary_input(self, Aircraft.Wing.LOAD_FRACTION, units='unitless')

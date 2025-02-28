@@ -103,7 +103,8 @@ class AltHydraulicsGroupMass(om.ExplicitComponent):
     def setup(self):
         add_aviary_input(self, Aircraft.Wing.AREA, units='ft**2')
         add_aviary_input(self, Aircraft.HorizontalTail.WETTED_AREA, units='ft**2')
-        add_aviary_input(self, Aircraft.HorizontalTail.THICKNESS_TO_CHORD, units='unitless')
+        add_aviary_input(self, Aircraft.HorizontalTail.THICKNESS_TO_CHORD,
+                         units='unitless')
         add_aviary_input(self, Aircraft.VerticalTail.AREA, units='ft**2')
         add_aviary_input(self, Aircraft.Hydraulics.MASS_SCALER, units='unitless')
 

@@ -122,19 +122,22 @@ class _Prelim(om.ExplicitComponent):
         add_aviary_input(self, Aircraft.HorizontalTail.AREA, units='ft**2')
         add_aviary_input(self, Aircraft.HorizontalTail.ASPECT_RATIO, units='unitless')
         add_aviary_input(self, Aircraft.HorizontalTail.TAPER_RATIO, units='unitless')
-        add_aviary_input(self, Aircraft.HorizontalTail.THICKNESS_TO_CHORD, units='unitless')
+        add_aviary_input(self, Aircraft.HorizontalTail.THICKNESS_TO_CHORD,
+                         units='unitless')
 
         add_aviary_input(self, Aircraft.VerticalTail.AREA, units='ft**2')
         add_aviary_input(self, Aircraft.VerticalTail.ASPECT_RATIO, units='unitless')
         add_aviary_input(self, Aircraft.VerticalTail.TAPER_RATIO, units='unitless')
-        add_aviary_input(self, Aircraft.VerticalTail.THICKNESS_TO_CHORD, units='unitless')
+        add_aviary_input(self, Aircraft.VerticalTail.THICKNESS_TO_CHORD,
+                         units='unitless')
 
         add_aviary_input(self, Aircraft.Wing.AREA, units='ft**2')
         add_aviary_input(self, Aircraft.Wing.GLOVE_AND_BAT, units='ft**2')
         # NOTE: FLOPS/aviary1 calculate span locally
         add_aviary_input(self, Aircraft.Wing.SPAN, units='ft')
         add_aviary_input(self, Aircraft.Wing.TAPER_RATIO, units='unitless')
-        add_aviary_input(self, Aircraft.Wing.THICKNESS_TO_CHORD, units='unitless')
+        add_aviary_input(self, Aircraft.Wing.THICKNESS_TO_CHORD,
+                         units='unitless')
 
         self.add_output(Names.CROOT, 1.0, units='unitless')
         self.add_output(Names.CROOTB, 1.0, units='unitless')
@@ -567,12 +570,15 @@ class _Tail(om.ExplicitComponent):
 
         add_aviary_input(self, Aircraft.HorizontalTail.AREA, units='ft**2')
 
-        add_aviary_input(self, Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION, units='unitless')
+        add_aviary_input(self, Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION,
+                         units='unitless')
 
-        add_aviary_input(self, Aircraft.HorizontalTail.WETTED_AREA_SCALER, units='unitless')
+        add_aviary_input(self, Aircraft.HorizontalTail.WETTED_AREA_SCALER,
+                         units='unitless')
 
         add_aviary_input(self, Aircraft.VerticalTail.AREA, units='ft**2')
-        add_aviary_input(self, Aircraft.VerticalTail.WETTED_AREA_SCALER, units='unitless')
+        add_aviary_input(self, Aircraft.VerticalTail.WETTED_AREA_SCALER,
+                         units='unitless')
 
         add_aviary_output(self, Aircraft.HorizontalTail.WETTED_AREA, units='ft**2')
         add_aviary_output(self, Aircraft.VerticalTail.WETTED_AREA, units='ft**2')
@@ -727,10 +733,13 @@ class _Fuselage(om.ExplicitComponent):
         add_aviary_input(self, Aircraft.Fuselage.LENGTH, units='ft')
         add_aviary_input(self, Aircraft.Fuselage.WETTED_AREA_SCALER, units='unitless')
 
-        add_aviary_input(self, Aircraft.HorizontalTail.THICKNESS_TO_CHORD, units='unitless')
-        add_aviary_input(self, Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION, units='unitless')
+        add_aviary_input(self, Aircraft.HorizontalTail.THICKNESS_TO_CHORD,
+                         units='unitless')
+        add_aviary_input(self, Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION,
+                         units='unitless')
 
-        add_aviary_input(self, Aircraft.VerticalTail.THICKNESS_TO_CHORD, units='unitless')
+        add_aviary_input(self, Aircraft.VerticalTail.THICKNESS_TO_CHORD,
+                         units='unitless')
 
         add_aviary_input(self, Aircraft.Wing.AREA, units='ft**2')
         add_aviary_input(self, Aircraft.Wing.ASPECT_RATIO, units='unitless')
@@ -738,7 +747,8 @@ class _Fuselage(om.ExplicitComponent):
         add_aviary_input(self, Aircraft.Wing.THICKNESS_TO_CHORD, units='unitless')
 
         add_aviary_output(self, Aircraft.Fuselage.CROSS_SECTION, units='ft**2')
-        add_aviary_output(self, Aircraft.Fuselage.DIAMETER_TO_WING_SPAN, units='unitless')
+        add_aviary_output(self, Aircraft.Fuselage.DIAMETER_TO_WING_SPAN,
+                          units='unitless')
         add_aviary_output(self, Aircraft.Fuselage.LENGTH_TO_DIAMETER, units='unitless')
         add_aviary_output(self, Aircraft.Fuselage.WETTED_AREA, units='ft**2')
 
