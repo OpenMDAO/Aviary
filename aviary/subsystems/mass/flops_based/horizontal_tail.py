@@ -12,12 +12,12 @@ class HorizontalTailMass(om.ExplicitComponent):
     '''
 
     def setup(self):
-        add_aviary_input(self, Aircraft.HorizontalTail.AREA)
-        add_aviary_input(self, Aircraft.HorizontalTail.TAPER_RATIO)
-        add_aviary_input(self, Mission.Design.GROSS_MASS)
-        add_aviary_input(self, Aircraft.HorizontalTail.MASS_SCALER)
+        add_aviary_input(self, Aircraft.HorizontalTail.AREA, units='ft**2')
+        add_aviary_input(self, Aircraft.HorizontalTail.TAPER_RATIO, units='unitless')
+        add_aviary_input(self, Mission.Design.GROSS_MASS, units='lbm')
+        add_aviary_input(self, Aircraft.HorizontalTail.MASS_SCALER, units='unitless')
 
-        add_aviary_output(self, Aircraft.HorizontalTail.MASS)
+        add_aviary_output(self, Aircraft.HorizontalTail.MASS, units='lbm')
 
     def setup_partials(self):
         self.declare_partials("*", "*")
@@ -62,10 +62,10 @@ class AltHorizontalTailMass(om.ExplicitComponent):
     '''
 
     def setup(self):
-        add_aviary_input(self, Aircraft.HorizontalTail.AREA)
-        add_aviary_input(self, Aircraft.HorizontalTail.MASS_SCALER)
+        add_aviary_input(self, Aircraft.HorizontalTail.AREA, units='ft**2')
+        add_aviary_input(self, Aircraft.HorizontalTail.MASS_SCALER, units='unitless')
 
-        add_aviary_output(self, Aircraft.HorizontalTail.MASS)
+        add_aviary_output(self, Aircraft.HorizontalTail.MASS, units='lbm')
 
     def setup_partials(self):
         self.declare_partials("*", "*")

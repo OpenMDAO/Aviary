@@ -20,12 +20,13 @@ class TransportFurnishingsGroupMass(om.ExplicitComponent):
         add_aviary_option(self, Aircraft.Fuselage.NUM_FUSELAGES)
 
     def setup(self):
-        add_aviary_input(self, Aircraft.Furnishings.MASS_SCALER)
-        add_aviary_input(self, Aircraft.Fuselage.PASSENGER_COMPARTMENT_LENGTH)
-        add_aviary_input(self, Aircraft.Fuselage.MAX_WIDTH)
-        add_aviary_input(self, Aircraft.Fuselage.MAX_HEIGHT)
+        add_aviary_input(self, Aircraft.Furnishings.MASS_SCALER, units='unitless')
+        add_aviary_input(self, Aircraft.Fuselage.PASSENGER_COMPARTMENT_LENGTH,
+                         units='ft')
+        add_aviary_input(self, Aircraft.Fuselage.MAX_WIDTH, units='ft')
+        add_aviary_input(self, Aircraft.Fuselage.MAX_HEIGHT, units='ft')
 
-        add_aviary_output(self, Aircraft.Furnishings.MASS)
+        add_aviary_output(self, Aircraft.Furnishings.MASS, units='lbm')
 
     def setup_partials(self):
         self.declare_partials(of=Aircraft.Furnishings.MASS, wrt='*')
@@ -100,15 +101,15 @@ class BWBFurnishingsGroupMass(om.ExplicitComponent):
         add_aviary_option(self, Aircraft.Fuselage.MILITARY_CARGO_FLOOR)
 
     def setup(self):
-        add_aviary_input(self, Aircraft.Furnishings.MASS_SCALER)
-        add_aviary_input(self, Aircraft.BWB.CABIN_AREA)
+        add_aviary_input(self, Aircraft.Furnishings.MASS_SCALER, units='unitless')
+        add_aviary_input(self, Aircraft.BWB.CABIN_AREA, units='ft**2')
 
-        add_aviary_input(self, Aircraft.Fuselage.MAX_WIDTH)
+        add_aviary_input(self, Aircraft.Fuselage.MAX_WIDTH, units='ft')
 
-        add_aviary_input(self, Aircraft.Fuselage.MAX_HEIGHT)
-        add_aviary_input(self, Aircraft.BWB.PASSENGER_LEADING_EDGE_SWEEP)
+        add_aviary_input(self, Aircraft.Fuselage.MAX_HEIGHT, units='ft')
+        add_aviary_input(self, Aircraft.BWB.PASSENGER_LEADING_EDGE_SWEEP, units='deg')
 
-        add_aviary_output(self, Aircraft.Furnishings.MASS)
+        add_aviary_output(self, Aircraft.Furnishings.MASS, units='lbm')
 
     def setup_partials(self):
         self.declare_partials(of=Aircraft.Furnishings.MASS, wrt='*')
@@ -232,9 +233,9 @@ class AltFurnishingsGroupMassBase(om.ExplicitComponent):
         add_aviary_option(self, Aircraft.CrewPayload.Design.NUM_PASSENGERS)
 
     def setup(self):
-        add_aviary_input(self, Aircraft.Furnishings.MASS_SCALER)
+        add_aviary_input(self, Aircraft.Furnishings.MASS_SCALER, units='unitless')
 
-        add_aviary_output(self, Aircraft.Furnishings.MASS_BASE)
+        add_aviary_output(self, Aircraft.Furnishings.MASS_BASE, units='lbm')
 
     def setup_partials(self):
         self.declare_partials(of=Aircraft.Furnishings.MASS_BASE, wrt='*')
@@ -265,12 +266,12 @@ class AltFurnishingsGroupMass(om.ExplicitComponent):
     '''
 
     def setup(self):
-        add_aviary_input(self, Aircraft.Furnishings.MASS_BASE)
-        add_aviary_input(self, Aircraft.Design.STRUCTURE_MASS)
-        add_aviary_input(self, Aircraft.Propulsion.MASS)
-        add_aviary_input(self, Aircraft.Design.SYSTEMS_EQUIP_MASS_BASE)
+        add_aviary_input(self, Aircraft.Furnishings.MASS_BASE, units='lbm')
+        add_aviary_input(self, Aircraft.Design.STRUCTURE_MASS, units='lbm')
+        add_aviary_input(self, Aircraft.Propulsion.MASS, units='lbm')
+        add_aviary_input(self, Aircraft.Design.SYSTEMS_EQUIP_MASS_BASE, units='lbm')
 
-        add_aviary_output(self, Aircraft.Furnishings.MASS)
+        add_aviary_output(self, Aircraft.Furnishings.MASS, units='lbm')
 
     def setup_partials(self):
         self.declare_partials(

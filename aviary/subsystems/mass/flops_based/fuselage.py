@@ -20,11 +20,11 @@ class TransportFuselageMass(om.ExplicitComponent):
         add_aviary_option(self, Aircraft.Propulsion.TOTAL_NUM_FUSELAGE_ENGINES)
 
     def setup(self):
-        add_aviary_input(self, Aircraft.Fuselage.LENGTH)
-        add_aviary_input(self, Aircraft.Fuselage.MASS_SCALER)
-        add_aviary_input(self, Aircraft.Fuselage.AVG_DIAMETER)
+        add_aviary_input(self, Aircraft.Fuselage.LENGTH, units='ft')
+        add_aviary_input(self, Aircraft.Fuselage.MASS_SCALER, units='unitless')
+        add_aviary_input(self, Aircraft.Fuselage.AVG_DIAMETER, units='ft')
 
-        add_aviary_output(self, Aircraft.Fuselage.MASS)
+        add_aviary_output(self, Aircraft.Fuselage.MASS, units='lbm')
 
     def setup_partials(self):
         self.declare_partials(Aircraft.Fuselage.MASS, "*")
@@ -79,12 +79,12 @@ class AltFuselageMass(om.ExplicitComponent):
     """
 
     def setup(self):
-        add_aviary_input(self, Aircraft.Fuselage.MASS_SCALER)
-        add_aviary_input(self, Aircraft.Fuselage.WETTED_AREA)
-        add_aviary_input(self, Aircraft.Fuselage.MAX_HEIGHT)
-        add_aviary_input(self, Aircraft.Fuselage.MAX_WIDTH)
+        add_aviary_input(self, Aircraft.Fuselage.MASS_SCALER, units='unitless')
+        add_aviary_input(self, Aircraft.Fuselage.WETTED_AREA, units='ft**2')
+        add_aviary_input(self, Aircraft.Fuselage.MAX_HEIGHT, units='ft')
+        add_aviary_input(self, Aircraft.Fuselage.MAX_WIDTH, units='ft')
 
-        add_aviary_output(self, Aircraft.Fuselage.MASS)
+        add_aviary_output(self, Aircraft.Fuselage.MASS, units='lbm')
 
     def setup_partials(self):
         self.declare_partials(of='*', wrt='*')

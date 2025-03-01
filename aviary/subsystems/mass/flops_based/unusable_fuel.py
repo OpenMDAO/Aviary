@@ -25,14 +25,14 @@ class TransportUnusableFuelMass(om.ExplicitComponent):
 
     def setup(self):
         add_aviary_input(
-            self, Aircraft.Fuel.UNUSABLE_FUEL_MASS_SCALER)
-        add_aviary_input(self, Aircraft.Fuel.DENSITY_RATIO)
-        add_aviary_input(self, Aircraft.Fuel.TOTAL_CAPACITY)
-        add_aviary_input(self, Aircraft.Propulsion.TOTAL_SCALED_SLS_THRUST)
-        add_aviary_input(self, Aircraft.Wing.AREA)
-        add_aviary_output(self, Aircraft.Fuel.TOTAL_VOLUME)
+            self, Aircraft.Fuel.UNUSABLE_FUEL_MASS_SCALER, units='unitless')
+        add_aviary_input(self, Aircraft.Fuel.DENSITY_RATIO, units='unitless')
+        add_aviary_input(self, Aircraft.Fuel.TOTAL_CAPACITY, units='lbm')
+        add_aviary_input(self, Aircraft.Propulsion.TOTAL_SCALED_SLS_THRUST, units='lbf')
+        add_aviary_input(self, Aircraft.Wing.AREA, units='ft**2')
+        add_aviary_output(self, Aircraft.Fuel.TOTAL_VOLUME, units='galUS')
 
-        add_aviary_output(self, Aircraft.Fuel.UNUSABLE_FUEL_MASS)
+        add_aviary_output(self, Aircraft.Fuel.UNUSABLE_FUEL_MASS, units='lbm')
 
     def setup_partials(self):
 
@@ -112,11 +112,11 @@ class AltUnusableFuelMass(om.ExplicitComponent):
     '''
 
     def setup(self):
-        add_aviary_input(self, Aircraft.Fuel.UNUSABLE_FUEL_MASS_SCALER, val=1.0)
+        add_aviary_input(self, Aircraft.Fuel.UNUSABLE_FUEL_MASS_SCALER, units='unitless')
 
-        add_aviary_input(self, Aircraft.Fuel.TOTAL_CAPACITY, 0.0)
+        add_aviary_input(self, Aircraft.Fuel.TOTAL_CAPACITY, units='lbm')
 
-        add_aviary_output(self, Aircraft.Fuel.UNUSABLE_FUEL_MASS, 0.0)
+        add_aviary_output(self, Aircraft.Fuel.UNUSABLE_FUEL_MASS, units='lbm')
 
     def setup_partials(self):
         self.declare_partials(of='*', wrt='*')

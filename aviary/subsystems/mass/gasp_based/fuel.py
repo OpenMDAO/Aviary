@@ -21,28 +21,28 @@ class BodyTankCalculations(om.ExplicitComponent):
 
     def setup(self):
 
-        add_aviary_input(self, Aircraft.Fuel.WING_VOLUME_DESIGN)
-        add_aviary_input(self, Aircraft.Fuel.WING_VOLUME_STRUCTURAL_MAX)
+        add_aviary_input(self, Aircraft.Fuel.WING_VOLUME_DESIGN, units='ft**3')
+        add_aviary_input(self, Aircraft.Fuel.WING_VOLUME_STRUCTURAL_MAX, units='ft**3')
         self.add_input("fuel_mass_min", val=2000, units="lbm",
                        desc="WFAMIN: minimum value of fuel mass (set when max payload is carried)")
-        add_aviary_input(self, Mission.Design.FUEL_MASS_REQUIRED)
+        add_aviary_input(self, Mission.Design.FUEL_MASS_REQUIRED, units='lbm')
         self.add_input("max_wingfuel_mass", val=6, units="lbm",
                        desc="WFWMX: maximum wingfuel mass")
-        add_aviary_input(self, Aircraft.Fuel.WING_VOLUME_GEOMETRIC_MAX)
+        add_aviary_input(self, Aircraft.Fuel.WING_VOLUME_GEOMETRIC_MAX, units='ft**3')
         add_aviary_input(self, Aircraft.Fuel.DENSITY, units="lbm/ft**3")
-        add_aviary_input(self, Mission.Design.GROSS_MASS)
-        add_aviary_input(self, Mission.Design.FUEL_MASS)
-        add_aviary_input(self, Aircraft.Design.OPERATING_MASS)
+        add_aviary_input(self, Mission.Design.GROSS_MASS, units='lbm')
+        add_aviary_input(self, Mission.Design.FUEL_MASS, units='lbm')
+        add_aviary_input(self, Aircraft.Design.OPERATING_MASS, units='lbm')
 
         # WFXTRA: extra amount of fuel that is required but does not fit in wings
-        add_aviary_output(self, Aircraft.Fuel.AUXILIARY_FUEL_CAPACITY)
+        add_aviary_output(self, Aircraft.Fuel.AUXILIARY_FUEL_CAPACITY, units='lbm')
         self.add_output("extra_fuel_volume", val=0, units="ft**3",
                         desc="FVOLXTRA: excess required design fuel volume (including fuel margin) greater than geometric fuel volume of wings")
         self.add_output("max_extra_fuel_mass", val=0, units="lbm",
                         desc="WFXTRAMX: mass of fuel that fits in extra_fuel_volume")
         self.add_output("wingfuel_mass_min", val=0, units="lbm",
                         desc="WFWMIN: minimum wing fuel mass")
-        add_aviary_output(self, Aircraft.Fuel.TOTAL_CAPACITY)
+        add_aviary_output(self, Aircraft.Fuel.TOTAL_CAPACITY, units='lbm')
 
         self.declare_partials(Aircraft.Fuel.AUXILIARY_FUEL_CAPACITY, [
                               Mission.Design.FUEL_MASS_REQUIRED, "max_wingfuel_mass"])
@@ -325,16 +325,16 @@ class FuelAndOEMOutputs(om.ExplicitComponent):
     def setup(self):
 
         add_aviary_input(self, Aircraft.Fuel.DENSITY, units="lbm/ft**3")
-        add_aviary_input(self, Mission.Design.GROSS_MASS)
-        add_aviary_input(self, Aircraft.Propulsion.MASS)
-        add_aviary_input(self, Aircraft.Controls.TOTAL_MASS)
-        add_aviary_input(self, Aircraft.Design.STRUCTURE_MASS)
-        add_aviary_input(self, Aircraft.Design.FIXED_EQUIPMENT_MASS)
-        add_aviary_input(self, Aircraft.Design.FIXED_USEFUL_LOAD)
-        add_aviary_input(self, Mission.Design.FUEL_MASS_REQUIRED)
-        add_aviary_input(self, Aircraft.Fuel.WING_VOLUME_GEOMETRIC_MAX)
-        add_aviary_input(self, Aircraft.Fuel.FUEL_MARGIN)
-        add_aviary_input(self, Aircraft.Fuel.TOTAL_CAPACITY)
+        add_aviary_input(self, Mission.Design.GROSS_MASS, units='lbm')
+        add_aviary_input(self, Aircraft.Propulsion.MASS, units='lbm')
+        add_aviary_input(self, Aircraft.Controls.TOTAL_MASS, units='lbm')
+        add_aviary_input(self, Aircraft.Design.STRUCTURE_MASS, units='lbm')
+        add_aviary_input(self, Aircraft.Design.FIXED_EQUIPMENT_MASS, units='lbm')
+        add_aviary_input(self, Aircraft.Design.FIXED_USEFUL_LOAD, units='lbm')
+        add_aviary_input(self, Mission.Design.FUEL_MASS_REQUIRED, units='lbm')
+        add_aviary_input(self, Aircraft.Fuel.WING_VOLUME_GEOMETRIC_MAX, units='ft**3')
+        add_aviary_input(self, Aircraft.Fuel.FUEL_MARGIN, units='unitless')
+        add_aviary_input(self, Aircraft.Fuel.TOTAL_CAPACITY, units='lbm')
 
         self.add_output(
             "OEM_wingfuel_mass",
@@ -348,8 +348,8 @@ class FuelAndOEMOutputs(om.ExplicitComponent):
             units="ft**3",
             desc="FVOLW: wing tank fuel volume when carrying maximum fuel",
         )
-        add_aviary_output(self, Aircraft.Fuel.WING_VOLUME_DESIGN)
-        add_aviary_output(self, Aircraft.Design.OPERATING_MASS)
+        add_aviary_output(self, Aircraft.Fuel.WING_VOLUME_DESIGN, units='ft**3')
+        add_aviary_output(self, Aircraft.Design.OPERATING_MASS, units='lbm')
 
         self.add_output(
             "payload_mass_max_fuel",
@@ -366,7 +366,7 @@ class FuelAndOEMOutputs(om.ExplicitComponent):
         self.add_output(
             "max_wingfuel_mass", val=0, units="lbm", desc="WFWMX: maximum wingfuel mass"
         )
-        add_aviary_output(self, Aircraft.Fuel.WING_VOLUME_STRUCTURAL_MAX)
+        add_aviary_output(self, Aircraft.Fuel.WING_VOLUME_STRUCTURAL_MAX, units='ft**3')
 
         self.declare_partials(
             "OEM_wingfuel_mass",
@@ -690,22 +690,23 @@ class FuelSysAndFullFuselageMass(om.ExplicitComponent):
 
     def setup(self):
 
-        add_aviary_input(self, Mission.Design.GROSS_MASS)
+        add_aviary_input(self, Mission.Design.GROSS_MASS, units='lbm')
 
-        add_aviary_input(self, Aircraft.Wing.MASS)
+        add_aviary_input(self, Aircraft.Wing.MASS, units='lbm')
         self.add_input("wing_mounted_mass", val=24446.343040697346, units="lbm",
                        desc="WM: mass of gear and engine (everything on wing that isn`t wing itself or fuel")
-        add_aviary_input(self, Aircraft.Fuel.FUEL_SYSTEM_MASS_SCALER)
-        add_aviary_input(self, Aircraft.Fuel.FUEL_SYSTEM_MASS_COEFFICIENT)
-        add_aviary_input(self, Aircraft.Fuel.DENSITY)
-        add_aviary_input(self, Mission.Design.FUEL_MASS)
-        add_aviary_input(self, Aircraft.Fuel.FUEL_MARGIN)
+        add_aviary_input(self, Aircraft.Fuel.FUEL_SYSTEM_MASS_SCALER, units='unitless')
+        add_aviary_input(self, Aircraft.Fuel.FUEL_SYSTEM_MASS_COEFFICIENT,
+                         units='unitless')
+        add_aviary_input(self, Aircraft.Fuel.DENSITY, units='lbm/galUS')
+        add_aviary_input(self, Mission.Design.FUEL_MASS, units='lbm')
+        add_aviary_input(self, Aircraft.Fuel.FUEL_MARGIN, units='unitless')
         self.add_input("wingfuel_mass_min", val=32850, units="lbm",
                        desc="WFWMIN: minimum wing fuel mass")
 
         self.add_output("fus_mass_full", val=0, units="lbm",
                         desc="WX: mass of fuselage and contents, including empennage")
-        add_aviary_output(self, Aircraft.Fuel.FUEL_SYSTEM_MASS)
+        add_aviary_output(self, Aircraft.Fuel.FUEL_SYSTEM_MASS, units='lbm')
 
         self.declare_partials(
             Aircraft.Fuel.FUEL_SYSTEM_MASS,
@@ -811,33 +812,34 @@ class FuselageAndStructMass(om.ExplicitComponent):
 
         self.add_input("fus_mass_full", val=4000, units="lbm",
                        desc="WX: mass of fuselage and contents, including empennage")
-        add_aviary_input(self, Aircraft.Fuselage.MASS_COEFFICIENT)
-        add_aviary_input(self, Aircraft.Fuselage.WETTED_AREA)
-        add_aviary_input(self, Aircraft.Fuselage.AVG_DIAMETER)
-        add_aviary_input(self, Aircraft.TailBoom.LENGTH)
+        add_aviary_input(self, Aircraft.Fuselage.MASS_COEFFICIENT, units='unitless')
+        add_aviary_input(self, Aircraft.Fuselage.WETTED_AREA, units='ft**2')
+        add_aviary_input(self, Aircraft.Fuselage.AVG_DIAMETER, units='ft')
+        add_aviary_input(self, Aircraft.TailBoom.LENGTH, units='ft')
         self.add_input("pylon_len", val=0, units="ft",
                        desc="ELRW: length of pylon for fuselage mounted engines")
         self.add_input("min_dive_vel", val=419.75918333, units="kn",
                        desc="VDMIN: dive velocity")
-        add_aviary_input(self, Aircraft.Fuselage.PRESSURE_DIFFERENTIAL)
-        add_aviary_input(self, Aircraft.Wing.ULTIMATE_LOAD_FACTOR)
+        add_aviary_input(self, Aircraft.Fuselage.PRESSURE_DIFFERENTIAL, units='psi')
+        add_aviary_input(self, Aircraft.Wing.ULTIMATE_LOAD_FACTOR, units='unitless')
         self.add_input("MAT", val=0, units="lbm",
                        desc="WAT: Weight of the Fuselage Acoustic Treatment")
-        add_aviary_input(self, Aircraft.Wing.MASS_SCALER)
-        add_aviary_input(self, Aircraft.Wing.MASS)
-        add_aviary_input(self, Aircraft.HorizontalTail.MASS_SCALER)
-        add_aviary_input(self, Aircraft.HorizontalTail.MASS)
-        add_aviary_input(self, Aircraft.VerticalTail.MASS_SCALER)
-        add_aviary_input(self, Aircraft.VerticalTail.MASS)
-        add_aviary_input(self, Aircraft.Fuselage.MASS_SCALER)
-        add_aviary_input(self, Aircraft.LandingGear.TOTAL_MASS_SCALER)
-        add_aviary_input(self, Aircraft.LandingGear.TOTAL_MASS)
-        add_aviary_input(self, Aircraft.Engine.POD_MASS_SCALER, shape=num_engine_type)
-        add_aviary_input(self, Aircraft.Propulsion.TOTAL_ENGINE_POD_MASS)
-        add_aviary_input(self, Aircraft.Design.STRUCTURAL_MASS_INCREMENT)
+        add_aviary_input(self, Aircraft.Wing.MASS_SCALER, units='unitless')
+        add_aviary_input(self, Aircraft.Wing.MASS, units='lbm')
+        add_aviary_input(self, Aircraft.HorizontalTail.MASS_SCALER, units='unitless')
+        add_aviary_input(self, Aircraft.HorizontalTail.MASS, units='lbm')
+        add_aviary_input(self, Aircraft.VerticalTail.MASS_SCALER, units='unitless')
+        add_aviary_input(self, Aircraft.VerticalTail.MASS, units='lbm')
+        add_aviary_input(self, Aircraft.Fuselage.MASS_SCALER, units='unitless')
+        add_aviary_input(self, Aircraft.LandingGear.TOTAL_MASS_SCALER, units='unitless')
+        add_aviary_input(self, Aircraft.LandingGear.TOTAL_MASS, units='lbm')
+        add_aviary_input(self, Aircraft.Engine.POD_MASS_SCALER,
+                         shape=num_engine_type, units='unitless')
+        add_aviary_input(self, Aircraft.Propulsion.TOTAL_ENGINE_POD_MASS, units='lbm')
+        add_aviary_input(self, Aircraft.Design.STRUCTURAL_MASS_INCREMENT, units='lbm')
 
-        add_aviary_output(self, Aircraft.Design.STRUCTURE_MASS)
-        add_aviary_output(self, Aircraft.Fuselage.MASS)
+        add_aviary_output(self, Aircraft.Design.STRUCTURE_MASS, units='lbm')
+        add_aviary_output(self, Aircraft.Fuselage.MASS, units='lbm')
 
         self.declare_partials(
             Aircraft.Fuselage.MASS,
@@ -1130,29 +1132,30 @@ class FuelMass(om.ExplicitComponent):
 
     def setup(self):
 
-        add_aviary_input(self, Aircraft.Design.STRUCTURE_MASS)
-        add_aviary_input(self, Aircraft.Fuel.FUEL_SYSTEM_MASS)
-        add_aviary_input(self, Mission.Design.GROSS_MASS)
+        add_aviary_input(self, Aircraft.Design.STRUCTURE_MASS, units='lbm')
+        add_aviary_input(self, Aircraft.Fuel.FUEL_SYSTEM_MASS, units='lbm')
+        add_aviary_input(self, Mission.Design.GROSS_MASS, units='lbm')
         self.add_input("eng_comb_mass", val=14371.0, units="lbm",
                        desc="WPSTAR: mass of dry engine and engine installation. Includes mass of electrical augmentation system.")
-        add_aviary_input(self, Aircraft.Controls.TOTAL_MASS)
-        add_aviary_input(self, Aircraft.Design.FIXED_EQUIPMENT_MASS)
-        add_aviary_input(self, Aircraft.Design.FIXED_USEFUL_LOAD)
+        add_aviary_input(self, Aircraft.Controls.TOTAL_MASS, units='lbm')
+        add_aviary_input(self, Aircraft.Design.FIXED_EQUIPMENT_MASS, units='lbm')
+        add_aviary_input(self, Aircraft.Design.FIXED_USEFUL_LOAD, units='lbm')
         self.add_input("payload_mass_des", val=36000, units="lbm",
                        desc="WPLDES: design payload")
-        add_aviary_input(self, Aircraft.Fuel.FUEL_SYSTEM_MASS_SCALER)
-        add_aviary_input(self, Aircraft.Fuel.FUEL_SYSTEM_MASS_COEFFICIENT)
-        add_aviary_input(self, Aircraft.Fuel.DENSITY)
-        add_aviary_input(self, Aircraft.CrewPayload.PASSENGER_PAYLOAD_MASS)
+        add_aviary_input(self, Aircraft.Fuel.FUEL_SYSTEM_MASS_SCALER, units='unitless')
+        add_aviary_input(self, Aircraft.Fuel.FUEL_SYSTEM_MASS_COEFFICIENT,
+                         units='unitless')
+        add_aviary_input(self, Aircraft.Fuel.DENSITY, units='lbm/galUS')
+        add_aviary_input(self, Aircraft.CrewPayload.PASSENGER_PAYLOAD_MASS, units='lbm')
 
         self.add_input("payload_mass_max", val=46040, units="lbm",
                        desc="WPLMAX: maximum payload that the aircraft is being asked to carry (design payload + cargo)")
 
-        add_aviary_input(self, Aircraft.Fuel.FUEL_MARGIN)
+        add_aviary_input(self, Aircraft.Fuel.FUEL_MARGIN, units='unitless')
 
-        add_aviary_output(self, Mission.Design.FUEL_MASS)
-        add_aviary_output(self, Aircraft.Propulsion.MASS)
-        add_aviary_output(self, Mission.Design.FUEL_MASS_REQUIRED)
+        add_aviary_output(self, Mission.Design.FUEL_MASS, units='lbm')
+        add_aviary_output(self, Aircraft.Propulsion.MASS, units='lbm')
+        add_aviary_output(self, Mission.Design.FUEL_MASS_REQUIRED, units='lbm')
         self.add_output("fuel_mass_min", val=0, units="lbm",
                         desc="WFAMIN: minimum value of fuel mass (set when max payload is carried)")
 
