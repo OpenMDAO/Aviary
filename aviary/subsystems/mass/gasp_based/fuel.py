@@ -696,7 +696,8 @@ class FuelSysAndFullFuselageMass(om.ExplicitComponent):
         self.add_input("wing_mounted_mass", val=24446.343040697346, units="lbm",
                        desc="WM: mass of gear and engine (everything on wing that isn`t wing itself or fuel")
         add_aviary_input(self, Aircraft.Fuel.FUEL_SYSTEM_MASS_SCALER, units='unitless')
-        add_aviary_input(self, Aircraft.Fuel.FUEL_SYSTEM_MASS_COEFFICIENT, units='unitless')
+        add_aviary_input(self, Aircraft.Fuel.FUEL_SYSTEM_MASS_COEFFICIENT,
+                         units='unitless')
         add_aviary_input(self, Aircraft.Fuel.DENSITY, units='lbm/galUS')
         add_aviary_input(self, Mission.Design.FUEL_MASS, units='lbm')
         add_aviary_input(self, Aircraft.Fuel.FUEL_MARGIN, units='unitless')
@@ -1142,7 +1143,8 @@ class FuelMass(om.ExplicitComponent):
         self.add_input("payload_mass_des", val=36000, units="lbm",
                        desc="WPLDES: design payload")
         add_aviary_input(self, Aircraft.Fuel.FUEL_SYSTEM_MASS_SCALER, units='unitless')
-        add_aviary_input(self, Aircraft.Fuel.FUEL_SYSTEM_MASS_COEFFICIENT, units='unitless')
+        add_aviary_input(self, Aircraft.Fuel.FUEL_SYSTEM_MASS_COEFFICIENT,
+                         units='unitless')
         add_aviary_input(self, Aircraft.Fuel.DENSITY, units='lbm/galUS')
         add_aviary_input(self, Aircraft.CrewPayload.PASSENGER_PAYLOAD_MASS, units='lbm')
 

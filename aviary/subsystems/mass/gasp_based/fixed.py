@@ -861,22 +861,27 @@ class TailMass(om.ExplicitComponent):
         add_aviary_input(self, Aircraft.VerticalTail.SWEEP, units="rad")
         add_aviary_input(self, Aircraft.VerticalTail.SPAN, units='ft')
         add_aviary_input(self, Mission.Design.GROSS_MASS, units='lbm')
-        add_aviary_input(self, Aircraft.HorizontalTail.MASS_COEFFICIENT, units='unitless')
+        add_aviary_input(self, Aircraft.HorizontalTail.MASS_COEFFICIENT,
+                         units='unitless')
         add_aviary_input(self, Aircraft.Fuselage.LENGTH, units='ft')
         add_aviary_input(self, Aircraft.HorizontalTail.SPAN, units='ft')
-        add_aviary_input(self, Aircraft.LandingGear.TAIL_HOOK_MASS_SCALER, units='unitless')
+        add_aviary_input(self, Aircraft.LandingGear.TAIL_HOOK_MASS_SCALER,
+                         units='unitless')
         add_aviary_input(self, Aircraft.HorizontalTail.TAPER_RATIO, units='unitless')
         add_aviary_input(self, Aircraft.VerticalTail.MASS_COEFFICIENT, units='unitless')
         add_aviary_input(self, Aircraft.Wing.SPAN, units='ft')
         add_aviary_input(self, Aircraft.HorizontalTail.AREA, units='ft**2')
         self.add_input("min_dive_vel", val=200, units="kn", desc="VDMIN: dive velocity")
         add_aviary_input(self, Aircraft.HorizontalTail.MOMENT_ARM, units='ft')
-        add_aviary_input(self, Aircraft.HorizontalTail.THICKNESS_TO_CHORD, units='unitless')
+        add_aviary_input(self, Aircraft.HorizontalTail.THICKNESS_TO_CHORD,
+                         units='unitless')
         add_aviary_input(self, Aircraft.HorizontalTail.ROOT_CHORD, units='ft')
-        add_aviary_input(self, Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION, units='unitless')
+        add_aviary_input(self, Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION,
+                         units='unitless')
         add_aviary_input(self, Aircraft.VerticalTail.AREA, units='ft**2')
         add_aviary_input(self, Aircraft.VerticalTail.MOMENT_ARM, units='ft')
-        add_aviary_input(self, Aircraft.VerticalTail.THICKNESS_TO_CHORD, units='unitless')
+        add_aviary_input(self, Aircraft.VerticalTail.THICKNESS_TO_CHORD,
+                         units='unitless')
         add_aviary_input(self, Aircraft.VerticalTail.ROOT_CHORD, units='ft')
 
         self.add_output("loc_MAC_vtail", val=0, units="ft",
@@ -1477,7 +1482,8 @@ class HighLiftMass(om.ExplicitComponent):
         add_aviary_option(self, Aircraft.Wing.NUM_FLAP_SEGMENTS)
 
     def setup(self):
-        add_aviary_input(self, Aircraft.Wing.HIGH_LIFT_MASS_COEFFICIENT, units='unitless')
+        add_aviary_input(self, Aircraft.Wing.HIGH_LIFT_MASS_COEFFICIENT,
+                         units='unitless')
         add_aviary_input(self, Aircraft.Wing.AREA, units='ft**2')
         add_aviary_input(self, Aircraft.Wing.SLAT_CHORD_RATIO, units='unitless')
         add_aviary_input(self, Aircraft.Wing.FLAP_CHORD_RATIO, units='unitless')
@@ -1955,8 +1961,10 @@ class ControlMass(om.ExplicitComponent):
                          units='unitless')
         add_aviary_input(self, Aircraft.Controls.STABILITY_AUGMENTATION_SYSTEM_MASS,
                          units='lbm')
-        add_aviary_input(self, Aircraft.Controls.COCKPIT_CONTROL_MASS_SCALER, units='unitless')
-        add_aviary_input(self, Aircraft.Wing.SURFACE_CONTROL_MASS_SCALER, units='unitless')
+        add_aviary_input(self, Aircraft.Controls.COCKPIT_CONTROL_MASS_SCALER,
+                         units='unitless')
+        add_aviary_input(self, Aircraft.Wing.SURFACE_CONTROL_MASS_SCALER,
+                         units='unitless')
         add_aviary_input(self, Aircraft.Controls.STABILITY_AUGMENTATION_SYSTEM_MASS_SCALER,
                          units='unitless')
         add_aviary_input(self, Aircraft.Controls.CONTROL_MASS_INCREMENT, units='lbm')

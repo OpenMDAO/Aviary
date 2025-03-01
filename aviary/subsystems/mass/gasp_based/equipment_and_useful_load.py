@@ -35,11 +35,13 @@ class EquipAndUsefulLoadMass(om.ExplicitComponent):
         add_aviary_input(self, Aircraft.Furnishings.MASS, units='lbm')
         add_aviary_input(self, Aircraft.Hydraulics.FLIGHT_CONTROL_MASS_COEFFICIENT,
                          units='unitless')
-        add_aviary_input(self, Aircraft.Hydraulics.GEAR_MASS_COEFFICIENT, units='unitless')
+        add_aviary_input(self, Aircraft.Hydraulics.GEAR_MASS_COEFFICIENT,
+                         units='unitless')
         add_aviary_input(self, Aircraft.Instruments.MASS_COEFFICIENT, units='unitless')
         add_aviary_input(self, Aircraft.CrewPayload.PASSENGER_SERVICE_MASS_PER_PASSENGER,
                          units='lbm')
-        add_aviary_input(self, Aircraft.Fuel.UNUSABLE_FUEL_MASS_COEFFICIENT, units='unitless')
+        add_aviary_input(self, Aircraft.Fuel.UNUSABLE_FUEL_MASS_COEFFICIENT,
+                         units='unitless')
         add_aviary_input(self, Aircraft.CrewPayload.WATER_MASS_PER_OCCUPANT)
 
         add_aviary_input(self, Mission.Design.GROSS_MASS, units='lbm')

@@ -644,8 +644,8 @@ class LoadFactors(om.ExplicitComponent):
     """
 
     def initialize(self):
-        add_aviary_option(self, Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES, units='unitless')
-        add_aviary_option(self, Aircraft.Design.ULF_CALCULATED_FROM_MANEUVER, units='unitless')
+        add_aviary_option(self, Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES)
+        add_aviary_option(self, Aircraft.Design.ULF_CALCULATED_FROM_MANEUVER)
 
     def setup(self):
 
