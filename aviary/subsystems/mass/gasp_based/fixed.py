@@ -521,7 +521,7 @@ class EngineMass(om.ExplicitComponent):
         add_aviary_input(self, Aircraft.Engine.PYLON_FACTOR,
                          shape=num_engine_type, units='unitless')
         add_aviary_input(self, Aircraft.Engine.ADDITIONAL_MASS_FRACTION,
-                         val=np.full(num_engine_type, 0.0))
+                         val=np.full(num_engine_type, 0.14))
         add_aviary_input(self, Aircraft.Engine.MASS_SCALER,
                          shape=num_engine_type, units='unitless')
         add_aviary_input(self, Aircraft.Propulsion.MISC_MASS_SCALER, units='unitless')
