@@ -26,11 +26,11 @@ class LoadSpeeds(om.ExplicitComponent):
 
     def setup(self):
 
-        add_aviary_input(self, Aircraft.Design.MAX_STRUCTURAL_SPEED)
+        add_aviary_input(self, Aircraft.Design.MAX_STRUCTURAL_SPEED, units='mi/h')
 
         if self.options[Aircraft.Design.PART25_STRUCTURAL_CATEGORY] < 3:
 
-            add_aviary_input(self, Aircraft.Wing.LOADING)
+            add_aviary_input(self, Aircraft.Wing.LOADING, units='lbf/ft**2')
 
         self.add_output("max_airspeed", units="kn",
                         desc="VM0: maximum operating equivalent airspeed")
@@ -606,11 +606,11 @@ class LiftCurveSlopeAtCruise(om.ExplicitComponent):
     """
 
     def setup(self):
-        add_aviary_input(self, Aircraft.Wing.ASPECT_RATIO)
+        add_aviary_input(self, Aircraft.Wing.ASPECT_RATIO, units='unitless')
         add_aviary_input(self, Aircraft.Wing.SWEEP, units="rad")
-        add_aviary_input(self, Mission.Design.MACH)
+        add_aviary_input(self, Mission.Design.MACH, units='unitless')
 
-        add_aviary_output(self, Aircraft.Design.LIFT_CURVE_SLOPE)
+        add_aviary_output(self, Aircraft.Design.LIFT_CURVE_SLOPE, units='1/rad')
 
         self.declare_partials(Aircraft.Design.LIFT_CURVE_SLOPE, "*")
 
@@ -644,8 +644,8 @@ class LoadFactors(om.ExplicitComponent):
     """
 
     def initialize(self):
-        add_aviary_option(self, Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES)
-        add_aviary_option(self, Aircraft.Design.ULF_CALCULATED_FROM_MANEUVER)
+        add_aviary_option(self, Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES, units='unitless')
+        add_aviary_option(self, Aircraft.Design.ULF_CALCULATED_FROM_MANEUVER, units='unitless')
 
     def setup(self):
 
@@ -659,10 +659,10 @@ class LoadFactors(om.ExplicitComponent):
         self.add_input("max_maneuver_factor", val=0.72, units="unitless",
                        desc="EMLF: maximum maneuver load factor, units are in g`s")
 
-        add_aviary_input(self, Aircraft.Wing.AVERAGE_CHORD)
-        add_aviary_input(self, Aircraft.Design.LIFT_CURVE_SLOPE)
+        add_aviary_input(self, Aircraft.Wing.AVERAGE_CHORD, units='ft')
+        add_aviary_input(self, Aircraft.Design.LIFT_CURVE_SLOPE, units='1/rad')
 
-        add_aviary_output(self, Aircraft.Wing.ULTIMATE_LOAD_FACTOR)
+        add_aviary_output(self, Aircraft.Wing.ULTIMATE_LOAD_FACTOR, units='unitless')
 
         self.declare_partials(Aircraft.Wing.ULTIMATE_LOAD_FACTOR, "*")
 
