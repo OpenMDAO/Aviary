@@ -28,10 +28,19 @@ class PropulsionMission(om.Group):
             'engine_models', types=list, desc='list of EngineModels on aircraft'
         )
 
+        # engine options is optional
+        self.options.declare(
+            'engine_options',
+            types=dict,
+            default={},
+            desc='dictionary of options for each EngineModel'
+        )
+
     def setup(self):
         nn = self.options['num_nodes']
         options: AviaryValues = self.options['aviary_options']
         engine_models = self.options['engine_models']
+        engine_options = self.options['engine_options']
         num_engine_type = len(engine_models)
 
         if num_engine_type > 1:
@@ -82,9 +91,16 @@ class PropulsionMission(om.Group):
             )
 
             for i, engine in enumerate(engine_models):
+                options = {}
+                if engine.name in engine_options:
+                    options = engine_options[engine.name]
                 self.add_subsystem(
                     engine.name,
-                    subsys=engine.build_mission(num_nodes=nn, aviary_inputs=options),
+                    subsys=engine.build_mission(
+                        num_nodes=nn,
+                        aviary_inputs=options,
+                        **options
+                    ),
                     promotes_inputs=['*'],
                 )
 
@@ -114,19 +130,25 @@ class PropulsionMission(om.Group):
                     )
         else:
             engine = engine_models[0]
+            options = {}
+            if engine.name in engine_options:
+                options = engine_options[engine.name]
+            self.add_subsystem(
+                engine.name,
+                subsys=engine.build_mission(
+                    num_nodes=nn,
+                    aviary_inputs=options,
+                    **options
+                ),
+                promotes_inputs=['*'],
+            )
 
-            for i, engine in enumerate(engine_models):
-                self.add_subsystem(
-                    engine.name,
-                    subsys=engine.build_mission(num_nodes=nn, aviary_inputs=options),
-                    promotes_inputs=['*'],
+            self.promotes(engine.name, inputs=[Dynamic.Vehicle.Propulsion.THROTTLE])
+
+            if engine.use_hybrid_throttle:
+                self.promotes(
+                    engine.name, inputs=[Dynamic.Vehicle.Propulsion.HYBRID_THROTTLE]
                 )
-
-                self.promotes(engine.name, inputs=[Dynamic.Vehicle.Propulsion.THROTTLE])
-                if engine.use_hybrid_throttle:
-                    self.promotes(
-                        engine.name, inputs=[Dynamic.Vehicle.Propulsion.HYBRID_THROTTLE]
-                    )
 
         # TODO might be able to avoid hardcoding using propulsion Enums
         # mux component to vectorize individual engine outputs into 2d arrays
