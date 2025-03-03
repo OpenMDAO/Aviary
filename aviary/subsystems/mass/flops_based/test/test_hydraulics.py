@@ -94,7 +94,7 @@ class TransportHydraulicsGroupMassTest2(unittest.TestCase):
         )
         prob.setup(check=False, force_alloc_complex=True)
         prob.set_val(Aircraft.Fuselage.PLANFORM_AREA, 1500.0, 'ft**2')
-        prob.set_val(Aircraft.Hydraulics.SYSTEM_PRESSURE, 5000.0, 'psi')
+        prob.set_val(Aircraft.Hydraulics.SYSTEM_PRESSURE, 5000.0, 'lbf/ft**2')
         prob.set_val(Aircraft.Wing.AREA, 1000.0, 'ft**2')
 
         partial_data = prob.check_partials(out_stream=None, method="cs")

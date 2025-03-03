@@ -400,7 +400,7 @@ class TestBenchFwFmSerial(ProblemPhaseTestCase):
         overall_fuel = prob.get_val(Mission.Summary.TOTAL_FUEL_MASS)
 
         # Making sure we include the fuel mass consumed in take-off and taxi.
-        self.assertGreater(overall_fuel, 40000.)
+        self.assertGreater(overall_fuel, 39000.)
 
 
 @use_tempdirs

@@ -912,7 +912,7 @@
     [
         "aircraft:hydraulics:system_pressure",
         3000,
-        "psi",
+        "lbf/ft**2",
         "<class 'int'>"
     ],
     [
