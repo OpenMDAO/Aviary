@@ -45,7 +45,9 @@ def get_aviary_resource_path(resource_name: str) -> str:
     path = file_manager.enter_context(importlib_resources.as_file(ref))
     return path
 
+
 top_dir = Path(get_aviary_resource_path(''))
+
 
 def set_aviary_initial_values(prob, aviary_inputs: AviaryValues):
     """
@@ -416,7 +418,8 @@ def get_path(path: Union[str, Path], verbosity=Verbosity.BRIEF) -> Path:
     if not path.exists():
         if verbosity > Verbosity.BRIEF:  # VERBOSE, DEBUG
             print(
-                f"Unable to locate '{original_path}' as an absolute or relative path. Trying Aviary package path."
+                f"Unable to locate '{
+                    original_path}' as an absolute or relative path. Trying Aviary package path."
             )
         # Determine the path relative to the Aviary package.
         aviary_based_path = Path(
@@ -428,7 +431,8 @@ def get_path(path: Union[str, Path], verbosity=Verbosity.BRIEF) -> Path:
     if not path.exists():
         if verbosity > Verbosity.BRIEF:
             print(
-                f"Unable to locate '{aviary_based_path}' as an Aviary package path, checking built-in models"
+                f"Unable to locate '{
+                    aviary_based_path}' as an Aviary package path, checking built-in models"
             )
         try:
             hangar_based_path = get_model(original_path)
