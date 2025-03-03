@@ -834,7 +834,7 @@ class EngineMass(om.ExplicitComponent):
         span_frac_factor_sum = np.zeros(num_engine_type, dtype=Fn_SLS.dtype)
         idx = 0
         for i in range(num_engine_type):
-            span_frac_factor_sum[i] = sum(span_frac_factor[idx : idx + num_engines[i]])
+            span_frac_factor_sum[i] = sum(span_frac_factor[idx: idx + num_engines[i]])
             idx = idx + num_engines[i]
 
         outputs["wing_mounted_mass"] = (
@@ -981,7 +981,7 @@ class EngineMass(om.ExplicitComponent):
         #                 sec_wt + prop_wt) * num_engines
         wing_mass_vec = (dry_wt_eng + eng_instl_wt + pod_wt + prop_wt) * num_engines
         for i in range(num_engine_type):
-            span_frac_factor_sum[i] = sum(span_frac_factor[idx : idx + num_engines[i]])
+            span_frac_factor_sum[i] = sum(span_frac_factor[idx: idx + num_engines[i]])
             wing_mass_deriv[idx: idx + num_engines[i]] = wing_mass_vec[i]
             idx = idx + num_engines[i]
 
