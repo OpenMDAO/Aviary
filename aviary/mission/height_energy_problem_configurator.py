@@ -340,6 +340,12 @@ class HeightEnergyProblemConfigurator(ProblemConfiguratorBase):
 
         if prob.pre_mission_info['include_takeoff']:
             self._add_post_mission_takeoff_systems(prob)
+        else:
+            first_flight_phase_name = list(prob.phase_info.keys())[0]
+            first_flight_phase = prob.traj._phases[first_flight_phase_name]
+            first_flight_phase.set_state_options(
+                Dynamic.Vehicle.MASS, fix_initial=False
+            )
 
         if include_landing and prob.post_mission_info['include_landing']:
             self._add_landing_systems(prob)
@@ -475,12 +481,7 @@ class HeightEnergyProblemConfigurator(ProblemConfiguratorBase):
         prob : AviaryProblem
             Problem that owns this builder.
         """
-        if not prob.pre_mission_info['include_takeoff']:
-            first_flight_phase_name = list(prob.phase_info.keys())[0]
-            first_flight_phase = prob.traj._phases[first_flight_phase_name]
-            first_flight_phase.set_state_options(
-                Dynamic.Vehicle.MASS, fix_initial=False
-            )
+        pass
 
     def add_guesses(self, prob, phase_name, phase, guesses, target_prob, parent_prefix):
         """
