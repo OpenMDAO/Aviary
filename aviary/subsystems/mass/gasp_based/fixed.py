@@ -504,6 +504,7 @@ class EngineMass(om.ExplicitComponent):
     def initialize(self):
         add_aviary_option(self, Aircraft.Electrical.HAS_HYBRID_SYSTEM)
         add_aviary_option(self, Aircraft.Engine.NUM_ENGINES)
+        add_aviary_option(self, Aircraft.Engine.ADDITIONAL_MASS_FRACTION)
         add_aviary_option(self, Aircraft.Propulsion.TOTAL_NUM_ENGINES)
 
     def setup(self):
@@ -520,8 +521,6 @@ class EngineMass(om.ExplicitComponent):
                          shape=num_engine_type, units='ft**2')
         add_aviary_input(self, Aircraft.Engine.PYLON_FACTOR,
                          shape=num_engine_type, units='unitless')
-        add_aviary_input(self, Aircraft.Engine.ADDITIONAL_MASS_FRACTION,
-                         val=np.full(num_engine_type, 0.14))
         add_aviary_input(self, Aircraft.Engine.MASS_SCALER,
                          shape=num_engine_type, units='unitless')
         add_aviary_input(self, Aircraft.Propulsion.MISC_MASS_SCALER, units='unitless')
@@ -604,8 +603,8 @@ class EngineMass(om.ExplicitComponent):
             ],
         )
         self.declare_partials(
-            Aircraft.Engine.ADDITIONAL_MASS, [Aircraft.Engine.ADDITIONAL_MASS_FRACTION,
-                                              Aircraft.Engine.MASS_SPECIFIC, Aircraft.Engine.SCALED_SLS_THRUST],
+            Aircraft.Engine.ADDITIONAL_MASS,
+            [Aircraft.Engine.MASS_SPECIFIC, Aircraft.Engine.SCALED_SLS_THRUST],
             rows=shape, cols=shape, val=1.0
         )
 
@@ -615,7 +614,6 @@ class EngineMass(om.ExplicitComponent):
                 Aircraft.Engine.WING_LOCATIONS,
                 Aircraft.Engine.MASS_SPECIFIC,
                 Aircraft.Engine.SCALED_SLS_THRUST,
-                Aircraft.Engine.ADDITIONAL_MASS_FRACTION,
                 Aircraft.Nacelle.MASS_SPECIFIC,
                 Aircraft.Nacelle.SURFACE_AREA,
                 Aircraft.Engine.PYLON_FACTOR,
@@ -629,7 +627,6 @@ class EngineMass(om.ExplicitComponent):
                 [
                     Aircraft.Engine.MASS_SCALER,
                     Aircraft.Propulsion.MISC_MASS_SCALER,
-                    Aircraft.Engine.ADDITIONAL_MASS_FRACTION,
                     Aircraft.Engine.MASS_SPECIFIC,
                     Aircraft.Engine.SCALED_SLS_THRUST,
                 ],
@@ -640,7 +637,6 @@ class EngineMass(om.ExplicitComponent):
                 [
                     Aircraft.Engine.MASS_SCALER,
                     Aircraft.Propulsion.MISC_MASS_SCALER,
-                    Aircraft.Engine.ADDITIONAL_MASS_FRACTION,
                     Aircraft.Engine.MASS_SPECIFIC,
                     Aircraft.Engine.SCALED_SLS_THRUST,
                     "aug_mass",
@@ -650,13 +646,13 @@ class EngineMass(om.ExplicitComponent):
     def compute(self, inputs, outputs):
         num_engines = self.options[Aircraft.Engine.NUM_ENGINES]
         num_engine_type = len(num_engines)
+        c_instl = self.options[Aircraft.Engine.ADDITIONAL_MASS_FRACTION]
+
         eng_spec_wt = inputs[Aircraft.Engine.MASS_SPECIFIC] * GRAV_ENGLISH_LBM
         Fn_SLS = inputs[Aircraft.Engine.SCALED_SLS_THRUST]
-
         spec_nacelle_wt = inputs[Aircraft.Nacelle.MASS_SPECIFIC] * GRAV_ENGLISH_LBM
         nacelle_area = inputs[Aircraft.Nacelle.SURFACE_AREA]
         pylon_fac = inputs[Aircraft.Engine.PYLON_FACTOR]
-        c_instl = inputs[Aircraft.Engine.ADDITIONAL_MASS_FRACTION]
         CK5 = inputs[Aircraft.Engine.MASS_SCALER]
         CK7 = inputs[Aircraft.Propulsion.MISC_MASS_SCALER]
         eng_span_frac = inputs[Aircraft.Engine.WING_LOCATIONS]
@@ -705,16 +701,15 @@ class EngineMass(om.ExplicitComponent):
         ) + main_gear_wt * loc_main_gear / (loc_main_gear + 0.001)) / GRAV_ENGLISH_LBM
 
     def compute_partials(self, inputs, J):
-        num_engine_type = len(self.options[Aircraft.Engine.NUM_ENGINES])
+        num_engines = self.options[Aircraft.Engine.NUM_ENGINES]
+        num_engine_type = len(num_engines)
+        c_instl = self.options[Aircraft.Engine.ADDITIONAL_MASS_FRACTION]
 
         eng_spec_wt = inputs[Aircraft.Engine.MASS_SPECIFIC] * GRAV_ENGLISH_LBM
         Fn_SLS = inputs[Aircraft.Engine.SCALED_SLS_THRUST]
-        num_engines = self.options[Aircraft.Engine.NUM_ENGINES]
-
         spec_nacelle_wt = inputs[Aircraft.Nacelle.MASS_SPECIFIC] * GRAV_ENGLISH_LBM
         nacelle_area = inputs[Aircraft.Nacelle.SURFACE_AREA]
         pylon_fac = inputs[Aircraft.Engine.PYLON_FACTOR]
-        c_instl = inputs[Aircraft.Engine.ADDITIONAL_MASS_FRACTION]
         CK5 = inputs[Aircraft.Engine.MASS_SCALER]
         CK7 = inputs[Aircraft.Propulsion.MISC_MASS_SCALER]
         eng_span_frac = inputs[Aircraft.Engine.WING_LOCATIONS]
@@ -768,8 +763,6 @@ class EngineMass(om.ExplicitComponent):
             Aircraft.Engine.SCALED_SLS_THRUST] = num_engines * dPW_dSLST / GRAV_ENGLISH_LBM
 
         J[Aircraft.Engine.ADDITIONAL_MASS,
-            Aircraft.Engine.ADDITIONAL_MASS_FRACTION] = eng_spec_wt * Fn_SLS / GRAV_ENGLISH_LBM
-        J[Aircraft.Engine.ADDITIONAL_MASS,
             Aircraft.Engine.MASS_SPECIFIC] = c_instl * Fn_SLS
         J[Aircraft.Engine.ADDITIONAL_MASS,
             Aircraft.Engine.SCALED_SLS_THRUST] = c_instl * eng_spec_wt / GRAV_ENGLISH_LBM
@@ -778,8 +771,6 @@ class EngineMass(om.ExplicitComponent):
             Fn_SLS * num_engines / GRAV_ENGLISH_LBM
         J["eng_comb_mass", Aircraft.Propulsion.MISC_MASS_SCALER] = sum(
             c_instl * eng_spec_wt * Fn_SLS * num_engines) / GRAV_ENGLISH_LBM
-        J["eng_comb_mass", Aircraft.Engine.ADDITIONAL_MASS_FRACTION] = eng_spec_wt * \
-            CK7 * Fn_SLS * num_engines / GRAV_ENGLISH_LBM
         J["eng_comb_mass", Aircraft.Engine.MASS_SPECIFIC] = (
             CK5 + CK7 * c_instl) * num_engines * Fn_SLS
         J["eng_comb_mass", Aircraft.Engine.SCALED_SLS_THRUST] = (
@@ -825,9 +816,6 @@ class EngineMass(om.ExplicitComponent):
 
         J["wing_mounted_mass", Aircraft.Engine.SCALED_SLS_THRUST] = span_frac_factor_sum  \
             * (num_engines * eng_spec_wt + c_instl * num_engines * eng_spec_wt + dPylonWt_dFnSLS * num_engines) / GRAV_ENGLISH_LBM
-
-        J["wing_mounted_mass", Aircraft.Engine.ADDITIONAL_MASS_FRACTION] = span_frac_factor_sum \
-            * (eng_spec_wt * Fn_SLS * num_engines) / GRAV_ENGLISH_LBM
 
         J["wing_mounted_mass", Aircraft.Nacelle.MASS_SPECIFIC] = (span_frac_factor_sum * num_engines
                                                                   * (nacelle_area + pylon_fac * 0.736 * ((dry_wt_eng + spec_nacelle_wt * nacelle_area) ** (0.736 - 1) * nacelle_area)))
