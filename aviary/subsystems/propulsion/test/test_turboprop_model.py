@@ -246,9 +246,6 @@ class TurbopropMissionTest(unittest.TestCase):
         self.prob.set_val(Aircraft.Engine.Propeller.TIP_SPEED_MAX, 800, units="ft/s")
 
         self.prob.run_model()
-        import openmdao.api as om
-
-        om.n2(self.prob)
 
         results = self.get_results()
         assert_near_equal(results[0], truth_vals[0], tolerance=1.5e-12)
@@ -402,8 +399,4 @@ class ExamplePropModel(SubsystemBuilderBase):
 
 
 if __name__ == "__main__":
-    # unittest.main()
-    test = TurbopropMissionTest()
-    test.setUp()
-    # test.test_electroprop()
-    test.test_case_2()
+    unittest.main()

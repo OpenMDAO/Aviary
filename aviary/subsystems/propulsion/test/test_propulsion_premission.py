@@ -25,7 +25,7 @@ class PropulsionPreMissionTest(unittest.TestCase):
         options.set_val(Aircraft.Engine.NUM_ENGINES, np.array([2]))
 
         self.prob.model = PropulsionPreMission(
-            aviary_options=options, engine_models=build_engine_deck(options)
+            aviary_options=options, engine_models=[build_engine_deck(options)]
         )
 
         self.prob.model.set_input_defaults(Aircraft.Engine.SCALE_FACTOR, np.ones(1))

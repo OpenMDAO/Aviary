@@ -457,9 +457,6 @@ class TurbopropMission(om.Group):
             )
             gearbox_outputs = []
 
-        # if isinstance(self.options['propeller_model'], PropellerBuilder):
-        #     propeller_model_name = 'propeller_model'
-        # else:
         propeller_model_name = self.options['propeller_model'].name
         propeller_model = self._get_subsystem(propeller_model_name)
         propeller_input_dict = propeller_model.list_inputs(
