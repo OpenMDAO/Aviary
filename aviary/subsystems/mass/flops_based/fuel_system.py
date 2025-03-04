@@ -19,10 +19,10 @@ class TransportFuelSystemMass(om.ExplicitComponent):
         add_aviary_option(self, Mission.Constraints.MAX_MACH)
 
     def setup(self):
-        add_aviary_input(self, Aircraft.Fuel.FUEL_SYSTEM_MASS_SCALER)
-        add_aviary_input(self, Aircraft.Fuel.TOTAL_CAPACITY)
+        add_aviary_input(self, Aircraft.Fuel.FUEL_SYSTEM_MASS_SCALER, units='unitless')
+        add_aviary_input(self, Aircraft.Fuel.TOTAL_CAPACITY, units='lbm')
 
-        add_aviary_output(self, Aircraft.Fuel.FUEL_SYSTEM_MASS)
+        add_aviary_output(self, Aircraft.Fuel.FUEL_SYSTEM_MASS, units='lbm')
 
     def setup_partials(self):
         self.declare_partials('*', '*')
@@ -64,10 +64,10 @@ class AltFuelSystemMass(om.ExplicitComponent):
         add_aviary_option(self, Aircraft.Fuel.NUM_TANKS)
 
     def setup(self):
-        add_aviary_input(self, Aircraft.Fuel.TOTAL_CAPACITY)
-        add_aviary_input(self, Aircraft.Fuel.FUEL_SYSTEM_MASS_SCALER)
+        add_aviary_input(self, Aircraft.Fuel.TOTAL_CAPACITY, units='lbm')
+        add_aviary_input(self, Aircraft.Fuel.FUEL_SYSTEM_MASS_SCALER, units='unitless')
 
-        add_aviary_output(self, Aircraft.Fuel.FUEL_SYSTEM_MASS)
+        add_aviary_output(self, Aircraft.Fuel.FUEL_SYSTEM_MASS, units='lbm')
 
     def setup_partials(self):
         self.declare_partials('*', '*')
