@@ -91,15 +91,15 @@ class PropulsionMission(om.Group):
             )
 
             for i, engine in enumerate(engine_models):
-                options = {}
+                kwargs = {}
                 if engine.name in engine_options:
-                    options = engine_options[engine.name]
+                    kwargs = engine_options[engine.name]
                 self.add_subsystem(
                     engine.name,
                     subsys=engine.build_mission(
                         num_nodes=nn,
                         aviary_inputs=options,
-                        **options
+                        **kwargs
                     ),
                     promotes_inputs=['*'],
                 )
@@ -130,15 +130,15 @@ class PropulsionMission(om.Group):
                     )
         else:
             engine = engine_models[0]
-            options = {}
+            kwargs = {}
             if engine.name in engine_options:
-                options = engine_options[engine.name]
+                kwargs = engine_options[engine.name]
             self.add_subsystem(
                 engine.name,
                 subsys=engine.build_mission(
                     num_nodes=nn,
                     aviary_inputs=options,
-                    **options
+                    **kwargs
                 ),
                 promotes_inputs=['*'],
             )
