@@ -1,9 +1,8 @@
 import openmdao.api as om
 import numpy as np
-import matplotlib.pyplot as plt
 import os
 from scipy.interpolate import CubicSpline
-from scipy.integrate import quad
+
 
 # Material densities (g/cm³ converted to kg/m³) -- these are just some random examples
 MATERIAL_DENSITIES = {
