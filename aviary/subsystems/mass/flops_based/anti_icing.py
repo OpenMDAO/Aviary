@@ -23,13 +23,14 @@ class AntiIcingMass(om.ExplicitComponent):
     def setup(self):
         num_engine_type = len(self.options[Aircraft.Engine.NUM_ENGINES])
 
-        add_aviary_input(self, Aircraft.AntiIcing.MASS_SCALER)
-        add_aviary_input(self, Aircraft.Fuselage.MAX_WIDTH)
-        add_aviary_input(self, Aircraft.Nacelle.AVG_DIAMETER, shape=num_engine_type)
-        add_aviary_input(self, Aircraft.Wing.SPAN)
-        add_aviary_input(self, Aircraft.Wing.SWEEP)
+        add_aviary_input(self, Aircraft.AntiIcing.MASS_SCALER, units='unitless')
+        add_aviary_input(self, Aircraft.Fuselage.MAX_WIDTH, units='ft')
+        add_aviary_input(self, Aircraft.Nacelle.AVG_DIAMETER,
+                         shape=num_engine_type, units='ft')
+        add_aviary_input(self, Aircraft.Wing.SPAN, units='ft')
+        add_aviary_input(self, Aircraft.Wing.SWEEP, units='deg')
 
-        add_aviary_output(self, Aircraft.AntiIcing.MASS)
+        add_aviary_output(self, Aircraft.AntiIcing.MASS, units='lbm')
 
     def setup_partials(self):
         self.declare_partials("*", "*")
