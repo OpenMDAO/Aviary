@@ -1,7 +1,7 @@
 import numpy as np
 import openmdao.api as om
 
-from aviary.mission.gasp_based.ode.base_ode import BaseODE
+from aviary.mission.gasp_based.ode.two_dof_ode import TwoDOFODE
 from aviary.mission.gasp_based.ode.params import ParamPort
 from aviary.mission.gasp_based.ode.breguet_cruise_eom import RangeComp
 from aviary.mission.ode.specific_energy_rate import SpecificEnergyRate
@@ -13,7 +13,7 @@ from aviary.variable_info.enums import SpeedType
 from aviary.variable_info.variables import Dynamic
 
 
-class BreguetCruiseODESolution(BaseODE):
+class BreguetCruiseODESolution(TwoDOFODE):
     """The GASP based cruise ODE"""
 
     def setup(self):
@@ -24,11 +24,7 @@ class BreguetCruiseODESolution(BaseODE):
         # TODO: paramport
         self.add_subsystem("params", ParamPort(), promotes=["*"])
 
-        self.add_subsystem(
-            name='atmosphere',
-            subsys=Atmosphere(num_nodes=nn, input_speed_type=SpeedType.MACH),
-            promotes=['*'],
-        )
+        self.add_atmosphere(input_speed_type=SpeedType.MACH)
 
         self.add_subsystem(
             "calc_weight",
@@ -56,6 +52,8 @@ class BreguetCruiseODESolution(BaseODE):
                                        promotes_inputs=subsystem.mission_inputs(
                                            **kwargs),
                                        promotes_outputs=subsystem.mission_outputs(**kwargs))
+
+        self.add_external_subsystems()
 
         bal = om.BalanceComp(
             name=Dynamic.Vehicle.Propulsion.THROTTLE,
