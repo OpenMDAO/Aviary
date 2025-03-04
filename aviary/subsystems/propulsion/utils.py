@@ -137,8 +137,8 @@ def build_engine_deck(
 
     Returns
     ----------
-    engine_models : <list of EngineDecks>
-        List of EngineDecks created using provided options.
+    EngineDeck
+        EngineDeck created using provided options.
     """
 
     # Required engine vars include one setting from Mission.Summary.

@@ -423,14 +423,14 @@ outputs.set_val(Mission.Design.MACH, 0.779)
 outputs.set_val(Mission.Design.LIFT_COEFFICIENT, 0.583)
 
 # Create engine model
-engine = build_engine_deck(options=inputs)
+engines = [build_engine_deck(options=inputs)]
 # Calls to preprocess_options() in this location should be avoided because they
 # # will trigger when get_flops_inputs() is imported
 # preprocess_options(inputs, engine_models=engine)
 
 # build subsystems
-default_premission_subsystems = get_default_premission_subsystems('FLOPS', engine)
-default_mission_subsystems = get_default_mission_subsystems('FLOPS', engine)
+default_premission_subsystems = get_default_premission_subsystems('FLOPS', engines)
+default_mission_subsystems = get_default_mission_subsystems('FLOPS', engines)
 
 # region - detailed takeoff
 takeoff_trajectory_builder = TakeoffTrajectory('detailed_takeoff')
