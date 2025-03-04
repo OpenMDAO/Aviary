@@ -192,7 +192,8 @@ class MassSummationTestCase2(unittest.TestCase):
         options.set_val(Aircraft.Fuselage.NUM_AISLES, 1)
         options.set_val(Aircraft.Fuselage.SEAT_PITCH, 29, units="inch")
         options.set_val(Aircraft.Fuselage.SEAT_WIDTH, 20.2, units="inch")
-        options.set_val(Aircraft.Engine.ADDITIONAL_MASS_FRACTION, 0.14, units='unitless')
+        options.set_val(Aircraft.Engine.ADDITIONAL_MASS_FRACTION,
+                        0.14, units='unitless')
 
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
@@ -582,7 +583,8 @@ class MassSummationTestCase3(unittest.TestCase):
         options.set_val(Aircraft.Fuselage.NUM_AISLES, 1)
         options.set_val(Aircraft.Fuselage.SEAT_PITCH, 29, units="inch")
         options.set_val(Aircraft.Fuselage.SEAT_WIDTH, 20.2, units="inch")
-        options.set_val(Aircraft.Engine.ADDITIONAL_MASS_FRACTION, 0.14, units='unitless')
+        options.set_val(Aircraft.Engine.ADDITIONAL_MASS_FRACTION,
+                        0.14, units='unitless')
 
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
@@ -964,7 +966,8 @@ class MassSummationTestCase4(unittest.TestCase):
         options.set_val(Aircraft.Fuselage.NUM_AISLES, 1)
         options.set_val(Aircraft.Fuselage.SEAT_PITCH, 29, units="inch")
         options.set_val(Aircraft.Fuselage.SEAT_WIDTH, 20.2, units="inch")
-        options.set_val(Aircraft.Engine.ADDITIONAL_MASS_FRACTION, 0.14, units='unitless')
+        options.set_val(Aircraft.Engine.ADDITIONAL_MASS_FRACTION,
+                        0.14, units='unitless')
 
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
@@ -1347,7 +1350,8 @@ class MassSummationTestCase5(unittest.TestCase):
         options.set_val(Aircraft.Fuselage.NUM_AISLES, 1)
         options.set_val(Aircraft.Fuselage.SEAT_PITCH, 29, units="inch")
         options.set_val(Aircraft.Fuselage.SEAT_WIDTH, 20.2, units="inch")
-        options.set_val(Aircraft.Engine.ADDITIONAL_MASS_FRACTION, 0.14, units='unitless')
+        options.set_val(Aircraft.Engine.ADDITIONAL_MASS_FRACTION,
+                        0.14, units='unitless')
 
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
@@ -1729,7 +1733,8 @@ class MassSummationTestCase6(unittest.TestCase):
         options.set_val(Aircraft.Fuselage.NUM_AISLES, 1)
         options.set_val(Aircraft.Fuselage.SEAT_PITCH, 29, units="inch")
         options.set_val(Aircraft.Fuselage.SEAT_WIDTH, 20.2, units="inch")
-        options.set_val(Aircraft.Engine.ADDITIONAL_MASS_FRACTION, 0.14, units='unitless')
+        options.set_val(Aircraft.Engine.ADDITIONAL_MASS_FRACTION,
+                        0.14, units='unitless')
 
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
@@ -2112,7 +2117,8 @@ class MassSummationTestCase7(unittest.TestCase):
         options.set_val(Aircraft.Fuselage.NUM_AISLES, 1)
         options.set_val(Aircraft.Fuselage.SEAT_PITCH, 29, units="inch")
         options.set_val(Aircraft.Fuselage.SEAT_WIDTH, 20.2, units="inch")
-        options.set_val(Aircraft.Engine.ADDITIONAL_MASS_FRACTION, 0.165, units='unitless')
+        options.set_val(Aircraft.Engine.ADDITIONAL_MASS_FRACTION,
+                        0.165, units='unitless')
 
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
@@ -2507,7 +2513,8 @@ class MassSummationTestCase8(unittest.TestCase):
         options.set_val(Aircraft.Fuselage.NUM_AISLES, 1)
         options.set_val(Aircraft.Fuselage.SEAT_PITCH, 44.2, units="inch")
         options.set_val(Aircraft.Fuselage.SEAT_WIDTH, 20.2, units="inch")
-        options.set_val(Aircraft.Engine.ADDITIONAL_MASS_FRACTION, 0.163, units='unitless')
+        options.set_val(Aircraft.Engine.ADDITIONAL_MASS_FRACTION,
+                        0.163, units='unitless')
 
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
@@ -2906,7 +2913,8 @@ class MassSummationTestCase9(unittest.TestCase):
         options.set_val(Aircraft.Fuselage.NUM_AISLES, 1)
         options.set_val(Aircraft.Fuselage.SEAT_PITCH, 44.2, units="inch")
         options.set_val(Aircraft.Fuselage.SEAT_WIDTH, 20.2, units="inch")
-        options.set_val(Aircraft.Engine.ADDITIONAL_MASS_FRACTION, 0.163, units='unitless')
+        options.set_val(Aircraft.Engine.ADDITIONAL_MASS_FRACTION,
+                        0.163, units='unitless')
 
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
