@@ -5,16 +5,65 @@ script that begins with 'run_' and ends with '.py'.
 """
 
 import os
+from pathlib import Path
+from parameterized import parameterized
 import subprocess
 import unittest
-from pathlib import Path
+
+from openmdao.utils.testing_utils import use_tempdirs
+
+# TODO: Address any issue that requires a skip.
+SKIP_EXAMPLES = {
+    'run_multimission_example_large_single_aisle.py': "Broken due to OpenMDAO changes",
+}
 
 
+def find_examples():
+    """
+    Find and return a list of run scripts in the specified directory.
+
+    Returns
+    -------
+    list
+        A list of pathlib.Path objects pointing to the run scripts.
+    """
+
+    base_dir = os.path.join(
+        os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+        "."
+    )
+
+    run_files = []
+    for root, _, files in os.walk(base_dir):
+        for file in files:
+            if file.startswith('run_') and file.endswith('.py'):
+                run_files.append(Path(root) / file)
+    return run_files
+
+
+def example_name(testcase_func, param_num, param):
+    """
+    Returns a formatted case name for unit testing with decorator @parameterized.expand().
+    It is intended to be used when expand() is called with a list of strings
+    representing test case names.
+
+    Parameters
+    ----------
+    testcase_func : Any
+        This parameter is ignored.
+    param_num : Any
+        This parameter is ignored.
+    param : param
+        The param object containing the case name to be formatted.
+    """
+    return 'test_example_' + param.args[0].name.replace('.py', '')
+
+
+@use_tempdirs
 class RunScriptTest(unittest.TestCase):
     """
     A test case class that uses unittest to run and test scripts with a timeout.
 
-    ...
 
     Attributes
     ----------
@@ -34,40 +83,6 @@ class RunScriptTest(unittest.TestCase):
     test_run_scripts()
         Generates a test for each run script with a timeout.
     """
-
-    @classmethod
-    def setUpClass(cls):
-        """
-        Class method to set up the test case class by finding all run scripts.
-
-        This method is called once before starting the tests and is used to
-        populate the 'run_files' attribute with a list of run scripts.
-        """
-        base_directory = os.path.join(os.path.dirname(
-            os.path.dirname(os.path.abspath(__file__))), ".")
-        cls.run_files = cls.find_run_files(base_directory)
-
-    @staticmethod
-    def find_run_files(base_dir):
-        """
-        Find and return a list of run scripts in the specified directory.
-
-        Parameters
-        ----------
-        base_dir : str
-            The directory to search for run scripts.
-
-        Returns
-        -------
-        list
-            A list of pathlib.Path objects pointing to the run scripts.
-        """
-        run_files = []
-        for root, _, files in os.walk(base_dir):
-            for file in files:
-                if file.startswith('run_') and file.endswith('.py'):
-                    run_files.append(Path(root) / file)
-        return run_files
 
     def run_script(self, script_path, max_allowable_time=500):
         """
@@ -96,16 +111,18 @@ class RunScriptTest(unittest.TestCase):
                 raise Exception(
                     f"Error running {script_path.name}:\n{stderr.decode('utf-8')}")
 
-    def test_run_scripts(self):
+    @parameterized.expand(find_examples(),
+                          name_func=example_name)
+    def test_run_scripts(self, example_path):
         """
         Test each run script to ensure it executes without error.
-
-        This method generates a subtest for each script in 'run_files'.
-        Each script is tested to ensure it runs without errors.
         """
-        for script_path in self.run_files:
-            with self.subTest(script=script_path.name):
-                self.run_script(script_path)
+
+        if example_path.name in SKIP_EXAMPLES:
+            reason = SKIP_EXAMPLES[example_path.name]
+            self.skipTest(f"Skipped {example_path.name}: {reason}.")
+
+        self.run_script(example_path)
 
 
 if __name__ == "__main__":

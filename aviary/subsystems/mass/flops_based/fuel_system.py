@@ -3,8 +3,7 @@ import openmdao.api as om
 from aviary.constants import GRAV_ENGLISH_LBM
 from aviary.subsystems.mass.flops_based.distributed_prop import \
     distributed_engine_count_factor
-from aviary.utils.aviary_values import AviaryValues
-from aviary.variable_info.functions import add_aviary_input, add_aviary_output
+from aviary.variable_info.functions import add_aviary_input, add_aviary_output, add_aviary_option
 from aviary.variable_info.variables import Aircraft, Mission
 
 
@@ -16,39 +15,35 @@ class TransportFuelSystemMass(om.ExplicitComponent):
     """
 
     def initialize(self):
-        self.options.declare(
-            'aviary_options', types=AviaryValues,
-            desc='collection of Aircraft/Mission specific options')
+        add_aviary_option(self, Aircraft.Propulsion.TOTAL_NUM_ENGINES)
+        add_aviary_option(self, Mission.Constraints.MAX_MACH)
 
     def setup(self):
-        add_aviary_input(self, Aircraft.Fuel.FUEL_SYSTEM_MASS_SCALER, val=1.0)
+        add_aviary_input(self, Aircraft.Fuel.FUEL_SYSTEM_MASS_SCALER)
+        add_aviary_input(self, Aircraft.Fuel.TOTAL_CAPACITY)
 
-        add_aviary_input(self, Aircraft.Fuel.TOTAL_CAPACITY, 0.0)
-
-        add_aviary_output(self, Aircraft.Fuel.FUEL_SYSTEM_MASS, val=0.0)
+        add_aviary_output(self, Aircraft.Fuel.FUEL_SYSTEM_MASS)
 
     def setup_partials(self):
         self.declare_partials('*', '*')
 
     def compute(self, inputs, outputs):
-        aviary_options: AviaryValues = self.options['aviary_options']
         scaler = inputs[Aircraft.Fuel.FUEL_SYSTEM_MASS_SCALER]
         capacity = inputs[Aircraft.Fuel.TOTAL_CAPACITY]
-        num_eng = aviary_options.get_val(Aircraft.Propulsion.TOTAL_NUM_ENGINES)
+        num_eng = self.options[Aircraft.Propulsion.TOTAL_NUM_ENGINES]
         num_eng_fact = distributed_engine_count_factor(num_eng)
-        max_mach = aviary_options.get_val(Mission.Constraints.MAX_MACH)
+        max_mach = self.options[Mission.Constraints.MAX_MACH]
 
         outputs[Aircraft.Fuel.FUEL_SYSTEM_MASS] = (
             1.07 * capacity**0.58
             * num_eng_fact**0.43 * max_mach**0.34 * scaler) / GRAV_ENGLISH_LBM
 
     def compute_partials(self, inputs, J):
-        aviary_options: AviaryValues = self.options['aviary_options']
         scaler = inputs[Aircraft.Fuel.FUEL_SYSTEM_MASS_SCALER]
         capacity = inputs[Aircraft.Fuel.TOTAL_CAPACITY]
-        num_eng = aviary_options.get_val(Aircraft.Propulsion.TOTAL_NUM_ENGINES)
+        num_eng = self.options[Aircraft.Propulsion.TOTAL_NUM_ENGINES]
         num_eng_fact = distributed_engine_count_factor(num_eng)
-        max_mach = aviary_options.get_val(Mission.Constraints.MAX_MACH)
+        max_mach = self.options[Mission.Constraints.MAX_MACH]
 
         J[Aircraft.Fuel.FUEL_SYSTEM_MASS, Aircraft.Fuel.FUEL_SYSTEM_MASS_SCALER] = (
             1.07 * capacity**0.58 * num_eng_fact**0.43 * max_mach**0.34 / GRAV_ENGLISH_LBM)
@@ -66,23 +61,19 @@ class AltFuelSystemMass(om.ExplicitComponent):
     """
 
     def initialize(self):
-        self.options.declare(
-            'aviary_options', types=AviaryValues,
-            desc='collection of Aircraft/Mission specific options')
+        add_aviary_option(self, Aircraft.Fuel.NUM_TANKS)
 
     def setup(self):
-        add_aviary_input(self, Aircraft.Fuel.TOTAL_CAPACITY, val=0.0)
+        add_aviary_input(self, Aircraft.Fuel.TOTAL_CAPACITY)
+        add_aviary_input(self, Aircraft.Fuel.FUEL_SYSTEM_MASS_SCALER)
 
-        add_aviary_input(self, Aircraft.Fuel.FUEL_SYSTEM_MASS_SCALER, val=1.0)
-
-        add_aviary_output(self, Aircraft.Fuel.FUEL_SYSTEM_MASS, val=0.0)
+        add_aviary_output(self, Aircraft.Fuel.FUEL_SYSTEM_MASS)
 
     def setup_partials(self):
         self.declare_partials('*', '*')
 
     def compute(self, inputs, outputs):
-        aviary_options: AviaryValues = self.options['aviary_options']
-        number_of_fuel_tanks = aviary_options.get_val(Aircraft.Fuel.NUM_TANKS)
+        number_of_fuel_tanks = self.options[Aircraft.Fuel.NUM_TANKS]
         total_fuel_capacity = inputs[Aircraft.Fuel.TOTAL_CAPACITY]
         scaler = inputs[Aircraft.Fuel.FUEL_SYSTEM_MASS_SCALER]
 
@@ -97,8 +88,7 @@ class AltFuelSystemMass(om.ExplicitComponent):
             fuel_sys_weight / GRAV_ENGLISH_LBM
 
     def compute_partials(self, inputs, J):
-        aviary_options: AviaryValues = self.options['aviary_options']
-        number_of_fuel_tanks = aviary_options.get_val(Aircraft.Fuel.NUM_TANKS)
+        number_of_fuel_tanks = self.options[Aircraft.Fuel.NUM_TANKS]
         total_fuel_capacity = inputs[Aircraft.Fuel.TOTAL_CAPACITY]
         scaler = inputs[Aircraft.Fuel.FUEL_SYSTEM_MASS_SCALER]
 

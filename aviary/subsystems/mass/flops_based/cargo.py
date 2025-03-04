@@ -5,8 +5,7 @@ equations, modified to output mass instead of weight.
 '''
 import openmdao.api as om
 
-from aviary.utils.aviary_values import AviaryValues
-from aviary.variable_info.functions import add_aviary_input, add_aviary_output
+from aviary.variable_info.functions import add_aviary_input, add_aviary_output, add_aviary_option
 from aviary.variable_info.variables import Aircraft, Mission
 
 
@@ -17,20 +16,19 @@ class CargoMass(om.ExplicitComponent):
     '''
 
     def initialize(self):
-        self.options.declare(
-            'aviary_options', types=AviaryValues,
-            desc='collection of Aircraft/Mission specific options')
+        add_aviary_option(self, Aircraft.CrewPayload.BAGGAGE_MASS_PER_PASSENGER,
+                          units='lbm')
+        add_aviary_option(self, Aircraft.CrewPayload.MASS_PER_PASSENGER, units='lbm')
+        add_aviary_option(self, Aircraft.CrewPayload.NUM_PASSENGERS)
 
     def setup(self):
-        add_aviary_output(self, Aircraft.CrewPayload.PASSENGER_MASS, 0.)
-        add_aviary_output(self, Aircraft.CrewPayload.BAGGAGE_MASS, 0.)
-        add_aviary_output(self, Aircraft.CrewPayload.PASSENGER_PAYLOAD_MASS, 0.)
-
-        add_aviary_input(self, Aircraft.CrewPayload.WING_CARGO, 0.)
-        add_aviary_input(self, Aircraft.CrewPayload.MISC_CARGO, 0.)
-
-        add_aviary_output(self, Aircraft.CrewPayload.CARGO_MASS, 0.)
-        add_aviary_output(self, Aircraft.CrewPayload.TOTAL_PAYLOAD_MASS, 0.)
+        add_aviary_input(self, Aircraft.CrewPayload.WING_CARGO)
+        add_aviary_input(self, Aircraft.CrewPayload.MISC_CARGO)
+        add_aviary_output(self, Aircraft.CrewPayload.PASSENGER_MASS)
+        add_aviary_output(self, Aircraft.CrewPayload.BAGGAGE_MASS)
+        add_aviary_output(self, Aircraft.CrewPayload.PASSENGER_PAYLOAD_MASS)
+        add_aviary_output(self, Aircraft.CrewPayload.CARGO_MASS)
+        add_aviary_output(self, Aircraft.CrewPayload.TOTAL_PAYLOAD_MASS)
 
     def setup_partials(self):
 
@@ -54,14 +52,9 @@ class CargoMass(om.ExplicitComponent):
     def compute(
         self, inputs, outputs, discrete_inputs=None, discrete_outputs=None
     ):
-        aviary_options: AviaryValues = self.options['aviary_options']
-        passenger_count = aviary_options.get_val(Aircraft.CrewPayload.NUM_PASSENGERS)
-
-        mass_per_passenger = aviary_options.get_val(
-            Aircraft.CrewPayload.MASS_PER_PASSENGER, units='lbm')
-
-        baggage_mass_per_passenger = aviary_options.get_val(
-            Aircraft.CrewPayload.BAGGAGE_MASS_PER_PASSENGER, 'lbm')
+        passenger_count = self.options[Aircraft.CrewPayload.NUM_PASSENGERS]
+        mass_per_passenger, _ = self.options[Aircraft.CrewPayload.MASS_PER_PASSENGER]
+        baggage_mass_per_passenger, _ = self.options[Aircraft.CrewPayload.BAGGAGE_MASS_PER_PASSENGER]
 
         outputs[Aircraft.CrewPayload.PASSENGER_MASS] = \
             mass_per_passenger * passenger_count

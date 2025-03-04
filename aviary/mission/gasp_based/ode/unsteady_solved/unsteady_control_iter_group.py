@@ -21,6 +21,7 @@ class UnsteadyControlIterGroup(om.Group):
                                   "output and adjusts the TAS rate equation.")
         self.options.declare("clean", types=bool, default=False,
                              desc="If true then no flaps or gear are included. Useful for high-speed flight phases.")
+
         self.options.declare(
             'aviary_options', types=AviaryValues, default=None,
             desc='collection of Aircraft/Mission specific options'
@@ -73,13 +74,15 @@ class UnsteadyControlIterGroup(om.Group):
 
         thrust_alpha_bal = om.BalanceComp()
         if not self.options['ground_roll']:
-            thrust_alpha_bal.add_balance("alpha",
-                                         units="rad",
-                                         val=np.zeros(nn),
-                                         lhs_name="dgam_dt_approx",
-                                         rhs_name="dgam_dt",
-                                         eq_units="rad/s",
-                                         normalize=False)
+            thrust_alpha_bal.add_balance(
+                Dynamic.Vehicle.ANGLE_OF_ATTACK,
+                units="rad",
+                val=np.zeros(nn),
+                lhs_name="dgam_dt_approx",
+                rhs_name="dgam_dt",
+                eq_units="rad/s",
+                normalize=False,
+            )
 
         thrust_alpha_bal.add_balance("thrust_req",
                                      units="N",

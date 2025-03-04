@@ -7,6 +7,7 @@ from openmdao.core.system import System
 
 from aviary.subsystems.subsystem_builder_base import SubsystemBuilderBase
 from aviary.utils.aviary_values import AviaryValues
+from aviary.variable_info.functions import setup_model_options
 
 
 def skipIfMissingDependencies(builder):
@@ -69,9 +70,9 @@ class TestSubsystemBuilderBase(unittest.TestCase):
             self.assertIn('units', values.keys(),
                           f'Bus Variable "{name}" is missing the "units" key')
 
-            # Check that the values of the keys are the expected types
+            # Check that the values of the keys are the expected types (allow list)
             self.assertIsInstance(
-                values['mission_name'], (str, type(None)), f'Bus Variable "{name}"\'s "mission_name" value should be a string or None')
+                values['mission_name'], (str, list, type(None)), f'Bus Variable "{name}"\'s "mission_name" value should be a string or None')
             self.assertIsInstance(
                 values['units'], str, f'Bus Variable "{name}"\'s "units" value should be a string')
 
@@ -164,11 +165,11 @@ class TestSubsystemBuilderBase(unittest.TestCase):
                 val, dict, "The values in the dictionary returned by get_parameters() should be dictionaries")
 
         # Verify that the dictionaries have the correct keys
-        for val in parameters.values():
+        for key, val in parameters.items():
             self.assertIn(
-                'val', val, "The dictionaries returned by get_parameters() should have a 'val' key")
+                'val', val, f"The dictionaries returned by get_parameters() should have a 'val' key for {key}")
             self.assertIn(
-                'units', val, "The dictionaries returned by get_parameters() should have a 'units' key")
+                'units', val, f"The dictionaries returned by get_parameters() should have a 'units' key for {key}")
 
     def test_get_initial_guesses(self):
         initial_guesses = self.subsystem_builder.get_initial_guesses()
@@ -249,6 +250,9 @@ class TestSubsystemBuilderBase(unittest.TestCase):
         group = om.Group()
         group.add_subsystem('mission', mission_sys, promotes=['*'])
         prob = om.Problem(group)
+
+        setup_model_options(prob, self.aviary_values)
+
         prob.setup()
         prob.final_setup()
 
@@ -273,6 +277,9 @@ class TestSubsystemBuilderBase(unittest.TestCase):
         group = om.Group()
         group.add_subsystem('pre_mission_sys', pre_mission_sys)
         prob = om.Problem(group)
+
+        setup_model_options(prob, self.aviary_values)
+
         prob.setup()
         prob.final_setup()
 
@@ -305,6 +312,9 @@ class TestSubsystemBuilderBase(unittest.TestCase):
         group = om.Group()
         group.add_subsystem('mission', mission_sys, promotes=['*'])
         prob = om.Problem(group)
+
+        setup_model_options(prob, self.aviary_values)
+
         prob.setup()
         prob.final_setup()
 
@@ -330,6 +340,9 @@ class TestSubsystemBuilderBase(unittest.TestCase):
         group = om.Group()
         group.add_subsystem('mission', mission_sys, promotes=['*'])
         prob = om.Problem(group)
+
+        setup_model_options(prob, self.aviary_values)
+
         prob.setup()
         prob.final_setup()
 
@@ -359,6 +372,9 @@ class TestSubsystemBuilderBase(unittest.TestCase):
         group = om.Group()
         group.add_subsystem('pre_mission', pre_mission_sys, promotes=['*'])
         prob = om.Problem(group)
+
+        setup_model_options(prob, self.aviary_values)
+
         prob.setup()
         prob.final_setup()
 
@@ -385,6 +401,9 @@ class TestSubsystemBuilderBase(unittest.TestCase):
         group = om.Group()
         group.add_subsystem('mission', mission_sys, promotes=['*'])
         prob = om.Problem(group)
+
+        setup_model_options(prob, self.aviary_values)
+
         prob.setup()
         prob.final_setup()
 

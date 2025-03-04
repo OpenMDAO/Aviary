@@ -4,7 +4,7 @@ import numpy as np
 import openmdao.api as om
 
 from aviary.utils.aviary_values import AviaryValues
-from aviary.variable_info.functions import add_aviary_input, add_aviary_output
+from aviary.variable_info.functions import add_aviary_input, add_aviary_output, add_aviary_option
 from aviary.variable_info.variables import Aircraft, Settings
 from aviary.variable_info.enums import Verbosity
 
@@ -21,13 +21,26 @@ class PropulsionPreMission(om.Group):
             types=AviaryValues,
             desc='collection of Aircraft/Mission specific options',
         )
+
         self.options.declare(
             'engine_models', types=list, desc='list of EngineModels on aircraft'
         )
 
+        # engine options is optional
+        self.options.declare(
+            'engine_options',
+            types=dict,
+            default={},
+            desc='dictionary of options for each EngineModel'
+        )
+
+        add_aviary_option(self, Aircraft.Engine.NUM_ENGINES)
+        add_aviary_option(self, Settings.VERBOSITY)
+
     def setup(self):
-        options = self.options['aviary_options']
+        aviary_options = self.options['aviary_options']
         engine_models = self.options['engine_models']
+        engine_options = self.options['engine_options']
         num_engine_type = len(engine_models)
 
         # Each engine model pre_mission component only needs to accept and output single
@@ -36,7 +49,10 @@ class PropulsionPreMission(om.Group):
         # each component here
         # Promotions are handled in configure()
         for engine in engine_models:
-            subsys = engine.build_pre_mission(options)
+            options = {}
+            if engine.name in engine_options:
+                options = engine_options[engine.name]
+            subsys = engine.build_pre_mission(aviary_options, **options)
             if subsys:
                 if num_engine_type > 1:
                     proms = None
@@ -57,7 +73,7 @@ class PropulsionPreMission(om.Group):
 
         self.add_subsystem(
             'propulsion_sum',
-            subsys=PropulsionSum(aviary_options=options),
+            subsys=PropulsionSum(),
             promotes_inputs=['*'],
             promotes_outputs=['*'],
         )
@@ -72,7 +88,7 @@ class PropulsionPreMission(om.Group):
         num_engine_type = len(engine_models)
 
         # determine if openMDAO messages and warnings should be suppressed
-        verbosity = self.options['aviary_options'].get_val(Settings.VERBOSITY)
+        verbosity = self.options[Settings.VERBOSITY]
         out_stream = None
 
         # DEBUG
@@ -203,16 +219,10 @@ class PropulsionSum(om.ExplicitComponent):
     '''
 
     def initialize(self):
-        self.options.declare(
-            'aviary_options',
-            types=AviaryValues,
-            desc='collection of Aircraft/Mission specific options',
-        )
+        add_aviary_option(self, Aircraft.Engine.NUM_ENGINES)
 
     def setup(self):
-        num_engine_type = len(
-            self.options['aviary_options'].get_val(Aircraft.Engine.NUM_ENGINES)
-        )
+        num_engine_type = len(self.options[Aircraft.Engine.NUM_ENGINES])
 
         add_aviary_input(
             self, Aircraft.Engine.SCALED_SLS_THRUST, val=np.zeros(num_engine_type)
@@ -221,9 +231,7 @@ class PropulsionSum(om.ExplicitComponent):
         add_aviary_output(self, Aircraft.Propulsion.TOTAL_SCALED_SLS_THRUST, val=0.0)
 
     def setup_partials(self):
-        num_engines = self.options['aviary_options'].get_val(
-            Aircraft.Engine.NUM_ENGINES
-        )
+        num_engines = self.options[Aircraft.Engine.NUM_ENGINES]
 
         self.declare_partials(
             Aircraft.Propulsion.TOTAL_SCALED_SLS_THRUST,
@@ -232,9 +240,7 @@ class PropulsionSum(om.ExplicitComponent):
         )
 
     def compute(self, inputs, outputs):
-        num_engines = self.options['aviary_options'].get_val(
-            Aircraft.Engine.NUM_ENGINES
-        )
+        num_engines = self.options[Aircraft.Engine.NUM_ENGINES]
 
         thrust = inputs[Aircraft.Engine.SCALED_SLS_THRUST]
 

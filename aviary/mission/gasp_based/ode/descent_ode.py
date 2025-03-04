@@ -2,11 +2,11 @@ import numpy as np
 import openmdao.api as om
 from aviary.subsystems.atmosphere.atmosphere import Atmosphere
 
-from aviary.mission.gasp_based.ode.base_ode import BaseODE
+from aviary.mission.gasp_based.ode.two_dof_ode import TwoDOFODE
 from aviary.mission.gasp_based.ode.params import ParamPort
 from aviary.mission.gasp_based.ode.descent_eom import DescentRates
 from aviary.subsystems.atmosphere.flight_conditions import FlightConditions
-from aviary.mission.gasp_based.ode.base_ode import BaseODE
+from aviary.mission.gasp_based.ode.two_dof_ode import TwoDOFODE
 from aviary.mission.gasp_based.ode.constraints.flight_constraints import FlightConstraints
 from aviary.mission.gasp_based.ode.constraints.speed_constraints import SpeedConstraints
 
@@ -17,7 +17,7 @@ from aviary.subsystems.propulsion.propulsion_builder import PropulsionBuilderBas
 from aviary.mission.gasp_based.ode.time_integration_base_classes import add_SGM_required_inputs
 
 
-class DescentODE(BaseODE):
+class DescentODE(TwoDOFODE):
     """ODE for quasi-steady descent.
 
     This ODE has a ``KSComp`` which allows for the switching of obeying an EAS
@@ -153,7 +153,7 @@ class DescentODE(BaseODE):
             ],  # [Dynamic.Atmosphere.DYNAMIC_PRESSURE] + speed_outputs,
         )
 
-        # maybe replace this with the solver in AddAlphaControl?
+        # maybe replace this with the solver in add_alpha_control?
         lift_balance_group.nonlinear_solver = om.NewtonSolver()
         lift_balance_group.nonlinear_solver.options["solve_subsystems"] = True
         lift_balance_group.nonlinear_solver.options["iprint"] = 0
@@ -170,7 +170,7 @@ class DescentODE(BaseODE):
                 Dynamic.Mission.VELOCITY,
                 Dynamic.Vehicle.DRAG,
                 Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
-                "alpha",
+                Dynamic.Vehicle.ANGLE_OF_ATTACK,
             ],
             promotes_outputs=[
                 Dynamic.Mission.ALTITUDE_RATE,
@@ -185,7 +185,7 @@ class DescentODE(BaseODE):
             FlightConstraints(num_nodes=nn),
             promotes_inputs=[
                 Dynamic.Vehicle.MASS,
-                "alpha",
+                Dynamic.Vehicle.ANGLE_OF_ATTACK,
                 Dynamic.Atmosphere.DENSITY,
                 "CL_max",
                 Dynamic.Mission.FLIGHT_PATH_ANGLE,
@@ -214,11 +214,14 @@ class DescentODE(BaseODE):
                                            **kwargs),
                                        promotes_outputs=subsystem.mission_outputs(**kwargs))
 
-        self.AddAlphaControl(
+        self.add_external_subsystems()
+
+        self.add_alpha_control(
             alpha_group=lift_balance_group,
             alpha_mode=AlphaModes.REQUIRED_LIFT,
             add_default_solver=False,
-            num_nodes=nn)
+            num_nodes=nn,
+        )
 
         # the last two subsystems will also be used for constraints
         self.add_excess_rate_comps(nn)

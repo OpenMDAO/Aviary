@@ -30,9 +30,7 @@ class GASPAeroTest(unittest.TestCase):
         prob = om.Problem()
         prob.model.add_subsystem(
             "aero",
-            CruiseAero(
-                num_nodes=2, aviary_options=get_option_defaults(), input_atmos=True
-            ),
+            CruiseAero(num_nodes=2, input_atmos=True),
             promotes=["*"],
         )
         prob.setup(check=False, force_alloc_complex=True)
@@ -53,7 +51,7 @@ class GASPAeroTest(unittest.TestCase):
             with self.subTest(alt=alt, mach=mach, alpha=alpha):
                 # prob.set_val(Dynamic.Mission.ALTITUDE, alt)
                 prob.set_val(Dynamic.Atmosphere.MACH, mach)
-                prob.set_val("alpha", alpha)
+                prob.set_val(Dynamic.Vehicle.ANGLE_OF_ATTACK, alpha)
                 prob.set_val(Dynamic.Atmosphere.SPEED_OF_SOUND, row["sos"])
                 prob.set_val(Dynamic.Atmosphere.KINEMATIC_VISCOSITY, row["nu"])
 
@@ -71,7 +69,8 @@ class GASPAeroTest(unittest.TestCase):
         prob.model.add_subsystem(
             "aero",
             LowSpeedAero(
-                num_nodes=2, aviary_options=get_option_defaults(), input_atmos=True
+                num_nodes=2,
+                input_atmos=True,
             ),
             promotes=["*"],
         )
@@ -95,7 +94,7 @@ class GASPAeroTest(unittest.TestCase):
             with self.subTest(ilift=ilift, alt=alt, mach=mach, alpha=alpha):
                 prob.set_val(Dynamic.Atmosphere.MACH, mach)
                 prob.set_val(Dynamic.Mission.ALTITUDE, alt)
-                prob.set_val("alpha", alpha)
+                prob.set_val(Dynamic.Vehicle.ANGLE_OF_ATTACK, alpha)
                 prob.set_val(Dynamic.Atmosphere.SPEED_OF_SOUND, row["sos"])
                 prob.set_val(Dynamic.Atmosphere.KINEMATIC_VISCOSITY, row["nu"])
 
@@ -126,18 +125,18 @@ class GASPAeroTest(unittest.TestCase):
                 assert_check_partials(partial_data, atol=4.5, rtol=5e-3)
 
     def test_ground_alpha_out(self):
-        # Test that drag output matches between alpha in/out cases
+        # Test that drag output matches between both CL computation methods
         prob = om.Problem()
         prob.model.add_subsystem(
-            "alpha_in",
-            LowSpeedAero(aviary_options=get_option_defaults()),
-            promotes_inputs=["*", ("alpha", "alpha_in")],
+            "lift_from_aoa",
+            LowSpeedAero(),
+            promotes_inputs=["*", (Dynamic.Vehicle.ANGLE_OF_ATTACK, "alpha_in")],
             promotes_outputs=[(Dynamic.Vehicle.LIFT, "lift_req")],
         )
 
         prob.model.add_subsystem(
-            "alpha_out",
-            LowSpeedAero(aviary_options=get_option_defaults(), output_alpha=True),
+            "lift_required",
+            LowSpeedAero(lift_required=True),
             promotes_inputs=["*", "lift_req"],
         )
 
@@ -157,7 +156,9 @@ class GASPAeroTest(unittest.TestCase):
         prob.set_val("alpha_in", 5)
         prob.run_model()
 
-        assert_near_equal(prob["alpha_in.drag"], prob["alpha_out.drag"], tolerance=1e-6)
+        assert_near_equal(
+            prob["lift_from_aoa.drag"], prob["lift_required.drag"], tolerance=1e-6
+        )
 
         partial_data = prob.check_partials(method="fd", out_stream=None)
         assert_check_partials(partial_data, atol=0.02, rtol=1e-4)
@@ -173,7 +174,7 @@ def _init_geom(prob):
     prob.set_val(Aircraft.Wing.AVERAGE_CHORD, setup_data["cbarw"])
     prob.set_val(Aircraft.Wing.TAPER_RATIO, setup_data["slm"])
     prob.set_val(Aircraft.Wing.THICKNESS_TO_CHORD_ROOT, setup_data["tcr"])
-    prob.set_val(Aircraft.Wing.MOUNTING_TYPE, setup_data["hwing"])
+    prob.set_val(Aircraft.Wing.VERTICAL_MOUNT_LOCATION, setup_data["hwing"])
     prob.set_val(Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION, setup_data["sah"])
     prob.set_val(Aircraft.HorizontalTail.SPAN, setup_data["bht"])
     prob.set_val(Aircraft.VerticalTail.SPAN, setup_data["bvt"])

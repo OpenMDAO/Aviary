@@ -7,7 +7,6 @@ from aviary.subsystems.mass.flops_based.paint import PaintMass
 from aviary.utils.test_utils.variable_test import assert_match_varnames
 from aviary.validation_cases.validation_tests import (flops_validation_test,
                                                       get_flops_case_names,
-                                                      get_flops_inputs,
                                                       print_case)
 from aviary.variable_info.variables import Aircraft
 
@@ -24,7 +23,7 @@ class PaintMassTest(unittest.TestCase):
 
         prob.model.add_subsystem(
             "paint",
-            PaintMass(aviary_options=get_flops_inputs(case_name)),
+            PaintMass(),
             promotes_inputs=['*'],
             promotes_outputs=['*'],
         )

@@ -492,6 +492,9 @@ def get_path(path: Union[str, Path], verbose: bool = False) -> Path:
     return path
 
 
+top_dir = Path(get_aviary_resource_path(''))
+
+
 def wrapped_convert_units(val_unit_tuple, new_units):
     """
     Wrapper for OpenMDAO's convert_units function.
@@ -519,3 +522,92 @@ def wrapped_convert_units(val_unit_tuple, new_units):
         return [convert_units(v, units, new_units) for v in value]
     else:
         return convert_units(value, units, new_units)
+
+
+def sigmoidX(x, x0, alpha=1.0):
+    """
+    Sigmoid used to smoothly transition between piecewise functions
+
+    Parameters
+    ----------
+    x: float or array
+        independent variable
+    x0: float
+        the center of symmetry. When x = x0, sigmoidX = 1/2.
+    alpha: float
+        steepness parameter.
+
+    returns
+    -------
+    float or array
+        smoothed value from input parameter x.
+    """
+    if alpha == 0:
+        raise ValueError("alpha must be non-zero")
+
+    if isinstance(x, np.ndarray):
+        if np.isrealobj(x):
+            dtype = float
+        else:
+            dtype = complex
+        n_size = x.size
+        y = np.zeros(n_size, dtype=dtype)
+        # avoid overflow in squared term, underflow seems to be ok
+        calc_idx = np.where((x.real - x0) / alpha > -320)
+        y[calc_idx] = 1 / (1 + np.exp(-(x[calc_idx] - x0) / alpha))
+    else:
+        if isinstance(x, float):
+            dtype = float
+        else:
+            dtype = complex
+        y = 0
+        if (x - x0)*alpha > -320:
+            y = 1 / (1 + np.exp(-(x - x0) / alpha))
+    if dtype == float:
+        y = y.real
+    return y
+
+
+def dSigmoidXdx(x, x0, alpha=1.0):
+    """
+    Derivative of sigmoid function
+
+    Parameters
+    ----------
+    x: float or array
+        independent variable
+    x0: float
+        the center of symmetry. When x = x0, sigmoidX = 1/2.
+    alpha: float
+        steepness parameter.
+    returns
+    -------
+    float or array
+        smoothed derivative value from input parameter x.
+    """
+    if alpha == 0:
+        raise ValueError("alpha must be non-zero")
+
+    if isinstance(x, np.ndarray):
+        if np.isrealobj(x):
+            dtype = float
+        else:
+            dtype = complex
+        n_size = x.size
+        y = np.zeros(n_size, dtype=dtype)
+        term = np.zeros(n_size, dtype=dtype)
+        term2 = np.zeros(n_size, dtype=dtype)
+        # avoid overflow in squared term, underflow seems to be ok
+        calc_idx = np.where((x.real - x0) / alpha > -320)
+        term[calc_idx] = np.exp(-(x[calc_idx] - x0) / alpha)
+        term2[calc_idx] = (1 + term[calc_idx]) * (1 + term[calc_idx])
+        y[calc_idx] = term[calc_idx] / alpha / term2[calc_idx]
+    else:
+        y = 0
+        if (x - x0)*alpha > -320:
+            term = np.exp(-(x - x0) / alpha)
+            term2 = (1 + term) * (1 + term)
+            y = term / alpha / term2
+    if dtype == float:
+        y = y.real
+    return y

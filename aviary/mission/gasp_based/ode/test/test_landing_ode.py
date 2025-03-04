@@ -12,6 +12,7 @@ from aviary.mission.gasp_based.ode.landing_ode import LandingSegment
 from aviary.subsystems.propulsion.utils import build_engine_deck
 from aviary.utils.test_utils.default_subsystems import get_default_mission_subsystems
 from aviary.utils.test_utils.IO_test_util import check_prob_outputs
+from aviary.variable_info.functions import setup_model_options
 from aviary.variable_info.options import get_option_defaults
 from aviary.variable_info.variables import Dynamic, Mission
 
@@ -32,6 +33,8 @@ class DLandTestCase(unittest.TestCase):
         self.prob.model = LandingSegment(
             aviary_options=options, core_subsystems=core_subsystems)
 
+        setup_model_options(self.prob, options)
+
     @unittest.skipIf(version.parse(openmdao.__version__) < version.parse("3.26"), "Skipping due to OpenMDAO version being too low (<3.26)")
     def test_dland(self):
         self.prob.setup(check=False, force_alloc_complex=True)
@@ -40,7 +43,9 @@ class DLandTestCase(unittest.TestCase):
 
         self.prob.set_val(Mission.Landing.AIRPORT_ALTITUDE, 0, units="ft")
         self.prob.set_val(Mission.Landing.INITIAL_MACH, 0.1, units="unitless")
-        self.prob.set_val("alpha", 0, units="deg")  # doesn't matter
+        self.prob.set_val(
+            Dynamic.Vehicle.ANGLE_OF_ATTACK, 0, units="deg"
+        )  # doesn't matter
         self.prob.set_val(Mission.Landing.MAXIMUM_SINK_RATE, 900, units="ft/min")
         self.prob.set_val(Mission.Landing.GLIDE_TO_STALL_RATIO, 1.3, units="unitless")
         self.prob.set_val(Mission.Landing.MAXIMUM_FLARE_LOAD_FACTOR,

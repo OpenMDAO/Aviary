@@ -17,7 +17,7 @@ from openmdao.utils.assert_utils import assert_near_equal
 from openmdao.utils.testing_utils import use_tempdirs
 from openmdao.utils.testing_utils import require_pyoptsparse
 
-from aviary.mission.energy_phase import EnergyPhase
+from aviary.mission.flops_based.phases.energy_phase import EnergyPhase
 from aviary.mission.flops_based.phases.build_landing import Landing
 from aviary.mission.flops_based.phases.build_takeoff import Takeoff
 from aviary.subsystems.premission import CorePreMission
@@ -34,7 +34,7 @@ from aviary.utils.test_utils.assert_utils import warn_timeseries_near_equal
 from aviary.utils.test_utils.default_subsystems import get_default_mission_subsystems
 from aviary.validation_cases.validation_tests import get_flops_inputs
 from aviary.variable_info.enums import LegacyCode
-from aviary.variable_info.functions import setup_trajectory_params
+from aviary.variable_info.functions import setup_trajectory_params, setup_model_options
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 from aviary.variable_info.variable_meta_data import _MetaData as BaseMetaData
 
@@ -436,6 +436,8 @@ def run_trajectory(sim=True):
         Mission.Summary.GROSS_MASS,
     ]
     set_aviary_input_defaults(prob.model, varnames, aviary_inputs)
+
+    setup_model_options(prob, aviary_inputs)
 
     prob.setup(force_alloc_complex=True)
 

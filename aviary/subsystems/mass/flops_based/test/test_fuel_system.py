@@ -12,7 +12,7 @@ from aviary.validation_cases.validation_tests import (Version,
                                                       get_flops_case_names,
                                                       get_flops_inputs,
                                                       print_case)
-from aviary.variable_info.variables import Aircraft
+from aviary.variable_info.variables import Aircraft, Mission
 
 
 class AltFuelSystemTest(unittest.TestCase):
@@ -26,10 +26,15 @@ class AltFuelSystemTest(unittest.TestCase):
 
         prob = self.prob
 
+        inputs = get_flops_inputs(case_name, preprocess=True)
+
+        options = {
+            Aircraft.Fuel.NUM_TANKS: inputs.get_val(Aircraft.Fuel.NUM_TANKS),
+        }
+
         prob.model.add_subsystem(
             "alt_fuel_sys_test",
-            AltFuelSystemMass(aviary_options=get_flops_inputs(
-                case_name, preprocess=True)),
+            AltFuelSystemMass(**options),
             promotes_outputs=['*'],
             promotes_inputs=['*']
         )
@@ -63,10 +68,16 @@ class AltFuelSystemTest2(unittest.TestCase):
 
     def test_case(self):
         prob = om.Problem()
+
+        inputs = get_flops_inputs("N3CC", preprocess=True)
+
+        options = {
+            Aircraft.Fuel.NUM_TANKS: inputs.get_val(Aircraft.Fuel.NUM_TANKS),
+        }
+
         prob.model.add_subsystem(
             "alt_fuel_sys_test",
-            AltFuelSystemMass(aviary_options=get_flops_inputs(
-                "N3CC", preprocess=True)),
+            AltFuelSystemMass(**options),
             promotes_outputs=['*'],
             promotes_inputs=['*']
         )
@@ -88,10 +99,16 @@ class TransportFuelSystemTest(unittest.TestCase):
 
         prob = self.prob
 
+        inputs = get_flops_inputs(case_name, preprocess=True)
+
+        options = {
+            Aircraft.Propulsion.TOTAL_NUM_ENGINES: inputs.get_val(Aircraft.Propulsion.TOTAL_NUM_ENGINES),
+            Mission.Constraints.MAX_MACH: inputs.get_val(Mission.Constraints.MAX_MACH),
+        }
+
         prob.model.add_subsystem(
             "transport_fuel_sys_test",
-            TransportFuelSystemMass(
-                aviary_options=get_flops_inputs(case_name, preprocess=True)),
+            TransportFuelSystemMass(**options),
             promotes_outputs=['*'],
             promotes_inputs=['*']
         )
@@ -126,10 +143,17 @@ class TransportFuelSystemTest2(unittest.TestCase):
 
     def test_case(self):
         prob = om.Problem()
+
+        inputs = get_flops_inputs("N3CC", preprocess=True)
+
+        options = {
+            Aircraft.Propulsion.TOTAL_NUM_ENGINES: inputs.get_val(Aircraft.Propulsion.TOTAL_NUM_ENGINES),
+            Mission.Constraints.MAX_MACH: inputs.get_val(Mission.Constraints.MAX_MACH),
+        }
+
         prob.model.add_subsystem(
             "transport_fuel_sys_test",
-            TransportFuelSystemMass(
-                aviary_options=get_flops_inputs("N3CC", preprocess=True)),
+            TransportFuelSystemMass(**options),
             promotes_outputs=['*'],
             promotes_inputs=['*']
         )

@@ -3,7 +3,7 @@ import numpy as np
 import dymos as dm
 
 from aviary.mission.initial_guess_builders import InitialGuessState
-from aviary.mission.flops_based.ode.mission_ODE import MissionODE
+from aviary.mission.flops_based.ode.energy_ODE import EnergyODE
 from aviary.mission.flops_based.phases.phase_utils import add_subsystem_variables_to_phase, get_initial
 from aviary.mission.phase_builder_base import PhaseBuilderBase, register
 
@@ -26,36 +26,11 @@ class FlightPhaseBase(PhaseBuilderBase):
 
     __slots__ = ('external_subsystems', 'meta_data')
 
-    # region : derived type customization points
     _meta_data_ = {}
-
     _initial_guesses_meta_data_ = {}
-
     default_name = 'cruise'
-
-    default_ode_class = MissionODE
-
+    default_ode_class = EnergyODE
     default_meta_data = _MetaData
-    # endregion : derived type customization points
-
-    def __init__(
-        self, name=None, subsystem_options=None, user_options=None, initial_guesses=None,
-        ode_class=None, transcription=None, core_subsystems=None,
-        external_subsystems=None, meta_data=None
-    ):
-        super().__init__(
-            name=name, core_subsystems=core_subsystems, subsystem_options=subsystem_options, user_options=user_options, initial_guesses=initial_guesses, ode_class=ode_class, transcription=transcription)
-
-        # TODO: support external_subsystems and meta_data in the base class
-        if external_subsystems is None:
-            external_subsystems = []
-
-        self.external_subsystems = external_subsystems
-
-        if meta_data is None:
-            meta_data = self.default_meta_data
-
-        self.meta_data = meta_data
 
     def build_phase(self, aviary_options: AviaryValues = None, phase_type=EquationsOfMotion.HEIGHT_ENERGY):
         '''
@@ -311,7 +286,7 @@ class FlightPhaseBase(PhaseBuilderBase):
 
         if phase_type is EquationsOfMotion.SOLVED_2DOF:
             phase.add_timeseries_output(Dynamic.Mission.FLIGHT_PATH_ANGLE)
-            phase.add_timeseries_output("alpha")
+            phase.add_timeseries_output(Dynamic.Vehicle.ANGLE_OF_ATTACK)
             phase.add_timeseries_output(
                 "fuselage_pitch", output_name="theta", units="deg")
             phase.add_timeseries_output("thrust_req", units="lbf")

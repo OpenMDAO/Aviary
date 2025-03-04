@@ -126,11 +126,12 @@ aircraft:wing:max_slat_deflection_landing,10,deg
 aircraft:wing:max_slat_deflection_takeoff,10,deg
 aircraft:wing:max_thickness_location,0.4,unitless
 aircraft:wing:min_pressure_location,0.3,unitless
-aircraft:wing:mounting_type,0,unitless
+aircraft:wing:vertical_mount_location,0,unitless
 aircraft:wing:num_flap_segments,2,unitless
 aircraft:wing:optimum_flap_deflection,55,deg
 aircraft:wing:optimum_slat_deflection,20,deg
 aircraft:wing:slat_chord_ratio,0.15,unitless
+aircraft:wing:slat_span_ratio,0.9,unitless
 aircraft:wing:slat_lift_increment_optimum,0.93,unitless
 aircraft:wing:surface_ctrl_mass_coefficient,0.95,unitless
 aircraft:wing:sweep,25,deg

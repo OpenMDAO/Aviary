@@ -7,6 +7,8 @@ aircraft:controls:control_mass_increment,0,lbm
 aircraft:controls:stability_augmentation_system_mass,0,lbm
 aircraft:controls:stability_augmentation_system_mass_scaler,1,unitless
 aircraft:crew_and_payload:cargo_mass,10040,lbm
+#aircraft:crew_and_payload:design:cargo_mass,0,lbm
+#aircraft:crew_and_payload:design:max_cargo_mass,0,lbm
 aircraft:crew_and_payload:catering_items_mass_per_passenger,7.6,lbm
 aircraft:crew_and_payload:design:num_passengers,180,unitless
 aircraft:crew_and_payload:passenger_mass_with_bags,200,lbm
@@ -125,12 +127,13 @@ aircraft:wing:max_slat_deflection_landing,10,deg
 aircraft:wing:max_slat_deflection_takeoff,10,deg
 aircraft:wing:max_thickness_location,0.4,unitless
 aircraft:wing:min_pressure_location,0.3,unitless
-aircraft:wing:mounting_type,0,unitless
+aircraft:wing:vertical_mount_location,0,unitless
 aircraft:wing:num_flap_segments,2,unitless
 aircraft:wing:optimum_flap_deflection,55,deg
 aircraft:wing:optimum_slat_deflection,20,deg
 aircraft:wing:slat_chord_ratio,0.15,unitless
 aircraft:wing:slat_lift_increment_optimum,0.93,unitless
+aircraft:wing:slat_span_ratio,0.9,unitless
 aircraft:wing:surface_ctrl_mass_coefficient,0.95,unitless
 aircraft:wing:sweep,25,deg
 aircraft:wing:taper_ratio,0.33,unitless

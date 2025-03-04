@@ -10,11 +10,10 @@ from aviary.subsystems.aerodynamics.gasp_based.common import (
     CLFromLift,
     TanhRampComp,
 )
-from aviary.utils.aviary_values import AviaryValues
-from aviary.variable_info.functions import add_aviary_input
-from aviary.variable_info.variables import Aircraft, Dynamic, Mission
-from aviary.utils.aviary_values import AviaryValues
-from aviary.subsystems.aerodynamics.gasp_based.interference import WingFuselageInterferenceMission
+from aviary.utils.functions import sigmoidX
+from aviary.variable_info.enums import Verbosity
+from aviary.variable_info.functions import add_aviary_input, add_aviary_option
+from aviary.variable_info.variables import Aircraft, Dynamic, Mission, Settings
 
 
 #
@@ -146,13 +145,6 @@ def cla(ar, sweep, mach):
     )
 
 
-def sigmoid(x, x0, alpha=0.1):
-    """Sigmoid used to smoothly transition between piecewise functions"""
-    if alpha == 0:
-        raise ValueError("alpha must be non-zero")
-    return 1 / (1 + np.exp(-(x - x0) / alpha))
-
-
 class WingTailRatios(om.ExplicitComponent):
     """Pre-mission calculation of ratios between tail and wing parameters"""
 
@@ -168,7 +160,7 @@ class WingTailRatios(om.ExplicitComponent):
 
         add_aviary_input(self, Aircraft.Wing.THICKNESS_TO_CHORD_ROOT, val=0.15)
 
-        add_aviary_input(self, Aircraft.Wing.MOUNTING_TYPE, val=0.0)
+        add_aviary_input(self, Aircraft.Wing.VERTICAL_MOUNT_LOCATION, val=0.0)
 
         add_aviary_input(self, Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION, val=0.0)
 
@@ -205,7 +197,7 @@ class WingTailRatios(om.ExplicitComponent):
                 Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION,
                 Aircraft.VerticalTail.SPAN,
                 Aircraft.Fuselage.AVG_DIAMETER,
-                Aircraft.Wing.MOUNTING_TYPE,
+                Aircraft.Wing.VERTICAL_MOUNT_LOCATION,
                 Aircraft.Wing.THICKNESS_TO_CHORD_ROOT,
                 Aircraft.Wing.AREA,
                 Aircraft.Wing.SPAN,
@@ -393,17 +385,12 @@ class AeroGeom(om.ExplicitComponent):
 
     def initialize(self):
         self.options.declare("num_nodes", default=1, types=int)
-        self.options.declare(
-            'aviary_options',
-            types=AviaryValues,
-            desc='collection of Aircraft/Mission specific options',
-        )
+        add_aviary_option(self, Aircraft.Engine.NUM_ENGINES)
+        add_aviary_option(self, Aircraft.Wing.HAS_STRUT)
 
     def setup(self):
         nn = self.options["num_nodes"]
-        num_engine_type = len(
-            self.options['aviary_options'].get_val(Aircraft.Engine.NUM_ENGINES)
-        )
+        num_engine_type = len(self.options[Aircraft.Engine.NUM_ENGINES])
 
         self.add_input(
             Dynamic.Atmosphere.MACH,
@@ -700,7 +687,7 @@ class AeroGeom(om.ExplicitComponent):
         # isn't a problem.
         reli_y1 = 700000 * np.ones(self.options["num_nodes"])
         reli_y2 = sos * mach / nu
-        sig = sigmoid(mach, 0.1, alpha=0.005)
+        sig = sigmoidX(mach, 0.1, alpha=0.005)
         reli = (1 - sig) * reli_y1 + sig * reli_y2
 
         # Re correction factors: fuselage, wing, nacelle, vtail, htail, strut, tip tank
@@ -718,9 +705,7 @@ class AeroGeom(om.ExplicitComponent):
         fnre[good_mask] = (np.log10(reli[good_mask] * nac_len) / 7) ** -2.6
         fvtre[good_mask] = (np.log10(reli[good_mask] * vtail_chord) / 7) ** -2.6
         fhtre[good_mask] = (np.log10(reli[good_mask] * htail_chord) / 7) ** -2.6
-        include_strut = self.options["aviary_options"].get_val(
-            Aircraft.Wing.HAS_STRUT, units='unitless'
-        )
+        include_strut = self.options[Aircraft.Wing.HAS_STRUT]
         if include_strut:
             fstrtre = (np.log10(reli[good_mask] * strut_chord) / 7) ** -2.6
 
@@ -797,26 +782,15 @@ class AeroSetup(om.Group):
     def initialize(self):
         self.options.declare("num_nodes", default=1, types=int)
         self.options.declare(
-            'aviary_options',
-            types=AviaryValues,
-            desc='collection of Aircraft/Mission specific options',
-        )
-        self.options.declare(
             "input_atmos",
             default=False,
             types=bool,
             desc="Directly input speed of sound and kinematic viscosity instead of "
             "computing them with an atmospherics component. For testing.",
         )
-        self.options.declare(
-            'aviary_options',
-            types=AviaryValues,
-            desc='collection of Aircraft/Mission specific options',
-        )
 
     def setup(self):
         nn = self.options["num_nodes"]
-        aviary_options = self.options['aviary_options']
 
         self.add_subsystem("ratios", WingTailRatios(), promotes=["*"])
         self.add_subsystem("xlifts", Xlifts(num_nodes=nn), promotes=["*"])
@@ -865,8 +839,8 @@ class AeroSetup(om.Group):
 
         self.add_subsystem(
             "geom",
-            AeroGeom(num_nodes=nn, aviary_options=aviary_options),
-            promotes=["*"],
+            AeroGeom(num_nodes=nn),
+            promotes=["*"]
         )
 
 
@@ -1118,7 +1092,7 @@ class DragCoefClean(om.ExplicitComponent):
 
         mach_div = SA1 + SA2 * CL + div_drag_supercrit
 
-        sig = sigmoid(mach, mach_div, alpha=0.005)
+        sig = sigmoidX(mach, mach_div, alpha=0.005)
         delcdm = sig * (10 * (mach - mach_div) ** 3)
 
         # delcdm = np.zeros_like(mach)
@@ -1150,7 +1124,13 @@ class LiftCoeff(om.ExplicitComponent):
         nn = self.options["num_nodes"]
 
         # mission inputs
-        self.add_input("alpha", val=0.0, units="deg", shape=nn, desc="Angle of attack")
+        self.add_input(
+            Dynamic.Vehicle.ANGLE_OF_ATTACK,
+            val=0.0,
+            units="deg",
+            shape=nn,
+            desc="Angle of attack",
+        )
         self.add_input(
             Dynamic.Mission.ALTITUDE,
             val=0.0,
@@ -1224,7 +1204,7 @@ class LiftCoeff(om.ExplicitComponent):
         ar = np.arange(self.options["num_nodes"])
 
         dynvars = [
-            "alpha",
+            Dynamic.Vehicle.ANGLE_OF_ATTACK,
             Dynamic.Mission.ALTITUDE,
             "lift_curve_slope",
             "lift_ratio",
@@ -1312,14 +1292,22 @@ class LiftCoeffClean(om.ExplicitComponent):
 
         if self.options["output_alpha"]:
             self.add_output(
-                "alpha", val=0.0, units="deg", shape=nn, desc="Angle of attack"
+                Dynamic.Vehicle.ANGLE_OF_ATTACK,
+                val=0.0,
+                units="deg",
+                shape=nn,
+                desc="Angle of attack",
             )
             self.add_input(
                 "CL", val=1.0, units="unitless", shape=nn, desc="Lift coefficient"
             )
         else:
             self.add_input(
-                "alpha", val=0.0, units="deg", shape=nn, desc="Angle of attack"
+                Dynamic.Vehicle.ANGLE_OF_ATTACK,
+                val=0.0,
+                units="deg",
+                shape=nn,
+                desc="Angle of attack",
             )
             self.add_output(
                 "CL", val=1.0, units="unitless", shape=nn, desc="Lift coefficient"
@@ -1346,17 +1334,21 @@ class LiftCoeffClean(om.ExplicitComponent):
 
         if self.options["output_alpha"]:
             self.declare_partials(
-                "alpha",
+                Dynamic.Vehicle.ANGLE_OF_ATTACK,
                 ["CL", "lift_ratio", "lift_curve_slope"],
                 rows=ar,
                 cols=ar,
                 method="cs",
             )
-            self.declare_partials("alpha", [Aircraft.Wing.ZERO_LIFT_ANGLE], method="cs")
+            self.declare_partials(
+                Dynamic.Vehicle.ANGLE_OF_ATTACK,
+                [Aircraft.Wing.ZERO_LIFT_ANGLE],
+                method="cs",
+            )
         else:
             self.declare_partials(
                 "CL",
-                ["lift_curve_slope", "alpha", "lift_ratio"],
+                ["lift_curve_slope", Dynamic.Vehicle.ANGLE_OF_ATTACK, "lift_ratio"],
                 rows=ar,
                 cols=ar,
                 method="cs",
@@ -1385,9 +1377,11 @@ class LiftCoeffClean(om.ExplicitComponent):
         if self.options["output_alpha"]:
             CL = inputs["CL"]
             clw = CL / (1 + lift_ratio)
-            outputs["alpha"] = rad2deg(clw / lift_curve_slope) + alpha0
+            outputs[Dynamic.Vehicle.ANGLE_OF_ATTACK] = (
+                rad2deg(clw / lift_curve_slope) + alpha0
+            )
         else:
-            alpha = inputs["alpha"]
+            alpha = inputs[Dynamic.Vehicle.ANGLE_OF_ATTACK]
             outputs["CL"] = (
                 lift_curve_slope * deg2rad(alpha - alpha0) * (1 + lift_ratio)
             )
@@ -1401,11 +1395,6 @@ class CruiseAero(om.Group):
 
     def initialize(self):
         self.options.declare("num_nodes", default=1, types=int)
-        self.options.declare(
-            'aviary_options',
-            types=AviaryValues,
-            desc='collection of Aircraft/Mission specific options',
-        )
 
         self.options.declare(
             "output_alpha",
@@ -1420,20 +1409,13 @@ class CruiseAero(om.Group):
             desc="Directly input speed of sound and kinematic viscosity instead of "
             "computing them with an atmospherics component. For testing.",
         )
-        self.options.declare(
-            'aviary_options',
-            types=AviaryValues,
-            desc='collection of Aircraft/Mission specific options',
-        )
 
     def setup(self):
         nn = self.options["num_nodes"]
-        aviary_options = self.options["aviary_options"]
         self.add_subsystem(
             "aero_setup",
             AeroSetup(
                 num_nodes=nn,
-                aviary_options=aviary_options,
                 input_atmos=self.options["input_atmos"],
             ),
             promotes=["*"],
@@ -1456,11 +1438,6 @@ class LowSpeedAero(om.Group):
     def initialize(self):
         self.options.declare("num_nodes", default=1, types=int)
         self.options.declare(
-            'aviary_options',
-            types=AviaryValues,
-            desc='collection of Aircraft/Mission specific options',
-        )
-        self.options.declare(
             "retract_gear",
             default=True,
             types=bool,
@@ -1472,14 +1449,12 @@ class LowSpeedAero(om.Group):
             types=bool,
             desc="True to start with flaps applied, False for reverse",
         )
-        # TODO this option does not really exist for LowSpeed and should be renamed
-        # (the value of having identical option set to cruise aero not worth the added
-        #  confusion of having a mislabeled option here)
         self.options.declare(
-            "output_alpha",
+            "lift_required",
             default=False,
             types=bool,
-            desc="If True, output alpha for a given input CL",
+            desc="If True, compute CL from lift required (mass). If False, compute lift "
+            "from current flight conditions including angle of attack.",
         )
         self.options.declare(
             "input_atmos",
@@ -1488,21 +1463,14 @@ class LowSpeedAero(om.Group):
             desc="Directly input speed of sound and kinematic viscosity instead of "
             "computing them with an atmospherics component. For testing.",
         )
-        self.options.declare(
-            'aviary_options',
-            types=AviaryValues,
-            desc='collection of Aircraft/Mission specific options',
-        )
 
     def setup(self):
         nn = self.options["num_nodes"]
-        output_alpha = self.options["output_alpha"]
-        aviary_options = self.options["aviary_options"]
+        lift_required = self.options["lift_required"]
         self.add_subsystem(
             "aero_setup",
             AeroSetup(
                 num_nodes=nn,
-                aviary_options=aviary_options,
                 input_atmos=self.options["input_atmos"],
             ),
             promotes=["*"],
@@ -1535,7 +1503,7 @@ class LowSpeedAero(om.Group):
             promotes_outputs=['flap_factor', 'gear_factor'],
         )
 
-        if output_alpha:
+        if lift_required:
             # lift_req -> CL
             self.add_subsystem(
                 "lift2cl",
@@ -1545,7 +1513,7 @@ class LowSpeedAero(om.Group):
                 # so ensure this is what's passed to DragCoef
                 promotes_outputs=[("CL", "CL_full_flaps")],
             )
-            warnings.warn("Alpha is NOT an output from LowSpeedAero.")
+            # NOTE Alpha is NOT an output from LowSpeedAero.
         else:
             self.add_subsystem(
                 "lift_coef",

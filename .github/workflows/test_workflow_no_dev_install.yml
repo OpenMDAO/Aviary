@@ -17,7 +17,7 @@ on:
 jobs:
 
   test_ubuntu_no_dev_install:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
 
     timeout-minutes: 90
 
@@ -81,7 +81,7 @@ jobs:
           conda env export --file ${{ matrix.NAME }}_environment.yml
 
       - name: 'Upload environment artifact'
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.NAME }}_environment
           path: ${{ matrix.NAME }}_environment.yml

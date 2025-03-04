@@ -1,5 +1,5 @@
 """
-Fortran_to_Aviary.py is used to read in Fortran based vehicle decks and convert them to Aviary decks.
+fortran_to_aviary.py is used to read in Fortran based vehicle decks and convert them to Aviary decks.
 
 FLOPS, GASP, or Aviary names can be used for variables (Ex WG or Mission:Design:GROSS_MASS)
 When specifying variables from FORTRAN, they should be in the appropriate NAMELIST.
@@ -30,8 +30,12 @@ from aviary.variable_info.variable_meta_data import _MetaData
 from aviary.variable_info.variables import Aircraft, Mission, Settings
 from aviary.variable_info.enums import LegacyCode, Verbosity, ProblemType
 from aviary.utils.functions import get_path
-from aviary.utils.legacy_code_data.deprecated_vars import (
+from aviary.utils.legacy_code_data.flops_defaults import (
+    flops_default_values,
     flops_deprecated_vars,
+)
+from aviary.utils.legacy_code_data.gasp_defaults import (
+    gasp_default_values,
     gasp_deprecated_vars,
 )
 
@@ -39,10 +43,9 @@ FLOPS = LegacyCode.FLOPS
 GASP = LegacyCode.GASP
 
 
-def create_aviary_deck(
+def fortran_to_aviary(
     fortran_deck: str,
     legacy_code=None,
-    defaults_deck=None,
     out_file=None,
     force=False,
     verbosity=Verbosity.BRIEF,
@@ -64,7 +67,6 @@ def create_aviary_deck(
         'input_values': NamedValues(),
         'unused_values': NamedValues(),
         'initialization_guesses': initialization_guesses,
-        'verbosity': verbosity,
     }
 
     fortran_deck: Path = get_path(fortran_deck, verbose=False)
@@ -85,48 +87,65 @@ def create_aviary_deck(
         name = fortran_deck.stem
         out_file: Path = fortran_deck.parent.resolve().joinpath(name + '_converted.csv')
 
-    if legacy_code is GASP:
-        default_extension = '.dat'
-        deprecated_vars = gasp_deprecated_vars
-    elif legacy_code is FLOPS:
-        default_extension = '.txt'
-        deprecated_vars = flops_deprecated_vars
-
-    if not defaults_deck:
-        defaults_filename = (
-            legacy_code.value.lower() + '_default_values' + default_extension
-        )
-        defaults_deck = (
-            Path(__file__)
-            .parent.resolve()
-            .joinpath('legacy_code_data', defaults_filename)
-        )
-
     # create dictionary to convert legacy code variables to Aviary variables
     # key: variable name, value: either None or relevant historical_name
-    aviary_variable_dict = generate_aviary_names([legacy_code.value])
+    aviary_variable_dict = generate_aviary_names(legacy_code.value)
 
-    if defaults_deck:  # If defaults are specified, initialize the vehicle with them
-        vehicle_data = input_parser(
-            defaults_deck,
-            vehicle_data,
-            aviary_variable_dict,
-            deprecated_vars,
-            legacy_code,
+    # Get legacy-code based depreciated variable list and set vehicle data to defaults
+    if legacy_code is GASP:
+        default_values = gasp_default_values
+        deprecated_vars = gasp_deprecated_vars
+    elif legacy_code is FLOPS:
+        default_values = flops_default_values
+        deprecated_vars = flops_deprecated_vars
+
+    # Convert default data to Aviary names, add to vehicle_data
+    for item in default_values:
+        name = item[0].split('.')
+        val = str(item[1][0])
+        vehicle_data = process_and_store_data(
+            data=val,
+            var_name=name[1],
+            legacy_code=legacy_code,
+            current_namelist=name[0],
+            alternate_names=aviary_variable_dict,
+            default_values=default_values,
+            vehicle_data=vehicle_data,
+            unused_vars=deprecated_vars,
+            verbosity=verbosity,
         )
 
-    vehicle_data = input_parser(
-        fortran_deck, vehicle_data, aviary_variable_dict, deprecated_vars, legacy_code
+    # read in and convert input file
+    vehicle_data = parse_input_file(
+        fortran_deck,
+        vehicle_data,
+        aviary_variable_dict,
+        default_values,
+        deprecated_vars,
+        legacy_code,
+        verbosity,
     )
+
+    # Postprocessing step to handle special cases for conversion (not 1-to-1 match),
+    # per legacy code.
     if legacy_code is GASP:
         vehicle_data = update_gasp_options(vehicle_data)
     elif legacy_code is FLOPS:
         vehicle_data = update_flops_options(vehicle_data)
     vehicle_data = update_aviary_options(vehicle_data)
 
-    if (
-        not out_file.is_file()
-    ):  # default outputted file to be in same directory as input
+    # Add settings
+    if legacy_code is FLOPS:
+        eom = ['height_energy']
+        mass = ['FLOPS']
+    if legacy_code is GASP:
+        eom = ['2DOF']
+        mass = ['GASP']
+    vehicle_data['input_values'].set_val(Settings.EQUATIONS_OF_MOTION, eom)
+    vehicle_data['input_values'].set_val(Settings.MASS_METHOD, mass)
+
+    if not out_file.is_file():
+        # default outputted file to be in same directory as input
         out_file = fortran_deck.parent / out_file
 
     if out_file.is_file():
@@ -157,16 +176,6 @@ def create_aviary_deck(
         for var, (val, units) in sorted(vehicle_data['input_values']):
             writer.writerow([var] + val + [units])
 
-        # TODO these should just get directly added to vehicle_data
-        if legacy_code is FLOPS:
-            EOM = 'height_energy'
-            mass = 'FLOPS'
-        if legacy_code is GASP:
-            EOM = '2DOF'
-            mass = 'GASP'
-        writer.writerow(['settings:equations_of_motion'] + [EOM])
-        writer.writerow(['settings:mass_method'] + [mass])
-
         if legacy_code is GASP:
             # Values used in initial guessing of the trajectory
             writer.writerow([])
@@ -182,14 +191,23 @@ def create_aviary_deck(
             writer.writerow([var] + val)
 
 
-def input_parser(fortran_deck, vehicle_data, alternate_names, unused_vars, legacy_code):
+def parse_input_file(
+    fortran_deck,
+    vehicle_data,
+    alternate_names,
+    default_values,
+    unused_vars,
+    legacy_code,
+    verbosity=Verbosity.BRIEF,
+):
     '''
-    input_parser will modify the values in the vehicle_data dictionary using the data in the
-    fortran_deck.
+    parse_input_file reads the data in fortran_deck and adds it to vehicle_data.
+
     Lines are read one by one, comments are removed, and namelists are tracked.
-    Lines with multiple variable-data pairs are supported, but the last value per variable must
-    be followed by a trailing comma.
+    Lines with multiple variable-data pairs are supported, but the last value per
+    variable must be followed by a trailing comma.
     '''
+    input_data = NamedValues()
     with open(fortran_deck, 'r') as f_in:
         current_namelist = current_tag = ''
         for line in f_in:
@@ -206,7 +224,7 @@ def input_parser(fortran_deck, vehicle_data, alternate_names, unused_vars, legac
             # Track when namelists are opened and closed
             if (line.lstrip()[0] in ['$', '&']) and current_tag == '':
                 current_tag = line.lstrip()[0]
-                current_namelist = line.split(current_tag)[1].split()[0] + '.'
+                current_namelist = line.split(current_tag)[1].split()[0]
             elif (line.lstrip()[0] == current_tag) or (line.rstrip()[-1] == '/'):
                 line = line.replace('/', '')
                 terminate_namelist = True
@@ -224,9 +242,11 @@ def input_parser(fortran_deck, vehicle_data, alternate_names, unused_vars, legac
                         legacy_code,
                         current_namelist,
                         alternate_names,
+                        default_values,
                         vehicle_data,
                         unused_vars,
                         comment,
+                        verbosity,
                     )
                 except Exception as err:
                     if current_namelist == '':
@@ -262,9 +282,11 @@ def input_parser(fortran_deck, vehicle_data, alternate_names, unused_vars, legac
                             legacy_code,
                             current_namelist,
                             alternate_names,
+                            default_values,
                             vehicle_data,
                             unused_vars,
                             comment,
+                            verbosity,
                         )
                     except Exception as err:
                         if current_namelist == '':
@@ -289,9 +311,11 @@ def process_and_store_data(
     legacy_code,
     current_namelist,
     alternate_names,
+    default_values,
     vehicle_data,
     unused_vars,
     comment='',
+    verbosity=Verbosity.BRIEF,
 ):
     '''
     process_and_store_data takes in a string that contains the data, the current variable's name and
@@ -305,7 +329,7 @@ def process_and_store_data(
     var_ind = data_units = None
     skip_variable = False
     # skip any variables that shouldn't get converted
-    if re.search(current_namelist + var_name + '\\Z', str(unused_vars), re.IGNORECASE):
+    if re.search(current_namelist + '.' + var_name, str(unused_vars), re.IGNORECASE):
         return vehicle_data
     # remove any elements that are empty (caused by trailing commas or extra commas)
     data_list = [dat for dat in data.split(',') if dat != '']
@@ -320,7 +344,7 @@ def process_and_store_data(
         var_values = []
 
     list_of_equivalent_aviary_names, var_ind = update_name(
-        alternate_names, current_namelist + var_name, vehicle_data['verbosity']
+        alternate_names, current_namelist + '.' + var_name, verbosity
     )
 
     # Fortran uses 1 indexing, Python uses 0 indexing
@@ -329,7 +353,7 @@ def process_and_store_data(
         var_ind -= fortran_offset
 
     # Aviary has a reduction gearbox which is 1/gear ratio of GASP gearbox
-    if current_namelist + var_name == 'INPROP.GR':
+    if current_namelist + '.' + var_name == 'INPROP.GR':
         var_values = [1 / var for var in var_values]
         vehicle_data['input_values'] = set_value(
             Aircraft.Engine.Gearbox.GEAR_RATIO,
@@ -347,29 +371,37 @@ def process_and_store_data(
                 continue
 
             elif name in _MetaData:
+                if current_namelist + '.' + var_name in default_values:
+                    data_units = default_values.get_item(
+                        current_namelist + '.' + var_name
+                    )[1]
+                else:
+                    data_units = None
                 vehicle_data['input_values'] = set_value(
                     name,
                     var_values,
+                    data_units,
                     vehicle_data['input_values'],
                     var_ind=var_ind,
-                    units=data_units,
                 )
                 continue
 
         vehicle_data['unused_values'] = set_value(
             name,
             var_values,
+            data_units,
             vehicle_data['unused_values'],
             var_ind=var_ind,
-            units=data_units,
         )
-        if vehicle_data['verbosity'].value >= Verbosity.VERBOSE:
+        if verbosity >= Verbosity.VERBOSE:
             print('Unused:', name, var_values, comment)
 
     return vehicle_data
 
 
-def set_value(var_name, var_value, value_dict: NamedValues, var_ind=None, units=None):
+def set_value(
+    var_name, var_value, units=None, value_dict: NamedValues = None, var_ind=None
+):
     '''
     set_value will update the current value of a variable in a value dictionary that contains a value
     and it's associated units.
@@ -383,9 +415,8 @@ def set_value(var_name, var_value, value_dict: NamedValues, var_ind=None, units=
     else:
         current_value = None
         if var_name in _MetaData:
-            units = _MetaData[var_name]['units']
-        else:
-            units = 'unitless'
+            if not units:
+                units = _MetaData[var_name]['units']
     if not units:
         units = 'unitless'
 
@@ -413,23 +444,20 @@ def set_value(var_name, var_value, value_dict: NamedValues, var_ind=None, units=
     return value_dict
 
 
-def generate_aviary_names(code_bases):
+def generate_aviary_names(legacy_code):
     '''
-    Create a dictionary for each of the specified Fortran code bases to map to the Aviary
-    variable names. Each dictionary of Aviary names will have a list of Fortran names for
-    each variable
+    Create a dictionary that maps the specified Fortran code to Aviary variable names.
+    Each Aviary variable will have a list of matching Fortran names
     '''
 
     alternate_names = {}
-    for code_base in code_bases:
-        alternate_names[code_base] = {}
-        for key in _MetaData.keys():
-            historical_dict = _MetaData[key]['historical_name']
-            if historical_dict and code_base in historical_dict:
-                alt_name = _MetaData[key]['historical_name'][code_base]
-                if isinstance(alt_name, str):
-                    alt_name = [alt_name]
-                alternate_names[code_base][key] = alt_name
+    for key in _MetaData.keys():
+        historical_dict = _MetaData[key]['historical_name']
+        if historical_dict and legacy_code in historical_dict:
+            alt_name = _MetaData[key]['historical_name'][legacy_code]
+            if isinstance(alt_name, str):
+                alt_name = [alt_name]
+            alternate_names[key] = alt_name
     return alternate_names
 
 
@@ -444,20 +472,19 @@ def update_name(alternate_names, var_name, verbosity=Verbosity.BRIEF):
         var_ind = None
 
     all_equivalent_names = []
-    for code_base in alternate_names.keys():
-        for key, list_of_names in alternate_names[code_base].items():
-            if list_of_names is not None:
-                for altname in list_of_names:
-                    altname = altname.lower()
-                    if altname.endswith(var_name.lower()):
-                        all_equivalent_names.append(key)
-                        continue
-                    elif var_ind is not None and altname.endswith(
-                        f'{var_name.lower()}({var_ind})'
-                    ):
-                        all_equivalent_names.append(key)
-                        var_ind = None
-                        continue
+    for key, list_of_names in alternate_names.items():
+        if list_of_names is not None:
+            for altname in list_of_names:
+                altname = altname.lower()
+                if altname.endswith(var_name.lower()):
+                    all_equivalent_names.append(key)
+                    continue
+                elif var_ind is not None and altname.endswith(
+                    f'{var_name.lower()}({var_ind})'
+                ):
+                    all_equivalent_names.append(key)
+                    var_ind = None
+                    continue
 
     # if there are no equivalent variable names, return the original name
     if len(all_equivalent_names) == 0:
@@ -596,13 +623,17 @@ def update_gasp_options(vehicle_data):
             [[0.12, 0.23, 0.13, 0.23, 0.23, 0.1, 0.15][flap_ind]],
         )
 
-    res = input_values.get_val(Aircraft.Design.RESERVE_FUEL_ADDITIONAL, units='lbm')[0]
-    if res <= 0:
+    reserve_fuel_additional = input_values.get_val(
+        Aircraft.Design.RESERVE_FUEL_ADDITIONAL, units='lbm'
+    )[0]
+    if reserve_fuel_additional <= 0:
         input_values.set_val(Aircraft.Design.RESERVE_FUEL_ADDITIONAL, [0], units='lbm')
         input_values.set_val(
-            Aircraft.Design.RESERVE_FUEL_FRACTION, [-res], units='unitless'
+            Aircraft.Design.RESERVE_FUEL_FRACTION,
+            [-reserve_fuel_additional],
+            units='unitless',
         )
-    elif res >= 10:
+    elif reserve_fuel_additional >= 10:
         input_values.set_val(
             Aircraft.Design.RESERVE_FUEL_FRACTION, [0], units='unitless'
         )
@@ -631,6 +662,15 @@ def update_gasp_options(vehicle_data):
     # the mission
     input_values.set_val(Aircraft.Engine.GLOBAL_THROTTLE, [True])
 
+    # GEARBOX
+    # Aviary has a reduction gearbox which is 1/gear ratio of GASP gearbox
+    if Aircraft.Engine.Gearbox.GEAR_RATIO in input_values:
+        ratios = input_values.get_val(Aircraft.Engine.Gearbox.GEAR_RATIO)
+        ratios = [1 / val for val in ratios]
+        input_values.set_val(
+            Aircraft.Engine.Gearbox.GEAR_RATIO, ratios, units='unitless'
+        )
+
     vehicle_data['input_values'] = input_values
     return vehicle_data
 
@@ -650,7 +690,6 @@ def update_flops_options(vehicle_data):
             input_values.delete(Aircraft.Design.THRUST_TO_WEIGHT_RATIO)
 
     # WSR
-
     # Additional mass fraction scaler set to zero to not add mass twice
     if Aircraft.Engine.ADDITIONAL_MASS_FRACTION in input_values:
         if input_values.get_val(Aircraft.Engine.ADDITIONAL_MASS_FRACTION)[0] >= 1:
@@ -841,12 +880,6 @@ def _setup_F2A_parser(parser):
         required=True,
     )
     parser.add_argument(
-        "-d",
-        "--defaults_deck",
-        default=None,
-        help="Deck of default values for unspecified variables",
-    )
-    parser.add_argument(
         "--force",
         action="store_true",
         help="Allow overwriting existing output files",
@@ -870,11 +903,4 @@ def _exec_F2A(args, user_args):
     # convert verbosity from int to enum
     verbosity = Verbosity(args.verbosity)
 
-    create_aviary_deck(
-        filepath,
-        args.legacy_code,
-        args.defaults_deck,
-        args.out_file,
-        args.force,
-        verbosity,
-    )
+    fortran_to_aviary(filepath, args.legacy_code, args.out_file, args.force, verbosity)

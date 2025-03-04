@@ -1,8 +1,11 @@
+import argparse
+import ast
 import inspect
 import subprocess
 import tempfile
-import os
 import numpy as np
+import re
+from aviary.interface.cmd_entry_points import _command_map
 
 
 """
@@ -25,8 +28,15 @@ run_command_no_file_error executes a CLI command but won't fail if a FileNotFoun
 get_attribute_name gets the name of an object's attribute based on it's value
 get_all_keys recursively get all of the keys from a dict of dicts
 get_value recursively get a value from a dict of dicts
-glue_variable Glue a variable for later use in markdown cells of notebooks (can auto format for code)
+glue_variable glue a variable for later use in markdown cells of notebooks (can auto format for code)
 glue_keys recursively glue all of the keys from a dict of dicts
+glue_actions glue all Aviary CLI options for a given command
+glue_class_functions glue all class functions for a gen class
+glue_function_arguments glue all function arguments and default values for a given function
+glue_class_options glue all class options for a given class
+get_previous_line returns the previous n line(s) of code as a string
+get_class_names return the class names in a file as a set
+get_function_names returns the function names in a file as a set
 """
 
 
@@ -89,6 +99,7 @@ def get_previous_line(n=1) -> str:
 def get_variable_name(*variables) -> str:
     """
     returns the name of the variable passed to the function as a string
+    # NOTE: You cannot call this function multiple times on one line
 
     Parameters
     ----------
@@ -107,8 +118,20 @@ def get_variable_name(*variables) -> str:
     # get the line number that called this function
     lineno = pframe.f_lineno - first_line if first_line else pframe.f_lineno - 1
     # extract the argument and remove all whitespace
-    arg: str = ''.join(lines[lineno].split(
-        'get_variable_name(')[1].split(')')[0].split())
+    arg = ''.join(lines[lineno].split()).split('get_variable_name(', 1)[1]
+
+    # Use regex to match balanced parentheses
+    match = re.match(r'([^()]*\([^()]*\))*[^()]*', arg)
+    if match:
+        arg = match.group(0)
+
+    # # Requires Python 3.11, but allows this to be called multiple times on one line
+    # positions = inspect.getframeinfo(pframe).positions
+    # calling_lines = lines[positions.lineno-1:positions.end_lineno]
+    # calling_lines[-1] = calling_lines[-1][:positions.end_col_offset-1]
+    # calling_lines[0] = calling_lines[0][positions.col_offset:].removeprefix('get_variable_name(')
+    # arg = ''.join([l.strip() for l in calling_lines])
+
     if ',' in arg:
         return arg.split(',')
     else:
@@ -295,6 +318,7 @@ def get_attribute_name(object: object, attribute, error_type=AttributeError) -> 
 def get_all_keys(dict_of_dicts: dict, track_layers=False, all_keys=None) -> list:
     """
     Recursively get all of the keys from a dict of dicts
+    This can also be used to recursively get all of the attributes from a complex object, like the Aircraft hierarchy
     Note: this will not add duplicates of keys, but will
     continue deeper even if a key is duplicated
 
@@ -314,9 +338,14 @@ def get_all_keys(dict_of_dicts: dict, track_layers=False, all_keys=None) -> list
     all_keys : list
         A list of all the keys in the dict_of_dicts
     """
+    if not isinstance(dict_of_dicts, dict):
+        dict_of_dicts = dict_of_dicts.__dict__
     if all_keys is None:
         all_keys = []
+
     for key, val in dict_of_dicts.items():
+        if key.startswith('__') and key.endswith('__'):
+            continue
         if track_layers is True:
             current_layer = ''
         elif track_layers:
@@ -325,7 +354,7 @@ def get_all_keys(dict_of_dicts: dict, track_layers=False, all_keys=None) -> list
             key = current_layer+'.'+key
         if key not in all_keys:
             all_keys.append(key)
-        if isinstance(val, dict):
+        if isinstance(val, dict) or hasattr(val, '__dict__'):
             if track_layers:
                 current_layer = key
             else:
@@ -352,6 +381,8 @@ def get_value(dict_of_dicts: dict, comlpete_key: str):
     """
 
     for key in comlpete_key.split('.'):
+        if not isinstance(dict_of_dicts, dict):
+            dict_of_dicts = dict_of_dicts.__dict__
         dict_of_dicts = dict_of_dicts[key]
     return dict_of_dicts
 
@@ -377,13 +408,18 @@ def glue_variable(name: str, val=None, md_code=False, display=True):
     # local import so myst isn't required unless glue is being used
     from myst_nb import glue
     from IPython.display import Markdown
+    from IPython.utils import io
     if val is None:
         val = name
     if md_code:
-        val = Markdown('`'+val+'`')
+        val = Markdown(f'`{val}`')
     else:
-        val = Markdown(val)
-    glue(name, val, display)
+        val = Markdown(f'{val}')
+
+    with io.capture_output() as captured:
+        glue(f'{name}', val, display)
+    # if display:
+    captured.show()
 
 
 def glue_keys(dict_of_dicts: dict, display=True) -> list:
@@ -400,7 +436,171 @@ def glue_keys(dict_of_dicts: dict, display=True) -> list:
     all_keys : list
         A list of all the keys that were glued
     """
-    all_keys = get_all_keys(dict_of_dicts)
+    if not isinstance(dict_of_dicts, dict):
+        track_layers = dict_of_dicts.__name__
+    else:
+        track_layers = False
+    all_keys = get_all_keys(dict_of_dicts, track_layers)
+
     for key in all_keys:
         glue_variable(key, md_code=True, display=display)
     return all_keys
+
+
+def get_class_names(file_path) -> set:
+    """
+    Retrieve all class names from a given file and return as a set
+
+    Parameters
+    ----------
+    file_path: str or Path
+        file path
+    """
+    # Read the content of the file
+    with open(file_path, 'r') as file:
+        file_content = file.read()
+
+    # Parse the file content into an AST
+    tree = ast.parse(file_content)
+
+    # Extract class names
+    class_names = [
+        node.name for node in ast.walk(tree)
+        if isinstance(node, ast.ClassDef)
+    ]
+
+    return set(class_names)
+
+
+def get_function_names(file_path) -> set:
+    """
+    Get all function names in a given file and return as a set.
+
+    Parameters
+    ----------
+    file_path: str or Path
+        file path
+    """
+    # Read the content of the file
+    with open(file_path, 'r') as file:
+        file_content = file.read()
+
+    # Parse the file content into an AST
+    tree = ast.parse(file_content)
+
+    # Extract function names
+    function_names = [
+        node.name for node in ast.walk(tree)
+        if isinstance(node, ast.FunctionDef)
+    ]
+
+    return set(function_names)
+
+
+def glue_actions(cmd, curr_glued=None, glue_default=False, glue_choices=False, md_code=True):
+    """
+    Glue all Aviary CLI options
+
+    Parameters
+    ----------
+    cmd: str
+        Aviary command
+    curr_glued: list
+        the parameters that have been glued
+    glue_default: boolean
+        flag whether the default values should be glued.
+    """
+    if curr_glued is None:
+        curr_glued = []
+    parser = argparse.ArgumentParser()
+    _command_map[cmd][0](parser)
+    actions = [*parser._get_optional_actions(), *parser._get_positional_actions()]
+    for action in actions:
+        opt_list = action.option_strings
+        for opt in opt_list:
+            if opt not in curr_glued:
+                glue_variable(opt, md_code=md_code)
+                curr_glued.append(opt)
+        if action.dest not in curr_glued:
+            glue_variable(action.dest, md_code=md_code)
+            curr_glued.append(action.dest)
+        if glue_default:
+            if str(action.default) not in curr_glued:
+                glue_variable(str(action.default), md_code=True)
+                curr_glued.append(str(action.default))
+        if glue_choices:
+            if action.choices is not None:
+                for choice in action.choices:
+                    if str(choice) not in curr_glued:
+                        glue_variable(str(choice), md_code=True)
+                        curr_glued.append(str(choice))
+
+
+def glue_class_functions(obj, curr_glued=None, pre_fix=None, md_code=True):
+    """
+    Glue all class functions
+
+    Parameters
+    ----------
+    obj: class
+        class object
+    curr_glued: list
+        the parameters that have been glued
+    """
+    if curr_glued is None:
+        curr_glued = []
+    methods = inspect.getmembers(obj, predicate=inspect.isfunction)
+    for func_name, func in methods:
+        if pre_fix is not None:
+            if pre_fix + '.' + func_name + '()' not in curr_glued:
+                glue_variable(pre_fix + '.' + func_name + '()', md_code=md_code)
+                curr_glued.append(pre_fix + '.' + func_name + '()')
+        if func_name + '()' not in curr_glued:
+            glue_variable(func_name + '()', md_code=md_code)
+            curr_glued.append(func_name + '()')
+
+
+def glue_function_arguments(func, curr_glued=None, glue_default=False, md_code=False):
+    """
+    Glue all function arguments and default values for a given function
+
+    Parameters
+    ----------
+    func: function
+        function
+    curr_glued: list
+        the parameters that have been glued
+    """
+    if curr_glued is None:
+        curr_glued = []
+    sig = inspect.signature(func)
+    for param_name, param in sig.parameters.items():
+        if param_name not in curr_glued and param_name != 'self':
+            glue_variable(param_name, md_code=md_code)
+            curr_glued.append(param_name)
+            if glue_default:
+                if str(param.default) is not param.empty:
+                    if str(param.default) not in curr_glued:
+                        glue_variable(str(param.default), md_code=md_code)
+                        curr_glued.append(str(param.default))
+
+
+def glue_class_options(obj,  curr_glued=None, md_code=False):
+    """
+    Glue all class options for a given class
+
+    Parameters
+    ----------
+    obj: class
+        class
+    curr_glued: list
+        the parameters that have been glued
+    """
+    if curr_glued is None:
+        curr_glued = []
+    obj = obj()
+    opts = list(obj.options)
+    for opt in opts:
+        if opt not in curr_glued:
+            glue_variable(opt, md_code=md_code)
+            curr_glued.append(opt)
