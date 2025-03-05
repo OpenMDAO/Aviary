@@ -15,10 +15,10 @@ class TransportAPUMass(om.ExplicitComponent):
         add_aviary_option(self, Aircraft.CrewPayload.Design.NUM_PASSENGERS)
 
     def setup(self):
-        add_aviary_input(self, Aircraft.APU.MASS_SCALER)
-        add_aviary_input(self, Aircraft.Fuselage.PLANFORM_AREA)
+        add_aviary_input(self, Aircraft.APU.MASS_SCALER, units='unitless')
+        add_aviary_input(self, Aircraft.Fuselage.PLANFORM_AREA, units='ft**2')
 
-        add_aviary_output(self, Aircraft.APU.MASS)
+        add_aviary_output(self, Aircraft.APU.MASS, units='lbm')
 
     def setup_partials(self):
         self.declare_partials('*', '*')
