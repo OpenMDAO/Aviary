@@ -4,6 +4,7 @@ import importlib
 
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_near_equal
+from openmdao.utils.testing_utils import use_tempdirs
 
 from aviary.interface.default_phase_info.height_energy_fiti import add_default_sgm_args
 from aviary.interface.methods_for_level2 import AviaryGroup
@@ -21,6 +22,7 @@ from aviary.variable_info.variable_meta_data import _MetaData as BaseMetaData
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission, Settings
 
 
+@use_tempdirs
 @unittest.skipUnless(importlib.util.find_spec("pyoptsparse") is not None, "pyoptsparse is not installed")
 class HE_SGMDescentTestCase(unittest.TestCase):
     """
