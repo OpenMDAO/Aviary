@@ -103,6 +103,8 @@ def make_problem(subsystem_options={}):
         promotes_outputs=aero_builder.mission_outputs(**subsystem_options['core_aerodynamics']))
 
     prob.model.set_input_defaults(Dynamic.Mission.ALTITUDE, np.zeros(nn), 'm')
+    prob.model.set_input_defaults(Dynamic.Atmosphere.DYNAMIC_PRESSURE,
+                                  np.ones(nn), 'psf')
 
     prob.setup(force_alloc_complex=True)
 
