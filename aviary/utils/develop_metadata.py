@@ -89,6 +89,9 @@ def add_meta_data(
     if units is None:
         units = 'unitless'
 
+    if types is None and default_value is not None:
+        types = type(default_value)
+
     meta_data[key] = {
         'historical_name': historical_name,
         'units': units,
@@ -181,7 +184,11 @@ def update_meta_data(
 
     if key not in meta_data:
         raise ValueError(
-            f'You provided the variable {key} to a variable metadata dictionary via the update_meta_data function, but {key} does not exist in the dictionary. If you are sure you want to add this variable to the dictionary, call the add_meta_data function instead.')
+            f'You provided the variable {key} to a variable metadata dictionary via the '
+            f'update_meta_data function, but {key} does not exist in the dictionary. If '
+            'you are sure you want to add this variable to the dictionary, call the '
+            'add_meta_data function instead.'
+        )
 
     add_meta_data(key=key, meta_data=meta_data, units=units, desc=desc,
                   default_value=default_value, option=option, types=types,
