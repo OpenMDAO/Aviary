@@ -55,25 +55,24 @@ class GroundrollPhaseOptions(AviaryOptionsDictionary):
             'initial_bounds',
             types=tuple,
             default=(0.0, 100.0),
-            units='min',
-            desc='Lower and upper bounds on the starting time for this phase relative to the '
-            'starting time of the mission, i.e., ((25, 45), "min") constrians this phase to '
-            'start between 25 and 45 minutes after the start of the mission.'
+            units='kn',
+            desc='Lower and upper bounds on the integration variable, which is speed.'
         )
 
         self.declare(
             name='duration_bounds',
             types=tuple,
             default=(0.0, 3600.0),
-            units='s',
-            desc='Lower and upper bounds on the phase duration, in the form of a nested tuple: '
+            units='kn',
+            desc='Lower and upper bounds on the integration variable, which is speed. It is'
+            'in the form of a nested tuple: '
             'i.e. ((20, 36), "min") This constrains the duration to be between 20 and 36 min.'
         )
 
         self.declare(
             name='initial_ref',
             default=100.0,
-            units='s',
+            units='kn',
             desc='Scale factor ref for the phase starting time.'
         )
 
@@ -81,7 +80,7 @@ class GroundrollPhaseOptions(AviaryOptionsDictionary):
             name='duration_ref',
             types=tuple,
             default=100.0,
-            units='s',
+            units='kn',
             desc='Scale factor ref for duration.'
         )
 
@@ -92,6 +91,14 @@ class GroundrollPhaseOptions(AviaryOptionsDictionary):
             desc="Add in custom constraints i.e. 'flight_path_angle': {'equals': -3., "
             "'loc': 'initial', 'units': 'deg', 'type': 'boundary',}. For more details see "
             "_add_user_defined_constraints()."
+        )
+
+        self.declare(
+            name='ground_roll',
+            types=bool,
+            default=False,
+            desc='Set to True only for phases where the aircraft is rolling on the ground. '
+            'All other phases of flight (climb, cruise, descent) this must be set to False.'
         )
 
 
@@ -185,8 +192,8 @@ class GroundrollPhase(PhaseBuilderBase):
         '''
         user_options = self.user_options
 
-        num_segments, _ = user_options.get_item('num_segments')
-        order, _ = user_options.get_item('order')
+        num_segments = user_options['num_segments']
+        order = user_options['order']
 
         seg_ends, _ = dm.utils.lgl.lgl(num_segments + 1)
 

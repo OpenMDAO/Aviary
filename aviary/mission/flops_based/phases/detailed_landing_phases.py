@@ -955,6 +955,60 @@ LandingFlareToTouchdown._add_initial_guess_meta_data(
 )
 
 
+class LandingTouchdownToNoseDownOptions(AviaryOptionsDictionary):
+
+    def declare_options(self):
+
+        self.declare(
+            name='max_duration',
+            default=5.0,
+            units='s',
+            desc='Upper bound on duration for this phase.'
+        )
+
+        self.declare(
+            name='duration_ref',
+            default=1.0,
+            units='s',
+            desc='Scale factor ref for duration.'
+        )
+
+        self.declare(
+            name='initial_ref',
+            default=10.0,
+            units='s',
+            desc='Scale factor ref for the phase starting time.'
+        )
+
+        self.declare(
+            name='distance_max',
+            default=1000.0,
+            units='ft',
+            desc='Upper bound for distance.'
+        )
+
+        self.declare(
+            name='max_velocity',
+            default=100.0,
+            units='ft/s',
+            desc='Upper bound for velocity.'
+        )
+
+        self.declare(
+            name='altitude_ref',
+            default=1.0,
+            units='ft',
+            desc='Scale factor ref for altitude.'
+        )
+
+        self.declare(
+            name='max_angle_of_attack',
+            default=10.0,
+            units='deg',
+            desc='Maximum angle of attack in this phase.'
+        )
+
+
 @_init_initial_guess_meta_data
 class LandingTouchdownToNoseDown(PhaseBuilderBase):
     '''
@@ -1009,13 +1063,10 @@ class LandingTouchdownToNoseDown(PhaseBuilderBase):
     '''
     __slots__ = ()
 
-    # region : derived type customization points
-    _meta_data_ = {}
-
     default_name = 'landing_touchdown'
 
     default_ode_class = LandingODE
-    # endregion : derived type customization points
+    default_options_class = LandingTouchdownToNoseDownOptions
 
     def build_phase(self, aviary_options=None):
         '''
@@ -1121,20 +1172,48 @@ class LandingTouchdownToNoseDown(PhaseBuilderBase):
             'friction_key': Mission.Takeoff.ROLLING_FRICTION_COEFFICIENT}
 
 
-LandingTouchdownToNoseDown._add_meta_data('max_duration', val=5.0, units='s')
-
-LandingTouchdownToNoseDown._add_meta_data('duration_ref', val=1.0, units='s')
-
-LandingTouchdownToNoseDown._add_meta_data('initial_ref', val=10.0, units='s')
-
-LandingTouchdownToNoseDown._add_meta_data('distance_max', val=1000.0, units='ft')
-
-LandingTouchdownToNoseDown._add_meta_data('max_velocity', val=100.0, units='ft/s')
-
-LandingTouchdownToNoseDown._add_meta_data('max_angle_of_attack', val=10.0, units='deg')
-
 LandingTouchdownToNoseDown._add_initial_guess_meta_data(
     InitialGuessPolynomialControl(Dynamic.Vehicle.ANGLE_OF_ATTACK))
+
+
+class LandingNoseDownToStopOptions(AviaryOptionsDictionary):
+
+    def declare_options(self):
+
+        self.declare(
+            name='max_duration',
+            default=1000.0,
+            units='s',
+            desc='Upper bound on duration for this phase.'
+        )
+
+        self.declare(
+            name='duration_ref',
+            default=10.0,
+            units='s',
+            desc='Scale factor ref for duration.'
+        )
+
+        self.declare(
+            name='initial_ref',
+            default=10.0,
+            units='s',
+            desc='Scale factor ref for the phase starting time.'
+        )
+
+        self.declare(
+            name='distance_max',
+            default=1000.0,
+            units='ft',
+            desc='Upper bound for distance.'
+        )
+
+        self.declare(
+            name='max_velocity',
+            default=100.0,
+            units='ft/s',
+            desc='Upper bound for velocity.'
+        )
 
 
 @_init_initial_guess_meta_data
@@ -1189,13 +1268,10 @@ class LandingNoseDownToStop(PhaseBuilderBase):
     '''
     __slots__ = ()
 
-    # region : derived type customization points
-    _meta_data_ = {}
-
     default_name = 'landing_stop'
 
     default_ode_class = LandingODE
-    # endregion : derived type customization points
+    default_options_class = LandingNoseDownToStopOptions
 
     def build_phase(self, aviary_options=None):
         '''
@@ -1298,16 +1374,6 @@ class LandingNoseDownToStop(PhaseBuilderBase):
             'climbing': False,
             'friction_key': Mission.Takeoff.BRAKING_FRICTION_COEFFICIENT}
 
-
-LandingNoseDownToStop._add_meta_data('max_duration', val=1000.0, units='s')
-
-LandingNoseDownToStop._add_meta_data('duration_ref', val=10.0, units='s')
-
-LandingNoseDownToStop._add_meta_data('initial_ref', val=10.0, units='s')
-
-LandingNoseDownToStop._add_meta_data('distance_max', val=1000.0, units='ft')
-
-LandingNoseDownToStop._add_meta_data('max_velocity', val=100.0, units='ft/s')
 
 LandingNoseDownToStop._add_initial_guess_meta_data(
     InitialGuessParameter(Dynamic.Vehicle.ANGLE_OF_ATTACK))
