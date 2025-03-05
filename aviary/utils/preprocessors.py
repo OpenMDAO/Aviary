@@ -11,7 +11,7 @@ from aviary.variable_info.enums import ProblemType, LegacyCode
 from aviary.utils.test_utils.variable_test import get_names_from_hierarchy
 
 
-def preprocess_options(aviary_options: AviaryValues, **kwargs):
+def preprocess_options(aviary_options: AviaryValues, metadata=_MetaData, **kwargs):
     """
     Run all preprocessors on provided AviaryValues object
 
@@ -29,11 +29,11 @@ def preprocess_options(aviary_options: AviaryValues, **kwargs):
         aviary_options.set_val(
             Settings.VERBOSITY, _MetaData[Settings.VERBOSITY]['default_value'])
 
-    preprocess_crewpayload(aviary_options)
-    preprocess_propulsion(aviary_options, engine_models)
+    preprocess_crewpayload(aviary_options, metadata)
+    preprocess_propulsion(aviary_options, engine_models, metadata)
 
 
-def preprocess_crewpayload(aviary_options: AviaryValues):
+def preprocess_crewpayload(aviary_options: AviaryValues, metadata=_MetaData):
     """
     Calculates option values that are derived from other options, and are not direct inputs.
     This function modifies the entries in the supplied collection, and for convenience also
@@ -333,7 +333,8 @@ def preprocess_crewpayload(aviary_options: AviaryValues):
     return aviary_options
 
 
-def preprocess_propulsion(aviary_options: AviaryValues, engine_models: list = None):
+def preprocess_propulsion(aviary_options: AviaryValues,
+                          engine_models: list = None, metadata=_MetaData):
     '''
     Updates AviaryValues object with values taken from provided EngineModels.
 

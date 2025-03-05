@@ -285,7 +285,11 @@ class AviaryProblem(om.Problem):
 
         # PREPROCESSORS #
         # Fill in anything missing in the options with computed defaults.
-        preprocess_options(aviary_inputs, engine_models=self.engine_builders)
+        preprocess_options(
+            aviary_inputs,
+            engine_models=self.engine_builders,
+            metadata=self.meta_data
+        )
 
         ## Set Up Core Subsystems ##
         everything_else_origin = self.builder.get_code_origin(self)
