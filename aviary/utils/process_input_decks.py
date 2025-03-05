@@ -177,8 +177,6 @@ def parse_inputs(
             if '[' in data_list[0]:
                 is_array = True
 
-            import pdb
-            pdb.set_trace()
             # Try to determine the data type from meta data 'types' attribute.
             # If it is not provided, try to determine if the data type is float according to 'default_value'.
             # If is is still not provided, set data type to None
