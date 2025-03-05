@@ -1585,7 +1585,7 @@ class AviaryProblem(om.Problem):
     def run_aviary_problem(self, record_filename="problem_history.db",
                            optimization_history_filename=None, restart_filename=None,
                            suppress_solver_print=True, run_driver=True, simulate=False,
-                           make_plots=True):
+                           make_plots=True, gen_n2=True):
         """
         This function actually runs the Aviary problem, which could be a simulation, optimization, or a driver execution, depending on the arguments provided.
 
@@ -1630,14 +1630,15 @@ class AviaryProblem(om.Problem):
             failed = self.run_model()
             warnings.filterwarnings('default', category=UserWarning)
 
-        # update n2 diagram after run.
-        outdir = Path(self.get_reports_dir(force=True))
-        outfile = os.path.join(outdir, "n2.html")
-        om.n2(
-            self,
-            outfile=outfile,
-            show_browser=False,
-        )
+        if gen_n2:
+            # update n2 diagram after run.
+            outdir = Path(self.get_reports_dir(force=True))
+            outfile = os.path.join(outdir, "n2.html")
+            om.n2(
+                self,
+                outfile=outfile,
+                show_browser=False,
+            )
 
         if self.aviary_inputs.get_val(Settings.VERBOSITY).value >= 2:
             with open('output_list.txt', 'w') as outfile:
