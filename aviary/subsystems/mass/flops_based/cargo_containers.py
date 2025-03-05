@@ -14,11 +14,12 @@ class TransportCargoContainersMass(om.ExplicitComponent):
     '''
 
     def setup(self):
-        add_aviary_input(self, Aircraft.CrewPayload.CARGO_CONTAINER_MASS_SCALER)
-        add_aviary_input(self, Aircraft.CrewPayload.CARGO_MASS)
-        add_aviary_input(self, Aircraft.CrewPayload.BAGGAGE_MASS)
+        add_aviary_input(self, Aircraft.CrewPayload.CARGO_CONTAINER_MASS_SCALER,
+                         units='unitless')
+        add_aviary_input(self, Aircraft.CrewPayload.CARGO_MASS, units='lbm')
+        add_aviary_input(self, Aircraft.CrewPayload.BAGGAGE_MASS, units='lbm')
 
-        add_aviary_output(self, Aircraft.CrewPayload.CARGO_CONTAINER_MASS)
+        add_aviary_output(self, Aircraft.CrewPayload.CARGO_CONTAINER_MASS, units='lbm')
 
     def setup_partials(self):
         self.declare_partials('*', '*')
