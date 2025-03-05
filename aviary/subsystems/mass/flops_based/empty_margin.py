@@ -10,12 +10,13 @@ class EmptyMassMargin(om.ExplicitComponent):
     """
 
     def setup(self):
-        add_aviary_input(self, Aircraft.Propulsion.MASS)
-        add_aviary_input(self, Aircraft.Design.STRUCTURE_MASS)
-        add_aviary_input(self, Aircraft.Design.SYSTEMS_EQUIP_MASS)
-        add_aviary_input(self, Aircraft.Design.EMPTY_MASS_MARGIN_SCALER)
+        add_aviary_input(self, Aircraft.Propulsion.MASS, units='lbm')
+        add_aviary_input(self, Aircraft.Design.STRUCTURE_MASS, units='lbm')
+        add_aviary_input(self, Aircraft.Design.SYSTEMS_EQUIP_MASS, units='lbm')
+        add_aviary_input(self, Aircraft.Design.EMPTY_MASS_MARGIN_SCALER,
+                         units='unitless')
 
-        add_aviary_output(self, Aircraft.Design.EMPTY_MASS_MARGIN)
+        add_aviary_output(self, Aircraft.Design.EMPTY_MASS_MARGIN, units='lbm')
 
     def setup_partials(self):
         self.declare_partials('*', '*')
