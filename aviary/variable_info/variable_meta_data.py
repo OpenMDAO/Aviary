@@ -3162,6 +3162,7 @@ add_meta_data(
     default_value=0.0,
 )
 
+# TODO this should be a design parameter? As it combines two physical categories?
 add_meta_data(
     Aircraft.Fuselage.DIAMETER_TO_WING_SPAN,
     meta_data=_MetaData,

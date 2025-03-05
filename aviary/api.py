@@ -146,5 +146,7 @@ from aviary.subsystems.mass.mass_builder import CoreMassBuilder
 # Propulsion
 from aviary.subsystems.propulsion.engine_deck import EngineDeck
 from aviary.subsystems.propulsion.engine_model import EngineModel
+from aviary.subsystems.propulsion.turboprop_model import TurbopropModel
+from aviary.subsystems.propulsion.motor.motor_builder import MotorBuilder
 from aviary.subsystems.propulsion.propulsion_builder import PropulsionBuilderBase
 from aviary.subsystems.propulsion.propulsion_builder import CorePropulsionBuilder

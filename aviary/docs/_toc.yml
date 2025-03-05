@@ -36,6 +36,8 @@ parts:
       - file: user_guide/aerodynamics
       - file: user_guide/external_aero
       - file: user_guide/propulsion
+        sections:
+          - file: user_guide/creating_a_turboprop_engine.ipynb
       - file: user_guide/hamilton_standard
       - file: user_guide/mass
       - file: user_guide/subsystems
@@ -74,6 +76,8 @@ parts:
       - file: theory_guide/mass
       - file: theory_guide/mission
       - file: theory_guide/propulsion
+        sections:
+          - file: theory_guide/turboprop
     - file: theory_guide/optimization_algorithms
     - file: theory_guide/validation
 
