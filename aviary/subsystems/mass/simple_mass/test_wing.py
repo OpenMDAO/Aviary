@@ -7,7 +7,7 @@ from aviary.subsystems.mass.simple_mass.wing import WingMassAndCOG
 
 class WingMassTestCase(unittest.TestCase):
     """
-    Wing mass test case
+    Wing mass test case.
 
     """
 
