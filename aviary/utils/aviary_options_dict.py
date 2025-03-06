@@ -260,3 +260,32 @@ class AviaryOptionsDictionary(om.OptionsDictionary):
             val = self[key]
 
         return val
+    
+    def to_phase_info(self, legacy=False):
+        """
+        Returns an equivalent phase_info dictionary for this options dict.
+
+        Parameters
+        ----------
+        legacy : bool
+            When True, return in original format, with explicit unitless declartions.
+            Default is False.
+
+        Returns
+        -------
+        dict
+            Equivalent phase_info.
+        """
+        phase_info = {}
+        for name, val in self.items():
+
+            meta = self._dict[name]
+            return_units = legacy or 'units' in meta
+
+            # For legacy formats, True becomes (True, 'unitless')
+            if return_units and self._dict[name]['set_function'] not in [units_setter, bounds_units_setter]:
+                val = (val, 'unitless')
+
+            phase_info[name] = val
+
+        return phase_info
