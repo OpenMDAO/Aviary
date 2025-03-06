@@ -15,7 +15,6 @@ from aviary.variable_info.enums import (
 )
 from aviary.variable_info.functions import add_aviary_output, add_aviary_input
 from aviary.variable_info.variable_meta_data import _MetaData
-import pdb
 
 
 class Null:
@@ -141,7 +140,6 @@ def convert_strings_to_data(string_list, data_type=None):
                 elif dtype is Path:  # In .csv file, it is always a string
                     pass
                 elif dtype in eNums:
-                    pdb.set_trace()
                     if not dat.isnumeric():
                         try:
                             x = dtype.get_element_by_name(dat.upper())
