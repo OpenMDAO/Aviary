@@ -60,14 +60,6 @@ class AviaryValues(NamedValues):
         if key in _MetaData.keys():
 
             expected_types = _MetaData[key]['types']
-            try:
-                if expected_types is float:
-                    my_val = float(val)
-                elif expected_types is int:
-                    my_val = int(val)
-            except:
-                err_msg = f'Variable {key} has an expected data type: {expected_types}, but the data is {val}.'
-                print(err_msg)
 
             if not isinstance(expected_types, tuple):
                 expected_types = (expected_types, )
