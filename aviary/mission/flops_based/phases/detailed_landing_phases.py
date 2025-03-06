@@ -208,7 +208,7 @@ class LandingApproachToMicP3(PhaseBuilderBase):
 
         user_options: AviaryValues = self.user_options
 
-        max_duration, units = user_options.get_item('max_duration')
+        max_duration, units = user_options['max_duration']
         duration_ref = user_options.get_val('duration_ref', units)
         initial_ref = user_options.get_val('initial_ref', units)
 
@@ -217,7 +217,7 @@ class LandingApproachToMicP3(PhaseBuilderBase):
             duration_ref=duration_ref, initial_ref=initial_ref,
             units=units)
 
-        distance_max, units = user_options.get_item('distance_max')
+        distance_max, units = user_options['distance_max']
 
         phase.add_state(
             Dynamic.Mission.DISTANCE, fix_initial=False, fix_final=False,
@@ -225,7 +225,7 @@ class LandingApproachToMicP3(PhaseBuilderBase):
             defect_ref=distance_max, units=units,
             rate_source=Dynamic.Mission.DISTANCE_RATE)
 
-        altitude_ref, units = user_options.get_item('altitude_ref')
+        altitude_ref, units = user_options['altitude_ref']
 
         phase.add_state(
             Dynamic.Mission.ALTITUDE,
@@ -237,7 +237,7 @@ class LandingApproachToMicP3(PhaseBuilderBase):
             rate_source=Dynamic.Mission.ALTITUDE_RATE,
         )
 
-        max_velocity, units = user_options.get_item('max_velocity')
+        max_velocity, units = user_options['max_velocity']
 
         phase.add_state(
             Dynamic.Mission.VELOCITY,
@@ -292,7 +292,7 @@ class LandingApproachToMicP3(PhaseBuilderBase):
             output_name=Dynamic.Vehicle.Propulsion.THRUST_TOTAL, units='lbf'
         )
 
-        initial_height, units = user_options.get_item('initial_height')
+        initial_height, units = user_options['initial_height']
 
         airport_altitude = aviary_options.get_val(
             Mission.Landing.AIRPORT_ALTITUDE, units)
@@ -550,20 +550,20 @@ class LandingObstacleToFlare(PhaseBuilderBase):
 
         user_options: AviaryValues = self.user_options
 
-        max_duration, units = user_options.get_item('max_duration')
+        max_duration, units = user_options['max_duration']
 
         phase.set_time_options(
             fix_initial=True, duration_bounds=(1, max_duration),
             units=units)
 
-        distance_max, units = user_options.get_item('distance_max')
+        distance_max, units = user_options['distance_max']
 
         phase.add_state(
             Dynamic.Mission.DISTANCE, fix_initial=True, lower=0, ref=distance_max,
             defect_ref=distance_max, units=units,
             rate_source=Dynamic.Mission.DISTANCE_RATE)
 
-        altitude_ref, units = user_options.get_item('altitude_ref')
+        altitude_ref, units = user_options['altitude_ref']
 
         phase.add_state(
             Dynamic.Mission.ALTITUDE,
@@ -575,7 +575,7 @@ class LandingObstacleToFlare(PhaseBuilderBase):
             rate_source=Dynamic.Mission.ALTITUDE_RATE,
         )
 
-        max_velocity, units = user_options.get_item('max_velocity')
+        max_velocity, units = user_options['max_velocity']
 
         phase.add_state(
             Dynamic.Mission.VELOCITY,
@@ -620,8 +620,7 @@ class LandingObstacleToFlare(PhaseBuilderBase):
             output_name=Dynamic.Vehicle.Propulsion.THRUST_TOTAL, units='lbf'
         )
 
-        obstacle_height, units = aviary_options.get_item(
-            Mission.Landing.OBSTACLE_HEIGHT)
+        obstacle_height, units = aviary_options.get_item(Mission.Landing.OBSTACLE_HEIGHT)
 
         if obstacle_height is None:
             raise TypeError(
@@ -826,7 +825,7 @@ class LandingFlareToTouchdown(PhaseBuilderBase):
 
         user_options: AviaryValues = self.user_options
 
-        max_duration, units = user_options.get_item('max_duration')
+        max_duration, units = user_options['max_duration']
         duration_ref = user_options.get_val('duration_ref', units)
         initial_ref = user_options.get_val('initial_ref', units)
 
@@ -835,14 +834,14 @@ class LandingFlareToTouchdown(PhaseBuilderBase):
             duration_ref=duration_ref, initial_ref=initial_ref,
             units=units)
 
-        distance_max, units = user_options.get_item('distance_max')
+        distance_max, units = user_options['distance_max']
 
         phase.add_state(
             Dynamic.Mission.DISTANCE, fix_initial=False, lower=0, ref=distance_max,
             defect_ref=distance_max, units=units,
             rate_source=Dynamic.Mission.DISTANCE_RATE)
 
-        altitude_ref, units = user_options.get_item('altitude_ref')
+        altitude_ref, units = user_options['altitude_ref']
 
         phase.add_state(
             Dynamic.Mission.ALTITUDE,
@@ -855,7 +854,7 @@ class LandingFlareToTouchdown(PhaseBuilderBase):
             rate_source=Dynamic.Mission.ALTITUDE_RATE,
         )
 
-        max_velocity, units = user_options.get_item('max_velocity')
+        max_velocity, units = user_options['max_velocity']
 
         phase.add_state(
             Dynamic.Mission.VELOCITY,
@@ -1090,7 +1089,7 @@ class LandingTouchdownToNoseDown(PhaseBuilderBase):
 
         user_options: AviaryValues = self.user_options
 
-        max_duration, units = user_options.get_item('max_duration')
+        max_duration, units = user_options['max_duration']
         duration_ref = user_options.get_val('duration_ref', units)
         initial_ref = user_options.get_val('initial_ref', units)
 
@@ -1099,14 +1098,14 @@ class LandingTouchdownToNoseDown(PhaseBuilderBase):
             duration_ref=duration_ref, initial_ref=initial_ref,
             units=units)
 
-        distance_max, units = user_options.get_item('distance_max')
+        distance_max, units = user_options['distance_max']
 
         phase.add_state(
             Dynamic.Mission.DISTANCE, fix_initial=False, lower=0, ref=distance_max,
             defect_ref=distance_max, units=units,
             rate_source=Dynamic.Mission.DISTANCE_RATE)
 
-        max_velocity, units = user_options.get_item('max_velocity')
+        max_velocity, units = user_options['max_velocity']
 
         phase.add_state(
             Dynamic.Mission.VELOCITY,
@@ -1295,7 +1294,7 @@ class LandingNoseDownToStop(PhaseBuilderBase):
 
         user_options: AviaryValues = self.user_options
 
-        max_duration, units = user_options.get_item('max_duration')
+        max_duration, units = user_options['max_duration']
         duration_ref = user_options.get_val('duration_ref', units)
         initial_ref = user_options.get_val('initial_ref', units)
 
@@ -1304,7 +1303,7 @@ class LandingNoseDownToStop(PhaseBuilderBase):
             duration_ref=duration_ref, initial_ref=initial_ref,
             units=units)
 
-        distance_max, units = user_options.get_item('distance_max')
+        distance_max, units = user_options['distance_max']
 
         phase.add_state(
             Dynamic.Mission.DISTANCE, fix_initial=False, fix_final=False,
@@ -1312,7 +1311,7 @@ class LandingNoseDownToStop(PhaseBuilderBase):
             defect_ref=distance_max, units=units,
             rate_source=Dynamic.Mission.DISTANCE_RATE)
 
-        max_velocity, units = user_options.get_item('max_velocity')
+        max_velocity, units = user_options['max_velocity']
 
         phase.add_state(
             Dynamic.Mission.VELOCITY,

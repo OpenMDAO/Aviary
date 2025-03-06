@@ -199,21 +199,21 @@ class TakeoffBrakeReleaseToDecisionSpeed(PhaseBuilderBase):
 
         user_options: AviaryValues = self.user_options
 
-        max_duration, units = user_options.get_item('max_duration')
+        max_duration, units = user_options['max_duration']
         duration_ref = user_options.get_val('duration_ref', units)
 
         phase.set_time_options(
             fix_initial=True, duration_bounds=(1, max_duration),
             duration_ref=duration_ref, units=units)
 
-        distance_max, units = user_options.get_item('distance_max')
+        distance_max, units = user_options['distance_max']
 
         phase.add_state(
             Dynamic.Mission.DISTANCE, fix_initial=True, lower=0, ref=distance_max,
             defect_ref=distance_max, units=units, upper=distance_max,
             rate_source=Dynamic.Mission.DISTANCE_RATE)
 
-        max_velocity, units = user_options.get_item('max_velocity')
+        max_velocity, units = user_options['max_velocity']
 
         phase.add_state(
             Dynamic.Mission.VELOCITY,
@@ -396,7 +396,7 @@ class TakeoffDecisionSpeedToRotate(PhaseBuilderBase):
 
         user_options: AviaryValues = self.user_options
 
-        max_duration, units = user_options.get_item('max_duration')
+        max_duration, units = user_options['max_duration']
         duration_ref = user_options.get_val('duration_ref', units)
         initial_ref = user_options.get_val('initial_ref', units)
 
@@ -406,14 +406,14 @@ class TakeoffDecisionSpeedToRotate(PhaseBuilderBase):
             duration_ref=duration_ref, initial_ref=initial_ref,
             units=units)
 
-        distance_max, units = user_options.get_item('distance_max')
+        distance_max, units = user_options['distance_max']
 
         phase.add_state(
             Dynamic.Mission.DISTANCE, fix_initial=False, lower=0, ref=distance_max,
             defect_ref=distance_max, units=units, upper=distance_max,
             rate_source=Dynamic.Mission.DISTANCE_RATE)
 
-        max_velocity, units = user_options.get_item('max_velocity')
+        max_velocity, units = user_options['max_velocity']
 
         phase.add_state(
             Dynamic.Mission.VELOCITY,
@@ -741,7 +741,7 @@ class TakeoffRotateToLiftoff(PhaseBuilderBase):
 
         user_options: AviaryValues = self.user_options
 
-        max_duration, units = user_options.get_item('max_duration')
+        max_duration, units = user_options['max_duration']
         duration_ref = user_options.get_val('duration_ref', units)
         initial_ref = user_options.get_val('initial_ref', units)
 
@@ -751,7 +751,7 @@ class TakeoffRotateToLiftoff(PhaseBuilderBase):
             duration_ref=duration_ref, initial_ref=initial_ref,
             units=units)
 
-        distance_max, units = user_options.get_item('distance_max')
+        distance_max, units = user_options['distance_max']
 
         phase.add_state(
             Dynamic.Mission.DISTANCE, fix_initial=False, lower=0, ref=distance_max,
@@ -997,7 +997,7 @@ class TakeoffLiftoffToObstacle(PhaseBuilderBase):
 
         user_options: AviaryValues = self.user_options
 
-        max_duration, units = user_options.get_item('max_duration')
+        max_duration, units = user_options['max_duration']
         duration_ref = user_options.get_val('duration_ref', units)
         initial_ref = user_options.get_val('initial_ref', units)
 
@@ -1007,7 +1007,7 @@ class TakeoffLiftoffToObstacle(PhaseBuilderBase):
             duration_ref=duration_ref, initial_ref=initial_ref,
             units=units)
 
-        distance_max, units = user_options.get_item('distance_max')
+        distance_max, units = user_options['distance_max']
 
         phase.add_state(
             Dynamic.Mission.DISTANCE, fix_initial=False, lower=0, ref=distance_max,
@@ -1318,7 +1318,7 @@ class TakeoffObstacleToMicP2(PhaseBuilderBase):
 
         user_options: AviaryValues = self.user_options
 
-        max_duration, units = user_options.get_item('max_duration')
+        max_duration, units = user_options['max_duration']
         duration_ref = user_options.get_val('duration_ref', units)
         initial_ref = user_options.get_val('initial_ref', units)
 
@@ -1328,7 +1328,7 @@ class TakeoffObstacleToMicP2(PhaseBuilderBase):
             duration_ref=duration_ref, initial_ref=initial_ref,
             units=units)
 
-        distance_max, units = user_options.get_item('distance_max')
+        distance_max, units = user_options['distance_max']
 
         phase.add_state(
             Dynamic.Mission.DISTANCE, fix_initial=False, lower=0, ref=distance_max,
@@ -1631,7 +1631,7 @@ class TakeoffMicP2ToEngineCutback(PhaseBuilderBase):
 
         user_options: AviaryValues = self.user_options
 
-        max_duration, units = user_options.get_item('max_duration')
+        max_duration, units = user_options['max_duration']
         duration_ref = user_options.get_val('duration_ref', units)
         initial_ref = user_options.get_val('initial_ref', units)
 
@@ -1641,7 +1641,7 @@ class TakeoffMicP2ToEngineCutback(PhaseBuilderBase):
             duration_ref=duration_ref, initial_ref=initial_ref,
             units=units)
 
-        distance_max, units = user_options.get_item('distance_max')
+        distance_max, units = user_options['distance_max']
 
         phase.add_state(
             Dynamic.Mission.DISTANCE, fix_initial=False, lower=0, ref=distance_max,
@@ -1922,7 +1922,7 @@ class TakeoffEngineCutback(PhaseBuilderBase):
             initial_ref=initial_ref,
             units=units)
 
-        distance_max, units = user_options.get_item('distance_max')
+        distance_max, units = user_options['distance_max']
 
         phase.add_state(
             Dynamic.Mission.DISTANCE, fix_initial=False, lower=0, ref=distance_max,
@@ -2209,7 +2209,7 @@ class TakeoffEngineCutbackToMicP1(PhaseBuilderBase):
 
         user_options: AviaryValues = self.user_options
 
-        max_duration, units = user_options.get_item('max_duration')
+        max_duration, units = user_options['max_duration']
         duration_ref = user_options.get_val('duration_ref', units)
         initial_ref = user_options.get_val('initial_ref', units)
 
@@ -2219,7 +2219,7 @@ class TakeoffEngineCutbackToMicP1(PhaseBuilderBase):
             duration_ref=duration_ref, initial_ref=initial_ref,
             units=units)
 
-        distance_max, units = user_options.get_item('distance_max')
+        distance_max, units = user_options['distance_max']
 
         phase.add_state(
             Dynamic.Mission.DISTANCE, fix_initial=False, lower=0, ref=distance_max,
@@ -2512,7 +2512,7 @@ class TakeoffMicP1ToClimb(PhaseBuilderBase):
 
         user_options: AviaryValues = self.user_options
 
-        max_duration, units = user_options.get_item('max_duration')
+        max_duration, units = user_options['max_duration']
         duration_ref = user_options.get_val('duration_ref', units)
         initial_ref = user_options.get_val('initial_ref', units)
 
@@ -2764,7 +2764,7 @@ class TakeoffBrakeToAbort(PhaseBuilderBase):
 
         user_options: AviaryValues = self.user_options
 
-        max_duration, units = user_options.get_item('max_duration')
+        max_duration, units = user_options['max_duration']
         duration_ref = user_options.get_val('duration_ref', units)
         initial_ref = user_options.get_val('initial_ref', units)
 
