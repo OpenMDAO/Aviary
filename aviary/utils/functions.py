@@ -141,7 +141,14 @@ def convert_strings_to_data(string_list, data_type=None):
                 elif dtype is GASPEngineType:  # This case is not treated
                     pass
                 elif dtype is FlapType:  # This case is not treated
-                    pass
+                    if isinstance(dat, str):
+                        try:
+                            x = FlapType.get_element_by_name(dat.upper())
+                            value_list[ii] = dat
+                            err_msg = ''
+                            break
+                        except:
+                            err_msg += f'Expected data type: {data_type}, but the data is {dat}.\n'
                 elif dtype is bool:
                     if dat.lower() == 'true':
                         value_list[ii] = True
@@ -153,6 +160,14 @@ def convert_strings_to_data(string_list, data_type=None):
                         break
                     else:
                         err_msg += f'Expected data type: {data_type}, but the data is {dat}.\n'
+                elif dtype is int:
+                    x = int(float(dat))
+                    y = float(dat)
+                    if 1.0 * x != y:
+                        err_msg += f'Expected data type: {data_type}, but the data is {dat}.\n'
+                    else:
+                        value_list[ii] = x
+                        err_msg = ''
                 else:
                     try:
                         if dat.lower() == 'true':

@@ -122,6 +122,10 @@ class FlapType(Enum):
     FOWLER = 6
     DOUBLE_SLOTTED_FOWLER = 7
 
+    @classmethod
+    def get_element_by_name(cls, val: str):
+        return next((c for c in cls if c.name == val), None)
+
 
 class LegacyCode(Enum):
     """

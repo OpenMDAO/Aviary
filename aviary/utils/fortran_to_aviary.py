@@ -325,6 +325,25 @@ def process_and_store_data(
     The variables are also sorted based on whether they will set an Aviary variable or they are for initial guessing
     '''
 
+    # try to determine data type from meta data (from 'types' and 'default_value')
+    list_of_equivalent_aviary_names, var_ind = update_name(
+        alternate_names, current_namelist + '.' + var_name, verbosity
+    )
+    aviary_data_type = None
+    for name in list_of_equivalent_aviary_names:
+        try:
+            aviary_data_type = _MetaData[name]['types']
+            if aviary_data_type is None:
+                aviary_default_val = _MetaData[name]['default_value']
+                if aviary_default_val is not None:
+                    aviary_data_type = type(aviary_default_val)
+                    if aviary_data_type not in (float, int, bool):
+                        aviary_data_type = None
+                    else:
+                        break
+        except:
+            aviary_data_type = None
+
     guess_names = list(initialization_guesses.keys())
     var_ind = data_units = None
     skip_variable = False
@@ -338,7 +357,7 @@ def process_and_store_data(
             # if the last element is a unit, remove it from the list and update the
             # variable's units
             data_units = data_list.pop()
-        var_values = convert_strings_to_data(data_list)
+        var_values = convert_strings_to_data(data_list, aviary_data_type)
     else:
         skip_variable = True
         var_values = []
