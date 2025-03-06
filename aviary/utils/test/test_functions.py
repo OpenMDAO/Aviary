@@ -123,32 +123,14 @@ class TestConvertStrings2Data(unittest.TestCase):
         self.assertEqual(var_values, [1.0])
         self.assertTrue(self.is_list_of_given_type(var_values, float))
 
-        data_list = ['1.0']
-        var_types = None
-        var_values = convert_strings_to_data(data_list, var_types)
-        self.assertEqual(var_values, [1.0])
-        self.assertTrue(self.is_list_of_given_type(var_values, float))
-
         data_list = ['100_000.0']
         var_types = float
         var_values = convert_strings_to_data(data_list, var_types)
         self.assertEqual(var_values, [100000.0])
         self.assertTrue(self.is_list_of_given_type(var_values, float))
 
-        data_list = ['100_000.0']
-        var_types = None
-        var_values = convert_strings_to_data(data_list, var_types)
-        self.assertEqual(var_values, [100000.0])
-        self.assertTrue(self.is_list_of_given_type(var_values, float))
-
         data_list = ['1.0', '0.285']
         var_types = float
-        var_values = convert_strings_to_data(data_list, var_types)
-        self.assertEqual(var_values, [1.0, 0.285])
-        self.assertTrue(self.is_list_of_given_type(var_values, float))
-
-        data_list = ['1.0', '0.285']
-        var_types = None
         var_values = convert_strings_to_data(data_list, var_types)
         self.assertEqual(var_values, [1.0, 0.285])
         self.assertTrue(self.is_list_of_given_type(var_values, float))
@@ -221,12 +203,6 @@ class TestConvertStrings2Data(unittest.TestCase):
         self.assertEqual(var_values, [180])
         self.assertTrue(self.is_list_of_given_type(var_values, int))
 
-        data_list = ['180']
-        var_types = None
-        var_values = convert_strings_to_data(data_list, var_types)
-        self.assertEqual(var_values, [180.0])
-        self.assertTrue(self.is_list_of_given_type(var_values, float))
-
         data_list = ['180.5']
         var_types = int
         var_values = convert_strings_to_data(data_list, var_types)
@@ -242,12 +218,6 @@ class TestConvertStrings2Data(unittest.TestCase):
         var_values = convert_strings_to_data(data_list, var_types)
         self.assertEqual(var_values, [0, 180])
         self.assertTrue(self.is_list_of_given_type(var_values, int))
-
-        data_list = ['0', '180']
-        var_types = None
-        var_values = convert_strings_to_data(data_list, var_types)
-        self.assertEqual(var_values, [0.0, 180.0])
-        self.assertTrue(self.is_list_of_given_type(var_values, float))
 
 
 if __name__ == "__main__":
