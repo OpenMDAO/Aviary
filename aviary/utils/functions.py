@@ -113,8 +113,10 @@ def convert_strings_to_data(string_list, data_type=None):
         dat = dat.strip('[]')
         if data_type is None:
             try:
-                # if the value is a number and data_type is None, store it as float.
-                value_list[ii] = float(dat)
+                # if the value is a number store it as a float or an int as appropriate
+                # BUG this returns floats that can be converted to int (e.g. 1.0) as an int (1), even if the variable requires floats
+                value_list[ii] = int(float(dat)) if float(
+                    dat).is_integer() else float(dat)
             except ValueError:
                 # store value as a logical if it is a string that represents True or False
                 if dat.lower() == 'true':
