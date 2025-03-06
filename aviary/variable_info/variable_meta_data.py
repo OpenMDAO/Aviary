@@ -1822,6 +1822,7 @@ add_meta_data(
     desc='additional propulsion system mass added to engine control and starter mass, or '
     'engine installation mass',
     default_value=0.0,
+    multivalue=True
 )
 
 add_meta_data(
@@ -1867,6 +1868,7 @@ add_meta_data(
     units='lbm',
     desc='estimated mass of the engine controls',
     default_value=0.0,
+    multivalue=True
 )
 
 # TODO there should be a GASP name that pairs here
@@ -1879,6 +1881,7 @@ add_meta_data(
     default_value=None,
     option=True,
     desc='filepath to data file containing engine performance tables',
+    multivalue=True
 )
 
 add_meta_data(
@@ -1890,6 +1893,7 @@ add_meta_data(
     desc='RPM the engine is set to be running at. Overrides RPM provided by '
     'engine model or chosen by optimizer. Typically used when pairing a motor or '
     'turboshaft using a fixed operating RPM with a propeller.',
+    multivalue=True
 )
 
 add_meta_data(
@@ -1907,6 +1911,7 @@ add_meta_data(
     'performance outputs (other than thrust) at flight idle to be below a '
     'decimal fraction of the max value of that output produced by the engine '
     'at each flight condition.',
+    multivalue=True
 )
 
 add_meta_data(
@@ -1924,6 +1929,7 @@ add_meta_data(
     'performance outputs (other than thrust) at flight idle to be above a '
     'decimal fraction of the max value of that output produced by the engine '
     'at each flight condition.',
+    multivalue=True
 )
 
 add_meta_data(
@@ -1936,6 +1942,7 @@ add_meta_data(
     desc='If Aircraft.Engine.GENERATE_FLIGHT_IDLE is True, defines idle thrust '
     'condition as a decimal fraction of max thrust produced by the engine at each '
     'flight condition.',
+    multivalue=True
 )
 
 add_meta_data(
@@ -1950,6 +1957,7 @@ add_meta_data(
     option=True,
     desc='Constant term in fuel flow scaling equation',
     default_value=0.0,
+    multivalue=True
 )
 
 add_meta_data(
@@ -1964,6 +1972,7 @@ add_meta_data(
     desc='Linear term in fuel flow scaling equation',
     default_value=0.0,
     option=True,
+    multivalue=True
 )
 
 add_meta_data(
@@ -1983,6 +1992,7 @@ add_meta_data(
     'defined by Aircraft.Engine.FLIGHT_IDLE_THRUST_FRACTION. Engine outputs are '
     'extrapolated to this thrust level, bounded by '
     'Aircraft.Engine.FLIGHT_IDLE_MIN_FRACT and Aircraft.Engine.FLIGHT_IDLE_MIN_FRACT',
+    multivalue=True
 )
 
 add_meta_data(
@@ -1999,6 +2009,7 @@ add_meta_data(
     'geometric altitudes. If False, engine deck altitudes are geometric.',
     types=bool,
     default_value=False,
+    multivalue=True
 )
 
 # Global hybrid throttle is also False by default to account for parallel-hybrid engines
@@ -2017,6 +2028,7 @@ add_meta_data(
     default_value=False,
     types=bool,
     option=True,
+    multivalue=True
 )
 
 # TODO Disabling global throttle ranges is preferred (therefore default) to prevent
@@ -2036,6 +2048,7 @@ add_meta_data(
     default_value=False,
     types=bool,
     option=True,
+    multivalue=True
 )
 
 # TODO dependency on NTYE? Does this var need preprocessing? Can this mention be removed?
@@ -2049,6 +2062,7 @@ add_meta_data(
     types=bool,
     desc='if True, the aircraft has propellers, otherwise aircraft is assumed to have no '
     'propellers. In GASP this depended on NTYE',
+    multivalue=True
 )
 
 add_meta_data(
@@ -2065,6 +2079,7 @@ add_meta_data(
     types=bool,
     desc='If False, all input or generated points are used, otherwise points in the '
     'engine deck with negative net thrust are ignored.',
+    multivalue=True
 )
 
 add_meta_data(
@@ -2077,6 +2092,7 @@ add_meta_data(
     types=str,
     desc="method used for interpolation on an engine deck's data file, allowable values are "
     'table methods from openmdao.components.interp_util.interp',
+    multivalue=True
 )
 
 add_meta_data(
@@ -2091,6 +2107,7 @@ add_meta_data(
     desc='scaled mass of a single engine or bare engine if inlet and nozzle mass are '
     'supplied',
     default_value=0.0,
+    multivalue=True
 )
 
 add_meta_data(
@@ -2104,6 +2121,7 @@ add_meta_data(
     units='unitless',
     desc='scaler for engine mass',
     default_value=1.0,
+    multivalue=True
 )
 
 add_meta_data(
@@ -2113,6 +2131,7 @@ add_meta_data(
     units="lbm/lbf",
     desc='specific mass of one engine (engine weight/SLS thrust)',
     default_value=0.0,
+    multivalue=True
 )
 
 add_meta_data(
@@ -2126,10 +2145,10 @@ add_meta_data(
     units='unitless',
     desc='total number of engines per model on the aircraft '
     '(fuselage, wing, or otherwise)',
-    types=(np.ndarray, int),
+    types=int,
     multivalue=True,
     option=True,
-    default_value=[2]
+    default_value=2
 )
 
 add_meta_data(
@@ -2162,7 +2181,7 @@ add_meta_data(
     option=True,
     types=(np.ndarray, int),
     multivalue=True,
-    default_value=[0]
+    default_value=0
 )
 
 add_meta_data(
@@ -2176,6 +2195,7 @@ add_meta_data(
     units='lbm',
     desc='engine pod mass including nacelles',
     default_value=0.0,
+    multivalue=True
 )
 
 add_meta_data(
@@ -2194,6 +2214,7 @@ add_meta_data(
     units="unitless",
     desc='engine position factor',
     default_value=0,
+    multivalue=True
 )
 
 add_meta_data(
@@ -2203,6 +2224,7 @@ add_meta_data(
     units="unitless",
     desc='factor for turbofan engine pylon mass',
     default_value=0.7,
+    multivalue=True
 )
 
 add_meta_data(
@@ -2212,6 +2234,7 @@ add_meta_data(
     units='ft',
     desc='engine reference diameter',
     default_value=0.0,
+    multivalue=True
 )
 
 # NOTE This unscaled turbine (engine) weight is an input provided by the user, and is not
@@ -2230,6 +2253,7 @@ add_meta_data(
     'are supplied',
     default_value=None,
     option=True,
+    multivalue=True
 )
 
 add_meta_data(
@@ -2244,6 +2268,7 @@ add_meta_data(
     desc='maximum thrust of an engine provided in engine model files',
     default_value=None,
     option=True,
+    multivalue=True
 )
 
 add_meta_data(
@@ -2257,6 +2282,7 @@ add_meta_data(
     units='rpm',
     desc='the designed output RPM from the engine for fixed-RPM shafts',
     default_value=None,
+    multivalue=True
 )
 
 add_meta_data(
@@ -2267,6 +2293,7 @@ add_meta_data(
     desc='Thrust-based scaling factor used to scale engine performance data during '
     'mission analysis',
     default_value=1.0,
+    multivalue=True
 )
 
 add_meta_data(
@@ -2317,6 +2344,7 @@ add_meta_data(
     units='lbf',
     desc='maximum thrust of an engine after scaling',
     default_value=0.0,
+    multivalue=True
 )
 
 add_meta_data(
@@ -2330,6 +2358,7 @@ add_meta_data(
     units='lbm',
     desc='starter mass',
     default_value=0.0,
+    multivalue=True
 )
 
 add_meta_data(
@@ -2344,6 +2373,7 @@ add_meta_data(
     desc='scaling factor on fuel flow when Mach number is subsonic',
     default_value=1.0,
     option=True,
+    multivalue=True
 )
 
 add_meta_data(
@@ -2358,6 +2388,7 @@ add_meta_data(
     desc='scaling factor on fuel flow when Mach number is supersonic',
     default_value=1.0,
     option=True,
+    multivalue=True
 )
 
 add_meta_data(
@@ -2377,6 +2408,7 @@ add_meta_data(
     units='lbm',
     desc='mass of thrust reversers on engines',
     default_value=0.0,
+    multivalue=True
 )
 
 add_meta_data(
@@ -2393,6 +2425,7 @@ add_meta_data(
     units='unitless',
     desc='scaler for mass of thrust reversers on engines. In FLOPS/LEAPS1 default to 0.0',
     default_value=0.0,
+    multivalue=True
 )
 
 add_meta_data(
@@ -2418,7 +2451,9 @@ add_meta_data(
     units='unitless',
     desc='Engine wing mount locations as fractions of semispan; (NUM_WING_ENGINES)/2 values '
     'are input',
+    types=(float, list, np.ndarray),
     default_value=np.array([0.0]),
+    multivalue=True
 )
 
 #   ___                      _
@@ -2434,6 +2469,7 @@ add_meta_data(
     units='unitless',
     desc='The efficiency of the gearbox.',
     default_value=1.0,
+    multivalue=True
 )
 add_meta_data(
     Aircraft.Engine.Gearbox.GEAR_RATIO,
@@ -2442,6 +2478,7 @@ add_meta_data(
     units='unitless',
     desc='Reduction gear ratio, or the ratio of the RPM_in divided by the RPM_out for the gearbox.',
     default_value=1.0,
+    multivalue=True
 )
 
 add_meta_data(
@@ -2451,6 +2488,7 @@ add_meta_data(
     units='lbm',
     desc='The mass of the gearbox.',
     default_value=0,
+    multivalue=True
 )
 
 add_meta_data(
@@ -2464,6 +2502,7 @@ add_meta_data(
     units='hp',
     desc='A guess for the maximum power that will be transmitted through the gearbox during the mission (max shp input).',
     default_value=1.0,
+    multivalue=True
 )
 
 add_meta_data(
@@ -2473,6 +2512,7 @@ add_meta_data(
     units='lbf*ft/lbm',
     desc='The specific torque of the gearbox, used to calculate gearbox mass. ',
     default_value=100,
+    multivalue=True
 )
 
 #  __  __         _
@@ -2488,6 +2528,7 @@ add_meta_data(
     units='lbm',
     desc='Total motor mass (considers number of motors)',
     default_value=0.0,
+    multivalue=True
 )
 
 add_meta_data(
@@ -2497,6 +2538,7 @@ add_meta_data(
     units='lbf*ft',
     desc='Max torque value that can be output from a single motor. Used to determine '
     'motor mass in pre-mission',
+    multivalue=True
 )
 
 #   ___                            _   _
@@ -2513,6 +2555,7 @@ add_meta_data(
     units="unitless",
     desc='propeller actitivty factor per Blade (Range: 80 to 200)',
     default_value=0.0,
+    multivalue=True
 )
 
 # NOTE if FT < 0, this bool is true, if >= 0, this is false and the value of FT is used
@@ -2538,6 +2581,7 @@ add_meta_data(
     default_value=None,
     option=True,
     desc='filepath to data file containing propeller data map',
+    multivalue=True
 )
 
 add_meta_data(
@@ -2547,6 +2591,7 @@ add_meta_data(
     units='ft',
     desc='propeller diameter',
     default_value=0.0,
+    multivalue=True
 )
 
 add_meta_data(
@@ -2556,6 +2601,7 @@ add_meta_data(
     units='unitless',
     desc='propeller blade integrated design lift coefficient (Range: 0.3 to 0.8)',
     default_value=0.5,
+    multivalue=True
 )
 
 add_meta_data(
@@ -2581,6 +2627,7 @@ add_meta_data(
     units='unitless',
     desc='maximum allowable Mach number at propeller tip (based on helical speed)',
     default_value=1.0,
+    multivalue=True
 )
 
 add_meta_data(
@@ -2594,21 +2641,8 @@ add_meta_data(
     units='ft/s',
     desc='maximum allowable propeller linear tip speed',
     default_value=800.0,
+    multivalue=True
 )
-
-# add_meta_data(
-#     Aircraft.Engine.USE_PROPELLER_MAP,
-#     meta_data=_MetaData,
-#     historical_name={"GASP": None,
-#                      "FLOPS": None,
-#                      "LEAPS1": None
-#                      },
-#     option=True,
-#     default_value=False,
-#     types=bool,
-#     units="unitless",
-#     desc='flag whether to use propeller map or Hamilton-Standard model.'
-# )
 
 #  ______   _
 # |  ____| (_)
@@ -4002,7 +4036,7 @@ add_meta_data(
     historical_name={"GASP": 'INGASP.YMG', "FLOPS": None, "LEAPS1": None},
     units="unitless",
     desc='span fraction of main gear on wing (0=on fuselage, 1=at tip)',
-    default_value=0,
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -4017,7 +4051,7 @@ add_meta_data(
     },
     units='lbm',
     desc='mass of main landing gear (WMG in GASP)',
-    default_value=0,
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -4128,7 +4162,7 @@ add_meta_data(
     historical_name={"GASP": 'INGASP.WLG', "FLOPS": None, "LEAPS1": None},
     units='lbm',
     desc='total mass of landing gear',
-    default_value=0,
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -4137,7 +4171,7 @@ add_meta_data(
     historical_name={"GASP": 'INGASP.CK12', "FLOPS": None, "LEAPS1": None},
     units="unitless",
     desc='technology factor on landing gear mass',
-    default_value=1,
+    default_value=1.0,
 )
 
 #  _   _                         _   _
