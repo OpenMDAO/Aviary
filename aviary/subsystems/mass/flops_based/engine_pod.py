@@ -22,20 +22,25 @@ class EnginePodMass(om.ExplicitComponent):
     def setup(self):
         num_engine_type = len(self.options[Aircraft.Engine.NUM_ENGINES])
 
-        add_aviary_input(self, Aircraft.Electrical.MASS)
-        add_aviary_input(self, Aircraft.Fuel.FUEL_SYSTEM_MASS)
-        add_aviary_input(self, Aircraft.Hydraulics.MASS)
-        add_aviary_input(self, Aircraft.Instruments.MASS)
-        add_aviary_input(self, Aircraft.Nacelle.MASS, shape=num_engine_type)
-        add_aviary_input(self, Aircraft.Propulsion.TOTAL_ENGINE_CONTROLS_MASS)
-        add_aviary_input(self, Aircraft.Engine.MASS, shape=num_engine_type)
-        add_aviary_input(self, Aircraft.Propulsion.TOTAL_STARTER_MASS)
+        add_aviary_input(self, Aircraft.Electrical.MASS, units='lbm')
+        add_aviary_input(self, Aircraft.Fuel.FUEL_SYSTEM_MASS, units='lbm')
+        add_aviary_input(self, Aircraft.Hydraulics.MASS, units='lbm')
+        add_aviary_input(self, Aircraft.Instruments.MASS, units='lbm')
+        add_aviary_input(self, Aircraft.Nacelle.MASS, shape=num_engine_type,
+                         units='lbm')
+        add_aviary_input(self, Aircraft.Propulsion.TOTAL_ENGINE_CONTROLS_MASS,
+                         units='lbm')
+        add_aviary_input(self, Aircraft.Engine.MASS, shape=num_engine_type, units='lbm')
+        add_aviary_input(self, Aircraft.Propulsion.TOTAL_STARTER_MASS, units='lbm')
         add_aviary_input(self, Aircraft.Engine.THRUST_REVERSERS_MASS,
-                         shape=num_engine_type)
-        add_aviary_input(self, Aircraft.Engine.SCALED_SLS_THRUST, shape=num_engine_type)
-        add_aviary_input(self, Aircraft.Propulsion.TOTAL_SCALED_SLS_THRUST)
+                         shape=num_engine_type, units='lbm')
+        add_aviary_input(self, Aircraft.Engine.SCALED_SLS_THRUST, shape=num_engine_type,
+                         units='lbf')
+        add_aviary_input(self, Aircraft.Propulsion.TOTAL_SCALED_SLS_THRUST,
+                         units='lbf')
 
-        add_aviary_output(self, Aircraft.Engine.POD_MASS, shape=num_engine_type)
+        add_aviary_output(self, Aircraft.Engine.POD_MASS, shape=num_engine_type,
+                          units='lbm')
 
     def setup_partials(self):
         self.declare_partials('*', '*')
