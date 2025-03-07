@@ -109,6 +109,7 @@ def convert_strings_to_data(string_list, data_type=None):
     otherwise they are passed as is
     """
     value_list = [0]*len(string_list)
+    eNums = (FlapType, GASPEngineType)
     for ii, dat in enumerate(string_list):
         dat = dat.strip('[]')
         if data_type is None:
@@ -138,13 +139,11 @@ def convert_strings_to_data(string_list, data_type=None):
                     pass
                 elif dtype is Path:  # In .csv file, it is always a string
                     pass
-                elif dtype is GASPEngineType:  # This case is not treated
-                    pass
-                elif dtype is FlapType:  # This case is not treated
-                    if isinstance(dat, str):
+                elif dtype in eNums:
+                    if not dat.isnumeric():
                         try:
-                            x = FlapType.get_element_by_name(dat.upper())
-                            value_list[ii] = dat
+                            x = dtype.get_element_by_name(dat.upper())
+                            value_list[ii] = x.value
                             err_msg = ''
                             break
                         except:
