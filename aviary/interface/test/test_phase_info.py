@@ -32,7 +32,7 @@ class TestPhaseInfo(unittest.TestCase):
         _phase_builder: PhaseBuilder = phase_info_to_builder(*_climb_info)
 
         # Convert back the phase builder to phase info
-        _phase_builder_info = _phase_builder.to_phase_info()
+        _phase_builder_info = _phase_builder.to_phase_info(legacy=True)
 
         if _climb_info != _phase_builder_info:
             lhs_name, lhs_info = _climb_info
