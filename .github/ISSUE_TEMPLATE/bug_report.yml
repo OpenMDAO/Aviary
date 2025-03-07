@@ -1,5 +1,5 @@
 name: Bug Report
-description: Submit a report only if you believe you've found a bug in Aviary. If you're not sure if your problem is a bug, especially for installation issues, try reaching out on the discussions page first to verify your problem with the dev team.
+description: Submit a report only if you believe you've found a bug in Aviary. If you're not sure if your problem is a bug, especially for installation issues, try reaching out on the discussions page first.
 labels: ["bug"]
 body:
   - type: textarea
