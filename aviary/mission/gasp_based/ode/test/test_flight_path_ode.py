@@ -11,6 +11,7 @@ from aviary.utils.test_utils.default_subsystems import get_default_mission_subsy
 from aviary.utils.test_utils.IO_test_util import check_prob_outputs
 from aviary.variable_info.options import get_option_defaults
 from aviary.variable_info.variables import Aircraft, Dynamic
+from aviary.variable_info.functions import setup_model_options
 
 
 class FlightPathODETestCase(unittest.TestCase):
@@ -32,6 +33,8 @@ class FlightPathODETestCase(unittest.TestCase):
             aviary_options=get_option_defaults(),
             core_subsystems=default_mission_subsystems,
         )
+
+        setup_model_options(self.prob, aviary_options)
 
     def test_case1(self):
         # ground_roll = False (the aircraft is not confined to the ground)

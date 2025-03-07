@@ -8,6 +8,7 @@ from aviary.subsystems.geometry.flops_based.characteristic_lengths import Charac
 from aviary.utils.test_utils.variable_test import assert_match_varnames
 from aviary.validation_cases.validation_tests import get_flops_inputs
 from aviary.variable_info.variables import Aircraft
+from aviary.variable_info.functions import setup_model_options
 
 
 class CharacteristicLengthsTest(unittest.TestCase):
@@ -33,6 +34,8 @@ class CharacteristicLengthsTest(unittest.TestCase):
             promotes_outputs=['*'],
             promotes_inputs=['*']
         )
+
+        setup_model_options(self.prob, aviary_inputs)
 
         prob.setup(check=False, force_alloc_complex=True)
 

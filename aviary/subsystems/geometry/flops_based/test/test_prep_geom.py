@@ -1,8 +1,11 @@
 import unittest
 
+import numpy as np
+
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials
 from parameterized import parameterized
+from openmdao.utils.testing_utils import use_tempdirs
 
 from aviary.subsystems.geometry.flops_based.canard import Canard
 from aviary.subsystems.geometry.flops_based.characteristic_lengths import \
@@ -24,7 +27,7 @@ from aviary.validation_cases.validation_tests import (do_validation_test,
                                                       get_flops_inputs,
                                                       get_flops_outputs,
                                                       print_case)
-from aviary.variable_info.functions import override_aviary_vars
+from aviary.variable_info.functions import override_aviary_vars, setup_model_options
 from aviary.variable_info.variables import Aircraft
 
 unit_data_sets = get_flops_case_names(
@@ -35,6 +38,7 @@ wetted_area_overide = get_flops_case_names(
 
 # TODO: We have no integration tests for canard, so canard-related names are commented
 # out.
+@use_tempdirs
 class PrepGeomTest(unittest.TestCase):
     """
     Test computation of derived values of aircraft geometry for aerodynamics analysis
@@ -436,6 +440,9 @@ class NacellesTest(unittest.TestCase):
             Nacelles(**options),
             promotes=['*'])
 
+        setup_model_options(prob, AviaryValues(
+            {Aircraft.Engine.NUM_ENGINES: (np.array([2]), 'unitless')}))
+
         prob.setup(check=False, force_alloc_complex=True)
 
         flops_validation_test(prob,
@@ -508,6 +515,9 @@ class CharacteristicLengthsTest(unittest.TestCase):
             CharacteristicLengths(**options),
             promotes=['*']
         )
+
+        setup_model_options(prob, AviaryValues(
+            {Aircraft.Engine.NUM_ENGINES: (np.array([2]), 'unitless')}))
 
         prob.setup(check=False, force_alloc_complex=True)
 

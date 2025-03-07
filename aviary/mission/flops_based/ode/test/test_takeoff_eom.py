@@ -12,7 +12,10 @@ from aviary.models.N3CC.N3CC_data import (
     detailed_takeoff_climbing, detailed_takeoff_ground, inputs)
 from aviary.utils.test_utils.variable_test import assert_match_varnames
 from aviary.validation_cases.validation_tests import do_validation_test
-from aviary.variable_info.variables import Dynamic, Mission
+from aviary.variable_info.variables import Aircraft, Dynamic, Mission
+from aviary.variable_info.functions import setup_model_options
+
+inputs.set_val(Aircraft.Engine.NUM_ENGINES, np.array([2]))
 
 
 class TakeoffEOMTest(unittest.TestCase):
@@ -89,6 +92,8 @@ class TakeoffEOMTest(unittest.TestCase):
                        ),
             promotes_inputs=['*'],
             promotes_outputs=['*'])
+
+        setup_model_options(prob, inputs)
 
         prob.setup(check=False, force_alloc_complex=True)
 

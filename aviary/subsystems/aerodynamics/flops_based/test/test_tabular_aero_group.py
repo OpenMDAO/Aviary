@@ -24,6 +24,9 @@ from aviary.variable_info.enums import LegacyCode
 from aviary.variable_info.functions import setup_model_options
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission, Settings
 
+from openmdao.utils.testing_utils import use_tempdirs
+
+
 FLOPS = LegacyCode.FLOPS
 GASP = LegacyCode.GASP
 
@@ -31,6 +34,7 @@ CDI_table = "subsystems/aerodynamics/flops_based/test/large_single_aisle_1_CDI_p
 CD0_table = "subsystems/aerodynamics/flops_based/test/large_single_aisle_1_CD0_polar.csv"
 
 
+@use_tempdirs
 class TabularAeroGroupFileTest(unittest.TestCase):
     # Test drag comp with data from file, structured grid
     def setUp(self):
@@ -127,6 +131,7 @@ class TabularAeroGroupFileTest(unittest.TestCase):
         assert_near_equal(wing_area, actual_wing_area)
 
 
+@use_tempdirs
 class TabularAeroGroupDataTest(unittest.TestCase):
     # Test tabular drag comp with training data, structured grid
     def setUp(self):
@@ -736,7 +741,7 @@ _design_altitudes = AviaryValues({
 
 
 if __name__ == "__main__":
-    unittest.main()
-    # test = ComputedVsTabularTest()
-    # test.setUp()
-    # test.test_case()
+    # unittest.main()
+    test = TabularAeroGroupDataTest()
+    test.setUp()
+    test.test_parameters()

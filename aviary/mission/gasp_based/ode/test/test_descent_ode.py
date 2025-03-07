@@ -14,6 +14,7 @@ from aviary.utils.test_utils.IO_test_util import check_prob_outputs
 from aviary.variable_info.enums import SpeedType
 from aviary.variable_info.options import get_option_defaults
 from aviary.variable_info.variables import Dynamic
+from aviary.variable_info.functions import setup_model_options
 
 
 class DescentODETestCase(unittest.TestCase):
@@ -35,6 +36,8 @@ class DescentODETestCase(unittest.TestCase):
             aviary_options=get_option_defaults(),
             core_subsystems=default_mission_subsystems
         )
+
+        setup_model_options(self.sys, aviary_options)
 
     @unittest.skipIf(
         version.parse(openmdao.__version__) < version.parse("3.26"),
