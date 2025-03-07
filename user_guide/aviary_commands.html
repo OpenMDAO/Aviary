@@ -1,0 +1,1188 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Command Line Tools</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=384b581d" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css?v=13237357" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?v=efea14e4"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../_static/togglebutton.js?v=4a39c7ea"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'user_guide/aviary_commands';</script>
+    <link rel="icon" href="../_static/aviary_logo.png"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Input Files" href="input_files.html" />
+    <link rel="prev" title="Examples of the same mission at different UI levels" href="examples_of_the_same_mission_at_different_UI_levels.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../intro.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/aviary.png" class="logo__image only-light" alt=" - Home"/>
+    <img src="../_static/aviary.png" class="logo__image only-dark pst-js-only" alt=" - Home"/>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../intro.html">
+                    Aviary Documentation
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../getting_started/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../getting_started/what_aviary_does.html">What Aviary Does</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../getting_started/tools_that_aviary_uses.html">Tools That Aviary is Built Upon</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../getting_started/expected_user_knowledge.html">Expected User Knowledge</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../getting_started/onboarding.html">Onboarding Guide</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../getting_started/onboarding_level1.html">Level 1</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../getting_started/onboarding_level2.html">Level 2</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../getting_started/onboarding_level3.html">Level 3</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../getting_started/onboarding_ext_subsystem.html">Models with External Subsystems</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../getting_started/input_csv_phase_info.html">Vehicle Input .csv File and Phase_info Dictionary</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../getting_started/now_what.html">Now What?</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">User Guide</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="user_interface.html">Aviary User Interface</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="UI_Levels.html">User Interface Levels</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples_of_the_same_mission_at_different_UI_levels.html">Examples of the same mission at different UI levels</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">Command Line Tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="input_files.html">Input Files</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="drawing_and_running_simple_missions.html">Drawing and running simple missions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pre_mission_and_mission.html">Pre-Mission and Mission</a></li>
+<li class="toctree-l1"><a class="reference internal" href="postprocessing_and_visualizing_results.html">Postprocessing and Visualizing Results from Aviary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="variable_metadata.html">Understanding the Variable Metadata</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="features_and_functionalities.html">Features and Functionalities</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="aerodynamics.html">Aerodynamics Subsystem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="external_aero.html">Externally Computed Polars</a></li>
+<li class="toctree-l2"><a class="reference internal" href="propulsion.html">Propulsion</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hamilton_standard.html">Hamilton Standard Propulsion Model</a></li>
+
+<li class="toctree-l2"><a class="reference internal" href="mass.html">Mass Subsystem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="subsystems.html">SubsystemBuilderBase</a></li>
+<li class="toctree-l2"><a class="reference internal" href="using_external_subsystems.html">Using external subsystems</a></li>
+<li class="toctree-l2"><a class="reference internal" href="step_by_step_external_guide.html">Step-by-step guide for creating, testing, and using external subsystems</a></li>
+<li class="toctree-l2"><a class="reference internal" href="battery_subsystem_example.html">In-depth look at the battery subsystem as an example</a></li>
+<li class="toctree-l2"><a class="reference internal" href="features/overriding.html">Overriding Variables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="FLOPS_based_detailed_takeoff_and_landing.html">FLOPS Based Detailed Takeoff and Landing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reserve_missions.html">Reserve Mission</a></li>
+<li class="toctree-l2"><a class="reference internal" href="multi_mission.html">Multi-Mission Optimization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="off_design_missions.html">Off-Design Missions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="SGM_capabilities.html">Key SGM Capabilities</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="troubleshooting.html">Troubleshooting</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../examples/intro.html">Discussing the Aviary Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/simple_mission_example.html">Conventional Aircraft and Simple Mission</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/more_advanced_example.html">Optimizing the Mission Profile of a Conventional Aircraft</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/coupled_aircraft_mission_optimization.html">Coupled Aircraft-Mission Optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/additional_flight_phases.html">Mission Optimization with Many Phases for a Commercial Aircraft</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/reserve_missions.html">Reserve Mission Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/multi_mission.html">Multi-Mission Example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/off_design_example.html">Off-Design Mission Example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/OAS_subsystem.html">Using Aviary and OpenAeroStruct Together</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/level_2_detailed_takeoff_and_landing.html">Level 2 Detailed Takeoff and Landing</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Theory Guide</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../theory_guide/intro.html">Overview of Aviary Functionality</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../theory_guide/underlying_concepts.html">Underlying Concepts</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../theory_guide/assumptions.html">Assumptions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../theory_guide/aerodynamics.html">Core Aerodynamics Subsystem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../theory_guide/geometry.html">Core Geometry Subsystem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../theory_guide/mass.html">Core Mass Subsystem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../theory_guide/mission.html">Mission Analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../theory_guide/propulsion.html">Core Propulsion Subsystem</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../theory_guide/optimization_algorithms.html">Optimization Algorithms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../theory_guide/validation.html">Validation</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Developer Guide</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../developer_guide/codebase_overview.html">Codebase Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developer_guide/coding_standards.html">Coding Standards</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developer_guide/unit_tests.html">Unit Tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developer_guide/contributing_guidelines.html">Guidelines for Contributing Code</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../developer_guide/how_to_contribute_docs.html">How to Contribute Docs</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../developer_guide/doctape.html">DocTAPE</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../developer_guide/doctape_examples.html">DocTAPE Examples</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../developer_guide/debugging_env_from_github.html">Using Dev Environments from GitHub Actions</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Miscellaneous Resources</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../misc_resources/modeling_exercise.html">Modeling Exercise for the Usability Study</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../misc_resources/FAQ.html">Frequently Asked Questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../misc_resources/glossary.html">Glossary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../misc_resources/resources.html">Resources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../misc_resources/externally_supported_subsystems.html">Externally Supported Subsystems</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../misc_resources/feature_comparison.html">Feature Comparison with Legacy Codes</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../misc_resources/comparison_to_flops.html">Comparison to FLOPS</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../misc_resources/planned_future_features.html">Planned Future Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../_srcdocs/index.html">Source Docs</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</label></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-launch-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Launch interactive content">
+    <i class="fas fa-rocket"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://colab.research.google.com/github/openmdao/Aviary/blob/gh-pages/user_guide/aviary_commands.ipynb" target="_blank"
+   class="btn btn-sm dropdown-item"
+   title="Launch onColab"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  
+    <img src="../_static/images/logo_colab.png">
+  </span>
+<span class="btn__text-container">Colab</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/openmdao/Aviary" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/openmdao/Aviary/issues/new?title=Issue%20on%20page%20%2Fuser_guide/aviary_commands.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../_sources/user_guide/aviary_commands.ipynb" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button>
+
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+<label class="sidebar-toggle secondary-toggle btn btn-sm" for="__secondary"title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</label>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Command Line Tools</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#available-commands-and-their-usage">Available Commands and Their Usage</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#aviary-run-mission">aviary run_mission</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#aviary-fortran-to-aviary">aviary fortran_to_aviary</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#aviary-convert-engine">aviary convert_engine</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#aviary-convert-aero-table">aviary convert_aero_table</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#aviary-convert-prop-table">aviary convert_prop_table</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#aviary-draw-mission">aviary draw_mission</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#aviary-plot-drag-polar">aviary plot_drag_polar</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#aviary-dashboard">aviary dashboard</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#aviary-hangar">aviary hangar</a></li>
+</ul>
+</li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="command-line-tools">
+<h1>Command Line Tools<a class="headerlink" href="#command-line-tools" title="Link to this heading">#</a></h1>
+<p>Aviary has a number of command line tools that are available via the <code class="docutils literal notranslate"><span class="pre">aviary</span></code>
+command.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>When using a command line tool on a script that takes its own command line arguments, those
+arguments must be placed after a <code class="docutils literal notranslate"><span class="pre">--</span></code> on the command line.  Anything to the right of the
+<code class="docutils literal notranslate"><span class="pre">--</span></code> will be ignored by the Aviary command line parser and passed on to the user script.
+For example: <code class="docutils literal notranslate"><span class="pre">Aviary</span> <span class="pre">sub_command</span> <span class="pre">-o</span> <span class="pre">foo.html</span> <span class="pre">myscript.py</span> <span class="pre">--</span> <span class="pre">-x</span> <span class="pre">--myarg=bar</span></code> would pass
+<code class="docutils literal notranslate"><span class="pre">-x</span></code> and <code class="docutils literal notranslate"><span class="pre">--myarg=bar</span></code> as args to <code class="docutils literal notranslate"><span class="pre">myscript.py</span></code>.</p>
+</div>
+<p>All available <code class="docutils literal notranslate"><span class="pre">aviary</span></code> sub-commands can be shown using the following command:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">aviary</span> <span class="o">-</span><span class="n">h</span>
+</pre></div>
+</div>
+<div class="cell tag_remove-input docutils container">
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/usr/share/miniconda/envs/test/lib/python3.12/site-packages/pyoptsparse/pyOpt_MPI.py:68: UserWarning: mpi4py could not be imported. mpi4py is required to use the parallel gradient analysis and parallel objective analysis for non-gradient based optimizers. Continuing using a dummy MPI module from pyOptSparse.
+  warnings.warn(warn)
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>usage: aviary [-h] [--version]  ...
+
+aviary Command Line Tools
+
+options:
+  -h, --help            show this help message and exit
+  --version             show version and exit
+
+Tools:
+  
+    convert_aero_table  Converts FLOPS- or GASP-formatted aero data files into
+                        Aviary csv format.
+    convert_engine      Converts FLOPS- or GASP-formatted engine decks into
+                        Aviary csv format. FLOPS decks are changed from
+                        column-delimited to csv format with added headers.
+                        GASP decks are reorganized into column based csv. T4
+                        is recovered through calculation. Data points whose T4
+                        exceeds T4max are removed.
+    convert_prop_table  Converts GASP-formatted propeller map file into Aviary
+                        csv format.
+    dashboard           Run the Dashboard tool
+    draw_mission        Allows users to draw a mission profile for use in
+                        Aviary.
+    fortran_to_aviary   Converts legacy Fortran input decks to Aviary csv
+                        based decks
+    hangar              Allows users that pip installed Aviary to download
+                        models from the Aviary hangar
+    plot_drag_polar     Plot a Drag Polar Graph using a provided polar data
+                        csv input
+    run_mission         Runs Aviary using a provided input deck
+</pre></div>
+</div>
+</div>
+</div>
+<p>To get further info on any sub-command, follow the command with a <em>-h</em>.  For example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">aviary</span> <span class="n">run_mission</span> <span class="o">-</span><span class="n">h</span>
+</pre></div>
+</div>
+<div class="cell tag_remove-input docutils container">
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/usr/share/miniconda/envs/test/lib/python3.12/site-packages/pyoptsparse/pyOpt_MPI.py:68: UserWarning: mpi4py could not be imported. mpi4py is required to use the parallel gradient analysis and parallel objective analysis for non-gradient based optimizers. Continuing using a dummy MPI module from pyOptSparse.
+  warnings.warn(warn)
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>usage: aviary run_mission [-h] [--optimizer {SNOPT,IPOPT,SLSQP,None}]
+                          [--phase_info PHASE_INFO] [--max_iter MAX_ITER]
+                          [--shooting] [--verbosity {0,1,2,3}]
+                          indeck
+
+positional arguments:
+  indeck                Name of vehicle input deck file
+
+options:
+  -h, --help            show this help message and exit
+  --optimizer {SNOPT,IPOPT,SLSQP,None}
+                        Name of optimizer
+  --phase_info PHASE_INFO
+                        Path to phase info file
+  --max_iter MAX_ITER   maximum number of iterations
+  --shooting            Use shooting instead of collocation
+  --verbosity {0,1,2,3}
+                        verbosity settings: 0=quiet, 1=brief, 2=verbose,
+                        3=debug
+</pre></div>
+</div>
+</div>
+</div>
+<section id="available-commands-and-their-usage">
+<h2>Available Commands and Their Usage<a class="headerlink" href="#available-commands-and-their-usage" title="Link to this heading">#</a></h2>
+<section id="aviary-run-mission">
+<span id="aviary-run-mission-command"></span><h3>aviary run_mission<a class="headerlink" href="#aviary-run-mission" title="Link to this heading">#</a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">run_mission</span></code> is a command line interface that will run an analysis on a given csv input file.</p>
+<p>To use small_single_aisle_GASP.csv, run the command
+<code class="docutils literal notranslate"><span class="pre">aviary</span> <span class="pre">run_mission</span> <span class="pre">models/small_single_aisle/small_single_aisle_GASP.csv</span></code> in
+<code class="docutils literal notranslate"><span class="pre">aviary/models/small_single_aisle</span></code></p>
+<p>SNOPT is the default optimizer, but IPOPT is available as well.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">aviary</span> <span class="n">run_mission</span> <span class="o">-</span><span class="n">h</span>
+</pre></div>
+</div>
+<div class="cell tag_remove-input docutils container">
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/usr/share/miniconda/envs/test/lib/python3.12/site-packages/pyoptsparse/pyOpt_MPI.py:68: UserWarning: mpi4py could not be imported. mpi4py is required to use the parallel gradient analysis and parallel objective analysis for non-gradient based optimizers. Continuing using a dummy MPI module from pyOptSparse.
+  warnings.warn(warn)
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>usage: aviary run_mission [-h] [--optimizer {SNOPT,IPOPT,SLSQP,None}]
+                          [--phase_info PHASE_INFO] [--max_iter MAX_ITER]
+                          [--shooting] [--verbosity {0,1,2,3}]
+                          indeck
+
+positional arguments:
+  indeck                Name of vehicle input deck file
+
+options:
+  -h, --help            show this help message and exit
+  --optimizer {SNOPT,IPOPT,SLSQP,None}
+                        Name of optimizer
+  --phase_info PHASE_INFO
+                        Path to phase info file
+  --max_iter MAX_ITER   maximum number of iterations
+  --shooting            Use shooting instead of collocation
+  --verbosity {0,1,2,3}
+                        verbosity settings: 0=quiet, 1=brief, 2=verbose,
+                        3=debug
+</pre></div>
+</div>
+</div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">input_deck</span></code> is the path to vehicle input deck .csv file.
+<code class="docutils literal notranslate"><span class="pre">--optimizer</span></code> is the name of the optimizer. The default is <code class="docutils literal notranslate"><span class="pre">SNOPT</span></code>.
+<code class="docutils literal notranslate"><span class="pre">--shooting</span></code> indicates that the integration method is <code class="docutils literal notranslate"><span class="pre">shooting</span></code> method instead of collocation scheme. The default is collocation.
+<code class="docutils literal notranslate"><span class="pre">--phase_info</span></code> is the path to phase info file. If it is missing, it depends on the integration method (collocation or <code class="docutils literal notranslate"><span class="pre">shooting</span></code>) and on the mission method (<code class="docutils literal notranslate"><span class="pre">equations_of_motion</span></code> with value of 2DOF or height_energy) which is defined in the .csv input file.
+<code class="docutils literal notranslate"><span class="pre">--max_iter</span></code> is the maximum number of iterations. The default is <code class="docutils literal notranslate"><span class="pre">max_iter</span></code>.</p>
+<p>More detailed information and examples can be found in the <a class="reference internal" href="../getting_started/onboarding_level1.html"><span class="std std-doc">Level 1 interface</span></a>.</p>
+</section>
+<section id="aviary-fortran-to-aviary">
+<span id="aviary-fortran-to-aviary-command"></span><h3>aviary fortran_to_aviary<a class="headerlink" href="#aviary-fortran-to-aviary" title="Link to this heading">#</a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">aviary</span> <span class="pre">fortran_to_aviary</span></code> command will convert a Fortran input deck to an Aviary csv.</p>
+<p>The only two required inputs are the filepath to the input deck and <code class="docutils literal notranslate"><span class="pre">-l</span></code> (for <code class="docutils literal notranslate"><span class="pre">--legacy_code</span></code> with options <code class="docutils literal notranslate"><span class="pre">FLOPS</span></code> and <code class="docutils literal notranslate"><span class="pre">GASP</span></code>).
+When this command is run, a brief message is printed. To print more messages, one can set verbosity level higher. For example, <code class="docutils literal notranslate"><span class="pre">-v</span> <span class="pre">3</span></code> will result in debug messages being printed. See <a class="reference internal" href="../developer_guide/coding_standards.html"><span class="std std-doc">Controlling Display Levels</span></a> for more details.
+If an invalid filepath is given, pre-packaged resources will be checked for input decks with a matching name.
+If the output file name is not specified, a detault name is assumed to be the trunk of the input file name with <code class="docutils literal notranslate"><span class="pre">csv</span></code> as file extension. For example, an input file <code class="docutils literal notranslate"><span class="pre">sample.dat</span></code> will result in <code class="docutils literal notranslate"><span class="pre">sample_converted.csv</span></code>.
+If the output file exists, the command will not run unless the user specifies <code class="docutils literal notranslate"><span class="pre">--force</span></code> to force the overwritten action.</p>
+<p>Here, pre-packaged resources are absolute path, relative path, and Aviary based path.</p>
+<p>Notes for input decks:</p>
+<ul class="simple">
+<li><p>When specifying variables from FORTRAN, they should be in the appropriate NAMELIST</p></li>
+<li><p>Names are not case-sensitive</p></li>
+<li><p>Comments can be added using “!”</p></li>
+<li><p>Lists can be entered by separating values with commas on the same line</p></li>
+<li><p>For GASP variables where required, individual list elements can be specified by adding an index after the variable name</p>
+<ul>
+<li><p>(NOTE: 1 indexing is used inside NAMELISTS, while 0 indexing is used outside NAMELISTS)</p></li>
+</ul>
+</li>
+</ul>
+<p>Example inputs (GASP-style file):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$INGASP
+DELP = 7.34797 ! typical GASP input
+ARNGE(1) = 3600 ! variable with specified index
+ACLS = 0.0,0.40,0.60,0.80,1.00,1.20, 1.40,1.60,1.80, ! values given as array
+</pre></div>
+</div>
+<p>Example usage:
+<code class="docutils literal notranslate"><span class="pre">aviary</span> <span class="pre">fortran_to_aviary</span> <span class="pre">--legacy_code</span> <span class="pre">GASP</span> <span class="pre">--force</span> <span class="pre">GASP_test.dat</span></code> Converts the GASP input deck to Aviary (even if a file with the name GASP_test.dat already exists).</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">aviary</span> <span class="n">fortran_to_aviary</span> <span class="o">-</span><span class="n">h</span>
+</pre></div>
+</div>
+<div class="cell tag_remove-input docutils container">
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/usr/share/miniconda/envs/test/lib/python3.12/site-packages/pyoptsparse/pyOpt_MPI.py:68: UserWarning: mpi4py could not be imported. mpi4py is required to use the parallel gradient analysis and parallel objective analysis for non-gradient based optimizers. Continuing using a dummy MPI module from pyOptSparse.
+  warnings.warn(warn)
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>usage: aviary fortran_to_aviary [-h] [-o OUT_FILE] -l {GASP,FLOPS} [--force]
+                                [-v {0,1,2,3}]
+                                input_deck
+
+positional arguments:
+  input_deck            Filename of vehicle input deck, including partial or
+                        complete path.
+
+options:
+  -h, --help            show this help message and exit
+  -o OUT_FILE, --out_file OUT_FILE
+                        Filename for converted input deck, including partial
+                        or complete path.
+  -l {GASP,FLOPS}, --legacy_code {GASP,FLOPS}
+                        Name of the legacy code the deck originated from
+  --force               Allow overwriting existing output files
+  -v {0,1,2,3}, --verbosity {0,1,2,3}
+                        Set level of print statements
+</pre></div>
+</div>
+</div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">aviary</span> <span class="n">hangar</span> <span class="o">-</span><span class="n">h</span>
+</pre></div>
+</div>
+<div class="cell tag_remove-input docutils container">
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>sh: 0: getcwd() failed: No such file or directory
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/usr/share/miniconda/envs/test/lib/python3.12/site-packages/pyoptsparse/pyOpt_MPI.py:68: UserWarning: mpi4py could not be imported. mpi4py is required to use the parallel gradient analysis and parallel objective analysis for non-gradient based optimizers. Continuing using a dummy MPI module from pyOptSparse.
+  warnings.warn(warn)
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Traceback (most recent call last):
+  File &quot;/usr/share/miniconda/envs/test/bin/aviary&quot;, line 5, in &lt;module&gt;
+    from aviary.interface.cmd_entry_points import aviary_cmd
+  File &quot;/home/runner/work/Aviary/Aviary/aviary/interface/cmd_entry_points.py&quot;, line 11, in &lt;module&gt;
+    from aviary.visualization.dashboard import _dashboard_setup_parser, _dashboard_cmd
+  File &quot;/home/runner/work/Aviary/Aviary/aviary/visualization/dashboard.py&quot;, line 23, in &lt;module&gt;
+    import panel as pn
+  File &quot;/usr/share/miniconda/envs/test/lib/python3.12/site-packages/panel/__init__.py&quot;, line 48, in &lt;module&gt;
+    from param import rx
+  File &quot;/usr/share/miniconda/envs/test/lib/python3.12/site-packages/param/__init__.py&quot;, line 14, in &lt;module&gt;
+    from .parameters import (  # noqa: api import
+  File &quot;/usr/share/miniconda/envs/test/lib/python3.12/site-packages/param/parameters.py&quot;, line 2587, in &lt;module&gt;
+    class resolve_path(ParameterizedFunction):
+  File &quot;/usr/share/miniconda/envs/test/lib/python3.12/site-packages/param/parameters.py&quot;, line 2604, in resolve_path
+    search_paths = List(default=[os.getcwd()], pickle_default_value=False, doc=&quot;&quot;&quot;
+                                 ^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="aviary-convert-engine">
+<span id="aviary-edc-command"></span><h3>aviary convert_engine<a class="headerlink" href="#aviary-convert-engine" title="Link to this heading">#</a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">aviary</span> <span class="pre">convert_engine</span></code> command will convert a legacy formatted (FLOPS or GASP) engine deck into an Aviary formatted engine deck.</p>
+<p>Users must provide the path or name of an input deck, and the engine format being converted.
+If an invalid filepath is given for the input file, pre-packaged resources will be checked for input decks with a matching name.</p>
+<p>The path to the output file name is optional. If it is missing, the output file name takes the
+trunk of the input file name with <code class="docutils literal notranslate"><span class="pre">deck</span></code> as default file extension. For example, an input file <code class="docutils literal notranslate"><span class="pre">sample.eng</span></code> will result in <code class="docutils literal notranslate"><span class="pre">sample.deck</span></code> unless the user specifies the output file name.</p>
+<p>If the output file exists, it will be overwritten.</p>
+<p>The engine format is specified by <code class="docutils literal notranslate"><span class="pre">-f</span></code> or <code class="docutils literal notranslate"><span class="pre">--data_format</span></code> with one of <code class="docutils literal notranslate"><span class="pre">FLOPS</span></code>, <code class="docutils literal notranslate"><span class="pre">GASP</span></code>, and <code class="docutils literal notranslate"><span class="pre">GASP_TS</span></code> string (<code class="docutils literal notranslate"><span class="pre">TS</span></code> stands for turboshaft). If multiple are specified, the last one will be used.</p>
+<p>Notes for input decks:</p>
+<ul class="simple">
+<li><p>Turbofan decks for both FLOPS and GASP can be converted</p></li>
+<li><p>Turboshaft decks for GASP can also be converted</p></li>
+<li><p>Comments can be added using #</p></li>
+</ul>
+<p>Example usage:</p>
+<p><code class="docutils literal notranslate"><span class="pre">aviary</span> <span class="pre">convert_engine</span> <span class="pre">turbofan_23k_1.eng</span> <span class="pre">turbofan_23k_1_lbm_s.deck</span> <span class="pre">-f</span> <span class="pre">GASP</span></code> Convert a GASP based turbofan</p>
+<p><code class="docutils literal notranslate"><span class="pre">aviary</span> <span class="pre">convert_engine</span> <span class="pre">turbofan_22k.eng</span> <span class="pre">turbofan_22k.txt</span> <span class="pre">-f</span> <span class="pre">FLOPS</span></code> Convert a FLOPS based turbofan</p>
+<p><code class="docutils literal notranslate"><span class="pre">aviary</span> <span class="pre">convert_engine</span> <span class="pre">turboshaft_4465hp.eng</span> <span class="pre">turboshaft_4465hp.deck</span> <span class="pre">--data_format</span> <span class="pre">GASP_TS</span></code> Convert a GASP based turboshaft</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">aviary</span> <span class="n">convert_engine</span> <span class="o">-</span><span class="n">h</span>
+</pre></div>
+</div>
+<div class="cell tag_remove-input docutils container">
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>sh: 0: getcwd() failed: No such file or directory
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/usr/share/miniconda/envs/test/lib/python3.12/site-packages/pyoptsparse/pyOpt_MPI.py:68: UserWarning: mpi4py could not be imported. mpi4py is required to use the parallel gradient analysis and parallel objective analysis for non-gradient based optimizers. Continuing using a dummy MPI module from pyOptSparse.
+  warnings.warn(warn)
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Traceback (most recent call last):
+  File &quot;/usr/share/miniconda/envs/test/bin/aviary&quot;, line 5, in &lt;module&gt;
+    from aviary.interface.cmd_entry_points import aviary_cmd
+  File &quot;/home/runner/work/Aviary/Aviary/aviary/interface/cmd_entry_points.py&quot;, line 11, in &lt;module&gt;
+    from aviary.visualization.dashboard import _dashboard_setup_parser, _dashboard_cmd
+  File &quot;/home/runner/work/Aviary/Aviary/aviary/visualization/dashboard.py&quot;, line 23, in &lt;module&gt;
+    import panel as pn
+  File &quot;/usr/share/miniconda/envs/test/lib/python3.12/site-packages/panel/__init__.py&quot;, line 48, in &lt;module&gt;
+    from param import rx
+  File &quot;/usr/share/miniconda/envs/test/lib/python3.12/site-packages/param/__init__.py&quot;, line 14, in &lt;module&gt;
+    from .parameters import (  # noqa: api import
+  File &quot;/usr/share/miniconda/envs/test/lib/python3.12/site-packages/param/parameters.py&quot;, line 2587, in &lt;module&gt;
+    class resolve_path(ParameterizedFunction):
+  File &quot;/usr/share/miniconda/envs/test/lib/python3.12/site-packages/param/parameters.py&quot;, line 2604, in resolve_path
+    search_paths = List(default=[os.getcwd()], pickle_default_value=False, doc=&quot;&quot;&quot;
+                                 ^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="aviary-convert-aero-table">
+<span id="aviary-atc-command"></span><h3>aviary convert_aero_table<a class="headerlink" href="#aviary-convert-aero-table" title="Link to this heading">#</a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">aviary</span> <span class="pre">convert_aero_table</span></code> command will convert a legacy formatted (FLOPS or GASP) aero table into an Aviary formatted aero table.</p>
+<p>Users must provide the path or name of an input deck and the data format being converted.
+Optionally, the path to the output file can also be specified, otherwise the default output file will be in the same location and have the same name as input file, but with ‘_aviary’ appended to the end of filename trunk while the file extension is preserved. For example, an input file <code class="docutils literal notranslate"><span class="pre">sample.txt</span></code> will result in <code class="docutils literal notranslate"><span class="pre">sample_aviary.txt</span></code> unless the user specifies the output file name.
+If both <code class="docutils literal notranslate"><span class="pre">-f</span></code> and <code class="docutils literal notranslate"><span class="pre">--data_format</span></code> are specified, the later one is taken.
+If an existing file has the same name as output file name, the existing file will be overwritten.
+If an invalid filepath is given for the input file, pre-packaged resources will be checked for input decks with a matching name.</p>
+<p>Notes for input decks:</p>
+<ul class="simple">
+<li><p>Aero tables for both FLOPS and GASP can be converted</p></li>
+<li><p>GASP tables will create a single file containing all the lift and drag information</p></li>
+<li><p>FLOPS tables will create two files, one containing the lift-dependent drag and the other containing the lift-independent drag.</p></li>
+<li><p>Comments can be added using #</p></li>
+</ul>
+<p>Example usage:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>`aviary convert_aero_table -f GASP subsystems/aerodynamics/gasp_based/data/GASP_aero_free.txt large_single_aisle_1_aero_flaps.txt` Converts a GASP based aero table
+
+`aviary convert_aero_table -f FLOPS utils/test/flops_test_polar.txt aviary_flops_polar.txt` Converts a FLOPS based aero table
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">aviary</span> <span class="n">convert_aero_table</span> <span class="o">-</span><span class="n">h</span>
+</pre></div>
+</div>
+<div class="cell tag_remove-input docutils container">
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>sh: 0: getcwd() failed: No such file or directory
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/usr/share/miniconda/envs/test/lib/python3.12/site-packages/pyoptsparse/pyOpt_MPI.py:68: UserWarning: mpi4py could not be imported. mpi4py is required to use the parallel gradient analysis and parallel objective analysis for non-gradient based optimizers. Continuing using a dummy MPI module from pyOptSparse.
+  warnings.warn(warn)
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Traceback (most recent call last):
+  File &quot;/usr/share/miniconda/envs/test/bin/aviary&quot;, line 5, in &lt;module&gt;
+    from aviary.interface.cmd_entry_points import aviary_cmd
+  File &quot;/home/runner/work/Aviary/Aviary/aviary/interface/cmd_entry_points.py&quot;, line 11, in &lt;module&gt;
+    from aviary.visualization.dashboard import _dashboard_setup_parser, _dashboard_cmd
+  File &quot;/home/runner/work/Aviary/Aviary/aviary/visualization/dashboard.py&quot;, line 23, in &lt;module&gt;
+    import panel as pn
+  File &quot;/usr/share/miniconda/envs/test/lib/python3.12/site-packages/panel/__init__.py&quot;, line 48, in &lt;module&gt;
+    from param import rx
+  File &quot;/usr/share/miniconda/envs/test/lib/python3.12/site-packages/param/__init__.py&quot;, line 14, in &lt;module&gt;
+    from .parameters import (  # noqa: api import
+  File &quot;/usr/share/miniconda/envs/test/lib/python3.12/site-packages/param/parameters.py&quot;, line 2587, in &lt;module&gt;
+    class resolve_path(ParameterizedFunction):
+  File &quot;/usr/share/miniconda/envs/test/lib/python3.12/site-packages/param/parameters.py&quot;, line 2604, in resolve_path
+    search_paths = List(default=[os.getcwd()], pickle_default_value=False, doc=&quot;&quot;&quot;
+                                 ^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="aviary-convert-prop-table">
+<span id="aviary-pmc-command"></span><h3>aviary convert_prop_table<a class="headerlink" href="#aviary-convert-prop-table" title="Link to this heading">#</a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">aviary</span> <span class="pre">convert_prop_table</span></code> command converts a legacy formatted (GASP) propeller map into an Aviary formatted propeller map. Currently, it is the only format allowed and so it is the default legacy format.</p>
+<p>Users must provide the path or name of an input deck, the path to the output file, and the engine format being converted.
+If an invalid filepath is given for the input file, pre-packaged resources will be checked for input decks with a matching name.</p>
+<p>Notes for input decks:</p>
+<ul class="simple">
+<li><p>There are two options for Mach number: Mach number and helical Mach number at 75% radius. We provide one example for each. This is the first integer on the first line of the input file. (1 = Mach, 2 = helical Mach)</p></li>
+<li><p>Comments can be added using #</p></li>
+</ul>
+<p>Example usage:</p>
+<p><code class="docutils literal notranslate"><span class="pre">aviary</span> <span class="pre">convert_prop_table</span> <span class="pre">-f</span> <span class="pre">GASP</span> <span class="pre">PropFan.map</span> <span class="pre">PropFan.prop</span></code> Convert a GASP based propeller map</p>
+<p><code class="docutils literal notranslate"><span class="pre">aviary</span> <span class="pre">convert_prop_table</span> <span class="pre">-f</span> <span class="pre">GASP</span> <span class="pre">general_aviation.map</span> <span class="pre">general_aviation.prop</span></code> Convert a GASP based propeller map</p>
+<p><code class="docutils literal notranslate"><span class="pre">aviary</span> <span class="pre">convert_prop_table</span> <span class="pre">general_aviation.map</span></code> Convert a GASP based propeller map</p>
+<p>The first example uses Mach number and the second example uses helical Mach number.
+Note that the output file name can be skipped as demonstrated in the third example. Since there is only one input data format that is supported at this time, it defaults to GASP if not provided. This is shown in the third example as well.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">aviary</span> <span class="n">convert_prop_table</span> <span class="o">-</span><span class="n">h</span>
+</pre></div>
+</div>
+<div class="cell tag_remove-input docutils container">
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>sh: 0: getcwd() failed: No such file or directory
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/usr/share/miniconda/envs/test/lib/python3.12/site-packages/pyoptsparse/pyOpt_MPI.py:68: UserWarning: mpi4py could not be imported. mpi4py is required to use the parallel gradient analysis and parallel objective analysis for non-gradient based optimizers. Continuing using a dummy MPI module from pyOptSparse.
+  warnings.warn(warn)
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Traceback (most recent call last):
+  File &quot;/usr/share/miniconda/envs/test/bin/aviary&quot;, line 5, in &lt;module&gt;
+    from aviary.interface.cmd_entry_points import aviary_cmd
+  File &quot;/home/runner/work/Aviary/Aviary/aviary/interface/cmd_entry_points.py&quot;, line 11, in &lt;module&gt;
+    from aviary.visualization.dashboard import _dashboard_setup_parser, _dashboard_cmd
+  File &quot;/home/runner/work/Aviary/Aviary/aviary/visualization/dashboard.py&quot;, line 23, in &lt;module&gt;
+    import panel as pn
+  File &quot;/usr/share/miniconda/envs/test/lib/python3.12/site-packages/panel/__init__.py&quot;, line 48, in &lt;module&gt;
+    from param import rx
+  File &quot;/usr/share/miniconda/envs/test/lib/python3.12/site-packages/param/__init__.py&quot;, line 14, in &lt;module&gt;
+    from .parameters import (  # noqa: api import
+  File &quot;/usr/share/miniconda/envs/test/lib/python3.12/site-packages/param/parameters.py&quot;, line 2587, in &lt;module&gt;
+    class resolve_path(ParameterizedFunction):
+  File &quot;/usr/share/miniconda/envs/test/lib/python3.12/site-packages/param/parameters.py&quot;, line 2604, in resolve_path
+    search_paths = List(default=[os.getcwd()], pickle_default_value=False, doc=&quot;&quot;&quot;
+                                 ^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="aviary-draw-mission">
+<span id="aviary-draw-command"></span><h3>aviary draw_mission<a class="headerlink" href="#aviary-draw-mission" title="Link to this heading">#</a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">aviary</span> <span class="pre">draw_mission</span></code> command will bring up a new graphical interface for users to create a  mission. This command does not have an input. More details can be found at <a class="reference internal" href="drawing_and_running_simple_missions.html"><span class="std std-doc">Drawing and running simple missions</span></a>.</p>
+</section>
+<section id="aviary-plot-drag-polar">
+<span id="aviary-plot-command"></span><h3>aviary plot_drag_polar<a class="headerlink" href="#aviary-plot-drag-polar" title="Link to this heading">#</a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">aviary</span> <span class="pre">plot_drag_polar</span></code> command will bring up a new graphical interface for users to draw drag polar. No options are needed on the command line but a file explorer window will pop-up to allow the user to select a drag polar file (a <code class="docutils literal notranslate"><span class="pre">.csv</span></code> file). It is not working at this time.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">!</span>aviary<span class="w"> </span>plot_drag_polar<span class="w"> </span>-h
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>sh: 0: getcwd() failed: No such file or directory
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/usr/share/miniconda/envs/test/lib/python3.12/site-packages/pyoptsparse/pyOpt_MPI.py:68: UserWarning: mpi4py could not be imported. mpi4py is required to use the parallel gradient analysis and parallel objective analysis for non-gradient based optimizers. Continuing using a dummy MPI module from pyOptSparse.
+  warnings.warn(warn)
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Traceback (most recent call last):
+  File &quot;/usr/share/miniconda/envs/test/bin/aviary&quot;, line 5, in &lt;module&gt;
+    from aviary.interface.cmd_entry_points import aviary_cmd
+  File &quot;/home/runner/work/Aviary/Aviary/aviary/interface/cmd_entry_points.py&quot;, line 11, in &lt;module&gt;
+    from aviary.visualization.dashboard import _dashboard_setup_parser, _dashboard_cmd
+  File &quot;/home/runner/work/Aviary/Aviary/aviary/visualization/dashboard.py&quot;, line 23, in &lt;module&gt;
+    import panel as pn
+  File &quot;/usr/share/miniconda/envs/test/lib/python3.12/site-packages/panel/__init__.py&quot;, line 48, in &lt;module&gt;
+    from param import rx
+  File &quot;/usr/share/miniconda/envs/test/lib/python3.12/site-packages/param/__init__.py&quot;, line 14, in &lt;module&gt;
+    from .parameters import (  # noqa: api import
+  File &quot;/usr/share/miniconda/envs/test/lib/python3.12/site-packages/param/parameters.py&quot;, line 2587, in &lt;module&gt;
+    class resolve_path(ParameterizedFunction):
+  File &quot;/usr/share/miniconda/envs/test/lib/python3.12/site-packages/param/parameters.py&quot;, line 2604, in resolve_path
+    search_paths = List(default=[os.getcwd()], pickle_default_value=False, doc=&quot;&quot;&quot;
+                                 ^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="aviary-dashboard">
+<span id="aviary-dashboard-command"></span><h3>aviary dashboard<a class="headerlink" href="#aviary-dashboard" title="Link to this heading">#</a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">aviary</span> <span class="pre">dashboard</span></code> command will bring up a dashboard that lets the user easily browse between the reports and files that are generated during an Aviary run.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">!</span>aviary<span class="w"> </span>dashboard<span class="w"> </span>-h
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>sh: 0: getcwd() failed: No such file or directory
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/usr/share/miniconda/envs/test/lib/python3.12/site-packages/pyoptsparse/pyOpt_MPI.py:68: UserWarning: mpi4py could not be imported. mpi4py is required to use the parallel gradient analysis and parallel objective analysis for non-gradient based optimizers. Continuing using a dummy MPI module from pyOptSparse.
+  warnings.warn(warn)
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Traceback (most recent call last):
+  File &quot;/usr/share/miniconda/envs/test/bin/aviary&quot;, line 5, in &lt;module&gt;
+    from aviary.interface.cmd_entry_points import aviary_cmd
+  File &quot;/home/runner/work/Aviary/Aviary/aviary/interface/cmd_entry_points.py&quot;, line 11, in &lt;module&gt;
+    from aviary.visualization.dashboard import _dashboard_setup_parser, _dashboard_cmd
+  File &quot;/home/runner/work/Aviary/Aviary/aviary/visualization/dashboard.py&quot;, line 23, in &lt;module&gt;
+    import panel as pn
+  File &quot;/usr/share/miniconda/envs/test/lib/python3.12/site-packages/panel/__init__.py&quot;, line 48, in &lt;module&gt;
+    from param import rx
+  File &quot;/usr/share/miniconda/envs/test/lib/python3.12/site-packages/param/__init__.py&quot;, line 14, in &lt;module&gt;
+    from .parameters import (  # noqa: api import
+  File &quot;/usr/share/miniconda/envs/test/lib/python3.12/site-packages/param/parameters.py&quot;, line 2587, in &lt;module&gt;
+    class resolve_path(ParameterizedFunction):
+  File &quot;/usr/share/miniconda/envs/test/lib/python3.12/site-packages/param/parameters.py&quot;, line 2604, in resolve_path
+    search_paths = List(default=[os.getcwd()], pickle_default_value=False, doc=&quot;&quot;&quot;
+                                 ^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory
+</pre></div>
+</div>
+</div>
+</div>
+<p>To use this utility, either a problem has been run or a run script is provided.</p>
+<p><code class="docutils literal notranslate"><span class="pre">--problem_recorder</span></code> is an input. Default is <code class="docutils literal notranslate"><span class="pre">problem_history.db</span></code>.
+<code class="docutils literal notranslate"><span class="pre">--driver_recorder</span></code> is an optional input.
+<code class="docutils literal notranslate"><span class="pre">--port</span></code> is the dashboard server port ID. The default is <code class="docutils literal notranslate"><span class="pre">0</span></code> meaning any free port.
+<code class="docutils literal notranslate"><span class="pre">-b</span></code> or <code class="docutils literal notranslate"><span class="pre">--background</span></code> indicates to run in background. Default is <code class="docutils literal notranslate"><span class="pre">False</span></code>.
+<code class="docutils literal notranslate"><span class="pre">-d</span></code> or <code class="docutils literal notranslate"><span class="pre">--debug</span></code> indicates to show debugging output. Default is <code class="docutils literal notranslate"><span class="pre">False</span></code>.
+<code class="docutils literal notranslate"><span class="pre">--save</span></code> is the name of zip file in which dashboard files are saved. If no argument given, use the script name to name the zip file.
+<code class="docutils literal notranslate"><span class="pre">--force</span></code> indicates to overwrite the saved zip file. The default is <code class="docutils literal notranslate"><span class="pre">False</span></code>.
+<code class="docutils literal notranslate"><span class="pre">script_name</span></code> is the name of aviary script that was run (not including .py), or the csv input filename if the user runs a Level 1 script.</p>
+<p>More discussion on <code class="docutils literal notranslate"><span class="pre">aviary</span> <span class="pre">dashboard</span></code> command can be found in <a class="reference internal" href="postprocessing_and_visualizing_results.html"><span class="std std-doc">Postprocessing and Visualizing Results from Aviary</span></a>.</p>
+</section>
+<section id="aviary-hangar">
+<span id="aviary-hangar-command"></span><h3>aviary hangar<a class="headerlink" href="#aviary-hangar" title="Link to this heading">#</a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">aviary</span> <span class="pre">hangar</span></code> command will copy files and folders from the Aviary hangar to an accessible directory.
+This is useful for users that have pip installed Aviary, but want to experiment with the included examples.</p>
+<p>The only required input is the name of an input deck.
+This can be specified as the name of the file, the path from <a class="reference external" href="https://github.com/OpenMDAO/Aviary/tree/main/aviary/models">aviary/models</a>, the name of a folder in aviary/models. Multiple files and folders can be copied at once.
+Optionally, the output directory can be specified; if it is not, the files will be copied into the current working directory in a folder called <code class="docutils literal notranslate"><span class="pre">aviary_models</span></code>.
+If specified, the output directory will be created as needed.</p>
+<p>Example usage:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>`aviary hangar engines` Copy all files in the engines folder
+`aviary hangar turbofan_22k.txt` Copy the 22k turbofan deck
+`aviary hangar N3CC/N3CC_data.py` Copy the N3CC data
+`aviary hangar small_single_aisle_GwGm.dat small_single_aisle_GwGm.csv` Copy the Fortran and Aviary input decks for the small single aisle
+`aviary hangar turbofan_22k.txt -o ~/example_files` Copy the engine model into ~/example_files
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">aviary</span> <span class="n">hangar</span> <span class="o">-</span><span class="n">h</span>
+</pre></div>
+</div>
+<div class="cell tag_remove-input docutils container">
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>sh: 0: getcwd() failed: No such file or directory
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/usr/share/miniconda/envs/test/lib/python3.12/site-packages/pyoptsparse/pyOpt_MPI.py:68: UserWarning: mpi4py could not be imported. mpi4py is required to use the parallel gradient analysis and parallel objective analysis for non-gradient based optimizers. Continuing using a dummy MPI module from pyOptSparse.
+  warnings.warn(warn)
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Traceback (most recent call last):
+  File &quot;/usr/share/miniconda/envs/test/bin/aviary&quot;, line 5, in &lt;module&gt;
+    from aviary.interface.cmd_entry_points import aviary_cmd
+  File &quot;/home/runner/work/Aviary/Aviary/aviary/interface/cmd_entry_points.py&quot;, line 11, in &lt;module&gt;
+    from aviary.visualization.dashboard import _dashboard_setup_parser, _dashboard_cmd
+  File &quot;/home/runner/work/Aviary/Aviary/aviary/visualization/dashboard.py&quot;, line 23, in &lt;module&gt;
+    import panel as pn
+  File &quot;/usr/share/miniconda/envs/test/lib/python3.12/site-packages/panel/__init__.py&quot;, line 48, in &lt;module&gt;
+    from param import rx
+  File &quot;/usr/share/miniconda/envs/test/lib/python3.12/site-packages/param/__init__.py&quot;, line 14, in &lt;module&gt;
+    from .parameters import (  # noqa: api import
+  File &quot;/usr/share/miniconda/envs/test/lib/python3.12/site-packages/param/parameters.py&quot;, line 2587, in &lt;module&gt;
+    class resolve_path(ParameterizedFunction):
+  File &quot;/usr/share/miniconda/envs/test/lib/python3.12/site-packages/param/parameters.py&quot;, line 2604, in resolve_path
+    search_paths = List(default=[os.getcwd()], pickle_default_value=False, doc=&quot;&quot;&quot;
+                                 ^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./user_guide"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="examples_of_the_same_mission_at_different_UI_levels.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Examples of the same mission at different UI levels</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="input_files.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Input Files</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#available-commands-and-their-usage">Available Commands and Their Usage</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#aviary-run-mission">aviary run_mission</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#aviary-fortran-to-aviary">aviary fortran_to_aviary</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#aviary-convert-engine">aviary convert_engine</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#aviary-convert-aero-table">aviary convert_aero_table</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#aviary-convert-prop-table">aviary convert_prop_table</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#aviary-draw-mission">aviary draw_mission</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#aviary-plot-drag-polar">aviary plot_drag_polar</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#aviary-dashboard">aviary dashboard</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#aviary-hangar">aviary hangar</a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Aviary team at NASA
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2023.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>
