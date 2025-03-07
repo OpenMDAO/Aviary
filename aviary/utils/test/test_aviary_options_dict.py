@@ -37,7 +37,7 @@ class TestAviaryOptionsDict(unittest.TestCase):
 
         class TestOptions(AviaryOptionsDictionary):
 
-             def declare_options(self):
+            def declare_options(self):
 
                 self.declare(
                     'p1',

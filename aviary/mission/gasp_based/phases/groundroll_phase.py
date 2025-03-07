@@ -211,7 +211,7 @@ class GroundrollPhase(PhaseBuilderBase):
 
     default_name = 'groundroll_phase'
     default_ode_class = GroundrollODE
-    default_options_class= GroundrollPhaseOptions
+    default_options_class = GroundrollPhaseOptions
 
     _initial_guesses_meta_data_ = {}
 

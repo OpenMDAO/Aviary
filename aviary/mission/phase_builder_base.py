@@ -131,7 +131,6 @@ class PhaseBuilderBase(ABC):
 
         self.subsystem_options = subsystem_options
 
-
         self.user_options = self.default_options_class(user_options)
 
         if initial_guesses is None:
