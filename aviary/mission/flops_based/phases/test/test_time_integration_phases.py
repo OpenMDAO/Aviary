@@ -41,7 +41,7 @@ class HE_SGMDescentTestCase(unittest.TestCase):
         aviary_inputs.set_val(Settings.EQUATIONS_OF_MOTION,
                               val=EquationsOfMotion.SOLVED_2DOF)
 
-        engines = build_engine_deck(aviary_inputs)
+        engines = [build_engine_deck(aviary_inputs)]
         # don't need mass
         core_subsystems = get_default_premission_subsystems('FLOPS', engines)[:-1]
         ode_args = dict(aviary_options=aviary_inputs, core_subsystems=core_subsystems)

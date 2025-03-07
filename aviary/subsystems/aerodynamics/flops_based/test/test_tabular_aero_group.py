@@ -697,9 +697,9 @@ class _ComputedAeroHarness(om.Group):
         gamma = options['gamma']
         aviary_options: AviaryValues = options['aviary_options']
 
-        engine = build_engine_deck(aviary_options)
+        engines = [build_engine_deck(aviary_options)]
         # don't need mass, skip it
-        default_premission_subsystems = get_default_premission_subsystems('FLOPS', engine)[
+        default_premission_subsystems = get_default_premission_subsystems('FLOPS', engines)[
             :-1]
 
         # Upstream pre-mission analysis for aero

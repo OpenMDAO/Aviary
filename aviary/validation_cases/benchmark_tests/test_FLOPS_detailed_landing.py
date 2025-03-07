@@ -71,10 +71,10 @@ class TestFLOPSDetailedLanding(unittest.TestCase):
 
         driver.recording_options['record_derivatives'] = False
 
-        engine = build_engine_deck(aviary_options)
-        preprocess_options(aviary_options, engine_models=engine)
+        engines = [build_engine_deck(aviary_options)]
+        preprocess_options(aviary_options, engine_models=engines)
 
-        default_premission_subsystems = get_default_mission_subsystems('FLOPS', engine)
+        default_premission_subsystems = get_default_mission_subsystems('FLOPS', engines)
 
         # Upstream static analysis for aero
         landing.model.add_subsystem(
