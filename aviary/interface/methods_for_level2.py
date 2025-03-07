@@ -284,11 +284,12 @@ class AviaryProblem(om.Problem):
                     aviary_inputs)
 
         # PREPROCESSORS #
-        # Fill in anything missing in the options with computed defaults.
+        # BUG we can't provide updated metadata to preprocessors, because we need the
+        #     processed options to build our subsystems to begin with
         preprocess_options(
             aviary_inputs,
             engine_models=self.engine_builders,
-            metadata=self.meta_data
+            # metadata=self.meta_data
         )
 
         ## Set Up Core Subsystems ##

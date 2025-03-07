@@ -16,7 +16,9 @@ OptionalValueAndUnits : type alias
 class AviaryValues
     define a collection of named values with associated units
 '''
+import operator
 from enum import EnumMeta
+from functools import reduce
 
 import numpy as np
 from openmdao.utils.units import convert_units as _convert_units
@@ -107,30 +109,45 @@ class AviaryValues(NamedValues):
         super().set_val(key=key, val=my_val, units=units)
 
     def _check_type(self, key, val, meta_data=_MetaData):
+        """
+        Check that provided val is the correct type. If val is iterable, also check each
+        individual index
+        """
 
         expected_types = meta_data[key]['types']
         if expected_types is None:
             # MetaData item has no type requirement.
             return
 
-        if isiterable(expected_types):
-            expected_types = tuple(expected_types)
+        # If data is iterable, check that it is allowed to be.
+        # Variables flagged multivalue can be lists or numpy arrays even if not specified
+        if isiterable(val):
+            types = expected_types
+            if meta_data[key]['multivalue']:
+                if isinstance(expected_types, tuple):
+                    types = (list, np.ndarray, *expected_types)
+                else:
+                    types = (list, np.ndarray, expected_types)
+            if not isinstance(val, types):
+                raise TypeError(
+                    f'{key} is of type(s) {types} but you have provided a value of type '
+                    f'{type(val)}.')
 
-        # if val is not iterable, add it to a list (length 1), checks assume
-        # val is iterable
-        if not isiterable(val):
-            val = [val]
-        # numpy arrays have special typings. Extract item of equivalent built-in python type
-        # numpy arrays do not allow mixed types, only have to check first entry
+        # numpy arrays have special typings. Convert to list using standard Python types
+        # numpy arrays do not allow mixed types, only have to check one entry
         # empty arrays do not need this check
         if isinstance(val, np.ndarray) and len(val) > 0:
-            # NoneType numpy arrays do not need to be "converted" to built-in python types
-            if val.dtype == type(None):
-                val = [val[0]]
-            else:
-                # item() gets us native Python equivalent object (i.e. int vs. numpy.int64)
-                # wrapping first index in np array ensures this works on any dtype
-                val = [np.array(val[0]).item()]
+            val = val.tolist()
+            while isiterable(val):
+                val = val[0]
+
+        # if val is not iterable, make it a list (checks assume val is iterable)
+        if not isiterable(val):
+            val = [val]
+        # if val is an iterable, flatten it so we can easily loop over every entry
+        else:
+            val = _flatten_iters(val)
+
         for item in val:
             has_bool = False  # needs some fancy shenanigans because bools will register as ints
             if (isinstance(expected_types, type)):
@@ -168,5 +185,12 @@ class AviaryValues(NamedValues):
             except ValueError:
                 # str instead maps to ENUM name
                 return enum_type[val.upper()]
-        else:
-            return enum_type(val)
+
+
+def _flatten_iters(iterable):
+    """Flattens iterables of any type and size"""
+    for item in iterable:
+        try:
+            yield from iter(item)
+        except TypeError:
+            yield item

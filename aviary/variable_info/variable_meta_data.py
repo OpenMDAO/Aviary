@@ -1850,6 +1850,7 @@ add_meta_data(
     units='lbm/h',
     desc='Additional constant fuel flow. This value is not scaled with the engine',
     default_value=0.0,
+    multivalue=True
 )
 
 add_meta_data(
@@ -4170,6 +4171,7 @@ add_meta_data(
     units='ft',
     desc='Average diameter of engine nacelles for each engine model',
     default_value=0.0,
+    multivalue=True
 )
 
 add_meta_data(
@@ -4185,6 +4187,7 @@ add_meta_data(
     units='ft',
     desc='Average length of nacelles for each engine model',
     default_value=0.0,
+    multivalue=True
 )
 
 add_meta_data(
@@ -4201,6 +4204,7 @@ add_meta_data(
     units='ft',
     desc='Reynolds characteristic length for nacelle for each engine model',
     default_value=0.0,
+    multivalue=True
 )
 
 add_meta_data(
@@ -4210,6 +4214,7 @@ add_meta_data(
     units="unitless",
     desc='the minimum number of nacelle diameters above the ground that the bottom of the nacelle must be',
     default_value=0.0,
+    multivalue=True
 )
 
 add_meta_data(
@@ -4219,6 +4224,7 @@ add_meta_data(
     units="unitless",
     desc='ratio of nacelle diameter to engine core diameter',
     default_value=1.25,
+    multivalue=True
 )
 
 add_meta_data(
@@ -4235,6 +4241,7 @@ add_meta_data(
     units='unitless',
     desc='nacelle fineness ratio',
     default_value=0.0,
+    multivalue=True
 )
 
 add_meta_data(
@@ -4244,6 +4251,7 @@ add_meta_data(
     units='unitless',
     desc='nacelle form factor',
     default_value=1.5,
+    multivalue=True
 )
 
 add_meta_data(
@@ -4257,6 +4265,7 @@ add_meta_data(
     units='unitless',
     desc='define percent laminar flow for nacelle lower surface for each engine model',
     default_value=0.0,
+    multivalue=True
 )
 
 add_meta_data(
@@ -4270,6 +4279,7 @@ add_meta_data(
     units='unitless',
     desc='define percent laminar flow for nacelle upper surface for each engine model',
     default_value=0.0,
+    multivalue=True
 )
 
 add_meta_data(
@@ -4289,6 +4299,7 @@ add_meta_data(
     units='lbm',
     desc='estimated mass of the nacelles for each engine model',
     default_value=0.0,
+    multivalue=True
 )
 
 add_meta_data(
@@ -4302,6 +4313,7 @@ add_meta_data(
     units='unitless',
     desc='mass scaler of the nacelle structure for each engine model',
     default_value=1.0,
+    multivalue=True
 )
 
 add_meta_data(
@@ -4311,6 +4323,7 @@ add_meta_data(
     units='lbm/ft**2',
     desc='nacelle mass/nacelle surface area; lbm per sq ft.',
     default_value=0.0,
+    multivalue=True
 )
 
 add_meta_data(
@@ -4320,6 +4333,7 @@ add_meta_data(
     units='ft**2',
     desc='surface area of the outside of one entire nacelle, '
     'not just the wetted area',
+    multivalue=True
 )
 
 add_meta_data(
@@ -4333,6 +4347,7 @@ add_meta_data(
     units='ft**2',
     desc='total nacelles wetted area',
     default_value=0.0,
+    multivalue=True
 )
 
 add_meta_data(
@@ -4349,6 +4364,7 @@ add_meta_data(
     units='ft**2',
     desc='wetted area of a single nacelle for each engine model',
     default_value=0.0,
+    multivalue=True
 )
 
 add_meta_data(
@@ -4362,6 +4378,7 @@ add_meta_data(
     units='unitless',
     desc='nacelle wetted area scaler for each engine model',
     default_value=1.0,
+    multivalue=True
 )
 
 #  _____            _           _
@@ -5268,7 +5285,9 @@ add_meta_data(
     units='unitless',
     desc='chord lengths as fractions of semispan at station locations; '
     'overwrites station_chord_lengths',
-    default_value=0.0,
+    types=float,
+    default_value=[0.0],
+    multivalue=True
 )
 
 add_meta_data(
@@ -5655,7 +5674,7 @@ add_meta_data(
         "LEAPS1": 'aircraft.inputs.L0_detailed_wing.pressure_dist',
     },
     units='unitless',
-    desc='controls spatial distribution of integratin stations for detailed' ' wing',
+    desc='controls spatial distribution of integration stations for detailed' ' wing',
     default_value=2.0,
     option=True,
 )
@@ -6162,7 +6181,9 @@ add_meta_data(
     },
     units='unitless',
     desc='the thickeness-chord ratios at station locations',
-    default_value=0.0,
+    default_value=[0.0],
+    types=float,
+    multivalue=True
 )
 
 add_meta_data(

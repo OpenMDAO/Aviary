@@ -1,12 +1,12 @@
 def add_meta_data(
-        key,
-        meta_data,
+        key: str,
+        meta_data: dict,
         units='unitless',
-        desc=None,
+        desc: str = None,
         default_value=0.0,
-        option=False,
+        option: bool = False,
         types=None,
-        multivalue=False,
+        multivalue: bool = False,
         historical_name=None,
         _check_unique=True):
     '''
@@ -104,14 +104,14 @@ def add_meta_data(
 
 
 def update_meta_data(
-        key,
-        meta_data,
+        key: str,
+        meta_data: dict,
         units='unitless',
-        desc=None,
+        desc: str = None,
         default_value=0.0,
-        option=False,
+        option: bool = False,
         types=None,
-        multivalue=False,
+        multivalue: bool = False,
         historical_name=None):
     '''
     Update existing meta data associated with variables in the Aviary data hierarchy.
