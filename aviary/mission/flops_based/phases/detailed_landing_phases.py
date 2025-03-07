@@ -180,8 +180,6 @@ class LandingApproachToMicP3(PhaseBuilderBase):
     '''
     __slots__ = ()
 
-    _meta_data_ = {}
-
     default_name = 'landing_approach'
     default_ode_class = LandingODE
     default_options_class = LandingApproachToMicP3Options
@@ -399,11 +397,7 @@ class LandingMicP3ToObstacle(LandingApproachToMicP3):
     '''
     __slots__ = ()
 
-    # region : derived type customization points
-    # _meta_data_ = {}  # <--- inherited from base class
-
     default_name = 'landing_mic_p3'
-    # endregion : derived type customization points
 
     def build_phase(self, aviary_options: AviaryValues = None):
         '''
