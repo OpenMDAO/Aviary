@@ -37,11 +37,11 @@ def add_meta_data(
         indicates that this variable is an option, rather than a normal input
 
     types : type
-        gives the allowable type(s) of the variable in the aviary API.
+        gives the allowable type(s) of the variable in the aviary API. if `multivalue` is
+        True, this specifies which types individual elements in the list can be.
 
     multivalue : bool
         when True, the variable can become a list of elements whose type is in types.
-        This is mainly used when there are multiple engine types.
 
     historical_name : dict or None
         dictionary of names that the variable held in prior codes

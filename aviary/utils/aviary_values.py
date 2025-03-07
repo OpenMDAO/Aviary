@@ -21,9 +21,9 @@ from enum import EnumMeta
 import numpy as np
 from openmdao.utils.units import convert_units as _convert_units
 
-from aviary.utils.named_values import (NamedValues, get_items, get_keys,
-                                       get_values)
+from aviary.utils.named_values import NamedValues, get_items, get_keys, get_values
 from aviary.variable_info.variable_meta_data import _MetaData
+from aviary.utils.utils import isiterable
 
 
 class AviaryValues(NamedValues):
@@ -55,37 +55,54 @@ class AviaryValues(NamedValues):
             if units of `None` were specified or units of any type other than `str`
         '''
 
-        # Special handling to access an Enum member from either the member name or its value.
         my_val = val
-        if key in _MetaData.keys():
-
-            expected_types = _MetaData[key]['types']
+        if key in meta_data.keys():
+            expected_types = meta_data[key]['types']
             if not isinstance(expected_types, tuple):
                 expected_types = (expected_types, )
 
-            for _type in expected_types:
-                if type(_type) is EnumMeta:
-                    if self._is_iterable(val):
+            # If provided val is not in expected types, see if it can be casted to one of
+            # them (e.g. cast int to float).
+            if not isinstance(val, expected_types):
+                # Prefer casting to Enum if possible
+                # Special handling to access an Enum member from either the member name
+                # or its value.
+                if EnumMeta in expected_types:
+                    if isiterable(val):
                         my_val = [self._convert_to_enum(
                             item, _type) for item in val]
                     else:
                         my_val = self._convert_to_enum(val, _type)
-                    break
+                else:
+                    for _type in expected_types:
+                        try:
+                            if isiterable(val):
+                                if isinstance(val, np.ndarray):
+                                    my_val = np.array([_type(item) for item in val])
+                                else:
+                                    my_val = type(val)([_type(item) for item in val])
+                            else:
+                                my_val = _type(val)
+                        except (ValueError, TypeError):
+                            # try another value in expected_types
+                            pass
+                        else:
+                            break
 
             # Special handling if the variable is supposed to be an array
-            default_value = _MetaData[key]['default_value']
-            # if the item is supposed to be an iterable...
-            if self._is_iterable(default_value):
-                # but the provided value is not...
-                if not self._is_iterable(my_val):
-                    # make object the correct iterable
-                    if isinstance(default_value, tuple):
-                        my_val = (my_val,)
-                    else:
-                        my_val = np.array([my_val], dtype=type(default_value[0]))
+            # If the item is supposed to be an iterable...
+            # if meta_data[key]['multivalue']:
+            #     # but the provided value is not...
+            #     if not isiterable(my_val):
+            #         # make object the correct iterable
+            #         if tuple in expected_types:
+            #             my_val = (my_val,)
+            #         else:
+            #             dtype = type(meta_data[key]['default_value'])
+            #             my_val = np.array([my_val], dtype)
 
             self._check_type(key, my_val, meta_data=meta_data)
-            self._check_units_compatability(key, my_val, units, meta_data=meta_data)
+            self._check_units_compatibility(key, my_val, units, meta_data=meta_data)
 
         super().set_val(key=key, val=my_val, units=units)
 
@@ -96,12 +113,12 @@ class AviaryValues(NamedValues):
             # MetaData item has no type requirement.
             return
 
-        if self._is_iterable(expected_types):
+        if isiterable(expected_types):
             expected_types = tuple(expected_types)
 
         # if val is not iterable, add it to a list (length 1), checks assume
         # val is iterable
-        if not self._is_iterable(val):
+        if not isiterable(val):
             val = [val]
         # numpy arrays have special typings. Extract item of equivalent built-in python type
         # numpy arrays do not allow mixed types, only have to check first entry
@@ -112,7 +129,7 @@ class AviaryValues(NamedValues):
                 val = [val[0]]
             else:
                 # item() gets us native Python equivalent object (i.e. int vs. numpy.int64)
-                # wrap first index in np array to ensures works on any dtype
+                # wrapping first index in np array ensures this works on any dtype
                 val = [np.array(val[0]).item()]
         for item in val:
             has_bool = False  # needs some fancy shenanigans because bools will register as ints
@@ -127,7 +144,7 @@ class AviaryValues(NamedValues):
                     f'{key} is of type(s) {meta_data[key]["types"]} but you '
                     f'have provided a value of type {type(item)}.')
 
-    def _check_units_compatability(self, key, val, units, meta_data=_MetaData):
+    def _check_units_compatibility(self, key, val, units, meta_data=_MetaData):
         expected_units = meta_data[key]['units']
 
         try:
@@ -143,9 +160,6 @@ class AviaryValues(NamedValues):
         except BaseException:
             raise KeyError('There is an unknown error with your units.')
 
-    def _is_iterable(self, val):
-        return isinstance(val, _valid_iterables)
-
     def _convert_to_enum(self, val, enum_type):
         if isinstance(val, str):
             try:
@@ -156,6 +170,3 @@ class AviaryValues(NamedValues):
                 return enum_type[val.upper()]
         else:
             return enum_type(val)
-
-
-_valid_iterables = (list, np.ndarray, tuple)

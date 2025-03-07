@@ -12,7 +12,7 @@ from openmdao.visualization.tables.table_builder import generate_table
 
 from aviary.interface.utils.markdown_utils import write_markdown_variable_table
 from aviary.utils.named_values import NamedValues
-from aviary.utils.functions import wrapped_convert_units
+from aviary.utils.utils import wrapped_convert_units
 
 
 def register_custom_reports():

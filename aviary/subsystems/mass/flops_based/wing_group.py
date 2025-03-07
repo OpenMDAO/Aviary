@@ -16,7 +16,8 @@ class WingMassGroup(om.Group):
     """
 
     def initialize(self):
-        add_aviary_option(self, Aircraft.Wing.INPUT_STATION_DIST)
+        # default to None instead of default value
+        add_aviary_option(self, Aircraft.Wing.INPUT_STATION_DIST, None)
 
     def setup(self):
 
@@ -26,7 +27,7 @@ class WingMassGroup(om.Group):
 
         if self.options[Aircraft.Wing.INPUT_STATION_DIST] is not None:
             self.add_subsystem(
-                'wing_BENDING_MATERIAL_FACTOR',
+                'wing_bending_material_factor',
                 DetailedWingBendingFact(),
                 promotes_inputs=['*'],
                 promotes_outputs=['*'],
@@ -34,7 +35,7 @@ class WingMassGroup(om.Group):
 
         else:
             self.add_subsystem(
-                'wing_BENDING_MATERIAL_FACTOR',
+                'wing_bending_material_factor',
                 SimpleWingBendingFact(),
                 promotes_inputs=['*'],
                 promotes_outputs=['*'],

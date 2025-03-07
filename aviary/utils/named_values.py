@@ -20,7 +20,8 @@ from collections.abc import Collection
 from typing import Any, Tuple, Union
 
 from openmdao.core.constants import _UNDEFINED
-from openmdao.utils.units import convert_units as _convert_units
+
+from aviary.utils.utils import wrapped_convert_units
 
 Units = str
 ValueAndUnits = Tuple[Any, Units]
@@ -148,10 +149,8 @@ class NamedValues(Collection):
 
         val, old_units = item
 
-        if isinstance(val, tuple):
-            val = tuple(_convert_units(v, old_units, units) for v in val)
-        elif old_units != units:
-            val = _convert_units(val, old_units, units)
+        if old_units != units:
+            val = wrapped_convert_units((val, old_units), units)
 
         return val
 

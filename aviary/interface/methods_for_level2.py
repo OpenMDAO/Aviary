@@ -33,7 +33,7 @@ from aviary.subsystems.premission import CorePreMission
 from aviary.subsystems.propulsion.propulsion_builder import CorePropulsionBuilder
 
 from aviary.utils.aviary_values import AviaryValues
-from aviary.utils.functions import wrapped_convert_units
+from aviary.utils.utils import wrapped_convert_units
 from aviary.utils.functions import convert_strings_to_data, set_value
 from aviary.utils.merge_variable_metadata import merge_meta_data
 from aviary.utils.preprocessors import preprocess_options
