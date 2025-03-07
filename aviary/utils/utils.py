@@ -45,8 +45,18 @@ def wrapped_convert_units(val_unit_tuple, new_units):
         return None
 
     if isiterable(value):
+        # tuples are immutable, so we have to convert to list to modify each index
+        if isinstance(value, tuple):
+            istuple = True
+            value = list(value)
+        else:
+            istuple = False
+
         for i, item in enumerate(value):
             value[i] = convert_units(item, units, new_units)
+
+        if istuple:
+            value = tuple(value)
     else:
         value = convert_units(value, units, new_units)
 
