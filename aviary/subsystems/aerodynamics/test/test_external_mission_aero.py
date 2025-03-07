@@ -2,7 +2,7 @@ from copy import deepcopy
 import unittest
 
 from openmdao.utils.assert_utils import assert_near_equal
-from openmdao.utils.testing_utils import require_pyoptsparse
+from openmdao.utils.testing_utils import require_pyoptsparse, use_tempdirs
 
 import aviary.api as av
 from aviary.examples.external_subsystems.custom_aero.custom_aero_builder import CustomAeroBuilder
@@ -10,6 +10,7 @@ from aviary.examples.external_subsystems.custom_aero.custom_aero_builder import 
 phase_info = deepcopy(av.default_height_energy_phase_info)
 
 
+@use_tempdirs
 class TestBattery(av.TestSubsystemBuilderBase):
     """
     Test replacing internal drag calculation with an external subsystem.
