@@ -5,6 +5,7 @@ from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.variables import Dynamic
 from aviary.mission.gasp_based.ode.breguet_cruise_ode import BreguetCruiseODESolution
 
+
 class CruisePhaseOptions(AviaryOptionsDictionary):
 
     def declare_options(self):
