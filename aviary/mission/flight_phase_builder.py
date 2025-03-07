@@ -586,7 +586,7 @@ class FlightPhaseBase(PhaseBuilderBase):
                 Dynamic.Mission.ALTITUDE,
                 loc='initial',
                 equals=initial_altitude,
-                units=altitude_bounds[0][1],
+                units=altitude_bounds[1],
                 ref=1.0e4,
             )
 
