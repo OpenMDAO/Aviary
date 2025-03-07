@@ -108,6 +108,10 @@ class GASPEngineType(Enum):
     # for geometry and mass
     ROTARY_RCWSZ = 14
 
+    @classmethod
+    def get_element_by_name(cls, val: str):
+        return next((c for c in cls if c.name == val), None)
+
 
 @unique
 class FlapType(Enum):
