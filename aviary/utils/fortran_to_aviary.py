@@ -362,7 +362,8 @@ def process_and_store_data(
             # if the last element is a unit, remove it from the list and update the
             # variable's units
             data_units = data_list.pop()
-        var_values = convert_strings_to_data(data_list, aviary_var_name, aviary_data_type)
+        var_values = convert_strings_to_data(
+            data_list, aviary_var_name, aviary_data_type)
     else:
         skip_variable = True
         var_values = []
