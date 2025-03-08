@@ -662,7 +662,8 @@ add_meta_data(
     units='lbm',
     desc='baggage mass per passenger',
     option=True,
-    default_value=0.0,
+    types=float,
+    default_value=None,
 )
 
 add_meta_data(
