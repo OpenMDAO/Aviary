@@ -191,7 +191,7 @@ def parse_inputs(
                         var_types = float
                 except:
                     var_types = None
-            var_values = convert_strings_to_data(data_list, var_types)
+            var_values = convert_strings_to_data(data_list, var_name, var_types)
 
             if var_name in meta_data.keys():
                 aircraft_values = set_value(
