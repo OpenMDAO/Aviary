@@ -5596,7 +5596,7 @@ add_meta_data(
     desc='wing station locations as fractions of semispan; overwrites '
     'station_locations',
     option=True,
-    types=(float, np.ndarray, list),
+    types=(float, np.ndarray, list),  # TODO: do we need 'list' here?
     default_value=None,
 )
 
