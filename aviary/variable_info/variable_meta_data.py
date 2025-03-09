@@ -594,7 +594,7 @@ add_meta_data(
     historical_name={"GASP": 'INGASP.DELWFC', "FLOPS": None, "LEAPS1": None},
     units='lbm',
     desc='incremental flight controls mass',
-    default_value=0,
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -603,7 +603,7 @@ add_meta_data(
     historical_name={"GASP": 'INGASP.SKSAS', "FLOPS": None, "LEAPS1": None},
     units='lbm',
     desc='mass of stability augmentation system',
-    default_value=0,
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -612,7 +612,7 @@ add_meta_data(
     historical_name={"GASP": 'INGASP.CK19', "FLOPS": None, "LEAPS1": None},
     units="unitless",
     desc='technology factor on stability augmentation system mass',
-    default_value=1,
+    default_value=1.0,
 )
 
 add_meta_data(
@@ -662,6 +662,7 @@ add_meta_data(
     units='lbm',
     desc='baggage mass per passenger',
     option=True,
+    types=float,
     default_value=None,
 )
 
@@ -1047,7 +1048,7 @@ add_meta_data(
     units='lbm',
     desc='total mass of one passenger and their bags',
     option=True,
-    default_value=200,
+    default_value=200.0,
 )
 
 add_meta_data(
@@ -1454,7 +1455,7 @@ add_meta_data(
     historical_name={"GASP": 'INGASP.VMLFSL', "FLOPS": None, "LEAPS1": None},
     units='mi/h',
     desc='maximum structural design flight speed in miles per hour',
-    default_value=0,
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -1494,7 +1495,7 @@ add_meta_data(
     option=True,
     units="lbm",
     desc='required fuel reserves: directly in lbm',
-    default_value=0,
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -1508,7 +1509,7 @@ add_meta_data(
     'If it is 0.5, the reserve fuel is half of the mission fuel (one third of the total fuel). Note '
     'it can be greater than 1. If it is 2, there would be twice as much reserve fuel as mission fuel '
     '(the total fuel carried would be 1/3 for the mission and 2/3 for the reserve)',
-    default_value=0,
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -1536,7 +1537,7 @@ add_meta_data(
     historical_name={"GASP": 'INGASP.DELWST', "FLOPS": None, "LEAPS1": None},
     units='lbm',
     desc='structural mass increment that is added (or removed) after the structural mass is calculated',
-    default_value=0,
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -2243,6 +2244,7 @@ add_meta_data(
     units='lbf',
     desc='maximum thrust of an engine provided in engine model files',
     default_value=None,
+    types=float,
     option=True,
 )
 
@@ -3107,7 +3109,7 @@ add_meta_data(
     units='inch',
     desc='width of the aisles in the passenger cabin',
     option=True,
-    default_value=24,
+    default_value=24.0,
 )
 
 # TODO FLOPS is not average diameter, but rather a reference diameter using max
@@ -3205,7 +3207,7 @@ add_meta_data(
     historical_name={"GASP": 'INGASP.CKF', "FLOPS": None, "LEAPS1": None},
     units='unitless',
     desc='fuselage form factor',
-    default_value=1,
+    default_value=1.0,
 )
 
 add_meta_data(
@@ -3298,7 +3300,7 @@ add_meta_data(
     historical_name={"GASP": 'INGASP.SKB', "FLOPS": None, "LEAPS1": None},
     units="unitless",
     desc='mass trend coefficient of fuselage',
-    default_value=136,
+    default_value=136.0,
 )
 
 add_meta_data(
@@ -3375,7 +3377,7 @@ add_meta_data(
     historical_name={"GASP": 'INGASP.ELODN', "FLOPS": None, "LEAPS1": None},
     units="unitless",
     desc='length to diameter ratio of nose cone',
-    default_value=1,
+    default_value=1.0,
 )
 
 add_meta_data(
@@ -3474,7 +3476,7 @@ add_meta_data(
     units='inch',
     desc='pitch of the economy class seats',
     option=True,
-    default_value=29,
+    default_value=29.0,
 )
 
 add_meta_data(
@@ -3484,7 +3486,7 @@ add_meta_data(
     units='inch',
     desc='width of the economy class seats',
     option=True,
-    default_value=20,
+    default_value=20.0,
 )
 
 add_meta_data(
@@ -3493,7 +3495,7 @@ add_meta_data(
     historical_name={"GASP": 'INGASP.ELODT', "FLOPS": None, "LEAPS1": None},
     units="unitless",
     desc='length to diameter ratio of tail cone',
-    default_value=1,
+    default_value=1.0,
 )
 
 add_meta_data(
@@ -4002,7 +4004,7 @@ add_meta_data(
     historical_name={"GASP": 'INGASP.YMG', "FLOPS": None, "LEAPS1": None},
     units="unitless",
     desc='span fraction of main gear on wing (0=on fuselage, 1=at tip)',
-    default_value=0,
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -4119,7 +4121,7 @@ add_meta_data(
     historical_name={"GASP": 'INGASP.SKTL', "FLOPS": None, "LEAPS1": None},
     units="unitless",
     desc='factor on tail mass for arresting hook',
-    default_value=1,
+    default_value=1.0,
 )
 
 add_meta_data(
@@ -4137,7 +4139,7 @@ add_meta_data(
     historical_name={"GASP": 'INGASP.CK12', "FLOPS": None, "LEAPS1": None},
     units="unitless",
     desc='technology factor on landing gear mass',
-    default_value=1,
+    default_value=1.0,
 )
 
 #  _   _                         _   _
@@ -4672,7 +4674,7 @@ add_meta_data(
     historical_name={"GASP": 'INGASP.WSTRUT', "FLOPS": None, "LEAPS1": None},
     units='lbm',
     desc='mass of the strut',
-    default_value=0,
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -4681,7 +4683,7 @@ add_meta_data(
     historical_name={"GASP": 'INGASP.SKSTRUT', "FLOPS": None, "LEAPS1": None},
     units="unitless",
     desc='mass trend coefficient of the strut',
-    default_value=0,
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -4690,7 +4692,7 @@ add_meta_data(
     historical_name={"GASP": 'INGASP.TCSTRT', "FLOPS": None, "LEAPS1": None},
     units="unitless",
     desc='thickness to chord ratio of the strut',
-    default_value=0,
+    default_value=0.0,
 )
 
 #  ____
@@ -5459,7 +5461,7 @@ add_meta_data(
     historical_name={"GASP": 'INGASP.SKWFOLD', "FLOPS": None, "LEAPS1": None},
     units="unitless",
     desc='mass trend coefficient of the wing fold',
-    default_value=0,
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -5468,7 +5470,7 @@ add_meta_data(
     historical_name={"GASP": 'INGASP.YWFOLD', "FLOPS": None, "LEAPS1": None},
     units='ft',
     desc='folded wingspan',
-    default_value=0,
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -5477,7 +5479,7 @@ add_meta_data(
     historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
     units="unitless",
     desc='folded wingspan',
-    default_value=1,
+    default_value=1.0,
 )
 
 add_meta_data(
@@ -5595,6 +5597,7 @@ add_meta_data(
     desc='wing station locations as fractions of semispan; overwrites '
     'station_locations',
     option=True,
+    types=(float, np.ndarray, list),  # TODO: do we need 'list' here?
     default_value=None,
 )
 
@@ -5784,7 +5787,7 @@ add_meta_data(
     historical_name={"GASP": 'INGASP.DELLED', "FLOPS": None, "LEAPS1": None},
     units='deg',
     desc='leading edge slat deflection during landing',
-    default_value=10,
+    default_value=10.0,
 )
 
 add_meta_data(
@@ -5881,7 +5884,7 @@ add_meta_data(
     historical_name={"GASP": 'INGASP.DELLEO', "FLOPS": None, "LEAPS1": None},
     units='deg',
     desc='optimum slat deflection angle',
-    default_value=20,
+    default_value=20.0,
 )
 
 add_meta_data(
@@ -6911,7 +6914,7 @@ add_meta_data(
     units='unitless',
     desc='Fixed design lift coefficient. If input, overrides design lift '
     'coefficient computed by EDET.',
-    default_value=None,
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -7022,7 +7025,7 @@ add_meta_data(
     historical_name={"GASP": 'INGASP.ALTLND', "FLOPS": None, "LEAPS1": None},
     units='ft',
     desc='altitude of airport where aircraft lands',
-    default_value=0,
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -7031,7 +7034,7 @@ add_meta_data(
     historical_name={"GASP": 'INGASP.TDELAY', "FLOPS": None, "LEAPS1": None},
     units='s',
     desc='time delay between touchdown and the application of brakes',
-    default_value=1,
+    default_value=1.0,
 )
 
 add_meta_data(
@@ -7179,7 +7182,7 @@ add_meta_data(
     historical_name={"GASP": 'INGASP.RSMX', "FLOPS": None, "LEAPS1": None},
     units='ft/min',
     desc='maximum rate of sink during glide',
-    default_value=1000,
+    default_value=1000.0,
 )
 
 add_meta_data(
@@ -7188,7 +7191,7 @@ add_meta_data(
     historical_name={"GASP": 'INGASP.HAPP', "FLOPS": None, "LEAPS1": None},
     units='ft',
     desc='landing obstacle height above the ground at airport altitude',
-    default_value=50,
+    default_value=50.0,
 )
 
 add_meta_data(
@@ -7263,7 +7266,7 @@ add_meta_data(
     historical_name={"GASP": 'INGASP.SINKTD', "FLOPS": None, "LEAPS1": None},
     units='ft/s',
     desc='sink rate at touchdown',
-    default_value=3,
+    default_value=3.0,
 )
 
 #   ____    _         _                 _     _
@@ -7472,7 +7475,7 @@ add_meta_data(
     historical_name={"GASP": 'INGASP.DV1', "FLOPS": None, "LEAPS1": None},
     units='kn',
     desc='increment of engine failure decision speed above stall speed',
-    default_value=5,
+    default_value=5.0,
 )
 
 add_meta_data(
@@ -7577,7 +7580,7 @@ add_meta_data(
     },
     units='lbm',
     desc='fuel burned during simple takeoff calculation',
-    default_value=None,
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -7664,7 +7667,7 @@ add_meta_data(
     historical_name={"GASP": 'INGASP.DVR', "FLOPS": None, "LEAPS1": None},
     units='kn',
     desc='increment of takeoff rotation speed above engine failure decision speed',
-    default_value=5,
+    default_value=5.0,
 )
 
 add_meta_data(
