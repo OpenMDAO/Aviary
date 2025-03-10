@@ -272,9 +272,9 @@ def add_aviary_option(comp, name, val=_unspecified, units=None, desc=None, meta_
     types = meta['types']
     if meta['multivalue']:
         if isinstance(types, tuple):
-            types = (list, *types)
+            types = (list, np.ndarray, *types)
         else:
-            types = (list, types)
+            types = (list, np.ndarray, types)
 
     if val is _unspecified:
         val = meta['default_value']

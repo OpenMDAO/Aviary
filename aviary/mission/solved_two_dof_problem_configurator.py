@@ -25,7 +25,7 @@ class SolvedTwoDOFProblemConfigurator(ProblemConfiguratorBase):
             Problem that owns this builder.
         """
         if prob.engine_builders is None:
-            prob.engine_builders = build_engine_deck(prob.aviary_inputs)
+            prob.engine_builders = [build_engine_deck(prob.aviary_inputs)]
 
         # This doesn't really have much value, but is needed for initializing
         # an objective-related component that still lives in level 2.

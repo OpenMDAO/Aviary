@@ -19,7 +19,7 @@ class CruiseODETestCase(unittest.TestCase):
         aviary_options = get_option_defaults()
         aviary_options.set_val(Aircraft.Engine.GLOBAL_THROTTLE, True)
         default_mission_subsystems = get_default_mission_subsystems(
-            'GASP', build_engine_deck(aviary_options)
+            'GASP', [build_engine_deck(aviary_options)]
         )
 
         self.prob.model = BreguetCruiseODESolution(
