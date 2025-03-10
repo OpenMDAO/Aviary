@@ -20,7 +20,7 @@ class TestSubsystemsMission(unittest.TestCase):
                 'external_subsystems': [BatteryBuilder()],
                 'optimize_mass': True,
             },
-            'cruise': {
+            'cruise1': {
                 "subsystem_options": {"core_aerodynamics": {"method": "computed"}},
                 'external_subsystems': [BatteryBuilder()],
                 "user_options": {
@@ -41,7 +41,31 @@ class TestSubsystemsMission(unittest.TestCase):
                     "constrain_final": False,
                     "fix_duration": False,
                     "initial_bounds": ((0.0, 0.0), "min"),
-                    "duration_bounds": ((10.0, 30.0), "min"),
+                    "duration_bounds": ((5.0, 30.0), "min"),
+                },
+            },
+            'cruise2': {
+                "subsystem_options": {"core_aerodynamics": {"method": "computed"}},
+                'external_subsystems': [BatteryBuilder()],
+                "user_options": {
+                    "optimize_mach": False,
+                    "optimize_altitude": False,
+                    "polynomial_control_order": 1,
+                    "num_segments": 5,
+                    "order": 3,
+                    "solve_for_distance": False,
+                    "initial_mach": (0.72, "unitless"),
+                    "final_mach": (0.72, "unitless"),
+                    "mach_bounds": ((0.7, 0.74), "unitless"),
+                    "initial_altitude": (35000.0, "ft"),
+                    "final_altitude": (35000.0, "ft"),
+                    "altitude_bounds": ((23000.0, 38000.0), "ft"),
+                    "throttle_enforcement": "boundary_constraint",
+                    "fix_initial": False,
+                    "constrain_final": False,
+                    "fix_duration": False,
+                    "initial_bounds": ((0.0, 0.0), "min"),
+                    "duration_bounds": ((5.0, 30.0), "min"),
                 },
             },
             'post_mission': {
@@ -86,13 +110,17 @@ class TestSubsystemsMission(unittest.TestCase):
 
         prob.run_aviary_problem()
 
-        electric_energy_used = prob.get_val(
-            'traj.cruise.timeseries.'
+        electric_energy_used_cruise2 = prob.get_val(
+            'traj.cruise2.timeseries.'
             f'{av.Dynamic.Vehicle.CUMULATIVE_ELECTRIC_ENERGY_USED}',
             units='kW*h',
         )
-        soc = prob.get_val(
-            'traj.cruise.timeseries.'
+        soc_cruise1 = prob.get_val(
+            'traj.cruise1.timeseries.'
+            f'{av.Dynamic.Vehicle.BATTERY_STATE_OF_CHARGE}',
+        )
+        soc_cruise2 = prob.get_val(
+            'traj.cruise2.timeseries.'
             f'{av.Dynamic.Vehicle.BATTERY_STATE_OF_CHARGE}',
         )
         fuel_burned = prob.get_val(av.Mission.Summary.FUEL_BURNED, units='lbm')
@@ -104,7 +132,7 @@ class TestSubsystemsMission(unittest.TestCase):
         # check battery state-of-charge over mission
 
         assert_near_equal(
-            soc.ravel(),
+            soc_cruise1.ravel(),
             [0.9999957806265609,
              0.9759111919233964,
              0.9426824352993478,
@@ -125,6 +153,31 @@ class TestSubsystemsMission(unittest.TestCase):
              0.4667330453186142,
              0.43355843033318553,
              0.42305951000787007],
+             1e-7,
+        )
+
+        assert_near_equal(
+            soc_cruise2.ravel(),
+            [0.7066259172513626,
+             0.6943965083029002,
+             0.677523294860927,
+             0.672183191828372,
+             0.672183191828372,
+             0.6472108945884663,
+             0.6127578690420414,
+             0.601854485338024,
+             0.601854485338024,
+             0.5721725827519708,
+             0.531222768718283,
+             0.5182635373126063,
+             0.5182635373126063,
+             0.4933049316352059,
+             0.4588707938555728,
+             0.44797338714853385,
+             0.44797338714853385,
+             0.435755243772871,
+             0.41889757299299735,
+             0.4135623887905029],
             1e-7,
         )
 
