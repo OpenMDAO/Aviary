@@ -25,7 +25,7 @@ from aviary.variable_info.variables import Aircraft, Dynamic, Mission, Settings
 # ASCII art from http://patorjk.com/software/taag/#p=display&h=0&f=Big&t=
 # Super categories such as aircraft and mission are in 'Blocks' font
 # Sub categories such as AntiIcing and Wing are in 'Big' font
-# Additional sub categories are in 'Small' font
+# Additional sub categories are in 'Small' foFnt
 # ---------------------------
 _MetaData = {}
 
@@ -316,7 +316,7 @@ add_meta_data(
     historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
     units='kW*h/L',
     desc='volumetric density of the battery pack',
-    default_value=0,
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -1235,6 +1235,8 @@ add_meta_data(
     historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
     units='unitless',
     desc='Drag polar computed during Aviary pre-mission.',
+    multivalue=True,
+    types=float
 )
 
 add_meta_data(
@@ -1416,6 +1418,8 @@ add_meta_data(
                      },
     units='unitless',
     desc='Lift dependent drag polar computed during Aviary pre-mission.',
+    multivalue=True,
+    types=float
 )
 
 add_meta_data(
@@ -1427,6 +1431,8 @@ add_meta_data(
                      },
     units='unitless',
     desc='Lift independent drag polar computed during Aviary pre-mission.',
+    multivalue=True,
+    types=float
 )
 
 add_meta_data(
@@ -1435,6 +1441,8 @@ add_meta_data(
     historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
     units='unitless',
     desc='Lift polar computed during Aviary pre-mission.',
+    multivalue=True,
+    types=float
 )
 
 add_meta_data(
@@ -2141,7 +2149,7 @@ add_meta_data(
     units='unitless',
     desc='number of fuselage mounted engines per model',
     option=True,
-    types=(np.ndarray, int),
+    types=int,
     multivalue=True,
     default_value=0
 )
@@ -2158,7 +2166,7 @@ add_meta_data(
     units='unitless',
     desc='number of wing mounted engines per model',
     option=True,
-    types=(np.ndarray, int),
+    types=int,
     multivalue=True,
     default_value=0
 )
@@ -2184,6 +2192,7 @@ add_meta_data(
     units="unitless",
     desc='technology factor on mass of engine pods',
     default_value=1.0,
+    multivalue=True
 )
 
 add_meta_data(
@@ -2589,7 +2598,7 @@ add_meta_data(
     units='unitless',
     desc='number of blades per propeller',
     option=True,
-    types=(int, np.ndarray),
+    types=int,
     multivalue=True,
     default_value=0
 )
@@ -3486,7 +3495,7 @@ add_meta_data(
     units='inch',
     desc='pitch of the economy class seats',
     option=True,
-    default_value=29,
+    default_value=29.0,
 )
 
 add_meta_data(
@@ -3496,7 +3505,7 @@ add_meta_data(
     units='inch',
     desc='width of the economy class seats',
     option=True,
-    default_value=20,
+    default_value=20.0,
 )
 
 add_meta_data(
@@ -3505,7 +3514,7 @@ add_meta_data(
     historical_name={"GASP": 'INGASP.ELODT', "FLOPS": None, "LEAPS1": None},
     units="unitless",
     desc='length to diameter ratio of tail cone',
-    default_value=1,
+    default_value=1.0,
 )
 
 add_meta_data(
@@ -5701,10 +5710,11 @@ add_meta_data(
         "LEAPS1": 'aircraft.inputs.L0_detailed_wing.wing_station_load_path_sweeps',
     },
     units='deg',
+    types=float,
     desc='Define the sweep of load path at station locations. Typically '
     'parallel to rear spar tending toward max t/c of airfoil. The Ith value '
     'is used between wing stations I and I+1.',
-    default_value=0.0,
+    default_value=[0.0],
     multivalue=True
 )
 

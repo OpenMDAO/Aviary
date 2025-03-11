@@ -16,16 +16,14 @@ OptionalValueAndUnits : type alias
 class AviaryValues
     define a collection of named values with associated units
 '''
-import operator
-from enum import EnumMeta
-from functools import reduce
+from enum import Enum
 
 import numpy as np
 from openmdao.utils.units import convert_units as _convert_units
 
 from aviary.utils.named_values import NamedValues, get_items, get_keys, get_values
 from aviary.variable_info.variable_meta_data import _MetaData
-from aviary.utils.utils import isiterable
+from aviary.utils.utils import isiterable, enum_setter
 
 
 class AviaryValues(NamedValues):
@@ -69,12 +67,13 @@ class AviaryValues(NamedValues):
                 # Prefer casting to Enum if possible
                 # Special handling to access an Enum member from either the member name
                 # or its value.
-                if EnumMeta in expected_types:
-                    if isiterable(val):
-                        my_val = [self._convert_to_enum(
-                            item, _type) for item in val]
-                    else:
-                        my_val = self._convert_to_enum(val, _type)
+                is_enum = False
+                for _type in expected_types:
+                    if issubclass(_type, Enum):
+                        is_enum = True
+                        break
+                if is_enum:
+                    my_val = enum_setter(meta_data[key], val)
                 else:
                     for _type in expected_types:
                         try:
@@ -90,18 +89,6 @@ class AviaryValues(NamedValues):
                             pass
                         else:
                             break
-
-            # Special handling if the variable is supposed to be an array
-            # If the item is supposed to be an iterable...
-            # if meta_data[key]['multivalue']:
-            #     # but the provided value is not...
-            #     if not isiterable(my_val):
-            #         # make object the correct iterable
-            #         if tuple in expected_types:
-            #             my_val = (my_val,)
-            #         else:
-            #             dtype = type(meta_data[key]['default_value'])
-            #             my_val = np.array([my_val], dtype)
 
             self._check_type(key, my_val, meta_data=meta_data)
             self._check_units_compatibility(key, my_val, units, meta_data=meta_data)
@@ -135,7 +122,7 @@ class AviaryValues(NamedValues):
 
         # numpy arrays have special typings. Convert to list using standard Python types
         # numpy arrays do not allow mixed types, only have to check one entry
-        # empty arrays do not need this check
+        # empty arrays do not need this step
         if isinstance(val, np.ndarray) and len(val) > 0:
             val = val.tolist()
             while isiterable(val):
@@ -173,22 +160,23 @@ class AviaryValues(NamedValues):
                 f'The units {units} which you have provided for {key} are invalid.')
         except TypeError:
             raise TypeError(
-                f'The base units of {key} are {expected_units}, and you have tried to set {key} with units of {units}, which are not compatible.')
+                f'The base units of {key} are {expected_units}, and you have tried to '
+                f'set {key} with units of {units}, which are not compatible.')
         except BaseException:
             raise KeyError('There is an unknown error with your units.')
 
-    def _convert_to_enum(self, val, enum_type):
-        if isinstance(val, str):
-            try:
-                # see if str maps to ENUM value
-                return enum_type(val)
-            except ValueError:
-                # str instead maps to ENUM name
-                return enum_type[val.upper()]
+    # def _convert_to_enum(self, val, enum_type):
+    #     if isinstance(val, str):
+    #         try:
+    #             # see if str maps to ENUM value
+    #             return enum_type(val)
+    #         except ValueError:
+    #             # str instead maps to ENUM name
+    #             return enum_type(val.upper())
 
 
 def _flatten_iters(iterable):
-    """Flattens iterables of any type and size"""
+    """Flattens iterables of any type and dimension"""
     for item in iterable:
         try:
             yield from iter(item)

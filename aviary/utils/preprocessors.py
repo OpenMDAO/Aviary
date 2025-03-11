@@ -395,6 +395,7 @@ def preprocess_propulsion(aviary_options: AviaryValues,
             # If dtype has multiple options, prefer type of default value
             # Otherwise, use the first type in the tuple
 
+            # v-- old comment, may need to be removed --v
             # , and create an "empty" value
             # of that type (for numpy array dtyping)
 
@@ -411,6 +412,8 @@ def preprocess_propulsion(aviary_options: AviaryValues,
                 typeset = (metadata[var]['types'])
             else:
                 typeset = (metadata[var]['types'],)
+            # Variables are multidimensional if their base types have iterables, and are
+            # flagged as `multivalue`
             multidimensional = set(typeset) & set(
                 (list, tuple, np.ndarray)) and multivalue
             # if multidimensional:

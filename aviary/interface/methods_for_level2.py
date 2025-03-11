@@ -34,7 +34,7 @@ from aviary.subsystems.propulsion.propulsion_builder import CorePropulsionBuilde
 
 from aviary.utils.aviary_values import AviaryValues
 from aviary.utils.utils import wrapped_convert_units
-from aviary.utils.functions import convert_strings_to_data, set_value
+from aviary.utils.functions import convert_strings_to_data
 from aviary.utils.merge_variable_metadata import merge_meta_data
 from aviary.utils.preprocessors import preprocess_options
 from aviary.utils.process_input_decks import create_vehicle, update_GASP_options

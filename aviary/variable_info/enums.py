@@ -189,9 +189,9 @@ class ThrottleAllocation(Enum):
     STATIC is specified by the optimizer as one value for the whole phase.
     DYNAMIC is specified by the optimizer at each point in the phase.
     """
-    FIXED = 1
-    STATIC = 2
-    DYNAMIC = 3
+    FIXED = 'fixed'
+    STATIC = 'static'
+    DYNAMIC = 'dynamic'
 
 
 class Verbosity(IntEnum):
