@@ -525,9 +525,10 @@ def glue_actions(cmd, curr_glued=None, glue_default=False, glue_choices=False, m
             glue_variable(action.dest, md_code=md_code)
             curr_glued.append(action.dest)
         if glue_default:
-            if str(action.default) not in curr_glued:
-                glue_variable(str(action.default), md_code=True)
-                curr_glued.append(str(action.default))
+            action_default = f'{action.dest}_default'
+            if action_default not in curr_glued:
+                glue_variable(action_default, str(action.default), md_code=True)
+                curr_glued.append(action_default)
         if glue_choices:
             if action.choices is not None:
                 for choice in action.choices:
@@ -578,11 +579,11 @@ def glue_function_arguments(func, curr_glued=None, glue_default=False, md_code=F
         if param_name not in curr_glued and param_name != 'self':
             glue_variable(param_name, md_code=md_code)
             curr_glued.append(param_name)
-            if glue_default:
-                if str(param.default) is not param.empty:
-                    if str(param.default) not in curr_glued:
-                        glue_variable(str(param.default), md_code=md_code)
-                        curr_glued.append(str(param.default))
+            if glue_default and str(param.default) is not param.empty:
+                param_default = param_name + '_default'
+                if param_default not in curr_glued:
+                    glue_variable(param_default, str(param.default), md_code=md_code)
+                    curr_glued.append(param_default)
 
 
 def glue_class_options(obj,  curr_glued=None, md_code=False):
