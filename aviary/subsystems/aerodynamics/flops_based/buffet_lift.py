@@ -34,7 +34,7 @@ class BuffetLift(om.ExplicitComponent):
         add_aviary_input(self, Aircraft.Wing.THICKNESS_TO_CHORD, units='unitless')
 
         # Declare outputs
-        self.add_output("DELCLB", shape=(nn), units='unitless',
+        self.add_output("DELCLB", shape=nn, units='unitless',
                         desc="Delta lift coefficient before buffet onset")
 
     def setup_partials(self):
