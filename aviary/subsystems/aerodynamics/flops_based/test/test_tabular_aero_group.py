@@ -6,6 +6,7 @@ import numpy as np
 
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
+from openmdao.utils.testing_utils import use_tempdirs
 
 from aviary.interface.default_phase_info.height_energy import phase_info
 from aviary.interface.methods_for_level2 import AviaryProblem
@@ -31,6 +32,7 @@ CDI_table = "subsystems/aerodynamics/flops_based/test/large_single_aisle_1_CDI_p
 CD0_table = "subsystems/aerodynamics/flops_based/test/large_single_aisle_1_CD0_polar.csv"
 
 
+@use_tempdirs
 class TabularAeroGroupFileTest(unittest.TestCase):
     # Test drag comp with data from file, structured grid
     def setUp(self):
@@ -130,6 +132,7 @@ class TabularAeroGroupFileTest(unittest.TestCase):
         assert_near_equal(wing_area, actual_wing_area)
 
 
+@use_tempdirs
 class TabularAeroGroupDataTest(unittest.TestCase):
     # Test tabular drag comp with training data, structured grid
     def setUp(self):
