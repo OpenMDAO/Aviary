@@ -149,11 +149,11 @@ def convert_strings_to_data(string_list, data_type=None):
                         except:
                             err_msg += f'Expected data type: {data_type}, but the data is {dat}.\n'
                 elif dtype is bool:
-                    if dat.lower() == 'true':
+                    if dat.lower() == 'true' or dat == '1' or dat == '1.0':
                         value_list[ii] = True
                         err_msg = ''
                         break
-                    elif dat.lower() == 'false':
+                    elif dat.lower() == 'false' or dat == '0' or dat == '0.0':
                         value_list[ii] = False
                         err_msg = ''
                         break
