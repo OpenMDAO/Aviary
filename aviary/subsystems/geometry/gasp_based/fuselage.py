@@ -24,7 +24,7 @@ class FuselageParameters(om.ExplicitComponent):
     def setup(self):
 
         add_aviary_input(self, Aircraft.Fuselage.DELTA_DIAMETER, units='ft')
-        add_aviary_input(self, Aircraft.Fuselage.PILOT_COMPARTMENT_LENGTH, units='ft')
+        # add_aviary_input(self, Aircraft.Fuselage.PILOT_COMPARTMENT_LENGTH, units='ft')
 
         add_aviary_output(self, Aircraft.Fuselage.AVG_DIAMETER, units='inch')
         self.add_output("cabin_height", val=0, units="ft", desc="HC: height of cabin")
@@ -150,7 +150,7 @@ class FuselageSize(om.ExplicitComponent):
         )
 
     def compute(self, inputs, outputs):
-        LoverD_nose = inputs[Aircraft.Fuselage.NOSE_FINENESS]
+        LoverD_nose = inputs[Aircraft.Fuselage.NOSE_FINENESS]  # bad name, it is length to diameter ratio of nose cone of fuselage
         LoverD_tail = inputs[Aircraft.Fuselage.TAIL_FINENESS]
         cockpit_len = inputs[Aircraft.Fuselage.PILOT_COMPARTMENT_LENGTH]
         fus_SA_scaler = inputs[Aircraft.Fuselage.WETTED_AREA_SCALER]

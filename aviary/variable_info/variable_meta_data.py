@@ -768,7 +768,7 @@ add_meta_data(
 )
 
 add_meta_data(
-    Aircraft.CrewPayload.Design.NUM_FIRST_CLASS,
+    Aircraft.CrewPayload.Design.NUM_FIRST_CLASS,  # not used in gasp_based?
     meta_data=_MetaData,
     historical_name={
         "GASP": None,
@@ -4325,7 +4325,7 @@ add_meta_data(
 )
 
 add_meta_data(
-    Aircraft.Nacelle.WETTED_AREA,
+    Aircraft.Nacelle.WETTED_AREA,  # not used in gasp_based?
     meta_data=_MetaData,
     historical_name={
         "GASP": None,
