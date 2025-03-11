@@ -40,7 +40,7 @@ class GroundEffect(om.ExplicitComponent):
 
         self.add_input(Dynamic.Vehicle.ANGLE_OF_ATTACK, val=np.zeros(nn), units='rad')
 
-        add_aviary_input(self, Dynamic.Mission.ALTITUDE, shape=(nn), units='m')
+        add_aviary_input(self, Dynamic.Mission.ALTITUDE, shape=nn, units='m')
 
         add_aviary_input(self, Dynamic.Mission.FLIGHT_PATH_ANGLE, shape=(nn),
                          units='rad')
