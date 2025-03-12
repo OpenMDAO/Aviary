@@ -25,7 +25,8 @@ class TestTypes(unittest.TestCase):
         except TypeError as err:
             self.assertEqual(
                 str(err),
-                f"AviaryValues: set_val({Aircraft.Design.PART25_STRUCTURAL_CATEGORY}): unsupported units: None"
+                f"AviaryValues: set_val({
+                    Aircraft.Design.PART25_STRUCTURAL_CATEGORY}): unsupported units: None"
             )
         else:
             self.fail('Expecting correct units to pass.')
@@ -110,9 +111,10 @@ class TestTypes(unittest.TestCase):
 
         try:
             vals.set_val(Aircraft.Engine.TYPE, FlapType.DOUBLE_SLOTTED)
-        except ValueError as err:
-            self.assertEqual(str(err),
-                             "<FlapType.DOUBLE_SLOTTED: 4> is not a valid GASPEngineType")
+        except TypeError as err:
+            self.assertEqual(
+                str(err), "aircraft:engine:type is of type(s) <enum 'GASPEngineType'> "
+                "but you have provided a value of type <enum 'FlapType'>.")
         else:
             self.fail("Expecting ValueError.")
 
@@ -230,13 +232,13 @@ class TestVariableExtension(unittest.TestCase):
         filename = get_path(
             'models/engines/turbofan_23k_1.deck')
         option_defaults.set_val(ExtendedAircraft.Engine.DATA_FILE, filename)
-        option_defaults.set_val(ExtendedAircraft.Wing.AERO_CENTER, val=5, units='ft',
+        option_defaults.set_val(ExtendedAircraft.Wing.AERO_CENTER, val=5.0, units='ft',
                                 meta_data=ExtendedMetaData)
 
         check_val = option_defaults.get_val(
             ExtendedAircraft.Wing.AERO_CENTER, units='inch')
 
-        assert_near_equal(check_val, 60, 1e-9)
+        assert_near_equal(check_val, np.array([60]), 1e-9)
 
 
 if __name__ == "__main__":

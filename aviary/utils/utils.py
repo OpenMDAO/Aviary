@@ -100,7 +100,7 @@ def enum_setter(opt_meta, value):
     elif isinstance(value, str):
         try:
             return enum_class(value)
-        except AttributeError:
+        except ValueError:
             return getattr(enum_class, value.upper())
 
     elif isiterable(value):

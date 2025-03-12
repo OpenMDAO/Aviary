@@ -104,7 +104,7 @@ def add_meta_data(
             # Try casting to float, as it is common for users to intend use of floats but
             # not include decimal points in default_value
             default_value = float(default_value)
-        except ValueError:
+        except (ValueError, TypeError):
             pass  # default_value is not a numerical value
         types = type(default_value)
 

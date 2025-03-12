@@ -2421,7 +2421,7 @@ add_meta_data(
     historical_name={"GASP": 'INGASP.NTYE', "FLOPS": None, "LEAPS1": None},
     option=True,
     default_value=GASPEngineType.TURBOJET,
-    types=(GASPEngineType, int, str),
+    types=GASPEngineType,
     multivalue=True,
     units="unitless",
     desc='specifies engine type used for GASP-based engine mass calculation',
@@ -2439,7 +2439,7 @@ add_meta_data(
     desc='Engine wing mount locations as fractions of semispan; (NUM_WING_ENGINES)/2 values '
     'are input',
     types=(float, list, np.ndarray),
-    default_value=np.array([0.0]),
+    default_value=[0.0],
     multivalue=True
 )
 
@@ -5463,7 +5463,7 @@ add_meta_data(
     historical_name={"GASP": 'INGASP.JFLTYP', "FLOPS": None, "LEAPS1": None},
     units="unitless",
     default_value=FlapType.DOUBLE_SLOTTED,
-    types=(FlapType, int, str),
+    types=FlapType,
     multivalue=True,
     option=True,
     desc='Set the flap type. Available choices are: plain, split, single_slotted, '
