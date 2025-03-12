@@ -577,7 +577,8 @@ class AviaryProblem(om.Problem):
 
         if self.analysis_scheme is AnalysisScheme.COLLOCATION:
             phases = list(phase_info.keys())
-            traj = self.model.add_subsystem('traj', dm.Trajectory(parallel_phases=parallel_phases))
+            traj = self.model.add_subsystem(
+                'traj', dm.Trajectory(parallel_phases=parallel_phases))
 
         elif self.analysis_scheme is AnalysisScheme.SHOOTING:
             vb = self.aviary_inputs.get_val(Settings.VERBOSITY)
