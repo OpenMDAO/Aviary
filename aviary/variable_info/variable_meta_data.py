@@ -5974,7 +5974,7 @@ add_meta_data(
 )
 
 add_meta_data(
-    Aircraft.Wing.SPAN_EFFICIENCY_FACTOR,
+    Aircraft.Wing.SPAN_EFFICIENCY_FACTOR,  # not used in gasp_based
     meta_data=_MetaData,
     historical_name={
         "GASP": None,
@@ -6174,7 +6174,7 @@ add_meta_data(
 )
 
 add_meta_data(
-    Aircraft.Wing.THICKNESS_TO_CHORD_TIP,
+    Aircraft.Wing.THICKNESS_TO_CHORD_TIP,  # not used in gasp_based?
     meta_data=_MetaData,
     historical_name={"GASP": 'INGASP.TCT', "FLOPS": None, "LEAPS1": None},
     units='unitless',

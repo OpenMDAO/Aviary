@@ -67,7 +67,7 @@ class FuselageParameters(om.ExplicitComponent):
         nose_height_a = cabin_width / 12
         cabin_height_a = nose_height_a + delta_diameter
 
-        # multiple seats across
+        # multiple seats across, assuming no first class seats
         cabin_len_b = (PAX - 1) * seat_pitch / (seats_abreast * 12)
         cabin_height_b = cabin_width / 12
         nose_height_b = cabin_height_b - delta_diameter
