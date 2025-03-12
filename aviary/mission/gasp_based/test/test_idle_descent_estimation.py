@@ -74,7 +74,6 @@ class IdleDescentTestCase(unittest.TestCase):
         prob.model.promotes('idle_descent_estimation', inputs=['parameters:*'])
 
         prob.setup()
-        prob.set_val(Aircraft.Wing.FORM_FACTOR, 1.25)
 
         set_params_for_unit_tests(prob)
 
