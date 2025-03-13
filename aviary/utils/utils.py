@@ -8,10 +8,8 @@ import numpy as np
 
 from openmdao.utils.units import convert_units
 
-_valid_iterables = (list, np.ndarray, tuple)
 
-
-def isiterable(val):
+def isiterable(val, valid_iterables: tuple = (list, np.ndarray, tuple)):
     """
     Checks if provided value is an iterable, as defined by the _valid_iterables global
     variable
@@ -19,9 +17,12 @@ def isiterable(val):
     Parameters
     ----------
     val : any object
-        The object that will be checked if it is a supported iterable
+        The object that will be checked if it is a supported iterable type
+    valid_iterables : tuple of types
+        Which iterable types val will be checked against. By default, lists, numpy arrays
+        and tuples are supported types
     """
-    return isinstance(val, _valid_iterables)
+    return isinstance(val, valid_iterables)
 
 
 def wrapped_convert_units(val_unit_tuple, new_units):

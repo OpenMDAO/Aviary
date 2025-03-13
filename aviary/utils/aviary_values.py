@@ -117,9 +117,9 @@ class AviaryValues(NamedValues):
             types = expected_types
             if meta_data[key]['multivalue']:
                 if isinstance(expected_types, tuple):
-                    types = (list, np.ndarray, *expected_types)
+                    types = (list, np.ndarray, tuple, *expected_types)
                 else:
-                    types = (list, np.ndarray, expected_types)
+                    types = (list, np.ndarray, tuple, expected_types)
             if not isinstance(input_val, types):
                 raise TypeError(
                     f'{key} is of type(s) {types} but you have provided a value of type '
