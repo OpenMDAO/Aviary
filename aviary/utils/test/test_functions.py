@@ -135,6 +135,12 @@ class TestConvertStrings2Data(unittest.TestCase):
         self.assertEqual(var_values, [1.0, 0.285])
         self.assertTrue(self.is_list_of_given_type(var_values, float))
 
+        data_list = ['1']
+        var_types = float
+        var_values = convert_strings_to_data(data_list, var_types)
+        self.assertEqual(var_values, [1.0])
+        self.assertTrue(self.is_list_of_given_type(var_values, float))
+
     def test_read_boolean(self):
         data_list = ['False']
         var_types = bool
