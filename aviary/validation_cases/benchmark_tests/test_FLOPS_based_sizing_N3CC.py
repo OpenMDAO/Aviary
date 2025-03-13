@@ -17,6 +17,7 @@ from openmdao.utils.assert_utils import assert_near_equal
 from openmdao.utils.testing_utils import use_tempdirs
 from openmdao.utils.testing_utils import require_pyoptsparse
 
+from aviary.interface.methods_for_level2 import AviaryProblem
 from aviary.mission.energy_phase import EnergyPhase
 from aviary.mission.flops_based.phases.build_landing import Landing
 from aviary.mission.flops_based.phases.build_takeoff import Takeoff
@@ -30,6 +31,7 @@ from aviary.utils.aviary_values import AviaryValues
 from aviary.utils.functions import set_aviary_input_defaults
 from aviary.utils.functions import set_aviary_initial_values
 from aviary.utils.preprocessors import preprocess_crewpayload, preprocess_propulsion
+from aviary.utils.process_input_decks import create_vehicle
 from aviary.utils.test_utils.assert_utils import warn_timeseries_near_equal
 from aviary.utils.test_utils.default_subsystems import get_default_mission_subsystems
 from aviary.validation_cases.benchmark_utils import \
@@ -47,55 +49,23 @@ except ImportError:
     pyoptsparse = None
 
 
-from dymos.transcriptions.transcription_base import TranscriptionBase
-if hasattr(TranscriptionBase, 'setup_polynomial_controls'):
-    use_new_dymos_syntax = False
-else:
-    use_new_dymos_syntax = True
-
-FLOPS = LegacyCode.FLOPS
-
 # benchmark for simple sizing problem on the N3CC
-
-
 def run_trajectory(sim=True):
-    prob = om.Problem(model=om.Group())
-    if pyoptsparse:
-        driver = prob.driver = om.pyOptSparseDriver()
-        driver.options["optimizer"] = "SNOPT"
-        # driver.declare_coloring()  # currently disabled pending resolve of issue 2507
-        if driver.options["optimizer"] == "SNOPT":
-            driver.opt_settings["Major iterations limit"] = 45
-            driver.opt_settings["Major optimality tolerance"] = 1e-4
-            driver.opt_settings["Major feasibility tolerance"] = 1e-6
-            driver.opt_settings["iSumm"] = 6
-        elif driver.options["optimizer"] == "IPOPT":
-            driver.opt_settings["max_iter"] = 100
-            driver.opt_settings["tol"] = 1e-3
-            driver.opt_settings['print_level'] = 4
+    prob = AviaryProblem()
 
-    else:
-        driver = prob.driver = om.ScipyOptimizeDriver()
-        opt_settings = prob.driver.opt_settings
+    # load inputs from .csv to build engine
+    options, _ = create_vehicle(
+        "models/N3CC/N3CC_FLOPS.csv"
+    )
 
-        driver.options['optimizer'] = 'SLSQP'
-        opt_settings['maxiter'] = 100
-        opt_settings['ftol'] = 5.0e-3
-        opt_settings['eps'] = 1e-2
+    # load_inputs needs to be updated to accept an already existing aviary options
+    prob.load_inputs(
+        "models/N3CC/N3CC_FLOPS.csv",
+    )
 
     ##########################################
     # Aircraft Input Variables and Options   #
     ##########################################
-
-    aviary_inputs = get_flops_inputs('N3CC')
-
-    aviary_inputs.set_val(Mission.Landing.LIFT_COEFFICIENT_MAX,
-                          2.4, units="unitless")
-    aviary_inputs.set_val(Mission.Takeoff.LIFT_COEFFICIENT_MAX,
-                          2.0, units="unitless")
-    aviary_inputs.set_val(
-        Mission.Takeoff.ROLLING_FRICTION_COEFFICIENT,
-        val=.0175, units="unitless")
 
     takeoff_fuel_burned = 577  # lbm TODO: where should this get connected from?
     takeoff_thrust_per_eng = 24555.5  # lbf TODO: where should this get connected from?
@@ -528,6 +498,20 @@ def run_trajectory(sim=True):
     # exit()
     prob.record("final")
     prob.cleanup()
+
+    prob.check_and_preprocess_inputs()
+    prob.add_pre_mission_systems()
+    prob.add_phases()
+    prob.add_post_mission_systems()
+    prob.link_phases()
+    prob.add_driver("IPOPT", max_iter=0, verbosity=0)
+    prob.add_design_variables()
+    prob.add_objective()
+    prob.setup()
+    prob.set_initial_guesses()
+    prob.run_aviary_problem("dymos_solution.db")
+
+    om.n2(prob)
 
     return prob
 
