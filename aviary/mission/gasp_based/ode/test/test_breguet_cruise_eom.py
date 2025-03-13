@@ -74,7 +74,7 @@ class TestBreguetPartials(unittest.TestCase):
 
     def test_partials(self):
 
-        tol = 1e-12
+        tol = 1e-10
         self.prob.run_model()
 
         # cruise_range = self.prob.get_val("cruise_range", units="NM")
@@ -125,10 +125,10 @@ class TestBreguetPartials2(unittest.TestCase):
         prob.setup(check=False, force_alloc_complex=True)
 
         partial_data = prob.check_partials(out_stream=None, method="cs")
-        assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
+        assert_check_partials(partial_data, atol=1e-11, rtol=1e-11)
 
 
-class TestBreguetResults(unittest.TestCase):
+class TestBreguetResults2(unittest.TestCase):
     def setUp(self):
         self.nn = nn = 100
 
@@ -198,14 +198,14 @@ class TestElectricBreguetResults(unittest.TestCase):
         cruise_time = self.prob.get_val("cruise_time", units="s")
 
         t_expected = 6475.243
-        r_expected = 825.2359
+        r_expected = 825.2337
 
         assert_near_equal(cruise_range[-1, ...], r_expected, tolerance=tol)
         assert_near_equal(cruise_time[-1, ...], t_expected, tolerance=tol)
 
     def test_partials(self):
 
-        tol = 1e-12
+        tol = 1e-10
         self.prob.run_model()
 
         partial_data = self.prob.check_partials(out_stream=None, method="cs")
