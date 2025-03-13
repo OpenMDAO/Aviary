@@ -3176,7 +3176,7 @@ add_meta_data(
 )
 
 add_meta_data(
-    Aircraft.Fuselage.FINENESS,
+    Aircraft.Fuselage.FINENESS,  # not used in gasp_based?
     meta_data=_MetaData,
     historical_name={
         "GASP": None,
@@ -5974,7 +5974,7 @@ add_meta_data(
 )
 
 add_meta_data(
-    Aircraft.Wing.SPAN_EFFICIENCY_FACTOR,  # not used in gasp_based
+    Aircraft.Wing.SPAN_EFFICIENCY_FACTOR,  # not used in gasp_based?
     meta_data=_MetaData,
     historical_name={
         "GASP": None,
