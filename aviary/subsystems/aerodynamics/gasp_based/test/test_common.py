@@ -98,6 +98,8 @@ class TestCLFromLift(unittest.TestCase):
         prob = om.Problem()
         prob.model.add_subsystem("comp", CLFromLift(num_nodes=2), promotes=["*"])
         prob.setup(check=False, force_alloc_complex=True)
+        prob.set_val(Aircraft.Wing.AREA, 1370)
+        prob.set_val(Dynamic.Atmosphere.DYNAMIC_PRESSURE, 1)
         partial_data = prob.check_partials(method="cs", out_stream=None)
         assert_check_partials(partial_data, atol=1e-15, rtol=1e-15)
 
