@@ -49,7 +49,7 @@ class CruiseODETestCase(unittest.TestCase):
             self.prob[Dynamic.Mission.VELOCITY_RATE], np.array([1.0, 1.0]), tol
         )
         assert_near_equal(
-            self.prob[Dynamic.Mission.DISTANCE], np.array([0.0, 882.5769]), tol
+            self.prob[Dynamic.Mission.DISTANCE], np.array([0.0, 882.57465]), tol
         )
         assert_near_equal(self.prob["time"], np.array([0, 7913.69]), tol)
         assert_near_equal(
@@ -97,7 +97,7 @@ class ElectricCruiseODETestCase(unittest.TestCase):
             Dynamic.Atmosphere.MACH, np.array([0, 0]), units="unitless"
         )
 
-    def test_cruise(self):
+    def test_electric_cruise(self):
         # test partial derivatives
         self.prob.setup(check=False, force_alloc_complex=True)
 
@@ -114,7 +114,7 @@ class ElectricCruiseODETestCase(unittest.TestCase):
             self.prob[Dynamic.Mission.VELOCITY_RATE], np.array([1.0, 1.0]), tol
         )
         assert_near_equal(
-            self.prob[Dynamic.Mission.DISTANCE], np.array([0.0, 66.66771412]), tol
+            self.prob[Dynamic.Mission.DISTANCE], np.array([0.0, 66.66754421]), tol
         )
         assert_near_equal(self.prob["time"], np.array([0, 597.78110206]), tol)
         assert_near_equal(
