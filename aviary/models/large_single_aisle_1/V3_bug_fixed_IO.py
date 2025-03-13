@@ -73,7 +73,7 @@ V3_bug_fixed_options.set_val(
     Aircraft.HorizontalTail.MOMENT_RATIO, val=0.2307, units="unitless"
 )
 V3_bug_fixed_options.set_val(
-    Aircraft.Engine.REFERENCE_SLS_THRUST, np.array([28690]), units="lbf"
+    Aircraft.Engine.REFERENCE_SLS_THRUST, np.array([28690.0]), units="lbf"
 )
 # NOTE override required for mass summation test
 V3_bug_fixed_options.set_val(

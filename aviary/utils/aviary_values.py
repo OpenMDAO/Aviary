@@ -60,6 +60,7 @@ class AviaryValues(NamedValues):
         if key in _MetaData.keys():
 
             expected_types = _MetaData[key]['types']
+
             if not isinstance(expected_types, tuple):
                 expected_types = (expected_types, )
 
