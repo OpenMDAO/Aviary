@@ -23,10 +23,10 @@ class TransportInstrumentMass(om.ExplicitComponent):
         add_aviary_option(self, Mission.Constraints.MAX_MACH)
 
     def setup(self):
-        add_aviary_input(self, Aircraft.Fuselage.PLANFORM_AREA)
-        add_aviary_input(self, Aircraft.Instruments.MASS_SCALER)
+        add_aviary_input(self, Aircraft.Fuselage.PLANFORM_AREA, units='ft**2')
+        add_aviary_input(self, Aircraft.Instruments.MASS_SCALER, units='unitless')
 
-        add_aviary_output(self, Aircraft.Instruments.MASS, 0.0)
+        add_aviary_output(self, Aircraft.Instruments.MASS, units='lbm')
 
         self.declare_partials("*", "*")
 

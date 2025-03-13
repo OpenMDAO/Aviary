@@ -26,38 +26,28 @@ class MassParameters(om.ExplicitComponent):
     def setup(self):
         num_engine_type = len(self.options[Aircraft.Engine.NUM_ENGINES])
 
-        add_aviary_input(self, Aircraft.Wing.SWEEP, val=0.436, units='rad')
-        add_aviary_input(self, Aircraft.Wing.TAPER_RATIO, val=0.33)
-        add_aviary_input(self, Aircraft.Wing.ASPECT_RATIO, val=10.13)
-        add_aviary_input(self, Aircraft.Wing.SPAN, val=117.8)
+        add_aviary_input(self, Aircraft.Wing.SWEEP, units='rad')
+        add_aviary_input(self, Aircraft.Wing.TAPER_RATIO, units='unitless')
+        add_aviary_input(self, Aircraft.Wing.ASPECT_RATIO, units='unitless')
+        add_aviary_input(self, Aircraft.Wing.SPAN, units='ft')
 
-        self.add_input(
-            "max_mach", val=0.9, units="unitless",
-            desc="EMM0: maximum operating mach number"
-        )
+        self.add_input("max_mach", val=0.9, units="unitless",
+                       desc="EMM0: maximum operating mach number")
 
-        add_aviary_input(
-            self, Aircraft.Strut.ATTACHMENT_LOCATION_DIMENSIONLESS, val=0,
-            units='unitless')
+        add_aviary_input(self, Aircraft.Strut.ATTACHMENT_LOCATION_DIMENSIONLESS,
+                         units='unitless')
 
-        add_aviary_input(self, Aircraft.LandingGear.MAIN_GEAR_LOCATION, val=0.15)
+        add_aviary_input(self, Aircraft.LandingGear.MAIN_GEAR_LOCATION, units='unitless')
 
-        add_aviary_output(self, Aircraft.Wing.MATERIAL_FACTOR, val=0)
-        self.add_output(
-            "c_strut_braced",
-            val=0,
-            units="unitless",
-            desc="SKSTR: reduction in bending moment factor for strut braced wing",
-        )
-        self.add_output(
-            "c_gear_loc", val=0, units="unitless",
-            desc="SKGEAR: landing gear location factor"
-        )
+        add_aviary_output(self, Aircraft.Wing.MATERIAL_FACTOR, units='unitless')
+        self.add_output("c_strut_braced", val=0, units="unitless",
+                        desc="SKSTR: reduction in bending moment factor for strut braced wing")
+        self.add_output("c_gear_loc", val=0, units="unitless",
+                        desc="SKGEAR: landing gear location factor")
         add_aviary_output(self, Aircraft.Engine.POSITION_FACTOR,
-                          val=np.zeros(num_engine_type))
-        self.add_output(
-            "half_sweep", val=0, units="rad", desc="SWC2: wing chord half sweep angle"
-        )
+                          shape=num_engine_type, units='unitless')
+        self.add_output("half_sweep", val=0, units="rad",
+                        desc="SWC2: wing chord half sweep angle")
 
         self.declare_partials(
             Aircraft.Wing.MATERIAL_FACTOR,
@@ -248,12 +238,12 @@ class PayloadMass(om.ExplicitComponent):
         add_aviary_option(self, Aircraft.CrewPayload.Design.NUM_PASSENGERS)
 
     def setup(self):
-        add_aviary_input(self, Aircraft.CrewPayload.CARGO_MASS, val=10040)
-        add_aviary_input(self, Aircraft.CrewPayload.Design.CARGO_MASS, val=0)
-        add_aviary_input(self, Aircraft.CrewPayload.Design.MAX_CARGO_MASS)
+        add_aviary_input(self, Aircraft.CrewPayload.CARGO_MASS, units='lbm')
+        add_aviary_input(self, Aircraft.CrewPayload.Design.CARGO_MASS, units='lbm')
+        add_aviary_input(self, Aircraft.CrewPayload.Design.MAX_CARGO_MASS, units='lbm')
 
-        add_aviary_output(self, Aircraft.CrewPayload.PASSENGER_PAYLOAD_MASS, val=0)
-        add_aviary_output(self, Aircraft.CrewPayload.TOTAL_PAYLOAD_MASS, val=0)
+        add_aviary_output(self, Aircraft.CrewPayload.PASSENGER_PAYLOAD_MASS, units='lbm')
+        add_aviary_output(self, Aircraft.CrewPayload.TOTAL_PAYLOAD_MASS, units='lbm')
 
         self.add_output(
             "payload_mass_des", val=0, units="lbm", desc="WPLDES: design payload"
@@ -296,107 +286,42 @@ class ElectricAugmentationMass(om.ExplicitComponent):
         add_aviary_option(self, Aircraft.Propulsion.TOTAL_NUM_ENGINES)
 
     def setup(self):
-        self.add_input(
-            "motor_power",
-            val=200,
-            units="kW",
-            desc="MOTRKW: power of augmentation motor",
-        )
-        self.add_input(
-            "motor_voltage",
-            val=50,
-            units="V",
-            desc="VOLTS: voltage of augmentation system",
-        )
-        self.add_input(
-            "max_amp_per_wire",
-            val=50,
-            units="A",
-            desc="AMPSPW: maximum amperage of each cable in augmentation system",
-        )
-        self.add_input(
-            "safety_factor",
-            val=1.33,
-            units="unitless",
-            desc="REDUNCY: cable mass redundancy/safety factor",
-        )
+        self.add_input("motor_power", val=200, units="kW",
+                       desc="MOTRKW: power of augmentation motor")
+        self.add_input("motor_voltage", val=50, units="V",
+                       desc="VOLTS: voltage of augmentation system")
+        self.add_input("max_amp_per_wire", val=50, units="A",
+                       desc="AMPSPW: maximum amperage of each cable in augmentation system")
+        self.add_input("safety_factor", val=1.33, units="unitless",
+                       desc="REDUNCY: cable mass redundancy/safety factor")
 
-        add_aviary_input(self, Aircraft.Electrical.HYBRID_CABLE_LENGTH, val=200)
+        add_aviary_input(self, Aircraft.Electrical.HYBRID_CABLE_LENGTH, units='ft')
 
-        self.add_input(
-            "wire_area",
-            val=0.0015,
-            units="ft**2",
-            desc="ACSWIRE: cross sectional area of electrical augmentation system wire",
-        )
-        self.add_input(
-            "rho_wire",
-            val=1,
-            units="lbm/ft**3",
-            desc="DENWIRE: density of wire for electrical augmentation system",
-        )
-        self.add_input(
-            "battery_energy",
-            val=1,
-            units="MJ",
-            desc="EBATT: energy coming from the battery",
-        )
-        self.add_input(
-            "motor_eff",
-            val=1,
-            units="unitless",
-            desc="EFF_MTR: efficiency of electrical augmentation motor",
-        )
-        self.add_input(
-            "inverter_eff",
-            val=1,
-            units="unitless",
-            desc="EFF_INV: efficiency of electrical augmentation inverter/controller",
-        )
-        self.add_input(
-            "transmission_eff",
-            val=1,
-            units="unitless",
-            desc="EFF_TRN: efficiency of electrical augmentation system power"
-            " transmission",
-        )
-        self.add_input(
-            "battery_eff",
-            val=1,
-            units="unitless",
-            desc="EFF_BAT: efficiency of electrical augmentation battery storage",
-        )
-        self.add_input(
-            "rho_battery",
-            val=200,
-            units="MJ/lb",
-            desc="ENGYDEN: energy density of electrical augmentation system battery",
-        )
-        self.add_input(
-            "motor_spec_mass",
-            val=10,
-            units="hp/lbm",
-            desc="SWT_MTR: specific mass of electrical augmentation motor",
-        )
-        self.add_input(
-            "inverter_spec_mass",
-            val=10,
-            units="kW/lbm",
-            desc="SWT_INV: specific mass of electrical augmentation inverter",
-        )
-        self.add_input(
-            "TMS_spec_mass",
-            val=10,
-            units="lbm/kW",
-            desc="SWT_TMS: specific mass of thermal managements system",
-        )
+        self.add_input("wire_area", val=0.0015, units="ft**2",
+                       desc="ACSWIRE: cross sectional area of electrical augmentation system wire")
+        self.add_input("rho_wire", val=1, units="lbm/ft**3",
+                       desc="DENWIRE: density of wire for electrical augmentation system")
+        self.add_input("battery_energy", val=1, units="MJ",
+                       desc="EBATT: energy coming from the battery")
+        self.add_input("motor_eff", val=1, units="unitless",
+                       desc="EFF_MTR: efficiency of electrical augmentation motor")
+        self.add_input("inverter_eff", val=1, units="unitless",
+                       desc="EFF_INV: efficiency of electrical augmentation inverter/controller")
+        self.add_input("transmission_eff", val=1, units="unitless",
+                       desc="EFF_TRN: efficiency of electrical augmentation system power transmission")
+        self.add_input("battery_eff", val=1, units="unitless",
+                       desc="EFF_BAT: efficiency of electrical augmentation battery storage")
+        self.add_input("rho_battery", val=200, units="MJ/lb",
+                       desc="ENGYDEN: energy density of electrical augmentation system battery")
+        self.add_input("motor_spec_mass", val=10, units="hp/lbm",
+                       desc="SWT_MTR: specific mass of electrical augmentation motor")
+        self.add_input("inverter_spec_mass", val=10, units="kW/lbm",
+                       desc="SWT_INV: specific mass of electrical augmentation inverter")
+        self.add_input("TMS_spec_mass", val=10, units="lbm/kW",
+                       desc="SWT_TMS: specific mass of thermal managements system")
 
-        self.add_output(
-            "aug_mass",
-            val=0,
-            units="lbm",
-            desc="WEAUG: mass of electrical augmentation system",
-        )
+        self.add_output("aug_mass", val=0, units="lbm",
+                        desc="WEAUG: mass of electrical augmentation system")
 
         self.declare_partials("aug_mass", "*")
 
@@ -579,6 +504,7 @@ class EngineMass(om.ExplicitComponent):
     def initialize(self):
         add_aviary_option(self, Aircraft.Electrical.HAS_HYBRID_SYSTEM)
         add_aviary_option(self, Aircraft.Engine.NUM_ENGINES)
+        add_aviary_option(self, Aircraft.Engine.ADDITIONAL_MASS_FRACTION)
         add_aviary_option(self, Aircraft.Propulsion.TOTAL_NUM_ENGINES)
 
     def setup(self):
@@ -586,59 +512,43 @@ class EngineMass(om.ExplicitComponent):
         total_num_engines = self.options[Aircraft.Propulsion.TOTAL_NUM_ENGINES]
 
         add_aviary_input(self, Aircraft.Engine.MASS_SPECIFIC,
-                         val=np.full(num_engine_type, 0.21366))
+                         shape=num_engine_type, units='lbm/lbf')
         add_aviary_input(self, Aircraft.Engine.SCALED_SLS_THRUST,
-                         val=np.full(num_engine_type, 4000), units="lbf")
+                         shape=num_engine_type, units='lbf')
         add_aviary_input(self, Aircraft.Nacelle.MASS_SPECIFIC,
-                         val=np.full(num_engine_type, 3))
+                         shape=num_engine_type, units='lbm/ft**2')
         add_aviary_input(self, Aircraft.Nacelle.SURFACE_AREA,
-                         val=np.full(num_engine_type, 5))
+                         shape=num_engine_type, units='ft**2')
         add_aviary_input(self, Aircraft.Engine.PYLON_FACTOR,
-                         val=np.full(num_engine_type, 1.25))
-        add_aviary_input(self, Aircraft.Engine.ADDITIONAL_MASS_FRACTION,
-                         val=np.full(num_engine_type, 0.14))
+                         shape=num_engine_type, units='unitless')
         add_aviary_input(self, Aircraft.Engine.MASS_SCALER,
-                         val=np.full(num_engine_type, 1.0))
-        add_aviary_input(self, Aircraft.Propulsion.MISC_MASS_SCALER, val=1)
+                         shape=num_engine_type, units='unitless')
+        add_aviary_input(self, Aircraft.Propulsion.MISC_MASS_SCALER, units='unitless')
         add_aviary_input(self, Aircraft.Engine.WING_LOCATIONS,
-                         val=np.full(int(total_num_engines/2), 0.35))
+                         shape=int(total_num_engines/2), units='unitless')
 
-        add_aviary_input(self, Aircraft.LandingGear.MAIN_GEAR_MASS,
-                         val=500, units="lbm", desc="WMG: mass of main gear")
+        add_aviary_input(self, Aircraft.LandingGear.MAIN_GEAR_MASS, units='lbm')
 
-        add_aviary_input(self, Aircraft.LandingGear.MAIN_GEAR_LOCATION, val=0.15)
+        add_aviary_input(self, Aircraft.LandingGear.MAIN_GEAR_LOCATION, units='unitless')
 
         has_hybrid_system = self.options[Aircraft.Electrical.HAS_HYBRID_SYSTEM]
 
         if has_hybrid_system:
-            self.add_input(
-                "aug_mass",
-                val=400,
-                units="lbm",
-                desc="WEAUG: mass of electrical augmentation system",
-            )
+            self.add_input("aug_mass", val=400, units="lbm",
+                           desc="WEAUG: mass of electrical augmentation system")
 
-        add_aviary_output(self, Aircraft.Propulsion.TOTAL_ENGINE_MASS, val=0)
-        add_aviary_output(self, Aircraft.Nacelle.MASS, val=np.zeros(num_engine_type))
+        add_aviary_output(self, Aircraft.Propulsion.TOTAL_ENGINE_MASS, units='lbm')
+        add_aviary_output(self, Aircraft.Nacelle.MASS, shape=num_engine_type)
         self.add_output('pylon_mass', units='lbm',
                         desc='WPYLON: mass of each pylon', val=np.zeros(num_engine_type))
-        add_aviary_output(self, Aircraft.Propulsion.TOTAL_ENGINE_POD_MASS, val=0)
+        add_aviary_output(self, Aircraft.Propulsion.TOTAL_ENGINE_POD_MASS, units='lbm')
         add_aviary_output(self, Aircraft.Engine.ADDITIONAL_MASS,
-                          val=np.zeros(num_engine_type))
-        self.add_output(
-            "eng_comb_mass",
-            val=0,
-            units="lbm",
-            desc="WPSTAR: combined mass of dry engine and engine installation,"
-            " includes mass of electrical augmentation system",
-        )
-        self.add_output(
-            "wing_mounted_mass",
-            val=0,
-            units="lbm",
-            desc="WM: mass of gear and engine, basically everything mounted on the"
-            " wing",
-        )
+                          shape=num_engine_type, units='lbm')
+        self.add_output("eng_comb_mass", val=0, units="lbm",
+                        desc="WPSTAR: combined mass of dry engine and engine installation,"
+                        " includes mass of electrical augmentation system")
+        self.add_output("wing_mounted_mass", val=0, units="lbm",
+                        desc="WM: mass of gear and engine, basically everything mounted on the wing")
 
         # for multiengine implementation needs this to always be avaliable
         self.add_input(
@@ -649,12 +559,8 @@ class EngineMass(om.ExplicitComponent):
             desc="WPROP1: mass of one propeller",
         )
 
-        self.add_output(
-            "prop_mass_all",
-            val=0,
-            units="lbm",
-            desc="WPROP: mass of all propellers",
-        )
+        self.add_output("prop_mass_all", val=0, units="lbm",
+                        desc="WPROP: mass of all propellers")
 
         self.declare_partials("prop_mass_all", ["prop_mass"])
         self.declare_partials("wing_mounted_mass", "prop_mass")
@@ -697,8 +603,8 @@ class EngineMass(om.ExplicitComponent):
             ],
         )
         self.declare_partials(
-            Aircraft.Engine.ADDITIONAL_MASS, [Aircraft.Engine.ADDITIONAL_MASS_FRACTION,
-                                              Aircraft.Engine.MASS_SPECIFIC, Aircraft.Engine.SCALED_SLS_THRUST],
+            Aircraft.Engine.ADDITIONAL_MASS,
+            [Aircraft.Engine.MASS_SPECIFIC, Aircraft.Engine.SCALED_SLS_THRUST],
             rows=shape, cols=shape, val=1.0
         )
 
@@ -708,7 +614,6 @@ class EngineMass(om.ExplicitComponent):
                 Aircraft.Engine.WING_LOCATIONS,
                 Aircraft.Engine.MASS_SPECIFIC,
                 Aircraft.Engine.SCALED_SLS_THRUST,
-                Aircraft.Engine.ADDITIONAL_MASS_FRACTION,
                 Aircraft.Nacelle.MASS_SPECIFIC,
                 Aircraft.Nacelle.SURFACE_AREA,
                 Aircraft.Engine.PYLON_FACTOR,
@@ -722,7 +627,6 @@ class EngineMass(om.ExplicitComponent):
                 [
                     Aircraft.Engine.MASS_SCALER,
                     Aircraft.Propulsion.MISC_MASS_SCALER,
-                    Aircraft.Engine.ADDITIONAL_MASS_FRACTION,
                     Aircraft.Engine.MASS_SPECIFIC,
                     Aircraft.Engine.SCALED_SLS_THRUST,
                 ],
@@ -733,7 +637,6 @@ class EngineMass(om.ExplicitComponent):
                 [
                     Aircraft.Engine.MASS_SCALER,
                     Aircraft.Propulsion.MISC_MASS_SCALER,
-                    Aircraft.Engine.ADDITIONAL_MASS_FRACTION,
                     Aircraft.Engine.MASS_SPECIFIC,
                     Aircraft.Engine.SCALED_SLS_THRUST,
                     "aug_mass",
@@ -743,13 +646,13 @@ class EngineMass(om.ExplicitComponent):
     def compute(self, inputs, outputs):
         num_engines = self.options[Aircraft.Engine.NUM_ENGINES]
         num_engine_type = len(num_engines)
+        c_instl = self.options[Aircraft.Engine.ADDITIONAL_MASS_FRACTION]
+
         eng_spec_wt = inputs[Aircraft.Engine.MASS_SPECIFIC] * GRAV_ENGLISH_LBM
         Fn_SLS = inputs[Aircraft.Engine.SCALED_SLS_THRUST]
-
         spec_nacelle_wt = inputs[Aircraft.Nacelle.MASS_SPECIFIC] * GRAV_ENGLISH_LBM
         nacelle_area = inputs[Aircraft.Nacelle.SURFACE_AREA]
         pylon_fac = inputs[Aircraft.Engine.PYLON_FACTOR]
-        c_instl = inputs[Aircraft.Engine.ADDITIONAL_MASS_FRACTION]
         CK5 = inputs[Aircraft.Engine.MASS_SCALER]
         CK7 = inputs[Aircraft.Propulsion.MISC_MASS_SCALER]
         eng_span_frac = inputs[Aircraft.Engine.WING_LOCATIONS]
@@ -798,16 +701,15 @@ class EngineMass(om.ExplicitComponent):
         ) + main_gear_wt * loc_main_gear / (loc_main_gear + 0.001)) / GRAV_ENGLISH_LBM
 
     def compute_partials(self, inputs, J):
-        num_engine_type = len(self.options[Aircraft.Engine.NUM_ENGINES])
+        num_engines = self.options[Aircraft.Engine.NUM_ENGINES]
+        num_engine_type = len(num_engines)
+        c_instl = self.options[Aircraft.Engine.ADDITIONAL_MASS_FRACTION]
 
         eng_spec_wt = inputs[Aircraft.Engine.MASS_SPECIFIC] * GRAV_ENGLISH_LBM
         Fn_SLS = inputs[Aircraft.Engine.SCALED_SLS_THRUST]
-        num_engines = self.options[Aircraft.Engine.NUM_ENGINES]
-
         spec_nacelle_wt = inputs[Aircraft.Nacelle.MASS_SPECIFIC] * GRAV_ENGLISH_LBM
         nacelle_area = inputs[Aircraft.Nacelle.SURFACE_AREA]
         pylon_fac = inputs[Aircraft.Engine.PYLON_FACTOR]
-        c_instl = inputs[Aircraft.Engine.ADDITIONAL_MASS_FRACTION]
         CK5 = inputs[Aircraft.Engine.MASS_SCALER]
         CK7 = inputs[Aircraft.Propulsion.MISC_MASS_SCALER]
         eng_span_frac = inputs[Aircraft.Engine.WING_LOCATIONS]
@@ -861,8 +763,6 @@ class EngineMass(om.ExplicitComponent):
             Aircraft.Engine.SCALED_SLS_THRUST] = num_engines * dPW_dSLST / GRAV_ENGLISH_LBM
 
         J[Aircraft.Engine.ADDITIONAL_MASS,
-            Aircraft.Engine.ADDITIONAL_MASS_FRACTION] = eng_spec_wt * Fn_SLS / GRAV_ENGLISH_LBM
-        J[Aircraft.Engine.ADDITIONAL_MASS,
             Aircraft.Engine.MASS_SPECIFIC] = c_instl * Fn_SLS
         J[Aircraft.Engine.ADDITIONAL_MASS,
             Aircraft.Engine.SCALED_SLS_THRUST] = c_instl * eng_spec_wt / GRAV_ENGLISH_LBM
@@ -871,8 +771,6 @@ class EngineMass(om.ExplicitComponent):
             Fn_SLS * num_engines / GRAV_ENGLISH_LBM
         J["eng_comb_mass", Aircraft.Propulsion.MISC_MASS_SCALER] = sum(
             c_instl * eng_spec_wt * Fn_SLS * num_engines) / GRAV_ENGLISH_LBM
-        J["eng_comb_mass", Aircraft.Engine.ADDITIONAL_MASS_FRACTION] = eng_spec_wt * \
-            CK7 * Fn_SLS * num_engines / GRAV_ENGLISH_LBM
         J["eng_comb_mass", Aircraft.Engine.MASS_SPECIFIC] = (
             CK5 + CK7 * c_instl) * num_engines * Fn_SLS
         J["eng_comb_mass", Aircraft.Engine.SCALED_SLS_THRUST] = (
@@ -919,9 +817,6 @@ class EngineMass(om.ExplicitComponent):
         J["wing_mounted_mass", Aircraft.Engine.SCALED_SLS_THRUST] = span_frac_factor_sum  \
             * (num_engines * eng_spec_wt + c_instl * num_engines * eng_spec_wt + dPylonWt_dFnSLS * num_engines) / GRAV_ENGLISH_LBM
 
-        J["wing_mounted_mass", Aircraft.Engine.ADDITIONAL_MASS_FRACTION] = span_frac_factor_sum \
-            * (eng_spec_wt * Fn_SLS * num_engines) / GRAV_ENGLISH_LBM
-
         J["wing_mounted_mass", Aircraft.Nacelle.MASS_SPECIFIC] = (span_frac_factor_sum * num_engines
                                                                   * (nacelle_area + pylon_fac * 0.736 * ((dry_wt_eng + spec_nacelle_wt * nacelle_area) ** (0.736 - 1) * nacelle_area)))
 
@@ -949,37 +844,38 @@ class TailMass(om.ExplicitComponent):
     """
 
     def setup(self):
-        add_aviary_input(self, Aircraft.VerticalTail.TAPER_RATIO, val=0.801)
-        add_aviary_input(self, Aircraft.VerticalTail.ASPECT_RATIO, val=1.67)
-        add_aviary_input(self, Aircraft.VerticalTail.SWEEP, val=0.1, units="rad")
-        add_aviary_input(self, Aircraft.VerticalTail.SPAN, val=5)
-        add_aviary_input(self, Mission.Design.GROSS_MASS, val=152000)
-        add_aviary_input(self, Aircraft.HorizontalTail.MASS_COEFFICIENT, val=0.232)
-        add_aviary_input(self, Aircraft.Fuselage.LENGTH, val=200)
-        add_aviary_input(self, Aircraft.HorizontalTail.SPAN, val=7)
-        add_aviary_input(self, Aircraft.LandingGear.TAIL_HOOK_MASS_SCALER, val=1)
-        add_aviary_input(self, Aircraft.HorizontalTail.TAPER_RATIO)
-        add_aviary_input(self, Aircraft.VerticalTail.MASS_COEFFICIENT, val=0.289)
-        add_aviary_input(self, Aircraft.Wing.SPAN, val=118)
-        add_aviary_input(self, Aircraft.HorizontalTail.AREA, val=15)
+        add_aviary_input(self, Aircraft.VerticalTail.TAPER_RATIO, units='unitless')
+        add_aviary_input(self, Aircraft.VerticalTail.ASPECT_RATIO, units='unitless')
+        add_aviary_input(self, Aircraft.VerticalTail.SWEEP, units="rad")
+        add_aviary_input(self, Aircraft.VerticalTail.SPAN, units='ft')
+        add_aviary_input(self, Mission.Design.GROSS_MASS, units='lbm')
+        add_aviary_input(self, Aircraft.HorizontalTail.MASS_COEFFICIENT,
+                         units='unitless')
+        add_aviary_input(self, Aircraft.Fuselage.LENGTH, units='ft')
+        add_aviary_input(self, Aircraft.HorizontalTail.SPAN, units='ft')
+        add_aviary_input(self, Aircraft.LandingGear.TAIL_HOOK_MASS_SCALER,
+                         units='unitless')
+        add_aviary_input(self, Aircraft.HorizontalTail.TAPER_RATIO, units='unitless')
+        add_aviary_input(self, Aircraft.VerticalTail.MASS_COEFFICIENT, units='unitless')
+        add_aviary_input(self, Aircraft.Wing.SPAN, units='ft')
+        add_aviary_input(self, Aircraft.HorizontalTail.AREA, units='ft**2')
         self.add_input("min_dive_vel", val=200, units="kn", desc="VDMIN: dive velocity")
-        add_aviary_input(self, Aircraft.HorizontalTail.MOMENT_ARM, val=20)
-        add_aviary_input(self, Aircraft.HorizontalTail.THICKNESS_TO_CHORD, val=0.11)
-        add_aviary_input(self, Aircraft.HorizontalTail.ROOT_CHORD, val=2)
-        add_aviary_input(self, Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION, val=0)
-        add_aviary_input(self, Aircraft.VerticalTail.AREA, val=20)
-        add_aviary_input(self, Aircraft.VerticalTail.MOMENT_ARM, val=20)
-        add_aviary_input(self, Aircraft.VerticalTail.THICKNESS_TO_CHORD, val=200)
-        add_aviary_input(self, Aircraft.VerticalTail.ROOT_CHORD, val=0.12)
+        add_aviary_input(self, Aircraft.HorizontalTail.MOMENT_ARM, units='ft')
+        add_aviary_input(self, Aircraft.HorizontalTail.THICKNESS_TO_CHORD,
+                         units='unitless')
+        add_aviary_input(self, Aircraft.HorizontalTail.ROOT_CHORD, units='ft')
+        add_aviary_input(self, Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION,
+                         units='unitless')
+        add_aviary_input(self, Aircraft.VerticalTail.AREA, units='ft**2')
+        add_aviary_input(self, Aircraft.VerticalTail.MOMENT_ARM, units='ft')
+        add_aviary_input(self, Aircraft.VerticalTail.THICKNESS_TO_CHORD,
+                         units='unitless')
+        add_aviary_input(self, Aircraft.VerticalTail.ROOT_CHORD, units='ft')
 
-        self.add_output(
-            "loc_MAC_vtail",
-            val=0,
-            units="ft",
-            desc="XVMAC: location of mean aerodynamic chord on the vertical tail",
-        )
-        add_aviary_output(self, Aircraft.HorizontalTail.MASS, val=0)
-        add_aviary_output(self, Aircraft.VerticalTail.MASS, val=0)
+        self.add_output("loc_MAC_vtail", val=0, units="ft",
+                        desc="XVMAC: location of mean aerodynamic chord on the vertical tail")
+        add_aviary_output(self, Aircraft.HorizontalTail.MASS, units='lbm')
+        add_aviary_output(self, Aircraft.VerticalTail.MASS, units='lbm')
 
         self.declare_partials(
             "loc_MAC_vtail",
@@ -1574,23 +1470,24 @@ class HighLiftMass(om.ExplicitComponent):
         add_aviary_option(self, Aircraft.Wing.NUM_FLAP_SEGMENTS)
 
     def setup(self):
-        add_aviary_input(self, Aircraft.Wing.HIGH_LIFT_MASS_COEFFICIENT, val=2.66)
-        add_aviary_input(self, Aircraft.Wing.AREA, val=200)
-        add_aviary_input(self, Aircraft.Wing.SLAT_CHORD_RATIO, val=.15)
-        add_aviary_input(self, Aircraft.Wing.FLAP_CHORD_RATIO, val=.3)
-        add_aviary_input(self, Aircraft.Wing.TAPER_RATIO, val=.33)
-        add_aviary_input(self, Aircraft.Wing.SLAT_SPAN_RATIO, val=.9)
-        add_aviary_input(self, Aircraft.Wing.FLAP_SPAN_RATIO, val=.65)
-        add_aviary_input(self, Aircraft.Wing.LOADING, val=128)
-        add_aviary_input(self, Aircraft.Wing.THICKNESS_TO_CHORD_ROOT, val=.15)
-        add_aviary_input(self, Aircraft.Wing.SPAN, val=118)
-        add_aviary_input(self, Aircraft.Fuselage.AVG_DIAMETER, val=13.1)
-        add_aviary_input(self, Aircraft.Wing.CENTER_CHORD, val=17.48974)
-        add_aviary_input(self, Mission.Landing.LIFT_COEFFICIENT_MAX, val=1.8)
+        add_aviary_input(self, Aircraft.Wing.HIGH_LIFT_MASS_COEFFICIENT,
+                         units='unitless')
+        add_aviary_input(self, Aircraft.Wing.AREA, units='ft**2')
+        add_aviary_input(self, Aircraft.Wing.SLAT_CHORD_RATIO, units='unitless')
+        add_aviary_input(self, Aircraft.Wing.FLAP_CHORD_RATIO, units='unitless')
+        add_aviary_input(self, Aircraft.Wing.TAPER_RATIO, units='unitless')
+        add_aviary_input(self, Aircraft.Wing.SLAT_SPAN_RATIO, units='unitless')
+        add_aviary_input(self, Aircraft.Wing.FLAP_SPAN_RATIO, units='unitless')
+        add_aviary_input(self, Aircraft.Wing.LOADING, units='lbf/ft**2')
+        add_aviary_input(self, Aircraft.Wing.THICKNESS_TO_CHORD_ROOT, units='unitless')
+        add_aviary_input(self, Aircraft.Wing.SPAN, units='ft')
+        add_aviary_input(self, Aircraft.Fuselage.AVG_DIAMETER, units='ft')
+        add_aviary_input(self, Aircraft.Wing.CENTER_CHORD, units='ft')
+        add_aviary_input(self, Mission.Landing.LIFT_COEFFICIENT_MAX, units='unitless')
         self.add_input("density", val=RHO_SEA_LEVEL_ENGLISH, units='slug/ft**3',
                        desc='RHO: Density of air')
 
-        add_aviary_output(self, Aircraft.Wing.HIGH_LIFT_MASS, val=0)
+        add_aviary_output(self, Aircraft.Wing.HIGH_LIFT_MASS, units='lbm')
         self.add_output("flap_mass", val=0, units="lbm",
                         desc="WFLAP: mass of trailing edge devices")
         self.add_output("slat_mass", val=0, units="lbm",
@@ -2043,23 +1940,25 @@ class ControlMass(om.ExplicitComponent):
 
     def setup(self):
         add_aviary_input(
-            self, Aircraft.Wing.SURFACE_CONTROL_MASS_COEFFICIENT, val=0.95)
-        add_aviary_input(self, Aircraft.Wing.AREA, val=200)
-        add_aviary_input(self, Mission.Design.GROSS_MASS, val=20000)
-        add_aviary_input(self, Aircraft.Wing.ULTIMATE_LOAD_FACTOR, val=7)
+            self, Aircraft.Wing.SURFACE_CONTROL_MASS_COEFFICIENT, units='unitless')
+        add_aviary_input(self, Aircraft.Wing.AREA, units='ft**2')
+        add_aviary_input(self, Mission.Design.GROSS_MASS, units='lbm')
+        add_aviary_input(self, Aircraft.Wing.ULTIMATE_LOAD_FACTOR, units='unitless')
         self.add_input("min_dive_vel", val=700, units="kn", desc="VDMIN: dive velocity")
-        add_aviary_input(
-            self, Aircraft.Design.COCKPIT_CONTROL_MASS_COEFFICIENT, val=16.5)
-        add_aviary_input(
-            self, Aircraft.Controls.STABILITY_AUGMENTATION_SYSTEM_MASS, val=200)
-        add_aviary_input(self, Aircraft.Controls.COCKPIT_CONTROL_MASS_SCALER, val=1)
-        add_aviary_input(self, Aircraft.Wing.SURFACE_CONTROL_MASS_SCALER, val=1)
-        add_aviary_input(
-            self, Aircraft.Controls.STABILITY_AUGMENTATION_SYSTEM_MASS_SCALER, val=1)
-        add_aviary_input(self, Aircraft.Controls.CONTROL_MASS_INCREMENT, val=0)
+        add_aviary_input(self, Aircraft.Design.COCKPIT_CONTROL_MASS_COEFFICIENT,
+                         units='unitless')
+        add_aviary_input(self, Aircraft.Controls.STABILITY_AUGMENTATION_SYSTEM_MASS,
+                         units='lbm')
+        add_aviary_input(self, Aircraft.Controls.COCKPIT_CONTROL_MASS_SCALER,
+                         units='unitless')
+        add_aviary_input(self, Aircraft.Wing.SURFACE_CONTROL_MASS_SCALER,
+                         units='unitless')
+        add_aviary_input(self, Aircraft.Controls.STABILITY_AUGMENTATION_SYSTEM_MASS_SCALER,
+                         units='unitless')
+        add_aviary_input(self, Aircraft.Controls.CONTROL_MASS_INCREMENT, units='lbm')
 
-        add_aviary_output(self, Aircraft.Controls.TOTAL_MASS, val=0)
-        add_aviary_output(self, Aircraft.Wing.SURFACE_CONTROL_MASS, val=0)
+        add_aviary_output(self, Aircraft.Controls.TOTAL_MASS, units='lbm')
+        add_aviary_output(self, Aircraft.Wing.SURFACE_CONTROL_MASS, units='lbm')
 
         self.declare_partials(Aircraft.Controls.TOTAL_MASS, "*")
         self.declare_partials(
@@ -2271,18 +2170,18 @@ class GearMass(om.ExplicitComponent):
     def setup(self):
         num_engine_type = len(self.options[Aircraft.Engine.NUM_ENGINES])
 
-        add_aviary_input(self, Aircraft.Wing.VERTICAL_MOUNT_LOCATION, val=0)
-        add_aviary_input(self, Aircraft.LandingGear.MASS_COEFFICIENT, val=0.04)
-        add_aviary_input(self, Mission.Design.GROSS_MASS, val=152000)
-        add_aviary_input(self, Aircraft.LandingGear.MAIN_GEAR_MASS_COEFFICIENT, val=0.85)
+        add_aviary_input(self, Aircraft.Wing.VERTICAL_MOUNT_LOCATION, units='unitless')
+        add_aviary_input(self, Aircraft.LandingGear.MASS_COEFFICIENT, units='unitless')
+        add_aviary_input(self, Mission.Design.GROSS_MASS, units='lbm')
+        add_aviary_input(self, Aircraft.LandingGear.MAIN_GEAR_MASS_COEFFICIENT,
+                         units='unitless')
         add_aviary_input(self, Aircraft.Nacelle.CLEARANCE_RATIO,
-                         val=np.full(num_engine_type, 0.2), units="unitless")
+                         shape=num_engine_type, units='unitless')
         add_aviary_input(self, Aircraft.Nacelle.AVG_DIAMETER,
-                         val=np.full(num_engine_type, 7.5))
+                         shape=num_engine_type, units='ft')
 
-        add_aviary_output(self, Aircraft.LandingGear.TOTAL_MASS, val=0)
-        add_aviary_output(self, Aircraft.LandingGear.MAIN_GEAR_MASS, val=0, units="lbm",
-                          desc="WMG: mass of main gear")
+        add_aviary_output(self, Aircraft.LandingGear.TOTAL_MASS, units='lbm')
+        add_aviary_output(self, Aircraft.LandingGear.MAIN_GEAR_MASS, units='lbm')
 
         self.declare_partials(
             Aircraft.LandingGear.TOTAL_MASS, [
@@ -2484,7 +2383,4 @@ class FixedMassGroup(om.Group):
                 inputs=["aug_mass", ],
             )
 
-        self.set_input_defaults(Aircraft.Wing.SPAN, val=117.8, units="ft")
-        self.set_input_defaults(Mission.Design.GROSS_MASS, val=175400, units="lbm")
         self.set_input_defaults("min_dive_vel", val=420, units="kn")
-        self.set_input_defaults(Aircraft.Wing.AREA, val=1370.3, units="ft**2")

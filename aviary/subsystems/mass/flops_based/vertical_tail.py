@@ -15,12 +15,12 @@ class VerticalTailMass(om.ExplicitComponent):
         add_aviary_option(self, Aircraft.VerticalTail.NUM_TAILS)
 
     def setup(self):
-        add_aviary_input(self, Aircraft.VerticalTail.AREA, val=0.0)
-        add_aviary_input(self, Aircraft.VerticalTail.TAPER_RATIO, val=0.0)
-        add_aviary_input(self, Aircraft.VerticalTail.MASS_SCALER)
-        add_aviary_input(self, Mission.Design.GROSS_MASS)
+        add_aviary_input(self, Aircraft.VerticalTail.AREA, units='ft**2')
+        add_aviary_input(self, Aircraft.VerticalTail.TAPER_RATIO, units='unitless')
+        add_aviary_input(self, Aircraft.VerticalTail.MASS_SCALER, units='unitless')
+        add_aviary_input(self, Mission.Design.GROSS_MASS, units='lbm')
 
-        add_aviary_output(self, Aircraft.VerticalTail.MASS)
+        add_aviary_output(self, Aircraft.VerticalTail.MASS, units='lbm')
 
     def setup_partials(self):
         self.declare_partials("*", "*")
@@ -74,11 +74,11 @@ class AltVerticalTailMass(om.ExplicitComponent):
     '''
 
     def setup(self):
-        add_aviary_input(self, Aircraft.VerticalTail.AREA, val=0.0)
+        add_aviary_input(self, Aircraft.VerticalTail.AREA, units='ft**2')
 
-        add_aviary_input(self, Aircraft.VerticalTail.MASS_SCALER, val=1.0)
+        add_aviary_input(self, Aircraft.VerticalTail.MASS_SCALER, units='unitless')
 
-        add_aviary_output(self, Aircraft.VerticalTail.MASS, val=0.0)
+        add_aviary_output(self, Aircraft.VerticalTail.MASS, units='lbm')
 
     def setup_partials(self):
         self.declare_partials("*", "*")
