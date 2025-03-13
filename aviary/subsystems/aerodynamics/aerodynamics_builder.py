@@ -176,7 +176,7 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
 
             elif method == 'low_speed':
                 if (
-                    any(
+                    all(
                         key in kwargs
                         for key in [
                             'free_aero_data',
@@ -184,7 +184,6 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
                             'free_ground_data',
                         ]
                     )
-                    in kwargs
                 ):
                     aero_group = TabularLowSpeedAero(
                         num_nodes=num_nodes,
