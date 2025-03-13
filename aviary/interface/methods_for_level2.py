@@ -6,8 +6,8 @@ from datetime import datetime
 import importlib.util
 import sys
 import json
-import enum
 import os
+from enum import Enum
 
 import numpy as np
 
@@ -1838,15 +1838,15 @@ class AviaryProblem(om.Problem):
                     if type_value == np.ndarray:
                         value = value.tolist()
 
-                    # Lists are fine except if they contain enums
+                    # Lists are fine except if they contain enums or Paths
                     if type_value == list:
-                        if isinstance(value[0], enum.Enum):
+                        if isinstance(value[0], Enum) or isinstance(value[0], Path):
                             for i in range(len(value)):
-                                value[i] = str([value[i]])
+                                value[i] = str(value[i])
 
-                    # Enums need converting to a string
-                    if isinstance(value, enum.Enum):
-                        value = str([value])
+                    # Enums and Paths need converting to a string
+                    if isinstance(value, Enum) or isinstance(value, Path):
+                        value = str(value)
 
                 # Append the data to the list
                 aviary_input_list.append([name, value, units, str(type_value)])
@@ -1975,13 +1975,14 @@ def _read_sizing_json(aviary_problem, json_filename):
         [var_name, var_values, var_units, var_type] = inputs
 
         # Initialize some flags to idetify arrays and enums
-        is_array = False
+        # is_array = False
         is_enum = False
 
-        if var_type == "<class 'numpy.ndarray'>":
-            is_array = True
+        # if var_type == "<class 'numpy.ndarray'>":
+        #     is_array = True
 
-        elif var_type == "<class 'list'>":
+        # elif var_type == "<class 'list'>":
+        if var_type == "<class 'list'>":
             # check if the list contains enums
             for i in range(len(var_values)):
                 if isinstance(var_values[i], str):
@@ -1997,8 +1998,8 @@ def _read_sizing_json(aviary_problem, json_filename):
             if is_enum:
                 var_values = convert_strings_to_data(var_values)
 
-            else:
-                var_values = [var_values]
+            # else:
+            #     var_values = var_values
 
         elif var_type.find("<enum") != -1:
             # Identify enums and manipulate the string to find the value
@@ -2007,16 +2008,16 @@ def _read_sizing_json(aviary_problem, json_filename):
                 "]", "").replace("'", "").replace(" ", "")
             var_values = convert_strings_to_data([var_values])
 
-        else:
-            # values are expected to be parsed as a list to set_value function
-            var_values = [var_values]
+        # else:
+        #     # values are expected to be parsed as a list to set_value function
+        #     var_values = [var_values]
 
         # Check if the variable is in meta data
         if var_name in BaseMetaData.keys():
             try:
-                aviary_problem.aviary_inputs = set_value(
-                    var_name, var_values, aviary_problem.aviary_inputs, units=var_units,
-                    is_array=is_array, meta_data=BaseMetaData)
+                aviary_problem.aviary_inputs.set_val(
+                    var_name, var_values, units=var_units, meta_data=BaseMetaData
+                )
             except BaseException:
                 # Print helpful error
                 print(

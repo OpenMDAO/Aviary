@@ -37,7 +37,7 @@ class DescentODETestCase(unittest.TestCase):
             core_subsystems=default_mission_subsystems
         )
 
-        setup_model_options(self.sys, aviary_options)
+        setup_model_options(self.prob, aviary_options)
 
     @unittest.skipIf(
         version.parse(openmdao.__version__) < version.parse("3.26"),
@@ -126,4 +126,7 @@ class DescentODETestCase(unittest.TestCase):
 
 
 if __name__ == "__main__":
-    unittest.main()
+    # unittest.main()
+    test = DescentODETestCase()
+    test.setUp()
+    test.test_high_alt()
