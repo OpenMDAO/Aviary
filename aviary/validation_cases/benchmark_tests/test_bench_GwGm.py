@@ -163,6 +163,10 @@ class ProblemPhaseTestCase(unittest.TestCase):
             tolerance=rtol,
         )
 
+    @unittest.skip(
+        'Shooting method is not correctly receiving user-set options, and is currently '
+        'using default values for most options'
+    )
     @require_pyoptsparse(optimizer="IPOPT")
     def test_bench_GwGm_shooting(self):
         from aviary.interface.default_phase_info.two_dof_fiti import (

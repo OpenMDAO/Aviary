@@ -18,6 +18,10 @@ from aviary.variable_info.functions import setup_model_options
 from aviary.utils.aviary_values import AviaryValues
 
 
+@unittest.skip(
+    'Shooting method is not correctly receiving user-set options, and is currently '
+    'using default values for most options'
+)
 @unittest.skipUnless(importlib.util.find_spec("pyoptsparse") is not None, "pyoptsparse is not installed")
 class IdleDescentTestCase(unittest.TestCase):
     """

@@ -3,6 +3,7 @@ A home for helper functions that are used in multiple files in aviary/utils
 Helps to avoid circular imports
 """
 from enum import Enum
+from copy import deepcopy
 
 import numpy as np
 
@@ -42,7 +43,7 @@ def wrapped_convert_units(val_unit_tuple, new_units):
     value: float, list, np.ndarray, tuple
         Value converted to new units, as the same type as provided
     """
-    value, units = val_unit_tuple
+    value, units = deepcopy(val_unit_tuple)
 
     # can't convert units on None; return None
     if value is None:

@@ -82,6 +82,7 @@ class TakeoffEOMTest(unittest.TestCase):
         time, _ = detailed_takeoff_climbing.get_item('time')
         nn = len(time)
         aviary_options = inputs
+        inputs.set_val(Aircraft.Engine.NUM_ENGINES, [2])
 
         prob.model.add_subsystem(
             "takeoff_eom",
@@ -93,7 +94,7 @@ class TakeoffEOMTest(unittest.TestCase):
             promotes_inputs=['*'],
             promotes_outputs=['*'])
 
-        setup_model_options(prob, inputs)
+        # setup_model_options(prob, inputs)
 
         prob.setup(check=False, force_alloc_complex=True)
 
@@ -403,6 +404,8 @@ class TakeoffEOMTest(unittest.TestCase):
             Dynamic.Vehicle.ANGLE_OF_ATTACK, np.array([5.086, 6.834]), units="rad"
         )
 
+        setup_model_options(prob, inputs)
+
         prob.setup(check=False, force_alloc_complex=True)
         prob.run_model()
 
@@ -421,3 +424,5 @@ class TakeoffEOMTest(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+    # test = TakeoffEOMTest()
+    # test.test_case_ground()

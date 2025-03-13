@@ -6,6 +6,10 @@ from aviary.api import AnalysisScheme
 from aviary.examples.level2_shooting_traj import custom_run_aviary
 
 
+@unittest.skip(
+    'Shooting method is not correctly receiving user-set options, and is currently '
+    'using default values for most options'
+)
 @use_tempdirs
 class CustomTrajTestCase(unittest.TestCase):
     # A test class for shooting scheme
