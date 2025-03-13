@@ -12,12 +12,12 @@ class CanardMass(om.ExplicitComponent):
     '''
 
     def setup(self):
-        add_aviary_input(self, Mission.Design.GROSS_MASS)
-        add_aviary_input(self, Aircraft.Canard.AREA)
-        add_aviary_input(self, Aircraft.Canard.TAPER_RATIO)
-        add_aviary_input(self, Aircraft.Canard.MASS_SCALER)
+        add_aviary_input(self, Mission.Design.GROSS_MASS, units='lbm')
+        add_aviary_input(self, Aircraft.Canard.AREA, units='ft**2')
+        add_aviary_input(self, Aircraft.Canard.TAPER_RATIO, units='unitless')
+        add_aviary_input(self, Aircraft.Canard.MASS_SCALER, units='unitless')
 
-        add_aviary_output(self, Aircraft.Canard.MASS)
+        add_aviary_output(self, Aircraft.Canard.MASS, units='lbm')
 
     def setup_partials(self):
         self.declare_partials("*", "*")

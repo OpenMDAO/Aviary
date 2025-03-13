@@ -23,10 +23,11 @@ class PassengerServiceMass(om.ExplicitComponent):
         add_aviary_option(self, Mission.Constraints.MAX_MACH)
 
     def setup(self):
-        add_aviary_input(self, Aircraft.CrewPayload.PASSENGER_SERVICE_MASS_SCALER)
-        add_aviary_input(self, Mission.Design.RANGE)
+        add_aviary_input(self, Aircraft.CrewPayload.PASSENGER_SERVICE_MASS_SCALER,
+                         units='unitless')
+        add_aviary_input(self, Mission.Design.RANGE, units='NM')
 
-        add_aviary_output(self, Aircraft.CrewPayload.PASSENGER_SERVICE_MASS)
+        add_aviary_output(self, Aircraft.CrewPayload.PASSENGER_SERVICE_MASS, units='lbm')
 
     def setup_partials(self):
         self.declare_partials('*', '*')
@@ -97,9 +98,9 @@ class AltPassengerServiceMass(om.ExplicitComponent):
 
     def setup(self):
         add_aviary_input(
-            self, Aircraft.CrewPayload.PASSENGER_SERVICE_MASS_SCALER, val=1.)
+            self, Aircraft.CrewPayload.PASSENGER_SERVICE_MASS_SCALER, units='unitless')
 
-        add_aviary_output(self, Aircraft.CrewPayload.PASSENGER_SERVICE_MASS, val=0.0)
+        add_aviary_output(self, Aircraft.CrewPayload.PASSENGER_SERVICE_MASS, units='lbm')
 
     def setup_partials(self):
         self.declare_partials('*', '*')
