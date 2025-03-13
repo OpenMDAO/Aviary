@@ -69,7 +69,6 @@ class TabularAeroGroupFileTest(unittest.TestCase):
         )  # convert from knots to ft/s
         self.prob.set_val(Dynamic.Mission.ALTITUDE, val=10582, units='m')
         self.prob.set_val(Dynamic.Vehicle.MASS, val=80442, units='kg')
-        self.prob.set_val(Dynamic.Atmosphere.MACH, val=0.3876, units='unitless')
         # 1344.5? 'reference' vs 'calculated'?
         self.prob.set_val(Aircraft.Wing.AREA, val=1341, units='ft**2')
         # calculated from online atmospheric table
@@ -211,7 +210,6 @@ class TabularAeroGroupDataTest(unittest.TestCase):
         )  # convert from knots to ft/s
         self.prob.set_val(Dynamic.Mission.ALTITUDE, val=10582, units='m')
         self.prob.set_val(Dynamic.Vehicle.MASS, val=80442, units='kg')
-        self.prob.set_val(Dynamic.Atmosphere.MACH, val=0.3876, units='unitless')
         # 1344.5? 'reference' vs 'calculated'?
         self.prob.set_val(Aircraft.Wing.AREA, val=1341, units='ft**2')
         # calculated from online atmospheric table
