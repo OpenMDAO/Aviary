@@ -150,7 +150,8 @@ class FuselageSize(om.ExplicitComponent):
         )
 
     def compute(self, inputs, outputs):
-        LoverD_nose = inputs[Aircraft.Fuselage.NOSE_FINENESS]  # bad name, it is length to diameter ratio of nose cone of fuselage
+        # length to diameter ratio of nose cone of fuselage
+        LoverD_nose = inputs[Aircraft.Fuselage.NOSE_FINENESS]
         LoverD_tail = inputs[Aircraft.Fuselage.TAIL_FINENESS]
         cockpit_len = inputs[Aircraft.Fuselage.PILOT_COMPARTMENT_LENGTH]
         fus_SA_scaler = inputs[Aircraft.Fuselage.WETTED_AREA_SCALER]
