@@ -1651,11 +1651,12 @@ class AviaryProblem(om.Problem):
 
         self.problem_ran_successfully = not failed
 
-    def alternate_mission(self, run_mission=True,
-                          json_filename='sizing_problem.json',
-                          num_first=None, num_business=None, num_tourist=None, num_pax=None,
-                          wing_cargo=None, misc_cargo=None, cargo_mass=None, mission_range=None,
-                          phase_info=None, verbosity=Verbosity.BRIEF):
+    def alternate_mission(
+        self, run_mission=True, json_filename='sizing_problem.json', num_first=None,
+        num_business=None, num_tourist=None, num_pax=None, wing_cargo=None,
+        misc_cargo=None, cargo_mass=None, mission_range=None, phase_info=None,
+        verbosity=Verbosity.BRIEF
+    ):
         """
         This function runs an alternate mission based on a sizing mission output.
 
@@ -1676,6 +1677,7 @@ class AviaryProblem(om.Problem):
             If a list is provided, it will be used as the debug print options.
         """
         mass_method = self.aviary_inputs.get_val(Settings.MASS_METHOD)
+        equations_of_motion = self.aviary_inputs.get_val(Settings.EQUATIONS_OF_MOTION)
         if mass_method == LegacyCode.FLOPS:
             if num_first is None or num_business is None or num_tourist is None:
                 print('Incomplete PAX numbers for FLOPS fallout - assume same as design')
@@ -1714,8 +1716,11 @@ class AviaryProblem(om.Problem):
         mission_mass = self.get_val(Mission.Design.GROSS_MASS)
         optimizer = self.driver.options["optimizer"]
 
-        prob_alternate = _load_off_design(json_filename, ProblemType.ALTERNATE, mass_method, phase_info, num_first,
-                                          num_business, num_tourist, num_pax, wing_cargo, misc_cargo, cargo_mass, mission_range, mission_mass)
+        prob_alternate = _load_off_design(
+            json_filename, ProblemType.ALTERNATE, equations_of_motion, mass_method,
+            phase_info, num_first, num_business, num_tourist, num_pax, wing_cargo,
+            misc_cargo, cargo_mass, mission_range, mission_mass
+        )
 
         prob_alternate.check_and_preprocess_inputs()
         prob_alternate.add_pre_mission_systems()
@@ -1732,11 +1737,12 @@ class AviaryProblem(om.Problem):
                 record_filename='alternate_problem_history.db')
         return prob_alternate
 
-    def fallout_mission(self, run_mission=True,
-                        json_filename='sizing_problem.json',
-                        num_first=None, num_business=None, num_tourist=None, num_pax=None,
-                        wing_cargo=None, misc_cargo=None, cargo_mass=None, mission_mass=None,
-                        phase_info=None, verbosity=Verbosity.BRIEF):
+    def fallout_mission(
+        self, run_mission=True, json_filename='sizing_problem.json', num_first=None,
+        num_business=None, num_tourist=None, num_pax=None, wing_cargo=None,
+        misc_cargo=None, cargo_mass=None, mission_mass=None, phase_info=None,
+        verbosity=Verbosity.BRIEF
+    ):
         """
         This function runs a fallout mission based on a sizing mission output.
 
@@ -1757,6 +1763,7 @@ class AviaryProblem(om.Problem):
             If a list is provided, it will be used as the debug print options.
         """
         mass_method = self.aviary_inputs.get_val(Settings.MASS_METHOD)
+        equations_of_motion = self.aviary_inputs.get_val(Settings.EQUATIONS_OF_MOTION)
         if mass_method == LegacyCode.FLOPS:
             if num_first is None or num_business is None or num_tourist is None:
                 print('Incomplete PAX numbers for FLOPS fallout - assume same as design')
@@ -1792,8 +1799,21 @@ class AviaryProblem(om.Problem):
 
         optimizer = self.driver.options["optimizer"]
 
-        prob_fallout = _load_off_design(json_filename, ProblemType.FALLOUT, mass_method, phase_info, num_first,
-                                        num_business, num_tourist, num_pax, wing_cargo, misc_cargo, cargo_mass, None, mission_mass)
+        prob_fallout = _load_off_design(
+            json_filename,
+            ProblemType.FALLOUT,
+            equations_of_motion,
+            mass_method,
+            phase_info,
+            num_first,
+            num_business,
+            num_tourist,
+            num_pax,
+            wing_cargo,
+            misc_cargo,
+            cargo_mass,
+            None,
+            mission_mass)
 
         prob_fallout.check_and_preprocess_inputs()
         prob_fallout.add_pre_mission_systems()

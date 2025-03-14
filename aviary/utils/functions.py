@@ -141,50 +141,6 @@ def convert_strings_to_data(input_string):
     return value_list
 
 
-# TODO this function is only used in a single place (process_input_decks.py), and its
-#      functionality can get handled in other places (convert_strings_to_data being able
-#      to handle lists/arrays, and other special handling directly present in
-#      process_input_decks.py)
-# def set_value(var_name, var_value, aviary_values: AviaryValues,
-#               units=None, is_array=False, meta_data=_MetaData):
-#     """
-#     Wrapper for AviaryValues.set_val(). Existing value/units of the provided variable name are used as defaults if
-#     they exist and not provided in this function. Special list handling provided: if 'is_array' is true, 'var_value' is
-#     always added to 'aviary_values' as a numpy array. Otherwise, if 'var_value' is a list or numpy array of length
-#     one and existing value in 'aviary_values' or default value in 'meta_data' is not a list or numpy array,
-#     individual value is pulled out of 'var_value' to be stored in 'aviary_values'.
-#     """
-#     if var_name in aviary_values:
-#         current_value, current_units = aviary_values.get_item(var_name)
-#     else:
-#         current_value = meta_data[var_name]['default_value']
-#         current_units = meta_data[var_name]['units']
-
-#     if units is None:
-#         if current_units:
-#             units = current_units
-#         else:
-#             units = meta_data[var_name]['units']
-#         #     raise ValueError("You have specified a new variable without any units")
-
-#     if is_array:
-#         var_value = np.atleast_1d(var_value)
-#     elif len(var_value) == 1 and not isiterable(current_value):
-#         # if only a single value is provided, don't store it as a list
-#         var_value = var_value[0]
-
-#     # TODO handle enums in an automated method via checking metadata for enum type
-#     if var_name == 'settings:problem_type':
-#         var_value = ProblemType(var_value)
-#     if var_name == 'settings:equations_of_motion':
-#         var_value = EquationsOfMotion(var_value)
-#     if var_name == 'settings:mass_method':
-#         var_value = LegacyCode(var_value)
-
-#     aviary_values.set_val(var_name, val=var_value, units=units, meta_data=meta_data)
-#     return aviary_values
-
-
 def create_opts2vals(all_options: list, output_units: dict = {}):
     """
     create_opts2vals creates a component that converts options to outputs.
