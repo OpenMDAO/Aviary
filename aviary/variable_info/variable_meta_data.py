@@ -3249,16 +3249,6 @@ add_meta_data(
 )
 
 add_meta_data(
-    Aircraft.Fuselage.LIFT_COEFFICENT_BODY_TO_WING,
-    meta_data=_MetaData,
-    historical_name={"GASP": 'INGASP.CLBqCLW', "FLOPS": None, "LEAPS1": None},
-    units='unitless',
-    types=float,
-    default_value=0.0,
-    desc='lift coefficent of body over lift coefficent of wing ratio',
-)
-
-add_meta_data(
     Aircraft.Fuselage.LAMINAR_FLOW_LOWER,
     meta_data=_MetaData,
     historical_name={
@@ -3321,6 +3311,16 @@ add_meta_data(
     units='unitless',
     desc='fuselage length to diameter ratio',
     default_value=0.0,
+)
+
+add_meta_data(
+    Aircraft.Fuselage.LIFT_COEFFICENT_BODY_TO_WING,
+    meta_data=_MetaData,
+    historical_name={"GASP": 'INGASP.CLBqCLW', "FLOPS": None, "LEAPS1": None},
+    units='unitless',
+    types=float,
+    default_value=0.0,
+    desc='lift coefficent of body over lift coefficent of wing ratio',
 )
 
 add_meta_data(
