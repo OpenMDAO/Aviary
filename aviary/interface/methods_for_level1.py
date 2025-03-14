@@ -11,20 +11,20 @@ from aviary.utils.functions import get_path
 
 
 def run_aviary(
-    aircraft_data,
-    phase_info,
-    optimizer=None,
-    analysis_scheme=AnalysisScheme.COLLOCATION,
-    objective_type=None,
-    record_filename='problem_history.db',
-    restart_filename=None,
-    max_iter=50,
-    run_driver=True,
-    make_plots=True,
-    phase_info_parameterization=None,
-    optimization_history_filename=None,
-    verbosity=None,
-):
+        aircraft_data,
+        phase_info,
+        optimizer=None,
+        analysis_scheme=AnalysisScheme.COLLOCATION,
+        objective_type=None,
+        record_filename='problem_history.db',
+        restart_filename=None,
+        max_iter=50,
+        run_driver=True,
+        make_plots=True,
+        phase_info_parameterization=None,
+        optimization_history_filename=None,
+        verbosity=None,
+        gen_n2=True):
     """
     Run the Aviary optimization problem for a specified aircraft configuration and mission.
 
@@ -117,7 +117,7 @@ def run_aviary(
     prob.run_aviary_problem(
         record_filename, restart_filename=restart_filename, run_driver=run_driver,
         make_plots=make_plots,
-        optimization_history_filename=optimization_history_filename)
+        optimization_history_filename=optimization_history_filename, gen_n2=gen_n2)
 
     return prob
 
