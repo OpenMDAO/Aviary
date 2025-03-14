@@ -25,7 +25,7 @@ from aviary.variable_info.variables import Aircraft, Dynamic, Mission, Settings
 # ASCII art from http://patorjk.com/software/taag/#p=display&h=0&f=Big&t=
 # Super categories such as aircraft and mission are in 'Blocks' font
 # Sub categories such as AntiIcing and Wing are in 'Big' font
-# Additional sub categories are in 'Small' foFnt
+# Additional sub categories are in 'Small' font
 # ---------------------------
 _MetaData = {}
 
