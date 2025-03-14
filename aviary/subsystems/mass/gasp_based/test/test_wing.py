@@ -9,6 +9,8 @@ from aviary.subsystems.mass.gasp_based.wing import (WingMassGroup,
 from aviary.variable_info.functions import setup_model_options
 from aviary.variable_info.options import get_option_defaults
 from aviary.variable_info.variables import Aircraft, Mission
+from aviary.variable_info.functions import setup_model_options
+from aviary.utils.aviary_values import AviaryValues
 
 
 class WingMassSolveTestCase(unittest.TestCase):
@@ -62,6 +64,9 @@ class WingMassSolveTestCase(unittest.TestCase):
         newton.options["err_on_non_converge"] = False
 
         self.prob.model.linear_solver = om.DirectSolver(assemble_jac=True)
+
+        setup_model_options(self.prob, AviaryValues(
+            {Aircraft.Engine.NUM_ENGINES: ([2], 'unitless')}))
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
@@ -125,6 +130,10 @@ class WingMassSolveTestCase2(unittest.TestCase):
         newton.linesearch.options["iprint"] = -1
         newton.options["err_on_non_converge"] = False
         prob.model.linear_solver = om.DirectSolver(assemble_jac=True)
+
+        setup_model_options(prob, AviaryValues(
+            {Aircraft.Engine.NUM_ENGINES: ([2], 'unitless')}))
+
         prob.setup(check=False, force_alloc_complex=True)
 
         partial_data = prob.check_partials(out_stream=None, method="cs")
@@ -145,6 +154,9 @@ class TotalWingMassTestCase1(unittest.TestCase):
 
         self.prob.model.set_input_defaults(
             "isolated_wing_mass", val=15830.0, units="lbm")
+
+        setup_model_options(self.prob, AviaryValues(
+            {Aircraft.Engine.NUM_ENGINES: ([2], 'unitless')}))
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
@@ -316,6 +328,10 @@ class TotalWingMassTestCase5(unittest.TestCase):
         )
         prob.model.set_input_defaults(
             "isolated_wing_mass", val=15830.0, units="lbm")
+
+        setup_model_options(prob, AviaryValues(
+            {Aircraft.Engine.NUM_ENGINES: ([2], 'unitless')}))
+
         prob.setup(check=False, force_alloc_complex=True)
 
         partial_data = prob.check_partials(out_stream=None, method="cs")
@@ -477,6 +493,9 @@ class WingMassGroupTestCase1(unittest.TestCase):
         self.prob.model.set_input_defaults(
             "half_sweep", val=0.3947081519145335, units="rad"
         )
+
+        setup_model_options(self.prob, AviaryValues(
+            {Aircraft.Engine.NUM_ENGINES: ([2], 'unitless')}))
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
@@ -693,4 +712,7 @@ class WingMassGroupTestCase4(unittest.TestCase):
 
 
 if __name__ == "__main__":
-    unittest.main()
+    # unittest.main()
+    test = WingMassSolveTestCase2()
+    test.setUp()
+    test.test_case1()

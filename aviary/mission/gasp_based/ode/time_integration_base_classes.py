@@ -10,6 +10,7 @@ from simupy.systems import DynamicalSystem
 from aviary.mission.gasp_based.ode.params import ParamPort
 from aviary.variable_info.enums import Verbosity
 from aviary.variable_info.variable_meta_data import _MetaData
+from aviary.variable_info.functions import setup_model_options
 
 
 def add_SGM_required_inputs(group: om.Group, inputs_to_add: dict):
@@ -134,6 +135,7 @@ class SimuPyProblem(SimulationMixin):
         self.ode = ode
 
         self.prob = prob
+        setup_model_options(prob, aviary_inputs=aviary_options)
         prob.setup(check=False, force_alloc_complex=True)
 
         # TODO - This is a hack to mimic the behavior of the old paramport, which

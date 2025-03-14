@@ -15,6 +15,8 @@ from aviary.subsystems.aerodynamics.aerodynamics_builder import CoreAerodynamics
 from aviary.variable_info.enums import LegacyCode, SpeedType
 from aviary.variable_info.options import get_option_defaults
 from aviary.variable_info.variables import Aircraft, Dynamic
+from aviary.variable_info.functions import setup_model_options
+from aviary.utils.aviary_values import AviaryValues
 
 
 class TestUnsteadyAlphaThrustIterGroup(unittest.TestCase):
@@ -52,6 +54,9 @@ class TestUnsteadyAlphaThrustIterGroup(unittest.TestCase):
             ig.set_input_defaults(
                 Dynamic.Vehicle.ANGLE_OF_ATTACK, np.zeros(nn), units="deg"
             )
+
+        setup_model_options(p, AviaryValues(
+            {Aircraft.Engine.NUM_ENGINES: ([2], 'unitless')}))
 
         p.setup(force_alloc_complex=True)
 

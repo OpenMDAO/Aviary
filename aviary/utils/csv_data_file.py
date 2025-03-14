@@ -14,7 +14,8 @@ from aviary.utils.named_values import NamedValues
 
 
 # multiple type annotation uses "typeA | typeB" syntax, but requires Python 3.10+
-def read_data_file(filename: (str, Path), metadata=None, aliases=None,
+# filename: (str, Path)
+def read_data_file(filename, metadata=None, aliases=None,
                    save_comments=False):
     """
     Read data file in Aviary format, which is data delimited by commas with any amount of
@@ -137,8 +138,8 @@ def read_data_file(filename: (str, Path), metadata=None, aliases=None,
                                 # units were not provided, but variable should have them
                                 # assume default units for that variable
                                 warning = f'Units were not provided for column <{name}> '\
-                                          f'while reading <{filepath}>. Using default '\
-                                          f'units of {default_units}.'
+                                    f'while reading <{filepath}>. Using default '\
+                                    f'units of {default_units}.'
                                 warnings.warn(warning)
                             units = default_units
 
@@ -175,8 +176,10 @@ def read_data_file(filename: (str, Path), metadata=None, aliases=None,
 
 
 # multiple type annotation uses "typeA | typeB" syntax, but requires Python 3.10+
-def write_data_file(filename: (str, Path) = None, data: NamedValues = None,
-                    comments: (str, list) = [], include_timestamp: bool = False):
+# filename: (str, Path)
+# comments: (str, list)
+def write_data_file(filename=None, data: NamedValues = None,
+                    comments=[], include_timestamp: bool = False):
     """
     Write data to a comma-separated values (csv) format file using the Aviary data table
     format.
