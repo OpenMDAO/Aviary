@@ -193,11 +193,12 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
                 # raise error if only some data types are provided (at this point we know
                 # not all are present, now need to see if any were provided at all)
                 elif any(data_tables):
-                    raise UserWarning('Low-speed tabular aerodynamics also requires '
-                                      f'{set(['free_aero_data',
-                                              'free_flaps_data',
-                                              'free_ground_data']) - set(data_tables)}'
-                                      'but this data set was not provided.')
+                    raise UserWarning(
+                        'Low-speed tabular aerodynamics also requires '
+                        f'{set(['free_aero_data', 'free_flaps_data',
+                                'free_ground_data']) - set(data_tables)}'
+                        'but this data set was not provided.'
+                    )
                 else:
                     aero_group = LowSpeedAero(num_nodes=num_nodes, **kwargs)
 
