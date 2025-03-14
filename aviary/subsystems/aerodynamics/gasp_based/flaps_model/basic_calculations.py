@@ -202,7 +202,7 @@ class BasicFlapsCalculations(om.ExplicitComponent):
         sweep_LE = inputs[Aircraft.Wing.LEADING_EDGE_SWEEP]
 
         # intermediate values equations
-        RLMC4 = sweep_c4 * 0.0174533
+        RLMC4 = sweep_c4 * 0.017453
 
         TSWPFH = (np.tan(RLMC4)) - (4.0 / AR) * (
             (0.75 - flap_chord_ratio) * (1.0 - taper_ratio) / (1.0 + taper_ratio)
