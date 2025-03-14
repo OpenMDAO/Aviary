@@ -359,11 +359,7 @@ add_meta_data(
 add_meta_data(
     Aircraft.BWB.IS_BWB,
     meta_data=_MetaData,
-    historical_name={
-        "GASP": ['DEFINE.IHWB'],
-        "FLOPS": None,
-        "LEAPS1": None,
-    },
+    historical_name={"GASP": ['DEFINE.IHWB'], "FLOPS": None, "LEAPS1": None},
     units='unitless',
     types=bool,
     option=True,
