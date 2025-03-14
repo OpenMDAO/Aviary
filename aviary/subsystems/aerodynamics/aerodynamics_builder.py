@@ -98,56 +98,66 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
 
         super().__init__(name=name, meta_data=meta_data)
 
-    def build_pre_mission(self, aviary_inputs):
+    def build_pre_mission(self, aviary_inputs, **kwargs):
         code_origin = self.code_origin
+        try:
+            method = kwargs.pop('method')
+        except KeyError:
+            method = None
+
+        if method is 'external':
+            return None
 
         if code_origin is GASP:
-            aero_group = PreMissionAero()
+            return PreMissionAero()
 
         elif code_origin is FLOPS:
-            aero_group = Design()
-
-        return aero_group
+            return Design()
 
     def build_mission(self, num_nodes, aviary_inputs, **kwargs):
         try:
             method = kwargs.pop('method')
         except KeyError:
             method = None
+
+        aero_group = None
+
+        if method is 'external':
+            return None
+
         if self.code_origin is FLOPS:
             if method is None:
                 aero_group = ComputedAeroGroup(num_nodes=num_nodes)
 
             elif method == 'computed':
-                aero_group = ComputedAeroGroup(num_nodes=num_nodes,
-                                               **kwargs)
+                aero_group = ComputedAeroGroup(num_nodes=num_nodes, **kwargs)
 
             elif method == 'low_speed':
-                aero_group = TakeoffAeroGroup(num_nodes=num_nodes,
-                                              aviary_options=aviary_inputs,
-                                              **kwargs)
+                aero_group = TakeoffAeroGroup(
+                    num_nodes=num_nodes, aviary_options=aviary_inputs, **kwargs
+                )
 
             # TODO solved alpha belongs in the GASP side, rolled into tabular aero
             #      It is currently only here because it is not possible to define
             #      per-subsystem code origins in AviaryProblem yet
             elif method == 'solved_alpha':
-                aero_group = SolvedAlphaGroup(num_nodes=num_nodes,
-                                              aero_data=kwargs.pop('aero_data'),
-                                              **kwargs)
+                aero_group = SolvedAlphaGroup(
+                    num_nodes=num_nodes, aero_data=kwargs.pop('aero_data'), **kwargs
+                )
 
             elif method == 'tabular':
-                aero_group = TabularAeroGroup(num_nodes=num_nodes,
-                                              CD0_data=kwargs.pop('CD0_data'),
-                                              CDI_data=kwargs.pop('CDI_data'),
-                                              **kwargs)
-
-            elif method == 'external':
-                # Aero completely replaced by external group.
-                aero_group = None
+                aero_group = TabularAeroGroup(
+                    num_nodes=num_nodes,
+                    CD0_data=kwargs.pop('CD0_data'),
+                    CDI_data=kwargs.pop('CDI_data'),
+                    **kwargs
+                )
 
             else:
-                raise ValueError('FLOPS-based aero method is not one of the following: '
-                                 '(computed, low_speed, solved_alpha, tabular)')
+                raise ValueError(
+                    'FLOPS-based aero method is not one of the following: '
+                    '(computed, low_speed, solved_alpha, tabular)'
+                )
 
         elif self.code_origin is GASP:
             if method is None:
@@ -155,34 +165,48 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
 
             elif method == 'cruise':
                 if 'aero_data' in kwargs:
-                    aero_group = TabularCruiseAero(num_nodes=num_nodes,
-                                                   aviary_options=aviary_inputs,
-                                                   aero_data=kwargs.pop('aero_data'),
-                                                   **kwargs)
+                    aero_group = TabularCruiseAero(
+                        num_nodes=num_nodes,
+                        aviary_options=aviary_inputs,
+                        aero_data=kwargs.pop('aero_data'),
+                        **kwargs
+                    )
                 else:
-                    aero_group = CruiseAero(num_nodes=num_nodes,
-                                            **kwargs)
+                    aero_group = CruiseAero(num_nodes=num_nodes, **kwargs)
 
             elif method == 'low_speed':
-                if any(key in kwargs for key in ['free_aero_data',
-                                                 'free_flaps_data',
-                                                 'free_ground_data']) in kwargs:
-                    aero_group = TabularLowSpeedAero(num_nodes=num_nodes,
-                                                     free_aero_data=kwargs.pop(
-                                                         'free_aero_data'),
-                                                     free_flaps_data=kwargs.pop(
-                                                         'free_flaps_data'),
-                                                     free_ground_data=kwargs.pop(
-                                                         'free_ground_data'),
-                                                     **kwargs)
+                # all three data types are needed to use tabular aero
+                data_tables = [
+                    key in kwargs for key in [
+                        'free_aero_data', 'free_flaps_data', 'free_ground_data'
+                    ]
+                ]
 
+                if all(data_tables):
+                    aero_group = TabularLowSpeedAero(
+                        num_nodes=num_nodes,
+                        free_aero_data=kwargs['free_aero_data'],
+                        free_flaps_data=kwargs['free_flaps_data'],
+                        free_ground_data=kwargs['free_ground_data'],
+                        **kwargs
+                    )
+                # raise error if only some data types are provided (at this point we know
+                # not all are present, now need to see if any were provided at all)
+                elif any(data_tables):
+                    raise UserWarning(
+                        'Low-speed tabular aerodynamics also requires '
+                        f'{set(['free_aero_data', 'free_flaps_data',
+                                'free_ground_data']) - set(data_tables)}'
+                        'but this data set was not provided.'
+                    )
                 else:
-                    aero_group = LowSpeedAero(num_nodes=num_nodes,
-                                              **kwargs)
+                    aero_group = LowSpeedAero(num_nodes=num_nodes, **kwargs)
 
             else:
-                raise ValueError('GASP-based aero method is not one of the following: '
-                                 '(cruise, low_speed)')
+                raise ValueError(
+                    'GASP-based aero method is not one of the following: '
+                    '(cruise, low_speed)'
+                )
 
         return aero_group
 
@@ -245,12 +269,12 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
 
         elif self.code_origin is GASP:
             if method == 'low_speed':
-                promotes = ['*',
-                            ("airport_alt", Mission.Takeoff.AIRPORT_ALTITUDE),
-                            ("CL_max_flaps", Mission.Takeoff.LIFT_COEFFICIENT_MAX),
-                            ("dCL_flaps_model", Mission.Takeoff.LIFT_COEFFICIENT_FLAP_INCREMENT),
-                            ("dCD_flaps_model", Mission.Takeoff.DRAG_COEFFICIENT_FLAP_INCREMENT),
-                            ("flap_defl", Aircraft.Wing.FLAP_DEFLECTION_TAKEOFF)]
+                promotes = [
+                    '*', ("airport_alt", Mission.Takeoff.AIRPORT_ALTITUDE),
+                    ("CL_max_flaps", Mission.Takeoff.LIFT_COEFFICIENT_MAX),
+                    ("dCL_flaps_model", Mission.Takeoff.LIFT_COEFFICIENT_FLAP_INCREMENT),
+                    ("dCD_flaps_model", Mission.Takeoff.DRAG_COEFFICIENT_FLAP_INCREMENT),
+                    ("flap_defl", Aircraft.Wing.FLAP_DEFLECTION_TAKEOFF)]
 
             elif method == 'cruise':
                 if 'output_alpha' in kwargs:
@@ -365,15 +389,19 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
                         shape = (n1, n2, n3)
 
                         if aviary_inputs is not None and Aircraft.Design.LIFT_POLAR in aviary_inputs:
-                            lift_opts = {'val': aviary_inputs.get_val(Aircraft.Design.LIFT_POLAR),
-                                         'static_target': True}
+                            lift_opts = {
+                                'val': aviary_inputs.get_val(
+                                    Aircraft.Design.LIFT_POLAR),
+                                'static_target': True}
                         else:
                             lift_opts = {'shape': shape,
                                          'static_target': True}
 
                         if aviary_inputs is not None and Aircraft.Design.DRAG_POLAR in aviary_inputs:
-                            drag_opts = {'val': aviary_inputs.get_val(Aircraft.Design.DRAG_POLAR),
-                                         'static_target': True}
+                            drag_opts = {
+                                'val': aviary_inputs.get_val(
+                                    Aircraft.Design.DRAG_POLAR),
+                                'static_target': True}
                         else:
                             drag_opts = {'shape': shape,
                                          'static_target': True}
@@ -401,9 +429,9 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
 
                         if aviary_inputs is not None and Aircraft.Design.LIFT_INDEPENDENT_DRAG_POLAR in aviary_inputs:
                             opts = {
-                                'val': aviary_inputs.get_val(Aircraft.Design.LIFT_INDEPENDENT_DRAG_POLAR),
-                                'static_target': True
-                            }
+                                'val': aviary_inputs.get_val(
+                                    Aircraft.Design.LIFT_INDEPENDENT_DRAG_POLAR),
+                                'static_target': True}
                         else:
                             opts = {'shape': shape,
                                     'static_target': True}
@@ -429,9 +457,9 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
 
                         if aviary_inputs is not None and Aircraft.Design.LIFT_DEPENDENT_DRAG_POLAR in aviary_inputs:
                             opts = {
-                                'val': aviary_inputs.get_val(Aircraft.Design.LIFT_DEPENDENT_DRAG_POLAR),
-                                'static_target': True
-                            }
+                                'val': aviary_inputs.get_val(
+                                    Aircraft.Design.LIFT_DEPENDENT_DRAG_POLAR),
+                                'static_target': True}
                         else:
                             opts = {'shape': shape,
                                     'static_target': True}
@@ -517,7 +545,8 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
             # TODO: 2DOF/Gasp decided on phases based on phase names. We used
             # a saved phase_name to determine the correct aero variables to
             # promote. Ideally, this should all be refactored.
-            if bool(phase_info) and phase_info['phase_type'] in ['ascent', 'groundroll', 'rotation']:
+            if bool(phase_info) and phase_info['phase_type'] in [
+                    'ascent', 'groundroll', 'rotation']:
                 all_vars = (AERO_2DOF_INPUTS, AERO_LS_2DOF_INPUTS)
             else:
                 all_vars = (AERO_2DOF_INPUTS, AERO_CLEAN_2DOF_INPUTS)
