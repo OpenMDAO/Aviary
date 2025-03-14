@@ -357,6 +357,21 @@ add_meta_data(
 )
 
 add_meta_data(
+    Aircraft.BWB.IS_BWB,
+    meta_data=_MetaData,
+    historical_name={
+        "GASP": ['DEFINE.IHWB'],
+        "FLOPS": None,
+        "LEAPS1": None,
+    },
+    units='unitless',
+    types=bool,
+    option=True,
+    default_value=False,
+    desc='a flag for BWB',
+)
+
+add_meta_data(
     Aircraft.BWB.NUM_BAYS,
     meta_data=_MetaData,
     historical_name={
@@ -378,13 +393,13 @@ add_meta_data(
     Aircraft.BWB.PASSENGER_LEADING_EDGE_SWEEP,
     meta_data=_MetaData,
     historical_name={
-        "GASP": None,
+        "GASP": ['DEFINE.SWP_FB'],
         # ['&DEFINE.FUSEIN.SWPLE', 'FUSDTA.SWPLE'],
         "FLOPS": 'FUSEIN.SWPLE',
         "LEAPS1": 'aircraft.inputs.L0_blended_wing_body_design.passenger_leading_edge_sweep',
     },
     units='deg',
-    desc='sweep angle of the leading edge of the passenger cabin',
+    desc='sweep angle of the leading edge of the passenger cabin',  # is this forebody Sweep angle?
     default_value=45.0,
 )
 
@@ -768,7 +783,7 @@ add_meta_data(
 )
 
 add_meta_data(
-    Aircraft.CrewPayload.Design.NUM_FIRST_CLASS,  # not used in gasp_based?
+    Aircraft.CrewPayload.Design.NUM_FIRST_CLASS,
     meta_data=_MetaData,
     historical_name={
         "GASP": None,
@@ -1394,6 +1409,15 @@ add_meta_data(
     units="1/rad",
     desc='lift curve slope at cruise mach number',
     default_value=0.0,
+)
+
+add_meta_data(
+    Aircraft.Design.LIFT_CURVE_SLOPE_Mach0,
+    meta_data=_MetaData,
+    historical_name={"GASP": 'INGASP.CLALPH_B0', "FLOPS": None, "LEAPS1": None},
+    units="1/rad",
+    default_value=0.0,
+    desc='lift curve slope of fuselage at Mach 0',
 )
 
 add_meta_data(
@@ -3101,6 +3125,16 @@ add_meta_data(
 # ========================================================
 
 add_meta_data(
+    Aircraft.Fuselage.AFTBODY_TO_TOTAL_WETTED_AREA,
+    meta_data=_MetaData,
+    historical_name={"GASP": 'INGASP.SAFTqS', "FLOPS": None, "LEAPS1": None},
+    units='unitless',
+    types=float,
+    default_value=0.0,
+    desc='aftbody wetted area to total body wetted area',
+)
+
+add_meta_data(
     Aircraft.Fuselage.AISLE_WIDTH,
     meta_data=_MetaData,
     historical_name={"GASP": 'INGASP.WAS', "FLOPS": None, "LEAPS1": None},
@@ -3176,7 +3210,7 @@ add_meta_data(
 )
 
 add_meta_data(
-    Aircraft.Fuselage.FINENESS,  # not used in gasp_based?
+    Aircraft.Fuselage.FINENESS,
     meta_data=_MetaData,
     historical_name={
         "GASP": None,
@@ -3206,6 +3240,26 @@ add_meta_data(
     units='unitless',
     desc='fuselage form factor',
     default_value=1,
+)
+
+add_meta_data(
+    Aircraft.Fuselage.HEIGHT_TO_WIDTH_RATIO,
+    meta_data=_MetaData,
+    historical_name={"GASP": 'INGASP.HGTqWID', "FLOPS": None, "LEAPS1": None},
+    units='unitless',
+    types=float,
+    default_value=1.0,
+    desc='fuselage height-to-width ratio',
+)
+
+add_meta_data(
+    Aircraft.Fuselage.LIFT_COEFFICENT_BODY_TO_WING,
+    meta_data=_MetaData,
+    historical_name={"GASP": 'INGASP.CLBqCLW', "FLOPS": None, "LEAPS1": None},
+    units='unitless',
+    types=float,
+    default_value=0.0,
+    desc='lift coefficent of body over lift coefficent of wing ratio',
 )
 
 add_meta_data(
@@ -3468,6 +3522,15 @@ add_meta_data(
 )
 
 add_meta_data(
+    Aircraft.Fuselage.PRESSURIZED_WIDTH_ADDITIONAL,
+    meta_data=_MetaData,
+    historical_name={"GASP": 'INGASP.WPRFUS', "FLOPS": None, "LEAPS1": None},
+    units='ft',
+    default_value=0.0,
+    desc='additional pressurized fuselage width for Cargo bay',
+)
+
+add_meta_data(
     Aircraft.Fuselage.SEAT_PITCH,
     meta_data=_MetaData,
     historical_name={"GASP": 'INGASP.PS', "FLOPS": None, "LEAPS1": None},
@@ -3494,6 +3557,15 @@ add_meta_data(
     units="unitless",
     desc='length to diameter ratio of tail cone',
     default_value=1,
+)
+
+add_meta_data(
+    Aircraft.Fuselage.UWT_AFT,
+    meta_data=_MetaData,
+    historical_name={"GASP": 'INGASP.UWT_AFT', "FLOPS": None, "LEAPS1": None},
+    units='lbf/ft**2',
+    default_value=0.0,
+    desc='aft body structural areal unit weight',
 )
 
 add_meta_data(
@@ -4211,6 +4283,15 @@ add_meta_data(
 )
 
 add_meta_data(
+    Aircraft.Nacelle.DIAMETER_BURRIED_IN_FUSELAGE,
+    meta_data=_MetaData,
+    historical_name={"GASP": 'INGASP.HEBQDN', "FLOPS": None, "LEAPS1": None},
+    units='unitless',
+    default_value=0.0,
+    desc='nacelle diamter burried in fuselage over nacelle diameter',
+)
+
+add_meta_data(
     Aircraft.Nacelle.FINENESS,
     meta_data=_MetaData,
     historical_name={
@@ -4325,7 +4406,7 @@ add_meta_data(
 )
 
 add_meta_data(
-    Aircraft.Nacelle.WETTED_AREA,  # not used in gasp_based?
+    Aircraft.Nacelle.WETTED_AREA,
     meta_data=_MetaData,
     historical_name={
         "GASP": None,
@@ -5974,7 +6055,7 @@ add_meta_data(
 )
 
 add_meta_data(
-    Aircraft.Wing.SPAN_EFFICIENCY_FACTOR,  # not used in gasp_based?
+    Aircraft.Wing.SPAN_EFFICIENCY_FACTOR,
     meta_data=_MetaData,
     historical_name={
         "GASP": None,
@@ -6174,7 +6255,7 @@ add_meta_data(
 )
 
 add_meta_data(
-    Aircraft.Wing.THICKNESS_TO_CHORD_TIP,  # not used in gasp_based?
+    Aircraft.Wing.THICKNESS_TO_CHORD_TIP,
     meta_data=_MetaData,
     historical_name={"GASP": 'INGASP.TCT', "FLOPS": None, "LEAPS1": None},
     units='unitless',
