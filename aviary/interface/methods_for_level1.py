@@ -64,7 +64,7 @@ def run_aviary(
         default is None.
     verbosity : Verbosity or int, optional
         Sets level of information outputted to the terminal during model execution.
-        If provided, overwrites verbosity specified in aircraft_filename.
+        If provided, overwrites verbosity specified in aircraft_data.
 
     Returns
     -------
