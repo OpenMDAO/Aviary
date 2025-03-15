@@ -24,7 +24,7 @@ class FuselageParameters(om.ExplicitComponent):
     def setup(self):
 
         add_aviary_input(self, Aircraft.Fuselage.DELTA_DIAMETER, units='ft')
-        # add_aviary_input(self, Aircraft.Fuselage.PILOT_COMPARTMENT_LENGTH, units='ft')
+        add_aviary_input(self, Aircraft.Fuselage.PILOT_COMPARTMENT_LENGTH, units='ft')  # XJ
 
         add_aviary_output(self, Aircraft.Fuselage.AVG_DIAMETER, units='inch')
         self.add_output("cabin_height", val=0, units="ft", desc="HC: height of cabin")
