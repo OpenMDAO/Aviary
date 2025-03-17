@@ -12,8 +12,7 @@ from openmdao.utils.general_utils import env_truthy
 import aviary.api as av
 
 from aviary.interface.default_phase_info.height_energy import phase_info_parameterization
-from aviary.variable_info.enums import ProblemType
-from aviary.variable_info.variables import Mission
+
 
 phase_info = {
     "pre_mission": {"include_takeoff": True, "optimize_mass": True},

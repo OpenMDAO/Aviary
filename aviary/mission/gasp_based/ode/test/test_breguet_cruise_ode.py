@@ -10,6 +10,7 @@ from aviary.subsystems.propulsion.utils import build_engine_deck
 from aviary.utils.test_utils.default_subsystems import get_default_mission_subsystems
 from aviary.variable_info.options import get_option_defaults
 from aviary.variable_info.variables import Aircraft, Dynamic
+from aviary.variable_info.functions import setup_model_options
 
 
 class CruiseODETestCase(unittest.TestCase):
@@ -31,6 +32,8 @@ class CruiseODETestCase(unittest.TestCase):
         self.prob.model.set_input_defaults(
             Dynamic.Atmosphere.MACH, np.array([0, 0]), units="unitless"
         )
+
+        setup_model_options(self.prob, aviary_options)
 
     def test_cruise(self):
         # test partial derivatives

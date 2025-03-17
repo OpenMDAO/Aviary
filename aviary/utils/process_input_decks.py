@@ -22,7 +22,7 @@ import numpy as np
 from openmdao.utils.units import valid_units
 
 from aviary.utils.aviary_values import AviaryValues, get_keys
-from aviary.utils.functions import convert_strings_to_data, set_value
+from aviary.utils.functions import convert_strings_to_data
 from aviary.variable_info.options import get_option_defaults
 from aviary.variable_info.enums import ProblemType, Verbosity
 from aviary.variable_info.variable_meta_data import _MetaData
@@ -151,7 +151,7 @@ def parse_inputs(
 
     with open(vehicle_deck, newline='') as f_in:
         for line in f_in:
-            used, data_units = False, None
+            data_units = None
 
             tmp = [*line.split('#', 1), '']
             line, comment = tmp[0], tmp[1]  # anything after the first # is a comment
@@ -173,34 +173,34 @@ def parse_inputs(
                 # if the last element is a unit, remove it from the list and update the variable's units
                 data_units = data_list.pop()
 
-            is_array = False
-            if '[' in data_list[0]:
-                is_array = True
-
-            var_values = convert_strings_to_data(data_list)
+            var_value = convert_strings_to_data(data_list)
+            # If var_value is length 1 list and is not supposed to be a list, pull out
+            # individual value. Otherwise, convert list to numpy array
+            if len(var_value) <= 1:
+                if var_name in meta_data and meta_data[var_name]['multivalue']:
+                    # if data is numeric, convert to numpy array
+                    if isinstance(var_value[0], (int, float)):
+                        var_value = np.array(var_value)
+                else:
+                    var_value = var_value[0]
 
             if var_name in meta_data.keys():
-                aircraft_values = set_value(
-                    var_name,
-                    var_values,
-                    aircraft_values,
-                    units=data_units,
-                    is_array=is_array,
-                    meta_data=meta_data,
-                )
+                if data_units is None:
+                    data_units = meta_data[var_name]['units']
+                aircraft_values.set_val(var_name, var_value, data_units, meta_data)
                 continue
 
             elif var_name in guess_names:
                 # all initial guesses take only a single value
                 # get values from supplied dictionary
-                initialization_guesses[var_name] = float(var_values[0])
+                initialization_guesses[var_name] = var_value
                 continue
 
             elif var_name.startswith('initialization_guesses:'):
                 # get values labelled as initialization_guesses in .csv input file
                 initialization_guesses[
                     var_name.removeprefix('initialization_guesses:')
-                ] = float(var_values[0])
+                ] = var_value
                 continue
 
             elif ":" in var_name:
@@ -212,7 +212,7 @@ def parse_inputs(
                 continue
 
             if aircraft_values.get_val(Settings.VERBOSITY) >= Verbosity.VERBOSE:
-                print('Unused:', var_name, var_values, comment)
+                print('Unused:', var_name, var_value, comment)
 
     return aircraft_values, initialization_guesses
 

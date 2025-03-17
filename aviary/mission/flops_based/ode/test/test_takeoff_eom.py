@@ -12,7 +12,10 @@ from aviary.models.N3CC.N3CC_data import (
     detailed_takeoff_climbing, detailed_takeoff_ground, inputs)
 from aviary.utils.test_utils.variable_test import assert_match_varnames
 from aviary.validation_cases.validation_tests import do_validation_test
-from aviary.variable_info.variables import Dynamic, Mission
+from aviary.variable_info.variables import Aircraft, Dynamic, Mission
+from aviary.variable_info.functions import setup_model_options
+
+inputs.set_val(Aircraft.Engine.NUM_ENGINES, np.array([2]))
 
 
 class TakeoffEOMTest(unittest.TestCase):
@@ -79,6 +82,7 @@ class TakeoffEOMTest(unittest.TestCase):
         time, _ = detailed_takeoff_climbing.get_item('time')
         nn = len(time)
         aviary_options = inputs
+        inputs.set_val(Aircraft.Engine.NUM_ENGINES, [2])
 
         prob.model.add_subsystem(
             "takeoff_eom",
@@ -398,6 +402,8 @@ class TakeoffEOMTest(unittest.TestCase):
             Dynamic.Vehicle.ANGLE_OF_ATTACK, np.array([5.086, 6.834]), units="rad"
         )
 
+        setup_model_options(prob, inputs)
+
         prob.setup(check=False, force_alloc_complex=True)
         prob.run_model()
 
@@ -416,3 +422,5 @@ class TakeoffEOMTest(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+    # test = TakeoffEOMTest()
+    # test.test_case_ground()
