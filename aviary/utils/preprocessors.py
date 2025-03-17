@@ -400,21 +400,26 @@ def preprocess_propulsion(aviary_options: AviaryValues,
                 else:
                     dtype = dtype[0]
 
-            # if var is supposed to be a unique array per engine model, assemble flat
-            # vector manually to avoid ragged arrays (such as for wing engine locations)
             if isiterable(metadata[var]['types']):
                 typeset = (metadata[var]['types'])
             else:
                 typeset = (metadata[var]['types'],)
+
             # Variables are multidimensional if their base types have iterables, and are
             # flagged as `multivalue`
             multidimensional = set(typeset) & set(
                 (list, tuple, np.ndarray)) and multivalue
+
             # vec is where the vectorized engine data is stored - always a list right
             # now, converted to other types like np array later
             vec = []
 
-            # priority order is (checked per engine):
+            # Vectorize variable "var" from available sources #
+
+            # If var is supposed to be a unique array per engine model, assemble flat
+            # vector manually to avoid ragged arrays (such as for wing engine locations)
+
+            # Priority order is (checked per engine):
             # 1. EngineModel.options
             # 2. aviary_options
             # 3. default value from metadata
