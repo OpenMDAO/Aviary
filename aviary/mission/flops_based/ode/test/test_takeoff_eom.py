@@ -94,8 +94,6 @@ class TakeoffEOMTest(unittest.TestCase):
             promotes_inputs=['*'],
             promotes_outputs=['*'])
 
-        # setup_model_options(prob, inputs)
-
         prob.setup(check=False, force_alloc_complex=True)
 
         return prob

@@ -170,15 +170,6 @@ class AviaryValues(NamedValues):
         except BaseException:
             raise KeyError('There is an unknown error with your units.')
 
-    # def _convert_to_enum(self, val, enum_type):
-    #     if isinstance(val, str):
-    #         try:
-    #             # see if str maps to ENUM value
-    #             return enum_type(val)
-    #         except ValueError:
-    #             # str instead maps to ENUM name
-    #             return enum_type(val.upper())
-
 
 def _flatten_iters(iterable):
     """Flattens iterables of any type and dimension"""

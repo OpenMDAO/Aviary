@@ -325,6 +325,7 @@ class CharacteristicLengths(om.ExplicitComponent):
         outputs[Aircraft.Nacelle.CHARACTERISTIC_LENGTH] = char_len
         outputs[Aircraft.Nacelle.FINENESS] = fineness
 
+    # NOTE this code is currently unused!!
     def _compute_additional_fuselages(
         self, inputs, outputs, discrete_inputs=None, discrete_outputs=None
     ):
@@ -355,6 +356,7 @@ class CharacteristicLengths(om.ExplicitComponent):
 
             idx += 1
 
+    # NOTE this code is currently unused!!
     def _compute_additional_vertical_tails(
         self, inputs, outputs, discrete_inputs=None, discrete_outputs=None
     ):

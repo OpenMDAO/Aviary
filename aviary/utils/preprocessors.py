@@ -394,17 +394,11 @@ def preprocess_propulsion(aviary_options: AviaryValues,
 
             # If dtype has multiple options, prefer type of default value
             # Otherwise, use the first type in the tuple
-
-            # v-- old comment, may need to be removed --v
-            # , and create an "empty" value
-            # of that type (for numpy array dtyping)
-
             if isinstance(dtype, tuple):
                 if default_value is not None:
                     dtype = type(default_value)
                 else:
                     dtype = dtype[0]
-                    # default_value = dtype()
 
             # if var is supposed to be a unique array per engine model, assemble flat
             # vector manually to avoid ragged arrays (such as for wing engine locations)
@@ -416,12 +410,8 @@ def preprocess_propulsion(aviary_options: AviaryValues,
             # flagged as `multivalue`
             multidimensional = set(typeset) & set(
                 (list, tuple, np.ndarray)) and multivalue
-            # if multidimensional:
-            # vec = np.zeros(0, dtype=dtype)
-            # elif isinstance(default_value, tuple):
-            #     vec = ()
-            # else:
-            #     vec = [default_value] * num_engine_type
+            # vec is where the vectorized engine data is stored - always a list right
+            # now, converted to other types like np array later
             vec = []
 
             # priority order is (checked per engine):
@@ -431,39 +421,18 @@ def preprocess_propulsion(aviary_options: AviaryValues,
             for i, engine in enumerate(engine_models):
                 # test to see if engine has this variable - if so, use it
                 try:
-                    # variables in engine models are known to be "safe", will only
+                    # variables in engine models are trusted to be "safe", and only
                     # contain data for that engine
                     engine_val = engine.get_val(var, units)
-                    # if isinstance(default_value, (list, np.ndarray)) and multivalue:
-                    #     vec = np.append(vec, engine_val)
-                    # elif isinstance(default_value, tuple):
-                    #     vec = vec + (engine_val,)
-                    # else:
-                    #     vec[i] = engine_val
                 # if the variable is not in the engine model, pull from aviary options
                 except KeyError:
                     # check if variable is defined in aviary options (for this engine's
                     # index) - if so, use it
                     try:
                         aviary_val = aviary_options.get_val(var, units)
-                        # if aviary_val is an iterable, just grab val for this engine
-                        # if isinstance(aviary_val, (list, np.ndarray, tuple)):
-                        #     aviary_val = aviary_val[i]
-                        # # add aviary_val to vec using type-appropriate syntax
-                        # if isinstance(default_value, (list, np.ndarray)) and multivalue:
-                        #     vec = np.append(vec, aviary_val)
-                        # elif isinstance(default_value, tuple):
-                        #     vec = vec + (aviary_val,)
-                        # else:
-                        #     vec[i] = aviary_val
                     # if the variable is not in aviary_options, use default from metadata
                     except (KeyError, IndexError):
-                        # if isinstance(default_value, (list, np.ndarray)) and
-                        # multivalue:
                         vec = np.append(vec, default_value)
-                        # else:
-                        #     # default value is already in array
-                        #     continue
                     else:
                         # save value from aviary_options
                         # if aviary_val is an iterable, just grab val for this engine

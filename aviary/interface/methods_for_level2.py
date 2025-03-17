@@ -2001,14 +2001,9 @@ def _read_sizing_json(aviary_problem, json_filename):
     for inputs in loaded_aviary_input_list:
         [var_name, var_values, var_units, var_type] = inputs
 
-        # Initialize some flags to idetify arrays and enums
-        # is_array = False
+        # Initialize some flags to identify enums
         is_enum = False
 
-        # if var_type == "<class 'numpy.ndarray'>":
-        #     is_array = True
-
-        # elif var_type == "<class 'list'>":
         if var_type == "<class 'list'>":
             # check if the list contains enums
             for i in range(len(var_values)):
@@ -2025,19 +2020,12 @@ def _read_sizing_json(aviary_problem, json_filename):
             if is_enum:
                 var_values = convert_strings_to_data(var_values)
 
-            # else:
-            #     var_values = var_values
-
         elif var_type.find("<enum") != -1:
             # Identify enums and manipulate the string to find the value
             tmp_var_values = var_values.split(':')[-1]
             var_values = tmp_var_values.replace(">", "").replace(
                 "]", "").replace("'", "").replace(" ", "")
             var_values = convert_strings_to_data([var_values])
-
-        # else:
-        #     # values are expected to be parsed as a list to set_value function
-        #     var_values = [var_values]
 
         # Check if the variable is in meta data
         if var_name in BaseMetaData.keys():
