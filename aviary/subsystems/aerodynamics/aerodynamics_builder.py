@@ -185,9 +185,6 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
                 if all(data_tables):
                     aero_group = TabularLowSpeedAero(
                         num_nodes=num_nodes,
-                        free_aero_data=kwargs['free_aero_data'],
-                        free_flaps_data=kwargs['free_flaps_data'],
-                        free_ground_data=kwargs['free_ground_data'],
                         **kwargs
                     )
                 # raise error if only some data types are provided (at this point we know
