@@ -32,7 +32,7 @@ class ProblemPhaseTestCase(unittest.TestCase):
             verbosity=0,
         )
 
-        rtol = 0.01
+        rtol = 1e-4
 
         # There are no truth values for these.
         assert_near_equal(
@@ -49,7 +49,7 @@ class ProblemPhaseTestCase(unittest.TestCase):
 
         assert_near_equal(
             prob.get_val(Mission.Summary.TOTAL_FUEL_MASS, units='lbm'),
-            41856.0,
+            42109.3400,
             tolerance=rtol,
         )
 
@@ -79,7 +79,7 @@ class ProblemPhaseTestCase(unittest.TestCase):
             verbosity=0,
         )
 
-        rtol = 0.01
+        rtol = 1e-4
 
         # There are no truth values for these.
         assert_near_equal(
@@ -96,7 +96,7 @@ class ProblemPhaseTestCase(unittest.TestCase):
 
         assert_near_equal(
             prob.get_val(Mission.Summary.TOTAL_FUEL_MASS, units='lbm'),
-            42529.0,  # TODO: my number: 42109.1488
+            42107.5096,
             tolerance=rtol,
         )
 
@@ -126,7 +126,7 @@ class ProblemPhaseTestCase(unittest.TestCase):
             verbosity=0,
         )
 
-        rtol = 0.01
+        rtol = 1e-4
 
         # There are no truth values for these.
         assert_near_equal(
@@ -143,7 +143,7 @@ class ProblemPhaseTestCase(unittest.TestCase):
 
         assert_near_equal(
             prob.get_val(Mission.Summary.TOTAL_FUEL_MASS, units='lbm'),
-            42529.0,  # TODO: my number: 42109.1488,
+            42109.1488,
             tolerance=rtol,
         )
 
@@ -201,7 +201,7 @@ class ProblemPhaseTestCase(unittest.TestCase):
 
         assert_near_equal(
             prob.get_val(Mission.Summary.TOTAL_FUEL_MASS, units='lbm'),
-            43574.0,
+            43555.5705,
             tolerance=rtol,
         )
 
