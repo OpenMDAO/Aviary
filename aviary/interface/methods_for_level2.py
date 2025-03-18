@@ -589,7 +589,8 @@ class AviaryProblem(om.Problem):
         base_phase_options = self.phase_info[phase_name]
 
         # We need to exclude some things from the phase_options that we pass down
-        # to the phases. Intead of "popping" keys, we just create new outer dictionaries.
+        # to the phases. Instead of "popping" keys, we just create new outer
+        # dictionaries.
 
         phase_options = {}
         for key, val in base_phase_options.items():
@@ -1089,7 +1090,7 @@ class AviaryProblem(om.Problem):
         # Phase linking.
         # If we are under mpi, and traj.phases is running in parallel, then let the
         # optimizer handle the linkage constraints.  Note that we can technically
-        # paralellize connected phases, but it requires a solver that we would like
+        # parallelize connected phases, but it requires a solver that we would like
         # to avoid.
         true_unless_mpi = True
         if self.comm.size > 1 and self.traj.options['parallel_phases']:
@@ -1403,7 +1404,7 @@ class AviaryProblem(om.Problem):
             ):
                 # problem formulation to make the trajectory work
                 self.model.add_design_var(
-                    Mission.Takeoff.ASCENT_T_INTIIAL, lower=0, upper=100, ref=30.0
+                    Mission.Takeoff.ASCENT_T_INITIAL, lower=0, upper=100, ref=30.0
                 )
                 self.model.add_design_var(
                     Mission.Takeoff.ASCENT_DURATION, lower=1, upper=1000, ref=10.0
@@ -1855,9 +1856,9 @@ class AviaryProblem(om.Problem):
                 restart=restart_filename,
             )
 
-            # TODO this is only used in a single test. Either self.problem_ran_sucessfully
+            # TODO this is only used in a single test. Either self.problem_ran_successfully
             #      should be removed, or rework this option to be more helpful (store
-            # entired "failed" object?) and implement more rigorously in benchmark
+            # entire "failed" object?) and implement more rigorously in benchmark
             # tests
             if self.analysis_scheme is AnalysisScheme.SHOOTING:
                 self.problem_ran_successfully = not failed
@@ -1972,7 +1973,7 @@ class AviaryProblem(om.Problem):
             if num_pax is None:
                 if verbosity > Verbosity.BRIEF:  # VERBOSE, DEBUG
                     warnings.warn(
-                        'Unspecifed PAX number for GASP fallout - assume same as design'
+                        'Unspecified PAX number for GASP fallout - assume same as design'
                     )
                 num_pax = self.aviary_inputs.get_val(
                     Aircraft.CrewPayload.Design.NUM_PASSENGERS
@@ -1980,7 +1981,7 @@ class AviaryProblem(om.Problem):
             if cargo_mass is None:
                 if verbosity > Verbosity.BRIEF:  # VERBOSE, DEBUG
                     warnings.warn(
-                        'Unspecifed Cargo mass for GASP fallout - assume same as design'
+                        'Unspecified Cargo mass for GASP fallout - assume same as design'
                     )
                 cargo_mass = self.get_val(Aircraft.CrewPayload.CARGO_MASS, 'lbm')
             num_first = num_business = num_tourist = wing_cargo = misc_cargo = 0
@@ -2099,7 +2100,7 @@ class AviaryProblem(om.Problem):
             if num_pax is None:
                 if verbosity > Verbosity.BRIEF:  # VERBOSE, DEBUG
                     warnings.warn(
-                        'Unspecifed PAX number for GASP fallout - assume same as design'
+                        'Unspecified PAX number for GASP fallout - assume same as design'
                     )
                 num_pax = self.aviary_inputs.get_val(
                     Aircraft.CrewPayload.Design.NUM_PASSENGERS
@@ -2107,7 +2108,7 @@ class AviaryProblem(om.Problem):
             if cargo_mass is None:
                 if verbosity > Verbosity.BRIEF:  # VERBOSE, DEBUG
                     warnings.warn(
-                        'Unspecifed Cargo mass for GASP fallout - assume same as design'
+                        'Unspecified Cargo mass for GASP fallout - assume same as design'
                     )
                 cargo_mass = self.get_val(Aircraft.CrewPayload.CARGO_MASS, 'lbm')
             num_first = num_business = num_tourist = wing_cargo = misc_cargo = 0
@@ -2349,7 +2350,7 @@ def _read_sizing_json(aviary_problem, json_filename):
     for inputs in loaded_aviary_input_list:
         [var_name, var_values, var_units, var_type] = inputs
 
-        # Initialize some flags to idetify arrays and enums
+        # Initialize some flags to identify arrays and enums
         is_array = False
         is_enum = False
 
