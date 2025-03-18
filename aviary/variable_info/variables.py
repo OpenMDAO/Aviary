@@ -404,7 +404,6 @@ class Aircraft:
         MASS_SCALER = 'aircraft:instruments:mass_scaler'
 
     class LandingGear:
-        CARRIER_BASED = 'aircraft:landing_gear:carrier_based'
         DRAG_COEFFICIENT = 'aircraft:landing_gear:drag_coefficient'
         FIXED_GEAR = 'aircraft:landing_gear:fixed_gear'
         MAIN_GEAR_LOCATION = 'aircraft:landing_gear:main_gear_location'
@@ -779,7 +778,7 @@ class Mission:
         AIRPORT_ALTITUDE = 'mission:takeoff:airport_altitude'
         ANGLE_OF_ATTACK_RUNWAY = 'mission:takeoff:angle_of_attack_runway'
         ASCENT_DURATION = 'mission:takeoff:ascent_duration'
-        ASCENT_T_INTIIAL = 'mission:takeoff:ascent_t_initial'
+        ASCENT_T_INITIAL = 'mission:takeoff:ascent_t_initial'
         BRAKING_FRICTION_COEFFICIENT = 'mission:takeoff:braking_friction_coefficient'
         DECISION_SPEED_INCREMENT = 'mission:takeoff:decision_speed_increment'
 

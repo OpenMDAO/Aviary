@@ -676,10 +676,16 @@ class TakeoffRotateToLiftoff(PhaseBuilderBase):
             opt=False
         )
 
-        phase.add_polynomial_control(
-            Dynamic.Vehicle.ANGLE_OF_ATTACK, opt=True, units=units, order=1,
-            lower=0, upper=max_angle_of_attack,
-            ref=max_angle_of_attack)
+        phase.add_control(
+            Dynamic.Vehicle.ANGLE_OF_ATTACK,
+            control_type='polynomial',
+            opt=True,
+            units=units,
+            order=1,
+            lower=0,
+            upper=max_angle_of_attack,
+            ref=max_angle_of_attack,
+        )
 
         phase.add_timeseries_output(
             Dynamic.Vehicle.DRAG, output_name=Dynamic.Vehicle.DRAG, units='lbf'
