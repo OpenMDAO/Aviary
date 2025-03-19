@@ -289,12 +289,12 @@ class MainGearLength(om.ExplicitComponent):
         # TODO temp using first engine, heterogeneous engines not supported
         num_wing_eng = self.options[Aircraft.Engine.NUM_WING_ENGINES][0]
 
-        y_eng_fore = inputs[Aircraft.Engine.WING_LOCATIONS][0][0]
-
         # TODO: high engine-count configuation.
         y_eng_aft = 0
 
         if num_wing_eng > 0:
+            y_eng_fore = inputs[Aircraft.Engine.WING_LOCATIONS][0][0]
+
             tan_dih = np.tan(inputs[Aircraft.Wing.DIHEDRAL] * DEG2RAD)
             fuse_half_width = inputs[Aircraft.Fuselage.MAX_WIDTH] * 6.0
 
@@ -328,10 +328,11 @@ class MainGearLength(om.ExplicitComponent):
         num_eng = self.options[Aircraft.Engine.NUM_ENGINES][0]
         num_wing_eng = self.options[Aircraft.Engine.NUM_WING_ENGINES][0]
 
-        y_eng_fore = inputs[Aircraft.Engine.WING_LOCATIONS][0][0]
         y_eng_aft = 0
 
         if num_wing_eng > 0:
+            y_eng_fore = inputs[Aircraft.Engine.WING_LOCATIONS][0][0]
+
             tan_dih = np.tan(inputs[Aircraft.Wing.DIHEDRAL] * DEG2RAD)
             dtan_dih = DEG2RAD / np.cos(inputs[Aircraft.Wing.DIHEDRAL] * DEG2RAD) ** 2
 
