@@ -25,45 +25,42 @@ class EquipAndUsefulLoadMass(om.ExplicitComponent):
         num_engine_type = len(self.options[Aircraft.Engine.NUM_ENGINES])
 
         add_aviary_input(
-            self, Aircraft.AirConditioning.MASS_COEFFICIENT, val=1, units="unitless")
-        add_aviary_input(self, Aircraft.AntiIcing.MASS, val=2, units="lbm")
-        add_aviary_input(self, Aircraft.APU.MASS, val=3, units="lbm")
-        add_aviary_input(self, Aircraft.Avionics.MASS, val=4, units="lbm")
-        add_aviary_input(
-            self, Aircraft.CrewPayload.CATERING_ITEMS_MASS_PER_PASSENGER, val=5, units="lbm")
-        add_aviary_input(self, Aircraft.Design.EMERGENCY_EQUIPMENT_MASS,
-                         val=6, units="lbm")
-        add_aviary_input(self, Aircraft.Furnishings.MASS, val=7, units="lbm")
-        add_aviary_input(
-            self, Aircraft.Hydraulics.FLIGHT_CONTROL_MASS_COEFFICIENT, val=8, units="unitless")
-        add_aviary_input(
-            self, Aircraft.Hydraulics.GEAR_MASS_COEFFICIENT, val=9, units="unitless")
-        add_aviary_input(
-            self, Aircraft.Instruments.MASS_COEFFICIENT, val=10, units="unitless")
-        add_aviary_input(
-            self, Aircraft.CrewPayload.PASSENGER_SERVICE_MASS_PER_PASSENGER, val=11, units="lbm")
-        add_aviary_input(
-            self, Aircraft.Fuel.UNUSABLE_FUEL_MASS_COEFFICIENT, val=12, units="unitless")
-        add_aviary_input(
-            self, Aircraft.CrewPayload.WATER_MASS_PER_OCCUPANT, val=13, units="lbm")
+            self, Aircraft.AirConditioning.MASS_COEFFICIENT, units='unitless')
+        add_aviary_input(self, Aircraft.AntiIcing.MASS, units='lbm')
+        add_aviary_input(self, Aircraft.APU.MASS, units='lbm')
+        add_aviary_input(self, Aircraft.Avionics.MASS, units='lbm')
+        add_aviary_input(self, Aircraft.CrewPayload.CATERING_ITEMS_MASS_PER_PASSENGER,
+                         units='lbm')
+        add_aviary_input(self, Aircraft.Design.EMERGENCY_EQUIPMENT_MASS, units='lbm')
+        add_aviary_input(self, Aircraft.Furnishings.MASS, units='lbm')
+        add_aviary_input(self, Aircraft.Hydraulics.FLIGHT_CONTROL_MASS_COEFFICIENT,
+                         units='unitless')
+        add_aviary_input(self, Aircraft.Hydraulics.GEAR_MASS_COEFFICIENT,
+                         units='unitless')
+        add_aviary_input(self, Aircraft.Instruments.MASS_COEFFICIENT, units='unitless')
+        add_aviary_input(self, Aircraft.CrewPayload.PASSENGER_SERVICE_MASS_PER_PASSENGER,
+                         units='lbm')
+        add_aviary_input(self, Aircraft.Fuel.UNUSABLE_FUEL_MASS_COEFFICIENT,
+                         units='unitless')
+        add_aviary_input(self, Aircraft.CrewPayload.WATER_MASS_PER_OCCUPANT)
 
-        add_aviary_input(self, Mission.Design.GROSS_MASS, val=175400)
-        add_aviary_input(self, Aircraft.Fuselage.LENGTH, val=128)
-        add_aviary_input(self, Aircraft.Wing.SPAN, val=117.8)
-        add_aviary_input(self, Aircraft.LandingGear.TOTAL_MASS, val=200)
-        add_aviary_input(self, Aircraft.Controls.TOTAL_MASS, val=150)
-        add_aviary_input(self, Aircraft.Wing.AREA, val=150)
-        add_aviary_input(self, Aircraft.HorizontalTail.AREA, val=150)
-        add_aviary_input(self, Aircraft.VerticalTail.AREA, val=150)
-        add_aviary_input(self, Aircraft.Fuselage.PRESSURE_DIFFERENTIAL, val=7.5)
-        add_aviary_input(self, Aircraft.Fuselage.AVG_DIAMETER, val=13.1)
+        add_aviary_input(self, Mission.Design.GROSS_MASS, units='lbm')
+        add_aviary_input(self, Aircraft.Fuselage.LENGTH, units='ft')
+        add_aviary_input(self, Aircraft.Wing.SPAN, units='ft')
+        add_aviary_input(self, Aircraft.LandingGear.TOTAL_MASS, units='lbm')
+        add_aviary_input(self, Aircraft.Controls.TOTAL_MASS, units='lbm')
+        add_aviary_input(self, Aircraft.Wing.AREA, units='ft**2')
+        add_aviary_input(self, Aircraft.HorizontalTail.AREA, units='ft**2')
+        add_aviary_input(self, Aircraft.VerticalTail.AREA, units='ft**2')
+        add_aviary_input(self, Aircraft.Fuselage.PRESSURE_DIFFERENTIAL, units='psi')
+        add_aviary_input(self, Aircraft.Fuselage.AVG_DIAMETER, units='ft')
         add_aviary_input(self, Aircraft.Engine.SCALED_SLS_THRUST,
-                         val=np.full(num_engine_type, 4000), units="lbf")
-        add_aviary_input(self, Aircraft.Fuel.WING_FUEL_FRACTION, val=0.5)
-        add_aviary_input(self, Aircraft.Design.EXTERNAL_SUBSYSTEMS_MASS, val=0.)
+                         shape=num_engine_type, units='lbf')
+        add_aviary_input(self, Aircraft.Fuel.WING_FUEL_FRACTION, units='unitless')
+        add_aviary_input(self, Aircraft.Design.EXTERNAL_SUBSYSTEMS_MASS, units='lbm')
 
-        add_aviary_output(self, Aircraft.Design.FIXED_USEFUL_LOAD, val=0)
-        add_aviary_output(self, Aircraft.Design.FIXED_EQUIPMENT_MASS, val=0)
+        add_aviary_output(self, Aircraft.Design.FIXED_USEFUL_LOAD, units='lbm')
+        add_aviary_output(self, Aircraft.Design.FIXED_EQUIPMENT_MASS, units='lbm')
 
         self.declare_partials(Aircraft.Design.FIXED_USEFUL_LOAD, '*')
         self.declare_partials(Aircraft.Design.FIXED_EQUIPMENT_MASS, '*')
