@@ -120,10 +120,10 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
         except KeyError:
             method = None
 
-        aero_group = None
-
         if method is 'external':
             return None
+        
+        aero_group = None
 
         if self.code_origin is FLOPS:
             if method is None:
