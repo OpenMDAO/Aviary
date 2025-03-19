@@ -9,6 +9,7 @@ from pathlib import Path
 
 from aviary.utils.develop_metadata import add_meta_data
 from aviary.variable_info.enums import (
+    AircraftTypes,
     EquationsOfMotion,
     FlapType,
     GASPEngineType,
@@ -357,17 +358,6 @@ add_meta_data(
 )
 
 add_meta_data(
-    Aircraft.BWB.IS_BWB,
-    meta_data=_MetaData,
-    historical_name={"GASP": ['DEFINE.IHWB'], "FLOPS": None, "LEAPS1": None},
-    units='unitless',
-    types=bool,
-    option=True,
-    default_value=False,
-    desc='a flag for BWB',
-)
-
-add_meta_data(
     Aircraft.BWB.NUM_BAYS,
     meta_data=_MetaData,
     historical_name={
@@ -389,7 +379,7 @@ add_meta_data(
     Aircraft.BWB.PASSENGER_LEADING_EDGE_SWEEP,
     meta_data=_MetaData,
     historical_name={
-        "GASP": ['DEFINE.SWP_FB'],
+        "GASP": ['INGASP.SWP_FB'],
         # ['&DEFINE.FUSEIN.SWPLE', 'FUSDTA.SWPLE'],
         "FLOPS": 'FUSEIN.SWPLE',
         "LEAPS1": 'aircraft.inputs.L0_blended_wing_body_design.passenger_leading_edge_sweep',
@@ -1684,6 +1674,17 @@ add_meta_data(
     units='lbm',
     desc='design landing mass',
     default_value=0.0,
+)
+
+add_meta_data(
+    Aircraft.Design.TYPE,
+    meta_data=_MetaData,
+    historical_name={"GASP": ['INGASP.IHWB'], "FLOPS": None, "LEAPS1": None},
+    units='unitless',
+    types=AircraftTypes,
+    option=True,
+    default_value=False,
+    desc='aircraft type: BWB for blended wing body, transport otherwise',
 )
 
 add_meta_data(

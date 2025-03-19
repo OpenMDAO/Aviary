@@ -37,7 +37,6 @@ class Aircraft:
 
     class BWB:
         CABIN_AREA = 'aircraft:blended_wing_body_design:cabin_area'
-        IS_BWB = 'aircraft:blended_wing_body_design:is_bwb'
         NUM_BAYS = 'aircraft:blended_wing_body_design:num_bays'
         PASSENGER_LEADING_EDGE_SWEEP = (
             'aircraft:blended_wing_body_design:passenger_leading_edge_sweep'
@@ -202,6 +201,7 @@ class Aircraft:
         THRUST_TO_WEIGHT_RATIO = 'aircraft:design:thrust_to_weight_ratio'
         TOTAL_WETTED_AREA = 'aircraft:design:total_wetted_area'
         TOUCHDOWN_MASS = 'aircraft:design:touchdown_mass'
+        TYPE = 'aircraft:design:type'
         ULF_CALCULATED_FROM_MANEUVER = 'aircraft:design:ulf_calculated_from_maneuver'
         USE_ALT_MASS = 'aircraft:design:use_alt_mass'
         WETTED_AREAS = 'aircraft:design:wetted_areas'
