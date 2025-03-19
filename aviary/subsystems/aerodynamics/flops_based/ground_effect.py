@@ -40,11 +40,10 @@ class GroundEffect(om.ExplicitComponent):
 
         self.add_input(Dynamic.Vehicle.ANGLE_OF_ATTACK, val=np.zeros(nn), units='rad')
 
-        add_aviary_input(self, Dynamic.Mission.ALTITUDE, np.zeros(nn), units='m')
+        add_aviary_input(self, Dynamic.Mission.ALTITUDE, shape=nn, units='m')
 
-        add_aviary_input(
-            self, Dynamic.Mission.FLIGHT_PATH_ANGLE, val=np.zeros(nn), units='rad'
-        )
+        add_aviary_input(self, Dynamic.Mission.FLIGHT_PATH_ANGLE, shape=(nn),
+                         units='rad')
 
         self.add_input(
             'minimum_drag_coefficient', 0.0,
@@ -61,9 +60,9 @@ class GroundEffect(om.ExplicitComponent):
             desc='coefficient of drag without ground effect', units='unitless'
         )
 
-        add_aviary_input(self, Aircraft.Wing.ASPECT_RATIO, val=1.)
-        add_aviary_input(self, Aircraft.Wing.HEIGHT, val=1., units='m')
-        add_aviary_input(self, Aircraft.Wing.SPAN, val=1., units='m')
+        add_aviary_input(self, Aircraft.Wing.ASPECT_RATIO, units='unitless')
+        add_aviary_input(self, Aircraft.Wing.HEIGHT, units='m')
+        add_aviary_input(self, Aircraft.Wing.SPAN, units='m')
 
         self.add_output(
             'lift_coefficient', val=np.ones(nn),
