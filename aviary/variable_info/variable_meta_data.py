@@ -359,7 +359,7 @@ add_meta_data(
 add_meta_data(
     Aircraft.BWB.IS_BWB,
     meta_data=_MetaData,
-    historical_name={"GASP": ['DEFINE.IHWB'], "FLOPS": None, "LEAPS1": None},
+    historical_name={"GASP": ['INGASP.IHWB'], "FLOPS": None, "LEAPS1": None},
     units='unitless',
     types=bool,
     option=True,
@@ -389,7 +389,7 @@ add_meta_data(
     Aircraft.BWB.PASSENGER_LEADING_EDGE_SWEEP,
     meta_data=_MetaData,
     historical_name={
-        "GASP": ['DEFINE.SWP_FB'],
+        "GASP": ['INGASP.SWP_FB'],
         # ['&DEFINE.FUSEIN.SWPLE', 'FUSDTA.SWPLE'],
         "FLOPS": 'FUSEIN.SWPLE',
         "LEAPS1": 'aircraft.inputs.L0_blended_wing_body_design.passenger_leading_edge_sweep',
