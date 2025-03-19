@@ -51,6 +51,7 @@ aircraft:engine:data_file, models/engines/turboshaft_4465hp.deck
 aircraft:engine:mass_scaler, 1, unitless
 aircraft:engine:mass_specific, 0.37026, lbm/lbf
 aircraft:engine:num_engines, 4, unitless
+aircraft:engine:num_wing_engines, 4, unitless
 aircraft:engine:propeller:num_blades, 4, unitless
 aircraft:engine:pod_mass_scaler, 1, unitless
 aircraft:engine:propeller:activity_factor, 167, unitless
@@ -92,7 +93,7 @@ aircraft:fuselage:pressure_differential, 6.55, psi
 aircraft:fuselage:seat_pitch, 41.24, inch
 aircraft:fuselage:seat_width, 18, inch
 aircraft:fuselage:tail_fineness, 2.9, unitless
-aircraft:fuselage:wetted_area_factor, 1, unitless
+aircraft:fuselage:wetted_area_scaler, 1, unitless
 
 # H-Tail
 aircraft:horizontal_tail:area, 0, ft**2

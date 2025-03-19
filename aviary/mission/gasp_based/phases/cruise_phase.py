@@ -2,7 +2,7 @@ from aviary.mission.phase_builder_base import PhaseBuilderBase
 from aviary.mission.initial_guess_builders import InitialGuessState, InitialGuessIntegrationVariable
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.variables import Dynamic
-from aviary.mission.gasp_based.ode.breguet_cruise_ode import BreguetCruiseODESolution
+from aviary.mission.gasp_based.ode.breguet_cruise_ode import BreguetCruiseODESolution, ElectricBreguetCruiseODESolution
 
 
 class CruisePhase(PhaseBuilderBase):
