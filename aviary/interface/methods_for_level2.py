@@ -126,6 +126,9 @@ class AviaryProblem(om.Problem):
         self.mission_method = mission_method = aviary_inputs.get_val(
             Settings.EQUATIONS_OF_MOTION)
         self.mass_method = mass_method = aviary_inputs.get_val(Settings.MASS_METHOD)
+        self.aero_method = aero_method = aviary_inputs.get_val(
+            Settings.AERODYNAMICS_METHOD
+        )
 
         # Create engine_builder
         self.engine_builders = engine_builders
@@ -149,7 +152,7 @@ class AviaryProblem(om.Problem):
                 f'settings:equations_of_motion must be one of: height_energy, 2DOF, solved_2DOF, or custom')
 
         # TODO this should be a preprocessor step if it is required here
-        if mass_method is GASP:
+        if mass_method is GASP or aero_method is GASP:
             aviary_inputs = update_GASP_options(aviary_inputs)
 
         ## LOAD PHASE_INFO ###
@@ -288,38 +291,34 @@ class AviaryProblem(om.Problem):
         preprocess_options(aviary_inputs, engine_models=self.engine_builders)
 
         ## Set Up Core Subsystems ##
-        everything_else_origin = self.builder.get_code_origin(self)
-
         prop = CorePropulsionBuilder(
             'core_propulsion', engine_models=self.engine_builders)
         mass = CoreMassBuilder('core_mass', code_origin=self.mass_method)
         aero = CoreAerodynamicsBuilder(
-            'core_aerodynamics', code_origin=everything_else_origin)
+            'core_aerodynamics', code_origin=self.aero_method
+        )
 
-        # TODO These values are currently hardcoded, in future should come from user
-        both_geom = False
+        # TODO These values are currently hardcoded, in future should come from user?
         code_origin_to_prioritize = None
 
-        # which geometry methods should be used, or both?
+        # which geometry methods should be used?
         geom_code_origin = None
-        if (everything_else_origin is FLOPS) and (self.mass_method is FLOPS):
+
+        if (self.aero_method is FLOPS) and (self.mass_method is FLOPS):
             geom_code_origin = FLOPS
-        elif (everything_else_origin is GASP) and (self.mass_method is GASP):
+        elif (self.aero_method is GASP) and (self.mass_method is GASP):
             geom_code_origin = GASP
         else:
-            both_geom = True
+            geom_code_origin = (FLOPS, GASP)
 
         # which geometry method gets prioritized in case of conflicting outputs
-        if not code_origin_to_prioritize:
-            if everything_else_origin is GASP:
-                code_origin_to_prioritize = GASP
-            elif everything_else_origin is FLOPS:
-                code_origin_to_prioritize = FLOPS
+        code_origin_to_prioritize = self.builder.get_code_origin(self)
 
-        geom = CoreGeometryBuilder('core_geometry',
-                                   code_origin=geom_code_origin,
-                                   use_both_geometries=both_geom,
-                                   code_origin_to_prioritize=code_origin_to_prioritize)
+        geom = CoreGeometryBuilder(
+            'core_geometry',
+            code_origin=geom_code_origin,
+            code_origin_to_prioritize=code_origin_to_prioritize,
+        )
 
         subsystems = self.core_subsystems = {'propulsion': prop,
                                              'geometry': geom,
