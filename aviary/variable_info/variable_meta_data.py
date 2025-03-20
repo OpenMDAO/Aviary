@@ -9,6 +9,7 @@ from pathlib import Path
 
 from aviary.utils.develop_metadata import add_meta_data
 from aviary.variable_info.enums import (
+    AircraftTypes,
     EquationsOfMotion,
     FlapType,
     GASPEngineType,
@@ -354,17 +355,6 @@ add_meta_data(
     units='ft**2',
     desc='fixed area of passenger cabin for blended wing body transports',
     default_value=0.0,
-)
-
-add_meta_data(
-    Aircraft.BWB.IS_BWB,
-    meta_data=_MetaData,
-    historical_name={"GASP": ['INGASP.IHWB'], "FLOPS": None, "LEAPS1": None},
-    units='unitless',
-    types=bool,
-    option=True,
-    default_value=False,
-    desc='a flag for BWB',
 )
 
 add_meta_data(
@@ -1684,6 +1674,17 @@ add_meta_data(
     units='lbm',
     desc='design landing mass',
     default_value=0.0,
+)
+
+add_meta_data(
+    Aircraft.Design.TYPE,
+    meta_data=_MetaData,
+    historical_name={"GASP": ['INGASP.IHWB'], "FLOPS": None, "LEAPS1": None},
+    units='unitless',
+    types=AircraftTypes,
+    option=True,
+    default_value=False,
+    desc='aircraft type: BWB for blended wing body, transport otherwise',
 )
 
 add_meta_data(
@@ -3533,7 +3534,7 @@ add_meta_data(
     units='inch',
     desc='pitch of the economy class seats',
     option=True,
-    default_value=29,
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -3543,7 +3544,7 @@ add_meta_data(
     units='inch',
     desc='width of the economy class seats',
     option=True,
-    default_value=20,
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -4279,15 +4280,6 @@ add_meta_data(
 )
 
 add_meta_data(
-    Aircraft.Nacelle.PERCENT_DIAMETER_BURIED_IN_FUSELAGE,
-    meta_data=_MetaData,
-    historical_name={"GASP": 'INGASP.HEBQDN', "FLOPS": None, "LEAPS1": None},
-    units='unitless',
-    default_value=0.0,
-    desc='percentage of nacelle diameter buried in fuselage over nacelle diameter',
-)
-
-add_meta_data(
     Aircraft.Nacelle.FINENESS,
     meta_data=_MetaData,
     historical_name={
@@ -4377,6 +4369,15 @@ add_meta_data(
     units='lbm/ft**2',
     desc='nacelle mass/nacelle surface area; lbm per sq ft.',
     default_value=0.0,
+)
+
+add_meta_data(
+    Aircraft.Nacelle.PERCENT_DIAMETER_BURIED_IN_FUSELAGE,
+    meta_data=_MetaData,
+    historical_name={"GASP": 'INGASP.HEBQDN', "FLOPS": None, "LEAPS1": None},
+    units='unitless',
+    default_value=0.0,
+    desc='percentage of nacelle diameter buried in fuselage over nacelle diameter',
 )
 
 add_meta_data(

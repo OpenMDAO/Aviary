@@ -37,7 +37,6 @@ class Aircraft:
 
     class BWB:
         CABIN_AREA = 'aircraft:blended_wing_body_design:cabin_area'
-        IS_BWB = 'aircraft:blended_wing_body_design:is_bwb'
         NUM_BAYS = 'aircraft:blended_wing_body_design:num_bays'
         PASSENGER_LEADING_EDGE_SWEEP = (
             'aircraft:blended_wing_body_design:passenger_leading_edge_sweep'
@@ -170,7 +169,7 @@ class Aircraft:
         LANDING_TO_TAKEOFF_MASS_RATIO = 'aircraft:design:landing_to_takeoff_mass_ratio'
 
         LIFT_CURVE_SLOPE = 'aircraft:design:lift_curve_slope'
-        LIFT_CURVE_SLOPE_Mach0 = 'aircraft:design:lift_curve_slope_mach0'
+        LIFT_CURVE_SLOPE_MACH0 = 'aircraft:design:lift_curve_slope_mach0'
         LIFT_DEPENDENT_DRAG_COEFF_FACTOR = (
             'aircraft:design:lift_dependent_drag_coeff_factor'
         )
@@ -202,6 +201,7 @@ class Aircraft:
         THRUST_TO_WEIGHT_RATIO = 'aircraft:design:thrust_to_weight_ratio'
         TOTAL_WETTED_AREA = 'aircraft:design:total_wetted_area'
         TOUCHDOWN_MASS = 'aircraft:design:touchdown_mass'
+        TYPE = 'aircraft:design:type'
         ULF_CALCULATED_FROM_MANEUVER = 'aircraft:design:ulf_calculated_from_maneuver'
         USE_ALT_MASS = 'aircraft:design:use_alt_mass'
         WETTED_AREAS = 'aircraft:design:wetted_areas'
@@ -435,7 +435,6 @@ class Aircraft:
         CHARACTERISTIC_LENGTH = 'aircraft:nacelle:characteristic_length'
         CLEARANCE_RATIO = 'aircraft:nacelle:clearance_ratio'
         CORE_DIAMETER_RATIO = 'aircraft:nacelle:core_diameter_ratio'
-        DIAMETER_BURRIED_IN_FUSELAGE = 'aircraft:nacelle:diameter_burried_in_fuselage'
         FINENESS = 'aircraft:nacelle:fineness'
         FORM_FACTOR = 'aircraft:nacelle:form_factor'
         LAMINAR_FLOW_LOWER = 'aircraft:nacelle:laminar_flow_lower'
@@ -443,6 +442,7 @@ class Aircraft:
         MASS = 'aircraft:nacelle:mass'
         MASS_SCALER = 'aircraft:nacelle:mass_scaler'
         MASS_SPECIFIC = 'aircraft:nacelle:mass_specific'
+        PERCENT_DIAMETER_BURIED_IN_FUSELAGE = 'aircraft:nacelle:percent_diameter_buried_in_fuselage'
         SURFACE_AREA = 'aircraft:nacelle:surface_area'
         TOTAL_WETTED_AREA = 'aircraft:nacelle:total_wetted_area'
         WETTED_AREA = 'aircraft:nacelle:wetted_area'
