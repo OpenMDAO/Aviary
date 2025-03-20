@@ -3534,7 +3534,7 @@ add_meta_data(
     units='inch',
     desc='pitch of the economy class seats',
     option=True,
-    default_value=29,
+    default_value=0.0,
 )
 
 add_meta_data(
