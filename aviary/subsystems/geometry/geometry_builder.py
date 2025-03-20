@@ -68,16 +68,21 @@ class CoreGeometryBuilder(GeometryBuilderBase):
         Generate the report for Aviary core geometry analysis.
     """
 
-    def __init__(self, name=None, meta_data=None, code_origin=None,
-                 use_both_geometries=False, code_origin_to_prioritize=None):
+    def __init__(
+        self,
+        name=None,
+        meta_data=None,
+        code_origin=None,
+        code_origin_to_prioritize=None,
+    ):
         if name is None:
             name = 'core_geometry'
 
-        if code_origin not in (FLOPS, GASP) and not use_both_geometries:
+        if code_origin not in (FLOPS, GASP) and set(code_origin) != set((FLOPS, GASP)):
             raise ValueError('Code origin is not one of the following: (FLOPS, GASP)')
 
         self.code_origin = code_origin
-        self.use_both_geometries = use_both_geometries
+        self.use_both_geometries = code_origin == (FLOPS, GASP)
         self.code_origin_to_prioritize = code_origin_to_prioritize
 
         super().__init__(name=name, meta_data=meta_data)
