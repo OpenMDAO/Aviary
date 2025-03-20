@@ -54,10 +54,10 @@ class CoreGeometryBuilder(GeometryBuilderBase):
     """
     Core geometry builder
 
-    Method
-    ------
+    Methods
+    -------
     __init__(self, name=None, meta_data=None, code_origin=None,
-        use_both_geometries=False, code_origin_to_prioritize=None):
+        code_origin_to_prioritize=None):
     build_pre_mission(self, aviary_inputs) -> openmdao.core.System:
         Builds an OpenMDAO system for the pre-mission computations of the subsystem.
     build_mission(self, num_nodes, aviary_inputs, **kwargs) -> openmdao.core.System:

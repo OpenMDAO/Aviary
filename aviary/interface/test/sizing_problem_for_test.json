@@ -1275,6 +1275,12 @@
         "<enum 'EquationsOfMotion'>"
     ],
     [
+        "settings:aerodynamics_method",
+        "[<LegacyCode.FLOPS: 'FLOPS'>]",
+        "unitless",
+        "<enum 'LegacyCode'>"
+    ],
+    [
         "settings:mass_method",
         "[<LegacyCode.FLOPS: 'FLOPS'>]",
         "unitless",
