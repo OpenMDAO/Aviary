@@ -169,7 +169,7 @@ class Aircraft:
         LANDING_TO_TAKEOFF_MASS_RATIO = 'aircraft:design:landing_to_takeoff_mass_ratio'
 
         LIFT_CURVE_SLOPE = 'aircraft:design:lift_curve_slope'
-        LIFT_CURVE_SLOPE_Mach0 = 'aircraft:design:lift_curve_slope_mach0'
+        LIFT_CURVE_SLOPE_MACH0 = 'aircraft:design:lift_curve_slope_mach0'
         LIFT_DEPENDENT_DRAG_COEFF_FACTOR = (
             'aircraft:design:lift_dependent_drag_coeff_factor'
         )
