@@ -275,7 +275,7 @@ class MainGearLength(om.ExplicitComponent):
             add_aviary_input(
                 self,
                 Aircraft.Engine.WING_LOCATIONS,
-                shape=(num_engine_type, int(num_wing_engines_total / 2)),
+                shape=int(num_wing_engines_total / 2),
                 units='unitless',
             )
         else:  # this case is not tested
@@ -337,7 +337,7 @@ class MainGearLength(om.ExplicitComponent):
         y_eng_aft = 0
 
         if num_wing_eng > 0:
-            y_eng_fore = inputs[Aircraft.Engine.WING_LOCATIONS][0][0]
+            y_eng_fore = inputs[Aircraft.Engine.WING_LOCATIONS][0]
 
             tan_dih = np.tan(inputs[Aircraft.Wing.DIHEDRAL] * DEG2RAD)
             dtan_dih = DEG2RAD / np.cos(inputs[Aircraft.Wing.DIHEDRAL] * DEG2RAD) ** 2

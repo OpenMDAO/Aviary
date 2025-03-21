@@ -4,6 +4,7 @@ import numpy as np
 import openmdao.api as om
 
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
+from openmdao.utils.testing_utils import use_tempdirs
 
 from aviary import constants
 from aviary.constants import RHO_SEA_LEVEL_ENGLISH
@@ -21,6 +22,7 @@ from aviary.variable_info.options import get_option_defaults
 from aviary.variable_info.variables import Aircraft, Mission, Settings
 
 
+@use_tempdirs
 class MassParametersTestCase1(unittest.TestCase):
     """this is large single aisle 1 v3 bug fixed test case"""
 
@@ -80,6 +82,7 @@ class MassParametersTestCase1(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
 
 
+@use_tempdirs
 class MassParametersTestCase2(unittest.TestCase):
     def setUp(self):
 
@@ -134,6 +137,7 @@ class MassParametersTestCase2(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
 
 
+@use_tempdirs
 class MassParametersTestCase3(unittest.TestCase):
     def setUp(self):
 
@@ -190,6 +194,7 @@ class MassParametersTestCase3(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
 
 
+@use_tempdirs
 class MassParametersTestCase4(unittest.TestCase):
     def setUp(self):
 
@@ -246,6 +251,7 @@ class MassParametersTestCase4(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
 
 
+@use_tempdirs
 class MassParametersTestCase5(unittest.TestCase):
     def setUp(self):
 
@@ -303,6 +309,7 @@ class MassParametersTestCase5(unittest.TestCase):
 
 
 # this is the large single aisle 1 V3 test case
+@use_tempdirs
 class PayloadMassTestCase(unittest.TestCase):
     def setUp(self):
 
@@ -345,6 +352,7 @@ class PayloadMassTestCase(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
 
 
+@use_tempdirs
 class ElectricAugmentationTestCase(unittest.TestCase):
     def setUp(self):
 
@@ -421,6 +429,7 @@ class ElectricAugmentationTestCase(unittest.TestCase):
         assert_check_partials(partial_data, atol=4e-12, rtol=1e-12)
 
 
+@use_tempdirs
 class EngineTestCase1(unittest.TestCase):  # this is the large single aisle 1 V3 test case
     def setUp(self):
 
@@ -496,6 +505,7 @@ class EngineTestCase1(unittest.TestCase):  # this is the large single aisle 1 V3
         assert_check_partials(partial_data, atol=2e-11, rtol=1e-12)
 
 
+@use_tempdirs
 class EngineTestCase2(unittest.TestCase):
     def setUp(self):
 
@@ -580,6 +590,7 @@ class EngineTestCase2(unittest.TestCase):
 
 
 # arbitarary test case with multiple engine types
+@use_tempdirs
 class EngineTestCaseMultiEngine(unittest.TestCase):
     def test_case_1(self):
 
@@ -646,6 +657,7 @@ class EngineTestCaseMultiEngine(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e-10, rtol=1e-10)
 
 
+@use_tempdirs
 class TailTestCase(unittest.TestCase):  # this is the large single aisle 1 V3 test case
     def setUp(self):
 
@@ -741,6 +753,7 @@ class TailTestCase(unittest.TestCase):  # this is the large single aisle 1 V3 te
 
 
 # this is a different configuration with turbofan_23k_1 test case
+@use_tempdirs
 class HighLiftTestCase(unittest.TestCase):
     def setUp(self):
 
@@ -811,6 +824,7 @@ class HighLiftTestCase(unittest.TestCase):
 
 
 # this is the large single aisle 1 V3 test case
+@use_tempdirs
 class ControlMassTestCase(unittest.TestCase):
     def setUp(self):
 
@@ -866,6 +880,7 @@ class ControlMassTestCase(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e-11, rtol=1e-12)
 
 
+@use_tempdirs
 class GearTestCase1(unittest.TestCase):  # this is the large single aisle 1 V3 test case
     def setUp(self):
 
@@ -910,6 +925,7 @@ class GearTestCase1(unittest.TestCase):  # this is the large single aisle 1 V3 t
         assert_check_partials(partial_data, atol=3e-11, rtol=1e-12)
 
 
+@use_tempdirs
 class GearTestCase2(unittest.TestCase):
     def setUp(self):
 
@@ -951,6 +967,7 @@ class GearTestCase2(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
 
 
+@use_tempdirs
 class GearTestCaseMultiengine(unittest.TestCase):
     def test_case1(self):
         options = get_option_defaults()
@@ -992,6 +1009,7 @@ class GearTestCaseMultiengine(unittest.TestCase):
 
 
 # this is the large single aisle 1 V3 test case
+@use_tempdirs
 class FixedMassGroupTestCase1(unittest.TestCase):
     def setUp(self):
 
@@ -1255,6 +1273,7 @@ class FixedMassGroupTestCase1(unittest.TestCase):
         assert_check_partials(partial_data, atol=3e-11, rtol=1e-12)
 
 
+@use_tempdirs
 class FixedMassGroupTestCase2(unittest.TestCase):
     def setUp(self):
 
@@ -1576,6 +1595,7 @@ class FixedMassGroupTestCase2(unittest.TestCase):
         assert_check_partials(partial_data, atol=3e-10, rtol=1e-12)
 
 
+@use_tempdirs
 class FixedMassGroupTestCase3(unittest.TestCase):
     # Tests partials calculations in FixedMassGroup using as complete code coverage as possible.
 
