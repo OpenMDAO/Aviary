@@ -247,11 +247,12 @@ class FlightPhaseBase(PhaseBuilderBase):
             Dynamic.Vehicle.DRAG, output_name=Dynamic.Vehicle.DRAG, units='lbf'
         )
 
-        phase.add_timeseries_output(
-            Dynamic.Mission.SPECIFIC_ENERGY_RATE_EXCESS,
-            output_name=Dynamic.Mission.SPECIFIC_ENERGY_RATE_EXCESS,
-            units='m/s',
-        )
+        if phase_type is EquationsOfMotion.HEIGHT_ENERGY:
+            phase.add_timeseries_output(
+                Dynamic.Mission.SPECIFIC_ENERGY_RATE_EXCESS,
+                output_name=Dynamic.Mission.SPECIFIC_ENERGY_RATE_EXCESS,
+                units='m/s',
+            )
 
         phase.add_timeseries_output(
             Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
