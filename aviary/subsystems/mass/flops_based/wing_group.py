@@ -3,7 +3,11 @@ import openmdao.api as om
 
 from aviary.subsystems.mass.flops_based.engine_pod import EnginePodMass
 from aviary.subsystems.mass.flops_based.wing_common import (
-    WingBendingMass, WingMiscMass, WingShearControlMass, WingTotalMass)
+    WingBendingMass,
+    WingMiscMass,
+    WingShearControlMass,
+    WingTotalMass,
+)
 from aviary.subsystems.mass.flops_based.wing_detailed import DetailedWingBendingFact
 from aviary.subsystems.mass.flops_based.wing_simple import SimpleWingBendingFact
 from aviary.variable_info.functions import add_aviary_option
@@ -20,9 +24,12 @@ class WingMassGroup(om.Group):
 
     def setup(self):
 
-        self.add_subsystem('engine_pod_mass',
-                           EnginePodMass(),
-                           promotes_inputs=['*'], promotes_outputs=['*'])
+        self.add_subsystem(
+            'engine_pod_mass',
+            EnginePodMass(),
+            promotes_inputs=['*'],
+            promotes_outputs=['*'],
+        )
 
         if self.options[Aircraft.Wing.INPUT_STATION_DIST] is not None:
             self.add_subsystem(
@@ -40,18 +47,24 @@ class WingMassGroup(om.Group):
                 promotes_outputs=['*'],
             )
 
-        self.add_subsystem('wing_misc',
-                           WingMiscMass(),
-                           promotes_inputs=['*'], promotes_outputs=['*'])
+        self.add_subsystem(
+            'wing_misc', WingMiscMass(), promotes_inputs=['*'], promotes_outputs=['*']
+        )
 
-        self.add_subsystem('wing_shear_control',
-                           WingShearControlMass(),
-                           promotes_inputs=['*'], promotes_outputs=['*'])
+        self.add_subsystem(
+            'wing_shear_control',
+            WingShearControlMass(),
+            promotes_inputs=['*'],
+            promotes_outputs=['*'],
+        )
 
-        self.add_subsystem('wing_bending',
-                           WingBendingMass(),
-                           promotes_inputs=['*'], promotes_outputs=['*'])
+        self.add_subsystem(
+            'wing_bending',
+            WingBendingMass(),
+            promotes_inputs=['*'],
+            promotes_outputs=['*'],
+        )
 
-        self.add_subsystem('wing_total',
-                           WingTotalMass(),
-                           promotes_inputs=['*'], promotes_outputs=['*'])
+        self.add_subsystem(
+            'wing_total', WingTotalMass(), promotes_inputs=['*'], promotes_outputs=['*']
+        )
