@@ -3250,6 +3250,16 @@ add_meta_data(
 )
 
 add_meta_data(
+    Aircraft.Fuselage.HYDRAULIC_DIAMETER,
+    meta_data=_MetaData,
+    historical_name={"GASP": 'None', "FLOPS": None, "LEAPS1": None},
+    units='ft',
+    types=float,
+    default_value=0.0,
+    desc='In GASP, hydraulic diameter is defined as the geometric mean of cabin length and cabin width.',
+)
+
+add_meta_data(
     Aircraft.Fuselage.LAMINAR_FLOW_LOWER,
     meta_data=_MetaData,
     historical_name={
