@@ -87,7 +87,7 @@ class TestSubsystemsMission(unittest.TestCase):
 
         # add an assert to see if the initial guesses are correct for Mission.Dummy.VARIABLE
         assert_almost_equal(
-            prob.get_val(f'traj.cruise.states:{Mission.Dummy.VARIABLE}'), 
+            prob.get_val(f'traj.cruise.states:{Mission.Dummy.VARIABLE}'),
             [[10.],
             [25.97729616],
             [48.02270384],
@@ -100,8 +100,10 @@ class TestSubsystemsMission(unittest.TestCase):
         prob.run_aviary_problem()
 
         # add an assert to see if MoreMission.Dummy.TIMESERIES_VAR was correctly added to the dymos problem
+        # Note, default value for this DUMMY_CONTROL is 1.0, which is openmdao's default. This produces
+        # the following value as the output.
         assert_almost_equal(prob[f'traj.phases.cruise.timeseries.{MoreMission.Dummy.TIMESERIES_VAR}'], np.array(
-            [[0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]]).T)
+            [[1.5, 1.5, 1.5, 1.5, 1.5, 1.5, 1.5, 1.5]]).T)
 
     def test_bad_initial_guess_key(self):
         phase_info = self.phase_info.copy()
