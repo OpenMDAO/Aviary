@@ -55,7 +55,7 @@ jobs:
             SNOPT: '7.7'
             OPENMDAO: 'latest'
             #DYMOS: 'latest'
-            # TODO: Reset when dymos 1.9 releases.
+            # TODO: Reset when dymos 1.13 releases.
             DYMOS: 'dev'
 
     steps:

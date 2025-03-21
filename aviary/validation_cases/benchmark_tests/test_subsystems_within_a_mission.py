@@ -100,8 +100,7 @@ class TestSubsystemsMission(unittest.TestCase):
         prob.run_aviary_problem()
 
         # add an assert to see if MoreMission.Dummy.TIMESERIES_VAR was correctly added to the dymos problem
-        # Note, default value for this DUMMY_CONTROL is 1.0, which is openmdao's default. This produces
-        # the following value as the output.
+        # Note, default value for this DUMMY_CONTROL has changed in dymos.
         assert_almost_equal(prob[f'traj.phases.cruise.timeseries.{MoreMission.Dummy.TIMESERIES_VAR}'], np.array(
             [[1.5, 1.5, 1.5, 1.5, 1.5, 1.5, 1.5, 1.5]]).T)
 

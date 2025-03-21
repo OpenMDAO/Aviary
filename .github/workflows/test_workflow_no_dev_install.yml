@@ -28,8 +28,6 @@ jobs:
           # latest versions of openmdao/dymos
           - NAME: latest
             PY: 3
-            # TODO: Remove when dymos 1.9 releases.
-            DYMOS: 'dev'
 
     steps:
       - name: Display run details
@@ -74,6 +72,15 @@ jobs:
           pip install "numpy<2"
           pip install packaging
           pip install .[all]
+
+    - name: Install Dymos
+      shell: bash -l {0}
+      run: |
+        echo "============================================================="
+        echo "Install Dymos (TEMPORARY)"
+        echo "Remove when dymos 1.13 releases."
+        echo "============================================================="
+        pip install git+https://github.com/OpenMDAO/Dymos
 
       - name: Display conda environment info
         shell: bash -l {0}
