@@ -98,6 +98,7 @@ gasp_default_values = NamedValues(
         'INGASP.HTG': (3, 'ft'),
         'INGASP.HWING': (0, 'unitless'),
         'INGASP.IGEAR': (False, 'unitless'),
+        'INGASP.IHWB': ('transport', 'unitless'),
         # 'INGASP.JENGSZ': (4, 'unitless'),
         'INGASP.JFLTYP': ('single_slotted', 'unitless'),
         'INGASP.NTYE': (7, 'unitless'),

@@ -1,6 +1,14 @@
 from enum import Enum, IntEnum, auto, unique
 
 
+class AircraftTypes(Enum):
+    '''
+    Aircraft types
+    '''
+    TRANSPORT = 'transport'
+    BLENDED_WING_BODY = 'BWB'
+
+
 class AlphaModes(Enum):
     '''
     AlphaModes is used to specify how angle of attack is defined during
