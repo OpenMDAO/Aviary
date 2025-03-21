@@ -338,6 +338,7 @@ class Aircraft:
         FLAT_PLATE_AREA_INCREMENT = 'aircraft:fuselage:flat_plate_area_increment'
         FORM_FACTOR = 'aircraft:fuselage:form_factor'
         HEIGHT_TO_WIDTH_RATIO = 'aircraft:fuselage:height_to_width_ratio'
+        HYDRAULIC_DIAMETER = 'aircraft:fuselage:hydraulic_diameter'
         LAMINAR_FLOW_LOWER = 'aircraft:fuselage:laminar_flow_lower'
         LAMINAR_FLOW_UPPER = 'aircraft:fuselage:laminar_flow_upper'
         LENGTH = 'aircraft:fuselage:length'

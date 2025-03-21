@@ -1683,7 +1683,7 @@ add_meta_data(
     units='unitless',
     types=AircraftTypes,
     option=True,
-    default_value=False,
+    default_value='transport',
     desc='aircraft type: BWB for blended wing body, transport otherwise',
 )
 
@@ -3247,6 +3247,16 @@ add_meta_data(
     types=float,
     default_value=1.0,
     desc='fuselage height-to-width ratio',
+)
+
+add_meta_data(
+    Aircraft.Fuselage.HYDRAULIC_DIAMETER,
+    meta_data=_MetaData,
+    historical_name={"GASP": 'None', "FLOPS": None, "LEAPS1": None},
+    units='ft',
+    types=float,
+    default_value=0.0,
+    desc='In GASP, hydraulic diameter is defined as the geometric mean of cabin length and cabin width.',
 )
 
 add_meta_data(
