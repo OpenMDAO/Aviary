@@ -1683,7 +1683,7 @@ add_meta_data(
     units='unitless',
     types=AircraftTypes,
     option=True,
-    default_value=False,
+    default_value='transport',
     desc='aircraft type: BWB for blended wing body, transport otherwise',
 )
 
