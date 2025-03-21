@@ -89,12 +89,12 @@ class TestSubsystemsMission(unittest.TestCase):
         assert_almost_equal(
             prob.get_val(f'traj.cruise.states:{Mission.Dummy.VARIABLE}'),
             [[10.],
-            [25.97729616],
-            [48.02270384],
-            [55.],
-            [70.97729616],
-            [93.02270384],
-            [100.]]
+             [25.97729616],
+             [48.02270384],
+             [55.],
+             [70.97729616],
+             [93.02270384],
+             [100.]]
         )
 
         prob.run_aviary_problem()
