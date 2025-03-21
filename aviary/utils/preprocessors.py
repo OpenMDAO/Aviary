@@ -545,11 +545,11 @@ def preprocess_propulsion(aviary_options: AviaryValues, engine_models: list = No
                     f'<{eng_name}> - unspecified engine is assumed fuselage-mounted.'
                 )
 
-        if num_wing_engines == 1:
+        if num_wing_engines % 2 == 1:
             warnings.warn(
-                'Only one wing engine is specified for engine of EngineModel '
-                f'<{eng_name}> - this may cause issues with some mass and geometry '
-                'components that assume symmetric wing engine distribution.'
+                f'Odd number of wing engines are specified for EngineModel <{eng_name}> '
+                '- this may cause issues with some mass and geometry components that '
+                'assume symmetric wing engine distribution.'
             )
 
     aviary_options.set_val(Aircraft.Engine.NUM_ENGINES, num_engines_all)
