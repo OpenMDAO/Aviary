@@ -28,6 +28,8 @@ jobs:
           # latest versions of openmdao/dymos
           - NAME: latest
             PY: 3
+            # TODO: Remove when dymos 1.9 releases.
+            DYMOS: 'dev'
 
     steps:
       - name: Display run details
