@@ -255,6 +255,8 @@ class NoseGearLength(om.ExplicitComponent):
 class MainGearLength(om.ExplicitComponent):
     """
     Computation of main gear length.
+
+    TODO does not support more than two wing engines, or more than one engine model
     """
 
     def initialize(self):
@@ -263,18 +265,22 @@ class MainGearLength(om.ExplicitComponent):
 
     def setup(self):
         num_engine_type = len(self.options[Aircraft.Engine.NUM_ENGINES])
-        num_wing_engines = self.options[Aircraft.Engine.NUM_WING_ENGINES]
+        num_wing_engines_total = sum(self.options[Aircraft.Engine.NUM_WING_ENGINES])
 
         add_aviary_input(self, Aircraft.Fuselage.LENGTH, units='ft')
         add_aviary_input(self, Aircraft.Fuselage.MAX_WIDTH, units='ft')
         add_aviary_input(self, Aircraft.Nacelle.AVG_DIAMETER,
                          shape=num_engine_type, units='ft')
-        if any(num_wing_engines) > 0:
-            add_aviary_input(self, Aircraft.Engine.WING_LOCATIONS,
-                             shape=(num_engine_type, int(num_wing_engines[0]/2)),
-                             units='unitless')
+        if num_wing_engines_total > 1:
+            add_aviary_input(
+                self,
+                Aircraft.Engine.WING_LOCATIONS,
+                shape=(num_engine_type, int(num_wing_engines_total / 2)),
+                units='unitless',
+            )
         else:  # this case is not tested
             add_aviary_input(self, Aircraft.Engine.WING_LOCATIONS, units='unitless')
+
         add_aviary_input(self, Aircraft.Wing.DIHEDRAL, units='deg')
         add_aviary_input(self, Aircraft.Wing.SPAN, units='ft')
 
@@ -293,7 +299,7 @@ class MainGearLength(om.ExplicitComponent):
         y_eng_aft = 0
 
         if num_wing_eng > 0:
-            y_eng_fore = inputs[Aircraft.Engine.WING_LOCATIONS][0][0]
+            y_eng_fore = inputs[Aircraft.Engine.WING_LOCATIONS][0]
 
             tan_dih = np.tan(inputs[Aircraft.Wing.DIHEDRAL] * DEG2RAD)
             fuse_half_width = inputs[Aircraft.Fuselage.MAX_WIDTH] * 6.0

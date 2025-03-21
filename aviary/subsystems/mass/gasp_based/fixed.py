@@ -509,7 +509,9 @@ class EngineMass(om.ExplicitComponent):
 
     def setup(self):
         num_engine_type = len(self.options[Aircraft.Engine.NUM_ENGINES])
-        total_num_engines = self.options[Aircraft.Propulsion.TOTAL_NUM_ENGINES]
+        total_num_wing_engines = self.options[
+            Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES
+        ]
 
         add_aviary_input(self, Aircraft.Engine.MASS_SPECIFIC,
                          shape=num_engine_type, units='lbm/lbf')
@@ -524,8 +526,16 @@ class EngineMass(om.ExplicitComponent):
         add_aviary_input(self, Aircraft.Engine.MASS_SCALER,
                          shape=num_engine_type, units='unitless')
         add_aviary_input(self, Aircraft.Propulsion.MISC_MASS_SCALER, units='unitless')
-        add_aviary_input(self, Aircraft.Engine.WING_LOCATIONS,
-                         shape=int(total_num_engines/2), units='unitless')
+
+        if total_num_wing_engines > 1:
+            add_aviary_input(
+                self,
+                Aircraft.Engine.WING_LOCATIONS,
+                shape=int(total_num_wing_engines / 2),
+                units='unitless',
+            )
+        else:
+            add_aviary_input(self, Aircraft.Engine.WING_LOCATIONS, units='unitless')
 
         add_aviary_input(self, Aircraft.LandingGear.MAIN_GEAR_MASS, units='lbm')
 
