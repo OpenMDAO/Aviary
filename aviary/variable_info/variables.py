@@ -327,6 +327,7 @@ class Aircraft:
         MASS_SCALER = 'aircraft:furnishings:mass_scaler'
 
     class Fuselage:
+        AFTBODY_MASS_PER_UNIT_AREA = 'aircraft:fuselage:aftbody_mass_per_unit_area'
         AFTBODY_TO_TOTAL_WETTED_AREA = 'aircraft:fuselage:aftbody_to_total_wetted_area'
         AISLE_WIDTH = 'aircraft:fuselage:aisle_width'
         AVG_DIAMETER = 'aircraft:fuselage:avg_diameter'
@@ -364,7 +365,6 @@ class Aircraft:
         SEAT_PITCH = 'aircraft:fuselage:seat_pitch'
         SEAT_WIDTH = 'aircraft:fuselage:seat_width'
         TAIL_FINENESS = 'aircraft:fuselage:tail_fineness'
-        UWT_AFT = 'aircraft:fuselage:uwt_aft'
         WETTED_AREA = 'aircraft:fuselage:wetted_area'
         WETTED_AREA_SCALER = 'aircraft:fuselage:wetted_area_scaler'
 

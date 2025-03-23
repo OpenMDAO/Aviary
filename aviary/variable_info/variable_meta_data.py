@@ -3122,6 +3122,15 @@ add_meta_data(
 # ========================================================
 
 add_meta_data(
+    Aircraft.Fuselage.AFTBODY_MASS_PER_UNIT_AREA,
+    meta_data=_MetaData,
+    historical_name={"GASP": 'INGASP.UWT_AFT', "FLOPS": None, "LEAPS1": None},
+    units='lbm/ft**2',
+    default_value=0.0,
+    desc='aftbody structural areal unit weight',
+)
+
+add_meta_data(
     Aircraft.Fuselage.AFTBODY_TO_TOTAL_WETTED_AREA,
     meta_data=_MetaData,
     historical_name={"GASP": 'INGASP.SAFTqS', "FLOPS": None, "LEAPS1": None},
@@ -3564,15 +3573,6 @@ add_meta_data(
     units="unitless",
     desc='length to diameter ratio of tail cone',
     default_value=1,
-)
-
-add_meta_data(
-    Aircraft.Fuselage.UWT_AFT,
-    meta_data=_MetaData,
-    historical_name={"GASP": 'INGASP.UWT_AFT', "FLOPS": None, "LEAPS1": None},
-    units='lbf/ft**2',
-    default_value=0.0,
-    desc='aft body structural areal unit weight',
 )
 
 add_meta_data(
