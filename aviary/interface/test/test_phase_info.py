@@ -6,6 +6,7 @@ import unittest
 from copy import deepcopy
 
 from openmdao.utils.assert_utils import assert_near_equal
+from openmdao.utils.testing_utils import use_tempdirs
 
 from aviary.interface.default_phase_info.two_dof import phase_info as ph_in_two_dof
 from aviary.interface.default_phase_info.two_dof import phase_info_parameterization as phase_info_parameterization_two_dof
@@ -80,6 +81,7 @@ class TestPhaseInfo(unittest.TestCase):
         self._test_phase_info_dict(local_phase_info, 'cruise')
 
 
+@use_tempdirs
 class TestParameterizePhaseInfo(unittest.TestCase):
 
     def test_phase_info_parameterization_two_dof(self):
