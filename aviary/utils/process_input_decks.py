@@ -186,7 +186,21 @@ def parse_inputs(
             if '[' in data_list[0]:
                 is_array = True
 
-            var_values = convert_strings_to_data(data_list)
+            # Try to determine the data type from meta data 'types' attribute.
+            # If it is not provided, try to determine if the data type is float according to 'default_value'.
+            # If is is still not provided, set data type to None
+            try:
+                var_types = _MetaData[var_name]['types']
+            except:
+                var_types = None
+            if var_types is None:
+                try:
+                    var_default = _MetaData[var_name]['default_value']
+                    if isinstance(var_default, float):
+                        var_types = float
+                except:
+                    var_types = None
+            var_values = convert_strings_to_data(data_list, var_types)
 
             if var_name in meta_data.keys():
                 aircraft_values = set_value(
@@ -222,7 +236,6 @@ def parse_inputs(
 
             if aircraft_values.get_val(Settings.VERBOSITY) >= Verbosity.VERBOSE:
                 print('Unused:', var_name, var_values, comment)
-
     return aircraft_values, initialization_guesses
 
 

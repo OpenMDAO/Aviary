@@ -86,19 +86,23 @@ class TestSubsystemsMission(unittest.TestCase):
         prob.set_initial_guesses()
 
         # add an assert to see if the initial guesses are correct for Mission.Dummy.VARIABLE
-        assert_almost_equal(prob[f'traj.phases.cruise.states:{Mission.Dummy.VARIABLE}'], [[10.],
-                                                                                          [25.97729616],
-                                                                                          [48.02270384],
-                                                                                          [55.],
-                                                                                          [70.97729616],
-                                                                                          [93.02270384],
-                                                                                          [100.]])
+        assert_almost_equal(
+            prob.get_val(f'traj.cruise.states:{Mission.Dummy.VARIABLE}'),
+            [[10.],
+             [25.97729616],
+             [48.02270384],
+             [55.],
+             [70.97729616],
+             [93.02270384],
+             [100.]]
+        )
 
         prob.run_aviary_problem()
 
         # add an assert to see if MoreMission.Dummy.TIMESERIES_VAR was correctly added to the dymos problem
+        # Note, default value for this DUMMY_CONTROL has changed in dymos.
         assert_almost_equal(prob[f'traj.phases.cruise.timeseries.{MoreMission.Dummy.TIMESERIES_VAR}'], np.array(
-            [[0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]]).T)
+            [[1.5, 1.5, 1.5, 1.5, 1.5, 1.5, 1.5, 1.5]]).T)
 
     def test_bad_initial_guess_key(self):
         phase_info = self.phase_info.copy()
