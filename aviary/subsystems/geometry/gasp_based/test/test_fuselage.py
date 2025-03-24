@@ -5,10 +5,12 @@ from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 
 from aviary.subsystems.geometry.gasp_based.fuselage import (FuselageGroup,
                                                             FuselageParameters,
-                                                            FuselageSize)
+                                                            FuselageSize,
+                                                            BWBCabinLayout)
+from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.functions import setup_model_options
 from aviary.variable_info.options import get_option_defaults
-from aviary.variable_info.variables import Aircraft
+from aviary.variable_info.variables import Aircraft, Settings
 
 
 class FuselageParametersTestCase1(unittest.TestCase):
@@ -424,6 +426,86 @@ class FuselageGroupTestCase4(unittest.TestCase):
         partial_data = self.prob.check_partials(out_stream=None, method="cs")
         assert_check_partials(partial_data, atol=1e-8, rtol=1e-8)
 
+
+class BWBLayoutTestCase(unittest.TestCase):
+    def setUp(self):
+
+        self.prob = om.Problem()
+
+        self.aviary_options = AviaryValues()
+
+        self.aviary_options.set_val(Aircraft.Fuselage.NUM_SEATS_ABREAST, 18)
+        self.aviary_options.set_val(Aircraft.Fuselage.SEAT_WIDTH, 21, units='inch')
+        self.aviary_options.set_val(Aircraft.Fuselage.NUM_AISLES, 3)
+        self.aviary_options.set_val(Aircraft.Fuselage.AISLE_WIDTH, 22, units='inch')
+        self.aviary_options.set_val(Aircraft.Fuselage.SEAT_PITCH, 32, units='inch')
+        self.aviary_options.set_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS, 250)
+        self.aviary_options.set_val(Aircraft.CrewPayload.Design.NUM_FIRST_CLASS, 18)
+        self.aviary_options.set_val(Settings.VERBOSITY, 1, units='unitless')
+
+        self.prob.model.add_subsystem(
+            "bwb_cabin_layout", BWBCabinLayout(), promotes=["*"])
+
+        self.prob.model.set_input_defaults(Aircraft.BWB.PASSENGER_LEADING_EDGE_SWEEP, 65.0,
+                                           units='deg')
+        self.prob.model.set_input_defaults(Aircraft.Fuselage.PILOT_COMPARTMENT_LENGTH, 7.5,
+                                           units='ft')
+        self.prob.model.set_input_defaults('nose_length', 4.2, units='ft')
+
+        setup_model_options(self.prob, self.aviary_options)
+
+        self.prob.setup()
+
+    def test_case1(self):
+        """Testing GASP data case"""
+
+        self.prob.run_model()
+
+        tol = 1e-4
+        assert_near_equal(
+            self.prob['fuselage_station_aft'], 71.8666763, tol
+        )
+
+        partial_data = self.prob.check_partials(
+            out_stream=None,
+            compact_print=True,
+            show_only_incorrect=True,
+            form='central',
+            method="fd",
+            minimum_step=1e-12,
+            abs_err_tol=5.0e-4,
+            rel_err_tol=5.0e-5,
+        )
+        assert_check_partials(partial_data, atol=1e-5, rtol=1e-5)
+
+    def test_case2(self):
+        """Testing 0 First Class case"""
+        self.aviary_options.set_val(
+            Aircraft.CrewPayload.Design.NUM_FIRST_CLASS,
+            val=0,
+            units='unitless',
+        )
+        setup_model_options(self.prob, self.aviary_options)
+        self.prob.setup()
+
+        self.prob.run_model()
+
+        tol = 1e-4
+        assert_near_equal(
+            self.prob['fuselage_station_aft'], 65.8666763, tol
+        )
+
+        partial_data = self.prob.check_partials(
+            out_stream=None,
+            compact_print=True,
+            show_only_incorrect=True,
+            form='central',
+            method="fd",
+            minimum_step=1e-12,
+            abs_err_tol=5.0e-4,
+            rel_err_tol=5.0e-5,
+        )
+        assert_check_partials(partial_data, atol=1e-5, rtol=1e-5)
 
 if __name__ == "__main__":
     unittest.main()
