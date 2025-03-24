@@ -345,7 +345,7 @@ def promote_aircraft_and_mission_vars(group):
 
         external_outputs.extend(out_names)
 
-        # Locally promote aircraft:* and mission:* only.
+        # Locally promote Aircraft, Mission, Dynamic variables only.
         promote_in = []
         promote_out = []
 

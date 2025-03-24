@@ -73,10 +73,17 @@ class BatteryBuilder(SubsystemBuilderBase):
 
         return battery_group
 
+    def mission_inputs(self, **kwargs):
+        return [
+            Aircraft.Battery.ENERGY_CAPACITY,
+            Dynamic.Vehicle.CUMULATIVE_ELECTRIC_ENERGY_USED,
+            Aircraft.Battery.EFFICIENCY,
+        ]
+
+    def mission_outputs(self, **kwargs):
+        return [Dynamic.Vehicle.BATTERY_STATE_OF_CHARGE]
+
     def get_states(self):
-        # need to add subsystem name to target name ('battery.') for state due
-        # to issue where non aircraft or mission variables are not fully promoted
-        # TODO fix this by not promoting only 'aircraft:*' and 'mission:*'
         state_dict = {
             Dynamic.Vehicle.CUMULATIVE_ELECTRIC_ENERGY_USED: {
                 'fix_initial': True,
@@ -87,8 +94,9 @@ class BatteryBuilder(SubsystemBuilderBase):
                 'units': 'kJ',
                 'rate_source': Dynamic.Vehicle.Propulsion.ELECTRIC_POWER_IN_TOTAL,
                 'input_initial': 0.0,
-                'targets': f'{self.name}.{Dynamic.Vehicle.CUMULATIVE_ELECTRIC_ENERGY_USED}',
-            }}
+                'targets': f'{Dynamic.Vehicle.CUMULATIVE_ELECTRIC_ENERGY_USED}',
+            }
+        }
 
         return state_dict
 
@@ -96,7 +104,7 @@ class BatteryBuilder(SubsystemBuilderBase):
         constraint_dict = {
             # Can add constraints here; state of charge is a common one in many
             # battery applications
-            f'{self.name}.{Dynamic.Vehicle.BATTERY_STATE_OF_CHARGE}': {
+            Dynamic.Vehicle.BATTERY_STATE_OF_CHARGE: {
                 'type': 'boundary',
                 'loc': 'final',
                 'lower': 0.2,

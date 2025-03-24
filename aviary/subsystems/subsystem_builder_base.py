@@ -222,16 +222,16 @@ class SubsystemBuilderBase(ABC):
     def mission_inputs(self, **kwargs):
         """
         Returns list of mission inputs to be promoted out of the external subsystem. By
-        default, all aircraft:* and mission:* inputs are promoted.
+        default, all Aircraft, Mission, and Dynamic inputs are promoted.
         """
-        return []
+        return ['aircraft:*', 'mission:*', 'dynamic:*']
 
     def mission_outputs(self, **kwargs):
         """
         Returns list of mission outputs to be promoted out of the external subsystem. By
-        default, all  aircraft:* and mission:* outputs are promoted.
+        default, all  Aircraft, Mission, and Dynamic outputs are promoted.
         """
-        return []
+        return ['aircraft:*', 'mission:*', 'dynamic:*']
 
     def define_order(self):
         """

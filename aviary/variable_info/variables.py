@@ -621,14 +621,14 @@ class Dynamic:
     class Atmosphere:
         """Atmospheric and freestream conditions"""
 
-        DENSITY = 'density'
-        DYNAMIC_PRESSURE = 'dynamic_pressure'
-        KINEMATIC_VISCOSITY = 'kinematic_viscosity'
-        MACH = 'mach'
-        MACH_RATE = 'mach_rate'
-        SPEED_OF_SOUND = 'speed_of_sound'
-        STATIC_PRESSURE = 'static_pressure'
-        TEMPERATURE = 'temperature'
+        DENSITY = 'dynamic:atmosphere:density'
+        DYNAMIC_PRESSURE = 'dynamic:atmosphere:dynamic_pressure'
+        KINEMATIC_VISCOSITY = 'dynamic:atmosphere:kinematic_viscosity'
+        MACH = 'dynamic:atmosphere:mach'
+        MACH_RATE = 'dynamic:atmosphere:mach_rate'
+        SPEED_OF_SOUND = 'dynamic:atmosphere:speed_of_sound'
+        STATIC_PRESSURE = 'dynamic:atmosphere:static_pressure'
+        TEMPERATURE = 'dynamic:atmosphere:temperature'
 
     class Mission:
         """
@@ -638,55 +638,63 @@ class Dynamic:
         """
 
         # TODO Vehicle summary forces, torques, etc. in X,Y,Z axes should also go here
-        ALTITUDE = 'altitude'
-        ALTITUDE_RATE = 'altitude_rate'
-        ALTITUDE_RATE_MAX = 'altitude_rate_max'
+        ALTITUDE = 'dynamic:mission:altitude'
+        ALTITUDE_RATE = 'dynamic:mission:altitude_rate'
+        ALTITUDE_RATE_MAX = 'dynamic:mission:altitude_rate_max'
         # TODO Angle of Attack
-        DISTANCE = 'distance'
-        DISTANCE_RATE = 'distance_rate'
-        FLIGHT_PATH_ANGLE = 'flight_path_angle'
-        FLIGHT_PATH_ANGLE_RATE = 'flight_path_angle_rate'
-        SPECIFIC_ENERGY = 'specific_energy'
-        SPECIFIC_ENERGY_RATE = 'specific_energy_rate'
-        SPECIFIC_ENERGY_RATE_EXCESS = 'specific_energy_rate_excess'
-        VELOCITY = 'velocity'
-        VELOCITY_RATE = 'velocity_rate'
+        DISTANCE = 'dynamic:mission:distance'
+        DISTANCE_RATE = 'dynamic:mission:distance_rate'
+        FLIGHT_PATH_ANGLE = 'dynamic:mission:flight_path_angle'
+        FLIGHT_PATH_ANGLE_RATE = 'dynamic:mission:flight_path_angle_rate'
+        SPECIFIC_ENERGY = 'dynamic:mission:specific_energy'
+        SPECIFIC_ENERGY_RATE = 'dynamic:mission:specific_energy_rate'
+        SPECIFIC_ENERGY_RATE_EXCESS = 'dynamic:mission:specific_energy_rate_excess'
+        VELOCITY = 'dynamic:mission:velocity'
+        VELOCITY_RATE = 'dynamic:mission:velocity_rate'
 
     class Vehicle:
         """Vehicle properties and states in a vehicle-fixed reference frame."""
 
-        ANGLE_OF_ATTACK = 'angle_of_attack'
-        BATTERY_STATE_OF_CHARGE = 'battery_state_of_charge'
-        CUMULATIVE_ELECTRIC_ENERGY_USED = 'cumulative_electric_energy_used'
-        DRAG = 'drag'
-        LIFT = 'lift'
-        MASS = 'mass'
-        MASS_RATE = 'mass_rate'
+        ANGLE_OF_ATTACK = 'dynamic:vehicle:angle_of_attack'
+        BATTERY_STATE_OF_CHARGE = 'dynamic:vehicle:battery_state_of_charge'
+        CUMULATIVE_ELECTRIC_ENERGY_USED = (
+            'dynamic:vehicle:cumulative_electric_energy_used'
+        )
+        DRAG = 'dynamic:vehicle:drag'
+        LIFT = 'dynamic:vehicle:lift'
+        MASS = 'dynamic:vehicle:mass'
+        MASS_RATE = 'dynamic:vehicle:mass_rate'
 
         class Propulsion:
             # variables specific to the propulsion subsystem
-            ELECTRIC_POWER_IN = 'electric_power_in'
-            ELECTRIC_POWER_IN_TOTAL = 'electric_power_in_total'
-            # EXIT_AREA = 'exit_area'
-            FUEL_FLOW_RATE = 'fuel_flow_rate'
-            FUEL_FLOW_RATE_NEGATIVE = 'fuel_flow_rate_negative'
-            FUEL_FLOW_RATE_NEGATIVE_TOTAL = 'fuel_flow_rate_negative_total'
-            FUEL_FLOW_RATE_TOTAL = 'fuel_flow_rate_total'
-            HYBRID_THROTTLE = 'hybrid_throttle'
-            NOX_RATE = 'nox_rate'
-            NOX_RATE_TOTAL = 'nox_rate_total'
-            PROPELLER_TIP_SPEED = 'propeller_tip_speed'
-            RPM = 'rotations_per_minute'
-            SHAFT_POWER = 'shaft_power'
-            SHAFT_POWER_MAX = 'shaft_power_max'
-            TEMPERATURE_T4 = 't4'
-            THROTTLE = 'throttle'
-            THRUST = 'thrust_net'
-            THRUST_MAX = 'thrust_net_max'
-            THRUST_MAX_TOTAL = 'thrust_net_max_total'
-            THRUST_TOTAL = 'thrust_net_total'
-            TORQUE = 'torque'
-            TORQUE_MAX = 'torque_max'
+            ELECTRIC_POWER_IN = 'dynamic:vehicle:propulsion:electric_power_in'
+            ELECTRIC_POWER_IN_TOTAL = (
+                'dynamic:vehicle:propulsion:electric_power_in_total'
+            )
+            # EXIT_AREA = 'dynamic:vehicle:propulsion:exit_area'
+            FUEL_FLOW_RATE = 'dynamic:vehicle:propulsion:fuel_flow_rate'
+            FUEL_FLOW_RATE_NEGATIVE = (
+                'dynamic:vehicle:propulsion:fuel_flow_rate_negative'
+            )
+            FUEL_FLOW_RATE_NEGATIVE_TOTAL = (
+                'dynamic:vehicle:propulsion:fuel_flow_rate_negative_total'
+            )
+            FUEL_FLOW_RATE_TOTAL = 'dynamic:vehicle:propulsion:fuel_flow_rate_total'
+            HYBRID_THROTTLE = 'dynamic:vehicle:propulsion:hybrid_throttle'
+            NOX_RATE = 'dynamic:vehicle:propulsion:nox_rate'
+            NOX_RATE_TOTAL = 'dynamic:vehicle:propulsion:nox_rate_total'
+            PROPELLER_TIP_SPEED = 'dynamic:vehicle:propulsion:propeller_tip_speed'
+            RPM = 'dynamic:vehicle:propulsion:rotations_per_minute'
+            SHAFT_POWER = 'dynamic:vehicle:propulsion:shaft_power'
+            SHAFT_POWER_MAX = 'dynamic:vehicle:propulsion:shaft_power_max'
+            TEMPERATURE_T4 = 'dynamic:vehicle:propulsion:t4'
+            THROTTLE = 'dynamic:vehicle:propulsion:throttle'
+            THRUST = 'dynamic:vehicle:propulsion:thrust_net'
+            THRUST_MAX = 'dynamic:vehicle:propulsion:thrust_net_max'
+            THRUST_MAX_TOTAL = 'dynamic:vehicle:propulsion:thrust_net_max_total'
+            THRUST_TOTAL = 'dynamic:vehicle:propulsion:thrust_net_total'
+            TORQUE = 'dynamic:vehicle:propulsion:torque'
+            TORQUE_MAX = 'dynamic:vehicle:propulsion:torque_max'
 
 
 class Mission:
