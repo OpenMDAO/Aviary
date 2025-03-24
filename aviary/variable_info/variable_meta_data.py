@@ -3225,15 +3225,6 @@ add_meta_data(
 )
 
 add_meta_data(
-    Aircraft.Fuselage.FOREBODY_MASS,
-    meta_data=_MetaData,
-    historical_name={"GASP": 'WGT_FB', "FLOPS": None, "LEAPS1": None},
-    units='lbm',
-    default_value=0.0,
-    desc='forebody mass',
-)
-
-add_meta_data(
     Aircraft.Fuselage.FINENESS,
     meta_data=_MetaData,
     historical_name={
@@ -3255,6 +3246,15 @@ add_meta_data(
     historical_name={"GASP": 'INGASP.DELFE', "FLOPS": None, "LEAPS1": None},
     units='ft**2',
     desc='increment to fuselage flat plate area',
+)
+
+add_meta_data(
+    Aircraft.Fuselage.FOREBODY_MASS,
+    meta_data=_MetaData,
+    historical_name={"GASP": 'WGT_FB', "FLOPS": None, "LEAPS1": None},
+    units='lbm',
+    default_value=0.0,
+    desc='forebody mass',
 )
 
 add_meta_data(
@@ -7563,7 +7563,7 @@ add_meta_data(
 )
 
 add_meta_data(
-    Mission.Takeoff.ASCENT_T_INTIIAL,
+    Mission.Takeoff.ASCENT_T_INITIAL,
     meta_data=_MetaData,
     historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
     units='s',
