@@ -7,6 +7,8 @@ from openmdao.utils.testing_utils import require_pyoptsparse, use_tempdirs
 from openmdao.core.problem import _clear_problem_names
 from openmdao.utils.reports_system import clear_reports
 
+import dymos
+
 from aviary.interface.methods_for_level1 import run_aviary
 from aviary.interface.methods_for_level2 import AviaryProblem
 from aviary.subsystems.test.test_dummy_subsystem import ArrayGuessSubsystemBuilder
@@ -189,9 +191,20 @@ class AircraftMissionTestSuite(unittest.TestCase):
         prob = self.run_mission(modified_phase_info, "IPOPT")
         self.assertTrue(prob.problem_ran_successfully)
 
+        try:
+            numeric, rel = dymos.__version__.split('-')
+        except ValueError:
+            numeric = dymos.__version__
+        dm_version = tuple([int(s) for s in numeric.split('.')])
+
+        if dm_version <= (1, 12, 0):
+            con_name = 'traj.climb.throttle[path]'
+        else:
+            con_name = 'traj.phases.climb->path_constraint->throttle'
+
         constraints = prob.driver._cons
         for name, meta in constraints.items():
-            if 'traj.phases.climb->path_constraint->throttle' in name:
+            if con_name in name:
                 self.assertEqual(meta['upper'], 0.9)
                 self.assertEqual(meta['lower'], 0.2)
 
@@ -290,8 +303,19 @@ class AircraftMissionTestSuite(unittest.TestCase):
 
         prob_vars = prob.list_problem_vars()
         cons = {key: val for (key, val) in prob_vars['constraints']}
-        con1 = cons['traj.phases.climb->initial_boundary_constraint->throttle_1']
-        con2 = cons['traj.phases.climb->final_boundary_constraint->throttle_2']
+
+        try:
+            numeric, rel = dymos.__version__.split('-')
+        except ValueError:
+            numeric = dymos.__version__
+        dm_version = tuple([int(s) for s in numeric.split('.')])
+
+        if dm_version <= (1, 12, 0):
+            con1 = cons['traj.phases.climb->initial_boundary_constraint->throttle_1']
+            con2 = cons['traj.phases.climb->final_boundary_constraint->throttle_2']
+        else:
+            con1 = cons['traj.climb.throttle_1[initial]']
+            con2 = cons['traj.climb.throttle_2[final]']
 
         self.assertEqual(con1['name'], 'timeseries.throttle_1')
         self.assertEqual(con2['name'], 'timeseries.throttle_2')
