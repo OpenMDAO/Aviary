@@ -3140,16 +3140,6 @@ add_meta_data(
 )
 
 add_meta_data(
-    Aircraft.Fuselage.AFTBODY_TO_TOTAL_WETTED_AREA,
-    meta_data=_MetaData,
-    historical_name={"GASP": 'INGASP.SAFTqS', "FLOPS": None, "LEAPS1": None},
-    units='unitless',
-    types=float,
-    default_value=0.0,
-    desc='aftbody wetted area to total body wetted area',
-)
-
-add_meta_data(
     Aircraft.Fuselage.AISLE_WIDTH,
     meta_data=_MetaData,
     historical_name={"GASP": 'INGASP.WAS', "FLOPS": None, "LEAPS1": None},
@@ -3611,6 +3601,16 @@ add_meta_data(
     units='ft**2',
     desc='fuselage wetted area',
     default_value=0.0,
+)
+
+add_meta_data(
+    Aircraft.Fuselage.WETTED_AREA_RATIO_AFTBODY_TO_TOTAL,
+    meta_data=_MetaData,
+    historical_name={"GASP": 'INGASP.SAFTqS', "FLOPS": None, "LEAPS1": None},
+    units='unitless',
+    types=float,
+    default_value=0.0,
+    desc='aftbody wetted area to total body wetted area',
 )
 
 add_meta_data(
