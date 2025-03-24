@@ -247,7 +247,7 @@ phase_info = {
             'polynomial_control_order': 1,
             'optimize_mach': optimize_mach,
             'optimize_altitude': optimize_altitude,
-            'throttle_enforcement': 'bounded',
+            'throttle_enforcement': 'path_constraint',
             'constraints': {
                 'distance': {
                     'equals': 21325.0,
@@ -353,7 +353,8 @@ if __name__ == '__main__':
 
     prob.set_initial_guesses()
 
-    prob.run_aviary_problem(record_filename='detailed_takeoff.db')
+    prob.run_aviary_problem(record_filename='detailed_takeoff.db',
+                            suppress_solver_print=True)
 
     try:
         loc = prob.get_outputs_dir()

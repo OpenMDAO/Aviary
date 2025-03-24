@@ -1225,7 +1225,7 @@ class AviaryProblem(om.Problem):
 
             if self.mission_method is TWO_DEGREES_OF_FREEDOM and self.analysis_scheme is AnalysisScheme.COLLOCATION:
                 # problem formulation to make the trajectory work
-                self.model.add_design_var(Mission.Takeoff.ASCENT_T_INTIIAL,
+                self.model.add_design_var(Mission.Takeoff.ASCENT_T_INITIAL,
                                           lower=0, upper=100, ref=30.0)
                 self.model.add_design_var(Mission.Takeoff.ASCENT_DURATION,
                                           lower=1, upper=1000, ref=10.)
