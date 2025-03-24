@@ -262,8 +262,8 @@ def input_check_report(prob, **kwargs):
     with open(report_file, mode='w') as f:
 
         f.write('# Unspecified Hierarchy Variables\n')
-        f.write("These aviary inputs are unspecified, and are using default values "
-                "specified in the Aviary metadata.\n\n")
+        f.write("These aviary inputs are unspecified in aviary_inputs, and may be using default values "
+                "defined in the Aviary metadata.\n\n")
 
         if bare_hierarchy_inputs:
 
@@ -274,7 +274,7 @@ def input_check_report(prob, **kwargs):
                 metadata = CoreMetaData.get(var)
                 units = metadata['units']
                 val = model.get_val(var, units=units)
-                desc =  metadata["desc"]
+                desc = metadata["desc"]
                 abs_paths = prom2abs[var]
 
                 f.write(f'| **{var}** | {val} | {units} | {desc} | {abs_paths}|\n')
@@ -285,7 +285,7 @@ def input_check_report(prob, **kwargs):
             f.write("None\n")
 
         f.write('# Unspecified Local Variables\n')
-        f.write("These local subsystem inputs are unspecified, and are using default "
+        f.write("These local subsystem inputs are unconnected, and may be using default "
                 "values specified in the component.\n\n")
 
         if bare_local_inputs:
@@ -299,9 +299,9 @@ def input_check_report(prob, **kwargs):
                 if var.startswith('traj') and '.rhs_all.' not in var:
                     continue
 
-                abs_paths =  prom2abs[var]
+                abs_paths = prom2abs[var]
                 val = model.get_val(var)
-                meta =  model._var_allprocs_abs2meta['input'][abs_paths[0]]
+                meta = model._var_allprocs_abs2meta['input'][abs_paths[0]]
                 units = meta['units']
 
                 f.write(f'| **{var}** | {val} | {units} | {abs_paths}|\n')
