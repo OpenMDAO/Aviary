@@ -62,7 +62,7 @@ class EngineModel(SubsystemBuilderBase):
         """
         self._preprocess_inputs()
 
-    def build_pre_mission(self, aviary_inputs):
+    def build_pre_mission(self, aviary_inputs, **kwargs):
         """
         Build an OpenMDAO system for the pre-mission computations of the engine model,
         such as sizing.
@@ -79,7 +79,7 @@ class EngineModel(SubsystemBuilderBase):
         """
         return None
 
-    def build_mission(self, num_nodes, aviary_inputs):
+    def build_mission(self, num_nodes, aviary_inputs, **kwargs):
         """
         Build an OpenMDAO system for the mission computations of the engine model.
 
@@ -97,7 +97,7 @@ class EngineModel(SubsystemBuilderBase):
         raise NotImplementedError('build_mission() is a required method but has not '
                                   f'been implemented in EngineModel <{self.name}>')
 
-    def build_post_mission(self, aviary_inputs):
+    def build_post_mission(self, aviary_inputs, **kwargs):
         """
         Build an OpenMDAO system for the post-mission computations of the engine model.
 

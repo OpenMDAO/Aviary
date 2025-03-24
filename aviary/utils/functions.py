@@ -10,7 +10,9 @@ import numpy as np
 from openmdao.utils.units import convert_units
 
 from aviary.utils.aviary_values import AviaryValues, get_items
-from aviary.variable_info.enums import ProblemType, EquationsOfMotion, LegacyCode
+from aviary.variable_info.enums import (
+    FlapType, GASPEngineType, ProblemType, EquationsOfMotion, LegacyCode
+)
 from aviary.variable_info.functions import add_aviary_output, add_aviary_input
 from aviary.variable_info.variable_meta_data import _MetaData
 
@@ -40,7 +42,10 @@ def get_aviary_resource_path(resource_name: str) -> str:
     """
     file_manager = ExitStack()
     atexit.register(file_manager.close)
-    ref = importlib_resources.files('aviary') / resource_name
+    if resource_name:
+        ref = importlib_resources.files('aviary') / resource_name
+    else:
+        ref = importlib_resources.files('aviary')
     path = file_manager.enter_context(
         importlib_resources.as_file(ref))
     return path
@@ -100,31 +105,79 @@ def set_aviary_input_defaults(model, inputs, aviary_inputs: AviaryValues,
         model.set_input_defaults(key, val=val, units=units)
 
 
-def convert_strings_to_data(string_list):
+def convert_strings_to_data(string_list, data_type=None):
     """
     convert_strings_to_data will convert a list of strings to usable data.
     Strings that can't be converted to numbers will attempt to store as a logical,
     otherwise they are passed as is
     """
     value_list = [0]*len(string_list)
+    eNums = (FlapType, GASPEngineType)
     for ii, dat in enumerate(string_list):
         dat = dat.strip('[]')
-        try:
-            # if the value is a number store it as a float or an int as appropriate
-            # BUG this returns floats that can be converted to int (e.g. 1.0) as an int (1), even if the variable requires floats
-            value_list[ii] = int(float(dat)) if float(
-                dat).is_integer() else float(dat)
-        except ValueError:
-            # store value as a logical if it is a string that represents True or False
-            if dat.lower() == 'true':
-                value_list[ii] = True
-            elif dat.lower() == 'false':
-                value_list[ii] = False
-            else:
-                # if the value isn't a number or a logial, store it as a string
-                value_list[ii] = dat
-        except Exception as e:
-            print('Exception', e)
+        if data_type is None:
+            try:
+                # if the value is a number store it as a float or an int as appropriate
+                # BUG this returns floats that can be converted to int (e.g. 1.0) as an int (1), even if the variable requires floats
+                value_list[ii] = int(float(dat)) if float(
+                    dat).is_integer() else float(dat)
+            except ValueError:
+                # store value as a logical if it is a string that represents True or False
+                if dat.lower() == 'true':
+                    value_list[ii] = True
+                elif dat.lower() == 'false':
+                    value_list[ii] = False
+                else:
+                    # if the value isn't a number or a logial, store it as a string
+                    value_list[ii] = dat
+            except Exception as e:
+                print('Exception', e)
+        else:  # only when reading from .csv file
+            if not isinstance(data_type, tuple):
+                data_type = (data_type, )
+            err_msg = ''
+
+            for dtype in data_type:
+                if dtype is np.ndarray:  # It's always coupled with int or float
+                    pass
+                elif dtype is Path:  # In .csv file, it is always a string
+                    pass
+                elif dtype in eNums:
+                    if not dat.isnumeric():
+                        try:
+                            x = dtype.get_element_by_name(dat.upper())
+                            value_list[ii] = x.value
+                            err_msg = ''
+                            break
+                        except:
+                            err_msg += f'Expected data type: {data_type}, but the data is {dat}.\n'
+                elif dtype is bool:
+                    if dat.lower() == 'true' or dat == '1' or dat == '1.0':
+                        value_list[ii] = True
+                        err_msg = ''
+                        break
+                    elif dat.lower() == 'false' or dat == '0' or dat == '0.0':
+                        value_list[ii] = False
+                        err_msg = ''
+                        break
+                    else:
+                        err_msg += f'Expected data type: {data_type}, but the data is {dat}.\n'
+                else:
+                    try:
+                        if dat.lower() == 'true':
+                            value_list[ii] = True
+                        elif dat.lower() == 'false':
+                            value_list[ii] = False
+                        else:
+                            value_list[ii] = dtype(dat.strip())
+                        err_msg = ''
+                        break
+                    except:
+                        err_msg += f'Expected data type: {data_type}, but the data is {dat}.\n'
+
+            if len(err_msg) > 0:
+                print(err_msg)
+
     return value_list
 
 
@@ -522,3 +575,92 @@ def wrapped_convert_units(val_unit_tuple, new_units):
         return [convert_units(v, units, new_units) for v in value]
     else:
         return convert_units(value, units, new_units)
+
+
+def sigmoidX(x, x0, alpha=1.0):
+    """
+    Sigmoid used to smoothly transition between piecewise functions
+
+    Parameters
+    ----------
+    x: float or array
+        independent variable
+    x0: float
+        the center of symmetry. When x = x0, sigmoidX = 1/2.
+    alpha: float
+        steepness parameter.
+
+    returns
+    -------
+    float or array
+        smoothed value from input parameter x.
+    """
+    if alpha == 0:
+        raise ValueError("alpha must be non-zero")
+
+    if isinstance(x, np.ndarray):
+        if np.isrealobj(x):
+            dtype = float
+        else:
+            dtype = complex
+        n_size = x.size
+        y = np.zeros(n_size, dtype=dtype)
+        # avoid overflow in squared term, underflow seems to be ok
+        calc_idx = np.where((x.real - x0) / alpha > -320)
+        y[calc_idx] = 1 / (1 + np.exp(-(x[calc_idx] - x0) / alpha))
+    else:
+        if isinstance(x, float):
+            dtype = float
+        else:
+            dtype = complex
+        y = 0
+        if (x - x0)*alpha > -320:
+            y = 1 / (1 + np.exp(-(x - x0) / alpha))
+    if dtype == float:
+        y = y.real
+    return y
+
+
+def dSigmoidXdx(x, x0, alpha=1.0):
+    """
+    Derivative of sigmoid function
+
+    Parameters
+    ----------
+    x: float or array
+        independent variable
+    x0: float
+        the center of symmetry. When x = x0, sigmoidX = 1/2.
+    alpha: float
+        steepness parameter.
+    returns
+    -------
+    float or array
+        smoothed derivative value from input parameter x.
+    """
+    if alpha == 0:
+        raise ValueError("alpha must be non-zero")
+
+    if isinstance(x, np.ndarray):
+        if np.isrealobj(x):
+            dtype = float
+        else:
+            dtype = complex
+        n_size = x.size
+        y = np.zeros(n_size, dtype=dtype)
+        term = np.zeros(n_size, dtype=dtype)
+        term2 = np.zeros(n_size, dtype=dtype)
+        # avoid overflow in squared term, underflow seems to be ok
+        calc_idx = np.where((x.real - x0) / alpha > -320)
+        term[calc_idx] = np.exp(-(x[calc_idx] - x0) / alpha)
+        term2[calc_idx] = (1 + term[calc_idx]) * (1 + term[calc_idx])
+        y[calc_idx] = term[calc_idx] / alpha / term2[calc_idx]
+    else:
+        y = 0
+        if (x - x0)*alpha > -320:
+            term = np.exp(-(x - x0) / alpha)
+            term2 = (1 + term) * (1 + term)
+            y = term / alpha / term2
+    if dtype == float:
+        y = y.real
+    return y

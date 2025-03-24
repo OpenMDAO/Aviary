@@ -61,6 +61,7 @@ class EquationsOfMotion(Enum):
     HEIGHT_ENERGY = 'height_energy'
     TWO_DEGREES_OF_FREEDOM = '2DOF'
     SOLVED_2DOF = 'solved_2DOF'
+    CUSTOM = 'custom'
 
 
 @unique
@@ -107,6 +108,10 @@ class GASPEngineType(Enum):
     # for geometry and mass
     ROTARY_RCWSZ = 14
 
+    @classmethod
+    def get_element_by_name(cls, val: str):
+        return next((c for c in cls if c.name == val), None)
+
 
 @unique
 class FlapType(Enum):
@@ -120,6 +125,10 @@ class FlapType(Enum):
     TRIPLE_SLOTTED = 5
     FOWLER = 6
     DOUBLE_SLOTTED_FOWLER = 7
+
+    @classmethod
+    def get_element_by_name(cls, val: str):
+        return next((c for c in cls if c.name == val), None)
 
 
 class LegacyCode(Enum):

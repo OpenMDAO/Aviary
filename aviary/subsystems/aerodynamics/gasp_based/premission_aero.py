@@ -113,3 +113,4 @@ class PreMissionAero(om.Group):
         self.set_input_defaults("alt_flaps", 0)
         self.set_input_defaults("flap_defl_up", 0)
         self.set_input_defaults("slat_defl_up", 0)
+        self.set_input_defaults(Aircraft.Wing.SWEEP, units='deg')

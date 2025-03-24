@@ -35,7 +35,7 @@ class TestUnsteadyFlightEOM(unittest.TestCase):
         p.set_val(Aircraft.Wing.INCIDENCE, 0.0, units="deg")
 
         if not ground_roll:
-            p.set_val("alpha", 0.0, units="deg")
+            p.set_val(Dynamic.Vehicle.ANGLE_OF_ATTACK, 0.0, units="deg")
             p.set_val(Dynamic.Mission.FLIGHT_PATH_ANGLE, 0, units="deg")
             p.set_val("dh_dr", 0, units=None)
             p.set_val("d2h_dr2", 0, units="1/m")
@@ -86,7 +86,9 @@ class TestUnsteadyFlightEOM(unittest.TestCase):
         p.set_val(Aircraft.Wing.INCIDENCE, np.random.rand(1), units="deg")
 
         if not ground_roll:
-            p.set_val("alpha", 5 * np.random.rand(nn), units="deg")
+            p.set_val(
+                Dynamic.Vehicle.ANGLE_OF_ATTACK, 5 * np.random.rand(nn), units="deg"
+            )
             p.set_val(
                 Dynamic.Mission.FLIGHT_PATH_ANGLE, 5 * np.random.rand(nn), units="deg"
             )

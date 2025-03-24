@@ -3,7 +3,7 @@ import openmdao.api as om
 
 from aviary.subsystems.atmosphere.atmosphere import Atmosphere
 from aviary.subsystems.atmosphere.flight_conditions import FlightConditions
-from aviary.mission.gasp_based.ode.base_ode import BaseODE
+from aviary.mission.gasp_based.ode.two_dof_ode import TwoDOFODE
 from aviary.mission.gasp_based.ode.climb_eom import ClimbRates
 from aviary.mission.gasp_based.ode.constraints.flight_constraints import (
     FlightConstraints,
@@ -18,7 +18,7 @@ from aviary.mission.gasp_based.ode.time_integration_base_classes import (
 )
 
 
-class ClimbODE(BaseODE):
+class ClimbODE(TwoDOFODE):
     """ODE for quasi-steady climb.
 
     This ODE has a ``KSComp`` which allows for the switching of obeying an EAS
@@ -188,7 +188,9 @@ class ClimbODE(BaseODE):
                         promotes_outputs=subsystem.mission_outputs(**kwargs),
                     )
 
-        # maybe replace this with the solver in AddAlphaControl?
+        self.add_external_subsystems()
+
+        # maybe replace this with the solver in add_alpha_control?
         lift_balance_group.nonlinear_solver = om.NewtonSolver()
         lift_balance_group.nonlinear_solver.options["solve_subsystems"] = True
         lift_balance_group.nonlinear_solver.options["iprint"] = 0
@@ -214,7 +216,7 @@ class ClimbODE(BaseODE):
             ],
         )
 
-        self.AddAlphaControl(
+        self.add_alpha_control(
             alpha_group=lift_balance_group,
             alpha_mode=AlphaModes.REQUIRED_LIFT,
             add_default_solver=False,
@@ -225,7 +227,7 @@ class ClimbODE(BaseODE):
             "constraints",
             FlightConstraints(num_nodes=nn),
             promotes_inputs=[
-                "alpha",
+                Dynamic.Vehicle.ANGLE_OF_ATTACK,
                 Dynamic.Atmosphere.DENSITY,
                 "CL_max",
                 Dynamic.Mission.FLIGHT_PATH_ANGLE,

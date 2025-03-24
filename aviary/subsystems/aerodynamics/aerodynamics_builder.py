@@ -7,12 +7,10 @@ AerodynamicsBuilderBase : the interface for an aerodynamics subsystem builder.
 
 CoreAerodynamicsBuilder : the interface for Aviary's core aerodynamics subsystem builder
 """
+import numpy as np
 from itertools import chain
 
-import numpy as np
-
-import openmdao.api as om
-from dymos.utils.misc import _unspecified
+# from dymos.utils.misc import _unspecified
 
 from aviary.subsystems.aerodynamics.flops_based.computed_aero_group import \
     ComputedAeroGroup
@@ -153,8 +151,7 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
 
         elif self.code_origin is GASP:
             if method is None:
-                aero_group = CruiseAero(num_nodes=num_nodes,
-                                        aviary_options=aviary_inputs)
+                aero_group = CruiseAero(num_nodes=num_nodes)
 
             elif method == 'cruise':
                 if 'aero_data' in kwargs:
@@ -221,7 +218,7 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
 
             elif method == 'low_speed':
                 promotes = [
-                    'angle_of_attack',
+                    Dynamic.Vehicle.ANGLE_OF_ATTACK,
                     Dynamic.Mission.ALTITUDE,
                     Dynamic.Mission.FLIGHT_PATH_ANGLE,
                     Mission.Takeoff.DRAG_COEFFICIENT_MIN,
@@ -287,7 +284,11 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
             elif method == 'cruise':
                 if 'output_alpha' in kwargs:
                     if kwargs['output_alpha']:
-                        promotes = [Dynamic.Vehicle.DRAG, Dynamic.Vehicle.LIFT, 'alpha']
+                        promotes = [
+                            Dynamic.Vehicle.DRAG,
+                            Dynamic.Vehicle.LIFT,
+                            Dynamic.Vehicle.ANGLE_OF_ATTACK,
+                        ]
                 else:
                     promotes = [Dynamic.Vehicle.DRAG, Dynamic.Vehicle.LIFT, 'CL_max']
 
@@ -445,7 +446,7 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
 
                     val = meta['default_value']
                     if val is None:
-                        val = _unspecified
+                        val = 0.0  # _unspecified
                     units = meta['units']
 
                     if var in aviary_inputs:
@@ -455,12 +456,21 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
                             val = aviary_inputs.get_val(var)
 
                     params[var] = {'val': val,
+                                   'units': units,
                                    'static_target': True}
 
                 for var in ENGINE_SIZED_INPUTS:
-                    params[var] = {'shape': (num_engine_type, ), 'static_target': True}
+                    meta = _MetaData[var]
+                    val = meta['default_value']
+                    if val is None:
+                        val = [0.0]  # _unspecified
+                    units = meta['units']
+                    params[var] = {'val': val,
+                                   'units': units,
+                                   'shape': (num_engine_type, ),
+                                   'static_target': True}
 
-            elif method == 'tabular':
+            elif method in ['tabular', 'solved_alpha']:
 
                 for var in TABULAR_CORE_INPUTS:
 
@@ -468,7 +478,7 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
 
                     val = meta['default_value']
                     if val is None:
-                        val = _unspecified
+                        val = 0.0  # _unspecified
                     units = meta['units']
 
                     if var in aviary_inputs:
@@ -478,6 +488,7 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
                             val = aviary_inputs.get_val(var)
 
                     params[var] = {'val': val,
+                                   'units': units,
                                    'static_target': True}
 
             elif method == "low_speed":
@@ -488,7 +499,7 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
 
                     val = meta['default_value']
                     if val is None:
-                        val = _unspecified
+                        val = 0.0  # _unspecified
                     units = meta['units']
 
                     if var in aviary_inputs:
@@ -498,6 +509,7 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
                             val = aviary_inputs.get_val(var)
 
                     params[var] = {'val': val,
+                                   'units': units,
                                    'static_target': True}
 
         else:
@@ -505,7 +517,7 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
             # TODO: 2DOF/Gasp decided on phases based on phase names. We used
             # a saved phase_name to determine the correct aero variables to
             # promote. Ideally, this should all be refactored.
-            if phase_info['phase_type'] in ['ascent', 'groundroll', 'rotation']:
+            if bool(phase_info) and phase_info['phase_type'] in ['ascent', 'groundroll', 'rotation']:
                 all_vars = (AERO_2DOF_INPUTS, AERO_LS_2DOF_INPUTS)
             else:
                 all_vars = (AERO_2DOF_INPUTS, AERO_CLEAN_2DOF_INPUTS)
@@ -516,7 +528,7 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
 
                 val = meta['default_value']
                 if val is None:
-                    val = _unspecified
+                    val = 0.0  # _unspecified
                 units = meta['units']
 
                 if var in aviary_inputs:
@@ -526,6 +538,7 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
                         val = aviary_inputs.get_val(var)
 
                 params[var] = {'val': val,
+                               'units': units,
                                'static_target': True}
 
         return params
@@ -603,7 +616,7 @@ COMPUTED_CORE_INPUTS = [
     Aircraft.Wing.TAPER_RATIO,
     Aircraft.Wing.THICKNESS_TO_CHORD,
     Aircraft.Wing.WETTED_AREA,
-    Mission.Summary.GROSS_MASS,
+    # Mission.Summary.GROSS_MASS,
     Mission.Design.LIFT_COEFFICIENT,
     Mission.Design.MACH,
 ]
@@ -641,6 +654,7 @@ AERO_2DOF_INPUTS = [
     Aircraft.Fuselage.WETTED_AREA,
     Aircraft.HorizontalTail.AREA,
     Aircraft.HorizontalTail.AVERAGE_CHORD,
+    Aircraft.HorizontalTail.FORM_FACTOR,
     Aircraft.HorizontalTail.MOMENT_RATIO,
     Aircraft.HorizontalTail.SPAN,
     Aircraft.HorizontalTail.SWEEP,
@@ -653,18 +667,20 @@ AERO_2DOF_INPUTS = [
     Aircraft.Strut.FUSELAGE_INTERFERENCE_FACTOR,
     Aircraft.VerticalTail.AREA,
     Aircraft.VerticalTail.AVERAGE_CHORD,
+    Aircraft.VerticalTail.FORM_FACTOR,
     Aircraft.VerticalTail.SPAN,
     Aircraft.Wing.AVERAGE_CHORD,
     Aircraft.Wing.AREA,
     Aircraft.Wing.ASPECT_RATIO,
+    Aircraft.Wing.FORM_FACTOR,
     Aircraft.Wing.FUSELAGE_INTERFERENCE_FACTOR,
     Aircraft.Wing.MAX_THICKNESS_LOCATION,
     Aircraft.Wing.MIN_PRESSURE_LOCATION,
-    Aircraft.Wing.MOUNTING_TYPE,
     Aircraft.Wing.SPAN,
     Aircraft.Wing.SWEEP,
     Aircraft.Wing.TAPER_RATIO,
     Aircraft.Wing.THICKNESS_TO_CHORD_UNWEIGHTED,
+    Aircraft.Wing.VERTICAL_MOUNT_LOCATION,
     Aircraft.Wing.ZERO_LIFT_ANGLE,
 ]
 
@@ -672,6 +688,7 @@ AERO_LS_2DOF_INPUTS = [
     Mission.Takeoff.DRAG_COEFFICIENT_FLAP_INCREMENT,
     Mission.Takeoff.LIFT_COEFFICIENT_FLAP_INCREMENT,
     Mission.Takeoff.LIFT_COEFFICIENT_MAX,
+    Aircraft.Wing.HEIGHT,
 ]
 
 AERO_CLEAN_2DOF_INPUTS = [

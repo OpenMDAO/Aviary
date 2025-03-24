@@ -177,7 +177,21 @@ def parse_inputs(
             if '[' in data_list[0]:
                 is_array = True
 
-            var_values = convert_strings_to_data(data_list)
+            # Try to determine the data type from meta data 'types' attribute.
+            # If it is not provided, try to determine if the data type is float according to 'default_value'.
+            # If is is still not provided, set data type to None
+            try:
+                var_types = _MetaData[var_name]['types']
+            except:
+                var_types = None
+            if var_types is None:
+                try:
+                    var_default = _MetaData[var_name]['default_value']
+                    if isinstance(var_default, float):
+                        var_types = float
+                except:
+                    var_types = None
+            var_values = convert_strings_to_data(data_list, var_types)
 
             if var_name in meta_data.keys():
                 aircraft_values = set_value(
@@ -213,7 +227,6 @@ def parse_inputs(
 
             if aircraft_values.get_val(Settings.VERBOSITY) >= Verbosity.VERBOSE:
                 print('Unused:', var_name, var_values, comment)
-
     return aircraft_values, initialization_guesses
 
 
@@ -481,9 +494,9 @@ def initialization_guessing(
                 total_thrust += thrust * num_engines
 
         else:
-            total_thrust = aircraft_values.get_val(
+            total_thrust = np.dot(aircraft_values.get_val(
                 Aircraft.Engine.SCALED_SLS_THRUST, 'lbf'
-            ) * aircraft_values.get_val(Aircraft.Engine.NUM_ENGINES)
+            ), aircraft_values.get_val(Aircraft.Engine.NUM_ENGINES))
 
     gamma_guess = np.arcsin(0.5 * total_thrust / mission_mass)
     avg_speed_guess = 0.5 * 667 * cruise_mach  # kts
