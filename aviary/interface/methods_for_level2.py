@@ -195,12 +195,12 @@ class AviaryProblem(om.Problem):
         if 'pre_mission' in phase_info:
             self.pre_mission_info = phase_info['pre_mission']
         else:
-            self.pre_mission_info = None
+            self.pre_mission_info = {}
 
         if 'post_mission' in phase_info:
             self.post_mission_info = phase_info['post_mission']
         else:
-            self.post_mission_info = None
+            self.post_mission_info = {}
 
         self.problem_type = aviary_inputs.get_val(Settings.PROBLEM_TYPE)
 
