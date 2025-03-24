@@ -11,8 +11,8 @@ from aviary.variable_info.variable_meta_data import _MetaData
 class ExternalSubsystemGroup(om.Group):
     """
     Create a lightly modified version of an OM group to add external subsystems to the
-    ODE with a special configure() method that promotes all 'aircraft:*' and 'mission:*'
-    variables to the ODE.
+    ODE with a special configure() method that promotes all Aircraft, Mission, and
+    Dynamic variables to the ODE.
     """
 
     def configure(self):

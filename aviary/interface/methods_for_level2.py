@@ -195,12 +195,12 @@ class AviaryProblem(om.Problem):
         if 'pre_mission' in phase_info:
             self.pre_mission_info = phase_info['pre_mission']
         else:
-            self.pre_mission_info = None
+            self.pre_mission_info = {}
 
         if 'post_mission' in phase_info:
             self.post_mission_info = phase_info['post_mission']
         else:
-            self.post_mission_info = None
+            self.post_mission_info = {}
 
         self.problem_type = aviary_inputs.get_val(Settings.PROBLEM_TYPE)
 
@@ -208,7 +208,8 @@ class AviaryProblem(om.Problem):
         # This function sets all the following defaults if they were not already set
         # self.engine_builders, self.pre_mission_info, self_post_mission_info
         # self.require_range_residual, self.target_range
-        # other specific self.*** are defined in here as well that are specific to each builder
+        # other specific self.*** are defined in here as well that are specific to
+        # each builder
 
         return self.aviary_inputs
 
@@ -1646,11 +1647,11 @@ class AviaryProblem(om.Problem):
 
         self.problem_ran_successfully = not failed
 
-    def alternate_mission(self, run_mission=True,
-                          json_filename='sizing_problem.json',
-                          num_first=None, num_business=None, num_tourist=None, num_pax=None,
-                          wing_cargo=None, misc_cargo=None, cargo_mass=None, mission_range=None,
-                          phase_info=None, verbosity=Verbosity.BRIEF):
+    def alternate_mission(
+            self, run_mission=True, json_filename='sizing_problem.json', num_first=None,
+            num_business=None, num_tourist=None, num_pax=None, wing_cargo=None,
+            misc_cargo=None, cargo_mass=None, mission_range=None, phase_info=None,
+            verbosity=Verbosity.BRIEF):
         """
         This function runs an alternate mission based on a sizing mission output.
 
@@ -1705,8 +1706,20 @@ class AviaryProblem(om.Problem):
         mission_mass = self.get_val(Mission.Design.GROSS_MASS)
         optimizer = self.driver.options["optimizer"]
 
-        prob_alternate = _load_off_design(json_filename, ProblemType.ALTERNATE, mass_method, phase_info, num_first,
-                                          num_business, num_tourist, num_pax, wing_cargo, misc_cargo, cargo_mass, mission_range, mission_mass)
+        prob_alternate = _load_off_design(
+            json_filename,
+            ProblemType.ALTERNATE,
+            mass_method,
+            phase_info,
+            num_first,
+            num_business,
+            num_tourist,
+            num_pax,
+            wing_cargo,
+            misc_cargo,
+            cargo_mass,
+            mission_range,
+            mission_mass)
 
         prob_alternate.check_and_preprocess_inputs()
         prob_alternate.add_pre_mission_systems()
@@ -1723,11 +1736,11 @@ class AviaryProblem(om.Problem):
                 record_filename='alternate_problem_history.db')
         return prob_alternate
 
-    def fallout_mission(self, run_mission=True,
-                        json_filename='sizing_problem.json',
-                        num_first=None, num_business=None, num_tourist=None, num_pax=None,
-                        wing_cargo=None, misc_cargo=None, cargo_mass=None, mission_mass=None,
-                        phase_info=None, verbosity=Verbosity.BRIEF):
+    def fallout_mission(
+            self, run_mission=True, json_filename='sizing_problem.json', num_first=None,
+            num_business=None, num_tourist=None, num_pax=None, wing_cargo=None,
+            misc_cargo=None, cargo_mass=None, mission_mass=None, phase_info=None,
+            verbosity=Verbosity.BRIEF):
         """
         This function runs a fallout mission based on a sizing mission output.
 
@@ -1781,8 +1794,20 @@ class AviaryProblem(om.Problem):
 
         optimizer = self.driver.options["optimizer"]
 
-        prob_fallout = _load_off_design(json_filename, ProblemType.FALLOUT, mass_method, phase_info, num_first,
-                                        num_business, num_tourist, num_pax, wing_cargo, misc_cargo, cargo_mass, None, mission_mass)
+        prob_fallout = _load_off_design(
+            json_filename,
+            ProblemType.FALLOUT,
+            mass_method,
+            phase_info,
+            num_first,
+            num_business,
+            num_tourist,
+            num_pax,
+            wing_cargo,
+            misc_cargo,
+            cargo_mass,
+            None,
+            mission_mass)
 
         prob_fallout.check_and_preprocess_inputs()
         prob_fallout.add_pre_mission_systems()
@@ -2046,8 +2071,10 @@ def _read_sizing_json(aviary_problem, json_filename):
     return aviary_problem
 
 
-def _load_off_design(json_filename, ProblemType, Mass_Method, phase_info, num_first, num_business, num_tourist,
-                     num_pax, wing_cargo, misc_cargo, cargo_mass, mission_range=None, mission_gross_mass=None):
+def _load_off_design(
+        json_filename, ProblemType, Mass_Method, phase_info, num_first, num_business,
+        num_tourist, num_pax, wing_cargo, misc_cargo, cargo_mass, mission_range=None,
+        mission_gross_mass=None):
     """
     This function loads a sized aircraft, and sets up an aviary problem
     for a specified off design mission.

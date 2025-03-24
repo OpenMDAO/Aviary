@@ -1,9 +1,11 @@
 from aviary.variable_info.enums import SpeedType, ThrottleAllocation
+from aviary.subsystems.energy.battery_builder import BatteryBuilder
 
 # Energy method
 energy_phase_info = {
-    "pre_mission": {"include_takeoff": False, "optimize_mass": True},
+    "pre_mission": {'external_subsystems': [BatteryBuilder()], "include_takeoff": False, "optimize_mass": True},
     "climb": {
+        'external_subsystems': [BatteryBuilder()],
         "subsystem_options": {"core_aerodynamics": {"method": "computed"}},
         "user_options": {
             "optimize_mach": False,
@@ -27,6 +29,7 @@ energy_phase_info = {
         },
     },
     "cruise": {
+        'external_subsystems': [BatteryBuilder()],
         "subsystem_options": {"core_aerodynamics": {"method": "computed"}},
         "user_options": {
             "optimize_mach": False,
@@ -49,6 +52,7 @@ energy_phase_info = {
         },
     },
     "descent": {
+        'external_subsystems': [BatteryBuilder()],
         "subsystem_options": {"core_aerodynamics": {"method": "computed"}},
         "user_options": {
             "optimize_mach": False,
@@ -79,7 +83,9 @@ energy_phase_info = {
 
 # 2DOF
 two_dof_phase_info = {
+    'pre_mission': {'external_subsystems': [BatteryBuilder()]},
     'groundroll': {
+        'external_subsystems': [BatteryBuilder()],
         'user_options': {
             'num_segments': 1,
             'order': 3,
@@ -108,6 +114,7 @@ two_dof_phase_info = {
         },
     },
     'rotation': {
+        'external_subsystems': [BatteryBuilder()],
         'user_options': {
             'num_segments': 1,
             'order': 3,
@@ -141,6 +148,7 @@ two_dof_phase_info = {
         },
     },
     'ascent': {
+        'external_subsystems': [BatteryBuilder()],
         'user_options': {
             'num_segments': 4,
             'order': 3,
@@ -163,10 +171,10 @@ two_dof_phase_info = {
             'alt_defect_ref': (1000, 'ft'),
             'final_altitude': (500, 'ft'),
             'alt_constraint_ref': (500, 'ft'),
-            'angle_lower': (-10, 'deg'),
-            'angle_upper': (20, 'deg'),
-            'angle_ref': (15, 'deg'),
-            'angle_defect_ref': (15, 'deg'),
+            'angle_lower': (-10, 'rad'),
+            'angle_upper': (20, 'rad'),
+            'angle_ref': (57.2958, 'deg'),
+            'angle_defect_ref': (57.2958, 'deg'),
             'pitch_constraint_lower': (0.0, 'deg'),
             'pitch_constraint_upper': (15.0, 'deg'),
             'pitch_constraint_ref': (1.0, 'deg'),
@@ -184,6 +192,7 @@ two_dof_phase_info = {
         },
     },
     'accel': {
+        'external_subsystems': [BatteryBuilder()],
         'user_options': {
             'num_segments': 1,
             'order': 3,
@@ -213,6 +222,7 @@ two_dof_phase_info = {
         },
     },
     'climb1': {
+        'external_subsystems': [BatteryBuilder()],
         'user_options': {
             'num_segments': 1,
             'order': 3,
@@ -243,6 +253,7 @@ two_dof_phase_info = {
         },
     },
     'climb2': {
+        'external_subsystems': [BatteryBuilder()],
         'user_options': {
             'num_segments': 3,
             'order': 3,
@@ -276,6 +287,7 @@ two_dof_phase_info = {
         },
     },
     'cruise': {
+        'external_subsystems': [BatteryBuilder()],
         'user_options': {
             'alt_cruise': (21_000, 'ft'),
             'mach_cruise': 0.475,
@@ -290,6 +302,7 @@ two_dof_phase_info = {
         },
     },
     'desc1': {
+        'external_subsystems': [BatteryBuilder()],
         'user_options': {
             'num_segments': 3,
             'order': 3,
@@ -326,6 +339,7 @@ two_dof_phase_info = {
         },
     },
     'desc2': {
+        'external_subsystems': [BatteryBuilder()],
         'user_options': {
             'num_segments': 1,
             'order': 7,
@@ -360,3 +374,5 @@ two_dof_phase_info = {
         },
     },
 }
+
+phase_info = two_dof_phase_info
