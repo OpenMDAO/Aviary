@@ -105,7 +105,7 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
         except KeyError:
             method = None
 
-        if method is 'external':
+        if method == 'external':
             return None
 
         if code_origin is GASP:
@@ -120,7 +120,7 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
         except KeyError:
             method = None
 
-        if method is 'external':
+        if method == 'external':
             return None
 
         aero_group = None
@@ -193,7 +193,7 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
                     raise UserWarning(
                         'Low-speed tabular aerodynamics also requires '
                         f'{set(['free_aero_data', 'free_flaps_data',
-                                'free_ground_data']) - set(data_tables)}'
+                               'free_ground_data']) - set(data_tables)}'
                         'but this data set was not provided.'
                     )
                 else:
