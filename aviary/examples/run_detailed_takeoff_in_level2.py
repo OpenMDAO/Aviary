@@ -352,7 +352,6 @@ if __name__ == '__main__':
     prob.setup()
 
     prob.set_initial_guesses()
-    #prob.set_solver_print(2)
 
     prob.run_aviary_problem(record_filename='detailed_takeoff.db',
                             suppress_solver_print=True)
