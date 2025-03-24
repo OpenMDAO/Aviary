@@ -207,7 +207,7 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
                     "tau_gear",  # design var
                     "tau_flaps",  # design var
                     ("m", Mission.Takeoff.ASCENT_DURATION),
-                    ("b", Mission.Takeoff.ASCENT_T_INTIIAL),
+                    ("b", Mission.Takeoff.ASCENT_T_INITIAL),
                 ],
                 promotes_outputs=["t_init_gear", "t_init_flaps"],  # link to h_fit
             )
@@ -519,7 +519,7 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
                 inputs=[
                     ("ascent.parameters:t_init_gear", "t_init_gear"),
                     ("ascent.parameters:t_init_flaps", "t_init_flaps"),
-                    ("ascent.t_initial", Mission.Takeoff.ASCENT_T_INTIIAL),
+                    ("ascent.t_initial", Mission.Takeoff.ASCENT_T_INITIAL),
                     ("ascent.t_duration", Mission.Takeoff.ASCENT_DURATION),
                 ],
             )
@@ -759,13 +759,22 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
 
             # Set initial guess for time variables
             if 'time' == guess_key:
+
+                if phase_name == 'ascent':
+                    # These variables are promoted to the top.
+                    init_path = Mission.Takeoff.ASCENT_T_INITIAL
+                    dura_path = Mission.Takeoff.ASCENT_DURATION
+                else:
+                    init_path = parent_prefix + f'traj.{phase_name}.t_initial'
+                    dura_path = parent_prefix + f'traj.{phase_name}.t_duration'
+
                 target_prob.set_val(
-                    parent_prefix + f'traj.{phase_name}.t_initial',
+                    init_path,
                     val[0],
                     units=units
                 )
                 target_prob.set_val(
-                    parent_prefix + f'traj.{phase_name}.t_duration',
+                    dura_path,
                     val[1],
                     units=units
                 )
