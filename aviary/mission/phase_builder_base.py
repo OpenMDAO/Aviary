@@ -131,7 +131,6 @@ class PhaseBuilderBase(ABC):
 
         self.subsystem_options = subsystem_options
 
-
         self.user_options = self.default_options_class(user_options)
 
         if initial_guesses is None:
@@ -356,25 +355,6 @@ class PhaseBuilderBase(ABC):
             core_subsystems=core_subsystems, external_subsystems=external_subsystems, transcription=transcription)
 
         return phase_builder
-
-    @classmethod
-    def _add_meta_data(cls, name, *, val, units='unitless', desc=None):
-        '''
-        Update supported options with a new item.
-
-        Raises
-        ------
-        ValueError
-            if a repeat option is found
-        '''
-        meta_data = cls._meta_data_
-
-        if name in meta_data:
-            raise ValueError(
-                f'{cls.__name__}": meta data: repeat option: {name}'
-            )
-
-        #meta_data[name] = dict(val=val, units=units, desc=desc)
 
     @classmethod
     def _add_initial_guess_meta_data(cls, initial_guess: InitialGuess, desc=None):
@@ -608,9 +588,3 @@ def phase_info_to_builder(name: str, phase_info: dict) -> PhaseBuilderBase:
 
 if __name__ == '__main__':
     help(PhaseBuilderBase)
-
-    try:
-        PhaseBuilderBase._add_meta_data('test', val=0, units=None, desc='test')
-
-    except Exception as error:
-        print(error)

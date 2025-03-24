@@ -127,6 +127,7 @@ class AviaryOptionsDictionary(om.OptionsDictionary):
     parent_name : str
         Name or class name of System that owns this OptionsDictionary.
     """
+
     def __init__(self, data=None, parent_name=None):
         super().__init__(parent_name)
 
@@ -141,8 +142,8 @@ class AviaryOptionsDictionary(om.OptionsDictionary):
             # Support for legacy format (unitless)
             if (isinstance(val, tuple) and
                 self._dict[name]['set_function'] is None and
-                val[1] == "unitless"):
-                    val = val[0]
+                    val[1] == "unitless"):
+                val = val[0]
 
             self[name] = val
 
@@ -260,7 +261,7 @@ class AviaryOptionsDictionary(om.OptionsDictionary):
             val = self[key]
 
         return val
-    
+
     def to_phase_info(self, legacy=False):
         """
         Returns an equivalent phase_info dictionary for this options dict.

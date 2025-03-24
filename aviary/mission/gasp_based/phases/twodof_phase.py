@@ -230,7 +230,8 @@ class TwoDOFPhaseOptions(AviaryOptionsDictionary):
         self.declare(
             name='throttle_allocation',
             default=ThrottleAllocation.FIXED,
-            values=[ThrottleAllocation.FIXED, ThrottleAllocation.STATIC, ThrottleAllocation.DYNAMIC],
+            values=[ThrottleAllocation.FIXED, ThrottleAllocation.STATIC,
+                    ThrottleAllocation.DYNAMIC],
             desc='Specifies how to handle the throttles for multiple engines. FIXED is a '
             'user-specified value. STATIC is specified by the optimizer as one value for the '
             'whole phase. DYNAMIC is specified by the optimizer at each point in the phase.'

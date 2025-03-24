@@ -758,7 +758,7 @@ class TakeoffRotateToLiftoff(PhaseBuilderBase):
             defect_ref=distance_max, units=units, upper=distance_max,
             rate_source=Dynamic.Mission.DISTANCE_RATE)
 
-        max_velocity, units = user_options.get_item('max_velocity')
+        max_velocity, units = user_options['max_velocity']
 
         phase.add_state(
             Dynamic.Mission.VELOCITY,
@@ -771,7 +771,7 @@ class TakeoffRotateToLiftoff(PhaseBuilderBase):
             rate_source=Dynamic.Mission.VELOCITY_RATE,
         )
 
-        max_angle_of_attack, units = user_options.get_item('max_angle_of_attack')
+        max_angle_of_attack, units = user_options['max_angle_of_attack']
 
         phase.add_state(
             Dynamic.Vehicle.MASS,
@@ -1014,7 +1014,7 @@ class TakeoffLiftoffToObstacle(PhaseBuilderBase):
             defect_ref=distance_max, units=units, upper=distance_max,
             rate_source=Dynamic.Mission.DISTANCE_RATE)
 
-        altitude_ref, units = user_options.get_item('altitude_ref')
+        altitude_ref, units = user_options['altitude_ref']
 
         phase.add_state(
             Dynamic.Mission.ALTITUDE,
@@ -1027,7 +1027,7 @@ class TakeoffLiftoffToObstacle(PhaseBuilderBase):
             rate_source=Dynamic.Mission.ALTITUDE_RATE,
         )
 
-        max_velocity, units = user_options.get_item('max_velocity')
+        max_velocity, units = user_options['max_velocity']
 
         phase.add_state(
             Dynamic.Mission.VELOCITY,
@@ -1040,7 +1040,7 @@ class TakeoffLiftoffToObstacle(PhaseBuilderBase):
             rate_source=Dynamic.Mission.VELOCITY_RATE,
         )
 
-        flight_path_angle_ref, units = user_options.get_item('flight_path_angle_ref')
+        flight_path_angle_ref, units = user_options['flight_path_angle_ref']
 
         phase.add_state(
             Dynamic.Mission.FLIGHT_PATH_ANGLE,
@@ -1072,7 +1072,7 @@ class TakeoffLiftoffToObstacle(PhaseBuilderBase):
             opt=False
         )
 
-        lower_angle_of_attack, units = user_options.get_item('lower_angle_of_attack')
+        lower_angle_of_attack, units = user_options['lower_angle_of_attack']
         upper_angle_of_attack = user_options.get_val('upper_angle_of_attack', units)
         angle_of_attack_ref = user_options.get_val('angle_of_attack_ref', units)
 
@@ -1335,7 +1335,7 @@ class TakeoffObstacleToMicP2(PhaseBuilderBase):
             defect_ref=distance_max, units=units, upper=distance_max,
             rate_source=Dynamic.Mission.DISTANCE_RATE)
 
-        altitude_ref, units = user_options.get_item('altitude_ref')
+        altitude_ref, units = user_options['altitude_ref']
 
         phase.add_state(
             Dynamic.Mission.ALTITUDE,
@@ -1347,7 +1347,7 @@ class TakeoffObstacleToMicP2(PhaseBuilderBase):
             rate_source=Dynamic.Mission.ALTITUDE_RATE,
         )
 
-        max_velocity, units = user_options.get_item('max_velocity')
+        max_velocity, units = user_options['max_velocity']
 
         phase.add_state(
             Dynamic.Mission.VELOCITY,
@@ -1360,7 +1360,7 @@ class TakeoffObstacleToMicP2(PhaseBuilderBase):
             rate_source=Dynamic.Mission.VELOCITY_RATE,
         )
 
-        flight_path_angle_ref, units = user_options.get_item('flight_path_angle_ref')
+        flight_path_angle_ref, units = user_options['flight_path_angle_ref']
 
         phase.add_state(
             Dynamic.Mission.FLIGHT_PATH_ANGLE,
@@ -1391,7 +1391,7 @@ class TakeoffObstacleToMicP2(PhaseBuilderBase):
             opt=False
         )
 
-        lower_angle_of_attack, units = user_options.get_item('lower_angle_of_attack')
+        lower_angle_of_attack, units = user_options['lower_angle_of_attack']
         upper_angle_of_attack = user_options.get_val('upper_angle_of_attack', units)
         angle_of_attack_ref = user_options.get_val('angle_of_attack_ref', units)
 
@@ -1409,7 +1409,7 @@ class TakeoffObstacleToMicP2(PhaseBuilderBase):
             output_name=Dynamic.Vehicle.Propulsion.THRUST_TOTAL, units='lbf'
         )
 
-        final_altitude, units = user_options.get_item('mic_altitude')
+        final_altitude, units = user_options['mic_altitude']
 
         airport_altitude = aviary_options.get_val(
             Mission.Takeoff.AIRPORT_ALTITUDE, units)
@@ -1648,7 +1648,7 @@ class TakeoffMicP2ToEngineCutback(PhaseBuilderBase):
             defect_ref=distance_max, units=units, upper=distance_max,
             rate_source=Dynamic.Mission.DISTANCE_RATE)
 
-        altitude_ref, units = user_options.get_item('altitude_ref')
+        altitude_ref, units = user_options['altitude_ref']
 
         phase.add_state(
             Dynamic.Mission.ALTITUDE,
@@ -1660,7 +1660,7 @@ class TakeoffMicP2ToEngineCutback(PhaseBuilderBase):
             rate_source=Dynamic.Mission.ALTITUDE_RATE,
         )
 
-        max_velocity, units = user_options.get_item('max_velocity')
+        max_velocity, units = user_options['max_velocity']
 
         phase.add_state(
             Dynamic.Mission.VELOCITY,
@@ -1673,7 +1673,7 @@ class TakeoffMicP2ToEngineCutback(PhaseBuilderBase):
             rate_source=Dynamic.Mission.VELOCITY_RATE,
         )
 
-        flight_path_angle_ref, units = user_options.get_item('flight_path_angle_ref')
+        flight_path_angle_ref, units = user_options['flight_path_angle_ref']
 
         phase.add_state(
             Dynamic.Mission.FLIGHT_PATH_ANGLE,
@@ -1704,7 +1704,7 @@ class TakeoffMicP2ToEngineCutback(PhaseBuilderBase):
             opt=False
         )
 
-        lower_angle_of_attack, units = user_options.get_item('lower_angle_of_attack')
+        lower_angle_of_attack, units = user_options['lower_angle_of_attack']
         upper_angle_of_attack = user_options.get_val('upper_angle_of_attack', units)
         angle_of_attack_ref = user_options.get_val('angle_of_attack_ref', units)
 
@@ -1726,7 +1726,7 @@ class TakeoffMicP2ToEngineCutback(PhaseBuilderBase):
         # TODO: what is the difference between distance_max and final_range?
         #    - should final_range replace distance_max?
         #    - is there any reason to support both in this phase?
-        final_range, units = user_options.get_item('final_range')
+        final_range, units = user_options['final_range']
 
         phase.add_boundary_constraint(
             Dynamic.Mission.DISTANCE, loc='final', equals=final_range, ref=final_range,
@@ -1914,7 +1914,7 @@ class TakeoffEngineCutback(PhaseBuilderBase):
 
         user_options: AviaryValues = self.user_options
 
-        initial_ref, units = user_options.get_item('initial_ref')
+        initial_ref, units = user_options['initial_ref']
 
         phase.set_time_options(
             fix_initial=False, fix_duration=True,
@@ -1929,7 +1929,7 @@ class TakeoffEngineCutback(PhaseBuilderBase):
             defect_ref=distance_max, units=units, upper=distance_max,
             rate_source=Dynamic.Mission.DISTANCE_RATE)
 
-        altitude_ref, units = user_options.get_item('altitude_ref')
+        altitude_ref, units = user_options['altitude_ref']
 
         phase.add_state(
             Dynamic.Mission.ALTITUDE,
@@ -1941,7 +1941,7 @@ class TakeoffEngineCutback(PhaseBuilderBase):
             rate_source=Dynamic.Mission.ALTITUDE_RATE,
         )
 
-        max_velocity, units = user_options.get_item('max_velocity')
+        max_velocity, units = user_options['max_velocity']
 
         phase.add_state(
             Dynamic.Mission.VELOCITY,
@@ -1954,7 +1954,7 @@ class TakeoffEngineCutback(PhaseBuilderBase):
             rate_source=Dynamic.Mission.VELOCITY_RATE,
         )
 
-        flight_path_angle_ref, units = user_options.get_item('flight_path_angle_ref')
+        flight_path_angle_ref, units = user_options['flight_path_angle_ref']
 
         phase.add_state(
             Dynamic.Mission.FLIGHT_PATH_ANGLE,
@@ -1985,7 +1985,7 @@ class TakeoffEngineCutback(PhaseBuilderBase):
             opt=False
         )
 
-        lower_angle_of_attack, units = user_options.get_item('lower_angle_of_attack')
+        lower_angle_of_attack, units = user_options['lower_angle_of_attack']
         upper_angle_of_attack = user_options.get_val('upper_angle_of_attack', units)
         angle_of_attack_ref = user_options.get_val('angle_of_attack_ref', units)
 
@@ -2226,7 +2226,7 @@ class TakeoffEngineCutbackToMicP1(PhaseBuilderBase):
             defect_ref=distance_max, units=units, upper=distance_max,
             rate_source=Dynamic.Mission.DISTANCE_RATE)
 
-        altitude_ref, units = user_options.get_item('altitude_ref')
+        altitude_ref, units = user_options['altitude_ref']
 
         phase.add_state(
             Dynamic.Mission.ALTITUDE,
@@ -2238,7 +2238,7 @@ class TakeoffEngineCutbackToMicP1(PhaseBuilderBase):
             rate_source=Dynamic.Mission.ALTITUDE_RATE,
         )
 
-        max_velocity, units = user_options.get_item('max_velocity')
+        max_velocity, units = user_options['max_velocity']
 
         phase.add_state(
             Dynamic.Mission.VELOCITY,
@@ -2251,7 +2251,7 @@ class TakeoffEngineCutbackToMicP1(PhaseBuilderBase):
             rate_source=Dynamic.Mission.VELOCITY_RATE,
         )
 
-        flight_path_angle_ref, units = user_options.get_item('flight_path_angle_ref')
+        flight_path_angle_ref, units = user_options['flight_path_angle_ref']
 
         phase.add_state(
             Dynamic.Mission.FLIGHT_PATH_ANGLE,
@@ -2282,7 +2282,7 @@ class TakeoffEngineCutbackToMicP1(PhaseBuilderBase):
             opt=False
         )
 
-        lower_angle_of_attack, units = user_options.get_item('lower_angle_of_attack')
+        lower_angle_of_attack, units = user_options['lower_angle_of_attack']
         upper_angle_of_attack = user_options.get_val('upper_angle_of_attack', units)
         angle_of_attack_ref = user_options.get_val('angle_of_attack_ref', units)
 
@@ -2300,7 +2300,7 @@ class TakeoffEngineCutbackToMicP1(PhaseBuilderBase):
             output_name=Dynamic.Vehicle.Propulsion.THRUST_TOTAL, units='lbf'
         )
 
-        mic_range, units = user_options.get_item('mic_range')
+        mic_range, units = user_options['mic_range']
 
         phase.add_boundary_constraint(
             Dynamic.Mission.DISTANCE, loc='final', equals=mic_range, ref=mic_range,
@@ -2522,14 +2522,14 @@ class TakeoffMicP1ToClimb(PhaseBuilderBase):
             duration_ref=duration_ref, initial_ref=initial_ref,
             units=units)
 
-        distance_max, units = user_options.get_item('distance_max')
+        distance_max, units = user_options['distance_max']
 
         phase.add_state(
             Dynamic.Mission.DISTANCE, fix_initial=False, lower=0, ref=distance_max,
             defect_ref=distance_max, units=units, upper=distance_max,
             rate_source=Dynamic.Mission.DISTANCE_RATE)
 
-        altitude_ref, units = user_options.get_item('altitude_ref')
+        altitude_ref, units = user_options['altitude_ref']
 
         phase.add_state(
             Dynamic.Mission.ALTITUDE,
@@ -2541,7 +2541,7 @@ class TakeoffMicP1ToClimb(PhaseBuilderBase):
             rate_source=Dynamic.Mission.ALTITUDE_RATE,
         )
 
-        max_velocity, units = user_options.get_item('max_velocity')
+        max_velocity, units = user_options['max_velocity']
 
         phase.add_state(
             Dynamic.Mission.VELOCITY,
@@ -2554,7 +2554,7 @@ class TakeoffMicP1ToClimb(PhaseBuilderBase):
             rate_source=Dynamic.Mission.VELOCITY_RATE,
         )
 
-        flight_path_angle_ref, units = user_options.get_item('flight_path_angle_ref')
+        flight_path_angle_ref, units = user_options['flight_path_angle_ref']
 
         phase.add_state(
             Dynamic.Mission.FLIGHT_PATH_ANGLE,
@@ -2585,7 +2585,7 @@ class TakeoffMicP1ToClimb(PhaseBuilderBase):
             opt=False
         )
 
-        lower_angle_of_attack, units = user_options.get_item('lower_angle_of_attack')
+        lower_angle_of_attack, units = user_options['lower_angle_of_attack']
         upper_angle_of_attack = user_options.get_val('upper_angle_of_attack', units)
         angle_of_attack_ref = user_options.get_val('angle_of_attack_ref', units)
 
@@ -2603,7 +2603,7 @@ class TakeoffMicP1ToClimb(PhaseBuilderBase):
             output_name=Dynamic.Vehicle.Propulsion.THRUST_TOTAL, units='lbf'
         )
 
-        mic_range, units = user_options.get_item('mic_range')
+        mic_range, units = user_options['mic_range']
 
         phase.add_boundary_constraint(
             Dynamic.Mission.DISTANCE, loc='final', equals=mic_range, ref=mic_range,
@@ -2774,14 +2774,14 @@ class TakeoffBrakeToAbort(PhaseBuilderBase):
             duration_ref=duration_ref, initial_ref=initial_ref,
             units=units)
 
-        distance_max, units = user_options.get_item('distance_max')
+        distance_max, units = user_options['distance_max']
 
         phase.add_state(
             Dynamic.Mission.DISTANCE, fix_initial=False, lower=0, ref=distance_max,
             defect_ref=distance_max, units=units, upper=distance_max,
             rate_source=Dynamic.Mission.DISTANCE_RATE)
 
-        max_velocity, units = user_options.get_item('max_velocity')
+        max_velocity, units = user_options['max_velocity']
 
         phase.add_state(
             Dynamic.Mission.VELOCITY,
