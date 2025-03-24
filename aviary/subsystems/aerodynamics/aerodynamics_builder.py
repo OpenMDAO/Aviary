@@ -7,19 +7,24 @@ AerodynamicsBuilderBase : the interface for an aerodynamics subsystem builder.
 
 CoreAerodynamicsBuilder : the interface for Aviary's core aerodynamics subsystem builder
 """
+
 import numpy as np
 from itertools import chain
 
 # from dymos.utils.misc import _unspecified
 
-from aviary.subsystems.aerodynamics.flops_based.computed_aero_group import \
-    ComputedAeroGroup
-from aviary.subsystems.aerodynamics.flops_based.takeoff_aero_group import \
-    TakeoffAeroGroup
-from aviary.subsystems.aerodynamics.flops_based.solved_alpha_group import \
-    SolvedAlphaGroup
-from aviary.subsystems.aerodynamics.flops_based.tabular_aero_group import \
-    TabularAeroGroup
+from aviary.subsystems.aerodynamics.flops_based.computed_aero_group import (
+    ComputedAeroGroup,
+)
+from aviary.subsystems.aerodynamics.flops_based.takeoff_aero_group import (
+    TakeoffAeroGroup,
+)
+from aviary.subsystems.aerodynamics.flops_based.solved_alpha_group import (
+    SolvedAlphaGroup,
+)
+from aviary.subsystems.aerodynamics.flops_based.tabular_aero_group import (
+    TabularAeroGroup,
+)
 from aviary.subsystems.aerodynamics.flops_based.drag_polar import DragPolar
 from aviary.subsystems.aerodynamics.flops_based.design import Design
 from aviary.subsystems.aerodynamics.gasp_based.premission_aero import PreMissionAero
@@ -150,7 +155,7 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
                     num_nodes=num_nodes,
                     CD0_data=kwargs.pop('CD0_data'),
                     CDI_data=kwargs.pop('CDI_data'),
-                    **kwargs
+                    **kwargs,
                 )
 
             else:
@@ -169,7 +174,7 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
                         num_nodes=num_nodes,
                         aviary_options=aviary_inputs,
                         aero_data=kwargs.pop('aero_data'),
-                        **kwargs
+                        **kwargs,
                     )
                 else:
                     aero_group = CruiseAero(num_nodes=num_nodes, **kwargs)
@@ -177,24 +182,21 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
             elif method == 'low_speed':
                 # all three data types are needed to use tabular aero
                 data_tables = [
-                    key in kwargs for key in [
-                        'free_aero_data', 'free_flaps_data', 'free_ground_data'
-                    ]
+                    key in kwargs
+                    for key in ['free_aero_data', 'free_flaps_data', 'free_ground_data']
                 ]
 
                 if all(data_tables):
-                    aero_group = TabularLowSpeedAero(
-                        num_nodes=num_nodes,
-                        **kwargs
-                    )
+                    aero_group = TabularLowSpeedAero(num_nodes=num_nodes, **kwargs)
                 # raise error if only some data types are provided (at this point we know
                 # not all are present, now need to see if any were provided at all)
                 elif any(data_tables):
+                    var_msg = set(
+                        ['free_aero_data', 'free_flaps_data', 'free_ground_data']
+                    ) - set(data_tables)
                     raise UserWarning(
-                        'Low-speed tabular aerodynamics also requires '
-                        f"{set([
-                            'free_aero_data', 'free_flaps_data', 'free_ground_data'
-                        ]) - set(data_tables)} but this data set was not provided."
+                        f'Low-speed tabular aerodynamics also requires {var_msg} but '
+                        'this data set was not provided.'
                     )
                 else:
                     aero_group = LowSpeedAero(num_nodes=num_nodes, **kwargs)
@@ -261,17 +263,27 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
                 ]
 
             else:
-                raise ValueError('FLOPS-based aero method is not one of the following: '
-                                 '(computed, low_speed, solved_alpha, tabular)')
+                raise ValueError(
+                    'FLOPS-based aero method is not one of the following: '
+                    '(computed, low_speed, solved_alpha, tabular)'
+                )
 
         elif self.code_origin is GASP:
             if method == 'low_speed':
                 promotes = [
-                    '*', ("airport_alt", Mission.Takeoff.AIRPORT_ALTITUDE),
+                    '*',
+                    ("airport_alt", Mission.Takeoff.AIRPORT_ALTITUDE),
                     ("CL_max_flaps", Mission.Takeoff.LIFT_COEFFICIENT_MAX),
-                    ("dCL_flaps_model", Mission.Takeoff.LIFT_COEFFICIENT_FLAP_INCREMENT),
-                    ("dCD_flaps_model", Mission.Takeoff.DRAG_COEFFICIENT_FLAP_INCREMENT),
-                    ("flap_defl", Aircraft.Wing.FLAP_DEFLECTION_TAKEOFF)]
+                    (
+                        "dCL_flaps_model",
+                        Mission.Takeoff.LIFT_COEFFICIENT_FLAP_INCREMENT,
+                    ),
+                    (
+                        "dCD_flaps_model",
+                        Mission.Takeoff.DRAG_COEFFICIENT_FLAP_INCREMENT,
+                    ),
+                    ("flap_defl", Aircraft.Wing.FLAP_DEFLECTION_TAKEOFF),
+                ]
 
             elif method == 'cruise':
                 if 'output_alpha' in kwargs:
@@ -279,8 +291,10 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
                         promotes = ['*', ("lift_req", "weight")]
 
             else:
-                raise ValueError('GASP-based aero method is not one of the following: '
-                                 '(low_speed, cruise)')
+                raise ValueError(
+                    'GASP-based aero method is not one of the following: '
+                    '(low_speed, cruise)'
+                )
 
         return promotes
 
@@ -314,8 +328,10 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
                     promotes = [Dynamic.Vehicle.DRAG, Dynamic.Vehicle.LIFT, 'CL_max']
 
             else:
-                raise ValueError('GASP-based aero method is not one of the following: '
-                                 '(low_speed, cruise)')
+                raise ValueError(
+                    'GASP-based aero method is not one of the following: '
+                    '(low_speed, cruise)'
+                )
 
         return promotes
 
@@ -387,23 +403,31 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
 
                         shape = (n1, n2, n3)
 
-                        if aviary_inputs is not None and Aircraft.Design.LIFT_POLAR in aviary_inputs:
+                        if (
+                            aviary_inputs is not None
+                            and Aircraft.Design.LIFT_POLAR in aviary_inputs
+                        ):
                             lift_opts = {
                                 'val': aviary_inputs.get_val(
-                                    Aircraft.Design.LIFT_POLAR),
-                                'static_target': True}
+                                    Aircraft.Design.LIFT_POLAR
+                                ),
+                                'static_target': True,
+                            }
                         else:
-                            lift_opts = {'shape': shape,
-                                         'static_target': True}
+                            lift_opts = {'shape': shape, 'static_target': True}
 
-                        if aviary_inputs is not None and Aircraft.Design.DRAG_POLAR in aviary_inputs:
+                        if (
+                            aviary_inputs is not None
+                            and Aircraft.Design.DRAG_POLAR in aviary_inputs
+                        ):
                             drag_opts = {
                                 'val': aviary_inputs.get_val(
-                                    Aircraft.Design.DRAG_POLAR),
-                                'static_target': True}
+                                    Aircraft.Design.DRAG_POLAR
+                                ),
+                                'static_target': True,
+                            }
                         else:
-                            drag_opts = {'shape': shape,
-                                         'static_target': True}
+                            drag_opts = {'shape': shape, 'static_target': True}
 
                         params[Aircraft.Design.LIFT_POLAR] = lift_opts
                         params[Aircraft.Design.DRAG_POLAR] = drag_opts
@@ -426,14 +450,19 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
 
                         shape = (n1, n2)
 
-                        if aviary_inputs is not None and Aircraft.Design.LIFT_INDEPENDENT_DRAG_POLAR in aviary_inputs:
+                        if (
+                            aviary_inputs is not None
+                            and Aircraft.Design.LIFT_INDEPENDENT_DRAG_POLAR
+                            in aviary_inputs
+                        ):
                             opts = {
                                 'val': aviary_inputs.get_val(
-                                    Aircraft.Design.LIFT_INDEPENDENT_DRAG_POLAR),
-                                'static_target': True}
+                                    Aircraft.Design.LIFT_INDEPENDENT_DRAG_POLAR
+                                ),
+                                'static_target': True,
+                            }
                         else:
-                            opts = {'shape': shape,
-                                    'static_target': True}
+                            opts = {'shape': shape, 'static_target': True}
 
                         params[Aircraft.Design.LIFT_INDEPENDENT_DRAG_POLAR] = opts
 
@@ -454,14 +483,19 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
 
                         shape = (n1, n2)
 
-                        if aviary_inputs is not None and Aircraft.Design.LIFT_DEPENDENT_DRAG_POLAR in aviary_inputs:
+                        if (
+                            aviary_inputs is not None
+                            and Aircraft.Design.LIFT_DEPENDENT_DRAG_POLAR
+                            in aviary_inputs
+                        ):
                             opts = {
                                 'val': aviary_inputs.get_val(
-                                    Aircraft.Design.LIFT_DEPENDENT_DRAG_POLAR),
-                                'static_target': True}
+                                    Aircraft.Design.LIFT_DEPENDENT_DRAG_POLAR
+                                ),
+                                'static_target': True,
+                            }
                         else:
-                            opts = {'shape': shape,
-                                    'static_target': True}
+                            opts = {'shape': shape, 'static_target': True}
 
                         params[Aircraft.Design.LIFT_DEPENDENT_DRAG_POLAR] = opts
 
@@ -482,9 +516,7 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
                         except TypeError:
                             val = aviary_inputs.get_val(var)
 
-                    params[var] = {'val': val,
-                                   'units': units,
-                                   'static_target': True}
+                    params[var] = {'val': val, 'units': units, 'static_target': True}
 
                 for var in ENGINE_SIZED_INPUTS:
                     meta = _MetaData[var]
@@ -492,10 +524,12 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
                     if val is None:
                         val = [0.0]  # _unspecified
                     units = meta['units']
-                    params[var] = {'val': val,
-                                   'units': units,
-                                   'shape': (num_engine_type, ),
-                                   'static_target': True}
+                    params[var] = {
+                        'val': val,
+                        'units': units,
+                        'shape': (num_engine_type,),
+                        'static_target': True,
+                    }
 
             elif method in ['tabular', 'solved_alpha']:
 
@@ -514,9 +548,7 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
                         except TypeError:
                             val = aviary_inputs.get_val(var)
 
-                    params[var] = {'val': val,
-                                   'units': units,
-                                   'static_target': True}
+                    params[var] = {'val': val, 'units': units, 'static_target': True}
 
             elif method == "low_speed":
 
@@ -535,9 +567,7 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
                         except TypeError:
                             val = aviary_inputs.get_val(var)
 
-                    params[var] = {'val': val,
-                                   'units': units,
-                                   'static_target': True}
+                    params[var] = {'val': val, 'units': units, 'static_target': True}
 
         else:
 
@@ -545,7 +575,10 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
             # a saved phase_name to determine the correct aero variables to
             # promote. Ideally, this should all be refactored.
             if bool(phase_info) and phase_info['phase_type'] in [
-                    'ascent', 'groundroll', 'rotation']:
+                'ascent',
+                'groundroll',
+                'rotation',
+            ]:
                 all_vars = (AERO_2DOF_INPUTS, AERO_LS_2DOF_INPUTS)
             else:
                 all_vars = (AERO_2DOF_INPUTS, AERO_CLEAN_2DOF_INPUTS)
@@ -565,9 +598,7 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
                     except TypeError:
                         val = aviary_inputs.get_val(var)
 
-                params[var] = {'val': val,
-                               'units': units,
-                               'static_target': True}
+                params[var] = {'val': val, 'units': units, 'static_target': True}
 
         return params
 
@@ -668,7 +699,7 @@ ENGINE_SIZED_INPUTS = [
     Aircraft.Nacelle.FINENESS,
     Aircraft.Nacelle.LAMINAR_FLOW_LOWER,
     Aircraft.Nacelle.LAMINAR_FLOW_UPPER,
-    Aircraft.Nacelle.WETTED_AREA
+    Aircraft.Nacelle.WETTED_AREA,
 ]
 
 AERO_2DOF_INPUTS = [
