@@ -3122,6 +3122,15 @@ add_meta_data(
 # ========================================================
 
 add_meta_data(
+    Aircraft.Fuselage.AFTBODY_MASS,
+    meta_data=_MetaData,
+    historical_name={"GASP": 'WGT_AB', "FLOPS": None, "LEAPS1": None},
+    units='lbm',
+    default_value=0.0,
+    desc='aftbody mass',
+)
+
+add_meta_data(
     Aircraft.Fuselage.AFTBODY_MASS_PER_UNIT_AREA,
     meta_data=_MetaData,
     historical_name={"GASP": 'INGASP.UWT_AFT', "FLOPS": None, "LEAPS1": None},
@@ -3216,6 +3225,15 @@ add_meta_data(
 )
 
 add_meta_data(
+    Aircraft.Fuselage.FOREBODY_MASS,
+    meta_data=_MetaData,
+    historical_name={"GASP": 'WGT_FB', "FLOPS": None, "LEAPS1": None},
+    units='lbm',
+    default_value=0.0,
+    desc='forebody mass',
+)
+
+add_meta_data(
     Aircraft.Fuselage.FINENESS,
     meta_data=_MetaData,
     historical_name={
@@ -3261,11 +3279,11 @@ add_meta_data(
 add_meta_data(
     Aircraft.Fuselage.HYDRAULIC_DIAMETER,
     meta_data=_MetaData,
-    historical_name={"GASP": 'None', "FLOPS": None, "LEAPS1": None},
+    historical_name={"GASP": 'DHYDRAUL', "FLOPS": None, "LEAPS1": None},
     units='ft',
     types=float,
     default_value=0.0,
-    desc='In GASP, hydraulic diameter is defined as the geometric mean of cabin length and cabin width.',
+    desc='the geometric mean of cabin length and cabin width',
 )
 
 add_meta_data(
@@ -5437,6 +5455,19 @@ add_meta_data(
     units='unitless',
     desc='Engine inertia relief factor for wingspan inboard of engine locations. Used '
     'to compute Aircraft.Wing.BENDING_MATERIAL_MASS',
+    default_value=0.0,
+)
+
+add_meta_data(
+    Aircraft.Wing.EXPOSED_WING_AREA,
+    meta_data=_MetaData,
+    historical_name={
+        "GASP": 'SW_EXP',
+        "FLOPS": None,
+        "LEAPS1": None,
+    },
+    units='ft**2',
+    desc='exposed wing area, i.e. wing area outside the fuselage, True for both Tube&Wing and HWB',
     default_value=0.0,
 )
 

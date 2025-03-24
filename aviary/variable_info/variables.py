@@ -327,6 +327,7 @@ class Aircraft:
         MASS_SCALER = 'aircraft:furnishings:mass_scaler'
 
     class Fuselage:
+        AFTBODY_MASS = 'aircraft:fuselage:aftbody_mass'
         AFTBODY_MASS_PER_UNIT_AREA = 'aircraft:fuselage:aftbody_mass_per_unit_area'
         AFTBODY_TO_TOTAL_WETTED_AREA = 'aircraft:fuselage:aftbody_to_total_wetted_area'
         AISLE_WIDTH = 'aircraft:fuselage:aisle_width'
@@ -335,6 +336,7 @@ class Aircraft:
         CROSS_SECTION = 'aircraft:fuselage:cross_section'
         DELTA_DIAMETER = 'aircraft:fuselage:delta_diameter'
         DIAMETER_TO_WING_SPAN = 'aircraft:fuselage:diameter_to_wing_span'
+        FOREBODY_MASS = 'aircraft:fuselage:forebody_mass'
         FINENESS = 'aircraft:fuselage:fineness'
         FLAT_PLATE_AREA_INCREMENT = 'aircraft:fuselage:flat_plate_area_increment'
         FORM_FACTOR = 'aircraft:fuselage:form_factor'
@@ -540,6 +542,7 @@ class Aircraft:
         DETAILED_WING = 'aircraft:wing:detailed_wing'
         DIHEDRAL = 'aircraft:wing:dihedral'
         ENG_POD_INERTIA_FACTOR = 'aircraft:wing:eng_pod_inertia_factor'
+        EXPOSED_WING_AREA = 'aircraft:wing:exposed_wing_area'
         FINENESS = 'aircraft:wing:fineness'
         FLAP_CHORD_RATIO = 'aircraft:wing:flap_chord_ratio'
         FLAP_DEFLECTION_LANDING = 'aircraft:wing:flap_deflection_landing'
