@@ -122,7 +122,7 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
 
         if method is 'external':
             return None
-        
+
         aero_group = None
 
         if self.code_origin is FLOPS:
@@ -325,11 +325,13 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
 
         Optional, used if subsystems have fixed values.
 
-        Used in the phase builders (e.g. cruise_phase.py) when other parameters are added to the phase.
+        Used in the phase builders (e.g. cruise_phase.py) when other parameters are
+        added to the phase.
 
         This is distinct from `get_design_vars` in a nuanced way. Design variables
         are variables that are optimized by the problem that are not at the phase level.
-        An example would be something that occurs in the pre-mission level of the problem.
+        An example would be something that occurs in the pre-mission level of the
+        problem.
         Parameters are fixed values that are held constant throughout a phase, but if
         `opt=True`, they are able to change during the optimization.
 
