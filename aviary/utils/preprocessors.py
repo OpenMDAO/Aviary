@@ -92,8 +92,9 @@ def preprocess_crewpayload(aviary_options: AviaryValues, verbosity=None):
     ):
         aviary_options.set_val(Aircraft.CrewPayload.NUM_PASSENGERS, passenger_count)
         if verbosity >= Verbosity.VERBOSE:
-            print(
-                "User has specified supporting values for NUM_PASSENGERS but has left NUM_PASSENGERS=0. Replacing NUM_PASSENGERS with passenger_count."
+            warnings.warn(
+                'User has specified supporting values for NUM_PASSENGERS but has left '
+                'NUM_PASSENGERS=0. Replacing NUM_PASSENGERS with passenger_count.'
             )
     if (
         design_passenger_count != 0
@@ -103,8 +104,10 @@ def preprocess_crewpayload(aviary_options: AviaryValues, verbosity=None):
             Aircraft.CrewPayload.Design.NUM_PASSENGERS, design_passenger_count
         )
         if verbosity >= Verbosity.VERBOSE:
-            print(
-                "User has specified supporting values for Design.NUM_PASSENGERS but has left Design.NUM_PASSENGERS=0. Replacing Design.NUM_PASSENGERS with design_passenger_count."
+            warnings.warn(
+                'User has specified supporting values for Design.NUM_PASSENGERS but has '
+                'left Design.NUM_PASSENGERS=0. Replacing Design.NUM_PASSENGERS with '
+                'design_passenger_count.'
             )
 
     num_pax = aviary_options.get_val(Aircraft.CrewPayload.NUM_PASSENGERS)
@@ -112,28 +115,38 @@ def preprocess_crewpayload(aviary_options: AviaryValues, verbosity=None):
 
     # Check summary data against individual data if individual data was entered
     if passenger_count != 0 and num_pax != passenger_count:
-        raise om.AnalysisError(
-            f"ERROR: In preprocesssors.py: NUM_PASSENGERS ({aviary_options.get_val(Aircraft.CrewPayload.NUM_PASSENGERS)}) does not equal the sum of first class + business class + tourist class passengers (total of {passenger_count})."
+        raise warnings.warn(
+            'NUM_PASSENGERS ('
+            f'{aviary_options.get_val(Aircraft.CrewPayload.NUM_PASSENGERS)}) does not '
+            'equal the sum of first class + business class + tourist class passengers '
+            f'(total of {passenger_count}).'
         )
     if design_passenger_count != 0 and design_num_pax != design_passenger_count:
-        raise om.AnalysisError(
-            f"ERROR: In preprocesssors.py: Design.NUM_PASSENGERS ({aviary_options.get_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS)}) does not equal the sum of design first class + business class + tourist class passengers (total of {design_passenger_count})."
+        raise warnings.warn(
+            'Design.NUM_PASSENGERS ('
+            f'{aviary_options.get_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS)}) '
+            'does not equal the sum of design first class + business class + tourist '
+            f'class passengers (total of {design_passenger_count}).'
         )
 
     # Fail if incorrect data sets were provided:
     # have you give us enough info to determine where people were sitting vs. designed seats
     if num_pax != 0 and design_passenger_count != 0 and passenger_count == 0:
-        raise om.AnalysisError(
-            f"ERROR: In preprocessor.py: The user has specified CrewPayload.NUM_PASSENGERS, and how many of what types of seats are on the aircraft."
-            f"However, the user has not specified where those passengers are sitting."
-            f"User must specify CrewPayload.FIRST_CLASS, CrewPayload.NUM_BUSINESS_CLASS, NUM_TOURIST_CLASS in aviary_values."
+        raise warnings.warn(
+            'The user has specified CrewPayload.NUM_PASSENGERS, and how many of what '
+            'types of seats are on the aircraft. However, the user has not specified '
+            'where those passengers are sitting. User must specify '
+            'CrewPayload.FIRST_CLASS, CrewPayload.NUM_BUSINESS_CLASS, NUM_TOURIST_CLASS '
+            'in aviary_values.'
         )
         # where are the people sitting? is first class full? We know how many seats are in each class.
     if design_num_pax != 0 and passenger_count != 0 and design_passenger_count == 0:
-        raise om.AnalysisError(
-            f"ERROR: In preprocessor.py: The user has specified Design.NUM_PASSENGERS, and has specified how many people are sitting in each class of seats."
-            f"However, the user has not specified how many seats of each class exist in the aircraft."
-            f"User must specify Design.FIRST_CLASS, Design.NUM_BUSINESS_CLASS, Design.NUM_TOURIST_CLASS in aviary_values."
+        raise warnings.warn(
+            'The user has specified Design.NUM_PASSENGERS, and has specified how many '
+            'people are sitting in each class of seats. However, the user has not '
+            'specified how many seats of each class exist in the aircraft. User must '
+            'specify Design.FIRST_CLASS, Design.NUM_BUSINESS_CLASS, '
+            'Design.NUM_TOURIST_CLASS in aviary_values.'
         )
         # we don't know which classes this aircraft has been design for. How many 1st class seats are there?
 
@@ -162,8 +175,9 @@ def preprocess_crewpayload(aviary_options: AviaryValues, verbosity=None):
     # user has not supplied detailed information on design but has supplied summary information on passengers
     elif num_pax != 0 and design_num_pax == 0:
         if verbosity >= Verbosity.VERBOSE:
-            print(
-                "User has specified as-flown NUM_PASSENGERS but not how many passengers the aircraft was designed for in Design.NUM_PASSENGERS. Assuming they are equal."
+            warnings.warn(
+                'User has specified as-flown NUM_PASSENGERS but not how many passengers '
+                the aircraft was designed for in Design.NUM_PASSENGERS. Assuming they are equal."
             )
         aviary_options.set_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS, num_pax)
     elif design_passenger_count != 0 and num_pax == 0 and passenger_count == 0:
@@ -211,25 +225,29 @@ def preprocess_crewpayload(aviary_options: AviaryValues, verbosity=None):
         Aircraft.CrewPayload.Design.NUM_FIRST_CLASS
     ) < aviary_options.get_val(Aircraft.CrewPayload.NUM_FIRST_CLASS):
         raise om.AnalysisError(
-            f"ERROR: In preprocesssors.py: NUM_FIRST_CLASS ({aviary_options.get_val(Aircraft.CrewPayload.NUM_FIRST_CLASS)}) is larger than the number of seats set by Design.NUM_FIRST_CLASS ({aviary_options.get_val(Aircraft.CrewPayload.Design.NUM_FIRST_CLASS)}) ."
+            f"ERROR: In preprocesssors.py: NUM_FIRST_CLASS ({aviary_options.get_val(Aircraft.CrewPayload.NUM_FIRST_CLASS)}) is larger than the number of seats set by Design.NUM_FIRST_CLASS ({
+                aviary_options.get_val(Aircraft.CrewPayload.Design.NUM_FIRST_CLASS)}) ."
         )
     if aviary_options.get_val(
         Aircraft.CrewPayload.Design.NUM_BUSINESS_CLASS
     ) < aviary_options.get_val(Aircraft.CrewPayload.NUM_BUSINESS_CLASS):
         raise om.AnalysisError(
-            f"ERROR: In preprocesssors.py: NUM_BUSINESS_CLASS ({aviary_options.get_val(Aircraft.CrewPayload.NUM_BUSINESS_CLASS)}) is larger than the number of seats set by Design.NUM_BUSINESS_CLASS ({aviary_options.get_val(Aircraft.CrewPayload.Design.NUM_BUSINESS_CLASS)}) ."
+            f"ERROR: In preprocesssors.py: NUM_BUSINESS_CLASS ({aviary_options.get_val(Aircraft.CrewPayload.NUM_BUSINESS_CLASS)}) is larger than the number of seats set by Design.NUM_BUSINESS_CLASS ({
+                aviary_options.get_val(Aircraft.CrewPayload.Design.NUM_BUSINESS_CLASS)}) ."
         )
     if aviary_options.get_val(
         Aircraft.CrewPayload.Design.NUM_TOURIST_CLASS
     ) < aviary_options.get_val(Aircraft.CrewPayload.NUM_TOURIST_CLASS):
         raise om.AnalysisError(
-            f"ERROR: In preprocesssors.py: NUM_TOURIST_CLASS ({aviary_options.get_val(Aircraft.CrewPayload.NUM_TOURIST_CLASS)}) is larger than the number of seats set by Design.NUM_TOURIST_CLASS ({aviary_options.get_val(Aircraft.CrewPayload.Design.NUM_TOURIST_CLASS)}) ."
+            f"ERROR: In preprocesssors.py: NUM_TOURIST_CLASS ({aviary_options.get_val(Aircraft.CrewPayload.NUM_TOURIST_CLASS)}) is larger than the number of seats set by Design.NUM_TOURIST_CLASS ({
+                aviary_options.get_val(Aircraft.CrewPayload.Design.NUM_TOURIST_CLASS)}) ."
         )
     if aviary_options.get_val(
         Aircraft.CrewPayload.Design.NUM_PASSENGERS
     ) < aviary_options.get_val(Aircraft.CrewPayload.NUM_PASSENGERS):
         raise om.AnalysisError(
-            f"ERROR: In preprocesssors.py: NUM_PASSENGERS ({aviary_options.get_val(Aircraft.CrewPayload.NUM_PASSENGERS)}) is larger than the number of seats set by Design.NUM_PASSENGERS ({aviary_options.get_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS)}) ."
+            f"ERROR: In preprocesssors.py: NUM_PASSENGERS ({aviary_options.get_val(Aircraft.CrewPayload.NUM_PASSENGERS)}) is larger than the number of seats set by Design.NUM_PASSENGERS ({
+                aviary_options.get_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS)}) ."
         )
 
     # Check and process cargo variables - confirm mass method
@@ -343,7 +361,8 @@ def preprocess_crewpayload(aviary_options: AviaryValues, verbosity=None):
 
         if cargo > max_cargo or des_cargo > max_cargo:
             raise om.AnalysisError(
-                f"ERROR: In preprocesssors.py: Aircraft.CrewPayload.CARGO_MASS ({cargo}) and/or Aircraft.CrewPayload.Design.CARGO_MASS ({des_cargo}) > Aircraft.CrewPayload.Design.MAX_CARGO_MASS ({max_cargo})"
+                f"ERROR: In preprocesssors.py: Aircraft.CrewPayload.CARGO_MASS ({cargo}) and/or Aircraft.CrewPayload.Design.CARGO_MASS ({
+                    des_cargo}) > Aircraft.CrewPayload.Design.MAX_CARGO_MASS ({max_cargo})"
             )
 
         # calculate passenger mass with bags based on user inputs.
@@ -603,44 +622,66 @@ def preprocess_propulsion(
         num_wing_engines_all = np.zeros(num_engine_type).astype(int)
 
     for i, engine in enumerate(engine_models):
+        eng_name = engine.name
         num_engines = num_engines_all[i]
         num_fuse_engines = num_fuse_engines_all[i]
         num_wing_engines = num_wing_engines_all[i]
         total_engines_calc = num_fuse_engines + num_wing_engines
 
-        # if engine mount type is not specified at all, default to wing
+        # If engine mount type is not specified at all, default to wing (unless there is
+        # only one engine, in which case default to fuselage)
         if total_engines_calc == 0:
-            eng_name = engine.name
-            num_wing_engines_all[i] = num_engines
-            # TODO is a warning overkill here? It can be documented wing mounted engines
-            # are assumed default
-            if verbosity >= Verbosity.VERBOSE:
-                warnings.warn(
-                    f'Mount location for engines of type <{eng_name}> not specified. '
-                    'Wing-mounted engines are assumed.'
-                )
+            if num_engines > 1:
+                num_wing_engines_all[i] = num_engines
+                if verbosity >= Verbosity.BRIEF:  # BRIEF, VERBOSE, DEBUG
+                    warnings.warn(
+                        f'Mount location for engines of type <{eng_name}> not '
+                        'specified. Wing-mounted engines are assumed.'
+                    )
+            else:
+                num_fuse_engines_all[i] = num_engines
+                if verbosity >= Verbosity.BRIEF:  # BRIEF, VERBOSE, DEBUG
+                    warnings.warn(
+                        f'Mount location for single engine of type <{eng_name}> not '
+                        'specified. Assuming it is fuselage-mounted.'
+                    )
 
         # If wing mount type are specified but inconsistent, handle it
         elif total_engines_calc > num_engines:
             # more defined engine locations than number of engines - increase num engines
-            eng_name = engine.name
             num_engines_all[i] = total_engines_calc
-            if verbosity >= Verbosity.VERBOSE:
+            if verbosity >= Verbosity.BRIEF:  # BRIEF, VERBOSE, DEBUG
                 warnings.warn(
-                    'Sum of aircraft:engine:num_fuselage_engines and '
-                    'aircraft:engine:num_wing_engines do not match '
-                    'aircraft:engine:num_engines for EngineModel '
-                    f'<{eng_name}>. Overwriting with the sum of wing and fuselage '
-                    'mounted engines.'
+                    'Sum of user-specified fuselage-mounted and wing-mounted engines do '
+                    f'not match total number of engines for EngineModel <{eng_name}>. '
+                    'Overwriting total number of engines with the sum of wing and '
+                    'fuselage mounted engines.'
                 )
         elif total_engines_calc < num_engines:
             # fewer defined locations than num_engines - assume rest are wing mounted
-            eng_name = engine.name
-            num_wing_engines_all[i] = num_engines - num_fuse_engines
-            if verbosity >= Verbosity.BRIEF:
+            # (unless there is just one prospective wing engine, then fuselage mount it)
+            num_unspecified_engines = num_engines - num_fuse_engines - num_wing_engines
+            if num_unspecified_engines > 1:
+                num_wing_engines_all[i] = num_wing_engines + num_unspecified_engines
+                if verbosity >= Verbosity.BRIEF:  # BRIEF, VERBOSE, DEBUG
+                    warnings.warn(
+                        'Mount location was not defined for all engines of EngineModel '
+                        f'<{eng_name}> - unspecified engines are assumed wing-mounted.'
+                    )
+            elif num_unspecified_engines == 1 and num_wing_engines != 0:
+                num_fuse_engines_all[i] = num_fuse_engines + num_unspecified_engines
+                if verbosity >= Verbosity.BRIEF:  # BRIEF, VERBOSE, DEBUG
+                    warnings.warn(
+                        'Mount location was not defined for all engine of EngineModel '
+                        f'<{eng_name}> - unspecified engine is assumed fuselage-mounted.'
+                    )
+
+        if num_wing_engines % 2 == 1:
+            if verbosity >= Verbosity.VERBOSE:  # VERBOSE, DEBUG
                 warnings.warn(
-                    'Mount location was not defined for all engines of EngineModel '
-                    f'<{eng_name}> - unspecified engines are assumed wing-mounted.'
+                    'Odd number of wing engines are specified for EngineModel '
+                    f'<{eng_name}> - this may cause issues with some mass and geometry '
+                    'components that assume symmetric wing engine distribution.'
                 )
 
     aviary_options.set_val(Aircraft.Engine.NUM_ENGINES, num_engines_all)
