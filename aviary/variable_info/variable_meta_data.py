@@ -7539,7 +7539,7 @@ add_meta_data(
 )
 
 add_meta_data(
-    Mission.Takeoff.ASCENT_T_INTIIAL,
+    Mission.Takeoff.ASCENT_T_INITIAL,
     meta_data=_MetaData,
     historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
     units='s',

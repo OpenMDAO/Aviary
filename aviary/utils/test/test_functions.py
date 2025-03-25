@@ -8,7 +8,7 @@ from openmdao.utils.assert_utils import assert_near_equal
 
 from aviary.variable_info.options import get_option_defaults
 from aviary.variable_info.variables import Aircraft, Mission
-from aviary.utils.functions import add_opts2vals, create_opts2vals, get_path
+from aviary.utils.functions import add_opts2vals, convert_strings_to_data, create_opts2vals, get_path
 from aviary.api import top_dir
 
 
@@ -109,6 +109,121 @@ class TestTopDir(unittest.TestCase):
     def test_top_dir(self):
         result = Path(__file__).parent.parent.parent
         self.assertEqual(result, top_dir)
+
+
+# class TestConvertStrings2Data(unittest.TestCase):
+#     def is_list_of_given_type(self, lst, givenType):
+#         """Test if the list of data is of given type"""
+#         return isinstance(lst, list) and all(isinstance(i, givenType) for i in lst)
+
+#     def test_read_float(self):
+#         data_list = ['1.0']
+#         var_types = float
+#         var_values = convert_strings_to_data(data_list, var_types)
+#         self.assertEqual(var_values, [1.0])
+#         self.assertTrue(self.is_list_of_given_type(var_values, float))
+
+#         data_list = ['100_000.0']
+#         var_types = float
+#         var_values = convert_strings_to_data(data_list, var_types)
+#         self.assertEqual(var_values, [100000.0])
+#         self.assertTrue(self.is_list_of_given_type(var_values, float))
+
+#         data_list = ['1.0', '0.285']
+#         var_types = float
+#         var_values = convert_strings_to_data(data_list, var_types)
+#         self.assertEqual(var_values, [1.0, 0.285])
+#         self.assertTrue(self.is_list_of_given_type(var_values, float))
+
+#         data_list = ['1']
+#         var_types = float
+#         var_values = convert_strings_to_data(data_list, var_types)
+#         self.assertEqual(var_values, [1.0])
+#         self.assertTrue(self.is_list_of_given_type(var_values, float))
+
+#     def test_read_boolean(self):
+#         data_list = ['False']
+#         var_types = bool
+#         var_values = convert_strings_to_data(data_list, var_types)
+#         self.assertEqual(var_values, [False])
+#         self.assertTrue(self.is_list_of_given_type(var_values, bool))
+
+#         data_list = ['False']
+#         var_types = None
+#         var_values = convert_strings_to_data(data_list, var_types)
+#         self.assertEqual(var_values, [False])
+#         self.assertTrue(self.is_list_of_given_type(var_values, bool))
+
+#         data_list = ['True']
+#         var_types = bool
+#         var_values = convert_strings_to_data(data_list, var_types)
+#         self.assertEqual(var_values, [True])
+#         self.assertTrue(self.is_list_of_given_type(var_values, bool))
+
+#         data_list = ['True']
+#         var_types = None
+#         var_values = convert_strings_to_data(data_list, var_types)
+#         self.assertEqual(var_values, [True])
+#         self.assertTrue(self.is_list_of_given_type(var_values, bool))
+
+#         data_list = ['this_is_not_a_bool']
+#         var_types = bool
+#         var_values = convert_strings_to_data(data_list, var_types)
+#         self.assertEqual(var_values, [0])
+
+#         data_list = ['False', 'True']
+#         var_types = bool
+#         var_values = convert_strings_to_data(data_list, var_types)
+#         self.assertEqual(var_values, [False, True])
+#         self.assertTrue(self.is_list_of_given_type(var_values, bool))
+
+#         data_list = ['False', 'True']
+#         var_types = None
+#         var_values = convert_strings_to_data(data_list, var_types)
+#         self.assertEqual(var_values, [False, True])
+#         self.assertTrue(self.is_list_of_given_type(var_values, bool))
+
+#     def test_read_string(self):
+#         data_list = ['this_is_a_string']
+#         var_types = (str, Path)
+#         var_values = convert_strings_to_data(data_list, var_types)
+#         self.assertEqual(var_values, ['this_is_a_string'])
+#         self.assertTrue(self.is_list_of_given_type(var_values, str))
+
+#         data_list = ['this_is_a_string']
+#         var_types = str
+#         var_values = convert_strings_to_data(data_list, var_types)
+#         self.assertEqual(var_values, ['this_is_a_string'])
+#         self.assertTrue(self.is_list_of_given_type(var_values, str))
+
+#         data_list = ['this_is_a_string']
+#         var_types = None
+#         var_values = convert_strings_to_data(data_list, var_types)
+#         self.assertEqual(var_values, ['this_is_a_string'])
+#         self.assertTrue(self.is_list_of_given_type(var_values, str))
+
+#     def test_read_int(self):
+#         data_list = ['180']
+#         var_types = int
+#         var_values = convert_strings_to_data(data_list, var_types)
+#         self.assertEqual(var_values, [180])
+#         self.assertTrue(self.is_list_of_given_type(var_values, int))
+
+#         data_list = ['180.5']
+#         var_types = int
+#         var_values = convert_strings_to_data(data_list, var_types)
+#         self.assertNotEqual(var_values, [180.5])
+
+#         data_list = ['180.0']
+#         var_types = int
+#         var_values = convert_strings_to_data(data_list, var_types)
+#         self.assertNotEqual(var_values, [180.0])
+
+#         data_list = ['0', '180']
+#         var_types = int
+#         var_values = convert_strings_to_data(data_list, var_types)
+#         self.assertEqual(var_values, [0, 180])
+#         self.assertTrue(self.is_list_of_given_type(var_values, int))
 
 
 if __name__ == "__main__":

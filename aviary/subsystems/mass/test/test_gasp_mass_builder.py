@@ -35,6 +35,7 @@ class TestGASPMassBuilderHybrid(av.TestSubsystemBuilderBase):
         self.aviary_values.set_val(Aircraft.Wing.HAS_FOLD, True, units='unitless')
         self.aviary_values.set_val(Aircraft.Wing.HAS_STRUT, True, units='unitless')
         self.aviary_values.set_val(Aircraft.Engine.NUM_ENGINES, [1], units='unitless')
+        self.aviary_values.set_val(Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES, 1)
 
 
 class TestGASPMassBuilder(av.TestSubsystemBuilderBase):
@@ -57,6 +58,7 @@ class TestGASPMassBuilder(av.TestSubsystemBuilderBase):
         self.aviary_values.set_val(Aircraft.Wing.HAS_FOLD, True, units='unitless')
         self.aviary_values.set_val(Aircraft.Wing.HAS_STRUT, True, units='unitless')
         self.aviary_values.set_val(Aircraft.Engine.NUM_ENGINES, [1], units='unitless')
+        self.aviary_values.set_val(Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES, 1)
 
 
 if __name__ == '__main__':

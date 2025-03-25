@@ -16,6 +16,7 @@ OptionalValueAndUnits : type alias
 class AviaryValues
     define a collection of named values with associated units
 '''
+
 from enum import Enum
 
 import numpy as np
@@ -57,7 +58,7 @@ class AviaryValues(NamedValues):
         if key in meta_data.keys():
             expected_types = meta_data[key]['types']
             if not isinstance(expected_types, tuple):
-                expected_types = (expected_types, )
+                expected_types = (expected_types,)
 
             # If provided val is not in expected types, see if it can be casted to one of
             # them (e.g. cast int to float).
@@ -123,7 +124,8 @@ class AviaryValues(NamedValues):
             if not isinstance(input_val, types):
                 raise TypeError(
                     f'{key} is of type(s) {types} but you have provided a value of type '
-                    f'{type(input_val)}.')
+                    f'{type(input_val)}.'
+                )
 
         # Numpy arrays have special typings. Convert to list using standard Python types
         # Numpy arrays do not allow mixed types, only have to check one entry
@@ -142,16 +144,18 @@ class AviaryValues(NamedValues):
 
         for item in input_val:
             has_bool = False  # needs some fancy shenanigans because bools will register as ints
-            if (isinstance(expected_types, type)):
+            if isinstance(expected_types, type):
                 if expected_types is bool:
                     has_bool = True
             elif bool in expected_types:
                 has_bool = True
             if (not isinstance(item, expected_types)) or (
-                    (has_bool == False) and (isinstance(item, bool))):
+                (has_bool == False) and (isinstance(item, bool))
+            ):
                 raise TypeError(
                     f'{key} is of type(s) {meta_data[key]["types"]} but you '
-                    f'have provided a value of type {type(item)}.')
+                    f'have provided a value of type {type(item)}.'
+                )
 
     def _check_units_compatibility(self, key, val, units, meta_data=_MetaData):
         expected_units = meta_data[key]['units']
@@ -162,11 +166,13 @@ class AviaryValues(NamedValues):
             _convert_units(10, expected_units, units)
         except ValueError:
             raise ValueError(
-                f'The units {units} which you have provided for {key} are invalid.')
+                f'The units {units} which you have provided for {key} are invalid.'
+            )
         except TypeError:
             raise TypeError(
                 f'The base units of {key} are {expected_units}, and you have tried to '
-                f'set {key} with units of {units}, which are not compatible.')
+                f'set {key} with units of {units}, which are not compatible.'
+            )
         except BaseException:
             raise KeyError('There is an unknown error with your units.')
 

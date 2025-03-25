@@ -24,7 +24,7 @@ common_entries = {
     'initial_altitude': tuple,
     'final_altitude': tuple,
     'altitude_bounds': tuple,
-    'throttle_enforcement': str,
+    'throttle_enforcement': (str, type(None)),
     'constrain_final': bool,
     'fix_duration': bool,
     'initial_bounds': tuple,

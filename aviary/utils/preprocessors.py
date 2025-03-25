@@ -486,38 +486,66 @@ def preprocess_propulsion(aviary_options: AviaryValues,
         num_wing_engines_all = np.zeros(num_engine_type).astype(int)
 
     for i, engine in enumerate(engine_models):
+        eng_name = engine.name
         num_engines = num_engines_all[i]
         num_fuse_engines = num_fuse_engines_all[i]
         num_wing_engines = num_wing_engines_all[i]
         total_engines_calc = num_fuse_engines + num_wing_engines
 
-        # if engine mount type is not specified at all, default to wing
+        # If engine mount type is not specified at all, default to wing (unless there is
+        # only one engine, in which case default to fuselage)
         if total_engines_calc == 0:
-            eng_name = engine.name
-            num_wing_engines_all[i] = num_engines
-            # TODO is a warning overkill here? It can be documented wing mounted engines
-            # are assumed default
-            warnings.warn(
-                f'Mount location for engines of type <{eng_name}> not specified. '
-                'Wing-mounted engines are assumed.')
+            if num_engines > 1:
+                num_wing_engines_all[i] = num_engines
+                # TODO is a warning overkill here? It can be documented wing mounted
+                # engines are assumed default
+                warnings.warn(
+                    f'Mount location for engines of type <{eng_name}> not specified. '
+                    'Wing-mounted engines are assumed.'
+                )
+            else:
+                num_fuse_engines_all[i] = num_engines
+                # TODO is a warning overkill here? It can be documented wing mounted
+                # engines are assumed default
+                warnings.warn(
+                    f'Mount location for single engine of type <{eng_name}> not '
+                    'specified. Assuming it is fuselage-mounted.'
+                )
 
         # If wing mount type are specified but inconsistent, handle it
         elif total_engines_calc > num_engines:
             # more defined engine locations than number of engines - increase num engines
-            eng_name = engine.name
             num_engines_all[i] = total_engines_calc
             warnings.warn(
                 'Sum of aircraft:engine:num_fueslage_engines and '
                 'aircraft:engine:num_wing_engines do not match '
                 f'aircraft:engine:num_engines for EngineModel <{eng_name}>. Overwriting '
-                'with the sum of wing and fuselage mounted engines.')
+                'with the sum of wing and fuselage mounted engines.'
+            )
+
         elif total_engines_calc < num_engines:
             # fewer defined locations than num_engines - assume rest are wing mounted
-            eng_name = engine.name
-            num_wing_engines_all[i] = num_engines - num_fuse_engines
+            # (unless there is just one prospective wing engine, then fuselage mount it)
+            num_unspecified_engines = num_engines - num_fuse_engines - num_wing_engines
+            if num_unspecified_engines > 1:
+                num_wing_engines_all[i] = num_wing_engines + num_unspecified_engines
+                warnings.warn(
+                    'Mount location was not defined for all engines of EngineModel '
+                    f'<{eng_name}> - unspecified engines are assumed wing-mounted.'
+                )
+            elif num_unspecified_engines == 1 and num_wing_engines != 0:
+                num_fuse_engines_all[i] = num_fuse_engines + num_unspecified_engines
+                warnings.warn(
+                    'Mount location was not defined for all engine of EngineModel '
+                    f'<{eng_name}> - unspecified engine is assumed fuselage-mounted.'
+                )
+
+        if num_wing_engines % 2 == 1:
             warnings.warn(
-                'Mount location was not defined for all engines of EngineModel '
-                f'<{eng_name}> - unspecified engines are assumed wing-mounted.')
+                f'Odd number of wing engines are specified for EngineModel <{eng_name}> '
+                '- this may cause issues with some mass and geometry components that '
+                'assume symmetric wing engine distribution.'
+            )
 
     aviary_options.set_val(Aircraft.Engine.NUM_ENGINES, num_engines_all)
     aviary_options.set_val(Aircraft.Engine.NUM_WING_ENGINES, num_wing_engines_all)
