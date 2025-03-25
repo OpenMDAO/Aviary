@@ -99,6 +99,43 @@ class PreMissionGroupTest(unittest.TestCase):
 
         prob.setup()
 
+    def test_serial_phase_group(self):
+        phase_info = deepcopy(ph_in)
+        phase_info['post_mission'] = {}
+        phase_info['post_mission']['include_landing'] = False
+        phase_info['post_mission']['external_subsystems'] = [
+            WingWeightBuilder(name="wing_external")
+        ]
+
+        prob = AviaryProblem()
+
+        csv_path = get_aviary_resource_path(
+            'models/test_aircraft/aircraft_for_bench_GwFm.csv'
+        )
+        prob.load_inputs(csv_path, phase_info)
+
+        # Preprocess inputs
+        prob.check_and_preprocess_inputs()
+
+        prob.add_pre_mission_systems()
+
+        prob.add_phases(parallel_phases=False)
+
+        prob.add_post_mission_systems()
+
+        # Link phases and variables
+        prob.link_phases()
+
+        prob.add_driver("SLSQP", verbosity=0)
+
+        prob.add_design_variables()
+
+        prob.add_objective(objective_type="mass", ref=-1e5)
+
+        prob.setup()
+
+        assert not isinstance(prob.traj.phases, om.ParallelGroup)
+
 
 if __name__ == '__main__':
     unittest.main()
