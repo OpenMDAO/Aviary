@@ -64,7 +64,7 @@ def run_aviary(
         default is None.
     verbosity : Verbosity or int, optional
         Sets level of information outputted to the terminal during model execution.
-        If provided, overwrites verbosity specified in aircraft_data.
+        If provided, overrides verbosity specified in aircraft_data.
 
     Returns
     -------
@@ -91,33 +91,39 @@ def run_aviary(
     prob.load_inputs(aircraft_data, phase_info, verbosity=verbosity)
 
     # Preprocess inputs
-    prob.check_and_preprocess_inputs()
+    prob.check_and_preprocess_inputs(verbosity=verbosity)
 
-    prob.add_pre_mission_systems()
+    prob.add_pre_mission_systems(verbosity=verbosity)
 
-    prob.add_phases(phase_info_parameterization=phase_info_parameterization)
+    prob.add_phases(
+        phase_info_parameterization=phase_info_parameterization, verbosity=verbosity
+    )
 
-    prob.add_post_mission_systems()
+    prob.add_post_mission_systems(verbosity=verbosity)
 
     # Link phases and variables
-    prob.link_phases()
+    prob.link_phases(verbosity=verbosity)
 
     prob.add_driver(optimizer, max_iter=max_iter, verbosity=verbosity)
 
-    prob.add_design_variables()
+    prob.add_design_variables(verbosity=verbosity)
 
     # Load optimization problem formulation
     # Detail which variables the optimizer can control
-    prob.add_objective(objective_type=objective_type)
+    prob.add_objective(objective_type=objective_type, verbosity=verbosity)
 
     prob.setup()
 
-    prob.set_initial_guesses()
+    prob.set_initial_guesses(verbosity=verbosity)
 
     prob.run_aviary_problem(
-        record_filename, restart_filename=restart_filename, run_driver=run_driver,
+        record_filename,
+        restart_filename=restart_filename,
+        run_driver=run_driver,
         make_plots=make_plots,
-        optimization_history_filename=optimization_history_filename)
+        optimization_history_filename=optimization_history_filename,
+        verbosity=verbosity,
+    )
 
     return prob
 

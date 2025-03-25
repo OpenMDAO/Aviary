@@ -1217,12 +1217,13 @@ class AviaryProblem(om.Problem):
         -------
         None
         """
-        # override verbosity for this function call if user desired
-        if verbosity is None:
-            verbosity = self.verbosity
-        else:
+        # `self.verbosity` is "true" verbosity for entire run. `verbosity` is verbosity
+        # override for just this method
+        if verbosity is not None:
             # compatibility with being passed int for verbosity
             verbosity = Verbosity(verbosity)
+        else:
+            verbosity = self.verbosity  # defaults to BRIEF
 
         # Set defaults for optimizer and use_coloring based on analysis scheme
         if optimizer is None:
@@ -1266,12 +1267,10 @@ class AviaryProblem(om.Problem):
         elif driver.options["optimizer"] == "IPOPT":
             # Print Options #
             if verbosity == Verbosity.QUIET:
-                # print_level = 3  # minimum to get exit status
                 print_level = 0
                 driver.opt_settings['print_user_options'] = 'no'
             elif verbosity == Verbosity.BRIEF:
-                # print_level = 5
-                print_level = 3
+                print_level = 3  # minimum to get exit status
                 driver.opt_settings['print_user_options'] = 'no'
                 driver.opt_settings['print_frequency_iter'] = 10
             elif verbosity == Verbosity.VERBOSE:
@@ -1309,10 +1308,9 @@ class AviaryProblem(om.Problem):
                 driver.options['print_opt_prob'] = True
 
         # optimizer agnostic settings
-        if verbosity > Verbosity.QUIET:  # BRIEF, VERBOSE, QUIET
-            if isinstance(verbosity, list):
-                driver.options['debug_print'] = ['desvars']
-            elif verbosity == Verbosity.DEBUG:
+        if verbosity >= Verbosity.VERBOSE:  # VERBOSE, DEBUG
+            driver.options['debug_print'] = ['desvars']
+            if verbosity == Verbosity.DEBUG:
                 driver.options['debug_print'] = [
                     'desvars',
                     'ln_cons',
@@ -1706,6 +1704,10 @@ class AviaryProblem(om.Problem):
         """
         Lightly wrapped setup() method for the problem.
         """
+        # verbosity is not used in this method, but it is understandable that a user
+        # might try and include it (only method that doesn't accept it). Capture it
+        if 'verbosity' in kwargs:
+            kwargs.pop('verbosity')
         # Use OpenMDAO's model options to pass all options through the system hierarchy.
         setup_model_options(self, self.aviary_inputs, self.meta_data)
 
@@ -1901,6 +1903,7 @@ class AviaryProblem(om.Problem):
         run_driver=True,
         simulate=False,
         make_plots=True,
+        verbosity=None,
     ):
         """
         This function actually runs the Aviary problem, which could be a simulation, optimization, or a driver execution, depending on the arguments provided.
@@ -1922,7 +1925,14 @@ class AviaryProblem(om.Problem):
         make_plots : bool, optional
             If True (default), Dymos html plots will be generated as part of the output.
         """
-        verbosity = self.aviary_inputs.get_val(Settings.VERBOSITY)
+        # `self.verbosity` is "true" verbosity for entire run. `verbosity` is verbosity
+        # override for just this method
+        if verbosity is not None:
+            # compatibility with being passed int for verbosity
+            verbosity = Verbosity(verbosity)
+        else:
+            verbosity = self.verbosity  # defaults to BRIEF
+
         if verbosity >= Verbosity.VERBOSE:  # VERBOSE, DEBUG
             self.final_setup()
             with open('input_list.txt', 'w') as outfile:
