@@ -394,8 +394,8 @@ def timeseries_csv(prob, **kwargs):
 
             if variable_str not in timeseries_outputs:
                 Warning(
-                    f'Variable {variable_str} not found in timeseries_outputs for phase {
-                        phase_name}.'
+                    f'Variable {variable_str} not found in timeseries_outputs for phase '
+                    f'{phase_name}.'
                 )
                 val = np.zeros_like(timeseries_outputs[time_str]['val'])
                 val[:] = np.nan
