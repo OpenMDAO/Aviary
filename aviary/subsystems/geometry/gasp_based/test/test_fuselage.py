@@ -469,7 +469,7 @@ class BWBFuselageParameters1TestCase(unittest.TestCase):
         assert_near_equal(
             self.prob[Aircraft.Fuselage.AVG_DIAMETER], 38.0, tol)
         assert_near_equal(
-            self.prob[Aircraft.Fuselage.HYDRAULIC_DIAMETER], 38.0, tol)
+            self.prob[Aircraft.Fuselage.HYDRAULIC_DIAMETER], 21.354512, tol)
         assert_near_equal(self.prob['cabin_height'], 12.0004, tol)
         assert_near_equal(self.prob['nose_height'], 7.0004, tol)
         assert_near_equal(self.prob['nose_length'], 4.20024, tol)
@@ -624,6 +624,6 @@ class BWBFuselageParameters2TestCase(unittest.TestCase):
 
 if __name__ == "__main__":
     #unittest.main()
-    test = BWBLayoutTestCase()
+    test = BWBFuselageParameters1TestCase()
     test.setUp()
-    test.test_case2()
+    test.test_case1()

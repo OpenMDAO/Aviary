@@ -293,9 +293,10 @@ class BWBFuselageParameters1(om.ExplicitComponent):
             ],
         )
         self.declare_partials(
-            Aircraft.BWB.HYDRAULIC_DIAMETER,
+            Aircraft.Fuselage.HYDRAULIC_DIAMETER,
             [
                 Aircraft.Fuselage.PRESSURIZED_WIDTH_ADDITIONAL,
+                Aircraft.Fuselage.HEIGHT_TO_WIDTH_RATIO,
             ],
         )
         self.declare_partials(
@@ -357,23 +358,29 @@ class BWBFuselageParameters1(om.ExplicitComponent):
         seat_width, _ = options[Aircraft.Fuselage.SEAT_WIDTH]
         num_aisle = options[Aircraft.Fuselage.NUM_AISLES]
         aisle_width, _ = options[Aircraft.Fuselage.AISLE_WIDTH]
+        additional_width = inputs[Aircraft.Fuselage.PRESSURIZED_WIDTH_ADDITIONAL]
         cabin_width = (seats_abreast * seat_width + num_aisle * aisle_width)/12.0 + 1.0
+        body_width = cabin_width + additional_width
 
         nose_height_to_length = inputs[Aircraft.Fuselage.HEIGHT_TO_WIDTH_RATIO]
         delta_diameter = inputs[Aircraft.Fuselage.DELTA_DIAMETER]
         nose_fineness = inputs[Aircraft.Fuselage.NOSE_FINENESS]
+        hydraulic_diameter = np.sqrt(body_width * cabin_width * nose_height_to_length)
 
         J[Aircraft.Fuselage.AVG_DIAMETER, Aircraft.Fuselage.PRESSURIZED_WIDTH_ADDITIONAL] = 1.0
+
+        J[Aircraft.Fuselage.HYDRAULIC_DIAMETER, Aircraft.Fuselage.PRESSURIZED_WIDTH_ADDITIONAL] = 0.5 * cabin_width * nose_height_to_length / hydraulic_diameter
+        J[Aircraft.Fuselage.HYDRAULIC_DIAMETER, Aircraft.Fuselage.HEIGHT_TO_WIDTH_RATIO] = 0.5 * body_width * cabin_width / hydraulic_diameter
+
         J["cabin_height", Aircraft.Fuselage.HEIGHT_TO_WIDTH_RATIO] = cabin_width
+
         J["nose_height", Aircraft.Fuselage.HEIGHT_TO_WIDTH_RATIO] = cabin_width
         J["nose_height", Aircraft.Fuselage.DELTA_DIAMETER] = -1.0
+
         J["nose_length", Aircraft.Fuselage.HEIGHT_TO_WIDTH_RATIO] = cabin_width * nose_fineness
         J["nose_length", Aircraft.Fuselage.DELTA_DIAMETER] = -nose_fineness
         J["nose_length", Aircraft.Fuselage.NOSE_FINENESS] = cabin_width * \
             nose_height_to_length - delta_diameter
-
-        #TODO
-        J[Aircraft.Fuselage.AVG_DIAMETER, Aircraft.Fuselage.PRESSURIZED_WIDTH_ADDITIONAL] = 0.0
 
 
 class BWBCabinLayout(om.ExplicitComponent):
