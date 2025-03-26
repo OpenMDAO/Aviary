@@ -258,7 +258,7 @@ class FuselageGroup(om.Group):
         )
 
 
-class BWBFuselageParameters(om.ExplicitComponent):
+class BWBFuselageParameters1(om.ExplicitComponent):
     """
     Computation of average fuselage diameter, cabin height, cabin length and nose height for BWB.
     """
@@ -268,12 +268,112 @@ class BWBFuselageParameters(om.ExplicitComponent):
         add_aviary_option(self, Aircraft.Fuselage.AISLE_WIDTH, units='inch')
         add_aviary_option(self, Aircraft.Fuselage.NUM_AISLES)
         add_aviary_option(self, Aircraft.Fuselage.NUM_SEATS_ABREAST)
-        add_aviary_option(self, Aircraft.Fuselage.SEAT_PITCH, units='inch')
         add_aviary_option(self, Aircraft.Fuselage.SEAT_WIDTH, units='inch')
         add_aviary_option(self, Settings.VERBOSITY)
 
     def setup(self):
-        pass
+
+        add_aviary_input(self, Aircraft.Fuselage.DELTA_DIAMETER, units='ft')
+        add_aviary_input(self, Aircraft.Fuselage.HEIGHT_TO_WIDTH_RATIO, units='unitless')
+        add_aviary_input(self,
+                         Aircraft.Fuselage.PRESSURIZED_WIDTH_ADDITIONAL, units='ft')
+        add_aviary_input(self, Aircraft.Fuselage.NOSE_FINENESS, units='unitless')
+
+        add_aviary_output(self, Aircraft.Fuselage.AVG_DIAMETER, units='ft')
+        add_aviary_output(self, Aircraft.Fuselage.HYDRAULIC_DIAMETER, units='ft', desc='DHYDRAL')
+        self.add_output("cabin_height", units="ft", desc="HC: height of cabin")
+        self.add_output("nose_height", units="ft", desc="HN: height of nose")
+        self.add_output("nose_length", units="ft", desc="L_NOSE: length of nose")
+
+    def setup_partials(self):
+        self.declare_partials(
+            Aircraft.Fuselage.AVG_DIAMETER,
+            [
+                Aircraft.Fuselage.PRESSURIZED_WIDTH_ADDITIONAL,
+            ],
+        )
+        self.declare_partials(
+            Aircraft.BWB.HYDRAULIC_DIAMETER,
+            [
+                Aircraft.Fuselage.PRESSURIZED_WIDTH_ADDITIONAL,
+            ],
+        )
+        self.declare_partials(
+            "cabin_height",
+            [
+                Aircraft.Fuselage.HEIGHT_TO_WIDTH_RATIO,
+            ],
+        )
+        self.declare_partials(
+            "nose_height",
+            [
+                Aircraft.Fuselage.HEIGHT_TO_WIDTH_RATIO,
+                Aircraft.Fuselage.DELTA_DIAMETER,
+            ],
+        )
+        self.declare_partials(
+            "nose_length",
+            [
+                Aircraft.Fuselage.HEIGHT_TO_WIDTH_RATIO,
+                Aircraft.Fuselage.DELTA_DIAMETER,
+                Aircraft.Fuselage.NOSE_FINENESS,
+            ],
+        )
+
+    def compute(self, inputs, outputs):
+        options = self.options
+        verbosity = options[Settings.VERBOSITY]
+
+        seats_abreast = options[Aircraft.Fuselage.NUM_SEATS_ABREAST]
+        seat_width, _ = options[Aircraft.Fuselage.SEAT_WIDTH]
+        num_aisle = options[Aircraft.Fuselage.NUM_AISLES]
+        aisle_width, _ = options[Aircraft.Fuselage.AISLE_WIDTH]
+        PAX = options[Aircraft.CrewPayload.Design.NUM_PASSENGERS]
+        additional_width = inputs[Aircraft.Fuselage.PRESSURIZED_WIDTH_ADDITIONAL]
+        cabin_width = (seats_abreast * seat_width + num_aisle * aisle_width) / 12.0 + 1.0
+        body_width = cabin_width + additional_width
+
+        cabin_height = cabin_width * inputs[Aircraft.Fuselage.HEIGHT_TO_WIDTH_RATIO]
+        nose_height = cabin_height - inputs[Aircraft.Fuselage.DELTA_DIAMETER]
+        nose_length = nose_height * inputs[Aircraft.Fuselage.NOSE_FINENESS]
+
+        if PAX < 1:
+            if verbosity >= Verbosity.BRIEF:
+                print("Warning: you have not specified at least one passenger")
+
+        fuselage_cross_area = np.pi * body_width * cabin_height / 4.0
+        hydraulic_diameter = np.sqrt(4.*fuselage_cross_area / np.pi)
+
+        outputs[Aircraft.Fuselage.AVG_DIAMETER] = body_width
+        outputs[Aircraft.Fuselage.HYDRAULIC_DIAMETER] = hydraulic_diameter
+        outputs["cabin_height"] = cabin_height
+        outputs["nose_height"] = nose_height
+        outputs["nose_length"] = nose_length
+
+    def compute_partials(self, inputs, J):
+        options = self.options
+
+        seats_abreast = options[Aircraft.Fuselage.NUM_SEATS_ABREAST]
+        seat_width, _ = options[Aircraft.Fuselage.SEAT_WIDTH]
+        num_aisle = options[Aircraft.Fuselage.NUM_AISLES]
+        aisle_width, _ = options[Aircraft.Fuselage.AISLE_WIDTH]
+        cabin_width = (seats_abreast * seat_width + num_aisle * aisle_width)/12.0 + 1.0
+
+        nose_height_to_length = inputs[Aircraft.Fuselage.HEIGHT_TO_WIDTH_RATIO]
+        delta_diameter = inputs[Aircraft.Fuselage.DELTA_DIAMETER]
+        nose_fineness = inputs[Aircraft.Fuselage.NOSE_FINENESS]
+
+        J[Aircraft.Fuselage.AVG_DIAMETER, Aircraft.Fuselage.PRESSURIZED_WIDTH_ADDITIONAL] = 1.0
+        J["cabin_height", Aircraft.Fuselage.HEIGHT_TO_WIDTH_RATIO] = cabin_width
+        J["nose_height", Aircraft.Fuselage.HEIGHT_TO_WIDTH_RATIO] = cabin_width
+        J["nose_height", Aircraft.Fuselage.DELTA_DIAMETER] = -1.0
+        J["nose_length", Aircraft.Fuselage.HEIGHT_TO_WIDTH_RATIO] = cabin_width * nose_fineness
+        J["nose_length", Aircraft.Fuselage.DELTA_DIAMETER] = -nose_fineness
+        J["nose_length", Aircraft.Fuselage.NOSE_FINENESS] = cabin_width * \
+            nose_height_to_length - delta_diameter
+
+        #TODO
+        J[Aircraft.Fuselage.AVG_DIAMETER, Aircraft.Fuselage.PRESSURIZED_WIDTH_ADDITIONAL] = 0.0
 
 
 class BWBCabinLayout(om.ExplicitComponent):
@@ -282,8 +382,6 @@ class BWBCabinLayout(om.ExplicitComponent):
     """
 
     def initialize(self):
-        add_aviary_option(self, Aircraft.Fuselage.NUM_SEATS_ABREAST,
-                          units='unitless', desc='INGASP.SAB')
         add_aviary_option(self, Aircraft.Fuselage.SEAT_WIDTH,
                           units='inch', desc='INGASP.WS')
         add_aviary_option(self, Aircraft.Fuselage.NUM_AISLES,
@@ -303,7 +401,10 @@ class BWBCabinLayout(om.ExplicitComponent):
                          units='deg')
         add_aviary_input(self, Aircraft.Fuselage.PILOT_COMPARTMENT_LENGTH,
                          units='ft')
-        self.add_input('nose_length', units='ft')
+        add_aviary_input(self, Aircraft.Fuselage.AVG_DIAMETER, units='ft')
+        self.add_input('nose_length', units='ft', desc='L_NOSE: nose length')
+        add_aviary_input(self,
+                         Aircraft.Fuselage.PRESSURIZED_WIDTH_ADDITIONAL, units='ft')
 
         self.add_output('fuselage_station_aft', units='ft',
                         desc='EL_AFT: fuselage station of aft pressure bulkhead')
@@ -327,7 +428,7 @@ class BWBCabinLayout(om.ExplicitComponent):
         TC_galley_area_per_pax = 0.15  # AGAL_TC: tourist class galley area per passenger, ft**2
         # If there is no first class cabin, please set NUM_FIRST_CLASS = 0.
 
-        num_seat_abreast = options[Aircraft.Fuselage.NUM_SEATS_ABREAST]
+        #num_seat_abreast = options[Aircraft.Fuselage.NUM_SEATS_ABREAST]
         TC_seat_pitch, _ = options[Aircraft.Fuselage.SEAT_PITCH]
         seat_width, _ = options[Aircraft.Fuselage.SEAT_WIDTH]
         if seat_width <= 0.0:
@@ -335,8 +436,9 @@ class BWBCabinLayout(om.ExplicitComponent):
         aisle_width, _ = options[Aircraft.Fuselage.AISLE_WIDTH]
         num_aisles = options[Aircraft.Fuselage.NUM_AISLES]
 
-        cabin_width = (num_seat_abreast * seat_width +
-                       num_aisles * aisle_width) / 12.0 + 1.
+        body_width = inputs[Aircraft.Fuselage.AVG_DIAMETER][0]
+        additional_width = inputs[Aircraft.Fuselage.PRESSURIZED_WIDTH_ADDITIONAL][0]
+        cabin_width = body_width - additional_width
 
         sweep_FB = inputs[Aircraft.BWB.PASSENGER_LEADING_EDGE_SWEEP][0]
         pax = options[Aircraft.CrewPayload.Design.NUM_PASSENGERS]
@@ -455,3 +557,67 @@ class BWBCabinLayout(om.ExplicitComponent):
                 TC_seat_pitch / 12.0 + TC_lav_width / 12.0
 
         outputs['fuselage_station_aft'] = EL_AFT
+
+
+class BWBFuselageParameters2(om.ExplicitComponent):
+    """
+    Computation of average fuselage diameter, cabin height, cabin length and nose height for BWB.
+    """
+
+    def initialize(self):
+        add_aviary_option(self, Settings.VERBOSITY)
+
+    def setup(self):
+
+        add_aviary_input(self, Aircraft.BWB.PASSENGER_LEADING_EDGE_SWEEP,
+                         units='deg')
+        add_aviary_input(self, Aircraft.Fuselage.PILOT_COMPARTMENT_LENGTH, units='ft')
+        add_aviary_input(self, Aircraft.Fuselage.AVG_DIAMETER, units='ft')
+        add_aviary_input(self, Aircraft.Fuselage.PRESSURIZED_WIDTH_ADDITIONAL, units='ft')
+        add_aviary_input(self, Aircraft.Fuselage.TAIL_FINENESS, units='unitless', desc='ELODT')
+        self.add_input("fuselage_station_aft", units="ft", desc="EL_AFT: fuselage station of aft pressure bulkhead")
+        self.add_input("nose_length", units="ft", desc="L_NOSE: length of nose")
+        self.add_input("cabin_height", val=0, units="ft", desc="HC: height of cabin")
+
+        add_aviary_output(self, Aircraft.BWB.CABIN_AREA, units='ft**2', desc='ACABIN')
+        add_aviary_output(self, Aircraft.Fuselage.PLANFORM_AREA, units='ft**2', desc='SPF_BODY')
+        self.add_output("cabin_len", val=0, units="ft", desc="LC: length of cabin")
+
+    def setup_partials(self):
+        pass
+
+    def compute(self, inputs, outputs):
+        options = self.options
+        verbosity = options[Settings.VERBOSITY]
+        rad2deg = 180. / np.pi
+
+        forebody_sweep = inputs[Aircraft.BWB.PASSENGER_LEADING_EDGE_SWEEP]
+        body_width = inputs[Aircraft.Fuselage.AVG_DIAMETER]
+        additional_width = inputs[Aircraft.Fuselage.PRESSURIZED_WIDTH_ADDITIONAL]
+        pilot_comp_len = inputs[Aircraft.Fuselage.PILOT_COMPARTMENT_LENGTH]
+        len_to_diam_tail_cone = inputs[Aircraft.Fuselage.TAIL_FINENESS]
+        nose_len = inputs['nose_length']
+        cabin_height = inputs['cabin_height']
+        fuselage_station_aft = inputs['fuselage_station_aft']
+
+        cabin_width = body_width - additional_width
+        forebody_len = 0.5 * cabin_width * np.tan(forebody_sweep / rad2deg)
+        nose_width = 2.0 * nose_len / np.tan(forebody_sweep / rad2deg)
+        aftbody_len = len_to_diam_tail_cone * cabin_height
+        cabin_len = fuselage_station_aft - nose_len - pilot_comp_len
+
+        area_nose_PF = 0.5 * nose_len * nose_width
+        area_aftbody_PF = aftbody_len * (cabin_width + body_width) / 2.0 
+        area_forebody = (forebody_len - nose_len) * (body_width + nose_width) / 2.0
+        area_aft = body_width * (fuselage_station_aft - forebody_len)
+        area_cabin = area_forebody + area_aft
+
+        area_body_PF = area_nose_PF + area_cabin + area_aftbody_PF
+
+        outputs['cabin_len'] = cabin_len
+        outputs[Aircraft.BWB.CABIN_AREA] = area_cabin
+        outputs[Aircraft.Fuselage.PLANFORM_AREA] = area_body_PF
+
+    def compute_partials(self, inputs, J):
+        options = self.options
+
