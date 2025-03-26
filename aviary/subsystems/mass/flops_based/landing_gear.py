@@ -19,14 +19,16 @@ class LandingGearMass(om.ExplicitComponent):
     # equations
 
     def setup(self):
-        add_aviary_input(self, Aircraft.LandingGear.MAIN_GEAR_OLEO_LENGTH)
-        add_aviary_input(self, Aircraft.LandingGear.MAIN_GEAR_MASS_SCALER)
-        add_aviary_input(self, Aircraft.LandingGear.NOSE_GEAR_OLEO_LENGTH)
-        add_aviary_input(self, Aircraft.LandingGear.NOSE_GEAR_MASS_SCALER)
-        add_aviary_input(self, Aircraft.Design.TOUCHDOWN_MASS)
+        add_aviary_input(self, Aircraft.LandingGear.MAIN_GEAR_OLEO_LENGTH, units='inch')
+        add_aviary_input(self, Aircraft.LandingGear.MAIN_GEAR_MASS_SCALER,
+                         units='unitless')
+        add_aviary_input(self, Aircraft.LandingGear.NOSE_GEAR_OLEO_LENGTH, units='inch')
+        add_aviary_input(self, Aircraft.LandingGear.NOSE_GEAR_MASS_SCALER,
+                         units='unitless')
+        add_aviary_input(self, Aircraft.Design.TOUCHDOWN_MASS, units='lbm')
 
-        add_aviary_output(self, Aircraft.LandingGear.MAIN_GEAR_MASS)
-        add_aviary_output(self, Aircraft.LandingGear.NOSE_GEAR_MASS)
+        add_aviary_output(self, Aircraft.LandingGear.MAIN_GEAR_MASS, units='lbm')
+        add_aviary_output(self, Aircraft.LandingGear.NOSE_GEAR_MASS, units='lbm')
 
         # TODO landing weight is not a landing_gear component level variable
         # self.add_input('aircraft:landing_gear:weights:landing_weight', val=0.0, desc='design landing weight', units='lbf')
@@ -126,14 +128,16 @@ class AltLandingGearMass(om.ExplicitComponent):
     '''
 
     def setup(self):
-        add_aviary_input(self, Aircraft.LandingGear.MAIN_GEAR_OLEO_LENGTH)
-        add_aviary_input(self, Aircraft.LandingGear.MAIN_GEAR_MASS_SCALER)
-        add_aviary_input(self, Aircraft.LandingGear.NOSE_GEAR_OLEO_LENGTH)
-        add_aviary_input(self, Aircraft.LandingGear.NOSE_GEAR_MASS_SCALER)
-        add_aviary_input(self, Mission.Design.GROSS_MASS)
+        add_aviary_input(self, Aircraft.LandingGear.MAIN_GEAR_OLEO_LENGTH, units='inch')
+        add_aviary_input(self, Aircraft.LandingGear.MAIN_GEAR_MASS_SCALER,
+                         units='unitless')
+        add_aviary_input(self, Aircraft.LandingGear.NOSE_GEAR_OLEO_LENGTH, units='inch')
+        add_aviary_input(self, Aircraft.LandingGear.NOSE_GEAR_MASS_SCALER,
+                         units='unitless')
+        add_aviary_input(self, Mission.Design.GROSS_MASS, units='lbm')
 
-        add_aviary_output(self, Aircraft.LandingGear.MAIN_GEAR_MASS)
-        add_aviary_output(self, Aircraft.LandingGear.NOSE_GEAR_MASS)
+        add_aviary_output(self, Aircraft.LandingGear.MAIN_GEAR_MASS, units='lbm')
+        add_aviary_output(self, Aircraft.LandingGear.NOSE_GEAR_MASS, units='lbm')
 
     def setup_partials(self):
         self.declare_partials(Aircraft.LandingGear.MAIN_GEAR_MASS, [
@@ -235,8 +239,8 @@ class NoseGearLength(om.ExplicitComponent):
     """
 
     def setup(self):
-        add_aviary_input(self, Aircraft.LandingGear.MAIN_GEAR_OLEO_LENGTH)
-        add_aviary_output(self, Aircraft.LandingGear.NOSE_GEAR_OLEO_LENGTH)
+        add_aviary_input(self, Aircraft.LandingGear.MAIN_GEAR_OLEO_LENGTH, units='inch')
+        add_aviary_output(self, Aircraft.LandingGear.NOSE_GEAR_OLEO_LENGTH, units='inch')
 
     def setup_partials(self):
         self.declare_partials(Aircraft.LandingGear.NOSE_GEAR_OLEO_LENGTH,
@@ -251,6 +255,8 @@ class NoseGearLength(om.ExplicitComponent):
 class MainGearLength(om.ExplicitComponent):
     """
     Computation of main gear length.
+
+    TODO does not support more than two wing engines, or more than one engine model
     """
 
     def initialize(self):
@@ -259,22 +265,26 @@ class MainGearLength(om.ExplicitComponent):
 
     def setup(self):
         num_engine_type = len(self.options[Aircraft.Engine.NUM_ENGINES])
-        num_wing_engines = self.options[Aircraft.Engine.NUM_WING_ENGINES]
+        num_wing_engines_total = sum(self.options[Aircraft.Engine.NUM_WING_ENGINES])
 
-        add_aviary_input(self, Aircraft.Fuselage.LENGTH)
-        add_aviary_input(self, Aircraft.Fuselage.MAX_WIDTH)
-        add_aviary_input(self, Aircraft.Nacelle.AVG_DIAMETER, shape=num_engine_type)
-        if any(num_wing_engines) > 0:
-            # XJ: shape=(num_engine_type, int(num_wing_engines[0]/2))
-            add_aviary_input(self, Aircraft.Engine.WING_LOCATIONS, val=np.zeros(
-                (num_engine_type, int(num_wing_engines[0] / 2))))
-        else:
-            add_aviary_input(self, Aircraft.Engine.WING_LOCATIONS,
-                             val=[[0.0]])
-        add_aviary_input(self, Aircraft.Wing.DIHEDRAL)
-        add_aviary_input(self, Aircraft.Wing.SPAN)
+        add_aviary_input(self, Aircraft.Fuselage.LENGTH, units='ft')
+        add_aviary_input(self, Aircraft.Fuselage.MAX_WIDTH, units='ft')
+        add_aviary_input(self, Aircraft.Nacelle.AVG_DIAMETER,
+                         shape=num_engine_type, units='ft')
+        if num_wing_engines_total > 1:
+            add_aviary_input(
+                self,
+                Aircraft.Engine.WING_LOCATIONS,
+                shape=int(num_wing_engines_total / 2),
+                units='unitless',
+            )
+        else:  # this case is not tested
+            add_aviary_input(self, Aircraft.Engine.WING_LOCATIONS, units='unitless')
 
-        add_aviary_output(self, Aircraft.LandingGear.MAIN_GEAR_OLEO_LENGTH)
+        add_aviary_input(self, Aircraft.Wing.DIHEDRAL, units='deg')
+        add_aviary_input(self, Aircraft.Wing.SPAN, units='ft')
+
+        add_aviary_output(self, Aircraft.LandingGear.MAIN_GEAR_OLEO_LENGTH, units='inch')
 
     def setup_partials(self):
         self.declare_partials('*', '*')
@@ -285,12 +295,12 @@ class MainGearLength(om.ExplicitComponent):
         # TODO temp using first engine, heterogeneous engines not supported
         num_wing_eng = self.options[Aircraft.Engine.NUM_WING_ENGINES][0]
 
-        y_eng_fore = inputs[Aircraft.Engine.WING_LOCATIONS][0][0]
-
         # TODO: high engine-count configuation.
         y_eng_aft = 0
 
         if num_wing_eng > 0:
+            y_eng_fore = inputs[Aircraft.Engine.WING_LOCATIONS][0]
+
             tan_dih = np.tan(inputs[Aircraft.Wing.DIHEDRAL] * DEG2RAD)
             fuse_half_width = inputs[Aircraft.Fuselage.MAX_WIDTH] * 6.0
 
@@ -324,10 +334,11 @@ class MainGearLength(om.ExplicitComponent):
         num_eng = self.options[Aircraft.Engine.NUM_ENGINES][0]
         num_wing_eng = self.options[Aircraft.Engine.NUM_WING_ENGINES][0]
 
-        y_eng_fore = inputs[Aircraft.Engine.WING_LOCATIONS][0][0]
         y_eng_aft = 0
 
         if num_wing_eng > 0:
+            y_eng_fore = inputs[Aircraft.Engine.WING_LOCATIONS][0]
+
             tan_dih = np.tan(inputs[Aircraft.Wing.DIHEDRAL] * DEG2RAD)
             dtan_dih = DEG2RAD / np.cos(inputs[Aircraft.Wing.DIHEDRAL] * DEG2RAD) ** 2
 

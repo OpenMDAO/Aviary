@@ -552,7 +552,7 @@ class AviaryProblem(om.Problem):
 
         return phase
 
-    def add_phases(self, phase_info_parameterization=None):
+    def add_phases(self, phase_info_parameterization=None, parallel_phases=True):
         """
         Add the mission phases to the problem trajectory based on the user-specified
         phase_info dictionary.
@@ -561,6 +561,9 @@ class AviaryProblem(om.Problem):
         ----------
         phase_info_parameterization (function, optional): A function that takes in the phase_info dictionary
             and aviary_inputs and returns modified phase_info. Defaults to None.
+
+        parallel_phases (bool, optional): If True, the top-level container of all phases will be a ParallelGroup,
+            otherwise it will be a standard OpenMDAO Group. Defaults to True.
 
         Returns
         -------
@@ -574,7 +577,8 @@ class AviaryProblem(om.Problem):
 
         if self.analysis_scheme is AnalysisScheme.COLLOCATION:
             phases = list(phase_info.keys())
-            traj = self.model.add_subsystem('traj', dm.Trajectory())
+            traj = self.model.add_subsystem(
+                'traj', dm.Trajectory(parallel_phases=parallel_phases))
 
         elif self.analysis_scheme is AnalysisScheme.SHOOTING:
             vb = self.aviary_inputs.get_val(Settings.VERBOSITY)
@@ -1221,7 +1225,7 @@ class AviaryProblem(om.Problem):
 
             if self.mission_method is TWO_DEGREES_OF_FREEDOM and self.analysis_scheme is AnalysisScheme.COLLOCATION:
                 # problem formulation to make the trajectory work
-                self.model.add_design_var(Mission.Takeoff.ASCENT_T_INTIIAL,
+                self.model.add_design_var(Mission.Takeoff.ASCENT_T_INITIAL,
                                           lower=0, upper=100, ref=30.0)
                 self.model.add_design_var(Mission.Takeoff.ASCENT_DURATION,
                                           lower=1, upper=1000, ref=10.)
@@ -1585,7 +1589,7 @@ class AviaryProblem(om.Problem):
     def run_aviary_problem(self, record_filename="problem_history.db",
                            optimization_history_filename=None, restart_filename=None,
                            suppress_solver_print=True, run_driver=True, simulate=False,
-                           make_plots=True):
+                           make_plots=True, gen_n2=True):
         """
         This function actually runs the Aviary problem, which could be a simulation, optimization, or a driver execution, depending on the arguments provided.
 
@@ -1630,14 +1634,15 @@ class AviaryProblem(om.Problem):
             failed = self.run_model()
             warnings.filterwarnings('default', category=UserWarning)
 
-        # update n2 diagram after run.
-        outdir = Path(self.get_reports_dir(force=True))
-        outfile = os.path.join(outdir, "n2.html")
-        om.n2(
-            self,
-            outfile=outfile,
-            show_browser=False,
-        )
+        if gen_n2:
+            # update n2 diagram after run.
+            outdir = Path(self.get_reports_dir(force=True))
+            outfile = os.path.join(outdir, "n2.html")
+            om.n2(
+                self,
+                outfile=outfile,
+                show_browser=False,
+            )
 
         if self.aviary_inputs.get_val(Settings.VERBOSITY).value >= 2:
             with open('output_list.txt', 'w') as outfile:

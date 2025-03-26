@@ -16,12 +16,16 @@ class CableSize(om.ExplicitComponent):
     def setup(self):
         total_num_wing_engines = self.options[Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES]
 
-        add_aviary_input(self, Aircraft.Engine.WING_LOCATIONS,
-                         shape=int(total_num_wing_engines/2))
-        add_aviary_input(self, Aircraft.Wing.SPAN)
-        add_aviary_input(self, Aircraft.Fuselage.AVG_DIAMETER)
+        add_aviary_input(
+            self,
+            Aircraft.Engine.WING_LOCATIONS,
+            shape=int(total_num_wing_engines / 2),
+            units='unitless',
+        )
+        add_aviary_input(self, Aircraft.Wing.SPAN, units='ft')
+        add_aviary_input(self, Aircraft.Fuselage.AVG_DIAMETER, units='ft')
 
-        add_aviary_output(self, Aircraft.Electrical.HYBRID_CABLE_LENGTH)
+        add_aviary_output(self, Aircraft.Electrical.HYBRID_CABLE_LENGTH, units='ft')
 
         self.declare_partials(
             Aircraft.Electrical.HYBRID_CABLE_LENGTH,

@@ -4,6 +4,7 @@ import numpy as np
 import openmdao.api as om
 
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
+from openmdao.utils.testing_utils import use_tempdirs
 
 from aviary import constants
 from aviary.constants import RHO_SEA_LEVEL_ENGLISH
@@ -21,6 +22,7 @@ from aviary.variable_info.options import get_option_defaults
 from aviary.variable_info.variables import Aircraft, Mission, Settings
 
 
+@use_tempdirs
 class MassParametersTestCase1(unittest.TestCase):
     """this is large single aisle 1 v3 bug fixed test case"""
 
@@ -80,6 +82,7 @@ class MassParametersTestCase1(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
 
 
+@use_tempdirs
 class MassParametersTestCase2(unittest.TestCase):
     def setUp(self):
 
@@ -134,6 +137,7 @@ class MassParametersTestCase2(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
 
 
+@use_tempdirs
 class MassParametersTestCase3(unittest.TestCase):
     def setUp(self):
 
@@ -190,6 +194,7 @@ class MassParametersTestCase3(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
 
 
+@use_tempdirs
 class MassParametersTestCase4(unittest.TestCase):
     def setUp(self):
 
@@ -246,6 +251,7 @@ class MassParametersTestCase4(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
 
 
+@use_tempdirs
 class MassParametersTestCase5(unittest.TestCase):
     def setUp(self):
 
@@ -303,6 +309,7 @@ class MassParametersTestCase5(unittest.TestCase):
 
 
 # this is the large single aisle 1 V3 test case
+@use_tempdirs
 class PayloadMassTestCase(unittest.TestCase):
     def setUp(self):
 
@@ -345,6 +352,7 @@ class PayloadMassTestCase(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
 
 
+@use_tempdirs
 class ElectricAugmentationTestCase(unittest.TestCase):
     def setUp(self):
 
@@ -421,12 +429,14 @@ class ElectricAugmentationTestCase(unittest.TestCase):
         assert_check_partials(partial_data, atol=4e-12, rtol=1e-12)
 
 
+@use_tempdirs
 class EngineTestCase1(unittest.TestCase):  # this is the large single aisle 1 V3 test case
     def setUp(self):
 
         options = get_option_defaults()
         options.set_val(Aircraft.Electrical.HAS_HYBRID_SYSTEM,
                         val=False, units='unitless')
+        options.set_val(Aircraft.Engine.ADDITIONAL_MASS_FRACTION, 0.14)
 
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
@@ -449,9 +459,6 @@ class EngineTestCase1(unittest.TestCase):  # this is the large single aisle 1 V3
         )  # bug fixed value and original value
         self.prob.model.set_input_defaults(
             Aircraft.Engine.PYLON_FACTOR, val=1.25, units="unitless"
-        )  # bug fixed value and original value
-        self.prob.model.set_input_defaults(
-            Aircraft.Engine.ADDITIONAL_MASS_FRACTION, val=0.14, units="unitless"
         )  # bug fixed value and original value
         self.prob.model.set_input_defaults(
             Aircraft.Engine.MASS_SCALER, val=1, units="unitless"
@@ -498,11 +505,13 @@ class EngineTestCase1(unittest.TestCase):  # this is the large single aisle 1 V3
         assert_check_partials(partial_data, atol=2e-11, rtol=1e-12)
 
 
+@use_tempdirs
 class EngineTestCase2(unittest.TestCase):
     def setUp(self):
 
         options = get_option_defaults()
         options.set_val(Aircraft.Engine.HAS_PROPELLERS, val=[True], units='unitless')
+        options.set_val(Aircraft.Engine.ADDITIONAL_MASS_FRACTION, 0.14)
 
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
@@ -525,9 +534,6 @@ class EngineTestCase2(unittest.TestCase):
         )  # bug fixed value and original value
         self.prob.model.set_input_defaults(
             Aircraft.Engine.PYLON_FACTOR, val=1.25, units="unitless"
-        )  # bug fixed value and original value
-        self.prob.model.set_input_defaults(
-            Aircraft.Engine.ADDITIONAL_MASS_FRACTION, val=0.14, units="unitless"
         )  # bug fixed value and original value
         self.prob.model.set_input_defaults(
             Aircraft.Engine.MASS_SCALER, val=1, units="unitless"
@@ -584,6 +590,7 @@ class EngineTestCase2(unittest.TestCase):
 
 
 # arbitarary test case with multiple engine types
+@use_tempdirs
 class EngineTestCaseMultiEngine(unittest.TestCase):
     def test_case_1(self):
 
@@ -592,7 +599,8 @@ class EngineTestCaseMultiEngine(unittest.TestCase):
                         val=False, units='unitless')
 
         options.set_val(Aircraft.Engine.NUM_ENGINES, np.array([2, 4]))
-        options.set_val(Aircraft.Propulsion.TOTAL_NUM_ENGINES, 6)
+        options.set_val(Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES, 6)
+        options.set_val(Aircraft.Engine.ADDITIONAL_MASS_FRACTION, np.array([0.14, 0.19]))
 
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
@@ -611,8 +619,6 @@ class EngineTestCaseMultiEngine(unittest.TestCase):
             Aircraft.Nacelle.SURFACE_AREA, val=[339.58, 235.66], units="ft**2")
         self.prob.model.set_input_defaults(
             Aircraft.Engine.PYLON_FACTOR, val=[1.25, 1.28], units="unitless")
-        self.prob.model.set_input_defaults(
-            Aircraft.Engine.ADDITIONAL_MASS_FRACTION, val=[0.14, 0.19], units="unitless")
         self.prob.model.set_input_defaults(
             Aircraft.Engine.MASS_SCALER, val=[1, 0.9], units="unitless")
         self.prob.model.set_input_defaults(
@@ -651,6 +657,7 @@ class EngineTestCaseMultiEngine(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e-10, rtol=1e-10)
 
 
+@use_tempdirs
 class TailTestCase(unittest.TestCase):  # this is the large single aisle 1 V3 test case
     def setUp(self):
 
@@ -746,6 +753,7 @@ class TailTestCase(unittest.TestCase):  # this is the large single aisle 1 V3 te
 
 
 # this is a different configuration with turbofan_23k_1 test case
+@use_tempdirs
 class HighLiftTestCase(unittest.TestCase):
     def setUp(self):
 
@@ -816,6 +824,7 @@ class HighLiftTestCase(unittest.TestCase):
 
 
 # this is the large single aisle 1 V3 test case
+@use_tempdirs
 class ControlMassTestCase(unittest.TestCase):
     def setUp(self):
 
@@ -871,6 +880,7 @@ class ControlMassTestCase(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e-11, rtol=1e-12)
 
 
+@use_tempdirs
 class GearTestCase1(unittest.TestCase):  # this is the large single aisle 1 V3 test case
     def setUp(self):
 
@@ -915,6 +925,7 @@ class GearTestCase1(unittest.TestCase):  # this is the large single aisle 1 V3 t
         assert_check_partials(partial_data, atol=3e-11, rtol=1e-12)
 
 
+@use_tempdirs
 class GearTestCase2(unittest.TestCase):
     def setUp(self):
 
@@ -956,6 +967,7 @@ class GearTestCase2(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
 
 
+@use_tempdirs
 class GearTestCaseMultiengine(unittest.TestCase):
     def test_case1(self):
         options = get_option_defaults()
@@ -997,6 +1009,7 @@ class GearTestCaseMultiengine(unittest.TestCase):
 
 
 # this is the large single aisle 1 V3 test case
+@use_tempdirs
 class FixedMassGroupTestCase1(unittest.TestCase):
     def setUp(self):
 
@@ -1009,6 +1022,7 @@ class FixedMassGroupTestCase1(unittest.TestCase):
         options.set_val(Aircraft.CrewPayload.PASSENGER_MASS_WITH_BAGS,
                         val=200, units="lbm")  # bug fixed value and original value
         options.set_val(Settings.VERBOSITY, 0)
+        options.set_val(Aircraft.Engine.ADDITIONAL_MASS_FRACTION, 0.14)
 
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
@@ -1166,9 +1180,6 @@ class FixedMassGroupTestCase1(unittest.TestCase):
             Aircraft.Engine.PYLON_FACTOR, val=1.25, units="unitless"
         )  # bug fixed value and original value
         self.prob.model.set_input_defaults(
-            Aircraft.Engine.ADDITIONAL_MASS_FRACTION, val=0.14, units="unitless"
-        )  # bug fixed value and original value
-        self.prob.model.set_input_defaults(
             Aircraft.Engine.MASS_SCALER, val=1, units="unitless"
         )  # bug fixed value and original value
         self.prob.model.set_input_defaults(
@@ -1262,6 +1273,7 @@ class FixedMassGroupTestCase1(unittest.TestCase):
         assert_check_partials(partial_data, atol=3e-11, rtol=1e-12)
 
 
+@use_tempdirs
 class FixedMassGroupTestCase2(unittest.TestCase):
     def setUp(self):
 
@@ -1276,6 +1288,7 @@ class FixedMassGroupTestCase2(unittest.TestCase):
                         val=False, units='unitless')
         options.set_val(Aircraft.CrewPayload.PASSENGER_MASS_WITH_BAGS,
                         val=200, units="lbm")  # bug fixed value and original value
+        options.set_val(Aircraft.Engine.ADDITIONAL_MASS_FRACTION, 0.14)
 
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
@@ -1479,9 +1492,6 @@ class FixedMassGroupTestCase2(unittest.TestCase):
             Aircraft.Engine.PYLON_FACTOR, val=1.25, units="unitless"
         )  # bug fixed value and original value
         self.prob.model.set_input_defaults(
-            Aircraft.Engine.ADDITIONAL_MASS_FRACTION, val=0.14, units="unitless"
-        )  # bug fixed value and original value
-        self.prob.model.set_input_defaults(
             Aircraft.Engine.MASS_SCALER, val=1, units="unitless"
         )  # bug fixed value and original value
         # self.prob.model.set_input_defaults(
@@ -1585,6 +1595,7 @@ class FixedMassGroupTestCase2(unittest.TestCase):
         assert_check_partials(partial_data, atol=3e-10, rtol=1e-12)
 
 
+@use_tempdirs
 class FixedMassGroupTestCase3(unittest.TestCase):
     # Tests partials calculations in FixedMassGroup using as complete code coverage as possible.
 
@@ -1635,94 +1646,102 @@ class FixedMassGroupTestCase3(unittest.TestCase):
 
     def test_case1(self):
 
-        data = AviaryValues({
-            Aircraft.Engine.NUM_ENGINES: ([2], 'unitless'),
-            Aircraft.Propulsion.TOTAL_NUM_ENGINES: (2, 'unitless'),
-            Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES: (False, 'unitless'),
-            Aircraft.Engine.NUM_FUSELAGE_ENGINES: (0, 'unitless'),
-            Aircraft.CrewPayload.NUM_PASSENGERS: (150, 'unitless'),
-            Aircraft.CrewPayload.Design.NUM_PASSENGERS: (150, 'unitless'),
-            Aircraft.Electrical.HAS_HYBRID_SYSTEM: (False, 'unitless'),
-            Aircraft.Engine.HAS_PROPELLERS: ([False], 'unitless'),
-            Aircraft.Wing.FLAP_TYPE: ('plain', 'unitless'),
-            Aircraft.Wing.SWEEP: (30.0, 'deg'),
-            Aircraft.Wing.VERTICAL_MOUNT_LOCATION: (0, 'unitless'),
-            Aircraft.Wing.TAPER_RATIO: (0.25, 'unitless'),
-            Aircraft.Wing.ASPECT_RATIO: (11.0, 'unitless'),
-            Aircraft.Wing.SPAN: (100.0, 'ft'),
-            'max_mach': (0.9, 'unitless'),
-            Aircraft.Strut.ATTACHMENT_LOCATION: (10.0, 'ft'),
-            Aircraft.LandingGear.MAIN_GEAR_LOCATION: (0.2, 'unitless'),
-            Aircraft.CrewPayload.PASSENGER_MASS_WITH_BAGS: (200.0, 'lbm'),
-            Aircraft.CrewPayload.CARGO_MASS: (0.0, 'lbm'),
-            Aircraft.CrewPayload.Design.MAX_CARGO_MASS: (10040.0, 'lbm'),
-            'wire_area': (0.0015, 'ft**2'),
-            'rho_wire': (1.1, 'lbm/ft**3'),
-            'battery_energy': (0.0, 'MJ'),
-            'motor_eff': (1.5, 'unitless'),
-            'inverter_eff': (0.95, 'unitless'),
-            'transmission_eff': (0.96, 'unitless'),
-            'battery_eff': (0.97, 'unitless'),
-            'rho_battery': (210.0, 'MJ/lb'),
-            'motor_spec_mass': (10.0, 'hp/lbm'),
-            'inverter_spec_mass': (10.5, 'kW/lbm'),
-            'TMS_spec_mass': (10.6, 'lbm/kW'),
-            Aircraft.Engine.MASS_SPECIFIC: (0.21366, 'lbm/lbf'),
-            Aircraft.Engine.SCALED_SLS_THRUST: (4000.0, 'lbf'),
-            Aircraft.Nacelle.MASS_SPECIFIC: (3.0, 'lbm/ft**2'),
-            Aircraft.Nacelle.SURFACE_AREA: (5.0, 'ft**2'),
-            Aircraft.Engine.PYLON_FACTOR: (1.25, 'unitless'),
-            Aircraft.Engine.ADDITIONAL_MASS_FRACTION: (0.14, 'unitless'),
-            Aircraft.Engine.MASS_SCALER: (1.05, 'unitless'),
-            Aircraft.Propulsion.MISC_MASS_SCALER: (1.06, 'unitless'),
-            Aircraft.Engine.WING_LOCATIONS: (0.35, 'unitless'),
-            'prop_mass': (0.5, 'lbm'),
-            Aircraft.VerticalTail.TAPER_RATIO: (0.26, 'unitless'),
-            Aircraft.VerticalTail.ASPECT_RATIO: (5.0, 'unitless'),
-            Aircraft.VerticalTail.SWEEP: (25.0, 'deg'),
-            Aircraft.VerticalTail.SPAN: (20.0, 'ft'),
-            Mission.Design.GROSS_MASS: (152000.0, 'lbm'),
-            Aircraft.HorizontalTail.MASS_COEFFICIENT: (1.07, 'unitless'),
-            Aircraft.Fuselage.LENGTH: (120.0, 'ft'),
-            Aircraft.HorizontalTail.SPAN: (14.0, 'ft'),
-            Aircraft.LandingGear.TAIL_HOOK_MASS_SCALER: (1.08, 'unitless'),
-            Aircraft.HorizontalTail.TAPER_RATIO: (0.35, 'unitless'),
-            Aircraft.VerticalTail.MASS_COEFFICIENT: (1.09, 'unitless'),
-            Aircraft.HorizontalTail.AREA: (500.0, 'ft**2'),
-            'min_dive_vel': (200.0, 'kn'),
-            Aircraft.HorizontalTail.MOMENT_ARM: (20.0, 'ft'),
-            Aircraft.HorizontalTail.THICKNESS_TO_CHORD: (0.15, 'unitless'),
-            Aircraft.HorizontalTail.ROOT_CHORD: (8.0, 'ft'),
-            Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION: (0.3, 'unitless'),
-            Aircraft.VerticalTail.AREA: (250.0, 'ft**2'),
-            Aircraft.VerticalTail.MOMENT_ARM: (6.0, 'ft'),
-            Aircraft.VerticalTail.THICKNESS_TO_CHORD: (0.12, 'unitless'),
-            Aircraft.VerticalTail.ROOT_CHORD: (7.0, 'ft'),
-            Aircraft.Wing.HIGH_LIFT_MASS_COEFFICIENT: (1.10, 'unitless'),
-            Aircraft.Wing.AREA: (3500.0, 'ft**2'),
-            Aircraft.Wing.NUM_FLAP_SEGMENTS: (2, 'unitless'),
-            Aircraft.Wing.SLAT_CHORD_RATIO: (0.15, 'unitless'),
-            Aircraft.Wing.FLAP_CHORD_RATIO: (0.3, 'unitless'),
-            Aircraft.Wing.SLAT_SPAN_RATIO: (0.9, 'unitless'),
-            Aircraft.Wing.FLAP_SPAN_RATIO: (0.65, 'unitless'),
-            Aircraft.Wing.LOADING: (128.0, 'lbf/ft**2'),
-            Aircraft.Wing.THICKNESS_TO_CHORD_ROOT: (0.15, 'unitless'),
-            Aircraft.Fuselage.AVG_DIAMETER: (11.0, 'ft'),
-            Aircraft.Wing.CENTER_CHORD: (17.0, 'ft'),
-            Mission.Landing.LIFT_COEFFICIENT_MAX: (1.8, 'unitless'),
-            'density': (RHO_SEA_LEVEL_ENGLISH, 'slug/ft**3'),
-            Aircraft.Wing.ULTIMATE_LOAD_FACTOR: (7.0, 'unitless'),
-            Aircraft.Design.COCKPIT_CONTROL_MASS_COEFFICIENT: (1.11, 'unitless'),
-            Aircraft.Controls.STABILITY_AUGMENTATION_SYSTEM_MASS: (200.0, 'lbm'),
-            Aircraft.Controls.COCKPIT_CONTROL_MASS_SCALER: (1.12, 'unitless'),
-            Aircraft.Wing.SURFACE_CONTROL_MASS_SCALER: (1.13, 'unitless'),
-            Aircraft.Controls.STABILITY_AUGMENTATION_SYSTEM_MASS_SCALER: (1.14, 'unitless'),
-            Aircraft.Controls.CONTROL_MASS_INCREMENT: (25.0, 'lbm'),
-            Aircraft.LandingGear.MASS_COEFFICIENT: (1.15, 'unitless'),
-            Aircraft.LandingGear.MAIN_GEAR_MASS_COEFFICIENT: (1.16, 'unitless'),
-            Aircraft.Nacelle.CLEARANCE_RATIO: (0.2, 'unitless'),
-            Aircraft.Nacelle.AVG_DIAMETER: (7.5, 'ft'),
-        })
+        data = AviaryValues(
+            {
+                Aircraft.Engine.NUM_ENGINES: (np.array([2]), 'unitless'),
+                Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES: (2, 'unitless'),
+                Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES: (False, 'unitless'),
+                Aircraft.Engine.NUM_FUSELAGE_ENGINES: (np.array([0]), 'unitless'),
+                Aircraft.CrewPayload.NUM_PASSENGERS: (150, 'unitless'),
+                Aircraft.CrewPayload.Design.NUM_PASSENGERS: (150, 'unitless'),
+                Aircraft.Electrical.HAS_HYBRID_SYSTEM: (False, 'unitless'),
+                Aircraft.Engine.HAS_PROPELLERS: ([False], 'unitless'),
+                Aircraft.Wing.FLAP_TYPE: ('plain', 'unitless'),
+                Aircraft.Wing.SWEEP: (30.0, 'deg'),
+                Aircraft.Wing.VERTICAL_MOUNT_LOCATION: (0, 'unitless'),
+                Aircraft.Wing.TAPER_RATIO: (0.25, 'unitless'),
+                Aircraft.Wing.ASPECT_RATIO: (11.0, 'unitless'),
+                Aircraft.Wing.SPAN: (100.0, 'ft'),
+                'max_mach': (0.9, 'unitless'),
+                Aircraft.Strut.ATTACHMENT_LOCATION: (10.0, 'ft'),
+                Aircraft.LandingGear.MAIN_GEAR_LOCATION: (0.2, 'unitless'),
+                Aircraft.CrewPayload.PASSENGER_MASS_WITH_BAGS: (200.0, 'lbm'),
+                Aircraft.CrewPayload.CARGO_MASS: (0.0, 'lbm'),
+                Aircraft.CrewPayload.Design.MAX_CARGO_MASS: (10040.0, 'lbm'),
+                'wire_area': (0.0015, 'ft**2'),
+                'rho_wire': (1.1, 'lbm/ft**3'),
+                'battery_energy': (0.0, 'MJ'),
+                'motor_eff': (1.5, 'unitless'),
+                'inverter_eff': (0.95, 'unitless'),
+                'transmission_eff': (0.96, 'unitless'),
+                'battery_eff': (0.97, 'unitless'),
+                'rho_battery': (210.0, 'MJ/lb'),
+                'motor_spec_mass': (10.0, 'hp/lbm'),
+                'inverter_spec_mass': (10.5, 'kW/lbm'),
+                'TMS_spec_mass': (10.6, 'lbm/kW'),
+                Aircraft.Engine.MASS_SPECIFIC: (np.array([0.21366]), 'lbm/lbf'),
+                Aircraft.Engine.SCALED_SLS_THRUST: (np.array([4000.0]), 'lbf'),
+                Aircraft.Nacelle.MASS_SPECIFIC: (3.0, 'lbm/ft**2'),
+                Aircraft.Nacelle.SURFACE_AREA: (5.0, 'ft**2'),
+                Aircraft.Engine.PYLON_FACTOR: (np.array([1.25]), 'unitless'),
+                Aircraft.Engine.ADDITIONAL_MASS_FRACTION: (
+                    np.array([0.14]),
+                    'unitless',
+                ),
+                Aircraft.Engine.MASS_SCALER: (np.array([1.05]), 'unitless'),
+                Aircraft.Propulsion.MISC_MASS_SCALER: (1.06, 'unitless'),
+                Aircraft.Engine.WING_LOCATIONS: (np.array([0.35]), 'unitless'),
+                'prop_mass': (0.5, 'lbm'),
+                Aircraft.VerticalTail.TAPER_RATIO: (0.26, 'unitless'),
+                Aircraft.VerticalTail.ASPECT_RATIO: (5.0, 'unitless'),
+                Aircraft.VerticalTail.SWEEP: (25.0, 'deg'),
+                Aircraft.VerticalTail.SPAN: (20.0, 'ft'),
+                Mission.Design.GROSS_MASS: (152000.0, 'lbm'),
+                Aircraft.HorizontalTail.MASS_COEFFICIENT: (1.07, 'unitless'),
+                Aircraft.Fuselage.LENGTH: (120.0, 'ft'),
+                Aircraft.HorizontalTail.SPAN: (14.0, 'ft'),
+                Aircraft.LandingGear.TAIL_HOOK_MASS_SCALER: (1.08, 'unitless'),
+                Aircraft.HorizontalTail.TAPER_RATIO: (0.35, 'unitless'),
+                Aircraft.VerticalTail.MASS_COEFFICIENT: (1.09, 'unitless'),
+                Aircraft.HorizontalTail.AREA: (500.0, 'ft**2'),
+                'min_dive_vel': (200.0, 'kn'),
+                Aircraft.HorizontalTail.MOMENT_ARM: (20.0, 'ft'),
+                Aircraft.HorizontalTail.THICKNESS_TO_CHORD: (0.15, 'unitless'),
+                Aircraft.HorizontalTail.ROOT_CHORD: (8.0, 'ft'),
+                Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION: (0.3, 'unitless'),
+                Aircraft.VerticalTail.AREA: (250.0, 'ft**2'),
+                Aircraft.VerticalTail.MOMENT_ARM: (6.0, 'ft'),
+                Aircraft.VerticalTail.THICKNESS_TO_CHORD: (0.12, 'unitless'),
+                Aircraft.VerticalTail.ROOT_CHORD: (7.0, 'ft'),
+                Aircraft.Wing.HIGH_LIFT_MASS_COEFFICIENT: (1.10, 'unitless'),
+                Aircraft.Wing.AREA: (3500.0, 'ft**2'),
+                Aircraft.Wing.NUM_FLAP_SEGMENTS: (2, 'unitless'),
+                Aircraft.Wing.SLAT_CHORD_RATIO: (0.15, 'unitless'),
+                Aircraft.Wing.FLAP_CHORD_RATIO: (0.3, 'unitless'),
+                Aircraft.Wing.SLAT_SPAN_RATIO: (0.9, 'unitless'),
+                Aircraft.Wing.FLAP_SPAN_RATIO: (0.65, 'unitless'),
+                Aircraft.Wing.LOADING: (128.0, 'lbf/ft**2'),
+                Aircraft.Wing.THICKNESS_TO_CHORD_ROOT: (0.15, 'unitless'),
+                Aircraft.Fuselage.AVG_DIAMETER: (11.0, 'ft'),
+                Aircraft.Wing.CENTER_CHORD: (17.0, 'ft'),
+                Mission.Landing.LIFT_COEFFICIENT_MAX: (1.8, 'unitless'),
+                'density': (RHO_SEA_LEVEL_ENGLISH, 'slug/ft**3'),
+                Aircraft.Wing.ULTIMATE_LOAD_FACTOR: (7.0, 'unitless'),
+                Aircraft.Design.COCKPIT_CONTROL_MASS_COEFFICIENT: (1.11, 'unitless'),
+                Aircraft.Controls.STABILITY_AUGMENTATION_SYSTEM_MASS: (200.0, 'lbm'),
+                Aircraft.Controls.COCKPIT_CONTROL_MASS_SCALER: (1.12, 'unitless'),
+                Aircraft.Wing.SURFACE_CONTROL_MASS_SCALER: (1.13, 'unitless'),
+                Aircraft.Controls.STABILITY_AUGMENTATION_SYSTEM_MASS_SCALER: (
+                    1.14,
+                    'unitless',
+                ),
+                Aircraft.Controls.CONTROL_MASS_INCREMENT: (25.0, 'lbm'),
+                Aircraft.LandingGear.MASS_COEFFICIENT: (1.15, 'unitless'),
+                Aircraft.LandingGear.MAIN_GEAR_MASS_COEFFICIENT: (1.16, 'unitless'),
+                Aircraft.Nacelle.CLEARANCE_RATIO: (0.2, 'unitless'),
+                Aircraft.Nacelle.AVG_DIAMETER: (7.5, 'ft'),
+            }
+        )
 
         # Try to cover all if-then branches in fixed.py.
         for flap_type in ['split', 'single_slotted', 'fowler']:
@@ -1752,6 +1771,6 @@ class FixedMassGroupTestCase3(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
-    # test = GearTestCaseMultiengine()
-    # test = EngineTestCaseMultiEngine()
-    # test.test_case_1()
+    # test = FixedMassGroupTestCase3()
+    # test.setUp()
+    # test.test_case1()

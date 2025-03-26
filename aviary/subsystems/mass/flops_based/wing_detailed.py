@@ -11,7 +11,11 @@ class DetailedWingBendingFact(om.ExplicitComponent):
     """
     Computation of wing bending factor and engine inertia relief factor
     used for FLOPS-based detailed wing mass estimation.
+
+    If one or zero wing-mounted engines are present, it is assumed there is no engine
+    inertial relief factor (i.e. the single engine is mounted at the wing root)
     """
+    # Basically, Engine.WING_LOCATIONS is ignored if there are one or fewer wing engines
 
     def initialize(self):
         add_aviary_option(self, Aircraft.Engine.NUM_ENGINES)
@@ -27,36 +31,36 @@ class DetailedWingBendingFact(om.ExplicitComponent):
         total_num_wing_engines = self.options[Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES]
         num_engine_type = len(self.options[Aircraft.Engine.NUM_ENGINES])
 
-        # wing locations are different for each engine type - ragged array!
-        # this "tricks" numpy into allowing a ragged array, with limitations (each index
-        # in the numpy array contains a list, instead of being a true 2d matrix)
-        # wing_location_default = np.empty(num_engine_type, object)
-        # wing_location_default[:] = [np.array([0]*int(num)) for num in num_wing_engines/2]
-
         add_aviary_input(self, Aircraft.Wing.LOAD_PATH_SWEEP_DIST,
-                         shape=num_input_stations - 1)
+                         shape=num_input_stations - 1, units='deg')
         add_aviary_input(self, Aircraft.Wing.THICKNESS_TO_CHORD_DIST,
-                         shape=num_input_stations)
+                         shape=num_input_stations, units='unitless')
         add_aviary_input(self, Aircraft.Wing.CHORD_PER_SEMISPAN_DIST,
-                         shape=num_input_stations)
-        add_aviary_input(self, Mission.Design.GROSS_MASS)
-        add_aviary_input(self, Aircraft.Engine.POD_MASS, shape=num_engine_type)
-        add_aviary_input(self, Aircraft.Wing.ASPECT_RATIO)
-        add_aviary_input(self, Aircraft.Wing.ASPECT_RATIO_REF)
-        add_aviary_input(self, Aircraft.Wing.STRUT_BRACING_FACTOR)
-        add_aviary_input(self, Aircraft.Wing.AEROELASTIC_TAILORING_FACTOR)
+                         shape=num_input_stations, units='unitless')
+        add_aviary_input(self, Mission.Design.GROSS_MASS, units='lbm')
+        add_aviary_input(self, Aircraft.Engine.POD_MASS,
+                         shape=num_engine_type, units='lbm')
+        add_aviary_input(self, Aircraft.Wing.ASPECT_RATIO, units='unitless')
+        add_aviary_input(self, Aircraft.Wing.ASPECT_RATIO_REF, units='unitless')
+        add_aviary_input(self, Aircraft.Wing.STRUT_BRACING_FACTOR, units='unitless')
+        add_aviary_input(self, Aircraft.Wing.AEROELASTIC_TAILORING_FACTOR,
+                         units='unitless')
 
-        if total_num_wing_engines > 0:
-            add_aviary_input(self, Aircraft.Engine.WING_LOCATIONS,
-                             shape=int(total_num_wing_engines/2))
+        if total_num_wing_engines > 1:
+            add_aviary_input(
+                self,
+                Aircraft.Engine.WING_LOCATIONS,
+                shape=int(total_num_wing_engines / 2),
+                units='unitless',
+            )
         else:
-            add_aviary_input(self, Aircraft.Engine.WING_LOCATIONS)
+            add_aviary_input(self, Aircraft.Engine.WING_LOCATIONS, units='unitless')
 
-        add_aviary_input(self, Aircraft.Wing.THICKNESS_TO_CHORD)
-        add_aviary_input(self, Aircraft.Wing.THICKNESS_TO_CHORD_REF)
+        add_aviary_input(self, Aircraft.Wing.THICKNESS_TO_CHORD, units='unitless')
+        add_aviary_input(self, Aircraft.Wing.THICKNESS_TO_CHORD_REF, units='unitless')
 
-        add_aviary_output(self, Aircraft.Wing.BENDING_MATERIAL_FACTOR)
-        add_aviary_output(self, Aircraft.Wing.ENG_POD_INERTIA_FACTOR)
+        add_aviary_output(self, Aircraft.Wing.BENDING_MATERIAL_FACTOR, units='unitless')
+        add_aviary_output(self, Aircraft.Wing.ENG_POD_INERTIA_FACTOR, units='unitless')
 
     def setup_partials(self):
         # TODO: Analytic derivs will be challenging, but possible.
@@ -221,7 +225,7 @@ class DetailedWingBendingFact(om.ExplicitComponent):
         for i in range(num_engine_type):
             # idx2 is the last index for the range of engines of this type
             idx2 = idx + int(num_wing_engines[i] / 2)
-            if num_wing_engines[i] > 0:
+            if num_wing_engines[i] > 1:
                 # engine locations must be in order from wing root to tip
                 eng_loc = np.sort(engine_locations[idx:idx2])
 
