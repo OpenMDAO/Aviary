@@ -3273,7 +3273,7 @@ add_meta_data(
     units='ft',
     types=float,
     default_value=0.0,
-    desc='the geometric mean of cabin length and cabin width',
+    desc='the geometric mean of cabin height and cabin width',
 )
 
 add_meta_data(
