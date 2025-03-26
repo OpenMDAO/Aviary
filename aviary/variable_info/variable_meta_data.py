@@ -1398,15 +1398,6 @@ add_meta_data(
 )
 
 add_meta_data(
-    Aircraft.Design.LIFT_CURVE_SLOPE_MACH0,
-    meta_data=_MetaData,
-    historical_name={"GASP": 'INGASP.CLALPH_B0', "FLOPS": None, "LEAPS1": None},
-    units="1/rad",
-    default_value=0.0,
-    desc='lift curve slope of fuselage at Mach 0',
-)
-
-add_meta_data(
     Aircraft.Design.LIFT_DEPENDENT_DRAG_COEFF_FACTOR,
     meta_data=_MetaData,
     historical_name={
@@ -3349,6 +3340,15 @@ add_meta_data(
     types=float,
     default_value=0.0,
     desc='lift coefficent of body over lift coefficent of wing ratio',
+)
+
+add_meta_data(
+    Aircraft.Fuselage.LIFT_CURVE_SLOPE_MACH0,
+    meta_data=_MetaData,
+    historical_name={"GASP": 'INGASP.CLALPH_B0', "FLOPS": None, "LEAPS1": None},
+    units="1/rad",
+    default_value=0.0,
+    desc='lift curve slope of fuselage at Mach 0',
 )
 
 add_meta_data(
