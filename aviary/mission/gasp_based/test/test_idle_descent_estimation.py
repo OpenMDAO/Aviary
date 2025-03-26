@@ -61,6 +61,9 @@ class IdleDescentTestCase(unittest.TestCase):
         ivc.add_output(
             "parameters:interference_independent_of_shielded_area", 1.89927266)
         ivc.add_output("parameters:drag_loss_due_to_shielded_wing_area", 68.02065834)
+        ivc.add_output(Aircraft.Wing.FORM_FACTOR, 1.25)
+        ivc.add_output(Aircraft.VerticalTail.FORM_FACTOR, 1.25)
+        ivc.add_output(Aircraft.HorizontalTail.FORM_FACTOR, 1.25)
         prob.model.add_subsystem('IVC', ivc, promotes=['*'])
 
         add_descent_estimation_as_submodel(
