@@ -114,13 +114,16 @@ class ClimbPhase(PhaseBuilderBase):
             output_name=Dynamic.Mission.VELOCITY,
             units="kn",
         )
-        phase.add_timeseries_output("aero.CL", output_name="CL", units="unitless")
         phase.add_timeseries_output(
             Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
             output_name=Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
             units="lbf",
         )
-        phase.add_timeseries_output("aero.CD", output_name="CD", units="unitless")
+        # TODO: These should be promoted in the 2dof mission outputs.
+        phase.add_timeseries_output("core_aerodynamics.CL",
+                                    output_name="CL", units="unitless")
+        phase.add_timeseries_output("core_aerodynamics.CD",
+                                    output_name="CD", units="unitless")
 
         return phase
 
