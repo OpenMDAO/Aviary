@@ -137,7 +137,7 @@ class TestConvertStrings2Data(unittest.TestCase):
 
         data_list = ['1']
         var_types = float
-        var_values = convert_strings_to_data(data_list, var_types)
+        var_values = convert_strings_to_data(data_list, None, var_types)
         self.assertEqual(var_values, [1.0])
         self.assertTrue(self.is_list_of_given_type(var_values, float))
 
