@@ -591,7 +591,37 @@ class BWBFuselageParameters2(om.ExplicitComponent):
         self.add_output("cabin_len", val=0, units="ft", desc="LC: length of cabin")
 
     def setup_partials(self):
-        pass
+        self.declare_partials(
+            "cabin_len",
+            [
+                Aircraft.Fuselage.NOSE_FINENESS,
+            ],
+        )
+
+        self.declare_partials(
+            Aircraft.BWB.CABIN_AREA,
+            [
+                Aircraft.BWB.PASSENGER_LEADING_EDGE_SWEEP,
+                Aircraft.Fuselage.AVG_DIAMETER,
+                Aircraft.Fuselage.PRESSURIZED_WIDTH_ADDITIONAL,
+                "fuselage_station_aft",
+                "nose_length",
+            ],
+        )
+
+        self.declare_partials(
+            Aircraft.Fuselage.PLANFORM_AREA,
+            [
+                Aircraft.BWB.PASSENGER_LEADING_EDGE_SWEEP,
+                Aircraft.Fuselage.AVG_DIAMETER,
+                Aircraft.Fuselage.PRESSURIZED_WIDTH_ADDITIONAL,
+                "fuselage_station_aft",
+                "nose_length",
+                "cabin_height",
+                Aircraft.Fuselage.TAIL_FINENESS,
+            ],
+        )
+
 
     def compute(self, inputs, outputs):
         options = self.options
@@ -613,18 +643,19 @@ class BWBFuselageParameters2(om.ExplicitComponent):
         aftbody_len = len_to_diam_tail_cone * cabin_height
         cabin_len = fuselage_station_aft - nose_len - pilot_comp_len
 
-        area_nose_PF = 0.5 * nose_len * nose_width
-        area_aftbody_PF = aftbody_len * (cabin_width + body_width) / 2.0 
+        area_nose_planform = 0.5 * nose_len * nose_width
+        area_aftbody_planform = aftbody_len * (cabin_width + body_width) / 2.0 
         area_forebody = (forebody_len - nose_len) * (body_width + nose_width) / 2.0
-        area_aft = body_width * (fuselage_station_aft - forebody_len)
-        area_cabin = area_forebody + area_aft
+        area_aftbody = body_width * (fuselage_station_aft - forebody_len)
+        area_cabin = area_forebody + area_aftbody
 
-        area_body_PF = area_nose_PF + area_cabin + area_aftbody_PF
+        area_body_planform = area_nose_planform + area_cabin + area_aftbody_planform
 
         outputs['cabin_len'] = cabin_len
         outputs[Aircraft.BWB.CABIN_AREA] = area_cabin
-        outputs[Aircraft.Fuselage.PLANFORM_AREA] = area_body_PF
+        outputs[Aircraft.Fuselage.PLANFORM_AREA] = area_body_planform
 
     def compute_partials(self, inputs, J):
         options = self.options
-
+        verbosity = options[Settings.VERBOSITY]
+        rad2deg = 180. / np.pi
