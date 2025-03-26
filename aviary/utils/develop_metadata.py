@@ -1,14 +1,15 @@
 def add_meta_data(
-        key: str,
-        meta_data: dict,
-        units='unitless',
-        desc: str = None,
-        default_value=0.0,
-        option: bool = False,
-        types=None,
-        multivalue: bool = False,
-        historical_name=None,
-        _check_unique=True):
+    key: str,
+    meta_data: dict,
+    units='unitless',
+    default_value=0.0,
+    types=None,
+    multivalue: bool = False,
+    option: bool = False,
+    desc: str = None,
+    historical_name=None,
+    _check_unique=True,
+):
     '''
     Add new meta data associated with variables in the Aviary data hierarchy.
 
@@ -33,14 +34,14 @@ def add_meta_data(
         Note, a default value of `None` indicates that the variable is
         optional, but that there is no default.
 
-    option : bool
-        indicates that this variable is an option, rather than a normal input
-
     types : type, optional
         gives the allowable type(s) of the variable in the aviary API. if `multivalue` is
         True, this specifies which types individual elements in the list can be. If
         `types` is not provided, the type of `default_value` is used. Numerical data
         for `default_value` is assumed to be a float in this case.
+
+    option : bool
+        indicates that this variable is an option, rather than a normal input
 
     multivalue : bool
         when True, the variable can become an iterable (list, tuple, numpy array) of
