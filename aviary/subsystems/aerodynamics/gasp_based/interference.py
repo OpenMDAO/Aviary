@@ -203,8 +203,12 @@ class InterferenceDrag(om.ExplicitComponent):
         add_aviary_input(self, Aircraft.Fuselage.AVG_DIAMETER)
         add_aviary_input(self, Aircraft.Wing.CENTER_DISTANCE)
 
-        self.add_output('interference_independent_of_shielded_area', 1.23456)
-        self.add_output('drag_loss_due_to_shielded_wing_area', 1.23456)
+        self.add_output(
+            'interference_independent_of_shielded_area', 1.23456, units='unitless'
+        )
+        self.add_output(
+            'drag_loss_due_to_shielded_wing_area', 1.23456, units='unitless'
+        )
 
     def compute(self, inputs, outputs):
         WBODYWF, CROOT, TCBODYWF, CBODYWF, ZW_RF, SWF, XWQLF = inputs.values()
@@ -310,8 +314,8 @@ class WingFuselageInterferenceMission(om.ExplicitComponent):
         add_aviary_input(self, Dynamic.Atmosphere.MACH, shape=nn)
         add_aviary_input(self, Dynamic.Atmosphere.TEMPERATURE, shape=nn)
         add_aviary_input(self, Dynamic.Atmosphere.KINEMATIC_VISCOSITY, shape=nn)
-        self.add_input('interference_independent_of_shielded_area')
-        self.add_input('drag_loss_due_to_shielded_wing_area')
+        self.add_input('interference_independent_of_shielded_area', units='unitless')
+        self.add_input('drag_loss_due_to_shielded_wing_area', unites='unitless')
 
         self.add_output('wing_fuselage_interference_flat_plate_equivalent',
                         np.full(nn, 1.23456))
