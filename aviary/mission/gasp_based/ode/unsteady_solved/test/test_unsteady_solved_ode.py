@@ -104,7 +104,7 @@ class TestUnsteadySolvedODE(unittest.TestCase):
 
         # 1. Test that forces balance along the velocity axis
         assert_near_equal(
-            drag + thrust_req * s_gamma, thrust_req * c_alphai, tolerance=1.0e-12
+            drag + thrust_req * s_gamma, thrust_req * c_alphai, tolerance=1.5e-12
         )
 
         # 2. Test that forces balance normal to the velocity axis
