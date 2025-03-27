@@ -30,6 +30,10 @@ class IdleDescentTestCase(unittest.TestCase):
         aviary_inputs.set_val(
             Dynamic.Vehicle.Propulsion.THROTTLE, val=0, units="unitless"
         )
+        aviary_inputs.set_val(Aircraft.Wing.FORM_FACTOR, 1.25)
+        aviary_inputs.set_val(Aircraft.VerticalTail.FORM_FACTOR, 1.25)
+        aviary_inputs.set_val(Aircraft.HorizontalTail.FORM_FACTOR, 1.25)
+        aviary_inputs.set_val(Aircraft.Wing.FUSELAGE_INTERFERENCE_FACTOR, 1.1)
 
         engine = build_engine_deck(aviary_options=aviary_inputs)
         preprocess_propulsion(aviary_inputs, engine)
@@ -57,6 +61,9 @@ class IdleDescentTestCase(unittest.TestCase):
         ivc.add_output(
             "parameters:interference_independent_of_shielded_area", 1.89927266)
         ivc.add_output("parameters:drag_loss_due_to_shielded_wing_area", 68.02065834)
+        ivc.add_output(Aircraft.Wing.FORM_FACTOR, 1.25)
+        ivc.add_output(Aircraft.VerticalTail.FORM_FACTOR, 1.25)
+        ivc.add_output(Aircraft.HorizontalTail.FORM_FACTOR, 1.25)
         prob.model.add_subsystem('IVC', ivc, promotes=['*'])
 
         add_descent_estimation_as_submodel(
