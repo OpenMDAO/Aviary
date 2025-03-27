@@ -3211,7 +3211,7 @@ add_meta_data(
     historical_name={"GASP": 'INGASP.CKF', "FLOPS": None, "LEAPS1": None},
     units='unitless',
     desc='fuselage form factor',
-    default_value=0.0
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -3740,7 +3740,7 @@ add_meta_data(
     desc='quarter-chord sweep of horizontal tail',
     default_value=0.0,
 )
-Aircraft.HorizontalTail.MOMENT_RATIO
+
 add_meta_data(
     Aircraft.HorizontalTail.TAPER_RATIO,
     meta_data=_MetaData,
@@ -5514,7 +5514,7 @@ add_meta_data(
     historical_name={"GASP": 'INGASP.CKI', "FLOPS": None, "LEAPS1": None},
     units='unitless',
     desc='wing/fuselage interference factor',
-    default_value=0.0,  # 1.1,
+    default_value=0.0,
 )
 
 add_meta_data(
