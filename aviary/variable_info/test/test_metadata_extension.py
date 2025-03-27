@@ -19,7 +19,7 @@ class MetaDataExtensionTest(unittest.TestCase):
         self.assertEqual(aircraft_variable['desc'], 'Main gear oleo diameter')
         self.assertEqual(aircraft_variable['default_value'], 0.0)
         self.assertEqual(aircraft_variable['option'], False)
-        self.assertEqual(aircraft_variable['types'], None)
+        self.assertEqual(aircraft_variable['types'], float)
 
 
 if __name__ == '__main__':

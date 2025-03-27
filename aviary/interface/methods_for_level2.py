@@ -6,8 +6,8 @@ from datetime import datetime
 import importlib.util
 import sys
 import json
-import enum
 import os
+from enum import Enum
 
 import numpy as np
 
@@ -33,8 +33,8 @@ from aviary.subsystems.premission import CorePreMission
 from aviary.subsystems.propulsion.propulsion_builder import CorePropulsionBuilder
 
 from aviary.utils.aviary_values import AviaryValues
-from aviary.utils.functions import wrapped_convert_units
-from aviary.utils.functions import convert_strings_to_data, set_value
+from aviary.utils.utils import wrapped_convert_units
+from aviary.utils.functions import convert_strings_to_data
 from aviary.utils.merge_variable_metadata import merge_meta_data
 from aviary.utils.preprocessors import preprocess_options
 from aviary.utils.process_input_decks import create_vehicle, update_GASP_options
@@ -285,8 +285,13 @@ class AviaryProblem(om.Problem):
                     aviary_inputs)
 
         # PREPROCESSORS #
-        # Fill in anything missing in the options with computed defaults.
-        preprocess_options(aviary_inputs, engine_models=self.engine_builders)
+        # BUG we can't provide updated metadata to preprocessors, because we need the
+        #     processed options to build our subsystems to begin with
+        preprocess_options(
+            aviary_inputs,
+            engine_models=self.engine_builders,
+            # metadata=self.meta_data
+        )
 
         ## Set Up Core Subsystems ##
         everything_else_origin = self.builder.get_code_origin(self)
@@ -1651,11 +1656,12 @@ class AviaryProblem(om.Problem):
 
         self.problem_ran_successfully = not failed
 
-    def alternate_mission(self, run_mission=True,
-                          json_filename='sizing_problem.json',
-                          num_first=None, num_business=None, num_tourist=None, num_pax=None,
-                          wing_cargo=None, misc_cargo=None, cargo_mass=None, mission_range=None,
-                          phase_info=None, verbosity=Verbosity.BRIEF):
+    def alternate_mission(
+        self, run_mission=True, json_filename='sizing_problem.json', num_first=None,
+        num_business=None, num_tourist=None, num_pax=None, wing_cargo=None,
+        misc_cargo=None, cargo_mass=None, mission_range=None, phase_info=None,
+        verbosity=Verbosity.BRIEF
+    ):
         """
         This function runs an alternate mission based on a sizing mission output.
 
@@ -1676,6 +1682,7 @@ class AviaryProblem(om.Problem):
             If a list is provided, it will be used as the debug print options.
         """
         mass_method = self.aviary_inputs.get_val(Settings.MASS_METHOD)
+        equations_of_motion = self.aviary_inputs.get_val(Settings.EQUATIONS_OF_MOTION)
         if mass_method == LegacyCode.FLOPS:
             if num_first is None or num_business is None or num_tourist is None:
                 print('Incomplete PAX numbers for FLOPS fallout - assume same as design')
@@ -1705,13 +1712,20 @@ class AviaryProblem(om.Problem):
         if phase_info is None:
             phase_info = self.phase_info
         if mission_range is None:
-            mission_range = self.get_val(Mission.Design.RANGE)
+            # mission range is sliced from a column vector numpy array, i.e. it is a len
+            # 1 numpy array
+            mission_range = self.get_val(Mission.Design.RANGE)[0]
 
+        # gross mass is sliced from a column vector numpy array, i.e. it is a len 1 numpy
+        # array
         mission_mass = self.get_val(Mission.Design.GROSS_MASS)
         optimizer = self.driver.options["optimizer"]
 
-        prob_alternate = _load_off_design(json_filename, ProblemType.ALTERNATE, mass_method, phase_info, num_first,
-                                          num_business, num_tourist, num_pax, wing_cargo, misc_cargo, cargo_mass, mission_range, mission_mass)
+        prob_alternate = _load_off_design(
+            json_filename, ProblemType.ALTERNATE, equations_of_motion, mass_method,
+            phase_info, num_first, num_business, num_tourist, num_pax, wing_cargo,
+            misc_cargo, cargo_mass, mission_range, mission_mass
+        )
 
         prob_alternate.check_and_preprocess_inputs()
         prob_alternate.add_pre_mission_systems()
@@ -1728,11 +1742,12 @@ class AviaryProblem(om.Problem):
                 record_filename='alternate_problem_history.db')
         return prob_alternate
 
-    def fallout_mission(self, run_mission=True,
-                        json_filename='sizing_problem.json',
-                        num_first=None, num_business=None, num_tourist=None, num_pax=None,
-                        wing_cargo=None, misc_cargo=None, cargo_mass=None, mission_mass=None,
-                        phase_info=None, verbosity=Verbosity.BRIEF):
+    def fallout_mission(
+        self, run_mission=True, json_filename='sizing_problem.json', num_first=None,
+        num_business=None, num_tourist=None, num_pax=None, wing_cargo=None,
+        misc_cargo=None, cargo_mass=None, mission_mass=None, phase_info=None,
+        verbosity=Verbosity.BRIEF
+    ):
         """
         This function runs a fallout mission based on a sizing mission output.
 
@@ -1753,6 +1768,7 @@ class AviaryProblem(om.Problem):
             If a list is provided, it will be used as the debug print options.
         """
         mass_method = self.aviary_inputs.get_val(Settings.MASS_METHOD)
+        equations_of_motion = self.aviary_inputs.get_val(Settings.EQUATIONS_OF_MOTION)
         if mass_method == LegacyCode.FLOPS:
             if num_first is None or num_business is None or num_tourist is None:
                 print('Incomplete PAX numbers for FLOPS fallout - assume same as design')
@@ -1782,12 +1798,27 @@ class AviaryProblem(om.Problem):
         if phase_info is None:
             phase_info = self.phase_info
         if mission_mass is None:
-            mission_mass = self.get_val(Mission.Design.GROSS_MASS)
+            # mission mass is sliced from a column vector numpy array, i.e. it is a len 1
+            # numpy array
+            mission_mass = self.get_val(Mission.Design.GROSS_MASS)[0]
 
         optimizer = self.driver.options["optimizer"]
 
-        prob_fallout = _load_off_design(json_filename, ProblemType.FALLOUT, mass_method, phase_info, num_first,
-                                        num_business, num_tourist, num_pax, wing_cargo, misc_cargo, cargo_mass, None, mission_mass)
+        prob_fallout = _load_off_design(
+            json_filename,
+            ProblemType.FALLOUT,
+            equations_of_motion,
+            mass_method,
+            phase_info,
+            num_first,
+            num_business,
+            num_tourist,
+            num_pax,
+            wing_cargo,
+            misc_cargo,
+            cargo_mass,
+            None,
+            mission_mass)
 
         prob_fallout.check_and_preprocess_inputs()
         prob_fallout.add_pre_mission_systems()
@@ -1839,15 +1870,15 @@ class AviaryProblem(om.Problem):
                     if type_value == np.ndarray:
                         value = value.tolist()
 
-                    # Lists are fine except if they contain enums
+                    # Lists are fine except if they contain enums or Paths
                     if type_value == list:
-                        if isinstance(value[0], enum.Enum):
+                        if isinstance(value[0], Enum) or isinstance(value[0], Path):
                             for i in range(len(value)):
-                                value[i] = str([value[i]])
+                                value[i] = str(value[i])
 
-                    # Enums need converting to a string
-                    if isinstance(value, enum.Enum):
-                        value = str([value])
+                    # Enums and Paths need converting to a string
+                    if isinstance(value, Enum) or isinstance(value, Path):
+                        value = str(value)
 
                 # Append the data to the list
                 aviary_input_list.append([name, value, units, str(type_value)])
@@ -1975,14 +2006,10 @@ def _read_sizing_json(aviary_problem, json_filename):
     for inputs in loaded_aviary_input_list:
         [var_name, var_values, var_units, var_type] = inputs
 
-        # Initialize some flags to idetify arrays and enums
-        is_array = False
+        # Initialize some flags to identify enums
         is_enum = False
 
-        if var_type == "<class 'numpy.ndarray'>":
-            is_array = True
-
-        elif var_type == "<class 'list'>":
+        if var_type == "<class 'list'>":
             # check if the list contains enums
             for i in range(len(var_values)):
                 if isinstance(var_values[i], str):
@@ -1998,9 +2025,6 @@ def _read_sizing_json(aviary_problem, json_filename):
             if is_enum:
                 var_values = convert_strings_to_data(var_values)
 
-            else:
-                var_values = [var_values]
-
         elif var_type.find("<enum") != -1:
             # Identify enums and manipulate the string to find the value
             tmp_var_values = var_values.split(':')[-1]
@@ -2008,16 +2032,12 @@ def _read_sizing_json(aviary_problem, json_filename):
                 "]", "").replace("'", "").replace(" ", "")
             var_values = convert_strings_to_data([var_values])
 
-        else:
-            # values are expected to be parsed as a list to set_value function
-            var_values = [var_values]
-
         # Check if the variable is in meta data
         if var_name in BaseMetaData.keys():
             try:
-                aviary_problem.aviary_inputs = set_value(
-                    var_name, var_values, aviary_problem.aviary_inputs, units=var_units,
-                    is_array=is_array, meta_data=BaseMetaData)
+                aviary_problem.aviary_inputs.set_val(
+                    var_name, var_values, units=var_units, meta_data=BaseMetaData
+                )
             except BaseException:
                 # Print helpful error
                 print(
@@ -2051,8 +2071,10 @@ def _read_sizing_json(aviary_problem, json_filename):
     return aviary_problem
 
 
-def _load_off_design(json_filename, ProblemType, Mass_Method, phase_info, num_first, num_business, num_tourist,
-                     num_pax, wing_cargo, misc_cargo, cargo_mass, mission_range=None, mission_gross_mass=None):
+def _load_off_design(
+    json_filename, problem_type, equations_of_motion, mass_method, phase_info,
+    num_first, num_business, num_tourist, num_pax, wing_cargo, misc_cargo,
+        cargo_mass, mission_range=None, mission_gross_mass=None):
     """
     This function loads a sized aircraft, and sets up an aviary problem
     for a specified off design mission.
@@ -2061,9 +2083,10 @@ def _load_off_design(json_filename, ProblemType, Mass_Method, phase_info, num_fi
     ----------
     json_filename:      string
         User specified name and relative path of json file containing the sized aircraft data
-    ProblemType:        enum
+    problem_type : ProblemType
         Alternate or Fallout. Alternate requires mission_range input and fallout requires mission_fuel input
-    MassMethod:         enum
+    equations_of_motion : EquationsOfMotion
+    mass_method : MassMethod
         FLOPS or GASP. FLOPS requires num_first, num_business, num_tourist, wing_cargo and misc cargo inputs. GASP requires num_pax and cargo_mass inputs
     phase_info:     phase_info dictionary for off design mission
     num_first:          integer             (FLOPS only)
@@ -2092,27 +2115,27 @@ def _load_off_design(json_filename, ProblemType, Mass_Method, phase_info, num_fi
     prob = _read_sizing_json(prob, json_filename)
 
     # Update problem type
-    prob.problem_type = ProblemType
-    prob.aviary_inputs.set_val('settings:problem_type', ProblemType, units='unitless')
+    prob.problem_type = problem_type
+    prob.aviary_inputs.set_val('settings:problem_type', problem_type)
+    prob.aviary_inputs.set_val('settings:equations_of_motion', equations_of_motion)
 
     # Setup Payload
-    if Mass_Method == LegacyCode.FLOPS:
+    if mass_method == LegacyCode.FLOPS:
         prob.aviary_inputs.set_val(
-            Aircraft.CrewPayload.NUM_FIRST_CLASS, num_first, units='unitless')
+            Aircraft.CrewPayload.NUM_FIRST_CLASS, num_first)
         prob.aviary_inputs.set_val(
-            Aircraft.CrewPayload.NUM_BUSINESS_CLASS, num_business, units='unitless')
+            Aircraft.CrewPayload.NUM_BUSINESS_CLASS, num_business)
         prob.aviary_inputs.set_val(
-            Aircraft.CrewPayload.NUM_TOURIST_CLASS, num_tourist, units='unitless')
+            Aircraft.CrewPayload.NUM_TOURIST_CLASS, num_tourist)
         num_pax = num_first + num_business + num_tourist
         prob.aviary_inputs.set_val(Aircraft.CrewPayload.MISC_CARGO, misc_cargo, 'lbm')
         prob.aviary_inputs.set_val(Aircraft.CrewPayload.WING_CARGO, wing_cargo, 'lbm')
         cargo_mass = misc_cargo + wing_cargo
 
-    prob.aviary_inputs.set_val(
-        Aircraft.CrewPayload.NUM_PASSENGERS, num_pax, units='unitless')
+    prob.aviary_inputs.set_val(Aircraft.CrewPayload.NUM_PASSENGERS, num_pax)
     prob.aviary_inputs.set_val(Aircraft.CrewPayload.CARGO_MASS, cargo_mass, 'lbm')
 
-    if ProblemType == ProblemType.ALTERNATE:
+    if problem_type == ProblemType.ALTERNATE:
         # Set mission range, aviary will calculate required fuel
         if mission_range is None:
             print(
@@ -2126,7 +2149,7 @@ def _load_off_design(json_filename, ProblemType, Mass_Method, phase_info, num_fi
             except KeyError:
                 print('no target range to update')
 
-    elif ProblemType == ProblemType.FALLOUT:
+    elif problem_type == ProblemType.FALLOUT:
         # Set mission fuel and calculate gross weight, aviary will calculate range
         if mission_gross_mass is None:
             print(
