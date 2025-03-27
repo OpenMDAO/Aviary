@@ -162,6 +162,7 @@ class GASPAeroTest(unittest.TestCase):
         prob.set_val(Aircraft.Wing.FLAP_CHORD_RATIO, setup_data["cfoc"])
         prob.set_val(Mission.Design.GROSS_MASS, setup_data["wgto"])
 
+        prob.set_val(Dynamic.Atmosphere.DYNAMIC_PRESSURE, 1)
         prob.set_val(Dynamic.Atmosphere.MACH, 0.1)
         prob.set_val(Dynamic.Mission.ALTITUDE, 10)
         prob.set_val("alpha_in", 5)

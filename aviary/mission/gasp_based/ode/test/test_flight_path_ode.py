@@ -48,6 +48,9 @@ class FlightPathODETestCase(unittest.TestCase):
         self.prob.set_val(Dynamic.Mission.ALTITUDE, [500, 500], units="ft")
         self.prob.set_val("interference_independent_of_shielded_area", 1.89927266)
         self.prob.set_val("drag_loss_due_to_shielded_wing_area", 68.02065834)
+        self.prob.set_val(Aircraft.Wing.FORM_FACTOR, 1.25)
+        self.prob.set_val(Aircraft.VerticalTail.FORM_FACTOR, 1.25)
+        self.prob.set_val(Aircraft.HorizontalTail.FORM_FACTOR, 1.25)
 
         self.prob.run_model()
         testvals = {
@@ -86,6 +89,9 @@ class FlightPathODETestCase(unittest.TestCase):
         self.prob.set_val(Dynamic.Mission.ALTITUDE, [500, 500], units="ft")
         self.prob.set_val("interference_independent_of_shielded_area", 1.89927266)
         self.prob.set_val("drag_loss_due_to_shielded_wing_area", 68.02065834)
+        self.prob.set_val(Aircraft.Wing.FORM_FACTOR, 1.25)
+        self.prob.set_val(Aircraft.VerticalTail.FORM_FACTOR, 1.25)
+        self.prob.set_val(Aircraft.HorizontalTail.FORM_FACTOR, 1.25)
 
         self.prob.run_model()
         testvals = {

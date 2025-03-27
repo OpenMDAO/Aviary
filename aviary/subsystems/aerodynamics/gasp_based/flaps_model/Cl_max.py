@@ -1,6 +1,6 @@
 import openmdao.api as om
 
-from aviary.variable_info.functions import add_aviary_input
+from aviary.variable_info.functions import add_aviary_input, add_aviary_output
 from aviary.variable_info.variables import Aircraft, Dynamic
 
 
@@ -20,15 +20,12 @@ class CLmaxCalculation(om.ExplicitComponent):
             units='unitless',
             desc="VLAM8: sensitivity of flap clean wing maximum lift coefficient to wing sweep angle",
         )
-        self.add_input(
-            Dynamic.Atmosphere.SPEED_OF_SOUND,
-            val=1118.21948771,
-            units="ft/s",
-            desc="SA: speed of sound at sea level",
-        )
+        add_aviary_input(self, Dynamic.Atmosphere.SPEED_OF_SOUND,
+                         desc="INGASP.SA", units="ft/s")
 
         # from component 3 outputs
-        add_aviary_input(self, Aircraft.Wing.FLAP_LIFT_INCREMENT_OPTIMUM, val=1.5)
+        add_aviary_input(self, Aircraft.Wing.FLAP_LIFT_INCREMENT_OPTIMUM,
+                         units="unitless")
         self.add_input(
             "VLAM1",
             val=0.97217,
@@ -86,19 +83,16 @@ class CLmaxCalculation(om.ExplicitComponent):
 
         # other inputs
 
-        add_aviary_input(self, Aircraft.Wing.LOADING, val=128)
+        add_aviary_input(self, Aircraft.Wing.LOADING, units='lbf/ft**2')
 
-        self.add_input(
-            Dynamic.Atmosphere.STATIC_PRESSURE,
-            val=(14.696 * 144),
-            units="lbf/ft**2",
-            desc="P0: static pressure",
-        )
+        add_aviary_input(self, Dynamic.Atmosphere.STATIC_PRESSURE,
+                         units="lbf/ft**2", desc="INGASP.P0")
 
-        add_aviary_input(self, Aircraft.Wing.AVERAGE_CHORD, val=12.61)
+        add_aviary_input(self, Aircraft.Wing.AVERAGE_CHORD, units='ft')
 
-        add_aviary_input(self, Aircraft.Wing.MAX_LIFT_REF, val=1.15)
-        add_aviary_input(self, Aircraft.Wing.SLAT_LIFT_INCREMENT_OPTIMUM, val=0.93)
+        add_aviary_input(self, Aircraft.Wing.MAX_LIFT_REF, units='unitless')
+        add_aviary_input(self, Aircraft.Wing.SLAT_LIFT_INCREMENT_OPTIMUM,
+                         units='unitless')
         self.add_input(
             "VLAM9",
             val=0.9975,
@@ -129,18 +123,10 @@ class CLmaxCalculation(om.ExplicitComponent):
             units='unitless',
             desc="DELCLF: fuselage lift increment",
         )
-        self.add_input(
-            Dynamic.Atmosphere.KINEMATIC_VISCOSITY,
-            val=0.15723e-03,
-            units="ft**2/s",
-            desc="XKV: kinematic viscosity",
-        )
-        self.add_input(
-            Dynamic.Atmosphere.TEMPERATURE,
-            val=518.67,
-            units="degR",
-            desc="T0: static temperature of air cross wing",
-        )
+        add_aviary_input(self, Dynamic.Atmosphere.KINEMATIC_VISCOSITY,
+                         val=0.15723e-03, desc="INGASP.XKV")
+        add_aviary_input(self, Dynamic.Atmosphere.TEMPERATURE,
+                         units="degR", desc="INGASP.T0")
 
         # outputs
 
@@ -150,12 +136,8 @@ class CLmaxCalculation(om.ExplicitComponent):
             desc="CLMAX: maximum lift coefficient",
             units="unitless",
         )
-        self.add_output(
-            Dynamic.Atmosphere.MACH,
-            val=0.17522,
-            units='unitless',
-            desc="SMN: mach number",
-        )
+        add_aviary_output(self, Dynamic.Atmosphere.MACH,
+                          units='unitless', desc="INGASP.SMN")
         self.add_output(
             "reynolds", val=157.1111, units='unitless', desc="RNW: reynolds number"
         )

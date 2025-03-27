@@ -62,6 +62,7 @@ class TestUnsteadySolvedODE(unittest.TestCase):
 
         p.final_setup()
 
+        p.set_val(Aircraft.Wing.FORM_FACTOR, 1.25, units="unitless")
         p.set_val(
             Dynamic.Atmosphere.SPEED_OF_SOUND, 968.076 * np.ones(nn), units="ft/s"
         )
