@@ -136,7 +136,10 @@ class CoreGeometryBuilder(GeometryBuilderBase):
                 var = getattr(Aircraft.Nacelle, entry)
                 if var in aviary_inputs:
                     if 'total' not in var:
-                        params[var] = {'shape': (num_engine_type), 'static_target': True}
+                        params[var] = {
+                            'shape': (num_engine_type),
+                            'static_target': True,
+                        }
 
         return params
 
@@ -156,18 +159,18 @@ class CoreGeometryBuilder(GeometryBuilderBase):
 
         # TODO output differs by method
         # TODO finish variables of interest
-        wing_outputs = [Aircraft.Wing.AREA,
-                        Aircraft.Wing.SPAN,
-                        Aircraft.Wing.ASPECT_RATIO,
-                        Aircraft.Wing.SWEEP]
-        htail_outputs = [Aircraft.HorizontalTail.AREA,
-                         Aircraft.VerticalTail.AREA]
-        fuselage_outputs = [Aircraft.Fuselage.LENGTH,
-                            Aircraft.Fuselage.AVG_DIAMETER]
+        wing_outputs = [
+            Aircraft.Wing.AREA,
+            Aircraft.Wing.SPAN,
+            Aircraft.Wing.ASPECT_RATIO,
+            Aircraft.Wing.SWEEP,
+        ]
+        htail_outputs = [Aircraft.HorizontalTail.AREA, Aircraft.VerticalTail.AREA]
+        fuselage_outputs = [Aircraft.Fuselage.LENGTH, Aircraft.Fuselage.AVG_DIAMETER]
 
         with open(filepath, mode='w') as f:
             if self.use_both_geometries:
-                method = ('FLOPS and GASP methods')
+                method = 'FLOPS and GASP methods'
             else:
                 method = self.code_origin.value + ' method'
             f.write(f'# Geometry: {method}\n')

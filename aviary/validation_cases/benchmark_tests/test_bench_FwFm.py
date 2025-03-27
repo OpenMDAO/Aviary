@@ -21,7 +21,7 @@ except ImportError:
 class ProblemPhaseTestCase(unittest.TestCase):
     """
     Setup of a large single aisle commercial transport aircraft using
-    FLOPS mass method and HEIGHT_ENERGY mission method. Expected outputs based
+    FLOPS mass and aero method and HEIGHT_ENERGY mission method. Expected outputs based
     on 'models/test_aircraft/aircraft_for_bench_FwFm.csv' model.
     """
 
@@ -426,7 +426,7 @@ class TestBenchFwFmParallel(ProblemPhaseTestCase):
 
 
 if __name__ == '__main__':
-    # unittest.main()
-    test = TestBenchFwFmSerial()
-    test.setUp()
-    test.test_bench_FwFm_SNOPT()
+    unittest.main()
+    # test = TestBenchFwFmSerial()
+    # test.setUp()
+    # test.test_bench_FwFm_SNOPT()
