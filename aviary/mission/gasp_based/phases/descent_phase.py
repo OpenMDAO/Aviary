@@ -1,9 +1,241 @@
 from aviary.mission.gasp_based.ode.descent_ode import DescentODE
 from aviary.mission.phase_builder_base import PhaseBuilderBase
 from aviary.mission.initial_guess_builders import InitialGuessState, InitialGuessIntegrationVariable, InitialGuessControl
+from aviary.utils.aviary_options_dict import AviaryOptionsDictionary
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.enums import SpeedType
 from aviary.variable_info.variables import Dynamic
+
+
+class DescentPhaseOptions(AviaryOptionsDictionary):
+
+    def declare_options(self):
+
+        self.declare(
+            'analytic',
+            types=bool,
+            default=False,
+            desc='When set to True, this is an analytic phase.'
+        )
+
+        self.declare(
+            'reserve',
+            types=bool,
+            default=False,
+            desc='Designate this phase as a reserve phase and contributes its fuel burn '
+            'towards the reserve mission fuel requirements. Reserve phases should be '
+            'be placed after all non-reserve phases in the phase_info.'
+        )
+
+        self.declare(
+            name='target_distance',
+            default=None,
+            units='m',
+            desc='The total distance traveled by the aircraft from takeoff to landing '
+            'for the primary mission, not including reserve missions. This value must '
+            'be positive.'
+        )
+
+        self.declare(
+            'target_duration',
+            default=None,
+            units='s',
+            desc='The amount of time taken by this phase added as a constraint.'
+        )
+
+        self.declare(
+            name='fix_initial',
+            types=bool,
+            default=False,
+            desc='Fixes the initial states (mass, distance) and does not allow them to '
+            'change during the optimization.'
+        )
+
+        self.declare(
+            name='input_initial',
+            types=bool,
+            default=False,
+            desc='Links all states to a calculation external to this phase.'
+        )
+
+        self.declare(
+            name='EAS_limit',
+            default=0.0,
+            units='kn',
+            desc='Value for maximum speed constraint in this phase.'
+        )
+
+        self.declare(
+            name='mach_cruise',
+            default=0.0,
+            desc='Defines the mach constraint in this phase.'
+        )
+
+        self.declare(
+            name='input_speed_type',
+            default=SpeedType.MACH,
+            values=[SpeedType.MACH, SpeedType.EAS, SpeedType.TAS],
+            desc='Determines which speed variable is independent. The other two will be .'
+            'computed from it.'
+        )
+
+        self.declare(
+            name='final_altitude',
+            default=0.0,
+            units='ft',
+            desc='Altitude for final point in the phase.'
+        )
+
+        self.declare(
+            name='duration_bounds',
+            default=(0, 0),
+            units='s',
+            desc='Lower and upper bounds on the phase duration, in the form of a nested tuple: '
+            'i.e. ((20, 36), "min") This constrains the duration to be between 20 and 36 min.'
+        )
+
+        self.declare(
+            name='duration_ref',
+            default=1.0,
+            units='s',
+            desc='Scale factor ref for duration.'
+        )
+
+        self.declare(
+            name='alt_lower',
+            types=tuple,
+            default=0.0,
+            units='ft',
+            desc='Lower bound for altitude.'
+        )
+
+        self.declare(
+            name='alt_upper',
+            default=0.0,
+            units='ft',
+            desc='Upper bound for altitude.'
+        )
+
+        self.declare(
+            name='alt_ref',
+            default=1.0,
+            units='ft',
+            desc='Scale factor ref for altitude.'
+        )
+
+        self.declare(
+            name='alt_ref0',
+            default=0.0,
+            units='ft',
+            desc='Scale factor ref0 for altitude.'
+        )
+
+        self.declare(
+            name='alt_defect_ref',
+            default=None,
+            units='ft',
+            desc='Scale factor ref for altitude defect.'
+        )
+
+        self.declare(
+            name='alt_constraint_ref',
+            default=None,
+            units='ft',
+            desc='Scale factor ref for altitude defect.'
+        )
+
+        self.declare(
+            name='alt_constraint_ref',
+            default=100.0,
+            units='ft',
+            desc='Scaling ref for the final altitude constraint.'
+        )
+
+        self.declare(
+            name='mass_lower',
+            types=tuple,
+            default=0.0,
+            units='lbm',
+            desc='Lower bound for mass.'
+        )
+
+        self.declare(
+            name='mass_upper',
+            default=0.0,
+            units='lbm',
+            desc='Upper bound for mass.'
+        )
+
+        self.declare(
+            name='mass_ref',
+            default=1.0,
+            units='lbm',
+            desc='Scale factor ref for mass.'
+        )
+
+        self.declare(
+            name='mass_ref0',
+            default=0.0,
+            units='lbm',
+            desc='Scale factor ref0 for mass.'
+        )
+
+        self.declare(
+            name='mass_defect_ref',
+            default=None,
+            units='lbm',
+            desc='Scale factor ref for mass defect.'
+        )
+
+        self.declare(
+            name='distance_lower',
+            default=0.0,
+            units='NM',
+            desc='Lower bound for distance.'
+        )
+
+        self.declare(
+            name='distance_upper',
+            default=0.0,
+            units='NM',
+            desc='Upper bound for distance.'
+        )
+
+        self.declare(
+            name='distance_ref',
+            default=1.0,
+            units='NM',
+            desc='Scale factor ref for distance.'
+        )
+
+        self.declare(
+            name='distance_ref0',
+            default=0.0,
+            units='NM',
+            desc='Scale factor ref0 for distance.'
+        )
+
+        self.declare(
+            name='distance_defect_ref',
+            default=None,
+            units='NM',
+            desc='Scale factor ref for distance defect.'
+        )
+
+        self.declare(
+            name='num_segments',
+            types=int,
+            default=None,
+            desc='The number of segments in transcription creation in Dymos. '
+        )
+
+        self.declare(
+            name='order',
+            types=int,
+            default=None,
+            desc='The order of polynomials for interpolation in the transcription '
+            'created in Dymos.'
+        )
 
 
 class DescentPhase(PhaseBuilderBase):
@@ -25,8 +257,8 @@ class DescentPhase(PhaseBuilderBase):
 
     default_name = 'descent_phase'
     default_ode_class = DescentODE
+    default_options_class = DescentPhaseOptions
 
-    _meta_data_ = {}
     _initial_guesses_meta_data_ = {}
 
     def build_phase(self, aviary_options: AviaryValues = None):
@@ -98,42 +330,6 @@ class DescentPhase(PhaseBuilderBase):
             'EAS_limit': self.user_options.get_val('EAS_limit', 'kn'),
         }
 
-
-# Adding metadata for the DescentPhase
-DescentPhase._add_meta_data(
-    'analytic', val=False, desc='this is an analytic phase (no states).')
-DescentPhase._add_meta_data(
-    'reserve', val=False, desc='this phase is part of the reserve mission.')
-DescentPhase._add_meta_data(
-    'target_distance', val={}, desc='the amount of distance traveled in this phase added as a constraint')
-DescentPhase._add_meta_data(
-    'target_duration', val={}, desc='the amount of time taken by this phase added as a constraint')
-DescentPhase._add_meta_data('fix_initial', val=False)
-DescentPhase._add_meta_data('input_initial', val=False)
-DescentPhase._add_meta_data('EAS_limit', val=0, units='kn')
-DescentPhase._add_meta_data('mach_cruise', val=0)
-DescentPhase._add_meta_data('input_speed_type', val=SpeedType.MACH)
-DescentPhase._add_meta_data('final_altitude', val=0, units='ft')
-DescentPhase._add_meta_data('duration_bounds', val=(0, 0), units='s')
-DescentPhase._add_meta_data('duration_ref', val=1, units='s')
-DescentPhase._add_meta_data('alt_lower', val=0, units='ft')
-DescentPhase._add_meta_data('alt_upper', val=0, units='ft')
-DescentPhase._add_meta_data('alt_ref', val=1, units='ft')
-DescentPhase._add_meta_data('alt_ref0', val=0, units='ft')
-DescentPhase._add_meta_data('alt_defect_ref', val=None, units='ft')
-DescentPhase._add_meta_data('alt_constraint_ref', val=None, units='ft')
-DescentPhase._add_meta_data('mass_lower', val=0, units='lbm')
-DescentPhase._add_meta_data('mass_upper', val=0, units='lbm')
-DescentPhase._add_meta_data('mass_ref', val=1, units='lbm')
-DescentPhase._add_meta_data('mass_ref0', val=0, units='lbm')
-DescentPhase._add_meta_data('mass_defect_ref', val=None, units='lbm')
-DescentPhase._add_meta_data('distance_lower', val=0, units='NM')
-DescentPhase._add_meta_data('distance_upper', val=0, units='NM')
-DescentPhase._add_meta_data('distance_ref', val=1, units='NM')
-DescentPhase._add_meta_data('distance_ref0', val=0, units='NM')
-DescentPhase._add_meta_data('distance_defect_ref', val=None, units='NM')
-DescentPhase._add_meta_data('num_segments', val=None, units='unitless')
-DescentPhase._add_meta_data('order', val=None, units='unitless')
 
 # Adding initial guess metadata
 DescentPhase._add_initial_guess_meta_data(
