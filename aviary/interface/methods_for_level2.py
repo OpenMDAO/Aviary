@@ -75,7 +75,8 @@ class AviaryProblem(om.Problem):
 
     def __init__(self, analysis_scheme=AnalysisScheme.COLLOCATION, **kwargs):
         # Modify OpenMDAO's default_reports for this session.
-        new_reports = ['subsystems', 'mission', 'timeseries_csv', 'run_status']
+        new_reports = ['subsystems', 'mission', 'timeseries_csv', 'run_status',
+                       'input_checks']
         for report in new_reports:
             if report not in _default_reports:
                 _default_reports.append(report)
@@ -552,7 +553,7 @@ class AviaryProblem(om.Problem):
 
         return phase
 
-    def add_phases(self, phase_info_parameterization=None):
+    def add_phases(self, phase_info_parameterization=None, parallel_phases=True):
         """
         Add the mission phases to the problem trajectory based on the user-specified
         phase_info dictionary.
@@ -561,6 +562,9 @@ class AviaryProblem(om.Problem):
         ----------
         phase_info_parameterization (function, optional): A function that takes in the phase_info dictionary
             and aviary_inputs and returns modified phase_info. Defaults to None.
+
+        parallel_phases (bool, optional): If True, the top-level container of all phases will be a ParallelGroup,
+            otherwise it will be a standard OpenMDAO Group. Defaults to True.
 
         Returns
         -------
@@ -574,7 +578,8 @@ class AviaryProblem(om.Problem):
 
         if self.analysis_scheme is AnalysisScheme.COLLOCATION:
             phases = list(phase_info.keys())
-            traj = self.model.add_subsystem('traj', dm.Trajectory())
+            traj = self.model.add_subsystem(
+                'traj', dm.Trajectory(parallel_phases=parallel_phases))
 
         elif self.analysis_scheme is AnalysisScheme.SHOOTING:
             vb = self.aviary_inputs.get_val(Settings.VERBOSITY)
@@ -1221,7 +1226,7 @@ class AviaryProblem(om.Problem):
 
             if self.mission_method is TWO_DEGREES_OF_FREEDOM and self.analysis_scheme is AnalysisScheme.COLLOCATION:
                 # problem formulation to make the trajectory work
-                self.model.add_design_var(Mission.Takeoff.ASCENT_T_INTIIAL,
+                self.model.add_design_var(Mission.Takeoff.ASCENT_T_INITIAL,
                                           lower=0, upper=100, ref=30.0)
                 self.model.add_design_var(Mission.Takeoff.ASCENT_DURATION,
                                           lower=1, upper=1000, ref=10.)

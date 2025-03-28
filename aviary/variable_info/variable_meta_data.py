@@ -1171,6 +1171,7 @@ add_meta_data(
     units='unitless',
     desc='allowable center-of-gravity (cg) travel as a fraction of '
     'the mean aerodynamic chord',
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -1227,6 +1228,7 @@ add_meta_data(
     historical_name={"GASP": 'INGASP.DELCD', "FLOPS": None, "LEAPS1": None},
     units='unitless',
     desc='increment to the profile drag coefficient',
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -1528,6 +1530,7 @@ add_meta_data(
     historical_name={"GASP": 'INGASP.STATIC', "FLOPS": None, "LEAPS1": None},
     units='unitless',
     desc='aircraft static margin as a fraction of mean aerodynamic chord',
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -1575,6 +1578,7 @@ add_meta_data(
     historical_name={"GASP": 'INGASP.SCFAC', "FLOPS": None, "LEAPS1": None},
     units='unitless',
     desc='shift in drag divergence Mach number due to ' 'supercritical design',
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -3151,6 +3155,7 @@ add_meta_data(
     },
     units='ft**2',
     desc='fuselage cross sectional area',
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -3197,6 +3202,7 @@ add_meta_data(
     historical_name={"GASP": 'INGASP.DELFE', "FLOPS": None, "LEAPS1": None},
     units='ft**2',
     desc='increment to fuselage flat plate area',
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -3205,7 +3211,7 @@ add_meta_data(
     historical_name={"GASP": 'INGASP.CKF', "FLOPS": None, "LEAPS1": None},
     units='unitless',
     desc='fuselage form factor',
-    default_value=1,
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -3573,6 +3579,7 @@ add_meta_data(
     historical_name={"GASP": 'INGASP.CBARHT', "FLOPS": None, "LEAPS1": None},
     units='ft',
     desc='mean aerodynamic chord of horizontal tail',
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -3613,7 +3620,7 @@ add_meta_data(
     historical_name={"GASP": 'INGASP.CKHT', "FLOPS": None, "LEAPS1": None},
     units='unitless',
     desc='horizontal tail form factor',
-    default_value=1.25,
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -3731,6 +3738,7 @@ add_meta_data(
     },
     units='deg',
     desc='quarter-chord sweep of horizontal tail',
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -4232,7 +4240,7 @@ add_meta_data(
     historical_name={"GASP": 'INGASP.CKN', "FLOPS": None, "LEAPS1": None},
     units='unitless',
     desc='nacelle form factor',
-    default_value=1.5,
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -4760,6 +4768,7 @@ add_meta_data(
     historical_name={"GASP": 'INGASP.CBARVT', "FLOPS": None, "LEAPS1": None},
     units='ft',
     desc='mean aerodynamic chord of vertical tail',
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -4800,7 +4809,7 @@ add_meta_data(
     historical_name={"GASP": 'INGASP.CKVT', "FLOPS": None, "LEAPS1": None},
     units='unitless',
     desc='vertical tail form factor',
-    default_value=1.25,
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -5407,6 +5416,7 @@ add_meta_data(
     historical_name={"GASP": 'INGASP.DCLMTE', "FLOPS": None, "LEAPS1": None},
     units="unitless",
     desc='lift coefficient increment due to optimally deflected trailing edge flaps (default depends on flap type)',
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -5495,7 +5505,7 @@ add_meta_data(
     historical_name={"GASP": 'INGASP.CKW', "FLOPS": None, "LEAPS1": None},
     units='unitless',
     desc='wing form factor',
-    default_value=1.25,
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -5504,7 +5514,7 @@ add_meta_data(
     historical_name={"GASP": 'INGASP.CKI', "FLOPS": None, "LEAPS1": None},
     units='unitless',
     desc='wing/fuselage interference factor',
-    default_value=1.1,
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -5552,6 +5562,7 @@ add_meta_data(
     units='ft',
     desc='wing height above ground during ground run, measured at roughly '
     'location of mean aerodynamic chord at the mid plane of the wing',
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -5802,6 +5813,7 @@ add_meta_data(
     historical_name={"GASP": 'INGASP.XCTCMX', "FLOPS": None, "LEAPS1": None},
     units='unitless',
     desc='location (percent chord) of max wing thickness',
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -5810,6 +5822,7 @@ add_meta_data(
     historical_name={"GASP": 'INGASP.XCPS', "FLOPS": None, "LEAPS1": None},
     units='unitless',
     desc='location (percent chord) of peak suction',
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -5873,6 +5886,7 @@ add_meta_data(
     historical_name={"GASP": 'INGASP.DELTEO', "FLOPS": None, "LEAPS1": None},
     units='deg',
     desc='optimum flap deflection angle (default depends on flap type)',
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -6267,6 +6281,7 @@ add_meta_data(
     historical_name={"GASP": 'INGASP.ALPHL0', "FLOPS": None, "LEAPS1": None},
     units='deg',
     desc='zero lift angle of attack',
+    default_value=0.0,
 )
 
 # ============================================================================================================================================
@@ -6299,6 +6314,7 @@ add_meta_data(
     historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
     units='lbm/ft**3',
     desc="Atmospheric density at the vehicle's current altitude",
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -6307,6 +6323,7 @@ add_meta_data(
     historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
     units='lbf/ft**2',
     desc="Atmospheric dynamic pressure at the vehicle's current flight condition",
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -6315,6 +6332,7 @@ add_meta_data(
     historical_name={"GASP": 'XKV', "FLOPS": None, "LEAPS1": None},
     units='ft**2/s',
     desc="Atmospheric kinematic viscosity at the vehicle's current flight condition",
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -6323,6 +6341,7 @@ add_meta_data(
     historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
     units='unitless',
     desc='Current Mach number of the vehicle',
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -6339,6 +6358,7 @@ add_meta_data(
     historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
     units='ft/s',
     desc="Atmospheric speed of sound at vehicle's current flight condition",
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -6347,6 +6367,7 @@ add_meta_data(
     historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
     units='lbf/ft**2',
     desc="Atmospheric static pressure at the vehicle's current flight condition",
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -6355,6 +6376,7 @@ add_meta_data(
     historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
     units='degR',
     desc="Atmospheric temperature at vehicle's current flight condition",
+    default_value=0.0,
 )
 
 
@@ -6371,6 +6393,7 @@ add_meta_data(
     historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
     units='ft',
     desc='Current altitude of the vehicle',
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -6412,6 +6435,7 @@ add_meta_data(
     historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
     units='rad',
     desc='Current flight path angle',
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -6455,6 +6479,7 @@ add_meta_data(
     historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
     units='ft/s',
     desc='Current velocity of the vehicle along its body axis',
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -6480,6 +6505,7 @@ add_meta_data(
     historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
     units='deg',
     desc="Angle between aircraft wing cord and relative wind",
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -6512,6 +6538,7 @@ add_meta_data(
     historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
     units='lbf',
     desc='Current total lift produced by the vehicle',
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -6520,6 +6547,7 @@ add_meta_data(
     historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
     units='lbm',
     desc='Current total mass of the vehicle',
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -6911,7 +6939,7 @@ add_meta_data(
     units='unitless',
     desc='Fixed design lift coefficient. If input, overrides design lift '
     'coefficient computed by EDET.',
-    default_value=None,
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -6925,6 +6953,7 @@ add_meta_data(
     units='unitless',
     desc='maximum lift coefficient from flaps model when flaps are up '
     '(not deployed)',
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -7444,7 +7473,7 @@ add_meta_data(
 )
 
 add_meta_data(
-    Mission.Takeoff.ASCENT_T_INTIIAL,
+    Mission.Takeoff.ASCENT_T_INITIAL,
     meta_data=_MetaData,
     historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
     units='s',
