@@ -7,8 +7,8 @@ from aviary.variable_info.functions import add_aviary_input, add_aviary_output
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 from aviary.constants import GRAV_ENGLISH_GASP
 
-FCFWC = 1
-FCFWT = 1
+FCFWC = 1  # Excrescence drag factor
+FCFWT = 1  # Aero technology factors for wing
 
 
 class RootChord(om.ExplicitComponent):
