@@ -228,7 +228,7 @@ def preprocess_crewpayload(aviary_options: AviaryValues, verbosity=None):
             )
         aviary_options.set_val(Aircraft.CrewPayload.NUM_PASSENGERS, design_num_pax)
 
-    # Performe checks on the final data tables to ensure Design is always large then As-Flow
+    # Perform checks on the final data tables to ensure Design is always larger then As-Flown
     if aviary_options.get_val(
         Aircraft.CrewPayload.Design.NUM_FIRST_CLASS
     ) < aviary_options.get_val(Aircraft.CrewPayload.NUM_FIRST_CLASS):
