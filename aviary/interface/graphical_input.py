@@ -129,7 +129,7 @@ class AviaryMissionEditor(tk.Tk):
         for theme_info in self.pallete.values():
             theme_info["image"] = tk.PhotoImage(
                 file=os.path.join(
-                    self.source_directory, "mac_theme.png"
+                    self.source_directory, "static", "mac_theme.png"
                     if self.macOS else theme_info["image"]))
         # stores/retrieves persistent settings in source directory
         self.persist_filename = os.path.join(
@@ -164,9 +164,9 @@ class AviaryMissionEditor(tk.Tk):
         # Set the window icon, provides 2 sizes of logos to prevent blurry icons
         self.iconphoto(
             False, tk.PhotoImage(
-                file=os.path.join(self.source_directory, "aviary_logo_16.png")),
+                file=os.path.join(self.source_directory, "static", "aviary_logo_16.png")),
             tk.PhotoImage(
-                file=os.path.join(self.source_directory, "aviary_logo_32.png")))
+                file=os.path.join(self.source_directory, "static", "aviary_logo_32.png")))
 
         # ------
         # create window layout with frames for containing graph, table, and scrollbar
@@ -265,7 +265,7 @@ class AviaryMissionEditor(tk.Tk):
                         f"Check data_info dictionary, expected {self.num_dep_vars+1} elements inside {key}.")
 
     def update_list(self, value, index, axis):
-        """Updates internal data lists based on row,col values. col corresponds 
+        """Updates internal data lists based on row,col values. col corresponds
             to dependent/independent variable. row corresponds to point number."""
         try:
             value = float(value)
@@ -285,7 +285,7 @@ class AviaryMissionEditor(tk.Tk):
         self.point_warning_strvar.set("")
 
     def update_theme(self, toggle=False):
-        """Called by theme toggle button and start of app, changes color settings for widgets 
+        """Called by theme toggle button and start of app, changes color settings for widgets
         based on current theme."""
         if toggle:
             self.theme = "light" if self.theme == "dark" else "dark"
@@ -371,7 +371,7 @@ class AviaryMissionEditor(tk.Tk):
 # ----------------------
 # Plot related functions
     def create_plots(self):
-        """Creates subplots according to data_info dict. Sets labels and limits. 
+        """Creates subplots according to data_info dict. Sets labels and limits.
             Ties mouse events to appropriate internal functions."""
         self.fig = Figure()
         self.plots = []
@@ -758,9 +758,9 @@ class AviaryMissionEditor(tk.Tk):
         # Set the window icon, provides 2 sizes of logos to prevent blurry icons
         popup.iconphoto(
             False, tk.PhotoImage(
-                file=os.path.join(self.source_directory, "aviary_logo_16.png")),
+                file=os.path.join(self.source_directory, "static", "aviary_logo_16.png")),
             tk.PhotoImage(
-                file=os.path.join(self.source_directory, "aviary_logo_32.png")))
+                file=os.path.join(self.source_directory, "static", "aviary_logo_32.png")))
         popup.resizable(False, False)
         popup.title(pop_title)
         popup.focus_set()
@@ -795,7 +795,7 @@ class AviaryMissionEditor(tk.Tk):
 
     def place_popup(self):
         """Generic popup lets Tkinter automatically size the popup to fit all contents.
-            This function uses that size and main GUI window size/location to compute a 
+            This function uses that size and main GUI window size/location to compute a
             location for the popup that is central to the GUI."""
         self.popup.update_idletasks()
         pop_wid, pop_hei = [int(x)
@@ -884,7 +884,7 @@ class AviaryMissionEditor(tk.Tk):
         return phase_name_list
 
     def advanced_options_popup(self):
-        """Creates a popup window that allows user to edit advanced options for phase info. 
+        """Creates a popup window that allows user to edit advanced options for phase info.
         Options included are specified as a dict in __init__ and include solve/constrain for range,
         include landing/takeoff, polynomial order, and phase order. This function is triggered by the menu buttons"""
 
@@ -978,7 +978,7 @@ class AviaryMissionEditor(tk.Tk):
 # ----------------------
 # Menu related functions
     def create_menu(self):
-        """Creates menu. Structure is specified as a dictionary, can add commands, 
+        """Creates menu. Structure is specified as a dictionary, can add commands,
         separators, and checkbuttons."""
         structure = {"File": [["command", "Open Phase Info..", self.open_phase_info],
                               ["command", "Save Phase Info", self.save],
@@ -1217,7 +1217,7 @@ class AviaryMissionEditor(tk.Tk):
         self.place_popup()
 
     def open_phase_info(self):
-        """Opens a dialog box to select a .py file with a phase info dict. File must contain a dict called phase_info. 
+        """Opens a dialog box to select a .py file with a phase info dict. File must contain a dict called phase_info.
             File can be placed in any directory."""
         file_dialog = filedialog.Open(self, filetypes=[("Python files", "*.py")])
         filename = file_dialog.show()
