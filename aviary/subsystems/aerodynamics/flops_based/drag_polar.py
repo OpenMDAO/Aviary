@@ -13,7 +13,7 @@ from aviary.variable_info.variables import Aircraft, Mission
 class DragPolar(om.ExplicitComponent):
     """
     This will need to create an instance of the dynamic aero group, perhaps as a
-    subproblem, and run it at the table of mach numbers and lift coefficients. Right now,
+    subproblem, and run it at the table of Mach numbers and lift coefficients. Right now,
     it is a placeholder, and also serves as a sink for all parts of the aircraft data
     structures that are passed to the dynamic portion, so that they can be overridden if
     needed.

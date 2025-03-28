@@ -25,7 +25,7 @@ class LargeElectrifiedTurbopropFreighterBenchmark(unittest.TestCase):
     def build_and_run_problem(self):
 
         # Build problem
-        prob = AviaryProblem()
+        prob = AviaryProblem(verbosity=0)
 
         # load inputs from .csv to build engine
         options, guesses = create_vehicle(

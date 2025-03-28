@@ -434,7 +434,7 @@ add_meta_data(
     },
     units='ft',
     desc='Reynolds characteristic length for the canard',
-    default_value=0.0
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -450,7 +450,7 @@ add_meta_data(
     },
     units='unitless',
     desc='canard fineness ratio',
-    default_value=0.0
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -1254,11 +1254,11 @@ add_meta_data(
     historical_name={
         "GASP": None,
         # ['&DEFMSS.MISSIN.DOWE', '&FLOPS.RERUN.DOWE', 'ESB.DOWE'],
-        "FLOPS": 'MISSIN.DOWE',
-        "LEAPS1": 'aircraft.inputs.L0_mission.fixed_operating_weight_empty',
+        "FLOPS": None,
+        "LEAPS1": None,
     },
     units='lbm',
-    desc='fixed operating empty mass',
+    desc='empty mass of the aircraft',
     default_value=0.0,
 )
 
@@ -1394,7 +1394,7 @@ add_meta_data(
     meta_data=_MetaData,
     historical_name={"GASP": 'INGASP.CLALPH', "FLOPS": None, "LEAPS1": None},
     units="1/rad",
-    desc='lift curve slope at cruise mach number',
+    desc='lift curve slope at cruise Mach number',
     default_value=0.0,
 )
 
@@ -1467,14 +1467,16 @@ add_meta_data(
     historical_name={
         "GASP": 'INGASP.OWE',
         # ['WTS.WSP(33, 2)', '~WEIGHT.WOWE', '~WTSTAT.WSP(33, 2)'],
-        "FLOPS": None,
+        "FLOPS": 'MISSIN.DOWE',
         "LEAPS1": [
             '(WeightABC)self._operating_weight_empty',
             'aircraft.outputs.L0_weights_summary.operating_weight_empty',
         ],
     },
     units='lbm',
-    desc='operating mass empty of the aircraft',
+    desc='operating mass of the aircraft, or aircraft mass without mission fuel, or '
+    'passengers. Includes crew, unusable fuel, oil, and operational items like '
+    'cargo containers and passenger service mass.',
     default_value=0.0,
 )
 
@@ -1611,6 +1613,8 @@ add_meta_data(
     default_value=0.0,
 )
 
+# TODO intermediate calculated values with no uses by other systems may not belong in the
+#      variable hierarchy
 add_meta_data(
     # Note in FLOPS/LEAPS1, this is the same variable as
     # Aircraft.Design.SYSTEMS_EQUIP_MASS, because FLOPS/LEAPS1 overwrite the
@@ -1839,8 +1843,8 @@ add_meta_data(
     units='unitless',
     option=True,
     desc='fraction of (scaled) engine mass used to calculate additional propulsion '
-         'system mass added to engine control and starter mass, or used to '
-         'calculate engine installation mass',
+    'system mass added to engine control and starter mass, or used to calculate engine '
+    'installation mass',
     types=(float, int, np.ndarray),
     multivalue=True,
     default_value=0.0,
@@ -1982,11 +1986,11 @@ add_meta_data(
     option=True,
     default_value=False,
     types=bool,
-    desc='If True, generate flight idle data by extrapolating from engine deck. Flight '
+    desc='If True, generate flight idle data by extrapolating from engine data. Flight '
     'idle is defined as engine performance when thrust is reduced to the level '
-    'defined by Aircraft.Engine.FLIGHT_IDLE_THRUST_FRACTION. Engine outputs are '
+    'defined by Aircraft.Engine.FLIGHT_IDLE_THRUST_FRACTION. Other engine outputs are '
     'extrapolated to this thrust level, bounded by '
-    'Aircraft.Engine.FLIGHT_IDLE_MIN_FRACT and Aircraft.Engine.FLIGHT_IDLE_MIN_FRACT',
+    'Aircraft.Engine.FLIGHT_IDLE_MIN_FRACT and Aircraft.Engine.FLIGHT_IDLE_MAX_FRACT',
 )
 
 add_meta_data(
@@ -2133,7 +2137,7 @@ add_meta_data(
     types=(np.ndarray, int),
     multivalue=True,
     option=True,
-    default_value=[2]
+    default_value=[2],
 )
 
 add_meta_data(
@@ -2149,7 +2153,7 @@ add_meta_data(
     option=True,
     types=(np.ndarray, int),
     multivalue=True,
-    default_value=0
+    default_value=0,
 )
 
 add_meta_data(
@@ -2166,7 +2170,7 @@ add_meta_data(
     option=True,
     types=(np.ndarray, int),
     multivalue=True,
-    default_value=[0]
+    default_value=[0],
 )
 
 add_meta_data(
@@ -2571,7 +2575,7 @@ add_meta_data(
     option=True,
     types=(int, np.ndarray),
     multivalue=True,
-    default_value=0
+    default_value=0,
 )
 
 add_meta_data(
@@ -3959,24 +3963,6 @@ add_meta_data(
 #                                                __/ |
 #                                               |___/
 # ===================================================================================
-# TODO obsolete w/o fighter equations?
-add_meta_data(
-    Aircraft.LandingGear.CARRIER_BASED,
-    meta_data=_MetaData,
-    historical_name={
-        "GASP": None,
-        "FLOPS": 'WTIN.CARBAS',  # ['&DEFINE.WTIN.CARBAS', 'FAWT.CARBAS'],
-        "LEAPS1": 'aircraft.inputs.L0_landing_gear.carrier_based',
-    },
-    units='unitless',
-    desc='carrier based aircraft switch, affects mass of flight crew, '
-    'avionics, and nose gear where true is carrier based and false is land '
-    'based',
-    option=True,
-    types=bool,
-    default_value=False,
-)
-
 add_meta_data(
     Aircraft.LandingGear.DRAG_COEFFICIENT,
     meta_data=_MetaData,
@@ -6815,7 +6801,7 @@ add_meta_data(
         ],
     },
     units='unitless',
-    desc='aircraft cruise mach number',
+    desc='aircraft cruise Mach number',
     # TODO: derived default value: Mission.Summary.CRUISE_MACH ???
     default_value=None,
     option=True,
@@ -7153,7 +7139,7 @@ add_meta_data(
     meta_data=_MetaData,
     historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
     units="unitless",
-    desc='approach mach number',
+    desc='approach Mach number',
     default_value=0.1,
 )
 
@@ -7353,7 +7339,7 @@ add_meta_data(
         ],
     },
     units='unitless',
-    desc='aircraft cruise mach number',
+    desc='aircraft cruise Mach number',
     default_value=0.0,  # TODO: required
 )
 

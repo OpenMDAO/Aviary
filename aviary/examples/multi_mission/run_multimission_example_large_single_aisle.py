@@ -232,7 +232,7 @@ class MultiMissionProblem(om.Problem):
             print()
 
 
-def large_single_aisle_example(makeN2=False):
+def large_single_aisle_example(makeN2=False, show_plots=False):
     aviary_values = [aviary_inputs_primary,
                      aviary_inputs_deadhead]
     phase_infos = [phase_info_primary,
@@ -272,32 +272,36 @@ def large_single_aisle_example(makeN2=False):
         createN2(__file__, super_prob)
 
     super_prob.run()
-    printoutputs = [
-        (Mission.Design.GROSS_MASS, 'lbm'),
-        (Aircraft.Design.EMPTY_MASS, 'lbm'),
-        (Aircraft.Wing.SWEEP, 'deg'),
-        (Aircraft.LandingGear.MAIN_GEAR_MASS, 'lbm'),
-        (Aircraft.LandingGear.NOSE_GEAR_MASS, 'lbm'),
-        (Aircraft.Design.LANDING_TO_TAKEOFF_MASS_RATIO, 'unitless'),
-        (Aircraft.Furnishings.MASS, 'lbm'),
-        (Aircraft.CrewPayload.PASSENGER_SERVICE_MASS, 'lbm'),
-        (Mission.Summary.GROSS_MASS, 'lbm'),
-        (Mission.Summary.FUEL_BURNED, 'lbm'),
-        (Aircraft.CrewPayload.PASSENGER_MASS, 'lbm'),
-        (Aircraft.CrewPayload.PASSENGER_PAYLOAD_MASS, 'lbm'),
-        (Aircraft.CrewPayload.CARGO_MASS, 'lbm'),
-        (Aircraft.CrewPayload.TOTAL_PAYLOAD_MASS, 'lbm')]
-    super_prob.print_vars(vars=printoutputs)
+    if show_plots:
+        printoutputs = [
+            (Mission.Design.GROSS_MASS, 'lbm'),
+            (Aircraft.Design.EMPTY_MASS, 'lbm'),
+            (Aircraft.Wing.SWEEP, 'deg'),
+            (Aircraft.LandingGear.MAIN_GEAR_MASS, 'lbm'),
+            (Aircraft.LandingGear.NOSE_GEAR_MASS, 'lbm'),
+            (Aircraft.Design.LANDING_TO_TAKEOFF_MASS_RATIO, 'unitless'),
+            (Aircraft.Furnishings.MASS, 'lbm'),
+            (Aircraft.CrewPayload.PASSENGER_SERVICE_MASS, 'lbm'),
+            (Mission.Summary.GROSS_MASS, 'lbm'),
+            (Mission.Summary.FUEL_BURNED, 'lbm'),
+            (Aircraft.CrewPayload.PASSENGER_MASS, 'lbm'),
+            (Aircraft.CrewPayload.PASSENGER_PAYLOAD_MASS, 'lbm'),
+            (Aircraft.CrewPayload.CARGO_MASS, 'lbm'),
+            (Aircraft.CrewPayload.TOTAL_PAYLOAD_MASS, 'lbm'),
+        ]
+        super_prob.print_vars(vars=printoutputs)
 
-    plotvars = [('altitude', 'ft'),
-                ('mass', 'lbm'),
-                ('drag', 'lbf'),
-                ('distance', 'nmi'),
-                ('throttle', 'unitless'),
-                ('mach', 'unitless')]
-    super_prob.create_timeseries_plots(plotvars=plotvars, show=False)
+        plotvars = [
+            ('altitude', 'ft'),
+            ('mass', 'lbm'),
+            ('drag', 'lbf'),
+            ('distance', 'nmi'),
+            ('throttle', 'unitless'),
+            ('mach', 'unitless'),
+        ]
+        super_prob.create_timeseries_plots(plotvars=plotvars, show=False)
 
-    plt.show()
+        plt.show()
 
     return super_prob
 
