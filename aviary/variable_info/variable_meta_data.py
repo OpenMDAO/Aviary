@@ -1839,8 +1839,8 @@ add_meta_data(
     units='unitless',
     option=True,
     desc='fraction of (scaled) engine mass used to calculate additional propulsion '
-    'system mass added to engine control and starter mass, or used to '
-    'calculate engine installation mass',
+    'system mass added to engine control and starter mass, or used to calculate engine '
+    'installation mass',
     types=(float, int, np.ndarray),
     multivalue=True,
     default_value=0.0,

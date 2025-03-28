@@ -62,7 +62,7 @@ def create_vehicle(vehicle_deck='', meta_data=_MetaData, verbosity=Verbosity.BRI
     verbosity (int, Verbosity):
         Verbosity level for the AviaryProblem. If provided, this overrides verbosity
         specified in the aircraft data. Default is None, and verbosity will be taken
-        from aircraft data or defaulted to Verbosity.BRIEF is not found.
+        from aircraft data or defaulted to Verbosity.BRIEF if not found.
 
     Returns
     -------

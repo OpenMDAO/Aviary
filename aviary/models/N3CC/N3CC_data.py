@@ -1241,69 +1241,35 @@ balanced_trajectory_builder.set_brake_to_abort(
 # region - detailed landing
 landing_trajectory_builder = LandingTrajectory('detailed_landing')
 
+# block auto-formatting of tables
+# autopep8: off
+# fmt: off
+
 # region - landing aero
 landing_subsystem_options = {
     'core_aerodynamics': {
         'method': 'low_speed',
         'ground_altitude': 0.0,  # units='m'
         'angles_of_attack': [
-            0.0,
-            1.0,
-            2.0,
-            3.0,
-            4.0,
-            5.0,
-            6.0,
-            7.0,
-            8.0,
-            9.0,
-            10.0,
-            11.0,
-            12.0,
-            13.0,
-            14.0,
-            15.0,
+            0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0,
+            8.0, 9.0, 10.0, 11.0, 12.0, 13.0, 14.0, 15.0,
         ],  # units='deg'
         'lift_coefficients': [
-            0.7,
-            0.9,
-            1.05,
-            1.15,
-            1.25,
-            1.4,
-            1.5,
-            1.60,
-            1.7,
-            1.8,
-            1.9,
-            2.0,
-            2.1,
-            2.2,
-            2.3,
-            2.40,
+            0.7, 0.9, 1.05, 1.15, 1.25, 1.4, 1.5, 1.60,
+            1.7, 1.8, 1.9, 2.0, 2.1, 2.2, 2.3, 2.40,
         ],
         'drag_coefficients': [
-            0.1,
-            0.1,
-            0.12,
-            0.13,
-            0.14,
-            0.15,
-            0.16,
-            0.17,
-            0.18,
-            0.20,
-            0.22,
-            0.24,
-            0.26,
-            0.3,
-            0.32,
-            0.34,
+            0.1, 0.1, 0.12, 0.13, 0.14, 0.15, 0.16, 0.17,
+            0.18, 0.20, 0.22, 0.24, 0.26, 0.3, 0.32, 0.34,
         ],
         'lift_coefficient_factor': 1.0,
         'drag_coefficient_factor': 1.0,
     }
 }
+
+# block auto-formatting of tables
+# autopep8: on
+# fmt: on
 
 landing_subsystem_options_spoilers = {
     'core_aerodynamics': {

@@ -665,18 +665,10 @@ class LiftCurveSlopeAtCruise(om.ExplicitComponent):
         mach = inputs[Mission.Design.MACH]
 
         outputs[Aircraft.Design.LIFT_CURVE_SLOPE] = (
-            np.pi
-            * AR
-            / (
-                1
-                + np.sqrt(
-                    1
-                    + (
-                        ((AR / (2 * np.cos(DLMC4))) ** 2)
-                        * (1 - (mach * np.cos(DLMC4)) ** 2)
-                    )
-                )
-            )
+            np.pi * AR / (1 + np.sqrt(1 + (
+                ((AR / (2 * np.cos(DLMC4))) ** 2)
+                * (1 - (mach * np.cos(DLMC4)) ** 2)
+            )))
         )
 
     def compute_partials(self, inputs, partials):
