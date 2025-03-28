@@ -13,7 +13,6 @@ from openmdao.visualization.tables.table_builder import generate_table
 from aviary.interface.utils.markdown_utils import write_markdown_variable_table
 from aviary.utils.functions import wrapped_convert_units
 from aviary.utils.named_values import NamedValues
-from aviary.variable_info.variable_meta_data import CoreMetaData
 
 
 def register_custom_reports():
@@ -248,6 +247,7 @@ def input_check_report(prob, **kwargs):
     all_ivc_abs = [k for k, v in model._conn_abs_in2out.items() if 'ivc' in v]
     all_ivc_prom = [abs2prom[v] for v in all_ivc_abs]
 
+    aviary_metadata = prob.meta_data
     aviary_inputs = prob.aviary_inputs
     bare_inputs = {v for v in all_ivc_prom if v not in aviary_inputs}
     bare_hierarchy_inputs = {
@@ -271,7 +271,7 @@ def input_check_report(prob, **kwargs):
             f.write('| :- |  :- |  :- | :- | :- |\n')
 
             for var in sorted(bare_hierarchy_inputs):
-                metadata = CoreMetaData.get(var)
+                metadata = aviary_metadata.get(var)
                 units = metadata['units']
                 val = model.get_val(var, units=units)
                 desc = metadata["desc"]
