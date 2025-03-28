@@ -32,6 +32,7 @@ aircraft:design:touchdown_mass,0,lbm
 aircraft:design:use_alt_mass,False,unitless
 aircraft:design:zero_lift_drag_coeff_factor,0.96,unitless
 aircraft:electrical:mass_scaler,1.1976,unitless
+aircraft:engine:data_file,models/engines/turbofan_22k.deck,unitless
 aircraft:engine:additional_mass_fraction,0,unitless
 aircraft:engine:constant_fuel_consumption,0,lbm/h
 aircraft:engine:flight_idle_max_fraction,1,unitless
@@ -393,7 +394,7 @@ TOLIN.rvfact,0
 TOLIN.tdelg,3
 TOLIN.tdsink,8
 TOLIN.thfact,1
-TOLIN.thrld
+TOLIN.thrld,0
 TOLIN.tibra,0
 TOLIN.tibrak,1.46
 TOLIN.ticut,1.46

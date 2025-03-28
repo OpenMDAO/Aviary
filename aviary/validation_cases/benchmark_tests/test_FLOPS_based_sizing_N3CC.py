@@ -15,11 +15,8 @@ from openmdao.utils.testing_utils import use_tempdirs
 from openmdao.utils.testing_utils import require_pyoptsparse
 
 from aviary.interface.methods_for_level2 import AviaryProblem
-from aviary.mission.flops_based.phases.energy_phase import EnergyPhase
 from aviary.models.N3CC.phase_info import phase_info
-from aviary.subsystems.propulsion import EngineModel
-from aviary.utils.aviary_values import AviaryValues
-from aviary.utils.functions import set_aviary_initial_values
+from aviary.subsystems.propulsion.engine_model import EngineModel
 from aviary.utils.process_input_decks import create_vehicle
 from aviary.utils.test_utils.assert_utils import warn_timeseries_near_equal
 from aviary.validation_cases.benchmark_utils import \
@@ -32,17 +29,19 @@ def run_trajectory(sim=True):
     prob = AviaryProblem()
 
     # load inputs from .csv to build engine
-    options, _ = create_vehicle(
-        "models/N3CC/N3CC_FLOPS.csv"
-    )
+    # options, _ = create_vehicle(
+    #    "models/N3CC/N3CC_FLOPS.csv"
+    # )
 
-    engine_model = EngineModel('engine_model', options=options)
+    # Dont think this is needed because build_engine_deck is called in
+    # height_energy_problem_configuration initial_guesses
+    # engine_model = EngineModel('engine_model', options=options)
 
     # load_inputs needs to be updated to accept an already existing aviary options
     prob.load_inputs(
         "models/N3CC/N3CC_FLOPS.csv",
         phase_info,
-        engine_builders=[engine_model],
+        # engine_builders=[engine_model],
     )
 
     ##########################################
@@ -53,12 +52,12 @@ def run_trajectory(sim=True):
     takeoff_thrust_per_eng = 24555.5  # lbf TODO: where should this get connected from?
     takeoff_L_over_D = 17.35  # TODO: should this come from aero?
 
-    aviary_inputs.set_val(Mission.Takeoff.FUEL_SIMPLE,
-                          takeoff_fuel_burned, units='lbm')
-    aviary_inputs.set_val(Mission.Takeoff.LIFT_OVER_DRAG,
-                          takeoff_L_over_D, units="unitless")
-    aviary_inputs.set_val(Mission.Design.THRUST_TAKEOFF_PER_ENG,
-                          takeoff_thrust_per_eng, units='lbf')
+    prob.aviary_inputs.set_val(Mission.Takeoff.FUEL_SIMPLE,
+                               takeoff_fuel_burned, units='lbm')
+    prob.aviary_inputs.set_val(Mission.Takeoff.LIFT_OVER_DRAG,
+                               takeoff_L_over_D, units="unitless")
+    prob.aviary_inputs.set_val(Mission.Design.THRUST_TAKEOFF_PER_ENG,
+                               takeoff_thrust_per_eng, units='lbf')
 
     prob.check_and_preprocess_inputs()
     prob.add_pre_mission_systems()
@@ -97,12 +96,12 @@ def run_trajectory(sim=True):
     ##########################
 
     # Nudge it a bit off the correct answer to verify that the optimize takes us there.
-    aviary_inputs.set_val(Mission.Design.GROSS_MASS, 135000.0, units='lbm')
+    prob.aviary_inputs.set_val(Mission.Design.GROSS_MASS, 135000.0, units='lbm')
 
-    prob.model.add_design_var(Mission.Design.GROSS_MASS, units='lbm',
-                              lower=100000.0, upper=200000.0, ref=135000)
-    prob.model.add_design_var(Mission.Summary.GROSS_MASS, units='lbm',
-                              lower=100000.0, upper=200000.0, ref=135000)
+    # prob.model.add_design_var(Mission.Design.GROSS_MASS, units='lbm',
+    #                          lower=100000.0, upper=200000.0, ref=135000)
+    # prob.model.add_design_var(Mission.Summary.GROSS_MASS, units='lbm',
+    #                          lower=100000.0, upper=200000.0, ref=135000)
 
     ##################
     # Define Phases  #
@@ -114,51 +113,51 @@ def run_trajectory(sim=True):
     # preprocess_propulsion(aviary_inputs, engine)
     # default_mission_subsystems = get_default_mission_subsystems('FLOPS', engine)
 
-    climb_options = EnergyPhase(
-        'test_climb',
-        user_options=AviaryValues({
-            # 'initial_altitude': (alt_i_climb, 'm'),
-            # 'final_altitude': (alt_f_climb, 'm'),
-            # 'initial_mach': (mach_i_climb, 'unitless'),
-            # 'final_mach': (mach_f_climb, 'unitless'),
-            # 'fix_initial': (False, 'unitless'),
-            'input_initial': (True, 'unitless'),
-            'use_polynomial_control': (False, 'unitless'),
-        }),
-        # core_subsystems=default_mission_subsystems,
-        # subsystem_options={'core_aerodynamics': {'method': 'computed'}},
-        transcription=transcription_climb,
-    )
+#    climb_options = EnergyPhase(
+#        'test_climb',
+#        user_options=AviaryValues({
+    # 'initial_altitude': (alt_i_climb, 'm'),
+    # 'final_altitude': (alt_f_climb, 'm'),
+    # 'initial_mach': (mach_i_climb, 'unitless'),
+    # 'final_mach': (mach_f_climb, 'unitless'),
+    # 'fix_initial': (False, 'unitless'),
+#            'input_initial': (True, 'unitless'),
+#            'use_polynomial_control': (False, 'unitless'),
+#        }),
+    # core_subsystems=default_mission_subsystems,
+    # subsystem_options={'core_aerodynamics': {'method': 'computed'}},
+#        transcription=transcription_climb,
+#    )
 
-    cruise_options = EnergyPhase(
-        'test_cruise',
-        user_options=AviaryValues({
-            # 'initial_altitude': (alt_min_cruise, 'm'),
-            # 'final_altitude': (alt_max_cruise, 'm'),
-            # 'initial_mach': (cruise_mach, 'unitless'),
-            # 'final_mach': (cruise_mach, 'unitless'),
-            'required_available_climb_rate': (300, 'ft/min'),
-            # 'fix_initial': (False, 'unitless'),
-        }),
-        # core_subsystems=default_mission_subsystems,
-        # subsystem_options={'core_aerodynamics': {'method': 'computed'}},
-        transcription=transcription_cruise,
-    )
+#    cruise_options = EnergyPhase(
+#        'test_cruise',
+#        user_options=AviaryValues({
+    # 'initial_altitude': (alt_min_cruise, 'm'),
+    # 'final_altitude': (alt_max_cruise, 'm'),
+    # 'initial_mach': (cruise_mach, 'unitless'),
+    # 'final_mach': (cruise_mach, 'unitless'),
+#            'required_available_climb_rate': (300, 'ft/min'),
+    # 'fix_initial': (False, 'unitless'),
+#        }),
+    # core_subsystems=default_mission_subsystems,
+    # subsystem_options={'core_aerodynamics': {'method': 'computed'}},
+#        transcription=transcription_cruise,
+#    )
 
-    descent_options = EnergyPhase(
-        'test_descent',
-        user_options=AviaryValues({
-            # 'final_altitude': (alt_f_descent, 'm'),
-            # 'initial_altitude': (alt_i_descent, 'm'),
-            # 'initial_mach': (mach_i_descent, 'unitless'),
-            # 'final_mach': (mach_f_descent, 'unitless'),
-            # 'fix_initial': (False, 'unitless'),
-            'use_polynomial_control': (False, 'unitless'),
-        }),
-        # core_subsystems=default_mission_subsystems,
-        # subsystem_options={'core_aerodynamics': {'method': 'computed'}},
-        transcription=transcription_descent,
-    )
+#    descent_options = EnergyPhase(
+#        'test_descent',
+#        user_options=AviaryValues({
+    # 'final_altitude': (alt_f_descent, 'm'),
+    # 'initial_altitude': (alt_i_descent, 'm'),
+    # 'initial_mach': (mach_i_descent, 'unitless'),
+    # 'final_mach': (mach_f_descent, 'unitless'),
+    # 'fix_initial': (False, 'unitless'),
+#            'use_polynomial_control': (False, 'unitless'),
+#        }),
+    # core_subsystems=default_mission_subsystems,
+    # subsystem_options={'core_aerodynamics': {'method': 'computed'}},
+#        transcription=transcription_descent,
+#    )
 
     # HANDLED THROUGH PREPROCESSORS LEVEL2 CALL
     # preprocess_crewpayload(aviary_inputs)
@@ -187,22 +186,22 @@ def run_trajectory(sim=True):
 
     # if fix_initial is false, can we always set input_initial to be true for
     # necessary states, and then ignore if we use a linkage?
-    climb.set_time_options(  # fix_initial=True, fix_duration=False, units='s',
-        #                           duration_bounds=(t_duration_climb*0.5, t_duration_climb*2),
-        duration_ref=t_duration_climb)
-    cruise.set_time_options(  # fix_initial=False, fix_duration=False, units='s',
-        #                            duration_bounds=(t_duration_cruise*0.5, t_duration_cruise*2),
-        duration_ref=t_duration_cruise,
-        #                            initial_bounds=(t_duration_climb*0.5, t_duration_climb*2)
-    )
-    descent.set_time_options(
-        #        fix_initial=False, fix_duration=False, units='s',
-        #        duration_bounds=(t_duration_descent*0.5, t_duration_descent*2),
-        duration_ref=t_duration_descent,
-        #        initial_bounds=(
-        #            (t_duration_cruise + t_duration_climb)*0.5,
-        #            (t_duration_cruise + t_duration_climb)*2))
-    )
+#    climb.set_time_options(  # fix_initial=True, fix_duration=False, units='s',
+    #                           duration_bounds=(t_duration_climb*0.5, t_duration_climb*2),
+#        duration_ref=t_duration_climb)
+#    cruise.set_time_options(  # fix_initial=False, fix_duration=False, units='s',
+    #                            duration_bounds=(t_duration_cruise*0.5, t_duration_cruise*2),
+#        duration_ref=t_duration_cruise,
+    #                            initial_bounds=(t_duration_climb*0.5, t_duration_climb*2)
+#    )
+#    descent.set_time_options(
+    #        fix_initial=False, fix_duration=False, units='s',
+    #        duration_bounds=(t_duration_descent*0.5, t_duration_descent*2),
+#        duration_ref=t_duration_descent,
+    #        initial_bounds=(
+    #            (t_duration_cruise + t_duration_climb)*0.5,
+    #            (t_duration_cruise + t_duration_climb)*2))
+#    )
 
     # THINK THIS IS HANDLED IN LVL2 METHODS LINE 655-660?
     # traj.add_phase('climb', climb)
@@ -354,9 +353,9 @@ def run_trajectory(sim=True):
     # setup_model_options(prob, aviary_inputs)
 
     # Not too sure about this one...
-    prob.setup(force_alloc_complex=True)
+    # prob.setup(force_alloc_complex=True)
 
-    set_aviary_initial_values(prob, aviary_inputs)
+    # set_aviary_initial_values(prob, aviary_inputs)
 
     ############################################
     # Initial Settings for States and Controls #
@@ -465,29 +464,11 @@ class ProblemPhaseTestCase(unittest.TestCase):
         prob = run_trajectory(sim=False)
 
         times_climb = prob.get_val('traj.climb.timeseries.time', units='s')
-        altitudes_climb = prob.get_val(
-            'traj.climb.timeseries.altitude', units='m')
-        masses_climb = prob.get_val('traj.climb.timeseries.mass', units='kg')
-        distances_climb = prob.get_val('traj.climb.timeseries.distance', units='m')
-        velocities_climb = prob.get_val(
-            'traj.climb.timeseries.velocity', units='m/s')
         thrusts_climb = prob.get_val('traj.climb.timeseries.thrust_net_total', units='N')
         times_cruise = prob.get_val('traj.cruise.timeseries.time', units='s')
-        altitudes_cruise = prob.get_val(
-            'traj.cruise.timeseries.altitude', units='m')
-        masses_cruise = prob.get_val('traj.cruise.timeseries.mass', units='kg')
-        distances_cruise = prob.get_val('traj.cruise.timeseries.distance', units='m')
-        velocities_cruise = prob.get_val(
-            'traj.cruise.timeseries.velocity', units='m/s')
         thrusts_cruise = prob.get_val(
             'traj.cruise.timeseries.thrust_net_total', units='N')
         times_descent = prob.get_val('traj.descent.timeseries.time', units='s')
-        altitudes_descent = prob.get_val(
-            'traj.descent.timeseries.altitude', units='m')
-        masses_descent = prob.get_val('traj.descent.timeseries.mass', units='kg')
-        distances_descent = prob.get_val('traj.descent.timeseries.distance', units='m')
-        velocities_descent = prob.get_val(
-            'traj.descent.timeseries.velocity', units='m/s')
         thrusts_descent = prob.get_val(
             'traj.descent.timeseries.thrust_net_total', units='N')
 
@@ -659,7 +640,6 @@ class ProblemPhaseTestCase(unittest.TestCase):
         #                      absolute tolerance for the points near the ground.
         rtol = .05
         atol = 2.0
-        atol_altitude = 30.0
 
         # FLIGHT PATH
         # CLIMB
