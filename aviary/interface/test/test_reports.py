@@ -60,7 +60,6 @@ class TestReports(unittest.TestCase):
                     self.assertAlmostEqual(float(expected_val), float(
                         output_val), places=7, msg="CSV row value does not match expected value within tolerance")
 
-
     @set_env_vars(TESTFLO_RUNNING='0', OPENMDAO_REPORTS='check_input_report')
     def test_check_input_report(self):
         # Make sure the input check works with custom metadata.
