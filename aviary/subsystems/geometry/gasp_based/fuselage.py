@@ -568,7 +568,7 @@ class BWBCabinLayout(om.ExplicitComponent):
 
 class BWBFuselageParameters2(om.ExplicitComponent):
     """
-    Computation of average fuselage diameter, cabin height, cabin length and nose height for BWB.
+    Computation of average fuselage diameter, cabin area, cabin length and fuselage planform area.
     """
 
     def initialize(self):
@@ -594,7 +594,9 @@ class BWBFuselageParameters2(om.ExplicitComponent):
         self.declare_partials(
             "cabin_len",
             [
-                Aircraft.Fuselage.NOSE_FINENESS,
+                'fuselage_station_aft',
+                'nose_length',
+                Aircraft.Fuselage.PILOT_COMPARTMENT_LENGTH,
             ],
         )
 
@@ -621,7 +623,6 @@ class BWBFuselageParameters2(om.ExplicitComponent):
                 Aircraft.Fuselage.TAIL_FINENESS,
             ],
         )
-
 
     def compute(self, inputs, outputs):
         options = self.options
@@ -659,3 +660,69 @@ class BWBFuselageParameters2(om.ExplicitComponent):
         options = self.options
         verbosity = options[Settings.VERBOSITY]
         rad2deg = 180. / np.pi
+
+        forebody_sweep = inputs[Aircraft.BWB.PASSENGER_LEADING_EDGE_SWEEP]
+        body_width = inputs[Aircraft.Fuselage.AVG_DIAMETER]
+        additional_width = inputs[Aircraft.Fuselage.PRESSURIZED_WIDTH_ADDITIONAL]
+        len_to_diam_tail_cone = inputs[Aircraft.Fuselage.TAIL_FINENESS]
+        nose_len = inputs['nose_length']
+        cabin_height = inputs['cabin_height']
+        fuselage_station_aft = inputs['fuselage_station_aft']
+
+        fb_sweep_rad = forebody_sweep / rad2deg
+        fb_tan = np.tan(fb_sweep_rad)
+        fb_cos = np.cos(fb_sweep_rad)
+        fb_dtan = 1.0 / rad2deg / (fb_cos * fb_cos)
+
+        cabin_width = body_width - additional_width
+
+        J['cabin_len', 'fuselage_station_aft'] = 1.0
+        J['cabin_len', 'nose_length'] = -1.0
+        J['cabin_len', Aircraft.Fuselage.PILOT_COMPARTMENT_LENGTH] = -1.0
+
+        d_forebody_area_d_bd_width = 0.5 * fb_tan * (0.5 * body_width + nose_len / fb_tan) + (0.5 * cabin_width * fb_tan - nose_len) * (0.5)
+        d_forebody_area_d_ns_length = -(0.5 * body_width + nose_len / fb_tan) + (0.5 * cabin_width *fb_tan - nose_len) / fb_tan
+        d_forebody_area_d_add_length = -0.5 *fb_tan * (0.5 * body_width + nose_len / fb_tan)
+        d_forebody_area_d_sweep = (0.5 * cabin_width * fb_dtan) * (0.5 * body_width + nose_len / fb_tan) - (0.5 * cabin_width *fb_tan - nose_len) * nose_len / fb_tan / fb_tan / rad2deg / fb_cos / fb_cos
+
+        d_aftbody_area_d_bd_width = fuselage_station_aft - 0.5 * cabin_width * fb_tan - 0.5 * body_width * fb_tan
+        d_aftbody_area_d_fuselage_aft = body_width
+        d_aftbody_area_d_additional = 0.5 * body_width * fb_tan
+        d_aftbody_area_d_sweep = -0.5 * body_width * cabin_width * fb_dtan
+
+        #
+        # cabin_area = forebody + aftbody
+        #
+        d_cabin_area_d_body_len = d_forebody_area_d_bd_width + d_aftbody_area_d_bd_width
+        J[Aircraft.BWB.CABIN_AREA, Aircraft.Fuselage.AVG_DIAMETER] = d_cabin_area_d_body_len
+
+        d_cabin_area_d_nose_len = d_forebody_area_d_ns_length
+        J[Aircraft.BWB.CABIN_AREA, 'nose_length'] = d_cabin_area_d_nose_len
+
+        d_cabin_area_d_fuselage_aft = d_aftbody_area_d_fuselage_aft
+        J[Aircraft.BWB.CABIN_AREA, 'fuselage_station_aft'] = d_cabin_area_d_fuselage_aft
+
+        d_cabin_area_d_additional = d_forebody_area_d_add_length + d_aftbody_area_d_additional
+        J[Aircraft.BWB.CABIN_AREA, Aircraft.Fuselage.PRESSURIZED_WIDTH_ADDITIONAL] = d_cabin_area_d_additional
+
+        d_cabin_area_d_sweep = d_forebody_area_d_sweep + d_aftbody_area_d_sweep
+        J[Aircraft.BWB.CABIN_AREA, Aircraft.BWB.PASSENGER_LEADING_EDGE_SWEEP] = d_cabin_area_d_sweep
+
+        d_nose_pf_area_d_nose_len = 2 * nose_len / fb_tan
+        d_nose_pf_area_d_sweep = -nose_len * nose_len / fb_tan / fb_tan * fb_dtan
+
+        d_tail_pf_area_d_tail_fineness = cabin_height * (body_width - 0.5 * additional_width)
+        d_tail_pf_area_d_both_width = len_to_diam_tail_cone * cabin_height
+        d_tail_pf_area_d_additional = -0.5 * len_to_diam_tail_cone * cabin_height
+        d_tail_pf_area_d_cabin_height = len_to_diam_tail_cone *  (body_width - 0.5 * additional_width)
+
+        #
+        # fuselage_planform_area = nose_area + cabin_area + tail_area
+        #
+        J[Aircraft.Fuselage.PLANFORM_AREA, Aircraft.BWB.PASSENGER_LEADING_EDGE_SWEEP] = d_nose_pf_area_d_sweep + d_cabin_area_d_sweep
+        J[Aircraft.Fuselage.PLANFORM_AREA, Aircraft.Fuselage.AVG_DIAMETER] = d_cabin_area_d_body_len + d_tail_pf_area_d_both_width
+        J[Aircraft.Fuselage.PLANFORM_AREA, Aircraft.Fuselage.PRESSURIZED_WIDTH_ADDITIONAL] = d_cabin_area_d_additional + d_tail_pf_area_d_additional
+        J[Aircraft.Fuselage.PLANFORM_AREA, 'fuselage_station_aft'] = d_cabin_area_d_fuselage_aft
+        J[Aircraft.Fuselage.PLANFORM_AREA, 'nose_length'] = d_nose_pf_area_d_nose_len + d_cabin_area_d_nose_len
+        J[Aircraft.Fuselage.PLANFORM_AREA, 'cabin_height'] = d_tail_pf_area_d_cabin_height
+        J[Aircraft.Fuselage.PLANFORM_AREA, Aircraft.Fuselage.TAIL_FINENESS] = d_tail_pf_area_d_tail_fineness

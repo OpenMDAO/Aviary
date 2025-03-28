@@ -619,11 +619,11 @@ class BWBFuselageParameters2TestCase(unittest.TestCase):
             abs_err_tol=5.0e-4,
             rel_err_tol=5.0e-5,
         )
-        #assert_check_partials(partial_data, atol=1e-5, rtol=1e-5)
+        assert_check_partials(partial_data, atol=1e-5, rtol=1e-5)
 
 
 if __name__ == "__main__":
     #unittest.main()
-    test = BWBFuselageParameters1TestCase()
+    test = BWBFuselageParameters2TestCase()
     test.setUp()
     test.test_case1()
