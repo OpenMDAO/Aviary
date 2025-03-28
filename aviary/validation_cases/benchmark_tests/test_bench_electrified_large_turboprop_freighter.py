@@ -29,7 +29,7 @@ class LargeElectrifiedTurbopropFreighterBenchmark(unittest.TestCase):
 
         # load inputs from .csv to build engine
         options, guesses = create_vehicle(
-            "models/large_turboprop_freighter/large_turboprop_freighter.csv"
+            "models/large_turboprop_freighter/large_turboprop_freighter_GASP.csv"
         )
 
         options.set_val(Settings.EQUATIONS_OF_MOTION, 'height_energy')
@@ -60,7 +60,7 @@ class LargeElectrifiedTurbopropFreighterBenchmark(unittest.TestCase):
 
         # load_inputs needs to be updated to accept an already existing aviary options
         prob.load_inputs(
-            options,  # "models/large_turboprop_freighter/large_turboprop_freighter.csv",
+            options,  # "models/large_turboprop_freighter/large_turboprop_freighter_GASP.csv",
             energy_phase_info,
             engine_builders=[electroprop],
         )
