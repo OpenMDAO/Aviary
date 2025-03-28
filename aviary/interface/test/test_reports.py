@@ -106,7 +106,6 @@ class TestReports(unittest.TestCase):
 
         prob.setup()
 
-        # Should make it through final setup.
         prob.run_model()
 
 
