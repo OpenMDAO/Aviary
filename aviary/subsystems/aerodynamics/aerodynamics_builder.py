@@ -611,13 +611,6 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
 
             all_vars = set()
             if method == 'low_speed':
-                # if any(
-                #     key in kwargs for key in [
-                #         'free_aero_data',
-                #         'free_flaps_data',
-                #         'free_ground_data'
-                #     ]
-                # ) in kwargs:
                 all_vars = set(AERO_2DOF_INPUTS + AERO_LS_2DOF_INPUTS)
             elif method == 'cruise':
                 all_vars = set(AERO_2DOF_INPUTS + AERO_CLEAN_2DOF_INPUTS)
