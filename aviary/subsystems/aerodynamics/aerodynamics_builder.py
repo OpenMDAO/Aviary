@@ -186,13 +186,6 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
                 aero_group = LowSpeedAero(num_nodes=num_nodes, **kwargs)
 
             elif method == 'tabular_low_speed':
-                # if any(
-                #     key in kwargs for key in [
-                #         'free_aero_data',
-                #         'free_flaps_data',
-                #         'free_ground_data'
-                #     ]
-                # ) in kwargs:
                 aero_group = TabularLowSpeedAero(
                     num_nodes=num_nodes,
                     free_aero_data=kwargs.pop('free_aero_data'),
@@ -216,7 +209,7 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
 
                 balance = aero_supergroup.add_subsystem('balance', om.BalanceComp())
                 balance.add_balance(
-                    'angle_of_attack',
+                    Dynamic.Vehicle.ANGLE_OF_ATTACK,
                     val=np.ones(num_nodes),
                     units='deg',
                     res_ref=1.0e6,
@@ -238,9 +231,13 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
                     ],
                 )
 
-                aero_supergroup.connect('balance.angle_of_attack', 'angle_of_attack')
                 aero_supergroup.connect(
-                    'required_lift.lift_resid', 'balance.lhs:angle_of_attack'
+                    f'balance.{Dynamic.Vehicle.ANGLE_OF_ATTACK}',
+                    Dynamic.Vehicle.ANGLE_OF_ATTACK,
+                )
+                aero_supergroup.connect(
+                    'required_lift.lift_resid',
+                    f'balance.lhs:{Dynamic.Vehicle.ANGLE_OF_ATTACK}',
                 )
 
                 aero_supergroup.linear_solver = om.DirectSolver()
@@ -355,7 +352,7 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
                 ]
 
             elif method in ('cruise', 'tabular_cruise'):
-                if method == 'tabluar_cruise':
+                if method == 'tabular_cruise':
                     promotes = [Dynamic.Vehicle.DRAG, Dynamic.Vehicle.LIFT]
                 else:
                     if 'output_alpha' in kwargs:
