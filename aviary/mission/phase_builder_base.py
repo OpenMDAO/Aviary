@@ -279,15 +279,9 @@ class PhaseBuilderBase(ABC):
         """
         return {}
 
-    def to_phase_info(self, legacy=False):
+    def to_phase_info(self):
         '''
         Return the stored settings as phase info.
-
-        Parameters
-        ----------
-        legacy : bool
-            When True, return in original format, with explicit unitless declartions.
-            Default is False.
 
         Returns
         -------
@@ -298,7 +292,7 @@ class PhaseBuilderBase(ABC):
                 stored settings
         '''
         subsystem_options = self.subsystem_options  # TODO: aero info?
-        user_options = self.user_options.to_phase_info(legacy=legacy)
+        user_options = self.user_options.to_phase_info()
         initial_guesses = dict(self.initial_guesses)
 
         # TODO some of these may be purely programming API hooks, rather than for use
