@@ -60,6 +60,9 @@ class EngineModel(SubsystemBuilderBase):
         All attributes and values for options in EngineModel are finalized for
         analysis.
         """
+        DeprecationWarning(
+            'EngineModel._setup() is redundant and will be removed in a future update.'
+        )
         self._preprocess_inputs()
 
     def build_pre_mission(self, aviary_inputs, **kwargs):
