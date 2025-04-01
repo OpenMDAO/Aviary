@@ -232,7 +232,7 @@ class EngineDeck(EngineModel):
                     warnings.warn(
                         f'<{key}> is a required option for EngineDecks, but has not been '
                         f'specified for EngineDeck <{self.name}>. The default value '
-                        f"{val}{' (' + units + ')' if units != 'unitless' else ''} will "
+                        f"{val}{' ' + units if units != 'unitless' else ''} will "
                         'be used.'
                     )
 
@@ -1248,6 +1248,13 @@ class EngineDeck(EngineModel):
 
             reference_sls_thrust = max(self.data[THRUST][sls_idx])
 
+            if self.get_val(Settings.VERBOSITY) >= Verbosity.VERBOSE:
+                print(
+                    f'EngineDeck <{self.name}>: found reference SLS thrust of '
+                    f'{reference_sls_thrust} {self.engine_variables[THRUST]} in '
+                    'provided performance data'
+                )
+
             self.set_val(
                 Aircraft.Engine.REFERENCE_SLS_THRUST,
                 reference_sls_thrust,
@@ -1286,7 +1293,7 @@ class EngineDeck(EngineModel):
                         # user wants scaling but provided conflicting inputs,
                         # cannot be resolved
                         raise AttributeError(
-                            f'EngineModel <{self.name}>: Conflicting values provided '
+                            f'EngineDeck <{self.name}>: Conflicting values provided '
                             'for aircraft:engine:scale_factor and '
                             'aircraft:engine:scaled_sls_thrust when compared against '
                             'aircraft:engine:reference_sls_thrust'
@@ -1297,7 +1304,7 @@ class EngineDeck(EngineModel):
                         target_thrust = ref_thrust * scale_factor
                         if self.get_val(Settings.VERBOSITY) >= Verbosity.VERBOSE:
                             warnings.warn(
-                                f'EngineModel <{self.name}>: '
+                                f'EngineDeck <{self.name}>: '
                                 'aircraft:engine:scaled_sls_thrust and '
                                 'product of aircraft:engine_scale_factor and '
                                 'aircraft:engine:reference_sls_thrust are not an exact '
@@ -1324,7 +1331,7 @@ class EngineDeck(EngineModel):
                 scale_factor = scaled_thrust / ref_thrust
                 if self.get_val(Settings.VERBOSITY) >= Verbosity.VERBOSE:
                     warnings.warn(
-                        f'EngineModel <{self.name}>: aircraft:engine:scale_factor has '
+                        f'EngineDeck <{self.name}>: aircraft:engine:scale_factor has '
                         'been indirectly set by the ratio of '
                         'aircraft:engine:scaled_sls_thrust and '
                         f'aircraft:engine:reference_sls_thrust to {scale_factor}'
