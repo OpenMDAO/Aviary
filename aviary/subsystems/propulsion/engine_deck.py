@@ -941,7 +941,7 @@ class EngineDeck(EngineModel):
                         'throttle_max',
                         self.throttle_max,
                         units='unitless',
-                        desc='max throttle avaliable at current ' 'flight condition',
+                        desc='max throttle avaliable at current flight condition',
                     )
                 if not self.global_hybrid_throttle and self.use_hybrid_throttle:
                     interp_throttles.add_output(
@@ -1373,7 +1373,9 @@ class EngineDeck(EngineModel):
             """
             Normalize hybrid throttle to the scale:
 
-            [-1 (minimum negative hybrid throttle) <-> 0 (idle hybrid throttle) <-> 1 (max positive hybrid throttle)]
+            [-1 (minimum negative hybrid throttle)
+            <-> 0 (idle hybrid throttle)
+            <-> 1 (max positive hybrid throttle)]
 
             Negative normalized hybrid throttles only appear if negative hybrid throttle
             values are provided in engine data. Positive normalized hybrid throttle values
