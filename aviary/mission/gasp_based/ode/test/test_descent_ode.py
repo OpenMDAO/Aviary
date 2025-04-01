@@ -13,7 +13,7 @@ from aviary.utils.test_utils.default_subsystems import get_default_mission_subsy
 from aviary.utils.test_utils.IO_test_util import check_prob_outputs
 from aviary.variable_info.enums import SpeedType
 from aviary.variable_info.options import get_option_defaults
-from aviary.variable_info.variables import Dynamic
+from aviary.variable_info.variables import Aircraft, Dynamic
 
 
 class DescentODETestCase(unittest.TestCase):
@@ -57,6 +57,9 @@ class DescentODETestCase(unittest.TestCase):
         self.prob.set_val(Dynamic.Vehicle.MASS, np.array([147661, 147572]), units="lbm")
         self.prob.set_val("interference_independent_of_shielded_area", 1.89927266)
         self.prob.set_val("drag_loss_due_to_shielded_wing_area", 68.02065834)
+        self.prob.set_val(Aircraft.Wing.FORM_FACTOR, 1.25)
+        self.prob.set_val(Aircraft.VerticalTail.FORM_FACTOR, 1.25)
+        self.prob.set_val(Aircraft.HorizontalTail.FORM_FACTOR, 1.25)
 
         set_params_for_unit_tests(self.prob)
 
@@ -99,6 +102,9 @@ class DescentODETestCase(unittest.TestCase):
         self.prob.set_val("EAS", 250, units="kn")
         self.prob.set_val("interference_independent_of_shielded_area", 1.89927266)
         self.prob.set_val("drag_loss_due_to_shielded_wing_area", 68.02065834)
+        self.prob.set_val(Aircraft.Wing.FORM_FACTOR, 1.25)
+        self.prob.set_val(Aircraft.VerticalTail.FORM_FACTOR, 1.25)
+        self.prob.set_val(Aircraft.HorizontalTail.FORM_FACTOR, 1.25)
 
         set_params_for_unit_tests(self.prob)
 
