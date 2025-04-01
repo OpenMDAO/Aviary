@@ -5,7 +5,9 @@ Takeoff, Climb, Cruise, Descent, Landing
 Computed Aero
 Large Single Aisle 1 data
 '''
+
 import unittest
+from copy import deepcopy
 
 import numpy as np
 from openmdao.utils.testing_utils import use_tempdirs
@@ -13,8 +15,7 @@ from openmdao.utils.testing_utils import require_pyoptsparse
 from openmdao.core.problem import _clear_problem_names
 
 from aviary.interface.methods_for_level1 import run_aviary
-from aviary.validation_cases.benchmark_utils import \
-    compare_against_expected_values
+from aviary.validation_cases.benchmark_utils import compare_against_expected_values
 
 from aviary.models.test_aircraft.GwFm_phase_info import phase_info
 
@@ -22,7 +23,7 @@ from aviary.models.test_aircraft.GwFm_phase_info import phase_info
 @use_tempdirs
 class ProblemPhaseTestCase(unittest.TestCase):
     """
-    Test the setup and run of a large single aisle commercial transport aircraft using 
+    Test the setup and run of a large single aisle commercial transport aircraft using
     GASP mass method, GASP aero method, and HEIGHT_ENERGY mission method. Expected outputs
     based on 'models/test_aircraft/aircraft_for_bench_FwFm.csv' model.
     """
@@ -124,7 +125,7 @@ class ProblemPhaseTestCase(unittest.TestCase):
 
         self.expected_dict = expected_dict
 
-        self.phase_info = phase_info
+        self.phase_info = deepcopy(phase_info)
 
         _clear_problem_names()  # need to reset these to simulate separate runs
 
@@ -149,7 +150,6 @@ class ProblemPhaseTestCase(unittest.TestCase):
             optimizer='SNOPT',
             verbosity=0,
         )
-
         compare_against_expected_values(prob, self.expected_dict)
 
 

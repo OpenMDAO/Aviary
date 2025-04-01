@@ -204,40 +204,40 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
                 # build a group to house the aero method plus the AoA balance comp
                 aero_supergroup = om.Group()
                 aero_supergroup.add_subsystem(
-                    method + '_aero', aero_group, promotes=['*']
-                )
-
-                balance = aero_supergroup.add_subsystem('balance', om.BalanceComp())
-                balance.add_balance(
-                    Dynamic.Vehicle.ANGLE_OF_ATTACK,
-                    val=np.ones(num_nodes),
-                    units='deg',
-                    res_ref=1.0e6,
+                    f'{method}_aero', aero_group, promotes=['*']
                 )
 
                 aero_supergroup.add_subsystem(
                     'required_lift',
                     om.ExecComp(
-                        'lift_resid = mass * grav_metric - computed_lift',
+                        'required_lift = mass * grav_metric',
                         grav_metric={'val': constants.GRAV_METRIC_GASP},
                         mass={'units': 'kg', 'shape': num_nodes},
-                        computed_lift={'units': 'N', 'shape': num_nodes},
-                        lift_resid={'shape': num_nodes},
+                        required_lift={'shape': num_nodes},
                         has_diag_partials=True,
                     ),
                     promotes_inputs=[
                         ('mass', Dynamic.Vehicle.MASS),
-                        ('computed_lift', Dynamic.Vehicle.LIFT),
                     ],
                 )
 
-                aero_supergroup.connect(
-                    f'balance.{Dynamic.Vehicle.ANGLE_OF_ATTACK}',
-                    Dynamic.Vehicle.ANGLE_OF_ATTACK,
+                balance = aero_supergroup.add_subsystem(
+                    'balance',
+                    om.BalanceComp(),
+                    promotes=[Dynamic.Vehicle.ANGLE_OF_ATTACK, Dynamic.Vehicle.LIFT],
                 )
+                balance.add_balance(
+                    Dynamic.Vehicle.ANGLE_OF_ATTACK,
+                    val=np.ones(num_nodes),
+                    units='deg',
+                    res_ref=1.0e6,
+                    lhs_name=Dynamic.Vehicle.LIFT,
+                    rhs_name='required_lift',
+                )
+
                 aero_supergroup.connect(
-                    'required_lift.lift_resid',
-                    f'balance.lhs:{Dynamic.Vehicle.ANGLE_OF_ATTACK}',
+                    'required_lift.required_lift',
+                    'balance.required_lift',
                 )
 
                 aero_supergroup.linear_solver = om.DirectSolver()
@@ -520,7 +520,7 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
                         'static_target': True,
                     }
 
-            elif method == 'tabular':  # , 'solved_alpha']:
+            elif method == 'tabular':
                 for var in TABULAR_CORE_INPUTS:
                     meta = _MetaData[var]
 
@@ -615,9 +615,14 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
                 all_vars = AERO_2DOF_TABULAR_LS_INPUTS
             elif method == 'tabular_cruise':
                 all_vars = AERO_2DOF_TABULAR_CLEAN_INPUTS
+            else:
+                raise ValueError(
+                    'GASP-based aero method is not one of the following: (cruise, '
+                    'tabular_cruise, low_speed, tabular_low_speed)'
+                )
 
             for var in all_vars:
-
+                # TODO only checking core metadata here!!
                 meta = _MetaData[var]
 
                 val = meta['default_value']

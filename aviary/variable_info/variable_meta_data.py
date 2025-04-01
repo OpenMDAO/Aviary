@@ -7014,6 +7014,8 @@ add_meta_data(
 
 add_meta_data(
     # TODO move to Engine?
+    # TODO this isn't actually tied to the engines in any way - user provided value is
+    #      arbitrary and will not update as engines resize
     Mission.Design.THRUST_TAKEOFF_PER_ENG,
     meta_data=_MetaData,
     historical_name={

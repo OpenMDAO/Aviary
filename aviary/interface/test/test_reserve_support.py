@@ -10,6 +10,11 @@ from aviary.interface.default_phase_info.two_dof import phase_info as ph_in_gasp
 from aviary.variable_info.variables import Aircraft, Mission
 
 
+# NOTE this test is probably in the wrong place, it isn't really testing a part of the
+#      interface. Also test name is `PreMissionGroupTest` which is completely innacurate.
+#      This test is for checking if reserve missions are being properly applied, which
+#      it only partially does (should be checking that the reserve mission properly
+#      exists in traj as well)
 @use_tempdirs
 class PreMissionGroupTest(unittest.TestCase):
 
