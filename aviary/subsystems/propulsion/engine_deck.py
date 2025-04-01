@@ -1315,8 +1315,10 @@ class EngineDeck(EngineModel):
                             Aircraft.Engine.SCALED_SLS_THRUST, target_thrust, 'lbf'
                         )
                 else:
-                    # engine is not scaled: just make sure scaled thrust = ref thrust
+                    # engine is not scaled: make sure scaled thrust = ref thrust and
+                    # scale factor = 1
                     self.set_val(Aircraft.Engine.SCALED_SLS_THRUST, ref_thrust, 'lbf')
+                    self.set_val(Aircraft.Engine.SCALE_FACTOR, 1.0)
 
             # scale factor provided, but not target thrust
             else:
@@ -1338,8 +1340,8 @@ class EngineDeck(EngineModel):
                     )
                 self.set_val(Aircraft.Engine.SCALE_FACTOR, scale_factor)
             else:
-                # engine is not scaled: just make sure scaled thrust = ref thrust
-                self.set_val(Aircraft.Engine.SCALED_SLS_THRUST, ref_thrust, 'lbf')
+                # engine is not scaled: just make sure scale_factor = 1
+                self.set_val(Aircraft.Engine.SCALE_FACTOR, 1.0)
 
         # neither scale factor nor target thrust are provided
         elif not thrust_provided:
@@ -1350,9 +1352,9 @@ class EngineDeck(EngineModel):
                 self.set_val(Aircraft.Engine.SCALE_FACTOR, scale_factor)
                 self.set_val(Aircraft.Engine.SCALED_SLS_THRUST, ref_thrust, 'lbf')
             else:
-                # engine is not scaled: just make sure scale_factor = 1
+                # engine is not scaled: just make sure scaled thrust = ref thrust
                 scaled_thrust = ref_thrust
-                self.set_val(Aircraft.Engine.SCALE_FACTOR, 1.0)
+                self.set_val(Aircraft.Engine.SCALED_SLS_THRUST, scaled_thrust, 'lbf')
 
     def _normalize_throttle(self):
         """
