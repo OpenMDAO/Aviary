@@ -368,7 +368,7 @@ class WingFuselageInterferenceMission(om.ExplicitComponent):
         add_aviary_input(self, Dynamic.Atmosphere.TEMPERATURE, shape=nn)
         add_aviary_input(self, Dynamic.Atmosphere.KINEMATIC_VISCOSITY, shape=nn)
         self.add_input('interference_independent_of_shielded_area', units='unitless')
-        self.add_input('drag_loss_due_to_shielded_wing_area', unites='unitless')
+        self.add_input('drag_loss_due_to_shielded_wing_area', units='unitless')
 
         self.add_output('wing_fuselage_interference_flat_plate_equivalent', shape=nn)
 
