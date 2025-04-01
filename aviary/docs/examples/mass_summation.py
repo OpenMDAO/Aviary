@@ -1,6 +1,7 @@
 import numpy as np
 
 import openmdao.api as om
+import openmdao.jax as omj
 
 # Maybe add some aviary inputs at some point here
 
@@ -20,7 +21,7 @@ class MassSummation(om.Group):
         )
 
 
-class StructureMass(om.ExplicitComponent):
+class StructureMass(om.JaxExplicitComponent):
 
     def setup(self):
         # Maybe later change these to Aviary inputs?
@@ -35,9 +36,8 @@ class StructureMass(om.ExplicitComponent):
         # I'm not sure what else to put here at the moment
         self.declare_partials('structure_mass', '*', val=1)
 
-    def compute(self, inputs, outputs):
-        wing_mass = inputs['wing_mass']
-        fuse_mass = inputs['fuse_mass']
-        tail_mass = inputs['tail_mass']
+    def compute_primal(self, wing_mass, fuse_mass, tail_mass):
 
-        outputs['structure_mass'] = wing_mass + fuse_mass + tail_mass
+        structure_mass = wing_mass + fuse_mass + tail_mass
+
+        return structure_mass

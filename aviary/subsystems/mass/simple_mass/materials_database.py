@@ -5,6 +5,7 @@ This database will be expanded as needed.
 
 """
 from aviary.utils.named_values import NamedValues
+from aviary.utils.named_values import get_keys, get_values, get_items
 
 materials = NamedValues()
 
@@ -63,4 +64,5 @@ EPS Foam: https://www.abtfoam.com/wp-content/uploads/2020/05/EPS-Standard-Sheet-
 
 materials.set_val('Wood Glue', 1080, units='kg/m**3') # Relative density value -- corresponds to 25 C (77 F)
 materials.set_val('EPS Foam', 16.3388, units='kg/m**3') 
+
 
