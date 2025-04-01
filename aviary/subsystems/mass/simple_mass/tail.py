@@ -1,21 +1,44 @@
 import openmdao.api as om
+import openmdao.jax as omj
+import jax.numpy as jnp
+from jax.scipy.integrate import trapezoid as jtrapz
 import numpy as np
-import scipy.integrate as spi
 from scipy.interpolate import interp1d
 from scipy.interpolate import CubicSpline
+import os 
+
+try:
+    from quadax import quadgk
+except ImportError:
+    raise ImportError(
+        "quadax package not found. You can install it by running 'pip install quadax'."
+    )
+
+"""
+The little bit of path code below is not important overall. This is for me to test 
+within the Docker container and VS Code before I push everything fully to the Github 
+repository. These lines can be deleted as things are updated further.
+
+"""
+
+import sys
 import os
 
-# Material densities, all in kg/m^3
-MATERIALS = {
-    'Aluminum': 2700,
-    'Steel': 7850,
-    'Titanium': 4500,
-    'Carbon Fiber': 1600,
-    'Wood': 600
-}
 
-class TailMassAndCOG(om.ExplicitComponent):
+module_path = os.path.abspath("/home/omdao/Aviary/aviary/subsystems/mass")
+if module_path not in sys.path:
+    sys.path.append(module_path)
+
+from simple_mass.materials_database import materials
+
+from aviary.utils.named_values import get_keys, get_values
+
+Debug = True # set to enable printing
+
+class TailMassAndCOG(om.JaxExplicitComponent):
     def initialize(self):
+        #self.options['default_shape'] = () # Sets the default shape to scalar
+
         self.options.declare('tail_type',
                             default='horizontal',
                             values=['horizontal', 'vertical'],
@@ -32,8 +55,8 @@ class TailMassAndCOG(om.ExplicitComponent):
                                  desc="4 digit code for NACA airfoil, if that is given.")
         
         self.options.declare('material', 
-                             default='Aluminum', 
-                             values=list(MATERIALS.keys()),
+                             default='Balsa', 
+                             values=list(get_keys(materials)),
                              desc="Material type")
         
         self.options.declare('airfoil_file', 
@@ -41,10 +64,12 @@ class TailMassAndCOG(om.ExplicitComponent):
                              desc="File path for airfoil coordinates (if applicable)")
 
         self.options.declare('num_sections', 
-                             default=1000, 
+                             default=10, 
                              desc="Number of sections for enumeration")
     
     def setup(self):
+        self.options['use_jit'] = not(Debug)
+
         # Inputs
         self.add_input('span', 
                        val=5.0, 
@@ -71,7 +96,7 @@ class TailMassAndCOG(om.ExplicitComponent):
                        desc="Skin panel thickness")
         
         self.add_input('twist', 
-                       val=np.zeros(self.options['num_sections']), 
+                       val=jnp.zeros(self.options['num_sections']), 
                        units='deg', 
                        desc="Twist distribution")
         
@@ -96,19 +121,19 @@ class TailMassAndCOG(om.ExplicitComponent):
                         units='m', 
                         desc="Z location of the center of gravity")
 
-    def compute(self, inputs, outputs):
+    def compute_primal(self, span, root_chord, tip_chord, thickness_ratio, skin_thickness, twist):
         tail_type = self.options["tail_type"]
         airfoil_type = self.options["airfoil_type"]
         material = self.options['material']
-        span = inputs['span']
-        root_chord = inputs['root_chord']
-        tip_chord = inputs['tip_chord']
-        thickness_ratio = inputs['thickness_ratio']
-        density = MATERIALS[material]
+        # span = inputs['span']
+        # root_chord = inputs['root_chord']
+        # tip_chord = inputs['tip_chord']
+        # thickness_ratio = inputs['thickness_ratio']
+        density, _ = materials.get_item(material)
         airfoil_file = self.options['airfoil_file']
-        skin_thickness = inputs['skin_thickness']
+        # skin_thickness = inputs['skin_thickness']
         num_sections = self.options['num_sections']
-        twist = inputs['twist']
+        # twist = inputs['twist']
         NACA_digits = self.options['NACA_digits']
 
         # File check
@@ -154,10 +179,10 @@ class TailMassAndCOG(om.ExplicitComponent):
         if skin_thickness <= 0:
             raise ValueError("Skin thickness must be greater than zero.")
         
-        if any(abs(twist)) > np.pi / 2:
+        if any(omj.smooth_abs(twist)) > jnp.pi / 2:
             raise ValueError("Twist angle is too extreme; must be within -90 to 90 degrees.")
 
-        span_locations = np.linspace(0, span, num_sections)
+        span_locations = jnp.linspace(0, span, num_sections)
 
         # Get x_points and dx for later
         x_points, dx = self.precompute_airfoil_geometry()
@@ -165,71 +190,105 @@ class TailMassAndCOG(om.ExplicitComponent):
         # Thickness distribution
         thickness_dist = self.airfoil_thickness(x_points, max_thickness)
 
-        total_mass = 0
-        total_moment_x = 0
-        total_moment_y = 0
-        total_moment_z = 0
+        # total_mass = 0
+        # total_moment_x = 0
+        # total_moment_y = 0
+        # total_moment_z = 0
 
-        for i, y in enumerate(span_locations):
-            section_chord = root_chord - (root_chord - tip_chord) * (y / span) # Assume linear variation in chord
-            section_area, centroid_x, centroid_z = self.compute_airfoil_geometry(section_chord, 
-                                                                                 camber, 
-                                                                                 camber_location, 
-                                                                                 thickness_dist, 
-                                                                                 x_points, 
-                                                                                 dx)
+        # for i, y in enumerate(span_locations):
+        #     section_chord = root_chord - (root_chord - tip_chord) * (y / span) # Assume linear variation in chord
+        #     section_area, centroid_x, centroid_z = self.compute_airfoil_geometry(section_chord, 
+        #                                                                          camber, 
+        #                                                                          camber_location, 
+        #                                                                          thickness_dist, 
+        #                                                                          x_points, 
+        #                                                                          dx)
 
             
-            section_mass = density * section_area * (span / num_sections)
+        #     section_mass = density * thickness_dist[i] * section_chord * (span / num_sections)
             
-            # Twist
-            twist_angle = twist[i]
-            rotated_x = centroid_x * np.cos(twist_angle) - centroid_z * np.sin(twist_angle)
-            rotated_z = centroid_x * np.sin(twist_angle) + centroid_z * np.cos(twist_angle)
+        #     # Twist
+        #     twist_angle = twist[i]
+        #     rotated_x = centroid_x * jnp.cos(twist_angle) - centroid_z * jnp.sin(twist_angle)
+        #     rotated_z = centroid_x * jnp.sin(twist_angle) + centroid_z * jnp.cos(twist_angle)
 
-            total_mass += section_mass
-            total_moment_x += rotated_x * section_mass
-            if tail_type == 'horizontal':
-                total_moment_y += y * section_mass
-                total_moment_z += rotated_z * section_mass
-            elif tail_type == 'vertical':
-                total_moment_y += rotated_z * section_mass
-                total_moment_z += y * section_mass
+        #     total_mass += section_mass
+        #     total_moment_x += rotated_x * section_mass
+        #     # if tail_type == 'horizontal':
+        #     #     total_moment_y += y * section_mass
+        #     #     total_moment_z += rotated_z * section_mass
+        #     # elif tail_type == 'vertical':
+        #     #     total_moment_y += rotated_z * section_mass
+        #     #     total_moment_z += y * section_mass
+            
+        #     total_moment_y += jnp.where(tail_type == 'horizontal', y * section_mass, rotated_z * section_mass)
+        #     total_moment_z += jnp.where(tail_type == 'horizontal', rotated_z * section_mass, y * section_mass)
 
-        # COG
-        outputs['mass'] = total_mass
-        outputs['cg_x'] = total_moment_x / total_mass
-        outputs['cg_y'] = total_moment_y / total_mass
-        outputs['cg_z'] = total_moment_z / total_mass
+        
+        #total_mass = jtrapz(density * self.airfoil_thickness(x_points, max_thickness) * (root_chord - (root_chord - tip_chord) * (x_points / span)) * span, x_points)
+        total_mass, _ = quadgk(lambda x: density * self.airfoil_thickness(x, max_thickness) * (root_chord - (root_chord - tip_chord) * (x / span)) * span, [0, 1], epsabs=1e-9, epsrel=1e-9)
+
+        #cgz_function = jnp.where(tail_type == 'horizontal', lambda x: (x * self.airfoil_thickness(x, max_thickness) * (root_chord - (root_chord - tip_chord) * (x / span))) * jnp.sin(twist) + (self.airfoil_camber_line(x, camber, camber_location) * self.airfoil_thickness(x, max_thickness) * (root_chord - (root_chord - tip_chord) * (x / span))) * jnp.cos(twist), lambda x: x * span)
+        #cgy_function = jnp.where(tail_type == 'horizontal', lambda x: x * span, lambda x: (x * self.airfoil_thickness(x, max_thickness) * (root_chord - (root_chord - tip_chord) * (x / span))) * jnp.sin(twist) + (self.airfoil_camber_line(x, camber, camber_location) * self.airfoil_thickness(x, max_thickness) * (root_chord - (root_chord - tip_chord) * (x / span))) * jnp.cos(twist))
+        if tail_type == 'horizontal':
+            cgz_function = lambda x: (x * self.airfoil_thickness(x, max_thickness) * (root_chord - (root_chord - tip_chord) * (x / span))) * jnp.sin(twist) + (self.airfoil_camber_line(x, camber, camber_location) * self.airfoil_thickness(x, max_thickness) * (root_chord - (root_chord - tip_chord) * (x / span))) * jnp.cos(twist)
+            cgy_function = lambda x: x * span
+        else:
+            cgz_function = lambda x: x * span
+            cgy_function = lambda x: (x * self.airfoil_thickness(x, max_thickness) * (root_chord - (root_chord - tip_chord) * (x / span))) * jnp.sin(twist) + (self.airfoil_camber_line(x, camber, camber_location) * self.airfoil_thickness(x, max_thickness) * (root_chord - (root_chord - tip_chord) * (x / span))) * jnp.cos(twist)
+
+        area, _ = quadgk(lambda x: self.airfoil_thickness(x, max_thickness) * (root_chord - (root_chord - tip_chord) * (x / span)), [0, 1], epsabs=1e-9, epsrel=1e-9)
+
+        cg_x_num, _ = quadgk(lambda x: (x * self.airfoil_thickness(x, max_thickness) * (root_chord - (root_chord - tip_chord) * (x / span)) * jnp.cos(twist)) - 
+                                     (self.airfoil_camber_line(x, camber, camber_location) * self.airfoil_thickness(x, max_thickness) * (root_chord - (root_chord - tip_chord) * (x / span))) * jnp.sin(twist), 
+                                     [0, 1], epsabs=1e-9, epsrel=1e-9) 
+        
+        cg_x = cg_x_num / area
+        cg_x = cg_x[0]
+        
+
+        cg_y, _ = quadgk(cgy_function, [0, 1], epsabs=1e-9, epsrel=1e-9)
+
+        cg_z_num, _ = quadgk(cgz_function, [0, 1], epsabs=1e-9, epsrel=1e-9)
+
+        cg_z = cg_z_num / area
+        cg_z = cg_z[0]
+
+        mass = total_mass
+        #cg_x = total_moment_x / total_mass
+        #cg_y = total_moment_y / total_mass
+        #cg_z = total_moment_z / total_mass
+
+        return mass, cg_x, cg_y, cg_z
     
     def precompute_airfoil_geometry(self):
         num_sections = self.options['num_sections']
         n_points = num_sections
-        x_points = np.linspace(0, 1, n_points)
+        x_points = jnp.linspace(0, 1, n_points)
         dx = 1 / (n_points - 1)
         return x_points, dx
     
     def compute_airfoil_geometry(self, chord, camber, camber_location, thickness_dist, x_points, dx):
 
-        #section_area, _ = quad(lambda x: np.interp(x, x_points, thickness_dist), 0, 1, limit=100)
-        section_area = np.trapz(thickness_dist, x_points, dx=dx) 
+        #section_area, _ = quad(lambda x: jnp.interp(x, x_points, thickness_dist), 0, 1, limit=100)
+        section_area = jnp.trapezoid(thickness_dist, x_points, dx=dx) 
         section_area *= chord
 
-        #centroid_x, _ = quad(lambda x: x * np.interp(x, x_points, thickness_dist), 0, 1, limit=100)
-        centroid_x = np.trapz(x_points * thickness_dist, x_points, dx=dx)
+        #centroid_x, _ = quad(lambda x: x * jnp.interp(x, x_points, thickness_dist), 0, 1, limit=100)
+        centroid_x = jnp.trapezoid(x_points * thickness_dist, x_points, dx=dx)
         centroid_x = (centroid_x * chord) / section_area
 
-        #centroid_z, _ = quad(lambda x: self.airfoil_camber_line(x, camber, camber_location) * np.interp(x, x_points, thickness_dist), 0, 1, limit=100)
-        centroid_z = np.trapz(self.airfoil_camber_line(x_points, camber, camber_location) * thickness_dist, x_points, dx=dx)
+        #centroid_z, _ = quad(lambda x: self.airfoil_camber_line(x, camber, camber_location) * jnp.interp(x, x_points, thickness_dist), 0, 1, limit=100)
+        centroid_z = jnp.trapezoid(self.airfoil_camber_line(x_points, camber, camber_location) * thickness_dist, x_points, dx=dx)
         centroid_z = (centroid_z * chord) / section_area
         return section_area, centroid_x, centroid_z
     
     def airfoil_thickness(self, x, max_thickness):
-        return 5 * max_thickness * (0.2969 * np.sqrt(x) - 0.1260 * x - 0.3516 * x**2 + 0.2843 * x**3 - 0.1015 * x**4)
+        return 5 * max_thickness * (0.2969 * jnp.sqrt(x) - 0.1260 * x - 0.3516 * x**2 + 0.2843 * x**3 - 0.1015 * x**4)
     
     def airfoil_camber_line(self, x, camber, camber_location):
-        camber_location = max(camber_location, 1e-9) # Divide by zero check
-        return np.where(
+        camber_location = omj.ks_max(camber_location, 1e-9) # Divide by zero check
+        return jnp.where(
             x < camber_location, 
             (camber / camber_location**2) * (2 * camber_location * x - x**2), 
         (camber / (1 - camber_location)**2) * ((1 - 2 * camber_location) + 2 * camber_location * x - x**2)
@@ -254,17 +313,16 @@ class TailMassAndCOG(om.ExplicitComponent):
 
         thickness = upper_spline(x_coords) - lower_spline(x_coords)
 
-        max_thickness_index = np.argmax(thickness)
+        max_thickness_index = omj.ks_max(thickness)
         max_thickness_value = thickness[max_thickness_index]
 
-        camber_slope = np.gradient(camber_line, x_coords)
-        camber_location_index = np.argmax(np.abs(camber_slope))
+        camber_slope = jnp.gradient(camber_line, x_coords)
+        camber_location_index = omj.ks_max(omj.smooth_abs(camber_slope))
         camber_location = x_coords[camber_location_index]
 
         camber = camber_line[camber_location_index]
 
         return camber, camber_location, max_thickness_value
-
 
 prob = om.Problem()
 
@@ -273,14 +331,14 @@ prob.model.add_subsystem('tail', TailMassAndCOG(), promotes_inputs=['*'], promot
 prob.setup()
 
 # Input values
-prob.set_val('span', 0.3912)
-prob.set_val('tip_chord', 0.15)
-prob.set_val('root_chord', 0.26)
+prob.set_val('span', 1)
+prob.set_val('tip_chord', 0.5)
+prob.set_val('root_chord', 1)
 prob.set_val('thickness_ratio', 0.12)
 prob.set_val('skin_thickness', 0.002)
-prob.model.tail.options['tail_type'] = 'vertical'
+prob.model.tail.options['tail_type'] = 'horizontal'
 
-prob.model.tail.options['material'] = 'Carbon Fiber'
+prob.model.tail.options['material'] = 'Balsa'
 
 prob.run_model()
 
