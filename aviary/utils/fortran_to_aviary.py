@@ -25,10 +25,12 @@ from pathlib import Path
 from openmdao.utils.units import valid_units
 
 from aviary.utils.functions import convert_strings_to_data
-from aviary.utils.named_values import NamedValues, get_items
+from aviary.utils.named_values import NamedValues
 from aviary.variable_info.variable_meta_data import _MetaData
 from aviary.variable_info.variables import Aircraft, Mission, Settings
-from aviary.variable_info.enums import LegacyCode, Verbosity, ProblemType
+from aviary.variable_info.enums import (
+    FlapType, GASPEngineType, LegacyCode, Verbosity
+)
 from aviary.utils.functions import get_path
 from aviary.utils.legacy_code_data.flops_defaults import (
     flops_default_values,
@@ -325,6 +327,29 @@ def process_and_store_data(
     The variables are also sorted based on whether they will set an Aviary variable or they are for initial guessing
     '''
 
+    # try to determine data type from meta data (from 'types' and 'default_value')
+    list_of_equivalent_aviary_names, var_ind = update_name(
+        alternate_names, current_namelist + '.' + var_name, verbosity
+    )
+    aviary_data_type = None
+    aviary_var_name = None
+    for name in list_of_equivalent_aviary_names:
+        aviary_var_name = name
+        try:
+            aviary_data_type = _MetaData[name]['types']
+            if aviary_data_type is None:
+                aviary_default_val = _MetaData[name]['default_value']
+                if aviary_default_val is not None:
+                    aviary_data_type = type(aviary_default_val)
+                    if aviary_data_type not in (float, int, bool, FlapType, GASPEngineType):
+                        aviary_data_type = None
+                    else:
+                        break
+            else:
+                break
+        except:
+            aviary_data_type = None
+
     guess_names = list(initialization_guesses.keys())
     var_ind = data_units = None
     skip_variable = False
@@ -338,7 +363,8 @@ def process_and_store_data(
             # if the last element is a unit, remove it from the list and update the
             # variable's units
             data_units = data_list.pop()
-        var_values = convert_strings_to_data(data_list)
+        var_values = convert_strings_to_data(
+            data_list, aviary_var_name, aviary_data_type)
     else:
         skip_variable = True
         var_values = []
@@ -637,7 +663,7 @@ def update_gasp_options(vehicle_data):
         Aircraft.Design.RESERVE_FUEL_ADDITIONAL, units='lbm'
     )[0]
     if reserve_fuel_additional <= 0:
-        input_values.set_val(Aircraft.Design.RESERVE_FUEL_ADDITIONAL, [0], units='lbm')
+        input_values.set_val(Aircraft.Design.RESERVE_FUEL_ADDITIONAL, [0.0], units='lbm')
         input_values.set_val(
             Aircraft.Design.RESERVE_FUEL_FRACTION,
             [-reserve_fuel_additional],
@@ -645,7 +671,7 @@ def update_gasp_options(vehicle_data):
         )
     elif reserve_fuel_additional >= 10:
         input_values.set_val(
-            Aircraft.Design.RESERVE_FUEL_FRACTION, [0], units='unitless'
+            Aircraft.Design.RESERVE_FUEL_FRACTION, [0.0], units='unitless'
         )
     else:
         ValueError('"FRESF" is not valid between 0 and 10.')
