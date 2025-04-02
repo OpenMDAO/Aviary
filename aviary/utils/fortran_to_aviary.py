@@ -41,6 +41,7 @@ from aviary.utils.legacy_code_data.gasp_defaults import (
     gasp_deprecated_vars,
 )
 
+
 FLOPS = LegacyCode.FLOPS
 GASP = LegacyCode.GASP
 
@@ -539,6 +540,12 @@ def update_gasp_options(vehicle_data):
         "double_slotted_fowler",
     ]
 
+    design_type, design_units = input_values.get_item(Aircraft.Design.TYPE)
+    if design_type[0] == 0:
+        input_values.set_val(Aircraft.Design.TYPE, ['transport'], design_units)
+    elif design_type[0] == 1:
+        input_values.set_val(Aircraft.Design.TYPE, ['BWB'], design_units)
+
     ## PROBLEM TYPE ##
     # if multiple values of target_range are specified, use the one that
     # corresponds to the problem_type
@@ -577,6 +584,10 @@ def update_gasp_options(vehicle_data):
         input_values.set_val(Aircraft.Wing.HAS_FOLD, [False], 'unitless')
     else:
         input_values.set_val(Aircraft.Wing.HAS_FOLD, [True], 'unitless')
+        if strut_loc >= 0:
+            input_values.set_val(
+                Aircraft.Wing.CHOOSE_FOLD_LOCATION, [False], 'unitless'
+            )
 
     if strut_loc < 0:
         input_values.set_val(Aircraft.Wing.HAS_FOLD, [True], 'unitless')
