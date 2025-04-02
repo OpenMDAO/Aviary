@@ -35,6 +35,8 @@ class FuselageParametersTestCase1(unittest.TestCase):
 
         self.prob.model.set_input_defaults(
             Aircraft.Fuselage.DELTA_DIAMETER, 4.5, units="ft")
+        self.prob.model.set_input_defaults(
+            Aircraft.Fuselage.PILOT_COMPARTMENT_LENGTH, 9.5, units="ft")
 
         setup_model_options(self.prob, options)
 
@@ -75,6 +77,8 @@ class FuselageParametersTestCase2(unittest.TestCase):
 
         self.prob.model.set_input_defaults(
             Aircraft.Fuselage.DELTA_DIAMETER, 4.5, units="ft")
+        self.prob.model.set_input_defaults(
+            Aircraft.Fuselage.PILOT_COMPARTMENT_LENGTH, 9.5, units="ft")
 
         setup_model_options(self.prob, options)
 
