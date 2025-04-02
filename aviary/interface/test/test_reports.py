@@ -9,10 +9,14 @@ from openmdao.utils.testing_utils import use_tempdirs, set_env_vars
 
 from aviary.interface.default_phase_info.height_energy import phase_info
 from aviary.interface.methods_for_level1 import run_aviary
+from aviary.interface.methods_for_level2 import AviaryProblem
+from aviary.subsystems.subsystem_builder_base import SubsystemBuilderBase
+from aviary.utils.develop_metadata import add_meta_data
+from aviary.variable_info.variable_meta_data import CoreMetaData
 
 
 @use_tempdirs
-class AviaryMissionTimeseries(unittest.TestCase):
+class TestReports(unittest.TestCase):
     def setUp(self):
         om.clear_reports()
         _clear_problem_names()
@@ -55,6 +59,53 @@ class AviaryMissionTimeseries(unittest.TestCase):
                 for expected_val, output_val in zip(expected_row, output_row):
                     self.assertAlmostEqual(float(expected_val), float(
                         output_val), places=7, msg="CSV row value does not match expected value within tolerance")
+
+    @set_env_vars(TESTFLO_RUNNING='0', OPENMDAO_REPORTS='check_input_report')
+    def test_check_input_report(self):
+        # Make sure the input check works with custom metadata.
+
+        class ExtraBuilder(SubsystemBuilderBase):
+
+            def build_pre_mission(self, aviary_inputs):
+
+                comp = om.ExecComp('z = 2*x')
+                wing_group = om.Group()
+                wing_group.add_subsystem(
+                    "aerostructures",
+                    comp,
+                    promotes_inputs=[('x', 'aircraft:custom_var')],
+                )
+                return wing_group
+
+        metadata = deepcopy(CoreMetaData)
+        local_phase_info = deepcopy(phase_info)
+
+        local_phase_info['pre_mission']['external_subsystems'] = [ExtraBuilder()]
+
+        add_meta_data(
+            'aircraft:custom_var',
+            metadata,
+            units=None,
+            desc='testing',
+        )
+
+        prob = AviaryProblem()
+        prob.load_inputs(
+            'models/test_aircraft/aircraft_for_bench_FwFm.csv',
+            local_phase_info,
+        )
+        prob.check_and_preprocess_inputs()
+        prob.meta_data = metadata
+
+        prob.add_pre_mission_systems()
+        prob.add_phases()
+        prob.add_post_mission_systems()
+
+        prob.link_phases()
+
+        prob.setup()
+
+        prob.run_model()
 
 
 if __name__ == "__main__":
