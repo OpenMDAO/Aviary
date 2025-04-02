@@ -37,10 +37,10 @@ class PreMissionGroupTest(unittest.TestCase):
         )
         flops_inputs.set_val(Settings.VERBOSITY, 0)
 
-        engine = build_engine_deck(flops_inputs)
-        preprocess_options(flops_inputs, engine_models=engine)
+        engines = [build_engine_deck(flops_inputs)]
+        preprocess_options(flops_inputs, engine_models=engines)
         default_premission_subsystems = get_default_premission_subsystems(
-            'FLOPS', engine
+            'FLOPS', engines
         )
 
         prob = self.prob
@@ -116,10 +116,10 @@ class PreMissionGroupTest(unittest.TestCase):
         flops_outputs: AviaryValues = LargeSingleAisle2FLOPS['outputs']
         flops_inputs.set_val(Settings.VERBOSITY, 0)
 
-        engine = build_engine_deck(flops_inputs)
-        preprocess_options(flops_inputs, engine_models=engine)
+        engines = [build_engine_deck(flops_inputs)]
+        preprocess_options(flops_inputs, engine_models=engines)
         default_premission_subsystems = get_default_premission_subsystems(
-            'FLOPS', engine
+            'FLOPS', engines
         )
 
         prob.model.add_subsystem(
