@@ -20,12 +20,20 @@ class TestSubsystemsMission(unittest.TestCase):
         self.phase_info = {
             'pre_mission': {
                 'include_takeoff': False,
-                'external_subsystems': [ArrayGuessSubsystemBuilder(), AdditionalArrayGuessSubsystemBuilder()],
+                'external_subsystems': [
+                    ArrayGuessSubsystemBuilder(),
+                    AdditionalArrayGuessSubsystemBuilder(),
+                ],
                 'optimize_mass': True,
             },
             'cruise': {
-                "subsystem_options": {"core_aerodynamics": {"method": "computed"}},
-                'external_subsystems': [ArrayGuessSubsystemBuilder(), AdditionalArrayGuessSubsystemBuilder()],
+                "subsystem_options": {
+                    "core_aerodynamics": {"method": "cruise", "solve_alpha": True}
+                },
+                'external_subsystems': [
+                    ArrayGuessSubsystemBuilder(),
+                    AdditionalArrayGuessSubsystemBuilder(),
+                ],
                 "user_options": {
                     "optimize_mach": False,
                     "optimize_altitude": False,
@@ -44,14 +52,14 @@ class TestSubsystemsMission(unittest.TestCase):
                     "constrain_final": False,
                     "fix_duration": False,
                     "initial_bounds": ((0.0, 0.0), "min"),
-                    "duration_bounds": ((10., 30.), "min"),
+                    "duration_bounds": ((10.0, 30.0), "min"),
                 },
                 "initial_guesses": {"time": ([0, 30], "min")},
             },
             'post_mission': {
                 'include_landing': False,
                 'external_subsystems': [PostOnlyBuilder()],
-            }
+            },
         }
 
     def test_subsystems_in_a_mission(self):

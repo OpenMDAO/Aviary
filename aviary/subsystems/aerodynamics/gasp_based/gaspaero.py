@@ -146,6 +146,8 @@ def cla(ar, sweep, mach):
 
 
 class WingTailRatios(om.ExplicitComponent):
+    # NOTE this is actually getting added in mission, not pre-mission. Which place is
+    # intended for this component??
     """Pre-mission calculation of ratios between tail and wing parameters"""
 
     def setup(self):

@@ -54,10 +54,10 @@ class CoreGeometryBuilder(GeometryBuilderBase):
     """
     Core geometry builder
 
-    Method
-    ------
+    Methods
+    -------
     __init__(self, name=None, meta_data=None, code_origin=None,
-        use_both_geometries=False, code_origin_to_prioritize=None):
+        code_origin_to_prioritize=None):
     build_pre_mission(self, aviary_inputs) -> openmdao.core.System:
         Builds an OpenMDAO system for the pre-mission computations of the subsystem.
     build_mission(self, num_nodes, aviary_inputs, **kwargs) -> openmdao.core.System:
@@ -68,16 +68,21 @@ class CoreGeometryBuilder(GeometryBuilderBase):
         Generate the report for Aviary core geometry analysis.
     """
 
-    def __init__(self, name=None, meta_data=None, code_origin=None,
-                 use_both_geometries=False, code_origin_to_prioritize=None):
+    def __init__(
+        self,
+        name=None,
+        meta_data=None,
+        code_origin=None,
+        code_origin_to_prioritize=None,
+    ):
         if name is None:
             name = 'core_geometry'
 
-        if code_origin not in (FLOPS, GASP) and not use_both_geometries:
+        if code_origin not in (FLOPS, GASP) and set(code_origin) != set((FLOPS, GASP)):
             raise ValueError('Code origin is not one of the following: (FLOPS, GASP)')
 
         self.code_origin = code_origin
-        self.use_both_geometries = use_both_geometries
+        self.use_both_geometries = code_origin == (FLOPS, GASP)
         self.code_origin_to_prioritize = code_origin_to_prioritize
 
         super().__init__(name=name, meta_data=meta_data)
@@ -131,7 +136,10 @@ class CoreGeometryBuilder(GeometryBuilderBase):
                 var = getattr(Aircraft.Nacelle, entry)
                 if var in aviary_inputs:
                     if 'total' not in var:
-                        params[var] = {'shape': (num_engine_type), 'static_target': True}
+                        params[var] = {
+                            'shape': (num_engine_type),
+                            'static_target': True,
+                        }
 
         return params
 
@@ -151,18 +159,18 @@ class CoreGeometryBuilder(GeometryBuilderBase):
 
         # TODO output differs by method
         # TODO finish variables of interest
-        wing_outputs = [Aircraft.Wing.AREA,
-                        Aircraft.Wing.SPAN,
-                        Aircraft.Wing.ASPECT_RATIO,
-                        Aircraft.Wing.SWEEP]
-        htail_outputs = [Aircraft.HorizontalTail.AREA,
-                         Aircraft.VerticalTail.AREA]
-        fuselage_outputs = [Aircraft.Fuselage.LENGTH,
-                            Aircraft.Fuselage.AVG_DIAMETER]
+        wing_outputs = [
+            Aircraft.Wing.AREA,
+            Aircraft.Wing.SPAN,
+            Aircraft.Wing.ASPECT_RATIO,
+            Aircraft.Wing.SWEEP,
+        ]
+        htail_outputs = [Aircraft.HorizontalTail.AREA, Aircraft.VerticalTail.AREA]
+        fuselage_outputs = [Aircraft.Fuselage.LENGTH, Aircraft.Fuselage.AVG_DIAMETER]
 
         with open(filepath, mode='w') as f:
             if self.use_both_geometries:
-                method = ('FLOPS and GASP methods')
+                method = 'FLOPS and GASP methods'
             else:
                 method = self.code_origin.value + ' method'
             f.write(f'# Geometry: {method}\n')

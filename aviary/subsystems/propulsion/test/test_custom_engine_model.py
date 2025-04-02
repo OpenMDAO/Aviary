@@ -202,7 +202,7 @@ class CustomEngineTest(unittest.TestCase):
         # Load aircraft and options data from user
         # Allow for user overrides here
         prob.load_inputs(
-            "models/test_aircraft/aircraft_for_bench_GwFm.csv",
+            "models/test_aircraft/aircraft_for_bench_FwFm.csv",
             phase_info,
             engine_builders=[SimpleTestEngine()],
         )
@@ -242,7 +242,7 @@ class CustomEngineTest(unittest.TestCase):
 
         tol = 1.0e-4
 
-        assert_near_equal(float(prob.get_val('traj.cruise.rhs_all.y')), 4.0, tol)
+        assert_near_equal(prob.get_val('traj.cruise.rhs_all.y'), 4.0, tol)
 
 
 if __name__ == '__main__':
