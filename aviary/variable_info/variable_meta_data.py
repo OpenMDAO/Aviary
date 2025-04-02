@@ -358,6 +358,20 @@ add_meta_data(
 )
 
 add_meta_data(
+    Aircraft.BWB.FOREBODY_SWEEP,
+    meta_data=_MetaData,
+    historical_name={
+        "GASP": ['INGASP.SWP_FB'],
+        # ['&DEFINE.FUSEIN.SWPLE', 'FUSDTA.SWPLE'],
+        "FLOPS": 'FUSEIN.SWPLE',
+        "LEAPS1": 'aircraft.inputs.L0_blended_wing_body_design.passenger_leading_edge_sweep',
+    },
+    units='deg',
+    desc='sweep angle of the leading edge of the passenger cabin',  # is this forebody Sweep angle?
+    default_value=45.0,
+)
+
+add_meta_data(
     Aircraft.BWB.NUM_BAYS,
     meta_data=_MetaData,
     historical_name={
@@ -373,20 +387,6 @@ add_meta_data(
     types=int,
     option=True,
     default_value=0,
-)
-
-add_meta_data(
-    Aircraft.BWB.PASSENGER_LEADING_EDGE_SWEEP,
-    meta_data=_MetaData,
-    historical_name={
-        "GASP": ['INGASP.SWP_FB'],
-        # ['&DEFINE.FUSEIN.SWPLE', 'FUSDTA.SWPLE'],
-        "FLOPS": 'FUSEIN.SWPLE',
-        "LEAPS1": 'aircraft.inputs.L0_blended_wing_body_design.passenger_leading_edge_sweep',
-    },
-    units='deg',
-    desc='sweep angle of the leading edge of the passenger cabin',  # is this forebody Sweep angle?
-    default_value=45.0,
 )
 
 #   _____                                      _

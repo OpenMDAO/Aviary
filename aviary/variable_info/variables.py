@@ -37,10 +37,8 @@ class Aircraft:
 
     class BWB:
         CABIN_AREA = 'aircraft:blended_wing_body_design:cabin_area'
+        FOREBODY_SWEEP = 'aircraft:blended_wing_body_design:forebody_sweep'
         NUM_BAYS = 'aircraft:blended_wing_body_design:num_bays'
-        PASSENGER_LEADING_EDGE_SWEEP = (
-            'aircraft:blended_wing_body_design:passenger_leading_edge_sweep'
-        )
 
     class Canard:
         AREA = 'aircraft:canard:area'
