@@ -777,7 +777,7 @@ add_meta_data(
         "LEAPS1": 'aircraft.inputs.L0_crew_and_payload.first_class_count',
     },
     units='unitless',
-    desc='number of first class passengers that the aircraft is designed to accommodate. In GAST, the input is the percentage of total number of passengers.',
+    desc='number of first class passengers that the aircraft is designed to accommodate. In GASP, the input is the percentage of total number of passengers.',
     types=int,
     option=True,
     default_value=0,
@@ -4816,7 +4816,7 @@ add_meta_data(
 # ===================================
 
 add_meta_data(
-    Aircraft.TailBoom.LENGTH,  # tail boom support is not included.
+    Aircraft.TailBoom.LENGTH,
     meta_data=_MetaData,
     historical_name={"GASP": 'INGASP.ELFFC', "FLOPS": None, "LEAPS1": None},
     units='ft',
