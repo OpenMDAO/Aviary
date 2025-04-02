@@ -9,6 +9,7 @@ from pathlib import Path
 
 from aviary.utils.develop_metadata import add_meta_data
 from aviary.variable_info.enums import (
+    AircraftTypes,
     EquationsOfMotion,
     FlapType,
     GASPEngineType,
@@ -378,13 +379,13 @@ add_meta_data(
     Aircraft.BWB.PASSENGER_LEADING_EDGE_SWEEP,
     meta_data=_MetaData,
     historical_name={
-        "GASP": None,
+        "GASP": ['INGASP.SWP_FB'],
         # ['&DEFINE.FUSEIN.SWPLE', 'FUSDTA.SWPLE'],
         "FLOPS": 'FUSEIN.SWPLE',
         "LEAPS1": 'aircraft.inputs.L0_blended_wing_body_design.passenger_leading_edge_sweep',
     },
     units='deg',
-    desc='sweep angle of the leading edge of the passenger cabin',
+    desc='sweep angle of the leading edge of the passenger cabin',  # is this forebody Sweep angle?
     default_value=45.0,
 )
 
@@ -1668,6 +1669,17 @@ add_meta_data(
     units='lbm',
     desc='design landing mass',
     default_value=0.0,
+)
+
+add_meta_data(
+    Aircraft.Design.TYPE,
+    meta_data=_MetaData,
+    historical_name={"GASP": ['INGASP.IHWB'], "FLOPS": None, "LEAPS1": None},
+    units='unitless',
+    types=AircraftTypes,
+    option=True,
+    default_value='transport',
+    desc='aircraft type: BWB for blended wing body, transport otherwise',
 )
 
 add_meta_data(
@@ -3105,6 +3117,24 @@ add_meta_data(
 # ========================================================
 
 add_meta_data(
+    Aircraft.Fuselage.AFTBODY_MASS,
+    meta_data=_MetaData,
+    historical_name={"GASP": 'WGT_AB', "FLOPS": None, "LEAPS1": None},
+    units='lbm',
+    default_value=0.0,
+    desc='aftbody mass',
+)
+
+add_meta_data(
+    Aircraft.Fuselage.AFTBODY_MASS_PER_UNIT_AREA,
+    meta_data=_MetaData,
+    historical_name={"GASP": 'INGASP.UWT_AFT', "FLOPS": None, "LEAPS1": None},
+    units='lbm/ft**2',
+    default_value=0.0,
+    desc='aftbody structural areal unit weight',
+)
+
+add_meta_data(
     Aircraft.Fuselage.AISLE_WIDTH,
     meta_data=_MetaData,
     historical_name={"GASP": 'INGASP.WAS', "FLOPS": None, "LEAPS1": None},
@@ -3206,12 +3236,41 @@ add_meta_data(
 )
 
 add_meta_data(
+    Aircraft.Fuselage.FOREBODY_MASS,
+    meta_data=_MetaData,
+    historical_name={"GASP": 'WGT_FB', "FLOPS": None, "LEAPS1": None},
+    units='lbm',
+    default_value=0.0,
+    desc='forebody mass',
+)
+
+add_meta_data(
     Aircraft.Fuselage.FORM_FACTOR,
     meta_data=_MetaData,
     historical_name={"GASP": 'INGASP.CKF', "FLOPS": None, "LEAPS1": None},
     units='unitless',
     desc='fuselage form factor',
     default_value=0.0,
+)
+
+add_meta_data(
+    Aircraft.Fuselage.HEIGHT_TO_WIDTH_RATIO,
+    meta_data=_MetaData,
+    historical_name={"GASP": 'INGASP.HGTqWID', "FLOPS": None, "LEAPS1": None},
+    units='unitless',
+    types=float,
+    default_value=1.0,
+    desc='fuselage height-to-width ratio',
+)
+
+add_meta_data(
+    Aircraft.Fuselage.HYDRAULIC_DIAMETER,
+    meta_data=_MetaData,
+    historical_name={"GASP": 'DHYDRAUL', "FLOPS": None, "LEAPS1": None},
+    units='ft',
+    types=float,
+    default_value=0.0,
+    desc='the geometric mean of cabin height and cabin width',
 )
 
 add_meta_data(
@@ -3277,6 +3336,25 @@ add_meta_data(
     units='unitless',
     desc='fuselage length to diameter ratio',
     default_value=0.0,
+)
+
+add_meta_data(
+    Aircraft.Fuselage.LIFT_COEFFICENT_RATIO_BODY_TO_WING,
+    meta_data=_MetaData,
+    historical_name={"GASP": 'INGASP.CLBqCLW', "FLOPS": None, "LEAPS1": None},
+    units='unitless',
+    types=float,
+    default_value=0.0,
+    desc='lift coefficent of body over lift coefficent of wing ratio',
+)
+
+add_meta_data(
+    Aircraft.Fuselage.LIFT_CURVE_SLOPE_MACH0,
+    meta_data=_MetaData,
+    historical_name={"GASP": 'INGASP.CLALPH_B0', "FLOPS": None, "LEAPS1": None},
+    units="1/rad",
+    default_value=0.0,
+    desc='lift curve slope of fuselage at Mach 0',
 )
 
 add_meta_data(
@@ -3474,13 +3552,22 @@ add_meta_data(
 )
 
 add_meta_data(
+    Aircraft.Fuselage.PRESSURIZED_WIDTH_ADDITIONAL,
+    meta_data=_MetaData,
+    historical_name={"GASP": 'INGASP.WPRFUS', "FLOPS": None, "LEAPS1": None},
+    units='ft',
+    default_value=0.0,
+    desc='additional pressurized fuselage width for cargo bay',
+)
+
+add_meta_data(
     Aircraft.Fuselage.SEAT_PITCH,
     meta_data=_MetaData,
     historical_name={"GASP": 'INGASP.PS', "FLOPS": None, "LEAPS1": None},
     units='inch',
     desc='pitch of the economy class seats',
     option=True,
-    default_value=29,
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -3490,7 +3577,7 @@ add_meta_data(
     units='inch',
     desc='width of the economy class seats',
     option=True,
-    default_value=20,
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -3520,6 +3607,16 @@ add_meta_data(
     units='ft**2',
     desc='fuselage wetted area',
     default_value=0.0,
+)
+
+add_meta_data(
+    Aircraft.Fuselage.WETTED_AREA_RATIO_AFTBODY_TO_TOTAL,
+    meta_data=_MetaData,
+    historical_name={"GASP": 'INGASP.SAFTqS', "FLOPS": None, "LEAPS1": None},
+    units='unitless',
+    types=float,
+    default_value=0.0,
+    desc='aftbody wetted area to total body wetted area',
 )
 
 add_meta_data(
@@ -4311,6 +4408,15 @@ add_meta_data(
 )
 
 add_meta_data(
+    Aircraft.Nacelle.PERCENT_DIAMETER_BURIED_IN_FUSELAGE,
+    meta_data=_MetaData,
+    historical_name={"GASP": 'INGASP.HEBQDN', "FLOPS": None, "LEAPS1": None},
+    units='unitless',
+    default_value=0.0,
+    desc='percentage of nacelle diameter buried in fuselage over nacelle diameter',
+)
+
+add_meta_data(
     Aircraft.Nacelle.SURFACE_AREA,
     meta_data=_MetaData,
     historical_name={"GASP": 'INGASP.SN', "FLOPS": None, "LEAPS1": None},
@@ -4715,6 +4821,7 @@ add_meta_data(
     historical_name={"GASP": 'INGASP.ELFFC', "FLOPS": None, "LEAPS1": None},
     units='ft',
     desc='cabin length for the tail boom fuselage',
+    default_value=0.0,
 )
 
 
@@ -5358,6 +5465,19 @@ add_meta_data(
     units='unitless',
     desc='Engine inertia relief factor for wingspan inboard of engine locations. Used '
     'to compute Aircraft.Wing.BENDING_MATERIAL_MASS',
+    default_value=0.0,
+)
+
+add_meta_data(
+    Aircraft.Wing.EXPOSED_WING_AREA,
+    meta_data=_MetaData,
+    historical_name={
+        "GASP": 'SW_EXP',
+        "FLOPS": None,
+        "LEAPS1": None,
+    },
+    units='ft**2',
+    desc='exposed wing area, i.e. wing area outside the fuselage, True for both Tube&Wing and HWB',
     default_value=0.0,
 )
 
