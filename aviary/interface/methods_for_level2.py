@@ -288,8 +288,9 @@ class AviaryProblem(om.Problem):
         for idx, phase_name in enumerate(self.phase_info):
             if 'user_options' in self.phase_info[phase_name]:
                 analytic = False
-                if (self.analysis_scheme is AnalysisScheme.COLLOCATION) and (
-                    self.mission_method is EquationsOfMotion.TWO_DEGREES_OF_FREEDOM
+                if (
+                    self.analysis_scheme is AnalysisScheme.COLLOCATION
+                    and self.mission_method is EquationsOfMotion.TWO_DEGREES_OF_FREEDOM
                 ):
                     try:
                         # if the user provided an option, use it
@@ -720,21 +721,9 @@ class AviaryProblem(om.Problem):
                     # specify ODE, output_name, with units that SimuPyProblem expects
                     # assume event function is of form ODE.output_name - value
                     # third key is event_idx associated with input
-                    (
-                        'groundroll',
-                        Dynamic.Mission.VELOCITY,
-                        0,
-                    ),
-                    (
-                        'climb3',
-                        Dynamic.Mission.ALTITUDE,
-                        0,
-                    ),
-                    (
-                        'cruise',
-                        Dynamic.Vehicle.MASS,
-                        0,
-                    ),
+                    ('groundroll', Dynamic.Mission.VELOCITY, 0),
+                    ('climb3', Dynamic.Mission.ALTITUDE, 0),
+                    ('cruise', Dynamic.Vehicle.MASS, 0),
                 ],
                 traj_intermediate_state_output=[
                     ('cruise', Dynamic.Mission.DISTANCE),
@@ -905,9 +894,7 @@ class AviaryProblem(om.Problem):
             if self.pre_mission_info['include_takeoff']:
                 self.post_mission.promotes(
                     'fuel_burned',
-                    [
-                        ('initial_mass', Mission.Summary.GROSS_MASS),
-                    ],
+                    [('initial_mass', Mission.Summary.GROSS_MASS)],
                 )
             else:
                 # timeseries has to be used because Breguet cruise phases don't have
@@ -943,9 +930,7 @@ class AviaryProblem(om.Problem):
                 # shooting method currently doesn't have timeseries
                 self.post_mission.promotes(
                     'reserve_fuel_burned',
-                    [
-                        ('initial_mass', Mission.Landing.TOUCHDOWN_MASS),
-                    ],
+                    [('initial_mass', Mission.Landing.TOUCHDOWN_MASS)],
                 )
                 self.model.connect(
                     f"traj.{self.reserve_phases[-1]}.states:mass",
@@ -1606,8 +1591,9 @@ class AviaryProblem(om.Problem):
 
             else:
                 raise ValueError(
-                    f"{objective_type} is not a valid objective.\nobjective_type must"
-                    " be one of mass, time, hybrid_objective, fuel_burned, or fuel"
+                    f"{objective_type} is not a valid objective. 'objective_type' must "
+                    'be one of the following: mass, time, hybrid_objective, '
+                    'fuel_burned, or fuel'
                 )
 
         else:  # If no 'objective_type' is specified, we handle based on 'problem_type'
