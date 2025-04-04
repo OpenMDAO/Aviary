@@ -20,6 +20,8 @@ class WingMassGroup(om.Group):
     """
 
     def initialize(self):
+        # TODO this requires a special workaround in
+        #      variable_info/functions.py, add_aviary_output()
         # default to None instead of default value
         add_aviary_option(self, Aircraft.Wing.INPUT_STATION_DIST, None)
 
