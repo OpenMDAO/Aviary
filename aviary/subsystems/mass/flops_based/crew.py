@@ -72,7 +72,6 @@ class FlightCrewMass(om.ExplicitComponent):
 
     def initialize(self):
         add_aviary_option(self, Aircraft.CrewPayload.NUM_FLIGHT_CREW)
-        add_aviary_option(self, Aircraft.LandingGear.CARRIER_BASED)
 
     def setup(self):
         add_aviary_input(self, Aircraft.CrewPayload.FLIGHT_CREW_MASS_SCALER,
@@ -113,10 +112,7 @@ class FlightCrewMass(om.ExplicitComponent):
         Return the mass, in pounds, of one member of the flight crew and
         their baggage.
         '''
+        # TODO this should be its own variable
         mass_per_flight_crew = 225.0  # lbm
-
-        # account for machine precision error
-        if self.options[Aircraft.LandingGear.CARRIER_BASED]:
-            mass_per_flight_crew -= 35.0  # lbm
 
         return mass_per_flight_crew

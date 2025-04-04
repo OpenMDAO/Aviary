@@ -11,7 +11,7 @@ class SkinFriction(om.ImplicitComponent):
     in FLOPS AERSCL.
 
     The fixed-point iteration scheme has been replaced with Newton's method, which can
-    converge the equations for multiple mach numbers and characteristic lengths
+    converge the equations for multiple Mach numbers and characteristic lengths
     simultaneously.
     """
 

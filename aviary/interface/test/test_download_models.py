@@ -12,24 +12,20 @@ from aviary.interface.download_models import get_model, save_file
 class CommandEntryPointsTestCases(unittest.TestCase):
 
     def run_and_test_hangar(self, filenames, out_dir=''):
-        # tests that the commands return an exit code of 0 and that the files are generated
+        # tests that the function runs successfully and that the files are generated
         if isinstance(filenames, str):
             filenames = [filenames]
-        cmd = ['aviary', 'hangar'] + filenames
 
         if out_dir:
-            cmd += ['-o', out_dir]
             out_dir = Path(out_dir)
         else:
             out_dir = Path.cwd() / 'aviary_models'
 
-        try:
-            output = subprocess.check_output(cmd)
-            for filename in filenames:
-                path = out_dir / filename.split('/')[-1]
-                self.assertTrue(path.exists())
-        except subprocess.CalledProcessError as err:
-            self.fail(f"Command '{cmd}' failed.  Return code: {err.returncode}")
+        for filename in filenames:
+            path = get_model(filename)
+            save_file(path, outdir=out_dir)
+            path = out_dir / filename.split('/')[-1]
+            self.assertTrue(path.exists())
 
     def test_single_file_without_path(self):
         filename = 'turbofan_22k.deck'
@@ -64,3 +60,5 @@ class CommandEntryPointsTestCases(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+    # test = CommandEntryPointsTestCases()
+    # test.test_single_file_with_path()
