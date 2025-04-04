@@ -162,6 +162,7 @@ aircraft:avionics:mass_scaler,1.2,unitless
 aircraft:canard:area,0.0,ft**2
 aircraft:canard:aspect_ratio,0.0,unitless
 aircraft:canard:thickness_to_chord,0.0,unitless
+aircraft:crew_and_payload:baggage_mass_per_passenger,44,lbm
 aircraft:crew_and_payload:cargo_container_mass_scaler,1.0,unitless
 aircraft:crew_and_payload:design:num_business_class,0,unitless
 aircraft:crew_and_payload:design:num_first_class,11,unitless
