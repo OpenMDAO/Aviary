@@ -1,8 +1,8 @@
 from aviary.variable_info.variables import Aircraft as av_Aircraft
-from aviary.variable_info.variables import Mission as av_Mission
+from aviary.variable_info.variables import Dynamic as av_Dynamic
 
 AviaryAircraft = av_Aircraft
-AviaryMission = av_Mission
+AviaryDynamic = av_Dynamic
 
 
 class Aircraft(AviaryAircraft):
@@ -34,17 +34,18 @@ class Aircraft(AviaryAircraft):
             TYPE = "aircraft:battery:cell:type"
 
 
-class Mission(AviaryMission):
+class Dynamic(AviaryDynamic):
     """
-    Mission data hierarchy for battery subsystem.
+    Dynamic data hierarchy for battery subsystem.
     """
 
     class Battery:
-        CURRENT = "mission:battery:current"
-        HEAT_OUT = "mission:battery:heat_out"
-        STATE_OF_CHARGE = "mission:battery:state_of_charge"
-        STATE_OF_CHARGE_RATE = "mission:battery:state_of_charge_rate"
-        TEMPERATURE = "mission:battery:temperature"
-        VOLTAGE = "mission:battery:voltage"
-        VOLTAGE_THEVENIN = "mission:battery:voltage_thevenin"
-        VOLTAGE_THEVENIN_RATE = "mission:battery:voltage_thevenin_rate"
+        CURRENT = "dynamic:battery:current"
+        EFFICIENCY = "dynamic:battery:efficiency"
+        HEAT_OUT = "dynamic:battery:heat_out"
+        STATE_OF_CHARGE = "dynamic:battery:state_of_charge"
+        STATE_OF_CHARGE_RATE = "dynamic:battery:state_of_charge_rate"
+        TEMPERATURE = "dynamic:battery:temperature"
+        VOLTAGE = "dynamic:battery:voltage"
+        VOLTAGE_THEVENIN = "dynamic:battery:voltage_thevenin"
+        VOLTAGE_THEVENIN_RATE = "dynamic:battery:voltage_thevenin_rate"

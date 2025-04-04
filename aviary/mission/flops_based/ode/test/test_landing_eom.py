@@ -14,6 +14,7 @@ from aviary.validation_cases.validation_tests import do_validation_test
 from aviary.variable_info.variables import Dynamic
 from aviary.subsystems.propulsion.utils import build_engine_deck
 from aviary.utils.preprocessors import preprocess_options
+from aviary.variable_info.functions import setup_model_options
 
 
 class FlareEOMTest(unittest.TestCase):
@@ -214,4 +215,7 @@ class OtherTest(unittest.TestCase):
 
 
 if __name__ == "__main__":
-    unittest.main()
+    # unittest.main()
+    test = FlareEOMTest()
+    test.setUp()
+    test.test_case()

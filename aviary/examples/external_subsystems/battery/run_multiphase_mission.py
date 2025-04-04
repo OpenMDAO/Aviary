@@ -40,7 +40,7 @@ if __name__ == '__main__':
 
     prob.add_objective('mass')
     # prob.model.add_objective(
-    #     f'traj.climb.states:{Mission.Battery.STATE_OF_CHARGE}', index=-1, ref=-1)
+    #     f'traj.climb.states:{Dynamic.Battery.STATE_OF_CHARGE}', index=-1, ref=-1)
 
     prob.setup()
 

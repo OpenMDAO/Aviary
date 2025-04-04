@@ -368,8 +368,8 @@ class AviaryMissionEditor(tk.Tk):
                     widget.configure(
                         foreground=self.pallete["light"]["foreground_primary"])
 
-# ----------------------
-# Plot related functions
+    # ----------------------
+    # Plot related functions
     def create_plots(self):
         """Creates subplots according to data_info dict. Sets labels and limits.
             Ties mouse events to appropriate internal functions."""
@@ -403,8 +403,14 @@ class AviaryMissionEditor(tk.Tk):
     def update_axes(self, units=False, limits=False, refresh=False):
         for i, plot in enumerate(self.plots):
             if units:
-                xlabel = f"{self.data_info['labels'][0]} ({self.data_info['units'][0].get()})"
-                ylabel = f"{self.data_info['labels'][i+1]} ({self.data_info['units'][i+1].get()})"
+                xlabel = (
+                    f"{self.data_info['labels'][0]} "
+                    f"({self.data_info['units'][0].get()})"
+                )
+                ylabel = (
+                    f"{self.data_info['labels'][i+1]} "
+                    f"({self.data_info['units'][i+1].get()})"
+                )
                 plot.set(xlabel=xlabel, ylabel=ylabel)
             if limits:
                 xlim = (0, float(self.data_info["limits"][0].get()))
@@ -441,8 +447,8 @@ class AviaryMissionEditor(tk.Tk):
                     continue
                 line.remove()
 
-# ----------------------
-# Mouse related functions
+    # ----------------------
+    # Mouse related functions
     def on_mouse_press(self, event):
         """Handles mouse press event, sets internal mouse state"""
         self.mouse_press = True
@@ -541,8 +547,8 @@ class AviaryMissionEditor(tk.Tk):
         lims = (self.plots[plot_idx].get_xlim()[1], self.plots[plot_idx].get_ylim()[1])
         return np.sqrt(sum([((pt1[i] - pt2[i])/lims[i])**2 for i in range(2)]))
 
-# ----------------------
-# Table related functions
+    # ----------------------
+    # Table related functions
     def update_str_vars(self):
         """Updates StringVar values for the table. Used when points are dragged on plot"""
         for i, vallist in enumerate(self.data):
@@ -572,7 +578,8 @@ class AviaryMissionEditor(tk.Tk):
         Overwriting causes all table widgets to be destroyed and a new set of widgets to be created.
         This also resets the StringVars."""
         row = len(
-            self.data[0])-1  # last row (assumes data lists have been updated with new point)
+            # last row (assumes data lists have been updated with new point)
+            self.data[0])-1
         if overwrite and len(self.table_widgets) > 0:
             for item in self.table_widgets:
                 item.destroy()
@@ -741,8 +748,8 @@ class AviaryMissionEditor(tk.Tk):
         return format(
             value, "." + str(int(self.data_info["rounding"][col].get()) + extra) + "f")
 
-# ----------------------
-# Popup related functions
+    # ----------------------
+    # Popup related functions
 
     def close_popup(self):
         """Function to close existing popup and refocus main window"""
@@ -975,8 +982,8 @@ class AviaryMissionEditor(tk.Tk):
             command=lambda: [self.close_popup(), reset_options(self, current_info)])
         self.place_popup()
 
-# ----------------------
-# Menu related functions
+    # ----------------------
+    # Menu related functions
     def create_menu(self):
         """Creates menu. Structure is specified as a dictionary, can add commands,
         separators, and checkbuttons."""
