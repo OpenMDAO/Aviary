@@ -1,8 +1,230 @@
 from aviary.mission.phase_builder_base import PhaseBuilderBase
 from aviary.mission.initial_guess_builders import InitialGuessState, InitialGuessIntegrationVariable, InitialGuessControl
+from aviary.utils.aviary_options_dict import AviaryOptionsDictionary
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.variables import Dynamic
 from aviary.mission.gasp_based.ode.climb_ode import ClimbODE
+
+
+class ClimbPhaseOptions(AviaryOptionsDictionary):
+
+    def declare_options(self):
+
+        self.declare(
+            'analytic',
+            types=bool,
+            default=False,
+            desc='When set to True, this is an analytic phase.'
+        )
+
+        self.declare(
+            'reserve',
+            types=bool,
+            default=False,
+            desc='Designate this phase as a reserve phase and contributes its fuel burn '
+            'towards the reserve mission fuel requirements. Reserve phases should be '
+            'be placed after all non-reserve phases in the phase_info.'
+        )
+
+        self.declare(
+            name='target_distance',
+            default=None,
+            units='m',
+            desc='The total distance traveled by the aircraft from takeoff to landing '
+            'for the primary mission, not including reserve missions. This value must '
+            'be positive.'
+        )
+
+        self.declare(
+            'target_duration',
+            default=None,
+            units='s',
+            desc='The amount of time taken by this phase added as a constraint.'
+        )
+
+        self.declare(
+            name='fix_initial',
+            types=bool,
+            default=False,
+            desc='Fixes the initial states (mass, distance) and does not allow them to '
+            'change during the optimization.'
+        )
+
+        self.declare(
+            name='EAS_target',
+            default=0.0,
+            units='kn',
+            desc='Target airspeed for the balance in this phase.'
+        )
+
+        self.declare(
+            name='mach_cruise',
+            default=0.0,
+            desc='Defines the mach constraint at the end of the phase. '
+            'Only valid when target_mach=True.'
+        )
+
+        self.declare(
+            'target_mach',
+            types=bool,
+            default=False,
+            desc='Set to true to enforce a mach_constraint at the phase endpoint. '
+            'The mach value is set in "mach_cruise".'
+        )
+
+        self.declare(
+            name='final_altitude',
+            default=0.0,
+            units='ft',
+            desc='Altitude for final point in the phase.'
+        )
+
+        self.declare(
+            name='required_available_climb_rate',
+            default=None,
+            units='ft/min',
+            desc='Adds a constraint requiring Dynamic.Mission.ALTITUDE_RATE_MAX to be no '
+            'smaller than required_available_climb_rate. This helps to ensure that the '
+            'propulsion system is large enough to handle emergency maneuvers at all points '
+            'throughout the flight envelope. Default value is None for no constraint.'
+        )
+
+        self.declare(
+            name='duration_bounds',
+            default=(0, 0),
+            units='s',
+            desc='Lower and upper bounds on the phase duration, in the form of a nested tuple: '
+            'i.e. ((20, 36), "min") This constrains the duration to be between 20 and 36 min.'
+        )
+
+        self.declare(
+            name='duration_ref',
+            default=1.0,
+            units='s',
+            desc='Scale factor ref for duration.'
+        )
+
+        self.declare(
+            name='alt_lower',
+            types=tuple,
+            default=0.0,
+            units='ft',
+            desc='Lower bound for altitude.'
+        )
+
+        self.declare(
+            name='alt_upper',
+            default=0.0,
+            units='ft',
+            desc='Upper bound for altitude.'
+        )
+
+        self.declare(
+            name='alt_ref',
+            default=1.0,
+            units='ft',
+            desc='Scale factor ref for altitude.'
+        )
+
+        self.declare(
+            name='alt_ref0',
+            default=0.0,
+            units='ft',
+            desc='Scale factor ref0 for altitude.'
+        )
+
+        self.declare(
+            name='alt_defect_ref',
+            default=None,
+            units='ft',
+            desc='Scale factor ref for altitude defect.'
+        )
+
+        self.declare(
+            name='mass_lower',
+            types=tuple,
+            default=0.0,
+            units='lbm',
+            desc='Lower bound for mass.'
+        )
+
+        self.declare(
+            name='mass_upper',
+            default=0.0,
+            units='lbm',
+            desc='Upper bound for mass.'
+        )
+
+        self.declare(
+            name='mass_ref',
+            default=1.0,
+            units='lbm',
+            desc='Scale factor ref for mass.'
+        )
+
+        self.declare(
+            name='mass_ref0',
+            default=0.0,
+            units='lbm',
+            desc='Scale factor ref0 for mass.'
+        )
+
+        self.declare(
+            name='mass_defect_ref',
+            default=None,
+            units='lbm',
+            desc='Scale factor ref for mass defect.'
+        )
+
+        self.declare(
+            name='distance_lower',
+            default=0.0,
+            units='NM',
+            desc='Lower bound for distance.'
+        )
+
+        self.declare(
+            name='distance_upper',
+            default=0.0,
+            units='NM',
+            desc='Upper bound for distance.'
+        )
+
+        self.declare(
+            name='distance_ref',
+            default=1.0,
+            units='NM',
+            desc='Scale factor ref for distance.'
+        )
+
+        self.declare(
+            name='distance_ref0',
+            default=0.0,
+            units='NM',
+            desc='Scale factor ref0 for distance.'
+        )
+
+        self.declare(
+            name='distance_defect_ref',
+            default=None,
+            units='NM',
+            desc='Scale factor ref for distance defect.'
+        )
+
+        self.declare(
+            name='num_segments',
+            types=int,
+            default=None,
+            desc='The number of segments in transcription creation in Dymos. '
+        )
+
+        self.declare(
+            name='order',
+            types=int,
+            default=None,
+            desc='The order of polynomials for interpolation in the transcription '
+            'created in Dymos.'
+        )
 
 
 class ClimbPhase(PhaseBuilderBase):
@@ -23,8 +245,8 @@ class ClimbPhase(PhaseBuilderBase):
     """
     default_name = 'climb_phase'
     default_ode_class = ClimbODE
+    default_options_class = ClimbPhaseOptions
 
-    _meta_data_ = {}
     _initial_guesses_meta_data_ = {}
 
     def build_phase(self, aviary_options: AviaryValues = None):
@@ -137,41 +359,6 @@ class ClimbPhase(PhaseBuilderBase):
             'mach_cruise': self.user_options.get_val('mach_cruise'),
         }
 
-
-# Adding metadata for the ClimbPhase
-ClimbPhase._add_meta_data(
-    'analytic', val=False, desc='this is an analytic phase (no states).')
-ClimbPhase._add_meta_data(
-    'reserve', val=False, desc='this phase is part of the reserve mission.')
-ClimbPhase._add_meta_data(
-    'target_distance', val={}, desc='the amount of distance traveled in this phase added as a constraint')
-ClimbPhase._add_meta_data(
-    'target_duration', val={}, desc='the amount of time taken by this phase added as a constraint')
-ClimbPhase._add_meta_data('fix_initial', val=False)
-ClimbPhase._add_meta_data('EAS_target', val=0)
-ClimbPhase._add_meta_data('mach_cruise', val=0)
-ClimbPhase._add_meta_data('target_mach', val=False)
-ClimbPhase._add_meta_data('final_altitude', val=0)
-ClimbPhase._add_meta_data('required_available_climb_rate', val=None, units='ft/min')
-ClimbPhase._add_meta_data('duration_bounds', val=(0, 0), units='s')
-ClimbPhase._add_meta_data('duration_ref', val=1, units='s')
-ClimbPhase._add_meta_data('alt_lower', val=0, units='ft')
-ClimbPhase._add_meta_data('alt_upper', val=0, units='ft')
-ClimbPhase._add_meta_data('alt_ref', val=1, units='ft')
-ClimbPhase._add_meta_data('alt_ref0', val=0, units='ft')
-ClimbPhase._add_meta_data('alt_defect_ref', val=None, units='ft')
-ClimbPhase._add_meta_data('mass_lower', val=0, units='lbm')
-ClimbPhase._add_meta_data('mass_upper', val=0, units='lbm')
-ClimbPhase._add_meta_data('mass_ref', val=1, units='lbm')
-ClimbPhase._add_meta_data('mass_ref0', val=0, units='lbm')
-ClimbPhase._add_meta_data('mass_defect_ref', val=None, units='lbm')
-ClimbPhase._add_meta_data('distance_lower', val=0, units='NM')
-ClimbPhase._add_meta_data('distance_upper', val=0, units='NM')
-ClimbPhase._add_meta_data('distance_ref', val=1, units='NM')
-ClimbPhase._add_meta_data('distance_ref0', val=0, units='NM')
-ClimbPhase._add_meta_data('distance_defect_ref', val=None, units='NM')
-ClimbPhase._add_meta_data('num_segments', val=None, units='unitless')
-ClimbPhase._add_meta_data('order', val=None, units='unitless')
 
 ClimbPhase._add_initial_guess_meta_data(
     InitialGuessIntegrationVariable(),
