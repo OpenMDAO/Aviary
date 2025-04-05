@@ -890,11 +890,16 @@ class LandingFlareToTouchdown(PhaseBuilderBase):
         upper_angle_of_attack = user_options.get_val('upper_angle_of_attack', units)
         angle_of_attack_ref = user_options.get_val('angle_of_attack_ref', units)
 
-        phase.add_polynomial_control(
-            Dynamic.Vehicle.ANGLE_OF_ATTACK, opt=True, units=units, order=1,
-            lower=lower_angle_of_attack, upper=upper_angle_of_attack,
+        phase.add_control(
+            Dynamic.Vehicle.ANGLE_OF_ATTACK,
+            control_type='polynomial',
+            opt=True,
+            units=units,
+            order=1,
+            lower=lower_angle_of_attack,
+            upper=upper_angle_of_attack,
             ref=angle_of_attack_ref,
-            rate_targets="angle_of_attack_rate"
+            rate_targets="angle_of_attack_rate",
         )
 
         phase.add_timeseries_output(
@@ -1132,10 +1137,18 @@ class LandingTouchdownToNoseDown(PhaseBuilderBase):
         units = 'deg'
         max_angle_of_attack = user_options.get_val('max_angle_of_attack', units)
 
-        phase.add_polynomial_control(
-            Dynamic.Vehicle.ANGLE_OF_ATTACK, opt=True, units=units, order=1,
-            lower=0, upper=max_angle_of_attack, fix_final=True,
-            fix_initial=False, ref=max_angle_of_attack)
+        phase.add_control(
+            Dynamic.Vehicle.ANGLE_OF_ATTACK,
+            control_type='polynomial',
+            opt=True,
+            units=units,
+            order=1,
+            lower=0,
+            upper=max_angle_of_attack,
+            fix_final=True,
+            fix_initial=False,
+            ref=max_angle_of_attack,
+        )
 
         phase.add_timeseries_output(
             Dynamic.Vehicle.DRAG, output_name=Dynamic.Vehicle.DRAG, units='lbf'
