@@ -413,7 +413,6 @@ class Aircraft:
         MASS_SCALER = 'aircraft:instruments:mass_scaler'
 
     class LandingGear:
-        CARRIER_BASED = 'aircraft:landing_gear:carrier_based'
         DRAG_COEFFICIENT = 'aircraft:landing_gear:drag_coefficient'
         FIXED_GEAR = 'aircraft:landing_gear:fixed_gear'
         MAIN_GEAR_LOCATION = 'aircraft:landing_gear:main_gear_location'

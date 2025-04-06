@@ -12,6 +12,7 @@ from aviary.utils.aviary_options_dict import units_setter, int_enum_setter, boun
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.variables import Aircraft, Settings
 from aviary.variable_info.variable_meta_data import _MetaData
+from aviary.variable_info.enums import Verbosity
 
 # ---------------------------
 # Helper functions for setting up inputs/outputs in components
@@ -317,14 +318,18 @@ def override_aviary_vars(group: om.Group, aviary_inputs: AviaryValues,
             group.promotes(comp.name, inputs=in_var_names, outputs=comp_promoted_outputs)
 
     if overridden_outputs:
-        if aviary_inputs.get_val(Settings.VERBOSITY).value >= 1:  # Verbosity.BRIEF
+        if (
+            aviary_inputs.get_val(Settings.VERBOSITY).value >= Verbosity.VERBOSE
+        ):  # VERBOSE, DEBUG
             print("\nThe following variables have been overridden:")
             for prom_name in sorted(overridden_outputs):
                 val, units = aviary_inputs.get_item(prom_name)
                 print(f"  '{prom_name}  {val}  {units}")
 
     if external_overridden_outputs:
-        if aviary_inputs.get_val(Settings.VERBOSITY).value >= 1:
+        if (
+            aviary_inputs.get_val(Settings.VERBOSITY).value >= Verbosity.VERBOSE
+        ):  # VERBOSE, DEBUG
             print("\nThe following variables have been overridden by an external subsystem:")
             for prom_name in sorted(external_overridden_outputs):
                 # do not print values because they will be updated by an external subsystem later.
