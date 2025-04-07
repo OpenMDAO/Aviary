@@ -6,6 +6,7 @@ from aviary.subsystems.geometry.gasp_based.non_dimensional_conversion import \
     DimensionalNonDimensionalInterchange
 from aviary.subsystems.geometry.gasp_based.strut import StrutGeom
 from aviary.utils.conflict_checks import check_fold_location_definition
+from aviary.variable_info.enums import AircraftTypes
 from aviary.variable_info.functions import add_aviary_input, add_aviary_output, add_aviary_option
 from aviary.variable_info.variables import Aircraft, Mission
 
@@ -993,3 +994,95 @@ class WingGroup(om.Group):
                 check_fold_location_definition(choose_fold_location, has_strut)
                 self.promotes("strut", outputs=["strut_y"])
                 self.promotes("fold", inputs=["strut_y"])
+
+
+class ExposedWing(om.ExplicitComponent):
+    """
+    Computation of exposed wing area. This is useful for BWB, but is available to tube+wing model too.
+    """
+
+    def initialize(self):
+        add_aviary_option(self, Aircraft.Design.TYPE)
+
+    def setup(self):
+        add_aviary_input(self, Aircraft.Wing.VERTICAL_MOUNT_LOCATION, units='unitless', desc='HWING')
+        add_aviary_input(self, Aircraft.Fuselage.AVG_DIAMETER, units='ft', desc='SWF')
+        add_aviary_input(self, Aircraft.Fuselage.HEIGHT_TO_WIDTH_RATIO, units='unitless', desc='HGTqWID')
+        add_aviary_input(self, Aircraft.Wing.SPAN, units='ft', desc='B')
+        add_aviary_input(self, Aircraft.Wing.TAPER_RATIO, units='unitless', desc='SLM')
+        add_aviary_input(self, Aircraft.Wing.AREA, units='ft**2', desc='SW')
+
+        add_aviary_output(self, Aircraft.Wing.EXPOSED_WING_AREA, units='ft**2', desc='SW_EXP')
+
+    def setup_partials(self):
+        design_type = self.options[Aircraft.Design.TYPE]
+
+        self.declare_partials(
+            Aircraft.Wing.EXPOSED_WING_AREA,
+            [
+                Aircraft.Wing.VERTICAL_MOUNT_LOCATION,
+                Aircraft.Fuselage.AVG_DIAMETER,
+                Aircraft.Wing.SPAN,
+                Aircraft.Wing.TAPER_RATIO,
+                Aircraft.Wing.AREA,
+            ],
+        )
+
+        import pdb
+        pdb.set_trace()
+        if design_type is AircraftTypes.BLENDED_WING_BODY:
+            self.declare_partials(
+                Aircraft.Wing.EXPOSED_WING_AREA,
+                [
+                    Aircraft.Fuselage.HEIGHT_TO_WIDTH_RATIO,
+                ],
+            )
+
+    def compute(self, inputs, outputs):
+        design_type = self.options[Aircraft.Design.TYPE]
+
+        h_wing = inputs[Aircraft.Wing.VERTICAL_MOUNT_LOCATION]
+        body_width = inputs[Aircraft.Fuselage.AVG_DIAMETER]
+
+        sqt = np.sqrt(0.25 - (0.5 - h_wing)**2)
+        if design_type is AircraftTypes.BLENDED_WING_BODY:
+            cabin_height = body_width * inputs[Aircraft.Fuselage.HEIGHT_TO_WIDTH_RATIO]
+            b_fus = 0.5 * (body_width - cabin_height) + cabin_height * sqt
+        else:
+            b_fus = body_width * sqt
+
+        wingspan = inputs[Aircraft.Wing.SPAN]
+        wing_area = inputs[Aircraft.Wing.AREA]
+        taper_ratio = inputs[Aircraft.Wing.TAPER_RATIO]
+
+        root_chord_wing = 2.0 * wing_area / (wingspan*(1. + taper_ratio))
+        tip_chord = taper_ratio * root_chord_wing
+        c_fus = root_chord_wing + 2.*b_fus*(tip_chord - root_chord_wing)/wingspan
+
+        exposed_wing_area = (wingspan/2.0 - b_fus)*(c_fus + tip_chord)
+        outputs[Aircraft.Wing.EXPOSED_WING_AREA] = exposed_wing_area
+
+    def compute_partials(self, inputs, J):
+        design_type = self.options[Aircraft.Design.TYPE]
+
+        h_wing = inputs[Aircraft.Wing.VERTICAL_MOUNT_LOCATION]
+        body_width = inputs[Aircraft.Fuselage.AVG_DIAMETER]
+
+        sqt = np.sqrt(0.25 - (0.5 - h_wing)**2)
+        if design_type is AircraftTypes.BLENDED_WING_BODY:
+            cabin_height = body_width * inputs[Aircraft.Fuselage.HEIGHT_TO_WIDTH_RATIO]
+            b_fus = 0.5 * (body_width - cabin_height) + cabin_height * sqt
+        else:
+            b_fus = body_width * sqt
+
+        wingspan = inputs[Aircraft.Wing.SPAN]
+        wing_area = inputs[Aircraft.Wing.AREA]
+        taper_ratio = inputs[Aircraft.Wing.TAPER_RATIO]
+
+        root_chord_wing = 2.0 * wing_area / (wingspan*(1. + taper_ratio))
+        tip_chord = taper_ratio * root_chord_wing
+        c_fus = root_chord_wing + 2.*b_fus*(tip_chord - root_chord_wing)/wingspan
+
+        if design_type is AircraftTypes.BLENDED_WING_BODY:
+            #J[Aircraft.Wing.EXPOSED_WING_AREA, Aircraft.Fuselage.HEIGHT_TO_WIDTH_RATIO] = - (-0.5 * body_width + body_width * sqt) *(c_fus + taper_ratio * 2 * wing_area /wingspan/(1+taper_ratio))
+            pass
