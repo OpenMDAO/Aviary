@@ -11,12 +11,18 @@ from openmdao.utils.units import valid_units, is_compatible
 from aviary.utils.named_values import get_items, get_keys
 from aviary.utils.functions import get_path
 from aviary.utils.named_values import NamedValues
+from aviary.variable_info.enums import Verbosity
 
 
 # multiple type annotation uses "typeA | typeB" syntax, but requires Python 3.10+
 # filename: (str, Path)
-def read_data_file(filename, metadata=None, aliases=None,
-                   save_comments=False):
+def read_data_file(
+    filename,
+    metadata=None,
+    aliases=None,
+    save_comments=False,
+    verbosity=Verbosity.BRIEF,
+):
     """
     Read data file in Aviary format, which is data delimited by commas with any amount of
     whitespace allowed between data entries. Spaces are not allowed in openMDAO
@@ -36,18 +42,22 @@ def read_data_file(filename, metadata=None, aliases=None,
         are a list of headers that correspond to that variable. Alias matching is not
         case-sensitive, and underscores and spaces are treated as equivalent.
     save_comments : bool, optional
-        flag if comments in data file should be returned along with data. Defaults to 
+        flag if comments in data file should be returned along with data. Defaults to
         False.
+    verbosity : (int, Verbosity), optional
+        controls level of printouts when running this method. Default is BRIEF (1).
 
     Returns
     -------
     data : NamedValues
-        data read from file in NamedValues format, including variable name, units, and 
+        data read from file in NamedValues format, including variable name, units, and
         values (stored in a numpy array)
     comments : list of str
-        any comments from file, with comment characters ('#') stripped out (only if 
+        any comments from file, with comment characters ('#') stripped out (only if
         save_comments=True)
     """
+    verbosity = Verbosity(verbosity)
+
     filepath = get_path(filename)
 
     data = NamedValues()
@@ -58,7 +68,7 @@ def read_data_file(filename, metadata=None, aliases=None,
         for key in aliases:
             if isinstance(aliases[key], str):
                 aliases[key] = [aliases[key]]
-            aliases[key] = [re.sub('\s', '_', item).lower() for item in aliases[key]]
+            aliases[key] = [re.sub('\\s', '_', item).lower() for item in aliases[key]]
 
     with open(filepath, newline=None, encoding='utf-8-sig') as file:
         # csv.reader() and other avaliable packages that can read csv files are not used
@@ -69,7 +79,7 @@ def read_data_file(filename, metadata=None, aliases=None,
             # if comments are present in line, strip them out
             if '#' in line_data:
                 index = line_data.index('#')
-                comments.append(line_data[index+1:].strip())
+                comments.append(line_data[index + 1:].strip())
                 line_data = line_data[:index]
 
             # split by delimiters, remove whitespace and newline characters
@@ -83,7 +93,7 @@ def read_data_file(filename, metadata=None, aliases=None,
             try:
                 line_data = [float(var) for var in line_data if var != '']
             # data contains things other than floats
-            except (ValueError):
+            except ValueError:
                 # skip checking for header data if not required
                 if check_for_header:
                     # dictionary of header name: units
@@ -93,8 +103,8 @@ def read_data_file(filename, metadata=None, aliases=None,
                     for index in range(len(line_data)):
                         item = re.split('[(]', line_data[index])
                         item = [item[i].strip(') ') for i in range(len(item))]
-                        # openMDAO vars can't have spaces, convert to underscores
-                        name = re.sub('\s', '_', item[0])
+                        # OpenMDAO vars can't have spaces, convert to underscores
+                        name = re.sub('\\s', '_', item[0])
                         if aliases:
                             # "reverse" lookup name in alias dict
                             for key in aliases:
@@ -107,9 +117,11 @@ def read_data_file(filename, metadata=None, aliases=None,
                         # default_units
                         if metadata is not None:
                             if name not in metadata.keys():
-                                warnings.warn(f'Header <{name}> was not recognized, and '
-                                              'will be skipped'
-                                              )
+                                if verbosity > Verbosity.QUIET:  # BRIEF, VERBOSE, DEBUG
+                                    warnings.warn(
+                                        f'<{filename}: Header <{name}> was not '
+                                        'recognized, and will be skipped'
+                                    )
                                 continue
                             else:
                                 default_units = metadata[name]['units']
@@ -124,23 +136,30 @@ def read_data_file(filename, metadata=None, aliases=None,
                                         # Raising error here, as trying to use default
                                         # units could mean accidental conversion which
                                         # would significantly impact analysis
-                                        raise ValueError(f'Provided units of <{units}> '
-                                                         f'for column <{name}>, which '
-                                                         'are not compatible with default '
-                                                         f'units of {default_units}')
+                                        raise ValueError(
+                                            f'Provided units of <{units}> '
+                                            f'for column <{name}>, which '
+                                            'are not compatible with default '
+                                            f'units of {default_units}'
+                                        )
                             else:
                                 # Units were not recognized. Raise error
-                                raise ValueError(f'Invalid units <{units}> provided for '
-                                                 f'column <{name}> while reading '
-                                                 f'<{filepath}>.')
+                                raise ValueError(
+                                    f'Invalid units <{units}> provided for '
+                                    f'column <{name}> while reading '
+                                    f'<{filepath}>.'
+                                )
                         else:
                             if metadata is not None and default_units != 'unitless':
                                 # units were not provided, but variable should have them
                                 # assume default units for that variable
-                                warning = f'Units were not provided for column <{name}> '\
-                                    f'while reading <{filepath}>. Using default '\
-                                    f'units of {default_units}.'
-                                warnings.warn(warning)
+                                if verbosity > Verbosity.BRIEF:  # VERBOSE, DEBUG
+                                    warning = (
+                                        f'Units were not provided for column <{name}> '
+                                        f'while reading <{filepath}>. Using default '
+                                        f'units of {default_units}.'
+                                    )
+                                    warnings.warn(warning)
                             units = default_units
 
                         header[name] = units
@@ -154,7 +173,8 @@ def read_data_file(filename, metadata=None, aliases=None,
                 # only raise error if not checking for header, or invalid header found
                 raise ValueError(
                     f'Non-numerical value found in data file <{filepath}> on line '
-                    f'{str(line_count)}')
+                    f'{str(line_count)}'
+                )
 
             # This point is reached when the first valid numerical entry in data file
             # is found. Stop looking for header data from now on
@@ -178,8 +198,12 @@ def read_data_file(filename, metadata=None, aliases=None,
 # multiple type annotation uses "typeA | typeB" syntax, but requires Python 3.10+
 # filename: (str, Path)
 # comments: (str, list)
-def write_data_file(filename=None, data: NamedValues = None,
-                    comments=[], include_timestamp: bool = False):
+def write_data_file(
+    filename,
+    data: NamedValues = None,
+    comments=[],
+    include_timestamp: bool = False,
+):
     """
     Write data to a comma-separated values (csv) format file using the Aviary data table
     format.
@@ -254,12 +278,12 @@ def write_data_file(filename=None, data: NamedValues = None,
 
         # if headers are smaller than column, pad with leading whitespace
         if header_len < col_len:
-            header[i] = ' '*(col_len-header_len) + header[i]
+            header[i] = ' ' * (col_len - header_len) + header[i]
 
         # special string to define column formatting with specific width
         format = f'%{col_len}s'
         # don't include commas for last column
-        if i < len(header)-1:
+        if i < len(header) - 1:
             format = format + ', '
         col_format.append(format)
 
@@ -267,8 +291,11 @@ def write_data_file(filename=None, data: NamedValues = None,
     formatted_data = np.array([data_dict[key] for key in data_dict]).transpose()
 
     # write to output file w/ header and comments
-    np.savetxt(filepath, formatted_data,
-               fmt=''.join(col_format),
-               delimiter=',',
-               header=', '.join(header),
-               comments='\n'.join(comments))
+    np.savetxt(
+        filepath,
+        formatted_data,
+        fmt=''.join(col_format),
+        delimiter=',',
+        header=', '.join(header),
+        comments='\n'.join(comments),
+    )

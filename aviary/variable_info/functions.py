@@ -11,6 +11,7 @@ from aviary.utils.aviary_options_dict import units_setter
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.variables import Aircraft, Settings
 from aviary.variable_info.variable_meta_data import _MetaData
+from aviary.variable_info.enums import Verbosity
 from aviary.utils.utils import enum_setter, wrapped_convert_units, check_type, cast_type
 
 # ---------------------------
@@ -371,14 +372,18 @@ def override_aviary_vars(
             )
 
     if overridden_outputs:
-        if aviary_inputs.get_val(Settings.VERBOSITY).value >= 1:  # Verbosity.BRIEF
+        if (
+            aviary_inputs.get_val(Settings.VERBOSITY).value >= Verbosity.VERBOSE
+        ):  # VERBOSE, DEBUG
             print("\nThe following variables have been overridden:")
             for prom_name in sorted(overridden_outputs):
                 val, units = aviary_inputs.get_item(prom_name)
                 print(f"  '{prom_name}  {val}  {units}")
 
     if external_overridden_outputs:
-        if aviary_inputs.get_val(Settings.VERBOSITY).value >= 1:
+        if (
+            aviary_inputs.get_val(Settings.VERBOSITY).value >= Verbosity.VERBOSE
+        ):  # VERBOSE, DEBUG
             print(
                 "\nThe following variables have been overridden by an external subsystem:"
             )
