@@ -121,7 +121,6 @@ inputs.set_val(Aircraft.Instruments.MASS_SCALER, 1.0)
 
 # Landing Gear
 # ---------------------------
-inputs.set_val(Aircraft.LandingGear.CARRIER_BASED, False)
 inputs.set_val(Aircraft.LandingGear.MAIN_GEAR_OLEO_LENGTH, 84.0, 'inch')
 inputs.set_val(Aircraft.LandingGear.MAIN_GEAR_MASS_SCALER, 1.0)
 inputs.set_val(Aircraft.LandingGear.NOSE_GEAR_OLEO_LENGTH, 58.8, 'inch')
