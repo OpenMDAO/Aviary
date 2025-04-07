@@ -458,7 +458,7 @@ class BWBFuselageParameters1TestCase(unittest.TestCase):
 
         setup_model_options(self.prob, self.aviary_options)
 
-        self.prob.setup()
+        self.prob.setup(check=False, force_alloc_complex=True)
 
     def test_case1(self):
         """Testing GASP data case"""
@@ -474,16 +474,7 @@ class BWBFuselageParameters1TestCase(unittest.TestCase):
         assert_near_equal(self.prob['nose_height'], 4.86859989, tol)
         assert_near_equal(self.prob['nose_length'], 2.92115998, tol)
 
-        partial_data = self.prob.check_partials(
-            out_stream=None,
-            compact_print=True,
-            show_only_incorrect=True,
-            form='central',
-            method="fd",
-            minimum_step=1e-12,
-            abs_err_tol=5.0e-4,
-            rel_err_tol=5.0e-5,
-        )
+        partial_data = self.prob.check_partials(out_stream=None, method="cs")
         assert_check_partials(partial_data, atol=1e-5, rtol=1e-5)
 
 
@@ -597,7 +588,7 @@ class BWBFuselageParameters2TestCase(unittest.TestCase):
 
         setup_model_options(self.prob, self.aviary_options)
 
-        self.prob.setup()
+        self.prob.setup(check=False, force_alloc_complex=True)
 
     def test_case1(self):
         """Testing GASP data case"""
@@ -609,16 +600,7 @@ class BWBFuselageParameters2TestCase(unittest.TestCase):
         assert_near_equal(self.prob[Aircraft.BWB.CABIN_AREA], 1283.52497, tol)
         assert_near_equal(self.prob['cabin_len'], 43.83334, tol)
 
-        partial_data = self.prob.check_partials(
-            out_stream=None,
-            compact_print=True,
-            show_only_incorrect=True,
-            form='central',
-            method="fd",
-            minimum_step=1e-12,
-            abs_err_tol=5.0e-4,
-            rel_err_tol=5.0e-5,
-        )
+        partial_data = self.prob.check_partials(out_stream=None, method="cs")
         assert_check_partials(partial_data, atol=1e-5, rtol=1e-5)
 
 
@@ -651,7 +633,7 @@ class BWBFuselageSizeTestCase(unittest.TestCase):
 
         setup_model_options(self.prob, self.aviary_options)
 
-        self.prob.setup()
+        self.prob.setup(check=False, force_alloc_complex=True)
 
     def test_case1(self):
         """Testing GASP data case"""
@@ -663,22 +645,13 @@ class BWBFuselageSizeTestCase(unittest.TestCase):
         assert_near_equal(self.prob[Aircraft.Fuselage.LENGTH], 71.5245514, tol)
         assert_near_equal(self.prob[Aircraft.TailBoom.LENGTH], 71.5245514, tol)
 
-        partial_data = self.prob.check_partials(
-            out_stream=None,
-            compact_print=True,
-            show_only_incorrect=True,
-            form='central',
-            method="fd",
-            minimum_step=1e-12,
-            abs_err_tol=5.0e-4,
-            rel_err_tol=5.0e-5,
-        )
+        partial_data = self.prob.check_partials(out_stream=None, method="cs")
         assert_check_partials(partial_data, atol=1e-5, rtol=1e-5)
 
 
 class BWBFuselageGroupTestCase(unittest.TestCase):
     """
-    
+    this is the GASP test case
     """
     def setUp(self):
 
@@ -753,7 +726,4 @@ class BWBFuselageGroupTestCase(unittest.TestCase):
 
 
 if __name__ == "__main__":
-    #unittest.main()
-    test = BWBLayoutTestCase()
-    test.setUp()
-    test.test_case1()
+    unittest.main()
