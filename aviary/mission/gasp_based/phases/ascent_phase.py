@@ -3,8 +3,318 @@ import numpy as np
 from aviary.mission.phase_builder_base import PhaseBuilderBase
 from aviary.mission.initial_guess_builders import InitialGuessState, InitialGuessIntegrationVariable, InitialGuessControl
 from aviary.utils.aviary_values import AviaryValues
+from aviary.utils.aviary_options_dict import AviaryOptionsDictionary
 from aviary.variable_info.variables import Dynamic
 from aviary.mission.gasp_based.ode.ascent_ode import AscentODE
+
+
+class AscentPhaseOptions(AviaryOptionsDictionary):
+
+    def declare_options(self):
+
+        self.declare(
+            'analytic',
+            types=bool,
+            default=False,
+            desc='When set to True, this is an analytic phase.'
+        )
+
+        self.declare(
+            'reserve',
+            types=bool,
+            default=False,
+            desc='Designate this phase as a reserve phase and contributes its fuel burn '
+            'towards the reserve mission fuel requirements. Reserve phases should be '
+            'be placed after all non-reserve phases in the phase_info.'
+        )
+
+        self.declare(
+            name='target_distance',
+            default=None,
+            units='m',
+            desc='The total distance traveled by the aircraft from takeoff to landing '
+            'for the primary mission, not including reserve missions. This value must '
+            'be positive.'
+        )
+
+        self.declare(
+            'target_duration',
+            default=None,
+            units='s',
+            desc='The amount of time taken by this phase added as a constraint.'
+        )
+
+        self.declare(
+            name='fix_initial',
+            types=bool,
+            default=False,
+            desc='Fixes the initial states (mass, distance) and does not allow them to '
+            'change during the optimization.'
+        )
+
+        self.declare(
+            name='angle_lower',
+            types=tuple,
+            default=-15 * np.pi / 180,
+            units='rad',
+            desc='Lower bound for angle.'
+        )
+
+        self.declare(
+            name='angle_upper',
+            default=25 * np.pi / 180,
+            units='rad',
+            desc='Upper bound for angle.'
+        )
+
+        self.declare(
+            name='angle_ref',
+            default=np.deg2rad(1),
+            units='rad',
+            desc='Scale factor ref for angle.'
+        )
+
+        self.declare(
+            name='angle_ref0',
+            default=0.0,
+            units='rad',
+            desc='Scale factor ref0 for angle.'
+        )
+
+        self.declare(
+            name='angle_defect_ref',
+            default=0.01,
+            units='rad',
+            desc='Scale factor ref for angle defect.'
+        )
+
+        self.declare(
+            name='alt_lower',
+            types=tuple,
+            default=0.0,
+            units='ft',
+            desc='Lower bound for altitude.'
+        )
+
+        self.declare(
+            name='alt_upper',
+            default=700.0,
+            units='ft',
+            desc='Upper bound for altitude.'
+        )
+
+        self.declare(
+            name='alt_ref',
+            default=100.0,
+            units='ft',
+            desc='Scale factor ref for altitude.'
+        )
+
+        self.declare(
+            name='alt_ref0',
+            default=0.0,
+            units='ft',
+            desc='Scale factor ref0 for altitude.'
+        )
+
+        self.declare(
+            name='alt_defect_ref',
+            default=100.0,
+            units='ft',
+            desc='Scale factor ref for altitude defect.'
+        )
+
+        self.declare(
+            name='final_altitude',
+            default=500.0,
+            units='ft',
+            desc='Altitude for final point in the phase.'
+        )
+
+        self.declare(
+            name='alt_constraint_ref',
+            default=100.0,
+            units='ft',
+            desc='Scaling ref for the final altitude constraint.'
+        )
+
+        self.declare(
+            name='alt_constraint_ref0',
+            default=0.0,
+            units='ft',
+            desc='Scaling ref0 for the final altitude constraint.'
+        )
+
+        self.declare(
+            name='velocity_lower',
+            default=0.0,
+            units='kn',
+            desc='Lower bound for velocity.'
+        )
+
+        self.declare(
+            name='velocity_upper',
+            default=1000.0,
+            units='kn',
+            desc='Upper bound for velocity.'
+        )
+
+        self.declare(
+            name='velocity_ref',
+            default=1.0e2,
+            units='kn',
+            desc='Scale factor ref for velocity.'
+        )
+
+        self.declare(
+            name='velocity_ref0',
+            default=0.0,
+            units='kn',
+            desc='Scale factor ref0 for velocity.'
+        )
+
+        self.declare(
+            name='velocity_defect_ref',
+            default=None,
+            units='kn',
+            desc='Scale factor ref for velocity defect.'
+        )
+
+        self.declare(
+            name='mass_lower',
+            types=tuple,
+            default=0.0,
+            units='lbm',
+            desc='Lower bound for mass.'
+        )
+
+        self.declare(
+            name='mass_upper',
+            default=190_000.0,
+            units='lbm',
+            desc='Upper bound for mass.'
+        )
+
+        self.declare(
+            name='mass_ref',
+            default=100_000.0,
+            units='lbm',
+            desc='Scale factor ref for mass.'
+        )
+
+        self.declare(
+            name='mass_ref0',
+            default=0.0,
+            units='lbm',
+            desc='Scale factor ref0 for mass.'
+        )
+
+        self.declare(
+            name='mass_defect_ref',
+            default=1.0e2,
+            units='lbm',
+            desc='Scale factor ref for mass defect.'
+        )
+
+        self.declare(
+            name='duration_ref',
+            default=1.0,
+            units='s',
+            desc='Scale factor ref for duration.'
+        )
+
+        self.declare(
+            name='distance_lower',
+            default=0.0,
+            units='ft',
+            desc='Lower bound for distance.'
+        )
+
+        self.declare(
+            name='distance_upper',
+            default=10.e3,
+            units='ft',
+            desc='Upper bound for distance.'
+        )
+
+        self.declare(
+            name='distance_ref',
+            default=3000.0,
+            units='ft',
+            desc='Scale factor ref for distance.'
+        )
+
+        self.declare(
+            name='distance_ref0',
+            default=0.0,
+            units='ft',
+            desc='Scale factor ref0 for distance.'
+        )
+
+        self.declare(
+            name='distance_defect_ref',
+            default=3000.0,
+            units='ft',
+            desc='Scale factor ref for distance defect.'
+        )
+
+        self.declare(
+            name='pitch_constraint_lower',
+            default=0.0,
+            units='deg',
+            desc='Pitch lower bound constraint.'
+        )
+
+        self.declare(
+            name='pitch_constraint_upper',
+            default=15.0,
+            units='deg',
+            desc='Pitch upper bound constraint.'
+        )
+
+        self.declare(
+            name='pitch_constraint_ref',
+            default=1.0,
+            units='deg',
+            desc='Scale factor ref for the pitch constraint.'
+        )
+
+        self.declare(
+            name='alpha_constraint_lower',
+            default=np.deg2rad(-30),
+            units='rad',
+            desc='Angle of attack lower bound constraint.'
+        )
+
+        self.declare(
+            name='alpha_constraint_upper',
+            default=np.deg2rad(30),
+            units='rad',
+            desc='Angle of attack upper bound constraint.'
+        )
+
+        self.declare(
+            name='alpha_constraint_ref',
+            default=np.deg2rad(5),
+            units='rad',
+            desc='Scale factor ref for the Angle of attack constraint.'
+        )
+
+        self.declare(
+            name='num_segments',
+            types=int,
+            default=1,
+            desc='The number of segments in transcription creation in Dymos. '
+            'The default value is 1.'
+        )
+
+        self.declare(
+            name='order',
+            types=int,
+            default=None,
+            desc='The order of polynomials for interpolation in the transcription '
+            'created in Dymos.'
+        )
 
 
 class AscentPhase(PhaseBuilderBase):
@@ -26,8 +336,8 @@ class AscentPhase(PhaseBuilderBase):
 
     default_name = 'ascent_phase'
     default_ode_class = AscentODE
+    default_options_class = AscentPhaseOptions
 
-    _meta_data_ = {}
     _initial_guesses_meta_data_ = {}
 
     def build_phase(self, aviary_options: AviaryValues = None):
@@ -98,53 +408,6 @@ class AscentPhase(PhaseBuilderBase):
 
         return phase
 
-
-# Adding metadata for the AscentPhase
-AscentPhase._add_meta_data(
-    'analytic', val=False, desc='this is an analytic phase (no states).')
-AscentPhase._add_meta_data(
-    'reserve', val=False, desc='this phase is part of the reserve mission.')
-AscentPhase._add_meta_data(
-    'target_distance', val={}, desc='the amount of distance traveled in this phase added as a constraint')
-AscentPhase._add_meta_data(
-    'target_duration', val={}, desc='the amount of time taken by this phase added as a constraint')
-AscentPhase._add_meta_data('fix_initial', val=False)
-AscentPhase._add_meta_data('angle_lower', val=-15 * np.pi / 180, units='rad')
-AscentPhase._add_meta_data('angle_upper', val=25 * np.pi / 180, units='rad')
-AscentPhase._add_meta_data('angle_ref', val=np.deg2rad(1), units='rad')
-AscentPhase._add_meta_data('angle_ref0', val=0, units='rad')
-AscentPhase._add_meta_data('angle_defect_ref', val=0.01, units='rad')
-AscentPhase._add_meta_data('alt_lower', val=0, units='ft')
-AscentPhase._add_meta_data('alt_upper', val=700, units='ft')
-AscentPhase._add_meta_data('alt_ref', val=100, units='ft')
-AscentPhase._add_meta_data('alt_ref0', val=0, units='ft')
-AscentPhase._add_meta_data('alt_defect_ref', val=100, units='ft')
-AscentPhase._add_meta_data('final_altitude', val=500, units='ft')
-AscentPhase._add_meta_data('alt_constraint_ref', val=100, units='ft')
-AscentPhase._add_meta_data('alt_constraint_ref0', val=0, units='ft')
-AscentPhase._add_meta_data('velocity_lower', val=0, units='kn')
-AscentPhase._add_meta_data('velocity_upper', val=1000, units='kn')
-AscentPhase._add_meta_data('velocity_ref', val=1e2, units='kn')
-AscentPhase._add_meta_data('velocity_ref0', val=0, units='kn')
-AscentPhase._add_meta_data('velocity_defect_ref', val=None, units='kn')
-AscentPhase._add_meta_data('mass_lower', val=0, units='lbm')
-AscentPhase._add_meta_data('mass_upper', val=190_000, units='lbm')
-AscentPhase._add_meta_data('mass_ref', val=100_000, units='lbm')
-AscentPhase._add_meta_data('mass_ref0', val=0, units='lbm')
-AscentPhase._add_meta_data('mass_defect_ref', val=1e2, units='lbm')
-AscentPhase._add_meta_data('distance_lower', val=0, units='ft')
-AscentPhase._add_meta_data('distance_upper', val=10.e3, units='ft')
-AscentPhase._add_meta_data('distance_ref', val=3000, units='ft')
-AscentPhase._add_meta_data('distance_ref0', val=0, units='ft')
-AscentPhase._add_meta_data('distance_defect_ref', val=3000, units='ft')
-AscentPhase._add_meta_data('pitch_constraint_lower', val=0, units='deg')
-AscentPhase._add_meta_data('pitch_constraint_upper', val=15, units='deg')
-AscentPhase._add_meta_data('pitch_constraint_ref', val=1, units='deg')
-AscentPhase._add_meta_data('alpha_constraint_lower', val=np.deg2rad(-30), units='rad')
-AscentPhase._add_meta_data('alpha_constraint_upper', val=np.deg2rad(30), units='rad')
-AscentPhase._add_meta_data('alpha_constraint_ref', val=np.deg2rad(5), units='rad')
-AscentPhase._add_meta_data('num_segments', val=None, units='unitless')
-AscentPhase._add_meta_data('order', val=None, units='unitless')
 
 # Adding initial guess metadata
 AscentPhase._add_initial_guess_meta_data(

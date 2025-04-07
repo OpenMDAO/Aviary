@@ -69,6 +69,8 @@ setup(
             "models/test_aircraft/*",
             "visualization/assets/*",
             "visualization/assets/aviary_vars/*",
+            "mission/gasp_based/ode/test/test_data/*.deck",
+            "interface/static/*.png",
         ],
         f"{pkgname}.docs": [
             "*.py",

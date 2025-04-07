@@ -18,10 +18,6 @@ from aviary.variable_info.variables import Dynamic
 from aviary.variable_info.variable_meta_data import _MetaData
 
 
-_require_new_meta_data_class_attr_ = \
-    namedtuple('_require_new_meta_data_class_attr_', ())
-
-
 _require_new_initial_guesses_meta_data_class_attr_ = \
     namedtuple('_require_new_initial_guesses_meta_data_class_attr_', ())
 
@@ -32,13 +28,13 @@ class PhaseBuilderBase(ABC):
 
     Attributes
     ----------
-    name : str ('<unknown phase>')
+    name : str ('_unknown phase_')
         object label
 
     core_subsystems : (None)
         list of SubsystemBuilderBase objects that will be added to the phase ODE
 
-    user_options : AviaryValues (<empty>)
+    user_options : OptionsDictionary (<empty>)
         state/path constraint values and flags
 
     initial_guesses : AviaryValues (<empty>)
@@ -62,6 +58,10 @@ class PhaseBuilderBase(ABC):
         class attribute: derived type customization point; the default value
         for ode_class used by build_phase
 
+    default_options_class : type
+        class attribute: derived type customization point; the default class
+        containing the phase options options_dictionary
+
     is_analytic_phase : bool (False)
         class attribute: derived type customization point; if True, build_phase
         will return an AnalyticPhase instead of a Phase
@@ -74,8 +74,6 @@ class PhaseBuilderBase(ABC):
     -------
     build_phase
     make_default_transcription
-    validate_options
-    assign_default_options
     '''
     __slots__ = (
         'name',
@@ -91,14 +89,12 @@ class PhaseBuilderBase(ABC):
         'meta_data',
     )
 
-    # region : derived type customization points
-    _meta_data_ = _require_new_meta_data_class_attr_()
-
     _initial_guesses_meta_data_ = _require_new_initial_guesses_meta_data_class_attr_()
 
-    default_name = '<unknown phase>'
+    default_name = '_unknown phase_'
 
     default_ode_class = EnergyODE
+    default_options_class = om.OptionsDictionary
 
     default_meta_data = _MetaData
     # endregion : derived type customization points
@@ -135,9 +131,7 @@ class PhaseBuilderBase(ABC):
 
         self.subsystem_options = subsystem_options
 
-        self.user_options = user_options
-        self.validate_options()
-        self.assign_default_options()
+        self.user_options = self.default_options_class(user_options)
 
         if initial_guesses is None:
             initial_guesses = AviaryValues()
@@ -227,58 +221,13 @@ class PhaseBuilderBase(ABC):
         '''
         user_options = self.user_options
 
-        num_segments, _ = user_options.get_item('num_segments')
-        order, _ = user_options.get_item('order')
+        num_segments = user_options['num_segments']
+        order = user_options['order']
 
         transcription = dm.Radau(
             num_segments=num_segments, order=order, compressed=True)
 
         return transcription
-
-    def validate_options(self):
-        '''
-        Raise TypeError if an unsupported option is found.
-
-        Users can call this method when updating options after initialization.
-        '''
-        user_options = self.user_options
-
-        if not user_options:
-            return  # acceptable
-
-        meta_data = self._meta_data_
-
-        for key in get_keys(user_options):
-            if key not in meta_data:
-                raise TypeError(
-                    f'{self.__class__.__name__}: {self.name}:'
-                    f' unsupported option: {key}'
-                )
-
-    def assign_default_options(self):
-        '''
-        Update missing options with default values.
-
-        If user_options is None, start with an empty AviaryValues.
-
-        Users can call this method when replacing the user_options member after
-        initialization.
-        '''
-        user_options = self.user_options
-
-        if user_options is None:
-            user_options = self.user_options = AviaryValues()
-
-        meta_data = self._meta_data_
-
-        for key in meta_data:
-            if key not in user_options:
-                item = meta_data[key]
-
-                val = item['val']
-                units = item['units']
-
-                user_options.set_val(key, val, units)
 
     def validate_initial_guesses(self):
         '''
@@ -343,7 +292,7 @@ class PhaseBuilderBase(ABC):
                 stored settings
         '''
         subsystem_options = self.subsystem_options  # TODO: aero info?
-        user_options = dict(self.user_options)
+        user_options = self.user_options.to_phase_info()
         initial_guesses = dict(self.initial_guesses)
 
         # TODO some of these may be purely programming API hooks, rather than for use
@@ -382,7 +331,7 @@ class PhaseBuilderBase(ABC):
 
         subsystem_options = phase_info.get(
             'subsystem_options', {})  # TODO: aero info?
-        user_options = AviaryValues(phase_info.get('user_options', ()))
+        user_options = phase_info.get('user_options', ())
         initial_guesses = AviaryValues(phase_info.get('initial_guesses', ()))
         external_subsystems = phase_info.get('external_subsystems', [])
         # TODO core subsystems in phase info?
@@ -400,25 +349,6 @@ class PhaseBuilderBase(ABC):
             core_subsystems=core_subsystems, external_subsystems=external_subsystems, transcription=transcription)
 
         return phase_builder
-
-    @classmethod
-    def _add_meta_data(cls, name, *, val, units='unitless', desc=None):
-        '''
-        Update supported options with a new item.
-
-        Raises
-        ------
-        ValueError
-            if a repeat option is found
-        '''
-        meta_data = cls._meta_data_
-
-        if name in meta_data:
-            raise ValueError(
-                f'{cls.__name__}": meta data: repeat option: {name}'
-            )
-
-        meta_data[name] = dict(val=val, units=units, desc=desc)
 
     @classmethod
     def _add_initial_guess_meta_data(cls, initial_guess: InitialGuess, desc=None):
@@ -652,9 +582,3 @@ def phase_info_to_builder(name: str, phase_info: dict) -> PhaseBuilderBase:
 
 if __name__ == '__main__':
     help(PhaseBuilderBase)
-
-    try:
-        PhaseBuilderBase._add_meta_data('test', val=0, units=None, desc='test')
-
-    except Exception as error:
-        print(error)

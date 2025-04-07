@@ -1,7 +1,8 @@
 """
-OpenMDAO component to compute the design mach number and design coefficient of lift,
+OpenMDAO component to compute the design Mach number and design coefficient of lift,
 based on the calculations used in FLOPS and LEAPS 1.0.
 """
+
 import numpy as np
 import openmdao.api as om
 from openmdao.components.interp_util.interp import InterpND
@@ -12,7 +13,7 @@ from aviary.variable_info.variables import Aircraft, Mission
 
 class Design(om.ExplicitComponent):
     """
-    Calculates the design mach number and coefficient of lift.
+    Calculates the design Mach number and coefficient of lift.
 
     Based on subroutines MDESN and CLDESN in FLOPS.
     """
@@ -30,14 +31,14 @@ class Design(om.ExplicitComponent):
 
     def setup(self):
         # Aircraft design inputs
-        add_aviary_input(self, Aircraft.Wing.ASPECT_RATIO, 0.0)
-        add_aviary_input(self, Aircraft.Wing.MAX_CAMBER_AT_70_SEMISPAN, 0.0)
-        add_aviary_input(self, Aircraft.Wing.SWEEP, 0.0)
-        add_aviary_input(self, Aircraft.Wing.THICKNESS_TO_CHORD, 0.0)
+        add_aviary_input(self, Aircraft.Wing.ASPECT_RATIO, units='unitless')
+        add_aviary_input(self, Aircraft.Wing.MAX_CAMBER_AT_70_SEMISPAN, units='unitless')
+        add_aviary_input(self, Aircraft.Wing.SWEEP, units='deg')
+        add_aviary_input(self, Aircraft.Wing.THICKNESS_TO_CHORD, units='unitless')
 
         # Declare outputs
-        add_aviary_output(self, Mission.Design.MACH, 0.0)
-        add_aviary_output(self, Mission.Design.LIFT_COEFFICIENT, 0.0)
+        add_aviary_output(self, Mission.Design.MACH, units='unitless')
+        add_aviary_output(self, Mission.Design.LIFT_COEFFICIENT, units='unitless')
 
     def setup_partials(self):
         self.declare_partials(of='*', wrt='*')
@@ -60,7 +61,7 @@ class Design(om.ExplicitComponent):
 
         outputs[Mission.Design.LIFT_COEFFICIENT] = CLDES
 
-        # design mach equation selected based on thickness/chord ratio or maximum mach number
+        # design Mach equation selected based on thickness/chord ratio or maximum Mach number
         if TC.real > 0.065 or VMAX < 1.0:  # subsonic
             TC23 = TC ** (2.0 / 3.0)
 
