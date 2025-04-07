@@ -493,8 +493,7 @@ def get_model(file_name: str, verbosity=Verbosity.BRIEF) -> Path:
     # If the path still doesn't exist, raise an error.
     if not aviary_path.exists():
         raise FileNotFoundError(f"File or Folder not found in Aviary's hangar")
-    if verbosity >= Verbosity.VERBOSE:  # VERBOSE, DEBUG
-        print('found', aviary_path, '\n')
+
     return aviary_path
 
 
