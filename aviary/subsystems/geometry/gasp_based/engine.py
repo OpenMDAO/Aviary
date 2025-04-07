@@ -5,6 +5,145 @@ from aviary.variable_info.functions import add_aviary_input, add_aviary_output, 
 from aviary.variable_info.variables import Aircraft
 
 
+epsilon = 0.05
+
+def f(x):
+    """valid for x in [0.0, 1.0]"""
+    diff = 0.5 - x
+    y = 1. - np.arccos(2.0 * diff) / np.pi
+    return y
+
+def df(x):
+    """first derivative of f(x), valid for x in (0.0, 1.0)"""
+    diff = 0.5 - x
+    dy = -2.0 / np.sqrt(1.0 - 4 * diff * diff) / np.pi
+    return dy
+
+def d2f(x):
+    """second derivative of f(x), valid for x in (0.0, 1.0)"""
+    diff = 0.5 - x
+    dy = 8.0 * diff / np.sqrt(1.0 - 4 * diff * diff) / (1.0 - 4 * diff * diff) / np.pi
+    return dy
+
+def g1(x):
+    """
+    Returns a cubic function g1(x) such that:
+    g1(0) = 1
+    g1(ε) = f(ε)
+    g1'(ε) = f'(ε)
+    g1"(ε) = f"(ε)
+    """
+    A1 = f(epsilon)
+    B1 = df(epsilon)
+    C1 = d2f(epsilon)
+    d1 = (A1 - 1 - epsilon * B1 + 0.5 * epsilon**2 * C1) / epsilon**3
+    c1 = (C1 - 6 * d1 * epsilon) / 2
+    b1 = B1 - epsilon * C1 + 3 * d1 * epsilon**2
+    a1 = 1
+    y = a1 + b1 * x + c1 * x**2 + d1 * x**3
+    return y
+
+def dg1(x):
+    """first derivative of g1(x)"""
+    A1 = f(epsilon)
+    B1 = df(epsilon)
+    C1 = d2f(epsilon)
+    d1 = (A1 - 1 - epsilon * B1 + 0.5 * epsilon**2 * C1) / epsilon**3
+    c1 = (C1 - 6 * d1 * epsilon) / 2
+    b1 = B1 - epsilon * C1 + 3 * d1 * epsilon**2
+    dy = b1 + 2 * c1 * x + 3 * d1 * x**2
+    return dy
+
+def g2(x):
+    """
+    Returns a cubic function g2(x) such that:
+    g2(1) = 0
+    g2(ε) = f(1-ε)
+    g2'(ε) = f'(1-ε)
+    g2"(ε) = f"(1-ε)
+    """
+    delta = 1 - epsilon
+    A2 = f(delta)
+    B2 = df(delta)
+    C2 = d2f(delta)
+    d2 = (C2 - 2 * (B2 - 2 * A2 / epsilon)) / (6 * delta)
+    c2 = (C2 - 6 * d2 * delta) / 2
+    b2 = B2 - 2 * c2 * delta - 3 * d2 * delta**2
+    a2 = - (b2 + c2 + d2)
+    y = a2 + b2 * x + c2 * x**2 + d2 * x**3
+    return y
+
+def dg2(x):
+    """first derivative of g2(x)"""
+    delta = 1 - epsilon
+    A2 = f(delta)
+    B2 = df(delta)
+    C2 = d2f(delta)
+    d2 = (C2 - 2 * (B2 - 2 * A2 / epsilon)) / (6 * delta)
+    c2 = (C2 - 6 * d2 * delta) / 2
+    b2 = B2 - 2 * c2 * delta - 3 * d2 * delta**2
+    dy = b2 + 2 * c2 * x + 3 * d2 * x**2
+    return dy
+
+
+class PercentNotInFuselage(om.ExplicitComponent):
+    """
+    For BWB, engine may be (partially) buried into fuselage. Compute the percentage of corresponding
+    surface area of nacelles not buried in fuselage.
+    """
+
+    def initialize(self):
+        add_aviary_option(self, Aircraft.Engine.NUM_ENGINES)
+
+    def setup(self):
+        num_engine_type = len(self.options[Aircraft.Engine.NUM_ENGINES])
+
+        add_aviary_input(self, Aircraft.Nacelle.DIAMETER_BURIED_IN_FUSELAGE,
+                         shape=num_engine_type, units='unitless')
+
+        self.add_output('percent_exposed', shape=num_engine_type, units='unitless')
+
+    def setup_partials(self):
+        num_engine_type = len(self.options[Aircraft.Engine.NUM_ENGINES])
+        shape = np.arange(num_engine_type)
+
+        self.declare_partials(
+            'percent_exposed',
+            [
+                Aircraft.Nacelle.DIAMETER_BURIED_IN_FUSELAGE
+            ],
+            rows=shape,
+            cols=shape,
+        )
+
+    def compute(self, inputs, outputs):
+        x = inputs[Aircraft.Nacelle.DIAMETER_BURIED_IN_FUSELAGE]
+        if x >= epsilon and x <= 1 - epsilon:
+            diff = 0.5 - x
+            pct_swn = 1. - np.arccos(2.0 * diff) / np.pi
+        elif x >= 0.0 and x < epsilon:
+            pct_swn = g1(x)
+        elif x <= 1.0 and x > 1 - epsilon:
+            pct_swn = g2(x)
+        else:
+            raise "The given parameter Aircraft.Nacelle.DIAMETER_BURIED_IN_FUSELAGE is out of range."
+
+        outputs['percent_exposed'] = pct_swn
+
+    def compute_partials(self, inputs, J):
+        x = inputs[Aircraft.Nacelle.DIAMETER_BURIED_IN_FUSELAGE]
+        if x >= epsilon and x <= 1 - epsilon:
+            diff = 0.5 - x
+            d_pct_swn = -2.0 / np.sqrt(1.0 - 4 * diff * diff) / np.pi
+        elif x >= 0.0 and x < epsilon:
+            d_pct_swn = dg1(x)
+        elif x <= 1.0 and x > 1 - epsilon:
+            d_pct_swn = dg2(x)
+        else:
+            raise "The given parameter Aircraft.Nacelle.DIAMETER_BURIED_IN_FUSELAGE is out of range."
+
+        J['percent_exposed', Aircraft.Nacelle.DIAMETER_BURIED_IN_FUSELAGE] = d_pct_swn
+
 class EngineSize(om.ExplicitComponent):
     """
     GASP engine geometry calculation. It returns Aircraft.Nacelle.AVG_DIAMETER,
@@ -25,6 +164,7 @@ class EngineSize(om.ExplicitComponent):
                          shape=num_engine_type, units='unitless')
         add_aviary_input(self, Aircraft.Nacelle.FINENESS,
                          shape=num_engine_type, units='unitless')
+        self.add_input('percent_exposed', val=np.ones(num_engine_type), units='unitless')
 
         add_aviary_output(self, Aircraft.Nacelle.AVG_DIAMETER,
                           shape=num_engine_type, units='ft')
@@ -50,7 +190,7 @@ class EngineSize(om.ExplicitComponent):
         self.declare_partials(Aircraft.Nacelle.AVG_LENGTH, innames,
                               rows=shape, cols=shape, val=1.0)
         self.declare_partials(Aircraft.Nacelle.SURFACE_AREA,
-                              innames, rows=shape, cols=shape, val=1.0)
+                              innames + ['percent_exposed'], rows=shape, cols=shape, val=1.0)
 
     def compute(self, inputs, outputs):
         d_ref = inputs[Aircraft.Engine.REFERENCE_DIAMETER]
@@ -67,6 +207,7 @@ class EngineSize(om.ExplicitComponent):
             np.pi
             * outputs[Aircraft.Nacelle.AVG_DIAMETER]
             * outputs[Aircraft.Nacelle.AVG_LENGTH]
+            * inputs['percent_exposed']
         )
 
     def compute_partials(self, inputs, J):
@@ -97,9 +238,38 @@ class EngineSize(om.ExplicitComponent):
             J[Aircraft.Nacelle.SURFACE_AREA, wrt] = np.pi * (
                 J[Aircraft.Nacelle.AVG_DIAMETER, wrt] * l_nac
                 + J[Aircraft.Nacelle.AVG_LENGTH, wrt] * d_nac
-            )
+            ) * inputs['percent_exposed']
 
         J[Aircraft.Nacelle.AVG_LENGTH, Aircraft.Nacelle.FINENESS] = d_nac
         J[Aircraft.Nacelle.SURFACE_AREA, Aircraft.Nacelle.FINENESS] = (
-            np.pi * J[Aircraft.Nacelle.AVG_LENGTH, Aircraft.Nacelle.FINENESS] * d_nac
+            np.pi * J[Aircraft.Nacelle.AVG_LENGTH, Aircraft.Nacelle.FINENESS] * d_nac * inputs['percent_exposed']
+        )
+        J[Aircraft.Nacelle.SURFACE_AREA, 'percent_exposed'] = (
+            np.pi * d_eng * d_nac_eng * ld_nac * d_eng * d_nac_eng
+        )
+
+
+class BWBEngineSizeGroup(om.Group):
+    def setup(self):
+        perc = self.add_subsystem(
+            "perc",
+            PercentNotInFuselage(),
+            promotes_inputs=["aircraft:nacelle:diameter_buried_in_fuselage"],
+            promotes_outputs=["percent_exposed"],
+        )
+
+        eng_size = self.add_subsystem(
+            "eng_size",
+            EngineSize(),
+            promotes_inputs=[
+                'aircraft:engine:reference_diameter',
+                'aircraft:engine:scale_factor',
+                'aircraft:nacelle:core_diameter_ratio',
+                'aircraft:nacelle:fineness',
+                'percent_exposed'],
+            promotes_outputs=[
+                'aircraft:nacelle:avg_diameter',
+                'aircraft:nacelle:avg_length',
+                'aircraft:nacelle:surface_area',
+            ],
         )
