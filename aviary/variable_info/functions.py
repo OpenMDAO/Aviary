@@ -375,9 +375,6 @@ def override_aviary_vars(
         if (
             aviary_inputs.get_val(Settings.VERBOSITY).value >= Verbosity.VERBOSE
         ):  # VERBOSE, DEBUG
-        if (
-            aviary_inputs.get_val(Settings.VERBOSITY).value >= Verbosity.VERBOSE
-        ):  # VERBOSE, DEBUG
             print("\nThe following variables have been overridden:")
             for prom_name in sorted(overridden_outputs):
                 val, units = aviary_inputs.get_item(prom_name)
