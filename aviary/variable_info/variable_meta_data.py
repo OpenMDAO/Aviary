@@ -1678,7 +1678,7 @@ add_meta_data(
     units='unitless',
     types=AircraftTypes,
     option=True,
-    default_value='transport',
+    default_value=AircraftTypes.TRANSPORT,
     desc='aircraft type: BWB for blended wing body, transport otherwise',
 )
 
@@ -4316,6 +4316,15 @@ add_meta_data(
 )
 
 add_meta_data(
+    Aircraft.Nacelle.DIAMETER_BURIED_IN_FUSELAGE,
+    meta_data=_MetaData,
+    historical_name={"GASP": 'INGASP.HEBQDN', "FLOPS": None, "LEAPS1": None},
+    units="unitless",
+    desc='percentage of nacelle diamter buried in fuselage over nacelle diameter',
+    default_value=0.0,
+)
+
+add_meta_data(
     Aircraft.Nacelle.FINENESS,
     meta_data=_MetaData,
     historical_name={
@@ -4405,15 +4414,6 @@ add_meta_data(
     units='lbm/ft**2',
     desc='nacelle mass/nacelle surface area; lbm per sq ft.',
     default_value=0.0,
-)
-
-add_meta_data(
-    Aircraft.Nacelle.PERCENT_DIAMETER_BURIED_IN_FUSELAGE,
-    meta_data=_MetaData,
-    historical_name={"GASP": 'INGASP.HEBQDN', "FLOPS": None, "LEAPS1": None},
-    units='unitless',
-    default_value=0.0,
-    desc='percentage of nacelle diameter buried in fuselage over nacelle diameter',
 )
 
 add_meta_data(
