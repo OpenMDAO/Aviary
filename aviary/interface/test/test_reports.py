@@ -105,7 +105,8 @@ class TestReports(unittest.TestCase):
 
         prob.setup()
 
-        prob.run_model()
+        # no need to run this model, just generate the report.
+        prob.final_setup()
 
 
 if __name__ == "__main__":
