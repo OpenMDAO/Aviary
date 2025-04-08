@@ -7,11 +7,13 @@ from aviary.variable_info.variables import Aircraft
 
 epsilon = 0.05
 
+
 def f(x):
     """valid for x in [0.0, 1.0]"""
     diff = 0.5 - x
     y = 1. - np.arccos(2.0 * diff) / np.pi
     return y
+
 
 def df(x):
     """first derivative of f(x), valid for x in (0.0, 1.0)"""
@@ -19,11 +21,13 @@ def df(x):
     dy = -2.0 / np.sqrt(1.0 - 4 * diff * diff) / np.pi
     return dy
 
+
 def d2f(x):
     """second derivative of f(x), valid for x in (0.0, 1.0)"""
     diff = 0.5 - x
     d2y = 8.0 * diff / np.sqrt(1.0 - 4 * diff * diff) / (1.0 - 4 * diff * diff) / np.pi
     return d2y
+
 
 def g1(x):
     """
@@ -43,6 +47,7 @@ def g1(x):
     y = a1 + b1 * x + c1 * x**2 + d1 * x**3
     return y
 
+
 def dg1(x):
     """first derivative of g1(x)"""
     A1 = f(epsilon)
@@ -53,6 +58,7 @@ def dg1(x):
     b1 = B1 - epsilon * C1 + 3 * d1 * epsilon**2
     dy = b1 + 2 * c1 * x + 3 * d1 * x**2
     return dy
+
 
 def g2(x):
     """
@@ -72,6 +78,7 @@ def g2(x):
     a2 = - (b2 + c2 + d2)
     y = a2 + b2 * x + c2 * x**2 + d2 * x**3
     return y
+
 
 def dg2(x):
     """first derivative of g2(x)"""
@@ -143,6 +150,7 @@ class PercentNotInFuselage(om.ExplicitComponent):
             raise "The given parameter Aircraft.Nacelle.DIAMETER_BURIED_IN_FUSELAGE is out of range."
 
         J['percent_exposed', Aircraft.Nacelle.DIAMETER_BURIED_IN_FUSELAGE] = d_pct_swn
+
 
 class EngineSize(om.ExplicitComponent):
     """
@@ -242,7 +250,8 @@ class EngineSize(om.ExplicitComponent):
 
         J[Aircraft.Nacelle.AVG_LENGTH, Aircraft.Nacelle.FINENESS] = d_nac
         J[Aircraft.Nacelle.SURFACE_AREA, Aircraft.Nacelle.FINENESS] = (
-            np.pi * J[Aircraft.Nacelle.AVG_LENGTH, Aircraft.Nacelle.FINENESS] * d_nac * inputs['percent_exposed']
+            np.pi * J[Aircraft.Nacelle.AVG_LENGTH, Aircraft.Nacelle.FINENESS] *
+            d_nac * inputs['percent_exposed']
         )
         J[Aircraft.Nacelle.SURFACE_AREA, 'percent_exposed'] = (
             np.pi * d_eng * d_nac_eng * ld_nac * d_eng * d_nac_eng

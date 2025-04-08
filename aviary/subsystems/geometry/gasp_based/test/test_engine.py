@@ -8,7 +8,7 @@ from aviary.subsystems.geometry.gasp_based.engine import EngineSize, PercentNotI
 from aviary.variable_info.functions import setup_model_options, extract_options
 from aviary.variable_info.variables import Aircraft
 from aviary.utils.aviary_values import AviaryValues
-from aviary.subsystems.geometry.gasp_based.engine import f,df,g2,dg2
+
 
 class TestPercentNotInFuselage(unittest.TestCase):
     def setUp(self):
@@ -36,7 +36,8 @@ class TestPercentNotInFuselage(unittest.TestCase):
 
     def test_half_buried(self):
         """test in the range (epsilon, 1.0 - epsilon)"""
-        self.prob.set_val(Aircraft.Nacelle.DIAMETER_BURIED_IN_FUSELAGE, val=0.5, units='unitless')
+        self.prob.set_val(
+            Aircraft.Nacelle.DIAMETER_BURIED_IN_FUSELAGE, val=0.5, units='unitless')
         self.prob.run_model()
         tol = 1e-7
         assert_near_equal(self.prob['percent_exposed'], 0.5, tol)
@@ -46,7 +47,8 @@ class TestPercentNotInFuselage(unittest.TestCase):
 
     def test_left_buried(self):
         """test in the range (0.0, epsilon)"""
-        self.prob.set_val(Aircraft.Nacelle.DIAMETER_BURIED_IN_FUSELAGE, val=0.03, units='unitless')
+        self.prob.set_val(
+            Aircraft.Nacelle.DIAMETER_BURIED_IN_FUSELAGE, val=0.03, units='unitless')
         self.prob.run_model()
         tol = 1e-7
         assert_near_equal(self.prob['percent_exposed'], 0.89181881, tol)
@@ -56,7 +58,8 @@ class TestPercentNotInFuselage(unittest.TestCase):
 
     def test_right_buried(self):
         """test in the range (1.0 - epsilon, 1.0)"""
-        self.prob.set_val(Aircraft.Nacelle.DIAMETER_BURIED_IN_FUSELAGE, val=0.97, units='unitless')
+        self.prob.set_val(
+            Aircraft.Nacelle.DIAMETER_BURIED_IN_FUSELAGE, val=0.97, units='unitless')
         self.prob.run_model()
         tol = 1e-7
 
@@ -143,6 +146,7 @@ class BWBEngineSizeGroupTestCase(unittest.TestCase):
     """
     this is the GASP test case, input and output values based on large single aisle 1 v3 without bug fix
     """
+
     def setUp(self):
 
         aviary_options = AviaryValues()
@@ -158,10 +162,14 @@ class BWBEngineSizeGroupTestCase(unittest.TestCase):
         self.prob.model.set_input_defaults(Aircraft.Nacelle.DIAMETER_BURIED_IN_FUSELAGE, 0.0,
                                            units='unitless')
 
-        self.prob.model.set_input_defaults(Aircraft.Engine.REFERENCE_DIAMETER, 5.8, units='ft')
-        self.prob.model.set_input_defaults(Aircraft.Engine.SCALE_FACTOR, 1.028233, units='unitless')
-        self.prob.model.set_input_defaults(Aircraft.Nacelle.CORE_DIAMETER_RATIO, 1.25, units='unitless')
-        self.prob.model.set_input_defaults(Aircraft.Nacelle.FINENESS, 2.0, units='unitless')
+        self.prob.model.set_input_defaults(
+            Aircraft.Engine.REFERENCE_DIAMETER, 5.8, units='ft')
+        self.prob.model.set_input_defaults(
+            Aircraft.Engine.SCALE_FACTOR, 1.028233, units='unitless')
+        self.prob.model.set_input_defaults(
+            Aircraft.Nacelle.CORE_DIAMETER_RATIO, 1.25, units='unitless')
+        self.prob.model.set_input_defaults(
+            Aircraft.Nacelle.FINENESS, 2.0, units='unitless')
 
         setup_model_options(self.prob, aviary_options)
 

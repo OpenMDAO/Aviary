@@ -738,6 +738,7 @@ class WingGroupTestCase5(unittest.TestCase):
 
 class BWBExposedWingTestCase(unittest.TestCase):
     """BWB case"""
+
     def setUp(self):
         options = get_option_defaults()
         options.set_val(Aircraft.Design.TYPE, val='BWB', units='unitless')
@@ -779,6 +780,7 @@ class BWBExposedWingTestCase(unittest.TestCase):
 
 class ExposedWingTestCase(unittest.TestCase):
     """Tube + Wing case"""
+
     def setUp(self):
         options = get_option_defaults()
         options.set_val(Aircraft.Design.TYPE, val='transport', units='unitless')
@@ -813,18 +815,19 @@ class ExposedWingTestCase(unittest.TestCase):
         self.prob.run_model()
         tol = 1e-7
 
-        assert_near_equal(self.prob[Aircraft.Wing.EXPOSED_WING_AREA], 1352.113599874, tol)
+        assert_near_equal(self.prob[Aircraft.Wing.EXPOSED_WING_AREA], 1352.1135998, tol)
 
         partial_data = self.prob.check_partials(out_stream=None, method="cs")
         assert_check_partials(partial_data, atol=1e-11, rtol=5e-11)
 
     def test_case_left(self):
         """test in the range (0.0, epsilon)"""
-        self.prob.set_val(Aircraft.Wing.VERTICAL_MOUNT_LOCATION, 0.04999, units="unitless")
+
+        self.prob.set_val(Aircraft.Wing.VERTICAL_MOUNT_LOCATION, 0.049, units="unitless")
         self.prob.run_model()
         tol = 1e-7
 
-        assert_near_equal(self.prob[Aircraft.Wing.EXPOSED_WING_AREA], 1777.99868985, tol)
+        assert_near_equal(self.prob[Aircraft.Wing.EXPOSED_WING_AREA], 1781.29634277, tol)
 
         partial_data = self.prob.check_partials(out_stream=None, method="cs")
         assert_check_partials(partial_data, atol=1e-11, rtol=5e-11)

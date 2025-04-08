@@ -584,7 +584,7 @@ class BWBFuselageParameters2TestCase(unittest.TestCase):
                                            units='ft')
         self.prob.model.set_input_defaults('nose_length', 2.92115998, units='ft')
         self.prob.model.set_input_defaults('cabin_height', 9.86859989, units='ft')
-        self.prob.model.set_input_defaults('fuselage_station_aft', 54.2545013, units='ft')
+        self.prob.model.set_input_defaults('fuselage_station_aft', 54.254501, units='ft')
 
         setup_model_options(self.prob, self.aviary_options)
 
@@ -625,7 +625,7 @@ class BWBFuselageSizeTestCase(unittest.TestCase):
             Aircraft.Fuselage.PILOT_COMPARTMENT_LENGTH, 7.5, units="ft")
         self.prob.model.set_input_defaults("cabin_height", 9.86859989, units="ft")
         self.prob.model.set_input_defaults("forebody_len", 40.7456322, units="ft")
-        self.prob.model.set_input_defaults("fuselage_station_aft",54.2545013, units="ft")
+        self.prob.model.set_input_defaults("fuselage_station_aft", 54.254501, units="ft")
         self.prob.model.set_input_defaults("nose_area", 3.97908521, units="ft**2")
         self.prob.model.set_input_defaults("aftbody_len", 17.27005, units="ft")
         self.prob.model.set_input_defaults("nose_length", 2.921159934, units='ft')
@@ -653,6 +653,7 @@ class BWBFuselageGroupTestCase(unittest.TestCase):
     """
     this is the GASP test case
     """
+
     def setUp(self):
 
         options = get_option_defaults()
