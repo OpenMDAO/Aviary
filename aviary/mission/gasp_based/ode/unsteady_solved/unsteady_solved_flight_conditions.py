@@ -48,7 +48,7 @@ class UnsteadySolvedFlightConditions(om.ExplicitComponent):
             "input_speed_type",
             default=SpeedType.TAS,
             types=SpeedType,
-            desc="tells whether the input airspeed is equivalent airspeed, true airspeed, or mach number",
+            desc="tells whether the input airspeed is equivalent airspeed, true airspeed, or Mach number",
         )
         self.options.declare("ground_roll", types=bool, default=False,
                              desc="True if the aircraft is confined to the ground. "
@@ -121,7 +121,7 @@ class UnsteadySolvedFlightConditions(om.ExplicitComponent):
                 Dynamic.Atmosphere.MACH,
                 val=np.zeros(nn),
                 units="unitless",
-                desc="mach number",
+                desc="Mach number",
             )
 
             self.declare_partials(
@@ -187,7 +187,7 @@ class UnsteadySolvedFlightConditions(om.ExplicitComponent):
                 Dynamic.Atmosphere.MACH,
                 val=np.zeros(nn),
                 units="unitless",
-                desc="mach number",
+                desc="Mach number",
             )
 
             self.declare_partials(
@@ -232,13 +232,13 @@ class UnsteadySolvedFlightConditions(om.ExplicitComponent):
                 Dynamic.Atmosphere.MACH,
                 val=np.zeros(nn),
                 units="unitless",
-                desc="mach number",
+                desc="Mach number",
             )
             self.add_input(
                 "dmach_dr",
                 val=np.zeros(nn),
                 units="unitless/distance_units",
-                desc="change in mach number per unit range",
+                desc="change in Mach number per unit range",
             )
             self.add_input(
                 "dsos_dh",
