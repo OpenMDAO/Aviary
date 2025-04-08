@@ -100,9 +100,8 @@ class TestSubsystemsMission(unittest.TestCase):
         prob.run_aviary_problem()
 
         # add an assert to see if MoreMission.Dummy.TIMESERIES_VAR was correctly added to the dymos problem
-        # Note, default value for this DUMMY_CONTROL has changed in dymos.
         assert_almost_equal(prob[f'traj.phases.cruise.timeseries.{MoreMission.Dummy.TIMESERIES_VAR}'], np.array(
-            [[1.5, 1.5, 1.5, 1.5, 1.5, 1.5, 1.5, 1.5]]).T)
+            [[0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]]).T)
 
     def test_bad_initial_guess_key(self):
         phase_info = self.phase_info.copy()
