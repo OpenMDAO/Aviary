@@ -22,8 +22,8 @@ def df(x):
 def d2f(x):
     """second derivative of f(x), valid for x in (0.0, 1.0)"""
     diff = 0.5 - x
-    dy = 8.0 * diff / np.sqrt(1.0 - 4 * diff * diff) / (1.0 - 4 * diff * diff) / np.pi
-    return dy
+    d2y = 8.0 * diff / np.sqrt(1.0 - 4 * diff * diff) / (1.0 - 4 * diff * diff) / np.pi
+    return d2y
 
 def g1(x):
     """
@@ -62,27 +62,27 @@ def g2(x):
     g2'(ε) = f'(1-ε)
     g2"(ε) = f"(1-ε)
     """
-    delta = 1 - epsilon
+    delta = 1.0 - epsilon
     A2 = f(delta)
     B2 = df(delta)
     C2 = d2f(delta)
-    d2 = (C2 - 2 * (B2 - 2 * A2 / epsilon)) / (6 * delta)
-    c2 = (C2 - 6 * d2 * delta) / 2
-    b2 = B2 - 2 * c2 * delta - 3 * d2 * delta**2
+    d2 = - (A2 + B2 * epsilon + 0.5 * C2 * epsilon**2)/epsilon**3
+    c2 = (C2 - 6.0 * d2 * delta)/2.0
+    b2 = B2 - C2 * delta + 3.0 * d2 * delta**2
     a2 = - (b2 + c2 + d2)
     y = a2 + b2 * x + c2 * x**2 + d2 * x**3
     return y
 
 def dg2(x):
     """first derivative of g2(x)"""
-    delta = 1 - epsilon
+    delta = 1.0 - epsilon
     A2 = f(delta)
     B2 = df(delta)
     C2 = d2f(delta)
-    d2 = (C2 - 2 * (B2 - 2 * A2 / epsilon)) / (6 * delta)
-    c2 = (C2 - 6 * d2 * delta) / 2
-    b2 = B2 - 2 * c2 * delta - 3 * d2 * delta**2
-    dy = b2 + 2 * c2 * x + 3 * d2 * x**2
+    d2 = - (A2 + B2 * epsilon + 0.5 * C2 * epsilon**2)/epsilon**3
+    c2 = (C2 - 6.0 * d2 * delta)/2.0
+    b2 = B2 - C2 * delta + 3.0 * d2 * delta**2
+    dy = b2 + 2 * c2 * x + 3.0 * d2 * x**2
     return dy
 
 

@@ -8,7 +8,7 @@ from aviary.subsystems.geometry.gasp_based.engine import EngineSize, PercentNotI
 from aviary.variable_info.functions import setup_model_options, extract_options
 from aviary.variable_info.variables import Aircraft
 from aviary.utils.aviary_values import AviaryValues
-
+from aviary.subsystems.geometry.gasp_based.engine import f,df,g2,dg2
 
 class TestPercentNotInFuselage(unittest.TestCase):
     def setUp(self):
@@ -59,7 +59,8 @@ class TestPercentNotInFuselage(unittest.TestCase):
         self.prob.set_val(Aircraft.Nacelle.DIAMETER_BURIED_IN_FUSELAGE, val=0.97, units='unitless')
         self.prob.run_model()
         tol = 1e-7
-        assert_near_equal(self.prob['percent_exposed'], 0.05833167, tol)
+
+        assert_near_equal(self.prob['percent_exposed'], 0.10818119, tol)
 
         partial_data = self.prob.check_partials(out_stream=None, method="cs")
         assert_check_partials(partial_data, atol=1e-8, rtol=1e-8)

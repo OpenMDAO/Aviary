@@ -996,6 +996,87 @@ class WingGroup(om.Group):
                 self.promotes("fold", inputs=["strut_y"])
 
 
+epsilon = 0.05
+
+def f(x):
+    """valid for x in [0.0, 1.0]"""
+    diff = 0.5 - x
+    y = np.sqrt(0.25 - diff**2)
+    return y
+
+def df(x):
+    """first derivative of f(x), valid for x in (0.0, 1.0)"""
+    diff = 0.5 - x
+    dy = (0.5 - x) / np.sqrt(0.25 - diff**2)
+    return dy
+
+def d2f(x):
+    """second derivative of f(x), valid for x in (0.0, 1.0)"""
+    diff = 0.5 - x
+    d2y = -0.25 / np.sqrt(0.25 - diff**2)**3
+    return d2y
+
+def g1(x):
+    """
+    Returns a cubic function g1(x) such that:
+    g1(0.0) = 0.0
+    g1(ε) = f(ε)
+    g1'(ε) = f'(ε)
+    g1"(ε) = f"(ε)
+    """
+    A1 = f(epsilon)
+    B1 = df(epsilon)
+    C1 = d2f(epsilon)
+    d1 = (A1 - epsilon * B1 + 0.5 * epsilon**2 * C1) / epsilon**3
+    c1 = (C1 - 6.0 * d1 * epsilon) / 2.0
+    b1 = B1 - epsilon * C1 + 3 * d1 * epsilon**2
+    a1 = 0.0
+    y = a1 + b1 * x + c1 * x**2 + d1 * x**3
+    return y
+
+def dg1(x):
+    """first derivative of g1(x)"""
+    A1 = f(epsilon)
+    B1 = df(epsilon)
+    C1 = d2f(epsilon)
+    d1 = (A1 - epsilon * B1 + 0.5 * epsilon**2 * C1) / epsilon**3
+    c1 = (C1 - 6.0 * d1 * epsilon) / 2.0
+    b1 = B1 - epsilon * C1 + 3.0 * d1 * epsilon**2
+    dy = b1 + 2.0 * c1 * x + 3.0 * d1 * x**2
+    return dy
+
+def g2(x):
+    """
+    Returns a cubic function g2(x) such that:
+    g2(1.0) = 0.0
+    g2(ε) = f(1.0-ε)
+    g2'(ε) = f'(1.0-ε)
+    g2"(ε) = f"(1.0-ε)
+    """
+    delta = 1.0 - epsilon
+    A2 = f(delta)
+    B2 = df(delta)
+    C2 = d2f(delta)
+    d2 = - (A2 + B2 * epsilon + 0.5 * C2 * epsilon**2)/epsilon**3
+    c2 = (C2 - 6.0 * d2 * delta)/2.0
+    b2 = B2 - C2 * delta + 3.0 * d2 * delta**2
+    a2 = - (b2 + c2 + d2)
+    y = a2 + b2 * x + c2 * x**2 + d2 * x**3
+    return y
+
+def dg2(x):
+    """first derivative of g2(x)"""
+    delta = 1.0 - epsilon
+    A2 = f(delta)
+    B2 = df(delta)
+    C2 = d2f(delta)
+    d2 = - (A2 + B2*epsilon + 0.5 * C2 * epsilon**2)/epsilon**3
+    c2 = (C2 - 6*d2*delta) / 2.0
+    b2 = B2 - C2 * delta + 3.0 * d2 * delta**2
+    dy = b2 + 2.0 * c2 * x + 3.0 * d2 * x**2
+    return dy
+
+
 class ExposedWing(om.ExplicitComponent):
     """
     Computation of exposed wing area. This is useful for BWB, but is available to tube+wing model too.
@@ -1028,8 +1109,6 @@ class ExposedWing(om.ExplicitComponent):
             ],
         )
 
-        import pdb
-        pdb.set_trace()
         if design_type is AircraftTypes.BLENDED_WING_BODY:
             self.declare_partials(
                 Aircraft.Wing.EXPOSED_WING_AREA,
@@ -1044,7 +1123,15 @@ class ExposedWing(om.ExplicitComponent):
         h_wing = inputs[Aircraft.Wing.VERTICAL_MOUNT_LOCATION]
         body_width = inputs[Aircraft.Fuselage.AVG_DIAMETER]
 
-        sqt = np.sqrt(0.25 - (0.5 - h_wing)**2)
+        if h_wing >= epsilon and h_wing <= 1.0 - epsilon:
+            sqt = np.sqrt(0.25 - (0.5 - h_wing)**2)
+        elif h_wing >= 0.0 and h_wing < epsilon:
+            sqt = g1(h_wing)
+        elif h_wing <= 1.0 and h_wing > 1.0 - epsilon:
+            sqt = g2(h_wing)
+        else:
+            raise "The given parameter Aircraft.Wing.VERTICAL_MOUNT_LOCATION is out of range."
+
         if design_type is AircraftTypes.BLENDED_WING_BODY:
             cabin_height = body_width * inputs[Aircraft.Fuselage.HEIGHT_TO_WIDTH_RATIO]
             b_fus = 0.5 * (body_width - cabin_height) + cabin_height * sqt
@@ -1055,11 +1142,11 @@ class ExposedWing(om.ExplicitComponent):
         wing_area = inputs[Aircraft.Wing.AREA]
         taper_ratio = inputs[Aircraft.Wing.TAPER_RATIO]
 
-        root_chord_wing = 2.0 * wing_area / (wingspan*(1. + taper_ratio))
+        root_chord_wing = 2.0 * wing_area / (wingspan*(1.0 + taper_ratio))
         tip_chord = taper_ratio * root_chord_wing
-        c_fus = root_chord_wing + 2.*b_fus*(tip_chord - root_chord_wing)/wingspan
+        c_fus = root_chord_wing + 2.0 * b_fus * (tip_chord - root_chord_wing) / wingspan
 
-        exposed_wing_area = (wingspan/2.0 - b_fus)*(c_fus + tip_chord)
+        exposed_wing_area = (wingspan / 2.0 - b_fus) * (c_fus + tip_chord)
         outputs[Aircraft.Wing.EXPOSED_WING_AREA] = exposed_wing_area
 
     def compute_partials(self, inputs, J):
@@ -1067,10 +1154,22 @@ class ExposedWing(om.ExplicitComponent):
 
         h_wing = inputs[Aircraft.Wing.VERTICAL_MOUNT_LOCATION]
         body_width = inputs[Aircraft.Fuselage.AVG_DIAMETER]
+        height_to_width = inputs[Aircraft.Fuselage.HEIGHT_TO_WIDTH_RATIO]
 
-        sqt = np.sqrt(0.25 - (0.5 - h_wing)**2)
+        if h_wing >= epsilon and h_wing <= 1.0 - epsilon:
+            sqt = np.sqrt(0.25 - (0.5 - h_wing)**2)
+            d_sqt = df(h_wing)
+        elif h_wing >= 0.0 and h_wing < epsilon:
+            sqt = g1(h_wing)
+            d_sqt = dg1(h_wing)
+        elif h_wing <= 1.0 and h_wing > 1.0 - epsilon:
+            sqt = g2(h_wing)
+            d_sqt = dg2(h_wing)
+        else:
+            raise "The given parameter Aircraft.Wing.VERTICAL_MOUNT_LOCATION is out of range."
+
         if design_type is AircraftTypes.BLENDED_WING_BODY:
-            cabin_height = body_width * inputs[Aircraft.Fuselage.HEIGHT_TO_WIDTH_RATIO]
+            cabin_height = body_width * height_to_width
             b_fus = 0.5 * (body_width - cabin_height) + cabin_height * sqt
         else:
             b_fus = body_width * sqt
@@ -1079,10 +1178,40 @@ class ExposedWing(om.ExplicitComponent):
         wing_area = inputs[Aircraft.Wing.AREA]
         taper_ratio = inputs[Aircraft.Wing.TAPER_RATIO]
 
-        root_chord_wing = 2.0 * wing_area / (wingspan*(1. + taper_ratio))
+        root_chord_wing = 2.0 * wing_area / (wingspan*(1.0 + taper_ratio))
         tip_chord = taper_ratio * root_chord_wing
-        c_fus = root_chord_wing + 2.*b_fus*(tip_chord - root_chord_wing)/wingspan
+        c_fus = root_chord_wing + 2.0*b_fus*(tip_chord - root_chord_wing)/wingspan
 
         if design_type is AircraftTypes.BLENDED_WING_BODY:
-            #J[Aircraft.Wing.EXPOSED_WING_AREA, Aircraft.Fuselage.HEIGHT_TO_WIDTH_RATIO] = - (-0.5 * body_width + body_width * sqt) *(c_fus + taper_ratio * 2 * wing_area /wingspan/(1+taper_ratio))
-            pass
+            d_b_fus_d_hwing = body_width * height_to_width *d_sqt
+            d_b_fus_d_body_width = 0.5 * (1.0 - height_to_width) + height_to_width * sqt
+            d_b_fus_d_height_to_width = -0.5 * body_width + body_width * sqt
+            d_c_fus_d_height_to_width = 4 * d_b_fus_d_height_to_width * (taper_ratio - 1.0) / (taper_ratio + 1.0) * wing_area / wingspan / wingspan
+
+            d_exp_area_d_height_to_width = -d_b_fus_d_height_to_width * c_fus + (wingspan * 0.5 - b_fus) * d_c_fus_d_height_to_width - d_b_fus_d_height_to_width * 2.0 * wing_area * taper_ratio / wingspan / (1.0 + taper_ratio)
+            J[Aircraft.Wing.EXPOSED_WING_AREA, Aircraft.Fuselage.HEIGHT_TO_WIDTH_RATIO] = d_exp_area_d_height_to_width
+
+        else:
+            d_b_fus_d_hwing = body_width * d_sqt
+            d_b_fus_d_body_width = sqt
+
+        d_c_fus_d_hwing = 4.0 * d_b_fus_d_hwing * (taper_ratio - 1.0) / (taper_ratio + 1.0) * wing_area / wingspan / wingspan
+        d_c_fus_d_body_width = 4.0 * d_b_fus_d_body_width * (taper_ratio - 1.0) / (taper_ratio + 1.0) * wing_area / wingspan / wingspan
+        d_c_fus_d_wing_area = 2.0 / (1.0 + taper_ratio) * (1.0 / wingspan + b_fus * 2 * (taper_ratio - 1.0) / wingspan / wingspan)
+        d_c_fus_d_wingspan = -2.0 * wing_area / (1.0 + taper_ratio) * (1.0 / wingspan**2 + b_fus * 4.0 * (taper_ratio - 1.0) / wingspan**3)
+        d_c_fus_d_taper_ratio = -2.0 * wing_area / (1.0 + taper_ratio)**2 / wingspan + b_fus * 8.0 * wing_area / wingspan**2 / (taper_ratio + 1)**2
+
+        d_exp_area_d_hwing = -d_b_fus_d_hwing * c_fus + (wingspan * 0.5 - b_fus) * d_c_fus_d_hwing - d_b_fus_d_hwing * 2.0 * wing_area * taper_ratio / wingspan / (1.0 + taper_ratio)
+        J[Aircraft.Wing.EXPOSED_WING_AREA, Aircraft.Wing.VERTICAL_MOUNT_LOCATION] = d_exp_area_d_hwing
+
+        d_exp_area_d_body_width = -d_b_fus_d_body_width * c_fus + (wingspan * 0.5 - b_fus) * d_c_fus_d_body_width - d_b_fus_d_body_width * 2.0 * wing_area * taper_ratio / wingspan / (1 + taper_ratio)
+        J[Aircraft.Wing.EXPOSED_WING_AREA, Aircraft.Fuselage.AVG_DIAMETER] = d_exp_area_d_body_width
+
+        d_exp_area_d_wingspan = 0.5 * c_fus + (0.5 * wingspan - b_fus) * d_c_fus_d_wingspan + b_fus * 2.0 * wing_area * taper_ratio / wingspan**2/(1.0 + taper_ratio)
+        J[Aircraft.Wing.EXPOSED_WING_AREA, Aircraft.Wing.SPAN] = d_exp_area_d_wingspan
+
+        d_exp_area_d_taper_ratio = (0.5 * wingspan - b_fus) * d_c_fus_d_taper_ratio + wing_area / (1.0 + taper_ratio)**2 - b_fus * 2.0 * wing_area / wingspan / (1.0 + taper_ratio)**2
+        J[Aircraft.Wing.EXPOSED_WING_AREA, Aircraft.Wing.TAPER_RATIO] = d_exp_area_d_taper_ratio
+
+        d_exp_area_d_wing_area = (0.5 * wingspan - b_fus) * d_c_fus_d_wing_area + taper_ratio / (1.0 + taper_ratio) - b_fus * 2.0 * taper_ratio / wingspan / (1.0 + taper_ratio)
+        J[Aircraft.Wing.EXPOSED_WING_AREA, Aircraft.Wing.AREA] = d_exp_area_d_wing_area
