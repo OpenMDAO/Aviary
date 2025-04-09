@@ -8,8 +8,7 @@ def add_meta_data(
     option: bool = False,
     desc: str = None,
     historical_name=None,
-    _check_unique=True,
-):
+    _check_unique=True):
     '''
     Add new meta data associated with variables in the Aviary data hierarchy.
 
