@@ -53,24 +53,24 @@ def add_meta_data(
         "INGASP.WWGHT"}
 
         NAMELIST nameing convention
-            &<function_name>.<namelist_name>.<var_name>
+        &<function_name>.<namelist_name>.<var_name>
 
-            Example: &DEFINE.CONFIN.GW
-                represents the GW variable of the CONFIN namelist as defined in
-                the DEFINE subroutine
+        Example: &DEFINE.CONFIN.GW
+            represents the GW variable of the CONFIN namelist as defined in
+            the DEFINE subroutine
 
         COMMON block naming convention, including aliases:
-            <block_name>.<var_name>
+        <block_name>.<var_name>
 
-            Example: CONFIG.GW
-                represents the GW variable of the CONFIG common block
+        Example: CONFIG.GW
+            represents the GW variable of the CONFIG common block
 
         Local variable naming convention, including equivalence statements, parameters,
         and other local declarations:
-            ~<function_name>.<var_name>
+        ~<function_name>.<var_name>
 
-            Example: ~ANALYS.GWTOL
-                represents the GWTOL variable of the ANALYS subroutine
+        Example: ~ANALYS.GWTOL
+            represents the GWTOL variable of the ANALYS subroutine
 
     _check_unique : bool
         private use only flag that tells whether to check the meta_data for the
@@ -170,24 +170,24 @@ def update_meta_data(
         "INGASP.WWGHT"}
 
         NAMELIST nameing convention
-            &<function_name>.<namelist_name>.<var_name>
+        &<function_name>.<namelist_name>.<var_name>
 
-            Example: &DEFINE.CONFIN.GW
-                represents the GW variable of the CONFIN namelist as defined in
-                the DEFINE subroutine
+        Example: &DEFINE.CONFIN.GW
+            represents the GW variable of the CONFIN namelist as defined in
+            the DEFINE subroutine
 
         COMMON block naming convention, including aliases:
-            <block_name>.<var_name>
+        <block_name>.<var_name>
 
-            Example: CONFIG.GW
-                represents the GW variable of the CONFIG common block
+        Example: CONFIG.GW
+            represents the GW variable of the CONFIG common block
 
         Local variable naming convention, including equivalence statements, parameters,
         and other local declarations:
-            ~<function_name>.<var_name>
+        ~<function_name>.<var_name>
 
-            Example: ~ANALYS.GWTOL
-                represents the GWTOL variable of the ANALYS subroutine
+        Example: ~ANALYS.GWTOL
+            represents the GWTOL variable of the ANALYS subroutine
 
     Returns
     -------
