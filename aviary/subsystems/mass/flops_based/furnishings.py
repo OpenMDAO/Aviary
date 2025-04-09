@@ -107,7 +107,7 @@ class BWBFurnishingsGroupMass(om.ExplicitComponent):
         add_aviary_input(self, Aircraft.Fuselage.MAX_WIDTH, units='ft')
 
         add_aviary_input(self, Aircraft.Fuselage.MAX_HEIGHT, units='ft')
-        add_aviary_input(self, Aircraft.BWB.PASSENGER_LEADING_EDGE_SWEEP, units='deg')
+        add_aviary_input(self, Aircraft.BWB.FOREBODY_SWEEP, units='deg')
 
         add_aviary_output(self, Aircraft.Furnishings.MASS, units='lbm')
 
@@ -136,7 +136,7 @@ class BWBFurnishingsGroupMass(om.ExplicitComponent):
             nbay = self.options[Aircraft.BWB.NUM_BAYS]
 
             cos = np.cos(
-                np.pi/180*(inputs[Aircraft.BWB.PASSENGER_LEADING_EDGE_SWEEP])
+                np.pi/180*(inputs[Aircraft.BWB.FOREBODY_SWEEP])
             )
 
             weight += 2.6 * (
@@ -169,11 +169,11 @@ class BWBFurnishingsGroupMass(om.ExplicitComponent):
 
             J[
                 Aircraft.Furnishings.MASS,
-                Aircraft.BWB.PASSENGER_LEADING_EDGE_SWEEP
+                Aircraft.BWB.FOREBODY_SWEEP
             ] = 0.0
 
         else:
-            d2r = np.radians(inputs[Aircraft.BWB.PASSENGER_LEADING_EDGE_SWEEP])
+            d2r = np.radians(inputs[Aircraft.BWB.FOREBODY_SWEEP])
             cos = np.cos(d2r)
             tan = np.tan(d2r)
 
@@ -215,7 +215,7 @@ class BWBFurnishingsGroupMass(om.ExplicitComponent):
 
             J[
                 Aircraft.Furnishings.MASS,
-                Aircraft.BWB.PASSENGER_LEADING_EDGE_SWEEP
+                Aircraft.BWB.FOREBODY_SWEEP
             ] = (
                 2.6 * scaler * fuse_max_width * fuse_max_height
                 * tan / cos / (180 / np.pi)
