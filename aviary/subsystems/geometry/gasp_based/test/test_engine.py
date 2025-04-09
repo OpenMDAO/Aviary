@@ -18,7 +18,6 @@ class TestPercentNotInFuselage(unittest.TestCase):
         aviary_options.set_val(Aircraft.Engine.NUM_ENGINES, [3])
 
         self.prob.model.add_subsystem("perc", PercentNotInFuselage(), promotes=["*"])
-        #self.prob.model.add_subsystem("perc", PercentNotInFuselage())
 
         self.prob.model.set_input_defaults(
             Aircraft.Nacelle.DIAMETER_BURIED_IN_FUSELAGE, 0.0, units="unitless")

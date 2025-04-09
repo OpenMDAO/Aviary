@@ -793,7 +793,6 @@ class BWBFuselageSize(om.ExplicitComponent):
 
     def initialize(self):
         add_aviary_option(self, Settings.VERBOSITY)
-        #self.options['default_shape'] = ()
 
     def setup(self):
 
