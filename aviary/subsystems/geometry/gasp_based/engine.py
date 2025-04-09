@@ -1,8 +1,9 @@
 import numpy as np
 import openmdao.api as om
 
+from aviary.variable_info.enums import Verbosity
 from aviary.variable_info.functions import add_aviary_input, add_aviary_output, add_aviary_option
-from aviary.variable_info.variables import Aircraft
+from aviary.variable_info.variables import Aircraft, Settings
 
 
 epsilon = 0.05
@@ -101,6 +102,7 @@ class PercentNotInFuselage(om.ExplicitComponent):
 
     def initialize(self):
         add_aviary_option(self, Aircraft.Engine.NUM_ENGINES)
+        add_aviary_option(self, Settings.VERBOSITY)
 
     def setup(self):
         num_engine_type = len(self.options[Aircraft.Engine.NUM_ENGINES])
@@ -160,6 +162,7 @@ class EngineSize(om.ExplicitComponent):
 
     def initialize(self):
         add_aviary_option(self, Aircraft.Engine.NUM_ENGINES)
+        add_aviary_option(self, Settings.VERBOSITY)
 
     def setup(self):
         num_engine_type = len(self.options[Aircraft.Engine.NUM_ENGINES])
@@ -219,10 +222,14 @@ class EngineSize(om.ExplicitComponent):
         )
 
     def compute_partials(self, inputs, J):
+        verbosity = self.options[Settings.VERBOSITY]
         d_ref = inputs[Aircraft.Engine.REFERENCE_DIAMETER]
         scale_fac = inputs[Aircraft.Engine.SCALE_FACTOR]
         d_nac_eng = inputs[Aircraft.Nacelle.CORE_DIAMETER_RATIO]
         ld_nac = inputs[Aircraft.Nacelle.FINENESS]
+        if any(x <= 0.0 for x in scale_fac):
+            if verbosity > Verbosity.BRIEF:
+                print("Aircraft.Engine.SCALE_FACTOR must be positive.")
 
         tr = np.sqrt(scale_fac)
         d_eng = d_ref * tr

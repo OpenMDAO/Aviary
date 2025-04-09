@@ -6,9 +6,9 @@ from aviary.subsystems.geometry.gasp_based.non_dimensional_conversion import \
     DimensionalNonDimensionalInterchange
 from aviary.subsystems.geometry.gasp_based.strut import StrutGeom
 from aviary.utils.conflict_checks import check_fold_location_definition
-from aviary.variable_info.enums import AircraftTypes
+from aviary.variable_info.enums import AircraftTypes, Verbosity
 from aviary.variable_info.functions import add_aviary_input, add_aviary_output, add_aviary_option
-from aviary.variable_info.variables import Aircraft, Mission
+from aviary.variable_info.variables import Aircraft, Mission, Settings
 
 
 class WingSize(om.ExplicitComponent):
@@ -1091,6 +1091,7 @@ class ExposedWing(om.ExplicitComponent):
 
     def initialize(self):
         add_aviary_option(self, Aircraft.Design.TYPE)
+        add_aviary_option(self, Settings.VERBOSITY)
 
     def setup(self):
         add_aviary_input(self, Aircraft.Wing.VERTICAL_MOUNT_LOCATION,
@@ -1129,6 +1130,7 @@ class ExposedWing(om.ExplicitComponent):
 
     def compute(self, inputs, outputs):
         design_type = self.options[Aircraft.Design.TYPE]
+        verbosity = self.options[Settings.VERBOSITY]
 
         h_wing = inputs[Aircraft.Wing.VERTICAL_MOUNT_LOCATION]
         body_width = inputs[Aircraft.Fuselage.AVG_DIAMETER]
@@ -1151,6 +1153,12 @@ class ExposedWing(om.ExplicitComponent):
         wingspan = inputs[Aircraft.Wing.SPAN]
         wing_area = inputs[Aircraft.Wing.AREA]
         taper_ratio = inputs[Aircraft.Wing.TAPER_RATIO]
+        if wingspan <= 0:
+            if verbosity > Verbosity.BRIEF:
+                print("Aircraft.Wing.SPAN must be positive.")
+        if taper_ratio <= 0:
+            if verbosity > Verbosity.BRIEF:
+                print("Aircraft.Wing.TAPER_RATIO must be positive.")
 
         root_chord_wing = 2.0 * wing_area / (wingspan*(1.0 + taper_ratio))
         tip_chord = taper_ratio * root_chord_wing

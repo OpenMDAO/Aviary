@@ -432,7 +432,7 @@ class BWBCabinLayout(om.ExplicitComponent):
         FC_seat_pitch = 36.0  # PS_FC: first class seat pitch, inch
         FC_num_aisles = 2  # AS_FC: num of aisles in first class
         FC_aisle_width = 24.0  # WAS_FC: First class aisle width, inch
-        length_FC_to_TC = 5.0  # Length of first class/tourist class aisle
+        length_FC_to_TC = 5.0  # Length of first class/tourist class aisle, ft
         TC_num_pax_per_lav = 78  # NLAVTC: tourist class passengers per lav
         TC_lav_width = 42.0  # WIDLAV: Lav width, inches
         TC_galley_area_per_pax = 0.15  # AGAL_TC: tourist class galley area per passenger, ft**2
@@ -702,6 +702,9 @@ class BWBFuselageParameters2(om.ExplicitComponent):
         cabin_height = inputs['cabin_height']
         fuselage_station_aft = inputs['fuselage_station_aft']
 
+        if forebody_sweep <= 0.0 or forebody_sweep >= 90.0:
+            if verbosity > Verbosity.BRIEF:
+                print("Forebody sweep angle must be between 0 and 90 degrees.")
         fb_sweep_rad = forebody_sweep / rad2deg
         fb_tan = np.tan(fb_sweep_rad)
         fb_cos = np.cos(fb_sweep_rad)
