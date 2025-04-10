@@ -55,7 +55,7 @@ class AviaryValues(NamedValues):
         TypeError
             if units of `None` were specified or units of any type other than `str`
         '''
-        if key in meta_data.keys():
+        if key in meta_data:
             val = cast_type(key, val, meta_data)
             check_type(key, val, meta_data)
 

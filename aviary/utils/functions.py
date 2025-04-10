@@ -138,7 +138,7 @@ def convert_strings_to_data(input_string):
             # if the value is a number store it as a float or an int as appropriate
             # BUG this returns floats that can be converted to int (e.g. 1.0) as an
             # int (1), even if the variable requires floats
-            value_list[ii] = int(float(dat)) if float(dat).is_integer() else float(dat)
+            value_list[ii] = int(dat) if '.' not in dat else float(dat)
         except ValueError:
             # store value as a boolean if it is a string that represents True or False
             if dat.lower() == 'true':
