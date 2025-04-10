@@ -38,7 +38,6 @@ class Aircraft:
     class BWB:
         CABIN_AREA = 'aircraft:blended_wing_body_design:cabin_area'
         NUM_BAYS = 'aircraft:blended_wing_body_design:num_bays'
-
         PASSENGER_LEADING_EDGE_SWEEP = (
             'aircraft:blended_wing_body_design:passenger_leading_edge_sweep'
         )
@@ -201,6 +200,7 @@ class Aircraft:
         THRUST_TO_WEIGHT_RATIO = 'aircraft:design:thrust_to_weight_ratio'
         TOTAL_WETTED_AREA = 'aircraft:design:total_wetted_area'
         TOUCHDOWN_MASS = 'aircraft:design:touchdown_mass'
+        TYPE = 'aircraft:design:type'
         ULF_CALCULATED_FROM_MANEUVER = 'aircraft:design:ulf_calculated_from_maneuver'
         USE_ALT_MASS = 'aircraft:design:use_alt_mass'
         WETTED_AREAS = 'aircraft:design:wetted_areas'
@@ -326,6 +326,8 @@ class Aircraft:
         MASS_SCALER = 'aircraft:furnishings:mass_scaler'
 
     class Fuselage:
+        AFTBODY_MASS = 'aircraft:fuselage:aftbody_mass'
+        AFTBODY_MASS_PER_UNIT_AREA = 'aircraft:fuselage:aftbody_mass_per_unit_area'
         AISLE_WIDTH = 'aircraft:fuselage:aisle_width'
         AVG_DIAMETER = 'aircraft:fuselage:avg_diameter'
         CHARACTERISTIC_LENGTH = 'aircraft:fuselage:characteristic_length'
@@ -334,11 +336,16 @@ class Aircraft:
         DIAMETER_TO_WING_SPAN = 'aircraft:fuselage:diameter_to_wing_span'
         FINENESS = 'aircraft:fuselage:fineness'
         FLAT_PLATE_AREA_INCREMENT = 'aircraft:fuselage:flat_plate_area_increment'
+        FOREBODY_MASS = 'aircraft:fuselage:forebody_mass'
         FORM_FACTOR = 'aircraft:fuselage:form_factor'
+        HEIGHT_TO_WIDTH_RATIO = 'aircraft:fuselage:height_to_width_ratio'
+        HYDRAULIC_DIAMETER = 'aircraft:fuselage:hydraulic_diameter'
         LAMINAR_FLOW_LOWER = 'aircraft:fuselage:laminar_flow_lower'
         LAMINAR_FLOW_UPPER = 'aircraft:fuselage:laminar_flow_upper'
         LENGTH = 'aircraft:fuselage:length'
         LENGTH_TO_DIAMETER = 'aircraft:fuselage:length_to_diameter'
+        LIFT_COEFFICENT_RATIO_BODY_TO_WING = 'aircraft:fuselage:lift_coefficient_ratio_body_to_wing'
+        LIFT_CURVE_SLOPE_MACH0 = 'aircraft:fuselage:lift_curve_slope_mach0'
         MASS = 'aircraft:fuselage:mass'
         MASS_COEFFICIENT = 'aircraft:fuselage:mass_coefficient'
         MASS_SCALER = 'aircraft:fuselage:mass_scaler'
@@ -355,10 +362,12 @@ class Aircraft:
         PILOT_COMPARTMENT_LENGTH = 'aircraft:fuselage:pilot_compartment_length'
         PLANFORM_AREA = 'aircraft:fuselage:planform_area'
         PRESSURE_DIFFERENTIAL = 'aircraft:fuselage:pressure_differential'
+        PRESSURIZED_WIDTH_ADDITIONAL = 'aircraft:fuselage:pressurized_width_additional'
         SEAT_PITCH = 'aircraft:fuselage:seat_pitch'
         SEAT_WIDTH = 'aircraft:fuselage:seat_width'
         TAIL_FINENESS = 'aircraft:fuselage:tail_fineness'
         WETTED_AREA = 'aircraft:fuselage:wetted_area'
+        WETTED_AREA_RATIO_AFTBODY_TO_TOTAL = 'aircraft:fuselage:wetted_area_ratio_aftbody_to_total'
         WETTED_AREA_SCALER = 'aircraft:fuselage:wetted_area_scaler'
 
     class HorizontalTail:
@@ -404,7 +413,6 @@ class Aircraft:
         MASS_SCALER = 'aircraft:instruments:mass_scaler'
 
     class LandingGear:
-        CARRIER_BASED = 'aircraft:landing_gear:carrier_based'
         DRAG_COEFFICIENT = 'aircraft:landing_gear:drag_coefficient'
         FIXED_GEAR = 'aircraft:landing_gear:fixed_gear'
         MAIN_GEAR_LOCATION = 'aircraft:landing_gear:main_gear_location'
@@ -436,6 +444,7 @@ class Aircraft:
         MASS = 'aircraft:nacelle:mass'
         MASS_SCALER = 'aircraft:nacelle:mass_scaler'
         MASS_SPECIFIC = 'aircraft:nacelle:mass_specific'
+        PERCENT_DIAMETER_BURIED_IN_FUSELAGE = 'aircraft:nacelle:percent_diameter_buried_in_fuselage'
         SURFACE_AREA = 'aircraft:nacelle:surface_area'
         TOTAL_WETTED_AREA = 'aircraft:nacelle:total_wetted_area'
         WETTED_AREA = 'aircraft:nacelle:wetted_area'
@@ -532,6 +541,7 @@ class Aircraft:
         DETAILED_WING = 'aircraft:wing:detailed_wing'
         DIHEDRAL = 'aircraft:wing:dihedral'
         ENG_POD_INERTIA_FACTOR = 'aircraft:wing:eng_pod_inertia_factor'
+        EXPOSED_WING_AREA = 'aircraft:wing:exposed_wing_area'
         FINENESS = 'aircraft:wing:fineness'
         FLAP_CHORD_RATIO = 'aircraft:wing:flap_chord_ratio'
         FLAP_DEFLECTION_LANDING = 'aircraft:wing:flap_deflection_landing'
@@ -779,7 +789,7 @@ class Mission:
         AIRPORT_ALTITUDE = 'mission:takeoff:airport_altitude'
         ANGLE_OF_ATTACK_RUNWAY = 'mission:takeoff:angle_of_attack_runway'
         ASCENT_DURATION = 'mission:takeoff:ascent_duration'
-        ASCENT_T_INTIIAL = 'mission:takeoff:ascent_t_initial'
+        ASCENT_T_INITIAL = 'mission:takeoff:ascent_t_initial'
         BRAKING_FRICTION_COEFFICIENT = 'mission:takeoff:braking_friction_coefficient'
         DECISION_SPEED_INCREMENT = 'mission:takeoff:decision_speed_increment'
 

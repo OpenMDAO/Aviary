@@ -1,6 +1,14 @@
 from enum import Enum, IntEnum, auto, unique
 
 
+class AircraftTypes(Enum):
+    '''
+    Aircraft types
+    '''
+    TRANSPORT = 'transport'
+    BLENDED_WING_BODY = 'BWB'
+
+
 class AlphaModes(Enum):
     '''
     AlphaModes is used to specify how angle of attack is defined during
@@ -108,6 +116,10 @@ class GASPEngineType(Enum):
     # for geometry and mass
     ROTARY_RCWSZ = 14
 
+    @classmethod
+    def get_element_by_name(cls, val: str):
+        return next((c for c in cls if c.name == val), None)
+
 
 @unique
 class FlapType(Enum):
@@ -121,6 +133,10 @@ class FlapType(Enum):
     TRIPLE_SLOTTED = 5
     FOWLER = 6
     DOUBLE_SLOTTED_FOWLER = 7
+
+    @classmethod
+    def get_element_by_name(cls, val: str):
+        return next((c for c in cls if c.name == val), None)
 
 
 class LegacyCode(Enum):
@@ -216,7 +232,7 @@ class Verbosity(IntEnum):
 
 class OutMachType(Enum):
     '''
-    OutMachType is an indicator which mach number to output.
+    OutMachType is an indicator which Mach number to output.
     helical_mach = sqrt(mach*mach + tip_mach*tip_mach)
     '''
     MACH = 'mach'

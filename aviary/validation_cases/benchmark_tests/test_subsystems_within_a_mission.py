@@ -57,7 +57,7 @@ class TestSubsystemsMission(unittest.TestCase):
     def test_subsystems_in_a_mission(self):
         phase_info = self.phase_info.copy()
 
-        prob = AviaryProblem()
+        prob = AviaryProblem(verbosity=0)
 
         prob.load_inputs("models/test_aircraft/aircraft_for_bench_GwFm.csv", phase_info)
 
@@ -86,13 +86,16 @@ class TestSubsystemsMission(unittest.TestCase):
         prob.set_initial_guesses()
 
         # add an assert to see if the initial guesses are correct for Mission.Dummy.VARIABLE
-        assert_almost_equal(prob[f'traj.phases.cruise.states:{Mission.Dummy.VARIABLE}'], [[10.],
-                                                                                          [25.97729616],
-                                                                                          [48.02270384],
-                                                                                          [55.],
-                                                                                          [70.97729616],
-                                                                                          [93.02270384],
-                                                                                          [100.]])
+        assert_almost_equal(
+            prob.get_val(f'traj.cruise.states:{Mission.Dummy.VARIABLE}'),
+            [[10.],
+             [25.97729616],
+             [48.02270384],
+             [55.],
+             [70.97729616],
+             [93.02270384],
+             [100.]]
+        )
 
         prob.run_aviary_problem()
 
@@ -104,7 +107,7 @@ class TestSubsystemsMission(unittest.TestCase):
         phase_info = self.phase_info.copy()
         phase_info['cruise']['initial_guesses']['bad_guess_name'] = ([10., 100.], 'm')
 
-        prob = AviaryProblem(reports=False)
+        prob = AviaryProblem(reports=False, verbosity=0)
 
         prob.load_inputs("models/test_aircraft/aircraft_for_bench_GwFm.csv", phase_info)
 
@@ -115,7 +118,7 @@ class TestSubsystemsMission(unittest.TestCase):
 
         with self.assertRaises(TypeError) as context:
             prob.add_phases()
-        print(str(context.exception))
+        # print(str(context.exception))
         self.assertTrue(
             'EnergyPhase: cruise: unsupported initial guess: bad_guess_name' in str(context.exception))
 

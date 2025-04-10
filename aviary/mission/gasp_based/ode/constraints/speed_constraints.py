@@ -18,7 +18,7 @@ class SpeedConstraints(om.ExplicitComponent):
             " satisfied",
         )
         self.options.declare(
-            "mach_cruise", default=0, desc="targeted cruise mach number"
+            "mach_cruise", default=0, desc="targeted cruise Mach number"
         )
 
     def setup(self):
@@ -35,7 +35,7 @@ class SpeedConstraints(om.ExplicitComponent):
             Dynamic.Atmosphere.MACH,
             val=np.ones(nn),
             units="unitless",
-            desc="mach number",
+            desc="Mach number",
         )
 
         self.add_output(
