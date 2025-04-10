@@ -455,7 +455,7 @@ class BWBCabinLayout(om.ExplicitComponent):
         if pax_FC <= 0:
             if verbosity > Verbosity.BRIEF:
                 print(
-                    "Warning: There are no first class passengers. First class cabin is not included.")
+                    "Warning: No first class passengers or cabins are included.")
         if pax_FC > pax:
             raise ValueError(
                 'Number of first class passengers must not exceed the total number of passengers.')
@@ -564,7 +564,8 @@ class BWBCabinLayout(om.ExplicitComponent):
 
 class BWBFuselageParameters2(om.ExplicitComponent):
     """
-    Computation of average fuselage diameter, cabin floor area, cabin length and fuselage planform area.
+    Computation of average fuselage diameter, cabin floor area, cabin length and
+    fuselage planform area.
     """
 
     def initialize(self):
@@ -780,7 +781,8 @@ class BWBFuselageParameters2(om.ExplicitComponent):
         J[Aircraft.Fuselage.PLANFORM_AREA,
           Aircraft.Fuselage.AVG_DIAMETER] = d_cabin_area_d_body_len + d_tail_pf_area_d_both_width
         J[Aircraft.Fuselage.PLANFORM_AREA,
-          Aircraft.Fuselage.PRESSURIZED_WIDTH_ADDITIONAL] = d_cabin_area_d_additional + d_tail_pf_area_d_additional
+          Aircraft.Fuselage.PRESSURIZED_WIDTH_ADDITIONAL] = d_cabin_area_d_additional + \
+          d_tail_pf_area_d_additional
         J[Aircraft.Fuselage.PLANFORM_AREA, 'fuselage_station_aft'] = d_cabin_area_d_fuselage_aft
         J[Aircraft.Fuselage.PLANFORM_AREA,
           'nose_length'] = d_nose_pf_area_d_nose_len + d_cabin_area_d_nose_len
@@ -885,7 +887,8 @@ class BWBFuselageSize(om.ExplicitComponent):
             (body_width * (fuselage_station_aft - forebody_len) + nose_area)
 
         body_width_pass = body_width - additional_width
-        aftbody_surface_area = (body_width + body_width_pass) * np.sqrt(aftbody_len**2 + (cabin_height / 2.0)**2) + \
+        aftbody_surface_area = (body_width + body_width_pass) * \
+            np.sqrt(aftbody_len**2 + (cabin_height / 2.0)**2) + \
             cabin_height * np.sqrt(aftbody_len**2 + (additional_width/2.)**2)
 
         fuselage_wetted_area = forebody_surface_area + cabin_surface_area + aftbody_surface_area
@@ -919,7 +922,8 @@ class BWBFuselageSize(om.ExplicitComponent):
             body_width * np.sqrt(forebody_len**2 + (cabin_height / 2.0)**2)
         cabin_surface_area = 2.0 * \
             (body_width * (fuselage_station_aft - forebody_len) + nose_area)
-        aftbody_surface_area = (body_width + body_width_pass) * np.sqrt(aftbody_len**2 + (cabin_height / 2.0)**2) + \
+        aftbody_surface_area = (body_width + body_width_pass) * \
+            np.sqrt(aftbody_len**2 + (cabin_height / 2.0)**2) + \
             cabin_height * np.sqrt(aftbody_len**2 + (additional_width/2.)**2)
 
         d_fb_area_d_cabin_height = np.sqrt(forebody_len**2 + (body_width/2.)**2) + \
@@ -951,7 +955,8 @@ class BWBFuselageSize(om.ExplicitComponent):
             np.sqrt(aftbody_len**2 + (additional_width/2.)**2)
 
         #
-        # fuselage_wetted_area = (forebody_surface_area + cabin_surface_area + aftbody_surface_area) * fus_SA_scaler
+        # fuselage_wetted_area:
+        #     (forebody_surface_area + cabin_surface_area + aftbody_surface_area) * fus_SA_scaler
         #
         J[Aircraft.Fuselage.WETTED_AREA, Aircraft.Fuselage.WETTED_AREA_SCALER] = \
             forebody_surface_area + cabin_surface_area + aftbody_surface_area
@@ -972,7 +977,8 @@ class BWBFuselageSize(om.ExplicitComponent):
 
 class BWBFuselageGroup(om.Group):
     """
-    Group to pull together BWBFuselageParameters1, BWBCabinLayout, BWBFuselageParameters2 and BWBFuselageSize.
+    Group to pull together BWBFuselageParameters1, BWBCabinLayout, BWBFuselageParameters2
+    and BWBFuselageSize.
     """
 
     def setup(self):
@@ -1006,7 +1012,8 @@ class BWBFuselageGroup(om.Group):
         size = self.add_subsystem(
             "size",
             BWBFuselageSize(),
-            promotes_inputs=["aircraft:*"] + ["nose_length", "cabin_height", "fuselage_station_aft",
-                                              "forebody_len", "nose_area", "aftbody_len", "cabin_len"],
+            promotes_inputs=["aircraft:*"] +[
+                "nose_length", "cabin_height", "fuselage_station_aft",
+                "forebody_len", "nose_area", "aftbody_len", "cabin_len"],
             promotes_outputs=["aircraft:*"],
         )

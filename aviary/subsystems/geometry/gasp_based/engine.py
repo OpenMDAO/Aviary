@@ -96,8 +96,8 @@ def dg2(x):
 
 class PercentNotInFuselage(om.ExplicitComponent):
     """
-    For BWB, engine may be (partially) buried into fuselage. Compute the percentage of corresponding
-    surface area of nacelles not buried in fuselage.
+    For BWB, engine may be (partially) buried into fuselage. Compute the percentage of
+    corresponding surface area of nacelles not buried in fuselage.
     """
 
     def initialize(self):
@@ -135,7 +135,7 @@ class PercentNotInFuselage(om.ExplicitComponent):
         elif x <= 1.0 and x > 1 - epsilon:
             pct_swn = g2(x)
         else:
-            raise "The given parameter Aircraft.Nacelle.DIAMETER_BURIED_IN_FUSELAGE is out of range."
+            raise "The parameter Aircraft.Nacelle.DIAMETER_BURIED_IN_FUSELAGE is out of range."
 
         outputs['percent_exposed'] = pct_swn
 
@@ -149,7 +149,7 @@ class PercentNotInFuselage(om.ExplicitComponent):
         elif x <= 1.0 and x > 1 - epsilon:
             d_pct_swn = dg2(x)
         else:
-            raise "The given parameter Aircraft.Nacelle.DIAMETER_BURIED_IN_FUSELAGE is out of range."
+            raise "The parameter Aircraft.Nacelle.DIAMETER_BURIED_IN_FUSELAGE is out of range."
 
         J['percent_exposed', Aircraft.Nacelle.DIAMETER_BURIED_IN_FUSELAGE] = d_pct_swn
 
