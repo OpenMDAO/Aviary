@@ -210,7 +210,7 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
         return aero_group
 
     # TODO DragPolar comp is unfinished and currently does nothing
-    # def build_post_mission(self, aviary_inputs, **kwargs):
+    # def build_post_mission(self, aviary_inputs, phase_info, phase_mission_bus_lengths, **kwargs):
     #     aero_group = DragPolar(aviary_options=aviary_inputs),
 
     #     return aero_group

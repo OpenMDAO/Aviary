@@ -771,6 +771,11 @@ class AviaryProblem(om.Problem):
                 timeseries_to_add = subsystem.get_outputs()
                 for timeseries in timeseries_to_add:
                     phase.add_timeseries_output(timeseries)
+                timeseries_to_add = subsystems.get_mission_bus_variables(
+                        self.aviary_inputs, self.phase_info)
+                for timeseries in timeseries_to_add:
+                    phase.add_timeseries_output(timeseries, timeseries="mission_bus_variables")
+
 
         if self.analysis_scheme is AnalysisScheme.COLLOCATION:
             self.phase_objects = []
@@ -810,6 +815,20 @@ class AviaryProblem(om.Problem):
 
         return traj
 
+    def _get_phase_mission_bus_lengths(self):
+        phase_mission_bus_lengths = {}
+        for phase_name, phase in self.traj._phases.items():
+            print(phase)
+            # if isinstance(phase, dm.AnalyticPhase):
+            #     phase_lengths[phase_name] = phase.options["num_nodes"]
+            # else:
+            #     tx = phase.options["transcription"]
+            #     phase_lengths[phase_name] = tx.grid_data.subset_num_nodes["all"]
+            # Need to get the grid data of the transcription associated with the "mission_bus_variables" timeseries.
+            phase_mission_bus_lengths[phase_name] = phase._timeseries["mission_bus_variables"]["transcription"].grid_data.subset_num_nodes["all"]
+        return phase_mission_bus_lengths
+
+
     def add_post_mission_systems(self, include_landing=True, verbosity=None):
         """
         Add post-mission systems to the aircraft model. This is akin to the pre-mission group
@@ -847,9 +866,10 @@ class AviaryProblem(om.Problem):
         self.builder.add_post_mission_systems(self, include_landing)
 
         # Add all post-mission external subsystems.
+        phase_mission_bus_lengths = self._get_phase_mission_bus_lengths(self)
         for external_subsystem in self.post_mission_info['external_subsystems']:
             subsystem_postmission = external_subsystem.build_post_mission(
-                self.aviary_inputs
+                self.aviary_inputs, self.phase_info, phase_mission_bus_lengths,
             )
 
             if subsystem_postmission is not None:
@@ -1686,6 +1706,22 @@ class AviaryProblem(om.Problem):
                                 f'post_mission.{external_subsystem.name}.'
                                 f'{variable_data["post_mission_name"]}',
                             )
+
+    def _connect_mission_bus_variables(self):
+        all_subsystems = self._get_all_subsystems()
+
+        # Loop through all external subsystems.
+        for external_subsystem in all_subsystems:
+            for phase_name, var_mapping in external_subsystems.get_linked_mission_bus_variables(self.aviary_data, self.phase_info):
+                for mission_variable_name, post_mission_variable_names in var_mapping.items():
+                    
+                    if not isinstance(post_mission_variable_names, list):
+                        post_mission_variable_names = [post_mission_variable_names]
+
+                    for post_mission_var_name in post_mission_variable_names:
+                        self.model.connect(
+                            f'traj.{phase_name}.mission_bus_variables.{mission_variable_name}',
+                            post_mission_var_name)
 
     def setup(self, **kwargs):
         """
