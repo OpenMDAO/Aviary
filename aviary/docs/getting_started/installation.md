@@ -10,7 +10,7 @@ The minimum supported version of Python is 3.9; we recommend using the latest re
 The simplest way to install Aviary to use pip in a terminal:
 
 ```python
-pip install om-aviary
+pip install aviary
 ```
 
 This will install the latest release of Aviary and all of its dependencies.
@@ -120,7 +120,7 @@ $ conda activate av1
 
 ### Installing Additional Dependencies
 
-Aviary can run in MPI. 
+Aviary can run in MPI.
 You do not need the `mpi4py` or `petsc4py` packages to use Aviary.
 They are useful when running large OpenMDAO models in parallel.
 If needed, you can install them with the following command:
@@ -136,7 +136,7 @@ $ cd ~/workspace
 $ git clone git@github.com:OpenMDAO/OpenMDAO.git
 ```
 
-You have a new subdirectory `workspace/OpenMDAO`. You are not expected to modify source code of OpenMDAO, but you want to keep up with the latests version of it. The best way to do is to install OpenMDAO in developer mode. This removes the need to reinstall OpenMDAO after changes are made. Go to this directory where you see a file `setup.py`. Run 
+You have a new subdirectory `workspace/OpenMDAO`. You are not expected to modify source code of OpenMDAO, but you want to keep up with the latests version of it. The best way to do is to install OpenMDAO in developer mode. This removes the need to reinstall OpenMDAO after changes are made. Go to this directory where you see a file `setup.py`. Run
 
 ```
 $ cd OpenMDAO
@@ -193,7 +193,7 @@ $ python -m pip install ./build_pyoptsparse
 `SNOPT` is a commercial optimizer that is free for academic use and available for purchase for commercial use. Users must obtain it themselves.
 ```
 
-Assuming you have the `SNOPT` source code already, copy it to the `workspace` directory. 
+Assuming you have the `SNOPT` source code already, copy it to the `workspace` directory.
 Run:
 
 ```
@@ -254,7 +254,7 @@ Successfully installed pyoptsparse-2.10.1
 
 ### Installing Aviary and Running Tests
 
-Now, we are ready to install Aviary. Assuming that you will become a contributor sooner or later, we want to install a copy from the main source. (You will need a GitHub account for this) Let us open `https://github.com/openMDAO/om-aviary/` in a web browser and click [fork](https://github.com/OpenMDAO/Aviary/fork) on the top-right corner. You then have created your own copy of Aviary on GitHub website. Now we create a copy on your local drive (supposing `USER_ID` is your GitHub account ID):
+Now, we are ready to install Aviary. Assuming that you will become a contributor sooner or later, we want to install a copy from the main source. (You will need a GitHub account for this) Let us open `https://github.com/openMDAO/aviary/` in a web browser and click [fork](https://github.com/OpenMDAO/Aviary/fork) on the top-right corner. You then have created your own copy of Aviary on GitHub website. Now we create a copy on your local drive (supposing `USER_ID` is your GitHub account ID):
 
 ```
 $ cd ~/workspace

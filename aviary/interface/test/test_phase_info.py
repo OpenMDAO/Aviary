@@ -67,6 +67,10 @@ class TestPhaseInfo(unittest.TestCase):
                             lhs_option = lhs_value[name]
                             rhs_option = rhs_value[name]
 
+                            # Support for more compact format for unitless vars.
+                            if lhs_option[1] == 'unitless' and lhs_option[0] == rhs_option:
+                                continue
+
                             if lhs_option != rhs_option:
                                 raise RuntimeError(
                                     f'value mismatch ({key}[{name}]):' f' {lhs_option} != {rhs_option}')

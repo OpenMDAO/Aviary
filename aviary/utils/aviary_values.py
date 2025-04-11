@@ -158,5 +158,22 @@ class AviaryValues(NamedValues):
         else:
             return enum_type(val)
 
+    def items(self):
+        """
+        Return (name, value) for variables contained in this vector.
+
+        Note that AviaryValues is not a dictionary, but this adds support for iterating over
+        its contents.
+
+        Yields
+        ------
+        str
+            The name of an item.
+        object
+            The value of that item.
+        """
+        for key, val in self._mapping.items():
+            yield key, val
+
 
 _valid_iterables = (list, np.ndarray, tuple)

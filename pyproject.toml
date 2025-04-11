@@ -1,2 +1,6 @@
+[build-system]
+build-backend = "setuptools.build_meta"
+requires = ["numpy<2", "setuptools"]
+
 [tool.autopep8]
 max_line_length = 89

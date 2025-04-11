@@ -8,9 +8,11 @@ from openmdao.utils.units import convert_units
 import dymos as dm
 from dymos.utils.misc import _unspecified
 
+from aviary.utils.aviary_options_dict import units_setter, int_enum_setter, bounds_units_setter
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.variables import Aircraft, Settings
 from aviary.variable_info.variable_meta_data import _MetaData
+from aviary.variable_info.enums import Verbosity
 
 # ---------------------------
 # Helper functions for setting up inputs/outputs in components
@@ -158,79 +160,6 @@ def add_aviary_output(comp, varname, val=None, units=None, desc=None, shape_by_c
 
     comp.add_output(varname, val=val, units=output_units,
                     desc=output_desc, shape_by_conn=shape_by_conn)
-
-
-def units_setter(opt_meta, value):
-    """
-    Check and convert new units tuple into
-
-    Parameters
-    ----------
-    opt_meta : dict
-        Dictionary of entries for the option.
-    value : any
-        New value for the option.
-
-    Returns
-    -------
-    any
-        Post processed value to set into the option.
-    """
-    new_val, new_units = value
-    old_val, units = opt_meta['val']
-
-    converted_val = convert_units(new_val, new_units, units)
-    return (converted_val, units)
-
-
-def int_enum_setter(opt_meta, value):
-    """
-    Support setting the option with a string or int and converting it to the
-    proper enum object.
-
-    Parameters
-    ----------
-    opt_meta : dict
-        Dictionary of entries for the option.
-    value : any
-        New value for the option.
-
-    Returns
-    -------
-    any
-        Post processed value to set into the option.
-    """
-    types = opt_meta['types']
-    for type_ in types:
-        if type_ not in (list, np.ndarray):
-            enum_class = type_
-            break
-
-    if isinstance(value, Enum):
-        return value
-
-    elif isinstance(value, int):
-        return enum_class(value)
-
-    elif isinstance(value, str):
-        return getattr(enum_class, value)
-
-    elif isinstance(value, list):
-        values = []
-        for val in value:
-            if isinstance(val, Enum):
-                values.append(val)
-            elif isinstance(val, int):
-                values.append(enum_class(val))
-            elif isinstance(val, str):
-                values.append(getattr(enum_class, val))
-            else:
-                break
-        else:
-            return values
-
-    msg = f"Value '{value}' not valid for option with types {enum_class}"
-    raise TypeError(msg)
 
 
 def add_aviary_option(comp, name, val=_unspecified, units=None, desc=None, meta_data=_MetaData):
@@ -389,14 +318,18 @@ def override_aviary_vars(group: om.Group, aviary_inputs: AviaryValues,
             group.promotes(comp.name, inputs=in_var_names, outputs=comp_promoted_outputs)
 
     if overridden_outputs:
-        if aviary_inputs.get_val(Settings.VERBOSITY).value >= 1:  # Verbosity.BRIEF
+        if (
+            aviary_inputs.get_val(Settings.VERBOSITY).value >= Verbosity.VERBOSE
+        ):  # VERBOSE, DEBUG
             print("\nThe following variables have been overridden:")
             for prom_name in sorted(overridden_outputs):
                 val, units = aviary_inputs.get_item(prom_name)
                 print(f"  '{prom_name}  {val}  {units}")
 
     if external_overridden_outputs:
-        if aviary_inputs.get_val(Settings.VERBOSITY).value >= 1:
+        if (
+            aviary_inputs.get_val(Settings.VERBOSITY).value >= Verbosity.VERBOSE
+        ):  # VERBOSE, DEBUG
             print("\nThe following variables have been overridden by an external subsystem:")
             for prom_name in sorted(external_overridden_outputs):
                 # do not print values because they will be updated by an external subsystem later.
