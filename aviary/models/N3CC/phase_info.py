@@ -7,7 +7,7 @@ phase_info = {
     "climb": {
         "subsystem_options": {"core_aerodynamics": {"method": "computed"}},
         "user_options": {
-            "optimize_mach": False,
+            "optimize_mach": True,
             "optimize_altitude": False,
             "num_segments": 6,
             "order": 3,
@@ -19,13 +19,16 @@ phase_info = {
             "final_altitude": (35000.0, "ft"),
             "altitude_bounds": ((0.0, 37000.0), "ft"),
             "throttle_enforcement": "path_constraint",
-            "fix_initial": True,
+            "fix_initial": False,
+            "input_initial": True,
             "constrain_final": False,
             "fix_duration": False,
             "initial_bounds": ((0.0, 0.0), "min"),
-            "duration_bounds": ((12.1, 48.4), "min"),
+            "duration_bounds": ((12.1, 60.0), "min"),
             "add_initial_mass_constraint": False,
         },
+        "initial_guesses": {"time": ([0, 40.0], "min")},
+
     },
     "cruise": {
         "subsystem_options": {"core_aerodynamics": {"method": "computed"}},
@@ -45,14 +48,14 @@ phase_info = {
             "fix_initial": False,
             "constrain_final": False,
             "fix_duration": False,
-            "initial_bounds": ((12.1, 48.4), "min"),
+            "initial_bounds": ((12.1, 60.0), "min"),
             "duration_bounds": ((203.1, 812.4), "min"),
         },
     },
     "descent": {
         "subsystem_options": {"core_aerodynamics": {"method": "computed"}},
         "user_options": {
-            "optimize_mach": False,
+            "optimize_mach": True,
             "optimize_altitude": False,
             "num_segments": 5,
             "order": 3,
@@ -67,7 +70,7 @@ phase_info = {
             "fix_initial": False,
             "constrain_final": True,
             "fix_duration": False,
-            "initial_bounds": ((215.1, 860.8), "min"),
+            "initial_bounds": ((215.1, 872.4), "min"),
             "duration_bounds": ((14.6, 58.5), "min"),
         },
     },
