@@ -367,7 +367,7 @@ add_meta_data(
         "LEAPS1": 'aircraft.inputs.L0_blended_wing_body_design.passenger_leading_edge_sweep',
     },
     units='deg',
-    desc='sweep angle of the leading edge of the passenger cabin',  # is this forebody Sweep angle?
+    desc='forebody Sweep angle',
     default_value=45.0,
 )
 
@@ -5709,8 +5709,7 @@ add_meta_data(
         "LEAPS1": 'aircraft.inputs.L0_detailed_wing.wing_station_locations',
     },
     units='unitless',
-    desc='wing station locations as fractions of semispan; overwrites '
-    'station_locations',
+    desc='wing station locations as fractions of semispan; overwrites station_locations',
     option=True,
     default_value=None,
 )
