@@ -7,8 +7,8 @@ from aviary.variable_info.functions import add_aviary_input, add_aviary_output
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 from aviary.constants import GRAV_ENGLISH_GASP
 
-FCFWC = 1
-FCFWT = 1
+FCFWC = 1  # Excrescence drag factor
+FCFWT = 1  # Aero technology factors for wing
 
 
 class RootChord(om.ExplicitComponent):
@@ -19,7 +19,7 @@ class RootChord(om.ExplicitComponent):
         add_aviary_input(self, Aircraft.Wing.SPAN)
         add_aviary_input(self, Aircraft.Wing.TAPER_RATIO)
 
-        self.add_output('CROOT', 1.23456)
+        self.add_output('CROOT')
 
     def compute(self, inputs, outputs):
         SW, B, SLM = inputs.values()
@@ -55,8 +55,8 @@ class CommonVariables(om.ExplicitComponent):
         add_aviary_input(self, Aircraft.Wing.THICKNESS_TO_CHORD_ROOT)
         add_aviary_input(self, Aircraft.Fuselage.AVG_DIAMETER)
 
-        self.add_output('ZW_RF', 1.23456)
-        self.add_output('wtofd', 1.23456)
+        self.add_output('ZW_RF')
+        self.add_output('wtofd')
 
     def compute(self, inputs, outputs):
         CROOT, HWING, TCR, SWF = inputs.values()
@@ -89,7 +89,7 @@ class TopAndBottomWidth(om.ExplicitComponent):
         self.add_input('wtofd')
         add_aviary_input(self, Aircraft.Fuselage.AVG_DIAMETER)
 
-        self.add_output('WBODYWF', 1.23456)
+        self.add_output('WBODYWF')
 
     def compute(self, inputs, outputs):
         ZW_RF, wtofd, SWF = inputs.values()
@@ -149,8 +149,8 @@ class BodyRatios(om.ExplicitComponent):
         add_aviary_input(self, Aircraft.Wing.THICKNESS_TO_CHORD_ROOT)
         add_aviary_input(self, Aircraft.Wing.THICKNESS_TO_CHORD_TIP)
 
-        self.add_output('TCBODYWF', 1.23456)
-        self.add_output('CBODYWF', 1.23456)
+        self.add_output('TCBODYWF')
+        self.add_output('CBODYWF')
 
     def compute(self, inputs, outputs):
         WBODYWF, CROOT, B, SLM, TCR, TCT = inputs.values()
@@ -203,8 +203,8 @@ class InterferenceDrag(om.ExplicitComponent):
         add_aviary_input(self, Aircraft.Fuselage.AVG_DIAMETER)
         add_aviary_input(self, Aircraft.Wing.CENTER_DISTANCE)
 
-        self.add_output('interference_independent_of_shielded_area', 1.23456)
-        self.add_output('drag_loss_due_to_shielded_wing_area', 1.23456)
+        self.add_output('interference_independent_of_shielded_area')
+        self.add_output('drag_loss_due_to_shielded_wing_area')
 
     def compute(self, inputs, outputs):
         WBODYWF, CROOT, TCBODYWF, CBODYWF, ZW_RF, SWF, XWQLF = inputs.values()
@@ -305,7 +305,7 @@ class WingFuselageInterferenceMission(om.ExplicitComponent):
     def setup(self):
         nn = self.options["num_nodes"]
 
-        add_aviary_input(self, Aircraft.Wing.FORM_FACTOR, 1.25)
+        add_aviary_input(self, Aircraft.Wing.FORM_FACTOR)
         add_aviary_input(self, Aircraft.Wing.AVERAGE_CHORD)
         add_aviary_input(self, Dynamic.Atmosphere.MACH, shape=nn)
         add_aviary_input(self, Dynamic.Atmosphere.TEMPERATURE, shape=nn)
@@ -313,8 +313,7 @@ class WingFuselageInterferenceMission(om.ExplicitComponent):
         self.add_input('interference_independent_of_shielded_area')
         self.add_input('drag_loss_due_to_shielded_wing_area')
 
-        self.add_output('wing_fuselage_interference_flat_plate_equivalent',
-                        np.full(nn, 1.23456))
+        self.add_output('wing_fuselage_interference_flat_plate_equivalent', shape=nn)
 
     def setup_partials(self):
         nn = self.options["num_nodes"]

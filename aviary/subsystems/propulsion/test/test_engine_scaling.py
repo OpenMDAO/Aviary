@@ -10,7 +10,7 @@ from aviary.utils.aviary_values import AviaryValues
 from aviary.utils.preprocessors import preprocess_propulsion
 from aviary.utils.functions import get_path
 from aviary.variable_info.functions import setup_model_options
-from aviary.variable_info.variables import Aircraft, Dynamic, Mission
+from aviary.variable_info.variables import Aircraft, Dynamic, Mission, Settings
 from aviary.subsystems.propulsion.utils import EngineModelVariables
 
 
@@ -26,6 +26,7 @@ class EngineScalingTest(unittest.TestCase):
         filename = get_path(filename)
 
         options = AviaryValues()
+        options.set_val(Settings.VERBOSITY, 0)
         options.set_val(Aircraft.Engine.DATA_FILE, filename)
         options.set_val(Aircraft.Engine.SUBSONIC_FUEL_FLOW_SCALER, 0.9)
         # make supersonic scaling factor extremely high so it is obvious if it gets used
@@ -57,9 +58,7 @@ class EngineScalingTest(unittest.TestCase):
 
         self.prob.model.add_subsystem(
             'engine',
-            EngineScaling(
-                num_nodes=nn, engine_variables=engine_variables
-            ),
+            EngineScaling(num_nodes=nn, engine_variables=engine_variables),
             promotes=['*'],
         )
 

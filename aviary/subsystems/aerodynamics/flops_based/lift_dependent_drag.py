@@ -22,29 +22,21 @@ class LiftDependentDrag(om.ExplicitComponent):
         nn = self.options["num_nodes"]
 
         # Simulation inputs
-        self.add_input(
-            Dynamic.Atmosphere.MACH, shape=(nn), units='unitless', desc="Mach number"
-        )
-        self.add_input(
-            Dynamic.Vehicle.LIFT, shape=(nn), units="lbf", desc="Lift magnitude"
-        )
-        self.add_input(
-            Dynamic.Atmosphere.STATIC_PRESSURE,
-            np.ones(nn),
-            units='lbf/ft**2',
-            desc='Static pressure at each evaulation point.',
-        )
+        add_aviary_input(self, Dynamic.Atmosphere.MACH, shape=nn, units='unitless')
+        add_aviary_input(self, Dynamic.Vehicle.LIFT, shape=(nn), units="lbf")
+        add_aviary_input(self, Dynamic.Atmosphere.STATIC_PRESSURE,
+                         shape=nn, units='lbf/ft**2')
 
         # Aero design inputs
-        add_aviary_input(self, Mission.Design.LIFT_COEFFICIENT, 0.0)
-        add_aviary_input(self, Mission.Design.MACH, 0.0)
+        add_aviary_input(self, Mission.Design.LIFT_COEFFICIENT, units='unitless')
+        add_aviary_input(self, Mission.Design.MACH, units='unitless')
 
         # Aircraft design inputs
-        add_aviary_input(self, Aircraft.Wing.AREA, 0.0)
-        add_aviary_input(self, Aircraft.Wing.ASPECT_RATIO, 0.0)
-        add_aviary_input(self, Aircraft.Wing.MAX_CAMBER_AT_70_SEMISPAN, 0.0)
-        add_aviary_input(self, Aircraft.Wing.SWEEP, 0.0)
-        add_aviary_input(self, Aircraft.Wing.THICKNESS_TO_CHORD, 0.0)
+        add_aviary_input(self, Aircraft.Wing.AREA, units='ft**2')
+        add_aviary_input(self, Aircraft.Wing.ASPECT_RATIO, units='unitless')
+        add_aviary_input(self, Aircraft.Wing.MAX_CAMBER_AT_70_SEMISPAN, units='unitless')
+        add_aviary_input(self, Aircraft.Wing.SWEEP, units='deg')
+        add_aviary_input(self, Aircraft.Wing.THICKNESS_TO_CHORD, units='unitless')
 
         # Declare outputs
         self.add_output("CD", shape=(nn), units='unitless',

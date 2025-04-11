@@ -44,7 +44,7 @@ def _setup_hangar_parser(parser: argparse.ArgumentParser):
 def _exec_hangar(args, user_args):
     input_decks = []
     for input_deck in args.input_decks:
-        input_decks.append(get_model(input_deck, args.verbose))
+        input_decks.append(get_model(input_deck))
 
     for input_deck in input_decks:
         save_file(input_deck, Path(args.outdir), args.verbose)
