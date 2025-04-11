@@ -204,10 +204,14 @@ class EngineSize(om.ExplicitComponent):
                               innames + ['percent_exposed'], rows=shape, cols=shape, val=1.0)
 
     def compute(self, inputs, outputs):
+        verbosity = self.options[Settings.VERBOSITY]
         d_ref = inputs[Aircraft.Engine.REFERENCE_DIAMETER]
         scale_fac = inputs[Aircraft.Engine.SCALE_FACTOR]
         d_nac_eng = inputs[Aircraft.Nacelle.CORE_DIAMETER_RATIO]
         ld_nac = inputs[Aircraft.Nacelle.FINENESS]
+        if any(x <= 0.0 for x in scale_fac):
+            if verbosity > Verbosity.BRIEF:
+                print("Aircraft.Engine.SCALE_FACTOR must be positive.")
 
         d_eng = d_ref * np.sqrt(scale_fac)
         outputs[Aircraft.Nacelle.AVG_DIAMETER] = d_eng * d_nac_eng
@@ -222,14 +226,10 @@ class EngineSize(om.ExplicitComponent):
         )
 
     def compute_partials(self, inputs, J):
-        verbosity = self.options[Settings.VERBOSITY]
         d_ref = inputs[Aircraft.Engine.REFERENCE_DIAMETER]
         scale_fac = inputs[Aircraft.Engine.SCALE_FACTOR]
         d_nac_eng = inputs[Aircraft.Nacelle.CORE_DIAMETER_RATIO]
         ld_nac = inputs[Aircraft.Nacelle.FINENESS]
-        if any(x <= 0.0 for x in scale_fac):
-            if verbosity > Verbosity.BRIEF:
-                print("Aircraft.Engine.SCALE_FACTOR must be positive.")
 
         tr = np.sqrt(scale_fac)
         d_eng = d_ref * tr
