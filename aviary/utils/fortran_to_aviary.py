@@ -546,6 +546,19 @@ def update_gasp_options(vehicle_data):
             input_values.set_val(Settings.PROBLEM_TYPE, ['fallout'])
     input_values.set_val(Mission.Design.RANGE, [design_range], distance_units)
 
+    ## Passengers ##
+    try:
+        num_passengers = input_values.get_val(
+            Aircraft.CrewPayload.Design.NUM_PASSENGERS, 'unitless')[0]
+        # In GASP, percentage of total number of passengers is given. Convert it to the actual first class passengers.
+        pct_first_class = input_values.get_val(
+            Aircraft.CrewPayload.Design.NUM_FIRST_CLASS, 'unitless')[0]
+        num_first_class = int(pct_first_class * num_passengers)
+        input_values.set_val(Aircraft.CrewPayload.Design.NUM_FIRST_CLASS,
+                             [num_first_class], 'unitless')
+    except:
+        pass
+
     ## STRUT AND FOLD ##
     strut_loc = input_values.get_val(Aircraft.Strut.ATTACHMENT_LOCATION, 'ft')[0]
     folded_span = input_values.get_val(Aircraft.Wing.FOLDED_SPAN, 'ft')[0]

@@ -37,10 +37,8 @@ class Aircraft:
 
     class BWB:
         CABIN_AREA = 'aircraft:blended_wing_body_design:cabin_area'
+        FOREBODY_SWEEP = 'aircraft:blended_wing_body_design:forebody_sweep'
         NUM_BAYS = 'aircraft:blended_wing_body_design:num_bays'
-        PASSENGER_LEADING_EDGE_SWEEP = (
-            'aircraft:blended_wing_body_design:passenger_leading_edge_sweep'
-        )
 
     class Canard:
         AREA = 'aircraft:canard:area'
@@ -437,6 +435,7 @@ class Aircraft:
         CHARACTERISTIC_LENGTH = 'aircraft:nacelle:characteristic_length'
         CLEARANCE_RATIO = 'aircraft:nacelle:clearance_ratio'
         CORE_DIAMETER_RATIO = 'aircraft:nacelle:core_diameter_ratio'
+        DIAMETER_BURIED_IN_FUSELAGE = 'aircraft:nacelle:diameter_buried_in_fuselage'
         FINENESS = 'aircraft:nacelle:fineness'
         FORM_FACTOR = 'aircraft:nacelle:form_factor'
         LAMINAR_FLOW_LOWER = 'aircraft:nacelle:laminar_flow_lower'
@@ -444,7 +443,6 @@ class Aircraft:
         MASS = 'aircraft:nacelle:mass'
         MASS_SCALER = 'aircraft:nacelle:mass_scaler'
         MASS_SPECIFIC = 'aircraft:nacelle:mass_specific'
-        PERCENT_DIAMETER_BURIED_IN_FUSELAGE = 'aircraft:nacelle:percent_diameter_buried_in_fuselage'
         SURFACE_AREA = 'aircraft:nacelle:surface_area'
         TOTAL_WETTED_AREA = 'aircraft:nacelle:total_wetted_area'
         WETTED_AREA = 'aircraft:nacelle:wetted_area'
