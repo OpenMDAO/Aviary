@@ -15,6 +15,7 @@ from aviary.variable_info.enums import Verbosity
 
 
 # multiple type annotation uses "typeA | typeB" syntax, but requires Python 3.10+
+# filename: (str, Path)
 def read_data_file(
     filename,
     metadata=None,
@@ -78,7 +79,7 @@ def read_data_file(
             # if comments are present in line, strip them out
             if '#' in line_data:
                 index = line_data.index('#')
-                comments.append(line_data[index+1:].strip())
+                comments.append(line_data[index + 1:].strip())
                 line_data = line_data[:index]
 
             # split by delimiters, remove whitespace and newline characters
@@ -92,7 +93,7 @@ def read_data_file(
             try:
                 line_data = [float(var) for var in line_data if var != '']
             # data contains things other than floats
-            except (ValueError):
+            except ValueError:
                 # skip checking for header data if not required
                 if check_for_header:
                     # dictionary of header name: units
@@ -135,15 +136,19 @@ def read_data_file(
                                         # Raising error here, as trying to use default
                                         # units could mean accidental conversion which
                                         # would significantly impact analysis
-                                        raise ValueError(f'Provided units of <{units}> '
-                                                         f'for column <{name}>, which '
-                                                         'are not compatible with default '
-                                                         f'units of {default_units}')
+                                        raise ValueError(
+                                            f'Provided units of <{units}> '
+                                            f'for column <{name}>, which '
+                                            'are not compatible with default '
+                                            f'units of {default_units}'
+                                        )
                             else:
                                 # Units were not recognized. Raise error
-                                raise ValueError(f'Invalid units <{units}> provided for '
-                                                 f'column <{name}> while reading '
-                                                 f'<{filepath}>.')
+                                raise ValueError(
+                                    f'Invalid units <{units}> provided for '
+                                    f'column <{name}> while reading '
+                                    f'<{filepath}>.'
+                                )
                         else:
                             if metadata is not None and default_units != 'unitless':
                                 # units were not provided, but variable should have them
@@ -168,7 +173,8 @@ def read_data_file(
                 # only raise error if not checking for header, or invalid header found
                 raise ValueError(
                     f'Non-numerical value found in data file <{filepath}> on line '
-                    f'{str(line_count)}')
+                    f'{str(line_count)}'
+                )
 
             # This point is reached when the first valid numerical entry in data file
             # is found. Stop looking for header data from now on
@@ -190,6 +196,8 @@ def read_data_file(
 
 
 # multiple type annotation uses "typeA | typeB" syntax, but requires Python 3.10+
+# filename: (str, Path)
+# comments: (str, list)
 def write_data_file(
     filename,
     data: NamedValues = None,
@@ -270,12 +278,12 @@ def write_data_file(
 
         # if headers are smaller than column, pad with leading whitespace
         if header_len < col_len:
-            header[i] = ' '*(col_len-header_len) + header[i]
+            header[i] = ' ' * (col_len - header_len) + header[i]
 
         # special string to define column formatting with specific width
         format = f'%{col_len}s'
         # don't include commas for last column
-        if i < len(header)-1:
+        if i < len(header) - 1:
             format = format + ', '
         col_format.append(format)
 
@@ -283,8 +291,11 @@ def write_data_file(
     formatted_data = np.array([data_dict[key] for key in data_dict]).transpose()
 
     # write to output file w/ header and comments
-    np.savetxt(filepath, formatted_data,
-               fmt=''.join(col_format),
-               delimiter=',',
-               header=', '.join(header),
-               comments='\n'.join(comments))
+    np.savetxt(
+        filepath,
+        formatted_data,
+        fmt=''.join(col_format),
+        delimiter=',',
+        header=', '.join(header),
+        comments='\n'.join(comments),
+    )

@@ -20,7 +20,10 @@ from aviary.examples.external_subsystems.battery.model.cell_comp import CellComp
 from aviary.examples.external_subsystems.battery.model.reg_thevenin_interp_group import RegTheveninInterpGroup
 
 from aviary.utils.aviary_values import AviaryValues
-from aviary.examples.external_subsystems.battery.battery_variables import Aircraft, Mission
+from aviary.examples.external_subsystems.battery.battery_variables import (
+    Aircraft,
+    Dynamic,
+)
 
 
 class BatteryMission(Group):
@@ -56,16 +59,16 @@ class BatteryMission(Group):
         self.promotes(
             "interp_group",
             inputs=[
-                ("T_batt", "mission:battery:temperature"),
-                ("SOC", "mission:battery:state_of_charge"),
+                ("T_batt", "dynamic:battery:temperature"),
+                ("SOC", "dynamic:battery:state_of_charge"),
             ],
         )
 
         self.promotes(
             "cell",
             inputs=[
-                Mission.Battery.VOLTAGE_THEVENIN,
-                Mission.Battery.CURRENT,
+                Dynamic.Battery.VOLTAGE_THEVENIN,
+                Dynamic.Battery.CURRENT,
                 Aircraft.Battery.N_SERIES,
                 Aircraft.Battery.N_PARALLEL,
                 Aircraft.Battery.Cell.ENERGY_CAPACITY_MAX,
@@ -75,10 +78,10 @@ class BatteryMission(Group):
         self.promotes(
             "cell",
             outputs=[
-                Mission.Battery.VOLTAGE,
-                Mission.Battery.VOLTAGE_THEVENIN_RATE,
-                Mission.Battery.STATE_OF_CHARGE_RATE,
-                Mission.Battery.HEAT_OUT,
-                Aircraft.Battery.EFFICIENCY,
+                Dynamic.Battery.VOLTAGE,
+                Dynamic.Battery.VOLTAGE_THEVENIN_RATE,
+                Dynamic.Battery.STATE_OF_CHARGE_RATE,
+                Dynamic.Battery.HEAT_OUT,
+                Dynamic.Battery.EFFICIENCY,
             ],
         )

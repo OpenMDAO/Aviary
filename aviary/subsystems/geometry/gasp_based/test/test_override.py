@@ -143,4 +143,7 @@ class GASPOverrideTestCase(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    unittest.main()
+    # unittest.main()
+    test = GASPOverrideTestCase()
+    test.setUp()
+    test.test_case_aero_coeffs()

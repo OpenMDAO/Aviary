@@ -1,7 +1,10 @@
 import openmdao.api as om
 
 from aviary.variable_info.functions import add_aviary_input, add_aviary_output
-from aviary.examples.external_subsystems.battery.battery_variables import Aircraft, Mission
+from aviary.examples.external_subsystems.battery.battery_variables import (
+    Aircraft,
+    Dynamic,
+)
 from aviary.examples.external_subsystems.battery.battery_variable_meta_data import ExtendedMetaData
 
 
@@ -16,7 +19,7 @@ class BatteryPreMission(om.ExplicitComponent):
         # control from optimizer
         add_aviary_input(self, Aircraft.Battery.ENERGY_REQUIRED,
                          meta_data=ExtendedMetaData)
-        add_aviary_input(self, Aircraft.Battery.EFFICIENCY, meta_data=ExtendedMetaData)
+        add_aviary_input(self, Dynamic.Battery.EFFICIENCY, meta_data=ExtendedMetaData)
 
         # output from zappy
         add_aviary_input(self, Aircraft.Battery.CURRENT_MAX, meta_data=ExtendedMetaData)

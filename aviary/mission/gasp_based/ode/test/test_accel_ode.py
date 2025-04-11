@@ -10,6 +10,8 @@ from aviary.utils.test_utils.default_subsystems import get_default_mission_subsy
 from aviary.utils.test_utils.IO_test_util import check_prob_outputs
 from aviary.variable_info.options import get_option_defaults
 from aviary.variable_info.variables import Aircraft, Dynamic
+from aviary.variable_info.functions import setup_model_options
+from aviary.utils.aviary_values import AviaryValues
 
 
 class AccelerationODETestCase(unittest.TestCase):
@@ -31,6 +33,9 @@ class AccelerationODETestCase(unittest.TestCase):
 
     def test_accel(self):
         # Test both points in GASP Large Single Aisle 1 acceleration segment
+        setup_model_options(self.prob, AviaryValues(
+            {Aircraft.Engine.NUM_ENGINES: ([2], 'unitless')}))
+
         self.prob.setup(check=False, force_alloc_complex=True)
 
         throttle_climb = 0.956
