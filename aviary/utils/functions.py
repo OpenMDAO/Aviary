@@ -113,7 +113,7 @@ def set_aviary_input_defaults(
         model.set_input_defaults(key, val=val, units=units)
 
 
-def convert_strings_to_data(string_list, data_type=None):
+def convert_strings_to_data(string_list, var_name=None, data_type=None):
     """
     convert_strings_to_data will convert a list of strings to usable data.
     Strings that can't be converted to numbers will attempt to store as a logical,
@@ -145,6 +145,8 @@ def convert_strings_to_data(string_list, data_type=None):
             if not isinstance(data_type, tuple):
                 data_type = (data_type,)
             err_msg = ''
+            if var_name is None:
+                var_name = 'unknown_variable'
 
             for dtype in data_type:
                 if dtype is np.ndarray:  # It's always coupled with int or float
@@ -160,7 +162,8 @@ def convert_strings_to_data(string_list, data_type=None):
                             break
                         except:
                             err_msg += (
-                                f'Expected data type: {data_type}, but the data is '
+                                f'For {var_name}, '
+                                f'expected data type: {data_type}, but the data is '
                                 f'{dat}.\n'
                             )
                 elif dtype is bool:
@@ -173,9 +176,16 @@ def convert_strings_to_data(string_list, data_type=None):
                         err_msg = ''
                         break
                     else:
-                        err_msg += (
-                            f'Expected data type: {data_type}, but the data is {dat}.\n'
-                        )
+                        err_msg += f'For {var_name},  expected data type: {data_type}, but the data is {dat}.\n'
+                elif dtype is int:
+                    x = int(float(dat))
+                    y = float(dat)
+                    if 1.0 * x != y:
+                        err_msg += f'For {var_name},  expected data type: {data_type}, but the data is {dat}.\n'
+                    else:
+                        value_list[ii] = x
+                        err_msg = ''
+                        break
                 else:
                     try:
                         if dat.lower() == 'true':
@@ -188,7 +198,8 @@ def convert_strings_to_data(string_list, data_type=None):
                         break
                     except:
                         err_msg += (
-                            f'Expected data type: {data_type}, but the data is {dat}.\n'
+                            f'For {var_name}, '
+                            f'expected data type: {data_type}, but the data is {dat}.\n'
                         )
 
             if len(err_msg) > 0:
