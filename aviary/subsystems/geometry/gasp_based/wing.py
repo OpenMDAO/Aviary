@@ -515,6 +515,7 @@ class WingFold(om.ExplicitComponent):
 
     def initialize(self):
         add_aviary_option(self, Aircraft.Wing.CHOOSE_FOLD_LOCATION)
+        add_aviary_option(self, Aircraft.Design.TYPE)
 
     def setup(self):
 
@@ -1204,13 +1205,17 @@ class ExposedWing(om.ExplicitComponent):
             d_b_fus_d_hwing = body_width * height_to_width * d_sqt
             d_b_fus_d_body_width = 0.5 * (1.0 - height_to_width) + height_to_width * sqt
             d_b_fus_d_height_to_width = -0.5 * body_width + body_width * sqt
-            d_c_fus_d_height_to_width = 4 * d_b_fus_d_height_to_width * (taper_ratio - 1.0) / \
-                (taper_ratio + 1.0) * wing_area / wingspan**2
+            d_c_fus_d_height_to_width = (
+                4 * d_b_fus_d_height_to_width * (taper_ratio - 1.0)
+                / (taper_ratio + 1.0) * wing_area / wingspan**2
+            )
 
-            d_exp_area_d_height_to_width = -d_b_fus_d_height_to_width * c_fus + \
-                (wingspan * 0.5 - b_fus) * d_c_fus_d_height_to_width - \
-                d_b_fus_d_height_to_width * 2.0 * wing_area * taper_ratio / \
+            d_exp_area_d_height_to_width = (
+                -d_b_fus_d_height_to_width * c_fus
+                + (wingspan * 0.5 - b_fus) * d_c_fus_d_height_to_width
+                - d_b_fus_d_height_to_width * 2.0 * wing_area * taper_ratio /
                 wingspan / (1.0 + taper_ratio)
+            )
             J[Aircraft.Wing.EXPOSED_WING_AREA,
               Aircraft.Fuselage.HEIGHT_TO_WIDTH_RATIO] = d_exp_area_d_height_to_width
 
@@ -1243,16 +1248,22 @@ class ExposedWing(om.ExplicitComponent):
         J[Aircraft.Wing.EXPOSED_WING_AREA,
           Aircraft.Fuselage.AVG_DIAMETER] = d_exp_area_d_body_width
 
-        d_exp_area_d_wingspan = 0.5 * c_fus + (0.5 * wingspan - b_fus) * d_c_fus_d_wingspan + \
-            b_fus * 2.0 * wing_area * taper_ratio / wingspan**2/(1.0 + taper_ratio)
+        d_exp_area_d_wingspan = (
+            0.5 * c_fus + (0.5 * wingspan - b_fus) * d_c_fus_d_wingspan
+            + b_fus * 2.0 * wing_area * taper_ratio / wingspan**2/(1.0 + taper_ratio)
+        )
         J[Aircraft.Wing.EXPOSED_WING_AREA, Aircraft.Wing.SPAN] = d_exp_area_d_wingspan
 
-        d_exp_area_d_taper_ratio = (0.5 * wingspan - b_fus) * d_c_fus_d_taper_ratio + \
-            wing_area / (1.0 + taper_ratio)**2 - \
-            b_fus * 2.0 * wing_area / wingspan / (1.0 + taper_ratio)**2
+        d_exp_area_d_taper_ratio = (
+            (0.5 * wingspan - b_fus) * d_c_fus_d_taper_ratio
+            + wing_area / (1.0 + taper_ratio)**2
+            - b_fus * 2.0 * wing_area / wingspan / (1.0 + taper_ratio)**2
+        )
         J[Aircraft.Wing.EXPOSED_WING_AREA, Aircraft.Wing.TAPER_RATIO] = d_exp_area_d_taper_ratio
 
-        d_exp_area_d_wing_area = (0.5 * wingspan - b_fus) * d_c_fus_d_wing_area + \
-            taper_ratio / (1.0 + taper_ratio) - \
-            b_fus * 2.0 * taper_ratio / wingspan / (1.0 + taper_ratio)
+        d_exp_area_d_wing_area = (
+            (0.5 * wingspan - b_fus) * d_c_fus_d_wing_area
+            + taper_ratio / (1.0 + taper_ratio)
+            - b_fus * 2.0 * taper_ratio / wingspan / (1.0 + taper_ratio)
+        )
         J[Aircraft.Wing.EXPOSED_WING_AREA, Aircraft.Wing.AREA] = d_exp_area_d_wing_area
