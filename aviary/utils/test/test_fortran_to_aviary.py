@@ -95,6 +95,18 @@ class TestFortranToAviary(unittest.TestCase):
         )
         self.compare_files(comparison_filepath)
 
+    def test_bwb_gasp(self):
+        filepath = 'models/BWB/generic_HWB_GASP.dat'
+        comparison_filepath = (
+            'utils/test/data/converter_test_HWB_GASP.csv'
+        )
+
+        self.prepare_and_run(
+            filepath,
+            out_file=Path.cwd() / Path('TEST_' + comparison_filepath),
+        )
+        self.compare_files(comparison_filepath)
+
     def test_N3CC(self):
         # Note: The csv comparison file N3CC_generic_low_speed_polars_FLOPSinp.csv was generated using the fortran-to-Aviary converter
         # and was not evaluated for comparison to the original. Thus, until this file is evaluated, this test is purely a regression

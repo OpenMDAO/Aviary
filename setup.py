@@ -25,7 +25,7 @@ for packages in extras_require.values():
 extras_require["all"] = all_packages
 
 setup(
-    name="om-aviary",
+    name="aviary",
     long_description=long_description,
     long_description_content_type='text/markdown',
     version=__version__,

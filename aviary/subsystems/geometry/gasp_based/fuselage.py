@@ -24,7 +24,6 @@ class FuselageParameters(om.ExplicitComponent):
     def setup(self):
 
         add_aviary_input(self, Aircraft.Fuselage.DELTA_DIAMETER, units='ft')
-        # add_aviary_input(self, Aircraft.Fuselage.PILOT_COMPARTMENT_LENGTH, units='ft')
 
         add_aviary_output(self, Aircraft.Fuselage.AVG_DIAMETER, units='inch')
         self.add_output("cabin_height", val=0, units="ft", desc="HC: height of cabin")
@@ -64,14 +63,12 @@ class FuselageParameters(om.ExplicitComponent):
 
         # single seat across
         cabin_len_a = PAX * seat_pitch / 12
-        nose_width_a = cabin_width / 12
-        nose_height_a = nose_width_a
+        nose_height_a = cabin_width / 12
         cabin_height_a = nose_height_a + delta_diameter
 
         # multiple seats across, assuming no first class seats
         cabin_len_b = (PAX - 1) * seat_pitch / (seats_abreast * 12)
-        cabin_width_b = cabin_width / 12
-        cabin_height_b = cabin_width_b
+        cabin_height_b = cabin_width / 12
         nose_height_b = cabin_height_b - delta_diameter
 
         outputs[Aircraft.Fuselage.AVG_DIAMETER] = cabin_width
