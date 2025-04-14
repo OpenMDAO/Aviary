@@ -219,6 +219,9 @@ def cast_type(key, val, meta_data=_MetaData):
     found, val is changed to that type. If no compatible type is found, val is returned
     as is. Typing preference given by order of types defined in meta_data.
     """
+    if key not in meta_data:
+        return val
+
     cast_val = deepcopy(val)
 
     expected_types = meta_data[key]['types']
