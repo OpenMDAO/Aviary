@@ -74,10 +74,12 @@ class PreMissionTestCase(unittest.TestCase):
         prop = CorePropulsionBuilder('core_propulsion', BaseMetaData, engine)
         mass = CoreMassBuilder('core_mass', BaseMetaData, GASP)
         aero = CoreAerodynamicsBuilder('core_aerodynamics', BaseMetaData, FLOPS)
-        geom = CoreGeometryBuilder('core_geometry',
-                                   BaseMetaData,
-                                   use_both_geometries=True,
-                                   code_origin_to_prioritize=GASP)
+        geom = CoreGeometryBuilder(
+            'core_geometry',
+            BaseMetaData,
+            code_origin=(FLOPS, GASP),
+            code_origin_to_prioritize=GASP,
+        )
 
         core_subsystems = [prop, geom, mass, aero]
 
@@ -288,10 +290,12 @@ class PreMissionTestCase(unittest.TestCase):
         prop = CorePropulsionBuilder('core_propulsion', BaseMetaData, engine)
         mass = CoreMassBuilder('core_mass', BaseMetaData, GASP)
         aero = CoreAerodynamicsBuilder('core_aerodynamics', BaseMetaData, FLOPS)
-        geom = CoreGeometryBuilder('core_geometry',
-                                   BaseMetaData,
-                                   use_both_geometries=True,
-                                   code_origin_to_prioritize=FLOPS)
+        geom = CoreGeometryBuilder(
+            'core_geometry',
+            BaseMetaData,
+            code_origin=(FLOPS, GASP),
+            code_origin_to_prioritize=FLOPS,
+        )
 
         core_subsystems = [prop, geom, mass, aero]
 

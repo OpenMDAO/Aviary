@@ -21,7 +21,7 @@ Aviary is currently in a beta state. The code is under active development, and f
 
 The simplest installation method for users is to install via pip:
 
-    pip install om-aviary
+    pip install aviary
 
 Please see the [installation doc page](https://openmdao.github.io/Aviary/getting_started/installation.html) for more detailed instructions.
 The minimum supported Python version for Aviary is 3.9.
