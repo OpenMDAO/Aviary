@@ -827,7 +827,7 @@ class Mission:
 
 class Settings:
     """Setting data hierarchy"""
-
+    AERODYNAMICS_METHOD = 'settings:aerodynamics_method'
     EQUATIONS_OF_MOTION = 'settings:equations_of_motion'
     MASS_METHOD = 'settings:mass_method'
     PROBLEM_TYPE = 'settings:problem_type'
