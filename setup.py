@@ -62,6 +62,7 @@ setup(
             "models/engines/*.eng",
             "models/engines/propellers/*.map",
             "models/engines/propellers/*.prop",
+            "models/BWB/*",
             "models/N3CC/*",
             "models/large_single_aisle_1/*",
             "models/large_single_aisle_2/*",
