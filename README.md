@@ -3,24 +3,25 @@
 [![All Contributors](https://img.shields.io/badge/all_contributors-17-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
-**Check out the Aviary [documentation](https://openmdao.github.io/Aviary/intro.html).**
+**Check out the Aviary [documentation](https://openmdao.github.io/Aviary/intro.html)**
 
 **[NASA's Aviary Takes Flight](https://ntrs.nasa.gov/citations/20240009217) (Presented at EAA AirVenture 2024)**
 
-**Get in touch with the Aviary team at agency-aviary@mail.nasa.gov**
+**Get in touch with the Aviary team at agency-aviary@mail.nasa.gov or the GitHub [discussions page](https://github.com/OpenMDAO/Aviary/discussions)** 
 
 ## Description
 
-This repository is an [OpenMDAO](https://openmdao.org/)-based aircraft modeling tool that incorporates aircraft sizing and weight equations from its predecessors [GASP (General Aviation Synthesis Program)](https://ntrs.nasa.gov/api/citations/19810010563/downloads/19810010563.pdf) and [FLOPS (Flight Optimization System)](https://software.nasa.gov/software/LAR-18934-1).
-It also incorporates aerodynamic calculations from GASP and FLOPS and has the capability to use an aerodynamics deck as well as an aircraft engine deck.
+This repository is an [OpenMDAO](https://openmdao.org/)-based aircraft modeling tool that incorporates aircraft sizing equations from its predecessors [GASP (General Aviation Synthesis Program)](https://ntrs.nasa.gov/api/citations/19810010563/downloads/19810010563.pdf) and [FLOPS (Flight Optimization System)](https://software.nasa.gov/software/LAR-18934-1).
 There are two options for the mission analysis portion of this code, a 2 degrees-of-freedom (2DOF) approach, and a energy-height approach.
 The user can select which type of mission analysis to use, as well as whether to use the FLOPS-based code or the GASP-based code for the weight, sizing, and aerodynamic relations.
+
+Aviary is currently in a beta state. The code is under active development, and frequent changes should be expected.
 
 ## Installation
 
 The simplest installation method for users is to install via pip:
 
-    pip install om-aviary
+    pip install aviary
 
 Please see the [installation doc page](https://openmdao.github.io/Aviary/getting_started/installation.html) for more detailed instructions.
 The minimum supported Python version for Aviary is 3.9.

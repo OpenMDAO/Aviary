@@ -30,7 +30,9 @@ from aviary.variable_info.variables import Aircraft, Dynamic, Mission, Settings
 # ---------------------------
 _MetaData = {}
 
-
+# TODO Metadata descriptions should contain which core subsystems that variable appears
+#      in. A standardized format for this should be created that takes advantage of
+#      newlines, tabs, etc. kind of like a docstring.
 # ================================================================================================================================================================
 # .----------------.  .----------------.  .----------------.  .----------------.  .----------------.  .----------------.  .----------------.  .----------------.
 # | .--------------. || .--------------. || .--------------. || .--------------. || .--------------. || .--------------. || .--------------. || .--------------. |
@@ -772,12 +774,12 @@ add_meta_data(
     Aircraft.CrewPayload.Design.NUM_FIRST_CLASS,
     meta_data=_MetaData,
     historical_name={
-        "GASP": None,
+        "GASP": 'INGASP.PCT_FC',
         "FLOPS": 'WTIN.NPF',  # ['&DEFINE.WTIN.NPF', 'WTS.NPF'],
         "LEAPS1": 'aircraft.inputs.L0_crew_and_payload.first_class_count',
     },
     units='unitless',
-    desc='number of first class passengers that the aircraft is designed to accommodate',
+    desc='number of first class passengers that the aircraft is designed to accommodate. In GASP, the input is the percentage of total number of passengers.',
     types=int,
     option=True,
     default_value=0,
@@ -932,7 +934,7 @@ add_meta_data(
         "LEAPS1": None,  # 'aircraft.inputs.L0_crew_and_payload.first_class_count',
     },
     units='unitless',
-    desc='number of first class passengers',
+    desc='number of first class passengers.',
     types=int,
     option=True,
     default_value=0,
@@ -2113,6 +2115,9 @@ add_meta_data(
     default_value=0.0,
 )
 
+# TODO FLOPS based equation scale factor needs to be separated out into a different
+#      variable, which will also eliminate logic branch in engine.py where two
+#      different equations are used depending on the value of MASS_SCALER
 add_meta_data(
     Aircraft.Engine.MASS_SCALER,
     meta_data=_MetaData,
@@ -2261,7 +2266,9 @@ add_meta_data(
         "LEAPS1": 'aircraft.inputs.L0_engine*.thrust',
     },
     units='lbf',
-    desc='maximum thrust of an engine provided in engine model files',
+    desc='Maximum sea-level static thrust of an unscaled engine. Optional. In '
+    'EngineDecks, reference thrust will be found from performance data if not provided '
+    'by user. User-provided values override SLS point found in performance data.',
     default_value=None,
     option=True,
 )
@@ -2297,7 +2304,7 @@ add_meta_data(
         "FLOPS": None,
         "LEAPS1": '(types)EngineScaleModes.WEIGHT',
     },
-    desc='Toggle for enabling scaling of engine mass',
+    desc='Toggle for enabling scaling of engine mass based on Aircraft.Engine.SCALE_FACTOR',
     option=True,
     types=bool,
     multivalue=True,
@@ -2316,7 +2323,7 @@ add_meta_data(
         ],
     },
     desc='Toggle for enabling scaling of engine performance including thrust, fuel flow, '
-    'and electric power',
+    'and electric power using Aircraft.Engine.SCALE_FACTOR',
     option=True,
     types=bool,
     multivalue=True,
@@ -2335,7 +2342,9 @@ add_meta_data(
         ],
     },
     units='lbf',
-    desc='maximum thrust of an engine after scaling',
+    desc='Maximum sea-level static thrust of an engine after scaling. Optional for '
+    'EngineDecks if Aircraft.Engine.SCALE_FACTOR is provided, in which case this '
+    'variable is computed.',
     default_value=0.0,
 )
 
@@ -2348,7 +2357,7 @@ add_meta_data(
         "LEAPS1": '(WeightABC)self._starter_weight',
     },
     units='lbm',
-    desc='starter mass',
+    desc='mass of engine starter subsystem',
     default_value=0.0,
 )
 
@@ -4806,6 +4815,7 @@ add_meta_data(
     meta_data=_MetaData,
     historical_name={"GASP": 'INGASP.ELFFC', "FLOPS": None, "LEAPS1": None},
     units='ft',
+    # tail boom support is not implemented yet.
     desc='cabin length for the tail boom fuselage',
     default_value=0.0,
 )
@@ -7889,6 +7899,16 @@ add_meta_data(
 # | |              | || |              | || |              | || |              | || |              | || |              | || |              | || |              | |
 # | '--------------' || '--------------' || '--------------' || '--------------' || '--------------' || '--------------' || '--------------' || '--------------' |
 #  '----------------'  '----------------'  '----------------'  '----------------'  '----------------'  '----------------'  '----------------'  '----------------'
+
+add_meta_data(
+    Settings.AERODYNAMICS_METHOD,
+    meta_data=_MetaData,
+    historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
+    desc="Sets which legacy code's methods will be used for aerodynamics estimation",
+    option=True,
+    types=LegacyCode,
+    default_value=None,
+)
 
 add_meta_data(
     Settings.EQUATIONS_OF_MOTION,
