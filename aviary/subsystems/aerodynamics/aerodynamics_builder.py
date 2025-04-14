@@ -602,7 +602,7 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
 
         return params
 
-    def get_bus_variables(self):
+    def get_bus_variables(self, aviary_inputs=None):
         if self.code_origin is GASP:
             return {
                 "interference_independent_of_shielded_area": {
