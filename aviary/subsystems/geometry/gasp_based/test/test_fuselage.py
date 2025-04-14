@@ -497,7 +497,7 @@ class BWBLayoutTestCase(unittest.TestCase):
         self.prob.model.add_subsystem(
             "bwb_cabin_layout", BWBCabinLayout(), promotes=["*"])
 
-        self.prob.model.set_input_defaults(Aircraft.BWB.FOREBODY_SWEEP, 65.0,
+        self.prob.model.set_input_defaults(Aircraft.BWB.PASSENGER_LEADING_EDGE_SWEEP, 65.0,
                                            units='deg')
         self.prob.model.set_input_defaults(Aircraft.Fuselage.PILOT_COMPARTMENT_LENGTH, 7.5,
                                            units='ft')
@@ -574,7 +574,7 @@ class BWBFuselageParameters2TestCase(unittest.TestCase):
         self.prob.model.add_subsystem(
             "bwb_fuselage_parameters2", BWBFuselageParameters2(), promotes=["*"])
 
-        self.prob.model.set_input_defaults(Aircraft.BWB.FOREBODY_SWEEP, 65.0,
+        self.prob.model.set_input_defaults(Aircraft.BWB.PASSENGER_LEADING_EDGE_SWEEP, 65.0,
                                            units='deg')
         self.prob.model.set_input_defaults(Aircraft.Fuselage.PILOT_COMPARTMENT_LENGTH, 7.5,
                                            units='ft')
@@ -682,7 +682,7 @@ class BWBFuselageGroupTestCase(unittest.TestCase):
                                            units='ft')
         self.prob.model.set_input_defaults(Aircraft.Fuselage.NOSE_FINENESS, 0.6,
                                            units='unitless')
-        self.prob.model.set_input_defaults(Aircraft.BWB.FOREBODY_SWEEP, 65.0,
+        self.prob.model.set_input_defaults(Aircraft.BWB.PASSENGER_LEADING_EDGE_SWEEP, 65.0,
                                            units='deg')
         self.prob.model.set_input_defaults(Aircraft.Fuselage.PILOT_COMPARTMENT_LENGTH, 7.5,
                                            units='ft')
