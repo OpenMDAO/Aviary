@@ -57,7 +57,7 @@ def read_data_file(filename: (str, Path), metadata=None, aliases=None,
         for key in aliases:
             if isinstance(aliases[key], str):
                 aliases[key] = [aliases[key]]
-            aliases[key] = [re.sub('\s', '_', item).lower() for item in aliases[key]]
+            aliases[key] = [re.sub(r'\s', '_', item).lower() for item in aliases[key]]
 
     with open(filepath, newline=None, encoding='utf-8-sig') as file:
         # csv.reader() and other avaliable packages that can read csv files are not used
@@ -93,7 +93,7 @@ def read_data_file(filename: (str, Path), metadata=None, aliases=None,
                         item = re.split('[(]', line_data[index])
                         item = [item[i].strip(') ') for i in range(len(item))]
                         # openMDAO vars can't have spaces, convert to underscores
-                        name = re.sub('\s', '_', item[0])
+                        name = re.sub(r'\s', '_', item[0])
                         if aliases:
                             # "reverse" lookup name in alias dict
                             for key in aliases:
@@ -136,9 +136,11 @@ def read_data_file(filename: (str, Path), metadata=None, aliases=None,
                             if metadata is not None and default_units != 'unitless':
                                 # units were not provided, but variable should have them
                                 # assume default units for that variable
-                                warning = f'Units were not provided for column <{name}> '\
-                                          f'while reading <{filepath}>. Using default '\
-                                          f'units of {default_units}.'
+                                warning = (
+                                    f'Units were not provided for column <{name}> while '
+                                    f'reading <{filepath}>. Using default units of '
+                                    f'{default_units}.'
+                                )
                                 warnings.warn(warning)
                             units = default_units
 
@@ -175,8 +177,14 @@ def read_data_file(filename: (str, Path), metadata=None, aliases=None,
 
 
 # multiple type annotation uses "typeA | typeB" syntax, but requires Python 3.10+
-def write_data_file(filename: (str, Path) = None, data: NamedValues = None,
-                    comments: (str, list) = [], include_timestamp: bool = False):
+# filename: (str, Path)
+# comments: (str, list)
+def write_data_file(
+    filename=None,
+    data: NamedValues = None,
+    comments=[],
+    include_timestamp: bool = False,
+):
     """
     Write data to a comma-separated values (csv) format file using the Aviary data table
     format.
