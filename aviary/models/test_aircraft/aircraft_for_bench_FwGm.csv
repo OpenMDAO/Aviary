@@ -15,7 +15,7 @@ aircraft:design:supercritical_drag_shift,0.033,unitless
 aircraft:engine:constant_fuel_consumption,0.,lbm/h
 aircraft:engine:data_file,models/engines/turbofan_23k_1.deck,unitless
 aircraft:engine:global_throttle, True, unitless
-aircraft:engine:enable_sizing,False,unitless
+aircraft:engine:scale_performance,False,unitless
 aircraft:engine:mass_specific,0.21366,lbm/lbf
 aircraft:engine:fuel_flow_scaler_constant_term,0.,unitless
 aircraft:engine:fuel_flow_scaler_linear_term,0.,unitless
@@ -162,6 +162,7 @@ aircraft:avionics:mass_scaler,1.2,unitless
 aircraft:canard:area,0.0,ft**2
 aircraft:canard:aspect_ratio,0.0,unitless
 aircraft:canard:thickness_to_chord,0.0,unitless
+aircraft:crew_and_payload:baggage_mass_per_passenger,44,lbm
 aircraft:crew_and_payload:cargo_container_mass_scaler,1.0,unitless
 aircraft:crew_and_payload:design:num_business_class,0,unitless
 aircraft:crew_and_payload:design:num_first_class,11,unitless
@@ -250,6 +251,7 @@ mission:takeoff:lift_over_drag,17.354,unitless
 mission:takeoff:rolling_friction_coefficient,0.0175,unitless
 aircraft:fuel:burn_per_passenger_mile,0.1
 settings:equations_of_motion,2DOF
+settings:aerodynamics_method,GASP
 settings:mass_method,FLOPS
 
 # Initialization Guesses

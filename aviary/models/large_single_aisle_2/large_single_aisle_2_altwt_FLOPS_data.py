@@ -253,6 +253,7 @@ inputs.set_val(Mission.Design.THRUST_TAKEOFF_PER_ENG, 27301.0, 'lbf')
 # Settings
 # ---------------------------
 inputs.set_val(Settings.EQUATIONS_OF_MOTION, EquationsOfMotion.HEIGHT_ENERGY)
+inputs.set_val(Settings.AERODYNAMICS_METHOD, LegacyCode.FLOPS)
 inputs.set_val(Settings.MASS_METHOD, LegacyCode.FLOPS)
 
 # ---------------------------
@@ -337,11 +338,11 @@ outputs.set_val(Aircraft.Instruments.MASS, 484., 'lbm')
 outputs.set_val(Aircraft.LandingGear.MAIN_GEAR_MASS, 0.85 * 5778., 'lbm')
 outputs.set_val(Aircraft.LandingGear.NOSE_GEAR_MASS, 0.15 * 5778., 'lbm')
 
-outputs.set_val(Aircraft.Nacelle.CHARACTERISTIC_LENGTH,  np.array(11.65), 'ft')
-outputs.set_val(Aircraft.Nacelle.FINENESS, np.array(1.6643))
+outputs.set_val(Aircraft.Nacelle.CHARACTERISTIC_LENGTH, 11.65, 'ft')
+outputs.set_val(Aircraft.Nacelle.FINENESS, 1.6643)
 outputs.set_val(Aircraft.Nacelle.TOTAL_WETTED_AREA, 2 * 228.34, 'ft**2')
 outputs.set_val(Aircraft.Nacelle.MASS, 1612.2, 'lbm')
-outputs.set_val(Aircraft.Nacelle.WETTED_AREA, np.array(228.34), 'ft**2')
+outputs.set_val(Aircraft.Nacelle.WETTED_AREA, 228.34, 'ft**2')
 
 outputs.set_val(Aircraft.Paint.MASS, 582.3, 'lbm')
 

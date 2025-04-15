@@ -25,6 +25,9 @@ from aviary.variable_info.enums import LegacyCode
 from aviary.variable_info.functions import setup_model_options
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission, Settings
 
+from openmdao.utils.testing_utils import use_tempdirs
+
+
 FLOPS = LegacyCode.FLOPS
 GASP = LegacyCode.GASP
 
@@ -746,7 +749,7 @@ _design_altitudes = AviaryValues({
 
 
 if __name__ == "__main__":
-    unittest.main()
-    # test = ComputedVsTabularTest()
-    # test.setUp()
-    # test.test_case()
+    # unittest.main()
+    test = TabularAeroGroupDataTest()
+    test.setUp()
+    test.test_parameters()
