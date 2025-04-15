@@ -387,7 +387,7 @@ add_meta_data(
         "LEAPS1": 'aircraft.inputs.L0_blended_wing_body_design.passenger_leading_edge_sweep',
     },
     units='deg',
-    desc='forebody Sweep angle',
+    desc='forebody sweep angle',
     default_value=45.0,
 )
 
@@ -4311,15 +4311,6 @@ add_meta_data(
 )
 
 add_meta_data(
-    Aircraft.Nacelle.DIAMETER_BURIED_IN_FUSELAGE,
-    meta_data=_MetaData,
-    historical_name={"GASP": 'INGASP.HEBQDN', "FLOPS": None, "LEAPS1": None},
-    units="unitless",
-    desc='percentage of nacelle diamter buried in fuselage over nacelle diameter',
-    default_value=0.0,
-)
-
-add_meta_data(
     Aircraft.Nacelle.FINENESS,
     meta_data=_MetaData,
     historical_name={
@@ -4408,6 +4399,15 @@ add_meta_data(
     historical_name={"GASP": 'INGASP.UWNAC', "FLOPS": None, "LEAPS1": None},
     units='lbm/ft**2',
     desc='nacelle mass/nacelle surface area; lbm per sq ft.',
+    default_value=0.0,
+)
+
+add_meta_data(
+    Aircraft.Nacelle.PERCENT_DIAM_BURIED_IN_FUSELAGE,
+    meta_data=_MetaData,
+    historical_name={"GASP": 'INGASP.HEBQDN', "FLOPS": None, "LEAPS1": None},
+    units="unitless",
+    desc='percentage of nacelle diamter buried in fuselage over nacelle diameter',
     default_value=0.0,
 )
 
@@ -5465,7 +5465,7 @@ add_meta_data(
 )
 
 add_meta_data(
-    Aircraft.Wing.EXPOSED_WING_AREA,
+    Aircraft.Wing.EXPOSED_AREA,
     meta_data=_MetaData,
     historical_name={
         "GASP": 'SW_EXP',
