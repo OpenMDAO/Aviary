@@ -8,7 +8,7 @@ import pandas as pd
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 
 from aviary.subsystems.aerodynamics.gasp_based.gaspaero import CruiseAero, LowSpeedAero
-from aviary.variable_info.options import get_option_defaults
+from aviary.variable_info.functions import setup_model_options
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 from aviary.utils.aviary_values import AviaryValues
 
@@ -33,6 +33,10 @@ class GASPAeroTest(unittest.TestCase):
             CruiseAero(num_nodes=2, input_atmos=True),
             promotes=["*"],
         )
+
+        setup_model_options(prob, AviaryValues(
+            {Aircraft.Engine.NUM_ENGINES: ([2], 'unitless')}))
+
         prob.setup(check=False, force_alloc_complex=True)
 
         _init_geom(prob)
@@ -74,6 +78,10 @@ class GASPAeroTest(unittest.TestCase):
             ),
             promotes=["*"],
         )
+
+        setup_model_options(prob, AviaryValues(
+            {Aircraft.Engine.NUM_ENGINES: ([2], 'unitless')}))
+
         prob.setup(check=False, force_alloc_complex=True)
 
         _init_geom(prob)
@@ -140,6 +148,9 @@ class GASPAeroTest(unittest.TestCase):
             promotes_inputs=["*", "lift_req"],
         )
 
+        setup_model_options(prob, AviaryValues(
+            {Aircraft.Engine.NUM_ENGINES: ([2], 'unitless')}))
+
         prob.setup(check=False, force_alloc_complex=True)
 
         _init_geom(prob)
@@ -151,6 +162,7 @@ class GASPAeroTest(unittest.TestCase):
         prob.set_val(Aircraft.Wing.FLAP_CHORD_RATIO, setup_data["cfoc"])
         prob.set_val(Mission.Design.GROSS_MASS, setup_data["wgto"])
 
+        prob.set_val(Dynamic.Atmosphere.DYNAMIC_PRESSURE, 1)
         prob.set_val(Dynamic.Atmosphere.MACH, 0.1)
         prob.set_val(Dynamic.Mission.ALTITUDE, 10)
         prob.set_val("alpha_in", 5)

@@ -13,11 +13,11 @@ import openmdao.api as om
 
 import aviary.constants as constants
 
+from aviary.utils.utils import isiterable
 from aviary.utils.aviary_values import AviaryValues
 from aviary.utils.named_values import NamedValues, get_keys, get_items
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 from aviary.variable_info.variable_meta_data import _MetaData
-from aviary.variable_info.enums import GASPEngineType
 
 
 class EngineModelVariables(Enum):
@@ -133,7 +133,18 @@ def build_engine_deck(
     Parameter
     ----------
     options : AviaryValues
-        Options to use in creation of EngineDecks.
+        Options to use in creation of EngineDeck
+
+    name : str, optional
+        The name of the newly created EngineDeck
+
+    required_variables : set, optional
+        A set of required variables (from EngineModelVariables) for the newly created
+        EngineDeck. Defaults to the required set {ALTITUDE, MACH, THROTTLE, THRUST}.        
+
+    meta_data : dict, optional
+        The metadata to be used while creating the EngineDeck. If None, use Aviary's
+        default metadata.
 
     Returns
     ----------
@@ -141,7 +152,7 @@ def build_engine_deck(
         EngineDeck created using provided options.
     """
 
-    # Required engine vars include one setting from Mission.Summary.
+    # Required engine vars include one setting from Mission.Summary
     engine_vars = [item for item in Aircraft.Engine.__dict__.values()]
     engine_vars.append(Mission.Summary.FUEL_FLOW_SCALER)
 
@@ -151,51 +162,29 @@ def build_engine_deck(
     for var in engine_vars:
         # check if this variable exist with useable metadata
         try:
-            units = _MetaData[var]['units']
+            units = meta_data[var]['units']
+        except (KeyError, TypeError):
+            continue
+        else:
             try:
                 aviary_val = options.get_val(var, units)
-                default_value = meta_data[var]['default_value']
             # if not, use default value from _MetaData?
             except KeyError:
-                # engine_options.set_val(var, _MetaData[var]['default_value'], units)
+                # currently skipping filling "missing" variables with defaults
+                # engine_options.set_val(var, meta_data[var]['default_value'], units)
                 continue
             # add value from options to engine_options
             else:
-                # special handling for numpy arrays - check if they are multidimensional,
-                # which implies multiple engine models, and only use the value intended
-                # for the first engine model
-                if isinstance(aviary_val, np.ndarray) and isinstance(
-                    default_value, np.ndarray
-                ):
-                    expected_dim = default_value.ndim
-                    val_dim = aviary_val.ndim
-                    # if aviary_values has one more dimension than expected per-engine,
-                    # we know aviary_values is for heterogeneous engine type. Currently only using
-                    # first index
-                    if val_dim == expected_dim + 1:
-                        aviary_val = aviary_val[0]
-                    # if aviary_values has more than one dimension from expected, then
-                    # something is very wrong and cannot be fixed here
-                    if val_dim > expected_dim + 1:
-                        UserWarning(
-                            f'Provided vector for {var} has too many dimensions: '
-                            f'expecting a {expected_dim+1}D array ({expected_dim}D '
-                            'per engine)'
-                        )
-                # if neither metadata nor aviary_val are numpy arrays, cannot check dimensions
-                # in robust way, so a reduced check is done. No raised, errors, must
-                # assume aviary_val data is formatted correctly
-                elif isinstance(aviary_val, (list, tuple, np.ndarray)):
+                if isiterable(aviary_val):
                     try:
                         aviary_val_0 = aviary_val[0]
                     except TypeError:
                         pass
                     else:
-                        # if item in first index is also iterable, aviary_val is multi-dimensional array
-                        # if array only contains a single value, use that
+                        # if item in first index is also iterable, or if array only
+                        # contains a single value, use that
                         if (
-                            isinstance(aviary_val_0, (list, tuple, np.ndarray))
-                            or len(aviary_val) == 1
+                            isiterable(aviary_val_0) or len(aviary_val) == 1
                         ):
                             aviary_val = aviary_val_0
                 # "Convert" numpy types to standard Python types. Wrap first

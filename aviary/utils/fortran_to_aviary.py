@@ -39,6 +39,7 @@ from aviary.utils.legacy_code_data.gasp_defaults import (
     gasp_deprecated_vars,
 )
 
+
 FLOPS = LegacyCode.FLOPS
 GASP = LegacyCode.GASP
 
@@ -69,7 +70,7 @@ def fortran_to_aviary(
         'initialization_guesses': initialization_guesses,
     }
 
-    fortran_deck: Path = get_path(fortran_deck, verbose=False)
+    fortran_deck: Path = get_path(fortran_deck, verbosity=verbosity)
 
     timestamp = datetime.now().strftime('%m/%d/%y at %H:%M')
     user = getpass.getuser()
@@ -207,7 +208,6 @@ def parse_input_file(
     Lines with multiple variable-data pairs are supported, but the last value per
     variable must be followed by a trailing comma.
     '''
-    input_data = NamedValues()
     with open(fortran_deck, 'r') as f_in:
         current_namelist = current_tag = ''
         for line in f_in:
@@ -514,6 +514,12 @@ def update_gasp_options(vehicle_data):
         "double_slotted_fowler",
     ]
 
+    design_type, design_units = input_values.get_item(Aircraft.Design.TYPE)
+    if design_type[0] == 0:
+        input_values.set_val(Aircraft.Design.TYPE, ['transport'], design_units)
+    elif design_type[0] == 1:
+        input_values.set_val(Aircraft.Design.TYPE, ['BWB'], design_units)
+
     ## PROBLEM TYPE ##
     # if multiple values of target_range are specified, use the one that
     # corresponds to the problem_type
@@ -540,6 +546,19 @@ def update_gasp_options(vehicle_data):
             input_values.set_val(Settings.PROBLEM_TYPE, ['fallout'])
     input_values.set_val(Mission.Design.RANGE, [design_range], distance_units)
 
+    ## Passengers ##
+    try:
+        num_passengers = input_values.get_val(
+            Aircraft.CrewPayload.Design.NUM_PASSENGERS, 'unitless')[0]
+        # In GASP, percentage of total number of passengers is given. Convert it to the actual first class passengers.
+        pct_first_class = input_values.get_val(
+            Aircraft.CrewPayload.Design.NUM_FIRST_CLASS, 'unitless')[0]
+        num_first_class = int(pct_first_class * num_passengers)
+        input_values.set_val(Aircraft.CrewPayload.Design.NUM_FIRST_CLASS,
+                             [num_first_class], 'unitless')
+    except:
+        pass
+
     ## STRUT AND FOLD ##
     strut_loc = input_values.get_val(Aircraft.Strut.ATTACHMENT_LOCATION, 'ft')[0]
     folded_span = input_values.get_val(Aircraft.Wing.FOLDED_SPAN, 'ft')[0]
@@ -552,6 +571,10 @@ def update_gasp_options(vehicle_data):
         input_values.set_val(Aircraft.Wing.HAS_FOLD, [False], 'unitless')
     else:
         input_values.set_val(Aircraft.Wing.HAS_FOLD, [True], 'unitless')
+        if strut_loc >= 0:
+            input_values.set_val(
+                Aircraft.Wing.CHOOSE_FOLD_LOCATION, [False], 'unitless'
+            )
 
     if strut_loc < 0:
         input_values.set_val(Aircraft.Wing.HAS_FOLD, [True], 'unitless')

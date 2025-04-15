@@ -4,12 +4,13 @@ import openmdao.api as om
 
 from dymos.transcriptions.transcription_base import TranscriptionBase
 
+from aviary.mission.flight_phase_builder import FlightPhaseOptions
 from aviary.mission.flops_based.phases.build_landing import Landing
 from aviary.mission.flops_based.phases.build_takeoff import Takeoff
 from aviary.mission.flops_based.phases.energy_phase import EnergyPhase
 from aviary.mission.phase_builder_base import PhaseBuilderBase
 from aviary.mission.problem_configurator import ProblemConfiguratorBase
-from aviary.utils.functions import wrapped_convert_units
+from aviary.utils.utils import wrapped_convert_units
 from aviary.utils.process_input_decks import initialization_guessing
 from aviary.variable_info.enums import AnalysisScheme, LegacyCode
 from aviary.variable_info.variables import Aircraft, Mission, Dynamic, Settings
@@ -26,6 +27,12 @@ class HeightEnergyProblemConfigurator(ProblemConfiguratorBase):
     A Height-Energy specific builder that customizes AviaryProblem() for use with
     height energy phases.
     """
+
+    def check_phase_options(self, prob):
+        "Returns the Options Dictionary used to instantiate the phases used by this ODE."
+        " This will be used by check_and_preprocess_inputs in M4L2 to ensure that the "
+        " required inputs are in the phase_info."
+        return FlightPhaseOptions
 
     def initial_guesses(self, prob):
         """

@@ -12,6 +12,9 @@ from aviary.models.N3CC.N3CC_data import (
 from aviary.validation_cases.validation_tests import do_validation_test
 from aviary.variable_info.variables import Dynamic, Mission, Aircraft
 from aviary.utils.preprocessors import preprocess_options
+from aviary.variable_info.functions import setup_model_options
+from aviary.utils.aviary_values import AviaryValues
+
 
 takeoff_subsystem_options = deepcopy(takeoff_subsystem_options)
 
@@ -108,6 +111,9 @@ class TakeoffODETest(unittest.TestCase):
             promotes_outputs=['*'])
 
         prob.model.set_input_defaults(Aircraft.Wing.AREA, val=1.0, units='ft**2')
+
+        setup_model_options(prob, AviaryValues(
+            {Aircraft.Engine.NUM_ENGINES: ([2], 'unitless')}))
 
         prob.setup(check=False, force_alloc_complex=True)
 

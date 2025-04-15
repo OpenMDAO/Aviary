@@ -10,6 +10,7 @@ from aviary.subsystems.propulsion.utils import build_engine_deck
 from aviary.utils.test_utils.default_subsystems import get_default_mission_subsystems
 from aviary.variable_info.options import get_option_defaults
 from aviary.variable_info.variables import Aircraft, Dynamic
+from aviary.variable_info.functions import setup_model_options
 
 
 class RotationODETestCase(unittest.TestCase):
@@ -28,6 +29,7 @@ class RotationODETestCase(unittest.TestCase):
         self.prob.model = RotationODE(num_nodes=2,
                                       aviary_options=get_option_defaults(),
                                       core_subsystems=default_mission_subsystems)
+        setup_model_options(self.prob, aviary_options)
 
     def test_rotation_partials(self):
         # Check partial derivatives
@@ -40,6 +42,9 @@ class RotationODETestCase(unittest.TestCase):
         self.prob.set_val("t_curr", [1, 2], units="s")
         self.prob.set_val("interference_independent_of_shielded_area", 1.89927266)
         self.prob.set_val("drag_loss_due_to_shielded_wing_area", 68.02065834)
+        self.prob.set_val(Aircraft.Wing.FORM_FACTOR, 1.25)
+        self.prob.set_val(Aircraft.VerticalTail.FORM_FACTOR, 1.25)
+        self.prob.set_val(Aircraft.HorizontalTail.FORM_FACTOR, 1.25)
 
         set_params_for_unit_tests(self.prob)
 

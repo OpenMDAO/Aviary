@@ -3,6 +3,7 @@
 ############
 settings:problem_type, fallout, unitless
 settings:equations_of_motion, 2DOF
+settings:aerodynamics_method, GASP
 settings:mass_method, GASP
 
 ############
@@ -92,7 +93,7 @@ aircraft:fuselage:pressure_differential, 6.55, psi
 aircraft:fuselage:seat_pitch, 41.24, inch
 aircraft:fuselage:seat_width, 18, inch
 aircraft:fuselage:tail_fineness, 2.9, unitless
-aircraft:fuselage:wetted_area_factor, 1, unitless
+aircraft:fuselage:wetted_area_scaler, 1, unitless
 
 # H-Tail
 aircraft:horizontal_tail:area, 0, ft**2

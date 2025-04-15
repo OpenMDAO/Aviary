@@ -14,7 +14,7 @@ from aviary.utils.test_utils.default_subsystems import get_default_mission_subsy
 from aviary.utils.test_utils.IO_test_util import check_prob_outputs
 from aviary.variable_info.functions import setup_model_options
 from aviary.variable_info.options import get_option_defaults
-from aviary.variable_info.variables import Dynamic, Mission
+from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 
 
 class DLandTestCase(unittest.TestCase):
@@ -54,6 +54,7 @@ class DLandTestCase(unittest.TestCase):
         self.prob.set_val(Mission.Landing.BRAKING_DELAY, 1, units="s")
         self.prob.set_val("mass", 165279, units="lbm")
         self.prob.set_val(Dynamic.Vehicle.Propulsion.THROTTLE, 0.0, units='unitless')
+        self.prob.set_val(Aircraft.Wing.FORM_FACTOR, 1.25, units='unitless')
 
         self.prob.run_model()
 

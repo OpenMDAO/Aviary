@@ -25,6 +25,9 @@ from aviary.variable_info.enums import LegacyCode
 from aviary.variable_info.functions import setup_model_options
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission, Settings
 
+from openmdao.utils.testing_utils import use_tempdirs
+
+
 FLOPS = LegacyCode.FLOPS
 GASP = LegacyCode.GASP
 
@@ -55,6 +58,9 @@ class TabularAeroGroupFileTest(unittest.TestCase):
 
         setup_model_options(self.prob, aviary_options)
 
+        self.prob.model.set_input_defaults(Dynamic.Atmosphere.MACH,
+                                           val=0.3876, units='unitless')
+
         self.prob.setup(check=False, force_alloc_complex=True)
 
     def test_case(self):
@@ -66,7 +72,6 @@ class TabularAeroGroupFileTest(unittest.TestCase):
         )  # convert from knots to ft/s
         self.prob.set_val(Dynamic.Mission.ALTITUDE, val=10582, units='m')
         self.prob.set_val(Dynamic.Vehicle.MASS, val=80442, units='kg')
-        self.prob.set_val(Dynamic.Atmosphere.MACH, val=0.3876, units='unitless')
         # 1344.5? 'reference' vs 'calculated'?
         self.prob.set_val(Aircraft.Wing.AREA, val=1341, units='ft**2')
         # calculated from online atmospheric table
@@ -100,7 +105,7 @@ class TabularAeroGroupFileTest(unittest.TestCase):
         local_phase_info.pop('climb')
         local_phase_info.pop('descent')
 
-        prob = AviaryProblem()
+        prob = AviaryProblem(verbosity=0)
 
         prob.load_inputs(
             "subsystems/aerodynamics/flops_based/test/data/high_wing_single_aisle.csv",
@@ -194,6 +199,9 @@ class TabularAeroGroupDataTest(unittest.TestCase):
 
         setup_model_options(self.prob, aviary_options)
 
+        self.prob.model.set_input_defaults(Dynamic.Atmosphere.MACH,
+                                           val=0.3876, units='unitless')
+
         self.prob.setup(check=False, force_alloc_complex=True)
 
     def test_case(self):
@@ -205,7 +213,6 @@ class TabularAeroGroupDataTest(unittest.TestCase):
         )  # convert from knots to ft/s
         self.prob.set_val(Dynamic.Mission.ALTITUDE, val=10582, units='m')
         self.prob.set_val(Dynamic.Vehicle.MASS, val=80442, units='kg')
-        self.prob.set_val(Dynamic.Atmosphere.MACH, val=0.3876, units='unitless')
         # 1344.5? 'reference' vs 'calculated'?
         self.prob.set_val(Aircraft.Wing.AREA, val=1341, units='ft**2')
         # calculated from online atmospheric table
@@ -365,6 +372,9 @@ class ComputedVsTabularTest(unittest.TestCase):
         )
 
         setup_model_options(prob, flops_inputs)
+
+        prob.model.set_input_defaults(Dynamic.Atmosphere.MACH,
+                                      val=0.3876, units='unitless')
 
         prob.setup(check=False, force_alloc_complex=True)
 
@@ -739,7 +749,7 @@ _design_altitudes = AviaryValues({
 
 
 if __name__ == "__main__":
-    unittest.main()
-    # test = ComputedVsTabularTest()
-    # test.setUp()
-    # test.test_case()
+    # unittest.main()
+    test = TabularAeroGroupDataTest()
+    test.setUp()
+    test.test_parameters()

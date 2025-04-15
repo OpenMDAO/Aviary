@@ -10,6 +10,7 @@ from aviary.subsystems.propulsion.utils import build_engine_deck
 from aviary.utils.test_utils.default_subsystems import get_default_mission_subsystems
 from aviary.variable_info.options import get_option_defaults
 from aviary.variable_info.variables import Aircraft, Dynamic
+from aviary.variable_info.functions import setup_model_options
 
 
 class CruiseODETestCase(unittest.TestCase):
@@ -32,6 +33,8 @@ class CruiseODETestCase(unittest.TestCase):
             Dynamic.Atmosphere.MACH, np.array([0, 0]), units="unitless"
         )
 
+        setup_model_options(self.prob, aviary_options)
+
     def test_cruise(self):
         # test partial derivatives
         self.prob.setup(check=False, force_alloc_complex=True)
@@ -39,6 +42,9 @@ class CruiseODETestCase(unittest.TestCase):
         self.prob.set_val(Dynamic.Atmosphere.MACH, [0.7, 0.7], units="unitless")
         self.prob.set_val("interference_independent_of_shielded_area", 1.89927266)
         self.prob.set_val("drag_loss_due_to_shielded_wing_area", 68.02065834)
+        self.prob.set_val(Aircraft.Wing.FORM_FACTOR, 1.25)
+        self.prob.set_val(Aircraft.VerticalTail.FORM_FACTOR, 1.25)
+        self.prob.set_val(Aircraft.HorizontalTail.FORM_FACTOR, 1.25)
 
         set_params_for_unit_tests(self.prob)
 
@@ -97,6 +103,8 @@ class ElectricCruiseODETestCase(unittest.TestCase):
             Dynamic.Atmosphere.MACH, np.array([0, 0]), units="unitless"
         )
 
+        setup_model_options(self.prob, aviary_options)
+
     def test_electric_cruise(self):
         # test partial derivatives
         self.prob.setup(check=False, force_alloc_complex=True)
@@ -104,6 +112,9 @@ class ElectricCruiseODETestCase(unittest.TestCase):
         self.prob.set_val(Dynamic.Atmosphere.MACH, [0.7, 0.7], units="unitless")
         self.prob.set_val("interference_independent_of_shielded_area", 1.89927266)
         self.prob.set_val("drag_loss_due_to_shielded_wing_area", 68.02065834)
+        self.prob.set_val(Aircraft.Wing.FORM_FACTOR, 1.25)
+        self.prob.set_val(Aircraft.VerticalTail.FORM_FACTOR, 1.25)
+        self.prob.set_val(Aircraft.HorizontalTail.FORM_FACTOR, 1.25)
 
         set_params_for_unit_tests(self.prob)
 

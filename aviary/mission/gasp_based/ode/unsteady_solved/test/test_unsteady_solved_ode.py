@@ -18,6 +18,7 @@ from aviary.utils.test_utils.default_subsystems import get_default_mission_subsy
 from aviary.variable_info.enums import SpeedType
 from aviary.variable_info.options import get_option_defaults
 from aviary.variable_info.variables import Aircraft, Dynamic
+from aviary.variable_info.functions import setup_model_options
 
 
 class TestUnsteadySolvedODE(unittest.TestCase):
@@ -53,12 +54,15 @@ class TestUnsteadySolvedODE(unittest.TestCase):
                 Dynamic.Vehicle.ANGLE_OF_ATTACK, np.zeros(nn), units="deg"
             )
 
+        setup_model_options(p, aviary_options)
+
         p.setup(force_alloc_complex=True)
 
         set_params_for_unit_tests(p)
 
         p.final_setup()
 
+        p.set_val(Aircraft.Wing.FORM_FACTOR, 1.25, units="unitless")
         p.set_val(
             Dynamic.Atmosphere.SPEED_OF_SOUND, 968.076 * np.ones(nn), units="ft/s"
         )

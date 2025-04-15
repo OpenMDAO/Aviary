@@ -11,6 +11,7 @@ from aviary.utils.test_utils.default_subsystems import get_default_mission_subsy
 from aviary.utils.test_utils.IO_test_util import check_prob_outputs
 from aviary.variable_info.options import get_option_defaults
 from aviary.variable_info.variables import Aircraft, Dynamic
+from aviary.variable_info.functions import setup_model_options
 
 
 class FlightPathODETestCase(unittest.TestCase):
@@ -33,6 +34,8 @@ class FlightPathODETestCase(unittest.TestCase):
             core_subsystems=default_mission_subsystems,
         )
 
+        setup_model_options(self.prob, aviary_options)
+
     def test_case1(self):
         # ground_roll = False (the aircraft is not confined to the ground)
 
@@ -45,6 +48,9 @@ class FlightPathODETestCase(unittest.TestCase):
         self.prob.set_val(Dynamic.Mission.ALTITUDE, [500, 500], units="ft")
         self.prob.set_val("interference_independent_of_shielded_area", 1.89927266)
         self.prob.set_val("drag_loss_due_to_shielded_wing_area", 68.02065834)
+        self.prob.set_val(Aircraft.Wing.FORM_FACTOR, 1.25)
+        self.prob.set_val(Aircraft.VerticalTail.FORM_FACTOR, 1.25)
+        self.prob.set_val(Aircraft.HorizontalTail.FORM_FACTOR, 1.25)
 
         self.prob.run_model()
         testvals = {
@@ -83,6 +89,9 @@ class FlightPathODETestCase(unittest.TestCase):
         self.prob.set_val(Dynamic.Mission.ALTITUDE, [500, 500], units="ft")
         self.prob.set_val("interference_independent_of_shielded_area", 1.89927266)
         self.prob.set_val("drag_loss_due_to_shielded_wing_area", 68.02065834)
+        self.prob.set_val(Aircraft.Wing.FORM_FACTOR, 1.25)
+        self.prob.set_val(Aircraft.VerticalTail.FORM_FACTOR, 1.25)
+        self.prob.set_val(Aircraft.HorizontalTail.FORM_FACTOR, 1.25)
 
         self.prob.run_model()
         testvals = {

@@ -12,6 +12,7 @@ from aviary.utils.test_utils.IO_test_util import check_prob_outputs
 from aviary.variable_info.enums import Verbosity
 from aviary.variable_info.options import get_option_defaults
 from aviary.variable_info.variables import Aircraft, Dynamic
+from aviary.variable_info.functions import setup_model_options
 
 
 class ClimbODETestCase(unittest.TestCase):
@@ -38,6 +39,8 @@ class ClimbODETestCase(unittest.TestCase):
             core_subsystems=default_mission_subsystems,
         )
 
+        setup_model_options(self.prob, aviary_options)
+
     def test_start_of_climb(self):
         # Test against GASP start of climb at 250 kts EAS, check partials
         self.sys.options["EAS_target"] = 250
@@ -55,6 +58,9 @@ class ClimbODETestCase(unittest.TestCase):
         self.prob.set_val(Aircraft.Wing.INCIDENCE, 0.0000001, units="deg")
         self.prob.set_val("interference_independent_of_shielded_area", 1.89927266)
         self.prob.set_val("drag_loss_due_to_shielded_wing_area", 68.02065834)
+        self.prob.set_val(Aircraft.Wing.FORM_FACTOR, 1.25)
+        self.prob.set_val(Aircraft.VerticalTail.FORM_FACTOR, 1.25)
+        self.prob.set_val(Aircraft.HorizontalTail.FORM_FACTOR, 1.25)
 
         set_params_for_unit_tests(self.prob)
 
@@ -99,6 +105,9 @@ class ClimbODETestCase(unittest.TestCase):
         self.prob.set_val("EAS", np.array([270, 270]), units="kn")
         self.prob.set_val("interference_independent_of_shielded_area", 1.89927266)
         self.prob.set_val("drag_loss_due_to_shielded_wing_area", 68.02065834)
+        self.prob.set_val(Aircraft.Wing.FORM_FACTOR, 1.25)
+        self.prob.set_val(Aircraft.VerticalTail.FORM_FACTOR, 1.25)
+        self.prob.set_val(Aircraft.HorizontalTail.FORM_FACTOR, 1.25)
 
         set_params_for_unit_tests(self.prob)
 
@@ -124,3 +133,6 @@ class ClimbODETestCase(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+    # test = ClimbODETestCase()
+    # test.setUp()
+    # test.test_end_of_climb()

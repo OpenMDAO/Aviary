@@ -11,6 +11,8 @@ from aviary.subsystems.mass.gasp_based.fuel import (BodyTankCalculations,
 from aviary.variable_info.enums import Verbosity
 from aviary.variable_info.options import get_option_defaults
 from aviary.variable_info.variables import Aircraft, Mission, Settings
+from aviary.variable_info.functions import setup_model_options
+from aviary.utils.aviary_values import AviaryValues
 
 
 class BodyCalculationTestCase1(unittest.TestCase):
@@ -46,6 +48,9 @@ class BodyCalculationTestCase1(unittest.TestCase):
         self.prob.model.set_input_defaults(
             Aircraft.Design.OPERATING_MASS, val=96508, units="lbm"
         )
+
+        setup_model_options(self.prob, AviaryValues(
+            {Aircraft.Engine.NUM_ENGINES: ([2], 'unitless')}))
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
@@ -102,6 +107,9 @@ class BodyCalculationTestCase2(
             Aircraft.Design.OPERATING_MASS, val=94417, units="lbm"
         )
 
+        setup_model_options(self.prob, AviaryValues(
+            {Aircraft.Engine.NUM_ENGINES: ([2], 'unitless')}))
+
         self.prob.setup(check=False, force_alloc_complex=True)
 
     def test_case1(self):
@@ -155,6 +163,10 @@ class BodyCalculationTestCase3(unittest.TestCase):
             Mission.Design.FUEL_MASS, val=44973.0, units="lbm")
         self.prob.model.set_input_defaults(
             Aircraft.Design.OPERATING_MASS, val=94417, units="lbm")
+
+        setup_model_options(self.prob, AviaryValues(
+            {Aircraft.Engine.NUM_ENGINES: ([2], 'unitless')}))
+
         self.prob.setup(check=False, force_alloc_complex=True)
 
         partial_data = self.prob.check_partials(out_stream=None, method="cs")
@@ -199,6 +211,9 @@ class BodyCalculationTestCase4smooth(unittest.TestCase):
         self.prob.model.set_input_defaults(
             Aircraft.Design.OPERATING_MASS, val=96508, units="lbm"
         )
+
+        setup_model_options(self.prob, AviaryValues(
+            {Aircraft.Engine.NUM_ENGINES: ([2], 'unitless')}))
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
@@ -256,6 +271,9 @@ class FuelAndOEMTestCase(unittest.TestCase):
             Aircraft.Fuel.FUEL_MARGIN, val=0, units="unitless")
         self.prob.model.set_input_defaults(
             Aircraft.Fuel.TOTAL_CAPACITY, val=55725.1, units="lbm")
+
+        setup_model_options(self.prob, AviaryValues(
+            {Aircraft.Engine.NUM_ENGINES: ([2], 'unitless')}))
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
@@ -320,6 +338,10 @@ class FuelAndOEMTestCase2(unittest.TestCase):
             Aircraft.Fuel.FUEL_MARGIN, val=0, units="unitless")
         prob.model.set_input_defaults(
             Aircraft.Fuel.TOTAL_CAPACITY, val=55725.1, units="lbm")
+
+        setup_model_options(prob, AviaryValues(
+            {Aircraft.Engine.NUM_ENGINES: ([2], 'unitless')}))
+
         prob.setup(check=False, force_alloc_complex=True)
 
         partial_data = prob.check_partials(out_stream=None, method="cs")
@@ -357,6 +379,9 @@ class FuelSysAndFullFusMassTestCase(
         self.prob.model.set_input_defaults("wingfuel_mass_min", val=32853, units="lbm")
         self.prob.model.set_input_defaults(
             Aircraft.Fuel.FUEL_MARGIN, val=0, units="unitless")
+
+        setup_model_options(self.prob, AviaryValues(
+            {Aircraft.Engine.NUM_ENGINES: ([2], 'unitless')}))
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
@@ -409,6 +434,10 @@ class FuelSysAndFullFusMassTestCase2(unittest.TestCase):
         self.prob.model.set_input_defaults("wingfuel_mass_min", val=32853, units="lbm")
         self.prob.model.set_input_defaults(
             Aircraft.Fuel.FUEL_MARGIN, val=0, units="unitless")
+
+        setup_model_options(self.prob, AviaryValues(
+            {Aircraft.Engine.NUM_ENGINES: ([2], 'unitless')}))
+
         self.prob.setup(check=False, force_alloc_complex=True)
 
         partial_data = self.prob.check_partials(out_stream=None, method="cs")
@@ -467,6 +496,9 @@ class FusAndStructMassTestCase(unittest.TestCase):
             Aircraft.Propulsion.TOTAL_ENGINE_POD_MASS, val=3785, units="lbm")
         self.prob.model.set_input_defaults(
             Aircraft.Design.STRUCTURAL_MASS_INCREMENT, val=0, units="lbm")
+
+        setup_model_options(self.prob, AviaryValues(
+            {Aircraft.Engine.NUM_ENGINES: ([2], 'unitless')}))
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
@@ -542,6 +574,10 @@ class FusAndStructMassTestCase2(unittest.TestCase):
             Aircraft.Propulsion.TOTAL_ENGINE_POD_MASS, val=3785, units="lbm")
         self.prob.model.set_input_defaults(
             Aircraft.Design.STRUCTURAL_MASS_INCREMENT, val=0, units="lbm")
+
+        setup_model_options(self.prob, AviaryValues(
+            {Aircraft.Engine.NUM_ENGINES: ([2], 'unitless')}))
+
         self.prob.setup(check=False, force_alloc_complex=True)
 
         partial_data = self.prob.check_partials(out_stream=None, method="cs")
@@ -582,6 +618,9 @@ class FuelMassTestCase(unittest.TestCase):  # this is the large single aisle 1 V
         self.prob.model.set_input_defaults("payload_mass_max", val=46040, units="lbm")
         self.prob.model.set_input_defaults(
             Aircraft.Fuel.FUEL_MARGIN, val=0, units="unitless")
+
+        setup_model_options(self.prob, AviaryValues(
+            {Aircraft.Engine.NUM_ENGINES: ([2], 'unitless')}))
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
@@ -640,6 +679,10 @@ class FuelMassTestCase2(unittest.TestCase):
         prob.model.set_input_defaults("payload_mass_max", val=46040, units="lbm")
         prob.model.set_input_defaults(
             Aircraft.Fuel.FUEL_MARGIN, val=0, units="unitless")
+
+        setup_model_options(prob, AviaryValues(
+            {Aircraft.Engine.NUM_ENGINES: ([2], 'unitless')}))
+
         prob.setup(check=False, force_alloc_complex=True)
 
         partial_data = prob.check_partials(out_stream=None, method="cs")
@@ -733,6 +776,9 @@ class FuelMassGroupTestCase1(unittest.TestCase):
         self.prob.model.set_input_defaults("payload_mass_max", val=46040, units="lbm")
         self.prob.model.set_input_defaults(
             Aircraft.Fuel.FUEL_MARGIN, val=0, units="unitless")
+
+        setup_model_options(self.prob, AviaryValues(
+            {Aircraft.Engine.NUM_ENGINES: ([2], 'unitless')}))
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
@@ -874,6 +920,9 @@ class FuelMassGroupTestCase2(
             Aircraft.Fuel.FUEL_MARGIN, val=10, units="unitless"
         )
 
+        setup_model_options(self.prob, AviaryValues(
+            {Aircraft.Engine.NUM_ENGINES: ([2], 'unitless')}))
+
         self.prob.setup(check=False, force_alloc_complex=True)
 
     def test_case1(self):
@@ -1013,6 +1062,9 @@ class FuelMassGroupTestCase3(
         self.prob.model.set_input_defaults(
             Aircraft.Fuel.FUEL_MARGIN, val=10, units="unitless"
         )
+
+        setup_model_options(self.prob, AviaryValues(
+            {Aircraft.Engine.NUM_ENGINES: ([2], 'unitless')}))
 
         self.prob.setup(check=False, force_alloc_complex=True)
 

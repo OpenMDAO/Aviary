@@ -57,7 +57,7 @@ class TestFortranToAviary(unittest.TestCase):
                 except Exception as error:
                     exc_string = (
                         f'Error: {filename}\n'
-                        f'Found: {line_no_whitespace}\n'
+                        f'Found:    {line_no_whitespace}\n'
                         f'Expected: {expected_line}'
                     )
                     raise Exception(exc_string)
@@ -92,6 +92,18 @@ class TestFortranToAviary(unittest.TestCase):
 
         self.prepare_and_run(
             filepath, out_file=Path.cwd() / Path('TEST_' + comparison_filepath)
+        )
+        self.compare_files(comparison_filepath)
+
+    def test_bwb_gasp(self):
+        filepath = 'models/BWB/generic_HWB_GASP.dat'
+        comparison_filepath = (
+            'utils/test/data/converter_test_HWB_GASP.csv'
+        )
+
+        self.prepare_and_run(
+            filepath,
+            out_file=Path.cwd() / Path('TEST_' + comparison_filepath),
         )
         self.compare_files(comparison_filepath)
 
