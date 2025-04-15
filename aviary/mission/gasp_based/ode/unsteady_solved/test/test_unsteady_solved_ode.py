@@ -18,6 +18,7 @@ from aviary.utils.test_utils.default_subsystems import get_default_mission_subsy
 from aviary.variable_info.enums import SpeedType
 from aviary.variable_info.options import get_option_defaults
 from aviary.variable_info.variables import Aircraft, Dynamic
+from aviary.variable_info.functions import setup_model_options
 
 
 class TestUnsteadySolvedODE(unittest.TestCase):
@@ -52,6 +53,8 @@ class TestUnsteadySolvedODE(unittest.TestCase):
             ode.set_input_defaults(
                 Dynamic.Vehicle.ANGLE_OF_ATTACK, np.zeros(nn), units="deg"
             )
+
+        setup_model_options(p, aviary_options)
 
         p.setup(force_alloc_complex=True)
 

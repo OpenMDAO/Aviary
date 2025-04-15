@@ -585,7 +585,7 @@ takeoff_rotate_user_options.set_val('max_angle_of_attack', val=10.0, units='deg'
 takeoff_rotate_initial_guesses = AviaryValues()
 
 takeoff_rotate_initial_guesses.set_val('time', [32.0, 1.0], 's')
-takeoff_rotate_initial_guesses.set_val('distance', [4500, 4800.0], 'ft')
+takeoff_rotate_initial_guesses.set_val('distance', [4500.0, 4800.0], 'ft')
 takeoff_rotate_initial_guesses.set_val('velocity', [160.0, 160.0], 'kn')
 takeoff_rotate_initial_guesses.set_val('throttle', 1.0)
 takeoff_rotate_initial_guesses.set_val(

@@ -1,4 +1,7 @@
-from aviary.examples.external_subsystems.battery.battery_variables import Aircraft, Mission
+from aviary.examples.external_subsystems.battery.battery_variables import (
+    Aircraft,
+    Dynamic,
+)
 from aviary.examples.external_subsystems.battery.battery_variable_meta_data import ExtendedMetaData
 from aviary.examples.external_subsystems.battery.model.battery_mission import BatteryMission
 from aviary.examples.external_subsystems.battery.model.battery_premission import BatteryPreMission
@@ -66,15 +69,15 @@ class BatteryBuilder(SubsystemBuilderBase):
               variable.
         '''
         states_dict = {
-            Mission.Battery.STATE_OF_CHARGE: {
-                'rate_source': Mission.Battery.STATE_OF_CHARGE_RATE,
+            Dynamic.Battery.STATE_OF_CHARGE: {
+                'rate_source': Dynamic.Battery.STATE_OF_CHARGE_RATE,
                 'fix_initial': True,
             },
-            Mission.Battery.VOLTAGE_THEVENIN: {
+            Dynamic.Battery.VOLTAGE_THEVENIN: {
                 'units': 'V',
-                'rate_source': Mission.Battery.VOLTAGE_THEVENIN_RATE,
-                'defect_ref': 1.e5,
-                'ref': 1.e5,
+                'rate_source': Dynamic.Battery.VOLTAGE_THEVENIN_RATE,
+                'defect_ref': 1.0e5,
+                'ref': 1.0e5,
             },
         }
 
@@ -85,7 +88,7 @@ class BatteryBuilder(SubsystemBuilderBase):
         Return the list of linked variables for the battery subsystem; in this case
         it's our two state variables.
         '''
-        return [Mission.Battery.VOLTAGE_THEVENIN, Mission.Battery.STATE_OF_CHARGE]
+        return [Dynamic.Battery.VOLTAGE_THEVENIN, Dynamic.Battery.STATE_OF_CHARGE]
 
     def build_pre_mission(self, aviary_inputs):
         '''
@@ -137,12 +140,12 @@ class BatteryBuilder(SubsystemBuilderBase):
         '''
         if self.include_constraints:
             constraints = {
-                Mission.Battery.STATE_OF_CHARGE: {
+                Dynamic.Battery.STATE_OF_CHARGE: {
                     'lower': 0.2,
                     'type': 'boundary',
                     'loc': 'final',
                 },
-                Mission.Battery.VOLTAGE_THEVENIN: {
+                Dynamic.Battery.VOLTAGE_THEVENIN: {
                     'lower': 0,
                     'type': 'path',
                 },
@@ -200,8 +203,8 @@ class BatteryBuilder(SubsystemBuilderBase):
         '''
 
         parameters_dict = {
-            Mission.Battery.TEMPERATURE: {'val': 25.0, 'units': 'degC'},
-            Mission.Battery.CURRENT: {'val': 3.25, 'units': 'A'}
+            Dynamic.Battery.TEMPERATURE: {'val': 25.0, 'units': 'degC'},
+            Dynamic.Battery.CURRENT: {'val': 3.25, 'units': 'A'},
         }
 
         return parameters_dict
@@ -219,11 +222,11 @@ class BatteryBuilder(SubsystemBuilderBase):
         '''
 
         initial_guess_dict = {
-            Mission.Battery.STATE_OF_CHARGE: {
+            Dynamic.Battery.STATE_OF_CHARGE: {
                 'val': 1.0,
                 'type': 'state',
             },
-            Mission.Battery.VOLTAGE_THEVENIN: {
+            Dynamic.Battery.VOLTAGE_THEVENIN: {
                 'val': 5.0,
                 'units': 'V',
                 'type': 'state',
@@ -276,4 +279,8 @@ class BatteryBuilder(SubsystemBuilderBase):
             A list of variable names for the battery subsystem.
         '''
 
-        return [Mission.Battery.VOLTAGE, Mission.Battery.HEAT_OUT, Aircraft.Battery.EFFICIENCY]
+        return [
+            Dynamic.Battery.VOLTAGE,
+            Dynamic.Battery.HEAT_OUT,
+            Dynamic.Battery.EFFICIENCY,
+        ]
