@@ -70,9 +70,7 @@ class TestSolvedAero(unittest.TestCase):
 
         prob.set_initial_guesses()
 
-        print('about to run')
         prob.run_model()
-        print('done')
 
         CL_base = prob.get_val("traj.cruise.rhs_all.core_aerodynamics.tabular_aero.CL")
         CD_base = prob.get_val("traj.cruise.rhs_all.core_aerodynamics.tabular_aero.CD")

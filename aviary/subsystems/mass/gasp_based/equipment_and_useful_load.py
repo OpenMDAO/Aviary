@@ -20,6 +20,7 @@ class EquipAndUsefulLoadMass(om.ExplicitComponent):
         add_aviary_option(self, Aircraft.Engine.TYPE)
         add_aviary_option(self, Aircraft.LandingGear.FIXED_GEAR)
         add_aviary_option(self, Aircraft.Propulsion.TOTAL_NUM_ENGINES)
+        add_aviary_option(self, Aircraft.Design.TYPE)
 
     def setup(self):
         num_engine_type = len(self.options[Aircraft.Engine.NUM_ENGINES])

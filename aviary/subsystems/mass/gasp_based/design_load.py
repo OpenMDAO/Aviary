@@ -3,12 +3,13 @@ import openmdao.api as om
 
 from aviary.constants import RHO_SEA_LEVEL_ENGLISH
 from aviary.utils.functions import sigmoidX, dSigmoidXdx
+from aviary.variable_info.enums import Verbosity
 from aviary.variable_info.functions import (
     add_aviary_input,
     add_aviary_output,
     add_aviary_option,
 )
-from aviary.variable_info.variables import Aircraft, Mission
+from aviary.variable_info.variables import Aircraft, Mission, Settings
 
 
 def dquotient(u, v, du, dv):
@@ -116,10 +117,11 @@ class LoadSpeeds(om.ExplicitComponent):
 
             max_airspeed = 0.85 * min_dive_vel
             vel_c = VCMIN
-            max_maneuver_factor = 3.8
-            if CATD == 1.0:
+            if CATD == 0:
+                max_maneuver_factor = 3.8
+            if CATD == 1:
                 max_maneuver_factor = 4.4
-            elif CATD == 2.0:
+            elif CATD == 2:
                 max_maneuver_factor = 6.0
 
         elif CATD == 3:
@@ -218,6 +220,7 @@ class LoadSpeeds(om.ExplicitComponent):
                     dVCMIN_dmax_struct_speed_mph = dVCMAX_dmax_struct_speed_mph
                     dVCMIN_dwing_loading = 0.0
 
+            # why this block?
             if CATD == 1:
 
                 dVCMIN_dwing_loading = 0.0
@@ -238,6 +241,7 @@ class LoadSpeeds(om.ExplicitComponent):
                     dVDCOF_dwing_loading = -0.001875
 
                 if CATD != 1:
+                    VDCOF = 1.55
                     dVDCOF_dwing_loading = 0.0
                     if WGS_greater_than_20_flag:
                         VDCOF = 1.55 - (0.0025 * (wing_loading - 20.0))
@@ -352,6 +356,434 @@ class LoadSpeeds(om.ExplicitComponent):
 
             partials["max_airspeed", Aircraft.Design.MAX_STRUCTURAL_SPEED] = (
                 1 * dmax_struct_speed_kts_dmax_struct_speed_mph
+            )
+            partials["min_dive_vel", Aircraft.Design.MAX_STRUCTURAL_SPEED] = (
+                1.2 * dmax_struct_speed_kts_dmax_struct_speed_mph
+            )
+            partials["vel_c", Aircraft.Design.MAX_STRUCTURAL_SPEED] = (
+                1.0 * dmax_struct_speed_kts_dmax_struct_speed_mph
+            )
+
+
+class BWBLoadSpeeds(om.ExplicitComponent):
+    """
+    Computation of load speeds (such as maximum operating equivalent airspeed,
+    velocity used in Gust Load Factor calculation at cruise conditions, maximum
+    maneuver load factor, and minimum dive velocity).
+    """
+
+    def initialize(self):
+        add_aviary_option(self, Aircraft.Design.PART25_STRUCTURAL_CATEGORY)
+        add_aviary_option(self, Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES)
+        add_aviary_option(self, Aircraft.Wing.LOADING_ABOVE_20)
+        add_aviary_option(self, Aircraft.Design.TYPE)
+        add_aviary_option(self, Settings.VERBOSITY)
+
+    def setup(self):
+        add_aviary_input(self, Aircraft.Design.MAX_STRUCTURAL_SPEED, units='mi/h')
+
+        if self.options[Aircraft.Design.PART25_STRUCTURAL_CATEGORY] < 3:
+
+            add_aviary_input(self, Mission.Design.GROSS_MASS, units='lbm')
+            add_aviary_input(self, Aircraft.Wing.EXPOSED_AREA, units='ft**2')
+
+        self.add_output(
+            "max_airspeed",
+            units="kn",
+            desc="VM0: maximum operating equivalent airspeed",
+        )
+        self.add_output(
+            "vel_c",
+            units="kn",
+            desc="VGC: Velocity used in Gust Load Factor calculation at cruise conditions.\
+                        This is Minimum Design Cruise Speed for Part 23 aircraft and \
+                        VM0 for Part 25 aircraft",
+        )
+        self.add_output(
+            "max_maneuver_factor",
+            units="unitless",
+            desc="EMLF: maximum maneuver load factor, units are in g`s",
+        )
+        self.add_output("min_dive_vel", units="kn", desc="VDMIN: dive velocity")
+        self.declare_partials("*", "*")
+
+    def compute(self, inputs, outputs):
+        verbosity = self.options[Settings.VERBOSITY]
+
+        max_struct_speed_mph = inputs[Aircraft.Design.MAX_STRUCTURAL_SPEED]
+
+        CATD = self.options[Aircraft.Design.PART25_STRUCTURAL_CATEGORY]
+        smooth = self.options[Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES]
+        WGS_greater_than_20_flag = self.options[Aircraft.Wing.LOADING_ABOVE_20]
+
+        max_struct_speed_kts = max_struct_speed_mph / 1.15
+
+        if CATD < 3:
+            gross_mass = inputs[Mission.Design.GROSS_MASS]
+            exp_wing_area = inputs[Aircraft.Wing.EXPOSED_AREA]
+            if verbosity > Verbosity.BRIEF:
+                if exp_wing_area <= 0.0:
+                    print("Aircraft.Wing.EXPOSED_AREA must be positive.")
+                if gross_mass <= 0.0:
+                    print("Mission.Design.GROSS_MASS must be positive.")
+            wing_loading = gross_mass / exp_wing_area
+
+            VCMAX = 0.9 * max_struct_speed_kts
+            if CATD <= 1:
+                if WGS_greater_than_20_flag:
+                    VCCOF = 33.0 - (0.0550 * (wing_loading - 20.0))
+                else:
+                    VCCOF = 33.0
+            elif CATD == 2:
+                if WGS_greater_than_20_flag:
+                    VCCOF = 36.0 - (0.0925 * (wing_loading - 20.0))
+                else:
+                    VCCOF = 36.0
+
+            VCMIN = VCCOF * (wing_loading**0.5)
+
+            if smooth:
+                VCMIN = VCMIN * sigmoidX(VCMIN / VCMAX, 1, -0.01) + VCMAX * sigmoidX(
+                    VCMIN / VCMAX, 1, 0.01
+                )
+            else:
+                if VCMIN > VCMAX:
+                    VCMIN = VCMAX
+
+            if CATD == 0:
+                if WGS_greater_than_20_flag:
+                    VDCOF = 1.4 - (0.000625 * (wing_loading - 20.0))
+                else:
+                    VDCOF = 1.4
+            elif CATD == 1:
+                if WGS_greater_than_20_flag:
+                    VDCOF = 1.5 - (0.001875 * (wing_loading - 20.0))
+                else:
+                    VDCOF = 1.5
+            elif CATD == 2:
+                if WGS_greater_than_20_flag:
+                    VDCOF = 1.55 - (0.0025 * (wing_loading - 20.0))
+                else:
+                    VDCOF = 1.55
+
+            min_dive_vel = VDCOF * VCMIN
+
+            if smooth:
+                min_dive_vel = max_struct_speed_kts * sigmoidX(
+                    min_dive_vel / max_struct_speed_kts, 1, -0.01
+                ) + min_dive_vel * sigmoidX(
+                    min_dive_vel / max_struct_speed_kts, 1, 0.01
+                )
+            else:
+                if min_dive_vel < max_struct_speed_kts:
+                    min_dive_vel = max_struct_speed_kts
+
+            max_airspeed = 0.85 * min_dive_vel
+            vel_c = VCMIN
+            
+            if CATD == 0:
+                max_maneuver_factor = 3.8
+            elif CATD == 1:
+                max_maneuver_factor = 4.4
+            elif CATD == 2:
+                max_maneuver_factor = 6.0
+
+        elif CATD == 3:
+            max_maneuver_factor = 2.5
+            min_dive_vel = 1.2 * max_struct_speed_kts
+            max_airspeed = max_struct_speed_kts
+            vel_c = max_airspeed
+
+        elif CATD > 3.001:
+            max_maneuver_factor = CATD
+            min_dive_vel = 1.2 * max_struct_speed_kts
+            max_airspeed = max_struct_speed_kts
+            vel_c = max_airspeed
+
+        outputs["max_airspeed"] = max_airspeed
+        outputs["vel_c"] = vel_c
+        outputs["max_maneuver_factor"] = max_maneuver_factor
+        outputs["min_dive_vel"] = min_dive_vel
+
+    def compute_partials(self, inputs, partials):
+
+        max_struct_speed_mph = inputs[Aircraft.Design.MAX_STRUCTURAL_SPEED]
+
+        CATD = self.options[Aircraft.Design.PART25_STRUCTURAL_CATEGORY]
+        smooth = self.options[Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES]
+        WGS_greater_than_20_flag = self.options[Aircraft.Wing.LOADING_ABOVE_20]
+
+        max_struct_speed_kts = max_struct_speed_mph / 1.15
+        dmax_struct_speed_kts_dmax_struct_speed_mph = 1 / 1.15
+        #dmax_struct_speed_kts_dwing_loading = 0.0
+        dmax_struct_speed_kts_dgross_mass = 0.0
+        dmax_struct_speed_kts_dexp_wing_area = 0.0
+
+        if CATD < 3:
+            gross_mass = inputs[Mission.Design.GROSS_MASS]
+            exp_wing_area = inputs[Aircraft.Wing.EXPOSED_AREA]
+            wing_loading = gross_mass / exp_wing_area
+            dwing_loading_dgross_mass = 1 / exp_wing_area
+            dwing_loading_dexp_wing_area = -gross_mass / exp_wing_area**2
+
+            VCMAX = 0.9 * max_struct_speed_kts
+            dVCMAX_dmax_struct_speed_mph = 0.9 / 1.15
+
+            if CATD <= 1:
+                if WGS_greater_than_20_flag:
+                    VCCOF = 33.0 - (0.0550 * (wing_loading - 20.0))
+                    dVCCOF_dwing_loading = -0.0550
+                    dVCCOF_dgross_mass = dVCCOF_dwing_loading * dwing_loading_dgross_mass
+                    dVCCOF_dexp_wing_area = dVCCOF_dwing_loading * dwing_loading_dexp_wing_area
+                else:
+                    VCCOF = 33.0
+                    dVCCOF_dwing_loading = 0.0
+                    dVCCOF_dgross_mass = 0.0
+                    dVCCOF_dexp_wing_area = 0.0
+            elif CATD == 2:
+                if WGS_greater_than_20_flag:
+                    VCCOF = 36.0 - (0.0925 * (wing_loading - 20.0))
+                    dVCCOF_dwing_loading = -0.0925
+                    dVCCOF_dgross_mass = dVCCOF_dwing_loading * dwing_loading_dgross_mass
+                    dVCCOF_dexp_wing_area = dVCCOF_dwing_loading * dwing_loading_dexp_wing_area
+                else:
+                    VCCOF = 36
+                    dVCCOF_dwing_loading = 0.0
+                    dVCCOF_dgross_mass = 0.0
+                    dVCCOF_dexp_wing_area = 0.0
+
+            wl_sqrt = wing_loading**0.5
+            d_wl_sqrt_d_wing_loading = 0.5 * wing_loading**-0.5
+            VCMIN = VCCOF * wl_sqrt
+            dVCMIN_dgross_mass = (
+                dVCCOF_dgross_mass * wl_sqrt
+                + VCCOF * d_wl_sqrt_d_wing_loading * dwing_loading_dgross_mass
+            )
+            dVCMIN_dexp_wing_area = (
+                dVCCOF_dexp_wing_area * wl_sqrt
+                + VCCOF * d_wl_sqrt_d_wing_loading * dwing_loading_dexp_wing_area
+            )
+            dVCMIN_dmax_struct_speed_mph = 0.0
+
+            if smooth:
+                VCMIN_1 = VCMIN * sigmoidX(VCMIN / VCMAX, 1, -0.01) + VCMAX * sigmoidX(
+                    VCMIN / VCMAX, 1, 0.01
+                )
+                dVCMIN_dgross_mass = (
+                    dVCMIN_dgross_mass * sigmoidX(VCMIN / VCMAX, 1, -0.01)
+                    - VCMIN * dSigmoidXdx(VCMIN / VCMAX, 1, 0.01) * dVCMIN_dgross_mass / VCMAX
+                    + VCMAX * dSigmoidXdx(VCMIN / VCMAX, 1, 0.01) * dVCMIN_dgross_mass / VCMAX
+                )
+                dVCMIN_dexp_wing_area = (
+                    dVCMIN_dgross_mass * sigmoidX(VCMIN / VCMAX, 1, -0.01)
+                    - VCMIN * dSigmoidXdx(VCMIN / VCMAX, 1, 0.01) * dVCMIN_dexp_wing_area / VCMAX
+                    + VCMAX * dSigmoidXdx(VCMIN / VCMAX, 1, 0.01) * dVCMIN_dexp_wing_area / VCMAX
+                )
+                dVCMIN_dmax_struct_speed_mph = (
+                    dVCMIN_dmax_struct_speed_mph * sigmoidX(VCMIN / VCMAX, 1, -0.01)
+                    + VCMIN
+                    * dSigmoidXdx(VCMIN / VCMAX, 1, 0.01)
+                    * dquotient(
+                        (VCMAX - VCMIN),
+                        VCMAX,
+                        dVCMAX_dmax_struct_speed_mph - dVCMIN_dmax_struct_speed_mph,
+                        dVCMAX_dmax_struct_speed_mph,
+                    )
+                    + dVCMAX_dmax_struct_speed_mph * sigmoidX(VCMIN / VCMAX, 1, 0.01)
+                    + VCMAX
+                    * dSigmoidXdx(VCMIN / VCMAX, 1, 0.01)
+                    * dquotient(
+                        (VCMIN - VCMAX),
+                        VCMAX,
+                        dVCMIN_dmax_struct_speed_mph - dVCMAX_dmax_struct_speed_mph,
+                        dVCMAX_dmax_struct_speed_mph,
+                    )
+                )
+                VCMIN = VCMIN_1
+            else:
+                if VCMIN > VCMAX:
+                    VCMIN = VCMAX
+                    dVCMIN_dmax_struct_speed_mph = dVCMAX_dmax_struct_speed_mph
+                    dVCMIN_dgross_mass = 0.0
+                    dVCMIN_dexp_wing_area = 0.0
+
+            if CATD == 0:
+                if WGS_greater_than_20_flag:
+                    VDCOF = 1.4 - (0.000625 * (wing_loading - 20.0))
+                    dVDCOF_dwing_loading = -0.000625
+                    dVDCOF_dgross_mass = dVDCOF_dwing_loading * dwing_loading_dgross_mass
+                    dVDCOF_dexp_wing_area = dVDCOF_dwing_loading * dwing_loading_dexp_wing_area
+                else:
+                    VDCOF = 1.4
+                    dVDCOF_dwing_loading = 0.0
+                    dVDCOF_dgross_mass = 0.0
+                    dVDCOF_dexp_wing_area = 0.0
+            if CATD == 1:
+                if WGS_greater_than_20_flag:
+                    VDCOF = 1.5 - (0.001875 * (wing_loading - 20.0))
+                    dVDCOF_dwing_loading = -0.001875
+                    dVDCOF_dgross_mass = dVDCOF_dwing_loading * dwing_loading_dgross_mass
+                    dVDCOF_dexp_wing_area = dVDCOF_dwing_loading * dwing_loading_dexp_wing_area
+                else:
+                    VDCOF = 1.5
+                    dVDCOF_dwing_loading = 0.0
+                    dVDCOF_dgross_mass = 0.0
+                    dVDCOF_dexp_wing_area = 0.0
+            if CATD == 2:
+                if WGS_greater_than_20_flag:
+                    VDCOF = 1.55 - (0.0025 * (wing_loading - 20.0))
+                    dVDCOF_dwing_loading = -0.0025
+                    dVDCOF_dgross_mass = dVDCOF_dwing_loading * dwing_loading_dgross_mass
+                    dVDCOF_dexp_wing_area = dVDCOF_dwing_loading * dwing_loading_dexp_wing_area
+                else:
+                    VDCOF = 1.55
+                    dVDCOF_dwing_loading = 0.0
+                    dVDCOF_dgross_mass = 0.0
+                    dVDCOF_dexp_wing_area = 0.0
+
+            min_dive_vel = VDCOF * VCMIN
+            dmin_dive_vel_dgross_mass = (
+                dVDCOF_dgross_mass * VCMIN + VDCOF * dVCMIN_dgross_mass
+            )
+            dmin_dive_vel_dexp_wing_area = (
+                dVDCOF_dexp_wing_area * VCMIN + VDCOF * dVCMIN_dexp_wing_area
+            )
+            dmin_dive_vel_dmax_struct_speed_mph = VDCOF * dVCMIN_dmax_struct_speed_mph
+
+            if smooth:
+                min_dive_vel_1 = max_struct_speed_kts * sigmoidX(
+                    min_dive_vel / max_struct_speed_kts, 1, -0.01
+                ) + min_dive_vel * sigmoidX(
+                    min_dive_vel / max_struct_speed_kts, 1, 0.01
+                )
+                dmin_dive_vel_dmax_struct_speed_mph = (
+                    dmax_struct_speed_kts_dmax_struct_speed_mph
+                    * sigmoidX(min_dive_vel / max_struct_speed_kts, 1, -0.01)
+                    + max_struct_speed_kts
+                    * dSigmoidXdx(min_dive_vel / max_struct_speed_kts, 1, 0.01)
+                    * dquotient(
+                        (max_struct_speed_kts - min_dive_vel),
+                        max_struct_speed_kts,
+                        (
+                            dmax_struct_speed_kts_dmax_struct_speed_mph
+                            - dmin_dive_vel_dmax_struct_speed_mph
+                        ),
+                        dmax_struct_speed_kts_dmax_struct_speed_mph,
+                    )
+                    + dmin_dive_vel_dmax_struct_speed_mph
+                    * sigmoidX(min_dive_vel / max_struct_speed_kts, 1, 0.01)
+                    + min_dive_vel
+                    * dSigmoidXdx(min_dive_vel / max_struct_speed_kts, 1, 0.01)
+                    * dquotient(
+                        (min_dive_vel - max_struct_speed_kts),
+                        max_struct_speed_kts,
+                        dmin_dive_vel_dmax_struct_speed_mph
+                        - dmax_struct_speed_kts_dmax_struct_speed_mph,
+                        dmax_struct_speed_kts_dmax_struct_speed_mph,
+                    )
+                )
+                dmin_dive_vel_dgross_mass = (
+                    dmax_struct_speed_kts_dgross_mass
+                    * sigmoidX(min_dive_vel / max_struct_speed_kts, 1, -0.01)
+                    + max_struct_speed_kts
+                    * dSigmoidXdx(min_dive_vel / max_struct_speed_kts, 1, 0.01)
+                    * dquotient(
+                        max_struct_speed_kts - min_dive_vel,
+                        max_struct_speed_kts,
+                        dmax_struct_speed_kts_dgross_mass
+                        - dmin_dive_vel_dgross_mass,
+                        dmax_struct_speed_kts_dgross_mass,
+                    )
+                    + dmin_dive_vel_dgross_mass
+                    * sigmoidX(min_dive_vel / max_struct_speed_kts, 1, 0.01)
+                    + min_dive_vel
+                    * dSigmoidXdx(min_dive_vel / max_struct_speed_kts, 1, 0.01)
+                    * dquotient(
+                        (min_dive_vel - max_struct_speed_kts),
+                        max_struct_speed_kts,
+                        dmin_dive_vel_dgross_mass
+                        - dmax_struct_speed_kts_dgross_mass,
+                        dmax_struct_speed_kts_dgross_mass,
+                    )
+                )
+                dmin_dive_vel_dexp_wing_area = (
+                    dmax_struct_speed_kts_dexp_wing_area
+                    * sigmoidX(min_dive_vel / max_struct_speed_kts, 1, -0.01)
+                    + max_struct_speed_kts
+                    * dSigmoidXdx(min_dive_vel / max_struct_speed_kts, 1, 0.01)
+                    * dquotient(
+                        max_struct_speed_kts - min_dive_vel,
+                        max_struct_speed_kts,
+                        dmax_struct_speed_kts_dexp_wing_area
+                        - dmin_dive_vel_dexp_wing_area,
+                        dmax_struct_speed_kts_dexp_wing_area,
+                    )
+                    + dmin_dive_vel_dexp_wing_area
+                    * sigmoidX(min_dive_vel / max_struct_speed_kts, 1, 0.01)
+                    + min_dive_vel
+                    * dSigmoidXdx(min_dive_vel / max_struct_speed_kts, 1, 0.01)
+                    * dquotient(
+                        (min_dive_vel - max_struct_speed_kts),
+                        max_struct_speed_kts,
+                        dmin_dive_vel_dexp_wing_area
+                        - dmax_struct_speed_kts_dexp_wing_area,
+                        dmax_struct_speed_kts_dexp_wing_area,
+                    )
+                )
+                min_dive_vel = min_dive_vel_1
+            else:
+                if (
+                    min_dive_vel < max_struct_speed_kts
+                ):  # note: this creates a discontinuity
+                    min_dive_vel = max_struct_speed_kts
+                    dmin_dive_vel_dgross_mass = 0
+                    dmin_dive_vel_dexp_wing_area = 0
+                    dmin_dive_vel_dmax_struct_speed_mph = (
+                        dmax_struct_speed_kts_dmax_struct_speed_mph
+                    )
+
+            partials["min_dive_vel", Mission.Design.GROSS_MASS] = (
+                dmin_dive_vel_dgross_mass
+            )
+            partials["min_dive_vel", Aircraft.Wing.EXPOSED_AREA] = (
+                dmin_dive_vel_dexp_wing_area
+            )
+            partials["min_dive_vel", Aircraft.Design.MAX_STRUCTURAL_SPEED] = (
+                dmin_dive_vel_dmax_struct_speed_mph
+            )
+
+            partials["max_airspeed", Mission.Design.GROSS_MASS] = (
+                0.85 * dmin_dive_vel_dgross_mass
+            )
+            partials["max_airspeed", Aircraft.Wing.EXPOSED_AREA] = (
+                0.85 * dmin_dive_vel_dexp_wing_area
+            )
+            partials["max_airspeed", Aircraft.Design.MAX_STRUCTURAL_SPEED] = (
+                0.85 * dmin_dive_vel_dmax_struct_speed_mph
+            )
+
+            partials["vel_c", Mission.Design.GROSS_MASS] = dVCMIN_dgross_mass
+            partials["vel_c", Aircraft.Wing.EXPOSED_AREA] = dVCMIN_dexp_wing_area
+            partials["vel_c", Aircraft.Design.MAX_STRUCTURAL_SPEED] = (
+                dVCMIN_dmax_struct_speed_mph
+            )
+
+        if CATD == 3:
+
+            partials["max_airspeed", Aircraft.Design.MAX_STRUCTURAL_SPEED] = (
+                dmax_struct_speed_kts_dmax_struct_speed_mph
+            )
+            partials["min_dive_vel", Aircraft.Design.MAX_STRUCTURAL_SPEED] = (
+                1.2 * dmax_struct_speed_kts_dmax_struct_speed_mph
+            )
+            partials["vel_c", Aircraft.Design.MAX_STRUCTURAL_SPEED] = (
+                1.0 * dmax_struct_speed_kts_dmax_struct_speed_mph
+            )
+
+        elif CATD > 3.001:
+
+            partials["max_airspeed", Aircraft.Design.MAX_STRUCTURAL_SPEED] = (
+                1.0 * dmax_struct_speed_kts_dmax_struct_speed_mph
             )
             partials["min_dive_vel", Aircraft.Design.MAX_STRUCTURAL_SPEED] = (
                 1.2 * dmax_struct_speed_kts_dmax_struct_speed_mph
@@ -706,10 +1138,11 @@ class LoadFactors(om.ExplicitComponent):
     def initialize(self):
         add_aviary_option(self, Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES)
         add_aviary_option(self, Aircraft.Design.ULF_CALCULATED_FROM_MANEUVER)
+        add_aviary_option(self, Aircraft.Design.TYPE)
 
     def setup(self):
 
-        add_aviary_input(self, Aircraft.Wing.LOADING)
+        add_aviary_input(self, Aircraft.Wing.LOADING, units='lbf/ft**2')
 
         self.add_input(
             "density_ratio",
@@ -802,6 +1235,588 @@ class LoadFactors(om.ExplicitComponent):
     def compute_partials(self, inputs, partials):
 
         wing_loading = inputs[Aircraft.Wing.LOADING]
+        density_ratio = inputs["density_ratio"]
+        V9 = inputs["V9"]
+        min_dive_vel = inputs["min_dive_vel"]
+        max_maneuver_factor = inputs["max_maneuver_factor"]
+        avg_chord = inputs[Aircraft.Wing.AVERAGE_CHORD]
+        Cl_alpha = inputs[Aircraft.Design.LIFT_CURVE_SLOPE]
+
+        ULF_from_maneuver = self.options[Aircraft.Design.ULF_CALCULATED_FROM_MANEUVER]
+        smooth = self.options[Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES]
+
+        mass_ratio = (
+            2.0
+            * wing_loading
+            / (density_ratio * RHO_SEA_LEVEL_ENGLISH * avg_chord * Cl_alpha * 32.2)
+        )
+        k_load_factor = 0.88 * mass_ratio / (5.3 + mass_ratio)
+        cruise_load_factor = 1.0 + (
+            (k_load_factor * 50.0 * V9 * Cl_alpha) / (498.0 * wing_loading)
+        )
+        dive_load_factor = 1.0 + (
+            (k_load_factor * 25.0 * min_dive_vel * Cl_alpha) / (498.0 * wing_loading)
+        )
+        gust_load_factor = dive_load_factor
+
+        dmass_ratio_dwing_loading = 2.0 / (
+            density_ratio * RHO_SEA_LEVEL_ENGLISH * avg_chord * Cl_alpha * 32.2
+        )
+        dmass_ratio_ddensity_ratio = (
+            -2.0
+            * wing_loading
+            / (density_ratio**2 * RHO_SEA_LEVEL_ENGLISH * avg_chord * Cl_alpha * 32.2)
+        )
+        dmass_ratio_davg_chord = (
+            -2.0
+            * wing_loading
+            / (density_ratio * RHO_SEA_LEVEL_ENGLISH * avg_chord**2 * Cl_alpha * 32.2)
+        )
+        dmass_ratio_dCl_alpha = (
+            -2.0
+            * wing_loading
+            / (density_ratio * RHO_SEA_LEVEL_ENGLISH * avg_chord * Cl_alpha**2 * 32.2)
+        )
+
+        dk_load_factor_dwing_loading = dquotient(
+            0.88 * mass_ratio,
+            5.3 + mass_ratio,
+            0.88 * dmass_ratio_dwing_loading,
+            dmass_ratio_dwing_loading,
+        )
+        dk_load_factor_ddensity_ratio = dquotient(
+            0.88 * mass_ratio,
+            5.3 + mass_ratio,
+            0.88 * dmass_ratio_ddensity_ratio,
+            dmass_ratio_ddensity_ratio,
+        )
+        dk_load_factor_davg_chord = dquotient(
+            0.88 * mass_ratio,
+            5.3 + mass_ratio,
+            0.88 * dmass_ratio_davg_chord,
+            dmass_ratio_davg_chord,
+        )
+        dk_load_factor_dCl_alpha = dquotient(
+            0.88 * mass_ratio,
+            5.3 + mass_ratio,
+            0.88 * dmass_ratio_dCl_alpha,
+            dmass_ratio_dCl_alpha,
+        )
+
+        dcruise_load_factor_dwing_loading = dquotient(
+            (k_load_factor * 50.0 * V9 * Cl_alpha),
+            (498.0 * wing_loading),
+            (dk_load_factor_dwing_loading * 50.0 * V9 * Cl_alpha),
+            498,
+        )
+        dcruise_load_factor_ddensity_ratio = (
+            dk_load_factor_ddensity_ratio * 50.0 * V9 * Cl_alpha
+        ) / (498.0 * wing_loading)
+        dcruise_load_factor_davg_chord = (
+            dk_load_factor_davg_chord * 50.0 * V9 * Cl_alpha
+        ) / (498.0 * wing_loading)
+        dcruise_load_factor_dCl_alpha = (
+            dk_load_factor_dCl_alpha * 50.0 * V9 * Cl_alpha + k_load_factor * 50 * V9
+        ) / (498.0 * wing_loading)
+        dcruise_load_factor_dV9 = (k_load_factor * 50.0 * Cl_alpha) / (
+            498.0 * wing_loading
+        )
+        dcruise_load_factor_dmin_dive_vel = 0.0
+
+        ddive_load_factor_dwing_loading = dquotient(
+            (k_load_factor * 25.0 * min_dive_vel * Cl_alpha),
+            (498.0 * wing_loading),
+            (dk_load_factor_dwing_loading * 25.0 * min_dive_vel * Cl_alpha),
+            498,
+        )
+        ddive_load_factor_ddensity_ratio = (
+            dk_load_factor_ddensity_ratio * 25 * min_dive_vel * Cl_alpha
+        ) / (498.0 * wing_loading)
+        ddive_load_factor_davg_chord = (
+            dk_load_factor_davg_chord * 25 * min_dive_vel * Cl_alpha
+        ) / (498.0 * wing_loading)
+        ddive_load_factor_dCl_alpha = (
+            dk_load_factor_dCl_alpha * 25 * min_dive_vel * Cl_alpha
+            + k_load_factor * 50 * min_dive_vel
+        ) / (498.0 * wing_loading)
+        ddive_load_factor_dmin_dive_vel = (k_load_factor * 25 * Cl_alpha) / (
+            498.0 * wing_loading
+        )
+        ddive_load_factor_dV9 = 0.0
+
+        dgust_load_factor_dwing_loading = dquotient(
+            (k_load_factor * 25.0 * min_dive_vel * Cl_alpha),
+            (498.0 * wing_loading),
+            (dk_load_factor_dwing_loading * 25.0 * min_dive_vel * Cl_alpha),
+            498,
+        )
+        dgust_load_factor_ddensity_ratio = (
+            dk_load_factor_ddensity_ratio * 25 * min_dive_vel * Cl_alpha
+        ) / (498.0 * wing_loading)
+        dgust_load_factor_davg_chord = (
+            dk_load_factor_davg_chord * 25 * min_dive_vel * Cl_alpha
+        ) / (498.0 * wing_loading)
+        dgust_load_factor_dCl_alpha = (
+            dk_load_factor_dCl_alpha * 25 * min_dive_vel * Cl_alpha
+            + k_load_factor * 50 * min_dive_vel
+        ) / (498.0 * wing_loading)
+        dgust_load_factor_dmin_dive_vel = (k_load_factor * 25 * Cl_alpha) / (
+            498.0 * wing_loading
+        )
+        dgust_load_factor_dV9 = 0.0
+
+        if smooth:
+            gust_load_factor_1 = dive_load_factor * sigmoidX(
+                cruise_load_factor / dive_load_factor, 1, -0.01
+            ) + cruise_load_factor * sigmoidX(
+                cruise_load_factor / dive_load_factor, 1, 0.01
+            )
+            dgust_load_factor_dwing_loading = (
+                ddive_load_factor_dwing_loading
+                * sigmoidX(cruise_load_factor / dive_load_factor, 1, -0.01)
+                + dive_load_factor
+                * dSigmoidXdx(cruise_load_factor / dive_load_factor, 1, -0.01)
+                * dquotient(
+                    (dive_load_factor - cruise_load_factor),
+                    dive_load_factor,
+                    ddive_load_factor_dwing_loading - dcruise_load_factor_dwing_loading,
+                    ddive_load_factor_dwing_loading,
+                )
+                + dcruise_load_factor_dwing_loading
+                * sigmoidX(cruise_load_factor / dive_load_factor, 1, 0.01)
+                + cruise_load_factor
+                * dSigmoidXdx(cruise_load_factor / dive_load_factor, 1, -0.01)
+                * dquotient(
+                    (cruise_load_factor - dive_load_factor),
+                    dive_load_factor,
+                    dcruise_load_factor_dwing_loading - ddive_load_factor_dwing_loading,
+                    ddive_load_factor_dwing_loading,
+                )
+            )
+            dgust_load_factor_ddensity_ratio = (
+                ddive_load_factor_ddensity_ratio
+                * sigmoidX(cruise_load_factor / dive_load_factor, 1, -0.01)
+                + dive_load_factor
+                * dSigmoidXdx(cruise_load_factor / dive_load_factor, 1, -0.01)
+                * dquotient(
+                    (dive_load_factor - cruise_load_factor),
+                    dive_load_factor,
+                    ddive_load_factor_ddensity_ratio
+                    - dcruise_load_factor_ddensity_ratio,
+                    ddive_load_factor_ddensity_ratio,
+                )
+                + dcruise_load_factor_ddensity_ratio
+                * sigmoidX(cruise_load_factor / dive_load_factor, 1, 0.01)
+                + cruise_load_factor
+                * dSigmoidXdx(cruise_load_factor / dive_load_factor, 1, 0.01)
+                * dquotient(
+                    (cruise_load_factor - dive_load_factor),
+                    dive_load_factor,
+                    dcruise_load_factor_ddensity_ratio
+                    - ddive_load_factor_ddensity_ratio,
+                    ddive_load_factor_ddensity_ratio,
+                )
+            )
+            dgust_load_factor_davg_chord = (
+                ddive_load_factor_davg_chord
+                * sigmoidX(cruise_load_factor / dive_load_factor, 1, -0.01)
+                + dive_load_factor
+                * dSigmoidXdx(cruise_load_factor / dive_load_factor, 1, 0.01)
+                * dquotient(
+                    (dive_load_factor - cruise_load_factor),
+                    dive_load_factor,
+                    ddive_load_factor_davg_chord - dcruise_load_factor_davg_chord,
+                    ddive_load_factor_davg_chord,
+                )
+                + dcruise_load_factor_davg_chord
+                * sigmoidX(cruise_load_factor / dive_load_factor, 1, 0.01)
+                + cruise_load_factor
+                * dSigmoidXdx(cruise_load_factor / dive_load_factor, 1, 0.01)
+                * dquotient(
+                    (cruise_load_factor - dive_load_factor),
+                    dive_load_factor,
+                    dcruise_load_factor_davg_chord - ddive_load_factor_davg_chord,
+                    ddive_load_factor_davg_chord,
+                )
+            )
+            dgust_load_factor_dCl_alpha = (
+                ddive_load_factor_dCl_alpha
+                * sigmoidX(cruise_load_factor / dive_load_factor, 1, -0.01)
+                + dive_load_factor
+                * dSigmoidXdx(cruise_load_factor / dive_load_factor, 1, 0.01)
+                * dquotient(
+                    (dive_load_factor - cruise_load_factor),
+                    dive_load_factor,
+                    ddive_load_factor_dCl_alpha - dcruise_load_factor_dCl_alpha,
+                    ddive_load_factor_dCl_alpha,
+                )
+                + dcruise_load_factor_dCl_alpha
+                * sigmoidX(cruise_load_factor / dive_load_factor, 1, 0.01)
+                + cruise_load_factor
+                * dSigmoidXdx(cruise_load_factor / dive_load_factor, 1, 0.01)
+                * dquotient(
+                    (cruise_load_factor - dive_load_factor),
+                    dive_load_factor,
+                    dcruise_load_factor_dCl_alpha - ddive_load_factor_dCl_alpha,
+                    ddive_load_factor_dCl_alpha,
+                )
+            )
+            dgust_load_factor_dV9 = (
+                dive_load_factor
+                * dSigmoidXdx(cruise_load_factor / dive_load_factor, 1, 0.01)
+                * dquotient(
+                    (dive_load_factor - cruise_load_factor),
+                    dive_load_factor,
+                    ddive_load_factor_dV9 - dcruise_load_factor_dV9,
+                    ddive_load_factor_dV9,
+                )
+                + dcruise_load_factor_dV9
+                * sigmoidX(cruise_load_factor / dive_load_factor, 1, 0.01)
+                + cruise_load_factor
+                * dSigmoidXdx(cruise_load_factor / dive_load_factor, 1, 0.01)
+                * dquotient(
+                    (cruise_load_factor - dive_load_factor),
+                    dive_load_factor,
+                    dcruise_load_factor_dV9 - ddive_load_factor_dV9,
+                    ddive_load_factor_dV9,
+                )
+            )
+            dgust_loading_dmin_dive_vel = (
+                ddive_load_factor_dmin_dive_vel
+                * sigmoidX(cruise_load_factor / dive_load_factor, 1, -0.01)
+                + dive_load_factor
+                * dSigmoidXdx(cruise_load_factor / dive_load_factor, 1, 0.01)
+                * dquotient(
+                    (dive_load_factor - cruise_load_factor),
+                    dive_load_factor,
+                    ddive_load_factor_dmin_dive_vel,
+                    ddive_load_factor_dmin_dive_vel,
+                )
+                + cruise_load_factor
+                * dSigmoidXdx(cruise_load_factor / dive_load_factor, 1, 0.01)
+                * dquotient(
+                    (cruise_load_factor - dive_load_factor),
+                    dive_load_factor,
+                    -ddive_load_factor_dmin_dive_vel,
+                    ddive_load_factor_dmin_dive_vel,
+                )
+            )
+            gust_load_factor = gust_load_factor_1
+        else:
+
+            if (
+                cruise_load_factor > dive_load_factor
+            ):  # note: this creates a discontinuity
+                gust_load_factor = cruise_load_factor
+
+                dgust_load_factor_dwing_loading = dcruise_load_factor_dwing_loading
+                dgust_load_factor_ddensity_ratio = dcruise_load_factor_ddensity_ratio
+                dgust_load_factor_davg_chord = dcruise_load_factor_davg_chord
+                dgust_load_factor_dCl_alpha = dcruise_load_factor_dCl_alpha
+                dgust_load_factor_dV9 = dcruise_load_factor_dV9
+                dgust_load_factor_dmin_dive_vel = 0.0
+
+        ULF = 1.5 * max_maneuver_factor
+        dULF_dmax_maneuver_factor = 1.5
+        dULF_dwing_loading = 0.0
+        dULF_ddensity_ratio = 0.0
+        dULF_davg_chord = 0.0
+        dULF_dCl_alpha = 0.0
+        dULF_dV9 = 0.0
+        dULF_dmin_dive_vel = 0.0
+
+        if smooth:
+            ULF_1 = 1.5 * (
+                gust_load_factor
+                * sigmoidX(max_maneuver_factor / gust_load_factor, 1, 0.01)
+                + max_maneuver_factor
+                * sigmoidX(max_maneuver_factor / gust_load_factor, 1, 0.01)
+            )
+            dULF_dmax_maneuver_factor = 1.5 * (
+                gust_load_factor
+                * dSigmoidXdx(max_maneuver_factor / gust_load_factor, 1, 0.01)
+                * dquotient(
+                    (gust_load_factor - max_maneuver_factor),
+                    gust_load_factor,
+                    -1.0,
+                    0.0,
+                )
+                + sigmoidX(max_maneuver_factor / gust_load_factor, 1, 0.01)
+                + max_maneuver_factor
+                * dSigmoidXdx(max_maneuver_factor / gust_load_factor, 1, 0.01)
+                * dquotient(
+                    (max_maneuver_factor - gust_load_factor), gust_load_factor, 1.0, 0.0
+                )
+            )
+            dULF_dwing_loading = 1.5 * (
+                dgust_load_factor_dwing_loading
+                * sigmoidX(max_maneuver_factor / gust_load_factor, 1, -0.01)
+                + gust_load_factor
+                * dSigmoidXdx(max_maneuver_factor / gust_load_factor, 1, 0.01)
+                * dquotient(
+                    (gust_load_factor - max_maneuver_factor),
+                    gust_load_factor,
+                    dgust_load_factor_dwing_loading,
+                    dgust_load_factor_dwing_loading,
+                )
+                + max_maneuver_factor
+                * dSigmoidXdx(max_maneuver_factor / gust_load_factor, 1, 0.01)
+                * dquotient(
+                    (max_maneuver_factor - gust_load_factor),
+                    gust_load_factor,
+                    -dgust_load_factor_dwing_loading,
+                    dgust_load_factor_dwing_loading,
+                )
+            )
+            dULF_ddensity_ratio = 1.5 * (
+                dgust_load_factor_ddensity_ratio
+                * sigmoidX(max_maneuver_factor / gust_load_factor, 1, -0.01)
+                + gust_load_factor
+                * dSigmoidXdx(max_maneuver_factor / gust_load_factor, 1, 0.01)
+                * dquotient(
+                    (gust_load_factor - max_maneuver_factor),
+                    gust_load_factor,
+                    dgust_load_factor_ddensity_ratio,
+                    dgust_load_factor_ddensity_ratio,
+                )
+                + max_maneuver_factor
+                * dSigmoidXdx(max_maneuver_factor / gust_load_factor, 1, 0.01)
+                * dquotient(
+                    (max_maneuver_factor - gust_load_factor),
+                    gust_load_factor,
+                    -dgust_load_factor_ddensity_ratio,
+                    dgust_load_factor_ddensity_ratio,
+                )
+            )
+            dULF_davg_chord = 1.5 * (
+                dgust_load_factor_davg_chord
+                * sigmoidX(max_maneuver_factor / gust_load_factor, 1, -0.01)
+                + gust_load_factor
+                * dSigmoidXdx(max_maneuver_factor / gust_load_factor, 1, 0.01)
+                * dquotient(
+                    (gust_load_factor - max_maneuver_factor),
+                    gust_load_factor,
+                    dgust_load_factor_davg_chord,
+                    dgust_load_factor_davg_chord,
+                )
+                + max_maneuver_factor
+                * dSigmoidXdx(max_maneuver_factor / gust_load_factor, 1, 0.01)
+                * dquotient(
+                    (max_maneuver_factor - gust_load_factor),
+                    gust_load_factor,
+                    -dgust_load_factor_davg_chord,
+                    dgust_load_factor_davg_chord,
+                )
+            )
+            dULF_dCl_alpha = 1.5 * (
+                dgust_load_factor_dCl_alpha
+                * sigmoidX(max_maneuver_factor / gust_load_factor, 1, -0.01)
+                + gust_load_factor
+                * dSigmoidXdx(max_maneuver_factor / gust_load_factor, 1, 0.01)
+                * dquotient(
+                    (gust_load_factor - max_maneuver_factor),
+                    gust_load_factor,
+                    dgust_load_factor_dCl_alpha,
+                    dgust_load_factor_dCl_alpha,
+                )
+                + max_maneuver_factor
+                * dSigmoidXdx(max_maneuver_factor / gust_load_factor, 1, 0.01)
+                * dquotient(
+                    (max_maneuver_factor - gust_load_factor),
+                    gust_load_factor,
+                    -dgust_load_factor_dCl_alpha,
+                    dgust_load_factor_dCl_alpha,
+                )
+            )
+            dULF_dV9 = 1.5 * (
+                dgust_load_factor_dV9
+                * sigmoidX(max_maneuver_factor / gust_load_factor, 1, -0.01)
+                + gust_load_factor
+                * dSigmoidXdx(max_maneuver_factor / gust_load_factor, 1, 0.01)
+                * dquotient(
+                    (gust_load_factor - max_maneuver_factor),
+                    gust_load_factor,
+                    dgust_load_factor_dV9,
+                    dgust_load_factor_dV9,
+                )
+                + max_maneuver_factor
+                * dSigmoidXdx(max_maneuver_factor / gust_load_factor, 1, 0.01)
+                * dquotient(
+                    (max_maneuver_factor - gust_load_factor),
+                    gust_load_factor,
+                    -dgust_load_factor_dV9,
+                    dgust_load_factor_dV9,
+                )
+            )
+            dULF_dmin_dive_vel = 0.0
+            ULF = ULF_1
+        else:
+            if (
+                gust_load_factor > max_maneuver_factor
+            ):  # note: this creates a discontinuity
+                ULF = 1.5 * gust_load_factor
+
+                dULF_dmax_maneuver_factor = 0.0
+                dULF_dwing_loading = 1.5 * dgust_load_factor_dwing_loading
+                dULF_ddensity_ratio = 1.5 * dgust_load_factor_ddensity_ratio
+                dULF_davg_chord = 1.5 * dgust_load_factor_davg_chord
+                dULF_dCl_alpha = 1.5 * dgust_load_factor_dCl_alpha
+                dULF_dV9 = 1.5 * dgust_load_factor_dV9
+                dULF_dmin_dive_vel = 1.5 * dgust_load_factor_dmin_dive_vel
+
+        if ULF_from_maneuver == True:
+            ULF = 1.5 * max_maneuver_factor
+
+            dULF_dmax_maneuver_factor = 1.5
+            dULF_dwing_loading = 0.0
+            dULF_ddensity_ratio = 0.0
+            dULF_davg_chord = 0.0
+            dULF_dCl_alpha = 0.0
+            dULF_dV9 = 0.0
+            dULF_dmin_dive_vel = 0.0
+
+        partials[Aircraft.Wing.ULTIMATE_LOAD_FACTOR, "max_maneuver_factor"] = (
+            dULF_dmax_maneuver_factor
+        )
+        partials[Aircraft.Wing.ULTIMATE_LOAD_FACTOR, Aircraft.Wing.LOADING] = (
+            dULF_dwing_loading
+        )
+        partials[Aircraft.Wing.ULTIMATE_LOAD_FACTOR, "density_ratio"] = (
+            dULF_ddensity_ratio
+        )
+        partials[Aircraft.Wing.ULTIMATE_LOAD_FACTOR, Aircraft.Wing.AVERAGE_CHORD] = (
+            dULF_davg_chord
+        )
+        partials[
+            Aircraft.Wing.ULTIMATE_LOAD_FACTOR, Aircraft.Design.LIFT_CURVE_SLOPE
+        ] = dULF_dCl_alpha
+        partials[Aircraft.Wing.ULTIMATE_LOAD_FACTOR, "V9"] = dULF_dV9
+        partials[Aircraft.Wing.ULTIMATE_LOAD_FACTOR, "min_dive_vel"] = (
+            dULF_dmin_dive_vel
+        )
+
+
+class BWBLoadFactors(om.ExplicitComponent):
+    """
+    Computation of structural ultimate load factor.
+    """
+
+    def initialize(self):
+        add_aviary_option(self, Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES)
+        add_aviary_option(self, Aircraft.Design.ULF_CALCULATED_FROM_MANEUVER)
+        add_aviary_option(self, Aircraft.Design.TYPE)
+        add_aviary_option(self, Settings.VERBOSITY)
+
+    def setup(self):
+
+        add_aviary_input(self, Mission.Design.GROSS_MASS, units='lbm')
+        add_aviary_input(self, Aircraft.Wing.EXPOSED_AREA, units='ft**2')
+
+        self.add_input(
+            "density_ratio",
+            val=0.5,
+            units="unitless",
+            desc="SIGMA (in GASP): density ratio = density at Altitude / density at Sea level",
+        )
+        self.add_input(
+            "V9",
+            val=100,
+            units="kn",
+            desc="V9: intermediate value. Typically it is maximum flight speed.",
+        )
+        self.add_input("min_dive_vel", val=250, units="kn", desc="VDMIN: dive velocity")
+        self.add_input(
+            "max_maneuver_factor",
+            val=0.72,
+            units="unitless",
+            desc="EMLF: maximum maneuver load factor, units are in g`s",
+        )
+
+        add_aviary_input(self, Aircraft.Wing.AVERAGE_CHORD, units='ft')
+        add_aviary_input(self, Aircraft.Design.LIFT_CURVE_SLOPE, units='1/rad')
+
+        add_aviary_output(self, Aircraft.Wing.ULTIMATE_LOAD_FACTOR, units='unitless')
+
+        self.declare_partials(Aircraft.Wing.ULTIMATE_LOAD_FACTOR, "*")
+
+    def compute(self, inputs, outputs):
+        verbosity = self.options[Settings.VERBOSITY]
+
+        gross_mass = inputs[Mission.Design.GROSS_MASS]
+        exp_wing_area = inputs[Aircraft.Wing.EXPOSED_AREA]
+        if verbosity > Verbosity.BRIEF:
+            if exp_wing_area <= 0.0:
+                print("Aircraft.Wing.EXPOSED_AREA must be positive.")
+            if gross_mass <= 0.0:
+                print("Mission.Design.GROSS_MASS must be positive.")
+        wing_loading = gross_mass / exp_wing_area
+
+        density_ratio = inputs["density_ratio"]
+        V9 = inputs["V9"]
+        min_dive_vel = inputs["min_dive_vel"]
+        max_maneuver_factor = inputs["max_maneuver_factor"]
+        avg_chord = inputs[Aircraft.Wing.AVERAGE_CHORD]
+        Cl_alpha = inputs[Aircraft.Design.LIFT_CURVE_SLOPE]
+
+        ULF_from_maneuver = self.options[Aircraft.Design.ULF_CALCULATED_FROM_MANEUVER]
+        smooth = self.options[Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES]
+
+        mass_ratio = (
+            2.0
+            * wing_loading
+            / (density_ratio * RHO_SEA_LEVEL_ENGLISH * avg_chord * Cl_alpha * 32.2)
+        )
+        k_load_factor = 0.88 * mass_ratio / (5.3 + mass_ratio)
+        cruise_load_factor = 1.0 + (
+            (k_load_factor * 50.0 * V9 * Cl_alpha) / (498.0 * wing_loading)
+        )
+        dive_load_factor = 1.0 + (
+            (k_load_factor * 25.0 * min_dive_vel * Cl_alpha) / (498.0 * wing_loading)
+        )
+        gust_load_factor = dive_load_factor
+
+        if smooth:
+            gust_load_factor = dive_load_factor * sigmoidX(
+                cruise_load_factor / dive_load_factor, 1, -0.01
+            ) + cruise_load_factor * sigmoidX(
+                cruise_load_factor / dive_load_factor, 1, 0.01
+            )
+
+        else:
+            if (
+                cruise_load_factor > dive_load_factor
+            ):  # note: this creates a discontinuity
+                gust_load_factor = cruise_load_factor
+
+        ULF = 1.5 * max_maneuver_factor
+
+        if smooth:
+            ULF = 1.5 * (
+                gust_load_factor
+                * sigmoidX(max_maneuver_factor / gust_load_factor, 1, -0.01)
+                + max_maneuver_factor
+                * sigmoidX(max_maneuver_factor / gust_load_factor, 1, 0.01)
+            )
+
+        else:
+            if (
+                gust_load_factor > max_maneuver_factor
+            ):  # note: this creates a discontinuity
+                ULF = 1.5 * gust_load_factor
+
+        if ULF_from_maneuver == True:
+            ULF = 1.5 * max_maneuver_factor
+
+        outputs[Aircraft.Wing.ULTIMATE_LOAD_FACTOR] = ULF
+
+    def compute_partials(self, inputs, partials):
+
+        gross_mass = inputs[Mission.Design.GROSS_MASS]
+        exp_wing_area = inputs[Aircraft.Wing.EXPOSED_AREA]
+        wing_loading = gross_mass / exp_wing_area
+        dwing_loading_dgross_mass = 1 / exp_wing_area
+        dwing_loading_dexp_wing_area = -gross_mass / exp_wing_area**2
+
         density_ratio = inputs["density_ratio"]
         V9 = inputs["V9"]
         min_dive_vel = inputs["min_dive_vel"]

@@ -57,7 +57,7 @@ class TestFortranToAviary(unittest.TestCase):
                 except Exception as error:
                     exc_string = (
                         f'Error: {filename}\n'
-                        f'Found: {line_no_whitespace}\n'
+                        f'Found:    {line_no_whitespace}\n'
                         f'Expected: {expected_line}'
                     )
                     raise Exception(exc_string)

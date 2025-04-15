@@ -12,6 +12,7 @@ from aviary.utils.test_utils.IO_test_util import check_prob_outputs
 from aviary.variable_info.enums import Verbosity
 from aviary.variable_info.options import get_option_defaults
 from aviary.variable_info.variables import Aircraft, Dynamic
+from aviary.variable_info.functions import setup_model_options
 
 
 class ClimbODETestCase(unittest.TestCase):
@@ -37,6 +38,8 @@ class ClimbODETestCase(unittest.TestCase):
             aviary_options=aviary_options,
             core_subsystems=default_mission_subsystems,
         )
+
+        setup_model_options(self.prob, aviary_options)
 
     def test_start_of_climb(self):
         # Test against GASP start of climb at 250 kts EAS, check partials
@@ -130,3 +133,6 @@ class ClimbODETestCase(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+    # test = ClimbODETestCase()
+    # test.setUp()
+    # test.test_end_of_climb()
