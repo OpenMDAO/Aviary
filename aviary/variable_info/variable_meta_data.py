@@ -4452,6 +4452,7 @@ add_meta_data(
     units="unitless",
     desc='percentage of nacelle diamter buried in fuselage over nacelle diameter',
     default_value=0.0,
+    multivalue=True,
 )
 
 add_meta_data(
