@@ -16,6 +16,7 @@ from aviary.utils.aviary_values import AviaryValues
 from aviary.utils.preprocessors import preprocess_propulsion
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 from aviary.subsystems.propulsion.engine_deck import EngineDeck
+from aviary.variable_info.functions import setup_model_options
 
 
 class TotalSummationTest(unittest.TestCase):
@@ -34,6 +35,9 @@ class TotalSummationTest(unittest.TestCase):
             promotes_inputs=['*'],
             promotes_outputs=['*'],
         )
+
+        setup_model_options(self.prob, AviaryValues(
+            {Aircraft.Engine.NUM_ENGINES: ([2], 'unitless')}))
 
         prob.setup(check=False, force_alloc_complex=True)
 
@@ -111,6 +115,9 @@ class AltTotalSummationTest(unittest.TestCase):
             promotes_inputs=['*'],
             promotes_outputs=['*'],
         )
+
+        setup_model_options(self.prob, AviaryValues(
+            {Aircraft.Engine.NUM_ENGINES: ([2], 'unitless')}))
 
         prob.setup(check=False, force_alloc_complex=True)
 

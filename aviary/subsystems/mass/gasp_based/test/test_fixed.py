@@ -908,6 +908,9 @@ class GearTestCase1(unittest.TestCase):  # this is the large single aisle 1 V3 t
         self.prob.model.set_input_defaults(
             Aircraft.Wing.VERTICAL_MOUNT_LOCATION, val=0, units="unitless")
 
+        setup_model_options(self.prob, AviaryValues(
+            {Aircraft.Engine.NUM_ENGINES: ([2], 'unitless')}))
+
         self.prob.setup(check=False, force_alloc_complex=True)
 
     def test_case1(self):
@@ -1771,7 +1774,7 @@ class FixedMassGroupTestCase3(unittest.TestCase):
 
 
 if __name__ == "__main__":
-    unittest.main()
-    # test = FixedMassGroupTestCase3()
-    # test.setUp()
-    # test.test_case1()
+    # unittest.main()
+    test = FixedMassGroupTestCase3()
+    test.setUp()
+    test.test_case1()

@@ -319,7 +319,7 @@ add_meta_data(
     historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
     units='kW*h/L',
     desc='volumetric density of the battery pack',
-    default_value=0,
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -665,7 +665,7 @@ add_meta_data(
     units='lbm',
     desc='baggage mass per passenger',
     option=True,
-    default_value=None,
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -704,12 +704,9 @@ add_meta_data(
 add_meta_data(
     Aircraft.CrewPayload.CARGO_MASS,
     meta_data=_MetaData,
-    historical_name={"GASP": None,
-                     "FLOPS": None,
-                     "LEAPS1": None
-                     },
+    historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
     units='lbm',
-    desc='total mass of as-flown cargo'
+    desc='total mass of as-flown cargo',
 )
 
 add_meta_data(
@@ -730,12 +727,9 @@ add_meta_data(
 add_meta_data(
     Aircraft.CrewPayload.Design.CARGO_MASS,
     meta_data=_MetaData,
-    historical_name={"GASP": None,
-                     "FLOPS": None,
-                     "LEAPS1": None
-                     },
+    historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
     units='lbm',
-    desc='total mass of cargo flown on design mission'
+    desc='total mass of cargo flown on design mission',
 )
 
 add_meta_data(
@@ -955,7 +949,7 @@ add_meta_data(
     desc='number of flight attendants',
     types=int,
     option=True,
-    default_value=None,
+    default_value=0,
 )
 
 add_meta_data(
@@ -974,7 +968,7 @@ add_meta_data(
     desc='number of flight crew',
     types=int,
     option=True,
-    default_value=None,
+    default_value=0,
 )
 
 add_meta_data(
@@ -992,7 +986,7 @@ add_meta_data(
     desc='number of galley crew',
     types=int,
     option=True,
-    default_value=None,
+    default_value=0,
 )
 
 add_meta_data(
@@ -1240,6 +1234,8 @@ add_meta_data(
     historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
     units='unitless',
     desc='Drag polar computed during Aviary pre-mission.',
+    multivalue=True,
+    types=float,
 )
 
 add_meta_data(
@@ -1352,6 +1348,7 @@ add_meta_data(
     "without his help.",
 )
 
+# TODO expected types and default value?
 add_meta_data(
     Aircraft.Design.LAMINAR_FLOW_LOWER,
     meta_data=_MetaData,
@@ -1362,9 +1359,9 @@ add_meta_data(
     },
     units='unitless',
     desc='table of percent laminar flow over lower component surfaces',
-    default_value=None,
 )
 
+# TODO expected types and default values?
 add_meta_data(
     Aircraft.Design.LAMINAR_FLOW_UPPER,
     meta_data=_MetaData,
@@ -1375,7 +1372,6 @@ add_meta_data(
     },
     units='unitless',
     desc='table of percent laminar flow over upper component surfaces',
-    default_value=None,
 )
 
 add_meta_data(
@@ -1417,23 +1413,21 @@ add_meta_data(
 add_meta_data(
     Aircraft.Design.LIFT_DEPENDENT_DRAG_POLAR,
     meta_data=_MetaData,
-    historical_name={"GASP": None,
-                     "FLOPS": None,
-                     "LEAPS1": None
-                     },
+    historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
     units='unitless',
     desc='Lift dependent drag polar computed during Aviary pre-mission.',
+    multivalue=True,
+    types=float,
 )
 
 add_meta_data(
     Aircraft.Design.LIFT_INDEPENDENT_DRAG_POLAR,
     meta_data=_MetaData,
-    historical_name={"GASP": None,
-                     "FLOPS": None,
-                     "LEAPS1": None
-                     },
+    historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
     units='unitless',
     desc='Lift independent drag polar computed during Aviary pre-mission.',
+    multivalue=True,
+    types=float,
 )
 
 add_meta_data(
@@ -1442,6 +1436,8 @@ add_meta_data(
     historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
     units='unitless',
     desc='Lift polar computed during Aviary pre-mission.',
+    multivalue=True,
+    types=float,
 )
 
 add_meta_data(
@@ -1844,6 +1840,7 @@ add_meta_data(
     desc='additional propulsion system mass added to engine control and starter mass, or '
     'engine installation mass',
     default_value=0.0,
+    multivalue=True,
 )
 
 add_meta_data(
@@ -1876,6 +1873,7 @@ add_meta_data(
     units='lbm/h',
     desc='Additional constant fuel flow. This value is not scaled with the engine',
     default_value=0.0,
+    multivalue=True,
 )
 
 add_meta_data(
@@ -1889,6 +1887,7 @@ add_meta_data(
     units='lbm',
     desc='estimated mass of the engine controls',
     default_value=0.0,
+    multivalue=True,
 )
 
 # TODO there should be a GASP name that pairs here
@@ -1897,10 +1896,11 @@ add_meta_data(
     meta_data=_MetaData,
     historical_name={"GASP": None, "FLOPS": "ENGDIN.EIFILE", "LEAPS1": None},
     units='unitless',
-    types=(str, Path),
+    types=(Path, str),
     default_value=None,
     option=True,
     desc='filepath to data file containing engine performance tables',
+    multivalue=True,
 )
 
 add_meta_data(
@@ -1912,6 +1912,7 @@ add_meta_data(
     desc='RPM the engine is set to be running at. Overrides RPM provided by '
     'engine model or chosen by optimizer. Typically used when pairing a motor or '
     'turboshaft using a fixed operating RPM with a propeller.',
+    multivalue=True,
 )
 
 add_meta_data(
@@ -1929,6 +1930,7 @@ add_meta_data(
     'performance outputs (other than thrust) at flight idle to be below a '
     'decimal fraction of the max value of that output produced by the engine '
     'at each flight condition.',
+    multivalue=True,
 )
 
 add_meta_data(
@@ -1946,6 +1948,7 @@ add_meta_data(
     'performance outputs (other than thrust) at flight idle to be above a '
     'decimal fraction of the max value of that output produced by the engine '
     'at each flight condition.',
+    multivalue=True,
 )
 
 add_meta_data(
@@ -1958,6 +1961,7 @@ add_meta_data(
     desc='If Aircraft.Engine.GENERATE_FLIGHT_IDLE is True, defines idle thrust '
     'condition as a decimal fraction of max thrust produced by the engine at each '
     'flight condition.',
+    multivalue=True,
 )
 
 add_meta_data(
@@ -1972,6 +1976,7 @@ add_meta_data(
     option=True,
     desc='Constant term in fuel flow scaling equation',
     default_value=0.0,
+    multivalue=True,
 )
 
 add_meta_data(
@@ -1986,6 +1991,7 @@ add_meta_data(
     desc='Linear term in fuel flow scaling equation',
     default_value=0.0,
     option=True,
+    multivalue=True,
 )
 
 add_meta_data(
@@ -2005,6 +2011,7 @@ add_meta_data(
     'defined by Aircraft.Engine.FLIGHT_IDLE_THRUST_FRACTION. Other engine outputs are '
     'extrapolated to this thrust level, bounded by '
     'Aircraft.Engine.FLIGHT_IDLE_MIN_FRACT and Aircraft.Engine.FLIGHT_IDLE_MAX_FRACT',
+    multivalue=True,
 )
 
 add_meta_data(
@@ -2021,6 +2028,7 @@ add_meta_data(
     'geometric altitudes. If False, engine deck altitudes are geometric.',
     types=bool,
     default_value=False,
+    multivalue=True,
 )
 
 # Global hybrid throttle is also False by default to account for parallel-hybrid engines
@@ -2039,6 +2047,7 @@ add_meta_data(
     default_value=False,
     types=bool,
     option=True,
+    multivalue=True,
 )
 
 # TODO Disabling global throttle ranges is preferred (therefore default) to prevent
@@ -2058,6 +2067,7 @@ add_meta_data(
     default_value=False,
     types=bool,
     option=True,
+    multivalue=True,
 )
 
 # TODO dependency on NTYE? Does this var need preprocessing? Can this mention be removed?
@@ -2071,6 +2081,7 @@ add_meta_data(
     types=bool,
     desc='if True, the aircraft has propellers, otherwise aircraft is assumed to have no '
     'propellers. In GASP this depended on NTYE',
+    multivalue=True,
 )
 
 add_meta_data(
@@ -2087,6 +2098,7 @@ add_meta_data(
     types=bool,
     desc='If False, all input or generated points are used, otherwise points in the '
     'engine deck with negative net thrust are ignored.',
+    multivalue=True,
 )
 
 add_meta_data(
@@ -2099,6 +2111,7 @@ add_meta_data(
     types=str,
     desc="method used for interpolation on an engine deck's data file, allowable values are "
     'table methods from openmdao.components.interp_util.interp',
+    multivalue=True,
 )
 
 add_meta_data(
@@ -2113,6 +2126,7 @@ add_meta_data(
     desc='scaled mass of a single engine or bare engine if inlet and nozzle mass are '
     'supplied',
     default_value=0.0,
+    multivalue=True,
 )
 
 # TODO FLOPS based equation scale factor needs to be separated out into a different
@@ -2129,6 +2143,7 @@ add_meta_data(
     units='unitless',
     desc='scaler for engine mass',
     default_value=1.0,
+    multivalue=True,
 )
 
 add_meta_data(
@@ -2138,6 +2153,7 @@ add_meta_data(
     units="lbm/lbf",
     desc='specific mass of one engine (engine weight/SLS thrust)',
     default_value=0.0,
+    multivalue=True,
 )
 
 add_meta_data(
@@ -2151,10 +2167,10 @@ add_meta_data(
     units='unitless',
     desc='total number of engines per model on the aircraft '
     '(fuselage, wing, or otherwise)',
-    types=(np.ndarray, int),
+    types=int,
     multivalue=True,
     option=True,
-    default_value=[2],
+    default_value=2,
 )
 
 add_meta_data(
@@ -2168,7 +2184,7 @@ add_meta_data(
     units='unitless',
     desc='number of fuselage mounted engines per model',
     option=True,
-    types=(np.ndarray, int),
+    types=int,
     multivalue=True,
     default_value=0,
 )
@@ -2185,9 +2201,9 @@ add_meta_data(
     units='unitless',
     desc='number of wing mounted engines per model',
     option=True,
-    types=(np.ndarray, int),
+    types=int,
     multivalue=True,
-    default_value=[0],
+    default_value=0,
 )
 
 add_meta_data(
@@ -2201,6 +2217,7 @@ add_meta_data(
     units='lbm',
     desc='engine pod mass including nacelles',
     default_value=0.0,
+    multivalue=True,
 )
 
 add_meta_data(
@@ -2210,6 +2227,7 @@ add_meta_data(
     units="unitless",
     desc='technology factor on mass of engine pods',
     default_value=1.0,
+    multivalue=True,
 )
 
 add_meta_data(
@@ -2219,6 +2237,7 @@ add_meta_data(
     units="unitless",
     desc='engine position factor',
     default_value=0,
+    multivalue=True,
 )
 
 add_meta_data(
@@ -2228,6 +2247,7 @@ add_meta_data(
     units="unitless",
     desc='factor for turbofan engine pylon mass',
     default_value=0.7,
+    multivalue=True,
 )
 
 add_meta_data(
@@ -2237,6 +2257,7 @@ add_meta_data(
     units='ft',
     desc='engine reference diameter',
     default_value=0.0,
+    multivalue=True,
 )
 
 # NOTE This unscaled turbine (engine) weight is an input provided by the user, and is not
@@ -2253,8 +2274,9 @@ add_meta_data(
     units='lbm',
     desc='unscaled mass of a single engine or bare engine if inlet and nozzle mass '
     'are supplied',
-    default_value=None,
+    default_value=0.0,
     option=True,
+    multivalue=True,
 )
 
 add_meta_data(
@@ -2269,8 +2291,9 @@ add_meta_data(
     desc='Maximum sea-level static thrust of an unscaled engine. Optional. In '
     'EngineDecks, reference thrust will be found from performance data if not provided '
     'by user. User-provided values override SLS point found in performance data.',
-    default_value=None,
+    default_value=0.0,
     option=True,
+    multivalue=True,
 )
 
 add_meta_data(
@@ -2283,7 +2306,7 @@ add_meta_data(
     },
     units='rpm',
     desc='the designed output RPM from the engine for fixed-RPM shafts',
-    default_value=None,
+    multivalue=True,
 )
 
 add_meta_data(
@@ -2294,6 +2317,7 @@ add_meta_data(
     desc='Thrust-based scaling factor used to scale engine performance data during '
     'mission analysis',
     default_value=1.0,
+    multivalue=True,
 )
 
 add_meta_data(
@@ -2346,6 +2370,7 @@ add_meta_data(
     'EngineDecks if Aircraft.Engine.SCALE_FACTOR is provided, in which case this '
     'variable is computed.',
     default_value=0.0,
+    multivalue=True,
 )
 
 add_meta_data(
@@ -2359,6 +2384,7 @@ add_meta_data(
     units='lbm',
     desc='mass of engine starter subsystem',
     default_value=0.0,
+    multivalue=True,
 )
 
 add_meta_data(
@@ -2373,6 +2399,7 @@ add_meta_data(
     desc='scaling factor on fuel flow when Mach number is subsonic',
     default_value=1.0,
     option=True,
+    multivalue=True,
 )
 
 add_meta_data(
@@ -2387,6 +2414,7 @@ add_meta_data(
     desc='scaling factor on fuel flow when Mach number is supersonic',
     default_value=1.0,
     option=True,
+    multivalue=True,
 )
 
 add_meta_data(
@@ -2406,6 +2434,7 @@ add_meta_data(
     units='lbm',
     desc='mass of thrust reversers on engines',
     default_value=0.0,
+    multivalue=True,
 )
 
 add_meta_data(
@@ -2422,6 +2451,7 @@ add_meta_data(
     units='unitless',
     desc='scaler for mass of thrust reversers on engines. In FLOPS/LEAPS1 default to 0.0',
     default_value=0.0,
+    multivalue=True,
 )
 
 add_meta_data(
@@ -2430,7 +2460,7 @@ add_meta_data(
     historical_name={"GASP": 'INGASP.NTYE', "FLOPS": None, "LEAPS1": None},
     option=True,
     default_value=GASPEngineType.TURBOJET,
-    types=(GASPEngineType, int, str),
+    types=GASPEngineType,
     multivalue=True,
     units="unitless",
     desc='specifies engine type used for GASP-based engine mass calculation',
@@ -2447,7 +2477,9 @@ add_meta_data(
     units='unitless',
     desc='Engine wing mount locations as fractions of semispan; (NUM_WING_ENGINES)/2 values '
     'are input',
-    default_value=np.array([0.0]),
+    types=(float, list, np.ndarray),
+    default_value=[0.0],
+    multivalue=True,
 )
 
 #   ___                      _
@@ -2463,6 +2495,7 @@ add_meta_data(
     units='unitless',
     desc='The efficiency of the gearbox.',
     default_value=1.0,
+    multivalue=True,
 )
 add_meta_data(
     Aircraft.Engine.Gearbox.GEAR_RATIO,
@@ -2471,6 +2504,7 @@ add_meta_data(
     units='unitless',
     desc='Reduction gear ratio, or the ratio of the RPM_in divided by the RPM_out for the gearbox.',
     default_value=1.0,
+    multivalue=True,
 )
 
 add_meta_data(
@@ -2480,6 +2514,7 @@ add_meta_data(
     units='lbm',
     desc='The mass of the gearbox.',
     default_value=0,
+    multivalue=True,
 )
 
 add_meta_data(
@@ -2493,6 +2528,7 @@ add_meta_data(
     units='hp',
     desc='A guess for the maximum power that will be transmitted through the gearbox during the mission (max shp input).',
     default_value=1.0,
+    multivalue=True,
 )
 
 add_meta_data(
@@ -2502,6 +2538,7 @@ add_meta_data(
     units='lbf*ft/lbm',
     desc='The specific torque of the gearbox, used to calculate gearbox mass. ',
     default_value=100,
+    multivalue=True,
 )
 
 #  __  __         _
@@ -2517,6 +2554,7 @@ add_meta_data(
     units='lbm',
     desc='Total motor mass (considers number of motors)',
     default_value=0.0,
+    multivalue=True,
 )
 
 add_meta_data(
@@ -2526,6 +2564,7 @@ add_meta_data(
     units='lbf*ft',
     desc='Max torque value that can be output from a single motor. Used to determine '
     'motor mass in pre-mission',
+    multivalue=True,
 )
 
 #   ___                            _   _
@@ -2542,6 +2581,7 @@ add_meta_data(
     units="unitless",
     desc='propeller actitivty factor per Blade (Range: 80 to 200)',
     default_value=0.0,
+    multivalue=True,
 )
 
 # NOTE if FT < 0, this bool is true, if >= 0, this is false and the value of FT is used
@@ -2567,6 +2607,7 @@ add_meta_data(
     default_value=None,
     option=True,
     desc='filepath to data file containing propeller data map',
+    multivalue=True,
 )
 
 add_meta_data(
@@ -2576,6 +2617,7 @@ add_meta_data(
     units='ft',
     desc='propeller diameter',
     default_value=0.0,
+    multivalue=True,
 )
 
 add_meta_data(
@@ -2585,6 +2627,7 @@ add_meta_data(
     units='unitless',
     desc='propeller blade integrated design lift coefficient (Range: 0.3 to 0.8)',
     default_value=0.5,
+    multivalue=True,
 )
 
 add_meta_data(
@@ -2594,7 +2637,7 @@ add_meta_data(
     units='unitless',
     desc='number of blades per propeller',
     option=True,
-    types=(int, np.ndarray),
+    types=int,
     multivalue=True,
     default_value=0,
 )
@@ -2610,6 +2653,7 @@ add_meta_data(
     units='unitless',
     desc='maximum allowable Mach number at propeller tip (based on helical speed)',
     default_value=1.0,
+    multivalue=True,
 )
 
 add_meta_data(
@@ -2623,21 +2667,8 @@ add_meta_data(
     units='ft/s',
     desc='maximum allowable propeller linear tip speed',
     default_value=800.0,
+    multivalue=True,
 )
-
-# add_meta_data(
-#     Aircraft.Engine.USE_PROPELLER_MAP,
-#     meta_data=_MetaData,
-#     historical_name={"GASP": None,
-#                      "FLOPS": None,
-#                      "LEAPS1": None
-#                      },
-#     option=True,
-#     default_value=False,
-#     types=bool,
-#     units="unitless",
-#     desc='flag whether to use propeller map or Hamilton-Standard model.'
-# )
 
 #  ______   _
 # |  ____| (_)
@@ -3599,7 +3630,7 @@ add_meta_data(
     historical_name={"GASP": 'INGASP.ELODT', "FLOPS": None, "LEAPS1": None},
     units="unitless",
     desc='length to diameter ratio of tail cone',
-    default_value=1,
+    default_value=1.0,
 )
 
 add_meta_data(
@@ -4102,7 +4133,7 @@ add_meta_data(
     historical_name={"GASP": 'INGASP.YMG', "FLOPS": None, "LEAPS1": None},
     units="unitless",
     desc='span fraction of main gear on wing (0=on fuselage, 1=at tip)',
-    default_value=0,
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -4117,7 +4148,7 @@ add_meta_data(
     },
     units='lbm',
     desc='mass of main landing gear (WMG in GASP)',
-    default_value=0,
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -4228,7 +4259,7 @@ add_meta_data(
     historical_name={"GASP": 'INGASP.WLG', "FLOPS": None, "LEAPS1": None},
     units='lbm',
     desc='total mass of landing gear',
-    default_value=0,
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -4237,7 +4268,7 @@ add_meta_data(
     historical_name={"GASP": 'INGASP.CK12', "FLOPS": None, "LEAPS1": None},
     units="unitless",
     desc='technology factor on landing gear mass',
-    default_value=1,
+    default_value=1.0,
 )
 
 #  _   _                         _   _
@@ -4259,6 +4290,7 @@ add_meta_data(
     units='ft',
     desc='Average diameter of engine nacelles for each engine model',
     default_value=0.0,
+    multivalue=True,
 )
 
 add_meta_data(
@@ -4274,6 +4306,7 @@ add_meta_data(
     units='ft',
     desc='Average length of nacelles for each engine model',
     default_value=0.0,
+    multivalue=True,
 )
 
 add_meta_data(
@@ -4290,6 +4323,7 @@ add_meta_data(
     units='ft',
     desc='Reynolds characteristic length for nacelle for each engine model',
     default_value=0.0,
+    multivalue=True,
 )
 
 add_meta_data(
@@ -4299,6 +4333,7 @@ add_meta_data(
     units="unitless",
     desc='the minimum number of nacelle diameters above the ground that the bottom of the nacelle must be',
     default_value=0.0,
+    multivalue=True,
 )
 
 add_meta_data(
@@ -4308,15 +4343,17 @@ add_meta_data(
     units="unitless",
     desc='ratio of nacelle diameter to engine core diameter',
     default_value=1.25,
+    multivalue=True,
 )
 
 add_meta_data(
     Aircraft.Nacelle.DIAMETER_BURIED_IN_FUSELAGE,
     meta_data=_MetaData,
     historical_name={"GASP": 'INGASP.HEBQDN', "FLOPS": None, "LEAPS1": None},
-    units="unitless",
-    desc='percentage of nacelle diamter buried in fuselage over nacelle diameter',
+    units='unitless',
     default_value=0.0,
+    multivalue=True,
+    desc='percentage of nacelle diameter buried in fuselage over nacelle diameter',
 )
 
 add_meta_data(
@@ -4333,6 +4370,7 @@ add_meta_data(
     units='unitless',
     desc='nacelle fineness ratio',
     default_value=0.0,
+    multivalue=True,
 )
 
 add_meta_data(
@@ -4342,6 +4380,7 @@ add_meta_data(
     units='unitless',
     desc='nacelle form factor',
     default_value=0.0,
+    multivalue=True,
 )
 
 add_meta_data(
@@ -4355,6 +4394,7 @@ add_meta_data(
     units='unitless',
     desc='define percent laminar flow for nacelle lower surface for each engine model',
     default_value=0.0,
+    multivalue=True,
 )
 
 add_meta_data(
@@ -4368,6 +4408,7 @@ add_meta_data(
     units='unitless',
     desc='define percent laminar flow for nacelle upper surface for each engine model',
     default_value=0.0,
+    multivalue=True,
 )
 
 add_meta_data(
@@ -4387,6 +4428,7 @@ add_meta_data(
     units='lbm',
     desc='estimated mass of the nacelles for each engine model',
     default_value=0.0,
+    multivalue=True,
 )
 
 add_meta_data(
@@ -4400,6 +4442,7 @@ add_meta_data(
     units='unitless',
     desc='mass scaler of the nacelle structure for each engine model',
     default_value=1.0,
+    multivalue=True,
 )
 
 add_meta_data(
@@ -4409,6 +4452,7 @@ add_meta_data(
     units='lbm/ft**2',
     desc='nacelle mass/nacelle surface area; lbm per sq ft.',
     default_value=0.0,
+    multivalue=True,
 )
 
 add_meta_data(
@@ -4418,6 +4462,7 @@ add_meta_data(
     units='ft**2',
     desc='surface area of the outside of one entire nacelle, '
     'not just the wetted area',
+    multivalue=True,
 )
 
 add_meta_data(
@@ -4431,6 +4476,7 @@ add_meta_data(
     units='ft**2',
     desc='total nacelles wetted area',
     default_value=0.0,
+    multivalue=True,
 )
 
 add_meta_data(
@@ -4447,6 +4493,7 @@ add_meta_data(
     units='ft**2',
     desc='wetted area of a single nacelle for each engine model',
     default_value=0.0,
+    multivalue=True,
 )
 
 add_meta_data(
@@ -4460,6 +4507,7 @@ add_meta_data(
     units='unitless',
     desc='nacelle wetted area scaler for each engine model',
     default_value=1.0,
+    multivalue=True,
 )
 
 #  _____            _           _
@@ -4623,7 +4671,7 @@ add_meta_data(
     desc='total number of engines for the aircraft ' '(fuselage, wing, or otherwise)',
     types=int,
     option=True,
-    default_value=None,
+    default_value=0,
 )
 
 add_meta_data(
@@ -4634,7 +4682,7 @@ add_meta_data(
     desc='total number of fuselage-mounted engines for the aircraft',
     types=int,
     option=True,
-    default_value=None,
+    default_value=0,
 )
 
 add_meta_data(
@@ -4645,7 +4693,7 @@ add_meta_data(
     desc='total number of wing-mounted engines for the aircraft',
     types=int,
     option=True,
-    default_value=None,
+    default_value=0,
 )
 
 add_meta_data(
@@ -4655,7 +4703,7 @@ add_meta_data(
     units='lbf',
     desc='total maximum thrust of all unscalsed engines on aircraft, sea-level static',
     option=True,
-    default_value=None,
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -5369,7 +5417,9 @@ add_meta_data(
     units='unitless',
     desc='chord lengths as fractions of semispan at station locations; '
     'overwrites station_chord_lengths',
-    default_value=0.0,
+    types=float,
+    default_value=[0.0],
+    multivalue=True,
 )
 
 add_meta_data(
@@ -5550,7 +5600,7 @@ add_meta_data(
     historical_name={"GASP": 'INGASP.JFLTYP', "FLOPS": None, "LEAPS1": None},
     units="unitless",
     default_value=FlapType.DOUBLE_SLOTTED,
-    types=(FlapType, int, str),
+    types=FlapType,
     multivalue=True,
     option=True,
     desc='Set the flap type. Available choices are: plain, split, single_slotted, '
@@ -5720,8 +5770,10 @@ add_meta_data(
     },
     units='unitless',
     desc='wing station locations as fractions of semispan; overwrites station_locations',
+    types=float,
+    multivalue=True,
     option=True,
-    default_value=None,
+    default_value=[0.0],
 )
 
 add_meta_data(
@@ -5768,7 +5820,7 @@ add_meta_data(
         "LEAPS1": 'aircraft.inputs.L0_detailed_wing.pressure_dist',
     },
     units='unitless',
-    desc='controls spatial distribution of integratin stations for detailed' ' wing',
+    desc='controls spatial distribution of integration stations for detailed' ' wing',
     default_value=2.0,
     option=True,
 )
@@ -5795,10 +5847,12 @@ add_meta_data(
         "LEAPS1": 'aircraft.inputs.L0_detailed_wing.wing_station_load_path_sweeps',
     },
     units='deg',
+    types=float,
     desc='Define the sweep of load path at station locations. Typically '
     'parallel to rear spar tending toward max t/c of airfoil. The Ith value '
     'is used between wing stations I and I+1.',
-    default_value=0.0,
+    default_value=[0.0],
+    multivalue=True,
 )
 
 add_meta_data(
@@ -6277,7 +6331,9 @@ add_meta_data(
     },
     units='unitless',
     desc='the thickeness-chord ratios at station locations',
-    default_value=0.0,
+    default_value=[0.0],
+    types=float,
+    multivalue=True,
 )
 
 add_meta_data(
@@ -6430,6 +6486,7 @@ add_meta_data(
     units='lbm/ft**3',
     desc="Atmospheric density at the vehicle's current altitude",
     default_value=0.0,
+    multivalue=True,
 )
 
 add_meta_data(
@@ -6439,6 +6496,7 @@ add_meta_data(
     units='lbf/ft**2',
     desc="Atmospheric dynamic pressure at the vehicle's current flight condition",
     default_value=0.0,
+    multivalue=True,
 )
 
 add_meta_data(
@@ -6448,6 +6506,7 @@ add_meta_data(
     units='ft**2/s',
     desc="Atmospheric kinematic viscosity at the vehicle's current flight condition",
     default_value=0.0,
+    multivalue=True,
 )
 
 add_meta_data(
@@ -6457,6 +6516,7 @@ add_meta_data(
     units='unitless',
     desc='Current Mach number of the vehicle',
     default_value=0.0,
+    multivalue=True,
 )
 
 add_meta_data(
@@ -6465,6 +6525,7 @@ add_meta_data(
     historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
     units='unitless',
     desc='Current rate at which the Mach number of the vehicle is changing',
+    multivalue=True,
 )
 
 add_meta_data(
@@ -6474,6 +6535,7 @@ add_meta_data(
     units='ft/s',
     desc="Atmospheric speed of sound at vehicle's current flight condition",
     default_value=0.0,
+    multivalue=True,
 )
 
 add_meta_data(
@@ -6483,6 +6545,7 @@ add_meta_data(
     units='lbf/ft**2',
     desc="Atmospheric static pressure at the vehicle's current flight condition",
     default_value=0.0,
+    multivalue=True,
 )
 
 add_meta_data(
@@ -6492,6 +6555,7 @@ add_meta_data(
     units='degR',
     desc="Atmospheric temperature at vehicle's current flight condition",
     default_value=0.0,
+    multivalue=True,
 )
 
 
@@ -6509,6 +6573,7 @@ add_meta_data(
     units='ft',
     desc='Current altitude of the vehicle',
     default_value=0.0,
+    multivalue=True,
 )
 
 add_meta_data(
@@ -6517,6 +6582,7 @@ add_meta_data(
     historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
     units='ft/s',
     desc='Current rate of altitude change (climb rate) of the vehicle',
+    multivalue=True,
 )
 
 add_meta_data(
@@ -6526,6 +6592,7 @@ add_meta_data(
     units='ft/s',
     desc='Current maximum possible rate of altitude change (climb rate) of the vehicle '
     '(at hypothetical maximum thrust condition)',
+    multivalue=True,
 )
 
 add_meta_data(
@@ -6533,7 +6600,9 @@ add_meta_data(
     meta_data=_MetaData,
     historical_name={"GASP": None, "FLOPS": 'range', "LEAPS1": None},
     units='NM',
-    desc="The total distance the vehicle has traveled since brake release at the current time",
+    desc='The total distance the vehicle has traveled since brake release at the '
+    'current time',
+    multivalue=True,
 )
 
 add_meta_data(
@@ -6542,6 +6611,7 @@ add_meta_data(
     historical_name={"GASP": None, "FLOPS": 'range_rate', "LEAPS1": None},
     units='NM/s',
     desc="The rate at which the distance traveled is changing at the current time",
+    multivalue=True,
 )
 
 add_meta_data(
@@ -6551,6 +6621,7 @@ add_meta_data(
     units='rad',
     desc='Current flight path angle',
     default_value=0.0,
+    multivalue=True,
 )
 
 add_meta_data(
@@ -6559,6 +6630,7 @@ add_meta_data(
     historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
     units='rad/s',
     desc='Current rate at which flight path angle is changing',
+    multivalue=True,
 )
 
 add_meta_data(
@@ -6566,8 +6638,9 @@ add_meta_data(
     meta_data=_MetaData,
     historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
     units='m/s',
-    desc='Rate of change in specific energy (energy per unit weight) of the vehicle at current '
-    'flight condition',
+    desc='Rate of change in specific energy (energy per unit weight) of the vehicle at '
+    'current flight condition',
+    multivalue=True,
 )
 
 add_meta_data(
@@ -6577,6 +6650,7 @@ add_meta_data(
     units='m/s',
     desc='Rate of change in specific energy (specific power) of the vehicle at current '
     'flight condition',
+    multivalue=True,
 )
 
 add_meta_data(
@@ -6586,6 +6660,7 @@ add_meta_data(
     units='m/s',
     desc='Specific excess power of the vehicle at current flight condition and at '
     'hypothetical maximum thrust',
+    multivalue=True,
 )
 
 add_meta_data(
@@ -6595,6 +6670,7 @@ add_meta_data(
     units='ft/s',
     desc='Current velocity of the vehicle along its body axis',
     default_value=0.0,
+    multivalue=True,
 )
 
 add_meta_data(
@@ -6604,6 +6680,7 @@ add_meta_data(
     units='ft/s**2',
     desc='Current rate of change in velocity (acceleration) of the vehicle along its '
     'body axis',
+    multivalue=True,
 )
 
 #  __      __         _       _          _
@@ -6621,6 +6698,7 @@ add_meta_data(
     units='deg',
     desc="Angle between aircraft wing cord and relative wind",
     default_value=0.0,
+    multivalue=True,
 )
 
 add_meta_data(
@@ -6629,6 +6707,7 @@ add_meta_data(
     historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
     units='unitless',
     desc="battery's current state of charge",
+    multivalue=True,
 )
 
 add_meta_data(
@@ -6636,7 +6715,9 @@ add_meta_data(
     meta_data=_MetaData,
     historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
     units='kJ',
-    desc='Total amount of electric energy consumed by the vehicle up until this point in the mission',
+    desc='Total amount of electric energy consumed by the vehicle up until this point '
+    'in the mission',
+    multivalue=True,
 )
 
 add_meta_data(
@@ -6645,6 +6726,7 @@ add_meta_data(
     historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
     units='lbf',
     desc='Current total drag experienced by the vehicle',
+    multivalue=True,
 )
 
 add_meta_data(
@@ -6654,6 +6736,7 @@ add_meta_data(
     units='lbf',
     desc='Current total lift produced by the vehicle',
     default_value=0.0,
+    multivalue=True,
 )
 
 add_meta_data(
@@ -6663,6 +6746,7 @@ add_meta_data(
     units='lbm',
     desc='Current total mass of the vehicle',
     default_value=0.0,
+    multivalue=True,
 )
 
 add_meta_data(
@@ -6671,6 +6755,7 @@ add_meta_data(
     historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
     units='lbm/s',
     desc='Current rate at which the mass of the vehicle is changing',
+    multivalue=True,
 )
 
 #   ___                             _        _
@@ -6686,6 +6771,7 @@ add_meta_data(
     historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
     units='kW',
     desc='Current electric power consumption of each engine',
+    multivalue=True,
 )
 
 add_meta_data(
@@ -6694,6 +6780,7 @@ add_meta_data(
     historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
     units='kW',
     desc='Current total electric power consumption of the vehicle',
+    multivalue=True,
 )
 
 # add_meta_data(
@@ -6716,6 +6803,7 @@ add_meta_data(
     desc='Current rate of fuel consumption of the vehicle, per single instance of '
     'each engine model. Consumption (i.e. mass reduction) of fuel is defined as '
     'positive.',
+    multivalue=True,
 )
 
 add_meta_data(
@@ -6725,6 +6813,7 @@ add_meta_data(
     units='lbm/h',
     desc='Current rate of fuel consumption of the vehicle, per single instance of each '
     'engine model. Consumption (i.e. mass reduction) of fuel is defined as negative.',
+    multivalue=True,
 )
 
 add_meta_data(
@@ -6734,6 +6823,7 @@ add_meta_data(
     units='lbm/h',
     desc='Current rate of total fuel consumption of the vehicle. Consumption (i.e. '
     'mass reduction) of fuel is defined as negative.',
+    multivalue=True,
 )
 
 add_meta_data(
@@ -6743,6 +6833,7 @@ add_meta_data(
     units='lbm/h',
     desc='Current rate of total fuel consumption of the vehicle. Consumption (i.e. '
     'mass reduction) of fuel is defined as positive.',
+    multivalue=True,
 )
 
 add_meta_data(
@@ -6752,6 +6843,7 @@ add_meta_data(
     units='unitless',
     desc='Current secondary throttle setting of each individual engine model on the '
     'vehicle, used as an additional degree of control for hybrid engines',
+    multivalue=True,
 )
 
 add_meta_data(
@@ -6761,6 +6853,7 @@ add_meta_data(
     units='lbm/h',
     desc='Current rate of nitrous oxide (NOx) production by the vehicle, per single '
     'instance of each engine model',
+    multivalue=True,
 )
 
 add_meta_data(
@@ -6769,6 +6862,7 @@ add_meta_data(
     historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
     units='lbm/h',
     desc='Current total rate of nitrous oxide (NOx) production by the vehicle',
+    multivalue=True,
 )
 
 add_meta_data(
@@ -6778,6 +6872,7 @@ add_meta_data(
     units='ft/s',
     desc='linear propeller tip speed due to rotation (not airspeed at propeller tip)',
     default_value=500.0,
+    multivalue=True,
 )
 
 add_meta_data(
@@ -6786,6 +6881,7 @@ add_meta_data(
     historical_name={"GASP": ['RPM', 'RPMe'], "FLOPS": None, "LEAPS1": None},
     units='rpm',
     desc='Rotational rate of shaft, per engine.',
+    multivalue=True,
 )
 
 add_meta_data(
@@ -6794,6 +6890,7 @@ add_meta_data(
     historical_name={"GASP": ['SHP, EHP'], "FLOPS": None, "LEAPS1": None},
     units='hp',
     desc='current shaft power, per engine',
+    multivalue=True,
 )
 
 add_meta_data(
@@ -6802,6 +6899,7 @@ add_meta_data(
     historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
     units='hp',
     desc='The maximum possible shaft power currently producible, per engine',
+    multivalue=True,
 )
 
 add_meta_data(
@@ -6811,6 +6909,7 @@ add_meta_data(
     units='degR',
     desc='Current turbine exit temperature (T4) of turbine engines on vehicle, per '
     'single instance of each engine model',
+    multivalue=True,
 )
 
 add_meta_data(
@@ -6819,6 +6918,7 @@ add_meta_data(
     historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
     units='unitless',
     desc='Current throttle setting for each individual engine model on the vehicle',
+    multivalue=True,
 )
 
 add_meta_data(
@@ -6828,6 +6928,7 @@ add_meta_data(
     units='lbf',
     desc='Current net thrust produced by engines, per single instance of each engine '
     'model',
+    multivalue=True,
 )
 
 add_meta_data(
@@ -6837,6 +6938,7 @@ add_meta_data(
     units='lbf',
     desc="Hypothetical maximum possible net thrust that can be produced per single "
     "instance of each engine model at the vehicle's current flight condition",
+    multivalue=True,
 )
 
 add_meta_data(
@@ -6846,6 +6948,7 @@ add_meta_data(
     units='lbf',
     desc='Hypothetical maximum possible net thrust produced by the vehicle at its '
     'current flight condition',
+    multivalue=True,
 )
 
 add_meta_data(
@@ -6854,6 +6957,7 @@ add_meta_data(
     historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
     units='lbf',
     desc='Current total net thrust produced by the vehicle',
+    multivalue=True,
 )
 
 add_meta_data(
@@ -6862,6 +6966,7 @@ add_meta_data(
     historical_name={"GASP": 'TORQUE', "FLOPS": None, "LEAPS1": None},
     units='N*m',
     desc='Current torque being produced, per engine',
+    multivalue=True,
 )
 
 add_meta_data(
@@ -6871,6 +6976,7 @@ add_meta_data(
     units='N*m',
     desc='Hypothetical maximum possible torque being produced at the current flight '
     'condition, per engine',
+    multivalue=True,
 )
 
 # ============================================================================================================================================
@@ -6932,7 +7038,7 @@ add_meta_data(
     units='unitless',
     desc='aircraft cruise Mach number',
     # TODO: derived default value: Mission.Summary.CRUISE_MACH ???
-    default_value=None,
+    default_value=0.0,
     option=True,
 )
 
@@ -7721,7 +7827,7 @@ add_meta_data(
     },
     units='lbm',
     desc='fuel burned during simple takeoff calculation',
-    default_value=None,
+    default_value=0.0,
 )
 
 add_meta_data(
