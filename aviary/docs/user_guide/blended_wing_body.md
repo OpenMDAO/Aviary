@@ -12,7 +12,7 @@ We will explain some details of each feature in this document.
 
 ### Partially Buried Engine in Fuselage
 
-In a BWB, an engine can be partially buried in fuselage. Supposed that the nacelle has the diameter $D$ and the buried diameter is $d$. In Aviary, we denote the ratio $x = d/D$. So, $0 \le x \le 1$. This variable is called `Aircraft.Nacelle.DIAMETER_BURIED_IN_FUSELAGE`. Then the percentage of perimeter not buried in fuselage is $f(x) = 1 - \arccos(2*(0.5 -x))/\pi$. Clearly, if the nacelle is not buried in fuselage at all, then $x = 0$ and $f(x) = 1$. Note that function $f(x)$ has infinity derivatives at $x = 0$ and $x = 1$. We have to use two cubic functions instead near the two ends. This is shown in the following image:
+In a BWB, an engine can be partially buried in fuselage. Supposed that the nacelle has the diameter $D$ and the buried diameter is $d$. In Aviary, we denote the ratio $x = d/D$. So, $0 \le x \le 1$. This variable is called `Aircraft.Nacelle.PERCENT_DIAM_BURIED_IN_FUSELAGE`. Then the percentage of perimeter not buried in fuselage is $f(x) = 1 - \arccos(2*(0.5 -x))/\pi$. Clearly, if the nacelle is not buried in fuselage at all, then $x = 0$ and $f(x) = 1$. Note that function $f(x)$ has infinity derivatives at $x = 0$ and $x = 1$. We have to use two cubic functions instead near the two ends. This is shown in the following image:
 
 ![Partially buried engine in fuselage](images/BWB_engine.png)
 
