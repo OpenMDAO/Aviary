@@ -91,7 +91,7 @@ aircraft:nacelle:avg_diameter,7.5,ft
 aircraft:nacelle:avg_length,18.11,ft
 aircraft:nacelle:clearance_ratio,0.2,unitless
 aircraft:nacelle:core_diameter_ratio,1.2205,unitless
-aircraft:nacelle:diameter_buried_in_fuselage,0,unitless
+aircraft:nacelle:percent_diam_buried_in_fuselage,0,unitless
 aircraft:nacelle:fineness,1.3588,unitless
 aircraft:nacelle:form_factor,1.2,unitless
 aircraft:nacelle:mass_specific,2.5,lbm/ft**2
