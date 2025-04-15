@@ -158,7 +158,7 @@ class BWBEngineSizeGroupTestCase(unittest.TestCase):
             promotes=["*"],
         )
 
-        self.prob.model.set_input_defaults(Aircraft.Nacelle.PERCENT_DIAM_BURIED_IN_FUSELAGE, 
+        self.prob.model.set_input_defaults(Aircraft.Nacelle.PERCENT_DIAM_BURIED_IN_FUSELAGE,
                                            0.0, units='unitless')
 
         self.prob.model.set_input_defaults(
