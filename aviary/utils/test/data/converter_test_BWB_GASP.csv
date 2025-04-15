@@ -94,7 +94,7 @@ aircraft:nacelle:core_diameter_ratio,1.2205,unitless
 aircraft:nacelle:fineness,1.3588,unitless
 aircraft:nacelle:form_factor,1.2,unitless
 aircraft:nacelle:mass_specific,2.5,lbm/ft**2
-aircraft:nacelle:percent_diam_buried_in_fuselage,0,unitless
+aircraft:nacelle:percent_diam_buried_in_fuselage,0.0,unitless
 aircraft:strut:area_ratio,0.0,unitless
 aircraft:strut:attachment_location,0.0,ft
 aircraft:strut:attachment_location_dimensionless,0.0,unitless
