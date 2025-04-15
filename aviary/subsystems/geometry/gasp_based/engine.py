@@ -109,7 +109,7 @@ class PercentNotInFuselage(om.ExplicitComponent):
     def setup(self):
         num_engine_type = len(self.options[Aircraft.Engine.NUM_ENGINES])
 
-        add_aviary_input(self, Aircraft.Nacelle.DIAMETER_BURIED_IN_FUSELAGE,
+        add_aviary_input(self, Aircraft.Nacelle.PERCENT_DIAM_BURIED_IN_FUSELAGE,
                          shape=num_engine_type, units='unitless')
 
         self.add_output('percent_exposed', shape=num_engine_type, units='unitless')
@@ -121,14 +121,14 @@ class PercentNotInFuselage(om.ExplicitComponent):
         self.declare_partials(
             'percent_exposed',
             [
-                Aircraft.Nacelle.DIAMETER_BURIED_IN_FUSELAGE
+                Aircraft.Nacelle.PERCENT_DIAM_BURIED_IN_FUSELAGE
             ],
             rows=shape,
             cols=shape,
         )
 
     def compute(self, inputs, outputs):
-        x = inputs[Aircraft.Nacelle.DIAMETER_BURIED_IN_FUSELAGE]
+        x = inputs[Aircraft.Nacelle.PERCENT_DIAM_BURIED_IN_FUSELAGE]
         if x >= epsilon and x <= 1 - epsilon:
             diff = 0.5 - x
             pct_swn = 1. - np.arccos(2.0 * diff) / np.pi
@@ -137,12 +137,13 @@ class PercentNotInFuselage(om.ExplicitComponent):
         elif x <= 1.0 and x > 1 - epsilon:
             pct_swn = g2(x)
         else:
-            raise "The parameter Aircraft.Nacelle.DIAMETER_BURIED_IN_FUSELAGE is out of range."
+            raise om.AnalysisError(
+                "The parameter Aircraft.Nacelle.PERCENT_DIAM_BURIED_IN_FUSELAGE is out of range.")
 
         outputs['percent_exposed'] = pct_swn
 
     def compute_partials(self, inputs, J):
-        x = inputs[Aircraft.Nacelle.DIAMETER_BURIED_IN_FUSELAGE]
+        x = inputs[Aircraft.Nacelle.PERCENT_DIAM_BURIED_IN_FUSELAGE]
         if x >= epsilon and x <= 1 - epsilon:
             diff = 0.5 - x
             d_pct_swn = -2.0 / np.sqrt(1.0 - 4 * diff * diff) / np.pi
@@ -151,9 +152,10 @@ class PercentNotInFuselage(om.ExplicitComponent):
         elif x <= 1.0 and x > 1 - epsilon:
             d_pct_swn = dg2(x)
         else:
-            raise "The parameter Aircraft.Nacelle.DIAMETER_BURIED_IN_FUSELAGE is out of range."
+            raise om.AnalysisError(
+                "The parameter Aircraft.Nacelle.PERCENT_DIAM_BURIED_IN_FUSELAGE is out of range.")
 
-        J['percent_exposed', Aircraft.Nacelle.DIAMETER_BURIED_IN_FUSELAGE] = d_pct_swn
+        J['percent_exposed', Aircraft.Nacelle.PERCENT_DIAM_BURIED_IN_FUSELAGE] = d_pct_swn
 
 
 class EngineSize(om.ExplicitComponent):
@@ -272,7 +274,7 @@ class BWBEngineSizeGroup(om.Group):
         perc = self.add_subsystem(
             "perc",
             PercentNotInFuselage(),
-            promotes_inputs=["aircraft:nacelle:diameter_buried_in_fuselage"],
+            promotes_inputs=["aircraft:nacelle:percent_diam_buried_in_fuselage"],
             promotes_outputs=["percent_exposed"],
         )
 

@@ -20,7 +20,7 @@ class TestPercentNotInFuselage(unittest.TestCase):
         self.prob.model.add_subsystem("perc", PercentNotInFuselage(), promotes=["*"])
 
         self.prob.model.set_input_defaults(
-            Aircraft.Nacelle.DIAMETER_BURIED_IN_FUSELAGE, 0.0, units="unitless")
+            Aircraft.Nacelle.PERCENT_DIAM_BURIED_IN_FUSELAGE, 0.0, units="unitless")
 
         setup_model_options(self.prob, aviary_options)
         self.prob.setup(check=False, force_alloc_complex=True)
@@ -36,7 +36,7 @@ class TestPercentNotInFuselage(unittest.TestCase):
     def test_half_buried(self):
         """test in the range (epsilon, 1.0 - epsilon)"""
         self.prob.set_val(
-            Aircraft.Nacelle.DIAMETER_BURIED_IN_FUSELAGE, val=0.5, units='unitless')
+            Aircraft.Nacelle.PERCENT_DIAM_BURIED_IN_FUSELAGE, val=0.5, units='unitless')
         self.prob.run_model()
         tol = 1e-7
         assert_near_equal(self.prob['percent_exposed'], 0.5, tol)
@@ -47,7 +47,7 @@ class TestPercentNotInFuselage(unittest.TestCase):
     def test_left_buried(self):
         """test in the range (0.0, epsilon)"""
         self.prob.set_val(
-            Aircraft.Nacelle.DIAMETER_BURIED_IN_FUSELAGE, val=0.03, units='unitless')
+            Aircraft.Nacelle.PERCENT_DIAM_BURIED_IN_FUSELAGE, val=0.03, units='unitless')
         self.prob.run_model()
         tol = 1e-7
         assert_near_equal(self.prob['percent_exposed'], 0.89181881, tol)
@@ -58,7 +58,7 @@ class TestPercentNotInFuselage(unittest.TestCase):
     def test_right_buried(self):
         """test in the range (1.0 - epsilon, 1.0)"""
         self.prob.set_val(
-            Aircraft.Nacelle.DIAMETER_BURIED_IN_FUSELAGE, val=0.97, units='unitless')
+            Aircraft.Nacelle.PERCENT_DIAM_BURIED_IN_FUSELAGE, val=0.97, units='unitless')
         self.prob.run_model()
         tol = 1e-7
 
@@ -158,8 +158,8 @@ class BWBEngineSizeGroupTestCase(unittest.TestCase):
             promotes=["*"],
         )
 
-        self.prob.model.set_input_defaults(Aircraft.Nacelle.DIAMETER_BURIED_IN_FUSELAGE, 0.0,
-                                           units='unitless')
+        self.prob.model.set_input_defaults(Aircraft.Nacelle.PERCENT_DIAM_BURIED_IN_FUSELAGE, 
+                                           0.0, units='unitless')
 
         self.prob.model.set_input_defaults(
             Aircraft.Engine.REFERENCE_DIAMETER, 5.8, units='ft')

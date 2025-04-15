@@ -772,7 +772,7 @@ class BWBExposedWingTestCase(unittest.TestCase):
         self.prob.run_model()
         tol = 1e-7
 
-        assert_near_equal(self.prob[Aircraft.Wing.EXPOSED_WING_AREA], 1352.11359987, tol)
+        assert_near_equal(self.prob[Aircraft.Wing.EXPOSED_AREA], 1352.11359987, tol)
 
         partial_data = self.prob.check_partials(out_stream=None, method="cs")
         assert_check_partials(partial_data, atol=1e-11, rtol=5e-11)
@@ -815,7 +815,7 @@ class ExposedWingTestCase(unittest.TestCase):
         self.prob.run_model()
         tol = 1e-7
 
-        assert_near_equal(self.prob[Aircraft.Wing.EXPOSED_WING_AREA], 1352.1135998, tol)
+        assert_near_equal(self.prob[Aircraft.Wing.EXPOSED_AREA], 1352.1135998, tol)
 
         partial_data = self.prob.check_partials(out_stream=None, method="cs")
         assert_check_partials(partial_data, atol=1e-11, rtol=5e-11)
@@ -827,7 +827,7 @@ class ExposedWingTestCase(unittest.TestCase):
         self.prob.run_model()
         tol = 1e-7
 
-        assert_near_equal(self.prob[Aircraft.Wing.EXPOSED_WING_AREA], 1781.29634277, tol)
+        assert_near_equal(self.prob[Aircraft.Wing.EXPOSED_AREA], 1781.29634277, tol)
 
         partial_data = self.prob.check_partials(out_stream=None, method="cs")
         assert_check_partials(partial_data, atol=1e-11, rtol=5e-11)
@@ -838,7 +838,7 @@ class ExposedWingTestCase(unittest.TestCase):
         self.prob.run_model()
         tol = 1e-7
 
-        assert_near_equal(self.prob[Aircraft.Wing.EXPOSED_WING_AREA], 1781.29634277, tol)
+        assert_near_equal(self.prob[Aircraft.Wing.EXPOSED_AREA], 1781.29634277, tol)
 
         partial_data = self.prob.check_partials(out_stream=None, method="cs")
         assert_check_partials(partial_data, atol=5e-10, rtol=5e-12)

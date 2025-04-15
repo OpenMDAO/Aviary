@@ -1104,14 +1104,14 @@ class ExposedWing(om.ExplicitComponent):
         add_aviary_input(self, Aircraft.Wing.TAPER_RATIO, units='unitless', desc='SLM')
         add_aviary_input(self, Aircraft.Wing.AREA, units='ft**2', desc='SW')
 
-        add_aviary_output(self, Aircraft.Wing.EXPOSED_WING_AREA,
+        add_aviary_output(self, Aircraft.Wing.EXPOSED_AREA,
                           units='ft**2', desc='SW_EXP')
 
     def setup_partials(self):
         design_type = self.options[Aircraft.Design.TYPE]
 
         self.declare_partials(
-            Aircraft.Wing.EXPOSED_WING_AREA,
+            Aircraft.Wing.EXPOSED_AREA,
             [
                 Aircraft.Wing.VERTICAL_MOUNT_LOCATION,
                 Aircraft.Fuselage.AVG_DIAMETER,
@@ -1123,7 +1123,7 @@ class ExposedWing(om.ExplicitComponent):
 
         if design_type is AircraftTypes.BLENDED_WING_BODY:
             self.declare_partials(
-                Aircraft.Wing.EXPOSED_WING_AREA,
+                Aircraft.Wing.EXPOSED_AREA,
                 [
                     Aircraft.Fuselage.HEIGHT_TO_WIDTH_RATIO,
                 ],
@@ -1165,8 +1165,8 @@ class ExposedWing(om.ExplicitComponent):
         tip_chord = taper_ratio * root_chord_wing
         c_fus = root_chord_wing + 2.0 * b_fus * (tip_chord - root_chord_wing) / wingspan
 
-        exposed_wing_area = (wingspan / 2.0 - b_fus) * (c_fus + tip_chord)
-        outputs[Aircraft.Wing.EXPOSED_WING_AREA] = exposed_wing_area
+        exp_wing_area = (wingspan / 2.0 - b_fus) * (c_fus + tip_chord)
+        outputs[Aircraft.Wing.EXPOSED_AREA] = exp_wing_area
 
     def compute_partials(self, inputs, J):
         design_type = self.options[Aircraft.Design.TYPE]
@@ -1216,7 +1216,7 @@ class ExposedWing(om.ExplicitComponent):
                 - d_b_fus_d_height_to_width * 2.0 * wing_area * taper_ratio /
                 wingspan / (1.0 + taper_ratio)
             )
-            J[Aircraft.Wing.EXPOSED_WING_AREA,
+            J[Aircraft.Wing.EXPOSED_AREA,
               Aircraft.Fuselage.HEIGHT_TO_WIDTH_RATIO] = d_exp_area_d_height_to_width
 
         else:
@@ -1238,32 +1238,32 @@ class ExposedWing(om.ExplicitComponent):
             (wingspan * 0.5 - b_fus) * d_c_fus_d_hwing - \
             d_b_fus_d_hwing * 2.0 * wing_area * taper_ratio / \
             wingspan / (1.0 + taper_ratio)
-        J[Aircraft.Wing.EXPOSED_WING_AREA,
+        J[Aircraft.Wing.EXPOSED_AREA,
           Aircraft.Wing.VERTICAL_MOUNT_LOCATION] = d_exp_area_d_hwing
 
         d_exp_area_d_body_width = -d_b_fus_d_body_width * c_fus + \
             (wingspan * 0.5 - b_fus) * d_c_fus_d_body_width - \
             d_b_fus_d_body_width * 2.0 * wing_area * \
             taper_ratio / wingspan / (1 + taper_ratio)
-        J[Aircraft.Wing.EXPOSED_WING_AREA,
+        J[Aircraft.Wing.EXPOSED_AREA,
           Aircraft.Fuselage.AVG_DIAMETER] = d_exp_area_d_body_width
 
         d_exp_area_d_wingspan = (
             0.5 * c_fus + (0.5 * wingspan - b_fus) * d_c_fus_d_wingspan
             + b_fus * 2.0 * wing_area * taper_ratio / wingspan**2/(1.0 + taper_ratio)
         )
-        J[Aircraft.Wing.EXPOSED_WING_AREA, Aircraft.Wing.SPAN] = d_exp_area_d_wingspan
+        J[Aircraft.Wing.EXPOSED_AREA, Aircraft.Wing.SPAN] = d_exp_area_d_wingspan
 
         d_exp_area_d_taper_ratio = (
             (0.5 * wingspan - b_fus) * d_c_fus_d_taper_ratio
             + wing_area / (1.0 + taper_ratio)**2
             - b_fus * 2.0 * wing_area / wingspan / (1.0 + taper_ratio)**2
         )
-        J[Aircraft.Wing.EXPOSED_WING_AREA, Aircraft.Wing.TAPER_RATIO] = d_exp_area_d_taper_ratio
+        J[Aircraft.Wing.EXPOSED_AREA, Aircraft.Wing.TAPER_RATIO] = d_exp_area_d_taper_ratio
 
         d_exp_area_d_wing_area = (
             (0.5 * wingspan - b_fus) * d_c_fus_d_wing_area
             + taper_ratio / (1.0 + taper_ratio)
             - b_fus * 2.0 * taper_ratio / wingspan / (1.0 + taper_ratio)
         )
-        J[Aircraft.Wing.EXPOSED_WING_AREA, Aircraft.Wing.AREA] = d_exp_area_d_wing_area
+        J[Aircraft.Wing.EXPOSED_AREA, Aircraft.Wing.AREA] = d_exp_area_d_wing_area
