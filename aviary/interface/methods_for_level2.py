@@ -1337,14 +1337,14 @@ class AviaryProblem(om.Problem):
 
         If using the GASP model, the following design variables are added depending on
         the mission type:
-            - the initial thrust-to-weight ratio of the aircraft during ascent
-            - the duration of the ascent phase
-            - the time constant for the landing gear actuation
-            - the time constant for the flaps actuation
+        - the initial thrust-to-weight ratio of the aircraft during ascent
+        - the duration of the ascent phase
+        - the time constant for the landing gear actuation
+        - the time constant for the flaps actuation
 
         In addition, two constraints are added for the GASP model:
-            - the initial altitude of the aircraft with gear extended is constrained to be 50 ft
-            - the initial altitude of the aircraft with flaps extended is constrained to be 400 ft
+        - the initial altitude of the aircraft with gear extended is constrained to be 50 ft
+        - the initial altitude of the aircraft with flaps extended is constrained to be 400 ft
 
         If solving a sizing problem, a design variable is added for the gross mass of
         the aircraft, and another for the gross mass of the aircraft computed during the
