@@ -351,15 +351,15 @@ class SubsystemBuilderBase(ABC):
             for phase_name, phase_data in phase_info.items():
                 phase_d = {}
                 if phase_data["do_the_thing"]:
-                    phase_d[f"{self.name}.mission_variable_a"] = f"{phase_name}_post_mission_variable_a"
-                    phase_d[f"{self.name}.mission_variable_b"] = [f"{phase_name}_post_mission_variable_b_name1", f"{phase_name}_post_mission_variable_b_name2"]
-                    phase_d[f"{self.name}.mission_variable_c"] = [f"{phase_name}_post_mission_variable_c_name1"]
-                    phase_d[Dynamic.Mission.VELOCITY] = [f"{phase_name}_post_mission_velocity_name1"]
+                    phase_d[f"{self.name}.mission_variable_a"] = f"{self.name}.{phase_name}_post_mission_variable_a"
+                    phase_d[f"{self.name}.mission_variable_b"] = [f"{self.name}.{phase_name}_post_mission_variable_b_name1", f"{self.name}.{phase_name}_post_mission_variable_b_name2"]
+                    phase_d[f"{self.name}.mission_variable_c"] = [f"{self.name}.{phase_name}_post_mission_variable_c_name1"]
+                    phase_d[Dynamic.Mission.VELOCITY] = [f"{self.name}.{phase_name}_post_mission_velocity_name1"]
                 if phase_data["do_the_other_thing"]:
-                    phase_d[f"{self.name}.mission_variable_d"] = f"{phase_name}_post_mission_variable_d"
-                    phase_d[f"{self.name}.mission_variable_e"] = [f"{phase_name}_post_mission_variable_e_name1", f"{phase_name}_post_mission_variable_e_name2"]
-                    phase_d[f"{self.name}.mission_variable_f"] = [f"{phase_name}_post_mission_variable_f_name1"]
-                    phase_d[Dynamic.Atmosphere.KINEMATIC_VISCOSITY] = f"{phase_name}_post_mission_nu_name1"
+                    phase_d[f"{self.name}.mission_variable_d"] = f"{self.name}.{phase_name}_post_mission_variable_d"
+                    phase_d[f"{self.name}.mission_variable_e"] = [f"{self.name}.{phase_name}_post_mission_variable_e_name1", f"{self.name}.{phase_name}_post_mission_variable_e_name2"]
+                    phase_d[f"{self.name}.mission_variable_f"] = [f"{self.name}.{phase_name}_post_mission_variable_f_name1"]
+                    phase_d[Dynamic.Atmosphere.KINEMATIC_VISCOSITY] = f"{self.name}.{phase_name}_post_mission_nu_name1"
 
                 out[phase_name] = phase_d
 

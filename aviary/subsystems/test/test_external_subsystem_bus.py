@@ -40,6 +40,7 @@ av.add_meta_data(
     meta_data=ExtendedMetaData
 )
 
+
 class PreMissionComp(om.ExplicitComponent):
 
     def initialize(self):
@@ -96,18 +97,20 @@ class PostMissionComp(om.ExplicitComponent):
     def compute(self, inputs, outputs):
         outputs["zzz"] = np.sum(inputs["xx"])
         if self.options['do_the_zz_thing']:
-            outputs["zzz"] *= np.sum(inputs["zz"])
+            outputs["zzz"] *= np.sum(inputs["zz"]*inputs['velocity'])
 
 
 class CustomBuilder(SubsystemBuilderBase):
 
     def build_pre_mission(self, aviary_inputs):
-        shape = (aviary_inputs.get_val("the_shape_for_the_thing_dim0"), aviary_inputs.get_val("the_shape_for_the_thing_dim1"))
+        shape = (aviary_inputs.get_val("the_shape_for_the_thing_dim0"),
+                 aviary_inputs.get_val("the_shape_for_the_thing_dim1"))
         return PreMissionComp(shape=shape)
 
     def build_mission(self, num_nodes, aviary_inputs):
         sub_group = om.Group()
-        shape = (aviary_inputs.get_val("the_shape_for_the_thing_dim0"), aviary_inputs.get_val("the_shape_for_the_thing_dim1"))
+        shape = (aviary_inputs.get_val("the_shape_for_the_thing_dim0"),
+                 aviary_inputs.get_val("the_shape_for_the_thing_dim1"))
         comp = MissionComp(shape=shape, num_nodes=num_nodes)
         sub_group.add_subsystem('electric', comp,
                                 promotes_inputs=['*'],
@@ -116,25 +119,26 @@ class CustomBuilder(SubsystemBuilderBase):
         return sub_group
 
     def get_bus_variables(self, aviary_inputs):
-        shape = (aviary_inputs.get_val("the_shape_for_the_thing_dim0"), aviary_inputs.get_val("the_shape_for_the_thing_dim1"))
+        shape = (aviary_inputs.get_val("the_shape_for_the_thing_dim0"),
+                 aviary_inputs.get_val("the_shape_for_the_thing_dim1"))
         vars_to_connect = {
             f"{self.name}.for_climb": {
                 "mission_name": [f'{self.name}.xx'],
-                "post_mission_name": 'climb_xx',
+                "post_mission_name": f'{self.name}.climb_xx',
                 "units": 'ft',
                 "shape": shape,
                 "phases": ['climb']
             },
             f"{self.name}.for_cruise": {
                 "mission_name": [f'{self.name}.xx'],
-                "post_mission_name": 'cruise_xx',
+                "post_mission_name": f'{self.name}.cruise_xx',
                 "units": 'ft',
                 "shape": shape,
                 "phases": ['cruise']
             },
             f"{self.name}.for_descent": {
                 "mission_name": [f'{self.name}.xx'],
-                "post_mission_name": 'descent_xx',
+                "post_mission_name": [f'{self.name}.descent_xx'],
                 "units": 'ft',
                 "shape": shape,
                 "phases": ['descent']
@@ -148,18 +152,20 @@ class CustomBuilder(SubsystemBuilderBase):
         for phase_name, phase_data in phase_info.items():
             phase_d = {}
             if phase_data.get("do_the_zz_thing", False):
-                phase_d[f"{self.name}.zz"] = f"{phase_name}_zz"
-                phase_d[Dynamic.Mission.VELOCITY] = f"{phase_name}_velocity"
+                phase_d[f"{self.name}.zz"] = f"{self.name}.{phase_name}_zz"
+                phase_d[Dynamic.Mission.VELOCITY] = f"{self.name}.{phase_name}_velocity"
             out[phase_name] = phase_d
         return out
 
     def build_post_mission(self, aviary_inputs, phase_info, phase_mission_bus_lengths, **kwargs):
-        shape = (aviary_inputs.get_val("the_shape_for_the_thing_dim0"), aviary_inputs.get_val("the_shape_for_the_thing_dim1"))
+        shape = (aviary_inputs.get_val("the_shape_for_the_thing_dim0"),
+                 aviary_inputs.get_val("the_shape_for_the_thing_dim1"))
         group = om.Group()
         for phase_name, phase_data in phase_info.items():
             do_the_zz_thing = phase_data.get("do_the_zz_thing", False)
             num_nodes = phase_mission_bus_lengths[phase_name]
-            comp = PostMissionComp(num_nodes=num_nodes, shape=shape, do_the_zz_thing=do_the_zz_thing)
+            comp = PostMissionComp(num_nodes=num_nodes, shape=shape,
+                                   do_the_zz_thing=do_the_zz_thing)
             pi = [("xx", f"{phase_name}_xx")]
             if do_the_zz_thing:
                 pi.append(("zz", f"{phase_name}_zz"))
@@ -169,7 +175,6 @@ class CustomBuilder(SubsystemBuilderBase):
                 f"{phase_name}_post_mission", comp,
                 promotes_inputs=pi, promotes_outputs=po)
         return group
-
 
 
 @use_tempdirs
@@ -190,8 +195,10 @@ class TestExternalSubsystemBus(unittest.TestCase):
 
         csv_path = "models/test_aircraft/aircraft_for_bench_FwFm.csv"
         prob.load_inputs(csv_path, phase_info)
-        prob.aviary_inputs.set_val("the_shape_for_the_thing_dim0", 3, meta_data=ExtendedMetaData)
-        prob.aviary_inputs.set_val("the_shape_for_the_thing_dim1", 4, meta_data=ExtendedMetaData)
+        prob.aviary_inputs.set_val("the_shape_for_the_thing_dim0",
+                                   3, meta_data=ExtendedMetaData)
+        prob.aviary_inputs.set_val("the_shape_for_the_thing_dim1",
+                                   4, meta_data=ExtendedMetaData)
         prob.check_and_preprocess_inputs()
 
         prob.add_pre_mission_systems()
@@ -205,19 +212,48 @@ class TestExternalSubsystemBus(unittest.TestCase):
         # Just run once to pass data.
         prob.run_model()
 
-        # # Each phase should have a different value passed from pre using the bus.
-        # assert_near_equal(
-        #     prob.model.get_val('traj.climb.rhs_all.test.yy'),
-        #     2.0 * np.array([[3.1], [1.7]]),
-        # )
-        # assert_near_equal(
-        #     prob.model.get_val('traj.cruise.rhs_all.test.yy'),
-        #     2.0 * np.array([[1.2], [4.1]]),
-        # )
-        # assert_near_equal(
-        #     prob.model.get_val('traj.descent.rhs_all.test.yy'),
-        #     2.0 * np.array([[3.], [8.]]),
-        # )
+        # Make sure the values are correct.
+        yy_actual = prob.model.get_val('traj.climb.rhs_all.test.yy')
+        xx = prob.model.get_val('pre_mission.test.for_climb')
+        yy_expected = 2.0*np.sum(xx)*range(len(yy_actual))
+        assert_near_equal(yy_actual, yy_expected)
+        zz_actual = prob.model.get_val('traj.climb.rhs_all.test.zz')
+        zz_expected = 3.0*np.sum(xx)*range(len(zz_actual))
+        assert_near_equal(zz_actual, zz_expected)
+
+        yy_actual = prob.model.get_val('traj.cruise.rhs_all.test.yy')
+        xx = prob.model.get_val('pre_mission.test.for_cruise')
+        yy_expected = 2.0*np.sum(xx)*range(len(yy_actual))
+        assert_near_equal(yy_actual, yy_expected)
+        zz_actual = prob.model.get_val('traj.cruise.rhs_all.test.zz')
+        zz_expected = 3.0*np.sum(xx)*range(len(zz_actual))
+        assert_near_equal(zz_actual, zz_expected)
+
+        yy_actual = prob.model.get_val('traj.descent.rhs_all.test.yy')
+        xx = prob.model.get_val('pre_mission.test.for_descent')
+        yy_expected = 2.0*np.sum(xx)*range(len(yy_actual))
+        assert_near_equal(yy_actual, yy_expected)
+        zz_actual = prob.model.get_val('traj.descent.rhs_all.test.zz')
+        zz_expected = 3.0*np.sum(xx)*range(len(zz_actual))
+        assert_near_equal(zz_actual, zz_expected)
+
+        # Only climb should have the zz and velocity outputs connected to post-mission.
+        zzz_actual = prob.model.get_val('test.climb_zzz')
+        xx = prob.model.get_val('pre_mission.test.for_climb')
+        zz = prob.model.get_val('traj.climb.mission_bus_variables.zz')
+        velocity = prob.model.get_val('traj.climb.mission_bus_variables.velocity')
+        zzz_expected = np.sum(xx)*np.sum(zz*velocity)
+        assert_near_equal(zzz_actual, zzz_expected)
+
+        zzz_actual = prob.model.get_val('test.cruise_zzz')
+        xx = prob.model.get_val('pre_mission.test.for_cruise')
+        zzz_expected = np.sum(xx)
+        assert_near_equal(zzz_actual, zzz_expected)
+
+        zzz_actual = prob.model.get_val('test.descent_zzz')
+        xx = prob.model.get_val('pre_mission.test.for_descent')
+        zzz_expected = np.sum(xx)
+        assert_near_equal(zzz_actual, zzz_expected)
 
 
 if __name__ == '__main__':

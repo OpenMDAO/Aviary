@@ -772,14 +772,15 @@ class AviaryProblem(om.Problem):
                 timeseries_to_add = subsystem.get_outputs()
                 for timeseries in timeseries_to_add:
                     phase.add_timeseries_output(timeseries)
-                mbvars = subsystem.get_mission_bus_variables(self.aviary_inputs, self.phase_info)
+                mbvars = subsystem.get_mission_bus_variables(
+                    self.aviary_inputs, self.phase_info)
                 if mbvars:
                     mbvars_this_phase = mbvars.get(phase_name, None)
                     if mbvars_this_phase:
                         timeseries_to_add = mbvars_this_phase.keys()
                         for timeseries in timeseries_to_add:
-                            phase.add_timeseries_output(timeseries, timeseries="mission_bus_variables")
-
+                            phase.add_timeseries_output(
+                                timeseries, timeseries="mission_bus_variables")
 
         if self.analysis_scheme is AnalysisScheme.COLLOCATION:
             self.phase_objects = []
@@ -822,7 +823,8 @@ class AviaryProblem(om.Problem):
     def _get_phase_mission_bus_lengths(self):
         phase_mission_bus_lengths = {}
         for phase_name, phase in self.traj._phases.items():
-            phase_mission_bus_lengths[phase_name] = phase._timeseries["mission_bus_variables"]["transcription"].grid_data.subset_num_nodes["all"]
+            phase_mission_bus_lengths[phase_name] = phase._timeseries[
+                "mission_bus_variables"]["transcription"].grid_data.subset_num_nodes["all"]
         return phase_mission_bus_lengths
 
     def add_post_mission_systems(self, include_landing=True, verbosity=None):
@@ -1698,11 +1700,17 @@ class AviaryProblem(om.Problem):
                                     f'traj.parameters:' + mission_var_name,
                                 )
 
-                        if 'post_mission_name' in variable_data:
+                    if 'post_mission_name' in variable_data:
+                        # check if post_mission_variable_name is a list
+                        post_mission_variable_name = variable_data["post_mission_name"]
+                        if not isinstance(post_mission_variable_name, list):
+                            post_mission_variable_name = [post_mission_variable_name]
+
+                        for post_mission_var_name in post_mission_variable_name:
+
                             self.model.connect(
                                 f'pre_mission.{bus_variable}',
-                                f'{external_subsystem.name}.'
-                                f'{variable_data["post_mission_name"]}',
+                                post_mission_var_name,
                             )
 
     def _connect_mission_bus_variables(self):
@@ -1712,7 +1720,7 @@ class AviaryProblem(om.Problem):
         for external_subsystem in all_subsystems:
             for phase_name, var_mapping in external_subsystem.get_mission_bus_variables(aviary_data=self.aviary_inputs, phase_info=self.phase_info).items():
                 for mission_variable_name, post_mission_variable_names in var_mapping.items():
-                    
+
                     if not isinstance(post_mission_variable_names, list):
                         post_mission_variable_names = [post_mission_variable_names]
 
@@ -1720,8 +1728,7 @@ class AviaryProblem(om.Problem):
                         # Remove possible prefix before a `.`, like <external_subsystem_name>.<var_name>"
                         mvn_basename = mission_variable_name.rpartition(".")[-1]
                         src_name = f'traj.{phase_name}.mission_bus_variables.{mvn_basename}'
-                        tgt_name = f'{external_subsystem.name}.{post_mission_var_name}'
-                        self.model.connect(src_name, tgt_name)
+                        self.model.connect(src_name, post_mission_var_name)
 
     def setup(self, **kwargs):
         """
