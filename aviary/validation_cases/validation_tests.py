@@ -131,7 +131,7 @@ def do_validation_test(prob: om.Problem,
 
     if check_partials:
         partial_data = prob.check_partials(
-            compact_print=True, method=method, step=step, excludes=excludes)
+            out_stream=None, method=method, step=step, excludes=excludes)
         assert_check_partials(partial_data, atol=atol, rtol=rtol)
 
 
