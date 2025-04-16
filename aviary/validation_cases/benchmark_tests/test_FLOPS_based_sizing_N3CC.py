@@ -53,7 +53,7 @@ def run_trajectory(sim=True):
     prob.add_phases()
     prob.add_post_mission_systems()
     prob.link_phases()
-    prob.add_driver("SNOPT", max_iter=50, verbosity=2)
+    prob.add_driver("SNOPT", max_iter=50, verbosity=1)
 
     ##########################
     # Design Variables       #
