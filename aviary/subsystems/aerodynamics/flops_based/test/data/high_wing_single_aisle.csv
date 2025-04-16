@@ -86,7 +86,7 @@ aircraft:nacelle:mass_scaler,1.01,unitless   #check
 aircraft:paint:mass_per_unit_area,0.01,lbm/ft**2   #check
 aircraft:propulsion:engine_oil_mass_scaler,1.01,unitless   #check
 aircraft:propulsion:misc_mass_scaler,1.01,unitless   #check
-aircraft:propulsion:total_num_wing_engines,[2],unitless
+aircraft:propulsion:total_num_wing_engines,2,unitless
 aircraft:vertical_tail:area,297,ft**2
 aircraft:vertical_tail:aspect_ratio,0.821,unitless
 aircraft:vertical_tail:mass_scaler,1.01,unitless   #check
@@ -137,4 +137,5 @@ mission:takeoff:lift_coefficient_max,2.55,unitless
 mission:takeoff:lift_over_drag,25,unitless
 mission:takeoff:rolling_friction_coefficient,0.0175,unitless
 settings:equations_of_motion,height_energy
+settings:aerodynamics_method,FLOPS
 settings:mass_method,FLOPS

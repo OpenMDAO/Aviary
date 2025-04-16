@@ -31,8 +31,7 @@ def get_option_defaults(engine=True, meta_data=_MetaData) -> AviaryValues:
         engine_options = option_defaults.deepcopy()
         engine_options.set_val(Aircraft.Engine.DATA_FILE,
                                get_path('models/engines/turbofan_23k_1.deck'))
-        engine_options.set_val(Aircraft.Engine.SCALE_FACTOR,
-                               meta_data[Aircraft.Engine.SCALE_FACTOR]['default_value'])
+        engine_options.set_val(Aircraft.Engine.REFERENCE_SLS_THRUST, 28690, 'lbf')
         engine_deck = EngineDeck(options=engine_options)
         preprocess_propulsion(option_defaults, [engine_deck])
 

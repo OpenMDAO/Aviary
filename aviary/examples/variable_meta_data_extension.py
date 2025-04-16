@@ -38,6 +38,8 @@ av.add_meta_data(
     Aircraft.CG,
     units='ft',
     desc='Center of gravity',
+    types=float,
+    multivalue=True,
     default_value=np.zeros(3),
     meta_data=ExtendedMetaData,
     # note that VSP_example is not a real code and center_of_gravity is not a real variable name. These are here to show how the historical_name argument can be used.
@@ -182,6 +184,8 @@ av.add_meta_data(
     Aircraft.Wing.AERO_CENTER,
     units='ft',
     desc='aerodynamic center.',
+    types=float,
+    multivalue=True,
     default_value=np.zeros(3),
     meta_data=ExtendedMetaData
 )
