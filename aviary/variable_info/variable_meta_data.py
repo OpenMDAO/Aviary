@@ -2029,7 +2029,8 @@ add_meta_data(
 # Global hybrid throttle is also False by default to account for parallel-hybrid engines
 # that can't operate at every power level at every condition due to other constraints
 add_meta_data(
-    Aircraft.Engine.GLOBAL_HYBRID_THROTTLE, meta_data=_MetaData,
+    Aircraft.Engine.GLOBAL_HYBRID_THROTTLE,
+    meta_data=_MetaData,
     historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
     units='unitless',
     desc='Flag for engine decks if the range of provided hybrid throttles is consistent '
@@ -6859,7 +6860,7 @@ add_meta_data(
     historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
     units='ft/s',
     desc='linear propeller tip speed due to rotation (not airspeed at propeller tip)',
-    default_value=500.0,
+    default_value=0.0,
     multivalue=True,
 )
 
