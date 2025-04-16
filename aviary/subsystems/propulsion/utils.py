@@ -35,6 +35,7 @@ class EngineModelVariables(Enum):
     SHAFT_POWER = Dynamic.Vehicle.Propulsion.SHAFT_POWER
     SHAFT_POWER_CORRECTED = 'shaft_power_corrected'
     RAM_DRAG = 'ram_drag'
+    RPM = Dynamic.Vehicle.Propulsion.RPM
     FUEL_FLOW = Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE
     ELECTRIC_POWER_IN = Dynamic.Vehicle.Propulsion.ELECTRIC_POWER_IN
     NOX_RATE = Dynamic.Vehicle.Propulsion.NOX_RATE
