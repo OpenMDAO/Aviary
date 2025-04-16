@@ -8,7 +8,7 @@ phase_info = {
         "subsystem_options": {"core_aerodynamics": {"method": "computed"}},
         "user_options": {
             "optimize_mach": True,
-            "optimize_altitude": False,
+            "optimize_altitude": True,
             "num_segments": 6,
             "order": 3,
             "solve_for_distance": False,
@@ -26,6 +26,7 @@ phase_info = {
             "initial_bounds": ((0.0, 0.0), "min"),
             "duration_bounds": ((12.1, 60.0), "min"),
             "add_initial_mass_constraint": False,
+            "no_descent": True,
         },
         "initial_guesses": {"time": ([0, 40.0], "min")},
 
@@ -56,13 +57,13 @@ phase_info = {
         "subsystem_options": {"core_aerodynamics": {"method": "computed"}},
         "user_options": {
             "optimize_mach": True,
-            "optimize_altitude": False,
+            "optimize_altitude": True,
             "num_segments": 5,
             "order": 3,
             "solve_for_distance": False,
             "initial_mach": (0.79, "unitless"),
             "final_mach": (0.3, "unitless"),
-            "mach_bounds": ((0.34, 0.74), "unitless"),
+            "mach_bounds": ((0.3, 0.79), "unitless"),
             "initial_altitude": (35000.0, "ft"),
             "final_altitude": (35.0, "ft"),
             "altitude_bounds": ((0.0, 38000.0), "ft"),
@@ -72,6 +73,7 @@ phase_info = {
             "fix_duration": False,
             "initial_bounds": ((215.1, 872.4), "min"),
             "duration_bounds": ((14.6, 58.5), "min"),
+            "no_climb": True,
         },
     },
     "post_mission": {
