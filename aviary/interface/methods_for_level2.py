@@ -1718,7 +1718,7 @@ class AviaryProblem(om.Problem):
 
         # Loop through all external subsystems.
         for external_subsystem in all_subsystems:
-            for phase_name, var_mapping in external_subsystem.get_mission_bus_variables(aviary_data=self.aviary_inputs, phase_info=self.phase_info).items():
+            for phase_name, var_mapping in external_subsystem.get_mission_bus_variables(aviary_inputs=self.aviary_inputs, phase_info=self.phase_info).items():
                 for mission_variable_name, post_mission_variable_names in var_mapping.items():
 
                     if not isinstance(post_mission_variable_names, list):

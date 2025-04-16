@@ -147,7 +147,7 @@ class CustomBuilder(SubsystemBuilderBase):
 
         return vars_to_connect
 
-    def get_mission_bus_variables(self, aviary_data, phase_info):
+    def get_mission_bus_variables(self, aviary_inputs, phase_info):
         out = {}
         for phase_name, phase_data in phase_info.items():
             phase_d = {}

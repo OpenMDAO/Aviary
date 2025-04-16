@@ -161,7 +161,8 @@ class TurbopropModel(EngineModel):
             )
 
         gearbox_model_post_mission = gearbox_model.build_post_mission(
-            aviary_inputs, phase_data, phase_mission_bus_lengths, **kwargs)
+            aviary_inputs, phase_data, phase_mission_bus_lengths,
+            **kwargs,
         )
         if gearbox_model_post_mission is not None:
             turboprop_group.add_subsystem(
@@ -171,7 +172,7 @@ class TurbopropModel(EngineModel):
             )
 
         propeller_model_post_mission = propeller_model.build_post_mission(
-            aviary_inputs, phase_data, phase_mission_bus_lengths, **kwargs)
+            aviary_inputs, phase_data, phase_mission_bus_lengths, **kwargs,
         )
         if propeller_model_post_mission is not None:
             turboprop_group.add_subsystem(

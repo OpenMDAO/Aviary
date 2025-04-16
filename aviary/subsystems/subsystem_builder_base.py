@@ -330,7 +330,7 @@ class SubsystemBuilderBase(ABC):
         """
         return []
 
-    def get_mission_bus_variables(self, aviary_data=None, phase_info=None):
+    def get_mission_bus_variables(self, aviary_inputs=None, phase_info=None):
         """
         Return a dict mapping phase names to a dict mapping mission variable names to (a list of) post-mission variable names.
 
