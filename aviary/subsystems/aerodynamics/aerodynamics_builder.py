@@ -210,7 +210,7 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
         return aero_group
 
     # TODO DragPolar comp is unfinished and currently does nothing
-    # def build_post_mission(self, aviary_inputs, **kwargs):
+    # def build_post_mission(self, aviary_inputs, phase_info, phase_mission_bus_lengths, **kwargs):
     #     aero_group = DragPolar(aviary_options=aviary_inputs),
 
     #     return aero_group
@@ -602,7 +602,7 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
 
         return params
 
-    def get_bus_variables(self):
+    def get_bus_variables(self, aviary_inputs=None):
         if self.code_origin is GASP:
             return {
                 "interference_independent_of_shielded_area": {
