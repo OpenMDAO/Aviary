@@ -70,12 +70,11 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
         )
 
         # Deal with missing defaults in phase info:
-        if prob.pre_mission_info is None:
-            prob.pre_mission_info = {'include_takeoff': True,
-                                     'external_subsystems': []}
-        if prob.post_mission_info is None:
-            prob.post_mission_info = {'include_landing': True,
-                                      'external_subsystems': []}
+        prob.pre_mission_info.setdefault('include_takeoff', True)
+        prob.pre_mission_info.setdefault('external_subsystems', [])
+
+        prob.post_mission_info.setdefault('include_landing', True)
+        prob.post_mission_info.setdefault('external_subsystems', [])
 
         # Commonly referenced values
         prob.cruise_alt = aviary_inputs.get_val(
