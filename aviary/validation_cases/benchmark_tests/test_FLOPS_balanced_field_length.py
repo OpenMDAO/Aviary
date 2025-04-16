@@ -63,8 +63,8 @@ class TestFLOPSBalancedFieldLength(unittest.TestCase):
     def _do_run(self, driver: Driver, optimizer, *args):
         aviary_options = _inputs.deepcopy()
 
-        engine = build_engine_deck(aviary_options)
-        preprocess_options(aviary_options, engine_models=engine)
+        engines = [build_engine_deck(aviary_options)]
+        preprocess_options(aviary_options, engine_models=engines)
 
         takeoff_trajectory_builder = copy.deepcopy(_takeoff_trajectory_builder)
         takeoff_liftoff_user_options = _takeoff_liftoff_user_options.deepcopy()
@@ -79,7 +79,7 @@ class TestFLOPSBalancedFieldLength(unittest.TestCase):
 
         driver.recording_options['record_derivatives'] = False
 
-        default_mission_subsystems = get_default_mission_subsystems('FLOPS', engine)
+        default_mission_subsystems = get_default_mission_subsystems('FLOPS', engines)
 
         # Upstream static analysis for aero
         takeoff.model.add_subsystem(

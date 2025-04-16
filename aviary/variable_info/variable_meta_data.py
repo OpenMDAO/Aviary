@@ -1340,13 +1340,11 @@ add_meta_data(
 )
 
 add_meta_data(
-    Aircraft.Design.IJEFF,
-    meta_data=_MetaData,
+    Aircraft.Design.IJEFF, meta_data=_MetaData,
     historical_name={"GASP": 'INGASP.IJEFF', "FLOPS": None, "LEAPS1": None},
     desc="A flag used by Jeff V. Bowles to debug GASP code during his 53 years supporting the development of GASP. "
     "This flag is planted here to thank him for his hard work and dedication, Aviary wouldn't be what it is today "
-    "without his help.",
-)
+    "without his help.",)
 
 # TODO expected types and default value?
 add_meta_data(
@@ -1501,18 +1499,15 @@ add_meta_data(
 )
 
 add_meta_data(
-    Aircraft.Design.RESERVE_FUEL_FRACTION,
-    meta_data=_MetaData,
+    Aircraft.Design.RESERVE_FUEL_FRACTION, meta_data=_MetaData,
     historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
-    option=True,
-    units="unitless",
+    option=True, units="unitless",
     desc='required fuel reserves: given as a proportion of mission fuel. This value must be nonnegative. '
     'Mission fuel only includes normal phases and excludes reserve phases. '
     'If it is 0.5, the reserve fuel is half of the mission fuel (one third of the total fuel). Note '
     'it can be greater than 1. If it is 2, there would be twice as much reserve fuel as mission fuel '
     '(the total fuel carried would be 1/3 for the mission and 2/3 for the reserve)',
-    default_value=0,
-)
+    default_value=0,)
 
 add_meta_data(
     Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES,
@@ -2072,13 +2067,9 @@ add_meta_data(
 
 # TODO dependency on NTYE? Does this var need preprocessing? Can this mention be removed?
 add_meta_data(
-    Aircraft.Engine.HAS_PROPELLERS,
-    meta_data=_MetaData,
+    Aircraft.Engine.HAS_PROPELLERS, meta_data=_MetaData,
     historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
-    option=True,
-    units="unitless",
-    default_value=False,
-    types=bool,
+    option=True, units="unitless", default_value=False, types=bool,
     desc='if True, the aircraft has propellers, otherwise aircraft is assumed to have no '
     'propellers. In GASP this depended on NTYE',
     multivalue=True,
@@ -2102,13 +2093,9 @@ add_meta_data(
 )
 
 add_meta_data(
-    Aircraft.Engine.INTERPOLATION_METHOD,
-    meta_data=_MetaData,
+    Aircraft.Engine.INTERPOLATION_METHOD, meta_data=_MetaData,
     historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
-    units="unitless",
-    option=True,
-    default_value='slinear',
-    types=str,
+    units="unitless", option=True, default_value='slinear', types=str,
     desc="method used for interpolation on an engine deck's data file, allowable values are "
     'table methods from openmdao.components.interp_util.interp',
     multivalue=True,
@@ -3241,6 +3228,7 @@ add_meta_data(
     default_value=0.0,
 )
 
+# TODO this should be a design parameter? As it combines two physical categories?
 add_meta_data(
     Aircraft.Fuselage.DIAMETER_TO_WING_SPAN,
     meta_data=_MetaData,
@@ -6872,7 +6860,7 @@ add_meta_data(
     historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
     units='ft/s',
     desc='linear propeller tip speed due to rotation (not airspeed at propeller tip)',
-    default_value=500.0,
+    default_value=0.0,
     multivalue=True,
 )
 
@@ -8047,18 +8035,14 @@ add_meta_data(
 )
 
 add_meta_data(
-    Settings.VERBOSITY,
-    meta_data=_MetaData,
+    Settings.VERBOSITY, meta_data=_MetaData,
     historical_name={"GASP": None, "FLOPS": None, "LEAPS1": None},
     desc='Sets how much information Aviary outputs when run. Options include:'
     '0. QUIET: All output except errors are suppressed'
     '1. BRIEF: Only important information is output, in human-readable format'
     '2. VERBOSE: All user-relevant information is output, in human-readable format'
     '3. DEBUG: Any information can be outtputed, including warnings, intermediate calculations, etc., with no formatting requirement',
-    option=True,
-    types=Verbosity,
-    default_value=Verbosity.BRIEF,
-)
+    option=True, types=Verbosity, default_value=Verbosity.BRIEF,)
 
 # here we create a copy of the Aviary-core metadata. The reason for this
 # copy is that if we simply imported the Aviary _MetaData in all the
