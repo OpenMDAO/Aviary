@@ -194,9 +194,6 @@ def build_engine_deck(
                     aviary_val = np.array(aviary_val).item()
                 engine_options.set_val(var, aviary_val, units)
 
-        except (KeyError, TypeError):
-            continue
-
     # Build EngineDeck object
     # gather arguments for building EngineDeck
     kwargs = {'options': engine_options}

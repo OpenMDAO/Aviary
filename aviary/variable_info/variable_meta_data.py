@@ -1834,7 +1834,6 @@ add_meta_data(
     units='lbm',
     desc='additional propulsion system mass added to engine control and starter mass, or '
     'engine installation mass',
-    multivalue=True,
     default_value=0.0,
     multivalue=True,
 )
@@ -1868,7 +1867,6 @@ add_meta_data(
     option=True,
     units='lbm/h',
     desc='Additional constant fuel flow. This value is not scaled with the engine',
-    multivalue=True,
     default_value=0.0,
     multivalue=True,
 )
@@ -1883,7 +1881,6 @@ add_meta_data(
     },
     units='lbm',
     desc='estimated mass of the engine controls',
-    multivalue=True,
     default_value=0.0,
     multivalue=True,
 )
@@ -1897,7 +1894,6 @@ add_meta_data(
     types=(Path, str),
     default_value=None,
     option=True,
-    multivalue=True,
     desc='filepath to data file containing engine performance tables',
     multivalue=True,
 )
