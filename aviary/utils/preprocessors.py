@@ -611,11 +611,12 @@ def preprocess_propulsion(
                         vec = np.append(vec, default_value)
                     else:
                         # save value from aviary_options
-                        # if aviary_val is an iterable, just grab val for this engine
                         if isiterable(aviary_val):
-                            aviary_val = aviary_val[i]
-                        if isiterable(aviary_val) and multidimensional:
-                            vec.extend(aviary_val)
+                            if multidimensional:
+                                vec.extend(aviary_val)
+                            else:
+                                # if aviary_val is an iterable, just grab val for this engine
+                                vec.append(aviary_val[i])
                         else:
                             vec.append(aviary_val)
                 else:
