@@ -1,6 +1,60 @@
 [build-system]
-build-backend = "setuptools.build_meta"
-requires = ["numpy<2", "setuptools"]
+requires = ["hatchling", "numpy>=2.0"]
+build-backend = "hatchling.build"
+
+[project]
+name = "aviary"
+dynamic = ["version"]
+readme = "README.md"
+license = "Apache-2.0"
+dependencies = [
+    "dymos>=1.8.1",
+    "hvplot",
+    "importlib_resources",
+    "matplotlib",
+    "numpy<2",
+    "openmdao>=3.36.0",
+    "pandas",
+    "panel>=1.0.0",
+    "parameterized",
+    "simupy",
+]
+
+[project.optional-dependencies]
+all = [
+    "ambiance",
+    "itables",
+    "myst-nb",
+    "openaerostruct",
+    "pre-commit",
+    "sphinx_book_theme==1.1.0",
+    "testflo",
+]
+examples = [
+    "ambiance",
+    "itables",
+    "openaerostruct",
+]
+test = [
+    "myst-nb",
+    "pre-commit",
+    "sphinx_book_theme==1.1.0",
+    "testflo",
+]
+
+[project.scripts]
+aviary = "aviary.interface.cmd_entry_points:aviary_cmd"
+
+[project.entry-points.openmdao_report]
+aviary_reports = "aviary.interface.reports:register_custom_reports"
+
+[tool.hatch.version]
+path = "aviary/__init__.py"
+
+[tool.hatch.build.targets.sdist]
+include = [
+    "/aviary",
+]
 
 [tool.autopep8]
 max_line_length = 89

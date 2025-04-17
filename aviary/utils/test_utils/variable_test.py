@@ -184,7 +184,8 @@ def assert_match_varnames(system, MetaData=None, exclude_inputs=None, exclude_ou
             diff = diff - exclude_inputs
         if len(diff) > 0:
             raise ValueError(
-                f"The inputs {diff} in the provided subsystem are not found in the provided variable structure."
+                f"The inputs {
+                    diff} in the provided subsystem are not found in the provided variable structure."
             )
 
     if output_overlap != sys_outputs:
@@ -193,7 +194,8 @@ def assert_match_varnames(system, MetaData=None, exclude_inputs=None, exclude_ou
             diff = diff - exclude_outputs
         if len(diff) > 0:
             raise ValueError(
-                f"The outputs {diff} in the provided subsystem are not found in the provided variable structure."
+                f"The outputs {
+                    diff} in the provided subsystem are not found in the provided variable structure."
             )
 
 

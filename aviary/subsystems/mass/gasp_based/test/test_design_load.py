@@ -222,7 +222,8 @@ class LoadSpeedsTestCase5(unittest.TestCase):
 
 class LoadSpeedsTestCase6smooth(
     unittest.TestCase
-):  # this is the large single aisle 1 V3 test case (LoadSpeedsTestCase1) with smooth functions
+    # this is the large single aisle 1 V3 test case (LoadSpeedsTestCase1) with smooth functions
+):
     def setUp(self):
 
         options = get_option_defaults()
