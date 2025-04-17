@@ -27,7 +27,7 @@ def register_custom_reports():
     register_report(
         name='subsystems',
         func=subsystem_report,
-        desc='Generates reports for each subsystem builder in the ' 'Aviary Problem',
+        desc='Generates reports for each subsystem builder in the Aviary Problem',
         class_name='AviaryProblem',
         method='run_driver',
         pre_or_post='post',
@@ -89,12 +89,12 @@ def run_status(prob):
     runtime = prob.driver.result.runtime
     runtime_ms = (runtime * 1000.0) % 1000.0
     runtime_formatted = (
-        f"{time.strftime('%H hours %M minutes %S seconds', time.gmtime(runtime))} "
-        f"{runtime_ms:.1f} milliseconds"
+        f'{time.strftime("%H hours %M minutes %S seconds", time.gmtime(runtime))} '
+        f'{runtime_ms:.1f} milliseconds'
     )
 
     t = datetime.datetime.now()
-    time_stamp = t.strftime("%Y-%m-%d %H:%M:%S %Z")
+    time_stamp = t.strftime('%Y-%m-%d %H:%M:%S %Z')
 
     status = {}
     status['Problem'] = prob._name
@@ -145,7 +145,7 @@ def mission_report(prob, **kwargs):
     def _get_phase_value(traj, phase, var_name, units, indices=None):
         try:
             vals = prob.get_val(
-                f"{traj}.{phase}.timeseries.{var_name}",
+                f'{traj}.{phase}.timeseries.{var_name}',
                 units=units,
                 indices=indices,
                 get_remote=True,
@@ -153,7 +153,7 @@ def mission_report(prob, **kwargs):
         except KeyError:
             try:
                 vals = prob.get_val(
-                    f"{traj}.{phase}.{var_name}",
+                    f'{traj}.{phase}.{var_name}',
                     units=units,
                     indices=indices,
                     get_remote=True,
@@ -161,7 +161,7 @@ def mission_report(prob, **kwargs):
             # 2DOF breguet range cruise uses time integration to track mass
             except TypeError:
                 vals = prob.get_val(
-                    f"{traj}.{phase}.timeseries.time",
+                    f'{traj}.{phase}.timeseries.time',
                     units=units,
                     indices=indices,
                     get_remote=True,
@@ -283,15 +283,13 @@ def input_check_report(prob, **kwargs):
         return
 
     with open(report_file, mode='w') as f:
-
         f.write('# Unspecified Hierarchy Variables\n')
         f.write(
-            "These aviary inputs are unspecified in aviary_inputs, and may be using default values "
-            "defined in the Aviary metadata.\n\n"
+            'These aviary inputs are unspecified in aviary_inputs, and may be using default values '
+            'defined in the Aviary metadata.\n\n'
         )
 
         if bare_hierarchy_inputs:
-
             f.write('| Name | Value | Units | Description | Absolute Paths\n')
             f.write('| :- |  :- |  :- | :- | :- |\n')
 
@@ -299,29 +297,27 @@ def input_check_report(prob, **kwargs):
                 metadata = aviary_metadata.get(var)
                 units = metadata['units']
                 val = model.get_val(var, units=units)
-                desc = metadata["desc"]
+                desc = metadata['desc']
                 abs_paths = prom2abs[var]
 
                 f.write(f'| **{var}** | {val} | {units} | {desc} | {abs_paths}|\n')
 
-            f.write("\n")
+            f.write('\n')
 
         else:
-            f.write("None\n")
+            f.write('None\n')
 
         f.write('# Unspecified Local Variables\n')
         f.write(
-            "These local subsystem inputs are unconnected, and may be using default "
-            "values specified in the component.\n\n"
+            'These local subsystem inputs are unconnected, and may be using default '
+            'values specified in the component.\n\n'
         )
 
         if bare_local_inputs:
-
             f.write('| Name | Value | Units | Absolute Paths\n')
             f.write('| :- |  :- |  :- | :- |\n')
 
             for var in sorted(bare_local_inputs):
-
                 # Filter out dymos internals.
                 if var.startswith('traj') and '.rhs_all.' not in var:
                     continue
@@ -333,10 +329,10 @@ def input_check_report(prob, **kwargs):
 
                 f.write(f'| **{var}** | {val} | {units} | {abs_paths}|\n')
 
-            f.write("\n\n")
+            f.write('\n\n')
 
         else:
-            f.write("None")
+            f.write('None')
 
 
 def timeseries_csv(prob, **kwargs):
@@ -368,14 +364,10 @@ def timeseries_csv(prob, **kwargs):
     if MPI and MPI.COMM_WORLD.rank != 0:
         return
 
-    timeseries_outputs = {
-        value['prom_name']: value for key, value in timeseries_outputs.items()
-    }
+    timeseries_outputs = {value['prom_name']: value for key, value in timeseries_outputs.items()}
 
     timeseries_outputs = {
-        key: value
-        for key, value in timeseries_outputs.items()
-        if not key.endswith('_phase')
+        key: value for key, value in timeseries_outputs.items() if not key.endswith('_phase')
     }
 
     unique_variable_names = set(

@@ -12,16 +12,12 @@ from openmdao.utils.testing_utils import use_tempdirs
 
 
 class WingWeightSubsys(om.ExplicitComponent):
-
     def setup(self):
-
         self.add_input(Aircraft.Engine.MASS, 1.0, units='lbm')
         self.add_output(Aircraft.Canard.ASPECT_RATIO, 1.0, units='unitless')
         self.add_output('Tail', 1.0, units='unitless')
 
-        self.declare_partials(
-            Aircraft.Canard.ASPECT_RATIO, Aircraft.Engine.MASS, val=2.0
-        )
+        self.declare_partials(Aircraft.Canard.ASPECT_RATIO, Aircraft.Engine.MASS, val=2.0)
         self.declare_partials('Tail', Aircraft.Engine.MASS, val=0.7)
 
     def compute(self, inputs, outputs):
@@ -38,7 +34,7 @@ class WingWeightBuilder(SubsystemBuilderBase):
         super().__init__(name)
 
     def build_post_mission(self, aviary_inputs):
-        '''
+        """
         Build an OpenMDAO system for the pre-mission computations of the subsystem.
 
         Returns
@@ -47,12 +43,12 @@ class WingWeightBuilder(SubsystemBuilderBase):
             An OpenMDAO system containing all computations that need to happen in
             the pre-mission part of the Aviary problem. This
             includes sizing, design, and other non-mission parameters.
-        '''
+        """
         wing_group = om.Group()
         wing_group.add_subsystem(
-            "aerostructures",
+            'aerostructures',
             WingWeightSubsys(),
-            promotes_inputs=["aircraft:*"],
+            promotes_inputs=['aircraft:*'],
             promotes_outputs=[
                 Aircraft.Canard.ASPECT_RATIO,
                 ('Tail', Aircraft.Canard.WETTED_AREA_SCALER),
@@ -63,20 +59,17 @@ class WingWeightBuilder(SubsystemBuilderBase):
 
 @use_tempdirs
 class PreMissionGroupTest(unittest.TestCase):
-
     def test_post_mission_promotion(self):
         phase_info = deepcopy(ph_in)
         phase_info['post_mission'] = {}
         phase_info['post_mission']['include_landing'] = False
         phase_info['post_mission']['external_subsystems'] = [
-            WingWeightBuilder(name="wing_external")
+            WingWeightBuilder(name='wing_external')
         ]
 
         prob = AviaryProblem()
 
-        csv_path = get_aviary_resource_path(
-            'models/test_aircraft/aircraft_for_bench_GwFm.csv'
-        )
+        csv_path = get_aviary_resource_path('models/test_aircraft/aircraft_for_bench_GwFm.csv')
         prob.load_inputs(csv_path, phase_info)
 
         # Preprocess inputs
@@ -91,11 +84,11 @@ class PreMissionGroupTest(unittest.TestCase):
         # Link phases and variables
         prob.link_phases()
 
-        prob.add_driver("SLSQP", verbosity=0)
+        prob.add_driver('SLSQP', verbosity=0)
 
         prob.add_design_variables()
 
-        prob.add_objective(objective_type="mass", ref=-1e5)
+        prob.add_objective(objective_type='mass', ref=-1e5)
 
         prob.setup()
 
@@ -104,14 +97,12 @@ class PreMissionGroupTest(unittest.TestCase):
         phase_info['post_mission'] = {}
         phase_info['post_mission']['include_landing'] = False
         phase_info['post_mission']['external_subsystems'] = [
-            WingWeightBuilder(name="wing_external")
+            WingWeightBuilder(name='wing_external')
         ]
 
         prob = AviaryProblem()
 
-        csv_path = get_aviary_resource_path(
-            'models/test_aircraft/aircraft_for_bench_GwFm.csv'
-        )
+        csv_path = get_aviary_resource_path('models/test_aircraft/aircraft_for_bench_GwFm.csv')
         prob.load_inputs(csv_path, phase_info)
 
         # Preprocess inputs
@@ -126,11 +117,11 @@ class PreMissionGroupTest(unittest.TestCase):
         # Link phases and variables
         prob.link_phases()
 
-        prob.add_driver("SLSQP", verbosity=0)
+        prob.add_driver('SLSQP', verbosity=0)
 
         prob.add_design_variables()
 
-        prob.add_objective(objective_type="mass", ref=-1e5)
+        prob.add_objective(objective_type='mass', ref=-1e5)
 
         prob.setup()
 

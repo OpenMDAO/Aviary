@@ -1,6 +1,7 @@
 """
 Builder for a simple drag calculation that replaces Aviary's calculation.
 """
+
 import openmdao.api as om
 
 from aviary.examples.external_subsystems.custom_aero.simple_drag import SimpleAeroGroup
@@ -92,7 +93,7 @@ class CustomAeroBuilder(SubsystemBuilderBase):
         """
         params = {}
         params[Aircraft.Wing.AREA] = {
-            'shape': (1, ),
+            'shape': (1,),
             'static_target': True,
             'units': 'ft**2',
         }

@@ -22,7 +22,9 @@ from aviary.utils.aviary_values import AviaryValues
     'Shooting method is not correctly receiving user-set options, and is currently '
     'using default values for most options'
 )
-@unittest.skipUnless(importlib.util.find_spec("pyoptsparse") is not None, "pyoptsparse is not installed")
+@unittest.skipUnless(
+    importlib.util.find_spec('pyoptsparse') is not None, 'pyoptsparse is not installed'
+)
 class IdleDescentTestCase(unittest.TestCase):
     """
     Test idle descent for 2DOF mission
@@ -32,10 +34,8 @@ class IdleDescentTestCase(unittest.TestCase):
         input_deck = 'models/large_single_aisle_1/large_single_aisle_1_GASP.csv'
         aviary_inputs, _ = create_vehicle(input_deck)
         aviary_inputs.set_val(Settings.VERBOSITY, 0)
-        aviary_inputs.set_val(Aircraft.Engine.SCALED_SLS_THRUST, val=28690, units="lbf")
-        aviary_inputs.set_val(
-            Dynamic.Vehicle.Propulsion.THROTTLE, val=0, units="unitless"
-        )
+        aviary_inputs.set_val(Aircraft.Engine.SCALED_SLS_THRUST, val=28690, units='lbf')
+        aviary_inputs.set_val(Dynamic.Vehicle.Propulsion.THROTTLE, val=0, units='unitless')
         aviary_inputs.set_val(Aircraft.Wing.FORM_FACTOR, 1.25)
         aviary_inputs.set_val(Aircraft.VerticalTail.FORM_FACTOR, 1.25)
         aviary_inputs.set_val(Aircraft.HorizontalTail.FORM_FACTOR, 1.25)
@@ -45,10 +45,10 @@ class IdleDescentTestCase(unittest.TestCase):
         preprocess_propulsion(aviary_inputs, engine)
 
         default_mission_subsystems = get_default_mission_subsystems(
-            'GASP', build_engine_deck(aviary_inputs))
+            'GASP', build_engine_deck(aviary_inputs)
+        )
 
-        ode_args = dict(aviary_options=aviary_inputs,
-                        core_subsystems=default_mission_subsystems)
+        ode_args = dict(aviary_options=aviary_inputs, core_subsystems=default_mission_subsystems)
 
         self.ode_args = ode_args
         self.aviary_inputs = aviary_inputs
@@ -64,9 +64,8 @@ class IdleDescentTestCase(unittest.TestCase):
         ivc = om.IndepVarComp()
         ivc.add_output(Aircraft.Design.OPERATING_MASS, 97500, units='lbm')
         ivc.add_output(Aircraft.CrewPayload.PASSENGER_PAYLOAD_MASS, 36000, units='lbm')
-        ivc.add_output(
-            "parameters:interference_independent_of_shielded_area", 1.89927266)
-        ivc.add_output("parameters:drag_loss_due_to_shielded_wing_area", 68.02065834)
+        ivc.add_output('parameters:interference_independent_of_shielded_area', 1.89927266)
+        ivc.add_output('parameters:drag_loss_due_to_shielded_wing_area', 68.02065834)
         ivc.add_output(Aircraft.Wing.FORM_FACTOR, 1.25)
         ivc.add_output(Aircraft.VerticalTail.FORM_FACTOR, 1.25)
         ivc.add_output(Aircraft.HorizontalTail.FORM_FACTOR, 1.25)
@@ -82,8 +81,10 @@ class IdleDescentTestCase(unittest.TestCase):
         )
         prob.model.promotes('idle_descent_estimation', inputs=['parameters:*'])
 
-        setup_model_options(prob.model.idle_descent_estimation, AviaryValues(
-            {Aircraft.Engine.NUM_ENGINES: ([2], 'unitless')}))
+        setup_model_options(
+            prob.model.idle_descent_estimation,
+            AviaryValues({Aircraft.Engine.NUM_ENGINES: ([2], 'unitless')}),
+        )
 
         prob.setup()
 
@@ -102,5 +103,5 @@ class IdleDescentTestCase(unittest.TestCase):
         # assert_check_partials(partial_data, atol=0.0005, rtol=1e-9)
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     unittest.main()

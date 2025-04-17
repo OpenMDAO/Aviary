@@ -7,8 +7,7 @@ from openmdao.utils.assert_utils import assert_near_equal
 from aviary.subsystems.propulsion.engine_deck import EngineDeck
 from aviary.subsystems.propulsion.utils import EngineModelVariables as keys
 from aviary.utils.named_values import NamedValues
-from aviary.validation_cases.validation_data.flops_data.FLOPS_Test_Data import \
-    FLOPS_Test_Data
+from aviary.validation_cases.validation_data.flops_data.FLOPS_Test_Data import FLOPS_Test_Data
 from aviary.subsystems.propulsion.utils import build_engine_deck
 
 from aviary.variable_info.variables import Aircraft
@@ -137,5 +136,5 @@ class EngineDeckTest(unittest.TestCase):
         assert_near_equal(fuel_flow_rate, expected_fuel_flow_rate, tolerance=tol)
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     unittest.main()

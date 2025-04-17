@@ -26,7 +26,6 @@ class WingMassGroup(om.Group):
         add_aviary_option(self, Aircraft.Wing.INPUT_STATION_DIST, None)
 
     def setup(self):
-
         self.add_subsystem(
             'engine_pod_mass',
             EnginePodMass(),
