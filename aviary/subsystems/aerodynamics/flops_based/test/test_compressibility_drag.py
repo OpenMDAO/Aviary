@@ -14,28 +14,12 @@ class CompressibilityDragTest(unittest.TestCase):
         # linear interp.
         delta = 1e-5
 
+        # fmt: off
         mach = [
-            0.2,
-            0.25,
-            0.3,
-            0.35,
-            0.4,
-            0.45,
-            0.5,
-            0.55,
-            0.6,
-            0.7,
-            0.75,
-            0.775,
-            0.8,
-            0.825,
-            0.85,
-            0.875,
-            0.9,
-            0.95,
-            1.05,
-            1.1,
+            0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6, 0.7, 0.75, 0.775, 0.8, 0.825, 0.85, 0.875, 0.9, 0.95, 1.05, 1.1,
         ]
+        # fmt: on
+
         mach = np.array(mach) + delta
         nn = len(mach)
 
@@ -78,28 +62,12 @@ class CompressibilityDragTest(unittest.TestCase):
 
         prob.run_model()
 
+        # fmt: off
         expected_compress_drag_coeff = [
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.00018641,
-            0.00079348,
-            0.00119559,
-            0.00155455,
-            0.00214888,
-            0.00339369,
-            0.01738419,
-            0.02046643,
-            0.02259292,
-            0.03716558,
-            0.04926635,
-            0.04841961,
+            0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.00018641, 0.00079348, 0.00119559, 0.00155455,
+            0.00214888, 0.00339369, 0.01738419, 0.02046643, 0.02259292, 0.03716558, 0.04926635, 0.04841961,
         ]
+        # fmt: on
         assert_near_equal(prob.get_val('compress_drag_coeff'), expected_compress_drag_coeff, 1e-6)
 
         derivs = prob.check_partials(out_stream=None, method='cs')
