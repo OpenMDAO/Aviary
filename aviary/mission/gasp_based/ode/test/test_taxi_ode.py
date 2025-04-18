@@ -21,11 +21,10 @@ class TaxiTestCase(unittest.TestCase):
     """
 
     def setUp(self):
-
         self.prob = om.Problem()
 
         options = get_option_defaults()
-        options.set_val(Mission.Taxi.DURATION, 0.1677, units="h")
+        options.set_val(Mission.Taxi.DURATION, 0.1677, units='h')
         default_mission_subsystems = get_default_mission_subsystems(
             'GASP', build_engine_deck(options)
         )
@@ -42,20 +41,20 @@ class TaxiTestCase(unittest.TestCase):
         )
 
     @unittest.skipIf(
-        version.parse(openmdao.__version__) < version.parse("3.26"),
-        "Skipping due to OpenMDAO version being too low (<3.26)",
+        version.parse(openmdao.__version__) < version.parse('3.26'),
+        'Skipping due to OpenMDAO version being too low (<3.26)',
     )
     def test_taxi(self):
         self.prob.setup(check=False, force_alloc_complex=True)
 
         set_params_for_unit_tests(self.prob)
 
-        self.prob.set_val(Mission.Takeoff.AIRPORT_ALTITUDE, 0, units="ft")
-        self.prob.set_val(Mission.Taxi.MACH, 0.1, units="unitless")
+        self.prob.set_val(Mission.Takeoff.AIRPORT_ALTITUDE, 0, units='ft')
+        self.prob.set_val(Mission.Taxi.MACH, 0.1, units='unitless')
         self.prob.set_val(
             Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
             -1512,
-            units="lbm/h",
+            units='lbm/h',
         )
 
         self.prob.run_model()
@@ -66,10 +65,10 @@ class TaxiTestCase(unittest.TestCase):
         check_prob_outputs(self.prob, testvals, rtol=1e-6)
 
         partial_data = self.prob.check_partials(
-            out_stream=None, method="cs", excludes=["*atmos*", "*params*", "*aero*"]
+            out_stream=None, method='cs', excludes=['*atmos*', '*params*', '*aero*']
         )
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     unittest.main()

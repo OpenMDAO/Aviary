@@ -70,9 +70,5 @@ class AltitudeRate(om.ExplicitComponent):
         acceleration = inputs[Dynamic.Mission.VELOCITY_RATE]
         velocity = inputs[Dynamic.Mission.VELOCITY]
 
-        J[Dynamic.Mission.ALTITUDE_RATE, Dynamic.Mission.VELOCITY_RATE] = (
-            -velocity / gravity
-        )
-        J[Dynamic.Mission.ALTITUDE_RATE, Dynamic.Mission.VELOCITY] = (
-            -acceleration / gravity
-        )
+        J[Dynamic.Mission.ALTITUDE_RATE, Dynamic.Mission.VELOCITY_RATE] = -velocity / gravity
+        J[Dynamic.Mission.ALTITUDE_RATE, Dynamic.Mission.VELOCITY] = -acceleration / gravity

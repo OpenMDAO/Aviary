@@ -25,28 +25,30 @@ class AccelerationODETestCase(unittest.TestCase):
         aviary_options = get_option_defaults()
         aviary_options.set_val(Aircraft.Engine.GLOBAL_THROTTLE, True)
         default_mission_subsystems = get_default_mission_subsystems(
-            'GASP', build_engine_deck(aviary_options))
+            'GASP', build_engine_deck(aviary_options)
+        )
 
-        self.sys = self.prob.model = AccelODE(num_nodes=2,
-                                              aviary_options=aviary_options,
-                                              core_subsystems=default_mission_subsystems)
+        self.sys = self.prob.model = AccelODE(
+            num_nodes=2, aviary_options=aviary_options, core_subsystems=default_mission_subsystems
+        )
 
     def test_accel(self):
         # Test both points in GASP Large Single Aisle 1 acceleration segment
-        setup_model_options(self.prob, AviaryValues(
-            {Aircraft.Engine.NUM_ENGINES: ([2], 'unitless')}))
+        setup_model_options(
+            self.prob, AviaryValues({Aircraft.Engine.NUM_ENGINES: ([2], 'unitless')})
+        )
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
         throttle_climb = 0.956
-        self.prob.set_val(Dynamic.Mission.ALTITUDE, [500, 500], units="ft")
+        self.prob.set_val(Dynamic.Mission.ALTITUDE, [500, 500], units='ft')
         self.prob.set_val(
             Dynamic.Vehicle.Propulsion.THROTTLE,
             [throttle_climb, throttle_climb],
             units='unitless',
         )
-        self.prob.set_val(Dynamic.Mission.VELOCITY, [185, 252], units="kn")
-        self.prob.set_val(Dynamic.Vehicle.MASS, [174974, 174878], units="lbm")
+        self.prob.set_val(Dynamic.Mission.VELOCITY, [185, 252], units='kn')
+        self.prob.set_val(Dynamic.Vehicle.MASS, [174974, 174878], units='lbm')
 
         set_params_for_unit_tests(self.prob)
 
@@ -61,10 +63,10 @@ class AccelerationODETestCase(unittest.TestCase):
         check_prob_outputs(self.prob, testvals, rtol=1e-6)
 
         partial_data = self.prob.check_partials(
-            method="cs", out_stream=None, excludes=["*params*", "*aero*"]
+            method='cs', out_stream=None, excludes=['*params*', '*aero*']
         )
         assert_check_partials(partial_data, rtol=1e-10)
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     unittest.main()

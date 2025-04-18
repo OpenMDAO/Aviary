@@ -83,9 +83,7 @@ def set_aviary_initial_values(prob, aviary_inputs: AviaryValues):
             continue
 
 
-def set_aviary_input_defaults(
-    model, inputs, aviary_inputs: AviaryValues, meta_data=_MetaData
-):
+def set_aviary_input_defaults(model, inputs, aviary_inputs: AviaryValues, meta_data=_MetaData):
     """
     This function sets the default values and units for any inputs prior to
     setup. This is needed to resolve ambiguities when inputs are promoted
@@ -182,9 +180,7 @@ def create_opts2vals(all_options: list, output_units: dict = {}):
     def configure_output(option_name: str, aviary_options: AviaryValues):
         option_data = aviary_options.get_item(option_name)
         out_units = (
-            output_units[option_name]
-            if option_name in output_units.keys()
-            else option_data[1]
+            output_units[option_name] if option_name in output_units.keys() else option_data[1]
         )
         return {'val': option_data[0], 'units': out_units}
 
@@ -198,9 +194,7 @@ def create_opts2vals(all_options: list, output_units: dict = {}):
 
         def setup(self):
             for option_name in all_options:
-                output_data = configure_output(
-                    option_name, self.options['aviary_options']
-                )
+                output_data = configure_output(option_name, self.options['aviary_options'])
                 add_aviary_output(
                     self,
                     option_name,
@@ -250,15 +244,11 @@ def add_opts2vals(Group: om.Group, OptionsToValues, aviary_options: AviaryValues
             )
 
         def setup(self):
-            self.add_subsystem(
-                'options_to_values', OptionsToValues(aviary_options=aviary_options)
-            )
+            self.add_subsystem('options_to_values', OptionsToValues(aviary_options=aviary_options))
 
         def configure(self):
             all_output_data = self.options_to_values.list_outputs(out_stream=None)
-            list_of_outputs = [
-                (name, 'option:' + name) for name, data in all_output_data
-            ]
+            list_of_outputs = [(name, 'option:' + name) for name, data in all_output_data]
             self.promotes('options_to_values', list_of_outputs)
 
     Group.add_subsystem(
@@ -268,9 +258,7 @@ def add_opts2vals(Group: om.Group, OptionsToValues, aviary_options: AviaryValues
     return Group
 
 
-def create_printcomp(
-    all_inputs: list, input_units: dict = {}, meta_data=_MetaData, num_nodes=1
-):
+def create_printcomp(all_inputs: list, input_units: dict = {}, meta_data=_MetaData, num_nodes=1):
     """
     Creates a component that prints the value of all inputs.
 
@@ -300,33 +288,24 @@ def create_printcomp(
             return None
 
     class PrintComp(om.ExplicitComponent):
-
         def setup(self):
             for variable_name in all_inputs:
                 units = get_units(variable_name)
                 if ':' in variable_name:
                     try:
-                        add_aviary_input(
-                            self, variable_name, units=units, shape=num_nodes
-                        )
+                        add_aviary_input(self, variable_name, units=units, shape=num_nodes)
                     except TypeError:
-                        self.add_input(
-                            variable_name, units=units, shape=num_nodes, val=1.23456
-                        )
+                        self.add_input(variable_name, units=units, shape=num_nodes, val=1.23456)
                 else:
                     # using an arbitrary number that will stand out for unconnected
                     # variables
-                    self.add_input(
-                        variable_name, units=units, shape=num_nodes, val=1.23456
-                    )
+                    self.add_input(variable_name, units=units, shape=num_nodes, val=1.23456)
 
         def compute(self, inputs, outputs):
             print_string = ['v' * 20]
             for variable_name in all_inputs:
                 units = get_units(variable_name)
-                print_string.append(
-                    '{} {} {}'.format(variable_name, inputs[variable_name], units)
-                )
+                print_string.append('{} {} {}'.format(variable_name, inputs[variable_name], units))
             print_string.append('^' * 20)
             print('\n'.join(print_string))
 
@@ -339,7 +318,6 @@ def promote_aircraft_and_mission_vars(group):
     """
     external_outputs = []
     for comp in group.system_iter(recurse=False):
-
         # Skip all aviary systems.
         if comp.name == 'core_subsystems':
             continue
@@ -420,7 +398,7 @@ def get_path(path: Union[str, Path], verbosity=Verbosity.BRIEF) -> Path:
         if verbosity > Verbosity.BRIEF:  # VERBOSE, DEBUG
             print(
                 f"Unable to locate '{original_path}' as an absolute or relative path. "
-                "Trying Aviary package path."
+                'Trying Aviary package path.'
             )
         # Determine the path relative to the Aviary package.
         aviary_based_path = Path(get_aviary_resource_path(original_path))
@@ -432,7 +410,7 @@ def get_path(path: Union[str, Path], verbosity=Verbosity.BRIEF) -> Path:
         if verbosity > Verbosity.BRIEF:
             print(
                 f"Unable to locate '{aviary_based_path}' as an Aviary package path, "
-                "checking built-in models"
+                'checking built-in models'
             )
         try:
             hangar_based_path = get_model(original_path)
@@ -456,7 +434,7 @@ def get_path(path: Union[str, Path], verbosity=Verbosity.BRIEF) -> Path:
 
 
 def get_model(file_name: str, verbosity=Verbosity.BRIEF) -> Path:
-    '''
+    """
     This function attempts to find the path to a file or folder in aviary/models
     If the path cannot be found in any of the locations, a FileNotFoundError is raised.
 
@@ -474,7 +452,7 @@ def get_model(file_name: str, verbosity=Verbosity.BRIEF) -> Path:
     ------
     FileNotFoundError
         If the path is not found.
-    '''
+    """
 
     # Get the path to Aviary's models
     path = Path('models', file_name)
@@ -516,7 +494,7 @@ def sigmoidX(x, x0, alpha=1.0):
         smoothed value from input parameter x.
     """
     if alpha == 0:
-        raise ValueError("alpha must be non-zero")
+        raise ValueError('alpha must be non-zero')
 
     if isinstance(x, np.ndarray):
         if np.isrealobj(x):
@@ -559,7 +537,7 @@ def dSigmoidXdx(x, x0, alpha=1.0):
         smoothed derivative value from input parameter x.
     """
     if alpha == 0:
-        raise ValueError("alpha must be non-zero")
+        raise ValueError('alpha must be non-zero')
 
     if isinstance(x, np.ndarray):
         if np.isrealobj(x):

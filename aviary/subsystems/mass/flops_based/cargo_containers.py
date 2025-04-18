@@ -7,15 +7,14 @@ from aviary.variable_info.variables import Aircraft
 
 
 class TransportCargoContainersMass(om.ExplicitComponent):
-    '''
+    """
     Calculate the estimated mass for cargo containers. Use for both
     traditional and blended-wing-body type transports. The methodology is based on
     the FLOPS weight equations, modified to output mass instead of weight.
-    '''
+    """
 
     def setup(self):
-        add_aviary_input(self, Aircraft.CrewPayload.CARGO_CONTAINER_MASS_SCALER,
-                         units='unitless')
+        add_aviary_input(self, Aircraft.CrewPayload.CARGO_CONTAINER_MASS_SCALER, units='unitless')
         add_aviary_input(self, Aircraft.CrewPayload.CARGO_MASS, units='lbm')
         add_aviary_input(self, Aircraft.CrewPayload.BAGGAGE_MASS, units='lbm')
 
@@ -24,9 +23,7 @@ class TransportCargoContainersMass(om.ExplicitComponent):
     def setup_partials(self):
         self.declare_partials('*', '*')
 
-    def compute(
-        self, inputs, outputs, discrete_inputs=None, discrete_outputs=None
-    ):
+    def compute(self, inputs, outputs, discrete_inputs=None, discrete_outputs=None):
         scaler = inputs[Aircraft.CrewPayload.CARGO_CONTAINER_MASS_SCALER]
         cargo = inputs[Aircraft.CrewPayload.CARGO_MASS]
         baggage = inputs[Aircraft.CrewPayload.BAGGAGE_MASS]
@@ -35,8 +32,9 @@ class TransportCargoContainersMass(om.ExplicitComponent):
         container_count = sin_int4(temp)
         cargo_container_weight = container_count * 175.0 * scaler
 
-        outputs[Aircraft.CrewPayload.CARGO_CONTAINER_MASS] = \
+        outputs[Aircraft.CrewPayload.CARGO_CONTAINER_MASS] = (
             cargo_container_weight / GRAV_ENGLISH_LBM
+        )
 
     def compute_partials(self, inputs, J, discrete_inputs=None):
         scaler = inputs[Aircraft.CrewPayload.CARGO_CONTAINER_MASS_SCALER]
@@ -50,32 +48,30 @@ class TransportCargoContainersMass(om.ExplicitComponent):
 
         J[
             Aircraft.CrewPayload.CARGO_CONTAINER_MASS,
-            Aircraft.CrewPayload.CARGO_CONTAINER_MASS_SCALER
+            Aircraft.CrewPayload.CARGO_CONTAINER_MASS_SCALER,
         ] = container_count * 175.0 / GRAV_ENGLISH_LBM
 
-        J[
-            Aircraft.CrewPayload.CARGO_CONTAINER_MASS,
-            Aircraft.CrewPayload.CARGO_MASS
-        ] = partial * scaler / GRAV_ENGLISH_LBM
+        J[Aircraft.CrewPayload.CARGO_CONTAINER_MASS, Aircraft.CrewPayload.CARGO_MASS] = (
+            partial * scaler / GRAV_ENGLISH_LBM
+        )
 
-        J[
-            Aircraft.CrewPayload.CARGO_CONTAINER_MASS,
-            Aircraft.CrewPayload.BAGGAGE_MASS
-        ] = partial * scaler / GRAV_ENGLISH_LBM
+        J[Aircraft.CrewPayload.CARGO_CONTAINER_MASS, Aircraft.CrewPayload.BAGGAGE_MASS] = (
+            partial * scaler / GRAV_ENGLISH_LBM
+        )
 
 
 # region TODO: move this to an appropriate module for import
 def sin_int4(val):
-    '''
+    """
     Define a smooth, differentialbe approximation to the 'int' function.
-    '''
+    """
     return sin_int(sin_int(sin_int(sin_int(val)))) - 0.5
 
 
 def dydx_sin_int4(val):
-    '''
+    """
     Define the derivative (dy/dx) of sin_int4, at x = val.
-    '''
+    """
     y0 = sin_int(val)
     y1 = sin_int(y0)
     y2 = sin_int(y1)
@@ -93,20 +89,22 @@ def dydx_sin_int4(val):
 # 'int' function can be approximated by recursively applying this sin function
 # which makes a smooth, differentialbe function
 def sin_int(val):
-    '''
+    """
     Define one step in approximating the 'int' function with a smooth,
     differentialbe function.
-    '''
-    int_val = val - np.sin(2*np.pi*(val+0.5))/(2*np.pi)
+    """
+    int_val = val - np.sin(2 * np.pi * (val + 0.5)) / (2 * np.pi)
 
     return int_val
 
 
 def dydx_sin_int(val):
-    '''
+    """
     Define the derivative (dy/dx) of sin_int, at x = val.
-    '''
+    """
     dydx = 1.0 - np.cos(2 * np.pi * (val + 0.5))
 
     return dydx
+
+
 # endregion TODO: move this to an appropriate module for import

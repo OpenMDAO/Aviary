@@ -13,7 +13,7 @@ from aviary.variable_info.variables import Aircraft
 
 class PropellerMapTest(unittest.TestCase):
     """
-    Test propeller map using OpenMDAO interpolator to make sure 
+    Test propeller map using OpenMDAO interpolator to make sure
     it provides correct error and gets correct Mach type.
     """
 
@@ -82,5 +82,5 @@ class PropellerMapTest(unittest.TestCase):
         self.assertEqual(out_mach_type, OutMachType.HELICAL_MACH)
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     unittest.main()

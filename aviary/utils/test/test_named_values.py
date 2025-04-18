@@ -1,6 +1,7 @@
-'''
+"""
 Unit test cases for class NamedValues.
-'''
+"""
+
 import unittest
 
 from aviary.utils.named_values import NamedValues, get_items, get_keys, get_values
@@ -241,7 +242,7 @@ _data1 = {
     'NUM_FUSELAGES': (1, 'unitless'),
     'NUM_ENGINES': (2, 'unitless'),
     Aircraft.CrewPayload.BAGGAGE_MASS: (7500, 'lbm'),
-    Mission.Design.RANGE: (3500, 'NM')
+    Mission.Design.RANGE: (3500, 'NM'),
 }
 
 

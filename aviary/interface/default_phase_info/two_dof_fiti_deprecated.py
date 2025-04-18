@@ -1,8 +1,15 @@
 import warnings
 
 from aviary.variable_info.enums import SpeedType, Verbosity
-from aviary.mission.gasp_based.phases.time_integration_phases import SGMGroundroll, \
-    SGMRotation, SGMAscentCombined, SGMAccel, SGMClimb, SGMCruise, SGMDescent
+from aviary.mission.gasp_based.phases.time_integration_phases import (
+    SGMGroundroll,
+    SGMRotation,
+    SGMAscentCombined,
+    SGMAccel,
+    SGMClimb,
+    SGMCruise,
+    SGMDescent,
+)
 from aviary.variable_info.variables import Aircraft, Mission, Dynamic
 
 # defaults for 2DOF based forward in time integeration phases
@@ -11,15 +18,16 @@ from aviary.variable_info.variables import Aircraft, Mission, Dynamic
 def create_2dof_based_ascent_phases(
     ode_args,
     cruise_alt=35e3,
-    cruise_mach=.8,
+    cruise_mach=0.8,
     simupy_args=dict(
         verbosity=Verbosity.QUIET,
     ),
 ):
-
-    warnings.warn("`descent_range_and_fuel` has been replaced with `add_descent_estimation_as_submodel`"
-                  "\nThe new methodology uses a phase_info that more closely matches that of collocation",
-                  DeprecationWarning)
+    warnings.warn(
+        '`descent_range_and_fuel` has been replaced with `add_descent_estimation_as_submodel`'
+        '\nThe new methodology uses a phase_info that more closely matches that of collocation',
+        DeprecationWarning,
+    )
 
     groundroll_kwargs = dict(
         ode_args=ode_args,
@@ -45,7 +53,10 @@ def create_2dof_based_ascent_phases(
         't_init_flaps': {'val': 10000, 'units': 's'},
         'rotation.start_rotation': {'val': 10000, 'units': 's'},  # special case
         # special case
-        'attr:fuselage_angle_max': {'val': Aircraft.Design.MAX_FUSELAGE_PITCH_ANGLE, 'units': 'deg'},
+        'attr:fuselage_angle_max': {
+            'val': Aircraft.Design.MAX_FUSELAGE_PITCH_ANGLE,
+            'units': 'deg',
+        },
     }
 
     accel_kwargs = dict(
@@ -120,7 +131,6 @@ def create_2dof_based_ascent_phases(
             'ode': SGMClimb(**climb3_kwargs),
             'vals_to_set': climb3_vals,
         },
-
     }
 
     return phases
@@ -128,19 +138,20 @@ def create_2dof_based_ascent_phases(
 
 def create_2dof_based_descent_phases(
     ode_args,
-    cruise_mach=.8,
+    cruise_mach=0.8,
     simupy_args=dict(
         verbosity=Verbosity.QUIET,
     ),
 ):
-
-    warnings.warn("`descent_range_and_fuel` has been replaced with `add_descent_estimation_as_submodel`"
-                  "\nThe new methodology uses a phase_info that more closely matches that of collocation",
-                  DeprecationWarning)
+    warnings.warn(
+        '`descent_range_and_fuel` has been replaced with `add_descent_estimation_as_submodel`'
+        '\nThe new methodology uses a phase_info that more closely matches that of collocation',
+        DeprecationWarning,
+    )
 
     descent1_kwargs = dict(
         input_speed_type=SpeedType.MACH,
-        input_speed_units="unitless",
+        input_speed_units='unitless',
         speed_trigger_units='kn',
         ode_args=ode_args,
         simupy_args=simupy_args,
@@ -153,7 +164,7 @@ def create_2dof_based_descent_phases(
 
     descent2_kwargs = dict(
         input_speed_type=SpeedType.EAS,
-        input_speed_units="kn",
+        input_speed_units='kn',
         speed_trigger_units='kn',
         ode_args=ode_args,
         simupy_args=simupy_args,
@@ -166,7 +177,7 @@ def create_2dof_based_descent_phases(
 
     descent3_kwargs = dict(
         input_speed_type=SpeedType.EAS,
-        input_speed_units="kn",
+        input_speed_units='kn',
         speed_trigger_units='kn',
         ode_args=ode_args,
         simupy_args=simupy_args,
@@ -190,7 +201,6 @@ def create_2dof_based_descent_phases(
             'ode': SGMDescent(**descent3_kwargs),
             'vals_to_set': descent3_vals,
         },
-
     }
 
     return phases

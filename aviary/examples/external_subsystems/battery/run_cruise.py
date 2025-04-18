@@ -19,8 +19,9 @@ if __name__ == '__main__':
 
     # Load aircraft and options data from user
     # Allow for user overrides here
-    prob.load_inputs('models/test_aircraft/aircraft_for_bench_FwFm.csv',
-                     phase_info, meta_data=ExtendedMetaData)
+    prob.load_inputs(
+        'models/test_aircraft/aircraft_for_bench_FwFm.csv', phase_info, meta_data=ExtendedMetaData
+    )
 
     # Preprocess inputs
     prob.check_and_preprocess_inputs()
@@ -34,7 +35,7 @@ if __name__ == '__main__':
     # Link phases and variables
     prob.link_phases()
 
-    prob.add_driver("SLSQP")
+    prob.add_driver('SLSQP')
 
     prob.add_design_variables()
 

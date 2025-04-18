@@ -3,8 +3,11 @@ import unittest
 from openmdao.utils.assert_utils import assert_near_equal
 
 from aviary.subsystems.mass.flops_based.distributed_prop import (
-    distributed_engine_count_factor, distributed_nacelle_diam_factor,
-    distributed_nacelle_diam_factor_deriv, distributed_thrust_factor)
+    distributed_engine_count_factor,
+    distributed_nacelle_diam_factor,
+    distributed_nacelle_diam_factor_deriv,
+    distributed_thrust_factor,
+)
 
 
 class DistributedPropulsionFactorsTest(unittest.TestCase):
@@ -28,11 +31,11 @@ class DistributedPropulsionFactorsTest(unittest.TestCase):
 
         for num_eng in [1, 2, 3, 4]:
             thrust_fact = distributed_thrust_factor(max_thrust, num_eng)
-            assert_near_equal(thrust_fact, max_thrust/num_eng, tol)
+            assert_near_equal(thrust_fact, max_thrust / num_eng, tol)
 
         num_eng = 5
         thrust_fact = distributed_thrust_factor(max_thrust, num_eng)
-        assert_near_equal(thrust_fact, max_thrust/4.643501108793284, tol)
+        assert_near_equal(thrust_fact, max_thrust / 4.643501108793284, tol)
 
     def test_case_dist_nacelle_diam(self):
         tol = 1e-12
@@ -44,7 +47,7 @@ class DistributedPropulsionFactorsTest(unittest.TestCase):
 
         num_eng = 5
         diam_fact = distributed_nacelle_diam_factor(diam_nacelle, num_eng)
-        assert_near_equal(diam_fact, diam_nacelle*1.11803398875, tol)
+        assert_near_equal(diam_fact, diam_nacelle * 1.11803398875, tol)
 
     def test_case_dist_nacelle_diam_deriv(self):
         tol = 1e-12
@@ -58,5 +61,5 @@ class DistributedPropulsionFactorsTest(unittest.TestCase):
         assert_near_equal(diam_fact, 1.11803398875, tol)
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     unittest.main()

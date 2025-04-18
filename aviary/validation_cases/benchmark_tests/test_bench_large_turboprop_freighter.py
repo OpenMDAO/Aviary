@@ -21,22 +21,20 @@ from aviary.models.large_turboprop_freighter.phase_info import (
 @use_tempdirs
 # TODO need to add asserts with "truth" values, only verifying no errors here
 class LargeTurbopropFreighterBenchmark(unittest.TestCase):
-
     def build_and_run_problem(self):
-
         # Build problem
         prob = AviaryProblem(verbosity=0)
 
         # load inputs from .csv to build engine
         options, _ = create_vehicle(
-            "models/large_turboprop_freighter/large_turboprop_freighter_GASP.csv"
+            'models/large_turboprop_freighter/large_turboprop_freighter_GASP.csv'
         )
 
         turboprop = TurbopropModel('turboprop', options=options)
 
         # load_inputs needs to be updated to accept an already existing aviary options
         prob.load_inputs(
-            "models/large_turboprop_freighter/large_turboprop_freighter_GASP.csv",
+            'models/large_turboprop_freighter/large_turboprop_freighter_GASP.csv',
             two_dof_phase_info,
             engine_builders=[turboprop],
         )
@@ -49,14 +47,14 @@ class LargeTurbopropFreighterBenchmark(unittest.TestCase):
         prob.add_phases()
         prob.add_post_mission_systems()
         prob.link_phases()
-        prob.add_driver("IPOPT", max_iter=0, verbosity=0)
+        prob.add_driver('IPOPT', max_iter=0, verbosity=0)
         prob.add_design_variables()
         prob.add_objective()
         prob.setup()
         # om.n2(prob)
 
         prob.set_initial_guesses()
-        prob.run_aviary_problem("dymos_solution.db")
+        prob.run_aviary_problem('dymos_solution.db')
         # om.n2(prob)
 
 

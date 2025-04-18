@@ -66,11 +66,11 @@ class Point3D:
     y: float = 0.0
     z: float = 0.0
 
-    def translated_copy(self, dx: float, dy: float, dz: float) -> "Point3D":
+    def translated_copy(self, dx: float, dy: float, dz: float) -> 'Point3D':
         """Return a new Point3D that is a translation of this point by (dx, dy, dz)."""
         return Point3D(self.x + dx, self.y + dy, self.z + dz)
 
-    def reflected_copy(self, axis: Axis) -> "Point3D":
+    def reflected_copy(self, axis: Axis) -> 'Point3D':
         """Return a new Point3D that is a reflection of this point across one of the 3d axes."""
         x = self.x * (-1 if axis == Axis.X else 1)
         y = self.y * (-1 if axis == Axis.Y else 1)
@@ -79,7 +79,7 @@ class Point3D:
 
     def __str__(self) -> str:
         """Return a string representation of the point in the format 'x y z'."""
-        return f"{self.x} {self.y} {self.z}"
+        return f'{self.x} {self.y} {self.z}'
 
 
 @dataclass
@@ -97,16 +97,14 @@ class Quad3D:
 
     def __post_init__(self):
         if len(self.vertices) != 4:
-            raise ValueError("A quadrilateral must have exactly four vertices.")
+            raise ValueError('A quadrilateral must have exactly four vertices.')
 
-    def translated_copy(self, dx: float, dy: float, dz: float) -> "Quad3D":
+    def translated_copy(self, dx: float, dy: float, dz: float) -> 'Quad3D':
         """Return a new Quad3D that is a translation of this quad by (dx, dy, dz)."""
-        translated_vertices = [
-            vertex.translated_copy(dx, dy, dz) for vertex in self.vertices
-        ]
+        translated_vertices = [vertex.translated_copy(dx, dy, dz) for vertex in self.vertices]
         return Quad3D(translated_vertices)
 
-    def reflected_copy(self, axis: Axis) -> "Quad3D":
+    def reflected_copy(self, axis: Axis) -> 'Quad3D':
         """Return a new Quad3D that is a reflection of this quad across one of the 3 axes."""
         reflected_vertices = [vertex.reflected_copy(axis) for vertex in self.vertices]
         return Quad3D(reflected_vertices)
@@ -249,20 +247,21 @@ class AircraftModelReader(object):
 
         model_options = cr.list_model_options(out_stream=None)
         try:
-            self.aviary_options = model_options["root"]["aviary_options"]
+            self.aviary_options = model_options['root']['aviary_options']
         except KeyError as e:
             issue_warning(
-                f"The case recorder file {self._case_recorder_file} does not have any metadata for the root system")
+                f'The case recorder file {self._case_recorder_file} does not have any metadata for the root system'
+            )
             self.aviary_options = av.AviaryValues()
 
             # <class 'aviary.utils.aviary_values.AviaryValues'>
 
-        if "final" not in cr.list_cases():
+        if 'final' not in cr.list_cases():
             raise AircraftModelReaderError(
                 f"Case recorder file, {self._case_recorder_file} does not have expected case named 'final'"
             )
 
-        self._final_case = cr.get_case("final")
+        self._final_case = cr.get_case('final')
 
     def _write_input_output_variables(self):
         """
@@ -270,13 +269,13 @@ class AircraftModelReader(object):
         """
         inputs = self._final_case.list_inputs(
             val=True,
-            return_format="list",
+            return_format='list',
             prom_name=True,
             hierarchical=False,
         )
         outputs = self._final_case.list_outputs(
             val=True,
-            return_format="list",
+            return_format='list',
             prom_name=True,
             hierarchical=False,
         )
@@ -303,15 +302,14 @@ class AircraftModelReader(object):
         except KeyError as e:
             pass
 
-        abs2prom = self._problem_metadata["abs2prom"]
-        for abs_name, prom_name in abs2prom["input"].items():
+        abs2prom = self._problem_metadata['abs2prom']
+        for abs_name, prom_name in abs2prom['input'].items():
             # the phrase "_OVERRIDE" in a variable indicates it is a calculated value that we are discarding
             if prom_name == var_prom_name and '_OVERRIDE' not in abs_name:
                 val = self._final_case.get_val(abs_name, units=units)
                 return float(val)
 
-        raise AircraftModelReaderError(
-            f"Promoted name {var_prom_name} not found in final case")
+        raise AircraftModelReaderError(f'Promoted name {var_prom_name} not found in final case')
 
     def get_variable_from_aviary_options(self, var_prom_name):
         """
@@ -330,7 +328,8 @@ class AircraftModelReader(object):
         item = self.aviary_options.get_item(var_prom_name)
         if item is None:
             raise AircraftModelReaderError(
-                f"Promoted name {var_prom_name} not found in aviary_options")
+                f'Promoted name {var_prom_name} not found in aviary_options'
+            )
         value, _units = item
         return value
 
@@ -362,16 +361,14 @@ class Fuselage(object):
     def read_variables(self):
         try:
             self._length = self._reader.get_variable_from_case(
-                "aircraft:fuselage:length", units="ft"
+                'aircraft:fuselage:length', units='ft'
             )
             self._radius = (
-                self._reader.get_variable_from_case(
-                    "aircraft:fuselage:avg_diameter", units="ft"
-                )
+                self._reader.get_variable_from_case('aircraft:fuselage:avg_diameter', units='ft')
                 / 2.0
             )
         except AircraftModelReaderError as e:
-            print(f"Warning: Unable to read fuselage variables due to the error: {e} ")
+            print(f'Warning: Unable to read fuselage variables due to the error: {e} ')
             raise
 
     def get_aframe_markup(self):
@@ -380,7 +377,7 @@ class Fuselage(object):
             <a-cylinder id="cylinder" position="0 0 0" radius="{self._radius}" height="{self._length}" 
                 rotation="0 90 0" color="white"></a-cylinder>
             <!-- front cone -->
-            <a-sphere color="white" radius="{self._radius}" position="0 {self._length/2.} 0"></a-sphere>
+            <a-sphere color="white" radius="{self._radius}" position="0 {self._length / 2.0} 0"></a-sphere>
         """
 
     @property
@@ -433,16 +430,14 @@ class VerticalTail(object):
         """
         try:
             thickness_to_chord = self._reader.get_variable_from_case(
-                "aircraft:vertical_tail:thickness_to_chord"
+                'aircraft:vertical_tail:thickness_to_chord'
             )
-            area = self._reader.get_variable_from_case(
-                "aircraft:vertical_tail:area", units="ft**2"
-            )
+            area = self._reader.get_variable_from_case('aircraft:vertical_tail:area', units='ft**2')
             aspect_ratio = self._reader.get_variable_from_case(
-                "aircraft:vertical_tail:aspect_ratio"
+                'aircraft:vertical_tail:aspect_ratio'
             )
             self._taper_ratio = self._reader.get_variable_from_case(
-                "aircraft:vertical_tail:taper_ratio"
+                'aircraft:vertical_tail:taper_ratio'
             )
             # Calculate the span (b) using the formula b = sqrt(AR * S)
             self._span = (aspect_ratio * area) ** 0.5
@@ -450,9 +445,7 @@ class VerticalTail(object):
             self._chord = area / self._span
             self._thickness = thickness_to_chord * self._chord
         except AircraftModelReaderError as e:
-            print(
-                f"Warning: Unable to read vertical tail variables due to the error: {e} "
-            )
+            print(f'Warning: Unable to read vertical tail variables due to the error: {e} ')
             raise
 
     def get_aframe_markup(self):
@@ -496,7 +489,7 @@ class VerticalTail(object):
         right_quad = left_quad.translated_copy(0, 0, -self._thickness)
         quads_to_complete_solid = complete_solid(left_quad, right_quad)
 
-        entities = ""
+        entities = ''
         entities += f"""
         <!-- vertical tail -->
         {quad3d_to_triangle_entities(left_quad)}
@@ -504,7 +497,7 @@ class VerticalTail(object):
         """
 
         for quad in quads_to_complete_solid:
-            entities += f"{quad3d_to_triangle_entities(quad)}"
+            entities += f'{quad3d_to_triangle_entities(quad)}'
         return entities
 
 
@@ -565,56 +558,49 @@ class HorizontalWing(object):
         Read the variables from the final case that are needed to define the horizontal wing.
         """
         if self._wing_type == WingType.WING:
-            wing_type_name = "wing"
+            wing_type_name = 'wing'
         elif self._wing_type == WingType.HORIZONTAL_TAIL:
-            wing_type_name = "horizontal_tail"
+            wing_type_name = 'horizontal_tail'
         try:
             aspect_ratio = self._reader.get_variable_from_case(
-                f"aircraft:{wing_type_name}:aspect_ratio"
+                f'aircraft:{wing_type_name}:aspect_ratio'
             )
             taper_ratio = self._reader.get_variable_from_case(
-                f"aircraft:{wing_type_name}:taper_ratio"
+                f'aircraft:{wing_type_name}:taper_ratio'
             )
             area = self._reader.get_variable_from_case(
-                f"aircraft:{wing_type_name}:area", units="ft**2"
+                f'aircraft:{wing_type_name}:area', units='ft**2'
             )
             try:
                 thickness_to_chord = self._reader.get_variable_from_case(
-                    f"aircraft:{wing_type_name}:thickness_to_chord"
+                    f'aircraft:{wing_type_name}:thickness_to_chord'
                 )
             except AircraftModelReaderError:  # try this method if the first doesn't work
                 thickness_to_chord_root = self._reader.get_variable_from_case(
-                    f"aircraft:{wing_type_name}:thickness_to_chord_root"
+                    f'aircraft:{wing_type_name}:thickness_to_chord_root'
                 )
                 thickness_to_chord_tip = self._reader.get_variable_from_case(
-                    f"aircraft:{wing_type_name}:thickness_to_chord_tip"
+                    f'aircraft:{wing_type_name}:thickness_to_chord_tip'
                 )
-                thickness_to_chord = (
-                    thickness_to_chord_root + thickness_to_chord_tip
-                ) / 2.0
+                thickness_to_chord = (thickness_to_chord_root + thickness_to_chord_tip) / 2.0
 
             self._span = (aspect_ratio * area) ** 0.5
             self._chord = area / self._span
             self._thickness = thickness_to_chord * self._chord
-            self._sweep_angle = self._reader.get_variable_from_case(
-                av.Aircraft.Wing.SWEEP)
+            self._sweep_angle = self._reader.get_variable_from_case(av.Aircraft.Wing.SWEEP)
             self._chord_tip = self._chord * taper_ratio
             if self._wing_type == WingType.WING:
                 try:
                     mount_location = self._reader.get_variable_from_case(
-                        "aircraft:wing:mount_location"
+                        'aircraft:wing:mount_location'
                     )
                 except AircraftModelReaderError:
                     mount_location = 0.0
-                self._vertical_position = (
-                    2.0 * (mount_location - 0.5) * self._fuselage.radius
-                )
+                self._vertical_position = 2.0 * (mount_location - 0.5) * self._fuselage.radius
                 self._position_along_fuselage = 0.0
             elif self._wing_type == WingType.HORIZONTAL_TAIL:
                 self._vertical_position = 0.0
-                self._position_along_fuselage = (
-                    -self._fuselage.length / 2.0 + self._chord / 2.0
-                )
+                self._position_along_fuselage = -self._fuselage.length / 2.0 + self._chord / 2.0
         except AircraftModelReaderError as e:
             print(
                 f"Warning: Unable to read horizontal wing of type '{self._wing_type}' variables due to the error: {e} "
@@ -632,7 +618,7 @@ class HorizontalWing(object):
         """
         sweep_angle_tan = math.tan(math.radians(self._sweep_angle))
 
-        entities = ""
+        entities = ''
 
         # the quad that defines the left side of the horizontal wing
         left_top_quad = Quad3D(
@@ -676,14 +662,12 @@ class HorizontalWing(object):
         {quad3d_to_triangle_entities(left_bottom_quad)}
         """
         for quad in left_quads_to_complete_solid:
-            entities += f"{quad3d_to_triangle_entities(quad)}"
+            entities += f'{quad3d_to_triangle_entities(quad)}'
 
         # Now the right wing
         right_top_quad = left_top_quad.reflected_copy(Axis.Z)
         right_bottom_quad = right_top_quad.translated_copy(-self._thickness, 0, 0)
-        right_quads_to_complete_solid = complete_solid(
-            right_top_quad, right_bottom_quad
-        )
+        right_quads_to_complete_solid = complete_solid(right_top_quad, right_bottom_quad)
         entities += f"""
         <!-- vertical tail -->
         {quad3d_to_triangle_entities(right_top_quad)}
@@ -691,7 +675,7 @@ class HorizontalWing(object):
         """
 
         for quad in right_quads_to_complete_solid:
-            entities += f"{quad3d_to_triangle_entities(quad)}"
+            entities += f'{quad3d_to_triangle_entities(quad)}'
 
         return entities
 
@@ -768,15 +752,13 @@ class Engines(object):
                 av.Aircraft.Engine.NUM_WING_ENGINES
             )
             self._engine_diameter = self._reader.get_variable_from_case(
-                av.Aircraft.Nacelle.AVG_DIAMETER, units="ft"
+                av.Aircraft.Nacelle.AVG_DIAMETER, units='ft'
             )
             self._engine_length = self._reader.get_variable_from_case(
-                av.Aircraft.Nacelle.AVG_LENGTH, units="ft"
+                av.Aircraft.Nacelle.AVG_LENGTH, units='ft'
             )
-            self._engine_locations_on_wing = (
-                self._reader.get_variable_from_aviary_options(
-                    av.Aircraft.Engine.WING_LOCATIONS
-                )
+            self._engine_locations_on_wing = self._reader.get_variable_from_aviary_options(
+                av.Aircraft.Engine.WING_LOCATIONS
             )
             try:
                 self._has_propellers = self._reader.get_variable_from_case(
@@ -785,7 +767,7 @@ class Engines(object):
             except AircraftModelReaderError as e2:
                 self._has_propellers = False
         except AircraftModelReaderError as e:
-            print(f"Warning: Unable to read engine variables due to the error: {e} ")
+            print(f'Warning: Unable to read engine variables due to the error: {e} ')
             raise
 
     def get_aframe_markup(self):
@@ -798,37 +780,40 @@ class Engines(object):
             A-Frame markup defining the engines.
         """
         wing_span = self._wing.span
-        entities = ""
+        entities = ''
 
         if self._engine_locations_on_wing:
             for engine_location in self._engine_locations_on_wing:
-                distance_from_fuselage = engine_location * wing_span/2.0
-                distance_along_fuselage = self._wing.position_along_fuselage + self._wing.chord / 2. - \
-                    distance_from_fuselage * \
-                    math.tan(math.radians(self._wing.sweep_angle)) + \
-                    self._engine_length/2.
-                distance_above_fuselage = self._wing.vertical_position - self._engine_diameter / 2.
+                distance_from_fuselage = engine_location * wing_span / 2.0
+                distance_along_fuselage = (
+                    self._wing.position_along_fuselage
+                    + self._wing.chord / 2.0
+                    - distance_from_fuselage * math.tan(math.radians(self._wing.sweep_angle))
+                    + self._engine_length / 2.0
+                )
+                distance_above_fuselage = self._wing.vertical_position - self._engine_diameter / 2.0
                 entities += f"""
                         <!-- engine -->
-                        <a-cylinder id="cylinder" position="{distance_above_fuselage} {distance_along_fuselage} {distance_from_fuselage}" radius="{self._engine_diameter/2}" height="{self._engine_length}" 
+                        <a-cylinder id="cylinder" position="{distance_above_fuselage} {distance_along_fuselage} {distance_from_fuselage}" radius="{self._engine_diameter / 2}" height="{self._engine_length}" 
                             rotation="0 90 0" color="white"></a-cylinder>
-                        <a-cylinder id="cylinder" position="{distance_above_fuselage} {distance_along_fuselage} {-distance_from_fuselage}" radius="{self._engine_diameter/2}" height="{self._engine_length}" 
+                        <a-cylinder id="cylinder" position="{distance_above_fuselage} {distance_along_fuselage} {-distance_from_fuselage}" radius="{self._engine_diameter / 2}" height="{self._engine_length}" 
                             rotation="0 90 0" color="white"></a-cylinder>
                 """
                 if self._has_propellers:
-                    propeller_blade_radius = self._engine_diameter / \
-                        10.0  # arbitrary fraction of engine diameter
+                    propeller_blade_radius = (
+                        self._engine_diameter / 10.0
+                    )  # arbitrary fraction of engine diameter
                     propeller_blade_length = self._engine_diameter * 2.0
                     entities += f"""
                             <!-- engine -->
-                            <a-cylinder id="cylinder" position="{distance_above_fuselage} {distance_along_fuselage + self._engine_length/2 + propeller_blade_radius} {distance_from_fuselage}" radius="{propeller_blade_radius}" height="{propeller_blade_length}" 
+                            <a-cylinder id="cylinder" position="{distance_above_fuselage} {distance_along_fuselage + self._engine_length / 2 + propeller_blade_radius} {distance_from_fuselage}" radius="{propeller_blade_radius}" height="{propeller_blade_length}" 
                                 rotation="90 135 0" color="grey"></a-cylinder>
-                            <a-cylinder id="cylinder" position="{distance_above_fuselage} {distance_along_fuselage + self._engine_length/2 + propeller_blade_radius} {distance_from_fuselage}" radius="{propeller_blade_radius}" height="{propeller_blade_length}" 
+                            <a-cylinder id="cylinder" position="{distance_above_fuselage} {distance_along_fuselage + self._engine_length / 2 + propeller_blade_radius} {distance_from_fuselage}" radius="{propeller_blade_radius}" height="{propeller_blade_length}" 
                                 rotation="90 45 0" color="grey"></a-cylinder>
                             <!-- engine -->
-                            <a-cylinder id="cylinder" position="{distance_above_fuselage} {distance_along_fuselage + self._engine_length/2 + propeller_blade_radius} {-distance_from_fuselage}" radius="{propeller_blade_radius}" height="{propeller_blade_length}" 
+                            <a-cylinder id="cylinder" position="{distance_above_fuselage} {distance_along_fuselage + self._engine_length / 2 + propeller_blade_radius} {-distance_from_fuselage}" radius="{propeller_blade_radius}" height="{propeller_blade_length}" 
                                 rotation="90 135 0" color="grey"></a-cylinder>
-                            <a-cylinder id="cylinder" position="{distance_above_fuselage} {distance_along_fuselage + self._engine_length/2 + propeller_blade_radius} {-distance_from_fuselage}" radius="{propeller_blade_radius}" height="{propeller_blade_length}" 
+                            <a-cylinder id="cylinder" position="{distance_above_fuselage} {distance_along_fuselage + self._engine_length / 2 + propeller_blade_radius} {-distance_from_fuselage}" radius="{propeller_blade_radius}" height="{propeller_blade_length}" 
                                 rotation="90 45 0" color="grey"></a-cylinder>
                     """
 
@@ -863,8 +848,8 @@ class Aircraft3DModel(object):
         #   in the final case
         # self.model_reader._write_input_output_variables()
 
-        self._entities = ""
-        self._camera_entity = ""
+        self._entities = ''
+        self._camera_entity = ''
 
     def read_variables(self):
         self.fuselage = Fuselage(self._reader)
@@ -873,9 +858,7 @@ class Aircraft3DModel(object):
         self.wing.read_variables()
         self.engines = Engines(self._reader, self.fuselage, self.wing)
         self.engines.read_variables()
-        self.horizontal_tail = HorizontalWing(
-            self._reader, self.fuselage, WingType.HORIZONTAL_TAIL
-        )
+        self.horizontal_tail = HorizontalWing(self._reader, self.fuselage, WingType.HORIZONTAL_TAIL)
         self.horizontal_tail.read_variables()
         self.vertical_tail = VerticalTail(self._reader, self.fuselage)
         self.vertical_tail.read_variables()
@@ -896,13 +879,11 @@ class Aircraft3DModel(object):
         """
 
     def write_file(self, aircraft_3d_template_filepath, outfilepath):
-        with open(aircraft_3d_template_filepath, "r", encoding="utf-8") as f:
+        with open(aircraft_3d_template_filepath, 'r', encoding='utf-8') as f:
             aircraft_3d_template = f.read()
 
-        with open(outfilepath, "w") as f:
+        with open(outfilepath, 'w') as f:
             template = Template(aircraft_3d_template)
 
-            s = template.substitute(
-                entities=self._entities, camera_entity=self._camera_entity
-            )
+            s = template.substitute(entities=self._entities, camera_entity=self._camera_entity)
             f.write(s)

@@ -24,7 +24,10 @@ class TestCreateVehicle(unittest.TestCase):
         modified_file_path = 'modified_aircraft.csv'
 
         # Copy and modify the original CSV
-        with open(get_path(original_file_path), 'r') as original_file, open(modified_file_path, 'w') as modified_file:
+        with (
+            open(get_path(original_file_path), 'r') as original_file,
+            open(modified_file_path, 'w') as modified_file,
+        ):
             content = original_file.readlines()
             half_way_point = len(content) // 2
 

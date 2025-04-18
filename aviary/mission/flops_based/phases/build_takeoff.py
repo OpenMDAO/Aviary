@@ -34,8 +34,8 @@ class Takeoff:
         # connections. The only variables that should stay are: airport_altitude
 
     __slots__ = (
-        "airport_altitude",
-        "num_engines",
+        'airport_altitude',
+        'num_engines',
     )
 
     def build_phase(self, use_detailed=False):
@@ -54,8 +54,8 @@ class Takeoff:
 
         if use_detailed:  # TODO
             raise om.AnalysisError(
-                "Must set takeoff method to `use_detailed=False`, detailed takeoff is"
-                " not currently enabled."
+                'Must set takeoff method to `use_detailed=False`, detailed takeoff is'
+                ' not currently enabled.'
             )
 
         ##############
@@ -63,8 +63,6 @@ class Takeoff:
         ##############
 
         takeoff = TakeoffGroup(num_engines=self.num_engines)
-        takeoff.set_input_defaults(
-            Dynamic.Mission.ALTITUDE, val=self.airport_altitude, units="ft"
-        )
+        takeoff.set_input_defaults(Dynamic.Mission.ALTITUDE, val=self.airport_altitude, units='ft')
 
         return takeoff

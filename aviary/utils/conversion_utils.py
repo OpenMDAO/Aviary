@@ -19,7 +19,7 @@ def _strparse(s, fmt):
     """
     p = 0
     for typ, length in fmt:
-        sub = s[p: p + length]
+        sub = s[p : p + length]
         if typ is not None:
             yield typ(sub)
         p += length

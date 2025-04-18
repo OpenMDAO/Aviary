@@ -60,8 +60,7 @@ class TabularAeroGroup(om.Group):
         options.declare(
             'CD0_data',
             types=(str, Path, NamedValues),
-            desc='Data file or NamedValues object containing zero-lift drag '
-            'coefficient table.',
+            desc='Data file or NamedValues object containing zero-lift drag coefficient table.',
         )
 
         options.declare(
@@ -144,11 +143,13 @@ class TabularAeroGroup(om.Group):
                 Aircraft.Wing.AREA,
                 Dynamic.Atmosphere.DYNAMIC_PRESSURE,
             ],
-            promotes_outputs=[('cl', 'lift_coefficient'), Dynamic.Vehicle.LIFT])
+            promotes_outputs=[('cl', 'lift_coefficient'), Dynamic.Vehicle.LIFT],
+        )
 
         if connect_training_data:
-            extra_promotes = [('zero_lift_drag_coefficient_train',
-                               Aircraft.Design.LIFT_INDEPENDENT_DRAG_POLAR)]
+            extra_promotes = [
+                ('zero_lift_drag_coefficient_train', Aircraft.Design.LIFT_INDEPENDENT_DRAG_POLAR)
+            ]
         else:
             extra_promotes = []
 
@@ -160,8 +161,9 @@ class TabularAeroGroup(om.Group):
         )
 
         if connect_training_data:
-            extra_promotes = [('lift_dependent_drag_coefficient_train',
-                               Aircraft.Design.LIFT_DEPENDENT_DRAG_POLAR)]
+            extra_promotes = [
+                ('lift_dependent_drag_coefficient_train', Aircraft.Design.LIFT_DEPENDENT_DRAG_POLAR)
+            ]
         else:
             extra_promotes = []
 
@@ -191,9 +193,9 @@ class TabularAeroGroup(om.Group):
 
 
 class _DynamicPressure(om.ExplicitComponent):
-    '''
+    """
     Calculate dynamic pressure as a function of velocity and density.
-    '''
+    """
 
     def initialize(self):
         self.options.declare('num_nodes', types=int)
@@ -204,8 +206,7 @@ class _DynamicPressure(om.ExplicitComponent):
         add_aviary_input(self, Dynamic.Mission.VELOCITY, shape=nn, units='m/s')
         add_aviary_input(self, Dynamic.Atmosphere.DENSITY, shape=nn, units='kg/m**3')
 
-        add_aviary_output(self, Dynamic.Atmosphere.DYNAMIC_PRESSURE, shape=nn,
-                          units='N/m**2')
+        add_aviary_output(self, Dynamic.Atmosphere.DYNAMIC_PRESSURE, shape=nn, units='N/m**2')
 
     def setup_partials(self):
         nn = self.options['num_nodes']
@@ -229,9 +230,5 @@ class _DynamicPressure(om.ExplicitComponent):
         TAS = inputs[Dynamic.Mission.VELOCITY]
         rho = inputs[Dynamic.Atmosphere.DENSITY]
 
-        partials[Dynamic.Atmosphere.DYNAMIC_PRESSURE, Dynamic.Mission.VELOCITY] = (
-            rho * TAS
-        )
-        partials[Dynamic.Atmosphere.DYNAMIC_PRESSURE, Dynamic.Atmosphere.DENSITY] = (
-            0.5 * TAS**2
-        )
+        partials[Dynamic.Atmosphere.DYNAMIC_PRESSURE, Dynamic.Mission.VELOCITY] = rho * TAS
+        partials[Dynamic.Atmosphere.DYNAMIC_PRESSURE, Dynamic.Atmosphere.DENSITY] = 0.5 * TAS**2

@@ -20,8 +20,7 @@ class SimpleWingBendingFact(om.ExplicitComponent):
         add_aviary_input(self, Aircraft.Wing.TAPER_RATIO, units='unitless')
         add_aviary_input(self, Aircraft.Wing.THICKNESS_TO_CHORD, units='unitless')
         add_aviary_input(self, Aircraft.Wing.STRUT_BRACING_FACTOR, units='unitless')
-        add_aviary_input(self, Aircraft.Wing.AEROELASTIC_TAILORING_FACTOR,
-                         units='unitless')
+        add_aviary_input(self, Aircraft.Wing.AEROELASTIC_TAILORING_FACTOR, units='unitless')
         add_aviary_input(self, Aircraft.Wing.ASPECT_RATIO, units='unitless')
         add_aviary_input(self, Aircraft.Wing.SWEEP, units='deg')
 
@@ -62,9 +61,9 @@ class SimpleWingBendingFact(om.ExplicitComponent):
         else:
             caya = ar - 5.0
 
-        tlam = np.tan(np.pi / 180. * sweep) - 2 * (1 - tr) / (ar * (1 + tr))
+        tlam = np.tan(np.pi / 180.0 * sweep) - 2 * (1 - tr) / (ar * (1 + tr))
 
-        slam = tlam / (1.0 + tlam**2)**0.5
+        slam = tlam / (1.0 + tlam**2) ** 0.5
 
         cayl = (1.0 - slam**2) * (1.0 + C6 * slam**2 + 0.03 * caya * C4 * slam)
 
@@ -95,7 +94,7 @@ class SimpleWingBendingFact(om.ExplicitComponent):
         else:
             caya = ar - 5.0
 
-        deg2rad = np.pi / 180.
+        deg2rad = np.pi / 180.0
         den = ar * (1 + tr)
         tlam = np.tan(deg2rad * sweep) - 2 * (1 - tr) / den
         dtlam_sweep = deg2rad / np.cos(deg2rad * sweep) ** 2
@@ -118,9 +117,9 @@ class SimpleWingBendingFact(om.ExplicitComponent):
         ems = 1.0 - 0.25 * fstrt
 
         # bend = 0.215 * (0.37 + 0.7 * tr) * (span**2 / area)**ems / (cayl * tca)
-        term1 = (0.37 + 0.7 * tr)
-        term2a = (span**2 / area)
-        term2 = term2a ** ems
+        term1 = 0.37 + 0.7 * tr
+        term2a = span**2 / area
+        term2 = term2a**ems
         term3 = 1.0 / (cayl * tca)
         dbend_exp = -0.215 * term1 * term2 * term3 * np.log(term2a) * 0.25
         dbend_tr = 0.215 * 0.7 * term2 * term3
@@ -149,12 +148,10 @@ class SimpleWingBendingFact(om.ExplicitComponent):
         J[
             Aircraft.Wing.BENDING_MATERIAL_FACTOR,
             Aircraft.Wing.AEROELASTIC_TAILORING_FACTOR,
-        ] = (
-            dbend_cayl * dcayl_faert
-        )
+        ] = dbend_cayl * dcayl_faert
 
-        J[Aircraft.Wing.BENDING_MATERIAL_FACTOR, Aircraft.Wing.ASPECT_RATIO] = (
-            dbend_cayl * (dcayl_ar + dcayl_slam * dslam * dtlam_ar)
+        J[Aircraft.Wing.BENDING_MATERIAL_FACTOR, Aircraft.Wing.ASPECT_RATIO] = dbend_cayl * (
+            dcayl_ar + dcayl_slam * dslam * dtlam_ar
         )
 
         J[Aircraft.Wing.BENDING_MATERIAL_FACTOR, Aircraft.Wing.SWEEP] = dbend_cayl * (

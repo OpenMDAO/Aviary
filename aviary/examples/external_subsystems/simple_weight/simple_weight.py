@@ -6,10 +6,11 @@ parts of the weight calculation.
 
 The wing and tail weights will replace Aviary's internally-computed values.
 
-This examples shows that you can use the Aviary hierarchy in your component 
+This examples shows that you can use the Aviary hierarchy in your component
 (as we do for the wing and engine weight), but you can also use your own
 local names (as we do for 'Tail'), and promote them in your builder.
 """
+
 import openmdao.api as om
 
 from aviary.variable_info.variables import Aircraft
@@ -23,7 +24,6 @@ class SimpleWeight(om.ExplicitComponent):
     """
 
     def setup(self):
-
         self.add_input(Aircraft.Engine.MASS, 1.0, units='lbm')
 
         self.add_output(Aircraft.Wing.MASS, 1.0, units='lbm')

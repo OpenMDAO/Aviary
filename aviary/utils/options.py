@@ -23,7 +23,7 @@ def list_options(model: System, aviary_keys: list = None):
         if subsystem.name == '_auto_ivc':
             continue
         print(subsystem.name)
-        for (key, obj) in subsystem.options.items():
+        for key, obj in subsystem.options.items():
             if isinstance(obj, AviaryValues):
                 aviary_options = obj
                 print('  aviary_options:')

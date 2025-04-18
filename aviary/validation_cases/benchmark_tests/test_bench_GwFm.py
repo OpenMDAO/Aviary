@@ -1,10 +1,11 @@
-'''
+"""
 NOTES:
 Includes:
 Takeoff, Climb, Cruise, Descent, Landing
 Computed Aero
 Large Single Aisle 1 data
-'''
+"""
+
 import unittest
 
 import numpy as np
@@ -13,8 +14,7 @@ from openmdao.utils.testing_utils import require_pyoptsparse
 from openmdao.core.problem import _clear_problem_names
 
 from aviary.interface.methods_for_level1 import run_aviary
-from aviary.validation_cases.benchmark_utils import \
-    compare_against_expected_values
+from aviary.validation_cases.benchmark_utils import compare_against_expected_values
 
 
 @use_tempdirs
@@ -28,7 +28,6 @@ class ProblemPhaseTestCase(unittest.TestCase):
     def setUp(self):
         expected_dict = {}
         # block auto-formatting of tables
-        # autopep8: off
         # fmt: off
         expected_dict['times'] = np.array(
             [
@@ -134,94 +133,93 @@ class ProblemPhaseTestCase(unittest.TestCase):
                 [133.84033631181276], [112.04151628392903], [101.91044471952507]
             ]
         )
-        # autopep8: on
         # fmt: on
 
         self.expected_dict = expected_dict
 
         phase_info = {
-            "pre_mission": {"include_takeoff": True, "optimize_mass": True},
-            "climb": {
-                "subsystem_options": {"core_aerodynamics": {"method": "computed"}},
-                "user_options": {
+            'pre_mission': {'include_takeoff': True, 'optimize_mass': True},
+            'climb': {
+                'subsystem_options': {'core_aerodynamics': {'method': 'computed'}},
+                'user_options': {
                     'fix_initial': False,
                     'input_initial': True,
-                    "optimize_mach": True,
-                    "optimize_altitude": True,
-                    "use_polynomial_control": False,
-                    "num_segments": 6,
-                    "order": 3,
-                    "solve_for_distance": False,
-                    "initial_mach": (0.2, "unitless"),
-                    "final_mach": (0.79, "unitless"),
-                    "mach_bounds": ((0.1, 0.8), "unitless"),
-                    "initial_altitude": (0.0, "ft"),
-                    "final_altitude": (35000.0, "ft"),
-                    "altitude_bounds": ((0.0, 36000.0), "ft"),
-                    "throttle_enforcement": "path_constraint",
-                    "constrain_final": False,
-                    "fix_duration": False,
-                    "initial_bounds": ((0.0, 0.0), "min"),
-                    "duration_bounds": ((5.0, 50.0), "min"),
-                    "no_descent": True,
-                    "add_initial_mass_constraint": False,
+                    'optimize_mach': True,
+                    'optimize_altitude': True,
+                    'use_polynomial_control': False,
+                    'num_segments': 6,
+                    'order': 3,
+                    'solve_for_distance': False,
+                    'initial_mach': (0.2, 'unitless'),
+                    'final_mach': (0.79, 'unitless'),
+                    'mach_bounds': ((0.1, 0.8), 'unitless'),
+                    'initial_altitude': (0.0, 'ft'),
+                    'final_altitude': (35000.0, 'ft'),
+                    'altitude_bounds': ((0.0, 36000.0), 'ft'),
+                    'throttle_enforcement': 'path_constraint',
+                    'constrain_final': False,
+                    'fix_duration': False,
+                    'initial_bounds': ((0.0, 0.0), 'min'),
+                    'duration_bounds': ((5.0, 50.0), 'min'),
+                    'no_descent': True,
+                    'add_initial_mass_constraint': False,
                 },
-                "initial_guesses": {"time": ([0, 40.0], "min")},
+                'initial_guesses': {'time': ([0, 40.0], 'min')},
             },
-            "cruise": {
-                "subsystem_options": {"core_aerodynamics": {"method": "computed"}},
-                "user_options": {
-                    "optimize_mach": True,
-                    "optimize_altitude": True,
-                    "polynomial_control_order": 1,
-                    "use_polynomial_control": True,
-                    "num_segments": 1,
-                    "order": 3,
-                    "solve_for_distance": False,
-                    "initial_mach": (0.79, "unitless"),
-                    "final_mach": (0.79, "unitless"),
-                    "mach_bounds": ((0.78, 0.8), "unitless"),
-                    "initial_altitude": (35000.0, "ft"),
-                    "final_altitude": (35000.0, "ft"),
-                    "altitude_bounds": ((35000.0, 35000.0), "ft"),
-                    "throttle_enforcement": "boundary_constraint",
-                    "fix_initial": False,
-                    "constrain_final": False,
-                    "fix_duration": False,
-                    "initial_bounds": ((64.0, 192.0), "min"),
-                    "duration_bounds": ((60.0, 7200.0), "min"),
+            'cruise': {
+                'subsystem_options': {'core_aerodynamics': {'method': 'computed'}},
+                'user_options': {
+                    'optimize_mach': True,
+                    'optimize_altitude': True,
+                    'polynomial_control_order': 1,
+                    'use_polynomial_control': True,
+                    'num_segments': 1,
+                    'order': 3,
+                    'solve_for_distance': False,
+                    'initial_mach': (0.79, 'unitless'),
+                    'final_mach': (0.79, 'unitless'),
+                    'mach_bounds': ((0.78, 0.8), 'unitless'),
+                    'initial_altitude': (35000.0, 'ft'),
+                    'final_altitude': (35000.0, 'ft'),
+                    'altitude_bounds': ((35000.0, 35000.0), 'ft'),
+                    'throttle_enforcement': 'boundary_constraint',
+                    'fix_initial': False,
+                    'constrain_final': False,
+                    'fix_duration': False,
+                    'initial_bounds': ((64.0, 192.0), 'min'),
+                    'duration_bounds': ((60.0, 7200.0), 'min'),
                 },
-                "initial_guesses": {"time": ([128, 113], "min")},
+                'initial_guesses': {'time': ([128, 113], 'min')},
             },
-            "descent": {
-                "subsystem_options": {"core_aerodynamics": {"method": "computed"}},
-                "user_options": {
-                    "optimize_mach": True,
-                    "optimize_altitude": True,
-                    "use_polynomial_control": False,
-                    "num_segments": 5,
-                    "order": 3,
-                    "solve_for_distance": False,
-                    "initial_mach": (0.79, "unitless"),
-                    "final_mach": (0.3, "unitless"),
-                    "mach_bounds": ((0.2, 0.8), "unitless"),
-                    "initial_altitude": (35000.0, "ft"),
-                    "final_altitude": (500.0, "ft"),
-                    "altitude_bounds": ((0.0, 35000.0), "ft"),
-                    "throttle_enforcement": "path_constraint",
-                    "fix_initial": False,
-                    "constrain_final": True,
-                    "fix_duration": False,
-                    "initial_bounds": ((120.5, 361.5), "min"),
-                    "duration_bounds": ((5.0, 30.0), "min"),
-                    "no_climb": True,
+            'descent': {
+                'subsystem_options': {'core_aerodynamics': {'method': 'computed'}},
+                'user_options': {
+                    'optimize_mach': True,
+                    'optimize_altitude': True,
+                    'use_polynomial_control': False,
+                    'num_segments': 5,
+                    'order': 3,
+                    'solve_for_distance': False,
+                    'initial_mach': (0.79, 'unitless'),
+                    'final_mach': (0.3, 'unitless'),
+                    'mach_bounds': ((0.2, 0.8), 'unitless'),
+                    'initial_altitude': (35000.0, 'ft'),
+                    'final_altitude': (500.0, 'ft'),
+                    'altitude_bounds': ((0.0, 35000.0), 'ft'),
+                    'throttle_enforcement': 'path_constraint',
+                    'fix_initial': False,
+                    'constrain_final': True,
+                    'fix_duration': False,
+                    'initial_bounds': ((120.5, 361.5), 'min'),
+                    'duration_bounds': ((5.0, 30.0), 'min'),
+                    'no_climb': True,
                 },
-                "initial_guesses": {"time": ([241, 30], "min")},
+                'initial_guesses': {'time': ([241, 30], 'min')},
             },
-            "post_mission": {
-                "include_landing": True,
-                "constrain_range": True,
-                "target_range": (3360.0, "nmi"),
+            'post_mission': {
+                'include_landing': True,
+                'constrain_range': True,
+                'target_range': (3360.0, 'nmi'),
             },
         }
 
@@ -229,7 +227,7 @@ class ProblemPhaseTestCase(unittest.TestCase):
 
         _clear_problem_names()  # need to reset these to simulate separate runs
 
-    @require_pyoptsparse(optimizer="IPOPT")
+    @require_pyoptsparse(optimizer='IPOPT')
     def bench_test_swap_1_GwFm_IPOPT(self):
         prob = run_aviary(
             'models/test_aircraft/aircraft_for_bench_GwFm.csv',
@@ -241,7 +239,7 @@ class ProblemPhaseTestCase(unittest.TestCase):
 
         compare_against_expected_values(prob, self.expected_dict)
 
-    @require_pyoptsparse(optimizer="SNOPT")
+    @require_pyoptsparse(optimizer='SNOPT')
     def bench_test_swap_1_GwFm_SNOPT(self):
         prob = run_aviary(
             'models/test_aircraft/aircraft_for_bench_GwFm.csv',

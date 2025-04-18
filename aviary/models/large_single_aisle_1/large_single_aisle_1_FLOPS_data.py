@@ -11,10 +11,10 @@ outputs = LargeSingleAisle1FLOPS['outputs'] = AviaryValues()
 
 # Overall Aircraft
 # ---------------------------
-inputs.set_val(Aircraft.Design.BASE_AREA, 0., 'ft**2')
+inputs.set_val(Aircraft.Design.BASE_AREA, 0.0, 'ft**2')
 inputs.set_val(Aircraft.Design.EMPTY_MASS_MARGIN_SCALER, 0.0)
 inputs.set_val(Aircraft.Design.TOUCHDOWN_MASS, 152800.0, 'lbm')
-inputs.set_val(Mission.Design.GROSS_MASS, 181200., 'lbm')
+inputs.set_val(Mission.Design.GROSS_MASS, 181200.0, 'lbm')
 inputs.set_val(Aircraft.Design.USE_ALT_MASS, False)
 inputs.set_val(Aircraft.Design.LIFT_DEPENDENT_DRAG_COEFF_FACTOR, 0.909839381134961)
 inputs.set_val(Aircraft.Design.SUBSONIC_DRAG_COEFF_FACTOR, 1.0)
@@ -59,11 +59,11 @@ inputs.set_val(Aircraft.CrewPayload.NUM_FLIGHT_ATTENDANTS, 3)
 inputs.set_val(Aircraft.CrewPayload.NUM_FLIGHT_CREW, 2)
 inputs.set_val(Aircraft.CrewPayload.FLIGHT_CREW_MASS_SCALER, 1.0)
 inputs.set_val(Aircraft.CrewPayload.NUM_GALLEY_CREW, 0)
-inputs.set_val(Aircraft.CrewPayload.MISC_CARGO, 0., 'lbm')
+inputs.set_val(Aircraft.CrewPayload.MISC_CARGO, 0.0, 'lbm')
 inputs.set_val(Aircraft.CrewPayload.NON_FLIGHT_CREW_MASS_SCALER, 1.0)
-inputs.set_val(Aircraft.CrewPayload.PASSENGER_SERVICE_MASS_SCALER, 1.)
-inputs.set_val(Aircraft.CrewPayload.MASS_PER_PASSENGER, 180., 'lbm')
-inputs.set_val(Aircraft.CrewPayload.WING_CARGO, 0., 'lbm')
+inputs.set_val(Aircraft.CrewPayload.PASSENGER_SERVICE_MASS_SCALER, 1.0)
+inputs.set_val(Aircraft.CrewPayload.MASS_PER_PASSENGER, 180.0, 'lbm')
+inputs.set_val(Aircraft.CrewPayload.WING_CARGO, 0.0, 'lbm')
 
 # Electrical
 # ---------------------------
@@ -94,7 +94,7 @@ inputs.set_val(Aircraft.Furnishings.MASS_SCALER, 1.1)
 # Fuselage
 # ---------------------------
 inputs.set_val(Aircraft.Fuselage.NUM_FUSELAGES, 1)
-inputs.set_val(Aircraft.Fuselage.LENGTH, 128., 'ft')
+inputs.set_val(Aircraft.Fuselage.LENGTH, 128.0, 'ft')
 inputs.set_val(Aircraft.Fuselage.PASSENGER_COMPARTMENT_LENGTH, 85.5, 'ft')
 inputs.set_val(Aircraft.Fuselage.MAX_HEIGHT, 13.17, 'ft')
 inputs.set_val(Aircraft.Fuselage.MAX_WIDTH, 12.33, 'ft')
@@ -106,7 +106,7 @@ inputs.set_val(Aircraft.Fuselage.WETTED_AREA_SCALER, 1.0)
 
 # Horizontal Tail
 # ---------------------------
-inputs.set_val(Aircraft.HorizontalTail.AREA, 355., 'ft**2')
+inputs.set_val(Aircraft.HorizontalTail.AREA, 355.0, 'ft**2')
 inputs.set_val(Aircraft.HorizontalTail.ASPECT_RATIO, 6.0)
 inputs.set_val(Aircraft.HorizontalTail.TAPER_RATIO, 0.22)
 inputs.set_val(Aircraft.HorizontalTail.THICKNESS_TO_CHORD, 0.125)
@@ -117,7 +117,7 @@ inputs.set_val(Aircraft.HorizontalTail.WETTED_AREA_SCALER, 1.0)
 
 # Hydraulics
 # ---------------------------
-inputs.set_val(Aircraft.Hydraulics.SYSTEM_PRESSURE, 3000., 'psi')
+inputs.set_val(Aircraft.Hydraulics.SYSTEM_PRESSURE, 3000.0, 'psi')
 inputs.set_val(Aircraft.Hydraulics.MASS_SCALER, 1.0)
 
 # Instruments
@@ -180,7 +180,7 @@ inputs.set_val(Aircraft.Engine.INTERPOLATION_METHOD, 'slinear')
 # Vertical Tail
 # ---------------------------
 inputs.set_val(Aircraft.VerticalTail.NUM_TAILS, 1)
-inputs.set_val(Aircraft.VerticalTail.AREA, 284., 'ft**2')
+inputs.set_val(Aircraft.VerticalTail.AREA, 284.0, 'ft**2')
 inputs.set_val(Aircraft.VerticalTail.ASPECT_RATIO, 1.75)
 inputs.set_val(Aircraft.VerticalTail.TAPER_RATIO, 0.33)
 inputs.set_val(Aircraft.VerticalTail.THICKNESS_TO_CHORD, 0.1195)
@@ -216,8 +216,7 @@ inputs.set_val(Aircraft.Wing.SURFACE_CONTROL_MASS_SCALER, 1.0)
 inputs.set_val(Aircraft.Wing.SWEEP, 25.0, 'deg')
 inputs.set_val(Aircraft.Wing.TAPER_RATIO, 0.27800)
 inputs.set_val(Aircraft.Wing.THICKNESS_TO_CHORD, 0.1300)
-inputs.set_val(
-    Aircraft.Wing.THICKNESS_TO_CHORD_DIST, np.array([0.145, 0.115, 0.104]))
+inputs.set_val(Aircraft.Wing.THICKNESS_TO_CHORD_DIST, np.array([0.145, 0.115, 0.104]))
 inputs.set_val(Aircraft.Wing.ULTIMATE_LOAD_FACTOR, 3.75)
 inputs.set_val(Aircraft.Wing.VAR_SWEEP_MASS_PENALTY, 0.0)
 inputs.set_val(Aircraft.Wing.MASS_SCALER, 1.23)
@@ -242,7 +241,7 @@ inputs.set_val(Mission.Takeoff.LIFT_OVER_DRAG, 17.354)
 
 # TODO: should this be a user input or should it be hard coded somewhere assuming it will
 # # never change?
-inputs.set_val(Mission.Takeoff.ROLLING_FRICTION_COEFFICIENT, .0175)
+inputs.set_val(Mission.Takeoff.ROLLING_FRICTION_COEFFICIENT, 0.0175)
 # lbf TODO: where should this get connected from?
 inputs.set_val(Mission.Design.THRUST_TAKEOFF_PER_ENG, 28928.0, 'lbf')
 
@@ -255,21 +254,21 @@ inputs.set_val(Settings.MASS_METHOD, LegacyCode.FLOPS)
 #          OUTPUTS
 # ---------------------------
 
-outputs.set_val(Aircraft.Design.EMPTY_MASS, 92023., 'lbm')
+outputs.set_val(Aircraft.Design.EMPTY_MASS, 92023.0, 'lbm')
 outputs.set_val(Aircraft.Design.EMPTY_MASS_MARGIN, 0.0, 'lbm')
-outputs.set_val(Aircraft.Design.OPERATING_MASS, 97992., 'lbm')
-outputs.set_val(Aircraft.Propulsion.MASS, 16118., 'lbm')
-outputs.set_val(Aircraft.Design.STRUCTURE_MASS, 50736., 'lbm')
-outputs.set_val(Aircraft.Design.SYSTEMS_EQUIP_MASS, 25169., 'lbm')
+outputs.set_val(Aircraft.Design.OPERATING_MASS, 97992.0, 'lbm')
+outputs.set_val(Aircraft.Propulsion.MASS, 16118.0, 'lbm')
+outputs.set_val(Aircraft.Design.STRUCTURE_MASS, 50736.0, 'lbm')
+outputs.set_val(Aircraft.Design.SYSTEMS_EQUIP_MASS, 25169.0, 'lbm')
 outputs.set_val(Aircraft.Design.TOTAL_WETTED_AREA, 8275.86, 'ft**2')
-outputs.set_val(Aircraft.Design.ZERO_FUEL_MASS, 135848., 'lbm')
-outputs.set_val(Mission.Design.FUEL_MASS, 45352., 'lbm')
+outputs.set_val(Aircraft.Design.ZERO_FUEL_MASS, 135848.0, 'lbm')
+outputs.set_val(Mission.Design.FUEL_MASS, 45352.0, 'lbm')
 
-outputs.set_val(Aircraft.AirConditioning.MASS, 1602., 'lbm')
+outputs.set_val(Aircraft.AirConditioning.MASS, 1602.0, 'lbm')
 
 outputs.set_val(Aircraft.AntiIcing.MASS, 208.85, 'lbm')
 
-outputs.set_val(Aircraft.APU.MASS, 1142., 'lbm')
+outputs.set_val(Aircraft.APU.MASS, 1142.0, 'lbm')
 
 outputs.set_val(Aircraft.Avionics.MASS, 1652.6, 'lbm')
 
@@ -278,14 +277,14 @@ outputs.set_val(Aircraft.Canard.FINENESS, 0.0)
 outputs.set_val(Aircraft.Canard.WETTED_AREA, 0.0, 'ft**2')
 outputs.set_val(Aircraft.Canard.MASS, 0.0, 'lbm')
 
-outputs.set_val(Aircraft.CrewPayload.BAGGAGE_MASS, 7436., 'lbm')
-outputs.set_val(Aircraft.CrewPayload.CARGO_MASS, 0., 'lbm')
-outputs.set_val(Aircraft.CrewPayload.CARGO_CONTAINER_MASS, 1400., 'lbm')
+outputs.set_val(Aircraft.CrewPayload.BAGGAGE_MASS, 7436.0, 'lbm')
+outputs.set_val(Aircraft.CrewPayload.CARGO_MASS, 0.0, 'lbm')
+outputs.set_val(Aircraft.CrewPayload.CARGO_CONTAINER_MASS, 1400.0, 'lbm')
 outputs.set_val(Aircraft.CrewPayload.FLIGHT_CREW_MASS, 450.0, 'lbm')
 outputs.set_val(Aircraft.CrewPayload.NON_FLIGHT_CREW_MASS, 465.0, 'lbm')
 outputs.set_val(Aircraft.CrewPayload.PASSENGER_SERVICE_MASS, 3022.74805809, 'lbm')
-outputs.set_val(Aircraft.CrewPayload.PASSENGER_MASS, 30420., 'lbm')
-outputs.set_val(Aircraft.CrewPayload.TOTAL_PAYLOAD_MASS, 37856., 'lbm')
+outputs.set_val(Aircraft.CrewPayload.PASSENGER_MASS, 30420.0, 'lbm')
+outputs.set_val(Aircraft.CrewPayload.TOTAL_PAYLOAD_MASS, 37856.0, 'lbm')
 
 outputs.set_val(Aircraft.Electrical.MASS, 2464.0, 'lbm')
 
@@ -294,23 +293,23 @@ outputs.set_val(Aircraft.Fuel.UNUSABLE_FUEL_MASS, 501.3, 'lbm')
 
 outputs.set_val(Aircraft.Fins.MASS, 0.0, 'lbm')
 
-outputs.set_val(Aircraft.Furnishings.MASS, 15517., 'lbm')
+outputs.set_val(Aircraft.Furnishings.MASS, 15517.0, 'lbm')
 
 avg_diameter = 12.75
 avg_diameter_units = 'ft'
 outputs.set_val(Aircraft.Fuselage.AVG_DIAMETER, avg_diameter, avg_diameter_units)
-outputs.set_val(Aircraft.Fuselage.CHARACTERISTIC_LENGTH, 128., 'ft')
+outputs.set_val(Aircraft.Fuselage.CHARACTERISTIC_LENGTH, 128.0, 'ft')
 outputs.set_val(
-    Aircraft.Fuselage.CROSS_SECTION,
-    np.pi * (avg_diameter / 2.0)**2.0, f'{avg_diameter_units}**2')
+    Aircraft.Fuselage.CROSS_SECTION, np.pi * (avg_diameter / 2.0) ** 2.0, f'{avg_diameter_units}**2'
+)
 outputs.set_val(Aircraft.Fuselage.DIAMETER_TO_WING_SPAN, 0.108207)
 outputs.set_val(Aircraft.Fuselage.FINENESS, 10.0392)
 outputs.set_val(Aircraft.Fuselage.LENGTH_TO_DIAMETER, 10.039216)
-outputs.set_val(Aircraft.Fuselage.MASS, 18357., 'lbm')
+outputs.set_val(Aircraft.Fuselage.MASS, 18357.0, 'lbm')
 
 outputs.set_val(Aircraft.HorizontalTail.CHARACTERISTIC_LENGTH, 7.69, 'ft')
 outputs.set_val(Aircraft.HorizontalTail.FINENESS, 0.1250)
-outputs.set_val(Aircraft.HorizontalTail.MASS, 1831., 'lbm')
+outputs.set_val(Aircraft.HorizontalTail.MASS, 1831.0, 'lbm')
 
 outputs.set_val(Aircraft.Hydraulics.MASS, 1086.7, 'lbm')
 
@@ -325,35 +324,31 @@ outputs.set_val(Aircraft.Nacelle.MASS, 1971.4, 'lbm')
 
 nacelle_wetted_area = np.array([273.45])
 nacelle_wetted_area_units = 'ft**2'
-outputs.set_val(
-    Aircraft.Nacelle.WETTED_AREA, nacelle_wetted_area, nacelle_wetted_area_units)
+outputs.set_val(Aircraft.Nacelle.WETTED_AREA, nacelle_wetted_area, nacelle_wetted_area_units)
 
 outputs.set_val(
-    Aircraft.Nacelle.TOTAL_WETTED_AREA,
-    2 * nacelle_wetted_area, nacelle_wetted_area_units)
+    Aircraft.Nacelle.TOTAL_WETTED_AREA, 2 * nacelle_wetted_area, nacelle_wetted_area_units
+)
 
 outputs.set_val(Aircraft.Paint.MASS, 306.2, 'lbm')
 
-outputs.set_val(
-    Aircraft.Propulsion.TOTAL_SCALED_SLS_THRUST, 28928.1*2, 'lbf')
+outputs.set_val(Aircraft.Propulsion.TOTAL_SCALED_SLS_THRUST, 28928.1 * 2, 'lbf')
 
-outputs.set_val(
-    Aircraft.Propulsion.TOTAL_NUM_ENGINES, 2)
+outputs.set_val(Aircraft.Propulsion.TOTAL_NUM_ENGINES, 2)
 
 engine_ctrls_mass = 88.44
 engine_ctrls_mass_units = 'lbm'
+outputs.set_val(Aircraft.Engine.CONTROLS_MASS, engine_ctrls_mass, engine_ctrls_mass_units)
 outputs.set_val(
-    Aircraft.Engine.CONTROLS_MASS, engine_ctrls_mass, engine_ctrls_mass_units)
-outputs.set_val(
-    Aircraft.Propulsion.TOTAL_ENGINE_CONTROLS_MASS,
-    engine_ctrls_mass, engine_ctrls_mass_units)
+    Aircraft.Propulsion.TOTAL_ENGINE_CONTROLS_MASS, engine_ctrls_mass, engine_ctrls_mass_units
+)
 
 outputs.set_val(Aircraft.Propulsion.TOTAL_ENGINE_OIL_MASS, 130.23, 'lbm')
 outputs.set_val(Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES, 2)
 
 outputs.set_val(Aircraft.Propulsion.TOTAL_NUM_FUSELAGE_ENGINES, 0)
 
-outputs.set_val(Aircraft.Engine.MASS, 14800/2, 'lbm')
+outputs.set_val(Aircraft.Engine.MASS, 14800 / 2, 'lbm')
 outputs.set_val(Aircraft.Engine.POD_MASS, 9000, 'lbm')
 outputs.set_val(Aircraft.Engine.ADDITIONAL_MASS, 0.0, 'lbm')
 outputs.set_val(Aircraft.Propulsion.TOTAL_MISC_MASS, 648.83, 'lbm')

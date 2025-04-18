@@ -8,8 +8,13 @@ This mission consists of climb, cruise, and descent phases.
 We then call the `run_aviary` function, which takes in the path to the aircraft model, the phase info, and some other options.
 This performs a coupled design-mission optimization and outputs the results from Aviary into the `reports` folder.
 """
+
 import aviary.api as av
 
 
-prob = av.run_aviary('models/test_aircraft/aircraft_for_bench_FwFm.csv', av.default_height_energy_phase_info,
-                     optimizer="SLSQP", make_plots=True)
+prob = av.run_aviary(
+    'models/test_aircraft/aircraft_for_bench_FwFm.csv',
+    av.default_height_energy_phase_info,
+    optimizer='SLSQP',
+    make_plots=True,
+)

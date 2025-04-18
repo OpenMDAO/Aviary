@@ -10,7 +10,7 @@ def add_meta_data(
     historical_name=None,
     _check_unique=True,
 ):
-    '''
+    """
     Add new meta data associated with variables in the Aviary data hierarchy.
 
     Parameters
@@ -88,14 +88,15 @@ def add_meta_data(
     None
         No exceptions raised by this method, although other methods called within may
         raise exceptions.
-    '''
+    """
 
     if key in meta_data and _check_unique:
         raise ValueError(
             f'You added the variable {key} to a variable metadata dictionary via the '
             f'add_meta_data function, but {key} already was present in the dictionary. '
             'If you are sure you want to overwrite this variable, call the '
-            'update_meta_data function instead.')
+            'update_meta_data function instead.'
+        )
 
     if units is None:
         units = 'unitless'
@@ -121,16 +122,17 @@ def add_meta_data(
 
 
 def update_meta_data(
-        key: str,
-        meta_data: dict,
-        units='unitless',
-        desc: str = None,
-        default_value=0.0,
-        option: bool = False,
-        types=None,
-        multivalue: bool = False,
-        historical_name=None):
-    '''
+    key: str,
+    meta_data: dict,
+    units='unitless',
+    desc: str = None,
+    default_value=0.0,
+    option: bool = False,
+    types=None,
+    multivalue: bool = False,
+    historical_name=None,
+):
+    """
     Update existing meta data associated with variables in the Aviary data hierarchy.
 
     Parameters
@@ -200,7 +202,7 @@ def update_meta_data(
     None
         No exceptions raised by this method, although other methods called within may
         raise exceptions.
-    '''
+    """
 
     if key not in meta_data:
         raise ValueError(
@@ -210,7 +212,15 @@ def update_meta_data(
             'add_meta_data function instead.'
         )
 
-    add_meta_data(key=key, meta_data=meta_data, units=units, desc=desc,
-                  default_value=default_value, option=option, types=types,
-                  multivalue=multivalue, historical_name=historical_name,
-                  _check_unique=False)
+    add_meta_data(
+        key=key,
+        meta_data=meta_data,
+        units=units,
+        desc=desc,
+        default_value=default_value,
+        option=option,
+        types=types,
+        multivalue=multivalue,
+        historical_name=historical_name,
+        _check_unique=False,
+    )

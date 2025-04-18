@@ -1,5 +1,10 @@
 repos:
-- repo: https://github.com/hhatto/autopep8
-  rev: 'v2.0.4'
-  hooks:
-  - id: autopep8
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    # Ruff version.
+    rev: v0.11.6
+    hooks:
+      # run the linter
+      # - id: ruff
+      #   args: [ --fix ]
+      # run the formatter
+      - id:  ruff-format

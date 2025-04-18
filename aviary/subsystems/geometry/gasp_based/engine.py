@@ -17,21 +17,20 @@ class EngineSize(om.ExplicitComponent):
     def setup(self):
         num_engine_type = len(self.options[Aircraft.Engine.NUM_ENGINES])
 
-        add_aviary_input(self, Aircraft.Engine.REFERENCE_DIAMETER,
-                         shape=num_engine_type, units='ft')
-        add_aviary_input(self, Aircraft.Engine.SCALE_FACTOR,
-                         shape=num_engine_type, units='unitless')
-        add_aviary_input(self, Aircraft.Nacelle.CORE_DIAMETER_RATIO,
-                         shape=num_engine_type, units='unitless')
-        add_aviary_input(self, Aircraft.Nacelle.FINENESS,
-                         shape=num_engine_type, units='unitless')
+        add_aviary_input(
+            self, Aircraft.Engine.REFERENCE_DIAMETER, shape=num_engine_type, units='ft'
+        )
+        add_aviary_input(
+            self, Aircraft.Engine.SCALE_FACTOR, shape=num_engine_type, units='unitless'
+        )
+        add_aviary_input(
+            self, Aircraft.Nacelle.CORE_DIAMETER_RATIO, shape=num_engine_type, units='unitless'
+        )
+        add_aviary_input(self, Aircraft.Nacelle.FINENESS, shape=num_engine_type, units='unitless')
 
-        add_aviary_output(self, Aircraft.Nacelle.AVG_DIAMETER,
-                          shape=num_engine_type, units='ft')
-        add_aviary_output(self, Aircraft.Nacelle.AVG_LENGTH,
-                          shape=num_engine_type, units='ft')
-        add_aviary_output(self, Aircraft.Nacelle.SURFACE_AREA,
-                          shape=num_engine_type, units='ft**2')
+        add_aviary_output(self, Aircraft.Nacelle.AVG_DIAMETER, shape=num_engine_type, units='ft')
+        add_aviary_output(self, Aircraft.Nacelle.AVG_LENGTH, shape=num_engine_type, units='ft')
+        add_aviary_output(self, Aircraft.Nacelle.SURFACE_AREA, shape=num_engine_type, units='ft**2')
 
     def setup_partials(self):
         # derivatives w.r.t vectorized engine inputs have known sparsity pattern
@@ -45,12 +44,13 @@ class EngineSize(om.ExplicitComponent):
             Aircraft.Nacelle.FINENESS,
         ]
 
-        self.declare_partials(Aircraft.Nacelle.AVG_DIAMETER,
-                              innames[:-1], rows=shape, cols=shape, val=1.0)
-        self.declare_partials(Aircraft.Nacelle.AVG_LENGTH, innames,
-                              rows=shape, cols=shape, val=1.0)
-        self.declare_partials(Aircraft.Nacelle.SURFACE_AREA,
-                              innames, rows=shape, cols=shape, val=1.0)
+        self.declare_partials(
+            Aircraft.Nacelle.AVG_DIAMETER, innames[:-1], rows=shape, cols=shape, val=1.0
+        )
+        self.declare_partials(Aircraft.Nacelle.AVG_LENGTH, innames, rows=shape, cols=shape, val=1.0)
+        self.declare_partials(
+            Aircraft.Nacelle.SURFACE_AREA, innames, rows=shape, cols=shape, val=1.0
+        )
 
     def compute(self, inputs, outputs):
         d_ref = inputs[Aircraft.Engine.REFERENCE_DIAMETER]
@@ -60,13 +60,9 @@ class EngineSize(om.ExplicitComponent):
 
         d_eng = d_ref * np.sqrt(scale_fac)
         outputs[Aircraft.Nacelle.AVG_DIAMETER] = d_eng * d_nac_eng
-        outputs[Aircraft.Nacelle.AVG_LENGTH] = (
-            ld_nac * outputs[Aircraft.Nacelle.AVG_DIAMETER]
-        )
+        outputs[Aircraft.Nacelle.AVG_LENGTH] = ld_nac * outputs[Aircraft.Nacelle.AVG_DIAMETER]
         outputs[Aircraft.Nacelle.SURFACE_AREA] = (
-            np.pi
-            * outputs[Aircraft.Nacelle.AVG_DIAMETER]
-            * outputs[Aircraft.Nacelle.AVG_LENGTH]
+            np.pi * outputs[Aircraft.Nacelle.AVG_DIAMETER] * outputs[Aircraft.Nacelle.AVG_LENGTH]
         )
 
     def compute_partials(self, inputs, J):
@@ -91,9 +87,7 @@ class EngineSize(om.ExplicitComponent):
             Aircraft.Engine.SCALE_FACTOR,
             Aircraft.Nacelle.CORE_DIAMETER_RATIO,
         ]:
-            J[Aircraft.Nacelle.AVG_LENGTH, wrt] = (
-                J[Aircraft.Nacelle.AVG_DIAMETER, wrt] * ld_nac
-            )
+            J[Aircraft.Nacelle.AVG_LENGTH, wrt] = J[Aircraft.Nacelle.AVG_DIAMETER, wrt] * ld_nac
             J[Aircraft.Nacelle.SURFACE_AREA, wrt] = np.pi * (
                 J[Aircraft.Nacelle.AVG_DIAMETER, wrt] * l_nac
                 + J[Aircraft.Nacelle.AVG_LENGTH, wrt] * d_nac

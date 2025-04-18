@@ -41,11 +41,11 @@ class GroundrollODETestCase(unittest.TestCase):
 
         set_params_for_unit_tests(self.prob)
 
-        self.prob.set_val(Dynamic.Mission.VELOCITY, [100, 100], units="kn")
-        self.prob.set_val("t_curr", [1, 2], units="s")
-        self.prob.set_val("aircraft:wing:incidence", 0, units="deg")
-        self.prob.set_val("interference_independent_of_shielded_area", 1.89927266)
-        self.prob.set_val("drag_loss_due_to_shielded_wing_area", 68.02065834)
+        self.prob.set_val(Dynamic.Mission.VELOCITY, [100, 100], units='kn')
+        self.prob.set_val('t_curr', [1, 2], units='s')
+        self.prob.set_val('aircraft:wing:incidence', 0, units='deg')
+        self.prob.set_val('interference_independent_of_shielded_area', 1.89927266)
+        self.prob.set_val('drag_loss_due_to_shielded_wing_area', 68.02065834)
         self.prob.set_val(Aircraft.Wing.FORM_FACTOR, 1.25)
         self.prob.set_val(Aircraft.VerticalTail.FORM_FACTOR, 1.25)
         self.prob.set_val(Aircraft.HorizontalTail.FORM_FACTOR, 1.25)
@@ -57,17 +57,17 @@ class GroundrollODETestCase(unittest.TestCase):
             Dynamic.Mission.FLIGHT_PATH_ANGLE_RATE: [0.0, 0.0],
             Dynamic.Mission.ALTITUDE_RATE: [0.0, 0.0],
             Dynamic.Mission.DISTANCE_RATE: [168.781, 168.781],
-            "normal_force": [0.0, 0.0],
-            "fuselage_pitch": [0.0, 0.0],
-            "dmass_dv": [-5.03252493e-06, -5.03252493e-06],
+            'normal_force': [0.0, 0.0],
+            'fuselage_pitch': [0.0, 0.0],
+            'dmass_dv': [-5.03252493e-06, -5.03252493e-06],
         }
         check_prob_outputs(self.prob, testvals, rtol=1e-6)
 
         partial_data = self.prob.check_partials(
-            out_stream=None, method="cs", excludes=["*params*", "*aero*"]
+            out_stream=None, method='cs', excludes=['*params*', '*aero*']
         )
         assert_check_partials(partial_data, atol=1e-8, rtol=1e-8)
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     unittest.main()

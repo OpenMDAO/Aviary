@@ -10,16 +10,13 @@ from aviary.variable_info.variables import Aircraft, Dynamic
 
 
 class TestMotorMission(unittest.TestCase):
-
     @use_tempdirs
     def test_motor_map(self):
         nn = 3
 
         prob = om.Problem()
 
-        prob.model.add_subsystem(
-            'motor_map', MotorMission(num_nodes=nn), promotes=['*']
-        )
+        prob.model.add_subsystem('motor_map', MotorMission(num_nodes=nn), promotes=['*'])
 
         prob.setup(force_alloc_complex=True)
 
@@ -51,7 +48,7 @@ class TestMotorMission(unittest.TestCase):
         assert_near_equal(max_shp, max_shp_expected, tolerance=1e-9)
         assert_near_equal(power, power, tolerance=1e-9)
 
-        partial_data = prob.check_partials(out_stream=None, method="cs")
+        partial_data = prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
 
 

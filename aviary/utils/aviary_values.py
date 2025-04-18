@@ -1,4 +1,4 @@
-'''
+"""
 Define utilities for using aviary values with associated units and testing
 for compatibility with aviary metadata dictionary.
 
@@ -15,7 +15,7 @@ OptionalValueAndUnits : type alias
 
 class AviaryValues
     define a collection of named values with associated units
-'''
+"""
 
 from enum import Enum
 
@@ -28,12 +28,12 @@ from aviary.utils.utils import check_type, cast_type
 
 
 class AviaryValues(NamedValues):
-    '''
+    """
     Define a collection of aviary values with associated units and aviary tests.
-    '''
+    """
 
     def set_val(self, key, val, units='unitless', meta_data=_MetaData):
-        '''
+        """
         Update the named value and its associated units.
 
         Note, specifying units of `None` or units of any type other than `str` will raise
@@ -54,7 +54,7 @@ class AviaryValues(NamedValues):
         ------
         TypeError
             if units of `None` were specified or units of any type other than `str`
-        '''
+        """
         if key in meta_data:
             val = cast_type(key, val, meta_data)
             check_type(key, val, meta_data)
@@ -75,9 +75,7 @@ class AviaryValues(NamedValues):
             # convert the units
             _convert_units(10, expected_units, units)
         except ValueError:
-            raise ValueError(
-                f'The units {units} which you have provided for {key} are invalid.'
-            )
+            raise ValueError(f'The units {units} which you have provided for {key} are invalid.')
         except TypeError:
             raise TypeError(
                 f'The base units of {key} are {expected_units}, and you have tried to '

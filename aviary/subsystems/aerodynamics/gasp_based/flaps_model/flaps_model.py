@@ -39,112 +39,111 @@ class FlapsGroup(om.Group):
         }
 
     def setup(self):
-
         self.add_subsystem(
-            "BasicFlapsCalculations",
+            'BasicFlapsCalculations',
             BasicFlapsCalculations(),
             promotes_inputs=[
-                "slat_defl",
-                "flap_defl",
+                'slat_defl',
+                'flap_defl',
             ]
-            + ["aircraft:*"],
-            promotes_outputs=["*"],
+            + ['aircraft:*'],
+            promotes_outputs=['*'],
         )
 
         self.add_subsystem(
-            "CLmaxCalculation",
+            'CLmaxCalculation',
             CLmaxCalculation(),
             promotes_inputs=[
                 Dynamic.Atmosphere.SPEED_OF_SOUND,
                 Dynamic.Atmosphere.STATIC_PRESSURE,
                 Dynamic.Atmosphere.KINEMATIC_VISCOSITY,
-                "VLAM1",
-                "VLAM2",
-                "VLAM3",
-                "VLAM4",
-                "VLAM5",
-                "VLAM6",
-                "VLAM7",
-                "VLAM8",
-                "VLAM9",
-                "VLAM10",
-                "VLAM11",
-                "VLAM12",
-                "VLAM13",
-                "VLAM14",
-                "fus_lift",
+                'VLAM1',
+                'VLAM2',
+                'VLAM3',
+                'VLAM4',
+                'VLAM5',
+                'VLAM6',
+                'VLAM7',
+                'VLAM8',
+                'VLAM9',
+                'VLAM10',
+                'VLAM11',
+                'VLAM12',
+                'VLAM13',
+                'VLAM14',
+                'fus_lift',
                 Dynamic.Atmosphere.TEMPERATURE,
             ]
-            + ["aircraft:*"],
-            promotes_outputs=["CL_max", Dynamic.Atmosphere.MACH, "reynolds"],
+            + ['aircraft:*'],
+            promotes_outputs=['CL_max', Dynamic.Atmosphere.MACH, 'reynolds'],
         )
 
         self.add_subsystem(
-            "LookupTables",
+            'LookupTables',
             MetaModelGroup(),
             promotes_inputs=[
-                "flap_defl_ratio",
-                "flap_defl",
-                "slat_defl_ratio",
-                "reynolds",
+                'flap_defl_ratio',
+                'flap_defl',
+                'slat_defl_ratio',
+                'reynolds',
                 Dynamic.Atmosphere.MACH,
-                "body_to_span_ratio",
-                "chord_to_body_ratio",
+                'body_to_span_ratio',
+                'chord_to_body_ratio',
             ]
-            + ["aircraft:*"],
+            + ['aircraft:*'],
             promotes_outputs=[
-                "VDEL1",
-                "VDEL2",
-                "VDEL3",
-                "VLAM1",
-                "VLAM2",
-                "VLAM3",
-                "VLAM4",
-                "VLAM5",
-                "VLAM6",
-                "VLAM7",
-                "VLAM10",
-                "VLAM11",
-                "VLAM13",
-                "VLAM14",
-                "fus_lift",
+                'VDEL1',
+                'VDEL2',
+                'VDEL3',
+                'VLAM1',
+                'VLAM2',
+                'VLAM3',
+                'VLAM4',
+                'VLAM5',
+                'VLAM6',
+                'VLAM7',
+                'VLAM10',
+                'VLAM11',
+                'VLAM13',
+                'VLAM14',
+                'fus_lift',
             ],
         )
 
         self.add_subsystem(
-            "LiftAndDragIncrements",
+            'LiftAndDragIncrements',
             LiftAndDragIncrements(),
             promotes_inputs=[
                 Aircraft.Wing.FLAP_DRAG_INCREMENT_OPTIMUM,
                 Aircraft.Wing.FLAP_LIFT_INCREMENT_OPTIMUM,
-                "VDEL1",
-                "VDEL2",
-                "VDEL3",
-                "VDEL4",
-                "VDEL5",
-                "VLAM3",
-                "VLAM4",
-                "VLAM5",
-                "VLAM6",
-                "VLAM7",
-                "VLAM8",
-                "VLAM13",
-                "VLAM14",
+                'VDEL1',
+                'VDEL2',
+                'VDEL3',
+                'VDEL4',
+                'VDEL5',
+                'VLAM3',
+                'VLAM4',
+                'VLAM5',
+                'VLAM6',
+                'VLAM7',
+                'VLAM8',
+                'VLAM13',
+                'VLAM14',
             ],
-            promotes_outputs=["delta_CD", "delta_CL"],
+            promotes_outputs=['delta_CD', 'delta_CL'],
         )
 
         self.nonlinear_solver = om.NewtonSolver(solve_subsystems=True)
         self.linear_solver = om.DirectSolver()
 
-        self.nonlinear_solver.options["iprint"] = 0
-        self.nonlinear_solver.options["maxiter"] = 25
-        self.nonlinear_solver.options["atol"] = 1e-8
-        self.nonlinear_solver.options["rtol"] = 1e-8
+        self.nonlinear_solver.options['iprint'] = 0
+        self.nonlinear_solver.options['maxiter'] = 25
+        self.nonlinear_solver.options['atol'] = 1e-8
+        self.nonlinear_solver.options['rtol'] = 1e-8
 
         # set default trailing edge deflection angle per GASP
         self.set_input_defaults(
             Aircraft.Wing.OPTIMUM_FLAP_DEFLECTION,
             self.optimum_flap_defls[self.options[Aircraft.Wing.FLAP_TYPE]],
-            units="deg",
+            units='deg',
         )

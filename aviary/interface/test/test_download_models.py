@@ -10,7 +10,6 @@ from aviary.interface.download_models import get_model, save_file
 
 @use_tempdirs
 class CommandEntryPointsTestCases(unittest.TestCase):
-
     def run_and_test_hangar(self, filenames, out_dir=''):
         # tests that the function runs successfully and that the files are generated
         if isinstance(filenames, str):
@@ -58,7 +57,7 @@ class CommandEntryPointsTestCases(unittest.TestCase):
         self.assertTrue(str(aviary_path) == str(expected_path))
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     unittest.main()
     # test = CommandEntryPointsTestCases()
     # test.test_single_file_with_path()

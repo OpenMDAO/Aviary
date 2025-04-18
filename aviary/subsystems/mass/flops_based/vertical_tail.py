@@ -6,10 +6,10 @@ from aviary.variable_info.variables import Aircraft, Mission
 
 
 class VerticalTailMass(om.ExplicitComponent):
-    '''
+    """
     Calculates the mass of the vertical tail(s). The methodology is based on the FLOPS weight
     equations, modified to output mass instead of weight.
-    '''
+    """
 
     def initialize(self):
         add_aviary_option(self, Aircraft.VerticalTail.NUM_TAILS)
@@ -23,7 +23,7 @@ class VerticalTailMass(om.ExplicitComponent):
         add_aviary_output(self, Aircraft.VerticalTail.MASS, units='lbm')
 
     def setup_partials(self):
-        self.declare_partials("*", "*")
+        self.declare_partials('*', '*')
 
     def compute(self, inputs, outputs):
         num_tails = self.options[Aircraft.VerticalTail.NUM_TAILS]
@@ -33,9 +33,15 @@ class VerticalTailMass(om.ExplicitComponent):
         scaler = inputs[Aircraft.VerticalTail.MASS_SCALER]
         gross_weight = inputs[Mission.Design.GROSS_MASS] * GRAV_ENGLISH_LBM
 
-        outputs[Aircraft.VerticalTail.MASS] = scaler * 0.32 * \
-            gross_weight ** 0.30 * (taper_ratio + 0.50) * area ** 0.85 * \
-            num_tails ** 0.7 / GRAV_ENGLISH_LBM
+        outputs[Aircraft.VerticalTail.MASS] = (
+            scaler
+            * 0.32
+            * gross_weight**0.30
+            * (taper_ratio + 0.50)
+            * area**0.85
+            * num_tails**0.7
+            / GRAV_ENGLISH_LBM
+        )
 
     def compute_partials(self, inputs, J):
         num_tails = self.options[Aircraft.VerticalTail.NUM_TAILS]
@@ -45,33 +51,44 @@ class VerticalTailMass(om.ExplicitComponent):
         taper_ratio = inputs[Aircraft.VerticalTail.TAPER_RATIO]
         scaler = inputs[Aircraft.VerticalTail.MASS_SCALER]
 
-        gross_weight_exp = gross_weight ** 0.30
-        area_exp = area ** 0.85
-        num_tails_exp = num_tails ** 0.7
+        gross_weight_exp = gross_weight**0.30
+        area_exp = area**0.85
+        num_tails_exp = num_tails**0.7
 
-        J[Aircraft.VerticalTail.MASS, Aircraft.VerticalTail.AREA] = \
-            scaler * 0.272 * gross_weight_exp * \
-            (taper_ratio + 0.50) * area ** -0.15 * \
-            num_tails_exp / GRAV_ENGLISH_LBM
+        J[Aircraft.VerticalTail.MASS, Aircraft.VerticalTail.AREA] = (
+            scaler
+            * 0.272
+            * gross_weight_exp
+            * (taper_ratio + 0.50)
+            * area**-0.15
+            * num_tails_exp
+            / GRAV_ENGLISH_LBM
+        )
 
-        J[Aircraft.VerticalTail.MASS, Mission.Design.GROSS_MASS] = \
-            scaler * 0.096 * gross_weight ** -0.70 * \
-            (taper_ratio + 0.50) * area_exp * num_tails_exp
+        J[Aircraft.VerticalTail.MASS, Mission.Design.GROSS_MASS] = (
+            scaler * 0.096 * gross_weight**-0.70 * (taper_ratio + 0.50) * area_exp * num_tails_exp
+        )
 
-        J[Aircraft.VerticalTail.MASS, Aircraft.VerticalTail.TAPER_RATIO] = \
+        J[Aircraft.VerticalTail.MASS, Aircraft.VerticalTail.TAPER_RATIO] = (
             scaler * 0.32 * gross_weight_exp * area_exp * num_tails_exp / GRAV_ENGLISH_LBM
+        )
 
-        J[Aircraft.VerticalTail.MASS, Aircraft.VerticalTail.MASS_SCALER] = \
-            0.32 * gross_weight_exp * (taper_ratio + 0.50) * \
-            area_exp * num_tails_exp / GRAV_ENGLISH_LBM
+        J[Aircraft.VerticalTail.MASS, Aircraft.VerticalTail.MASS_SCALER] = (
+            0.32
+            * gross_weight_exp
+            * (taper_ratio + 0.50)
+            * area_exp
+            * num_tails_exp
+            / GRAV_ENGLISH_LBM
+        )
 
 
 class AltVerticalTailMass(om.ExplicitComponent):
-    '''
+    """
     Calculates the mass of the vertical tail(s) using the alternate method.
     The methodology is based on the FLOPS weight- equations, modified to
     output mass instead of weight.
-    '''
+    """
 
     def setup(self):
         add_aviary_input(self, Aircraft.VerticalTail.AREA, units='ft**2')
@@ -81,7 +98,7 @@ class AltVerticalTailMass(om.ExplicitComponent):
         add_aviary_output(self, Aircraft.VerticalTail.MASS, units='lbm')
 
     def setup_partials(self):
-        self.declare_partials("*", "*")
+        self.declare_partials('*', '*')
 
     def compute(self, inputs, outputs):
         area = inputs[Aircraft.VerticalTail.AREA]
@@ -93,10 +110,6 @@ class AltVerticalTailMass(om.ExplicitComponent):
         area = inputs[Aircraft.VerticalTail.AREA]
         scaler = inputs[Aircraft.VerticalTail.MASS_SCALER]
 
-        J[Aircraft.VerticalTail.MASS, Aircraft.VerticalTail.AREA] = (
-            6.0 * scaler
-        )
+        J[Aircraft.VerticalTail.MASS, Aircraft.VerticalTail.AREA] = 6.0 * scaler
 
-        J[Aircraft.VerticalTail.MASS, Aircraft.VerticalTail.MASS_SCALER] = (
-            6.0 * area
-        )
+        J[Aircraft.VerticalTail.MASS, Aircraft.VerticalTail.MASS_SCALER] = 6.0 * area

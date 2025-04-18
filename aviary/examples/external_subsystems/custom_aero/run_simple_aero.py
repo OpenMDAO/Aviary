@@ -2,6 +2,7 @@
 Run the a mission with a simple external component that computes the wing
 and horizontal tail mass.
 """
+
 from copy import deepcopy
 
 import aviary.api as av
@@ -45,7 +46,7 @@ if __name__ == '__main__':
     prob.link_phases()
 
     # Note, SLSQP might have troubles here.
-    prob.add_driver("SLSQP")
+    prob.add_driver('SLSQP')
 
     prob.add_design_variables()
 

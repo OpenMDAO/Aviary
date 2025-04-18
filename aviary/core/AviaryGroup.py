@@ -18,14 +18,14 @@ class AviaryGroup(om.Group):
     def initialize(self):
         """declare options"""
         self.options.declare(
-            'aviary_options', types=AviaryValues,
-            desc='collection of Aircraft/Mission specific options')
+            'aviary_options',
+            types=AviaryValues,
+            desc='collection of Aircraft/Mission specific options',
+        )
         self.options.declare(
-            'aviary_metadata', types=dict,
-            desc='metadata dictionary of the full aviary problem.')
-        self.options.declare(
-            'phase_info', types=dict,
-            desc='phase-specific settings.')
+            'aviary_metadata', types=dict, desc='metadata dictionary of the full aviary problem.'
+        )
+        self.options.declare('phase_info', types=dict, desc='phase-specific settings.')
         self.builder = []
 
     def configure(self):
@@ -57,7 +57,6 @@ class AviaryGroup(om.Group):
             all_prom_inputs = self.comm.bcast(all_prom_inputs, root=0)
 
         for key in aviary_metadata:
-
             if ':' not in key or key.startswith('dynamic:'):
                 continue
 
@@ -82,8 +81,7 @@ class AviaryGroup(om.Group):
 
         # try to get all the possible EOMs from the Enums rather than specifically calling the names here
         # This will require some modifications to the enums
-        mission_method = aviary_options.get_val(
-            Settings.EQUATIONS_OF_MOTION)
+        mission_method = aviary_options.get_val(Settings.EQUATIONS_OF_MOTION)
 
         # Temporarily add extra stuff here, probably patched soon
         if mission_method is HEIGHT_ENERGY:
@@ -91,7 +89,6 @@ class AviaryGroup(om.Group):
 
             # Set a more appropriate solver for dymos when the phases are linked.
             if MPI and isinstance(self.traj.phases.linear_solver, om.PETScKrylov):
-
                 # When any phase is connected with input_initial = True, dymos puts
                 # a jacobi solver in the phases group. This is necessary in case
                 # the phases are cyclic. However, this causes some problems
@@ -111,7 +108,6 @@ class AviaryGroup(om.Group):
             # into the state interp component.
             # TODO: Future updates to dymos may make this unneccesary.
             for phase in self.traj.phases.system_iter(recurse=False):
-
                 # Don't move the solvers if we are using solve segements.
                 if phase_info[phase.name]['user_options'].get('solve_for_distance'):
                     continue
@@ -119,6 +115,5 @@ class AviaryGroup(om.Group):
                 phase.nonlinear_solver = om.NonlinearRunOnce()
                 phase.linear_solver = om.LinearRunOnce()
                 if isinstance(phase.indep_states, om.ImplicitComponent):
-                    phase.indep_states.nonlinear_solver = \
-                        om.NewtonSolver(solve_subsystems=True)
+                    phase.indep_states.nonlinear_solver = om.NewtonSolver(solve_subsystems=True)
                     phase.indep_states.linear_solver = om.DirectSolver(rhs_checking=True)

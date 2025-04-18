@@ -24,7 +24,6 @@ def add_subsystem_variables_to_phase(phase, phase_name, external_subsystems):
 
     # Loop through each subsystem in the list of external_subsystems
     for subsystem in external_subsystems:
-
         # Fetch the states from the current subsystem
         subsystem_states = subsystem.get_states()
 

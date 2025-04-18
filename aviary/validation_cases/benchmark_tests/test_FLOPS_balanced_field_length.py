@@ -1,6 +1,7 @@
 """
 Balanced field length optimization implemented with the Level 3 API.
 """
+
 import copy
 import unittest
 import warnings
@@ -11,16 +12,15 @@ from openmdao.core.driver import Driver
 from openmdao.utils.assert_utils import assert_near_equal
 from openmdao.utils.testing_utils import require_pyoptsparse, use_tempdirs
 
-from aviary.models.N3CC.N3CC_data import \
-    balanced_liftoff_user_options as _takeoff_liftoff_user_options
-from aviary.models.N3CC.N3CC_data import \
-    balanced_trajectory_builder as _takeoff_trajectory_builder
+from aviary.models.N3CC.N3CC_data import (
+    balanced_liftoff_user_options as _takeoff_liftoff_user_options,
+)
+from aviary.models.N3CC.N3CC_data import balanced_trajectory_builder as _takeoff_trajectory_builder
 from aviary.models.N3CC.N3CC_data import inputs as _inputs
 from aviary.subsystems.premission import CorePreMission
 from aviary.subsystems.propulsion.utils import build_engine_deck
 from aviary.utils.test_utils.default_subsystems import get_default_mission_subsystems
-from aviary.utils.functions import \
-    set_aviary_initial_values, set_aviary_input_defaults
+from aviary.utils.functions import set_aviary_initial_values, set_aviary_input_defaults
 from aviary.utils.preprocessors import preprocess_options
 from aviary.variable_info.functions import setup_model_options
 from aviary.variable_info.variables import Dynamic, Aircraft
@@ -34,7 +34,6 @@ class TestFLOPSBalancedFieldLength(unittest.TestCase):
 
     @require_pyoptsparse(optimizer='IPOPT')
     def bench_test_IPOPT(self):
-
         driver = om.pyOptSparseDriver()
 
         optimizer = 'IPOPT'
@@ -74,8 +73,7 @@ class TestFLOPSBalancedFieldLength(unittest.TestCase):
 
         driver.declare_coloring()
 
-        driver.add_recorder(om.SqliteRecorder(
-            f'FLOPS_detailed_takeoff_traj_{optimizer}.sql'))
+        driver.add_recorder(om.SqliteRecorder(f'FLOPS_detailed_takeoff_traj_{optimizer}.sql'))
 
         driver.recording_options['record_derivatives'] = False
 
@@ -97,13 +95,13 @@ class TestFLOPSBalancedFieldLength(unittest.TestCase):
         takeoff.model.add_subsystem('traj', traj)
 
         takeoff_trajectory_builder.build_trajectory(
-            aviary_options=aviary_options, model=takeoff.model, traj=traj)
+            aviary_options=aviary_options, model=takeoff.model, traj=traj
+        )
 
         distance_max, units = takeoff_liftoff_user_options.get_item('distance_max')
         liftoff = takeoff_trajectory_builder.get_phase('balanced_liftoff')
 
-        liftoff.add_objective(
-            Dynamic.Mission.DISTANCE, loc='final', ref=distance_max, units=units)
+        liftoff.add_objective(Dynamic.Mission.DISTANCE, loc='final', ref=distance_max, units=units)
 
         varnames = [Aircraft.Wing.ASPECT_RATIO, Aircraft.Engine.SCALE_FACTOR]
         set_aviary_input_defaults(takeoff.model, varnames, aviary_options)
@@ -113,8 +111,7 @@ class TestFLOPSBalancedFieldLength(unittest.TestCase):
         # suppress warnings:
         # "input variable '...' promoted using '*' was already promoted using 'aircraft:*'
         with warnings.catch_warnings():
-
-            warnings.simplefilter("ignore", om.PromotionWarning)
+            warnings.simplefilter('ignore', om.PromotionWarning)
             takeoff.setup(check=True)
 
         set_aviary_initial_values(takeoff, aviary_options)
@@ -133,29 +130,25 @@ class TestFLOPSBalancedFieldLength(unittest.TestCase):
         # Field Length
         # N3CC FLOPS output Line 2282
         desired = 7032.65
-        actual = takeoff.model.get_val(
-            'traj.balanced_liftoff.states:distance', units='ft')[-1]
+        actual = takeoff.model.get_val('traj.balanced_liftoff.states:distance', units='ft')[-1]
         assert_near_equal(actual, desired, 2e-2)
 
         # Decision Time
         # N3CC FLOPS output Line 2287
         desired = 29.52
-        actual = takeoff.model.get_val(
-            'traj.balanced_brake_release.t', units='s')[-1]
+        actual = takeoff.model.get_val('traj.balanced_brake_release.t', units='s')[-1]
         assert_near_equal(actual, desired, 2e-2)
 
         # Liftoff Time
         # N3CC FLOPS output Line 2289
         desired = 36.63
-        actual = takeoff.model.get_val(
-            'traj.balanced_rotate.t', units='s')[-1]
-        assert_near_equal(actual, desired, .05)
+        actual = takeoff.model.get_val('traj.balanced_rotate.t', units='s')[-1]
+        assert_near_equal(actual, desired, 0.05)
 
         # Rotation Speed
         # N3CC FLOPS output Line 2289
         desired = 156.55
-        actual = takeoff.model.get_val(
-            'traj.balanced_rotate.states:velocity', units='kn')[-1]
+        actual = takeoff.model.get_val('traj.balanced_rotate.states:velocity', units='kn')[-1]
         assert_near_equal(actual, desired, 2e-2)
 
 

@@ -1,4 +1,4 @@
-'''
+"""
 The following test data comes from a file which was LEAPS2/problems/full_mission_test.py
 results. The file does not exist anymore, but the data is used for regression testing.
 The analysis converged using SNOPT with 0/1 results and good plots.
@@ -11,7 +11,8 @@ analysis data, because the methodologies are too different. FLOPS/LEAPS1
 mission analyses use implementations that do not rely on some Aviary variables,
 such as altitude rate and velocity rate. These missing values cannot be derived
 from the available FLOPS/LEAPS1 data.
-'''
+"""
+
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 
@@ -49,7 +50,7 @@ data.set_val(
 
 data.set_val(
     Mission.Takeoff.ROLLING_FRICTION_COEFFICIENT,
-    val=.0175,
+    val=0.0175,
     units='unitless',
 )
 
@@ -149,14 +150,22 @@ data.set_val(
 # TODO: double check values
 data.set_val(
     'throttle_max',
-    val=[1., 1., 1., ],
+    val=[
+        1.0,
+        1.0,
+        1.0,
+    ],
     units='unitless',
 )
 
 data.set_val(
     # state_rates:range
     Dynamic.Mission.DISTANCE_RATE,
-    val=[163.776550884386, 232.775306059091, 117.631414542995, ],
+    val=[
+        163.776550884386,
+        232.775306059091,
+        117.631414542995,
+    ],
     units='m/s',
 )
 
@@ -207,7 +216,11 @@ data.set_val(
 data.set_val(
     # outputs
     'time',
-    val=[85.8098321364695, 8852.1530657591, 23851.1097964271, ],
+    val=[
+        85.8098321364695,
+        8852.1530657591,
+        23851.1097964271,
+    ],
     units='s',
 )
 

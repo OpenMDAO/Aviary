@@ -18,39 +18,38 @@ class SizeGroup(om.Group):
         add_aviary_option(self, Aircraft.Electrical.HAS_HYBRID_SYSTEM)
 
     def setup(self):
-
         self.add_subsystem(
-            "fuselage",
+            'fuselage',
             FuselageGroup(),
-            promotes_inputs=["aircraft:*"],
-            promotes_outputs=["aircraft:*"],
+            promotes_inputs=['aircraft:*'],
+            promotes_outputs=['aircraft:*'],
         )
 
         self.add_subsystem(
-            "wing",
+            'wing',
             WingGroup(),
-            promotes=["aircraft:*", "mission:*"],
+            promotes=['aircraft:*', 'mission:*'],
         )
 
         self.add_subsystem(
-            "empennage",
+            'empennage',
             EmpennageSize(),
-            promotes=["aircraft:*"],
+            promotes=['aircraft:*'],
         )
 
         self.add_subsystem(
-            "engine",
+            'engine',
             EngineSize(),
-            promotes_inputs=["aircraft:*"],
-            promotes_outputs=["aircraft:*"],
+            promotes_inputs=['aircraft:*'],
+            promotes_outputs=['aircraft:*'],
         )
 
         if self.options[Aircraft.Electrical.HAS_HYBRID_SYSTEM]:
             self.add_subsystem(
-                "cable",
+                'cable',
                 CableSize(),
-                promotes_inputs=["aircraft:*"],
-                promotes_outputs=["aircraft:*"],
+                promotes_inputs=['aircraft:*'],
+                promotes_outputs=['aircraft:*'],
             )
 
-        self.set_input_defaults(Aircraft.Fuselage.AVG_DIAMETER, units="inch")
+        self.set_input_defaults(Aircraft.Fuselage.AVG_DIAMETER, units='inch')

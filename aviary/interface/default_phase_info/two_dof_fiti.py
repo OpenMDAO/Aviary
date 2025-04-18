@@ -1,12 +1,19 @@
-from aviary.mission.gasp_based.phases.time_integration_phases import SGMGroundroll, \
-    SGMRotation, SGMAscentCombined, SGMAccel, SGMClimb, SGMCruise, SGMDescent
+from aviary.mission.gasp_based.phases.time_integration_phases import (
+    SGMGroundroll,
+    SGMRotation,
+    SGMAscentCombined,
+    SGMAccel,
+    SGMClimb,
+    SGMCruise,
+    SGMDescent,
+)
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.enums import AlphaModes, SpeedType, Verbosity
 from aviary.variable_info.variables import Aircraft, Mission, Dynamic, Settings
 
 # defaults for 2DOF based forward in time integeration phases
-cruise_alt = 35e3,
-cruise_mach = .8,
+cruise_alt = (35e3,)
+cruise_mach = (0.8,)
 
 takeoff_phases = {
     'groundroll': {
@@ -18,8 +25,7 @@ takeoff_phases = {
     },
     'rotation': {
         'builder': SGMRotation,
-        'user_options': {
-        },
+        'user_options': {},
     },
     'ascent': {
         'builder': SGMAscentCombined,
@@ -34,8 +40,7 @@ takeoff_phases = {
     },
     'accel': {
         'builder': SGMAccel,
-        'user_options': {
-        },
+        'user_options': {},
     },
 }
 climb_phases = {
@@ -79,21 +84,18 @@ climb_phases = {
         },
     },
 }
-ascent_phases = {
-    **takeoff_phases,
-    **climb_phases
-}
+ascent_phases = {**takeoff_phases, **climb_phases}
 cruise_phase = {
     'cruise': {
         'kwargs': dict(
             input_speed_type=SpeedType.MACH,
-            input_speed_units="unitless",
+            input_speed_units='unitless',
             alpha_mode=AlphaModes.REQUIRED_LIFT,
         ),
         'builder': SGMCruise,
         'user_options': {
             'mach': (cruise_mach, 'unitless'),
-            'attr:mass_trigger': ('SGMCruise_mass_trigger', 'lbm')
+            'attr:mass_trigger': ('SGMCruise_mass_trigger', 'lbm'),
         },
     },
 }
@@ -203,6 +205,7 @@ def add_default_sgm_args(phase_info: dict, ode_args: dict, verbosity=None):
         if 'simupy_args' not in kwargs:
             if verbosity is None:
                 verbosity, _ = ode_args['aviary_options'].get_item(
-                    Settings.VERBOSITY, default=(Verbosity.QUIET, 'unitless'))
+                    Settings.VERBOSITY, default=(Verbosity.QUIET, 'unitless')
+                )
             kwargs['simupy_args'] = {'verbosity': verbosity}
         info['kwargs'] = kwargs

@@ -8,9 +8,7 @@ OASWingWeightBuilder = av.TestSubsystemBuilderBase.import_builder(path_to_builde
 
 
 @av.skipIfMissingDependencies(OASWingWeightBuilder)
-@unittest.skipUnless(
-    importlib.util.find_spec('ambiance'), "'ambiance' is not installed"
-)
+@unittest.skipUnless(importlib.util.find_spec('ambiance'), "'ambiance' is not installed")
 class TestStructures(av.TestSubsystemBuilderBase):
     """Test OAS structure builder"""
 

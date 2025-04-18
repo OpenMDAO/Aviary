@@ -32,7 +32,8 @@ class RangeRate(om.ExplicitComponent):
             Dynamic.Mission.DISTANCE_RATE,
             val=np.ones(nn),
             desc='current horizontal velocity (assumed no wind)',
-            units='m/s')
+            units='m/s',
+        )
 
     def compute(self, inputs, outputs):
         climb_rate = inputs[Dynamic.Mission.ALTITUDE_RATE]
@@ -40,9 +41,8 @@ class RangeRate(om.ExplicitComponent):
         climb_rate_2 = climb_rate**2
         velocity_2 = velocity**2
         if (climb_rate_2 >= velocity_2).any():
-            raise om.AnalysisError(
-                "WARNING: climb rate exceeds velocity (range_rate.py)")
-        outputs[Dynamic.Mission.DISTANCE_RATE] = (velocity_2 - climb_rate_2)**0.5
+            raise om.AnalysisError('WARNING: climb rate exceeds velocity (range_rate.py)')
+        outputs[Dynamic.Mission.DISTANCE_RATE] = (velocity_2 - climb_rate_2) ** 0.5
 
     def setup_partials(self):
         arange = np.arange(self.options['num_nodes'])

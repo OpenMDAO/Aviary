@@ -8,6 +8,7 @@ Here we have climb, cruise, and descent phases.
 We then call the correct methods in order to set up and run an Aviary optimization problem.
 This performs a coupled design-mission optimization and outputs the results from Aviary into the `reports` folder.
 """
+
 import aviary.api as av
 from aviary.interface.default_phase_info.two_dof import phase_info
 from copy import deepcopy
@@ -18,7 +19,7 @@ phase_info = deepcopy(phase_info)
 reserve_cruise = deepcopy(phase_info['cruise'])
 reserve_cruise['user_options']['reserve'] = True
 reserve_cruise['user_options']['target_duration'] = (30, 'min')
-reserve_cruise['user_options']['initial_bounds'] = ((149.5, 448.5), "min")
+reserve_cruise['user_options']['initial_bounds'] = ((149.5, 448.5), 'min')
 reserve_cruise['initial_guesses']['initial_distance'] = (4000, 'nmi')
 
 phase_info.update({'reserve_cruise': reserve_cruise})
@@ -42,7 +43,7 @@ if __name__ == '__main__':
     # Link phases and variables
     prob.link_phases()
 
-    prob.add_driver("SNOPT", max_iter=50)
+    prob.add_driver('SNOPT', max_iter=50)
 
     prob.add_design_variables()
 

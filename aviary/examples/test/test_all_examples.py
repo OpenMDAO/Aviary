@@ -14,7 +14,7 @@ from openmdao.utils.testing_utils import use_tempdirs
 
 # TODO: Address any issue that requires a skip.
 SKIP_EXAMPLES = {
-    'run_multimission_example_large_single_aisle.py': "Broken due to OpenMDAO changes",
+    'run_multimission_example_large_single_aisle.py': 'Broken due to OpenMDAO changes',
 }
 
 
@@ -28,10 +28,7 @@ def find_examples():
         A list of pathlib.Path objects pointing to the run scripts.
     """
 
-    base_dir = os.path.join(
-        os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
-        "."
-    )
+    base_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), '.')
 
     run_files = []
     for root, _, files in os.walk(base_dir):
@@ -99,20 +96,17 @@ class RunScriptTest(unittest.TestCase):
             Any exception other than ImportError or TimeoutExpired that occurs while running the script.
         """
         with open(os.devnull, 'w') as devnull:
-            proc = subprocess.Popen(['python', script_path],
-                                    stdout=devnull, stderr=subprocess.PIPE)
+            proc = subprocess.Popen(['python', script_path], stdout=devnull, stderr=subprocess.PIPE)
         proc.wait(timeout=max_allowable_time)
         (stdout, stderr) = proc.communicate()
 
         if proc.returncode != 0:
             if 'ImportError' in str(stderr):
-                self.skipTest(f"Skipped {script_path.name} due to ImportError")
+                self.skipTest(f'Skipped {script_path.name} due to ImportError')
             else:
-                raise Exception(
-                    f"Error running {script_path.name}:\n{stderr.decode('utf-8')}")
+                raise Exception(f'Error running {script_path.name}:\n{stderr.decode("utf-8")}')
 
-    @parameterized.expand(find_examples(),
-                          name_func=example_name)
+    @parameterized.expand(find_examples(), name_func=example_name)
     def test_run_scripts(self, example_path):
         """
         Test each run script to ensure it executes without error.
@@ -120,10 +114,10 @@ class RunScriptTest(unittest.TestCase):
 
         if example_path.name in SKIP_EXAMPLES:
             reason = SKIP_EXAMPLES[example_path.name]
-            self.skipTest(f"Skipped {example_path.name}: {reason}.")
+            self.skipTest(f'Skipped {example_path.name}: {reason}.')
 
         self.run_script(example_path)
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     unittest.main()

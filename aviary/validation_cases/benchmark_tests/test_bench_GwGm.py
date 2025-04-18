@@ -22,7 +22,7 @@ class ProblemPhaseTestCase(unittest.TestCase):
     def setUp(self):
         _clear_problem_names()  # need to reset these to simulate separate runs
 
-    @require_pyoptsparse(optimizer="IPOPT")
+    @require_pyoptsparse(optimizer='IPOPT')
     def test_bench_GwGm(self):
         local_phase_info = deepcopy(phase_info)
         prob = run_aviary(
@@ -59,9 +59,7 @@ class ProblemPhaseTestCase(unittest.TestCase):
             tolerance=rtol,
         )
 
-        assert_near_equal(
-            prob.get_val(Mission.Summary.RANGE, units='NM'), 3675.0, tolerance=rtol
-        )
+        assert_near_equal(prob.get_val(Mission.Summary.RANGE, units='NM'), 3675.0, tolerance=rtol)
 
         assert_near_equal(
             prob.get_val(Mission.Landing.TOUCHDOWN_MASS, units='lbm'),
@@ -69,7 +67,7 @@ class ProblemPhaseTestCase(unittest.TestCase):
             tolerance=rtol,
         )
 
-    @require_pyoptsparse(optimizer="SNOPT")
+    @require_pyoptsparse(optimizer='SNOPT')
     def test_bench_GwGm_SNOPT(self):
         local_phase_info = deepcopy(phase_info)
         prob = run_aviary(
@@ -106,9 +104,7 @@ class ProblemPhaseTestCase(unittest.TestCase):
             tolerance=rtol,
         )
 
-        assert_near_equal(
-            prob.get_val(Mission.Summary.RANGE, units='NM'), 3675.0, tolerance=rtol
-        )
+        assert_near_equal(prob.get_val(Mission.Summary.RANGE, units='NM'), 3675.0, tolerance=rtol)
 
         assert_near_equal(
             prob.get_val(Mission.Landing.TOUCHDOWN_MASS, units='lbm'),
@@ -116,7 +112,7 @@ class ProblemPhaseTestCase(unittest.TestCase):
             tolerance=rtol,
         )
 
-    @require_pyoptsparse(optimizer="SNOPT")
+    @require_pyoptsparse(optimizer='SNOPT')
     def test_bench_GwGm_SNOPT_lbm_s(self):
         local_phase_info = deepcopy(phase_info)
         prob = run_aviary(
@@ -153,9 +149,7 @@ class ProblemPhaseTestCase(unittest.TestCase):
             tolerance=rtol,
         )
 
-        assert_near_equal(
-            prob.get_val(Mission.Summary.RANGE, units='NM'), 3675.0, tolerance=rtol
-        )
+        assert_near_equal(prob.get_val(Mission.Summary.RANGE, units='NM'), 3675.0, tolerance=rtol)
 
         assert_near_equal(
             prob.get_val(Mission.Landing.TOUCHDOWN_MASS, units='lbm'),
@@ -167,9 +161,8 @@ class ProblemPhaseTestCase(unittest.TestCase):
         'Shooting method is not correctly receiving user-set options, and is currently '
         'using default values for most options'
     )
-    @require_pyoptsparse(optimizer="IPOPT")
+    @require_pyoptsparse(optimizer='IPOPT')
     def test_bench_GwGm_shooting(self):
-
         self.skipTest('SGM currently failing this test.')
 
         from aviary.interface.default_phase_info.two_dof_fiti import (
@@ -218,9 +211,7 @@ class ProblemPhaseTestCase(unittest.TestCase):
             tolerance=rtol,
         )
 
-        assert_near_equal(
-            prob.get_val(Mission.Summary.RANGE, units='NM'), 3765.48, tolerance=rtol
-        )
+        assert_near_equal(prob.get_val(Mission.Summary.RANGE, units='NM'), 3765.48, tolerance=rtol)
 
         assert_near_equal(
             prob.get_val(Mission.Landing.TOUCHDOWN_MASS, units='lbm'),
@@ -229,9 +220,7 @@ class ProblemPhaseTestCase(unittest.TestCase):
         )
 
         assert_near_equal(
-            prob.get_val(
-                'traj.cruise_' + Dynamic.Mission.DISTANCE + '_final', units='nmi'
-            ),
+            prob.get_val('traj.cruise_' + Dynamic.Mission.DISTANCE + '_final', units='nmi'),
             3668.3,
             tolerance=rtol,
         )

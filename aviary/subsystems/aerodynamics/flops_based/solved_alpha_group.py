@@ -28,22 +28,31 @@ class SolvedAlphaGroup(om.Group):
         """
         self.options.declare('num_nodes', types=int)
 
-        self.options.declare('aero_data', types=(str, Path, NamedValues), default=None,
-                             desc='Data file or NamedValues object containing lift and '
-                                  'drag coefficient table as a function of altitude, '
-                                  'Mach, and angle of attack')
-
-        self.options.declare('connect_training_data', default=False,
-                             desc='When True, the aero tables will be passed as '
-                                  'OpenMDAO variables')
-
-        self.options.declare('structured', types=bool, default=True,
-                             desc='Flag that sets if data is a structured grid')
+        self.options.declare(
+            'aero_data',
+            types=(str, Path, NamedValues),
+            default=None,
+            desc='Data file or NamedValues object containing lift and '
+            'drag coefficient table as a function of altitude, '
+            'Mach, and angle of attack',
+        )
 
         self.options.declare(
-            'extrapolate', default=True,
-            desc='Flag that sets if drag '
-            'data can be extrapolated')
+            'connect_training_data',
+            default=False,
+            desc='When True, the aero tables will be passed as OpenMDAO variables',
+        )
+
+        self.options.declare(
+            'structured',
+            types=bool,
+            default=True,
+            desc='Flag that sets if data is a structured grid',
+        )
+
+        self.options.declare(
+            'extrapolate', default=True, desc='Flag that sets if drag data can be extrapolated'
+        )
 
     def setup(self):
         options = self.options
@@ -63,20 +72,21 @@ class SolvedAlphaGroup(om.Group):
             promotes_outputs=[Dynamic.Atmosphere.DYNAMIC_PRESSURE],
         )
 
-        aero = TabularCruiseAero(num_nodes=nn,
-                                 aero_data=aero_data,
-                                 connect_training_data=connect_training_data,
-                                 structured=structured,
-                                 extrapolate=extrapolate)
+        aero = TabularCruiseAero(
+            num_nodes=nn,
+            aero_data=aero_data,
+            connect_training_data=connect_training_data,
+            structured=structured,
+            extrapolate=extrapolate,
+        )
 
         if connect_training_data:
-            extra_promotes = [Aircraft.Design.DRAG_POLAR,
-                              Aircraft.Design.LIFT_POLAR]
+            extra_promotes = [Aircraft.Design.DRAG_POLAR, Aircraft.Design.LIFT_POLAR]
         else:
             extra_promotes = []
 
         self.add_subsystem(
-            "tabular_aero",
+            'tabular_aero',
             aero,
             promotes_inputs=[
                 Dynamic.Mission.ALTITUDE,
@@ -89,8 +99,7 @@ class SolvedAlphaGroup(om.Group):
         )
 
         balance = self.add_subsystem('balance', om.BalanceComp())
-        balance.add_balance('angle_of_attack', val=np.ones(nn),
-                            units='deg', res_ref=1.0e6)
+        balance.add_balance('angle_of_attack', val=np.ones(nn), units='deg', res_ref=1.0e6)
 
         self.connect('balance.angle_of_attack', 'tabular_aero.angle_of_attack')
         self.connect('needed_lift.lift_resid', 'balance.lhs:angle_of_attack')
