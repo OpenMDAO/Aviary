@@ -228,27 +228,34 @@ class OAStructures(om.ExplicitComponent):
         mesh = user_mesh()
 
         # surface options dictionary
+        # fmt: off
         surf_dict = {
             # surface name
             'name': 'meshwing',
+
             # wing symmetry
             'symmetry': self.options['symmetry'],
+
             # wing mesh
             'mesh': mesh,
+            
             # wing definition
             'S_ref_type': self.options['S_ref_type'],
             'fem_model_type': self.options['fem_model_type'],
+
             # wing thickness data
             'data_x_upper': inputs['box_upper_x'],
             'data_x_lower': inputs['box_lower_x'],
             'data_y_upper': inputs['box_upper_y'],
             'data_y_lower': inputs['box_lower_y'],
+
             # wing sizing parameters
             'twist_cp': inputs['twist_cp'],
             'spar_thickness_cp': inputs['spar_thickness_cp'],
             'skin_thickness_cp': inputs['skin_thickness_cp'],
             't_over_c_cp': inputs['t_over_c_cp'],
             'original_wingbox_airfoil_t_over_c': inputs['airfoil_t_over_c'],
+
             # Aerodynamic deltas.
             # These CL0 and CD0 values are added to the CL and CD
             # obtained from aerodynamic analysis of the surface to get
@@ -259,10 +266,13 @@ class OAStructures(om.ExplicitComponent):
             'CD0': inputs['CD0'][0],
             'with_viscous': self.options['with_viscous'],
             'with_wave': self.options['with_wave'],
+
             # Airfoil properties for viscous drag calculation
             'k_lam': self.options['k_lam'],
+
             # flow, used for viscous drag
             'c_max_t': self.options['c_max_t'],
+            
             # Structural values
             'E': self.options['E'],
             'G': self.options['G'],
@@ -271,15 +281,19 @@ class OAStructures(om.ExplicitComponent):
             'strength_factor_for_upper_skin': self.options['strength_factor_for_upper_skin'],
             'wing_weight_ratio': self.options['wing_weight_ratio'],
             'exact_failure_constraint': self.options['exact_failure_constraint'],
+            
             # structural weight factors
             'struct_weight_relief': self.options['struct_weight_relief'],
             'distributed_fuel_weight': self.options['distributed_fuel_weight'],
+            
             # point masses
             'n_point_masses': self.options['n_point_masses'],
+            
             # fuel factors
             'fuel_density': self.options['fuel_density'],
             'Wf_reserve': inputs['fuel_reserve'][0],
         }
+        # fmt: on
 
         # define the surfaces
         surfaces = [surf_dict]
