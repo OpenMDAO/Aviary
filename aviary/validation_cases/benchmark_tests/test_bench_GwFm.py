@@ -28,7 +28,6 @@ class ProblemPhaseTestCase(unittest.TestCase):
     def setUp(self):
         expected_dict = {}
         # block auto-formatting of tables
-        # autopep8: off
         # fmt: off
         expected_dict['times'] = np.array(
             [
@@ -134,7 +133,6 @@ class ProblemPhaseTestCase(unittest.TestCase):
                 [133.84033631181276], [112.04151628392903], [101.91044471952507]
             ]
         )
-        # autopep8: on
         # fmt: on
 
         self.expected_dict = expected_dict

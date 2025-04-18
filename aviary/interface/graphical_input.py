@@ -1677,16 +1677,17 @@ def create_phase_info(
     with open(filename, 'w') as f:
         f.write(f'phase_info = {phase_info}')
 
-    # Check for 'black' and format the file
-    if shutil.which('black'):
-        subprocess.run(['black', filename])
+    # Check for 'ruff' and format the file
+    if shutil.which('ruff'):
+        subprocess.run(['ruff', filename])
     else:
         if shutil.which('autopep8'):
             subprocess.run(['autopep8', '--in-place', '--aggressive', filename])
             print("File formatted using 'autopep8'")
         else:
             print(
-                "'black' and 'autopep8' are not installed. Please consider installing one of them for better formatting."
+                "'ruff' or 'autopep8' are not installed. Please consider installing one of them "
+                'for better formatting.'
             )
 
     print(f'Phase info has been saved and formatted in {filename}')

@@ -5,7 +5,6 @@ import openmdao.api as om
 from aviary.variable_info.variables import Dynamic, Aircraft
 
 # block auto-formatting of tables
-# autopep8: off
 # fmt: off
 motor_map = np.array([
     # speed---- .0       .083333  .16667  .25    .33333.41667  .5,     .58333 .66667  .75,   .83333, .91667 1.
@@ -27,7 +26,6 @@ motor_map = np.array([
     [.807,    .808,    .884,   .912,  .927, .936,   .942,   .947,  .950,   .952,   .954,  .955,   .956],  # 0.936
     [.795,    .796,    .877,   .907,  .923, .933,   .939,   .944,  .948,   .950,   .952,  .953,   .954]  # 1.000
 ]).T
-# autopep8: on
 # fmt: on
 
 
@@ -65,14 +63,18 @@ class MotorMap(om.Group):
         n = self.options['num_nodes']
 
         # Training data
-        # autopep8: off
         # fmt: off
-        rpm_vals = np.array([0, .083333, .16667, .25, .33333, .41667, .5,
-                            .58333, .66667, .75, .83333, .91667, 1.]) * 6000
-        torque_vals = np.array([0.0, 0.040, 0.104, 0.168, 0.232, 0.296, 0.360,
-                                0.424, 0.488, 0.552, 0.616, 0.680, 0.744, 0.808,
-                                0.872, 0.936, 1.000]) * 1800
-        # autopep8: on
+        rpm_vals = np.array(
+            [
+                0, .083333, .16667, .25, .33333, .41667, .5, .58333, .66667, .75, .83333, .91667, 1.
+            ]
+        ) * 6000
+        torque_vals = np.array(
+            [
+                0.0, 0.040, 0.104, 0.168, 0.232, 0.296, 0.360, 0.424, 0.488,
+                0.552, 0.616, 0.680,  0.744, 0.808, 0.872, 0.936, 1.000
+            ]
+        ) * 1800
         # fmt: on
         # Create a structured metamodel to compute motor efficiency from rpm
         motor = om.MetaModelStructuredComp(method='slinear', vec_size=n, extrapolate=True)
