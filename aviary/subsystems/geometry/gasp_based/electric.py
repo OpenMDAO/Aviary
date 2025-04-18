@@ -36,9 +36,8 @@ class CableSize(om.ExplicitComponent):
         )
 
         self.declare_partials(
-            Aircraft.Electrical.HYBRID_CABLE_LENGTH,
-            Aircraft.Fuselage.AVG_DIAMETER,
-            val=2.)
+            Aircraft.Electrical.HYBRID_CABLE_LENGTH, Aircraft.Fuselage.AVG_DIAMETER, val=2.0
+        )
 
     def compute(self, inputs, outputs):
         eng_span_frac = np.sum(inputs[Aircraft.Engine.WING_LOCATIONS])
@@ -57,5 +56,4 @@ class CableSize(om.ExplicitComponent):
             Aircraft.Electrical.HYBRID_CABLE_LENGTH,
             Aircraft.Engine.WING_LOCATIONS,
         ] = wingspan
-        J[Aircraft.Electrical.HYBRID_CABLE_LENGTH,
-            Aircraft.Wing.SPAN] = np.sum(eng_span_frac)
+        J[Aircraft.Electrical.HYBRID_CABLE_LENGTH, Aircraft.Wing.SPAN] = np.sum(eng_span_frac)

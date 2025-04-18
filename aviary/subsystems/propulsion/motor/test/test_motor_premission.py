@@ -11,7 +11,6 @@ from aviary.variable_info.variables import Aircraft, Dynamic
 
 
 class TestGearbox(unittest.TestCase):
-
     @use_tempdirs
     def test_motor_map(self):
         prob = om.Problem()
@@ -37,7 +36,7 @@ class TestGearbox(unittest.TestCase):
         assert_near_equal(torque_max, torque_max_expected, tolerance=1e-9)
         assert_near_equal(mass, mass_expected, tolerance=1e-9)
 
-        partial_data = prob.check_partials(out_stream=None, method="cs")
+        partial_data = prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
 
 

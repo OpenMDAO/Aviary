@@ -10,10 +10,10 @@ from aviary.variable_info.enums import Verbosity
 
 
 class PropulsionPreMission(om.Group):
-    '''
+    """
     Group that contains propulsion calculations for pre-mission analysis, such as
     computing scaling factors, and sums propulsion-system level totals.
-    '''
+    """
 
     def initialize(self):
         self.options.declare(
@@ -22,16 +22,14 @@ class PropulsionPreMission(om.Group):
             desc='collection of Aircraft/Mission specific options',
         )
 
-        self.options.declare(
-            'engine_models', types=list, desc='list of EngineModels on aircraft'
-        )
+        self.options.declare('engine_models', types=list, desc='list of EngineModels on aircraft')
 
         # engine options is optional
         self.options.declare(
             'engine_options',
             types=dict,
             default={},
-            desc='dictionary of options for each EngineModel'
+            desc='dictionary of options for each EngineModel',
         )
 
         add_aviary_option(self, Aircraft.Engine.NUM_ENGINES)
@@ -67,9 +65,7 @@ class PropulsionPreMission(om.Group):
         if num_engine_type > 1:
             # Add an empty mux comp, which will be customized to handle all required
             # outputs in configure()
-            self.add_subsystem(
-                'pre_mission_mux', subsys=om.MuxComp(), promotes_outputs=['*']
-            )
+            self.add_subsystem('pre_mission_mux', subsys=om.MuxComp(), promotes_outputs=['*'])
 
         self.add_subsystem(
             'propulsion_sum',
@@ -132,9 +128,7 @@ class PropulsionPreMission(om.Group):
             )
             # only keep inputs if they contain the pattern
             input_dict[engine.name] = dict(
-                (key, eng_inputs[key])
-                for key in eng_inputs
-                if any([x in key for x in pattern])
+                (key, eng_inputs[key]) for key in eng_inputs if any([x in key for x in pattern])
             )
 
             # do the same thing with outputs
@@ -149,9 +143,7 @@ class PropulsionPreMission(om.Group):
                 ]
             )
             output_dict[engine.name] = dict(
-                (key, eng_outputs[key])
-                for key in eng_outputs
-                if any([x in key for x in pattern])
+                (key, eng_outputs[key]) for key in eng_outputs if any([x in key for x in pattern])
             )
             unique_outputs.update(
                 [
@@ -178,15 +170,9 @@ class PropulsionPreMission(om.Group):
             # promote all other inputs/outputs for this engine normally (handle vectorized outputs later)
             self.promotes(
                 engine.name,
-                inputs=[
-                    input
-                    for input in eng_inputs
-                    if input not in input_dict[engine.name]
-                ],
+                inputs=[input for input in eng_inputs if input not in input_dict[engine.name]],
                 outputs=[
-                    output
-                    for output in eng_outputs
-                    if output not in output_dict[engine.name]
+                    output for output in eng_outputs if output not in output_dict[engine.name]
                 ],
             )
 
@@ -214,9 +200,9 @@ class PropulsionPreMission(om.Group):
 
 
 class PropulsionSum(om.ExplicitComponent):
-    '''
+    """
     Calculates propulsion system level sums of individual engine performance parameters.
-    '''
+    """
 
     def initialize(self):
         add_aviary_option(self, Aircraft.Engine.NUM_ENGINES)
@@ -224,9 +210,7 @@ class PropulsionSum(om.ExplicitComponent):
     def setup(self):
         num_engine_type = len(self.options[Aircraft.Engine.NUM_ENGINES])
 
-        add_aviary_input(
-            self, Aircraft.Engine.SCALED_SLS_THRUST, val=np.zeros(num_engine_type)
-        )
+        add_aviary_input(self, Aircraft.Engine.SCALED_SLS_THRUST, val=np.zeros(num_engine_type))
 
         add_aviary_output(self, Aircraft.Propulsion.TOTAL_SCALED_SLS_THRUST, val=0.0)
 
@@ -244,6 +228,4 @@ class PropulsionSum(om.ExplicitComponent):
 
         thrust = inputs[Aircraft.Engine.SCALED_SLS_THRUST]
 
-        outputs[Aircraft.Propulsion.TOTAL_SCALED_SLS_THRUST] = np.dot(
-            thrust, num_engines
-        )
+        outputs[Aircraft.Propulsion.TOTAL_SCALED_SLS_THRUST] = np.dot(thrust, num_engines)

@@ -100,9 +100,7 @@ class CoreGeometryBuilder(GeometryBuilderBase):
 
         if method != 'external':
             if both_geom:
-                geom_group = CombinedGeometry(
-                    code_origin_to_prioritize=code_origin_to_prioritize
-                )
+                geom_group = CombinedGeometry(code_origin_to_prioritize=code_origin_to_prioritize)
 
             elif code_origin is GASP:
                 geom_group = SizeGroup()
@@ -132,7 +130,7 @@ class CoreGeometryBuilder(GeometryBuilderBase):
         params = {}
 
         for entry in Aircraft.Nacelle.__dict__:
-            if entry != "__dict__":  # cannot get attribute from mappingproxy
+            if entry != '__dict__':  # cannot get attribute from mappingproxy
                 var = getattr(Aircraft.Nacelle, entry)
                 if var in aviary_inputs:
                     if 'total' not in var:
@@ -156,18 +154,18 @@ class CoreGeometryBuilder(GeometryBuilderBase):
 
         # TODO output differs by method
         # TODO finish variables of interest
-        wing_outputs = [Aircraft.Wing.AREA,
-                        Aircraft.Wing.SPAN,
-                        Aircraft.Wing.ASPECT_RATIO,
-                        Aircraft.Wing.SWEEP]
-        htail_outputs = [Aircraft.HorizontalTail.AREA,
-                         Aircraft.VerticalTail.AREA]
-        fuselage_outputs = [Aircraft.Fuselage.LENGTH,
-                            Aircraft.Fuselage.AVG_DIAMETER]
+        wing_outputs = [
+            Aircraft.Wing.AREA,
+            Aircraft.Wing.SPAN,
+            Aircraft.Wing.ASPECT_RATIO,
+            Aircraft.Wing.SWEEP,
+        ]
+        htail_outputs = [Aircraft.HorizontalTail.AREA, Aircraft.VerticalTail.AREA]
+        fuselage_outputs = [Aircraft.Fuselage.LENGTH, Aircraft.Fuselage.AVG_DIAMETER]
 
         with open(filepath, mode='w') as f:
             if self.use_both_geometries:
-                method = ('FLOPS and GASP methods')
+                method = 'FLOPS and GASP methods'
             else:
                 method = self.code_origin.value + ' method'
             f.write(f'# Geometry: {method}\n')

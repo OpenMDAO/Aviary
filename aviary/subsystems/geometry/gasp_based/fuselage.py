@@ -22,22 +22,21 @@ class FuselageParameters(om.ExplicitComponent):
         add_aviary_option(self, Settings.VERBOSITY)
 
     def setup(self):
-
         add_aviary_input(self, Aircraft.Fuselage.DELTA_DIAMETER, units='ft')
 
         add_aviary_output(self, Aircraft.Fuselage.AVG_DIAMETER, units='inch')
-        self.add_output("cabin_height", val=0, units="ft", desc="HC: height of cabin")
-        self.add_output("cabin_len", val=0, units="ft", desc="LC: length of cabin")
-        self.add_output("nose_height", val=0, units="ft", desc="HN: height of nose")
+        self.add_output('cabin_height', val=0, units='ft', desc='HC: height of cabin')
+        self.add_output('cabin_len', val=0, units='ft', desc='LC: length of cabin')
+        self.add_output('nose_height', val=0, units='ft', desc='HN: height of nose')
 
         self.declare_partials(
-            "cabin_height",
+            'cabin_height',
             [
                 Aircraft.Fuselage.DELTA_DIAMETER,
             ],
         )
         self.declare_partials(
-            "nose_height",
+            'nose_height',
             [
                 Aircraft.Fuselage.DELTA_DIAMETER,
             ],
@@ -59,7 +58,7 @@ class FuselageParameters(om.ExplicitComponent):
 
         if PAX < 1:
             if verbosity >= Verbosity.BRIEF:
-                print("Warning: you have not specified at least one passenger")
+                print('Warning: you have not specified at least one passenger')
 
         # single seat across
         cabin_len_a = PAX * seat_pitch / 12
@@ -78,18 +77,16 @@ class FuselageParameters(om.ExplicitComponent):
         # between the smoothed function and the stepwise function at 1 and 2 seats.
         sig1 = sigmoidX(seats_abreast, 1.5, -0.01)
         sig2 = sigmoidX(seats_abreast, 1.5, 0.01)
-        outputs["cabin_height"] = cabin_height_a * sig1 + cabin_height_b*sig2
-        outputs["cabin_len"] = cabin_len_a * sig1 + cabin_len_b*sig2
-        outputs["nose_height"] = nose_height_a * sig1 + nose_height_b*sig2
+        outputs['cabin_height'] = cabin_height_a * sig1 + cabin_height_b * sig2
+        outputs['cabin_len'] = cabin_len_a * sig1 + cabin_len_b * sig2
+        outputs['nose_height'] = nose_height_a * sig1 + nose_height_b * sig2
 
     def compute_partials(self, inputs, J):
         options = self.options
         seats_abreast = options[Aircraft.Fuselage.NUM_SEATS_ABREAST]
 
-        J["nose_height", Aircraft.Fuselage.DELTA_DIAMETER] = -sigmoidX(
-            seats_abreast, 1.5, 0.01)
-        J["cabin_height", Aircraft.Fuselage.DELTA_DIAMETER] = sigmoidX(
-            seats_abreast, 1.5, -0.01)
+        J['nose_height', Aircraft.Fuselage.DELTA_DIAMETER] = -sigmoidX(seats_abreast, 1.5, 0.01)
+        J['cabin_height', Aircraft.Fuselage.DELTA_DIAMETER] = sigmoidX(seats_abreast, 1.5, -0.01)
 
 
 class FuselageSize(om.ExplicitComponent):
@@ -100,11 +97,11 @@ class FuselageSize(om.ExplicitComponent):
 
     def setup(self):
         add_aviary_input(self, Aircraft.Fuselage.NOSE_FINENESS, units='unitless')
-        self.add_input("nose_height", val=0, units="ft", desc="HN: height of nose")
+        self.add_input('nose_height', val=0, units='ft', desc='HN: height of nose')
         add_aviary_input(self, Aircraft.Fuselage.PILOT_COMPARTMENT_LENGTH, units='ft')
-        self.add_input("cabin_len", val=0, units="ft", desc="LC: length of cabin")
+        self.add_input('cabin_len', val=0, units='ft', desc='LC: length of cabin')
         add_aviary_input(self, Aircraft.Fuselage.TAIL_FINENESS, units='unitless')
-        self.add_input("cabin_height", val=0, units="ft", desc="HC: height of cabin")
+        self.add_input('cabin_height', val=0, units='ft', desc='HC: height of cabin')
         add_aviary_input(self, Aircraft.Fuselage.WETTED_AREA_SCALER, units='unitless')
 
         add_aviary_output(self, Aircraft.Fuselage.LENGTH, units='ft')
@@ -115,11 +112,11 @@ class FuselageSize(om.ExplicitComponent):
             Aircraft.Fuselage.LENGTH,
             [
                 Aircraft.Fuselage.NOSE_FINENESS,
-                "nose_height",
+                'nose_height',
                 Aircraft.Fuselage.PILOT_COMPARTMENT_LENGTH,
-                "cabin_len",
+                'cabin_len',
                 Aircraft.Fuselage.TAIL_FINENESS,
-                "cabin_height",
+                'cabin_height',
             ],
         )
 
@@ -127,11 +124,11 @@ class FuselageSize(om.ExplicitComponent):
             Aircraft.Fuselage.WETTED_AREA,
             [
                 Aircraft.Fuselage.WETTED_AREA_SCALER,
-                "cabin_height",
+                'cabin_height',
                 Aircraft.Fuselage.NOSE_FINENESS,
-                "nose_height",
+                'nose_height',
                 Aircraft.Fuselage.PILOT_COMPARTMENT_LENGTH,
-                "cabin_len",
+                'cabin_len',
                 Aircraft.Fuselage.TAIL_FINENESS,
             ],
         )
@@ -140,11 +137,11 @@ class FuselageSize(om.ExplicitComponent):
             Aircraft.TailBoom.LENGTH,
             [
                 Aircraft.Fuselage.NOSE_FINENESS,
-                "nose_height",
+                'nose_height',
                 Aircraft.Fuselage.PILOT_COMPARTMENT_LENGTH,
-                "cabin_len",
+                'cabin_len',
                 Aircraft.Fuselage.TAIL_FINENESS,
-                "cabin_height",
+                'cabin_height',
             ],
         )
 
@@ -154,16 +151,11 @@ class FuselageSize(om.ExplicitComponent):
         LoverD_tail = inputs[Aircraft.Fuselage.TAIL_FINENESS]
         cockpit_len = inputs[Aircraft.Fuselage.PILOT_COMPARTMENT_LENGTH]
         fus_SA_scaler = inputs[Aircraft.Fuselage.WETTED_AREA_SCALER]
-        nose_height = inputs["nose_height"]
-        cabin_len = inputs["cabin_len"]
-        cabin_height = inputs["cabin_height"]
+        nose_height = inputs['nose_height']
+        cabin_len = inputs['cabin_len']
+        cabin_height = inputs['cabin_height']
 
-        fus_len = (
-            LoverD_nose * nose_height
-            + cockpit_len
-            + cabin_len
-            + LoverD_tail * cabin_height
-        )
+        fus_len = LoverD_nose * nose_height + cockpit_len + cabin_len + LoverD_tail * cabin_height
 
         fus_SA = cabin_height * (
             2.5 * (LoverD_nose * nose_height + cockpit_len)
@@ -182,20 +174,20 @@ class FuselageSize(om.ExplicitComponent):
     def compute_partials(self, inputs, J):
         LoverD_nose = inputs[Aircraft.Fuselage.NOSE_FINENESS]
         LoverD_tail = inputs[Aircraft.Fuselage.TAIL_FINENESS]
-        nose_height = inputs["nose_height"]
-        cabin_height = inputs["cabin_height"]
+        nose_height = inputs['nose_height']
+        cabin_height = inputs['cabin_height']
         fus_SA_scaler = inputs[Aircraft.Fuselage.WETTED_AREA_SCALER]
         cockpit_len = inputs[Aircraft.Fuselage.PILOT_COMPARTMENT_LENGTH]
-        cabin_len = inputs["cabin_len"]
+        cabin_len = inputs['cabin_len']
 
         J[Aircraft.Fuselage.LENGTH, Aircraft.Fuselage.NOSE_FINENESS] = nose_height
-        J[Aircraft.Fuselage.LENGTH, "nose_height"] = LoverD_nose
+        J[Aircraft.Fuselage.LENGTH, 'nose_height'] = LoverD_nose
         J[Aircraft.Fuselage.LENGTH, Aircraft.Fuselage.PILOT_COMPARTMENT_LENGTH] = 1
-        J[Aircraft.Fuselage.LENGTH, "cabin_len"] = 1
+        J[Aircraft.Fuselage.LENGTH, 'cabin_len'] = 1
         J[Aircraft.Fuselage.LENGTH, Aircraft.Fuselage.TAIL_FINENESS] = cabin_height
-        J[Aircraft.Fuselage.LENGTH, "cabin_height"] = LoverD_tail
+        J[Aircraft.Fuselage.LENGTH, 'cabin_height'] = LoverD_tail
 
-        J[Aircraft.Fuselage.WETTED_AREA, "cabin_height"] = fus_SA_scaler * (
+        J[Aircraft.Fuselage.WETTED_AREA, 'cabin_height'] = fus_SA_scaler * (
             2.5 * (LoverD_nose * nose_height + cockpit_len)
             + 3.14 * cabin_len
             + 2.1 * LoverD_tail * cabin_height
@@ -204,15 +196,13 @@ class FuselageSize(om.ExplicitComponent):
         J[Aircraft.Fuselage.WETTED_AREA, Aircraft.Fuselage.NOSE_FINENESS] = (
             fus_SA_scaler * cabin_height * 2.5 * nose_height
         )
-        J[Aircraft.Fuselage.WETTED_AREA, "nose_height"] = (
+        J[Aircraft.Fuselage.WETTED_AREA, 'nose_height'] = (
             fus_SA_scaler * cabin_height * 2.5 * LoverD_nose
         )
         J[Aircraft.Fuselage.WETTED_AREA, Aircraft.Fuselage.PILOT_COMPARTMENT_LENGTH] = (
             fus_SA_scaler * cabin_height * 2.5
         )
-        J[Aircraft.Fuselage.WETTED_AREA, "cabin_len"] = (
-            fus_SA_scaler * 3.14 * cabin_height
-        )
+        J[Aircraft.Fuselage.WETTED_AREA, 'cabin_len'] = fus_SA_scaler * 3.14 * cabin_height
         J[Aircraft.Fuselage.WETTED_AREA, Aircraft.Fuselage.TAIL_FINENESS] = (
             fus_SA_scaler * 2.1 * cabin_height**2
         )
@@ -223,11 +213,11 @@ class FuselageSize(om.ExplicitComponent):
         )
 
         J[Aircraft.TailBoom.LENGTH, Aircraft.Fuselage.NOSE_FINENESS] = nose_height
-        J[Aircraft.TailBoom.LENGTH, "nose_height"] = LoverD_nose
+        J[Aircraft.TailBoom.LENGTH, 'nose_height'] = LoverD_nose
         J[Aircraft.TailBoom.LENGTH, Aircraft.Fuselage.PILOT_COMPARTMENT_LENGTH] = 1
-        J[Aircraft.TailBoom.LENGTH, "cabin_len"] = 1
+        J[Aircraft.TailBoom.LENGTH, 'cabin_len'] = 1
         J[Aircraft.TailBoom.LENGTH, Aircraft.Fuselage.TAIL_FINENESS] = cabin_height
-        J[Aircraft.TailBoom.LENGTH, "cabin_height"] = LoverD_tail
+        J[Aircraft.TailBoom.LENGTH, 'cabin_height'] = LoverD_tail
 
 
 class FuselageGroup(om.Group):
@@ -236,20 +226,19 @@ class FuselageGroup(om.Group):
     """
 
     def setup(self):
-
         # outputs from parameters that are used in size but not outside of this group
-        connected_input_outputs = ["cabin_height", "cabin_len", "nose_height"]
+        connected_input_outputs = ['cabin_height', 'cabin_len', 'nose_height']
 
         parameters = self.add_subsystem(
-            "parameters",
+            'parameters',
             FuselageParameters(),
-            promotes_inputs=["aircraft:*"],
-            promotes_outputs=["aircraft:*"] + connected_input_outputs,
+            promotes_inputs=['aircraft:*'],
+            promotes_outputs=['aircraft:*'] + connected_input_outputs,
         )
 
         size = self.add_subsystem(
-            "size",
+            'size',
             FuselageSize(),
-            promotes_inputs=connected_input_outputs + ["aircraft:*"],
-            promotes_outputs=["aircraft:*"],
+            promotes_inputs=connected_input_outputs + ['aircraft:*'],
+            promotes_outputs=['aircraft:*'],
         )

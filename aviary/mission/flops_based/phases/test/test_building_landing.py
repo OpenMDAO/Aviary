@@ -26,16 +26,14 @@ class LandingPhaseTest(unittest.TestCase):
         prob.setup(force_alloc_complex=True)
         prob.run_model()
         partial_data = prob.check_partials(
-            out_stream=None, method="cs", compact_print=False, excludes=["*atmosphere*"])
+            out_stream=None, method='cs', compact_print=False, excludes=['*atmosphere*']
+        )
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
 
         tol = 1e-6
-        assert_near_equal(
-            prob[Mission.Landing.GROUND_DISTANCE], 6331.781, tol
-        )
-        assert_near_equal(
-            prob[Mission.Landing.INITIAL_VELOCITY], 134.9752, tol)
+        assert_near_equal(prob[Mission.Landing.GROUND_DISTANCE], 6331.781, tol)
+        assert_near_equal(prob[Mission.Landing.INITIAL_VELOCITY], 134.9752, tol)
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     unittest.main()

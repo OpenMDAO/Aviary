@@ -1,20 +1,19 @@
 import openmdao.api as om
 
 from aviary.constants import GRAV_ENGLISH_LBM
-from aviary.subsystems.mass.flops_based.distributed_prop import \
-    distributed_engine_count_factor
+from aviary.subsystems.mass.flops_based.distributed_prop import distributed_engine_count_factor
 from aviary.variable_info.functions import add_aviary_input, add_aviary_output, add_aviary_option
 from aviary.variable_info.variables import Aircraft, Mission
 
 
 class TransportInstrumentMass(om.ExplicitComponent):
-    '''
+    """
     Calculates mass of instrument group for transports and GA aircraft.
     The methodology is based on the FLOPS weight equations, modified to
     output mass instead of weight.
 
     ASSUMPTIONS: All engines have instrument mass that follows this equation
-    '''
+    """
 
     def initialize(self):
         add_aviary_option(self, Aircraft.CrewPayload.NUM_FLIGHT_CREW)
@@ -28,7 +27,7 @@ class TransportInstrumentMass(om.ExplicitComponent):
 
         add_aviary_output(self, Aircraft.Instruments.MASS, units='lbm')
 
-        self.declare_partials("*", "*")
+        self.declare_partials('*', '*')
 
     def compute(self, inputs, outputs):
         num_crew = self.options[Aircraft.CrewPayload.NUM_FLIGHT_CREW]
@@ -42,12 +41,13 @@ class TransportInstrumentMass(om.ExplicitComponent):
         mass_scaler = inputs[Aircraft.Instruments.MASS_SCALER]
 
         instrument_weight = (
-            0.48 * fuse_area**0.57 * max_mach**0.5
+            0.48
+            * fuse_area**0.57
+            * max_mach**0.5
             * (10.0 + 2.5 * num_crew + num_wing_eng_fact + 1.5 * num_fuse_eng_fact)
         )
 
-        outputs[Aircraft.Instruments.MASS] = instrument_weight * \
-            mass_scaler / GRAV_ENGLISH_LBM
+        outputs[Aircraft.Instruments.MASS] = instrument_weight * mass_scaler / GRAV_ENGLISH_LBM
 
     def compute_partials(self, inputs, J):
         num_crew = self.options[Aircraft.CrewPayload.NUM_FLIGHT_CREW]
@@ -60,7 +60,7 @@ class TransportInstrumentMass(om.ExplicitComponent):
         max_mach = self.options[Mission.Constraints.MAX_MACH]
         mass_scaler = inputs[Aircraft.Instruments.MASS_SCALER]
 
-        fact = (10.0 + 2.5 * num_crew + num_wing_eng_fact + 1.5 * num_fuse_eng_fact)
+        fact = 10.0 + 2.5 * num_crew + num_wing_eng_fact + 1.5 * num_fuse_eng_fact
         area_fact = fuse_area**0.57
         mach_fact = max_mach**0.5
 

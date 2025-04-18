@@ -2,10 +2,13 @@
 Run the a mission with a simple external component that computes the wing
 and horizontal tail mass.
 """
+
 from copy import deepcopy
 import aviary.api as av
 
-from aviary.examples.external_subsystems.simple_weight.simple_weight_builder import WingWeightBuilder
+from aviary.examples.external_subsystems.simple_weight.simple_weight_builder import (
+    WingWeightBuilder,
+)
 
 
 phase_info = deepcopy(av.default_height_energy_phase_info)
@@ -31,7 +34,7 @@ if __name__ == '__main__':
     # Link phases and variables
     prob.link_phases()
 
-    prob.add_driver("SLSQP")
+    prob.add_driver('SLSQP')
 
     prob.add_design_variables()
 

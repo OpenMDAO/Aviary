@@ -32,8 +32,8 @@ class Landing:
         # connections.
 
     __slots__ = (
-        "ref_wing_area",
-        "Cl_max_ldg",
+        'ref_wing_area',
+        'Cl_max_ldg',
     )
 
     def build_phase(self, use_detailed=False):
@@ -52,8 +52,8 @@ class Landing:
 
         if use_detailed:
             raise om.AnalysisError(
-                "Must set landing method to `use_detailed=False`, detailed landing is"
-                " not currently enabled."
+                'Must set landing method to `use_detailed=False`, detailed landing is'
+                ' not currently enabled.'
             )
 
         ##############
@@ -61,10 +61,9 @@ class Landing:
         ##############
 
         landing = LandingGroup()
+        landing.set_input_defaults(Aircraft.Wing.AREA, val=self.ref_wing_area, units='ft**2')
         landing.set_input_defaults(
-            Aircraft.Wing.AREA, val=self.ref_wing_area, units="ft**2"
+            Mission.Landing.LIFT_COEFFICIENT_MAX, val=self.Cl_max_ldg, units='unitless'
         )
-        landing.set_input_defaults(
-            Mission.Landing.LIFT_COEFFICIENT_MAX, val=self.Cl_max_ldg, units='unitless')
 
         return landing
