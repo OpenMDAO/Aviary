@@ -3,7 +3,7 @@ from openmdao.utils.mpi import MPI
 
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.enums import EquationsOfMotion
-from aviary.variable_info.variables import Aircraft, Mission, Dynamic, Settings
+from aviary.variable_info.variables import Settings
 
 HEIGHT_ENERGY = EquationsOfMotion.HEIGHT_ENERGY
 

@@ -1,14 +1,11 @@
 import argparse
 from collections import defaultdict
-from dataclasses import dataclass
 import importlib.util
 import json
 import os
-import pathlib
 from pathlib import Path
 import re
 import shutil
-import warnings
 import zipfile
 
 import numpy as np
@@ -18,8 +15,6 @@ import pandas as pd
 from bokeh.models import (
     Legend,
     LegendItem,
-    CheckboxGroup,
-    CustomJS,
     TextInput,
     ColumnDataSource,
     CustomJS,
@@ -29,8 +24,7 @@ from bokeh.models import (
     PrintfTickFormatter,
 )
 from bokeh.plotting import figure
-from bokeh.layouts import column
-from bokeh.palettes import Category10, Category20, d3
+from bokeh.palettes import Category20, d3
 
 import panel as pn
 
@@ -273,7 +267,7 @@ def create_table_pane_from_json(json_filepath, documentation):
             ),
             table_pane,
         )
-    except Exception as err:
+    except Exception:
         table_pane_with_doc = pn.Column(
             pn.pane.HTML(
                 f'<p>{documentation}</p>', styles={'text-align': documentation_text_align}
@@ -346,7 +340,7 @@ def get_run_status(status_filepath):
                 return '✅ Success'
             else:
                 return f'❌ {status_dct["Exit status"]}'
-    except Exception as err:
+    except Exception:
         return 'Unknown'
 
 
@@ -1285,7 +1279,7 @@ def dashboard(script_name, problem_recorder, driver_recorder, port, run_in_backg
 
         interactive_mission_var_plot_pane_with_doc = pn.Column(
             pn.pane.HTML(
-                f'<p>Plot of mission variables allowing user to select X and Y plot values.</p>',
+                '<p>Plot of mission variables allowing user to select X and Y plot values.</p>',
                 styles={'text-align': documentation_text_align},
             ),
             interactive_mission_var_plot_pane,

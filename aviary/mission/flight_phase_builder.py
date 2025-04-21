@@ -573,21 +573,21 @@ class FlightPhaseBase(PhaseBuilderBase):
         ###################
         # Add Constraints #
         ###################
-        if optimize_mach and fix_initial and not Dynamic.Atmosphere.MACH in constraints:
+        if optimize_mach and fix_initial and Dynamic.Atmosphere.MACH not in constraints:
             phase.add_boundary_constraint(
                 Dynamic.Atmosphere.MACH,
                 loc='initial',
                 equals=initial_mach,
             )
 
-        if optimize_mach and constrain_final and not Dynamic.Atmosphere.MACH in constraints:
+        if optimize_mach and constrain_final and Dynamic.Atmosphere.MACH not in constraints:
             phase.add_boundary_constraint(
                 Dynamic.Atmosphere.MACH,
                 loc='final',
                 equals=final_mach,
             )
 
-        if optimize_altitude and fix_initial and not Dynamic.Mission.ALTITUDE in constraints:
+        if optimize_altitude and fix_initial and Dynamic.Mission.ALTITUDE not in constraints:
             phase.add_boundary_constraint(
                 Dynamic.Mission.ALTITUDE,
                 loc='initial',
@@ -596,7 +596,7 @@ class FlightPhaseBase(PhaseBuilderBase):
                 ref=1.0e4,
             )
 
-        if optimize_altitude and constrain_final and not Dynamic.Mission.ALTITUDE in constraints:
+        if optimize_altitude and constrain_final and Dynamic.Mission.ALTITUDE not in constraints:
             phase.add_boundary_constraint(
                 Dynamic.Mission.ALTITUDE,
                 loc='final',
@@ -605,17 +605,17 @@ class FlightPhaseBase(PhaseBuilderBase):
                 ref=1.0e4,
             )
 
-        if no_descent and not Dynamic.Mission.ALTITUDE_RATE in constraints:
+        if no_descent and Dynamic.Mission.ALTITUDE_RATE not in constraints:
             phase.add_path_constraint(Dynamic.Mission.ALTITUDE_RATE, lower=0.0)
 
-        if no_climb and not Dynamic.Mission.ALTITUDE_RATE in constraints:
+        if no_climb and Dynamic.Mission.ALTITUDE_RATE not in constraints:
             phase.add_path_constraint(Dynamic.Mission.ALTITUDE_RATE, upper=0.0)
 
         required_available_climb_rate, units = user_options['required_available_climb_rate']
 
         if (
             required_available_climb_rate is not None
-            and not Dynamic.Mission.ALTITUDE_RATE_MAX in constraints
+            and Dynamic.Mission.ALTITUDE_RATE_MAX not in constraints
         ):
             phase.add_path_constraint(
                 Dynamic.Mission.ALTITUDE_RATE_MAX,
@@ -623,7 +623,7 @@ class FlightPhaseBase(PhaseBuilderBase):
                 units=units,
             )
 
-        if not Dynamic.Vehicle.Propulsion.THROTTLE in constraints:
+        if Dynamic.Vehicle.Propulsion.THROTTLE not in constraints:
             if throttle_enforcement == 'boundary_constraint':
                 phase.add_boundary_constraint(
                     Dynamic.Vehicle.Propulsion.THROTTLE,

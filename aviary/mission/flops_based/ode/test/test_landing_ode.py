@@ -3,7 +3,6 @@ import unittest
 import openmdao.api as om
 
 from aviary.subsystems.propulsion.utils import build_engine_deck
-from aviary.utils.aviary_values import get_items
 from aviary.utils.functions import set_aviary_initial_values
 from aviary.utils.test_utils.default_subsystems import get_default_mission_subsystems
 from aviary.mission.flops_based.ode.landing_ode import FlareODE

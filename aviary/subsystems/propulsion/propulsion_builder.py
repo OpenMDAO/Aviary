@@ -10,7 +10,6 @@ CorePropulsionBuilder : the interface for Aviary's core propulsion subsystem bui
 
 import numpy as np
 
-from openmdao.utils.units import convert_units as _convert_units
 
 from aviary.interface.utils.markdown_utils import write_markdown_variable_table
 

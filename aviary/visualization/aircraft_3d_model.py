@@ -248,7 +248,7 @@ class AircraftModelReader(object):
         model_options = cr.list_model_options(out_stream=None)
         try:
             self.aviary_options = model_options['root']['aviary_options']
-        except KeyError as e:
+        except KeyError:
             issue_warning(
                 f'The case recorder file {self._case_recorder_file} does not have any metadata for the root system'
             )
@@ -299,7 +299,7 @@ class AircraftModelReader(object):
         try:
             val = self._final_case.get_val(var_prom_name, units=units)
             return float(val)
-        except KeyError as e:
+        except KeyError:
             pass
 
         abs2prom = self._problem_metadata['abs2prom']
@@ -764,7 +764,7 @@ class Engines(object):
                 self._has_propellers = self._reader.get_variable_from_case(
                     av.Aircraft.Engine.HAS_PROPELLERS
                 )
-            except AircraftModelReaderError as e2:
+            except AircraftModelReaderError:
                 self._has_propellers = False
         except AircraftModelReaderError as e:
             print(f'Warning: Unable to read engine variables due to the error: {e} ')

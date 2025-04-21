@@ -1,5 +1,4 @@
 from enum import Enum
-from copy import deepcopy
 import numpy as np
 
 import openmdao.api as om

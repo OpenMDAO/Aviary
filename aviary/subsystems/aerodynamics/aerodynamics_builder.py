@@ -25,7 +25,6 @@ from aviary.subsystems.aerodynamics.flops_based.solved_alpha_group import (
 from aviary.subsystems.aerodynamics.flops_based.tabular_aero_group import (
     TabularAeroGroup,
 )
-from aviary.subsystems.aerodynamics.flops_based.drag_polar import DragPolar
 from aviary.subsystems.aerodynamics.flops_based.design import Design
 from aviary.subsystems.aerodynamics.gasp_based.premission_aero import PreMissionAero
 from aviary.subsystems.aerodynamics.gasp_based.gaspaero import CruiseAero

@@ -1,7 +1,6 @@
 from packaging import version
 import unittest
 
-import numpy as np
 
 import openmdao
 import openmdao.api as om

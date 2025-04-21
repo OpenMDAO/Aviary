@@ -7,7 +7,6 @@ from aviary.subsystems.atmosphere.atmosphere import Atmosphere
 from pathlib import Path
 from openmdao.utils.testing_utils import use_tempdirs
 
-from aviary.interface.methods_for_level2 import AviaryProblem
 from aviary.subsystems.propulsion.turboprop_model import TurbopropModel
 from aviary.subsystems.propulsion.propeller.propeller_performance import (
     PropellerPerformance,

@@ -7,7 +7,6 @@ setup and execution. These tasks include consistency checking between related va
 import warnings
 
 import numpy as np
-import openmdao.api as om
 
 from aviary.utils.aviary_values import AviaryValues
 from aviary.utils.named_values import get_keys

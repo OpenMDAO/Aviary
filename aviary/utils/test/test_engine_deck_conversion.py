@@ -52,7 +52,7 @@ class TestEngineDeckConversion(unittest.TestCase):
                 try:
                     self.assertEqual(line_no_whitespace.count(expected_line), 1)
 
-                except Exception as error:
+                except Exception:
                     exc_string = (
                         f'Error: {filename}\nFound: {line_no_whitespace}\nExpected: {expected_line}'
                     )

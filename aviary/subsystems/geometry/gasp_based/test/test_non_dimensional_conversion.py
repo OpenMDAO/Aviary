@@ -8,9 +8,6 @@ from aviary.subsystems.geometry.gasp_based.non_dimensional_conversion import (
 )
 from aviary.variable_info.variables import Aircraft
 
-from aviary.subsystems.geometry.gasp_based.non_dimensional_conversion import (
-    DimensionalNonDimensionalInterchange,
-)
 from aviary.variable_info.functions import setup_model_options
 from aviary.variable_info.options import get_option_defaults
 

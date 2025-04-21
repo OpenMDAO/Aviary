@@ -1,10 +1,9 @@
 import numpy as np
 import openmdao.api as om
 from openmdao.utils import cs_safe as cs
-import os
 
-from aviary.variable_info.functions import add_aviary_input, add_aviary_output
-from aviary.variable_info.variables import Aircraft, Dynamic, Mission
+from aviary.variable_info.functions import add_aviary_input
+from aviary.variable_info.variables import Aircraft, Dynamic
 from aviary.constants import GRAV_ENGLISH_GASP
 
 FCFWC = 1  # Excrescence drag factor

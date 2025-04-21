@@ -17,9 +17,6 @@ class AviaryValues
     define a collection of named values with associated units
 """
 
-from enum import Enum
-
-import numpy as np
 from openmdao.utils.units import convert_units as _convert_units
 
 from aviary.utils.named_values import NamedValues, get_items, get_keys, get_values

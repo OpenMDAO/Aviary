@@ -5,15 +5,12 @@ Test for some features when using an external subsystem in the mission.
 from copy import deepcopy
 import unittest
 
-import numpy as np
 import openmdao.api as om
 from openmdao.utils.testing_utils import use_tempdirs
-from openmdao.utils.assert_utils import assert_near_equal
 
 from aviary.interface.methods_for_level2 import AviaryProblem
 
 from aviary.subsystems.subsystem_builder_base import SubsystemBuilderBase
-from aviary.utils.csv_data_file import read_data_file
 from aviary.interface.default_phase_info.height_energy import (
     phase_info as energy_phase_info,
 )

@@ -470,11 +470,11 @@ class EngineDeck(EngineModel):
         #   check that they match is done after reading data
         if THRUST in engine_variables:
             # if thrust is present, but gross thrust or ram drag also present raise warning
-            if GROSS_THRUST in engine_variables and not RAM_DRAG in engine_variables:
+            if GROSS_THRUST in engine_variables and RAM_DRAG not in engine_variables:
                 warnings.warn(
                     f'{message} contains both net and gross thrust. Only net thrust will be used.'
                 )
-            if not GROSS_THRUST in engine_variables and RAM_DRAG in engine_variables:
+            if GROSS_THRUST not in engine_variables and RAM_DRAG in engine_variables:
                 warnings.warn(
                     f'{message} contains both net thrust '
                     'and ram drag. Only net thrust will be used.'

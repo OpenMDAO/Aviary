@@ -75,19 +75,19 @@ class fortran_to_aviaryTestCases(CommandEntryPointsTestCases):
 
 class hangarTestCases(CommandEntryPointsTestCases):
     def test_copy_folder(self):
-        cmd = f'aviary hangar engines'
+        cmd = 'aviary hangar engines'
         self.run_and_test_cmd(cmd)
 
     def test_copy_deck(self):
-        cmd = f'aviary hangar turbofan_22k.txt'
+        cmd = 'aviary hangar turbofan_22k.txt'
         self.run_and_test_cmd(cmd)
 
     def test_copy_n3cc_data(self):
-        cmd = f'aviary hangar N3CC/N3CC_data.py'
+        cmd = 'aviary hangar N3CC/N3CC_data.py'
         self.run_and_test_cmd(cmd)
 
     def test_copy_multiple(self):
-        cmd = f'aviary hangar small_single_aisle_GASP.dat small_single_aisle_GASP.csv'
+        cmd = 'aviary hangar small_single_aisle_GASP.dat small_single_aisle_GASP.csv'
         self.run_and_test_cmd(cmd)
 
     def test_copy_to(self):

@@ -62,12 +62,12 @@ class GearboxMission(om.Group):
         )
         self.connect(
             f'{Dynamic.Vehicle.Propulsion.SHAFT_POWER}_out',
-            f'torque_comp.shaft_power_out',
+            'torque_comp.shaft_power_out',
         )
 
         self.connect(
             f'{Dynamic.Vehicle.Propulsion.RPM}_out',
-            f'torque_comp.rpm_out',
+            'torque_comp.rpm_out',
         )
 
         # Determine the maximum power available at this flight condition

@@ -19,7 +19,7 @@ from aviary.validation_cases.validation_tests import (
     get_flops_inputs,
     print_case,
 )
-from aviary.variable_info.variables import Aircraft, Mission
+from aviary.variable_info.variables import Aircraft
 
 
 class TransportFurnishingsGroupMassTest(unittest.TestCase):

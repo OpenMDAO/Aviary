@@ -12,13 +12,12 @@ import openmdao.api as om
 from aviary.subsystems.atmosphere.atmosphere import Atmosphere
 
 from aviary.mission.base_ode import BaseODE as _BaseODE
-from aviary.mission.flops_based.ode.landing_eom import FlareEOM, StallSpeed
+from aviary.mission.flops_based.ode.landing_eom import FlareEOM
+from aviary.mission.flops_based.ode.takeoff_ode import StallSpeed
 from aviary.mission.flops_based.ode.takeoff_ode import TakeoffODE as _TakeoffODE
 from aviary.mission.gasp_based.ode.time_integration_base_classes import (
     add_SGM_required_inputs,
 )
-from aviary.mission.utils import ExternalSubsystemGroup
-from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.enums import AnalysisScheme
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 

@@ -10,7 +10,6 @@ from aviary.utils.test_utils.variable_test import assert_match_varnames
 from aviary.validation_cases.validation_tests import (
     flops_validation_test,
     get_flops_case_names,
-    get_flops_inputs,
     get_flops_options,
     print_case,
 )

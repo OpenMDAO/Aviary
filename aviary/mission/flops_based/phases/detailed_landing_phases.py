@@ -39,7 +39,6 @@ from aviary.mission.initial_guess_builders import (
     InitialGuessParameter,
     InitialGuessPolynomialControl,
     InitialGuessState,
-    InitialGuessIntegrationVariable,
 )
 from aviary.subsystems.aerodynamics.aerodynamics_builder import CoreAerodynamicsBuilder
 from aviary.utils.aviary_options_dict import AviaryOptionsDictionary

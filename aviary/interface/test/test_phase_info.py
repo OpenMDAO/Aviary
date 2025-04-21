@@ -23,7 +23,7 @@ from aviary.mission.phase_builder_base import (
     PhaseBuilderBase as PhaseBuilder,
     phase_info_to_builder,
 )
-from aviary.variable_info.variables import Aircraft, Mission
+from aviary.variable_info.variables import Mission
 
 
 class TestPhaseInfo(unittest.TestCase):

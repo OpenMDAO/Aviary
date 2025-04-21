@@ -8,7 +8,6 @@ import numpy as np
 
 from openmdao.utils.mpi import MPI
 from openmdao.utils.reports_system import register_report
-from openmdao.visualization.tables.table_builder import generate_table
 
 from aviary.interface.utils.markdown_utils import write_markdown_variable_table
 from aviary.utils.utils import wrapped_convert_units

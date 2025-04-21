@@ -9,13 +9,6 @@ import openmdao.api as om
 import numpy as np
 
 from aviary.utils.aviary_values import AviaryValues, get_items
-from aviary.variable_info.enums import (
-    FlapType,
-    GASPEngineType,
-    ProblemType,
-    EquationsOfMotion,
-    LegacyCode,
-)
 from aviary.variable_info.functions import add_aviary_output, add_aviary_input
 from aviary.variable_info.variable_meta_data import _MetaData
 from aviary.variable_info.enums import Verbosity
@@ -470,7 +463,7 @@ def get_model(file_name: str, verbosity=Verbosity.BRIEF) -> Path:
 
     # If the path still doesn't exist, raise an error.
     if not aviary_path.exists():
-        raise FileNotFoundError(f"File or Folder not found in Aviary's hangar")
+        raise FileNotFoundError("File or Folder not found in Aviary's hangar")
 
     return aviary_path
 

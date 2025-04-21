@@ -3,7 +3,6 @@ from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.variables import Dynamic, Mission
 from aviary.variable_info.enums import SpeedType, AlphaModes
 
-from aviary.interface.default_phase_info.two_dof_fiti import add_default_sgm_args
 
 # defaults for height energy based forward in time integeration phases
 cruise_mach = (0.8,)

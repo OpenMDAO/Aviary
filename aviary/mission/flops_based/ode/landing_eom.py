@@ -10,12 +10,11 @@ from aviary.mission.flops_based.ode.takeoff_eom import (
     Accelerations,
     DistanceRates,
     FlightPathAngleRate,
-    StallSpeed,
     VelocityRate,
 )
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.functions import add_aviary_input
-from aviary.variable_info.variables import Aircraft, Dynamic, Mission
+from aviary.variable_info.variables import Dynamic, Mission
 
 
 class FlareEOM(om.Group):

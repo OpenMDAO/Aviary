@@ -1,4 +1,3 @@
-import numpy as np
 import aviary.api as av
 from aviary.examples.external_subsystems.battery.battery_variables import (
     Aircraft,

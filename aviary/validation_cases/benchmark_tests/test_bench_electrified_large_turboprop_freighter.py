@@ -1,9 +1,7 @@
-import numpy as np
 import unittest
 import openmdao.api as om
 
 
-from numpy.testing import assert_almost_equal
 from openmdao.utils.testing_utils import use_tempdirs
 
 from aviary.interface.methods_for_level2 import AviaryProblem
@@ -13,7 +11,6 @@ from aviary.utils.process_input_decks import create_vehicle
 from aviary.variable_info.variables import Aircraft, Mission, Settings
 
 from aviary.models.large_turboprop_freighter.phase_info import (
-    two_dof_phase_info,
     energy_phase_info,
 )
 

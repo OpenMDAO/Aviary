@@ -1,4 +1,4 @@
-from aviary.variable_info.enums import SpeedType, ThrottleAllocation
+from aviary.variable_info.enums import SpeedType
 
 # Energy method
 energy_phase_info = {

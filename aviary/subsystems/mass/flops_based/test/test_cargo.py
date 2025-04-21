@@ -9,7 +9,6 @@ from aviary.utils.test_utils.variable_test import assert_match_varnames
 from aviary.validation_cases.validation_tests import (
     do_validation_test,
     print_case,
-    get_flops_options,
 )
 from aviary.variable_info.variables import Aircraft
 

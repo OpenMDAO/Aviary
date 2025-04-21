@@ -1042,7 +1042,7 @@ class AviaryMissionEditor(tk.Tk):
             if newval < self.phase_order_default:
                 messagebox.showwarning(
                     title='Error',
-                    message=f'Phase transcription order must be '
+                    message='Phase transcription order must be '
                     + 'at least {self.phase_order_default}!',
                 )
                 newval = self.phase_order_default

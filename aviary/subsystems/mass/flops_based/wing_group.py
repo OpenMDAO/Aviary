@@ -1,4 +1,3 @@
-import numpy as np
 import openmdao.api as om
 
 from aviary.subsystems.mass.flops_based.engine_pod import EnginePodMass

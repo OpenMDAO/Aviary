@@ -14,7 +14,6 @@ compared.
 """
 
 import numpy as np
-import openmdao.api as om
 import aviary.api as av
 from aviary.examples.external_subsystems.OAS_weight.OAS_wing_weight_builder import (
     OASWingWeightBuilder,

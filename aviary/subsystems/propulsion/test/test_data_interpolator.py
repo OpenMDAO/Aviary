@@ -1,4 +1,3 @@
-import csv
 import unittest
 
 import numpy as np

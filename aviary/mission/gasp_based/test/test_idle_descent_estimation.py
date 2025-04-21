@@ -3,7 +3,7 @@ import warnings
 import importlib
 
 import openmdao.api as om
-from openmdao.utils.assert_utils import assert_near_equal, assert_check_partials
+from openmdao.utils.assert_utils import assert_near_equal
 
 from aviary.interface.default_phase_info.two_dof_fiti import descent_phases, add_default_sgm_args
 

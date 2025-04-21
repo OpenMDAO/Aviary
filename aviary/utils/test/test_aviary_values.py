@@ -116,7 +116,7 @@ class TestTypes(unittest.TestCase):
 
         try:
             vals.set_val(Aircraft.Engine.DATA_FILE, np.array([]))
-        except IndexError as err:
+        except IndexError:
             self.fail('Expecting to be able to set the value of an empty numpy array.')
         else:
             # NOTE comparing two empty numpy arrays will fail (unlike empty lists), so

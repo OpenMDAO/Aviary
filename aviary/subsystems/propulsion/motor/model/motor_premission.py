@@ -1,5 +1,4 @@
 import openmdao.api as om
-import numpy as np
 
 from aviary.variable_info.variables import Aircraft, Dynamic
 from aviary.utils.aviary_values import AviaryValues

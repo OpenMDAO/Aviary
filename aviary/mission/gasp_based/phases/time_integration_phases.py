@@ -9,7 +9,7 @@ from aviary.mission.gasp_based.ode.groundroll_ode import GroundrollODE
 from aviary.mission.gasp_based.ode.rotation_ode import RotationODE
 from aviary.mission.gasp_based.ode.time_integration_base_classes import SimuPyProblem
 from aviary.variable_info.enums import AlphaModes, AnalysisScheme, SpeedType, Verbosity
-from aviary.variable_info.variables import Aircraft, Dynamic, Mission
+from aviary.variable_info.variables import Dynamic
 
 
 class SGMGroundroll(SimuPyProblem):

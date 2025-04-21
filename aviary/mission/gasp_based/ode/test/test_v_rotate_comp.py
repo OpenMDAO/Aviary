@@ -1,7 +1,7 @@
 import unittest
 
 import openmdao.api as om
-from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
+from openmdao.utils.assert_utils import assert_check_partials
 
 from aviary.constants import RHO_SEA_LEVEL_ENGLISH
 from aviary.mission.gasp_based.ode.v_rotate_comp import VRotateComp

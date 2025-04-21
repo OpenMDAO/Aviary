@@ -5,7 +5,7 @@ import openmdao.api as om
 from aviary.subsystems.aerodynamics.aero_common import DynamicPressure
 from aviary.subsystems.aerodynamics.flops_based.lift import LiftEqualsWeight
 from aviary.subsystems.aerodynamics.flops_based.drag import SimpleDrag
-from aviary.variable_info.variables import Aircraft, Dynamic, Mission
+from aviary.variable_info.variables import Aircraft, Dynamic
 
 
 class SimplestDragCoeff(om.ExplicitComponent):

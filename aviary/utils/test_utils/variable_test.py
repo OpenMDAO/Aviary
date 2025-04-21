@@ -176,7 +176,7 @@ def assert_match_varnames(system, MetaData=None, exclude_inputs=None, exclude_ou
 
     if input_overlap != sys_inputs:
         diff = sys_inputs - input_overlap
-        if not exclude_inputs is None:
+        if exclude_inputs is not None:
             diff = diff - exclude_inputs
         if len(diff) > 0:
             raise ValueError(
@@ -185,7 +185,7 @@ def assert_match_varnames(system, MetaData=None, exclude_inputs=None, exclude_ou
 
     if output_overlap != sys_outputs:
         diff = sys_outputs - output_overlap
-        if not exclude_outputs is None:
+        if exclude_outputs is not None:
             diff = diff - exclude_outputs
         if len(diff) > 0:
             raise ValueError(

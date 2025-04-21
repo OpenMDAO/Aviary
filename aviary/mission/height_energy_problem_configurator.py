@@ -13,7 +13,7 @@ from aviary.mission.problem_configurator import ProblemConfiguratorBase
 from aviary.utils.utils import wrapped_convert_units
 from aviary.utils.process_input_decks import initialization_guessing
 from aviary.variable_info.enums import AnalysisScheme, LegacyCode
-from aviary.variable_info.variables import Aircraft, Mission, Dynamic, Settings
+from aviary.variable_info.variables import Aircraft, Mission, Dynamic
 from aviary.subsystems.propulsion.utils import build_engine_deck
 
 if hasattr(TranscriptionBase, 'setup_polynomial_controls'):
@@ -177,7 +177,7 @@ class HeightEnergyProblemConfigurator(ProblemConfiguratorBase):
             phase_builder = phase_options['phase_builder']
             if not issubclass(phase_builder, PhaseBuilderBase):
                 raise TypeError(
-                    f'phase_builder for the phase called '
+                    'phase_builder for the phase called '
                     '{phase_name} must be a PhaseBuilderBase object.'
                 )
         else:

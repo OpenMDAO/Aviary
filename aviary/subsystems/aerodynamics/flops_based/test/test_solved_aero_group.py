@@ -17,7 +17,7 @@ from aviary.subsystems.subsystem_builder_base import SubsystemBuilderBase
 from aviary.utils.csv_data_file import read_data_file
 from aviary.utils.named_values import NamedValues
 from aviary.interface.default_phase_info.height_energy import phase_info
-from aviary.variable_info.variables import Aircraft, Dynamic
+from aviary.variable_info.variables import Aircraft
 
 
 # The drag-polar-generating component reads this in, instead of computing the polars.

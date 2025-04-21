@@ -55,7 +55,7 @@ from aviary.subsystems.mass.flops_based.unusable_fuel import (
 from aviary.subsystems.mass.flops_based.vertical_tail import AltVerticalTailMass, VerticalTailMass
 from aviary.subsystems.mass.flops_based.wing_group import WingMassGroup
 from aviary.variable_info.functions import add_aviary_option
-from aviary.variable_info.variables import Aircraft, Mission
+from aviary.variable_info.variables import Aircraft
 
 
 class MassPremission(om.Group):

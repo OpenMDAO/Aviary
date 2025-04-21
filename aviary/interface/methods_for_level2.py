@@ -21,7 +21,6 @@ from aviary.interface.default_phase_info.two_dof_fiti import add_default_sgm_arg
 from aviary.interface.utils.check_phase_info import check_phase_info
 from aviary.mission.gasp_based.phases.time_integration_traj import FlexibleTraj
 
-from aviary.mission.gasp_based.ode.v_rotate_comp import VRotateComp
 from aviary.mission.height_energy_problem_configurator import (
     HeightEnergyProblemConfigurator,
 )
@@ -181,12 +180,12 @@ class AviaryProblem(om.Problem):
                 # TODO: make draft / example custom builder
             else:
                 raise ValueError(
-                    f'When using "settings:equations_of_motion,custom", a '
+                    'When using "settings:equations_of_motion,custom", a '
                     'problem_configurator must be specified in load_inputs().'
                 )
         else:
             raise ValueError(
-                f'settings:equations_of_motion must be one of: height_energy, 2DOF, '
+                'settings:equations_of_motion must be one of: height_energy, 2DOF, '
                 'solved_2DOF, or custom'
             )
 
@@ -1640,7 +1639,7 @@ class AviaryProblem(om.Problem):
 
                                 self.model.connect(
                                     f'pre_mission.{bus_variable}',
-                                    f'traj.parameters:' + mission_var_name,
+                                    'traj.parameters:' + mission_var_name,
                                 )
 
                         if 'post_mission_name' in variable_data:

@@ -15,7 +15,6 @@ from aviary.subsystems.geometry.flops_based.prep_geom import PrepGeom
 from aviary.subsystems.geometry.gasp_based.size_group import SizeGroup
 from aviary.variable_info.variables import Aircraft
 from aviary.variable_info.enums import LegacyCode
-from aviary.variable_info.variable_meta_data import _MetaData
 
 GASP = LegacyCode.GASP
 FLOPS = LegacyCode.FLOPS

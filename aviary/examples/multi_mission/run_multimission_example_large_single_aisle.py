@@ -20,13 +20,10 @@ from aviary.variable_info.enums import ProblemType
 import aviary.api as av
 import openmdao.api as om
 import matplotlib.pyplot as plt
-from os.path import join
 import numpy as np
 import dymos as dm
 import warnings
 import sys
-from aviary.subsystems.mass.flops_based.furnishings import TransportFurnishingsGroupMass
-from aviary.api import SubsystemBuilderBase
 from aviary.validation_cases.validation_tests import get_flops_inputs
 
 # fly the same mission twice with two different passenger loads

@@ -4,8 +4,7 @@ import openmdao.api as om
 
 from aviary.mission.ode.specific_energy_rate import SpecificEnergyRate
 from aviary.mission.ode.altitude_rate import AltitudeRate
-from aviary.utils.aviary_values import AviaryValues
-from aviary.variable_info.enums import AnalysisScheme, AlphaModes
+from aviary.variable_info.enums import AlphaModes
 from aviary.variable_info.variables import Aircraft, Dynamic
 from aviary.mission.base_ode import BaseODE as _BaseODE
 

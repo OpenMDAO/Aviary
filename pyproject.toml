@@ -8,31 +8,31 @@ line-length = 100
 [tool.ruff.format]
 quote-style = "single"
 
-[tool.ruff.lint]
+# [tool.ruff.lint]
 # isort, pydocstyle
-extend-select = ["I", "D"]
-extend-ignore = [
-    "D100",
-    "D101",
-    "D102",
-    "D103",
-    "D104",
-    "D105",
-    "D106",
-    "D204",
-    "D205",
-    "D401",
-    "D404",
-]
+# extend-select = ["I", "D"]
+# extend-ignore = [
+#     "D100",
+#     "D101",
+#     "D102",
+#     "D103",
+#     "D104",
+#     "D105",
+#     "D106",
+#     "D204",
+#     "D205",
+#     "D401",
+#     "D404",
+# ]
 
-[tool.ruff.lint.isort]
-split-on-trailing-comma = false
+# [tool.ruff.lint.isort]
+# split-on-trailing-comma = false
 
-[tool.ruff.lint.pydocstyle]
-convention = "numpy"
+# [tool.ruff.lint.pydocstyle]
+# convention = "numpy"
 
 [tool.ruff.lint.per-file-ignores]
-# Ignore `F401` (unused import) in api files.
-"api.py" = ["F401"]
+# Ignore `F401` (unused import) in api and doc files.
 # Ignore `E402` (module import not at top of file) for doc cells.
-"*.ipynb" = ["E402"]
+"api.py" = ["F401"]
+"*.ipynb" = ["F401", "E402"]

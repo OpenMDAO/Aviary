@@ -1,5 +1,3 @@
-import dymos as dm
-
 from aviary.mission.flight_phase_builder import FlightPhaseBase, register
 from aviary.mission.initial_guess_builders import InitialGuessIntegrationVariable, InitialGuessState
 

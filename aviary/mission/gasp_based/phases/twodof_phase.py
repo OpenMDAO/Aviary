@@ -4,7 +4,6 @@ from aviary.mission.flight_phase_builder import FlightPhaseBase, register
 from aviary.mission.initial_guess_builders import (
     InitialGuessState,
     InitialGuessIntegrationVariable,
-    InitialGuessControl,
     InitialGuessPolynomialControl,
 )
 from aviary.mission.gasp_based.ode.unsteady_solved.unsteady_solved_ode import UnsteadySolvedODE

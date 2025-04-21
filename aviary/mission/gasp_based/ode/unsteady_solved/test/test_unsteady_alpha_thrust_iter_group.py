@@ -15,7 +15,6 @@ from aviary.mission.gasp_based.ode.unsteady_solved.unsteady_solved_flight_condit
 )
 from aviary.subsystems.aerodynamics.aerodynamics_builder import CoreAerodynamicsBuilder
 from aviary.variable_info.enums import LegacyCode, SpeedType
-from aviary.variable_info.options import get_option_defaults
 from aviary.variable_info.variables import Aircraft, Dynamic
 from aviary.variable_info.functions import setup_model_options
 from aviary.utils.aviary_values import AviaryValues
