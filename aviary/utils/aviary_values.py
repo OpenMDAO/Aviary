@@ -19,9 +19,15 @@ class AviaryValues
 
 from openmdao.utils.units import convert_units as _convert_units
 
-from aviary.utils.named_values import NamedValues
+from aviary.utils.named_values import NamedValues, get_items, get_keys, get_values
 from aviary.utils.utils import cast_type, check_type
 from aviary.variable_info.variable_meta_data import _MetaData
+
+# TODO: workaround to avoid unused imports - a better solution is desired such as utils or making
+#       get_*() methods of NamedValues
+get_items = get_items
+get_keys = get_keys
+get_values = get_values
 
 
 class AviaryValues(NamedValues):
