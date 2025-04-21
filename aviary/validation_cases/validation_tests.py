@@ -1,3 +1,4 @@
+from copy import deepcopy
 import warnings
 from enum import Enum
 
