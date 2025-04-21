@@ -40,7 +40,6 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
         prob : AviaryProblem
             Problem that owns this builder.
         """
-
         # TODO: This should probably be moved to the set_initial_guesses() method in AviaryProblem class
         # Defines how the problem should build it's initial guesses for load_inputs()
         # this modifies mass_method, initialization_guesses, and aviary_values
@@ -117,7 +116,6 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
         AviaryValues
             General default phase_info.
         """
-
         if prob.analysis_scheme is AnalysisScheme.COLLOCATION:
             from aviary.interface.default_phase_info.two_dof import phase_info
 
@@ -276,7 +274,6 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
         PhaseBuilderBase
             Phase builder for requested phase.
         """
-
         if 'groundroll' in phase_name:
             phase_builder = GroundrollPhase
         elif 'rotation' in phase_name:
@@ -318,7 +315,6 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
         user_options : dict
             Subdictionary "user_options" from the phase_info.
         """
-
         try:
             fix_initial = user_options.get_val('fix_initial')
         except KeyError:
@@ -443,7 +439,6 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
             When True, then connected=True. This allows the connections to be
             handled by constraints if `phases` is a parallel group under MPI.
         """
-
         if prob.analysis_scheme is AnalysisScheme.COLLOCATION:
             for ii in range(len(phases) - 1):
                 phase1, phase2 = phases[ii : ii + 2]
@@ -627,7 +622,6 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
         include_landing : bool
             When True, include the landing systems.
         """
-
         if include_landing and prob.post_mission_info['include_landing']:
             self._add_landing_systems(prob)
 
@@ -712,7 +706,6 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
         parent_prefix : str
             Location of this trajectory in the hierarchy.
         """
-
         # Handle Analytic Phase
         if prob.phase_info[phase_name]['user_options'].get('analytic', False):
             for guess_key, guess_data in guesses.items():

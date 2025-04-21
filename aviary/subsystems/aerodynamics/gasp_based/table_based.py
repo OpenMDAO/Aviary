@@ -444,7 +444,7 @@ def _build_free_aero_interp(
     structured=True,
     extrapolate=True,
 ):
-    """creates interpolation components for cruise aero"""
+    """Creates interpolation components for cruise aero"""
     # build_data_interpolator normally handles converting to filepath and reading
     # data, but here we need to query the data before building the component
     if isinstance(aero_data, str):
@@ -528,7 +528,7 @@ def _build_flaps_aero_interp(
     structured=True,
     extrapolate=False,
 ):
-    """creates interpolation components for cruise aero"""
+    """Creates interpolation components for cruise aero"""
     # TODO linear method default because standard GASP tables have only two flap
     #      deflections - may want to have option for two separate 2D tables instead?
 
@@ -600,7 +600,7 @@ def _build_ground_aero_interp(
     structured=True,
     extrapolate=True,
 ):
-    """creates interpolation components for cruise aero"""
+    """Creates interpolation components for cruise aero"""
     # build_data_interpolator normally handles converting to filepath and reading
     # data, but here we need to query the data before building the component
     if isinstance(aero_data, str):

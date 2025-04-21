@@ -76,7 +76,6 @@ class CompressibilityDrag(om.ExplicitComponent):
         """
         Calculate compressibility drag.
         """
-
         del_mach = inputs[Dynamic.Atmosphere.MACH] - inputs[Mission.Design.MACH]
 
         idx_super = np.where(del_mach > 0.05)
@@ -93,7 +92,6 @@ class CompressibilityDrag(om.ExplicitComponent):
         """
         Calculate compressibility drag for supersonic speeds.
         """
-
         mach = inputs[Dynamic.Atmosphere.MACH][idx]
         nn = len(mach)
         del_mach = mach - inputs[Mission.Design.MACH]
@@ -174,7 +172,6 @@ class CompressibilityDrag(om.ExplicitComponent):
         """
         Calculate compressibility drag for subsonic speeds.
         """
-
         mach = inputs[Dynamic.Atmosphere.MACH][idx]
         nn = len(mach)
         del_mach = mach - inputs[Mission.Design.MACH]
@@ -233,7 +230,6 @@ class CompressibilityDrag(om.ExplicitComponent):
         :param partials: _description_
         :type partials: _type_
         """
-
         del_mach = inputs[Dynamic.Atmosphere.MACH] - inputs[Mission.Design.MACH]
 
         idx_super = np.where(del_mach > 0.05)

@@ -10,8 +10,7 @@ quote-style = "single"
 
 [tool.ruff.lint]
 # isort, pydocstyle
-extend-select = ["I"]
-# extend-select = ["I", "D"]
+extend-select = ["I", "D"]
 # extend-ignore = [
 #     "D100",
 #     "D101",
@@ -29,8 +28,8 @@ extend-select = ["I"]
 [tool.ruff.lint.isort]
 split-on-trailing-comma = false
 
-# [tool.ruff.lint.pydocstyle]
-# convention = "numpy"
+[tool.ruff.lint.pydocstyle]
+convention = "numpy"
 
 [tool.ruff.lint.per-file-ignores]
 # Ignore `F401` (unused import) in api and doc files.

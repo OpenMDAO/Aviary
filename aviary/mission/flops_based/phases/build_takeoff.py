@@ -41,17 +41,18 @@ class Takeoff:
     def build_phase(self, use_detailed=False):
         """
         Construct and return a new phase for takeoff analysis.
+
         Parameters
         ----------
         use_detailed : bool(False)
             tells whether to use simplified or detailed takeoff. Currently detailed is
             disabled.
+
         Returns
         -------
         Group
             a group in OpenMDAO
         """
-
         if use_detailed:  # TODO
             raise om.AnalysisError(
                 'Must set takeoff method to `use_detailed=False`, detailed takeoff is'

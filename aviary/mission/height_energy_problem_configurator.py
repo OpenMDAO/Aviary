@@ -27,7 +27,7 @@ class HeightEnergyProblemConfigurator(ProblemConfiguratorBase):
     """
 
     def check_phase_options(self, prob):
-        "Returns the Options Dictionary used to instantiate the phases used by this ODE."
+        """Returns the Options Dictionary used to instantiate the phases used by this ODE."""
         ' This will be used by check_and_preprocess_inputs in M4L2 to ensure that the '
         ' required inputs are in the phase_info.'
         return FlightPhaseOptions
@@ -43,7 +43,6 @@ class HeightEnergyProblemConfigurator(ProblemConfiguratorBase):
         prob : AviaryProblem
             Problem that owns this builder.
         """
-
         # TODO: This should probably be moved to the set_initial_guesses() method in AviaryProblem class
         # Defines how the problem should build it's initial guesses for load_inputs()
         # this modifies mass_method, initialization_guesses, and aviary_values
@@ -170,7 +169,6 @@ class HeightEnergyProblemConfigurator(ProblemConfiguratorBase):
         PhaseBuilderBase
             Phase builder for requested phase.
         """
-
         if 'phase_builder' in phase_options:
             phase_builder = phase_options['phase_builder']
             if not issubclass(phase_builder, PhaseBuilderBase):
@@ -202,7 +200,6 @@ class HeightEnergyProblemConfigurator(ProblemConfiguratorBase):
         user_options : dict
             Subdictionary "user_options" from the phase_info.
         """
-
         try:
             fix_initial = user_options.get_val('fix_initial')
         except KeyError:
@@ -285,7 +282,6 @@ class HeightEnergyProblemConfigurator(ProblemConfiguratorBase):
             When True, then connected=True. This allows the connections to be
             handled by constraints if `phases` is a parallel group under MPI.
         """
-
         # connect regular_phases with each other if you are optimizing alt or mach
         prob._link_phases_helper_with_options(
             prob.regular_phases,
@@ -348,7 +344,6 @@ class HeightEnergyProblemConfigurator(ProblemConfiguratorBase):
         include_landing : bool
             When True, include the landing systems.
         """
-
         if prob.pre_mission_info['include_takeoff']:
             self._add_post_mission_takeoff_systems(prob)
         else:

@@ -16,7 +16,7 @@ class AviaryGroup(om.Group):
     """
 
     def initialize(self):
-        """declare options"""
+        """Declare options"""
         self.options.declare(
             'aviary_options',
             types=AviaryValues,

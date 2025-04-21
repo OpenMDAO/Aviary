@@ -39,8 +39,8 @@ def assert_structure_alphabetization(file_loc):
     """
     Assert that an aviary variable hierarchy is properly sorted.
 
-    Parameters:
-    -----------
+    Parameters
+    ----------
     file_loc : str
         Location of the hierarchy file relative to the aviary top directory.
     """
@@ -147,8 +147,8 @@ def assert_match_varnames(system, MetaData=None, exclude_inputs=None, exclude_ou
     """
     Assert that the inputs and outputs of the system match with those in MetaData
 
-    Parameters:
-    -----------
+    Parameters
+    ----------
     exclude_inputs: set
         The inputs that are excluded from comparison with MetaData.
     exclude_outputs: set
@@ -159,7 +159,6 @@ def assert_match_varnames(system, MetaData=None, exclude_inputs=None, exclude_ou
     list
         List of all names in the hierarchy, including duplicates.
     """
-
     prob = om.Problem()
     prob.model = system
     prob.setup()
@@ -199,8 +198,8 @@ def get_names_from_hierarchy(hierarchy):
 
     This is used for finding duplicates names.
 
-    Parameters:
-    -----------
+    Parameters
+    ----------
     hierarchy: object
         Instance of a class hierarchy such as Aircraft.
 

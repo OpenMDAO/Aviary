@@ -18,7 +18,6 @@ def add_SGM_required_inputs(group: om.Group, inputs_to_add: dict):
     they can be added to the ODE with this function, in order to minimize the differences between ODEs that are
     used for both SGM and collocation.
     """
-
     blank_component = om.ExplicitComponent()
     for input, details in inputs_to_add.items():
         blank_component.add_input(input, **details)
@@ -36,7 +35,6 @@ def add_SGM_required_outputs(group: om.Group, outputs_to_add: dict):
     calculated by the EOM they can be added to the ODE with this function, in order to minimize the
     differences between ODEs that are used for both SGM and collocation.
     """
-
     iv_comp = om.IndepVarComp()
     for output, details in outputs_to_add.items():
         iv_comp.add_output(output, **details)
@@ -110,7 +108,6 @@ class SimuPyProblem(SimulationMixin):
         works well for auto-parsed naming, does not check for duplication before adding
         states, parameters, outputs, and controls can also be input as a list of keys for the dictionary
         """
-
         default_om_list_args = dict(prom_name=True, val=False, out_stream=None, units=True)
 
         self.verbosity = verbosity

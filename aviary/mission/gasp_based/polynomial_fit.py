@@ -49,7 +49,6 @@ class PolynomialFit(om.ImplicitComponent):
         """
         Compute the outputs, given the inputs using the numpy fitting function.
         """
-
         X_cp = inputs['time_cp']
         Y_cp = inputs['h_cp']
 

@@ -40,7 +40,6 @@ class GearboxBuilder(SubsystemBuilderBase):
         the design variable, the lower and upper bounds for the design variable, and any
         additional keyword arguments required by OpenMDAO for the design variable.
         """
-
         DVs = {
             Aircraft.Engine.Gearbox.GEAR_RATIO: {
                 'units': 'unitless',

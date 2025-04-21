@@ -20,12 +20,14 @@ def smooth_min(x, b, alpha=100.0):
     """
     Smooth approximation of the min function using the log-sum-exp trick.
 
-    Parameters:
+    Parameters
+    ----------
     x (float or array-like): First value.
     b (float or array-like): Second value.
     alpha (float): The smoothing factor. Higher values make it closer to the true minimum. Try between 75 and 275.
 
-    Returns:
+    Returns
+    -------
     float or array-like: The smooth approximation of min(x, b).
     """
     sum_log_exp = np.log(np.exp(np.multiply(-alpha, x)) + np.exp(np.multiply(-alpha, b)))
@@ -37,12 +39,14 @@ def d_smooth_min(x, b, alpha=100.0):
     """
     Derivative of function smooth_min(x)
 
-    Parameters:
+    Parameters
+    ----------
     x (float or array-like): First value.
     b (float or array-like): Second value.
     alpha (float): The smoothing factor. Higher values make it closer to the true minimum. Try between 75 and 275.
 
-    Returns:
+    Returns
+    -------
     float or array-like: The smooth approximation of derivative of min(x, b).
     """
     d_sum_log_exp = np.exp(np.multiply(-alpha, x)) / (

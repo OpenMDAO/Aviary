@@ -165,7 +165,6 @@ def _dashboard_cmd(options, user_args):
     user_args : list of str
         Args to be passed to the user script.
     """
-
     if options.save and not options.script_name:
         if options.save is not True:
             options.script_name = options.save
@@ -238,7 +237,6 @@ def create_table_pane_from_json(json_filepath, documentation):
         A Panel Pane that is a Panel library Tabular widget.
         Or None if there was an error.
     """
-
     try:
         with open(json_filepath) as json_file:
             parsed_json = json.load(json_file)
@@ -327,7 +325,6 @@ def get_run_status(status_filepath):
     """
     Get run status
     """
-
     try:
         with open(status_filepath) as f:
             status_dct = json.load(f)

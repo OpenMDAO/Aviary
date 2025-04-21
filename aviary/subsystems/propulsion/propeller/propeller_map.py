@@ -29,6 +29,7 @@ aliases = {
 class PropellerMap(om.ExplicitComponent):
     """
     This class loads a user provided propeller map into memory and builds a propeller.
+
     Attributes
     ----------
     name : str ('propeller')

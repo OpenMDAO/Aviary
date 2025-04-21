@@ -28,8 +28,6 @@ class CustomAeroBuilder(SubsystemBuilderBase):
 
         Returns
         -------
-        Returns
-        -------
         mission_sys : openmdao.core.System
             An OpenMDAO system containing all computations that need to happen
             during the mission. This includes time-dependent states that are

@@ -16,7 +16,6 @@ class StallSpeed(om.ExplicitComponent):
         """
         Setup the inputs and output to calculate the stall speed of the aircraft.
         """
-
         self.add_input(
             'mass',
             val=150_000,

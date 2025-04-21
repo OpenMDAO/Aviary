@@ -27,7 +27,6 @@ def find_examples():
     list
         A list of pathlib.Path objects pointing to the run scripts.
     """
-
     base_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), '.')
 
     run_files = []
@@ -60,7 +59,6 @@ def example_name(testcase_func, param_num, param):
 class RunScriptTest(unittest.TestCase):
     """
     A test case class that uses unittest to run and test scripts with a timeout.
-
 
     Attributes
     ----------
@@ -111,7 +109,6 @@ class RunScriptTest(unittest.TestCase):
         """
         Test each run script to ensure it executes without error.
         """
-
         if example_path.name in SKIP_EXAMPLES:
             reason = SKIP_EXAMPLES[example_path.name]
             self.skipTest(f'Skipped {example_path.name}: {reason}.')

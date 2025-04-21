@@ -100,7 +100,6 @@ class SolvedTwoDOFProblemConfigurator(ProblemConfiguratorBase):
         PhaseBuilderBase
             Phase builder for requested phase.
         """
-
         if (
             phase_options['user_options']['ground_roll']
             and phase_options['user_options']['fix_initial']
@@ -130,7 +129,6 @@ class SolvedTwoDOFProblemConfigurator(ProblemConfiguratorBase):
         user_options : dict
             Subdictionary "user_options" from the phase_info.
         """
-
         try:
             fix_initial = user_options.get_val('fix_initial')
         except KeyError:
@@ -210,7 +208,6 @@ class SolvedTwoDOFProblemConfigurator(ProblemConfiguratorBase):
             When True, then connected=True. This allows the connections to be
             handled by constraints if `phases` is a parallel group under MPI.
         """
-
         # connect regular_phases with each other if you are optimizing alt or mach
         prob._link_phases_helper_with_options(
             prob.regular_phases,
@@ -297,7 +294,6 @@ class SolvedTwoDOFProblemConfigurator(ProblemConfiguratorBase):
         parent_prefix : str
             Location of this trajectory in the hierarchy.
         """
-
         control_keys = ['mach', 'altitude']
 
         # for the simple mission method, use the provided initial and final mach

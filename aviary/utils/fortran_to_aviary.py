@@ -313,7 +313,6 @@ def process_and_store_data(
     part of a list or a single element, and update the current name to it's equivalent Aviary name.
     The variables are also sorted based on whether they will set an Aviary variable or they are for initial guessing
     """
-
     guess_names = list(initialization_guesses.keys())
     var_ind = data_units = None
     skip_variable = False
@@ -394,7 +393,6 @@ def set_value(var_name, var_value, units=None, value_dict: NamedValues = None, v
     value dictionary or the default units from _MetaData are used.
     If the new variable is part of a list, the current list will be extended if needed.
     """
-
     if var_name in value_dict:
         current_value, units = value_dict.get_item(var_name)
     else:
@@ -434,7 +432,6 @@ def generate_aviary_names(legacy_code):
     Create a dictionary that maps the specified Fortran code to Aviary variable names.
     Each Aviary variable will have a list of matching Fortran names
     """
-
     alternate_names = {}
     for key in _MetaData.keys():
         historical_dict = _MetaData[key]['historical_name']
@@ -448,7 +445,6 @@ def generate_aviary_names(legacy_code):
 
 def update_name(alternate_names, var_name, verbosity=Verbosity.BRIEF):
     """update_name will convert a Fortran name to a list of equivalent Aviary names."""
-
     if '(' in var_name:  # some GASP lists are given as individual elements
         # get the target index
         var_ind = int(var_name.split('(')[1].split(')')[0])

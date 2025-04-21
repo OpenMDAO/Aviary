@@ -144,9 +144,8 @@ class TakeoffEOMTest(unittest.TestCase):
 
     def test_DistanceRates_1(self):
         """
-        climbing = True
+        Climbing = True
         """
-
         tol = 1e-6
         prob = om.Problem()
         prob.model.add_subsystem(
@@ -172,9 +171,8 @@ class TakeoffEOMTest(unittest.TestCase):
 
     def test_DistanceRates_2(self):
         """
-        climbing = False
+        Climbing = False
         """
-
         tol = 1e-6
         prob = om.Problem()
         prob.model.add_subsystem(
@@ -254,9 +252,8 @@ class TakeoffEOMTest(unittest.TestCase):
 
     def test_SumForcese_1(self):
         """
-        climbing = True
+        Climbing = True
         """
-
         tol = 1e-6
         prob = om.Problem()
         aviary_options = inputs
@@ -289,9 +286,8 @@ class TakeoffEOMTest(unittest.TestCase):
 
     def test_SumForcese_2(self):
         """
-        climbing = False
+        Climbing = False
         """
-
         tol = 1e-6
         prob = om.Problem()
         aviary_options = inputs
@@ -324,9 +320,8 @@ class TakeoffEOMTest(unittest.TestCase):
 
     def test_ClimbGradientForces(self):
         """
-        climbing = False
+        Climbing = False
         """
-
         tol = 1e-6
         prob = om.Problem()
         aviary_options = inputs

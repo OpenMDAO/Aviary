@@ -207,7 +207,7 @@ class EngineModel(SubsystemBuilderBase):
         Returns desired value from options in specified units.
 
         Parameters
-        -------
+        ----------
         key : str
             Name of requested option.
         units : str
@@ -245,7 +245,7 @@ class EngineModel(SubsystemBuilderBase):
         Updates desired value in options with specified units.
 
         Parameters
-        -------
+        ----------
         key : str
             Name of option whose value will be updated.
         val

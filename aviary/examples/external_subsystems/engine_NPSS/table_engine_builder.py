@@ -62,7 +62,6 @@ class TableEngineBuilder(EngineModel):
         prob : openmdao.core.Group
             engine model for design.
         """
-
         return DesignEngineGroup()
 
     def build_mission(self, num_nodes, aviary_inputs):
@@ -195,7 +194,6 @@ class TableEngineBuilder(EngineModel):
             values are dictionaries with the keys `units`, `upper`, and `lower` which states the units of the
             variable to be controlled.
         """
-
         return {}
 
     def get_design_vars(self):

@@ -41,7 +41,6 @@ def merge_attributes(base_class, merge_class, base_class_attributes, merge_class
     None
         No exceptions raised by this method, although other methods called within may raise exceptions.
     """
-
     merge_class_unique = (
         merge_class_attributes - base_class_attributes
     )  # attributes present only in merge_class
@@ -80,11 +79,10 @@ def recursive_merge(overlapping_inners, base_class, merge_class):
         No variables returned by this method.
 
     Raises
-    ----------
+    ------
     None
         No exceptions raised by this method, although other methods called within may raise exceptions.
     """
-
     for overlapping_class_name in overlapping_inners:
         overlapping_inner_class_base = getattr(base_class, overlapping_class_name)
         overlapping_inner_class_merge = getattr(merge_class, overlapping_class_name)
@@ -142,7 +140,7 @@ def merge_two_hierarchies(base_hierarchy, hierarchy_b):
         mutability.
 
     Raises
-    ----------
+    ------
     None
         No exceptions raised by this method, although other methods called within may raise exceptions.
     """

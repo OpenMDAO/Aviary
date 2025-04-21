@@ -38,7 +38,6 @@ class PropellerBuilder(SubsystemBuilderBase):
         parameters : dict
         A dict of names for the propeller subsystem.
         """
-
         # TODO bounds are rough placeholders
         DVs = {
             Aircraft.Engine.Propeller.ACTIVITY_FACTOR: {

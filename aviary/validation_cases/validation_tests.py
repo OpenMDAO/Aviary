@@ -100,7 +100,6 @@ def do_validation_test(
         If True, prob.model.list_outputs() will be called after the model is run.
         Default is False.
     """
-
     input_key_list = _assure_is_list(input_keys)
     output_key_list = _assure_is_list(output_keys)
     aviary_option_key_list = _assure_is_list(aviary_option_keys)
@@ -223,7 +222,6 @@ def flops_validation_test(
         Allows a custom set of outputs to be tested. Default is None, which reads
         data from FLOPS_Test_Data with key case_name.
     """
-
     if not isinstance(version, Version):
         raise TypeError('parameter "version" must be of enumeration type "Version"')
 

@@ -38,7 +38,6 @@ def get_default_mission_subsystems(legacy_code, engines=None):
     engine : <list of EngineDecks>
         List of EngineDecks
     """
-
     legacy_code = LegacyCode(legacy_code)
     prop = CorePropulsionBuilder('core_propulsion', BaseMetaData, engine_models=engines)
     aero = CoreAerodynamicsBuilder('core_aerodynamics', BaseMetaData, legacy_code)

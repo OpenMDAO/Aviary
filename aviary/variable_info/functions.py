@@ -538,7 +538,6 @@ def setup_model_options(
     prefix : str
         Prefix for model options. Used for multi-mission.
     """
-
     # Use OpenMDAO's model options to pass all options through the system hierarchy.
     prob.model_options[f'{prefix}*'] = extract_options(aviary_inputs, meta_data)
 

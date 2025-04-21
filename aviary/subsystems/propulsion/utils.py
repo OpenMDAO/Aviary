@@ -79,7 +79,7 @@ def convert_geopotential_altitude(altitude):
         geopotential altitudes (in ft) to be converted.
 
     Returns
-    ----------
+    -------
     altitude_list : <list of floats>
         geometric altitudes (ft).
     """
@@ -127,11 +127,10 @@ def build_engine_deck(aviary_options: AviaryValues, meta_data=_MetaData):
         Options to use in creation of EngineDecks.
 
     Returns
-    ----------
+    -------
     engine_models : <list of EngineDecks>
         List of EngineDecks created using provided aviary_options.
     """
-
     # Required engine vars include one setting from Mission.Summary
     engine_vars = [item for item in Aircraft.Engine.__dict__.values()]
     engine_vars.append(Mission.Summary.FUEL_FLOW_SCALER)

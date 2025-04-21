@@ -25,7 +25,6 @@ def _load_and_exec(script_name, user_args):
     user_args : list of str
         Args to be passed to the user script.
     """
-
     sys.path.insert(0, os.path.dirname(script_name))
 
     sys.argv[:] = [script_name] + user_args

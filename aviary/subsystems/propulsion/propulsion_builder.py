@@ -59,6 +59,7 @@ class PropulsionBuilderBase(SubsystemBuilderBase):
 class CorePropulsionBuilder(PropulsionBuilderBase):
     """
     Core propulsion builder.
+
     Methods
     -------
     build_pre_mission(self, aviary_inputs) -> openmdao.core.System:

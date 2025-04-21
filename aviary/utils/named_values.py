@@ -89,7 +89,7 @@ class NamedValues(Collection):
         Return a copy of the instance of this class.
 
         Parameters
-        ---------
+        ----------
         None
 
         Returns
@@ -103,7 +103,7 @@ class NamedValues(Collection):
         Return a deep copy of the instance of this class.
 
         Parameters
-        ---------
+        ----------
         None
 
         Returns

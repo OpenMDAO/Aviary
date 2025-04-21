@@ -789,7 +789,6 @@ class EngineDeck(EngineModel):
             SizeEngine component specific to this EngineDeck, used for calculating engine
             scaling factors.
         """
-
         return SizeEngine()
 
     def _build_engine_interpolator(self, num_nodes, aviary_inputs):

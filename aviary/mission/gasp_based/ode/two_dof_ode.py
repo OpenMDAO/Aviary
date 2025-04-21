@@ -33,7 +33,6 @@ class TwoDOFODE(_BaseODE):
         """
         This is used when angle of attack in an ODE needs to be controlled directly.
         """
-
         if not alpha_group:
             alpha_group = self
         nn = num_nodes
@@ -183,7 +182,6 @@ class TwoDOFODE(_BaseODE):
         """
         This is used when throttle in an ODE needs to be controlled directly.
         """
-
         nn = num_nodes
 
         thrust_bal = om.BalanceComp(

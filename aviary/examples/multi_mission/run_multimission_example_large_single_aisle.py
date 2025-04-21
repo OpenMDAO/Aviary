@@ -175,8 +175,10 @@ class MultiMissionProblem(om.Problem):
         dm.run_problem(self, make_plots=False)
 
     def get_design_range(self):
-        """Finds the longest mission and sets its range as the design range for all
-        Aviary problems. Used within Aviary for sizing subsystems (avionics and AC)."""
+        """
+        Finds the longest mission and sets its range as the design range for all
+        Aviary problems. Used within Aviary for sizing subsystems (avionics and AC).
+        """
         design_range = []
         for phase_info in self.phase_infos:
             design_range.append(phase_info['post_mission']['target_range'][0])  # TBD add units
@@ -216,7 +218,6 @@ class MultiMissionProblem(om.Problem):
 
     def print_vars(self, vars=[]):
         """Specify vars with name and unit in a tuple, e.g. vars = [ (Mission.Summary.FUEL_BURNED, 'lbm') ]"""
-
         print('\n\n=========================\n')
         print(f'{"":40}', end=': ')
         for i in range(self.num_missions):

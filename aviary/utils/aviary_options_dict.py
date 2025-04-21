@@ -120,7 +120,6 @@ class AviaryOptionsDictionary(om.OptionsDictionary):
         -------
         val
         """
-
         if units is not None:
             if self._dict[key]['set_function'] is None:
                 self._raise(

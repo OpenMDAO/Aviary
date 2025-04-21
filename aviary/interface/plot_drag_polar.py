@@ -188,6 +188,7 @@ def plot_drag_polar(input_file=None):
 def _setup_plot_drag_polar_parser(parser):
     """
     Set up the command line options for the Model Building tool.
+
     Parameters
     ----------
     parser : argparse.ArgumentParser
@@ -195,13 +196,13 @@ def _setup_plot_drag_polar_parser(parser):
     parser : argparse subparser
         The parser we're adding options to.
     """
-
     pass
 
 
 def _exec_plot_drag_polar(options, user_args):
     """
     Run the Model Building tool.
+
     Parameters
     ----------
     options : argparse.Namespace

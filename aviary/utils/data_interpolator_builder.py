@@ -25,7 +25,6 @@ def build_data_interpolator(
 
     Parameters
     ----------
-
     num_nodes : int
         Number of points that will be simultaneously interpolated during model executuion.
 

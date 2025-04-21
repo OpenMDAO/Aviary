@@ -339,7 +339,6 @@ class FakeDragPolarBuilder(SubsystemBuilderBase):
             the pre-mission part of the Aviary problem. This
             includes sizing, design, and other non-mission parameters.
         """
-
         group = om.Group()
 
         calc_drag_polar = FakeCalcDragPolar(

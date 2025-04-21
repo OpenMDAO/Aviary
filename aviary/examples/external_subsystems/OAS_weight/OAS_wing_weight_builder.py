@@ -37,7 +37,6 @@ class OASWingWeightBuilder(av.SubsystemBuilderBase):
             the pre-mission part of the Aviary problem. This
             includes sizing, design, and other non-mission parameters.
         """
-
         wing_group = om.Group()
         wing_group.add_subsystem(
             'aerostructures',

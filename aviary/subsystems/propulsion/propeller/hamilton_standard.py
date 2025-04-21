@@ -12,12 +12,11 @@ from aviary.variable_info.variables import Aircraft, Dynamic, Settings
 
 def _unint(xa, ya, x):
     """
-    univariate table routine with seperate arrays for x and y
+    Univariate table routine with seperate arrays for x and y
     This routine interpolates over a 4 point interval using a
     variation of 3nd degree interpolation to produce a continuity
     of slope between adjacent intervals.
     """
-
     Lmt = 0
     n = len(xa)
     # test for off low end
@@ -97,7 +96,6 @@ def _biquad(T, i, xi, yi):
     T(i+2) = number of y values in yi array
     T(i+3) = values of x in ascending order
     """
-
     lmt = 0
     nx = int(T[i])
     ny = int(T[i + 1])

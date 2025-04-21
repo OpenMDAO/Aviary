@@ -136,7 +136,6 @@ class MotorBuilder(SubsystemBuilderBase):
         outputs : list
             A list of variable names for the motor subsystem.
         """
-
         return [
             Dynamic.Vehicle.Propulsion.TORQUE,
             Dynamic.Vehicle.Propulsion.SHAFT_POWER,

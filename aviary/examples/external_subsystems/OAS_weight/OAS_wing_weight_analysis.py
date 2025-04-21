@@ -47,8 +47,7 @@ from openaerostruct.structures.wingbox_fuel_vol_delta import WingboxFuelVolDelta
 
 
 def user_mesh():
-    """generate a user defined mesh which is model specific"""
-
+    """Generate a user defined mesh which is model specific"""
     # Planform specifications
     half_span = 17.9573
     kink_location = 4.9544

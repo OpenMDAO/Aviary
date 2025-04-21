@@ -1,5 +1,6 @@
 """
-NOTES:
+Notes
+-----
 Includes:
 Takeoff, Climb, Cruise, Descent, Landing
 Computed Aero

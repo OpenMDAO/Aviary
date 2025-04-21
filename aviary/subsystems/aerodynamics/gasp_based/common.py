@@ -248,6 +248,7 @@ class TanhRampComp(om.ExplicitComponent):
     ):
         """
         Add a tanh ramp function with the given output name to the component.
+
         Parameters
         ----------
         output_name : str

@@ -51,9 +51,8 @@ class MissionEOMTest(unittest.TestCase):
 
     def test_case(self):
         """
-        test on mission EOM using data from validation_cases/validation_data/flops_data/full_mission_test_data.py
+        Test on mission EOM using data from validation_cases/validation_data/flops_data/full_mission_test_data.py
         """
-
         tol = 1e-6
         self.prob.run_model()
 

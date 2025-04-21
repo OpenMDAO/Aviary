@@ -33,7 +33,6 @@ def PropDataConverter(input_file, output_file, data_format: PropMapType):
     As an Aviary command, the usage is:
     aviary convert_prop_table -f GASP input_file output_file
     """
-
     timestamp = datetime.now().strftime('%m/%d/%y at %H:%M')
     comments = []
     header = {}

@@ -73,7 +73,7 @@ def gramatical_list(list_of_strings: list, cc='and', add_accents=False) -> str:
 
 def get_previous_line(n=1) -> str:
     """
-    returns the previous n line(s) of code as a string
+    Returns the previous n line(s) of code as a string
 
     Parameters
     ----------
@@ -97,7 +97,7 @@ def get_previous_line(n=1) -> str:
 
 def get_variable_name(*variables) -> str:
     """
-    returns the name of the variable passed to the function as a string
+    Returns the name of the variable passed to the function as a string
     # NOTE: You cannot call this function multiple times on one line
 
     Parameters
@@ -387,7 +387,6 @@ def get_value(dict_of_dicts: dict, comlpete_key: str):
     val : any
         The value found
     """
-
     for key in comlpete_key.split('.'):
         if not isinstance(dict_of_dicts, dict):
             dict_of_dicts = dict_of_dicts.__dict__

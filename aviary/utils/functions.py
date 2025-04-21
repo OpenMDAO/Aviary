@@ -36,7 +36,7 @@ def get_aviary_resource_path(resource_name: str) -> str:
             The name of the resource.
 
     Returns
-    ----------
+    -------
         Path
             The file path of the resource.
 
@@ -372,7 +372,6 @@ def get_path(path: Union[str, Path], verbosity=Verbosity.BRIEF) -> Path:
     FileNotFoundError
         If the path is not found in any of the prioritized locations.
     """
-
     # Store the original path for reference in error messages.
     original_path = path
 
@@ -446,7 +445,6 @@ def get_model(file_name: str, verbosity=Verbosity.BRIEF) -> Path:
     FileNotFoundError
         If the path is not found.
     """
-
     # Get the path to Aviary's models
     path = Path('models', file_name)
     aviary_path = Path(get_aviary_resource_path(str(path)))
@@ -481,7 +479,7 @@ def sigmoidX(x, x0, alpha=1.0):
     alpha: float
         steepness parameter.
 
-    returns
+    Returns
     -------
     float or array
         smoothed value from input parameter x.
@@ -524,7 +522,8 @@ def dSigmoidXdx(x, x0, alpha=1.0):
         the center of symmetry. When x = x0, sigmoidX = 1/2.
     alpha: float
         steepness parameter.
-    returns
+
+    Returns
     -------
     float or array
         smoothed derivative value from input parameter x.

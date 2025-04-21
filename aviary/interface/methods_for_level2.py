@@ -415,7 +415,6 @@ class AviaryProblem(om.Problem):
         return two dictionaries of phases: regular_phases and reserve_phases
         For shooting trajectories, this will also check if a phase is part of the descent
         """
-
         # Check to ensure no non-reserve phases are specified after reserve phases
         start_reserve = False
         raise_error = False
@@ -538,7 +537,6 @@ class AviaryProblem(om.Problem):
         pre-mission object, allowing this calculated subsystem mass to be accessed
         directly from the pre-mission object.
         """
-
         mass_names = []
         # Loop through all the phases in this subsystem.
         for external_subsystem in self.pre_mission_info['external_subsystems']:
@@ -1742,6 +1740,7 @@ class AviaryProblem(om.Problem):
         the normalized phase time domain), using the numpy linspace function.
         The result of this method is a single value or an array of interpolated values
         that can be used to seed the optimization problem with initial guesses.
+
         Parameters
         ----------
         val : float or list/array of floats
@@ -1750,6 +1749,7 @@ class AviaryProblem(om.Problem):
             The key identifying the variable for which the initial guess is provided.
         phase : Phase
             The phase for which the variable is being set.
+
         Returns
         -------
         val : float or array of floats
@@ -1790,6 +1790,7 @@ class AviaryProblem(om.Problem):
         guess, it identifies whether the guess corresponds to a state or a control
         variable and then processes the guess variable. After this, the initial
         guess is set in the problem using the `set_val` method.
+
         Parameters
         ----------
         phase_name : str
@@ -1797,7 +1798,6 @@ class AviaryProblem(om.Problem):
         phase : Phase
             The phase object for which the subsystem guesses are being added.
         """
-
         # Get all subsystems associated with the phase
         all_subsystems = self._get_all_subsystems(
             self.phase_info[phase_name]['external_subsystems']
@@ -2185,7 +2185,6 @@ class AviaryProblem(om.Problem):
         json_filename : string
             User specified name and relative path of json file to save the data into.
         """
-
         aviary_input_list = []
         with open(json_filename, 'w') as jsonfile:
             # Loop through aviary input datastructure and create a list
@@ -2349,7 +2348,7 @@ def _read_sizing_json(aviary_problem, json_filename):
         User specified name and relative path of json file to save the data into
 
     Returns
-    ----------
+    -------
     Aviary Problem object with updated input values from json file
 
     """
@@ -2476,7 +2475,7 @@ def _load_off_design(
         Controls the level of printouts for this method.
 
     Returns
-    ----------
+    -------
     Aviary Problem object with completed load_inputs() for specified off design mission
     """
     # Initialize a new aviary problem and aviary_input data structure

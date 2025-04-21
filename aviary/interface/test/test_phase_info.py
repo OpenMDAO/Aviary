@@ -26,7 +26,6 @@ from aviary.variable_info.variables import Mission
 class TestPhaseInfo(unittest.TestCase):
     def _test_phase_info_dict(self, phase_info_dict, name):
         """Helper method to test a given phase_info dict"""
-
         _climb_info = (name, phase_info_dict[name])
 
         # Removing the 'fix_duration' key from user_options for test comparison

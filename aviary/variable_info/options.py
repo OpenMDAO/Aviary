@@ -18,7 +18,6 @@ def get_option_defaults(engine=True, meta_data=_MetaData) -> AviaryValues:
         Dictionary containing metadata for the options. If None, Aviary's built-in
         metadata will be used.
     """
-
     option_defaults = AviaryValues()
 
     # Load all variables marked as options in the MetaData
@@ -51,5 +50,4 @@ def is_option(key, meta_data=_MetaData) -> bool:
         Dictionary containing metadata for the variable. If None, Aviary's built-in
         metadata will be used.
     """
-
     return meta_data[key]['option']
