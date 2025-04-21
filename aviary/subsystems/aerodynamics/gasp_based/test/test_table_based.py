@@ -191,9 +191,7 @@ class TestLowSpeedAero(unittest.TestCase):
 
 
 class GearDragIncrementTest(unittest.TestCase):
-    """
-    Test Gear drag coefficient increment
-    """
+    """Test Gear drag coefficient increment."""
 
     def test_case(self):
         prob = om.Problem()
@@ -215,9 +213,7 @@ class GearDragIncrementTest(unittest.TestCase):
 
 
 class GearDragIncrementTest2(unittest.TestCase):
-    """
-    Test mass-weight conversion
-    """
+    """Test mass-weight conversion."""
 
     def setUp(self):
         import aviary.subsystems.aerodynamics.gasp_based.table_based as table

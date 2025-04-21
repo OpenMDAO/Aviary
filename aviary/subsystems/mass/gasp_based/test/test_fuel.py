@@ -18,7 +18,7 @@ from aviary.variable_info.variables import Aircraft, Mission, Settings
 
 
 class BodyCalculationTestCase1(unittest.TestCase):
-    """this is the large single aisle 1 V3 test case"""
+    """this is the large single aisle 1 V3 test case."""
 
     def setUp(self):
         self.prob = om.Problem()
@@ -116,9 +116,7 @@ class BodyCalculationTestCase2(
 
 
 class BodyCalculationTestCase3(unittest.TestCase):
-    """
-    Test mass-weight conversion
-    """
+    """Test mass-weight conversion."""
 
     def setUp(self):
         import aviary.subsystems.mass.gasp_based.fuel as fuel
@@ -269,9 +267,7 @@ class FuelAndOEMTestCase(unittest.TestCase):
 
 
 class FuelAndOEMTestCase2(unittest.TestCase):
-    """
-    Test mass-weight conversion
-    """
+    """Test mass-weight conversion."""
 
     def setUp(self):
         import aviary.subsystems.mass.gasp_based.fuel as fuel
@@ -347,9 +343,7 @@ class FuelSysAndFullFusMassTestCase(
 
 
 class FuelSysAndFullFusMassTestCase2(unittest.TestCase):
-    """
-    Test mass-weight conversion
-    """
+    """Test mass-weight conversion."""
 
     def setUp(self):
         import aviary.subsystems.mass.gasp_based.fuel as fuel
@@ -451,9 +445,7 @@ class FusAndStructMassTestCase(unittest.TestCase):
 
 
 class FusAndStructMassTestCase2(unittest.TestCase):
-    """
-    Test mass-weight conversion
-    """
+    """Test mass-weight conversion."""
 
     def setUp(self):
         import aviary.subsystems.mass.gasp_based.fuel as fuel
@@ -568,9 +560,7 @@ class FuelMassTestCase(unittest.TestCase):  # this is the large single aisle 1 V
 
 
 class FuelMassTestCase2(unittest.TestCase):
-    """
-    Test mass-weight conversion
-    """
+    """Test mass-weight conversion."""
 
     def setUp(self):
         import aviary.subsystems.mass.gasp_based.fuel as fuel

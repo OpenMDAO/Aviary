@@ -15,9 +15,7 @@ from aviary.variable_info.variable_meta_data import CoreMetaData, add_meta_data
 
 @use_tempdirs
 class TestAviaryCSV(unittest.TestCase):
-    """
-    Test read/write CSV files and compare CSV files.
-    """
+    """Test read/write CSV files and compare CSV files."""
 
     def setUp(self):
         self.filename = get_path('utils/test/data/csv_test.csv')

@@ -12,9 +12,7 @@ from aviary.variable_info.variables import Aircraft, Mission
 
 
 class WingSize(om.ExplicitComponent):
-    """
-    Computation of wing area and wing span for GASP-based aerodynamics.
-    """
+    """Computation of wing area and wing span for GASP-based aerodynamics."""
 
     def setup(self):
         add_aviary_input(self, Mission.Design.GROSS_MASS, units='lbm')
@@ -69,9 +67,7 @@ class WingSize(om.ExplicitComponent):
 
 
 class WingParameters(om.ExplicitComponent):
-    """
-    Computation of various wing parameters for GASP-based geometry.
-    """
+    """Computation of various wing parameters for GASP-based geometry."""
 
     def initialize(self):
         add_aviary_option(self, Aircraft.Wing.HAS_FOLD)
@@ -820,9 +816,7 @@ class WingFold(om.ExplicitComponent):
 
 
 class WingGroup(om.Group):
-    """
-    Group of WingSize, WingParameters, and WingFold for wing parameter computations.
-    """
+    """Group of WingSize, WingParameters, and WingFold for wing parameter computations."""
 
     def initialize(self):
         add_aviary_option(self, Aircraft.Wing.CHOOSE_FOLD_LOCATION)

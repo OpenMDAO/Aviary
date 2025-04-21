@@ -20,9 +20,7 @@ from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 
 
 class LandingODE(_TakeoffODE):
-    """
-    Define the ODE for most phases of landing.
-    """
+    """Define the ODE for most phases of landing."""
 
     # region : derived type customization points
     stall_speed_lift_coefficient_name = Mission.Landing.LIFT_COEFFICIENT_MAX
@@ -30,9 +28,7 @@ class LandingODE(_TakeoffODE):
 
 
 class FlareODE(_BaseODE):
-    """
-    Define the ODE for the flare phase of landing.
-    """
+    """Define the ODE for the flare phase of landing."""
 
     def setup(self):
         options = self.options

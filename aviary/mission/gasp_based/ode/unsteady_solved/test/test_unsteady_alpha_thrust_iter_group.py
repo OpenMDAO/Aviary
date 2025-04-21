@@ -20,9 +20,7 @@ from aviary.variable_info.variables import Aircraft, Dynamic
 
 
 class TestUnsteadyAlphaThrustIterGroup(unittest.TestCase):
-    """
-    Test the UnsteadyControlIterGroup.
-    """
+    """Test the UnsteadyControlIterGroup."""
 
     def _test_unsteady_alpha_thrust_iter_group(self, ground_roll=False):
         nn = 5

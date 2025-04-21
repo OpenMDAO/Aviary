@@ -65,9 +65,7 @@ class AviaryOptionsDictionary(om.OptionsDictionary):
             self[name] = val
 
     def declare_options(self):
-        """
-        Hook for declaring options for a phase builder.
-        """
+        """Hook for declaring options for a phase builder."""
         pass
 
     def declare(

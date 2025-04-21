@@ -16,9 +16,7 @@ from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 
 
 class DLandTestCase(unittest.TestCase):
-    """
-    Test 2DOF landing group
-    """
+    """Test 2DOF landing group."""
 
     def setUp(self):
         self.prob = om.Problem()

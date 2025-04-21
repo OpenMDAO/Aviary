@@ -7,9 +7,7 @@ from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 
 
 class LandingCalc(om.ExplicitComponent):
-    """
-    Calculate the distance covered over the ground and approach velocity during landing
-    """
+    """Calculate the distance covered over the ground and approach velocity during landing."""
 
     def setup(self):
         add_aviary_input(self, Mission.Landing.TOUCHDOWN_MASS, val=150_000)

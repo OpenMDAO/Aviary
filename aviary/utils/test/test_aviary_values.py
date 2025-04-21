@@ -12,9 +12,7 @@ from aviary.variable_info.variables import Aircraft, Mission
 
 
 class TestTypes(unittest.TestCase):
-    """
-    Test Aviary variables have correct data types.
-    """
+    """Test Aviary variables have correct data types."""
 
     def test_aircraft(self):
         vals = AviaryValues()
@@ -141,9 +139,7 @@ class TestTypes(unittest.TestCase):
 
 
 class TestUnits(unittest.TestCase):
-    """
-    Test Aviary variables have correct units.
-    """
+    """Test Aviary variables have correct units."""
 
     def test_aircraft(self):
         vals = AviaryValues()
@@ -222,9 +218,7 @@ class TestUnits(unittest.TestCase):
 
 
 class TestVariableExtension(unittest.TestCase):
-    """
-    Test set_val function for extended Aviary variables.
-    """
+    """Test set_val function for extended Aviary variables."""
 
     def test_set_val_metadata_extension(self):
         option_defaults = AviaryValues()

@@ -191,9 +191,7 @@ class FlightConstraints(om.ExplicitComponent):
 
 
 class ClimbAtTopOfClimb(om.ExplicitComponent):
-    """
-    This class is not used nor tested.
-    """
+    """This class is not used nor tested."""
 
     def setup(self):
         self.add_input(Dynamic.Mission.VELOCITY, units='ft/s', val=-200)

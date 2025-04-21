@@ -104,9 +104,7 @@ class NacelleMassTest(unittest.TestCase):
 
 
 class NacelleMassTest2(unittest.TestCase):
-    """
-    Test mass-weight conversion
-    """
+    """Test mass-weight conversion."""
 
     def setUp(self):
         import aviary.subsystems.mass.flops_based.nacelle as nacelle

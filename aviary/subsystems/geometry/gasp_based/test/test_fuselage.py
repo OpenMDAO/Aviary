@@ -14,9 +14,7 @@ from aviary.variable_info.variables import Aircraft
 
 
 class FuselageParametersTestCase1(unittest.TestCase):
-    """
-    this is the GASP test case, input and output values based on large single aisle 1 v3 without bug fix
-    """
+    """this is the GASP test case, input and output values based on large single aisle 1 v3 without bug fix."""
 
     def setUp(self):
         options = get_option_defaults()
@@ -90,9 +88,7 @@ class FuselageParametersTestCase2(unittest.TestCase):
 
 
 class FuselageSizeTestCase1(unittest.TestCase):
-    """
-    this is the GASP test case, input and output values based on large single aisle 1 v3 without bug fix
-    """
+    """this is the GASP test case, input and output values based on large single aisle 1 v3 without bug fix."""
 
     def setUp(self):
         self.prob = om.Problem()
@@ -126,9 +122,7 @@ class FuselageSizeTestCase1(unittest.TestCase):
 
 
 class FuselageSizeTestCase2(unittest.TestCase):
-    """
-    this is the GASP test case for V3.6 advanced tube and wing
-    """
+    """this is the GASP test case for V3.6 advanced tube and wing."""
 
     def setUp(self):
         options = get_option_defaults()

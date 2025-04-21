@@ -37,7 +37,7 @@ def smooth_min(x, b, alpha=100.0):
 
 def d_smooth_min(x, b, alpha=100.0):
     """
-    Derivative of function smooth_min(x)
+    Derivative of function smooth_min(x).
 
     Parameters
     ----------
@@ -59,7 +59,7 @@ class TipSpeed(om.ExplicitComponent):
     """
     Compute current propeller speed and allowable max tip speed
     Maximum allowable tip speed is lower of helical tip Mach limited speed and
-    tip rotational speed limit
+    tip rotational speed limit.
     """
 
     def initialize(self):
@@ -320,9 +320,7 @@ class OutMachs(om.ExplicitComponent):
 
 
 class AreaSquareRatio(om.ExplicitComponent):
-    """
-    Compute the area ratio nacelle and propeller with a maximum 0.5.
-    """
+    """Compute the area ratio nacelle and propeller with a maximum 0.5."""
 
     def initialize(self):
         self.options.declare('num_nodes', types=int)
@@ -382,9 +380,7 @@ class AreaSquareRatio(om.ExplicitComponent):
 
 
 class AdvanceRatio(om.ExplicitComponent):
-    """
-    Compute the advance ratio jze with a maximum 5.0.
-    """
+    """Compute the advance ratio jze with a maximum 5.0."""
 
     def initialize(self):
         self.options.declare(
@@ -447,9 +443,7 @@ class AdvanceRatio(om.ExplicitComponent):
 
 
 class AreaSquareRatio(om.ExplicitComponent):
-    """
-    Compute the area ratio nacelle and propeller with a maximum 0.5.
-    """
+    """Compute the area ratio nacelle and propeller with a maximum 0.5."""
 
     def initialize(self):
         self.options.declare('num_nodes', types=int)
@@ -509,9 +503,7 @@ class AreaSquareRatio(om.ExplicitComponent):
 
 
 class AdvanceRatio(om.ExplicitComponent):
-    """
-    Compute the advance ratio jze with a maximum 5.0.
-    """
+    """Compute the advance ratio jze with a maximum 5.0."""
 
     def initialize(self):
         self.options.declare(
@@ -574,9 +566,7 @@ class AdvanceRatio(om.ExplicitComponent):
 
 
 class InstallLoss(om.Group):
-    """
-    Compute installation loss
-    """
+    """Compute installation loss."""
 
     def initialize(self):
         self.options.declare(

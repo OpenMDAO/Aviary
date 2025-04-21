@@ -26,9 +26,7 @@ class WingWeightSubsys(om.ExplicitComponent):
 
 
 class WingWeightBuilder(SubsystemBuilderBase):
-    """
-    Prototype of a subsystem that overrides an aviary internally computed var.
-    """
+    """Prototype of a subsystem that overrides an aviary internally computed var."""
 
     def __init__(self, name='wing_weight'):
         super().__init__(name)

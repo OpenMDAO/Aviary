@@ -200,9 +200,7 @@ class PropulsionPreMission(om.Group):
 
 
 class PropulsionSum(om.ExplicitComponent):
-    """
-    Calculates propulsion system level sums of individual engine performance parameters.
-    """
+    """Calculates propulsion system level sums of individual engine performance parameters."""
 
     def initialize(self):
         add_aviary_option(self, Aircraft.Engine.NUM_ENGINES)

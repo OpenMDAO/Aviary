@@ -70,9 +70,7 @@ class event_trigger:
 
 
 class SimuPyProblem(SimulationMixin):
-    """
-    Subproblem used as a basis for forward in time integration phases.
-    """
+    """Subproblem used as a basis for forward in time integration phases."""
 
     def __init__(
         self,
@@ -106,7 +104,7 @@ class SimuPyProblem(SimulationMixin):
         controls: a dictionary of the form {control_name:unit}
         include_state_outputs : automatically add the state to the input
         works well for auto-parsed naming, does not check for duplication before adding
-        states, parameters, outputs, and controls can also be input as a list of keys for the dictionary
+        states, parameters, outputs, and controls can also be input as a list of keys for the dictionary.
         """
         default_om_list_args = dict(prom_name=True, val=False, out_stream=None, units=True)
 
@@ -494,7 +492,7 @@ class SGMTrajBase(om.ExplicitComponent):
             pass ODE's,
             next_problem = f(current_problem, current_result)
             initial_state/time/etc
-            next_state from last state/output/event information
+            next_state from last state/output/event information.
 
             pass in terminal and integrand output functions with derivatives (components)
             -- anything special for final state, final time?

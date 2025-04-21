@@ -1,6 +1,4 @@
-"""
-Define meta data associated with variables in the Aviary data hierarchy.
-"""
+"""Define meta data associated with variables in the Aviary data hierarchy."""
 
 from copy import deepcopy
 from pathlib import Path

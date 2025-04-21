@@ -109,9 +109,7 @@ class AircraftMissionTestSuite(unittest.TestCase):
         clear_reports()
 
     def add_external_subsystem(self, phase_info, subsystem_builder):
-        """
-        Add an external subsystem to all phases in the mission.
-        """
+        """Add an external subsystem to all phases in the mission."""
         for phase in phase_info:
             if 'user_options' in phase_info[phase]:
                 if 'external_subsystems' not in phase_info[phase]:

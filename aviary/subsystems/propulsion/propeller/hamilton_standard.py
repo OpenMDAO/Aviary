@@ -463,9 +463,7 @@ comp_mach_CT_arr = np.array([
 
 
 class PreHamiltonStandard(om.ExplicitComponent):
-    """
-    Pre-process parameters needed by HamiltonStandard component
-    """
+    """Pre-process parameters needed by HamiltonStandard component."""
 
     def initialize(self):
         self.options.declare('num_nodes', default=1, types=int)
@@ -934,9 +932,7 @@ class HamiltonStandard(om.ExplicitComponent):
 
 
 class PostHamiltonStandard(om.ExplicitComponent):
-    """
-    Post-process after HamiltonStandard run to get thrust and compressibility
-    """
+    """Post-process after HamiltonStandard run to get thrust and compressibility."""
 
     def initialize(self):
         self.options.declare('num_nodes', default=1, types=int)

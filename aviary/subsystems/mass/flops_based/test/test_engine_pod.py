@@ -17,9 +17,7 @@ from aviary.variable_info.variables import Aircraft
 
 
 class EnginePodMassTest(unittest.TestCase):
-    """
-    Tests the engine pod mass needed for the detailed wing calculation.
-    """
+    """Tests the engine pod mass needed for the detailed wing calculation."""
 
     def setUp(self):
         self.prob = om.Problem()

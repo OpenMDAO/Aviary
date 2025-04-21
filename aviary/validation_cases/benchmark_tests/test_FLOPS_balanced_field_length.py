@@ -1,6 +1,4 @@
-"""
-Balanced field length optimization implemented with the Level 3 API.
-"""
+"""Balanced field length optimization implemented with the Level 3 API."""
 
 import copy
 import unittest
@@ -28,9 +26,7 @@ from aviary.variable_info.variables import Aircraft, Dynamic
 
 @use_tempdirs
 class TestFLOPSBalancedFieldLength(unittest.TestCase):
-    """
-    Test balanced field computation using N3CC data in balanced_liftoff phase
-    """
+    """Test balanced field computation using N3CC data in balanced_liftoff phase."""
 
     @require_pyoptsparse(optimizer='IPOPT')
     def bench_test_IPOPT(self):

@@ -386,7 +386,7 @@ class SGMAscentCombined(SGMAscent):
 class SGMAccel(SimuPyProblem):
     """
     This creates a subproblem for the acceleration phase of the trajectory that will
-    be solved using SGM
+    be solved using SGM.
     """
 
     def __init__(
@@ -422,7 +422,7 @@ class SGMAccel(SimuPyProblem):
 class SGMClimb(SimuPyProblem):
     """
     This creates a subproblem for the climb phase of the trajectory that will
-    be solved using SGM
+    be solved using SGM.
     """
 
     def __init__(
@@ -487,7 +487,7 @@ class SGMClimb(SimuPyProblem):
 class SGMCruise(SimuPyProblem):
     """
     This creates a subproblem for the cruise phase of the trajectory that will
-    be solved using SGM
+    be solved using SGM.
     """
 
     def __init__(
@@ -545,7 +545,7 @@ class SGMCruise(SimuPyProblem):
 class SGMDescent(SimuPyProblem):
     """
     This creates a subproblem for the descent phase of the trajectory that will
-    be solved using SGM
+    be solved using SGM.
     """
 
     def __init__(

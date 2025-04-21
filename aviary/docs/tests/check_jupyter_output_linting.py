@@ -44,14 +44,10 @@ def _get_files():
 
 @unittest.skipIf(sys.platform == 'win32', "Tests don't work in Windows")
 class LintJupyterOutputsTestCase(unittest.TestCase):
-    """
-    Check Jupyter Notebooks for outputs through execution count and recommend to remove output.
-    """
+    """Check Jupyter Notebooks for outputs through execution count and recommend to remove output."""
 
     def test_output(self):
-        """
-        Check that output has been cleaned out of all cells.
-        """
+        """Check that output has been cleaned out of all cells."""
         for file in _get_files():
             with self.subTest(file):
                 with open(file) as f:
@@ -62,9 +58,7 @@ class LintJupyterOutputsTestCase(unittest.TestCase):
                             self.fail(f'Output found in {file}.\n{msg}')
 
     def test_assert(self):
-        """
-        Make sure any code cells with asserts are hidden.
-        """
+        """Make sure any code cells with asserts are hidden."""
         for file in _get_files():
             with open(file) as f:
                 json_data = json.load(f)
@@ -97,9 +91,7 @@ class LintJupyterOutputsTestCase(unittest.TestCase):
                             )
 
     def test_eval_rst(self):
-        """
-        Make sure any automethod calls are bracketed with {eval-rst}.
-        """
+        """Make sure any automethod calls are bracketed with {eval-rst}."""
         files = set()
 
         for file in _get_files():

@@ -7,9 +7,7 @@ from aviary.variable_info.variables import Aircraft, Dynamic
 
 
 class MotorMission(om.Group):
-    """
-    Calculates the mission performance (ODE) of a single electric motor.
-    """
+    """Calculates the mission performance (ODE) of a single electric motor."""
 
     def initialize(self):
         self.options.declare('num_nodes', types=int)

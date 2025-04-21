@@ -53,9 +53,7 @@ class WingShearControlMassTest(unittest.TestCase):
 
 
 class WingShearControlMassTest2(unittest.TestCase):
-    """
-    Test mass-weight conversion
-    """
+    """Test mass-weight conversion."""
 
     def setUp(self):
         import aviary.subsystems.mass.flops_based.wing_common as wing
@@ -118,9 +116,7 @@ class WingMiscMassTest(unittest.TestCase):
 
 
 class WingMiscMassTest2(unittest.TestCase):
-    """
-    Test mass-weight conversion
-    """
+    """Test mass-weight conversion."""
 
     def setUp(self):
         import aviary.subsystems.mass.flops_based.wing_common as wing
@@ -199,9 +195,7 @@ class WingBendingMassTest(unittest.TestCase):
 
 
 class WingBendingMassTest2(unittest.TestCase):
-    """
-    Test mass-weight conversion
-    """
+    """Test mass-weight conversion."""
 
     def setUp(self):
         import aviary.subsystems.mass.flops_based.wing_common as wing

@@ -10,9 +10,7 @@ from aviary.variable_info.variables import Dynamic
 
 
 class TestBreguetResults(unittest.TestCase):
-    """
-    Test cruise range and time in RangeComp component
-    """
+    """Test cruise range and time in RangeComp component."""
 
     def setUp(self):
         nn = 10
@@ -102,9 +100,7 @@ class TestBreguetPartials(unittest.TestCase):
 
 
 class TestBreguetPartials2(unittest.TestCase):
-    """
-    Test mass-weight conversion
-    """
+    """Test mass-weight conversion."""
 
     def setUp(self):
         import aviary.mission.gasp_based.ode.breguet_cruise_eom as breguet
@@ -186,9 +182,7 @@ class TestBreguetResults2(unittest.TestCase):
 
 
 class TestElectricBreguetResults(unittest.TestCase):
-    """
-    Test cruise range and time in E_RangeComp component
-    """
+    """Test cruise range and time in E_RangeComp component."""
 
     def setUp(self):
         nn = 10

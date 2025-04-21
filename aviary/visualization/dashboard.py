@@ -322,9 +322,7 @@ def create_csv_frame(csv_filepath, documentation):
 
 
 def get_run_status(status_filepath):
-    """
-    Get run status
-    """
+    """Get run status."""
     try:
         with open(status_filepath) as f:
             status_dct = json.load(f)

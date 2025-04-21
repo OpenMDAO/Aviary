@@ -8,7 +8,7 @@ from aviary.variable_info.variables import Dynamic
 class RequiredThrust(om.ExplicitComponent):
     """
     Computes the required thrust using the equation:
-    thrust_required = drag + (altitude_rate*gravity/velocity + velocity_rate) * mass
+    thrust_required = drag + (altitude_rate*gravity/velocity + velocity_rate) * mass.
     """
 
     def initialize(self):

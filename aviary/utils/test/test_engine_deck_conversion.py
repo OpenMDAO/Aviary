@@ -9,9 +9,7 @@ from aviary.utils.functions import get_path
 
 @use_tempdirs
 class TestEngineDeckConversion(unittest.TestCase):
-    """
-    Test engine deck conversion utility by comparing against previously converted engine deck files
-    """
+    """Test engine deck conversion utility by comparing against previously converted engine deck files."""
 
     def prepare_and_run(self, filename, output_file=None, data_format=EngineDeckType.GASP):
         # Specify the input file

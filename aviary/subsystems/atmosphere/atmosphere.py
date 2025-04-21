@@ -9,7 +9,7 @@ from aviary.variable_info.variables import Dynamic
 class Atmosphere(om.Group):
     """
     Group that contains atmospheric conditions for the aircraft's current flight
-    condition, as well as conversions for different speed types (TAS, EAS, Mach)
+    condition, as well as conversions for different speed types (TAS, EAS, Mach).
     """
 
     def initialize(self):

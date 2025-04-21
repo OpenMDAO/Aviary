@@ -7,9 +7,7 @@ from aviary.variable_info.variables import Aircraft, Settings
 
 
 class FuselageParameters(om.ExplicitComponent):
-    """
-    Computation of average fuselage diameter, cabin height, cabin length and nose height.
-    """
+    """Computation of average fuselage diameter, cabin height, cabin length and nose height."""
 
     def initialize(self):
         add_aviary_option(self, Aircraft.CrewPayload.Design.NUM_PASSENGERS)
@@ -220,9 +218,7 @@ class FuselageSize(om.ExplicitComponent):
 
 
 class FuselageGroup(om.Group):
-    """
-    Group to pull together FuselageParameters and FuselageSize.
-    """
+    """Group to pull together FuselageParameters and FuselageSize."""
 
     def setup(self):
         # outputs from parameters that are used in size but not outside of this group

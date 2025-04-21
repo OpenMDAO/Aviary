@@ -14,9 +14,7 @@ from aviary.variable_info.variables import Dynamic
 
 
 class TestUnsteadyFlightConditions(unittest.TestCase):
-    """
-    Unit test for UnsteadySolvedFlightConditions
-    """
+    """Unit test for UnsteadySolvedFlightConditions."""
 
     def _test_unsteady_flight_conditions(self, ground_roll=False, input_speed_type=SpeedType.TAS):
         nn = 5

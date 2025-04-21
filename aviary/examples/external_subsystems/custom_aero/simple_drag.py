@@ -9,7 +9,7 @@ from aviary.variable_info.variables import Aircraft, Dynamic
 
 class SimplestDragCoeff(om.ExplicitComponent):
     """
-    Simple representation of aircraft drag as CD = CD_zero + k * CL**2
+    Simple representation of aircraft drag as CD = CD_zero + k * CL**2.
 
     Values are fictional. Typically, some higher fidelity method will go here instead.
     """

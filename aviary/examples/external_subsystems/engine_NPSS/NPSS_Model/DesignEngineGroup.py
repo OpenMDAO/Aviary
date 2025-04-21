@@ -9,9 +9,7 @@ from aviary.utils.functions import get_path
 
 
 class NPSSExternalCodeComp(om.ExternalCodeComp):
-    """
-    Component that wraps NPSS engine model
-    """
+    """Component that wraps NPSS engine model."""
 
     def initialize(self):
         self.options.declare(
@@ -118,9 +116,7 @@ class NPSSExternalCodeComp(om.ExternalCodeComp):
 
 
 class DesignEngineGroup(om.Group):
-    """
-    Group that contains NPSSExternalCodeComp and component to calculate negative fuel flow rate
-    """
+    """Group that contains NPSSExternalCodeComp and component to calculate negative fuel flow rate."""
 
     def initialize(self):
         self.options.declare(

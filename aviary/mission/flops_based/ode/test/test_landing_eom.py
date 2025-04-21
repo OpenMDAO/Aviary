@@ -19,9 +19,7 @@ from aviary.variable_info.variables import Dynamic
 
 
 class FlareEOMTest(unittest.TestCase):
-    """
-    Test against data of detailed_landing_flare from models/N3CC/N3CC_data.py
-    """
+    """Test against data of detailed_landing_flare from models/N3CC/N3CC_data.py."""
 
     def setUp(self):
         prob = self.prob = om.Problem()
@@ -91,7 +89,7 @@ class FlareEOMTest(unittest.TestCase):
 class OtherTest(unittest.TestCase):
     """
     Test against data of detailed landing glide slope forces, flare sum forces,
-    and ground sum forces from models/N3CC/N3CC_data.py
+    and ground sum forces from models/N3CC/N3CC_data.py.
     """
 
     def test_GlideSlopeForces(self):

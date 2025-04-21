@@ -85,9 +85,7 @@ class TransportFurnishingsGroupMass(om.ExplicitComponent):
 
 
 class BWBFurnishingsGroupMass(om.ExplicitComponent):
-    """
-    Calculates the mass of the furnishings group for HWB aircraft.
-    """
+    """Calculates the mass of the furnishings group for HWB aircraft."""
 
     def initialize(self):
         add_aviary_option(self, Aircraft.BWB.NUM_BAYS)

@@ -16,9 +16,7 @@ from aviary.variable_info.variables import Aircraft, Dynamic
 
 
 class PreHamiltonStandardTest(unittest.TestCase):
-    """
-    Test computation in PreHamiltonStandard class.
-    """
+    """Test computation in PreHamiltonStandard class."""
 
     def setUp(self):
         prob = om.Problem()
@@ -85,9 +83,7 @@ class PreHamiltonStandardTest(unittest.TestCase):
 
 
 class HamiltonStandardTest(unittest.TestCase):
-    """
-    Test computation in HamiltonStandard class.
-    """
+    """Test computation in HamiltonStandard class."""
 
     def setUp(self):
         options = get_option_defaults()
@@ -140,9 +136,7 @@ class HamiltonStandardTest(unittest.TestCase):
 
 
 class PostHamiltonStandardTest(unittest.TestCase):
-    """
-    Test computation in PostHamiltonStandard class.
-    """
+    """Test computation in PostHamiltonStandard class."""
 
     def setUp(self):
         prob = om.Problem()

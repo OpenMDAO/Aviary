@@ -38,7 +38,7 @@ _default_name = 'aerodynamics'
 
 class AerodynamicsBuilderBase(SubsystemBuilderBase):
     """
-    Base class of aerodynamics builder
+    Base class of aerodynamics builder.
 
     Methods
     -------
@@ -594,7 +594,7 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
 
     def report(self, prob, reports_folder, **kwargs):
         """
-        Generate the report for Aviary core aerodynamics analysis
+        Generate the report for Aviary core aerodynamics analysis.
 
         Parameters
         ----------

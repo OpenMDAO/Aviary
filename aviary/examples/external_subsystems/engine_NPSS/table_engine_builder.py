@@ -20,7 +20,7 @@ from aviary.utils.functions import get_aviary_resource_path
 
 class TableEngineBuilder(EngineModel):
     """
-    NPSS engine builder from table
+    NPSS engine builder from table.
 
     Attributes
     ----------
@@ -180,7 +180,7 @@ class TableEngineBuilder(EngineModel):
         return engine
 
     def get_bus_variables(self):
-        """Transfer training data from pre-mission to mission"""
+        """Transfer training data from pre-mission to mission."""
         return vars_to_connect
 
     def get_controls(self, phase_name):

@@ -222,9 +222,7 @@ def _add_drag_coefficients(
     CD0_scaled: np.ndarray,
     CDI_scaled: np.ndarray,
 ):
-    """
-    Insert drag coefficients into the mission data, undoing FLOPS scaling.
-    """
+    """Insert drag coefficients into the mission data, undoing FLOPS scaling."""
     flops_inputs = get_flops_inputs(case_name)
     FCDSUB = flops_inputs.get_val(Aircraft.Design.SUBSONIC_DRAG_COEFF_FACTOR)
     FCDSUP = flops_inputs.get_val(Aircraft.Design.SUPERSONIC_DRAG_COEFF_FACTOR)

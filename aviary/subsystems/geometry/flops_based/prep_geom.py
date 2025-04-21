@@ -27,9 +27,7 @@ from aviary.variable_info.variables import Aircraft
 
 
 class PrepGeom(om.Group):
-    """
-    Prepare derived values of aircraft geometry for aerodynamics analysis.
-    """
+    """Prepare derived values of aircraft geometry for aerodynamics analysis."""
 
     def setup(self):
         self.add_subsystem(
@@ -89,9 +87,7 @@ class PrepGeom(om.Group):
 
 
 class _Prelim(om.ExplicitComponent):
-    """
-    Calculate internal derived values of aircraft geometry for FLOPS-based aerodynamics analysis.
-    """
+    """Calculate internal derived values of aircraft geometry for FLOPS-based aerodynamics analysis."""
 
     def initialize(self):
         add_aviary_option(self, Aircraft.Wing.SPAN_EFFICIENCY_REDUCTION)
@@ -434,9 +430,7 @@ class _Prelim(om.ExplicitComponent):
 
     @property
     def fuselage_var(self):
-        """
-        Define the variable name associated with XDX.
-        """
+        """Define the variable name associated with XDX."""
         value = Aircraft.Fuselage.AVG_DIAMETER
 
         if self.options[Aircraft.Wing.SPAN_EFFICIENCY_REDUCTION]:
@@ -446,9 +440,7 @@ class _Prelim(om.ExplicitComponent):
 
 
 class _Wing(om.ExplicitComponent):
-    """
-    Calculate wing wetted area of aircraft geometry for FLOPS-based aerodynamics analysis.
-    """
+    """Calculate wing wetted area of aircraft geometry for FLOPS-based aerodynamics analysis."""
 
     def initialize(self):
         add_aviary_option(self, Aircraft.Fuselage.NUM_FUSELAGES)

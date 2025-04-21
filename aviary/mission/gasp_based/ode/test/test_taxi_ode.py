@@ -16,9 +16,7 @@ from aviary.variable_info.variables import Dynamic, Mission
 
 
 class TaxiTestCase(unittest.TestCase):
-    """
-    Test computation of taxi group.
-    """
+    """Test computation of taxi group."""
 
     def setUp(self):
         self.prob = om.Problem()

@@ -7,9 +7,7 @@ from aviary.examples.external_subsystems.battery.model.cell_comp import CellComp
 
 
 class Test_cell_comp(unittest.TestCase):
-    """
-    test partials in CellComp component
-    """
+    """test partials in CellComp component."""
 
     @use_tempdirs
     def test_cell_comp(self):

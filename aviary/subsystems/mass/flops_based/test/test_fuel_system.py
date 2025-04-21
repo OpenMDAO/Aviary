@@ -55,9 +55,7 @@ class AltFuelSystemTest(unittest.TestCase):
 
 
 class AltFuelSystemTest2(unittest.TestCase):
-    """
-    Test mass-weight conversion
-    """
+    """Test mass-weight conversion."""
 
     def setUp(self):
         import aviary.subsystems.mass.flops_based.fuel_system as fuel
@@ -131,9 +129,7 @@ class TransportFuelSystemTest(unittest.TestCase):
 
 
 class TransportFuelSystemTest2(unittest.TestCase):
-    """
-    Test mass-weight conversion
-    """
+    """Test mass-weight conversion."""
 
     def setUp(self):
         import aviary.subsystems.mass.flops_based.fuel_system as fuel

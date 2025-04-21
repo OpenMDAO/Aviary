@@ -145,7 +145,7 @@ def assert_metadata_alphabetization(metadata_variables_list):
 
 def assert_match_varnames(system, MetaData=None, exclude_inputs=None, exclude_outputs=None):
     """
-    Assert that the inputs and outputs of the system match with those in MetaData
+    Assert that the inputs and outputs of the system match with those in MetaData.
 
     Parameters
     ----------
@@ -229,7 +229,7 @@ def get_names_from_hierarchy(hierarchy):
 
 
 def filter_empty(entry):
-    if (entry != '') and (entry != None):
+    if (entry != '') and (entry is not None):
         return True
 
     else:

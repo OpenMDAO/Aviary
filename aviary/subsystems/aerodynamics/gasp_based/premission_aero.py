@@ -20,7 +20,7 @@ from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 
 
 class PreMissionAero(om.Group):
-    """Takeoff and landing flaps modeling"""
+    """Takeoff and landing flaps modeling."""
 
     def setup(self):
         self.add_subsystem(

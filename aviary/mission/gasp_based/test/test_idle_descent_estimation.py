@@ -25,9 +25,7 @@ from aviary.variable_info.variables import Aircraft, Dynamic, Settings
     importlib.util.find_spec('pyoptsparse') is not None, 'pyoptsparse is not installed'
 )
 class IdleDescentTestCase(unittest.TestCase):
-    """
-    Test idle descent for 2DOF mission
-    """
+    """Test idle descent for 2DOF mission."""
 
     def setUp(self):
         input_deck = 'models/large_single_aisle_1/large_single_aisle_1_GASP.csv'

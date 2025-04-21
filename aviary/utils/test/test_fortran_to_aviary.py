@@ -10,9 +10,7 @@ from aviary.variable_info.enums import LegacyCode
 
 @use_tempdirs
 class TestFortranToAviary(unittest.TestCase):
-    """
-    Test fortran_to_aviary legacy code input file conversion utility by comparing against already converted input files.
-    """
+    """Test fortran_to_aviary legacy code input file conversion utility by comparing against already converted input files."""
 
     def prepare_and_run(self, filepath, out_file=None, legacy_code=LegacyCode.GASP):
         # Specify the output file

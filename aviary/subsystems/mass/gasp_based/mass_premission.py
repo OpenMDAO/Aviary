@@ -8,9 +8,7 @@ from aviary.subsystems.mass.gasp_based.wing import WingMassGroup
 
 
 class MassPremission(om.Group):
-    """
-    Pre-mission mass group for GASP-based mass.
-    """
+    """Pre-mission mass group for GASP-based mass."""
 
     def setup(self):
         # output values from design_load that are connected to fixed_mass via promotion

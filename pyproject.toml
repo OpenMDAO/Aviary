@@ -11,6 +11,7 @@ quote-style = "single"
 [tool.ruff.lint]
 # isort, pydocstyle
 extend-select = ["I", "D"]
+extend-ignore = ["F841"]
 # disabling these rules will help current Aviary code pass a pre-commit lint check
 # extend-ignore = [
 #     "D100",

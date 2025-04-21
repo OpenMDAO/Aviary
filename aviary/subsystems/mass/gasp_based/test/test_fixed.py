@@ -26,7 +26,7 @@ from aviary.variable_info.variables import Aircraft, Mission, Settings
 
 @use_tempdirs
 class MassParametersTestCase1(unittest.TestCase):
-    """this is large single aisle 1 v3 bug fixed test case"""
+    """this is large single aisle 1 v3 bug fixed test case."""
 
     def setUp(self):
         options = get_option_defaults()

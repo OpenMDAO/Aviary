@@ -150,9 +150,7 @@ class AltLandingGearMassTest2(unittest.TestCase):
 
 
 class LandingGearLengthTest(unittest.TestCase):
-    """
-    This component is unrepresented in our test data.
-    """
+    """This component is unrepresented in our test data."""
 
     def setUp(self):
         self.prob = om.Problem()

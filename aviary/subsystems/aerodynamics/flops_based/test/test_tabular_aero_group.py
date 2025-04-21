@@ -641,9 +641,7 @@ def _run_computed_aero_harness(flops_inputs, dynamic_inputs, num_nodes):
 
 
 class _ComputedAeroHarness(om.Group):
-    """
-    Calculate drag and drag polars.
-    """
+    """Calculate drag and drag polars."""
 
     def initialize(self):
         options = self.options

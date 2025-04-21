@@ -43,9 +43,7 @@ inputs.set_val(Aircraft.Nacelle.LAMINAR_FLOW_UPPER, np.zeros(2))
 
 @use_tempdirs
 class MultiengineTestcase(unittest.TestCase):
-    """
-    Test the different throttle allocation methods for models with multiple, unique EngineModels.
-    """
+    """Test the different throttle allocation methods for models with multiple, unique EngineModels."""
 
     def setUp(self):
         om.clear_reports()

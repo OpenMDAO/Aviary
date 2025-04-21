@@ -269,9 +269,7 @@ class WingMassSolve(om.ImplicitComponent):
 
 
 class WingMassTotal(om.ExplicitComponent):
-    """
-    Computation of wing mass, strut mass, and wing fold mass.
-    """
+    """Computation of wing mass, strut mass, and wing fold mass."""
 
     def initialize(self):
         add_aviary_option(self, Aircraft.Wing.HAS_FOLD)
@@ -381,16 +379,14 @@ class WingMassTotal(om.ExplicitComponent):
             )
 
         if (
-            self.options[Aircraft.Wing.HAS_STRUT] == False
-            and self.options[Aircraft.Wing.HAS_FOLD] == False
+            self.options[Aircraft.Wing.HAS_STRUT] is False
+            and self.options[Aircraft.Wing.HAS_FOLD] is False
         ):
             J[Aircraft.Wing.MASS, 'isolated_wing_mass'] = 1
 
 
 class WingMassGroup(om.Group):
-    """
-    Group to compute wing mass for GASP-based mass.
-    """
+    """Group to compute wing mass for GASP-based mass."""
 
     def initialize(self):
         add_aviary_option(self, Aircraft.Wing.HAS_FOLD)

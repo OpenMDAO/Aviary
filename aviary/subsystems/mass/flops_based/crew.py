@@ -10,9 +10,7 @@ from aviary.variable_info.variables import Aircraft
 
 
 class NonFlightCrewMass(om.ExplicitComponent):
-    """
-    Calculate the estimated mass for the non-flight and their baggage.
-    """
+    """Calculate the estimated mass for the non-flight and their baggage."""
 
     def initialize(self):
         add_aviary_option(self, Aircraft.CrewPayload.NUM_FLIGHT_ATTENDANTS)
@@ -63,9 +61,7 @@ class NonFlightCrewMass(om.ExplicitComponent):
 
 
 class FlightCrewMass(om.ExplicitComponent):
-    """
-    Calculate the estimated mass for the flight crew and their baggage.
-    """
+    """Calculate the estimated mass for the flight crew and their baggage."""
 
     def initialize(self):
         add_aviary_option(self, Aircraft.CrewPayload.NUM_FLIGHT_CREW)

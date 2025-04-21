@@ -5,9 +5,7 @@ from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 
 
 class GearboxMission(om.Group):
-    """
-    Calculates the mission performance of a single gearbox.
-    """
+    """Calculates the mission performance of a single gearbox."""
 
     def initialize(self):
         self.options.declare('num_nodes', types=int)

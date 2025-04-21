@@ -8,9 +8,7 @@ from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 
 
 class LiftDependentDrag(om.ExplicitComponent):
-    """
-    Calculates lift dependent drag
-    """
+    """Calculates lift dependent drag."""
 
     def initialize(self):
         self.options.declare(

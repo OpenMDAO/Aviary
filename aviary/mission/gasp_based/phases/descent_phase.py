@@ -267,9 +267,7 @@ class DescentPhase(PhaseBuilderBase):
         return phase
 
     def _extra_ode_init_kwargs(self):
-        """
-        Return extra kwargs required for initializing the ODE.
-        """
+        """Return extra kwargs required for initializing the ODE."""
         # TODO: support external_subsystems and meta_data in the base class
         return {
             'input_speed_type': self.user_options.get_val('input_speed_type'),

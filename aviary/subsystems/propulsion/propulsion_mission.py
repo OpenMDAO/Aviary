@@ -316,9 +316,7 @@ class PropulsionMission(om.Group):
 
 
 class PropulsionSum(om.ExplicitComponent):
-    """
-    Calculates propulsion system level sums of individual engine performance parameters.
-    """
+    """Calculates propulsion system level sums of individual engine performance parameters."""
 
     def initialize(self):
         self.options.declare('num_nodes', types=int, lower=0)

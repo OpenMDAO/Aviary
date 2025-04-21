@@ -1,6 +1,6 @@
 """
 Preprocessors are utility functions that handle issues with Aviary inputs before model
-setup and execution. These tasks include consistency checking between related variables,
+setup and execution. These tasks include consistency checking between related variables,.
 
 """
 
@@ -20,7 +20,7 @@ from aviary.variable_info.variables import Aircraft, Mission, Settings
 # TODO document what kwargs are used, and by which preprocessors in docstring?
 def preprocess_options(aviary_options: AviaryValues, meta_data=_MetaData, verbosity=None, **kwargs):
     """
-    Run all preprocessors on provided AviaryValues object
+    Run all preprocessors on provided AviaryValues object.
 
     Parameters
     ----------
@@ -704,9 +704,7 @@ def preprocess_propulsion(
 
 
 def _get_engine_variables():
-    """
-    Yields all propulsion-related variables in Aircraft that need to be vectorized
-    """
+    """Yields all propulsion-related variables in Aircraft that need to be vectorized."""
     for item in get_names_from_hierarchy(Aircraft.Engine):
         yield item
 

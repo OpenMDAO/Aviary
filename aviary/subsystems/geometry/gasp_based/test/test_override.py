@@ -114,7 +114,7 @@ class GASPOverrideTestCase(unittest.TestCase):
     def test_case_aero_coeffs(self):
         """
         Test overriding from csv (vertical tail) and overriding from code (horizontal tail)
-        Also checks non-overriden (wing) and default (strut)
+        Also checks non-overriden (wing) and default (strut).
         """
         prob = self.prob
         prob.model.add_subsystem('geom', AeroGeom(), promotes=['*'])

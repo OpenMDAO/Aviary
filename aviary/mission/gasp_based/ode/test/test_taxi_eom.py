@@ -10,9 +10,7 @@ from aviary.variable_info.variables import Dynamic, Mission
 
 
 class TaxiFuelComponentTestCase(unittest.TestCase):
-    """
-    Test the computation of fuel consumed during taxi in TaxiFuelComponent component.
-    """
+    """Test the computation of fuel consumed during taxi in TaxiFuelComponent component."""
 
     def setUp(self):
         self.prob = om.Problem()

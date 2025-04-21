@@ -15,9 +15,7 @@ from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 
 
 class LandingSegment(TwoDOFODE):
-    """
-    Group for a 2-degree of freedom landing ODE.
-    """
+    """Group for a 2-degree of freedom landing ODE."""
 
     def setup(self):
         aviary_options = self.options['aviary_options']

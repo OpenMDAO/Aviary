@@ -20,9 +20,7 @@ from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 
 
 class EngineModelVariables(Enum):
-    """
-    Define constants that map to supported variable names in an engine model.
-    """
+    """Define constants that map to supported variable names in an engine model."""
 
     MACH = Dynamic.Atmosphere.MACH
     ALTITUDE = Dynamic.Mission.ALTITUDE
@@ -187,7 +185,7 @@ def build_engine_deck(aviary_options: AviaryValues, meta_data=_MetaData):
 class EngineDataInterpolator(om.Group):
     """
     Group that contains interpolators that get passed training data directly through
-    openMDAO connections
+    openMDAO connections.
     """
 
     def initialize(self):
@@ -311,9 +309,7 @@ class EngineDataInterpolator(om.Group):
 
 
 class UncorrectData(om.Group):
-    """
-    Calculations to recover physical parameter values that have been corrected based on ambient atmospheric conditions
-    """
+    """Calculations to recover physical parameter values that have been corrected based on ambient atmospheric conditions."""
 
     def initialize(self):
         self.options.declare('num_nodes', types=int, default=1)
@@ -391,9 +387,7 @@ class UncorrectData(om.Group):
 
 
 class PropellerModelVariables(Enum):
-    """
-    Define constants that map to supported variable names in a propeller model.
-    """
+    """Define constants that map to supported variable names in a propeller model."""
 
     HELICAL_MACH = 'Helical_Mach'
     MACH = 'Mach'

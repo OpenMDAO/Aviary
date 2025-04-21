@@ -1,6 +1,4 @@
-"""
-Test external subsystem bus API.
-"""
+"""Test external subsystem bus API."""
 
 import unittest
 from copy import deepcopy

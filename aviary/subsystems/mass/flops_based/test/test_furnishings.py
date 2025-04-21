@@ -23,9 +23,7 @@ from aviary.variable_info.variables import Aircraft
 
 
 class TransportFurnishingsGroupMassTest(unittest.TestCase):
-    """
-    Tests transport/GA furnishings mass calculation.
-    """
+    """Tests transport/GA furnishings mass calculation."""
 
     def setUp(self):
         self.prob = om.Problem()
@@ -63,9 +61,7 @@ class TransportFurnishingsGroupMassTest(unittest.TestCase):
 
 
 class BWBFurnishingsGroupMassTest(unittest.TestCase):
-    """
-    Tests BWB furnishings mass calculation.
-    """
+    """Tests BWB furnishings mass calculation."""
 
     def setUp(self):
         self.prob = om.Problem()
@@ -133,9 +129,7 @@ class BWBFurnishingsGroupMassTest(unittest.TestCase):
 
 
 class BWBFurnishingsGroupMassTest2(unittest.TestCase):
-    """
-    Test mass-weight conversion
-    """
+    """Test mass-weight conversion."""
 
     def setUp(self):
         import aviary.subsystems.mass.flops_based.furnishings as furnishings
@@ -185,9 +179,7 @@ class BWBFurnishingsGroupMassTest2(unittest.TestCase):
 
 
 class AltFurnishingsGroupMassBaseTest(unittest.TestCase):
-    """
-    Tests alternate base furnishings mass calculation.
-    """
+    """Tests alternate base furnishings mass calculation."""
 
     def setUp(self):
         self.prob = om.Problem()
@@ -220,9 +212,7 @@ class AltFurnishingsGroupMassBaseTest(unittest.TestCase):
 
 
 class AltFurnishingsGroupMassTest(unittest.TestCase):
-    """
-    Tests alternate furnishings mass calculation.
-    """
+    """Tests alternate furnishings mass calculation."""
 
     def setUp(self):
         self.prob = om.Problem()

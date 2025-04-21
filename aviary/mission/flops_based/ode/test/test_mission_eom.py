@@ -10,9 +10,7 @@ from aviary.variable_info.variables import Dynamic
 
 
 class MissionEOMTest(unittest.TestCase):
-    """
-    Test energy-method equations of motion
-    """
+    """Test energy-method equations of motion."""
 
     def setUp(self):
         self.prob = prob = om.Problem()
@@ -50,9 +48,7 @@ class MissionEOMTest(unittest.TestCase):
         prob.setup(check=False, force_alloc_complex=True)
 
     def test_case(self):
-        """
-        Test on mission EOM using data from validation_cases/validation_data/flops_data/full_mission_test_data.py
-        """
+        """Test on mission EOM using data from validation_cases/validation_data/flops_data/full_mission_test_data.py."""
         tol = 1e-6
         self.prob.run_model()
 

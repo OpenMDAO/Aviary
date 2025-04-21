@@ -23,9 +23,7 @@ class SolvedAlphaGroup(om.Group):
     """
 
     def initialize(self):
-        """
-        Declare options.
-        """
+        """Declare options."""
         self.options.declare('num_nodes', types=int)
 
         self.options.declare(

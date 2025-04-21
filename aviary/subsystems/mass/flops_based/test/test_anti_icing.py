@@ -124,9 +124,7 @@ class AntiIcingMassTest(unittest.TestCase):
 
 
 class AntiIcingMassTest2(unittest.TestCase):
-    """
-    Test mass-weight conversion
-    """
+    """Test mass-weight conversion."""
 
     def setUp(self):
         import aviary.subsystems.mass.flops_based.anti_icing as antiicing

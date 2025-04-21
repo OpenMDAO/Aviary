@@ -16,7 +16,7 @@ from aviary.variable_info.variables import Aircraft, Mission
 
 
 class LoadSpeedsTestCase1(unittest.TestCase):
-    """this is the large single aisle 1 V3 test case"""
+    """this is the large single aisle 1 V3 test case."""
 
     def setUp(self):
         self.prob = om.Problem()

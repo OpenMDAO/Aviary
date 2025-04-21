@@ -135,9 +135,7 @@ merge_combo8 = [Aircraft3, Aircraft4]
 
 
 class MergeHierarchiesTest(unittest.TestCase):
-    """
-    Test functionality of merge_hierarchies function.
-    """
+    """Test functionality of merge_hierarchies function."""
 
     def test_merge1(self):
         self.maxDiff = None

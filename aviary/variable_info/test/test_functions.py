@@ -8,9 +8,7 @@ from aviary.variable_info.functions import add_aviary_input, add_aviary_option, 
 
 
 class InputOutputOptionTest(unittest.TestCase):
-    """
-    Test the use of unit conversion when adding Aviary inputs, outputs, options
-    """
+    """Test the use of unit conversion when adding Aviary inputs, outputs, options."""
 
     def test_unit_conversion(self):
         comp = DummyComp()
@@ -26,9 +24,7 @@ class InputOutputOptionTest(unittest.TestCase):
 
 
 class DummyComp(om.ExplicitComponent):
-    """
-    Simple component to test unit conversion
-    """
+    """Simple component to test unit conversion."""
 
     def initialize(self):
         add_aviary_option(self, 'mass', units='lbm', meta_data=dummy_metadata)

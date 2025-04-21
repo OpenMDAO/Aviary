@@ -106,9 +106,7 @@ class RunScriptTest(unittest.TestCase):
 
     @parameterized.expand(find_examples(), name_func=example_name)
     def test_run_scripts(self, example_path):
-        """
-        Test each run script to ensure it executes without error.
-        """
+        """Test each run script to ensure it executes without error."""
         if example_path.name in SKIP_EXAMPLES:
             reason = SKIP_EXAMPLES[example_path.name]
             self.skipTest(f'Skipped {example_path.name}: {reason}.')

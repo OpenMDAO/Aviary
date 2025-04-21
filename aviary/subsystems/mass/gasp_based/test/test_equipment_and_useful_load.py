@@ -11,7 +11,7 @@ from aviary.variable_info.variables import Aircraft, Mission
 
 
 class FixedEquipMassTestCase1(unittest.TestCase):
-    """this is the large single aisle 1 V3 test case"""
+    """this is the large single aisle 1 V3 test case."""
 
     def setUp(self):
         options = get_option_defaults()
@@ -258,7 +258,7 @@ class FixedEquipMassTestCase3(unittest.TestCase):
 
 
 class FixedEquipMassTestCase4smooth(unittest.TestCase):
-    """this is the large single aisle 1 V3 test case"""
+    """this is the large single aisle 1 V3 test case."""
 
     def setUp(self):
         options = get_option_defaults()
@@ -510,7 +510,7 @@ class FixedEquipMassTestCase6smooth(unittest.TestCase):
 
 
 class EquipAndUsefulMassGroupTestCase1(unittest.TestCase):
-    """this is the large single aisle 1 V3 test case"""
+    """this is the large single aisle 1 V3 test case."""
 
     def setUp(self):
         options = get_option_defaults()
@@ -595,9 +595,7 @@ class EquipAndUsefulMassGroupTestCase1(unittest.TestCase):
 
 
 class FixedEquipMassTestCase7(unittest.TestCase):
-    """
-    Test mass-weight conversion
-    """
+    """Test mass-weight conversion."""
 
     def setUp(self):
         import aviary.subsystems.mass.gasp_based.equipment_and_useful_load as equip

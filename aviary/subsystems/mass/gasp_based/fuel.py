@@ -661,9 +661,7 @@ class FuelAndOEMOutputs(om.ExplicitComponent):
 
 
 class FuelSysAndFullFuselageMass(om.ExplicitComponent):
-    """
-    Computation of fuselage mass and fuel system mass
-    """
+    """Computation of fuselage mass and fuel system mass."""
 
     def setup(self):
         add_aviary_input(self, Mission.Design.GROSS_MASS, units='lbm')
@@ -782,9 +780,7 @@ class FuelSysAndFullFuselageMass(om.ExplicitComponent):
 
 
 class FuselageAndStructMass(om.ExplicitComponent):
-    """
-    Computation of total structural group mass and mass of the fuselage structure.
-    """
+    """Computation of total structural group mass and mass of the fuselage structure."""
 
     def initialize(self):
         add_aviary_option(self, Aircraft.Engine.NUM_ENGINES)

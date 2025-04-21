@@ -1,6 +1,4 @@
-"""
-Tests the aero builder with the 2dof (gasp-based) drag.
-"""
+"""Tests the aero builder with the 2dof (gasp-based) drag."""
 
 import unittest
 from copy import deepcopy

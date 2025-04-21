@@ -202,9 +202,7 @@ class ProblemPhaseTestCase(unittest.TestCase):
 
 @use_tempdirs
 class TestBenchFwFmSerial(ProblemPhaseTestCase):
-    """
-    Run the model in serial that is setup in ProblemPhaseTestCase class.
-    """
+    """Run the model in serial that is setup in ProblemPhaseTestCase class."""
 
     @require_pyoptsparse(optimizer='IPOPT')
     def test_bench_FwFm_IPOPT(self):
@@ -240,9 +238,7 @@ class TestBenchFwFmSerial(ProblemPhaseTestCase):
 @use_tempdirs
 @unittest.skipUnless(MPI and PETScVector, 'MPI and PETSc are required.')
 class TestBenchFwFmParallel(ProblemPhaseTestCase):
-    """
-    Run the model in parallel that is setup in ProblemPhaseTestCase class.
-    """
+    """Run the model in parallel that is setup in ProblemPhaseTestCase class."""
 
     N_PROCS = 3
 

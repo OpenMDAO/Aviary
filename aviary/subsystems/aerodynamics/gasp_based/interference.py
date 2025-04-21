@@ -11,7 +11,7 @@ FCFWT = 1  # Aero technology factors for wing
 
 
 class RootChord(om.ExplicitComponent):
-    """Calculates the wing root chord"""
+    """Calculates the wing root chord."""
 
     def setup(self):
         add_aviary_input(self, Aircraft.Wing.AREA)
@@ -47,7 +47,7 @@ class CommonVariables(om.ExplicitComponent):
     """
     Calculates the wing_thickness_over_fuselage_diameter and an
     intermediate reference variable that maps the wing attachment
-    location from -1 (bottom of fuselage) to +1 (top of fuselage)
+    location from -1 (bottom of fuselage) to +1 (top of fuselage).
     """
 
     def setup(self):
@@ -85,7 +85,7 @@ class CommonVariables(om.ExplicitComponent):
 
 
 class TopAndBottomWidth(om.ExplicitComponent):
-    """Calculates the fuselage width at the top and bottom"""
+    """Calculates the fuselage width at the top and bottom."""
 
     def setup(self):
         self.add_input('ZW_RF')
@@ -144,7 +144,7 @@ class TopAndBottomWidth(om.ExplicitComponent):
 
 
 class BodyRatios(om.ExplicitComponent):
-    """Calculates some intermediate variables that are based on unitless ratios"""
+    """Calculates some intermediate variables that are based on unitless ratios."""
 
     def setup(self):
         self.add_input('WBODYWF')
@@ -200,7 +200,7 @@ class BodyRatios(om.ExplicitComponent):
 class InterferenceDrag(om.ExplicitComponent):
     """
     Calculates the interference_independent_of_shielded_area and
-    drag_loss_due_to_shielded_wing_area
+    drag_loss_due_to_shielded_wing_area.
     """
 
     def setup(self):
@@ -328,7 +328,7 @@ class WingFuselageInterferencePremission(om.Group):
 class WingFuselageInterferenceMission(om.ExplicitComponent):
     """
     This calculates an additional flat plate drag area due to general aerodynamic interference for wing-fuselage interference
-    (based on results from Hoerner's drag)
+    (based on results from Hoerner's drag).
     """
 
     def initialize(self):

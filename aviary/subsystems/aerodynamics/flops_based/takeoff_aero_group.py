@@ -1,6 +1,4 @@
-"""
-Define utilities for calculating takeoff aerodynamics.
-"""
+"""Define utilities for calculating takeoff aerodynamics."""
 
 from collections.abc import Sequence
 
@@ -15,9 +13,7 @@ from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 
 
 class TakeoffAeroGroup(om.Group):
-    """
-    Define a group for calculating takeoff aerodynamics.
-    """
+    """Define a group for calculating takeoff aerodynamics."""
 
     def initialize(self):
         options = self.options

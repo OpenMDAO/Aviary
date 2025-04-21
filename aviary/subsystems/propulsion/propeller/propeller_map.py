@@ -115,9 +115,7 @@ class PropellerMap(om.ExplicitComponent):
         return OutMachType.get_element_by_value(m_type)
 
     def build_propeller_interpolator(self, num_nodes, options=None):
-        """
-        Builds the OpenMDAO metamodel component for the propeller map.
-        """
+        """Builds the OpenMDAO metamodel component for the propeller map."""
         interp_method = options.get_val(Aircraft.Engine.INTERPOLATION_METHOD)
         # interpolator object for propeller data
         propeller = om.MetaModelSemiStructuredComp(

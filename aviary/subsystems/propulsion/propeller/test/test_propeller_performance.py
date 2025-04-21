@@ -187,9 +187,7 @@ install_eff = np.array(
 
 
 class PropellerPerformanceTest(unittest.TestCase):
-    """
-    Test computation of propeller performance test using Hamilton Standard model.
-    """
+    """Test computation of propeller performance test using Hamilton Standard model."""
 
     def setUp(self):
         options = get_option_defaults()
@@ -609,9 +607,7 @@ class OutMachsTest(unittest.TestCase):
 
 
 class TipSpeedLimitTest(unittest.TestCase):
-    """
-    Test computation of tip speed limit in TipSpeedLimit class.
-    """
+    """Test computation of tip speed limit in TipSpeedLimit class."""
 
     def test_tipspeed(self):
         tol = 1e-5
@@ -656,9 +652,7 @@ class TipSpeedLimitTest(unittest.TestCase):
 
 
 class SquareRatioTest(unittest.TestCase):
-    """
-    Test the computation of square ratio with a maximum
-    """
+    """Test the computation of square ratio with a maximum."""
 
     def test_sqa_ratio_1(self):
         prob = om.Problem()
@@ -697,9 +691,7 @@ class SquareRatioTest(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
 
     def test_sqa_ratio_3(self):
-        """
-        Smooth, above 0.5
-        """
+        """Smooth, above 0.5."""
         prob = om.Problem()
         prob.model.add_subsystem(
             'group',
@@ -719,9 +711,7 @@ class SquareRatioTest(unittest.TestCase):
 
 
 class AdvanceRatioTest(unittest.TestCase):
-    """
-    Test the computation of advanced ratio with a maximum
-    """
+    """Test the computation of advanced ratio with a maximum."""
 
     def test_zje_1(self):
         prob = om.Problem()

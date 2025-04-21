@@ -24,9 +24,7 @@ from aviary.variable_info.variables import Aircraft, Dynamic
 
 @use_tempdirs
 class TestFLOPSDetailedLanding(unittest.TestCase):
-    """
-    Test detailed landing using N3CC data
-    """
+    """Test detailed landing using N3CC data."""
 
     # @require_pyoptsparse(optimizer='IPOPT')
     # def bench_test_IPOPT(self):

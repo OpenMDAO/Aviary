@@ -5,7 +5,7 @@ gets a copy of this hierarchy.
 
 
 class Aircraft:
-    """Aircraft data hierarchy"""
+    """Aircraft data hierarchy."""
 
     class AirConditioning:
         MASS = 'aircraft:air_conditioning:mass'
@@ -600,10 +600,10 @@ class Aircraft:
 
 
 class Dynamic:
-    """All time-dependent variables used during mission analysis"""
+    """All time-dependent variables used during mission analysis."""
 
     class Atmosphere:
-        """Atmospheric and freestream conditions"""
+        """Atmospheric and freestream conditions."""
 
         DENSITY = 'density'
         DYNAMIC_PRESSURE = 'dynamic_pressure'
@@ -674,7 +674,7 @@ class Dynamic:
 
 
 class Mission:
-    """Mission data hierarchy"""
+    """Mission data hierarchy."""
 
     class Constraints:
         # these can be residuals (for equality constraints),
@@ -792,7 +792,7 @@ class Mission:
 
 
 class Settings:
-    """Setting data hierarchy"""
+    """Setting data hierarchy."""
 
     AERODYNAMICS_METHOD = 'settings:aerodynamics_method'
     EQUATIONS_OF_MOTION = 'settings:equations_of_motion'

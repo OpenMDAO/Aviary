@@ -1,6 +1,4 @@
-"""
-This file contains functions needed to run Aviary using the Level 1 interface.
-"""
+"""This file contains functions needed to run Aviary using the Level 1 interface."""
 
 from importlib.machinery import SourceFileLoader
 from pathlib import Path
@@ -136,7 +134,7 @@ def run_level_1(
 ):
     """
     This file enables running aviary from the command line with a user specified input deck.
-    usage: aviary run_mission [input_deck] [opt_args]
+    usage: aviary run_mission [input_deck] [opt_args].
     """
     kwargs = {
         'max_iter': max_iter,

@@ -80,9 +80,7 @@ _command_map = {
 
 
 def aviary_cmd():
-    """
-    Run an 'aviary' sub-command or list help info for 'aviary' command or sub-commands.
-    """
+    """Run an 'aviary' sub-command or list help info for 'aviary' command or sub-commands."""
     # pre-parse sys.argv to split between before and after '--'
     if '--' in sys.argv:
         idx = sys.argv.index('--')

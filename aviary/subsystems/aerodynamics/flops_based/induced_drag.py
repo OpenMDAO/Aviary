@@ -7,9 +7,7 @@ from aviary.variable_info.variables import Aircraft, Dynamic
 
 
 class InducedDrag(om.ExplicitComponent):
-    """
-    Calculates induced drag
-    """
+    """Calculates induced drag."""
 
     def initialize(self):
         self.options.declare(

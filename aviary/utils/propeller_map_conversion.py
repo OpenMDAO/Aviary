@@ -31,7 +31,7 @@ def PropDataConverter(input_file, output_file, data_format: PropMapType):
     This is a utility class to convert a propeller map file to Aviary format.
     Currently, there is only one option: from GASP format to Aviary format.
     As an Aviary command, the usage is:
-    aviary convert_prop_table -f GASP input_file output_file
+    aviary convert_prop_table -f GASP input_file output_file.
     """
     timestamp = datetime.now().strftime('%m/%d/%y at %H:%M')
     comments = []
@@ -106,7 +106,7 @@ def _read_gasp_propeller(fp, cmts):
 def _read_pm_header(f):
     """Read GASP propeller map header (first line), returning the propeller scalars in a dict
     parameter 1 is Mach type. It is either 1 or 2.
-    parameter 2 is IPRINT in GASP and is ignored in Aviary
+    parameter 2 is IPRINT in GASP and is ignored in Aviary.
     """
     iread, _ = _parse(f, [*_rep(2, (int, 5))])
 

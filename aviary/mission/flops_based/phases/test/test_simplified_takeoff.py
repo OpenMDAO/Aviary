@@ -19,9 +19,7 @@ from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 
 
 class StallSpeedTest(unittest.TestCase):
-    """
-    Test computation in StallSpeed class
-    """
+    """Test computation in StallSpeed class."""
 
     def setUp(self):
         self.prob = om.Problem()
@@ -54,9 +52,7 @@ class StallSpeedTest(unittest.TestCase):
 
 
 class StallSpeedTest2(unittest.TestCase):
-    """
-    Test mass-weight conversion
-    """
+    """Test mass-weight conversion."""
 
     def setUp(self):
         import aviary.mission.flops_based.phases.simplified_takeoff as takeoff
@@ -83,9 +79,7 @@ class StallSpeedTest2(unittest.TestCase):
 
 
 class FinalConditionsTest(unittest.TestCase):
-    """
-    Test final conditions computation in FinalTakeoffConditions class
-    """
+    """Test final conditions computation in FinalTakeoffConditions class."""
 
     def setUp(self):
         self.prob = om.Problem()
@@ -136,9 +130,7 @@ class FinalConditionsTest(unittest.TestCase):
 
 
 class FinalConditionsTest2(unittest.TestCase):
-    """
-    Test mass-weight conversion
-    """
+    """Test mass-weight conversion."""
 
     def setUp(self):
         import aviary.mission.flops_based.phases.simplified_takeoff as takeoff
@@ -164,9 +156,7 @@ class FinalConditionsTest2(unittest.TestCase):
 
 
 class TakeoffGroupTest(unittest.TestCase):
-    """
-    Test computation in TakeoffGroup
-    """
+    """Test computation in TakeoffGroup."""
 
     def setUp(self):
         self.prob = om.Problem()

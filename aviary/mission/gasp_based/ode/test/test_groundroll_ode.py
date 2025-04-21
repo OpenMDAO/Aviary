@@ -14,9 +14,7 @@ from aviary.variable_info.variables import Aircraft, Dynamic
 
 
 class GroundrollODETestCase(unittest.TestCase):
-    """
-    Test groundroll ODE
-    """
+    """Test groundroll ODE."""
 
     def setUp(self):
         self.prob = om.Problem()

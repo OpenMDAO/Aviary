@@ -75,9 +75,7 @@ class CruiseODETestCase(unittest.TestCase):
 
 
 class ElectricCruiseODETestCase(unittest.TestCase):
-    """
-    This test uses a makeup electrical engine to test electrical Breguet cruise ODE.
-    """
+    """This test uses a makeup electrical engine to test electrical Breguet cruise ODE."""
 
     def setUp(self):
         self.prob = om.Problem()

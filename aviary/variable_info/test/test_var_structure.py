@@ -25,9 +25,7 @@ class DuplicateHierarchy:
 
 
 class MetaDataTest(unittest.TestCase):
-    """
-    Tests for variable_meta_data.py: check for duplicate legacy code names, alphabetization, and any missing names from variable hierarchy.
-    """
+    """Tests for variable_meta_data.py: check for duplicate legacy code names, alphabetization, and any missing names from variable hierarchy."""
 
     def test_duplicate_names_FLOPS(self):
         flops_names = [var['historical_name']['FLOPS'] for var in _MetaData.values()]
@@ -70,9 +68,7 @@ class MetaDataTest(unittest.TestCase):
 
 
 class VariableStructureTest(unittest.TestCase):
-    """
-    Tests for variables.py: check for duplicates and alphabetization
-    """
+    """Tests for variables.py: check for duplicates and alphabetization."""
 
     def test_duplicate_names_Aviary(self):
         aviary_names = (

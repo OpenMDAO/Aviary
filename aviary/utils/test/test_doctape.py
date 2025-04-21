@@ -26,7 +26,7 @@ from aviary.utils.doctape import (
 class DocTAPETests(unittest.TestCase):
     """
     Testing the DocTAPE functions to make sure they all run in all supported Python versions
-    Docs are only built with latest, but these test will be run with latest and dev as well
+    Docs are only built with latest, but these test will be run with latest and dev as well.
     """
 
     def test_gramatical_list(self):

@@ -1,6 +1,4 @@
-"""
-Test for some features when using an external subsystem in the mission.
-"""
+"""Test for some features when using an external subsystem in the mission."""
 
 import unittest
 from copy import deepcopy
@@ -175,9 +173,7 @@ class TestExternalSubsystems(unittest.TestCase):
 
 
 class ExternNoSolve(om.ExplicitComponent):
-    """
-    This component should not have a solver above it.
-    """
+    """This component should not have a solver above it."""
 
     def setup(self):
         self.add_input(Aircraft.Wing.AREA, 1.0, units='ft**2')
@@ -188,9 +184,7 @@ class ExternNoSolve(om.ExplicitComponent):
 
 
 class NoSolverBuilder(SubsystemBuilderBase):
-    """
-    Mission only. No solver.
-    """
+    """Mission only. No solver."""
 
     def needs_mission_solver(self, aviary_options):
         return False
@@ -200,9 +194,7 @@ class NoSolverBuilder(SubsystemBuilderBase):
 
 
 class SolverBuilder(SubsystemBuilderBase):
-    """
-    Mission only. Solver.
-    """
+    """Mission only. Solver."""
 
     def needs_mission_solver(self, aviary_options):
         return True

@@ -17,7 +17,7 @@ from aviary.utils.utils import wrapped_convert_units
 def register_custom_reports():
     """
     Registers Aviary reports with OpenMDAO, so they are automatically generated and
-    added to the same reports folder as other default reports
+    added to the same reports folder as other default reports.
     """
     # TODO top-level aircraft report?
     # TODO add flag to skip registering reports?
@@ -72,7 +72,7 @@ def register_custom_reports():
 
 def run_status(prob):
     """
-    Creates a JSON file that containts high level overview of the run
+    Creates a JSON file that containts high level overview of the run.
 
     Parameters
     ----------
@@ -114,7 +114,7 @@ def run_status(prob):
 def subsystem_report(prob, **kwargs):
     """
     Loops through all subsystem builders in the AviaryProblem calls their write_report
-    method. All generated report files are placed in the "reports/subsystem_reports" folder
+    method. All generated report files are placed in the "reports/subsystem_reports" folder.
 
     Parameters
     ----------
@@ -133,7 +133,7 @@ def subsystem_report(prob, **kwargs):
 
 def mission_report(prob, **kwargs):
     """
-    Creates a basic mission summary report that is placed in the "reports" folder
+    Creates a basic mission summary report that is placed in the "reports" folder.
 
     Parameters
     ----------

@@ -9,9 +9,7 @@ from aviary.variable_info.variables import Aircraft, Dynamic
 
 
 class TestVRotateComp(unittest.TestCase):
-    """
-    Test the computation of the speed at which takeoff rotation should be initiated
-    """
+    """Test the computation of the speed at which takeoff rotation should be initiated."""
 
     def test_partials(self):
         prob = om.Problem()
@@ -37,9 +35,7 @@ class TestVRotateComp(unittest.TestCase):
 
 
 class TestVRotateComp2(unittest.TestCase):
-    """
-    Test mass-weight conversion
-    """
+    """Test mass-weight conversion."""
 
     def setUp(self):
         import aviary.mission.gasp_based.ode.v_rotate_comp as vr

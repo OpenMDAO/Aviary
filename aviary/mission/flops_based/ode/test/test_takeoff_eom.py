@@ -24,9 +24,7 @@ inputs.set_val(Aircraft.Engine.NUM_ENGINES, np.array([2]))
 
 
 class TakeoffEOMTest(unittest.TestCase):
-    """
-    Test detailed takeoff equation of motion
-    """
+    """Test detailed takeoff equation of motion."""
 
     def test_case_ground(self):
         prob = self._make_prob(climbing=False)
@@ -143,9 +141,7 @@ class TakeoffEOMTest(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
 
     def test_DistanceRates_1(self):
-        """
-        Climbing = True
-        """
+        """Climbing = True."""
         tol = 1e-6
         prob = om.Problem()
         prob.model.add_subsystem(
@@ -170,9 +166,7 @@ class TakeoffEOMTest(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
 
     def test_DistanceRates_2(self):
-        """
-        Climbing = False
-        """
+        """Climbing = False."""
         tol = 1e-6
         prob = om.Problem()
         prob.model.add_subsystem(
@@ -251,9 +245,7 @@ class TakeoffEOMTest(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
 
     def test_SumForcese_1(self):
-        """
-        Climbing = True
-        """
+        """Climbing = True."""
         tol = 1e-6
         prob = om.Problem()
         aviary_options = inputs
@@ -285,9 +277,7 @@ class TakeoffEOMTest(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e-10, rtol=1e-10)
 
     def test_SumForcese_2(self):
-        """
-        Climbing = False
-        """
+        """Climbing = False."""
         tol = 1e-6
         prob = om.Problem()
         aviary_options = inputs
@@ -319,9 +309,7 @@ class TakeoffEOMTest(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e-10, rtol=1e-10)
 
     def test_ClimbGradientForces(self):
-        """
-        Climbing = False
-        """
+        """Climbing = False."""
         tol = 1e-6
         prob = om.Problem()
         aviary_options = inputs

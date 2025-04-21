@@ -14,7 +14,7 @@ from aviary.variable_info.variables import Dynamic
 
 
 class BreguetCruiseODESolution(TwoDOFODE):
-    """The GASP based cruise ODE"""
+    """The GASP based cruise ODE."""
 
     def setup(self):
         nn = self.options['num_nodes']
@@ -153,7 +153,7 @@ class BreguetCruiseODESolution(TwoDOFODE):
 
 
 class E_BreguetCruiseODESolution(TwoDOFODE):
-    """The GASP based cruise ODE by electrical aircraft"""
+    """The GASP based cruise ODE by electrical aircraft."""
 
     def setup(self):
         nn = self.options['num_nodes']

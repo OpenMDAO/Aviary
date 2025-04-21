@@ -8,9 +8,7 @@ from aviary.variable_info.variables import Dynamic
 
 
 class UnsteadyControlIterGroup(om.Group):
-    """
-    This Group contains a nonlinear solver to determine alpha and thrust for a given flight condition.
-    """
+    """This Group contains a nonlinear solver to determine alpha and thrust for a given flight condition."""
 
     def initialize(self):
         self.options.declare('num_nodes', types=int)

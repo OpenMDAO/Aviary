@@ -1,6 +1,4 @@
-"""
-Define utilities for calculating takeoff EOMs.
-"""
+"""Define utilities for calculating takeoff EOMs."""
 
 import numpy as np
 import openmdao.api as om
@@ -104,9 +102,7 @@ class StallSpeed(om.ExplicitComponent):
 
 
 class TakeoffEOM(om.Group):
-    """
-    Define a group for calculating takeoff equations of motion.
-    """
+    """Define a group for calculating takeoff equations of motion."""
 
     def initialize(self):
         options = self.options
@@ -277,9 +273,7 @@ class DistanceRates(om.ExplicitComponent):
 
 
 class Accelerations(om.ExplicitComponent):
-    """
-    Define a component for calculating horizontal and vertical accelerations from forces.
-    """
+    """Define a component for calculating horizontal and vertical accelerations from forces."""
 
     def initialize(self):
         options = self.options
@@ -377,9 +371,7 @@ class Accelerations(om.ExplicitComponent):
 
 
 class VelocityRate(om.ExplicitComponent):
-    """
-    Define a component for calculating total acceleration.
-    """
+    """Define a component for calculating total acceleration."""
 
     def initialize(self):
         options = self.options
@@ -444,9 +436,7 @@ class VelocityRate(om.ExplicitComponent):
 
 
 class FlightPathAngleRate(om.ExplicitComponent):
-    """
-    Define a component for calculating flight path angle change rate.
-    """
+    """Define a component for calculating flight path angle change rate."""
 
     def initialize(self):
         options = self.options

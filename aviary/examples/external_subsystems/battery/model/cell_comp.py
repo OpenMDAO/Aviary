@@ -7,9 +7,7 @@ from aviary.variable_info.functions import add_aviary_input, add_aviary_output
 
 
 class CellComp(ExplicitComponent):
-    """
-    Compute behavior of a single battery cell then expand to the full pack.
-    """
+    """Compute behavior of a single battery cell then expand to the full pack."""
 
     def initialize(self):
         self.options.declare('num_nodes', types=int)

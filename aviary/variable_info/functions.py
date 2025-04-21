@@ -284,7 +284,7 @@ def override_aviary_vars(
     optionally provide the names of variables that they would like to
     override manually. (Manual overriding is simply suppressing the
     promotion of the variable to make way for another output variable
-    of the same name, or to create an unconnected input elsewhere.)
+    of the same name, or to create an unconnected input elsewhere.).
     """
 
     def name_filter(name):

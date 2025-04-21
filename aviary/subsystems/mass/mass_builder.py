@@ -22,9 +22,7 @@ _default_name = 'mass'
 
 
 class MassBuilderBase(SubsystemBuilderBase):
-    """
-    Base mass builder
-    """
+    """Base mass builder."""
 
     def __init__(self, name=None, meta_data=None):
         if name is None:
@@ -40,9 +38,7 @@ class MassBuilderBase(SubsystemBuilderBase):
 
 
 class CoreMassBuilder(MassBuilderBase):
-    """
-    Core mass subsystem builder
-    """
+    """Core mass subsystem builder."""
 
     def __init__(self, name=None, meta_data=None, code_origin=None):
         if name is None:
@@ -87,7 +83,7 @@ class CoreMassBuilder(MassBuilderBase):
 
     def report(self, prob, reports_folder, **kwargs):
         """
-        Generate the report for Aviary core mass
+        Generate the report for Aviary core mass.
 
         Parameters
         ----------

@@ -62,16 +62,12 @@ class TransportCargoContainersMass(om.ExplicitComponent):
 
 # region TODO: move this to an appropriate module for import
 def sin_int4(val):
-    """
-    Define a smooth, differentialbe approximation to the 'int' function.
-    """
+    """Define a smooth, differentialbe approximation to the 'int' function."""
     return sin_int(sin_int(sin_int(sin_int(val)))) - 0.5
 
 
 def dydx_sin_int4(val):
-    """
-    Define the derivative (dy/dx) of sin_int4, at x = val.
-    """
+    """Define the derivative (dy/dx) of sin_int4, at x = val."""
     y0 = sin_int(val)
     y1 = sin_int(y0)
     y2 = sin_int(y1)
@@ -99,9 +95,7 @@ def sin_int(val):
 
 
 def dydx_sin_int(val):
-    """
-    Define the derivative (dy/dx) of sin_int, at x = val.
-    """
+    """Define the derivative (dy/dx) of sin_int, at x = val."""
     dydx = 1.0 - np.cos(2 * np.pi * (val + 0.5))
 
     return dydx

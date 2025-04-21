@@ -86,9 +86,7 @@ class VerticalScrolledFrame(tk.Frame):
 
 
 class AviaryMissionEditor(tk.Tk):
-    """
-    Aviary mission editor class
-    """
+    """Aviary mission editor class."""
 
     def __init__(self):
         screen_width, screen_height = [
@@ -260,7 +258,7 @@ class AviaryMissionEditor(tk.Tk):
 
     def save_option_defaults(self):
         """Saves default values for advanced options and axes limits, these will be referenced
-        if user chooses to reset advanced options or axes limits
+        if user chooses to reset advanced options or axes limits.
         """
         self.advanced_options_defaults = {}
         for key, item in self.advanced_options.items():
@@ -272,7 +270,7 @@ class AviaryMissionEditor(tk.Tk):
                 self.data_info_defaults[key] = [element for element in item]
 
     def check_data_info(self):
-        """Verifies data_info dict has consistent number of dependent variables"""
+        """Verifies data_info dict has consistent number of dependent variables."""
         self.num_dep_vars = len(self.data_info['plot_titles'])
         for key, item in self.data_info.items():
             if key != 'plot_titles':
@@ -447,7 +445,7 @@ class AviaryMissionEditor(tk.Tk):
             self.figure_canvas.draw()
 
     def redraw_plot(self):
-        """Redraws plot, using the new values inside data lists"""
+        """Redraws plot, using the new values inside data lists."""
         self.clear_plot()
         for i, plot in enumerate(self.plots):
             plot.plot(
@@ -472,7 +470,7 @@ class AviaryMissionEditor(tk.Tk):
             )
 
     def clear_plot(self):
-        """Clears all lines from plots except for crosshairs"""
+        """Clears all lines from plots except for crosshairs."""
         for plot in self.plots:
             for line in plot.lines:
                 if line == self.crossX or line == self.crossY:
@@ -482,7 +480,7 @@ class AviaryMissionEditor(tk.Tk):
     # ----------------------
     # Mouse related functions
     def on_mouse_press(self, event):
-        """Handles mouse press event, sets internal mouse state"""
+        """Handles mouse press event, sets internal mouse state."""
         self.mouse_press = True
 
     def on_mouse_release(self, event):
@@ -494,7 +492,7 @@ class AviaryMissionEditor(tk.Tk):
         self.mouse_press, self.mouse_drag = False, False
 
     def on_mouse_click(self, event):
-        """Called when mouse click is determined, adds new point if it is valid"""
+        """Called when mouse click is determined, adds new point if it is valid."""
         # this list creates default values for subplots not clicked on, half of ylim
         default_y_vals = [float(lim.get()) / 2 for lim in self.data_info['limits'][1:]]
         valid_click = False
@@ -581,7 +579,7 @@ class AviaryMissionEditor(tk.Tk):
 
     def get_distance(self, pt1: tuple, pt2: tuple, plot_idx: int):
         """Returns a normalized distance value between 2 points. Normalization is based on the subplot's
-        x and y limits, subplot specified as plot_idx
+        x and y limits, subplot specified as plot_idx.
         """
         lims = (self.plots[plot_idx].get_xlim()[1], self.plots[plot_idx].get_ylim()[1])
         return np.sqrt(sum([((pt1[i] - pt2[i]) / lims[i]) ** 2 for i in range(2)]))
@@ -589,7 +587,7 @@ class AviaryMissionEditor(tk.Tk):
     # ----------------------
     # Table related functions
     def update_str_vars(self):
-        """Updates StringVar values for the table. Used when points are dragged on plot"""
+        """Updates StringVar values for the table. Used when points are dragged on plot."""
         for i, vallist in enumerate(self.data):
             for j, val in enumerate(vallist):
                 val = self.display_rounding(val, i)
@@ -737,7 +735,7 @@ class AviaryMissionEditor(tk.Tk):
             self.table_add_button.grid(row=row * 2 + 3, column=0, columnspan=col + 2)
 
     def update_header(self, new_headers):
-        """Update header"""
+        """Update header."""
         i = 0
         for widget in self.table_header_widgets:
             if isinstance(widget, tk.Entry):
@@ -746,7 +744,7 @@ class AviaryMissionEditor(tk.Tk):
 
     def add_new_row(self):
         """Updates data lists with a generic new point and runs redraw plot and update table.
-        New point is added at x = halfway between last point and x limit, y = half of y limit
+        New point is added at x = halfway between last point and x limit, y = half of y limit.
         """
         default_y_vals = [float(lim.get()) / 2 for lim in self.data_info['limits'][1:]]
         newx = 0
@@ -812,7 +810,7 @@ class AviaryMissionEditor(tk.Tk):
 
     def display_rounding(self, value, col: int, extra=0):
         """Returns a rounded value based on which variable the value belongs to.
-        Uses rounding amount specified in data_info
+        Uses rounding amount specified in data_info.
         """
         return format(value, '.' + str(int(self.data_info['rounding'][col].get()) + extra) + 'f')
 
@@ -820,7 +818,7 @@ class AviaryMissionEditor(tk.Tk):
     # Popup related functions
 
     def close_popup(self):
-        """Function to close existing popup and refocus main window"""
+        """Function to close existing popup and refocus main window."""
         self.focus_set()
         self.popup.destroy()
         self.popup = None
@@ -896,7 +894,7 @@ class AviaryMissionEditor(tk.Tk):
 
     def change_axes_popup(self):
         """Creates a popup window that allows user to edit axes limits. This function is triggered
-        by the menu buttons
+        by the menu buttons.
         """
 
         def reset_options(old_list=None):
@@ -988,7 +986,7 @@ class AviaryMissionEditor(tk.Tk):
     def advanced_options_popup(self):
         """Creates a popup window that allows user to edit advanced options for phase info.
         Options included are specified as a dict in __init__ and include solve/constrain for range,
-        include landing/takeoff, polynomial order, and phase order. This function is triggered by the menu buttons
+        include landing/takeoff, polynomial order, and phase order. This function is triggered by the menu buttons.
         """
 
         def reset_options(self, old_dict=self.advanced_options_defaults):
@@ -1163,7 +1161,7 @@ class AviaryMissionEditor(tk.Tk):
         self.destroy()
 
     def toggle_optimize_view(self):
-        """Runs update table with overwrite on to toggle display of optimize checkboxes"""
+        """Runs update table with overwrite on to toggle display of optimize checkboxes."""
         self.update_table(overwrite=True)
 
     def toggle_phase_slope(self, redraw=True):

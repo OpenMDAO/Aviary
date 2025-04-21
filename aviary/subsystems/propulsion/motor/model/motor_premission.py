@@ -6,9 +6,7 @@ from aviary.variable_info.variables import Aircraft, Dynamic
 
 
 class MotorPreMission(om.Group):
-    """
-    Calculate electric motor mass for a single motor
-    """
+    """Calculate electric motor mass for a single motor."""
 
     def initialize(self):
         self.options.declare(

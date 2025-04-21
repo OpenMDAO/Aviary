@@ -15,9 +15,7 @@ from aviary.variable_info.variables import Aircraft, Dynamic
 
 
 class FlightPathODETestCase(unittest.TestCase):
-    """
-    Test 2-degree of freedom flight path ODE
-    """
+    """Test 2-degree of freedom flight path ODE."""
 
     def setUp(self):
         self.prob = om.Problem()

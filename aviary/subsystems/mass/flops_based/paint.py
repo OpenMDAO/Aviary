@@ -5,9 +5,7 @@ from aviary.variable_info.variables import Aircraft
 
 
 class PaintMass(om.ExplicitComponent):
-    """
-    Calculates the mass of paint based on total wetted area.
-    """
+    """Calculates the mass of paint based on total wetted area."""
 
     def setup(self):
         add_aviary_input(self, Aircraft.Design.TOTAL_WETTED_AREA, units='ft**2')

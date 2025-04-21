@@ -8,7 +8,7 @@ SWETFCT = 1.02
 
 
 class AeroFormfactors(om.ExplicitComponent):
-    """Compute aero form factors"""
+    """Compute aero form factors."""
 
     def setup(self):
         add_aviary_input(self, Aircraft.Wing.THICKNESS_TO_CHORD_UNWEIGHTED, units='unitless')

@@ -10,9 +10,7 @@ from aviary.variable_info.variables import Dynamic, Mission
 
 
 class SolvedTwoDOFProblemConfigurator(ProblemConfiguratorBase):
-    """
-    The Solved 2DOF builder is used for detailed take-off and landing.
-    """
+    """The Solved 2DOF builder is used for detailed take-off and landing."""
 
     def initial_guesses(self, prob):
         """

@@ -1,6 +1,6 @@
 """
 authors: Jatin Soni, Eliot Aretskin
-Multi Mission Optimization Example using Aviary
+Multi Mission Optimization Example using Aviary.
 
 In this example, a monolithic optimization is created by instantiating two aviary problems
 using typical AviaryProblem calls like load_inputs(), check_and_preprocess_payload(),
@@ -152,7 +152,7 @@ class MultiMissionProblem(om.Problem):
         self.model.add_objective('compound')
 
     def setup_wrapper(self):
-        """Wrapper for om.Problem setup with warning ignoring and setting options"""
+        """Wrapper for om.Problem setup with warning ignoring and setting options."""
         for i, prob in enumerate(self.probs):
             prob.model.options['aviary_options'] = prob.aviary_inputs
             prob.model.options['aviary_metadata'] = prob.meta_data
@@ -217,7 +217,7 @@ class MultiMissionProblem(om.Problem):
             plt.show()
 
     def print_vars(self, vars=[]):
-        """Specify vars with name and unit in a tuple, e.g. vars = [ (Mission.Summary.FUEL_BURNED, 'lbm') ]"""
+        """Specify vars with name and unit in a tuple, e.g. vars = [ (Mission.Summary.FUEL_BURNED, 'lbm') ]."""
         print('\n\n=========================\n')
         print(f'{"":40}', end=': ')
         for i in range(self.num_missions):

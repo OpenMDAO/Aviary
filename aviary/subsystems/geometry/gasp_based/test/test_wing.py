@@ -34,9 +34,7 @@ class WingSizeTestCase1(
 
 
 class WingSizeTestCase2(unittest.TestCase):
-    """
-    Test mass-weight conversion
-    """
+    """Test mass-weight conversion."""
 
     def setUp(self):
         import aviary.subsystems.geometry.gasp_based.wing as wing
@@ -302,7 +300,7 @@ class WingGroupTestCase1(
 class WingGroupTestCase2(unittest.TestCase):
     """
     Wing with both folds and struts which has fold dimensional location and strut dimensional location specified
-    with the fold at the strut connection
+    with the fold at the strut connection.
     """
 
     def setUp(self):
@@ -391,9 +389,7 @@ class WingGroupTestCase2(unittest.TestCase):
 
 
 class WingGroupTestCase3(unittest.TestCase):
-    """
-    Wing with folds which has dimensional location specified
-    """
+    """Wing with folds which has dimensional location specified."""
 
     def setUp(self):
         options = get_option_defaults()
@@ -469,9 +465,7 @@ class WingGroupTestCase3(unittest.TestCase):
 
 
 class WingGroupTestCase4(unittest.TestCase):
-    """
-    Wing with both folds and struts which has fold dimensional location and strut dimensional location specified
-    """
+    """Wing with both folds and struts which has fold dimensional location and strut dimensional location specified."""
 
     def setUp(self):
         options = get_option_defaults()
@@ -536,9 +530,7 @@ class WingGroupTestCase4(unittest.TestCase):
 
 
 class WingGroupTestCase5(unittest.TestCase):
-    """
-    Wing with struts which has dimentional location specified
-    """
+    """Wing with struts which has dimentional location specified."""
 
     def setUp(self):
         options = get_option_defaults()

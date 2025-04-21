@@ -6,9 +6,7 @@ from aviary.variable_info.functions import add_aviary_input, add_aviary_output
 
 
 class BatteryPreMission(om.ExplicitComponent):
-    """
-    Calculates battery pack mass
-    """
+    """Calculates battery pack mass."""
 
     def setup(self):
         # Inputs

@@ -12,7 +12,7 @@ from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 
 
 class TaxiSegment(TwoDOFODE):
-    """ODE for taxi phase of a 2DOF mission"""
+    """ODE for taxi phase of a 2DOF mission."""
 
     def setup(self):
         options: AviaryValues = self.options['aviary_options']

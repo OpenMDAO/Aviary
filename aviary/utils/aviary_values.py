@@ -31,9 +31,7 @@ get_values = get_values
 
 
 class AviaryValues(NamedValues):
-    """
-    Define a collection of aviary values with associated units and aviary tests.
-    """
+    """Define a collection of aviary values with associated units and aviary tests."""
 
     def set_val(self, key, val, units='unitless', meta_data=_MetaData):
         """
@@ -69,7 +67,7 @@ class AviaryValues(NamedValues):
     def _check_units_compatibility(self, key, val, units, meta_data=_MetaData):
         """
         Check that the two provided units are compatible - we don't actually want to
-        convert here, just verify that the provided units are allowed
+        convert here, just verify that the provided units are allowed.
         """
         expected_units = meta_data[key]['units']
 

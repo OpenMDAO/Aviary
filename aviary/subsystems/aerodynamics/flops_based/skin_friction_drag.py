@@ -25,9 +25,7 @@ class SkinFrictionDrag(om.ExplicitComponent):
         # fmt: on
 
     def initialize(self):
-        """
-        Declare options.
-        """
+        """Declare options."""
         self.options.declare(
             'num_nodes',
             types=int,

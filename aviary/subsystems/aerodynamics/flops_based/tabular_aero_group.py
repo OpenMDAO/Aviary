@@ -192,9 +192,7 @@ class TabularAeroGroup(om.Group):
 
 
 class _DynamicPressure(om.ExplicitComponent):
-    """
-    Calculate dynamic pressure as a function of velocity and density.
-    """
+    """Calculate dynamic pressure as a function of velocity and density."""
 
     def initialize(self):
         self.options.declare('num_nodes', types=int)

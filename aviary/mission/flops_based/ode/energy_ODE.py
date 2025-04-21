@@ -13,9 +13,7 @@ from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 
 
 class EnergyODE(_BaseODE):
-    """
-    The base class for all energy method ODE components.
-    """
+    """The base class for all energy method ODE components."""
 
     def initialize(self):
         super().initialize()

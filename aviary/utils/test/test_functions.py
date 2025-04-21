@@ -18,9 +18,7 @@ from aviary.variable_info.variables import Aircraft, Mission
 
 
 class TestOpts2Vals(unittest.TestCase):
-    """
-    Test the functionality of create_opts2vals function.
-    """
+    """Test the functionality of create_opts2vals function."""
 
     def setUp(self):
         self.options = get_option_defaults()
@@ -65,9 +63,7 @@ class TestOpts2Vals(unittest.TestCase):
 
 
 class TestGetPath(unittest.TestCase):
-    """
-    Test get_path function from string and Path object for absolute and relative path
-    """
+    """Test get_path function from string and Path object for absolute and relative path."""
 
     def setUp(self):
         self.current_dir = Path.cwd()
@@ -120,7 +116,7 @@ class TestTopDir(unittest.TestCase):
 
 class TestConvertStrings2Data(unittest.TestCase):
     def is_list_of_given_type(self, lst, givenType):
-        """Test if the list of data is of given type"""
+        """Test if the list of data is of given type."""
         return isinstance(lst, list) and all(isinstance(i, givenType) for i in lst)
 
     def test_read_float(self):

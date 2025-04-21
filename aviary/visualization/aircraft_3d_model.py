@@ -265,9 +265,7 @@ class AircraftModelReader(object):
         self._final_case = cr.get_case('final')
 
     def _write_input_output_variables(self):
-        """
-        Write out the input and output variables in the final case. For debugging.
-        """
+        """Write out the input and output variables in the final case. For debugging."""
         inputs = self._final_case.list_inputs(
             val=True,
             return_format='list',
@@ -426,9 +424,7 @@ class VerticalTail(object):
         self._fuselage = fuselage
 
     def read_variables(self):
-        """
-        Read the variables from the final case that are needed to define the vertical tail.
-        """
+        """Read the variables from the final case that are needed to define the vertical tail."""
         try:
             thickness_to_chord = self._reader.get_variable_from_case(
                 'aircraft:vertical_tail:thickness_to_chord'
@@ -555,9 +551,7 @@ class HorizontalWing(object):
         self._wing_type = wing_type
 
     def read_variables(self):
-        """
-        Read the variables from the final case that are needed to define the horizontal wing.
-        """
+        """Read the variables from the final case that are needed to define the horizontal wing."""
         if self._wing_type == WingType.WING:
             wing_type_name = 'wing'
         elif self._wing_type == WingType.HORIZONTAL_TAIL:
@@ -745,9 +739,7 @@ class Engines(object):
         self._has_propellers = None
 
     def read_variables(self):
-        """
-        Read the variables from the final case that are needed to define the engines.
-        """
+        """Read the variables from the final case that are needed to define the engines."""
         try:
             self._num_wing_engines = self._reader.get_variable_from_aviary_options(
                 av.Aircraft.Engine.NUM_WING_ENGINES

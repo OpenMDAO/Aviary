@@ -369,9 +369,7 @@ class WingMiscMass(om.ExplicitComponent):
 
 
 class WingTotalMass(om.ExplicitComponent):
-    """
-    Computation of wing mass using FLOPS-based detailed wing mass equations.
-    """
+    """Computation of wing mass using FLOPS-based detailed wing mass equations."""
 
     def setup(self):
         add_aviary_input(self, Aircraft.Wing.BENDING_MATERIAL_MASS, units='lbm')

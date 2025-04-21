@@ -8,7 +8,7 @@ from aviary.variable_info.variables import Aircraft, Mission
 
 
 def dquotient(u, v, du, dv):
-    """d(u/v) / dv"""
+    """d(u/v) / dv."""
     return (du * v - u * dv) / v**2
 
 
@@ -332,7 +332,7 @@ class LoadSpeeds(om.ExplicitComponent):
 class LoadParameters(om.ExplicitComponent):
     """
     Computation of load parameters (such as maximum operating Mach number,
-    density ratio, etc.)
+    density ratio, etc.).
     """
 
     def initialize(self):
@@ -603,9 +603,7 @@ class LoadParameters(om.ExplicitComponent):
 
 
 class LiftCurveSlopeAtCruise(om.ExplicitComponent):
-    """
-    Computation of lift curve slope at cruise Mach number
-    """
+    """Computation of lift curve slope at cruise Mach number."""
 
     def setup(self):
         add_aviary_input(self, Aircraft.Wing.ASPECT_RATIO, units='unitless')
@@ -658,9 +656,7 @@ class LiftCurveSlopeAtCruise(om.ExplicitComponent):
 
 
 class LoadFactors(om.ExplicitComponent):
-    """
-    Computation of structural ultimate load factor.
-    """
+    """Computation of structural ultimate load factor."""
 
     def initialize(self):
         add_aviary_option(self, Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES)
@@ -741,7 +737,7 @@ class LoadFactors(om.ExplicitComponent):
             if gust_load_factor > max_maneuver_factor:  # note: this creates a discontinuity
                 ULF = 1.5 * gust_load_factor
 
-        if ULF_from_maneuver == True:
+        if ULF_from_maneuver is True:
             ULF = 1.5 * max_maneuver_factor
 
         outputs[Aircraft.Wing.ULTIMATE_LOAD_FACTOR] = ULF
@@ -1154,7 +1150,7 @@ class LoadFactors(om.ExplicitComponent):
                 dULF_dV9 = 1.5 * dgust_load_factor_dV9
                 dULF_dmin_dive_vel = 1.5 * dgust_load_factor_dmin_dive_vel
 
-        if ULF_from_maneuver == True:
+        if ULF_from_maneuver is True:
             ULF = 1.5 * max_maneuver_factor
 
             dULF_dmax_maneuver_factor = 1.5
@@ -1179,9 +1175,7 @@ class LoadFactors(om.ExplicitComponent):
 
 
 class DesignLoadGroup(om.Group):
-    """
-    Design load group for GASP-based mass.
-    """
+    """Design load group for GASP-based mass."""
 
     def setup(self):
         self.add_subsystem(

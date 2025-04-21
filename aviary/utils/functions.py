@@ -15,9 +15,7 @@ from aviary.variable_info.variable_meta_data import _MetaData
 
 
 class Null:
-    """
-    This can be used to divert outputs, such as stdout, to improve performance
-    """
+    """This can be used to divert outputs, such as stdout, to improve performance."""
 
     def write(self, *args, **kwargs):
         pass
@@ -111,7 +109,7 @@ def convert_strings_to_data(input_string):
     """
     convert_strings_to_data will convert a string or list of strings to usable data.
     Strings that can't be converted to numbers will attempt to store as a boolean,
-    otherwise they are passed as is
+    otherwise they are passed as is.
     """
     # pack input_string into a list if it is not
     # setup output list size
@@ -306,9 +304,7 @@ def create_printcomp(all_inputs: list, input_units: dict = {}, meta_data=_MetaDa
 
 
 def promote_aircraft_and_mission_vars(group):
-    """
-    Promotes inputs and outputs in Aircraft and Mission hierarchy categories for provided group.
-    """
+    """Promotes inputs and outputs in Aircraft and Mission hierarchy categories for provided group."""
     external_outputs = []
     for comp in group.system_iter(recurse=False):
         # Skip all aviary systems.
@@ -468,7 +464,7 @@ def get_model(file_name: str, verbosity=Verbosity.BRIEF) -> Path:
 
 def sigmoidX(x, x0, alpha=1.0):
     """
-    Sigmoid used to smoothly transition between piecewise functions
+    Sigmoid used to smoothly transition between piecewise functions.
 
     Parameters
     ----------
@@ -512,7 +508,7 @@ def sigmoidX(x, x0, alpha=1.0):
 
 def dSigmoidXdx(x, x0, alpha=1.0):
     """
-    Derivative of sigmoid function
+    Derivative of sigmoid function.
 
     Parameters
     ----------

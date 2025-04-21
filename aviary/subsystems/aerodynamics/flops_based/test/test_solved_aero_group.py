@@ -262,9 +262,7 @@ class FakeCalcDragPolar(om.ExplicitComponent):
     """
 
     def initialize(self):
-        """
-        Declare options.
-        """
+        """Declare options."""
         self.options.declare(
             'altitude',
             default=None,

@@ -14,9 +14,7 @@ from aviary.variable_info.variables import Aircraft
 
 
 class WingMassGroup(om.Group):
-    """
-    Group of components used for FLOPS-based wing mass computation.
-    """
+    """Group of components used for FLOPS-based wing mass computation."""
 
     def initialize(self):
         # TODO this requires a special workaround in

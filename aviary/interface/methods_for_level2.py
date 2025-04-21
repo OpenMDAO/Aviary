@@ -393,9 +393,7 @@ class AviaryProblem(om.Problem):
         self._check_reserve_phase_separation()
 
     def _update_metadata_from_subsystems(self):
-        """
-        Merge metadata from user-defined subsystems into problem metadata.
-        """
+        """Merge metadata from user-defined subsystems into problem metadata."""
         self.meta_data = BaseMetaData.copy()
 
         # loop through phase_info and external subsystems
@@ -413,7 +411,7 @@ class AviaryProblem(om.Problem):
         This method checks for reserve=True & False
         Returns an error if a non-reserve phase is specified after a reserve phase.
         return two dictionaries of phases: regular_phases and reserve_phases
-        For shooting trajectories, this will also check if a phase is part of the descent
+        For shooting trajectories, this will also check if a phase is part of the descent.
         """
         # Check to ensure no non-reserve phases are specified after reserve phases
         start_reserve = False
@@ -1637,9 +1635,7 @@ class AviaryProblem(om.Problem):
                             )
 
     def setup(self, **kwargs):
-        """
-        Lightly wrapped setup() method for the problem.
-        """
+        """Lightly wrapped setup() method for the problem."""
         # verbosity is not used in this method, but it is understandable that a user
         # might try and include it (only method that doesn't accept it). Capture it
         if 'verbosity' in kwargs:

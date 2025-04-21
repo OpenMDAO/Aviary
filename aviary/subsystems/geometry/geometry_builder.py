@@ -24,7 +24,7 @@ _default_name = 'geometry'
 
 class GeometryBuilderBase(SubsystemBuilderBase):
     """
-    Base geometry builder
+    Base geometry builder.
 
     Methods
     -------
@@ -51,7 +51,7 @@ class GeometryBuilderBase(SubsystemBuilderBase):
 
 class CoreGeometryBuilder(GeometryBuilderBase):
     """
-    Core geometry builder
+    Core geometry builder.
 
     Methods
     -------
@@ -139,7 +139,7 @@ class CoreGeometryBuilder(GeometryBuilderBase):
 
     def report(self, prob, reports_folder, **kwargs):
         """
-        Generate the report for Aviary core geometry analysis
+        Generate the report for Aviary core geometry analysis.
 
         Parameters
         ----------

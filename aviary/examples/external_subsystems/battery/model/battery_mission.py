@@ -2,7 +2,7 @@
 Battery Performance Modeling on Maxwell X-57
 Jeffrey C. Chin, Sydney L. Schnulo, Thomas B. Miller,
 Kevin Prokopius, and Justin Gray
-http://openmdao.org/pubs/chin_battery_performance_x57_2019.pdf
+http://openmdao.org/pubs/chin_battery_performance_x57_2019.pdf.
 
 Thevenin voltage equation based on paper
 "Evaluation of Lithium Ion Battery Equivalent Circuit Models
@@ -27,7 +27,7 @@ from aviary.utils.aviary_values import AviaryValues
 
 class BatteryMission(Group):
     """Assembly to connect subcomponents of the Thevenin Battery Equivalent
-    Circuit Model From Interpolated Performance Maps
+    Circuit Model From Interpolated Performance Maps.
     """
 
     def initialize(self):

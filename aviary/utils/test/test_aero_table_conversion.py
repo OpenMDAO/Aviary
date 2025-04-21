@@ -16,9 +16,7 @@ from aviary.utils.functions import get_path
 
 @use_tempdirs
 class TestAeroTableConversion(unittest.TestCase):
-    """
-    Test conversion of aero table from GASP and FLOPS data format to Aviary format.
-    """
+    """Test conversion of aero table from GASP and FLOPS data format to Aviary format."""
 
     # fmt: off
     def test_GASP_table_1(self):

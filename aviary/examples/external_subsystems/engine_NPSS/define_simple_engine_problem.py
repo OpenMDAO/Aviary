@@ -16,9 +16,7 @@ from aviary.examples.external_subsystems.engine_NPSS.table_engine_builder import
 
 
 def define_aviary_NPSS_problem():
-    """
-    Build NPSS model in Aviary
-    """
+    """Build NPSS model in Aviary."""
     phase_info = deepcopy(av.default_height_energy_phase_info)
 
     prob = av.AviaryProblem()

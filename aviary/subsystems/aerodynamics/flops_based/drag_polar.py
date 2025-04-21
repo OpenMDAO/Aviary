@@ -1,6 +1,4 @@
-"""
-OpenMDAO system for generating the aero tables that were typically printed in FLOPS.
-"""
+"""OpenMDAO system for generating the aero tables that were typically printed in FLOPS."""
 
 import numpy as np
 import openmdao.api as om

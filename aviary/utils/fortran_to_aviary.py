@@ -311,7 +311,7 @@ def process_and_store_data(
     namelist, the dictionary of alternate names, and the current vehicle data.
     It will convert the string of data into a list, get units, check whether the data specified is
     part of a list or a single element, and update the current name to it's equivalent Aviary name.
-    The variables are also sorted based on whether they will set an Aviary variable or they are for initial guessing
+    The variables are also sorted based on whether they will set an Aviary variable or they are for initial guessing.
     """
     guess_names = list(initialization_guesses.keys())
     var_ind = data_units = None
@@ -430,7 +430,7 @@ def set_value(var_name, var_value, units=None, value_dict: NamedValues = None, v
 def generate_aviary_names(legacy_code):
     """
     Create a dictionary that maps the specified Fortran code to Aviary variable names.
-    Each Aviary variable will have a list of matching Fortran names
+    Each Aviary variable will have a list of matching Fortran names.
     """
     alternate_names = {}
     for key in _MetaData.keys():
@@ -475,9 +475,7 @@ def update_name(alternate_names, var_name, verbosity=Verbosity.BRIEF):
 
 
 def update_gasp_options(vehicle_data):
-    """
-    Handles variables that are affected by the values of others
-    """
+    """Handles variables that are affected by the values of others."""
     input_values: NamedValues = vehicle_data['input_values']
 
     for var_name in gasp_scaler_variables:
@@ -669,9 +667,7 @@ def update_gasp_options(vehicle_data):
 
 
 def update_flops_options(vehicle_data):
-    """
-    Handles variables that are affected by the values of others
-    """
+    """Handles variables that are affected by the values of others."""
     input_values: NamedValues = vehicle_data['input_values']
 
     for var_name in flops_scaler_variables:
@@ -708,9 +704,7 @@ def update_flops_options(vehicle_data):
 
 
 def update_aviary_options(vehicle_data):
-    """
-    Special handling for variables that occurs for either legacy code
-    """
+    """Special handling for variables that occurs for either legacy code."""
     input_values: NamedValues = vehicle_data['input_values']
 
     # if reference + scaled thrust both provided, set scale factor
@@ -736,7 +730,7 @@ def update_flops_scaler_variables(var_name, input_values: NamedValues):
     = 0., no weight for that component
     > 0. but < 5., scale factor applied to internally computed weight or area
     > 5., actual fixed weight for component, lb or ft**2
-    Same rules also applied to various other FLOPS scaler parameters
+    Same rules also applied to various other FLOPS scaler parameters.
     """
     scaler_name = var_name + '_scaler'
     if scaler_name not in input_values:
@@ -763,7 +757,7 @@ def update_gasp_scaler_variables(var_name, input_values: NamedValues):
     = 0., no weight/area for that component
     > 0. but < 10., scale factor applied to internally computed weight
     > 10., actual fixed weight for component, lb or ft**2
-    Same rules also applied to various other FLOPS scaler parameters
+    Same rules also applied to various other FLOPS scaler parameters.
     """
     scaler_name = var_name + '_scaler'
     if scaler_name not in input_values:

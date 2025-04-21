@@ -9,9 +9,7 @@ from aviary.variable_info.enums import ProblemType, Verbosity
 
 
 class HeightEnergyTestCase(unittest.TestCase):
-    """
-    Setup basic aircraft mass and range and select climb, cruise, and descent phases for simulation.
-    """
+    """Setup basic aircraft mass and range and select climb, cruise, and descent phases for simulation."""
 
     def setUp(self) -> None:
         self.sized_mass = 175871.04745399

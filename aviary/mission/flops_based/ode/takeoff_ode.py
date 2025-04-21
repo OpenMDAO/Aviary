@@ -1,6 +1,4 @@
-"""
-Define the ODE for takeoff.
-"""
+"""Define the ODE for takeoff."""
 
 import numpy as np
 import openmdao.api as om
@@ -13,9 +11,7 @@ from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 
 
 class TakeoffODE(_BaseODE):
-    """
-    Define the ODE for takeoff.
-    """
+    """Define the ODE for takeoff."""
 
     # region : derived type customization points
     stall_speed_lift_coefficient_name = Mission.Takeoff.LIFT_COEFFICIENT_MAX

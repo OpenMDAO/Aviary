@@ -1,5 +1,5 @@
 """
-This module is the API for Aviary aircraft analysis code
+This module is the API for Aviary aircraft analysis code.
 
 For users: All built-in Aviary functions, code, and objects
 should be imported from this file.

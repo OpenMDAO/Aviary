@@ -1,6 +1,4 @@
-"""
-Define utilities for calculating landing EOMs.
-"""
+"""Define utilities for calculating landing EOMs."""
 
 import numpy as np
 import openmdao.api as om
@@ -18,9 +16,7 @@ from aviary.variable_info.variables import Dynamic, Mission
 
 
 class FlareEOM(om.Group):
-    """
-    Define a group for calculating equations of motion from start of flare to touchdown.
-    """
+    """Define a group for calculating equations of motion from start of flare to touchdown."""
 
     def initialize(self):
         options = self.options
@@ -146,9 +142,7 @@ class FlareEOM(om.Group):
 
 
 class GlideSlopeForces(om.ExplicitComponent):
-    """
-    Define a component for calculating forces for evaluation of glide slope criteria.
-    """
+    """Define a component for calculating forces for evaluation of glide slope criteria."""
 
     def initialize(self):
         options = self.options

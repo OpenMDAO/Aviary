@@ -6,7 +6,7 @@ from aviary.variable_info.enums import Verbosity
 
 
 class TimeIntegrationTrajBase(SGMTrajBase):
-    """Base class for time integration trajectory"""
+    """Base class for time integration trajectory."""
 
     def initialize(self):
         super().initialize()

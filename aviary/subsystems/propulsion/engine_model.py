@@ -195,9 +195,7 @@ class EngineModel(SubsystemBuilderBase):
             #     options.delete(key)
 
     def update(self, options: AviaryValues, **kwargs):
-        """
-        Given a new set of AviaryValues, update the engine model and rerun setup.
-        """
+        """Given a new set of AviaryValues, update the engine model and rerun setup."""
         self.options = options.deepcopy()
 
         self._setup(**kwargs)

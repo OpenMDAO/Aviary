@@ -132,9 +132,7 @@ class convert_aero_tableTestCases(CommandEntryPointsTestCases):
 
 
 class convert_propeller_tableTestCases(CommandEntryPointsTestCases):
-    """
-    aviary convert_prop_table test. The only option is from GASP propeller map to Aviary table.
-    """
+    """aviary convert_prop_table test. The only option is from GASP propeller map to Aviary table."""
 
     def test_GASP_conversion(self):
         filepath = self.get_file('models/propellers/PropFan.map')
