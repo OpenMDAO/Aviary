@@ -846,10 +846,3 @@ class ExposedWingTestCase(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
-    test = BWBExposedWingTestCase()
-    test.setUp()
-    test.test_case_middle()
-
-    test = ExposedWingTestCase()
-    test.setUp()
-    test.test_case_right()
