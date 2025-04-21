@@ -1,12 +1,13 @@
 import argparse
 import ast
 import inspect
+import re
 import subprocess
 import tempfile
-import numpy as np
-import re
-from aviary.interface.cmd_entry_points import _command_map
 
+import numpy as np
+
+from aviary.interface.cmd_entry_points import _command_map
 
 """
 # DocTAPE #
@@ -413,9 +414,9 @@ def glue_variable(name: str, val=None, md_code=False, display=True):
         Whether to wrap the value in markdown code formatting (e.g. `code`)
     """
     # local import so myst isn't required unless glue is being used
-    from myst_nb import glue
     from IPython.display import Markdown
     from IPython.utils import io
+    from myst_nb import glue
 
     if val is None:
         val = name

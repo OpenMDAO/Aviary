@@ -1,11 +1,10 @@
 import unittest
 
 import numpy as np
-
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials
-from parameterized import parameterized
 from openmdao.utils.testing_utils import use_tempdirs
+from parameterized import parameterized
 
 from aviary.subsystems.geometry.flops_based.canard import Canard
 from aviary.subsystems.geometry.flops_based.characteristic_lengths import CharacteristicLengths

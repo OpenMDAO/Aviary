@@ -4,16 +4,16 @@ import numpy as np
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 
-from aviary.subsystems.propulsion.propulsion_premission import PropulsionPreMission, PropulsionSum
-from aviary.subsystems.propulsion.utils import build_engine_deck
-from aviary.validation_cases.validation_tests import get_flops_inputs
 from aviary.models.multi_engine_single_aisle.multi_engine_single_aisle_data import (
     engine_1_inputs,
     engine_2_inputs,
 )
+from aviary.subsystems.propulsion.propulsion_premission import PropulsionPreMission, PropulsionSum
+from aviary.subsystems.propulsion.utils import build_engine_deck
+from aviary.utils.preprocessors import preprocess_options
+from aviary.validation_cases.validation_tests import get_flops_inputs
 from aviary.variable_info.functions import setup_model_options
 from aviary.variable_info.variables import Aircraft, Settings
-from aviary.utils.preprocessors import preprocess_options
 
 
 class PropulsionPreMissionTest(unittest.TestCase):

@@ -2,8 +2,9 @@ import subprocess
 import unittest
 from pathlib import Path
 
-from aviary.utils.functions import get_aviary_resource_path
 from openmdao.utils.testing_utils import require_pyoptsparse, use_tempdirs
+
+from aviary.utils.functions import get_aviary_resource_path
 
 
 @use_tempdirs

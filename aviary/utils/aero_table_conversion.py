@@ -2,11 +2,10 @@
 
 import argparse
 import re
-
-import numpy as np
-
 from enum import Enum
 from pathlib import Path
+
+import numpy as np
 
 from aviary.api import NamedValues
 from aviary.utils.csv_data_file import write_data_file

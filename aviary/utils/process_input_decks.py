@@ -22,13 +22,11 @@ import numpy as np
 from openmdao.utils.units import valid_units
 
 from aviary.utils.aviary_values import AviaryValues, get_keys
-from aviary.utils.functions import convert_strings_to_data
-from aviary.variable_info.options import get_option_defaults
+from aviary.utils.functions import convert_strings_to_data, get_path
 from aviary.variable_info.enums import ProblemType, Verbosity
+from aviary.variable_info.options import get_option_defaults
 from aviary.variable_info.variable_meta_data import _MetaData
 from aviary.variable_info.variables import Aircraft, Mission, Settings
-from aviary.utils.functions import get_path
-
 
 operation_dict = {
     '<': lt,

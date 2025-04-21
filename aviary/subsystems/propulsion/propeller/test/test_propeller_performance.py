@@ -6,11 +6,11 @@ from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 
 from aviary.subsystems.atmosphere.atmosphere import Atmosphere
 from aviary.subsystems.propulsion.propeller.propeller_performance import (
+    AdvanceRatio,
+    AreaSquareRatio,
     OutMachs,
     PropellerPerformance,
     TipSpeed,
-    AreaSquareRatio,
-    AdvanceRatio,
 )
 from aviary.variable_info.enums import OutMachType
 from aviary.variable_info.functions import setup_model_options

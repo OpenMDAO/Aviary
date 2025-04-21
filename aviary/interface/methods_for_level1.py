@@ -5,9 +5,9 @@ This file contains functions needed to run Aviary using the Level 1 interface.
 from importlib.machinery import SourceFileLoader
 from pathlib import Path
 
-from aviary.variable_info.enums import AnalysisScheme, Verbosity
 from aviary.interface.methods_for_level2 import AviaryProblem
 from aviary.utils.functions import get_path
+from aviary.variable_info.enums import AnalysisScheme, Verbosity
 
 
 def run_aviary(

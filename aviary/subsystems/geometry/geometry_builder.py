@@ -9,12 +9,12 @@ CoreGeometryBuilder : the interface for Aviary's core geometry subsystem builder
 """
 
 from aviary.interface.utils.markdown_utils import write_markdown_variable_table
-from aviary.subsystems.subsystem_builder_base import SubsystemBuilderBase
 from aviary.subsystems.geometry.combined_geometry import CombinedGeometry
 from aviary.subsystems.geometry.flops_based.prep_geom import PrepGeom
 from aviary.subsystems.geometry.gasp_based.size_group import SizeGroup
-from aviary.variable_info.variables import Aircraft
+from aviary.subsystems.subsystem_builder_base import SubsystemBuilderBase
 from aviary.variable_info.enums import LegacyCode
+from aviary.variable_info.variables import Aircraft
 
 GASP = LegacyCode.GASP
 FLOPS = LegacyCode.FLOPS

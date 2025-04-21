@@ -9,7 +9,7 @@ from aviary.mission.gasp_based.ode.landing_eom import (
     LandingAltitudeComponent,
     LandingGroundRollComponent,
 )
-from aviary.variable_info.variables import Aircraft, Mission, Dynamic
+from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 
 
 class LandingAltTestCase(unittest.TestCase):

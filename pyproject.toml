@@ -8,8 +8,9 @@ line-length = 100
 [tool.ruff.format]
 quote-style = "single"
 
-# [tool.ruff.lint]
+[tool.ruff.lint]
 # isort, pydocstyle
+extend-select = ["I"]
 # extend-select = ["I", "D"]
 # extend-ignore = [
 #     "D100",
@@ -25,8 +26,8 @@ quote-style = "single"
 #     "D404",
 # ]
 
-# [tool.ruff.lint.isort]
-# split-on-trailing-comma = false
+[tool.ruff.lint.isort]
+split-on-trailing-comma = false
 
 # [tool.ruff.lint.pydocstyle]
 # convention = "numpy"

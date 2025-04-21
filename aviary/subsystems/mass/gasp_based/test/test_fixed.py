@@ -2,13 +2,11 @@ import unittest
 
 import numpy as np
 import openmdao.api as om
-
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 from openmdao.utils.testing_utils import use_tempdirs
 
 from aviary import constants
 from aviary.constants import RHO_SEA_LEVEL_ENGLISH
-
 from aviary.subsystems.mass.gasp_based.fixed import (
     ControlMass,
     ElectricAugmentationMass,
@@ -21,7 +19,7 @@ from aviary.subsystems.mass.gasp_based.fixed import (
     TailMass,
 )
 from aviary.utils.aviary_values import AviaryValues, get_keys
-from aviary.variable_info.functions import setup_model_options, extract_options
+from aviary.variable_info.functions import extract_options, setup_model_options
 from aviary.variable_info.options import get_option_defaults
 from aviary.variable_info.variables import Aircraft, Mission, Settings
 

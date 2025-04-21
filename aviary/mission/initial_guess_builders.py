@@ -24,8 +24,6 @@ from collections.abc import Sequence
 import dymos as dm
 import numpy as np
 import openmdao.api as om
-
-
 from dymos.transcriptions.transcription_base import TranscriptionBase
 
 if hasattr(TranscriptionBase, 'setup_polynomial_controls'):

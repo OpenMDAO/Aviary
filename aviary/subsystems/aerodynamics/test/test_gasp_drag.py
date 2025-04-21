@@ -2,8 +2,8 @@
 Tests the aero builder with the 2dof (gasp-based) drag.
 """
 
-from copy import deepcopy
 import unittest
+from copy import deepcopy
 
 from openmdao.utils.assert_utils import assert_near_equal
 

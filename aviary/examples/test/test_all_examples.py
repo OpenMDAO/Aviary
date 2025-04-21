@@ -5,12 +5,12 @@ script that begins with 'run_' and ends with '.py'.
 """
 
 import os
-from pathlib import Path
-from parameterized import parameterized
 import subprocess
 import unittest
+from pathlib import Path
 
 from openmdao.utils.testing_utils import use_tempdirs
+from parameterized import parameterized
 
 # TODO: Address any issue that requires a skip.
 SKIP_EXAMPLES = {

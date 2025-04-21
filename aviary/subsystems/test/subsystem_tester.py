@@ -1,7 +1,7 @@
 import unittest
+from importlib import import_module
 
 import numpy as np
-from importlib import import_module
 import openmdao.api as om
 from openmdao.core.system import System
 

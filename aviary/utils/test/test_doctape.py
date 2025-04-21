@@ -1,25 +1,25 @@
 import unittest
-import numpy as np
 
+import numpy as np
 from openmdao.utils.assert_utils import (
-    assert_near_equal,
-    assert_equal_numstrings,
     assert_equal_arrays,
+    assert_equal_numstrings,
+    assert_near_equal,
 )
 
 from aviary.utils.doctape import (
-    gramatical_list,
-    check_value,
-    check_contains,
     check_args,
-    run_command_no_file_error,
-    get_attribute_name,
+    check_contains,
+    check_value,
     get_all_keys,
-    get_value,
+    get_attribute_name,
     get_previous_line,
+    get_value,
     get_variable_name,
-    glue_variable,
     glue_keys,
+    glue_variable,
+    gramatical_list,
+    run_command_no_file_error,
 )
 
 

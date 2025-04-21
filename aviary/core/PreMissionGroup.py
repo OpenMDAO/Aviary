@@ -1,4 +1,5 @@
 import openmdao.api as om
+
 from aviary.utils.functions import promote_aircraft_and_mission_vars
 from aviary.variable_info.functions import override_aviary_vars
 

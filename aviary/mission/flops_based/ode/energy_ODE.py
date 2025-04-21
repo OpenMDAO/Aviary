@@ -1,16 +1,15 @@
 import numpy as np
-
 import openmdao.api as om
 
+from aviary.mission.base_ode import BaseODE as _BaseODE
 from aviary.mission.flops_based.ode.mission_EOM import MissionEOM
 from aviary.mission.gasp_based.ode.time_integration_base_classes import (
     add_SGM_required_inputs,
     add_SGM_required_outputs,
 )
 from aviary.subsystems.propulsion.throttle_allocation import ThrottleAllocator
-from aviary.variable_info.enums import AnalysisScheme, ThrottleAllocation, SpeedType
+from aviary.variable_info.enums import AnalysisScheme, SpeedType, ThrottleAllocation
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
-from aviary.mission.base_ode import BaseODE as _BaseODE
 
 
 class EnergyODE(_BaseODE):

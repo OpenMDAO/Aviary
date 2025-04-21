@@ -2,8 +2,8 @@
 Benchmark test for aviary mission with an NPSS defined engine.
 """
 
-import unittest
 import os as os
+import unittest
 
 from openmdao.utils.assert_utils import assert_near_equal
 

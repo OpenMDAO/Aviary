@@ -12,9 +12,8 @@ from aviary.interface.utils.markdown_utils import write_markdown_variable_table
 from aviary.subsystems.mass.flops_based.mass_premission import MassPremission as MassPremissionFLOPS
 from aviary.subsystems.mass.gasp_based.mass_premission import MassPremission as MassPremissionGASP
 from aviary.subsystems.subsystem_builder_base import SubsystemBuilderBase
-from aviary.variable_info.variables import Aircraft, Mission
 from aviary.variable_info.enums import LegacyCode
-
+from aviary.variable_info.variables import Aircraft, Mission
 
 GASP = LegacyCode.GASP
 FLOPS = LegacyCode.FLOPS

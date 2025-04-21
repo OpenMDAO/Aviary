@@ -1,17 +1,17 @@
-from typing import Union
-from pathlib import Path
-import importlib_resources
-from contextlib import ExitStack
 import atexit
 import os
+from contextlib import ExitStack
+from pathlib import Path
+from typing import Union
 
-import openmdao.api as om
+import importlib_resources
 import numpy as np
+import openmdao.api as om
 
 from aviary.utils.aviary_values import AviaryValues, get_items
-from aviary.variable_info.functions import add_aviary_output, add_aviary_input
-from aviary.variable_info.variable_meta_data import _MetaData
 from aviary.variable_info.enums import Verbosity
+from aviary.variable_info.functions import add_aviary_input, add_aviary_output
+from aviary.variable_info.variable_meta_data import _MetaData
 
 
 class Null:

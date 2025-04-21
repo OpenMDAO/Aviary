@@ -1,8 +1,7 @@
 from aviary.mission.flops_based.phases.time_integration_phases import SGMHeightEnergy
 from aviary.utils.aviary_values import AviaryValues
+from aviary.variable_info.enums import AlphaModes, SpeedType
 from aviary.variable_info.variables import Dynamic, Mission
-from aviary.variable_info.enums import SpeedType, AlphaModes
-
 
 # defaults for height energy based forward in time integeration phases
 cruise_mach = (0.8,)

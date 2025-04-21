@@ -1,7 +1,9 @@
-from aviary.examples.external_subsystems.battery.model.cell_comp import CellComp
-from openmdao.api import Problem, Group
-from openmdao.utils.testing_utils import use_tempdirs
 import unittest
+
+from openmdao.api import Group, Problem
+from openmdao.utils.testing_utils import use_tempdirs
+
+from aviary.examples.external_subsystems.battery.model.cell_comp import CellComp
 
 
 class Test_cell_comp(unittest.TestCase):

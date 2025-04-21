@@ -4,9 +4,9 @@ import numpy as np
 import openmdao.api as om
 
 from aviary.utils.aviary_values import AviaryValues
-from aviary.variable_info.functions import add_aviary_input, add_aviary_output, add_aviary_option
-from aviary.variable_info.variables import Aircraft, Settings
 from aviary.variable_info.enums import Verbosity
+from aviary.variable_info.functions import add_aviary_input, add_aviary_option, add_aviary_output
+from aviary.variable_info.variables import Aircraft, Settings
 
 
 class PropulsionPreMission(om.Group):

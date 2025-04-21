@@ -1,12 +1,11 @@
+from pathlib import Path
+
 import numpy as np
 import openmdao.api as om
 
-from pathlib import Path
-
-from aviary.utils.named_values import get_keys, get_items
 from aviary.utils.csv_data_file import read_data_file
 from aviary.utils.functions import get_path
-from aviary.utils.named_values import NamedValues
+from aviary.utils.named_values import NamedValues, get_items, get_keys
 
 
 def build_data_interpolator(

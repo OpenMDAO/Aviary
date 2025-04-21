@@ -1,18 +1,17 @@
+import importlib.util  # used for opening existing phase info file
+import json
 import os
+import platform
 import shutil
 import subprocess
-import json
-import platform
-import importlib.util  # used for opening existing phase info file
-import numpy as np
-
 import tkinter as tk  # base tkinter
 import tkinter.ttk as ttk  # used for combobox
-from tkinter import filedialog, messagebox, font
+from tkinter import filedialog, font, messagebox
 
-from matplotlib.figure import Figure
-from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+import numpy as np
 from matplotlib.backend_bases import MouseButton
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+from matplotlib.figure import Figure
 
 # used for unit conversion of numerical data
 from openmdao.utils.units import convert_units

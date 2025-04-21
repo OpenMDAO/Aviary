@@ -5,15 +5,15 @@ the dynamic aero.
 """
 
 import openmdao.api as om
-from aviary.subsystems.atmosphere.atmosphere import Atmosphere
 
 from aviary.subsystems.aerodynamics.gasp_based.flaps_model import FlapsGroup
-from aviary.variable_info.variables import Aircraft, Dynamic, Mission
-from aviary.variable_info.enums import SpeedType
 from aviary.subsystems.aerodynamics.gasp_based.gasp_aero_coeffs import AeroFormfactors
 from aviary.subsystems.aerodynamics.gasp_based.interference import (
     WingFuselageInterferencePremission,
 )
+from aviary.subsystems.atmosphere.atmosphere import Atmosphere
+from aviary.variable_info.enums import SpeedType
+from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 
 # TODO: add subsystems to compute CLMXFU, CLMXTO, CLMXLD using dynamic aero components
 # with alpha > alpha_stall

@@ -1,5 +1,6 @@
-import numpy as np
 import warnings
+
+import numpy as np
 import openmdao.api as om
 from openmdao.utils.units import convert_units
 
@@ -9,7 +10,6 @@ from aviary.utils.csv_data_file import read_data_file
 from aviary.utils.functions import get_path
 from aviary.variable_info.enums import OutMachType
 from aviary.variable_info.variables import Aircraft, Settings
-
 
 MACH = PropellerModelVariables.MACH
 CP = PropellerModelVariables.CP

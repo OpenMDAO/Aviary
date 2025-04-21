@@ -1,6 +1,6 @@
 import unittest
-import aviary.api as av
 
+import aviary.api as av
 
 BatteryBuilder = av.TestSubsystemBuilderBase.import_builder(
     'battery.battery_builder.BatteryBuilder'

@@ -6,16 +6,16 @@ from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 
 from aviary.mission.flops_based.ode.landing_eom import (
     FlareEOM,
-    GlideSlopeForces,
     FlareSumForces,
+    GlideSlopeForces,
     GroundSumForces,
 )
 from aviary.models.N3CC.N3CC_data import detailed_landing_flare, inputs
+from aviary.subsystems.propulsion.utils import build_engine_deck
+from aviary.utils.preprocessors import preprocess_options
 from aviary.utils.test_utils.variable_test import assert_match_varnames
 from aviary.validation_cases.validation_tests import do_validation_test
 from aviary.variable_info.variables import Dynamic
-from aviary.subsystems.propulsion.utils import build_engine_deck
-from aviary.utils.preprocessors import preprocess_options
 
 
 class FlareEOMTest(unittest.TestCase):

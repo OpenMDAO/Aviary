@@ -1,6 +1,6 @@
-import numpy as np
 import unittest
 
+import numpy as np
 from openmdao.components.interp_util.interp_semi import InterpNDSemi
 from openmdao.utils.assert_utils import assert_near_equal
 

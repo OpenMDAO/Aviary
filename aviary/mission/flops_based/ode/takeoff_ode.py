@@ -5,11 +5,9 @@ Define the ODE for takeoff.
 import numpy as np
 import openmdao.api as om
 
-from aviary.mission.flops_based.ode.takeoff_eom import StallSpeed, TakeoffEOM
-from aviary.mission.gasp_based.ode.time_integration_base_classes import (
-    add_SGM_required_inputs,
-)
 from aviary.mission.base_ode import BaseODE as _BaseODE
+from aviary.mission.flops_based.ode.takeoff_eom import StallSpeed, TakeoffEOM
+from aviary.mission.gasp_based.ode.time_integration_base_classes import add_SGM_required_inputs
 from aviary.variable_info.enums import AnalysisScheme
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 

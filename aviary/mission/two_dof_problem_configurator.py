@@ -2,28 +2,25 @@ import openmdao.api as om
 
 from aviary.constants import GRAV_ENGLISH_LBM, RHO_SEA_LEVEL_ENGLISH
 from aviary.interface.default_phase_info.two_dof_fiti import add_default_sgm_args
-
 from aviary.mission.gasp_based.idle_descent_estimation import add_descent_estimation_as_submodel
 from aviary.mission.gasp_based.ode.landing_ode import LandingSegment
 from aviary.mission.gasp_based.ode.params import ParamPort
 from aviary.mission.gasp_based.ode.taxi_ode import TaxiSegment
-from aviary.mission.gasp_based.phases.groundroll_phase import GroundrollPhase
-from aviary.mission.gasp_based.phases.rotation_phase import RotationPhase
-from aviary.mission.gasp_based.phases.climb_phase import ClimbPhase
-from aviary.mission.gasp_based.phases.cruise_phase import CruisePhase
 from aviary.mission.gasp_based.phases.accel_phase import AccelPhase
 from aviary.mission.gasp_based.phases.ascent_phase import AscentPhase
+from aviary.mission.gasp_based.phases.climb_phase import ClimbPhase
+from aviary.mission.gasp_based.phases.cruise_phase import CruisePhase
 from aviary.mission.gasp_based.phases.descent_phase import DescentPhase
-from aviary.mission.problem_configurator import ProblemConfiguratorBase
-
-from aviary.utils.functions import create_opts2vals, add_opts2vals
-from aviary.utils.utils import wrapped_convert_units
-from aviary.utils.process_input_decks import initialization_guessing
-from aviary.variable_info.enums import AnalysisScheme, LegacyCode
-from aviary.variable_info.variables import Aircraft, Mission, Dynamic
-from aviary.utils.process_input_decks import update_GASP_options
-from aviary.subsystems.propulsion.utils import build_engine_deck
+from aviary.mission.gasp_based.phases.groundroll_phase import GroundrollPhase
+from aviary.mission.gasp_based.phases.rotation_phase import RotationPhase
 from aviary.mission.gasp_based.polynomial_fit import PolynomialFit
+from aviary.mission.problem_configurator import ProblemConfiguratorBase
+from aviary.subsystems.propulsion.utils import build_engine_deck
+from aviary.utils.functions import add_opts2vals, create_opts2vals
+from aviary.utils.process_input_decks import initialization_guessing, update_GASP_options
+from aviary.utils.utils import wrapped_convert_units
+from aviary.variable_info.enums import AnalysisScheme, LegacyCode
+from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 
 
 class TwoDOFProblemConfigurator(ProblemConfiguratorBase):

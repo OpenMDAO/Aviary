@@ -1,5 +1,4 @@
 import numpy as np
-
 import openmdao.api as om
 
 from aviary.variable_info.enums import ThrottleAllocation

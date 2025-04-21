@@ -9,9 +9,8 @@ Large Single Aisle 1 data
 import unittest
 
 import numpy as np
-from openmdao.utils.testing_utils import use_tempdirs
-from openmdao.utils.testing_utils import require_pyoptsparse
 from openmdao.core.problem import _clear_problem_names
+from openmdao.utils.testing_utils import require_pyoptsparse, use_tempdirs
 
 from aviary.interface.methods_for_level1 import run_aviary
 from aviary.validation_cases.benchmark_utils import compare_against_expected_values

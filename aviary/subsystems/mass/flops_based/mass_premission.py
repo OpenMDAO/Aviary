@@ -7,11 +7,11 @@ from aviary.subsystems.mass.flops_based.avionics import TransportAvionicsMass
 from aviary.subsystems.mass.flops_based.canard import CanardMass
 from aviary.subsystems.mass.flops_based.cargo import CargoMass
 from aviary.subsystems.mass.flops_based.cargo_containers import TransportCargoContainersMass
-from aviary.subsystems.mass.flops_based.crew import NonFlightCrewMass, FlightCrewMass
+from aviary.subsystems.mass.flops_based.crew import FlightCrewMass, NonFlightCrewMass
 from aviary.subsystems.mass.flops_based.electrical import AltElectricalMass, ElectricalMass
 from aviary.subsystems.mass.flops_based.engine import EngineMass
 from aviary.subsystems.mass.flops_based.engine_controls import TransportEngineCtrlsMass
-from aviary.subsystems.mass.flops_based.engine_oil import TransportEngineOilMass, AltEngineOilMass
+from aviary.subsystems.mass.flops_based.engine_oil import AltEngineOilMass, TransportEngineOilMass
 from aviary.subsystems.mass.flops_based.fin import FinMass
 from aviary.subsystems.mass.flops_based.fuel_capacity import FuelCapacityGroup
 from aviary.subsystems.mass.flops_based.fuel_system import (

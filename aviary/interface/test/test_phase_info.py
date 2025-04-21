@@ -9,20 +9,17 @@ from copy import deepcopy
 from openmdao.utils.assert_utils import assert_near_equal
 from openmdao.utils.testing_utils import use_tempdirs
 
-from aviary.interface.default_phase_info.two_dof import phase_info as ph_in_two_dof
-from aviary.interface.default_phase_info.two_dof import (
-    phase_info_parameterization as phase_info_parameterization_two_dof,
-)
 from aviary.interface.default_phase_info.height_energy import phase_info as ph_in_height_energy
 from aviary.interface.default_phase_info.height_energy import (
     phase_info_parameterization as phase_info_parameterization_height_energy,
 )
-from aviary.interface.methods_for_level2 import AviaryProblem
-
-from aviary.mission.phase_builder_base import (
-    PhaseBuilderBase as PhaseBuilder,
-    phase_info_to_builder,
+from aviary.interface.default_phase_info.two_dof import phase_info as ph_in_two_dof
+from aviary.interface.default_phase_info.two_dof import (
+    phase_info_parameterization as phase_info_parameterization_two_dof,
 )
+from aviary.interface.methods_for_level2 import AviaryProblem
+from aviary.mission.phase_builder_base import PhaseBuilderBase as PhaseBuilder
+from aviary.mission.phase_builder_base import phase_info_to_builder
 from aviary.variable_info.variables import Mission
 
 

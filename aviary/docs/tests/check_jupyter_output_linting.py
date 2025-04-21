@@ -1,7 +1,7 @@
-import unittest
-import os.path
 import json
+import os.path
 import sys
+import unittest
 
 exclude = {'tests', 'test', '_build', '.ipynb_checkpoints', '_srcdocs', '__pycache__'}
 

@@ -1,17 +1,17 @@
 import datetime
 import json
-from pathlib import Path
 import sys
 import time
-import pandas as pd
-import numpy as np
+from pathlib import Path
 
+import numpy as np
+import pandas as pd
 from openmdao.utils.mpi import MPI
 from openmdao.utils.reports_system import register_report
 
 from aviary.interface.utils.markdown_utils import write_markdown_variable_table
-from aviary.utils.utils import wrapped_convert_units
 from aviary.utils.named_values import NamedValues
+from aviary.utils.utils import wrapped_convert_units
 
 
 def register_custom_reports():

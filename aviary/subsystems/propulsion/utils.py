@@ -12,12 +12,11 @@ import numpy as np
 import openmdao.api as om
 
 import aviary.constants as constants
-
-from aviary.utils.utils import isiterable
 from aviary.utils.aviary_values import AviaryValues
-from aviary.utils.named_values import NamedValues, get_keys, get_items
-from aviary.variable_info.variables import Aircraft, Dynamic, Mission
+from aviary.utils.named_values import NamedValues, get_items, get_keys
+from aviary.utils.utils import isiterable
 from aviary.variable_info.variable_meta_data import _MetaData
+from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 
 
 class EngineModelVariables(Enum):

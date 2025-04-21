@@ -1,7 +1,7 @@
 import unittest
 
-from openmdao.utils.testing_utils import use_tempdirs
 from openmdao.utils.assert_utils import assert_near_equal
+from openmdao.utils.testing_utils import use_tempdirs
 
 import aviary.api as av
 from aviary.subsystems.energy.battery_builder import BatteryBuilder

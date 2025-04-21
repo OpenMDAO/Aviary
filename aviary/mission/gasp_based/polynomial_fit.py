@@ -1,6 +1,6 @@
 import numpy as np
-from numpy.polynomial import Polynomial
 import openmdao.api as om
+from numpy.polynomial import Polynomial
 
 
 class PolynomialFit(om.ImplicitComponent):

@@ -1,7 +1,7 @@
-import unittest
-import aviary.api as av
 import importlib.util
+import unittest
 
+import aviary.api as av
 
 path_to_builder = 'OAS_weight.OAS_wing_weight_builder.OASWingWeightBuilder'
 OASWingWeightBuilder = av.TestSubsystemBuilderBase.import_builder(path_to_builder)

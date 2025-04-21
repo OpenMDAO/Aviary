@@ -2,9 +2,9 @@ import numpy as np
 import openmdao.api as om
 from openmdao.utils import cs_safe as cs
 
+from aviary.constants import GRAV_ENGLISH_GASP
 from aviary.variable_info.functions import add_aviary_input
 from aviary.variable_info.variables import Aircraft, Dynamic
-from aviary.constants import GRAV_ENGLISH_GASP
 
 FCFWC = 1  # Excrescence drag factor
 FCFWT = 1  # Aero technology factors for wing

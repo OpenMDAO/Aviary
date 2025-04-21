@@ -10,12 +10,11 @@ import numpy as np
 
 from aviary.utils.aviary_values import AviaryValues
 from aviary.utils.named_values import get_keys
-from aviary.variable_info.variable_meta_data import _MetaData
-from aviary.variable_info.variables import Aircraft, Mission, Settings
-from aviary.variable_info.enums import ProblemType, LegacyCode
-from aviary.variable_info.enums import Verbosity
 from aviary.utils.test_utils.variable_test import get_names_from_hierarchy
 from aviary.utils.utils import isiterable
+from aviary.variable_info.enums import LegacyCode, ProblemType, Verbosity
+from aviary.variable_info.variable_meta_data import _MetaData
+from aviary.variable_info.variables import Aircraft, Mission, Settings
 
 
 # TODO document what kwargs are used, and by which preprocessors in docstring?

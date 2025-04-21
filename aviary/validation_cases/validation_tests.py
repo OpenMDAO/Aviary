@@ -5,13 +5,13 @@ import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 from parameterized import param
 
+from aviary.subsystems.propulsion.utils import build_engine_deck
 from aviary.utils.aviary_values import AviaryValues
 from aviary.utils.options import list_options as list_options_func
-from aviary.subsystems.propulsion.utils import build_engine_deck
 from aviary.utils.preprocessors import preprocess_options
 from aviary.validation_cases.validation_data.flops_data.FLOPS_Test_Data import (
-    FLOPS_Test_Data,
     FLOPS_Lacking_Test_Data,
+    FLOPS_Test_Data,
 )
 from aviary.variable_info.functions import extract_options
 from aviary.variable_info.variables import Aircraft

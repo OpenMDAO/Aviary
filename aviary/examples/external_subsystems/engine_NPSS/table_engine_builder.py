@@ -1,14 +1,12 @@
 import os
+
 import numpy as np
 import openmdao.api as om
 
 from aviary.examples.external_subsystems.engine_NPSS.engine_variable_meta_data import (
     ExtendedMetaData,
 )
-from aviary.examples.external_subsystems.engine_NPSS.engine_variables import (
-    Aircraft,
-    Dynamic,
-)
+from aviary.examples.external_subsystems.engine_NPSS.engine_variables import Aircraft, Dynamic
 from aviary.examples.external_subsystems.engine_NPSS.NPSS_Model.DesignEngineGroup import (
     DesignEngineGroup,
 )

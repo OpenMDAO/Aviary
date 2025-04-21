@@ -1,15 +1,14 @@
+from pathlib import Path
+
 import numpy as np
 import openmdao.api as om
 
-from pathlib import Path
-
 from aviary.constants import GRAV_ENGLISH_LBM
 from aviary.subsystems.aerodynamics.gasp_based.common import AeroForces, TimeRamp
-from aviary.utils.named_values import NamedValues, get_keys
-from aviary.utils.data_interpolator_builder import build_data_interpolator
 from aviary.utils.csv_data_file import read_data_file
+from aviary.utils.data_interpolator_builder import build_data_interpolator
 from aviary.utils.functions import get_path
-from aviary.utils.named_values import get_items
+from aviary.utils.named_values import NamedValues, get_items, get_keys
 from aviary.variable_info.functions import add_aviary_input
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 

@@ -5,8 +5,8 @@ The engine model was developed using NPSS v3.2.
 """
 
 from copy import deepcopy
-import aviary.api as av
 
+import aviary.api as av
 from aviary.examples.external_subsystems.engine_NPSS.engine_variable_meta_data import (
     ExtendedMetaData,
 )

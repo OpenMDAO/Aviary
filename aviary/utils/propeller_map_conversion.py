@@ -1,14 +1,15 @@
 #!/usr/bin/python
 import argparse
-import numpy as np
 from datetime import datetime
 from enum import Enum
 
-from aviary.utils.conversion_utils import _rep, _parse, _read_map
+import numpy as np
+
 from aviary.api import NamedValues
+from aviary.subsystems.propulsion.utils import PropellerModelVariables, default_propeller_units
+from aviary.utils.conversion_utils import _parse, _read_map, _rep
 from aviary.utils.csv_data_file import write_data_file
 from aviary.utils.functions import get_path
-from aviary.subsystems.propulsion.utils import PropellerModelVariables, default_propeller_units
 
 
 class PropMapType(Enum):

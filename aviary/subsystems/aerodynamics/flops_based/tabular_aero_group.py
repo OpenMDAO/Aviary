@@ -1,7 +1,7 @@
+from pathlib import Path
+
 import numpy as np
 import openmdao.api as om
-
-from pathlib import Path
 
 from aviary.subsystems.aerodynamics.flops_based.drag import TotalDrag as Drag
 from aviary.subsystems.aerodynamics.flops_based.lift import LiftEqualsWeight as CL
@@ -11,7 +11,6 @@ from aviary.utils.functions import get_path
 from aviary.utils.named_values import NamedValues
 from aviary.variable_info.functions import add_aviary_input, add_aviary_output
 from aviary.variable_info.variables import Aircraft, Dynamic
-
 
 # Map of variable names to allowed headers for data files (only lowercase required,
 # spaces are replaced with underscores when data tables are read)

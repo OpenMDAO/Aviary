@@ -1,18 +1,17 @@
-from copy import deepcopy
 import os
-import unittest
 import subprocess
-
-from openmdao.utils.testing_utils import require_pyoptsparse, use_tempdirs
-from openmdao.core.problem import _clear_problem_names
-from openmdao.utils.reports_system import clear_reports
+import unittest
+from copy import deepcopy
 
 import dymos
+from openmdao.core.problem import _clear_problem_names
+from openmdao.utils.reports_system import clear_reports
+from openmdao.utils.testing_utils import require_pyoptsparse, use_tempdirs
 
 from aviary.interface.methods_for_level1 import run_aviary
 from aviary.interface.methods_for_level2 import AviaryProblem
-from aviary.subsystems.test.test_dummy_subsystem import ArrayGuessSubsystemBuilder
 from aviary.mission.flops_based.phases.energy_phase import EnergyPhase
+from aviary.subsystems.test.test_dummy_subsystem import ArrayGuessSubsystemBuilder
 from aviary.variable_info.variables import Dynamic
 
 

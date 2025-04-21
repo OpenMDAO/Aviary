@@ -13,18 +13,20 @@ dymos missions are summed and weighted to create the objective function the opti
 """
 
 import copy as copy
-from aviary.examples.example_phase_info import phase_info
-from aviary.variable_info.functions import setup_model_options
-from aviary.variable_info.variables import Mission, Aircraft, Settings
-from aviary.variable_info.enums import ProblemType
-import aviary.api as av
-import openmdao.api as om
+import sys
+import warnings
+
+import dymos as dm
 import matplotlib.pyplot as plt
 import numpy as np
-import dymos as dm
-import warnings
-import sys
+import openmdao.api as om
+
+import aviary.api as av
+from aviary.examples.example_phase_info import phase_info
 from aviary.validation_cases.validation_tests import get_flops_inputs
+from aviary.variable_info.enums import ProblemType
+from aviary.variable_info.functions import setup_model_options
+from aviary.variable_info.variables import Aircraft, Mission, Settings
 
 # fly the same mission twice with two different passenger loads
 phase_info_primary = copy.deepcopy(phase_info)
@@ -261,8 +263,9 @@ def large_single_aisle_example(makeN2=False, show_plots=False):
 
     if makeN2:
         # TODO: Not sure we need this at all.
+        from os.path import abspath, basename, dirname, join
+
         from openmdao.api import n2
-        from os.path import basename, dirname, join, abspath
 
         def createN2(fileref, prob):
             n2folder = join(dirname(abspath(__file__)), 'N2s')

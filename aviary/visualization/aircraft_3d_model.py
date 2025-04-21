@@ -1,11 +1,12 @@
-from enum import IntEnum
 import math
-from string import Template
 from dataclasses import dataclass
+from enum import IntEnum
+from string import Template
 from typing import Iterator, List, Tuple
 
 import openmdao.api as om
 from openmdao.utils.om_warnings import issue_warning
+
 import aviary.api as av
 
 

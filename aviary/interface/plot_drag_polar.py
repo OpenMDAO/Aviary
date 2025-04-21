@@ -1,10 +1,12 @@
-import numpy as np
+import tkinter as tk
+from tkinter import Button, Label, StringVar, filedialog, messagebox
+from tkinter.ttk import Combobox
+
 import matplotlib.cm as cm
 import matplotlib.pyplot as plt
+import numpy as np
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
-import tkinter as tk
-from tkinter import Label, Button, StringVar, filedialog, messagebox
-from tkinter.ttk import Combobox
+
 import aviary.api as av
 from aviary.utils.functions import get_path
 

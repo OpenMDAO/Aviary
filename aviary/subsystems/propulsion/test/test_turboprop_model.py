@@ -1,24 +1,22 @@
 import unittest
+from pathlib import Path
 
 import numpy as np
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
-from aviary.subsystems.atmosphere.atmosphere import Atmosphere
-from pathlib import Path
 from openmdao.utils.testing_utils import use_tempdirs
 
-from aviary.subsystems.propulsion.turboprop_model import TurbopropModel
-from aviary.subsystems.propulsion.propeller.propeller_performance import (
-    PropellerPerformance,
-)
-from aviary.utils.preprocessors import preprocess_propulsion
-from aviary.utils.functions import get_path
-from aviary.variable_info.functions import setup_model_options
-from aviary.variable_info.variables import Aircraft, Dynamic, Mission
-from aviary.variable_info.enums import SpeedType
-from aviary.variable_info.options import get_option_defaults
-from aviary.subsystems.subsystem_builder_base import SubsystemBuilderBase
+from aviary.subsystems.atmosphere.atmosphere import Atmosphere
 from aviary.subsystems.propulsion.motor.motor_builder import MotorBuilder
+from aviary.subsystems.propulsion.propeller.propeller_performance import PropellerPerformance
+from aviary.subsystems.propulsion.turboprop_model import TurbopropModel
+from aviary.subsystems.subsystem_builder_base import SubsystemBuilderBase
+from aviary.utils.functions import get_path
+from aviary.utils.preprocessors import preprocess_propulsion
+from aviary.variable_info.enums import SpeedType
+from aviary.variable_info.functions import setup_model_options
+from aviary.variable_info.options import get_option_defaults
+from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 
 
 @use_tempdirs

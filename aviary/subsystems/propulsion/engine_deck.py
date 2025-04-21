@@ -28,26 +28,24 @@ import warnings
 
 import numpy as np
 import openmdao.api as om
-
 from openmdao.utils.units import convert_units
 
 from aviary.interface.utils.markdown_utils import round_it
 from aviary.subsystems.propulsion.engine_model import EngineModel
 from aviary.subsystems.propulsion.engine_scaling import EngineScaling
 from aviary.subsystems.propulsion.engine_sizing import SizeEngine
-from aviary.subsystems.propulsion.utils import UncorrectData
 from aviary.subsystems.propulsion.utils import (
     EngineModelVariables,
+    UncorrectData,
     convert_geopotential_altitude,
     default_units,
     max_variables,
 )
-from aviary.utils.aviary_values import AviaryValues, NamedValues, get_keys, get_items
+from aviary.utils.aviary_values import AviaryValues, NamedValues, get_items, get_keys
 from aviary.utils.csv_data_file import read_data_file
 from aviary.variable_info.enums import Verbosity
 from aviary.variable_info.variable_meta_data import _MetaData
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission, Settings
-
 
 MACH = EngineModelVariables.MACH
 ALTITUDE = EngineModelVariables.ALTITUDE

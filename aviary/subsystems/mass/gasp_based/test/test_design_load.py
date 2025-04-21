@@ -5,9 +5,9 @@ from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 
 from aviary.subsystems.mass.gasp_based.design_load import (
     DesignLoadGroup,
+    LiftCurveSlopeAtCruise,
     LoadFactors,
     LoadParameters,
-    LiftCurveSlopeAtCruise,
     LoadSpeeds,
 )
 from aviary.variable_info.functions import setup_model_options

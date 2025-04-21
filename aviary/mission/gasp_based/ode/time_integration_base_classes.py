@@ -1,16 +1,14 @@
 import numpy as np
-from scipy import interpolate
-
 import openmdao.api as om
 from openmdao.utils import units
-
+from scipy import interpolate
 from simupy.block_diagram import DEFAULT_INTEGRATOR_OPTIONS, SimulationMixin
 from simupy.systems import DynamicalSystem
 
 from aviary.mission.gasp_based.ode.params import ParamPort
 from aviary.variable_info.enums import Verbosity
-from aviary.variable_info.variable_meta_data import _MetaData
 from aviary.variable_info.functions import setup_model_options
+from aviary.variable_info.variable_meta_data import _MetaData
 
 
 def add_SGM_required_inputs(group: om.Group, inputs_to_add: dict):

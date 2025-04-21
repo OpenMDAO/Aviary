@@ -1,11 +1,10 @@
 import unittest
 
 import openmdao.api as om
-
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 
-from aviary.subsystems.propulsion.gearbox.gearbox_builder import GearboxBuilder
 import aviary.api as av
+from aviary.subsystems.propulsion.gearbox.gearbox_builder import GearboxBuilder
 
 
 class TestGearbox(unittest.TestCase):

@@ -1,5 +1,4 @@
 import openmdao.api as om
-
 from dymos.models.atmosphere.atmos_1976 import USatm1976Comp
 
 from aviary.subsystems.atmosphere.flight_conditions import FlightConditions

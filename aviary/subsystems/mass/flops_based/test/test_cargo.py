@@ -6,10 +6,7 @@ from parameterized import parameterized
 from aviary.subsystems.mass.flops_based.cargo import CargoMass
 from aviary.utils.aviary_values import AviaryValues
 from aviary.utils.test_utils.variable_test import assert_match_varnames
-from aviary.validation_cases.validation_tests import (
-    do_validation_test,
-    print_case,
-)
+from aviary.validation_cases.validation_tests import do_validation_test, print_case
 from aviary.variable_info.variables import Aircraft
 
 cargo_test_data = {}

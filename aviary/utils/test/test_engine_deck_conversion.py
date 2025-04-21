@@ -3,7 +3,7 @@ from pathlib import Path
 
 from openmdao.utils.testing_utils import use_tempdirs
 
-from aviary.utils.engine_deck_conversion import EngineDeckType, EngineDeckConverter
+from aviary.utils.engine_deck_conversion import EngineDeckConverter, EngineDeckType
 from aviary.utils.functions import get_path
 
 

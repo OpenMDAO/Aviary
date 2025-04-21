@@ -1,9 +1,9 @@
-from packaging import version
 import unittest
 
 import openmdao
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials
+from packaging import version
 
 from aviary.mission.gasp_based.ode.params import set_params_for_unit_tests
 from aviary.mission.gasp_based.ode.taxi_ode import TaxiSegment

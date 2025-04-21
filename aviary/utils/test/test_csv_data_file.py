@@ -5,7 +5,7 @@ import warnings
 from openmdao.utils.assert_utils import assert_near_equal, assert_warning
 from openmdao.utils.testing_utils import use_tempdirs
 
-from aviary.utils.csv_data_file import write_data_file, read_data_file
+from aviary.utils.csv_data_file import read_data_file, write_data_file
 from aviary.utils.functions import get_path
 from aviary.utils.named_values import NamedValues, get_items, get_keys
 from aviary.utils.process_input_decks import parse_inputs

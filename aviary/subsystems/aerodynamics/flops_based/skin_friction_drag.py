@@ -1,7 +1,7 @@
 import numpy as np
 import openmdao.api as om
 
-from aviary.variable_info.functions import add_aviary_input, get_units, add_aviary_option
+from aviary.variable_info.functions import add_aviary_input, add_aviary_option, get_units
 from aviary.variable_info.variables import Aircraft
 
 

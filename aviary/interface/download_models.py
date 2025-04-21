@@ -1,7 +1,8 @@
-import os
-from pathlib import Path
 import argparse
+import os
 import shutil
+from pathlib import Path
+
 from aviary.utils.functions import get_model
 
 

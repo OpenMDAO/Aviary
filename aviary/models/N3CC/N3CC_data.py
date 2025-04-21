@@ -33,13 +33,13 @@ from aviary.mission.flops_based.phases.detailed_takeoff_phases import (
 )
 from aviary.subsystems.propulsion.utils import build_engine_deck
 from aviary.utils.aviary_values import AviaryValues
-from aviary.utils.test_utils.default_subsystems import (
-    get_default_premission_subsystems,
-    get_default_mission_subsystems,
-)
 from aviary.utils.functions import get_path
-from aviary.variable_info.variables import Aircraft, Dynamic, Mission, Settings
+from aviary.utils.test_utils.default_subsystems import (
+    get_default_mission_subsystems,
+    get_default_premission_subsystems,
+)
 from aviary.variable_info.enums import EquationsOfMotion, LegacyCode, ProblemType
+from aviary.variable_info.variables import Aircraft, Dynamic, Mission, Settings
 
 N3CC = {}
 inputs = N3CC['inputs'] = AviaryValues()

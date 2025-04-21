@@ -2,12 +2,11 @@ import unittest
 
 import numpy as np
 
-
+import aviary.api as av
 from aviary.subsystems.mass.mass_builder import CoreMassBuilder
 from aviary.variable_info.enums import LegacyCode
-from aviary.variable_info.variables import Aircraft
 from aviary.variable_info.variable_meta_data import _MetaData as BaseMetaData
-import aviary.api as av
+from aviary.variable_info.variables import Aircraft
 
 FLOPS = LegacyCode.FLOPS
 

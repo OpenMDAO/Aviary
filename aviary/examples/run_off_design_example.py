@@ -10,9 +10,7 @@ This performs a coupled design-mission optimization and outputs the results from
 """
 
 import aviary.api as av
-
 from aviary.interface.default_phase_info.height_energy import phase_info_parameterization
-
 
 phase_info = {
     'pre_mission': {'include_takeoff': True, 'optimize_mass': True},

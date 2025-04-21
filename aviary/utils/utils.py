@@ -4,12 +4,12 @@ Helps to avoid circular imports. These functions do not rely on imports from oth
 utility files.
 """
 
-from enum import Enum
 from copy import deepcopy
+from enum import Enum
 
 import numpy as np
-
 from openmdao.utils.units import convert_units
+
 from aviary.variable_info.variable_meta_data import _MetaData
 
 

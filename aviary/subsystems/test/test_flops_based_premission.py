@@ -1,7 +1,7 @@
 import unittest
-from parameterized import parameterized
 
 import openmdao.api as om
+from parameterized import parameterized
 
 from aviary.subsystems.premission import CorePreMission
 from aviary.subsystems.propulsion.utils import build_engine_deck
@@ -11,12 +11,11 @@ from aviary.utils.preprocessors import preprocess_options
 from aviary.utils.test_utils.default_subsystems import get_default_premission_subsystems
 from aviary.validation_cases.validation_tests import (
     flops_validation_test,
+    get_flops_case_names,
     get_flops_inputs,
     get_flops_outputs,
-    get_flops_case_names,
     print_case,
 )
-
 from aviary.variable_info.functions import setup_model_options
 from aviary.variable_info.variables import Aircraft, Mission, Settings
 

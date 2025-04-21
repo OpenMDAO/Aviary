@@ -1,15 +1,13 @@
+import dymos as dm
 import numpy as np
 
-import dymos as dm
-
-from aviary.mission.initial_guess_builders import InitialGuessState
 from aviary.mission.flops_based.ode.energy_ODE import EnergyODE
 from aviary.mission.flops_based.phases.phase_utils import (
     add_subsystem_variables_to_phase,
     get_initial,
 )
+from aviary.mission.initial_guess_builders import InitialGuessState
 from aviary.mission.phase_builder_base import PhaseBuilderBase, register
-
 from aviary.utils.aviary_options_dict import AviaryOptionsDictionary
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.enums import EquationsOfMotion, ThrottleAllocation

@@ -6,11 +6,7 @@ from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 from parameterized import parameterized
 
 from aviary.subsystems.aerodynamics.flops_based.computed_aero_group import ComputedDrag
-from aviary.subsystems.aerodynamics.flops_based.drag import (
-    SimpleDrag,
-    SimpleCD,
-    TotalDrag,
-)
+from aviary.subsystems.aerodynamics.flops_based.drag import SimpleCD, SimpleDrag, TotalDrag
 from aviary.utils.aviary_values import AviaryValues
 from aviary.validation_cases.validation_tests import (
     get_flops_case_names,

@@ -1,9 +1,9 @@
-from aviary.subsystems.propulsion.propulsion_builder import CorePropulsionBuilder
+from aviary.subsystems.aerodynamics.aerodynamics_builder import CoreAerodynamicsBuilder
 from aviary.subsystems.geometry.geometry_builder import CoreGeometryBuilder
 from aviary.subsystems.mass.mass_builder import CoreMassBuilder
-from aviary.subsystems.aerodynamics.aerodynamics_builder import CoreAerodynamicsBuilder
-from aviary.variable_info.variable_meta_data import _MetaData as BaseMetaData
+from aviary.subsystems.propulsion.propulsion_builder import CorePropulsionBuilder
 from aviary.variable_info.enums import LegacyCode
+from aviary.variable_info.variable_meta_data import _MetaData as BaseMetaData
 
 
 def get_default_premission_subsystems(legacy_code, engines=None):

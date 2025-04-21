@@ -1,7 +1,5 @@
 import numpy as np
-
 import openmdao.api as om
-
 from dymos.transcriptions.transcription_base import TranscriptionBase
 
 from aviary.mission.flight_phase_builder import FlightPhaseOptions
@@ -10,11 +8,11 @@ from aviary.mission.flops_based.phases.build_takeoff import Takeoff
 from aviary.mission.flops_based.phases.energy_phase import EnergyPhase
 from aviary.mission.phase_builder_base import PhaseBuilderBase
 from aviary.mission.problem_configurator import ProblemConfiguratorBase
-from aviary.utils.utils import wrapped_convert_units
-from aviary.utils.process_input_decks import initialization_guessing
-from aviary.variable_info.enums import AnalysisScheme, LegacyCode
-from aviary.variable_info.variables import Aircraft, Mission, Dynamic
 from aviary.subsystems.propulsion.utils import build_engine_deck
+from aviary.utils.process_input_decks import initialization_guessing
+from aviary.utils.utils import wrapped_convert_units
+from aviary.variable_info.enums import AnalysisScheme, LegacyCode
+from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 
 if hasattr(TranscriptionBase, 'setup_polynomial_controls'):
     use_new_dymos_syntax = False

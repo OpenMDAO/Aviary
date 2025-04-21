@@ -11,10 +11,10 @@ from aviary.subsystems.mass.gasp_based.fuel import (
     FuelSysAndFullFuselageMass,
     FuselageAndStructMass,
 )
-from aviary.variable_info.enums import Verbosity
-from aviary.variable_info.variables import Aircraft, Mission, Settings
-from aviary.variable_info.functions import setup_model_options
 from aviary.utils.aviary_values import AviaryValues
+from aviary.variable_info.enums import Verbosity
+from aviary.variable_info.functions import setup_model_options
+from aviary.variable_info.variables import Aircraft, Mission, Settings
 
 
 class BodyCalculationTestCase1(unittest.TestCase):

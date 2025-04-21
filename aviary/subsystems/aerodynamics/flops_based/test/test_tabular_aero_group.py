@@ -1,12 +1,11 @@
-from copy import deepcopy
-from parameterized import parameterized
 import unittest
+from copy import deepcopy
 
 import numpy as np
-
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 from openmdao.utils.testing_utils import use_tempdirs
+from parameterized import parameterized
 
 from aviary.interface.default_phase_info.height_energy import phase_info
 from aviary.interface.methods_for_level2 import AviaryProblem
@@ -22,7 +21,6 @@ from aviary.validation_cases.validation_tests import get_flops_inputs, get_flops
 from aviary.variable_info.enums import LegacyCode
 from aviary.variable_info.functions import setup_model_options
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission, Settings
-
 
 FLOPS = LegacyCode.FLOPS
 GASP = LegacyCode.GASP

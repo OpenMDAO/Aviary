@@ -1,13 +1,10 @@
 import unittest
+
 import openmdao.api as om
+from openmdao.utils.assert_utils import assert_near_equal
 
 from aviary.utils.develop_metadata import add_meta_data
-from aviary.variable_info.functions import (
-    add_aviary_input,
-    add_aviary_output,
-    add_aviary_option,
-)
-from openmdao.utils.assert_utils import assert_near_equal
+from aviary.variable_info.functions import add_aviary_input, add_aviary_option, add_aviary_output
 
 
 class InputOutputOptionTest(unittest.TestCase):

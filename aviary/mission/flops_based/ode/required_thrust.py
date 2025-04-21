@@ -1,5 +1,6 @@
-import openmdao.api as om
 import numpy as np
+import openmdao.api as om
+
 from aviary.constants import GRAV_METRIC_FLOPS as gravity
 from aviary.variable_info.variables import Dynamic
 

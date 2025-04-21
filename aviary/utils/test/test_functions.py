@@ -1,20 +1,20 @@
-import unittest
 import os
 import shutil
+import unittest
 from pathlib import Path
 
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_near_equal
 
-from aviary.variable_info.options import get_option_defaults
-from aviary.variable_info.variables import Aircraft, Mission
+from aviary.api import top_dir
 from aviary.utils.functions import (
     add_opts2vals,
     convert_strings_to_data,
     create_opts2vals,
     get_path,
 )
-from aviary.api import top_dir
+from aviary.variable_info.options import get_option_defaults
+from aviary.variable_info.variables import Aircraft, Mission
 
 
 class TestOpts2Vals(unittest.TestCase):

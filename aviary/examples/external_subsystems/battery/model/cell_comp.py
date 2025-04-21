@@ -1,13 +1,9 @@
 import numpy as np
-
 from openmdao.api import ExplicitComponent
 
-from aviary.variable_info.functions import add_aviary_input, add_aviary_output
-from aviary.examples.external_subsystems.battery.battery_variables import (
-    Aircraft,
-    Dynamic,
-)
 from aviary.examples.external_subsystems.battery.battery_variable_meta_data import ExtendedMetaData
+from aviary.examples.external_subsystems.battery.battery_variables import Aircraft, Dynamic
+from aviary.variable_info.functions import add_aviary_input, add_aviary_output
 
 
 class CellComp(ExplicitComponent):

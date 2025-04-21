@@ -1,61 +1,50 @@
 import csv
-import warnings
-import inspect
-from pathlib import Path
-from datetime import datetime
 import importlib.util
-import sys
+import inspect
 import json
 import os
+import sys
+import warnings
+from datetime import datetime
 from enum import Enum
-
-import numpy as np
+from pathlib import Path
 
 import dymos as dm
-from dymos.utils.misc import _unspecified
-
+import numpy as np
 import openmdao.api as om
+from dymos.utils.misc import _unspecified
 from openmdao.utils.reports_system import _default_reports
 
+from aviary.core.AviaryGroup import AviaryGroup
+from aviary.core.PostMissionGroup import PostMissionGroup
+from aviary.core.PreMissionGroup import PreMissionGroup
 from aviary.interface.default_phase_info.two_dof_fiti import add_default_sgm_args
 from aviary.interface.utils.check_phase_info import check_phase_info
 from aviary.mission.gasp_based.phases.time_integration_traj import FlexibleTraj
-
-from aviary.mission.height_energy_problem_configurator import (
-    HeightEnergyProblemConfigurator,
-)
+from aviary.mission.height_energy_problem_configurator import HeightEnergyProblemConfigurator
+from aviary.mission.solved_two_dof_problem_configurator import SolvedTwoDOFProblemConfigurator
 from aviary.mission.two_dof_problem_configurator import TwoDOFProblemConfigurator
-from aviary.mission.solved_two_dof_problem_configurator import (
-    SolvedTwoDOFProblemConfigurator,
-)
-
 from aviary.subsystems.aerodynamics.aerodynamics_builder import CoreAerodynamicsBuilder
 from aviary.subsystems.geometry.geometry_builder import CoreGeometryBuilder
 from aviary.subsystems.mass.mass_builder import CoreMassBuilder
 from aviary.subsystems.premission import CorePreMission
 from aviary.subsystems.propulsion.propulsion_builder import CorePropulsionBuilder
-
 from aviary.utils.aviary_values import AviaryValues
-from aviary.utils.utils import wrapped_convert_units
 from aviary.utils.functions import convert_strings_to_data
 from aviary.utils.merge_variable_metadata import merge_meta_data
 from aviary.utils.preprocessors import preprocess_options
 from aviary.utils.process_input_decks import create_vehicle, update_GASP_options
-
+from aviary.utils.utils import wrapped_convert_units
 from aviary.variable_info.enums import (
     AnalysisScheme,
-    ProblemType,
     EquationsOfMotion,
     LegacyCode,
+    ProblemType,
     Verbosity,
 )
-from aviary.variable_info.functions import setup_trajectory_params, setup_model_options
-from aviary.variable_info.variables import Aircraft, Mission, Dynamic, Settings
+from aviary.variable_info.functions import setup_model_options, setup_trajectory_params
 from aviary.variable_info.variable_meta_data import _MetaData as BaseMetaData
-
-from aviary.core.PostMissionGroup import PostMissionGroup
-from aviary.core.PreMissionGroup import PreMissionGroup
-from aviary.core.AviaryGroup import AviaryGroup
+from aviary.variable_info.variables import Aircraft, Dynamic, Mission, Settings
 
 FLOPS = LegacyCode.FLOPS
 GASP = LegacyCode.GASP

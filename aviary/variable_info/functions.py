@@ -1,17 +1,17 @@
 from enum import Enum
-import numpy as np
 
-import openmdao.api as om
-from openmdao.core.component import Component
 import dymos as dm
+import numpy as np
+import openmdao.api as om
 from dymos.utils.misc import _unspecified
+from openmdao.core.component import Component
 
 from aviary.utils.aviary_options_dict import units_setter
 from aviary.utils.aviary_values import AviaryValues
-from aviary.variable_info.variables import Aircraft, Settings
-from aviary.variable_info.variable_meta_data import _MetaData
+from aviary.utils.utils import cast_type, check_type, enum_setter, wrapped_convert_units
 from aviary.variable_info.enums import Verbosity
-from aviary.utils.utils import enum_setter, wrapped_convert_units, check_type, cast_type
+from aviary.variable_info.variable_meta_data import _MetaData
+from aviary.variable_info.variables import Aircraft, Settings
 
 # ---------------------------
 # Helper functions for setting up inputs/outputs in components

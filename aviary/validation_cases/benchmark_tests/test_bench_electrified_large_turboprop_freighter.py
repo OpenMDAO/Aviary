@@ -1,18 +1,14 @@
 import unittest
+
 import openmdao.api as om
-
-
 from openmdao.utils.testing_utils import use_tempdirs
 
 from aviary.interface.methods_for_level2 import AviaryProblem
-from aviary.subsystems.propulsion.turboprop_model import TurbopropModel
+from aviary.models.large_turboprop_freighter.phase_info import energy_phase_info
 from aviary.subsystems.propulsion.motor.motor_builder import MotorBuilder
+from aviary.subsystems.propulsion.turboprop_model import TurbopropModel
 from aviary.utils.process_input_decks import create_vehicle
 from aviary.variable_info.variables import Aircraft, Mission, Settings
-
-from aviary.models.large_turboprop_freighter.phase_info import (
-    energy_phase_info,
-)
 
 
 @use_tempdirs

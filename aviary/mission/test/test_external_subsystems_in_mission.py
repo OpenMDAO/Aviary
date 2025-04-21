@@ -2,21 +2,17 @@
 Test for some features when using an external subsystem in the mission.
 """
 
-from copy import deepcopy
 import unittest
+from copy import deepcopy
 
 import openmdao.api as om
 from openmdao.utils.testing_utils import use_tempdirs
 
-from aviary.interface.methods_for_level2 import AviaryProblem
-
-from aviary.subsystems.subsystem_builder_base import SubsystemBuilderBase
-from aviary.interface.default_phase_info.height_energy import (
-    phase_info as energy_phase_info,
-)
+from aviary.interface.default_phase_info.height_energy import phase_info as energy_phase_info
 from aviary.interface.default_phase_info.two_dof import phase_info as two_dof_phase_info
+from aviary.interface.methods_for_level2 import AviaryProblem
+from aviary.subsystems.subsystem_builder_base import SubsystemBuilderBase
 from aviary.variable_info.variables import Aircraft
-
 
 energy_phase_info = deepcopy(energy_phase_info)
 

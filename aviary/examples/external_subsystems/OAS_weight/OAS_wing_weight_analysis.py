@@ -42,7 +42,6 @@ except ImportError:
     )
 
 from ambiance import Atmosphere
-
 from openaerostruct.integration.aerostruct_groups import AerostructGeometry, AerostructPoint
 from openaerostruct.structures.wingbox_fuel_vol_delta import WingboxFuelVolDelta
 

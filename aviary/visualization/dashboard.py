@@ -1,34 +1,30 @@
 import argparse
-from collections import defaultdict
 import importlib.util
 import json
 import os
-from pathlib import Path
 import re
 import shutil
 import zipfile
+from collections import defaultdict
+from pathlib import Path
 
 import numpy as np
-
+import openmdao.api as om
 import pandas as pd
-
+import panel as pn
 from bokeh.models import (
-    Legend,
-    LegendItem,
-    TextInput,
     ColumnDataSource,
     CustomJS,
     Div,
-    Range1d,
+    Legend,
+    LegendItem,
     LinearAxis,
     PrintfTickFormatter,
+    Range1d,
+    TextInput,
 )
-from bokeh.plotting import figure
 from bokeh.palettes import Category20, d3
-
-import panel as pn
-
-import openmdao.api as om
+from bokeh.plotting import figure
 from openmdao.utils.general_utils import env_truthy
 from openmdao.utils.units import conversion_to_base_units
 
@@ -40,9 +36,8 @@ except BaseException:
         return 5000
 
 
-from openmdao.utils.om_warnings import issue_warning
-
 from dymos.visualization.timeseries.bokeh_timeseries_report import _meta_tree_subsys_iter
+from openmdao.utils.om_warnings import issue_warning
 
 from aviary.visualization.aircraft_3d_model import Aircraft3DModel
 

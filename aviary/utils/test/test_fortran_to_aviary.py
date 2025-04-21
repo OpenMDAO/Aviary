@@ -3,10 +3,9 @@ from pathlib import Path
 
 from openmdao.utils.testing_utils import use_tempdirs
 
-from aviary.variable_info.enums import LegacyCode
-
-from aviary.utils.functions import get_path
 from aviary.utils.fortran_to_aviary import fortran_to_aviary
+from aviary.utils.functions import get_path
+from aviary.variable_info.enums import LegacyCode
 
 
 @use_tempdirs

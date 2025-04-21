@@ -1,9 +1,8 @@
 import unittest
 
 import numpy as np
-
 import openmdao.api as om
-from openmdao.utils.assert_utils import assert_near_equal, assert_check_partials
+from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 
 from aviary.constants import GRAV_ENGLISH_LBM
 from aviary.mission.gasp_based.ode.params import set_params_for_unit_tests
@@ -14,10 +13,10 @@ from aviary.mission.gasp_based.ode.unsteady_solved.unsteady_solved_flight_condit
     UnsteadySolvedFlightConditions,
 )
 from aviary.subsystems.aerodynamics.aerodynamics_builder import CoreAerodynamicsBuilder
-from aviary.variable_info.enums import LegacyCode, SpeedType
-from aviary.variable_info.variables import Aircraft, Dynamic
-from aviary.variable_info.functions import setup_model_options
 from aviary.utils.aviary_values import AviaryValues
+from aviary.variable_info.enums import LegacyCode, SpeedType
+from aviary.variable_info.functions import setup_model_options
+from aviary.variable_info.variables import Aircraft, Dynamic
 
 
 class TestUnsteadyAlphaThrustIterGroup(unittest.TestCase):

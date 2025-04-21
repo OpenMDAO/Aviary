@@ -5,7 +5,7 @@ from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 
 from aviary import constants
 from aviary.mission.flops_based.phases.simplified_landing import LandingCalc, LandingGroup
-from aviary.variable_info.variables import Aircraft, Mission, Dynamic
+from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 
 
 class LandingCalcTest(unittest.TestCase):

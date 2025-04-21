@@ -1,12 +1,10 @@
 import unittest
 
-
-from aviary.subsystems.mass.mass_builder import CoreMassBuilder
-
-from aviary.variable_info.enums import LegacyCode
-from aviary.variable_info.variables import Aircraft
-from aviary.variable_info.variable_meta_data import _MetaData as BaseMetaData
 import aviary.api as av
+from aviary.subsystems.mass.mass_builder import CoreMassBuilder
+from aviary.variable_info.enums import LegacyCode
+from aviary.variable_info.variable_meta_data import _MetaData as BaseMetaData
+from aviary.variable_info.variables import Aircraft
 
 GASP = LegacyCode.GASP
 

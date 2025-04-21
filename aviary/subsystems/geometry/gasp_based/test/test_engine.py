@@ -5,9 +5,9 @@ import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 
 from aviary.subsystems.geometry.gasp_based.engine import EngineSize
-from aviary.variable_info.functions import setup_model_options, extract_options
-from aviary.variable_info.variables import Aircraft
 from aviary.utils.aviary_values import AviaryValues
+from aviary.variable_info.functions import extract_options, setup_model_options
+from aviary.variable_info.variables import Aircraft
 
 
 class TestEngine(

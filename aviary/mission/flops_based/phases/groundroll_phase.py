@@ -2,17 +2,15 @@ import dymos as dm
 
 from aviary.mission.gasp_based.ode.groundroll_ode import GroundrollODE
 from aviary.mission.initial_guess_builders import (
-    InitialGuessState,
     InitialGuessIntegrationVariable,
     InitialGuessPolynomialControl,
+    InitialGuessState,
 )
 from aviary.mission.phase_builder_base import PhaseBuilderBase, register
-
 from aviary.utils.aviary_options_dict import AviaryOptionsDictionary
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.variable_meta_data import _MetaData
 from aviary.variable_info.variables import Dynamic
-
 
 # TODO: support/handle the following in the base class
 # - phase.set_time_options()

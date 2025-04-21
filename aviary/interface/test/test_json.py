@@ -1,15 +1,15 @@
 import unittest
-from pathlib import Path
 from copy import deepcopy
+from pathlib import Path
 
-from aviary.utils.functions import get_aviary_resource_path
 from openmdao.utils.testing_utils import use_tempdirs
+
 import aviary.api as av
 from aviary.interface.default_phase_info.height_energy import (
     phase_info,
     phase_info_parameterization,
 )
-
+from aviary.utils.functions import get_aviary_resource_path
 
 local_phase_info = deepcopy(phase_info)
 

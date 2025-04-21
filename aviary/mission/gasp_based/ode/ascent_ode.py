@@ -1,11 +1,11 @@
 import numpy as np
 
-from aviary.variable_info.enums import AlphaModes, AnalysisScheme
-from aviary.variable_info.variables import Aircraft, Dynamic
 from aviary.mission.gasp_based.ode.ascent_eom import AscentEOM
-from aviary.mission.gasp_based.ode.two_dof_ode import TwoDOFODE
 from aviary.mission.gasp_based.ode.params import ParamPort
 from aviary.mission.gasp_based.ode.time_integration_base_classes import add_SGM_required_inputs
+from aviary.mission.gasp_based.ode.two_dof_ode import TwoDOFODE
+from aviary.variable_info.enums import AlphaModes, AnalysisScheme
+from aviary.variable_info.variables import Aircraft, Dynamic
 
 
 class AscentODE(TwoDOFODE):
