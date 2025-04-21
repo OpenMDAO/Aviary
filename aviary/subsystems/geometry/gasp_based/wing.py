@@ -515,7 +515,6 @@ class WingFold(om.ExplicitComponent):
 
     def initialize(self):
         add_aviary_option(self, Aircraft.Wing.CHOOSE_FOLD_LOCATION)
-        add_aviary_option(self, Aircraft.Design.TYPE)
 
     def setup(self):
 
