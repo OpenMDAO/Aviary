@@ -222,8 +222,8 @@ def flops_validation_test(prob: om.Problem,
 
     if flops_inputs is None and flops_outputs is None:
         flops_data = FLOPS_Test_Data[case_name]
-        flops_inputs = flops_data['inputs']
-        flops_outputs = flops_data['outputs']
+        flops_inputs = flops_data['inputs'].deepcopy()
+        flops_outputs = flops_data['outputs'].deepcopy()
 
     if version is Version.TRANSPORT and flops_inputs.get_val(Aircraft.Design.USE_ALT_MASS) or \
             version is Version.ALTERNATE and not flops_inputs.get_val(Aircraft.Design.USE_ALT_MASS):
