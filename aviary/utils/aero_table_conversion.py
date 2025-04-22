@@ -281,8 +281,6 @@ def _setup_ATC_parser(parser):
         choices=[origin.value for origin in CodeOrigin],
         help='data format used by input_file',
     )
-    parser.add_argument('--round', action='store_true',
-                        help='rounds any generated data')
 
 
 def _exec_ATC(args, user_args):
