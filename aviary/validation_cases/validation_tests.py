@@ -1,4 +1,3 @@
-
 import warnings
 from enum import Enum
 
@@ -111,7 +110,6 @@ def do_validation_test(prob: om.Problem,
         prob.set_val(key, desired, units)
 
     prob.run_model()
-    print(case_name)
 
     if list_options:
         list_options_func(prob.model, aviary_keys=aviary_option_key_list)
@@ -133,7 +131,7 @@ def do_validation_test(prob: om.Problem,
 
     if check_partials:
         partial_data = prob.check_partials(
-            compact_print=True, method=method, step=step, excludes=excludes)
+            out_stream=None, method=method, step=step, excludes=excludes)
         assert_check_partials(partial_data, atol=atol, rtol=rtol)
 
 
@@ -224,8 +222,8 @@ def flops_validation_test(prob: om.Problem,
 
     if flops_inputs is None and flops_outputs is None:
         flops_data = FLOPS_Test_Data[case_name]
-        flops_inputs = flops_data['inputs']
-        flops_outputs = flops_data['outputs']
+        flops_inputs = flops_data['inputs'].deepcopy()
+        flops_outputs = flops_data['outputs'].deepcopy()
 
     if version is Version.TRANSPORT and flops_inputs.get_val(Aircraft.Design.USE_ALT_MASS) or \
             version is Version.ALTERNATE and not flops_inputs.get_val(Aircraft.Design.USE_ALT_MASS):
@@ -309,8 +307,11 @@ def get_flops_inputs(case_name: str, keys: str = None, preprocess: bool = False)
 
     flops_inputs_copy: AviaryValues = flops_data['inputs'].deepcopy()
     if preprocess:
-        preprocess_options(flops_inputs_copy,
-                           engine_models=build_engine_deck(flops_inputs_copy))
+        preprocess_options(
+            flops_inputs_copy,
+            engine_models=build_engine_deck(flops_inputs_copy),
+            verbosity=0,
+        )
     if keys is None:
         return flops_inputs_copy
     keys_list = _assure_is_list(keys)

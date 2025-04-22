@@ -10,6 +10,7 @@ from aviary.subsystems.propulsion.utils import build_engine_deck
 from aviary.utils.test_utils.default_subsystems import get_default_mission_subsystems
 from aviary.variable_info.options import get_option_defaults
 from aviary.variable_info.variables import Aircraft, Dynamic
+from aviary.variable_info.functions import setup_model_options
 
 
 class RotationODETestCase(unittest.TestCase):
@@ -28,6 +29,7 @@ class RotationODETestCase(unittest.TestCase):
         self.prob.model = RotationODE(num_nodes=2,
                                       aviary_options=get_option_defaults(),
                                       core_subsystems=default_mission_subsystems)
+        setup_model_options(self.prob, aviary_options)
 
     def test_rotation_partials(self):
         # Check partial derivatives

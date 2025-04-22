@@ -22,7 +22,7 @@ import numpy as np
 from openmdao.utils.units import valid_units
 
 from aviary.utils.aviary_values import AviaryValues, get_keys
-from aviary.utils.functions import convert_strings_to_data, set_value
+from aviary.utils.functions import convert_strings_to_data
 from aviary.variable_info.options import get_option_defaults
 from aviary.variable_info.enums import ProblemType, Verbosity
 from aviary.variable_info.variable_meta_data import _MetaData
@@ -53,17 +53,25 @@ def create_vehicle(vehicle_deck='', meta_data=_MetaData, verbosity=Verbosity.BRI
 
     Parameters
     ----------
-    vehicle_deck (str):
-        Path to the vehicle deck file. Default is an empty string.
+    vehicle_deck (str, AviaryValues):
+        Path to the vehicle deck file, or an AviaryValues object that contains aircraft
+        inputs. Default is an empty string.
     meta_data (dict):
         Variable metadata used when reading input file for unit validation,
-        default values, and other checks
+        default values, and other checks.
+    verbosity (int, Verbosity):
+        Verbosity level for the AviaryProblem. If provided, this overrides verbosity
+        specified in the aircraft data. Default is None, and verbosity will be taken
+        from aircraft data or defaulted to Verbosity.BRIEF if not found.
 
     Returns
     -------
     (aircraft_values, initialization_guesses): (tuple)
         Returns a tuple containing aircraft values and initial guesses.
     """
+    if verbosity is None:
+        verbosity = Verbosity.BRIEF
+
     aircraft_values = get_option_defaults(engine=False)
 
     # TODO remove all hardcoded GASP values here, find appropriate place for them
@@ -96,7 +104,7 @@ def create_vehicle(vehicle_deck='', meta_data=_MetaData, verbosity=Verbosity.BRI
                 )
         aircraft_values.update(vehicle_deck)
     else:
-        if verbosity >= 1:  # BRIEF
+        if verbosity >= Verbosity.BRIEF:
             verbose = True
         else:
             verbose = False
@@ -109,13 +117,15 @@ def create_vehicle(vehicle_deck='', meta_data=_MetaData, verbosity=Verbosity.BRI
         )
 
     # make sure verbosity is always set
-    # if verbosity set via parameter, use that
+    # if verbosity set via parameter, use that - override what is in the file
     if verbosity is not None:
         # Enum conversion here, so user can pass either number or actual Enum as parameter
         aircraft_values.set_val(Settings.VERBOSITY, Verbosity(verbosity))
     # else, if verbosity not specified anywhere, use default of BRIEF
     elif verbosity is None and Settings.VERBOSITY not in aircraft_values:
-        aircraft_values.set_val(Settings.VERBOSITY, Verbosity.BRIEF)
+        aircraft_values.set_val(
+            Settings.VERBOSITY, _MetaData[Settings.VERBOSITY]['default_value']
+        )
 
     return aircraft_values, initialization_guesses
 
@@ -142,7 +152,6 @@ def parse_inputs(
     """
     if aircraft_values is None:
         aircraft_values = AviaryValues()
-        aircraft_values.set_val(Settings.VERBOSITY, Verbosity.BRIEF)
 
     if initialization_guesses is None:
         initialization_guesses = {}
@@ -151,7 +160,7 @@ def parse_inputs(
 
     with open(vehicle_deck, newline='') as f_in:
         for line in f_in:
-            used, data_units = False, None
+            data_units = None
 
             tmp = [*line.split('#', 1), '']
             line, comment = tmp[0], tmp[1]  # anything after the first # is a comment
@@ -173,48 +182,34 @@ def parse_inputs(
                 # if the last element is a unit, remove it from the list and update the variable's units
                 data_units = data_list.pop()
 
-            is_array = False
-            if '[' in data_list[0]:
-                is_array = True
-
-            # Try to determine the data type from meta data 'types' attribute.
-            # If it is not provided, try to determine if the data type is float according to 'default_value'.
-            # If is is still not provided, set data type to None
-            try:
-                var_types = _MetaData[var_name]['types']
-            except:
-                var_types = None
-            if var_types is None:
-                try:
-                    var_default = _MetaData[var_name]['default_value']
-                    if isinstance(var_default, float):
-                        var_types = float
-                except:
-                    var_types = None
-            var_values = convert_strings_to_data(data_list, var_types)
+            var_value = convert_strings_to_data(data_list)
+            # If var_value is length 1 list and is not supposed to be a list, pull out
+            # individual value. Otherwise, convert list to numpy array
+            if len(var_value) <= 1:
+                if var_name in meta_data and meta_data[var_name]['multivalue']:
+                    # if data is numeric, convert to numpy array
+                    if isinstance(var_value[0], (int, float)):
+                        var_value = np.array(var_value)
+                else:
+                    var_value = var_value[0]
 
             if var_name in meta_data.keys():
-                aircraft_values = set_value(
-                    var_name,
-                    var_values,
-                    aircraft_values,
-                    units=data_units,
-                    is_array=is_array,
-                    meta_data=meta_data,
-                )
+                if data_units is None:
+                    data_units = meta_data[var_name]['units']
+                aircraft_values.set_val(var_name, var_value, data_units, meta_data)
                 continue
 
             elif var_name in guess_names:
                 # all initial guesses take only a single value
                 # get values from supplied dictionary
-                initialization_guesses[var_name] = float(var_values[0])
+                initialization_guesses[var_name] = var_value
                 continue
 
             elif var_name.startswith('initialization_guesses:'):
-                # get values labelled as initialization_guesses in .csv input file
+                # get values labeled as initialization_guesses in .csv input file
                 initialization_guesses[
                     var_name.removeprefix('initialization_guesses:')
-                ] = float(var_values[0])
+                ] = var_value
                 continue
 
             elif ":" in var_name:
@@ -226,7 +221,8 @@ def parse_inputs(
                 continue
 
             if aircraft_values.get_val(Settings.VERBOSITY) >= Verbosity.VERBOSE:
-                print('Unused:', var_name, var_values, comment)
+                print('Unused:', var_name, var_value, comment)
+
     return aircraft_values, initialization_guesses
 
 
@@ -494,9 +490,10 @@ def initialization_guessing(
                 total_thrust += thrust * num_engines
 
         else:
-            total_thrust = np.dot(aircraft_values.get_val(
-                Aircraft.Engine.SCALED_SLS_THRUST, 'lbf'
-            ), aircraft_values.get_val(Aircraft.Engine.NUM_ENGINES))
+            total_thrust = np.dot(
+                aircraft_values.get_val(Aircraft.Engine.SCALED_SLS_THRUST, 'lbf'),
+                aircraft_values.get_val(Aircraft.Engine.NUM_ENGINES),
+            )
 
     gamma_guess = np.arcsin(0.5 * total_thrust / mission_mass)
     avg_speed_guess = 0.5 * 667 * cruise_mach  # kts

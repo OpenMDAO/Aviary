@@ -18,7 +18,7 @@ class FlightConditions(om.ExplicitComponent):
             "input_speed_type",
             default=SpeedType.TAS,
             types=SpeedType,
-            desc="defines input airspeed as equivalent airspeed, true airspeed, or mach number",
+            desc="defines input airspeed as equivalent airspeed, true airspeed, or Mach number",
         )
 
     def setup(self):
@@ -63,7 +63,7 @@ class FlightConditions(om.ExplicitComponent):
                 Dynamic.Atmosphere.MACH,
                 val=np.zeros(nn),
                 units="unitless",
-                desc="mach number",
+                desc="Mach number",
             )
 
             self.declare_partials(
@@ -101,7 +101,7 @@ class FlightConditions(om.ExplicitComponent):
                 Dynamic.Atmosphere.MACH,
                 val=np.zeros(nn),
                 units="unitless",
-                desc="mach number",
+                desc="Mach number",
             )
 
             self.declare_partials(
@@ -131,7 +131,7 @@ class FlightConditions(om.ExplicitComponent):
                 Dynamic.Atmosphere.MACH,
                 val=np.zeros(nn),
                 units="unitless",
-                desc="mach number",
+                desc="Mach number",
             )
             self.add_output(
                 "EAS",

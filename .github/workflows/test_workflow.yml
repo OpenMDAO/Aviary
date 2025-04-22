@@ -33,7 +33,7 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          # oldest versions of openmdao/dymos
+          # oldest supported versions of openmdao/dymos
           # Note: bugfixes sometimes require incrementing the minimal version of openmdao or dymos.
           - NAME: oldest
             PY: '3.9'
@@ -41,10 +41,8 @@ jobs:
             SCIPY: '1.6'
             PYOPTSPARSE: 'v2.9.1'
             SNOPT: '7.7'
-            OPENMDAO: '3.35.0'
-            #DYMOS: '1.8.0'
-            # TODO: Reset when dymos 1.9 releases.
-            DYMOS: 'dev'
+            OPENMDAO: '3.36.0'
+            DYMOS: '1.13.1'
 
           # latest versions of openmdao/dymos
           - NAME: latest
@@ -54,9 +52,7 @@ jobs:
             PYOPTSPARSE: 'v2.12.0'
             SNOPT: '7.7'
             OPENMDAO: 'latest'
-            #DYMOS: 'latest'
-            # TODO: Reset when dymos 1.13 releases.
-            DYMOS: 'dev'
+            DYMOS: 'latest'
 
     steps:
       - name: Checkout actions

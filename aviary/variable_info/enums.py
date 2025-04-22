@@ -205,9 +205,9 @@ class ThrottleAllocation(Enum):
     STATIC is specified by the optimizer as one value for the whole phase.
     DYNAMIC is specified by the optimizer at each point in the phase.
     """
-    FIXED = 1
-    STATIC = 2
-    DYNAMIC = 3
+    FIXED = 'fixed'
+    STATIC = 'static'
+    DYNAMIC = 'dynamic'
 
 
 class Verbosity(IntEnum):
@@ -232,7 +232,7 @@ class Verbosity(IntEnum):
 
 class OutMachType(Enum):
     '''
-    OutMachType is an indicator which mach number to output.
+    OutMachType is an indicator which Mach number to output.
     helical_mach = sqrt(mach*mach + tip_mach*tip_mach)
     '''
     MACH = 'mach'

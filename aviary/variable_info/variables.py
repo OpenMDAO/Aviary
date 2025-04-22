@@ -413,7 +413,6 @@ class Aircraft:
         MASS_SCALER = 'aircraft:instruments:mass_scaler'
 
     class LandingGear:
-        CARRIER_BASED = 'aircraft:landing_gear:carrier_based'
         DRAG_COEFFICIENT = 'aircraft:landing_gear:drag_coefficient'
         FIXED_GEAR = 'aircraft:landing_gear:fixed_gear'
         MAIN_GEAR_LOCATION = 'aircraft:landing_gear:main_gear_location'
@@ -445,7 +444,7 @@ class Aircraft:
         MASS = 'aircraft:nacelle:mass'
         MASS_SCALER = 'aircraft:nacelle:mass_scaler'
         MASS_SPECIFIC = 'aircraft:nacelle:mass_specific'
-        PERCENT_DIAMETER_BURIED_IN_FUSELAGE = 'aircraft:nacelle:percent_diameter_buried_in_fuselage'
+        PERCENT_DIAM_BURIED_IN_FUSELAGE = 'aircraft:nacelle:percent_diam_buried_in_fuselage'
         SURFACE_AREA = 'aircraft:nacelle:surface_area'
         TOTAL_WETTED_AREA = 'aircraft:nacelle:total_wetted_area'
         WETTED_AREA = 'aircraft:nacelle:wetted_area'
@@ -542,7 +541,7 @@ class Aircraft:
         DETAILED_WING = 'aircraft:wing:detailed_wing'
         DIHEDRAL = 'aircraft:wing:dihedral'
         ENG_POD_INERTIA_FACTOR = 'aircraft:wing:eng_pod_inertia_factor'
-        EXPOSED_WING_AREA = 'aircraft:wing:exposed_wing_area'
+        EXPOSED_AREA = 'aircraft:wing:exposed_area'
         FINENESS = 'aircraft:wing:fineness'
         FLAP_CHORD_RATIO = 'aircraft:wing:flap_chord_ratio'
         FLAP_DEFLECTION_LANDING = 'aircraft:wing:flap_deflection_landing'

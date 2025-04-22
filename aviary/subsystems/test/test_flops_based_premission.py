@@ -112,8 +112,8 @@ class PreMissionGroupTest(unittest.TestCase):
 
         prob = om.Problem()
 
-        flops_inputs: AviaryValues = LargeSingleAisle2FLOPS['inputs']
-        flops_outputs: AviaryValues = LargeSingleAisle2FLOPS['outputs']
+        flops_inputs = get_flops_inputs('LargeSingleAisle2FLOPS')
+        flops_outputs = get_flops_outputs('LargeSingleAisle2FLOPS')
         flops_inputs.set_val(Settings.VERBOSITY, 0)
 
         engine = build_engine_deck(flops_inputs)
@@ -152,3 +152,6 @@ class PreMissionGroupTest(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+    # test = PreMissionGroupTest()
+    # test.setUp()
+    # test.test_diff_configuration_mass()

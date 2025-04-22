@@ -70,7 +70,7 @@ def fortran_to_aviary(
         'initialization_guesses': initialization_guesses,
     }
 
-    fortran_deck: Path = get_path(fortran_deck, verbose=False)
+    fortran_deck: Path = get_path(fortran_deck, verbosity=verbosity)
 
     timestamp = datetime.now().strftime('%m/%d/%y at %H:%M')
     user = getpass.getuser()
@@ -546,6 +546,19 @@ def update_gasp_options(vehicle_data):
         if design_range == 0:
             input_values.set_val(Settings.PROBLEM_TYPE, ['fallout'])
     input_values.set_val(Mission.Design.RANGE, [design_range], distance_units)
+
+    ## Passengers ##
+    try:
+        num_passengers = input_values.get_val(
+            Aircraft.CrewPayload.Design.NUM_PASSENGERS, 'unitless')[0]
+        # In GASP, percentage of total number of passengers is given. Convert it to the actual first class passengers.
+        pct_first_class = input_values.get_val(
+            Aircraft.CrewPayload.Design.NUM_FIRST_CLASS, 'unitless')[0]
+        num_first_class = int(pct_first_class * num_passengers)
+        input_values.set_val(Aircraft.CrewPayload.Design.NUM_FIRST_CLASS,
+                             [num_first_class], 'unitless')
+    except:
+        pass
 
     ## STRUT AND FOLD ##
     strut_loc = input_values.get_val(Aircraft.Strut.ATTACHMENT_LOCATION, 'ft')[0]

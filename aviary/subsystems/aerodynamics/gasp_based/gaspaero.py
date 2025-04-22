@@ -477,8 +477,8 @@ class AeroGeom(om.ExplicitComponent):
 
         add_aviary_input(self, Aircraft.Strut.CHORD, units='ft')
 
-        self.add_input('interference_independent_of_shielded_area')
-        self.add_input('drag_loss_due_to_shielded_wing_area')
+        self.add_input('interference_independent_of_shielded_area', units='unitless')
+        self.add_input('drag_loss_due_to_shielded_wing_area', units='unitless')
 
         # outputs
         for i in range(7):

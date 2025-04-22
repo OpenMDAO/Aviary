@@ -16,7 +16,8 @@ from aviary.mission.gasp_based.phases.ascent_phase import AscentPhase
 from aviary.mission.gasp_based.phases.descent_phase import DescentPhase
 from aviary.mission.problem_configurator import ProblemConfiguratorBase
 
-from aviary.utils.functions import create_opts2vals, add_opts2vals, wrapped_convert_units
+from aviary.utils.functions import create_opts2vals, add_opts2vals
+from aviary.utils.utils import wrapped_convert_units
 from aviary.utils.process_input_decks import initialization_guessing
 from aviary.variable_info.enums import AnalysisScheme, LegacyCode
 from aviary.variable_info.variables import Aircraft, Mission, Dynamic
@@ -69,12 +70,11 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
         )
 
         # Deal with missing defaults in phase info:
-        if prob.pre_mission_info is None:
-            prob.pre_mission_info = {'include_takeoff': True,
-                                     'external_subsystems': []}
-        if prob.post_mission_info is None:
-            prob.post_mission_info = {'include_landing': True,
-                                      'external_subsystems': []}
+        prob.pre_mission_info.setdefault('include_takeoff', True)
+        prob.pre_mission_info.setdefault('external_subsystems', [])
+
+        prob.post_mission_info.setdefault('include_landing', True)
+        prob.post_mission_info.setdefault('external_subsystems', [])
 
         # Commonly referenced values
         prob.cruise_alt = aviary_inputs.get_val(

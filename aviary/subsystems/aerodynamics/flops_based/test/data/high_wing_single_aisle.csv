@@ -75,7 +75,6 @@ aircraft:horizontal_tail:vertical_tail_fraction,1.01,unitless   #check
 aircraft:hydraulics:mass_scaler,1.01,unitless   #check
 aircraft:hydraulics:system_pressure,5010.0,lbf/ft**2
 aircraft:instruments:mass_scaler,1.01,unitless   #check
-aircraft:landing_gear:carrier_based,False,unitless
 aircraft:landing_gear:main_gear_mass_scaler,1.01,unitless   #check
 aircraft:landing_gear:main_gear_oleo_length,55,inch
 aircraft:landing_gear:nose_gear_mass_scaler,1.01,unitless   #check
@@ -87,7 +86,7 @@ aircraft:nacelle:mass_scaler,1.01,unitless   #check
 aircraft:paint:mass_per_unit_area,0.01,lbm/ft**2   #check
 aircraft:propulsion:engine_oil_mass_scaler,1.01,unitless   #check
 aircraft:propulsion:misc_mass_scaler,1.01,unitless   #check
-aircraft:propulsion:total_num_wing_engines,[2],unitless
+aircraft:propulsion:total_num_wing_engines,2,unitless
 aircraft:vertical_tail:area,297,ft**2
 aircraft:vertical_tail:aspect_ratio,0.821,unitless
 aircraft:vertical_tail:mass_scaler,1.01,unitless   #check
@@ -99,7 +98,7 @@ aircraft:wing:aeroelastic_tailoring_factor,0.01,unitless   #check
 aircraft:wing:airfoil_technology,1.01,unitless   #check
 aircraft:wing:area,1480,ft**2
 aircraft:wing:aspect_ratio_reference,0.01,unitless   #check
-aircraft:wing:BENDING_MATERIAL_MASS_SCALER,1.01,unitless   #check
+aircraft:wing:bending_material_mass_scaler,1.01,unitless   #check
 aircraft:wing:chord_per_semispan,0.13,0.115,0.06,unitless
 aircraft:wing:composite_fraction,0.01,unitless   #check
 aircraft:wing:dihedral,-1.0,deg

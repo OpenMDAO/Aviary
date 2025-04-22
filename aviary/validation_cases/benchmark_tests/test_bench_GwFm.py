@@ -1,10 +1,10 @@
-'''
+"""
 NOTES:
 Includes:
 Takeoff, Climb, Cruise, Descent, Landing
 Computed Aero
 Large Single Aisle 1 data
-'''
+"""
 
 import unittest
 from copy import deepcopy
@@ -132,10 +132,10 @@ class ProblemPhaseTestCase(unittest.TestCase):
     @require_pyoptsparse(optimizer="IPOPT")
     def bench_test_swap_1_GwFm_IPOPT(self):
         prob = run_aviary(
-            'models/test_aircraft/aircraft_for_bench_GwFm.csv',
+            "models/test_aircraft/aircraft_for_bench_GwFm.csv",
             self.phase_info,
             max_iter=100,
-            optimizer='IPOPT',
+            optimizer="IPOPT",
             verbosity=0,
         )
 
@@ -144,16 +144,16 @@ class ProblemPhaseTestCase(unittest.TestCase):
     @require_pyoptsparse(optimizer="SNOPT")
     def bench_test_swap_1_GwFm_SNOPT(self):
         prob = run_aviary(
-            'models/test_aircraft/aircraft_for_bench_GwFm.csv',
+            "models/test_aircraft/aircraft_for_bench_GwFm.csv",
             self.phase_info,
             max_iter=50,
-            optimizer='SNOPT',
+            optimizer="SNOPT",
             verbosity=0,
         )
         compare_against_expected_values(prob, self.expected_dict)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     test = ProblemPhaseTestCase()
     test.setUp()
     # test.bench_test_swap_1_GwFm_IPOPT()

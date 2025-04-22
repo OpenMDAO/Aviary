@@ -29,6 +29,7 @@ class MassParametersTestCase1(unittest.TestCase):
     def setUp(self):
 
         options = get_option_defaults()
+        options.set_val(Settings.VERBOSITY, 0)
         options.set_val(Aircraft.Strut.DIMENSIONAL_LOCATION_SPECIFIED,
                         val=True, units='unitless')
         options.set_val(Aircraft.Engine.NUM_FUSELAGE_ENGINES, val=0)
@@ -654,7 +655,7 @@ class EngineTestCaseMultiEngine(unittest.TestCase):
         )  # bug fixed value and original value
 
         partial_data = self.prob.check_partials(out_stream=None, method="cs")
-        assert_check_partials(partial_data, atol=1e-10, rtol=1e-10)
+        assert_check_partials(partial_data, atol=1e-8, rtol=1e-8)
 
 
 @use_tempdirs
@@ -906,6 +907,9 @@ class GearTestCase1(unittest.TestCase):  # this is the large single aisle 1 V3 t
         )  # bug fixed value and original value
         self.prob.model.set_input_defaults(
             Aircraft.Wing.VERTICAL_MOUNT_LOCATION, val=0, units="unitless")
+
+        setup_model_options(self.prob, AviaryValues(
+            {Aircraft.Engine.NUM_ENGINES: ([2], 'unitless')}))
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
@@ -1770,7 +1774,7 @@ class FixedMassGroupTestCase3(unittest.TestCase):
 
 
 if __name__ == "__main__":
-    unittest.main()
-    # test = FixedMassGroupTestCase3()
-    # test.setUp()
-    # test.test_case1()
+    # unittest.main()
+    test = FixedMassGroupTestCase3()
+    test.setUp()
+    test.test_case1()

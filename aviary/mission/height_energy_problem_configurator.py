@@ -10,7 +10,7 @@ from aviary.mission.flops_based.phases.build_takeoff import Takeoff
 from aviary.mission.flops_based.phases.energy_phase import EnergyPhase
 from aviary.mission.phase_builder_base import PhaseBuilderBase
 from aviary.mission.problem_configurator import ProblemConfiguratorBase
-from aviary.utils.functions import wrapped_convert_units
+from aviary.utils.utils import wrapped_convert_units
 from aviary.utils.process_input_decks import initialization_guessing
 from aviary.variable_info.enums import AnalysisScheme, LegacyCode
 from aviary.variable_info.variables import Aircraft, Mission, Dynamic, Settings
@@ -59,12 +59,11 @@ class HeightEnergyProblemConfigurator(ProblemConfiguratorBase):
             aviary_inputs, prob.initialization_guesses, prob.engine_builders)
 
         # Deal with missing defaults in phase info:
-        if prob.pre_mission_info is None:
-            prob.pre_mission_info = {'include_takeoff': True,
-                                     'external_subsystems': []}
-        if prob.post_mission_info is None:
-            prob.post_mission_info = {'include_landing': True,
-                                      'external_subsystems': []}
+        prob.pre_mission_info.setdefault('include_takeoff', True)
+        prob.pre_mission_info.setdefault('external_subsystems', [])
+
+        prob.post_mission_info.setdefault('include_landing', True)
+        prob.post_mission_info.setdefault('external_subsystems', [])
 
         # Commonly referenced values
         aviary_inputs.set_val(
