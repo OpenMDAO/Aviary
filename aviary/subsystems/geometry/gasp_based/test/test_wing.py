@@ -3,7 +3,14 @@ import unittest
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 
-from aviary.subsystems.geometry.gasp_based.wing import WingFold, WingGroup, WingParameters, WingSize
+from aviary.subsystems.geometry.gasp_based.wing import (
+    WingFold,
+    WingGroup,
+    WingParameters,
+    WingSize,
+    ExposedWing,
+)
+from aviary.variable_info.enums import AircraftTypes
 from aviary.variable_info.functions import setup_model_options
 from aviary.variable_info.options import get_option_defaults
 from aviary.variable_info.variables import Aircraft, Mission
@@ -608,6 +615,110 @@ class WingGroupTestCase5(unittest.TestCase):
 
         partial_data = self.prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=2e-12, rtol=1e-12)
+
+
+class BWBExposedWingTestCase(unittest.TestCase):
+    """BWB case"""
+
+    def setUp(self):
+        options = get_option_defaults()
+        options.set_val(Aircraft.Design.TYPE, val='BWB', units='unitless')
+
+        self.prob = om.Problem()
+        self.prob.model.add_subsystem(
+            'bwb_expo_wing',
+            ExposedWing(),
+            promotes=['*'],
+        )
+
+        self.prob.model.set_input_defaults(Aircraft.Fuselage.AVG_DIAMETER, 38.0, units='ft')
+        self.prob.model.set_input_defaults(
+            Aircraft.Wing.VERTICAL_MOUNT_LOCATION, 0.5, units='unitless'
+        )
+        self.prob.model.set_input_defaults(
+            Aircraft.Fuselage.HEIGHT_TO_WIDTH_RATIO, 0.25970, units='unitless'
+        )
+        self.prob.model.set_input_defaults(Aircraft.Wing.SPAN, 146.38501, units='ft')
+        self.prob.model.set_input_defaults(Aircraft.Wing.TAPER_RATIO, 0.274439991, units='unitless')
+        self.prob.model.set_input_defaults(Aircraft.Wing.AREA, 2142.85718, units='ft**2')
+
+        setup_model_options(self.prob, options)
+
+        self.prob.setup(check=False, force_alloc_complex=True)
+
+    def test_case_middle(self):
+        self.prob.set_val(Aircraft.Wing.VERTICAL_MOUNT_LOCATION, 0.5, units='unitless')
+        self.prob.run_model()
+        tol = 1e-7
+
+        assert_near_equal(self.prob[Aircraft.Wing.EXPOSED_AREA], 1352.11359987, tol)
+
+        partial_data = self.prob.check_partials(out_stream=None, method='cs')
+        assert_check_partials(partial_data, atol=1e-11, rtol=5e-11)
+
+
+class ExposedWingTestCase(unittest.TestCase):
+    """Tube + Wing case"""
+
+    def setUp(self):
+        options = get_option_defaults()
+        options.set_val(Aircraft.Design.TYPE, val='transport', units='unitless')
+
+        self.prob = om.Problem()
+        self.prob.model.add_subsystem(
+            'expo_wing',
+            ExposedWing(),
+            promotes=['*'],
+        )
+
+        self.prob.model.set_input_defaults(Aircraft.Fuselage.AVG_DIAMETER, 38.0, units='ft')
+        self.prob.model.set_input_defaults(
+            Aircraft.Wing.VERTICAL_MOUNT_LOCATION, 0.5, units='unitless'
+        )
+        self.prob.model.set_input_defaults(
+            Aircraft.Fuselage.HEIGHT_TO_WIDTH_RATIO, 1.0, units='unitless'
+        )
+        self.prob.model.set_input_defaults(Aircraft.Wing.SPAN, 146.38501, units='ft')
+        self.prob.model.set_input_defaults(Aircraft.Wing.TAPER_RATIO, 0.274439991, units='unitless')
+        self.prob.model.set_input_defaults(Aircraft.Wing.AREA, 2142.85718, units='ft**2')
+
+        setup_model_options(self.prob, options)
+
+        self.prob.setup(check=False, force_alloc_complex=True)
+
+    def test_case_middle(self):
+        """test in the range (epsilon, 1.0 - epsilon)"""
+        self.prob.set_val(Aircraft.Wing.VERTICAL_MOUNT_LOCATION, 0.5, units='unitless')
+        self.prob.run_model()
+        tol = 1e-7
+
+        assert_near_equal(self.prob[Aircraft.Wing.EXPOSED_AREA], 1352.1135998, tol)
+
+        partial_data = self.prob.check_partials(out_stream=None, method='cs')
+        assert_check_partials(partial_data, atol=1e-11, rtol=5e-11)
+
+    def test_case_left(self):
+        """test in the range (0.0, epsilon)"""
+
+        self.prob.set_val(Aircraft.Wing.VERTICAL_MOUNT_LOCATION, 0.049, units='unitless')
+        self.prob.run_model()
+        tol = 1e-7
+
+        assert_near_equal(self.prob[Aircraft.Wing.EXPOSED_AREA], 1781.29634277, tol)
+
+        partial_data = self.prob.check_partials(out_stream=None, method='cs')
+        assert_check_partials(partial_data, atol=1e-11, rtol=5e-11)
+
+    def test_case_right(self):
+        """test in the range (1.0 - epsilon, 1.0)"""
+        self.prob.set_val(Aircraft.Wing.VERTICAL_MOUNT_LOCATION, 0.951, units='unitless')
+        self.prob.run_model()
+        tol = 1e-7
+
+        assert_near_equal(self.prob[Aircraft.Wing.EXPOSED_AREA], 1781.29634277, tol)
+
+        partial_data = self.prob.check_partials(out_stream=None, method='cs')
+        assert_check_partials(partial_data, atol=5e-10, rtol=5e-12)
 
 
 if __name__ == '__main__':
