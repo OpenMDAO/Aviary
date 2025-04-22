@@ -11,21 +11,20 @@ quote-style = "single"
 [tool.ruff.lint]
 # isort, pydocstyle
 extend-select = ["I", "D"]
-extend-ignore = ["F841"]
 # disabling these rules will help current Aviary code pass a pre-commit lint check
-# extend-ignore = [
-#     "D100",
-#     "D101",
-#     "D102",
-#     "D103",
-#     "D104",
-#     "D105",
-#     "D106",
-#     "D204",
-#     "D205",
-#     "D401",
-#     "D404",
-# ]
+extend-ignore = [
+    "D100",
+    "D101",
+    "D102",
+    "D103",
+    "D104",
+    "D105",
+    "D106",
+    "D204",
+    "D205",
+    "D401",
+    "D404",
+]
 
 [tool.ruff.lint.isort]
 split-on-trailing-comma = false
