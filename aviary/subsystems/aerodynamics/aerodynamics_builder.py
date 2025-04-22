@@ -9,20 +9,15 @@ CoreAerodynamicsBuilder : the interface for Aviary's core aerodynamics subsystem
 """
 
 import numpy as np
-from itertools import chain
+from copy import deepcopy
 
 import openmdao.api as om
-
-# from dymos.utils.misc import _unspecified
 
 from aviary.subsystems.aerodynamics.flops_based.computed_aero_group import (
     ComputedAeroGroup,
 )
 from aviary.subsystems.aerodynamics.flops_based.takeoff_aero_group import (
     TakeoffAeroGroup,
-)
-from aviary.subsystems.aerodynamics.flops_based.solved_alpha_group import (
-    SolvedAlphaGroup,
 )
 from aviary.subsystems.aerodynamics.flops_based.tabular_aero_group import (
     TabularAeroGroup,
@@ -39,7 +34,7 @@ from aviary.utils.named_values import NamedValues
 from aviary.variable_info.enums import LegacyCode
 from aviary.variable_info.variable_meta_data import _MetaData
 from aviary.variable_info.variables import Aircraft, Mission, Dynamic
-from aviary import constants
+from aviary.subsystems.aerodynamics.solve_alpha_group import SolveAlphaGroup
 
 
 GASP = LegacyCode.GASP
@@ -114,7 +109,7 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
 
         code_origin = self.code_origin
         try:
-            method = kwargs.pop('method')
+            method = kwargs["method"]
         except KeyError:
             method = None
 
@@ -128,8 +123,9 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
             return Design()
 
     def build_mission(self, num_nodes, aviary_inputs, **kwargs):
+        arguments = deepcopy(kwargs)
         try:
-            method = kwargs.pop('method')
+            method = arguments.pop("method")
         except KeyError:
             method = None
 
@@ -143,19 +139,19 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
                 aero_group = ComputedAeroGroup(num_nodes=num_nodes)
 
             elif method == 'computed':
-                aero_group = ComputedAeroGroup(num_nodes=num_nodes, **kwargs)
+                aero_group = ComputedAeroGroup(num_nodes=num_nodes, **arguments)
 
             elif method == 'low_speed':
                 aero_group = TakeoffAeroGroup(
-                    num_nodes=num_nodes, aviary_options=aviary_inputs, **kwargs
+                    num_nodes=num_nodes, aviary_options=aviary_inputs, **arguments
                 )
 
             elif method == 'tabular':
                 aero_group = TabularAeroGroup(
                     num_nodes=num_nodes,
-                    CD0_data=kwargs.pop('CD0_data'),
-                    CDI_data=kwargs.pop('CDI_data'),
-                    **kwargs,
+                    CD0_data=arguments.pop("CD0_data"),
+                    CDI_data=arguments.pop("CDI_data"),
+                    **arguments,
                 )
 
             else:
@@ -166,7 +162,7 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
 
         elif self.code_origin is GASP:
             try:
-                solve_alpha = kwargs.pop('solve_alpha')
+                solve_alpha = arguments.pop("solve_alpha")
             except KeyError:
                 solve_alpha = False
 
@@ -174,24 +170,26 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
                 aero_group = CruiseAero(num_nodes=num_nodes)
 
             elif method == 'cruise':
-                aero_group = CruiseAero(num_nodes=num_nodes, **kwargs)
+                aero_group = CruiseAero(num_nodes=num_nodes, **arguments)
 
             elif method == 'tabular_cruise':
-                # if 'aero_data' in kwargs:
+                # if 'aero_data' in arguments:
                 aero_group = TabularCruiseAero(
-                    num_nodes=num_nodes, aero_data=kwargs.pop('aero_data'), **kwargs
+                    num_nodes=num_nodes,
+                    aero_data=arguments.pop("aero_data"),
+                    **arguments,
                 )
 
             elif method == 'low_speed':
-                aero_group = LowSpeedAero(num_nodes=num_nodes, **kwargs)
+                aero_group = LowSpeedAero(num_nodes=num_nodes, **arguments)
 
             elif method == 'tabular_low_speed':
                 aero_group = TabularLowSpeedAero(
                     num_nodes=num_nodes,
-                    free_aero_data=kwargs.pop('free_aero_data'),
-                    free_flaps_data=kwargs.pop('free_flaps_data'),
-                    free_ground_data=kwargs.pop('free_ground_data'),
-                    **kwargs,
+                    free_aero_data=arguments.pop("free_aero_data"),
+                    free_flaps_data=arguments.pop("free_flaps_data"),
+                    free_ground_data=arguments.pop("free_ground_data"),
+                    **arguments,
                 )
 
             else:
@@ -207,38 +205,7 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
                     f'{method}_aero', aero_group, promotes=['*']
                 )
 
-                aero_supergroup.add_subsystem(
-                    'required_lift',
-                    om.ExecComp(
-                        'required_lift = mass * grav_metric',
-                        grav_metric={'val': constants.GRAV_METRIC_GASP},
-                        mass={'units': 'kg', 'shape': num_nodes},
-                        required_lift={'shape': num_nodes},
-                        has_diag_partials=True,
-                    ),
-                    promotes_inputs=[
-                        ('mass', Dynamic.Vehicle.MASS),
-                    ],
-                )
-
-                balance = aero_supergroup.add_subsystem(
-                    'balance',
-                    om.BalanceComp(),
-                    promotes=[Dynamic.Vehicle.ANGLE_OF_ATTACK, Dynamic.Vehicle.LIFT],
-                )
-                balance.add_balance(
-                    Dynamic.Vehicle.ANGLE_OF_ATTACK,
-                    val=np.ones(num_nodes),
-                    units='deg',
-                    res_ref=1.0e6,
-                    lhs_name=Dynamic.Vehicle.LIFT,
-                    rhs_name='required_lift',
-                )
-
-                aero_supergroup.connect(
-                    'required_lift.required_lift',
-                    'balance.required_lift',
-                )
+                aero_supergroup.add_subsystem(SolveAlphaGroup(num_nodes=num_nodes))
 
                 aero_supergroup.linear_solver = om.DirectSolver()
                 newton = aero_supergroup.nonlinear_solver = om.NewtonSolver(
