@@ -10,6 +10,7 @@ import re
 import shutil
 import warnings
 import zipfile
+import functools
 
 import numpy as np
 
@@ -323,6 +324,148 @@ def get_run_status(status_filepath):
     except Exception as err:
         return 'Unknown'
 
+
+
+def add_to_pane_with_error_handling(panes_list, pane_title):
+    """
+    A decorator that adds the returned pane to a list and handles exceptions.
+    
+    Args:
+        panes_list: The list to which the returned pane should be added
+        
+    Returns:
+        The decorated function
+    """
+    def decorator(func):
+        def wrapper(*args, **kwargs):
+            try:
+                # Call the original function
+                pane = func(*args, **kwargs)
+                
+                # If no exception occurred, add the pane to the list
+                panes_list.append((pane_title, pane))
+                
+                # Return the pane so it can be used further if needed
+                return pane
+            
+            except Exception as e:
+                # Print a warning message
+                issue_warning(f"Warning: Failed to create pane, {pane_title}, from {func.__name__}: {str(e)}")
+                
+                # Return None since no pane was created
+                return None
+                
+        return wrapper
+    return decorator
+
+def create_report_frame_with_error_handling(format, text_filepath, documentation, pane_list, pane_title):
+    """
+    Create a Panel Pane that contains an embedded external file in HTML, Markdown, or text format,
+    or a simple message in HTML format.
+
+    Parameters
+    ----------
+    format : str
+        Format of the file to be embedded. Options are 'html', 'text', 'markdown', 'simple_message'.
+    text_filepath : str
+        Path to the report text file or message if format is 'simple_message'.
+    documentation : str
+        Explanation of what this tab is showing.
+    pane_list : list
+        The list that this pane will be appended to.
+    pane_title : str
+        The string that is the title of this pane.
+
+    Returns
+    -------
+    pane : Panel.Pane or None
+        A Panel Pane object to be displayed in the dashboard. Or None if the file
+        does not exist.
+    """
+    try:
+        create_report_frame(format, text_filepath, documentation)
+        pane_list.append((pane_title, pane_list))
+    except Exception as e:
+        warnings.warn(f"Unable to generate pane for {pane_title} due to error {e}")
+
+
+def collect_on_success():
+    """
+    A decorator that calls the decorated function. If the function
+    executes without raising an exception, its return value is appended
+    to a target list provided during the function call. If an exception
+    occurs, a warning message is printed, and the execution continues.
+    """
+    def decorator(func):
+        @functools.wraps(func)
+        def wrapper(pane_list, pane_title, *args, **kwargs):
+            try:
+                result = func(*args, **kwargs)
+                pane_list.append((pane_title, result))
+                return result  # Optionally return the result
+            except Exception as e:
+                issue_warning(f"Warning: During the creation of pane '{pane_title}' an exception was raised an exception: {e}. "
+                              "Therefore, this pane will not be shown in the dashboard")
+                return None  # Optionally return None or some other default value
+        return wrapper
+    return decorator
+
+
+@collect_on_success()
+def create_report_frame_new(format, text_filepath, documentation):
+    """
+    Create a Panel Pane that contains an embedded external file in HTML, Markdown, or text format,
+    or a simple message in HTML format.
+
+    Parameters
+    ----------
+    format : str
+        Format of the file to be embedded. Options are 'html', 'text', 'markdown', 'simple_message'.
+    text_filepath : str
+        Path to the report text file or message if format is 'simple_message'.
+    documentation : str
+        Explanation of what this tab is showing.
+
+    Returns
+    -------
+    pane : Panel.Pane or None
+        A Panel Pane object to be displayed in the dashboard. Or None if the file
+        does not exist.
+    """
+    if format == "simple_message":
+        report_pane = pn.Column(
+            pn.pane.HTML(f"<p>{documentation}</p>", styles={'text-align': 'left'}),
+            pn.pane.HTML(f"<p>{text_filepath}</p>", styles={'text-align': 'left'})
+        )
+    elif os.path.isfile(text_filepath):
+        if format == "html":
+            iframe_css = 'width=1200px height=800px overflow-x="scroll" overflow="scroll" margin=0px padding=0px border=20px frameBorder=20px scrolling="yes"'
+            report_pane = pn.Column(
+                pn.pane.HTML(f"<p>{documentation}</p>", styles={'text-align': 'left'}),
+                pn.pane.HTML(f"<iframe {iframe_css} src=/home/{text_filepath}></iframe>")
+            )
+        elif format in ["markdown", "text"]:
+            with open(text_filepath, "rb") as f:
+                file_text = f.read()
+                # need to deal with some encoding errors
+                file_text = file_text.decode("latin-1")
+            if format == "markdown":
+                report_pane = pn.pane.Markdown(file_text)
+            elif format == "text":
+                report_pane = pn.pane.Str(file_text)
+            report_pane = pn.Column(
+                pn.pane.HTML(f"<p>{documentation}</p>", styles={'text-align': 'left'}),
+                report_pane
+            )
+        else:
+            raise RuntimeError(f"Report format of {format} is not supported.")
+    else:
+        report_pane = pn.Column(
+            pn.pane.HTML(f"<p>{documentation}</p>", styles={'text-align': 'left'}),
+            pn.pane.Markdown(
+                f"# Report not shown because report file, '{text_filepath}', not found.")
+        )
+    return report_pane
 
 def create_report_frame(format, text_filepath, documentation):
     """
@@ -803,9 +946,335 @@ def create_optimization_history_plot(case_recorder, df):
 
     return layout
 
+@collect_on_success()
+def create_interactive_xy_plot_mission_variables(problem_recorder_path):
+    plot_title = "Interactive Mission Variable Plot"
+    try:
+        if problem_recorder_path:
+            if os.path.exists(problem_recorder_path):
+                cr = om.CaseReader(problem_recorder_path)
+
+                # determine what trajectories there are
+                traj_nodes = [
+                    n
+                    for n in _meta_tree_subsys_iter(
+                        cr.problem_metadata['tree'],
+                        cls='dymos.trajectory.trajectory:Trajectory')]
+
+                if len(traj_nodes) == 0:
+                    raise ValueError(
+                        "No trajectories available in case recorder file for use "
+                        "in generating interactive XY plot of mission variables")
+                traj_name = traj_nodes[0]["name"]
+                if len(traj_nodes) > 1:
+                    issue_warning("More than one trajectory found in problem case recorder file. Only using "
+                                f'the first one, "{traj_name}", for the interactive XY plot of mission variables')
+                case = cr.get_case("final")
+                outputs = case.list_outputs(out_stream=None, units=True)
+
+                # data_by_varname_and_phase = defaultdict(dict)
+                data_by_varname_and_phase = defaultdict(lambda: defaultdict(list))
+
+                # Find the "largest" unit used for any timeseries output across all phases
+                units_by_varname = {}
+                phases = set()
+                varnames = set()
+                # pattern used to parse out the phase names and variable names
+                pattern = fr"{traj_name}\.phases\.([a-zA-Z0-9_]+)\.timeseries\.timeseries_comp\.([a-zA-Z0-9_]+)"
+                for varname, meta in outputs:
+                    match = re.match(pattern, varname)
+                    if match:
+                        phase, name = match.group(1), match.group(2)
+                        phases.add(phase)
+                        varnames.add(name)
+                        if name not in units_by_varname:
+                            units_by_varname[name] = meta['units']
+                        else:
+                            _, new_conv_factor = conversion_to_base_units(meta['units'])
+                            _, old_conv_factor = conversion_to_base_units(
+                                units_by_varname[name])
+                            if new_conv_factor < old_conv_factor:
+                                units_by_varname[name] = meta['units']
+
+                # Now get the values using those units
+                for varname, meta in outputs:
+                    match = re.match(pattern, varname)
+                    if match:
+                        phase, name = match.group(1), match.group(2)
+                        val = case.get_val(varname, units=units_by_varname[name])
+                        data_by_varname_and_phase[name][phase] = val
+
+                # determine the initial variables used for X and Y
+                varname_options = list(sorted(varnames, key=str.casefold))
+                if "distance" in varname_options:
+                    x_varname_default = "distance"
+                elif "time" in varname_options:
+                    x_varname_default = "time"
+                else:
+                    x_varname_default = varname_options[0]
+
+                if "altitude" in varname_options:
+                    y_varname_default = "altitude"
+                else:
+                    y_varname_default = varname_options[-1]
+
+                # need to create ColumnDataSource for each phase
+                sources = {}
+                for phase in phases:
+                    x, y = _get_interactive_plot_sources(
+                        data_by_varname_and_phase, x_varname_default, y_varname_default, phase)
+                    sources[phase] = ColumnDataSource(data=dict(
+                        x=x,
+                        y=y))
+
+                # Create the figure
+                p = figure(
+                    width=800, height=400,
+                    tools='pan,box_zoom,xwheel_zoom,hover,undo,reset,save',
+                    tooltips=[
+                        ('x', '@x'),
+                        ('y', '@y'),
+                    ],
+                )
+
+                colors = d3['Category20'][20][0::2] + d3['Category20'][20][1::2]
+                legend_data = []
+                phases = sorted(phases, key=str.casefold)
+                for i, phase in enumerate(phases):
+                    color = colors[i % 20]
+                    scatter_plot = p.scatter('x', 'y', source=sources[phase],
+                                            color=color,
+                                            size=5,
+                                            )
+                    line_plot = p.line('x', 'y', source=sources[phase],
+                                    color=color,
+                                    line_width=1,
+                                    )
+                    legend_data.append((phase, [scatter_plot, line_plot]))
+
+                # Make the Legend
+                legend = Legend(items=legend_data, location='center',
+                                label_text_font_size='8pt')
+                # so users can click on the dot in the legend to turn off/on that phase in
+                # the plot
+                legend.click_policy = "hide"
+                p.add_layout(legend, 'right')
+
+                # Create dropdown menus for X and Y axis selection
+                x_select = pn.widgets.Select(
+                    name="X-Axis", value=x_varname_default, options=varname_options)
+                y_select = pn.widgets.Select(
+                    name="Y-Axis", value=y_varname_default, options=varname_options)
+
+                # Callback function to update the plot
+                @pn.depends(x_select, y_select)
+                def update_plot(x_varname, y_varname):
+                    for phase in phases:
+                        x = data_by_varname_and_phase[x_varname][phase]
+                        y = data_by_varname_and_phase[y_varname][phase]
+                        x, y = _get_interactive_plot_sources(data_by_varname_and_phase,
+                                                            x_varname, y_varname, phase)
+                        sources[phase].data = dict(x=x, y=y)
+
+                    p.xaxis.axis_label = f'{x_varname} ({units_by_varname[x_varname]})'
+                    p.yaxis.axis_label = f'{y_varname} ({units_by_varname[y_varname]})'
+
+                    p.hover.tooltips = [
+                        (x_varname, "@x"),
+                        (y_varname, "@y")
+                    ]
+                    return p
+
+                # Create the dashboard pane for this plot
+                interactive_mission_var_plot_pane = pn.Column(
+                    pn.pane.Markdown(
+                        f"# Interactive Mission Variable Plot for Trajectory, {traj_name}"),
+                    pn.Row(x_select, y_select),
+                    pn.Row(pn.HSpacer(), update_plot, pn.HSpacer())
+                )
+            else:
+                interactive_mission_var_plot_pane = pn.pane.Markdown(
+                    f"# Recorder file '{problem_recorder_path}' not found.")
+
+            interactive_mission_var_plot_pane_with_doc = pn.Column(
+                pn.pane.HTML(
+                    f"<p>Plot of mission variables allowing user to select X and Y plot values.</p>",
+                    styles={
+                        'text-align': documentation_text_align}),
+                interactive_mission_var_plot_pane)
+    except Exception as e:
+        raise RuntimeError(f"Unable to create {plot_title} pane due to error {e}.")
+
+    return interactive_mission_var_plot_pane_with_doc
+
+
+# def create_interactive_xy_plot_mission_variables(problem_recorder_path, tabs_list):
+#     plot_title = "Interactive Mission Variable Plot"
+#     try:
+#         if problem_recorder_path:
+#             if os.path.exists(problem_recorder_path):
+#                 cr = om.CaseReader(problem_recorder_path)
+
+#                 # determine what trajectories there are
+#                 traj_nodes = [
+#                     n
+#                     for n in _meta_tree_subsys_iter(
+#                         cr.problem_metadata['tree'],
+#                         cls='dymos.trajectory.trajectory:Trajectory')]
+
+#                 if len(traj_nodes) == 0:
+#                     raise ValueError(
+#                         "No trajectories available in case recorder file for use "
+#                         "in generating interactive XY plot of mission variables")
+#                 traj_name = traj_nodes[0]["name"]
+#                 if len(traj_nodes) > 1:
+#                     issue_warning("More than one trajectory found in problem case recorder file. Only using "
+#                                 f'the first one, "{traj_name}", for the interactive XY plot of mission variables')
+#                 case = cr.get_case("final")
+#                 outputs = case.list_outputs(out_stream=None, units=True)
+
+#                 # data_by_varname_and_phase = defaultdict(dict)
+#                 data_by_varname_and_phase = defaultdict(lambda: defaultdict(list))
+
+#                 # Find the "largest" unit used for any timeseries output across all phases
+#                 units_by_varname = {}
+#                 phases = set()
+#                 varnames = set()
+#                 # pattern used to parse out the phase names and variable names
+#                 pattern = fr"{traj_name}\.phases\.([a-zA-Z0-9_]+)\.timeseries\.timeseries_comp\.([a-zA-Z0-9_]+)"
+#                 for varname, meta in outputs:
+#                     match = re.match(pattern, varname)
+#                     if match:
+#                         phase, name = match.group(1), match.group(2)
+#                         phases.add(phase)
+#                         varnames.add(name)
+#                         if name not in units_by_varname:
+#                             units_by_varname[name] = meta['units']
+#                         else:
+#                             _, new_conv_factor = conversion_to_base_units(meta['units'])
+#                             _, old_conv_factor = conversion_to_base_units(
+#                                 units_by_varname[name])
+#                             if new_conv_factor < old_conv_factor:
+#                                 units_by_varname[name] = meta['units']
+
+#                 # Now get the values using those units
+#                 for varname, meta in outputs:
+#                     match = re.match(pattern, varname)
+#                     if match:
+#                         phase, name = match.group(1), match.group(2)
+#                         val = case.get_val(varname, units=units_by_varname[name])
+#                         data_by_varname_and_phase[name][phase] = val
+
+#                 # determine the initial variables used for X and Y
+#                 varname_options = list(sorted(varnames, key=str.casefold))
+#                 if "distance" in varname_options:
+#                     x_varname_default = "distance"
+#                 elif "time" in varname_options:
+#                     x_varname_default = "time"
+#                 else:
+#                     x_varname_default = varname_options[0]
+
+#                 if "altitude" in varname_options:
+#                     y_varname_default = "altitude"
+#                 else:
+#                     y_varname_default = varname_options[-1]
+
+#                 # need to create ColumnDataSource for each phase
+#                 sources = {}
+#                 for phase in phases:
+#                     x, y = _get_interactive_plot_sources(
+#                         data_by_varname_and_phase, x_varname_default, y_varname_default, phase)
+#                     sources[phase] = ColumnDataSource(data=dict(
+#                         x=x,
+#                         y=y))
+
+#                 # Create the figure
+#                 p = figure(
+#                     width=800, height=400,
+#                     tools='pan,box_zoom,xwheel_zoom,hover,undo,reset,save',
+#                     tooltips=[
+#                         ('x', '@x'),
+#                         ('y', '@y'),
+#                     ],
+#                 )
+
+#                 colors = d3['Category20'][20][0::2] + d3['Category20'][20][1::2]
+#                 legend_data = []
+#                 phases = sorted(phases, key=str.casefold)
+#                 for i, phase in enumerate(phases):
+#                     color = colors[i % 20]
+#                     scatter_plot = p.scatter('x', 'y', source=sources[phase],
+#                                             color=color,
+#                                             size=5,
+#                                             )
+#                     line_plot = p.line('x', 'y', source=sources[phase],
+#                                     color=color,
+#                                     line_width=1,
+#                                     )
+#                     legend_data.append((phase, [scatter_plot, line_plot]))
+
+#                 # Make the Legend
+#                 legend = Legend(items=legend_data, location='center',
+#                                 label_text_font_size='8pt')
+#                 # so users can click on the dot in the legend to turn off/on that phase in
+#                 # the plot
+#                 legend.click_policy = "hide"
+#                 p.add_layout(legend, 'right')
+
+#                 # Create dropdown menus for X and Y axis selection
+#                 x_select = pn.widgets.Select(
+#                     name="X-Axis", value=x_varname_default, options=varname_options)
+#                 y_select = pn.widgets.Select(
+#                     name="Y-Axis", value=y_varname_default, options=varname_options)
+
+#                 # Callback function to update the plot
+#                 @pn.depends(x_select, y_select)
+#                 def update_plot(x_varname, y_varname):
+#                     for phase in phases:
+#                         x = data_by_varname_and_phase[x_varname][phase]
+#                         y = data_by_varname_and_phase[y_varname][phase]
+#                         x, y = _get_interactive_plot_sources(data_by_varname_and_phase,
+#                                                             x_varname, y_varname, phase)
+#                         sources[phase].data = dict(x=x, y=y)
+
+#                     p.xaxis.axis_label = f'{x_varname} ({units_by_varname[x_varname]})'
+#                     p.yaxis.axis_label = f'{y_varname} ({units_by_varname[y_varname]})'
+
+#                     p.hover.tooltips = [
+#                         (x_varname, "@x"),
+#                         (y_varname, "@y")
+#                     ]
+#                     return p
+
+#                 # Create the dashboard pane for this plot
+#                 interactive_mission_var_plot_pane = pn.Column(
+#                     pn.pane.Markdown(
+#                         f"# Interactive Mission Variable Plot for Trajectory, {traj_name}"),
+#                     pn.Row(x_select, y_select),
+#                     pn.Row(pn.HSpacer(), update_plot, pn.HSpacer())
+#                 )
+#             else:
+#                 interactive_mission_var_plot_pane = pn.pane.Markdown(
+#                     f"# Recorder file '{problem_recorder_path}' not found.")
+
+#             interactive_mission_var_plot_pane_with_doc = pn.Column(
+#                 pn.pane.HTML(
+#                     f"<p>Plot of mission variables allowing user to select X and Y plot values.</p>",
+#                     styles={
+#                         'text-align': documentation_text_align}),
+#                 interactive_mission_var_plot_pane)
+#     except Exception as e:
+#         raise RuntimeError(f"Unable to create {plot_title} pane due to error {e}.")
+
+#     tabs_list.append(
+#         ("Interactive Mission Variable Plot",
+#             interactive_mission_var_plot_pane_with_doc))
+
+
+
+
+
 # The main script that generates all the tabs in the dashboard
-
-
 def dashboard(script_name, problem_recorder, driver_recorder,
               port, run_in_background=False):
     """
@@ -846,11 +1315,12 @@ def dashboard(script_name, problem_recorder, driver_recorder,
     input_checks_pane = create_report_frame(
         "markdown",
         Path(reports_dir) / "input_checks.md",
-        "Detailed checks on the model inputs.")
+        "Detailed checks on the model inputs.",
+        )
     model_tabs_list.append(("Input Checks", input_checks_pane))
 
     #  Debug Input List
-    input_list_pane = create_report_frame(
+    input_list_pane = create_report_frame_with_error_handling(
         "text", Path(reports_dir) / "input_list.txt", '''
        A plain text display of the model inputs. Recommended for beginners. Only created if Settings.VERBOSITY is set to at least 2 in the input deck.
         The variables are listed in a tree structure. There are three columns. The left column is a list of variable names,
@@ -858,8 +1328,11 @@ def dashboard(script_name, problem_recorder, driver_recorder,
         promoted variable name. The hierarchy is phase, subgroups, components, and variables. An input variable can appear under
         different phases and within different components. Its values can be different because its value has
         been updated during the computation. On the top-left corner is the total number of inputs.
-        That number counts the duplicates because one variable can appear in different phases.''')
-    model_tabs_list.append(("Debug Input List", input_list_pane))
+        That number counts the duplicates because one variable can appear in different phases.''',
+        # input_list_pane,
+        123,
+        "Debug Input List"
+        )
 
     #  Debug Output List
     output_list_pane = create_report_frame(
@@ -1065,161 +1538,174 @@ def dashboard(script_name, problem_recorder, driver_recorder,
     )
 
     # Interactive XY plot of mission variables
-    if problem_recorder_path:
-        if os.path.exists(problem_recorder_path):
-            cr = om.CaseReader(problem_recorder_path)
 
-            # determine what trajectories there are
-            traj_nodes = [
-                n
-                for n in _meta_tree_subsys_iter(
-                    cr.problem_metadata['tree'],
-                    cls='dymos.trajectory.trajectory:Trajectory')]
 
-            if len(traj_nodes) == 0:
-                raise ValueError(
-                    "No trajectories available in case recorder file for use "
-                    "in generating interactive XY plot of mission variables")
-            traj_name = traj_nodes[0]["name"]
-            if len(traj_nodes) > 1:
-                issue_warning("More than one trajectory found in problem case recorder file. Only using "
-                              f'the first one, "{traj_name}", for the interactive XY plot of mission variables')
-            case = cr.get_case("final")
-            outputs = case.list_outputs(out_stream=None, units=True)
 
-            # data_by_varname_and_phase = defaultdict(dict)
-            data_by_varname_and_phase = defaultdict(lambda: defaultdict(list))
+    # create_interactive_xy_plot_mission_variables(problem_recorder_path, results_tabs_list)
 
-            # Find the "largest" unit used for any timeseries output across all phases
-            units_by_varname = {}
-            phases = set()
-            varnames = set()
-            # pattern used to parse out the phase names and variable names
-            pattern = fr"{traj_name}\.phases\.([a-zA-Z0-9_]+)\.timeseries\.timeseries_comp\.([a-zA-Z0-9_]+)"
-            for varname, meta in outputs:
-                match = re.match(pattern, varname)
-                if match:
-                    phase, name = match.group(1), match.group(2)
-                    phases.add(phase)
-                    varnames.add(name)
-                    if name not in units_by_varname:
-                        units_by_varname[name] = meta['units']
-                    else:
-                        _, new_conv_factor = conversion_to_base_units(meta['units'])
-                        _, old_conv_factor = conversion_to_base_units(
-                            units_by_varname[name])
-                        if new_conv_factor < old_conv_factor:
-                            units_by_varname[name] = meta['units']
 
-            # Now get the values using those units
-            for varname, meta in outputs:
-                match = re.match(pattern, varname)
-                if match:
-                    phase, name = match.group(1), match.group(2)
-                    val = case.get_val(varname, units=units_by_varname[name])
-                    data_by_varname_and_phase[name][phase] = val
+    create_interactive_xy_plot_mission_variables(results_tabs_list, "Interactive Mission Variable Plot", 
+                                                 problem_recorder_path)
 
-            # determine the initial variables used for X and Y
-            varname_options = list(sorted(varnames, key=str.casefold))
-            if "distance" in varname_options:
-                x_varname_default = "distance"
-            elif "time" in varname_options:
-                x_varname_default = "time"
-            else:
-                x_varname_default = varname_options[0]
 
-            if "altitude" in varname_options:
-                y_varname_default = "altitude"
-            else:
-                y_varname_default = varname_options[-1]
 
-            # need to create ColumnDataSource for each phase
-            sources = {}
-            for phase in phases:
-                x, y = _get_interactive_plot_sources(
-                    data_by_varname_and_phase, x_varname_default, y_varname_default, phase)
-                sources[phase] = ColumnDataSource(data=dict(
-                    x=x,
-                    y=y))
 
-            # Create the figure
-            p = figure(
-                width=800, height=400,
-                tools='pan,box_zoom,xwheel_zoom,hover,undo,reset,save',
-                tooltips=[
-                    ('x', '@x'),
-                    ('y', '@y'),
-                ],
-            )
+    # # Interactive XY plot of mission variables
+    # if problem_recorder_path:
+    #     if os.path.exists(problem_recorder_path):
+    #         cr = om.CaseReader(problem_recorder_path)
 
-            colors = d3['Category20'][20][0::2] + d3['Category20'][20][1::2]
-            legend_data = []
-            phases = sorted(phases, key=str.casefold)
-            for i, phase in enumerate(phases):
-                color = colors[i % 20]
-                scatter_plot = p.scatter('x', 'y', source=sources[phase],
-                                         color=color,
-                                         size=5,
-                                         )
-                line_plot = p.line('x', 'y', source=sources[phase],
-                                   color=color,
-                                   line_width=1,
-                                   )
-                legend_data.append((phase, [scatter_plot, line_plot]))
+    #         # determine what trajectories there are
+    #         traj_nodes = [
+    #             n
+    #             for n in _meta_tree_subsys_iter(
+    #                 cr.problem_metadata['tree'],
+    #                 cls='dymos.trajectory.trajectory:Trajectory')]
 
-            # Make the Legend
-            legend = Legend(items=legend_data, location='center',
-                            label_text_font_size='8pt')
-            # so users can click on the dot in the legend to turn off/on that phase in
-            # the plot
-            legend.click_policy = "hide"
-            p.add_layout(legend, 'right')
+    #         if len(traj_nodes) == 0:
+    #             raise ValueError(
+    #                 "No trajectories available in case recorder file for use "
+    #                 "in generating interactive XY plot of mission variables")
+    #         traj_name = traj_nodes[0]["name"]
+    #         if len(traj_nodes) > 1:
+    #             issue_warning("More than one trajectory found in problem case recorder file. Only using "
+    #                           f'the first one, "{traj_name}", for the interactive XY plot of mission variables')
+    #         case = cr.get_case("final")
+    #         outputs = case.list_outputs(out_stream=None, units=True)
 
-            # Create dropdown menus for X and Y axis selection
-            x_select = pn.widgets.Select(
-                name="X-Axis", value=x_varname_default, options=varname_options)
-            y_select = pn.widgets.Select(
-                name="Y-Axis", value=y_varname_default, options=varname_options)
+    #         # data_by_varname_and_phase = defaultdict(dict)
+    #         data_by_varname_and_phase = defaultdict(lambda: defaultdict(list))
 
-            # Callback function to update the plot
-            @pn.depends(x_select, y_select)
-            def update_plot(x_varname, y_varname):
-                for phase in phases:
-                    x = data_by_varname_and_phase[x_varname][phase]
-                    y = data_by_varname_and_phase[y_varname][phase]
-                    x, y = _get_interactive_plot_sources(data_by_varname_and_phase,
-                                                         x_varname, y_varname, phase)
-                    sources[phase].data = dict(x=x, y=y)
+    #         # Find the "largest" unit used for any timeseries output across all phases
+    #         units_by_varname = {}
+    #         phases = set()
+    #         varnames = set()
+    #         # pattern used to parse out the phase names and variable names
+    #         pattern = fr"{traj_name}\.phases\.([a-zA-Z0-9_]+)\.timeseries\.timeseries_comp\.([a-zA-Z0-9_]+)"
+    #         for varname, meta in outputs:
+    #             match = re.match(pattern, varname)
+    #             if match:
+    #                 phase, name = match.group(1), match.group(2)
+    #                 phases.add(phase)
+    #                 varnames.add(name)
+    #                 if name not in units_by_varname:
+    #                     units_by_varname[name] = meta['units']
+    #                 else:
+    #                     _, new_conv_factor = conversion_to_base_units(meta['units'])
+    #                     _, old_conv_factor = conversion_to_base_units(
+    #                         units_by_varname[name])
+    #                     if new_conv_factor < old_conv_factor:
+    #                         units_by_varname[name] = meta['units']
 
-                p.xaxis.axis_label = f'{x_varname} ({units_by_varname[x_varname]})'
-                p.yaxis.axis_label = f'{y_varname} ({units_by_varname[y_varname]})'
+    #         # Now get the values using those units
+    #         for varname, meta in outputs:
+    #             match = re.match(pattern, varname)
+    #             if match:
+    #                 phase, name = match.group(1), match.group(2)
+    #                 val = case.get_val(varname, units=units_by_varname[name])
+    #                 data_by_varname_and_phase[name][phase] = val
 
-                p.hover.tooltips = [
-                    (x_varname, "@x"),
-                    (y_varname, "@y")
-                ]
-                return p
+    #         # determine the initial variables used for X and Y
+    #         varname_options = list(sorted(varnames, key=str.casefold))
+    #         if "distance" in varname_options:
+    #             x_varname_default = "distance"
+    #         elif "time" in varname_options:
+    #             x_varname_default = "time"
+    #         else:
+    #             x_varname_default = varname_options[0]
 
-            # Create the dashboard pane for this plot
-            interactive_mission_var_plot_pane = pn.Column(
-                pn.pane.Markdown(
-                    f"# Interactive Mission Variable Plot for Trajectory, {traj_name}"),
-                pn.Row(x_select, y_select),
-                pn.Row(pn.HSpacer(), update_plot, pn.HSpacer())
-            )
-        else:
-            interactive_mission_var_plot_pane = pn.pane.Markdown(
-                f"# Recorder file '{problem_recorder_path}' not found.")
+    #         if "altitude" in varname_options:
+    #             y_varname_default = "altitude"
+    #         else:
+    #             y_varname_default = varname_options[-1]
 
-        interactive_mission_var_plot_pane_with_doc = pn.Column(
-            pn.pane.HTML(
-                f"<p>Plot of mission variables allowing user to select X and Y plot values.</p>",
-                styles={
-                    'text-align': documentation_text_align}),
-            interactive_mission_var_plot_pane)
-        results_tabs_list.append(
-            ("Interactive Mission Variable Plot",
-             interactive_mission_var_plot_pane_with_doc))
+    #         # need to create ColumnDataSource for each phase
+    #         sources = {}
+    #         for phase in phases:
+    #             x, y = _get_interactive_plot_sources(
+    #                 data_by_varname_and_phase, x_varname_default, y_varname_default, phase)
+    #             sources[phase] = ColumnDataSource(data=dict(
+    #                 x=x,
+    #                 y=y))
+
+    #         # Create the figure
+    #         p = figure(
+    #             width=800, height=400,
+    #             tools='pan,box_zoom,xwheel_zoom,hover,undo,reset,save',
+    #             tooltips=[
+    #                 ('x', '@x'),
+    #                 ('y', '@y'),
+    #             ],
+    #         )
+
+    #         colors = d3['Category20'][20][0::2] + d3['Category20'][20][1::2]
+    #         legend_data = []
+    #         phases = sorted(phases, key=str.casefold)
+    #         for i, phase in enumerate(phases):
+    #             color = colors[i % 20]
+    #             scatter_plot = p.scatter('x', 'y', source=sources[phase],
+    #                                      color=color,
+    #                                      size=5,
+    #                                      )
+    #             line_plot = p.line('x', 'y', source=sources[phase],
+    #                                color=color,
+    #                                line_width=1,
+    #                                )
+    #             legend_data.append((phase, [scatter_plot, line_plot]))
+
+    #         # Make the Legend
+    #         legend = Legend(items=legend_data, location='center',
+    #                         label_text_font_size='8pt')
+    #         # so users can click on the dot in the legend to turn off/on that phase in
+    #         # the plot
+    #         legend.click_policy = "hide"
+    #         p.add_layout(legend, 'right')
+
+    #         # Create dropdown menus for X and Y axis selection
+    #         x_select = pn.widgets.Select(
+    #             name="X-Axis", value=x_varname_default, options=varname_options)
+    #         y_select = pn.widgets.Select(
+    #             name="Y-Axis", value=y_varname_default, options=varname_options)
+
+    #         # Callback function to update the plot
+    #         @pn.depends(x_select, y_select)
+    #         def update_plot(x_varname, y_varname):
+    #             for phase in phases:
+    #                 x = data_by_varname_and_phase[x_varname][phase]
+    #                 y = data_by_varname_and_phase[y_varname][phase]
+    #                 x, y = _get_interactive_plot_sources(data_by_varname_and_phase,
+    #                                                      x_varname, y_varname, phase)
+    #                 sources[phase].data = dict(x=x, y=y)
+
+    #             p.xaxis.axis_label = f'{x_varname} ({units_by_varname[x_varname]})'
+    #             p.yaxis.axis_label = f'{y_varname} ({units_by_varname[y_varname]})'
+
+    #             p.hover.tooltips = [
+    #                 (x_varname, "@x"),
+    #                 (y_varname, "@y")
+    #             ]
+    #             return p
+
+    #         # Create the dashboard pane for this plot
+    #         interactive_mission_var_plot_pane = pn.Column(
+    #             pn.pane.Markdown(
+    #                 f"# Interactive Mission Variable Plot for Trajectory, {traj_name}"),
+    #             pn.Row(x_select, y_select),
+    #             pn.Row(pn.HSpacer(), update_plot, pn.HSpacer())
+    #         )
+    #     else:
+    #         interactive_mission_var_plot_pane = pn.pane.Markdown(
+    #             f"# Recorder file '{problem_recorder_path}' not found.")
+
+    #     interactive_mission_var_plot_pane_with_doc = pn.Column(
+    #         pn.pane.HTML(
+    #             f"<p>Plot of mission variables allowing user to select X and Y plot values.</p>",
+    #             styles={
+    #                 'text-align': documentation_text_align}),
+    #         interactive_mission_var_plot_pane)
+    #     results_tabs_list.append(
+    #         ("Interactive Mission Variable Plot",
+    #          interactive_mission_var_plot_pane_with_doc))
 
     ####### Subsystems Tab #######
     subsystem_tabs_list = []
