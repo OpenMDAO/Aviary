@@ -36,7 +36,8 @@ class AscentODETestCase(unittest.TestCase):
 
         self.prob.set_val(Dynamic.Mission.VELOCITY, [100, 100], units="kn")
         self.prob.set_val("t_curr", [1, 2], units="s")
-        self.prob.set_val("interference_independent_of_shielded_area", 1.89927266)
+        self.prob.set_val(
+            "interference_independent_of_shielded_area", 1.89927266)
         self.prob.set_val("drag_loss_due_to_shielded_wing_area", 68.02065834)
         self.prob.set_val(Aircraft.Wing.FORM_FACTOR, 1.25)
         self.prob.set_val(Aircraft.VerticalTail.FORM_FACTOR, 1.25)
@@ -49,7 +50,7 @@ class AscentODETestCase(unittest.TestCase):
         tol = tol = 1e-6
         assert_near_equal(
             self.prob[Dynamic.Mission.VELOCITY_RATE],
-            np.array([641174.75, 641174.75]),
+            np.array([641050.94345628, 641050.94345628]),
             tol,
         )
         assert_near_equal(

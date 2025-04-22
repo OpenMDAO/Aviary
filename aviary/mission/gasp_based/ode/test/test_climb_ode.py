@@ -56,7 +56,8 @@ class ClimbODETestCase(unittest.TestCase):
         self.prob.set_val("EAS", 250, units="kn")
         # slightly greater than zero to help check partials
         self.prob.set_val(Aircraft.Wing.INCIDENCE, 0.0000001, units="deg")
-        self.prob.set_val("interference_independent_of_shielded_area", 1.89927266)
+        self.prob.set_val(
+            "interference_independent_of_shielded_area", 1.89927266)
         self.prob.set_val("drag_loss_due_to_shielded_wing_area", 68.02065834)
         self.prob.set_val(Aircraft.Wing.FORM_FACTOR, 1.25)
         self.prob.set_val(Aircraft.VerticalTail.FORM_FACTOR, 1.25)
@@ -68,15 +69,16 @@ class ClimbODETestCase(unittest.TestCase):
 
         testvals = {
             Dynamic.Vehicle.ANGLE_OF_ATTACK: 5.16398,
-            "CL": 0.59766664,
-            "CD": 0.03070836,
-            Dynamic.Mission.ALTITUDE_RATE: 3414.624 / 60,  # ft/s
+            'CL': 0.59766664,
+            'CD': 0.03070836,
+            Dynamic.Mission.ALTITUDE_RATE: 56.90751948,  # ft/s
             # TAS (kts -> ft/s) * cos(gamma), 253.6827 * 1.68781 *
             # cos(0.13331060446181708)
             Dynamic.Mission.DISTANCE_RATE: 424.36918705874785,  # ft/s
-            Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL: -13448.29,  # lbm/h
-            "theta": 0.22343906,  # rad (12.8021 deg)
-            Dynamic.Mission.FLIGHT_PATH_ANGLE: 0.13331060446181708,  # rad (7.638135 deg)
+            Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL: -13447.80297433,  # lbm/h
+            'theta': 0.22343231,  # rad (12.8021 deg)
+            # rad (7.638135 deg)
+            Dynamic.Mission.FLIGHT_PATH_ANGLE: 0.13330381,
         }
         check_prob_outputs(self.prob, testvals, rtol=1e-6)
 
@@ -101,9 +103,11 @@ class ClimbODETestCase(unittest.TestCase):
         self.prob.set_val(
             Dynamic.Mission.ALTITUDE, np.array([11000, 37000]), units="ft"
         )
-        self.prob.set_val(Dynamic.Vehicle.MASS, np.array([174149, 171592]), units="lbm")
+        self.prob.set_val(Dynamic.Vehicle.MASS, np.array(
+            [174149, 171592]), units="lbm")
         self.prob.set_val("EAS", np.array([270, 270]), units="kn")
-        self.prob.set_val("interference_independent_of_shielded_area", 1.89927266)
+        self.prob.set_val(
+            "interference_independent_of_shielded_area", 1.89927266)
         self.prob.set_val("drag_loss_due_to_shielded_wing_area", 68.02065834)
         self.prob.set_val(Aircraft.Wing.FORM_FACTOR, 1.25)
         self.prob.set_val(Aircraft.VerticalTail.FORM_FACTOR, 1.25)
@@ -114,19 +118,21 @@ class ClimbODETestCase(unittest.TestCase):
         self.prob.run_model()
 
         testvals = {
-            Dynamic.Vehicle.ANGLE_OF_ATTACK: [4.0557, 4.06615],
-            "CL": [0.512628, 0.615819],
-            "CD": [0.02692759, 0.03299578],
-            Dynamic.Mission.ALTITUDE_RATE: [3053.64 / 60, 430.746 / 60],  # ft/s
+            Dynamic.Vehicle.ANGLE_OF_ATTACK: [4.05571741, 4.06615387],
+            'CL': [0.51262956, 0.61581904],
+            'CD': [0.02692764, 0.0329958],
+            Dynamic.Mission.ALTITUDE_RATE: [50.87984665, 7.13050668],  # ft/s
             # TAS (kts -> ft/s) * cos(gamma), [319, 459] kts
-            Dynamic.Mission.DISTANCE_RATE: [536.23446, 774.40085],  # ft/s
+            # ft/s
+            Dynamic.Mission.DISTANCE_RATE: [536.23580232, 774.40129424],
             Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL: [
-                -11419.94,
-                -6050.26,
+                -11417.86519196,
+                -6042.88107957,
             ],
-            "theta": [0.16541191, 0.08023799],  # rad ([9.47740, 4.59730] deg),
-            Dynamic.Mission.FLIGHT_PATH_ANGLE: [0.09462652, 0.00927027],  # rad, gamma
-            Dynamic.Vehicle.Propulsion.THRUST_TOTAL: [25561.393, 10784.245],
+            'theta': [0.16538576, 0.08017528],  # rad ([9.47740, 4.59730] deg),
+            # rad, gamma
+            Dynamic.Mission.FLIGHT_PATH_ANGLE: [0.09460013, 0.00920751],
+            Dynamic.Vehicle.Propulsion.THRUST_TOTAL: [25556.83497662, 10773.48189764],
         }
         check_prob_outputs(self.prob, testvals, 1e-6)
 

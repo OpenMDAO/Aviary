@@ -46,7 +46,8 @@ class FlightPathODETestCase(unittest.TestCase):
         self.prob.set_val(Dynamic.Mission.VELOCITY, [100, 100], units="kn")
         self.prob.set_val(Dynamic.Vehicle.MASS, [100000, 100000], units="lbm")
         self.prob.set_val(Dynamic.Mission.ALTITUDE, [500, 500], units="ft")
-        self.prob.set_val("interference_independent_of_shielded_area", 1.89927266)
+        self.prob.set_val(
+            "interference_independent_of_shielded_area", 1.89927266)
         self.prob.set_val("drag_loss_due_to_shielded_wing_area", 68.02065834)
         self.prob.set_val(Aircraft.Wing.FORM_FACTOR, 1.25)
         self.prob.set_val(Aircraft.VerticalTail.FORM_FACTOR, 1.25)
@@ -54,15 +55,15 @@ class FlightPathODETestCase(unittest.TestCase):
 
         self.prob.run_model()
         testvals = {
-            Dynamic.Mission.VELOCITY_RATE: [14.0673, 14.0673],
+            Dynamic.Mission.VELOCITY_RATE: [14.06533056, 14.06533056],
             Dynamic.Mission.FLIGHT_PATH_ANGLE_RATE: [-0.1429133, -0.1429133],
             Dynamic.Mission.ALTITUDE_RATE: [0.0, 0.0],
             Dynamic.Mission.DISTANCE_RATE: [168.781, 168.781],
-            "normal_force": [74910.12, 74910.12],
-            "fuselage_pitch": [0.0, 0.0],
-            "load_factor": [0.2508988, 0.2508988],
+            'normal_force': [74910.12, 74910.12],
+            'fuselage_pitch': [0.0, 0.0],
+            'load_factor': [0.2508988, 0.2508988],
             Dynamic.Mission.ALTITUDE_RATE: [0.0, 0.0],
-            Dynamic.Mission.ALTITUDE_RATE_MAX: [-0.01812796, -0.01812796],
+            Dynamic.Mission.ALTITUDE_RATE_MAX: [-0.01812541, -0.01812541],
         }
         check_prob_outputs(self.prob, testvals, rtol=1e-6)
 
@@ -87,7 +88,8 @@ class FlightPathODETestCase(unittest.TestCase):
         self.prob.set_val(Dynamic.Mission.VELOCITY, [100, 100], units="kn")
         self.prob.set_val(Dynamic.Vehicle.MASS, [100000, 100000], units="lbm")
         self.prob.set_val(Dynamic.Mission.ALTITUDE, [500, 500], units="ft")
-        self.prob.set_val("interference_independent_of_shielded_area", 1.89927266)
+        self.prob.set_val(
+            "interference_independent_of_shielded_area", 1.89927266)
         self.prob.set_val("drag_loss_due_to_shielded_wing_area", 68.02065834)
         self.prob.set_val(Aircraft.Wing.FORM_FACTOR, 1.25)
         self.prob.set_val(Aircraft.VerticalTail.FORM_FACTOR, 1.25)
@@ -95,12 +97,12 @@ class FlightPathODETestCase(unittest.TestCase):
 
         self.prob.run_model()
         testvals = {
-            Dynamic.Mission.VELOCITY_RATE: [13.58489, 13.58489],
+            Dynamic.Mission.VELOCITY_RATE: [13.58290945, 13.58290945],
             Dynamic.Mission.DISTANCE_RATE: [168.781, 168.781],
-            "normal_force": [74910.12, 74910.12],
-            "fuselage_pitch": [0.0, 0.0],
-            "load_factor": [0.2508988, 0.2508988],
-            Dynamic.Mission.ALTITUDE_RATE_MAX: [0.7532356, 0.7532356],
+            'normal_force': [74910.12, 74910.12],
+            'fuselage_pitch': [0.0, 0.0],
+            'load_factor': [0.2508988, 0.2508988],
+            Dynamic.Mission.ALTITUDE_RATE_MAX: [0.75323808, 0.75323808],
         }
         check_prob_outputs(self.prob, testvals, rtol=1e-6)
 

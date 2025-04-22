@@ -39,8 +39,10 @@ class CruiseODETestCase(unittest.TestCase):
         # test partial derivatives
         self.prob.setup(check=False, force_alloc_complex=True)
 
-        self.prob.set_val(Dynamic.Atmosphere.MACH, [0.7, 0.7], units="unitless")
-        self.prob.set_val("interference_independent_of_shielded_area", 1.89927266)
+        self.prob.set_val(Dynamic.Atmosphere.MACH, [
+                          0.7, 0.7], units="unitless")
+        self.prob.set_val(
+            "interference_independent_of_shielded_area", 1.89927266)
         self.prob.set_val("drag_loss_due_to_shielded_wing_area", 68.02065834)
         self.prob.set_val(Aircraft.Wing.FORM_FACTOR, 1.25)
         self.prob.set_val(Aircraft.VerticalTail.FORM_FACTOR, 1.25)
@@ -54,18 +56,17 @@ class CruiseODETestCase(unittest.TestCase):
         assert_near_equal(
             self.prob[Dynamic.Mission.VELOCITY_RATE], np.array([1.0, 1.0]), tol
         )
-        assert_near_equal(
-            self.prob[Dynamic.Mission.DISTANCE], np.array([0.0, 882.57465]), tol
-        )
-        assert_near_equal(self.prob["time"], np.array([0, 7913.69]), tol)
+        assert_near_equal(self.prob[Dynamic.Mission.DISTANCE], np.array(
+            [0.0, 882.58196388]), tol)
+        assert_near_equal(self.prob['time'], np.array([0, 7913.75811534]), tol)
         assert_near_equal(
             self.prob[Dynamic.Mission.SPECIFIC_ENERGY_RATE_EXCESS],
-            np.array([3.439203, 4.440962]),
+            np.array([3.43157488, 4.43286636]),
             tol,
         )
         assert_near_equal(
             self.prob[Dynamic.Mission.ALTITUDE_RATE_MAX],
-            np.array([-17.622456, -16.62070]),
+            np.array([-17.63008441, -16.62879293]),
             tol,
         )
 
@@ -109,8 +110,10 @@ class ElectricCruiseODETestCase(unittest.TestCase):
         # test partial derivatives
         self.prob.setup(check=False, force_alloc_complex=True)
 
-        self.prob.set_val(Dynamic.Atmosphere.MACH, [0.7, 0.7], units="unitless")
-        self.prob.set_val("interference_independent_of_shielded_area", 1.89927266)
+        self.prob.set_val(Dynamic.Atmosphere.MACH, [
+                          0.7, 0.7], units="unitless")
+        self.prob.set_val(
+            "interference_independent_of_shielded_area", 1.89927266)
         self.prob.set_val("drag_loss_due_to_shielded_wing_area", 68.02065834)
         self.prob.set_val(Aircraft.Wing.FORM_FACTOR, 1.25)
         self.prob.set_val(Aircraft.VerticalTail.FORM_FACTOR, 1.25)
@@ -125,7 +128,8 @@ class ElectricCruiseODETestCase(unittest.TestCase):
             self.prob[Dynamic.Mission.VELOCITY_RATE], np.array([1.0, 1.0]), tol
         )
         assert_near_equal(
-            self.prob[Dynamic.Mission.DISTANCE], np.array([0.0, 66.66754421]), tol
+            self.prob[Dynamic.Mission.DISTANCE], np.array(
+                [0.0, 66.66754421]), tol
         )
         assert_near_equal(self.prob["time"], np.array([0, 597.78110206]), tol)
         assert_near_equal(

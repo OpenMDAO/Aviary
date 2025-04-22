@@ -2,5 +2,38 @@
 build-backend = "setuptools.build_meta"
 requires = ["numpy<2", "setuptools"]
 
-[tool.autopep8]
-max_line_length = 89
+[tool.ruff]
+line-length = 100
+
+[tool.ruff.format]
+quote-style = "single"
+
+[tool.ruff.lint]
+# isort, pydocstyle
+extend-select = ["I", "D"]
+# disabling these rules will help current Aviary code pass a pre-commit lint check
+extend-ignore = [
+    "D100",
+    "D101",
+    "D102",
+    "D103",
+    "D104",
+    "D105",
+    "D106",
+    "D204",
+    "D205",
+    "D401",
+    "D404",
+]
+
+[tool.ruff.lint.isort]
+split-on-trailing-comma = false
+
+[tool.ruff.lint.pydocstyle]
+convention = "numpy"
+
+[tool.ruff.lint.per-file-ignores]
+# Ignore `F401` (unused import) in api and doc files.
+# Ignore `E402` (module import not at top of file) for doc cells.
+"api.py" = ["F401"]
+"*.ipynb" = ["F401", "E402"]
