@@ -11,11 +11,28 @@ import subprocess
 import unittest
 
 from openmdao.utils.testing_utils import use_tempdirs
+from openmdao.utils.general_utils import set_pyoptsparse_opt
 
 # TODO: Address any issue that requires a skip.
 SKIP_EXAMPLES = {
     'run_multimission_example_large_single_aisle.py': "Broken due to OpenMDAO changes",
 }
+
+OPT, OPTIMIZER = set_pyoptsparse_opt('SNOPT')
+if OPT is None:
+    reason = "pyoptsparse is not installed. This example requires pyoptsparse to run."
+    SKIP_EXAMPLES.update({
+        'run_2dof_reserve_mission_fixedrange.py': reason,
+        'run_2dof_reserve_mission_fixedtime.py': reason,
+        'run_2dof_reserve_mission_multiphase.py': reason
+    })
+elif OPTIMIZER != 'SNOPT':
+    reason = "pyoptsparse is not providing SNOPT. This example requires SNOPT to run."
+    SKIP_EXAMPLES.update({
+        'run_2dof_reserve_mission_fixedrange.py': reason,
+        'run_2dof_reserve_mission_fixedtime.py': reason,
+        'run_2dof_reserve_mission_multiphase.py': reason
+    })
 
 
 def find_examples():
