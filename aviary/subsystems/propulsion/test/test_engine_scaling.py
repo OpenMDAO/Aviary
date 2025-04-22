@@ -66,16 +66,10 @@ class EngineScalingTest(unittest.TestCase):
 
         self.prob.setup(force_alloc_complex=True)
 
-        self.prob.set_val(
-            'thrust_net_unscaled', np.ones([nn, count]) * 1000, units='lbf'
-        )
-        self.prob.set_val(
-            'fuel_flow_rate_unscaled', np.ones([nn, count]) * 100, units='lbm/h'
-        )
+        self.prob.set_val('thrust_net_unscaled', np.ones([nn, count]) * 1000, units='lbf')
+        self.prob.set_val('fuel_flow_rate_unscaled', np.ones([nn, count]) * 100, units='lbm/h')
         self.prob.set_val('nox_rate_unscaled', np.ones([nn, count]) * 10, units='lbm/h')
-        self.prob.set_val(
-            Dynamic.Atmosphere.MACH, np.linspace(0, 0.75, nn), units='unitless'
-        )
+        self.prob.set_val(Dynamic.Atmosphere.MACH, np.linspace(0, 0.75, nn), units='unitless')
         self.prob.set_val(
             Aircraft.Engine.SCALE_FACTOR, options.get_val(Aircraft.Engine.SCALE_FACTOR)
         )
@@ -83,9 +77,7 @@ class EngineScalingTest(unittest.TestCase):
         self.prob.run_model()
 
         thrust = self.prob.get_val(Dynamic.Vehicle.Propulsion.THRUST)
-        fuel_flow = self.prob.get_val(
-            Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE
-        )
+        fuel_flow = self.prob.get_val(Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE)
         nox_rate = self.prob.get_val(Dynamic.Vehicle.Propulsion.NOX_RATE)
         # exit_area = self.prob.get_val(Dynamic.Mission.EXIT_AREA)
 
@@ -99,9 +91,9 @@ class EngineScalingTest(unittest.TestCase):
         assert_near_equal(fuel_flow, fuel_flow_expected, tolerance=1e-10)
         assert_near_equal(nox_rate, nox_rate_expected, tolerance=1e-10)
 
-        partial_data = self.prob.check_partials(out_stream=None, method="cs")
+        partial_data = self.prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=1e-11, rtol=1e-10)
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     unittest.main()

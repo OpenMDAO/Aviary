@@ -17,41 +17,47 @@ class BreguetCruiseODESolution(TwoDOFODE):
     """The GASP based cruise ODE"""
 
     def setup(self):
-        nn = self.options["num_nodes"]
+        nn = self.options['num_nodes']
         aviary_options = self.options['aviary_options']
         core_subsystems = self.options['core_subsystems']
 
         # TODO: paramport
-        self.add_subsystem("params", ParamPort(), promotes=["*"])
+        self.add_subsystem('params', ParamPort(), promotes=['*'])
 
         self.add_atmosphere(input_speed_type=SpeedType.MACH)
 
         self.add_subsystem(
-            "calc_weight",
+            'calc_weight',
             MassToWeight(num_nodes=nn),
-            promotes_inputs=["mass"],
-            promotes_outputs=["weight"]
+            promotes_inputs=['mass'],
+            promotes_outputs=['weight'],
         )
 
         prop_group = om.Group()
 
-        kwargs = {'num_nodes': nn, 'aviary_inputs': aviary_options,
-                  'method': 'cruise', 'output_alpha': True}
+        kwargs = {
+            'num_nodes': nn,
+            'aviary_inputs': aviary_options,
+            'method': 'cruise',
+            'output_alpha': True,
+        }
         for subsystem in core_subsystems:
             system = subsystem.build_mission(**kwargs)
             if system is not None:
                 if isinstance(subsystem, PropulsionBuilderBase):
-                    prop_group.add_subsystem(subsystem.name,
-                                             system,
-                                             promotes_inputs=subsystem.mission_inputs(
-                                                 **kwargs),
-                                             promotes_outputs=subsystem.mission_outputs(**kwargs))
+                    prop_group.add_subsystem(
+                        subsystem.name,
+                        system,
+                        promotes_inputs=subsystem.mission_inputs(**kwargs),
+                        promotes_outputs=subsystem.mission_outputs(**kwargs),
+                    )
                 else:
-                    self.add_subsystem(subsystem.name,
-                                       system,
-                                       promotes_inputs=subsystem.mission_inputs(
-                                           **kwargs),
-                                       promotes_outputs=subsystem.mission_outputs(**kwargs))
+                    self.add_subsystem(
+                        subsystem.name,
+                        system,
+                        promotes_inputs=subsystem.mission_inputs(**kwargs),
+                        promotes_outputs=subsystem.mission_outputs(**kwargs),
+                    )
 
         self.add_external_subsystems()
 
@@ -60,17 +66,15 @@ class BreguetCruiseODESolution(TwoDOFODE):
             val=np.ones(nn),
             upper=1.0,
             lower=0.0,
-            units="unitless",
+            units='unitless',
             lhs_name=Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
             rhs_name=Dynamic.Vehicle.DRAG,
-            eq_units="lbf",
+            eq_units='lbf',
         )
 
         prop_group.add_subsystem(
-            "thrust_balance",
-            subsys=bal,
-            promotes_inputs=['*'],
-            promotes_outputs=['*'])
+            'thrust_balance', subsys=bal, promotes_inputs=['*'], promotes_outputs=['*']
+        )
 
         prop_group.linear_solver = om.DirectSolver()
 
@@ -83,31 +87,29 @@ class BreguetCruiseODESolution(TwoDOFODE):
         )
         prop_group.nonlinear_solver.linesearch = om.BoundsEnforceLS()
 
-        prop_group.nonlinear_solver.options["iprint"] = 2
-        prop_group.linear_solver.options["iprint"] = 2
+        prop_group.nonlinear_solver.options['iprint'] = 2
+        prop_group.linear_solver.options['iprint'] = 2
 
         self.add_subsystem(
-            'prop_group',
-            subsys=prop_group,
-            promotes_inputs=['*'],
-            promotes_outputs=['*'])
+            'prop_group', subsys=prop_group, promotes_inputs=['*'], promotes_outputs=['*']
+        )
 
         #
         # collect initial/final outputs
         #
         self.add_subsystem(
-            "breguet_eom",
+            'breguet_eom',
             RangeComp(num_nodes=nn),
             promotes_inputs=[
-                ("cruise_distance_initial", "initial_distance"),
-                ("cruise_time_initial", "initial_time"),
-                "mass",
+                ('cruise_distance_initial', 'initial_distance'),
+                ('cruise_time_initial', 'initial_time'),
+                'mass',
                 Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
-                ("TAS_cruise", Dynamic.Mission.VELOCITY),
+                ('TAS_cruise', Dynamic.Mission.VELOCITY),
             ],
             promotes_outputs=[
-                ("cruise_range", Dynamic.Mission.DISTANCE),
-                ("cruise_time", "time"),
+                ('cruise_range', Dynamic.Mission.DISTANCE),
+                ('cruise_time', 'time'),
             ],
         )
 
@@ -142,29 +144,24 @@ class BreguetCruiseODESolution(TwoDOFODE):
                 Dynamic.Mission.VELOCITY_RATE,
                 Dynamic.Mission.VELOCITY,
             ],
-            promotes_outputs=[
-                (Dynamic.Mission.ALTITUDE_RATE, Dynamic.Mission.ALTITUDE_RATE_MAX)
-            ],
+            promotes_outputs=[(Dynamic.Mission.ALTITUDE_RATE, Dynamic.Mission.ALTITUDE_RATE_MAX)],
         )
 
         ParamPort.set_default_vals(self)
-        self.set_input_defaults(
-            Dynamic.Mission.ALTITUDE, val=37500 * np.ones(nn), units="ft"
-        )
-        self.set_input_defaults("mass", val=np.linspace(
-            171481, 171581 - 10000, nn), units="lbm")
+        self.set_input_defaults(Dynamic.Mission.ALTITUDE, val=37500 * np.ones(nn), units='ft')
+        self.set_input_defaults('mass', val=np.linspace(171481, 171581 - 10000, nn), units='lbm')
 
 
 class E_BreguetCruiseODESolution(TwoDOFODE):
     """The GASP based cruise ODE by electrical aircraft"""
 
     def setup(self):
-        nn = self.options["num_nodes"]
+        nn = self.options['num_nodes']
         aviary_options = self.options['aviary_options']
         core_subsystems = self.options['core_subsystems']
 
         # TODO: paramport
-        self.add_subsystem("params", ParamPort(), promotes=["*"])
+        self.add_subsystem('params', ParamPort(), promotes=['*'])
 
         self.add_subsystem(
             name='atmosphere',
@@ -173,48 +170,52 @@ class E_BreguetCruiseODESolution(TwoDOFODE):
         )
 
         self.add_subsystem(
-            "calc_weight",
+            'calc_weight',
             MassToWeight(num_nodes=nn),
-            promotes_inputs=["mass"],
-            promotes_outputs=["weight"]
+            promotes_inputs=['mass'],
+            promotes_outputs=['weight'],
         )
 
         prop_group = om.Group()
 
-        kwargs = {'num_nodes': nn, 'aviary_inputs': aviary_options,
-                  'method': 'cruise', 'output_alpha': True}
+        kwargs = {
+            'num_nodes': nn,
+            'aviary_inputs': aviary_options,
+            'method': 'cruise',
+            'output_alpha': True,
+        }
         for subsystem in core_subsystems:
             system = subsystem.build_mission(**kwargs)
             if system is not None:
                 if isinstance(subsystem, PropulsionBuilderBase):
-                    prop_group.add_subsystem(subsystem.name,
-                                             system,
-                                             promotes_inputs=subsystem.mission_inputs(
-                                                 **kwargs),
-                                             promotes_outputs=subsystem.mission_outputs(**kwargs))
+                    prop_group.add_subsystem(
+                        subsystem.name,
+                        system,
+                        promotes_inputs=subsystem.mission_inputs(**kwargs),
+                        promotes_outputs=subsystem.mission_outputs(**kwargs),
+                    )
                 else:
-                    self.add_subsystem(subsystem.name,
-                                       system,
-                                       promotes_inputs=subsystem.mission_inputs(
-                                           **kwargs),
-                                       promotes_outputs=subsystem.mission_outputs(**kwargs))
+                    self.add_subsystem(
+                        subsystem.name,
+                        system,
+                        promotes_inputs=subsystem.mission_inputs(**kwargs),
+                        promotes_outputs=subsystem.mission_outputs(**kwargs),
+                    )
 
         bal = om.BalanceComp(
             name=Dynamic.Vehicle.Propulsion.THROTTLE,
             val=np.ones(nn),
             upper=1.0,
             lower=0.0,
-            units="unitless",
+            units='unitless',
             lhs_name=Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
             rhs_name=Dynamic.Vehicle.DRAG,
-            eq_units="lbf",
+            eq_units='lbf',
         )
 
         prop_group.add_subsystem(
-            "thrust_balance",
-            subsys=bal,
-            promotes_inputs=['*'],
-            promotes_outputs=['*'])
+            'thrust_balance', subsys=bal, promotes_inputs=['*'], promotes_outputs=['*']
+        )
 
         prop_group.linear_solver = om.DirectSolver()
 
@@ -227,31 +228,29 @@ class E_BreguetCruiseODESolution(TwoDOFODE):
         )
         prop_group.nonlinear_solver.linesearch = om.BoundsEnforceLS()
 
-        prop_group.nonlinear_solver.options["iprint"] = 2
-        prop_group.linear_solver.options["iprint"] = 2
+        prop_group.nonlinear_solver.options['iprint'] = 2
+        prop_group.linear_solver.options['iprint'] = 2
 
         self.add_subsystem(
-            'prop_group',
-            subsys=prop_group,
-            promotes_inputs=['*'],
-            promotes_outputs=['*'])
+            'prop_group', subsys=prop_group, promotes_inputs=['*'], promotes_outputs=['*']
+        )
 
         #
         # collect initial/final outputs
         #
         self.add_subsystem(
-            "e_breguet_eom",
+            'e_breguet_eom',
             E_RangeComp(num_nodes=nn),
             promotes_inputs=[
-                ("cruise_distance_initial", "initial_distance"),
-                ("cruise_time_initial", "initial_time"),
+                ('cruise_distance_initial', 'initial_distance'),
+                ('cruise_time_initial', 'initial_time'),
                 Dynamic.Vehicle.CUMULATIVE_ELECTRIC_ENERGY_USED,
                 Dynamic.Vehicle.Propulsion.ELECTRIC_POWER_IN_TOTAL,
-                ("TAS_cruise", Dynamic.Mission.VELOCITY),
+                ('TAS_cruise', Dynamic.Mission.VELOCITY),
             ],
             promotes_outputs=[
-                ("cruise_range", Dynamic.Mission.DISTANCE),
-                ("cruise_time", "time"),
+                ('cruise_range', Dynamic.Mission.DISTANCE),
+                ('cruise_time', 'time'),
             ],
         )
 
@@ -286,14 +285,9 @@ class E_BreguetCruiseODESolution(TwoDOFODE):
                 Dynamic.Mission.VELOCITY_RATE,
                 Dynamic.Mission.VELOCITY,
             ],
-            promotes_outputs=[
-                (Dynamic.Mission.ALTITUDE_RATE, Dynamic.Mission.ALTITUDE_RATE_MAX)
-            ],
+            promotes_outputs=[(Dynamic.Mission.ALTITUDE_RATE, Dynamic.Mission.ALTITUDE_RATE_MAX)],
         )
 
         ParamPort.set_default_vals(self)
-        self.set_input_defaults(
-            Dynamic.Mission.ALTITUDE, val=37500 * np.ones(nn), units="ft"
-        )
-        self.set_input_defaults("mass", val=np.linspace(
-            171481, 171581 - 10000, nn), units="lbm")
+        self.set_input_defaults(Dynamic.Mission.ALTITUDE, val=37500 * np.ones(nn), units='ft')
+        self.set_input_defaults('mass', val=np.linspace(171481, 171581 - 10000, nn), units='lbm')

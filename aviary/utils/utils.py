@@ -196,9 +196,7 @@ def check_type(key, val, meta_data=_MetaData):
         input_val = _flatten_iters(input_val)
 
     for item in input_val:
-        has_bool = (
-            False  # needs some fancy shenanigans because bools will register as ints
-        )
+        has_bool = False  # needs some fancy shenanigans because bools will register as ints
         if isinstance(expected_types, type):
             if expected_types is bool:
                 has_bool = True
@@ -248,9 +246,7 @@ def cast_type(key, val, meta_data=_MetaData):
                         if isinstance(cast_val, np.ndarray):
                             cast_val = np.array([_type(item) for item in cast_val])
                         else:
-                            cast_val = type(cast_val)(
-                                [_type(item) for item in cast_val]
-                            )
+                            cast_val = type(cast_val)([_type(item) for item in cast_val])
                     # Don't cast things to bool, most types will convert and we
                     # don't actually want that
                     elif _type is not bool:

@@ -20,9 +20,7 @@ from aviary.utils.utils import isiterable
 
 
 # TODO document what kwargs are used, and by which preprocessors in docstring?
-def preprocess_options(
-    aviary_options: AviaryValues, meta_data=_MetaData, verbosity=None, **kwargs
-):
+def preprocess_options(aviary_options: AviaryValues, meta_data=_MetaData, verbosity=None, **kwargs):
     """
     Run all preprocessors on provided AviaryValues object
 
@@ -50,9 +48,7 @@ def preprocess_options(
     preprocess_propulsion(aviary_options, engine_models, meta_data, verbosity)
 
 
-def preprocess_crewpayload(
-    aviary_options: AviaryValues, meta_data=_MetaData, verbosity=None
-):
+def preprocess_crewpayload(aviary_options: AviaryValues, meta_data=_MetaData, verbosity=None):
     """
     Calculates option values that are derived from other options, and are not direct inputs.
     This function modifies the entries in the supplied collection, and for convenience also
@@ -98,10 +94,7 @@ def preprocess_crewpayload(
 
     # Create summary value (num_pax) if it was not assigned by the user
     # or if it was set to it's default value of zero
-    if (
-        passenger_count != 0
-        and aviary_options.get_val(Aircraft.CrewPayload.NUM_PASSENGERS) == 0
-    ):
+    if passenger_count != 0 and aviary_options.get_val(Aircraft.CrewPayload.NUM_PASSENGERS) == 0:
         aviary_options.set_val(Aircraft.CrewPayload.NUM_PASSENGERS, passenger_count)
         if verbosity >= Verbosity.VERBOSE:
             warnings.warn(
@@ -112,9 +105,7 @@ def preprocess_crewpayload(
         design_passenger_count != 0
         and aviary_options.get_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS) == 0
     ):
-        aviary_options.set_val(
-            Aircraft.CrewPayload.Design.NUM_PASSENGERS, design_passenger_count
-        )
+        aviary_options.set_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS, design_passenger_count)
         if verbosity >= Verbosity.VERBOSE:
             warnings.warn(
                 'User has specified supporting values for Design.NUM_PASSENGERS but has '
@@ -173,9 +164,7 @@ def preprocess_crewpayload(
                 'User has not input design passengers data. Assuming design is equal to '
                 'as-flow passenger data.'
             )
-        aviary_options.set_val(
-            Aircraft.CrewPayload.Design.NUM_PASSENGERS, passenger_count
-        )
+        aviary_options.set_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS, passenger_count)
         aviary_options.set_val(
             Aircraft.CrewPayload.Design.NUM_FIRST_CLASS,
             aviary_options.get_val(Aircraft.CrewPayload.NUM_FIRST_CLASS),
@@ -206,9 +195,7 @@ def preprocess_crewpayload(
                 'If you intended to have no passengers on this flight, set '
                 'Aircraft.CrewPayload.TOTAL_PAYLOAD_MASS to zero in aviary_values.'
             )
-        aviary_options.set_val(
-            Aircraft.CrewPayload.NUM_PASSENGERS, design_passenger_count
-        )
+        aviary_options.set_val(Aircraft.CrewPayload.NUM_PASSENGERS, design_passenger_count)
         aviary_options.set_val(
             Aircraft.CrewPayload.NUM_FIRST_CLASS,
             aviary_options.get_val(Aircraft.CrewPayload.Design.NUM_FIRST_CLASS),
@@ -235,9 +222,9 @@ def preprocess_crewpayload(
         aviary_options.set_val(Aircraft.CrewPayload.NUM_PASSENGERS, design_num_pax)
 
     # Perform checks on the final data tables to ensure Design is always larger then As-Flown
-    if aviary_options.get_val(
-        Aircraft.CrewPayload.Design.NUM_FIRST_CLASS
-    ) < aviary_options.get_val(Aircraft.CrewPayload.NUM_FIRST_CLASS):
+    if aviary_options.get_val(Aircraft.CrewPayload.Design.NUM_FIRST_CLASS) < aviary_options.get_val(
+        Aircraft.CrewPayload.NUM_FIRST_CLASS
+    ):
         raise UserWarning(
             'NUM_FIRST_CLASS ('
             f'{aviary_options.get_val(Aircraft.CrewPayload.NUM_FIRST_CLASS)}) is larger '
@@ -262,9 +249,9 @@ def preprocess_crewpayload(
             'larger than the number of seats set by Design.NUM_TOURIST_CLASS ('
             f'{aviary_options.get_val(Aircraft.CrewPayload.Design.NUM_TOURIST_CLASS)})'
         )
-    if aviary_options.get_val(
-        Aircraft.CrewPayload.Design.NUM_PASSENGERS
-    ) < aviary_options.get_val(Aircraft.CrewPayload.NUM_PASSENGERS):
+    if aviary_options.get_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS) < aviary_options.get_val(
+        Aircraft.CrewPayload.NUM_PASSENGERS
+    ):
         raise UserWarning(
             'NUM_PASSENGERS ('
             f'{aviary_options.get_val(Aircraft.CrewPayload.NUM_PASSENGERS)}) is larger '
@@ -285,15 +272,11 @@ def preprocess_crewpayload(
         except KeyError:
             cargo = None
         try:
-            max_cargo = aviary_options.get_val(
-                Aircraft.CrewPayload.Design.MAX_CARGO_MASS, 'lbm'
-            )
+            max_cargo = aviary_options.get_val(Aircraft.CrewPayload.Design.MAX_CARGO_MASS, 'lbm')
         except KeyError:
             max_cargo = None
         try:
-            des_cargo = aviary_options.get_val(
-                Aircraft.CrewPayload.Design.CARGO_MASS, 'lbm'
-            )
+            des_cargo = aviary_options.get_val(Aircraft.CrewPayload.Design.CARGO_MASS, 'lbm')
         except KeyError:
             des_cargo = None
 
@@ -354,8 +337,7 @@ def preprocess_crewpayload(
                 cargo = 0
                 if verbosity >= Verbosity.BRIEF:  # BRIEF, VERBOSE, DEBUG:
                     warnings.warn(
-                        'Aircraft.CrewPayload.CARGO_MASS is missing, assuming '
-                        'CARGO_MASS = 0'
+                        'Aircraft.CrewPayload.CARGO_MASS is missing, assuming CARGO_MASS = 0'
                     )
             else:
                 # user has set max only: assume flown = des = 0
@@ -393,8 +375,7 @@ def preprocess_crewpayload(
         if cargo > des_cargo:
             if verbosity >= Verbosity.BRIEF:  # BRIEF, VERBOSE, DEBUG:
                 warnings.warn(
-                    f'As-flown cargo ({cargo}) is greater than design cargo ('
-                    f'{des_cargo})'
+                    f'As-flown cargo ({cargo}) is greater than design cargo ({des_cargo})'
                 )
 
         if cargo > max_cargo or des_cargo > max_cargo:
@@ -410,9 +391,7 @@ def preprocess_crewpayload(
                 Aircraft.CrewPayload.PASSENGER_MASS_WITH_BAGS, 'lbm'
             )
         except KeyError:
-            pax_mass = aviary_options.get_val(
-                Aircraft.CrewPayload.MASS_PER_PASSENGER, 'lbm'
-            )
+            pax_mass = aviary_options.get_val(Aircraft.CrewPayload.MASS_PER_PASSENGER, 'lbm')
             bag_mass = aviary_options.get_val(
                 Aircraft.CrewPayload.BAGGAGE_MASS_PER_PASSENGER, 'lbm'
             )
@@ -428,9 +407,7 @@ def preprocess_crewpayload(
         num_pax = aviary_options.get_val(Aircraft.CrewPayload.NUM_PASSENGERS)
         as_flown_passenger_payload_mass = num_pax * pax_mass_with_bag
         as_flown_payload = as_flown_passenger_payload_mass + cargo
-        if (
-            as_flown_payload > des_payload and verbosity >= Verbosity.BRIEF
-        ):  # BRIEF, VERBOSE, DEBUG
+        if as_flown_payload > des_payload and verbosity >= Verbosity.BRIEF:  # BRIEF, VERBOSE, DEBUG
             warnings.warn(
                 f'As-flown payload ({as_flown_payload}) is greater than design payload '
                 f'({des_payload}). The aircraft will be undersized for this payload!'
@@ -438,9 +415,7 @@ def preprocess_crewpayload(
 
         # set assumed cargo mass variables:
         aviary_options.set_val(Aircraft.CrewPayload.CARGO_MASS, cargo, 'lbm')
-        aviary_options.set_val(
-            Aircraft.CrewPayload.Design.MAX_CARGO_MASS, max_cargo, 'lbm'
-        )
+        aviary_options.set_val(Aircraft.CrewPayload.Design.MAX_CARGO_MASS, max_cargo, 'lbm')
         aviary_options.set_val(Aircraft.CrewPayload.Design.CARGO_MASS, des_cargo, 'lbm')
 
     if Aircraft.CrewPayload.NUM_FLIGHT_ATTENDANTS not in aviary_options:
@@ -453,9 +428,7 @@ def preprocess_crewpayload(
             else:
                 flight_attendants_count = passenger_count // 40 + 1
 
-        aviary_options.set_val(
-            Aircraft.CrewPayload.NUM_FLIGHT_ATTENDANTS, flight_attendants_count
-        )
+        aviary_options.set_val(Aircraft.CrewPayload.NUM_FLIGHT_ATTENDANTS, flight_attendants_count)
 
     if Aircraft.CrewPayload.NUM_GALLEY_CREW not in aviary_options:
         galley_crew_count = 0  # assume no passengers
@@ -501,7 +474,7 @@ def preprocess_propulsion(
     meta_data=_MetaData,
     verbosity=None,
 ):
-    '''
+    """
     Updates AviaryValues object with values taken from provided EngineModels.
 
     If no EngineModels are provided, either in engine_models or included in
@@ -526,7 +499,7 @@ def preprocess_propulsion(
     engine_models : <list of EngineModels> (optional)
         EngineModel objects to be added to aviary_options. Replaced existing EngineModels
         in aviary_options
-    '''
+    """
     if verbosity is not None:
         # compatibility with being passed int for verbosity
         verbosity = Verbosity(verbosity)
@@ -577,9 +550,7 @@ def preprocess_propulsion(
 
             # Variables are multidimensional if their base types have iterables, and are
             # flagged as `multivalue`
-            multidimensional = (
-                set(typeset) & set((list, tuple, np.ndarray)) and multivalue
-            )
+            multidimensional = set(typeset) & set((list, tuple, np.ndarray)) and multivalue
 
             # vec is where the vectorized engine data is stored - always a list right
             # now, converted to other types like np array later
@@ -645,9 +616,7 @@ def preprocess_propulsion(
     except KeyError:
         num_engines_all = np.zeros(num_engine_type).astype(int)
     try:
-        num_fuse_engines_all = aviary_options.get_val(
-            Aircraft.Engine.NUM_FUSELAGE_ENGINES
-        )
+        num_fuse_engines_all = aviary_options.get_val(Aircraft.Engine.NUM_FUSELAGE_ENGINES)
     except KeyError:
         num_fuse_engines_all = np.zeros(num_engine_type).astype(int)
     try:
@@ -732,18 +701,14 @@ def preprocess_propulsion(
 
     # compute propulsion-level engine count totals here
     aviary_options.set_val(Aircraft.Propulsion.TOTAL_NUM_ENGINES, total_num_engines)
-    aviary_options.set_val(
-        Aircraft.Propulsion.TOTAL_NUM_FUSELAGE_ENGINES, total_num_fuse_engines
-    )
-    aviary_options.set_val(
-        Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES, total_num_wing_engines
-    )
+    aviary_options.set_val(Aircraft.Propulsion.TOTAL_NUM_FUSELAGE_ENGINES, total_num_fuse_engines)
+    aviary_options.set_val(Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES, total_num_wing_engines)
 
 
 def _get_engine_variables():
-    '''
+    """
     Yields all propulsion-related variables in Aircraft that need to be vectorized
-    '''
+    """
     for item in get_names_from_hierarchy(Aircraft.Engine):
         yield item
 

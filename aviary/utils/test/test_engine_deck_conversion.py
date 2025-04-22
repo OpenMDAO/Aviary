@@ -13,9 +13,7 @@ class TestEngineDeckConversion(unittest.TestCase):
     Test engine deck conversion utility by comparing against previously converted engine deck files
     """
 
-    def prepare_and_run(
-        self, filename, output_file=None, data_format=EngineDeckType.GASP
-    ):
+    def prepare_and_run(self, filename, output_file=None, data_format=EngineDeckType.GASP):
         # Specify the input file
         input_file = get_path('utils/test/data/' + filename)
 
@@ -37,12 +35,12 @@ class TestEngineDeckConversion(unittest.TestCase):
         to skip. This is useful for skipping data that Aviary might need but
         Fortran-based tools do not.
         """
-        filename = filepath.split('.')[0]+'.deck'
+        filename = filepath.split('.')[0] + '.deck'
 
-        validation_data = get_path('models/engines/'+filename)
+        validation_data = get_path('models/engines/' + filename)
 
         # Open the converted and validation files
-        with open('TEST_'+filename, 'r') as f_in, open(validation_data, 'r') as expected:
+        with open('TEST_' + filename, 'r') as f_in, open(validation_data, 'r') as expected:
             for line in f_in:
                 if any(s in line for s in skip_list):
                     break
@@ -56,9 +54,7 @@ class TestEngineDeckConversion(unittest.TestCase):
 
                 except Exception as error:
                     exc_string = (
-                        f'Error: {filename}\n'
-                        f'Found: {line_no_whitespace}\n'
-                        f'Expected: {expected_line}'
+                        f'Error: {filename}\nFound: {line_no_whitespace}\nExpected: {expected_line}'
                     )
                     raise Exception(exc_string)
 
@@ -81,7 +77,7 @@ class TestEngineDeckConversion(unittest.TestCase):
         self.compare_files(filename)
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     unittest.main()
     # test = TestEngineDeckConversion()
     # test.test_TP_conversion()
