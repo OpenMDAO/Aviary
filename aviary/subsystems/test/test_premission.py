@@ -206,11 +206,11 @@ class PreMissionTestCase(unittest.TestCase):
         # This is not in the model because it has been overridden, but is not an
         # input to any other component in the GASP premission model.
         err_text = (
-            '\'<model> <class Group>: Variable "aircraft:fuel:auxiliary_fuel_capacity" not found.\''
+            'Could not find \'aircraft:fuel:auxiliary_fuel_capacity\''
         )
         with self.assertRaises(KeyError) as cm:
             self.prob.get_val(Aircraft.Fuel.AUXILIARY_FUEL_CAPACITY)
-        self.assertEqual(str(cm.exception), err_text)
+        self.assertTrue(err_text in str(cm.exception))
 
         assert_near_equal(
             self.prob['fuel_mass.body_tank.extra_fuel_volume'], 0, tol
