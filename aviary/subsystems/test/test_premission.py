@@ -205,12 +205,16 @@ class PreMissionTestCase(unittest.TestCase):
 
         # This is not in the model because it has been overridden, but is not an
         # input to any other component in the GASP premission model.
-        err_text = (
+        # Note: newer version of OpenMDAO has changed the exception text
+        err_text1 = (
             'Could not find \'aircraft:fuel:auxiliary_fuel_capacity\''
+        )
+        err_text2 = (
+            '\'aircraft:fuel:auxiliary_fuel_capacity\' not found'
         )
         with self.assertRaises(KeyError) as cm:
             self.prob.get_val(Aircraft.Fuel.AUXILIARY_FUEL_CAPACITY)
-        self.assertTrue(err_text in str(cm.exception))
+        self.assertTrue(err_text1 in str(cm.exception) or err_text2 in str(cm.exception))
 
         assert_near_equal(
             self.prob['fuel_mass.body_tank.extra_fuel_volume'], 0, tol
