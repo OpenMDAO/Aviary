@@ -12,39 +12,39 @@ class SolveAlphaGroup(om.Group):
     """
 
     def initialize(self):
-        self.options.declare("num_nodes", types=int)
+        self.options.declare('num_nodes', types=int)
 
     def setup(self):
-        num_nodes = self.options["num_nodes"]
+        num_nodes = self.options['num_nodes']
         self.add_subsystem(
-            "required_lift",
+            'required_lift',
             om.ExecComp(
-                "required_lift = mass * grav_metric",
-                grav_metric={"val": constants.GRAV_METRIC_GASP},
-                mass={"units": "kg", "shape": num_nodes},
-                required_lift={"shape": num_nodes},
+                'required_lift = mass * grav_metric',
+                grav_metric={'val': constants.GRAV_METRIC_GASP},
+                mass={'units': 'kg', 'shape': num_nodes},
+                required_lift={'shape': num_nodes},
                 has_diag_partials=True,
             ),
             promotes_inputs=[
-                ("mass", Dynamic.Vehicle.MASS),
+                ('mass', Dynamic.Vehicle.MASS),
             ],
         )
 
         balance = self.add_subsystem(
-            "balance",
+            'balance',
             om.BalanceComp(),
             promotes=[Dynamic.Vehicle.ANGLE_OF_ATTACK, Dynamic.Vehicle.LIFT],
         )
         balance.add_balance(
             Dynamic.Vehicle.ANGLE_OF_ATTACK,
             val=np.ones(num_nodes),
-            units="deg",
+            units='deg',
             res_ref=1.0e6,
             lhs_name=Dynamic.Vehicle.LIFT,
-            rhs_name="required_lift",
+            rhs_name='required_lift',
         )
 
         self.connect(
-            "required_lift.required_lift",
-            "balance.required_lift",
+            'required_lift.required_lift',
+            'balance.required_lift',
         )
