@@ -138,8 +138,7 @@ def convert_engine_deck(input_file, output_file, data_format: EngineDeckType, ro
         engine_type = 'turboshaft engine'
         legacy_code = 'GASP'
 
-    comments.append(
-        f'# {legacy_code}-derived {engine_type} deck converted from {data_file.name}')
+    comments.append(f'# {legacy_code}-derived {engine_type} deck converted from {data_file.name}')
 
     if data_format == EngineDeckType.FLOPS:
         data = {key: np.array([]) for key in _flops_keys}
@@ -192,12 +191,14 @@ def convert_engine_deck(input_file, output_file, data_format: EngineDeckType, ro
             throttle_step = 0.5
 
         # save scalars as comments
-        comments.extend(['# ' + key + ': ' + str(scalars[key])
-                        for key in scalars.keys()])
+        comments.extend(['# ' + key + ': ' + str(scalars[key]) for key in scalars.keys()])
 
         # recommended to always generate structured grid
         structure_data = True
         if structure_data:
+            structured_data = _make_structured_grid(
+                tables, method='lagrange3', fields=fields, throttle_step=throttle_step
+            )
             structured_data = _make_structured_grid(
                 tables, method='lagrange3', fields=fields, throttle_step=throttle_step
             )
@@ -251,15 +252,13 @@ def convert_engine_deck(input_file, output_file, data_format: EngineDeckType, ro
 
             prob.model.add_subsystem(
                 Dynamic.Atmosphere.MACH,
-                om.IndepVarComp(Dynamic.Atmosphere.MACH,
-                                data[MACH], units='unitless'),
+                om.IndepVarComp(Dynamic.Atmosphere.MACH, data[MACH], units='unitless'),
                 promotes=['*'],
             )
 
             prob.model.add_subsystem(
                 Dynamic.Mission.ALTITUDE,
-                om.IndepVarComp(Dynamic.Mission.ALTITUDE,
-                                data[ALTITUDE], units='ft'),
+                om.IndepVarComp(Dynamic.Mission.ALTITUDE, data[ALTITUDE], units='ft'),
                 promotes=['*'],
             )
 
@@ -294,8 +293,7 @@ def convert_engine_deck(input_file, output_file, data_format: EngineDeckType, ro
             #      problems when finding reference SLS thrust, as there is often no max
             #      power data at that point in the engine deck. It is recommended GASP
             #      engine decks override Aircraft.Engine.REFERENCE_THRUST in EngineDecks
-            data[THROTTLE] = normalize(
-                data[TEMPERATURE], minimum=0.0, maximum=t4max)
+            data[THROTTLE] = normalize(data[TEMPERATURE], minimum=0.0, maximum=t4max)
 
         else:
             # data[THROTTLE] = normalize(
@@ -321,8 +319,7 @@ def convert_engine_deck(input_file, output_file, data_format: EngineDeckType, ro
         # round data if requested, using sig_figs as guide
         if round_data:
             for key in data:
-                data[key] = np.array([round_it(val, sig_figs[key])
-                                     for val in data[key]])
+                data[key] = np.array([round_it(val, sig_figs[key]) for val in data[key]])
 
         # data needs to be string so column length can be easily found later
         for var in data:
@@ -342,8 +339,7 @@ def convert_engine_deck(input_file, output_file, data_format: EngineDeckType, ro
 
     # Sort by mach, then altitude, then throttle, then hybrid throttle
     sorted_values = sorted_values[
-        np.lexsort([formatted_data[THROTTLE],
-                   formatted_data[ALTITUDE], formatted_data[MACH]])
+        np.lexsort([formatted_data[THROTTLE], formatted_data[ALTITUDE], formatted_data[MACH]])
     ]
     for idx, key in enumerate(formatted_data):
         formatted_data[key] = sorted_values[:, idx]
@@ -352,8 +348,7 @@ def convert_engine_deck(input_file, output_file, data_format: EngineDeckType, ro
     write_data = NamedValues()
 
     for key in data:
-        write_data.set_val(
-            header_names[key], formatted_data[key], default_units[key])
+        write_data.set_val(header_names[key], formatted_data[key], default_units[key])
 
     if output_file is None:
         sfx = data_file.suffix
@@ -421,8 +416,7 @@ def _read_gasp_engine(fp, is_turbo_prop=False):
     """
     with open(fp, 'r') as f:
         if is_turbo_prop:
-            table_types = ['shaft_power_corrected',
-                           'fuelflow', 'tailpipe_thrust']
+            table_types = ['shaft_power_corrected', 'fuelflow', 'tailpipe_thrust']
             scalars = _read_tp_header(f)
         else:
             table_types = ['thrust', 'fuelflow', 'airflow']
@@ -440,8 +434,7 @@ def _read_tp_header(f):
         f, [*_rep(2, (int, 5)), (None, 10), *_rep(6, (float, 10))]
     )
     # file header: FORMAT(7F10.4)
-    sls_hp, xncref, prop_rpm, gbx_rat, torque_lim, waslrf = _parse(
-        f, [*_rep(6, (float, 10))])
+    sls_hp, xncref, prop_rpm, gbx_rat, torque_lim, waslrf = _parse(f, [*_rep(6, (float, 10))])
 
     return {
         'throttle_type': iread,
@@ -670,12 +663,9 @@ class CalculateIdle(om.ExplicitComponent):
     def setup(self):
         nn = self.options['num_nodes']
 
-        self.add_input('t2', _TSLS_DEGR, units='degR', shape=nn,
-                       desc='Engine inlet temperature')
-        self.add_input('p2', _PSLS_PSF, units='psf',
-                       shape=nn, desc='Engine inlet pressure')
-        self.add_input('pct_corr_airflow_idle', 0.5,
-                       desc='Percent corrected airflow at idle')
+        self.add_input('t2', _TSLS_DEGR, units='degR', shape=nn, desc='Engine inlet temperature')
+        self.add_input('p2', _PSLS_PSF, units='psf', shape=nn, desc='Engine inlet pressure')
+        self.add_input('pct_corr_airflow_idle', 0.5, desc='Percent corrected airflow at idle')
         self.add_input(
             'sfc_idle',
             1.0,
@@ -683,13 +673,11 @@ class CalculateIdle(om.ExplicitComponent):
             desc='Thrust-specific fuel consumption at idle',
         )
 
-        self.add_output('idle_thrust', units='lbf',
-                        shape=nn, desc='Idle thrust')
+        self.add_output('idle_thrust', units='lbf', shape=nn, desc='Idle thrust')
         # self.add_output(
         #     "idle_airflow", units="lbf/s", shape=nn, desc="Idle corrected airflow"
         # )
-        self.add_output('idle_fuelflow', units='lbm/h',
-                        shape=nn, desc='Idle fuel flow')
+        self.add_output('idle_fuelflow', units='lbm/h', shape=nn, desc='Idle fuel flow')
 
     def compute(self, inputs, outputs):
         (
@@ -715,7 +703,9 @@ class CalculateIdle(om.ExplicitComponent):
 
 
 class AtmosCalc(om.ExplicitComponent):
-    """Calculates T2 and P2 given static temperature and pressure."""
+    """
+    Calculates T2 and P2 given static temperature and pressure
+    """
 
     def initialize(self):
         self.options.declare('num_nodes', types=int)
@@ -742,10 +732,8 @@ class AtmosCalc(om.ExplicitComponent):
             desc='Ambient static pressure',
         )
 
-        self.add_output('t2', units='degR', shape=nn,
-                        desc='Engine inlet total temperature')
-        self.add_output('p2', units='psf', shape=nn,
-                        desc='Engine inlet total pressure')
+        self.add_output('t2', units='degR', shape=nn, desc='Engine inlet total temperature')
+        self.add_output('p2', units='psf', shape=nn, desc='Engine inlet total pressure')
 
     def compute(self, inputs, outputs):
         mach, T, P = inputs.values()
@@ -759,8 +747,7 @@ class AtmosCalc(om.ExplicitComponent):
 
 
 def _setup_EDC_parser(parser):
-    parser.add_argument('input_file', type=str,
-                        help='path to engine deck file to be converted')
+    parser.add_argument('input_file', type=str, help='path to engine deck file to be converted')
     parser.add_argument(
         'output_file',
         type=str,
@@ -774,8 +761,7 @@ def _setup_EDC_parser(parser):
         choices=list(EngineDeckType),
         help='data format used by input_file',
     )
-    parser.add_argument('--round', action='store_true',
-                        help='round data to improve readability')
+    parser.add_argument('--round', action='store_true', help='round data to improve readability')
 
 
 def _exec_EDC(args, user_args):

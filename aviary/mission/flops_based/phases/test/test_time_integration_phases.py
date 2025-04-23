@@ -9,8 +9,7 @@ from openmdao.utils.testing_utils import use_tempdirs
 from aviary.interface.default_phase_info.height_energy_fiti import add_default_sgm_args
 from aviary.interface.methods_for_level2 import AviaryGroup
 from aviary.mission.gasp_based.phases.time_integration_traj import FlexibleTraj
-from aviary.mission.flops_based.phases.time_integration_phases import \
-    SGMHeightEnergy
+from aviary.mission.flops_based.phases.time_integration_phases import SGMHeightEnergy
 from aviary.subsystems.premission import CorePreMission
 from aviary.subsystems.propulsion.utils import build_engine_deck
 from aviary.utils.preprocessors import preprocess_propulsion
@@ -23,7 +22,9 @@ from aviary.variable_info.variables import Aircraft, Dynamic, Mission, Settings
 
 
 @use_tempdirs
-@unittest.skipUnless(importlib.util.find_spec("pyoptsparse") is not None, "pyoptsparse is not installed")
+@unittest.skipUnless(
+    importlib.util.find_spec('pyoptsparse') is not None, 'pyoptsparse is not installed'
+)
 class HE_SGMDescentTestCase(unittest.TestCase):
     """
     This test builds height-energy based trajectories and then simulates them and checks that the final values are correct.
@@ -32,17 +33,18 @@ class HE_SGMDescentTestCase(unittest.TestCase):
 
     def setUp(self):
         aviary_inputs, initialization_guesses = create_vehicle(
-            'models/test_aircraft/aircraft_for_bench_FwFm.csv')
-        aviary_inputs.set_val(Aircraft.Engine.SCALED_SLS_THRUST, val=28690, units="lbf")
+            'models/test_aircraft/aircraft_for_bench_FwFm.csv'
+        )
+        aviary_inputs.set_val(Aircraft.Engine.SCALED_SLS_THRUST, val=28690, units='lbf')
         aviary_inputs.set_val(Aircraft.Engine.SCALE_FACTOR, val=0.9917)
-        aviary_inputs.set_val(Dynamic.Vehicle.Propulsion.THROTTLE,
-                              val=0, units="unitless")
-        aviary_inputs.set_val(Mission.Takeoff.ROLLING_FRICTION_COEFFICIENT,
-                              val=0.0175, units="unitless")
-        aviary_inputs.set_val(Mission.Takeoff.BRAKING_FRICTION_COEFFICIENT,
-                              val=0.35, units="unitless")
-        aviary_inputs.set_val(Settings.EQUATIONS_OF_MOTION,
-                              val=EquationsOfMotion.SOLVED_2DOF)
+        aviary_inputs.set_val(Dynamic.Vehicle.Propulsion.THROTTLE, val=0, units='unitless')
+        aviary_inputs.set_val(
+            Mission.Takeoff.ROLLING_FRICTION_COEFFICIENT, val=0.0175, units='unitless'
+        )
+        aviary_inputs.set_val(
+            Mission.Takeoff.BRAKING_FRICTION_COEFFICIENT, val=0.35, units='unitless'
+        )
+        aviary_inputs.set_val(Settings.EQUATIONS_OF_MOTION, val=EquationsOfMotion.SOLVED_2DOF)
 
         engines = build_engine_deck(aviary_inputs)
         # don't need mass
@@ -60,8 +62,8 @@ class HE_SGMDescentTestCase(unittest.TestCase):
     def setup_prob(self, phases) -> om.Problem:
         prob = om.Problem()
         prob.driver = om.pyOptSparseDriver()
-        prob.driver.options["optimizer"] = 'IPOPT'
-        prob.driver.opt_settings['tol'] = 1.0E-6
+        prob.driver.options['optimizer'] = 'IPOPT'
+        prob.driver.opt_settings['tol'] = 1.0e-6
         prob.driver.opt_settings['mu_init'] = 1e-5
         prob.driver.opt_settings['max_iter'] = 50
         prob.driver.opt_settings['print_level'] = 5
@@ -85,29 +87,26 @@ class HE_SGMDescentTestCase(unittest.TestCase):
                 Dynamic.Mission.ALTITUDE,
             ],
         )
-        prob.model = AviaryGroup(aviary_options=aviary_options,
-                                 aviary_metadata=BaseMetaData)
+        prob.model = AviaryGroup(aviary_options=aviary_options, aviary_metadata=BaseMetaData)
         prob.model.add_subsystem(
             'pre_mission',
             CorePreMission(aviary_options=aviary_options, subsystems=subsystems),
             promotes_inputs=['aircraft:*'],
             promotes_outputs=['aircraft:*', 'mission:*'],
         )
-        prob.model.add_subsystem('traj', traj,
-                                 promotes=['aircraft:*', 'mission:*']
-                                 )
+        prob.model.add_subsystem('traj', traj, promotes=['aircraft:*', 'mission:*'])
 
         prob.model.add_subsystem(
-            "fuel_obj",
+            'fuel_obj',
             om.ExecComp(
-                "reg_objective = overall_fuel/10000",
-                reg_objective={"val": 0.0, "units": "unitless"},
-                overall_fuel={"units": "lbm"},
+                'reg_objective = overall_fuel/10000',
+                reg_objective={'val': 0.0, 'units': 'unitless'},
+                overall_fuel={'units': 'lbm'},
             ),
             promotes_inputs=[
-                ("overall_fuel", Mission.Summary.TOTAL_FUEL_MASS),
+                ('overall_fuel', Mission.Summary.TOTAL_FUEL_MASS),
             ],
-            promotes_outputs=[("reg_objective", Mission.Objectives.FUEL)],
+            promotes_outputs=[('reg_objective', Mission.Objectives.FUEL)],
         )
 
         prob.model.add_objective(Mission.Objectives.FUEL, ref=1e4)
@@ -115,8 +114,7 @@ class HE_SGMDescentTestCase(unittest.TestCase):
         setup_model_options(prob, aviary_options)
 
         with warnings.catch_warnings():
-
-            warnings.simplefilter("ignore", om.PromotionWarning)
+            warnings.simplefilter('ignore', om.PromotionWarning)
 
             prob.setup()
 
@@ -165,20 +163,21 @@ class HE_SGMDescentTestCase(unittest.TestCase):
 
     def test_cruise(self):
         initial_values_cruise = {
-            "traj.altitude_initial": {'val': 35000, 'units': "ft"},
-            "traj.mass_initial": {'val': 171000, 'units': "lbm"},
-            "traj.distance_initial": {'val': 0, 'units': "NM"},
-            "traj.mach": {'val': .8, 'units': "unitless"},
+            'traj.altitude_initial': {'val': 35000, 'units': 'ft'},
+            'traj.mass_initial': {'val': 171000, 'units': 'lbm'},
+            'traj.distance_initial': {'val': 0, 'units': 'NM'},
+            'traj.mach': {'val': 0.8, 'units': 'unitless'},
         }
 
-        phases = {'HE': {
-            'kwargs': {
-                'mass_trigger': (160000, 'lbm'),
-            },
-            'builder': SGMHeightEnergy,
-            "user_options": {
-            },
-        }}
+        phases = {
+            'HE': {
+                'kwargs': {
+                    'mass_trigger': (160000, 'lbm'),
+                },
+                'builder': SGMHeightEnergy,
+                'user_options': {},
+            }
+        }
 
         final_states = self.run_simulation(phases, initial_values_cruise)
         assert_near_equal(final_states['mass'], 160000, self.tol)

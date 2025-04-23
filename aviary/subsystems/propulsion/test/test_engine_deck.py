@@ -52,8 +52,7 @@ class EngineDeckTest(unittest.TestCase):
         assert_near_equal(altitude, expected_altitude, tolerance=tol)
         assert_near_equal(throttle, expected_throttle, tolerance=tol)
         assert_near_equal(thrust, expected_thrust, tolerance=tol)
-        assert_near_equal(
-            fuel_flow_rate, expected_fuel_flow_rate, tolerance=tol)
+        assert_near_equal(fuel_flow_rate, expected_fuel_flow_rate, tolerance=tol)
         # no need for check_partials
 
     def test_flight_idle_2(self):
@@ -93,8 +92,7 @@ class EngineDeckTest(unittest.TestCase):
         assert_near_equal(altitude, expected_altitude, tolerance=tol)
         # assert_near_equal(throttle, expected_throttle, tolerance=tol)
         assert_near_equal(thrust, expected_thrust, tolerance=tol)
-        assert_near_equal(
-            fuel_flow_rate, expected_fuel_flow_rate, tolerance=tol)
+        assert_near_equal(fuel_flow_rate, expected_fuel_flow_rate, tolerance=tol)
 
     def test_load_from_memory(self):
         tol = 1e-6
@@ -137,9 +135,8 @@ class EngineDeckTest(unittest.TestCase):
         assert_near_equal(altitude, expected_altitude, tolerance=tol)
         # assert_near_equal(throttle, expected_throttle, tolerance=tol)
         assert_near_equal(thrust, expected_thrust, tolerance=tol)
-        assert_near_equal(
-            fuel_flow_rate, expected_fuel_flow_rate, tolerance=tol)
+        assert_near_equal(fuel_flow_rate, expected_fuel_flow_rate, tolerance=tol)
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     unittest.main()

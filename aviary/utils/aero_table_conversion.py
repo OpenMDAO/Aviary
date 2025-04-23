@@ -64,8 +64,7 @@ def AeroDataConverter(input_file=None, output_file=None, data_format=None):
             file2 = path / name + '_aviary_CD0' + suffix
             output_file = [file1, file2]
 
-    stamp = f'# {
-        data_format.value}-derived aerodynamics data converted from {data_file.name}'
+    stamp = f'# {data_format.value}-derived aerodynamics data converted from {data_file.name}'
 
     if data_format is CodeOrigin.GASP:
         data, comments = _load_gasp_aero_table(data_file)
@@ -88,8 +87,7 @@ def AeroDataConverter(input_file=None, output_file=None, data_format=None):
 
         # write lift-dependent drag file
         lift_drag_comments = [stamp] + lift_drag_comments
-        write_data_file(output_file[0], lift_drag_data,
-                        lift_drag_comments, include_timestamp=True)
+        write_data_file(output_file[0], lift_drag_data, lift_drag_comments, include_timestamp=True)
 
         # write zero-lift drag file
         zero_lift_drag_comments = [stamp] + zero_lift_drag_comments
@@ -119,8 +117,7 @@ def _load_flops_aero_table(filepath: Path):
             # data contains things other than floats
             except ValueError:
                 raise ValueError(
-                    f'Non-numerical value found in data file <{
-                        filepath.name}> on '
+                    f'Non-numerical value found in data file <{filepath.name}> on '
                     f'line {str(line_count)}'
                 )
 
@@ -163,8 +160,7 @@ def _load_flops_aero_table(filepath: Path):
         )
     offset = offset + i
     # these are not needed, we can determine the length of data vectors directly
-    altitude_count, zero_lift_mach_count = _read_line(
-        4 + offset, zero_lift_drag_comments)
+    altitude_count, zero_lift_mach_count = _read_line(4 + offset, zero_lift_drag_comments)
     zero_lift_machs = _read_line(5 + offset, zero_lift_drag_comments)
     altitudes = _read_line(6 + offset, zero_lift_drag_comments)
     for i in range(len(zero_lift_machs)):
@@ -189,16 +185,14 @@ def _load_flops_aero_table(filepath: Path):
     lift_drag_data.set_val('Mach', mach.flatten(), 'unitless')
     lift_drag_data.set_val('Lift Coefficient', cl.flatten(), 'unitless')
     lift_drag_data.set_val(
-        'Lift-Dependent Drag Coefficient', np.array(
-            lift_drag).flatten(), 'unitless'
+        'Lift-Dependent Drag Coefficient', np.array(lift_drag).flatten(), 'unitless'
     )
 
     altitude, mach = np.meshgrid(altitudes, zero_lift_machs)
     zero_lift_drag_data.set_val('Altitude', altitude.flatten(), 'ft')
     zero_lift_drag_data.set_val('Mach', mach.flatten(), 'unitless')
     zero_lift_drag_data.set_val(
-        'Zero-Lift Drag Coefficient', np.array(
-            zero_lift_drag).flatten(), 'unitless'
+        'Zero-Lift Drag Coefficient', np.array(zero_lift_drag).flatten(), 'unitless'
     )
 
     return lift_drag_data, lift_drag_comments, zero_lift_drag_data, zero_lift_drag_comments
@@ -247,8 +241,7 @@ def _load_gasp_aero_table(filepath: Path):
                 # data contains things other than floats
                 except ValueError:
                     raise ValueError(
-                        f'Non-numerical value found in data file <{
-                            filepath.name}> on '
+                        f'Non-numerical value found in data file <{filepath.name}> on '
                         f'line {str(line_count)}'
                     )
                 else:
@@ -259,15 +252,13 @@ def _load_gasp_aero_table(filepath: Path):
     # translate raw data into NamedValues object
     for idx, var in enumerate(variables):
         if var.lower() in allowed_headers:
-            data.set_val(allowed_headers[var.lower()],
-                         raw_data[:, idx], units[idx])
+            data.set_val(allowed_headers[var.lower()], raw_data[:, idx], units[idx])
 
     return data, comments
 
 
 def _setup_ATC_parser(parser):
-    parser.add_argument('input_file', type=str,
-                        help='path to aero data file to be converted')
+    parser.add_argument('input_file', type=str, help='path to aero data file to be converted')
     parser.add_argument(
         'output_file',
         type=str,

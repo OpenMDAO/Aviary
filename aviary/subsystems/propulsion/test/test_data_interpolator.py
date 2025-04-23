@@ -44,7 +44,8 @@ class DataInterpolationTest(unittest.TestCase):
         test_throttle_list = np.linspace(0, 1, 5)
 
         test_mach, test_alt, test_throttle = np.meshgrid(
-            test_mach_list, test_alt_list, test_throttle_list)
+            test_mach_list, test_alt_list, test_throttle_list
+        )
 
         num_nodes = len(test_mach.flatten())
 
@@ -75,22 +76,21 @@ class DataInterpolationTest(unittest.TestCase):
             units='lbm/h',
         )
 
-        engine_interpolator = EngineDataInterpolator(num_nodes=num_nodes,
-                                                     interpolator_inputs=inputs,
-                                                     interpolator_outputs=outputs,
-                                                     interpolation_method='slinear')
+        engine_interpolator = EngineDataInterpolator(
+            num_nodes=num_nodes,
+            interpolator_inputs=inputs,
+            interpolator_outputs=outputs,
+            interpolation_method='slinear',
+        )
 
         prob = om.Problem()
         prob.model.add_subsystem('engine_data', engine_data, promotes=['*'])
-        prob.model.add_subsystem(
-            'interpolator', engine_interpolator, promotes=['*'])
+        prob.model.add_subsystem('interpolator', engine_interpolator, promotes=['*'])
 
         prob.setup()
 
-        prob.set_val(Dynamic.Atmosphere.MACH, np.array(
-            test_mach.flatten()), 'unitless')
-        prob.set_val(Dynamic.Mission.ALTITUDE,
-                     np.array(test_alt.flatten()), 'ft')
+        prob.set_val(Dynamic.Atmosphere.MACH, np.array(test_mach.flatten()), 'unitless')
+        prob.set_val(Dynamic.Mission.ALTITUDE, np.array(test_alt.flatten()), 'ft')
         prob.set_val(
             Dynamic.Vehicle.Propulsion.THROTTLE,
             np.array(test_throttle.flatten()),
@@ -100,9 +100,7 @@ class DataInterpolationTest(unittest.TestCase):
         prob.run_model()
 
         interp_thrust = prob.get_val(Dynamic.Vehicle.Propulsion.THRUST, 'lbf')
-        interp_fuel_flow = prob.get_val(
-            Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE, 'lbm/h'
-        )
+        interp_fuel_flow = prob.get_val(Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE, 'lbm/h')
 
         # fmt: off
         expected_thrust = [
@@ -179,7 +177,7 @@ class DataInterpolationTest(unittest.TestCase):
         assert_near_equal(interp_fuel_flow, expected_fuel_flow, tolerance=tol)
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     # unittest.main()
     test = DataInterpolationTest()
     test.test_data_interpolation()

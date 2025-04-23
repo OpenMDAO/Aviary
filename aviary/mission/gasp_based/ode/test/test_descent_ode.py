@@ -40,28 +40,22 @@ class DescentODETestCase(unittest.TestCase):
         setup_model_options(self.prob, aviary_options)
 
     @unittest.skipIf(
-        version.parse(openmdao.__version__) < version.parse("3.26"),
-        "Skipping due to OpenMDAO version being too low (<3.26)",
+        version.parse(openmdao.__version__) < version.parse('3.26'),
+        'Skipping due to OpenMDAO version being too low (<3.26)',
     )
     def test_high_alt(self):
         # Test descent above 10k ft with Mach under and over the EAS limit
-        self.sys.options["num_nodes"] = 2
-        self.sys.options["input_speed_type"] = SpeedType.MACH
-        self.sys.options["EAS_limit"] = 350
+        self.sys.options['num_nodes'] = 2
+        self.sys.options['input_speed_type'] = SpeedType.MACH
+        self.sys.options['EAS_limit'] = 350
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
-        self.prob.set_val(
-            Dynamic.Vehicle.Propulsion.THROTTLE, np.array([0, 0]), units='unitless'
-        )
-        self.prob.set_val(
-            Dynamic.Mission.ALTITUDE, np.array([36500, 14500]), units="ft"
-        )
-        self.prob.set_val(Dynamic.Vehicle.MASS, np.array(
-            [147661, 147572]), units="lbm")
-        self.prob.set_val(
-            "interference_independent_of_shielded_area", 1.89927266)
-        self.prob.set_val("drag_loss_due_to_shielded_wing_area", 68.02065834)
+        self.prob.set_val(Dynamic.Vehicle.Propulsion.THROTTLE, np.array([0, 0]), units='unitless')
+        self.prob.set_val(Dynamic.Mission.ALTITUDE, np.array([36500, 14500]), units='ft')
+        self.prob.set_val(Dynamic.Vehicle.MASS, np.array([147661, 147572]), units='lbm')
+        self.prob.set_val('interference_independent_of_shielded_area', 1.89927266)
+        self.prob.set_val('drag_loss_due_to_shielded_wing_area', 68.02065834)
         self.prob.set_val(Aircraft.Wing.FORM_FACTOR, 1.25)
         self.prob.set_val(Aircraft.VerticalTail.FORM_FACTOR, 1.25)
         self.prob.set_val(Aircraft.HorizontalTail.FORM_FACTOR, 1.25)
@@ -82,8 +76,7 @@ class DescentODETestCase(unittest.TestCase):
             Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL: np.array(
                 [-452.29466667, -997.41373745]
             ),
-            # ft/s ([247.95894, 349.99997] kts)
-            'EAS': [418.50757579, 590.73344999],
+            'EAS': [418.50757579, 590.73344999],  # ft/s ([247.95894, 349.99997] kts)
             Dynamic.Atmosphere.MACH: [0.8, 0.697125],
             # gamma, rad ([-2.908332, -3.723388] deg)
             Dynamic.Mission.FLIGHT_PATH_ANGLE: [-0.05076362, -0.06498377],
@@ -91,25 +84,23 @@ class DescentODETestCase(unittest.TestCase):
         check_prob_outputs(self.prob, testvals, rtol=1e-6)
 
         partial_data = self.prob.check_partials(
-            method="cs", out_stream=None, excludes=["*params*", "*aero*"]
+            method='cs', out_stream=None, excludes=['*params*', '*aero*']
         )
         assert_check_partials(partial_data, atol=1e-8, rtol=1e-8)
 
     def test_low_alt(self):
         # Test descent below 10k ft
-        self.sys.options["input_speed_type"] = SpeedType.EAS
-        self.sys.options["EAS_limit"] = 350
+        self.sys.options['input_speed_type'] = SpeedType.EAS
+        self.sys.options['EAS_limit'] = 350
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
-        self.prob.set_val(Dynamic.Vehicle.Propulsion.THROTTLE,
-                          0, units='unitless')
-        self.prob.set_val(Dynamic.Mission.ALTITUDE, 1500, units="ft")
-        self.prob.set_val(Dynamic.Vehicle.MASS, 147410, units="lbm")
-        self.prob.set_val("EAS", 250, units="kn")
-        self.prob.set_val(
-            "interference_independent_of_shielded_area", 1.89927266)
-        self.prob.set_val("drag_loss_due_to_shielded_wing_area", 68.02065834)
+        self.prob.set_val(Dynamic.Vehicle.Propulsion.THROTTLE, 0, units='unitless')
+        self.prob.set_val(Dynamic.Mission.ALTITUDE, 1500, units='ft')
+        self.prob.set_val(Dynamic.Vehicle.MASS, 147410, units='lbm')
+        self.prob.set_val('EAS', 250, units='kn')
+        self.prob.set_val('interference_independent_of_shielded_area', 1.89927266)
+        self.prob.set_val('drag_loss_due_to_shielded_wing_area', 68.02065834)
         self.prob.set_val(Aircraft.Wing.FORM_FACTOR, 1.25)
         self.prob.set_val(Aircraft.VerticalTail.FORM_FACTOR, 1.25)
         self.prob.set_val(Aircraft.HorizontalTail.FORM_FACTOR, 1.25)
@@ -132,12 +123,12 @@ class DescentODETestCase(unittest.TestCase):
         check_prob_outputs(self.prob, testvals, rtol=1e-6)
 
         partial_data = self.prob.check_partials(
-            out_stream=None, method="cs", excludes=["*params*", "*aero*"]
+            out_stream=None, method='cs', excludes=['*params*', '*aero*']
         )
         assert_check_partials(partial_data, atol=1e-8, rtol=1e-8)
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     unittest.main()
     # test = DescentODETestCase()
     # test.setUp()

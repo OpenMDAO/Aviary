@@ -48,11 +48,10 @@ class TableEngineBuilder(EngineModel):
     """
 
     def __init__(self, name='NPSS_prop_system', aviary_inputs=AviaryValues()):
-
         super().__init__(name, options=aviary_inputs, meta_data=ExtendedMetaData)
 
     def build_pre_mission(self, aviary_inputs=AviaryValues()):
-        '''
+        """
         Builds the design (pre-mission) engine model.
 
         Parameters
@@ -64,12 +63,12 @@ class TableEngineBuilder(EngineModel):
         -------
         prob : openmdao.core.Group
             engine model for design.
-        '''
+        """
 
         return DesignEngineGroup()
 
     def build_mission(self, num_nodes, aviary_inputs):
-        '''
+        """
         Builds the off-design (mission) engine model.
 
         Parameters
@@ -83,7 +82,7 @@ class TableEngineBuilder(EngineModel):
         -------
         prob : openmdao.core.Group
             engine model for off-design.
-        '''
+        """
         interp_method = aviary_inputs.get_val(Aircraft.Engine.INTERPOLATION_METHOD)[0]
 
         # interpolator object for engine data
@@ -95,12 +94,12 @@ class TableEngineBuilder(EngineModel):
         )
 
         ref = os.path.join(
-            "examples",
-            "external_subsystems",
-            "engine_NPSS",
-            "NPSS_Model",
-            "Output",
-            "RefEngine.outputAviary",
+            'examples',
+            'external_subsystems',
+            'engine_NPSS',
+            'NPSS_Model',
+            'Output',
+            'RefEngine.outputAviary',
         )
         csv_path = get_aviary_resource_path(ref)
         engine_data = np.genfromtxt(csv_path, skip_header=0)
@@ -124,9 +123,7 @@ class TableEngineBuilder(EngineModel):
             )[0][0]
             thrust_max[i] = engine_data[index, 3]
 
-        print(
-            Dynamic.Vehicle.Propulsion.THRUST, '--------------------------------------'
-        )
+        print(Dynamic.Vehicle.Propulsion.THRUST, '--------------------------------------')
 
         # add inputs and outputs to interpolator
         engine.add_input(
@@ -190,7 +187,7 @@ class TableEngineBuilder(EngineModel):
         return vars_to_connect
 
     def get_controls(self, phase_name):
-        '''
+        """
         Builds dictionary of controls for engine off-design.
 
         Returns
@@ -199,12 +196,12 @@ class TableEngineBuilder(EngineModel):
             Dictionary with keys that are names of variables to be controlled and the
             values are dictionaries with the keys `units`, `upper`, and `lower` which states the units of the
             variable to be controlled.
-        '''
+        """
 
         return {}
 
     def get_design_vars(self):
-        '''
+        """
         Builds dictionary of design variables for Engine off-design.
 
         Returns
@@ -212,7 +209,7 @@ class TableEngineBuilder(EngineModel):
         design_vars : dict
             Dictionary with keys that are names of variables to be made design variables
             and the values are dictionaries with the keys `units`, `upper`, `lower`, and `ref`.
-        '''
+        """
         mass_flow_dict = {
             'units': 'lbm/s',
             'upper': 450,
@@ -226,9 +223,9 @@ class TableEngineBuilder(EngineModel):
         return design_vars
 
 
-'''
+"""
 inputs: mach, altitude
 # rename variables
 # deal with multiple engines
 
-'''
+"""

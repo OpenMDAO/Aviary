@@ -11,8 +11,9 @@ class MissionEOM(om.Group):
     """Define the mission equation of motion for the energy method"""
 
     def initialize(self):
-        self.options.declare('num_nodes', types=int,
-                             desc='Number of nodes to be evaluated in the RHS')
+        self.options.declare(
+            'num_nodes', types=int, desc='Number of nodes to be evaluated in the RHS'
+        )
 
     def setup(self):
         nn = self.options['num_nodes']
@@ -70,7 +71,5 @@ class MissionEOM(om.Group):
                 Dynamic.Mission.VELOCITY_RATE,
                 Dynamic.Mission.VELOCITY,
             ],
-            promotes_outputs=[
-                (Dynamic.Mission.ALTITUDE_RATE, Dynamic.Mission.ALTITUDE_RATE_MAX)
-            ],
+            promotes_outputs=[(Dynamic.Mission.ALTITUDE_RATE, Dynamic.Mission.ALTITUDE_RATE_MAX)],
         )

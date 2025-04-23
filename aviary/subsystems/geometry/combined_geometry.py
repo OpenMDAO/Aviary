@@ -18,27 +18,23 @@ class CombinedGeometry(om.Group):
     """
 
     def initialize(self):
-        self.options.declare('code_origin_to_prioritize',
-                             values=[GASP, FLOPS, None],
-                             default=None,
-                             desc='sets which code origin to prioritize if there are'
-                                  ' conflicting outputs.'
-                             )
+        self.options.declare(
+            'code_origin_to_prioritize',
+            values=[GASP, FLOPS, None],
+            default=None,
+            desc='sets which code origin to prioritize if there are conflicting outputs.',
+        )
 
     def setup(self):
-
         self.add_subsystem(
             'gasp_based_geom',
             SizeGroup(),
-            promotes_inputs=["aircraft:*", "mission:*"],
-            promotes_outputs=["aircraft:*"],
+            promotes_inputs=['aircraft:*', 'mission:*'],
+            promotes_outputs=['aircraft:*'],
         )
 
         self.add_subsystem(
-            'flops_based_geom',
-            PrepGeom(),
-            promotes_inputs=['*'],
-            promotes_outputs=['*']
+            'flops_based_geom', PrepGeom(), promotes_inputs=['*'], promotes_outputs=['*']
         )
 
     def configure(self):
@@ -49,33 +45,35 @@ class CombinedGeometry(om.Group):
         # geometry subsystems.
         flops_geom_pathname = self.flops_based_geom.pathname
         flops_fus_area_path = flops_geom_pathname + '.fuselage.' + Aircraft.Fuselage.WETTED_AREA
-        flops_fus_diam_path = flops_geom_pathname + \
-            '.fuselage_prelim.' + Aircraft.Fuselage.AVG_DIAMETER
+        flops_fus_diam_path = (
+            flops_geom_pathname + '.fuselage_prelim.' + Aircraft.Fuselage.AVG_DIAMETER
+        )
         gasp_geom_pathname = self.gasp_based_geom.pathname
         gasp_fus_area_path = gasp_geom_pathname + '.fuselage.size.' + Aircraft.Fuselage.WETTED_AREA
-        gasp_fus_diam_path = gasp_geom_pathname + \
-            '.fuselage.parameters.' + Aircraft.Fuselage.AVG_DIAMETER
+        gasp_fus_diam_path = (
+            gasp_geom_pathname + '.fuselage.parameters.' + Aircraft.Fuselage.AVG_DIAMETER
+        )
 
         if prioritize_origin is GASP:
             override = [flops_fus_area_path, flops_fus_diam_path]
 
             name = Aircraft.Fuselage.WETTED_AREA
-            outs = [(name, f"MANUAL_OVERRIDE:{name}")]
+            outs = [(name, f'MANUAL_OVERRIDE:{name}')]
             self.flops_based_geom.promotes('fuselage', outputs=outs)
 
             name = Aircraft.Fuselage.AVG_DIAMETER
-            outs = [(name, f"MANUAL_OVERRIDE:{name}")]
+            outs = [(name, f'MANUAL_OVERRIDE:{name}')]
             self.flops_based_geom.promotes('fuselage_prelim', outputs=outs)
 
         elif prioritize_origin is FLOPS:
             override = [gasp_fus_area_path, gasp_fus_diam_path]
 
             name = Aircraft.Fuselage.WETTED_AREA
-            outs = [(name, f"MANUAL_OVERRIDE:{name}")]
+            outs = [(name, f'MANUAL_OVERRIDE:{name}')]
             self.gasp_based_geom.fuselage.promotes('size', outputs=outs)
 
             name = Aircraft.Fuselage.AVG_DIAMETER
-            outs = [(name, f"MANUAL_OVERRIDE:{name}")]
+            outs = [(name, f'MANUAL_OVERRIDE:{name}')]
             self.gasp_based_geom.fuselage.promotes('parameters', outputs=outs)
 
         self.manual_overrides = override

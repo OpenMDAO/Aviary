@@ -43,22 +43,19 @@ class ClimbODETestCase(unittest.TestCase):
 
     def test_start_of_climb(self):
         # Test against GASP start of climb at 250 kts EAS, check partials
-        self.sys.options["EAS_target"] = 250
+        self.sys.options['EAS_target'] = 250
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
         throttle_climb = 0.956
-        self.prob.set_val(
-            Dynamic.Vehicle.Propulsion.THROTTLE, throttle_climb, units='unitless'
-        )
-        self.prob.set_val(Dynamic.Mission.ALTITUDE, 1000, units="ft")
-        self.prob.set_val(Dynamic.Vehicle.MASS, 174845, units="lbm")
-        self.prob.set_val("EAS", 250, units="kn")
+        self.prob.set_val(Dynamic.Vehicle.Propulsion.THROTTLE, throttle_climb, units='unitless')
+        self.prob.set_val(Dynamic.Mission.ALTITUDE, 1000, units='ft')
+        self.prob.set_val(Dynamic.Vehicle.MASS, 174845, units='lbm')
+        self.prob.set_val('EAS', 250, units='kn')
         # slightly greater than zero to help check partials
-        self.prob.set_val(Aircraft.Wing.INCIDENCE, 0.0000001, units="deg")
-        self.prob.set_val(
-            "interference_independent_of_shielded_area", 1.89927266)
-        self.prob.set_val("drag_loss_due_to_shielded_wing_area", 68.02065834)
+        self.prob.set_val(Aircraft.Wing.INCIDENCE, 0.0000001, units='deg')
+        self.prob.set_val('interference_independent_of_shielded_area', 1.89927266)
+        self.prob.set_val('drag_loss_due_to_shielded_wing_area', 68.02065834)
         self.prob.set_val(Aircraft.Wing.FORM_FACTOR, 1.25)
         self.prob.set_val(Aircraft.VerticalTail.FORM_FACTOR, 1.25)
         self.prob.set_val(Aircraft.HorizontalTail.FORM_FACTOR, 1.25)
@@ -83,14 +80,14 @@ class ClimbODETestCase(unittest.TestCase):
         check_prob_outputs(self.prob, testvals, rtol=1e-6)
 
         partial_data = self.prob.check_partials(
-            out_stream=None, method="cs", excludes=["*params*", "*aero*"]
+            out_stream=None, method='cs', excludes=['*params*', '*aero*']
         )
         assert_check_partials(partial_data, atol=1e-8, rtol=1e-8)
 
     def test_end_of_climb(self):
         # Test against GASP at 270 kts EAS and at cruise Mach.
-        self.sys.options["num_nodes"] = 2
-        self.sys.options["EAS_target"] = 270
+        self.sys.options['num_nodes'] = 2
+        self.sys.options['EAS_target'] = 270
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
@@ -100,15 +97,11 @@ class ClimbODETestCase(unittest.TestCase):
             np.array([throttle_climb, throttle_climb]),
             units='unitless',
         )
-        self.prob.set_val(
-            Dynamic.Mission.ALTITUDE, np.array([11000, 37000]), units="ft"
-        )
-        self.prob.set_val(Dynamic.Vehicle.MASS, np.array(
-            [174149, 171592]), units="lbm")
-        self.prob.set_val("EAS", np.array([270, 270]), units="kn")
-        self.prob.set_val(
-            "interference_independent_of_shielded_area", 1.89927266)
-        self.prob.set_val("drag_loss_due_to_shielded_wing_area", 68.02065834)
+        self.prob.set_val(Dynamic.Mission.ALTITUDE, np.array([11000, 37000]), units='ft')
+        self.prob.set_val(Dynamic.Vehicle.MASS, np.array([174149, 171592]), units='lbm')
+        self.prob.set_val('EAS', np.array([270, 270]), units='kn')
+        self.prob.set_val('interference_independent_of_shielded_area', 1.89927266)
+        self.prob.set_val('drag_loss_due_to_shielded_wing_area', 68.02065834)
         self.prob.set_val(Aircraft.Wing.FORM_FACTOR, 1.25)
         self.prob.set_val(Aircraft.VerticalTail.FORM_FACTOR, 1.25)
         self.prob.set_val(Aircraft.HorizontalTail.FORM_FACTOR, 1.25)
@@ -137,7 +130,7 @@ class ClimbODETestCase(unittest.TestCase):
         check_prob_outputs(self.prob, testvals, 1e-6)
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     unittest.main()
     # test = ClimbODETestCase()
     # test.setUp()

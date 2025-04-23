@@ -1,11 +1,26 @@
 import unittest
 import numpy as np
 
-from openmdao.utils.assert_utils import assert_near_equal, assert_equal_numstrings, assert_equal_arrays
+from openmdao.utils.assert_utils import (
+    assert_near_equal,
+    assert_equal_numstrings,
+    assert_equal_arrays,
+)
 
-from aviary.utils.doctape import (gramatical_list, check_value, check_contains, check_args,
-                                  run_command_no_file_error, get_attribute_name, get_all_keys, get_value, get_previous_line,
-                                  get_variable_name, glue_variable, glue_keys)
+from aviary.utils.doctape import (
+    gramatical_list,
+    check_value,
+    check_contains,
+    check_args,
+    run_command_no_file_error,
+    get_attribute_name,
+    get_all_keys,
+    get_value,
+    get_previous_line,
+    get_variable_name,
+    glue_variable,
+    glue_keys,
+)
 
 
 class DocTAPETests(unittest.TestCase):
@@ -33,6 +48,7 @@ class DocTAPETests(unittest.TestCase):
     def test_get_attribute_name(self):
         class dummy_object:
             attr1 = 1
+
         name = get_attribute_name(dummy_object, 1)
         assert_equal_numstrings(name, 'attr1')
 
@@ -45,10 +61,10 @@ class DocTAPETests(unittest.TestCase):
         assert_near_equal(val, 2)
 
     def test_get_previous_line(self):
-        something = "something_else"
+        something = 'something_else'
         line1 = get_previous_line()
         line2 = get_previous_line(2)
-        assert_equal_numstrings(line1, 'something = "something_else"')
+        assert_equal_numstrings(line1, "something = 'something_else'")
         assert_equal_numstrings(line2[1].strip(), 'line1 = get_previous_line()')
 
     def test_get_variable_name(self):

@@ -43,12 +43,11 @@ class FlightPathODETestCase(unittest.TestCase):
 
         set_params_for_unit_tests(self.prob)
 
-        self.prob.set_val(Dynamic.Mission.VELOCITY, [100, 100], units="kn")
-        self.prob.set_val(Dynamic.Vehicle.MASS, [100000, 100000], units="lbm")
-        self.prob.set_val(Dynamic.Mission.ALTITUDE, [500, 500], units="ft")
-        self.prob.set_val(
-            "interference_independent_of_shielded_area", 1.89927266)
-        self.prob.set_val("drag_loss_due_to_shielded_wing_area", 68.02065834)
+        self.prob.set_val(Dynamic.Mission.VELOCITY, [100, 100], units='kn')
+        self.prob.set_val(Dynamic.Vehicle.MASS, [100000, 100000], units='lbm')
+        self.prob.set_val(Dynamic.Mission.ALTITUDE, [500, 500], units='ft')
+        self.prob.set_val('interference_independent_of_shielded_area', 1.89927266)
+        self.prob.set_val('drag_loss_due_to_shielded_wing_area', 68.02065834)
         self.prob.set_val(Aircraft.Wing.FORM_FACTOR, 1.25)
         self.prob.set_val(Aircraft.VerticalTail.FORM_FACTOR, 1.25)
         self.prob.set_val(Aircraft.HorizontalTail.FORM_FACTOR, 1.25)
@@ -68,29 +67,26 @@ class FlightPathODETestCase(unittest.TestCase):
         check_prob_outputs(self.prob, testvals, rtol=1e-6)
 
         tol = 1e-6
-        assert_near_equal(
-            self.prob[Dynamic.Mission.ALTITUDE_RATE], np.array([0, 0]), tol
-        )
+        assert_near_equal(self.prob[Dynamic.Mission.ALTITUDE_RATE], np.array([0, 0]), tol)
 
         partial_data = self.prob.check_partials(
-            out_stream=None, method="cs", excludes=["*USatm*", "*params*", "*aero*"]
+            out_stream=None, method='cs', excludes=['*USatm*', '*params*', '*aero*']
         )
         assert_check_partials(partial_data, atol=1e-8, rtol=1e-8)
 
     def test_case2(self):
         # ground_roll = True (the aircraft is confined to the ground)
 
-        self.fp.options["ground_roll"] = True
+        self.fp.options['ground_roll'] = True
         self.prob.setup(check=False, force_alloc_complex=True)
 
         set_params_for_unit_tests(self.prob)
 
-        self.prob.set_val(Dynamic.Mission.VELOCITY, [100, 100], units="kn")
-        self.prob.set_val(Dynamic.Vehicle.MASS, [100000, 100000], units="lbm")
-        self.prob.set_val(Dynamic.Mission.ALTITUDE, [500, 500], units="ft")
-        self.prob.set_val(
-            "interference_independent_of_shielded_area", 1.89927266)
-        self.prob.set_val("drag_loss_due_to_shielded_wing_area", 68.02065834)
+        self.prob.set_val(Dynamic.Mission.VELOCITY, [100, 100], units='kn')
+        self.prob.set_val(Dynamic.Vehicle.MASS, [100000, 100000], units='lbm')
+        self.prob.set_val(Dynamic.Mission.ALTITUDE, [500, 500], units='ft')
+        self.prob.set_val('interference_independent_of_shielded_area', 1.89927266)
+        self.prob.set_val('drag_loss_due_to_shielded_wing_area', 68.02065834)
         self.prob.set_val(Aircraft.Wing.FORM_FACTOR, 1.25)
         self.prob.set_val(Aircraft.VerticalTail.FORM_FACTOR, 1.25)
         self.prob.set_val(Aircraft.HorizontalTail.FORM_FACTOR, 1.25)
@@ -107,10 +103,10 @@ class FlightPathODETestCase(unittest.TestCase):
         check_prob_outputs(self.prob, testvals, rtol=1e-6)
 
         partial_data = self.prob.check_partials(
-            out_stream=None, method="cs", excludes=["*USatm*", "*params*", "*aero*"]
+            out_stream=None, method='cs', excludes=['*USatm*', '*params*', '*aero*']
         )
         assert_check_partials(partial_data, atol=1e-8, rtol=1e-8)
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     unittest.main()

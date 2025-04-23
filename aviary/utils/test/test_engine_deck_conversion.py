@@ -51,13 +51,11 @@ class TestEngineDeckConversion(unittest.TestCase):
 
                 # Assert that the lines are equal
                 try:
-                    self.assertEqual(
-                        line_no_whitespace.count(expected_line), 1)
+                    self.assertEqual(line_no_whitespace.count(expected_line), 1)
 
                 except Exception as error:
                     exc_string = (
-                        f'Error: {filename}\nFound: {
-                            line_no_whitespace}\nExpected: {expected_line}'
+                        f'Error: {filename}\nFound: {line_no_whitespace}\nExpected: {expected_line}'
                     )
                     raise Exception(exc_string)
 
