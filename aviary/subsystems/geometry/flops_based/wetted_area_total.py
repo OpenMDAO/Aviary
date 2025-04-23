@@ -30,4 +30,5 @@ class TotalWettedArea(om.ExplicitComponent):
             + inputs[Aircraft.HorizontalTail.WETTED_AREA]
             + inputs[Aircraft.Nacelle.TOTAL_WETTED_AREA]
             + inputs[Aircraft.VerticalTail.WETTED_AREA]
-            + inputs[Aircraft.Wing.WETTED_AREA])
+            + inputs[Aircraft.Wing.WETTED_AREA]
+        )

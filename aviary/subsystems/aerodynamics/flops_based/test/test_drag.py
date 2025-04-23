@@ -19,13 +19,10 @@ from aviary.validation_cases.validation_tests import (
 )
 from aviary.variable_info.variables import Aircraft, Dynamic
 
-data_sets = get_flops_case_names(
-    only=['LargeSingleAisle1FLOPS', 'LargeSingleAisle2FLOPS', 'N3CC']
-)
+data_sets = get_flops_case_names(only=['LargeSingleAisle1FLOPS', 'LargeSingleAisle2FLOPS', 'N3CC'])
 
 
 class SimpleDragTest(unittest.TestCase):
-
     @parameterized.expand(data_sets, name_func=print_case)
     def test_case(self, case_name):
         flops_inputs = get_flops_inputs(case_name)
@@ -90,17 +87,14 @@ class SimpleDragTest(unittest.TestCase):
 
                 raise ValueError(msg) from None
 
-        data = prob.check_partials(out_stream=None, method="cs")
+        data = prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(data, atol=2.5e-10, rtol=1e-12)
 
-        assert_near_equal(prob.get_val("CD"), mission_simple_CD[case_name], 1e-6)
-        assert_near_equal(
-            prob.get_val(Dynamic.Vehicle.DRAG), mission_simple_drag[case_name], 1e-6
-        )
+        assert_near_equal(prob.get_val('CD'), mission_simple_CD[case_name], 1e-6)
+        assert_near_equal(prob.get_val(Dynamic.Vehicle.DRAG), mission_simple_drag[case_name], 1e-6)
 
 
 class TotalDragTest(unittest.TestCase):
-
     @parameterized.expand(data_sets, name_func=print_case)
     def test_case(self, case_name):
         flops_inputs = get_flops_inputs(case_name)
@@ -166,17 +160,14 @@ class TotalDragTest(unittest.TestCase):
 
                 raise ValueError(msg) from None
 
-        data = prob.check_partials(out_stream=None, method="cs")
+        data = prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(data, atol=2.5e-10, rtol=1e-12)
 
-        assert_near_equal(prob.get_val("CD"), mission_total_CD[case_name], 1e-6)
-        assert_near_equal(
-            prob.get_val(Dynamic.Vehicle.DRAG), mission_total_drag[case_name], 1e-6
-        )
+        assert_near_equal(prob.get_val('CD'), mission_total_CD[case_name], 1e-6)
+        assert_near_equal(prob.get_val(Dynamic.Vehicle.DRAG), mission_total_drag[case_name], 1e-6)
 
 
 class ComputedDragTest(unittest.TestCase):
-
     def test_derivs(self):
         nn = 2
 
@@ -208,15 +199,15 @@ class ComputedDragTest(unittest.TestCase):
         prob.set_val(Aircraft.Design.LIFT_DEPENDENT_DRAG_COEFF_FACTOR, 0.3)
         prob.set_val(Aircraft.Design.SUBSONIC_DRAG_COEFF_FACTOR, 1.4)
         prob.set_val(Aircraft.Design.SUPERSONIC_DRAG_COEFF_FACTOR, 1.1)
-        prob.set_val(Aircraft.Wing.AREA, 1370, units="ft**2")
+        prob.set_val(Aircraft.Wing.AREA, 1370, units='ft**2')
         prob.set_val(Dynamic.Atmosphere.DYNAMIC_PRESSURE, [206.0, 205.6], 'lbf/ft**2')
 
         prob.run_model()
 
-        derivs = prob.check_partials(out_stream=None, method="cs")
+        derivs = prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(derivs, atol=1e-12, rtol=1e-12)
 
-        assert_near_equal(prob.get_val("CD"), [0.0249732, 0.0297451], 1e-6)
+        assert_near_equal(prob.get_val('CD'), [0.0249732, 0.0297451], 1e-6)
         assert_near_equal(prob.get_val(Dynamic.Vehicle.DRAG), [31350.8, 37268.8], 1e-6)
 
 
@@ -235,9 +226,9 @@ def _add_drag_coefficients(
     CD0_scaled: np.ndarray,
     CDI_scaled: np.ndarray,
 ):
-    '''
+    """
     Insert drag coefficients into the mission data, undoing FLOPS scaling.
-    '''
+    """
     flops_inputs = get_flops_inputs(case_name)
     FCDSUB = flops_inputs.get_val(Aircraft.Design.SUBSONIC_DRAG_COEFF_FACTOR)
     FCDSUP = flops_inputs.get_val(Aircraft.Design.SUPERSONIC_DRAG_COEFF_FACTOR)
@@ -269,9 +260,7 @@ mission_test_data[key] = _mission_data = AviaryValues()
 _mission_data.set_val(
     Dynamic.Atmosphere.DYNAMIC_PRESSURE, np.array([206.0, 205.6, 205.4]), 'lbf/ft**2'
 )
-_mission_data.set_val(
-    Dynamic.Vehicle.MASS, np.array([176751.0, 176400.0, 176185.0]), 'lbm'
-)
+_mission_data.set_val(Dynamic.Vehicle.MASS, np.array([176751.0, 176400.0, 176185.0]), 'lbm')
 _mission_data.set_val(Dynamic.Vehicle.DRAG, np.array([9350.0, 9333.0, 9323.0]), 'lbf')
 
 M = np.array([0.7750, 0.7750, 0.7750])
@@ -289,9 +278,7 @@ mission_total_drag[key] = np.array([41590.64350841, 41522.41437213, 41469.505711
 
 key = 'LargeSingleAisle2FLOPS'
 mission_test_data[key] = _mission_data = AviaryValues()
-_mission_data.set_val(
-    Dynamic.Atmosphere.DYNAMIC_PRESSURE, [215.4, 215.4, 215.4], 'lbf/ft**2'
-)
+_mission_data.set_val(Dynamic.Atmosphere.DYNAMIC_PRESSURE, [215.4, 215.4, 215.4], 'lbf/ft**2')
 _mission_data.set_val(Dynamic.Vehicle.MASS, [169730.0, 169200.0, 167400.0], 'lbm')
 _mission_data.set_val(Dynamic.Vehicle.DRAG, [9542.0, 9512.0, 9411.0], 'lbf')
 
@@ -310,9 +297,7 @@ mission_total_drag[key] = np.array([42452.27140246, 42310.93514779, 41861.228882
 
 key = 'N3CC'
 mission_test_data[key] = _mission_data = AviaryValues()
-_mission_data.set_val(
-    Dynamic.Atmosphere.DYNAMIC_PRESSURE, [208.4, 288.5, 364.0], 'lbf/ft**2'
-)
+_mission_data.set_val(Dynamic.Atmosphere.DYNAMIC_PRESSURE, [208.4, 288.5, 364.0], 'lbf/ft**2')
 _mission_data.set_val(Dynamic.Vehicle.MASS, [128777.0, 128721.0, 128667.0], 'lbm')
 _mission_data.set_val(Dynamic.Vehicle.DRAG, [5837.0, 6551.0, 7566.0], 'lbf')
 
@@ -331,5 +316,5 @@ mission_total_CD[key] = np.array([0.0229615, 0.0186105, 0.0170335])
 mission_total_drag[key] = np.array([25968.341729, 29137.353709, 33647.401139])
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     unittest.main()
