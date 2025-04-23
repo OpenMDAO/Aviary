@@ -20,35 +20,33 @@ class SimpleCD(om.ExplicitComponent):
     def setup(self):
         nn = self.options['num_nodes']
 
-        add_aviary_input(self, Aircraft.Design.SUBSONIC_DRAG_COEFF_FACTOR,
-                         units='unitless')
-        add_aviary_input(self, Aircraft.Design.SUPERSONIC_DRAG_COEFF_FACTOR,
-                         units='unitless')
+        add_aviary_input(self, Aircraft.Design.SUBSONIC_DRAG_COEFF_FACTOR, units='unitless')
+        add_aviary_input(self, Aircraft.Design.SUPERSONIC_DRAG_COEFF_FACTOR, units='unitless')
 
         add_aviary_input(self, Dynamic.Atmosphere.MACH, shape=nn, units='unitless')
 
         self.add_input(
-            'CD_prescaled', val=np.ones(nn), units='unitless',
-            desc='total drag coefficient')
+            'CD_prescaled', val=np.ones(nn), units='unitless', desc='total drag coefficient'
+        )
 
-        self.add_output('CD', val=np.ones(nn),
-                        units='unitless', desc='total drag')
+        self.add_output('CD', val=np.ones(nn), units='unitless', desc='total drag')
 
     def setup_partials(self):
-        self.declare_partials('CD',
-                              ['CD_prescaled',
-                               Aircraft.Design.SUBSONIC_DRAG_COEFF_FACTOR,
-                               Aircraft.Design.SUPERSONIC_DRAG_COEFF_FACTOR]
-                              )
+        self.declare_partials(
+            'CD',
+            [
+                'CD_prescaled',
+                Aircraft.Design.SUBSONIC_DRAG_COEFF_FACTOR,
+                Aircraft.Design.SUPERSONIC_DRAG_COEFF_FACTOR,
+            ],
+        )
 
         self.declare_partials('CD', Dynamic.Atmosphere.MACH, dependent=False)
 
         nn = self.options['num_nodes']
         rows_cols = np.arange(nn)
 
-        self.declare_partials(
-            'CD', 'CD_prescaled',
-            rows=rows_cols, cols=rows_cols)
+        self.declare_partials('CD', 'CD_prescaled', rows=rows_cols, cols=rows_cols)
 
     def compute(self, inputs, outputs):
         FCDSUB = inputs[Aircraft.Design.SUBSONIC_DRAG_COEFF_FACTOR]
@@ -100,12 +98,9 @@ class SimpleDrag(om.ExplicitComponent):
 
         add_aviary_input(self, Aircraft.Wing.AREA, units='m**2')
 
-        add_aviary_input(self, Dynamic.Atmosphere.DYNAMIC_PRESSURE,
-                         shape=nn, units='N/m**2')
+        add_aviary_input(self, Dynamic.Atmosphere.DYNAMIC_PRESSURE, shape=nn, units='N/m**2')
 
-        self.add_input(
-            'CD', val=np.ones(nn), units='unitless',
-            desc='total drag coefficient')
+        self.add_input('CD', val=np.ones(nn), units='unitless', desc='total drag coefficient')
 
         add_aviary_output(self, Dynamic.Vehicle.DRAG, shape=nn, units='N')
 
@@ -140,7 +135,7 @@ class SimpleDrag(om.ExplicitComponent):
 
 
 class TotalDrag(om.Group):
-    '''
+    """
     Calculate drag as a function of wing area, dynamic pressure, and lift-dependent and
     lift-independent drag coefficients.
 
@@ -156,7 +151,7 @@ class TotalDrag(om.Group):
     Apply optional factors (default: 1.0) for increasing or decreasing the total drag
     coefficient before calculating drag. The effect is cummulative with the above
     optional factors.
-    '''
+    """
 
     def initialize(self):
         self.options.declare('num_nodes', types=int)
@@ -169,26 +164,30 @@ class TotalDrag(om.Group):
 
         kwargs = {
             'CDI': dict(
-                val=np.ones(nn), units='unitless',
+                val=np.ones(nn),
+                units='unitless',
                 desc='lift-dependent drag coefficient,'
-                ' including contributions from pressure drag coefficient'),
+                ' including contributions from pressure drag coefficient',
+            ),
             'CD0': dict(
-                val=np.ones(nn), units='unitless',
-                desc='lift-independent drag coefficient'),
-            'FCDI': dict(val=1., units='unitless', desc=FCDI_desc),
-            'FCD0': dict(val=1., units='unitless', desc=FCD0_desc),
-            'CD_prescaled': dict(val=np.ones(nn), units='unitless',
-                                 desc='total drag coefficient')
+                val=np.ones(nn), units='unitless', desc='lift-independent drag coefficient'
+            ),
+            'FCDI': dict(val=1.0, units='unitless', desc=FCDI_desc),
+            'FCD0': dict(val=1.0, units='unitless', desc=FCD0_desc),
+            'CD_prescaled': dict(val=np.ones(nn), units='unitless', desc='total drag coefficient'),
         }
 
         total_drag_comp = self.add_subsystem(
             'total_drag_coeff',
             om.ExecComp('CD_prescaled = CDI * FCDI + CD0 * FCD0', **kwargs),
             promotes_inputs=[
-                'CDI', 'CD0',
+                'CDI',
+                'CD0',
                 ('FCDI', Aircraft.Design.LIFT_DEPENDENT_DRAG_COEFF_FACTOR),
-                ('FCD0', Aircraft.Design.ZERO_LIFT_DRAG_COEFF_FACTOR)],
-            promotes_outputs=['*'])
+                ('FCD0', Aircraft.Design.ZERO_LIFT_DRAG_COEFF_FACTOR),
+            ],
+            promotes_outputs=['*'],
+        )
         total_drag_comp.declare_coloring(show_summary=False)
 
         self.add_subsystem('simple_CD', SimpleCD(num_nodes=nn), promotes=['*'])

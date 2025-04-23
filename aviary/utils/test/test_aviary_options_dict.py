@@ -11,7 +11,6 @@ class TestAviaryOptionsDict(unittest.TestCase):
     """
 
     def test_declare_options(self):
-
         opts = AviaryOptionsDictionary()
 
         opts.declare('simple', default=3.5)
@@ -24,7 +23,6 @@ class TestAviaryOptionsDict(unittest.TestCase):
         self.assertEqual(opts['bounds_units'], ((1.2, 4.3), 'ft'))
 
     def test_get_val(self):
-
         opts = AviaryOptionsDictionary()
 
         opts.declare('simple_units', default=2.0, units='ft')
@@ -34,21 +32,14 @@ class TestAviaryOptionsDict(unittest.TestCase):
         assert_near_equal(opts.get_val('bounds_units', units='inch'), (60.0, 72.0))
 
     def test_load_on_init(self):
-
         class TestOptions(AviaryOptionsDictionary):
-
             def declare_options(self):
-
                 self.declare(
                     'p1',
                     default=3.0,
                 )
 
-                self.declare(
-                    'p1_units',
-                    default=3.0,
-                    units='ft'
-                )
+                self.declare('p1_units', default=3.0, units='ft')
 
         data = {
             'p1': 5.5,
@@ -69,8 +60,7 @@ class TestAviaryOptionsDict(unittest.TestCase):
         self.assertEqual(opts['p1'], 6.5)
 
     def test_errors(self):
-
-        opts = AviaryOptionsDictionary(parent_name="builder")
+        opts = AviaryOptionsDictionary(parent_name='builder')
 
         opts.declare('simple', default=3.5)
         with self.assertRaises(AttributeError) as cm:

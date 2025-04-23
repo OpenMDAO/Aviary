@@ -6,7 +6,10 @@ from aviary.mission.gasp_based.ode.params import ParamPort
 from aviary.subsystems.mass.mass_to_weight import MassToWeight
 from aviary.variable_info.enums import AnalysisScheme, AnalysisScheme
 from aviary.variable_info.variables import Dynamic
-from aviary.mission.gasp_based.ode.time_integration_base_classes import add_SGM_required_inputs, add_SGM_required_outputs
+from aviary.mission.gasp_based.ode.time_integration_base_classes import (
+    add_SGM_required_inputs,
+    add_SGM_required_outputs,
+)
 
 
 class AccelODE(TwoDOFODE):
@@ -18,16 +21,19 @@ class AccelODE(TwoDOFODE):
     """
 
     def setup(self):
-        nn = self.options["num_nodes"]
-        analysis_scheme = self.options["analysis_scheme"]
+        nn = self.options['num_nodes']
+        analysis_scheme = self.options['analysis_scheme']
         aviary_options = self.options['aviary_options']
         core_subsystems = self.options['core_subsystems']
 
         if analysis_scheme is AnalysisScheme.SHOOTING:
-            add_SGM_required_inputs(self, {
-                't_curr': {'units': 's'},
-                Dynamic.Mission.DISTANCE: {'units': 'ft'},
-            })
+            add_SGM_required_inputs(
+                self,
+                {
+                    't_curr': {'units': 's'},
+                    Dynamic.Mission.DISTANCE: {'units': 'ft'},
+                },
+            )
             add_SGM_required_outputs(
                 self,
                 {
@@ -36,31 +42,29 @@ class AccelODE(TwoDOFODE):
             )
 
         # TODO: paramport
-        self.add_subsystem("params", ParamPort(), promotes=["*"])
+        self.add_subsystem('params', ParamPort(), promotes=['*'])
 
         self.add_atmosphere()
 
         self.add_subsystem(
-            "calc_weight",
+            'calc_weight',
             MassToWeight(num_nodes=nn),
-            promotes_inputs=[("mass", Dynamic.Vehicle.MASS)],
-            promotes_outputs=["weight"],
+            promotes_inputs=[('mass', Dynamic.Vehicle.MASS)],
+            promotes_outputs=['weight'],
         )
 
         kwargs = {
             'method': 'cruise',
             'output_alpha': True,
         }
-        self.options['subsystem_options'].setdefault('core_aerodynamics', {}).update(
-            kwargs
-        )
+        self.options['subsystem_options'].setdefault('core_aerodynamics', {}).update(kwargs)
 
         self.add_core_subsystems()
 
         self.add_external_subsystems()
 
         self.add_subsystem(
-            "accel_eom",
+            'accel_eom',
             AccelerationRates(num_nodes=nn),
             promotes_inputs=[
                 Dynamic.Vehicle.MASS,
@@ -77,12 +81,8 @@ class AccelODE(TwoDOFODE):
         self.add_excess_rate_comps(nn)
 
         ParamPort.set_default_vals(self)
+        self.set_input_defaults(Dynamic.Vehicle.MASS, val=14e4 * np.ones(nn), units='lbm')
+        self.set_input_defaults(Dynamic.Mission.ALTITUDE, val=500 * np.ones(nn), units='ft')
         self.set_input_defaults(
-            Dynamic.Vehicle.MASS, val=14e4 * np.ones(nn), units="lbm"
-        )
-        self.set_input_defaults(
-            Dynamic.Mission.ALTITUDE, val=500 * np.ones(nn), units="ft"
-        )
-        self.set_input_defaults(
-            Dynamic.Mission.VELOCITY, val=200 * np.ones(nn), units="m/s"
+            Dynamic.Mission.VELOCITY, val=200 * np.ones(nn), units='m/s'
         )  # val here is nominal

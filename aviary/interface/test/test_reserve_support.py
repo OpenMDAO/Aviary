@@ -17,19 +17,17 @@ from aviary.variable_info.variables import Aircraft, Mission
 #      exists in traj as well)
 @use_tempdirs
 class PreMissionGroupTest(unittest.TestCase):
-
     def test_post_mission_promotion(self):
         phase_info = deepcopy(ph_in_flops)
 
         prob = AviaryProblem()
 
-        csv_path = "models/test_aircraft/aircraft_for_bench_GwFm.csv"
+        csv_path = 'models/test_aircraft/aircraft_for_bench_GwFm.csv'
 
         prob.load_inputs(csv_path, phase_info)
         prob.check_and_preprocess_inputs()
 
-        prob.aviary_inputs.set_val(
-            Aircraft.Design.RESERVE_FUEL_ADDITIONAL, 10000.0, units='lbm')
+        prob.aviary_inputs.set_val(Aircraft.Design.RESERVE_FUEL_ADDITIONAL, 10000.0, units='lbm')
 
         prob.add_pre_mission_systems()
         prob.add_phases()
@@ -38,7 +36,7 @@ class PreMissionGroupTest(unittest.TestCase):
         prob.link_phases()
 
         prob.add_design_variables()
-        prob.add_objective(objective_type="mass", ref=-1e5)
+        prob.add_objective(objective_type='mass', ref=-1e5)
 
         prob.setup()
         prob.set_initial_guesses()
@@ -55,7 +53,7 @@ class PreMissionGroupTest(unittest.TestCase):
 
         prob = AviaryProblem()
 
-        csv_path = "models/small_single_aisle/small_single_aisle_GASP.csv"
+        csv_path = 'models/small_single_aisle/small_single_aisle_GASP.csv'
 
         prob.load_inputs(csv_path, phase_info)
         prob.check_and_preprocess_inputs()
@@ -69,7 +67,7 @@ class PreMissionGroupTest(unittest.TestCase):
         prob.link_phases()
 
         prob.add_design_variables()
-        prob.add_objective(objective_type="mass", ref=-1e5)
+        prob.add_objective(objective_type='mass', ref=-1e5)
 
         prob.setup()
         prob.set_initial_guesses()
@@ -77,7 +75,8 @@ class PreMissionGroupTest(unittest.TestCase):
         prob.run_model()
 
         res_frac = prob.aviary_inputs.get_val(
-            Aircraft.Design.RESERVE_FUEL_FRACTION, units='unitless')
+            Aircraft.Design.RESERVE_FUEL_FRACTION, units='unitless'
+        )
         td_mass = prob.model.get_val(Mission.Landing.TOUCHDOWN_MASS, units='lbm')
         reserve = prob.model.get_val(Mission.Design.RESERVE_FUEL, units='lbm')
         assert_near_equal(reserve, res_frac * (140000.0 - td_mass), 1e-3)

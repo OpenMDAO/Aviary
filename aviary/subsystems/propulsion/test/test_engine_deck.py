@@ -136,5 +136,5 @@ class EngineDeckTest(unittest.TestCase):
         assert_near_equal(fuel_flow_rate, expected_fuel_flow_rate, tolerance=tol)
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     unittest.main()

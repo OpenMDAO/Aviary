@@ -15,6 +15,7 @@ class DetailedWingBendingFact(om.ExplicitComponent):
     If one or zero wing-mounted engines are present, it is assumed there is no engine
     inertial relief factor (i.e. the single engine is mounted at the wing root)
     """
+
     # Basically, Engine.WING_LOCATIONS is ignored if there are one or fewer wing engines
 
     def initialize(self):
@@ -31,20 +32,21 @@ class DetailedWingBendingFact(om.ExplicitComponent):
         total_num_wing_engines = self.options[Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES]
         num_engine_type = len(self.options[Aircraft.Engine.NUM_ENGINES])
 
-        add_aviary_input(self, Aircraft.Wing.LOAD_PATH_SWEEP_DIST,
-                         shape=num_input_stations - 1, units='deg')
-        add_aviary_input(self, Aircraft.Wing.THICKNESS_TO_CHORD_DIST,
-                         shape=num_input_stations, units='unitless')
-        add_aviary_input(self, Aircraft.Wing.CHORD_PER_SEMISPAN_DIST,
-                         shape=num_input_stations, units='unitless')
+        add_aviary_input(
+            self, Aircraft.Wing.LOAD_PATH_SWEEP_DIST, shape=num_input_stations - 1, units='deg'
+        )
+        add_aviary_input(
+            self, Aircraft.Wing.THICKNESS_TO_CHORD_DIST, shape=num_input_stations, units='unitless'
+        )
+        add_aviary_input(
+            self, Aircraft.Wing.CHORD_PER_SEMISPAN_DIST, shape=num_input_stations, units='unitless'
+        )
         add_aviary_input(self, Mission.Design.GROSS_MASS, units='lbm')
-        add_aviary_input(self, Aircraft.Engine.POD_MASS,
-                         shape=num_engine_type, units='lbm')
+        add_aviary_input(self, Aircraft.Engine.POD_MASS, shape=num_engine_type, units='lbm')
         add_aviary_input(self, Aircraft.Wing.ASPECT_RATIO, units='unitless')
         add_aviary_input(self, Aircraft.Wing.ASPECT_RATIO_REF, units='unitless')
         add_aviary_input(self, Aircraft.Wing.STRUT_BRACING_FACTOR, units='unitless')
-        add_aviary_input(self, Aircraft.Wing.AEROELASTIC_TAILORING_FACTOR,
-                         units='unitless')
+        add_aviary_input(self, Aircraft.Wing.AEROELASTIC_TAILORING_FACTOR, units='unitless')
 
         if total_num_wing_engines > 1:
             add_aviary_input(
@@ -64,7 +66,7 @@ class DetailedWingBendingFact(om.ExplicitComponent):
 
     def setup_partials(self):
         # TODO: Analytic derivs will be challenging, but possible.
-        self.declare_partials("*", "*", method='cs')
+        self.declare_partials('*', '*', method='cs')
 
     def compute(self, inputs, outputs):
         input_station_dist = self.options[Aircraft.Wing.INPUT_STATION_DIST]
@@ -123,9 +125,7 @@ class DetailedWingBendingFact(om.ExplicitComponent):
 
         dy = np.diff(integration_stations)
         avg_sweep = np.sum(
-            (dy[1:] + 2.0 * integration_stations[1:-1])
-            * dy[1:]
-            * sweep_int_stations[1:-1]
+            (dy[1:] + 2.0 * integration_stations[1:-1]) * dy[1:] * sweep_int_stations[1:-1]
         )
 
         # TODO: add all load_distribution_factor options
@@ -144,9 +144,7 @@ class DetailedWingBendingFact(om.ExplicitComponent):
         chord_interp = InterpND(
             method='slinear', points=(inp_stations), x_interp=integration_stations
         )
-        chord_int_stations = chord_interp.evaluate_spline(
-            chord, compute_derivative=False
-        )
+        chord_int_stations = chord_interp.evaluate_spline(chord, compute_derivative=False)
         if arref > 0.0:
             # Scale
             chord_int_stations *= arref / ar
@@ -155,8 +153,7 @@ class DetailedWingBendingFact(om.ExplicitComponent):
             dy
             * (
                 chord_int_stations[:-1] * (2 * load_intensity[:-1] + load_intensity[1:])
-                + chord_int_stations[1:]
-                * (2 * load_intensity[1:] + load_intensity[:-1])
+                + chord_int_stations[1:] * (2 * load_intensity[1:] + load_intensity[:-1])
             )
             / 6
         )
@@ -167,8 +164,7 @@ class DetailedWingBendingFact(om.ExplicitComponent):
             dy**2
             * (
                 chord_int_stations[:-1] * (load_intensity[:-1] + load_intensity[1:])
-                + chord_int_stations[1:]
-                * (3 * load_intensity[1:] + load_intensity[:-1])
+                + chord_int_stations[1:] * (3 * load_intensity[1:] + load_intensity[:-1])
             )
             / 12
         )
@@ -180,12 +176,8 @@ class DetailedWingBendingFact(om.ExplicitComponent):
         emi = (del_moment + dy * load_path_length) * csw
         # em = np.sum(emi)
 
-        tc_interp = InterpND(
-            method='slinear', points=(inp_stations), x_interp=integration_stations
-        )
-        tc_int_stations = tc_interp.evaluate_spline(
-            thickness_to_chord, compute_derivative=False
-        )
+        tc_interp = InterpND(method='slinear', points=(inp_stations), x_interp=integration_stations)
+        tc_int_stations = tc_interp.evaluate_spline(thickness_to_chord, compute_derivative=False)
         if tcref > 0.0:
             tc_int_stations *= tc / tcref
 
@@ -207,11 +199,7 @@ class DetailedWingBendingFact(om.ExplicitComponent):
 
         bt = btb / (
             ar ** (0.25 * fstrt)
-            * (
-                1.0
-                + (0.5 * faert - 0.16 * fstrt) * sa**2
-                + 0.03 * caya * (1.0 - 0.5 * faert) * sa
-            )
+            * (1.0 + (0.5 * faert - 0.16 * fstrt) * sa**2 + 0.03 * caya * (1.0 - 0.5 * faert) * sa)
         )
 
         outputs[Aircraft.Wing.BENDING_MATERIAL_FACTOR] = bt

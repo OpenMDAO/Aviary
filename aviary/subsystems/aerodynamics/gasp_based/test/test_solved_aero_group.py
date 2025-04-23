@@ -22,28 +22,28 @@ from aviary.variable_info.enums import LegacyCode
 
 
 # The drag-polar-generating component reads this in, instead of computing the polars.
-polar_file = "subsystems/aerodynamics/gasp_based/data/large_single_aisle_1_aero_free_reduced_alpha.txt"
+polar_file = (
+    'subsystems/aerodynamics/gasp_based/data/large_single_aisle_1_aero_free_reduced_alpha.txt'
+)
 
 phase_info = deepcopy(phase_info)
 
-phase_info["pre_mission"]["include_takeoff"] = False
-phase_info["post_mission"]["include_landing"] = False
-phase_info["cruise"]["subsystem_options"]["core_aerodynamics"]["method"] = (
-    "tabular_cruise"
-)
-phase_info["cruise"]["subsystem_options"]["core_aerodynamics"]["solve_alpha"] = True
-phase_info["cruise"]["subsystem_options"]["core_aerodynamics"]["aero_data"] = polar_file
-phase_info.pop("climb")
-phase_info.pop("descent")
+phase_info['pre_mission']['include_takeoff'] = False
+phase_info['post_mission']['include_landing'] = False
+phase_info['cruise']['subsystem_options']['core_aerodynamics']['method'] = 'tabular_cruise'
+phase_info['cruise']['subsystem_options']['core_aerodynamics']['solve_alpha'] = True
+phase_info['cruise']['subsystem_options']['core_aerodynamics']['aero_data'] = polar_file
+phase_info.pop('climb')
+phase_info.pop('descent')
 
 data = read_data_file(polar_file)
-ALTITUDE = data.get_val("Altitude", "ft")
-MACH = data.get_val("Mach", "unitless")
-ALPHA = data.get_val("Angle_of_Attack", "deg")
+ALTITUDE = data.get_val('Altitude', 'ft')
+MACH = data.get_val('Mach', 'unitless')
+ALPHA = data.get_val('Angle_of_Attack', 'deg')
 
 shape = (np.unique(ALTITUDE).size, np.unique(MACH).size, np.unique(ALPHA).size)
-CL = data.get_val("CL").reshape(shape)
-CD = data.get_val("CD").reshape(shape)
+CL = data.get_val('CL').reshape(shape)
+CD = data.get_val('CD').reshape(shape)
 
 
 class TestSolvedAero(unittest.TestCase):
@@ -54,7 +54,7 @@ class TestSolvedAero(unittest.TestCase):
         prob = AviaryProblem()
 
         prob.load_inputs(
-            "subsystems/aerodynamics/flops_based/test/data/high_wing_single_aisle.csv",
+            'subsystems/aerodynamics/flops_based/test/data/high_wing_single_aisle.csv',
             local_phase_info,
         )
         prob.aero_method = LegacyCode.GASP
@@ -74,8 +74,8 @@ class TestSolvedAero(unittest.TestCase):
 
         prob.run_model()
 
-        CL_base = prob.get_val("traj.cruise.rhs_all.core_aerodynamics.CL")
-        CD_base = prob.get_val("traj.cruise.rhs_all.core_aerodynamics.CD")
+        CL_base = prob.get_val('traj.cruise.rhs_all.core_aerodynamics.CL')
+        CD_base = prob.get_val('traj.cruise.rhs_all.core_aerodynamics.CD')
 
         return CL_base, CD_base
 
@@ -86,28 +86,26 @@ class TestSolvedAero(unittest.TestCase):
 
         ph_in = deepcopy(phase_info)
 
-        polar_builder = FakeDragPolarBuilder(
-            name="aero", altitude=ALTITUDE, mach=MACH, alpha=ALPHA
-        )
+        polar_builder = FakeDragPolarBuilder(name='aero', altitude=ALTITUDE, mach=MACH, alpha=ALPHA)
         aero_data = NamedValues()
-        aero_data.set_val("altitude", ALTITUDE, "ft")
-        aero_data.set_val("mach", MACH, "unitless")
-        aero_data.set_val("angle_of_attack", ALPHA, "deg")
+        aero_data.set_val('altitude', ALTITUDE, 'ft')
+        aero_data.set_val('mach', MACH, 'unitless')
+        aero_data.set_val('angle_of_attack', ALPHA, 'deg')
 
         subsystem_options = {
-            "method": "tabular_cruise",
-            "solve_alpha": True,
-            "aero_data": aero_data,
-            "connect_training_data": True,
+            'method': 'tabular_cruise',
+            'solve_alpha': True,
+            'aero_data': aero_data,
+            'connect_training_data': True,
         }
-        ph_in["pre_mission"]["external_subsystems"] = [polar_builder]
+        ph_in['pre_mission']['external_subsystems'] = [polar_builder]
 
-        ph_in["cruise"]["subsystem_options"] = {"core_aerodynamics": subsystem_options}
+        ph_in['cruise']['subsystem_options'] = {'core_aerodynamics': subsystem_options}
 
         prob = AviaryProblem()
 
         prob.load_inputs(
-            "subsystems/aerodynamics/flops_based/test/data/high_wing_single_aisle.csv",
+            'subsystems/aerodynamics/flops_based/test/data/high_wing_single_aisle.csv',
             ph_in,
         )
         prob.aero_method = LegacyCode.GASP
@@ -115,12 +113,8 @@ class TestSolvedAero(unittest.TestCase):
         # Preprocess inputs
         prob.check_and_preprocess_inputs()
 
-        prob.aviary_inputs.set_val(
-            Aircraft.Design.LIFT_POLAR, np.zeros_like(CL), units="unitless"
-        )
-        prob.aviary_inputs.set_val(
-            Aircraft.Design.DRAG_POLAR, np.zeros_like(CD), units="unitless"
-        )
+        prob.aviary_inputs.set_val(Aircraft.Design.LIFT_POLAR, np.zeros_like(CL), units='unitless')
+        prob.aviary_inputs.set_val(Aircraft.Design.DRAG_POLAR, np.zeros_like(CD), units='unitless')
 
         prob.add_pre_mission_systems()
         prob.add_phases()
@@ -134,8 +128,8 @@ class TestSolvedAero(unittest.TestCase):
 
         prob.run_model()
 
-        CL_pass = prob.get_val("traj.cruise.rhs_all.core_aerodynamics.CL")
-        CD_pass = prob.get_val("traj.cruise.rhs_all.core_aerodynamics.CD")
+        CL_pass = prob.get_val('traj.cruise.rhs_all.core_aerodynamics.CL')
+        CD_pass = prob.get_val('traj.cruise.rhs_all.core_aerodynamics.CD')
 
         assert_near_equal(CL_pass, CL_base, 1e-6)
         assert_near_equal(CD_pass, CD_base, 1e-6)
@@ -149,13 +143,13 @@ class TestSolvedAero(unittest.TestCase):
         prob = AviaryProblem()
 
         prob.load_inputs(
-            "subsystems/aerodynamics/flops_based/test/data/high_wing_single_aisle.csv",
+            'subsystems/aerodynamics/flops_based/test/data/high_wing_single_aisle.csv',
             local_phase_info,
         )
         prob.aero_method = LegacyCode.GASP
 
         # Change value just to be certain.
-        prob.aviary_inputs.set_val(Aircraft.Wing.AREA, 7777, units="ft**2")
+        prob.aviary_inputs.set_val(Aircraft.Wing.AREA, 7777, units='ft**2')
 
         # Preprocess inputs
         prob.check_and_preprocess_inputs()
@@ -173,10 +167,8 @@ class TestSolvedAero(unittest.TestCase):
         prob.run_model()
 
         # verify that we are promoting the parameters.
-        wing_area = prob.get_val(
-            "traj.cruise.rhs_all.aircraft:wing:area", units="ft**2"
-        )
-        actual_wing_area = prob.aviary_inputs.get_val(Aircraft.Wing.AREA, units="ft**2")
+        wing_area = prob.get_val('traj.cruise.rhs_all.aircraft:wing:area', units='ft**2')
+        actual_wing_area = prob.aviary_inputs.get_val(Aircraft.Wing.AREA, units='ft**2')
         assert_near_equal(wing_area, actual_wing_area)
 
     def test_solved_aero_pass_polar_unique_abscissa(self):
@@ -185,9 +177,7 @@ class TestSolvedAero(unittest.TestCase):
 
         prob = AviaryProblem()
 
-        csv_path = (
-            "subsystems/aerodynamics/flops_based/test/data/high_wing_single_aisle.csv"
-        )
+        csv_path = 'subsystems/aerodynamics/flops_based/test/data/high_wing_single_aisle.csv'
         prob.load_inputs(csv_path, local_phase_info)
         prob.aero_method = LegacyCode.GASP
 
@@ -206,8 +196,8 @@ class TestSolvedAero(unittest.TestCase):
 
         prob.run_model()
 
-        CL_base = prob.get_val("traj.cruise.rhs_all.core_aerodynamics.CL")
-        CD_base = prob.get_val("traj.cruise.rhs_all.core_aerodynamics.CD")
+        CL_base = prob.get_val('traj.cruise.rhs_all.core_aerodynamics.CL')
+        CD_base = prob.get_val('traj.cruise.rhs_all.core_aerodynamics.CD')
 
         # Lift and Drag polars passed from external component in pre-mission.
 
@@ -235,23 +225,21 @@ class TestSolvedAero(unittest.TestCase):
         mach = np.array([0.0, 0.2, 0.4, 0.5, 0.6, 0.7, 0.75, 0.8, 0.85, 0.9])
         alpha = np.array([-2.0, 0.0, 2.0, 4.0, 6.0, 8.0, 10.0])
 
-        polar_builder = FakeDragPolarBuilder(
-            name="aero", altitude=alt, mach=mach, alpha=alpha
-        )
+        polar_builder = FakeDragPolarBuilder(name='aero', altitude=alt, mach=mach, alpha=alpha)
         aero_data = NamedValues()
-        aero_data.set_val("altitude", alt, "ft")
-        aero_data.set_val("mach", mach, "unitless")
-        aero_data.set_val("angle_of_attack", alpha, "deg")
+        aero_data.set_val('altitude', alt, 'ft')
+        aero_data.set_val('mach', mach, 'unitless')
+        aero_data.set_val('angle_of_attack', alpha, 'deg')
 
         subsystem_options = {
-            "method": "tabular_cruise",
-            "solve_alpha": True,
-            "aero_data": aero_data,
-            "connect_training_data": True,
+            'method': 'tabular_cruise',
+            'solve_alpha': True,
+            'aero_data': aero_data,
+            'connect_training_data': True,
         }
-        ph_in["pre_mission"]["external_subsystems"] = [polar_builder]
+        ph_in['pre_mission']['external_subsystems'] = [polar_builder]
 
-        ph_in["cruise"]["subsystem_options"] = {"core_aerodynamics": subsystem_options}
+        ph_in['cruise']['subsystem_options'] = {'core_aerodynamics': subsystem_options}
 
         prob = AviaryProblem()
 
@@ -261,12 +249,8 @@ class TestSolvedAero(unittest.TestCase):
         # Preprocess inputs
         prob.check_and_preprocess_inputs()
 
-        prob.aviary_inputs.set_val(
-            Aircraft.Design.LIFT_POLAR, np.zeros_like(CL), units="unitless"
-        )
-        prob.aviary_inputs.set_val(
-            Aircraft.Design.DRAG_POLAR, np.zeros_like(CD), units="unitless"
-        )
+        prob.aviary_inputs.set_val(Aircraft.Design.LIFT_POLAR, np.zeros_like(CL), units='unitless')
+        prob.aviary_inputs.set_val(Aircraft.Design.DRAG_POLAR, np.zeros_like(CD), units='unitless')
 
         prob.add_pre_mission_systems()
         prob.add_phases()
@@ -280,8 +264,8 @@ class TestSolvedAero(unittest.TestCase):
 
         prob.run_model()
 
-        CL_pass = prob.get_val("traj.cruise.rhs_all.core_aerodynamics.CL")
-        CD_pass = prob.get_val("traj.cruise.rhs_all.core_aerodynamics.CD")
+        CL_pass = prob.get_val('traj.cruise.rhs_all.core_aerodynamics.CL')
+        CD_pass = prob.get_val('traj.cruise.rhs_all.core_aerodynamics.CD')
 
         assert_near_equal(CL_pass, CL_base, 1e-6)
         assert_near_equal(CD_pass, CD_base, 1e-6)
@@ -298,36 +282,36 @@ class FakeCalcDragPolar(om.ExplicitComponent):
         Declare options.
         """
         self.options.declare(
-            "altitude",
+            'altitude',
             default=None,
             allow_none=True,
-            desc="List of altitudes in ascending order.",
+            desc='List of altitudes in ascending order.',
         )
         self.options.declare(
-            "mach",
+            'mach',
             default=None,
             allow_none=True,
-            desc="List of mach numbers in ascending order.",
+            desc='List of mach numbers in ascending order.',
         )
         self.options.declare(
-            "alpha",
+            'alpha',
             default=None,
             allow_none=True,
-            desc="List of angles of attack in ascending order.",
+            desc='List of angles of attack in ascending order.',
         )
 
     def setup(self):
-        altitude = self.options["altitude"]
-        mach = self.options["mach"]
-        alpha = self.options["alpha"]
+        altitude = self.options['altitude']
+        mach = self.options['mach']
+        alpha = self.options['alpha']
 
-        self.add_input(Aircraft.Wing.AREA, 1.0, units="ft**2")
-        self.add_input(Aircraft.Wing.SPAN, 1.0, units="ft")
+        self.add_input(Aircraft.Wing.AREA, 1.0, units='ft**2')
+        self.add_input(Aircraft.Wing.SPAN, 1.0, units='ft')
 
         shape = (len(altitude), len(mach), len(alpha))
 
-        self.add_output("drag_table", shape=shape, units="unitless")
-        self.add_output("lift_table", shape=shape, units="unitless")
+        self.add_output('drag_table', shape=shape, units='unitless')
+        self.add_output('lift_table', shape=shape, units='unitless')
 
     def compute(self, inputs, outputs):
         """
@@ -336,8 +320,8 @@ class FakeCalcDragPolar(om.ExplicitComponent):
 
         Any real analysis would compute these tables.
         """
-        outputs["drag_table"] = CD
-        outputs["lift_table"] = CL
+        outputs['drag_table'] = CD
+        outputs['lift_table'] = CL
 
 
 class FakeDragPolarBuilder(SubsystemBuilderBase):
@@ -354,7 +338,7 @@ class FakeDragPolarBuilder(SubsystemBuilderBase):
         List of angles of attack in ascending order. (Optional)
     """
 
-    def __init__(self, name="aero", altitude=None, mach=None, alpha=None):
+    def __init__(self, name='aero', altitude=None, mach=None, alpha=None):
         super().__init__(name)
         self.altitude = np.unique(altitude)
         self.mach = np.unique(mach)
@@ -379,18 +363,18 @@ class FakeDragPolarBuilder(SubsystemBuilderBase):
         )
 
         group.add_subsystem(
-            "aero",
+            'aero',
             calc_drag_polar,
-            promotes_inputs=["aircraft:*"],
+            promotes_inputs=['aircraft:*'],
             promotes_outputs=[
-                ("drag_table", Aircraft.Design.DRAG_POLAR),
-                ("lift_table", Aircraft.Design.LIFT_POLAR),
+                ('drag_table', Aircraft.Design.DRAG_POLAR),
+                ('lift_table', Aircraft.Design.LIFT_POLAR),
             ],
         )
         return group
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     unittest.main()
     # test = TestSolvedAero()
     # test.test_solved_aero_pass_polar_unique_abscissa()

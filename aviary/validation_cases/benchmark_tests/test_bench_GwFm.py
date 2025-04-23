@@ -32,7 +32,6 @@ class ProblemPhaseTestCase(unittest.TestCase):
         expected_dict = {}
 
         # block auto-formatting of tables
-        # autopep8: off
         # fmt: off
         expected_dict['times'] = np.array(
             [
@@ -120,7 +119,6 @@ class ProblemPhaseTestCase(unittest.TestCase):
                 [138.08432897], [136.46253134], [116.34759903], [102.07377559]
             ]
         )
-        # autopep8: on
         # fmt: on
 
         self.expected_dict = expected_dict
@@ -129,31 +127,31 @@ class ProblemPhaseTestCase(unittest.TestCase):
 
         _clear_problem_names()  # need to reset these to simulate separate runs
 
-    @require_pyoptsparse(optimizer="IPOPT")
+    @require_pyoptsparse(optimizer='IPOPT')
     def bench_test_swap_1_GwFm_IPOPT(self):
         prob = run_aviary(
-            "models/test_aircraft/aircraft_for_bench_GwFm.csv",
+            'models/test_aircraft/aircraft_for_bench_GwFm.csv',
             self.phase_info,
             max_iter=100,
-            optimizer="IPOPT",
+            optimizer='IPOPT',
             verbosity=0,
         )
 
         compare_against_expected_values(prob, self.expected_dict)
 
-    @require_pyoptsparse(optimizer="SNOPT")
+    @require_pyoptsparse(optimizer='SNOPT')
     def bench_test_swap_1_GwFm_SNOPT(self):
         prob = run_aviary(
-            "models/test_aircraft/aircraft_for_bench_GwFm.csv",
+            'models/test_aircraft/aircraft_for_bench_GwFm.csv',
             self.phase_info,
             max_iter=50,
-            optimizer="SNOPT",
+            optimizer='SNOPT',
             verbosity=0,
         )
         compare_against_expected_values(prob, self.expected_dict)
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     test = ProblemPhaseTestCase()
     test.setUp()
     # test.bench_test_swap_1_GwFm_IPOPT()

@@ -4,8 +4,7 @@ import openmdao.api as om
 
 from aviary.mission.flops_based.ode.range_rate import RangeRate
 from aviary.utils.test_utils.variable_test import assert_match_varnames
-from aviary.validation_cases.validation_data.flops_data.full_mission_test_data import \
-    data
+from aviary.validation_cases.validation_data.flops_data.full_mission_test_data import data
 from aviary.validation_cases.validation_tests import do_validation_test
 from aviary.variable_info.variables import Dynamic
 
@@ -30,7 +29,6 @@ class RangeRateTest(unittest.TestCase):
         prob.setup(check=False, force_alloc_complex=True)
 
     def test_case1(self):
-
         do_validation_test(
             self.prob,
             'full_mission_test_data',
@@ -45,5 +43,5 @@ class RangeRateTest(unittest.TestCase):
         assert_match_varnames(self.prob.model)
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     unittest.main()

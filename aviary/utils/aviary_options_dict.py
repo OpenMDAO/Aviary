@@ -54,12 +54,11 @@ class AviaryOptionsDictionary(om.OptionsDictionary):
 
         # Loop over all user_options and set them.
         for name, val in data.items():
-
             # Support for legacy format (unitless)
             if (
                 isinstance(val, tuple)
                 and self._dict[name]['set_function'] is None
-                and val[1] == "unitless"
+                and val[1] == 'unitless'
             ):
                 val = val[0]
 
@@ -123,7 +122,6 @@ class AviaryOptionsDictionary(om.OptionsDictionary):
         """
 
         if units is not None:
-
             if self._dict[key]['set_function'] is None:
                 self._raise(
                     f"Option '{key}' does not have declared units.",

@@ -100,9 +100,7 @@ class CoreGeometryBuilder(GeometryBuilderBase):
 
         if method != 'external':
             if both_geom:
-                geom_group = CombinedGeometry(
-                    code_origin_to_prioritize=code_origin_to_prioritize
-                )
+                geom_group = CombinedGeometry(code_origin_to_prioritize=code_origin_to_prioritize)
 
             elif code_origin is GASP:
                 geom_group = SizeGroup()
@@ -132,7 +130,7 @@ class CoreGeometryBuilder(GeometryBuilderBase):
         params = {}
 
         for entry in Aircraft.Nacelle.__dict__:
-            if entry != "__dict__":  # cannot get attribute from mappingproxy
+            if entry != '__dict__':  # cannot get attribute from mappingproxy
                 var = getattr(Aircraft.Nacelle, entry)
                 if var in aviary_inputs:
                     if 'total' not in var:

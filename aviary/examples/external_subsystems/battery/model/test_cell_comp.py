@@ -19,5 +19,5 @@ class Test_cell_comp(unittest.TestCase):
         p.check_partials(compact_print=True, method='cs', step=1e-50)
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     unittest.main()
