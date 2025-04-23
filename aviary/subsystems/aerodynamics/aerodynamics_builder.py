@@ -205,7 +205,11 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
                     f'{method}_aero', aero_group, promotes=['*']
                 )
 
-                aero_supergroup.add_subsystem(SolveAlphaGroup(num_nodes=num_nodes))
+                aero_supergroup.add_subsystem(
+                    "solve_alpha_group",
+                    SolveAlphaGroup(num_nodes=num_nodes),
+                    promotes=["*"],
+                )
 
                 aero_supergroup.linear_solver = om.DirectSolver()
                 newton = aero_supergroup.nonlinear_solver = om.NewtonSolver(
