@@ -3,9 +3,10 @@ import unittest
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 
-from aviary.subsystems.mass.gasp_based.wing import (WingMassGroup,
-                                                    WingMassSolve,
-                                                    WingMassTotal)
+from aviary.subsystems.mass.gasp_based.wing import (
+    WingMassGroup, WingMassSolve, WingMassTotal,
+    BWBWingMassSolve, BWBWingMassGroup
+)
 from aviary.variable_info.functions import setup_model_options
 from aviary.variable_info.options import get_option_defaults
 from aviary.variable_info.variables import Aircraft, Mission
@@ -711,8 +712,135 @@ class WingMassGroupTestCase4(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e-8, rtol=1e-8)
 
 
+class BWBWingMassSolveTestCase(unittest.TestCase):
+    """this is the large single aisle 1 V3 test case"""
+
+    def setUp(self):
+
+        self.prob = om.Problem()
+        self.prob.model.add_subsystem("wingfuel", BWBWingMassSolve(),
+                                      promotes=["*"])
+
+        self.prob.model.set_input_defaults(
+            Mission.Design.GROSS_MASS, val=175400, units="lbm"
+        )
+        self.prob.model.set_input_defaults(
+            Aircraft.Wing.HIGH_LIFT_MASS, val=3645, units="lbm")
+        self.prob.model.set_input_defaults("c_strut_braced", val=1.0, units="unitless")
+        self.prob.model.set_input_defaults(
+            Aircraft.Wing.ULTIMATE_LOAD_FACTOR, val=3.893, units="unitless")
+        self.prob.model.set_input_defaults(
+            Aircraft.Wing.MASS_COEFFICIENT, val=102.5, units="unitless")
+        self.prob.model.set_input_defaults(
+            Aircraft.Wing.MATERIAL_FACTOR, val=1.2213063198183813, units="unitless"
+        )
+        self.prob.model.set_input_defaults(
+            Aircraft.Engine.POSITION_FACTOR, val=0.98, units="unitless")
+        self.prob.model.set_input_defaults("c_gear_loc", val=1.0, units="unitless")
+        self.prob.model.set_input_defaults(Aircraft.Wing.SPAN, val=155.8, units="ft")
+        self.prob.model.set_input_defaults(Aircraft.Fuselage.AVG_DIAMETER, val=38.0, units="ft")
+        self.prob.model.set_input_defaults(
+            Aircraft.Wing.TAPER_RATIO, val=0.33, units="unitless"
+        )
+        self.prob.model.set_input_defaults(
+            Aircraft.Wing.THICKNESS_TO_CHORD_ROOT, val=0.15, units="unitless"
+        )
+        self.prob.model.set_input_defaults(
+            "half_sweep", val=0.3947081519145335, units="rad"
+        )
+
+        newton = self.prob.model.nonlinear_solver = om.NewtonSolver()
+        newton.options["atol"] = 1e-9
+        newton.options["rtol"] = 1e-9
+        newton.options["iprint"] = 2
+        newton.options["maxiter"] = 10
+        newton.options["solve_subsystems"] = True
+        newton.options["max_sub_solves"] = 10
+        newton.options["err_on_non_converge"] = True
+        newton.options["reraise_child_analysiserror"] = False
+        newton.linesearch = om.BoundsEnforceLS()
+        newton.linesearch.options["bound_enforcement"] = "scalar"
+        newton.linesearch.options["iprint"] = -1
+        newton.options["err_on_non_converge"] = False
+
+        self.prob.model.linear_solver = om.DirectSolver(assemble_jac=True)
+
+        setup_model_options(self.prob, AviaryValues(
+            {Aircraft.Engine.NUM_ENGINES: ([2], 'unitless')}))
+
+        self.prob.setup(check=False, force_alloc_complex=True)
+
+    def test_case1(self):
+
+        self.prob.run_model()
+
+        tol = 5e-4
+        assert_near_equal(self.prob["isolated_wing_mass"], 15830.0, tol)
+
+        partial_data = self.prob.check_partials(out_stream=None, method="cs")
+        assert_check_partials(partial_data, atol=1e-8, rtol=1e-8)
+
+
+class BWBWingMassGroupTest(unittest.TestCase):
+    """this is the large single aisle 1 V3 test case"""
+
+    def setUp(self):
+
+        self.prob = om.Problem()
+        self.prob.model.add_subsystem(
+            "group",
+            BWBWingMassGroup(),
+            promotes=["*"],
+        )
+
+        self.prob.model.set_input_defaults(
+            Mission.Design.GROSS_MASS, val=175400, units="lbm"
+        )
+        self.prob.model.set_input_defaults(
+            Aircraft.Wing.HIGH_LIFT_MASS, val=3645, units="lbm")
+        self.prob.model.set_input_defaults("c_strut_braced", val=1.0, units="unitless")
+        self.prob.model.set_input_defaults(
+            Aircraft.Wing.ULTIMATE_LOAD_FACTOR, val=3.893, units="unitless")
+        self.prob.model.set_input_defaults(
+            Aircraft.Wing.MASS_COEFFICIENT, val=102.5, units="unitless"
+        )
+        self.prob.model.set_input_defaults(
+            Aircraft.Wing.MATERIAL_FACTOR, val=1.2213063198183813, units="unitless"
+        )
+        self.prob.model.set_input_defaults(
+            Aircraft.Engine.POSITION_FACTOR, val=0.98, units="unitless")
+        self.prob.model.set_input_defaults("c_gear_loc", val=1.0, units="unitless")
+        self.prob.model.set_input_defaults(Aircraft.Wing.SPAN, val=155.8, units="ft")
+        self.prob.model.set_input_defaults(Aircraft.Fuselage.AVG_DIAMETER, val=38.0, units="ft")
+        self.prob.model.set_input_defaults(
+            Aircraft.Wing.TAPER_RATIO, val=0.33, units="unitless"
+        )
+        self.prob.model.set_input_defaults(
+            Aircraft.Wing.THICKNESS_TO_CHORD_ROOT, val=0.15, units="unitless"
+        )
+        self.prob.model.set_input_defaults(
+            "half_sweep", val=0.3947081519145335, units="rad"
+        )
+
+        setup_model_options(self.prob, AviaryValues(
+            {Aircraft.Engine.NUM_ENGINES: ([2], 'unitless')}))
+
+        self.prob.setup(check=False, force_alloc_complex=True)
+
+    def test_case1(self):
+
+        self.prob.run_model()
+
+        tol = 5e-4
+        assert_near_equal(self.prob[Aircraft.Wing.MASS], 15830, tol)
+        assert_near_equal(self.prob["isolated_wing_mass"], 15830, tol)
+
+        partial_data = self.prob.check_partials(out_stream=None, method="cs")
+        assert_check_partials(partial_data, atol=1e-8, rtol=1e-8)
+
+
 if __name__ == "__main__":
     # unittest.main()
-    test = WingMassSolveTestCase2()
+    test = BWBWingMassGroupTest()
     test.setUp()
     test.test_case1()
