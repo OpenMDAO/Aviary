@@ -63,7 +63,7 @@ class MassSummationTestCase1(unittest.TestCase):
     def test_case1(self):
         self.prob.run_model()
 
-        # print(f"wetted_area: {self.prob[Aircraft.Fuselage.WETTED_AREA]}")
+        # print(f'wetted_area: {self.prob[Aircraft.Fuselage.WETTED_AREA]}')
 
         tol = 5e-4
         # size values:
@@ -256,7 +256,7 @@ class MassSummationTestCase2(unittest.TestCase):
         )
         self.prob.model.set_input_defaults(Aircraft.Engine.REFERENCE_DIAMETER, 5.8, units='ft')
         # self.prob.model.set_input_defaults(
-        #     Aircraft.Engine.REFERENCE_SLS_THRUST, 28690, units="lbf"
+        #     Aircraft.Engine.REFERENCE_SLS_THRUST, 28690, units='lbf'
         # )
         self.prob.model.set_input_defaults(Aircraft.Engine.SCALE_FACTOR, 1.02823, units='unitless')
         self.prob.model.set_input_defaults(
@@ -375,16 +375,12 @@ class MassSummationTestCase2(unittest.TestCase):
         self.prob.model.set_input_defaults(
             Aircraft.Fuselage.MASS_COEFFICIENT, val=128, units='unitless'
         )
-        self.prob.model.set_input_defaults('fuel_mass.fus_and_struct.pylon_len', val=0, units='ft')
+        self.prob.model.set_input_defaults('fuel_mass.fuselage.pylon_len', val=0, units='ft')
         self.prob.model.set_input_defaults(
-<<<<<<< HEAD
-            "fuel_mass.fuselage.pylon_len", val=0, units='ft'
+            'fuel_mass.fuselage.pylon_len', val=0, units='ft'
         )
         self.prob.model.set_input_defaults(
-            "fuel_mass.fuselage.MAT", val=0, units='lbm'
-=======
-            'fuel_mass.fus_and_struct.MAT', val=0, units='lbm'
->>>>>>> 1e29f27c9fbe1b9370d442466cf8ab16f82b4583
+            'fuel_mass.fuselage.MAT', val=0, units='lbm'
         )  # note: not actually defined in program, likely an error
         self.prob.model.set_input_defaults(Aircraft.Wing.MASS_SCALER, val=1, units='unitless')
         self.prob.model.set_input_defaults(
@@ -616,7 +612,7 @@ class MassSummationTestCase3(unittest.TestCase):
         )
         self.prob.model.set_input_defaults(Aircraft.Engine.REFERENCE_DIAMETER, 5.8, units='ft')
         # self.prob.model.set_input_defaults(
-        #     Aircraft.Engine.REFERENCE_SLS_THRUST, 28690, units="lbf"
+        #     Aircraft.Engine.REFERENCE_SLS_THRUST, 28690, units='lbf'
         # )
         self.prob.model.set_input_defaults(Aircraft.Engine.SCALE_FACTOR, 1.02823, units='unitless')
         self.prob.model.set_input_defaults(
@@ -736,16 +732,12 @@ class MassSummationTestCase3(unittest.TestCase):
         self.prob.model.set_input_defaults(
             Aircraft.Fuselage.MASS_COEFFICIENT, val=128, units='unitless'
         )
-        self.prob.model.set_input_defaults('fuel_mass.fus_and_struct.pylon_len', val=0, units='ft')
+        self.prob.model.set_input_defaults('fuel_mass.fuselage.pylon_len', val=0, units='ft')
         self.prob.model.set_input_defaults(
-<<<<<<< HEAD
-            "fuel_mass.fuselage.pylon_len", val=0, units='ft'
+            'fuel_mass.fuselage.pylon_len', val=0, units='ft'
         )
         self.prob.model.set_input_defaults(
-            "fuel_mass.fuselage.MAT", val=0, units='lbm'
-=======
-            'fuel_mass.fus_and_struct.MAT', val=0, units='lbm'
->>>>>>> 1e29f27c9fbe1b9370d442466cf8ab16f82b4583
+            'fuel_mass.fuselage.MAT', val=0, units='lbm'
         )  # note: not actually defined in program, likely an error
         self.prob.model.set_input_defaults(Aircraft.Wing.MASS_SCALER, val=1, units='unitless')
         self.prob.model.set_input_defaults(
@@ -973,7 +965,7 @@ class MassSummationTestCase4(unittest.TestCase):
         )
         self.prob.model.set_input_defaults(Aircraft.Engine.REFERENCE_DIAMETER, 5.8, units='ft')
         # self.prob.model.set_input_defaults(
-        #     Aircraft.Engine.REFERENCE_SLS_THRUST, 28690, units="lbf"
+        #     Aircraft.Engine.REFERENCE_SLS_THRUST, 28690, units='lbf'
         # )
         self.prob.model.set_input_defaults(Aircraft.Engine.SCALE_FACTOR, 1.02823, units='unitless')
         self.prob.model.set_input_defaults(
@@ -1093,16 +1085,12 @@ class MassSummationTestCase4(unittest.TestCase):
         self.prob.model.set_input_defaults(
             Aircraft.Fuselage.MASS_COEFFICIENT, val=128, units='unitless'
         )
-        self.prob.model.set_input_defaults('fuel_mass.fus_and_struct.pylon_len', val=0, units='ft')
+        self.prob.model.set_input_defaults('fuel_mass.fuselage.pylon_len', val=0, units='ft')
         self.prob.model.set_input_defaults(
-<<<<<<< HEAD
-            "fuel_mass.fuselage.pylon_len", val=0, units='ft'
+            'fuel_mass.fuselage.pylon_len', val=0, units='ft'
         )
         self.prob.model.set_input_defaults(
-            "fuel_mass.fuselage.MAT", val=0, units='lbm'
-=======
-            'fuel_mass.fus_and_struct.MAT', val=0, units='lbm'
->>>>>>> 1e29f27c9fbe1b9370d442466cf8ab16f82b4583
+            'fuel_mass.fuselage.MAT', val=0, units='lbm'
         )  # note: not actually defined in program, likely an error
         self.prob.model.set_input_defaults(Aircraft.Wing.MASS_SCALER, val=1, units='unitless')
         self.prob.model.set_input_defaults(
@@ -1330,7 +1318,7 @@ class MassSummationTestCase5(unittest.TestCase):
         )
         self.prob.model.set_input_defaults(Aircraft.Engine.REFERENCE_DIAMETER, 5.8, units='ft')
         # self.prob.model.set_input_defaults(
-        #     Aircraft.Engine.REFERENCE_SLS_THRUST, 28690, units="lbf"
+        #     Aircraft.Engine.REFERENCE_SLS_THRUST, 28690, units='lbf'
         # )
         self.prob.model.set_input_defaults(Aircraft.Engine.SCALE_FACTOR, 1.02823, units='unitless')
         self.prob.model.set_input_defaults(
@@ -1450,16 +1438,12 @@ class MassSummationTestCase5(unittest.TestCase):
         self.prob.model.set_input_defaults(
             Aircraft.Fuselage.MASS_COEFFICIENT, val=128, units='unitless'
         )
-        self.prob.model.set_input_defaults('fuel_mass.fus_and_struct.pylon_len', val=0, units='ft')
+        self.prob.model.set_input_defaults('fuel_mass.fuselage.pylon_len', val=0, units='ft')
         self.prob.model.set_input_defaults(
-<<<<<<< HEAD
-            "fuel_mass.fuselage.pylon_len", val=0, units='ft'
+            'fuel_mass.fuselage.pylon_len', val=0, units='ft'
         )
         self.prob.model.set_input_defaults(
-            "fuel_mass.fuselage.MAT", val=0, units='lbm'
-=======
-            'fuel_mass.fus_and_struct.MAT', val=0, units='lbm'
->>>>>>> 1e29f27c9fbe1b9370d442466cf8ab16f82b4583
+            'fuel_mass.fuselage.MAT', val=0, units='lbm'
         )  # note: not actually defined in program, likely an error
         self.prob.model.set_input_defaults(Aircraft.Wing.MASS_SCALER, val=1, units='unitless')
         self.prob.model.set_input_defaults(
@@ -1522,7 +1506,7 @@ class MassSummationTestCase5(unittest.TestCase):
             self.prob[Aircraft.LandingGear.MAIN_GEAR_MASS],
             6384.349999999999,
             tol,
-            # self.prob["fixed_mass.main_gear_mass"], 6384.349999999999, tol
+            # self.prob['fixed_mass.main_gear_mass'], 6384.349999999999, tol
         )  # calculated by hand
 
         assert_near_equal(self.prob[Aircraft.Propulsion.TOTAL_ENGINE_MASS], 12606, tol)
@@ -1686,7 +1670,7 @@ class MassSummationTestCase6(unittest.TestCase):
         )
         self.prob.model.set_input_defaults(Aircraft.Engine.REFERENCE_DIAMETER, 5.8, units='ft')
         # self.prob.model.set_input_defaults(
-        #     Aircraft.Engine.REFERENCE_SLS_THRUST, 28690, units="lbf"
+        #     Aircraft.Engine.REFERENCE_SLS_THRUST, 28690, units='lbf'
         # )
         self.prob.model.set_input_defaults(Aircraft.Engine.SCALE_FACTOR, 1.02823, units='unitless')
         self.prob.model.set_input_defaults(
@@ -1806,16 +1790,12 @@ class MassSummationTestCase6(unittest.TestCase):
         self.prob.model.set_input_defaults(
             Aircraft.Fuselage.MASS_COEFFICIENT, val=128, units='unitless'
         )
-        self.prob.model.set_input_defaults('fuel_mass.fus_and_struct.pylon_len', val=0, units='ft')
+        self.prob.model.set_input_defaults('fuel_mass.fuselage.pylon_len', val=0, units='ft')
         self.prob.model.set_input_defaults(
-<<<<<<< HEAD
-            "fuel_mass.fuselage.pylon_len", val=0, units='ft'
+            'fuel_mass.fuselage.pylon_len', val=0, units='ft'
         )
         self.prob.model.set_input_defaults(
-            "fuel_mass.fuselage.MAT", val=0, units='lbm'
-=======
-            'fuel_mass.fus_and_struct.MAT', val=0, units='lbm'
->>>>>>> 1e29f27c9fbe1b9370d442466cf8ab16f82b4583
+            'fuel_mass.fuselage.MAT', val=0, units='lbm'
         )  # note: not actually defined in program, likely an error
         self.prob.model.set_input_defaults(Aircraft.Wing.MASS_SCALER, val=1, units='unitless')
         self.prob.model.set_input_defaults(
@@ -1878,7 +1858,7 @@ class MassSummationTestCase6(unittest.TestCase):
             self.prob[Aircraft.LandingGear.MAIN_GEAR_MASS],
             6384.349999999999,
             tol,
-            # self.prob["fixed_mass.main_gear_mass"], 6384.349999999999, tol
+            # self.prob['fixed_mass.main_gear_mass'], 6384.349999999999, tol
         )  # calculated by hand
 
         assert_near_equal(self.prob[Aircraft.Propulsion.TOTAL_ENGINE_MASS], 12606, tol)
@@ -2044,7 +2024,7 @@ class MassSummationTestCase7(unittest.TestCase):
         )
         self.prob.model.set_input_defaults(Aircraft.Engine.REFERENCE_DIAMETER, 7.36, units='ft')
         # self.prob.model.set_input_defaults(
-        #     Aircraft.Engine.REFERENCE_SLS_THRUST, 28620.0, units="lbf"
+        #     Aircraft.Engine.REFERENCE_SLS_THRUST, 28620.0, units='lbf'
         # )
         self.prob.model.set_input_defaults(Aircraft.Engine.SCALE_FACTOR, 0.594, units='unitless')
         self.prob.model.set_input_defaults(
@@ -2165,23 +2145,19 @@ class MassSummationTestCase7(unittest.TestCase):
         self.prob.model.set_input_defaults(
             Aircraft.Fuselage.MASS_COEFFICIENT, val=128, units='unitless'
         )
-        self.prob.model.set_input_defaults('fuel_mass.fus_and_struct.pylon_len', val=0, units='ft')
+        self.prob.model.set_input_defaults('fuel_mass.fuselage.pylon_len', val=0, units='ft')
         self.prob.model.set_input_defaults(
-<<<<<<< HEAD
-            Aircraft.Wing.FOLD_MASS_COEFFICIENT, val=0.2, units="unitless"
+            Aircraft.Wing.FOLD_MASS_COEFFICIENT, val=0.2, units='unitless'
         )
 
         self.prob.model.set_input_defaults(
-            Aircraft.Fuselage.MASS_COEFFICIENT, val=128, units="unitless"
+            Aircraft.Fuselage.MASS_COEFFICIENT, val=128, units='unitless'
         )
         self.prob.model.set_input_defaults(
-            "fuel_mass.fuselage.pylon_len", val=0, units='ft'
+            'fuel_mass.fuselage.pylon_len', val=0, units='ft'
         )
         self.prob.model.set_input_defaults(
-            "fuel_mass.fuselage.MAT", val=0, units='lbm'
-=======
-            'fuel_mass.fus_and_struct.MAT', val=0, units='lbm'
->>>>>>> 1e29f27c9fbe1b9370d442466cf8ab16f82b4583
+            'fuel_mass.fuselage.MAT', val=0, units='lbm'
         )  # note: not actually defined in program, likely an error
         self.prob.model.set_input_defaults(Aircraft.Wing.MASS_SCALER, val=1, units='unitless')
         self.prob.model.set_input_defaults(
@@ -2251,7 +2227,7 @@ class MassSummationTestCase7(unittest.TestCase):
             self.prob[Aircraft.LandingGear.MAIN_GEAR_MASS],
             5219.3076,
             tol,
-            # self.prob["fixed_mass.main_gear_mass"], 5219.3076, tol
+            # self.prob['fixed_mass.main_gear_mass'], 5219.3076, tol
         )  # note: value came from running the GASP code on my own and printing it out
 
         assert_near_equal(self.prob[Aircraft.Propulsion.TOTAL_ENGINE_MASS], 8007, tol)
@@ -2377,7 +2353,7 @@ class MassSummationTestCase8(unittest.TestCase):
         )
         self.prob.model.set_input_defaults(Aircraft.Engine.REFERENCE_DIAMETER, 7.642, units='ft')
         # self.prob.model.set_input_defaults(
-        #     Aircraft.Engine.REFERENCE_SLS_THRUST, 28620.0, units="lbf"
+        #     Aircraft.Engine.REFERENCE_SLS_THRUST, 28620.0, units='lbf'
         # )
         self.prob.model.set_input_defaults(Aircraft.Engine.SCALE_FACTOR, 1.35255, units='unitless')
         self.prob.model.set_input_defaults(
@@ -2535,25 +2511,21 @@ class MassSummationTestCase8(unittest.TestCase):
         self.prob.model.set_input_defaults(
             Aircraft.Fuselage.MASS_COEFFICIENT, val=89.66, units='unitless'
         )
-        self.prob.model.set_input_defaults('fuel_mass.fus_and_struct.pylon_len', val=0, units='ft')
+        self.prob.model.set_input_defaults('fuel_mass.fuselage.pylon_len', val=0, units='ft')
         self.prob.model.set_input_defaults(
-<<<<<<< HEAD
-            Aircraft.Fuel.FUEL_MARGIN, val=10.0, units="unitless"
+            Aircraft.Fuel.FUEL_MARGIN, val=10.0, units='unitless'
         )
         self.prob.model.set_input_defaults(
-            Aircraft.Fuel.FUEL_SYSTEM_MASS_COEFFICIENT, val=0.060, units="unitless"
+            Aircraft.Fuel.FUEL_SYSTEM_MASS_COEFFICIENT, val=0.060, units='unitless'
         )
         self.prob.model.set_input_defaults(
-            Aircraft.Fuselage.MASS_COEFFICIENT, val=89.66, units="unitless"
+            Aircraft.Fuselage.MASS_COEFFICIENT, val=89.66, units='unitless'
         )
         self.prob.model.set_input_defaults(
-            "fuel_mass.fuselage.pylon_len", val=0, units='ft'
+            'fuel_mass.fuselage.pylon_len', val=0, units='ft'
         )
         self.prob.model.set_input_defaults(
-            "fuel_mass.fuselage.MAT", val=0, units='lbm'
-=======
-            'fuel_mass.fus_and_struct.MAT', val=0, units='lbm'
->>>>>>> 1e29f27c9fbe1b9370d442466cf8ab16f82b4583
+            'fuel_mass.fuselage.MAT', val=0, units='lbm'
         )  # not in file
         self.prob.model.set_input_defaults(Aircraft.Wing.MASS_SCALER, val=1, units='unitless')
         self.prob.model.set_input_defaults(
@@ -2592,7 +2564,7 @@ class MassSummationTestCase8(unittest.TestCase):
             Aircraft.Wing.FOLD_MASS_COEFFICIENT, val=0.2, units='unitless'
         )
         # self.prob.model.set_input_defaults(
-        #     Aircraft.Strut.AREA, 523.337, units="ft**2"
+        #     Aircraft.Strut.AREA, 523.337, units='ft**2'
         # )  # had to calculate by hand
         self.prob.model.set_input_defaults(Aircraft.Strut.MASS_COEFFICIENT, 0.238, units='unitless')
 
@@ -2634,7 +2606,7 @@ class MassSummationTestCase8(unittest.TestCase):
             self.prob[Aircraft.LandingGear.MAIN_GEAR_MASS],
             4123.4,
             tol,
-            # self.prob["fixed_mass.main_gear_mass"], 4123.4, tol
+            # self.prob['fixed_mass.main_gear_mass'], 4123.4, tol
         )  # note:printed out from GASP code
 
         assert_near_equal(self.prob[Aircraft.Propulsion.TOTAL_ENGINE_MASS], 10453.0, tol)
@@ -2758,7 +2730,7 @@ class MassSummationTestCase9(unittest.TestCase):
         )
         self.prob.model.set_input_defaults(Aircraft.Engine.REFERENCE_DIAMETER, 8.425, units='ft')
         # self.prob.model.set_input_defaults(
-        #     Aircraft.Engine.REFERENCE_SLS_THRUST, 28620, units="lbf"
+        #     Aircraft.Engine.REFERENCE_SLS_THRUST, 28620, units='lbf'
         # )
         self.prob.model.set_input_defaults(Aircraft.Engine.SCALE_FACTOR, 0.73934, units='unitless')
         self.prob.model.set_input_defaults(
@@ -2914,8 +2886,8 @@ class MassSummationTestCase9(unittest.TestCase):
         self.prob.model.set_input_defaults(
             Aircraft.Fuselage.MASS_COEFFICIENT, val=96.94, units='unitless'
         )
-        self.prob.model.set_input_defaults('fuel_mass.fus_and_struct.pylon_len', val=0, units='ft')
-        self.prob.model.set_input_defaults('fuel_mass.fus_and_struct.MAT', val=0, units='lbm')
+        self.prob.model.set_input_defaults('fuel_mass.fuselage.pylon_len', val=0, units='ft')
+        self.prob.model.set_input_defaults('fuel_mass.fuselage.MAT', val=0, units='lbm')
         self.prob.model.set_input_defaults(Aircraft.Wing.MASS_SCALER, val=1, units='unitless')
         self.prob.model.set_input_defaults(
             Aircraft.HorizontalTail.MASS_SCALER, val=1, units='unitless'
@@ -2925,35 +2897,31 @@ class MassSummationTestCase9(unittest.TestCase):
         )
         self.prob.model.set_input_defaults(Aircraft.Fuselage.MASS_SCALER, val=1, units='unitless')
         self.prob.model.set_input_defaults(
-<<<<<<< HEAD
-            Aircraft.Fuselage.MASS_COEFFICIENT, val=96.94, units="unitless"
+            Aircraft.Fuselage.MASS_COEFFICIENT, val=96.94, units='unitless'
         )
         self.prob.model.set_input_defaults(
-            "fuel_mass.fuselage.pylon_len", val=0, units='ft'
+            'fuel_mass.fuselage.pylon_len', val=0, units='ft'
         )
         self.prob.model.set_input_defaults(
-            "fuel_mass.fuselage.MAT", val=0, units='lbm'
+            'fuel_mass.fuselage.MAT', val=0, units='lbm'
         )
         self.prob.model.set_input_defaults(
-            Aircraft.Wing.MASS_SCALER, val=1, units="unitless"
+            Aircraft.Wing.MASS_SCALER, val=1, units='unitless'
         )
         self.prob.model.set_input_defaults(
-            Aircraft.HorizontalTail.MASS_SCALER, val=1, units="unitless"
+            Aircraft.HorizontalTail.MASS_SCALER, val=1, units='unitless'
         )
         self.prob.model.set_input_defaults(
-            Aircraft.VerticalTail.MASS_SCALER, val=1, units="unitless"
+            Aircraft.VerticalTail.MASS_SCALER, val=1, units='unitless'
         )
         self.prob.model.set_input_defaults(
-            Aircraft.Fuselage.MASS_SCALER, val=1, units="unitless"
+            Aircraft.Fuselage.MASS_SCALER, val=1, units='unitless'
         )
         self.prob.model.set_input_defaults(
-            Aircraft.LandingGear.TOTAL_MASS_SCALER, val=1, units="unitless"
-        )
-        self.prob.model.set_input_defaults(
-            Aircraft.Engine.POD_MASS_SCALER, val=1, units="unitless"
-=======
             Aircraft.LandingGear.TOTAL_MASS_SCALER, val=1, units='unitless'
->>>>>>> 1e29f27c9fbe1b9370d442466cf8ab16f82b4583
+        )
+        self.prob.model.set_input_defaults(
+            Aircraft.Engine.POD_MASS_SCALER, val=1, units='unitless'
         )
         self.prob.model.set_input_defaults(Aircraft.Engine.POD_MASS_SCALER, val=1, units='unitless')
         self.prob.model.set_input_defaults(
@@ -2981,7 +2949,7 @@ class MassSummationTestCase9(unittest.TestCase):
             Aircraft.Wing.FOLD_MASS_COEFFICIENT, val=0.2, units='unitless'
         )
         # self.prob.model.set_input_defaults(
-        #     Aircraft.Strut.AREA, 553.1, units="ft**2"
+        #     Aircraft.Strut.AREA, 553.1, units='ft**2'
         # )
         self.prob.model.set_input_defaults(Aircraft.Strut.MASS_COEFFICIENT, 0.238, units='unitless')
         self.prob.model.set_input_defaults('fixed_mass.augmentation.motor_power', 830, units='kW')

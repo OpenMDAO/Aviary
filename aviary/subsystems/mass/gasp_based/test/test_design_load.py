@@ -3,7 +3,6 @@ import unittest
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 
-<<<<<<< HEAD
 from aviary.subsystems.mass.gasp_based.design_load import (DesignLoadGroup,
                                                            LoadFactors,
                                                            LoadParameters,
@@ -11,14 +10,6 @@ from aviary.subsystems.mass.gasp_based.design_load import (DesignLoadGroup,
                                                            LoadSpeeds)
 from aviary.subsystems.mass.gasp_based.design_load import (
     BWBDesignLoadGroup, BWBLoadFactors, BWBLoadSpeeds
-=======
-from aviary.subsystems.mass.gasp_based.design_load import (
-    DesignLoadGroup,
-    LoadFactors,
-    LoadParameters,
-    LiftCurveSlopeAtCruise,
-    LoadSpeeds,
->>>>>>> 1e29f27c9fbe1b9370d442466cf8ab16f82b4583
 )
 from aviary.variable_info.functions import setup_model_options
 from aviary.variable_info.options import get_option_defaults
@@ -776,7 +767,7 @@ class DesignLoadGroupTestCase1(unittest.TestCase):
             Aircraft.Wing.AVERAGE_CHORD, val=12.71, units='ft'
         )  # bug fixed value
         self.prob.model.set_input_defaults(
-            Aircraft.Wing.ASPECT_RATIO, val=10.13, units="unitless"
+            Aircraft.Wing.ASPECT_RATIO, val=10.13, units='unitless'
         )
 
         setup_model_options(self.prob, options)
@@ -840,7 +831,6 @@ class DesignLoadGroupTestCase2smooth(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e-13, rtol=5e-12)
 
 
-<<<<<<< HEAD
 class BWBLoadSpeedsTestCATD3(unittest.TestCase):
     """PART25_STRUCTURAL_CATEGORY = 3."""
 
@@ -855,13 +845,13 @@ class BWBLoadSpeedsTestCATD3(unittest.TestCase):
         )  # default
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
-            "speeds",
+            'speeds',
             BWBLoadSpeeds(),
-            promotes=["*"],
+            promotes=['*'],
         )
 
         self.prob.model.set_input_defaults(
-            Aircraft.Design.MAX_STRUCTURAL_SPEED, val=402.5, units="mi/h"
+            Aircraft.Design.MAX_STRUCTURAL_SPEED, val=402.5, units='mi/h'
         )
         self.prob.setup(check=False, force_alloc_complex=True)
 
@@ -874,12 +864,12 @@ class BWBLoadSpeedsTestCATD3(unittest.TestCase):
         self.prob.run_model()
 
         tol = 1e-8
-        assert_near_equal(self.prob["max_airspeed"], 350.0, tol)
-        assert_near_equal(self.prob["vel_c"], 350.0, tol)
-        assert_near_equal(self.prob["max_maneuver_factor"], 2.5, tol)
-        assert_near_equal(self.prob["min_dive_vel"], 420.0, tol)
+        assert_near_equal(self.prob['max_airspeed'], 350.0, tol)
+        assert_near_equal(self.prob['vel_c'], 350.0, tol)
+        assert_near_equal(self.prob['max_maneuver_factor'], 2.5, tol)
+        assert_near_equal(self.prob['min_dive_vel'], 420.0, tol)
 
-        partial_data = self.prob.check_partials(out_stream=None, method="cs")
+        partial_data = self.prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=1e-15, rtol=1e-15)
 
     def test_case2(self):
@@ -895,12 +885,12 @@ class BWBLoadSpeedsTestCATD3(unittest.TestCase):
         self.prob.run_model()
 
         tol = 1e-8
-        assert_near_equal(self.prob["max_airspeed"], 350.0, tol)
-        assert_near_equal(self.prob["vel_c"], 350.0, tol)
-        assert_near_equal(self.prob["max_maneuver_factor"], 2.5, tol)
-        assert_near_equal(self.prob["min_dive_vel"], 420.0, tol)
+        assert_near_equal(self.prob['max_airspeed'], 350.0, tol)
+        assert_near_equal(self.prob['vel_c'], 350.0, tol)
+        assert_near_equal(self.prob['max_maneuver_factor'], 2.5, tol)
+        assert_near_equal(self.prob['min_dive_vel'], 420.0, tol)
 
-        partial_data = self.prob.check_partials(out_stream=None, method="cs")
+        partial_data = self.prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=1e-15, rtol=1e-15)
 
         # case 2B
@@ -913,12 +903,12 @@ class BWBLoadSpeedsTestCATD3(unittest.TestCase):
         self.prob.run_model()
 
         tol = 1e-8
-        assert_near_equal(self.prob["max_airspeed"], 350.0, tol)
-        assert_near_equal(self.prob["vel_c"], 350.0, tol)
-        assert_near_equal(self.prob["max_maneuver_factor"], 2.5, tol)
-        assert_near_equal(self.prob["min_dive_vel"], 420.0, tol)
+        assert_near_equal(self.prob['max_airspeed'], 350.0, tol)
+        assert_near_equal(self.prob['vel_c'], 350.0, tol)
+        assert_near_equal(self.prob['max_maneuver_factor'], 2.5, tol)
+        assert_near_equal(self.prob['min_dive_vel'], 420.0, tol)
 
-        partial_data = self.prob.check_partials(out_stream=None, method="cs")
+        partial_data = self.prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=1e-15, rtol=1e-15)
 
         # case 2C
@@ -931,12 +921,12 @@ class BWBLoadSpeedsTestCATD3(unittest.TestCase):
         self.prob.run_model()
 
         tol = 1e-8
-        assert_near_equal(self.prob["max_airspeed"], 350.0, tol)
-        assert_near_equal(self.prob["vel_c"], 350.0, tol)
-        assert_near_equal(self.prob["max_maneuver_factor"], 2.5, tol)
-        assert_near_equal(self.prob["min_dive_vel"], 420.0, tol)
+        assert_near_equal(self.prob['max_airspeed'], 350.0, tol)
+        assert_near_equal(self.prob['vel_c'], 350.0, tol)
+        assert_near_equal(self.prob['max_maneuver_factor'], 2.5, tol)
+        assert_near_equal(self.prob['min_dive_vel'], 420.0, tol)
 
-        partial_data = self.prob.check_partials(out_stream=None, method="cs")
+        partial_data = self.prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=1e-15, rtol=1e-15)
 
 
@@ -958,18 +948,18 @@ class BWBLoadSpeedsTestCATD0(unittest.TestCase):
 
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
-            "speeds",
+            'speeds',
             BWBLoadSpeeds(),
-            promotes=["*"],
+            promotes=['*'],
         )
         self.prob.model.set_input_defaults(
-            Aircraft.Design.MAX_STRUCTURAL_SPEED, val=402.5, units="mi/h"
+            Aircraft.Design.MAX_STRUCTURAL_SPEED, val=402.5, units='mi/h'
         )
         self.prob.model.set_input_defaults(
-            Mission.Design.GROSS_MASS, val=150000.0, units="lbm"
+            Mission.Design.GROSS_MASS, val=150000.0, units='lbm'
         )
         self.prob.model.set_input_defaults(
-            Aircraft.Wing.EXPOSED_AREA, val=1352.1136, units="ft**2"
+            Aircraft.Wing.EXPOSED_AREA, val=1352.1136, units='ft**2'
         )
         setup_model_options(self.prob, self.options)
         self.prob.setup(check=False, force_alloc_complex=True)
@@ -980,12 +970,12 @@ class BWBLoadSpeedsTestCATD0(unittest.TestCase):
         self.prob.run_model()
 
         tol = 1e-8
-        assert_near_equal(self.prob["max_airspeed"], 336.68277925, tol)
-        assert_near_equal(self.prob["vel_c"], 294.8987279, tol)
-        assert_near_equal(self.prob["max_maneuver_factor"], 3.8, tol)
-        assert_near_equal(self.prob["min_dive_vel"], 396.09738736, tol)
+        assert_near_equal(self.prob['max_airspeed'], 336.68277925, tol)
+        assert_near_equal(self.prob['vel_c'], 294.8987279, tol)
+        assert_near_equal(self.prob['max_maneuver_factor'], 3.8, tol)
+        assert_near_equal(self.prob['min_dive_vel'], 396.09738736, tol)
 
-        partial_data = self.prob.check_partials(out_stream=None, method="cs")
+        partial_data = self.prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=1e-15, rtol=1e-15)
 
     def test_case2(self):
@@ -1001,12 +991,12 @@ class BWBLoadSpeedsTestCATD0(unittest.TestCase):
         self.prob.run_model()
 
         tol = 1e-8
-        assert_near_equal(self.prob["max_airspeed"], 336.68277925, tol)
-        assert_near_equal(self.prob["vel_c"], 294.8987279, tol)
-        assert_near_equal(self.prob["max_maneuver_factor"], 3.8, tol)
-        assert_near_equal(self.prob["min_dive_vel"], 396.09738736, tol)
+        assert_near_equal(self.prob['max_airspeed'], 336.68277925, tol)
+        assert_near_equal(self.prob['vel_c'], 294.8987279, tol)
+        assert_near_equal(self.prob['max_maneuver_factor'], 3.8, tol)
+        assert_near_equal(self.prob['min_dive_vel'], 396.09738736, tol)
 
-        partial_data = self.prob.check_partials(out_stream=None, method="cs")
+        partial_data = self.prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=1e-15, rtol=1e-15)
 
         # case 2B
@@ -1019,12 +1009,12 @@ class BWBLoadSpeedsTestCATD0(unittest.TestCase):
         self.prob.run_model()
 
         tol = 1e-8
-        assert_near_equal(self.prob["max_airspeed"], 336.68277925, tol)
-        assert_near_equal(self.prob["vel_c"], 294.8987279, tol)
-        assert_near_equal(self.prob["max_maneuver_factor"], 3.8, tol)
-        assert_near_equal(self.prob["min_dive_vel"], 396.09738736, tol)
+        assert_near_equal(self.prob['max_airspeed'], 336.68277925, tol)
+        assert_near_equal(self.prob['vel_c'], 294.8987279, tol)
+        assert_near_equal(self.prob['max_maneuver_factor'], 3.8, tol)
+        assert_near_equal(self.prob['min_dive_vel'], 396.09738736, tol)
 
-        partial_data = self.prob.check_partials(out_stream=None, method="cs")
+        partial_data = self.prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=1e-15, rtol=1e-15)
 
         # case 2C
@@ -1037,12 +1027,12 @@ class BWBLoadSpeedsTestCATD0(unittest.TestCase):
         self.prob.run_model()
 
         tol = 1e-8
-        assert_near_equal(self.prob["max_airspeed"], 336.68277925, tol)
-        assert_near_equal(self.prob["vel_c"], 294.8987279, tol)
-        assert_near_equal(self.prob["max_maneuver_factor"], 3.8, tol)
-        assert_near_equal(self.prob["min_dive_vel"], 396.09738736, tol)
+        assert_near_equal(self.prob['max_airspeed'], 336.68277925, tol)
+        assert_near_equal(self.prob['vel_c'], 294.8987279, tol)
+        assert_near_equal(self.prob['max_maneuver_factor'], 3.8, tol)
+        assert_near_equal(self.prob['min_dive_vel'], 396.09738736, tol)
 
-        partial_data = self.prob.check_partials(out_stream=None, method="cs")
+        partial_data = self.prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=1e-15, rtol=1e-15)
 
 
@@ -1063,19 +1053,19 @@ class BWBLoadSpeedsTestCATD1(unittest.TestCase):
 
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
-            "speeds",
+            'speeds',
             BWBLoadSpeeds(),
-            promotes=["*"],
+            promotes=['*'],
         )
 
         self.prob.model.set_input_defaults(
-            Aircraft.Design.MAX_STRUCTURAL_SPEED, val=402.5, units="mi/h"
+            Aircraft.Design.MAX_STRUCTURAL_SPEED, val=402.5, units='mi/h'
         )
         self.prob.model.set_input_defaults(
-            Mission.Design.GROSS_MASS, val=150000.0, units="lbm"
+            Mission.Design.GROSS_MASS, val=150000.0, units='lbm'
         )
         self.prob.model.set_input_defaults(
-            Aircraft.Wing.EXPOSED_AREA, val=1352.1136, units="ft**2"
+            Aircraft.Wing.EXPOSED_AREA, val=1352.1136, units='ft**2'
         )
 
         setup_model_options(self.prob, self.options)
@@ -1088,12 +1078,12 @@ class BWBLoadSpeedsTestCATD1(unittest.TestCase):
         self.prob.run_model()
 
         tol = 1e-8
-        assert_near_equal(self.prob["max_airspeed"], 333.25575724, tol)
-        assert_near_equal(self.prob["vel_c"], 294.8987279, tol)
-        assert_near_equal(self.prob["max_maneuver_factor"], 4.4, tol)
-        assert_near_equal(self.prob["min_dive_vel"], 392.06559676, tol)
+        assert_near_equal(self.prob['max_airspeed'], 333.25575724, tol)
+        assert_near_equal(self.prob['vel_c'], 294.8987279, tol)
+        assert_near_equal(self.prob['max_maneuver_factor'], 4.4, tol)
+        assert_near_equal(self.prob['min_dive_vel'], 392.06559676, tol)
 
-        partial_data = self.prob.check_partials(out_stream=None, method="cs")
+        partial_data = self.prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=1e-15, rtol=1e-15)
 
     def test_case2(self):
@@ -1109,12 +1099,12 @@ class BWBLoadSpeedsTestCATD1(unittest.TestCase):
         self.prob.run_model()
 
         tol = 1e-8
-        assert_near_equal(self.prob["max_airspeed"], 333.25575724, tol)
-        assert_near_equal(self.prob["vel_c"], 294.8987279, tol)
-        assert_near_equal(self.prob["max_maneuver_factor"], 4.4, tol)
-        assert_near_equal(self.prob["min_dive_vel"], 392.06559676, tol)
+        assert_near_equal(self.prob['max_airspeed'], 333.25575724, tol)
+        assert_near_equal(self.prob['vel_c'], 294.8987279, tol)
+        assert_near_equal(self.prob['max_maneuver_factor'], 4.4, tol)
+        assert_near_equal(self.prob['min_dive_vel'], 392.06559676, tol)
 
-        partial_data = self.prob.check_partials(out_stream=None, method="cs")
+        partial_data = self.prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=1e-15, rtol=1e-15)
 
         # case 2B
@@ -1127,12 +1117,12 @@ class BWBLoadSpeedsTestCATD1(unittest.TestCase):
         self.prob.run_model()
 
         tol = 1e-8
-        assert_near_equal(self.prob["max_airspeed"], 333.25575724, tol)
-        assert_near_equal(self.prob["vel_c"], 294.8987279, tol)
-        assert_near_equal(self.prob["max_maneuver_factor"], 4.4, tol)
-        assert_near_equal(self.prob["min_dive_vel"], 392.06559676, tol)
+        assert_near_equal(self.prob['max_airspeed'], 333.25575724, tol)
+        assert_near_equal(self.prob['vel_c'], 294.8987279, tol)
+        assert_near_equal(self.prob['max_maneuver_factor'], 4.4, tol)
+        assert_near_equal(self.prob['min_dive_vel'], 392.06559676, tol)
 
-        partial_data = self.prob.check_partials(out_stream=None, method="cs")
+        partial_data = self.prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=1e-15, rtol=1e-15)
 
         # case 2C
@@ -1145,12 +1135,12 @@ class BWBLoadSpeedsTestCATD1(unittest.TestCase):
         self.prob.run_model()
 
         tol = 1e-8
-        assert_near_equal(self.prob["max_airspeed"], 333.25575724, tol)
-        assert_near_equal(self.prob["vel_c"], 294.8987279, tol)
-        assert_near_equal(self.prob["max_maneuver_factor"], 4.4, tol)
-        assert_near_equal(self.prob["min_dive_vel"], 392.06559676, tol)
+        assert_near_equal(self.prob['max_airspeed'], 333.25575724, tol)
+        assert_near_equal(self.prob['vel_c'], 294.8987279, tol)
+        assert_near_equal(self.prob['max_maneuver_factor'], 4.4, tol)
+        assert_near_equal(self.prob['min_dive_vel'], 392.06559676, tol)
 
-        partial_data = self.prob.check_partials(out_stream=None, method="cs")
+        partial_data = self.prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=1e-15, rtol=1e-15)
 
 
@@ -1169,19 +1159,19 @@ class BWBLoadSpeedsTestCATD2(unittest.TestCase):
 
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
-            "speeds",
+            'speeds',
             BWBLoadSpeeds(),
-            promotes=["*"],
+            promotes=['*'],
         )
 
         self.prob.model.set_input_defaults(
-            Aircraft.Design.MAX_STRUCTURAL_SPEED, val=402.5, units="mi/h"
+            Aircraft.Design.MAX_STRUCTURAL_SPEED, val=402.5, units='mi/h'
         )
         self.prob.model.set_input_defaults(
-            Mission.Design.GROSS_MASS, val=150000.0, units="lbm"
+            Mission.Design.GROSS_MASS, val=150000.0, units='lbm'
         )
         self.prob.model.set_input_defaults(
-            Aircraft.Wing.EXPOSED_AREA, val=1352.1136, units="ft**2"
+            Aircraft.Wing.EXPOSED_AREA, val=1352.1136, units='ft**2'
         )
 
         setup_model_options(self.prob, self.options)
@@ -1194,12 +1184,12 @@ class BWBLoadSpeedsTestCATD2(unittest.TestCase):
         self.prob.run_model()
 
         tol = 1e-8
-        assert_near_equal(self.prob["max_airspeed"], 326.68543372, tol)
-        assert_near_equal(self.prob["vel_c"], 290.57871182, tol)
-        assert_near_equal(self.prob["max_maneuver_factor"], 6.0, tol)
-        assert_near_equal(self.prob["min_dive_vel"], 384.33580438, tol)
+        assert_near_equal(self.prob['max_airspeed'], 326.68543372, tol)
+        assert_near_equal(self.prob['vel_c'], 290.57871182, tol)
+        assert_near_equal(self.prob['max_maneuver_factor'], 6.0, tol)
+        assert_near_equal(self.prob['min_dive_vel'], 384.33580438, tol)
 
-        partial_data = self.prob.check_partials(out_stream=None, method="cs")
+        partial_data = self.prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=1e-15, rtol=1e-15)
 
     def test_case2(self):
@@ -1215,12 +1205,12 @@ class BWBLoadSpeedsTestCATD2(unittest.TestCase):
         self.prob.run_model()
 
         tol = 1e-8
-        assert_near_equal(self.prob["max_airspeed"], 326.68543372, tol)
-        assert_near_equal(self.prob["vel_c"], 290.57871182, tol)
-        assert_near_equal(self.prob["max_maneuver_factor"], 6.0, tol)
-        assert_near_equal(self.prob["min_dive_vel"], 384.33580438, tol)
+        assert_near_equal(self.prob['max_airspeed'], 326.68543372, tol)
+        assert_near_equal(self.prob['vel_c'], 290.57871182, tol)
+        assert_near_equal(self.prob['max_maneuver_factor'], 6.0, tol)
+        assert_near_equal(self.prob['min_dive_vel'], 384.33580438, tol)
 
-        partial_data = self.prob.check_partials(out_stream=None, method="cs")
+        partial_data = self.prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=1e-15, rtol=1e-15)
 
         # case 2B
@@ -1233,12 +1223,12 @@ class BWBLoadSpeedsTestCATD2(unittest.TestCase):
         self.prob.run_model()
 
         tol = 1e-8
-        assert_near_equal(self.prob["max_airspeed"], 326.68543372, tol)
-        assert_near_equal(self.prob["vel_c"], 290.57871182, tol)
-        assert_near_equal(self.prob["max_maneuver_factor"], 6.0, tol)
-        assert_near_equal(self.prob["min_dive_vel"], 384.33580438, tol)
+        assert_near_equal(self.prob['max_airspeed'], 326.68543372, tol)
+        assert_near_equal(self.prob['vel_c'], 290.57871182, tol)
+        assert_near_equal(self.prob['max_maneuver_factor'], 6.0, tol)
+        assert_near_equal(self.prob['min_dive_vel'], 384.33580438, tol)
 
-        partial_data = self.prob.check_partials(out_stream=None, method="cs")
+        partial_data = self.prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=1e-15, rtol=1e-15)
 
         # case 2C
@@ -1251,12 +1241,12 @@ class BWBLoadSpeedsTestCATD2(unittest.TestCase):
         self.prob.run_model()
 
         tol = 1e-8
-        assert_near_equal(self.prob["max_airspeed"], 326.68543372, tol)
-        assert_near_equal(self.prob["vel_c"], 290.57871182, tol)
-        assert_near_equal(self.prob["max_maneuver_factor"], 6.0, tol)
-        assert_near_equal(self.prob["min_dive_vel"], 384.33580438, tol)
+        assert_near_equal(self.prob['max_airspeed'], 326.68543372, tol)
+        assert_near_equal(self.prob['vel_c'], 290.57871182, tol)
+        assert_near_equal(self.prob['max_maneuver_factor'], 6.0, tol)
+        assert_near_equal(self.prob['min_dive_vel'], 384.33580438, tol)
 
-        partial_data = self.prob.check_partials(out_stream=None, method="cs")
+        partial_data = self.prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=1e-15, rtol=1e-15)
 
 
@@ -1276,13 +1266,13 @@ class BWBLoadSpeedsTestCATD4(unittest.TestCase):
 
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
-            "speeds",
+            'speeds',
             BWBLoadSpeeds(),
-            promotes=["*"],
+            promotes=['*'],
         )
 
         self.prob.model.set_input_defaults(
-            Aircraft.Design.MAX_STRUCTURAL_SPEED, val=402.5, units="mi/h"
+            Aircraft.Design.MAX_STRUCTURAL_SPEED, val=402.5, units='mi/h'
         )
 
         setup_model_options(self.prob, self.options)
@@ -1295,12 +1285,12 @@ class BWBLoadSpeedsTestCATD4(unittest.TestCase):
         self.prob.run_model()
 
         tol = 1e-4
-        assert_near_equal(self.prob["max_airspeed"], 350.0, tol)
-        assert_near_equal(self.prob["vel_c"], 350.0, tol)
-        assert_near_equal(self.prob["max_maneuver_factor"], 4.0, tol)
-        assert_near_equal(self.prob["min_dive_vel"], 420.0, tol)
+        assert_near_equal(self.prob['max_airspeed'], 350.0, tol)
+        assert_near_equal(self.prob['vel_c'], 350.0, tol)
+        assert_near_equal(self.prob['max_maneuver_factor'], 4.0, tol)
+        assert_near_equal(self.prob['min_dive_vel'], 420.0, tol)
 
-        partial_data = self.prob.check_partials(out_stream=None, method="cs")
+        partial_data = self.prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=1e-15, rtol=1e-15)
 
     def test_case2(self):
@@ -1316,12 +1306,12 @@ class BWBLoadSpeedsTestCATD4(unittest.TestCase):
         self.prob.run_model()
 
         tol = 1e-8
-        assert_near_equal(self.prob["max_airspeed"], 350.0, tol)
-        assert_near_equal(self.prob["vel_c"], 350.0, tol)
-        assert_near_equal(self.prob["max_maneuver_factor"], 4.0, tol)
-        assert_near_equal(self.prob["min_dive_vel"], 420.0, tol)
+        assert_near_equal(self.prob['max_airspeed'], 350.0, tol)
+        assert_near_equal(self.prob['vel_c'], 350.0, tol)
+        assert_near_equal(self.prob['max_maneuver_factor'], 4.0, tol)
+        assert_near_equal(self.prob['min_dive_vel'], 420.0, tol)
 
-        partial_data = self.prob.check_partials(out_stream=None, method="cs")
+        partial_data = self.prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=1e-15, rtol=1e-15)
 
         # case 2B
@@ -1334,12 +1324,12 @@ class BWBLoadSpeedsTestCATD4(unittest.TestCase):
         self.prob.run_model()
 
         tol = 1e-8
-        assert_near_equal(self.prob["max_airspeed"], 350.0, tol)
-        assert_near_equal(self.prob["vel_c"], 350.0, tol)
-        assert_near_equal(self.prob["max_maneuver_factor"], 4.0, tol)
-        assert_near_equal(self.prob["min_dive_vel"], 420.0, tol)
+        assert_near_equal(self.prob['max_airspeed'], 350.0, tol)
+        assert_near_equal(self.prob['vel_c'], 350.0, tol)
+        assert_near_equal(self.prob['max_maneuver_factor'], 4.0, tol)
+        assert_near_equal(self.prob['min_dive_vel'], 420.0, tol)
 
-        partial_data = self.prob.check_partials(out_stream=None, method="cs")
+        partial_data = self.prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=1e-15, rtol=1e-15)
 
         # case 2C
@@ -1352,12 +1342,12 @@ class BWBLoadSpeedsTestCATD4(unittest.TestCase):
         self.prob.run_model()
 
         tol = 1e-8
-        assert_near_equal(self.prob["max_airspeed"], 350.0, tol)
-        assert_near_equal(self.prob["vel_c"], 350.0, tol)
-        assert_near_equal(self.prob["max_maneuver_factor"], 4.0, tol)
-        assert_near_equal(self.prob["min_dive_vel"], 420.0, tol)
+        assert_near_equal(self.prob['max_airspeed'], 350.0, tol)
+        assert_near_equal(self.prob['vel_c'], 350.0, tol)
+        assert_near_equal(self.prob['max_maneuver_factor'], 4.0, tol)
+        assert_near_equal(self.prob['min_dive_vel'], 420.0, tol)
 
-        partial_data = self.prob.check_partials(out_stream=None, method="cs")
+        partial_data = self.prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=1e-15, rtol=1e-15)
 
 
@@ -1368,30 +1358,30 @@ class BWBLoadFactorsTestCaseNonsmooth(unittest.TestCase):
 
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
-            "factors", BWBLoadFactors(), promotes=["*"]
+            'factors', BWBLoadFactors(), promotes=['*']
         )
 
         self.prob.model.set_input_defaults(
-            Mission.Design.GROSS_MASS, val=150000.0, units="lbm"
+            Mission.Design.GROSS_MASS, val=150000.0, units='lbm'
         )
         self.prob.model.set_input_defaults(
-            Aircraft.Wing.EXPOSED_AREA, val=1352.1136, units="ft**2"
+            Aircraft.Wing.EXPOSED_AREA, val=1352.1136, units='ft**2'
         )
         self.prob.model.set_input_defaults(
-            "density_ratio", val=0.692859828, units="unitless"
+            'density_ratio', val=0.692859828, units='unitless'
         )
-        self.prob.model.set_input_defaults("V9", val=350.0, units="kn")
+        self.prob.model.set_input_defaults('V9', val=350.0, units='kn')
         self.prob.model.set_input_defaults(
-            "min_dive_vel", val=420, units="kn"
-        )
-        self.prob.model.set_input_defaults(
-            "max_maneuver_factor", val=2.5, units="unitless"
+            'min_dive_vel', val=420, units='kn'
         )
         self.prob.model.set_input_defaults(
-            Aircraft.Wing.AVERAGE_CHORD, val=16.2200546, units="ft"
+            'max_maneuver_factor', val=2.5, units='unitless'
         )
         self.prob.model.set_input_defaults(
-            Aircraft.Design.LIFT_CURVE_SLOPE, val=5.94851685, units="1/rad"
+            Aircraft.Wing.AVERAGE_CHORD, val=16.2200546, units='ft'
+        )
+        self.prob.model.set_input_defaults(
+            Aircraft.Design.LIFT_CURVE_SLOPE, val=5.94851685, units='1/rad'
         )
 
         self.prob.setup(check=False, force_alloc_complex=True)
@@ -1405,7 +1395,7 @@ class BWBLoadFactorsTestCaseNonsmooth(unittest.TestCase):
         tol = 1e-7
         assert_near_equal(self.prob[Aircraft.Wing.ULTIMATE_LOAD_FACTOR], 3.75, tol)
 
-        partial_data = self.prob.check_partials(out_stream=None, method="cs")
+        partial_data = self.prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=1e-15, rtol=1e-14)
 
     def test_case2(self):
@@ -1415,36 +1405,36 @@ class BWBLoadFactorsTestCaseNonsmooth(unittest.TestCase):
         """
 
         # Case 2A
-        self.prob.set_val('density_ratio', 0.53281, units="unitless")
+        self.prob.set_val('density_ratio', 0.53281, units='unitless')
         self.prob.run_model()
 
         tol = 1e-7
         assert_near_equal(self.prob[Aircraft.Wing.ULTIMATE_LOAD_FACTOR], 3.77353191, tol)
 
-        partial_data = self.prob.check_partials(out_stream=None, method="cs")
+        partial_data = self.prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=1e-15, rtol=1e-14)
 
         # Case 2B
-        self.prob.set_val('density_ratio', 0.53281, units="unitless")
-        self.prob.set_val('V9', 210.0, units="kn")
+        self.prob.set_val('density_ratio', 0.53281, units='unitless')
+        self.prob.set_val('V9', 210.0, units='kn')
         self.prob.run_model()
 
         tol = 1e-7
         assert_near_equal(self.prob[Aircraft.Wing.ULTIMATE_LOAD_FACTOR], 3.75, tol)
 
-        partial_data = self.prob.check_partials(out_stream=None, method="cs")
+        partial_data = self.prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=1e-15, rtol=1e-14)
 
         # Case 2C
-        self.prob.set_val('density_ratio', 0.53281, units="unitless")
-        self.prob.set_val('V9', 209.9, units="kn")
-        self.prob.set_val('max_maneuver_factor', 1.9, units="unitless")
+        self.prob.set_val('density_ratio', 0.53281, units='unitless')
+        self.prob.set_val('V9', 209.9, units='kn')
+        self.prob.set_val('max_maneuver_factor', 1.9, units='unitless')
         self.prob.run_model()
 
         tol = 1e-7
         assert_near_equal(self.prob[Aircraft.Wing.ULTIMATE_LOAD_FACTOR], 2.86411929, tol)
 
-        partial_data = self.prob.check_partials(out_stream=None, method="cs")
+        partial_data = self.prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=1e-15, rtol=1e-14)
 
 
@@ -1458,30 +1448,30 @@ class BWBLoadFactorsTestCaseSmooth(unittest.TestCase):
 
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
-            "factors", BWBLoadFactors(), promotes=["*"]
+            'factors', BWBLoadFactors(), promotes=['*']
         )
 
         self.prob.model.set_input_defaults(
-            Mission.Design.GROSS_MASS, val=150000.0, units="lbm"
+            Mission.Design.GROSS_MASS, val=150000.0, units='lbm'
         )
         self.prob.model.set_input_defaults(
-            Aircraft.Wing.EXPOSED_AREA, val=1352.1136, units="ft**2"
+            Aircraft.Wing.EXPOSED_AREA, val=1352.1136, units='ft**2'
         )
         self.prob.model.set_input_defaults(
-            "density_ratio", val=0.692859828, units="unitless"
+            'density_ratio', val=0.692859828, units='unitless'
         )
-        self.prob.model.set_input_defaults("V9", val=350.0, units="kn")
+        self.prob.model.set_input_defaults('V9', val=350.0, units='kn')
         self.prob.model.set_input_defaults(
-            "min_dive_vel", val=420, units="kn"
-        )
-        self.prob.model.set_input_defaults(
-            "max_maneuver_factor", val=2.5, units="unitless"
+            'min_dive_vel', val=420, units='kn'
         )
         self.prob.model.set_input_defaults(
-            Aircraft.Wing.AVERAGE_CHORD, val=16.2200546, units="ft"
+            'max_maneuver_factor', val=2.5, units='unitless'
         )
         self.prob.model.set_input_defaults(
-            Aircraft.Design.LIFT_CURVE_SLOPE, val=5.94851685, units="1/rad"
+            Aircraft.Wing.AVERAGE_CHORD, val=16.2200546, units='ft'
+        )
+        self.prob.model.set_input_defaults(
+            Aircraft.Design.LIFT_CURVE_SLOPE, val=5.94851685, units='1/rad'
         )
 
         self.prob.setup(check=False, force_alloc_complex=True)
@@ -1495,7 +1485,7 @@ class BWBLoadFactorsTestCaseSmooth(unittest.TestCase):
         tol = 1e-7
         assert_near_equal(self.prob[Aircraft.Wing.ULTIMATE_LOAD_FACTOR], 3.75, tol)
 
-        partial_data = self.prob.check_partials(out_stream=None, method="cs")
+        partial_data = self.prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=1e-15, rtol=1e-14)
 
 
@@ -1508,26 +1498,26 @@ class BWBDesignLoadGroupTestCaseNonsmooth(unittest.TestCase):
         self.prob = om.Problem()
 
         self.prob.model.add_subsystem(
-            "Dload",
+            'Dload',
             BWBDesignLoadGroup(),
-            promotes=["*"],
+            promotes=['*'],
         )
 
         self.prob.model.set_input_defaults(
-            Aircraft.Design.MAX_STRUCTURAL_SPEED, val=402.5, units="mi/h"
+            Aircraft.Design.MAX_STRUCTURAL_SPEED, val=402.5, units='mi/h'
         )
 
         self.prob.model.set_input_defaults(
-            Mission.Design.GROSS_MASS, val=150000.0, units="lbm"
+            Mission.Design.GROSS_MASS, val=150000.0, units='lbm'
         )
         self.prob.model.set_input_defaults(
-            Aircraft.Wing.EXPOSED_AREA, val=1352.1136, units="ft**2"
+            Aircraft.Wing.EXPOSED_AREA, val=1352.1136, units='ft**2'
         )
         self.prob.model.set_input_defaults(
-            Aircraft.Wing.AVERAGE_CHORD, val=12.71, units="ft"
+            Aircraft.Wing.AVERAGE_CHORD, val=12.71, units='ft'
         )
         self.prob.model.set_input_defaults(
-            Aircraft.Wing.ASPECT_RATIO, val=10.13, units="unitless"
+            Aircraft.Wing.ASPECT_RATIO, val=10.13, units='unitless'
         )
 
         setup_model_options(self.prob, options)
@@ -1539,10 +1529,10 @@ class BWBDesignLoadGroupTestCaseNonsmooth(unittest.TestCase):
         self.prob.run_model()
 
         tol = 1e-4
-        assert_near_equal(self.prob["max_mach"], 0.9, tol)
+        assert_near_equal(self.prob['max_mach'], 0.9, tol)
         assert_near_equal(self.prob[Aircraft.Wing.ULTIMATE_LOAD_FACTOR], 3.75, tol)
 
-        partial_data = self.prob.check_partials(out_stream=None, method="cs")
+        partial_data = self.prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=1e-15, rtol=1e-15)
 
 
@@ -1557,32 +1547,32 @@ class BWBDesignLoadGroupTestCaseSmooth(unittest.TestCase):
         self.prob = om.Problem()
 
         self.prob.model.add_subsystem(
-            "Dload",
+            'Dload',
             BWBDesignLoadGroup(),
-            promotes=["*"],
+            promotes=['*'],
         )
 
         self.prob.model.set_input_defaults(
-            Aircraft.Design.MAX_STRUCTURAL_SPEED, val=402.5, units="mi/h"
+            Aircraft.Design.MAX_STRUCTURAL_SPEED, val=402.5, units='mi/h'
         )
 
         self.prob.model.set_input_defaults(
-            Mission.Design.GROSS_MASS, val=150000.0, units="lbm"
+            Mission.Design.GROSS_MASS, val=150000.0, units='lbm'
         )
         self.prob.model.set_input_defaults(
-            Aircraft.Wing.EXPOSED_AREA, val=1352.1136, units="ft**2"
+            Aircraft.Wing.EXPOSED_AREA, val=1352.1136, units='ft**2'
         )
         self.prob.model.set_input_defaults(
-            Aircraft.Wing.AVERAGE_CHORD, val=12.71, units="ft"
+            Aircraft.Wing.AVERAGE_CHORD, val=12.71, units='ft'
         )
         self.prob.model.set_input_defaults(
-            Aircraft.Wing.ASPECT_RATIO, val=10.13, units="unitless"
+            Aircraft.Wing.ASPECT_RATIO, val=10.13, units='unitless'
         )
         self.prob.model.set_input_defaults(
-            Aircraft.Wing.SWEEP, val=0.436, units="rad"
+            Aircraft.Wing.SWEEP, val=0.436, units='rad'
         )
         self.prob.model.set_input_defaults(
-            Mission.Design.MACH, val=0.8, units="unitless"
+            Mission.Design.MACH, val=0.8, units='unitless'
         )
 
         setup_model_options(self.prob, options)
@@ -1594,15 +1584,12 @@ class BWBDesignLoadGroupTestCaseSmooth(unittest.TestCase):
         self.prob.run_model()
 
         tol = 6e-4
-        assert_near_equal(self.prob["max_mach"], 0.9, tol)
+        assert_near_equal(self.prob['max_mach'], 0.9, tol)
         assert_near_equal(self.prob[Aircraft.Wing.ULTIMATE_LOAD_FACTOR], 3.97744787, tol)
 
-        partial_data = self.prob.check_partials(out_stream=None, method="cs")
+        partial_data = self.prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=1e-13, rtol=5e-12)
 
 
-if __name__ == "__main__":
-=======
 if __name__ == '__main__':
->>>>>>> 1e29f27c9fbe1b9370d442466cf8ab16f82b4583
     unittest.main()

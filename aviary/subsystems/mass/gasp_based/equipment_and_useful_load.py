@@ -1676,15 +1676,15 @@ class UsefulLoadMass(om.ExplicitComponent):
 class EquipAndUsefulLoadMassGroup(om.Group):
     def setup(self):
         self.add_subsystem(
-            "equip",
+            'equip',
             EquipMass(),
-            promotes_inputs=["aircraft:*", "mission:*"],
-            promotes_outputs=["aircraft:*"],
+            promotes_inputs=['aircraft:*', 'mission:*'],
+            promotes_outputs=['aircraft:*'],
         )
 
         self.add_subsystem(
-            "useful",
+            'useful',
             UsefulLoadMass(),
-            promotes_inputs=["aircraft:*"],
-            promotes_outputs=["aircraft:*"],
+            promotes_inputs=['aircraft:*'],
+            promotes_outputs=['aircraft:*'],
         )

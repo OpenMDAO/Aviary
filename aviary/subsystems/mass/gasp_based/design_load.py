@@ -636,9 +636,9 @@ class LiftCurveSlopeAtCruise(om.ExplicitComponent):
 
         if verbosity > Verbosity.BRIEF:
             if AR <= 0.0:
-                print("Aircraft.Wing.ASPECT_RATIO must be positive.")
+                print('Aircraft.Wing.ASPECT_RATIO must be positive.')
             if DLMC4 == np.pi / 2.0:
-                print("Aircraft.Wing.SWEEP can not be 90 degrees.")
+                print('Aircraft.Wing.SWEEP can not be 90 degrees.')
 
         outputs[Aircraft.Design.LIFT_CURVE_SLOPE] = (
             np.pi
@@ -686,12 +686,7 @@ class LoadFactors(om.ExplicitComponent):
         add_aviary_option(self, Aircraft.Design.ULF_CALCULATED_FROM_MANEUVER)
 
     def setup(self):
-<<<<<<< HEAD
-
         add_aviary_input(self, Aircraft.Wing.LOADING, units='lbf/ft**2')
-=======
-        add_aviary_input(self, Aircraft.Wing.LOADING)
->>>>>>> 1e29f27c9fbe1b9370d442466cf8ab16f82b4583
 
         self.add_input(
             'density_ratio',
@@ -1273,21 +1268,21 @@ class BWBLoadSpeeds(om.ExplicitComponent):
             add_aviary_input(self, Aircraft.Wing.EXPOSED_AREA, units='ft**2')
 
         self.add_output(
-            "max_airspeed", units="kn",
-            desc="VM0: maximum operating equivalent airspeed",
+            'max_airspeed', units='kn',
+            desc='VM0: maximum operating equivalent airspeed',
         )
         self.add_output(
-            "vel_c", units="kn",
-            desc="VGC: Velocity used in Gust Load Factor calculation at cruise conditions.\
+            'vel_c', units='kn',
+            desc='VGC: Velocity used in Gust Load Factor calculation at cruise conditions.\
                         This is Minimum Design Cruise Speed for Part 23 aircraft and \
-                        VM0 for Part 25 aircraft",
+                        VM0 for Part 25 aircraft',
         )
         self.add_output(
-            "max_maneuver_factor", units="unitless",
-            desc="EMLF: maximum maneuver load factor, units are in g`s",
+            'max_maneuver_factor', units='unitless',
+            desc='EMLF: maximum maneuver load factor, units are in g`s',
         )
-        self.add_output("min_dive_vel", units="kn", desc="VDMIN: dive velocity")
-        self.declare_partials("*", "*")
+        self.add_output('min_dive_vel', units='kn', desc='VDMIN: dive velocity')
+        self.declare_partials('*', '*')
 
     def compute(self, inputs, outputs):
         verbosity = self.options[Settings.VERBOSITY]
@@ -1305,9 +1300,9 @@ class BWBLoadSpeeds(om.ExplicitComponent):
             exp_wing_area = inputs[Aircraft.Wing.EXPOSED_AREA]
             if verbosity > Verbosity.BRIEF:
                 if exp_wing_area <= 0.0:
-                    print("Aircraft.Wing.EXPOSED_AREA must be positive.")
+                    print('Aircraft.Wing.EXPOSED_AREA must be positive.')
                 if gross_mass <= 0.0:
-                    print("Mission.Design.GROSS_MASS must be positive.")
+                    print('Mission.Design.GROSS_MASS must be positive.')
             wing_loading = gross_mass / exp_wing_area
 
             VCMAX = 0.9 * max_struct_speed_kts
@@ -1382,10 +1377,10 @@ class BWBLoadSpeeds(om.ExplicitComponent):
             max_airspeed = max_struct_speed_kts
             vel_c = max_airspeed
 
-        outputs["max_airspeed"] = max_airspeed
-        outputs["vel_c"] = vel_c
-        outputs["max_maneuver_factor"] = max_maneuver_factor
-        outputs["min_dive_vel"] = min_dive_vel
+        outputs['max_airspeed'] = max_airspeed
+        outputs['vel_c'] = vel_c
+        outputs['max_maneuver_factor'] = max_maneuver_factor
+        outputs['min_dive_vel'] = min_dive_vel
 
     def compute_partials(self, inputs, partials):
 
@@ -1624,51 +1619,51 @@ class BWBLoadSpeeds(om.ExplicitComponent):
                         dmax_struct_speed_kts_dmax_struct_speed_mph
                     )
 
-            partials["min_dive_vel", Mission.Design.GROSS_MASS] = (
+            partials['min_dive_vel', Mission.Design.GROSS_MASS] = (
                 dmin_dive_vel_dgross_mass
             )
-            partials["min_dive_vel", Aircraft.Wing.EXPOSED_AREA] = (
+            partials['min_dive_vel', Aircraft.Wing.EXPOSED_AREA] = (
                 dmin_dive_vel_dexp_wing_area
             )
-            partials["min_dive_vel", Aircraft.Design.MAX_STRUCTURAL_SPEED] = (
+            partials['min_dive_vel', Aircraft.Design.MAX_STRUCTURAL_SPEED] = (
                 dmin_dive_vel_dmax_struct_speed_mph
             )
 
-            partials["max_airspeed", Mission.Design.GROSS_MASS] = (
+            partials['max_airspeed', Mission.Design.GROSS_MASS] = (
                 0.85 * dmin_dive_vel_dgross_mass
             )
-            partials["max_airspeed", Aircraft.Wing.EXPOSED_AREA] = (
+            partials['max_airspeed', Aircraft.Wing.EXPOSED_AREA] = (
                 0.85 * dmin_dive_vel_dexp_wing_area
             )
-            partials["max_airspeed", Aircraft.Design.MAX_STRUCTURAL_SPEED] = (
+            partials['max_airspeed', Aircraft.Design.MAX_STRUCTURAL_SPEED] = (
                 0.85 * dmin_dive_vel_dmax_struct_speed_mph
             )
 
-            partials["vel_c", Mission.Design.GROSS_MASS] = dVCMIN_dgross_mass
-            partials["vel_c", Aircraft.Wing.EXPOSED_AREA] = dVCMIN_dexp_wing_area
-            partials["vel_c", Aircraft.Design.MAX_STRUCTURAL_SPEED] = (
+            partials['vel_c', Mission.Design.GROSS_MASS] = dVCMIN_dgross_mass
+            partials['vel_c', Aircraft.Wing.EXPOSED_AREA] = dVCMIN_dexp_wing_area
+            partials['vel_c', Aircraft.Design.MAX_STRUCTURAL_SPEED] = (
                 dVCMIN_dmax_struct_speed_mph
             )
 
         if CATD == 3:
-            partials["max_airspeed", Aircraft.Design.MAX_STRUCTURAL_SPEED] = (
+            partials['max_airspeed', Aircraft.Design.MAX_STRUCTURAL_SPEED] = (
                 dmax_struct_speed_kts_dmax_struct_speed_mph
             )
-            partials["min_dive_vel", Aircraft.Design.MAX_STRUCTURAL_SPEED] = (
+            partials['min_dive_vel', Aircraft.Design.MAX_STRUCTURAL_SPEED] = (
                 1.2 * dmax_struct_speed_kts_dmax_struct_speed_mph
             )
-            partials["vel_c", Aircraft.Design.MAX_STRUCTURAL_SPEED] = (
+            partials['vel_c', Aircraft.Design.MAX_STRUCTURAL_SPEED] = (
                 1.0 * dmax_struct_speed_kts_dmax_struct_speed_mph
             )
         elif CATD > 3.001:
 
-            partials["max_airspeed", Aircraft.Design.MAX_STRUCTURAL_SPEED] = (
+            partials['max_airspeed', Aircraft.Design.MAX_STRUCTURAL_SPEED] = (
                 1.0 * dmax_struct_speed_kts_dmax_struct_speed_mph
             )
-            partials["min_dive_vel", Aircraft.Design.MAX_STRUCTURAL_SPEED] = (
+            partials['min_dive_vel', Aircraft.Design.MAX_STRUCTURAL_SPEED] = (
                 1.2 * dmax_struct_speed_kts_dmax_struct_speed_mph
             )
-            partials["vel_c", Aircraft.Design.MAX_STRUCTURAL_SPEED] = (
+            partials['vel_c', Aircraft.Design.MAX_STRUCTURAL_SPEED] = (
                 1.0 * dmax_struct_speed_kts_dmax_struct_speed_mph
             )
 
@@ -1689,24 +1684,24 @@ class BWBLoadFactors(om.ExplicitComponent):
         add_aviary_input(self, Aircraft.Wing.EXPOSED_AREA, units='ft**2')
 
         self.add_input(
-            "density_ratio", units="unitless",
-            desc="SIGMA (in GASP): density ratio = density at Altitude / density at Sea level",
+            'density_ratio', units='unitless',
+            desc='SIGMA (in GASP): density ratio = density at Altitude / density at Sea level',
         )
         self.add_input(
-            "V9", units="kn",
-            desc="V9: intermediate value. Typically it is maximum flight speed.",
+            'V9', units='kn',
+            desc='V9: intermediate value. Typically it is maximum flight speed.',
         )
-        self.add_input("min_dive_vel", units="kn", desc="VDMIN: dive velocity")
+        self.add_input('min_dive_vel', units='kn', desc='VDMIN: dive velocity')
         self.add_input(
-            "max_maneuver_factor", units="unitless",
-            desc="EMLF: maximum maneuver load factor, units are in g`s",
+            'max_maneuver_factor', units='unitless',
+            desc='EMLF: maximum maneuver load factor, units are in g`s',
         )
         add_aviary_input(self, Aircraft.Wing.AVERAGE_CHORD, units='ft')
         add_aviary_input(self, Aircraft.Design.LIFT_CURVE_SLOPE, units='1/rad')
 
         add_aviary_output(self, Aircraft.Wing.ULTIMATE_LOAD_FACTOR, units='unitless')
 
-        self.declare_partials(Aircraft.Wing.ULTIMATE_LOAD_FACTOR, "*")
+        self.declare_partials(Aircraft.Wing.ULTIMATE_LOAD_FACTOR, '*')
 
     def compute(self, inputs, outputs):
         verbosity = self.options[Settings.VERBOSITY]
@@ -1719,15 +1714,15 @@ class BWBLoadFactors(om.ExplicitComponent):
             exp_wing_area = inputs[Aircraft.Wing.EXPOSED_AREA]
             if verbosity > Verbosity.BRIEF:
                 if exp_wing_area <= 0.0:
-                    print("Aircraft.Wing.EXPOSED_AREA must be positive.")
+                    print('Aircraft.Wing.EXPOSED_AREA must be positive.')
                 if gross_mass <= 0.0:
-                    print("Mission.Design.GROSS_MASS must be positive.")
+                    print('Mission.Design.GROSS_MASS must be positive.')
             wing_loading = gross_mass / exp_wing_area
 
-            density_ratio = inputs["density_ratio"]
-            V9 = inputs["V9"]
-            min_dive_vel = inputs["min_dive_vel"]
-            max_maneuver_factor = inputs["max_maneuver_factor"]
+            density_ratio = inputs['density_ratio']
+            V9 = inputs['V9']
+            min_dive_vel = inputs['min_dive_vel']
+            max_maneuver_factor = inputs['max_maneuver_factor']
             avg_chord = inputs[Aircraft.Wing.AVERAGE_CHORD]
             Cl_alpha = inputs[Aircraft.Design.LIFT_CURVE_SLOPE]
 
@@ -1795,10 +1790,10 @@ class BWBLoadFactors(om.ExplicitComponent):
             dwing_loading_dgross_mass = 1 / exp_wing_area
             dwing_loading_dexp_wing_area = -gross_mass / exp_wing_area**2
 
-            density_ratio = inputs["density_ratio"]
-            V9 = inputs["V9"]
-            min_dive_vel = inputs["min_dive_vel"]
-            max_maneuver_factor = inputs["max_maneuver_factor"]
+            density_ratio = inputs['density_ratio']
+            V9 = inputs['V9']
+            min_dive_vel = inputs['min_dive_vel']
+            max_maneuver_factor = inputs['max_maneuver_factor']
             avg_chord = inputs[Aircraft.Wing.AVERAGE_CHORD]
             Cl_alpha = inputs[Aircraft.Design.LIFT_CURVE_SLOPE]
 
@@ -2284,7 +2279,7 @@ class BWBLoadFactors(om.ExplicitComponent):
                     dULF_dV9 = 0.0
                     dULF_dmin_dive_vel = 0.0
 
-        partials[Aircraft.Wing.ULTIMATE_LOAD_FACTOR, "max_maneuver_factor"] = (
+        partials[Aircraft.Wing.ULTIMATE_LOAD_FACTOR, 'max_maneuver_factor'] = (
             dULF_dmax_maneuver_factor
         )
         partials[Aircraft.Wing.ULTIMATE_LOAD_FACTOR, Mission.Design.GROSS_MASS] = (
@@ -2293,7 +2288,7 @@ class BWBLoadFactors(om.ExplicitComponent):
         partials[Aircraft.Wing.ULTIMATE_LOAD_FACTOR, Aircraft.Wing.EXPOSED_AREA] = (
             dULF_dexp_wing_areas
         )
-        partials[Aircraft.Wing.ULTIMATE_LOAD_FACTOR, "density_ratio"] = (
+        partials[Aircraft.Wing.ULTIMATE_LOAD_FACTOR, 'density_ratio'] = (
             dULF_ddensity_ratio
         )
         partials[Aircraft.Wing.ULTIMATE_LOAD_FACTOR, Aircraft.Wing.AVERAGE_CHORD] = (
@@ -2302,8 +2297,8 @@ class BWBLoadFactors(om.ExplicitComponent):
         partials[
             Aircraft.Wing.ULTIMATE_LOAD_FACTOR, Aircraft.Design.LIFT_CURVE_SLOPE
         ] = dULF_dCl_alpha
-        partials[Aircraft.Wing.ULTIMATE_LOAD_FACTOR, "V9"] = dULF_dV9
-        partials[Aircraft.Wing.ULTIMATE_LOAD_FACTOR, "min_dive_vel"] = (
+        partials[Aircraft.Wing.ULTIMATE_LOAD_FACTOR, 'V9'] = dULF_dV9
+        partials[Aircraft.Wing.ULTIMATE_LOAD_FACTOR, 'min_dive_vel'] = (
             dULF_dmin_dive_vel
         )
 
@@ -2316,31 +2311,31 @@ class BWBDesignLoadGroup(om.Group):
     def setup(self):
 
         self.add_subsystem(
-            "speeds",
+            'speeds',
             BWBLoadSpeeds(),
             promotes_inputs=['aircraft:*'],
-            promotes_outputs=["max_airspeed", "vel_c", "max_maneuver_factor", "min_dive_vel"],
+            promotes_outputs=['max_airspeed', 'vel_c', 'max_maneuver_factor', 'min_dive_vel'],
         )
 
         self.add_subsystem(
-            "params",
+            'params',
             LoadParameters(),
-            promotes_inputs=["max_airspeed", "vel_c"],
-            promotes_outputs=["density_ratio", "V9", "max_mach"],
+            promotes_inputs=['max_airspeed', 'vel_c'],
+            promotes_outputs=['density_ratio', 'V9', 'max_mach'],
         )
 
         self.add_subsystem(
-            "CL_Alpha",
+            'CL_Alpha',
             LiftCurveSlopeAtCruise(),
-            promotes_inputs=["aircraft:*", "mission:*"],
-            promotes_outputs=["aircraft:*"],
+            promotes_inputs=['aircraft:*', 'mission:*'],
+            promotes_outputs=['aircraft:*'],
         )
 
         self.add_subsystem(
-            "factors",
+            'factors',
             BWBLoadFactors(),
             promotes_inputs=[
-                "max_maneuver_factor", "min_dive_vel", "density_ratio", "V9"]
-            + ["aircraft:*", "mission:*"],
-            promotes_outputs=["aircraft:*"],
+                'max_maneuver_factor', 'min_dive_vel', 'density_ratio', 'V9']
+            + ['aircraft:*', 'mission:*'],
+            promotes_outputs=['aircraft:*'],
         )
