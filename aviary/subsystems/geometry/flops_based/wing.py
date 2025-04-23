@@ -28,7 +28,7 @@ class WingPrelim(om.ExplicitComponent):
         glove_and_bat = inputs[Aircraft.Wing.GLOVE_AND_BAT]
         span = inputs[Aircraft.Wing.SPAN]
 
-        AR = span ** 2 / (area - glove_and_bat)
+        AR = span**2 / (area - glove_and_bat)
         outputs[Aircraft.Wing.ASPECT_RATIO] = AR
 
     def compute_partials(self, inputs, partials, discrete_inputs=None):
@@ -38,11 +38,8 @@ class WingPrelim(om.ExplicitComponent):
 
         denom = 1.0 / (area - glove_and_bat)
 
-        partials[Aircraft.Wing.ASPECT_RATIO,
-                 Aircraft.Wing.AREA] = -(span * denom) ** 2
+        partials[Aircraft.Wing.ASPECT_RATIO, Aircraft.Wing.AREA] = -((span * denom) ** 2)
 
-        partials[Aircraft.Wing.ASPECT_RATIO,
-                 Aircraft.Wing.GLOVE_AND_BAT] = (span * denom) ** 2
+        partials[Aircraft.Wing.ASPECT_RATIO, Aircraft.Wing.GLOVE_AND_BAT] = (span * denom) ** 2
 
-        partials[Aircraft.Wing.ASPECT_RATIO,
-                 Aircraft.Wing.SPAN] = 2.0 * span * denom
+        partials[Aircraft.Wing.ASPECT_RATIO, Aircraft.Wing.SPAN] = 2.0 * span * denom

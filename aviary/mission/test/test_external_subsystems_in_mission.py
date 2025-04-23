@@ -43,18 +43,14 @@ energy_phase_info.pop('descent')
 
 @use_tempdirs
 class TestExternalSubsystems(unittest.TestCase):
-
     def test_mission_solver_energy(self):
-
         local_phase_info = deepcopy(energy_phase_info)
-        local_phase_info['cruise']['external_subsystems'] = [
-            SolverBuilder(name='solve_me')
-        ]
+        local_phase_info['cruise']['external_subsystems'] = [SolverBuilder(name='solve_me')]
 
         prob = AviaryProblem()
 
         prob.load_inputs(
-            "subsystems/aerodynamics/flops_based/test/data/high_wing_single_aisle.csv",
+            'subsystems/aerodynamics/flops_based/test/data/high_wing_single_aisle.csv',
             local_phase_info,
         )
 
@@ -76,12 +72,11 @@ class TestExternalSubsystems(unittest.TestCase):
         self.assertTrue(
             hasattr(
                 prob.model.traj.phases.cruise.rhs_all.solver_sub.external_subsystems,
-                "solve_me",
+                'solve_me',
             )
         )
 
     def test_no_mission_solver_energy(self):
-
         local_phase_info = deepcopy(energy_phase_info)
         local_phase_info['cruise']['external_subsystems'] = [
             NoSolverBuilder(name='do_not_solve_me')
@@ -90,7 +85,7 @@ class TestExternalSubsystems(unittest.TestCase):
         prob = AviaryProblem()
 
         prob.load_inputs(
-            "subsystems/aerodynamics/flops_based/test/data/high_wing_single_aisle.csv",
+            'subsystems/aerodynamics/flops_based/test/data/high_wing_single_aisle.csv',
             local_phase_info,
         )
 
@@ -112,21 +107,18 @@ class TestExternalSubsystems(unittest.TestCase):
         self.assertTrue(
             hasattr(
                 prob.model.traj.phases.cruise.rhs_all.external_subsystems,
-                "do_not_solve_me",
+                'do_not_solve_me',
             )
         )
 
     def test_mission_solver_2DOF(self):
-
         local_phase_info = deepcopy(two_dof_phase_info)
-        local_phase_info['cruise']['external_subsystems'] = [
-            SolverBuilder(name='solve_me')
-        ]
+        local_phase_info['cruise']['external_subsystems'] = [SolverBuilder(name='solve_me')]
 
         prob = AviaryProblem()
 
         prob.load_inputs(
-            "models/large_single_aisle_1/large_single_aisle_1_GASP.csv",
+            'models/large_single_aisle_1/large_single_aisle_1_GASP.csv',
             local_phase_info,
         )
 
@@ -149,12 +141,11 @@ class TestExternalSubsystems(unittest.TestCase):
         self.assertTrue(
             hasattr(
                 prob.model.traj.phases.cruise.rhs.external_subsystems,
-                "solve_me",
+                'solve_me',
             )
         )
 
     def test_no_mission_solver_2DOF(self):
-
         local_phase_info = deepcopy(two_dof_phase_info)
         local_phase_info['cruise']['external_subsystems'] = [
             NoSolverBuilder(name='do_not_solve_me')
@@ -163,7 +154,7 @@ class TestExternalSubsystems(unittest.TestCase):
         prob = AviaryProblem()
 
         prob.load_inputs(
-            "models/large_single_aisle_1/large_single_aisle_1_GASP.csv",
+            'models/large_single_aisle_1/large_single_aisle_1_GASP.csv',
             local_phase_info,
         )
 
@@ -185,7 +176,7 @@ class TestExternalSubsystems(unittest.TestCase):
         self.assertTrue(
             hasattr(
                 prob.model.traj.phases.cruise.rhs.external_subsystems,
-                "do_not_solve_me",
+                'do_not_solve_me',
             )
         )
 
@@ -197,7 +188,7 @@ class ExternNoSolve(om.ExplicitComponent):
 
     def setup(self):
         self.add_input(Aircraft.Wing.AREA, 1.0, units='ft**2')
-        self.add_output("stuff", 1.0, units='ft**2')
+        self.add_output('stuff', 1.0, units='ft**2')
 
     def compute(self, inputs, outputs):
         pass
@@ -227,7 +218,7 @@ class SolverBuilder(SubsystemBuilderBase):
         return ExternNoSolve()
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     unittest.main()
     # test = TestExternalSubsystems()
     # test.test_no_mission_solver_2DOF()

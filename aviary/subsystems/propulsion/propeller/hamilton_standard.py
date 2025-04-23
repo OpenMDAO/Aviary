@@ -21,59 +21,59 @@ def _unint(xa, ya, x):
     Lmt = 0
     n = len(xa)
     # test for off low end
-    if (xa[0] > x):
+    if xa[0] > x:
         Lmt = 1  # off low end
         y = ya[0]
-    elif (xa[0] == x):
+    elif xa[0] == x:
         y = ya[0]  # at low end
     else:
         ifnd = 0
         idx = 0
         for i in range(1, n):
-            if (xa[i] == x):
+            if xa[i] == x:
                 ifnd = 1  # at a node
                 idx = i
                 break
-            elif (xa[i] > x):
+            elif xa[i] > x:
                 ifnd = 2  # between (xa[i-1],xa[i])
                 idx = i
                 break
-        if (ifnd == 0):
+        if ifnd == 0:
             idx = n
             Lmt = 2  # off high end
-            y = ya[n-1]
-        elif (ifnd == 1):
+            y = ya[n - 1]
+        elif ifnd == 1:
             y = ya[idx]
-        elif (ifnd == 2):
+        elif ifnd == 2:
             # jx1: the first point of four points
-            if (idx == 1):
+            if idx == 1:
                 # first interval
                 jx1 = 0
                 ra = 1.0
-            elif (idx == n-1):
+            elif idx == n - 1:
                 # last interval
                 jx1 = n - 4
                 ra = 0.0
             else:
                 jx1 = idx - 2
-                ra = (xa[idx] - x)/(xa[idx] - xa[idx-1])
+                ra = (xa[idx] - x) / (xa[idx] - xa[idx - 1])
             rb = 1.0 - ra
 
             # get coefficeints and results
-            p1 = xa[jx1+1] - xa[jx1]
-            p2 = xa[jx1+2] - xa[jx1+1]
-            p3 = xa[jx1+3] - xa[jx1+2]
+            p1 = xa[jx1 + 1] - xa[jx1]
+            p2 = xa[jx1 + 2] - xa[jx1 + 1]
+            p3 = xa[jx1 + 3] - xa[jx1 + 2]
             p4 = p1 + p2
             p5 = p2 + p3
             d1 = x - xa[jx1]
-            d2 = x - xa[jx1+1]
-            d3 = x - xa[jx1+2]
-            d4 = x - xa[jx1+3]
+            d2 = x - xa[jx1 + 1]
+            d3 = x - xa[jx1 + 2]
+            d4 = x - xa[jx1 + 3]
             c1 = ra / p1 * d2 / p4 * d3
             c2 = -ra / p1 * d1 / p2 * d3 + rb / p2 * d3 / p5 * d4
             c3 = ra / p2 * d1 / p4 * d2 - rb / p2 * d2 / p3 * d4
             c4 = rb / p5 * d2 / p3 * d3
-            y = ya[jx1]*c1 + ya[jx1+1]*c2 + ya[jx1+2]*c3 + ya[jx1+3]*c4
+            y = ya[jx1] * c1 + ya[jx1 + 1] * c2 + ya[jx1 + 2] * c3 + ya[jx1 + 3] * c4
 
             # we don't want y to be an array
             try:
@@ -100,7 +100,7 @@ def _biquad(T, i, xi, yi):
 
     lmt = 0
     nx = int(T[i])
-    ny = int(T[i+1])
+    ny = int(T[i + 1])
     j1 = int(i + 2)
     j2 = j1 + nx - 1
     # search in x sense
@@ -113,12 +113,12 @@ def _biquad(T, i, xi, yi):
     ifnd_x = 0
     jn = 0
     xc = [0, 0, 0, 0]
-    for j in range(j1, j2+1):
-        if (T[j] >= x):
+    for j in range(j1, j2 + 1):
+        if T[j] >= x:
             ifnd_x = 1
             jn = j
             break
-    if (ifnd_x == 0):
+    if ifnd_x == 0:
         # off high end
         x = T[j2]
         kx = 2
@@ -127,29 +127,29 @@ def _biquad(T, i, xi, yi):
         ra_x = 0.0
     else:
         # test for -- off low end, first interval, other
-        if (jn < j1+1):
-            if (T[jn] != x):
+        if jn < j1 + 1:
+            if T[jn] != x:
                 kx = 1
                 x = T[j1]
-        if (jn <= j1+1):
+        if jn <= j1 + 1:
             jx1 = j1
             ra_x = 1.0
         else:
             # test for last interval
-            if (j == j2):
+            if j == j2:
                 jx1 = j2 - 3
                 ra_x = 0.0
             else:
                 jx1 = jn - 2
-                ra_x = (T[jn] - x)/(T[jn] - T[jn-1])
-        rb_x = 1. - ra_x
+                ra_x = (T[jn] - x) / (T[jn] - T[jn - 1])
+        rb_x = 1.0 - ra_x
 
         # return here from search of x
         lmt = kx
         jx = jx1
         # The following code puts x values in xc blocks
         for j in range(4):
-            xc[j] = T[jx1+j]
+            xc[j] = T[jx1 + j]
         # get coeff. in x sense
         # coefficient routine - input x,x1,x2,x3,x4,ra_x,rb_x
         p1 = xc[1] - xc[0]
@@ -161,17 +161,17 @@ def _biquad(T, i, xi, yi):
         d2 = x - xc[1]
         d3 = x - xc[2]
         d4 = x - xc[3]
-        cx1 = ra_x/p1*d2/p4*d3
-        cx2 = -ra_x/p1*d1/p2*d3 + rb_x/p2*d3/p5*d4
-        cx3 = ra_x/p2*d1/p4*d2 - rb_x/p2*d2/p3*d4
-        cx4 = rb_x/p5*d2/p3*d3
+        cx1 = ra_x / p1 * d2 / p4 * d3
+        cx2 = -ra_x / p1 * d1 / p2 * d3 + rb_x / p2 * d3 / p5 * d4
+        cx3 = ra_x / p2 * d1 / p4 * d2 - rb_x / p2 * d2 / p3 * d4
+        cx4 = rb_x / p5 * d2 / p3 * d3
         # return to main body
 
         # return here with coeff. test for univariate or bivariate
-        if (ny == 0):
+        if ny == 0:
             z = 0.0
             jy = jx + nx
-            z = cx1*T[jy] + cx2*T[jy+1] + cx3*T[jy+2] + cx4*T[jy+3]
+            z = cx1 * T[jy] + cx2 * T[jy + 1] + cx3 * T[jy + 2] + cx4 * T[jy + 3]
         else:
             # bivariate table
             y = yi
@@ -183,11 +183,11 @@ def _biquad(T, i, xi, yi):
             #                - output ra_y,rb_y,ky,,jy1
             ky = 0
             ifnd_y = 0
-            for j in range(j3, j4+1):
-                if (T[j] >= y):
+            for j in range(j3, j4 + 1):
+                if T[j] >= y:
                     ifnd_y = 1
                     break
-            if (ifnd_y == 0):
+            if ifnd_y == 0:
                 # off high end
                 y = T[j4]
                 ky = 2
@@ -196,31 +196,31 @@ def _biquad(T, i, xi, yi):
                 ra_y = 0.0
             else:
                 # test for off low end, first interval
-                if (j < j3 + 1):
-                    if (T[j] != y):
+                if j < j3 + 1:
+                    if T[j] != y:
                         ky = 1
                         y = T[j3]
-                if (j <= j3 + 1):
+                if j <= j3 + 1:
                     jy1 = j3
                     ra_y = 1.0
                 else:
                     # test for last interval
-                    if (j == j4):
+                    if j == j4:
                         jy1 = j4 - 3
                         ra_y = 0.0
                     else:
                         jy1 = j - 2
-                        ra_y = (T[j] - y)/(T[j] - T[j-1])
+                        ra_y = (T[j] - y) / (T[j] - T[j - 1])
             rb_y = 1.0 - ra_y
 
-            lmt = lmt + 3*ky
+            lmt = lmt + 3 * ky
             # interpolate in y sense
             # subscript - base, num. of col., num. of y's
-            jy = (j4 + 1) + (jx - i - 2)*ny + (jy1 - j3)
+            jy = (j4 + 1) + (jx - i - 2) * ny + (jy1 - j3)
             yt = [0, 0, 0, 0]
             for m in range(4):
                 jx = jy
-                yt[m] = cx1*T[jx] + cx2*T[jx+ny] + cx3*T[jx+2*ny] + cx4*T[jx+3*ny]
+                yt[m] = cx1 * T[jx] + cx2 * T[jx + ny] + cx3 * T[jx + 2 * ny] + cx4 * T[jx + 3 * ny]
                 jy = jy + 1
 
             # the following code puts y values in yc block
@@ -239,34 +239,26 @@ def _biquad(T, i, xi, yi):
             d2 = y - yc[1]
             d3 = y - yc[2]
             d4 = y - yc[3]
-            cy1 = ra_y/p1*d2/p4*d3
-            cy2 = -ra_y/p1*d1/p2*d3 + rb_y/p2*d3/p5*d4
-            cy3 = ra_y/p2*d1/p4*d2 - rb_y/p2*d2/p3*d4
-            cy4 = rb_y/p5*d2/p3*d3
-            z = cy1*yt[0] + cy2*yt[1] + cy3*yt[2] + cy4*yt[3]
+            cy1 = ra_y / p1 * d2 / p4 * d3
+            cy2 = -ra_y / p1 * d1 / p2 * d3 + rb_y / p2 * d3 / p5 * d4
+            cy3 = ra_y / p2 * d1 / p4 * d2 - rb_y / p2 * d2 / p3 * d4
+            cy4 = rb_y / p5 * d2 / p3 * d3
+            z = cy1 * yt[0] + cy2 * yt[1] + cy3 * yt[2] + cy4 * yt[3]
 
     return z, lmt
 
 
 # block auto-formatting of tables
-# autopep8: off
 # fmt: off
 CP_Angle_table = np.array([
     [  # 2 blades
-        [0.0158, 0.0165, .0188, .0230, .0369,
-            .0588, .0914, .1340, .1816, .22730],  # advance_ratio = 0.0
-        [0.0215, 0.0459, .0829, .1305, .1906,
-            .2554, 0.000, 0.000, 0.000, 0.0000],  # advance_ratio = 0.5
-        [-.0149, -.0088, .0173, .0744, .1414,
-            .2177, .3011, .3803, 0.000, 0.0000],  # advance_ratio = 1.0
-        [-.0670, -.0385, .0285, .1304, .2376,
-            .3536, .4674, .5535, 0.000, 0.0000],  # advance_ratio = 1.5
-        [-.1150, -.0281, .1086, .2646, .4213,
-            .5860, .7091, 0.000, 0.000, 0.0000],  # advance_ratio = 2.0
-        [-.1151, 0.0070, .1436, .2910, .4345,
-            .5744, .7142, .8506, .9870, 1.1175],  # advance_ratio = 3.0
-        [-.2427, 0.0782, .4242, .7770, 1.1164,
-            1.4443, 0.000, 0.000, 0.000, 0.000],  # advance_ratio = 5.0
+        [0.0158, 0.0165, .0188, .0230, .0369, .0588, .0914, .1340, .1816, .22730],  # advance_ratio = 0.0
+        [0.0215, 0.0459, .0829, .1305, .1906, .2554, 0.000, 0.000, 0.000, 0.0000],  # advance_ratio = 0.5
+        [-.0149, -.0088, .0173, .0744, .1414, .2177, .3011, .3803, 0.000, 0.0000],  # advance_ratio = 1.0
+        [-.0670, -.0385, .0285, .1304, .2376, .3536, .4674, .5535, 0.000, 0.0000],  # advance_ratio = 1.5
+        [-.1150, -.0281, .1086, .2646, .4213, .5860, .7091, 0.000, 0.000, 0.0000],  # advance_ratio = 2.0
+        [-.1151, 0.0070, .1436, .2910, .4345, .5744, .7142, .8506, .9870, 1.1175],  # advance_ratio = 3.0
+        [-.2427, 0.0782, .4242, .7770, 1.1164, 1.4443, 0.000, 0.000, 0.000, 0.000],  # advance_ratio = 5.0
     ],
     [  # 4 blades
         [.0311, .0320, .0360, .0434, .0691, .1074, .1560, .2249, .3108, .4026],
@@ -469,7 +461,6 @@ comp_mach_CT_arr = np.array([
     .525, .540, .565, .615, .670, .710, .745, .790, .825, .860, .880, .895,  # X = 0.20
     .225, .260, .320, .375, .430, .495, .550, .610, .660, .710, .740, .775,  # X = 0.30
 ])
-# autopep8: on
 # fmt: on
 
 
@@ -491,16 +482,10 @@ class PreHamiltonStandard(om.ExplicitComponent):
             val=np.zeros(nn),
             units='ft/s',
         )
-        add_aviary_input(
-            self, Dynamic.Vehicle.Propulsion.SHAFT_POWER, val=np.zeros(nn), units='hp'
-        )
-        add_aviary_input(
-            self, Dynamic.Atmosphere.DENSITY, val=np.zeros(nn), units='slug/ft**3'
-        )
+        add_aviary_input(self, Dynamic.Vehicle.Propulsion.SHAFT_POWER, val=np.zeros(nn), units='hp')
+        add_aviary_input(self, Dynamic.Atmosphere.DENSITY, val=np.zeros(nn), units='slug/ft**3')
         add_aviary_input(self, Dynamic.Mission.VELOCITY, val=np.zeros(nn), units='ft/s')
-        add_aviary_input(
-            self, Dynamic.Atmosphere.SPEED_OF_SOUND, val=np.zeros(nn), units='ft/s'
-        )
+        add_aviary_input(self, Dynamic.Atmosphere.SPEED_OF_SOUND, val=np.zeros(nn), units='ft/s')
 
         self.add_output('power_coefficient', val=np.zeros(nn), units='unitless')
         self.add_output('advance_ratio', val=np.zeros(nn), units='unitless')
@@ -556,22 +541,17 @@ class PreHamiltonStandard(om.ExplicitComponent):
         density_ratio = inputs[Dynamic.Atmosphere.DENSITY] / RHO_SEA_LEVEL_ENGLISH
 
         if diam_prop <= 0.0:
-            raise om.AnalysisError(
-                "Aircraft.Engine.Propeller.DIAMETER must be positive.")
+            raise om.AnalysisError('Aircraft.Engine.Propeller.DIAMETER must be positive.')
         if any(tipspd) <= 0.0:
             raise om.AnalysisError(
-                "Dynamic.Vehicle.Propulsion.PROPELLER_TIP_SPEED must be positive."
+                'Dynamic.Vehicle.Propulsion.PROPELLER_TIP_SPEED must be positive.'
             )
         if any(sos) <= 0.0:
-            raise om.AnalysisError(
-                "Dynamic.Atmosphere.SPEED_OF_SOUND must be positive."
-            )
+            raise om.AnalysisError('Dynamic.Atmosphere.SPEED_OF_SOUND must be positive.')
         if any(density_ratio) <= 0.0:
-            raise om.AnalysisError("Dynamic.Atmosphere.DENSITY must be positive.")
+            raise om.AnalysisError('Dynamic.Atmosphere.DENSITY must be positive.')
         if any(shp) < 0.0:
-            raise om.AnalysisError(
-                "Dynamic.Vehicle.Propulsion.SHAFT_POWER must be non-negative."
-            )
+            raise om.AnalysisError('Dynamic.Vehicle.Propulsion.SHAFT_POWER must be non-negative.')
 
         # outputs['density_ratio'] = density_ratio
         # TODO tip mach was already calculated, revisit this
@@ -580,11 +560,7 @@ class PreHamiltonStandard(om.ExplicitComponent):
         # TODO back out what is going on with unit conversion factor 10e10/(2*6966)
 
         outputs['power_coefficient'] = (
-            shp
-            * 10.0e10
-            / (2 * 6966.0)
-            / density_ratio
-            / (tipspd**3 * diam_prop**2)
+            shp * 10.0e10 / (2 * 6966.0) / density_ratio / (tipspd**3 * diam_prop**2)
         )
 
     def compute_partials(self, inputs, partials):
@@ -595,25 +571,38 @@ class PreHamiltonStandard(om.ExplicitComponent):
         shp = inputs[Dynamic.Vehicle.Propulsion.SHAFT_POWER]
         sos = inputs[Dynamic.Atmosphere.SPEED_OF_SOUND]
 
-        unit_conversion_const = 10.E10 / (2 * 6966.)
+        unit_conversion_const = 10.0e10 / (2 * 6966.0)
 
         # partials["density_ratio", Dynamic.Atmosphere.DENSITY] = 1 / RHO_SEA_LEVEL_ENGLISH
-        partials["tip_mach", Dynamic.Vehicle.Propulsion.PROPELLER_TIP_SPEED] = 1 / sos
-        partials["tip_mach", Dynamic.Atmosphere.SPEED_OF_SOUND] = -tipspd / sos**2
-        partials["advance_ratio", Dynamic.Mission.VELOCITY] = math.pi / tipspd
-        partials["advance_ratio", Dynamic.Vehicle.Propulsion.PROPELLER_TIP_SPEED] = (
+        partials['tip_mach', Dynamic.Vehicle.Propulsion.PROPELLER_TIP_SPEED] = 1 / sos
+        partials['tip_mach', Dynamic.Atmosphere.SPEED_OF_SOUND] = -tipspd / sos**2
+        partials['advance_ratio', Dynamic.Mission.VELOCITY] = math.pi / tipspd
+        partials['advance_ratio', Dynamic.Vehicle.Propulsion.PROPELLER_TIP_SPEED] = (
             -math.pi * vtas / (tipspd * tipspd)
         )
-        partials["power_coefficient", Dynamic.Vehicle.Propulsion.SHAFT_POWER] = unit_conversion_const * \
-            RHO_SEA_LEVEL_ENGLISH / (rho * tipspd**3*diam_prop**2)
-        partials["power_coefficient", Dynamic.Atmosphere.DENSITY] = -unit_conversion_const * shp * \
-            RHO_SEA_LEVEL_ENGLISH / (rho * rho * tipspd**3*diam_prop**2)
-        partials["power_coefficient", Dynamic.Vehicle.Propulsion.PROPELLER_TIP_SPEED] = -3 * \
-            unit_conversion_const * shp * RHO_SEA_LEVEL_ENGLISH / \
-            (rho * tipspd**4*diam_prop**2)
-        partials["power_coefficient", Aircraft.Engine.Propeller.DIAMETER] = -2 * \
-            unit_conversion_const * shp * RHO_SEA_LEVEL_ENGLISH / \
-            (rho * tipspd**3*diam_prop**3)
+        partials['power_coefficient', Dynamic.Vehicle.Propulsion.SHAFT_POWER] = (
+            unit_conversion_const * RHO_SEA_LEVEL_ENGLISH / (rho * tipspd**3 * diam_prop**2)
+        )
+        partials['power_coefficient', Dynamic.Atmosphere.DENSITY] = (
+            -unit_conversion_const
+            * shp
+            * RHO_SEA_LEVEL_ENGLISH
+            / (rho * rho * tipspd**3 * diam_prop**2)
+        )
+        partials['power_coefficient', Dynamic.Vehicle.Propulsion.PROPELLER_TIP_SPEED] = (
+            -3
+            * unit_conversion_const
+            * shp
+            * RHO_SEA_LEVEL_ENGLISH
+            / (rho * tipspd**4 * diam_prop**2)
+        )
+        partials['power_coefficient', Aircraft.Engine.Propeller.DIAMETER] = (
+            -2
+            * unit_conversion_const
+            * shp
+            * RHO_SEA_LEVEL_ENGLISH
+            / (rho * tipspd**3 * diam_prop**3)
+        )
 
 
 class HamiltonStandard(om.ExplicitComponent):
@@ -635,9 +624,7 @@ class HamiltonStandard(om.ExplicitComponent):
 
         self.add_input('power_coefficient', val=np.zeros(nn), units='unitless')
         self.add_input('advance_ratio', val=np.zeros(nn), units='unitless')
-        add_aviary_input(
-            self, Dynamic.Atmosphere.MACH, val=np.zeros(nn), units='unitless'
-        )
+        add_aviary_input(self, Dynamic.Atmosphere.MACH, val=np.zeros(nn), units='unitless')
         self.add_input('tip_mach', val=np.zeros(nn), units='unitless')
         add_aviary_input(
             self, Aircraft.Engine.Propeller.ACTIVITY_FACTOR, val=0.0, units='unitless'
@@ -695,20 +682,22 @@ class HamiltonStandard(om.ExplicitComponent):
             for k in range(2, 7):
                 AF_adj_CP[k] = AF_adj_CP[1]
                 AF_adj_CT[k] = AF_adj_CT[1]
-            if (inputs['advance_ratio'][i_node] <= 0.5):
-                AFCTE = 2.*inputs['advance_ratio'][i_node] * \
-                    (AF_adj_CT[1] - AF_adj_CT[0]) + AF_adj_CT[0]
+            if inputs['advance_ratio'][i_node] <= 0.5:
+                AFCTE = (
+                    2.0 * inputs['advance_ratio'][i_node] * (AF_adj_CT[1] - AF_adj_CT[0])
+                    + AF_adj_CT[0]
+                )
             else:
                 AFCTE = AF_adj_CT[1]
 
             # bounding J (advance ratio) for setting up interpolation
-            if (inputs['advance_ratio'][i_node] <= 1.0):
+            if inputs['advance_ratio'][i_node] <= 1.0:
                 J_begin = 0
                 J_end = 3
-            elif (inputs['advance_ratio'][i_node] <= 1.5):
+            elif inputs['advance_ratio'][i_node] <= 1.5:
                 J_begin = 1
                 J_end = 4
-            elif (inputs['advance_ratio'][i_node] <= 2.0):
+            elif inputs['advance_ratio'][i_node] <= 2.0:
                 J_begin = 2
                 J_end = 5
             else:
@@ -724,14 +713,14 @@ class HamiltonStandard(om.ExplicitComponent):
             power_coefficient = inputs['power_coefficient'][i_node]
             for ii in range(6):
                 cl_idx = ii
-                if (abs(cli - CL_arr[ii]) <= 0.0009):
+                if abs(cli - CL_arr[ii]) <= 0.0009:
                     ifnd = 1
                     break
-            if (ifnd == 0):
-                if (cli <= 0.6):
+            if ifnd == 0:
+                if cli <= 0.6:
                     CL_tab_idx_begin = 0
                     CL_tab_idx_end = 3
-                elif (cli <= 0.7):
+                elif cli <= 0.7:
                     CL_tab_idx_begin = 1
                     CL_tab_idx_end = 4
                 else:
@@ -744,7 +733,7 @@ class HamiltonStandard(om.ExplicitComponent):
                 CL_tab_idx_flg = 1
 
             lmod = (num_blades % 2) + 1
-            if (lmod == 1):
+            if lmod == 1:
                 nbb = 1
                 idx_blade = int(num_blades / 2)
                 # even number of blades idx_blade = 1 if 2 blades;
@@ -761,48 +750,55 @@ class HamiltonStandard(om.ExplicitComponent):
                 # nbb = 1 even number of blades. No interpolation needed
                 # nbb = 4 odd number of blades. So, interpolation done
                 #       using 4 sets of even J (advance ratio) interpolation
-                for kdx in range(J_begin, J_end+1):
-                    CP_Eff = power_coefficient*AF_adj_CP[kdx]
+                for kdx in range(J_begin, J_end + 1):
+                    CP_Eff = power_coefficient * AF_adj_CP[kdx]
                     PBL, run_flag = _unint(CPEC, BL_P_corr_table[idx_blade], CP_Eff)
                     # PBL = number of blades correction for power_coefficient
-                    CPE1 = CP_Eff*PBL*PF_CLI_arr[kdx]
+                    CPE1 = CP_Eff * PBL * PF_CLI_arr[kdx]
                     CL_tab_idx = CL_tab_idx_begin
-                    for kl in range(CL_tab_idx_begin, CL_tab_idx_end+1):
+                    for kl in range(CL_tab_idx_begin, CL_tab_idx_end + 1):
                         CPE1X = CPE1
-                        if (CPE1 < CP_CLi_table[CL_tab_idx][0]):
+                        if CPE1 < CP_CLi_table[CL_tab_idx][0]:
                             CPE1X = CP_CLi_table[CL_tab_idx][0]
                         cli_len = cli_arr_len[CL_tab_idx]
                         PXCLI[kl], run_flag = _unint(
-                            CP_CLi_table[CL_tab_idx][:cli_len], XPCLI[CL_tab_idx], CPE1X)
-                        if (run_flag == 1):
+                            CP_CLi_table[CL_tab_idx][:cli_len], XPCLI[CL_tab_idx], CPE1X
+                        )
+                        if run_flag == 1:
                             ichck = ichck + 1
                         if verbosity == Verbosity.DEBUG or ichck <= Verbosity.BRIEF:
-                            if (run_flag == 1):
+                            if run_flag == 1:
                                 warnings.warn(
-                                    f"Mach = {inputs[Dynamic.Atmosphere.MACH][i_node]}\n"
-                                    f"VTMACH = {inputs['tip_mach'][i_node]}\n"
-                                    f"J = {inputs['advance_ratio'][i_node]}\n"
-                                    f"power_coefficient = {power_coefficient}\n"
-                                    f"CP_Eff = {CP_Eff}"
+                                    f'Mach = {inputs[Dynamic.Atmosphere.MACH][i_node]}\n'
+                                    f'VTMACH = {inputs["tip_mach"][i_node]}\n'
+                                    f'J = {inputs["advance_ratio"][i_node]}\n'
+                                    f'power_coefficient = {power_coefficient}\n'
+                                    f'CP_Eff = {CP_Eff}'
                                 )
-                            if (kl == 4 and CPE1 < 0.010):
+                            if kl == 4 and CPE1 < 0.010:
                                 print(
-                                    f"Extrapolated data is being used for CLI=.6--CPE1,PXCLI,L= , {CPE1},{PXCLI[kl]},{idx_blade}   Suggest inputting CLI=.5")
-                            if (kl == 5 and CPE1 < 0.010):
+                                    f'Extrapolated data is being used for CLI=.6--CPE1,PXCLI,L= , {CPE1},{PXCLI[kl]},{idx_blade}   Suggest inputting CLI=.5'
+                                )
+                            if kl == 5 and CPE1 < 0.010:
                                 print(
-                                    f"Extrapolated data is being used for CLI=.7--CPE1,PXCLI,L= , {CPE1},{PXCLI[kl]},{idx_blade}   Suggest inputting CLI=.5")
-                            if (kl == 6 and CPE1 < 0.010):
+                                    f'Extrapolated data is being used for CLI=.7--CPE1,PXCLI,L= , {CPE1},{PXCLI[kl]},{idx_blade}   Suggest inputting CLI=.5'
+                                )
+                            if kl == 6 and CPE1 < 0.010:
                                 print(
-                                    f"Extrapolated data is being used for CLI=.8--CPE1,PXCLI,L= , {CPE1},{PXCLI[kl]},{idx_blade}   Suggest inputting CLI=.5")
+                                    f'Extrapolated data is being used for CLI=.8--CPE1,PXCLI,L= , {CPE1},{PXCLI[kl]},{idx_blade}   Suggest inputting CLI=.5'
+                                )
                         NERPT = 1
-                        CL_tab_idx = CL_tab_idx+1
-                    if (CL_tab_idx_flg != 1):
+                        CL_tab_idx = CL_tab_idx + 1
+                    if CL_tab_idx_flg != 1:
                         PCLI, run_flag = _unint(
-                            CL_arr[CL_tab_idx_begin:CL_tab_idx_begin+4], PXCLI[CL_tab_idx_begin:CL_tab_idx_begin+4], inputs[Aircraft.Engine.Propeller.INTEGRATED_LIFT_COEFFICIENT][0])
+                            CL_arr[CL_tab_idx_begin : CL_tab_idx_begin + 4],
+                            PXCLI[CL_tab_idx_begin : CL_tab_idx_begin + 4],
+                            inputs[Aircraft.Engine.Propeller.INTEGRATED_LIFT_COEFFICIENT][0],
+                        )
                     else:
                         PCLI = PXCLI[CL_tab_idx_begin]
                         # PCLI = CLI adjustment to power_coefficient
-                    CP_Eff = CP_Eff*PCLI  # the effective CP at baseline point for kdx
+                    CP_Eff = CP_Eff * PCLI  # the effective CP at baseline point for kdx
                     ang_len = ang_arr_len[kdx]
                     BLL[kdx], run_flag = _unint(
                         # blade angle at baseline point for kdx
@@ -813,107 +809,127 @@ class HamiltonStandard(om.ExplicitComponent):
                     try:
                         CTT[kdx], run_flag = _unint(
                             # thrust coeff at baseline point for kdx
-                            Blade_angle_table[kdx][:ang_len], CT_Angle_table[idx_blade][kdx][:ang_len], BLL[kdx])
+                            Blade_angle_table[kdx][:ang_len],
+                            CT_Angle_table[idx_blade][kdx][:ang_len],
+                            BLL[kdx],
+                        )
                     except IndexError:
                         raise om.AnalysisError(
-                            "interp failed for CTT (thrust coefficient) in hamilton_standard.py")
+                            'interp failed for CTT (thrust coefficient) in hamilton_standard.py'
+                        )
                     if run_flag > 1:
                         NERPT = 2
-                        print(
-                            f"ERROR IN PROP. PERF.-- NERPT={NERPT}, run_flag={run_flag}"
-                        )
+                        print(f'ERROR IN PROP. PERF.-- NERPT={NERPT}, run_flag={run_flag}')
 
                 BLLL[ibb], run_flag = _unint(
-                    advance_ratio_array[J_begin:J_begin+4], BLL[J_begin:J_begin+4], inputs['advance_ratio'][i_node])
+                    advance_ratio_array[J_begin : J_begin + 4],
+                    BLL[J_begin : J_begin + 4],
+                    inputs['advance_ratio'][i_node],
+                )
                 ang_blade = BLLL[ibb]
                 CTTT[ibb], run_flag = _unint(
-                    advance_ratio_array[J_begin:J_begin+4], CTT[J_begin:J_begin+4], inputs['advance_ratio'][i_node])
+                    advance_ratio_array[J_begin : J_begin + 4],
+                    CTT[J_begin : J_begin + 4],
+                    inputs['advance_ratio'][i_node],
+                )
 
                 # make extra correction. CTG is an "error" function, and the iteration (loop counter = "IL") tries to drive CTG/CT to 0
                 # ERR_CT = CTG1[il]/CTTT[ibb], where CTG1 =CT_Eff - CTTT(IBB).
-                CTG[0] = .100
-                CTG[1] = .200
+                CTG[0] = 0.100
+                CTG[1] = 0.200
                 TFCLII, run_flag = _unint(
-                    advance_ratio_array, TF_CLI_arr, inputs['advance_ratio'][i_node])
+                    advance_ratio_array, TF_CLI_arr, inputs['advance_ratio'][i_node]
+                )
                 NCTG = 10
                 ifnd1 = 0
                 ifnd2 = 0
                 for il in range(NCTG):
                     ct = CTG[il]
-                    CT_Eff = CTG[il]*AFCTE
+                    CT_Eff = CTG[il] * AFCTE
                     TBL, run_flag = _unint(CTEC, BL_T_corr_table[idx_blade], CT_Eff)
                     # TBL = number of blades correction for thrust_coefficient
-                    CTE1 = CT_Eff*TBL*TFCLII
+                    CTE1 = CT_Eff * TBL * TFCLII
                     CL_tab_idx = CL_tab_idx_begin
-                    for kl in range(CL_tab_idx_begin, CL_tab_idx_end+1):
+                    for kl in range(CL_tab_idx_begin, CL_tab_idx_end + 1):
                         CTE1X = CTE1
-                        if (CTE1 < CT_CLi_table[CL_tab_idx][0]):
+                        if CTE1 < CT_CLi_table[CL_tab_idx][0]:
                             CTE1X = CT_CLi_table[CL_tab_idx][0]
                         cli_len = cli_arr_len[CL_tab_idx]
                         TXCLI[kl], run_flag = _unint(
-                            CT_CLi_table[CL_tab_idx][:cli_len], XTCLI[CL_tab_idx][:cli_len], CTE1X)
+                            CT_CLi_table[CL_tab_idx][:cli_len], XTCLI[CL_tab_idx][:cli_len], CTE1X
+                        )
                         NERPT = 5
-                        if (run_flag == 1):
+                        if run_flag == 1:
                             # off lower bound only.
                             print(
-                                f"ERROR IN PROP. PERF.-- NERPT={NERPT}, "
-                                f"run_flag={run_flag}, il={il}, kl = {kl}"
+                                f'ERROR IN PROP. PERF.-- NERPT={NERPT}, '
+                                f'run_flag={run_flag}, il={il}, kl = {kl}'
                             )
-                        if (inputs['advance_ratio'][i_node] != 0.0):
+                        if inputs['advance_ratio'][i_node] != 0.0:
                             ZMCRT, run_flag = _unint(
-                                advance_ratio_array2, mach_corr_table[CL_tab_idx], inputs['advance_ratio'][i_node])
+                                advance_ratio_array2,
+                                mach_corr_table[CL_tab_idx],
+                                inputs['advance_ratio'][i_node],
+                            )
                             DMN = inputs[Dynamic.Atmosphere.MACH][i_node] - ZMCRT
                         else:
                             ZMCRT = mach_tip_corr_arr[CL_tab_idx]
                             DMN = inputs['tip_mach'][i_node] - ZMCRT
                         XFFT[kl] = 1.0  # compressibility tip loss factor
-                        if (DMN > 0.0):
-                            CTE2 = CT_Eff*TXCLI[kl]*TBL
+                        if DMN > 0.0:
+                            CTE2 = CT_Eff * TXCLI[kl] * TBL
                             XFFT[kl], run_flag = _biquad(comp_mach_CT_arr, 1, DMN, CTE2)
                         CL_tab_idx = CL_tab_idx + 1
-                    if (CL_tab_idx_flg != 1):
+                    if CL_tab_idx_flg != 1:
                         cli = inputs[Aircraft.Engine.Propeller.INTEGRATED_LIFT_COEFFICIENT][0]
                         TCLII, run_flag = _unint(
-                            CL_arr[CL_tab_idx_begin:CL_tab_idx_begin+4], TXCLI[CL_tab_idx_begin:CL_tab_idx_begin+4], cli)
+                            CL_arr[CL_tab_idx_begin : CL_tab_idx_begin + 4],
+                            TXCLI[CL_tab_idx_begin : CL_tab_idx_begin + 4],
+                            cli,
+                        )
                         xft, run_flag = _unint(
-                            CL_arr[CL_tab_idx_begin:CL_tab_idx_begin+4], XFFT[CL_tab_idx_begin:CL_tab_idx_begin+4], cli)
+                            CL_arr[CL_tab_idx_begin : CL_tab_idx_begin + 4],
+                            XFFT[CL_tab_idx_begin : CL_tab_idx_begin + 4],
+                            cli,
+                        )
                     else:
                         TCLII = TXCLI[CL_tab_idx_begin]
                         xft = XFFT[CL_tab_idx_begin]
                     ct = CTG[il]
-                    CT_Eff = CTG[il]*AFCTE*TCLII
+                    CT_Eff = CTG[il] * AFCTE * TCLII
                     CTG1[il] = CT_Eff - CTTT[ibb]
-                    if (abs(CTG1[il]/CTTT[ibb]) < 0.001):
+                    if abs(CTG1[il] / CTTT[ibb]) < 0.001:
                         ifnd1 = 1
                         break
-                    if (il > 0):
-                        CTG[il+1] = -CTG1[il-1] * \
-                            (CTG[il] - CTG[il-1])/(CTG1[il] - CTG1[il-1]) + CTG[il-1]
-                        if (CTG[il+1] <= 0):
+                    if il > 0:
+                        CTG[il + 1] = (
+                            -CTG1[il - 1] * (CTG[il] - CTG[il - 1]) / (CTG1[il] - CTG1[il - 1])
+                            + CTG[il - 1]
+                        )
+                        if CTG[il + 1] <= 0:
                             ifnd2 = 1
                             break
 
-                if (ifnd1 == 0 and ifnd2 == 0):
+                if ifnd1 == 0 and ifnd2 == 0:
                     raise ValueError(
-                        "Integrated design cl adjustment not working properly for ct "
-                        f"definition (ibb={ibb})"
+                        'Integrated design cl adjustment not working properly for ct '
+                        f'definition (ibb={ibb})'
                     )
-                if (ifnd1 == 0 and ifnd2 == 1):
+                if ifnd1 == 0 and ifnd2 == 1:
                     ct = 0.0
                 CTTT[ibb] = ct
                 XXXFT[ibb] = xft
                 idx_blade = idx_blade + 1
 
-            if (nbb != 1):
+            if nbb != 1:
                 # interpolation by the number of blades if odd number
-                ang_blade, run_flag = _unint(
-                    num_blades_arr, BLLL[:4], num_blades)
+                ang_blade, run_flag = _unint(num_blades_arr, BLLL[:4], num_blades)
                 ct, run_flag = _unint(num_blades_arr, CTTT, num_blades)
                 xft, run_flag = _unint(num_blades_arr, XXXFT, num_blades)
 
             # NOTE this could be handled via the metamodel comps (extrapolate flag)
             if ichck > 0:
-                print(f"  table look-up error = {ichck} (if you go outside the tables.)")
+                print(f'  table look-up error = {ichck} (if you go outside the tables.)')
 
             outputs['thrust_coefficient'][i_node] = ct
             outputs['comp_tip_loss_factor'][i_node] = xft
@@ -931,8 +947,7 @@ class PostHamiltonStandard(om.ExplicitComponent):
         nn = self.options['num_nodes']
 
         add_aviary_input(self, Aircraft.Engine.Propeller.DIAMETER, val=0.0, units='ft')
-        self.add_input('install_loss_factor',
-                       val=np.zeros(nn), units='unitless')
+        self.add_input('install_loss_factor', val=np.zeros(nn), units='unitless')
         self.add_input('thrust_coefficient', val=np.zeros(nn), units='unitless')
         self.add_input('comp_tip_loss_factor', val=np.zeros(nn), units='unitless')
         add_aviary_input(
@@ -945,11 +960,8 @@ class PostHamiltonStandard(om.ExplicitComponent):
         self.add_input('advance_ratio', val=np.zeros(nn), units='unitless')
         self.add_input('power_coefficient', val=np.zeros(nn), units='unitless')
 
-        self.add_output('thrust_coefficient_comp_loss',
-                        val=np.zeros(nn), units='unitless')
-        add_aviary_output(
-            self, Dynamic.Vehicle.Propulsion.THRUST, val=np.zeros(nn), units='lbf'
-        )
+        self.add_output('thrust_coefficient_comp_loss', val=np.zeros(nn), units='unitless')
+        add_aviary_output(self, Dynamic.Vehicle.Propulsion.THRUST, val=np.zeros(nn), units='lbf')
         # keep them for reporting but don't seem to be required
         self.add_output('propeller_efficiency', val=np.zeros(nn), units='unitless')
         self.add_output('install_efficiency', val=np.zeros(nn), units='unitless')
@@ -957,10 +969,15 @@ class PostHamiltonStandard(om.ExplicitComponent):
     def setup_partials(self):
         arange = np.arange(self.options['num_nodes'])
 
-        self.declare_partials('thrust_coefficient_comp_loss', [
-            'thrust_coefficient',
-            'comp_tip_loss_factor',
-        ], rows=arange, cols=arange)
+        self.declare_partials(
+            'thrust_coefficient_comp_loss',
+            [
+                'thrust_coefficient',
+                'comp_tip_loss_factor',
+            ],
+            rows=arange,
+            cols=arange,
+        )
         self.declare_partials(
             Dynamic.Vehicle.Propulsion.THRUST,
             [
@@ -977,24 +994,34 @@ class PostHamiltonStandard(om.ExplicitComponent):
             Dynamic.Vehicle.Propulsion.THRUST,
             [
                 Aircraft.Engine.Propeller.DIAMETER,
-            ]
+            ],
         )
-        self.declare_partials('propeller_efficiency', [
-            'advance_ratio',
-            'power_coefficient',
-            'thrust_coefficient',
-            'comp_tip_loss_factor',
-        ], rows=arange, cols=arange)
-        self.declare_partials('install_efficiency', [
-            'advance_ratio',
-            'power_coefficient',
-            'thrust_coefficient',
-            'comp_tip_loss_factor',
-            'install_loss_factor',
-        ], rows=arange, cols=arange)
+        self.declare_partials(
+            'propeller_efficiency',
+            [
+                'advance_ratio',
+                'power_coefficient',
+                'thrust_coefficient',
+                'comp_tip_loss_factor',
+            ],
+            rows=arange,
+            cols=arange,
+        )
+        self.declare_partials(
+            'install_efficiency',
+            [
+                'advance_ratio',
+                'power_coefficient',
+                'thrust_coefficient',
+                'comp_tip_loss_factor',
+                'install_loss_factor',
+            ],
+            rows=arange,
+            cols=arange,
+        )
 
     def compute(self, inputs, outputs):
-        ctx = inputs['thrust_coefficient']*inputs['comp_tip_loss_factor']
+        ctx = inputs['thrust_coefficient'] * inputs['comp_tip_loss_factor']
         outputs['thrust_coefficient_comp_loss'] = ctx
         diam_prop = inputs[Aircraft.Engine.Propeller.DIAMETER]
         tipspd = inputs[Dynamic.Vehicle.Propulsion.PROPELLER_TIP_SPEED]
@@ -1013,25 +1040,30 @@ class PostHamiltonStandard(om.ExplicitComponent):
         # avoid divide by zero when shaft power is zero
         calc_idx = np.where(inputs['power_coefficient'] > 1e-6)  # index where CP > 1e-5
         prop_eff = np.zeros(self.options['num_nodes'])
-        prop_eff[calc_idx] = inputs['advance_ratio'][calc_idx] * ctx[calc_idx] \
+        prop_eff[calc_idx] = (
+            inputs['advance_ratio'][calc_idx]
+            * ctx[calc_idx]
             / inputs['power_coefficient'][calc_idx]
+        )
         outputs['propeller_efficiency'] = prop_eff
-        outputs['install_efficiency'] = outputs['propeller_efficiency'] * \
-            (1. - install_loss_factor)
+        outputs['install_efficiency'] = outputs['propeller_efficiency'] * (
+            1.0 - install_loss_factor
+        )
 
     def compute_partials(self, inputs, partials):
         nn = self.options['num_nodes']
         XFT = inputs['comp_tip_loss_factor']
-        ctx = inputs['thrust_coefficient']*XFT
+        ctx = inputs['thrust_coefficient'] * XFT
         diam_prop = inputs[Aircraft.Engine.Propeller.DIAMETER]
         install_loss_factor = inputs['install_loss_factor']
         tipspd = inputs[Dynamic.Vehicle.Propulsion.PROPELLER_TIP_SPEED]
         density_ratio = inputs[Dynamic.Atmosphere.DENSITY] / RHO_SEA_LEVEL_ENGLISH
 
-        unit_conversion_factor = 364.76 / 1.515E06
-        partials["thrust_coefficient_comp_loss", 'thrust_coefficient'] = XFT
-        partials["thrust_coefficient_comp_loss",
-                 'comp_tip_loss_factor'] = inputs['thrust_coefficient']
+        unit_conversion_factor = 364.76 / 1.515e06
+        partials['thrust_coefficient_comp_loss', 'thrust_coefficient'] = XFT
+        partials['thrust_coefficient_comp_loss', 'comp_tip_loss_factor'] = inputs[
+            'thrust_coefficient'
+        ]
         partials[Dynamic.Vehicle.Propulsion.THRUST, 'thrust_coefficient'] = (
             XFT
             * tipspd**2
@@ -1048,7 +1080,9 @@ class PostHamiltonStandard(om.ExplicitComponent):
             * unit_conversion_factor
             * (1.0 - install_loss_factor)
         )
-        partials[Dynamic.Vehicle.Propulsion.THRUST, Dynamic.Vehicle.Propulsion.PROPELLER_TIP_SPEED] = (
+        partials[
+            Dynamic.Vehicle.Propulsion.THRUST, Dynamic.Vehicle.Propulsion.PROPELLER_TIP_SPEED
+        ] = (
             2
             * ctx
             * tipspd
@@ -1071,7 +1105,8 @@ class PostHamiltonStandard(om.ExplicitComponent):
             * tipspd**2
             * diam_prop**2
             * unit_conversion_factor
-            * (1.0 - install_loss_factor) / RHO_SEA_LEVEL_ENGLISH
+            * (1.0 - install_loss_factor)
+            / RHO_SEA_LEVEL_ENGLISH
         )
         partials[Dynamic.Vehicle.Propulsion.THRUST, 'install_loss_factor'] = (
             -ctx * tipspd**2 * diam_prop**2 * density_ratio * unit_conversion_factor
@@ -1087,17 +1122,16 @@ class PostHamiltonStandard(om.ExplicitComponent):
         deriv_propeff_cp = np.zeros(nn, dtype=pow_coeff.dtype)
 
         deriv_propeff_adv[calc_idx] = ctx[calc_idx] / pow_coeff[calc_idx]
-        deriv_propeff_ct[calc_idx] = adv_ratio[calc_idx] * \
-            XFT[calc_idx]/pow_coeff[calc_idx]
-        deriv_propeff_tip[calc_idx] = adv_ratio[calc_idx] * \
-            inputs['thrust_coefficient'][calc_idx]/pow_coeff[calc_idx]
-        deriv_propeff_cp[calc_idx] = - \
-            adv_ratio[calc_idx]*ctx[calc_idx]/pow_coeff[calc_idx]**2
+        deriv_propeff_ct[calc_idx] = adv_ratio[calc_idx] * XFT[calc_idx] / pow_coeff[calc_idx]
+        deriv_propeff_tip[calc_idx] = (
+            adv_ratio[calc_idx] * inputs['thrust_coefficient'][calc_idx] / pow_coeff[calc_idx]
+        )
+        deriv_propeff_cp[calc_idx] = -adv_ratio[calc_idx] * ctx[calc_idx] / pow_coeff[calc_idx] ** 2
 
-        partials["propeller_efficiency", "advance_ratio"] = deriv_propeff_adv
-        partials["propeller_efficiency", "thrust_coefficient"] = deriv_propeff_ct
-        partials["propeller_efficiency", "comp_tip_loss_factor"] = deriv_propeff_tip
-        partials["propeller_efficiency", "power_coefficient"] = deriv_propeff_cp
+        partials['propeller_efficiency', 'advance_ratio'] = deriv_propeff_adv
+        partials['propeller_efficiency', 'thrust_coefficient'] = deriv_propeff_ct
+        partials['propeller_efficiency', 'comp_tip_loss_factor'] = deriv_propeff_tip
+        partials['propeller_efficiency', 'power_coefficient'] = deriv_propeff_cp
 
         deriv_insteff_adv = np.zeros(nn, dtype=pow_coeff.dtype)
         deriv_insteff_ct = np.zeros(nn, dtype=pow_coeff.dtype)
@@ -1105,20 +1139,31 @@ class PostHamiltonStandard(om.ExplicitComponent):
         deriv_insteff_cp = np.zeros(nn, dtype=pow_coeff.dtype)
         deriv_insteff_lf = np.zeros(nn, dtype=pow_coeff.dtype)
 
-        deriv_insteff_adv[calc_idx] = ctx[calc_idx] / \
-            pow_coeff[calc_idx] * (1. - install_loss_factor[calc_idx])
-        deriv_insteff_ct[calc_idx] = adv_ratio[calc_idx] * \
-            XFT[calc_idx]/pow_coeff[calc_idx] * (1. - install_loss_factor[calc_idx])
-        deriv_insteff_tip[calc_idx] = adv_ratio[calc_idx] * \
-            inputs['thrust_coefficient'][calc_idx] / \
-            pow_coeff[calc_idx] * (1. - install_loss_factor[calc_idx])
-        deriv_insteff_cp[calc_idx] = -adv_ratio[calc_idx] * \
-            ctx[calc_idx]/pow_coeff[calc_idx]**2 * (1. - install_loss_factor[calc_idx])
-        deriv_insteff_lf[calc_idx] = - \
-            adv_ratio[calc_idx]*ctx[calc_idx]/pow_coeff[calc_idx]
+        deriv_insteff_adv[calc_idx] = (
+            ctx[calc_idx] / pow_coeff[calc_idx] * (1.0 - install_loss_factor[calc_idx])
+        )
+        deriv_insteff_ct[calc_idx] = (
+            adv_ratio[calc_idx]
+            * XFT[calc_idx]
+            / pow_coeff[calc_idx]
+            * (1.0 - install_loss_factor[calc_idx])
+        )
+        deriv_insteff_tip[calc_idx] = (
+            adv_ratio[calc_idx]
+            * inputs['thrust_coefficient'][calc_idx]
+            / pow_coeff[calc_idx]
+            * (1.0 - install_loss_factor[calc_idx])
+        )
+        deriv_insteff_cp[calc_idx] = (
+            -adv_ratio[calc_idx]
+            * ctx[calc_idx]
+            / pow_coeff[calc_idx] ** 2
+            * (1.0 - install_loss_factor[calc_idx])
+        )
+        deriv_insteff_lf[calc_idx] = -adv_ratio[calc_idx] * ctx[calc_idx] / pow_coeff[calc_idx]
 
-        partials["install_efficiency", "advance_ratio"] = deriv_insteff_adv
-        partials["install_efficiency", "thrust_coefficient"] = deriv_insteff_ct
-        partials["install_efficiency", "comp_tip_loss_factor"] = deriv_insteff_tip
-        partials["install_efficiency", "power_coefficient"] = deriv_insteff_cp
-        partials["install_efficiency", 'install_loss_factor'] = deriv_insteff_lf
+        partials['install_efficiency', 'advance_ratio'] = deriv_insteff_adv
+        partials['install_efficiency', 'thrust_coefficient'] = deriv_insteff_ct
+        partials['install_efficiency', 'comp_tip_loss_factor'] = deriv_insteff_tip
+        partials['install_efficiency', 'power_coefficient'] = deriv_insteff_cp
+        partials['install_efficiency', 'install_loss_factor'] = deriv_insteff_lf

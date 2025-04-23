@@ -5,7 +5,7 @@ from aviary.variable_info.variables import Aircraft, Dynamic
 
 
 class MotorBuilder(SubsystemBuilderBase):
-    '''
+    """
     Define the builder for a single motor subsystem that provides methods to define the
     motor subsystem's states, design variables, fixed values, initial guesses, and mass
     names.
@@ -62,7 +62,7 @@ class MotorBuilder(SubsystemBuilderBase):
         Returns a list of names for the motor subsystem mass.
     preprocess_inputs(self, aviary_inputs) -> aviary_inputs:
         No preprocessing needed for the motor subsystem.
-    '''
+    """
 
     def __init__(self, name='motor'):  # , include_constraints=True):
         # self.include_constraints = include_constraints
@@ -117,26 +117,25 @@ class MotorBuilder(SubsystemBuilderBase):
     # return initial_guess_dict
 
     def get_mass_names(self):
-        '''
+        """
         Return a list of names for the motor subsystem.
 
         Returns
         -------
         mass_names : list
             A list of names for the motor subsystem.
-        '''
-        return [Aircraft.Engine.Motor.MASS,
-                Aircraft.Engine.Gearbox.MASS]
+        """
+        return [Aircraft.Engine.Motor.MASS, Aircraft.Engine.Gearbox.MASS]
 
     def get_outputs(self):
-        '''
+        """
         Return a list of output names for the motor subsystem.
 
         Returns
         -------
         outputs : list
             A list of variable names for the motor subsystem.
-        '''
+        """
 
         return [
             Dynamic.Vehicle.Propulsion.TORQUE,

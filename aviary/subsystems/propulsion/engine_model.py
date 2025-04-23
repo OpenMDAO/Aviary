@@ -5,6 +5,7 @@ Classes
 -------
 EngineModel : the interface for an engine model builder.
 """
+
 import warnings
 
 import numpy as np
@@ -39,8 +40,9 @@ class EngineModel(SubsystemBuilderBase):
 
     default_name = 'engine_model'
 
-    def __init__(self, name: str = None, options: AviaryValues = None,
-                 meta_data: dict = None, **kwargs):
+    def __init__(
+        self, name: str = None, options: AviaryValues = None, meta_data: dict = None, **kwargs
+    ):
         super().__init__(name, meta_data=meta_data)
         if options is not None:
             self.options = options.deepcopy()
@@ -97,8 +99,10 @@ class EngineModel(SubsystemBuilderBase):
             being integrated as well as any other variables that vary during
             the mission.
         """
-        raise NotImplementedError('build_mission() is a required method but has not '
-                                  f'been implemented in EngineModel <{self.name}>')
+        raise NotImplementedError(
+            'build_mission() is a required method but has not '
+            f'been implemented in EngineModel <{self.name}>'
+        )
 
     def build_post_mission(self, aviary_inputs, **kwargs):
         """
@@ -137,21 +141,21 @@ class EngineModel(SubsystemBuilderBase):
         if not isinstance(options, AviaryValues):
             raise TypeError('EngineModel options must be an AviaryValues object')
 
-        for (key, (val, units)) in options:
+        for key, (val, units) in options:
             # only perform vector check for variables related to engines and nacelles
             if key.startswith('aircraft:engine:') or key.startswith('aircraft:nacelle'):
                 # if val is an iterable...
                 if type(val) in (list, np.ndarray, tuple):
                     # but meta_data says it is not supposed to be...
-                    if not isinstance(self.meta_data[key]['default_value'],
-                                      (list, np.ndarray, tuple)):
-
+                    if not isinstance(
+                        self.meta_data[key]['default_value'], (list, np.ndarray, tuple)
+                    ):
                         # if val is multidimensional, raise error
                         if isinstance(val[0], (list, np.ndarray, tuple)):
                             raise UserWarning(
                                 f'Multidimensional {type(val)} was given for variable '
                                 f'{key} in EngineModel <{self.name}>, but '
-                                f"{type(self.meta_data[key]['default_value'])} "
+                                f'{type(self.meta_data[key]["default_value"])} '
                                 'was expected.'
                             )
                         # use first item in val and warn user
@@ -160,7 +164,8 @@ class EngineModel(SubsystemBuilderBase):
                                 warnings.warn(
                                     f'The value of {key} passed to EngineModel '
                                     f'<{self.name}> is {type(val)}. Only the first '
-                                    'entry in this iterable will be used.')
+                                    'entry in this iterable will be used.'
+                                )
 
                     # if val is supposed to be an iterable...
                     else:
@@ -169,7 +174,8 @@ class EngineModel(SubsystemBuilderBase):
                             warnings.warn(
                                 f'The value of {key} passed to EngineModel '
                                 f'<{self.name}> is multidimensional {type(val)}. Only '
-                                'the first entry in this iterable will be used.')
+                                'the first entry in this iterable will be used.'
+                            )
                         # and val is 1-D, then it is ok!
                         else:
                             continue
@@ -215,7 +221,7 @@ class EngineModel(SubsystemBuilderBase):
         return self.options.get_val(key, units)
 
     def get_item(self, key, default=(None, None)):
-        '''
+        """
         Return the named value and its associated units.
 
         Note, this method never raises `KeyError` or `TypeError`.
@@ -231,7 +237,7 @@ class EngineModel(SubsystemBuilderBase):
         Returns
         -------
         OptionalValueAndUnits
-        '''
+        """
         return self.options.get_item(key, default)
 
     def set_val(self, key, val, units='unitless'):

@@ -44,22 +44,39 @@ def _load_and_exec(script_name, user_args):
 
 
 _command_map = {
-    'fortran_to_aviary': (_setup_F2A_parser, _exec_F2A,
-                          "Converts legacy Fortran input decks to Aviary csv based decks"),
-    'run_mission': (_setup_level1_parser, _exec_level1,
-                    "Runs Aviary using a provided input deck"),
-    'draw_mission': (_setup_flight_profile_parser, _exec_flight_profile,
-                     "Allows users to draw a mission profile for use in Aviary."),
-    'dashboard': (_dashboard_setup_parser, _dashboard_cmd,
-                  "Run the Dashboard tool"),
-    'hangar': (_setup_hangar_parser, _exec_hangar,
-               "Allows users that pip installed Aviary to download models from the Aviary hangar"),
+    'fortran_to_aviary': (
+        _setup_F2A_parser,
+        _exec_F2A,
+        'Converts legacy Fortran input decks to Aviary csv based decks',
+    ),
+    'run_mission': (_setup_level1_parser, _exec_level1, 'Runs Aviary using a provided input deck'),
+    'draw_mission': (
+        _setup_flight_profile_parser,
+        _exec_flight_profile,
+        'Allows users to draw a mission profile for use in Aviary.',
+    ),
+    'dashboard': (_dashboard_setup_parser, _dashboard_cmd, 'Run the Dashboard tool'),
+    'hangar': (
+        _setup_hangar_parser,
+        _exec_hangar,
+        'Allows users that pip installed Aviary to download models from the Aviary hangar',
+    ),
     'convert_engine': (_setup_EDC_parser, _exec_EDC, EDC_description),
-    'convert_aero_table': (_setup_ATC_parser, _exec_ATC,
-                           'Converts FLOPS- or GASP-formatted aero data files into Aviary csv format.'),
-    'convert_prop_table': (_setup_PMC_parser, _exec_PMC,
-                           'Converts GASP-formatted propeller map file into Aviary csv format.'),
-    'plot_drag_polar': (_setup_plot_drag_polar_parser, _exec_plot_drag_polar, 'Plot a Drag Polar Graph using a provided polar data csv input'),
+    'convert_aero_table': (
+        _setup_ATC_parser,
+        _exec_ATC,
+        'Converts FLOPS- or GASP-formatted aero data files into Aviary csv format.',
+    ),
+    'convert_prop_table': (
+        _setup_PMC_parser,
+        _exec_PMC,
+        'Converts GASP-formatted propeller map file into Aviary csv format.',
+    ),
+    'plot_drag_polar': (
+        _setup_plot_drag_polar_parser,
+        _exec_plot_drag_polar,
+        'Plot a Drag Polar Graph using a provided polar data csv input',
+    ),
 }
 
 
@@ -71,24 +88,25 @@ def aviary_cmd():
     if '--' in sys.argv:
         idx = sys.argv.index('--')
         sys_args = sys.argv[:idx]
-        user_args = sys.argv[idx + 1:]
+        user_args = sys.argv[idx + 1 :]
         sys.argv[:] = sys_args
     else:
         user_args = []
 
-    parser = argparse.ArgumentParser(description='aviary Command Line Tools',
-                                     #  epilog='Use -h after any sub-command for sub-command help, '
-                                     #  'for example, "openmdao tree -h" for help on the "tree" '
-                                     #  'command. If using a tool on a script that takes its own '
-                                     #  'command line arguments, place those arguments after a "--". '
-                                     #  'For example: '
-                                     #  '"openmdao n2 -o foo.html myscript.py -- -x --myarg=bar"'
-                                     )
+    parser = argparse.ArgumentParser(
+        description='aviary Command Line Tools',
+        #  epilog='Use -h after any sub-command for sub-command help, '
+        #  'for example, "openmdao tree -h" for help on the "tree" '
+        #  'command. If using a tool on a script that takes its own '
+        #  'command line arguments, place those arguments after a "--". '
+        #  'For example: '
+        #  '"openmdao n2 -o foo.html myscript.py -- -x --myarg=bar"'
+    )
 
     # Adding the --version argument
     parser.add_argument('--version', action='store_true', help='show version and exit')
 
-    subs = parser.add_subparsers(title='Tools', metavar='', dest="subparser_name")
+    subs = parser.add_subparsers(title='Tools', metavar='', dest='subparser_name')
     for p, (parser_setup_func, executor, help_str) in sorted(_command_map.items()):
         subp = subs.add_parser(p, help=help_str)
         parser_setup_func(subp)
@@ -109,7 +127,7 @@ def aviary_cmd():
 
         # Check if --version was passed
         if options.version:
-            print(f"Aviary version: {aviary.__version__}")
+            print(f'Aviary version: {aviary.__version__}')
             return
 
         if unknown:

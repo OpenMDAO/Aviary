@@ -79,7 +79,7 @@ def read_data_file(
             # if comments are present in line, strip them out
             if '#' in line_data:
                 index = line_data.index('#')
-                comments.append(line_data[index + 1:].strip())
+                comments.append(line_data[index + 1 :].strip())
                 line_data = line_data[:index]
 
             # split by delimiters, remove whitespace and newline characters
@@ -172,8 +172,7 @@ def read_data_file(
 
                 # only raise error if not checking for header, or invalid header found
                 raise ValueError(
-                    f'Non-numerical value found in data file <{filepath}> on line '
-                    f'{str(line_count)}'
+                    f'Non-numerical value found in data file <{filepath}> on line {str(line_count)}'
                 )
 
             # This point is reached when the first valid numerical entry in data file

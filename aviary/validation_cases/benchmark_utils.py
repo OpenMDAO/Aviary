@@ -1,4 +1,3 @@
-
 import numpy as np
 from openmdao.utils.assert_utils import assert_near_equal
 
@@ -22,17 +21,15 @@ def compare_against_expected_values(prob, expected_dict):
     velocities = []
 
     for idx, phase in enumerate(['climb', 'cruise', 'descent']):
-
-        times.extend(prob.get_val(f'traj.{phase}.timeseries.time', units='s',
-                                  get_remote=True))
-        altitudes.extend(prob.get_val(
-            f'traj.{phase}.timeseries.altitude', units='m', get_remote=True))
-        velocities.extend(prob.get_val(
-            f'traj.{phase}.timeseries.velocity', units='m/s', get_remote=True))
-        masses.extend(
-            prob.get_val(f'traj.{phase}.timeseries.mass', units='kg', get_remote=True))
-        ranges.extend(
-            prob.get_val(f'traj.{phase}.timeseries.distance', units='m', get_remote=True))
+        times.extend(prob.get_val(f'traj.{phase}.timeseries.time', units='s', get_remote=True))
+        altitudes.extend(
+            prob.get_val(f'traj.{phase}.timeseries.altitude', units='m', get_remote=True)
+        )
+        velocities.extend(
+            prob.get_val(f'traj.{phase}.timeseries.velocity', units='m/s', get_remote=True)
+        )
+        masses.extend(prob.get_val(f'traj.{phase}.timeseries.mass', units='kg', get_remote=True))
+        ranges.extend(prob.get_val(f'traj.{phase}.timeseries.distance', units='m', get_remote=True))
 
     times = np.array(times)
     altitudes = np.array(altitudes)
@@ -42,7 +39,7 @@ def compare_against_expected_values(prob, expected_dict):
 
     # Check Objective and other key variables to a reasonably tight tolerance.
 
-    rtol = 2.e-2
+    rtol = 2.0e-2
 
     # Mass at the end of Descent
     assert_near_equal(masses[-1], expected_masses[-1], tolerance=rtol)
@@ -63,20 +60,30 @@ def compare_against_expected_values(prob, expected_dict):
     # NOTE rtol = 0.05 = 5% different from truth (first timeseries)
     #      atol = 2 = no more than +/-2 meter/second/kg difference between values
     #      atol_altitude - 30 ft.
-    rtol = .05
+    rtol = 0.05
     atol = 2.0
     atol_altitude = 30.0
 
     # FLIGHT PATH
     warn_timeseries_near_equal(
-        times, altitudes, expected_times,
-        expected_altitudes, abs_tolerance=atol_altitude, rel_tolerance=rtol)
+        times,
+        altitudes,
+        expected_times,
+        expected_altitudes,
+        abs_tolerance=atol_altitude,
+        rel_tolerance=rtol,
+    )
     warn_timeseries_near_equal(
-        times, masses, expected_times,
-        expected_masses, abs_tolerance=atol, rel_tolerance=rtol)
+        times, masses, expected_times, expected_masses, abs_tolerance=atol, rel_tolerance=rtol
+    )
     warn_timeseries_near_equal(
-        times, ranges, expected_times,
-        expected_ranges, abs_tolerance=atol, rel_tolerance=rtol)
+        times, ranges, expected_times, expected_ranges, abs_tolerance=atol, rel_tolerance=rtol
+    )
     warn_timeseries_near_equal(
-        times, velocities, expected_times,
-        expected_velocities, abs_tolerance=atol, rel_tolerance=rtol)
+        times,
+        velocities,
+        expected_times,
+        expected_velocities,
+        abs_tolerance=atol,
+        rel_tolerance=rtol,
+    )

@@ -30,34 +30,31 @@ class LoadSpeeds(om.ExplicitComponent):
         add_aviary_option(self, Aircraft.Wing.LOADING_ABOVE_20)
 
     def setup(self):
-
         add_aviary_input(self, Aircraft.Design.MAX_STRUCTURAL_SPEED, units='mi/h')
 
         if self.options[Aircraft.Design.PART25_STRUCTURAL_CATEGORY] < 3:
-
             add_aviary_input(self, Aircraft.Wing.LOADING, units='lbf/ft**2')
 
         self.add_output(
-            "max_airspeed",
-            units="kn",
-            desc="VM0: maximum operating equivalent airspeed",
+            'max_airspeed',
+            units='kn',
+            desc='VM0: maximum operating equivalent airspeed',
         )
         self.add_output(
-            "vel_c",
-            units="kn",
-            desc="VGC: Velocity used in Gust Load Factor calculation at cruise conditions.\
-                        This is Minimum Design Cruise Speed for Part 23 aircraft and VM0 for Part 25 aircraft",
+            'vel_c',
+            units='kn',
+            desc='VGC: Velocity used in Gust Load Factor calculation at cruise conditions.\
+                        This is Minimum Design Cruise Speed for Part 23 aircraft and VM0 for Part 25 aircraft',
         )
         self.add_output(
-            "max_maneuver_factor",
-            units="unitless",
-            desc="EMLF: maximum maneuver load factor, units are in g`s",
+            'max_maneuver_factor',
+            units='unitless',
+            desc='EMLF: maximum maneuver load factor, units are in g`s',
         )
-        self.add_output("min_dive_vel", units="kn", desc="VDMIN: dive velocity")
-        self.declare_partials("*", "*")
+        self.add_output('min_dive_vel', units='kn', desc='VDMIN: dive velocity')
+        self.declare_partials('*', '*')
 
     def compute(self, inputs, outputs):
-
         max_struct_speed_mph = inputs[Aircraft.Design.MAX_STRUCTURAL_SPEED]
 
         CATD = self.options[Aircraft.Design.PART25_STRUCTURAL_CATEGORY]
@@ -108,9 +105,7 @@ class LoadSpeeds(om.ExplicitComponent):
             if smooth:
                 min_dive_vel = max_struct_speed_kts * sigmoidX(
                     min_dive_vel / max_struct_speed_kts, 1, -0.01
-                ) + min_dive_vel * sigmoidX(
-                    min_dive_vel / max_struct_speed_kts, 1, 0.01
-                )
+                ) + min_dive_vel * sigmoidX(min_dive_vel / max_struct_speed_kts, 1, 0.01)
             else:
                 if min_dive_vel < max_struct_speed_kts:
                     min_dive_vel = max_struct_speed_kts
@@ -136,13 +131,12 @@ class LoadSpeeds(om.ExplicitComponent):
             max_airspeed = max_struct_speed_kts
             vel_c = max_airspeed
 
-        outputs["max_airspeed"] = max_airspeed
-        outputs["vel_c"] = vel_c
-        outputs["max_maneuver_factor"] = max_maneuver_factor
-        outputs["min_dive_vel"] = min_dive_vel
+        outputs['max_airspeed'] = max_airspeed
+        outputs['vel_c'] = vel_c
+        outputs['max_maneuver_factor'] = max_maneuver_factor
+        outputs['min_dive_vel'] = min_dive_vel
 
     def compute_partials(self, inputs, partials):
-
         max_struct_speed_mph = inputs[Aircraft.Design.MAX_STRUCTURAL_SPEED]
 
         CATD = self.options[Aircraft.Design.PART25_STRUCTURAL_CATEGORY]
@@ -173,8 +167,7 @@ class LoadSpeeds(om.ExplicitComponent):
 
             VCMIN = VCCOF * (wing_loading**0.5)
             dVCMIN_dwing_loading = (
-                dVCCOF_dwing_loading * (wing_loading**0.5)
-                + VCCOF * 0.5 * wing_loading**-0.5
+                dVCCOF_dwing_loading * (wing_loading**0.5) + VCCOF * 0.5 * wing_loading**-0.5
             )
             dVCMIN_dmax_struct_speed_mph = 0.0
 
@@ -184,14 +177,8 @@ class LoadSpeeds(om.ExplicitComponent):
                 )
                 dVCMIN_dwing_loading = (
                     dVCMIN_dwing_loading * sigmoidX(VCMIN / VCMAX, 1, -0.01)
-                    + VCMIN
-                    * dSigmoidXdx(VCMIN / VCMAX, 1, 0.01)
-                    * -dVCMIN_dwing_loading
-                    / VCMAX
-                    + VCMAX
-                    * dSigmoidXdx(VCMIN / VCMAX, 1, 0.01)
-                    * dVCMIN_dwing_loading
-                    / VCMAX
+                    + VCMIN * dSigmoidXdx(VCMIN / VCMAX, 1, 0.01) * -dVCMIN_dwing_loading / VCMAX
+                    + VCMAX * dSigmoidXdx(VCMIN / VCMAX, 1, 0.01) * dVCMIN_dwing_loading / VCMAX
                 )
                 dVCMIN_dmax_struct_speed_mph = (
                     dVCMIN_dmax_struct_speed_mph * sigmoidX(VCMIN / VCMAX, 1, -0.01)
@@ -222,7 +209,6 @@ class LoadSpeeds(om.ExplicitComponent):
 
             # why this block?
             if CATD == 1:
-
                 dVCMIN_dwing_loading = 0.0
                 dVCMIN_dmax_struct_speed_mph = 0.9 / 1.15
 
@@ -256,9 +242,7 @@ class LoadSpeeds(om.ExplicitComponent):
             if smooth:
                 min_dive_vel_1 = max_struct_speed_kts * sigmoidX(
                     min_dive_vel / max_struct_speed_kts, 1, -0.01
-                ) + min_dive_vel * sigmoidX(
-                    min_dive_vel / max_struct_speed_kts, 1, 0.01
-                )
+                ) + min_dive_vel * sigmoidX(min_dive_vel / max_struct_speed_kts, 1, 0.01)
                 dmin_dive_vel_dmax_struct_speed_mph = (
                     dmax_struct_speed_kts_dmax_struct_speed_mph
                     * sigmoidX(min_dive_vel / max_struct_speed_kts, 1, -0.01)
@@ -293,8 +277,7 @@ class LoadSpeeds(om.ExplicitComponent):
                     * dquotient(
                         max_struct_speed_kts - min_dive_vel,
                         max_struct_speed_kts,
-                        dmax_struct_speed_kts_dwing_loading
-                        - dmin_dive_vel_dwing_loading,
+                        dmax_struct_speed_kts_dwing_loading - dmin_dive_vel_dwing_loading,
                         dmax_struct_speed_kts_dwing_loading,
                     )
                     + dmin_dive_vel_dwing_loading
@@ -304,63 +287,52 @@ class LoadSpeeds(om.ExplicitComponent):
                     * dquotient(
                         (min_dive_vel - max_struct_speed_kts),
                         max_struct_speed_kts,
-                        dmin_dive_vel_dwing_loading
-                        - dmax_struct_speed_kts_dwing_loading,
+                        dmin_dive_vel_dwing_loading - dmax_struct_speed_kts_dwing_loading,
                         dmax_struct_speed_kts_dwing_loading,
                     )
                 )
                 min_dive_vel = min_dive_vel_1
 
             else:
-                if (
-                    min_dive_vel < max_struct_speed_kts
-                ):  # note: this creates a discontinuity
+                if min_dive_vel < max_struct_speed_kts:  # note: this creates a discontinuity
                     min_dive_vel = max_struct_speed_kts
                     dmin_dive_vel_dwing_loading = 0
                     dmin_dive_vel_dmax_struct_speed_mph = (
                         dmax_struct_speed_kts_dmax_struct_speed_mph
                     )
 
-            partials["min_dive_vel", Aircraft.Wing.LOADING] = (
-                dmin_dive_vel_dwing_loading
-            )
-            partials["min_dive_vel", Aircraft.Design.MAX_STRUCTURAL_SPEED] = (
+            partials['min_dive_vel', Aircraft.Wing.LOADING] = dmin_dive_vel_dwing_loading
+            partials['min_dive_vel', Aircraft.Design.MAX_STRUCTURAL_SPEED] = (
                 dmin_dive_vel_dmax_struct_speed_mph
             )
 
-            partials["max_airspeed", Aircraft.Wing.LOADING] = (
-                0.85 * dmin_dive_vel_dwing_loading
-            )
-            partials["max_airspeed", Aircraft.Design.MAX_STRUCTURAL_SPEED] = (
+            partials['max_airspeed', Aircraft.Wing.LOADING] = 0.85 * dmin_dive_vel_dwing_loading
+            partials['max_airspeed', Aircraft.Design.MAX_STRUCTURAL_SPEED] = (
                 0.85 * dmin_dive_vel_dmax_struct_speed_mph
             )
 
-            partials["vel_c", Aircraft.Wing.LOADING] = dVCMIN_dwing_loading
-            partials["vel_c", Aircraft.Design.MAX_STRUCTURAL_SPEED] = (
-                dVCMIN_dmax_struct_speed_mph
-            )
+            partials['vel_c', Aircraft.Wing.LOADING] = dVCMIN_dwing_loading
+            partials['vel_c', Aircraft.Design.MAX_STRUCTURAL_SPEED] = dVCMIN_dmax_struct_speed_mph
 
         if CATD == 3:
-
-            partials["max_airspeed", Aircraft.Design.MAX_STRUCTURAL_SPEED] = (
+            partials['max_airspeed', Aircraft.Design.MAX_STRUCTURAL_SPEED] = (
                 dmax_struct_speed_kts_dmax_struct_speed_mph
             )
-            partials["min_dive_vel", Aircraft.Design.MAX_STRUCTURAL_SPEED] = (
+            partials['min_dive_vel', Aircraft.Design.MAX_STRUCTURAL_SPEED] = (
                 1.2 * dmax_struct_speed_kts_dmax_struct_speed_mph
             )
-            partials["vel_c", Aircraft.Design.MAX_STRUCTURAL_SPEED] = (
+            partials['vel_c', Aircraft.Design.MAX_STRUCTURAL_SPEED] = (
                 1.0 * dmax_struct_speed_kts_dmax_struct_speed_mph
             )
 
         elif CATD > 3.001:
-
-            partials["max_airspeed", Aircraft.Design.MAX_STRUCTURAL_SPEED] = (
+            partials['max_airspeed', Aircraft.Design.MAX_STRUCTURAL_SPEED] = (
                 1 * dmax_struct_speed_kts_dmax_struct_speed_mph
             )
-            partials["min_dive_vel", Aircraft.Design.MAX_STRUCTURAL_SPEED] = (
+            partials['min_dive_vel', Aircraft.Design.MAX_STRUCTURAL_SPEED] = (
                 1.2 * dmax_struct_speed_kts_dmax_struct_speed_mph
             )
-            partials["vel_c", Aircraft.Design.MAX_STRUCTURAL_SPEED] = (
+            partials['vel_c', Aircraft.Design.MAX_STRUCTURAL_SPEED] = (
                 1.0 * dmax_struct_speed_kts_dmax_struct_speed_mph
             )
 
@@ -377,48 +349,46 @@ class LoadParameters(om.ExplicitComponent):
         add_aviary_option(self, Mission.Design.CRUISE_ALTITUDE, units='ft')
 
     def setup(self):
-
         self.add_input(
-            "vel_c",
+            'vel_c',
             val=100,
-            units="kn",
-            desc="VGC: Velocity used in Gust Load Factor calculation at cruise conditions.\
-                       This is Minimum Design Cruise Speed for Part 23 aircraft and VM0 for Part 25 aircraft",
+            units='kn',
+            desc='VGC: Velocity used in Gust Load Factor calculation at cruise conditions.\
+                       This is Minimum Design Cruise Speed for Part 23 aircraft and VM0 for Part 25 aircraft',
         )
         self.add_input(
-            "max_airspeed",
+            'max_airspeed',
             val=200,
-            units="kn",
-            desc="VM0: maximum operating equivalent airspeed",
+            units='kn',
+            desc='VM0: maximum operating equivalent airspeed',
         )
 
         self.add_output(
-            "max_mach",
+            'max_mach',
             val=0,
-            units="unitless",
-            desc="EMM0: maximum operating Mach number",
+            units='unitless',
+            desc='EMM0: maximum operating Mach number',
         )
         self.add_output(
-            "density_ratio",
+            'density_ratio',
             val=0,
-            units="unitless",
-            desc="SIGMA (in GASP): density ratio = density at Altitude / density at Sea level",
+            units='unitless',
+            desc='SIGMA (in GASP): density ratio = density at Altitude / density at Sea level',
         )
         self.add_output(
-            "V9",
+            'V9',
             val=0,
-            units="kn",
-            desc="V9: intermediate value. Typically it is maximum flight speed.",
+            units='kn',
+            desc='V9: intermediate value. Typically it is maximum flight speed.',
         )
 
-        self.declare_partials("max_mach", "max_airspeed")
-        self.declare_partials("density_ratio", "max_airspeed")
-        self.declare_partials("V9", "*")
+        self.declare_partials('max_mach', 'max_airspeed')
+        self.declare_partials('density_ratio', 'max_airspeed')
+        self.declare_partials('V9', '*')
 
     def compute(self, inputs, outputs):
-
-        vel_c = inputs["vel_c"]
-        max_airspeed = inputs["max_airspeed"]
+        vel_c = inputs['vel_c']
+        max_airspeed = inputs['max_airspeed']
 
         cruise_alt, _ = self.options[Mission.Design.CRUISE_ALTITUDE]
         CATD = self.options[Aircraft.Design.PART25_STRUCTURAL_CATEGORY]
@@ -444,9 +414,9 @@ class LoadParameters(om.ExplicitComponent):
         density_ratio = (max_airspeed / (661.7 * max_mach)) ** 1.61949
 
         if smooth:
-            V9 = vel_c * sigmoidX(
-                density_ratio, 1, -0.01
-            ) + 661.7 * max_mach * sigmoidX(density_ratio, 1, 0.01)
+            V9 = vel_c * sigmoidX(density_ratio, 1, -0.01) + 661.7 * max_mach * sigmoidX(
+                density_ratio, 1, 0.01
+            )
 
             if CATD < 3:
                 # this line creates a smooth bounded density_ratio such that .6820<=density_ratio<=1
@@ -479,19 +449,16 @@ class LoadParameters(om.ExplicitComponent):
                 density_ratio = 0.53281
                 V9 = vel_c
 
-            if (
-                CATD < 3.0 and density_ratio <= 0.6820
-            ):  # note: this creates a discontinuity
+            if CATD < 3.0 and density_ratio <= 0.6820:  # note: this creates a discontinuity
                 density_ratio = 0.6820
 
-        outputs["max_mach"] = max_mach
-        outputs["density_ratio"] = density_ratio
-        outputs["V9"] = V9
+        outputs['max_mach'] = max_mach
+        outputs['density_ratio'] = density_ratio
+        outputs['V9'] = V9
 
     def compute_partials(self, inputs, partials):
-
-        vel_c = inputs["vel_c"]
-        max_airspeed = inputs["max_airspeed"]
+        vel_c = inputs['vel_c']
+        max_airspeed = inputs['max_airspeed']
 
         cruise_alt, _ = self.options[Mission.Design.CRUISE_ALTITUDE]
         CATD = self.options[Aircraft.Design.PART25_STRUCTURAL_CATEGORY]
@@ -530,19 +497,15 @@ class LoadParameters(om.ExplicitComponent):
         ddensity_ratio_dmax_airspeed = (
             1.61949
             * (max_airspeed / (661.7 * max_mach)) ** 0.61949
-            * dquotient(
-                max_airspeed, (661.7 * max_mach), 1, 661.7 * dmax_mach_dmax_airspeed
-            )
+            * dquotient(max_airspeed, (661.7 * max_mach), 1, 661.7 * dmax_mach_dmax_airspeed)
         )
 
         if smooth:
-            V9_1 = vel_c * sigmoidX(
-                density_ratio, 1, -0.01
-            ) + 661.7 * max_mach * sigmoidX(density_ratio, 1, 0.01)
+            V9_1 = vel_c * sigmoidX(density_ratio, 1, -0.01) + 661.7 * max_mach * sigmoidX(
+                density_ratio, 1, 0.01
+            )
             dV9_dmax_airspeed = (
-                vel_c
-                * dSigmoidXdx(density_ratio, 1, 0.01)
-                * (-ddensity_ratio_dmax_airspeed)
+                vel_c * dSigmoidXdx(density_ratio, 1, 0.01) * (-ddensity_ratio_dmax_airspeed)
                 + 661.7
                 * dmax_mach_dmax_airspeed
                 * sigmoidX(density_ratio, 1, 0.01)
@@ -637,16 +600,14 @@ class LoadParameters(om.ExplicitComponent):
                 dV9_dmax_airspeed = 0.0
                 ddensity_ratio_dmax_airspeed = 0.0
 
-            if (
-                CATD < 3.0 and density_ratio <= 0.6820
-            ):  # note: this creates a discontinuity
+            if CATD < 3.0 and density_ratio <= 0.6820:  # note: this creates a discontinuity
                 density_ratio = 0.6820
                 ddensity_ratio_dmax_airspeed = 0.0
 
-        partials["max_mach", "max_airspeed"] = dmax_mach_dmax_airspeed
-        partials["density_ratio", "max_airspeed"] = ddensity_ratio_dmax_airspeed
-        partials["V9", "max_airspeed"] = dV9_dmax_airspeed
-        partials["V9", "vel_c"] = dV9_dvel_c
+        partials['max_mach', 'max_airspeed'] = dmax_mach_dmax_airspeed
+        partials['density_ratio', 'max_airspeed'] = ddensity_ratio_dmax_airspeed
+        partials['V9', 'max_airspeed'] = dV9_dmax_airspeed
+        partials['V9', 'vel_c'] = dV9_dvel_c
 
 
 class LiftCurveSlopeAtCruise(om.ExplicitComponent):
@@ -659,12 +620,12 @@ class LiftCurveSlopeAtCruise(om.ExplicitComponent):
 
     def setup(self):
         add_aviary_input(self, Aircraft.Wing.ASPECT_RATIO, units='unitless')
-        add_aviary_input(self, Aircraft.Wing.SWEEP, units="rad")
+        add_aviary_input(self, Aircraft.Wing.SWEEP, units='rad')
         add_aviary_input(self, Mission.Design.MACH, units='unitless')
 
         add_aviary_output(self, Aircraft.Design.LIFT_CURVE_SLOPE, units='1/rad')
 
-        self.declare_partials(Aircraft.Design.LIFT_CURVE_SLOPE, "*")
+        self.declare_partials(Aircraft.Design.LIFT_CURVE_SLOPE, '*')
 
     def compute(self, inputs, outputs):
         verbosity = self.options[Settings.VERBOSITY]
@@ -680,10 +641,14 @@ class LiftCurveSlopeAtCruise(om.ExplicitComponent):
                 print("Aircraft.Wing.SWEEP can not be 90 degrees.")
 
         outputs[Aircraft.Design.LIFT_CURVE_SLOPE] = (
-            np.pi * AR / (1 + np.sqrt(1 + (
-                ((AR / (2 * np.cos(DLMC4))) ** 2)
-                * (1 - (mach * np.cos(DLMC4)) ** 2)
-            )))
+            np.pi
+            * AR
+            / (
+                1
+                + np.sqrt(
+                    1 + (((AR / (2 * np.cos(DLMC4))) ** 2) * (1 - (mach * np.cos(DLMC4)) ** 2))
+                )
+            )
         )
 
     def compute_partials(self, inputs, partials):
@@ -691,9 +656,7 @@ class LiftCurveSlopeAtCruise(om.ExplicitComponent):
         DLMC4 = inputs[Aircraft.Wing.SWEEP]
         mach = inputs[Mission.Design.MACH]
 
-        c1 = np.sqrt(
-            AR**2 * (-(mach**2) * np.cos(DLMC4) ** 2 + 1) + 4 * np.cos(DLMC4) ** 2
-        )
+        c1 = np.sqrt(AR**2 * (-(mach**2) * np.cos(DLMC4) ** 2 + 1) + 4 * np.cos(DLMC4) ** 2)
         c2 = 2 * np.cos(DLMC4) + c1
 
         partials[Aircraft.Design.LIFT_CURVE_SLOPE, Aircraft.Wing.ASPECT_RATIO] = (
@@ -723,27 +686,31 @@ class LoadFactors(om.ExplicitComponent):
         add_aviary_option(self, Aircraft.Design.ULF_CALCULATED_FROM_MANEUVER)
 
     def setup(self):
+<<<<<<< HEAD
 
         add_aviary_input(self, Aircraft.Wing.LOADING, units='lbf/ft**2')
+=======
+        add_aviary_input(self, Aircraft.Wing.LOADING)
+>>>>>>> 1e29f27c9fbe1b9370d442466cf8ab16f82b4583
 
         self.add_input(
-            "density_ratio",
+            'density_ratio',
             val=0.5,
-            units="unitless",
-            desc="SIGMA (in GASP): density ratio = density at Altitude / density at Sea level",
+            units='unitless',
+            desc='SIGMA (in GASP): density ratio = density at Altitude / density at Sea level',
         )
         self.add_input(
-            "V9",
+            'V9',
             val=100,
-            units="kn",
-            desc="V9: intermediate value. Typically it is maximum flight speed.",
+            units='kn',
+            desc='V9: intermediate value. Typically it is maximum flight speed.',
         )
-        self.add_input("min_dive_vel", val=250, units="kn", desc="VDMIN: dive velocity")
+        self.add_input('min_dive_vel', val=250, units='kn', desc='VDMIN: dive velocity')
         self.add_input(
-            "max_maneuver_factor",
+            'max_maneuver_factor',
             val=0.72,
-            units="unitless",
-            desc="EMLF: maximum maneuver load factor, units are in g`s",
+            units='unitless',
+            desc='EMLF: maximum maneuver load factor, units are in g`s',
         )
 
         add_aviary_input(self, Aircraft.Wing.AVERAGE_CHORD, units='ft')
@@ -751,15 +718,14 @@ class LoadFactors(om.ExplicitComponent):
 
         add_aviary_output(self, Aircraft.Wing.ULTIMATE_LOAD_FACTOR, units='unitless')
 
-        self.declare_partials(Aircraft.Wing.ULTIMATE_LOAD_FACTOR, "*")
+        self.declare_partials(Aircraft.Wing.ULTIMATE_LOAD_FACTOR, '*')
 
     def compute(self, inputs, outputs):
-
         wing_loading = inputs[Aircraft.Wing.LOADING]
-        density_ratio = inputs["density_ratio"]
-        V9 = inputs["V9"]
-        min_dive_vel = inputs["min_dive_vel"]
-        max_maneuver_factor = inputs["max_maneuver_factor"]
+        density_ratio = inputs['density_ratio']
+        V9 = inputs['V9']
+        min_dive_vel = inputs['min_dive_vel']
+        max_maneuver_factor = inputs['max_maneuver_factor']
         avg_chord = inputs[Aircraft.Wing.AVERAGE_CHORD]
         Cl_alpha = inputs[Aircraft.Design.LIFT_CURVE_SLOPE]
 
@@ -772,9 +738,7 @@ class LoadFactors(om.ExplicitComponent):
             / (density_ratio * RHO_SEA_LEVEL_ENGLISH * avg_chord * Cl_alpha * 32.2)
         )
         k_load_factor = 0.88 * mass_ratio / (5.3 + mass_ratio)
-        cruise_load_factor = 1.0 + (
-            (k_load_factor * 50.0 * V9 * Cl_alpha) / (498.0 * wing_loading)
-        )
+        cruise_load_factor = 1.0 + ((k_load_factor * 50.0 * V9 * Cl_alpha) / (498.0 * wing_loading))
         dive_load_factor = 1.0 + (
             (k_load_factor * 25.0 * min_dive_vel * Cl_alpha) / (498.0 * wing_loading)
         )
@@ -783,30 +747,22 @@ class LoadFactors(om.ExplicitComponent):
         if smooth:
             gust_load_factor = dive_load_factor * sigmoidX(
                 cruise_load_factor / dive_load_factor, 1, -0.01
-            ) + cruise_load_factor * sigmoidX(
-                cruise_load_factor / dive_load_factor, 1, 0.01
-            )
+            ) + cruise_load_factor * sigmoidX(cruise_load_factor / dive_load_factor, 1, 0.01)
 
         else:
-            if (
-                cruise_load_factor > dive_load_factor
-            ):  # note: this creates a discontinuity
+            if cruise_load_factor > dive_load_factor:  # note: this creates a discontinuity
                 gust_load_factor = cruise_load_factor
 
         ULF = 1.5 * max_maneuver_factor
 
         if smooth:
             ULF = 1.5 * (
-                gust_load_factor
-                * sigmoidX(max_maneuver_factor / gust_load_factor, 1, -0.01)
-                + max_maneuver_factor
-                * sigmoidX(max_maneuver_factor / gust_load_factor, 1, 0.01)
+                gust_load_factor * sigmoidX(max_maneuver_factor / gust_load_factor, 1, -0.01)
+                + max_maneuver_factor * sigmoidX(max_maneuver_factor / gust_load_factor, 1, 0.01)
             )
 
         else:
-            if (
-                gust_load_factor > max_maneuver_factor
-            ):  # note: this creates a discontinuity
+            if gust_load_factor > max_maneuver_factor:  # note: this creates a discontinuity
                 ULF = 1.5 * gust_load_factor
 
         if ULF_from_maneuver == True:
@@ -815,12 +771,11 @@ class LoadFactors(om.ExplicitComponent):
         outputs[Aircraft.Wing.ULTIMATE_LOAD_FACTOR] = ULF
 
     def compute_partials(self, inputs, partials):
-
         wing_loading = inputs[Aircraft.Wing.LOADING]
-        density_ratio = inputs["density_ratio"]
-        V9 = inputs["V9"]
-        min_dive_vel = inputs["min_dive_vel"]
-        max_maneuver_factor = inputs["max_maneuver_factor"]
+        density_ratio = inputs['density_ratio']
+        V9 = inputs['V9']
+        min_dive_vel = inputs['min_dive_vel']
+        max_maneuver_factor = inputs['max_maneuver_factor']
         avg_chord = inputs[Aircraft.Wing.AVERAGE_CHORD]
         Cl_alpha = inputs[Aircraft.Design.LIFT_CURVE_SLOPE]
 
@@ -833,9 +788,7 @@ class LoadFactors(om.ExplicitComponent):
             / (density_ratio * RHO_SEA_LEVEL_ENGLISH * avg_chord * Cl_alpha * 32.2)
         )
         k_load_factor = 0.88 * mass_ratio / (5.3 + mass_ratio)
-        cruise_load_factor = 1.0 + (
-            (k_load_factor * 50.0 * V9 * Cl_alpha) / (498.0 * wing_loading)
-        )
+        cruise_load_factor = 1.0 + ((k_load_factor * 50.0 * V9 * Cl_alpha) / (498.0 * wing_loading))
         dive_load_factor = 1.0 + (
             (k_load_factor * 25.0 * min_dive_vel * Cl_alpha) / (498.0 * wing_loading)
         )
@@ -894,15 +847,13 @@ class LoadFactors(om.ExplicitComponent):
         dcruise_load_factor_ddensity_ratio = (
             dk_load_factor_ddensity_ratio * 50.0 * V9 * Cl_alpha
         ) / (498.0 * wing_loading)
-        dcruise_load_factor_davg_chord = (
-            dk_load_factor_davg_chord * 50.0 * V9 * Cl_alpha
-        ) / (498.0 * wing_loading)
+        dcruise_load_factor_davg_chord = (dk_load_factor_davg_chord * 50.0 * V9 * Cl_alpha) / (
+            498.0 * wing_loading
+        )
         dcruise_load_factor_dCl_alpha = (
             dk_load_factor_dCl_alpha * 50.0 * V9 * Cl_alpha + k_load_factor * 50 * V9
         ) / (498.0 * wing_loading)
-        dcruise_load_factor_dV9 = (k_load_factor * 50.0 * Cl_alpha) / (
-            498.0 * wing_loading
-        )
+        dcruise_load_factor_dV9 = (k_load_factor * 50.0 * Cl_alpha) / (498.0 * wing_loading)
         dcruise_load_factor_dmin_dive_vel = 0.0
 
         ddive_load_factor_dwing_loading = dquotient(
@@ -921,9 +872,7 @@ class LoadFactors(om.ExplicitComponent):
             dk_load_factor_dCl_alpha * 25 * min_dive_vel * Cl_alpha
             + k_load_factor * 50 * min_dive_vel
         ) / (498.0 * wing_loading)
-        ddive_load_factor_dmin_dive_vel = (k_load_factor * 25 * Cl_alpha) / (
-            498.0 * wing_loading
-        )
+        ddive_load_factor_dmin_dive_vel = (k_load_factor * 25 * Cl_alpha) / (498.0 * wing_loading)
         ddive_load_factor_dV9 = 0.0
 
         dgust_load_factor_dwing_loading = dquotient(
@@ -942,17 +891,13 @@ class LoadFactors(om.ExplicitComponent):
             dk_load_factor_dCl_alpha * 25 * min_dive_vel * Cl_alpha
             + k_load_factor * 25 * min_dive_vel
         ) / (498.0 * wing_loading)
-        dgust_load_factor_dmin_dive_vel = (k_load_factor * 25 * Cl_alpha) / (
-            498.0 * wing_loading
-        )
+        dgust_load_factor_dmin_dive_vel = (k_load_factor * 25 * Cl_alpha) / (498.0 * wing_loading)
         dgust_load_factor_dV9 = 0.0
 
         if smooth:
             gust_load_factor_1 = dive_load_factor * sigmoidX(
                 cruise_load_factor / dive_load_factor, 1, -0.01
-            ) + cruise_load_factor * sigmoidX(
-                cruise_load_factor / dive_load_factor, 1, 0.01
-            )
+            ) + cruise_load_factor * sigmoidX(cruise_load_factor / dive_load_factor, 1, 0.01)
             dgust_load_factor_dwing_loading = (
                 ddive_load_factor_dwing_loading
                 * sigmoidX(cruise_load_factor / dive_load_factor, 1, -0.01)
@@ -983,8 +928,7 @@ class LoadFactors(om.ExplicitComponent):
                 * dquotient(
                     (dive_load_factor - cruise_load_factor),
                     dive_load_factor,
-                    ddive_load_factor_ddensity_ratio
-                    - dcruise_load_factor_ddensity_ratio,
+                    ddive_load_factor_ddensity_ratio - dcruise_load_factor_ddensity_ratio,
                     ddive_load_factor_ddensity_ratio,
                 )
                 + dcruise_load_factor_ddensity_ratio
@@ -994,8 +938,7 @@ class LoadFactors(om.ExplicitComponent):
                 * dquotient(
                     (cruise_load_factor - dive_load_factor),
                     dive_load_factor,
-                    dcruise_load_factor_ddensity_ratio
-                    - ddive_load_factor_ddensity_ratio,
+                    dcruise_load_factor_ddensity_ratio - ddive_load_factor_ddensity_ratio,
                     ddive_load_factor_ddensity_ratio,
                 )
             )
@@ -1052,8 +995,7 @@ class LoadFactors(om.ExplicitComponent):
                     ddive_load_factor_dV9 - dcruise_load_factor_dV9,
                     ddive_load_factor_dV9,
                 )
-                + dcruise_load_factor_dV9
-                * sigmoidX(cruise_load_factor / dive_load_factor, 1, 0.01)
+                + dcruise_load_factor_dV9 * sigmoidX(cruise_load_factor / dive_load_factor, 1, 0.01)
                 + cruise_load_factor
                 * dSigmoidXdx(cruise_load_factor / dive_load_factor, 1, 0.01)
                 * dquotient(
@@ -1085,10 +1027,7 @@ class LoadFactors(om.ExplicitComponent):
             )
             gust_load_factor = gust_load_factor_1
         else:
-
-            if (
-                cruise_load_factor > dive_load_factor
-            ):  # note: this creates a discontinuity
+            if cruise_load_factor > dive_load_factor:  # note: this creates a discontinuity
                 gust_load_factor = cruise_load_factor
 
                 dgust_load_factor_dwing_loading = dcruise_load_factor_dwing_loading
@@ -1109,10 +1048,8 @@ class LoadFactors(om.ExplicitComponent):
 
         if smooth:
             ULF_1 = 1.5 * (
-                gust_load_factor
-                * sigmoidX(max_maneuver_factor / gust_load_factor, 1, 0.01)
-                + max_maneuver_factor
-                * sigmoidX(max_maneuver_factor / gust_load_factor, 1, 0.01)
+                gust_load_factor * sigmoidX(max_maneuver_factor / gust_load_factor, 1, 0.01)
+                + max_maneuver_factor * sigmoidX(max_maneuver_factor / gust_load_factor, 1, 0.01)
             )
             dULF_dmax_maneuver_factor = 1.5 * (
                 gust_load_factor
@@ -1126,9 +1063,7 @@ class LoadFactors(om.ExplicitComponent):
                 + sigmoidX(max_maneuver_factor / gust_load_factor, 1, 0.01)
                 + max_maneuver_factor
                 * dSigmoidXdx(max_maneuver_factor / gust_load_factor, 1, 0.01)
-                * dquotient(
-                    (max_maneuver_factor - gust_load_factor), gust_load_factor, 1.0, 0.0
-                )
+                * dquotient((max_maneuver_factor - gust_load_factor), gust_load_factor, 1.0, 0.0)
             )
             dULF_dwing_loading = 1.5 * (
                 dgust_load_factor_dwing_loading
@@ -1211,8 +1146,7 @@ class LoadFactors(om.ExplicitComponent):
                 )
             )
             dULF_dV9 = 1.5 * (
-                dgust_load_factor_dV9
-                * sigmoidX(max_maneuver_factor / gust_load_factor, 1, -0.01)
+                dgust_load_factor_dV9 * sigmoidX(max_maneuver_factor / gust_load_factor, 1, -0.01)
                 + gust_load_factor
                 * dSigmoidXdx(max_maneuver_factor / gust_load_factor, 1, 0.01)
                 * dquotient(
@@ -1233,9 +1167,7 @@ class LoadFactors(om.ExplicitComponent):
             dULF_dmin_dive_vel = 0.0
             ULF = ULF_1
         else:
-            if (
-                gust_load_factor > max_maneuver_factor
-            ):  # note: this creates a discontinuity
+            if gust_load_factor > max_maneuver_factor:  # note: this creates a discontinuity
                 ULF = 1.5 * gust_load_factor
 
                 dULF_dmax_maneuver_factor = 0.0
@@ -1257,25 +1189,17 @@ class LoadFactors(om.ExplicitComponent):
             dULF_dV9 = 0.0
             dULF_dmin_dive_vel = 0.0
 
-        partials[Aircraft.Wing.ULTIMATE_LOAD_FACTOR, "max_maneuver_factor"] = (
+        partials[Aircraft.Wing.ULTIMATE_LOAD_FACTOR, 'max_maneuver_factor'] = (
             dULF_dmax_maneuver_factor
         )
-        partials[Aircraft.Wing.ULTIMATE_LOAD_FACTOR, Aircraft.Wing.LOADING] = (
-            dULF_dwing_loading
+        partials[Aircraft.Wing.ULTIMATE_LOAD_FACTOR, Aircraft.Wing.LOADING] = dULF_dwing_loading
+        partials[Aircraft.Wing.ULTIMATE_LOAD_FACTOR, 'density_ratio'] = dULF_ddensity_ratio
+        partials[Aircraft.Wing.ULTIMATE_LOAD_FACTOR, Aircraft.Wing.AVERAGE_CHORD] = dULF_davg_chord
+        partials[Aircraft.Wing.ULTIMATE_LOAD_FACTOR, Aircraft.Design.LIFT_CURVE_SLOPE] = (
+            dULF_dCl_alpha
         )
-        partials[Aircraft.Wing.ULTIMATE_LOAD_FACTOR, "density_ratio"] = (
-            dULF_ddensity_ratio
-        )
-        partials[Aircraft.Wing.ULTIMATE_LOAD_FACTOR, Aircraft.Wing.AVERAGE_CHORD] = (
-            dULF_davg_chord
-        )
-        partials[
-            Aircraft.Wing.ULTIMATE_LOAD_FACTOR, Aircraft.Design.LIFT_CURVE_SLOPE
-        ] = dULF_dCl_alpha
-        partials[Aircraft.Wing.ULTIMATE_LOAD_FACTOR, "V9"] = dULF_dV9
-        partials[Aircraft.Wing.ULTIMATE_LOAD_FACTOR, "min_dive_vel"] = (
-            dULF_dmin_dive_vel
-        )
+        partials[Aircraft.Wing.ULTIMATE_LOAD_FACTOR, 'V9'] = dULF_dV9
+        partials[Aircraft.Wing.ULTIMATE_LOAD_FACTOR, 'min_dive_vel'] = dULF_dmin_dive_vel
 
 
 class DesignLoadGroup(om.Group):
@@ -1284,47 +1208,46 @@ class DesignLoadGroup(om.Group):
     """
 
     def setup(self):
-
         self.add_subsystem(
-            "speeds",
+            'speeds',
             LoadSpeeds(),
             promotes_inputs=['aircraft:*'],
             promotes_outputs=[
-                "max_airspeed",
-                "vel_c",
-                "max_maneuver_factor",
-                "min_dive_vel",
+                'max_airspeed',
+                'vel_c',
+                'max_maneuver_factor',
+                'min_dive_vel',
             ],
         )
 
         self.add_subsystem(
-            "params",
+            'params',
             LoadParameters(),
             promotes_inputs=[
-                "max_airspeed",
-                "vel_c",
+                'max_airspeed',
+                'vel_c',
             ],
-            promotes_outputs=["density_ratio", "V9", "max_mach"],
+            promotes_outputs=['density_ratio', 'V9', 'max_mach'],
         )
 
         self.add_subsystem(
-            "Cl_Alpha_calc",
+            'Cl_Alpha_calc',
             LiftCurveSlopeAtCruise(),
-            promotes_inputs=["aircraft:*", "mission:*"],
-            promotes_outputs=["aircraft:*"],
+            promotes_inputs=['aircraft:*', 'mission:*'],
+            promotes_outputs=['aircraft:*'],
         )
 
         self.add_subsystem(
-            "factors",
+            'factors',
             LoadFactors(),
             promotes_inputs=[
-                "max_maneuver_factor",
-                "min_dive_vel",
-                "density_ratio",
-                "V9",
+                'max_maneuver_factor',
+                'min_dive_vel',
+                'density_ratio',
+                'V9',
             ]
-            + ["aircraft:*"],
-            promotes_outputs=["aircraft:*"],
+            + ['aircraft:*'],
+            promotes_outputs=['aircraft:*'],
         )
 
 

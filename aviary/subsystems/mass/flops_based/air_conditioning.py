@@ -2,17 +2,19 @@ import openmdao.api as om
 
 from aviary.constants import GRAV_ENGLISH_LBM
 from aviary.subsystems.mass.flops_based.distributed_prop import (
-    distributed_engine_count_factor, distributed_thrust_factor)
+    distributed_engine_count_factor,
+    distributed_thrust_factor,
+)
 from aviary.variable_info.functions import add_aviary_input, add_aviary_output, add_aviary_option
 from aviary.variable_info.variables import Aircraft, Mission
 
 
 class TransportAirCondMass(om.ExplicitComponent):
-    '''
+    """
     Calculates the mass of the air conditioning group using the transport/general
     aviation method. The methodology is based on the FLOPS weight equations,
     modified to output mass instead of weight.
-    '''
+    """
 
     def initialize(self):
         add_aviary_option(self, Aircraft.CrewPayload.Design.NUM_PASSENGERS)
@@ -38,9 +40,11 @@ class TransportAirCondMass(om.ExplicitComponent):
         planform = inputs[Aircraft.Fuselage.PLANFORM_AREA]
         max_mach = self.options[Mission.Constraints.MAX_MACH]
 
-        outputs[Aircraft.AirConditioning.MASS] = \
-            ((3.2 * (planform * height)**0.6 + 9 * pax**0.83)
-             * max_mach + 0.075 * avionics_wt) * scaler / GRAV_ENGLISH_LBM
+        outputs[Aircraft.AirConditioning.MASS] = (
+            ((3.2 * (planform * height) ** 0.6 + 9 * pax**0.83) * max_mach + 0.075 * avionics_wt)
+            * scaler
+            / GRAV_ENGLISH_LBM
+        )
 
     def compute_partials(self, inputs, J):
         pax = self.options[Aircraft.CrewPayload.Design.NUM_PASSENGERS]
@@ -56,25 +60,26 @@ class TransportAirCondMass(om.ExplicitComponent):
         pax_exp = pax**0.83
 
         J[Aircraft.AirConditioning.MASS, Aircraft.AirConditioning.MASS_SCALER] = (
-            (3.2 * planform_exp * height_exp + 9 * pax_exp) *
-            max_mach + 0.075 * avionics_wt) / GRAV_ENGLISH_LBM
+            (3.2 * planform_exp * height_exp + 9 * pax_exp) * max_mach + 0.075 * avionics_wt
+        ) / GRAV_ENGLISH_LBM
 
-        J[Aircraft.AirConditioning.MASS, Aircraft.Avionics.MASS] = \
-            0.075 * scaler
+        J[Aircraft.AirConditioning.MASS, Aircraft.Avionics.MASS] = 0.075 * scaler
 
-        J[Aircraft.AirConditioning.MASS, Aircraft.Fuselage.MAX_HEIGHT] = \
+        J[Aircraft.AirConditioning.MASS, Aircraft.Fuselage.MAX_HEIGHT] = (
             1.92 * planform_exp * height**-0.4 * max_mach * scaler / GRAV_ENGLISH_LBM
+        )
 
-        J[Aircraft.AirConditioning.MASS, Aircraft.Fuselage.PLANFORM_AREA] = \
+        J[Aircraft.AirConditioning.MASS, Aircraft.Fuselage.PLANFORM_AREA] = (
             1.92 * planform**-0.4 * height_exp * max_mach * scaler / GRAV_ENGLISH_LBM
+        )
 
 
 class AltAirCondMass(om.ExplicitComponent):
-    '''
+    """
     Calculates the mass of the air conditioning group using the alternate method.
     The methodology is based on the FLOPS weight equations, modified to output
     mass instead of weight.
-    '''
+    """
 
     def initialize(self):
         add_aviary_option(self, Aircraft.CrewPayload.Design.NUM_PASSENGERS)
@@ -92,11 +97,11 @@ class AltAirCondMass(om.ExplicitComponent):
 
         scaler = inputs[Aircraft.AirConditioning.MASS_SCALER]
 
-        outputs[Aircraft.AirConditioning.MASS] = \
-            26.0 * num_pax * scaler / GRAV_ENGLISH_LBM
+        outputs[Aircraft.AirConditioning.MASS] = 26.0 * num_pax * scaler / GRAV_ENGLISH_LBM
 
     def compute_partials(self, inputs, J):
         num_pax = self.options[Aircraft.CrewPayload.Design.NUM_PASSENGERS]
 
-        J[Aircraft.AirConditioning.MASS, Aircraft.AirConditioning.MASS_SCALER] = \
+        J[Aircraft.AirConditioning.MASS, Aircraft.AirConditioning.MASS_SCALER] = (
             26.0 * num_pax / GRAV_ENGLISH_LBM
+        )

@@ -8,11 +8,12 @@ from aviary.variable_info.variables import Aircraft
 # TODO should additional misc mass be separated out into a separate component?
 # TODO include estimation for baseline (unscaled) mass if not provided (NTRS paper on FLOPS equations pg. 30)
 
+
 class EngineMass(om.ExplicitComponent):
-    '''
+    """
     Calculate scaled engine mass and additional miscellaneous mass for a
     single named engine model.
-    '''
+    """
 
     def initialize(self):
         add_aviary_option(self, Aircraft.Engine.ADDITIONAL_MASS_FRACTION)
@@ -24,15 +25,13 @@ class EngineMass(om.ExplicitComponent):
     def setup(self):
         num_engine_type = len(self.options[Aircraft.Engine.NUM_ENGINES])
 
-        add_aviary_input(self, Aircraft.Engine.SCALED_SLS_THRUST, shape=num_engine_type,
-                         units='lbf')
-        add_aviary_input(self, Aircraft.Engine.MASS_SCALER, shape=num_engine_type,
-                         units='unitless')
+        add_aviary_input(
+            self, Aircraft.Engine.SCALED_SLS_THRUST, shape=num_engine_type, units='lbf'
+        )
+        add_aviary_input(self, Aircraft.Engine.MASS_SCALER, shape=num_engine_type, units='unitless')
 
-        add_aviary_output(self, Aircraft.Engine.MASS, shape=num_engine_type,
-                          units='lbm')
-        add_aviary_output(self, Aircraft.Engine.ADDITIONAL_MASS, shape=num_engine_type,
-                          units='lbm')
+        add_aviary_output(self, Aircraft.Engine.MASS, shape=num_engine_type, units='lbm')
+        add_aviary_output(self, Aircraft.Engine.ADDITIONAL_MASS, shape=num_engine_type, units='lbm')
         add_aviary_output(self, Aircraft.Propulsion.TOTAL_ENGINE_MASS, units='lbm')
 
     def compute(self, inputs, outputs):
@@ -57,33 +56,29 @@ class EngineMass(om.ExplicitComponent):
         # scale engine mass using equation chosen by value of user-provided mass scaler
         thrust_ratio = scaled_sls_thrust / ref_sls_thrust
 
-        calc_mass[scale_idx] = ref_engine_mass[scale_idx] + (
-            scaled_sls_thrust[scale_idx] - ref_sls_thrust[scale_idx]) * scaling_parameter[scale_idx]
+        calc_mass[scale_idx] = (
+            ref_engine_mass[scale_idx]
+            + (scaled_sls_thrust[scale_idx] - ref_sls_thrust[scale_idx])
+            * scaling_parameter[scale_idx]
+        )
 
-        calc_mass[param_idx] = ref_engine_mass[param_idx] * \
-            thrust_ratio[param_idx]**scaling_parameter[param_idx]
+        calc_mass[param_idx] = (
+            ref_engine_mass[param_idx] * thrust_ratio[param_idx] ** scaling_parameter[param_idx]
+        )
 
         addtl_mass = addtl_mass_fraction * calc_mass
 
         outputs[Aircraft.Engine.MASS] = calc_mass
-        outputs[Aircraft.Propulsion.TOTAL_ENGINE_MASS] = sum(
-            calc_mass * num_engines)
+        outputs[Aircraft.Propulsion.TOTAL_ENGINE_MASS] = sum(calc_mass * num_engines)
         outputs[Aircraft.Engine.ADDITIONAL_MASS] = addtl_mass
 
     def setup_partials(self):
         num_engine_type = len(self.options[Aircraft.Engine.NUM_ENGINES])
         shape = np.arange(num_engine_type)
 
-        self.declare_partials(Aircraft.Engine.MASS,
-                              ['*'],
-                              rows=shape, cols=shape)
-        self.declare_partials(
-            Aircraft.Engine.ADDITIONAL_MASS,
-            ['*'],
-            rows=shape, cols=shape)
-        self.declare_partials(
-            Aircraft.Propulsion.TOTAL_ENGINE_MASS,
-            ['*'])
+        self.declare_partials(Aircraft.Engine.MASS, ['*'], rows=shape, cols=shape)
+        self.declare_partials(Aircraft.Engine.ADDITIONAL_MASS, ['*'], rows=shape, cols=shape)
+        self.declare_partials(Aircraft.Propulsion.TOTAL_ENGINE_MASS, ['*'])
 
     def compute_partials(self, inputs, J):
         options = self.options
@@ -111,39 +106,37 @@ class EngineMass(om.ExplicitComponent):
         param_idx = np.where(scaling_parameter[scale_idx] >= 0.3)
 
         thrust_deriv[scale_idx] = scaling_parameter[scale_idx]
-        scaled_mass = ref_engine_mass[param_idx] * \
-            thrust_ratio[param_idx]**scaling_parameter[param_idx]
-        thrust_deriv[param_idx] = (scaling_parameter[param_idx] *
-                                   scaled_mass) / scaled_sls_thrust[param_idx]
+        scaled_mass = (
+            ref_engine_mass[param_idx] * thrust_ratio[param_idx] ** scaling_parameter[param_idx]
+        )
+        thrust_deriv[param_idx] = (scaling_parameter[param_idx] * scaled_mass) / scaled_sls_thrust[
+            param_idx
+        ]
 
-        scale_deriv[scale_idx] = (
-            scaled_sls_thrust[scale_idx] - ref_sls_thrust[scale_idx])
+        scale_deriv[scale_idx] = scaled_sls_thrust[scale_idx] - ref_sls_thrust[scale_idx]
 
-        scale_deriv[param_idx] = ref_engine_mass[param_idx] * \
-            thrust_ratio[param_idx]**scaling_parameter[param_idx]
+        scale_deriv[param_idx] = (
+            ref_engine_mass[param_idx] * thrust_ratio[param_idx] ** scaling_parameter[param_idx]
+        )
         if len(param_idx) > 0:
             scale_deriv[param_idx] = scaled_mass * np.log(thrust_ratio[param_idx])
 
-        J[Aircraft.Engine.MASS,
-            Aircraft.Engine.SCALED_SLS_THRUST
-          ] = thrust_deriv
+        J[Aircraft.Engine.MASS, Aircraft.Engine.SCALED_SLS_THRUST] = thrust_deriv
 
-        J[Aircraft.Propulsion.TOTAL_ENGINE_MASS,
-            Aircraft.Engine.SCALED_SLS_THRUST
-          ] = thrust_deriv * num_engines
+        J[Aircraft.Propulsion.TOTAL_ENGINE_MASS, Aircraft.Engine.SCALED_SLS_THRUST] = (
+            thrust_deriv * num_engines
+        )
 
-        J[Aircraft.Engine.ADDITIONAL_MASS,
-            Aircraft.Engine.SCALED_SLS_THRUST
-          ] = addtl_mass_fraction * thrust_deriv
+        J[Aircraft.Engine.ADDITIONAL_MASS, Aircraft.Engine.SCALED_SLS_THRUST] = (
+            addtl_mass_fraction * thrust_deriv
+        )
 
-        J[Aircraft.Engine.MASS,
-            Aircraft.Engine.MASS_SCALER
-          ] = scale_deriv
+        J[Aircraft.Engine.MASS, Aircraft.Engine.MASS_SCALER] = scale_deriv
 
-        J[Aircraft.Propulsion.TOTAL_ENGINE_MASS,
-            Aircraft.Engine.MASS_SCALER
-          ] = scale_deriv * num_engines
+        J[Aircraft.Propulsion.TOTAL_ENGINE_MASS, Aircraft.Engine.MASS_SCALER] = (
+            scale_deriv * num_engines
+        )
 
-        J[Aircraft.Engine.ADDITIONAL_MASS,
-            Aircraft.Engine.MASS_SCALER
-          ] = addtl_mass_fraction * scale_deriv
+        J[Aircraft.Engine.ADDITIONAL_MASS, Aircraft.Engine.MASS_SCALER] = (
+            addtl_mass_fraction * scale_deriv
+        )
