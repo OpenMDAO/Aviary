@@ -214,7 +214,9 @@ class PreMissionTestCase(unittest.TestCase):
         )
         with self.assertRaises(KeyError) as cm:
             self.prob.get_val(Aircraft.Fuel.AUXILIARY_FUEL_CAPACITY)
-        self.assertTrue(err_text1 in str(cm.exception) or err_text2 in str(cm.exception))
+
+        actual_text = str(cm.exception)
+        self.assertTrue(err_text1 in actual_text or err_text2 in actual_text)
 
         assert_near_equal(
             self.prob['fuel_mass.body_tank.extra_fuel_volume'], 0, tol
