@@ -132,7 +132,7 @@ class PreMissionTestCase(unittest.TestCase):
     def test_GASP_mass_FLOPS_everything_else(self):
         self.prob.run_model()
 
-        # check the outputs from GASP mass and geometry (FLOPS outputs are not tested)
+        # Check the outputs from GASP mass and geometry (FLOPS outputs are not tested)
 
         tol = 5e-4
         # size values:
