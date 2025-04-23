@@ -785,7 +785,7 @@ class EngineMass(om.ExplicitComponent):
 
         # prop_wt = np.zeros(num_engine_type)
         # prop_idx = np.where(self.options[Aircraft.Engine.HAS_PROPELLERS))
-        # prop_wt[prop_idx] = inputs["prop_mass"] * GRAV_ENGLISH_LBM
+        # prop_wt[prop_idx] = inputs['prop_mass'] * GRAV_ENGLISH_LBM
         prop_wt = inputs['prop_mass'] * GRAV_ENGLISH_LBM
         outputs['prop_mass_all'] = sum(num_engines * prop_wt) / GRAV_ENGLISH_LBM
 
