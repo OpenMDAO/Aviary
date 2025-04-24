@@ -1656,7 +1656,4 @@ class FixedMassGroupTestCase3(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    # unittest.main()
-    test = FixedMassGroupTestCase3()
-    test.setUp()
-    test.test_case1()
+    unittest.main()

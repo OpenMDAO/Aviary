@@ -764,7 +764,4 @@ class BWBWingMassGroupTest(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    # unittest.main()
-    test = WingMassSolveTestCase2()
-    test.setUp()
-    test.test_case1()
+    unittest.main()
