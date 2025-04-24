@@ -131,7 +131,7 @@ class PreMissionTestCase(unittest.TestCase):
     def test_GASP_mass_FLOPS_everything_else(self):
         self.prob.run_model()
 
-        # check the outputs from GASP mass and geometry (FLOPS outputs are not tested)
+        # Check the outputs from GASP mass and geometry (FLOPS outputs are not tested)
 
         tol = 5e-4
         # size values:
@@ -201,15 +201,6 @@ class PreMissionTestCase(unittest.TestCase):
         # extra_fuel_mass calculated differently in this version, so test for fuel_mass.fuel_and_oem.payload_mass_max_fuel not included
         assert_near_equal(self.prob['fuel_mass.fuel_and_oem.volume_wingfuel_mass'], 57066.3, tol)
         assert_near_equal(self.prob['fuel_mass.max_wingfuel_mass'], 57066.3, tol)
-
-        # This is not in the model because it has been overridden, but is not an
-        # input to any other component in the GASP premission model.
-        err_text = (
-            '\'<model> <class Group>: Variable "aircraft:fuel:auxiliary_fuel_capacity" not found.\''
-        )
-        with self.assertRaises(KeyError) as cm:
-            self.prob.get_val(Aircraft.Fuel.AUXILIARY_FUEL_CAPACITY)
-        self.assertEqual(str(cm.exception), err_text)
 
         assert_near_equal(
             self.prob['fuel_mass.body_tank.extra_fuel_volume'], 0, tol

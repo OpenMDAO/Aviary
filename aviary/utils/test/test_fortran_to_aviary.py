@@ -86,8 +86,8 @@ class TestFortranToAviary(unittest.TestCase):
         self.compare_files(comparison_filepath)
 
     def test_bwb_gasp(self):
-        filepath = 'models/BWB/generic_HWB_GASP.dat'
-        comparison_filepath = 'utils/test/data/converter_test_HWB_GASP.csv'
+        filepath = 'models/BWB/generic_BWB_GASP.dat'
+        comparison_filepath = 'utils/test/data/converter_test_BWB_GASP.csv'
 
         self.prepare_and_run(
             filepath,

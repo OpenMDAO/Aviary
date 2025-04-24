@@ -7,7 +7,7 @@ from openmdao.utils.assert_utils import assert_near_equal
 from aviary.subsystems.propulsion.utils import EngineDataInterpolator, build_engine_deck
 from aviary.subsystems.propulsion.utils import EngineModelVariables as keys
 from aviary.utils.named_values import NamedValues
-from aviary.validation_cases.validation_data.flops_data.FLOPS_Test_Data import FLOPS_Test_Data
+from aviary.validation_cases.validation_tests import get_flops_inputs
 from aviary.variable_info.variables import Aircraft, Dynamic
 
 
@@ -15,7 +15,7 @@ class DataInterpolationTest(unittest.TestCase):
     def test_data_interpolation(self):
         tol = 1e-6
 
-        aviary_values = FLOPS_Test_Data['LargeSingleAisle2FLOPS']['inputs']
+        aviary_values = get_flops_inputs('LargeSingleAisle2FLOPS')
         aviary_values.set_val(Aircraft.Engine.GLOBAL_THROTTLE, True)
 
         model = build_engine_deck(aviary_values)[0]

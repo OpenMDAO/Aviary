@@ -8,7 +8,7 @@ from aviary.subsystems.propulsion.engine_deck import EngineDeck
 from aviary.subsystems.propulsion.utils import EngineModelVariables as keys
 from aviary.subsystems.propulsion.utils import build_engine_deck
 from aviary.utils.named_values import NamedValues
-from aviary.validation_cases.validation_data.flops_data.FLOPS_Test_Data import FLOPS_Test_Data
+from aviary.validation_cases.validation_tests import get_flops_inputs
 from aviary.variable_info.variables import Aircraft
 
 
@@ -16,7 +16,7 @@ class EngineDeckTest(unittest.TestCase):
     def test_flight_idle(self):
         tol = 1e-6
 
-        aviary_values = FLOPS_Test_Data['LargeSingleAisle2FLOPS']['inputs']
+        aviary_values = get_flops_inputs('LargeSingleAisle2FLOPS')
         # Test data grabbed from LEAPS uses the global throttle approach
         aviary_values.set_val(Aircraft.Engine.GLOBAL_THROTTLE, True)
 
@@ -55,7 +55,7 @@ class EngineDeckTest(unittest.TestCase):
     def test_flight_idle_2(self):
         tol = 1e-6
 
-        aviary_values = FLOPS_Test_Data['LargeSingleAisle1FLOPS']['inputs']
+        aviary_values = get_flops_inputs('LargeSingleAisle1FLOPS')
 
         model = build_engine_deck(aviary_values)[0]
 
@@ -94,7 +94,7 @@ class EngineDeckTest(unittest.TestCase):
     def test_load_from_memory(self):
         tol = 1e-6
 
-        aviary_values = FLOPS_Test_Data['LargeSingleAisle2FLOPS']['inputs']
+        aviary_values = get_flops_inputs('LargeSingleAisle2FLOPS')
 
         expected_mach_number = []
         expected_altitude = []
