@@ -1862,13 +1862,13 @@ class BWBLoadFactors(om.ExplicitComponent):
             dcruise_load_factor_ddensity_ratio = (
                 dk_load_factor_ddensity_ratio * 50.0 * V9 * Cl_alpha
             ) / (498.0 * wing_loading)
-            dcruise_load_factor_davg_chord = (
-                dk_load_factor_davg_chord * 50.0 * V9 * Cl_alpha / (498.0 * wing_loading)
+            dcruise_load_factor_davg_chord = (dk_load_factor_davg_chord * 50.0 * V9 * Cl_alpha) / (
+                498.0 * wing_loading
             )
             dcruise_load_factor_dCl_alpha = (
                 dk_load_factor_dCl_alpha * 50.0 * V9 * Cl_alpha + k_load_factor * 50 * V9
             ) / (498.0 * wing_loading)
-            dcruise_load_factor_dV9 = (k_load_factor * 50.0 * Cl_alpha) / 498.0 * wing_loading
+            dcruise_load_factor_dV9 = (k_load_factor * 50.0 * Cl_alpha) / (498.0 * wing_loading)
             dcruise_load_factor_dmin_dive_vel = 0.0
 
             ddive_load_factor_dgross_mass = dquotient(
