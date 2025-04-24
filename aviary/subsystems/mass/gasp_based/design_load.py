@@ -1263,22 +1263,24 @@ class BWBLoadSpeeds(om.ExplicitComponent):
         add_aviary_input(self, Aircraft.Design.MAX_STRUCTURAL_SPEED, units='mi/h')
 
         if self.options[Aircraft.Design.PART25_STRUCTURAL_CATEGORY] < 3:
-
             add_aviary_input(self, Mission.Design.GROSS_MASS, units='lbm')
             add_aviary_input(self, Aircraft.Wing.EXPOSED_AREA, units='ft**2')
 
         self.add_output(
-            'max_airspeed', units='kn',
+            'max_airspeed',
+            units='kn',
             desc='VM0: maximum operating equivalent airspeed',
         )
         self.add_output(
-            'vel_c', units='kn',
+            'vel_c',
+            units='kn',
             desc='VGC: Velocity used in Gust Load Factor calculation at cruise conditions.\
                         This is Minimum Design Cruise Speed for Part 23 aircraft and \
                         VM0 for Part 25 aircraft',
         )
         self.add_output(
-            'max_maneuver_factor', units='unitless',
+            'max_maneuver_factor',
+            units='unitless',
             desc='EMLF: maximum maneuver load factor, units are in g`s',
         )
         self.add_output('min_dive_vel', units='kn', desc='VDMIN: dive velocity')
@@ -1348,9 +1350,7 @@ class BWBLoadSpeeds(om.ExplicitComponent):
             if smooth:
                 min_dive_vel = max_struct_speed_kts * sigmoidX(
                     min_dive_vel / max_struct_speed_kts, 1, -0.01
-                ) + min_dive_vel * sigmoidX(
-                    min_dive_vel / max_struct_speed_kts, 1, 0.01
-                )
+                ) + min_dive_vel * sigmoidX(min_dive_vel / max_struct_speed_kts, 1, 0.01)
             else:
                 if min_dive_vel < max_struct_speed_kts:
                     min_dive_vel = max_struct_speed_kts
@@ -1383,7 +1383,6 @@ class BWBLoadSpeeds(om.ExplicitComponent):
         outputs['min_dive_vel'] = min_dive_vel
 
     def compute_partials(self, inputs, partials):
-
         max_struct_speed_mph = inputs[Aircraft.Design.MAX_STRUCTURAL_SPEED]
 
         CATD = self.options[Aircraft.Design.PART25_STRUCTURAL_CATEGORY]
@@ -1392,7 +1391,6 @@ class BWBLoadSpeeds(om.ExplicitComponent):
 
         max_struct_speed_kts = max_struct_speed_mph / 1.15
         dmax_struct_speed_kts_dmax_struct_speed_mph = 1 / 1.15
-        #dmax_struct_speed_kts_dwing_loading = 0.0
         dmax_struct_speed_kts_dgross_mass = 0.0
         dmax_struct_speed_kts_dexp_wing_area = 0.0
 
@@ -1519,9 +1517,7 @@ class BWBLoadSpeeds(om.ExplicitComponent):
                     dVDCOF_dexp_wing_area = 0.0
 
             min_dive_vel = VDCOF * VCMIN
-            dmin_dive_vel_dgross_mass = (
-                dVDCOF_dgross_mass * VCMIN + VDCOF * dVCMIN_dgross_mass
-            )
+            dmin_dive_vel_dgross_mass = dVDCOF_dgross_mass * VCMIN + VDCOF * dVCMIN_dgross_mass
             dmin_dive_vel_dexp_wing_area = (
                 dVDCOF_dexp_wing_area * VCMIN + VDCOF * dVCMIN_dexp_wing_area
             )
@@ -1530,9 +1526,7 @@ class BWBLoadSpeeds(om.ExplicitComponent):
             if smooth:
                 min_dive_vel_1 = max_struct_speed_kts * sigmoidX(
                     min_dive_vel / max_struct_speed_kts, 1, -0.01
-                ) + min_dive_vel * sigmoidX(
-                    min_dive_vel / max_struct_speed_kts, 1, 0.01
-                )
+                ) + min_dive_vel * sigmoidX(min_dive_vel / max_struct_speed_kts, 1, 0.01)
                 dmin_dive_vel_dmax_struct_speed_mph = (
                     dmax_struct_speed_kts_dmax_struct_speed_mph
                     * sigmoidX(min_dive_vel / max_struct_speed_kts, 1, -0.01)
@@ -1567,8 +1561,7 @@ class BWBLoadSpeeds(om.ExplicitComponent):
                     * dquotient(
                         max_struct_speed_kts - min_dive_vel,
                         max_struct_speed_kts,
-                        dmax_struct_speed_kts_dgross_mass
-                        - dmin_dive_vel_dgross_mass,
+                        dmax_struct_speed_kts_dgross_mass - dmin_dive_vel_dgross_mass,
                         dmax_struct_speed_kts_dgross_mass,
                     )
                     + dmin_dive_vel_dgross_mass
@@ -1578,8 +1571,7 @@ class BWBLoadSpeeds(om.ExplicitComponent):
                     * dquotient(
                         (min_dive_vel - max_struct_speed_kts),
                         max_struct_speed_kts,
-                        dmin_dive_vel_dgross_mass
-                        - dmax_struct_speed_kts_dgross_mass,
+                        dmin_dive_vel_dgross_mass - dmax_struct_speed_kts_dgross_mass,
                         dmax_struct_speed_kts_dgross_mass,
                     )
                 )
@@ -1591,8 +1583,7 @@ class BWBLoadSpeeds(om.ExplicitComponent):
                     * dquotient(
                         max_struct_speed_kts - min_dive_vel,
                         max_struct_speed_kts,
-                        dmax_struct_speed_kts_dexp_wing_area
-                        - dmin_dive_vel_dexp_wing_area,
+                        dmax_struct_speed_kts_dexp_wing_area - dmin_dive_vel_dexp_wing_area,
                         dmax_struct_speed_kts_dexp_wing_area,
                     )
                     + dmin_dive_vel_dexp_wing_area
@@ -1602,16 +1593,13 @@ class BWBLoadSpeeds(om.ExplicitComponent):
                     * dquotient(
                         (min_dive_vel - max_struct_speed_kts),
                         max_struct_speed_kts,
-                        dmin_dive_vel_dexp_wing_area
-                        - dmax_struct_speed_kts_dexp_wing_area,
+                        dmin_dive_vel_dexp_wing_area - dmax_struct_speed_kts_dexp_wing_area,
                         dmax_struct_speed_kts_dexp_wing_area,
                     )
                 )
                 min_dive_vel = min_dive_vel_1
             else:
-                if (
-                    min_dive_vel < max_struct_speed_kts
-                ):  # note: this creates a discontinuity
+                if min_dive_vel < max_struct_speed_kts:  # note: this creates a discontinuity
                     min_dive_vel = max_struct_speed_kts
                     dmin_dive_vel_dgross_mass = 0
                     dmin_dive_vel_dexp_wing_area = 0
@@ -1619,19 +1607,13 @@ class BWBLoadSpeeds(om.ExplicitComponent):
                         dmax_struct_speed_kts_dmax_struct_speed_mph
                     )
 
-            partials['min_dive_vel', Mission.Design.GROSS_MASS] = (
-                dmin_dive_vel_dgross_mass
-            )
-            partials['min_dive_vel', Aircraft.Wing.EXPOSED_AREA] = (
-                dmin_dive_vel_dexp_wing_area
-            )
+            partials['min_dive_vel', Mission.Design.GROSS_MASS] = dmin_dive_vel_dgross_mass
+            partials['min_dive_vel', Aircraft.Wing.EXPOSED_AREA] = dmin_dive_vel_dexp_wing_area
             partials['min_dive_vel', Aircraft.Design.MAX_STRUCTURAL_SPEED] = (
                 dmin_dive_vel_dmax_struct_speed_mph
             )
 
-            partials['max_airspeed', Mission.Design.GROSS_MASS] = (
-                0.85 * dmin_dive_vel_dgross_mass
-            )
+            partials['max_airspeed', Mission.Design.GROSS_MASS] = 0.85 * dmin_dive_vel_dgross_mass
             partials['max_airspeed', Aircraft.Wing.EXPOSED_AREA] = (
                 0.85 * dmin_dive_vel_dexp_wing_area
             )
@@ -1641,9 +1623,7 @@ class BWBLoadSpeeds(om.ExplicitComponent):
 
             partials['vel_c', Mission.Design.GROSS_MASS] = dVCMIN_dgross_mass
             partials['vel_c', Aircraft.Wing.EXPOSED_AREA] = dVCMIN_dexp_wing_area
-            partials['vel_c', Aircraft.Design.MAX_STRUCTURAL_SPEED] = (
-                dVCMIN_dmax_struct_speed_mph
-            )
+            partials['vel_c', Aircraft.Design.MAX_STRUCTURAL_SPEED] = dVCMIN_dmax_struct_speed_mph
 
         if CATD == 3:
             partials['max_airspeed', Aircraft.Design.MAX_STRUCTURAL_SPEED] = (
@@ -1656,7 +1636,6 @@ class BWBLoadSpeeds(om.ExplicitComponent):
                 1.0 * dmax_struct_speed_kts_dmax_struct_speed_mph
             )
         elif CATD > 3.001:
-
             partials['max_airspeed', Aircraft.Design.MAX_STRUCTURAL_SPEED] = (
                 1.0 * dmax_struct_speed_kts_dmax_struct_speed_mph
             )
@@ -1679,21 +1658,23 @@ class BWBLoadFactors(om.ExplicitComponent):
         add_aviary_option(self, Settings.VERBOSITY)
 
     def setup(self):
-
         add_aviary_input(self, Mission.Design.GROSS_MASS, units='lbm')
         add_aviary_input(self, Aircraft.Wing.EXPOSED_AREA, units='ft**2')
 
         self.add_input(
-            'density_ratio', units='unitless',
+            'density_ratio',
+            units='unitless',
             desc='SIGMA (in GASP): density ratio = density at Altitude / density at Sea level',
         )
         self.add_input(
-            'V9', units='kn',
+            'V9',
+            units='kn',
             desc='V9: intermediate value. Typically it is maximum flight speed.',
         )
         self.add_input('min_dive_vel', units='kn', desc='VDMIN: dive velocity')
         self.add_input(
-            'max_maneuver_factor', units='unitless',
+            'max_maneuver_factor',
+            units='unitless',
             desc='EMLF: maximum maneuver load factor, units are in g`s',
         )
         add_aviary_input(self, Aircraft.Wing.AVERAGE_CHORD, units='ft')
@@ -1745,9 +1726,7 @@ class BWBLoadFactors(om.ExplicitComponent):
             if smooth:
                 gust_load_factor = dive_load_factor * sigmoidX(
                     cruise_load_factor / dive_load_factor, 1, -0.01
-                ) + cruise_load_factor * sigmoidX(
-                    cruise_load_factor / dive_load_factor, 1, 0.01
-                )
+                ) + cruise_load_factor * sigmoidX(cruise_load_factor / dive_load_factor, 1, 0.01)
             else:
                 if cruise_load_factor > dive_load_factor:
                     gust_load_factor = cruise_load_factor
@@ -1757,8 +1736,7 @@ class BWBLoadFactors(om.ExplicitComponent):
             # set ULF between max_maneuver_factor and gust_load_factor
             if smooth:
                 ULF = 1.5 * (
-                    gust_load_factor
-                    * sigmoidX(max_maneuver_factor / gust_load_factor, 1, -0.01)
+                    gust_load_factor * sigmoidX(max_maneuver_factor / gust_load_factor, 1, -0.01)
                     + max_maneuver_factor
                     * sigmoidX(max_maneuver_factor / gust_load_factor, 1, 0.01)
                 )
@@ -1800,7 +1778,8 @@ class BWBLoadFactors(om.ExplicitComponent):
             smooth = self.options[Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES]
 
             mass_ratio = (
-                2.0 * wing_loading
+                2.0
+                * wing_loading
                 / (density_ratio * RHO_SEA_LEVEL_ENGLISH * avg_chord * Cl_alpha * 32.2)
             )
             k_load_factor = 0.88 * mass_ratio / (5.3 + mass_ratio)
@@ -1811,22 +1790,29 @@ class BWBLoadFactors(om.ExplicitComponent):
                 (k_load_factor * 25.0 * min_dive_vel * Cl_alpha) / (498.0 * wing_loading)
             )
 
-            dmass_ratio_dgross_mass = 2.0 * dwing_loading_dgross_mass / (
-                density_ratio * RHO_SEA_LEVEL_ENGLISH * avg_chord * Cl_alpha * 32.2
+            dmass_ratio_dgross_mass = (
+                2.0
+                * dwing_loading_dgross_mass
+                / (density_ratio * RHO_SEA_LEVEL_ENGLISH * avg_chord * Cl_alpha * 32.2)
             )
-            dmass_ratio_dexp_wing_area = 2.0 * dwing_loading_dexp_wing_area / (
-                density_ratio * RHO_SEA_LEVEL_ENGLISH * avg_chord * Cl_alpha * 32.2
+            dmass_ratio_dexp_wing_area = (
+                2.0
+                * dwing_loading_dexp_wing_area
+                / (density_ratio * RHO_SEA_LEVEL_ENGLISH * avg_chord * Cl_alpha * 32.2)
             )
             dmass_ratio_ddensity_ratio = (
-                -2.0 * wing_loading
+                -2.0
+                * wing_loading
                 / (density_ratio**2 * RHO_SEA_LEVEL_ENGLISH * avg_chord * Cl_alpha * 32.2)
             )
             dmass_ratio_davg_chord = (
-                -2.0 * wing_loading
+                -2.0
+                * wing_loading
                 / (density_ratio * RHO_SEA_LEVEL_ENGLISH * avg_chord**2 * Cl_alpha * 32.2)
             )
             dmass_ratio_dCl_alpha = (
-                -2.0 * wing_loading
+                -2.0
+                * wing_loading
                 / (density_ratio * RHO_SEA_LEVEL_ENGLISH * avg_chord * Cl_alpha**2 * 32.2)
             )
 
@@ -1877,14 +1863,12 @@ class BWBLoadFactors(om.ExplicitComponent):
                 dk_load_factor_ddensity_ratio * 50.0 * V9 * Cl_alpha
             ) / (498.0 * wing_loading)
             dcruise_load_factor_davg_chord = (
-                dk_load_factor_davg_chord * 50.0 * V9 * Cl_alpha
-            ) / (498.0 * wing_loading)
+                dk_load_factor_davg_chord * 50.0 * V9 * Cl_alpha / (498.0 * wing_loading)
+            )
             dcruise_load_factor_dCl_alpha = (
                 dk_load_factor_dCl_alpha * 50.0 * V9 * Cl_alpha + k_load_factor * 50 * V9
             ) / (498.0 * wing_loading)
-            dcruise_load_factor_dV9 = (k_load_factor * 50.0 * Cl_alpha) / (
-                498.0 * wing_loading
-            )
+            dcruise_load_factor_dV9 = (k_load_factor * 50.0 * Cl_alpha) / 498.0 * wing_loading
             dcruise_load_factor_dmin_dive_vel = 0.0
 
             ddive_load_factor_dgross_mass = dquotient(
@@ -1918,9 +1902,7 @@ class BWBLoadFactors(om.ExplicitComponent):
             if smooth:
                 gust_load_factor = dive_load_factor * sigmoidX(
                     cruise_load_factor / dive_load_factor, 1, -0.01
-                ) + cruise_load_factor * sigmoidX(
-                    cruise_load_factor / dive_load_factor, 1, 0.01
-                )
+                ) + cruise_load_factor * sigmoidX(cruise_load_factor / dive_load_factor, 1, 0.01)
                 dgust_load_factor_dgross_mass = (
                     ddive_load_factor_dgross_mass
                     * sigmoidX(cruise_load_factor / dive_load_factor, 1, -0.01)
@@ -1973,8 +1955,7 @@ class BWBLoadFactors(om.ExplicitComponent):
                     * dquotient(
                         (dive_load_factor - cruise_load_factor),
                         dive_load_factor,
-                        ddive_load_factor_ddensity_ratio
-                        - dcruise_load_factor_ddensity_ratio,
+                        ddive_load_factor_ddensity_ratio - dcruise_load_factor_ddensity_ratio,
                         ddive_load_factor_ddensity_ratio,
                     )
                     + dcruise_load_factor_ddensity_ratio
@@ -1984,8 +1965,7 @@ class BWBLoadFactors(om.ExplicitComponent):
                     * dquotient(
                         (cruise_load_factor - dive_load_factor),
                         dive_load_factor,
-                        dcruise_load_factor_ddensity_ratio
-                        - ddive_load_factor_ddensity_ratio,
+                        dcruise_load_factor_ddensity_ratio - ddive_load_factor_ddensity_ratio,
                         ddive_load_factor_ddensity_ratio,
                     )
                 )
@@ -2282,25 +2262,17 @@ class BWBLoadFactors(om.ExplicitComponent):
         partials[Aircraft.Wing.ULTIMATE_LOAD_FACTOR, 'max_maneuver_factor'] = (
             dULF_dmax_maneuver_factor
         )
-        partials[Aircraft.Wing.ULTIMATE_LOAD_FACTOR, Mission.Design.GROSS_MASS] = (
-            dULF_dgross_mass
-        )
+        partials[Aircraft.Wing.ULTIMATE_LOAD_FACTOR, Mission.Design.GROSS_MASS] = dULF_dgross_mass
         partials[Aircraft.Wing.ULTIMATE_LOAD_FACTOR, Aircraft.Wing.EXPOSED_AREA] = (
             dULF_dexp_wing_areas
         )
-        partials[Aircraft.Wing.ULTIMATE_LOAD_FACTOR, 'density_ratio'] = (
-            dULF_ddensity_ratio
+        partials[Aircraft.Wing.ULTIMATE_LOAD_FACTOR, 'density_ratio'] = dULF_ddensity_ratio
+        partials[Aircraft.Wing.ULTIMATE_LOAD_FACTOR, Aircraft.Wing.AVERAGE_CHORD] = dULF_davg_chord
+        partials[Aircraft.Wing.ULTIMATE_LOAD_FACTOR, Aircraft.Design.LIFT_CURVE_SLOPE] = (
+            dULF_dCl_alpha
         )
-        partials[Aircraft.Wing.ULTIMATE_LOAD_FACTOR, Aircraft.Wing.AVERAGE_CHORD] = (
-            dULF_davg_chord
-        )
-        partials[
-            Aircraft.Wing.ULTIMATE_LOAD_FACTOR, Aircraft.Design.LIFT_CURVE_SLOPE
-        ] = dULF_dCl_alpha
         partials[Aircraft.Wing.ULTIMATE_LOAD_FACTOR, 'V9'] = dULF_dV9
-        partials[Aircraft.Wing.ULTIMATE_LOAD_FACTOR, 'min_dive_vel'] = (
-            dULF_dmin_dive_vel
-        )
+        partials[Aircraft.Wing.ULTIMATE_LOAD_FACTOR, 'min_dive_vel'] = dULF_dmin_dive_vel
 
 
 class BWBDesignLoadGroup(om.Group):
@@ -2309,7 +2281,6 @@ class BWBDesignLoadGroup(om.Group):
     """
 
     def setup(self):
-
         self.add_subsystem(
             'speeds',
             BWBLoadSpeeds(),
@@ -2334,8 +2305,7 @@ class BWBDesignLoadGroup(om.Group):
         self.add_subsystem(
             'factors',
             BWBLoadFactors(),
-            promotes_inputs=[
-                'max_maneuver_factor', 'min_dive_vel', 'density_ratio', 'V9']
+            promotes_inputs=['max_maneuver_factor', 'min_dive_vel', 'density_ratio', 'V9']
             + ['aircraft:*', 'mission:*'],
             promotes_outputs=['aircraft:*'],
         )

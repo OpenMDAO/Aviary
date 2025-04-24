@@ -7096,8 +7096,9 @@ add_meta_data(
 add_meta_data(
     Mission.Design.FUEL_MASS_REQUIRED,
     meta_data=_MetaData,
-    historical_name={"GASP": "INGASP.WFA", "FLOPS": None, "LEAPS1": None},
+    historical_name={'GASP': 'INGASP.WFAREQ', 'FLOPS': None, 'LEAPS1': None},
     units='lbm',
+    # Note: In GASP, WFAREQ includes margin, but this variable does not.
     desc='fuel carried by the aircraft when it is on the ramp at the '
     'beginning of the design mission',
     default_value=0.0,

@@ -401,28 +401,40 @@ class BWBWingMassSolve(om.ImplicitComponent):
 
         add_aviary_input(self, Mission.Design.GROSS_MASS, units='lbm')
         add_aviary_input(self, Aircraft.Wing.HIGH_LIFT_MASS, units='lbm')
-        self.add_input('c_strut_braced', val=1.00000001, units='unitless',
-                       desc='SKSTR: reduction in bending moment factor for strut braced wing')
+        self.add_input(
+            'c_strut_braced',
+            val=1.00000001,
+            units='unitless',
+            desc='SKSTR: reduction in bending moment factor for strut braced wing',
+        )
         add_aviary_input(self, Aircraft.Wing.ULTIMATE_LOAD_FACTOR, units='unitless')
         add_aviary_input(self, Aircraft.Wing.MASS_COEFFICIENT, units='unitless')
         add_aviary_input(self, Aircraft.Wing.MATERIAL_FACTOR, units='unitless')
         add_aviary_input(self, Aircraft.Engine.POSITION_FACTOR, shape=num_engine_type)
-        self.add_input('c_gear_loc', val=1.000000001, units='unitless',
-                       desc='SKGEAR: landing gear location factor')
+        self.add_input(
+            'c_gear_loc',
+            val=1.000000001,
+            units='unitless',
+            desc='SKGEAR: landing gear location factor',
+        )
         add_aviary_input(self, Aircraft.Wing.SPAN, units='ft')
         add_aviary_input(self, Aircraft.Fuselage.AVG_DIAMETER, units='ft')
         add_aviary_input(self, Aircraft.Wing.TAPER_RATIO, units='unitless')
         add_aviary_input(self, Aircraft.Wing.THICKNESS_TO_CHORD_ROOT, units='unitless')
-        self.add_input('half_sweep', val=0.3947081519, units='rad',
-                       desc='SWC2: wing half-chord sweep angle')
+        self.add_input(
+            'half_sweep', val=0.3947081519, units='rad', desc='SWC2: wing half-chord sweep angle'
+        )
 
-        self.add_output('isolated_wing_mass', val=17670, units='lbm',
-                        desc='WW: wing mass including high lift devices (but excluding struts and fold effects)')
+        self.add_output(
+            'isolated_wing_mass',
+            val=17670,
+            units='lbm',
+            desc='WW: wing mass including high lift devices (but excluding struts and fold effects)',
+        )
 
         self.declare_partials('isolated_wing_mass', '*')
 
     def apply_nonlinear(self, inputs, outputs, residuals):
-
         gross_wt_initial = inputs[Mission.Design.GROSS_MASS] * GRAV_ENGLISH_LBM
         high_lift_wt = inputs[Aircraft.Wing.HIGH_LIFT_MASS] * GRAV_ENGLISH_LBM
         c_strut_braced = inputs['c_strut_braced']
@@ -439,9 +451,7 @@ class BWBWingMassSolve(om.ImplicitComponent):
 
         isolated_wing_wt = outputs['isolated_wing_mass'] * GRAV_ENGLISH_LBM
 
-        foo = (
-            c_strut_braced * ULF * (gross_wt_initial - 0.8 * isolated_wing_wt)
-        ) ** 0.757
+        foo = (c_strut_braced * ULF * (gross_wt_initial - 0.8 * isolated_wing_wt)) ** 0.757
         wingspan_mod = wingspan - cabin_width
         wing_wt_guess = (
             c_wing_mass
@@ -451,15 +461,11 @@ class BWBWingMassSolve(om.ImplicitComponent):
             * foo
             * wingspan_mod**1.049
             * (1.0 + taper_ratio) ** 0.4
-        ) / (
-            100000.0 * tc_ratio_root**0.4 * np.cos(half_sweep) ** 1.535
-        ) + high_lift_wt
+        ) / (100000.0 * tc_ratio_root**0.4 * np.cos(half_sweep) ** 1.535) + high_lift_wt
 
-        residuals['isolated_wing_mass'] = (
-            isolated_wing_wt - wing_wt_guess) / GRAV_ENGLISH_LBM
+        residuals['isolated_wing_mass'] = (isolated_wing_wt - wing_wt_guess) / GRAV_ENGLISH_LBM
 
     def linearize(self, inputs, outputs, J):
-
         gross_wt_initial = inputs[Mission.Design.GROSS_MASS] * GRAV_ENGLISH_LBM
         high_lift_wt = inputs[Aircraft.Wing.HIGH_LIFT_MASS] * GRAV_ENGLISH_LBM
         c_strut_braced = inputs['c_strut_braced']
@@ -476,9 +482,7 @@ class BWBWingMassSolve(om.ImplicitComponent):
 
         isolated_wing_wt = outputs['isolated_wing_mass'] * GRAV_ENGLISH_LBM
 
-        foo = (
-            c_strut_braced * ULF * (gross_wt_initial - 0.8 * isolated_wing_wt)
-        ) ** 0.757
+        foo = (c_strut_braced * ULF * (gross_wt_initial - 0.8 * isolated_wing_wt)) ** 0.757
         wingspan_mod = wingspan - cabin_width
         wing_wt_guess = (
             c_wing_mass
@@ -488,9 +492,7 @@ class BWBWingMassSolve(om.ImplicitComponent):
             * foo
             * wingspan_mod**1.049
             * (1.0 + taper_ratio) ** 0.4
-        ) / (
-            100000.0 * tc_ratio_root**0.4 * np.cos(half_sweep) ** 1.535
-        ) + high_lift_wt
+        ) / (100000.0 * tc_ratio_root**0.4 * np.cos(half_sweep) ** 1.535) + high_lift_wt
 
         J['isolated_wing_mass', Mission.Design.GROSS_MASS] = (
             -(
@@ -503,8 +505,7 @@ class BWBWingMassSolve(om.ImplicitComponent):
             )
             / (100000.0 * tc_ratio_root**0.4 * np.cos(half_sweep) ** 1.535)
             * 0.757
-            * (c_strut_braced * ULF * (gross_wt_initial - 0.8 * isolated_wing_wt))
-            ** (-0.243)
+            * (c_strut_braced * ULF * (gross_wt_initial - 0.8 * isolated_wing_wt)) ** (-0.243)
             * c_strut_braced
             * ULF
         )
@@ -520,8 +521,7 @@ class BWBWingMassSolve(om.ImplicitComponent):
             )
             / (100000.0 * tc_ratio_root**0.4 * np.cos(half_sweep) ** 1.535)
             * 0.757
-            * (c_strut_braced * ULF * (gross_wt_initial - 0.8 * isolated_wing_wt))
-            ** (-0.243)
+            * (c_strut_braced * ULF * (gross_wt_initial - 0.8 * isolated_wing_wt)) ** (-0.243)
             * ULF
             * (gross_wt_initial - 0.8 * isolated_wing_wt)
             / GRAV_ENGLISH_LBM
@@ -537,8 +537,7 @@ class BWBWingMassSolve(om.ImplicitComponent):
             )
             / (100000.0 * tc_ratio_root**0.4 * np.cos(half_sweep) ** 1.535)
             * 0.757
-            * (c_strut_braced * ULF * (gross_wt_initial - 0.8 * isolated_wing_wt))
-            ** (-0.243)
+            * (c_strut_braced * ULF * (gross_wt_initial - 0.8 * isolated_wing_wt)) ** (-0.243)
             * c_strut_braced
             * (gross_wt_initial - 0.8 * isolated_wing_wt)
             / GRAV_ENGLISH_LBM
@@ -662,8 +661,7 @@ class BWBWingMassSolve(om.ImplicitComponent):
             )
             / (100000.0 * tc_ratio_root**0.4 * np.cos(half_sweep) ** 1.535)
             * 0.757
-            * (c_strut_braced * ULF * (gross_wt_initial - 0.8 * isolated_wing_wt))
-            ** (-0.243)
+            * (c_strut_braced * ULF * (gross_wt_initial - 0.8 * isolated_wing_wt)) ** (-0.243)
             * (-0.8)
             * c_strut_braced
             * ULF
@@ -741,19 +739,14 @@ class BWBWingMassGroup(om.Group):
         add_aviary_option(self, Aircraft.Wing.HAS_STRUT)
 
     def setup(self):
-
         # variables that are calculated at a higher level
         higher_level_inputs_isolated = [
             'c_strut_braced',
             'c_gear_loc',
             'half_sweep',
         ]
-        if self.options[Aircraft.Wing.HAS_FOLD] or \
-                self.options[Aircraft.Wing.HAS_STRUT]:
-
-            higher_level_inputs_total = [
-                'aircraft:*'
-            ]
+        if self.options[Aircraft.Wing.HAS_FOLD] or self.options[Aircraft.Wing.HAS_STRUT]:
+            higher_level_inputs_total = ['aircraft:*']
         else:
             higher_level_inputs_total = []
 
