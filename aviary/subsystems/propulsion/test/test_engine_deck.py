@@ -81,7 +81,7 @@ class EngineDeckTest(unittest.TestCase):
 
         mach_number = model.data[keys.MACH]
         altitude = model.data[keys.ALTITUDE]
-        throttle = model.data[keys.THROTTLE]
+        # throttle = model.data[keys.THROTTLE]
         thrust = model.data[keys.THRUST]
         fuel_flow_rate = model.data[keys.FUEL_FLOW]
 
@@ -124,7 +124,7 @@ class EngineDeckTest(unittest.TestCase):
 
         mach_number = model.data[keys.MACH]
         altitude = model.data[keys.ALTITUDE]
-        throttle = model.data[keys.THROTTLE]
+        model.data[keys.THROTTLE]
         thrust = model.data[keys.THRUST]
         fuel_flow_rate = model.data[keys.FUEL_FLOW]
 

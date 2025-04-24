@@ -271,4 +271,4 @@ class CLmaxCalculation(om.ExplicitComponent):
         outputs[Dynamic.Atmosphere.MACH] = mach = (Q1 / 0.7 / P) ** 0.5
 
         VK = mach * sos
-        outputs['reynolds'] = reynolds = (avg_chord * VK / kinematic_viscosity) / 100000
+        outputs['reynolds'] = (avg_chord * VK / kinematic_viscosity) / 100000

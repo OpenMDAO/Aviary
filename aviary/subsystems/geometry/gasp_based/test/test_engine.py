@@ -39,7 +39,7 @@ class TestPercentNotInFuselage(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e-8, rtol=1e-8)
 
     def test_half_buried(self):
-        """Test in the range (epsilon, 1.0 - epsilon)"""
+        """Test in the range (epsilon, 1.0 - epsilon)."""
         self.prob.set_val(
             Aircraft.Nacelle.PERCENT_DIAM_BURIED_IN_FUSELAGE, val=0.5, units='unitless'
         )
@@ -51,7 +51,7 @@ class TestPercentNotInFuselage(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e-8, rtol=1e-8)
 
     def test_left_buried(self):
-        """Test in the range (0.0, epsilon)"""
+        """Test in the range (0.0, epsilon)."""
         self.prob.set_val(
             Aircraft.Nacelle.PERCENT_DIAM_BURIED_IN_FUSELAGE, val=0.03, units='unitless'
         )
@@ -63,7 +63,7 @@ class TestPercentNotInFuselage(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e-8, rtol=1e-8)
 
     def test_right_buried(self):
-        """Test in the range (1.0 - epsilon, 1.0)"""
+        """Test in the range (1.0 - epsilon, 1.0)."""
         self.prob.set_val(
             Aircraft.Nacelle.PERCENT_DIAM_BURIED_IN_FUSELAGE, val=0.97, units='unitless'
         )
@@ -147,9 +147,7 @@ class ElectricTestCaseMultiEngine(unittest.TestCase):
 
 
 class BWBEngineSizeGroupTestCase(unittest.TestCase):
-    """
-    this is the GASP test case, input and output values based on large single aisle 1 v3 without bug fix
-    """
+    """this is the GASP test case, input and output values based on large single aisle 1 v3 without bug fix."""
 
     def setUp(self):
         aviary_options = AviaryValues()
@@ -178,7 +176,7 @@ class BWBEngineSizeGroupTestCase(unittest.TestCase):
         self.prob.setup(check=False, force_alloc_complex=True)
 
     def test_case1(self):
-        """Testing GASP data case"""
+        """Testing GASP data case."""
         self.prob.run_model()
 
         tol = 1e-4

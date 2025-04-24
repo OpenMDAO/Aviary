@@ -9,7 +9,7 @@ from aviary.subsystems.propulsion.gearbox.gearbox_builder import GearboxBuilder
 
 class TestGearbox(unittest.TestCase):
     def setUp(self):
-        self.prob = prob = om.Problem()
+        self.prob = om.Problem()
 
         self.options = av.AviaryValues()
 

@@ -58,13 +58,13 @@ class TestJson(unittest.TestCase):
 
     def test_alternate(self):
         filepath = self.get_file('interface/test/sizing_problem_for_test.json')
-        prob_alternate = self.prob.alternate_mission(
+        self.prob.alternate_mission(
             run_mission=False, json_filename=filepath, phase_info=local_phase_info
         )
 
     def test_fallout(self):
         filepath = self.get_file('interface/test/sizing_problem_for_test.json')
-        prob_fallout = self.prob.fallout_mission(
+        self.prob.fallout_mission(
             run_mission=False, json_filename=filepath, phase_info=local_phase_info
         )
 

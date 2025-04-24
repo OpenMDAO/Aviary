@@ -2517,6 +2517,8 @@ def _load_off_design(
         else:
             prob.aviary_inputs.set_val(Mission.Design.RANGE, mission_range, units='NM')
             prob.aviary_inputs.set_val(Mission.Summary.RANGE, mission_range, units='NM')
+            # TODO is there a reason we can't use set_default() to make sure target range exists and
+            #      has a value if not already in dictionary?
             try:
                 target_range = phase_info['post_mission']['target_range']
                 phase_info['post_mission']['target_range'] = (mission_range, 'nmi')

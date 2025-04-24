@@ -58,7 +58,8 @@ class TransportStarterMass(om.ExplicitComponent):
         if total_engines > 4:
             diam_deriv_fact = (0.5 * total_engines**0.5) ** 1.6
 
-        diam_exp = diam_deriv_fact * d_avg**1.6
+        # unused?
+        # diam_exp = diam_deriv_fact * d_avg**1.6
         max_mach_exp = max_mach**0.32
 
         J[Aircraft.Propulsion.TOTAL_STARTER_MASS, Aircraft.Nacelle.AVG_DIAMETER] = (

@@ -150,8 +150,8 @@ class LiftAndDragIncrements(om.ExplicitComponent):
         VLAM13 = inputs['VLAM13']
         VLAM14 = inputs['VLAM14']
 
-        outputs['delta_CD'] = delta_CD = delta_drag_trailing * VDEL1 * VDEL2 * VDEL3 * VDEL4 * VDEL5
-        outputs['delta_CL'] = delta_CL = (
+        outputs['delta_CD'] = delta_drag_trailing * VDEL1 * VDEL2 * VDEL3 * VDEL4 * VDEL5
+        outputs['delta_CL'] = (
             trailing_lift_increment
             * VLAM3
             * VLAM4

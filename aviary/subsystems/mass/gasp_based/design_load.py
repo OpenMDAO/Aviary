@@ -390,7 +390,6 @@ class LoadParameters(om.ExplicitComponent):
             max_mach = max_airspeed / 486.33
         if cruise_alt > 22500.0 and cruise_alt <= 36000.0:
             max_mach = max_airspeed / 424.73
-            dmax_mach_dmax_airspeed = 1 / 424.73
         if cruise_alt > 36000.0:
             max_mach = max_airspeed / 372.34
 
@@ -493,7 +492,7 @@ class LoadParameters(om.ExplicitComponent):
         )
 
         if smooth:
-            V9_1 = vel_c * sigmoidX(density_ratio, 1, -0.01) + 661.7 * max_mach * sigmoidX(
+            vel_c * sigmoidX(density_ratio, 1, -0.01) + 661.7 * max_mach * sigmoidX(
                 density_ratio, 1, 0.01
             )
             dV9_dmax_airspeed = (
@@ -507,7 +506,6 @@ class LoadParameters(om.ExplicitComponent):
                 * ddensity_ratio_dmax_airspeed
             )
             dV9_dvel_c = sigmoidX(density_ratio, 1, -0.01)
-            V9 = V9_1
 
             if CATD < 3:
                 # this line creates a smooth bounded density_ratio such that .6820<=density_ratio<=1
@@ -572,12 +570,11 @@ class LoadParameters(om.ExplicitComponent):
                 density_ratio = density_ratio_1
         else:
             if density_ratio >= 0.53281:  # note: this creates a discontinuity
-                V9 = vel_c
                 dV9_dvel_c = 1.0
                 dV9_dmax_airspeed = 0.0
 
                 if density_ratio > 1:  # note: this creates a discontinuity
-                    V9 = 661.7 * max_mach
+                    661.7 * max_mach
                     density_ratio = 1.0
 
                     dV9_dvel_c = 0.0
@@ -586,7 +583,6 @@ class LoadParameters(om.ExplicitComponent):
 
             else:  # note: this creates a discontinuity
                 density_ratio = 0.53281
-                V9 = vel_c
 
                 dV9_dvel_c = 1.0
                 dV9_dmax_airspeed = 0.0
@@ -826,7 +822,6 @@ class LoadFactors(om.ExplicitComponent):
             dk_load_factor_dCl_alpha * 50.0 * V9 * Cl_alpha + k_load_factor * 50 * V9
         ) / (498.0 * wing_loading)
         dcruise_load_factor_dV9 = (k_load_factor * 50.0 * Cl_alpha) / (498.0 * wing_loading)
-        dcruise_load_factor_dmin_dive_vel = 0.0
 
         ddive_load_factor_dwing_loading = dquotient(
             (k_load_factor * 25.0 * min_dive_vel * Cl_alpha),
@@ -977,7 +972,7 @@ class LoadFactors(om.ExplicitComponent):
                     ddive_load_factor_dV9,
                 )
             )
-            dgust_loading_dmin_dive_vel = (
+            (
                 ddive_load_factor_dmin_dive_vel
                 * sigmoidX(cruise_load_factor / dive_load_factor, 1, -0.01)
                 + dive_load_factor
@@ -1009,7 +1004,7 @@ class LoadFactors(om.ExplicitComponent):
                 dgust_load_factor_dV9 = dcruise_load_factor_dV9
                 dgust_load_factor_dmin_dive_vel = 0.0
 
-        ULF = 1.5 * max_maneuver_factor
+        1.5 * max_maneuver_factor
         dULF_dmax_maneuver_factor = 1.5
         dULF_dwing_loading = 0.0
         dULF_ddensity_ratio = 0.0
@@ -1019,7 +1014,7 @@ class LoadFactors(om.ExplicitComponent):
         dULF_dmin_dive_vel = 0.0
 
         if smooth:
-            ULF_1 = 1.5 * (
+            1.5 * (
                 gust_load_factor * sigmoidX(max_maneuver_factor / gust_load_factor, 1, 0.01)
                 + max_maneuver_factor * sigmoidX(max_maneuver_factor / gust_load_factor, 1, 0.01)
             )
@@ -1137,10 +1132,9 @@ class LoadFactors(om.ExplicitComponent):
                 )
             )
             dULF_dmin_dive_vel = 0.0
-            ULF = ULF_1
         else:
             if gust_load_factor > max_maneuver_factor:  # note: this creates a discontinuity
-                ULF = 1.5 * gust_load_factor
+                1.5 * gust_load_factor
 
                 dULF_dmax_maneuver_factor = 0.0
                 dULF_dwing_loading = 1.5 * dgust_load_factor_dwing_loading
@@ -1151,7 +1145,7 @@ class LoadFactors(om.ExplicitComponent):
                 dULF_dmin_dive_vel = 1.5 * dgust_load_factor_dmin_dive_vel
 
         if ULF_from_maneuver is True:
-            ULF = 1.5 * max_maneuver_factor
+            1.5 * max_maneuver_factor
 
             dULF_dmax_maneuver_factor = 1.5
             dULF_dwing_loading = 0.0

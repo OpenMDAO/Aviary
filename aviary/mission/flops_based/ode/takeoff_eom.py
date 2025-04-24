@@ -875,9 +875,7 @@ class ClimbGradientForces(om.ExplicitComponent):
         t_inc = aviary_options.get_val(Mission.Takeoff.THRUST_INCIDENCE, 'rad')
 
         mass = inputs[Dynamic.Vehicle.MASS]
-        lift = inputs[Dynamic.Vehicle.LIFT]
         thrust = inputs[Dynamic.Vehicle.Propulsion.THRUST_TOTAL]
-        drag = inputs[Dynamic.Vehicle.DRAG]
 
         weight = mass * grav_metric
 

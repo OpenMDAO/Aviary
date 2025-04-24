@@ -61,7 +61,6 @@ class DocTAPETests(unittest.TestCase):
         assert_near_equal(val, 2)
 
     def test_get_previous_line(self):
-        something = 'something_else'
         line1 = get_previous_line()
         line2 = get_previous_line(2)
         assert_equal_numstrings(line1, "something = 'something_else'")

@@ -266,13 +266,13 @@ class AircraftModelReader(object):
 
     def _write_input_output_variables(self):
         """Write out the input and output variables in the final case. For debugging."""
-        inputs = self._final_case.list_inputs(
+        self._final_case.list_inputs(
             val=True,
             return_format='list',
             prom_name=True,
             hierarchical=False,
         )
-        outputs = self._final_case.list_outputs(
+        self._final_case.list_outputs(
             val=True,
             return_format='list',
             prom_name=True,

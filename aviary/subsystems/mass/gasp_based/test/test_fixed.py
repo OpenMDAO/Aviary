@@ -367,7 +367,6 @@ class ElectricAugmentationTestCase(unittest.TestCase):
     def test_case1(self):
         self.prob.run_model()
 
-        tol = 5e-4
         assert_near_equal(
             self.prob['aug_mass'], 9394.3, 0.0017
         )  # electrified diff configuration value v3.6. Higher tol because num_wires is discrete in GASP and is not in Aviary

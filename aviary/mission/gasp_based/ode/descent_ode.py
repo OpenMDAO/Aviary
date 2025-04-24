@@ -54,13 +54,6 @@ class DescentODE(TwoDOFODE):
 
         flight_condition_group = self
 
-        if input_speed_type is SpeedType.EAS:
-            speed_inputs = ['EAS']
-            speed_outputs = ['mach', Dynamic.Mission.VELOCITY]
-        elif input_speed_type is SpeedType.MACH:
-            speed_inputs = ['mach']
-            speed_outputs = ['EAS', Dynamic.Mission.VELOCITY]
-
         if analysis_scheme is AnalysisScheme.SHOOTING:
             add_SGM_required_inputs(
                 self,

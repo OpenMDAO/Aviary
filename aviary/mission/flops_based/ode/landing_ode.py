@@ -35,9 +35,6 @@ class FlareODE(_BaseODE):
 
         nn = options['num_nodes']
         analysis_scheme = options['analysis_scheme']
-        aviary_options = options['aviary_options']
-        subsystem_options = options['subsystem_options']
-        core_subsystems = options['core_subsystems']
 
         if analysis_scheme is AnalysisScheme.SHOOTING:
             SGM_required_inputs = {

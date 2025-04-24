@@ -406,7 +406,7 @@ class BWBFuselageParameters1TestCase(unittest.TestCase):
         self.prob.setup(check=False, force_alloc_complex=True)
 
     def test_case1(self):
-        """Testing GASP data case"""
+        """Testing GASP data case."""
         self.prob.run_model()
 
         tol = 1e-7
@@ -454,7 +454,7 @@ class BWBLayoutTestCase(unittest.TestCase):
         self.prob.setup()
 
     def test_case1(self):
-        """Testing GASP data case"""
+        """Testing GASP data case."""
         self.prob.run_model()
 
         tol = 1e-7
@@ -473,7 +473,7 @@ class BWBLayoutTestCase(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e-5, rtol=1e-5)
 
     def test_case2(self):
-        """Testing 0 First Class case"""
+        """Testing 0 First Class case."""
         self.aviary_options.set_val(
             Aircraft.CrewPayload.Design.NUM_FIRST_CLASS,
             val=0,
@@ -528,7 +528,7 @@ class BWBFuselageParameters2TestCase(unittest.TestCase):
         self.prob.setup(check=False, force_alloc_complex=True)
 
     def test_case1(self):
-        """Testing GASP data case"""
+        """Testing GASP data case."""
         self.prob.run_model()
 
         tol = 1e-7
@@ -572,7 +572,7 @@ class BWBFuselageSizeTestCase(unittest.TestCase):
         self.prob.setup(check=False, force_alloc_complex=True)
 
     def test_case1(self):
-        """Testing GASP data case"""
+        """Testing GASP data case."""
         self.prob.run_model()
 
         tol = 1e-7
@@ -585,9 +585,7 @@ class BWBFuselageSizeTestCase(unittest.TestCase):
 
 
 class BWBFuselageGroupTestCase(unittest.TestCase):
-    """
-    this is the GASP test case
-    """
+    """this is the GASP test case."""
 
     def setUp(self):
         options = get_option_defaults()
@@ -632,7 +630,7 @@ class BWBFuselageGroupTestCase(unittest.TestCase):
         self.prob.setup(check=False, force_alloc_complex=True)
 
     def test_case1(self):
-        """Testing GASP data case"""
+        """Testing GASP data case."""
         self.prob.run_model()
 
         tol = 1e-4

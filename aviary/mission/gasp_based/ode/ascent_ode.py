@@ -24,8 +24,6 @@ class AscentODE(TwoDOFODE):
         nn = self.options['num_nodes']
         alpha_mode = self.options['alpha_mode']
         analysis_scheme = self.options['analysis_scheme']
-        aviary_options = self.options['aviary_options']
-        core_subsystems = self.options['core_subsystems']
 
         # TODO: paramport
         ascent_params = ParamPort()

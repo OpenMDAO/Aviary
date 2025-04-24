@@ -34,8 +34,6 @@ class MassPremission(om.Group):
 
         # combine all necessary inputs and outputs for each group
 
-        design_load_outputs = fixed_mass_design_load_values
-
         fixed_mass_inputs = fixed_mass_design_load_values + ['density']
         fixed_mass_outputs = wing_mass_fixed_mass_values + fuel_mass_fixed_mass_values
 

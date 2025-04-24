@@ -52,7 +52,7 @@ class PreMissionTestCase(unittest.TestCase):
         case_name = 'LargeSingleAisle1FLOPS'
 
         flops_inputs = get_flops_inputs(case_name)
-        flops_outputs = get_flops_outputs(case_name)
+        # flops_outputs = get_flops_outputs(case_name)
 
         FLOPS_input = flops_inputs
         GASP_input = V3_bug_fixed_options
@@ -259,7 +259,7 @@ class PreMissionTestCase(unittest.TestCase):
         case_name = 'LargeSingleAisle1FLOPS'
 
         flops_inputs = get_flops_inputs(case_name)
-        flops_outputs = get_flops_outputs(case_name)
+        get_flops_outputs(case_name)
 
         FLOPS_input = flops_inputs
         GASP_input = V3_bug_fixed_options

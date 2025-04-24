@@ -216,7 +216,8 @@ class CellComp(ExplicitComponent):
         U_pack = U_L * n_s
         Q_pack = Q_cell * n_s * n_p
         P_tot = I_pack * U_pack
-        pack_eta = 1.0 - Q_pack / (P_tot + Q_pack)
+        # unused?
+        # pack_eta = 1.0 - Q_pack / (P_tot + Q_pack)
 
         dI_li__dnp = -I_pack / n_p**2
         dU_L__dnp = -R_0 * dI_li__dnp

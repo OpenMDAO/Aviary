@@ -1,3 +1,4 @@
+import numpy as np
 import openmdao.api as om
 
 from aviary.utils.functions import sigmoidX
@@ -224,14 +225,14 @@ class FuselageGroup(om.Group):
         # outputs from parameters that are used in size but not outside of this group
         connected_input_outputs = ['cabin_height', 'cabin_len', 'nose_height']
 
-        parameters = self.add_subsystem(
+        self.add_subsystem(
             'parameters',
             FuselageParameters(),
             promotes_inputs=['aircraft:*'],
             promotes_outputs=['aircraft:*'] + connected_input_outputs,
         )
 
-        size = self.add_subsystem(
+        self.add_subsystem(
             'size',
             FuselageSize(),
             promotes_inputs=connected_input_outputs + ['aircraft:*'],
@@ -240,9 +241,7 @@ class FuselageGroup(om.Group):
 
 
 class BWBFuselageParameters1(om.ExplicitComponent):
-    """
-    Computation of average fuselage diameter, cabin height, cabin length and nose height for BWB.
-    """
+    """Computation of average fuselage diameter, cabin height, cabin length and nose height for BWB."""
 
     def initialize(self):
         add_aviary_option(self, Aircraft.CrewPayload.Design.NUM_PASSENGERS)
@@ -368,9 +367,7 @@ class BWBFuselageParameters1(om.ExplicitComponent):
 
 
 class BWBCabinLayout(om.ExplicitComponent):
-    """
-    layout of passenger cabin for BWB
-    """
+    """layout of passenger cabin for BWB."""
 
     def initialize(self):
         add_aviary_option(self, Aircraft.Fuselage.SEAT_WIDTH, units='inch', desc='INGASP.WS')
@@ -630,8 +627,6 @@ class BWBFuselageParameters2(om.ExplicitComponent):
         )
 
     def compute(self, inputs, outputs):
-        options = self.options
-        verbosity = options[Settings.VERBOSITY]
         rad2deg = 180.0 / np.pi
 
         PASSENGER_LEADING_EDGE_SWEEP = inputs[Aircraft.BWB.PASSENGER_LEADING_EDGE_SWEEP]
@@ -773,9 +768,7 @@ class BWBFuselageParameters2(om.ExplicitComponent):
 
 
 class BWBFuselageSize(om.ExplicitComponent):
-    """
-    Computation of fuselage length and wetted area.
-    """
+    """Computation of fuselage length and wetted area."""
 
     def initialize(self):
         add_aviary_option(self, Settings.VERBOSITY)
@@ -963,21 +956,21 @@ class BWBFuselageGroup(om.Group):
     """
 
     def setup(self):
-        parameters1 = self.add_subsystem(
+        self.add_subsystem(
             'parameters1',
             BWBFuselageParameters1(),
             promotes_inputs=['aircraft:*'],
             promotes_outputs=['aircraft:*'] + ['nose_length', 'cabin_height'],
         )
 
-        layout = self.add_subsystem(
+        self.add_subsystem(
             'layout',
             BWBCabinLayout(),
             promotes_inputs=['aircraft:*'] + ['nose_length'],
             promotes_outputs=['fuselage_station_aft'],
         )
 
-        parameters2 = self.add_subsystem(
+        self.add_subsystem(
             'parameters2',
             BWBFuselageParameters2(),
             promotes_inputs=['aircraft:*']
@@ -986,7 +979,7 @@ class BWBFuselageGroup(om.Group):
             + ['forebody_len', 'nose_area', 'aftbody_len', 'cabin_len'],
         )
 
-        size = self.add_subsystem(
+        self.add_subsystem(
             'size',
             BWBFuselageSize(),
             promotes_inputs=['aircraft:*']

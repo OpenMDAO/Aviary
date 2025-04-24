@@ -149,10 +149,6 @@ class FlightConstraints(om.ExplicitComponent):
         wing_area = inputs[Aircraft.Wing.AREA]
         rho = inputs[Dynamic.Atmosphere.DENSITY]
         CL_max = inputs['CL_max']
-        gamma = inputs[Dynamic.Mission.FLIGHT_PATH_ANGLE]
-        i_wing = inputs[Aircraft.Wing.INCIDENCE]
-        alpha = inputs[Dynamic.Vehicle.ANGLE_OF_ATTACK]
-        TAS = inputs[Dynamic.Mission.VELOCITY]
 
         J['theta', Dynamic.Mission.FLIGHT_PATH_ANGLE] = 1
         J['theta', Dynamic.Vehicle.ANGLE_OF_ATTACK] = 1

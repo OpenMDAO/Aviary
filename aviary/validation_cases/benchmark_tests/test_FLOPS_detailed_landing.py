@@ -116,7 +116,7 @@ class TestFLOPSDetailedLanding(unittest.TestCase):
 
         # Field length
         # N3CC FLOPS output line 1773
-        base = -954.08  # ft
+        # base = -954.08 # ft
         # N3CC FLOPS output line 1842
         desired = 3409.47  # ft
 
@@ -126,7 +126,7 @@ class TestFLOPSDetailedLanding(unittest.TestCase):
 
         # TOUCHDOWN time
         # N3CC FLOPS output line 1773
-        base = -4.08  # s
+        # base = -4.08 # s
         # N3CC FLOPS output line 1849
         desired = 4.22  # s
 

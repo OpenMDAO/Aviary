@@ -205,7 +205,7 @@ def _exec_level1(args, user_args):
     if isinstance(args.input_deck, list):
         args.input_deck = args.input_deck[0]
 
-    prob = run_level_1(
+    run_level_1(
         input_deck=args.input_deck,
         optimizer=args.optimizer,
         phase_info=args.phase_info,

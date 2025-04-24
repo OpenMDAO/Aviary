@@ -154,7 +154,8 @@ class MassParameters(om.ExplicitComponent):
         half_sweep = np.arctan(tan_half_sweep)
         cos_half_sweep = np.cos(half_sweep)
         struct_span = wingspan / cos_half_sweep
-        c_material = 1.0 + 2.5 / (struct_span**0.5)
+        # unused?
+        # c_material = 1.0 + 2.5 / (struct_span**0.5)
 
         not_fuselage_mounted = self.options[Aircraft.Engine.NUM_FUSELAGE_ENGINES] == 0
 
@@ -261,7 +262,7 @@ class PayloadMass(om.ExplicitComponent):
         cargo_mass_des = inputs[Aircraft.CrewPayload.Design.CARGO_MASS]
         cargo_mass_max = inputs[Aircraft.CrewPayload.Design.MAX_CARGO_MASS]
 
-        outputs[Aircraft.CrewPayload.PASSENGER_PAYLOAD_MASS] = payload_mass = pax_mass * pax
+        outputs[Aircraft.CrewPayload.PASSENGER_PAYLOAD_MASS] = pax_mass * pax
         outputs['payload_mass_des'] = pax_mass * pax_des + cargo_mass_des
         outputs['payload_mass_max'] = pax_mass * pax_des + cargo_mass_max
         outputs[Aircraft.CrewPayload.TOTAL_PAYLOAD_MASS] = pax_mass * pax + cargo_mass
@@ -452,7 +453,7 @@ class ElectricAugmentationMass(om.ExplicitComponent):
 
         TMS_wt = TMS_spec_wt * motor_power
 
-        aug_wt = (
+        (
             battery_wt
             + cable_wt
             + num_engines * inverter_wt
@@ -2550,7 +2551,7 @@ class ControlMass(om.ExplicitComponent):
         CK15 = inputs[Aircraft.Controls.COCKPIT_CONTROL_MASS_SCALER]
         CK18 = inputs[Aircraft.Wing.SURFACE_CONTROL_MASS_SCALER]
         CK19 = inputs[Aircraft.Controls.STABILITY_AUGMENTATION_SYSTEM_MASS_SCALER]
-        delta_control_wt = inputs[Aircraft.Controls.CONTROL_MASS_INCREMENT] * GRAV_ENGLISH_LBM
+        inputs[Aircraft.Controls.CONTROL_MASS_INCREMENT] * GRAV_ENGLISH_LBM
         min_dive_vel = inputs['min_dive_vel']
 
         dive_param = (1.15 * min_dive_vel) ** 2 / 391.0

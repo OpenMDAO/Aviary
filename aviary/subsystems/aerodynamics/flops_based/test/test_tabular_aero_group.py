@@ -553,7 +553,7 @@ def _computed_aero_drag_data(flops_inputs: AviaryValues, design_altitude, units)
     T = prob.get_val(Dynamic.Atmosphere.TEMPERATURE, 'degR')
     P = prob.get_val(Dynamic.Atmosphere.STATIC_PRESSURE, 'lbf/ft**2')
 
-    mass = lift = CL * S * 0.5 * 1.4 * P * mach**2  # lbf -> lbm * 1g
+    mass = CL * S * 0.5 * 1.4 * P * mach**2  # lbf -> lbm * 1g
 
     # calculate lift-dependent drag coefficient table, including pressure drag effects
     nn = len(mass)

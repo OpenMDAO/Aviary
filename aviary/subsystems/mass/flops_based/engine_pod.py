@@ -121,7 +121,6 @@ class EnginePodMass(om.ExplicitComponent):
         m_elec = inputs[Aircraft.Electrical.MASS]
         m_hyd = inputs[Aircraft.Hydraulics.MASS]
         m_fsys = inputs[Aircraft.Fuel.FUEL_SYSTEM_MASS]
-        m_nac = inputs[Aircraft.Nacelle.MASS]
 
         eng_thrust = inputs[Aircraft.Engine.SCALED_SLS_THRUST]
         total_thrust = inputs[Aircraft.Propulsion.TOTAL_SCALED_SLS_THRUST]

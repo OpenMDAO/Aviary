@@ -849,7 +849,8 @@ def dashboard(script_name, problem_recorder, driver_recorder, port, run_in_backg
         )
 
     problem_recorder_path = Path(out_dir) / problem_recorder
-    driver_recorder_path = Path(out_dir) / driver_recorder
+    # unused?
+    # driver_recorder_path = Path(out_dir) / driver_recorder
 
     if not os.path.isfile(problem_recorder_path):
         issue_warning(f'Given Problem case recorder file {problem_recorder_path} does not exist.')

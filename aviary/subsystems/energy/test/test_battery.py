@@ -10,7 +10,7 @@ from aviary.subsystems.energy.battery_builder import BatteryBuilder
 
 class TestBatteryDerivs(unittest.TestCase):
     def setUp(self):
-        self.prob = prob = om.Problem()
+        self.prob = om.Problem()
 
         self.options = av.AviaryValues()
 

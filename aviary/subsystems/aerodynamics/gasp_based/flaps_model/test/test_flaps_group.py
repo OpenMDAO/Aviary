@@ -21,7 +21,7 @@ class FlapsGroupTestCaseTripleSlotted(unittest.TestCase):
         options = get_option_defaults()
         options.set_val(Aircraft.Wing.FLAP_TYPE, val=FlapType.TRIPLE_SLOTTED, units='unitless')
 
-        self.prob.model = FCC = FlapsGroup()
+        self.prob.model = FlapsGroup()
 
         setup_model_options(self.prob, options)
 
@@ -122,7 +122,7 @@ class FlapsGroupTestCaseSplit(unittest.TestCase):
         options = get_option_defaults()
         options.set_val(Aircraft.Wing.FLAP_TYPE, val=FlapType.SPLIT, units='unitless')
 
-        self.prob.model = FCC = FlapsGroup()
+        self.prob.model = FlapsGroup()
 
         setup_model_options(self.prob, options)
 
@@ -223,7 +223,7 @@ class FlapsGroupTestCaseSingleSlotted(unittest.TestCase):
         options = get_option_defaults()
         options.set_val(Aircraft.Wing.FLAP_TYPE, val=FlapType.SINGLE_SLOTTED, units='unitless')
 
-        self.prob.model = FCC = FlapsGroup()
+        self.prob.model = FlapsGroup()
 
         setup_model_options(self.prob, options)
 
@@ -325,7 +325,7 @@ class FlapsGroupTestCasePlain(unittest.TestCase):
         options = get_option_defaults()
         options.set_val(Aircraft.Wing.FLAP_TYPE, val=FlapType.PLAIN, units='unitless')
 
-        self.prob.model = FCC = FlapsGroup()
+        self.prob.model = FlapsGroup()
 
         setup_model_options(self.prob, options)
 
@@ -426,7 +426,7 @@ class FlapsGroupTestCaseFowler(unittest.TestCase):
         options = get_option_defaults()
         options.set_val(Aircraft.Wing.FLAP_TYPE, val=FlapType.FOWLER, units='unitless')
 
-        self.prob.model = FCC = FlapsGroup()
+        self.prob.model = FlapsGroup()
 
         setup_model_options(self.prob, options)
 
@@ -529,7 +529,7 @@ class FlapsGroupTestCaseDoubleFowler(unittest.TestCase):
             Aircraft.Wing.FLAP_TYPE, val=FlapType.DOUBLE_SLOTTED_FOWLER, units='unitless'
         )
 
-        self.prob.model = FCC = FlapsGroup()
+        self.prob.model = FlapsGroup()
 
         setup_model_options(self.prob, options)
 

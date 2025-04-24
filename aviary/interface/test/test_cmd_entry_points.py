@@ -14,7 +14,7 @@ class CommandEntryPointsTestCases(unittest.TestCase):
         # check the expected output at all. The underlying functions that implement the
         # commands should be tested seperately.
         try:
-            output = subprocess.check_output(cmd.split())
+            subprocess.check_output(cmd.split())
         except subprocess.CalledProcessError as err:
             self.fail(f"Command '{cmd}' failed.  Return code: {err.returncode}")
 

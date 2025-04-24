@@ -107,7 +107,7 @@ class TestUnsteadySolvedODE(unittest.TestCase):
         # 5. Test that fuelflow (lbf/s) * dt_dr (s/ft) is equal to dmass_dr
         assert_near_equal(fuelflow * dt_dr, dmass_dr, tolerance=1.0e-12)
 
-        cpd = p.check_partials(out_stream=None, method='cs', excludes=['*params*', '*aero*'])
+        p.check_partials(out_stream=None, method='cs', excludes=['*params*', '*aero*'])
         # issue #495
         # dTAS_dt_approx wrt flight_path_angle | abs | fwd-fd | 1.8689625335382314
         # dTAS_dt_approx wrt flight_path_angle | rel | fwd-fd | 1.0
