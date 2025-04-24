@@ -4,16 +4,14 @@ import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 
 from aviary.subsystems.geometry.gasp_based.fuselage import (
+    BWBCabinLayout,
+    BWBFuselageGroup,
+    BWBFuselageParameters1,
+    BWBFuselageParameters2,
+    BWBFuselageSize,
     FuselageGroup,
     FuselageParameters,
     FuselageSize,
-)
-from aviary.subsystems.geometry.gasp_based.fuselage import (
-    BWBFuselageParameters1,
-    BWBCabinLayout,
-    BWBFuselageParameters2,
-    BWBFuselageSize,
-    BWBFuselageGroup,
 )
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.functions import setup_model_options
@@ -409,7 +407,6 @@ class BWBFuselageParameters1TestCase(unittest.TestCase):
 
     def test_case1(self):
         """Testing GASP data case"""
-
         self.prob.run_model()
 
         tol = 1e-7
@@ -458,7 +455,6 @@ class BWBLayoutTestCase(unittest.TestCase):
 
     def test_case1(self):
         """Testing GASP data case"""
-
         self.prob.run_model()
 
         tol = 1e-7
@@ -533,7 +529,6 @@ class BWBFuselageParameters2TestCase(unittest.TestCase):
 
     def test_case1(self):
         """Testing GASP data case"""
-
         self.prob.run_model()
 
         tol = 1e-7
@@ -578,7 +573,6 @@ class BWBFuselageSizeTestCase(unittest.TestCase):
 
     def test_case1(self):
         """Testing GASP data case"""
-
         self.prob.run_model()
 
         tol = 1e-7
@@ -639,7 +633,6 @@ class BWBFuselageGroupTestCase(unittest.TestCase):
 
     def test_case1(self):
         """Testing GASP data case"""
-
         self.prob.run_model()
 
         tol = 1e-4

@@ -8,7 +8,7 @@ from aviary.subsystems.geometry.gasp_based.non_dimensional_conversion import (
 from aviary.subsystems.geometry.gasp_based.strut import StrutGeom
 from aviary.utils.conflict_checks import check_fold_location_definition
 from aviary.variable_info.enums import AircraftTypes, Verbosity
-from aviary.variable_info.functions import add_aviary_input, add_aviary_output, add_aviary_option
+from aviary.variable_info.functions import add_aviary_input, add_aviary_option, add_aviary_output
 from aviary.variable_info.variables import Aircraft, Mission, Settings
 
 
@@ -877,21 +877,21 @@ epsilon = 0.05
 
 
 def f(x):
-    """valid for x in [0.0, 1.0]"""
+    """Valid for x in [0.0, 1.0]"""
     diff = 0.5 - x
     y = np.sqrt(0.25 - diff**2)
     return y
 
 
 def df(x):
-    """first derivative of f(x), valid for x in (0.0, 1.0)"""
+    """First derivative of f(x), valid for x in (0.0, 1.0)"""
     diff = 0.5 - x
     dy = (0.5 - x) / np.sqrt(0.25 - diff**2)
     return dy
 
 
 def d2f(x):
-    """second derivative of f(x), valid for x in (0.0, 1.0)"""
+    """Second derivative of f(x), valid for x in (0.0, 1.0)"""
     diff = 0.5 - x
     d2y = -0.25 / np.sqrt(0.25 - diff**2) ** 3
     return d2y
@@ -917,7 +917,7 @@ def g1(x):
 
 
 def dg1(x):
-    """first derivative of g1(x)"""
+    """First derivative of g1(x)"""
     A1 = f(epsilon)
     B1 = df(epsilon)
     C1 = d2f(epsilon)
@@ -949,7 +949,7 @@ def g2(x):
 
 
 def dg2(x):
-    """first derivative of g2(x)"""
+    """First derivative of g2(x)"""
     delta = 1.0 - epsilon
     A2 = f(delta)
     B2 = df(delta)

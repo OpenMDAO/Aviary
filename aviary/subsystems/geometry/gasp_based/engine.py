@@ -2,29 +2,28 @@ import numpy as np
 import openmdao.api as om
 
 from aviary.variable_info.enums import Verbosity
-from aviary.variable_info.functions import add_aviary_input, add_aviary_output, add_aviary_option
+from aviary.variable_info.functions import add_aviary_input, add_aviary_option, add_aviary_output
 from aviary.variable_info.variables import Aircraft, Settings
-
 
 epsilon = 0.05
 
 
 def f(x):
-    """valid for x in [0.0, 1.0]"""
+    """Valid for x in [0.0, 1.0]"""
     diff = 0.5 - x
     y = 1.0 - np.arccos(2.0 * diff) / np.pi
     return y
 
 
 def df(x):
-    """first derivative of f(x), valid for x in (0.0, 1.0)"""
+    """First derivative of f(x), valid for x in (0.0, 1.0)"""
     diff = 0.5 - x
     dy = -2.0 / np.sqrt(1.0 - 4 * diff * diff) / np.pi
     return dy
 
 
 def d2f(x):
-    """second derivative of f(x), valid for x in (0.0, 1.0)"""
+    """Second derivative of f(x), valid for x in (0.0, 1.0)"""
     diff = 0.5 - x
     d2y = 8.0 * diff / np.sqrt(1.0 - 4 * diff * diff) / (1.0 - 4 * diff * diff) / np.pi
     return d2y
@@ -50,7 +49,7 @@ def g1(x):
 
 
 def dg1(x):
-    """first derivative of g1(x)"""
+    """First derivative of g1(x)"""
     A1 = f(epsilon)
     B1 = df(epsilon)
     C1 = d2f(epsilon)
@@ -82,7 +81,7 @@ def g2(x):
 
 
 def dg2(x):
-    """first derivative of g2(x)"""
+    """First derivative of g2(x)"""
     delta = 1.0 - epsilon
     A2 = f(delta)
     B2 = df(delta)

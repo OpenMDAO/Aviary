@@ -5,7 +5,6 @@ from parameterized import parameterized
 
 from aviary.subsystems.premission import CorePreMission
 from aviary.subsystems.propulsion.utils import build_engine_deck
-from aviary.utils.aviary_values import AviaryValues
 from aviary.utils.functions import set_aviary_initial_values
 from aviary.utils.preprocessors import preprocess_options
 from aviary.utils.test_utils.default_subsystems import get_default_premission_subsystems
@@ -97,9 +96,6 @@ class PreMissionGroupTest(unittest.TestCase):
     def test_diff_configuration_mass(self):
         # This standalone test provides coverage for some features unique to this
         # model.
-        from aviary.models.large_single_aisle_2.large_single_aisle_2_FLOPS_data import (
-            LargeSingleAisle2FLOPS,
-        )
 
         prob = om.Problem()
 

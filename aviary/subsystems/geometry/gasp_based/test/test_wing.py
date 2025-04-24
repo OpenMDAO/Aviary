@@ -4,13 +4,12 @@ import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 
 from aviary.subsystems.geometry.gasp_based.wing import (
+    ExposedWing,
     WingFold,
     WingGroup,
     WingParameters,
     WingSize,
-    ExposedWing,
 )
-from aviary.variable_info.enums import AircraftTypes
 from aviary.variable_info.functions import setup_model_options
 from aviary.variable_info.options import get_option_defaults
 from aviary.variable_info.variables import Aircraft, Mission
@@ -679,7 +678,7 @@ class ExposedWingTestCase(unittest.TestCase):
         self.prob.setup(check=False, force_alloc_complex=True)
 
     def test_case_middle(self):
-        """test in the range (epsilon, 1.0 - epsilon)"""
+        """Test in the range (epsilon, 1.0 - epsilon)"""
         self.prob.set_val(Aircraft.Wing.VERTICAL_MOUNT_LOCATION, 0.5, units='unitless')
         self.prob.run_model()
         tol = 1e-7
@@ -690,8 +689,7 @@ class ExposedWingTestCase(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e-11, rtol=5e-11)
 
     def test_case_left(self):
-        """test in the range (0.0, epsilon)"""
-
+        """Test in the range (0.0, epsilon)"""
         self.prob.set_val(Aircraft.Wing.VERTICAL_MOUNT_LOCATION, 0.049, units='unitless')
         self.prob.run_model()
         tol = 1e-7
@@ -702,7 +700,7 @@ class ExposedWingTestCase(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e-11, rtol=5e-11)
 
     def test_case_right(self):
-        """test in the range (1.0 - epsilon, 1.0)"""
+        """Test in the range (1.0 - epsilon, 1.0)"""
         self.prob.set_val(Aircraft.Wing.VERTICAL_MOUNT_LOCATION, 0.951, units='unitless')
         self.prob.run_model()
         tol = 1e-7
