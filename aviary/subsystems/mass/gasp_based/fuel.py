@@ -788,22 +788,30 @@ class FuselageMass(om.ExplicitComponent):
     """
 
     def setup(self):
-        self.add_input('fus_mass_full', val=4000, units='lbm',
-                       desc='WX: mass of fuselage and contents, including empennage')
+        self.add_input(
+            'fus_mass_full',
+            val=4000,
+            units='lbm',
+            desc='WX: mass of fuselage and contents, including empennage',
+        )
         add_aviary_input(self, Aircraft.Fuselage.MASS_COEFFICIENT, units='unitless')
         add_aviary_input(self, Aircraft.Fuselage.WETTED_AREA, units='ft**2')
         add_aviary_input(self, Aircraft.Fuselage.AVG_DIAMETER, units='ft')
         add_aviary_input(self, Aircraft.TailBoom.LENGTH, units='ft')
         # pylon_len is not computed in Aviary
-        self.add_input('pylon_len', val=0, units='ft',
-                       desc='ELRW: length of pylon for fuselage mounted engines')
-        self.add_input('min_dive_vel', val=419.75918333, units='kn',
-                       desc='VDMIN: dive velocity')
+        self.add_input(
+            'pylon_len',
+            val=0,
+            units='ft',
+            desc='ELRW: length of pylon for fuselage mounted engines',
+        )
+        self.add_input('min_dive_vel', val=419.75918333, units='kn', desc='VDMIN: dive velocity')
         add_aviary_input(self, Aircraft.Fuselage.PRESSURE_DIFFERENTIAL, units='psi')
         add_aviary_input(self, Aircraft.Wing.ULTIMATE_LOAD_FACTOR, units='unitless')
         # MAT is not computed in Aviary
-        self.add_input('MAT', val=0, units='lbm',
-                       desc='WAT: Weight of the Fuselage Acoustic Treatment')
+        self.add_input(
+            'MAT', val=0, units='lbm', desc='WAT: Weight of the Fuselage Acoustic Treatment'
+        )
 
         add_aviary_output(self, Aircraft.Fuselage.MASS, units='lbm')
 
@@ -1002,12 +1010,12 @@ class BWBFuselageMass(om.ExplicitComponent):
     """
 
     def setup(self):
-
         add_aviary_input(self, Aircraft.BWB.CABIN_AREA, units='ft**2')
         add_aviary_input(self, Aircraft.Fuselage.MASS_COEFFICIENT, units='unitless')
         add_aviary_input(self, Mission.Design.GROSS_MASS, units='lbm')
-        add_aviary_input(self, Aircraft.Fuselage.WETTED_AREA_RATIO_AFTBODY_TO_TOTAL,
-                         units='unitless')
+        add_aviary_input(
+            self, Aircraft.Fuselage.WETTED_AREA_RATIO_AFTBODY_TO_TOTAL, units='unitless'
+        )
         add_aviary_input(self, Aircraft.Fuselage.AFTBODY_MASS_PER_UNIT_AREA, units='lbm/ft**2')
         add_aviary_input(self, Aircraft.Fuselage.WETTED_AREA, units='ft**2')
 
@@ -1026,7 +1034,6 @@ class BWBFuselageMass(om.ExplicitComponent):
         )
 
     def compute(self, inputs, outputs):
-
         c_fuselage = inputs[Aircraft.Fuselage.MASS_COEFFICIENT]
         gross_wt_initial = inputs[Mission.Design.GROSS_MASS] * GRAV_ENGLISH_LBM
         area_cabin = inputs[Aircraft.BWB.CABIN_AREA]
@@ -1041,7 +1048,6 @@ class BWBFuselageMass(om.ExplicitComponent):
         outputs[Aircraft.Fuselage.MASS] = fus_mass
 
     def compute_partials(self, inputs, J):
-
         c_fuselage = inputs[Aircraft.Fuselage.MASS_COEFFICIENT]
         gross_wt_initial = inputs[Mission.Design.GROSS_MASS] * GRAV_ENGLISH_LBM
         area_cabin = inputs[Aircraft.BWB.CABIN_AREA]
@@ -1069,9 +1075,7 @@ class BWBFuselageMass(om.ExplicitComponent):
         J[Aircraft.Fuselage.MASS, Aircraft.Fuselage.WETTED_AREA_RATIO_AFTBODY_TO_TOTAL] = (
             dFusWt_darea_aft_to_total
         )
-        J[Aircraft.Fuselage.MASS, Aircraft.Fuselage.AFTBODY_MASS_PER_UNIT_AREA] = (
-            dFusWt_duwt_aft
-        )
+        J[Aircraft.Fuselage.MASS, Aircraft.Fuselage.AFTBODY_MASS_PER_UNIT_AREA] = dFusWt_duwt_aft
         J[Aircraft.Fuselage.MASS, Aircraft.Fuselage.WETTED_AREA] = dFusWt_dfus_SA
 
 
@@ -1096,8 +1100,9 @@ class StructMass(om.ExplicitComponent):
         add_aviary_input(self, Aircraft.Fuselage.MASS_SCALER, units='unitless')
         add_aviary_input(self, Aircraft.LandingGear.TOTAL_MASS_SCALER, units='unitless')
         add_aviary_input(self, Aircraft.LandingGear.TOTAL_MASS, units='lbm')
-        add_aviary_input(self, Aircraft.Engine.POD_MASS_SCALER,
-                         shape=num_engine_type, units='unitless')
+        add_aviary_input(
+            self, Aircraft.Engine.POD_MASS_SCALER, shape=num_engine_type, units='unitless'
+        )
         add_aviary_input(self, Aircraft.Propulsion.TOTAL_ENGINE_POD_MASS, units='lbm')
         add_aviary_input(self, Aircraft.Design.STRUCTURAL_MASS_INCREMENT, units='lbm')
 
@@ -1106,7 +1111,6 @@ class StructMass(om.ExplicitComponent):
         self.declare_partials(Aircraft.Design.STRUCTURE_MASS, '*')
 
     def compute(self, inputs, outputs):
-
         fus_wt = inputs[Aircraft.Fuselage.MASS] * GRAV_ENGLISH_LBM
         CK8 = inputs[Aircraft.Wing.MASS_SCALER]
         total_wing_wt = inputs[Aircraft.Wing.MASS] * GRAV_ENGLISH_LBM
@@ -1116,13 +1120,10 @@ class StructMass(om.ExplicitComponent):
         vtail_wt = inputs[Aircraft.VerticalTail.MASS] * GRAV_ENGLISH_LBM
         CK11 = inputs[Aircraft.Fuselage.MASS_SCALER]
         CK12 = inputs[Aircraft.LandingGear.TOTAL_MASS_SCALER]
-        landing_gear_wt = inputs[Aircraft.LandingGear.TOTAL_MASS] * \
-            GRAV_ENGLISH_LBM
+        landing_gear_wt = inputs[Aircraft.LandingGear.TOTAL_MASS] * GRAV_ENGLISH_LBM
         CK14 = inputs[Aircraft.Engine.POD_MASS_SCALER]
-        sec_wt = inputs[Aircraft.Propulsion.TOTAL_ENGINE_POD_MASS] * \
-            GRAV_ENGLISH_LBM
-        delta_struct_wt = inputs[Aircraft.Design.STRUCTURAL_MASS_INCREMENT] * \
-            GRAV_ENGLISH_LBM
+        sec_wt = inputs[Aircraft.Propulsion.TOTAL_ENGINE_POD_MASS] * GRAV_ENGLISH_LBM
+        delta_struct_wt = inputs[Aircraft.Design.STRUCTURAL_MASS_INCREMENT] * GRAV_ENGLISH_LBM
 
         outputs[Aircraft.Design.STRUCTURE_MASS] = (
             CK8 * total_wing_wt
@@ -1135,7 +1136,6 @@ class StructMass(om.ExplicitComponent):
         ) / GRAV_ENGLISH_LBM
 
     def compute_partials(self, inputs, J):
-
         fus_wt = inputs[Aircraft.Fuselage.MASS] * GRAV_ENGLISH_LBM
         CK8 = inputs[Aircraft.Wing.MASS_SCALER]
         total_wing_wt = inputs[Aircraft.Wing.MASS] * GRAV_ENGLISH_LBM
@@ -1145,16 +1145,14 @@ class StructMass(om.ExplicitComponent):
         vtail_wt = inputs[Aircraft.VerticalTail.MASS] * GRAV_ENGLISH_LBM
         CK11 = inputs[Aircraft.Fuselage.MASS_SCALER]
         CK12 = inputs[Aircraft.LandingGear.TOTAL_MASS_SCALER]
-        landing_gear_wt = inputs[Aircraft.LandingGear.TOTAL_MASS] * \
-            GRAV_ENGLISH_LBM
+        landing_gear_wt = inputs[Aircraft.LandingGear.TOTAL_MASS] * GRAV_ENGLISH_LBM
         CK14 = inputs[Aircraft.Engine.POD_MASS_SCALER]
-        sec_wt = inputs[Aircraft.Propulsion.TOTAL_ENGINE_POD_MASS] * \
-            GRAV_ENGLISH_LBM
-        delta_struct_wt = inputs[Aircraft.Design.STRUCTURAL_MASS_INCREMENT] * \
-            GRAV_ENGLISH_LBM
+        sec_wt = inputs[Aircraft.Propulsion.TOTAL_ENGINE_POD_MASS] * GRAV_ENGLISH_LBM
+        delta_struct_wt = inputs[Aircraft.Design.STRUCTURAL_MASS_INCREMENT] * GRAV_ENGLISH_LBM
 
-        J[Aircraft.Design.STRUCTURE_MASS, Aircraft.Wing.MASS_SCALER] = \
+        J[Aircraft.Design.STRUCTURE_MASS, Aircraft.Wing.MASS_SCALER] = (
             total_wing_wt / GRAV_ENGLISH_LBM
+        )
         J[Aircraft.Design.STRUCTURE_MASS, Aircraft.Wing.MASS] = CK8
         J[Aircraft.Design.STRUCTURE_MASS, Aircraft.HorizontalTail.MASS_SCALER] = (
             htail_wt / GRAV_ENGLISH_LBM
@@ -1164,11 +1162,11 @@ class StructMass(om.ExplicitComponent):
             vtail_wt / GRAV_ENGLISH_LBM
         )
         J[Aircraft.Design.STRUCTURE_MASS, Aircraft.VerticalTail.MASS] = CK10
-        J[Aircraft.Design.STRUCTURE_MASS, Aircraft.Fuselage.MASS_SCALER] = \
-            fus_wt / GRAV_ENGLISH_LBM
+        J[Aircraft.Design.STRUCTURE_MASS, Aircraft.Fuselage.MASS_SCALER] = fus_wt / GRAV_ENGLISH_LBM
         J[Aircraft.Design.STRUCTURE_MASS, Aircraft.Fuselage.MASS] = CK11
-        J[Aircraft.Design.STRUCTURE_MASS,
-            Aircraft.LandingGear.TOTAL_MASS_SCALER] = landing_gear_wt / GRAV_ENGLISH_LBM
+        J[Aircraft.Design.STRUCTURE_MASS, Aircraft.LandingGear.TOTAL_MASS_SCALER] = (
+            landing_gear_wt / GRAV_ENGLISH_LBM
+        )
         J[Aircraft.Design.STRUCTURE_MASS, Aircraft.LandingGear.TOTAL_MASS] = CK12
         J[Aircraft.Design.STRUCTURE_MASS, Aircraft.Engine.POD_MASS_SCALER] = (
             sec_wt / GRAV_ENGLISH_LBM
