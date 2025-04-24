@@ -1,25 +1,22 @@
 import argparse
 from collections import defaultdict
-from dataclasses import dataclass
+import functools
 import importlib.util
 import json
 import os
-import pathlib
 from pathlib import Path
 import re
 import shutil
-import warnings
+import traceback
 import zipfile
-import functools
 
 import numpy as np
-
 import pandas as pd
 
-from bokeh.models import Legend, LegendItem, CheckboxGroup, CustomJS, TextInput, ColumnDataSource, CustomJS, Div, Range1d, LinearAxis, PrintfTickFormatter
+from bokeh.models import Legend, LegendItem, CustomJS, TextInput, \
+    ColumnDataSource, CustomJS, Div, Range1d, LinearAxis, PrintfTickFormatter
 from bokeh.plotting import figure
-from bokeh.layouts import column
-from bokeh.palettes import Category10, Category20, d3
+from bokeh.palettes import Category20, d3
 
 import panel as pn
 
@@ -217,8 +214,36 @@ def _dashboard_cmd(options, user_args):
         options.run_in_background,
     )
 
+def _handle_pane_creation_errors():
+    """
+    A decorator used with the functions that creates panes for use in the dashboard.
+    If the function executes without throwing an exception, the pane is added 
+    to the pane list that will be shown in the dashboard. 
+    If the function does throw an exception, it puts the error message 
+    and stack trace into the pane so the user can see why it failed.
+    """
+    def decorator(func):
+        @functools.wraps(func)
+        def wrapper(pane_title, pane_list, pane_documentation, *args, **kwargs):
+            try:
+                pane = func(pane_documentation, *args, **kwargs)
+                pane_list.append((pane_title, pane))
+                return pane
+            except Exception as e:
+                # Get the full stack trace as a string
+                stack_trace = traceback.format_exc()
+                pane = _create_message_pane(
+                    pane_documentation,
+                    f"Unable to create {pane_title} due to error: {e}\n\nStack trace:\n{stack_trace}",
+                    )
+                pane_list.append((pane_title, pane))
+                return None
+        return wrapper
+    return decorator
 
-def create_table_pane_from_json(json_filepath, documentation):
+
+@_handle_pane_creation_errors()
+def create_table_pane_from_json(documentation, json_filepath):
     """
     Create a Tabulator Pane with Name and Value columns using tabular data
     from a JSON file.
@@ -249,13 +274,15 @@ def create_table_pane_from_json(json_filepath, documentation):
                                               'Value': '',
                                           })
         table_pane_with_doc = pn.Column(
-            pn.pane.HTML(f"<p>{documentation}</p>",
+            pn.pane.HTML(f'<p class="pane_doc">{documentation}</p>',
+                         stylesheets=["assets/aviary_styles.css"], 
                          styles={'text-align': documentation_text_align}),
             table_pane
         )
     except Exception as err:
         table_pane_with_doc = pn.Column(
-            pn.pane.HTML(f"<p>{documentation}</p>",
+            pn.pane.HTML(f'<p class="pane_doc">{documentation}</p>',
+                         stylesheets=["assets/aviary_styles.css"], 
                          styles={'text-align': documentation_text_align}),
             pn.pane.Markdown(
                 f"# Table not shown because data source JSON file, '{json_filepath}', not found.")
@@ -266,7 +293,8 @@ def create_table_pane_from_json(json_filepath, documentation):
 
 # functions for creating Panel Panes given different kinds of
 #    data inputs
-def create_csv_frame(csv_filepath, documentation):
+@_handle_pane_creation_errors()
+def create_csv_frame(documentation, csv_filepath):
     """
     Create a Panel Pane that contains a tabular display of the data in a CSV file.
 
@@ -294,13 +322,15 @@ def create_csv_frame(csv_filepath, documentation):
             sizing_mode='scale_both',
         )
         report_pane = pn.Column(
-            pn.pane.HTML(f"<p>{documentation}</p>",
+            pn.pane.HTML(f'<p class="pane_doc">{documentation}</p>',
+                         stylesheets=["assets/aviary_styles.css"], 
                          styles={'text-align': documentation_text_align}),
             df_pane
         )
     else:
         report_pane = pn.Column(
-            pn.pane.HTML(f"<p>{documentation}</p>",
+            pn.pane.HTML(f'<p class="pane_doc">{documentation}</p>',
+                         stylesheets=["assets/aviary_styles.css"], 
                          styles={'text-align': documentation_text_align}),
             pn.pane.Markdown(
                 f"# Report not shown because data source CSV file, '{csv_filepath}', not found.")
@@ -325,149 +355,23 @@ def get_run_status(status_filepath):
         return 'Unknown'
 
 
-
-def add_to_pane_with_error_handling(panes_list, pane_title):
+def _create_message_pane(documentation, message):
     """
-    A decorator that adds the returned pane to a list and handles exceptions.
-    
-    Args:
-        panes_list: The list to which the returned pane should be added
-        
-    Returns:
-        The decorated function
+    A simple pane showing a text message. Mostly used for 
+    showing error messages.
     """
-    def decorator(func):
-        def wrapper(*args, **kwargs):
-            try:
-                # Call the original function
-                pane = func(*args, **kwargs)
-                
-                # If no exception occurred, add the pane to the list
-                panes_list.append((pane_title, pane))
-                
-                # Return the pane so it can be used further if needed
-                return pane
-            
-            except Exception as e:
-                # Print a warning message
-                issue_warning(f"Warning: Failed to create pane, {pane_title}, from {func.__name__}: {str(e)}")
-                
-                # Return None since no pane was created
-                return None
-                
-        return wrapper
-    return decorator
-
-def create_report_frame_with_error_handling(format, text_filepath, documentation, pane_list, pane_title):
-    """
-    Create a Panel Pane that contains an embedded external file in HTML, Markdown, or text format,
-    or a simple message in HTML format.
-
-    Parameters
-    ----------
-    format : str
-        Format of the file to be embedded. Options are 'html', 'text', 'markdown', 'simple_message'.
-    text_filepath : str
-        Path to the report text file or message if format is 'simple_message'.
-    documentation : str
-        Explanation of what this tab is showing.
-    pane_list : list
-        The list that this pane will be appended to.
-    pane_title : str
-        The string that is the title of this pane.
-
-    Returns
-    -------
-    pane : Panel.Pane or None
-        A Panel Pane object to be displayed in the dashboard. Or None if the file
-        does not exist.
-    """
-    try:
-        create_report_frame(format, text_filepath, documentation)
-        pane_list.append((pane_title, pane_list))
-    except Exception as e:
-        warnings.warn(f"Unable to generate pane for {pane_title} due to error {e}")
-
-
-def collect_on_success():
-    """
-    A decorator that calls the decorated function. If the function
-    executes without raising an exception, its return value is appended
-    to a target list provided during the function call. If an exception
-    occurs, a warning message is printed, and the execution continues.
-    """
-    def decorator(func):
-        @functools.wraps(func)
-        def wrapper(pane_list, pane_title, *args, **kwargs):
-            try:
-                result = func(*args, **kwargs)
-                pane_list.append((pane_title, result))
-                return result  # Optionally return the result
-            except Exception as e:
-                issue_warning(f"Warning: During the creation of pane '{pane_title}' an exception was raised an exception: {e}. "
-                              "Therefore, this pane will not be shown in the dashboard")
-                return None  # Optionally return None or some other default value
-        return wrapper
-    return decorator
-
-
-@collect_on_success()
-def create_report_frame_new(format, text_filepath, documentation):
-    """
-    Create a Panel Pane that contains an embedded external file in HTML, Markdown, or text format,
-    or a simple message in HTML format.
-
-    Parameters
-    ----------
-    format : str
-        Format of the file to be embedded. Options are 'html', 'text', 'markdown', 'simple_message'.
-    text_filepath : str
-        Path to the report text file or message if format is 'simple_message'.
-    documentation : str
-        Explanation of what this tab is showing.
-
-    Returns
-    -------
-    pane : Panel.Pane or None
-        A Panel Pane object to be displayed in the dashboard. Or None if the file
-        does not exist.
-    """
-    if format == "simple_message":
-        report_pane = pn.Column(
-            pn.pane.HTML(f"<p>{documentation}</p>", styles={'text-align': 'left'}),
-            pn.pane.HTML(f"<p>{text_filepath}</p>", styles={'text-align': 'left'})
-        )
-    elif os.path.isfile(text_filepath):
-        if format == "html":
-            iframe_css = 'width=1200px height=800px overflow-x="scroll" overflow="scroll" margin=0px padding=0px border=20px frameBorder=20px scrolling="yes"'
-            report_pane = pn.Column(
-                pn.pane.HTML(f"<p>{documentation}</p>", styles={'text-align': 'left'}),
-                pn.pane.HTML(f"<iframe {iframe_css} src=/home/{text_filepath}></iframe>")
-            )
-        elif format in ["markdown", "text"]:
-            with open(text_filepath, "rb") as f:
-                file_text = f.read()
-                # need to deal with some encoding errors
-                file_text = file_text.decode("latin-1")
-            if format == "markdown":
-                report_pane = pn.pane.Markdown(file_text)
-            elif format == "text":
-                report_pane = pn.pane.Str(file_text)
-            report_pane = pn.Column(
-                pn.pane.HTML(f"<p>{documentation}</p>", styles={'text-align': 'left'}),
-                report_pane
-            )
-        else:
-            raise RuntimeError(f"Report format of {format} is not supported.")
-    else:
-        report_pane = pn.Column(
-            pn.pane.HTML(f"<p>{documentation}</p>", styles={'text-align': 'left'}),
-            pn.pane.Markdown(
-                f"# Report not shown because report file, '{text_filepath}', not found.")
-        )
+    report_pane = pn.Column(
+        pn.pane.HTML(f'<p class="pane_doc">{documentation}</p>', 
+            stylesheets=["assets/aviary_styles.css"], 
+            styles={'text-align': 'left'}),
+        # pn.pane.HTML(f"<p>{message}</p>", styles={'text-align': 'left'})
+        pn.pane.Str(f"<p>{message}</p>", styles={'text-align': 'left'})
+    )
     return report_pane
 
-def create_report_frame(format, text_filepath, documentation):
+
+@_handle_pane_creation_errors()
+def create_report_frame(documentation, format, text_filepath):
     """
     Create a Panel Pane that contains an embedded external file in HTML, Markdown, or text format,
     or a simple message in HTML format.
@@ -487,16 +391,13 @@ def create_report_frame(format, text_filepath, documentation):
         A Panel Pane object to be displayed in the dashboard. Or None if the file
         does not exist.
     """
-    if format == "simple_message":
-        report_pane = pn.Column(
-            pn.pane.HTML(f"<p>{documentation}</p>", styles={'text-align': 'left'}),
-            pn.pane.HTML(f"<p>{text_filepath}</p>", styles={'text-align': 'left'})
-        )
-    elif os.path.isfile(text_filepath):
+    if os.path.isfile(text_filepath):
         if format == "html":
             iframe_css = 'width=1200px height=800px overflow-x="scroll" overflow="scroll" margin=0px padding=0px border=20px frameBorder=20px scrolling="yes"'
             report_pane = pn.Column(
-                pn.pane.HTML(f"<p>{documentation}</p>", styles={'text-align': 'left'}),
+                pn.pane.HTML(f'<p class="pane_doc">{documentation}</p>', 
+                         stylesheets=["assets/aviary_styles.css"], 
+                             styles={'text-align': 'left'}),
                 pn.pane.HTML(f"<iframe {iframe_css} src=/home/{text_filepath}></iframe>")
             )
         elif format in ["markdown", "text"]:
@@ -509,14 +410,19 @@ def create_report_frame(format, text_filepath, documentation):
             elif format == "text":
                 report_pane = pn.pane.Str(file_text)
             report_pane = pn.Column(
-                pn.pane.HTML(f"<p>{documentation}</p>", styles={'text-align': 'left'}),
+                pn.pane.HTML(f'<p class="pane_doc">{documentation}</p>', 
+                         stylesheets=["assets/aviary_styles.css"], 
+                             styles={'text-align': 'left'}),
                 report_pane
             )
         else:
             raise RuntimeError(f"Report format of {format} is not supported.")
     else:
         report_pane = pn.Column(
-            pn.pane.HTML(f"<p>{documentation}</p>", styles={'text-align': 'left'}),
+            pn.pane.HTML(f'<p class="pane_doc">{documentation}</p>', 
+                         stylesheets=["assets/aviary_styles.css"], 
+                         styles={'text-align': 'left'},
+                         ),
             pn.pane.Markdown(
                 f"# Report not shown because report file, '{text_filepath}', not found.")
         )
@@ -946,332 +852,166 @@ def create_optimization_history_plot(case_recorder, df):
 
     return layout
 
-@collect_on_success()
-def create_interactive_xy_plot_mission_variables(problem_recorder_path):
-    plot_title = "Interactive Mission Variable Plot"
-    try:
-        if problem_recorder_path:
-            if os.path.exists(problem_recorder_path):
-                cr = om.CaseReader(problem_recorder_path)
+@_handle_pane_creation_errors()
+def _create_interactive_xy_plot_mission_variables(documentation, problem_recorder_path):
+    """
+    Create a pane showing an XY plot of mission variables. 
+    """
+    if problem_recorder_path:
+        if os.path.exists(problem_recorder_path):
+            cr = om.CaseReader(problem_recorder_path)
 
-                # determine what trajectories there are
-                traj_nodes = [
-                    n
-                    for n in _meta_tree_subsys_iter(
-                        cr.problem_metadata['tree'],
-                        cls='dymos.trajectory.trajectory:Trajectory')]
+            # determine what trajectories there are
+            traj_nodes = [
+                n
+                for n in _meta_tree_subsys_iter(
+                    cr.problem_metadata['tree'],
+                    cls='dymos.trajectory.trajectory:Trajectory')]
 
-                if len(traj_nodes) == 0:
-                    raise ValueError(
-                        "No trajectories available in case recorder file for use "
-                        "in generating interactive XY plot of mission variables")
-                traj_name = traj_nodes[0]["name"]
-                if len(traj_nodes) > 1:
-                    issue_warning("More than one trajectory found in problem case recorder file. Only using "
-                                f'the first one, "{traj_name}", for the interactive XY plot of mission variables')
-                case = cr.get_case("final")
-                outputs = case.list_outputs(out_stream=None, units=True)
+            if len(traj_nodes) == 0:
+                raise ValueError(
+                    "No trajectories available in case recorder file for use "
+                    "in generating interactive XY plot of mission variables")
+            traj_name = traj_nodes[0]["name"]
+            if len(traj_nodes) > 1:
+                issue_warning("More than one trajectory found in problem case recorder file. Only using "
+                            f'the first one, "{traj_name}", for the interactive XY plot of mission variables')
+            case = cr.get_case("final")
+            outputs = case.list_outputs(out_stream=None, units=True)
 
-                # data_by_varname_and_phase = defaultdict(dict)
-                data_by_varname_and_phase = defaultdict(lambda: defaultdict(list))
+            # data_by_varname_and_phase = defaultdict(dict)
+            data_by_varname_and_phase = defaultdict(lambda: defaultdict(list))
 
-                # Find the "largest" unit used for any timeseries output across all phases
-                units_by_varname = {}
-                phases = set()
-                varnames = set()
-                # pattern used to parse out the phase names and variable names
-                pattern = fr"{traj_name}\.phases\.([a-zA-Z0-9_]+)\.timeseries\.timeseries_comp\.([a-zA-Z0-9_]+)"
-                for varname, meta in outputs:
-                    match = re.match(pattern, varname)
-                    if match:
-                        phase, name = match.group(1), match.group(2)
-                        phases.add(phase)
-                        varnames.add(name)
-                        if name not in units_by_varname:
+            # Find the "largest" unit used for any timeseries output across all phases
+            units_by_varname = {}
+            phases = set()
+            varnames = set()
+            # pattern used to parse out the phase names and variable names
+            pattern = fr"{traj_name}\.phases\.([a-zA-Z0-9_]+)\.timeseries\.timeseries_comp\.([a-zA-Z0-9_]+)"
+            for varname, meta in outputs:
+                match = re.match(pattern, varname)
+                if match:
+                    phase, name = match.group(1), match.group(2)
+                    phases.add(phase)
+                    varnames.add(name)
+                    if name not in units_by_varname:
+                        units_by_varname[name] = meta['units']
+                    else:
+                        _, new_conv_factor = conversion_to_base_units(meta['units'])
+                        _, old_conv_factor = conversion_to_base_units(
+                            units_by_varname[name])
+                        if new_conv_factor < old_conv_factor:
                             units_by_varname[name] = meta['units']
-                        else:
-                            _, new_conv_factor = conversion_to_base_units(meta['units'])
-                            _, old_conv_factor = conversion_to_base_units(
-                                units_by_varname[name])
-                            if new_conv_factor < old_conv_factor:
-                                units_by_varname[name] = meta['units']
 
-                # Now get the values using those units
-                for varname, meta in outputs:
-                    match = re.match(pattern, varname)
-                    if match:
-                        phase, name = match.group(1), match.group(2)
-                        val = case.get_val(varname, units=units_by_varname[name])
-                        data_by_varname_and_phase[name][phase] = val
+            # Now get the values using those units
+            for varname, meta in outputs:
+                match = re.match(pattern, varname)
+                if match:
+                    phase, name = match.group(1), match.group(2)
+                    val = case.get_val(varname, units=units_by_varname[name])
+                    data_by_varname_and_phase[name][phase] = val
 
-                # determine the initial variables used for X and Y
-                varname_options = list(sorted(varnames, key=str.casefold))
-                if "distance" in varname_options:
-                    x_varname_default = "distance"
-                elif "time" in varname_options:
-                    x_varname_default = "time"
-                else:
-                    x_varname_default = varname_options[0]
-
-                if "altitude" in varname_options:
-                    y_varname_default = "altitude"
-                else:
-                    y_varname_default = varname_options[-1]
-
-                # need to create ColumnDataSource for each phase
-                sources = {}
-                for phase in phases:
-                    x, y = _get_interactive_plot_sources(
-                        data_by_varname_and_phase, x_varname_default, y_varname_default, phase)
-                    sources[phase] = ColumnDataSource(data=dict(
-                        x=x,
-                        y=y))
-
-                # Create the figure
-                p = figure(
-                    width=800, height=400,
-                    tools='pan,box_zoom,xwheel_zoom,hover,undo,reset,save',
-                    tooltips=[
-                        ('x', '@x'),
-                        ('y', '@y'),
-                    ],
-                )
-
-                colors = d3['Category20'][20][0::2] + d3['Category20'][20][1::2]
-                legend_data = []
-                phases = sorted(phases, key=str.casefold)
-                for i, phase in enumerate(phases):
-                    color = colors[i % 20]
-                    scatter_plot = p.scatter('x', 'y', source=sources[phase],
-                                            color=color,
-                                            size=5,
-                                            )
-                    line_plot = p.line('x', 'y', source=sources[phase],
-                                    color=color,
-                                    line_width=1,
-                                    )
-                    legend_data.append((phase, [scatter_plot, line_plot]))
-
-                # Make the Legend
-                legend = Legend(items=legend_data, location='center',
-                                label_text_font_size='8pt')
-                # so users can click on the dot in the legend to turn off/on that phase in
-                # the plot
-                legend.click_policy = "hide"
-                p.add_layout(legend, 'right')
-
-                # Create dropdown menus for X and Y axis selection
-                x_select = pn.widgets.Select(
-                    name="X-Axis", value=x_varname_default, options=varname_options)
-                y_select = pn.widgets.Select(
-                    name="Y-Axis", value=y_varname_default, options=varname_options)
-
-                # Callback function to update the plot
-                @pn.depends(x_select, y_select)
-                def update_plot(x_varname, y_varname):
-                    for phase in phases:
-                        x = data_by_varname_and_phase[x_varname][phase]
-                        y = data_by_varname_and_phase[y_varname][phase]
-                        x, y = _get_interactive_plot_sources(data_by_varname_and_phase,
-                                                            x_varname, y_varname, phase)
-                        sources[phase].data = dict(x=x, y=y)
-
-                    p.xaxis.axis_label = f'{x_varname} ({units_by_varname[x_varname]})'
-                    p.yaxis.axis_label = f'{y_varname} ({units_by_varname[y_varname]})'
-
-                    p.hover.tooltips = [
-                        (x_varname, "@x"),
-                        (y_varname, "@y")
-                    ]
-                    return p
-
-                # Create the dashboard pane for this plot
-                interactive_mission_var_plot_pane = pn.Column(
-                    pn.pane.Markdown(
-                        f"# Interactive Mission Variable Plot for Trajectory, {traj_name}"),
-                    pn.Row(x_select, y_select),
-                    pn.Row(pn.HSpacer(), update_plot, pn.HSpacer())
-                )
+            # determine the initial variables used for X and Y
+            varname_options = list(sorted(varnames, key=str.casefold))
+            if "distance" in varname_options:
+                x_varname_default = "distance"
+            elif "time" in varname_options:
+                x_varname_default = "time"
             else:
-                interactive_mission_var_plot_pane = pn.pane.Markdown(
-                    f"# Recorder file '{problem_recorder_path}' not found.")
+                x_varname_default = varname_options[0]
 
-            interactive_mission_var_plot_pane_with_doc = pn.Column(
-                pn.pane.HTML(
-                    f"<p>Plot of mission variables allowing user to select X and Y plot values.</p>",
-                    styles={
-                        'text-align': documentation_text_align}),
-                interactive_mission_var_plot_pane)
-    except Exception as e:
-        raise RuntimeError(f"Unable to create {plot_title} pane due to error {e}.")
+            if "altitude" in varname_options:
+                y_varname_default = "altitude"
+            else:
+                y_varname_default = varname_options[-1]
+
+            # need to create ColumnDataSource for each phase
+            sources = {}
+            for phase in phases:
+                x, y = _get_interactive_plot_sources(
+                    data_by_varname_and_phase, x_varname_default, y_varname_default, phase)
+                sources[phase] = ColumnDataSource(data=dict(
+                    x=x,
+                    y=y))
+
+            # Create the figure
+            p = figure(
+                width=800, height=400,
+                tools='pan,box_zoom,xwheel_zoom,hover,undo,reset,save',
+                tooltips=[
+                    ('x', '@x'),
+                    ('y', '@y'),
+                ],
+            )
+
+            colors = d3['Category20'][20][0::2] + d3['Category20'][20][1::2]
+            legend_data = []
+            phases = sorted(phases, key=str.casefold)
+            for i, phase in enumerate(phases):
+                color = colors[i % 20]
+                scatter_plot = p.scatter('x', 'y', source=sources[phase],
+                                        color=color,
+                                        size=5,
+                                        )
+                line_plot = p.line('x', 'y', source=sources[phase],
+                                color=color,
+                                line_width=1,
+                                )
+                legend_data.append((phase, [scatter_plot, line_plot]))
+
+            # Make the Legend
+            legend = Legend(items=legend_data, location='center',
+                            label_text_font_size='8pt')
+            # so users can click on the dot in the legend to turn off/on that phase in
+            # the plot
+            legend.click_policy = "hide"
+            p.add_layout(legend, 'right')
+
+            # Create dropdown menus for X and Y axis selection
+            x_select = pn.widgets.Select(
+                name="X-Axis", value=x_varname_default, options=varname_options)
+            y_select = pn.widgets.Select(
+                name="Y-Axis", value=y_varname_default, options=varname_options)
+
+            # Callback function to update the plot
+            @pn.depends(x_select, y_select)
+            def update_plot(x_varname, y_varname):
+                for phase in phases:
+                    x = data_by_varname_and_phase[x_varname][phase]
+                    y = data_by_varname_and_phase[y_varname][phase]
+                    x, y = _get_interactive_plot_sources(data_by_varname_and_phase,
+                                                        x_varname, y_varname, phase)
+                    sources[phase].data = dict(x=x, y=y)
+
+                p.xaxis.axis_label = f'{x_varname} ({units_by_varname[x_varname]})'
+                p.yaxis.axis_label = f'{y_varname} ({units_by_varname[y_varname]})'
+
+                p.hover.tooltips = [
+                    (x_varname, "@x"),
+                    (y_varname, "@y")
+                ]
+                return p
+
+            # Create the dashboard pane for this plot
+            interactive_mission_var_plot_pane = pn.Column(
+                pn.pane.Markdown(
+                    f"# Interactive Mission Variable Plot for Trajectory, {traj_name}"),
+                pn.Row(x_select, y_select),
+                pn.Row(pn.HSpacer(), update_plot, pn.HSpacer())
+            )
+        else:
+            interactive_mission_var_plot_pane = pn.pane.Markdown(
+                f"# Recorder file '{problem_recorder_path}' not found.")
+
+        interactive_mission_var_plot_pane_with_doc = pn.Column(
+            pn.pane.HTML(
+                f'<p class="pane_doc">{documentation}</p>',
+                stylesheets=["assets/aviary_styles.css"], 
+                styles={
+                    'text-align': documentation_text_align}),
+            interactive_mission_var_plot_pane)
 
     return interactive_mission_var_plot_pane_with_doc
-
-
-# def create_interactive_xy_plot_mission_variables(problem_recorder_path, tabs_list):
-#     plot_title = "Interactive Mission Variable Plot"
-#     try:
-#         if problem_recorder_path:
-#             if os.path.exists(problem_recorder_path):
-#                 cr = om.CaseReader(problem_recorder_path)
-
-#                 # determine what trajectories there are
-#                 traj_nodes = [
-#                     n
-#                     for n in _meta_tree_subsys_iter(
-#                         cr.problem_metadata['tree'],
-#                         cls='dymos.trajectory.trajectory:Trajectory')]
-
-#                 if len(traj_nodes) == 0:
-#                     raise ValueError(
-#                         "No trajectories available in case recorder file for use "
-#                         "in generating interactive XY plot of mission variables")
-#                 traj_name = traj_nodes[0]["name"]
-#                 if len(traj_nodes) > 1:
-#                     issue_warning("More than one trajectory found in problem case recorder file. Only using "
-#                                 f'the first one, "{traj_name}", for the interactive XY plot of mission variables')
-#                 case = cr.get_case("final")
-#                 outputs = case.list_outputs(out_stream=None, units=True)
-
-#                 # data_by_varname_and_phase = defaultdict(dict)
-#                 data_by_varname_and_phase = defaultdict(lambda: defaultdict(list))
-
-#                 # Find the "largest" unit used for any timeseries output across all phases
-#                 units_by_varname = {}
-#                 phases = set()
-#                 varnames = set()
-#                 # pattern used to parse out the phase names and variable names
-#                 pattern = fr"{traj_name}\.phases\.([a-zA-Z0-9_]+)\.timeseries\.timeseries_comp\.([a-zA-Z0-9_]+)"
-#                 for varname, meta in outputs:
-#                     match = re.match(pattern, varname)
-#                     if match:
-#                         phase, name = match.group(1), match.group(2)
-#                         phases.add(phase)
-#                         varnames.add(name)
-#                         if name not in units_by_varname:
-#                             units_by_varname[name] = meta['units']
-#                         else:
-#                             _, new_conv_factor = conversion_to_base_units(meta['units'])
-#                             _, old_conv_factor = conversion_to_base_units(
-#                                 units_by_varname[name])
-#                             if new_conv_factor < old_conv_factor:
-#                                 units_by_varname[name] = meta['units']
-
-#                 # Now get the values using those units
-#                 for varname, meta in outputs:
-#                     match = re.match(pattern, varname)
-#                     if match:
-#                         phase, name = match.group(1), match.group(2)
-#                         val = case.get_val(varname, units=units_by_varname[name])
-#                         data_by_varname_and_phase[name][phase] = val
-
-#                 # determine the initial variables used for X and Y
-#                 varname_options = list(sorted(varnames, key=str.casefold))
-#                 if "distance" in varname_options:
-#                     x_varname_default = "distance"
-#                 elif "time" in varname_options:
-#                     x_varname_default = "time"
-#                 else:
-#                     x_varname_default = varname_options[0]
-
-#                 if "altitude" in varname_options:
-#                     y_varname_default = "altitude"
-#                 else:
-#                     y_varname_default = varname_options[-1]
-
-#                 # need to create ColumnDataSource for each phase
-#                 sources = {}
-#                 for phase in phases:
-#                     x, y = _get_interactive_plot_sources(
-#                         data_by_varname_and_phase, x_varname_default, y_varname_default, phase)
-#                     sources[phase] = ColumnDataSource(data=dict(
-#                         x=x,
-#                         y=y))
-
-#                 # Create the figure
-#                 p = figure(
-#                     width=800, height=400,
-#                     tools='pan,box_zoom,xwheel_zoom,hover,undo,reset,save',
-#                     tooltips=[
-#                         ('x', '@x'),
-#                         ('y', '@y'),
-#                     ],
-#                 )
-
-#                 colors = d3['Category20'][20][0::2] + d3['Category20'][20][1::2]
-#                 legend_data = []
-#                 phases = sorted(phases, key=str.casefold)
-#                 for i, phase in enumerate(phases):
-#                     color = colors[i % 20]
-#                     scatter_plot = p.scatter('x', 'y', source=sources[phase],
-#                                             color=color,
-#                                             size=5,
-#                                             )
-#                     line_plot = p.line('x', 'y', source=sources[phase],
-#                                     color=color,
-#                                     line_width=1,
-#                                     )
-#                     legend_data.append((phase, [scatter_plot, line_plot]))
-
-#                 # Make the Legend
-#                 legend = Legend(items=legend_data, location='center',
-#                                 label_text_font_size='8pt')
-#                 # so users can click on the dot in the legend to turn off/on that phase in
-#                 # the plot
-#                 legend.click_policy = "hide"
-#                 p.add_layout(legend, 'right')
-
-#                 # Create dropdown menus for X and Y axis selection
-#                 x_select = pn.widgets.Select(
-#                     name="X-Axis", value=x_varname_default, options=varname_options)
-#                 y_select = pn.widgets.Select(
-#                     name="Y-Axis", value=y_varname_default, options=varname_options)
-
-#                 # Callback function to update the plot
-#                 @pn.depends(x_select, y_select)
-#                 def update_plot(x_varname, y_varname):
-#                     for phase in phases:
-#                         x = data_by_varname_and_phase[x_varname][phase]
-#                         y = data_by_varname_and_phase[y_varname][phase]
-#                         x, y = _get_interactive_plot_sources(data_by_varname_and_phase,
-#                                                             x_varname, y_varname, phase)
-#                         sources[phase].data = dict(x=x, y=y)
-
-#                     p.xaxis.axis_label = f'{x_varname} ({units_by_varname[x_varname]})'
-#                     p.yaxis.axis_label = f'{y_varname} ({units_by_varname[y_varname]})'
-
-#                     p.hover.tooltips = [
-#                         (x_varname, "@x"),
-#                         (y_varname, "@y")
-#                     ]
-#                     return p
-
-#                 # Create the dashboard pane for this plot
-#                 interactive_mission_var_plot_pane = pn.Column(
-#                     pn.pane.Markdown(
-#                         f"# Interactive Mission Variable Plot for Trajectory, {traj_name}"),
-#                     pn.Row(x_select, y_select),
-#                     pn.Row(pn.HSpacer(), update_plot, pn.HSpacer())
-#                 )
-#             else:
-#                 interactive_mission_var_plot_pane = pn.pane.Markdown(
-#                     f"# Recorder file '{problem_recorder_path}' not found.")
-
-#             interactive_mission_var_plot_pane_with_doc = pn.Column(
-#                 pn.pane.HTML(
-#                     f"<p>Plot of mission variables allowing user to select X and Y plot values.</p>",
-#                     styles={
-#                         'text-align': documentation_text_align}),
-#                 interactive_mission_var_plot_pane)
-#     except Exception as e:
-#         raise RuntimeError(f"Unable to create {plot_title} pane due to error {e}.")
-
-#     tabs_list.append(
-#         ("Interactive Mission Variable Plot",
-#             interactive_mission_var_plot_pane_with_doc))
-
-
-
 
 
 # The main script that generates all the tabs in the dashboard
@@ -1301,7 +1041,6 @@ def dashboard(script_name, problem_recorder, driver_recorder,
         )
 
     problem_recorder_path = Path(out_dir) / problem_recorder
-    driver_recorder_path = Path(out_dir) / driver_recorder
 
     if not os.path.isfile(problem_recorder_path):
         issue_warning(
@@ -1312,76 +1051,95 @@ def dashboard(script_name, problem_recorder, driver_recorder,
     model_tabs_list = []
 
     # Input Checks
-    input_checks_pane = create_report_frame(
+    create_report_frame(
+        "Input Checks",
+        model_tabs_list,
+        "Detailed checks on the model inputs.",
         "markdown",
         Path(reports_dir) / "input_checks.md",
-        "Detailed checks on the model inputs.",
-        )
-    model_tabs_list.append(("Input Checks", input_checks_pane))
+    )
 
     #  Debug Input List
-    input_list_pane = create_report_frame_with_error_handling(
-        "text", Path(reports_dir) / "input_list.txt", '''
-       A plain text display of the model inputs. Recommended for beginners. Only created if Settings.VERBOSITY is set to at least 2 in the input deck.
+    create_report_frame(
+        "Debug Input List",
+        model_tabs_list,
+        """
+        A plain text display of the model inputs. Recommended for beginners. Only created if Settings.VERBOSITY is set to at least 2 in the input deck.
         The variables are listed in a tree structure. There are three columns. The left column is a list of variable names,
         the middle column is the value, and the right column is the
         promoted variable name. The hierarchy is phase, subgroups, components, and variables. An input variable can appear under
         different phases and within different components. Its values can be different because its value has
         been updated during the computation. On the top-left corner is the total number of inputs.
-        That number counts the duplicates because one variable can appear in different phases.''',
-        # input_list_pane,
-        123,
-        "Debug Input List"
-        )
+        That number counts the duplicates because one variable can appear in different phases.""",
+        "text",
+        Path(reports_dir) / "input_list.txt",
+    )
 
     #  Debug Output List
-    output_list_pane = create_report_frame(
-        "text", Path(reports_dir) / "output_list.txt", '''
+    create_report_frame(
+        "Debug Output List",
+        model_tabs_list,
+        """
        A plain text display of the model outputs. Recommended for beginners. Only created if Settings.VERBOSITY is set to at least 2 in the input deck.
         The variables are listed in a tree structure. There are three columns. The left column is a list of variable names,
         the middle column is the value, and the right column is the
         promoted variable name. The hierarchy is phase, subgroups, components, and variables. An output variable can appear under
         different phases and within different components. Its values can be different because its value has
         been updated during the computation. On the top-left corner is the total number of outputs.
-        That number counts the duplicates because one variable can appear in different phases.''')
-    model_tabs_list.append(("Debug Output List", output_list_pane))
+        That number counts the duplicates because one variable can appear in different phases.""",
+        "text",
+        Path(reports_dir) / "output_list.txt",
+    )
 
     # Inputs
-    inputs_pane = create_report_frame(
+    create_report_frame(
+        "Inputs",
+        model_tabs_list,
+        "Detailed report on the model inputs.",
         "html",
         Path(reports_dir) / "inputs.html",
-        "Detailed report on the model inputs.")
-    model_tabs_list.append(("Inputs", inputs_pane))
+    )
 
     # N2
-    n2_pane = create_report_frame("html", Path(reports_dir) / "n2.html", '''
+    create_report_frame(
+        "N2",
+        model_tabs_list,
+        """
         The N2 diagram, sometimes referred to as an eXtended Design Structure Matrix (XDSM), is a
         powerful tool for understanding your model in OpenMDAO. It is an N-squared diagram in the
         shape of a matrix representing functional or physical interfaces between system elements.
         It can be used to systematically identify, define, tabulate, design, and analyze functional
-        and physical interfaces.''')
-    model_tabs_list.append(("N2", n2_pane))
+        and physical interfaces.""",
+        "html",
+        Path(reports_dir) / "n2.html",
+    )
 
     # Trajectory Linkage
-    traj_linkage_report_pane = create_report_frame(
-        "html", Path(reports_dir) / "traj_linkage_report.html", '''
+    create_report_frame(
+        "Trajectory Linkage",
+        model_tabs_list,
+        """
         This is a Dymos linkage report in a customized N2 diagram. It provides a report detailing how phases
         are linked together via constraint or connection. The diagram clearly shows how mission phases are linked.
         It can be used to identify errant linkages between fixed quantities.
-        '''
+        """,
+        "html",
+        Path(reports_dir) / "traj_linkage_report.html",
     )
-    model_tabs_list.append(("Trajectory Linkage", traj_linkage_report_pane))
 
     # Driver scaling
-    driver_scaling_report_pane = create_report_frame(
-        "html", Path(reports_dir) / "driver_scaling_report.html", '''
+    create_report_frame(
+        "Driver Scaling",
+        model_tabs_list,
+        """
             This report is a summary of driver scaling information. After all design variables, objectives, and constraints
             are declared and the problem has been set up, this report presents all the design variables and constraints
             in all phases as well as the objectives. It also shows Jacobian information showing responses with respect to
             design variables (DV).
-        '''
+        """,
+        "html",
+        Path(reports_dir) / "driver_scaling_report.html",
     )
-    model_tabs_list.append(("Driver Scaling", driver_scaling_report_pane))
 
     ####### Optimization Tab #######
     optimization_tabs_list = []
@@ -1396,48 +1154,71 @@ def dashboard(script_name, problem_recorder, driver_recorder,
 
     # IPOPT report
     if os.path.isfile(Path(reports_dir) / "IPOPT.out"):
-        ipopt_pane = create_report_frame("text", Path(reports_dir) / "IPOPT.out", '''
+        ipopt_pane = create_report_frame(
+            "IPOPT Output",
+            optimization_tabs_list,
+            """
             This report is generated by the IPOPT optimizer.
-                                        ''')
-        optimization_tabs_list.append(("IPOPT Output", ipopt_pane))
+                                        """,
+            "text",
+            Path(reports_dir) / "IPOPT.out",
+        )
 
     # Optimization report
     opt_report_pane = create_report_frame(
-        "html", Path(reports_dir) / "opt_report.html", '''
+        "Summary",
+        optimization_tabs_list,
+        """
         This report is an OpenMDAO optimization report. All values are in unscaled, physical units.
         On the top is a summary of the optimization, followed by the objective, design variables, constraints,
-        and optimizer settings. This report is important when dissecting optimal results produced by Aviary.''')
-    optimization_tabs_list.append(("Summary", opt_report_pane))
+        and optimizer settings. This report is important when dissecting optimal results produced by Aviary.""",
+        "html",
+        Path(reports_dir) / "opt_report.html",
+    )
 
     # PyOpt report
     if os.path.isfile(Path(reports_dir) / "pyopt_solution.out"):
-        pyopt_solution_pane = create_report_frame(
-            "text", Path(reports_dir) / "pyopt_solution.txt", '''
+        create_report_frame(
+            "PyOpt Solution",
+            optimization_tabs_list,
+            """
             This report is generated by the pyOptSparse optimizer.
-        '''
+            """,
+            "text",
+            Path(reports_dir) / "pyopt_solution.txt",
         )
-        optimization_tabs_list.append(("PyOpt Solution", pyopt_solution_pane))
 
     # SNOPT report
     if os.path.isfile(Path(reports_dir) / "SNOPT_print.out"):
-        snopt_pane = create_report_frame(
-            "text", Path(reports_dir) / "SNOPT_print.out", '''
+        create_report_frame(
+            "SNOPT Output",
+            optimization_tabs_list,
+            """
             This report is generated by the SNOPT optimizer.
-                                        ''')
-        optimization_tabs_list.append(("SNOPT Output", snopt_pane))
+                                        """,
+            "text",
+            Path(reports_dir) / "SNOPT_print.out",
+        )
 
     # SNOPT summary
     if os.path.isfile(Path(reports_dir) / "SNOPT_summary.out"):
-        snopt_summary_pane = create_report_frame(
-            "text", Path(reports_dir) / "SNOPT_summary.out", '''
-            This is a report generated by the SNOPT optimizer that summarizes the optimization results.''')
-        optimization_tabs_list.append(("SNOPT Summary", snopt_summary_pane))
+        create_report_frame(
+            "SNOPT Summary",
+            optimization_tabs_list,
+            """
+            This is a report generated by the SNOPT optimizer that summarizes the optimization results.""",
+            "text",
+            Path(reports_dir) / "SNOPT_summary.out",
+        )
 
     # Coloring report
-    coloring_report_pane = create_report_frame(
-        "html", Path(reports_dir) / "total_coloring.html",
-        "The report shows metadata associated with the creation of the coloring.")
-    optimization_tabs_list.append(("Total Coloring", coloring_report_pane))
+    create_report_frame(
+        "Total Coloring",
+        optimization_tabs_list,
+        "The report shows metadata associated with the creation of the coloring.",
+        "html",
+        Path(reports_dir) / "total_coloring.html",
+    )
 
     ####### Results Tab #######
     results_tabs_list = []
@@ -1450,80 +1231,97 @@ def dashboard(script_name, problem_recorder, driver_recorder,
                 create_aircraft_3d_file(
                     problem_recorder_path, reports_dir, aircraft_3d_file
                 )
-                aircraft_3d_pane = create_report_frame(
-                    "html", aircraft_3d_file,
-                    "3D model view of designed aircraft."
+                create_report_frame(
+                    "Aircraft 3d model",
+                    results_tabs_list,
+                    "3D model view of designed aircraft.",
+                    "html",
+                    aircraft_3d_file,
                 )
             except Exception as e:
-                aircraft_3d_pane = create_report_frame(
+                create_report_frame(
+                    "Aircraft 3d model",
+                    results_tabs_list,
+                    "3D model view of designed aircraft.",
                     "simple_message",
                     f"Unable to create aircraft 3D model display due to error: {e}",
-                    "3D model view of designed aircraft.")
-            results_tabs_list.append(("Aircraft 3d model", aircraft_3d_pane))
+                )
 
     # Make the Aviary variables table pane
     if os.path.isfile(problem_recorder_path):
-
-        # Make dir reports/script_name/aviary_vars if needed
-        aviary_vars_dir = Path(reports_dir) / "aviary_vars"
-        aviary_vars_dir.mkdir(parents=True, exist_ok=True)
-
-        # copy index.html file to reports/script_name/aviary_vars/index.html
-        aviary_dir = Path(importlib.util.find_spec("aviary").origin).parent
-
-        shutil.copy(
-            aviary_dir.joinpath("visualization/assets/aviary_vars/index.html"),
-            aviary_vars_dir.joinpath("index.html"),
-        )
-        shutil.copy(
-            aviary_dir.joinpath("visualization/assets/aviary_vars/script.js"),
-            aviary_vars_dir.joinpath("script.js"),
-        )
-        # copy script.js file to reports/script_name/aviary_vars/index.html.
-        # mod the script.js file to point at the json file
-        # create the json file and put it in
-        # reports/script_name/aviary_vars/aviary_vars.json
         try:
+            # Make dir reports/script_name/aviary_vars if needed
+            aviary_vars_dir = Path(reports_dir) / "aviary_vars"
+            aviary_vars_dir.mkdir(parents=True, exist_ok=True)
+
+            # copy index.html file to reports/script_name/aviary_vars/index.html
+            aviary_dir = Path(importlib.util.find_spec("aviary").origin).parent
+
+            shutil.copy(
+                aviary_dir.joinpath("visualization/assets/aviary_vars/index.html"),
+                aviary_vars_dir.joinpath("index.html"),
+            )
+            shutil.copy(
+                aviary_dir.joinpath("visualization/assets/aviary_vars/script.js"),
+                aviary_vars_dir.joinpath("script.js"),
+            )
+            # copy script.js file to reports/script_name/aviary_vars/index.html.
+            # mod the script.js file to point at the json file
+            # create the json file and put it in
+            # reports/script_name/aviary_vars/aviary_vars.json
             create_aviary_variables_table_data_nested(
                 script_name, problem_recorder_path
             )  # create the json file
-
-            aviary_vars_pane = create_report_frame(
-                "html", Path(reports_dir) / "aviary_vars/index.html",
-                "Table showing Aviary variables"
-            )
-            results_tabs_list.append(("Aviary Variables", aviary_vars_pane))
         except Exception as e:
-            issue_warning(
-                f'Unable to create Aviary Variables tab in dashboard due to the error: {e}')
+            pane = _create_message_pane(
+                "Table showing Aviary variables",
+                f"Unable to create 'Aviary Variables' pane in dashboard due to error: {e}.",
+            )
+            results_tabs_list.append(("Aviary Variables", pane))
+
+        create_report_frame(
+            "Aviary Variables",
+            results_tabs_list,
+            "Table showing Aviary variables.",
+            "html",
+            Path(reports_dir) / "aviary_vars/index.html",
+        )
 
     # Mission Summary
-    mission_summary_pane = create_report_frame(
-        "markdown", Path(reports_dir) / "mission_summary.md",
-        "A report of mission results from an Aviary problem")
-    results_tabs_list.append(("Mission Summary", mission_summary_pane))
+    create_report_frame(
+        "Mission Summary",
+        results_tabs_list,
+        "A report of mission results from an Aviary problem.",
+        "markdown",
+        Path(reports_dir) / "mission_summary.md",
+    )
 
     # Run status pane
-    status_pane = create_table_pane_from_json(
+    create_table_pane_from_json(
+        "Run status pane",
+        results_tabs_list,
+        "A high level overview of the status of the run.",
         Path(reports_dir) / "status.json",
-        "A high level overview of the status of the run")
-    results_tabs_list.append(("Run status pane", status_pane))
+    )
     run_status_pane_tab_number = len(results_tabs_list) - 1
 
     # Timeseries Mission Output Report
-    mission_timeseries_pane = create_csv_frame(
-        Path(reports_dir) / "mission_timeseries_data.csv", '''
+    create_csv_frame(
+        "Timeseries Mission Output",
+        results_tabs_list,
+        """
         The outputs of the aircraft trajectory.
         Any value that is included in the timeseries data is included in this report.
         This data is useful for post-processing, especially those used for acoustic analysis.
-        ''')
-    results_tabs_list.append(
-        ("Timeseries Mission Output", mission_timeseries_pane)
+        """,
+        Path(reports_dir) / "mission_timeseries_data.csv",
     )
 
     # Trajectory results
     traj_results_report_pane = create_report_frame(
-        "html", Path(reports_dir) / "traj_results_report.html", '''
+        "Trajectory Results",
+        results_tabs_list,
+        """
             This is one of the most important reports produced by Aviary. It will help you visualize and
             understand the optimal trajectory produced by Aviary.
             Users should play with it and try to grasp all possible features.
@@ -1531,181 +1329,18 @@ def dashboard(script_name, problem_recorder, driver_recorder,
             On the timeseries tab, users can select which phases to view.
             Other features include hovering the mouse over the solution points to see solution value and
             zooming into a particular region for details, etc.
-        '''
-    )
-    results_tabs_list.append(
-        ("Trajectory Results", traj_results_report_pane)
+        """,
+        "html",
+        Path(reports_dir) / "traj_results_report.html",
     )
 
     # Interactive XY plot of mission variables
-
-
-
-    # create_interactive_xy_plot_mission_variables(problem_recorder_path, results_tabs_list)
-
-
-    create_interactive_xy_plot_mission_variables(results_tabs_list, "Interactive Mission Variable Plot", 
-                                                 problem_recorder_path)
-
-
-
-
-    # # Interactive XY plot of mission variables
-    # if problem_recorder_path:
-    #     if os.path.exists(problem_recorder_path):
-    #         cr = om.CaseReader(problem_recorder_path)
-
-    #         # determine what trajectories there are
-    #         traj_nodes = [
-    #             n
-    #             for n in _meta_tree_subsys_iter(
-    #                 cr.problem_metadata['tree'],
-    #                 cls='dymos.trajectory.trajectory:Trajectory')]
-
-    #         if len(traj_nodes) == 0:
-    #             raise ValueError(
-    #                 "No trajectories available in case recorder file for use "
-    #                 "in generating interactive XY plot of mission variables")
-    #         traj_name = traj_nodes[0]["name"]
-    #         if len(traj_nodes) > 1:
-    #             issue_warning("More than one trajectory found in problem case recorder file. Only using "
-    #                           f'the first one, "{traj_name}", for the interactive XY plot of mission variables')
-    #         case = cr.get_case("final")
-    #         outputs = case.list_outputs(out_stream=None, units=True)
-
-    #         # data_by_varname_and_phase = defaultdict(dict)
-    #         data_by_varname_and_phase = defaultdict(lambda: defaultdict(list))
-
-    #         # Find the "largest" unit used for any timeseries output across all phases
-    #         units_by_varname = {}
-    #         phases = set()
-    #         varnames = set()
-    #         # pattern used to parse out the phase names and variable names
-    #         pattern = fr"{traj_name}\.phases\.([a-zA-Z0-9_]+)\.timeseries\.timeseries_comp\.([a-zA-Z0-9_]+)"
-    #         for varname, meta in outputs:
-    #             match = re.match(pattern, varname)
-    #             if match:
-    #                 phase, name = match.group(1), match.group(2)
-    #                 phases.add(phase)
-    #                 varnames.add(name)
-    #                 if name not in units_by_varname:
-    #                     units_by_varname[name] = meta['units']
-    #                 else:
-    #                     _, new_conv_factor = conversion_to_base_units(meta['units'])
-    #                     _, old_conv_factor = conversion_to_base_units(
-    #                         units_by_varname[name])
-    #                     if new_conv_factor < old_conv_factor:
-    #                         units_by_varname[name] = meta['units']
-
-    #         # Now get the values using those units
-    #         for varname, meta in outputs:
-    #             match = re.match(pattern, varname)
-    #             if match:
-    #                 phase, name = match.group(1), match.group(2)
-    #                 val = case.get_val(varname, units=units_by_varname[name])
-    #                 data_by_varname_and_phase[name][phase] = val
-
-    #         # determine the initial variables used for X and Y
-    #         varname_options = list(sorted(varnames, key=str.casefold))
-    #         if "distance" in varname_options:
-    #             x_varname_default = "distance"
-    #         elif "time" in varname_options:
-    #             x_varname_default = "time"
-    #         else:
-    #             x_varname_default = varname_options[0]
-
-    #         if "altitude" in varname_options:
-    #             y_varname_default = "altitude"
-    #         else:
-    #             y_varname_default = varname_options[-1]
-
-    #         # need to create ColumnDataSource for each phase
-    #         sources = {}
-    #         for phase in phases:
-    #             x, y = _get_interactive_plot_sources(
-    #                 data_by_varname_and_phase, x_varname_default, y_varname_default, phase)
-    #             sources[phase] = ColumnDataSource(data=dict(
-    #                 x=x,
-    #                 y=y))
-
-    #         # Create the figure
-    #         p = figure(
-    #             width=800, height=400,
-    #             tools='pan,box_zoom,xwheel_zoom,hover,undo,reset,save',
-    #             tooltips=[
-    #                 ('x', '@x'),
-    #                 ('y', '@y'),
-    #             ],
-    #         )
-
-    #         colors = d3['Category20'][20][0::2] + d3['Category20'][20][1::2]
-    #         legend_data = []
-    #         phases = sorted(phases, key=str.casefold)
-    #         for i, phase in enumerate(phases):
-    #             color = colors[i % 20]
-    #             scatter_plot = p.scatter('x', 'y', source=sources[phase],
-    #                                      color=color,
-    #                                      size=5,
-    #                                      )
-    #             line_plot = p.line('x', 'y', source=sources[phase],
-    #                                color=color,
-    #                                line_width=1,
-    #                                )
-    #             legend_data.append((phase, [scatter_plot, line_plot]))
-
-    #         # Make the Legend
-    #         legend = Legend(items=legend_data, location='center',
-    #                         label_text_font_size='8pt')
-    #         # so users can click on the dot in the legend to turn off/on that phase in
-    #         # the plot
-    #         legend.click_policy = "hide"
-    #         p.add_layout(legend, 'right')
-
-    #         # Create dropdown menus for X and Y axis selection
-    #         x_select = pn.widgets.Select(
-    #             name="X-Axis", value=x_varname_default, options=varname_options)
-    #         y_select = pn.widgets.Select(
-    #             name="Y-Axis", value=y_varname_default, options=varname_options)
-
-    #         # Callback function to update the plot
-    #         @pn.depends(x_select, y_select)
-    #         def update_plot(x_varname, y_varname):
-    #             for phase in phases:
-    #                 x = data_by_varname_and_phase[x_varname][phase]
-    #                 y = data_by_varname_and_phase[y_varname][phase]
-    #                 x, y = _get_interactive_plot_sources(data_by_varname_and_phase,
-    #                                                      x_varname, y_varname, phase)
-    #                 sources[phase].data = dict(x=x, y=y)
-
-    #             p.xaxis.axis_label = f'{x_varname} ({units_by_varname[x_varname]})'
-    #             p.yaxis.axis_label = f'{y_varname} ({units_by_varname[y_varname]})'
-
-    #             p.hover.tooltips = [
-    #                 (x_varname, "@x"),
-    #                 (y_varname, "@y")
-    #             ]
-    #             return p
-
-    #         # Create the dashboard pane for this plot
-    #         interactive_mission_var_plot_pane = pn.Column(
-    #             pn.pane.Markdown(
-    #                 f"# Interactive Mission Variable Plot for Trajectory, {traj_name}"),
-    #             pn.Row(x_select, y_select),
-    #             pn.Row(pn.HSpacer(), update_plot, pn.HSpacer())
-    #         )
-    #     else:
-    #         interactive_mission_var_plot_pane = pn.pane.Markdown(
-    #             f"# Recorder file '{problem_recorder_path}' not found.")
-
-    #     interactive_mission_var_plot_pane_with_doc = pn.Column(
-    #         pn.pane.HTML(
-    #             f"<p>Plot of mission variables allowing user to select X and Y plot values.</p>",
-    #             styles={
-    #                 'text-align': documentation_text_align}),
-    #         interactive_mission_var_plot_pane)
-    #     results_tabs_list.append(
-    #         ("Interactive Mission Variable Plot",
-    #          interactive_mission_var_plot_pane_with_doc))
+    _create_interactive_xy_plot_mission_variables(
+        "Interactive Mission Variable Plot",
+        results_tabs_list,
+        "Plot of mission variables allowing user to select X and Y plot values.",
+        problem_recorder_path,
+    )
 
     ####### Subsystems Tab #######
     subsystem_tabs_list = []
@@ -1715,16 +1350,19 @@ def dashboard(script_name, problem_recorder, driver_recorder,
     # subsystem in the Aviary problem
 
     for md_file in sorted(Path(f"{reports_dir}subsystems").glob("*.md"), key=str):
-        subsystems_pane = create_report_frame(
-            "markdown", str(md_file),
-            f'''
+        create_report_frame(
+            md_file.stem,
+            subsystem_tabs_list,
+            f"""
 
         The subsystems report tab shows selected results for every major subsystem in the Aviary problem.
         This report is for the
             {md_file.stem}
              subsystem. Reports available currently are mass, geometry, and propulsion.
-            ''')
-        subsystem_tabs_list.append((md_file.stem, subsystems_pane))
+            """,
+            "markdown",
+            str(md_file),
+        )
 
     # Actually make the tabs from the list of Panes
     model_tabs = pn.Tabs(*model_tabs_list, stylesheets=["assets/aviary_styles.css"])
