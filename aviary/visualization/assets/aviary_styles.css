@@ -26,3 +26,10 @@ nav#header {
     border: 2px solid black;
     font-size: 10pt;
 }
+
+p.pane_doc {
+    background: #dddddd;
+    border: 2px solid black;
+    padding: 10px;
+    font-size: 18pt;
+}
