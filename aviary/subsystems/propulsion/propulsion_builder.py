@@ -105,16 +105,15 @@ class CorePropulsionBuilder(PropulsionBuilderBase):
 
         for engine in engine_models:
             if not isinstance(engine, EngineModel):
-                raise UserWarning('Engine provided to propulsion builder is not an '
-                                  'EngineModel object')
+                raise UserWarning(
+                    'Engine provided to propulsion builder is not an EngineModel object'
+                )
 
         self.engine_models = engine_models
 
     def build_pre_mission(self, aviary_inputs, **kwargs):
         return PropulsionPreMission(
-            aviary_options=aviary_inputs,
-            engine_models=self.engine_models,
-            engine_options=kwargs
+            aviary_options=aviary_inputs, engine_models=self.engine_models, engine_options=kwargs
         )
 
     def build_mission(self, num_nodes, aviary_inputs, **kwargs):
@@ -122,7 +121,7 @@ class CorePropulsionBuilder(PropulsionBuilderBase):
             num_nodes=num_nodes,
             aviary_options=aviary_inputs,
             engine_models=self.engine_models,
-            engine_options=kwargs
+            engine_options=kwargs,
         )
 
     # NOTE no unittests!
@@ -313,8 +312,10 @@ class CorePropulsionBuilder(PropulsionBuilderBase):
         filename = self.name + '.md'
         filepath = reports_folder / filename
 
-        propulsion_outputs = [Aircraft.Propulsion.TOTAL_NUM_ENGINES,
-                              Aircraft.Propulsion.TOTAL_SCALED_SLS_THRUST]
+        propulsion_outputs = [
+            Aircraft.Propulsion.TOTAL_NUM_ENGINES,
+            Aircraft.Propulsion.TOTAL_SCALED_SLS_THRUST,
+        ]
 
         with open(filepath, mode='w') as f:
             f.write('# Propulsion')

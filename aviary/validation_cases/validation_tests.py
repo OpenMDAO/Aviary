@@ -30,7 +30,7 @@ def do_validation_test(
     tol: float = 1.0e-4,
     atol: float = 1.0e-12,
     rtol: float = 1.0e-12,
-    method: str = "cs",
+    method: str = 'cs',
     step: float = None,
     check_values: bool = True,
     check_partials: bool = True,
@@ -150,7 +150,7 @@ def flops_validation_test(
     tol: float = 1.0e-4,
     atol: float = 1.0e-12,
     rtol: float = 1.0e-12,
-    method: str = "cs",
+    method: str = 'cs',
     step: float = None,
     check_values: bool = True,
     check_partials: bool = True,
@@ -229,8 +229,8 @@ def flops_validation_test(
 
     if flops_inputs is None and flops_outputs is None:
         flops_data = FLOPS_Test_Data[case_name]
-        flops_inputs = flops_data['inputs']
-        flops_outputs = flops_data['outputs']
+        flops_inputs = flops_data['inputs'].deepcopy()
+        flops_outputs = flops_data['outputs'].deepcopy()
 
     if (
         version is Version.TRANSPORT
@@ -269,9 +269,7 @@ def flops_validation_test(
     )
 
 
-def get_flops_data(
-    case_name: str, keys: str = None, preprocess: bool = False
-) -> AviaryValues:
+def get_flops_data(case_name: str, keys: str = None, preprocess: bool = False) -> AviaryValues:
     """
     Returns an AviaryValues object containing input and output data for
     the named FLOPS validation case.
@@ -297,9 +295,7 @@ def get_flops_data(
     return AviaryValues({key: flops_data_copy.get_item(key) for key in keys_list})
 
 
-def get_flops_inputs(
-    case_name: str, keys: str = None, preprocess: bool = False
-) -> AviaryValues:
+def get_flops_inputs(case_name: str, keys: str = None, preprocess: bool = False) -> AviaryValues:
     """
     Returns an AviaryValues object containing input data for the named FLOPS validation case.
 
@@ -334,9 +330,7 @@ def get_flops_inputs(
     return AviaryValues({key: flops_inputs_copy.get_item(key) for key in keys_list})
 
 
-def get_flops_options(
-    case_name: str, keys: str = None, preprocess: bool = False
-) -> AviaryValues:
+def get_flops_options(case_name: str, keys: str = None, preprocess: bool = False) -> AviaryValues:
     """
     Returns a dictionary containing options for the named FLOPS validation case.
 
@@ -359,9 +353,7 @@ def get_flops_options(
 
     flops_inputs_copy: AviaryValues = flops_data['inputs'].deepcopy()
     if preprocess:
-        preprocess_options(
-            flops_inputs_copy, engine_models=[build_engine_deck(flops_inputs_copy)]
-        )
+        preprocess_options(flops_inputs_copy, engine_models=[build_engine_deck(flops_inputs_copy)])
 
     if keys is None:
         options = extract_options(flops_inputs_copy)
@@ -434,7 +426,6 @@ def print_case(testcase_func, param_num, param: param):
 
 
 def _assure_is_list(keys, backup=None):
-
     if isinstance(keys, str):
         return [keys]
     elif not keys:

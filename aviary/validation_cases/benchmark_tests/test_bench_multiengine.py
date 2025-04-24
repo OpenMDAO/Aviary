@@ -9,7 +9,11 @@ from openmdao.utils.testing_utils import require_pyoptsparse, use_tempdirs
 
 from aviary.interface.default_phase_info.height_energy import phase_info
 from aviary.interface.methods_for_level2 import AviaryProblem
-from aviary.models.multi_engine_single_aisle.multi_engine_single_aisle_data import inputs, engine_1_inputs, engine_2_inputs
+from aviary.models.multi_engine_single_aisle.multi_engine_single_aisle_data import (
+    inputs,
+    engine_1_inputs,
+    engine_2_inputs,
+)
 from aviary.subsystems.propulsion.utils import build_engine_deck
 from aviary.variable_info.enums import ThrottleAllocation
 from aviary.variable_info.variables import Aircraft
@@ -25,8 +29,7 @@ local_phase_info['climb']['user_options']['use_polynomial_control'] = True
 
 local_phase_info['cruise']['user_options']['optimize_mach'] = False
 local_phase_info['cruise']['user_options']['optimize_altitude'] = False
-local_phase_info['cruise']['user_options']['altitude_bounds'] = (
-    (32000.0, 34000.0), "ft")
+local_phase_info['cruise']['user_options']['altitude_bounds'] = ((32000.0, 34000.0), 'ft')
 local_phase_info['cruise']['user_options']['throttle_enforcement'] = 'path_constraint'
 local_phase_info['cruise']['user_options']['use_polynomial_control'] = True
 
@@ -49,9 +52,8 @@ class MultiengineTestcase(unittest.TestCase):
         om.clear_reports()
         _clear_problem_names()  # need to reset these to simulate separate runs
 
-    @require_pyoptsparse(optimizer="SNOPT")
+    @require_pyoptsparse(optimizer='SNOPT')
     def test_multiengine_fixed(self):
-
         test_phase_info = deepcopy(local_phase_info)
         method = ThrottleAllocation.FIXED
 
@@ -74,7 +76,7 @@ class MultiengineTestcase(unittest.TestCase):
         prob.add_post_mission_systems()
         prob.link_phases()
 
-        prob.add_driver("SNOPT", max_iter=50, use_coloring=True)
+        prob.add_driver('SNOPT', max_iter=50, use_coloring=True)
 
         prob.add_design_variables()
         prob.add_objective()
@@ -82,7 +84,7 @@ class MultiengineTestcase(unittest.TestCase):
         prob.setup()
         prob.set_initial_guesses()
 
-        prob.run_aviary_problem("dymos_solution.db", suppress_solver_print=True)
+        prob.run_aviary_problem('dymos_solution.db', suppress_solver_print=True)
 
         alloc_climb = prob.get_val('traj.climb.parameter_vals:throttle_allocations')
         alloc_cruise = prob.get_val('traj.cruise.parameter_vals:throttle_allocations')
@@ -92,9 +94,8 @@ class MultiengineTestcase(unittest.TestCase):
         assert_near_equal(alloc_cruise[0], 0.5, tolerance=1e-3)
         assert_near_equal(alloc_descent[0], 0.5, tolerance=1e-3)
 
-    @require_pyoptsparse(optimizer="SNOPT")
+    @require_pyoptsparse(optimizer='SNOPT')
     def test_multiengine_static(self):
-
         test_phase_info = deepcopy(local_phase_info)
         method = ThrottleAllocation.STATIC
 
@@ -115,7 +116,7 @@ class MultiengineTestcase(unittest.TestCase):
         prob.add_post_mission_systems()
         prob.link_phases()
 
-        prob.add_driver("SNOPT", max_iter=50, use_coloring=True)
+        prob.add_driver('SNOPT', max_iter=50, use_coloring=True)
 
         prob.add_design_variables()
         prob.add_objective()
@@ -123,7 +124,7 @@ class MultiengineTestcase(unittest.TestCase):
         prob.setup()
         prob.set_initial_guesses()
 
-        prob.run_aviary_problem("dymos_solution.db", suppress_solver_print=True)
+        prob.run_aviary_problem('dymos_solution.db', suppress_solver_print=True)
 
         alloc_climb = prob.get_val('traj.climb.parameter_vals:throttle_allocations')
         alloc_cruise = prob.get_val('traj.cruise.parameter_vals:throttle_allocations')
@@ -133,9 +134,8 @@ class MultiengineTestcase(unittest.TestCase):
         assert_near_equal(alloc_cruise[0], 0.593, tolerance=1e-2)
         assert_near_equal(alloc_descent[0], 0.408, tolerance=1e-2)
 
-    @require_pyoptsparse(optimizer="SNOPT")
+    @require_pyoptsparse(optimizer='SNOPT')
     def test_multiengine_dynamic(self):
-
         test_phase_info = deepcopy(local_phase_info)
         method = ThrottleAllocation.DYNAMIC
 
@@ -156,7 +156,7 @@ class MultiengineTestcase(unittest.TestCase):
         prob.add_post_mission_systems()
         prob.link_phases()
 
-        prob.add_driver("SNOPT", max_iter=50, use_coloring=True)
+        prob.add_driver('SNOPT', max_iter=50, use_coloring=True)
 
         prob.add_design_variables()
         prob.add_objective()
@@ -164,7 +164,7 @@ class MultiengineTestcase(unittest.TestCase):
         prob.setup()
         prob.set_initial_guesses()
 
-        prob.run_aviary_problem("dymos_solution.db", suppress_solver_print=True)
+        prob.run_aviary_problem('dymos_solution.db', suppress_solver_print=True)
 
         alloc_climb = prob.get_val('traj.climb.controls:throttle_allocations')
         alloc_cruise = prob.get_val('traj.cruise.controls:throttle_allocations')

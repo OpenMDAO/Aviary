@@ -18,7 +18,7 @@ class TestFortranToAviary(unittest.TestCase):
 
     def prepare_and_run(self, filepath, out_file=None, legacy_code=LegacyCode.GASP):
         # Specify the output file
-        filename = filepath.split('.')[0]+'.csv'
+        filename = filepath.split('.')[0] + '.csv'
         if not out_file:
             out_file = Path.cwd() / Path('TEST_' + filename)
         else:
@@ -36,12 +36,12 @@ class TestFortranToAviary(unittest.TestCase):
         to skip. This is useful for skipping data that Aviary might need but
         Fortran-based tools do not.
         """
-        filename = filepath.split('.')[0]+'.csv'
+        filename = filepath.split('.')[0] + '.csv'
 
         validation_data = get_path(filename)
 
         # Open the converted and validation files
-        with open('TEST_'+filename, 'r') as f_in, open(validation_data, 'r') as expected:
+        with open('TEST_' + filename, 'r') as f_in, open(validation_data, 'r') as expected:
             for line in f_in:
                 if any(s in line for s in skip_list):
                     continue
@@ -64,9 +64,7 @@ class TestFortranToAviary(unittest.TestCase):
 
     def test_large_single_aisle(self):
         filepath = 'models/large_single_aisle_1/large_single_aisle_1_GASP.dat'
-        comparison_filepath = (
-            'utils/test/data/converter_test_large_single_aisle_1_GASP.csv'
-        )
+        comparison_filepath = 'utils/test/data/converter_test_large_single_aisle_1_GASP.csv'
 
         self.prepare_and_run(
             filepath,
@@ -76,9 +74,7 @@ class TestFortranToAviary(unittest.TestCase):
 
     def test_small_single_aisle(self):
         filepath = 'models/small_single_aisle/small_single_aisle_GASP.dat'
-        comparison_filepath = (
-            'utils/test/data/converter_test_small_single_aisle_GASP.csv'
-        )
+        comparison_filepath = 'utils/test/data/converter_test_small_single_aisle_GASP.csv'
 
         self.prepare_and_run(
             filepath,
@@ -90,16 +86,12 @@ class TestFortranToAviary(unittest.TestCase):
         filepath = 'utils/test/data/configuration_test_data_GASP.dat'
         comparison_filepath = 'utils/test/data/converter_test_configuration_GASP.csv'
 
-        self.prepare_and_run(
-            filepath, out_file=Path.cwd() / Path('TEST_' + comparison_filepath)
-        )
+        self.prepare_and_run(filepath, out_file=Path.cwd() / Path('TEST_' + comparison_filepath))
         self.compare_files(comparison_filepath)
 
     def test_bwb_gasp(self):
-        filepath = 'models/BWB/generic_HWB_GASP.dat'
-        comparison_filepath = (
-            'utils/test/data/converter_test_HWB_GASP.csv'
-        )
+        filepath = 'models/BWB/generic_BWB_GASP.dat'
+        comparison_filepath = 'utils/test/data/converter_test_BWB_GASP.csv'
 
         self.prepare_and_run(
             filepath,
@@ -122,7 +114,7 @@ class TestFortranToAviary(unittest.TestCase):
         self.compare_files(comparison_filepath)
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     unittest.main()
 
     # test = TestFortranToAviary()

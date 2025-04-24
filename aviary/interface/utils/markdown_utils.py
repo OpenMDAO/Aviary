@@ -37,10 +37,10 @@ def round_it(x, sig=None):
         return x
 
     if not sig:
-        sig = len(str(round(x)))+2
+        sig = len(str(round(x))) + 2
 
     if x != 0:
-        return round(x, sig-int(floor(log10(abs(x))))-1)
+        return round(x, sig - int(floor(log10(abs(x)))) - 1)
     else:
         return 0
 

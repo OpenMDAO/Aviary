@@ -106,10 +106,7 @@ def convert_geopotential_altitude(altitude):
         while abs(DH) > 1.0:
             R = radius_earth + Z
             GN = GNS * (radius_earth / R) ** (CM1 + 1.0)
-            H = (
-                R * GN * ((R / radius_earth) ** CM1 - 1.0) / CM1
-                - Z * (R - Z / 2.0) * OC2
-            ) / g
+            H = (R * GN * ((R / radius_earth) ** CM1 - 1.0) / CM1 - Z * (R - Z / 2.0) * OC2) / g
 
             DH = HO - H
             Z += DH
@@ -141,7 +138,7 @@ def build_engine_deck(
 
     required_variables : set, optional
         A set of required variables (from EngineModelVariables) for the newly created
-        EngineDeck. Defaults to the required set {ALTITUDE, MACH, THROTTLE, THRUST}.        
+        EngineDeck. Defaults to the required set {ALTITUDE, MACH, THROTTLE, THRUST}.
 
     meta_data : dict, optional
         The metadata to be used while creating the EngineDeck. If None, use Aviary's
@@ -184,9 +181,7 @@ def build_engine_deck(
                     else:
                         # if item in first index is also iterable, or if array only
                         # contains a single value, use that
-                        if (
-                            isiterable(aviary_val_0) or len(aviary_val) == 1
-                        ):
+                        if isiterable(aviary_val_0) or len(aviary_val) == 1:
                             aviary_val = aviary_val_0
                 # "Convert" numpy types to standard Python types. Wrap first
                 # index in numpy array before calling item() to safeguard against
@@ -216,10 +211,10 @@ def build_engine_deck(
 
 # TODO combine with aviary/utils/data_interpolator_builder.py build_data_interpolator
 class EngineDataInterpolator(om.Group):
-    '''
+    """
     Group that contains interpolators that get passed training data directly through
     openMDAO connections
-    '''
+    """
 
     def initialize(self):
         self.options.declare('num_nodes', types=int)
@@ -285,8 +280,7 @@ class EngineDataInterpolator(om.Group):
             model_length = len(val)
             if model_length != prev_model_length:
                 raise IndexError(
-                    'Lengths of data provided for engine performance '
-                    'interpolation do not match.'
+                    'Lengths of data provided for engine performance interpolation do not match.'
                 )
 
         # add inputs and outputs to interpolator
@@ -330,13 +324,9 @@ class EngineDataInterpolator(om.Group):
             )
 
         # add created subsystems to engine_group
-        self.add_subsystem(
-            'interpolation', engine, promotes_inputs=['*'], promotes_outputs=['*']
-        )
+        self.add_subsystem('interpolation', engine, promotes_inputs=['*'], promotes_outputs=['*'])
 
-        self.add_subsystem(
-            'fixed_max_throttles', fixed_throttles, promotes_outputs=['*']
-        )
+        self.add_subsystem('fixed_max_throttles', fixed_throttles, promotes_outputs=['*'])
 
         self.add_subsystem(
             'max_thrust_interpolation',
@@ -366,7 +356,7 @@ class UncorrectData(om.Group):
             'pressure_term',
             om.ExecComp(
                 'delta_T = (P0 * (1 + .2*mach**2)**3.5) / P_amb',
-                delta_T={'units': "unitless", 'shape': num_nodes},
+                delta_T={'units': 'unitless', 'shape': num_nodes},
                 P0={'units': 'psi', 'shape': num_nodes},
                 mach={'units': 'unitless', 'shape': num_nodes},
                 P_amb={
@@ -386,7 +376,7 @@ class UncorrectData(om.Group):
             'temperature_term',
             om.ExecComp(
                 'theta_T = T0 * (1 + .2*mach**2)/T_amb',
-                theta_T={'units': "unitless", 'shape': num_nodes},
+                theta_T={'units': 'unitless', 'shape': num_nodes},
                 T0={'units': 'degR', 'shape': num_nodes},
                 mach={'units': 'unitless', 'shape': num_nodes},
                 T_amb={
@@ -406,10 +396,10 @@ class UncorrectData(om.Group):
             'uncorrection',
             om.ExecComp(
                 'uncorrected_data = corrected_data * (delta_T * theta_T**.5)',
-                uncorrected_data={'units': "hp", 'shape': num_nodes},
-                delta_T={'units': "unitless", 'shape': num_nodes},
-                theta_T={'units': "unitless", 'shape': num_nodes},
-                corrected_data={'units': "hp", 'shape': num_nodes},
+                uncorrected_data={'units': 'hp', 'shape': num_nodes},
+                delta_T={'units': 'unitless', 'shape': num_nodes},
+                theta_T={'units': 'unitless', 'shape': num_nodes},
+                corrected_data={'units': 'hp', 'shape': num_nodes},
                 has_diag_partials=True,
             ),
             promotes=['*'],

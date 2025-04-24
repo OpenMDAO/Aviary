@@ -55,7 +55,7 @@ av.add_meta_data(
     'aircraft:fuselage:eccentricity',
     units=None,
     desc='Eccentricity of cross section of fuselage',
-    default_value=.5,
+    default_value=0.5,
     meta_data=dict2,
     historical_name=None,
 )
@@ -196,7 +196,7 @@ av.add_meta_data(
     'aircraft:fuselage:eccentricity',
     units=None,
     desc='Eccentricity of cross section of fuselage',
-    default_value=.5,
+    default_value=0.5,
     meta_data=merged_dicts_23,
     historical_name=None,
 )

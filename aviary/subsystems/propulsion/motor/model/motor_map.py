@@ -5,7 +5,6 @@ import openmdao.api as om
 from aviary.variable_info.variables import Dynamic, Aircraft
 
 # block auto-formatting of tables
-# autopep8: off
 # fmt: off
 motor_map = np.array([
     # speed---- .0       .083333  .16667  .25    .33333.41667  .5,     .58333 .66667  .75,   .83333, .91667 1.
@@ -27,12 +26,11 @@ motor_map = np.array([
     [.807,    .808,    .884,   .912,  .927, .936,   .942,   .947,  .950,   .952,   .954,  .955,   .956],  # 0.936
     [.795,    .796,    .877,   .907,  .923, .933,   .939,   .944,  .948,   .950,   .952,  .953,   .954]  # 1.000
 ]).T
-# autopep8: on
 # fmt: on
 
 
 class MotorMap(om.Group):
-    '''
+    """
     This function takes in 0-1 values for electric motor throttle,
     scales those values into 0 to max_torque on the motor map
     this also allows us to solve for motor efficiency
@@ -56,42 +54,44 @@ class MotorMap(om.Group):
     Dynamic.Vehicle.Propulsion.TORQUE : float (positive)
     Dynamic.Mission.Motor.EFFICIENCY : float (positive)
 
-    '''
+    """
 
     def initialize(self):
-        self.options.declare("num_nodes", types=int)
+        self.options.declare('num_nodes', types=int)
 
     def setup(self):
-        n = self.options["num_nodes"]
+        n = self.options['num_nodes']
 
         # Training data
-        # autopep8: off
         # fmt: off
-        rpm_vals = np.array([0, .083333, .16667, .25, .33333, .41667, .5,
-                            .58333, .66667, .75, .83333, .91667, 1.]) * 6000
-        torque_vals = np.array([0.0, 0.040, 0.104, 0.168, 0.232, 0.296, 0.360,
-                                0.424, 0.488, 0.552, 0.616, 0.680, 0.744, 0.808,
-                                0.872, 0.936, 1.000]) * 1800
-        # autopep8: on
+        rpm_vals = np.array(
+            [
+                0, .083333, .16667, .25, .33333, .41667, .5, .58333, .66667, .75, .83333, .91667, 1.
+            ]
+        ) * 6000
+        torque_vals = np.array(
+            [
+                0.0, 0.040, 0.104, 0.168, 0.232, 0.296, 0.360, 0.424, 0.488,
+                0.552, 0.616, 0.680,  0.744, 0.808, 0.872, 0.936, 1.000
+            ]
+        ) * 1800
         # fmt: on
         # Create a structured metamodel to compute motor efficiency from rpm
-        motor = om.MetaModelStructuredComp(
-            method="slinear", vec_size=n, extrapolate=True
-        )
+        motor = om.MetaModelStructuredComp(method='slinear', vec_size=n, extrapolate=True)
         motor.add_input(
             Dynamic.Vehicle.Propulsion.RPM,
             val=np.ones(n),
             training_data=rpm_vals,
-            units="rpm",
+            units='rpm',
         )
         motor.add_input(
-            "torque_unscaled",
+            'torque_unscaled',
             val=np.ones(n),  # unscaled torque
             training_data=torque_vals,
-            units="N*m",
+            units='N*m',
         )
         motor.add_output(
-            "motor_efficiency",
+            'motor_efficiency',
             val=np.ones(n),
             training_data=motor_map,
             units='unitless',
@@ -106,14 +106,14 @@ class MotorMap(om.Group):
                 throttle={'val': np.ones(n), 'units': 'unitless'},
                 has_diag_partials=True,
             ),
-            promotes=[("throttle", Dynamic.Vehicle.Propulsion.THROTTLE)],
+            promotes=[('throttle', Dynamic.Vehicle.Propulsion.THROTTLE)],
         )
 
         self.add_subsystem(
-            name="motor_efficiency",
+            name='motor_efficiency',
             subsys=motor,
             promotes_inputs=[Dynamic.Vehicle.Propulsion.RPM],
-            promotes_outputs=["motor_efficiency"],
+            promotes_outputs=['motor_efficiency'],
         )
 
         # Now that we know the efficiency, scale up the torque correctly for the engine
@@ -129,8 +129,8 @@ class MotorMap(om.Group):
                 has_diag_partials=True,
             ),
             promotes=[
-                ("torque", Dynamic.Vehicle.Propulsion.TORQUE),
-                ("scale_factor", Aircraft.Engine.SCALE_FACTOR),
+                ('torque', Dynamic.Vehicle.Propulsion.TORQUE),
+                ('scale_factor', Aircraft.Engine.SCALE_FACTOR),
             ],
         )
 

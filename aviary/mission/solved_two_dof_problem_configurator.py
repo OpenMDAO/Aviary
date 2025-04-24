@@ -1,5 +1,6 @@
-
-from aviary.mission.flops_based.phases.groundroll_phase import GroundrollPhase as GroundrollPhaseVelocityIntegrated
+from aviary.mission.flops_based.phases.groundroll_phase import (
+    GroundrollPhase as GroundrollPhaseVelocityIntegrated,
+)
 from aviary.mission.gasp_based.phases.twodof_phase import TwoDOFPhase
 from aviary.mission.problem_configurator import ProblemConfiguratorBase
 from aviary.subsystems.propulsion.utils import build_engine_deck
@@ -29,9 +30,7 @@ class SolvedTwoDOFProblemConfigurator(ProblemConfiguratorBase):
 
         # This doesn't really have much value, but is needed for initializing
         # an objective-related component that still lives in level 2.
-        prob.target_range = prob.aviary_inputs.get_val(
-            Mission.Design.RANGE, units='NM'
-        )
+        prob.target_range = prob.aviary_inputs.get_val(Mission.Design.RANGE, units='NM')
 
     def get_default_phase_info(self, prob):
         """
@@ -52,7 +51,7 @@ class SolvedTwoDOFProblemConfigurator(ProblemConfiguratorBase):
         AviaryValues
             General default phase_info.
         """
-        raise RuntimeError("Solved 2DOF requires that a phase_info is specified.")
+        raise RuntimeError('Solved 2DOF requires that a phase_info is specified.')
 
     def get_code_origin(self, prob):
         """
@@ -102,7 +101,10 @@ class SolvedTwoDOFProblemConfigurator(ProblemConfiguratorBase):
             Phase builder for requested phase.
         """
 
-        if phase_options['user_options']['ground_roll'] and phase_options['user_options']['fix_initial']:
+        if (
+            phase_options['user_options']['ground_roll']
+            and phase_options['user_options']['fix_initial']
+        ):
             phase_builder = GroundrollPhaseVelocityIntegrated
         else:
             phase_builder = TwoDOFPhase
@@ -150,42 +152,43 @@ class SolvedTwoDOFProblemConfigurator(ProblemConfiguratorBase):
 
         if initial_bounds[0] is not None and initial_bounds[1] != 0.0:
             # Upper bound is good for a ref.
-            user_options.set_val('initial_ref', initial_bounds[1],
-                                 units=time_units)
+            user_options.set_val('initial_ref', initial_bounds[1], units=time_units)
         else:
-            user_options.set_val('initial_ref', 600., time_units)
+            user_options.set_val('initial_ref', 600.0, time_units)
 
-        duration_bounds = user_options.get_val("duration_bounds", time_units)
+        duration_bounds = user_options.get_val('duration_bounds', time_units)
         user_options.set_val(
-            'duration_ref', (duration_bounds[0] + duration_bounds[1]) / 2.,
-            time_units
+            'duration_ref', (duration_bounds[0] + duration_bounds[1]) / 2.0, time_units
         )
         if phase_idx > 0:
             input_initial = True
 
         if fix_initial or input_initial:
-
             if prob.comm.size > 1:
                 # Phases are disconnected to run in parallel, so initial ref is
                 # valid.
-                initial_ref = user_options.get_val("initial_ref", time_units)
+                initial_ref = user_options.get_val('initial_ref', time_units)
             else:
                 # Redundant on a fixed input; raises a warning if specified.
                 initial_ref = None
 
             phase.set_time_options(
-                fix_initial=fix_initial, fix_duration=fix_duration, units=time_units,
-                duration_bounds=user_options.get_val("duration_bounds", time_units),
-                duration_ref=user_options.get_val("duration_ref", time_units),
+                fix_initial=fix_initial,
+                fix_duration=fix_duration,
+                units=time_units,
+                duration_bounds=user_options.get_val('duration_bounds', time_units),
+                duration_ref=user_options.get_val('duration_ref', time_units),
                 initial_ref=initial_ref,
             )
         else:  # TODO: figure out how to handle this now that fix_initial is dict
             phase.set_time_options(
-                fix_initial=fix_initial, fix_duration=fix_duration, units=time_units,
-                duration_bounds=user_options.get_val("duration_bounds", time_units),
-                duration_ref=user_options.get_val("duration_ref", time_units),
+                fix_initial=fix_initial,
+                fix_duration=fix_duration,
+                units=time_units,
+                duration_bounds=user_options.get_val('duration_bounds', time_units),
+                duration_ref=user_options.get_val('duration_ref', time_units),
                 initial_bounds=initial_bounds,
-                initial_ref=user_options.get_val("initial_ref", time_units),
+                initial_ref=user_options.get_val('initial_ref', time_units),
             )
 
     def link_phases(self, prob, phases, connect_directly=True):
@@ -232,9 +235,9 @@ class SolvedTwoDOFProblemConfigurator(ProblemConfiguratorBase):
 
         prob.traj.link_phases(phases, [Dynamic.Vehicle.MASS], connected=True)
         prob.traj.link_phases(
-            phases, [Dynamic.Mission.DISTANCE],
-            units='ft', ref=1.e3, connected=False)
-        prob.traj.link_phases(phases, ["time"], connected=False)
+            phases, [Dynamic.Mission.DISTANCE], units='ft', ref=1.0e3, connected=False
+        )
+        prob.traj.link_phases(phases, ['time'], connected=False)
 
         if len(phases) > 2:
             prob.traj.link_phases(
@@ -295,19 +298,21 @@ class SolvedTwoDOFProblemConfigurator(ProblemConfiguratorBase):
             Location of this trajectory in the hierarchy.
         """
 
-        control_keys = ["mach", "altitude"]
+        control_keys = ['mach', 'altitude']
 
         # for the simple mission method, use the provided initial and final mach
         # and altitude values from phase_info
         initial_altitude = wrapped_convert_units(
-            prob.phase_info[phase_name]['user_options']['initial_altitude'], 'ft')
+            prob.phase_info[phase_name]['user_options']['initial_altitude'], 'ft'
+        )
         final_altitude = wrapped_convert_units(
-            prob.phase_info[phase_name]['user_options']['final_altitude'], 'ft')
+            prob.phase_info[phase_name]['user_options']['final_altitude'], 'ft'
+        )
         initial_mach = prob.phase_info[phase_name]['user_options']['initial_mach']
         final_mach = prob.phase_info[phase_name]['user_options']['final_mach']
 
-        guesses["mach"] = ([initial_mach[0], final_mach[0]], "unitless")
-        guesses["altitude"] = ([initial_altitude, final_altitude], 'ft')
+        guesses['mach'] = ([initial_mach[0], final_mach[0]], 'unitless')
+        guesses['altitude'] = ([initial_altitude, final_altitude], 'ft')
 
         for guess_key, guess_data in guesses.items():
             val, units = guess_data
@@ -318,16 +323,15 @@ class SolvedTwoDOFProblemConfigurator(ProblemConfiguratorBase):
                     target_prob.set_val(
                         parent_prefix + f'traj.{phase_name}.controls:{guess_key}',
                         prob._process_guess_var(val, guess_key, phase),
-                        units=units
+                        units=units,
                     )
 
                 except KeyError:
                     try:
                         target_prob.set_val(
-                            parent_prefix +
-                            f'traj.{phase_name}.polynomial_controls:{guess_key}',
+                            parent_prefix + f'traj.{phase_name}.polynomial_controls:{guess_key}',
                             prob._process_guess_var(val, guess_key, phase),
-                            units=units
+                            units=units,
                         )
 
                     except KeyError:
@@ -335,5 +339,5 @@ class SolvedTwoDOFProblemConfigurator(ProblemConfiguratorBase):
                             parent_prefix + f'traj.{phase_name}.bspline_controls:',
                             {guess_key},
                             prob._process_guess_var(val, guess_key, phase),
-                            units=units
+                            units=units,
                         )

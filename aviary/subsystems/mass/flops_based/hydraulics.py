@@ -1,8 +1,7 @@
 import openmdao.api as om
 
 from aviary.constants import GRAV_ENGLISH_LBM
-from aviary.subsystems.mass.flops_based.distributed_prop import \
-    distributed_engine_count_factor
+from aviary.subsystems.mass.flops_based.distributed_prop import distributed_engine_count_factor
 from aviary.variable_info.functions import add_aviary_input, add_aviary_output, add_aviary_option
 from aviary.variable_info.variables import Aircraft, Mission
 
@@ -13,13 +12,13 @@ _max_mach = 'aircraft:design:dimensions:max_mach'
 
 
 class TransportHydraulicsGroupMass(om.ExplicitComponent):
-    '''
+    """
     Calculates the mass of the hydraulics group using the transport/general aviation
     method. The methodology is based on the FLOPS weight equations, modified to
     output mass instead of weight.
 
     ASSUMPTIONS: all engines use hydraulics which follow this equation
-    '''
+    """
 
     def initialize(self):
         add_aviary_option(self, Aircraft.Propulsion.TOTAL_NUM_FUSELAGE_ENGINES)
@@ -52,10 +51,15 @@ class TransportHydraulicsGroupMass(om.ExplicitComponent):
         max_mach = self.options[Mission.Constraints.MAX_MACH]
 
         outputs[Aircraft.Hydraulics.MASS] = (
-            0.57 * (planform + 0.27 * area)
+            0.57
+            * (planform + 0.27 * area)
             * (1 + 0.03 * num_wing_eng_fact + 0.05 * num_fuse_eng_fact)
-            * (3000 / sys_press)**0.35 * (1 + 0.04 * var_sweep) * max_mach**0.33
-            * scaler / GRAV_ENGLISH_LBM)
+            * (3000 / sys_press) ** 0.35
+            * (1 + 0.04 * var_sweep)
+            * max_mach**0.33
+            * scaler
+            / GRAV_ENGLISH_LBM
+        )
 
     def compute_partials(self, inputs, J):
         num_wing_eng = self.options[Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES]
@@ -70,41 +74,51 @@ class TransportHydraulicsGroupMass(om.ExplicitComponent):
         var_sweep = inputs[Aircraft.Wing.VAR_SWEEP_MASS_PENALTY]
         max_mach = self.options[Mission.Constraints.MAX_MACH]
 
-        term1 = (planform + 0.27 * area)
-        term2 = (1.0 + 0.03 * num_wing_eng_fact + 0.05 * num_fuse_eng_fact)
-        term3 = (3000.0 / sys_press)**0.35
-        term4 = (1.0 + 0.04 * var_sweep)
+        term1 = planform + 0.27 * area
+        term2 = 1.0 + 0.03 * num_wing_eng_fact + 0.05 * num_fuse_eng_fact
+        term3 = (3000.0 / sys_press) ** 0.35
+        term4 = 1.0 + 0.04 * var_sweep
         term5 = max_mach**0.33
 
         J[Aircraft.Hydraulics.MASS, Aircraft.Fuselage.PLANFORM_AREA] = (
-            0.57 * term2 * term3 * term4 * term5 * scaler / GRAV_ENGLISH_LBM)
+            0.57 * term2 * term3 * term4 * term5 * scaler / GRAV_ENGLISH_LBM
+        )
 
         J[Aircraft.Hydraulics.MASS, Aircraft.Wing.AREA] = (
-            0.1539 * term2 * term3 * term4 * term5 * scaler / GRAV_ENGLISH_LBM)
+            0.1539 * term2 * term3 * term4 * term5 * scaler / GRAV_ENGLISH_LBM
+        )
 
         J[Aircraft.Hydraulics.MASS, Aircraft.Hydraulics.SYSTEM_PRESSURE] = (
-            -3.2880267277063872637891549227565 * term1 * term2
-            * sys_press**-1.35 * term4 * term5 * scaler / GRAV_ENGLISH_LBM)
+            -3.2880267277063872637891549227565
+            * term1
+            * term2
+            * sys_press**-1.35
+            * term4
+            * term5
+            * scaler
+            / GRAV_ENGLISH_LBM
+        )
 
         J[Aircraft.Hydraulics.MASS, Aircraft.Wing.VAR_SWEEP_MASS_PENALTY] = (
-            0.0228 * term1 * term2 * term3 * term5 * scaler / GRAV_ENGLISH_LBM)
+            0.0228 * term1 * term2 * term3 * term5 * scaler / GRAV_ENGLISH_LBM
+        )
 
         J[Aircraft.Hydraulics.MASS, Aircraft.Hydraulics.MASS_SCALER] = (
-            0.57 * term1 * term2 * term3 * term4 * term5 / GRAV_ENGLISH_LBM)
+            0.57 * term1 * term2 * term3 * term4 * term5 / GRAV_ENGLISH_LBM
+        )
 
 
 class AltHydraulicsGroupMass(om.ExplicitComponent):
-    '''
+    """
     Calculates the mass of the hydraulics group using the alternate method.
     The methodology is based on the FLOPS weight equations, modified to
     output mass instead of weight.
-    '''
+    """
 
     def setup(self):
         add_aviary_input(self, Aircraft.Wing.AREA, units='ft**2')
         add_aviary_input(self, Aircraft.HorizontalTail.WETTED_AREA, units='ft**2')
-        add_aviary_input(self, Aircraft.HorizontalTail.THICKNESS_TO_CHORD,
-                         units='unitless')
+        add_aviary_input(self, Aircraft.HorizontalTail.THICKNESS_TO_CHORD, units='unitless')
         add_aviary_input(self, Aircraft.VerticalTail.AREA, units='ft**2')
         add_aviary_input(self, Aircraft.Hydraulics.MASS_SCALER, units='unitless')
 
@@ -121,30 +135,32 @@ class AltHydraulicsGroupMass(om.ExplicitComponent):
         scaler = inputs[Aircraft.Hydraulics.MASS_SCALER]
 
         outputs[Aircraft.Hydraulics.MASS] = (
-            0.6053 * (area + 1.44 * (horiz_wetted_area /
-                      (2.0 + 0.387 * horiz_thick_chord) + vert_area)) * scaler / GRAV_ENGLISH_LBM
+            0.6053
+            * (area + 1.44 * (horiz_wetted_area / (2.0 + 0.387 * horiz_thick_chord) + vert_area))
+            * scaler
+            / GRAV_ENGLISH_LBM
         )
 
     def compute_partials(self, inputs, J):
         area = inputs[Aircraft.Wing.AREA]
         horiz_wetted_area = inputs[Aircraft.HorizontalTail.WETTED_AREA]
         horiz_thick_chord = inputs[Aircraft.HorizontalTail.THICKNESS_TO_CHORD]
-        thick_chord_term = \
-            2.0 + 0.387 * inputs[Aircraft.HorizontalTail.THICKNESS_TO_CHORD]
+        thick_chord_term = 2.0 + 0.387 * inputs[Aircraft.HorizontalTail.THICKNESS_TO_CHORD]
         vert_area = inputs[Aircraft.VerticalTail.AREA]
         scaler = inputs[Aircraft.Hydraulics.MASS_SCALER]
 
-        J[Aircraft.Hydraulics.MASS, Aircraft.Wing.AREA] = (
-            0.6053 * scaler / GRAV_ENGLISH_LBM
-        )
+        J[Aircraft.Hydraulics.MASS, Aircraft.Wing.AREA] = 0.6053 * scaler / GRAV_ENGLISH_LBM
 
         J[Aircraft.Hydraulics.MASS, Aircraft.HorizontalTail.WETTED_AREA] = (
             0.871632 / thick_chord_term * scaler / GRAV_ENGLISH_LBM
         )
 
         J[Aircraft.Hydraulics.MASS, Aircraft.HorizontalTail.THICKNESS_TO_CHORD] = (
-            -0.337321584 * horiz_wetted_area /
-            (thick_chord_term * thick_chord_term) * scaler / GRAV_ENGLISH_LBM
+            -0.337321584
+            * horiz_wetted_area
+            / (thick_chord_term * thick_chord_term)
+            * scaler
+            / GRAV_ENGLISH_LBM
         )
 
         J[Aircraft.Hydraulics.MASS, Aircraft.VerticalTail.AREA] = (
@@ -152,6 +168,7 @@ class AltHydraulicsGroupMass(om.ExplicitComponent):
         )
 
         J[Aircraft.Hydraulics.MASS, Aircraft.Hydraulics.MASS_SCALER] = (
-            0.6053 * (area + 1.44 * (horiz_wetted_area /
-                      (2.0 + 0.387 * horiz_thick_chord) + vert_area)) / GRAV_ENGLISH_LBM
+            0.6053
+            * (area + 1.44 * (horiz_wetted_area / (2.0 + 0.387 * horiz_thick_chord) + vert_area))
+            / GRAV_ENGLISH_LBM
         )

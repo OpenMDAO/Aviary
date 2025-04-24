@@ -17,36 +17,35 @@ class SimplestDragCoeff(om.ExplicitComponent):
 
     def initialize(self):
         self.options.declare(
-            "num_nodes", default=1, types=int,
-            desc="Number of nodes along mission segment"
+            'num_nodes', default=1, types=int, desc='Number of nodes along mission segment'
         )
 
-        self.options.declare("CD_zero", default=0.01)
-        self.options.declare("k", default=0.065)
+        self.options.declare('CD_zero', default=0.01)
+        self.options.declare('k', default=0.065)
 
     def setup(self):
-        nn = self.options["num_nodes"]
+        nn = self.options['num_nodes']
 
         self.add_input('cl', val=np.zeros(nn))
 
         self.add_output('CD', val=np.zeros(nn))
 
     def setup_partials(self):
-        nn = self.options["num_nodes"]
+        nn = self.options['num_nodes']
         arange = np.arange(nn)
 
         self.declare_partials('CD', 'cl', rows=arange, cols=arange)
 
     def compute(self, inputs, outputs, discrete_inputs=None, discrete_outputs=None):
-        CD_zero = self.options["CD_zero"]
-        k = self.options["k"]
+        CD_zero = self.options['CD_zero']
+        k = self.options['k']
 
         cl = inputs['cl']
 
         outputs['CD'] = CD_zero + k * cl**2
 
     def compute_partials(self, inputs, partials, discrete_inputs=None):
-        k = self.options["k"]
+        k = self.options['k']
 
         cl = inputs['cl']
 
@@ -54,15 +53,13 @@ class SimplestDragCoeff(om.ExplicitComponent):
 
 
 class SimpleAeroGroup(om.Group):
-
     def initialize(self):
         self.options.declare(
-            "num_nodes", default=1, types=int,
-            desc="Number of nodes along mission segment"
+            'num_nodes', default=1, types=int, desc='Number of nodes along mission segment'
         )
 
     def setup(self):
-        nn = self.options["num_nodes"]
+        nn = self.options['num_nodes']
 
         self.add_subsystem(
             'DynamicPressure',
@@ -75,7 +72,7 @@ class SimpleAeroGroup(om.Group):
         )
 
         self.add_subsystem(
-            "Lift",
+            'Lift',
             LiftEqualsWeight(num_nodes=nn),
             promotes_inputs=[
                 Aircraft.Wing.AREA,
@@ -86,14 +83,14 @@ class SimpleAeroGroup(om.Group):
         )
 
         self.add_subsystem(
-            "SimpleDragCoeff",
+            'SimpleDragCoeff',
             SimplestDragCoeff(num_nodes=nn),
             promotes_inputs=['cl'],
             promotes_outputs=['CD'],
         )
 
         self.add_subsystem(
-            "SimpleDrag",
+            'SimpleDrag',
             SimpleDrag(num_nodes=nn),
             promotes_inputs=[
                 'CD',

@@ -1,7 +1,7 @@
-
 # TODO: This is very much a conceptual prototype, and needs fine tuning.
 
-class ProblemConfiguratorBase():
+
+class ProblemConfiguratorBase:
     """
     Base class for a problem configurator in Aviary.
     """
@@ -38,7 +38,7 @@ class ProblemConfiguratorBase():
         AviaryValues
             General default phase_info.
         """
-        msg = "This pmethod must be defined in your problem configurator."
+        msg = 'This pmethod must be defined in your problem configurator.'
         raise NotImplementedError(msg)
 
     def get_code_origin(self, prob):
@@ -88,7 +88,7 @@ class ProblemConfiguratorBase():
         PhaseBuilderBase
             Phase builder for requested phase.
         """
-        msg = "This pmethod must be defined in your problem configurator."
+        msg = 'This pmethod must be defined in your problem configurator.'
         raise NotImplementedError(msg)
 
     def set_phase_options(self, prob, phase_name, phase_idx, phase, user_options):
