@@ -481,8 +481,8 @@ def _read_table(f, is_turbo_prop=False):
     """
     tab_data = None
 
-    # strip out table title
-    title = f.readline().strip()
+    # strip out table title, not used
+    f.readline().strip()
     # number of maps in the table
     (nmaps,) = _parse(f, [(int, 5)])
     # blank line
