@@ -60,6 +60,7 @@ default_units = {
     EngineModelVariables.NOX_RATE: 'lb/h',
     EngineModelVariables.TEMPERATURE_T4: 'degR',
     EngineModelVariables.TORQUE: 'ft*lbf',
+    EngineModelVariables.RPM: 'rpm',
     # EngineModelVariables.EXIT_AREA: 'ft**2',
 }
 
