@@ -750,6 +750,7 @@ AERO_2DOF_INPUTS = [
     Aircraft.Wing.SPAN,
     Aircraft.Wing.SWEEP,
     Aircraft.Wing.TAPER_RATIO,
+    Aircraft.Wing.THICKNESS_TO_CHORD_ROOT,
     Aircraft.Wing.THICKNESS_TO_CHORD_UNWEIGHTED,
     Aircraft.Wing.VERTICAL_MOUNT_LOCATION,
     Aircraft.Wing.ZERO_LIFT_ANGLE,
@@ -764,6 +765,8 @@ AERO_LS_2DOF_INPUTS = [
     Mission.Takeoff.LIFT_COEFFICIENT_FLAP_INCREMENT,
     Mission.Takeoff.LIFT_COEFFICIENT_MAX,
     Aircraft.Wing.HEIGHT,
+    Aircraft.Wing.FLAP_CHORD_RATIO,
+    Mission.Design.GROSS_MASS,
 ]
 
 AERO_CLEAN_2DOF_INPUTS = [
