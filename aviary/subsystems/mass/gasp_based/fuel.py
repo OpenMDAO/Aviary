@@ -269,8 +269,6 @@ class BodyTankCalculations(om.ExplicitComponent):
 
         int1 = sigmoidX(gross_wt_initial - est_GTOW, 0, 1 / 110.0)
         int2 = sigmoidX(est_GTOW - gross_wt_initial, 0, 1 / 110.0)
-        # unused?
-        # max_fuel_avail = max_fuel_avail_est * int1 + max_fuel_avail_new * int2
 
         dInt1_dFuelWtDes = dSigmoidXdx(gross_wt_initial - est_GTOW, 0, 1 / 110.0) * (-1 / 110)
         dInt1_dReqFuelWt = dSigmoidXdx(gross_wt_initial - est_GTOW, 0, 1 / 110.0) * (
@@ -290,8 +288,6 @@ class BodyTankCalculations(om.ExplicitComponent):
         )
         dInt2_dGTOW = dSigmoidXdx(est_GTOW - gross_wt_initial, 0, 1 / 110.0) * (-1 / 110)
 
-        # unused?
-        # dMFAest_dFuelWtDes = 1
         dMFAest_dReqFuelWt = dExtraFuelWt_dReqFuelWt
         dMFAest_dMaxWingfuelWt = dExtraFuelWt_dMaxWingfuelWt
 
@@ -1133,8 +1129,6 @@ class FuelMass(om.ExplicitComponent):
         add_aviary_input(self, Aircraft.Fuel.FUEL_SYSTEM_MASS_SCALER, units='unitless')
         add_aviary_input(self, Aircraft.Fuel.FUEL_SYSTEM_MASS_COEFFICIENT, units='unitless')
         add_aviary_input(self, Aircraft.Fuel.DENSITY, units='lbm/galUS')
-        # unused?
-        # add_aviary_input(self, Aircraft.CrewPayload.PASSENGER_PAYLOAD_MASS, units='lbm')
 
         self.add_input(
             'payload_mass_max',
@@ -1215,8 +1209,6 @@ class FuelMass(om.ExplicitComponent):
         CK21 = inputs[Aircraft.Fuel.FUEL_SYSTEM_MASS_SCALER]
         c_mass_trend_fuel_sys = inputs[Aircraft.Fuel.FUEL_SYSTEM_MASS_COEFFICIENT]
         rho_fuel = inputs[Aircraft.Fuel.DENSITY] * GRAV_ENGLISH_LBM
-        # unused?
-        # payload_wt = inputs[Aircraft.CrewPayload.PASSENGER_PAYLOAD_MASS] * GRAV_ENGLISH_LBM
         payload_wt_max = inputs['payload_mass_max'] * GRAV_ENGLISH_LBM
         fuel_margin = inputs[Aircraft.Fuel.FUEL_MARGIN]
 

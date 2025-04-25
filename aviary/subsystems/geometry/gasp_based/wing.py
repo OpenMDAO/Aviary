@@ -167,8 +167,7 @@ class WingParameters(om.ExplicitComponent):
         tan_sweep_TE = 3.0 * (taper_ratio - 1.0) / (1.0 + taper_ratio) / AR + np.tan(
             sweep_c4 * (np.pi / 180)
         )
-        # unused?
-        # sweep_TE = np.arctan(tan_sweep_TE)
+
         FHP = (
             2.0
             * (tc_ratio_root * center_chord * (cabin_width - (tc_ratio_root * center_chord))) ** 0.5
@@ -358,14 +357,6 @@ class WingParameters(om.ExplicitComponent):
 
         if not self.options[Aircraft.Wing.HAS_FOLD]:
             fuel_vol_frac = inputs[Aircraft.Fuel.WING_FUEL_FRACTION]
-            # unused?
-            # geometric_fuel_vol = (
-            #     fuel_vol_frac
-            #     * 0.888889
-            #     * tc_ratio_avg
-            #     * (wing_area**1.5)
-            #     * (2.0 * taper_ratio + 1.0)
-            # ) / ((AR**0.5) * ((taper_ratio + 1.0) ** 2.0))
             num = (
                 fuel_vol_frac
                 * 0.888889
@@ -710,14 +701,6 @@ class WingFold(om.ExplicitComponent):
             / nonfolded_wing_area**2
         )
 
-        # unused?
-        # geometric_fuel_vol = (
-        #     fuel_vol_frac
-        #     * 0.888889
-        #     * tc_ratio_mean_folded
-        #     * (nonfolded_wing_area**1.5)
-        #     * (2.0 * nonfolded_taper_ratio + 1.0)
-        # ) / ((nonfolded_AR**0.5) * ((nonfolded_taper_ratio + 1.0) ** 2.0))
         a = (nonfolded_wing_area**1.5) * (2.0 * nonfolded_taper_ratio + 1.0)
         num = fuel_vol_frac * 0.888889 * tc_ratio_mean_folded * a
         den = (nonfolded_AR**0.5) * ((nonfolded_taper_ratio + 1.0) ** 2.0)

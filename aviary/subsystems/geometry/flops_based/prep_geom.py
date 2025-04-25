@@ -408,10 +408,6 @@ class _Prelim(om.ExplicitComponent):
 
             _1p_tr = 1.0 + taper_ratio
 
-            # unused?
-            # CROTVT = 2.0 * area / (span * _1p_tr)
-
-            # da = d(f / g) = (df * g - f * dg) / g**2
             f = 2.0 * area / _1p_tr
             g = span
             df = 2.0 / _1p_tr

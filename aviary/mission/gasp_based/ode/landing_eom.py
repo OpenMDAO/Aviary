@@ -432,9 +432,6 @@ class GlideConditionComponent(om.ExplicitComponent):
             -2 * (1.0 - gamma_touchdown / theta) * dGammaTd_dRateOfSinkTd / theta
         )
 
-        # unused?
-        # tr_distance = inter1 * inter2
-
         J['tr_distance', Mission.Landing.MAXIMUM_FLARE_LOAD_FACTOR] = (
             dInter1_dLandingFlareLoadFactor * inter2
         )

@@ -125,8 +125,6 @@ class WingBendingMass(om.ExplicitComponent):
         dW1NIR_bt = self.A1 * fact1 * ulf * span * fact2 * fact3 * cayf * vfact * pctl * 1.0e-6
         dW1NIR_ulf = self.A1 * bt * fact1 * span * fact2 * fact3 * cayf * vfact * pctl * 1.0e-6
         dW1NIR_pctl = self.A1 * bt * fact1 * ulf * span * fact2 * fact3 * cayf * vfact * 1.0e-6
-        # unused?
-        # dW1NIR_cayf = self.A1 * bt * fact1 * ulf * span * fact2 * fact3 * vfact * pctl * 1.0e-6
         dW1NIR_compfrac = (
             -self.A1 * bt * fact1 * ulf * span * 0.4 * fact3 * cayf * vfact * pctl * 1.0e-6
         )

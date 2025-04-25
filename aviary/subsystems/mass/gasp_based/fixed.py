@@ -154,8 +154,6 @@ class MassParameters(om.ExplicitComponent):
         half_sweep = np.arctan(tan_half_sweep)
         cos_half_sweep = np.cos(half_sweep)
         struct_span = wingspan / cos_half_sweep
-        # unused?
-        # c_material = 1.0 + 2.5 / (struct_span**0.5)
 
         not_fuselage_mounted = self.options[Aircraft.Engine.NUM_FUSELAGE_ENGINES] == 0
 
