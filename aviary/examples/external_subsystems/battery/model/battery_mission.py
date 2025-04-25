@@ -17,7 +17,9 @@ Tarun Huria, Massimo Ceraolo, Javier Gazzarri, Robyn Jackey
 
 from openmdao.api import Group
 from aviary.examples.external_subsystems.battery.model.cell_comp import CellComp
-from aviary.examples.external_subsystems.battery.model.reg_thevenin_interp_group import RegTheveninInterpGroup
+from aviary.examples.external_subsystems.battery.model.reg_thevenin_interp_group import (
+    RegTheveninInterpGroup,
+)
 
 from aviary.utils.aviary_values import AviaryValues
 from aviary.examples.external_subsystems.battery.battery_variables import (
@@ -32,40 +34,41 @@ class BatteryMission(Group):
     """
 
     def initialize(self):
-        self.options.declare("num_nodes", types=int)
+        self.options.declare('num_nodes', types=int)
         self.options.declare(
-            'aviary_inputs', types=AviaryValues,
+            'aviary_inputs',
+            types=AviaryValues,
             desc='collection of Aircraft/Mission specific options',
             default=None,
         )
 
     def setup(self):
-        n = self.options["num_nodes"]
+        n = self.options['num_nodes']
 
         self.add_subsystem(
-            name="interp_group",
+            name='interp_group',
             subsys=RegTheveninInterpGroup(num_nodes=n),
         )
 
-        self.add_subsystem(name="cell", subsys=CellComp(num_nodes=n))
+        self.add_subsystem(name='cell', subsys=CellComp(num_nodes=n))
 
         # Connect internal names
-        self.connect("interp_group.U_oc", "cell.U_oc")
-        self.connect("interp_group.C_Th", "cell.C_Th")
-        self.connect("interp_group.R_Th", "cell.R_Th")
-        self.connect("interp_group.R_0", "cell.R_0")
+        self.connect('interp_group.U_oc', 'cell.U_oc')
+        self.connect('interp_group.C_Th', 'cell.C_Th')
+        self.connect('interp_group.R_Th', 'cell.R_Th')
+        self.connect('interp_group.R_0', 'cell.R_0')
 
         # Promote interp group inputs to match Aviary variable names
         self.promotes(
-            "interp_group",
+            'interp_group',
             inputs=[
-                ("T_batt", "dynamic:battery:temperature"),
-                ("SOC", "dynamic:battery:state_of_charge"),
+                ('T_batt', 'dynamic:battery:temperature'),
+                ('SOC', 'dynamic:battery:state_of_charge'),
             ],
         )
 
         self.promotes(
-            "cell",
+            'cell',
             inputs=[
                 Dynamic.Battery.VOLTAGE_THEVENIN,
                 Dynamic.Battery.CURRENT,
@@ -76,7 +79,7 @@ class BatteryMission(Group):
         )
 
         self.promotes(
-            "cell",
+            'cell',
             outputs=[
                 Dynamic.Battery.VOLTAGE,
                 Dynamic.Battery.VOLTAGE_THEVENIN_RATE,

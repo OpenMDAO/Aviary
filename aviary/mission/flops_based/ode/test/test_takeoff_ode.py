@@ -8,7 +8,11 @@ from aviary.utils.functions import set_aviary_initial_values
 from aviary.utils.test_utils.default_subsystems import get_default_mission_subsystems
 from aviary.mission.flops_based.ode.takeoff_ode import TakeoffODE
 from aviary.models.N3CC.N3CC_data import (
-    detailed_takeoff_climbing, detailed_takeoff_ground, takeoff_subsystem_options, inputs)
+    detailed_takeoff_climbing,
+    detailed_takeoff_ground,
+    takeoff_subsystem_options,
+    inputs,
+)
 from aviary.validation_cases.validation_tests import do_validation_test
 from aviary.variable_info.variables import Dynamic, Mission, Aircraft
 from aviary.utils.preprocessors import preprocess_options
@@ -95,25 +99,25 @@ class TakeoffODETest(unittest.TestCase):
 
         preprocess_options(aviary_options, engine_models=engine)
 
-        default_mission_subsystems = get_default_mission_subsystems(
-            'FLOPS', engine)
+        default_mission_subsystems = get_default_mission_subsystems('FLOPS', engine)
 
         prob.model.add_subsystem(
-            "takeoff_ode",
+            'takeoff_ode',
             TakeoffODE(
                 num_nodes=nn,
                 aviary_options=aviary_options,
                 subsystem_options=takeoff_subsystem_options,
                 core_subsystems=default_mission_subsystems,
                 climbing=climbing,
-                friction_key=Mission.Takeoff.ROLLING_FRICTION_COEFFICIENT),
+                friction_key=Mission.Takeoff.ROLLING_FRICTION_COEFFICIENT,
+            ),
             promotes_inputs=['*'],
-            promotes_outputs=['*'])
+            promotes_outputs=['*'],
+        )
 
         prob.model.set_input_defaults(Aircraft.Wing.AREA, val=1.0, units='ft**2')
 
-        setup_model_options(prob, AviaryValues(
-            {Aircraft.Engine.NUM_ENGINES: ([2], 'unitless')}))
+        setup_model_options(prob, AviaryValues({Aircraft.Engine.NUM_ENGINES: ([2], 'unitless')}))
 
         prob.setup(check=False, force_alloc_complex=True)
 
@@ -122,5 +126,5 @@ class TakeoffODETest(unittest.TestCase):
         return prob
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     unittest.main()

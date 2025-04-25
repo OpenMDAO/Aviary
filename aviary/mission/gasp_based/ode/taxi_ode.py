@@ -23,7 +23,7 @@ class TaxiSegment(TwoDOFODE):
         options: AviaryValues = self.options['aviary_options']
         core_subsystems = self.options['core_subsystems']
 
-        self.add_subsystem("params", ParamPort(), promotes=["*"])
+        self.add_subsystem('params', ParamPort(), promotes=['*'])
 
         add_opts2vals(self, create_opts2vals([Mission.Taxi.MACH]), options)
 
@@ -75,9 +75,7 @@ class TaxiSegment(TwoDOFODE):
 
         self.add_external_subsystems()
 
-        self.add_subsystem(
-            "taxifuel", TaxiFuelComponent(), promotes=["*"]
-        )
+        self.add_subsystem('taxifuel', TaxiFuelComponent(), promotes=['*'])
 
         ParamPort.set_default_vals(self)
         self.set_input_defaults(Mission.Taxi.MACH, 0)

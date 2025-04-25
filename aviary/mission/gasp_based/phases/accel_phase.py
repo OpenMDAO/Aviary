@@ -1,4 +1,8 @@
-from aviary.mission.initial_guess_builders import InitialGuessState, InitialGuessIntegrationVariable, InitialGuessControl
+from aviary.mission.initial_guess_builders import (
+    InitialGuessState,
+    InitialGuessIntegrationVariable,
+    InitialGuessControl,
+)
 from aviary.mission.gasp_based.ode.accel_ode import AccelODE
 from aviary.mission.phase_builder_base import PhaseBuilderBase, register
 from aviary.utils.aviary_options_dict import AviaryOptionsDictionary
@@ -7,14 +11,12 @@ from aviary.variable_info.variables import Dynamic
 
 
 class AccelPhaseOptions(AviaryOptionsDictionary):
-
     def declare_options(self):
-
         self.declare(
             'analytic',
             types=bool,
             default=False,
-            desc='When set to True, this is an analytic phase.'
+            desc='When set to True, this is an analytic phase.',
         )
 
         self.declare(
@@ -23,7 +25,7 @@ class AccelPhaseOptions(AviaryOptionsDictionary):
             default=False,
             desc='Designate this phase as a reserve phase and contributes its fuel burn '
             'towards the reserve mission fuel requirements. Reserve phases should be '
-            'be placed after all non-reserve phases in the phase_info.'
+            'be placed after all non-reserve phases in the phase_info.',
         )
 
         self.declare(
@@ -32,14 +34,14 @@ class AccelPhaseOptions(AviaryOptionsDictionary):
             units='m',
             desc='The total distance traveled by the aircraft from takeoff to landing '
             'for the primary mission, not including reserve missions. This value must '
-            'be positive.'
+            'be positive.',
         )
 
         self.declare(
             'target_duration',
             default=None,
             units='s',
-            desc='The amount of time taken by this phase added as a constraint.'
+            desc='The amount of time taken by this phase added as a constraint.',
         )
 
         self.declare(
@@ -47,14 +49,14 @@ class AccelPhaseOptions(AviaryOptionsDictionary):
             types=bool,
             default=False,
             desc='Fixes the initial states (mass, distance) and does not allow them to '
-            'change during the optimization.'
+            'change during the optimization.',
         )
 
         self.declare(
             name='EAS_constraint_eq',
             default=250.0,
             units='kn',
-            desc='Airspeed constraint applied at the end of the phase.'
+            desc='Airspeed constraint applied at the end of the phase.',
         )
 
         self.declare(
@@ -62,127 +64,78 @@ class AccelPhaseOptions(AviaryOptionsDictionary):
             default=(None, None),
             units='s',
             desc='Lower and upper bounds on the phase duration, in the form of a nested tuple: '
-            'i.e. ((20, 36), "min") This constrains the duration to be between 20 and 36 min.'
+            'i.e. ((20, 36), "min") This constrains the duration to be between 20 and 36 min.',
         )
 
         self.declare(
-            name='duration_ref',
-            default=1.0,
-            units='s',
-            desc='Scale factor ref for duration.'
+            name='duration_ref', default=1.0, units='s', desc='Scale factor ref for duration.'
         )
 
         self.declare(
-            name='velocity_lower',
-            default=0.0,
-            units='kn',
-            desc='Lower bound for velocity.'
+            name='velocity_lower', default=0.0, units='kn', desc='Lower bound for velocity.'
         )
 
         self.declare(
-            name='velocity_upper',
-            default=0.0,
-            units='kn',
-            desc='Upper bound for velocity.'
+            name='velocity_upper', default=0.0, units='kn', desc='Upper bound for velocity.'
         )
 
         self.declare(
-            name='velocity_ref',
-            default=1.0,
-            units='kn',
-            desc='Scale factor ref for velocity.'
+            name='velocity_ref', default=1.0, units='kn', desc='Scale factor ref for velocity.'
         )
 
         self.declare(
-            name='velocity_ref0',
-            default=0.0,
-            units='kn',
-            desc='Scale factor ref0 for velocity.'
+            name='velocity_ref0', default=0.0, units='kn', desc='Scale factor ref0 for velocity.'
         )
 
         self.declare(
             name='velocity_defect_ref',
             default=None,
             units='kn',
-            desc='Scale factor ref for velocity defect.'
+            desc='Scale factor ref for velocity defect.',
         )
 
         self.declare(
-            name='mass_lower',
-            types=tuple,
-            default=0.0,
-            units='lbm',
-            desc='Lower bound for mass.'
+            name='mass_lower', types=tuple, default=0.0, units='lbm', desc='Lower bound for mass.'
         )
 
-        self.declare(
-            name='mass_upper',
-            default=0.0,
-            units='lbm',
-            desc='Upper bound for mass.'
-        )
+        self.declare(name='mass_upper', default=0.0, units='lbm', desc='Upper bound for mass.')
 
-        self.declare(
-            name='mass_ref',
-            default=1.0,
-            units='lbm',
-            desc='Scale factor ref for mass.'
-        )
+        self.declare(name='mass_ref', default=1.0, units='lbm', desc='Scale factor ref for mass.')
 
-        self.declare(
-            name='mass_ref0',
-            default=0.0,
-            units='lbm',
-            desc='Scale factor ref0 for mass.'
-        )
+        self.declare(name='mass_ref0', default=0.0, units='lbm', desc='Scale factor ref0 for mass.')
 
         self.declare(
             name='mass_defect_ref',
             default=0.0,
             units='lbm',
-            desc='Scale factor ref for mass defect.'
+            desc='Scale factor ref for mass defect.',
         )
 
         self.declare(
-            name='distance_lower',
-            default=0.0,
-            units='NM',
-            desc='Lower bound for distance.'
+            name='distance_lower', default=0.0, units='NM', desc='Lower bound for distance.'
         )
 
         self.declare(
-            name='distance_upper',
-            default=0.0,
-            units='ft',
-            desc='Upper bound for distance.'
+            name='distance_upper', default=0.0, units='ft', desc='Upper bound for distance.'
         )
 
         self.declare(
-            name='distance_ref',
-            default=1.0,
-            units='ft',
-            desc='Scale factor ref for distance.'
+            name='distance_ref', default=1.0, units='ft', desc='Scale factor ref for distance.'
         )
 
         self.declare(
-            name='distance_ref0',
-            default=0.0,
-            units='ft',
-            desc='Scale factor ref0 for distance.'
+            name='distance_ref0', default=0.0, units='ft', desc='Scale factor ref0 for distance.'
         )
 
         self.declare(
             name='distance_defect_ref',
             default=None,
             units='ft',
-            desc='Scale factor ref for distance defect.'
+            desc='Scale factor ref for distance defect.',
         )
 
         self.declare(
-            name='alt',
-            default=500.0,
-            units='ft',
-            desc='Constant altitude for this phase.'
+            name='alt', default=500.0, units='ft', desc='Constant altitude for this phase.'
         )
 
         self.declare(
@@ -190,7 +143,7 @@ class AccelPhaseOptions(AviaryOptionsDictionary):
             types=int,
             default=1,
             desc='The number of segments in transcription creation in Dymos. '
-            'The default value is 1.'
+            'The default value is 1.',
         )
 
         self.declare(
@@ -198,7 +151,7 @@ class AccelPhaseOptions(AviaryOptionsDictionary):
             types=int,
             default=3,
             desc='The order of polynomials for interpolation in the transcription '
-            'created in Dymos. The default value is 3.'
+            'created in Dymos. The default value is 3.',
         )
 
 
@@ -219,6 +172,7 @@ class AccelPhase(PhaseBuilderBase):
     Inherits all methods from PhaseBuilderBase.
     Additional method overrides and new methods specific to the acceleration phase are included.
     """
+
     default_name = 'accel_phase'
     default_ode_class = AccelODE
     default_options_class = AccelPhaseOptions
@@ -254,54 +208,51 @@ class AccelPhase(PhaseBuilderBase):
 
         # Boundary Constraints
         phase.add_boundary_constraint(
-            "EAS", loc="final", equals=EAS_constraint_eq, units="kn", ref=EAS_constraint_eq
+            'EAS', loc='final', equals=EAS_constraint_eq, units='kn', ref=EAS_constraint_eq
         )
 
-        phase.add_parameter(Dynamic.Mission.ALTITUDE, opt=False, units="ft", val=alt)
+        phase.add_parameter(Dynamic.Mission.ALTITUDE, opt=False, units='ft', val=alt)
 
         # Timeseries Outputs
-        phase.add_timeseries_output("EAS", output_name="EAS", units="kn")
+        phase.add_timeseries_output('EAS', output_name='EAS', units='kn')
         phase.add_timeseries_output(
             Dynamic.Atmosphere.MACH,
             output_name=Dynamic.Atmosphere.MACH,
-            units="unitless",
+            units='unitless',
         )
         phase.add_timeseries_output(
             Dynamic.Vehicle.ANGLE_OF_ATTACK,
             output_name=Dynamic.Vehicle.ANGLE_OF_ATTACK,
-            units="deg",
+            units='deg',
         )
         phase.add_timeseries_output(
             Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
             output_name=Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
-            units="lbf",
+            units='lbf',
         )
 
         # TODO: These should be promoted in the 2dof mission outputs.
-        phase.add_timeseries_output("core_aerodynamics.CL",
-                                    output_name="CL", units="unitless")
-        phase.add_timeseries_output("core_aerodynamics.CD",
-                                    output_name="CD", units="unitless")
+        phase.add_timeseries_output('core_aerodynamics.CL', output_name='CL', units='unitless')
+        phase.add_timeseries_output('core_aerodynamics.CD', output_name='CD', units='unitless')
 
         return phase
 
 
 AccelPhase._add_initial_guess_meta_data(
     InitialGuessIntegrationVariable(),
-    desc='initial guess for initial time and duration specified as a tuple')
+    desc='initial guess for initial time and duration specified as a tuple',
+)
 
 AccelPhase._add_initial_guess_meta_data(
-    InitialGuessState('velocity'),
-    desc='initial guess for true airspeed')
+    InitialGuessState('velocity'), desc='initial guess for true airspeed'
+)
+
+AccelPhase._add_initial_guess_meta_data(InitialGuessState('mass'), desc='initial guess for mass')
 
 AccelPhase._add_initial_guess_meta_data(
-    InitialGuessState('mass'),
-    desc='initial guess for mass')
+    InitialGuessState('distance'), desc='initial guess for horizontal distance traveled'
+)
 
 AccelPhase._add_initial_guess_meta_data(
-    InitialGuessState('distance'),
-    desc='initial guess for horizontal distance traveled')
-
-AccelPhase._add_initial_guess_meta_data(
-    InitialGuessControl('throttle'),
-    desc='initial guess for throttle')
+    InitialGuessControl('throttle'), desc='initial guess for throttle'
+)

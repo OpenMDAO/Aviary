@@ -29,7 +29,7 @@ allowed_headers = {
     'cd': 'CD',
     'hob': 'Hob',
     'del_cl': 'Delta CL',
-    'del_cd': 'Delta CD'
+    'del_cd': 'Delta CD',
 }
 
 
@@ -81,19 +81,19 @@ def AeroDataConverter(input_file=None, output_file=None, data_format=None):
             file2 = path / (name + '_CD0' + suffix)
             output_file = [file1, file2]
 
-        lift_drag_data, lift_drag_comments, \
-            zero_lift_drag_data, zero_lift_drag_comments = _load_flops_aero_table(
-                data_file)
+        lift_drag_data, lift_drag_comments, zero_lift_drag_data, zero_lift_drag_comments = (
+            _load_flops_aero_table(data_file)
+        )
 
         # write lift-dependent drag file
         lift_drag_comments = [stamp] + lift_drag_comments
-        write_data_file(output_file[0], lift_drag_data,
-                        lift_drag_comments, include_timestamp=True)
+        write_data_file(output_file[0], lift_drag_data, lift_drag_comments, include_timestamp=True)
 
         # write zero-lift drag file
         zero_lift_drag_comments = [stamp] + zero_lift_drag_comments
-        write_data_file(output_file[1], zero_lift_drag_data,
-                        zero_lift_drag_comments, include_timestamp=True)
+        write_data_file(
+            output_file[1], zero_lift_drag_data, zero_lift_drag_comments, include_timestamp=True
+        )
 
 
 def _load_flops_aero_table(filepath: Path):
@@ -107,7 +107,7 @@ def _load_flops_aero_table(filepath: Path):
             nonlocal offset
             offset += 1
             try:
-                items = _read_line(line_count+1, comments)
+                items = _read_line(line_count + 1, comments)
             except IndexError:
                 return
         else:
@@ -115,10 +115,11 @@ def _load_flops_aero_table(filepath: Path):
             try:
                 items = [float(var) for var in items]
             # data contains things other than floats
-            except (ValueError):
+            except ValueError:
                 raise ValueError(
                     f'Non-numerical value found in data file <{filepath.name}> on '
-                    f'line {str(line_count)}')
+                    f'line {str(line_count)}'
+                )
 
         return items
 
@@ -145,18 +146,21 @@ def _load_flops_aero_table(filepath: Path):
         if len(drag) == len(cls):
             lift_drag.append(drag)
         else:
-            raise ValueError('Number of data points provided for '
-                             f'lift-dependent drag at Mach {lift_drag_machs[i]} '
-                             'does not match number of CLs provided '
-                             f'(FLOPS aero data file {filepath.name})')
+            raise ValueError(
+                'Number of data points provided for '
+                f'lift-dependent drag at Mach {lift_drag_machs[i]} '
+                'does not match number of CLs provided '
+                f'(FLOPS aero data file {filepath.name})'
+            )
     if len(lift_drag) != len(lift_drag_machs):
-        raise ValueError('Number of data rows provided for lift-dependent drag does '
-                         'not match number of Mach numbers provided (FLOPS aero data '
-                         f'file {filepath.name})')
+        raise ValueError(
+            'Number of data rows provided for lift-dependent drag does '
+            'not match number of Mach numbers provided (FLOPS aero data '
+            f'file {filepath.name})'
+        )
     offset = offset + i
     # these are not needed, we can determine the length of data vectors directly
-    altitude_count, zero_lift_mach_count = _read_line(
-        4 + offset, zero_lift_drag_comments)
+    altitude_count, zero_lift_mach_count = _read_line(4 + offset, zero_lift_drag_comments)
     zero_lift_machs = _read_line(5 + offset, zero_lift_drag_comments)
     altitudes = _read_line(6 + offset, zero_lift_drag_comments)
     for i in range(len(zero_lift_machs)):
@@ -164,26 +168,32 @@ def _load_flops_aero_table(filepath: Path):
         if len(drag) == len(altitudes):
             zero_lift_drag.append(drag)
         else:
-            raise ValueError('Number of data points provided for '
-                             f'zero-lift drag at Mach {zero_lift_machs[i]} '
-                             'does not match number of Altitudes provided '
-                             f'(FLOPS aero data file {filepath.name})')
+            raise ValueError(
+                'Number of data points provided for '
+                f'zero-lift drag at Mach {zero_lift_machs[i]} '
+                'does not match number of Altitudes provided '
+                f'(FLOPS aero data file {filepath.name})'
+            )
     if len(zero_lift_drag) != len(zero_lift_machs):
-        raise ValueError('Number of data rows provided for zero-lift drag does '
-                         'not match number of Mach numbers provided (FLOPS aero data '
-                         f'file {filepath.name})')
+        raise ValueError(
+            'Number of data rows provided for zero-lift drag does '
+            'not match number of Mach numbers provided (FLOPS aero data '
+            f'file {filepath.name})'
+        )
 
     cl, mach = np.meshgrid(cls, lift_drag_machs)
     lift_drag_data.set_val('Mach', mach.flatten(), 'unitless')
     lift_drag_data.set_val('Lift Coefficient', cl.flatten(), 'unitless')
-    lift_drag_data.set_val('Lift-Dependent Drag Coefficient',
-                           np.array(lift_drag).flatten(), 'unitless')
+    lift_drag_data.set_val(
+        'Lift-Dependent Drag Coefficient', np.array(lift_drag).flatten(), 'unitless'
+    )
 
     altitude, mach = np.meshgrid(altitudes, zero_lift_machs)
     zero_lift_drag_data.set_val('Altitude', altitude.flatten(), 'ft')
     zero_lift_drag_data.set_val('Mach', mach.flatten(), 'unitless')
-    zero_lift_drag_data.set_val('Zero-Lift Drag Coefficient',
-                                np.array(zero_lift_drag).flatten(), 'unitless')
+    zero_lift_drag_data.set_val(
+        'Zero-Lift Drag Coefficient', np.array(zero_lift_drag).flatten(), 'unitless'
+    )
 
     return lift_drag_data, lift_drag_comments, zero_lift_drag_data, zero_lift_drag_comments
 
@@ -229,10 +239,11 @@ def _load_gasp_aero_table(filepath: Path):
                 try:
                     line_data = [float(var) for var in items]
                 # data contains things other than floats
-                except (ValueError):
+                except ValueError:
                     raise ValueError(
                         f'Non-numerical value found in data file <{filepath.name}> on '
-                        f'line {str(line_count)}')
+                        f'line {str(line_count)}'
+                    )
                 else:
                     raw_data.append(line_data)
 
@@ -247,25 +258,32 @@ def _load_gasp_aero_table(filepath: Path):
 
 
 def _setup_ATC_parser(parser):
-    parser.add_argument('input_file', type=str,
-                        help='path to aero data file to be converted')
-    parser.add_argument('output_file', type=str, nargs='?',
-                        help='path to file where new converted data will be written')
-    parser.add_argument('-f', '--data_format', type=str, choices=[origin.value for origin in CodeOrigin],
-                        help='data format used by input_file')
+    parser.add_argument('input_file', type=str, help='path to aero data file to be converted')
+    parser.add_argument(
+        'output_file',
+        type=str,
+        nargs='?',
+        help='path to file where new converted data will be written',
+    )
+    parser.add_argument(
+        '-f',
+        '--data_format',
+        type=str,
+        choices=[origin.value for origin in CodeOrigin],
+        help='data format used by input_file',
+    )
 
 
 def _exec_ATC(args, user_args):
     AeroDataConverter(
-        input_file=args.input_file,
-        output_file=args.output_file,
-        data_format=args.data_format
+        input_file=args.input_file, output_file=args.output_file, data_format=args.data_format
     )
 
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description='Converts FLOPS- or GASP-formatted '
-                                     'aero data files into Aviary csv format.\n')
+    parser = argparse.ArgumentParser(
+        description='Converts FLOPS- or GASP-formatted aero data files into Aviary csv format.\n'
+    )
     _setup_ATC_parser(parser)
     args = parser.parse_args()
     _exec_ATC(args, None)

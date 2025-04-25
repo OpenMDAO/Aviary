@@ -40,8 +40,7 @@ class PropellerMap(om.ExplicitComponent):
     mach_type: OutMachType (MACH or HELICAL_MACH)
     """
 
-    def __init__(self, name='propeller', options: AviaryValues = None,
-                 data: NamedValues = None):
+    def __init__(self, name='propeller', options: AviaryValues = None, data: NamedValues = None):
         super().__init__()
 
         # working copy of propeller performance data, is modified during data pre-processing
@@ -66,12 +65,15 @@ class PropellerMap(om.ExplicitComponent):
                 # Convert data to expected units. Required so settings like tolerances
                 # that assume units work as expected
                 try:
-                    val = np.array([convert_units(i, units, default_propeller_units[key])
-                                   for i in val])
+                    val = np.array(
+                        [convert_units(i, units, default_propeller_units[key]) for i in val]
+                    )
                 except TypeError:
-                    raise TypeError(f"{message}: units of '{units}' provided for "
-                                    f'<{key.name}> are not compatible with expected units '
-                                    f'of {default_propeller_units[key]}')
+                    raise TypeError(
+                        f"{message}: units of '{units}' provided for "
+                        f'<{key.name}> are not compatible with expected units '
+                        f'of {default_propeller_units[key]}'
+                    )
 
                 # propeller_variables currently only used to store "valid" engine variables
                 # as defined in PropellerModelVariables Enum
@@ -80,13 +82,13 @@ class PropellerMap(om.ExplicitComponent):
             else:
                 if self.get_val(Settings.VERBOSITY).value >= 1:
                     warnings.warn(
-                        f'{message}: header <{key}> was not recognized, and will be skipped')
+                        f'{message}: header <{key}> was not recognized, and will be skipped'
+                    )
 
             self.data[key] = val
 
         if not self.propeller_variables:
-            raise UserWarning(
-                f'No valid propeller variables found in data for {message}')
+            raise UserWarning(f'No valid propeller variables found in data for {message}')
 
     def read_and_set_mach_type(self, data_file):
         # read the mach type from header.
@@ -96,7 +98,7 @@ class PropellerMap(om.ExplicitComponent):
         m_type = 'mach'  # default to freestream Mach number
         m_type_define = False
         fp = get_path(data_file)
-        with open(fp, "r") as f:
+        with open(fp, 'r') as f:
             for line in f:
                 tokens = line.split(',')
                 if len(tokens) > 1:
@@ -108,7 +110,8 @@ class PropellerMap(om.ExplicitComponent):
 
         if not m_type_define:
             warnings.warn(
-                f"String 'mach_type' is not defined. Assume freestream Mach in the table.")
+                f"String 'mach_type' is not defined. Assume freestream Mach in the table."
+            )
 
         return OutMachType.get_element_by_value(m_type)
 
@@ -119,24 +122,24 @@ class PropellerMap(om.ExplicitComponent):
         interp_method = options.get_val(Aircraft.Engine.INTERPOLATION_METHOD)
         # interpolator object for propeller data
         propeller = om.MetaModelSemiStructuredComp(
-            method=interp_method, extrapolate=True, vec_size=num_nodes)
+            method=interp_method, extrapolate=True, vec_size=num_nodes
+        )
 
         # add inputs and outputs to interpolator
         # depending on p, selected_mach can be Mach number (Dynamic.Atmosphere.MACH) or helical Mach number
-        propeller.add_input('selected_mach',
-                            self.data[MACH],
-                            units='unitless',
-                            desc='Current Mach number (flight or helical)')
-        propeller.add_input('power_coefficient',
-                            self.data[CP],
-                            units='unitless',
-                            desc='Current power coefficient')
-        propeller.add_input('advance_ratio',
-                            self.data[J],
-                            units='unitless',
-                            desc='Current advance ratio')
-        propeller.add_output('thrust_coefficient',
-                             self.data[CT],
-                             units='unitless',
-                             desc='Current thrust coefficient')
+        propeller.add_input(
+            'selected_mach',
+            self.data[MACH],
+            units='unitless',
+            desc='Current Mach number (flight or helical)',
+        )
+        propeller.add_input(
+            'power_coefficient', self.data[CP], units='unitless', desc='Current power coefficient'
+        )
+        propeller.add_input(
+            'advance_ratio', self.data[J], units='unitless', desc='Current advance ratio'
+        )
+        propeller.add_output(
+            'thrust_coefficient', self.data[CT], units='unitless', desc='Current thrust coefficient'
+        )
         return propeller

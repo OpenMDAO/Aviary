@@ -112,8 +112,7 @@ class SimpleEngine(om.ExplicitComponent):
         # calculate outputs
         outputs[Dynamic.Vehicle.Propulsion.THRUST] = 10000.0 * combined_throttle
         outputs[Dynamic.Vehicle.Propulsion.THRUST_MAX] = 10000.0
-        outputs[Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE] = - \
-            10.0 * combined_throttle
+        outputs[Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE] = -10.0 * combined_throttle
         outputs[Dynamic.Vehicle.Propulsion.TEMPERATURE_T4] = 2800.0
 
 
@@ -130,7 +129,7 @@ class SimpleTestEngine(EngineModel):
 
     def get_controls(self, **kwargs):
         controls_dict = {
-            "different_throttle": {'units': 'unitless', 'lower': 0.0, 'upper': 0.1},
+            'different_throttle': {'units': 'unitless', 'lower': 0.0, 'upper': 0.1},
         }
         if use_new_dymos_syntax:
             controls_dict['different_throttle']['control_type'] = 'polynomial'
@@ -139,19 +138,19 @@ class SimpleTestEngine(EngineModel):
 
     def get_bus_variables(self):
         bus_dict = {
-            "y": {
-                "mission_name": "y",
-                "units": "m**2",
+            'y': {
+                'mission_name': 'y',
+                'units': 'm**2',
             },
         }
         return bus_dict
 
     def get_initial_guesses(self):
         initial_guesses_dict = {
-            "different_throttle": {
-                "val": 0.05,
-                "units": "unitless",
-                "type": "control",
+            'different_throttle': {
+                'val': 0.05,
+                'units': 'unitless',
+                'type': 'control',
             }
         }
         return initial_guesses_dict
@@ -160,7 +159,6 @@ class SimpleTestEngine(EngineModel):
 @use_tempdirs
 class CustomEngineTest(unittest.TestCase):
     def test_custom_engine(self):
-
         phase_info = {
             'pre_mission': {
                 'include_takeoff': False,
@@ -168,28 +166,28 @@ class CustomEngineTest(unittest.TestCase):
                 'optimize_mass': True,
             },
             'cruise': {
-                "subsystem_options": {"core_aerodynamics": {"method": "computed"}},
-                "user_options": {
-                    "optimize_mach": False,
-                    "optimize_altitude": False,
-                    "polynomial_control_order": 1,
-                    "num_segments": 2,
-                    "order": 3,
-                    "solve_for_distance": False,
-                    "initial_mach": (0.72, "unitless"),
-                    "final_mach": (0.72, "unitless"),
-                    "mach_bounds": ((0.7, 0.74), "unitless"),
-                    "initial_altitude": (35000.0, "ft"),
-                    "final_altitude": (35000.0, "ft"),
-                    "altitude_bounds": ((23000.0, 38000.0), "ft"),
-                    "throttle_enforcement": "boundary_constraint",
-                    "fix_initial": False,
-                    "constrain_final": False,
-                    "fix_duration": False,
-                    "initial_bounds": ((0.0, 0.0), "min"),
-                    "duration_bounds": ((10.0, 30.0), "min"),
+                'subsystem_options': {'core_aerodynamics': {'method': 'computed'}},
+                'user_options': {
+                    'optimize_mach': False,
+                    'optimize_altitude': False,
+                    'polynomial_control_order': 1,
+                    'num_segments': 2,
+                    'order': 3,
+                    'solve_for_distance': False,
+                    'initial_mach': (0.72, 'unitless'),
+                    'final_mach': (0.72, 'unitless'),
+                    'mach_bounds': ((0.7, 0.74), 'unitless'),
+                    'initial_altitude': (35000.0, 'ft'),
+                    'final_altitude': (35000.0, 'ft'),
+                    'altitude_bounds': ((23000.0, 38000.0), 'ft'),
+                    'throttle_enforcement': 'boundary_constraint',
+                    'fix_initial': False,
+                    'constrain_final': False,
+                    'fix_duration': False,
+                    'initial_bounds': ((0.0, 0.0), 'min'),
+                    'duration_bounds': ((10.0, 30.0), 'min'),
                 },
-                "initial_guesses": {"time": ([0, 30], "min")},
+                'initial_guesses': {'time': ([0, 30], 'min')},
             },
             'post_mission': {
                 'include_landing': False,
@@ -202,7 +200,7 @@ class CustomEngineTest(unittest.TestCase):
         # Load aircraft and options data from user
         # Allow for user overrides here
         prob.load_inputs(
-            "models/test_aircraft/aircraft_for_bench_GwFm.csv",
+            'models/test_aircraft/aircraft_for_bench_GwFm.csv',
             phase_info,
             engine_builders=[SimpleTestEngine()],
         )
@@ -219,7 +217,7 @@ class CustomEngineTest(unittest.TestCase):
         # Link phases and variables
         prob.link_phases()
 
-        prob.add_driver("SLSQP", verbosity=0)
+        prob.add_driver('SLSQP', verbosity=0)
 
         prob.add_design_variables()
 
@@ -232,9 +230,7 @@ class CustomEngineTest(unittest.TestCase):
         prob.final_setup()
 
         # check that the different throttle initial guess has been set correctly
-        initial_guesses = prob.get_val(
-            'traj.phases.cruise.controls:different_throttle'
-        )[0]
+        initial_guesses = prob.get_val('traj.phases.cruise.controls:different_throttle')[0]
         assert_near_equal(float(initial_guesses), 0.05)
 
         # and run mission

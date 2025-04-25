@@ -7,24 +7,27 @@ from aviary.variable_info.enums import Verbosity
 
 
 def add_descent_estimation_as_submodel(
-        main_prob: om.Problem,
-        subsys_name='idle_descent_estimation',
-        phases=None,
-        ode_args=None,
-        initial_mass=None,
-        cruise_alt=None,
-        cruise_mach=None,
-        reserve_fuel=None,
-        all_subsystems=None,
-        verbosity=Verbosity.QUIET,
+    main_prob: om.Problem,
+    subsys_name='idle_descent_estimation',
+    phases=None,
+    ode_args=None,
+    initial_mass=None,
+    cruise_alt=None,
+    cruise_mach=None,
+    reserve_fuel=None,
+    all_subsystems=None,
+    verbosity=Verbosity.QUIET,
 ):
     """
     This creates a sub model that contains a copy of the descent portion of the mission's trajectory. This is used to calculate an estimation of the fuel burn and distance required for the descent, so that they can be used as triggers for the cruise phase. The sub model is then added to the main problem.
     The user can specify certain initial conditions or requirements such as cruise Mach number, reserve fuel required, etc.
     """
     if phases is None:
-        from aviary.interface.default_phase_info.two_dof_fiti import \
-            descent_phases as phases, add_default_sgm_args
+        from aviary.interface.default_phase_info.two_dof_fiti import (
+            descent_phases as phases,
+            add_default_sgm_args,
+        )
+
         add_default_sgm_args(phases, ode_args)
 
     if all_subsystems is None:
@@ -56,7 +59,8 @@ def add_descent_estimation_as_submodel(
                 top_of_descent_mass={'units': 'lbm'},
             ),
             promotes_inputs=['top_of_descent_mass'],
-            promotes_outputs=['mass_initial'])
+            promotes_outputs=['mass_initial'],
+        )
     else:
         model.add_subsystem(
             'top_of_descent_mass',
@@ -75,7 +79,7 @@ def add_descent_estimation_as_submodel(
                 # ('reserve_fuel', Mission.Design.RESERVE_FUEL),
                 ('descent_fuel_estimate', 'descent_fuel'),
             ],
-            promotes_outputs=['mass_initial']
+            promotes_outputs=['mass_initial'],
         )
 
     all_bus_vars = set()
@@ -89,9 +93,10 @@ def add_descent_estimation_as_submodel(
                 all_bus_vars.add(mission_var_name)
 
     model.add_subsystem(
-        'descent_traj', traj,
-        promotes_inputs=['altitude_initial', 'mass_initial', 'aircraft:*'] +
-        [(var, 'parameters:'+var) for var in all_bus_vars],
+        'descent_traj',
+        traj,
+        promotes_inputs=['altitude_initial', 'mass_initial', 'aircraft:*']
+        + [(var, 'parameters:' + var) for var in all_bus_vars],
         promotes_outputs=['mass_final', 'distance_final'],
     )
 
@@ -107,10 +112,12 @@ def add_descent_estimation_as_submodel(
             'mass_initial',
             'mass_final',
         ],
-        promotes_outputs=[('actual_fuel_burn', 'descent_fuel')])
+        promotes_outputs=[('actual_fuel_burn', 'descent_fuel')],
+    )
 
     if verbosity >= Verbosity.BRIEF:
         from aviary.utils.functions import create_printcomp
+
         dummy_comp = create_printcomp(
             all_inputs=[
                 Aircraft.Design.OPERATING_MASS,
@@ -125,16 +132,17 @@ def add_descent_estimation_as_submodel(
                 'reserve_fuel': 'lbm',
                 'mass_initial': 'lbm',
                 'distance_final': 'nmi',
-            })
+            },
+        )
         model.add_subsystem(
-            "dummy_comp",
+            'dummy_comp',
             dummy_comp(),
-            promotes_inputs=["*"],
+            promotes_inputs=['*'],
         )
         model.set_input_defaults('reserve_fuel', 0, 'lbm')
         model.set_input_defaults('mass_initial', 0, 'lbm')
 
-    model.add_objective("descent_fuel", ref=1e4)
+    model.add_objective('descent_fuel', ref=1e4)
 
     model.linear_solver = om.DirectSolver(assemble_jac=True)
     model.nonlinear_solver = om.NonlinearBlockGS(iprint=3, rtol=1e-2, maxiter=5)
@@ -156,8 +164,7 @@ def add_descent_estimation_as_submodel(
         model.set_input_defaults('reserve_fuel', reserve_fuel)
 
     model.set_input_defaults(Aircraft.CrewPayload.PASSENGER_PAYLOAD_MASS, 0)
-    model.set_input_defaults(
-        Aircraft.Design.OPERATING_MASS, val=0, units='lbm')
+    model.set_input_defaults(Aircraft.Design.OPERATING_MASS, val=0, units='lbm')
     model.set_input_defaults('descent_traj.' + Dynamic.Vehicle.Propulsion.THROTTLE, 0)
 
     promote_aircraft_and_mission_vars(model)
@@ -169,7 +176,7 @@ def add_descent_estimation_as_submodel(
             'aircraft:*',
         ],
         outputs=['distance_final', 'descent_fuel', 'mass_initial'],
-        do_coloring=False
+        do_coloring=False,
     )
 
     main_prob.model.add_subsystem(
@@ -177,11 +184,11 @@ def add_descent_estimation_as_submodel(
         subcomp,
         promotes_inputs=[
             'aircraft:*',
-        ] + input_aliases,
+        ]
+        + input_aliases,
         promotes_outputs=[
             ('distance_final', 'descent_range'),
             'descent_fuel',
             ('mass_initial', 'start_of_descent_mass'),
         ],
-
     )
