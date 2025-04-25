@@ -214,6 +214,7 @@ def _dashboard_cmd(options, user_args):
         options.run_in_background,
     )
 
+
 def _handle_pane_creation_errors():
     """
     A decorator used with the functions that creates panes for use in the dashboard.
@@ -235,7 +236,7 @@ def _handle_pane_creation_errors():
                 pane = _create_message_pane(
                     pane_documentation,
                     f"Unable to create {pane_title} due to error: {e}\n\nStack trace:\n{stack_trace}",
-                    )
+                )
                 pane_list.append((pane_title, pane))
                 return None
         return wrapper
@@ -275,14 +276,14 @@ def create_table_pane_from_json(documentation, json_filepath):
                                           })
         table_pane_with_doc = pn.Column(
             pn.pane.HTML(f'<p class="pane_doc">{documentation}</p>',
-                         stylesheets=["assets/aviary_styles.css"], 
+                         stylesheets=["assets/aviary_styles.css"],
                          styles={'text-align': documentation_text_align}),
             table_pane
         )
     except Exception as err:
         table_pane_with_doc = pn.Column(
             pn.pane.HTML(f'<p class="pane_doc">{documentation}</p>',
-                         stylesheets=["assets/aviary_styles.css"], 
+                         stylesheets=["assets/aviary_styles.css"],
                          styles={'text-align': documentation_text_align}),
             pn.pane.Markdown(
                 f"# Table not shown because data source JSON file, '{json_filepath}', not found.")
@@ -323,14 +324,14 @@ def create_csv_frame(documentation, csv_filepath):
         )
         report_pane = pn.Column(
             pn.pane.HTML(f'<p class="pane_doc">{documentation}</p>',
-                         stylesheets=["assets/aviary_styles.css"], 
+                         stylesheets=["assets/aviary_styles.css"],
                          styles={'text-align': documentation_text_align}),
             df_pane
         )
     else:
         report_pane = pn.Column(
             pn.pane.HTML(f'<p class="pane_doc">{documentation}</p>',
-                         stylesheets=["assets/aviary_styles.css"], 
+                         stylesheets=["assets/aviary_styles.css"],
                          styles={'text-align': documentation_text_align}),
             pn.pane.Markdown(
                 f"# Report not shown because data source CSV file, '{csv_filepath}', not found.")
@@ -361,9 +362,9 @@ def _create_message_pane(documentation, message):
     showing error messages.
     """
     report_pane = pn.Column(
-        pn.pane.HTML(f'<p class="pane_doc">{documentation}</p>', 
-            stylesheets=["assets/aviary_styles.css"], 
-            styles={'text-align': 'left'}),
+        pn.pane.HTML(f'<p class="pane_doc">{documentation}</p>',
+                     stylesheets=["assets/aviary_styles.css"],
+                     styles={'text-align': 'left'}),
         # pn.pane.HTML(f"<p>{message}</p>", styles={'text-align': 'left'})
         pn.pane.Str(f"<p>{message}</p>", styles={'text-align': 'left'})
     )
@@ -395,8 +396,8 @@ def create_report_frame(documentation, format, text_filepath):
         if format == "html":
             iframe_css = 'width=1200px height=800px overflow-x="scroll" overflow="scroll" margin=0px padding=0px border=20px frameBorder=20px scrolling="yes"'
             report_pane = pn.Column(
-                pn.pane.HTML(f'<p class="pane_doc">{documentation}</p>', 
-                         stylesheets=["assets/aviary_styles.css"], 
+                pn.pane.HTML(f'<p class="pane_doc">{documentation}</p>',
+                             stylesheets=["assets/aviary_styles.css"],
                              styles={'text-align': 'left'}),
                 pn.pane.HTML(f"<iframe {iframe_css} src=/home/{text_filepath}></iframe>")
             )
@@ -410,8 +411,8 @@ def create_report_frame(documentation, format, text_filepath):
             elif format == "text":
                 report_pane = pn.pane.Str(file_text)
             report_pane = pn.Column(
-                pn.pane.HTML(f'<p class="pane_doc">{documentation}</p>', 
-                         stylesheets=["assets/aviary_styles.css"], 
+                pn.pane.HTML(f'<p class="pane_doc">{documentation}</p>',
+                             stylesheets=["assets/aviary_styles.css"],
                              styles={'text-align': 'left'}),
                 report_pane
             )
@@ -419,8 +420,8 @@ def create_report_frame(documentation, format, text_filepath):
             raise RuntimeError(f"Report format of {format} is not supported.")
     else:
         report_pane = pn.Column(
-            pn.pane.HTML(f'<p class="pane_doc">{documentation}</p>', 
-                         stylesheets=["assets/aviary_styles.css"], 
+            pn.pane.HTML(f'<p class="pane_doc">{documentation}</p>',
+                         stylesheets=["assets/aviary_styles.css"],
                          styles={'text-align': 'left'},
                          ),
             pn.pane.Markdown(
@@ -852,6 +853,7 @@ def create_optimization_history_plot(case_recorder, df):
 
     return layout
 
+
 @_handle_pane_creation_errors()
 def _create_interactive_xy_plot_mission_variables(documentation, problem_recorder_path):
     """
@@ -875,7 +877,7 @@ def _create_interactive_xy_plot_mission_variables(documentation, problem_recorde
             traj_name = traj_nodes[0]["name"]
             if len(traj_nodes) > 1:
                 issue_warning("More than one trajectory found in problem case recorder file. Only using "
-                            f'the first one, "{traj_name}", for the interactive XY plot of mission variables')
+                              f'the first one, "{traj_name}", for the interactive XY plot of mission variables')
             case = cr.get_case("final")
             outputs = case.list_outputs(out_stream=None, units=True)
 
@@ -950,13 +952,13 @@ def _create_interactive_xy_plot_mission_variables(documentation, problem_recorde
             for i, phase in enumerate(phases):
                 color = colors[i % 20]
                 scatter_plot = p.scatter('x', 'y', source=sources[phase],
-                                        color=color,
-                                        size=5,
-                                        )
+                                         color=color,
+                                         size=5,
+                                         )
                 line_plot = p.line('x', 'y', source=sources[phase],
-                                color=color,
-                                line_width=1,
-                                )
+                                   color=color,
+                                   line_width=1,
+                                   )
                 legend_data.append((phase, [scatter_plot, line_plot]))
 
             # Make the Legend
@@ -980,7 +982,7 @@ def _create_interactive_xy_plot_mission_variables(documentation, problem_recorde
                     x = data_by_varname_and_phase[x_varname][phase]
                     y = data_by_varname_and_phase[y_varname][phase]
                     x, y = _get_interactive_plot_sources(data_by_varname_and_phase,
-                                                        x_varname, y_varname, phase)
+                                                         x_varname, y_varname, phase)
                     sources[phase].data = dict(x=x, y=y)
 
                 p.xaxis.axis_label = f'{x_varname} ({units_by_varname[x_varname]})'
@@ -1006,7 +1008,7 @@ def _create_interactive_xy_plot_mission_variables(documentation, problem_recorde
         interactive_mission_var_plot_pane_with_doc = pn.Column(
             pn.pane.HTML(
                 f'<p class="pane_doc">{documentation}</p>',
-                stylesheets=["assets/aviary_styles.css"], 
+                stylesheets=["assets/aviary_styles.css"],
                 styles={
                     'text-align': documentation_text_align}),
             interactive_mission_var_plot_pane)
