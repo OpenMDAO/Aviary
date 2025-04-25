@@ -2520,7 +2520,7 @@ def _load_off_design(
             # TODO is there a reason we can't use set_default() to make sure target range exists and
             #      has a value if not already in dictionary?
             try:
-                target_range = phase_info['post_mission']['target_range']
+                phase_info['post_mission']['target_range']
                 phase_info['post_mission']['target_range'] = (mission_range, 'nmi')
             except KeyError:
                 warnings.warn('no target range to update')

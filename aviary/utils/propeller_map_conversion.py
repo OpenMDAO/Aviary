@@ -35,7 +35,6 @@ def PropDataConverter(input_file, output_file, data_format: PropMapType):
     """
     timestamp = datetime.now().strftime('%m/%d/%y at %H:%M')
     comments = []
-    header = {}
     data = {}
 
     data_file = get_path(input_file)

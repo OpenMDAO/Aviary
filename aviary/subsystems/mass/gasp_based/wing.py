@@ -84,7 +84,6 @@ class WingMassSolve(om.ImplicitComponent):
 
     def linearize(self, inputs, outputs, J):
         gross_wt_initial = inputs[Mission.Design.GROSS_MASS] * GRAV_ENGLISH_LBM
-        high_lift_wt = inputs[Aircraft.Wing.HIGH_LIFT_MASS] * GRAV_ENGLISH_LBM
         c_strut_braced = inputs['c_strut_braced']
         ULF = inputs[Aircraft.Wing.ULTIMATE_LOAD_FACTOR]
         c_wing_mass = inputs[Aircraft.Wing.MASS_COEFFICIENT]
