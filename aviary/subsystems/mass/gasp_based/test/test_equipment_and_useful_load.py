@@ -5,7 +5,10 @@ from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 
 from aviary.subsystems.mass.gasp_based.equipment_and_useful_load import (
     ACMass,
-    EquipMass,
+    EquipMassPartial,
+    FurnishingMass,
+    EquipMassSum,
+    EquipMassGroup,
     UsefulLoadMass,
     EquipAndUsefulLoadMassGroup,
 )
@@ -26,7 +29,7 @@ class EquipMassTestCase1(unittest.TestCase):
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
             'equip',
-            EquipMass(),
+            EquipMassPartial(),
             promotes=['*'],
         )
 
@@ -41,11 +44,7 @@ class EquipMassTestCase1(unittest.TestCase):
             Aircraft.Hydraulics.GEAR_MASS_COEFFICIENT, val=0.14, units='unitless'
         )
         self.prob.model.set_input_defaults(Aircraft.Avionics.MASS, val=1959.0, units='lbm')
-        self.prob.model.set_input_defaults(
-            Aircraft.AirConditioning.MASS_COEFFICIENT, val=1.65, units='unitless'
-        )
         self.prob.model.set_input_defaults(Aircraft.AntiIcing.MASS, val=551.0, units='lbm')
-        self.prob.model.set_input_defaults(Aircraft.Furnishings.MASS, val=11192.0, units='lbm')
         self.prob.model.set_input_defaults(
             Aircraft.CrewPayload.PASSENGER_SERVICE_MASS_PER_PASSENGER, val=5.0, units='lbm'
         )
@@ -69,10 +68,6 @@ class EquipMassTestCase1(unittest.TestCase):
         self.prob.model.set_input_defaults(Aircraft.Wing.AREA, val=1370.3, units='ft**2')
         self.prob.model.set_input_defaults(Aircraft.HorizontalTail.AREA, val=375.9, units='ft**2')
         self.prob.model.set_input_defaults(Aircraft.VerticalTail.AREA, val=469.3, units='ft**2')
-        self.prob.model.set_input_defaults(
-            Aircraft.Fuselage.PRESSURE_DIFFERENTIAL, val=7.5, units='psi'
-        )
-        self.prob.model.set_input_defaults(Aircraft.Fuselage.AVG_DIAMETER, val=13.1, units='ft')
 
         setup_model_options(self.prob, options)
 
@@ -81,8 +76,8 @@ class EquipMassTestCase1(unittest.TestCase):
     def test_case1(self):
         self.prob.run_model()
 
-        tol = 1e-4
-        assert_near_equal(self.prob[Aircraft.Design.FIXED_EQUIPMENT_MASS], 21089, tol)
+        tol = 1e-7
+        assert_near_equal(self.prob['equip_mass_part'], 8573.19157631, tol)
 
         partial_data = self.prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=8e-12, rtol=1e-12)
@@ -97,7 +92,7 @@ class EquipMassTestCase2(unittest.TestCase):
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
             'equip',
-            EquipMass(),
+            EquipMassPartial(),
             promotes=['*'],
         )
 
@@ -112,11 +107,7 @@ class EquipMassTestCase2(unittest.TestCase):
             Aircraft.Hydraulics.GEAR_MASS_COEFFICIENT, val=0.14, units='unitless'
         )
         self.prob.model.set_input_defaults(Aircraft.Avionics.MASS, val=1959.0, units='lbm')
-        self.prob.model.set_input_defaults(
-            Aircraft.AirConditioning.MASS_COEFFICIENT, val=1.65, units='unitless'
-        )
         self.prob.model.set_input_defaults(Aircraft.AntiIcing.MASS, val=551.0, units='lbm')
-        self.prob.model.set_input_defaults(Aircraft.Furnishings.MASS, val=11192.0, units='lbm')
         self.prob.model.set_input_defaults(
             Aircraft.CrewPayload.PASSENGER_SERVICE_MASS_PER_PASSENGER, val=5.0, units='lbm'
         )
@@ -140,10 +131,6 @@ class EquipMassTestCase2(unittest.TestCase):
         self.prob.model.set_input_defaults(Aircraft.Wing.AREA, val=1370.3, units='ft**2')
         self.prob.model.set_input_defaults(Aircraft.HorizontalTail.AREA, val=375.9, units='ft**2')
         self.prob.model.set_input_defaults(Aircraft.VerticalTail.AREA, val=469.3, units='ft**2')
-        self.prob.model.set_input_defaults(
-            Aircraft.Fuselage.PRESSURE_DIFFERENTIAL, val=7.5, units='psi'
-        )
-        self.prob.model.set_input_defaults(Aircraft.Fuselage.AVG_DIAMETER, val=13.1, units='ft')
 
         setup_model_options(self.prob, options)
 
@@ -155,7 +142,7 @@ class EquipMassTestCase2(unittest.TestCase):
         tol = 1e-4
         # not actual GASP value
         assert_near_equal(
-            self.prob[Aircraft.Design.FIXED_EQUIPMENT_MASS], 23509, tol
+            self.prob['equip_mass_part'], 10992.96303693, tol
         )  # not actual GASP value
 
         partial_data = self.prob.check_partials(out_stream=None, method='cs')
@@ -171,7 +158,7 @@ class EquipMassTestCase3(unittest.TestCase):
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
             'equip',
-            EquipMass(),
+            EquipMassPartial(),
             promotes=['*'],
         )
 
@@ -186,11 +173,7 @@ class EquipMassTestCase3(unittest.TestCase):
             Aircraft.Hydraulics.GEAR_MASS_COEFFICIENT, val=0.14, units='unitless'
         )
         self.prob.model.set_input_defaults(Aircraft.Avionics.MASS, val=1959.0, units='lbm')
-        self.prob.model.set_input_defaults(
-            Aircraft.AirConditioning.MASS_COEFFICIENT, val=1.65, units='unitless'
-        )
         self.prob.model.set_input_defaults(Aircraft.AntiIcing.MASS, val=551.0, units='lbm')
-        self.prob.model.set_input_defaults(Aircraft.Furnishings.MASS, val=11192.0, units='lbm')
         self.prob.model.set_input_defaults(
             Aircraft.CrewPayload.PASSENGER_SERVICE_MASS_PER_PASSENGER, val=5.0, units='lbm'
         )
@@ -214,10 +197,6 @@ class EquipMassTestCase3(unittest.TestCase):
         self.prob.model.set_input_defaults(Aircraft.Wing.AREA, val=1370.3, units='ft**2')
         self.prob.model.set_input_defaults(Aircraft.HorizontalTail.AREA, val=375.9, units='ft**2')
         self.prob.model.set_input_defaults(Aircraft.VerticalTail.AREA, val=469.3, units='ft**2')
-        self.prob.model.set_input_defaults(
-            Aircraft.Fuselage.PRESSURE_DIFFERENTIAL, val=7.5, units='psi'
-        )
-        self.prob.model.set_input_defaults(Aircraft.Fuselage.AVG_DIAMETER, val=13.1, units='ft')
 
         setup_model_options(self.prob, options)
 
@@ -229,7 +208,7 @@ class EquipMassTestCase3(unittest.TestCase):
         tol = 1e-4
         # not actual GASP value
         assert_near_equal(
-            self.prob[Aircraft.Design.FIXED_EQUIPMENT_MASS], 23509, tol
+            self.prob['equip_mass_part'], 10992.96303693, tol
         )  # not actual GASP value
 
         partial_data = self.prob.check_partials(out_stream=None, method='cs')
@@ -259,7 +238,7 @@ class EquipMassTestCase4(unittest.TestCase):
         prob = om.Problem()
         prob.model.add_subsystem(
             'equip',
-            EquipMass(),
+            EquipMassPartial(),
             promotes=['*'],
         )
 
@@ -274,11 +253,7 @@ class EquipMassTestCase4(unittest.TestCase):
             Aircraft.Hydraulics.GEAR_MASS_COEFFICIENT, val=0.14, units='unitless'
         )
         prob.model.set_input_defaults(Aircraft.Avionics.MASS, val=1959.0, units='lbm')
-        prob.model.set_input_defaults(
-            Aircraft.AirConditioning.MASS_COEFFICIENT, val=1.65, units='unitless'
-        )
         prob.model.set_input_defaults(Aircraft.AntiIcing.MASS, val=551.0, units='lbm')
-        prob.model.set_input_defaults(Aircraft.Furnishings.MASS, val=11192.0, units='lbm')
         prob.model.set_input_defaults(
             Aircraft.CrewPayload.PASSENGER_SERVICE_MASS_PER_PASSENGER, val=5.0, units='lbm'
         )
@@ -302,8 +277,6 @@ class EquipMassTestCase4(unittest.TestCase):
         prob.model.set_input_defaults(Aircraft.Wing.AREA, val=1370.3, units='ft**2')
         prob.model.set_input_defaults(Aircraft.HorizontalTail.AREA, val=375.9, units='ft**2')
         prob.model.set_input_defaults(Aircraft.VerticalTail.AREA, val=469.3, units='ft**2')
-        prob.model.set_input_defaults(Aircraft.Fuselage.PRESSURE_DIFFERENTIAL, val=7.5, units='psi')
-        prob.model.set_input_defaults(Aircraft.Fuselage.AVG_DIAMETER, val=13.1, units='ft')
 
         setup_model_options(prob, options)
 
@@ -325,7 +298,7 @@ class EquipMassTestCase5smooth(unittest.TestCase):
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
             'equip',
-            EquipMass(),
+            EquipMassPartial(),
             promotes=['*'],
         )
 
@@ -340,11 +313,7 @@ class EquipMassTestCase5smooth(unittest.TestCase):
             Aircraft.Hydraulics.GEAR_MASS_COEFFICIENT, val=0.14, units='unitless'
         )
         self.prob.model.set_input_defaults(Aircraft.Avionics.MASS, val=1959.0, units='lbm')
-        self.prob.model.set_input_defaults(
-            Aircraft.AirConditioning.MASS_COEFFICIENT, val=1.65, units='unitless'
-        )
         self.prob.model.set_input_defaults(Aircraft.AntiIcing.MASS, val=551.0, units='lbm')
-        self.prob.model.set_input_defaults(Aircraft.Furnishings.MASS, val=11192.0, units='lbm')
         self.prob.model.set_input_defaults(
             Aircraft.CrewPayload.PASSENGER_SERVICE_MASS_PER_PASSENGER, val=5.0, units='lbm'
         )
@@ -368,10 +337,6 @@ class EquipMassTestCase5smooth(unittest.TestCase):
         self.prob.model.set_input_defaults(Aircraft.Wing.AREA, val=1370.3, units='ft**2')
         self.prob.model.set_input_defaults(Aircraft.HorizontalTail.AREA, val=375.9, units='ft**2')
         self.prob.model.set_input_defaults(Aircraft.VerticalTail.AREA, val=469.3, units='ft**2')
-        self.prob.model.set_input_defaults(
-            Aircraft.Fuselage.PRESSURE_DIFFERENTIAL, val=7.5, units='psi'
-        )
-        self.prob.model.set_input_defaults(Aircraft.Fuselage.AVG_DIAMETER, val=13.1, units='ft')
 
         setup_model_options(self.prob, options)
 
@@ -382,7 +347,7 @@ class EquipMassTestCase5smooth(unittest.TestCase):
 
         tol = 1e-4
 
-        assert_near_equal(self.prob[Aircraft.Design.FIXED_EQUIPMENT_MASS], 21089, tol)
+        assert_near_equal(self.prob['equip_mass_part'], 8573.19157631, tol)
 
         partial_data = self.prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=8e-12, rtol=1e-12)
@@ -398,7 +363,7 @@ class EquipMassTestCase6smooth(unittest.TestCase):
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
             'equip',
-            EquipMass(),
+            EquipMassPartial(),
             promotes=['*'],
         )
 
@@ -413,11 +378,7 @@ class EquipMassTestCase6smooth(unittest.TestCase):
             Aircraft.Hydraulics.GEAR_MASS_COEFFICIENT, val=0.14, units='unitless'
         )
         self.prob.model.set_input_defaults(Aircraft.Avionics.MASS, val=1959.0, units='lbm')
-        self.prob.model.set_input_defaults(
-            Aircraft.AirConditioning.MASS_COEFFICIENT, val=1.65, units='unitless'
-        )
         self.prob.model.set_input_defaults(Aircraft.AntiIcing.MASS, val=551.0, units='lbm')
-        self.prob.model.set_input_defaults(Aircraft.Furnishings.MASS, val=11192.0, units='lbm')
         self.prob.model.set_input_defaults(
             Aircraft.CrewPayload.PASSENGER_SERVICE_MASS_PER_PASSENGER, val=5.0, units='lbm'
         )
@@ -441,10 +402,6 @@ class EquipMassTestCase6smooth(unittest.TestCase):
         self.prob.model.set_input_defaults(Aircraft.Wing.AREA, val=1370.3, units='ft**2')
         self.prob.model.set_input_defaults(Aircraft.HorizontalTail.AREA, val=375.9, units='ft**2')
         self.prob.model.set_input_defaults(Aircraft.VerticalTail.AREA, val=469.3, units='ft**2')
-        self.prob.model.set_input_defaults(
-            Aircraft.Fuselage.PRESSURE_DIFFERENTIAL, val=7.5, units='psi'
-        )
-        self.prob.model.set_input_defaults(Aircraft.Fuselage.AVG_DIAMETER, val=13.1, units='ft')
 
         setup_model_options(self.prob, options)
 
@@ -456,7 +413,7 @@ class EquipMassTestCase6smooth(unittest.TestCase):
         tol = 1e-4
         # not actual GASP value
         assert_near_equal(
-            self.prob[Aircraft.Design.FIXED_EQUIPMENT_MASS], 23509, tol
+            self.prob['equip_mass_part'], 10992.96303693, tol
         )  # not actual GASP value
 
         partial_data = self.prob.check_partials(out_stream=None, method='cs')
@@ -474,7 +431,7 @@ class EquipMassTestCase7smooth(unittest.TestCase):
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
             'equip',
-            EquipMass(),
+            EquipMassPartial(),
             promotes=['*'],
         )
 
@@ -489,11 +446,7 @@ class EquipMassTestCase7smooth(unittest.TestCase):
             Aircraft.Hydraulics.GEAR_MASS_COEFFICIENT, val=0.14, units='unitless'
         )
         self.prob.model.set_input_defaults(Aircraft.Avionics.MASS, val=1959.0, units='lbm')
-        self.prob.model.set_input_defaults(
-            Aircraft.AirConditioning.MASS_COEFFICIENT, val=1.65, units='unitless'
-        )
         self.prob.model.set_input_defaults(Aircraft.AntiIcing.MASS, val=551.0, units='lbm')
-        self.prob.model.set_input_defaults(Aircraft.Furnishings.MASS, val=11192.0, units='lbm')
         self.prob.model.set_input_defaults(
             Aircraft.CrewPayload.PASSENGER_SERVICE_MASS_PER_PASSENGER, val=5.0, units='lbm'
         )
@@ -517,10 +470,6 @@ class EquipMassTestCase7smooth(unittest.TestCase):
         self.prob.model.set_input_defaults(Aircraft.Wing.AREA, val=1370.3, units='ft**2')
         self.prob.model.set_input_defaults(Aircraft.HorizontalTail.AREA, val=375.9, units='ft**2')
         self.prob.model.set_input_defaults(Aircraft.VerticalTail.AREA, val=469.3, units='ft**2')
-        self.prob.model.set_input_defaults(
-            Aircraft.Fuselage.PRESSURE_DIFFERENTIAL, val=7.5, units='psi'
-        )
-        self.prob.model.set_input_defaults(Aircraft.Fuselage.AVG_DIAMETER, val=13.1, units='ft')
 
         setup_model_options(self.prob, options)
 
@@ -532,7 +481,7 @@ class EquipMassTestCase7smooth(unittest.TestCase):
         tol = 1e-4
         # not actual GASP value
         assert_near_equal(
-            self.prob[Aircraft.Design.FIXED_EQUIPMENT_MASS], 23509, tol
+            self.prob['equip_mass_part'], 10992.96303693, tol
         )  # not actual GASP value
 
         partial_data = self.prob.check_partials(out_stream=None, method='cs')
@@ -556,7 +505,7 @@ class EquipMassTestCase8(unittest.TestCase):
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
             'equip',
-            EquipMass(),
+            EquipMassPartial(),
             promotes=['*'],
         )
 
@@ -571,11 +520,7 @@ class EquipMassTestCase8(unittest.TestCase):
             Aircraft.Hydraulics.GEAR_MASS_COEFFICIENT, val=0.14, units='unitless'
         )
         self.prob.model.set_input_defaults(Aircraft.Avionics.MASS, val=0.0, units='lbm')
-        self.prob.model.set_input_defaults(
-            Aircraft.AirConditioning.MASS_COEFFICIENT, val=1.65, units='unitless'
-        )
         self.prob.model.set_input_defaults(Aircraft.AntiIcing.MASS, val=0.0, units='lbm')
-        self.prob.model.set_input_defaults(Aircraft.Furnishings.MASS, val=0.0, units='lbm')
         self.prob.model.set_input_defaults(
             Aircraft.CrewPayload.PASSENGER_SERVICE_MASS_PER_PASSENGER, val=5.0, units='lbm'
         )
@@ -599,10 +544,6 @@ class EquipMassTestCase8(unittest.TestCase):
         self.prob.model.set_input_defaults(Aircraft.Wing.AREA, val=1370.3, units='ft**2')
         self.prob.model.set_input_defaults(Aircraft.HorizontalTail.AREA, val=375.9, units='ft**2')
         self.prob.model.set_input_defaults(Aircraft.VerticalTail.AREA, val=469.3, units='ft**2')
-        self.prob.model.set_input_defaults(
-            Aircraft.Fuselage.PRESSURE_DIFFERENTIAL, val=7.5, units='psi'
-        )
-        self.prob.model.set_input_defaults(Aircraft.Fuselage.AVG_DIAMETER, val=13.1, units='ft')
 
         setup_model_options(self.prob, options)
 
@@ -612,7 +553,7 @@ class EquipMassTestCase8(unittest.TestCase):
         self.prob.run_model()
 
         tol = 1e-7
-        assert_near_equal(self.prob[Aircraft.Design.FIXED_EQUIPMENT_MASS], 26856.68562484, tol)
+        assert_near_equal(self.prob['equip_mass_part'], 8410.62948115, tol)
 
         partial_data = self.prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=8e-12, rtol=1e-12)
@@ -636,7 +577,7 @@ class EquipMassTestCase9smooth(unittest.TestCase):
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
             'equip',
-            EquipMass(),
+            EquipMassPartial(),
             promotes=['*'],
         )
 
@@ -651,11 +592,7 @@ class EquipMassTestCase9smooth(unittest.TestCase):
             Aircraft.Hydraulics.GEAR_MASS_COEFFICIENT, val=0.14, units='unitless'
         )
         self.prob.model.set_input_defaults(Aircraft.Avionics.MASS, val=0.0, units='lbm')
-        self.prob.model.set_input_defaults(
-            Aircraft.AirConditioning.MASS_COEFFICIENT, val=1.65, units='unitless'
-        )
         self.prob.model.set_input_defaults(Aircraft.AntiIcing.MASS, val=0.0, units='lbm')
-        self.prob.model.set_input_defaults(Aircraft.Furnishings.MASS, val=0.0, units='lbm')
         self.prob.model.set_input_defaults(
             Aircraft.CrewPayload.PASSENGER_SERVICE_MASS_PER_PASSENGER, val=5.0, units='lbm'
         )
@@ -679,10 +616,6 @@ class EquipMassTestCase9smooth(unittest.TestCase):
         self.prob.model.set_input_defaults(Aircraft.Wing.AREA, val=1370.3, units='ft**2')
         self.prob.model.set_input_defaults(Aircraft.HorizontalTail.AREA, val=375.9, units='ft**2')
         self.prob.model.set_input_defaults(Aircraft.VerticalTail.AREA, val=469.3, units='ft**2')
-        self.prob.model.set_input_defaults(
-            Aircraft.Fuselage.PRESSURE_DIFFERENTIAL, val=7.5, units='psi'
-        )
-        self.prob.model.set_input_defaults(Aircraft.Fuselage.AVG_DIAMETER, val=13.1, units='ft')
 
         setup_model_options(self.prob, options)
 
@@ -692,7 +625,7 @@ class EquipMassTestCase9smooth(unittest.TestCase):
         self.prob.run_model()
 
         tol = 1e-7
-        assert_near_equal(self.prob[Aircraft.Design.FIXED_EQUIPMENT_MASS], 26856.686, tol)
+        assert_near_equal(self.prob['equip_mass_part'], 8410.62948115, tol)
 
         partial_data = self.prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=8e-12, rtol=1e-12)
@@ -733,7 +666,7 @@ class ACMassTestCase1(unittest.TestCase):
         self.prob.run_model()
 
         tol = 1e-7
-        assert_near_equal(self.prob['air_conditioning_mass'], 1324.0561, tol)
+        assert_near_equal(self.prob[Aircraft.AirConditioning.MASS], 1324.0561, tol)
 
         partial_data = self.prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=8e-12, rtol=1e-12)
@@ -780,6 +713,175 @@ class ACMassTestCase2(unittest.TestCase):
 
         self.prob.setup(check=False, force_alloc_complex=True)
         self.prob.run_model()
+
+        partial_data = self.prob.check_partials(out_stream=None, method='cs')
+        assert_check_partials(partial_data, atol=8e-12, rtol=1e-12)
+
+
+class FurnishingMassTestCase1(unittest.TestCase):
+    """Created based on EquipMassTestCase1"""
+
+    def setUp(self):
+        options = get_option_defaults()
+        options.set_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS, val=180, units='unitless')
+
+        self.prob = om.Problem()
+        self.prob.model.add_subsystem(
+            'furnishing',
+            FurnishingMass(),
+            promotes=['*'],
+        )
+
+        self.prob.model.set_input_defaults(Aircraft.Furnishings.MASS, val=11192.0, units='lbm')
+        self.prob.model.set_input_defaults(Mission.Design.GROSS_MASS, val=175400, units='lbm')
+        self.prob.model.set_input_defaults(Aircraft.Fuselage.AVG_DIAMETER, val=13.1, units='ft')
+
+        setup_model_options(self.prob, options)
+
+        self.prob.setup(check=False, force_alloc_complex=True)
+
+    def test_case1(self):
+        self.prob.run_model()
+
+        tol = 1e-7
+        assert_near_equal(self.prob['furnishing_mass'], 11192.0, tol)
+
+        partial_data = self.prob.check_partials(out_stream=None, method='cs')
+        assert_check_partials(partial_data, atol=8e-12, rtol=1e-12)
+
+
+class FurnishingMassTestCase2(unittest.TestCase):
+    """Created based on EquipMassTestCase1"""
+
+    def setUp(self):
+        options = get_option_defaults()
+        options.set_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS, val=180, units='unitless')
+
+        self.prob = om.Problem()
+        self.prob.model.add_subsystem(
+            'furnishing',
+            FurnishingMass(),
+            promotes=['*'],
+        )
+
+        self.prob.model.set_input_defaults(Aircraft.Furnishings.MASS, val=0.0, units='lbm')
+        self.prob.model.set_input_defaults(Mission.Design.GROSS_MASS, val=175400, units='lbm')
+        self.prob.model.set_input_defaults(Aircraft.Fuselage.AVG_DIAMETER, val=13.1, units='ft')
+
+        setup_model_options(self.prob, options)
+
+        self.prob.setup(check=False, force_alloc_complex=True)
+
+    def test_case1(self):
+        self.prob.run_model()
+
+        tol = 1e-7
+        assert_near_equal(self.prob['furnishing_mass'], 17122.0, tol)
+
+        partial_data = self.prob.check_partials(out_stream=None, method='cs')
+        assert_check_partials(partial_data, atol=8e-12, rtol=1e-12)
+
+
+class EquipMassSumTestCase1(unittest.TestCase):
+    """
+    Created based on EquipMassTestCase1
+    """
+
+    def setUp(self):
+        self.prob = om.Problem()
+        self.prob.model.add_subsystem(
+            'sum',
+            EquipMassSum(),
+            promotes=['*'],
+        )
+
+        self.prob.model.set_input_defaults('equip_mass_part', val=8573.19157631, units='lbm')
+        self.prob.model.set_input_defaults(
+            Aircraft.AirConditioning.MASS, val=1324.0561, units='lbm'
+        )
+        self.prob.model.set_input_defaults('furnishing_mass', val=11192.0, units='lbm')
+
+        self.prob.setup(check=False, force_alloc_complex=True)
+
+    def test_case1(self):
+        self.prob.run_model()
+
+        tol = 1e-7
+        assert_near_equal(self.prob[Aircraft.Design.FIXED_EQUIPMENT_MASS], 21089.24767631, tol)
+
+        partial_data = self.prob.check_partials(out_stream=None, method='cs')
+        assert_check_partials(partial_data, atol=8e-12, rtol=1e-12)
+
+
+class EquipMassGroupTest(unittest.TestCase):
+    """this is the large single aisle 1 V3 test case"""
+
+    def setUp(self):
+        options = get_option_defaults()
+        options.set_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS, val=180, units='unitless')
+        options.set_val(Aircraft.LandingGear.FIXED_GEAR, val=False, units='unitless')
+
+        self.prob = om.Problem()
+        self.prob.model.add_subsystem(
+            'group',
+            EquipMassGroup(),
+            promotes=['*'],
+        )
+
+        self.prob.model.set_input_defaults(Aircraft.APU.MASS, val=928.0, units='lbm')
+        self.prob.model.set_input_defaults(
+            Aircraft.Instruments.MASS_COEFFICIENT, val=0.0736, units='unitless'
+        )
+        self.prob.model.set_input_defaults(
+            Aircraft.Hydraulics.FLIGHT_CONTROL_MASS_COEFFICIENT, val=0.112, units='unitless'
+        )
+        self.prob.model.set_input_defaults(
+            Aircraft.Hydraulics.GEAR_MASS_COEFFICIENT, val=0.14, units='unitless'
+        )
+        self.prob.model.set_input_defaults(Aircraft.Avionics.MASS, val=1959.0, units='lbm')
+        self.prob.model.set_input_defaults(Aircraft.AntiIcing.MASS, val=551.0, units='lbm')
+        self.prob.model.set_input_defaults(
+            Aircraft.CrewPayload.PASSENGER_SERVICE_MASS_PER_PASSENGER, val=5.0, units='lbm'
+        )
+        self.prob.model.set_input_defaults(
+            Aircraft.CrewPayload.WATER_MASS_PER_OCCUPANT, val=3.0, units='lbm'
+        )
+        self.prob.model.set_input_defaults(
+            Aircraft.Design.EMERGENCY_EQUIPMENT_MASS, val=50.0, units='lbm'
+        )
+        self.prob.model.set_input_defaults(
+            Aircraft.CrewPayload.CATERING_ITEMS_MASS_PER_PASSENGER, val=7.6, units='lbm'
+        )
+        self.prob.model.set_input_defaults(
+            Aircraft.Fuel.UNUSABLE_FUEL_MASS_COEFFICIENT, val=12.0, units='unitless'
+        )
+        self.prob.model.set_input_defaults(Mission.Design.GROSS_MASS, val=175400, units='lbm')
+        self.prob.model.set_input_defaults(Aircraft.Fuselage.LENGTH, val=129.4, units='ft')
+        self.prob.model.set_input_defaults(Aircraft.Wing.SPAN, val=117.8, units='ft')
+        self.prob.model.set_input_defaults(Aircraft.LandingGear.TOTAL_MASS, val=7511, units='lbm')
+        self.prob.model.set_input_defaults(Aircraft.Controls.TOTAL_MASS, val=3895.0, units='lbm')
+        self.prob.model.set_input_defaults(Aircraft.Wing.AREA, val=1370.3, units='ft**2')
+        self.prob.model.set_input_defaults(Aircraft.HorizontalTail.AREA, val=375.9, units='ft**2')
+        self.prob.model.set_input_defaults(Aircraft.VerticalTail.AREA, val=469.3, units='ft**2')
+
+        self.prob.model.set_input_defaults(
+            Aircraft.AirConditioning.MASS_COEFFICIENT, val=1.65, units='unitless'
+        )
+        self.prob.model.set_input_defaults(
+            Aircraft.Fuselage.PRESSURE_DIFFERENTIAL, val=7.5, units='psi'
+        )
+        self.prob.model.set_input_defaults(Aircraft.Fuselage.AVG_DIAMETER, val=13.1, units='ft')
+        self.prob.model.set_input_defaults(Aircraft.Furnishings.MASS, val=11192.0, units='lbm')
+
+        setup_model_options(self.prob, options)
+
+        self.prob.setup(check=False, force_alloc_complex=True)
+
+    def test_case1(self):
+        self.prob.run_model()
+
+        tol = 1e-7
+        assert_near_equal(self.prob[Aircraft.Design.FIXED_EQUIPMENT_MASS], 21089.248, tol)
 
         partial_data = self.prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=8e-12, rtol=1e-12)
@@ -1134,6 +1236,6 @@ class EquipAndUsefulMassGroupTest(unittest.TestCase):
 
 if __name__ == '__main__':
     # unittest.main()
-    test = ACMassTestCase2()
+    test = ACMassTestCase1()
     test.setUp()
     test.test_case1()
