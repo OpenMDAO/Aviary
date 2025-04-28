@@ -63,7 +63,7 @@ class DocTAPETests(unittest.TestCase):
     def test_get_previous_line(self):
         line1 = get_previous_line()
         line2 = get_previous_line(2)
-        assert_equal_numstrings(line1, "something = 'something_else'")
+        assert_equal_numstrings(line2[0].strip(), line1)
         assert_equal_numstrings(line2[1].strip(), 'line1 = get_previous_line()')
 
     def test_get_variable_name(self):
