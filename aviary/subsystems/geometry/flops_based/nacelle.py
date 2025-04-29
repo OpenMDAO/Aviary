@@ -1,7 +1,7 @@
 import numpy as np
 import openmdao.api as om
 
-from aviary.variable_info.functions import add_aviary_input, add_aviary_output, add_aviary_option
+from aviary.variable_info.functions import add_aviary_input, add_aviary_option, add_aviary_output
 from aviary.variable_info.variables import Aircraft
 
 
@@ -9,9 +9,7 @@ from aviary.variable_info.variables import Aircraft
 #      Aircraft.Nacelle.AVG_LENGTH = 0.07 * sqrt(Aircraft.ENGINE.SCALED_SLS_THRUST)
 #      Aircraft.Nacelle.AVG_DIAMETER = 0.04 * sqrt(Aircraft.ENGINE.SCALED_SLS_THRUST)
 class Nacelles(om.ExplicitComponent):
-    """
-    Calculate nacelle wetted area and total wetted area
-    """
+    """Calculate nacelle wetted area and total wetted area."""
 
     def initialize(self):
         add_aviary_option(self, Aircraft.Engine.NUM_ENGINES)

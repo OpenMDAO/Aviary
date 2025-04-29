@@ -1,6 +1,4 @@
-"""
-Unit test cases for class NamedValues.
-"""
+"""Unit test cases for class NamedValues."""
 
 import unittest
 
@@ -9,9 +7,7 @@ from aviary.variable_info.variables import Aircraft, Mission
 
 
 class NamedValuesTest(unittest.TestCase):
-    """
-    Test NamedValues class
-    """
+    """Test NamedValues class."""
 
     def test_init(self):
         d = NamedValues()

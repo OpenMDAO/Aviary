@@ -8,7 +8,6 @@ from copy import deepcopy
 import aviary.api as av
 from aviary.examples.external_subsystems.custom_aero.custom_aero_builder import CustomAeroBuilder
 
-
 phase_info = deepcopy(av.default_height_energy_phase_info)
 
 # Just do cruise in this example.

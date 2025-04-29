@@ -1,14 +1,14 @@
 import numpy as np
 import openmdao.api as om
-from aviary.subsystems.mass.mass_to_weight import MassToWeight
 
-from aviary.variable_info.enums import AlphaModes, AnalysisScheme, SpeedType
-from aviary.mission.gasp_based.ode.two_dof_ode import TwoDOFODE
 from aviary.mission.gasp_based.ode.flight_path_eom import FlightPathEOM
 from aviary.mission.gasp_based.ode.params import ParamPort
-from aviary.subsystems.propulsion.propulsion_builder import PropulsionBuilderBase
-from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 from aviary.mission.gasp_based.ode.time_integration_base_classes import add_SGM_required_inputs
+from aviary.mission.gasp_based.ode.two_dof_ode import TwoDOFODE
+from aviary.subsystems.mass.mass_to_weight import MassToWeight
+from aviary.subsystems.propulsion.propulsion_builder import PropulsionBuilderBase
+from aviary.variable_info.enums import AlphaModes, AnalysisScheme, SpeedType
+from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 
 
 class FlightPathODE(TwoDOFODE):

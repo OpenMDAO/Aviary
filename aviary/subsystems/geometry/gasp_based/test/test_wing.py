@@ -4,13 +4,12 @@ import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 
 from aviary.subsystems.geometry.gasp_based.wing import (
+    ExposedWing,
     WingFold,
     WingGroup,
     WingParameters,
     WingSize,
-    ExposedWing,
 )
-from aviary.variable_info.enums import AircraftTypes
 from aviary.variable_info.functions import setup_model_options
 from aviary.variable_info.options import get_option_defaults
 from aviary.variable_info.variables import Aircraft, Mission
@@ -41,9 +40,7 @@ class WingSizeTestCase1(
 
 
 class WingSizeTestCase2(unittest.TestCase):
-    """
-    Test mass-weight conversion
-    """
+    """Test mass-weight conversion."""
 
     def setUp(self):
         import aviary.subsystems.geometry.gasp_based.wing as wing
@@ -309,7 +306,7 @@ class WingGroupTestCase1(
 class WingGroupTestCase2(unittest.TestCase):
     """
     Wing with both folds and struts which has fold dimensional location and strut dimensional location specified
-    with the fold at the strut connection
+    with the fold at the strut connection.
     """
 
     def setUp(self):
@@ -398,9 +395,7 @@ class WingGroupTestCase2(unittest.TestCase):
 
 
 class WingGroupTestCase3(unittest.TestCase):
-    """
-    Wing with folds which has dimensional location specified
-    """
+    """Wing with folds which has dimensional location specified."""
 
     def setUp(self):
         options = get_option_defaults()
@@ -476,9 +471,7 @@ class WingGroupTestCase3(unittest.TestCase):
 
 
 class WingGroupTestCase4(unittest.TestCase):
-    """
-    Wing with both folds and struts which has fold dimensional location and strut dimensional location specified
-    """
+    """Wing with both folds and struts which has fold dimensional location and strut dimensional location specified."""
 
     def setUp(self):
         options = get_option_defaults()
@@ -543,9 +536,7 @@ class WingGroupTestCase4(unittest.TestCase):
 
 
 class WingGroupTestCase5(unittest.TestCase):
-    """
-    Wing with struts which has dimentional location specified
-    """
+    """Wing with struts which has dimentional location specified."""
 
     def setUp(self):
         options = get_option_defaults()
@@ -618,7 +609,7 @@ class WingGroupTestCase5(unittest.TestCase):
 
 
 class BWBExposedWingTestCase(unittest.TestCase):
-    """BWB case"""
+    """BWB case."""
 
     def setUp(self):
         options = get_option_defaults()
@@ -658,7 +649,7 @@ class BWBExposedWingTestCase(unittest.TestCase):
 
 
 class ExposedWingTestCase(unittest.TestCase):
-    """Tube + Wing case"""
+    """Tube + Wing case."""
 
     def setUp(self):
         options = get_option_defaults()
@@ -687,7 +678,7 @@ class ExposedWingTestCase(unittest.TestCase):
         self.prob.setup(check=False, force_alloc_complex=True)
 
     def test_case_middle(self):
-        """test in the range (epsilon, 1.0 - epsilon)"""
+        """Test in the range (epsilon, 1.0 - epsilon)."""
         self.prob.set_val(Aircraft.Wing.VERTICAL_MOUNT_LOCATION, 0.5, units='unitless')
         self.prob.run_model()
         tol = 1e-7
@@ -698,8 +689,7 @@ class ExposedWingTestCase(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e-11, rtol=5e-11)
 
     def test_case_left(self):
-        """test in the range (0.0, epsilon)"""
-
+        """Test in the range (0.0, epsilon)."""
         self.prob.set_val(Aircraft.Wing.VERTICAL_MOUNT_LOCATION, 0.049, units='unitless')
         self.prob.run_model()
         tol = 1e-7
@@ -710,7 +700,7 @@ class ExposedWingTestCase(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e-11, rtol=5e-11)
 
     def test_case_right(self):
-        """test in the range (1.0 - epsilon, 1.0)"""
+        """Test in the range (1.0 - epsilon, 1.0)."""
         self.prob.set_val(Aircraft.Wing.VERTICAL_MOUNT_LOCATION, 0.951, units='unitless')
         self.prob.run_model()
         tol = 1e-7

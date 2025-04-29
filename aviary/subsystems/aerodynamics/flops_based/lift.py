@@ -9,9 +9,7 @@ grav_metric = constants.GRAV_METRIC_FLOPS
 
 
 class SimpleLift(om.ExplicitComponent):
-    """
-    Calculate lift as a function of wing area, dynamic pressure, and lift coefficient.
-    """
+    """Calculate lift as a function of wing area, dynamic pressure, and lift coefficient."""
 
     def initialize(self):
         self.options.declare('num_nodes', types=int)

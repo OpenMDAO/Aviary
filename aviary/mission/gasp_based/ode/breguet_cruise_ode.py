@@ -1,11 +1,11 @@
 import numpy as np
 import openmdao.api as om
 
-from aviary.mission.gasp_based.ode.two_dof_ode import TwoDOFODE
+from aviary.mission.gasp_based.ode.breguet_cruise_eom import E_RangeComp, RangeComp
 from aviary.mission.gasp_based.ode.params import ParamPort
-from aviary.mission.gasp_based.ode.breguet_cruise_eom import RangeComp, E_RangeComp
-from aviary.mission.ode.specific_energy_rate import SpecificEnergyRate
+from aviary.mission.gasp_based.ode.two_dof_ode import TwoDOFODE
 from aviary.mission.ode.altitude_rate import AltitudeRate
+from aviary.mission.ode.specific_energy_rate import SpecificEnergyRate
 from aviary.subsystems.atmosphere.atmosphere import Atmosphere
 from aviary.subsystems.mass.mass_to_weight import MassToWeight
 from aviary.subsystems.propulsion.propulsion_builder import PropulsionBuilderBase
@@ -14,7 +14,7 @@ from aviary.variable_info.variables import Dynamic
 
 
 class BreguetCruiseODESolution(TwoDOFODE):
-    """The GASP based cruise ODE"""
+    """The GASP based cruise ODE."""
 
     def setup(self):
         nn = self.options['num_nodes']
@@ -153,7 +153,7 @@ class BreguetCruiseODESolution(TwoDOFODE):
 
 
 class E_BreguetCruiseODESolution(TwoDOFODE):
-    """The GASP based cruise ODE by electrical aircraft"""
+    """The GASP based cruise ODE by electrical aircraft."""
 
     def setup(self):
         nn = self.options['num_nodes']

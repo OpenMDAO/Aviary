@@ -57,9 +57,7 @@ class RotationEOMTestCase(unittest.TestCase):
 
 
 class RotationEOMTestCase2(unittest.TestCase):
-    """
-    Test mass-weight conversion
-    """
+    """Test mass-weight conversion."""
 
     def setUp(self):
         import aviary.mission.gasp_based.ode.rotation_eom as rotation

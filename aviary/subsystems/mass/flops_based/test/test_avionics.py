@@ -16,9 +16,7 @@ from aviary.variable_info.variables import Aircraft, Mission
 
 
 class TransportAvionicsMassTest(unittest.TestCase):
-    """
-    Tests transport/GA avionics mass calculation.
-    """
+    """Tests transport/GA avionics mass calculation."""
 
     def setUp(self):
         self.prob = om.Problem()
@@ -56,9 +54,7 @@ class TransportAvionicsMassTest(unittest.TestCase):
 
 
 class TransportAvionicsMassTest2(unittest.TestCase):
-    """
-    Test mass-weight conversion
-    """
+    """Test mass-weight conversion."""
 
     def setUp(self):
         import aviary.subsystems.mass.flops_based.avionics as avionics

@@ -20,9 +20,7 @@ from aviary.variable_info.variables import Aircraft, Mission
 
 
 class TransportHydraulicsGroupMassTest(unittest.TestCase):
-    """
-    Tests transport/GA hydraulics mass calculation.
-    """
+    """Tests transport/GA hydraulics mass calculation."""
 
     def setUp(self):
         self.prob = om.Problem()
@@ -72,9 +70,7 @@ class TransportHydraulicsGroupMassTest(unittest.TestCase):
 
 
 class TransportHydraulicsGroupMassTest2(unittest.TestCase):
-    """
-    Test mass-weight conversion
-    """
+    """Test mass-weight conversion."""
 
     def setUp(self):
         import aviary.subsystems.mass.flops_based.hydraulics as hydraulics
@@ -117,9 +113,7 @@ class TransportHydraulicsGroupMassTest2(unittest.TestCase):
 
 
 class AltHydraulicsGroupMassTest(unittest.TestCase):
-    """
-    Tests alternate hydraulics mass calculation.
-    """
+    """Tests alternate hydraulics mass calculation."""
 
     def setUp(self):
         self.prob = om.Problem()
@@ -153,9 +147,7 @@ class AltHydraulicsGroupMassTest(unittest.TestCase):
 
 
 class AltHydraulicsGroupMassTest2(unittest.TestCase):
-    """
-    Test mass-weight conversion
-    """
+    """Test mass-weight conversion."""
 
     def setUp(self):
         import aviary.subsystems.mass.flops_based.hydraulics as hydraulics

@@ -33,21 +33,20 @@ from aviary.mission.flops_based.phases.detailed_takeoff_phases import (
     TakeoffTrajectory as _TakeoffTrajectory,
 )
 from aviary.mission.flops_based.phases.detailed_takeoff_phases import _init_initial_guess_meta_data
-from aviary.mission.phase_builder_base import PhaseBuilderBase
 from aviary.mission.initial_guess_builders import (
     InitialGuessControl,
     InitialGuessParameter,
     InitialGuessPolynomialControl,
     InitialGuessState,
-    InitialGuessIntegrationVariable,
 )
+from aviary.mission.phase_builder_base import PhaseBuilderBase
 from aviary.subsystems.aerodynamics.aerodynamics_builder import CoreAerodynamicsBuilder
 from aviary.utils.aviary_options_dict import AviaryOptionsDictionary
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.enums import LegacyCode
 from aviary.variable_info.functions import setup_trajectory_params
-from aviary.variable_info.variables import Dynamic, Mission
 from aviary.variable_info.variable_meta_data import _MetaData as BaseMetaData
+from aviary.variable_info.variables import Dynamic, Mission
 
 
 class LandingApproachToMicP3Options(AviaryOptionsDictionary):
@@ -309,17 +308,13 @@ class LandingApproachToMicP3(PhaseBuilderBase):
         return phase
 
     def make_default_transcription(self):
-        """
-        Return a transcription object to be used by default in build_phase.
-        """
+        """Return a transcription object to be used by default in build_phase."""
         transcription = dm.Radau(num_segments=5, order=3, compressed=True)
 
         return transcription
 
     def _extra_ode_init_kwargs(self):
-        """
-        Return extra kwargs required for initializing the ODE.
-        """
+        """Return extra kwargs required for initializing the ODE."""
         return {'climbing': True, 'friction_key': Mission.Takeoff.ROLLING_FRICTION_COEFFICIENT}
 
 
@@ -628,17 +623,13 @@ class LandingObstacleToFlare(PhaseBuilderBase):
         return phase
 
     def make_default_transcription(self):
-        """
-        Return a transcription object to be used by default in build_phase.
-        """
+        """Return a transcription object to be used by default in build_phase."""
         transcription = dm.Radau(num_segments=5, order=3, compressed=True)
 
         return transcription
 
     def _extra_ode_init_kwargs(self):
-        """
-        Return extra kwargs required for initializing the ODE.
-        """
+        """Return extra kwargs required for initializing the ODE."""
         return {'climbing': True, 'friction_key': Mission.Takeoff.ROLLING_FRICTION_COEFFICIENT}
 
 
@@ -907,17 +898,13 @@ class LandingFlareToTouchdown(PhaseBuilderBase):
         return phase
 
     def make_default_transcription(self):
-        """
-        Return a transcription object to be used by default in build_phase.
-        """
+        """Return a transcription object to be used by default in build_phase."""
         transcription = dm.Radau(num_segments=5, order=3, compressed=True)
 
         return transcription
 
     def _extra_ode_init_kwargs(self):
-        """
-        Return extra kwargs required for initializing the ODE.
-        """
+        """Return extra kwargs required for initializing the ODE."""
         return {}
 
 
@@ -1138,17 +1125,13 @@ class LandingTouchdownToNoseDown(PhaseBuilderBase):
         return phase
 
     def make_default_transcription(self):
-        """
-        Return a transcription object to be used by default in build_phase.
-        """
+        """Return a transcription object to be used by default in build_phase."""
         transcription = dm.Radau(num_segments=3, order=3, compressed=True)
 
         return transcription
 
     def _extra_ode_init_kwargs(self):
-        """
-        Return extra kwargs required for initializing the ODE.
-        """
+        """Return extra kwargs required for initializing the ODE."""
         return {'climbing': False, 'friction_key': Mission.Takeoff.ROLLING_FRICTION_COEFFICIENT}
 
 
@@ -1339,17 +1322,13 @@ class LandingNoseDownToStop(PhaseBuilderBase):
         return phase
 
     def make_default_transcription(self):
-        """
-        Return a transcription object to be used by default in build_phase.
-        """
+        """Return a transcription object to be used by default in build_phase."""
         transcription = dm.Radau(num_segments=3, order=3, compressed=True)
 
         return transcription
 
     def _extra_ode_init_kwargs(self):
-        """
-        Return extra kwargs required for initializing the ODE.
-        """
+        """Return extra kwargs required for initializing the ODE."""
         return {'climbing': False, 'friction_key': Mission.Takeoff.BRAKING_FRICTION_COEFFICIENT}
 
 
@@ -1387,9 +1366,7 @@ class LandingTrajectory:
         self._traj = None
 
     def get_phase_names(self):
-        """
-        Return a list of base names for available phases.
-        """
+        """Return a list of base names for available phases."""
         keys = list(self._phases)
 
         return keys
@@ -1410,7 +1387,7 @@ class LandingTrajectory:
     def set_approach_to_mic_p3(self, phase_builder: PhaseBuilderBase):
         """
         Assign a phase builder for moving from descent to the mic location P3. This phase
-        is required for acoustic calculations
+        is required for acoustic calculations.
         """
         self._approach_to_mic_p3 = phase_builder
 
@@ -1418,7 +1395,7 @@ class LandingTrajectory:
         """
         Assign a phase builder for moving from the mic location P3 to the start of the
         runway, just above the required clearance height. This phase is required for
-        acoustic calculations
+        acoustic calculations.
         """
         self._mic_p3_to_obstacle = phase_builder
 
@@ -1438,9 +1415,7 @@ class LandingTrajectory:
         self._flare_to_touchdown = phase_builder
 
     def set_touchdown_to_nose_down(self, phase_builder: PhaseBuilderBase):
-        """
-        Assign a phase builder for rotating the nose down after touchdown.
-        """
+        """Assign a phase builder for rotating the nose down after touchdown."""
         self._touchdown_to_nose_down = phase_builder
 
     def set_nose_down_to_stop(self, phase_builder: PhaseBuilderBase):

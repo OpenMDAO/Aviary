@@ -47,27 +47,25 @@ import dymos as dm
 import openmdao.api as om
 
 from aviary.mission.flops_based.ode.takeoff_ode import TakeoffODE
-from aviary.mission.phase_builder_base import PhaseBuilderBase
 from aviary.mission.initial_guess_builders import (
     InitialGuessControl,
+    InitialGuessIntegrationVariable,
     InitialGuessParameter,
     InitialGuessPolynomialControl,
     InitialGuessState,
-    InitialGuessIntegrationVariable,
 )
+from aviary.mission.phase_builder_base import PhaseBuilderBase
 from aviary.subsystems.aerodynamics.aerodynamics_builder import CoreAerodynamicsBuilder
 from aviary.utils.aviary_options_dict import AviaryOptionsDictionary
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.enums import LegacyCode
 from aviary.variable_info.functions import setup_trajectory_params
-from aviary.variable_info.variables import Dynamic, Mission
 from aviary.variable_info.variable_meta_data import _MetaData as BaseMetaData
+from aviary.variable_info.variables import Dynamic, Mission
 
 
 def _init_initial_guess_meta_data(cls: PhaseBuilderBase):
-    """
-    Create default initial guess meta data preset with common items.
-    """
+    """Create default initial guess meta data preset with common items."""
     cls._initial_guesses_meta_data_ = {}
 
     cls._add_initial_guess_meta_data(
@@ -264,17 +262,13 @@ class TakeoffBrakeReleaseToDecisionSpeed(PhaseBuilderBase):
         return phase
 
     def make_default_transcription(self):
-        """
-        Return a transcription object to be used by default in build_phase.
-        """
+        """Return a transcription object to be used by default in build_phase."""
         transcription = dm.Radau(num_segments=3, order=3, compressed=True)
 
         return transcription
 
     def _extra_ode_init_kwargs(self):
-        """
-        Return extra kwargs required for initializing the ODE.
-        """
+        """Return extra kwargs required for initializing the ODE."""
         return {'climbing': False, 'friction_key': Mission.Takeoff.ROLLING_FRICTION_COEFFICIENT}
 
 
@@ -475,17 +469,13 @@ class TakeoffDecisionSpeedToRotate(PhaseBuilderBase):
         return phase
 
     def make_default_transcription(self):
-        """
-        Return a transcription object to be used by default in build_phase.
-        """
+        """Return a transcription object to be used by default in build_phase."""
         transcription = dm.Radau(num_segments=3, order=3, compressed=True)
 
         return transcription
 
     def _extra_ode_init_kwargs(self):
-        """
-        Return extra kwargs required for initializing the ODE.
-        """
+        """Return extra kwargs required for initializing the ODE."""
         return {'climbing': False, 'friction_key': Mission.Takeoff.ROLLING_FRICTION_COEFFICIENT}
 
 
@@ -818,17 +808,13 @@ class TakeoffRotateToLiftoff(PhaseBuilderBase):
         return phase
 
     def make_default_transcription(self):
-        """
-        Return a transcription object to be used by default in build_phase.
-        """
+        """Return a transcription object to be used by default in build_phase."""
         transcription = dm.Radau(num_segments=3, order=3, compressed=True)
 
         return transcription
 
     def _extra_ode_init_kwargs(self):
-        """
-        Return extra kwargs required for initializing the ODE.
-        """
+        """Return extra kwargs required for initializing the ODE."""
         return {'climbing': False, 'friction_key': Mission.Takeoff.ROLLING_FRICTION_COEFFICIENT}
 
 
@@ -1123,17 +1109,13 @@ class TakeoffLiftoffToObstacle(PhaseBuilderBase):
         return phase
 
     def make_default_transcription(self):
-        """
-        Return a transcription object to be used by default in build_phase.
-        """
+        """Return a transcription object to be used by default in build_phase."""
         transcription = dm.Radau(num_segments=5, order=3, compressed=True)
 
         return transcription
 
     def _extra_ode_init_kwargs(self):
-        """
-        Return extra kwargs required for initializing the ODE.
-        """
+        """Return extra kwargs required for initializing the ODE."""
         return {'climbing': True, 'friction_key': Mission.Takeoff.ROLLING_FRICTION_COEFFICIENT}
 
 
@@ -1430,18 +1412,14 @@ class TakeoffObstacleToMicP2(PhaseBuilderBase):
         return phase
 
     def make_default_transcription(self):
-        """
-        Return a transcription object to be used by default in build_phase.
-        """
+        """Return a transcription object to be used by default in build_phase."""
         num_segments_climb = 7
         transcription = dm.Radau(num_segments=num_segments_climb, order=3, compressed=True)
 
         return transcription
 
     def _extra_ode_init_kwargs(self):
-        """
-        Return extra kwargs required for initializing the ODE.
-        """
+        """Return extra kwargs required for initializing the ODE."""
         return {'climbing': True, 'friction_key': Mission.Takeoff.ROLLING_FRICTION_COEFFICIENT}
 
 
@@ -1738,18 +1716,14 @@ class TakeoffMicP2ToEngineCutback(PhaseBuilderBase):
         return phase
 
     def make_default_transcription(self):
-        """
-        Return a transcription object to be used by default in build_phase.
-        """
+        """Return a transcription object to be used by default in build_phase."""
         num_segments_climb = 7
         transcription = dm.Radau(num_segments=num_segments_climb, order=3, compressed=True)
 
         return transcription
 
     def _extra_ode_init_kwargs(self):
-        """
-        Return extra kwargs required for initializing the ODE.
-        """
+        """Return extra kwargs required for initializing the ODE."""
         return {'climbing': True, 'friction_key': Mission.Takeoff.ROLLING_FRICTION_COEFFICIENT}
 
 
@@ -2010,18 +1984,14 @@ class TakeoffEngineCutback(PhaseBuilderBase):
         return phase
 
     def make_default_transcription(self):
-        """
-        Return a transcription object to be used by default in build_phase.
-        """
+        """Return a transcription object to be used by default in build_phase."""
         num_segments_climb = 7
         transcription = dm.Radau(num_segments=num_segments_climb, order=3, compressed=True)
 
         return transcription
 
     def _extra_ode_init_kwargs(self):
-        """
-        Return extra kwargs required for initializing the ODE.
-        """
+        """Return extra kwargs required for initializing the ODE."""
         return {'climbing': True, 'friction_key': Mission.Takeoff.ROLLING_FRICTION_COEFFICIENT}
 
 
@@ -2314,18 +2284,14 @@ class TakeoffEngineCutbackToMicP1(PhaseBuilderBase):
         return phase
 
     def make_default_transcription(self):
-        """
-        Return a transcription object to be used by default in build_phase.
-        """
+        """Return a transcription object to be used by default in build_phase."""
         num_segments_climb = 7
         transcription = dm.Radau(num_segments=num_segments_climb, order=3, compressed=True)
 
         return transcription
 
     def _extra_ode_init_kwargs(self):
-        """
-        Return extra kwargs required for initializing the ODE.
-        """
+        """Return extra kwargs required for initializing the ODE."""
         return {'climbing': True, 'friction_key': Mission.Takeoff.ROLLING_FRICTION_COEFFICIENT}
 
 
@@ -2618,18 +2584,14 @@ class TakeoffMicP1ToClimb(PhaseBuilderBase):
         return phase
 
     def make_default_transcription(self):
-        """
-        Return a transcription object to be used by default in build_phase.
-        """
+        """Return a transcription object to be used by default in build_phase."""
         num_segments_climb = 7
         transcription = dm.Radau(num_segments=num_segments_climb, order=3, compressed=True)
 
         return transcription
 
     def _extra_ode_init_kwargs(self):
-        """
-        Return extra kwargs required for initializing the ODE.
-        """
+        """Return extra kwargs required for initializing the ODE."""
         return {'climbing': True, 'friction_key': Mission.Takeoff.ROLLING_FRICTION_COEFFICIENT}
 
 
@@ -2820,17 +2782,13 @@ class TakeoffBrakeToAbort(PhaseBuilderBase):
         return phase
 
     def make_default_transcription(self):
-        """
-        Return a transcription object to be used by default in build_phase.
-        """
+        """Return a transcription object to be used by default in build_phase."""
         transcription = dm.Radau(num_segments=3, order=3, compressed=True)
 
         return transcription
 
     def _extra_ode_init_kwargs(self):
-        """
-        Return extra kwargs required for initializing the ODE.
-        """
+        """Return extra kwargs required for initializing the ODE."""
         return {'climbing': False, 'friction_key': Mission.Takeoff.BRAKING_FRICTION_COEFFICIENT}
 
 
@@ -2873,9 +2831,7 @@ class TakeoffTrajectory:
         self._traj = None
 
     def get_phase_names(self):
-        """
-        Return a list of base names for available phases.
-        """
+        """Return a list of base names for available phases."""
         keys = list(self._phases)
 
         return keys

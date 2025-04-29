@@ -2,17 +2,13 @@ import numpy as np
 import openmdao.api as om
 
 from aviary.constants import RHO_SEA_LEVEL_ENGLISH
-
+from aviary.mission.gasp_based.ode.unsteady_solved.unsteady_solved_eom import UnsteadySolvedEOM
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.variables import Dynamic
 
-from aviary.mission.gasp_based.ode.unsteady_solved.unsteady_solved_eom import UnsteadySolvedEOM
-
 
 class UnsteadyControlIterGroup(om.Group):
-    """
-    This Group contains a nonlinear solver to determine alpha and thrust for a given flight condition.
-    """
+    """This Group contains a nonlinear solver to determine alpha and thrust for a given flight condition."""
 
     def initialize(self):
         self.options.declare('num_nodes', types=int)

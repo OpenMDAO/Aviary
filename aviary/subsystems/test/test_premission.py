@@ -1,31 +1,30 @@
 import unittest
 
 import openmdao.api as om
-from openmdao.utils.assert_utils import assert_near_equal, assert_check_partials
+from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 
-from aviary.subsystems.propulsion.propulsion_builder import CorePropulsionBuilder
+from aviary.models.large_single_aisle_1.V3_bug_fixed_IO import (
+    V3_bug_fixed_non_metadata,
+    V3_bug_fixed_options,
+)
+from aviary.subsystems.aerodynamics.aerodynamics_builder import CoreAerodynamicsBuilder
 from aviary.subsystems.geometry.geometry_builder import CoreGeometryBuilder
 from aviary.subsystems.mass.mass_builder import CoreMassBuilder
-from aviary.subsystems.aerodynamics.aerodynamics_builder import CoreAerodynamicsBuilder
 from aviary.subsystems.premission import CorePreMission
+from aviary.subsystems.propulsion.propulsion_builder import CorePropulsionBuilder
+from aviary.subsystems.propulsion.utils import build_engine_deck
 from aviary.utils.aviary_values import get_items, get_keys
+from aviary.utils.functions import set_aviary_initial_values
+from aviary.utils.preprocessors import preprocess_options
 from aviary.validation_cases.validation_tests import (
     get_flops_case_names,
     get_flops_inputs,
     get_flops_outputs,
 )
-from aviary.variable_info.variables import Aircraft, Mission
-from aviary.variable_info.variable_meta_data import _MetaData as BaseMetaData
-from aviary.models.large_single_aisle_1.V3_bug_fixed_IO import (
-    V3_bug_fixed_options,
-    V3_bug_fixed_non_metadata,
-)
-from aviary.utils.functions import set_aviary_initial_values
-from aviary.utils.preprocessors import preprocess_options
 from aviary.variable_info.enums import LegacyCode
 from aviary.variable_info.functions import setup_model_options
-from aviary.subsystems.propulsion.utils import build_engine_deck
-
+from aviary.variable_info.variable_meta_data import _MetaData as BaseMetaData
+from aviary.variable_info.variables import Aircraft, Mission
 
 FLOPS = LegacyCode.FLOPS
 GASP = LegacyCode.GASP
@@ -53,7 +52,7 @@ class PreMissionTestCase(unittest.TestCase):
         case_name = 'LargeSingleAisle1FLOPS'
 
         flops_inputs = get_flops_inputs(case_name)
-        flops_outputs = get_flops_outputs(case_name)
+        # flops_outputs = get_flops_outputs(case_name)
 
         FLOPS_input = flops_inputs
         GASP_input = V3_bug_fixed_options
@@ -260,7 +259,7 @@ class PreMissionTestCase(unittest.TestCase):
         case_name = 'LargeSingleAisle1FLOPS'
 
         flops_inputs = get_flops_inputs(case_name)
-        flops_outputs = get_flops_outputs(case_name)
+        # flops_outputs = get_flops_outputs(case_name)
 
         FLOPS_input = flops_inputs
         GASP_input = V3_bug_fixed_options

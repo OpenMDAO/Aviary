@@ -3,15 +3,13 @@ from pathlib import Path
 
 from openmdao.utils.testing_utils import use_tempdirs
 
-from aviary.utils.engine_deck_conversion import EngineDeckType, EngineDeckConverter
+from aviary.utils.engine_deck_conversion import EngineDeckConverter, EngineDeckType
 from aviary.utils.functions import get_path
 
 
 @use_tempdirs
 class TestEngineDeckConversion(unittest.TestCase):
-    """
-    Test engine deck conversion utility by comparing against previously converted engine deck files
-    """
+    """Test engine deck conversion utility by comparing against previously converted engine deck files."""
 
     def prepare_and_run(self, filename, output_file=None, data_format=EngineDeckType.GASP):
         # Specify the input file
@@ -52,7 +50,7 @@ class TestEngineDeckConversion(unittest.TestCase):
                 try:
                     self.assertEqual(line_no_whitespace.count(expected_line), 1)
 
-                except Exception as error:
+                except Exception:
                     exc_string = (
                         f'Error: {filename}\nFound: {line_no_whitespace}\nExpected: {expected_line}'
                     )

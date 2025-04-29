@@ -1,20 +1,19 @@
 import unittest
 
-from dymos.models.atmosphere.atmos_1976 import USatm1976Comp
 import openmdao.api as om
+from dymos.models.atmosphere.atmos_1976 import USatm1976Comp
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 
 from aviary.subsystems.aerodynamics.gasp_based.interference import (
-    RootChord,
-    CommonVariables,
-    TopAndBottomWidth,
     BodyRatios,
+    CommonVariables,
     InterferenceDrag,
-    WingFuselageInterferencePremission,
+    RootChord,
+    TopAndBottomWidth,
     WingFuselageInterferenceMission,
+    WingFuselageInterferencePremission,
 )
 from aviary.variable_info.variables import Aircraft, Dynamic
-
 
 tol = 1e-6
 

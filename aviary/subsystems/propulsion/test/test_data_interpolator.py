@@ -1,17 +1,14 @@
-import csv
 import unittest
 
 import numpy as np
 import openmdao.api as om
-
 from openmdao.utils.assert_utils import assert_near_equal
 
-from aviary.subsystems.propulsion.utils import EngineDataInterpolator, EngineModelVariables as keys
+from aviary.subsystems.propulsion.utils import EngineDataInterpolator, build_engine_deck
+from aviary.subsystems.propulsion.utils import EngineModelVariables as keys
 from aviary.utils.named_values import NamedValues
-from aviary.variable_info.variables import Dynamic
 from aviary.validation_cases.validation_tests import get_flops_inputs
-from aviary.subsystems.propulsion.utils import build_engine_deck
-from aviary.variable_info.variables import Aircraft
+from aviary.variable_info.variables import Aircraft, Dynamic
 
 
 class DataInterpolationTest(unittest.TestCase):

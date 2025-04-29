@@ -6,9 +6,7 @@ from aviary.utils.aviary_options_dict import AviaryOptionsDictionary
 
 
 class TestAviaryOptionsDict(unittest.TestCase):
-    """
-    Test conversion of aero table from GASP and FLOPS data format to Aviary format.
-    """
+    """Test conversion of aero table from GASP and FLOPS data format to Aviary format."""
 
     def test_declare_options(self):
         opts = AviaryOptionsDictionary()

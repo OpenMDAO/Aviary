@@ -24,8 +24,6 @@ from collections.abc import Sequence
 import dymos as dm
 import numpy as np
 import openmdao.api as om
-
-
 from dymos.transcriptions.transcription_base import TranscriptionBase
 
 if hasattr(TranscriptionBase, 'setup_polynomial_controls'):
@@ -52,9 +50,7 @@ class InitialGuess:
     def apply_initial_guess(
         self, prob: om.Problem, traj_name, phase: dm.Phase, phase_name, val, units
     ):
-        """
-        Set the initial guess on the problem.
-        """
+        """Set the initial guess on the problem."""
         complete_key = self._get_complete_key(traj_name, phase_name)
 
         # TODO: this is a short term hack in need of an appropriate long term solution
@@ -71,9 +67,7 @@ class InitialGuess:
             prob.set_val(complete_key, val, units)
 
     def _get_complete_key(self, traj_name, phase_name):
-        """
-        Compose the complete key for setting the initial guess.
-        """
+        """Compose the complete key for setting the initial guess."""
         _ = traj_name
         _ = phase_name
 
@@ -93,9 +87,7 @@ class InitialGuessControl(InitialGuess):
     __slots__ = ()
 
     def _get_complete_key(self, traj_name, phase_name):
-        """
-        Compose the complete key for setting the control initial guess.
-        """
+        """Compose the complete key for setting the control initial guess."""
         key = f'{traj_name}.{phase_name}.controls:{self.key}'
 
         return key
@@ -114,9 +106,7 @@ class InitialGuessParameter(InitialGuess):
     __slots__ = ()
 
     def _get_complete_key(self, traj_name, phase_name):
-        """
-        Compose the complete key for setting the parameter initial guess.
-        """
+        """Compose the complete key for setting the parameter initial guess."""
         key = f'{traj_name}.{phase_name}.parameters:{self.key}'
 
         return key
@@ -135,9 +125,7 @@ class InitialGuessPolynomialControl(InitialGuess):
     __slots__ = ()
 
     def _get_complete_key(self, traj_name, phase_name):
-        """
-        Compose the complete key for setting the polynomial control initial guess.
-        """
+        """Compose the complete key for setting the polynomial control initial guess."""
         if use_new_dymos_syntax:
             key = f'{traj_name}.{phase_name}.controls:{self.key}'
         else:
@@ -158,9 +146,7 @@ class InitialGuessState(InitialGuess):
     __slots__ = ()
 
     def _get_complete_key(self, traj_name, phase_name):
-        """
-        Compose the complete key for setting the state initial guess.
-        """
+        """Compose the complete key for setting the state initial guess."""
         key = f'{traj_name}.{phase_name}.states:{self.key}'
 
         return key

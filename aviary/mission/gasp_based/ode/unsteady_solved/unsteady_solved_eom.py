@@ -2,7 +2,7 @@ import numpy as np
 import openmdao.api as om
 from openmdao.utils.units import convert_units
 
-from aviary.constants import GRAV_METRIC_GASP, GRAV_ENGLISH_LBM, MU_TAKEOFF
+from aviary.constants import GRAV_ENGLISH_LBM, GRAV_METRIC_GASP, MU_TAKEOFF
 from aviary.variable_info.functions import add_aviary_input
 from aviary.variable_info.variables import Aircraft, Dynamic
 

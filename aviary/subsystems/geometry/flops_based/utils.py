@@ -17,9 +17,7 @@ def calc_fuselage_adjustment(chord, thickness_to_chord):
 
 
 def d_calc_fuselage_adjustment(chord, thickness_to_chord):
-    """
-    Calculate partial derivatives of fuselage_adjustment with respect to chord and thickness_to_chord.
-    """
+    """Calculate partial derivatives of fuselage_adjustment with respect to chord and thickness_to_chord."""
     d1 = 2.0 * _fuselage_adjustment_scaler * thickness_to_chord * chord
     d2 = _fuselage_adjustment_scaler * chord**2
 
@@ -27,9 +25,7 @@ def d_calc_fuselage_adjustment(chord, thickness_to_chord):
 
 
 class Names:
-    """
-    Define component I/O variable names that should not exported.
-    """
+    """Define component I/O variable names that should not exported."""
 
     CROOT = 'prep_geom:_Names:CROOT'
     CROOTB = 'prep_geom:_Names:CROOTB'

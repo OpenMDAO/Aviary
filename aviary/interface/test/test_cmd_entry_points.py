@@ -2,8 +2,9 @@ import subprocess
 import unittest
 from pathlib import Path
 
-from aviary.utils.functions import get_aviary_resource_path
 from openmdao.utils.testing_utils import require_pyoptsparse, use_tempdirs
+
+from aviary.utils.functions import get_aviary_resource_path
 
 
 @use_tempdirs
@@ -13,7 +14,7 @@ class CommandEntryPointsTestCases(unittest.TestCase):
         # check the expected output at all. The underlying functions that implement the
         # commands should be tested seperately.
         try:
-            output = subprocess.check_output(cmd.split())
+            subprocess.check_output(cmd.split())
         except subprocess.CalledProcessError as err:
             self.fail(f"Command '{cmd}' failed.  Return code: {err.returncode}")
 
@@ -75,19 +76,19 @@ class fortran_to_aviaryTestCases(CommandEntryPointsTestCases):
 
 class hangarTestCases(CommandEntryPointsTestCases):
     def test_copy_folder(self):
-        cmd = f'aviary hangar engines'
+        cmd = 'aviary hangar engines'
         self.run_and_test_cmd(cmd)
 
     def test_copy_deck(self):
-        cmd = f'aviary hangar turbofan_22k.txt'
+        cmd = 'aviary hangar turbofan_22k.txt'
         self.run_and_test_cmd(cmd)
 
     def test_copy_n3cc_data(self):
-        cmd = f'aviary hangar N3CC/N3CC_data.py'
+        cmd = 'aviary hangar N3CC/N3CC_data.py'
         self.run_and_test_cmd(cmd)
 
     def test_copy_multiple(self):
-        cmd = f'aviary hangar small_single_aisle_GASP.dat small_single_aisle_GASP.csv'
+        cmd = 'aviary hangar small_single_aisle_GASP.dat small_single_aisle_GASP.csv'
         self.run_and_test_cmd(cmd)
 
     def test_copy_to(self):
@@ -131,9 +132,7 @@ class convert_aero_tableTestCases(CommandEntryPointsTestCases):
 
 
 class convert_propeller_tableTestCases(CommandEntryPointsTestCases):
-    """
-    aviary convert_prop_table test. The only option is from GASP propeller map to Aviary table.
-    """
+    """aviary convert_prop_table test. The only option is from GASP propeller map to Aviary table."""
 
     def test_GASP_conversion(self):
         filepath = self.get_file('models/propellers/PropFan.map')

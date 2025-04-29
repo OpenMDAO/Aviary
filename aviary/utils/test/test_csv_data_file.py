@@ -3,10 +3,9 @@ import unittest
 import warnings
 
 from openmdao.utils.assert_utils import assert_near_equal, assert_warning
-from openmdao.utils.om_warnings import SetupWarning
 from openmdao.utils.testing_utils import use_tempdirs
 
-from aviary.utils.csv_data_file import write_data_file, read_data_file
+from aviary.utils.csv_data_file import read_data_file, write_data_file
 from aviary.utils.functions import get_path
 from aviary.utils.named_values import NamedValues, get_items, get_keys
 from aviary.utils.process_input_decks import parse_inputs
@@ -16,9 +15,7 @@ from aviary.variable_info.variable_meta_data import CoreMetaData, add_meta_data
 
 @use_tempdirs
 class TestAviaryCSV(unittest.TestCase):
-    """
-    Test read/write CSV files and compare CSV files.
-    """
+    """Test read/write CSV files and compare CSV files."""
 
     def setUp(self):
         self.filename = get_path('utils/test/data/csv_test.csv')
@@ -52,7 +49,7 @@ class TestAviaryCSV(unittest.TestCase):
             for line in file:
                 read_contents.append(line.strip('\n'))
         if read_contents != self.expected_contents:
-            raise ValueError(f'Contents written to csv do not match expected values')
+            raise ValueError('Contents written to csv do not match expected values')
 
     def test_read_data_file(self):
         self._compare_csv_results(*read_data_file(self.filename, save_comments=True))
