@@ -304,6 +304,7 @@ class Aircraft:
         MASS = 'aircraft:furnishings:mass'
         MASS_BASE = 'aircraft:furnishings:mass_base'
         MASS_SCALER = 'aircraft:furnishings:mass_scaler'
+        USE_STANDARD_REGRESSION = 'aircraft:furnishings:use_standard_regression'
 
     class Fuselage:
         AFTBODY_MASS = 'aircraft:fuselage:aftbody_mass'

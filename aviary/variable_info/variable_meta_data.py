@@ -3126,7 +3126,7 @@ add_meta_data(
     meta_data=_MetaData,
     historical_name={'GASP': None, 'FLOPS': None, 'LEAPS1': None},
     units='lbm',
-    desc='Base furnishings system mass without additional 1% empty mass',
+    desc='For FLOPS based, base furnishings system mass without additional 1% empty mass',
     default_value=0.0,
 )
 
@@ -3140,8 +3140,20 @@ add_meta_data(
         'LEAPS1': 'aircraft.inputs.L0_overrides.furnishings_group_weight',
     },
     units='unitless',
-    desc='Furnishings system mass scaler',
+    desc='Furnishings system mass scaler. In GASP based, it is applicale if gross mass '
+    '> 10000 lbs and number of passengers >= 50. Set it to 0.0 if not use.',
     default_value=1.0,
+)
+
+add_meta_data(
+    Aircraft.Furnishings.USE_STANDARD_REGRESSION,
+    meta_data=_MetaData,
+    historical_name={'GASP': None, 'FLOPS': None, 'LEAPS1': None},
+    units='unitless',
+    desc='In GASP based, indicate whether use standard linear empirical regression formula. '
+    'This applies only when gross mass > 10000 and number of passengers >= 50.',
+    types=bool,
+    default_value=True,
 )
 
 #  ______                        _
