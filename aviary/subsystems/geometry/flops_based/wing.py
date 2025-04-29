@@ -1,6 +1,4 @@
-"""
-Contains any preliminary calculations on the wing.
-"""
+"""Contains any preliminary calculations on the wing."""
 
 import openmdao.api as om
 
@@ -9,9 +7,7 @@ from aviary.variable_info.variables import Aircraft
 
 
 class WingPrelim(om.ExplicitComponent):
-    """
-    preliminary calculations of wing aspect ratio
-    """
+    """preliminary calculations of wing aspect ratio."""
 
     def setup(self):
         add_aviary_input(self, Aircraft.Wing.AREA, units='ft**2')

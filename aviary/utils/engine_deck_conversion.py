@@ -2,22 +2,22 @@
 
 import argparse
 import getpass
+from copy import deepcopy
 from datetime import datetime
 from enum import Enum
-from copy import deepcopy
 
 import numpy as np
 import openmdao.api as om
-from aviary.subsystems.atmosphere.atmosphere import Atmosphere
 from openmdao.components.interp_util.interp import InterpND
 
-from aviary.utils.conversion_utils import _rep, _parse, _read_map
+from aviary.subsystems.atmosphere.atmosphere import Atmosphere
 from aviary.subsystems.propulsion.engine_deck import normalize
 from aviary.subsystems.propulsion.utils import EngineModelVariables, default_units
-from aviary.variable_info.variables import Dynamic
+from aviary.utils.conversion_utils import _parse, _read_map, _rep
 from aviary.utils.csv_data_file import write_data_file
 from aviary.utils.functions import get_path
 from aviary.utils.named_values import NamedValues
+from aviary.variable_info.variables import Dynamic
 
 
 class EngineDeckType(Enum):
@@ -324,7 +324,7 @@ def EngineDeckConverter(input_file, output_file, data_format: EngineDeckType):
 def _read_flops_engine(input_file):
     """
     Read engine data file using FLOPS standard, which is column delimited data
-    always assumed to be in the order defined in the FLOPS manual
+    always assumed to be in the order defined in the FLOPS manual.
     """
     for line in input_file:
         sz = len(line)
@@ -389,7 +389,7 @@ def _read_gasp_engine(fp, is_turbo_prop=False):
 
 
 def _read_tp_header(f):
-    """Read GASP engine deck header, returning the engine scalars in a dict"""
+    """Read GASP engine deck header, returning the engine scalars in a dict."""
     # file header: FORMAT(2I5,10X,6F10.4)
     iread, iprint, t4max, t4mcl, t4mc, t4idle, xsfc, cexp = _parse(
         f, [*_rep(2, (int, 5)), (None, 10), *_rep(6, (float, 10))]
@@ -415,7 +415,7 @@ def _read_tp_header(f):
 
 
 def _read_header(f):
-    """Read GASP engine deck header, returning the engine scalars in a dict"""
+    """Read GASP engine deck header, returning the engine scalars in a dict."""
     # file header: FORMAT(2I5,10X,5F10.4)
     iread, iprint, wamap, t4max, t4mcl, t4mc, sfnidl = _parse(
         f, [*_rep(2, (int, 5)), (None, 10), *_rep(5, (float, 10))]
@@ -467,7 +467,7 @@ def _read_table(f, is_turbo_prop=False):
 def _make_structured_grid(
     data, method='lagrange3', fields=['thrust', 'fuelflow', 'airflow'], throttle_step=0.05
 ):
-    """Generate a structured grid of unique mach/T4:T2/alt values in the deck"""
+    """Generate a structured grid of unique mach/T4:T2/alt values in the deck."""
     # step size in t4/t2 ratio used in generating the structured grid
     # t2t2_step = 0.5 # original value
     t4t2_step = throttle_step
@@ -608,7 +608,7 @@ _TSLS_DEGR = 518.67  # SLS temperature in deg R
 class CalculateIdle(om.ExplicitComponent):
     """
     Calculates idle conditions of a GASP engine at a specified flight condition
-    Vectorized to calculate values for entire flight regime
+    Vectorized to calculate values for entire flight regime.
     """
 
     def initialize(self):
@@ -664,9 +664,7 @@ class CalculateIdle(om.ExplicitComponent):
 
 
 class AtmosCalc(om.ExplicitComponent):
-    """
-    Calculates T2 and P2 given static temperature and pressure
-    """
+    """Calculates T2 and P2 given static temperature and pressure."""
 
     def initialize(self):
         self.options.declare('num_nodes', types=int)

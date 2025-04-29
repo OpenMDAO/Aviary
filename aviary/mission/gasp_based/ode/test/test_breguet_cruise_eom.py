@@ -5,14 +5,12 @@ import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 
 from aviary.constants import GRAV_ENGLISH_LBM
-from aviary.mission.gasp_based.ode.breguet_cruise_eom import RangeComp, E_RangeComp
+from aviary.mission.gasp_based.ode.breguet_cruise_eom import E_RangeComp, RangeComp
 from aviary.variable_info.variables import Dynamic
 
 
 class TestBreguetResults(unittest.TestCase):
-    """
-    Test cruise range and time in RangeComp component
-    """
+    """Test cruise range and time in RangeComp component."""
 
     def setUp(self):
         nn = 10
@@ -102,9 +100,7 @@ class TestBreguetPartials(unittest.TestCase):
 
 
 class TestBreguetPartials2(unittest.TestCase):
-    """
-    Test mass-weight conversion
-    """
+    """Test mass-weight conversion."""
 
     def setUp(self):
         import aviary.mission.gasp_based.ode.breguet_cruise_eom as breguet
@@ -186,9 +182,7 @@ class TestBreguetResults2(unittest.TestCase):
 
 
 class TestElectricBreguetResults(unittest.TestCase):
-    """
-    Test cruise range and time in E_RangeComp component
-    """
+    """Test cruise range and time in E_RangeComp component."""
 
     def setUp(self):
         nn = 10

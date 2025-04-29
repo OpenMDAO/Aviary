@@ -1,26 +1,24 @@
-import unittest
 import os
 import shutil
+import unittest
 from pathlib import Path
 
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_near_equal
 
-from aviary.variable_info.options import get_option_defaults
-from aviary.variable_info.variables import Aircraft, Mission
+from aviary.api import top_dir
 from aviary.utils.functions import (
     add_opts2vals,
     convert_strings_to_data,
     create_opts2vals,
     get_path,
 )
-from aviary.api import top_dir
+from aviary.variable_info.options import get_option_defaults
+from aviary.variable_info.variables import Aircraft, Mission
 
 
 class TestOpts2Vals(unittest.TestCase):
-    """
-    Test the functionality of create_opts2vals function.
-    """
+    """Test the functionality of create_opts2vals function."""
 
     def setUp(self):
         self.options = get_option_defaults()
@@ -65,9 +63,7 @@ class TestOpts2Vals(unittest.TestCase):
 
 
 class TestGetPath(unittest.TestCase):
-    """
-    Test get_path function from string and Path object for absolute and relative path
-    """
+    """Test get_path function from string and Path object for absolute and relative path."""
 
     def setUp(self):
         self.current_dir = Path.cwd()
@@ -120,7 +116,7 @@ class TestTopDir(unittest.TestCase):
 
 class TestConvertStrings2Data(unittest.TestCase):
     def is_list_of_given_type(self, lst, givenType):
-        """Test if the list of data is of given type"""
+        """Test if the list of data is of given type."""
         return isinstance(lst, list) and all(isinstance(i, givenType) for i in lst)
 
     def test_read_float(self):

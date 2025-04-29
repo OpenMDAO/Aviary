@@ -1,17 +1,14 @@
-import os
+from pathlib import Path
 
 import numpy as np
 import openmdao.api as om
 
-from pathlib import Path
-
 from aviary.constants import GRAV_ENGLISH_LBM
 from aviary.subsystems.aerodynamics.gasp_based.common import AeroForces, TimeRamp
-from aviary.utils.named_values import NamedValues, get_keys
-from aviary.utils.data_interpolator_builder import build_data_interpolator
 from aviary.utils.csv_data_file import read_data_file
+from aviary.utils.data_interpolator_builder import build_data_interpolator
 from aviary.utils.functions import get_path
-from aviary.utils.named_values import get_items
+from aviary.utils.named_values import NamedValues, get_items, get_keys
 from aviary.variable_info.functions import add_aviary_input
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 
@@ -447,7 +444,7 @@ def _build_free_aero_interp(
     structured=True,
     extrapolate=True,
 ):
-    """creates interpolation components for cruise aero"""
+    """Creates interpolation components for cruise aero."""
     # build_data_interpolator normally handles converting to filepath and reading
     # data, but here we need to query the data before building the component
     if isinstance(aero_data, str):
@@ -531,7 +528,7 @@ def _build_flaps_aero_interp(
     structured=True,
     extrapolate=False,
 ):
-    """creates interpolation components for cruise aero"""
+    """Creates interpolation components for cruise aero."""
     # TODO linear method default because standard GASP tables have only two flap
     #      deflections - may want to have option for two separate 2D tables instead?
 
@@ -603,7 +600,7 @@ def _build_ground_aero_interp(
     structured=True,
     extrapolate=True,
 ):
-    """creates interpolation components for cruise aero"""
+    """Creates interpolation components for cruise aero."""
     # build_data_interpolator normally handles converting to filepath and reading
     # data, but here we need to query the data before building the component
     if isinstance(aero_data, str):
@@ -664,7 +661,7 @@ def _build_ground_aero_interp(
 def _structure_special_grid(aero_data):
     """
     Structure a GASP-based data table that has a special case with incorrect number
-    of alpha points for a structured grid
+    of alpha points for a structured grid.
 
     This assumes that the first two values in the data table (or directly provided data)
     are the other independent variables (mach, alt, or hob depending on use case), while

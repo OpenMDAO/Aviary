@@ -7,9 +7,7 @@ from aviary.variable_info.variables import Aircraft, Dynamic
 
 
 class InducedDrag(om.ExplicitComponent):
-    """
-    Calculates induced drag
-    """
+    """Calculates induced drag."""
 
     def initialize(self):
         self.options.declare(
@@ -135,7 +133,6 @@ class InducedDrag(om.ExplicitComponent):
         dCL_dP = -2.0 * lift / (Sref * gamma * P**2 * mach**2)
         dCL_dmach = -4.0 * lift / (Sref * gamma * P * mach**3)
 
-        CDi = CL**2 / (np.pi * AR * span_efficiency)
         dCDi_dCL = 2.0 * CL / (np.pi * AR * span_efficiency)
         dCDi_dAR = -(CL**2) / (np.pi * AR**2 * span_efficiency)
         dCDi_dspan = -(CL**2) / (np.pi * AR * span_efficiency**2)

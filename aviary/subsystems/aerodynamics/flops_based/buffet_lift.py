@@ -9,9 +9,7 @@ from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 
 
 class BuffetLift(om.ExplicitComponent):
-    """
-    Computes lift margin before buffet onset.
-    """
+    """Computes lift margin before buffet onset."""
 
     def initialize(self):
         self.options.declare(
@@ -56,9 +54,7 @@ class BuffetLift(om.ExplicitComponent):
         )
 
     def compute(self, inputs, outputs):
-        """
-        Computes lift margin before buffet onset.
-        """
+        """Computes lift margin before buffet onset."""
         mach, design_Mach, AR, CAM, SW25, TC = inputs.values()
 
         del_Mach = mach - design_Mach

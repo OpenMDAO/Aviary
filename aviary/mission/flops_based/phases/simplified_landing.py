@@ -1,15 +1,13 @@
 import openmdao.api as om
-from aviary.subsystems.atmosphere.atmosphere import Atmosphere
 
 from aviary.constants import GRAV_ENGLISH_LBM, RHO_SEA_LEVEL_METRIC
+from aviary.subsystems.atmosphere.atmosphere import Atmosphere
 from aviary.variable_info.functions import add_aviary_input, add_aviary_output
-from aviary.variable_info.variables import Aircraft, Mission, Dynamic
+from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 
 
 class LandingCalc(om.ExplicitComponent):
-    """
-    Calculate the distance covered over the ground and approach velocity during landing
-    """
+    """Calculate the distance covered over the ground and approach velocity during landing."""
 
     def setup(self):
         add_aviary_input(self, Mission.Landing.TOUCHDOWN_MASS, val=150_000)

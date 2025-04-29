@@ -1,16 +1,14 @@
 import getpass
-import numpy as np
 import re
 import warnings
-
 from datetime import datetime
 from pathlib import Path
 
-from openmdao.utils.units import valid_units, is_compatible
+import numpy as np
+from openmdao.utils.units import is_compatible, valid_units
 
-from aviary.utils.named_values import get_items, get_keys
 from aviary.utils.functions import get_path
-from aviary.utils.named_values import NamedValues
+from aviary.utils.named_values import NamedValues, get_items, get_keys
 from aviary.variable_info.enums import Verbosity
 
 

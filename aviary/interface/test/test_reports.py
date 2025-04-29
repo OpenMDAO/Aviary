@@ -1,11 +1,11 @@
+import csv
+import unittest
 from copy import deepcopy
 from pathlib import Path
-import unittest
-import csv
 
 import openmdao.api as om
 from openmdao.core.problem import _clear_problem_names
-from openmdao.utils.testing_utils import use_tempdirs, set_env_vars
+from openmdao.utils.testing_utils import set_env_vars, use_tempdirs
 
 from aviary.interface.default_phase_info.height_energy import phase_info
 from aviary.interface.methods_for_level1 import run_aviary

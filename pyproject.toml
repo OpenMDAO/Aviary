@@ -11,6 +11,7 @@ quote-style = "single"
 [tool.ruff.lint]
 # isort, pydocstyle
 extend-select = ["I", "D"]
+# disabling these rules will help current Aviary code pass a pre-commit lint check
 extend-ignore = [
     "D100",
     "D101",
@@ -32,7 +33,8 @@ split-on-trailing-comma = false
 convention = "numpy"
 
 [tool.ruff.lint.per-file-ignores]
-# Ignore `F401` (unused import) in api files.
-"api.py" = ["F401"]
+# Ignore `F401` (unused import) in api and doc files.
+# Ignore `I001` (sort and format imports) in api.
 # Ignore `E402` (module import not at top of file) for doc cells.
-"*.ipynb" = ["E402"]
+"api.py" = ["F401", "I001"]
+"*.ipynb" = ["F401", "E402"]

@@ -1,4 +1,5 @@
 import itertools
+
 import numpy as np
 
 
@@ -8,7 +9,7 @@ def _rep(n, t):
 
 
 def _parse(f, fmt):
-    """Read a line from file ``f`` and parse it according to the given ``fmt``"""
+    """Read a line from file ``f`` and parse it according to the given ``fmt``."""
     return _strparse(f.readline(), fmt)
 
 

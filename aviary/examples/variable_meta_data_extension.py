@@ -1,8 +1,7 @@
-"""
-Define meta data associated with variables in the disciplinary data hierarchy.
-"""
+"""Define meta data associated with variables in the disciplinary data hierarchy."""
 
 from copy import deepcopy
+
 import numpy as np
 
 import aviary.api as av

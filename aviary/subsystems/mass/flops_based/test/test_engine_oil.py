@@ -10,7 +10,6 @@ from aviary.validation_cases.validation_tests import (
     Version,
     flops_validation_test,
     get_flops_case_names,
-    get_flops_options,
     get_flops_inputs,
     print_case,
 )
@@ -18,9 +17,7 @@ from aviary.variable_info.variables import Aircraft
 
 
 class TransportEngineOilMassTest(unittest.TestCase):
-    """
-    Tests transport/GA engine oil mass calculation.
-    """
+    """Tests transport/GA engine oil mass calculation."""
 
     def setUp(self):
         self.prob = om.Problem()
@@ -61,9 +58,7 @@ class TransportEngineOilMassTest(unittest.TestCase):
 
 
 class TransportEngineOilMassTest2(unittest.TestCase):
-    """
-    Test mass-weight conversion
-    """
+    """Test mass-weight conversion."""
 
     def setUp(self):
         import aviary.subsystems.mass.flops_based.engine_oil as oil
@@ -96,9 +91,7 @@ class TransportEngineOilMassTest2(unittest.TestCase):
 
 
 class AltEngineOilMassTest(unittest.TestCase):
-    """
-    Tests alternate engine oil mass calculation.
-    """
+    """Tests alternate engine oil mass calculation."""
 
     def setUp(self):
         self.prob = om.Problem()
@@ -138,9 +131,7 @@ class AltEngineOilMassTest(unittest.TestCase):
 
 
 class AltEngineOilMassTest2(unittest.TestCase):
-    """
-    Test mass-weight conversion
-    """
+    """Test mass-weight conversion."""
 
     def setUp(self):
         import aviary.subsystems.mass.flops_based.engine_oil as oil

@@ -1,4 +1,4 @@
-from aviary.examples.external_subsystems.engine_NPSS.engine_variables import Aircraft, Dynamic
+from aviary.examples.external_subsystems.engine_NPSS.engine_variables import Dynamic
 
 vars_to_connect = {
     'Fn_train': {

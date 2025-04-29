@@ -8,9 +8,9 @@ import pandas as pd
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 
 from aviary.subsystems.aerodynamics.gasp_based.gaspaero import CruiseAero, LowSpeedAero
+from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.functions import setup_model_options
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
-from aviary.utils.aviary_values import AviaryValues
 
 here = os.path.abspath(os.path.dirname(__file__))
 cruise_data = pd.read_csv(os.path.join(here, 'data', 'aero_data_cruise.csv'))
@@ -19,7 +19,7 @@ setup_data = json.load(open(os.path.join(here, 'data', 'aero_data_setup.json')))
 
 
 class GASPAeroTest(unittest.TestCase):
-    """Test overall pre-mission and mission aero systems in cruise and near-ground flight"""
+    """Test overall pre-mission and mission aero systems in cruise and near-ground flight."""
 
     cruise_tol = 1.5e-3
     ground_tol = 0.5e-3
@@ -170,7 +170,7 @@ class GASPAeroTest(unittest.TestCase):
 
 
 def _init_geom(prob):
-    """Initialize user inputs and geometry/sizing data"""
+    """Initialize user inputs and geometry/sizing data."""
     prob.set_val('interference_independent_of_shielded_area', 1.89927266)
     prob.set_val('drag_loss_due_to_shielded_wing_area', 68.02065834)
     # i.e. common auto IVC vars for the setup + cruise and ground aero models

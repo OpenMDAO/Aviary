@@ -1,32 +1,32 @@
 import unittest
-import numpy as np
 
+import numpy as np
 from openmdao.utils.assert_utils import (
-    assert_near_equal,
-    assert_equal_numstrings,
     assert_equal_arrays,
+    assert_equal_numstrings,
+    assert_near_equal,
 )
 
 from aviary.utils.doctape import (
-    gramatical_list,
-    check_value,
-    check_contains,
     check_args,
-    run_command_no_file_error,
-    get_attribute_name,
+    check_contains,
+    check_value,
     get_all_keys,
-    get_value,
+    get_attribute_name,
     get_previous_line,
+    get_value,
     get_variable_name,
-    glue_variable,
     glue_keys,
+    glue_variable,
+    gramatical_list,
+    run_command_no_file_error,
 )
 
 
 class DocTAPETests(unittest.TestCase):
     """
     Testing the DocTAPE functions to make sure they all run in all supported Python versions
-    Docs are only built with latest, but these test will be run with latest and dev as well
+    Docs are only built with latest, but these test will be run with latest and dev as well.
     """
 
     def test_gramatical_list(self):
@@ -61,10 +61,9 @@ class DocTAPETests(unittest.TestCase):
         assert_near_equal(val, 2)
 
     def test_get_previous_line(self):
-        something = 'something_else'
         line1 = get_previous_line()
         line2 = get_previous_line(2)
-        assert_equal_numstrings(line1, "something = 'something_else'")
+        assert_equal_numstrings(line2[0].strip(), line1)
         assert_equal_numstrings(line2[1].strip(), 'line1 = get_previous_line()')
 
     def test_get_variable_name(self):

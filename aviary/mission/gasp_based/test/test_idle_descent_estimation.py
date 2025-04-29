@@ -1,21 +1,20 @@
+import importlib
 import unittest
 import warnings
-import importlib
 
 import openmdao.api as om
-from openmdao.utils.assert_utils import assert_near_equal, assert_check_partials
+from openmdao.utils.assert_utils import assert_near_equal
 
-from aviary.interface.default_phase_info.two_dof_fiti import descent_phases, add_default_sgm_args
-
+from aviary.interface.default_phase_info.two_dof_fiti import add_default_sgm_args, descent_phases
 from aviary.mission.gasp_based.idle_descent_estimation import add_descent_estimation_as_submodel
 from aviary.mission.gasp_based.ode.params import set_params_for_unit_tests
 from aviary.subsystems.propulsion.utils import build_engine_deck
-from aviary.variable_info.variables import Aircraft, Dynamic, Settings
-from aviary.utils.process_input_decks import create_vehicle
+from aviary.utils.aviary_values import AviaryValues
 from aviary.utils.preprocessors import preprocess_propulsion
+from aviary.utils.process_input_decks import create_vehicle
 from aviary.utils.test_utils.default_subsystems import get_default_mission_subsystems
 from aviary.variable_info.functions import setup_model_options
-from aviary.utils.aviary_values import AviaryValues
+from aviary.variable_info.variables import Aircraft, Dynamic, Settings
 
 
 @unittest.skip(
@@ -26,9 +25,7 @@ from aviary.utils.aviary_values import AviaryValues
     importlib.util.find_spec('pyoptsparse') is not None, 'pyoptsparse is not installed'
 )
 class IdleDescentTestCase(unittest.TestCase):
-    """
-    Test idle descent for 2DOF mission
-    """
+    """Test idle descent for 2DOF mission."""
 
     def setUp(self):
         input_deck = 'models/large_single_aisle_1/large_single_aisle_1_GASP.csv'

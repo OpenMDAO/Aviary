@@ -1,9 +1,8 @@
 import unittest
-import numpy as np
 
+import numpy as np
 import openmdao.api as om
-from openmdao.utils.assert_utils import assert_near_equal
-from openmdao.utils.assert_utils import assert_check_partials
+from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 
 from aviary.subsystems.aerodynamics.flops_based.buffet_lift import BuffetLift
 from aviary.variable_info.variables import Aircraft, Mission
