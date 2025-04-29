@@ -1426,6 +1426,7 @@ class FuelMassGroup(om.Group):
     """
     Group of fuel related components including FuelSysAndFullFuselageMass,
     FuselageMass, StructMass, FuelMass, FuelAndOEMOutputs, and BodyTankCalculations.
+    In case of BWB, FuselageMass is replaced by BWBFuselageMass.
     """
 
     def initialize(self):
