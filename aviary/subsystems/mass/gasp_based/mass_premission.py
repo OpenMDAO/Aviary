@@ -1,7 +1,7 @@
 import openmdao.api as om
 
 from aviary.subsystems.mass.gasp_based.design_load import DesignLoadGroup
-from aviary.subsystems.mass.gasp_based.equipment_and_useful_load import EquipAndUsefulLoadMass
+from aviary.subsystems.mass.gasp_based.equipment_and_useful_load import EquipAndUsefulLoadMassGroup
 from aviary.subsystems.mass.gasp_based.fixed import FixedMassGroup
 from aviary.subsystems.mass.gasp_based.fuel import FuelMassGroup
 from aviary.subsystems.mass.gasp_based.wing import WingMassGroup
@@ -63,7 +63,7 @@ class MassPremission(om.Group):
 
         self.add_subsystem(
             'equip_and_useful_mass',
-            EquipAndUsefulLoadMass(),
+            EquipAndUsefulLoadMassGroup(),
             promotes_inputs=['aircraft:*', 'mission:*'],
             promotes_outputs=['aircraft:*'],
         )
