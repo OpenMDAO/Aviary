@@ -461,13 +461,6 @@ class GlideConditionComponent(om.ExplicitComponent):
         J['delay_distance', 'CL_max'] = time_delay * dTasTd_dClMax
         J['delay_distance', Dynamic.Atmosphere.DENSITY] = time_delay * dTasTd_dRhoApp
         J['delay_distance', Mission.Landing.BRAKING_DELAY] = TAS_touchdown
-
-        (
-            TAS_glide**2
-            * (theta**2 - gamma_touchdown**2)
-            / (2.0 * G * (landing_flare_load_factor - 1.0))
-        )
-
         J['flare_alt', Mission.Landing.MAXIMUM_FLARE_LOAD_FACTOR] = (
             -(TAS_glide**2)
             * (theta**2 - gamma_touchdown**2)

@@ -492,9 +492,6 @@ class LoadParameters(om.ExplicitComponent):
         )
 
         if smooth:
-            vel_c * sigmoidX(density_ratio, 1, -0.01) + 661.7 * max_mach * sigmoidX(
-                density_ratio, 1, 0.01
-            )
             dV9_dmax_airspeed = (
                 vel_c * dSigmoidXdx(density_ratio, 1, 0.01) * (-ddensity_ratio_dmax_airspeed)
                 + 661.7
@@ -574,7 +571,6 @@ class LoadParameters(om.ExplicitComponent):
                 dV9_dmax_airspeed = 0.0
 
                 if density_ratio > 1:  # note: this creates a discontinuity
-                    661.7 * max_mach
                     density_ratio = 1.0
 
                     dV9_dvel_c = 0.0
@@ -972,26 +968,6 @@ class LoadFactors(om.ExplicitComponent):
                     ddive_load_factor_dV9,
                 )
             )
-            (
-                ddive_load_factor_dmin_dive_vel
-                * sigmoidX(cruise_load_factor / dive_load_factor, 1, -0.01)
-                + dive_load_factor
-                * dSigmoidXdx(cruise_load_factor / dive_load_factor, 1, 0.01)
-                * dquotient(
-                    (dive_load_factor - cruise_load_factor),
-                    dive_load_factor,
-                    ddive_load_factor_dmin_dive_vel,
-                    ddive_load_factor_dmin_dive_vel,
-                )
-                + cruise_load_factor
-                * dSigmoidXdx(cruise_load_factor / dive_load_factor, 1, 0.01)
-                * dquotient(
-                    (cruise_load_factor - dive_load_factor),
-                    dive_load_factor,
-                    -ddive_load_factor_dmin_dive_vel,
-                    ddive_load_factor_dmin_dive_vel,
-                )
-            )
             gust_load_factor = gust_load_factor_1
         else:
             if cruise_load_factor > dive_load_factor:  # note: this creates a discontinuity
@@ -1004,7 +980,6 @@ class LoadFactors(om.ExplicitComponent):
                 dgust_load_factor_dV9 = dcruise_load_factor_dV9
                 dgust_load_factor_dmin_dive_vel = 0.0
 
-        1.5 * max_maneuver_factor
         dULF_dmax_maneuver_factor = 1.5
         dULF_dwing_loading = 0.0
         dULF_ddensity_ratio = 0.0
@@ -1014,10 +989,6 @@ class LoadFactors(om.ExplicitComponent):
         dULF_dmin_dive_vel = 0.0
 
         if smooth:
-            1.5 * (
-                gust_load_factor * sigmoidX(max_maneuver_factor / gust_load_factor, 1, 0.01)
-                + max_maneuver_factor * sigmoidX(max_maneuver_factor / gust_load_factor, 1, 0.01)
-            )
             dULF_dmax_maneuver_factor = 1.5 * (
                 gust_load_factor
                 * dSigmoidXdx(max_maneuver_factor / gust_load_factor, 1, 0.01)
@@ -1134,8 +1105,6 @@ class LoadFactors(om.ExplicitComponent):
             dULF_dmin_dive_vel = 0.0
         else:
             if gust_load_factor > max_maneuver_factor:  # note: this creates a discontinuity
-                1.5 * gust_load_factor
-
                 dULF_dmax_maneuver_factor = 0.0
                 dULF_dwing_loading = 1.5 * dgust_load_factor_dwing_loading
                 dULF_ddensity_ratio = 1.5 * dgust_load_factor_ddensity_ratio
@@ -1145,8 +1114,6 @@ class LoadFactors(om.ExplicitComponent):
                 dULF_dmin_dive_vel = 1.5 * dgust_load_factor_dmin_dive_vel
 
         if ULF_from_maneuver is True:
-            1.5 * max_maneuver_factor
-
             dULF_dmax_maneuver_factor = 1.5
             dULF_dwing_loading = 0.0
             dULF_ddensity_ratio = 0.0

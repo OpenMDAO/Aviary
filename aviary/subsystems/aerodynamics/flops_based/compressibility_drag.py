@@ -371,8 +371,6 @@ class CompressibilityDrag(om.ExplicitComponent):
         )
 
     def _compute_partials_subsonic(self, inputs, partials, idx):
-        mach = inputs[Dynamic.Atmosphere.MACH][idx]
-        len(mach)
         TC = inputs[Aircraft.Wing.THICKNESS_TO_CHORD]
         max_camber_70 = inputs[Aircraft.Wing.MAX_CAMBER_AT_70_SEMISPAN]
         fuse_area = inputs[Aircraft.Fuselage.CROSS_SECTION]

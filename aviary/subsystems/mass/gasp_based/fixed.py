@@ -439,24 +439,8 @@ class ElectricAugmentationMass(om.ExplicitComponent):
 
         motor_current = 1000.0 * motor_power / motor_voltage
         num_wires = motor_current / max_amp_per_wire
-        cable_wt = (
-            1.15 * safety_factor * num_wires * cable_len * wire_area * rho_wire * GRAV_ENGLISH_LBM
-        )
         actual_battery_energy = battery_energy / (
             motor_eff * inverter_eff * transmission_eff * battery_eff
-        )
-        battery_wt = actual_battery_energy / rho_battery
-        motor_wt = motor_power / 0.746 / motor_spec_wt
-        inverter_wt = motor_power / inverter_spec_wt
-
-        TMS_wt = TMS_spec_wt * motor_power
-
-        (
-            battery_wt
-            + cable_wt
-            + num_engines * inverter_wt
-            + num_engines * motor_wt
-            + num_engines * TMS_wt
         )
 
         dCableWt_dMotorPower = (
@@ -2549,7 +2533,6 @@ class ControlMass(om.ExplicitComponent):
         CK15 = inputs[Aircraft.Controls.COCKPIT_CONTROL_MASS_SCALER]
         CK18 = inputs[Aircraft.Wing.SURFACE_CONTROL_MASS_SCALER]
         CK19 = inputs[Aircraft.Controls.STABILITY_AUGMENTATION_SYSTEM_MASS_SCALER]
-        inputs[Aircraft.Controls.CONTROL_MASS_INCREMENT] * GRAV_ENGLISH_LBM
         min_dive_vel = inputs['min_dive_vel']
 
         dive_param = (1.15 * min_dive_vel) ** 2 / 391.0

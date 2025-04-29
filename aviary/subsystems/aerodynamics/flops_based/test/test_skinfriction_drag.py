@@ -109,7 +109,6 @@ class SkinFrictionDragTest(unittest.TestCase):
         )
         lam_up = np.array([6 * 0.03])
         lam_low = np.array([6 * 0.02])
-        len(fine)
 
         prob = om.Problem()
         model = prob.model
