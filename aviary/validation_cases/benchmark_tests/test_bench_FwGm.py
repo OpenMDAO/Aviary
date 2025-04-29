@@ -26,7 +26,7 @@ class ProblemPhaseTestCase(unittest.TestCase):
         local_phase_info = deepcopy(phase_info)
         for phase in local_phase_info:
             local_phase_info[phase].setdefault('subsystem_options', {}).setdefault(
-                'core_aerodynamics, {}'
+                'core_aerodynamics', {}
             ).setdefault('solve_alpha', True)
 
         prob = run_aviary(
@@ -85,5 +85,5 @@ class ProblemPhaseTestCase(unittest.TestCase):
 if __name__ == '__main__':
     test = ProblemPhaseTestCase()
     test.setUp()
-    test.bench_test_swap_3_FwGm_SNOPT()
-    # test.bench_test_swap_3_FwGm_IPOPT()
+    # test.bench_test_swap_3_FwGm_SNOPT()
+    test.bench_test_swap_3_FwGm_IPOPT()
