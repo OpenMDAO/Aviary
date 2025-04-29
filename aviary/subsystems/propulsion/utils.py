@@ -143,7 +143,7 @@ def build_engine_deck(
         default metadata.
 
     Returns
-    ----------
+    -------
     EngineDeck
         EngineDeck created using provided options.
     """
