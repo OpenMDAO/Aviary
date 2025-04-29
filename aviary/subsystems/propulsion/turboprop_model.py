@@ -3,16 +3,16 @@ import warnings
 import numpy as np
 import openmdao.api as om
 
-from aviary.subsystems.subsystem_builder_base import SubsystemBuilderBase
-from aviary.subsystems.propulsion.engine_model import EngineModel
 from aviary.subsystems.propulsion.engine_deck import EngineDeck
-from aviary.subsystems.propulsion.utils import EngineModelVariables
-from aviary.utils.named_values import NamedValues
-from aviary.utils.aviary_values import AviaryValues
-from aviary.variable_info.variables import Aircraft, Dynamic, Settings
-from aviary.variable_info.enums import Verbosity
-from aviary.subsystems.propulsion.propeller.propeller_builder import PropellerBuilder
+from aviary.subsystems.propulsion.engine_model import EngineModel
 from aviary.subsystems.propulsion.gearbox.gearbox_builder import GearboxBuilder
+from aviary.subsystems.propulsion.propeller.propeller_builder import PropellerBuilder
+from aviary.subsystems.propulsion.utils import EngineModelVariables
+from aviary.subsystems.subsystem_builder_base import SubsystemBuilderBase
+from aviary.utils.aviary_values import AviaryValues
+from aviary.utils.named_values import NamedValues
+from aviary.variable_info.enums import Verbosity
+from aviary.variable_info.variables import Aircraft, Dynamic, Settings
 from aviary.subsystems.propulsion.utils import build_engine_deck
 
 

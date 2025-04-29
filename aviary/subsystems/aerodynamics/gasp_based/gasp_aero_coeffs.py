@@ -2,14 +2,13 @@ import numpy as np
 import openmdao.api as om
 
 from aviary.variable_info.functions import add_aviary_input, add_aviary_output
-from aviary.variable_info.variables import Aircraft, Dynamic, Mission
-
+from aviary.variable_info.variables import Aircraft, Mission
 
 SWETFCT = 1.02
 
 
 class AeroFormfactors(om.ExplicitComponent):
-    """Compute aero form factors"""
+    """Compute aero form factors."""
 
     def setup(self):
         add_aviary_input(self, Aircraft.Wing.THICKNESS_TO_CHORD_UNWEIGHTED, units='unitless')

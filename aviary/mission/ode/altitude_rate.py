@@ -8,7 +8,7 @@ from aviary.variable_info.variables import Dynamic
 class AltitudeRate(om.ExplicitComponent):
     """
     Rutowski "Energy Approach to the General Aircraft Performance Problem", doi 10.2514/8.2956
-    Equation 6
+    Equation 6.
     """
 
     def initialize(self):

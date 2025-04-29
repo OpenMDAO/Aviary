@@ -8,12 +8,11 @@ from openmdao.core.driver import Driver
 from openmdao.utils.assert_utils import assert_near_equal
 from openmdao.utils.testing_utils import require_pyoptsparse, use_tempdirs
 
+from aviary.models.N3CC.N3CC_data import inputs as _inputs
 from aviary.models.N3CC.N3CC_data import (
-    inputs as _inputs,
-    landing_trajectory_builder as _landing_trajectory_builder,
     landing_fullstop_user_options as _landing_fullstop_user_options,
 )
-
+from aviary.models.N3CC.N3CC_data import landing_trajectory_builder as _landing_trajectory_builder
 from aviary.subsystems.premission import CorePreMission
 from aviary.subsystems.propulsion.utils import build_engine_deck
 from aviary.utils.functions import set_aviary_initial_values, set_aviary_input_defaults
@@ -25,9 +24,7 @@ from aviary.variable_info.variables import Aircraft, Dynamic
 
 @use_tempdirs
 class TestFLOPSDetailedLanding(unittest.TestCase):
-    """
-    Test detailed landing using N3CC data
-    """
+    """Test detailed landing using N3CC data."""
 
     # @require_pyoptsparse(optimizer='IPOPT')
     # def bench_test_IPOPT(self):
@@ -119,7 +116,7 @@ class TestFLOPSDetailedLanding(unittest.TestCase):
 
         # Field length
         # N3CC FLOPS output line 1773
-        base = -954.08  # ft
+        # base = -954.08 # ft
         # N3CC FLOPS output line 1842
         desired = 3409.47  # ft
 
@@ -129,7 +126,7 @@ class TestFLOPSDetailedLanding(unittest.TestCase):
 
         # TOUCHDOWN time
         # N3CC FLOPS output line 1773
-        base = -4.08  # s
+        # base = -4.08 # s
         # N3CC FLOPS output line 1849
         desired = 4.22  # s
 

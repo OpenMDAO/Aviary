@@ -1,15 +1,12 @@
 import openmdao.api as om
-import numpy as np
 
-from aviary.variable_info.variables import Aircraft, Dynamic
-from aviary.utils.aviary_values import AviaryValues
 from aviary.subsystems.propulsion.motor.model.motor_map import MotorMap
+from aviary.utils.aviary_values import AviaryValues
+from aviary.variable_info.variables import Aircraft, Dynamic
 
 
 class MotorPreMission(om.Group):
-    """
-    Calculate electric motor mass for a single motor
-    """
+    """Calculate electric motor mass for a single motor."""
 
     def initialize(self):
         self.options.declare(

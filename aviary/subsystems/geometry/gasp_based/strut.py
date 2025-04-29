@@ -8,9 +8,7 @@ from aviary.variable_info.variables import Aircraft
 
 
 class StrutGeom(om.ExplicitComponent):
-    """
-    Computation of strut length, strut area, and strut chord for GASP-based geometry.
-    """
+    """Computation of strut length, strut area, and strut chord for GASP-based geometry."""
 
     def setup(self):
         add_aviary_input(self, Aircraft.Wing.AREA, units='ft**2')

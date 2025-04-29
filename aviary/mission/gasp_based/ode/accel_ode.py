@@ -1,15 +1,15 @@
 import numpy as np
 
 from aviary.mission.gasp_based.ode.accel_eom import AccelerationRates
-from aviary.mission.gasp_based.ode.two_dof_ode import TwoDOFODE
 from aviary.mission.gasp_based.ode.params import ParamPort
-from aviary.subsystems.mass.mass_to_weight import MassToWeight
-from aviary.variable_info.enums import AnalysisScheme, AnalysisScheme
-from aviary.variable_info.variables import Dynamic
 from aviary.mission.gasp_based.ode.time_integration_base_classes import (
     add_SGM_required_inputs,
     add_SGM_required_outputs,
 )
+from aviary.mission.gasp_based.ode.two_dof_ode import TwoDOFODE
+from aviary.subsystems.mass.mass_to_weight import MassToWeight
+from aviary.variable_info.enums import AnalysisScheme
+from aviary.variable_info.variables import Dynamic
 
 
 class AccelODE(TwoDOFODE):
@@ -23,8 +23,6 @@ class AccelODE(TwoDOFODE):
     def setup(self):
         nn = self.options['num_nodes']
         analysis_scheme = self.options['analysis_scheme']
-        aviary_options = self.options['aviary_options']
-        core_subsystems = self.options['core_subsystems']
 
         if analysis_scheme is AnalysisScheme.SHOOTING:
             add_SGM_required_inputs(

@@ -38,7 +38,7 @@ class MissionDragTest(unittest.TestCase):
         aero = default_premission_subsystems[-1]
 
         # Design conditions:
-        alt = 41000
+        # alt = 41000
         # mach = 0.79
 
         # Is this correct?
@@ -183,7 +183,6 @@ class MissionDragTest(unittest.TestCase):
         # we just want aero for mission, make a copy by itself
         aero = default_premission_subsystems[-1]
 
-        alt = 43000
         Sref = 1220.0
 
         # ---------------------
@@ -321,7 +320,6 @@ class MissionDragTest(unittest.TestCase):
         # we just want aero for mission, make a copy by itself
         aero = default_premission_subsystems[-1]
 
-        alt = 41000
         Sref = 1341.0
 
         # ---------------------
@@ -445,4 +443,6 @@ class MissionDragTest(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    unittest.main()
+    # unittest.main()
+    test = MissionDragTest()
+    test.test_large_single_aisle_2_drag()

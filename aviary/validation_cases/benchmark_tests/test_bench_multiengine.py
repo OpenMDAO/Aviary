@@ -1,7 +1,7 @@
-from copy import deepcopy
 import unittest
-import numpy as np
+from copy import deepcopy
 
+import numpy as np
 import openmdao.api as om
 from openmdao.core.problem import _clear_problem_names
 from openmdao.utils.assert_utils import assert_near_equal
@@ -10,14 +10,13 @@ from openmdao.utils.testing_utils import require_pyoptsparse, use_tempdirs
 from aviary.interface.default_phase_info.height_energy import phase_info
 from aviary.interface.methods_for_level2 import AviaryProblem
 from aviary.models.multi_engine_single_aisle.multi_engine_single_aisle_data import (
-    inputs,
     engine_1_inputs,
     engine_2_inputs,
+    inputs,
 )
 from aviary.subsystems.propulsion.utils import build_engine_deck
 from aviary.variable_info.enums import ThrottleAllocation
 from aviary.variable_info.variables import Aircraft
-
 
 # Build problem
 local_phase_info = deepcopy(phase_info)
@@ -44,9 +43,7 @@ inputs.set_val(Aircraft.Nacelle.LAMINAR_FLOW_UPPER, np.zeros(2))
 
 @use_tempdirs
 class MultiengineTestcase(unittest.TestCase):
-    """
-    Test the different throttle allocation methods for models with multiple, unique EngineModels.
-    """
+    """Test the different throttle allocation methods for models with multiple, unique EngineModels."""
 
     def setUp(self):
         om.clear_reports()

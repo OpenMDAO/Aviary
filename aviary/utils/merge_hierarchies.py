@@ -41,7 +41,6 @@ def merge_attributes(base_class, merge_class, base_class_attributes, merge_class
     None
         No exceptions raised by this method, although other methods called within may raise exceptions.
     """
-
     merge_class_unique = (
         merge_class_attributes - base_class_attributes
     )  # attributes present only in merge_class
@@ -80,11 +79,10 @@ def recursive_merge(overlapping_inners, base_class, merge_class):
         No variables returned by this method.
 
     Raises
-    ----------
+    ------
     None
         No exceptions raised by this method, although other methods called within may raise exceptions.
     """
-
     for overlapping_class_name in overlapping_inners:
         overlapping_inner_class_base = getattr(base_class, overlapping_class_name)
         overlapping_inner_class_merge = getattr(merge_class, overlapping_class_name)
@@ -142,7 +140,7 @@ def merge_two_hierarchies(base_hierarchy, hierarchy_b):
         mutability.
 
     Raises
-    ----------
+    ------
     None
         No exceptions raised by this method, although other methods called within may raise exceptions.
     """
@@ -187,7 +185,7 @@ def merge_hierarchies(hierarchies_to_merge):
     subclass_hierarchy = None
     for hierarchy in hierarchies_to_merge:  # check that there are not hierarchies subclassing from different classes that we are attempting to merge
         # checks if the given hierarchy is the first subclass of the hierarchies
-        if (len(hierarchy.__mro__) > 2) and (subclass_type == None):
+        if (len(hierarchy.__mro__) > 2) and (subclass_type is None):
             # gets highest level superclass of the class before "class" itself
             subclass_type = copy.deepcopy(hierarchy.__mro__[-2])
             subclass_hierarchy = copy.deepcopy(hierarchy)
@@ -198,7 +196,7 @@ def merge_hierarchies(hierarchies_to_merge):
                 )
 
     if (
-        subclass_hierarchy != None
+        subclass_hierarchy is not None
     ):  # ensure that we build on the subclassed hierarchy if we have one, that way the super class information is not lost
         merged_hierarchy = subclass_hierarchy
     else:

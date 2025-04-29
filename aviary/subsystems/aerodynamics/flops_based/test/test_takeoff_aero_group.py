@@ -2,18 +2,18 @@ import unittest
 
 import numpy as np
 import openmdao.api as om
-from aviary.subsystems.atmosphere.atmosphere import Atmosphere
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 
-from aviary.subsystems.aerodynamics.aerodynamics_builder import CoreAerodynamicsBuilder
-from aviary.utils.aviary_values import AviaryValues, get_items
 from aviary.models.N3CC.N3CC_data import (
     N3CC,
     takeoff_subsystem_options,
     takeoff_subsystem_options_spoilers,
 )
-from aviary.variable_info.variables import Aircraft, Dynamic, Mission
+from aviary.subsystems.aerodynamics.aerodynamics_builder import CoreAerodynamicsBuilder
+from aviary.subsystems.atmosphere.atmosphere import Atmosphere
+from aviary.utils.aviary_values import AviaryValues, get_items
 from aviary.variable_info.enums import LegacyCode
+from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 
 
 class TestTakeoffAeroGroup(unittest.TestCase):

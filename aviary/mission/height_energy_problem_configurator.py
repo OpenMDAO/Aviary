@@ -1,7 +1,5 @@
 import numpy as np
-
 import openmdao.api as om
-
 from dymos.transcriptions.transcription_base import TranscriptionBase
 
 from aviary.mission.flight_phase_builder import FlightPhaseOptions
@@ -10,11 +8,11 @@ from aviary.mission.flops_based.phases.build_takeoff import Takeoff
 from aviary.mission.flops_based.phases.energy_phase import EnergyPhase
 from aviary.mission.phase_builder_base import PhaseBuilderBase
 from aviary.mission.problem_configurator import ProblemConfiguratorBase
-from aviary.utils.utils import wrapped_convert_units
-from aviary.utils.process_input_decks import initialization_guessing
-from aviary.variable_info.enums import AnalysisScheme, LegacyCode
-from aviary.variable_info.variables import Aircraft, Mission, Dynamic, Settings
 from aviary.subsystems.propulsion.utils import build_engine_deck
+from aviary.utils.process_input_decks import initialization_guessing
+from aviary.utils.utils import wrapped_convert_units
+from aviary.variable_info.enums import AnalysisScheme, LegacyCode
+from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 
 if hasattr(TranscriptionBase, 'setup_polynomial_controls'):
     use_new_dymos_syntax = False
@@ -29,7 +27,7 @@ class HeightEnergyProblemConfigurator(ProblemConfiguratorBase):
     """
 
     def check_phase_options(self, prob):
-        "Returns the Options Dictionary used to instantiate the phases used by this ODE."
+        """Returns the Options Dictionary used to instantiate the phases used by this ODE."""
         ' This will be used by check_and_preprocess_inputs in M4L2 to ensure that the '
         ' required inputs are in the phase_info.'
         return FlightPhaseOptions
@@ -45,7 +43,6 @@ class HeightEnergyProblemConfigurator(ProblemConfiguratorBase):
         prob : AviaryProblem
             Problem that owns this builder.
         """
-
         # TODO: This should probably be moved to the set_initial_guesses() method in AviaryProblem class
         # Defines how the problem should build it's initial guesses for load_inputs()
         # this modifies mass_method, initialization_guesses, and aviary_values
@@ -172,12 +169,11 @@ class HeightEnergyProblemConfigurator(ProblemConfiguratorBase):
         PhaseBuilderBase
             Phase builder for requested phase.
         """
-
         if 'phase_builder' in phase_options:
             phase_builder = phase_options['phase_builder']
             if not issubclass(phase_builder, PhaseBuilderBase):
                 raise TypeError(
-                    f'phase_builder for the phase called '
+                    'phase_builder for the phase called '
                     '{phase_name} must be a PhaseBuilderBase object.'
                 )
         else:
@@ -204,7 +200,6 @@ class HeightEnergyProblemConfigurator(ProblemConfiguratorBase):
         user_options : dict
             Subdictionary "user_options" from the phase_info.
         """
-
         try:
             fix_initial = user_options.get_val('fix_initial')
         except KeyError:
@@ -287,7 +282,6 @@ class HeightEnergyProblemConfigurator(ProblemConfiguratorBase):
             When True, then connected=True. This allows the connections to be
             handled by constraints if `phases` is a parallel group under MPI.
         """
-
         # connect regular_phases with each other if you are optimizing alt or mach
         prob._link_phases_helper_with_options(
             prob.regular_phases,
@@ -350,7 +344,6 @@ class HeightEnergyProblemConfigurator(ProblemConfiguratorBase):
         include_landing : bool
             When True, include the landing systems.
         """
-
         if prob.pre_mission_info['include_takeoff']:
             self._add_post_mission_takeoff_systems(prob)
         else:

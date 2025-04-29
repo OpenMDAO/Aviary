@@ -2,7 +2,7 @@ import numpy as np
 import openmdao.api as om
 
 from aviary.subsystems.mass.flops_based.distributed_prop import nacelle_count_factor
-from aviary.variable_info.functions import add_aviary_input, add_aviary_output, add_aviary_option
+from aviary.variable_info.functions import add_aviary_input, add_aviary_option, add_aviary_output
 from aviary.variable_info.variables import Aircraft
 
 
@@ -121,7 +121,6 @@ class EnginePodMass(om.ExplicitComponent):
         m_elec = inputs[Aircraft.Electrical.MASS]
         m_hyd = inputs[Aircraft.Hydraulics.MASS]
         m_fsys = inputs[Aircraft.Fuel.FUEL_SYSTEM_MASS]
-        m_nac = inputs[Aircraft.Nacelle.MASS]
 
         eng_thrust = inputs[Aircraft.Engine.SCALED_SLS_THRUST]
         total_thrust = inputs[Aircraft.Propulsion.TOTAL_SCALED_SLS_THRUST]

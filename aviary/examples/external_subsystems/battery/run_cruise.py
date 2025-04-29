@@ -1,10 +1,9 @@
 from copy import deepcopy
+
 import aviary.api as av
-
 from aviary.examples.external_subsystems.battery.battery_builder import BatteryBuilder
-from aviary.examples.external_subsystems.battery.battery_variables import Dynamic
 from aviary.examples.external_subsystems.battery.battery_variable_meta_data import ExtendedMetaData
-
+from aviary.examples.external_subsystems.battery.battery_variables import Dynamic
 
 battery_builder = BatteryBuilder()
 

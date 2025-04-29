@@ -4,19 +4,17 @@ import numpy as np
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 
-from aviary.mission.gasp_based.ode.rotation_ode import RotationODE
 from aviary.mission.gasp_based.ode.params import set_params_for_unit_tests
+from aviary.mission.gasp_based.ode.rotation_ode import RotationODE
 from aviary.subsystems.propulsion.utils import build_engine_deck
 from aviary.utils.test_utils.default_subsystems import get_default_mission_subsystems
+from aviary.variable_info.functions import setup_model_options
 from aviary.variable_info.options import get_option_defaults
 from aviary.variable_info.variables import Aircraft, Dynamic
-from aviary.variable_info.functions import setup_model_options
 
 
 class RotationODETestCase(unittest.TestCase):
-    """
-    Test 2-degree of freedom rotation ODE
-    """
+    """Test 2-degree of freedom rotation ODE."""
 
     def setUp(self):
         self.prob = om.Problem()

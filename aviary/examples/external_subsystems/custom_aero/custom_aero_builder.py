@@ -1,8 +1,4 @@
-"""
-Builder for a simple drag calculation that replaces Aviary's calculation.
-"""
-
-import openmdao.api as om
+"""Builder for a simple drag calculation that replaces Aviary's calculation."""
 
 from aviary.examples.external_subsystems.custom_aero.simple_drag import SimpleAeroGroup
 from aviary.subsystems.subsystem_builder_base import SubsystemBuilderBase
@@ -28,8 +24,6 @@ class CustomAeroBuilder(SubsystemBuilderBase):
         """
         Build an OpenMDAO system for the mission computations of the subsystem.
 
-        Returns
-        -------
         Returns
         -------
         mission_sys : openmdao.core.System

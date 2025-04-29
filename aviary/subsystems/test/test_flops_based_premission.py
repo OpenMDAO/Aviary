@@ -1,23 +1,20 @@
 import unittest
-from parameterized import parameterized
 
 import openmdao.api as om
-from openmdao.utils.assert_utils import assert_near_equal, assert_check_partials
+from parameterized import parameterized
 
 from aviary.subsystems.premission import CorePreMission
 from aviary.subsystems.propulsion.utils import build_engine_deck
-from aviary.utils.aviary_values import AviaryValues
 from aviary.utils.functions import set_aviary_initial_values
 from aviary.utils.preprocessors import preprocess_options
 from aviary.utils.test_utils.default_subsystems import get_default_premission_subsystems
 from aviary.validation_cases.validation_tests import (
     flops_validation_test,
+    get_flops_case_names,
     get_flops_inputs,
     get_flops_outputs,
-    get_flops_case_names,
     print_case,
 )
-
 from aviary.variable_info.functions import setup_model_options
 from aviary.variable_info.variables import Aircraft, Mission, Settings
 
@@ -99,9 +96,6 @@ class PreMissionGroupTest(unittest.TestCase):
     def test_diff_configuration_mass(self):
         # This standalone test provides coverage for some features unique to this
         # model.
-        from aviary.models.large_single_aisle_2.large_single_aisle_2_FLOPS_data import (
-            LargeSingleAisle2FLOPS,
-        )
 
         prob = om.Problem()
 

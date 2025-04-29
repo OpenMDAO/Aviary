@@ -135,9 +135,7 @@ merge_combo8 = [Aircraft3, Aircraft4]
 
 
 class MergeHierarchiesTest(unittest.TestCase):
-    """
-    Test functionality of merge_hierarchies function.
-    """
+    """Test functionality of merge_hierarchies function."""
 
     def test_merge1(self):
         self.maxDiff = None
@@ -234,7 +232,7 @@ class MergeHierarchiesTest(unittest.TestCase):
         combo3_error_msg = "You have attempted to merge together variable hierarchies that subclass from different superclasses. 'Aircraft1' is a subclass of '<class 'aviary.variable_info.variables.Aircraft'>' and 'Mission1' is a subclass of '<class 'aviary.variable_info.variables.Mission'>'."
 
         with self.assertRaises(ValueError) as cm:
-            merged = merge_hierarchies(merge_combo3)
+            merge_hierarchies(merge_combo3)
         self.assertEqual(str(cm.exception), combo3_error_msg)
 
     def test_merge4(self):
@@ -301,7 +299,7 @@ class MergeHierarchiesTest(unittest.TestCase):
         combo8_error_msg = "You have attempted to merge two variable hierarchies together that have the same variable with a different string name associated to it. The offending variable is 'SPAN'. In 'Aircraft3.HorizontalTail.Elevator' it has a value of 'aircraft:horizontal_tail:elevator_span' and in 'Aircraft4.HorizontalTail.Elevator' it has a value of 'wrong_value'."
 
         with self.assertRaises(ValueError) as cm:
-            merged = merge_hierarchies(merge_combo8)
+            merge_hierarchies(merge_combo8)
         self.assertEqual(str(cm.exception), combo8_error_msg)
 
 

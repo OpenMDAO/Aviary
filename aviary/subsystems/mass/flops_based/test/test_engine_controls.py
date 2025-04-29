@@ -16,9 +16,7 @@ from aviary.variable_info.variables import Aircraft
 
 
 class BasicTransportEngineCtrlsTest(unittest.TestCase):
-    """
-    Test the BasicTransportEngineCtrls component.
-    """
+    """Test the BasicTransportEngineCtrls component."""
 
     def setUp(self):
         self.prob = om.Problem()
@@ -52,9 +50,7 @@ class BasicTransportEngineCtrlsTest(unittest.TestCase):
 
 
 class BasicTransportEngineCtrlsTest2(unittest.TestCase):
-    """
-    Test mass-weight conversion
-    """
+    """Test mass-weight conversion."""
 
     def setUp(self):
         import aviary.subsystems.mass.flops_based.engine_controls as control

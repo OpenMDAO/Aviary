@@ -1,20 +1,20 @@
 import numpy as np
 import openmdao.api as om
-from aviary.subsystems.atmosphere.atmosphere import Atmosphere
 
 from aviary.constants import RHO_SEA_LEVEL_ENGLISH as rho_sl
-from aviary.mission.gasp_based.ode.two_dof_ode import TwoDOFODE
 from aviary.mission.gasp_based.ode.params import ParamPort
+from aviary.mission.gasp_based.ode.two_dof_ode import TwoDOFODE
 from aviary.mission.gasp_based.ode.unsteady_solved.gamma_comp import GammaComp
+from aviary.mission.gasp_based.ode.unsteady_solved.unsteady_solved_eom import UnsteadySolvedEOM
 from aviary.mission.gasp_based.ode.unsteady_solved.unsteady_solved_flight_conditions import (
     UnsteadySolvedFlightConditions,
 )
-from aviary.mission.gasp_based.ode.unsteady_solved.unsteady_solved_eom import UnsteadySolvedEOM
-from aviary.variable_info.enums import SpeedType, LegacyCode
-from aviary.variable_info.variables import Dynamic
 from aviary.subsystems.aerodynamics.aerodynamics_builder import AerodynamicsBuilderBase
+from aviary.subsystems.atmosphere.atmosphere import Atmosphere
 from aviary.subsystems.propulsion.propulsion_builder import PropulsionBuilderBase
+from aviary.variable_info.enums import LegacyCode, SpeedType
 from aviary.variable_info.variable_meta_data import _MetaData
+from aviary.variable_info.variables import Dynamic
 
 
 class UnsteadySolvedODE(TwoDOFODE):

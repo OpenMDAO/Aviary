@@ -4,19 +4,19 @@ Helps to avoid circular imports. These functions do not rely on imports from oth
 utility files.
 """
 
-from enum import Enum
 from copy import deepcopy
+from enum import Enum
 
 import numpy as np
-
 from openmdao.utils.units import convert_units
+
 from aviary.variable_info.variable_meta_data import _MetaData
 
 
 def isiterable(val, valid_iterables: tuple = (list, np.ndarray, tuple)):
     """
     Checks if provided value is an iterable, as defined by the _valid_iterables global
-    variable
+    variable.
 
     Parameters
     ----------
@@ -146,11 +146,11 @@ def enum_setter(opt_meta, value):
 def check_type(key, val, meta_data=_MetaData):
     """
     Check that provided val is the correct type. If val is iterable, also check each
-    individual index
+    individual index.
     """
 
     def _flatten_iters(iterable):
-        """Flattens iterables of any type and dimension"""
+        """Flattens iterables of any type and dimension."""
         for item in iterable:
             try:
                 yield from iter(item)
@@ -203,7 +203,7 @@ def check_type(key, val, meta_data=_MetaData):
         elif bool in expected_types:
             has_bool = True
         if (not isinstance(item, expected_types)) or (
-            (has_bool == False) and (isinstance(item, bool))
+            (has_bool is False) and (isinstance(item, bool))
         ):
             raise TypeError(
                 f'{key} is of type(s) {meta_data[key]["types"]} but you '

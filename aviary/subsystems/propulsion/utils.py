@@ -12,18 +12,15 @@ import numpy as np
 import openmdao.api as om
 
 import aviary.constants as constants
-
-from aviary.utils.utils import isiterable
 from aviary.utils.aviary_values import AviaryValues
-from aviary.utils.named_values import NamedValues, get_keys, get_items
-from aviary.variable_info.variables import Aircraft, Dynamic, Mission
+from aviary.utils.named_values import NamedValues, get_items, get_keys
+from aviary.utils.utils import isiterable
 from aviary.variable_info.variable_meta_data import _MetaData
+from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 
 
 class EngineModelVariables(Enum):
-    """
-    Define constants that map to supported variable names in an engine model.
-    """
+    """Define constants that map to supported variable names in an engine model."""
 
     MACH = Dynamic.Atmosphere.MACH
     ALTITUDE = Dynamic.Mission.ALTITUDE
@@ -82,7 +79,7 @@ def convert_geopotential_altitude(altitude):
         geopotential altitudes (in ft) to be converted.
 
     Returns
-    ----------
+    -------
     altitude_list : <list of floats>
         geometric altitudes (ft).
     """
@@ -150,7 +147,6 @@ def build_engine_deck(
     EngineDeck
         EngineDeck created using provided options.
     """
-
     # Required engine vars include one setting from Mission.Summary
     engine_vars = [item for item in Aircraft.Engine.__dict__.values()]
     engine_vars.append(Mission.Summary.FUEL_FLOW_SCALER)
@@ -214,7 +210,7 @@ def build_engine_deck(
 class EngineDataInterpolator(om.Group):
     """
     Group that contains interpolators that get passed training data directly through
-    openMDAO connections
+    openMDAO connections.
     """
 
     def initialize(self):
@@ -338,9 +334,7 @@ class EngineDataInterpolator(om.Group):
 
 
 class UncorrectData(om.Group):
-    """
-    Calculations to recover physical parameter values that have been corrected based on ambient atmospheric conditions
-    """
+    """Calculations to recover physical parameter values that have been corrected based on ambient atmospheric conditions."""
 
     def initialize(self):
         self.options.declare('num_nodes', types=int, default=1)
@@ -418,9 +412,7 @@ class UncorrectData(om.Group):
 
 
 class PropellerModelVariables(Enum):
-    """
-    Define constants that map to supported variable names in a propeller model.
-    """
+    """Define constants that map to supported variable names in a propeller model."""
 
     HELICAL_MACH = 'Helical_Mach'
     MACH = 'Mach'

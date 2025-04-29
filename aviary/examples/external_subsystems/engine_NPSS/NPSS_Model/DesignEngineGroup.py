@@ -1,7 +1,7 @@
-import numpy as np
-import openmdao.api as om
 import subprocess as subprocess
 
+import numpy as np
+import openmdao.api as om
 from openmdao.utils.file_wrap import FileParser
 
 from aviary.examples.external_subsystems.engine_NPSS.engine_variables import Aircraft
@@ -9,9 +9,7 @@ from aviary.utils.functions import get_path
 
 
 class NPSSExternalCodeComp(om.ExternalCodeComp):
-    """
-    Component that wraps NPSS engine model
-    """
+    """Component that wraps NPSS engine model."""
 
     def initialize(self):
         self.options.declare(
@@ -118,9 +116,7 @@ class NPSSExternalCodeComp(om.ExternalCodeComp):
 
 
 class DesignEngineGroup(om.Group):
-    """
-    Group that contains NPSSExternalCodeComp and component to calculate negative fuel flow rate
-    """
+    """Group that contains NPSSExternalCodeComp and component to calculate negative fuel flow rate."""
 
     def initialize(self):
         self.options.declare(
