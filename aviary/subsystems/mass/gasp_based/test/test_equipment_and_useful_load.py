@@ -77,7 +77,7 @@ class EquipMassTestCase1(unittest.TestCase):
         self.prob.run_model()
 
         tol = 1e-7
-        assert_near_equal(self.prob['equip_mass_part'], 8573.19157631, tol)
+        assert_near_equal(self.prob['equip_mass_part'], 8573.1915, tol)
 
         partial_data = self.prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=8e-12, rtol=1e-12)
@@ -139,11 +139,9 @@ class EquipMassTestCase2(unittest.TestCase):
     def test_case1(self):
         self.prob.run_model()
 
-        tol = 1e-4
+        tol = 1e-7
         # not actual GASP value
-        assert_near_equal(
-            self.prob['equip_mass_part'], 10992.96303693, tol
-        )  # not actual GASP value
+        assert_near_equal(self.prob['equip_mass_part'], 10992.963, tol)  # not actual GASP value
 
         partial_data = self.prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=8e-12, rtol=1e-12)
@@ -205,11 +203,9 @@ class EquipMassTestCase3(unittest.TestCase):
     def test_case1(self):
         self.prob.run_model()
 
-        tol = 1e-4
+        tol = 1e-7
         # not actual GASP value
-        assert_near_equal(
-            self.prob['equip_mass_part'], 10992.96303693, tol
-        )  # not actual GASP value
+        assert_near_equal(self.prob['equip_mass_part'], 10992.963, tol)  # not actual GASP value
 
         partial_data = self.prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=8e-12, rtol=1e-12)
@@ -345,9 +341,9 @@ class EquipMassTestCase5smooth(unittest.TestCase):
     def test_case1(self):
         self.prob.run_model()
 
-        tol = 1e-4
+        tol = 1e-7
 
-        assert_near_equal(self.prob['equip_mass_part'], 8573.19157631, tol)
+        assert_near_equal(self.prob['equip_mass_part'], 8573.192, tol)
 
         partial_data = self.prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=8e-12, rtol=1e-12)
@@ -410,11 +406,9 @@ class EquipMassTestCase6smooth(unittest.TestCase):
     def test_case1(self):
         self.prob.run_model()
 
-        tol = 1e-4
+        tol = 1e-7
         # not actual GASP value
-        assert_near_equal(
-            self.prob['equip_mass_part'], 10992.96303693, tol
-        )  # not actual GASP value
+        assert_near_equal(self.prob['equip_mass_part'], 10992.963, tol)  # not actual GASP value
 
         partial_data = self.prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=8e-12, rtol=1e-12)
@@ -478,11 +472,9 @@ class EquipMassTestCase7smooth(unittest.TestCase):
     def test_case1(self):
         self.prob.run_model()
 
-        tol = 1e-4
+        tol = 1e-7
         # not actual GASP value
-        assert_near_equal(
-            self.prob['equip_mass_part'], 10992.96303693, tol
-        )  # not actual GASP value
+        assert_near_equal(self.prob['equip_mass_part'], 10992.963, tol)  # not actual GASP value
 
         partial_data = self.prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=8e-12, rtol=1e-12)
@@ -553,7 +545,7 @@ class EquipMassTestCase8(unittest.TestCase):
         self.prob.run_model()
 
         tol = 1e-7
-        assert_near_equal(self.prob['equip_mass_part'], 8410.62948115, tol)
+        assert_near_equal(self.prob['equip_mass_part'], 8410.6295, tol)
 
         partial_data = self.prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=8e-12, rtol=1e-12)
@@ -625,7 +617,7 @@ class EquipMassTestCase9smooth(unittest.TestCase):
         self.prob.run_model()
 
         tol = 1e-7
-        assert_near_equal(self.prob['equip_mass_part'], 8410.62948115, tol)
+        assert_near_equal(self.prob['equip_mass_part'], 8410.6295, tol)
 
         partial_data = self.prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=8e-12, rtol=1e-12)
@@ -732,7 +724,6 @@ class FurnishingMassTestCase1(unittest.TestCase):
             promotes=['*'],
         )
 
-        self.prob.model.set_input_defaults(Aircraft.Furnishings.MASS, val=11192.0, units='lbm')
         self.prob.model.set_input_defaults(Mission.Design.GROSS_MASS, val=175400, units='lbm')
         self.prob.model.set_input_defaults(Aircraft.Fuselage.AVG_DIAMETER, val=13.1, units='ft')
 
@@ -744,16 +735,26 @@ class FurnishingMassTestCase1(unittest.TestCase):
         self.prob.run_model()
 
         tol = 1e-7
-        assert_near_equal(self.prob['furnishing_mass'], 11192.0, tol)
+        assert_near_equal(self.prob[Aircraft.Furnishings.MASS], 19658.5, tol)
 
         partial_data = self.prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=8e-12, rtol=1e-12)
 
 
 class FurnishingMassTestCase2(unittest.TestCase):
-    """Created based on EquipMassTestCase1"""
+    """Test mass-weight conversion"""
 
     def setUp(self):
+        import aviary.subsystems.mass.gasp_based.equipment_and_useful_load as equip
+
+        equip.GRAV_ENGLISH_LBM = 1.1
+
+    def tearDown(self):
+        import aviary.subsystems.mass.gasp_based.equipment_and_useful_load as equip
+
+        equip.GRAV_ENGLISH_LBM = 1.0
+
+    def test_case1(self):
         options = get_option_defaults()
         options.set_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS, val=180, units='unitless')
 
@@ -764,19 +765,13 @@ class FurnishingMassTestCase2(unittest.TestCase):
             promotes=['*'],
         )
 
-        self.prob.model.set_input_defaults(Aircraft.Furnishings.MASS, val=0.0, units='lbm')
         self.prob.model.set_input_defaults(Mission.Design.GROSS_MASS, val=175400, units='lbm')
         self.prob.model.set_input_defaults(Aircraft.Fuselage.AVG_DIAMETER, val=13.1, units='ft')
 
         setup_model_options(self.prob, options)
 
         self.prob.setup(check=False, force_alloc_complex=True)
-
-    def test_case1(self):
         self.prob.run_model()
-
-        tol = 1e-7
-        assert_near_equal(self.prob['furnishing_mass'], 17122.0, tol)
 
         partial_data = self.prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=8e-12, rtol=1e-12)
@@ -799,7 +794,7 @@ class EquipMassSumTestCase1(unittest.TestCase):
         self.prob.model.set_input_defaults(
             Aircraft.AirConditioning.MASS, val=1324.0561, units='lbm'
         )
-        self.prob.model.set_input_defaults('furnishing_mass', val=11192.0, units='lbm')
+        self.prob.model.set_input_defaults(Aircraft.Furnishings.MASS, val=11192.0, units='lbm')
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
@@ -807,7 +802,7 @@ class EquipMassSumTestCase1(unittest.TestCase):
         self.prob.run_model()
 
         tol = 1e-7
-        assert_near_equal(self.prob[Aircraft.Design.FIXED_EQUIPMENT_MASS], 21089.24767631, tol)
+        assert_near_equal(self.prob[Aircraft.Design.FIXED_EQUIPMENT_MASS], 21089.248, tol)
 
         partial_data = self.prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=8e-12, rtol=1e-12)
@@ -881,7 +876,7 @@ class EquipMassGroupTest(unittest.TestCase):
         self.prob.run_model()
 
         tol = 1e-7
-        assert_near_equal(self.prob[Aircraft.Design.FIXED_EQUIPMENT_MASS], 21089.248, tol)
+        assert_near_equal(self.prob[Aircraft.Design.FIXED_EQUIPMENT_MASS], 32551.307, tol)
 
         partial_data = self.prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=8e-12, rtol=1e-12)
@@ -931,9 +926,9 @@ class UsefulMassTestCase1(unittest.TestCase):
     def test_case1(self):
         self.prob.run_model()
 
-        tol = 1e-4
+        tol = 1e-7
         assert_near_equal(
-            self.prob[Aircraft.Design.FIXED_USEFUL_LOAD], 5176, tol
+            self.prob[Aircraft.Design.FIXED_USEFUL_LOAD], 5176.429, tol
         )  # modified from GASP value to account for updated crew mass. GASP value is 4932
 
         partial_data = self.prob.check_partials(out_stream=None, method='cs')
@@ -982,9 +977,9 @@ class UsefulMassTestCase2(unittest.TestCase):
     def test_case1(self):
         self.prob.run_model()
 
-        tol = 1e-4
+        tol = 1e-7
         # not actual GASP value
-        assert_near_equal(self.prob[Aircraft.Design.FIXED_USEFUL_LOAD], 1235.4, tol)
+        assert_near_equal(self.prob[Aircraft.Design.FIXED_USEFUL_LOAD], 1235.429, tol)
 
         partial_data = self.prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=8e-12, rtol=1e-12)
@@ -1032,9 +1027,9 @@ class UsefulMassTestCase3(unittest.TestCase):
     def test_case1(self):
         self.prob.run_model()
 
-        tol = 1e-4
+        tol = 1e-7
         # not actual GASP value
-        assert_near_equal(self.prob[Aircraft.Design.FIXED_USEFUL_LOAD], 892.83, tol)
+        assert_near_equal(self.prob[Aircraft.Design.FIXED_USEFUL_LOAD], 892.829, tol)
 
         partial_data = self.prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=8e-12, rtol=1e-12)
@@ -1142,7 +1137,7 @@ class UsefulMassTestCase5(unittest.TestCase):
 
         tol = 1e-7
         assert_near_equal(
-            self.prob[Aircraft.Design.FIXED_USEFUL_LOAD], 5241.42896854, tol
+            self.prob[Aircraft.Design.FIXED_USEFUL_LOAD], 5241.429, tol
         )  # modified from GASP value to account for updated crew mass. GASP value is 4932
 
         partial_data = self.prob.check_partials(out_stream=None, method='cs')
@@ -1225,10 +1220,8 @@ class EquipAndUsefulMassGroupTest(unittest.TestCase):
         self.prob.run_model()
 
         tol = 1e-7
-        assert_near_equal(
-            self.prob[Aircraft.Design.FIXED_USEFUL_LOAD], 5176.429, tol
-        )  # modified from GASP value to account for updated crew mass. GASP value is 4932
-        assert_near_equal(self.prob[Aircraft.Design.FIXED_EQUIPMENT_MASS], 21089.248, tol)
+        assert_near_equal(self.prob[Aircraft.Design.FIXED_USEFUL_LOAD], 5176.429, tol)
+        assert_near_equal(self.prob[Aircraft.Design.FIXED_EQUIPMENT_MASS], 32551.307, tol)
 
         partial_data = self.prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=8e-12, rtol=1e-12)
@@ -1236,6 +1229,6 @@ class EquipAndUsefulMassGroupTest(unittest.TestCase):
 
 if __name__ == '__main__':
     # unittest.main()
-    test = ACMassTestCase1()
+    test = FurnishingMassTestCase2()
     test.setUp()
     test.test_case1()

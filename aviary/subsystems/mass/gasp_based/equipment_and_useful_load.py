@@ -2,10 +2,58 @@ import numpy as np
 import openmdao.api as om
 
 from aviary.constants import GRAV_ENGLISH_LBM
-from aviary.utils.functions import sigmoidX, dSigmoidXdx
+from aviary.utils.functions import sigmoidX, dSigmoidXdx, smooth_max, d_smooth_max
 from aviary.variable_info.enums import GASPEngineType
 from aviary.variable_info.functions import add_aviary_input, add_aviary_output, add_aviary_option
 from aviary.variable_info.variables import Aircraft, Mission
+
+
+def get_num_of_flight_attendent(num_pax):
+    num_flight_attendants = 0
+    if num_pax >= 20.0:
+        num_flight_attendants = 1
+    if num_pax >= 51.0:
+        num_flight_attendants = 2
+    if num_pax >= 101.0:
+        num_flight_attendants = 3
+    if num_pax >= 151.0:
+        num_flight_attendants = 4
+    if num_pax >= 201.0:
+        num_flight_attendants = 5
+    if num_pax >= 251.0:
+        num_flight_attendants = 6
+
+    return num_flight_attendants
+
+
+def get_num_of_pilots(num_pax, engine_type):
+    num_pilots = 1
+    if num_pax > 9.0:
+        num_pilots = 2
+    if engine_type is GASPEngineType.TURBOJET and num_pax > 5.0:
+        num_pilots = 2
+    if num_pax >= 351.0:
+        num_pilots = 3
+
+    return num_pilots
+
+
+def get_num_of_lavatories(num_pax):
+    num_lavatories = 0
+    if num_pax > 25.0:
+        num_lavatories = 1
+    if num_pax >= 51.0:
+        num_lavatories = 2
+    if num_pax >= 101.0:
+        num_lavatories = 3
+    if num_pax >= 151.0:
+        num_lavatories = 4
+    if num_pax >= 201.0:
+        num_lavatories = 5
+    if num_pax >= 251.0:
+        num_lavatories = 6
+
+    return num_lavatories
 
 
 class EquipMassPartial(om.ExplicitComponent):
@@ -30,7 +78,6 @@ class EquipMassPartial(om.ExplicitComponent):
         add_aviary_input(self, Aircraft.Avionics.MASS, units='lbm')
         add_aviary_input(self, Aircraft.CrewPayload.CATERING_ITEMS_MASS_PER_PASSENGER, units='lbm')
         add_aviary_input(self, Aircraft.Design.EMERGENCY_EQUIPMENT_MASS, units='lbm')
-        add_aviary_input(self, Aircraft.Furnishings.MASS, units='lbm')
         add_aviary_input(
             self, Aircraft.Hydraulics.FLIGHT_CONTROL_MASS_COEFFICIENT, units='unitless'
         )
@@ -88,13 +135,7 @@ class EquipMassPartial(om.ExplicitComponent):
             # note: this technically creates a discontinuity
             APU_wt = inputs[Aircraft.APU.MASS] * GRAV_ENGLISH_LBM
 
-        num_pilots = 1.0
-        if PAX > 9.0:
-            num_pilots = 2.0
-        if engine_type is GASPEngineType.TURBOJET and PAX > 5.0:
-            num_pilots = 2.0
-        if PAX >= 251.0:
-            num_pilots = 3.0
+        num_pilots = get_num_of_pilots(PAX, engine_type)
 
         instrument_wt = (
             inputs[Aircraft.Instruments.MASS_COEFFICIENT]
@@ -197,8 +238,6 @@ class EquipMassPartial(om.ExplicitComponent):
         wing_area = inputs[Aircraft.Wing.AREA]
         htail_area = inputs[Aircraft.HorizontalTail.AREA]
         vtail_area = inputs[Aircraft.VerticalTail.AREA]
-        # p_diff_fus = inputs[Aircraft.Fuselage.PRESSURE_DIFFERENTIAL]
-        # cabin_width = inputs[Aircraft.Fuselage.AVG_DIAMETER]
 
         engine_type = self.options[Aircraft.Engine.TYPE][0]
 
@@ -207,13 +246,7 @@ class EquipMassPartial(om.ExplicitComponent):
             # note: this technically creates a discontinuity
             dAPU_wt_dmass_coeff_0 = GRAV_ENGLISH_LBM
 
-        num_pilots = 1.0
-        if PAX > 9.0:
-            num_pilots = 2.0
-        if engine_type is GASPEngineType.TURBOJET and PAX > 5.0:
-            num_pilots = 2.0
-        if PAX >= 251.0:
-            num_pilots = 3.0
+        num_pilots = get_num_of_pilots(PAX, engine_type)
 
         dinstrument_wt_dmass_coeff_1 = (
             gross_wt_initial**0.386
@@ -292,37 +325,6 @@ class EquipMassPartial(om.ExplicitComponent):
             davionics_wt_dgross_wt_initial = 0.0
             davionics_wt_dmass_coeff_4 = GRAV_ENGLISH_LBM
 
-        # dair_conditioning_wt_dmass_coeff_5 = 0.0
-        # dair_conditioning_wt_dp_diff_fus = 0.0
-        # dair_conditioning_wt_dfus_len = 0.0
-        # dair_conditioning_wt_dcabin_width = 0.0
-        # if gross_wt_initial > 3500.0:  # note: this technically creates a discontinuity
-        #    dair_conditioning_wt_dmass_coeff_5 = (1.5 + p_diff_fus) * (
-        #        0.358 * fus_len * cabin_width**2
-        #    ) ** 0.5
-        #    dair_conditioning_wt_dp_diff_fus = (
-        #        inputs[Aircraft.AirConditioning.MASS_COEFFICIENT]
-        #        * (0.358 * fus_len * cabin_width**2) ** 0.5
-        #    )
-        #    dair_conditioning_wt_dfus_len = (
-        #        0.5
-        #        * inputs[Aircraft.AirConditioning.MASS_COEFFICIENT]
-        #        * (1.5 + p_diff_fus)
-        #        * (0.358 * fus_len * cabin_width**2) ** -0.5
-        #        * 0.358
-        #        * cabin_width**2
-        #    )
-        #    dair_conditioning_wt_dcabin_width = (
-        #        0.5
-        #        * inputs[Aircraft.AirConditioning.MASS_COEFFICIENT]
-        #        * (1.5 + p_diff_fus)
-        #        * (0.358 * fus_len * cabin_width**2) ** -0.5
-        #        * 2
-        #        * 0.358
-        #        * fus_len
-        #        * cabin_width
-        #    )
-
         SSUM = wing_area + htail_area + vtail_area
         icing_wt = 22.7 * (SSUM**0.5) - 385.0
 
@@ -362,78 +364,6 @@ class EquipMassPartial(om.ExplicitComponent):
             d_aux_wt_dgross_wt_initial = 0.0
         if PAX > 74.0:
             d_aux_wt_dgross_wt_initial = 0.0
-
-        # CPX = 28.0 + 10.516 * (cabin_width - 5.667)
-        # dCPX_dcabin_width = 10.516
-
-        # if smooth:
-        #    CPX_1 = (
-        #        28 * sigmoidX(CPX / 28, 1, -0.01)
-        #        + CPX * sigmoidX(CPX / 28, 1, 0.01) * sigmoidX(CPX / 62, 1, -0.01)
-        #        + 62 * sigmoidX(CPX / 62, 1, 0.01)
-        #    )
-
-        #    dCPX_dcabin_width = (
-        #        28 * dSigmoidXdx(CPX / 28, 1, 0.01) * -dCPX_dcabin_width
-        #        + (
-        #            dCPX_dcabin_width * sigmoidX(CPX / 28, 1, 0.01)
-        #            + CPX * dSigmoidXdx(CPX / 28, 1, 0.01) * dCPX_dcabin_width
-        #        )
-        #        * sigmoidX(CPX / 62, 1, 0.01)
-        #        + CPX
-        #        * sigmoidX(CPX / 28, 1, 0.01)
-        #        * dSigmoidXdx(CPX / 62, 1, 0.01)
-        #        * -dCPX_dcabin_width
-        #        + 62 * dSigmoidXdx(CPX / 62, 1, 0.01) * dCPX_dcabin_width
-        #    )
-
-        #    CPX = CPX_1
-        #    dfurnishing_wt_dgross_wt_initial = 0.0
-        #    dfurnishing_wt_dgross_wt_initial = 0.0
-        #    dfurnishing_wt_dmass_coeff_7 = 0.0
-        # else:
-        #    if cabin_width <= 5.667:  # note: this technically creates a discontinuity
-        #        CPX = 28.0
-        #        dCPX_dcabin_width = 0.0
-        #        dfurnishing_wt_dgross_wt_initial = 0.0
-        #        dfurnishing_wt_dmass_coeff_7 = 0.0
-        #    if cabin_width > 8.90:  # note: this technically creates a discontinuity
-        #        CPX = 62.0
-        #        dCPX_dcabin_width = 0.0
-        #        dfurnishing_wt_dgross_wt_initial = 0.0
-        #        dfurnishing_wt_dmass_coeff_7 = 0.0
-
-        # furnishing_wt = CPX * PAX + 310.0
-        # dfurnishing_wt_dgross_wt_initial = 0.0
-        # dfurnishing_wt_dmass_coeff_7 = 0.0
-        # dfurnishing_wt_dcabin_width = PAX * dCPX_dcabin_width
-        # if PAX > 80:
-        #    furnishing_wt = 118.4 * PAX - 4190.0
-        #    dfurnishing_wt_dgross_wt_initial = 0.0
-        #    dfurnishing_wt_dcabin_width = 0.0
-        #    dfurnishing_wt_dmass_coeff_7 = 0.0
-        # if (
-        #    gross_wt_initial <= 10000.0
-        # ):  # note: this technically creates a discontinuity #TODO: Doesn't occur in large single aisle
-        #    furnishing_wt = 0.065 * gross_wt_initial - 59.0
-        #    dfurnishing_wt_dgross_wt_initial = 0.065
-        #    dfurnishing_wt_dcabin_width = 0.0
-        #    dfurnishing_wt_dmass_coeff_7 = 0.0
-
-        # if smooth:
-        #    pass
-        # else:
-        #    if furnishing_wt <= 30.0:  # note: this technically creates a discontinuity
-        #        furnishing_wt = 30.0
-        #        dfurnishing_wt_dgross_wt_initial = 0.0
-        #        dfurnishing_wt_dcabin_width = 0.0
-        #        dfurnishing_wt_dmass_coeff_7 = 0.0
-        # if not (-1e-5 < inputs[Aircraft.Furnishings.MASS] < 1e-5):
-        #    # note: this technically creates a discontinuity #WONT CHANGE
-        #    furnishing_wt = inputs[Aircraft.Furnishings.MASS] * GRAV_ENGLISH_LBM
-        #    dfurnishing_wt_dmass_coeff_7 = GRAV_ENGLISH_LBM
-        #    dfurnishing_wt_dcabin_width = 0.0
-        #    dfurnishing_wt_dgross_wt_initial = 0.0
 
         dfixed_equip_mass_dmass_coeff_0 = dAPU_wt_dmass_coeff_0 / GRAV_ENGLISH_LBM
         dfixed_equip_mass_dmass_coeff_1 = dinstrument_wt_dmass_coeff_1 / GRAV_ENGLISH_LBM
@@ -590,151 +520,223 @@ class FurnishingMass(om.ExplicitComponent):
     def initialize(self):
         add_aviary_option(self, Aircraft.CrewPayload.Design.NUM_PASSENGERS)
         add_aviary_option(self, Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES)
+        add_aviary_option(self, Aircraft.Engine.TYPE)
+        add_aviary_option(self, Aircraft.Furnishings.USE_STANDARD_REGRESSION)
+        self.options.declare('mu', default=100.0, types=float)
 
     def setup(self):
-        add_aviary_input(self, Aircraft.Furnishings.MASS, units='lbm')
         add_aviary_input(self, Mission.Design.GROSS_MASS, units='lbm')
         add_aviary_input(self, Aircraft.Fuselage.AVG_DIAMETER, units='ft')
+        add_aviary_input(self, Aircraft.Fuselage.LENGTH, units='ft')
+        add_aviary_input(self, Aircraft.Furnishings.MASS_SCALER, units='unitless')
 
-        self.add_output('furnishing_mass', units='lbm')
+        self.add_output(Aircraft.Furnishings.MASS, units='lbm')
 
         self.declare_partials(
-            'furnishing_mass',
+            Aircraft.Furnishings.MASS,
             [
-                Aircraft.Furnishings.MASS,
                 Aircraft.Fuselage.AVG_DIAMETER,
                 Mission.Design.GROSS_MASS,
+                Aircraft.Furnishings.MASS_SCALER,
+                Aircraft.Fuselage.LENGTH,
             ],
         )
 
     def compute(self, inputs, outputs):
         PAX = self.options[Aircraft.CrewPayload.Design.NUM_PASSENGERS]
         smooth = self.options[Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES]
+        regression = self.options[Aircraft.Furnishings.USE_STANDARD_REGRESSION]
+        engine_type = self.options[Aircraft.Engine.TYPE][0]
+        mu = self.options['mu']
+
+        num_pilots = get_num_of_pilots(PAX, engine_type)
+        num_flight_attendants = get_num_of_flight_attendent(PAX)
+        lavatories = get_num_of_lavatories(PAX)
 
         gross_wt_initial = inputs[Mission.Design.GROSS_MASS] * GRAV_ENGLISH_LBM
-
+        fus_len = inputs[Aircraft.Fuselage.LENGTH]
         cabin_width = inputs[Aircraft.Fuselage.AVG_DIAMETER]
-        CPX = 28.0 + 10.516 * (cabin_width - 5.667)
-
-        if smooth:
-            CPX = (
-                28 * sigmoidX(CPX / 28, 1, -0.01)
-                + CPX * sigmoidX(CPX / 28, 1, 0.01) * sigmoidX(CPX / 62, 1, -0.01)
-                + 62 * sigmoidX(CPX / 62, 1, 0.01)
-            )
-        else:
-            if cabin_width <= 5.667:  # note: this technically creates a discontinuity
-                CPX = 28.0
-            elif cabin_width > 8.90:  # note: this technically creates a discontinuity
-                CPX = 62.0
-
-        furnishing_wt = CPX * PAX + 310.0
-        if PAX > 80:
-            furnishing_wt = 118.4 * PAX - 4190.0
+        scaler = inputs[Aircraft.Furnishings.MASS_SCALER]
 
         if gross_wt_initial <= 10000.0:
             # note: this technically creates a discontinuity
             # TODO: Doesn't occur in large single aisle
             furnishing_wt = 0.065 * gross_wt_initial - 59.0
+        else:
+            if PAX >= 50:
+                if regression:
+                    # linear empirical regression formula
+                    furnishing_wt_additional = 118.4 * PAX - 4190.0
+                else:
+                    # commonly used empirical furnishing weight equation
+                    furnishing_wt_additional = scaler * PAX
+                # baseline furnishings (crew seats, cockpit, lavatories, galleys)
+                cabin_len = 0.75 * fus_len
+                agalley = 0.50 * PAX
+                furnishing_wt = (
+                    furnishing_wt_additional
+                    + num_pilots * (1.0 + cabin_width / 12.0) * 90.0
+                    + num_flight_attendants * 30.0
+                    + lavatories * 240.0
+                    + agalley * 12.0
+                    + 1.5 * cabin_len * cabin_width * np.pi / 2.0
+                )
+            else:
+                CPX_lin = 28.0 + 10.516 * (cabin_width - 5.667)
+                if smooth:
+                    CPX = (
+                        28 * sigmoidX(CPX_lin / 28, 1, -0.01)
+                        + CPX * sigmoidX(CPX_lin / 28, 1, 0.01) * sigmoidX(CPX_lin / 62, 1, -0.01)
+                        + 62 * sigmoidX(CPX_lin / 62, 1, 0.01)
+                    )
+                else:
+                    if cabin_width <= 5.667:  # note: this technically creates a discontinuity
+                        CPX = 28.0
+                    elif cabin_width > 8.90:  # note: this technically creates a discontinuity
+                        CPX = 62.0
+                furnishing_wt = CPX * PAX + 310.0
 
         if smooth:
-            pass
+            furnishing_wt = smooth_max(furnishing_wt, 30.0, mu)
         else:
-            if furnishing_wt <= 30.0:  # note: this technically creates a discontinuity
-                furnishing_wt = 30.0
-        if not (-1e-5 < inputs[Aircraft.Furnishings.MASS] < 1e-5):
-            # note: this technically creates a discontinuity
-            furnishing_wt = inputs[Aircraft.Furnishings.MASS] * GRAV_ENGLISH_LBM
+            furnishing_wt = np.maximum(furnishing_wt, 30.0)
 
-        outputs['furnishing_mass'] = furnishing_wt / GRAV_ENGLISH_LBM
+        outputs[Aircraft.Furnishings.MASS] = furnishing_wt / GRAV_ENGLISH_LBM
 
     def compute_partials(self, inputs, partials):
         PAX = self.options[Aircraft.CrewPayload.Design.NUM_PASSENGERS]
         smooth = self.options[Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES]
+        regression = self.options[Aircraft.Furnishings.USE_STANDARD_REGRESSION]
+        engine_type = self.options[Aircraft.Engine.TYPE][0]
+        mu = self.options['mu']
+
+        num_pilots = get_num_of_pilots(PAX, engine_type)
+        num_flight_attendants = get_num_of_flight_attendent(PAX)
+        lavatories = get_num_of_lavatories(PAX)
 
         gross_wt_initial = inputs[Mission.Design.GROSS_MASS] * GRAV_ENGLISH_LBM
+        fus_len = inputs[Aircraft.Fuselage.LENGTH]
         cabin_width = inputs[Aircraft.Fuselage.AVG_DIAMETER]
+        scaler = inputs[Aircraft.Furnishings.MASS_SCALER]
 
-        CPX = 28.0 + 10.516 * (cabin_width - 5.667)
-        dCPX_dcabin_width = 10.516
-
-        if smooth:
-            CPX_1 = (
-                28 * sigmoidX(CPX / 28, 1, -0.01)
-                + CPX * sigmoidX(CPX / 28, 1, 0.01) * sigmoidX(CPX / 62, 1, -0.01)
-                + 62 * sigmoidX(CPX / 62, 1, 0.01)
-            )
-
-            dCPX_dcabin_width = (
-                28 * dSigmoidXdx(CPX / 28, 1, 0.01) * -dCPX_dcabin_width
-                + (
-                    dCPX_dcabin_width * sigmoidX(CPX / 28, 1, 0.01)
-                    + CPX * dSigmoidXdx(CPX / 28, 1, 0.01) * dCPX_dcabin_width
-                )
-                * sigmoidX(CPX / 62, 1, 0.01)
-                + CPX
-                * sigmoidX(CPX / 28, 1, 0.01)
-                * dSigmoidXdx(CPX / 62, 1, 0.01)
-                * -dCPX_dcabin_width
-                + 62 * dSigmoidXdx(CPX / 62, 1, 0.01) * dCPX_dcabin_width
-            )
-
-            CPX = CPX_1
-            dfurnishing_wt_dgross_wt_initial = 0.0
-            dfurnishing_wt_dgross_wt_initial = 0.0
-            dfurnishing_wt_dmass_coeff_7 = 0.0
-        else:
-            if cabin_width <= 5.667:  # note: this technically creates a discontinuity
-                CPX = 28.0
-                dCPX_dcabin_width = 0.0
-                dfurnishing_wt_dgross_wt_initial = 0.0
-                dfurnishing_wt_dmass_coeff_7 = 0.0
-            if cabin_width > 8.90:  # note: this technically creates a discontinuity
-                CPX = 62.0
-                dCPX_dcabin_width = 0.0
-                dfurnishing_wt_dgross_wt_initial = 0.0
-                dfurnishing_wt_dmass_coeff_7 = 0.0
-
-        furnishing_wt = CPX * PAX + 310.0
-        dfurnishing_wt_dgross_wt_initial = 0.0
-        dfurnishing_wt_dmass_coeff_7 = 0.0
-        dfurnishing_wt_dcabin_width = PAX * dCPX_dcabin_width
-        if PAX > 80:
-            furnishing_wt = 118.4 * PAX - 4190.0
-            dfurnishing_wt_dgross_wt_initial = 0.0
-            dfurnishing_wt_dcabin_width = 0.0
-            dfurnishing_wt_dmass_coeff_7 = 0.0
-        if gross_wt_initial <= 10000.0:  # note: this technically creates a discontinuity
+        if gross_wt_initial <= 10000.0:
             furnishing_wt = 0.065 * gross_wt_initial - 59.0
             dfurnishing_wt_dgross_wt_initial = 0.065
             dfurnishing_wt_dcabin_width = 0.0
-            dfurnishing_wt_dmass_coeff_7 = 0.0
+            dfurnishing_wt_dfus_len = 0.0
+            dfurnishing_wt_dscaler = 0.0
+        else:
+            if PAX >= 50:
+                if regression:
+                    furnishing_wt_additional = 118.4 * PAX - 4190.0
+                    dfurnishing_wt_additional_dgross_wt_initial = 0.0
+                    dfurnishing_wt_additional_dcabin_width = 0.0
+                    dfurnishing_wt_additional_dfus_len = 0.0
+                    dfurnishing_wt_additional_dscaler = 0.0
+                else:
+                    furnishing_wt_additional = scaler * PAX
+                    dfurnishing_wt_additional_dgross_wt_initial = 0.0
+                    dfurnishing_wt_additional_dcabin_width = 0.0
+                    dfurnishing_wt_additional_dfus_len = 0.0
+                    dfurnishing_wt_additional_dscaler = PAX
+                cabin_len = 0.75 * fus_len
+                agalley = 0.50 * PAX
+                furnishing_wt = (
+                    furnishing_wt_additional
+                    + num_pilots * (1.0 + cabin_width / 12.0) * 90.0
+                    + num_flight_attendants * 30.0
+                    + lavatories * 240.0
+                    + agalley * 12.0
+                    + 1.5 * cabin_len * cabin_width * np.pi / 2.0
+                )
+                dfurnishing_wt_dgross_wt_initial = dfurnishing_wt_additional_dgross_wt_initial + 0.0
+                dfurnishing_wt_dcabin_width = (
+                    dfurnishing_wt_additional_dcabin_width
+                    + num_pilots * (1.0 / 12.0) * 90.0
+                    + 1.5 * 0.75 * fus_len * np.pi / 2.0
+                )
+                dfurnishing_wt_dfus_len = (
+                    dfurnishing_wt_additional_dfus_len + 1.5 * 0.75 * cabin_width * np.pi / 2.0
+                )
+                dfurnishing_wt_dscaler = dfurnishing_wt_additional_dscaler + 0.0
+            else:
+                CPX_lin = 28.0 + 10.516 * (cabin_width - 5.667)
+                if smooth:
+                    CPX = (
+                        28 * sigmoidX(CPX_lin / 28, 1, -0.01)
+                        + CPX * sigmoidX(CPX_lin / 28, 1, 0.01) * sigmoidX(CPX_lin / 62, 1, -0.01)
+                        + 62 * sigmoidX(CPX_lin / 62, 1, 0.01)
+                    )
+                else:
+                    if cabin_width <= 5.667:  # note: this technically creates a discontinuity
+                        CPX = 28.0
+                    elif cabin_width > 8.90:  # note: this technically creates a discontinuity
+                        CPX = 62.0
+                furnishing_wt = CPX * PAX + 310.0
+
+                dCPX_lin_dcabin_width = 10.516
+                if smooth:
+                    dCPX_dcabin_width = (
+                        28 * dSigmoidXdx(CPX_lin / 28, 1, 0.01) * -dCPX_lin_dcabin_width
+                        + (
+                            dCPX_lin_dcabin_width * sigmoidX(CPX_lin / 28, 1, 0.01)
+                            + CPX_lin * dSigmoidXdx(CPX_lin / 28, 1, 0.01) * dCPX_lin_dcabin_width
+                        )
+                        * sigmoidX(CPX_lin / 62, 1, 0.01)
+                        + CPX_lin
+                        * sigmoidX(CPX_lin / 28, 1, 0.01)
+                        * dSigmoidXdx(CPX_lin / 62, 1, 0.01)
+                        * -dCPX_lin_dcabin_width
+                        + 62 * dSigmoidXdx(CPX_lin / 62, 1, 0.01) * dCPX_lin_dcabin_width
+                    )
+                else:
+                    if cabin_width <= 5.667:  # note: this technically creates a discontinuity
+                        dCPX_dcabin_width = 0.0
+                    if cabin_width > 8.90:  # note: this technically creates a discontinuity
+                        dCPX_dcabin_width = 0.0
+
+                dfurnishing_wt_dcabin_width = PAX * dCPX_dcabin_width
+                dfurnishing_wt_dgross_wt_initial = 0.0
+                dfurnishing_wt_dfus_len = 0.0
+                dfurnishing_wt_dscaler = 0.0
 
         if smooth:
-            pass
+            dfurnishing_wt_dcabin_width = (
+                d_smooth_max(furnishing_wt, 30.0, mu) * dfurnishing_wt_dcabin_width
+            )
+            dfurnishing_wt_dgross_wt_initial = (
+                d_smooth_max(furnishing_wt, 30.0, mu) * dfurnishing_wt_dgross_wt_initial
+            )
+            dfurnishing_wt_dfus_len = (
+                d_smooth_max(furnishing_wt, 30.0, mu) * dfurnishing_wt_dfus_len
+            )
+            dfurnishing_wt_dscaler = d_smooth_max(furnishing_wt, 30.0, mu) * dfurnishing_wt_dscaler
         else:
-            if furnishing_wt <= 30.0:  # note: this technically creates a discontinuity
-                furnishing_wt = 30.0
-                dfurnishing_wt_dgross_wt_initial = 0.0
+            if furnishing_wt < 30.0:  # note: this technically creates a discontinuity
                 dfurnishing_wt_dcabin_width = 0.0
-                dfurnishing_wt_dmass_coeff_7 = 0.0
-        if not (-1e-5 < inputs[Aircraft.Furnishings.MASS] < 1e-5):
-            # note: this technically creates a discontinuity #WONT CHANGE
-            furnishing_wt = inputs[Aircraft.Furnishings.MASS] * GRAV_ENGLISH_LBM
-            dfurnishing_wt_dmass_coeff_7 = GRAV_ENGLISH_LBM
-            dfurnishing_wt_dcabin_width = 0.0
-            dfurnishing_wt_dgross_wt_initial = 0.0
+                dfurnishing_wt_dgross_wt_initial = 0.0
+                dfurnishing_wt_dfus_len = 0.0
+                dfurnishing_wt_dscaler = 0.0
 
-        partials['furnishing_mass', Mission.Design.GROSS_MASS] = dfurnishing_wt_dgross_wt_initial
-        partials['furnishing_mass', Aircraft.Fuselage.AVG_DIAMETER] = dfurnishing_wt_dcabin_width
-        partials['furnishing_mass', Aircraft.Furnishings.MASS] = dfurnishing_wt_dmass_coeff_7
+        partials[Aircraft.Furnishings.MASS, Mission.Design.GROSS_MASS] = (
+            dfurnishing_wt_dgross_wt_initial
+        )
+        partials[Aircraft.Furnishings.MASS, Aircraft.Fuselage.AVG_DIAMETER] = (
+            dfurnishing_wt_dcabin_width / GRAV_ENGLISH_LBM
+        )
+        partials[Aircraft.Furnishings.MASS, Aircraft.Fuselage.LENGTH] = (
+            dfurnishing_wt_dfus_len / GRAV_ENGLISH_LBM
+        )
+        partials[Aircraft.Furnishings.MASS, Aircraft.Furnishings.MASS_SCALER] = (
+            dfurnishing_wt_dscaler
+        )
 
 
 class EquipMassSum(om.ExplicitComponent):
     def setup(self):
         self.add_input('equip_mass_part', units='lbm')
         add_aviary_input(self, Aircraft.AirConditioning.MASS, units='lbm')
-        self.add_input('furnishing_mass', units='lbm')
+        self.add_input(Aircraft.Furnishings.MASS, units='lbm')
 
         add_aviary_output(self, Aircraft.Design.FIXED_EQUIPMENT_MASS, units='lbm')
 
@@ -743,14 +745,14 @@ class EquipMassSum(om.ExplicitComponent):
             [
                 'equip_mass_part',
                 Aircraft.AirConditioning.MASS,
-                'furnishing_mass',
+                Aircraft.Furnishings.MASS,
             ],
         )
 
     def compute(self, inputs, outputs):
         equip_mass_part = inputs['equip_mass_part']
         air_conditioning_mass = inputs[Aircraft.AirConditioning.MASS]
-        furnishing_mass = inputs['furnishing_mass']
+        furnishing_mass = inputs[Aircraft.Furnishings.MASS]
 
         equip_mass_sum = equip_mass_part + air_conditioning_mass + furnishing_mass
         outputs[Aircraft.Design.FIXED_EQUIPMENT_MASS] = equip_mass_sum
@@ -758,7 +760,7 @@ class EquipMassSum(om.ExplicitComponent):
     def compute_partials(self, inputs, J):
         J[Aircraft.Design.FIXED_EQUIPMENT_MASS, 'equip_mass_part'] = 1
         J[Aircraft.Design.FIXED_EQUIPMENT_MASS, Aircraft.AirConditioning.MASS] = 1
-        J[Aircraft.Design.FIXED_EQUIPMENT_MASS, 'furnishing_mass'] = 1
+        J[Aircraft.Design.FIXED_EQUIPMENT_MASS, Aircraft.Furnishings.MASS] = 1
 
 
 class EquipMassGroup(om.Group):
@@ -779,12 +781,16 @@ class EquipMassGroup(om.Group):
             'furnishing',
             FurnishingMass(),
             promotes_inputs=['aircraft:*', 'mission:*'],
-            promotes_outputs=['furnishing_mass'],
+            promotes_outputs=[Aircraft.Furnishings.MASS],
         )
         self.add_subsystem(
             'equip_sum',
             EquipMassSum(),
-            promotes_inputs=['equip_mass_part', 'furnishing_mass', Aircraft.AirConditioning.MASS],
+            promotes_inputs=[
+                'equip_mass_part',
+                Aircraft.Furnishings.MASS,
+                Aircraft.AirConditioning.MASS,
+            ],
             promotes_outputs=[Aircraft.Design.FIXED_EQUIPMENT_MASS],
         )
 
@@ -833,27 +839,9 @@ class UsefulLoadMass(om.ExplicitComponent):
 
         engine_type = self.options[Aircraft.Engine.TYPE][0]
 
-        num_flight_attendants = 0.0
-        if PAX >= 20.0:
-            num_flight_attendants = 1.0
-        if PAX >= 51.0:
-            num_flight_attendants = 2.0
-        if PAX >= 101.0:
-            num_flight_attendants = 3.0
-        if PAX >= 151.0:
-            num_flight_attendants = 4.0
-        if PAX >= 201.0:
-            num_flight_attendants = 5.0
-        if PAX >= 251.0:
-            num_flight_attendants = 6.0
+        num_flight_attendants = get_num_of_flight_attendent(PAX)
 
-        num_pilots = 1.0
-        if PAX > 9.0:
-            num_pilots = 2.0
-        if engine_type is GASPEngineType.TURBOJET and PAX > 5.0:
-            num_pilots = 2.0
-        if PAX >= 251.0:
-            num_pilots = 3.0
+        num_pilots = get_num_of_pilots(PAX, engine_type)
 
         # note: the average weight of a pilot was calulated using the following equation:
         # avg_wt = pct_male*avg_wt_male + pct_female*avg_wt_female where
@@ -895,19 +883,7 @@ class UsefulLoadMass(om.ExplicitComponent):
 
         oil_wt = num_engines * oil_per_eng_wt
 
-        lavatories = 0.0
-        if PAX > 25.0:
-            lavatories = 1.0
-        if PAX >= 51.0:
-            lavatories = 2.0
-        if PAX >= 101.0:
-            lavatories = 3.0
-        if PAX >= 151.0:
-            lavatories = 4.0
-        if PAX >= 201.0:
-            lavatories = 5.0
-        if PAX >= 251.0:
-            lavatories = 6.0
+        lavatories = get_num_of_lavatories(PAX)
 
         service_wt = 0.0
         if PAX > 9.0:
@@ -979,27 +955,9 @@ class UsefulLoadMass(om.ExplicitComponent):
 
         engine_type = self.options[Aircraft.Engine.TYPE][0]
 
-        num_pilots = 1.0
-        if PAX > 9.0:
-            num_pilots = 2.0
-        if engine_type is GASPEngineType.TURBOJET and PAX > 5.0:
-            num_pilots = 2.0
-        if PAX >= 251.0:
-            num_pilots = 3.0
+        num_pilots = get_num_of_pilots(PAX, engine_type)
 
-        num_flight_attendants = 0.0
-        if PAX >= 20.0:
-            num_flight_attendants = 1.0
-        if PAX >= 51.0:
-            num_flight_attendants = 2.0
-        if PAX >= 101.0:
-            num_flight_attendants = 3.0
-        if PAX >= 151.0:
-            num_flight_attendants = 4.0
-        if PAX >= 201.0:
-            num_flight_attendants = 5.0
-        if PAX >= 251.0:
-            num_flight_attendants = 6.0
+        num_flight_attendants = get_num_of_flight_attendent(PAX)
 
         if engine_type is GASPEngineType.TURBOJET:
             doil_per_eng_wt_dFn_SLS = 0.0054
