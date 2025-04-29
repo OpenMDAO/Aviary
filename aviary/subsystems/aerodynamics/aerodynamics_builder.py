@@ -402,7 +402,7 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
         aero_options = kwargs
 
         if self.code_origin is FLOPS:
-            if aero_options is not {}:
+            if aero_options != {}:
                 # Only some methods have connectable training inputs.
                 if method == 'tabular':
                     CD0_data = aero_options['CD0_data']
