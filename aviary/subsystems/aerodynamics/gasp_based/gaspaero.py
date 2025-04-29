@@ -1,20 +1,12 @@
 import numpy as np
-import warnings
-
 import openmdao.api as om
 from openmdao.utils import cs_safe as cs
 
 from aviary.constants import GRAV_ENGLISH_LBM
-from aviary.subsystems.aerodynamics.gasp_based.common import (
-    AeroForces,
-    CLFromLift,
-    TanhRampComp,
-)
+from aviary.subsystems.aerodynamics.gasp_based.common import AeroForces, CLFromLift, TanhRampComp
 from aviary.utils.functions import sigmoidX
-from aviary.variable_info.enums import Verbosity
 from aviary.variable_info.functions import add_aviary_input, add_aviary_option, add_aviary_output
-from aviary.variable_info.variables import Aircraft, Dynamic, Mission, Settings
-
+from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 
 #
 # data from EAERO
@@ -108,17 +100,17 @@ asigma = np.array(
 
 
 def deg2rad(d):
-    """Complex step safe deg2rad"""
+    """Complex step safe deg2rad."""
     return d * np.pi / 180.0
 
 
 def rad2deg(r):
-    """Complex step safe rad2deg"""
+    """Complex step safe rad2deg."""
     return r * 180.0 / np.pi
 
 
 def cla(ar, sweep, mach):
-    """Lift-curve slope of 3D wings from Seckel equation
+    """Lift-curve slope of 3D wings from Seckel equation.
 
     Parameters
     ----------
@@ -228,7 +220,7 @@ class WingTailRatios(om.ExplicitComponent):
 
 
 class Xlifts(om.ExplicitComponent):
-    """Compute lift ratio and lift-curve slope for given stability margin"""
+    """Compute lift ratio and lift-curve slope for given stability margin."""
 
     def initialize(self):
         self.options.declare('num_nodes', default=1, types=int)
@@ -706,7 +698,7 @@ class AeroGeom(om.ExplicitComponent):
 
 
 class AeroSetup(om.Group):
-    """Calculations for setting up aero"""
+    """Calculations for setting up aero."""
 
     def initialize(self):
         self.options.declare('num_nodes', default=1, types=int)
@@ -933,7 +925,7 @@ class DragCoef(om.ExplicitComponent):
 
 
 class DragCoefClean(om.ExplicitComponent):
-    """Clean drag coefficient for high-speed flight"""
+    """Clean drag coefficient for high-speed flight."""
 
     def initialize(self):
         self.options.declare('num_nodes', default=1, types=int)
@@ -1021,7 +1013,7 @@ class DragCoefClean(om.ExplicitComponent):
 
 
 class LiftCoeff(om.ExplicitComponent):
-    """GASP lift coefficient calculation for low-speed near-ground flight"""
+    """GASP lift coefficient calculation for low-speed near-ground flight."""
 
     def initialize(self):
         self.options.declare('num_nodes', default=1, types=int)
@@ -1155,7 +1147,7 @@ class LiftCoeff(om.ExplicitComponent):
 
 
 class LiftCoeffClean(om.ExplicitComponent):
-    """Clean wing lift coefficient for high-speed flight"""
+    """Clean wing lift coefficient for high-speed flight."""
 
     def initialize(self):
         self.options.declare('num_nodes', default=1, types=int)
@@ -1242,7 +1234,7 @@ class LiftCoeffClean(om.ExplicitComponent):
 
 
 class CruiseAero(om.Group):
-    """Top-level aerodynamics group for cruise (no flaps, no landing gear)"""
+    """Top-level aerodynamics group for cruise (no flaps, no landing gear)."""
 
     def initialize(self):
         self.options.declare('num_nodes', default=1, types=int)
@@ -1284,7 +1276,7 @@ class CruiseAero(om.Group):
 
 
 class LowSpeedAero(om.Group):
-    """Top-level aerodynamics group for near-ground flight"""
+    """Top-level aerodynamics group for near-ground flight."""
 
     def initialize(self):
         self.options.declare('num_nodes', default=1, types=int)

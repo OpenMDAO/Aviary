@@ -1,13 +1,11 @@
 import openmdao.api as om
 
-from aviary.variable_info.functions import add_aviary_input, add_aviary_output, add_aviary_option
+from aviary.variable_info.functions import add_aviary_input, add_aviary_option, add_aviary_output
 from aviary.variable_info.variables import Aircraft
 
 
 class StrutCalcs(om.ExplicitComponent):
-    """
-    Given strut location as a non-dimensional function of wing half-span or distance from aircraft center, compute the other value not provided.
-    """
+    """Given strut location as a non-dimensional function of wing half-span or distance from aircraft center, compute the other value not provided."""
 
     def initialize(self):
         add_aviary_option(self, Aircraft.Strut.DIMENSIONAL_LOCATION_SPECIFIED)
@@ -69,9 +67,7 @@ class StrutCalcs(om.ExplicitComponent):
 
 
 class FoldCalcs(om.ExplicitComponent):
-    """
-    Dimensional and non-dimensional conversion of fold calculation.
-    """
+    """Dimensional and non-dimensional conversion of fold calculation."""
 
     def initialize(self):
         add_aviary_option(self, Aircraft.Wing.FOLD_DIMENSIONAL_LOCATION_SPECIFIED)
@@ -126,9 +122,7 @@ class FoldCalcs(om.ExplicitComponent):
 
 
 class DimensionalNonDimensionalInterchange(om.Group):
-    """
-    Dimensional and non-dimensional conversion of strut and fold calculation if any.
-    """
+    """Dimensional and non-dimensional conversion of strut and fold calculation if any."""
 
     def initialize(self):
         add_aviary_option(self, Aircraft.Wing.HAS_FOLD)

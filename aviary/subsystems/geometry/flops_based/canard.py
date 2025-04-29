@@ -10,9 +10,7 @@ from aviary.variable_info.variables import Aircraft
 
 
 class Canard(om.ExplicitComponent):
-    """
-    Calculate the wetted area of canard.
-    """
+    """Calculate the wetted area of canard."""
 
     def initialize(self):
         self.options.declare(

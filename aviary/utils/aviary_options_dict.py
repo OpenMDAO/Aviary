@@ -65,9 +65,7 @@ class AviaryOptionsDictionary(om.OptionsDictionary):
             self[name] = val
 
     def declare_options(self):
-        """
-        Hook for declaring options for a phase builder.
-        """
+        """Hook for declaring options for a phase builder."""
         pass
 
     def declare(
@@ -120,7 +118,6 @@ class AviaryOptionsDictionary(om.OptionsDictionary):
         -------
         val
         """
-
         if units is not None:
             if self._dict[key]['set_function'] is None:
                 self._raise(

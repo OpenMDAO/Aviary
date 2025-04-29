@@ -1,5 +1,4 @@
 import openmdao.api as om
-
 from dymos.models.atmosphere.atmos_1976 import USatm1976Comp
 
 from aviary.subsystems.atmosphere.flight_conditions import FlightConditions
@@ -10,7 +9,7 @@ from aviary.variable_info.variables import Dynamic
 class Atmosphere(om.Group):
     """
     Group that contains atmospheric conditions for the aircraft's current flight
-    condition, as well as conversions for different speed types (TAS, EAS, Mach)
+    condition, as well as conversions for different speed types (TAS, EAS, Mach).
     """
 
     def initialize(self):

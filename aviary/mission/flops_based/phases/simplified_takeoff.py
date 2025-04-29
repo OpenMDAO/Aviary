@@ -1,7 +1,7 @@
 import openmdao.api as om
-from aviary.subsystems.atmosphere.atmosphere import Atmosphere
 
 from aviary.constants import GRAV_ENGLISH_LBM, RHO_SEA_LEVEL_METRIC
+from aviary.subsystems.atmosphere.atmosphere import Atmosphere
 from aviary.variable_info.functions import add_aviary_input, add_aviary_output
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 
@@ -9,14 +9,11 @@ from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 class StallSpeed(om.ExplicitComponent):
     """
     Calculates the stall speed of the aircraft using
-    v_stall = (2 * weight / (density * planform_area * Cl_max)) ** 0.5
+    v_stall = (2 * weight / (density * planform_area * Cl_max)) ** 0.5.
     """
 
     def setup(self):
-        """
-        Setup the inputs and output to calculate the stall speed of the aircraft.
-        """
-
+        """Setup the inputs and output to calculate the stall speed of the aircraft."""
         self.add_input(
             'mass',
             val=150_000,

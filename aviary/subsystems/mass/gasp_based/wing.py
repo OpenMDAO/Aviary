@@ -2,7 +2,7 @@ import numpy as np
 import openmdao.api as om
 
 from aviary.constants import GRAV_ENGLISH_LBM
-from aviary.variable_info.functions import add_aviary_input, add_aviary_output, add_aviary_option
+from aviary.variable_info.functions import add_aviary_input, add_aviary_option, add_aviary_output
 from aviary.variable_info.variables import Aircraft, Mission
 
 
@@ -84,7 +84,6 @@ class WingMassSolve(om.ImplicitComponent):
 
     def linearize(self, inputs, outputs, J):
         gross_wt_initial = inputs[Mission.Design.GROSS_MASS] * GRAV_ENGLISH_LBM
-        high_lift_wt = inputs[Aircraft.Wing.HIGH_LIFT_MASS] * GRAV_ENGLISH_LBM
         c_strut_braced = inputs['c_strut_braced']
         ULF = inputs[Aircraft.Wing.ULTIMATE_LOAD_FACTOR]
         c_wing_mass = inputs[Aircraft.Wing.MASS_COEFFICIENT]
@@ -99,15 +98,6 @@ class WingMassSolve(om.ImplicitComponent):
         isolated_wing_wt = outputs['isolated_wing_mass'] * GRAV_ENGLISH_LBM
 
         foo = (c_strut_braced * ULF * (gross_wt_initial - 0.8 * isolated_wing_wt)) ** 0.757
-        wing_wt_guess = (
-            c_wing_mass
-            * c_material
-            * c_eng_pos
-            * c_gear_loc
-            * foo
-            * wingspan**1.049
-            * (1.0 + taper_ratio) ** 0.4
-        ) / (100000.0 * tc_ratio_root**0.4 * np.cos(half_sweep) ** 1.535) + high_lift_wt
 
         J['isolated_wing_mass', Mission.Design.GROSS_MASS] = (
             -(
@@ -270,9 +260,7 @@ class WingMassSolve(om.ImplicitComponent):
 
 
 class WingMassTotal(om.ExplicitComponent):
-    """
-    Computation of wing mass, strut mass, and wing fold mass.
-    """
+    """Computation of wing mass, strut mass, and wing fold mass."""
 
     def initialize(self):
         add_aviary_option(self, Aircraft.Wing.HAS_FOLD)
@@ -382,16 +370,14 @@ class WingMassTotal(om.ExplicitComponent):
             )
 
         if (
-            self.options[Aircraft.Wing.HAS_STRUT] == False
-            and self.options[Aircraft.Wing.HAS_FOLD] == False
+            self.options[Aircraft.Wing.HAS_STRUT] is False
+            and self.options[Aircraft.Wing.HAS_FOLD] is False
         ):
             J[Aircraft.Wing.MASS, 'isolated_wing_mass'] = 1
 
 
 class WingMassGroup(om.Group):
-    """
-    Group to compute wing mass for GASP-based mass.
-    """
+    """Group to compute wing mass for GASP-based mass."""
 
     def initialize(self):
         add_aviary_option(self, Aircraft.Wing.HAS_FOLD)
@@ -424,7 +410,7 @@ class WingMassGroup(om.Group):
             promotes_outputs=connected_outputs_isolated,
         )
 
-        total_mass = self.add_subsystem(
+        self.add_subsystem(
             'total_mass',
             WingMassTotal(),
             promotes_inputs=connected_inputs_total + higher_level_inputs_total,

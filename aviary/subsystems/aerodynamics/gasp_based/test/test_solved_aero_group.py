@@ -4,15 +4,15 @@ Computed lift and drag should be the same as reading the same polar in from
 a file.
 """
 
-from copy import deepcopy
 import unittest
+from copy import deepcopy
 
 import numpy as np
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_near_equal
 
+from aviary.interface.default_phase_info.height_energy import phase_info
 from aviary.interface.methods_for_level2 import AviaryProblem
-
 from aviary.subsystems.subsystem_builder_base import SubsystemBuilderBase
 from aviary.utils.csv_data_file import read_data_file
 from aviary.utils.named_values import NamedValues
@@ -278,9 +278,7 @@ class FakeCalcDragPolar(om.ExplicitComponent):
     """
 
     def initialize(self):
-        """
-        Declare options.
-        """
+        """Declare options."""
         self.options.declare(
             'altitude',
             default=None,
@@ -355,7 +353,6 @@ class FakeDragPolarBuilder(SubsystemBuilderBase):
             the pre-mission part of the Aviary problem. This
             includes sizing, design, and other non-mission parameters.
         """
-
         group = om.Group()
 
         calc_drag_polar = FakeCalcDragPolar(

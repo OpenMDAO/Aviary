@@ -1,5 +1,5 @@
-from copy import deepcopy
 import unittest
+from copy import deepcopy
 
 from openmdao.utils.assert_utils import assert_near_equal
 from openmdao.utils.testing_utils import require_pyoptsparse, use_tempdirs

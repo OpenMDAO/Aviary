@@ -1,11 +1,9 @@
 import unittest
 
 import numpy as np
-
-from openmdao.utils.mpi import MPI
-from openmdao.utils.testing_utils import use_tempdirs
-from openmdao.utils.testing_utils import require_pyoptsparse
 from openmdao.core.problem import _clear_problem_names
+from openmdao.utils.mpi import MPI
+from openmdao.utils.testing_utils import require_pyoptsparse, use_tempdirs
 
 from aviary.api import Mission
 from aviary.interface.methods_for_level1 import run_aviary
@@ -205,9 +203,7 @@ class ProblemPhaseTestCase(unittest.TestCase):
 
 @use_tempdirs
 class TestBenchFwFmSerial(ProblemPhaseTestCase):
-    """
-    Run the model in serial that is setup in ProblemPhaseTestCase class.
-    """
+    """Run the model in serial that is setup in ProblemPhaseTestCase class."""
 
     @require_pyoptsparse(optimizer='IPOPT')
     def test_bench_FwFm_IPOPT(self):
@@ -243,9 +239,7 @@ class TestBenchFwFmSerial(ProblemPhaseTestCase):
 @use_tempdirs
 @unittest.skipUnless(MPI and PETScVector, 'MPI and PETSc are required.')
 class TestBenchFwFmParallel(ProblemPhaseTestCase):
-    """
-    Run the model in parallel that is setup in ProblemPhaseTestCase class.
-    """
+    """Run the model in parallel that is setup in ProblemPhaseTestCase class."""
 
     N_PROCS = 3
 

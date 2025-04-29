@@ -122,7 +122,7 @@ class DescentRates(om.ExplicitComponent):
 
         gamma = (thrust - drag) / weight
 
-        outputs[Dynamic.Mission.ALTITUDE_RATE] = alt_rate = TAS * np.sin(gamma)
+        outputs[Dynamic.Mission.ALTITUDE_RATE] = TAS * np.sin(gamma)
         outputs[Dynamic.Mission.DISTANCE_RATE] = TAS * np.cos(gamma)
         outputs['required_lift'] = weight * np.cos(gamma) - thrust * np.sin(alpha)
         outputs[Dynamic.Mission.FLIGHT_PATH_ANGLE] = gamma

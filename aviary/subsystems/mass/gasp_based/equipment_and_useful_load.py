@@ -2,16 +2,14 @@ import numpy as np
 import openmdao.api as om
 
 from aviary.constants import GRAV_ENGLISH_LBM
-from aviary.utils.functions import sigmoidX, dSigmoidXdx
+from aviary.utils.functions import dSigmoidXdx, sigmoidX
 from aviary.variable_info.enums import GASPEngineType
-from aviary.variable_info.functions import add_aviary_input, add_aviary_output, add_aviary_option
+from aviary.variable_info.functions import add_aviary_input, add_aviary_option, add_aviary_output
 from aviary.variable_info.variables import Aircraft, Mission
 
 
 class EquipAndUsefulLoadMass(om.ExplicitComponent):
-    """
-    Computation of fixed equipment mass and useful load for GASP-based mass.
-    """
+    """Computation of fixed equipment mass and useful load for GASP-based mass."""
 
     def initialize(self):
         add_aviary_option(self, Aircraft.CrewPayload.Design.NUM_PASSENGERS)

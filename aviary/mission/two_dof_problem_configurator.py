@@ -2,28 +2,25 @@ import openmdao.api as om
 
 from aviary.constants import GRAV_ENGLISH_LBM, RHO_SEA_LEVEL_ENGLISH
 from aviary.interface.default_phase_info.two_dof_fiti import add_default_sgm_args
-
 from aviary.mission.gasp_based.idle_descent_estimation import add_descent_estimation_as_submodel
 from aviary.mission.gasp_based.ode.landing_ode import LandingSegment
 from aviary.mission.gasp_based.ode.params import ParamPort
 from aviary.mission.gasp_based.ode.taxi_ode import TaxiSegment
-from aviary.mission.gasp_based.phases.groundroll_phase import GroundrollPhase
-from aviary.mission.gasp_based.phases.rotation_phase import RotationPhase
-from aviary.mission.gasp_based.phases.climb_phase import ClimbPhase
-from aviary.mission.gasp_based.phases.cruise_phase import CruisePhase
 from aviary.mission.gasp_based.phases.accel_phase import AccelPhase
 from aviary.mission.gasp_based.phases.ascent_phase import AscentPhase
+from aviary.mission.gasp_based.phases.climb_phase import ClimbPhase
+from aviary.mission.gasp_based.phases.cruise_phase import CruisePhase
 from aviary.mission.gasp_based.phases.descent_phase import DescentPhase
-from aviary.mission.problem_configurator import ProblemConfiguratorBase
-
-from aviary.utils.functions import create_opts2vals, add_opts2vals
-from aviary.utils.utils import wrapped_convert_units
-from aviary.utils.process_input_decks import initialization_guessing
-from aviary.variable_info.enums import AnalysisScheme, LegacyCode
-from aviary.variable_info.variables import Aircraft, Mission, Dynamic
-from aviary.utils.process_input_decks import update_GASP_options
-from aviary.subsystems.propulsion.utils import build_engine_deck
+from aviary.mission.gasp_based.phases.groundroll_phase import GroundrollPhase
+from aviary.mission.gasp_based.phases.rotation_phase import RotationPhase
 from aviary.mission.gasp_based.polynomial_fit import PolynomialFit
+from aviary.mission.problem_configurator import ProblemConfiguratorBase
+from aviary.subsystems.propulsion.utils import build_engine_deck
+from aviary.utils.functions import add_opts2vals, create_opts2vals
+from aviary.utils.process_input_decks import initialization_guessing, update_GASP_options
+from aviary.utils.utils import wrapped_convert_units
+from aviary.variable_info.enums import AnalysisScheme, LegacyCode
+from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 
 
 class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
@@ -43,7 +40,6 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
         prob : AviaryProblem
             Problem that owns this builder.
         """
-
         # TODO: This should probably be moved to the set_initial_guesses() method in AviaryProblem class
         # Defines how the problem should build it's initial guesses for load_inputs()
         # this modifies mass_method, initialization_guesses, and aviary_values
@@ -120,7 +116,6 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
         AviaryValues
             General default phase_info.
         """
-
         if prob.analysis_scheme is AnalysisScheme.COLLOCATION:
             from aviary.interface.default_phase_info.two_dof import phase_info
 
@@ -279,7 +274,6 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
         PhaseBuilderBase
             Phase builder for requested phase.
         """
-
         if 'groundroll' in phase_name:
             phase_builder = GroundrollPhase
         elif 'rotation' in phase_name:
@@ -321,7 +315,6 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
         user_options : dict
             Subdictionary "user_options" from the phase_info.
         """
-
         try:
             fix_initial = user_options.get_val('fix_initial')
         except KeyError:
@@ -454,7 +447,6 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
             When True, then connected=True. This allows the connections to be
             handled by constraints if `phases` is a parallel group under MPI.
         """
-
         if prob.analysis_scheme is AnalysisScheme.COLLOCATION:
             for ii in range(len(phases) - 1):
                 phase1, phase2 = phases[ii : ii + 2]
@@ -638,7 +630,6 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
         include_landing : bool
             When True, include the landing systems.
         """
-
         if include_landing and prob.post_mission_info['include_landing']:
             self._add_landing_systems(prob)
 
@@ -723,7 +714,6 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
         parent_prefix : str
             Location of this trajectory in the hierarchy.
         """
-
         # Handle Analytic Phase
         if prob.phase_info[phase_name]['user_options'].get('analytic', False):
             for guess_key, guess_data in guesses.items():

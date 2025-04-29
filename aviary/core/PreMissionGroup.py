@@ -1,11 +1,11 @@
 import openmdao.api as om
-from aviary.utils.aviary_values import AviaryValues
+
 from aviary.utils.functions import promote_aircraft_and_mission_vars
 from aviary.variable_info.functions import override_aviary_vars
 
 
 class PreMissionGroup(om.Group):
-    """OpenMDAO group that holds all pre-mission systems"""
+    """OpenMDAO group that holds all pre-mission systems."""
 
     def configure(self):
         """

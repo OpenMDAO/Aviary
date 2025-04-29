@@ -1,6 +1,6 @@
 import unittest
-import aviary.api as av
 
+import aviary.api as av
 
 BatteryBuilder = av.TestSubsystemBuilderBase.import_builder(
     'battery.battery_builder.BatteryBuilder'
@@ -9,9 +9,7 @@ BatteryBuilder = av.TestSubsystemBuilderBase.import_builder(
 
 @av.skipIfMissingDependencies(BatteryBuilder)
 class TestBattery(av.TestSubsystemBuilderBase):
-    """
-    Test battery builder
-    """
+    """Test battery builder."""
 
     def setUp(self):
         self.subsystem_builder = BatteryBuilder()

@@ -1,12 +1,11 @@
-from copy import deepcopy
-from parameterized import parameterized
 import unittest
+from copy import deepcopy
 
 import numpy as np
-
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 from openmdao.utils.testing_utils import use_tempdirs
+from parameterized import parameterized
 
 from aviary.interface.default_phase_info.height_energy import phase_info
 from aviary.interface.methods_for_level2 import AviaryProblem
@@ -22,9 +21,6 @@ from aviary.validation_cases.validation_tests import get_flops_inputs, get_flops
 from aviary.variable_info.enums import LegacyCode
 from aviary.variable_info.functions import setup_model_options
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission, Settings
-
-from openmdao.utils.testing_utils import use_tempdirs
-
 
 FLOPS = LegacyCode.FLOPS
 GASP = LegacyCode.GASP
@@ -557,7 +553,7 @@ def _computed_aero_drag_data(flops_inputs: AviaryValues, design_altitude, units)
     T = prob.get_val(Dynamic.Atmosphere.TEMPERATURE, 'degR')
     P = prob.get_val(Dynamic.Atmosphere.STATIC_PRESSURE, 'lbf/ft**2')
 
-    mass = lift = CL * S * 0.5 * 1.4 * P * mach**2  # lbf -> lbm * 1g
+    mass = CL * S * 0.5 * 1.4 * P * mach**2  # lbf -> lbm * 1g
 
     # calculate lift-dependent drag coefficient table, including pressure drag effects
     nn = len(mass)
@@ -645,9 +641,7 @@ def _run_computed_aero_harness(flops_inputs, dynamic_inputs, num_nodes):
 
 
 class _ComputedAeroHarness(om.Group):
-    """
-    Calculate drag and drag polars.
-    """
+    """Calculate drag and drag polars."""
 
     def initialize(self):
         options = self.options

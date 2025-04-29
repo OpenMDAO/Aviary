@@ -1,15 +1,13 @@
+import dymos as dm
 import numpy as np
 
-import dymos as dm
-
-from aviary.mission.initial_guess_builders import InitialGuessState
 from aviary.mission.flops_based.ode.energy_ODE import EnergyODE
 from aviary.mission.flops_based.phases.phase_utils import (
     add_subsystem_variables_to_phase,
     get_initial,
 )
+from aviary.mission.initial_guess_builders import InitialGuessState
 from aviary.mission.phase_builder_base import PhaseBuilderBase, register
-
 from aviary.utils.aviary_options_dict import AviaryOptionsDictionary
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.enums import EquationsOfMotion, ThrottleAllocation
@@ -287,9 +285,7 @@ class FlightPhaseOptions(AviaryOptionsDictionary):
 
 @register
 class FlightPhaseBase(PhaseBuilderBase):
-    """
-    The base class for flight phase
-    """
+    """The base class for flight phase."""
 
     __slots__ = ('external_subsystems', 'meta_data')
 
@@ -573,21 +569,21 @@ class FlightPhaseBase(PhaseBuilderBase):
         ###################
         # Add Constraints #
         ###################
-        if optimize_mach and fix_initial and not Dynamic.Atmosphere.MACH in constraints:
+        if optimize_mach and fix_initial and Dynamic.Atmosphere.MACH not in constraints:
             phase.add_boundary_constraint(
                 Dynamic.Atmosphere.MACH,
                 loc='initial',
                 equals=initial_mach,
             )
 
-        if optimize_mach and constrain_final and not Dynamic.Atmosphere.MACH in constraints:
+        if optimize_mach and constrain_final and Dynamic.Atmosphere.MACH not in constraints:
             phase.add_boundary_constraint(
                 Dynamic.Atmosphere.MACH,
                 loc='final',
                 equals=final_mach,
             )
 
-        if optimize_altitude and fix_initial and not Dynamic.Mission.ALTITUDE in constraints:
+        if optimize_altitude and fix_initial and Dynamic.Mission.ALTITUDE not in constraints:
             phase.add_boundary_constraint(
                 Dynamic.Mission.ALTITUDE,
                 loc='initial',
@@ -596,7 +592,7 @@ class FlightPhaseBase(PhaseBuilderBase):
                 ref=1.0e4,
             )
 
-        if optimize_altitude and constrain_final and not Dynamic.Mission.ALTITUDE in constraints:
+        if optimize_altitude and constrain_final and Dynamic.Mission.ALTITUDE not in constraints:
             phase.add_boundary_constraint(
                 Dynamic.Mission.ALTITUDE,
                 loc='final',
@@ -605,17 +601,17 @@ class FlightPhaseBase(PhaseBuilderBase):
                 ref=1.0e4,
             )
 
-        if no_descent and not Dynamic.Mission.ALTITUDE_RATE in constraints:
+        if no_descent and Dynamic.Mission.ALTITUDE_RATE not in constraints:
             phase.add_path_constraint(Dynamic.Mission.ALTITUDE_RATE, lower=0.0)
 
-        if no_climb and not Dynamic.Mission.ALTITUDE_RATE in constraints:
+        if no_climb and Dynamic.Mission.ALTITUDE_RATE not in constraints:
             phase.add_path_constraint(Dynamic.Mission.ALTITUDE_RATE, upper=0.0)
 
         required_available_climb_rate, units = user_options['required_available_climb_rate']
 
         if (
             required_available_climb_rate is not None
-            and not Dynamic.Mission.ALTITUDE_RATE_MAX in constraints
+            and Dynamic.Mission.ALTITUDE_RATE_MAX not in constraints
         ):
             phase.add_path_constraint(
                 Dynamic.Mission.ALTITUDE_RATE_MAX,
@@ -623,7 +619,7 @@ class FlightPhaseBase(PhaseBuilderBase):
                 units=units,
             )
 
-        if not Dynamic.Vehicle.Propulsion.THROTTLE in constraints:
+        if Dynamic.Vehicle.Propulsion.THROTTLE not in constraints:
             if throttle_enforcement == 'boundary_constraint':
                 phase.add_boundary_constraint(
                     Dynamic.Vehicle.Propulsion.THROTTLE,
@@ -652,9 +648,7 @@ class FlightPhaseBase(PhaseBuilderBase):
         return phase
 
     def make_default_transcription(self):
-        """
-        Return a transcription object to be used by default in build_phase.
-        """
+        """Return a transcription object to be used by default in build_phase."""
         user_options = self.user_options
 
         num_segments = user_options['num_segments']
@@ -672,9 +666,7 @@ class FlightPhaseBase(PhaseBuilderBase):
         return transcription
 
     def _extra_ode_init_kwargs(self):
-        """
-        Return extra kwargs required for initializing the ODE.
-        """
+        """Return extra kwargs required for initializing the ODE."""
         # TODO: support external_subsystems and meta_data in the base class
         return {
             'external_subsystems': self.external_subsystems,

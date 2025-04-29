@@ -8,9 +8,7 @@ from aviary.variable_info.variables import Aircraft, Mission
 
 
 class TakeoffPhaseTest(unittest.TestCase):
-    """
-    Test takeoff phase builder
-    """
+    """Test takeoff phase builder."""
 
     def test_case1(self):
         takeoff_options = Takeoff(

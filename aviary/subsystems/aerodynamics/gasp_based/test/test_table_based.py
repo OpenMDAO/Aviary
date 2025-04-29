@@ -3,7 +3,6 @@ import unittest
 import numpy as np
 import openmdao
 import openmdao.api as om
-from aviary.utils.functions import get_aviary_resource_path
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 from packaging import version
 
@@ -12,6 +11,7 @@ from aviary.subsystems.aerodynamics.gasp_based.table_based import (
     TabularCruiseAero,
     TabularLowSpeedAero,
 )
+from aviary.utils.functions import get_aviary_resource_path
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 
 
@@ -191,9 +191,7 @@ class TestLowSpeedAero(unittest.TestCase):
 
 
 class GearDragIncrementTest(unittest.TestCase):
-    """
-    Test Gear drag coefficient increment
-    """
+    """Test Gear drag coefficient increment."""
 
     def test_case(self):
         prob = om.Problem()
@@ -215,9 +213,7 @@ class GearDragIncrementTest(unittest.TestCase):
 
 
 class GearDragIncrementTest2(unittest.TestCase):
-    """
-    Test mass-weight conversion
-    """
+    """Test mass-weight conversion."""
 
     def setUp(self):
         import aviary.subsystems.aerodynamics.gasp_based.table_based as table

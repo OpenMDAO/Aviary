@@ -1,8 +1,5 @@
-from aviary.examples.external_subsystems.battery.battery_variables import (
-    Aircraft,
-    Dynamic,
-)
 from aviary.examples.external_subsystems.battery.battery_variable_meta_data import ExtendedMetaData
+from aviary.examples.external_subsystems.battery.battery_variables import Aircraft, Dynamic
 from aviary.examples.external_subsystems.battery.model.battery_mission import BatteryMission
 from aviary.examples.external_subsystems.battery.model.battery_premission import BatteryPreMission
 from aviary.subsystems.subsystem_builder_base import SubsystemBuilderBase
@@ -174,7 +171,6 @@ class BatteryBuilder(SubsystemBuilderBase):
             - any additional keyword arguments required by OpenMDAO for the design
               variable
         """
-
         DVs = {
             Aircraft.Battery.Cell.DISCHARGE_RATE: {
                 'units': 'A',
@@ -201,7 +197,6 @@ class BatteryBuilder(SubsystemBuilderBase):
                 The units for the variable.
             - any additional keyword arguments required by OpenMDAO for the variable.
         """
-
         parameters_dict = {
             Dynamic.Battery.TEMPERATURE: {'val': 25.0, 'units': 'degC'},
             Dynamic.Battery.CURRENT: {'val': 3.25, 'units': 'A'},
@@ -220,7 +215,6 @@ class BatteryBuilder(SubsystemBuilderBase):
             and the values are dictionaries with any additional keyword
             arguments required by OpenMDAO for the variable.
         """
-
         initial_guess_dict = {
             Dynamic.Battery.STATE_OF_CHARGE: {
                 'val': 1.0,
@@ -278,7 +272,6 @@ class BatteryBuilder(SubsystemBuilderBase):
         outputs : list
             A list of variable names for the battery subsystem.
         """
-
         return [
             Dynamic.Battery.VOLTAGE,
             Dynamic.Battery.HEAT_OUT,

@@ -1,28 +1,26 @@
 """
 Preprocessors are utility functions that handle issues with Aviary inputs before model
-setup and execution. These tasks include consistency checking between related variables,
+setup and execution. These tasks include consistency checking between related variables,.
 
 """
 
 import warnings
 
 import numpy as np
-import openmdao.api as om
 
 from aviary.utils.aviary_values import AviaryValues
 from aviary.utils.named_values import get_keys
-from aviary.variable_info.variable_meta_data import _MetaData
-from aviary.variable_info.variables import Aircraft, Mission, Settings
-from aviary.variable_info.enums import ProblemType, LegacyCode
-from aviary.variable_info.enums import Verbosity
 from aviary.utils.test_utils.variable_test import get_names_from_hierarchy
 from aviary.utils.utils import isiterable
+from aviary.variable_info.enums import LegacyCode, ProblemType, Verbosity
+from aviary.variable_info.variable_meta_data import _MetaData
+from aviary.variable_info.variables import Aircraft, Mission, Settings
 
 
 # TODO document what kwargs are used, and by which preprocessors in docstring?
 def preprocess_options(aviary_options: AviaryValues, meta_data=_MetaData, verbosity=None, **kwargs):
     """
-    Run all preprocessors on provided AviaryValues object
+    Run all preprocessors on provided AviaryValues object.
 
     Parameters
     ----------
@@ -706,9 +704,7 @@ def preprocess_propulsion(
 
 
 def _get_engine_variables():
-    """
-    Yields all propulsion-related variables in Aircraft that need to be vectorized
-    """
+    """Yields all propulsion-related variables in Aircraft that need to be vectorized."""
     for item in get_names_from_hierarchy(Aircraft.Engine):
         yield item
 

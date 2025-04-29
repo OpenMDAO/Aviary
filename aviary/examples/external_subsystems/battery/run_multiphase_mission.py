@@ -1,10 +1,8 @@
-from aviary.interface.methods_for_level2 import AviaryProblem
-
+from aviary.api import default_height_energy_phase_info as phase_info
 from aviary.examples.external_subsystems.battery.battery_builder import BatteryBuilder
 from aviary.examples.external_subsystems.battery.battery_variable_meta_data import ExtendedMetaData
-from aviary.api import default_height_energy_phase_info as phase_info
+from aviary.interface.methods_for_level2 import AviaryProblem
 from aviary.utils.functions import get_aviary_resource_path
-
 
 battery_builder = BatteryBuilder(include_constraints=False)
 

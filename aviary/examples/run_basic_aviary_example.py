@@ -11,7 +11,6 @@ This performs a coupled design-mission optimization and outputs the results from
 
 import aviary.api as av
 
-
 prob = av.run_aviary(
     'models/test_aircraft/aircraft_for_bench_FwFm.csv',
     av.default_height_energy_phase_info,

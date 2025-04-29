@@ -1,5 +1,6 @@
 from openmdao.utils.units import valid_units
-from aviary.variable_info.enums import SpeedType, EquationsOfMotion
+
+from aviary.variable_info.enums import EquationsOfMotion, SpeedType
 
 TWO_DEGREES_OF_FREEDOM = EquationsOfMotion.TWO_DEGREES_OF_FREEDOM
 HEIGHT_ENERGY = EquationsOfMotion.HEIGHT_ENERGY

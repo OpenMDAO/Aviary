@@ -1,13 +1,11 @@
-"""
-This file contains functions needed to run Aviary using the Level 1 interface.
-"""
+"""This file contains functions needed to run Aviary using the Level 1 interface."""
 
 from importlib.machinery import SourceFileLoader
 from pathlib import Path
 
-from aviary.variable_info.enums import AnalysisScheme, Verbosity
 from aviary.interface.methods_for_level2 import AviaryProblem
 from aviary.utils.functions import get_path
+from aviary.variable_info.enums import AnalysisScheme, Verbosity
 
 
 def run_aviary(
@@ -136,9 +134,8 @@ def run_level_1(
 ):
     """
     This file enables running aviary from the command line with a user specified input deck.
-    usage: aviary run_mission [input_deck] [opt_args]
+    usage: aviary run_mission [input_deck] [opt_args].
     """
-
     kwargs = {
         'max_iter': max_iter,
     }
@@ -208,7 +205,7 @@ def _exec_level1(args, user_args):
     if isinstance(args.input_deck, list):
         args.input_deck = args.input_deck[0]
 
-    prob = run_level_1(
+    run_level_1(
         input_deck=args.input_deck,
         optimizer=args.optimizer,
         phase_info=args.phase_info,

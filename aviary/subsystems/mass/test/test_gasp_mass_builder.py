@@ -1,16 +1,10 @@
 import unittest
 
-import numpy as np
-import openmdao.api as om
-
-from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
-
-from aviary.subsystems.mass.mass_builder import CoreMassBuilder
-
-from aviary.variable_info.enums import LegacyCode
-from aviary.variable_info.variables import Aircraft
-from aviary.variable_info.variable_meta_data import _MetaData as BaseMetaData
 import aviary.api as av
+from aviary.subsystems.mass.mass_builder import CoreMassBuilder
+from aviary.variable_info.enums import LegacyCode
+from aviary.variable_info.variable_meta_data import _MetaData as BaseMetaData
+from aviary.variable_info.variables import Aircraft
 
 GASP = LegacyCode.GASP
 
