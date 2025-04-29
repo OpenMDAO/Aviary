@@ -86,9 +86,7 @@ class SimpleCD(om.ExplicitComponent):
 
 
 class SimpleDrag(om.ExplicitComponent):
-    """
-    Calculate drag as a function of wing area, dynamic pressure, and drag coefficient.
-    """
+    """Calculate drag as a function of wing area, dynamic pressure, and drag coefficient."""
 
     def initialize(self):
         self.options.declare('num_nodes', types=int)

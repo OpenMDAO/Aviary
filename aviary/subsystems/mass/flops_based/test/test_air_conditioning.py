@@ -56,9 +56,7 @@ class TransportAirCondMassTest(unittest.TestCase):
 
 
 class TransportAirCondMassTest2(unittest.TestCase):
-    """
-    Test mass-weight conversion
-    """
+    """Test mass-weight conversion."""
 
     def setUp(self):
         import aviary.subsystems.mass.flops_based.air_conditioning as ac
@@ -96,9 +94,7 @@ class TransportAirCondMassTest2(unittest.TestCase):
 
 
 class AltAirCondMassTest(unittest.TestCase):
-    """
-    Tests alternate air conditioning mass calculation.
-    """
+    """Tests alternate air conditioning mass calculation."""
 
     def setUp(self):
         self.prob = om.Problem()
@@ -132,9 +128,7 @@ class AltAirCondMassTest(unittest.TestCase):
 
 
 class AltAirCondMassTest2(unittest.TestCase):
-    """
-    Test mass-weight conversion
-    """
+    """Test mass-weight conversion."""
 
     def setUp(self):
         import aviary.subsystems.mass.flops_based.air_conditioning as ac

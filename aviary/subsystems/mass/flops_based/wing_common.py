@@ -2,7 +2,7 @@ import numpy as np
 import openmdao.api as om
 
 from aviary.constants import GRAV_ENGLISH_LBM
-from aviary.variable_info.functions import add_aviary_input, add_aviary_output, add_aviary_option
+from aviary.variable_info.functions import add_aviary_input, add_aviary_option, add_aviary_output
 from aviary.variable_info.variables import Aircraft, Mission
 
 
@@ -125,7 +125,6 @@ class WingBendingMass(om.ExplicitComponent):
         dW1NIR_bt = self.A1 * fact1 * ulf * span * fact2 * fact3 * cayf * vfact * pctl * 1.0e-6
         dW1NIR_ulf = self.A1 * bt * fact1 * span * fact2 * fact3 * cayf * vfact * pctl * 1.0e-6
         dW1NIR_pctl = self.A1 * bt * fact1 * ulf * span * fact2 * fact3 * cayf * vfact * 1.0e-6
-        dW1NIR_cayf = self.A1 * bt * fact1 * ulf * span * fact2 * fact3 * vfact * pctl * 1.0e-6
         dW1NIR_compfrac = (
             -self.A1 * bt * fact1 * ulf * span * 0.4 * fact3 * cayf * vfact * pctl * 1.0e-6
         )
@@ -369,9 +368,7 @@ class WingMiscMass(om.ExplicitComponent):
 
 
 class WingTotalMass(om.ExplicitComponent):
-    """
-    Computation of wing mass using FLOPS-based detailed wing mass equations.
-    """
+    """Computation of wing mass using FLOPS-based detailed wing mass equations."""
 
     def setup(self):
         add_aviary_input(self, Aircraft.Wing.BENDING_MATERIAL_MASS, units='lbm')

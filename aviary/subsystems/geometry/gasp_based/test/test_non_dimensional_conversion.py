@@ -6,13 +6,9 @@ from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 from aviary.subsystems.geometry.gasp_based.non_dimensional_conversion import (
     DimensionalNonDimensionalInterchange,
 )
-from aviary.variable_info.variables import Aircraft
-
-from aviary.subsystems.geometry.gasp_based.non_dimensional_conversion import (
-    DimensionalNonDimensionalInterchange,
-)
 from aviary.variable_info.functions import setup_model_options
 from aviary.variable_info.options import get_option_defaults
+from aviary.variable_info.variables import Aircraft
 
 
 class FoldOnlyTestCase1(unittest.TestCase):

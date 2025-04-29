@@ -1,6 +1,6 @@
-from aviary.subsystems.subsystem_builder_base import SubsystemBuilderBase
-from aviary.subsystems.propulsion.gearbox.model.gearbox_premission import GearboxPreMission
 from aviary.subsystems.propulsion.gearbox.model.gearbox_mission import GearboxMission
+from aviary.subsystems.propulsion.gearbox.model.gearbox_premission import GearboxPreMission
+from aviary.subsystems.subsystem_builder_base import SubsystemBuilderBase
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 
 
@@ -40,7 +40,6 @@ class GearboxBuilder(SubsystemBuilderBase):
         the design variable, the lower and upper bounds for the design variable, and any
         additional keyword arguments required by OpenMDAO for the design variable.
         """
-
         DVs = {
             Aircraft.Engine.Gearbox.GEAR_RATIO: {
                 'units': 'unitless',

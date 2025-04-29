@@ -54,9 +54,7 @@ class ExplicitHorizontalTailMassTest(unittest.TestCase):
 
 
 class ExplicitHorizontalTailMassTest2(unittest.TestCase):
-    """
-    Test mass-weight conversion
-    """
+    """Test mass-weight conversion."""
 
     def setUp(self):
         import aviary.subsystems.mass.flops_based.horizontal_tail as htail
@@ -115,9 +113,7 @@ class ExplicitAltHorizontalTailMassTest(unittest.TestCase):
 
 
 class ExplicitAltHorizontalTailMassTest2(unittest.TestCase):
-    """
-    Test mass-weight conversion
-    """
+    """Test mass-weight conversion."""
 
     def setUp(self):
         import aviary.subsystems.mass.flops_based.horizontal_tail as htail

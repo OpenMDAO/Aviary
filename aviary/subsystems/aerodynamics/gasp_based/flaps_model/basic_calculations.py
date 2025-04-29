@@ -6,9 +6,7 @@ from aviary.variable_info.variables import Aircraft
 
 
 class BasicFlapsCalculations(om.ExplicitComponent):
-    """
-    Intermediate calculations for flaps model of GASP-based aerodynamics
-    """
+    """Intermediate calculations for flaps model of GASP-based aerodynamics."""
 
     def setup(self):
         # inputs
@@ -213,13 +211,13 @@ class BasicFlapsCalculations(om.ExplicitComponent):
         SWPL12 = sweep_LE - 5.0 / 57.296
 
         # outputs equations
-        outputs['VLAM8'] = VLAM8 = (np.cos(RLMC4)) ** 3
+        outputs['VLAM8'] = (np.cos(RLMC4)) ** 3
         outputs['body_to_span_ratio'] = body_to_span_ratio = DBALE / wingspan
-        outputs['VDEL4'] = VDEL4 = np.cos(SWPFHL)
-        outputs['VDEL5'] = VDEL5 = 1.0 - body_to_span_ratio
-        outputs['VLAM9'] = VLAM9 = 6.65 * slat_chord_ratio
-        outputs['slat_defl_ratio'] = slat_defl_ratio = slat_defl / optimum_slat_defl
+        outputs['VDEL4'] = np.cos(SWPFHL)
+        outputs['VDEL5'] = 1.0 - body_to_span_ratio
+        outputs['VLAM9'] = 6.65 * slat_chord_ratio
+        outputs['slat_defl_ratio'] = slat_defl / optimum_slat_defl
         outputs['flap_defl_ratio'] = flap_defl / optimum_flap_defl
-        outputs[Aircraft.Wing.SLAT_SPAN_RATIO] = slat_span_ratio = 0.99 - DBALE / wingspan
-        outputs['chord_to_body_ratio'] = chord_to_body_ratio = root_chord / fus_len
-        outputs['VLAM12'] = VLAM12 = (np.cos(SWPL12)) ** 3
+        outputs[Aircraft.Wing.SLAT_SPAN_RATIO] = 0.99 - DBALE / wingspan
+        outputs['chord_to_body_ratio'] = root_chord / fus_len
+        outputs['VLAM12'] = (np.cos(SWPL12)) ** 3

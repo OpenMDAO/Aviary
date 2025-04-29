@@ -9,9 +9,7 @@ from aviary.variable_info.variables import Aircraft, Dynamic
 
 
 class TestUnsteadySolvedEOM(unittest.TestCase):
-    """
-    unit test for UnsteadySolvedEOM
-    """
+    """unit test for UnsteadySolvedEOM."""
 
     def _test_unsteady_solved_eom(self, ground_roll=False):
         nn = 5
@@ -99,9 +97,7 @@ class TestUnsteadySolvedEOM(unittest.TestCase):
 
 
 class TestUnsteadySolvedEOM2(unittest.TestCase):
-    """
-    Test mass-weight conversion
-    """
+    """Test mass-weight conversion."""
 
     def setUp(self):
         import aviary.mission.gasp_based.ode.unsteady_solved.unsteady_solved_eom as unsteady

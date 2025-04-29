@@ -9,7 +9,7 @@ from aviary.mission.gasp_based.ode.groundroll_ode import GroundrollODE
 from aviary.mission.gasp_based.ode.rotation_ode import RotationODE
 from aviary.mission.gasp_based.ode.time_integration_base_classes import SimuPyProblem
 from aviary.variable_info.enums import AlphaModes, AnalysisScheme, SpeedType, Verbosity
-from aviary.variable_info.variables import Aircraft, Dynamic, Mission
+from aviary.variable_info.variables import Dynamic
 
 
 class SGMGroundroll(SimuPyProblem):
@@ -386,7 +386,7 @@ class SGMAscentCombined(SGMAscent):
 class SGMAccel(SimuPyProblem):
     """
     This creates a subproblem for the acceleration phase of the trajectory that will
-    be solved using SGM
+    be solved using SGM.
     """
 
     def __init__(
@@ -422,7 +422,7 @@ class SGMAccel(SimuPyProblem):
 class SGMClimb(SimuPyProblem):
     """
     This creates a subproblem for the climb phase of the trajectory that will
-    be solved using SGM
+    be solved using SGM.
     """
 
     def __init__(
@@ -487,7 +487,7 @@ class SGMClimb(SimuPyProblem):
 class SGMCruise(SimuPyProblem):
     """
     This creates a subproblem for the cruise phase of the trajectory that will
-    be solved using SGM
+    be solved using SGM.
     """
 
     def __init__(
@@ -545,7 +545,7 @@ class SGMCruise(SimuPyProblem):
 class SGMDescent(SimuPyProblem):
     """
     This creates a subproblem for the descent phase of the trajectory that will
-    be solved using SGM
+    be solved using SGM.
     """
 
     def __init__(

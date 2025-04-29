@@ -4,15 +4,14 @@ import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 
 from aviary.subsystems.mass.gasp_based.wing import WingMassGroup, WingMassSolve, WingMassTotal
+from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.functions import setup_model_options
 from aviary.variable_info.options import get_option_defaults
 from aviary.variable_info.variables import Aircraft, Mission
-from aviary.variable_info.functions import setup_model_options
-from aviary.utils.aviary_values import AviaryValues
 
 
 class WingMassSolveTestCase(unittest.TestCase):
-    """this is the large single aisle 1 V3 test case"""
+    """this is the large single aisle 1 V3 test case."""
 
     def setUp(self):
         self.prob = om.Problem()
@@ -128,7 +127,7 @@ class WingMassSolveTestCase2(unittest.TestCase):
 
 
 class TotalWingMassTestCase1(unittest.TestCase):
-    """this is the large single aisle 1 V3 test case"""
+    """this is the large single aisle 1 V3 test case."""
 
     def setUp(self):
         self.prob = om.Problem()
@@ -157,9 +156,7 @@ class TotalWingMassTestCase1(unittest.TestCase):
 
 
 class TotalWingMassTestCase2(unittest.TestCase):
-    """
-    Has fold and no strut
-    """
+    """Has fold and no strut."""
 
     def setUp(self):
         options = get_option_defaults()
@@ -198,9 +195,7 @@ class TotalWingMassTestCase2(unittest.TestCase):
 
 
 class TotalWingMassTestCase3(unittest.TestCase):
-    """
-    Has strut and no fold
-    """
+    """Has strut and no fold."""
 
     def setUp(self):
         options = get_option_defaults()
@@ -233,9 +228,7 @@ class TotalWingMassTestCase3(unittest.TestCase):
 
 
 class TotalWingMassTestCase4(unittest.TestCase):
-    """
-    Has fold and strut
-    """
+    """Has fold and strut."""
 
     def setUp(self):
         options = get_option_defaults()
@@ -276,7 +269,7 @@ class TotalWingMassTestCase4(unittest.TestCase):
 class TotalWingMassTestCase5(unittest.TestCase):
     """
     Test mass-weight conversion
-    No fold, no strut
+    No fold, no strut.
     """
 
     def setUp(self):
@@ -309,7 +302,7 @@ class TotalWingMassTestCase5(unittest.TestCase):
 class TotalWingMassTestCase6(unittest.TestCase):
     """
     Test mass-weight conversion
-    Has fold and no strut
+    Has fold and no strut.
     """
 
     def setUp(self):
@@ -349,7 +342,7 @@ class TotalWingMassTestCase6(unittest.TestCase):
 class TotalWingMassTestCase7(unittest.TestCase):
     """
     Test mass-weight conversion
-    Has strut and no fold
+    Has strut and no fold.
     """
 
     def setUp(self):
@@ -385,7 +378,7 @@ class TotalWingMassTestCase7(unittest.TestCase):
 class TotalWingMassTestCase8(unittest.TestCase):
     """
     Test mass-weight conversion
-    Has fold and strut
+    Has fold and strut.
     """
 
     def setUp(self):
@@ -421,7 +414,7 @@ class TotalWingMassTestCase8(unittest.TestCase):
 
 
 class WingMassGroupTestCase1(unittest.TestCase):
-    """this is the large single aisle 1 V3 test case"""
+    """this is the large single aisle 1 V3 test case."""
 
     def setUp(self):
         self.prob = om.Problem()

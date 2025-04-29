@@ -68,9 +68,7 @@ class DescentTestCase(unittest.TestCase):
 
 
 class DescentTestCase2(unittest.TestCase):
-    """
-    Test mass-weight conversion
-    """
+    """Test mass-weight conversion."""
 
     def setUp(self):
         import aviary.mission.gasp_based.ode.descent_eom as descent

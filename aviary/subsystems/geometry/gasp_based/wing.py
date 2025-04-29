@@ -8,14 +8,12 @@ from aviary.subsystems.geometry.gasp_based.non_dimensional_conversion import (
 from aviary.subsystems.geometry.gasp_based.strut import StrutGeom
 from aviary.utils.conflict_checks import check_fold_location_definition
 from aviary.variable_info.enums import AircraftTypes, Verbosity
-from aviary.variable_info.functions import add_aviary_input, add_aviary_output, add_aviary_option
+from aviary.variable_info.functions import add_aviary_input, add_aviary_option, add_aviary_output
 from aviary.variable_info.variables import Aircraft, Mission, Settings
 
 
 class WingSize(om.ExplicitComponent):
-    """
-    Computation of wing area and wing span for GASP-based aerodynamics.
-    """
+    """Computation of wing area and wing span for GASP-based aerodynamics."""
 
     def setup(self):
         add_aviary_input(self, Mission.Design.GROSS_MASS, units='lbm')
@@ -70,9 +68,7 @@ class WingSize(om.ExplicitComponent):
 
 
 class WingParameters(om.ExplicitComponent):
-    """
-    Computation of various wing parameters for GASP-based geometry.
-    """
+    """Computation of various wing parameters for GASP-based geometry."""
 
     def initialize(self):
         add_aviary_option(self, Aircraft.Wing.HAS_FOLD)
@@ -171,7 +167,7 @@ class WingParameters(om.ExplicitComponent):
         tan_sweep_TE = 3.0 * (taper_ratio - 1.0) / (1.0 + taper_ratio) / AR + np.tan(
             sweep_c4 * (np.pi / 180)
         )
-        sweep_TE = np.arctan(tan_sweep_TE)
+
         FHP = (
             2.0
             * (tc_ratio_root * center_chord * (cabin_width - (tc_ratio_root * center_chord))) ** 0.5
@@ -361,13 +357,6 @@ class WingParameters(om.ExplicitComponent):
 
         if not self.options[Aircraft.Wing.HAS_FOLD]:
             fuel_vol_frac = inputs[Aircraft.Fuel.WING_FUEL_FRACTION]
-            geometric_fuel_vol = (
-                fuel_vol_frac
-                * 0.888889
-                * tc_ratio_avg
-                * (wing_area**1.5)
-                * (2.0 * taper_ratio + 1.0)
-            ) / ((AR**0.5) * ((taper_ratio + 1.0) ** 2.0))
             num = (
                 fuel_vol_frac
                 * 0.888889
@@ -712,13 +701,6 @@ class WingFold(om.ExplicitComponent):
             / nonfolded_wing_area**2
         )
 
-        geometric_fuel_vol = (
-            fuel_vol_frac
-            * 0.888889
-            * tc_ratio_mean_folded
-            * (nonfolded_wing_area**1.5)
-            * (2.0 * nonfolded_taper_ratio + 1.0)
-        ) / ((nonfolded_AR**0.5) * ((nonfolded_taper_ratio + 1.0) ** 2.0))
         a = (nonfolded_wing_area**1.5) * (2.0 * nonfolded_taper_ratio + 1.0)
         num = fuel_vol_frac * 0.888889 * tc_ratio_mean_folded * a
         den = (nonfolded_AR**0.5) * ((nonfolded_taper_ratio + 1.0) ** 2.0)
@@ -821,9 +803,7 @@ class WingFold(om.ExplicitComponent):
 
 
 class WingGroup(om.Group):
-    """
-    Group of WingSize, WingParameters, and WingFold for wing parameter computations.
-    """
+    """Group of WingSize, WingParameters, and WingFold for wing parameter computations."""
 
     def initialize(self):
         add_aviary_option(self, Aircraft.Wing.CHOOSE_FOLD_LOCATION)
@@ -834,7 +814,7 @@ class WingGroup(om.Group):
         has_fold = self.options[Aircraft.Wing.HAS_FOLD]
         has_strut = self.options[Aircraft.Wing.HAS_STRUT]
 
-        size = self.add_subsystem(
+        self.add_subsystem(
             'size',
             WingSize(),
             promotes_inputs=['aircraft:*', 'mission:*'],
@@ -849,7 +829,7 @@ class WingGroup(om.Group):
                 promotes_outputs=['aircraft:*'],
             )
 
-        parameters = self.add_subsystem(
+        self.add_subsystem(
             'parameters',
             WingParameters(),
             promotes_inputs=['aircraft:*'],
@@ -857,7 +837,7 @@ class WingGroup(om.Group):
         )
 
         if has_strut:
-            strut = self.add_subsystem(
+            self.add_subsystem(
                 'strut',
                 StrutGeom(),
                 promotes_inputs=['aircraft:*'],
@@ -865,7 +845,7 @@ class WingGroup(om.Group):
             )
 
         if has_fold:
-            fold = self.add_subsystem(
+            self.add_subsystem(
                 'fold',
                 WingFold(),
                 promotes_inputs=['aircraft:*'],
@@ -883,21 +863,21 @@ epsilon = 0.05
 
 
 def f(x):
-    """valid for x in [0.0, 1.0]"""
+    """Valid for x in [0.0, 1.0]."""
     diff = 0.5 - x
     y = np.sqrt(0.25 - diff**2)
     return y
 
 
 def df(x):
-    """first derivative of f(x), valid for x in (0.0, 1.0)"""
+    """First derivative of f(x), valid for x in (0.0, 1.0)."""
     diff = 0.5 - x
     dy = (0.5 - x) / np.sqrt(0.25 - diff**2)
     return dy
 
 
 def d2f(x):
-    """second derivative of f(x), valid for x in (0.0, 1.0)"""
+    """Second derivative of f(x), valid for x in (0.0, 1.0)."""
     diff = 0.5 - x
     d2y = -0.25 / np.sqrt(0.25 - diff**2) ** 3
     return d2y
@@ -909,7 +889,7 @@ def g1(x):
     g1(0.0) = 0.0
     g1(ε) = f(ε)
     g1'(ε) = f'(ε)
-    g1"(ε) = f"(ε)
+    g1"(ε) = f"(ε).
     """
     A1 = f(epsilon)
     B1 = df(epsilon)
@@ -923,7 +903,7 @@ def g1(x):
 
 
 def dg1(x):
-    """first derivative of g1(x)"""
+    """First derivative of g1(x)."""
     A1 = f(epsilon)
     B1 = df(epsilon)
     C1 = d2f(epsilon)
@@ -940,7 +920,7 @@ def g2(x):
     g2(1.0) = 0.0
     g2(ε) = f(1.0-ε)
     g2'(ε) = f'(1.0-ε)
-    g2"(ε) = f"(1.0-ε)
+    g2"(ε) = f"(1.0-ε).
     """
     delta = 1.0 - epsilon
     A2 = f(delta)
@@ -955,7 +935,7 @@ def g2(x):
 
 
 def dg2(x):
-    """first derivative of g2(x)"""
+    """First derivative of g2(x)."""
     delta = 1.0 - epsilon
     A2 = f(delta)
     B2 = df(delta)
@@ -968,9 +948,7 @@ def dg2(x):
 
 
 class ExposedWing(om.ExplicitComponent):
-    """
-    Computation of exposed wing area. This is useful for BWB, but is available to tube+wing model too.
-    """
+    """Computation of exposed wing area. This is useful for BWB, but is available to tube+wing model too."""
 
     def initialize(self):
         add_aviary_option(self, Aircraft.Design.TYPE)

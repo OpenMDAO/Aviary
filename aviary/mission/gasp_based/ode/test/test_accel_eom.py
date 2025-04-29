@@ -58,9 +58,7 @@ class AccelerationTestCase(unittest.TestCase):
 
 
 class AccelerationTestCase2(unittest.TestCase):
-    """
-    Test mass-weight conversion
-    """
+    """Test mass-weight conversion."""
 
     def setUp(self):
         import aviary.mission.gasp_based.ode.accel_eom as accel

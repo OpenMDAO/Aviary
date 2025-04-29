@@ -20,9 +20,7 @@ class ExternalSubsystemGroup(om.Group):
 
 
 class BaseODE(om.Group):
-    """
-    The base class for all ODE components.
-    """
+    """The base class for all ODE components."""
 
     def initialize(self):
         self.options.declare('num_nodes', default=1, types=int)
@@ -59,9 +57,7 @@ class BaseODE(om.Group):
         )
 
     def add_atmosphere(self, **kwargs):
-        """
-        Adds Atmosphere component to ODE
-        """
+        """Adds Atmosphere component to ODE."""
         nn = self.options['num_nodes']
         self.add_subsystem(
             name='atmosphere',
@@ -71,7 +67,7 @@ class BaseODE(om.Group):
 
     def add_core_subsystems(self, solver_group=None):
         """
-        Adds all specified external subsystems to ODE in their own group
+        Adds all specified external subsystems to ODE in their own group.
 
         Parameters
         ----------
@@ -112,7 +108,7 @@ class BaseODE(om.Group):
 
     def add_external_subsystems(self, solver_group=None):
         """
-        Adds all specified external subsystems to ODE in their own group
+        Adds all specified external subsystems to ODE in their own group.
 
         Parameters
         ----------

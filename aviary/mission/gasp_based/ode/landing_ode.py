@@ -1,24 +1,21 @@
 import numpy as np
 
-from aviary.subsystems.atmosphere.atmosphere import Atmosphere
-
-from aviary.mission.gasp_based.ode.two_dof_ode import TwoDOFODE
-from aviary.mission.gasp_based.ode.params import ParamPort
 from aviary.mission.gasp_based.ode.landing_eom import (
     GlideConditionComponent,
     LandingAltitudeComponent,
     LandingGroundRollComponent,
 )
+from aviary.mission.gasp_based.ode.params import ParamPort
+from aviary.mission.gasp_based.ode.two_dof_ode import TwoDOFODE
 from aviary.subsystems.aerodynamics.aerodynamics_builder import AerodynamicsBuilderBase
+from aviary.subsystems.atmosphere.atmosphere import Atmosphere
 from aviary.subsystems.propulsion.propulsion_builder import PropulsionBuilderBase
 from aviary.variable_info.enums import SpeedType
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 
 
 class LandingSegment(TwoDOFODE):
-    """
-    Group for a 2-degree of freedom landing ODE.
-    """
+    """Group for a 2-degree of freedom landing ODE."""
 
     def setup(self):
         aviary_options = self.options['aviary_options']

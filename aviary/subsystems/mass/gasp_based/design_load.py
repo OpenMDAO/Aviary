@@ -2,17 +2,13 @@ import numpy as np
 import openmdao.api as om
 
 from aviary.constants import RHO_SEA_LEVEL_ENGLISH
-from aviary.utils.functions import sigmoidX, dSigmoidXdx
-from aviary.variable_info.functions import (
-    add_aviary_input,
-    add_aviary_output,
-    add_aviary_option,
-)
+from aviary.utils.functions import dSigmoidXdx, sigmoidX
+from aviary.variable_info.functions import add_aviary_input, add_aviary_option, add_aviary_output
 from aviary.variable_info.variables import Aircraft, Mission
 
 
 def dquotient(u, v, du, dv):
-    """d(u/v) / dv"""
+    """d(u/v) / dv."""
     return (du * v - u * dv) / v**2
 
 
@@ -336,7 +332,7 @@ class LoadSpeeds(om.ExplicitComponent):
 class LoadParameters(om.ExplicitComponent):
     """
     Computation of load parameters (such as maximum operating Mach number,
-    density ratio, etc.)
+    density ratio, etc.).
     """
 
     def initialize(self):
@@ -394,7 +390,6 @@ class LoadParameters(om.ExplicitComponent):
             max_mach = max_airspeed / 486.33
         if cruise_alt > 22500.0 and cruise_alt <= 36000.0:
             max_mach = max_airspeed / 424.73
-            dmax_mach_dmax_airspeed = 1 / 424.73
         if cruise_alt > 36000.0:
             max_mach = max_airspeed / 372.34
 
@@ -497,9 +492,6 @@ class LoadParameters(om.ExplicitComponent):
         )
 
         if smooth:
-            V9_1 = vel_c * sigmoidX(density_ratio, 1, -0.01) + 661.7 * max_mach * sigmoidX(
-                density_ratio, 1, 0.01
-            )
             dV9_dmax_airspeed = (
                 vel_c * dSigmoidXdx(density_ratio, 1, 0.01) * (-ddensity_ratio_dmax_airspeed)
                 + 661.7
@@ -511,7 +503,6 @@ class LoadParameters(om.ExplicitComponent):
                 * ddensity_ratio_dmax_airspeed
             )
             dV9_dvel_c = sigmoidX(density_ratio, 1, -0.01)
-            V9 = V9_1
 
             if CATD < 3:
                 # this line creates a smooth bounded density_ratio such that .6820<=density_ratio<=1
@@ -576,12 +567,10 @@ class LoadParameters(om.ExplicitComponent):
                 density_ratio = density_ratio_1
         else:
             if density_ratio >= 0.53281:  # note: this creates a discontinuity
-                V9 = vel_c
                 dV9_dvel_c = 1.0
                 dV9_dmax_airspeed = 0.0
 
                 if density_ratio > 1:  # note: this creates a discontinuity
-                    V9 = 661.7 * max_mach
                     density_ratio = 1.0
 
                     dV9_dvel_c = 0.0
@@ -590,7 +579,6 @@ class LoadParameters(om.ExplicitComponent):
 
             else:  # note: this creates a discontinuity
                 density_ratio = 0.53281
-                V9 = vel_c
 
                 dV9_dvel_c = 1.0
                 dV9_dmax_airspeed = 0.0
@@ -607,9 +595,7 @@ class LoadParameters(om.ExplicitComponent):
 
 
 class LiftCurveSlopeAtCruise(om.ExplicitComponent):
-    """
-    Computation of lift curve slope at cruise Mach number
-    """
+    """Computation of lift curve slope at cruise Mach number."""
 
     def setup(self):
         add_aviary_input(self, Aircraft.Wing.ASPECT_RATIO, units='unitless')
@@ -662,9 +648,7 @@ class LiftCurveSlopeAtCruise(om.ExplicitComponent):
 
 
 class LoadFactors(om.ExplicitComponent):
-    """
-    Computation of structural ultimate load factor.
-    """
+    """Computation of structural ultimate load factor."""
 
     def initialize(self):
         add_aviary_option(self, Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES)
@@ -745,7 +729,7 @@ class LoadFactors(om.ExplicitComponent):
             if gust_load_factor > max_maneuver_factor:  # note: this creates a discontinuity
                 ULF = 1.5 * gust_load_factor
 
-        if ULF_from_maneuver == True:
+        if ULF_from_maneuver is True:
             ULF = 1.5 * max_maneuver_factor
 
         outputs[Aircraft.Wing.ULTIMATE_LOAD_FACTOR] = ULF
@@ -834,7 +818,6 @@ class LoadFactors(om.ExplicitComponent):
             dk_load_factor_dCl_alpha * 50.0 * V9 * Cl_alpha + k_load_factor * 50 * V9
         ) / (498.0 * wing_loading)
         dcruise_load_factor_dV9 = (k_load_factor * 50.0 * Cl_alpha) / (498.0 * wing_loading)
-        dcruise_load_factor_dmin_dive_vel = 0.0
 
         ddive_load_factor_dwing_loading = dquotient(
             (k_load_factor * 25.0 * min_dive_vel * Cl_alpha),
@@ -985,26 +968,6 @@ class LoadFactors(om.ExplicitComponent):
                     ddive_load_factor_dV9,
                 )
             )
-            dgust_loading_dmin_dive_vel = (
-                ddive_load_factor_dmin_dive_vel
-                * sigmoidX(cruise_load_factor / dive_load_factor, 1, -0.01)
-                + dive_load_factor
-                * dSigmoidXdx(cruise_load_factor / dive_load_factor, 1, 0.01)
-                * dquotient(
-                    (dive_load_factor - cruise_load_factor),
-                    dive_load_factor,
-                    ddive_load_factor_dmin_dive_vel,
-                    ddive_load_factor_dmin_dive_vel,
-                )
-                + cruise_load_factor
-                * dSigmoidXdx(cruise_load_factor / dive_load_factor, 1, 0.01)
-                * dquotient(
-                    (cruise_load_factor - dive_load_factor),
-                    dive_load_factor,
-                    -ddive_load_factor_dmin_dive_vel,
-                    ddive_load_factor_dmin_dive_vel,
-                )
-            )
             gust_load_factor = gust_load_factor_1
         else:
             if cruise_load_factor > dive_load_factor:  # note: this creates a discontinuity
@@ -1017,7 +980,6 @@ class LoadFactors(om.ExplicitComponent):
                 dgust_load_factor_dV9 = dcruise_load_factor_dV9
                 dgust_load_factor_dmin_dive_vel = 0.0
 
-        ULF = 1.5 * max_maneuver_factor
         dULF_dmax_maneuver_factor = 1.5
         dULF_dwing_loading = 0.0
         dULF_ddensity_ratio = 0.0
@@ -1027,10 +989,6 @@ class LoadFactors(om.ExplicitComponent):
         dULF_dmin_dive_vel = 0.0
 
         if smooth:
-            ULF_1 = 1.5 * (
-                gust_load_factor * sigmoidX(max_maneuver_factor / gust_load_factor, 1, 0.01)
-                + max_maneuver_factor * sigmoidX(max_maneuver_factor / gust_load_factor, 1, 0.01)
-            )
             dULF_dmax_maneuver_factor = 1.5 * (
                 gust_load_factor
                 * dSigmoidXdx(max_maneuver_factor / gust_load_factor, 1, 0.01)
@@ -1145,11 +1103,8 @@ class LoadFactors(om.ExplicitComponent):
                 )
             )
             dULF_dmin_dive_vel = 0.0
-            ULF = ULF_1
         else:
             if gust_load_factor > max_maneuver_factor:  # note: this creates a discontinuity
-                ULF = 1.5 * gust_load_factor
-
                 dULF_dmax_maneuver_factor = 0.0
                 dULF_dwing_loading = 1.5 * dgust_load_factor_dwing_loading
                 dULF_ddensity_ratio = 1.5 * dgust_load_factor_ddensity_ratio
@@ -1158,9 +1113,7 @@ class LoadFactors(om.ExplicitComponent):
                 dULF_dV9 = 1.5 * dgust_load_factor_dV9
                 dULF_dmin_dive_vel = 1.5 * dgust_load_factor_dmin_dive_vel
 
-        if ULF_from_maneuver == True:
-            ULF = 1.5 * max_maneuver_factor
-
+        if ULF_from_maneuver is True:
             dULF_dmax_maneuver_factor = 1.5
             dULF_dwing_loading = 0.0
             dULF_ddensity_ratio = 0.0
@@ -1183,9 +1136,7 @@ class LoadFactors(om.ExplicitComponent):
 
 
 class DesignLoadGroup(om.Group):
-    """
-    Design load group for GASP-based mass.
-    """
+    """Design load group for GASP-based mass."""
 
     def setup(self):
         self.add_subsystem(

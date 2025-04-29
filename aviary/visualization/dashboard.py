@@ -1,40 +1,30 @@
 import argparse
-from collections import defaultdict
-from dataclasses import dataclass
 import importlib.util
 import json
 import os
-import pathlib
-from pathlib import Path
 import re
 import shutil
-import warnings
 import zipfile
+from collections import defaultdict
+from pathlib import Path
 
 import numpy as np
-
+import openmdao.api as om
 import pandas as pd
-
+import panel as pn
 from bokeh.models import (
-    Legend,
-    LegendItem,
-    CheckboxGroup,
-    CustomJS,
-    TextInput,
     ColumnDataSource,
     CustomJS,
     Div,
-    Range1d,
+    Legend,
+    LegendItem,
     LinearAxis,
     PrintfTickFormatter,
+    Range1d,
+    TextInput,
 )
+from bokeh.palettes import Category20, d3
 from bokeh.plotting import figure
-from bokeh.layouts import column
-from bokeh.palettes import Category10, Category20, d3
-
-import panel as pn
-
-import openmdao.api as om
 from openmdao.utils.general_utils import env_truthy
 from openmdao.utils.units import conversion_to_base_units
 
@@ -46,9 +36,8 @@ except BaseException:
         return 5000
 
 
-from openmdao.utils.om_warnings import issue_warning
-
 from dymos.visualization.timeseries.bokeh_timeseries_report import _meta_tree_subsys_iter
+from openmdao.utils.om_warnings import issue_warning
 
 from aviary.visualization.aircraft_3d_model import Aircraft3DModel
 
@@ -176,7 +165,6 @@ def _dashboard_cmd(options, user_args):
     user_args : list of str
         Args to be passed to the user script.
     """
-
     if options.save and not options.script_name:
         if options.save is not True:
             options.script_name = options.save
@@ -249,7 +237,6 @@ def create_table_pane_from_json(json_filepath, documentation):
         A Panel Pane that is a Panel library Tabular widget.
         Or None if there was an error.
     """
-
     try:
         with open(json_filepath) as json_file:
             parsed_json = json.load(json_file)
@@ -273,7 +260,7 @@ def create_table_pane_from_json(json_filepath, documentation):
             ),
             table_pane,
         )
-    except Exception as err:
+    except Exception:
         table_pane_with_doc = pn.Column(
             pn.pane.HTML(
                 f'<p>{documentation}</p>', styles={'text-align': documentation_text_align}
@@ -335,10 +322,7 @@ def create_csv_frame(csv_filepath, documentation):
 
 
 def get_run_status(status_filepath):
-    """
-    Get run status
-    """
-
+    """Get run status."""
     try:
         with open(status_filepath) as f:
             status_dct = json.load(f)
@@ -346,7 +330,7 @@ def get_run_status(status_filepath):
                 return '✅ Success'
             else:
                 return f'❌ {status_dct["Exit status"]}'
-    except Exception as err:
+    except Exception:
         return 'Unknown'
 
 
@@ -865,7 +849,6 @@ def dashboard(script_name, problem_recorder, driver_recorder, port, run_in_backg
         )
 
     problem_recorder_path = Path(out_dir) / problem_recorder
-    driver_recorder_path = Path(out_dir) / driver_recorder
 
     if not os.path.isfile(problem_recorder_path):
         issue_warning(f'Given Problem case recorder file {problem_recorder_path} does not exist.')
@@ -1285,7 +1268,7 @@ def dashboard(script_name, problem_recorder, driver_recorder, port, run_in_backg
 
         interactive_mission_var_plot_pane_with_doc = pn.Column(
             pn.pane.HTML(
-                f'<p>Plot of mission variables allowing user to select X and Y plot values.</p>',
+                '<p>Plot of mission variables allowing user to select X and Y plot values.</p>',
                 styles={'text-align': documentation_text_align},
             ),
             interactive_mission_var_plot_pane,

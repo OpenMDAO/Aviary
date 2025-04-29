@@ -1,30 +1,21 @@
-from typing import Union
-from pathlib import Path
-import importlib_resources
-from contextlib import ExitStack
 import atexit
 import os
+from contextlib import ExitStack
+from pathlib import Path
+from typing import Union
 
-import openmdao.api as om
+import importlib_resources
 import numpy as np
+import openmdao.api as om
 
 from aviary.utils.aviary_values import AviaryValues, get_items
-from aviary.variable_info.enums import (
-    FlapType,
-    GASPEngineType,
-    ProblemType,
-    EquationsOfMotion,
-    LegacyCode,
-)
-from aviary.variable_info.functions import add_aviary_output, add_aviary_input
-from aviary.variable_info.variable_meta_data import _MetaData
 from aviary.variable_info.enums import Verbosity
+from aviary.variable_info.functions import add_aviary_input, add_aviary_output
+from aviary.variable_info.variable_meta_data import _MetaData
 
 
 class Null:
-    """
-    This can be used to divert outputs, such as stdout, to improve performance
-    """
+    """This can be used to divert outputs, such as stdout, to improve performance."""
 
     def write(self, *args, **kwargs):
         pass
@@ -43,7 +34,7 @@ def get_aviary_resource_path(resource_name: str) -> str:
             The name of the resource.
 
     Returns
-    ----------
+    -------
         Path
             The file path of the resource.
 
@@ -118,7 +109,7 @@ def convert_strings_to_data(input_string):
     """
     convert_strings_to_data will convert a string or list of strings to usable data.
     Strings that can't be converted to numbers will attempt to store as a boolean,
-    otherwise they are passed as is
+    otherwise they are passed as is.
     """
     # pack input_string into a list if it is not
     # setup output list size
@@ -313,9 +304,7 @@ def create_printcomp(all_inputs: list, input_units: dict = {}, meta_data=_MetaDa
 
 
 def promote_aircraft_and_mission_vars(group):
-    """
-    Promotes inputs and outputs in Aircraft and Mission hierarchy categories for provided group.
-    """
+    """Promotes inputs and outputs in Aircraft and Mission hierarchy categories for provided group."""
     external_outputs = []
     for comp in group.system_iter(recurse=False):
         # Skip all aviary systems.
@@ -379,7 +368,6 @@ def get_path(path: Union[str, Path], verbosity=Verbosity.BRIEF) -> Path:
     FileNotFoundError
         If the path is not found in any of the prioritized locations.
     """
-
     # Store the original path for reference in error messages.
     original_path = path
 
@@ -453,7 +441,6 @@ def get_model(file_name: str, verbosity=Verbosity.BRIEF) -> Path:
     FileNotFoundError
         If the path is not found.
     """
-
     # Get the path to Aviary's models
     path = Path('models', file_name)
     aviary_path = Path(get_aviary_resource_path(str(path)))
@@ -470,14 +457,14 @@ def get_model(file_name: str, verbosity=Verbosity.BRIEF) -> Path:
 
     # If the path still doesn't exist, raise an error.
     if not aviary_path.exists():
-        raise FileNotFoundError(f"File or Folder not found in Aviary's hangar")
+        raise FileNotFoundError("File or Folder not found in Aviary's hangar")
 
     return aviary_path
 
 
 def sigmoidX(x, x0, alpha=1.0):
     """
-    Sigmoid used to smoothly transition between piecewise functions
+    Sigmoid used to smoothly transition between piecewise functions.
 
     Parameters
     ----------
@@ -488,7 +475,7 @@ def sigmoidX(x, x0, alpha=1.0):
     alpha: float
         steepness parameter.
 
-    returns
+    Returns
     -------
     float or array
         smoothed value from input parameter x.
@@ -521,7 +508,7 @@ def sigmoidX(x, x0, alpha=1.0):
 
 def dSigmoidXdx(x, x0, alpha=1.0):
     """
-    Derivative of sigmoid function
+    Derivative of sigmoid function.
 
     Parameters
     ----------
@@ -531,7 +518,8 @@ def dSigmoidXdx(x, x0, alpha=1.0):
         the center of symmetry. When x = x0, sigmoidX = 1/2.
     alpha: float
         steepness parameter.
-    returns
+
+    Returns
     -------
     float or array
         smoothed derivative value from input parameter x.

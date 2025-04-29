@@ -8,9 +8,7 @@ from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 
 
 class LiftDependentDrag(om.ExplicitComponent):
-    """
-    Calculates lift dependent drag
-    """
+    """Calculates lift dependent drag."""
 
     def initialize(self):
         self.options.declare(
@@ -281,7 +279,6 @@ class LiftDependentDrag(om.ExplicitComponent):
         ddelCL_dSref = -2.0 * lift / (Sref * Sref * gamma * P * mach**2)
         ddelCL_dmach = -4.0 * lift / (Sref * gamma * P * mach**3)
 
-        A = self.A
         FCDP = self.FCDP
         dFCDP_dA = self.dFCDP_dA
         dFCDP_dDELM = self.dFCDP_dDELM
