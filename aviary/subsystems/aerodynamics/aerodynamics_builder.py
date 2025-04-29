@@ -16,7 +16,6 @@ import openmdao.api as om
 # from dymos.utils.misc import _unspecified
 from aviary.subsystems.aerodynamics.flops_based.computed_aero_group import ComputedAeroGroup
 from aviary.subsystems.aerodynamics.flops_based.design import Design
-from aviary.subsystems.aerodynamics.flops_based.solved_alpha_group import SolvedAlphaGroup
 from aviary.subsystems.aerodynamics.flops_based.tabular_aero_group import TabularAeroGroup
 from aviary.subsystems.aerodynamics.flops_based.takeoff_aero_group import TakeoffAeroGroup
 from aviary.subsystems.aerodynamics.gasp_based.gaspaero import CruiseAero, LowSpeedAero
@@ -25,13 +24,12 @@ from aviary.subsystems.aerodynamics.gasp_based.table_based import (
     TabularCruiseAero,
     TabularLowSpeedAero,
 )
+from aviary.subsystems.aerodynamics.solve_alpha_group import SolveAlphaGroup
 from aviary.subsystems.subsystem_builder_base import SubsystemBuilderBase
 from aviary.utils.named_values import NamedValues
 from aviary.variable_info.enums import LegacyCode
 from aviary.variable_info.variable_meta_data import _MetaData
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
-from aviary.subsystems.aerodynamics.solve_alpha_group import SolveAlphaGroup
-
 
 GASP = LegacyCode.GASP
 FLOPS = LegacyCode.FLOPS

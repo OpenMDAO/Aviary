@@ -1,8 +1,8 @@
 import numpy as np
 import openmdao.api as om
 
-from aviary.variable_info.variables import Dynamic
 from aviary import constants
+from aviary.variable_info.variables import Dynamic
 
 
 class SolveAlphaGroup(om.Group):

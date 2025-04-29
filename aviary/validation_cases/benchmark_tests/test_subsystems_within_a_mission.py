@@ -26,10 +26,6 @@ class TestSubsystemsMission(unittest.TestCase):
                     ArrayGuessSubsystemBuilder(),
                     AdditionalArrayGuessSubsystemBuilder(),
                 ],
-                'external_subsystems': [
-                    ArrayGuessSubsystemBuilder(),
-                    AdditionalArrayGuessSubsystemBuilder(),
-                ],
                 'optimize_mass': True,
             },
             'cruise': {
