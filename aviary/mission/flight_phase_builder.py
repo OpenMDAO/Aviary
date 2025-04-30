@@ -285,7 +285,11 @@ class FlightPhaseOptions(AviaryOptionsDictionary):
 
 @register
 class FlightPhaseBase(PhaseBuilderBase):
-    """The base class for flight phase."""
+    """
+    The base class for flight phase.
+
+    This houses parts of the build_phase process that are commmon to EnergyPhase and TwoDOFPhase.
+    """
 
     __slots__ = ('external_subsystems', 'meta_data')
 
