@@ -1157,7 +1157,9 @@ class BWBFuselageMassTestCase1(unittest.TestCase):
         self.prob.model.set_input_defaults(
             Aircraft.Fuselage.AFTBODY_MASS_PER_UNIT_AREA, val=5.0, units='lbm/ft**2'
         )
-        self.prob.model.set_input_defaults(Aircraft.BWB.CABIN_AREA, val=1283.5249, units='ft**2')
+        self.prob.model.set_input_defaults(
+            Aircraft.Fuselage.CABIN_AREA, val=1283.5249, units='ft**2'
+        )
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
@@ -1409,7 +1411,9 @@ class BWBFuelMassGroupTest(unittest.TestCase):
         self.prob.model.set_input_defaults(
             Aircraft.Fuselage.AFTBODY_MASS_PER_UNIT_AREA, val=5.0, units='lbm/ft**2'
         )
-        self.prob.model.set_input_defaults(Aircraft.BWB.CABIN_AREA, val=1283.5249, units='ft**2')
+        self.prob.model.set_input_defaults(
+            Aircraft.Fuselage.CABIN_AREA, val=1283.5249, units='ft**2'
+        )
 
         # StructMass
         self.prob.model.set_input_defaults(Aircraft.Fuselage.MASS, val=26834.979, units='lbm')
