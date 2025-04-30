@@ -43,13 +43,13 @@ class BodyTankCalculations(om.ExplicitComponent):
             val=0,
             units='ft**3',
             desc='FVOLXTRA: excess required design fuel volume (including fuel margin) greater than geometric fuel volume of wings',
-        )
+        )  # there is no FVOLXTRA in GASP
         self.add_output(
             'max_extra_fuel_mass',
             val=0,
             units='lbm',
             desc='WFXTRAMX: mass of fuel that fits in extra_fuel_volume',
-        )
+        )  # there is no WFXTRAMX in GASP
         self.add_output(
             'wingfuel_mass_min', val=0, units='lbm', desc='WFWMIN: minimum wing fuel mass'
         )
@@ -134,6 +134,7 @@ class BodyTankCalculations(om.ExplicitComponent):
         else:
             if extra_fuel_wt < 0:
                 extra_fuel_wt = 0
+
         max_extra_fuel_wt = extra_fuel_volume * rho_fuel
         wingfuel_wt_min = fuel_wt_min - max_extra_fuel_wt
         wingfuel_wt_min = wingfuel_wt_min * sigmoidX(wingfuel_wt_min, 0)
@@ -1023,7 +1024,7 @@ class BWBFuselageMass(om.ExplicitComponent):
     """
 
     def setup(self):
-        add_aviary_input(self, Aircraft.BWB.CABIN_AREA, units='ft**2')
+        add_aviary_input(self, Aircraft.Fuselage.CABIN_AREA, units='ft**2')
         add_aviary_input(self, Aircraft.Fuselage.MASS_COEFFICIENT, units='unitless')
         add_aviary_input(self, Mission.Design.GROSS_MASS, units='lbm')
         add_aviary_input(
@@ -1037,7 +1038,7 @@ class BWBFuselageMass(om.ExplicitComponent):
         self.declare_partials(
             Aircraft.Fuselage.MASS,
             [
-                Aircraft.BWB.CABIN_AREA,
+                Aircraft.Fuselage.CABIN_AREA,
                 Aircraft.Fuselage.WETTED_AREA,
                 Aircraft.Fuselage.MASS_COEFFICIENT,
                 Mission.Design.GROSS_MASS,
@@ -1049,7 +1050,7 @@ class BWBFuselageMass(om.ExplicitComponent):
     def compute(self, inputs, outputs):
         c_fuselage = inputs[Aircraft.Fuselage.MASS_COEFFICIENT]
         gross_wt_initial = inputs[Mission.Design.GROSS_MASS] * GRAV_ENGLISH_LBM
-        area_cabin = inputs[Aircraft.BWB.CABIN_AREA]
+        area_cabin = inputs[Aircraft.Fuselage.CABIN_AREA]
         area_aft_to_total = inputs[Aircraft.Fuselage.WETTED_AREA_RATIO_AFTBODY_TO_TOTAL]
         uwt_aft = inputs[Aircraft.Fuselage.AFTBODY_MASS_PER_UNIT_AREA] * GRAV_ENGLISH_LBM
         fus_SA = inputs[Aircraft.Fuselage.WETTED_AREA]
@@ -1063,7 +1064,7 @@ class BWBFuselageMass(om.ExplicitComponent):
     def compute_partials(self, inputs, J):
         c_fuselage = inputs[Aircraft.Fuselage.MASS_COEFFICIENT]
         gross_wt_initial = inputs[Mission.Design.GROSS_MASS] * GRAV_ENGLISH_LBM
-        area_cabin = inputs[Aircraft.BWB.CABIN_AREA]
+        area_cabin = inputs[Aircraft.Fuselage.CABIN_AREA]
         area_aft_to_total = inputs[Aircraft.Fuselage.WETTED_AREA_RATIO_AFTBODY_TO_TOTAL]
         uwt_aft = inputs[Aircraft.Fuselage.AFTBODY_MASS_PER_UNIT_AREA] * GRAV_ENGLISH_LBM
         fus_SA = inputs[Aircraft.Fuselage.WETTED_AREA]
@@ -1084,7 +1085,7 @@ class BWBFuselageMass(om.ExplicitComponent):
 
         J[Aircraft.Fuselage.MASS, Aircraft.Fuselage.MASS_COEFFICIENT] = dFusWt_dc_fuselage
         J[Aircraft.Fuselage.MASS, Mission.Design.GROSS_MASS] = dFusWt_dgross_wt_initial
-        J[Aircraft.Fuselage.MASS, Aircraft.BWB.CABIN_AREA] = dFusWt_darea_cabin
+        J[Aircraft.Fuselage.MASS, Aircraft.Fuselage.CABIN_AREA] = dFusWt_darea_cabin
         J[Aircraft.Fuselage.MASS, Aircraft.Fuselage.WETTED_AREA_RATIO_AFTBODY_TO_TOTAL] = (
             dFusWt_darea_aft_to_total
         )
