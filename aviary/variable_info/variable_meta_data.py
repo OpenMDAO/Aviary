@@ -343,23 +343,6 @@ add_meta_data(
 # ========================================================================================================================
 
 add_meta_data(
-    Aircraft.BWB.CABIN_AREA,
-    meta_data=_MetaData,
-    historical_name={
-        'GASP': None,
-        # ['&DEFINE.FUSEIN.ACABIN', 'WDEF.ACABIN'],
-        'FLOPS': 'FUSEIN.ACABIN',
-        'LEAPS1': [
-            'aircraft.inputs.L0_blended_wing_body_design.cabin_area',
-            'aircraft.cached.L0_blended_wing_body_design.cabin_area',
-        ],
-    },
-    units='ft**2',
-    desc='fixed area of passenger cabin for blended wing body transports',
-    default_value=0.0,
-)
-
-add_meta_data(
     Aircraft.BWB.NUM_BAYS,
     meta_data=_MetaData,
     historical_name={
@@ -3153,6 +3136,7 @@ add_meta_data(
     desc='In GASP based, indicate whether use standard linear empirical regression formula. '
     'This applies only when gross mass > 10000 and number of passengers >= 50.',
     types=bool,
+    option=True,
     default_value=True,
 )
 
@@ -3206,6 +3190,23 @@ add_meta_data(
     },
     units='ft',
     desc='average fuselage diameter',
+    default_value=0.0,
+)
+
+add_meta_data(
+    Aircraft.Fuselage.CABIN_AREA,
+    meta_data=_MetaData,
+    historical_name={
+        'GASP': None,
+        # ['&DEFINE.FUSEIN.ACABIN', 'WDEF.ACABIN'],
+        'FLOPS': 'FUSEIN.ACABIN',
+        'LEAPS1': [
+            'aircraft.inputs.L0_blended_wing_body_design.cabin_area',
+            'aircraft.cached.L0_blended_wing_body_design.cabin_area',
+        ],
+    },
+    units='ft**2',
+    desc='fixed area of passenger cabin for blended wing body transports',
     default_value=0.0,
 )
 
