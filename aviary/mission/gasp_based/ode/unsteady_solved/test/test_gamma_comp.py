@@ -10,9 +10,7 @@ from aviary.variable_info.variables import Aircraft, Dynamic
 
 
 class TestUnsteadyFlightEOM(unittest.TestCase):
-    """
-    Test 2-degree of freedom equations of motion for unsteady flight
-    """
+    """Test 2-degree of freedom equations of motion for unsteady flight."""
 
     def _test_unsteady_flight_eom(self, ground_roll=False):
         nn = 5

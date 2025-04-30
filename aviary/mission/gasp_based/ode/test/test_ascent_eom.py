@@ -55,9 +55,7 @@ class AscentEOMTestCase(unittest.TestCase):
 
 
 class AscentEOMTestCase2(unittest.TestCase):
-    """
-    Test mass-weight conversion
-    """
+    """Test mass-weight conversion."""
 
     def setUp(self):
         import aviary.mission.gasp_based.ode.ascent_eom as ascent

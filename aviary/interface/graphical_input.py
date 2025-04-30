@@ -1,18 +1,17 @@
+import importlib.util  # used for opening existing phase info file
+import json
 import os
+import platform
 import shutil
 import subprocess
-import json
-import platform
-import importlib.util  # used for opening existing phase info file
-import numpy as np
-
 import tkinter as tk  # base tkinter
 import tkinter.ttk as ttk  # used for combobox
-from tkinter import filedialog, messagebox, font
+from tkinter import filedialog, font, messagebox
 
-from matplotlib.figure import Figure
-from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+import numpy as np
 from matplotlib.backend_bases import MouseButton
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+from matplotlib.figure import Figure
 
 # used for unit conversion of numerical data
 from openmdao.utils.units import convert_units
@@ -87,9 +86,7 @@ class VerticalScrolledFrame(tk.Frame):
 
 
 class AviaryMissionEditor(tk.Tk):
-    """
-    Aviary mission editor class
-    """
+    """Aviary mission editor class."""
 
     def __init__(self):
         screen_width, screen_height = [
@@ -261,8 +258,8 @@ class AviaryMissionEditor(tk.Tk):
 
     def save_option_defaults(self):
         """Saves default values for advanced options and axes limits, these will be referenced
-        if user chooses to reset advanced options or axes limits"""
-
+        if user chooses to reset advanced options or axes limits.
+        """
         self.advanced_options_defaults = {}
         for key, item in self.advanced_options.items():
             self.advanced_options_defaults[key] = item.get()
@@ -273,7 +270,7 @@ class AviaryMissionEditor(tk.Tk):
                 self.data_info_defaults[key] = [element for element in item]
 
     def check_data_info(self):
-        """Verifies data_info dict has consistent number of dependent variables"""
+        """Verifies data_info dict has consistent number of dependent variables."""
         self.num_dep_vars = len(self.data_info['plot_titles'])
         for key, item in self.data_info.items():
             if key != 'plot_titles':
@@ -284,7 +281,8 @@ class AviaryMissionEditor(tk.Tk):
 
     def update_list(self, value, index, axis):
         """Updates internal data lists based on row,col values. col corresponds
-        to dependent/independent variable. row corresponds to point number."""
+        to dependent/independent variable. row corresponds to point number.
+        """
         try:
             value = float(value)
         except (ValueError, TypeError):
@@ -304,7 +302,8 @@ class AviaryMissionEditor(tk.Tk):
 
     def update_theme(self, toggle=False):
         """Called by theme toggle button and start of app, changes color settings for widgets
-        based on current theme."""
+        based on current theme.
+        """
         if toggle:
             self.theme = 'light' if self.theme == 'dark' else 'dark'
 
@@ -400,7 +399,8 @@ class AviaryMissionEditor(tk.Tk):
     # Plot related functions
     def create_plots(self):
         """Creates subplots according to data_info dict. Sets labels and limits.
-        Ties mouse events to appropriate internal functions."""
+        Ties mouse events to appropriate internal functions.
+        """
         self.fig = Figure()
         self.plots = []
         self.plot_texts = [[] for _ in range(self.num_dep_vars)]
@@ -445,7 +445,7 @@ class AviaryMissionEditor(tk.Tk):
             self.figure_canvas.draw()
 
     def redraw_plot(self):
-        """Redraws plot, using the new values inside data lists"""
+        """Redraws plot, using the new values inside data lists."""
         self.clear_plot()
         for i, plot in enumerate(self.plots):
             plot.plot(
@@ -470,7 +470,7 @@ class AviaryMissionEditor(tk.Tk):
             )
 
     def clear_plot(self):
-        """Clears all lines from plots except for crosshairs"""
+        """Clears all lines from plots except for crosshairs."""
         for plot in self.plots:
             for line in plot.lines:
                 if line == self.crossX or line == self.crossY:
@@ -480,7 +480,7 @@ class AviaryMissionEditor(tk.Tk):
     # ----------------------
     # Mouse related functions
     def on_mouse_press(self, event):
-        """Handles mouse press event, sets internal mouse state"""
+        """Handles mouse press event, sets internal mouse state."""
         self.mouse_press = True
 
     def on_mouse_release(self, event):
@@ -492,7 +492,7 @@ class AviaryMissionEditor(tk.Tk):
         self.mouse_press, self.mouse_drag = False, False
 
     def on_mouse_click(self, event):
-        """Called when mouse click is determined, adds new point if it is valid"""
+        """Called when mouse click is determined, adds new point if it is valid."""
         # this list creates default values for subplots not clicked on, half of ylim
         default_y_vals = [float(lim.get()) / 2 for lim in self.data_info['limits'][1:]]
         valid_click = False
@@ -523,7 +523,8 @@ class AviaryMissionEditor(tk.Tk):
     def on_mouse_move(self, event):
         """Handles functionality related to mouse movement. Creates crosshair if mouse is inside
         a subplot and updates cursor if near a point that can be dragged. Also handles moving
-        point on graph if it is being dragged."""
+        point on graph if it is being dragged.
+        """
         if event.xdata and event.ydata:
             for plot_idx, plot in enumerate(self.plots):
                 if event.inaxes == plot:
@@ -578,14 +579,15 @@ class AviaryMissionEditor(tk.Tk):
 
     def get_distance(self, pt1: tuple, pt2: tuple, plot_idx: int):
         """Returns a normalized distance value between 2 points. Normalization is based on the subplot's
-        x and y limits, subplot specified as plot_idx"""
+        x and y limits, subplot specified as plot_idx.
+        """
         lims = (self.plots[plot_idx].get_xlim()[1], self.plots[plot_idx].get_ylim()[1])
         return np.sqrt(sum([((pt1[i] - pt2[i]) / lims[i]) ** 2 for i in range(2)]))
 
     # ----------------------
     # Table related functions
     def update_str_vars(self):
-        """Updates StringVar values for the table. Used when points are dragged on plot"""
+        """Updates StringVar values for the table. Used when points are dragged on plot."""
         for i, vallist in enumerate(self.data):
             for j, val in enumerate(vallist):
                 val = self.display_rounding(val, i)
@@ -593,7 +595,8 @@ class AviaryMissionEditor(tk.Tk):
 
     def delete_point(self, row: int):
         """When X button next to tabular point is pressed, lists are popped and plot and tables
-        are updated to show the removed point."""
+        are updated to show the removed point.
+        """
         if row < len(self.data[0]) and row > 0:
             self.phase_order_list.pop(row - 1)
             if len(self.plot_texts[0]) > 0:
@@ -611,7 +614,8 @@ class AviaryMissionEditor(tk.Tk):
     def update_table(self, overwrite=False, bool_list=None):
         """This function handles both adding a new entry to table and overwriting the whole table.
         Overwriting causes all table widgets to be destroyed and a new set of widgets to be created.
-        This also resets the StringVars."""
+        This also resets the StringVars.
+        """
         row = (
             len(
                 # last row (assumes data lists have been updated with new point)
@@ -731,7 +735,7 @@ class AviaryMissionEditor(tk.Tk):
             self.table_add_button.grid(row=row * 2 + 3, column=0, columnspan=col + 2)
 
     def update_header(self, new_headers):
-        """Update header"""
+        """Update header."""
         i = 0
         for widget in self.table_header_widgets:
             if isinstance(widget, tk.Entry):
@@ -740,7 +744,8 @@ class AviaryMissionEditor(tk.Tk):
 
     def add_new_row(self):
         """Updates data lists with a generic new point and runs redraw plot and update table.
-        New point is added at x = halfway between last point and x limit, y = half of y limit"""
+        New point is added at x = halfway between last point and x limit, y = half of y limit.
+        """
         default_y_vals = [float(lim.get()) / 2 for lim in self.data_info['limits'][1:]]
         newx = 0
         if len(self.data[0]) > 0:
@@ -805,14 +810,15 @@ class AviaryMissionEditor(tk.Tk):
 
     def display_rounding(self, value, col: int, extra=0):
         """Returns a rounded value based on which variable the value belongs to.
-        Uses rounding amount specified in data_info"""
+        Uses rounding amount specified in data_info.
+        """
         return format(value, '.' + str(int(self.data_info['rounding'][col].get()) + extra) + 'f')
 
     # ----------------------
     # Popup related functions
 
     def close_popup(self):
-        """Function to close existing popup and refocus main window"""
+        """Function to close existing popup and refocus main window."""
         self.focus_set()
         self.popup.destroy()
         self.popup = None
@@ -820,7 +826,8 @@ class AviaryMissionEditor(tk.Tk):
     def generic_popup(self, pop_title='Popup', buttons_text=[]):
         """Function to create a base window for a popup. Returns popup object to be used for adding widget
         and configuring settings. Buttons_text can be used to specify any number of buttons. These button
-        objects are returned for configuring commands and location."""
+        objects are returned for configuring commands and location.
+        """
         popup = tk.Toplevel(self)
         # Set the window icon, provides 2 sizes of logos to prevent blurry icons
         popup.iconphoto(
@@ -867,7 +874,8 @@ class AviaryMissionEditor(tk.Tk):
     def place_popup(self):
         """Generic popup lets Tkinter automatically size the popup to fit all contents.
         This function uses that size and main GUI window size/location to compute a
-        location for the popup that is central to the GUI."""
+        location for the popup that is central to the GUI.
+        """
         self.popup.update_idletasks()
         pop_wid, pop_hei = [int(x) for x in self.popup.winfo_geometry().split('+')[0].split('x')]
         win_size, win_left, win_top = self.winfo_geometry().split('+')
@@ -886,7 +894,8 @@ class AviaryMissionEditor(tk.Tk):
 
     def change_axes_popup(self):
         """Creates a popup window that allows user to edit axes limits. This function is triggered
-        by the menu buttons"""
+        by the menu buttons.
+        """
 
         def reset_options(old_list=None):
             if not old_list:
@@ -955,7 +964,8 @@ class AviaryMissionEditor(tk.Tk):
     def get_phase_names(self):
         """Returns a list of phase names, these are decided based on final and starting altitudes.
         These names are only used for the dropdown menu in advanced options, and are not connected to
-        phase info phase names."""
+        phase info phase names.
+        """
         names = ['Climb ', 'Cruise ', 'Descent ']
         counters = [1, 1, 1]
         phase_name_list = []
@@ -976,7 +986,8 @@ class AviaryMissionEditor(tk.Tk):
     def advanced_options_popup(self):
         """Creates a popup window that allows user to edit advanced options for phase info.
         Options included are specified as a dict in __init__ and include solve/constrain for range,
-        include landing/takeoff, polynomial order, and phase order. This function is triggered by the menu buttons"""
+        include landing/takeoff, polynomial order, and phase order. This function is triggered by the menu buttons.
+        """
 
         def reset_options(self, old_dict=self.advanced_options_defaults):
             for key, value in old_dict.items():
@@ -1042,7 +1053,7 @@ class AviaryMissionEditor(tk.Tk):
             if newval < self.phase_order_default:
                 messagebox.showwarning(
                     title='Error',
-                    message=f'Phase transcription order must be '
+                    message='Phase transcription order must be '
                     + 'at least {self.phase_order_default}!',
                 )
                 newval = self.phase_order_default
@@ -1086,7 +1097,8 @@ class AviaryMissionEditor(tk.Tk):
     # Menu related functions
     def create_menu(self):
         """Creates menu. Structure is specified as a dictionary, can add commands,
-        separators, and checkbuttons."""
+        separators, and checkbuttons.
+        """
         structure = {
             'File': [
                 ['command', 'Open Phase Info..', self.open_phase_info],
@@ -1149,7 +1161,7 @@ class AviaryMissionEditor(tk.Tk):
         self.destroy()
 
     def toggle_optimize_view(self):
-        """Runs update table with overwrite on to toggle display of optimize checkboxes"""
+        """Runs update table with overwrite on to toggle display of optimize checkboxes."""
         self.update_table(overwrite=True)
 
     def toggle_phase_slope(self, redraw=True):
@@ -1361,7 +1373,8 @@ class AviaryMissionEditor(tk.Tk):
 
     def open_phase_info(self):
         """Opens a dialog box to select a .py file with a phase info dict. File must contain a dict called phase_info.
-        File can be placed in any directory."""
+        File can be placed in any directory.
+        """
         file_dialog = filedialog.Open(self, filetypes=[('Python files', '*.py')])
         filename = file_dialog.show()
         if filename != '':
@@ -1460,7 +1473,8 @@ class AviaryMissionEditor(tk.Tk):
 
     def save(self, filename=None):
         """Saves mission into a file as a phase info dictionary which can be used by Aviary.
-        This function is also called by the save as function with a non-default filename."""
+        This function is also called by the save as function with a non-default filename.
+        """
         for i in range(len(self.data[0]) - 1):
             if self.data[0][i] > self.data[0][i + 1]:  # going backwards in time
                 messagebox.showerror(

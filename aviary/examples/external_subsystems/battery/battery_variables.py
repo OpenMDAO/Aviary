@@ -6,9 +6,7 @@ AviaryDynamic = av_Dynamic
 
 
 class Aircraft(AviaryAircraft):
-    """
-    Aircraft data hierarchy for battery subsystem.
-    """
+    """Aircraft data hierarchy for battery subsystem."""
 
     # cell = single cell, battery = one case plus multiple cells
 
@@ -35,9 +33,7 @@ class Aircraft(AviaryAircraft):
 
 
 class Dynamic(AviaryDynamic):
-    """
-    Dynamic data hierarchy for battery subsystem.
-    """
+    """Dynamic data hierarchy for battery subsystem."""
 
     class Battery:
         CURRENT = 'dynamic:battery:current'

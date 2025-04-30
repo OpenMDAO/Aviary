@@ -2,7 +2,7 @@ import numpy as np
 
 
 def almost_equal(a, b, rel_tol=1e-8, abs_tol=0.0):
-    """check if two floats, or two ndarray, or two dictionary are equal. Return True if they are equal."""
+    """Check if two floats, or two ndarray, or two dictionary are equal. Return True if they are equal."""
     if isinstance(a, (float, np.float32, np.float64)) and isinstance(
         b, (float, np.float32, np.float64)
     ):
@@ -45,7 +45,6 @@ def merge_2_meta_data_dicts(dict1, dict2):
     ValueError
         Raises error if dict1 and dict2 have differing metadata for the same variable.
     """
-
     dict1_keys = set(dict1.keys())  # get keys of provided dictionaries
     dict2_keys = set(dict2.keys())  # get keys of provided dictionaries
     # get keys that are unique to each dictionary

@@ -12,8 +12,8 @@ import numpy as np
 
 from aviary.subsystems.subsystem_builder_base import SubsystemBuilderBase
 from aviary.utils.aviary_values import AviaryValues
-from aviary.variable_info.variables import Settings
 from aviary.variable_info.enums import Verbosity
+from aviary.variable_info.variables import Settings
 
 
 class EngineModel(SubsystemBuilderBase):
@@ -195,9 +195,7 @@ class EngineModel(SubsystemBuilderBase):
             #     options.delete(key)
 
     def update(self, options: AviaryValues, **kwargs):
-        """
-        Given a new set of AviaryValues, update the engine model and rerun setup.
-        """
+        """Given a new set of AviaryValues, update the engine model and rerun setup."""
         self.options = options.deepcopy()
 
         self._setup(**kwargs)
@@ -207,7 +205,7 @@ class EngineModel(SubsystemBuilderBase):
         Returns desired value from options in specified units.
 
         Parameters
-        -------
+        ----------
         key : str
             Name of requested option.
         units : str
@@ -245,7 +243,7 @@ class EngineModel(SubsystemBuilderBase):
         Updates desired value in options with specified units.
 
         Parameters
-        -------
+        ----------
         key : str
             Name of option whose value will be updated.
         val

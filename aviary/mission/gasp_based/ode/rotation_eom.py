@@ -8,7 +8,7 @@ from aviary.variable_info.variables import Aircraft, Dynamic
 
 
 class RotationEOM(om.ExplicitComponent):
-    """2-degree of freedom rotation EOM"""
+    """2-degree of freedom rotation EOM."""
 
     def initialize(self):
         self.options.declare('num_nodes', types=int)

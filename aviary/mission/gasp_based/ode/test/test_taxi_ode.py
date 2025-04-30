@@ -1,9 +1,9 @@
-from packaging import version
 import unittest
 
 import openmdao
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials
+from packaging import version
 
 from aviary.mission.gasp_based.ode.params import set_params_for_unit_tests
 from aviary.mission.gasp_based.ode.taxi_ode import TaxiSegment
@@ -16,9 +16,7 @@ from aviary.variable_info.variables import Dynamic, Mission
 
 
 class TaxiTestCase(unittest.TestCase):
-    """
-    Test computation of taxi group.
-    """
+    """Test computation of taxi group."""
 
     def setUp(self):
         self.prob = om.Problem()

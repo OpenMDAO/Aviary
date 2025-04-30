@@ -56,9 +56,7 @@ class GroundrollEOMTestCase(unittest.TestCase):
 
 
 class GroundrollEOMTestCase2(unittest.TestCase):
-    """
-    Test mass-weight conversion
-    """
+    """Test mass-weight conversion."""
 
     def setUp(self):
         import aviary.mission.gasp_based.ode.groundroll_eom as gr

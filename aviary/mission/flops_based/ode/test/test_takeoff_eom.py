@@ -5,28 +5,26 @@ import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 
 from aviary.mission.flops_based.ode.takeoff_eom import (
-    TakeoffEOM,
-    StallSpeed,
-    DistanceRates,
     Accelerations,
-    VelocityRate,
-    FlightPathAngleRate,
-    SumForces,
     ClimbGradientForces,
+    DistanceRates,
+    FlightPathAngleRate,
+    StallSpeed,
+    SumForces,
+    TakeoffEOM,
+    VelocityRate,
 )
 from aviary.models.N3CC.N3CC_data import detailed_takeoff_climbing, detailed_takeoff_ground, inputs
 from aviary.utils.test_utils.variable_test import assert_match_varnames
 from aviary.validation_cases.validation_tests import do_validation_test
-from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 from aviary.variable_info.functions import setup_model_options
+from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 
 inputs.set_val(Aircraft.Engine.NUM_ENGINES, np.array([2]))
 
 
 class TakeoffEOMTest(unittest.TestCase):
-    """
-    Test detailed takeoff equation of motion
-    """
+    """Test detailed takeoff equation of motion."""
 
     def test_case_ground(self):
         prob = self._make_prob(climbing=False)
@@ -143,10 +141,7 @@ class TakeoffEOMTest(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
 
     def test_DistanceRates_1(self):
-        """
-        climbing = True
-        """
-
+        """Climbing = True."""
         tol = 1e-6
         prob = om.Problem()
         prob.model.add_subsystem(
@@ -171,10 +166,7 @@ class TakeoffEOMTest(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
 
     def test_DistanceRates_2(self):
-        """
-        climbing = False
-        """
-
+        """Climbing = False."""
         tol = 1e-6
         prob = om.Problem()
         prob.model.add_subsystem(
@@ -253,10 +245,7 @@ class TakeoffEOMTest(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
 
     def test_SumForcese_1(self):
-        """
-        climbing = True
-        """
-
+        """Climbing = True."""
         tol = 1e-6
         prob = om.Problem()
         aviary_options = inputs
@@ -288,10 +277,7 @@ class TakeoffEOMTest(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e-10, rtol=1e-10)
 
     def test_SumForcese_2(self):
-        """
-        climbing = False
-        """
-
+        """Climbing = False."""
         tol = 1e-6
         prob = om.Problem()
         aviary_options = inputs
@@ -323,10 +309,7 @@ class TakeoffEOMTest(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e-10, rtol=1e-10)
 
     def test_ClimbGradientForces(self):
-        """
-        climbing = False
-        """
-
+        """Climbing = False."""
         tol = 1e-6
         prob = om.Problem()
         aviary_options = inputs

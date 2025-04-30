@@ -1,25 +1,22 @@
-import unittest
 import tempfile
-
-import numpy as np
+import unittest
 from pathlib import Path
 
+import numpy as np
 from openmdao.utils.assert_utils import assert_near_equal
 from openmdao.utils.testing_utils import use_tempdirs
 
 from aviary.utils.aero_table_conversion import (
+    _exec_ATC,
     _load_flops_aero_table,
     _load_gasp_aero_table,
-    _exec_ATC,
 )
 from aviary.utils.functions import get_path
 
 
 @use_tempdirs
 class TestAeroTableConversion(unittest.TestCase):
-    """
-    Test conversion of aero table from GASP and FLOPS data format to Aviary format.
-    """
+    """Test conversion of aero table from GASP and FLOPS data format to Aviary format."""
 
     # fmt: off
     def test_GASP_table_1(self):
@@ -62,7 +59,7 @@ class TestAeroTableConversion(unittest.TestCase):
         input = get_path('subsystems/aerodynamics/gasp_based/data/GASP_aero_flaps.txt')
         data, comments = _load_gasp_aero_table(input)
         if comments != expected_comments:
-            raise ValueError(f'Comments written to csv do not match expected values')
+            raise ValueError('Comments written to csv do not match expected values')
 
         assert_near_equal(data.get_val('Flap Deflection', 'deg'), expected_delflp)
         assert_near_equal(data.get_val('Mach'), expected_mach)
@@ -108,7 +105,7 @@ class TestAeroTableConversion(unittest.TestCase):
         input = get_path('subsystems/aerodynamics/gasp_based/data/GASP_aero_free.txt')
         data, comments = _load_gasp_aero_table(input)
         if comments != expected_comments:
-            raise ValueError(f'Comments written to csv do not match expected values')
+            raise ValueError('Comments written to csv do not match expected values')
 
         assert_near_equal(data.get_val('Altitude', 'ft'), expected_alt)
         assert_near_equal(data.get_val('Mach'), expected_mach)
@@ -150,7 +147,7 @@ class TestAeroTableConversion(unittest.TestCase):
         input = get_path('subsystems/aerodynamics/gasp_based/data/GASP_aero_ground.txt')
         data, comments = _load_gasp_aero_table(input)
         if comments != expected_comments:
-            raise ValueError(f'Comments written to csv do not match expected values')
+            raise ValueError('Comments written to csv do not match expected values')
 
         assert_near_equal(data.get_val('Mach'), expected_mach)
         assert_near_equal(data.get_val('Angle of Attack', 'deg'), expected_alpha)
@@ -203,7 +200,7 @@ class TestAeroTableConversion(unittest.TestCase):
         if cdi_comments != expected_cdi_comments:
             print(cdi_comments)
             print(expected_cdi_comments)
-            raise ValueError(f'Comments written to csv do not match expected values')
+            raise ValueError('Comments written to csv do not match expected values')
 
         assert_near_equal(cdi_data.get_val('Mach'), expected_cdi_mach)
         assert_near_equal(cdi_data.get_val('Lift Coefficient'), expected_cdi_cl)
@@ -211,7 +208,7 @@ class TestAeroTableConversion(unittest.TestCase):
 
         # test CD0
         if cd0_comments != expected_cd0_comments:
-            raise ValueError(f'Comments written to csv do not match expected values')
+            raise ValueError('Comments written to csv do not match expected values')
 
         assert_near_equal(cd0_data.get_val('Mach'), expected_cd0_mach)
         assert_near_equal(cd0_data.get_val('Altitude', 'ft'), expected_cd0_alt)
@@ -243,7 +240,7 @@ class TestAeroTableConversion(unittest.TestCase):
                 try:
                     self.assertEqual(line_no_whitespace.count(expected_line), 1)
 
-                except Exception as error:
+                except Exception:
                     exc_string = (
                         f'Error:  {args.output_file}\nFound: '
                         f'{line_no_whitespace}\nExpected:  {expected_line}'

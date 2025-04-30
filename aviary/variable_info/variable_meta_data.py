@@ -1,11 +1,9 @@
-"""
-Define meta data associated with variables in the Aviary data hierarchy.
-"""
-
-import numpy as np
+"""Define meta data associated with variables in the Aviary data hierarchy."""
 
 from copy import deepcopy
 from pathlib import Path
+
+import numpy as np
 
 from aviary.utils.develop_metadata import add_meta_data
 from aviary.variable_info.enums import (
@@ -14,8 +12,8 @@ from aviary.variable_info.enums import (
     FlapType,
     GASPEngineType,
     LegacyCode,
-    Verbosity,
     ProblemType,
+    Verbosity,
 )
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission, Settings
 

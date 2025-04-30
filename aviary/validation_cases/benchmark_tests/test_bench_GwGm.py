@@ -1,5 +1,5 @@
-from copy import deepcopy
 import unittest
+from copy import deepcopy
 
 from openmdao.core.problem import _clear_problem_names
 from openmdao.utils.assert_utils import assert_near_equal

@@ -1,7 +1,6 @@
 import aviary.api as av
 from aviary.examples.external_subsystems.engine_NPSS.engine_variables import Aircraft, Dynamic
 
-
 ExtendedMetaData = av.CoreMetaData
 
 

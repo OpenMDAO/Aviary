@@ -180,9 +180,7 @@ class Aircraft_c:
 
 
 class CompareHierarchiesTest(unittest.TestCase):
-    """
-    Test the functionality of compare_hierarchies_to_merge function.
-    """
+    """Test the functionality of compare_hierarchies_to_merge function."""
 
     def test_compare_successful(self):
         # this shouldn't throw an error

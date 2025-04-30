@@ -3,15 +3,15 @@ import unittest
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 
+from aviary.models.large_single_aisle_1.V3_bug_fixed_IO import (
+    V3_bug_fixed_non_metadata,
+    V3_bug_fixed_options,
+)
 from aviary.subsystems.geometry.gasp_based.size_group import SizeGroup
 from aviary.subsystems.mass.gasp_based.mass_premission import MassPremission
 from aviary.utils.aviary_values import get_items
 from aviary.variable_info.functions import setup_model_options
 from aviary.variable_info.options import get_option_defaults, is_option
-from aviary.models.large_single_aisle_1.V3_bug_fixed_IO import (
-    V3_bug_fixed_non_metadata,
-    V3_bug_fixed_options,
-)
 from aviary.variable_info.variables import Aircraft, Mission
 
 

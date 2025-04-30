@@ -6,11 +6,7 @@ from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 from parameterized import parameterized
 
 from aviary.subsystems.aerodynamics.flops_based.computed_aero_group import ComputedDrag
-from aviary.subsystems.aerodynamics.flops_based.drag import (
-    SimpleDrag,
-    SimpleCD,
-    TotalDrag,
-)
+from aviary.subsystems.aerodynamics.flops_based.drag import SimpleCD, SimpleDrag, TotalDrag
 from aviary.utils.aviary_values import AviaryValues
 from aviary.validation_cases.validation_tests import (
     get_flops_case_names,
@@ -226,9 +222,7 @@ def _add_drag_coefficients(
     CD0_scaled: np.ndarray,
     CDI_scaled: np.ndarray,
 ):
-    """
-    Insert drag coefficients into the mission data, undoing FLOPS scaling.
-    """
+    """Insert drag coefficients into the mission data, undoing FLOPS scaling."""
     flops_inputs = get_flops_inputs(case_name)
     FCDSUB = flops_inputs.get_val(Aircraft.Design.SUBSONIC_DRAG_COEFF_FACTOR)
     FCDSUP = flops_inputs.get_val(Aircraft.Design.SUPERSONIC_DRAG_COEFF_FACTOR)

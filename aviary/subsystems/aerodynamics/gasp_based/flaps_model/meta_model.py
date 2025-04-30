@@ -9,7 +9,7 @@ from aviary.variable_info.variables import Aircraft, Dynamic
 class MetaModelGroup(om.Group):
     """
     Group of metamodel components to interpolate intermediate calculation values for flaps model in GASP-based
-    aerodynamics
+    aerodynamics.
     """
 
     def initialize(self):

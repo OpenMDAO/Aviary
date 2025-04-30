@@ -42,14 +42,12 @@ except ImportError:
     )
 
 from ambiance import Atmosphere
-
 from openaerostruct.integration.aerostruct_groups import AerostructGeometry, AerostructPoint
 from openaerostruct.structures.wingbox_fuel_vol_delta import WingboxFuelVolDelta
 
 
 def user_mesh():
-    """generate a user defined mesh which is model specific"""
-
+    """Generate a user defined mesh which is model specific."""
     # Planform specifications
     half_span = 17.9573
     kink_location = 4.9544
@@ -132,7 +130,7 @@ def user_mesh():
 
 
 class OAStructures(om.ExplicitComponent):
-    """OAS structure component"""
+    """OAS structure component."""
 
     def initialize(self):
         self.options.declare('symmetry', default=True, desc='wing symmetry (True or False)')

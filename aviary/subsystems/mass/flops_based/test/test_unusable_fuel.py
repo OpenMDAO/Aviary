@@ -20,9 +20,7 @@ from aviary.variable_info.variables import Aircraft
 
 
 class TransportUnusableFuelMassTest(unittest.TestCase):
-    """
-    Tests transport/GA unusable fuel mass calculation.
-    """
+    """Tests transport/GA unusable fuel mass calculation."""
 
     def setUp(self):
         self.prob = om.Problem()
@@ -65,9 +63,7 @@ class TransportUnusableFuelMassTest(unittest.TestCase):
 
 
 class TransportUnusableFuelMassTest2(unittest.TestCase):
-    """
-    Test mass-weight conversion
-    """
+    """Test mass-weight conversion."""
 
     def setUp(self):
         import aviary.subsystems.mass.flops_based.unusable_fuel as ufuel
@@ -101,9 +97,7 @@ class TransportUnusableFuelMassTest2(unittest.TestCase):
 
 
 class AltUnusableFuelMassTest(unittest.TestCase):
-    """
-    Tests alternate unusable fuel mass calculation.
-    """
+    """Tests alternate unusable fuel mass calculation."""
 
     def setUp(self):
         self.prob = om.Problem()
@@ -133,9 +127,7 @@ class AltUnusableFuelMassTest(unittest.TestCase):
 
 
 class AltUnusableFuelMassTest2(unittest.TestCase):
-    """
-    Test mass-weight conversion
-    """
+    """Test mass-weight conversion."""
 
     def setUp(self):
         import aviary.subsystems.mass.flops_based.unusable_fuel as ufuel

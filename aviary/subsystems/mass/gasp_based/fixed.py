@@ -3,13 +3,9 @@ import openmdao.api as om
 from openmdao.components.ks_comp import KSfunction
 
 from aviary.constants import GRAV_ENGLISH_LBM, RHO_SEA_LEVEL_ENGLISH
-from aviary.utils.functions import sigmoidX, dSigmoidXdx
+from aviary.utils.functions import dSigmoidXdx, sigmoidX
 from aviary.variable_info.enums import FlapType
-from aviary.variable_info.functions import (
-    add_aviary_input,
-    add_aviary_output,
-    add_aviary_option,
-)
+from aviary.variable_info.functions import add_aviary_input, add_aviary_option, add_aviary_output
 from aviary.variable_info.variables import Aircraft, Mission
 
 
@@ -18,7 +14,7 @@ class MassParameters(om.ExplicitComponent):
     Computation of various parameters (such as correction factor for the use of
     non optimum material, reduction in bending moment factor for strut braced wing,
     landing gear location factor, engine position factor, and wing chord half sweep
-    angle)
+    angle).
     """
 
     def initialize(self):
@@ -158,7 +154,6 @@ class MassParameters(om.ExplicitComponent):
         half_sweep = np.arctan(tan_half_sweep)
         cos_half_sweep = np.cos(half_sweep)
         struct_span = wingspan / cos_half_sweep
-        c_material = 1.0 + 2.5 / (struct_span**0.5)
 
         not_fuselage_mounted = self.options[Aircraft.Engine.NUM_FUSELAGE_ENGINES] == 0
 
@@ -224,9 +219,7 @@ class MassParameters(om.ExplicitComponent):
 
 
 class PayloadMass(om.ExplicitComponent):
-    """
-    Computation of maximum payload that the aircraft is being asked to carry
-    """
+    """Computation of maximum payload that the aircraft is being asked to carry."""
 
     def initialize(self):
         add_aviary_option(self, Aircraft.CrewPayload.NUM_PASSENGERS)
@@ -267,16 +260,14 @@ class PayloadMass(om.ExplicitComponent):
         cargo_mass_des = inputs[Aircraft.CrewPayload.Design.CARGO_MASS]
         cargo_mass_max = inputs[Aircraft.CrewPayload.Design.MAX_CARGO_MASS]
 
-        outputs[Aircraft.CrewPayload.PASSENGER_PAYLOAD_MASS] = payload_mass = pax_mass * pax
+        outputs[Aircraft.CrewPayload.PASSENGER_PAYLOAD_MASS] = pax_mass * pax
         outputs['payload_mass_des'] = pax_mass * pax_des + cargo_mass_des
         outputs['payload_mass_max'] = pax_mass * pax_des + cargo_mass_max
         outputs[Aircraft.CrewPayload.TOTAL_PAYLOAD_MASS] = pax_mass * pax + cargo_mass
 
 
 class ElectricAugmentationMass(om.ExplicitComponent):
-    """
-    Computation of electrical augmentation system mass
-    """
+    """Computation of electrical augmentation system mass."""
 
     def initialize(self):
         add_aviary_option(self, Aircraft.Propulsion.TOTAL_NUM_ENGINES)
@@ -448,24 +439,8 @@ class ElectricAugmentationMass(om.ExplicitComponent):
 
         motor_current = 1000.0 * motor_power / motor_voltage
         num_wires = motor_current / max_amp_per_wire
-        cable_wt = (
-            1.15 * safety_factor * num_wires * cable_len * wire_area * rho_wire * GRAV_ENGLISH_LBM
-        )
         actual_battery_energy = battery_energy / (
             motor_eff * inverter_eff * transmission_eff * battery_eff
-        )
-        battery_wt = actual_battery_energy / rho_battery
-        motor_wt = motor_power / 0.746 / motor_spec_wt
-        inverter_wt = motor_power / inverter_spec_wt
-
-        TMS_wt = TMS_spec_wt * motor_power
-
-        aug_wt = (
-            battery_wt
-            + cable_wt
-            + num_engines * inverter_wt
-            + num_engines * motor_wt
-            + num_engines * TMS_wt
         )
 
         dCableWt_dMotorPower = (
@@ -563,7 +538,7 @@ class ElectricAugmentationMass(om.ExplicitComponent):
 class EngineMass(om.ExplicitComponent):
     """
     Computation of total engine mass, nacelle mass, pylon mass, total engine POD mass,
-    additional engine mass
+    additional engine mass.
     """
 
     def initialize(self):
@@ -990,9 +965,7 @@ class EngineMass(om.ExplicitComponent):
 
 
 class TailMass(om.ExplicitComponent):
-    """
-    Computation of horizontal tail mass and vertical tail mass.
-    """
+    """Computation of horizontal tail mass and vertical tail mass."""
 
     def setup(self):
         add_aviary_input(self, Aircraft.VerticalTail.TAPER_RATIO, units='unitless')
@@ -2560,7 +2533,6 @@ class ControlMass(om.ExplicitComponent):
         CK15 = inputs[Aircraft.Controls.COCKPIT_CONTROL_MASS_SCALER]
         CK18 = inputs[Aircraft.Wing.SURFACE_CONTROL_MASS_SCALER]
         CK19 = inputs[Aircraft.Controls.STABILITY_AUGMENTATION_SYSTEM_MASS_SCALER]
-        delta_control_wt = inputs[Aircraft.Controls.CONTROL_MASS_INCREMENT] * GRAV_ENGLISH_LBM
         min_dive_vel = inputs['min_dive_vel']
 
         dive_param = (1.15 * min_dive_vel) ** 2 / 391.0
@@ -2680,9 +2652,7 @@ class ControlMass(om.ExplicitComponent):
 
 
 class GearMass(om.ExplicitComponent):
-    """
-    Computation of total mass of landing gear and mass of main landing gear.
-    """
+    """Computation of total mass of landing gear and mass of main landing gear."""
 
     def initialize(self):
         add_aviary_option(self, Aircraft.Engine.NUM_ENGINES)
@@ -2838,9 +2808,7 @@ class GearMass(om.ExplicitComponent):
 
 
 class FixedMassGroup(om.Group):
-    """
-    Group of all fixed mass components for GASP-based mass.
-    """
+    """Group of all fixed mass components for GASP-based mass."""
 
     def initialize(self):
         add_aviary_option(self, Aircraft.Electrical.HAS_HYBRID_SYSTEM)

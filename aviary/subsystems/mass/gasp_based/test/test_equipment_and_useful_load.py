@@ -18,7 +18,7 @@ from aviary.variable_info.options import get_option_defaults
 from aviary.variable_info.variables import Aircraft, Mission
 
 
-class EquipMassTestCase1(unittest.TestCase):
+class FixedEquipMassTestCase1(unittest.TestCase):
     """this is the large single aisle 1 V3 test case"""
 
     def setUp(self):
@@ -488,7 +488,7 @@ class EquipMassTestCase7smooth(unittest.TestCase):
         assert_check_partials(partial_data, atol=8e-12, rtol=1e-12)
 
 
-class EquipMassTestCase8(unittest.TestCase):
+class FixedEquipMassTestCase8(unittest.TestCase):
     """
     this is the same case as EquipMassTestCase1, except:
     Aircraft.APU.MASS = 0.0,
@@ -559,7 +559,7 @@ class EquipMassTestCase8(unittest.TestCase):
         assert_check_partials(partial_data, atol=8e-12, rtol=1e-12)
 
 
-class EquipMassTestCase9smooth(unittest.TestCase):
+class FixedEquipMassTestCase9smooth(unittest.TestCase):
     """
     this is the same case as EquipMassTestCase5smooth, except:
     Aircraft.APU.MASS = 0.0,

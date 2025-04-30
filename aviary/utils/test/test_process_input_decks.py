@@ -1,15 +1,14 @@
 import unittest
+
 from openmdao.utils.testing_utils import use_tempdirs
 
-from aviary.utils.process_input_decks import create_vehicle
 from aviary.utils.functions import get_path
+from aviary.utils.process_input_decks import create_vehicle
 
 
 @use_tempdirs
 class TestCreateVehicle(unittest.TestCase):
-    """
-    Test creation and modification of aircraft from CSV file.
-    """
+    """Test creation and modification of aircraft from CSV file."""
 
     def test_load_aircraft_csv(self):
         # Test loading a standard aircraft CSV file.

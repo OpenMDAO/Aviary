@@ -6,7 +6,7 @@ from aviary.variable_info.variables import Aircraft, Dynamic
 
 
 class AeroForces(om.ExplicitComponent):
-    """Compute lift and drag from coefficients"""
+    """Compute lift and drag from coefficients."""
 
     def initialize(self):
         self.options.declare('num_nodes', default=1, types=int)
@@ -59,7 +59,7 @@ class AeroForces(om.ExplicitComponent):
 
 
 class CLFromLift(om.ExplicitComponent):
-    """Compute a CL from lift, used commonly for getting CL required"""
+    """Compute a CL from lift, used commonly for getting CL required."""
 
     def initialize(self):
         self.options.declare('num_nodes', default=1, types=int)
@@ -248,6 +248,7 @@ class TanhRampComp(om.ExplicitComponent):
     ):
         """
         Add a tanh ramp function with the given output name to the component.
+
         Parameters
         ----------
         output_name : str

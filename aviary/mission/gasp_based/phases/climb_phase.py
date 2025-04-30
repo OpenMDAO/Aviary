@@ -1,13 +1,13 @@
-from aviary.mission.phase_builder_base import PhaseBuilderBase
+from aviary.mission.gasp_based.ode.climb_ode import ClimbODE
 from aviary.mission.initial_guess_builders import (
-    InitialGuessState,
-    InitialGuessIntegrationVariable,
     InitialGuessControl,
+    InitialGuessIntegrationVariable,
+    InitialGuessState,
 )
+from aviary.mission.phase_builder_base import PhaseBuilderBase
 from aviary.utils.aviary_options_dict import AviaryOptionsDictionary
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.variables import Dynamic
-from aviary.mission.gasp_based.ode.climb_ode import ClimbODE
 
 
 class ClimbPhaseOptions(AviaryOptionsDictionary):
@@ -300,9 +300,7 @@ class ClimbPhase(PhaseBuilderBase):
         return phase
 
     def _extra_ode_init_kwargs(self):
-        """
-        Return extra kwargs required for initializing the ODE.
-        """
+        """Return extra kwargs required for initializing the ODE."""
         # TODO: support external_subsystems and meta_data in the base class
         return {
             'EAS_target': self.user_options.get_val('EAS_target', units='kn'),

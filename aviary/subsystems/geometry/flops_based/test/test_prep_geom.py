@@ -1,11 +1,10 @@
 import unittest
 
 import numpy as np
-
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials
-from parameterized import parameterized
 from openmdao.utils.testing_utils import use_tempdirs
+from parameterized import parameterized
 
 from aviary.subsystems.geometry.flops_based.canard import Canard
 from aviary.subsystems.geometry.flops_based.characteristic_lengths import CharacteristicLengths
@@ -57,9 +56,7 @@ wetted_area_overide = get_flops_case_names(
 # out.
 @use_tempdirs
 class PrepGeomTest(unittest.TestCase):
-    """
-    Test computation of derived values of aircraft geometry for aerodynamics analysis
-    """
+    """Test computation of derived values of aircraft geometry for aerodynamics analysis."""
 
     def setUp(self):
         self.prob = om.Problem()

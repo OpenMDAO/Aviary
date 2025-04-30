@@ -5,7 +5,7 @@ AviaryMission = av.Mission
 
 
 class Aircraft(AviaryAircraft):
-    """Extended Aircraft data hierarchy"""
+    """Extended Aircraft data hierarchy."""
 
     CG = 'aircraft:center_of_gravity'
     MASS = 'aircraft:mass'
@@ -48,7 +48,7 @@ class Aircraft(AviaryAircraft):
 
 
 class Mission(AviaryMission):
-    """Extended Mission data hierarchy"""
+    """Extended Mission data hierarchy."""
 
     class Cruise:
         FUEL_MASS = 'mission:cruise:fuel_mass'

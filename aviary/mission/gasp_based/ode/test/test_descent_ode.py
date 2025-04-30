@@ -12,15 +12,13 @@ from aviary.subsystems.propulsion.utils import build_engine_deck
 from aviary.utils.test_utils.default_subsystems import get_default_mission_subsystems
 from aviary.utils.test_utils.IO_test_util import check_prob_outputs
 from aviary.variable_info.enums import SpeedType
+from aviary.variable_info.functions import setup_model_options
 from aviary.variable_info.options import get_option_defaults
 from aviary.variable_info.variables import Aircraft, Dynamic
-from aviary.variable_info.functions import setup_model_options
 
 
 class DescentODETestCase(unittest.TestCase):
-    """
-    Test 2-degree of freedom descent ODE
-    """
+    """Test 2-degree of freedom descent ODE."""
 
     def setUp(self):
         self.prob = om.Problem()

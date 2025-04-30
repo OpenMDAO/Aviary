@@ -1,7 +1,7 @@
 import unittest
+from importlib import import_module
 
 import numpy as np
-from importlib import import_module
 import openmdao.api as om
 from openmdao.core.system import System
 
@@ -18,7 +18,7 @@ class TestSubsystemBuilderBase(unittest.TestCase):
     @staticmethod
     def import_builder(path_to_builder: str, base_package='aviary.examples.external_subsystems'):
         """
-        import a subsytem builder
+        Import a subsytem builder.
 
         This is intended to be used with skipIfMissingDependencies
         """

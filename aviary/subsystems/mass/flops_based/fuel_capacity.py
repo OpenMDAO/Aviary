@@ -5,9 +5,7 @@ from aviary.variable_info.variables import Aircraft
 
 
 class FuelCapacityGroup(om.Group):
-    """
-    Compute the maximum fuel that can be carried.
-    """
+    """Compute the maximum fuel that can be carried."""
 
     def setup(self):
         self.add_subsystem(
@@ -37,9 +35,7 @@ class FuelCapacityGroup(om.Group):
 
 
 class FuselageFuelCapacity(om.ExplicitComponent):
-    """
-    Compute the maximum fuel that can be carried in the fuselage.
-    """
+    """Compute the maximum fuel that can be carried in the fuselage."""
 
     def setup(self):
         (add_aviary_input(self, Aircraft.Fuel.TOTAL_CAPACITY, units='lbm'),)
@@ -61,9 +57,7 @@ class FuselageFuelCapacity(om.ExplicitComponent):
 
 
 class AuxFuelCapacity(om.ExplicitComponent):
-    """
-    Compute the maximum fuel that can be carried in the auxiliary tanks.
-    """
+    """Compute the maximum fuel that can be carried in the auxiliary tanks."""
 
     def setup(self):
         (add_aviary_input(self, Aircraft.Fuel.TOTAL_CAPACITY, units='lbm'),)
@@ -91,9 +85,7 @@ class AuxFuelCapacity(om.ExplicitComponent):
 
 
 class TotalFuelCapacity(om.ExplicitComponent):
-    """
-    Compute the total fuel that can be carried in all tanks.
-    """
+    """Compute the total fuel that can be carried in all tanks."""
 
     def setup(self):
         (add_aviary_input(self, Aircraft.Fuel.WING_FUEL_CAPACITY, units='lbm'),)
@@ -121,9 +113,7 @@ class TotalFuelCapacity(om.ExplicitComponent):
 
 
 class WingFuelCapacity(om.ExplicitComponent):
-    """
-    Compute the maximum fuel that can be carried in the wing's enclosed space.
-    """
+    """Compute the maximum fuel that can be carried in the wing's enclosed space."""
 
     def setup(self):
         add_aviary_input(self, Aircraft.Fuel.DENSITY_RATIO, units='unitless')

@@ -1,10 +1,5 @@
-import numpy as np
 import aviary.api as av
-from aviary.examples.external_subsystems.battery.battery_variables import (
-    Aircraft,
-    Dynamic,
-)
-
+from aviary.examples.external_subsystems.battery.battery_variables import Aircraft, Dynamic
 
 ExtendedMetaData = av.CoreMetaData
 

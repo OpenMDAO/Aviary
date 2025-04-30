@@ -1,24 +1,23 @@
 import datetime
 import json
-from pathlib import Path
 import sys
 import time
-import pandas as pd
-import numpy as np
+from pathlib import Path
 
+import numpy as np
+import pandas as pd
 from openmdao.utils.mpi import MPI
 from openmdao.utils.reports_system import register_report
-from openmdao.visualization.tables.table_builder import generate_table
 
 from aviary.interface.utils.markdown_utils import write_markdown_variable_table
-from aviary.utils.utils import wrapped_convert_units
 from aviary.utils.named_values import NamedValues
+from aviary.utils.utils import wrapped_convert_units
 
 
 def register_custom_reports():
     """
     Registers Aviary reports with OpenMDAO, so they are automatically generated and
-    added to the same reports folder as other default reports
+    added to the same reports folder as other default reports.
     """
     # TODO top-level aircraft report?
     # TODO add flag to skip registering reports?
@@ -73,7 +72,7 @@ def register_custom_reports():
 
 def run_status(prob):
     """
-    Creates a JSON file that containts high level overview of the run
+    Creates a JSON file that containts high level overview of the run.
 
     Parameters
     ----------
@@ -115,7 +114,7 @@ def run_status(prob):
 def subsystem_report(prob, **kwargs):
     """
     Loops through all subsystem builders in the AviaryProblem calls their write_report
-    method. All generated report files are placed in the "reports/subsystem_reports" folder
+    method. All generated report files are placed in the "reports/subsystem_reports" folder.
 
     Parameters
     ----------
@@ -134,7 +133,7 @@ def subsystem_report(prob, **kwargs):
 
 def mission_report(prob, **kwargs):
     """
-    Creates a basic mission summary report that is placed in the "reports" folder
+    Creates a basic mission summary report that is placed in the "reports" folder.
 
     Parameters
     ----------

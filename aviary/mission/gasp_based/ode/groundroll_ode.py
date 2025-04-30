@@ -1,16 +1,13 @@
 import numpy as np
 import openmdao.api as om
 
-from aviary.mission.gasp_based.ode.two_dof_ode import TwoDOFODE
 from aviary.mission.gasp_based.ode.groundroll_eom import GroundrollEOM
 from aviary.mission.gasp_based.ode.params import ParamPort
-from aviary.variable_info.variables import Aircraft, Dynamic
-from aviary.variable_info.enums import AnalysisScheme
+from aviary.mission.gasp_based.ode.time_integration_base_classes import add_SGM_required_inputs
+from aviary.mission.gasp_based.ode.two_dof_ode import TwoDOFODE
 from aviary.subsystems.aerodynamics.aerodynamics_builder import AerodynamicsBuilderBase
-from aviary.variable_info.variable_meta_data import _MetaData
-from aviary.mission.gasp_based.ode.time_integration_base_classes import (
-    add_SGM_required_inputs,
-)
+from aviary.variable_info.enums import AnalysisScheme
+from aviary.variable_info.variables import Aircraft, Dynamic
 
 
 class GroundrollODE(TwoDOFODE):
@@ -92,7 +89,7 @@ class GroundrollODE(TwoDOFODE):
         self.add_subsystem(
             'exec',
             om.ExecComp(
-                f'over_a = velocity / velocity_rate',
+                'over_a = velocity / velocity_rate',
                 velocity_rate={'units': 'kn/s', 'val': np.ones(nn)},
                 velocity={'units': 'kn', 'val': np.ones(nn)},
                 over_a={'units': 's', 'val': np.ones(nn)},
@@ -104,7 +101,7 @@ class GroundrollODE(TwoDOFODE):
         self.add_subsystem(
             'exec2',
             om.ExecComp(
-                f'dt_dv = 1 / velocity_rate',
+                'dt_dv = 1 / velocity_rate',
                 velocity_rate={'units': 'kn/s', 'val': np.ones(nn)},
                 dt_dv={'units': 's/kn', 'val': np.ones(nn)},
                 has_diag_partials=True,

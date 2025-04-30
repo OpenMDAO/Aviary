@@ -1,14 +1,12 @@
 import os
+
 import numpy as np
 import openmdao.api as om
 
 from aviary.examples.external_subsystems.engine_NPSS.engine_variable_meta_data import (
     ExtendedMetaData,
 )
-from aviary.examples.external_subsystems.engine_NPSS.engine_variables import (
-    Aircraft,
-    Dynamic,
-)
+from aviary.examples.external_subsystems.engine_NPSS.engine_variables import Aircraft, Dynamic
 from aviary.examples.external_subsystems.engine_NPSS.NPSS_Model.DesignEngineGroup import (
     DesignEngineGroup,
 )
@@ -22,7 +20,7 @@ from aviary.utils.functions import get_aviary_resource_path
 
 class TableEngineBuilder(EngineModel):
     """
-    NPSS engine builder from table
+    NPSS engine builder from table.
 
     Attributes
     ----------
@@ -64,7 +62,6 @@ class TableEngineBuilder(EngineModel):
         prob : openmdao.core.Group
             engine model for design.
         """
-
         return DesignEngineGroup()
 
     def build_mission(self, num_nodes, aviary_inputs):
@@ -183,7 +180,7 @@ class TableEngineBuilder(EngineModel):
         return engine
 
     def get_bus_variables(self):
-        """Transfer training data from pre-mission to mission"""
+        """Transfer training data from pre-mission to mission."""
         return vars_to_connect
 
     def get_controls(self, phase_name):
@@ -197,7 +194,6 @@ class TableEngineBuilder(EngineModel):
             values are dictionaries with the keys `units`, `upper`, and `lower` which states the units of the
             variable to be controlled.
         """
-
         return {}
 
     def get_design_vars(self):
