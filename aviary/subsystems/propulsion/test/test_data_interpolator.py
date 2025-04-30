@@ -18,7 +18,7 @@ class DataInterpolationTest(unittest.TestCase):
         aviary_values = get_flops_inputs('LargeSingleAisle2FLOPS')
         aviary_values.set_val(Aircraft.Engine.GLOBAL_THROTTLE, True)
 
-        model = build_engine_deck(aviary_values)[0]
+        model = build_engine_deck(aviary_values)
 
         mach_number = model.data[keys.MACH]
         altitude = model.data[keys.ALTITUDE]

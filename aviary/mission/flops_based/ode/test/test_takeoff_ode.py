@@ -92,11 +92,11 @@ class TakeoffODETest(unittest.TestCase):
         time, _ = detailed_takeoff_climbing.get_item('time')
         nn = len(time)
         aviary_options = inputs
-        engine = build_engine_deck(aviary_options)
+        engines = [build_engine_deck(aviary_options)]
 
-        preprocess_options(aviary_options, engine_models=engine)
+        preprocess_options(aviary_options, engine_models=engines)
 
-        default_mission_subsystems = get_default_mission_subsystems('FLOPS', engine)
+        default_mission_subsystems = get_default_mission_subsystems('FLOPS', engines)
 
         prob.model.add_subsystem(
             'takeoff_ode',

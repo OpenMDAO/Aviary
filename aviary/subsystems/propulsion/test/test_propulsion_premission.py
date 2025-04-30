@@ -26,7 +26,7 @@ class PropulsionPreMissionTest(unittest.TestCase):
         options.set_val(Aircraft.Engine.NUM_ENGINES, np.array([2]))
 
         self.prob.model = PropulsionPreMission(
-            aviary_options=options, engine_models=build_engine_deck(options)
+            aviary_options=options, engine_models=[build_engine_deck(options)]
         )
 
         self.prob.model.set_input_defaults(Aircraft.Engine.SCALE_FACTOR, np.ones(1))
@@ -52,8 +52,8 @@ class PropulsionPreMissionTest(unittest.TestCase):
         options = get_flops_inputs('MultiEngineSingleAisle')
         options.set_val(Settings.VERBOSITY, 0)
 
-        engine1 = build_engine_deck(engine_1_inputs)[0]
-        engine2 = build_engine_deck(engine_2_inputs)[0]
+        engine1 = build_engine_deck(engine_1_inputs)
+        engine2 = build_engine_deck(engine_2_inputs)
         engine_models = [engine1, engine2]
         preprocess_options(options, engine_models=engine_models)
 

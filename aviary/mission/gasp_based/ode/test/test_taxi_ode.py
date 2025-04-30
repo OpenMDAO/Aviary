@@ -24,7 +24,7 @@ class TaxiTestCase(unittest.TestCase):
         options = get_option_defaults()
         options.set_val(Mission.Taxi.DURATION, 0.1677, units='h')
         default_mission_subsystems = get_default_mission_subsystems(
-            'GASP', build_engine_deck(options)
+            'GASP', [build_engine_deck(options)]
         )
 
         self.prob.model = TaxiSegment(

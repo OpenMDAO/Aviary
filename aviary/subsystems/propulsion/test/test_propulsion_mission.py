@@ -42,16 +42,9 @@ class PropulsionMissionTest(unittest.TestCase):
         options.set_val(Aircraft.Engine.FUEL_FLOW_SCALER_CONSTANT_TERM, 0.0)
         options.set_val(Aircraft.Engine.FUEL_FLOW_SCALER_LINEAR_TERM, 1.0)
         options.set_val(Aircraft.Engine.CONSTANT_FUEL_CONSUMPTION, 0.0, units='lbm/h')
-        options.set_val(Aircraft.Engine.SCALE_PERFORMANCE, True)
         options.set_val(Mission.Summary.FUEL_FLOW_SCALER, 1.0)
         options.set_val(Aircraft.Engine.SCALE_FACTOR, 0.5)
-        options.set_val(Aircraft.Engine.GENERATE_FLIGHT_IDLE, False)
         options.set_val(Aircraft.Engine.IGNORE_NEGATIVE_THRUST, False)
-        options.set_val(Aircraft.Engine.FLIGHT_IDLE_THRUST_FRACTION, 0.0)
-        options.set_val(Aircraft.Engine.FLIGHT_IDLE_MAX_FRACTION, 1.0)
-        options.set_val(Aircraft.Engine.FLIGHT_IDLE_MIN_FRACTION, 0.08)
-        options.set_val(Aircraft.Engine.GEOPOTENTIAL_ALT, False)
-        options.set_val(Aircraft.Engine.INTERPOLATION_METHOD, 'slinear')
 
         engine = EngineDeck(options=options)
         preprocess_propulsion(options, [engine])
@@ -206,8 +199,8 @@ class PropulsionMissionTest(unittest.TestCase):
         options.set_val(Settings.VERBOSITY, 0)
         options.set_val(Aircraft.Engine.GLOBAL_THROTTLE, True)
 
-        engine = build_engine_deck(options)[0]
-        engine2 = build_engine_deck(options)[0]
+        engine = build_engine_deck(options)
+        engine2 = build_engine_deck(options)
         engine2.name = 'engine2'
         engine_models = [engine, engine2]
         preprocess_propulsion(options, engine_models=engine_models)

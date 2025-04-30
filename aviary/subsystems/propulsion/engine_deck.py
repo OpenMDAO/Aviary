@@ -61,6 +61,8 @@ FUEL_FLOW = EngineModelVariables.FUEL_FLOW
 ELECTRIC_POWER_IN = EngineModelVariables.ELECTRIC_POWER_IN
 NOX_RATE = EngineModelVariables.NOX_RATE
 TEMPERATURE = EngineModelVariables.TEMPERATURE_T4
+RPM = EngineModelVariables.RPM
+
 # EXIT_AREA = EngineModelVariables.EXIT_AREA
 
 # EngineDeck assumes all aliases point to an enum, these are used internally only
@@ -86,6 +88,7 @@ aliases = {
     SHAFT_POWER: ['shaft_power', 'shp'],
     SHAFT_POWER_CORRECTED: ['shaft_power_corrected', 'shpcor', 'corrected_horsepower'],
     TAILPIPE_THRUST: ['tailpipe_thrust'],
+    RPM: ['rpm', 'rotations_per_minute'],
 }
 
 # these variables must be present in engine performance data
@@ -98,6 +101,7 @@ required_options = (
     Aircraft.Engine.IGNORE_NEGATIVE_THRUST,
     Aircraft.Engine.GEOPOTENTIAL_ALT,
     Aircraft.Engine.GENERATE_FLIGHT_IDLE,
+    Aircraft.Engine.INTERPOLATION_METHOD,
     # TODO fuel flow scaler is required for the EngineScaling component but does not need
     #      to be defined on a per-engine basis, so it could exist only in the problem-
     #      level aviary_options without issue. Is this a propulsion_preprocessor task?
@@ -809,7 +813,7 @@ class EngineDeck(EngineModel):
 
         # add inputs and outputs to interpolator
         independent_variables = [MACH, ALTITUDE, THROTTLE, HYBRID_THROTTLE]
-        no_scale_variables = [TEMPERATURE]
+        no_scale_variables = [TEMPERATURE, RPM]
         for variable in self.engine_variables:
             if variable in independent_variables:
                 engine.add_input(
@@ -1075,6 +1079,7 @@ class EngineDeck(EngineModel):
             HYBRID_THROTTLE,
             TEMPERATURE,
             SHAFT_POWER_CORRECTED,
+            RPM,
         ]
 
         for variable in self.engine_variables:

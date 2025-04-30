@@ -318,7 +318,7 @@ def get_flops_inputs(case_name: str, keys: str = None, preprocess: bool = False)
     if preprocess:
         preprocess_options(
             flops_inputs_copy,
-            engine_models=build_engine_deck(flops_inputs_copy),
+            engine_models=[build_engine_deck(flops_inputs_copy)],
             verbosity=0,
         )
     if keys is None:
@@ -351,7 +351,7 @@ def get_flops_options(case_name: str, keys: str = None, preprocess: bool = False
 
     flops_inputs_copy: AviaryValues = flops_data['inputs'].deepcopy()
     if preprocess:
-        preprocess_options(flops_inputs_copy, engine_models=build_engine_deck(flops_inputs_copy))
+        preprocess_options(flops_inputs_copy, engine_models=[build_engine_deck(flops_inputs_copy)])
 
     if keys is None:
         options = extract_options(flops_inputs_copy)

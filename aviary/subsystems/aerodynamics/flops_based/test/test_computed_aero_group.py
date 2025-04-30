@@ -29,11 +29,11 @@ class MissionDragTest(unittest.TestCase):
         flops_inputs.set_val(key, *(flops_outputs.get_item(key)))
         flops_inputs.set_val(Settings.VERBOSITY, 0)
 
-        engine = build_engine_deck(flops_inputs)
-        preprocess_options(flops_inputs, engine_models=engine)
+        engines = [build_engine_deck(flops_inputs)]
+        preprocess_options(flops_inputs, engine_models=engines)
 
         # don't need mass subsystem, so we skip it
-        default_premission_subsystems = get_default_premission_subsystems('FLOPS', engine)[:-1]
+        default_premission_subsystems = get_default_premission_subsystems('FLOPS', engines)[:-1]
         # we just want aero for mission, make a copy by itself
         aero = default_premission_subsystems[-1]
 
@@ -175,11 +175,11 @@ class MissionDragTest(unittest.TestCase):
         flops_inputs.set_val(key, *(flops_outputs.get_item(key)))
         flops_inputs.set_val(Settings.VERBOSITY, 0)
 
-        engine = build_engine_deck(flops_inputs)
-        preprocess_options(flops_inputs, engine_models=engine)
+        engines = [build_engine_deck(flops_inputs)]
+        preprocess_options(flops_inputs, engine_models=engines)
 
         # don't need mass subsystem, so we skip it
-        default_premission_subsystems = get_default_premission_subsystems('FLOPS', engine)[:-1]
+        default_premission_subsystems = get_default_premission_subsystems('FLOPS', engines)[:-1]
         # we just want aero for mission, make a copy by itself
         aero = default_premission_subsystems[-1]
 
@@ -312,11 +312,11 @@ class MissionDragTest(unittest.TestCase):
         flops_inputs.set_val(key, *(flops_outputs.get_item(key)))
         flops_inputs.set_val(Settings.VERBOSITY, 0)
 
-        engine = build_engine_deck(flops_inputs)
-        preprocess_options(flops_inputs, engine_models=engine)
+        engines = [build_engine_deck(flops_inputs)]
+        preprocess_options(flops_inputs, engine_models=engines)
 
         # don't need mass subsystem, so we skip it
-        default_premission_subsystems = get_default_premission_subsystems('FLOPS', engine)[:-1]
+        default_premission_subsystems = get_default_premission_subsystems('FLOPS', engines)[:-1]
         # we just want aero for mission, make a copy by itself
         aero = default_premission_subsystems[-1]
 

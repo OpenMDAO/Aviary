@@ -183,9 +183,9 @@ def run_trajectory(sim=True):
     )
 
     # default subsystems
-    engine = build_engine_deck(aviary_inputs)
-    preprocess_propulsion(aviary_inputs, engine)
-    default_mission_subsystems = get_default_mission_subsystems('FLOPS', engine)
+    engines = [build_engine_deck(aviary_inputs)]
+    preprocess_propulsion(aviary_inputs, engines)
+    default_mission_subsystems = get_default_mission_subsystems('FLOPS', engines)
 
     climb_options = EnergyPhase(
         'test_climb',
@@ -246,7 +246,7 @@ def run_trajectory(sim=True):
 
     preprocess_crewpayload(aviary_inputs)
 
-    prop = CorePropulsionBuilder('core_propulsion', BaseMetaData, engine)
+    prop = CorePropulsionBuilder('core_propulsion', BaseMetaData, engines)
     mass = CoreMassBuilder('core_mass', BaseMetaData, FLOPS)
     aero = CoreAerodynamicsBuilder('core_aerodynamics', BaseMetaData, FLOPS)
     geom = CoreGeometryBuilder('core_geometry', BaseMetaData, code_origin=FLOPS)

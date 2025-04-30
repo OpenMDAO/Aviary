@@ -33,9 +33,9 @@ class PreMissionGroupTest(unittest.TestCase):
         )
         flops_inputs.set_val(Settings.VERBOSITY, 0)
 
-        engine = build_engine_deck(flops_inputs)
-        preprocess_options(flops_inputs, engine_models=engine)
-        default_premission_subsystems = get_default_premission_subsystems('FLOPS', engine)
+        engines = [build_engine_deck(flops_inputs)]
+        preprocess_options(flops_inputs, engine_models=engines)
+        default_premission_subsystems = get_default_premission_subsystems('FLOPS', engines)
 
         prob = self.prob
 
@@ -103,9 +103,9 @@ class PreMissionGroupTest(unittest.TestCase):
         flops_outputs = get_flops_outputs('LargeSingleAisle2FLOPS')
         flops_inputs.set_val(Settings.VERBOSITY, 0)
 
-        engine = build_engine_deck(flops_inputs)
-        preprocess_options(flops_inputs, engine_models=engine)
-        default_premission_subsystems = get_default_premission_subsystems('FLOPS', engine)
+        engines = [build_engine_deck(flops_inputs)]
+        preprocess_options(flops_inputs, engine_models=engines)
+        default_premission_subsystems = get_default_premission_subsystems('FLOPS', engines)
 
         prob.model.add_subsystem(
             'pre_mission',
