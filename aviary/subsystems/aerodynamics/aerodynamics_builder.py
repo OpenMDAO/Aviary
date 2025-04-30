@@ -179,12 +179,12 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
 
             elif method == 'tabular_low_speed':
                 data_tables = [
-                    key in kwargs
+                    key in arguments
                     for key in ['free_aero_data', 'free_flaps_data', 'free_ground_data']
                 ]
 
                 if all(data_tables):
-                    aero_group = TabularLowSpeedAero(num_nodes=num_nodes, **kwargs)
+                    aero_group = TabularLowSpeedAero(num_nodes=num_nodes, **arguments)
                 # raise error if only some data types are provided (at this point we know
                 # not all are present, now need to see if any were provided at all)
                 elif any(data_tables):
@@ -386,14 +386,15 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
             - any additional keyword arguments required by OpenMDAO for the fixed
               variable.
         """
+        arguments = deepcopy(kwargs)
         try:
-            method = kwargs.pop('method')
+            method = arguments.pop('method')
         except KeyError:
             method = None
 
         num_engine_type = len(aviary_inputs.get_val(Aircraft.Engine.NUM_ENGINES))
         params = {}
-        aero_options = kwargs
+        aero_options = arguments
 
         if self.code_origin is FLOPS:
             if aero_options != {}:
@@ -529,12 +530,12 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
 
         else:
             try:
-                solve_alpha = kwargs.pop('solve_alpha')
+                solve_alpha = arguments.pop('solve_alpha')
             except KeyError:
                 solve_alpha = False
 
             if solve_alpha and 'tabular' in method:
-                aero_data = kwargs['aero_data']
+                aero_data = arguments['aero_data']
 
                 if isinstance(aero_data, NamedValues):
                     altitude = aero_data.get_item('altitude')[0]
