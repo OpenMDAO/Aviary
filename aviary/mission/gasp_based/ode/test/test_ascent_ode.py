@@ -7,11 +7,11 @@ from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 from aviary.mission.gasp_based.ode.ascent_ode import AscentODE
 from aviary.mission.gasp_based.ode.params import set_params_for_unit_tests
 from aviary.subsystems.propulsion.utils import build_engine_deck
+from aviary.utils.aviary_values import AviaryValues
 from aviary.utils.test_utils.default_subsystems import get_default_mission_subsystems
+from aviary.variable_info.functions import setup_model_options
 from aviary.variable_info.options import get_option_defaults
 from aviary.variable_info.variables import Aircraft, Dynamic
-from aviary.variable_info.functions import setup_model_options
-from aviary.utils.aviary_values import AviaryValues
 
 
 class AscentODETestCase(unittest.TestCase):

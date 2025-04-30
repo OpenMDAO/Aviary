@@ -5,11 +5,13 @@ import numpy as np
 from datetime import datetime
 from enum import Enum
 
-from aviary.utils.conversion_utils import _rep, _parse, _read_map
+import numpy as np
+
 from aviary.api import NamedValues
+from aviary.subsystems.propulsion.utils import PropellerModelVariables, default_propeller_units
+from aviary.utils.conversion_utils import _parse, _read_map, _rep
 from aviary.utils.csv_data_file import write_data_file
 from aviary.utils.functions import get_path
-from aviary.subsystems.propulsion.utils import PropellerModelVariables, default_propeller_units
 
 
 class PropMapType(Enum):
@@ -31,9 +33,8 @@ def PropDataConverter(input_file, output_file, data_format: PropMapType = PropMa
     This is a utility class to convert a propeller map file to Aviary format.
     Currently, there is only one option: from GASP format to Aviary format.
     As an Aviary command, the usage is:
-    aviary convert_prop_table -f GASP input_file output_file
+    aviary convert_prop_table -f GASP input_file output_file.
     """
-
     timestamp = datetime.now().strftime('%m/%d/%y at %H:%M')
     user = getpass.getuser()
     comments = []
@@ -107,7 +108,7 @@ def _read_gasp_propeller(fp, cmts):
 def _read_pm_header(f):
     """Read GASP propeller map header (first line), returning the propeller scalars in a dict
     parameter 1 is Mach type. It is either 1 or 2.
-    parameter 2 is IPRINT in GASP and is ignored in Aviary
+    parameter 2 is IPRINT in GASP and is ignored in Aviary.
     """
     iread, _ = _parse(f, [*_rep(2, (int, 5))])
 

@@ -1,11 +1,11 @@
-import subprocess
+import shutil
 import unittest
 from pathlib import Path
-import shutil
 
-from aviary.utils.functions import get_aviary_resource_path
 from openmdao.utils.testing_utils import use_tempdirs
+
 from aviary.interface.download_models import get_model, save_file
+from aviary.utils.functions import get_aviary_resource_path
 
 
 @use_tempdirs

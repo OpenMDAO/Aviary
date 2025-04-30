@@ -5,11 +5,17 @@ This theoretically could be the Level 2 (intermediate) user's
 entry point to Aviary.
 """
 
-from aviary.api import AviaryProblem
-from aviary.api import AnalysisScheme, SpeedType, AlphaModes, Verbosity
-from aviary.api import FlexibleTraj
-from aviary.api import SGMCruise, SGMDescent
-from aviary.api import Dynamic
+from aviary.api import (
+    AlphaModes,
+    AnalysisScheme,
+    AviaryProblem,
+    Dynamic,
+    FlexibleTraj,
+    SGMCruise,
+    SGMDescent,
+    SpeedType,
+    Verbosity,
+)
 
 
 def custom_run_aviary(
@@ -44,8 +50,8 @@ def custom_run_aviary(
     prob = AviaryProblem(analysis_scheme)
 
     from aviary.interface.default_phase_info.two_dof_fiti import (
-        ascent_phases,
         add_default_sgm_args,
+        ascent_phases,
         phase_info_parameterization,
     )
 

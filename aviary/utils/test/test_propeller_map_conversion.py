@@ -16,9 +16,7 @@ class DummyArgs(object):
 
 @use_tempdirs
 class TestPropellerMapConversion(unittest.TestCase):
-    """
-    Test GASP propeller data file conversion utility by comparing against already converted data files.
-    """
+    """Test GASP propeller data file conversion utility by comparing against already converted data files."""
 
     def prepare_and_run(self, filename, output_file=None, data_format=PropMapType.GASP):
         args = DummyArgs()

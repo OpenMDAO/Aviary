@@ -171,7 +171,6 @@ def compare_hierarchies_to_merge(hierarchies_to_merge):
     ------
     No explicit exceptions are raised by this function, although called functions may raise exceptions.
     """
-
     for hierarchy in hierarchies_to_merge:
         # check if hierarchy has developed conflicts with original hierarchy
         if issubclass(hierarchy, _Aircraft):

@@ -1,6 +1,4 @@
-"""
-Define utilities for calculating takeoff aerodynamics.
-"""
+"""Define utilities for calculating takeoff aerodynamics."""
 
 from collections.abc import Sequence
 
@@ -15,9 +13,7 @@ from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 
 
 class TakeoffAeroGroup(om.Group):
-    """
-    Define a group for calculating takeoff aerodynamics.
-    """
+    """Define a group for calculating takeoff aerodynamics."""
 
     def initialize(self):
         options = self.options
@@ -133,7 +129,7 @@ class TakeoffAeroGroup(om.Group):
 
         self.connect('takeoff_polar.drag_coefficient', 'ground_effect.base_drag_coefficient')
 
-        f = f'climb_drag_coefficient = ground_effect_drag'
+        f = 'climb_drag_coefficient = ground_effect_drag'
 
         if not options['landing_gear_up']:
             gear_drag = aviary_options.get_val(Aircraft.LandingGear.DRAG_COEFFICIENT)

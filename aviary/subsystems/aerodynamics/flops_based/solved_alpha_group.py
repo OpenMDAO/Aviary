@@ -1,7 +1,7 @@
+from pathlib import Path
+
 import numpy as np
 import openmdao.api as om
-
-from pathlib import Path
 
 import aviary.constants as constants
 from aviary.subsystems.aerodynamics.aero_common import DynamicPressure
@@ -23,9 +23,7 @@ class SolvedAlphaGroup(om.Group):
     """
 
     def initialize(self):
-        """
-        Declare options.
-        """
+        """Declare options."""
         self.options.declare('num_nodes', types=int)
 
         self.options.declare(

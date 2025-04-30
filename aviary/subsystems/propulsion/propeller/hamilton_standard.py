@@ -6,18 +6,17 @@ import openmdao.api as om
 
 from aviary.constants import RHO_SEA_LEVEL_ENGLISH
 from aviary.variable_info.enums import Verbosity
+from aviary.variable_info.functions import add_aviary_input, add_aviary_option, add_aviary_output
 from aviary.variable_info.variables import Aircraft, Dynamic, Settings
-from aviary.variable_info.functions import add_aviary_input, add_aviary_output, add_aviary_option
 
 
 def _unint(xa, ya, x):
     """
-    univariate table routine with seperate arrays for x and y
+    Univariate table routine with seperate arrays for x and y
     This routine interpolates over a 4 point interval using a
     variation of 3nd degree interpolation to produce a continuity
     of slope between adjacent intervals.
     """
-
     Lmt = 0
     n = len(xa)
     # test for off low end
@@ -97,7 +96,6 @@ def _biquad(T, i, xi, yi):
     T(i+2) = number of y values in yi array
     T(i+3) = values of x in ascending order
     """
-
     lmt = 0
     nx = int(T[i])
     ny = int(T[i + 1])
@@ -465,9 +463,7 @@ comp_mach_CT_arr = np.array([
 
 
 class PreHamiltonStandard(om.ExplicitComponent):
-    """
-    Pre-process parameters needed by HamiltonStandard component
-    """
+    """Pre-process parameters needed by HamiltonStandard component."""
 
     def initialize(self):
         self.options.declare('num_nodes', default=1, types=int)
@@ -936,9 +932,7 @@ class HamiltonStandard(om.ExplicitComponent):
 
 
 class PostHamiltonStandard(om.ExplicitComponent):
-    """
-    Post-process after HamiltonStandard run to get thrust and compressibility
-    """
+    """Post-process after HamiltonStandard run to get thrust and compressibility."""
 
     def initialize(self):
         self.options.declare('num_nodes', default=1, types=int)

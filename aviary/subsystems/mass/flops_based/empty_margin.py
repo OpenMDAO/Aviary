@@ -5,9 +5,7 @@ from aviary.variable_info.variables import Aircraft
 
 
 class EmptyMassMargin(om.ExplicitComponent):
-    """
-    Calculates the empty mass margin.
-    """
+    """Calculates the empty mass margin."""
 
     def setup(self):
         add_aviary_input(self, Aircraft.Propulsion.MASS, units='lbm')

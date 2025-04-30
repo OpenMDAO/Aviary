@@ -1,14 +1,11 @@
 import numpy as np
-
 import openmdao.api as om
 
-from aviary.variable_info.variables import Dynamic, Aircraft, Mission
+from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 
 
 class GearboxMission(om.Group):
-    """
-    Calculates the mission performance of a single gearbox.
-    """
+    """Calculates the mission performance of a single gearbox."""
 
     def initialize(self):
         self.options.declare('num_nodes', types=int)
@@ -62,12 +59,12 @@ class GearboxMission(om.Group):
         )
         self.connect(
             f'{Dynamic.Vehicle.Propulsion.SHAFT_POWER}_out',
-            f'torque_comp.shaft_power_out',
+            'torque_comp.shaft_power_out',
         )
 
         self.connect(
             f'{Dynamic.Vehicle.Propulsion.RPM}_out',
-            f'torque_comp.rpm_out',
+            'torque_comp.rpm_out',
         )
 
         # Determine the maximum power available at this flight condition

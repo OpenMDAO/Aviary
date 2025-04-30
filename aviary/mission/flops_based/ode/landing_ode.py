@@ -7,26 +7,20 @@ FlareODE : the ODE for the flare phase of landing
 """
 
 import numpy as np
-
 import openmdao.api as om
-from aviary.subsystems.atmosphere.atmosphere import Atmosphere
 
 from aviary.mission.base_ode import BaseODE as _BaseODE
-from aviary.mission.flops_based.ode.landing_eom import FlareEOM, StallSpeed
+from aviary.mission.flops_based.ode.landing_eom import FlareEOM
+from aviary.mission.flops_based.ode.takeoff_ode import StallSpeed
 from aviary.mission.flops_based.ode.takeoff_ode import TakeoffODE as _TakeoffODE
-from aviary.mission.gasp_based.ode.time_integration_base_classes import (
-    add_SGM_required_inputs,
-)
-from aviary.mission.utils import ExternalSubsystemGroup
-from aviary.utils.aviary_values import AviaryValues
+from aviary.mission.gasp_based.ode.time_integration_base_classes import add_SGM_required_inputs
+from aviary.subsystems.atmosphere.atmosphere import Atmosphere
 from aviary.variable_info.enums import AnalysisScheme
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 
 
 class LandingODE(_TakeoffODE):
-    """
-    Define the ODE for most phases of landing.
-    """
+    """Define the ODE for most phases of landing."""
 
     # region : derived type customization points
     stall_speed_lift_coefficient_name = Mission.Landing.LIFT_COEFFICIENT_MAX
@@ -34,18 +28,13 @@ class LandingODE(_TakeoffODE):
 
 
 class FlareODE(_BaseODE):
-    """
-    Define the ODE for the flare phase of landing.
-    """
+    """Define the ODE for the flare phase of landing."""
 
     def setup(self):
         options = self.options
 
         nn = options['num_nodes']
         analysis_scheme = options['analysis_scheme']
-        aviary_options = options['aviary_options']
-        subsystem_options = options['subsystem_options']
-        core_subsystems = options['core_subsystems']
 
         if analysis_scheme is AnalysisScheme.SHOOTING:
             SGM_required_inputs = {

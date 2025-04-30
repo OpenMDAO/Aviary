@@ -1,6 +1,6 @@
-import numpy as np
 import unittest
 
+import numpy as np
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 from parameterized import parameterized
@@ -17,9 +17,7 @@ from aviary.variable_info.variables import Aircraft
 
 
 class EnginePodMassTest(unittest.TestCase):
-    """
-    Tests the engine pod mass needed for the detailed wing calculation.
-    """
+    """Tests the engine pod mass needed for the detailed wing calculation."""
 
     def setUp(self):
         self.prob = om.Problem()

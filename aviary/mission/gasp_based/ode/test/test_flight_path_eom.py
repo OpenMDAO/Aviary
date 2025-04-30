@@ -49,9 +49,7 @@ class FlightPathEOMTestCase(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
 
     def test_case2(self):
-        """
-        ground_roll = True (the aircraft is confined to the ground)
-        """
+        """ground_roll = True (the aircraft is confined to the ground)."""
         self.fp.options['ground_roll'] = True
         self.prob.setup(force_alloc_complex=True)
 
@@ -75,9 +73,7 @@ class FlightPathEOMTestCase(unittest.TestCase):
 
 
 class FlightPathEOMTestCase2(unittest.TestCase):
-    """
-    Test mass-weight conversion
-    """
+    """Test mass-weight conversion."""
 
     def setUp(self):
         import aviary.mission.gasp_based.ode.flight_path_eom as fp
@@ -90,9 +86,7 @@ class FlightPathEOMTestCase2(unittest.TestCase):
         fp.GRAV_ENGLISH_LBM = 1.0
 
     def test_case1(self):
-        """
-        ground_roll = False (the aircraft is not confined to the ground)
-        """
+        """ground_roll = False (the aircraft is not confined to the ground)."""
         prob = om.Problem()
         prob.model.add_subsystem(
             'group', FlightPathEOM(num_nodes=2, ground_roll=False), promotes=['*']
@@ -103,9 +97,7 @@ class FlightPathEOMTestCase2(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
 
     def test_case2(self):
-        """
-        ground_roll = True (the aircraft is confined to the ground)
-        """
+        """ground_roll = True (the aircraft is confined to the ground)."""
         prob = om.Problem()
         prob.model.add_subsystem(
             'group', FlightPathEOM(num_nodes=2, ground_roll=True), promotes=['*']

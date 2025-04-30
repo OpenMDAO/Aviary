@@ -8,13 +8,13 @@ from packaging import version
 
 from aviary.subsystems.propulsion.engine_deck import EngineDeck
 from aviary.subsystems.propulsion.propulsion_mission import PropulsionMission, PropulsionSum
+from aviary.subsystems.propulsion.utils import build_engine_deck
 from aviary.utils.aviary_values import AviaryValues
-from aviary.utils.preprocessors import preprocess_propulsion
 from aviary.utils.functions import get_path
+from aviary.utils.preprocessors import preprocess_propulsion
 from aviary.validation_cases.validation_tests import get_flops_inputs
 from aviary.variable_info.functions import setup_model_options
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission, Settings
-from aviary.subsystems.propulsion.utils import build_engine_deck
 
 
 class PropulsionMissionTest(unittest.TestCase):

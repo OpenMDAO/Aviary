@@ -1,14 +1,13 @@
-import os
-from pathlib import Path
 import argparse
+import os
 import shutil
+from pathlib import Path
+
 from aviary.utils.functions import get_model
 
 
 def save_file(aviary_path: Path, outdir: Path, verbose=False) -> Path:
-    """
-    Saves the file or folder specified into the output directory, creating directories as needed.
-    """
+    """Saves the file or folder specified into the output directory, creating directories as needed."""
     outdir.mkdir(parents=True, exist_ok=True)
     if aviary_path.is_dir():
         if verbose:

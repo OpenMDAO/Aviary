@@ -1,6 +1,4 @@
-"""
-OpenMDAO System to compute drag based on the methods in FLOPS AERO.
-"""
+"""OpenMDAO System to compute drag based on the methods in FLOPS AERO."""
 
 import numpy as np
 import openmdao.api as om
@@ -19,9 +17,7 @@ from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 
 
 class ComputedAeroGroup(om.Group):
-    """
-    FLOPS-based computed aero group
-    """
+    """FLOPS-based computed aero group."""
 
     def initialize(self):
         self.options.declare(
@@ -188,9 +184,7 @@ class ComputedAeroGroup(om.Group):
 
 
 class ComputedDrag(om.Group):
-    """
-    FLOPS-based computed drag group
-    """
+    """FLOPS-based computed drag group."""
 
     def initialize(self):
         self.options.declare('num_nodes', types=int)

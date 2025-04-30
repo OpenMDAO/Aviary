@@ -6,10 +6,9 @@ from openmdao.utils.assert_utils import assert_near_equal
 
 from aviary.subsystems.propulsion.engine_deck import EngineDeck
 from aviary.subsystems.propulsion.utils import EngineModelVariables as keys
+from aviary.subsystems.propulsion.utils import build_engine_deck
 from aviary.utils.named_values import NamedValues
 from aviary.validation_cases.validation_tests import get_flops_inputs
-from aviary.subsystems.propulsion.utils import build_engine_deck
-
 from aviary.variable_info.variables import Aircraft
 
 
@@ -84,7 +83,7 @@ class EngineDeckTest(unittest.TestCase):
 
         mach_number = model.data[keys.MACH]
         altitude = model.data[keys.ALTITUDE]
-        throttle = model.data[keys.THROTTLE]
+        # throttle = model.data[keys.THROTTLE]
         thrust = model.data[keys.THRUST]
         fuel_flow_rate = model.data[keys.FUEL_FLOW]
 
@@ -127,7 +126,7 @@ class EngineDeckTest(unittest.TestCase):
 
         mach_number = model.data[keys.MACH]
         altitude = model.data[keys.ALTITUDE]
-        throttle = model.data[keys.THROTTLE]
+        # throttle = model.data[keys.THROTTLE]
         thrust = model.data[keys.THRUST]
         fuel_flow_rate = model.data[keys.FUEL_FLOW]
 

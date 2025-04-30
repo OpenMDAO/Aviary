@@ -2,21 +2,19 @@ import unittest
 
 import numpy as np
 import openmdao.api as om
-from aviary.subsystems.atmosphere.atmosphere import Atmosphere
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 
 from aviary.constants import RHO_SEA_LEVEL_METRIC
 from aviary.mission.gasp_based.ode.unsteady_solved.unsteady_solved_flight_conditions import (
     UnsteadySolvedFlightConditions,
 )
+from aviary.subsystems.atmosphere.atmosphere import Atmosphere
 from aviary.variable_info.enums import SpeedType
 from aviary.variable_info.variables import Dynamic
 
 
 class TestUnsteadyFlightConditions(unittest.TestCase):
-    """
-    Unit test for UnsteadySolvedFlightConditions
-    """
+    """Unit test for UnsteadySolvedFlightConditions."""
 
     def _test_unsteady_flight_conditions(self, ground_roll=False, input_speed_type=SpeedType.TAS):
         nn = 5

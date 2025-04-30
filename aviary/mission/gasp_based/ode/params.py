@@ -23,7 +23,7 @@ class ParamPort(om.ExplicitComponent):
 
     @staticmethod
     def set_default_vals(sys):
-        """Set input defaults on a group"""
+        """Set input defaults on a group."""
         for name, data in ParamPort.param_data.items():
             sys.set_input_defaults(name, val=data.get('val', 1), units=data.get('units', None))
 

@@ -2,9 +2,7 @@ from enum import Enum, IntEnum, auto, unique
 
 
 class AircraftTypes(Enum):
-    """
-    Aircraft types
-    """
+    """Aircraft types."""
 
     TRANSPORT = 'transport'
     BLENDED_WING_BODY = 'BWB'
@@ -66,9 +64,7 @@ class AnalysisScheme(Enum):
 
 
 class EquationsOfMotion(Enum):
-    """
-    Available equations of motion for use during mission analysis
-    """
+    """Available equations of motion for use during mission analysis."""
 
     HEIGHT_ENERGY = 'height_energy'
     TWO_DEGREES_OF_FREEDOM = '2DOF'
@@ -128,9 +124,7 @@ class GASPEngineType(Enum):
 
 @unique
 class FlapType(Enum):
-    """
-    Defines the type of flap used on the wing. Used in GASP-based aerodynamics and mass calculations.
-    """
+    """Defines the type of flap used on the wing. Used in GASP-based aerodynamics and mass calculations."""
 
     PLAIN = 1
     SPLIT = 2
@@ -146,9 +140,7 @@ class FlapType(Enum):
 
 
 class LegacyCode(Enum):
-    """
-    Flag for legacy codebases
-    """
+    """Flag for legacy codebases."""
 
     FLOPS = 'FLOPS'
     GASP = 'GASP'
@@ -195,7 +187,7 @@ class SpeedType(Enum):
     SpeedType is used to specify the type of speed being used.
     EAS is equivalent airspeed.
     TAS is true airspeed.
-    MACH is mach
+    MACH is mach.
     """
 
     EAS = 'EAS'
@@ -222,7 +214,7 @@ class ThrottleAllocation(Enum):
 
 class Verbosity(IntEnum):
     """
-    Sets how much information Aviary outputs when run
+    Sets how much information Aviary outputs when run.
 
     Verbosity levels are based on ubuntu's standard:
     https://discourse.ubuntu.com/t/cli-verbosity-levels/26973
@@ -244,7 +236,7 @@ class Verbosity(IntEnum):
 class OutMachType(Enum):
     """
     OutMachType is an indicator which Mach number to output.
-    helical_mach = sqrt(mach*mach + tip_mach*tip_mach)
+    helical_mach = sqrt(mach*mach + tip_mach*tip_mach).
     """
 
     MACH = 'mach'

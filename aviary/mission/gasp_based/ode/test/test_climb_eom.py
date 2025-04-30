@@ -66,9 +66,7 @@ class ClimbTestCase(unittest.TestCase):
 
 
 class ClimbTestCase2(unittest.TestCase):
-    """
-    Test mass-weight conversion
-    """
+    """Test mass-weight conversion."""
 
     def setUp(self):
         import aviary.mission.gasp_based.ode.climb_eom as climb

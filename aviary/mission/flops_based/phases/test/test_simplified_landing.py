@@ -5,13 +5,11 @@ from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 
 from aviary import constants
 from aviary.mission.flops_based.phases.simplified_landing import LandingCalc, LandingGroup
-from aviary.variable_info.variables import Aircraft, Mission, Dynamic
+from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 
 
 class LandingCalcTest(unittest.TestCase):
-    """
-    Test computation in LandingCalc class (the simplified landing)
-    """
+    """Test computation in LandingCalc class (the simplified landing)."""
 
     def setUp(self):
         self.prob = om.Problem()
@@ -54,9 +52,7 @@ class LandingCalcTest(unittest.TestCase):
 
 
 class LandingCalcTest2(unittest.TestCase):
-    """
-    Test mass-weight conversion
-    """
+    """Test mass-weight conversion."""
 
     def setUp(self):
         import aviary.mission.flops_based.phases.simplified_landing as landing
@@ -82,9 +78,7 @@ class LandingCalcTest2(unittest.TestCase):
 
 
 class LandingGroupTest(unittest.TestCase):
-    """
-    Test the computation of LandingGroup
-    """
+    """Test the computation of LandingGroup."""
 
     def setUp(self):
         self.prob = om.Problem()

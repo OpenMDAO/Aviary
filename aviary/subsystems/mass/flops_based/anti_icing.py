@@ -7,7 +7,7 @@ from aviary.subsystems.mass.flops_based.distributed_prop import (
     distributed_nacelle_diam_factor,
     distributed_nacelle_diam_factor_deriv,
 )
-from aviary.variable_info.functions import add_aviary_input, add_aviary_output, add_aviary_option
+from aviary.variable_info.functions import add_aviary_input, add_aviary_option, add_aviary_output
 from aviary.variable_info.variables import Aircraft
 
 

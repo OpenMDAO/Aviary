@@ -28,9 +28,7 @@ class SkinFriction(om.ImplicitComponent):
         self.linear_solver.options['iprint'] = -1
 
     def initialize(self):
-        """
-        Declare options.
-        """
+        """Declare options."""
         self.options.declare(
             'num_nodes',
             types=int,

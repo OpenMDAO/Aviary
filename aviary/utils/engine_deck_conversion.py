@@ -2,23 +2,22 @@
 
 import argparse
 import getpass
+from copy import deepcopy
 from datetime import datetime
 from enum import Enum
-from copy import deepcopy
 
 import numpy as np
 import openmdao.api as om
-from aviary.subsystems.atmosphere.atmosphere import Atmosphere
 from openmdao.components.interp_util.interp import InterpND
 
-from aviary.utils.conversion_utils import _rep, _parse, _read_map
+from aviary.subsystems.atmosphere.atmosphere import Atmosphere
+from aviary.interface.utils.markdown_utils import round_it
 from aviary.subsystems.propulsion.engine_deck import normalize
 from aviary.subsystems.propulsion.utils import EngineModelVariables, default_units
-from aviary.variable_info.variables import Dynamic
+from aviary.utils.conversion_utils import _parse, _read_map, _rep
 from aviary.utils.csv_data_file import write_data_file
 from aviary.utils.functions import get_path
 from aviary.utils.named_values import NamedValues
-from aviary.interface.utils.markdown_utils import round_it
 
 
 class EngineDeckType(Enum):
@@ -703,9 +702,7 @@ class CalculateIdle(om.ExplicitComponent):
 
 
 class AtmosCalc(om.ExplicitComponent):
-    """
-    Calculates T2 and P2 given static temperature and pressure
-    """
+    """Calculates T2 and P2 given static temperature and pressure."""
 
     def initialize(self):
         self.options.declare('num_nodes', types=int)

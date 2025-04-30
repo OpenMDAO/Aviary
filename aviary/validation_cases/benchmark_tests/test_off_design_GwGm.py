@@ -1,10 +1,10 @@
 import unittest
-import aviary.api as av
 from copy import deepcopy
 
-from openmdao.utils.testing_utils import require_pyoptsparse, use_tempdirs
 from openmdao.utils.assert_utils import assert_near_equal
+from openmdao.utils.testing_utils import require_pyoptsparse, use_tempdirs
 
+import aviary.api as av
 from aviary.interface.default_phase_info.two_dof import phase_info
 from aviary.variable_info.enums import ProblemType, Verbosity
 

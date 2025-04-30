@@ -1,6 +1,6 @@
-from aviary.subsystems.subsystem_builder_base import SubsystemBuilderBase
-from aviary.subsystems.propulsion.motor.model.motor_premission import MotorPreMission
 from aviary.subsystems.propulsion.motor.model.motor_mission import MotorMission
+from aviary.subsystems.propulsion.motor.model.motor_premission import MotorPreMission
+from aviary.subsystems.subsystem_builder_base import SubsystemBuilderBase
 from aviary.variable_info.variables import Aircraft, Dynamic
 
 
@@ -136,7 +136,6 @@ class MotorBuilder(SubsystemBuilderBase):
         outputs : list
             A list of variable names for the motor subsystem.
         """
-
         return [
             Dynamic.Vehicle.Propulsion.TORQUE,
             Dynamic.Vehicle.Propulsion.SHAFT_POWER,

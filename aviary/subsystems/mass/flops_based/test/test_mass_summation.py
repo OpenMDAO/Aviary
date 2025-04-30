@@ -2,9 +2,13 @@ import unittest
 
 import numpy as np
 import openmdao.api as om
+from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 from parameterized import parameterized
 
 from aviary.subsystems.mass.flops_based.mass_summation import MassSummation, StructureMass
+from aviary.subsystems.propulsion.engine_deck import EngineDeck
+from aviary.utils.aviary_values import AviaryValues
+from aviary.utils.preprocessors import preprocess_propulsion
 from aviary.utils.test_utils.variable_test import assert_match_varnames
 from aviary.validation_cases.validation_tests import (
     Version,
@@ -13,12 +17,8 @@ from aviary.validation_cases.validation_tests import (
     get_flops_inputs,
     print_case,
 )
-from aviary.variable_info.variables import Aircraft, Mission, Settings
-from aviary.utils.aviary_values import AviaryValues
-from aviary.utils.preprocessors import preprocess_propulsion
-from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
-from aviary.subsystems.propulsion.engine_deck import EngineDeck
 from aviary.variable_info.functions import setup_model_options
+from aviary.variable_info.variables import Aircraft, Mission, Settings
 
 
 class TotalSummationTest(unittest.TestCase):
