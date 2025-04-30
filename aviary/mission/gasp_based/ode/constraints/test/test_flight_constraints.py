@@ -9,9 +9,7 @@ from aviary.variable_info.variables import Aircraft, Dynamic
 
 
 class FlightConstraintTestCase(unittest.TestCase):
-    """
-    Test minimum TAS computation
-    """
+    """Test minimum TAS computation."""
 
     def setUp(self):
         self.prob = om.Problem()
@@ -51,9 +49,7 @@ class FlightConstraintTestCase(unittest.TestCase):
 
 
 class FlightConstraintTestCase2(unittest.TestCase):
-    """
-    Test mass-weight conversion
-    """
+    """Test mass-weight conversion."""
 
     def setUp(self):
         import aviary.mission.gasp_based.ode.constraints.flight_constraints as constraints

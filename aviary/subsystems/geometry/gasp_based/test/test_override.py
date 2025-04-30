@@ -1,20 +1,19 @@
+import unittest
+import warnings
+
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_near_equal
 
 from aviary.interface.methods_for_level2 import AviaryGroup
-from aviary.subsystems.premission import CorePreMission
-from aviary.variable_info.variables import Aircraft
-
-from aviary.utils.test_utils.default_subsystems import get_default_premission_subsystems
-from aviary.subsystems.propulsion.utils import build_engine_deck
 from aviary.subsystems.aerodynamics.gasp_based.gaspaero import AeroGeom
-from aviary.utils.process_input_decks import create_vehicle
+from aviary.subsystems.premission import CorePreMission
+from aviary.subsystems.propulsion.utils import build_engine_deck
 from aviary.utils.preprocessors import preprocess_propulsion
+from aviary.utils.process_input_decks import create_vehicle
+from aviary.utils.test_utils.default_subsystems import get_default_premission_subsystems
 from aviary.variable_info.functions import setup_model_options
 from aviary.variable_info.variable_meta_data import _MetaData as BaseMetaData
-
-import warnings
-import unittest
+from aviary.variable_info.variables import Aircraft
 
 
 class GASPOverrideTestCase(unittest.TestCase):
@@ -115,7 +114,7 @@ class GASPOverrideTestCase(unittest.TestCase):
     def test_case_aero_coeffs(self):
         """
         Test overriding from csv (vertical tail) and overriding from code (horizontal tail)
-        Also checks non-overriden (wing) and default (strut)
+        Also checks non-overriden (wing) and default (strut).
         """
         prob = self.prob
         prob.model.add_subsystem('geom', AeroGeom(), promotes=['*'])

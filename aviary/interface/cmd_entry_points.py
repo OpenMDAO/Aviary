@@ -3,15 +3,15 @@ import os
 import sys
 
 import aviary
-from aviary.interface.methods_for_level1 import _exec_level1, _setup_level1_parser
-from aviary.utils.fortran_to_aviary import _exec_F2A, _setup_F2A_parser
-from aviary.utils.engine_deck_conversion import _exec_EDC, _setup_EDC_parser, EDC_description
-from aviary.utils.aero_table_conversion import _exec_ATC, _setup_ATC_parser
-from aviary.utils.propeller_map_conversion import _exec_PMC, _setup_PMC_parser
-from aviary.visualization.dashboard import _dashboard_setup_parser, _dashboard_cmd
-from aviary.interface.graphical_input import _exec_flight_profile, _setup_flight_profile_parser
 from aviary.interface.download_models import _exec_hangar, _setup_hangar_parser
+from aviary.interface.graphical_input import _exec_flight_profile, _setup_flight_profile_parser
+from aviary.interface.methods_for_level1 import _exec_level1, _setup_level1_parser
 from aviary.interface.plot_drag_polar import _exec_plot_drag_polar, _setup_plot_drag_polar_parser
+from aviary.utils.aero_table_conversion import _exec_ATC, _setup_ATC_parser
+from aviary.utils.engine_deck_conversion import EDC_description, _exec_EDC, _setup_EDC_parser
+from aviary.utils.fortran_to_aviary import _exec_F2A, _setup_F2A_parser
+from aviary.utils.propeller_map_conversion import _exec_PMC, _setup_PMC_parser
+from aviary.visualization.dashboard import _dashboard_cmd, _dashboard_setup_parser
 
 
 def _load_and_exec(script_name, user_args):
@@ -25,7 +25,6 @@ def _load_and_exec(script_name, user_args):
     user_args : list of str
         Args to be passed to the user script.
     """
-
     sys.path.insert(0, os.path.dirname(script_name))
 
     sys.argv[:] = [script_name] + user_args
@@ -81,9 +80,7 @@ _command_map = {
 
 
 def aviary_cmd():
-    """
-    Run an 'aviary' sub-command or list help info for 'aviary' command or sub-commands.
-    """
+    """Run an 'aviary' sub-command or list help info for 'aviary' command or sub-commands."""
     # pre-parse sys.argv to split between before and after '--'
     if '--' in sys.argv:
         idx = sys.argv.index('--')

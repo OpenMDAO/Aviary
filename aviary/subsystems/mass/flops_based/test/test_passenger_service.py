@@ -52,9 +52,7 @@ class PassengerServiceMassTest(unittest.TestCase):
 
 
 class PassengerServiceMassTest2(unittest.TestCase):
-    """
-    Test mass-weight conversion
-    """
+    """Test mass-weight conversion."""
 
     def setUp(self):
         import aviary.subsystems.mass.flops_based.passenger_service as service
@@ -116,9 +114,7 @@ class AlternatePassengerServiceMassTest(unittest.TestCase):
 
 
 class AlternatePassengerServiceMassTest2(unittest.TestCase):
-    """
-    Test mass-weight conversion
-    """
+    """Test mass-weight conversion."""
 
     def setUp(self):
         import aviary.subsystems.mass.flops_based.nacelle as nacelle

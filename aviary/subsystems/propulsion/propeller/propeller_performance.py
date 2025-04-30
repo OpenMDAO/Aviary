@@ -1,8 +1,7 @@
 import math
 
-import openmdao.api as om
 import numpy as np
-
+import openmdao.api as om
 from openmdao.components.ks_comp import KSfunction
 
 from aviary.subsystems.propulsion.propeller.hamilton_standard import (
@@ -14,15 +13,50 @@ from aviary.subsystems.propulsion.propeller.propeller_map import PropellerMap
 from aviary.utils.aviary_values import AviaryValues
 from aviary.utils.functions import smooth_min, d_smooth_min
 from aviary.variable_info.enums import OutMachType
-from aviary.variable_info.functions import add_aviary_input, add_aviary_output, add_aviary_option
+from aviary.variable_info.functions import add_aviary_input, add_aviary_option, add_aviary_output
 from aviary.variable_info.variables import Aircraft, Dynamic
+
+
+def smooth_min(x, b, alpha=100.0):
+    """
+    Smooth approximation of the min function using the log-sum-exp trick.
+
+    Parameters:
+    x (float or array-like): First value.
+    b (float or array-like): Second value.
+    alpha (float): The smoothing factor. Higher values make it closer to the true minimum. Try between 75 and 275.
+
+    Returns:
+    float or array-like: The smooth approximation of min(x, b).
+    """
+    sum_log_exp = np.log(np.exp(np.multiply(-alpha, x)) + np.exp(np.multiply(-alpha, b)))
+    rv = -(1 / alpha) * sum_log_exp
+    return rv
+
+
+def d_smooth_min(x, b, alpha=100.0):
+    """
+    Derivative of function smooth_min(x)
+
+    Parameters:
+    x (float or array-like): First value.
+    b (float or array-like): Second value.
+    alpha (float): The smoothing factor. Higher values make it closer to the true minimum. Try between 75 and 275.
+
+    Returns:
+    float or array-like: The smooth approximation of derivative of min(x, b).
+    """
+    d_sum_log_exp = np.exp(np.multiply(-alpha, x)) / (
+        np.exp(np.multiply(-alpha, x)) + np.exp(np.multiply(-alpha, b))
+    )
+    return d_sum_log_exp
 
 
 class TipSpeed(om.ExplicitComponent):
     """
     Compute current propeller speed and allowable max tip speed
     Maximum allowable tip speed is lower of helical tip Mach limited speed and
-    tip rotational speed limit
+    tip rotational speed limit.
     """
 
     def initialize(self):
@@ -283,9 +317,7 @@ class OutMachs(om.ExplicitComponent):
 
 
 class AreaSquareRatio(om.ExplicitComponent):
-    """
-    Compute the area ratio nacelle and propeller with a maximum 0.5.
-    """
+    """Compute the area ratio nacelle and propeller with a maximum 0.5."""
 
     def initialize(self):
         self.options.declare('num_nodes', types=int)
@@ -345,9 +377,7 @@ class AreaSquareRatio(om.ExplicitComponent):
 
 
 class AdvanceRatio(om.ExplicitComponent):
-    """
-    Compute the advance ratio jze with a maximum 5.0.
-    """
+    """Compute the advance ratio jze with a maximum 5.0."""
 
     def initialize(self):
         self.options.declare(
@@ -410,9 +440,7 @@ class AdvanceRatio(om.ExplicitComponent):
 
 
 class AreaSquareRatio(om.ExplicitComponent):
-    """
-    Compute the area ratio nacelle and propeller with a maximum 0.5.
-    """
+    """Compute the area ratio nacelle and propeller with a maximum 0.5."""
 
     def initialize(self):
         self.options.declare('num_nodes', types=int)
@@ -472,9 +500,7 @@ class AreaSquareRatio(om.ExplicitComponent):
 
 
 class AdvanceRatio(om.ExplicitComponent):
-    """
-    Compute the advance ratio jze with a maximum 5.0.
-    """
+    """Compute the advance ratio jze with a maximum 5.0."""
 
     def initialize(self):
         self.options.declare(
@@ -537,9 +563,7 @@ class AdvanceRatio(om.ExplicitComponent):
 
 
 class InstallLoss(om.Group):
-    """
-    Compute installation loss
-    """
+    """Compute installation loss."""
 
     def initialize(self):
         self.options.declare(

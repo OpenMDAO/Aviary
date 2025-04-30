@@ -1,12 +1,10 @@
 import unittest
-import os
 
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 
 from aviary.subsystems.aerodynamics.gasp_based.flaps_model.meta_model import MetaModelGroup
 from aviary.variable_info.enums import FlapType
-from aviary.variable_info.options import get_option_defaults
 from aviary.variable_info.variables import Aircraft, Dynamic
 
 """
@@ -20,7 +18,7 @@ class MetaModelTestCasePlain(unittest.TestCase):
         options = {
             Aircraft.Wing.FLAP_TYPE: FlapType.PLAIN,
         }
-        self.prob.model = LuTMMa = MetaModelGroup(**options)
+        self.prob.model = MetaModelGroup(**options)
         self.prob.setup()
 
         self.prob.set_val(Aircraft.Wing.FLAP_CHORD_RATIO, 0.3)
@@ -112,7 +110,7 @@ class MetaModelTestCaseSingleSlotted(unittest.TestCase):
         options = {
             Aircraft.Wing.FLAP_TYPE: FlapType.SINGLE_SLOTTED,
         }
-        self.prob.model = LuTMMb = MetaModelGroup(**options)
+        self.prob.model = MetaModelGroup(**options)
         self.prob.setup()
 
         self.prob.set_val(Aircraft.Wing.FLAP_CHORD_RATIO, 0.3)
@@ -149,7 +147,7 @@ class MetaModelTestCaseFowler(unittest.TestCase):
         options = {
             Aircraft.Wing.FLAP_TYPE: FlapType.FOWLER,
         }
-        self.prob.model = LuTMMc = MetaModelGroup(**options)
+        self.prob.model = MetaModelGroup(**options)
         self.prob.setup()
 
         self.prob.set_val(Aircraft.Wing.FLAP_CHORD_RATIO, 0.3)

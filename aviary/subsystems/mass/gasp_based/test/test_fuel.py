@@ -13,15 +13,14 @@ from aviary.subsystems.mass.gasp_based.fuel import (
     StructMass,
     BWBFuselageMass,
 )
-from aviary.variable_info.enums import Verbosity
-from aviary.variable_info.options import get_option_defaults
-from aviary.variable_info.variables import Aircraft, Mission, Settings
-from aviary.variable_info.functions import setup_model_options
 from aviary.utils.aviary_values import AviaryValues
+from aviary.variable_info.enums import Verbosity
+from aviary.variable_info.functions import setup_model_options
+from aviary.variable_info.variables import Aircraft, Mission, Settings
 
 
 class BodyCalculationTestCase1(unittest.TestCase):
-    """this is the large single aisle 1 V3 test case"""
+    """this is the large single aisle 1 V3 test case."""
 
     def setUp(self):
         self.prob = om.Problem()
@@ -119,9 +118,7 @@ class BodyCalculationTestCase2(
 
 
 class BodyCalculationTestCase3(unittest.TestCase):
-    """
-    Test mass-weight conversion
-    """
+    """Test mass-weight conversion."""
 
     def setUp(self):
         import aviary.subsystems.mass.gasp_based.fuel as fuel
@@ -272,9 +269,7 @@ class FuelAndOEMTestCase(unittest.TestCase):
 
 
 class FuelAndOEMTestCase2(unittest.TestCase):
-    """
-    Test mass-weight conversion
-    """
+    """Test mass-weight conversion."""
 
     def setUp(self):
         import aviary.subsystems.mass.gasp_based.fuel as fuel
@@ -350,9 +345,7 @@ class FuelSysAndFullFusMassTestCase(
 
 
 class FuelSysAndFullFusMassTestCase2(unittest.TestCase):
-    """
-    Test mass-weight conversion
-    """
+    """Test mass-weight conversion."""
 
     def setUp(self):
         import aviary.subsystems.mass.gasp_based.fuel as fuel
@@ -591,9 +584,6 @@ class FuelMassTestCase(unittest.TestCase):  # this is the large single aisle 1 V
             Aircraft.Fuel.FUEL_SYSTEM_MASS_COEFFICIENT, val=0.041, units='unitless'
         )
         self.prob.model.set_input_defaults(Aircraft.Fuel.DENSITY, val=6.687, units='lbm/galUS')
-        self.prob.model.set_input_defaults(
-            Aircraft.CrewPayload.PASSENGER_PAYLOAD_MASS, val=36000, units='lbm'
-        )
         self.prob.model.set_input_defaults('payload_mass_max', val=46040, units='lbm')
         self.prob.model.set_input_defaults(Aircraft.Fuel.FUEL_MARGIN, val=0, units='unitless')
 
@@ -617,9 +607,7 @@ class FuelMassTestCase(unittest.TestCase):  # this is the large single aisle 1 V
 
 
 class FuelMassTestCase2(unittest.TestCase):
-    """
-    Test mass-weight conversion
-    """
+    """Test mass-weight conversion."""
 
     def setUp(self):
         import aviary.subsystems.mass.gasp_based.fuel as fuel
@@ -651,9 +639,6 @@ class FuelMassTestCase2(unittest.TestCase):
             Aircraft.Fuel.FUEL_SYSTEM_MASS_COEFFICIENT, val=0.041, units='unitless'
         )
         prob.model.set_input_defaults(Aircraft.Fuel.DENSITY, val=6.687, units='lbm/galUS')
-        prob.model.set_input_defaults(
-            Aircraft.CrewPayload.PASSENGER_PAYLOAD_MASS, val=36000, units='lbm'
-        )
         prob.model.set_input_defaults('payload_mass_max', val=46040, units='lbm')
         prob.model.set_input_defaults(Aircraft.Fuel.FUEL_MARGIN, val=0, units='unitless')
 
@@ -763,9 +748,6 @@ class FuelMassGroupTestCase1(unittest.TestCase):
         # fuel
         self.prob.model.set_input_defaults('eng_comb_mass', val=14370.8, units='lbm')
         self.prob.model.set_input_defaults('payload_mass_des', val=36000, units='lbm')
-        self.prob.model.set_input_defaults(
-            Aircraft.CrewPayload.PASSENGER_PAYLOAD_MASS, val=36000, units='lbm'
-        )
         self.prob.model.set_input_defaults('payload_mass_max', val=46040, units='lbm')
         self.prob.model.set_input_defaults(Aircraft.Fuel.FUEL_MARGIN, val=0, units='unitless')
 
@@ -897,9 +879,6 @@ class FuelMassGroupTestCase2(
         # fuel
         self.prob.model.set_input_defaults('eng_comb_mass', val=14370.8, units='lbm')
         self.prob.model.set_input_defaults('payload_mass_des', val=36000, units='lbm')
-        self.prob.model.set_input_defaults(
-            Aircraft.CrewPayload.PASSENGER_PAYLOAD_MASS, val=36000, units='lbm'
-        )
         self.prob.model.set_input_defaults('payload_mass_max', val=46040, units='lbm')
         self.prob.model.set_input_defaults(Aircraft.Fuel.FUEL_MARGIN, val=10, units='unitless')
 
@@ -1054,9 +1033,6 @@ class FuelMassGroupTestCase3(unittest.TestCase):  # this is v 3.6 advanced tube 
         # fuel
         self.prob.model.set_input_defaults('eng_comb_mass', val=9328.2, units='lbm')
         self.prob.model.set_input_defaults('payload_mass_des', val=30800, units='lbm')
-        self.prob.model.set_input_defaults(
-            Aircraft.CrewPayload.PASSENGER_PAYLOAD_MASS, val=30800, units='lbm'
-        )
         self.prob.model.set_input_defaults('payload_mass_max', val=46770.0, units='lbm')
         self.prob.model.set_input_defaults(Aircraft.Fuel.FUEL_MARGIN, val=10, units='unitless')
 

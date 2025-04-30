@@ -2,9 +2,7 @@
 
 
 class ProblemConfiguratorBase:
-    """
-    Base class for a problem configurator in Aviary.
-    """
+    """Base class for a problem configurator in Aviary."""
 
     def initial_guesses(self, prob):
         """

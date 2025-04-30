@@ -1,5 +1,6 @@
 import numpy as np
 import openmdao.api as om
+
 from aviary.constants import GRAV_METRIC_FLOPS as gravity
 from aviary.variable_info.variables import Dynamic
 
@@ -7,7 +8,7 @@ from aviary.variable_info.variables import Dynamic
 class SpecificEnergyRate(om.ExplicitComponent):
     """
     Rutowski "Energy Approach to the General Aircraft Performance Problem", doi 10.2514/8.2956
-    Equation 5
+    Equation 5.
     """
 
     def initialize(self):

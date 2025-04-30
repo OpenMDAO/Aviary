@@ -9,9 +9,7 @@ from aviary.subsystems.mass.mass_to_weight import MassToWeight
 
 
 class MassToWeightTest(unittest.TestCase):
-    """
-    Test computation of weight from mass.
-    """
+    """Test computation of weight from mass."""
 
     def setUp(self):
         self.prob = om.Problem()
@@ -54,9 +52,7 @@ class MassToWeightTest(unittest.TestCase):
 
 
 class MassToWeightTest2(unittest.TestCase):
-    """
-    Test mass-weight conversion
-    """
+    """Test mass-weight conversion."""
 
     def setUp(self):
         import aviary.subsystems.mass.mass_to_weight as m_to_w

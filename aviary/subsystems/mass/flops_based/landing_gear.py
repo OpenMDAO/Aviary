@@ -6,7 +6,7 @@ from aviary.subsystems.mass.flops_based.distributed_prop import (
     distributed_nacelle_diam_factor,
     distributed_nacelle_diam_factor_deriv,
 )
-from aviary.variable_info.functions import add_aviary_input, add_aviary_output, add_aviary_option
+from aviary.variable_info.functions import add_aviary_input, add_aviary_option, add_aviary_output
 from aviary.variable_info.variables import Aircraft, Mission
 
 DEG2RAD = np.pi / 180.0
@@ -243,7 +243,7 @@ class AltLandingGearMass(om.ExplicitComponent):
 class NoseGearLength(om.ExplicitComponent):
     """
     Computation of nose gear oleo strut length from main gear oleo strut length:
-    NOSE_GEAR_OLEO_LENGTH = 0.7 * MAIN_GEAR_OLEO_LENGTH
+    NOSE_GEAR_OLEO_LENGTH = 0.7 * MAIN_GEAR_OLEO_LENGTH.
     """
 
     def setup(self):

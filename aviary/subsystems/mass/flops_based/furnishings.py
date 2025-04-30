@@ -2,8 +2,8 @@ import numpy as np
 import openmdao.api as om
 
 from aviary.constants import GRAV_ENGLISH_LBM
-from aviary.variable_info.functions import add_aviary_input, add_aviary_output, add_aviary_option
-from aviary.variable_info.variables import Aircraft, Mission
+from aviary.variable_info.functions import add_aviary_input, add_aviary_option, add_aviary_output
+from aviary.variable_info.variables import Aircraft
 
 
 class TransportFurnishingsGroupMass(om.ExplicitComponent):
@@ -85,9 +85,7 @@ class TransportFurnishingsGroupMass(om.ExplicitComponent):
 
 
 class BWBFurnishingsGroupMass(om.ExplicitComponent):
-    """
-    Calculates the mass of the furnishings group for HWB aircraft.
-    """
+    """Calculates the mass of the furnishings group for HWB aircraft."""
 
     def initialize(self):
         add_aviary_option(self, Aircraft.BWB.NUM_BAYS)

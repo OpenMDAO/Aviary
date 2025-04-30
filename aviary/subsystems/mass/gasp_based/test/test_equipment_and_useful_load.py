@@ -18,7 +18,7 @@ from aviary.variable_info.options import get_option_defaults
 from aviary.variable_info.variables import Aircraft, Mission
 
 
-class EquipMassTestCase1(unittest.TestCase):
+class FixedEquipMassTestCase1(unittest.TestCase):
     """this is the large single aisle 1 V3 test case"""
 
     def setUp(self):
@@ -83,7 +83,7 @@ class EquipMassTestCase1(unittest.TestCase):
         assert_check_partials(partial_data, atol=8e-12, rtol=1e-12)
 
 
-class EquipMassTestCase2(unittest.TestCase):
+class FixedEquipMassTestCase2(unittest.TestCase):
     def setUp(self):
         options = get_option_defaults()
         options.set_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS, val=5, units='unitless')
@@ -147,7 +147,7 @@ class EquipMassTestCase2(unittest.TestCase):
         assert_check_partials(partial_data, atol=8e-12, rtol=1e-12)
 
 
-class EquipMassTestCase3(unittest.TestCase):
+class FixedEquipMassTestCase3(unittest.TestCase):
     def setUp(self):
         options = get_option_defaults()
         options.set_val(Aircraft.Engine.TYPE, val=[GASPEngineType.RECIP_CARB], units='unitless')
@@ -211,7 +211,7 @@ class EquipMassTestCase3(unittest.TestCase):
         assert_check_partials(partial_data, atol=8e-12, rtol=1e-12)
 
 
-class EquipMassTestCase4(unittest.TestCase):
+class FixedEquipMassTestCase4(unittest.TestCase):
     """
     Test mass-weight conversion
     """
@@ -282,7 +282,7 @@ class EquipMassTestCase4(unittest.TestCase):
         assert_check_partials(partial_data, atol=8e-12, rtol=1e-12)
 
 
-class EquipMassTestCase5smooth(unittest.TestCase):
+class FixedEquipMassTestCase5smooth(unittest.TestCase):
     """this is the large single aisle 1 V3 test case"""
 
     def setUp(self):
@@ -349,7 +349,7 @@ class EquipMassTestCase5smooth(unittest.TestCase):
         assert_check_partials(partial_data, atol=8e-12, rtol=1e-12)
 
 
-class EquipMassTestCase6smooth(unittest.TestCase):
+class FixedEquipMassTestCase6smooth(unittest.TestCase):
     def setUp(self):
         options = get_option_defaults()
         options.set_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS, val=5, units='unitless')
@@ -414,7 +414,7 @@ class EquipMassTestCase6smooth(unittest.TestCase):
         assert_check_partials(partial_data, atol=8e-12, rtol=1e-12)
 
 
-class EquipMassTestCase7smooth(unittest.TestCase):
+class FixedEquipMassTestCase7smooth(unittest.TestCase):
     def setUp(self):
         options = get_option_defaults()
         options.set_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS, val=5, units='unitless')
@@ -480,7 +480,7 @@ class EquipMassTestCase7smooth(unittest.TestCase):
         assert_check_partials(partial_data, atol=8e-12, rtol=1e-12)
 
 
-class EquipMassTestCase8(unittest.TestCase):
+class FixedEquipMassTestCase8(unittest.TestCase):
     """
     this is the same case as EquipMassTestCase1, except:
     Aircraft.APU.MASS = 0.0,
@@ -551,7 +551,7 @@ class EquipMassTestCase8(unittest.TestCase):
         assert_check_partials(partial_data, atol=8e-12, rtol=1e-12)
 
 
-class EquipMassTestCase9smooth(unittest.TestCase):
+class FixedEquipMassTestCase9smooth(unittest.TestCase):
     """
     this is the same case as EquipMassTestCase5smooth, except:
     Aircraft.APU.MASS = 0.0,
@@ -862,7 +862,7 @@ class FurnishingMassTestCase3(unittest.TestCase):
         assert_check_partials(partial_data, atol=8e-12, rtol=1e-12)
 
 
-class EquipMassSumTestCase1(unittest.TestCase):
+class FixedEquipMassSumTestCase1(unittest.TestCase):
     """
     Created based on EquipMassTestCase1
     """
@@ -893,7 +893,7 @@ class EquipMassSumTestCase1(unittest.TestCase):
         assert_check_partials(partial_data, atol=8e-12, rtol=1e-12)
 
 
-class EquipMassGroupTest(unittest.TestCase):
+class FixedEquipMassGroupTest(unittest.TestCase):
     """this is the large single aisle 1 V3 test case"""
 
     def setUp(self):
@@ -1229,7 +1229,7 @@ class UsefulMassTestCase5(unittest.TestCase):
         assert_check_partials(partial_data, atol=8e-12, rtol=1e-12)
 
 
-class EquipAndUsefulMassGroupTest(unittest.TestCase):
+class FixedEquipAndUsefulMassGroupTest(unittest.TestCase):
     """this is the large single aisle 1 V3 test case"""
 
     def setUp(self):
