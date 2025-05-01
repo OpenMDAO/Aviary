@@ -795,23 +795,19 @@ class EquipMassGroup(om.Group):
             'ac',
             ACMass(),
             promotes_inputs=['aircraft:*', 'mission:*'],
-            promotes_outputs=[Aircraft.AirConditioning.MASS],
+            promotes_outputs=['aircraft:*'],
         )
         self.add_subsystem(
             'furnishing',
             FurnishingMass(),
             promotes_inputs=['aircraft:*', 'mission:*'],
-            promotes_outputs=[Aircraft.Furnishings.MASS],
+            promotes_outputs=['aircraft:*'],
         )
         self.add_subsystem(
             'equip_sum',
             EquipMassSum(),
-            promotes_inputs=[
-                'equip_mass_part',
-                Aircraft.Furnishings.MASS,
-                Aircraft.AirConditioning.MASS,
-            ],
-            promotes_outputs=[Aircraft.Design.FIXED_EQUIPMENT_MASS],
+            promotes_inputs=['equip_mass_part', 'aircraft:*'],
+            promotes_outputs=['aircraft:*'],
         )
 
 
