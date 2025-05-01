@@ -1,9 +1,11 @@
-"""Define meta data associated with variables in the Aviary data hierarchy."""
+"""
+Define meta data associated with variables in the Aviary data hierarchy.
+"""
+
+import numpy as np
 
 from copy import deepcopy
 from pathlib import Path
-
-import numpy as np
 
 from aviary.utils.develop_metadata import add_meta_data
 from aviary.variable_info.enums import (
@@ -3127,15 +3129,15 @@ add_meta_data(
 )
 
 add_meta_data(
-    Aircraft.Furnishings.USE_STANDARD_REGRESSION,
+    Aircraft.Furnishings.USE_EMPIRICAL_EQUATION,
     meta_data=_MetaData,
     historical_name={'GASP': None, 'FLOPS': None, 'LEAPS1': None},
     units='unitless',
-    desc='In GASP based, indicate whether use standard linear empirical regression formula. '
+    desc='In GASP based, indicate whether use commonly used empirical furnishing weight equation. '
     'This applies only when gross mass > 10000 and number of passengers >= 50.',
     types=bool,
     option=True,
-    default_value=False,
+    default_value=True,
 )
 
 #  ______                        _
