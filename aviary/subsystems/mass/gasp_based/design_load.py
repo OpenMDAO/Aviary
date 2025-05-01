@@ -1403,7 +1403,7 @@ class BWBLoadSpeeds(om.ExplicitComponent):
                     + VCMAX * dSigmoidXdx(VCMIN / VCMAX, 1, 0.01) * dVCMIN_dgross_mass / VCMAX
                 )
                 dVCMIN_dexp_wing_area = (
-                    dVCMIN_dgross_mass * sigmoidX(VCMIN / VCMAX, 1, -0.01)
+                    dVCMIN_dexp_wing_area * sigmoidX(VCMIN / VCMAX, 1, -0.01)
                     - VCMIN * dSigmoidXdx(VCMIN / VCMAX, 1, 0.01) * dVCMIN_dexp_wing_area / VCMAX
                     + VCMAX * dSigmoidXdx(VCMIN / VCMAX, 1, 0.01) * dVCMIN_dexp_wing_area / VCMAX
                 )
