@@ -17,41 +17,6 @@ from aviary.variable_info.functions import add_aviary_input, add_aviary_option, 
 from aviary.variable_info.variables import Aircraft, Dynamic
 
 
-def smooth_min(x, b, alpha=100.0):
-    """
-    Smooth approximation of the min function using the log-sum-exp trick.
-
-    Parameters:
-    x (float or array-like): First value.
-    b (float or array-like): Second value.
-    alpha (float): The smoothing factor. Higher values make it closer to the true minimum. Try between 75 and 275.
-
-    Returns:
-    float or array-like: The smooth approximation of min(x, b).
-    """
-    sum_log_exp = np.log(np.exp(np.multiply(-alpha, x)) + np.exp(np.multiply(-alpha, b)))
-    rv = -(1 / alpha) * sum_log_exp
-    return rv
-
-
-def d_smooth_min(x, b, alpha=100.0):
-    """
-    Derivative of function smooth_min(x)
-
-    Parameters:
-    x (float or array-like): First value.
-    b (float or array-like): Second value.
-    alpha (float): The smoothing factor. Higher values make it closer to the true minimum. Try between 75 and 275.
-
-    Returns:
-    float or array-like: The smooth approximation of derivative of min(x, b).
-    """
-    d_sum_log_exp = np.exp(np.multiply(-alpha, x)) / (
-        np.exp(np.multiply(-alpha, x)) + np.exp(np.multiply(-alpha, b))
-    )
-    return d_sum_log_exp
-
-
 class TipSpeed(om.ExplicitComponent):
     """
     Compute current propeller speed and allowable max tip speed
