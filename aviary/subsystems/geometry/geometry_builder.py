@@ -9,13 +9,12 @@ CoreGeometryBuilder : the interface for Aviary's core geometry subsystem builder
 """
 
 from aviary.interface.utils.markdown_utils import write_markdown_variable_table
-from aviary.subsystems.subsystem_builder_base import SubsystemBuilderBase
 from aviary.subsystems.geometry.combined_geometry import CombinedGeometry
 from aviary.subsystems.geometry.flops_based.prep_geom import PrepGeom
 from aviary.subsystems.geometry.gasp_based.size_group import SizeGroup
-from aviary.variable_info.variables import Aircraft
+from aviary.subsystems.subsystem_builder_base import SubsystemBuilderBase
 from aviary.variable_info.enums import LegacyCode
-from aviary.variable_info.variable_meta_data import _MetaData
+from aviary.variable_info.variables import Aircraft
 
 GASP = LegacyCode.GASP
 FLOPS = LegacyCode.FLOPS
@@ -25,7 +24,7 @@ _default_name = 'geometry'
 
 class GeometryBuilderBase(SubsystemBuilderBase):
     """
-    Base geometry builder
+    Base geometry builder.
 
     Methods
     -------
@@ -52,7 +51,7 @@ class GeometryBuilderBase(SubsystemBuilderBase):
 
 class CoreGeometryBuilder(GeometryBuilderBase):
     """
-    Core geometry builder
+    Core geometry builder.
 
     Methods
     -------
@@ -140,7 +139,7 @@ class CoreGeometryBuilder(GeometryBuilderBase):
 
     def report(self, prob, reports_folder, **kwargs):
         """
-        Generate the report for Aviary core geometry analysis
+        Generate the report for Aviary core geometry analysis.
 
         Parameters
         ----------

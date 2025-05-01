@@ -84,12 +84,11 @@ def add_meta_data(
         No variables returned by this method.
 
     Raises
-    ----------
+    ------
     None
         No exceptions raised by this method, although other methods called within may
         raise exceptions.
     """
-
     if key in meta_data and _check_unique:
         raise ValueError(
             f'You added the variable {key} to a variable metadata dictionary via the '
@@ -198,12 +197,11 @@ def update_meta_data(
         No variables returned by this method.
 
     Raises
-    ----------
+    ------
     None
         No exceptions raised by this method, although other methods called within may
         raise exceptions.
     """
-
     if key not in meta_data:
         raise ValueError(
             f'You provided the variable {key} to a variable metadata dictionary via the '

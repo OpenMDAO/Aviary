@@ -1,6 +1,4 @@
-"""
-Define utilities for calculating landing EOMs.
-"""
+"""Define utilities for calculating landing EOMs."""
 
 import numpy as np
 import openmdao.api as om
@@ -10,18 +8,15 @@ from aviary.mission.flops_based.ode.takeoff_eom import (
     Accelerations,
     DistanceRates,
     FlightPathAngleRate,
-    StallSpeed,
     VelocityRate,
 )
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.functions import add_aviary_input
-from aviary.variable_info.variables import Aircraft, Dynamic, Mission
+from aviary.variable_info.variables import Dynamic, Mission
 
 
 class FlareEOM(om.Group):
-    """
-    Define a group for calculating equations of motion from start of flare to touchdown.
-    """
+    """Define a group for calculating equations of motion from start of flare to touchdown."""
 
     def initialize(self):
         options = self.options
@@ -147,9 +142,7 @@ class FlareEOM(om.Group):
 
 
 class GlideSlopeForces(om.ExplicitComponent):
-    """
-    Define a component for calculating forces for evaluation of glide slope criteria.
-    """
+    """Define a component for calculating forces for evaluation of glide slope criteria."""
 
     def initialize(self):
         options = self.options
@@ -420,7 +413,6 @@ class FlareSumForces(om.ExplicitComponent):
         alpha0 = aviary_options.get_val(Mission.Takeoff.ANGLE_OF_ATTACK_RUNWAY, 'rad')
         t_inc = aviary_options.get_val(Mission.Takeoff.THRUST_INCIDENCE, 'rad')
 
-        mass = inputs[Dynamic.Vehicle.MASS]
         lift = inputs[Dynamic.Vehicle.LIFT]
         thrust = inputs[Dynamic.Vehicle.Propulsion.THRUST_TOTAL]
         drag = inputs[Dynamic.Vehicle.DRAG]

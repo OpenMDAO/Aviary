@@ -1,5 +1,6 @@
-import numpy as np
 import warnings
+
+import numpy as np
 import openmdao.api as om
 from openmdao.utils.units import convert_units
 
@@ -9,7 +10,6 @@ from aviary.utils.csv_data_file import read_data_file
 from aviary.utils.functions import get_path
 from aviary.variable_info.enums import OutMachType
 from aviary.variable_info.variables import Aircraft, Settings
-
 
 MACH = PropellerModelVariables.MACH
 CP = PropellerModelVariables.CP
@@ -29,6 +29,7 @@ aliases = {
 class PropellerMap(om.ExplicitComponent):
     """
     This class loads a user provided propeller map into memory and builds a propeller.
+
     Attributes
     ----------
     name : str ('propeller')
@@ -109,16 +110,12 @@ class PropellerMap(om.ExplicitComponent):
                         break
 
         if not m_type_define:
-            warnings.warn(
-                f"String 'mach_type' is not defined. Assume freestream Mach in the table."
-            )
+            warnings.warn("String 'mach_type' is not defined. Assume freestream Mach in the table.")
 
         return OutMachType.get_element_by_value(m_type)
 
     def build_propeller_interpolator(self, num_nodes, options=None):
-        """
-        Builds the OpenMDAO metamodel component for the propeller map.
-        """
+        """Builds the OpenMDAO metamodel component for the propeller map."""
         interp_method = options.get_val(Aircraft.Engine.INTERPOLATION_METHOD)
         # interpolator object for propeller data
         propeller = om.MetaModelSemiStructuredComp(

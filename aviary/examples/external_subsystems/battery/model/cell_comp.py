@@ -1,19 +1,13 @@
 import numpy as np
-
 from openmdao.api import ExplicitComponent
 
-from aviary.variable_info.functions import add_aviary_input, add_aviary_output
-from aviary.examples.external_subsystems.battery.battery_variables import (
-    Aircraft,
-    Dynamic,
-)
 from aviary.examples.external_subsystems.battery.battery_variable_meta_data import ExtendedMetaData
+from aviary.examples.external_subsystems.battery.battery_variables import Aircraft, Dynamic
+from aviary.variable_info.functions import add_aviary_input, add_aviary_output
 
 
 class CellComp(ExplicitComponent):
-    """
-    Compute behavior of a single battery cell then expand to the full pack.
-    """
+    """Compute behavior of a single battery cell then expand to the full pack."""
 
     def initialize(self):
         self.options.declare('num_nodes', types=int)
@@ -222,7 +216,6 @@ class CellComp(ExplicitComponent):
         U_pack = U_L * n_s
         Q_pack = Q_cell * n_s * n_p
         P_tot = I_pack * U_pack
-        pack_eta = 1.0 - Q_pack / (P_tot + Q_pack)
 
         dI_li__dnp = -I_pack / n_p**2
         dU_L__dnp = -R_0 * dI_li__dnp

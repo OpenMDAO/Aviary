@@ -12,7 +12,6 @@ def distributed_engine_count_factor(total_num_eng: int) -> float:
     total_num_eng : int
         Total number of engines
     """
-
     factor = float(total_num_eng)
 
     if total_num_eng > 4:
@@ -32,7 +31,6 @@ def distributed_thrust_factor(max_sls_thrust: float, total_num_eng: int) -> floa
     total_num_eng : iterable or int
         Total number of engines
     """
-
     num_engine_factor = distributed_engine_count_factor(total_num_eng)
     return max_sls_thrust / num_engine_factor
 
@@ -50,7 +48,6 @@ def distributed_nacelle_diam_factor(diam_nacelle: list, num_eng: list) -> float:
     num_eng : iterable or int
         Number of engines for each engine model
     """
-
     # If there is more than one engine model, use the global average diameter
     try:
         total_num_eng = sum(num_eng)
@@ -76,7 +73,6 @@ def distributed_nacelle_diam_factor_deriv(num_eng: int) -> float:
     num_eng : iterable or int
         Number of engines for each engine model
     """
-
     try:
         total_num_engines = sum(num_eng)
     except TypeError:

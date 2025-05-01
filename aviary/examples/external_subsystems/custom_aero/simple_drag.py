@@ -1,16 +1,15 @@
 import numpy as np
-
 import openmdao.api as om
 
 from aviary.subsystems.aerodynamics.aero_common import DynamicPressure
-from aviary.subsystems.aerodynamics.flops_based.lift import LiftEqualsWeight
 from aviary.subsystems.aerodynamics.flops_based.drag import SimpleDrag
-from aviary.variable_info.variables import Aircraft, Dynamic, Mission
+from aviary.subsystems.aerodynamics.flops_based.lift import LiftEqualsWeight
+from aviary.variable_info.variables import Aircraft, Dynamic
 
 
 class SimplestDragCoeff(om.ExplicitComponent):
     """
-    Simple representation of aircraft drag as CD = CD_zero + k * CL**2
+    Simple representation of aircraft drag as CD = CD_zero + k * CL**2.
 
     Values are fictional. Typically, some higher fidelity method will go here instead.
     """

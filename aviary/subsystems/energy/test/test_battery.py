@@ -2,16 +2,15 @@ import unittest
 
 import numpy as np
 import openmdao.api as om
-
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 
-from aviary.subsystems.energy.battery_builder import BatteryBuilder
 import aviary.api as av
+from aviary.subsystems.energy.battery_builder import BatteryBuilder
 
 
 class TestBatteryDerivs(unittest.TestCase):
     def setUp(self):
-        self.prob = prob = om.Problem()
+        self.prob = om.Problem()
 
         self.options = av.AviaryValues()
 

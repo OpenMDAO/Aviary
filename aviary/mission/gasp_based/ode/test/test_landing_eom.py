@@ -9,13 +9,11 @@ from aviary.mission.gasp_based.ode.landing_eom import (
     LandingAltitudeComponent,
     LandingGroundRollComponent,
 )
-from aviary.variable_info.variables import Aircraft, Mission, Dynamic
+from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 
 
 class LandingAltTestCase(unittest.TestCase):
-    """
-    Test computation of initial altitude in LandingAltitudeComponent component
-    """
+    """Test computation of initial altitude in LandingAltitudeComponent component."""
 
     def setUp(self):
         self.prob = om.Problem()
@@ -39,9 +37,7 @@ class LandingAltTestCase(unittest.TestCase):
 
 
 class GlideTestCase(unittest.TestCase):
-    """
-    Test computation of initial velocity and stall velocity in GlideConditionComponent component
-    """
+    """Test computation of initial velocity and stall velocity in GlideConditionComponent component."""
 
     def setUp(self):
         self.prob = om.Problem()
@@ -108,9 +104,7 @@ class GlideTestCase(unittest.TestCase):
 
 
 class GlideTestCase2(unittest.TestCase):
-    """
-    Test mass-weight conversion
-    """
+    """Test mass-weight conversion."""
 
     def setUp(self):
         import aviary.mission.gasp_based.ode.landing_eom as landing
@@ -193,9 +187,7 @@ class GroundRollTestCase(unittest.TestCase):
 
 
 class GroundRollTestCase2(unittest.TestCase):
-    """
-    Test mass-weight conversion
-    """
+    """Test mass-weight conversion."""
 
     def setUp(self):
         import aviary.mission.gasp_based.ode.landing_eom as landing

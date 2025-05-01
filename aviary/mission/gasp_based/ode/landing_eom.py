@@ -7,9 +7,7 @@ from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 
 
 class LandingAltitudeComponent(om.ExplicitComponent):
-    """
-    Compute the landing altitude.
-    """
+    """Compute the landing altitude."""
 
     def setup(self):
         add_aviary_input(self, Mission.Landing.OBSTACLE_HEIGHT, val=50.0)
@@ -31,9 +29,7 @@ class LandingAltitudeComponent(om.ExplicitComponent):
 
 
 class GlideConditionComponent(om.ExplicitComponent):
-    """
-    Compute the initial conditions of the 2DOF glide phase.
-    """
+    """Compute the initial conditions of the 2DOF glide phase."""
 
     def setup(self):
         self.add_input(Dynamic.Atmosphere.DENSITY, val=0.0, units='slug/ft**3', desc='air density')
@@ -436,8 +432,6 @@ class GlideConditionComponent(om.ExplicitComponent):
             -2 * (1.0 - gamma_touchdown / theta) * dGammaTd_dRateOfSinkTd / theta
         )
 
-        tr_distance = inter1 * inter2
-
         J['tr_distance', Mission.Landing.MAXIMUM_FLARE_LOAD_FACTOR] = (
             dInter1_dLandingFlareLoadFactor * inter2
         )
@@ -467,13 +461,6 @@ class GlideConditionComponent(om.ExplicitComponent):
         J['delay_distance', 'CL_max'] = time_delay * dTasTd_dClMax
         J['delay_distance', Dynamic.Atmosphere.DENSITY] = time_delay * dTasTd_dRhoApp
         J['delay_distance', Mission.Landing.BRAKING_DELAY] = TAS_touchdown
-
-        flare_alt = (
-            TAS_glide**2
-            * (theta**2 - gamma_touchdown**2)
-            / (2.0 * G * (landing_flare_load_factor - 1.0))
-        )
-
         J['flare_alt', Mission.Landing.MAXIMUM_FLARE_LOAD_FACTOR] = (
             -(TAS_glide**2)
             * (theta**2 - gamma_touchdown**2)
@@ -546,9 +533,7 @@ class GlideConditionComponent(om.ExplicitComponent):
 
 
 class LandingGroundRollComponent(om.ExplicitComponent):
-    """
-    Compute the groundroll distance and average acceleration/deceleration
-    """
+    """Compute the groundroll distance and average acceleration/deceleration."""
 
     def setup(self):
         self.add_input('touchdown_CD', val=0.0, units='unitless', desc='CDRL: CD at touchdown')

@@ -1,6 +1,6 @@
-import numpy as np
 import unittest
 
+import numpy as np
 from numpy.testing import assert_almost_equal
 from openmdao.utils.testing_utils import use_tempdirs
 
@@ -16,9 +16,7 @@ from aviary.subsystems.test.test_dummy_subsystem import (
 
 @use_tempdirs
 class TestSubsystemsMission(unittest.TestCase):
-    """
-    Test the setup and run of a model with external subsystem
-    """
+    """Test the setup and run of a model with external subsystem."""
 
     def setUp(self):
         self.phase_info = {

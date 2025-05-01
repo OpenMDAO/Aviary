@@ -1,11 +1,12 @@
 import numpy as np
+
 from aviary.mission.gasp_based.ode.time_integration_base_classes import SGMTrajBase
 from aviary.mission.gasp_based.phases.time_integration_phases import SGMGroundroll, SGMRotation
 from aviary.variable_info.enums import Verbosity
 
 
 class TimeIntegrationTrajBase(SGMTrajBase):
-    """Base class for time integration trajectory"""
+    """Base class for time integration trajectory."""
 
     def initialize(self):
         super().initialize()

@@ -44,9 +44,7 @@ Y_cp = [
 
 
 class PolynomialFitTest(unittest.TestCase):
-    """
-    Test computation of initial gear time and initial flap time.
-    """
+    """Test computation of initial gear time and initial flap time."""
 
     def setUp(self):
         self.prob = om.Problem()

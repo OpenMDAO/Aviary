@@ -1,19 +1,15 @@
 import numpy as np
-
 import openmdao.api as om
 
-from aviary.mission.ode.specific_energy_rate import SpecificEnergyRate
-from aviary.mission.ode.altitude_rate import AltitudeRate
-from aviary.utils.aviary_values import AviaryValues
-from aviary.variable_info.enums import AnalysisScheme, AlphaModes
-from aviary.variable_info.variables import Aircraft, Dynamic
 from aviary.mission.base_ode import BaseODE as _BaseODE
+from aviary.mission.ode.altitude_rate import AltitudeRate
+from aviary.mission.ode.specific_energy_rate import SpecificEnergyRate
+from aviary.variable_info.enums import AlphaModes
+from aviary.variable_info.variables import Aircraft, Dynamic
 
 
 class TwoDOFODE(_BaseODE):
-    """
-    The base class for all 2 Degree-of-Freedom ODE components.
-    """
+    """The base class for all 2 Degree-of-Freedom ODE components."""
 
     def initialize(self):
         super().initialize()
@@ -32,10 +28,7 @@ class TwoDOFODE(_BaseODE):
         add_default_solver=True,
         print_level=0,
     ):
-        """
-        This is used when angle of attack in an ODE needs to be controlled directly.
-        """
-
+        """This is used when angle of attack in an ODE needs to be controlled directly."""
         if not alpha_group:
             alpha_group = self
         nn = num_nodes
@@ -182,10 +175,7 @@ class TwoDOFODE(_BaseODE):
         add_default_solver=True,
         print_level=0,
     ):
-        """
-        This is used when throttle in an ODE needs to be controlled directly.
-        """
-
+        """This is used when throttle in an ODE needs to be controlled directly."""
         nn = num_nodes
 
         thrust_bal = om.BalanceComp(
@@ -226,7 +216,7 @@ class TwoDOFODE(_BaseODE):
             self.add_subsystem('prop_group', prop_group, promotes=['*'])
 
     def add_excess_rate_comps(self, nn):
-        """Add SpecificEnergyRate and AltitudeRate components"""
+        """Add SpecificEnergyRate and AltitudeRate components."""
         self.add_subsystem(
             name='SPECIFIC_ENERGY_RATE_EXCESS',
             subsys=SpecificEnergyRate(num_nodes=nn),

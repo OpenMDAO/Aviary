@@ -1,12 +1,13 @@
 import argparse
 import ast
 import inspect
+import re
 import subprocess
 import tempfile
-import numpy as np
-import re
-from aviary.interface.cmd_entry_points import _command_map
 
+import numpy as np
+
+from aviary.interface.cmd_entry_points import _command_map
 
 """
 # DocTAPE #
@@ -45,7 +46,7 @@ class expected_error(Exception): ...
 
 def gramatical_list(list_of_strings: list, cc='and', add_accents=False) -> str:
     """
-    Combines the elements of a list into a string with proper punctuation
+    Combines the elements of a list into a string with proper punctuation.
 
     Parameters
     ----------
@@ -72,7 +73,7 @@ def gramatical_list(list_of_strings: list, cc='and', add_accents=False) -> str:
 
 def get_previous_line(n=1) -> str:
     """
-    returns the previous n line(s) of code as a string
+    Returns the previous n line(s) of code as a string.
 
     Parameters
     ----------
@@ -96,8 +97,8 @@ def get_previous_line(n=1) -> str:
 
 def get_variable_name(*variables) -> str:
     """
-    returns the name of the variable passed to the function as a string
-    # NOTE: You cannot call this function multiple times on one line
+    Returns the name of the variable passed to the function as a string
+    # NOTE: You cannot call this function multiple times on one line.
 
     Parameters
     ----------
@@ -174,7 +175,7 @@ def check_contains(
 ):
     """
     Checks that all of the expected_values exist in actual_values
-    (It does not check for missing values)
+    (It does not check for missing values).
 
     Parameters
     ----------
@@ -290,7 +291,7 @@ def run_command_no_file_error(command: str, verbose=False):
 
 def get_attribute_name(object: object, attribute, error_type=AttributeError) -> str:
     """
-    Gets the name of an object's attribute based on it's value
+    Gets the name of an object's attribute based on it's value.
 
     This is intended for use with Enums and other objects that have unique values.
     This method will return the name of the first attribute that has a value that
@@ -327,7 +328,7 @@ def get_all_keys(dict_of_dicts: dict, track_layers=False, all_keys=None) -> list
     Recursively get all of the keys from a dict of dicts
     This can also be used to recursively get all of the attributes from a complex object, like the Aircraft hierarchy
     Note: this will not add duplicates of keys, but will
-    continue deeper even if a key is duplicated
+    continue deeper even if a key is duplicated.
 
     Parameters
     ----------
@@ -372,7 +373,7 @@ def get_all_keys(dict_of_dicts: dict, track_layers=False, all_keys=None) -> list
 
 def get_value(dict_of_dicts: dict, comlpete_key: str):
     """
-    Recursively get a value from a dict of dicts
+    Recursively get a value from a dict of dicts.
 
     Parameters
     ----------
@@ -386,7 +387,6 @@ def get_value(dict_of_dicts: dict, comlpete_key: str):
     val : any
         The value found
     """
-
     for key in comlpete_key.split('.'):
         if not isinstance(dict_of_dicts, dict):
             dict_of_dicts = dict_of_dicts.__dict__
@@ -396,7 +396,7 @@ def get_value(dict_of_dicts: dict, comlpete_key: str):
 
 def glue_variable(name: str, val=None, md_code=False, display=True):
     """
-    Glue a variable for later use in markdown cells of notebooks
+    Glue a variable for later use in markdown cells of notebooks.
 
     Note:
     glue_variable(get_variable_name(Aircraft.APU.MASS))
@@ -413,9 +413,9 @@ def glue_variable(name: str, val=None, md_code=False, display=True):
         Whether to wrap the value in markdown code formatting (e.g. `code`)
     """
     # local import so myst isn't required unless glue is being used
-    from myst_nb import glue
     from IPython.display import Markdown
     from IPython.utils import io
+    from myst_nb import glue
 
     if val is None:
         val = name
@@ -432,7 +432,7 @@ def glue_variable(name: str, val=None, md_code=False, display=True):
 
 def glue_keys(dict_of_dicts: dict, display=True) -> list:
     """
-    Recursively glue all of the keys from a dict of dicts
+    Recursively glue all of the keys from a dict of dicts.
 
     Parameters
     ----------
@@ -457,7 +457,7 @@ def glue_keys(dict_of_dicts: dict, display=True) -> list:
 
 def get_class_names(file_path) -> set:
     """
-    Retrieve all class names from a given file and return as a set
+    Retrieve all class names from a given file and return as a set.
 
     Parameters
     ----------
@@ -501,7 +501,7 @@ def get_function_names(file_path) -> set:
 
 def glue_actions(cmd, curr_glued=None, glue_default=False, glue_choices=False, md_code=True):
     """
-    Glue all Aviary CLI options
+    Glue all Aviary CLI options.
 
     Parameters
     ----------
@@ -541,7 +541,7 @@ def glue_actions(cmd, curr_glued=None, glue_default=False, glue_choices=False, m
 
 def glue_class_functions(obj, curr_glued=None, pre_fix=None, md_code=True):
     """
-    Glue all class functions
+    Glue all class functions.
 
     Parameters
     ----------
@@ -565,7 +565,7 @@ def glue_class_functions(obj, curr_glued=None, pre_fix=None, md_code=True):
 
 def glue_function_arguments(func, curr_glued=None, glue_default=False, md_code=False):
     """
-    Glue all function arguments and default values for a given function
+    Glue all function arguments and default values for a given function.
 
     Parameters
     ----------
@@ -590,7 +590,7 @@ def glue_function_arguments(func, curr_glued=None, glue_default=False, md_code=F
 
 def glue_class_options(obj, curr_glued=None, md_code=False):
     """
-    Glue all class options for a given class
+    Glue all class options for a given class.
 
     Parameters
     ----------

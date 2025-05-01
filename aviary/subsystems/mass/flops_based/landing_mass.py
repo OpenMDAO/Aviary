@@ -6,9 +6,7 @@ from aviary.variable_info.variables import Aircraft, Mission
 
 
 class LandingTakeoffMassRatio(om.ExplicitComponent):
-    """
-    Calculate the ratio of maximum landing mass to maximum takeoff gross mass.
-    """
+    """Calculate the ratio of maximum landing mass to maximum takeoff gross mass."""
 
     def setup(self):
         add_aviary_input(self, Mission.Summary.CRUISE_MACH, units='unitless')
@@ -45,9 +43,7 @@ class LandingTakeoffMassRatio(om.ExplicitComponent):
 
 
 class LandingMass(om.ExplicitComponent):
-    """
-    Maximum landing mass is maximum takeoff gross mass times the ratio of landing/takeoff mass.
-    """
+    """Maximum landing mass is maximum takeoff gross mass times the ratio of landing/takeoff mass."""
 
     def setup(self):
         add_aviary_input(self, Mission.Design.GROSS_MASS)

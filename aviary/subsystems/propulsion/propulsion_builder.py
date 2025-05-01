@@ -10,14 +10,11 @@ CorePropulsionBuilder : the interface for Aviary's core propulsion subsystem bui
 
 import numpy as np
 
-from openmdao.utils.units import convert_units as _convert_units
-
 from aviary.interface.utils.markdown_utils import write_markdown_variable_table
-
-from aviary.subsystems.subsystem_builder_base import SubsystemBuilderBase
-from aviary.subsystems.propulsion.propulsion_premission import PropulsionPreMission
-from aviary.subsystems.propulsion.propulsion_mission import PropulsionMission
 from aviary.subsystems.propulsion.engine_model import EngineModel
+from aviary.subsystems.propulsion.propulsion_mission import PropulsionMission
+from aviary.subsystems.propulsion.propulsion_premission import PropulsionPreMission
+from aviary.subsystems.subsystem_builder_base import SubsystemBuilderBase
 
 # NOTE These are currently needed to get around variable hierarchy being class-based.
 #      Ideally, an alternate solution to loop through the hierarchy will be created and
@@ -30,7 +27,7 @@ _default_name = 'propulsion'
 
 class PropulsionBuilderBase(SubsystemBuilderBase):
     """
-    Base class for propulsion builder
+    Base class for propulsion builder.
 
     Note
     ----
@@ -62,6 +59,7 @@ class PropulsionBuilderBase(SubsystemBuilderBase):
 class CorePropulsionBuilder(PropulsionBuilderBase):
     """
     Core propulsion builder.
+
     Methods
     -------
     build_pre_mission(self, aviary_inputs) -> openmdao.core.System:
@@ -126,9 +124,7 @@ class CorePropulsionBuilder(PropulsionBuilderBase):
 
     # NOTE no unittests!
     def get_states(self):
-        """
-        Call get_states() on all engine models and return combined result.
-        """
+        """Call get_states() on all engine models and return combined result."""
         states = {}
         for engine in self.engine_models:
             engine_states = engine.get_states()
@@ -137,9 +133,7 @@ class CorePropulsionBuilder(PropulsionBuilderBase):
         return states
 
     def get_controls(self, phase_name=None):
-        """
-        Call get_controls() on all engine models and return combined result.
-        """
+        """Call get_controls() on all engine models and return combined result."""
         controls = {}
         for engine in self.engine_models:
             engine_controls = engine.get_controls(phase_name=phase_name)
@@ -187,9 +181,7 @@ class CorePropulsionBuilder(PropulsionBuilderBase):
 
     # NOTE no unittests!
     def get_constraints(self):
-        """
-        Call get_constraints() on all engine models and return combined result.
-        """
+        """Call get_constraints() on all engine models and return combined result."""
         constraints = {}
         for engine in self.engine_models:
             engine_constraints = engine.get_constraints()
@@ -199,9 +191,7 @@ class CorePropulsionBuilder(PropulsionBuilderBase):
 
     # NOTE no unittests!
     def get_linked_variables(self):
-        """
-        Call get_linked_variables() on all engine models and return combined result.
-        """
+        """Call get_linked_variables() on all engine models and return combined result."""
         linked_vars = {}
         for engine in self.engine_models:
             engine_linked_vars = engine.get_linked_variables()
@@ -210,9 +200,7 @@ class CorePropulsionBuilder(PropulsionBuilderBase):
         return linked_vars
 
     def get_bus_variables(self):
-        """
-        Call get_linked_variables() on all engine models and return combined result.
-        """
+        """Call get_linked_variables() on all engine models and return combined result."""
         bus_vars = {}
         for engine in self.engine_models:
             engine_bus_vars = engine.get_bus_variables()
@@ -229,9 +217,7 @@ class CorePropulsionBuilder(PropulsionBuilderBase):
 
     # NOTE no unittests!
     def define_order(self):
-        """
-        Call define_order() on all engine models and return combined result.
-        """
+        """Call define_order() on all engine models and return combined result."""
         subsys_order = []
         for engine in self.engine_models:
             engine_subsys_order = engine.define_order()
@@ -241,9 +227,7 @@ class CorePropulsionBuilder(PropulsionBuilderBase):
 
     # NOTE no unittests!
     def get_design_vars(self):
-        """
-        Call get_design_vars() on all engine models and return combined result.
-        """
+        """Call get_design_vars() on all engine models and return combined result."""
         design_vars = {}
         for engine in self.engine_models:
             engine_design_vars = engine.get_design_vars()
@@ -252,9 +236,7 @@ class CorePropulsionBuilder(PropulsionBuilderBase):
         return design_vars
 
     def get_initial_guesses(self):
-        """
-        Call get_initial_guesses() on all engine models and return combined result.
-        """
+        """Call get_initial_guesses() on all engine models and return combined result."""
         initial_guesses = {}
         for engine in self.engine_models:
             engine_initial_guesses = engine.get_initial_guesses()
@@ -264,9 +246,7 @@ class CorePropulsionBuilder(PropulsionBuilderBase):
 
     # NOTE no unittests!
     def get_mass_names(self):
-        """
-        Call get_mass_names() on all engine models and return combined result.
-        """
+        """Call get_mass_names() on all engine models and return combined result."""
         mass_names = {}
         for engine in self.engine_models:
             engine_mass_names = engine.get_mass_names()
@@ -276,9 +256,7 @@ class CorePropulsionBuilder(PropulsionBuilderBase):
 
     # NOTE no unittests!
     def preprocess_inputs(self):
-        """
-        Call get_mass_names() on all engine models and return combined result.
-        """
+        """Call get_mass_names() on all engine models and return combined result."""
         mass_names = {}
         for engine in self.engine_models:
             engine_mass_names = engine.get_mass_names()
@@ -288,9 +266,7 @@ class CorePropulsionBuilder(PropulsionBuilderBase):
 
     # NOTE no unittests!
     def get_outputs(self):
-        """
-        Call get_outputs() on all engine models and return combined result.
-        """
+        """Call get_outputs() on all engine models and return combined result."""
         outputs = []
         for engine in self.engine_models:
             engine_outputs = engine.get_outputs()
@@ -300,7 +276,7 @@ class CorePropulsionBuilder(PropulsionBuilderBase):
 
     def report(self, prob, reports_folder, **kwargs):
         """
-        Generate the report for Aviary core propulsion analysis
+        Generate the report for Aviary core propulsion analysis.
 
         Parameters
         ----------
