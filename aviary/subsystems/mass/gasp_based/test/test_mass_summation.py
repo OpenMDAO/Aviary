@@ -55,6 +55,8 @@ class MassSummationTestCase1(unittest.TestCase):
         )
         self.prob.model.set_input_defaults(Aircraft.Wing.SLAT_CHORD_RATIO, val=0.15)
         self.prob.model.set_input_defaults(Aircraft.Wing.SLAT_SPAN_RATIO, val=0.9)
+        self.prob.model.set_input_defaults(Aircraft.Furnishings.MASS_SCALER, 40.0, units='unitless')
+        self.prob.model.set_input_defaults(Aircraft.Fuselage.CABIN_AREA, val=1069.0, units='ft**2')
 
         setup_model_options(self.prob, V3_bug_fixed_options)
 
@@ -408,6 +410,8 @@ class MassSummationTestCase2(unittest.TestCase):
         self.prob.model.set_input_defaults(Aircraft.Wing.SLAT_CHORD_RATIO, val=0.15)
         self.prob.model.set_input_defaults(Aircraft.Wing.FLAP_CHORD_RATIO, val=0.3)
         self.prob.model.set_input_defaults(Aircraft.Wing.SLAT_SPAN_RATIO, val=0.9)
+        self.prob.model.set_input_defaults(Aircraft.Furnishings.MASS_SCALER, 40.0, units='unitless')
+        self.prob.model.set_input_defaults(Aircraft.Fuselage.CABIN_AREA, val=1069.0, units='ft**2')
 
         setup_model_options(self.prob, options)
 
@@ -763,6 +767,8 @@ class MassSummationTestCase3(unittest.TestCase):
         self.prob.model.set_input_defaults(Aircraft.Wing.SLAT_CHORD_RATIO, val=0.15)
         self.prob.model.set_input_defaults(Aircraft.Wing.FLAP_CHORD_RATIO, val=0.3)
         self.prob.model.set_input_defaults(Aircraft.Wing.SLAT_SPAN_RATIO, val=0.9)
+        self.prob.model.set_input_defaults(Aircraft.Furnishings.MASS_SCALER, 40.0, units='unitless')
+        self.prob.model.set_input_defaults(Aircraft.Fuselage.CABIN_AREA, val=1069.0, units='ft**2')
 
         setup_model_options(self.prob, options)
 
@@ -1114,6 +1120,8 @@ class MassSummationTestCase4(unittest.TestCase):
         self.prob.model.set_input_defaults(Aircraft.Wing.SLAT_CHORD_RATIO, val=0.15)
         self.prob.model.set_input_defaults(Aircraft.Wing.FLAP_CHORD_RATIO, val=0.3)
         self.prob.model.set_input_defaults(Aircraft.Wing.SLAT_SPAN_RATIO, val=0.9)
+        self.prob.model.set_input_defaults(Aircraft.Furnishings.MASS_SCALER, 40.0, units='unitless')
+        self.prob.model.set_input_defaults(Aircraft.Fuselage.CABIN_AREA, val=1069.0, units='ft**2')
 
         setup_model_options(self.prob, options)
 
@@ -1465,6 +1473,8 @@ class MassSummationTestCase5(unittest.TestCase):
         self.prob.model.set_input_defaults(Aircraft.Wing.SLAT_CHORD_RATIO, val=0.15)
         self.prob.model.set_input_defaults(Aircraft.Wing.FLAP_CHORD_RATIO, val=0.3)
         self.prob.model.set_input_defaults(Aircraft.Wing.SLAT_SPAN_RATIO, val=0.9)
+        self.prob.model.set_input_defaults(Aircraft.Furnishings.MASS_SCALER, 40.0, units='unitless')
+        self.prob.model.set_input_defaults(Aircraft.Fuselage.CABIN_AREA, val=1069.0, units='ft**2')
 
         setup_model_options(self.prob, options)
 
@@ -1817,6 +1827,8 @@ class MassSummationTestCase6(unittest.TestCase):
         self.prob.model.set_input_defaults(Aircraft.Wing.SLAT_CHORD_RATIO, val=0.15)
         self.prob.model.set_input_defaults(Aircraft.Wing.FLAP_CHORD_RATIO, val=0.3)
         self.prob.model.set_input_defaults(Aircraft.Wing.SLAT_SPAN_RATIO, val=0.9)
+        self.prob.model.set_input_defaults(Aircraft.Furnishings.MASS_SCALER, 40.0, units='unitless')
+        self.prob.model.set_input_defaults(Aircraft.Fuselage.CABIN_AREA, val=1069.0, units='ft**2')
 
         setup_model_options(self.prob, options)
 
@@ -2180,6 +2192,8 @@ class MassSummationTestCase7(unittest.TestCase):
         self.prob.model.set_input_defaults(Aircraft.Wing.SLAT_CHORD_RATIO, val=0.15)
         self.prob.model.set_input_defaults(Aircraft.Wing.FLAP_CHORD_RATIO, val=0.3)
         self.prob.model.set_input_defaults(Aircraft.Wing.SLAT_SPAN_RATIO, val=0.9)
+        self.prob.model.set_input_defaults(Aircraft.Furnishings.MASS_SCALER, 40.0, units='unitless')
+        self.prob.model.set_input_defaults(Aircraft.Fuselage.CABIN_AREA, val=1069.0, units='ft**2')
 
         setup_model_options(self.prob, options)
 
@@ -2561,6 +2575,8 @@ class MassSummationTestCase8(unittest.TestCase):
         self.prob.model.set_input_defaults(Aircraft.Wing.SLAT_CHORD_RATIO, val=0.15)
         self.prob.model.set_input_defaults(Aircraft.Wing.FLAP_CHORD_RATIO, val=0.3)
         self.prob.model.set_input_defaults(Aircraft.Wing.SLAT_SPAN_RATIO, val=0.9)
+        self.prob.model.set_input_defaults(Aircraft.Furnishings.MASS_SCALER, 40.0, units='unitless')
+        self.prob.model.set_input_defaults(Aircraft.Fuselage.CABIN_AREA, val=1069.0, units='ft**2')
 
         setup_model_options(self.prob, options)
 
@@ -2977,6 +2993,8 @@ class MassSummationTestCase9(unittest.TestCase):
         self.prob.model.set_input_defaults(Aircraft.Wing.SLAT_CHORD_RATIO, val=0.15)
         self.prob.model.set_input_defaults(Aircraft.Wing.FLAP_CHORD_RATIO, val=0.3)
         self.prob.model.set_input_defaults(Aircraft.Wing.SLAT_SPAN_RATIO, val=0.9)
+        self.prob.model.set_input_defaults(Aircraft.Furnishings.MASS_SCALER, 40.0, units='unitless')
+        self.prob.model.set_input_defaults(Aircraft.Fuselage.CABIN_AREA, val=1069.0, units='ft**2')
 
         setup_model_options(self.prob, options)
 

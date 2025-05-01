@@ -16,6 +16,7 @@ from aviary.subsystems.mass.gasp_based.fuel import (
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.enums import Verbosity
 from aviary.variable_info.functions import setup_model_options
+from aviary.variable_info.options import get_option_defaults
 from aviary.variable_info.variables import Aircraft, Mission, Settings
 
 
@@ -1228,9 +1229,6 @@ class BWBFuelMassTestCase(unittest.TestCase):
             Aircraft.Fuel.FUEL_SYSTEM_MASS_COEFFICIENT, val=0.035, units='unitless'
         )
         self.prob.model.set_input_defaults(Aircraft.Fuel.DENSITY, val=6.687, units='lbm/galUS')
-        self.prob.model.set_input_defaults(
-            Aircraft.CrewPayload.PASSENGER_PAYLOAD_MASS, val=33750.0, units='lbm'
-        )
         self.prob.model.set_input_defaults('payload_mass_max', val=48750.0, units='lbm')
         self.prob.model.set_input_defaults(Aircraft.Fuel.FUEL_MARGIN, val=10.0, units='unitless')
 
@@ -1439,9 +1437,6 @@ class BWBFuelMassGroupTest(unittest.TestCase):
             Aircraft.Fuel.FUEL_SYSTEM_MASS_COEFFICIENT, val=0.035, units='unitless'
         )
         self.prob.model.set_input_defaults(Aircraft.Fuel.DENSITY, val=6.687, units='lbm/galUS')
-        self.prob.model.set_input_defaults(
-            Aircraft.CrewPayload.PASSENGER_PAYLOAD_MASS, val=33750.0, units='lbm'
-        )
         self.prob.model.set_input_defaults('payload_mass_max', val=48750.0, units='lbm')
         self.prob.model.set_input_defaults(Aircraft.Fuel.FUEL_MARGIN, val=10.0, units='unitless')
 
@@ -1511,7 +1506,4 @@ class BWBFuelMassGroupTest(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    # unittest.main()
-    test = FuselageMassTestCase1()
-    test.setUp()
-    test.test_case1()
+    unittest.main()
