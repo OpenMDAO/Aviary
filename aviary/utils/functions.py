@@ -587,24 +587,27 @@ def d_smooth_min(x, b, mu=100.0):
     return d_sum_log_exp
 
 
-def smooth_max(x, b, mu=100.0):
+def smooth_max(x, b, mu=10.0):
     """
     Smooth approximation of the min function using the log-sum-exp trick.
 
     Parameters:
     x (float or array-like): First value.
     b (float or array-like): Second value.
-    mu (float): The smoothing factor. Higher values make it closer to the true minimum. Try between 75 and 275.
+    mu (float): The smoothing factor. Higher values make it closer to the true maximum. Try between 75 and 275.
 
     Returns:
-    float or array-like: The smooth approximation of min(x, b).
+    float or array-like: The smooth approximation of max(x, b).
     """
-    sum_log_exp = np.log(np.exp(np.multiply(mu, x)) + np.exp(np.multiply(mu, b)))
-    rv = (1 / mu) * sum_log_exp
-    return rv
+    mu_x = mu * x
+    mu_b = mu * b
+    m = np.maximum(mu_x, mu_b)
+    sum_log_exp = (m + np.log(np.exp(mu_x - m) + np.exp(mu_b - m))) / mu
+
+    return sum_log_exp
 
 
-def d_smooth_max(x, b, mu=100.0):
+def d_smooth_max(x, b, mu=10.0):
     """
     Derivative of function smooth_min(x)
 
@@ -616,7 +619,10 @@ def d_smooth_max(x, b, mu=100.0):
     Returns:
     float or array-like: The smooth approximation of derivative of min(x, b).
     """
-    d_sum_log_exp = np.exp(np.multiply(mu, x)) / (
-        np.exp(np.multiply(mu, x)) + np.exp(np.multiply(mu, b))
-    )
+    mu_x = mu * x
+    mu_b = mu * b
+    m = np.maximum(mu_x, mu_b)
+    numerator = np.exp(mu_x - m)
+    denominator = np.exp(mu_x - m) + np.exp(mu_b - m)
+    d_sum_log_exp = mu * numerator / denominator
     return d_sum_log_exp
