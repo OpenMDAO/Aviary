@@ -67,6 +67,25 @@ class TestAviaryOptionsDict(unittest.TestCase):
         err_text = "builder: Option 'simple' does not have declared units."
         self.assertEqual(str(cm.exception), err_text)
 
+    def test_add_state(self):
+        opts = AviaryOptionsDictionary(parent_name='testing')
+        
+        opts.add_state_options('zzz')
+
+        stems = [
+            'initial', 'final', 'bounds', 'ref', 'ref0', 'defect_ref', 'solve_segments',
+        ]
+        for stem in stems:
+            self.assertTrue(f'zzz_{stem}' in opts)
+
+        opts.add_state_options('u', units='ft')
+        opts['u_final'] = (12.0, 'inch')
+        val = opts['u_final']
+        self.assertEqual(val, (1.0, 'ft'))
+
+        opts.add_state_options('d', defaults={'d_initial': 3.5}, units='m')
+        val = opts['d_initial']
+        self.assertEqual(val, (3.5, 'm'))
 
 if __name__ == '__main__':
     unittest.main()

@@ -149,3 +149,115 @@ class AviaryOptionsDictionary(om.OptionsDictionary):
             phase_info[name] = val
 
         return phase_info
+
+    def add_state_options(self, state_name: str, units: str=None, defaults=None):
+        """
+        Adds all options needed for a state variable.
+
+        For a state named mass, these are mass_initial, mass_final, mass_bounds, mass_ref,
+        mass_ref0, mass_defect_ref, mass_solve_segments.
+
+        Parameters
+        ----------
+        state_name : str
+            Name of this state.
+        units : str
+            Units for this state if it has them.
+        defaults : dict or None
+            Optional dictionary of default values for any state option.
+        """
+        if defaults is None:
+            defaults = {}
+
+        name = f'{state_name}_initial'
+        default = defaults.get(name, None)
+        desc = f'Tuple of (value, units) containing value of {state_name} '
+        desc += 'at the start of the phase.\n'
+        desc += 'When unspecified, the value comes from upstream.\n'
+        desc += f'When specified, a constraint is created on the initial {state_name}.'
+        self.declare(
+            name=name,
+            default=default,
+            types=tuple,
+            allow_none=True,
+            units=units,
+            desc=desc,
+        )
+    
+        name = f'{state_name}_final'
+        default = defaults.get(name, None)
+        desc = f'Tuple of (value, units) containing value of {state_name} '
+        desc += 'at the end of the phase.\n'
+        desc += 'If this phase is connected to a downstream phase, final values should be '
+        desc += f'specified with {state_name}_initial in that phase instead of here.\n'
+        desc += f'When specified, a constraint is created on the final {state_name}.'
+        self.declare(
+            name=name,
+            default=default,
+            types=tuple,
+            allow_none=True,
+            units=units,
+            desc=desc,
+        )
+
+        name = f'{state_name}_bounds'
+        default = defaults.get(name, (None, None))
+        desc = 'Tuple of form ((lower, upper), units) containing the upper and lower bounds for '
+        desc += f'all values of {state_name} in the phase.\n'
+        desc += 'The default of None for upper or lower means that bound will not be declared.\n'
+        self.declare(
+            name=name,
+            default=default,
+            types=tuple,
+            units=units,
+            desc=desc,
+        )
+
+        name = f'{state_name}_ref'
+        default = defaults.get(name, 1.0)
+        desc = f'Multiplicative scale factor "ref" for {state_name}.\n'
+        desc += 'Default is 1.0'
+        self.declare(
+            name=name,
+            default=default,
+            types=float,
+            units=units,
+            desc=desc,
+        )
+
+        name = f'{state_name}_ref0'
+        default = defaults.get(name, 0.0)
+        desc = f'Additive scale factor "ref0" for {state_name}.\n'
+        desc += 'Default is 0.0'
+        self.declare(
+            name=name,
+            default=default,
+            types=float,
+            units=units,
+            desc=desc,
+        )
+
+        name = f'{state_name}_defect_ref'
+        default = defaults.get(name, None)
+        desc = f'Multiplicative scale factor "ref" for the {state_name} defect constraint.\n'
+        desc += 'Default is None, which means the ref and defect_ref are the same.'
+        self.declare(
+            name=name,
+            default=default,
+            types=float,
+            allow_none=True,
+            units=units,
+            desc=desc,
+        )
+
+        name = f'{state_name}_solve_segments'
+        default = defaults.get(name, False)
+        desc = 'When True, a solver will be used to converge the collocation defects within a '
+        desc += 'segment. Note that the state continuity defects between segements will still be '
+        desc += 'handled by the optimizer.'
+        self.declare(
+            name=name,
+            default=default,
+            types=bool,
+            desc=desc,
+        )
