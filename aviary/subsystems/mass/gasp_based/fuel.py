@@ -110,15 +110,18 @@ class BodyTankCalculations(om.ExplicitComponent):
 
         smooth = self.options[Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES]
 
-        if smooth:
-            extra_fuel_volume = sigmoidX(design_fuel_vol - max_wingfuel_vol, 0) * (
-                design_fuel_vol - geometric_fuel_vol
-            )
-        else:
-            if design_fuel_vol < max_wingfuel_vol:
-                extra_fuel_volume = 0.0
-            else:
-                extra_fuel_volume = design_fuel_vol - geometric_fuel_vol
+        extra_fuel_volume = sigmoidX(design_fuel_vol - max_wingfuel_vol, 0) * (
+            design_fuel_vol - geometric_fuel_vol
+        )
+        # if smooth:
+        #     extra_fuel_volume = sigmoidX(design_fuel_vol - max_wingfuel_vol, 0) * (
+        #         design_fuel_vol - geometric_fuel_vol
+        #     )
+        # else:
+        #     if design_fuel_vol < max_wingfuel_vol:
+        #         extra_fuel_volume = 0.0
+        #     else:
+        #         extra_fuel_volume = design_fuel_vol - geometric_fuel_vol
 
         verbosity = self.options[Settings.VERBOSITY]
         if verbosity >= Verbosity.BRIEF:
@@ -164,15 +167,18 @@ class BodyTankCalculations(om.ExplicitComponent):
 
         smooth = self.options[Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES]
 
-        if smooth:
-            extra_fuel_volume = sigmoidX(design_fuel_vol - max_wingfuel_vol, 0) * (
-                design_fuel_vol - geometric_fuel_vol
-            )
-        else:
-            if design_fuel_vol < max_wingfuel_vol:
-                extra_fuel_volume = 0.0
-            else:
-                extra_fuel_volume = design_fuel_vol - geometric_fuel_vol
+        extra_fuel_volume = sigmoidX(design_fuel_vol - max_wingfuel_vol, 0) * (
+            design_fuel_vol - geometric_fuel_vol
+        )
+        # if smooth:
+        #     extra_fuel_volume = sigmoidX(design_fuel_vol - max_wingfuel_vol, 0) * (
+        #         design_fuel_vol - geometric_fuel_vol
+        #     )
+        # else:
+        #     if design_fuel_vol < max_wingfuel_vol:
+        #         extra_fuel_volume = 0.0
+        #     else:
+        #         extra_fuel_volume = design_fuel_vol - geometric_fuel_vol
 
         max_extra_fuel_wt = extra_fuel_volume * rho_fuel
 
