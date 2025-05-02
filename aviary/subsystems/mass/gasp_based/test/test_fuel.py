@@ -46,10 +46,6 @@ class BodyCalculationTestCase1(unittest.TestCase):
         self.prob.model.set_input_defaults(Mission.Design.FUEL_MASS, val=42893.1, units='lbm')
         self.prob.model.set_input_defaults(Aircraft.Design.OPERATING_MASS, val=96508, units='lbm')
 
-        setup_model_options(
-            self.prob, AviaryValues({Aircraft.Engine.NUM_ENGINES: ([2], 'unitless')})
-        )
-
         self.prob.setup(check=False, force_alloc_complex=True)
 
     def test_case1(self):
@@ -97,10 +93,6 @@ class BodyCalculationTestCase2(
         self.prob.model.set_input_defaults(Mission.Design.GROSS_MASS, val=175400, units='lbm')
         self.prob.model.set_input_defaults(Mission.Design.FUEL_MASS, val=44973.0, units='lbm')
         self.prob.model.set_input_defaults(Aircraft.Design.OPERATING_MASS, val=94417, units='lbm')
-
-        setup_model_options(
-            self.prob, AviaryValues({Aircraft.Engine.NUM_ENGINES: ([2], 'unitless')})
-        )
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
@@ -153,10 +145,6 @@ class BodyCalculationTestCase3(unittest.TestCase):
         self.prob.model.set_input_defaults(Mission.Design.FUEL_MASS, val=44973.0, units='lbm')
         self.prob.model.set_input_defaults(Aircraft.Design.OPERATING_MASS, val=94417, units='lbm')
 
-        setup_model_options(
-            self.prob, AviaryValues({Aircraft.Engine.NUM_ENGINES: ([2], 'unitless')})
-        )
-
         self.prob.setup(check=False, force_alloc_complex=True)
 
         partial_data = self.prob.check_partials(out_stream=None, method='cs')
@@ -194,10 +182,6 @@ class BodyCalculationTestCase4smooth(unittest.TestCase):
         self.prob.model.set_input_defaults(Mission.Design.FUEL_MASS, val=42893.1, units='lbm')
         self.prob.model.set_input_defaults(Aircraft.Design.OPERATING_MASS, val=96508, units='lbm')
 
-        setup_model_options(
-            self.prob, AviaryValues({Aircraft.Engine.NUM_ENGINES: ([2], 'unitless')})
-        )
-
         self.prob.setup(check=False, force_alloc_complex=True)
 
     def test_case1(self):
@@ -208,13 +192,174 @@ class BodyCalculationTestCase4smooth(unittest.TestCase):
             self.prob[Aircraft.Fuel.AUXILIARY_FUEL_CAPACITY], 0, tol
         )  # note: not in version 3 output, calulated by hand
         assert_near_equal(
+            self.prob['extra_fuel_volume'], 0.69314718, tol
+        )  # note: not in version 3 output, calulated by hand
+        assert_near_equal(
+            self.prob['max_extra_fuel_mass'], 34.67277748, tol
+        )  # note: not in version 3 output, calulated by hand
+        assert_near_equal(self.prob['wingfuel_mass_min'], 32818.32722252, tol)
+        # note: Aircraft.Fuel.TOTAL_CAPACITY is calculated differently in V3, so it is not included here
+
+        partial_data = self.prob.check_partials(out_stream=None, method='cs')
+        assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
+
+
+class BodyCalculationTestCase5(unittest.TestCase):
+    """
+    This is the Advanced Tube and Wing V3.6 test case.
+    It tests the case Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES = True.
+    """
+
+    def setUp(self):
+        self.prob = om.Problem()
+        self.prob.model.add_subsystem('wing_calcs', BodyTankCalculations(), promotes=['*'])
+        self.prob.model.wing_calcs.options[Settings.VERBOSITY] = Verbosity.QUIET
+        self.prob.model.wing_calcs.options[Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES] = False
+
+        self.prob.model.set_input_defaults(
+            Aircraft.Fuel.WING_VOLUME_DESIGN, val=661.583, units='ft**3'
+        )
+        self.prob.model.set_input_defaults(
+            Aircraft.Fuel.WING_VOLUME_STRUCTURAL_MAX, val=677.554, units='ft**3'
+        )
+        self.prob.model.set_input_defaults('fuel_mass_min', val=14115.342, units='lbm')
+        self.prob.model.set_input_defaults(
+            Mission.Design.FUEL_MASS_REQUIRED, val=30085.342, units='lbm'
+        )
+        self.prob.model.set_input_defaults('max_wingfuel_mass', val=33892.8, units='lbm')
+        self.prob.model.set_input_defaults(
+            Aircraft.Fuel.WING_VOLUME_GEOMETRIC_MAX, val=677.554, units='ft**3'
+        )
+        self.prob.model.set_input_defaults(Aircraft.Fuel.DENSITY, val=6.687, units='lbm/galUS')
+        self.prob.model.set_input_defaults(Mission.Design.GROSS_MASS, val=145388, units='lbm')
+        self.prob.model.set_input_defaults(Mission.Design.FUEL_MASS, val=30085.342, units='lbm')
+        self.prob.model.set_input_defaults(
+            Aircraft.Design.OPERATING_MASS, val=84502.658, units='lbm'
+        )
+
+        self.prob.setup(check=False, force_alloc_complex=True)
+
+    def test_case1(self):
+        self.prob.run_model()
+
+        tol = 1e-7
+        assert_near_equal(
+            self.prob[Aircraft.Fuel.AUXILIARY_FUEL_CAPACITY], 0, tol
+        )  # note: not in version 3 output, calulated by hand
+        assert_near_equal(
             self.prob['extra_fuel_volume'], 0, tol
         )  # note: not in version 3 output, calulated by hand
         assert_near_equal(
             self.prob['max_extra_fuel_mass'], 0, tol
         )  # note: not in version 3 output, calulated by hand
-        assert_near_equal(self.prob['wingfuel_mass_min'], 32853.0, tol)
+        assert_near_equal(self.prob['wingfuel_mass_min'], 14115.342, tol)
         # note: Aircraft.Fuel.TOTAL_CAPACITY is calculated differently in V3, so it is not included here
+
+        partial_data = self.prob.check_partials(out_stream=None, method='cs')
+        assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
+
+
+class BodyCalculationTestCase6smooth(unittest.TestCase):
+    """
+    This is the Advanced Tube and Wing V3.6 test case.
+    It tests the case Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES = True.
+    """
+
+    def setUp(self):
+        self.prob = om.Problem()
+        self.prob.model.add_subsystem('wing_calcs', BodyTankCalculations(), promotes=['*'])
+        self.prob.model.wing_calcs.options[Settings.VERBOSITY] = Verbosity.QUIET
+        self.prob.model.wing_calcs.options[Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES] = True
+
+        self.prob.model.set_input_defaults(
+            Aircraft.Fuel.WING_VOLUME_DESIGN, val=661.583, units='ft**3'
+        )
+        self.prob.model.set_input_defaults(
+            Aircraft.Fuel.WING_VOLUME_STRUCTURAL_MAX, val=677.554, units='ft**3'
+        )
+        self.prob.model.set_input_defaults('fuel_mass_min', val=14115.342, units='lbm')
+        self.prob.model.set_input_defaults(
+            Mission.Design.FUEL_MASS_REQUIRED, val=30085.342, units='lbm'
+        )
+        self.prob.model.set_input_defaults('max_wingfuel_mass', val=33892.8, units='lbm')
+        self.prob.model.set_input_defaults(
+            Aircraft.Fuel.WING_VOLUME_GEOMETRIC_MAX, val=677.554, units='ft**3'
+        )
+        self.prob.model.set_input_defaults(Aircraft.Fuel.DENSITY, val=6.687, units='lbm/galUS')
+        self.prob.model.set_input_defaults(Mission.Design.GROSS_MASS, val=145388, units='lbm')
+        self.prob.model.set_input_defaults(Mission.Design.FUEL_MASS, val=30085.342, units='lbm')
+        self.prob.model.set_input_defaults(
+            Aircraft.Design.OPERATING_MASS, val=84502.658, units='lbm'
+        )
+
+        self.prob.setup(check=False, force_alloc_complex=True)
+
+    def test_case1(self):
+        self.prob.run_model()
+
+        tol = 1e-7
+        assert_near_equal(
+            self.prob[Aircraft.Fuel.AUXILIARY_FUEL_CAPACITY], 0, tol
+        )  # note: not in version 3 output, calulated by hand
+        assert_near_equal(
+            self.prob['extra_fuel_volume'], 0.69314626, tol
+        )  # note: not in version 3 output, calulated by hand
+        assert_near_equal(
+            self.prob['max_extra_fuel_mass'], 34.672731, tol
+        )  # note: not in version 3 output, calulated by hand
+        assert_near_equal(self.prob['wingfuel_mass_min'], 14080.669, tol)
+        # note: Aircraft.Fuel.TOTAL_CAPACITY is calculated differently in V3, so it is not included here
+
+        partial_data = self.prob.check_partials(out_stream=None, method='cs')
+        assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
+
+
+class BodyCalculationTestCase7smooth(unittest.TestCase):
+    """
+    It tests the case Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES = True.
+    """
+
+    def setUp(self):
+        self.prob = om.Problem()
+        self.prob.model.add_subsystem('wing_calcs', BodyTankCalculations(), promotes=['*'])
+        self.prob.model.wing_calcs.options[Settings.VERBOSITY] = Verbosity.QUIET
+        self.prob.model.wing_calcs.options[Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES] = True
+
+        self.prob.model.set_input_defaults(
+            Aircraft.Fuel.WING_VOLUME_DESIGN, val=615.03323815, units='ft**3'
+        )
+        self.prob.model.set_input_defaults(
+            Aircraft.Fuel.WING_VOLUME_STRUCTURAL_MAX, val=620.75516364, units='ft**3'
+        )
+        self.prob.model.set_input_defaults('fuel_mass_min', val=11998.49344063, units='lbm')
+        self.prob.model.set_input_defaults(
+            Mission.Design.FUEL_MASS_REQUIRED, val=27968.49344063, units='lbm'
+        )
+        self.prob.model.set_input_defaults('max_wingfuel_mass', val=31051.56633854, units='lbm')
+        self.prob.model.set_input_defaults(
+            Aircraft.Fuel.WING_VOLUME_GEOMETRIC_MAX, val=620.75516364, units='ft**3'
+        )
+        self.prob.model.set_input_defaults(Aircraft.Fuel.DENSITY, val=6.687, units='lbm/galUS')
+        self.prob.model.set_input_defaults(Mission.Design.GROSS_MASS, val=143100.0, units='lbm')
+        self.prob.model.set_input_defaults(
+            Mission.Design.FUEL_MASS, val=26236.86063849, units='lbm'
+        )
+        self.prob.model.set_input_defaults(
+            Aircraft.Design.OPERATING_MASS, val=84331.50655937, units='lbm'
+        )
+
+        self.prob.setup(check=False, force_alloc_complex=True)
+
+    def test_case1(self):
+        self.prob.run_model()
+
+        tol = 1e-7
+        assert_near_equal(
+            self.prob[Aircraft.Fuel.AUXILIARY_FUEL_CAPACITY], 0, tol
+        )  # note: not in version 3 output, calulated by hand
+        assert_near_equal(self.prob['extra_fuel_volume'], 0.68385622, tol)
+        assert_near_equal(self.prob['max_extra_fuel_mass'], 34.20802285, tol)
+        assert_near_equal(self.prob['wingfuel_mass_min'], 11964.285, tol)
 
         partial_data = self.prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
@@ -1483,7 +1628,7 @@ class BWBFuelMassGroupTest(unittest.TestCase):
         assert_near_equal(self.prob['max_wingfuel_mass'], 26646.849, tol)
 
         # sys and fus
-        assert_near_equal(self.prob['fus_mass_full'], 121859.325, tol)
+        assert_near_equal(self.prob['fus_mass_full'], 121862.009, tol)
         assert_near_equal(self.prob[Aircraft.Fuel.FUEL_SYSTEM_MASS], 932.8389, tol)
 
         # fus and struct
@@ -1498,12 +1643,15 @@ class BWBFuelMassGroupTest(unittest.TestCase):
 
         # body tank
         assert_near_equal(self.prob[Aircraft.Fuel.AUXILIARY_FUEL_CAPACITY], 0.0, tol)
-        assert_near_equal(self.prob['body_tank.extra_fuel_volume'], 0.06011982, tol)
-        assert_near_equal(self.prob['body_tank.max_extra_fuel_mass'], 3.0073281, tol)
+        assert_near_equal(self.prob['body_tank.extra_fuel_volume'], 0.11377431, tol)
+        assert_near_equal(self.prob['body_tank.max_extra_fuel_mass'], 5.69124619, tol)
 
         partial_data = self.prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=2e-11, rtol=1e-12)
 
 
 if __name__ == '__main__':
-    unittest.main()
+    # unittest.main()
+    test = BodyCalculationTestCase7smooth()
+    test.setUp()
+    test.test_case1()
