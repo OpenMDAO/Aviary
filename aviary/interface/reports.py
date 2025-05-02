@@ -276,7 +276,7 @@ def input_check_report(prob, **kwargs):
     except AttributeError:
 
         def prom2abs(prom_name):
-            return model._var_allprocs_prom2abs_list['input'][prom_name][0]
+            return model._var_allprocs_prom2abs_list['input'][prom_name]
 
         def abs2prom(abs_name):
             return model._var_allprocs_abs2prom['input'][abs_name]
