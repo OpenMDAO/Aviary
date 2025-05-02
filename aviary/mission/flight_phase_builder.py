@@ -25,6 +25,86 @@ from aviary.variable_info.variables import Aircraft, Dynamic
 
 class FlightPhaseOptions(AviaryOptionsDictionary):
     def declare_options(self):
+
+        self.declare(
+            name='num_segments',
+            types=int,
+            default=1,
+            desc='The number of segments in transcription creation in Dymos. '
+            'The default value is 1.',
+        )
+
+        self.declare(
+            name='order',
+            types=int,
+            default=3,
+            desc='The order of polynomials for interpolation in the transcription '
+            'created in Dymos. The default value is 3.',
+        )
+
+        # TODO: These defaults aren't great.
+        defaults = {
+            'mass_ref': 1e4,
+            'mass_defect_ref': 1e6,
+            'mass_bounds': (0.0, None),
+        }
+        self.add_state_options('mass', units='kg', defaults=defaults)
+
+        self.add_state_options('distance', units='m')
+        self.add_control_options('altitude', units='ft')
+        self.add_control_options('mach', units='unitless')
+
+        self.declare(
+            name='throttle_enforcement',
+            default='path_constraint',
+            values=['path_constraint', 'boundary_constraint', 'bounded', None],
+            desc='Flag to enforce engine throttle constraints on the path or at the segment '
+            'boundaries or using solver bounds.',
+        )
+
+        self.declare(
+            name='throttle_allocation',
+            default=ThrottleAllocation.FIXED,
+            values=[
+                ThrottleAllocation.FIXED,
+                ThrottleAllocation.STATIC,
+                ThrottleAllocation.DYNAMIC,
+            ],
+            desc='Specifies how to handle the throttles for multiple engines. FIXED is a '
+            'user-specified value. STATIC is specified by the optimizer as one value for the '
+            'whole phase. DYNAMIC is specified by the optimizer at each point in the phase.',
+        )
+
+        self.declare(
+            name='required_available_climb_rate',
+            default=None,
+            units='ft/s',
+            desc='Adds a constraint requiring Dynamic.Mission.ALTITUDE_RATE_MAX to be no '
+            'smaller than required_available_climb_rate. This helps to ensure that the '
+            'propulsion system is large enough to handle emergency maneuvers at all points '
+            'throughout the flight envelope. Default value is None for no constraint.',
+        )
+
+        self.declare(
+            name='ground_roll',
+            types=bool,
+            default=False,
+            desc='Set to True only for phases where the aircraft is rolling on the ground. '
+            'All other phases of flight (climb, cruise, descent) this must be set to False.',
+        )
+
+        self.declare(
+            name='constraints',
+            types=dict,
+            default={},
+            desc="Add in custom constraints i.e. 'flight_path_angle': {'equals': -3., "
+            "'loc': 'initial', 'units': 'deg', 'type': 'boundary',}. For more details see "
+            '_add_user_defined_constraints().',
+        )
+
+
+        # untreated
+
         self.declare(
             'reserve',
             types=bool,
@@ -52,22 +132,6 @@ class FlightPhaseOptions(AviaryOptionsDictionary):
         )
 
         self.declare(
-            name='num_segments',
-            types=int,
-            default=1,
-            desc='The number of segments in transcription creation in Dymos. '
-            'The default value is 1.',
-        )
-
-        self.declare(
-            name='order',
-            types=int,
-            default=3,
-            desc='The order of polynomials for interpolation in the transcription '
-            'created in Dymos. The default value is 3.',
-        )
-
-        self.declare(
             name='polynomial_control_order',
             types=int,
             default=3,
@@ -81,22 +145,6 @@ class FlightPhaseOptions(AviaryOptionsDictionary):
             default=True,
             desc='Set fo True to use polynomial controls in this phase, which smooths the '
             'control inputs.',
-        )
-
-        self.declare(
-            name='ground_roll',
-            types=bool,
-            default=False,
-            desc='Set to True only for phases where the aircraft is rolling on the ground. '
-            'All other phases of flight (climb, cruise, descent) this must be set to False.',
-        )
-
-        self.declare(
-            name='add_initial_mass_constraint',
-            types=bool,
-            default=False,
-            desc='Use a constraint for mass instead of connected initial mass for this phase. '
-            'Overwrites input_initial=True and sets it to False.',
         )
 
         self.declare(
@@ -153,16 +201,6 @@ class FlightPhaseOptions(AviaryOptionsDictionary):
             units='min',
             desc='Lower and upper bounds on the phase duration, in the form of a nested tuple: '
             'i.e. ((20, 36), "min") This constrains the duration to be between 20 and 36 min.',
-        )
-
-        self.declare(
-            name='required_available_climb_rate',
-            default=None,
-            units='ft/s',
-            desc='Adds a constraint requiring Dynamic.Mission.ALTITUDE_RATE_MAX to be no '
-            'smaller than required_available_climb_rate. This helps to ensure that the '
-            'propulsion system is large enough to handle emergency maneuvers at all points '
-            'throughout the flight envelope. Default value is None for no constraint.',
         )
 
         self.declare(
@@ -226,27 +264,6 @@ class FlightPhaseOptions(AviaryOptionsDictionary):
         )
 
         self.declare(
-            name='throttle_enforcement',
-            default='path_constraint',
-            values=['path_constraint', 'boundary_constraint', 'bounded', None],
-            desc='Flag to enforce engine throttle constraints on the path or at the segment '
-            'boundaries or using solver bounds.',
-        )
-
-        self.declare(
-            name='throttle_allocation',
-            default=ThrottleAllocation.FIXED,
-            values=[
-                ThrottleAllocation.FIXED,
-                ThrottleAllocation.STATIC,
-                ThrottleAllocation.DYNAMIC,
-            ],
-            desc='Specifies how to handle the throttles for multiple engines. FIXED is a '
-            'user-specified value. STATIC is specified by the optimizer as one value for the '
-            'whole phase. DYNAMIC is specified by the optimizer at each point in the phase.',
-        )
-
-        self.declare(
             name='mach_bounds',
             types=tuple,
             default=(None, None),
@@ -271,15 +288,6 @@ class FlightPhaseOptions(AviaryOptionsDictionary):
             default=False,
             desc='if True, use a nonlinear solver to converge the distance state variable to '
             'the desired value. Otherwise uses the optimizer to converge the distance state.',
-        )
-
-        self.declare(
-            name='constraints',
-            types=dict,
-            default={},
-            desc="Add in custom constraints i.e. 'flight_path_angle': {'equals': -3., "
-            "'loc': 'initial', 'units': 'deg', 'type': 'boundary',}. For more details see "
-            '_add_user_defined_constraints().',
         )
 
 
@@ -323,6 +331,7 @@ class FlightPhaseBase(PhaseBuilderBase):
         dymos.Phase
         """
         phase: dm.Phase = super().build_phase(aviary_options)
+        self.phase = phase
 
         num_engine_type = len(aviary_options.get_val(Aircraft.Engine.NUM_ENGINES))
 
@@ -355,31 +364,15 @@ class FlightPhaseBase(PhaseBuilderBase):
         input_initial_mass = get_initial(input_initial, Dynamic.Vehicle.MASS)
         fix_initial_mass = get_initial(fix_initial, Dynamic.Vehicle.MASS, True)
 
-        # Experiment: use a constraint for mass instead of connected initial.
-        # This is due to some problems in mpi.
-        # This is needed for the cutting edge full subsystem integration.
-        # TODO: when a Dymos fix is in and we've verified that full case works with the fix,
-        # remove this argument.
-        if user_options['add_initial_mass_constraint']:
-            phase.add_constraint('rhs_all.initial_mass_residual', equals=0.0, ref=1e4)
-            input_initial_mass = False
-
         if phase_type is EquationsOfMotion.HEIGHT_ENERGY:
             rate_source = Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL
         else:
             rate_source = 'dmass_dr'
 
-        phase.add_state(
+        self.add_state(
+            'mass',
             Dynamic.Vehicle.MASS,
-            fix_initial=fix_initial_mass,
-            fix_final=False,
-            lower=0.0,
-            ref=1e4,
-            defect_ref=1e6,
-            units='kg',
-            rate_source=rate_source,
-            targets=Dynamic.Vehicle.MASS,
-            input_initial=input_initial_mass,
+            rate_source
         )
 
         if phase_type is EquationsOfMotion.HEIGHT_ENERGY:

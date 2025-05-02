@@ -394,6 +394,43 @@ class PhaseBuilderBase(ABC):
             duration_ref=duration_ref,
         )
 
+    def add_state(self, name, target, rate_source):
+        """
+        Add a state to this phase.
+
+        Parameters
+        ----------
+        name : str
+            The name of this state.
+        target : str
+            State promoted variable path to the ODE.
+        rate_source : str
+            Source of the state rate in the ODE.
+        """
+        options = self.user_options
+
+        initial, _= options[f'{name}_initial']
+        final, _ = options[f'{name}_final']
+        bounds, units = options[f'{name}_bounds']
+        ref, _ = options[f'{name}_ref']
+        ref0, _ = options[f'{name}_ref0']
+        defect_ref, _ = options[f'{name}_defect_ref']
+
+        self.phase.add_state(
+            target,
+            fix_initial=initial is not None,
+            input_initial=initial is None,
+            fix_final=final is not None,
+            lower=bounds[0],
+            upper=bounds[1],
+            units=units,
+            rate_source=rate_source,
+            targets=target,
+            ref=ref,
+            ref0=ref0,
+            defect_ref=defect_ref,
+        )
+
     def add_velocity_state(self, user_options):
         """Add velocity state: lower and upper bounds, reference, zero-reference, and state defect reference."""
         velocity_lower = user_options.get_val('velocity_lower', units='kn')

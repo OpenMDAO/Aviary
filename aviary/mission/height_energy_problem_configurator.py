@@ -394,9 +394,7 @@ class HeightEnergyProblemConfigurator(ProblemConfiguratorBase):
 
     def _add_post_mission_takeoff_systems(self, prob):
         first_flight_phase_name = list(prob.phase_info.keys())[0]
-        connect_takeoff_to_climb = not prob.phase_info[first_flight_phase_name]['user_options'].get(
-            'add_initial_mass_constraint', True
-        )
+        connect_takeoff_to_climb = True
 
         if connect_takeoff_to_climb:
             prob.model.connect(

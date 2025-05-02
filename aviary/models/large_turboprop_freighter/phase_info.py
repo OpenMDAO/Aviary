@@ -23,7 +23,6 @@ energy_phase_info = {
             'fix_duration': False,
             'initial_bounds': ((0.0, 0.0), 'min'),
             'duration_bounds': ((24.0, 192.0), 'min'),
-            'add_initial_mass_constraint': False,
         },
     },
     'cruise': {

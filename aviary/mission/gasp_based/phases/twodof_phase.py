@@ -88,14 +88,6 @@ class TwoDOFPhaseOptions(AviaryOptionsDictionary):
         )
 
         self.declare(
-            name='add_initial_mass_constraint',
-            types=bool,
-            default=False,
-            desc='Use a constraint for mass instead of connected initial mass for this phase. '
-            'Overwrites input_initial=True and sets it to False.',
-        )
-
-        self.declare(
             name='input_initial',
             types=bool,
             default=False,

@@ -183,7 +183,7 @@ class AviaryOptionsDictionary(om.OptionsDictionary):
             units=units,
             desc=desc,
         )
-    
+
         name = f'{state_name}_final'
         default = defaults.get(name, None)
         desc = f'Tuple of (value, units) containing value of {state_name} '
@@ -262,7 +262,7 @@ class AviaryOptionsDictionary(om.OptionsDictionary):
             desc=desc,
         )
 
-    def add_control_options(self, state_name: str, units: str=None, defaults=None):
+    def add_control_options(self, ctrl_name: str, units: str=None, defaults=None):
         """
         Adds all options needed for a control variable.
 
@@ -271,12 +271,115 @@ class AviaryOptionsDictionary(om.OptionsDictionary):
 
         Parameters
         ----------
-        state_name : str
-            Name of this state.
+        ctrl_name : str
+            Name of this control variable.
         units : str
-            Units for this state if it has them.
+            Units for this control if it has them.
         defaults : dict or None
-            Optional dictionary of default values for any state option.
+            Optional dictionary of default values for any control option.
         """
         if defaults is None:
             defaults = {}
+
+        name = f'{ctrl_name}_initial'
+        default = defaults.get(name, None)
+        desc = f'Tuple of (value, units) containing value of {ctrl_name} '
+        desc += 'at the start of the phase.\n'
+        desc += 'When unspecified, the value comes from upstream.\n'
+        desc += f'When specified, a constraint is created on the initial {ctrl_name}.'
+        self.declare(
+            name=name,
+            default=default,
+            types=tuple,
+            allow_none=True,
+            units=units,
+            desc=desc,
+        )
+
+        name = f'{ctrl_name}_final'
+        default = defaults.get(name, None)
+        desc = f'Tuple of (value, units) containing value of {ctrl_name} '
+        desc += 'at the end of the phase.\n'
+        desc += 'If this phase is connected to a downstream phase, final values should be '
+        desc += f'specified with {ctrl_name}_initial in that phase instead of here.\n'
+        desc += f'When specified, a constraint is created on the final {ctrl_name}.'
+        self.declare(
+            name=name,
+            default=default,
+            types=tuple,
+            allow_none=True,
+            units=units,
+            desc=desc,
+        )
+
+        name = f'{ctrl_name}_bounds'
+        default = defaults.get(name, (None, None))
+        desc = 'Tuple of form ((lower, upper), units) containing the upper and lower bounds for '
+        desc += f'all values of {ctrl_name} in the phase.\n'
+        desc += 'The default of None for upper or lower means that bound will not be declared.\n'
+        self.declare(
+            name=name,
+            default=default,
+            types=tuple,
+            units=units,
+            desc=desc,
+        )
+
+        name = f'{ctrl_name}_ref'
+        default = defaults.get(name, 1.0)
+        desc = f'Multiplicative scale factor "ref" for {ctrl_name}.\n'
+        desc += 'Default is 1.0'
+        self.declare(
+            name=name,
+            default=default,
+            types=float,
+            units=units,
+            desc=desc,
+        )
+
+        name = f'{ctrl_name}_ref0'
+        default = defaults.get(name, 0.0)
+        desc = f'Additive scale factor "ref0" for {ctrl_name}.\n'
+        desc += 'Default is 0.0'
+        self.declare(
+            name=name,
+            default=default,
+            types=float,
+            units=units,
+            desc=desc,
+        )
+
+        name = f'{ctrl_name}_polynomial_order'
+        default = defaults.get(name, None)
+        desc = f'The order of polynomials for interpolation in the transcription.\n'
+        desc += 'Default is None, which does not use a polynomial.'
+        self.declare(
+            name=name,
+            default=default,
+            types=float,
+            allow_none=True,
+            desc=desc,
+        )
+
+        name = f'{ctrl_name}_optimize'
+        default = defaults.get(name, True)
+        desc = f'When True, the optimizer will set this value. When False, the initial value '
+        desc += 'can be set by the user in the initial_conditions section of the phase.'
+        self.declare(
+            name=name,
+            default=default,
+            types=bool,
+            desc=desc,
+        )
+
+        name = f'{ctrl_name}_rate_constraint'
+        default = defaults.get(name, None)
+        desc = f'Can be (None, positive, negative.)  When not None, adds a constraint that keeps '
+        desc += 'the rate positive or negative as requested. For altitude in a flight phase, '
+        desc += 'negative means no climb, and positive means no descent.'
+        self.declare(
+            name=name,
+            default=default,
+            values=[None, 'positive', 'negative'],
+            desc=desc,
+        )

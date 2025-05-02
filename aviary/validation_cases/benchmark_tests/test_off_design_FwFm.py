@@ -39,7 +39,6 @@ class HeightEnergyTestCase(unittest.TestCase):
                     'initial_bounds': ((0.0, 2.0), 'min'),
                     'duration_bounds': ((5.0, 50.0), 'min'),
                     'no_descent': False,
-                    'add_initial_mass_constraint': False,
                 },
                 'initial_guesses': {'time': ([0, 40.0], 'min')},
             },
