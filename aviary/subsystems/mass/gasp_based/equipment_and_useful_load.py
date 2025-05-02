@@ -721,12 +721,12 @@ class FurnishingMass(om.ExplicitComponent):
                 dfurnishing_wt_dacabin = 0.0
 
         if smooth:
-            sm_fact = d_smooth_max(furnishing_wt, 30.0, mu)
-            dfurnishing_wt_dcabin_width = sm_fact * dfurnishing_wt_dcabin_width
-            dfurnishing_wt_dgross_wt_initial = sm_fact * dfurnishing_wt_dgross_wt_initial
-            dfurnishing_wt_dfus_len = sm_fact * dfurnishing_wt_dfus_len
-            dfurnishing_wt_dscaler = sm_fact * dfurnishing_wt_dscaler
-            dfurnishing_wt_dacabin = sm_fact * dfurnishing_wt_dacabin
+            sm_fac = d_smooth_max(furnishing_wt, 30.0, mu)
+            dfurnishing_wt_dcabin_width = sm_fac * dfurnishing_wt_dcabin_width
+            dfurnishing_wt_dgross_wt_initial = sm_fac * dfurnishing_wt_dgross_wt_initial
+            dfurnishing_wt_dfus_len = sm_fac * dfurnishing_wt_dfus_len
+            dfurnishing_wt_dscaler = sm_fac * dfurnishing_wt_dscaler
+            dfurnishing_wt_dacabin = sm_fac * dfurnishing_wt_dacabin
         else:
             if furnishing_wt < 30.0:  # note: this technically creates a discontinuity
                 dfurnishing_wt_dcabin_width = 0.0
