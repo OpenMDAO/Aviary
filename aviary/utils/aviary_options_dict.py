@@ -261,3 +261,22 @@ class AviaryOptionsDictionary(om.OptionsDictionary):
             types=bool,
             desc=desc,
         )
+
+    def add_control_options(self, state_name: str, units: str=None, defaults=None):
+        """
+        Adds all options needed for a control variable.
+
+        For a control named mach, these are mach_initial, mach_final, mach_bounds, mach_ref,
+        mach_ref0, mach_defect_ref, mach_solve_segments.
+
+        Parameters
+        ----------
+        state_name : str
+            Name of this state.
+        units : str
+            Units for this state if it has them.
+        defaults : dict or None
+            Optional dictionary of default values for any state option.
+        """
+        if defaults is None:
+            defaults = {}
