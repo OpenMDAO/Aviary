@@ -197,6 +197,7 @@ class Aircraft:
         HYBRID_CABLE_LENGTH = 'aircraft:electrical:hybrid_cable_length'
         MASS = 'aircraft:electrical:mass'
         MASS_SCALER = 'aircraft:electrical:mass_scaler'
+        SYSTEM_MASS_PER_PASSENGER = 'aircraft:electrical:system_mass_per_passenger'
 
     class Engine:
         ADDITIONAL_MASS = 'aircraft:engine:additional_mass'

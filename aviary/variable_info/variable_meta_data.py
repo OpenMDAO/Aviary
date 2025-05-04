@@ -1800,6 +1800,15 @@ add_meta_data(
     default_value=1.0,
 )
 
+add_meta_data(
+    Aircraft.Electrical.SYSTEM_MASS_PER_PASSENGER,
+    meta_data=_MetaData,
+    historical_name={'GASP': 'INGASP.CW(15)', 'FLOPS': None, 'LEAPS1': None},
+    units='lbm',
+    desc='electrical system weight per passenger. In GASP, default 16.0',
+    default_value=0.0,
+)
+
 #  ______                   _
 # |  ____|                 (_)
 # | |__     _ __     __ _   _   _ __     ___
