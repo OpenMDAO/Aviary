@@ -1651,7 +1651,4 @@ class BWBFuelMassGroupTest(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    # unittest.main()
-    test = BodyCalculationTestCase7smooth()
-    test.setUp()
-    test.test_case1()
+    unittest.main()

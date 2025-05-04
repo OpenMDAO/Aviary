@@ -1509,7 +1509,4 @@ class BWBDesignLoadGroupTestCaseSmooth(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    # unittest.main()
-    test = BWBLoadSpeedsTestCATD2()
-    test.setUp()
-    test.test_case2()
+    unittest.main()
