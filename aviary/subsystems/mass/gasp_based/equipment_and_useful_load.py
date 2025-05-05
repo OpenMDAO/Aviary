@@ -125,9 +125,11 @@ class EquipMassPartial(om.ExplicitComponent):
 
         engine_type = self.options[Aircraft.Engine.TYPE][0]
 
-        APU_wt = 0.0
         if PAX > 35.0:
             APU_wt = 26.2 * PAX**0.944 - 13.6 * PAX
+        else:
+            APU_wt = 0.0
+        # The following if-block should be removed. Aircraft.APU.MASS should be output, not input.
         if not (-1e-5 < inputs[Aircraft.APU.MASS] < 1e-5):
             # note: this technically creates a discontinuity
             APU_wt = inputs[Aircraft.APU.MASS] * GRAV_ENGLISH_LBM
@@ -160,7 +162,12 @@ class EquipMassPartial(om.ExplicitComponent):
 
         if PAX < 20:
             if smooth:
-                # where does it come from?
+                # Exponential regression from four points:
+                # (3000, 65), (5500, 113), (7500, 163), (11000, 340)
+                # avionics_wt = 36.2 * exp(0.0002024 * gross_wt_initial)
+                # Exponential regression from five points:
+                # (0, 27), (3000, 65), (5500, 113), (7500, 163), (11000, 340)
+                # avionics_wt = 30.03 * exp(0.0002262 * gross_wt_initial)
                 avionics_wt = 35.538 * np.exp(0.0002 * gross_wt_initial)
             else:
                 if gross_wt_initial >= 3000.0:  # note: this technically creates a discontinuity
@@ -179,6 +186,7 @@ class EquipMassPartial(om.ExplicitComponent):
             avionics_wt = 600.0
         if PAX > 100:
             avionics_wt = 2.8 * PAX + 1010.0
+        # The following if-block should be removed. Aircraft.Avionics.MASS should be output, not input.
         if not (-1e-5 < inputs[Aircraft.Avionics.MASS] < 1e-5):
             # note: this technically creates a discontinuity !WILL NOT CHANGE
             avionics_wt = inputs[Aircraft.Avionics.MASS] * GRAV_ENGLISH_LBM
@@ -187,11 +195,13 @@ class EquipMassPartial(om.ExplicitComponent):
         icing_wt = 22.7 * (SSUM**0.5) - 385.0
 
         if smooth:
+            # This should be implemented:
             # icing_wt = smooth_max(icing_wt, 0.0, mu)
             pass
         else:
             if icing_wt < 0.0:  # note: this technically creates a discontinuity
                 icing_wt = 0.0
+        # The following if-block should be removed. Aircraft.AntiIcing.MASS should be output, not input.
         if not (-1e-5 < inputs[Aircraft.AntiIcing.MASS] < 1e-5):
             # note: this technically creates a discontinuity !WILL NOT CHANGE
             icing_wt = inputs[Aircraft.AntiIcing.MASS] * GRAV_ENGLISH_LBM
@@ -242,6 +252,7 @@ class EquipMassPartial(om.ExplicitComponent):
         engine_type = self.options[Aircraft.Engine.TYPE][0]
 
         dAPU_wt_dmass_coeff_0 = 0.0
+        # The following if-block should be removed. Aircraft.APU.MASS should be output, not input.
         if not (-1e-5 < inputs[Aircraft.APU.MASS] < 1e-5):
             # note: this technically creates a discontinuity
             dAPU_wt_dmass_coeff_0 = GRAV_ENGLISH_LBM
@@ -305,26 +316,14 @@ class EquipMassPartial(om.ExplicitComponent):
 
         davionics_wt_dmass_coeff_4 = 0.0
 
-        if smooth:
-            davionics_wt_dgross_wt_initial = 0.0071076 * np.exp(0.0002 * gross_wt_initial)
+        if PAX < 20:
+            if smooth:
+                davionics_wt_dgross_wt_initial = 0.0071076 * np.exp(0.0002 * gross_wt_initial)
+            else:
+                davionics_wt_dgross_wt_initial = 0.0
         else:
-            if gross_wt_initial >= 3000.0:  # note: this technically creates a discontinuity
-                davionics_wt_dgross_wt_initial = 0.0
-            if gross_wt_initial >= 5500.0:  # note: this technically creates a discontinuity
-                davionics_wt_dgross_wt_initial = 0.0
-            if gross_wt_initial >= 7500.0:  # note: this technically creates a discontinuity
-                davionics_wt_dgross_wt_initial = 0.0
-            if gross_wt_initial >= 11000.0:  # note: this technically creates a discontinuity
-                davionics_wt_dgross_wt_initial = 0.0
-
-        if PAX >= 20.0 and PAX < 30.0:
             davionics_wt_dgross_wt_initial = 0.0
-        elif PAX >= 30.0 and PAX <= 50.0:
-            davionics_wt_dgross_wt_initial = 0.0
-        elif PAX > 50.0:
-            davionics_wt_dgross_wt_initial = 0.0
-        if PAX > 100.0:
-            davionics_wt_dgross_wt_initial = 0.0
+        # The following if-block should be removed. Aircraft.Avionics.MASS should be output, not input.
         if not (-1e-5 < inputs[Aircraft.Avionics.MASS] < 1e-5):
             # note: this technically creates a discontinuity !WILL NOT CHANGE
             davionics_wt_dgross_wt_initial = 0.0
@@ -339,6 +338,7 @@ class EquipMassPartial(om.ExplicitComponent):
         dicing_weight_dmass_coeff_6 = 0.0
 
         if smooth:
+            # The partials of smooth_max should be implemented here.
             pass
         else:
             if icing_wt < 0.0:  # note: this technically creates a discontinuity
@@ -347,6 +347,7 @@ class EquipMassPartial(om.ExplicitComponent):
                 dicing_weight_dhtail_area = 0.0
                 dicing_weight_dvtail_area = 0.0
                 dicing_weight_dmass_coeff_6 = 0.0
+        # The following if-block should be removed. Aircraft.AntiIcing.MASS should be output, not input.
         if not (-1e-5 < inputs[Aircraft.AntiIcing.MASS] < 1e-5):
             # note: this technically creates a discontinuity !WILL NOT CHANGE
             icing_wt = inputs[Aircraft.AntiIcing.MASS] * GRAV_ENGLISH_LBM
@@ -355,19 +356,15 @@ class EquipMassPartial(om.ExplicitComponent):
             dicing_weight_dvtail_area = 0.0
             dicing_weight_dmass_coeff_6 = GRAV_ENGLISH_LBM
 
-        if smooth:
-            d_aux_wt_dgross_wt_initial = (
-                3 * dSigmoidXdx(gross_wt_initial / 3000, 1, 0.01) * 1 / 3000
-            )
+        if PAX < 9:
+            if smooth:
+                d_aux_wt_dgross_wt_initial = (
+                    3 * dSigmoidXdx(gross_wt_initial / 3000, 1, 0.01) * 1 / 3000
+                )
+            else:
+                if gross_wt_initial > 3000.0:  # note: this technically creates a discontinuity
+                    d_aux_wt_dgross_wt_initial = 0.0
         else:
-            if gross_wt_initial > 3000.0:  # note: this technically creates a discontinuity
-                d_aux_wt_dgross_wt_initial = 0.0
-
-        if PAX >= 9.0:
-            d_aux_wt_dgross_wt_initial = 0.0
-        if PAX > 19.0:
-            d_aux_wt_dgross_wt_initial = 0.0
-        if PAX > 74.0:
             d_aux_wt_dgross_wt_initial = 0.0
 
         dfixed_equip_mass_dmass_coeff_0 = dAPU_wt_dmass_coeff_0 / GRAV_ENGLISH_LBM
@@ -932,6 +929,7 @@ class UsefulLoadMass(om.ExplicitComponent):
             emergency_wt = 15.0
         if PAX >= 35.0:
             emergency_wt = 25.0 * num_flight_attendants + 15.0
+        # The following if-block should be removed. Aircraft.Design.EMERGENCY_EQUIPMENT_MASS should be output, not input.
         if not (-1e-5 < inputs[Aircraft.Design.EMERGENCY_EQUIPMENT_MASS] < 1e-5):
             emergency_wt = inputs[Aircraft.Design.EMERGENCY_EQUIPMENT_MASS] * GRAV_ENGLISH_LBM
 
@@ -1001,6 +999,7 @@ class UsefulLoadMass(om.ExplicitComponent):
             dwater_wt_dmass_coeff_9 = (PAX + num_pilots + num_flight_attendants) * GRAV_ENGLISH_LBM
 
         demergency_wt_dmass_coeff_10 = 0.0
+        # The following if-block should be removed. Aircraft.Design.EMERGENCY_EQUIPMENT_MASS should be output, not input.
         if not (-1e-5 < inputs[Aircraft.Design.EMERGENCY_EQUIPMENT_MASS] < 1e-5):
             demergency_wt_dmass_coeff_10 = GRAV_ENGLISH_LBM
 
