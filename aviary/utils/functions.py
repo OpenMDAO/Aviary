@@ -311,8 +311,15 @@ def promote_aircraft_and_mission_vars(group):
         if comp.name == 'core_subsystems':
             continue
 
-        out_names = [item for item in comp._var_allprocs_prom2abs_list['output']]
-        in_names = [item for item in comp._var_allprocs_prom2abs_list['input']]
+        try:
+            resolver = comp._resolver
+            out_names = [item for item in resolver.prom_iter(iotype='output')]
+            in_names = [item for item in resolver.prom_iter(iotype='input')]
+
+        except AttributeError:
+            # This is an older version of OpenMDAO
+            out_names = [item for item in comp._var_allprocs_prom2abs_list['output']]
+            in_names = [item for item in comp._var_allprocs_prom2abs_list['input']]
 
         external_outputs.extend(out_names)
 
