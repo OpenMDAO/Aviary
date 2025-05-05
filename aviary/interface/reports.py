@@ -262,12 +262,28 @@ def input_check_report(prob, **kwargs):
     report_file = reports_folder / 'input_checks.md'
 
     model = prob.model
-    abs2prom = model._var_allprocs_abs2prom['input']
-    prom2abs = model._var_allprocs_prom2abs_list['input']
+
+    # a change in OpenMDAO 3.38.1-dev adds a resolver in place of the prom2abs/abs2prom attributes
+    try:
+        resolver = model._resolver
+
+        def prom2abs(prom_name):
+            return resolver.absnames(prom_name, 'input')
+
+        def abs2prom(abs_name):
+            return resolver.abs2prom(abs_name, 'input')
+
+    except AttributeError:
+
+        def prom2abs(prom_name):
+            return model._var_allprocs_prom2abs_list['input'][prom_name]
+
+        def abs2prom(abs_name):
+            return model._var_allprocs_abs2prom['input'][abs_name]
 
     # Find all unconnected inputs.
     all_ivc_abs = [k for k, v in model._conn_abs_in2out.items() if 'ivc' in v]
-    all_ivc_prom = [abs2prom[v] for v in all_ivc_abs]
+    all_ivc_prom = [abs2prom(v) for v in all_ivc_abs]
 
     aviary_metadata = prob.meta_data
     aviary_inputs = prob.aviary_inputs
@@ -297,7 +313,7 @@ def input_check_report(prob, **kwargs):
                 units = metadata['units']
                 val = model.get_val(var, units=units)
                 desc = metadata['desc']
-                abs_paths = prom2abs[var]
+                abs_paths = prom2abs(var)
 
                 f.write(f'| **{var}** | {val} | {units} | {desc} | {abs_paths}|\n')
 
@@ -321,7 +337,7 @@ def input_check_report(prob, **kwargs):
                 if var.startswith('traj') and '.rhs_all.' not in var:
                     continue
 
-                abs_paths = prom2abs[var]
+                abs_paths = prom2abs(var)
                 val = model.get_val(var)
                 meta = model._var_allprocs_abs2meta['input'][abs_paths[0]]
                 units = meta['units']
