@@ -168,6 +168,7 @@ class EquipMassPartial(om.ExplicitComponent):
                 # Exponential regression from five points:
                 # (0, 27), (3000, 65), (5500, 113), (7500, 163), (11000, 340)
                 # avionics_wt = 30.03 * exp(0.0002262 * gross_wt_initial)
+                # Should we use use 4 sigmoid functions (one for each transition zone) instead?
                 avionics_wt = 35.538 * np.exp(0.0002 * gross_wt_initial)
             else:
                 if gross_wt_initial >= 3000.0:  # note: this technically creates a discontinuity
