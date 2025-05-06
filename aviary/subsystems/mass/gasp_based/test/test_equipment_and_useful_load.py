@@ -161,6 +161,7 @@ class FixedEquipMassTestCase3(unittest.TestCase):
         options = get_option_defaults()
         options.set_val(Aircraft.Engine.TYPE, val=[GASPEngineType.RECIP_CARB], units='unitless')
         options.set_val(Aircraft.LandingGear.FIXED_GEAR, val=False, units='unitless')
+        # PAX = 0
 
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
@@ -1782,7 +1783,4 @@ class BWBFixedEquipAndUsefulMassGroupTest(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    # unittest.main()
-    test = BWBFixedEquipAndUsefulMassGroupTest()
-    test.setUp()
-    test.test_case1()
+    unittest.main()
