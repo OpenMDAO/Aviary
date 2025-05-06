@@ -95,8 +95,8 @@ class TurbopropMissionTest(unittest.TestCase):
     def get_results(self, point_names=None, display_results=False):
         shp = self.prob.get_val(Dynamic.Vehicle.Propulsion.SHAFT_POWER, units='hp')
         total_thrust = self.prob.get_val(Dynamic.Vehicle.Propulsion.THRUST, units='lbf')
-        prop_thrust = self.prob.get_val('turboprop_model.propeller_thrust', units='lbf')
-        tailpipe_thrust = self.prob.get_val('turboprop_model.turboshaft_thrust', units='lbf')
+        prop_thrust = self.prob.get_val('propeller_thrust', units='lbf')
+        tailpipe_thrust = self.prob.get_val('turboshaft_thrust', units='lbf')
         max_thrust = self.prob.get_val(Dynamic.Vehicle.Propulsion.THRUST_MAX, units='lbf')
         fuel_flow = self.prob.get_val(
             Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE, units='lbm/h'
@@ -319,7 +319,7 @@ class TurbopropMissionTest(unittest.TestCase):
 
         shp = self.prob.get_val(Dynamic.Vehicle.Propulsion.SHAFT_POWER, units='hp')
         total_thrust = self.prob.get_val(Dynamic.Vehicle.Propulsion.THRUST, units='lbf')
-        prop_thrust = self.prob.get_val('turboprop_model.propeller_thrust', units='lbf')
+        prop_thrust = self.prob.get_val('propeller_thrust', units='lbf')
         electric_power = self.prob.get_val(Dynamic.Vehicle.Propulsion.ELECTRIC_POWER_IN, units='kW')
 
         assert_near_equal(shp, shp_expected, tolerance=1e-8)
