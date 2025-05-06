@@ -504,7 +504,7 @@ def extract_options(aviary_inputs: AviaryValues, metadata=_MetaData) -> dict:
         val, units = aviary_inputs.get_item(key)
         meta_units = meta['units']
 
-        if meta_units == 'unitless' or meta_units is None:
+        if meta_units is None:
             options[key] = val
 
         else:

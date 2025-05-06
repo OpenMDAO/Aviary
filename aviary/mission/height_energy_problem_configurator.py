@@ -394,8 +394,10 @@ class HeightEnergyProblemConfigurator(ProblemConfiguratorBase):
 
     def _add_post_mission_takeoff_systems(self, prob):
         first_flight_phase_name = list(prob.phase_info.keys())[0]
-        connect_takeoff_to_climb = True
 
+        # TODO: None of our aircraft set this to True, so the code is uncovered. Do we still need
+        # any of it?
+        connect_takeoff_to_climb = False
         if connect_takeoff_to_climb:
             prob.model.connect(
                 Mission.Takeoff.FINAL_MASS, f'traj.{first_flight_phase_name}.initial_states:mass'

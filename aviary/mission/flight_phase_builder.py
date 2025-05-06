@@ -42,7 +42,7 @@ class FlightPhaseOptions(AviaryOptionsDictionary):
             'created in Dymos. The default value is 3.',
         )
 
-        # TODO: These defaults aren't great.
+        # TODO: These defaults aren't great, but need to keep things the same for now.
         defaults = {
             'mass_ref': 1e4,
             'mass_defect_ref': 1e6,
@@ -50,9 +50,21 @@ class FlightPhaseOptions(AviaryOptionsDictionary):
         }
         self.add_state_options('mass', units='kg', defaults=defaults)
 
-        self.add_state_options('distance', units='m')
+        # TODO: These defaults aren't great, but need to keep things the same for now.
+        defaults = {
+            'distance_ref': 1e6,
+            'distance_defect_ref': 1e8,
+            'mass_bounds': (0.0, None),
+        }
+        self.add_state_options('distance', units='m', defaults=defaults)
+
         self.add_control_options('altitude', units='ft')
-        self.add_control_options('mach', units='unitless')
+
+        # TODO: These defaults aren't great, but need to keep things the same for now.
+        defaults = {
+            'mach_ref': 0.5,
+        }
+        self.add_control_options('mach', units='unitless', defaults=defaults)
 
         self.declare(
             name='throttle_enforcement',
@@ -264,15 +276,6 @@ class FlightPhaseOptions(AviaryOptionsDictionary):
         )
 
         self.declare(
-            name='mach_bounds',
-            types=tuple,
-            default=(None, None),
-            desc='The lower and upper constraints on mach during this phase i.e., '
-            '((0.18, 0.74), "unitless"). The optimizer is never allowed choose mach values '
-            'outside of these bounds constraints.',
-        )
-
-        self.declare(
             name='altitude_bounds',
             types=tuple,
             default=(None, None),
@@ -341,7 +344,6 @@ class FlightPhaseBase(PhaseBuilderBase):
         constrain_final = user_options['constrain_final']
         optimize_mach = user_options['optimize_mach']
         optimize_altitude = user_options['optimize_altitude']
-        input_initial = user_options['input_initial']
         polynomial_control_order = user_options['polynomial_control_order']
         use_polynomial_control = user_options['use_polynomial_control']
         throttle_enforcement = user_options['throttle_enforcement']
@@ -351,7 +353,6 @@ class FlightPhaseBase(PhaseBuilderBase):
         final_mach = user_options['final_mach']
         initial_altitude = user_options['initial_altitude'][0]
         final_altitude = user_options['final_altitude'][0]
-        solve_for_distance = user_options['solve_for_distance']
         no_descent = user_options['no_descent']
         no_climb = user_options['no_climb']
         constraints = user_options['constraints']
@@ -359,11 +360,6 @@ class FlightPhaseBase(PhaseBuilderBase):
         ##############
         # Add States #
         ##############
-        # TODO: critically think about how we should handle fix_initial and input_initial defaults.
-        # In keeping with Dymos standards, the default should be False instead of True.
-        input_initial_mass = get_initial(input_initial, Dynamic.Vehicle.MASS)
-        fix_initial_mass = get_initial(fix_initial, Dynamic.Vehicle.MASS, True)
-
         if phase_type is EquationsOfMotion.HEIGHT_ENERGY:
             rate_source = Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL
         else:
@@ -376,19 +372,10 @@ class FlightPhaseBase(PhaseBuilderBase):
         )
 
         if phase_type is EquationsOfMotion.HEIGHT_ENERGY:
-            input_initial_distance = get_initial(input_initial, Dynamic.Mission.DISTANCE)
-            fix_initial_distance = get_initial(fix_initial, Dynamic.Mission.DISTANCE, True)
-            phase.add_state(
+            self.add_state(
+                'distance',
                 Dynamic.Mission.DISTANCE,
-                fix_initial=fix_initial_distance,
-                fix_final=False,
-                lower=0.0,
-                ref=1e6,
-                defect_ref=1e8,
-                units='m',
-                rate_source=Dynamic.Mission.DISTANCE_RATE,
-                input_initial=input_initial_distance,
-                solve_segments='forward' if solve_for_distance else None,
+                Dynamic.Mission.DISTANCE_RATE
             )
 
         phase = add_subsystem_variables_to_phase(phase, self.name, self.external_subsystems)
@@ -401,25 +388,31 @@ class FlightPhaseBase(PhaseBuilderBase):
         else:
             rate_targets = ['dmach_dr']
 
-        # dictionary of options for Mach control
-        control_dict = {
-            'name': Dynamic.Atmosphere.MACH,
-            'targets': Dynamic.Atmosphere.MACH,
-            # 'units': mach_bounds[1],
-            'rate_targets': rate_targets,
-            'opt': optimize_mach,
-        }
+        self.add_control(
+            'mach',
+            Dynamic.Atmosphere.MACH,
+            rate_targets
+        )
 
-        if optimize_mach:
-            control_dict['lower'] = mach_bounds[0]
-            control_dict['upper'] = mach_bounds[1]
-            control_dict['ref'] = 0.5
+        ## dictionary of options for Mach control
+        #control_dict = {
+            #'name': Dynamic.Atmosphere.MACH,
+            #'targets': Dynamic.Atmosphere.MACH,
+            ## 'units': mach_bounds[1],
+            #'rate_targets': rate_targets,
+            #'opt': optimize_mach,
+        #}
 
-        if use_polynomial_control:
-            control_dict['control_type'] = 'polynomial'
-            control_dict['order'] = polynomial_control_order
+        #if optimize_mach:
+            #control_dict['lower'] = mach_bounds[0]
+            #control_dict['upper'] = mach_bounds[1]
+            #control_dict['ref'] = 0.5
 
-        phase.add_control(**control_dict)
+        #if use_polynomial_control:
+            #control_dict['control_type'] = 'polynomial'
+            #control_dict['order'] = polynomial_control_order
+
+        #phase.add_control(**control_dict)
 
         # Add altitude rate as a control
         if phase_type is EquationsOfMotion.HEIGHT_ENERGY:

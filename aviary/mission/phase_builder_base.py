@@ -396,12 +396,12 @@ class PhaseBuilderBase(ABC):
 
     def add_state(self, name, target, rate_source):
         """
-        Add a state to this phase.
+        Add a state to this phase using the options in the phase_info.
 
         Parameters
         ----------
         name : str
-            The name of this state.
+            The name of this state in the phase_info options.
         target : str
             State promoted variable path to the ODE.
         rate_source : str
@@ -409,12 +409,18 @@ class PhaseBuilderBase(ABC):
         """
         options = self.user_options
 
-        initial, _= options[f'{name}_initial']
+        initial, _ = options[f'{name}_initial']
         final, _ = options[f'{name}_final']
         bounds, units = options[f'{name}_bounds']
         ref, _ = options[f'{name}_ref']
         ref0, _ = options[f'{name}_ref0']
         defect_ref, _ = options[f'{name}_defect_ref']
+        solve_segments = options[f'{name}_solve_segments']
+
+        # If a value is specified for the starting node, then fix_initial is True.
+        # Otherwise, input_initial is True.
+        # The problem configurator may change input_initial to False requested or necessary, (e.g.,
+        # for parallel phases in MPI.)
 
         self.phase.add_state(
             target,
@@ -425,10 +431,54 @@ class PhaseBuilderBase(ABC):
             upper=bounds[1],
             units=units,
             rate_source=rate_source,
-            targets=target,
             ref=ref,
             ref0=ref0,
             defect_ref=defect_ref,
+            solve_segments='forward' if solve_segments else None,
+        )
+
+    def add_control(self, name, target, rate_targets):
+        """
+        Add a control to this phase using the options in the phase-info.
+
+        Parameters
+        ----------
+        name : str
+            The name of this control in the phase_info options.
+        target : str
+            Control promoted variable path to the ODE.
+        rate_source : list of str
+            List of rate targets for this control.
+        """
+        options = self.user_options
+
+        initial, _ = options[f'{name}_initial']
+        final, _ = options[f'{name}_final']
+        bounds, units = options[f'{name}_bounds']
+        ref, _ = options[f'{name}_ref']
+        ref0, _ = options[f'{name}_ref0']
+        polynomial_order = options[f'{name}_polynomial_order']
+        opt = options[f'{name}_optimize']
+
+        extra_options = {}
+        if polynomial_order is True:
+            extra_options['control_type'] = 'polynomial'
+            extra_options['order'] = polynomial_order
+
+        if opt is True:
+            extra_options['lower'] = bounds[0]
+            extra_options['upper'] = bounds[1]
+            extra_options['ref'] = ref
+            extra_options['ref0'] = ref0
+
+        self.phase.add_control(
+            target,
+            fix_initial=initial is not None,
+            fix_final=final is not None,
+            units=units,
+            targets=rate_targets,
+            opt=opt,
+            **extra_options
         )
 
     def add_velocity_state(self, user_options):
