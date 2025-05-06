@@ -9,6 +9,7 @@ from aviary.subsystems.geometry.gasp_based.wing import (
     WingGroup,
     WingParameters,
     WingSize,
+    WingVolume,
 )
 from aviary.variable_info.functions import setup_model_options
 from aviary.variable_info.options import get_option_defaults
@@ -64,18 +65,17 @@ class WingSizeTestCase2(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
 
 
-class WingParametersTestCase1(
+class WingVolumeTestCase1(
     unittest.TestCase
 ):  # actual GASP test case, input and output values based on large single aisle 1 v3 without bug fix
     def setUp(self):
         self.prob = om.Problem()
-        self.prob.model.add_subsystem('parameters', WingParameters(), promotes=['*'])
+        self.prob.model.add_subsystem('wing_vol', WingVolume(), promotes=['*'])
 
         self.prob.model.set_input_defaults(Aircraft.Wing.AREA, 1370.3, units='ft**2')
         self.prob.model.set_input_defaults(Aircraft.Wing.SPAN, 117.8, units='ft')
         self.prob.model.set_input_defaults(Aircraft.Wing.ASPECT_RATIO, 10.13, units='unitless')
         self.prob.model.set_input_defaults(Aircraft.Wing.TAPER_RATIO, 0.33, units='unitless')
-        self.prob.model.set_input_defaults(Aircraft.Wing.SWEEP, 25, units='deg')
         self.prob.model.set_input_defaults(
             Aircraft.Wing.THICKNESS_TO_CHORD_ROOT, 0.15, units='unitless'
         )
@@ -91,12 +91,6 @@ class WingParametersTestCase1(
         self.prob.run_model()
 
         tol = 5e-4
-        assert_near_equal(self.prob[Aircraft.Wing.CENTER_CHORD], 17.49, tol)
-        assert_near_equal(self.prob[Aircraft.Wing.AVERAGE_CHORD], 12.615, tol)
-        assert_near_equal(self.prob[Aircraft.Wing.ROOT_CHORD], 16.41, tol)
-        assert_near_equal(
-            self.prob[Aircraft.Wing.THICKNESS_TO_CHORD_UNWEIGHTED], 0.1397, tol
-        )  # this is slightly different from the GASP output value, likely due to rounding error
         assert_near_equal(self.prob[Aircraft.Fuel.WING_VOLUME_GEOMETRIC_MAX], 1114, tol)
 
         partial_data = self.prob.check_partials(out_stream=None, method='cs')
@@ -106,8 +100,6 @@ class WingParametersTestCase1(
 class WingParametersTestCase2(unittest.TestCase):
     def setUp(self):
         options = get_option_defaults()
-        options.set_val(Aircraft.Wing.HAS_FOLD, val=True, units='unitless')
-
         self.prob = om.Problem()
         self.prob.model.add_subsystem('parameters', WingParameters(), promotes=['*'])
 
@@ -712,4 +704,7 @@ class ExposedWingTestCase(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    unittest.main()
+    # unittest.main()
+    test = WingVolumeTestCase1()
+    test.setUp()
+    test.test_case1()
