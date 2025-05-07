@@ -608,9 +608,6 @@ class HeightEnergyProblemConfigurator(ProblemConfiguratorBase):
                                 units=units,
                             )
 
-                if guess_key in control_keys:
-                    pass
-
                 # Set initial guess for state variables
                 elif guess_key in state_keys:
                     target_prob.set_val(
