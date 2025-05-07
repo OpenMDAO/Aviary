@@ -70,8 +70,6 @@ def run_trajectory(sim=True):
     prob.set_initial_guesses()
     prob.run_aviary_problem('dymos_solution.db')
 
-    om.n2(prob)
-
     return prob
 
 

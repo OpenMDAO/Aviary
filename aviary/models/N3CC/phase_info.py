@@ -116,7 +116,7 @@ def phase_info_parameterization(phase_info, post_mission_info, aviary_inputs):
         post_mission_info['target_range'] = (new_val, range_units)
 
     # Altitude
-    old_alt_cruise = 32000.0
+    old_alt_cruise = 35000.0
     if alt_cruise != old_alt_cruise:
         phase_info['climb']['user_options']['final_altitude'] = (alt_cruise, 'ft')
         phase_info['cruise']['user_options']['initial_altitude'] = (alt_cruise, 'ft')
@@ -124,7 +124,7 @@ def phase_info_parameterization(phase_info, post_mission_info, aviary_inputs):
         phase_info['descent']['user_options']['initial_altitude'] = (alt_cruise, 'ft')
 
     # Mach
-    old_mach_cruise = 0.72
+    old_mach_cruise = 0.79
     if mach_cruise != old_mach_cruise:
         phase_info['climb']['user_options']['final_mach'] = (mach_cruise, 'unitless')
         phase_info['cruise']['user_options']['initial_mach'] = (mach_cruise, 'unitless')
