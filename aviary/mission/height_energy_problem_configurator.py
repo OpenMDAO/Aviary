@@ -1,3 +1,5 @@
+from copy import deepcopy
+
 import numpy as np
 import openmdao.api as om
 from dymos.transcriptions.transcription_base import TranscriptionBase
@@ -290,7 +292,7 @@ class HeightEnergyProblemConfigurator(ProblemConfiguratorBase):
             ref=1.0e4,
         )
         prob._link_phases_helper_with_options(
-            prob.regular_phases, 'optimize_mach', Dynamic.Atmosphere.MACH
+            prob.regular_phases, 'mach_optimize', Dynamic.Atmosphere.MACH
         )
 
         # connect reserve phases with each other if you are optimizing alt or mach
@@ -301,7 +303,7 @@ class HeightEnergyProblemConfigurator(ProblemConfiguratorBase):
             ref=1.0e4,
         )
         prob._link_phases_helper_with_options(
-            prob.reserve_phases, 'optimize_mach', Dynamic.Atmosphere.MACH
+            prob.reserve_phases, 'mach_optimize', Dynamic.Atmosphere.MACH
         )
 
         # connect mass and distance between all phases regardless of reserve /
@@ -505,11 +507,12 @@ class HeightEnergyProblemConfigurator(ProblemConfiguratorBase):
     def add_guesses(self, prob, phase_name, phase, guesses, target_prob, parent_prefix):
         """
         Adds the initial guesses for each variable of a given phase to the problem.
-        This method sets the initial guesses for time, control, state, and problem-specific
-        variables for a given phase. If using the GASP model, it also handles some special
-        cases that are not covered in the `phase_info` object. These include initial guesses
-        for mass, time, and distance, which are determined based on the phase name and other
-        mission-related variables.
+
+        This method sets the initial guesses into the openmdao model for time, controls, states,
+        and problem-specific variables for a given phase. If using the GASP model, it also handles
+        some special cases that are not covered in the `phase_info` object. These include initial
+        guesses for mass, time, and distance, which are determined based on the phase name and
+        other mission-related variables.
 
         Parameters
         ----------
@@ -528,52 +531,50 @@ class HeightEnergyProblemConfigurator(ProblemConfiguratorBase):
         state_keys = ['mass', Dynamic.Mission.DISTANCE]
         prob_keys = ['tau_gear', 'tau_flaps']
 
-        # for the simple mission method, use the provided initial and final mach
-        # and altitude values from phase_info
-        initial_altitude = wrapped_convert_units(
-            prob.phase_info[phase_name]['user_options']['initial_altitude'], 'ft'
-        )
-        final_altitude = wrapped_convert_units(
-            prob.phase_info[phase_name]['user_options']['final_altitude'], 'ft'
-        )
-        mach_initial = prob.phase_info[phase_name]['user_options']['mach_initial']
-        mach_final = prob.phase_info[phase_name]['user_options']['mach_final']
+        options = prob.phase_info[phase_name]['user_options']
 
-        guesses['mach'] = ([mach_initial[0], mach_final[0]], 'unitless')
-        guesses['altitude'] = ([initial_altitude, final_altitude], 'ft')
+        # Let's preserve the original user-specified initial conditions.
+        guess_dict = deepcopy(guesses)
 
-        # if time not in initial guesses, set it to the average of the
-        # initial_bounds and the duration_bounds
-        if 'time' not in guesses:
+        if 'mass' not in guess_dict:
+            mass_guess = prob.aviary_inputs.get_val(Mission.Design.GROSS_MASS, units='lbm')
+
+            guess_dict['mass'] = (mass_guess, 'lbm')
+
+        if 'altitude' not in guess_dict:
+            # Use values from fixed endpoints.
+            altitude_initial = wrapped_convert_units(options['initial_altitude'], 'ft')
+            altitude_final = wrapped_convert_units(options['final_altitude'], 'ft')
+
+            guess_dict['altitude'] = ([altitude_initial, altitude_final], 'ft')
+
+        if 'mach' not in guess_dict:
+            # Use values from fixed endpoints.
+            mach_initial = wrapped_convert_units(options['mach_initial'], 'unitless')
+            mach_final = wrapped_convert_units(options['mach_final'], 'unitless')
+
+            if mach_final is None:
+                # TODO: Pull from downstream phase.
+                mach_final = mach_initial
+
+            guess_dict['mach'] = ([mach_initial, mach_final], 'unitless')
+
+        if 'time' not in guess_dict:
+            # if time not in initial guesses, set it to the average of the
+            # initial_bounds and the duration_bounds
             initial_bounds = wrapped_convert_units(
-                prob.phase_info[phase_name]['user_options']['initial_bounds'], 's'
+                options['initial_bounds'], 's'
             )
             duration_bounds = wrapped_convert_units(
-                prob.phase_info[phase_name]['user_options']['duration_bounds'], 's'
+                options['duration_bounds'], 's'
             )
-            guesses['time'] = ([np.mean(initial_bounds[0]), np.mean(duration_bounds[0])], 's')
+            guess_dict['time'] = ([np.mean(initial_bounds[0]), np.mean(duration_bounds[0])], 's')
 
-        # if time not in initial guesses, set it to the average of the
-        # initial_bounds and the duration_bounds
-        if 'time' not in guesses:
-            initial_bounds = prob.phase_info[phase_name]['user_options']['initial_bounds']
-            duration_bounds = prob.phase_info[phase_name]['user_options']['duration_bounds']
-            # Add a check for the initial and duration bounds, raise an error if they
-            # are not consistent
-            if initial_bounds[1] != duration_bounds[1]:
-                raise ValueError(
-                    f'Initial and duration bounds for {phase_name} are not consistent.'
-                )
-            guesses['time'] = (
-                [np.mean(initial_bounds[0]), np.mean(duration_bounds[0])],
-                initial_bounds[1],
-            )
-
-        for guess_key, guess_data in guesses.items():
+        for guess_key, guess_data in guess_dict.items():
             val, units = guess_data
 
-            # Set initial guess for time variables
             if 'time' == guess_key:
+                # Set initial guess for time variables
                 target_prob.set_val(
                     parent_prefix + f'traj.{phase_name}.t_initial', val[0], units=units
                 )
@@ -581,60 +582,52 @@ class HeightEnergyProblemConfigurator(ProblemConfiguratorBase):
                     parent_prefix + f'traj.{phase_name}.t_duration', val[1], units=units
                 )
 
-            else:
+            elif guess_key in control_keys:
                 # Set initial guess for control variables
-                if guess_key in control_keys:
+                try:
+                    target_prob.set_val(
+                        parent_prefix + f'traj.{phase_name}.controls:{guess_key}',
+                        prob._process_guess_var(val, guess_key, phase),
+                        units=units,
+                    )
+
+                except KeyError:
                     try:
                         target_prob.set_val(
-                            parent_prefix + f'traj.{phase_name}.controls:{guess_key}',
+                            parent_prefix
+                            + f'traj.{phase_name}.polynomial_controls:{guess_key}',
                             prob._process_guess_var(val, guess_key, phase),
                             units=units,
                         )
 
                     except KeyError:
-                        try:
-                            target_prob.set_val(
-                                parent_prefix
-                                + f'traj.{phase_name}.polynomial_controls:{guess_key}',
-                                prob._process_guess_var(val, guess_key, phase),
-                                units=units,
-                            )
+                        target_prob.set_val(
+                            parent_prefix + f'traj.{phase_name}.bspline_controls:',
+                            {guess_key},
+                            prob._process_guess_var(val, guess_key, phase),
+                            units=units,
+                        )
 
-                        except KeyError:
-                            target_prob.set_val(
-                                parent_prefix + f'traj.{phase_name}.bspline_controls:',
-                                {guess_key},
-                                prob._process_guess_var(val, guess_key, phase),
-                                units=units,
-                            )
-
+            elif guess_key in state_keys:
                 # Set initial guess for state variables
-                elif guess_key in state_keys:
-                    target_prob.set_val(
-                        parent_prefix + f'traj.{phase_name}.states:{guess_key}',
-                        prob._process_guess_var(val, guess_key, phase),
-                        units=units,
-                    )
+                target_prob.set_val(
+                    parent_prefix + f'traj.{phase_name}.states:{guess_key}',
+                    prob._process_guess_var(val, guess_key, phase),
+                    units=units,
+                )
 
-                elif guess_key in prob_keys:
-                    target_prob.set_val(parent_prefix + guess_key, val, units=units)
+            elif guess_key in prob_keys:
+                target_prob.set_val(parent_prefix + guess_key, val, units=units)
 
-                elif ':' in guess_key:
-                    target_prob.set_val(
-                        parent_prefix + f'traj.{phase_name}.{guess_key}',
-                        prob._process_guess_var(val, guess_key, phase),
-                        units=units,
-                    )
-                else:
-                    # raise error if the guess key is not recognized
-                    raise ValueError(
-                        f'Initial guess key {guess_key} in {phase_name} is not recognized.'
-                    )
-
-        if 'mass' not in guesses:
-            mass_guess = prob.aviary_inputs.get_val(Mission.Design.GROSS_MASS, units='lbm')
-
-            # Set the mass guess as the initial value for the mass state variable
-            target_prob.set_val(
-                parent_prefix + f'traj.{phase_name}.states:mass', mass_guess, units='lbm'
-            )
+            elif ':' in guess_key:
+                # These may come from external subsystems.
+                target_prob.set_val(
+                    parent_prefix + f'traj.{phase_name}.{guess_key}',
+                    prob._process_guess_var(val, guess_key, phase),
+                    units=units,
+                )
+            else:
+                # raise error if the guess key is not recognized
+                raise ValueError(
+                    f'Initial guess key {guess_key} in {phase_name} is not recognized.'
+                )

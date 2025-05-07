@@ -162,11 +162,12 @@ class ProblemConfiguratorBase:
     def add_guesses(self, prob, phase_name, phase, guesses, target_prob, parent_prefix):
         """
         Adds the initial guesses for each variable of a given phase to the problem.
-        This method sets the initial guesses for time, control, state, and problem-specific
-        variables for a given phase. If using the GASP model, it also handles some special
-        cases that are not covered in the `phase_info` object. These include initial guesses
-        for mass, time, and distance, which are determined based on the phase name and other
-        mission-related variables.
+
+        This method sets the initial guesses into the openmdao model for time, controls, states,
+        and problem-specific variables for a given phase. If using the GASP model, it also handles
+        some special cases that are not covered in the `phase_info` object. These include initial
+        guesses for mass, time, and distance, which are determined based on the phase name and
+        other mission-related variables.
 
         Parameters
         ----------
