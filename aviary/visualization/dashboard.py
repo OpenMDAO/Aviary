@@ -13,6 +13,7 @@ from collections import defaultdict
 from pathlib import Path
 
 import numpy as np
+import openmdao.api as om
 import pandas as pd
 import panel as pn
 from bokeh.models import (
