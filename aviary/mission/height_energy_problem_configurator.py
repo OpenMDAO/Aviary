@@ -526,7 +526,6 @@ class HeightEnergyProblemConfigurator(ProblemConfiguratorBase):
         """
         control_keys = ['mach', 'altitude']
         state_keys = ['mass', Dynamic.Mission.DISTANCE]
-
         prob_keys = ['tau_gear', 'tau_flaps']
 
         # for the simple mission method, use the provided initial and final mach
@@ -537,10 +536,10 @@ class HeightEnergyProblemConfigurator(ProblemConfiguratorBase):
         final_altitude = wrapped_convert_units(
             prob.phase_info[phase_name]['user_options']['final_altitude'], 'ft'
         )
-        initial_mach = prob.phase_info[phase_name]['user_options']['initial_mach']
-        final_mach = prob.phase_info[phase_name]['user_options']['final_mach']
+        mach_initial = prob.phase_info[phase_name]['user_options']['mach_initial']
+        mach_final = prob.phase_info[phase_name]['user_options']['mach_final']
 
-        guesses['mach'] = ([initial_mach[0], final_mach[0]], 'unitless')
+        guesses['mach'] = ([mach_initial[0], mach_final[0]], 'unitless')
         guesses['altitude'] = ([initial_altitude, final_altitude], 'ft')
 
         # if time not in initial guesses, set it to the average of the

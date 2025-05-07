@@ -471,12 +471,15 @@ class PhaseBuilderBase(ABC):
             extra_options['ref'] = ref
             extra_options['ref0'] = ref0
 
+        if units not in ['unitless', None]:
+            extra_options['units'] = units
+
         self.phase.add_control(
             target,
+            targets=target,
+            rate_targets=rate_targets,
             fix_initial=initial is not None,
             fix_final=final is not None,
-            units=units,
-            targets=rate_targets,
             opt=opt,
             **extra_options
         )

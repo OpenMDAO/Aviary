@@ -183,13 +183,6 @@ class FlightPhaseOptions(AviaryOptionsDictionary):
         )
 
         self.declare(
-            name='optimize_mach',
-            types=bool,
-            default=False,
-            desc='Adds the Mach number as a design variable controlled by the optimizer.',
-        )
-
-        self.declare(
             name='optimize_altitude',
             types=bool,
             default=False,
@@ -237,24 +230,6 @@ class FlightPhaseOptions(AviaryOptionsDictionary):
             default=False,
             desc='Fixes the final states (mach and altitude) to the values of final_altitude '
             'and final_mach. These values will be unable to change during the optimization.',
-        )
-
-        self.declare(
-            name='initial_mach',
-            types=float,
-            allow_none=True,
-            default=None,
-            desc='The initial Mach number at the start of the phase. This option is only valid '
-            'when fix_initial is True.',
-        )
-
-        self.declare(
-            name='final_mach',
-            types=float,
-            allow_none=True,
-            default=None,
-            desc='The final Mach number at the end of the phase. This option is only valid '
-            'when fix_initial is True.',
         )
 
         self.declare(
@@ -342,15 +317,14 @@ class FlightPhaseBase(PhaseBuilderBase):
 
         fix_initial = user_options['fix_initial']
         constrain_final = user_options['constrain_final']
-        optimize_mach = user_options['optimize_mach']
+        mach_optimize = user_options['mach_optimize']
         optimize_altitude = user_options['optimize_altitude']
         polynomial_control_order = user_options['polynomial_control_order']
         use_polynomial_control = user_options['use_polynomial_control']
         throttle_enforcement = user_options['throttle_enforcement']
-        mach_bounds = user_options['mach_bounds']
         altitude_bounds = user_options['altitude_bounds']
-        initial_mach = user_options['initial_mach']
-        final_mach = user_options['final_mach']
+        mach_initial = user_options['mach_initial']
+        mach_final = user_options['mach_final'][0]
         initial_altitude = user_options['initial_altitude'][0]
         final_altitude = user_options['final_altitude'][0]
         no_descent = user_options['no_descent']
@@ -559,18 +533,18 @@ class FlightPhaseBase(PhaseBuilderBase):
         ###################
         # Add Constraints #
         ###################
-        if optimize_mach and fix_initial and Dynamic.Atmosphere.MACH not in constraints:
+        if mach_optimize and fix_initial and Dynamic.Atmosphere.MACH not in constraints:
             phase.add_boundary_constraint(
                 Dynamic.Atmosphere.MACH,
                 loc='initial',
-                equals=initial_mach,
+                equals=mach_initial,
             )
 
-        if optimize_mach and constrain_final and Dynamic.Atmosphere.MACH not in constraints:
+        if mach_optimize and constrain_final and Dynamic.Atmosphere.MACH not in constraints:
             phase.add_boundary_constraint(
                 Dynamic.Atmosphere.MACH,
                 loc='final',
-                equals=final_mach,
+                equals=mach_final,
             )
 
         if optimize_altitude and fix_initial and Dynamic.Mission.ALTITUDE not in constraints:
