@@ -1,13 +1,11 @@
 import openmdao.api as om
 
-from aviary.variable_info.functions import add_aviary_input, add_aviary_output
+from aviary.variable_info.functions import add_aviary_input
 from aviary.variable_info.variables import Aircraft, Dynamic
 
 
 class CLmaxCalculation(om.ExplicitComponent):
-    """
-    CL_max calculation for GASP-based aerodynamics
-    """
+    """CL_max calculation for GASP-based aerodynamics."""
 
     def setup(self):
         # inputs
@@ -273,4 +271,4 @@ class CLmaxCalculation(om.ExplicitComponent):
         outputs[Dynamic.Atmosphere.MACH] = mach = (Q1 / 0.7 / P) ** 0.5
 
         VK = mach * sos
-        outputs['reynolds'] = reynolds = (avg_chord * VK / kinematic_viscosity) / 100000
+        outputs['reynolds'] = (avg_chord * VK / kinematic_viscosity) / 100000

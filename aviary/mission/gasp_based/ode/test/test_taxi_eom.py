@@ -3,16 +3,14 @@ import unittest
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 
-from aviary.utils.aviary_values import AviaryValues
 from aviary.mission.gasp_based.ode.taxi_eom import TaxiFuelComponent
+from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.functions import setup_model_options
 from aviary.variable_info.variables import Dynamic, Mission
 
 
 class TaxiFuelComponentTestCase(unittest.TestCase):
-    """
-    Test the computation of fuel consumed during taxi in TaxiFuelComponent component.
-    """
+    """Test the computation of fuel consumed during taxi in TaxiFuelComponent component."""
 
     def setUp(self):
         self.prob = om.Problem()

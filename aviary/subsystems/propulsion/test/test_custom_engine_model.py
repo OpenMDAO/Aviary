@@ -2,20 +2,14 @@ import unittest
 
 import dymos as dm
 import openmdao.api as om
-from openmdao.utils.assert_utils import assert_near_equal
-
-from aviary.subsystems.propulsion.engine_model import EngineModel
-from aviary.utils.aviary_values import AviaryValues
-from aviary.variable_info.variables import Aircraft, Dynamic
+from dymos.transcriptions.transcription_base import TranscriptionBase
 from openmdao.utils.assert_utils import assert_near_equal
 from openmdao.utils.testing_utils import use_tempdirs
-from aviary.subsystems.propulsion.turboprop_model import TurbopropModel
-from aviary.variable_info.options import get_option_defaults
-from aviary.utils.functions import get_path
+
 from aviary.interface.methods_for_level2 import AviaryProblem
-
-
-from dymos.transcriptions.transcription_base import TranscriptionBase
+from aviary.subsystems.propulsion.engine_model import EngineModel
+from aviary.utils.aviary_values import AviaryValues
+from aviary.variable_info.variables import Dynamic
 
 if hasattr(TranscriptionBase, 'setup_polynomial_controls'):
     use_new_dymos_syntax = False
@@ -230,7 +224,7 @@ class CustomEngineTest(unittest.TestCase):
         prob.final_setup()
 
         # check that the different throttle initial guess has been set correctly
-        initial_guesses = prob.get_val('traj.phases.cruise.controls:different_throttle')[0]
+        initial_guesses = prob.get_val('traj.cruise.controls:different_throttle')[0]
         assert_near_equal(float(initial_guesses), 0.05)
 
         # and run mission

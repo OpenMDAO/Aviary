@@ -1,7 +1,5 @@
 import numpy as np
-
 from openmdao.api import Group, MetaModelStructuredComp
-
 
 # These battery values are entirely fabricated and not representative of any real battery.
 # This model is used as an example of how to integrate external subsystems in Aviary.

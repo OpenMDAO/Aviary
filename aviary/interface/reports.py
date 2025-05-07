@@ -1,24 +1,23 @@
 import datetime
 import json
-from pathlib import Path
 import sys
 import time
-import pandas as pd
-import numpy as np
+from pathlib import Path
 
+import numpy as np
+import pandas as pd
 from openmdao.utils.mpi import MPI
 from openmdao.utils.reports_system import register_report
-from openmdao.visualization.tables.table_builder import generate_table
 
 from aviary.interface.utils.markdown_utils import write_markdown_variable_table
-from aviary.utils.utils import wrapped_convert_units
 from aviary.utils.named_values import NamedValues
+from aviary.utils.utils import wrapped_convert_units
 
 
 def register_custom_reports():
     """
     Registers Aviary reports with OpenMDAO, so they are automatically generated and
-    added to the same reports folder as other default reports
+    added to the same reports folder as other default reports.
     """
     # TODO top-level aircraft report?
     # TODO add flag to skip registering reports?
@@ -73,7 +72,7 @@ def register_custom_reports():
 
 def run_status(prob):
     """
-    Creates a JSON file that containts high level overview of the run
+    Creates a JSON file that containts high level overview of the run.
 
     Parameters
     ----------
@@ -115,7 +114,7 @@ def run_status(prob):
 def subsystem_report(prob, **kwargs):
     """
     Loops through all subsystem builders in the AviaryProblem calls their write_report
-    method. All generated report files are placed in the "reports/subsystem_reports" folder
+    method. All generated report files are placed in the "reports/subsystem_reports" folder.
 
     Parameters
     ----------
@@ -134,7 +133,7 @@ def subsystem_report(prob, **kwargs):
 
 def mission_report(prob, **kwargs):
     """
-    Creates a basic mission summary report that is placed in the "reports" folder
+    Creates a basic mission summary report that is placed in the "reports" folder.
 
     Parameters
     ----------
@@ -263,12 +262,28 @@ def input_check_report(prob, **kwargs):
     report_file = reports_folder / 'input_checks.md'
 
     model = prob.model
-    abs2prom = model._var_allprocs_abs2prom['input']
-    prom2abs = model._var_allprocs_prom2abs_list['input']
+
+    # a change in OpenMDAO 3.38.1-dev adds a resolver in place of the prom2abs/abs2prom attributes
+    try:
+        resolver = model._resolver
+
+        def prom2abs(prom_name):
+            return resolver.absnames(prom_name, 'input')
+
+        def abs2prom(abs_name):
+            return resolver.abs2prom(abs_name, 'input')
+
+    except AttributeError:
+
+        def prom2abs(prom_name):
+            return model._var_allprocs_prom2abs_list['input'][prom_name]
+
+        def abs2prom(abs_name):
+            return model._var_allprocs_abs2prom['input'][abs_name]
 
     # Find all unconnected inputs.
     all_ivc_abs = [k for k, v in model._conn_abs_in2out.items() if 'ivc' in v]
-    all_ivc_prom = [abs2prom[v] for v in all_ivc_abs]
+    all_ivc_prom = [abs2prom(v) for v in all_ivc_abs]
 
     aviary_metadata = prob.meta_data
     aviary_inputs = prob.aviary_inputs
@@ -298,7 +313,7 @@ def input_check_report(prob, **kwargs):
                 units = metadata['units']
                 val = model.get_val(var, units=units)
                 desc = metadata['desc']
-                abs_paths = prom2abs[var]
+                abs_paths = prom2abs(var)
 
                 f.write(f'| **{var}** | {val} | {units} | {desc} | {abs_paths}|\n')
 
@@ -322,7 +337,7 @@ def input_check_report(prob, **kwargs):
                 if var.startswith('traj') and '.rhs_all.' not in var:
                     continue
 
-                abs_paths = prom2abs[var]
+                abs_paths = prom2abs(var)
                 val = model.get_val(var)
                 meta = model._var_allprocs_abs2meta['input'][abs_paths[0]]
                 units = meta['units']

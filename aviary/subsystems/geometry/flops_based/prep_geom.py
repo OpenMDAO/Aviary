@@ -6,9 +6,8 @@ TODO: blended-wing-body support
 TODO: multiple engine model support
 """
 
-from numpy import pi
-
 import openmdao.api as om
+from numpy import pi
 
 from aviary.subsystems.geometry.flops_based.canard import Canard
 from aviary.subsystems.geometry.flops_based.characteristic_lengths import CharacteristicLengths
@@ -23,14 +22,12 @@ from aviary.subsystems.geometry.flops_based.utils import (
 )
 from aviary.subsystems.geometry.flops_based.wetted_area_total import TotalWettedArea
 from aviary.subsystems.geometry.flops_based.wing import WingPrelim
-from aviary.variable_info.functions import add_aviary_input, add_aviary_output, add_aviary_option
+from aviary.variable_info.functions import add_aviary_input, add_aviary_option, add_aviary_output
 from aviary.variable_info.variables import Aircraft
 
 
 class PrepGeom(om.Group):
-    """
-    Prepare derived values of aircraft geometry for aerodynamics analysis.
-    """
+    """Prepare derived values of aircraft geometry for aerodynamics analysis."""
 
     def setup(self):
         self.add_subsystem(
@@ -90,9 +87,7 @@ class PrepGeom(om.Group):
 
 
 class _Prelim(om.ExplicitComponent):
-    """
-    Calculate internal derived values of aircraft geometry for FLOPS-based aerodynamics analysis.
-    """
+    """Calculate internal derived values of aircraft geometry for FLOPS-based aerodynamics analysis."""
 
     def initialize(self):
         add_aviary_option(self, Aircraft.Wing.SPAN_EFFICIENCY_REDUCTION)
@@ -413,9 +408,6 @@ class _Prelim(om.ExplicitComponent):
 
             _1p_tr = 1.0 + taper_ratio
 
-            CROTVT = 2.0 * area / (span * _1p_tr)
-
-            # da = d(f / g) = (df * g - f * dg) / g**2
             f = 2.0 * area / _1p_tr
             g = span
             df = 2.0 / _1p_tr
@@ -435,9 +427,7 @@ class _Prelim(om.ExplicitComponent):
 
     @property
     def fuselage_var(self):
-        """
-        Define the variable name associated with XDX.
-        """
+        """Define the variable name associated with XDX."""
         value = Aircraft.Fuselage.AVG_DIAMETER
 
         if self.options[Aircraft.Wing.SPAN_EFFICIENCY_REDUCTION]:
@@ -447,9 +437,7 @@ class _Prelim(om.ExplicitComponent):
 
 
 class _Wing(om.ExplicitComponent):
-    """
-    Calculate wing wetted area of aircraft geometry for FLOPS-based aerodynamics analysis.
-    """
+    """Calculate wing wetted area of aircraft geometry for FLOPS-based aerodynamics analysis."""
 
     def initialize(self):
         add_aviary_option(self, Aircraft.Fuselage.NUM_FUSELAGES)

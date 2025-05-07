@@ -1,15 +1,15 @@
-import warnings
-import unittest
 import importlib
+import unittest
+import warnings
 
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_near_equal
 from openmdao.utils.testing_utils import use_tempdirs
 
-from aviary.interface.default_phase_info.height_energy_fiti import add_default_sgm_args
+from aviary.interface.default_phase_info.two_dof_fiti import add_default_sgm_args
 from aviary.interface.methods_for_level2 import AviaryGroup
-from aviary.mission.gasp_based.phases.time_integration_traj import FlexibleTraj
 from aviary.mission.flops_based.phases.time_integration_phases import SGMHeightEnergy
+from aviary.mission.gasp_based.phases.time_integration_traj import FlexibleTraj
 from aviary.subsystems.premission import CorePreMission
 from aviary.subsystems.propulsion.utils import build_engine_deck
 from aviary.utils.preprocessors import preprocess_propulsion

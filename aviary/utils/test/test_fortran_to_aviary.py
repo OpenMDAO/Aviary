@@ -1,20 +1,16 @@
 import unittest
 from pathlib import Path
-from datetime import datetime
 
 from openmdao.utils.testing_utils import use_tempdirs
 
-from aviary.variable_info.enums import LegacyCode
-
-from aviary.utils.functions import get_path
 from aviary.utils.fortran_to_aviary import fortran_to_aviary
+from aviary.utils.functions import get_path
+from aviary.variable_info.enums import LegacyCode
 
 
 @use_tempdirs
 class TestFortranToAviary(unittest.TestCase):
-    """
-    Test fortran_to_aviary legacy code input file conversion utility by comparing against already converted input files.
-    """
+    """Test fortran_to_aviary legacy code input file conversion utility by comparing against already converted input files."""
 
     def prepare_and_run(self, filepath, out_file=None, legacy_code=LegacyCode.GASP):
         # Specify the output file
@@ -54,7 +50,7 @@ class TestFortranToAviary(unittest.TestCase):
                 try:
                     self.assertEqual(line_no_whitespace.count(expected_line), 1)
 
-                except Exception as error:
+                except Exception:
                     exc_string = (
                         f'Error: {filename}\n'
                         f'Found:    {line_no_whitespace}\n'

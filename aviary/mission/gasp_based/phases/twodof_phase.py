@@ -1,17 +1,15 @@
 import dymos as dm
 
 from aviary.mission.flight_phase_builder import FlightPhaseBase, register
-from aviary.mission.initial_guess_builders import (
-    InitialGuessState,
-    InitialGuessIntegrationVariable,
-    InitialGuessControl,
-    InitialGuessPolynomialControl,
-)
 from aviary.mission.gasp_based.ode.unsteady_solved.unsteady_solved_ode import UnsteadySolvedODE
-
+from aviary.mission.initial_guess_builders import (
+    InitialGuessIntegrationVariable,
+    InitialGuessPolynomialControl,
+    InitialGuessState,
+)
 from aviary.utils.aviary_options_dict import AviaryOptionsDictionary
 from aviary.utils.aviary_values import AviaryValues
-from aviary.variable_info.enums import SpeedType, EquationsOfMotion, ThrottleAllocation
+from aviary.variable_info.enums import EquationsOfMotion, SpeedType, ThrottleAllocation
 from aviary.variable_info.variables import Dynamic
 
 # TODO: support/handle the following in the base class
@@ -326,9 +324,7 @@ class TwoDOFPhaseOptions(AviaryOptionsDictionary):
 
 @register
 class TwoDOFPhase(FlightPhaseBase):
-    """
-    A phase builder for a two degree of freedom (2DOF) phase.
-    """
+    """A phase builder for a two degree of freedom (2DOF) phase."""
 
     default_options_class = TwoDOFPhaseOptions
 
@@ -412,9 +408,7 @@ class TwoDOFPhase(FlightPhaseBase):
         return phase
 
     def make_default_transcription(self):
-        """
-        Return a transcription object to be used by default in build_phase.
-        """
+        """Return a transcription object to be used by default in build_phase."""
         user_options = self.user_options
 
         num_segments = user_options['num_segments']
@@ -429,9 +423,7 @@ class TwoDOFPhase(FlightPhaseBase):
         return transcription
 
     def _extra_ode_init_kwargs(self):
-        """
-        Return extra kwargs required for initializing the ODE.
-        """
+        """Return extra kwargs required for initializing the ODE."""
         # TODO: support external_subsystems and meta_data in the base class
         return {
             'external_subsystems': self.external_subsystems,

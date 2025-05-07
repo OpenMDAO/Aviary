@@ -1,12 +1,9 @@
-"""
-Define utilities for calculating takeoff EOMs.
-"""
+"""Define utilities for calculating takeoff EOMs."""
 
 import numpy as np
 import openmdao.api as om
 
 from aviary.constants import GRAV_METRIC_FLOPS as grav_metric
-
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.functions import add_aviary_input, add_aviary_output
 from aviary.variable_info.variables import Dynamic, Mission
@@ -105,9 +102,7 @@ class StallSpeed(om.ExplicitComponent):
 
 
 class TakeoffEOM(om.Group):
-    """
-    Define a group for calculating takeoff equations of motion.
-    """
+    """Define a group for calculating takeoff equations of motion."""
 
     def initialize(self):
         options = self.options
@@ -278,9 +273,7 @@ class DistanceRates(om.ExplicitComponent):
 
 
 class Accelerations(om.ExplicitComponent):
-    """
-    Define a component for calculating horizontal and vertical accelerations from forces.
-    """
+    """Define a component for calculating horizontal and vertical accelerations from forces."""
 
     def initialize(self):
         options = self.options
@@ -378,9 +371,7 @@ class Accelerations(om.ExplicitComponent):
 
 
 class VelocityRate(om.ExplicitComponent):
-    """
-    Define a component for calculating total acceleration.
-    """
+    """Define a component for calculating total acceleration."""
 
     def initialize(self):
         options = self.options
@@ -445,9 +436,7 @@ class VelocityRate(om.ExplicitComponent):
 
 
 class FlightPathAngleRate(om.ExplicitComponent):
-    """
-    Define a component for calculating flight path angle change rate.
-    """
+    """Define a component for calculating flight path angle change rate."""
 
     def initialize(self):
         options = self.options
@@ -886,9 +875,7 @@ class ClimbGradientForces(om.ExplicitComponent):
         t_inc = aviary_options.get_val(Mission.Takeoff.THRUST_INCIDENCE, 'rad')
 
         mass = inputs[Dynamic.Vehicle.MASS]
-        lift = inputs[Dynamic.Vehicle.LIFT]
         thrust = inputs[Dynamic.Vehicle.Propulsion.THRUST_TOTAL]
-        drag = inputs[Dynamic.Vehicle.DRAG]
 
         weight = mass * grav_metric
 

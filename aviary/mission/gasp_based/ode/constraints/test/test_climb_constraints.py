@@ -9,9 +9,7 @@ from aviary.variable_info.variables import Dynamic
 
 
 class SpeedConstraintTestCase1(unittest.TestCase):
-    """
-    Test speed constraint at MACH = 0.6 with targeted MACH at 0.8
-    """
+    """Test speed constraint at MACH = 0.6 with targeted MACH at 0.8."""
 
     def setUp(self):
         self.prob = om.Problem()
@@ -43,9 +41,7 @@ class SpeedConstraintTestCase1(unittest.TestCase):
 
 
 class SpeedConstraintTestCase2(unittest.TestCase):
-    """
-    Test speed constraint at MACH = 0.9 with targeted Mach at 0.8
-    """
+    """Test speed constraint at MACH = 0.9 with targeted Mach at 0.8."""
 
     def setUp(self):
         self.prob = om.Problem()

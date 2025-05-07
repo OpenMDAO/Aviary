@@ -10,9 +10,7 @@ from aviary.variable_info.variables import Aircraft
 
 
 class SizeGroup(om.Group):
-    """
-    Group to pull together all the different components and subgroups of the SIZE subroutine
-    """
+    """Group to pull together all the different components and subgroups of the SIZE subroutine."""
 
     def initialize(self):
         add_aviary_option(self, Aircraft.Electrical.HAS_HYBRID_SYSTEM)

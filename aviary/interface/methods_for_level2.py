@@ -1,62 +1,50 @@
 import csv
-import warnings
-import inspect
-from pathlib import Path
-from datetime import datetime
 import importlib.util
-import sys
+import inspect
 import json
 import os
+import sys
+import warnings
+from datetime import datetime
 from enum import Enum
-
-import numpy as np
+from pathlib import Path
 
 import dymos as dm
-from dymos.utils.misc import _unspecified
-
+import numpy as np
 import openmdao.api as om
+from dymos.utils.misc import _unspecified
 from openmdao.utils.reports_system import _default_reports
 
+from aviary.core.AviaryGroup import AviaryGroup
+from aviary.core.PostMissionGroup import PostMissionGroup
+from aviary.core.PreMissionGroup import PreMissionGroup
 from aviary.interface.default_phase_info.two_dof_fiti import add_default_sgm_args
 from aviary.interface.utils.check_phase_info import check_phase_info
 from aviary.mission.gasp_based.phases.time_integration_traj import FlexibleTraj
-
-from aviary.mission.gasp_based.ode.v_rotate_comp import VRotateComp
-from aviary.mission.height_energy_problem_configurator import (
-    HeightEnergyProblemConfigurator,
-)
+from aviary.mission.height_energy_problem_configurator import HeightEnergyProblemConfigurator
+from aviary.mission.solved_two_dof_problem_configurator import SolvedTwoDOFProblemConfigurator
 from aviary.mission.two_dof_problem_configurator import TwoDOFProblemConfigurator
-from aviary.mission.solved_two_dof_problem_configurator import (
-    SolvedTwoDOFProblemConfigurator,
-)
-
 from aviary.subsystems.aerodynamics.aerodynamics_builder import CoreAerodynamicsBuilder
 from aviary.subsystems.geometry.geometry_builder import CoreGeometryBuilder
 from aviary.subsystems.mass.mass_builder import CoreMassBuilder
 from aviary.subsystems.premission import CorePreMission
 from aviary.subsystems.propulsion.propulsion_builder import CorePropulsionBuilder
-
 from aviary.utils.aviary_values import AviaryValues
-from aviary.utils.utils import wrapped_convert_units
 from aviary.utils.functions import convert_strings_to_data
 from aviary.utils.merge_variable_metadata import merge_meta_data
 from aviary.utils.preprocessors import preprocess_options
 from aviary.utils.process_input_decks import create_vehicle, update_GASP_options
-
+from aviary.utils.utils import wrapped_convert_units
 from aviary.variable_info.enums import (
     AnalysisScheme,
-    ProblemType,
     EquationsOfMotion,
     LegacyCode,
+    ProblemType,
     Verbosity,
 )
-from aviary.variable_info.functions import setup_trajectory_params, setup_model_options
-from aviary.variable_info.variables import Aircraft, Mission, Dynamic, Settings
+from aviary.variable_info.functions import setup_model_options, setup_trajectory_params
 from aviary.variable_info.variable_meta_data import _MetaData as BaseMetaData
-
-from aviary.core.PostMissionGroup import PostMissionGroup
-from aviary.core.PreMissionGroup import PreMissionGroup
-from aviary.core.AviaryGroup import AviaryGroup
+from aviary.variable_info.variables import Aircraft, Dynamic, Mission, Settings
 
 FLOPS = LegacyCode.FLOPS
 GASP = LegacyCode.GASP
@@ -181,12 +169,12 @@ class AviaryProblem(om.Problem):
                 # TODO: make draft / example custom builder
             else:
                 raise ValueError(
-                    f'When using "settings:equations_of_motion,custom", a '
+                    'When using "settings:equations_of_motion,custom", a '
                     'problem_configurator must be specified in load_inputs().'
                 )
         else:
             raise ValueError(
-                f'settings:equations_of_motion must be one of: height_energy, 2DOF, '
+                'settings:equations_of_motion must be one of: height_energy, 2DOF, '
                 'solved_2DOF, or custom'
             )
 
@@ -405,9 +393,7 @@ class AviaryProblem(om.Problem):
         self._check_reserve_phase_separation()
 
     def _update_metadata_from_subsystems(self):
-        """
-        Merge metadata from user-defined subsystems into problem metadata.
-        """
+        """Merge metadata from user-defined subsystems into problem metadata."""
         self.meta_data = BaseMetaData.copy()
 
         # loop through phase_info and external subsystems
@@ -425,9 +411,8 @@ class AviaryProblem(om.Problem):
         This method checks for reserve=True & False
         Returns an error if a non-reserve phase is specified after a reserve phase.
         return two dictionaries of phases: regular_phases and reserve_phases
-        For shooting trajectories, this will also check if a phase is part of the descent
+        For shooting trajectories, this will also check if a phase is part of the descent.
         """
-
         # Check to ensure no non-reserve phases are specified after reserve phases
         start_reserve = False
         raise_error = False
@@ -550,7 +535,6 @@ class AviaryProblem(om.Problem):
         pre-mission object, allowing this calculated subsystem mass to be accessed
         directly from the pre-mission object.
         """
-
         mass_names = []
         # Loop through all the phases in this subsystem.
         for external_subsystem in self.pre_mission_info['external_subsystems']:
@@ -1640,7 +1624,7 @@ class AviaryProblem(om.Problem):
 
                                 self.model.connect(
                                     f'pre_mission.{bus_variable}',
-                                    f'traj.parameters:' + mission_var_name,
+                                    'traj.parameters:' + mission_var_name,
                                 )
 
                         if 'post_mission_name' in variable_data:
@@ -1651,9 +1635,7 @@ class AviaryProblem(om.Problem):
                             )
 
     def setup(self, **kwargs):
-        """
-        Lightly wrapped setup() method for the problem.
-        """
+        """Lightly wrapped setup() method for the problem."""
         # verbosity is not used in this method, but it is understandable that a user
         # might try and include it (only method that doesn't accept it). Capture it
         if 'verbosity' in kwargs:
@@ -1754,6 +1736,7 @@ class AviaryProblem(om.Problem):
         the normalized phase time domain), using the numpy linspace function.
         The result of this method is a single value or an array of interpolated values
         that can be used to seed the optimization problem with initial guesses.
+
         Parameters
         ----------
         val : float or list/array of floats
@@ -1762,6 +1745,7 @@ class AviaryProblem(om.Problem):
             The key identifying the variable for which the initial guess is provided.
         phase : Phase
             The phase for which the variable is being set.
+
         Returns
         -------
         val : float or array of floats
@@ -1802,6 +1786,7 @@ class AviaryProblem(om.Problem):
         guess, it identifies whether the guess corresponds to a state or a control
         variable and then processes the guess variable. After this, the initial
         guess is set in the problem using the `set_val` method.
+
         Parameters
         ----------
         phase_name : str
@@ -1809,7 +1794,6 @@ class AviaryProblem(om.Problem):
         phase : Phase
             The phase object for which the subsystem guesses are being added.
         """
-
         # Get all subsystems associated with the phase
         all_subsystems = self._get_all_subsystems(
             self.phase_info[phase_name]['external_subsystems']
@@ -2197,7 +2181,6 @@ class AviaryProblem(om.Problem):
         json_filename : string
             User specified name and relative path of json file to save the data into.
         """
-
         aviary_input_list = []
         with open(json_filename, 'w') as jsonfile:
             # Loop through aviary input datastructure and create a list
@@ -2361,7 +2344,7 @@ def _read_sizing_json(aviary_problem, json_filename):
         User specified name and relative path of json file to save the data into
 
     Returns
-    ----------
+    -------
     Aviary Problem object with updated input values from json file
 
     """
@@ -2488,7 +2471,7 @@ def _load_off_design(
         Controls the level of printouts for this method.
 
     Returns
-    ----------
+    -------
     Aviary Problem object with completed load_inputs() for specified off design mission
     """
     # Initialize a new aviary problem and aviary_input data structure
@@ -2534,8 +2517,10 @@ def _load_off_design(
         else:
             prob.aviary_inputs.set_val(Mission.Design.RANGE, mission_range, units='NM')
             prob.aviary_inputs.set_val(Mission.Summary.RANGE, mission_range, units='NM')
+            # TODO is there a reason we can't use set_default() to make sure target range exists and
+            #      has a value if not already in dictionary?
             try:
-                target_range = phase_info['post_mission']['target_range']
+                phase_info['post_mission']['target_range']
                 phase_info['post_mission']['target_range'] = (mission_range, 'nmi')
             except KeyError:
                 warnings.warn('no target range to update')

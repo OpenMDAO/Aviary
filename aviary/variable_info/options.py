@@ -1,9 +1,9 @@
+from aviary.subsystems.propulsion.engine_deck import EngineDeck
 from aviary.utils.aviary_values import AviaryValues
-from aviary.utils.preprocessors import preprocess_propulsion
 from aviary.utils.functions import get_path
+from aviary.utils.preprocessors import preprocess_propulsion
 from aviary.variable_info.variable_meta_data import _MetaData
 from aviary.variable_info.variables import Aircraft
-from aviary.subsystems.propulsion.engine_deck import EngineDeck
 
 
 def get_option_defaults(engine=True, meta_data=_MetaData) -> AviaryValues:
@@ -18,7 +18,6 @@ def get_option_defaults(engine=True, meta_data=_MetaData) -> AviaryValues:
         Dictionary containing metadata for the options. If None, Aviary's built-in
         metadata will be used.
     """
-
     option_defaults = AviaryValues()
 
     # Load all variables marked as options in the MetaData
@@ -51,5 +50,4 @@ def is_option(key, meta_data=_MetaData) -> bool:
         Dictionary containing metadata for the variable. If None, Aviary's built-in
         metadata will be used.
     """
-
     return meta_data[key]['option']

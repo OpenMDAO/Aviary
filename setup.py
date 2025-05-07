@@ -1,7 +1,7 @@
-from setuptools import find_packages, setup
-from pathlib import Path
 import re
+from pathlib import Path
 
+from setuptools import find_packages, setup
 
 # Version info is set in one place; the aviary/__init__.py file
 __version__ = re.findall(

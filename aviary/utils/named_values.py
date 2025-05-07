@@ -30,9 +30,7 @@ OptionalValueAndUnits = Union[ValueAndUnits, Any]
 
 
 class NamedValues(Collection):
-    """
-    Define a collection of named values with associated units.
-    """
+    """Define a collection of named values with associated units."""
 
     def __init__(self, other=None, **kwargs):
         """
@@ -89,7 +87,7 @@ class NamedValues(Collection):
         Return a copy of the instance of this class.
 
         Parameters
-        ---------
+        ----------
         None
 
         Returns
@@ -103,7 +101,7 @@ class NamedValues(Collection):
         Return a deep copy of the instance of this class.
 
         Parameters
-        ---------
+        ----------
         None
 
         Returns
@@ -183,15 +181,11 @@ class NamedValues(Collection):
         self._mapping[key] = (val, units)
 
     def __repr__(self):
-        """
-        Return a string containing a printable representation of the collection.
-        """
+        """Return a string containing a printable representation of the collection."""
         return repr(self._mapping)
 
     def clear(self):
-        """
-        Remove all items from the collection.
-        """
+        """Remove all items from the collection."""
         self._mapping.clear()
 
     def update(self, other=None, **kwargs):
@@ -263,9 +257,7 @@ class NamedValues(Collection):
             raise KeyError(f'KeyError: key not found: {key}')
 
     def __eq__(self, other):
-        """
-        Return whether or not this collection is equivalent to another.
-        """
+        """Return whether or not this collection is equivalent to another."""
         collection = self._mapping
 
         if isinstance(other, type(self)):
@@ -274,23 +266,17 @@ class NamedValues(Collection):
         return collection == other
 
     def __contains__(self, key):
-        """
-        Return whether or not the named value exists.
-        """
+        """Return whether or not the named value exists."""
         return key in self._mapping
 
     def __iter__(self):
-        """
-        Return an iterator over the `(key, (val, units))` data stored in this collection.
-        """
+        """Return an iterator over the `(key, (val, units))` data stored in this collection."""
         items = self._mapping.items()
 
         yield from items
 
     def __len__(self):
-        """
-        Return the number of items in this collection.
-        """
+        """Return the number of items in this collection."""
         return len(self._mapping)
 
     def _check_units(self, funcname, key, units):
@@ -320,21 +306,15 @@ class NamedValues(Collection):
 # It is weird that these are not methods - it requires us to import these in AviarValues
 # just so they can be imported from that file as well. Seems unintuitive
 def get_keys(named_values: NamedValues):
-    """
-    Return a new view of the collection's names.
-    """
+    """Return a new view of the collection's names."""
     return named_values._mapping.keys()
 
 
 def get_items(named_values: NamedValues):
-    """
-    Return a new view of the collection's `(key, (val, units))`.
-    """
+    """Return a new view of the collection's `(key, (val, units))`."""
     return named_values._mapping.items()
 
 
 def get_values(named_values: NamedValues):
-    """
-    Return a new view of the collection's `(val, units)`.
-    """
+    """Return a new view of the collection's `(val, units)`."""
     return named_values._mapping.values()

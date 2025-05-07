@@ -1,5 +1,4 @@
 import unittest
-
 from copy import deepcopy
 
 from aviary.utils.test_utils.variable_test import (
@@ -9,7 +8,7 @@ from aviary.utils.test_utils.variable_test import (
     get_names_from_hierarchy,
 )
 from aviary.variable_info.variable_meta_data import _MetaData
-from aviary.variable_info.variables import Aircraft, Mission, Dynamic, Settings
+from aviary.variable_info.variables import Aircraft, Dynamic, Mission, Settings
 
 
 class DuplicateHierarchy:
@@ -26,9 +25,7 @@ class DuplicateHierarchy:
 
 
 class MetaDataTest(unittest.TestCase):
-    """
-    Tests for variable_meta_data.py: check for duplicate legacy code names, alphabetization, and any missing names from variable hierarchy.
-    """
+    """Tests for variable_meta_data.py: check for duplicate legacy code names, alphabetization, and any missing names from variable hierarchy."""
 
     def test_duplicate_names_FLOPS(self):
         flops_names = [var['historical_name']['FLOPS'] for var in _MetaData.values()]
@@ -71,9 +68,7 @@ class MetaDataTest(unittest.TestCase):
 
 
 class VariableStructureTest(unittest.TestCase):
-    """
-    Tests for variables.py: check for duplicates and alphabetization
-    """
+    """Tests for variables.py: check for duplicates and alphabetization."""
 
     def test_duplicate_names_Aviary(self):
         aviary_names = (

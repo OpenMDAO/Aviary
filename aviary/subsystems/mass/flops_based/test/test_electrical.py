@@ -96,9 +96,7 @@ class ElectricMassTest0(unittest.TestCase):
 
 
 class ElectricMassTest2(unittest.TestCase):
-    """
-    Test mass-weight conversion
-    """
+    """Test mass-weight conversion."""
 
     def setUp(self):
         import aviary.subsystems.mass.flops_based.electrical as electrical

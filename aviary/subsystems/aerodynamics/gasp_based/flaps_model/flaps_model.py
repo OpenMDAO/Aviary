@@ -3,18 +3,14 @@ import openmdao.api as om
 from aviary.subsystems.aerodynamics.gasp_based.flaps_model.basic_calculations import (
     BasicFlapsCalculations,
 )
-from aviary.subsystems.aerodynamics.gasp_based.flaps_model.Cl_max import (
-    CLmaxCalculation,
-)
+from aviary.subsystems.aerodynamics.gasp_based.flaps_model.Cl_max import CLmaxCalculation
 from aviary.subsystems.aerodynamics.gasp_based.flaps_model.L_and_D_increments import (
     LiftAndDragIncrements,
 )
-from aviary.subsystems.aerodynamics.gasp_based.flaps_model.meta_model import (
-    MetaModelGroup,
-)
+from aviary.subsystems.aerodynamics.gasp_based.flaps_model.meta_model import MetaModelGroup
 from aviary.variable_info.enums import FlapType
-from aviary.variable_info.variables import Aircraft, Dynamic
 from aviary.variable_info.functions import add_aviary_option
+from aviary.variable_info.variables import Aircraft, Dynamic
 
 
 class FlapsGroup(om.Group):

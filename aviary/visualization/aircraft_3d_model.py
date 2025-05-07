@@ -1,11 +1,12 @@
-from enum import IntEnum
 import math
-from string import Template
 from dataclasses import dataclass
+from enum import IntEnum
+from string import Template
 from typing import Iterator, List, Tuple
 
 import openmdao.api as om
 from openmdao.utils.om_warnings import issue_warning
+
 import aviary.api as av
 
 
@@ -248,7 +249,7 @@ class AircraftModelReader(object):
         model_options = cr.list_model_options(out_stream=None)
         try:
             self.aviary_options = model_options['root']['aviary_options']
-        except KeyError as e:
+        except KeyError:
             issue_warning(
                 f'The case recorder file {self._case_recorder_file} does not have any metadata for the root system'
             )
@@ -264,16 +265,14 @@ class AircraftModelReader(object):
         self._final_case = cr.get_case('final')
 
     def _write_input_output_variables(self):
-        """
-        Write out the input and output variables in the final case. For debugging.
-        """
-        inputs = self._final_case.list_inputs(
+        """Write out the input and output variables in the final case. For debugging."""
+        self._final_case.list_inputs(
             val=True,
             return_format='list',
             prom_name=True,
             hierarchical=False,
         )
-        outputs = self._final_case.list_outputs(
+        self._final_case.list_outputs(
             val=True,
             return_format='list',
             prom_name=True,
@@ -299,7 +298,7 @@ class AircraftModelReader(object):
         try:
             val = self._final_case.get_val(var_prom_name, units=units)
             return float(val)
-        except KeyError as e:
+        except KeyError:
             pass
 
         abs2prom = self._problem_metadata['abs2prom']
@@ -425,9 +424,7 @@ class VerticalTail(object):
         self._fuselage = fuselage
 
     def read_variables(self):
-        """
-        Read the variables from the final case that are needed to define the vertical tail.
-        """
+        """Read the variables from the final case that are needed to define the vertical tail."""
         try:
             thickness_to_chord = self._reader.get_variable_from_case(
                 'aircraft:vertical_tail:thickness_to_chord'
@@ -554,9 +551,7 @@ class HorizontalWing(object):
         self._wing_type = wing_type
 
     def read_variables(self):
-        """
-        Read the variables from the final case that are needed to define the horizontal wing.
-        """
+        """Read the variables from the final case that are needed to define the horizontal wing."""
         if self._wing_type == WingType.WING:
             wing_type_name = 'wing'
         elif self._wing_type == WingType.HORIZONTAL_TAIL:
@@ -744,9 +739,7 @@ class Engines(object):
         self._has_propellers = None
 
     def read_variables(self):
-        """
-        Read the variables from the final case that are needed to define the engines.
-        """
+        """Read the variables from the final case that are needed to define the engines."""
         try:
             self._num_wing_engines = self._reader.get_variable_from_aviary_options(
                 av.Aircraft.Engine.NUM_WING_ENGINES
@@ -764,7 +757,7 @@ class Engines(object):
                 self._has_propellers = self._reader.get_variable_from_case(
                     av.Aircraft.Engine.HAS_PROPELLERS
                 )
-            except AircraftModelReaderError as e2:
+            except AircraftModelReaderError:
                 self._has_propellers = False
         except AircraftModelReaderError as e:
             print(f'Warning: Unable to read engine variables due to the error: {e} ')

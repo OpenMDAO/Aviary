@@ -1,9 +1,7 @@
 from aviary.mission.flops_based.phases.time_integration_phases import SGMHeightEnergy
 from aviary.utils.aviary_values import AviaryValues
+from aviary.variable_info.enums import AlphaModes, SpeedType
 from aviary.variable_info.variables import Dynamic, Mission
-from aviary.variable_info.enums import SpeedType, AlphaModes
-
-from aviary.interface.default_phase_info.two_dof_fiti import add_default_sgm_args
 
 # defaults for height energy based forward in time integeration phases
 cruise_mach = (0.8,)
@@ -66,10 +64,7 @@ def phase_info_parameterization(phase_info, post_mission_info, aviary_inputs: Av
         Modified phase_info and post_mission_info that have been changed to match
         the new mission parameters
     """
-
-    range_cruise = aviary_inputs.get_item(Mission.Design.RANGE)
     alt_cruise = aviary_inputs.get_item(Mission.Design.CRUISE_ALTITUDE)
-    gross_mass = aviary_inputs.get_item(Mission.Design.GROSS_MASS)
     mach_cruise = aviary_inputs.get_item(Mission.Design.MACH)
 
     phase_info['climb']['user_options']['alt_trigger'] = alt_cruise

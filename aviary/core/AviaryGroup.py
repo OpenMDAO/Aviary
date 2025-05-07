@@ -3,7 +3,7 @@ from openmdao.utils.mpi import MPI
 
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.enums import EquationsOfMotion
-from aviary.variable_info.variables import Aircraft, Mission, Dynamic, Settings
+from aviary.variable_info.variables import Settings
 
 HEIGHT_ENERGY = EquationsOfMotion.HEIGHT_ENERGY
 
@@ -16,7 +16,7 @@ class AviaryGroup(om.Group):
     """
 
     def initialize(self):
-        """declare options"""
+        """Declare options."""
         self.options.declare(
             'aviary_options',
             types=AviaryValues,
@@ -29,9 +29,7 @@ class AviaryGroup(om.Group):
         self.builder = []
 
     def configure(self):
-        """
-        Configure the Aviary group
-        """
+        """Configure the Aviary group."""
         aviary_options = self.options['aviary_options']
         aviary_metadata = self.options['aviary_metadata']
 

@@ -1,4 +1,3 @@
-import numpy as np
 from numpy import pi
 
 from aviary.utils.aviary_values import AviaryValues

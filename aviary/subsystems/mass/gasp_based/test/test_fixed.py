@@ -2,13 +2,11 @@ import unittest
 
 import numpy as np
 import openmdao.api as om
-
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 from openmdao.utils.testing_utils import use_tempdirs
 
 from aviary import constants
 from aviary.constants import RHO_SEA_LEVEL_ENGLISH
-
 from aviary.subsystems.mass.gasp_based.fixed import (
     ControlMass,
     ElectricAugmentationMass,
@@ -21,14 +19,14 @@ from aviary.subsystems.mass.gasp_based.fixed import (
     TailMass,
 )
 from aviary.utils.aviary_values import AviaryValues, get_keys
-from aviary.variable_info.functions import setup_model_options, extract_options
+from aviary.variable_info.functions import extract_options, setup_model_options
 from aviary.variable_info.options import get_option_defaults
 from aviary.variable_info.variables import Aircraft, Mission, Settings
 
 
 @use_tempdirs
 class MassParametersTestCase1(unittest.TestCase):
-    """this is large single aisle 1 v3 bug fixed test case"""
+    """this is large single aisle 1 v3 bug fixed test case."""
 
     def setUp(self):
         options = get_option_defaults()
@@ -369,7 +367,6 @@ class ElectricAugmentationTestCase(unittest.TestCase):
     def test_case1(self):
         self.prob.run_model()
 
-        tol = 5e-4
         assert_near_equal(
             self.prob['aug_mass'], 9394.3, 0.0017
         )  # electrified diff configuration value v3.6. Higher tol because num_wires is discrete in GASP and is not in Aviary
