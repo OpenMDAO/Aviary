@@ -1176,10 +1176,12 @@ class WingGroup(om.Group):
                 'wing_vol_geom',
                 BWBWingVolume(),
                 promotes_inputs=['aircraft:*'],
-                promotes_outputs=['aircraft:*'],
+                # promotes_outputs=['aircraft:*'],
             )
             if has_fold:
                 self.promotes('wing_vol_geom', outputs=['wing_voume_no_fold'])
+            else:
+                self.promotes('wing_vol_geom', outputs=['aircraft:*'])
         else:
             self.add_subsystem(
                 'wing_vol_geom',
