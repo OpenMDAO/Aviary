@@ -2984,7 +2984,7 @@ class MassSummationTestCase9(unittest.TestCase):
         )  # modified from GASP value to account for updated crew mass. GASP value is 63707.6
 
         assert_near_equal(
-            self.prob['fuel_mass.fus_mass_full'], 108803.9, tol
+            self.prob['fuel_mass.fus_mass_full'], 108864.635, tol
         )  # (printed out from GASP code),  #modified from GASP value to account for updated crew mass. GASP value is 108754.4
         assert_near_equal(
             self.prob[Aircraft.Fuel.FUEL_SYSTEM_MASS], 2027.6, 0.00055
@@ -3022,8 +3022,8 @@ class MassSummationTestCase9(unittest.TestCase):
         assert_near_equal(self.prob['fuel_mass.fuel_and_oem.volume_wingfuel_mass'], 35042.1, tol)
         assert_near_equal(self.prob['fuel_mass.max_wingfuel_mass'], 35042.1, tol)
         assert_near_equal(self.prob[Aircraft.Fuel.AUXILIARY_FUEL_CAPACITY], 0, tol)
-        assert_near_equal(self.prob['fuel_mass.body_tank.extra_fuel_volume'], 0, tol)
-        assert_near_equal(self.prob['fuel_mass.body_tank.max_extra_fuel_mass'], 0, tol)
+        assert_near_equal(self.prob['fuel_mass.body_tank.extra_fuel_volume'], 0.69314718, tol)
+        assert_near_equal(self.prob['fuel_mass.body_tank.max_extra_fuel_mass'], 34.67278, tol)
 
         assert_near_equal(self.prob[Aircraft.Electrical.HYBRID_CABLE_LENGTH], 65.6, tol)
         assert_near_equal(
@@ -3035,4 +3035,7 @@ class MassSummationTestCase9(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    unittest.main()
+    # unittest.main()
+    test = MassSummationTestCase9()
+    test.setUp()
+    test.test_case1()
