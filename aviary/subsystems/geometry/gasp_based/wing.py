@@ -1173,7 +1173,7 @@ class WingGroup(om.Group):
 
         if design_type is AircraftTypes.BLENDED_WING_BODY:
             self.add_subsystem(
-                'wing_vol',
+                'wing_vol_geom',
                 BWBWingVolume(),
                 promotes_inputs=['aircraft:*'],
                 promotes_outputs=['aircraft:*'],
@@ -1182,7 +1182,7 @@ class WingGroup(om.Group):
                 self.promotes('wing_vol', outputs=['wing_voume_no_fold'])
         else:
             self.add_subsystem(
-                'wing_vol',
+                'wing_vol_geom',
                 WingVolume(),
                 promotes_inputs=['aircraft:*'],
                 promotes_outputs=['aircraft:*'],
