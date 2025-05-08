@@ -251,19 +251,19 @@ class SizeGroupTestCase2(unittest.TestCase):
         )  # not actual GASP value
 
         assert_near_equal(
-            self.prob['wing.fold.nonfolded_taper_ratio'], 0.93175961, tol
+            self.prob['wing.fold_vol.nonfolded_taper_ratio'], 0.93175961, tol
         )  # not actual GASP value
         assert_near_equal(
             self.prob[Aircraft.Wing.FOLDING_AREA], 1167.5966191, tol
         )  # not actual GASP value
         assert_near_equal(
-            self.prob['wing.fold.nonfolded_wing_area'], 202.7158809, tol
+            self.prob['wing.fold_vol.nonfolded_wing_area'], 202.7158809, tol
         )  # not actual GASP value
         assert_near_equal(
-            self.prob['wing.fold.tc_ratio_mean_folded'], 0.14847223, tol
+            self.prob['wing.fold_vol.tc_ratio_mean_folded'], 0.14847223, tol
         )  # not actual GASP value
         assert_near_equal(
-            self.prob['wing.fold.nonfolded_AR'], 0.71035382, tol
+            self.prob['wing.fold_vol.nonfolded_AR'], 0.71035382, tol
         )  # not actual GASP value
         assert_near_equal(
             self.prob[Aircraft.Fuel.WING_VOLUME_GEOMETRIC_MAX], 208.08091725, tol
@@ -441,19 +441,19 @@ class SizeGroupTestCase3(unittest.TestCase):
         )  # not actual GASP value
 
         assert_near_equal(
-            self.prob['wing.fold.nonfolded_taper_ratio'], 0.85783252, tol
+            self.prob['wing.fold_vol.nonfolded_taper_ratio'], 0.85783252, tol
         )  # not actual GASP value
         assert_near_equal(
             self.prob[Aircraft.Wing.FOLDING_AREA], 964.14982163, tol
         )  # not actual GASP value
         assert_near_equal(
-            self.prob['wing.fold.nonfolded_wing_area'], 406.16267837, tol
+            self.prob['wing.fold_vol.nonfolded_wing_area'], 406.16267837, tol
         )  # not actual GASP value
         assert_near_equal(
-            self.prob['wing.fold.tc_ratio_mean_folded'], 0.14681715, tol
+            self.prob['wing.fold_vol.tc_ratio_mean_folded'], 0.14681715, tol
         )  # not actual GASP value
         assert_near_equal(
-            self.prob['wing.fold.nonfolded_AR'], 1.5387923, tol
+            self.prob['wing.fold_vol.nonfolded_AR'], 1.5387923, tol
         )  # not actual GASP value
         assert_near_equal(
             self.prob[Aircraft.Fuel.WING_VOLUME_GEOMETRIC_MAX], 406.53567274, tol
