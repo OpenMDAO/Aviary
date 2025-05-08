@@ -1179,7 +1179,7 @@ class WingGroup(om.Group):
                 promotes_outputs=['aircraft:*'],
             )
             if has_fold:
-                self.promotes('wing_vol', outputs=['wing_voume_no_fold'])
+                self.promotes('wing_vol_geom', outputs=['wing_voume_no_fold'])
         else:
             self.add_subsystem(
                 'wing_vol_geom',
