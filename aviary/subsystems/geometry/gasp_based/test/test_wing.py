@@ -4,6 +4,7 @@ import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 
 from aviary.subsystems.geometry.gasp_based.wing import (
+    BWBWingVolume,
     ExposedWing,
     WingFold,
     WingGroup,
@@ -69,6 +70,8 @@ class WingVolumeTestCase1(
     unittest.TestCase
 ):  # actual GASP test case, input and output values based on large single aisle 1 v3 without bug fix
     def setUp(self):
+        options = get_option_defaults()
+        options.set_val(Aircraft.Wing.HAS_FOLD, val=False, units='unitless')
         self.prob = om.Problem()
         self.prob.model.add_subsystem('wing_vol', WingVolume(), promotes=['*'])
 
@@ -85,6 +88,8 @@ class WingVolumeTestCase1(
         )
         self.prob.model.set_input_defaults(Aircraft.Fuel.WING_FUEL_FRACTION, 0.6, units='unitless')
 
+        setup_model_options(self.prob, options)
+
         self.prob.setup(check=False, force_alloc_complex=True)
 
     def test_case1(self):
@@ -95,6 +100,44 @@ class WingVolumeTestCase1(
 
         partial_data = self.prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
+
+
+class BWBWingVolumeTestCase(unittest.TestCase):
+    """Test BWB data for BWBWingVolume"""
+
+    def setUp(self):
+        options = get_option_defaults()
+        options.set_val(Aircraft.Wing.HAS_FOLD, val=False, units='unitless')
+        self.prob = om.Problem()
+        self.prob.model.add_subsystem('wing_vol', BWBWingVolume(), promotes=['*'])
+
+        self.prob.model.set_input_defaults(
+            Aircraft.LandingGear.MAIN_GEAR_LOCATION, 0.0, units='unitless'
+        )
+        self.prob.model.set_input_defaults(
+            Aircraft.Wing.THICKNESS_TO_CHORD_REF, 0.165, units='unitless'
+        )
+        self.prob.model.set_input_defaults(
+            Aircraft.Wing.THICKNESS_TO_CHORD_TIP, 0.1, units='unitless'
+        )
+        self.prob.model.set_input_defaults(Aircraft.Fuselage.AVG_DIAMETER, 38.0, units='ft')
+        self.prob.model.set_input_defaults(Aircraft.Wing.SPAN, 146.385, units='ft')
+        self.prob.model.set_input_defaults(Aircraft.Wing.ROOT_CHORD, 22.9724445, units='ft')
+        self.prob.model.set_input_defaults(Aircraft.Wing.TAPER_RATIO, 0.27444, units='unitless')
+        self.prob.model.set_input_defaults(Aircraft.Fuel.WING_FUEL_FRACTION, 0.45, units='unitless')
+
+        setup_model_options(self.prob, options)
+
+        self.prob.setup(check=False, force_alloc_complex=True)
+
+    def test_case1(self):
+        self.prob.run_model()
+
+        tol = 1e-7
+        assert_near_equal(self.prob[Aircraft.Fuel.WING_VOLUME_GEOMETRIC_MAX], 783.6209, tol)
+
+        partial_data = self.prob.check_partials(out_stream=None, method='cs')
+        assert_check_partials(partial_data, atol=1e-11, rtol=1e-12)
 
 
 class WingParametersTestCase2(unittest.TestCase):
@@ -705,6 +748,6 @@ class ExposedWingTestCase(unittest.TestCase):
 
 if __name__ == '__main__':
     # unittest.main()
-    test = WingVolumeTestCase1()
+    test = BWBWingVolumeTestCase()
     test.setUp()
     test.test_case1()
