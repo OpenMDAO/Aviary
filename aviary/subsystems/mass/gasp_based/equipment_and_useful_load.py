@@ -160,6 +160,8 @@ class EquipMassPartial(om.ExplicitComponent):
 
         avionics_wt = 27.0
 
+        # GASP avionics weight model was put together long before modern systems
+        # came on-board, and should be updated.
         if PAX < 20:
             if smooth:
                 # Exponential regression from four points:
