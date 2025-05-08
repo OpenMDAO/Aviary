@@ -490,38 +490,42 @@ class BWBWingVolume(om.ExplicitComponent):
         add_aviary_input(self, Aircraft.Wing.TAPER_RATIO, units='unitless', desc='SLM')
         add_aviary_input(self, Aircraft.Fuel.WING_FUEL_FRACTION, units='unitless', desc='SKWF')
 
-        add_aviary_output(
-            self, Aircraft.Fuel.WING_VOLUME_GEOMETRIC_MAX, units='ft**3', desc='FVOLW_GEOM'
-        )
-        self.add_output('wing_voume_no_fold', units='ft**3', desc='FVOLW_GEOMX')
+        if self.options[Aircraft.Wing.HAS_FOLD]:
+            self.add_output('wing_voume_no_fold', units='ft**3', desc='FVOLW_GEOMX')
+        else:
+            add_aviary_output(
+                self, Aircraft.Fuel.WING_VOLUME_GEOMETRIC_MAX, units='ft**3', desc='FVOLW_GEOM'
+            )
 
     def setup_partials(self):
-        self.declare_partials(
-            Aircraft.Fuel.WING_VOLUME_GEOMETRIC_MAX,
-            [
-                Aircraft.LandingGear.MAIN_GEAR_LOCATION,
-                Aircraft.Wing.THICKNESS_TO_CHORD_REF,
-                Aircraft.Wing.THICKNESS_TO_CHORD_TIP,
-                Aircraft.Wing.SPAN,
-                Aircraft.Fuselage.AVG_DIAMETER,
-                Aircraft.Wing.ROOT_CHORD,
-                Aircraft.Wing.TAPER_RATIO,
-                Aircraft.Fuel.WING_FUEL_FRACTION,
-            ],
-        )
-        self.declare_partials(
-            'wing_voume_no_fold',
-            [
-                Aircraft.LandingGear.MAIN_GEAR_LOCATION,
-                Aircraft.Wing.THICKNESS_TO_CHORD_REF,
-                Aircraft.Wing.THICKNESS_TO_CHORD_TIP,
-                Aircraft.Wing.SPAN,
-                Aircraft.Fuselage.AVG_DIAMETER,
-                Aircraft.Wing.ROOT_CHORD,
-                Aircraft.Wing.TAPER_RATIO,
-                Aircraft.Fuel.WING_FUEL_FRACTION,
-            ],
-        )
+        if self.options[Aircraft.Wing.HAS_FOLD]:
+            self.declare_partials(
+                'wing_voume_no_fold',
+                [
+                    Aircraft.LandingGear.MAIN_GEAR_LOCATION,
+                    Aircraft.Wing.THICKNESS_TO_CHORD_REF,
+                    Aircraft.Wing.THICKNESS_TO_CHORD_TIP,
+                    Aircraft.Wing.SPAN,
+                    Aircraft.Fuselage.AVG_DIAMETER,
+                    Aircraft.Wing.ROOT_CHORD,
+                    Aircraft.Wing.TAPER_RATIO,
+                    Aircraft.Fuel.WING_FUEL_FRACTION,
+                ],
+            )
+        else:
+            self.declare_partials(
+                Aircraft.Fuel.WING_VOLUME_GEOMETRIC_MAX,
+                [
+                    Aircraft.LandingGear.MAIN_GEAR_LOCATION,
+                    Aircraft.Wing.THICKNESS_TO_CHORD_REF,
+                    Aircraft.Wing.THICKNESS_TO_CHORD_TIP,
+                    Aircraft.Wing.SPAN,
+                    Aircraft.Fuselage.AVG_DIAMETER,
+                    Aircraft.Wing.ROOT_CHORD,
+                    Aircraft.Wing.TAPER_RATIO,
+                    Aircraft.Fuel.WING_FUEL_FRACTION,
+                ],
+            )
 
     def compute(self, inputs, outputs):
         verbosity = self.options[Settings.VERBOSITY]
@@ -565,11 +569,13 @@ class BWBWingVolume(om.ExplicitComponent):
         numer = SKWF * 0.888889 * TCM * SW_NFX**1.5 * (2.0 * SLM_NFX + 1.0)
         denom = AR_NFX**0.5 * (SLM_NFX + 1.0) ** 2
         FVOLW_GEOM = numer / denom
-        outputs[Aircraft.Fuel.WING_VOLUME_GEOMETRIC_MAX] = FVOLW_GEOM
-        # At this point, wing_voume_no_fold is the same as Aircraft.Fuel.WING_VOLUME_GEOMETRIC_MAX.
-        # If there are wing folds, Aircraft.Fuel.WING_VOLUME_GEOMETRIC_MAX will be updated using
-        # wing_voume_no_fold
-        outputs['wing_voume_no_fold'] = FVOLW_GEOM
+        if self.options[Aircraft.Wing.HAS_FOLD]:
+            # At this point, wing_voume_no_fold is the same as Aircraft.Fuel.WING_VOLUME_GEOMETRIC_MAX.
+            # If there are wing folds, Aircraft.Fuel.WING_VOLUME_GEOMETRIC_MAX will be updated using
+            # wing_voume_no_fold
+            outputs['wing_voume_no_fold'] = FVOLW_GEOM
+        else:
+            outputs[Aircraft.Fuel.WING_VOLUME_GEOMETRIC_MAX] = FVOLW_GEOM
 
     def compute_partials(self, inputs, J):
         smooth = self.options[Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES]
@@ -719,33 +725,36 @@ class BWBWingVolume(om.ExplicitComponent):
         dFVOLW_GEOM_dSWF = (dnumer_dSWF * denom - numer * ddenom_dSWF) / denom**2
         dFVOLW_GEOM_dwingspan = (dnumer_dwingspan * denom - numer * ddenom_dwingspan) / denom**2
 
-        J[Aircraft.Fuel.WING_VOLUME_GEOMETRIC_MAX, Aircraft.Fuel.WING_FUEL_FRACTION] = (
-            dFVOLW_GEOM_dSKWF
-        )
-        J[Aircraft.Fuel.WING_VOLUME_GEOMETRIC_MAX, Aircraft.LandingGear.MAIN_GEAR_LOCATION] = (
-            dFVOLW_GEOM_dYMG
-        )
-        J[Aircraft.Fuel.WING_VOLUME_GEOMETRIC_MAX, Aircraft.Wing.TAPER_RATIO] = dFVOLW_GEOM_dSLM
-        J[Aircraft.Fuel.WING_VOLUME_GEOMETRIC_MAX, Aircraft.Wing.ROOT_CHORD] = dFVOLW_GEOM_dCROOT
-        J[Aircraft.Fuel.WING_VOLUME_GEOMETRIC_MAX, Aircraft.Wing.THICKNESS_TO_CHORD_REF] = (
-            dFVOLW_GEOM_dTCR
-        )
-        J[Aircraft.Fuel.WING_VOLUME_GEOMETRIC_MAX, Aircraft.Wing.THICKNESS_TO_CHORD_TIP] = (
-            dFVOLW_GEOM_dTCT
-        )
-        J[Aircraft.Fuel.WING_VOLUME_GEOMETRIC_MAX, Aircraft.Fuselage.AVG_DIAMETER] = (
-            dFVOLW_GEOM_dSWF
-        )
-        J[Aircraft.Fuel.WING_VOLUME_GEOMETRIC_MAX, Aircraft.Wing.SPAN] = dFVOLW_GEOM_dwingspan
-
-        J['wing_voume_no_fold', Aircraft.Fuel.WING_FUEL_FRACTION] = dFVOLW_GEOM_dSKWF
-        J['wing_voume_no_fold', Aircraft.LandingGear.MAIN_GEAR_LOCATION] = dFVOLW_GEOM_dYMG
-        J['wing_voume_no_fold', Aircraft.Wing.TAPER_RATIO] = dFVOLW_GEOM_dSLM
-        J['wing_voume_no_fold', Aircraft.Wing.ROOT_CHORD] = dFVOLW_GEOM_dCROOT
-        J['wing_voume_no_fold', Aircraft.Wing.THICKNESS_TO_CHORD_REF] = dFVOLW_GEOM_dTCR
-        J['wing_voume_no_fold', Aircraft.Wing.THICKNESS_TO_CHORD_TIP] = dFVOLW_GEOM_dTCT
-        J['wing_voume_no_fold', Aircraft.Fuselage.AVG_DIAMETER] = dFVOLW_GEOM_dSWF
-        J['wing_voume_no_fold', Aircraft.Wing.SPAN] = dFVOLW_GEOM_dwingspan
+        if self.options[Aircraft.Wing.HAS_FOLD]:
+            J['wing_voume_no_fold', Aircraft.Fuel.WING_FUEL_FRACTION] = dFVOLW_GEOM_dSKWF
+            J['wing_voume_no_fold', Aircraft.LandingGear.MAIN_GEAR_LOCATION] = dFVOLW_GEOM_dYMG
+            J['wing_voume_no_fold', Aircraft.Wing.TAPER_RATIO] = dFVOLW_GEOM_dSLM
+            J['wing_voume_no_fold', Aircraft.Wing.ROOT_CHORD] = dFVOLW_GEOM_dCROOT
+            J['wing_voume_no_fold', Aircraft.Wing.THICKNESS_TO_CHORD_REF] = dFVOLW_GEOM_dTCR
+            J['wing_voume_no_fold', Aircraft.Wing.THICKNESS_TO_CHORD_TIP] = dFVOLW_GEOM_dTCT
+            J['wing_voume_no_fold', Aircraft.Fuselage.AVG_DIAMETER] = dFVOLW_GEOM_dSWF
+            J['wing_voume_no_fold', Aircraft.Wing.SPAN] = dFVOLW_GEOM_dwingspan
+        else:
+            J[Aircraft.Fuel.WING_VOLUME_GEOMETRIC_MAX, Aircraft.Fuel.WING_FUEL_FRACTION] = (
+                dFVOLW_GEOM_dSKWF
+            )
+            J[Aircraft.Fuel.WING_VOLUME_GEOMETRIC_MAX, Aircraft.LandingGear.MAIN_GEAR_LOCATION] = (
+                dFVOLW_GEOM_dYMG
+            )
+            J[Aircraft.Fuel.WING_VOLUME_GEOMETRIC_MAX, Aircraft.Wing.TAPER_RATIO] = dFVOLW_GEOM_dSLM
+            J[Aircraft.Fuel.WING_VOLUME_GEOMETRIC_MAX, Aircraft.Wing.ROOT_CHORD] = (
+                dFVOLW_GEOM_dCROOT
+            )
+            J[Aircraft.Fuel.WING_VOLUME_GEOMETRIC_MAX, Aircraft.Wing.THICKNESS_TO_CHORD_REF] = (
+                dFVOLW_GEOM_dTCR
+            )
+            J[Aircraft.Fuel.WING_VOLUME_GEOMETRIC_MAX, Aircraft.Wing.THICKNESS_TO_CHORD_TIP] = (
+                dFVOLW_GEOM_dTCT
+            )
+            J[Aircraft.Fuel.WING_VOLUME_GEOMETRIC_MAX, Aircraft.Fuselage.AVG_DIAMETER] = (
+                dFVOLW_GEOM_dSWF
+            )
+            J[Aircraft.Fuel.WING_VOLUME_GEOMETRIC_MAX, Aircraft.Wing.SPAN] = dFVOLW_GEOM_dwingspan
 
 
 class WingFold(om.ExplicitComponent):
@@ -1173,7 +1182,7 @@ class WingGroup(om.Group):
 
         if design_type is AircraftTypes.BLENDED_WING_BODY:
             self.add_subsystem(
-                'wing_vol_geom',
+                'wing_vol',
                 BWBWingVolume(),
                 promotes_inputs=['aircraft:*'],
                 # promotes_outputs=['aircraft:*'],
@@ -1183,14 +1192,13 @@ class WingGroup(om.Group):
             else:
                 self.promotes('wing_vol_geom', outputs=['aircraft:*'])
         else:
-            self.add_subsystem(
-                'wing_vol_geom',
-                WingVolume(),
-                promotes_inputs=['aircraft:*'],
-                # promotes_outputs=['aircraft:*'],
-            )
             if not has_fold:
-                self.promotes('wing_vol_geom', outputs=['aircraft:*'])
+                self.add_subsystem(
+                    'wing_vol',
+                    WingVolume(),
+                    promotes_inputs=['aircraft:*'],
+                    promotes_outputs=['aircraft:*'],
+                )
 
         if has_strut:
             self.add_subsystem(
@@ -1213,13 +1221,6 @@ class WingGroup(om.Group):
                 check_fold_location_definition(choose_fold_location, has_strut)
                 self.promotes('strut', outputs=['strut_y'])
                 self.promotes('fold', inputs=['strut_y'])
-        else:
-            self.add_subsystem(
-                'wing_vol',
-                WingVolume(),
-                promotes_inputs=['aircraft:*'],
-                promotes_outputs=['aircraft:*'],
-            )
 
         if design_type is AircraftTypes.BLENDED_WING_BODY:
             self.add_subsystem(
