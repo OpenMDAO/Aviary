@@ -167,6 +167,5 @@ V3_bug_fixed_options.set_val(
 )
 V3_bug_fixed_options.set_val(Aircraft.Wing.FLAP_CHORD_RATIO, val=0.3, units='unitless')
 
-
-V3_bug_fixed_non_metadata.set_val('fuel_mass.fus_and_struct.pylon_len', val=0, units='ft')
-V3_bug_fixed_non_metadata.set_val('fuel_mass.fus_and_struct.MAT', val=0, units='lbm')
+V3_bug_fixed_non_metadata.set_val('fuel_mass.fuselage.pylon_len', val=0, units='ft')
+V3_bug_fixed_non_metadata.set_val('fuel_mass.fuselage.MAT', val=0, units='lbm')

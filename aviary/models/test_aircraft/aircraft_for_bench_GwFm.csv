@@ -57,6 +57,7 @@ aircraft:design:use_alt_mass,False,unitless
 aircraft:design:zero_lift_drag_coeff_factor,0.930890028006548,unitless
 aircraft:electrical:has_hybrid_system,False,unitless
 aircraft:electrical:mass_scaler,1.25,unitless
+aircraft:electrical:system_mass_per_passenger,16.0,lbm
 aircraft:engine:constant_fuel_consumption,0.,lbm/h
 aircraft:engine:data_file,models/engines/turbofan_28k.deck,unitless
 aircraft:engine:mass_specific,0.21366,lbm/lbf

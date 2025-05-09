@@ -1406,7 +1406,7 @@ class FixedMassGroupTestCase2(unittest.TestCase):
             Aircraft.Engine.MASS_SCALER, val=1, units='unitless'
         )  # bug fixed value and original value
         # self.prob.model.set_input_defaults(
-        #     Aircraft.Fuel.FUEL_SYSTEM_MASS_SCALER, val=1, units="unitless"
+        #     Aircraft.Fuel.FUEL_SYSTEM_MASS_SCALER, val=1, units='unitless'
         # )  # bug fixed value and original value
         self.prob.model.set_input_defaults(
             Aircraft.Engine.WING_LOCATIONS, val=0.35, units='unitless'
@@ -1653,7 +1653,4 @@ class FixedMassGroupTestCase3(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    # unittest.main()
-    test = FixedMassGroupTestCase3()
-    test.setUp()
-    test.test_case1()
+    unittest.main()
