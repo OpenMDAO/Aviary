@@ -16,11 +16,7 @@ from aviary.subsystems.propulsion.utils import build_engine_deck
 from aviary.utils.aviary_values import get_items, get_keys
 from aviary.utils.functions import set_aviary_initial_values
 from aviary.utils.preprocessors import preprocess_options
-from aviary.validation_cases.validation_tests import (
-    get_flops_case_names,
-    get_flops_inputs,
-    get_flops_outputs,
-)
+from aviary.validation_cases.validation_tests import get_flops_case_names, get_flops_inputs
 from aviary.variable_info.enums import LegacyCode
 from aviary.variable_info.functions import setup_model_options
 from aviary.variable_info.variable_meta_data import _MetaData as BaseMetaData

@@ -38,12 +38,14 @@ class CorePreMission(om.Group):
         core_subsystems = self.options['subsystems']
 
         for subsystem in core_subsystems:
-            self.add_subsystem(
-                subsystem.name,
-                subsystem.build_pre_mission(aviary_options),
-                promotes_inputs=['*'],
-                promotes_outputs=['*'],
-            )
+            pre_mission_system = subsystem.build_pre_mission(aviary_options)
+            if pre_mission_system is not None:
+                self.add_subsystem(
+                    subsystem.name,
+                    pre_mission_system,
+                    promotes_inputs=['*'],
+                    promotes_outputs=['*'],
+                )
 
     def configure(self):
         self.manual_overrides = []

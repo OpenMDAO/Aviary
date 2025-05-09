@@ -835,7 +835,7 @@ class LoadFactors(om.ExplicitComponent):
             dk_load_factor_dCl_alpha * 25 * min_dive_vel * Cl_alpha
             + k_load_factor * 50 * min_dive_vel
         ) / (498.0 * wing_loading)
-        ddive_load_factor_dmin_dive_vel = (k_load_factor * 25 * Cl_alpha) / (498.0 * wing_loading)
+        (k_load_factor * 25 * Cl_alpha) / (498.0 * wing_loading)
         ddive_load_factor_dV9 = 0.0
 
         dgust_load_factor_dwing_loading = dquotient(
