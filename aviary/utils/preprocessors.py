@@ -45,6 +45,7 @@ def preprocess_options(aviary_options: AviaryValues, meta_data=_MetaData, verbos
     preprocess_crewpayload(aviary_options, meta_data, verbosity)
     preprocess_propulsion(aviary_options, engine_models, meta_data, verbosity)
 
+
 def remove_preprocessed_options(aviary_options):
     """
     Remove options whose values will be computed in the preprocessors.
