@@ -15,7 +15,7 @@ from aviary.variable_info.variables import Aircraft
 @use_tempdirs
 class TestLevel2Preprocessing(unittest.TestCase):
     def test_crew_preprocessing(self):
-        # Tests that flight-crew preprocesses correctly.
+        # Test that flight-crew preprocesses correctly.
         prob = AviaryProblem()
         local_phase_info = deepcopy(phase_info)
 
