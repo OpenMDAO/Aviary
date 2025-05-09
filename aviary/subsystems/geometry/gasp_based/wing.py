@@ -1314,26 +1314,18 @@ class WingGroup(om.Group):
             )
 
         if has_fold:
-            if True:
-                self.add_subsystem(
-                    'fold_area',
-                    WingFoldArea(),
-                    promotes_inputs=['aircraft:*'],
-                    promotes_outputs=['aircraft:*'],
-                )
-                self.add_subsystem(
-                    'fold_vol',
-                    WingFoldVolume(),
-                    promotes_inputs=['aircraft:*'],
-                    promotes_outputs=['aircraft:*'],
-                )
-            if False:
-                self.add_subsystem(
-                    'fold_vol',
-                    WingFold(),
-                    promotes_inputs=['aircraft:*'],
-                    promotes_outputs=['aircraft:*'],
-                )
+            self.add_subsystem(
+                'fold_area',
+                WingFoldArea(),
+                promotes_inputs=['aircraft:*'],
+                promotes_outputs=['aircraft:*'],
+            )
+            self.add_subsystem(
+                'fold_vol',
+                WingFoldVolume(),
+                promotes_inputs=['aircraft:*'],
+                promotes_outputs=['aircraft:*'],
+            )
 
             choose_fold_location = self.options[Aircraft.Wing.CHOOSE_FOLD_LOCATION]
             if not choose_fold_location:
