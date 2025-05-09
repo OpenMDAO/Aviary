@@ -5,7 +5,8 @@ from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 
 from aviary.subsystems.geometry.gasp_based.wing import (
     ExposedWing,
-    WingFold,
+    WingFoldArea,
+    WingFoldVolume,
     WingGroup,
     WingParameters,
     WingSize,
@@ -135,7 +136,7 @@ class WingParametersTestCase2(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
 
 
-class WingFoldTestCase1(unittest.TestCase):
+class WingFoldAreaTestCase1(unittest.TestCase):
     def setUp(self):
         options = get_option_defaults()
         options.set_val(Aircraft.Wing.CHOOSE_FOLD_LOCATION, val=False, units='unitless')
@@ -146,7 +147,44 @@ class WingFoldTestCase1(unittest.TestCase):
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
             'group',
-            WingFold(),
+            WingFoldArea(),
+            promotes=['*'],
+        )
+
+        self.prob.model.set_input_defaults(Aircraft.Wing.TAPER_RATIO, 0.33, units='unitless')
+        self.prob.model.set_input_defaults('strut_y', val=25, units='ft')  # not actual GASP value
+        self.prob.model.set_input_defaults(Aircraft.Wing.AREA, val=1370.3, units='ft**2')
+        self.prob.model.set_input_defaults(Aircraft.Wing.SPAN, val=117.8, units='ft')
+
+        setup_model_options(self.prob, options)
+
+        self.prob.setup(check=False, force_alloc_complex=True)
+
+    def test_case1(self):
+        self.prob.run_model()
+
+        tol = 1e-4
+
+        assert_near_equal(
+            self.prob[Aircraft.Wing.FOLDING_AREA], 620.04352246, tol
+        )  # not actual GASP value
+
+        partial_data = self.prob.check_partials(out_stream=None, method='cs')
+        assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
+
+
+class WingFoldVolumeTestCase1(unittest.TestCase):
+    def setUp(self):
+        options = get_option_defaults()
+        options.set_val(Aircraft.Wing.CHOOSE_FOLD_LOCATION, val=False, units='unitless')
+        options.set_val(
+            Aircraft.Wing.FOLD_DIMENSIONAL_LOCATION_SPECIFIED, val=True, units='unitless'
+        )
+
+        self.prob = om.Problem()
+        self.prob.model.add_subsystem(
+            'group',
+            WingFoldVolume(),
             promotes=['*'],
         )
 
@@ -161,6 +199,7 @@ class WingFoldTestCase1(unittest.TestCase):
         self.prob.model.set_input_defaults(Aircraft.Wing.AREA, val=1370.3, units='ft**2')
         self.prob.model.set_input_defaults(Aircraft.Wing.SPAN, val=117.8, units='ft')
         self.prob.model.set_input_defaults(Aircraft.Fuel.WING_FUEL_FRACTION, 0.6, units='unitless')
+        self.prob.model.set_input_defaults(Aircraft.Wing.FOLDING_AREA, val=620.0435, units='ft**2')
 
         setup_model_options(self.prob, options)
 
@@ -175,9 +214,6 @@ class WingFoldTestCase1(unittest.TestCase):
             self.prob['nonfolded_taper_ratio'], 0.71561969, tol
         )  # not actual GASP value
         assert_near_equal(
-            self.prob[Aircraft.Wing.FOLDING_AREA], 620.04352246, tol
-        )  # not actual GASP value
-        assert_near_equal(
             self.prob['nonfolded_wing_area'], 750.25647754, tol
         )  # not actual GASP value
         assert_near_equal(
@@ -189,10 +225,10 @@ class WingFoldTestCase1(unittest.TestCase):
         )  # not actual GASP value
 
         partial_data = self.prob.check_partials(out_stream=None, method='cs')
-        assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
+        assert_check_partials(partial_data, atol=1e-11, rtol=1e-12)
 
 
-class WingFoldTestCase2(unittest.TestCase):
+class WingFoldAreaTestCase2(unittest.TestCase):
     def setUp(self):
         options = get_option_defaults()
         options.set_val(
@@ -202,7 +238,45 @@ class WingFoldTestCase2(unittest.TestCase):
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
             'group',
-            WingFold(),
+            WingFoldArea(),
+            promotes=['*'],
+        )
+
+        self.prob.model.set_input_defaults(Aircraft.Wing.TAPER_RATIO, 0.33, units='unitless')
+        self.prob.model.set_input_defaults(
+            Aircraft.Wing.FOLDED_SPAN, val=25, units='ft'
+        )  # not actual GASP value
+        self.prob.model.set_input_defaults(Aircraft.Wing.AREA, val=1370.3, units='ft**2')
+        self.prob.model.set_input_defaults(Aircraft.Wing.SPAN, val=117.8, units='ft')
+
+        setup_model_options(self.prob, options)
+
+        self.prob.setup(check=False, force_alloc_complex=True)
+
+    def test_case1(self):
+        self.prob.run_model()
+
+        tol = 1e-4
+
+        assert_near_equal(
+            self.prob[Aircraft.Wing.FOLDING_AREA], 964.0812219, tol
+        )  # not actual GASP value
+
+        partial_data = self.prob.check_partials(out_stream=None, method='cs')
+        assert_check_partials(partial_data, atol=2e-12, rtol=1e-12)
+
+
+class WingFoldVolumeTestCase2(unittest.TestCase):
+    def setUp(self):
+        options = get_option_defaults()
+        options.set_val(
+            Aircraft.Wing.FOLD_DIMENSIONAL_LOCATION_SPECIFIED, val=True, units='unitless'
+        )
+
+        self.prob = om.Problem()
+        self.prob.model.add_subsystem(
+            'group',
+            WingFoldVolume(),
             promotes=['*'],
         )
 
@@ -219,6 +293,7 @@ class WingFoldTestCase2(unittest.TestCase):
         self.prob.model.set_input_defaults(Aircraft.Wing.AREA, val=1370.3, units='ft**2')
         self.prob.model.set_input_defaults(Aircraft.Wing.SPAN, val=117.8, units='ft')
         self.prob.model.set_input_defaults(Aircraft.Fuel.WING_FUEL_FRACTION, 0.6, units='unitless')
+        self.prob.model.set_input_defaults(Aircraft.Wing.FOLDING_AREA, 964.0812219, units='ft**2')
 
         setup_model_options(self.prob, options)
 
@@ -231,9 +306,6 @@ class WingFoldTestCase2(unittest.TestCase):
 
         assert_near_equal(
             self.prob['nonfolded_taper_ratio'], 0.85780985, tol
-        )  # not actual GASP value
-        assert_near_equal(
-            self.prob[Aircraft.Wing.FOLDING_AREA], 964.0812219, tol
         )  # not actual GASP value
         assert_near_equal(
             self.prob['nonfolded_wing_area'], 406.2187781, tol
@@ -361,18 +433,20 @@ class WingGroupTestCase2(unittest.TestCase):
         )  # this is slightly different from the GASP output value, likely due to rounding error
 
         assert_near_equal(
-            self.prob['fold.nonfolded_taper_ratio'], 0.9943133, tol
+            self.prob['fold_vol.nonfolded_taper_ratio'], 0.9943133, tol
         )  # not actual GASP value
         assert_near_equal(
             self.prob[Aircraft.Wing.FOLDING_AREA], 1352.8724859, tol
         )  # not actual GASP value
         assert_near_equal(
-            self.prob['fold.nonfolded_wing_area'], 17.4400141, tol
+            self.prob['fold_vol.nonfolded_wing_area'], 17.4400141, tol
         )  # not actual GASP value
         assert_near_equal(
-            self.prob['fold.tc_ratio_mean_folded'], 0.14987269, tol
+            self.prob['fold_vol.tc_ratio_mean_folded'], 0.14987269, tol
         )  # not actual GASP value
-        assert_near_equal(self.prob['fold.nonfolded_AR'], 0.0573394, tol)  # not actual GASP value
+        assert_near_equal(
+            self.prob['fold_vol.nonfolded_AR'], 0.0573394, tol
+        )  # not actual GASP value
         assert_near_equal(
             self.prob[Aircraft.Fuel.WING_VOLUME_GEOMETRIC_MAX], 18.26837098, tol
         )  # not actual GASP value
@@ -442,18 +516,20 @@ class WingGroupTestCase3(unittest.TestCase):
         )  # this is slightly different from the GASP output value, likely due to rounding error
 
         assert_near_equal(
-            self.prob['fold.nonfolded_taper_ratio'], 0.85780985, tol
+            self.prob['fold_vol.nonfolded_taper_ratio'], 0.85780985, tol
         )  # not actual GASP value
         assert_near_equal(
             self.prob[Aircraft.Wing.FOLDING_AREA], 964.14982163, tol
         )  # not actual GASP value
         assert_near_equal(
-            self.prob['fold.nonfolded_wing_area'], 406.16267837, tol
+            self.prob['fold_vol.nonfolded_wing_area'], 406.16267837, tol
         )  # not actual GASP value
         assert_near_equal(
-            self.prob['fold.tc_ratio_mean_folded'], 0.14681715, tol
+            self.prob['fold_vol.tc_ratio_mean_folded'], 0.14681715, tol
         )  # not actual GASP value
-        assert_near_equal(self.prob['fold.nonfolded_AR'], 1.5387923, tol)  # not actual GASP value
+        assert_near_equal(
+            self.prob['fold_vol.nonfolded_AR'], 1.5387923, tol
+        )  # not actual GASP value
         assert_near_equal(
             self.prob[Aircraft.Fuel.WING_VOLUME_GEOMETRIC_MAX], 406.64971668264957, tol
         )  # not actual GASP value
@@ -514,11 +590,11 @@ class WingGroupTestCase4(unittest.TestCase):
         assert_near_equal(self.prob[Aircraft.Wing.AVERAGE_CHORD], 11.7430, tol)
         assert_near_equal(self.prob[Aircraft.Wing.ROOT_CHORD], 15.4789, tol)
         assert_near_equal(self.prob[Aircraft.Wing.THICKNESS_TO_CHORD_UNWEIGHTED], 0.1067, tol)
-        assert_near_equal(self.prob['fold.nonfolded_taper_ratio'], 0.9939, tol)
+        assert_near_equal(self.prob['fold_vol.nonfolded_taper_ratio'], 0.9939, tol)
         assert_near_equal(self.prob[Aircraft.Wing.FOLDING_AREA], 1171.2684, tol)
-        assert_near_equal(self.prob['fold.nonfolded_wing_area'], 16.2316, tol)
-        assert_near_equal(self.prob['fold.tc_ratio_mean_folded'], 0.10995, tol)
-        assert_near_equal(self.prob['fold.nonfolded_AR'], 0.06161, tol)
+        assert_near_equal(self.prob['fold_vol.nonfolded_wing_area'], 16.2316, tol)
+        assert_near_equal(self.prob['fold_vol.tc_ratio_mean_folded'], 0.10995, tol)
+        assert_near_equal(self.prob['fold_vol.nonfolded_AR'], 0.06161, tol)
         assert_near_equal(self.prob[Aircraft.Fuel.WING_VOLUME_GEOMETRIC_MAX], 11.61131, tol)
         assert_near_equal(self.prob[Aircraft.Strut.LENGTH], 11.18034, tol)
         assert_near_equal(self.prob[Aircraft.Strut.CHORD], 10.62132, tol)
@@ -704,7 +780,4 @@ class ExposedWingTestCase(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    # unittest.main()
-    test = WingVolumeTestCase1()
-    test.setUp()
-    test.test_case1()
+    unittest.main()

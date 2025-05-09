@@ -463,11 +463,9 @@ class WingVolume(om.ExplicitComponent):
         ) / ((AR**0.5) * ((taper_ratio + 1.0) ** 2.0))
 
 
-class WingFold(om.ExplicitComponent):
+class WingFoldArea(om.ExplicitComponent):
     """
-    Computation of taper ratio between wing root and fold location, wing area of
-    part of wings that does not fold, mean value of thickess to chord ratio between
-    root and fold, aspect ratio of non-folding part of wing, wing tank fuel volume.
+    Computation of folding area.
     """
 
     def initialize(self):
@@ -484,106 +482,28 @@ class WingFold(om.ExplicitComponent):
         add_aviary_input(self, Aircraft.Wing.AREA, units='ft**2')
         add_aviary_input(self, Aircraft.Wing.SPAN, units='ft')
         add_aviary_input(self, Aircraft.Wing.TAPER_RATIO, units='unitless')
-        add_aviary_input(self, Aircraft.Wing.THICKNESS_TO_CHORD_ROOT, units='unitless')
-        add_aviary_input(self, Aircraft.Wing.THICKNESS_TO_CHORD_TIP, units='unitless')
-        add_aviary_input(self, Aircraft.Fuel.WING_FUEL_FRACTION, units='unitless')
-
-        self.add_output(
-            'nonfolded_taper_ratio',
-            val=0.1,
-            units='unitless',
-            desc='SLM_NF: taper ratio between wing root and fold location',
-        )
 
         add_aviary_output(self, Aircraft.Wing.FOLDING_AREA, units='ft**2')
 
-        self.add_output(
-            'nonfolded_wing_area',
-            val=150,
-            units='ft**2',
-            desc='SW_NF: wing area of part of wings that does not fold',
-        )
-        self.add_output(
-            'tc_ratio_mean_folded',
-            val=0.12,
-            units='unitless',
-            desc='TCM: mean value of thickess to chord ratio between root and fold',
-        )
-        self.add_output(
-            'nonfolded_AR',
-            val=10,
-            units='unitless',
-            desc='AR_NF: aspect ratio of non-folding part of wing',
-        )
-
-        add_aviary_output(self, Aircraft.Fuel.WING_VOLUME_GEOMETRIC_MAX, units='ft**3')
-
     def setup_partials(self):
         if not self.options[Aircraft.Wing.CHOOSE_FOLD_LOCATION]:
-            self.declare_partials('nonfolded_taper_ratio', 'strut_y')
             self.declare_partials(Aircraft.Wing.FOLDING_AREA, 'strut_y')
-            self.declare_partials('nonfolded_wing_area', 'strut_y')
-            self.declare_partials('tc_ratio_mean_folded', 'strut_y')
-            self.declare_partials('nonfolded_AR', 'strut_y')
-            self.declare_partials(Aircraft.Fuel.WING_VOLUME_GEOMETRIC_MAX, 'strut_y')
         else:
-            self.declare_partials('nonfolded_taper_ratio', Aircraft.Wing.FOLDED_SPAN)
             self.declare_partials(Aircraft.Wing.FOLDING_AREA, Aircraft.Wing.FOLDED_SPAN)
-            self.declare_partials('nonfolded_wing_area', Aircraft.Wing.FOLDED_SPAN)
-            self.declare_partials('tc_ratio_mean_folded', Aircraft.Wing.FOLDED_SPAN)
-            self.declare_partials('nonfolded_AR', Aircraft.Wing.FOLDED_SPAN)
-            self.declare_partials(
-                Aircraft.Fuel.WING_VOLUME_GEOMETRIC_MAX, Aircraft.Wing.FOLDED_SPAN
-            )
 
-        self.declare_partials(
-            'nonfolded_taper_ratio',
-            [Aircraft.Wing.AREA, Aircraft.Wing.SPAN, Aircraft.Wing.TAPER_RATIO],
-        )
         self.declare_partials(
             Aircraft.Wing.FOLDING_AREA,
             [Aircraft.Wing.SPAN, Aircraft.Wing.AREA, Aircraft.Wing.TAPER_RATIO],
-        )
-        self.declare_partials(
-            'nonfolded_wing_area',
-            [Aircraft.Wing.AREA, Aircraft.Wing.SPAN, Aircraft.Wing.TAPER_RATIO],
-        )
-        self.declare_partials(
-            'tc_ratio_mean_folded',
-            [
-                Aircraft.Wing.THICKNESS_TO_CHORD_ROOT,
-                Aircraft.Wing.THICKNESS_TO_CHORD_TIP,
-                Aircraft.Wing.SPAN,
-            ],
-        )
-        self.declare_partials(
-            'nonfolded_AR',
-            [Aircraft.Wing.AREA, Aircraft.Wing.SPAN, Aircraft.Wing.TAPER_RATIO],
-        )
-        self.declare_partials(
-            Aircraft.Fuel.WING_VOLUME_GEOMETRIC_MAX,
-            [
-                Aircraft.Fuel.WING_FUEL_FRACTION,
-                Aircraft.Wing.THICKNESS_TO_CHORD_ROOT,
-                Aircraft.Wing.THICKNESS_TO_CHORD_TIP,
-                Aircraft.Wing.SPAN,
-                Aircraft.Wing.AREA,
-                Aircraft.Wing.TAPER_RATIO,
-            ],
         )
 
     def compute(self, inputs, outputs):
         wing_area = inputs[Aircraft.Wing.AREA]
         wingspan = inputs[Aircraft.Wing.SPAN]
         taper_ratio = inputs[Aircraft.Wing.TAPER_RATIO]
-        tc_ratio_root = inputs[Aircraft.Wing.THICKNESS_TO_CHORD_ROOT]
-        tc_ratio_tip = inputs[Aircraft.Wing.THICKNESS_TO_CHORD_TIP]
-        fuel_vol_frac = inputs[Aircraft.Fuel.WING_FUEL_FRACTION]
 
         if not self.options[Aircraft.Wing.CHOOSE_FOLD_LOCATION]:
             strut_y = inputs['strut_y']
             location = strut_y
-
         else:
             fold_y = inputs[Aircraft.Wing.FOLDED_SPAN]
             location = fold_y / 2.0
@@ -591,41 +511,19 @@ class WingFold(om.ExplicitComponent):
         root_chord_wing = 2 * wing_area / (wingspan * (1 + taper_ratio))
         tip_chord = taper_ratio * root_chord_wing
         fold_chord = root_chord_wing + location * (tip_chord - root_chord_wing) / (wingspan / 2.0)
-        nonfolded_taper_ratio = fold_chord / root_chord_wing
         folding_area = (wingspan / 2.0 - location) * (fold_chord + tip_chord)
-
-        nonfolded_wing_area = wing_area - folding_area
 
         if (wingspan / 2.0) < location:
             raise ValueError(
                 'Error: The wingspan provided is less than the wingspan of the wing fold.'
             )
 
-        tc_ratio_fold = tc_ratio_root + location * (tc_ratio_tip - tc_ratio_root) / (wingspan / 2.0)
-        tc_ratio_mean_folded = 0.5 * (tc_ratio_root + tc_ratio_fold)
-        nonfolded_AR = 4.0 * location**2 / nonfolded_wing_area
-        geometric_fuel_vol = (
-            fuel_vol_frac
-            * 0.888889
-            * tc_ratio_mean_folded
-            * (nonfolded_wing_area**1.5)
-            * (2.0 * nonfolded_taper_ratio + 1.0)
-        ) / ((nonfolded_AR**0.5) * ((nonfolded_taper_ratio + 1.0) ** 2.0))
-
-        outputs['nonfolded_taper_ratio'] = nonfolded_taper_ratio
         outputs[Aircraft.Wing.FOLDING_AREA] = folding_area
-        outputs['nonfolded_wing_area'] = nonfolded_wing_area
-        outputs['tc_ratio_mean_folded'] = tc_ratio_mean_folded
-        outputs['nonfolded_AR'] = nonfolded_AR
-        outputs[Aircraft.Fuel.WING_VOLUME_GEOMETRIC_MAX] = geometric_fuel_vol
 
     def compute_partials(self, inputs, J):
         wing_area = inputs[Aircraft.Wing.AREA]
         wingspan = inputs[Aircraft.Wing.SPAN]
         taper_ratio = inputs[Aircraft.Wing.TAPER_RATIO]
-        tc_ratio_root = inputs[Aircraft.Wing.THICKNESS_TO_CHORD_ROOT]
-        tc_ratio_tip = inputs[Aircraft.Wing.THICKNESS_TO_CHORD_TIP]
-        fuel_vol_frac = inputs[Aircraft.Fuel.WING_FUEL_FRACTION]
 
         if not self.options[Aircraft.Wing.CHOOSE_FOLD_LOCATION]:
             strut_y = inputs['strut_y']
@@ -645,12 +543,6 @@ class WingFold(om.ExplicitComponent):
         root_chord_wing = 2 * wing_area / (wingspan * (1 + taper_ratio))
         tip_chord = taper_ratio * root_chord_wing
         fold_chord = root_chord_wing + location * (tip_chord - root_chord_wing) / (wingspan / 2.0)
-        nonfolded_taper_ratio = fold_chord / root_chord_wing
-        folding_area = (wingspan / 2.0 - location) * (fold_chord + tip_chord)
-        nonfolded_wing_area = wing_area - folding_area
-        tc_ratio_fold = tc_ratio_root + location * (tc_ratio_tip - tc_ratio_root) / (wingspan / 2.0)
-        tc_ratio_mean_folded = 0.5 * (tc_ratio_root + tc_ratio_fold)
-        nonfolded_AR = 4.0 * location**2 / nonfolded_wing_area
 
         dRootChordWing_dWingArea = 2 / (wingspan * (1 + taper_ratio))
         dRootChordWing_dWingspan = -2 * wing_area / (wingspan**2 * (1 + taper_ratio))
@@ -676,8 +568,252 @@ class WingFold(om.ExplicitComponent):
         dFoldChord_dTaperRatio = dRootChordWing_dTaperRatio + location * (
             dTipChord_dTaperRatio - dRootChordWing_dTaperRatio
         ) / (wingspan / 2)
+
+        J[Aircraft.Wing.FOLDING_AREA, Aircraft.Wing.AREA] = (wingspan / 2.0 - location) * (
+            dFoldChord_dWingArea + dTipChord_dWingArea
+        )
+        J[Aircraft.Wing.FOLDING_AREA, Aircraft.Wing.SPAN] = (wingspan / 2.0 - location) * (
+            dFoldChord_dWingspan + dTipChord_dWingspan
+        ) + (fold_chord + tip_chord) * (0.5 - dLoc_dWingspan)
+        J[Aircraft.Wing.FOLDING_AREA, Aircraft.Wing.TAPER_RATIO] = (wingspan / 2.0 - location) * (
+            dFoldChord_dTaperRatio + dTipChord_dTaperRatio
+        )
+        J[Aircraft.Wing.FOLDING_AREA, wrt] = -dLoc_dy * (fold_chord + tip_chord) + (
+            wingspan / 2 - location
+        ) * dLoc_dy * (tip_chord - root_chord_wing) / (wingspan / 2.0)
+
+
+class WingFoldVolume(om.ExplicitComponent):
+    """
+    Computation of taper ratio between wing root and fold location, wing area of
+    part of wings that does not fold, mean value of thickess to chord ratio between
+    root and fold, aspect ratio of non-folding part of wing, wing tank fuel volume.
+    """
+
+    def initialize(self):
+        add_aviary_option(self, Aircraft.Wing.CHOOSE_FOLD_LOCATION)
+
+    def setup(self):
+        if not self.options[Aircraft.Wing.CHOOSE_FOLD_LOCATION]:
+            self.add_input(
+                'strut_y', val=25, units='ft', desc='YSTRUT: attachment location of strut'
+            )
+        else:
+            add_aviary_input(self, Aircraft.Wing.FOLDED_SPAN)
+
+        add_aviary_input(self, Aircraft.Wing.AREA, units='ft**2')
+        add_aviary_input(self, Aircraft.Wing.SPAN, units='ft')
+        add_aviary_input(self, Aircraft.Wing.TAPER_RATIO, units='unitless')
+        add_aviary_input(self, Aircraft.Wing.THICKNESS_TO_CHORD_ROOT, units='unitless')
+        add_aviary_input(self, Aircraft.Wing.THICKNESS_TO_CHORD_TIP, units='unitless')
+        add_aviary_input(self, Aircraft.Fuel.WING_FUEL_FRACTION, units='unitless')
+        add_aviary_input(self, Aircraft.Wing.FOLDING_AREA, units='ft**2')
+
+        # all of the non-Aviary variable outputs are not needed.
+        self.add_output(
+            'nonfolded_taper_ratio',
+            val=0.1,
+            units='unitless',
+            desc='SLM_NF: taper ratio between wing root and fold location',
+        )
+        self.add_output(
+            'nonfolded_wing_area',
+            val=150,
+            units='ft**2',
+            desc='SW_NF: wing area of part of wings that does not fold',
+        )
+        self.add_output(
+            'tc_ratio_mean_folded',
+            val=0.12,
+            units='unitless',
+            desc='TCM: mean value of thickess to chord ratio between root and fold',
+        )
+        self.add_output(
+            'nonfolded_AR',
+            val=10,
+            units='unitless',
+            desc='AR_NF: aspect ratio of non-folding part of wing',
+        )
+
+        add_aviary_output(self, Aircraft.Fuel.WING_VOLUME_GEOMETRIC_MAX, units='ft**3')
+
+    def setup_partials(self):
+        if not self.options[Aircraft.Wing.CHOOSE_FOLD_LOCATION]:
+            self.declare_partials('nonfolded_taper_ratio', 'strut_y')
+            self.declare_partials('nonfolded_wing_area', 'strut_y')
+            self.declare_partials('tc_ratio_mean_folded', 'strut_y')
+            self.declare_partials('nonfolded_AR', 'strut_y')
+            self.declare_partials(Aircraft.Fuel.WING_VOLUME_GEOMETRIC_MAX, 'strut_y')
+        else:
+            self.declare_partials('nonfolded_taper_ratio', Aircraft.Wing.FOLDED_SPAN)
+            self.declare_partials('nonfolded_wing_area', Aircraft.Wing.FOLDED_SPAN)
+            self.declare_partials('tc_ratio_mean_folded', Aircraft.Wing.FOLDED_SPAN)
+            self.declare_partials('nonfolded_AR', Aircraft.Wing.FOLDED_SPAN)
+            self.declare_partials(
+                Aircraft.Fuel.WING_VOLUME_GEOMETRIC_MAX, Aircraft.Wing.FOLDED_SPAN
+            )
+
+        self.declare_partials(
+            'nonfolded_taper_ratio',
+            [
+                Aircraft.Wing.AREA,
+                Aircraft.Wing.SPAN,
+                Aircraft.Wing.TAPER_RATIO,
+            ],
+        )
+        self.declare_partials(
+            'nonfolded_wing_area',
+            [
+                Aircraft.Wing.AREA,
+                Aircraft.Wing.FOLDING_AREA,
+            ],
+        )
+        self.declare_partials(
+            'tc_ratio_mean_folded',
+            [
+                Aircraft.Wing.THICKNESS_TO_CHORD_ROOT,
+                Aircraft.Wing.THICKNESS_TO_CHORD_TIP,
+                Aircraft.Wing.SPAN,
+            ],
+        )
+        self.declare_partials(
+            'nonfolded_AR',
+            [
+                Aircraft.Wing.AREA,
+                Aircraft.Wing.SPAN,
+                Aircraft.Wing.FOLDING_AREA,
+            ],
+        )
+        self.declare_partials(
+            Aircraft.Fuel.WING_VOLUME_GEOMETRIC_MAX,
+            [
+                Aircraft.Fuel.WING_FUEL_FRACTION,
+                Aircraft.Wing.THICKNESS_TO_CHORD_ROOT,
+                Aircraft.Wing.THICKNESS_TO_CHORD_TIP,
+                Aircraft.Wing.SPAN,
+                Aircraft.Wing.AREA,
+                Aircraft.Wing.TAPER_RATIO,
+                Aircraft.Wing.FOLDING_AREA,
+            ],
+        )
+
+    def compute(self, inputs, outputs):
+        wing_area = inputs[Aircraft.Wing.AREA]
+        wingspan = inputs[Aircraft.Wing.SPAN]
+        taper_ratio = inputs[Aircraft.Wing.TAPER_RATIO]
+        tc_ratio_root = inputs[Aircraft.Wing.THICKNESS_TO_CHORD_ROOT]
+        tc_ratio_tip = inputs[Aircraft.Wing.THICKNESS_TO_CHORD_TIP]
+        fuel_vol_frac = inputs[Aircraft.Fuel.WING_FUEL_FRACTION]
+        folding_area = inputs[Aircraft.Wing.FOLDING_AREA]
+
+        if not self.options[Aircraft.Wing.CHOOSE_FOLD_LOCATION]:
+            strut_y = inputs['strut_y']
+            location = strut_y
+
+        else:
+            fold_y = inputs[Aircraft.Wing.FOLDED_SPAN]
+            location = fold_y / 2.0
+
+        root_chord_wing = 2 * wing_area / (wingspan * (1 + taper_ratio))
+        tip_chord = taper_ratio * root_chord_wing
+        fold_chord = root_chord_wing + location * (tip_chord - root_chord_wing) / (wingspan / 2.0)
+        nonfolded_taper_ratio = fold_chord / root_chord_wing
+        nonfolded_wing_area = wing_area - folding_area
+
+        tc_ratio_fold = tc_ratio_root + location * (tc_ratio_tip - tc_ratio_root) / (wingspan / 2.0)
+        tc_ratio_mean_folded = 0.5 * (tc_ratio_root + tc_ratio_fold)
+        nonfolded_AR = 4.0 * location**2 / nonfolded_wing_area
+        geometric_fuel_vol = (
+            fuel_vol_frac
+            * 0.888889
+            * tc_ratio_mean_folded
+            * (nonfolded_wing_area**1.5)
+            * (2.0 * nonfolded_taper_ratio + 1.0)
+        ) / ((nonfolded_AR**0.5) * ((nonfolded_taper_ratio + 1.0) ** 2.0))
+
+        outputs['nonfolded_taper_ratio'] = nonfolded_taper_ratio
+        outputs['nonfolded_wing_area'] = nonfolded_wing_area
+        outputs['tc_ratio_mean_folded'] = tc_ratio_mean_folded
+        outputs['nonfolded_AR'] = nonfolded_AR
+        outputs[Aircraft.Fuel.WING_VOLUME_GEOMETRIC_MAX] = geometric_fuel_vol
+
+    def compute_partials(self, inputs, J):
+        wing_area = inputs[Aircraft.Wing.AREA]
+        wingspan = inputs[Aircraft.Wing.SPAN]
+        taper_ratio = inputs[Aircraft.Wing.TAPER_RATIO]
+        tc_ratio_root = inputs[Aircraft.Wing.THICKNESS_TO_CHORD_ROOT]
+        tc_ratio_tip = inputs[Aircraft.Wing.THICKNESS_TO_CHORD_TIP]
+        fuel_vol_frac = inputs[Aircraft.Fuel.WING_FUEL_FRACTION]
+        folding_area = inputs[Aircraft.Wing.FOLDING_AREA]
+
+        if not self.options[Aircraft.Wing.CHOOSE_FOLD_LOCATION]:
+            strut_y = inputs['strut_y']
+            location = strut_y
+            dLoc_dWingspan = 0
+            dLoc_dy = 1
+            wrt = 'strut_y'
+
+        else:
+            fold_y = inputs[Aircraft.Wing.FOLDED_SPAN]
+            wrt = Aircraft.Wing.FOLDED_SPAN
+
+            location = fold_y / 2.0
+            dLoc_dWingspan = 0
+            dLoc_dy = 1 / 2
+
+        root_chord_wing = 2 * wing_area / (wingspan * (1 + taper_ratio))
+        dRootChordWing_dWingArea = 2 / (wingspan * (1 + taper_ratio))
+        dRootChordWing_dWingspan = -2 * wing_area / (wingspan**2 * (1 + taper_ratio))
+        dRootChordWing_dTaperRatio = -2 * wing_area / (wingspan * (1 + taper_ratio) ** 2)
+
+        tip_chord = taper_ratio * root_chord_wing
+        dTipChord_dTaperRatio = taper_ratio * dRootChordWing_dTaperRatio + root_chord_wing
+        dTipChord_dWingArea = taper_ratio * dRootChordWing_dWingArea
+        dTipChord_dWingspan = taper_ratio * dRootChordWing_dWingspan
+
+        fold_chord = root_chord_wing + location * (tip_chord - root_chord_wing) / (wingspan / 2.0)
+        dFoldChord_dWingArea = dRootChordWing_dWingArea + location * (
+            dTipChord_dWingArea - dRootChordWing_dWingArea
+        ) / (wingspan / 2)
+        dFoldChord_dWingspan = (
+            dRootChordWing_dWingspan
+            + location
+            * (
+                (wingspan / 2) * (dTipChord_dWingspan - dRootChordWing_dWingspan)
+                - (tip_chord - root_chord_wing) * (1 / 2)
+            )
+            / (wingspan / 2) ** 2
+            + dLoc_dWingspan * (tip_chord - root_chord_wing) / (wingspan / 2.0)
+        )
+        dFoldChord_dTaperRatio = dRootChordWing_dTaperRatio + location * (
+            dTipChord_dTaperRatio - dRootChordWing_dTaperRatio
+        ) / (wingspan / 2)
         dFoldChord_dy = dLoc_dy * (tip_chord - root_chord_wing) / (wingspan / 2.0)
 
+        nonfolded_taper_ratio = fold_chord / root_chord_wing
+        dNFTR_dWingArea = (
+            root_chord_wing * dFoldChord_dWingArea - fold_chord * dRootChordWing_dWingArea
+        ) / root_chord_wing**2
+        dNFTR_dWingspan = (
+            root_chord_wing * dFoldChord_dWingspan - fold_chord * dRootChordWing_dWingspan
+        ) / root_chord_wing**2
+        dNFTR_dTaperRatio = (
+            root_chord_wing * dFoldChord_dTaperRatio - fold_chord * dRootChordWing_dTaperRatio
+        ) / root_chord_wing**2
+        dNFTR_dy = dFoldChord_dy / root_chord_wing
+
+        J['nonfolded_taper_ratio', Aircraft.Wing.AREA] = dNFTR_dWingArea
+        J['nonfolded_taper_ratio', Aircraft.Wing.SPAN] = dNFTR_dWingspan
+        J['nonfolded_taper_ratio', Aircraft.Wing.TAPER_RATIO] = dNFTR_dTaperRatio
+        J['nonfolded_taper_ratio', wrt] = dNFTR_dy
+
+        nonfolded_wing_area = wing_area - folding_area
+        dNFWA_dWingArea = 1
+        dNFWA_dWingFoldArea = -1
+        J['nonfolded_wing_area', Aircraft.Wing.AREA] = dNFWA_dWingArea
+        J['nonfolded_wing_area', Aircraft.Wing.FOLDING_AREA] = dNFWA_dWingFoldArea
+
+        tc_ratio_fold = tc_ratio_root + location * (tc_ratio_tip - tc_ratio_root) / (wingspan / 2.0)
         dTcRatioFold_dTCR = 1 + location * (-1) / (wingspan / 2)
         dTcRatioFold_dTCT = location / (wingspan / 2)
         dTcRatioFold_dWingspan = (
@@ -687,98 +823,40 @@ class WingFold(om.ExplicitComponent):
         )
         dTcRatioFold_dy = dLoc_dy * (tc_ratio_tip - tc_ratio_root) / (wingspan / 2.0)
 
-        J['nonfolded_taper_ratio', Aircraft.Wing.AREA] = dNFTR_dWingArea = (
-            root_chord_wing * dFoldChord_dWingArea - fold_chord * dRootChordWing_dWingArea
-        ) / root_chord_wing**2
-        J['nonfolded_taper_ratio', Aircraft.Wing.SPAN] = dNFTR_dWingspan = (
-            root_chord_wing * dFoldChord_dWingspan - fold_chord * dRootChordWing_dWingspan
-        ) / root_chord_wing**2
-        J['nonfolded_taper_ratio', Aircraft.Wing.TAPER_RATIO] = dNFTR_dTaperRatio = (
-            root_chord_wing * dFoldChord_dTaperRatio - fold_chord * dRootChordWing_dTaperRatio
-        ) / root_chord_wing**2
-        J['nonfolded_taper_ratio', wrt] = dNFTR_dy = dFoldChord_dy / root_chord_wing
+        tc_ratio_mean_folded = 0.5 * (tc_ratio_root + tc_ratio_fold)
+        dTCRMeanFolded_dTCR = 0.5 * (1 + dTcRatioFold_dTCR)
+        dTCRMeanFolded_dTCT = 0.5 * dTcRatioFold_dTCT
+        dTCRMeanFolded_dWingspan = 0.5 * dTcRatioFold_dWingspan
+        dTCRMeanFolded_dy = 0.5 * dTcRatioFold_dy
 
-        J[Aircraft.Wing.FOLDING_AREA, Aircraft.Wing.AREA] = dFoldingArea_dWingArea = (
-            wingspan / 2.0 - location
-        ) * (dFoldChord_dWingArea + dTipChord_dWingArea)
-        J[Aircraft.Wing.FOLDING_AREA, Aircraft.Wing.SPAN] = dFoldingArea_dWingspan = (
-            wingspan / 2.0 - location
-        ) * (dFoldChord_dWingspan + dTipChord_dWingspan) + (fold_chord + tip_chord) * (
-            0.5 - dLoc_dWingspan
-        )
-        J[Aircraft.Wing.FOLDING_AREA, Aircraft.Wing.TAPER_RATIO] = dFoldingArea_dTaperRatio = (
-            wingspan / 2.0 - location
-        ) * (dFoldChord_dTaperRatio + dTipChord_dTaperRatio)
-        J[Aircraft.Wing.FOLDING_AREA, wrt] = dFoldingArea_dy = -dLoc_dy * (
-            fold_chord + tip_chord
-        ) + (wingspan / 2 - location) * dLoc_dy * (tip_chord - root_chord_wing) / (wingspan / 2.0)
+        J['tc_ratio_mean_folded', Aircraft.Wing.THICKNESS_TO_CHORD_ROOT] = dTCRMeanFolded_dTCR
+        J['tc_ratio_mean_folded', Aircraft.Wing.THICKNESS_TO_CHORD_TIP] = dTCRMeanFolded_dTCT
+        J['tc_ratio_mean_folded', Aircraft.Wing.SPAN] = dTCRMeanFolded_dWingspan
+        J['tc_ratio_mean_folded', wrt] = dTCRMeanFolded_dy
 
-        J['nonfolded_wing_area', Aircraft.Wing.AREA] = dNFWA_dWingArea = 1 - dFoldingArea_dWingArea
-        J['nonfolded_wing_area', Aircraft.Wing.SPAN] = dNFWA_dWingspan = -dFoldingArea_dWingspan
-        J['nonfolded_wing_area', Aircraft.Wing.TAPER_RATIO] = (
-            dNFWA_dTaperRatio
-        ) = -dFoldingArea_dTaperRatio
-        J['nonfolded_wing_area', wrt] = dNFWA_dy = -dFoldingArea_dy
-
-        J['tc_ratio_mean_folded', Aircraft.Wing.THICKNESS_TO_CHORD_ROOT] = dTCRMeanFolded_dTCR = (
-            0.5 * (1 + dTcRatioFold_dTCR)
-        )
-        J['tc_ratio_mean_folded', Aircraft.Wing.THICKNESS_TO_CHORD_TIP] = dTCRMeanFolded_dTCT = (
-            0.5 * dTcRatioFold_dTCT
-        )
-        J['tc_ratio_mean_folded', Aircraft.Wing.SPAN] = dTCRMeanFolded_dWingspan = (
-            0.5 * dTcRatioFold_dWingspan
-        )
-        J['tc_ratio_mean_folded', wrt] = dTCRMeanFolded_dy = 0.5 * dTcRatioFold_dy
-
-        J['nonfolded_AR', Aircraft.Wing.AREA] = dNFAR_dWingArea = (
-            -4 * location**2 / nonfolded_wing_area**2 * dNFWA_dWingArea
-        )
-        J['nonfolded_AR', Aircraft.Wing.SPAN] = dNFAR_dWingspan = (
-            4
-            * (nonfolded_wing_area * 2 * location * dLoc_dWingspan - location**2 * dNFWA_dWingspan)
-            / nonfolded_wing_area**2
-        )
-        J['nonfolded_AR', Aircraft.Wing.TAPER_RATIO] = dNFAR_dTaperRatio = (
-            -4 * location**2 / nonfolded_wing_area**2 * dNFWA_dTaperRatio
-        )
-        J['nonfolded_AR', wrt] = dNFAR_dy = (
-            4
-            * (nonfolded_wing_area * 2 * location * dLoc_dy - location**2 * dNFWA_dy)
-            / nonfolded_wing_area**2
-        )
+        nonfolded_AR = 4.0 * location**2 / nonfolded_wing_area
+        dNFAR_dWingArea = -4 * location**2 / nonfolded_wing_area**2
+        dNFAR_dWingFoldArea = 4 * location**2 / nonfolded_wing_area**2
+        dNFAR_dWingspan = 4 * (2 * location * dLoc_dWingspan) / nonfolded_wing_area
+        dNFAR_dTaperRatio = 0
+        dNFAR_dy = 4 * (2 * location * dLoc_dy) / nonfolded_wing_area
+        J['nonfolded_AR', Aircraft.Wing.AREA] = dNFAR_dWingArea
+        J['nonfolded_AR', Aircraft.Wing.FOLDING_AREA] = dNFAR_dWingFoldArea
+        J['nonfolded_AR', Aircraft.Wing.SPAN] = dNFAR_dWingspan
+        J['nonfolded_AR', wrt] = dNFAR_dy
 
         a = (nonfolded_wing_area**1.5) * (2.0 * nonfolded_taper_ratio + 1.0)
+        dA_dWingspan = nonfolded_wing_area**1.5 * 2 * dNFTR_dWingspan
+        dA_dy = nonfolded_wing_area**1.5 * 2 * dNFTR_dy
+
         num = fuel_vol_frac * 0.888889 * tc_ratio_mean_folded * a
-        den = (nonfolded_AR**0.5) * ((nonfolded_taper_ratio + 1.0) ** 2.0)
-
-        dA_dWingspan = (
-            1.5 * nonfolded_wing_area**0.5 * dNFWA_dWingspan * (2 * nonfolded_taper_ratio + 1)
-            + nonfolded_wing_area**1.5 * 2 * dNFTR_dWingspan
-        )
-        dA_dy = (
-            1.5 * nonfolded_wing_area**0.5 * dNFWA_dy * (2 * nonfolded_taper_ratio + 1)
-            + nonfolded_wing_area**1.5 * 2 * dNFTR_dy
-        )
-
         dNum_dWingspan = (
             fuel_vol_frac * 0.888889 * dTCRMeanFolded_dWingspan * a
             + fuel_vol_frac * 0.888889 * tc_ratio_mean_folded * dA_dWingspan
         )
-        dDen_dWingspan = (
-            0.5
-            * (nonfolded_AR ** (-0.5))
-            * dNFAR_dWingspan
-            * ((nonfolded_taper_ratio + 1.0) ** 2.0)
-            + ((nonfolded_AR**0.5) * 2 * (nonfolded_taper_ratio + 1.0)) * dNFTR_dWingspan
-        )
         dNum_dy = (
             fuel_vol_frac * 0.888889 * dTCRMeanFolded_dy * a
             + fuel_vol_frac * 0.888889 * tc_ratio_mean_folded * dA_dy
-        )
-        dDen_dy = (
-            0.5 * (nonfolded_AR ** (-0.5)) * dNFAR_dy * ((nonfolded_taper_ratio + 1.0) ** 2.0)
-            + ((nonfolded_AR**0.5) * 2 * (nonfolded_taper_ratio + 1.0)) * dNFTR_dy
         )
         dNum_dWingArea = (
             fuel_vol_frac
@@ -791,6 +869,33 @@ class WingFold(om.ExplicitComponent):
         ) + (
             fuel_vol_frac * 0.888889 * tc_ratio_mean_folded * (nonfolded_wing_area**1.5) * 2
         ) * dNFTR_dWingArea
+        dNum_dWingFoldArea = (
+            fuel_vol_frac
+            * 0.888889
+            * tc_ratio_mean_folded
+            * 1.5
+            * (nonfolded_wing_area**0.5)
+            * dNFWA_dWingFoldArea
+            * (2.0 * nonfolded_taper_ratio + 1.0)
+        )
+
+        dNum_dTaperRatio = (
+            fuel_vol_frac * 0.888889 * tc_ratio_mean_folded * (nonfolded_wing_area**1.5) * 2
+        ) * dNFTR_dTaperRatio
+
+        den = (nonfolded_AR**0.5) * ((nonfolded_taper_ratio + 1.0) ** 2.0)
+
+        dDen_dWingspan = (
+            0.5
+            * (nonfolded_AR ** (-0.5))
+            * dNFAR_dWingspan
+            * ((nonfolded_taper_ratio + 1.0) ** 2.0)
+            + ((nonfolded_AR**0.5) * 2 * (nonfolded_taper_ratio + 1.0)) * dNFTR_dWingspan
+        )
+        dDen_dy = (
+            0.5 * (nonfolded_AR ** (-0.5)) * dNFAR_dy * ((nonfolded_taper_ratio + 1.0) ** 2.0)
+            + ((nonfolded_AR**0.5) * 2 * (nonfolded_taper_ratio + 1.0)) * dNFTR_dy
+        )
         dDen_dWingArea = (
             0.5
             * (nonfolded_AR ** (-0.5))
@@ -798,17 +903,14 @@ class WingFold(om.ExplicitComponent):
             * ((nonfolded_taper_ratio + 1.0) ** 2.0)
             + ((nonfolded_AR**0.5) * 2 * (nonfolded_taper_ratio + 1.0)) * dNFTR_dWingArea
         )
-        dNum_dTaperRatio = (
-            fuel_vol_frac
-            * 0.888889
-            * tc_ratio_mean_folded
-            * 1.5
-            * (nonfolded_wing_area**0.5)
-            * dNFWA_dTaperRatio
-            * (2.0 * nonfolded_taper_ratio + 1.0)
-        ) + (
-            fuel_vol_frac * 0.888889 * tc_ratio_mean_folded * (nonfolded_wing_area**1.5) * 2
-        ) * dNFTR_dTaperRatio
+
+        dDen_dWingFoldArea = (
+            0.5
+            * (nonfolded_AR ** (-0.5))
+            * dNFAR_dWingFoldArea
+            * ((nonfolded_taper_ratio + 1.0) ** 2.0)
+        )
+
         dDen_dTaperRatio = (
             0.5
             * (nonfolded_AR ** (-0.5))
@@ -843,6 +945,11 @@ class WingFold(om.ExplicitComponent):
         J[Aircraft.Fuel.WING_VOLUME_GEOMETRIC_MAX, Aircraft.Wing.AREA] = (
             den * dNum_dWingArea - num * dDen_dWingArea
         ) / den**2
+
+        J[Aircraft.Fuel.WING_VOLUME_GEOMETRIC_MAX, Aircraft.Wing.FOLDING_AREA] = (
+            den * dNum_dWingFoldArea - num * dDen_dWingFoldArea
+        ) / den**2
+
         J[Aircraft.Fuel.WING_VOLUME_GEOMETRIC_MAX, Aircraft.Wing.TAPER_RATIO] = (
             den * dNum_dTaperRatio - num * dDen_dTaperRatio
         ) / den**2
@@ -893,8 +1000,14 @@ class WingGroup(om.Group):
 
         if has_fold:
             self.add_subsystem(
-                'fold',
-                WingFold(),
+                'fold_area',
+                WingFoldArea(),
+                promotes_inputs=['aircraft:*'],
+                promotes_outputs=['aircraft:*'],
+            )
+            self.add_subsystem(
+                'fold_vol',
+                WingFoldVolume(),
                 promotes_inputs=['aircraft:*'],
                 promotes_outputs=['aircraft:*'],
             )
@@ -903,7 +1016,8 @@ class WingGroup(om.Group):
             if not choose_fold_location:
                 check_fold_location_definition(choose_fold_location, has_strut)
                 self.promotes('strut', outputs=['strut_y'])
-                self.promotes('fold', inputs=['strut_y'])
+                self.promotes('fold_area', inputs=['strut_y'])
+                self.promotes('fold_vol', inputs=['strut_y'])
         else:
             self.add_subsystem(
                 'wing_vol',
