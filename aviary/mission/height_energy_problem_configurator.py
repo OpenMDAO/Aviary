@@ -397,65 +397,61 @@ class HeightEnergyProblemConfigurator(ProblemConfiguratorBase):
     def _add_post_mission_takeoff_systems(self, prob):
         first_flight_phase_name = list(prob.phase_info.keys())[0]
 
-        # TODO: None of our aircraft set this to True, so the code is uncovered. Do we still need
-        # any of it?
-        connect_takeoff_to_climb = False
-        if connect_takeoff_to_climb:
-            prob.model.connect(
-                Mission.Takeoff.FINAL_MASS, f'traj.{first_flight_phase_name}.initial_states:mass'
+        prob.model.connect(
+            Mission.Takeoff.FINAL_MASS, f'traj.{first_flight_phase_name}.initial_states:mass'
+        )
+        prob.model.connect(
+            Mission.Takeoff.GROUND_DISTANCE,
+            f'traj.{first_flight_phase_name}.initial_states:distance',
+        )
+
+        control_type_string = 'control_values'
+        if prob.phase_info[first_flight_phase_name]['user_options'].get(
+            'use_polynomial_control', True
+        ):
+            if not use_new_dymos_syntax:
+                control_type_string = 'polynomial_control_values'
+
+        if prob.phase_info[first_flight_phase_name]['user_options'].get('optimize_mach', False):
+            # Create an ExecComp to compute the difference in mach
+            mach_diff_comp = om.ExecComp(
+                'mach_resid_for_connecting_takeoff = final_mach - initial_mach'
             )
+            prob.model.add_subsystem('mach_diff_comp', mach_diff_comp)
+
+            # Connect the inputs to the mach difference component
+            prob.model.connect(Mission.Takeoff.FINAL_MACH, 'mach_diff_comp.final_mach')
             prob.model.connect(
-                Mission.Takeoff.GROUND_DISTANCE,
-                f'traj.{first_flight_phase_name}.initial_states:distance',
+                f'traj.{first_flight_phase_name}.{control_type_string}:mach',
+                'mach_diff_comp.initial_mach',
+                src_indices=[0],
             )
 
-            control_type_string = 'control_values'
-            if prob.phase_info[first_flight_phase_name]['user_options'].get(
-                'use_polynomial_control', True
-            ):
-                if not use_new_dymos_syntax:
-                    control_type_string = 'polynomial_control_values'
+            # Add constraint for mach difference
+            prob.model.add_constraint(
+                'mach_diff_comp.mach_resid_for_connecting_takeoff', equals=0.0
+            )
 
-            if prob.phase_info[first_flight_phase_name]['user_options'].get('optimize_mach', False):
-                # Create an ExecComp to compute the difference in mach
-                mach_diff_comp = om.ExecComp(
-                    'mach_resid_for_connecting_takeoff = final_mach - initial_mach'
-                )
-                prob.model.add_subsystem('mach_diff_comp', mach_diff_comp)
+        if prob.phase_info[first_flight_phase_name]['user_options'].get(
+            'optimize_altitude', False
+        ):
+            # Similar steps for altitude difference
+            alt_diff_comp = om.ExecComp(
+                'altitude_resid_for_connecting_takeoff = final_altitude - initial_altitude',
+                units='ft',
+            )
+            prob.model.add_subsystem('alt_diff_comp', alt_diff_comp)
 
-                # Connect the inputs to the mach difference component
-                prob.model.connect(Mission.Takeoff.FINAL_MACH, 'mach_diff_comp.final_mach')
-                prob.model.connect(
-                    f'traj.{first_flight_phase_name}.{control_type_string}:mach',
-                    'mach_diff_comp.initial_mach',
-                    src_indices=[0],
-                )
+            prob.model.connect(Mission.Takeoff.FINAL_ALTITUDE, 'alt_diff_comp.final_altitude')
+            prob.model.connect(
+                f'traj.{first_flight_phase_name}.{control_type_string}:altitude',
+                'alt_diff_comp.initial_altitude',
+                src_indices=[0],
+            )
 
-                # Add constraint for mach difference
-                prob.model.add_constraint(
-                    'mach_diff_comp.mach_resid_for_connecting_takeoff', equals=0.0
-                )
-
-            if prob.phase_info[first_flight_phase_name]['user_options'].get(
-                'optimize_altitude', False
-            ):
-                # Similar steps for altitude difference
-                alt_diff_comp = om.ExecComp(
-                    'altitude_resid_for_connecting_takeoff = final_altitude - initial_altitude',
-                    units='ft',
-                )
-                prob.model.add_subsystem('alt_diff_comp', alt_diff_comp)
-
-                prob.model.connect(Mission.Takeoff.FINAL_ALTITUDE, 'alt_diff_comp.final_altitude')
-                prob.model.connect(
-                    f'traj.{first_flight_phase_name}.{control_type_string}:altitude',
-                    'alt_diff_comp.initial_altitude',
-                    src_indices=[0],
-                )
-
-                prob.model.add_constraint(
-                    'alt_diff_comp.altitude_resid_for_connecting_takeoff', equals=0.0
-                )
+            prob.model.add_constraint(
+                'alt_diff_comp.altitude_resid_for_connecting_takeoff', equals=0.0
+            )
 
     def _add_landing_systems(self, prob):
         landing_options = Landing(
@@ -562,12 +558,9 @@ class HeightEnergyProblemConfigurator(ProblemConfiguratorBase):
         if 'time' not in guess_dict:
             # if time not in initial guesses, set it to the average of the
             # initial_bounds and the duration_bounds
-            initial_bounds = wrapped_convert_units(
-                options['initial_bounds'], 's'
-            )
-            duration_bounds = wrapped_convert_units(
-                options['duration_bounds'], 's'
-            )
+            initial_bounds = wrapped_convert_units(options['initial_bounds'], 's')
+            duration_bounds = wrapped_convert_units(options['duration_bounds'], 's'
+                                                    )
             guess_dict['time'] = ([np.mean(initial_bounds[0]), np.mean(duration_bounds[0])], 's')
 
         for guess_key, guess_data in guess_dict.items():
