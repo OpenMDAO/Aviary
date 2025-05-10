@@ -281,6 +281,8 @@ Ran 1065 tests using 1 processes
 Wall clock time:   00:02:47.31
 ```
 
+If you have failed tests, you may want to try the latest released versions of OpenMDAO and Dymos instead of the developer versions.
+
 To find which tests are skipped, we can add `--show_skipped` option:
 
 ```
