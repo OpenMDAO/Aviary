@@ -1646,6 +1646,8 @@ def extend_array(inp_array, size):
     Extends input array such that it is at least as large as the target size in each dimension.
     Works on arrays of any dimension.
     Returns copy of input array extended in required dimensions with newly created points set to 0.
+    If requested size is smaller than inp_array in any dimensions, original inp_array is not
+    modified along that dimension.
 
     Parameters
     ----------
@@ -1665,6 +1667,16 @@ def extend_array(inp_array, size):
     # Calculate padding needed for each dimension
     current_shape = np.array(inp_array.shape)
     target_shape = np.array(size)
+
+    # If target has more dimensions, add new dimensions to input array
+    if len(target_shape) > len(current_shape):
+        # Create new shape with additional dimensions of size 1
+        new_shape = np.ones(len(target_shape), dtype=int)
+        new_shape[: len(current_shape)] = current_shape
+        # Reshape input array to add new dimensions
+        inp_array = inp_array.reshape(new_shape)
+        current_shape = np.array(inp_array.shape)
+
     padding = np.maximum(0, target_shape - current_shape)
 
     # Create padding tuple for np.pad
