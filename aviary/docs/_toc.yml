@@ -82,6 +82,7 @@ parts:
   chapters:
     - file: developer_guide/codebase_overview
     - file: developer_guide/coding_standards
+    - file: developer_guide/ai_policy.md
     - file: developer_guide/unit_tests
     - file: developer_guide/contributing_guidelines
     - file: developer_guide/how_to_contribute_docs
