@@ -88,7 +88,7 @@ class WingMassTestCase(unittest.TestCase):
         self.prob.run_model()
 
         tol = 1e-10
-        assert_near_equal(self.prob["total_weight"], 
+        assert_near_equal(self.prob["total_weight_wing"], 
                           4.22032, 
                           tol) 
         

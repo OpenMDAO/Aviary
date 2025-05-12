@@ -90,19 +90,19 @@ class FuselageMassAndCOG(om.JaxExplicitComponent):
         
 
         # Outputs
-        self.add_output('center_of_gravity_x', 
+        self.add_output('center_of_gravity_x_fuse', 
                         val=0.0, 
                         units='m')
         
-        self.add_output('center_of_gravity_y', 
+        self.add_output('center_of_gravity_y_fuse', 
                         val=0.0, 
                         units='m')
         
-        self.add_output('center_of_gravity_z', 
+        self.add_output('center_of_gravity_z_fuse', 
                         val=0.0, 
                         units='m')
         
-        self.add_output('total_weight', 
+        self.add_output('total_weight_fuse', 
                         val=0.0, 
                         units='kg')
     
@@ -127,7 +127,7 @@ class FuselageMassAndCOG(om.JaxExplicitComponent):
 
         section_locations = jnp.linspace(0, length, num_sections)
         
-        total_weight = 0
+        total_weight_fuse = 0
         total_moment_x = 0
         total_moment_y = 0
         total_moment_z = 0
@@ -145,39 +145,16 @@ class FuselageMassAndCOG(om.JaxExplicitComponent):
 
             centroid_x, centroid_y, centroid_z = self.compute_centroid(location, length, y_offset, z_offset, curvature, taper_ratio)
 
-            total_weight += section_weight
+            total_weight_fuse += section_weight
             total_moment_x += centroid_x * section_weight
             total_moment_y += centroid_y * section_weight
             total_moment_z += centroid_z * section_weight
 
-        center_of_gravity_x = total_moment_x / total_weight
-        center_of_gravity_y = total_moment_y / total_weight
-        center_of_gravity_z = total_moment_z / total_weight
+        center_of_gravity_x_fuse = total_moment_x / total_weight_fuse
+        center_of_gravity_y_fuse = total_moment_y / total_weight_fuse
+        center_of_gravity_z_fuse = total_moment_z / total_weight_fuse
 
-        # outer_radius = lambda x: 0.5 * (1 - taper_ratio * (x / length))
-
-        # if is_hollow:
-        #     inner_radius = lambda x: 0.5 * (1 - taper_ratio * (x / length)) - thickness
-        #     inner_radius_squared = lambda x: (0.5 - thickness)**2 - 2 * (0.5 - thickness) * (taper_ratio / 2) * (x / length) + (taper_ratio**2 / 4) * (x / length)**2
-        # else:
-        #     inner_radius = lambda x: 0 * x # 0
-        #     inner_radius_squared = lambda x: 0 * x # 0
-    
-        # outer_radius_squared = lambda x: (1 / 4) - (taper_ratio / 2) * (x / length) + taper_ratio**2 * (x / length)**2 / 4
-
-        # if is_hollow: 
-        #     outer_minus_inner_squared = lambda x: ((1 / 4) - (taper_ratio / 2) * (x / length) + taper_ratio**2 * (x / length)**2 / 4) - (
-        #         (0.5 - thickness)**2 - 2 * (0.5 - thickness) * (taper_ratio / 2) * (x / length) + (taper_ratio**2 / 4) * (x / length)**2)
-        # else:
-        #     outer_minus_inner_squared = lambda x: (1 / 4) - (taper_ratio / 2) * (x / length) + taper_ratio**2 * (x / length)**2 / 4
-        
-        # if is_hollow:
-        #     total_weight, _ = quadgk(lambda x: (length * jnp.pi * density) * (((1 / 4) - (taper_ratio / 2) * (x / length) + taper_ratio**2 * (x / length)**2 / 4) - (
-        #         (0.5 - thickness)**2 - 2 * (0.5 - thickness) * (taper_ratio / 2) * (x / length) + (taper_ratio**2 / 4) * (x / length)**2)), [0, length])
-        # else:
-        #     total_weight, _ = quadgk(lambda x: (length * jnp.pi * density) * ((1 / 4) - (taper_ratio / 2) * (x / length) + taper_ratio**2 * (x / length)**2 / 4), [0, length])
-
-        return center_of_gravity_x, center_of_gravity_y, center_of_gravity_z, total_weight
+        return center_of_gravity_x_fuse, center_of_gravity_y_fuse, center_of_gravity_z_fuse, total_weight_fuse
 
     def validate_inputs(self, length, diameter, thickness, taper_ratio, is_hollow):
         if length <= 0 or diameter <= 0 or thickness <= 0:
@@ -205,48 +182,48 @@ class FuselageMassAndCOG(om.JaxExplicitComponent):
             return self.custom_fuselage_function(location)
         elif self.load_fuselage_data:
             return interpolate_diameter(location) if interpolate_diameter is not None else omj.smooth_max(0.01, diameter * (1 - taper_ratio * (location / length)))
-            #return jnp.where(interpolate_diameter is not None, interpolate_diameter(location), omj.smooth_max(0.01, diameter * (1 - taper_ratio * (location / length))))
         else:
             return omj.smooth_max(0.01, diameter * (1 - taper_ratio * (location / length)))
     
     def compute_centroid(self, location, length, y_offset, z_offset, curvature, taper_ratio):
-        #centroid_x = (3/4) * location if taper_ratio > 0 else location # This is an approximation that could and should be better modeled in the future
         centroid_x = jnp.where(taper_ratio > 0, (3/4) * location, location)
         centroid_y = y_offset * (1 - location / length)
         centroid_z = z_offset * (1 - location / length) + curvature * location**2 / length
         return centroid_x, centroid_y, centroid_z
-    
-prob = om.Problem()
 
-prob.model.add_subsystem('fuselage_cg', FuselageMassAndCOG(), promotes_inputs=['length', 'diameter', 'taper_ratio', 'curvature', 'thickness', 'y_offset', 'z_offset', 'is_hollow'])
 
-prob.setup()
+if __name__ == "__main__":
+    prob = om.Problem()
 
-prob.set_val('length', 2.5)
-prob.set_val('diameter', 0.5)
-prob.set_val('taper_ratio', 0.5)
-prob.set_val('curvature', 0.0)
-prob.set_val('thickness', 0.05) # Wall thickness of 5 cm
-#prob.set_val('is_hollow', False) # Default is True, uncomment to use False -- for testing purposes
+    prob.model.add_subsystem('fuselage_cg', FuselageMassAndCOG(), promotes_inputs=['length', 'diameter', 'taper_ratio', 'curvature', 'thickness', 'y_offset', 'z_offset', 'is_hollow'])
 
-# Example using custom function -- uncomment to run 
-#def custom_fuselage_model(location):
-#    return 0.5 * jnp.exp(-0.1 * location)
+    prob.setup()
 
-#prob.model.fuselage_cg.custom_fuselage_function = custom_fuselage_model
+    prob.set_val('length', 2.5)
+    prob.set_val('diameter', 0.5)
+    prob.set_val('taper_ratio', 0.5)
+    prob.set_val('curvature', 0.0)
+    prob.set_val('thickness', 0.05) # Wall thickness of 5 cm
+    #prob.set_val('is_hollow', False) # Default is True, uncomment to use False -- for testing purposes
 
-# Example for custom .dat file -- uncomment to run
-#prob.model.fuselage_cg.options['custom_fuselage_data_file'] = 'Custom_Fuselage.dat'
+    # Example using custom function -- uncomment to run 
+    #def custom_fuselage_model(location):
+    #    return 0.5 * jnp.exp(-0.1 * location)
 
-prob.run_model()
+    #prob.model.fuselage_cg.custom_fuselage_function = custom_fuselage_model
 
-center_of_gravity_x = prob.get_val('fuselage_cg.center_of_gravity_x')
-center_of_gravity_y = prob.get_val('fuselage_cg.center_of_gravity_y')
-center_of_gravity_z = prob.get_val('fuselage_cg.center_of_gravity_z')
-total_weight = prob.get_val('fuselage_cg.total_weight')
+    # Example for custom .dat file -- uncomment to run
+    #prob.model.fuselage_cg.options['custom_fuselage_data_file'] = 'Custom_Fuselage.dat'
 
-#data = prob.check_partials(compact_print=True, abs_err_tol=1e-04, rel_err_tol=1e-04, step=1e-8, step_calc='rel')
+    prob.run_model()
 
-print(f"Center of gravity of the fuselage: X = {center_of_gravity_x} m, Y = {center_of_gravity_y} m, Z = {center_of_gravity_z} m")
-print(f"Total weight of the fuselage: {total_weight} kg")
+    center_of_gravity_x = prob.get_val('fuselage_cg.center_of_gravity_x_fuse')
+    center_of_gravity_y = prob.get_val('fuselage_cg.center_of_gravity_y_fuse')
+    center_of_gravity_z = prob.get_val('fuselage_cg.center_of_gravity_z_fuse')
+    total_weight = prob.get_val('fuselage_cg.total_weight_fuse')
+
+    #data = prob.check_partials(compact_print=True, abs_err_tol=1e-04, rel_err_tol=1e-04, step=1e-8, step_calc='rel')
+
+    print(f"Center of gravity of the fuselage: X = {center_of_gravity_x} m, Y = {center_of_gravity_y} m, Z = {center_of_gravity_z} m")
+    print(f"Total mass of the fuselage: {total_weight} kg")
 
