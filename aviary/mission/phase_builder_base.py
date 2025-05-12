@@ -437,7 +437,7 @@ class PhaseBuilderBase(ABC):
             solve_segments='forward' if solve_segments else None,
         )
 
-    def add_control(self, name, target, rate_targets):
+    def add_control(self, name, target, rate_targets, rate2_targets=None):
         """
         Add a control to this phase using the options in the phase-info.
 
@@ -449,6 +449,8 @@ class PhaseBuilderBase(ABC):
             Control promoted variable path to the ODE.
         rate_source : list of str
             List of rate targets for this control.
+        rate2_targets : Sequence of str or None
+            (Optional) The parameter in the ODE to which the control 2nd derivative is connected.
         """
         options = self.user_options
 
@@ -461,7 +463,7 @@ class PhaseBuilderBase(ABC):
         opt = options[f'{name}_optimize']
 
         extra_options = {}
-        if polynomial_order is True:
+        if polynomial_order is not None:
             extra_options['control_type'] = 'polynomial'
             extra_options['order'] = polynomial_order
 
@@ -473,6 +475,9 @@ class PhaseBuilderBase(ABC):
 
         if units not in ['unitless', None]:
             extra_options['units'] = units
+
+        if rate2_targets is not None:
+            extra_options['rate2_targets'] = rate2_targets
 
         self.phase.add_control(
             target,

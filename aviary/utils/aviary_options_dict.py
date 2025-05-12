@@ -356,7 +356,7 @@ class AviaryOptionsDictionary(om.OptionsDictionary):
         self.declare(
             name=name,
             default=default,
-            types=float,
+            types=int,
             allow_none=True,
             desc=desc,
         )

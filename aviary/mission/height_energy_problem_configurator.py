@@ -287,7 +287,7 @@ class HeightEnergyProblemConfigurator(ProblemConfiguratorBase):
         # connect regular_phases with each other if you are optimizing alt or mach
         prob._link_phases_helper_with_options(
             prob.regular_phases,
-            'optimize_altitude',
+            'altitude_optimize',
             Dynamic.Mission.ALTITUDE,
             ref=1.0e4,
         )
@@ -298,7 +298,7 @@ class HeightEnergyProblemConfigurator(ProblemConfiguratorBase):
         # connect reserve phases with each other if you are optimizing alt or mach
         prob._link_phases_helper_with_options(
             prob.reserve_phases,
-            'optimize_altitude',
+            'altitude_optimize',
             Dynamic.Mission.ALTITUDE,
             ref=1.0e4,
         )
@@ -433,7 +433,7 @@ class HeightEnergyProblemConfigurator(ProblemConfiguratorBase):
             )
 
         if prob.phase_info[first_flight_phase_name]['user_options'].get(
-            'optimize_altitude', False
+            'altitude_optimize', False
         ):
             # Similar steps for altitude difference
             alt_diff_comp = om.ExecComp(
@@ -539,8 +539,12 @@ class HeightEnergyProblemConfigurator(ProblemConfiguratorBase):
 
         if 'altitude' not in guess_dict:
             # Use values from fixed endpoints.
-            altitude_initial = wrapped_convert_units(options['initial_altitude'], 'ft')
-            altitude_final = wrapped_convert_units(options['final_altitude'], 'ft')
+            altitude_initial = wrapped_convert_units(options['altitude_initial'], 'ft')
+            altitude_final = wrapped_convert_units(options['altitude_final'], 'ft')
+
+            if altitude_final is None:
+                # TODO: Pull from downstream phase.
+                altitude_final = altitude_initial
 
             guess_dict['altitude'] = ([altitude_initial, altitude_final], 'ft')
 
@@ -568,46 +572,15 @@ class HeightEnergyProblemConfigurator(ProblemConfiguratorBase):
 
             if 'time' == guess_key:
                 # Set initial guess for time variables
-                target_prob.set_val(
-                    parent_prefix + f'traj.{phase_name}.t_initial', val[0], units=units
-                )
-                target_prob.set_val(
-                    parent_prefix + f'traj.{phase_name}.t_duration', val[1], units=units
-                )
+                phase.set_time_val(initial=val[0], duration=val[1], units=units)
 
             elif guess_key in control_keys:
                 # Set initial guess for control variables
-                try:
-                    target_prob.set_val(
-                        parent_prefix + f'traj.{phase_name}.controls:{guess_key}',
-                        prob._process_guess_var(val, guess_key, phase),
-                        units=units,
-                    )
-
-                except KeyError:
-                    try:
-                        target_prob.set_val(
-                            parent_prefix
-                            + f'traj.{phase_name}.polynomial_controls:{guess_key}',
-                            prob._process_guess_var(val, guess_key, phase),
-                            units=units,
-                        )
-
-                    except KeyError:
-                        target_prob.set_val(
-                            parent_prefix + f'traj.{phase_name}.bspline_controls:',
-                            {guess_key},
-                            prob._process_guess_var(val, guess_key, phase),
-                            units=units,
-                        )
+                phase.set_control_val(guess_key, val, units=units)
 
             elif guess_key in state_keys:
                 # Set initial guess for state variables
-                target_prob.set_val(
-                    parent_prefix + f'traj.{phase_name}.states:{guess_key}',
-                    prob._process_guess_var(val, guess_key, phase),
-                    units=units,
-                )
+                phase.set_state_val(guess_key, val, units=units)
 
             elif guess_key in prob_keys:
                 target_prob.set_val(parent_prefix + guess_key, val, units=units)

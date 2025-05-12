@@ -144,22 +144,6 @@ class FlightPhaseOptions(AviaryOptionsDictionary):
         )
 
         self.declare(
-            name='polynomial_control_order',
-            types=int,
-            default=3,
-            desc='The order of the polynomial fit to control values. '
-            'Only used if polynomial_control = True',
-        )
-
-        self.declare(
-            name='use_polynomial_control',
-            types=bool,
-            default=True,
-            desc='Set fo True to use polynomial controls in this phase, which smooths the '
-            'control inputs.',
-        )
-
-        self.declare(
             name='input_initial',
             types=bool,
             default=False,
@@ -180,13 +164,6 @@ class FlightPhaseOptions(AviaryOptionsDictionary):
             default=True,
             desc='If True, the time duration of the phase is not treated as a design '
             'variable for the optimization problem.',
-        )
-
-        self.declare(
-            name='optimize_altitude',
-            types=bool,
-            default=False,
-            desc='Adds the Altitude as a design variable controlled by the optimizer.',
         )
 
         self.declare(
@@ -318,9 +295,6 @@ class FlightPhaseBase(PhaseBuilderBase):
         fix_initial = user_options['fix_initial']
         constrain_final = user_options['constrain_final']
         mach_optimize = user_options['mach_optimize']
-        optimize_altitude = user_options['optimize_altitude']
-        polynomial_control_order = user_options['polynomial_control_order']
-        use_polynomial_control = user_options['use_polynomial_control']
         throttle_enforcement = user_options['throttle_enforcement']
         altitude_bounds = user_options['altitude_bounds']
         mach_initial = user_options['mach_initial']
@@ -330,6 +304,7 @@ class FlightPhaseBase(PhaseBuilderBase):
         no_descent = user_options['no_descent']
         no_climb = user_options['no_climb']
         constraints = user_options['constraints']
+        ground_roll = user_options['ground_roll']
 
         ##############
         # Add States #
@@ -368,33 +343,55 @@ class FlightPhaseBase(PhaseBuilderBase):
             rate_targets
         )
 
-        ## dictionary of options for Mach control
+        if ground_roll:
+            # Ground roll hardcoded for now.
+            rate_targets = ['dh_dr']
+            rate2_targets = ['d2h_dr2']
+        elif phase_type is EquationsOfMotion.HEIGHT_ENERGY:
+            rate_targets = [Dynamic.Mission.ALTITUDE_RATE]
+            rate2_targets = None
+        else:
+            rate_targets = ['dh_dr']
+            rate2_targets = ['d2h_dr2']
+
+        # TODO: How do we handle hard-coding all of this stuff? Should be in phase-info.
+        # ground_roll uses some hardcoded settings that overwrite user-provided ones
+        #if ground_roll:
+            #control_dict['control_type'] = 'polynomial'
+            #control_dict['order'] = 1
+            #control_dict['val'] = 0
+            #control_dict['opt'] = False
+            #control_dict['fix_initial'] = fix_initial
+            #control_dict['rate_targets'] = ['dh_dr']
+            #control_dict['rate2_targets'] = ['d2h_dr2']
+
+        self.add_control(
+            'altitude',
+            Dynamic.Mission.ALTITUDE,
+            rate_targets,
+            rate2_targets=rate2_targets
+        )
+
+        # dictionary of options for altitude control
         #control_dict = {
-            #'name': Dynamic.Atmosphere.MACH,
-            #'targets': Dynamic.Atmosphere.MACH,
-            ## 'units': mach_bounds[1],
+            #'name': Dynamic.Mission.ALTITUDE,
+            #'targets': Dynamic.Mission.ALTITUDE,
+            #'units': altitude_bounds[1],
             #'rate_targets': rate_targets,
-            #'opt': optimize_mach,
+            #'rate2_targets': rate2_targets,
+            #'opt': optimize_altitude,
         #}
 
-        #if optimize_mach:
-            #control_dict['lower'] = mach_bounds[0]
-            #control_dict['upper'] = mach_bounds[1]
-            #control_dict['ref'] = 0.5
+        #if optimize_altitude:
+            #control_dict['lower'] = altitude_bounds[0][0]
+            #control_dict['upper'] = altitude_bounds[0][1]
+            #control_dict['ref'] = altitude_bounds[0][1]
 
         #if use_polynomial_control:
             #control_dict['control_type'] = 'polynomial'
             #control_dict['order'] = polynomial_control_order
 
         #phase.add_control(**control_dict)
-
-        # Add altitude rate as a control
-        if phase_type is EquationsOfMotion.HEIGHT_ENERGY:
-            rate_targets = [Dynamic.Mission.ALTITUDE_RATE]
-            rate2_targets = []
-        else:
-            rate_targets = ['dh_dr']
-            rate2_targets = ['d2h_dr2']
 
         # For heterogeneous-engine cases, we may have throttle allocation control.
         if phase_type is EquationsOfMotion.HEIGHT_ENERGY and num_engine_type > 1:
@@ -431,38 +428,6 @@ class FlightPhaseBase(PhaseBuilderBase):
                     lower=0.0,
                     upper=1.0,
                 )
-
-        # dictionary of options for altitude control
-        control_dict = {
-            'name': Dynamic.Mission.ALTITUDE,
-            'targets': Dynamic.Mission.ALTITUDE,
-            'units': altitude_bounds[1],
-            'rate_targets': rate_targets,
-            'rate2_targets': rate2_targets,
-            'opt': optimize_altitude,
-        }
-
-        if optimize_altitude:
-            control_dict['lower'] = altitude_bounds[0][0]
-            control_dict['upper'] = altitude_bounds[0][1]
-            control_dict['ref'] = altitude_bounds[0][1]
-
-        if use_polynomial_control:
-            control_dict['control_type'] = 'polynomial'
-            control_dict['order'] = polynomial_control_order
-
-        # ground_roll uses some hardcoded settings that overwrite user-provided ones
-        ground_roll = user_options['ground_roll']
-        if ground_roll:
-            control_dict['control_type'] = 'polynomial'
-            control_dict['order'] = 1
-            control_dict['val'] = 0
-            control_dict['opt'] = False
-            control_dict['fix_initial'] = fix_initial
-            control_dict['rate_targets'] = ['dh_dr']
-            control_dict['rate2_targets'] = ['d2h_dr2']
-
-        phase.add_control(**control_dict)
 
         ##################
         # Add Timeseries #
@@ -540,14 +505,14 @@ class FlightPhaseBase(PhaseBuilderBase):
                 equals=mach_initial,
             )
 
-        if mach_optimize and constrain_final and Dynamic.Atmosphere.MACH not in constraints:
+        if constrain_final and Dynamic.Atmosphere.MACH not in constraints:
             phase.add_boundary_constraint(
                 Dynamic.Atmosphere.MACH,
                 loc='final',
                 equals=mach_final,
             )
 
-        if optimize_altitude and fix_initial and Dynamic.Mission.ALTITUDE not in constraints:
+        if fix_initial and Dynamic.Mission.ALTITUDE not in constraints:
             phase.add_boundary_constraint(
                 Dynamic.Mission.ALTITUDE,
                 loc='initial',
@@ -556,7 +521,7 @@ class FlightPhaseBase(PhaseBuilderBase):
                 ref=1.0e4,
             )
 
-        if optimize_altitude and constrain_final and Dynamic.Mission.ALTITUDE not in constraints:
+        if constrain_final and Dynamic.Mission.ALTITUDE not in constraints:
             phase.add_boundary_constraint(
                 Dynamic.Mission.ALTITUDE,
                 loc='final',

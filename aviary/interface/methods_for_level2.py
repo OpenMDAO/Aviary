@@ -1643,17 +1643,16 @@ class AviaryProblem(om.Problem):
 
     def set_initial_guesses(self, parent_prob=None, parent_prefix='', verbosity=None):
         """
-        Call `set_val` on the trajectory for states and controls to seed
-        the problem with reasonable initial guesses. This is especially
-        important for collocation methods.
-        This method first identifies all phases in the trajectory then
-        loops over each phase. Specific initial guesses
-        are added depending on the phase and mission method. Cruise is treated
-        as a special phase for GASP-based missions because it is an AnalyticPhase
-        in Dymos. For this phase, we handle the initial guesses first separately
-        and continue to the next phase after that. For other phases, we set the initial
-        guesses for states and controls according to the information available
-        in the 'initial_guesses' attribute of the phase.
+        Call `set_val` on the trajectory for states and controls to seed the problem with
+        reasonable initial guesses. This is especially important for collocation methods.
+
+        This method first identifies all phases in the trajectory then loops over each phase.
+        Specific initial guesses are added depending on the phase and mission method. Cruise is
+        treated as a special phase for GASP-based missions because it is an AnalyticPhase in
+        Dymos. For this phase, we handle the initial guesses first separately and continue to the
+        next phase after that. For other phases, we set the initial guesses for states and
+        controls according to the information available in the 'initial_guesses' attribute of the
+        phase.
         """
         # `self.verbosity` is "true" verbosity for entire run. `verbosity` is verbosity
         # override for just this method
@@ -1709,7 +1708,7 @@ class AviaryProblem(om.Problem):
             # Add subsystem guesses
             self._add_subsystem_guesses(phase_name, phase, target_prob, parent_prefix)
 
-            # Set initial guesses for states and controls for each phase
+            # Set initial guesses for states, controls and time for each phase.
             self.configurator.add_guesses(self, phase_name, phase, guesses, target_prob,
                                           parent_prefix)
 
