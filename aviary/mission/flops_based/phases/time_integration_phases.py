@@ -1,4 +1,4 @@
-from aviary.mission.flops_based.ode.mission_ODE import MissionODE
+from aviary.mission.flops_based.ode.energy_ODE import EnergyODE
 from aviary.mission.flops_based.ode.landing_ode import LandingODE
 from aviary.mission.flops_based.ode.takeoff_ode import TakeoffODE
 from aviary.mission.gasp_based.ode.time_integration_base_classes import SimuPyProblem
@@ -14,14 +14,10 @@ class SGMHeightEnergy(SimuPyProblem):
     """
 
     def __init__(
-        self,
-        ode_args,
-        phase_name='mission',
-        simupy_args={},
-        mass_trigger=(150000, 'lbm')
+        self, ode_args, phase_name='mission', simupy_args={}, mass_trigger=(150000, 'lbm')
     ):
         super().__init__(
-            MissionODE(analysis_scheme=AnalysisScheme.SHOOTING, **ode_args),
+            EnergyODE(analysis_scheme=AnalysisScheme.SHOOTING, **ode_args),
             problem_name=phase_name,
             outputs=[],
             states=[
@@ -33,7 +29,7 @@ class SGMHeightEnergy(SimuPyProblem):
                 Dynamic.Vehicle.MASS: Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL
             },
             aviary_options=ode_args['aviary_options'],
-            **simupy_args
+            **simupy_args,
         )
 
         self.phase_name = phase_name
@@ -68,7 +64,7 @@ class SGMDetailedTakeoff(SimuPyProblem):
                 Dynamic.Vehicle.MASS: Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL
             },
             aviary_options=ode_args['aviary_options'],
-            **simupy_args
+            **simupy_args,
         )
 
         self.phase_name = phase_name
@@ -102,7 +98,7 @@ class SGMDetailedLanding(SimuPyProblem):
                 Dynamic.Vehicle.MASS: Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL
             },
             aviary_options=ode_args['aviary_options'],
-            **simupy_args
+            **simupy_args,
         )
 
         self.phase_name = phase_name

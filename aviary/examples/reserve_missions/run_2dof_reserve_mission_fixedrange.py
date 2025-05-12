@@ -9,9 +9,10 @@ We then call the correct methods in order to set up and run an Aviary optimizati
 This performs a coupled design-mission optimization and outputs the results from Aviary into the `reports` folder.
 """
 
+from copy import deepcopy
+
 import aviary.api as av
 from aviary.interface.default_phase_info.two_dof import phase_info
-from copy import deepcopy
 
 phase_info = deepcopy(phase_info)
 
@@ -42,7 +43,7 @@ if __name__ == '__main__':
     # Link phases and variables
     prob.link_phases()
 
-    prob.add_driver("SNOPT", max_iter=50, verbosity=2)
+    prob.add_driver('SNOPT', max_iter=50, verbosity=2)
 
     prob.add_design_variables()
 

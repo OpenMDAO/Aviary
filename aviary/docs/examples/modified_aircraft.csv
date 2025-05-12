@@ -49,6 +49,7 @@ aircraft:engine:num_fuselage_engines,0,unitless
 aircraft:engine:num_wing_engines,2,unitless
 aircraft:engine:reference_mass,7400,lbm
 aircraft:engine:reference_sls_thrust,28928.1,lbf
+aircraft:engine:scale_factor,1.0,unitless
 aircraft:engine:scale_mass,True,unitless
 aircraft:engine:scale_performance,True,unitless
 aircraft:engine:scaled_sls_thrust,28928.1,lbf
@@ -90,7 +91,6 @@ aircraft:horizontal_tail:wetted_area,592.65,ft**2
 aircraft:hydraulics:mass_scaler,1.0,unitless
 aircraft:hydraulics:system_pressure,3000,psi
 aircraft:instruments:mass_scaler,1.25,unitless
-aircraft:landing_gear:carrier_based,False,unitless
 aircraft:landing_gear:main_gear_mass_scaler,1.1,unitless
 aircraft:landing_gear:main_gear_oleo_length,102.0,inch
 aircraft:landing_gear:nose_gear_mass_scaler,1.0,unitless
@@ -114,7 +114,7 @@ aircraft:wing:aeroelastic_tailoring_factor,0.0,unitless
 aircraft:wing:airfoil_technology,1.92669766647637,unitless
 aircraft:wing:area,1370.0,ft**2
 aircraft:wing:aspect_ratio,11.02091,unitless
-aircraft:wing:BENDING_MATERIAL_MASS_SCALER,1.0,unitless
+aircraft:wing:bending_material_mass_scaler,1.0,unitless
 aircraft:wing:chord_per_semispan,0.31,0.23,0.084,unitless
 aircraft:wing:composite_fraction,0.2,unitless
 aircraft:wing:control_surface_area,137,ft**2

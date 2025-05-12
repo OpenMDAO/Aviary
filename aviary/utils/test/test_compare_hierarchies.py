@@ -8,9 +8,9 @@ AviaryMission = av.Mission
 
 
 class Aircraft1(AviaryAircraft):
-    ''' Simple variable hierarchy extension for testing. '''
+    """Simple variable hierarchy extension for testing."""
 
-    CG = "aircraft:center_of_gravity"
+    CG = 'aircraft:center_of_gravity'
 
     class LandingGear(AviaryAircraft.LandingGear):
         SHAPE = 'aircraft:landing_gear:shape'
@@ -25,35 +25,33 @@ class Aircraft1(AviaryAircraft):
         COLOR = 'aircraft:engine:color'
 
     class Fuselage(AviaryAircraft.Fuselage):
-
         class Nose:
             ECCENTRICITY = 'aircraft:fuselage:nose:eccentricity'
 
 
 class Aircraft2(AviaryAircraft):
-    ''' Simple variable hierarchy extension for testing. '''
+    """Simple variable hierarchy extension for testing."""
 
-    MASS = "aircraft:mass"
+    MASS = 'aircraft:mass'
     CG = 'aircraft:center_of_gravity'
 
     class HorizontalTail(AviaryAircraft.HorizontalTail):
         # add variable that is in the core hierarchy and give it the right value
         AREA = 'aircraft:horizontal_tail:area'
-        MEAN_AERO_CHORD = "aircraft:horizontal_tail:mean_aerodynamic_chord"
+        MEAN_AERO_CHORD = 'aircraft:horizontal_tail:mean_aerodynamic_chord'
 
         class Elevator:
-            AREA = "aircraft:horizontal_tail:elevator_area_dist"
+            AREA = 'aircraft:horizontal_tail:elevator_area_dist'
 
     class Wing(AviaryAircraft.Wing):
-
-        AERO_CENTER = "aircraft:wing:aerodynamic_center"
-        CHORD = "aircraft:wing:chord"
+        AERO_CENTER = 'aircraft:wing:aerodynamic_center'
+        CHORD = 'aircraft:wing:chord'
         AIRFOIL_TECHNOLOGY = 'aircraft:wing:airfoil_technology'
 
         class Flap:
-            AREA = "aircraft:wing:flap_area_dist"
-            ROOT_CHORD = "aircraft:wing:flap_root_chord_dist"
-            SPAN = "aircraft:wing:flap_span_dist"
+            AREA = 'aircraft:wing:flap_area_dist'
+            ROOT_CHORD = 'aircraft:wing:flap_root_chord_dist'
+            SPAN = 'aircraft:wing:flap_span_dist'
 
     class Jury:
         MASS = 'aircraft:jury:mass'
@@ -62,20 +60,19 @@ class Aircraft2(AviaryAircraft):
         COLOR = 'aircraft:engine:color'
 
     class Fuselage(AviaryAircraft.Fuselage):
-
         class Nose:
             ECCENTRICITY = 'aircraft:fuselage:nose:eccentricity'
 
 
 class Aircraft3(AviaryAircraft):
-    ''' Simple variable hierarchy extension for testing. '''
+    """Simple variable hierarchy extension for testing."""
 
     class HorizontalTail:
         AREA = 'the_wrong_value'  # add variable that is in the core hierarchy and give it the wrong value
 
 
 class Aircraft_a:
-    ''' Simple variable hierarchy for testing. '''
+    """Simple variable hierarchy for testing."""
 
     A1 = 'a1'
 
@@ -111,7 +108,7 @@ class Aircraft_a:
 
 
 class Aircraft_b:
-    ''' Simple variable hierarchy for testing. '''
+    """Simple variable hierarchy for testing."""
 
     A1 = 'a1'
 
@@ -147,7 +144,7 @@ class Aircraft_b:
 
 
 class Aircraft_c:
-    ''' Simple variable hierarchy for testing. '''
+    """Simple variable hierarchy for testing."""
 
     A1 = 'a1'
 
@@ -183,9 +180,7 @@ class Aircraft_c:
 
 
 class CompareHierarchiesTest(unittest.TestCase):
-    """
-    Test the functionality of compare_hierarchies_to_merge function.
-    """
+    """Test the functionality of compare_hierarchies_to_merge function."""
 
     def test_compare_successful(self):
         # this shouldn't throw an error

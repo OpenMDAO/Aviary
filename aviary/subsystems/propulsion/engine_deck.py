@@ -28,26 +28,24 @@ import warnings
 
 import numpy as np
 import openmdao.api as om
-
 from openmdao.utils.units import convert_units
 
 from aviary.interface.utils.markdown_utils import round_it
 from aviary.subsystems.propulsion.engine_model import EngineModel
 from aviary.subsystems.propulsion.engine_scaling import EngineScaling
 from aviary.subsystems.propulsion.engine_sizing import SizeEngine
-from aviary.subsystems.propulsion.utils import UncorrectData
 from aviary.subsystems.propulsion.utils import (
     EngineModelVariables,
+    UncorrectData,
     convert_geopotential_altitude,
     default_units,
     max_variables,
 )
-from aviary.utils.aviary_values import AviaryValues, NamedValues, get_keys, get_items
+from aviary.utils.aviary_values import AviaryValues, NamedValues, get_items, get_keys
 from aviary.utils.csv_data_file import read_data_file
 from aviary.variable_info.enums import Verbosity
 from aviary.variable_info.variable_meta_data import _MetaData
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission, Settings
-
 
 MACH = EngineModelVariables.MACH
 ALTITUDE = EngineModelVariables.ALTITUDE
@@ -91,12 +89,7 @@ aliases = {
 }
 
 # these variables must be present in engine performance data
-default_required_variables = {
-    MACH,
-    ALTITUDE,
-    THROTTLE,
-    THRUST
-}
+default_required_variables = {MACH, ALTITUDE, THROTTLE, THRUST}
 
 # EngineDecks internally require these options to have values. Input checks will set
 # these options to default values in self.options if they are not provided
@@ -113,9 +106,11 @@ required_options = (
 
 # options that are only required based on the value of another option
 dependent_options = {
-    Aircraft.Engine.GENERATE_FLIGHT_IDLE: (Aircraft.Engine.FLIGHT_IDLE_THRUST_FRACTION,
-                                           Aircraft.Engine.FLIGHT_IDLE_MIN_FRACTION,
-                                           Aircraft.Engine.FLIGHT_IDLE_MAX_FRACTION,)
+    Aircraft.Engine.GENERATE_FLIGHT_IDLE: (
+        Aircraft.Engine.FLIGHT_IDLE_THRUST_FRACTION,
+        Aircraft.Engine.FLIGHT_IDLE_MIN_FRACTION,
+        Aircraft.Engine.FLIGHT_IDLE_MAX_FRACTION,
+    )
 }
 
 
@@ -235,7 +230,9 @@ class EngineDeck(EngineModel):
                     warnings.warn(
                         f'<{key}> is a required option for EngineDecks, but has not been '
                         f'specified for EngineDeck <{self.name}>. The default value '
-                        f"{val}{' ' + units if units != 'unitless' else ''} will be used.")
+                        f'{val}{" " + units if units != "unitless" else ""} will '
+                        'be used.'
+                    )
 
                 self.set_val(key, val, units)
 
@@ -261,10 +258,8 @@ class EngineDeck(EngineModel):
                         'exceeds maximum flight idle fraction. Values for min and max '
                         'fraction will be flipped.'
                     )
-                self.set_val(Aircraft.Engine.FLIGHT_IDLE_MIN_FRACTION,
-                             val=idle_max)
-                self.set_val(Aircraft.Engine.FLIGHT_IDLE_MAX_FRACTION,
-                             val=idle_min)
+                self.set_val(Aircraft.Engine.FLIGHT_IDLE_MIN_FRACTION, val=idle_max)
+                self.set_val(Aircraft.Engine.FLIGHT_IDLE_MAX_FRACTION, val=idle_min)
 
         # check that sufficient information on engine scaling is provided
         # default behavior is to calculate scale factor based on thrust target
@@ -286,11 +281,15 @@ class EngineDeck(EngineModel):
             thrust_provided = True
 
         # user provided target thrust or scale factor, but performance scaling is off
-        if not scale_performance and (scale_factor_provided or thrust_provided) and self.get_val(Settings.VERBOSITY).value >= 1:
+        if (
+            not scale_performance
+            and (scale_factor_provided or thrust_provided)
+            and self.get_val(Settings.VERBOSITY).value >= 1
+        ):
             warnings.warn(
                 f'EngineDeck <{self.name}>: Scaling targets are provided, but will be '
                 'ignored because performance scaling is disabled. Set '
-                'aircraft:engine:SCALE_PERFORMANCE to True to enable scaling.'
+                'aircraft:engine:scale_performance to True to enable scaling.'
             )
 
     def _set_variable_flags(self):
@@ -336,8 +335,7 @@ class EngineDeck(EngineModel):
 
         # convert geopotential altitude to geometric if required
         if self.get_val(Aircraft.Engine.GEOPOTENTIAL_ALT):
-            self.data[ALTITUDE] = convert_geopotential_altitude(
-                self.data[ALTITUDE])
+            self.data[ALTITUDE] = convert_geopotential_altitude(self.data[ALTITUDE])
 
         # sort and organize data
         self._pack_data()
@@ -409,8 +407,7 @@ class EngineDeck(EngineModel):
                 # Convert data to expected units. Required so settings like tolerances
                 # that assume units work as expected
                 try:
-                    val = np.array([convert_units(i, units, default_units[key])
-                                   for i in val])
+                    val = np.array([convert_units(i, units, default_units[key]) for i in val])
                 except TypeError:
                     raise TypeError(
                         f"{message}: units of '{units}' provided for "
@@ -425,7 +422,8 @@ class EngineDeck(EngineModel):
             else:
                 if self.get_val(Settings.VERBOSITY) >= Verbosity.BRIEF:
                     warnings.warn(
-                        f'{message}: header <{key}> was not recognized, and will be skipped')
+                        f'{message}: header <{key}> was not recognized, and will be skipped'
+                    )
 
             # save all data in self._original_data, including skipped variables
             self._original_data[key] = val
@@ -470,12 +468,15 @@ class EngineDeck(EngineModel):
         #   check that they match is done after reading data
         if THRUST in engine_variables:
             # if thrust is present, but gross thrust or ram drag also present raise warning
-            if GROSS_THRUST in engine_variables and not RAM_DRAG in engine_variables:
-                warnings.warn(f'{message} contains both net and '
-                              'gross thrust. Only net thrust will be used.')
-            if not GROSS_THRUST in engine_variables and RAM_DRAG in engine_variables:
-                warnings.warn(f'{message} contains both net thrust '
-                              'and ram drag. Only net thrust will be used.')
+            if GROSS_THRUST in engine_variables and RAM_DRAG not in engine_variables:
+                warnings.warn(
+                    f'{message} contains both net and gross thrust. Only net thrust will be used.'
+                )
+            if GROSS_THRUST not in engine_variables and RAM_DRAG in engine_variables:
+                warnings.warn(
+                    f'{message} contains both net thrust '
+                    'and ram drag. Only net thrust will be used.'
+                )
 
         if RAM_DRAG in engine_variables and GROSS_THRUST in engine_variables:
             # Check that units are the same. Variables have already been checked for valid
@@ -493,9 +494,11 @@ class EngineDeck(EngineModel):
             if THRUST in engine_variables:
                 res = abs(net_thrust_calc - original_data[THRUST])
                 if np.any(self.thrust_tol > res):
-                    raise UserWarning('Provided net thrust is not equal to difference '
-                                      '(within tolerance) between gross thrust and ram '
-                                      f'drag in {message}')
+                    raise UserWarning(
+                        'Provided net thrust is not equal to difference '
+                        '(within tolerance) between gross thrust and ram '
+                        f'drag in {message}'
+                    )
             else:
                 # store net thrust in THRUST key instead of gross thrust
                 data[THRUST] = net_thrust_calc
@@ -560,9 +563,9 @@ class EngineDeck(EngineModel):
 
             # if missing_variables is not empty
             if not missing_variables:
-                raise UserWarning(f'Required variables {missing_variables} are '
-                                  f'missing from {message}'
-                                  )
+                raise UserWarning(
+                    f'Required variables {missing_variables} are missing from {message}'
+                )
 
         # Set all unused variables to default value of zero
         for key in data:
@@ -587,6 +590,7 @@ class EngineDeck(EngineModel):
 
         Modifies unpacked data in place, updates packed data.
         """
+
         def _extrapolate(array):
             """
             Linearly extrapolate variable to idle thrust point.
@@ -607,9 +611,7 @@ class EngineDeck(EngineModel):
             if y0 == 0 and y1 == 0:
                 return 0
 
-            rvalue = (
-                y0 + (y1 - y0) * extrap_term
-            )
+            rvalue = y0 + (y1 - y0) * extrap_term
 
             return rvalue
 
@@ -668,20 +670,27 @@ class EngineDeck(EngineModel):
 
                 # define known data for idle point (independent variables)
                 idle_points[MACH] = np.append(
-                    idle_points[MACH], [packed_data[MACH][M, A, 0]] * num_points)
+                    idle_points[MACH], [packed_data[MACH][M, A, 0]] * num_points
+                )
                 idle_points[ALTITUDE] = np.append(
-                    idle_points[ALTITUDE], [packed_data[ALTITUDE][M, A, 0]] * num_points)
+                    idle_points[ALTITUDE], [packed_data[ALTITUDE][M, A, 0]] * num_points
+                )
                 idle_points[THROTTLE] = np.append(
-                    idle_points[THROTTLE], [throttle_idle] * num_points)
+                    idle_points[THROTTLE], [throttle_idle] * num_points
+                )
                 if self.use_hybrid_throttle:
-                    hybrid_throttle_range = np.linspace(hybrid_throttle_idle-h_tol,
-                                                        hybrid_throttle_idle+h_tol,
-                                                        num_points)
+                    hybrid_throttle_range = np.linspace(
+                        hybrid_throttle_idle - h_tol,
+                        hybrid_throttle_idle + h_tol,
+                        num_points,
+                    )
                     idle_points[HYBRID_THROTTLE] = np.append(
-                        idle_points[HYBRID_THROTTLE], hybrid_throttle_range)
+                        idle_points[HYBRID_THROTTLE], hybrid_throttle_range
+                    )
                 else:
                     idle_points[HYBRID_THROTTLE] = np.append(
-                        idle_points[HYBRID_THROTTLE], hybrid_throttle_idle)
+                        idle_points[HYBRID_THROTTLE], hybrid_throttle_idle
+                    )
 
                 # if there is only one data point at this Mach, alt combination, use
                 # thrust fraction instead of extrapolation
@@ -689,11 +698,10 @@ class EngineDeck(EngineModel):
                 #      guaranteed to be at hybrid throttle idle point, could be negative
                 if data_indices[M, A] == 1:
                     for key in packed_data:
-                        if key not in [
-                                MACH,
-                                ALTITUDE,
-                                THROTTLE,
-                                HYBRID_THROTTLE] + direct_calc_vars:
+                        if (
+                            key
+                            not in [MACH, ALTITUDE, THROTTLE, HYBRID_THROTTLE] + direct_calc_vars
+                        ):
                             idle_value = packed_data[key][M, A, 0] * idle_thrust_fract
                             var_min = packed_data[key][M, A, -1] * idle_min_fract
                             var_max = packed_data[key][M, A, -1] * idle_max_fract
@@ -703,27 +711,29 @@ class EngineDeck(EngineModel):
                             elif idle_value > var_max:
                                 idle_value = var_max
 
-                            idle_points[key] = np.append(idle_points[key],
-                                                         [idle_value] * num_points)
+                            idle_points[key] = np.append(
+                                idle_points[key], [idle_value] * num_points
+                            )
                             # add Mach, alt combination to idle_points with idle power
                             # codes
 
                     # thrust, shaft powers do not get idle_min/max checks
                     for var in direct_calc_vars:
-                        idle_points[var] = np.append(idle_points[var],
-                                                     [[packed_data[var][M, A, 0]
-                                                       * idle_thrust_fract]] * num_points)
+                        idle_points[var] = np.append(
+                            idle_points[var],
+                            [[packed_data[var][M, A, 0] * idle_thrust_fract]] * num_points,
+                        )
                     # move to next data point
                     continue
 
                 # calculate idle thrust, shaft powers as a percentage of max thrust at Mach, alt point
                 for var in direct_calc_vars:
-                    idle_calc_value = packed_data[var][M, A, data_indices[M, A] - 1]\
-                        * idle_thrust_fract
+                    idle_calc_value = (
+                        packed_data[var][M, A, data_indices[M, A] - 1] * idle_thrust_fract
+                    )
 
                     # add this point to idle_points
-                    idle_points[var] = np.append(idle_points[var],
-                                                 [idle_calc_value] * num_points)
+                    idle_points[var] = np.append(idle_points[var], [idle_calc_value] * num_points)
 
                     # Calculate term for linear extrapolation - shaft power has highest
                     # "preference" since it is last in the list, followed by corrected
@@ -731,16 +741,13 @@ class EngineDeck(EngineModel):
                     # with turboshaft engine decks in TurbopropModels.
                     # Only one extrapolation term can be used for all dependent vars
                     extrap_term = (idle_calc_value - packed_data[var][M, A, 0]) / (
-                        packed_data[var][M, A, 1] - packed_data[var][M, A, 0])
+                        packed_data[var][M, A, 1] - packed_data[var][M, A, 0]
+                    )
 
                 # compute idle data
                 for key in packed_data:
                     # skip independent variables or thrust, which is already calculated
-                    if key not in [
-                            MACH,
-                            ALTITUDE,
-                            THROTTLE,
-                            HYBRID_THROTTLE] + direct_calc_vars:
+                    if key not in [MACH, ALTITUDE, THROTTLE, HYBRID_THROTTLE] + direct_calc_vars:
                         # extrapolate to idle from lowest two throttle points in data
                         idle_value = _extrapolate(packed_data[key][M, A])
 
@@ -754,8 +761,7 @@ class EngineDeck(EngineModel):
                             idle_value = var_max
 
                         # store newly computed idle point
-                        idle_points[key] = np.append(idle_points[key],
-                                                     [idle_value] * num_points)
+                        idle_points[key] = np.append(idle_points[key], [idle_value] * num_points)
 
         # add idle points to data
         for key in packed_data:
@@ -774,7 +780,7 @@ class EngineDeck(EngineModel):
         # Re-normalize throttle since "dummy" idle values were used
         self._normalize_throttle()
 
-    def build_pre_mission(self, aviary_inputs) -> om.ExplicitComponent:
+    def build_pre_mission(self, aviary_inputs, **kwargs) -> om.ExplicitComponent:
         """
         Build components to be added to pre-mission propulsion subsystem.
 
@@ -783,7 +789,6 @@ class EngineDeck(EngineModel):
             SizeEngine component specific to this EngineDeck, used for calculating engine
             scaling factors.
         """
-
         return SizeEngine()
 
     def _build_engine_interpolator(self, num_nodes, aviary_inputs):
@@ -794,7 +799,8 @@ class EngineDeck(EngineModel):
         interp_method = self.get_val(Aircraft.Engine.INTERPOLATION_METHOD)
         # interpolator object for engine data
         engine = om.MetaModelSemiStructuredComp(
-            method=interp_method, extrapolate=True, vec_size=num_nodes)
+            method=interp_method, extrapolate=True, vec_size=num_nodes
+        )
 
         units = default_units
         for key in self.engine_variables:
@@ -825,7 +831,7 @@ class EngineDeck(EngineModel):
 
         return engine
 
-    def build_mission(self, num_nodes, aviary_inputs) -> om.Group:
+    def build_mission(self, num_nodes, aviary_inputs, **kwargs) -> om.Group:
         """
         Creates interpolator objects to be added to mission-level propulsion subsystem.
         Interpolators must be re-generated for each ODE due to potentialy different
@@ -858,27 +864,29 @@ class EngineDeck(EngineModel):
         #      Pre-solve max throttle/hybrid throttle for each flight condition, interpolate on
         #      reduced data set?
         if self.use_thrust or self.use_shaft_power:
-            if self.global_throttle or (self.global_hybrid_throttle
-                                        and self.use_hybrid_throttle):
+            if self.global_throttle or (self.global_hybrid_throttle and self.use_hybrid_throttle):
                 # create IndepVarComp to pass maximum throttle is to max thrust interpolator
                 fixed_throttles = om.IndepVarComp()
                 if self.global_throttle:
-                    fixed_throttles.add_output('throttle_max',
-                                               val=np.ones(num_nodes) *
-                                               self.throttle_max,
-                                               units='unitless',
-                                               desc='Engine maximum throttle')
+                    fixed_throttles.add_output(
+                        'throttle_max',
+                        val=np.ones(num_nodes) * self.throttle_max,
+                        units='unitless',
+                        desc='Engine maximum throttle',
+                    )
                 if self.global_hybrid_throttle and self.use_hybrid_throttle:
-                    fixed_throttles.add_output('hybrid_throttle_max',
-                                               val=np.ones(num_nodes) *
-                                               self.hybrid_throttle_max,
-                                               units='unitless',
-                                               desc='Engine maximum hybrid throttle')
-            if not (self.global_throttle or (self.global_hybrid_throttle
-                                             and self.use_hybrid_throttle)):
-                interp_throttles = om.MetaModelSemiStructuredComp(method=interp_method,
-                                                                  extrapolate=False,
-                                                                  vec_size=num_nodes)
+                    fixed_throttles.add_output(
+                        'hybrid_throttle_max',
+                        val=np.ones(num_nodes) * self.hybrid_throttle_max,
+                        units='unitless',
+                        desc='Engine maximum hybrid throttle',
+                    )
+            if not (
+                self.global_throttle or (self.global_hybrid_throttle and self.use_hybrid_throttle)
+            ):
+                interp_throttles = om.MetaModelSemiStructuredComp(
+                    method=interp_method, extrapolate=False, vec_size=num_nodes
+                )
 
                 packed_data = self.packed_data
                 mach_table = np.array([])
@@ -887,10 +895,8 @@ class EngineDeck(EngineModel):
                 for M in range(self.mach_max_count):
                     for A in range(self.alt_max_count):
                         if self.data_indices[M, A] != 0:
-                            mach_table = np.append(
-                                mach_table, packed_data[MACH][M, A, 0])
-                            alt_table = np.append(
-                                alt_table, packed_data[ALTITUDE][M, A, 0])
+                            mach_table = np.append(mach_table, packed_data[MACH][M, A, 0])
+                            alt_table = np.append(alt_table, packed_data[ALTITUDE][M, A, 0])
 
                 # add inputs and outputs to interpolator
                 interp_throttles.add_input(
@@ -906,22 +912,25 @@ class EngineDeck(EngineModel):
                     desc='Current flight altitude',
                 )
                 if not self.global_throttle:
-                    interp_throttles.add_output('throttle_max',
-                                                self.throttle_max,
-                                                units='unitless',
-                                                desc='max throttle avaliable at current '
-                                                'flight condition')
+                    interp_throttles.add_output(
+                        'throttle_max',
+                        self.throttle_max,
+                        units='unitless',
+                        desc='max throttle avaliable at current flight condition',
+                    )
                 if not self.global_hybrid_throttle and self.use_hybrid_throttle:
-                    interp_throttles.add_output('hybrid_throttle_max',
-                                                self.hybrid_throttle_max,
-                                                units='unitless',
-                                                desc='max hybrid throttle avaliable at '
-                                                     'current flight condition')
+                    interp_throttles.add_output(
+                        'hybrid_throttle_max',
+                        self.hybrid_throttle_max,
+                        units='unitless',
+                        desc='max hybrid throttle avaliable at current flight condition',
+                    )
 
             # Calculation of max thrust currently done with a duplicate of the engine
             # model and scaling components
             max_thrust_engine = om.MetaModelSemiStructuredComp(
-                method=interp_method, extrapolate=False, vec_size=num_nodes)
+                method=interp_method, extrapolate=False, vec_size=num_nodes
+            )
 
             max_thrust_engine.add_input(
                 Dynamic.Atmosphere.MACH,
@@ -936,47 +945,58 @@ class EngineDeck(EngineModel):
                 desc='Current flight altitude',
             )
             # replace throttle coming from mission with max value based on flight condition
-            max_thrust_engine.add_input('throttle_max',
-                                        self.data[THROTTLE],
-                                        units='unitless',
-                                        desc='Current engine throttle')
+            max_thrust_engine.add_input(
+                'throttle_max',
+                self.data[THROTTLE],
+                units='unitless',
+                desc='Current engine throttle',
+            )
             if self.use_hybrid_throttle:
                 # replace hybrid throttle coming from mission with max value based on
                 # flight condition
-                max_thrust_engine.add_input('hybrid_throttle_max',
-                                            self.data[HYBRID_THROTTLE],
-                                            units='unitless',
-                                            desc='Current engine hybrid throttle')
-            max_thrust_engine.add_output('thrust_net_max_unscaled',
-                                         self.data[THRUST],
-                                         units=units[THRUST],
-                                         desc='maximum thrust that can currently be produced')
+                max_thrust_engine.add_input(
+                    'hybrid_throttle_max',
+                    self.data[HYBRID_THROTTLE],
+                    units='unitless',
+                    desc='Current engine hybrid throttle',
+                )
+            max_thrust_engine.add_output(
+                'thrust_net_max_unscaled',
+                self.data[THRUST],
+                units=units[THRUST],
+                desc='maximum thrust that can currently be produced',
+            )
         if self.use_shaft_power:
             if SHAFT_POWER in self.engine_variables:
-                max_thrust_engine.add_output('shaft_power_max_unscaled',
-                                             self.data[SHAFT_POWER],
-                                             units=units[SHAFT_POWER],
-                                             desc='maximum shaft power that can currently be produced')
+                max_thrust_engine.add_output(
+                    'shaft_power_max_unscaled',
+                    self.data[SHAFT_POWER],
+                    units=units[SHAFT_POWER],
+                    desc='maximum shaft power that can currently be produced',
+                )
             else:
-                max_thrust_engine.add_output('shaft_power_corrected_max_unscaled',
-                                             self.data[SHAFT_POWER_CORRECTED],
-                                             units=units[SHAFT_POWER_CORRECTED],
-                                             desc='maximum corrected shaft power that can currently be produced')
+                max_thrust_engine.add_output(
+                    'shaft_power_corrected_max_unscaled',
+                    self.data[SHAFT_POWER_CORRECTED],
+                    units=units[SHAFT_POWER_CORRECTED],
+                    desc='maximum corrected shaft power that can currently be produced',
+                )
 
         # add created subsystems to engine_group
         outputs = []
         if getattr(self, 'use_t4', False):
             outputs.append(Dynamic.Vehicle.Propulsion.TEMPERATURE_T4)
 
-        engine_group.add_subsystem('interpolation',
-                                   engine,
-                                   promotes_inputs=['*'],
-                                   promotes_outputs=outputs)
+        engine_group.add_subsystem(
+            'interpolation', engine, promotes_inputs=['*'], promotes_outputs=outputs
+        )
 
         # check if uncorrection component is needed
         uncorrect_shp = False
-        if SHAFT_POWER_CORRECTED in self.engine_variables\
-           and SHAFT_POWER not in self.engine_variables:
+        if (
+            SHAFT_POWER_CORRECTED in self.engine_variables
+            and SHAFT_POWER not in self.engine_variables
+        ):
             uncorrect_shp = True
             engine_group.add_subsystem(
                 'uncorrect_shaft_power',
@@ -988,27 +1008,30 @@ class EngineDeck(EngineModel):
                 ],
             )
 
-            engine_group.connect('interpolation.shaft_power_corrected_unscaled',
-                                 'uncorrect_shaft_power.corrected_data')
+            engine_group.connect(
+                'interpolation.shaft_power_corrected_unscaled',
+                'uncorrect_shaft_power.corrected_data',
+            )
 
         if self.use_thrust or self.use_shaft_power:
-            if self.global_throttle or (self.global_hybrid_throttle
-                                        and self.use_hybrid_throttle):
-                engine_group.add_subsystem('fixed_max_throttles',
-                                           fixed_throttles,
-                                           promotes_outputs=['*'])
+            if self.global_throttle or (self.global_hybrid_throttle and self.use_hybrid_throttle):
+                engine_group.add_subsystem(
+                    'fixed_max_throttles', fixed_throttles, promotes_outputs=['*']
+                )
 
-            if not (self.global_throttle or (self.global_hybrid_throttle
-                                             and self.use_hybrid_throttle)):
-                engine_group.add_subsystem('interp_max_throttles',
-                                           interp_throttles,
-                                           promotes_inputs=['*'],
-                                           promotes_outputs=['*'])
+            if not (
+                self.global_throttle or (self.global_hybrid_throttle and self.use_hybrid_throttle)
+            ):
+                engine_group.add_subsystem(
+                    'interp_max_throttles',
+                    interp_throttles,
+                    promotes_inputs=['*'],
+                    promotes_outputs=['*'],
+                )
 
             engine_group.add_subsystem(
-                'max_interpolation',
-                max_thrust_engine,
-                promotes_inputs=['*'])
+                'max_interpolation', max_thrust_engine, promotes_inputs=['*']
+            )
 
             if uncorrect_shp:
                 engine_group.add_subsystem(
@@ -1023,8 +1046,10 @@ class EngineDeck(EngineModel):
                     ],
                 )
 
-                engine_group.connect('max_interpolation.shaft_power_corrected_max_unscaled',
-                                     'uncorrect_max_shaft_power.corrected_data')
+                engine_group.connect(
+                    'max_interpolation.shaft_power_corrected_max_unscaled',
+                    'uncorrect_max_shaft_power.corrected_data',
+                )
 
         engine_outputs = self.engine_variables.copy()
         if SHAFT_POWER_CORRECTED in engine_outputs:
@@ -1090,11 +1115,13 @@ class EngineDeck(EngineModel):
         meta_data = kwargs['meta_data']
         engine_idx = kwargs['engine_idx']
 
-        outputs = [Aircraft.Engine.NUM_ENGINES,
-                   Aircraft.Engine.SCALED_SLS_THRUST,
-                   Aircraft.Engine.SCALE_FACTOR]
+        outputs = [
+            Aircraft.Engine.NUM_ENGINES,
+            Aircraft.Engine.SCALED_SLS_THRUST,
+            Aircraft.Engine.SCALE_FACTOR,
+        ]
 
-        # modified version of markdown table util adjusted to handle engine decks
+        # modified version of markdown table until adjusted to handle engine decks
         with open(reports_file, mode='a') as f:
             f.write(f'\n### {self.name}')
             f.write('\n| Variable Name | Value | Units |\n')
@@ -1172,27 +1199,38 @@ class EngineDeck(EngineModel):
             alt_tol = self.alt_tol
             mach_tol = self.mach_tol
             # NOTE This fails if there is no data point at SLS (within tolerance)
-            sea_level_idx = (np.intersect1d(
+            sea_level_idx = np.intersect1d(
                 np.where(-alt_tol < self.data[ALTITUDE])[0],
-                np.where(self.data[ALTITUDE] <= alt_tol)[0]))
-            static_idx = (np.intersect1d(
+                np.where(self.data[ALTITUDE] <= alt_tol)[0],
+            )
+            static_idx = np.intersect1d(
                 np.where(-mach_tol < self.data[MACH]),
-                np.where(self.data[MACH] < self.mach_tol)))
+                np.where(self.data[MACH] < self.mach_tol),
+            )
             sls_idx = np.intersect1d(sea_level_idx, static_idx)
 
             if sls_idx.size == 0:
                 raise UserWarning(
-                    'Could not find sea-level static max thrust point for '
-                    f'EngineDeck <{self.name}>. Please review the data '
-                    f'file <{self.get_val(Aircraft.Engine.DATA_FILE)}> or '
-                    'manually specify Aircraft.Engine.REFERENCE_SLS_THRUST '
-                    'in EngineDeck options'
+                    'Could not find sea-level static max thrust point for EngineDeck '
+                    f'<{self.name}>. Please review the data file '
+                    f'<{self.get_val(Aircraft.Engine.DATA_FILE)}> or manually specify '
+                    'aircraft:engine:reference_sls_thrust in EngineDeck options'
                 )
 
             reference_sls_thrust = max(self.data[THRUST][sls_idx])
 
-            self.set_val(Aircraft.Engine.REFERENCE_SLS_THRUST,
-                         reference_sls_thrust, units=self.engine_variables[THRUST])
+            if self.get_val(Settings.VERBOSITY) >= Verbosity.VERBOSE:
+                print(
+                    f'EngineDeck <{self.name}>: found reference SLS thrust of '
+                    f'{reference_sls_thrust} {self.engine_variables[THRUST]} in '
+                    'provided performance data'
+                )
+
+            self.set_val(
+                Aircraft.Engine.REFERENCE_SLS_THRUST,
+                reference_sls_thrust,
+                units=self.engine_variables[THRUST],
+            )
 
         # Update SCALED_SLS_THRUST if required based on scaling information provided
         scale_performance = self.get_val(Aircraft.Engine.SCALE_PERFORMANCE)
@@ -1212,41 +1250,76 @@ class EngineDeck(EngineModel):
             # both scale factor and target thrust provided:
             if thrust_provided:
                 scaled_thrust = self.get_val(Aircraft.Engine.SCALED_SLS_THRUST, 'lbf')
-                if scale_performance:  # using very rough tolerance
-                    if not math.isclose(scaled_thrust/ref_thrust, scale_factor, abs_tol=1e-2):
+                if scale_performance:
+                    # Check if target thrust and ref thrust * scale factor match using
+                    # rough tolerance
+                    # Tolerance is arbitrary, but designed to handle thrusts in the
+                    # hundreds of thousands via rel_tol, and the hundreds via abs_tol
+                    if not math.isclose(
+                        scaled_thrust,
+                        ref_thrust * scale_factor,
+                        abs_tol=1e-1,
+                        rel_tol=1e-4,
+                    ):
                         # user wants scaling but provided conflicting inputs,
                         # cannot be resolved
                         raise AttributeError(
-                            f'EngineModel <{self.name}>: Conflicting values provided '
+                            f'EngineDeck <{self.name}>: Conflicting values provided '
                             'for aircraft:engine:scale_factor and '
-                            'aircraft:engine:scaled_sls_thrust'
+                            'aircraft:engine:scaled_sls_thrust when compared against '
+                            'aircraft:engine:reference_sls_thrust'
                         )
                     # get thrust target & scale factor matching exactly. Scale factor is
                     # design variable, so don't touch it!! Instead change output thrust
                     else:
-                        self.set_val(Aircraft.Engine.SCALED_SLS_THRUST,
-                                     ref_thrust*scale_factor, 'lbf')
+                        target_thrust = ref_thrust * scale_factor
+                        if self.get_val(Settings.VERBOSITY) >= Verbosity.VERBOSE:
+                            warnings.warn(
+                                f'EngineDeck <{self.name}>: '
+                                'aircraft:engine:scaled_sls_thrust and '
+                                'product of aircraft:engine_scale_factor and '
+                                'aircraft:engine:reference_sls_thrust are not an exact '
+                                'match but within tolerance. Setting scaled thrust '
+                                f'target to calculated value of {target_thrust} lbf.'
+                            )
+                        self.set_val(Aircraft.Engine.SCALED_SLS_THRUST, target_thrust, 'lbf')
                 else:
-                    # engine is not scaled: just make sure scaled thrust = ref thrust
-                    self.set_val(
-                        Aircraft.Engine.SCALED_SLS_THRUST, ref_thrust, 'lbf')
+                    # engine is not scaled: make sure scaled thrust = ref thrust and
+                    # scale factor = 1
+                    self.set_val(Aircraft.Engine.SCALED_SLS_THRUST, ref_thrust, 'lbf')
+                    self.set_val(Aircraft.Engine.SCALE_FACTOR, 1.0)
 
             # scale factor provided, but not target thrust
             else:
                 # calculate new scaled thrust value
-                scaled_thrust = ref_thrust*scale_factor
+                scaled_thrust = ref_thrust * scale_factor
                 self.set_val(Aircraft.Engine.SCALED_SLS_THRUST, scaled_thrust, 'lbf')
 
+        # target thrust provided, but not scale factor
+        elif thrust_provided:
+            scaled_thrust = self.get_val(Aircraft.Engine.SCALED_SLS_THRUST, 'lbf')
+            if scale_performance:
+                scale_factor = scaled_thrust / ref_thrust
+                if self.get_val(Settings.VERBOSITY) >= Verbosity.VERBOSE:
+                    warnings.warn(
+                        f'EngineDeck <{self.name}>: aircraft:engine:scale_factor has '
+                        'been indirectly set by the ratio of '
+                        'aircraft:engine:scaled_sls_thrust and '
+                        f'aircraft:engine:reference_sls_thrust to {scale_factor}'
+                    )
+                self.set_val(Aircraft.Engine.SCALE_FACTOR, scale_factor)
+            else:
+                # engine is not scaled: just make sure scale_factor = 1
+                self.set_val(Aircraft.Engine.SCALE_FACTOR, 1.0)
+
         # neither scale factor nor target thrust are provided
-        if not scale_factor_provided and not thrust_provided:
+        elif not thrust_provided:
             if scale_performance:
                 # user wants to scale, but provided no scaling info: default to
                 # scale factor of 1, set scaled thrust = ref thrust
                 scale_factor = 1
-                self.set_val(
-                    Aircraft.Engine.SCALE_FACTOR, scale_factor)
-                self.set_val(
-                    Aircraft.Engine.SCALED_SLS_THRUST, ref_thrust, 'lbf')
+                self.set_val(Aircraft.Engine.SCALE_FACTOR, scale_factor)
+                self.set_val(Aircraft.Engine.SCALED_SLS_THRUST, ref_thrust, 'lbf')
             else:
                 # engine is not scaled: just make sure scaled thrust = ref thrust
                 scaled_thrust = ref_thrust
@@ -1264,6 +1337,7 @@ class EngineDeck(EngineModel):
         Normalization can be "global" (using max and min values from entire data set), or
         "local" (using the max and min values from each individual flight condition).
         """
+
         def _hybrid_throttle_norm(hybrid_throttle_list):
             """
             Normalize hybrid throttle to the scale:
@@ -1329,8 +1403,7 @@ class EngineDeck(EngineModel):
                     continue
 
                 if not self.global_throttle:
-                    throttle_list = normalize(
-                        packed_throttle[M, A][:data_indices[M, A]+1])
+                    throttle_list = normalize(packed_throttle[M, A][: data_indices[M, A] + 1])
                     # normalize throttles for this flight condition from 0 to 1
                     normalized_throttle = np.append(normalized_throttle, throttle_list)
                     throttle_min = np.append(throttle_min, min(throttle_list))
@@ -1339,13 +1412,13 @@ class EngineDeck(EngineModel):
                 if not self.global_hybrid_throttle and self.use_hybrid_throttle:
                     # normalize hybrid throttles for this flight condition
                     hybrid_throttle_list = _hybrid_throttle_norm(
-                        packed_hybrid_throttle[M, A][:data_indices[M, A]+1])
+                        packed_hybrid_throttle[M, A][: data_indices[M, A] + 1]
+                    )
                     normalized_hybrid_throttle = np.append(
-                        normalized_hybrid_throttle, hybrid_throttle_list)
-                    hybrid_throttle_min = np.append(
-                        hybrid_throttle_min, min(hybrid_throttle_list))
-                    hybrid_throttle_max = np.append(
-                        hybrid_throttle_max, max(hybrid_throttle_list))
+                        normalized_hybrid_throttle, hybrid_throttle_list
+                    )
+                    hybrid_throttle_min = np.append(hybrid_throttle_min, min(hybrid_throttle_list))
+                    hybrid_throttle_max = np.append(hybrid_throttle_max, max(hybrid_throttle_list))
 
         # store normalized throttle data
         if self.global_throttle:
@@ -1375,7 +1448,7 @@ class EngineDeck(EngineModel):
 
     def _sort_data(self):
         """
-        Sort unpacked engine data in order of mach number, altitude, throttle,
+        Sort unpacked engine data in order of Mach number, altitude, throttle,
         hybrid throttle.
         """
         engine_data = self.data
@@ -1387,11 +1460,16 @@ class EngineDeck(EngineModel):
         sorted_values = np.array([engine_data[key] for key in engine_data]).transpose()
 
         # Sort by mach, then altitude, then throttle, then hybrid throttle
-        sorted_values = sorted_values[np.lexsort(
-            [engine_data[HYBRID_THROTTLE],
-             engine_data[THROTTLE],
-             engine_data[ALTITUDE],
-             engine_data[MACH]])]
+        sorted_values = sorted_values[
+            np.lexsort(
+                [
+                    engine_data[HYBRID_THROTTLE],
+                    engine_data[THROTTLE],
+                    engine_data[ALTITUDE],
+                    engine_data[MACH],
+                ]
+            )
+        ]
         for idx, var in enumerate(engine_data):
             engine_data[var] = sorted_values[:, idx]
 
@@ -1421,7 +1499,6 @@ class EngineDeck(EngineModel):
             packed_data[key] = np.zeros((mach_max_count, alt_max_count, data_max_count))
 
         for M in range(mach_max_count):
-
             for A in range(alt_max_count):
                 if data_indices[M, A] == 0:
                     # skip point if there is no data
@@ -1447,10 +1524,10 @@ class EngineDeck(EngineModel):
             number.
         """
         mach_count = 0
-        # First mach number must have at least one altitude associated with it
+        # First Mach number must have at least one altitude associated with it
         alt_count = 1
         max_alt_count = 0
-        # First mach number must have at least one data point associated with it
+        # First Mach number must have at least one data point associated with it
         data_count = 1
         max_data_count = 0
 
@@ -1471,13 +1548,12 @@ class EngineDeck(EngineModel):
             alt = altitudes[idx]
 
             if math.isclose(mach_num, curr_mach, abs_tol=self.mach_tol):
-
                 if math.isclose(alt, curr_alt, abs_tol=self.alt_tol):
                     data_indices[mach_count - 1, alt_count - 1] = data_count
                     data_count += 1
 
                 else:
-                    # new altitude for this mach number, count it
+                    # new altitude for this Mach number, count it
                     curr_alt = alt
                     alt_count += 1
                     data_indices = extend_array(data_indices, [mach_count, alt_count])
@@ -1500,7 +1576,7 @@ class EngineDeck(EngineModel):
                         f'<{self.get_val(Aircraft.Engine.DATA_FILE).name}>'
                     )
 
-                # record and count mach numbers
+                # record and count Mach numbers
                 curr_mach = mach_num
                 mach_count += 1
 
@@ -1590,18 +1666,15 @@ def extend_array(inp_array, size):
     # TODO may be built-in numpy functions that can replace this and support n dimensions
     dims = np.array(np.shape(inp_array))
     while size[0] > dims[0]:
-        inp_array = np.concatenate(
-            (inp_array, np.zeros((1, *dims[1:]))), 0)
+        inp_array = np.concatenate((inp_array, np.zeros((1, *dims[1:]))), 0)
         dims[0] += 1
     if len(dims) > 1:
         while size[1] > dims[1]:
-            inp_array = np.concatenate(
-                (inp_array, np.zeros((dims[0], 1, *dims[2:]))), 1)
+            inp_array = np.concatenate((inp_array, np.zeros((dims[0], 1, *dims[2:]))), 1)
             dims[1] += 1
         if len(dims) > 2:
             while size[2] > dims[2]:
-                inp_array = np.concatenate(
-                    (inp_array, np.zeros((*dims[:2], 1))), 2)
+                inp_array = np.concatenate((inp_array, np.zeros((*dims[:2], 1))), 2)
                 dims[2] += 1
 
     return inp_array

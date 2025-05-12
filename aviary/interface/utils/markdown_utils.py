@@ -1,5 +1,6 @@
-import numpy as np
 from math import floor, log10
+
+import numpy as np
 
 # TODO openMDAO has generate_table() that might be able to replace this
 
@@ -11,6 +12,7 @@ def round_it(x, sig=None):
     """
     Round a float to a specified significance.
     If the number is equal to zero, "0" will be returned, regardless of the number of significant digits specified
+    If the number is NaN, directly returns it (stays NaN).
 
     Parameters
     ----------
@@ -21,7 +23,8 @@ def round_it(x, sig=None):
 
     Returns
     -------
-        The rounded number
+        The rounded number, or provided string if not convertible to float, or original
+        number if it is NaN
     """
     # default sig figs to 2 decimal places out
     if isinstance(x, str):
@@ -29,10 +32,16 @@ def round_it(x, sig=None):
             x = float(x)
         except ValueError:
             return x
+
+    if np.isnan(x):
+        # return NaNs directly back to markdown report
+        return x
+
     if not sig:
-        sig = len(str(round(x)))+2
+        sig = len(str(round(x))) + 2
+
     if x != 0:
-        return round(x, sig-int(floor(log10(abs(x))))-1)
+        return round(x, sig - int(floor(log10(abs(x)))) - 1)
     else:
         return 0
 

@@ -5,10 +5,12 @@ from parameterized import parameterized
 
 from aviary.subsystems.mass.flops_based.wing_simple import SimpleWingBendingFact
 from aviary.utils.test_utils.variable_test import assert_match_varnames
-from aviary.validation_cases.validation_tests import (flops_validation_test,
-                                                      get_flops_case_names,
-                                                      get_flops_inputs,
-                                                      print_case)
+from aviary.validation_cases.validation_tests import (
+    flops_validation_test,
+    get_flops_case_names,
+    get_flops_inputs,
+    print_case,
+)
 from aviary.variable_info.variables import Aircraft
 
 
@@ -17,20 +19,23 @@ class SimpleWingBendingFactTest(unittest.TestCase):
         self.prob = om.Problem()
 
     # Only dataset that uses the simple wing.
-    @parameterized.expand(get_flops_case_names(only=['LargeSingleAisle2FLOPS', 'LargeSingleAisle2FLOPSalt']),
-                          name_func=print_case)
+    @parameterized.expand(
+        get_flops_case_names(only=['LargeSingleAisle2FLOPS', 'LargeSingleAisle2FLOPSalt']),
+        name_func=print_case,
+    )
     def test_case(self, case_name):
-
         prob = self.prob
 
         inputs = get_flops_inputs(case_name, preprocess=True)
 
         options = {
-            Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES: inputs.get_val(Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES),
+            Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES: inputs.get_val(
+                Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES
+            ),
         }
 
         prob.model.add_subsystem(
-            "wing",
+            'wing',
             SimpleWingBendingFact(**options),
             promotes_inputs=['*'],
             promotes_outputs=['*'],
@@ -63,5 +68,5 @@ class SimpleWingBendingFactTest(unittest.TestCase):
         assert_match_varnames(self.prob.model)
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     unittest.main()

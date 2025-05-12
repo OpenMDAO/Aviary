@@ -1,24 +1,33 @@
 from enum import Enum
 
-import numpy as np
-
-import openmdao.api as om
-from openmdao.core.component import Component
-from openmdao.utils.units import convert_units
 import dymos as dm
+import numpy as np
+import openmdao.api as om
 from dymos.utils.misc import _unspecified
+from openmdao.core.component import Component
 
+from aviary.utils.aviary_options_dict import units_setter
 from aviary.utils.aviary_values import AviaryValues
-from aviary.variable_info.variables import Aircraft, Settings
+from aviary.utils.utils import cast_type, check_type, enum_setter, wrapped_convert_units
+from aviary.variable_info.enums import Verbosity
 from aviary.variable_info.variable_meta_data import _MetaData
+from aviary.variable_info.variables import Aircraft, Settings
 
 # ---------------------------
 # Helper functions for setting up inputs/outputs in components
 # ---------------------------
 
 
-def add_aviary_input(comp, varname, val=None, units=None, desc=None, shape_by_conn=False,
-                     meta_data=_MetaData, shape=None):
+def add_aviary_input(
+    comp,
+    varname,
+    val=None,
+    units=None,
+    desc=None,
+    shape_by_conn=False,
+    meta_data=_MetaData,
+    shape=None,
+):
     """
     This function provides a clean way to add variables from the
     variable hierarchy into components as Aviary inputs. It takes
@@ -35,7 +44,7 @@ def add_aviary_input(comp, varname, val=None, units=None, desc=None, shape_by_co
     val: float or ndarray
         Default value for variable.
     units: str
-        (Optional) when speficying val, units should also be specified.
+        (Optional) when specifying val, units should also be specified.
     desc: str
         (Optional) description text for the variable.
     shape_by_conn: bool
@@ -47,17 +56,17 @@ def add_aviary_input(comp, varname, val=None, units=None, desc=None, shape_by_co
         (Optional) shape for this input.
     """
     meta = meta_data[varname]
-    if units:
-        input_units = units
-    else:
-        # units of None are overwritten with defaults. Overwriting units with None is
-        # unecessary as it will cause errors down the line if the default is not already
-        # None
-        input_units = meta['units']
-    if desc:
-        input_desc = desc
-    else:
-        input_desc = meta['desc']
+    # units of None are overwritten with defaults. Overwriting units with None is
+    # unnecessary as it will cause errors down the line if the default is not already
+    # None
+    default_units = meta['units']
+
+    if units is None:
+        units = default_units
+
+    if desc is None:
+        desc = meta['desc']
+
     if val is None:
         if shape is None:
             val = meta['default_value']
@@ -69,12 +78,42 @@ def add_aviary_input(comp, varname, val=None, units=None, desc=None, shape_by_co
                 val = np.zeros(shape)
             else:
                 val = np.ones(shape) * val
-    comp.add_input(varname, val=val, units=input_units,
-                   desc=input_desc, shape_by_conn=shape_by_conn, shape=shape)
+
+        # val was not provided but different units were
+        if units != default_units:
+            try:
+                # convert the default units to requested units
+                val = wrapped_convert_units((val, default_units), units)
+            except ValueError:
+                raise ValueError(
+                    f'The requested units {units} for input {varname} in component '
+                    f'{comp.name} are invalid.'
+                )
+
+    # check types
+    val = cast_type(varname, val, meta_data)
+    check_type(varname, val, meta_data)
+
+    comp.add_input(
+        varname,
+        val=val,
+        units=units,
+        desc=desc,
+        shape_by_conn=shape_by_conn,
+        shape=shape,
+    )
 
 
-def add_aviary_output(comp, varname, val=None, units=None, desc=None, shape_by_conn=False,
-                      meta_data=_MetaData, shape=None):
+def add_aviary_output(
+    comp,
+    varname,
+    val=None,
+    units=None,
+    desc=None,
+    shape_by_conn=False,
+    meta_data=_MetaData,
+    shape=None,
+):
     """
     This function provides a clean way to add variables from the
     variable hierarchy into components as Aviary outputs. It takes
@@ -104,17 +143,17 @@ def add_aviary_output(comp, varname, val=None, units=None, desc=None, shape_by_c
         (Optional) shape for this input.
     """
     meta = meta_data[varname]
-    if units:
-        output_units = units
-    else:
-        # units of None are overwritten with defaults. Overwriting units with None is
-        # unecessary as it will cause errors down the line if the default is not already
-        # None
-        output_units = meta['units']
-    if desc:
-        output_desc = desc
-    else:
-        output_desc = meta['desc']
+    # units of None are overwritten with defaults. Overwriting units with None is
+    # unnecessary as it will cause errors down the line if the default is not already
+    # None
+    default_units = meta['units']
+
+    if units is None:
+        units = default_units
+
+    if desc is None:
+        desc = meta['desc']
+
     if val is None:
         if shape is None:
             val = meta['default_value']
@@ -126,81 +165,29 @@ def add_aviary_output(comp, varname, val=None, units=None, desc=None, shape_by_c
                 val = np.zeros(shape)
             else:
                 val = np.ones(shape) * val
-    comp.add_output(varname, val=val, units=output_units,
-                    desc=output_desc, shape_by_conn=shape_by_conn)
 
+        # val was not provided but different units were
+        if units != default_units:
+            try:
+                # convert the default units to requested units
+                val = wrapped_convert_units((val, default_units), units)
+            except ValueError:
+                raise ValueError(
+                    f'The requested units {units} for output {varname} in component '
+                    f'{comp.name} are invalid.'
+                )
 
-def units_setter(opt_meta, value):
-    """
-    Check and convert new units tuple into
+    # check types
+    val = cast_type(varname, val, meta_data)
+    check_type(varname, val, meta_data)
 
-    Parameters
-    ----------
-    opt_meta : dict
-        Dictionary of entries for the option.
-    value : any
-        New value for the option.
-
-    Returns
-    -------
-    any
-        Post processed value to set into the option.
-    """
-    new_val, new_units = value
-    old_val, units = opt_meta['val']
-
-    converted_val = convert_units(new_val, new_units, units)
-    return (converted_val, units)
-
-
-def int_enum_setter(opt_meta, value):
-    """
-    Support setting the option with a string or int and converting it to the
-    proper enum object.
-
-    Parameters
-    ----------
-    opt_meta : dict
-        Dictionary of entries for the option.
-    value : any
-        New value for the option.
-
-    Returns
-    -------
-    any
-        Post processed value to set into the option.
-    """
-    types = opt_meta['types']
-    for type_ in types:
-        if type_ not in (list, np.ndarray):
-            enum_class = type_
-            break
-
-    if isinstance(value, Enum):
-        return value
-
-    elif isinstance(value, int):
-        return enum_class(value)
-
-    elif isinstance(value, str):
-        return getattr(enum_class, value)
-
-    elif isinstance(value, list):
-        values = []
-        for val in value:
-            if isinstance(val, Enum):
-                values.append(val)
-            elif isinstance(val, int):
-                values.append(enum_class(val))
-            elif isinstance(val, str):
-                values.append(getattr(enum_class, val))
-            else:
-                break
-        else:
-            return values
-
-    msg = f"Value '{value}' not valid for option with types {enum_class}"
-    raise TypeError(msg)
+    comp.add_output(
+        varname,
+        val=val,
+        units=units,
+        desc=desc,
+        shape_by_conn=shape_by_conn,
+    )
 
 
 def add_aviary_option(comp, name, val=_unspecified, units=None, desc=None, meta_data=_MetaData):
@@ -226,46 +213,82 @@ def add_aviary_option(comp, name, val=_unspecified, units=None, desc=None, meta_
         be used.
     """
     meta = meta_data[name]
-    if not desc:
+    # units of None are overwritten with defaults. Overwriting units with None is
+    # unnecessary as it will cause errors down the line if the default is not already
+    # None
+    default_units = meta['units']
+
+    if units is None:
+        units = default_units
+
+    if desc is None:
         desc = meta['desc']
+
+    # check units
     if val is _unspecified:
         val = meta['default_value']
 
+        # val was not provided but different units were
+        if units != default_units:
+            try:
+                # convert the default units to requested units
+                val = wrapped_convert_units((val, default_units), units)
+            except ValueError:
+                raise ValueError(
+                    f'The requested units {units} for output {name} in component '
+                    f'{comp.name} are invalid.'
+                )
+
+    # value of None needs to be skipped due to unusual setup of
+    # subsystems/mass/flops_based/wing_group.py
+    if val is not None:
+        # check types
+        val = cast_type(name, val, meta_data)
+        check_type(name, val, meta_data)
+
+    # Need to gather expected types since sometimes we need to use these to declare the
+    # option. Most of the time, types is overwritten to tuple to support (val, units)
     types = meta['types']
-    if meta['multivalue']:
+    if meta_data[name]['multivalue']:
         if isinstance(types, tuple):
-            types = (list, *types)
+            types = (list, np.ndarray, tuple, *types)
         else:
-            types = (list, types)
+            types = (list, np.ndarray, tuple, types)
 
     if units not in [None, 'unitless']:
         types = tuple
-        comp.options.declare(name, default=(val, units),
-                             types=types, desc=desc,
-                             set_function=units_setter)
+        comp.options.declare(
+            name,
+            default=(val, units),
+            types=types,
+            desc=desc,
+            set_function=units_setter,
+        )
 
     elif isinstance(val, Enum):
-        comp.options.declare(name, default=val,
-                             types=types, desc=desc,
-                             set_function=int_enum_setter)
+        comp.options.declare(name, default=val, types=types, desc=desc, set_function=enum_setter)
 
     else:
-        comp.options.declare(name, default=val,
-                             types=types, desc=desc)
+        comp.options.declare(name, default=val, types=types, desc=desc)
 
 
-def override_aviary_vars(group: om.Group, aviary_inputs: AviaryValues,
-                         manual_overrides=None, external_overrides=None):
-    '''
+def override_aviary_vars(
+    group: om.Group,
+    aviary_inputs: AviaryValues,
+    manual_overrides=None,
+    external_overrides=None,
+):
+    """
     This function provides the capability to override output variables
     with variables from the aviary_inputs input. The user can also
     optionally provide the names of variables that they would like to
     override manually. (Manual overriding is simply suppressing the
     promotion of the variable to make way for another output variable
-    of the same name, or to create an unconnected input elsewhere.)
-    '''
+    of the same name, or to create an unconnected input elsewhere.).
+    """
+
     def name_filter(name):
-        return "aircraft:" in name or "mission:" in name
+        return 'aircraft:' in name or 'mission:' in name
 
     if not manual_overrides:
         manual_overrides = []
@@ -277,7 +300,7 @@ def override_aviary_vars(group: om.Group, aviary_inputs: AviaryValues,
     # so that we can keep track of any unclaimed inputs
     all_inputs = set()  # use a set to avoid duplicates
     for system in group.system_iter():
-        meta = system.get_io_metadata(iotypes=("input",))
+        meta = system.get_io_metadata(iotypes=('input',))
         in_var_names = meta.keys()
         for name in in_var_names:
             all_inputs.add(name)
@@ -286,12 +309,15 @@ def override_aviary_vars(group: om.Group, aviary_inputs: AviaryValues,
     external_overridden_outputs = []
     for comp in group.system_iter(typ=Component):
         # get a list of the variables to use
-        out_var_names = list(filter(name_filter, comp.get_io_metadata(
-            iotypes=("output",), return_rel_names=False)))
+        out_var_names = list(
+            filter(
+                name_filter,
+                comp.get_io_metadata(iotypes=('output',), return_rel_names=False),
+            )
+        )
         # get a list of the metadata associated with each variable
-        out_var_metadata = comp.get_io_metadata(
-            iotypes=("output",), return_rel_names=False)
-        in_var_names = filter(name_filter, comp.get_io_metadata(iotypes=("input", )))
+        out_var_metadata = comp.get_io_metadata(iotypes=('output',), return_rel_names=False)
+        in_var_names = filter(name_filter, comp.get_io_metadata(iotypes=('input',)))
 
         comp_promoted_outputs = []
 
@@ -303,9 +329,8 @@ def override_aviary_vars(group: om.Group, aviary_inputs: AviaryValues,
                 continue
 
             elif name in external_overrides:
-
                 # Overridden variables are given a new name
-                comp_promoted_outputs.append((name, f"EXTERNAL_OVERRIDE:{name}"))
+                comp_promoted_outputs.append((name, f'EXTERNAL_OVERRIDE:{name}'))
                 external_overridden_outputs.append(name)
 
                 continue  # don't promote it
@@ -316,7 +341,7 @@ def override_aviary_vars(group: om.Group, aviary_inputs: AviaryValues,
                     group.set_input_defaults(name, val=val, units=units)
 
                 # Overridden variables are given a new name
-                comp_promoted_outputs.append((name, f"AUTO_OVERRIDE:{name}"))
+                comp_promoted_outputs.append((name, f'AUTO_OVERRIDE:{name}'))
                 overridden_outputs.append(name)
 
                 continue  # don't promote it
@@ -327,25 +352,25 @@ def override_aviary_vars(group: om.Group, aviary_inputs: AviaryValues,
         # NOTE Always promoting all inputs into the "global" namespace
         # so its VERY important that we enforce all inputs names exist in the master
         # variable list
-        rel_path = comp.pathname[len(group.pathname):].lstrip(".")
-        if "." in rel_path:
+        rel_path = comp.pathname[len(group.pathname) :].lstrip('.')
+        if '.' in rel_path:
             # comp is in a subgroup. We must find it.
-            sub_path = ".".join(rel_path.split(".")[:-1])
+            sub_path = '.'.join(rel_path.split('.')[:-1])
             sub = group._get_subsystem(sub_path)
             sub.promotes(comp.name, inputs=in_var_names, outputs=comp_promoted_outputs)
         else:
             group.promotes(comp.name, inputs=in_var_names, outputs=comp_promoted_outputs)
 
     if overridden_outputs:
-        if aviary_inputs.get_val(Settings.VERBOSITY).value >= 1:  # Verbosity.BRIEF
-            print("\nThe following variables have been overridden:")
+        if aviary_inputs.get_val(Settings.VERBOSITY).value >= Verbosity.VERBOSE:  # VERBOSE, DEBUG
+            print('\nThe following variables have been overridden:')
             for prom_name in sorted(overridden_outputs):
                 val, units = aviary_inputs.get_item(prom_name)
                 print(f"  '{prom_name}  {val}  {units}")
 
     if external_overridden_outputs:
-        if aviary_inputs.get_val(Settings.VERBOSITY).value >= 1:
-            print("\nThe following variables have been overridden by an external subsystem:")
+        if aviary_inputs.get_val(Settings.VERBOSITY).value >= Verbosity.VERBOSE:  # VERBOSE, DEBUG
+            print('\nThe following variables have been overridden by an external subsystem:')
             for prom_name in sorted(external_overridden_outputs):
                 # do not print values because they will be updated by an external subsystem later.
                 print(f"  '{prom_name}")
@@ -354,8 +379,13 @@ def override_aviary_vars(group: om.Group, aviary_inputs: AviaryValues,
 
 
 def setup_trajectory_params(
-    model: om.Group, traj: dm.Trajectory, aviary_variables: AviaryValues, phases=['climb', 'cruise', 'descent'],
-    variables_to_add=None, meta_data=_MetaData, external_parameters={},
+    model: om.Group,
+    traj: dm.Trajectory,
+    aviary_variables: AviaryValues,
+    phases=['climb', 'cruise', 'descent'],
+    variables_to_add=None,
+    meta_data=_MetaData,
+    external_parameters={},
 ):
     """
     This function smoothly sorts through the aviary variables which
@@ -382,11 +412,7 @@ def setup_trajectory_params(
         # Assuming the kwargs are the same for shared parameters
         kwargs = external_parameters[phases[0]][key]
         targets = {phase: [key] for phase in phases}
-        traj.add_parameter(
-            key,
-            **kwargs,
-            targets=targets
-        )
+        traj.add_parameter(key, **kwargs, targets=targets)
 
         model.promotes('traj', inputs=[(f'parameters:{key}', key)])
         already_added.append(key)
@@ -396,7 +422,6 @@ def setup_trajectory_params(
     # TODO: As we use more builders, we may reach the point where we don't need
     # to do these anymore.
     for key in sorted(variables_to_add):
-
         if key in already_added:
             continue
 
@@ -425,7 +450,8 @@ def setup_trajectory_params(
                 units=units,
                 val=val,
                 static_target=True,
-                targets={phase_name: [key] for phase_name in phases})
+                targets={phase_name: [key] for phase_name in phases},
+            )
 
             model.promotes('traj', inputs=[(f'parameters:{key}', key)])
 
@@ -469,7 +495,6 @@ def extract_options(aviary_inputs: AviaryValues, metadata=_MetaData) -> dict:
     """
     options = {}
     for key, meta in metadata.items():
-
         if key not in aviary_inputs:
             continue
 
@@ -489,8 +514,13 @@ def extract_options(aviary_inputs: AviaryValues, metadata=_MetaData) -> dict:
     return options
 
 
-def setup_model_options(prob: om.Problem, aviary_inputs: AviaryValues,
-                        meta_data=_MetaData, engine_models=None, prefix=''):
+def setup_model_options(
+    prob: om.Problem,
+    aviary_inputs: AviaryValues,
+    meta_data=_MetaData,
+    engine_models=None,
+    prefix='',
+):
     """
     Setup the correct model options for an aviary problem.
 
@@ -508,10 +538,8 @@ def setup_model_options(prob: om.Problem, aviary_inputs: AviaryValues,
     prefix : str
         Prefix for model options. Used for multi-mission.
     """
-
     # Use OpenMDAO's model options to pass all options through the system hierarchy.
-    prob.model_options[f'{prefix}*'] = extract_options(aviary_inputs,
-                                                       meta_data)
+    prob.model_options[f'{prefix}*'] = extract_options(aviary_inputs, meta_data)
 
     # Multi-engines need to index into their options.
     try:
@@ -521,7 +549,6 @@ def setup_model_options(prob: om.Problem, aviary_inputs: AviaryValues,
         return
 
     if num_engine_models > 1:
-
         if engine_models is None:
             engine_models = prob.engine_builders
 
@@ -547,5 +574,5 @@ def setup_model_options(prob: om.Problem, aviary_inputs: AviaryValues,
                 val, units = aviary_inputs.get_item(key)
                 opts[key] = (val[idx], units)
 
-            path = f"{prefix}*core_propulsion.{eng_name}*"
+            path = f'{prefix}*core_propulsion.{eng_name}*'
             prob.model_options[path] = opts

@@ -1,5 +1,6 @@
 from openmdao.utils.units import valid_units
-from aviary.variable_info.enums import SpeedType, EquationsOfMotion
+
+from aviary.variable_info.enums import EquationsOfMotion, SpeedType
 
 TWO_DEGREES_OF_FREEDOM = EquationsOfMotion.TWO_DEGREES_OF_FREEDOM
 HEIGHT_ENERGY = EquationsOfMotion.HEIGHT_ENERGY
@@ -24,7 +25,7 @@ common_entries = {
     'initial_altitude': tuple,
     'final_altitude': tuple,
     'altitude_bounds': tuple,
-    'throttle_enforcement': str,
+    'throttle_enforcement': (str, type(None)),
     'constrain_final': bool,
     'fix_duration': bool,
     'initial_bounds': tuple,
@@ -34,7 +35,7 @@ common_entries = {
 # Combine common and phase-specific entries
 phase_keys_height_energy = {
     'pre_mission': {'include_takeoff': bool, 'optimize_mass': bool},
-    'post_mission': {'include_landing': bool}
+    'post_mission': {'include_landing': bool},
 }
 
 common_TAS = {
@@ -208,10 +209,11 @@ def check_phase_info(phase_info, mission_method):
             else:
                 phase_keys[phase] = phase_keys_height_energy[phase]
     else:
-        possible_values = ["'"+e.value+"'" for e in EquationsOfMotion]
-        possible_values[-1] = "or " + possible_values[-1]
-        raise ValueError("Invalid mission_method. Please choose from " +
-                         ", ".join(possible_values) + ".")
+        possible_values = ["'" + e.value + "'" for e in EquationsOfMotion]
+        possible_values[-1] = 'or ' + possible_values[-1]
+        raise ValueError(
+            'Invalid mission_method. Please choose from ' + ', '.join(possible_values) + '.'
+        )
 
     # Check if all phases exist in phase_info
     for phase in phase_info:
@@ -228,7 +230,8 @@ def check_phase_info(phase_info, mission_method):
 
         if phase_options.get('target_range', False) and phase_options.get('target_duration', False):
             raise ValueError(
-                f"target_range and target_duration have both been set to True for {phase}, please pick one.")
+                f'target_range and target_duration have both been set to True for {phase}, please pick one.'
+            )
 
         # Check if all required keys exist, if there are no extra keys, and if they are of the correct type
         for key, expected_type in phase_keys[phase].items():
@@ -236,18 +239,22 @@ def check_phase_info(phase_info, mission_method):
             if expected_type is tuple:
                 if key not in phase_options:
                     raise ValueError(
-                        f"Key {key} not found in phase {phase} of the provided dictionary.")
+                        f'Key {key} not found in phase {phase} of the provided dictionary.'
+                    )
                 value = phase_options[key]
                 if not isinstance(value, tuple) or len(value) != 2:
-                    raise ValueError(f"Key {key} in phase {phase} should be a tuple of size 2 (value, unit), "
-                                     f"but got {value}.")
+                    raise ValueError(
+                        f'Key {key} in phase {phase} should be a tuple of size 2 (value, unit), '
+                        f'but got {value}.'
+                    )
                 unit = value[1]
                 if not valid_units(unit):
-                    raise ValueError(
-                        f"Key {key} in phase {phase} has an invalid unit {unit}.")
+                    raise ValueError(f'Key {key} in phase {phase} has an invalid unit {unit}.')
 
             if not isinstance(phase_options[key], expected_type):
-                raise TypeError(f"Key {key} in phase {phase} should be of type {expected_type.__name__}, "
-                                f"but got type {type(phase_options[key]).__name__}")
+                raise TypeError(
+                    f'Key {key} in phase {phase} should be of type {expected_type.__name__}, '
+                    f'but got type {type(phase_options[key]).__name__}'
+                )
 
     return True

@@ -2,15 +2,13 @@ import unittest
 
 import numpy as np
 import openmdao.api as om
-from openmdao.utils.assert_utils import assert_near_equal
-from openmdao.utils.assert_utils import assert_check_partials
+from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 
 from aviary.subsystems.aerodynamics.flops_based.mux_component import MuxComponent
 from aviary.variable_info.variables import Aircraft
 
 
 class TestMuxComponent(unittest.TestCase):
-
     def test_mux(self):
         prob = om.Problem()
         model = prob.model
@@ -21,9 +19,7 @@ class TestMuxComponent(unittest.TestCase):
             Aircraft.VerticalTail.NUM_TAILS: 1,
         }
 
-        model.add_subsystem(
-            'mux', MuxComponent(**aviary_options),
-            promotes_inputs=['*'])
+        model.add_subsystem('mux', MuxComponent(**aviary_options), promotes_inputs=['*'])
 
         prob.setup(force_alloc_complex=True)
 
@@ -58,16 +54,16 @@ class TestMuxComponent(unittest.TestCase):
         prob.set_val(Aircraft.Nacelle.LAMINAR_FLOW_LOWER, np.array([0.10]))
 
         prob.run_model()
-        prob.check_partials(compact_print=True, method="cs")
+        prob.check_partials(compact_print=True, method='cs')
 
-        derivs = prob.check_partials(out_stream=None, method="cs")
+        derivs = prob.check_partials(out_stream=None, method='cs')
 
         assert_check_partials(derivs, atol=1e-12, rtol=1e-12)
 
         # Truth values for each variable
-        wetted_areas_truth = np.array([2., 12., 22., 32., 42., 42.])
-        fineness_ratios_truth = np.array([3., 13., 23., 33., 43., 43.])
-        characteristic_lengths_truth = np.array([4., 14., 24., 34., 44., 44.])
+        wetted_areas_truth = np.array([2.0, 12.0, 22.0, 32.0, 42.0, 42.0])
+        fineness_ratios_truth = np.array([3.0, 13.0, 23.0, 33.0, 43.0, 43.0])
+        characteristic_lengths_truth = np.array([4.0, 14.0, 24.0, 34.0, 44.0, 44.0])
         laminar_fractions_upper_truth = np.array([0.01, 0.03, 0.05, 0.07, 0.09, 0.09])
         laminar_fractions_lower_truth = np.array([0.02, 0.04, 0.06, 0.08, 0.1, 0.1])
 
@@ -80,12 +76,9 @@ class TestMuxComponent(unittest.TestCase):
         # Assert that the outputs are near the expected values
         assert_near_equal(wetted_areas_output, wetted_areas_truth, 1e-7)
         assert_near_equal(fineness_ratios_output, fineness_ratios_truth, 1e-7)
-        assert_near_equal(characteristic_lengths_output,
-                          characteristic_lengths_truth, 1e-7)
-        assert_near_equal(laminar_fractions_upper_output,
-                          laminar_fractions_upper_truth, 1e-7)
-        assert_near_equal(laminar_fractions_lower_output,
-                          laminar_fractions_lower_truth, 1e-7)
+        assert_near_equal(characteristic_lengths_output, characteristic_lengths_truth, 1e-7)
+        assert_near_equal(laminar_fractions_upper_output, laminar_fractions_upper_truth, 1e-7)
+        assert_near_equal(laminar_fractions_lower_output, laminar_fractions_lower_truth, 1e-7)
 
     def test_mux_multiengine(self):
         prob = om.Problem()
@@ -97,9 +90,7 @@ class TestMuxComponent(unittest.TestCase):
             Aircraft.VerticalTail.NUM_TAILS: 1,
         }
 
-        model.add_subsystem(
-            'mux', MuxComponent(**aviary_options),
-            promotes_inputs=['*'])
+        model.add_subsystem('mux', MuxComponent(**aviary_options), promotes_inputs=['*'])
 
         prob.setup(force_alloc_complex=True)
 
@@ -134,21 +125,24 @@ class TestMuxComponent(unittest.TestCase):
         prob.set_val(Aircraft.Nacelle.LAMINAR_FLOW_LOWER, np.array([0.10, 0.04]))
 
         prob.run_model()
-        prob.check_partials(compact_print=True, method="cs")
+        prob.check_partials(compact_print=True, method='cs')
 
-        derivs = prob.check_partials(out_stream=None, method="cs")
+        derivs = prob.check_partials(out_stream=None, method='cs')
 
         assert_check_partials(derivs, atol=1e-12, rtol=1e-12)
 
         # Truth values for each variable
-        wetted_areas_truth = np.array([2., 12., 22., 32., 42., 42., 33.5, 33.5, 33.5])
-        fineness_ratios_truth = np.array([3., 13., 23., 33., 43., 43., 37.0, 37.0, 37.0])
+        wetted_areas_truth = np.array([2.0, 12.0, 22.0, 32.0, 42.0, 42.0, 33.5, 33.5, 33.5])
+        fineness_ratios_truth = np.array([3.0, 13.0, 23.0, 33.0, 43.0, 43.0, 37.0, 37.0, 37.0])
         characteristic_lengths_truth = np.array(
-            [4., 14., 24., 34., 44., 44., 30.0, 30.0, 30.0])
+            [4.0, 14.0, 24.0, 34.0, 44.0, 44.0, 30.0, 30.0, 30.0]
+        )
         laminar_fractions_upper_truth = np.array(
-            [0.01, 0.03, 0.05, 0.07, 0.09, 0.09, 0.13, 0.13, 0.13])
+            [0.01, 0.03, 0.05, 0.07, 0.09, 0.09, 0.13, 0.13, 0.13]
+        )
         laminar_fractions_lower_truth = np.array(
-            [0.02, 0.04, 0.06, 0.08, 0.1, 0.1, 0.04, 0.04, 0.04])
+            [0.02, 0.04, 0.06, 0.08, 0.1, 0.1, 0.04, 0.04, 0.04]
+        )
 
         wetted_areas_output = prob['mux.wetted_areas']
         fineness_ratios_output = prob['mux.fineness_ratios']
@@ -159,15 +153,12 @@ class TestMuxComponent(unittest.TestCase):
         # Assert that the outputs are near the expected values
         assert_near_equal(wetted_areas_output, wetted_areas_truth, 1e-7)
         assert_near_equal(fineness_ratios_output, fineness_ratios_truth, 1e-7)
-        assert_near_equal(characteristic_lengths_output,
-                          characteristic_lengths_truth, 1e-7)
-        assert_near_equal(laminar_fractions_upper_output,
-                          laminar_fractions_upper_truth, 1e-7)
-        assert_near_equal(laminar_fractions_lower_output,
-                          laminar_fractions_lower_truth, 1e-7)
+        assert_near_equal(characteristic_lengths_output, characteristic_lengths_truth, 1e-7)
+        assert_near_equal(laminar_fractions_upper_output, laminar_fractions_upper_truth, 1e-7)
+        assert_near_equal(laminar_fractions_lower_output, laminar_fractions_lower_truth, 1e-7)
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     unittest.main()
     # test = TestMuxComponent()
     # test.test_mux_multiengine()
