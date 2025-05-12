@@ -1,44 +1,29 @@
 import numpy as np
 import openmdao.api as om
 
+from aviary.variable_info.functions import add_aviary_input, add_aviary_output
 from aviary.variable_info.variables import Dynamic
 
 
 class DynamicPressure(om.ExplicitComponent):
     """
     Compute dynamic pressure as
-    Dynamic.Mission.DYNAMIC_PRESSURE = 0.5 * gamma * P * M**2
+    Dynamic.Mission.DYNAMIC_PRESSURE = 0.5 * gamma * P * M**2.
     """
 
     def initialize(self):
         self.options.declare('num_nodes', types=int)
 
-        self.options.declare(
-            'gamma', default=1.4, desc='Ratio of specific heats for air.')
+        self.options.declare('gamma', default=1.4, desc='Ratio of specific heats for air.')
 
     def setup(self):
         nn = self.options['num_nodes']
 
-        self.add_input(
-            Dynamic.Atmosphere.STATIC_PRESSURE,
-            np.ones(nn),
-            units='lbf/ft**2',
-            desc='Static pressure at each evaulation point.',
-        )
+        add_aviary_input(self, Dynamic.Atmosphere.STATIC_PRESSURE, shape=nn, units='lbf/ft**2')
 
-        self.add_input(
-            Dynamic.Atmosphere.MACH,
-            np.ones(nn),
-            units='unitless',
-            desc='Mach at each evaulation point.',
-        )
+        add_aviary_input(self, Dynamic.Atmosphere.MACH, shape=nn, units='unitless')
 
-        self.add_output(
-            Dynamic.Atmosphere.DYNAMIC_PRESSURE,
-            val=np.ones(nn),
-            units='lbf/ft**2',
-            desc='pressure caused by fluid motion',
-        )
+        add_aviary_output(self, Dynamic.Atmosphere.DYNAMIC_PRESSURE, shape=nn, units='lbf/ft**2')
 
     def setup_partials(self):
         nn = self.options['num_nodes']
@@ -64,9 +49,7 @@ class DynamicPressure(om.ExplicitComponent):
         P = inputs[Dynamic.Atmosphere.STATIC_PRESSURE]
         M = inputs[Dynamic.Atmosphere.MACH]
 
-        partials[Dynamic.Atmosphere.DYNAMIC_PRESSURE, Dynamic.Atmosphere.MACH] = (
-            gamma * P * M
+        partials[Dynamic.Atmosphere.DYNAMIC_PRESSURE, Dynamic.Atmosphere.MACH] = gamma * P * M
+        partials[Dynamic.Atmosphere.DYNAMIC_PRESSURE, Dynamic.Atmosphere.STATIC_PRESSURE] = (
+            0.5 * gamma * M**2
         )
-        partials[
-            Dynamic.Atmosphere.DYNAMIC_PRESSURE, Dynamic.Atmosphere.STATIC_PRESSURE
-        ] = (0.5 * gamma * M**2)

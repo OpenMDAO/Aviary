@@ -1,19 +1,16 @@
 import numpy as np
-
 import openmdao.api as om
-from aviary.utils.aviary_values import AviaryValues
 
-from aviary.variable_info.variables import Dynamic, Aircraft
 from aviary.subsystems.propulsion.motor.model.motor_map import MotorMap
+from aviary.utils.aviary_values import AviaryValues
+from aviary.variable_info.variables import Aircraft, Dynamic
 
 
 class MotorMission(om.Group):
-    '''
-    Calculates the mission performance (ODE) of a single electric motor.
-    '''
+    """Calculates the mission performance (ODE) of a single electric motor."""
 
     def initialize(self):
-        self.options.declare("num_nodes", types=int)
+        self.options.declare('num_nodes', types=int)
         self.options.declare(
             'aviary_inputs',
             types=AviaryValues,
@@ -23,7 +20,7 @@ class MotorMission(om.Group):
         self.name = 'motor_mission'
 
     def setup(self):
-        nn = self.options["num_nodes"]
+        nn = self.options['num_nodes']
 
         ivc = om.IndepVarComp()
         ivc.add_output('max_throttle', val=np.ones(nn), units='unitless')
@@ -73,16 +70,12 @@ class MotorMission(om.Group):
                 has_diag_partials=True,
             ),
             promotes_inputs=[('efficiency', 'motor_efficiency')],
-            promotes_outputs=[
-                ('power_elec', Dynamic.Vehicle.Propulsion.ELECTRIC_POWER_IN)
-            ],
+            promotes_outputs=[('power_elec', Dynamic.Vehicle.Propulsion.ELECTRIC_POWER_IN)],
         )
 
         # Can't promote shaft power as an input, as it will create a feedback loop with
         # propulsion mux component. Connect it here instead
-        motor_group.connect(
-            Dynamic.Vehicle.Propulsion.SHAFT_POWER, 'energy_comp.shaft_power'
-        )
+        motor_group.connect(Dynamic.Vehicle.Propulsion.SHAFT_POWER, 'energy_comp.shaft_power')
 
         self.add_subsystem(
             'motor_group', motor_group, promotes_inputs=['*'], promotes_outputs=['*']
@@ -123,9 +116,7 @@ class MotorMission(om.Group):
                 ('max_torque', Dynamic.Vehicle.Propulsion.TORQUE_MAX),
                 ('RPM', Dynamic.Vehicle.Propulsion.RPM),
             ],
-            promotes_outputs=[
-                ('max_power', Dynamic.Vehicle.Propulsion.SHAFT_POWER_MAX)
-            ],
+            promotes_outputs=[('max_power', Dynamic.Vehicle.Propulsion.SHAFT_POWER_MAX)],
         )
 
         self.add_subsystem(
@@ -138,6 +129,4 @@ class MotorMission(om.Group):
             ],
         )
 
-        self.set_input_defaults(
-            Dynamic.Vehicle.Propulsion.RPM, val=np.ones(nn), units='rpm'
-        )
+        self.set_input_defaults(Dynamic.Vehicle.Propulsion.RPM, val=np.ones(nn), units='rpm')

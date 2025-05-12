@@ -1,15 +1,10 @@
-
-from aviary.utils.aviary_values import AviaryValues
-from aviary.variable_info.variables import Aircraft
-
-
 def check_fold_location_definition(choose_fold_location, has_strut):
-    """
-    If there is no strut, then CHOOSE_FOLD_LOCATION must be true.
-    """
+    """If there is no strut, then CHOOSE_FOLD_LOCATION must be true."""
     if not choose_fold_location and not has_strut:
         raise RuntimeError(
-            "The option CHOOSE_FOLD_LOCATION can only be False if the option HAS_STRUT is True.")
+            'The option CHOOSE_FOLD_LOCATION can only be False if the option HAS_STRUT is True.'
+        )
+
 
 # Possible TODO
 # Aircraft.Design.ULF_CALCULATED_FROM_MANEUVER - Aircraft.Design.PART25_STRUCTURAL_CATEGORY

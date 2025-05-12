@@ -1,44 +1,41 @@
-'''
+"""
 Define utilities for building phases.
 
 Classes
 -------
 PhaseBuilderBase : the interface for a phase builder
-'''
+"""
+
 from abc import ABC
 from collections import namedtuple
 
 import dymos as dm
 import openmdao.api as om
 
-from aviary.mission.flops_based.ode.mission_ODE import MissionODE
+from aviary.mission.flops_based.ode.energy_ODE import EnergyODE
 from aviary.mission.initial_guess_builders import InitialGuess
 from aviary.utils.aviary_values import AviaryValues, get_keys
-from aviary.variable_info.variables import Dynamic
 from aviary.variable_info.variable_meta_data import _MetaData
+from aviary.variable_info.variables import Dynamic
 
-
-_require_new_meta_data_class_attr_ = \
-    namedtuple('_require_new_meta_data_class_attr_', ())
-
-
-_require_new_initial_guesses_meta_data_class_attr_ = \
-    namedtuple('_require_new_initial_guesses_meta_data_class_attr_', ())
+_require_new_initial_guesses_meta_data_class_attr_ = namedtuple(
+    '_require_new_initial_guesses_meta_data_class_attr_', ()
+)
 
 
 class PhaseBuilderBase(ABC):
-    '''
+    """
     Define the interface for a phase builder.
 
     Attributes
     ----------
-    name : str ('<unknown phase>')
+    name : str ('_unknown phase_')
         object label
 
     core_subsystems : (None)
         list of SubsystemBuilderBase objects that will be added to the phase ODE
 
-    user_options : AviaryValues (<empty>)
+    user_options : OptionsDictionary (<empty>)
         state/path constraint values and flags
 
     initial_guesses : AviaryValues (<empty>)
@@ -62,6 +59,10 @@ class PhaseBuilderBase(ABC):
         class attribute: derived type customization point; the default value
         for ode_class used by build_phase
 
+    default_options_class : type
+        class attribute: derived type customization point; the default class
+        containing the phase options options_dictionary
+
     is_analytic_phase : bool (False)
         class attribute: derived type customization point; if True, build_phase
         will return an AnalyticPhase instead of a Phase
@@ -74,30 +75,45 @@ class PhaseBuilderBase(ABC):
     -------
     build_phase
     make_default_transcription
-    validate_options
-    assign_default_options
-    '''
-    __slots__ = (
-        'name',  'core_subsystems', 'subsystem_options', 'user_options',
-        'initial_guesses', 'ode_class', 'transcription',
-        'is_analytic_phase', 'num_nodes', 'external_subsystems', 'meta_data',
-    )
+    """
 
-    # region : derived type customization points
-    _meta_data_ = _require_new_meta_data_class_attr_()
+    __slots__ = (
+        'name',
+        'core_subsystems',
+        'external_subsystems',
+        'subsystem_options',
+        'user_options',
+        'initial_guesses',
+        'ode_class',
+        'transcription',
+        'is_analytic_phase',
+        'num_nodes',
+        'meta_data',
+    )
 
     _initial_guesses_meta_data_ = _require_new_initial_guesses_meta_data_class_attr_()
 
-    default_name = '<unknown phase>'
+    default_name = '_unknown phase_'
 
-    default_ode_class = MissionODE
+    default_ode_class = EnergyODE
+    default_options_class = om.OptionsDictionary
 
     default_meta_data = _MetaData
     # endregion : derived type customization points
 
     def __init__(
-        self, name=None, core_subsystems=None, user_options=None, initial_guesses=None,
-        ode_class=None, transcription=None, subsystem_options=None, is_analytic_phase=False, num_nodes=5, external_subsystems=None, meta_data=None,
+        self,
+        name=None,
+        core_subsystems=None,
+        external_subsystems=None,
+        user_options=None,
+        initial_guesses=None,
+        ode_class=None,
+        transcription=None,
+        subsystem_options=None,
+        is_analytic_phase=False,
+        num_nodes=5,
+        meta_data=None,
     ):
         if name is None:
             name = self.default_name
@@ -106,17 +122,18 @@ class PhaseBuilderBase(ABC):
 
         if core_subsystems is None:
             core_subsystems = []
+        if external_subsystems is None:
+            external_subsystems = []
 
         self.core_subsystems = core_subsystems
+        self.external_subsystems = external_subsystems
 
         if subsystem_options is None:
             subsystem_options = {}
 
         self.subsystem_options = subsystem_options
 
-        self.user_options = user_options
-        self.validate_options()
-        self.assign_default_options()
+        self.user_options = self.default_options_class(user_options)
 
         if initial_guesses is None:
             initial_guesses = AviaryValues()
@@ -140,7 +157,7 @@ class PhaseBuilderBase(ABC):
         self.meta_data = meta_data
 
     def build_phase(self, aviary_options=None):
-        '''
+        """
         Return a new phase object for analysis using these constraints.
 
         If ode_class is None, default_ode_class is used.
@@ -156,7 +173,7 @@ class PhaseBuilderBase(ABC):
         Returns
         -------
         dymos.Phase
-        '''
+        """
         ode_class = self.ode_class
 
         if ode_class is None:
@@ -172,10 +189,7 @@ class PhaseBuilderBase(ABC):
 
         kwargs = self._extra_ode_init_kwargs()
 
-        kwargs = {
-            'aviary_options': aviary_options,
-            **kwargs
-        }
+        kwargs = {'aviary_options': aviary_options, **kwargs}
 
         subsystem_options = self.subsystem_options
 
@@ -183,6 +197,7 @@ class PhaseBuilderBase(ABC):
             kwargs['subsystem_options'] = subsystem_options
 
         kwargs['core_subsystems'] = self.core_subsystems
+        kwargs['external_subsystems'] = self.external_subsystems
 
         if self.is_analytic_phase:
             phase = dm.AnalyticPhase(
@@ -192,78 +207,29 @@ class PhaseBuilderBase(ABC):
             )
         else:
             phase = dm.Phase(
-                ode_class=ode_class, transcription=transcription,
-                ode_init_kwargs=kwargs
+                ode_class=ode_class, transcription=transcription, ode_init_kwargs=kwargs
             )
 
         # overrides should add state, controls, etc.
         return phase
 
     def make_default_transcription(self):
-        '''
-        Return a transcription object to be used by default in build_phase.
-        '''
+        """Return a transcription object to be used by default in build_phase."""
         user_options = self.user_options
 
-        num_segments, _ = user_options.get_item('num_segments')
-        order, _ = user_options.get_item('order')
+        num_segments = user_options['num_segments']
+        order = user_options['order']
 
-        transcription = dm.Radau(
-            num_segments=num_segments, order=order, compressed=True)
+        transcription = dm.Radau(num_segments=num_segments, order=order, compressed=True)
 
         return transcription
 
-    def validate_options(self):
-        '''
-        Raise TypeError if an unsupported option is found.
-
-        Users can call this method when updating options after initialization.
-        '''
-        user_options = self.user_options
-
-        if not user_options:
-            return  # acceptable
-
-        meta_data = self._meta_data_
-
-        for key in get_keys(user_options):
-            if key not in meta_data:
-                raise TypeError(
-                    f'{self.__class__.__name__}: {self.name}:'
-                    f' unsupported option: {key}'
-                )
-
-    def assign_default_options(self):
-        '''
-        Update missing options with default values.
-
-        If user_options is None, start with an empty AviaryValues.
-
-        Users can call this method when replacing the user_options member after
-        initialization.
-        '''
-        user_options = self.user_options
-
-        if user_options is None:
-            user_options = self.user_options = AviaryValues()
-
-        meta_data = self._meta_data_
-
-        for key in meta_data:
-            if key not in user_options:
-                item = meta_data[key]
-
-                val = item['val']
-                units = item['units']
-
-                user_options.set_val(key, val, units)
-
     def validate_initial_guesses(self):
-        '''
+        """
         Raise TypeError if an unsupported initial guess is found.
 
         Users can call this method when updating initial guesses after initialization.
-        '''
+        """
         initial_guesses = self.initial_guesses
 
         if not initial_guesses:
@@ -274,16 +240,11 @@ class PhaseBuilderBase(ABC):
         for key in get_keys(initial_guesses):
             if key not in meta_data:
                 raise TypeError(
-                    f'{self.__class__.__name__}: {self.name}:'
-                    f' unsupported initial guess: {key}'
+                    f'{self.__class__.__name__}: {self.name}: unsupported initial guess: {key}'
                 )
 
-    def apply_initial_guesses(
-        self, prob: om.Problem, traj_name, phase: dm.Phase
-    ):
-        '''
-        Apply any stored initial guesses; return a list of guesses not applied.
-        '''
+    def apply_initial_guesses(self, prob: om.Problem, traj_name, phase: dm.Phase):
+        """Apply any stored initial guesses; return a list of guesses not applied."""
         not_applied = []
 
         phase_name = self.name
@@ -303,13 +264,11 @@ class PhaseBuilderBase(ABC):
         return not_applied
 
     def _extra_ode_init_kwargs(self):
-        """
-        Return extra kwargs required for initializing the ODE.
-        """
+        """Return extra kwargs required for initializing the ODE."""
         return {}
 
     def to_phase_info(self):
-        '''
+        """
         Return the stored settings as phase info.
 
         Returns
@@ -319,9 +278,9 @@ class PhaseBuilderBase(ABC):
                 object label
             phase_info : dict
                 stored settings
-        '''
+        """
         subsystem_options = self.subsystem_options  # TODO: aero info?
-        user_options = dict(self.user_options)
+        user_options = self.user_options.to_phase_info()
         initial_guesses = dict(self.initial_guesses)
 
         # TODO some of these may be purely programming API hooks, rather than for use
@@ -332,14 +291,18 @@ class PhaseBuilderBase(ABC):
         # - meta_data
 
         phase_info = dict(
-            subsystem_options=subsystem_options, user_options=user_options,
-            initial_guesses=initial_guesses)
+            subsystem_options=subsystem_options,
+            user_options=user_options,
+            initial_guesses=initial_guesses,
+        )
 
         return (self.name, phase_info)
 
     @classmethod
-    def from_phase_info(cls, name, phase_info: dict, core_subsystems=None, meta_data=None, transcription=None):
-        '''
+    def from_phase_info(
+        cls, name, phase_info: dict, core_subsystems=None, meta_data=None, transcription=None
+    ):
+        """
         Return a new phase builder based on the specified phase info.
 
         Note, calling code is responsible for matching phase info to the correct phase
@@ -351,16 +314,15 @@ class PhaseBuilderBase(ABC):
             object label
         phase_info : dict
             stored settings
-        '''
+        """
         # loop over user_options dict entries
         # if the value is not a tuple, wrap it in a tuple with the second entry of 'unitless'
         for key, value in phase_info['user_options'].items():
             if not isinstance(value, tuple):
                 phase_info['user_options'][key] = (value, 'unitless')
 
-        subsystem_options = phase_info.get(
-            'subsystem_options', {})  # TODO: aero info?
-        user_options = AviaryValues(phase_info.get('user_options', ()))
+        subsystem_options = phase_info.get('subsystem_options', {})  # TODO: aero info?
+        user_options = phase_info.get('user_options', ())
         initial_guesses = AviaryValues(phase_info.get('initial_guesses', ()))
         external_subsystems = phase_info.get('external_subsystems', [])
         # TODO core subsystems in phase info?
@@ -373,51 +335,35 @@ class PhaseBuilderBase(ABC):
         # - meta_data
 
         phase_builder = cls(
-            name, subsystem_options=subsystem_options, user_options=user_options,
-            initial_guesses=initial_guesses, meta_data=meta_data,
-            core_subsystems=core_subsystems, external_subsystems=external_subsystems, transcription=transcription)
+            name,
+            subsystem_options=subsystem_options,
+            user_options=user_options,
+            initial_guesses=initial_guesses,
+            meta_data=meta_data,
+            core_subsystems=core_subsystems,
+            external_subsystems=external_subsystems,
+            transcription=transcription,
+        )
 
         return phase_builder
 
     @classmethod
-    def _add_meta_data(cls, name, *, val, units='unitless', desc=None):
-        '''
-        Update supported options with a new item.
-
-        Raises
-        ------
-        ValueError
-            if a repeat option is found
-        '''
-        meta_data = cls._meta_data_
-
-        if name in meta_data:
-            raise ValueError(
-                f'{cls.__name__}": meta data: repeat option: {name}'
-            )
-
-        meta_data[name] = dict(val=val, units=units, desc=desc)
-
-    @classmethod
     def _add_initial_guess_meta_data(cls, initial_guess: InitialGuess, desc=None):
-        '''
+        """
         Update supported initial guesses with a new item.
 
         Raises
         ------
         ValueError
             if a repeat initial guess is found
-        '''
+        """
         meta_data = cls._initial_guesses_meta_data_
         name = initial_guess.key
 
-        meta_data[name] = dict(
-            apply_initial_guess=initial_guess.apply_initial_guess, desc=desc)
+        meta_data[name] = dict(apply_initial_guess=initial_guess.apply_initial_guess, desc=desc)
 
     def _add_user_defined_constraints(self, phase, constraints):
-        """
-        Add each constraint and its corresponding arguments to the phase
-        """
+        """Add each constraint and its corresponding arguments to the phase."""
         for constraint_name, kwargs in constraints.items():
             if kwargs['type'] == 'boundary':
                 kwargs.pop('type')
@@ -435,9 +381,7 @@ class PhaseBuilderBase(ABC):
                 phase.add_path_constraint(constraint_name, **kwargs)
 
     def set_time_options(self, user_options, targets=[]):
-        """
-        Set time options: fix_initial flag, duration upper bounds, duration reference
-        """
+        """Set time options: fix_initial flag, duration upper bounds, duration reference."""
         fix_initial = user_options.get_val('fix_initial')
         duration_bounds = user_options.get_val('duration_bounds', units='s')
         duration_ref = user_options.get_val('duration_ref', units='s')
@@ -445,15 +389,13 @@ class PhaseBuilderBase(ABC):
         self.phase.set_time_options(
             fix_initial=fix_initial,
             duration_bounds=duration_bounds,
-            units="s",
+            units='s',
             targets=targets,
             duration_ref=duration_ref,
         )
 
     def add_velocity_state(self, user_options):
-        """
-        Add velocity state: lower and upper bounds, reference, zero-reference, and state defect reference.
-        """
+        """Add velocity state: lower and upper bounds, reference, zero-reference, and state defect reference."""
         velocity_lower = user_options.get_val('velocity_lower', units='kn')
         velocity_upper = user_options.get_val('velocity_upper', units='kn')
         velocity_ref = user_options.get_val('velocity_ref', units='kn')
@@ -465,7 +407,7 @@ class PhaseBuilderBase(ABC):
             fix_final=False,
             lower=velocity_lower,
             upper=velocity_upper,
-            units="kn",
+            units='kn',
             rate_source=Dynamic.Mission.VELOCITY_RATE,
             targets=Dynamic.Mission.VELOCITY,
             ref=velocity_ref,
@@ -474,9 +416,7 @@ class PhaseBuilderBase(ABC):
         )
 
     def add_mass_state(self, user_options):
-        """
-        Add mass state: lower and upper bounds, reference, zero-reference, and state defect reference.
-        """
+        """Add mass state: lower and upper bounds, reference, zero-reference, and state defect reference."""
         mass_lower = user_options.get_val('mass_lower', units='lbm')
         mass_upper = user_options.get_val('mass_upper', units='lbm')
         mass_ref = user_options.get_val('mass_ref', units='lbm')
@@ -488,7 +428,7 @@ class PhaseBuilderBase(ABC):
             fix_final=False,
             lower=mass_lower,
             upper=mass_upper,
-            units="lbm",
+            units='lbm',
             rate_source=Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
             targets=Dynamic.Vehicle.MASS,
             ref=mass_ref,
@@ -497,9 +437,7 @@ class PhaseBuilderBase(ABC):
         )
 
     def add_distance_state(self, user_options, units='NM'):
-        """
-        Add distance state: lower and upper bounds, reference, zero-reference, and state defect reference.
-        """
+        """Add distance state: lower and upper bounds, reference, zero-reference, and state defect reference."""
         distance_lower = user_options.get_val('distance_lower', units=units)
         distance_upper = user_options.get_val('distance_upper', units=units)
         distance_ref = user_options.get_val('distance_ref', units=units)
@@ -519,9 +457,7 @@ class PhaseBuilderBase(ABC):
         )
 
     def add_flight_path_angle_state(self, user_options):
-        """
-        Add flight path angle state: lower and upper bounds, reference, zero-reference, and state defect reference.
-        """
+        """Add flight path angle state: lower and upper bounds, reference, zero-reference, and state defect reference."""
         angle_lower = user_options.get_val('angle_lower', units='rad')
         angle_upper = user_options.get_val('angle_upper', units='rad')
         angle_ref = user_options.get_val('angle_ref', units='rad')
@@ -533,7 +469,7 @@ class PhaseBuilderBase(ABC):
             fix_final=False,
             lower=angle_lower,
             upper=angle_upper,
-            units="rad",
+            units='rad',
             rate_source=Dynamic.Mission.FLIGHT_PATH_ANGLE_RATE,
             ref=angle_ref,
             defect_ref=angle_defect_ref,
@@ -541,9 +477,7 @@ class PhaseBuilderBase(ABC):
         )
 
     def add_altitude_state(self, user_options, units='ft'):
-        """
-        Add altitude state: lower and upper bounds, reference, zero-reference, and state defect reference.
-        """
+        """Add altitude state: lower and upper bounds, reference, zero-reference, and state defect reference."""
         alt_lower = user_options.get_val('alt_lower', units=units)
         alt_upper = user_options.get_val('alt_upper', units=units)
         alt_ref = user_options.get_val('alt_ref', units=units)
@@ -562,16 +496,14 @@ class PhaseBuilderBase(ABC):
         )
 
     def add_altitude_constraint(self, user_options):
-        """
-        Add altitude constraint: final altitude and altitude constraint reference.
-        """
+        """Add altitude constraint: final altitude and altitude constraint reference."""
         final_altitude = user_options.get_val('final_altitude', units='ft')
         alt_constraint_ref = user_options.get_val('alt_constraint_ref', units='ft')
         self.phase.add_boundary_constraint(
             Dynamic.Mission.ALTITUDE,
-            loc="final",
+            loc='final',
             equals=final_altitude,
-            units="ft",
+            units='ft',
             ref=alt_constraint_ref,
         )
 
@@ -580,7 +512,7 @@ _registered_phase_builder_types = []
 
 
 def register(phase_builder_t=None, *, check_repeats=True):
-    '''
+    """
     Register a new phase builder type.
 
     Note, this function qualifies as a class decorator for ease of use.
@@ -588,8 +520,9 @@ def register(phase_builder_t=None, *, check_repeats=True):
     Returns
     -------
     phase builder type
-    '''
+    """
     if phase_builder_t is None:
+
         def decorator(phase_builder_t):
             return register(phase_builder_t, check_repeats=check_repeats)
 
@@ -604,7 +537,7 @@ def register(phase_builder_t=None, *, check_repeats=True):
 
 
 def phase_info_to_builder(name: str, phase_info: dict) -> PhaseBuilderBase:
-    '''
+    """
     Return a new phase builder based on the specified phase info.
 
     Note, the type of phase builder will be determined by calling
@@ -616,7 +549,7 @@ def phase_info_to_builder(name: str, phase_info: dict) -> PhaseBuilderBase:
     ------
     ValueError
         if a supported phase builder type cannot be determined
-    '''
+    """
     phase_builder_t: PhaseBuilderBase = None
 
     for phase_builder_t in _registered_phase_builder_types:
@@ -630,9 +563,3 @@ def phase_info_to_builder(name: str, phase_info: dict) -> PhaseBuilderBase:
 
 if __name__ == '__main__':
     help(PhaseBuilderBase)
-
-    try:
-        PhaseBuilderBase._add_meta_data('test', val=0, units=None, desc='test')
-
-    except Exception as error:
-        print(error)

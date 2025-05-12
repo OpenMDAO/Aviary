@@ -1,18 +1,17 @@
-import numpy as np
 import openmdao.api as om
 
-from aviary.variable_info.functions import add_aviary_input, add_aviary_output, add_aviary_option
+from aviary.variable_info.functions import add_aviary_input, add_aviary_option, add_aviary_output
 from aviary.variable_info.variables import Aircraft
 
 
 class SizeEngine(om.ExplicitComponent):
-    '''
+    """
     Calculates thrust scaling factors for mission performance parameters. Designed for
     use with EngineDecks.
 
     Can be vectorized for all unique engines present on aircraft. Each index represents a
     single instance of an engine model.
-    '''
+    """
 
     def initialize(self):
         add_aviary_option(self, Aircraft.Engine.REFERENCE_SLS_THRUST, units='lbf')
@@ -32,7 +31,6 @@ class SizeEngine(om.ExplicitComponent):
         # TODO - nacelle_wetted_area: if length, diam get scaled - this should be covered by geom
 
     def compute(self, inputs, outputs):
-
         scale_engine = self.options[Aircraft.Engine.SCALE_PERFORMANCE]
         reference_sls_thrust, _ = self.options[Aircraft.Engine.REFERENCE_SLS_THRUST]
 
@@ -51,13 +49,9 @@ class SizeEngine(om.ExplicitComponent):
         scale_engine = self.options[Aircraft.Engine.SCALE_PERFORMANCE]
 
         if scale_engine:
-            self.declare_partials(
-                Aircraft.Engine.SCALED_SLS_THRUST, Aircraft.Engine.SCALE_FACTOR
-            )
+            self.declare_partials(Aircraft.Engine.SCALED_SLS_THRUST, Aircraft.Engine.SCALE_FACTOR)
 
     def compute_partials(self, inputs, J):
         reference_sls_thrust, _ = self.options[Aircraft.Engine.REFERENCE_SLS_THRUST]
 
-        J[Aircraft.Engine.SCALED_SLS_THRUST, Aircraft.Engine.SCALE_FACTOR] = (
-            reference_sls_thrust
-        )
+        J[Aircraft.Engine.SCALED_SLS_THRUST, Aircraft.Engine.SCALE_FACTOR] = reference_sls_thrust

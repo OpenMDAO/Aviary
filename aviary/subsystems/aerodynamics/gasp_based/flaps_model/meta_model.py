@@ -9,78 +9,75 @@ from aviary.variable_info.variables import Aircraft, Dynamic
 class MetaModelGroup(om.Group):
     """
     Group of metamodel components to interpolate intermediate calculation values for flaps model in GASP-based
-    aerodynamics
+    aerodynamics.
     """
 
     def initialize(self):
         add_aviary_option(self, Aircraft.Wing.FLAP_TYPE)
 
     def setup(self):
-
         flap_type = self.options[Aircraft.Wing.FLAP_TYPE]
 
         # VDEL1
         VDEL1_interp = self.add_subsystem(
-            "VDEL1_interp",
-            om.MetaModelStructuredComp(method="1D-slinear", extrapolate=True),
+            'VDEL1_interp',
+            om.MetaModelStructuredComp(method='1D-slinear', extrapolate=True),
             promotes_inputs=[
-                "aircraft:*",
+                'aircraft:*',
             ],
             promotes_outputs=[
-                "VDEL1",
+                'VDEL1',
             ],
         )
 
         VDEL1_interp.add_input(
             Aircraft.Wing.FLAP_CHORD_RATIO,
-            0.3,
+            0.0,
             training_data=[0.0, 0.1, 0.2, 0.3, 0.4, 0.5],
-            units="unitless",
-            desc="ratio of flap chord to wing chord",
+            units='unitless',
+            desc='ratio of flap chord to wing chord',
         )
 
         if flap_type is FlapType.PLAIN or flap_type is FlapType.SPLIT:
-
             VDEL1_interp.add_output(
-                "VDEL1",
+                'VDEL1',
                 1.0,
                 training_data=[0.0, 0.32, 0.66, 1.0, 1.32, 1.70],
-                units="unitless",
-                desc="sensitivity of flap minimum drag coefficient to flap chord ratio",
+                units='unitless',
+                desc='sensitivity of flap minimum drag coefficient to flap chord ratio',
             )
 
         else:
-
             VDEL1_interp.add_output(
-                "VDEL1",
+                'VDEL1',
                 1.0,
                 training_data=[0.0, 0.24, 0.55, 1.00, 1.60, 2.20],
-                units="unitless",
-                desc="sensitivity of flap minimum drag coefficient to flap chord ratio",
+                units='unitless',
+                desc='sensitivity of flap minimum drag coefficient to flap chord ratio',
             )
 
         # VDEL2
         VDEL2_interp = self.add_subsystem(
-            "VDEL2_interp",
-            om.MetaModelStructuredComp(method="1D-slinear", extrapolate=True),
+            'VDEL2_interp',
+            om.MetaModelStructuredComp(method='1D-slinear', extrapolate=True),
             promotes_inputs=[
-                "flap_defl_ratio",
+                'flap_defl_ratio',
             ],
             promotes_outputs=[
-                "VDEL2",
+                'VDEL2',
             ],
         )
 
         VDEL2_interp.add_input(
-            "flap_defl_ratio",
+            'flap_defl_ratio',
             0.727273,
             training_data=[0.0, 0.25, 0.5, 0.75, 1.0, 1.5, 2.0, 2.25, 2.5, 2.75, 3.0],
-            units="unitless",
-            desc="ratio of flap deflection to optimum flap deflection angle",
+            units='unitless',
+            desc='ratio of flap deflection to optimum flap deflection angle',
         )
 
         VDEL2_interp.add_output(
-            "VDEL2",
+            'VDEL2',
             0.62455,
             training_data=[
                 0.0,
@@ -95,18 +92,18 @@ class MetaModelGroup(om.Group):
                 4.82,
                 5.00,
             ],
-            units="unitless",
-            desc="sensitivity of flap minimum drag coefficient to flap angle",
+            units='unitless',
+            desc='sensitivity of flap minimum drag coefficient to flap angle',
         )
 
         # VDEL3
 
         VDEL3_interp = self.add_subsystem(
-            "VDEL3_interp",
-            om.MetaModelStructuredComp(method="scipy_slinear", extrapolate=True),
-            promotes_inputs=["aircraft:*"],
+            'VDEL3_interp',
+            om.MetaModelStructuredComp(method='scipy_slinear', extrapolate=True),
+            promotes_inputs=['aircraft:*'],
             promotes_outputs=[
-                "VDEL3",
+                'VDEL3',
             ],
         )
 
@@ -114,23 +111,23 @@ class MetaModelGroup(om.Group):
             Aircraft.Wing.FLAP_SPAN_RATIO,
             0.65,
             training_data=[0.0, 0.2, 0.4, 0.6, 0.7, 0.8, 0.9, 1.0],
-            units="unitless",
-            desc="BTEOB: trailing edge flap span divided by wing span",
+            units='unitless',
+            desc='BTEOB: trailing edge flap span divided by wing span',
         )
 
         VDEL3_interp.add_input(
             Aircraft.Wing.TAPER_RATIO,
-            0.33,
+            0.0,
             training_data=[0.0, 0.33, 1.0],
-            units="unitless",
-            desc="taper ratio of wing",
+            units='unitless',
+            desc='taper ratio of wing',
         )
 
         VDEL3_interp.add_output(
-            "VDEL3",
+            'VDEL3',
             0.765,
-            units="unitless",
-            desc="sensitivity of flap minimum drag coefficient to partial flap span",
+            units='unitless',
+            desc='sensitivity of flap minimum drag coefficient to partial flap span',
             training_data=np.array(
                 [
                     [0.0, 0.0, 0.0],
@@ -149,19 +146,19 @@ class MetaModelGroup(om.Group):
 
         # VLAM1
         VLAM1_interp = self.add_subsystem(
-            "VLAM1_interp",
-            om.MetaModelStructuredComp(method="1D-slinear", extrapolate=True),
+            'VLAM1_interp',
+            om.MetaModelStructuredComp(method='1D-slinear', extrapolate=True),
             promotes_inputs=[
-                "aircraft:*",
+                'aircraft:*',
             ],
             promotes_outputs=[
-                "VLAM1",
+                'VLAM1',
             ],
         )
 
         VLAM1_interp.add_input(
             Aircraft.Wing.ASPECT_RATIO,
-            10.13,
+            0.0,
             training_data=[
                 0.0,
                 0.2,
@@ -182,12 +179,12 @@ class MetaModelGroup(om.Group):
                 12.0,
                 20.0,
             ],
-            units="unitless",
-            desc="aspect ratio",
+            units='unitless',
+            desc='aspect ratio',
         )
 
         VLAM1_interp.add_output(
-            "VLAM1",
+            'VLAM1',
             0.97217,
             training_data=[
                 0.0,
@@ -209,23 +206,23 @@ class MetaModelGroup(om.Group):
                 1.0,
                 1.0,
             ],
-            units="unitless",
-            desc="sensitivity of clean wing maximum lift coefficient to wing aspect ratio",
+            units='unitless',
+            desc='sensitivity of clean wing maximum lift coefficient to wing aspect ratio',
         )
 
         # VLAM2
         VLAM2_interp = self.add_subsystem(
-            "VLAM2_interp",
-            om.MetaModelStructuredComp(method="1D-slinear", extrapolate=True),
+            'VLAM2_interp',
+            om.MetaModelStructuredComp(method='1D-slinear', extrapolate=True),
             promotes_inputs=[
                 Aircraft.Wing.THICKNESS_TO_CHORD_UNWEIGHTED,
             ],
-            promotes_outputs=["VLAM2"],
+            promotes_outputs=['VLAM2'],
         )
 
         VLAM2_interp.add_input(
             Aircraft.Wing.THICKNESS_TO_CHORD_UNWEIGHTED,
-            0.13966,
+            0.0,
             training_data=[
                 0.0,
                 0.04,
@@ -244,12 +241,12 @@ class MetaModelGroup(om.Group):
                 0.24,
                 0.28,
             ],
-            units="unitless",
-            desc="average wing thickness to chord ratio",
+            units='unitless',
+            desc='average wing thickness to chord ratio',
         )
 
         VLAM2_interp.add_output(
-            "VLAM2",
+            'VLAM2',
             1.09948,
             training_data=[
                 0.8,
@@ -269,23 +266,23 @@ class MetaModelGroup(om.Group):
                 0.96,
                 0.80,
             ],
-            units="unitless",
-            desc="sensitivity of clean wing maximum lift coefficient to wing thickness to chord ratio",
+            units='unitless',
+            desc='sensitivity of clean wing maximum lift coefficient to wing thickness to chord ratio',
         )
 
         # VLAM3
         VLAM3_interp = self.add_subsystem(
-            "VLAM3_interp",
-            om.MetaModelStructuredComp(method="1D-slinear", extrapolate=True),
+            'VLAM3_interp',
+            om.MetaModelStructuredComp(method='1D-slinear', extrapolate=True),
             promotes_inputs=[
-                "aircraft:*",
+                'aircraft:*',
             ],
-            promotes_outputs=["VLAM3"],
+            promotes_outputs=['VLAM3'],
         )
 
         VLAM3_interp.add_input(
             Aircraft.Wing.ASPECT_RATIO,
-            10.13,
+            0.0,
             training_data=[
                 0.0,
                 0.2,
@@ -306,12 +303,12 @@ class MetaModelGroup(om.Group):
                 12.0,
                 20.0,
             ],
-            units="unitless",
-            desc="aspect ratio",
+            units='unitless',
+            desc='aspect ratio',
         )
 
         VLAM3_interp.add_output(
-            "VLAM3",
+            'VLAM3',
             0.97217,
             training_data=[
                 0.0,
@@ -333,25 +330,25 @@ class MetaModelGroup(om.Group):
                 1.0,
                 1.0,
             ],
-            units="unitless",
-            desc="sensitivity of flap clean wing maximum lift coefficient to wing aspect ratio",
+            units='unitless',
+            desc='sensitivity of flap clean wing maximum lift coefficient to wing aspect ratio',
         )
 
         # VLAM4
         VLAM4_interp = self.add_subsystem(
-            "VLAM4_interp",
-            om.MetaModelStructuredComp(method="1D-slinear", extrapolate=True),
+            'VLAM4_interp',
+            om.MetaModelStructuredComp(method='1D-slinear', extrapolate=True),
             promotes_inputs=[
                 Aircraft.Wing.THICKNESS_TO_CHORD_UNWEIGHTED,
             ],
             promotes_outputs=[
-                "VLAM4",
+                'VLAM4',
             ],
         )
 
         VLAM4_interp.add_input(
             Aircraft.Wing.THICKNESS_TO_CHORD_UNWEIGHTED,
-            0.13966,
+            0.0,
             training_data=[
                 0.0,
                 0.04,
@@ -370,14 +367,13 @@ class MetaModelGroup(om.Group):
                 0.24,
                 0.28,
             ],
-            units="unitless",
-            desc="average wing thickness to chord ratio",
+            units='unitless',
+            desc='average wing thickness to chord ratio',
         )
 
         if flap_type is FlapType.PLAIN or flap_type is FlapType.SPLIT:
-
             VLAM4_interp.add_output(
-                "VLAM4",
+                'VLAM4',
                 1.19742,
                 training_data=[
                     1.25,
@@ -397,14 +393,13 @@ class MetaModelGroup(om.Group):
                     2.18,
                     2.20,
                 ],
-                units="unitless",
-                desc="sensitivity of flap clean wing maximum lift coefficient slope to wing thickness",
+                units='unitless',
+                desc='sensitivity of flap clean wing maximum lift coefficient slope to wing thickness',
             )
 
         else:
-
             VLAM4_interp.add_output(
-                "VLAM4",
+                'VLAM4',
                 1.25725,
                 training_data=[
                     0.84,
@@ -424,36 +419,35 @@ class MetaModelGroup(om.Group):
                     1.59,
                     1.60,
                 ],
-                units="unitless",
-                desc="sensitivity of flap clean wing maximum lift coefficient slope to wing thickness",
+                units='unitless',
+                desc='sensitivity of flap clean wing maximum lift coefficient slope to wing thickness',
             )
 
         # VLAM5
         VLAM5_interp = self.add_subsystem(
-            "VLAM5_intep",
-            om.MetaModelStructuredComp(method="1D-slinear", extrapolate=True),
+            'VLAM5_intep',
+            om.MetaModelStructuredComp(method='1D-slinear', extrapolate=True),
             promotes_inputs=[
-                "aircraft:*",
+                'aircraft:*',
             ],
-            promotes_outputs=["VLAM5"],
+            promotes_outputs=['VLAM5'],
         )
 
         VLAM5_interp.add_input(
             Aircraft.Wing.FLAP_CHORD_RATIO,
-            0.3,
+            0.0,
             training_data=[0.0, 0.1, 0.2, 0.3, 0.4, 0.5],
-            units="unitless",
-            desc="ratio of flap chord to wing chord",
+            units='unitless',
+            desc='ratio of flap chord to wing chord',
         )
 
         if flap_type is FlapType.PLAIN or flap_type is FlapType.SPLIT:
-
             VLAM5_interp.add_output(
-                "VLAM5",
+                'VLAM5',
                 1.0,
                 training_data=[0.0, 0.72, 0.94, 1.00, 0.95, 0.73],
-                units="unitless",
-                desc="sensitivity of flap clean wing maximum lift coefficient to wing flap to chord ratio",
+                units='unitless',
+                desc='sensitivity of flap clean wing maximum lift coefficient to wing flap to chord ratio',
             )
 
         elif (
@@ -461,39 +455,37 @@ class MetaModelGroup(om.Group):
             or flap_type is FlapType.DOUBLE_SLOTTED
             or flap_type is FlapType.TRIPLE_SLOTTED
         ):
-
             VLAM5_interp.add_output(
-                "VLAM5",
+                'VLAM5',
                 1.0,
                 training_data=[0.0, 0.575, 0.83, 1.00, 1.065, 1.09],
-                units="unitless",
-                desc="sensitivity of flap clean wing maximum lift coefficient to wing flap to chord ratio",
+                units='unitless',
+                desc='sensitivity of flap clean wing maximum lift coefficient to wing flap to chord ratio',
             )
 
         else:
-
             VLAM5_interp.add_output(
-                "VLAM5",
+                'VLAM5',
                 1.0,
                 training_data=[0.0, 0.41, 0.73, 1.00, 1.22, 1.40],
-                units="unitless",
-                desc="sensitivity of flap clean wing maximum lift coefficient to wing flap to chord ratio",
+                units='unitless',
+                desc='sensitivity of flap clean wing maximum lift coefficient to wing flap to chord ratio',
             )
 
         # VLAM6
         VLAM6_interp = self.add_subsystem(
-            "VLAM6_interp",
-            om.MetaModelStructuredComp(method="1D-slinear", extrapolate=True),
+            'VLAM6_interp',
+            om.MetaModelStructuredComp(method='1D-slinear', extrapolate=True),
             promotes_inputs=[
-                "flap_defl",
+                'flap_defl',
             ],
             promotes_outputs=[
-                "VLAM6",
+                'VLAM6',
             ],
         )
 
         VLAM6_interp.add_input(
-            "flap_defl",
+            'flap_defl',
             10.0,
             training_data=[
                 0.0,
@@ -512,14 +504,13 @@ class MetaModelGroup(om.Group):
                 55.0,
                 60.0,
             ],
-            units="deg",
-            desc="flap deflection",
+            units='deg',
+            desc='flap deflection',
         )
 
         if flap_type is FlapType.PLAIN or flap_type is FlapType.SPLIT:
-
             VLAM6_interp.add_output(
-                "VLAM6",
+                'VLAM6',
                 0.8,
                 training_data=[
                     0.0,
@@ -538,8 +529,8 @@ class MetaModelGroup(om.Group):
                     0.98,
                     1.0,
                 ],
-                units="unitless",
-                desc="sensitivity of flap clean wing maximum lift coefficient to wing flap deflection",
+                units='unitless',
+                desc='sensitivity of flap clean wing maximum lift coefficient to wing flap deflection',
             )
 
         elif (
@@ -547,9 +538,8 @@ class MetaModelGroup(om.Group):
             or flap_type is FlapType.DOUBLE_SLOTTED
             or flap_type is FlapType.TRIPLE_SLOTTED
         ):
-
             VLAM6_interp.add_output(
-                "VLAM6",
+                'VLAM6',
                 1.0,
                 training_data=[
                     0.0,
@@ -568,14 +558,13 @@ class MetaModelGroup(om.Group):
                     0.85,
                     0.75,
                 ],
-                units="unitless",
-                desc="sensitivity of flap clean wing maximum lift coefficient to wing flap deflection",
+                units='unitless',
+                desc='sensitivity of flap clean wing maximum lift coefficient to wing flap deflection',
             )
 
-        elif (flap_type is FlapType.FOWLER or flap_type is FlapType.DOUBLE_SLOTTED_FOWLER):
-
+        elif flap_type is FlapType.FOWLER or flap_type is FlapType.DOUBLE_SLOTTED_FOWLER:
             VLAM6_interp.add_output(
-                "VLAM6",
+                'VLAM6',
                 1.11,
                 training_data=[
                     0.0,
@@ -594,8 +583,8 @@ class MetaModelGroup(om.Group):
                     0.56,
                     0.20,
                 ],
-                units="unitless",
-                desc="sensitivity of flap clean wing maximum lift coefficient to wing flap deflection",
+                units='unitless',
+                desc='sensitivity of flap clean wing maximum lift coefficient to wing flap deflection',
             )
 
         else:
@@ -603,13 +592,13 @@ class MetaModelGroup(om.Group):
 
         # VLAM7
         VLAM7_interp = self.add_subsystem(
-            "VLAM7_interp",
-            om.MetaModelStructuredComp(method="1D-slinear", extrapolate=True),
+            'VLAM7_interp',
+            om.MetaModelStructuredComp(method='1D-slinear', extrapolate=True),
             promotes_inputs=[
                 Aircraft.Wing.FLAP_SPAN_RATIO,
             ],
             promotes_outputs=[
-                "VLAM7",
+                'VLAM7',
             ],
         )
 
@@ -617,32 +606,32 @@ class MetaModelGroup(om.Group):
             Aircraft.Wing.FLAP_SPAN_RATIO,
             0.65,
             training_data=[0.0, 0.2, 0.4, 0.6, 0.8, 0.9, 1.0],
-            units="unitless",
-            desc="BTEOB: trailing edge flap span divided by wing span",
+            units='unitless',
+            desc='BTEOB: trailing edge flap span divided by wing span',
         )
 
         VLAM7_interp.add_output(
-            "VLAM7",
+            'VLAM7',
             0.735,
             training_data=[0.0, 0.25, 0.47, 0.69, 0.87, 0.94, 1.00],
-            units="unitless",
-            desc="sensitivity of flap clean wing maximum lift coefficient to wing flap span",
+            units='unitless',
+            desc='sensitivity of flap clean wing maximum lift coefficient to wing flap span',
         )
 
         # VLAM10
         VLAM10_interp = self.add_subsystem(
-            "VLAM10_interp",
-            om.MetaModelStructuredComp(method="1D-slinear", extrapolate=True),
+            'VLAM10_interp',
+            om.MetaModelStructuredComp(method='1D-slinear', extrapolate=True),
             promotes_inputs=[
-                "slat_defl_ratio",
+                'slat_defl_ratio',
             ],
             promotes_outputs=[
-                "VLAM10",
+                'VLAM10',
             ],
         )
 
         VLAM10_interp.add_input(
-            "slat_defl_ratio",
+            'slat_defl_ratio',
             0.5,
             training_data=[
                 0.0,
@@ -660,12 +649,12 @@ class MetaModelGroup(om.Group):
                 1.6,
                 1.7,
             ],
-            units="unitless",
-            desc="Ratio of leading edge slat deflection to optimum deflection angle",
+            units='unitless',
+            desc='Ratio of leading edge slat deflection to optimum deflection angle',
         )
 
         VLAM10_interp.add_output(
-            "VLAM10",
+            'VLAM10',
             0.74,
             training_data=[
                 0.0,
@@ -683,19 +672,19 @@ class MetaModelGroup(om.Group):
                 0.49,
                 0.22,
             ],
-            units="unitless",
-            desc="sensitivity of clean wing maximum lift coefficient to slat deflection angle",
+            units='unitless',
+            desc='sensitivity of clean wing maximum lift coefficient to slat deflection angle',
         )
 
         # VLAM11
         VLAM11_interp = self.add_subsystem(
-            "VLAM11_interp",
-            om.MetaModelStructuredComp(method="1D-slinear", extrapolate=True),
+            'VLAM11_interp',
+            om.MetaModelStructuredComp(method='1D-slinear', extrapolate=True),
             promotes_inputs=[
                 Aircraft.Wing.SLAT_SPAN_RATIO,
             ],
             promotes_outputs=[
-                "VLAM11",
+                'VLAM11',
             ],
         )
 
@@ -703,32 +692,32 @@ class MetaModelGroup(om.Group):
             Aircraft.Wing.SLAT_SPAN_RATIO,
             0.89759553,
             training_data=[0.0, 0.2, 0.3, 0.4, 0.47, 0.5, 1.0],
-            units="unitless",
-            desc="ratio of leading edge slat span to wing span",
+            units='unitless',
+            desc='ratio of leading edge slat span to wing span',
         )
 
         VLAM11_interp.add_output(
-            "VLAM11",
+            'VLAM11',
             0.84232,
             training_data=[0.0, 0.05, 0.09, 0.15, 0.20, 0.23, 1.00],
-            units="unitless",
-            desc="sensitivity of slat clean wing maximum lift coefficient to slat span",
+            units='unitless',
+            desc='sensitivity of slat clean wing maximum lift coefficient to slat span',
         )
 
         # VLAM13
         VLAM13_interp = self.add_subsystem(
-            "VLAM13_interp",
-            om.MetaModelStructuredComp(method="1D-slinear", extrapolate=True),
+            'VLAM13_interp',
+            om.MetaModelStructuredComp(method='1D-slinear', extrapolate=True),
             promotes_inputs=[
-                "reynolds",
+                'reynolds',
             ],
             promotes_outputs=[
-                "VLAM13",
+                'VLAM13',
             ],
         )
 
         VLAM13_interp.add_input(
-            "reynolds",
+            'reynolds',
             val=157.1111,
             training_data=[
                 1.0,
@@ -746,12 +735,12 @@ class MetaModelGroup(om.Group):
                 1000.0,
                 10000.0,
             ],
-            units="unitless",
-            desc="reynolds number",
+            units='unitless',
+            desc='reynolds number',
         )
 
         VLAM13_interp.add_output(
-            "VLAM13",
+            'VLAM13',
             1.03512,
             training_data=[
                 0.70,
@@ -769,19 +758,19 @@ class MetaModelGroup(om.Group):
                 0.90,
                 0.90,
             ],
-            units="unitless",
-            desc="reynolds number correction factor",
+            units='unitless',
+            desc='reynolds number correction factor',
         )
 
         # VLAM14
         VLAM14_interp = self.add_subsystem(
-            "VLAM14_interp",
-            om.MetaModelStructuredComp(method="1D-slinear", extrapolate=True),
+            'VLAM14_interp',
+            om.MetaModelStructuredComp(method='1D-slinear', extrapolate=True),
             promotes_inputs=[
                 Dynamic.Atmosphere.MACH,
             ],
             promotes_outputs=[
-                "VLAM14",
+                'VLAM14',
             ],
         )
 
@@ -789,50 +778,50 @@ class MetaModelGroup(om.Group):
             Dynamic.Atmosphere.MACH,
             0.17522,
             training_data=[0.0, 0.2, 0.4, 0.6, 0.8, 1.0],
-            units="unitless",
-            desc="mach number",
+            units='unitless',
+            desc='Mach number',
         )
 
         VLAM14_interp.add_output(
-            "VLAM14",
+            'VLAM14',
             0.99124,
             training_data=[1.0, 0.99, 0.94, 0.87, 0.78, 0.66],
-            units="unitless",
-            desc="mach number correction factor",
+            units='unitless',
+            desc='Mach number correction factor',
             ref=100,
         )
 
         # fus_lift
         fus_lift_interp = self.add_subsystem(
-            "fus_lift_interp",
-            om.MetaModelStructuredComp(method="scipy_slinear", extrapolate=True),
-            promotes_inputs=["body_to_span_ratio", "chord_to_body_ratio"],
+            'fus_lift_interp',
+            om.MetaModelStructuredComp(method='scipy_slinear', extrapolate=True),
+            promotes_inputs=['body_to_span_ratio', 'chord_to_body_ratio'],
             promotes_outputs=[
-                "fus_lift",
+                'fus_lift',
             ],
         )
 
         fus_lift_interp.add_input(
-            "body_to_span_ratio",
+            'body_to_span_ratio',
             0.09240447,
             training_data=[0.0, 0.05, 0.10, 0.12, 0.15, 0.20, 0.25, 0.30, 0.40, 0.50],
-            units="unitless",
-            desc="trailing edge flap span divided by wing span",
+            units='unitless',
+            desc='trailing edge flap span divided by wing span',
         )
 
         fus_lift_interp.add_input(
-            "chord_to_body_ratio",
+            'chord_to_body_ratio',
             0.12679,
             training_data=[0.1, 0.2, 0.3, 0.4, 0.5],
-            units="unitless",
-            desc="taper ratio of wing",
+            units='unitless',
+            desc='taper ratio of wing',
         )
 
         fus_lift_interp.add_output(
-            "fus_lift",
+            'fus_lift',
             0.05498,
-            units="unitless",
-            desc="sensitivity of flap minimum drag coefficient to partial flap span",
+            units='unitless',
+            desc='sensitivity of flap minimum drag coefficient to partial flap span',
             training_data=np.array(
                 [
                     [0.0, 0.0, 0.0, 0.0, 0.0],

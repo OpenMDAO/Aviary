@@ -1,22 +1,22 @@
-from aviary.examples.external_subsystems.engine_NPSS.engine_variables import Aircraft, Dynamic
+from aviary.examples.external_subsystems.engine_NPSS.engine_variables import Dynamic
 
 vars_to_connect = {
-    "Fn_train": {
-        "mission_name": [
-            Dynamic.Vehicle.Propulsion.THRUST + "_train",
+    'Fn_train': {
+        'mission_name': [
+            Dynamic.Vehicle.Propulsion.THRUST + '_train',
         ],
-        "units": "lbf",
+        'units': 'lbf',
     },
-    "Fn_max_train": {
-        "mission_name": [
-            Dynamic.Vehicle.Propulsion.THRUST_MAX + "_train",
+    'Fn_max_train': {
+        'mission_name': [
+            Dynamic.Vehicle.Propulsion.THRUST_MAX + '_train',
         ],
-        "units": "lbf",
+        'units': 'lbf',
     },
-    "Wf_inv_train": {
-        "mission_name": [
-            Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE + "_train",
+    'Wf_inv_train': {
+        'mission_name': [
+            Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE + '_train',
         ],
-        "units": "lbm/s",
+        'units': 'lbm/s',
     },
 }

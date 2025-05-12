@@ -2,16 +2,15 @@ import unittest
 
 import numpy as np
 import openmdao.api as om
-
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 
-from aviary.subsystems.energy.battery_builder import BatteryBuilder
 import aviary.api as av
+from aviary.subsystems.energy.battery_builder import BatteryBuilder
 
 
 class TestBatteryDerivs(unittest.TestCase):
     def setUp(self):
-        self.prob = prob = om.Problem()
+        self.prob = om.Problem()
 
         self.options = av.AviaryValues()
 
@@ -19,9 +18,9 @@ class TestBatteryDerivs(unittest.TestCase):
 
     def test_battery_premission(self):
         prob = self.prob
-        prob.model.add_subsystem('battery_premission',
-                                 self.battery.build_pre_mission(self.options),
-                                 promotes=['*'])
+        prob.model.add_subsystem(
+            'battery_premission', self.battery.build_pre_mission(self.options), promotes=['*']
+        )
 
         prob.setup(force_alloc_complex=True)
 
@@ -40,20 +39,18 @@ class TestBatteryDerivs(unittest.TestCase):
         assert_near_equal(mass, mass_expected, tolerance=1e-10)
         assert_near_equal(energy, energy_expected, tolerance=1e-10)
 
-        partial_data = prob.check_partials(out_stream=None, method="cs")
+        partial_data = prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=1e-9, rtol=1e-9)
 
     def test_battery_mission(self):
         prob = self.prob
-        prob.model.add_subsystem('battery_mission',
-                                 subsys=self.battery.build_mission(num_nodes=4),
-                                 promotes=['*'])
+        prob.model.add_subsystem(
+            'battery_mission', subsys=self.battery.build_mission(num_nodes=4), promotes=['*']
+        )
 
         efficiency = 0.95
-        prob.model.set_input_defaults(
-            av.Aircraft.Battery.ENERGY_CAPACITY, 10_000, units='kJ')
-        prob.model.set_input_defaults(
-            av.Aircraft.Battery.EFFICIENCY, efficiency, units='unitless')
+        prob.model.set_input_defaults(av.Aircraft.Battery.ENERGY_CAPACITY, 10_000, units='kJ')
+        prob.model.set_input_defaults(av.Aircraft.Battery.EFFICIENCY, efficiency, units='unitless')
         prob.model.set_input_defaults(
             av.Dynamic.Vehicle.CUMULATIVE_ELECTRIC_ENERGY_USED,
             [0, 2_000, 5_000, 9_500],
@@ -64,12 +61,12 @@ class TestBatteryDerivs(unittest.TestCase):
 
         prob.run_model()
 
-        soc_expected = np.array([1., 0.7894736842105263, 0.4736842105263159, 0.])
+        soc_expected = np.array([1.0, 0.7894736842105263, 0.4736842105263159, 0.0])
         soc = prob.get_val(av.Dynamic.Vehicle.BATTERY_STATE_OF_CHARGE, 'unitless')
 
         assert_near_equal(soc, soc_expected, tolerance=1e-10)
 
-        partial_data = prob.check_partials(out_stream=None, method="cs")
+        partial_data = prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=1e-9, rtol=1e-9)
 
 

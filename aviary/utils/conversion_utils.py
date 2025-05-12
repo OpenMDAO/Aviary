@@ -1,4 +1,5 @@
 import itertools
+
 import numpy as np
 
 
@@ -8,7 +9,7 @@ def _rep(n, t):
 
 
 def _parse(f, fmt):
-    """Read a line from file ``f`` and parse it according to the given ``fmt``"""
+    """Read a line from file ``f`` and parse it according to the given ``fmt``."""
     return _strparse(f.readline(), fmt)
 
 
@@ -19,7 +20,7 @@ def _strparse(s, fmt):
     """
     p = 0
     for typ, length in fmt:
-        sub = s[p: p + length]
+        sub = s[p : p + length]
         if typ is not None:
             yield typ(sub)
         p += length

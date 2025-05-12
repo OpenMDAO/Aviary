@@ -8,9 +8,11 @@ Here we have climb, cruise, and descent phases.
 We then call the correct methods in order to set up and run an Aviary optimization problem.
 This performs a coupled design-mission optimization and outputs the results from Aviary into the `reports` folder.
 """
+
+from copy import deepcopy
+
 import aviary.api as av
 from aviary.interface.default_phase_info.two_dof import phase_info
-from copy import deepcopy
 
 phase_info = deepcopy(phase_info)
 # Add reserve phase(s)
@@ -37,7 +39,7 @@ duration_cruise1 = deepcopy(phase_info['cruise'])
 duration_cruise1['user_options']['reserve'] = True
 duration_cruise1['user_options']['alt_cruise'] = (25e3, 'ft')
 duration_cruise1['user_options']['target_duration'] = (30, 'min')
-duration_cruise1['user_options']['initial_bounds'] = ((149.5, 448.5), "min")
+duration_cruise1['user_options']['initial_bounds'] = ((149.5, 448.5), 'min')
 duration_cruise1['initial_guesses']['altitude'] = (25e3, 'ft')
 duration_cruise1['initial_guesses']['initial_distance'] = (3825, 'nmi')
 
@@ -57,15 +59,17 @@ reserve_descent2 = deepcopy(phase_info['desc2'])
 reserve_descent2['user_options']['reserve'] = True
 reserve_descent2['initial_guesses']['distance'] = ([3925, 3950], 'nmi')
 
-phase_info.update({
-    "reserve_climb1": reserve_climb1,
-    "reserve_climb2": reserve_climb2,
-    "reserve_cruise_fixed_range": distance_cruise1,
-    "reserve_cruise_fixed_time": duration_cruise1,
-    "reserve_cruise_fixed_range_2": distance_cruise2,
-    "reserve_desc1": reserve_descent1,
-    "reserve_desc2": reserve_descent2,
-})
+phase_info.update(
+    {
+        'reserve_climb1': reserve_climb1,
+        'reserve_climb2': reserve_climb2,
+        'reserve_cruise_fixed_range': distance_cruise1,
+        'reserve_cruise_fixed_time': duration_cruise1,
+        'reserve_cruise_fixed_range_2': distance_cruise2,
+        'reserve_desc1': reserve_descent1,
+        'reserve_desc2': reserve_descent2,
+    }
+)
 
 if __name__ == '__main__':
     prob = av.AviaryProblem()
@@ -86,7 +90,7 @@ if __name__ == '__main__':
     # Link phases and variables
     prob.link_phases()
 
-    prob.add_driver("SNOPT", max_iter=50)
+    prob.add_driver('SNOPT', max_iter=50)
 
     prob.add_design_variables()
 

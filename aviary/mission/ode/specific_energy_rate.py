@@ -1,5 +1,6 @@
 import numpy as np
 import openmdao.api as om
+
 from aviary.constants import GRAV_METRIC_FLOPS as gravity
 from aviary.variable_info.variables import Dynamic
 
@@ -7,7 +8,7 @@ from aviary.variable_info.variables import Dynamic
 class SpecificEnergyRate(om.ExplicitComponent):
     """
     Rutowski "Energy Approach to the General Aircraft Performance Problem", doi 10.2514/8.2956
-    Equation 5
+    Equation 5.
     """
 
     def initialize(self):
@@ -22,18 +23,14 @@ class SpecificEnergyRate(om.ExplicitComponent):
             desc='current velocity',
             units='m/s',
         )
+        self.add_input(Dynamic.Vehicle.MASS, val=np.ones(nn), desc='current mass', units='kg')
         self.add_input(
-            Dynamic.Vehicle.MASS,
+            Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
             val=np.ones(nn),
-            desc='current mass',
-            units='kg')
-        self.add_input(Dynamic.Vehicle.Propulsion.THRUST_TOTAL, val=np.ones(nn),
-                       desc='current thrust', units='N')
-        self.add_input(
-            Dynamic.Vehicle.DRAG,
-            val=np.ones(nn),
-            desc='current drag',
-            units='N')
+            desc='current thrust',
+            units='N',
+        )
+        self.add_input(Dynamic.Vehicle.DRAG, val=np.ones(nn), desc='current drag', units='N')
         self.add_output(
             Dynamic.Mission.SPECIFIC_ENERGY_RATE,
             val=np.ones(nn),
@@ -46,9 +43,7 @@ class SpecificEnergyRate(om.ExplicitComponent):
         thrust = inputs[Dynamic.Vehicle.Propulsion.THRUST_TOTAL]
         drag = inputs[Dynamic.Vehicle.DRAG]
         weight = inputs[Dynamic.Vehicle.MASS] * gravity
-        outputs[Dynamic.Mission.SPECIFIC_ENERGY_RATE] = (
-            velocity * (thrust - drag) / weight
-        )
+        outputs[Dynamic.Mission.SPECIFIC_ENERGY_RATE] = velocity * (thrust - drag) / weight
 
     def setup_partials(self):
         arange = np.arange(self.options['num_nodes'])
@@ -70,18 +65,12 @@ class SpecificEnergyRate(om.ExplicitComponent):
         drag = inputs[Dynamic.Vehicle.DRAG]
         weight = inputs[Dynamic.Vehicle.MASS] * gravity
 
-        J[Dynamic.Mission.SPECIFIC_ENERGY_RATE, Dynamic.Mission.VELOCITY] = (
-            thrust - drag
-        ) / weight
+        J[Dynamic.Mission.SPECIFIC_ENERGY_RATE, Dynamic.Mission.VELOCITY] = (thrust - drag) / weight
         J[
             Dynamic.Mission.SPECIFIC_ENERGY_RATE,
             Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
-        ] = (
-            velocity / weight
-        )
-        J[Dynamic.Mission.SPECIFIC_ENERGY_RATE, Dynamic.Vehicle.DRAG] = (
-            -velocity / weight
-        )
+        ] = velocity / weight
+        J[Dynamic.Mission.SPECIFIC_ENERGY_RATE, Dynamic.Vehicle.DRAG] = -velocity / weight
         J[Dynamic.Mission.SPECIFIC_ENERGY_RATE, Dynamic.Vehicle.MASS] = (
             -gravity * velocity * (thrust - drag) / (weight) ** 2
         )
