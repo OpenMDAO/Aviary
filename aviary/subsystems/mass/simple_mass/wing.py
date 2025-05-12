@@ -80,19 +80,19 @@ class WingMassAndCOG(om.JaxExplicitComponent):
         
 
         # Outputs
-        self.add_output('center_of_gravity_x', 
+        self.add_output('center_of_gravity_x_wing', 
                         val=0.0, 
                         units='m')
         
-        self.add_output('center_of_gravity_y', 
+        self.add_output('center_of_gravity_y_wing', 
                         val=0.0, 
                         units='m')
         
-        self.add_output('center_of_gravity_z', 
+        self.add_output('center_of_gravity_z_wing', 
                         val=0.0, 
                         units='m')
         
-        self.add_output('total_weight', 
+        self.add_output('total_weight_wing', 
                         val=0.0, 
                         units='kg')
 
@@ -100,24 +100,9 @@ class WingMassAndCOG(om.JaxExplicitComponent):
         material = self.options['material'] # Material is taken from options
         airfoil_type = self.options['airfoil_type'] # NACA airfoil type 
         airfoil_data_file = self.options['airfoil_data_file']
-
-        # Input validation checks
-        if span <= 0:
-            raise ValueError("Span must be greater than zero.")
-        
-        if root_chord <= 0 or tip_chord <= 0:
-            raise ValueError("Root chord and tip chord must be greater than zero.")
-        
-        if tip_chord > root_chord:
-            raise ValueError("Tip chord cannot be larger than root chord.")
-        
-        if any(omj.smooth_abs(twist)) > jnp.pi / 2:
-            raise ValueError("Twist angle is too extreme; must be within -90 to 90 degrees.")
         
         # Get material density
-        density, _ = materials.get_item(material)  # in kg/m³
-
-        #x_points, dx = self.precompute_airfoil_geometry()
+        density, _ = materials.get_item(material)  # in kg/m^3
 
         if airfoil_data_file and os.path.exists(airfoil_data_file):
             airfoil_data = np.loadtxt(airfoil_data_file)
@@ -137,21 +122,13 @@ class WingMassAndCOG(om.JaxExplicitComponent):
         # Wing spanwise distribution
         span_locations = jnp.linspace(0, span, num_sections)
 
-        #num_sections = self.options['num_sections']
         n_points = num_sections
         x_points = jnp.linspace(0, 1, n_points)
         dx = 1 / (n_points - 1)
         
         weight_function = lambda x: density * self.airfoil_thickness(x, max_thickness) * (root_chord - (root_chord - tip_chord) * (x / span)) * span
-        
-        #total_weight = jint.trapezoid(density * self.airfoil_thickness(x_points, max_thickness) * (root_chord - (root_chord - tip_chord) * (x_points / span)) * span, x_points)
-
-        #total_weight = self.gauss_quad(weight_function, num_sections, 0, 1)
-        total_weight, _ = quadgk(weight_function, [0, 1], epsabs=1e-9, epsrel=1e-9)
-
-        #center_of_gravity_x = jint.trapezoid(x_points * self.airfoil_thickness(x_points, max_thickness) * (root_chord - (root_chord - tip_chord) * (x_points / span) * jnp.cos(twist)) - 
-        #                          self.airfoil_camber_line(x_points, camber, camber_location) * self.airfoil_thickness(x_points, max_thickness) * (root_chord - (root_chord - tip_chord) * (x_points / span)) * jnp.sin(twist), 
-        #                          x_points) / jint.trapezoid(self.airfoil_thickness(x_points, max_thickness) * (root_chord - (root_chord - tip_chord) * (x_points / span)), x_points)
+    
+        total_weight_wing, _ = quadgk(weight_function, [0, 1], epsabs=1e-9, epsrel=1e-9)
         
         center_of_gravity_x_num, _ = quadgk(lambda x: x * self.airfoil_thickness(x, max_thickness) * (root_chord - (root_chord - tip_chord) * (x / span) * jnp.cos(twist)) - 
                                      self.airfoil_camber_line(x, camber, camber_location) * self.airfoil_thickness(x, max_thickness) * (root_chord - (root_chord - tip_chord) * (x / span)) * jnp.sin(twist), 
@@ -159,11 +136,7 @@ class WingMassAndCOG(om.JaxExplicitComponent):
         center_of_gravity_x_denom, _ = quadgk(lambda x: self.airfoil_thickness(x, max_thickness) * (root_chord - (root_chord - tip_chord) * (x / span)), [0, 1], epsabs=1e-9, epsrel=1e-9)
 
         center_of_gravity_x = center_of_gravity_x_num / center_of_gravity_x_denom
-        center_of_gravity_x = center_of_gravity_x[0]
-        
-        #center_of_gravity_z = jint.trapezoid(x_points * self.airfoil_thickness(x_points, max_thickness) * (root_chord - (root_chord - tip_chord) * (x_points / span) * jnp.sin(twist)) + 
-        #                          self.airfoil_camber_line(x_points, camber, camber_location) * self.airfoil_thickness(x_points, max_thickness) * (root_chord - (root_chord - tip_chord) * (x_points / span)) * jnp.cos(twist), 
-        #                          x_points) / jint.trapezoid(self.airfoil_thickness(x_points, max_thickness) * (root_chord - (root_chord - tip_chord) * (x_points / span)), x_points)
+        center_of_gravity_x_wing = center_of_gravity_x[0]
         
         center_of_gravity_z_num, _ = quadgk(lambda x: x * self.airfoil_thickness(x, max_thickness) * (root_chord - (root_chord - tip_chord) * (x / span) * jnp.sin(twist)) + 
                                      self.airfoil_camber_line(x, camber, camber_location) * self.airfoil_thickness(x, max_thickness) * (root_chord - (root_chord - tip_chord) * (x / span)) * jnp.cos(twist), 
@@ -172,13 +145,10 @@ class WingMassAndCOG(om.JaxExplicitComponent):
         center_of_gravity_z_denom, _ = quadgk(lambda x: self.airfoil_thickness(x, max_thickness) * (root_chord - (root_chord - tip_chord) * (x / span)), [0, 1], epsabs=1e-9, epsrel=1e-9)
 
         center_of_gravity_z = center_of_gravity_z_num / center_of_gravity_z_denom
-        center_of_gravity_z = center_of_gravity_z[0]
-        
-        #center_of_gravity_y = jint.trapezoid(x_points * span, x_points) 
+        center_of_gravity_z_wing = center_of_gravity_z[0]
+        center_of_gravity_y_wing, _ = quadgk(lambda x: x * span, [0, 1], epsabs=1e-9, epsrel=1e-9)
 
-        center_of_gravity_y, _ = quadgk(lambda x: x * span, [0, 1], epsabs=1e-9, epsrel=1e-9)
-
-        return center_of_gravity_x, center_of_gravity_y, center_of_gravity_z, total_weight
+        return center_of_gravity_x_wing, center_of_gravity_y_wing, center_of_gravity_z_wing, total_weight_wing
     
     def precompute_airfoil_geometry(self):
         num_sections = self.options['num_sections']
@@ -228,128 +198,44 @@ class WingMassAndCOG(om.JaxExplicitComponent):
 
         return camber, camber_location, max_thickness_value, thickness, camber_line
 
-    # def legendre_roots_and_weights(self, n):
-    #     """
-    #     Compute nodes and weights for Legendre-Gauss quadrature using JAX.
+if __name__ == '__main__':
 
-    #     Parameters: 
+    # Build OpenMDAO problem
+    prob = om.Problem()
 
-    #     beta: 
-    #         coefficient coming form Gram-Schmidt process, derived from recursive relation
-    #         of Legendre polynomials.
+    # Add the center of gravity component
+    prob.model.add_subsystem('cog', WingMassAndCOG() , promotes_inputs=['*'], promotes_outputs=['*'])
 
-    #     T:
-    #         symmetric, tri-diagonal Jacobi matrix derived using Golub-Welsch theorem. Eigenvalues
-    #         of T correspond to roots of Legendre polynomials
-        
-    #     Eigenvalues, Eigenvectors:
-    #         The eigenvalues of T and their respective eigenvectors, calculated using 
-    #         jax.scipy.special.eigh function.
-        
-    #     weights:
-    #         Weights used for Gaussian-Legendre quadrature, calculated using the first
-    #         component of the normalized eigenvector, derived from Golub & Welsch (1969). 
-    #         Coefficient 2 comes from an application of Rodrigues' formula for Legendre
-    #         polynomials and applying the orthonormality property for Legendre polynomials
-    #         over the interval [-1, 1] with weight = 1.
+    n_points = 10 # = num_sections
+    x = jnp.linspace(0, 1, n_points)
+    max_thickness_chord_ratio = 0.12
+    thickness_dist = 5 * max_thickness_chord_ratio * (0.2969 * jnp.sqrt(x) - 0.1260 * x - 0.3516 * x**2 + 0.2843 * x**3 - 0.1015 * x**4) 
 
-    #     Returns:
+    # Setup the problem
+    prob.setup()
 
-    #     float
-    #         Roots of the Legendre polynomials (eigenvalues of T)
-    #     float
-    #         weights used for G-L quadrature (formula from Golub & Welsch 1969)
-
-    #     References: 
-
-    #     [1] Golub, Gene H., and John H. Welsch. "Calculation of Gauss quadrature rules." 
-    #         Mathematics of computation 23.106 (1969): 221-230.
-        
-    #     [2] André Ronveaux, Jean Mawhin, Rediscovering the contributions of Rodrigues on 
-    #         the representation of special functions, Expositiones Mathematicae, Volume 23, 
-    #         Issue 4, 2005, Pages 361-369, ISSN 0723-0869,
-    #         https://doi.org/10.1016/j.exmath.2005.05.001. 
-
-    #     """
-
-    #     i = jnp.arange(1, n)
-    #     beta = i / jnp.sqrt(4 * i**2 - 1)
-    #     T = jnp.diag(beta, k=1) + jnp.diag(beta, k=-1)  # Tridiagonal matrix
-    #     eigenvalues, eigenvectors = jax.jit(jnp.linalg.eigh)(T)  # Compute eigenvalues (roots) and eigenvectors
-    #     roots = eigenvalues
-    #     weights = 2 * (eigenvectors[0, :] ** 2)  # Compute weights from first row of eigenvectors
-        
-    #     return roots, weights
+    # Define some example inputs
+    prob.set_val('span', 1)  
+    prob.set_val('root_chord', 1)  
+    prob.set_val('tip_chord', 0.5)  
+    prob.set_val('twist', jnp.linspace(0, 0, 10))  
+    prob.set_val('thickness_dist', thickness_dist)  
 
 
-    # def gauss_quad(self, f, n, a, b):
-    #     """
-    #     Computes the integral of f(x) over [a, b] using Gaussian quadrature with n points.
+    #prob.model.cog.options['airfoil_data_file'] = 'Clark_Y.dat'
+    prob.model.cog.options['material'] = 'Balsa'
+    prob.model.cog.options['airfoil_type'] = '2412'
 
-    #     Parameters: 
+    # Run the model
+    prob.run_model()
 
-    #     f : function
-    #         The function to integrate.
-        
-    #     n : int
-    #         The number of quadrature points.
-        
-    #     a, b : float
-    #         Integration limits.
+    # Get the results
+    center_of_gravity_x = prob.get_val('cog.center_of_gravity_x_wing')
+    center_of_gravity_y = prob.get_val('cog.center_of_gravity_y_wing')
+    center_of_gravity_z = prob.get_val('cog.center_of_gravity_z_wing')
+    total_weight = prob.get_val('cog.total_weight_wing')
 
-    #     Returns:
-
-    #     float
-    #         The approximated integral of f(x) over [a, b].
-
-    #     """
-    #     x, w = self.legendre_roots_and_weights(n)
-
-    #     x_mapped = 0.5 * (b - a) * x + 0.5 * (b + a)
-    #     w_mapped = 0.5 * (b - a) * w
-
-    #     integral = jnp.sum(w_mapped * f(x_mapped))  # Compute weighted sum
-    #     return integral.astype(jnp.float64)
-
-# Build OpenMDAO problem
-prob = om.Problem()
-
-# Add the center of gravity component
-prob.model.add_subsystem('cog', WingMassAndCOG() , promotes_inputs=['*'], promotes_outputs=['*'])
-
-n_points = 10 # = num_sections
-x = jnp.linspace(0, 1, n_points)
-max_thickness_chord_ratio = 0.12
-thickness_dist = 5 * max_thickness_chord_ratio * (0.2969 * jnp.sqrt(x) - 0.1260 * x - 0.3516 * x**2 + 0.2843 * x**3 - 0.1015 * x**4) 
-
-# Setup the problem
-prob.setup()
-
-# Define some example inputs
-prob.set_val('span', 1)  
-prob.set_val('root_chord', 1)  
-prob.set_val('tip_chord', 0.5)  
-prob.set_val('twist', jnp.linspace(0, 0, 10))  
-prob.set_val('thickness_dist', thickness_dist)  
-
-
-#prob.model.cog.options['airfoil_data_file'] = 'Clark_Y.dat'
-prob.model.cog.options['material'] = 'Balsa'
-prob.model.cog.options['airfoil_type'] = '2412'
-
-# Run the model
-prob.run_model()
-
-# Get the results
-center_of_gravity_x = prob.get_val('cog.center_of_gravity_x')
-center_of_gravity_y = prob.get_val('cog.center_of_gravity_y')
-center_of_gravity_z = prob.get_val('cog.center_of_gravity_z')
-total_weight = prob.get_val('cog.total_weight')
-
-#data = prob.check_partials(compact_print=True, method='cs')
-#om.partial_deriv_plot(data)
-
-print(f"Center of gravity: X = {center_of_gravity_x} m, Y = {center_of_gravity_y} m, Z = {center_of_gravity_z} m")
-print(f"Total weight of the wing: {total_weight} kg")
+    print(f"Center of gravity: X = {center_of_gravity_x} m, Y = {center_of_gravity_y} m, Z = {center_of_gravity_z} m")
+    print(f"Total mass of the wing: {total_weight} kg")
 
 

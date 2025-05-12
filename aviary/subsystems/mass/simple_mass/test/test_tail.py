@@ -39,19 +39,19 @@ class TailMassTestCase(unittest.TestCase):
         )
 
         self.prob.model.set_input_defaults(
-            "span",
+            "span_tail",
             val=1,
             units="m"
         )
 
         self.prob.model.set_input_defaults(
-            "root_chord",
+            "root_chord_tail",
             val=1,
             units="m"
         )
 
         self.prob.model.set_input_defaults(
-            "tip_chord",
+            "tip_chord_tail",
             val=0.5,
             units="m"
         )
@@ -68,7 +68,7 @@ class TailMassTestCase(unittest.TestCase):
         )
 
         self.prob.model.set_input_defaults(
-            "twist",
+            "twist_tail",
             val=np.zeros(10),
             units="deg"
         )
@@ -85,12 +85,12 @@ class TailMassTestCase(unittest.TestCase):
 
         assert_near_equal(
             self.prob["mass"],
-            4.22032, # still need to calculate by hand
+            4.22032, 
             tol)
         
         partial_data = self.prob.check_partials(
             out_stream=None,
-            method="cs") # Finite difference because cs is used in tail mass calculation right now
+            method="cs") 
         
         assert_check_partials(
             partial_data,
