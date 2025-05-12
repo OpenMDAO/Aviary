@@ -49,7 +49,7 @@ fi
 # pyoptsparse_line=$(grep ' pyoptsparse' $input_yaml | sed 's/^    //')
 
 # Remove specified packages and write to an intermediate file
-grep -v -e 'aviary' -e 'om-aviary' -e 'build-pyoptsparse' -e 'pyoptsparse' -e 'networkx' -e '  - pip:' $input_yaml > $intermediate_yaml
+grep -v -e 'aviary' -e 'build-pyoptsparse' -e 'pyoptsparse' -e 'networkx' -e '  - pip:' $input_yaml > $intermediate_yaml
 
 # Check for 'dev' versions of OpenMDAO and Dymos
 if grep -q -e 'openmdao.*dev' $intermediate_yaml; then

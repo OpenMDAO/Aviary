@@ -8,8 +8,10 @@ Here we have climb, cruise, and descent phases.
 We then call the correct methods in order to set up and run an Aviary optimization problem.
 This performs a coupled design-mission optimization and outputs the results from Aviary into the `reports` folder.
 """
-import aviary.api as av
+
 from example_phase_info import phase_info
+
+import aviary.api as av
 
 prob = av.AviaryProblem()
 
@@ -29,7 +31,7 @@ prob.add_post_mission_systems()
 # Link phases and variables
 prob.link_phases()
 
-prob.add_driver("SLSQP", max_iter=100)
+prob.add_driver('SLSQP', max_iter=100)
 
 prob.add_design_variables()
 

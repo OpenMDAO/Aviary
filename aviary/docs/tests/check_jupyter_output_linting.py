@@ -1,16 +1,9 @@
-import unittest
-import os.path
 import json
+import os.path
 import sys
+import unittest
 
-exclude = {
-    'tests',
-    'test',
-    '_build',
-    '.ipynb_checkpoints',
-    '_srcdocs',
-    '__pycache__'
-}
+exclude = {'tests', 'test', '_build', '.ipynb_checkpoints', '_srcdocs', '__pycache__'}
 
 directories = None
 
@@ -42,23 +35,19 @@ def _get_files():
             # Loop over files
             for file_name in os.listdir(dirpath):
                 if not file_name.startswith('_') and file_name.endswith('.ipynb'):
-                    FILES.append(dirpath + "/" + file_name)
+                    FILES.append(dirpath + '/' + file_name)
 
         if len(FILES) < 1:
-            raise RuntimeError(f"No notebooks found. Top directory is {top}.")
+            raise RuntimeError(f'No notebooks found. Top directory is {top}.')
     return FILES
 
 
 @unittest.skipIf(sys.platform == 'win32', "Tests don't work in Windows")
 class LintJupyterOutputsTestCase(unittest.TestCase):
-    """
-    Check Jupyter Notebooks for outputs through execution count and recommend to remove output.
-    """
+    """Check Jupyter Notebooks for outputs through execution count and recommend to remove output."""
 
     def test_output(self):
-        """
-        Check that output has been cleaned out of all cells.
-        """
+        """Check that output has been cleaned out of all cells."""
         for file in _get_files():
             with self.subTest(file):
                 with open(file) as f:
@@ -66,30 +55,28 @@ class LintJupyterOutputsTestCase(unittest.TestCase):
                     for cell in json_data['cells']:
                         if 'execution_count' in cell and cell['execution_count'] is not None:
                             msg = "Clear output with 'reset_notebook path_to_notebook.ipynb'"
-                            self.fail(f"Output found in {file}.\n{msg}")
+                            self.fail(f'Output found in {file}.\n{msg}')
 
     def test_assert(self):
-        """
-        Make sure any code cells with asserts are hidden.
-        """
+        """Make sure any code cells with asserts are hidden."""
         for file in _get_files():
             with open(file) as f:
                 json_data = json.load(f)
                 for block in json_data['cells'][1:]:
-
                     # Don't check markup cells
                     if block['cell_type'] != 'code':
                         continue
 
                     tags = block['metadata'].get('tags')
                     if tags:
-
                         # Don't check hidden cells
-                        if ('remove-input' in tags and 'remove-output' in tags) or 'remove-cell' in tags:
+                        if (
+                            'remove-input' in tags and 'remove-output' in tags
+                        ) or 'remove-cell' in tags:
                             continue
 
                         # We allow an assert in a cell if you tag it.
-                        if "allow-assert" in tags:
+                        if 'allow-assert' in tags:
                             continue
 
                     for line in block['source']:
@@ -97,14 +84,14 @@ class LintJupyterOutputsTestCase(unittest.TestCase):
                             sblock = ''.join(block['source'])
                             stags = tags if tags else ''
                             delim = '-' * 50
-                            self.fail(f"Assert found in a code block in {file}:\n"
-                                      f"Tags: {stags}\n"
-                                      f"Block source:\n{delim}\n{sblock}\n{delim}")
+                            self.fail(
+                                f'Assert found in a code block in {file}:\n'
+                                f'Tags: {stags}\n'
+                                f'Block source:\n{delim}\n{sblock}\n{delim}'
+                            )
 
     def test_eval_rst(self):
-        """
-        Make sure any automethod calls are bracketed with {eval-rst}.
-        """
+        """Make sure any automethod calls are bracketed with {eval-rst}."""
         files = set()
 
         for file in _get_files():
@@ -112,7 +99,6 @@ class LintJupyterOutputsTestCase(unittest.TestCase):
                 json_data = json.load(f)
                 blocks = json_data['cells']
                 for block in blocks[1:]:
-
                     # check only markdown cells
                     if block['cell_type'] != 'markdown':
                         continue
@@ -122,8 +108,10 @@ class LintJupyterOutputsTestCase(unittest.TestCase):
                         files.add(file)
 
         if files:
-            self.fail("'automethod' directive found in the following {} files without"
-                      "'eval-rst':\n{}".format(len(files), '\n'.join(files)))
+            self.fail(
+                "'automethod' directive found in the following {} files without"
+                "'eval-rst':\n{}".format(len(files), '\n'.join(files))
+            )
 
 
 if __name__ == '__main__':

@@ -55,7 +55,7 @@ av.add_meta_data(
     'aircraft:fuselage:eccentricity',
     units=None,
     desc='Eccentricity of cross section of fuselage',
-    default_value=.5,
+    default_value=0.5,
     meta_data=dict2,
     historical_name=None,
 )
@@ -196,7 +196,7 @@ av.add_meta_data(
     'aircraft:fuselage:eccentricity',
     units=None,
     desc='Eccentricity of cross section of fuselage',
-    default_value=.5,
+    default_value=0.5,
     meta_data=merged_dicts_23,
     historical_name=None,
 )
@@ -267,9 +267,7 @@ merged_dicts_26_msg = 'You have attempted to merge metadata dictionaries that co
 
 
 class MergeMetaDataTest(unittest.TestCase):
-    """
-    Test functionality of merge_meta_data function.
-    """
+    """Test functionality of merge_meta_data function."""
 
     def test_match_merge(self):
         merge23 = merge_meta_data([dict2, dict3])

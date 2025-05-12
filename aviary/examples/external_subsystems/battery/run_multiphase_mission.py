@@ -1,10 +1,8 @@
-from aviary.interface.methods_for_level2 import AviaryProblem
-
+from aviary.api import default_height_energy_phase_info as phase_info
 from aviary.examples.external_subsystems.battery.battery_builder import BatteryBuilder
 from aviary.examples.external_subsystems.battery.battery_variable_meta_data import ExtendedMetaData
-from aviary.api import default_height_energy_phase_info as phase_info
+from aviary.interface.methods_for_level2 import AviaryProblem
 from aviary.utils.functions import get_aviary_resource_path
-
 
 battery_builder = BatteryBuilder(include_constraints=False)
 
@@ -18,8 +16,7 @@ if __name__ == '__main__':
 
     # Load aircraft and options data from user
     # Allow for user overrides here
-    input_file = get_aviary_resource_path(
-        'models/test_aircraft/aircraft_for_bench_FwFm.csv')
+    input_file = get_aviary_resource_path('models/test_aircraft/aircraft_for_bench_FwFm.csv')
     prob.load_inputs(input_file, phase_info, meta_data=ExtendedMetaData)
 
     # Preprocess inputs
@@ -34,13 +31,13 @@ if __name__ == '__main__':
     # Link phases and variables
     prob.link_phases()
 
-    prob.add_driver("SLSQP")
+    prob.add_driver('SLSQP')
 
     prob.add_design_variables()
 
     prob.add_objective('mass')
     # prob.model.add_objective(
-    #     f'traj.climb.states:{Mission.Battery.STATE_OF_CHARGE}', index=-1, ref=-1)
+    #     f'traj.climb.states:{Dynamic.Battery.STATE_OF_CHARGE}', index=-1, ref=-1)
 
     prob.setup()
 

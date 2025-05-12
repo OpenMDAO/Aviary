@@ -1,21 +1,18 @@
 import numpy as np
-
 import openmdao.api as om
 
-from aviary.variable_info.variables import Dynamic, Aircraft, Mission
+from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 
 
 class GearboxMission(om.Group):
-    """
-    Calculates the mission performance of a single gearbox.
-    """
+    """Calculates the mission performance of a single gearbox."""
 
     def initialize(self):
-        self.options.declare("num_nodes", types=int)
+        self.options.declare('num_nodes', types=int)
         self.name = 'gearbox_mission'
 
     def setup(self):
-        n = self.options["num_nodes"]
+        n = self.options['num_nodes']
 
         self.add_subsystem(
             'rpm_comp',
@@ -46,9 +43,7 @@ class GearboxMission(om.Group):
                 ('shaft_power_in', Dynamic.Vehicle.Propulsion.SHAFT_POWER + '_in'),
                 ('efficiency', Aircraft.Engine.Gearbox.EFFICIENCY),
             ],
-            promotes_outputs=[
-                ('shaft_power_out', Dynamic.Vehicle.Propulsion.SHAFT_POWER + '_out')
-            ],
+            promotes_outputs=[('shaft_power_out', Dynamic.Vehicle.Propulsion.SHAFT_POWER + '_out')],
         )
 
         self.add_subsystem(
@@ -60,17 +55,16 @@ class GearboxMission(om.Group):
                 rpm_out={'val': np.ones(n), 'units': 'rad/s'},
                 has_diag_partials=True,
             ),
-            promotes_outputs=[
-                ('torque_out', Dynamic.Vehicle.Propulsion.TORQUE + '_out')],
+            promotes_outputs=[('torque_out', Dynamic.Vehicle.Propulsion.TORQUE + '_out')],
         )
         self.connect(
             f'{Dynamic.Vehicle.Propulsion.SHAFT_POWER}_out',
-            f'torque_comp.shaft_power_out',
+            'torque_comp.shaft_power_out',
         )
 
         self.connect(
             f'{Dynamic.Vehicle.Propulsion.RPM}_out',
-            f'torque_comp.rpm_out',
+            'torque_comp.rpm_out',
         )
 
         # Determine the maximum power available at this flight condition

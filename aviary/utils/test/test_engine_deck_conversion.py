@@ -3,44 +3,29 @@ from pathlib import Path
 
 from openmdao.utils.testing_utils import use_tempdirs
 
-from aviary.utils.engine_deck_conversion import EngineDeckType, _exec_EDC
+from aviary.utils.engine_deck_conversion import EngineDeckConverter, EngineDeckType
 from aviary.utils.functions import get_path
-
-
-class DummyArgs(object):
-    def __init__(self):
-        self.input_file = None
-        self.output_file = None
-        self.data_format = None
 
 
 @use_tempdirs
 class TestEngineDeckConversion(unittest.TestCase):
-    """
-    Test engine deck conversion utility by comparing against previously converted engine deck files
-    """
+    """Test engine deck conversion utility by comparing against previously converted engine deck files."""
 
     def prepare_and_run(self, filename, output_file=None, data_format=EngineDeckType.GASP):
-        args = DummyArgs()
-
         # Specify the input file
-        args.input_file = filepath = get_path('models/engines/'+filename)
+        input_file = get_path('utils/test/data/' + filename)
 
         # Specify the output file
         if not output_file:
-            filename = filepath.stem+'.deck'
-            args.output_file = Path.cwd() / Path('TEST_'+filename)
+            filename = input_file.stem + '.deck'
+            output_file = Path.cwd() / Path('TEST_' + filename)
         else:
-            args.output_file = str(Path(output_file))
-
-        # Specify the legacy code and engine type
-        args.data_format = data_format
+            output_file = str(Path(output_file))
 
         # Execute the conversion
-        _exec_EDC(args, None)
-        return args
+        EngineDeckConverter(input_file, output_file, data_format)
 
-    def compare_files(self, filepath, skip_list=[]):
+    def compare_files(self, filepath, skip_list=['# created']):
         """
         Compares the converted file with a validation file.
 
@@ -48,12 +33,12 @@ class TestEngineDeckConversion(unittest.TestCase):
         to skip. This is useful for skipping data that Aviary might need but
         Fortran-based tools do not.
         """
-        filename = filepath.split('.')[0]+'.deck'
+        filename = filepath.split('.')[0] + '.deck'
 
-        validation_data = get_path('models/engines/'+filename)
+        validation_data = get_path('models/engines/' + filename)
 
         # Open the converted and validation files
-        with open('TEST_'+filename, 'r') as f_in, open(validation_data, 'r') as expected:
+        with open('TEST_' + filename, 'r') as f_in, open(validation_data, 'r') as expected:
             for line in f_in:
                 if any(s in line for s in skip_list):
                     break
@@ -65,24 +50,32 @@ class TestEngineDeckConversion(unittest.TestCase):
                 try:
                     self.assertEqual(line_no_whitespace.count(expected_line), 1)
 
-                except Exception as error:
+                except Exception:
                     exc_string = (
-                        f'Error: {filename}\n'
-                        f'Found: {line_no_whitespace}\n'
-                        f'Expected: {expected_line}'
+                        f'Error: {filename}\nFound: {line_no_whitespace}\nExpected: {expected_line}'
                     )
                     raise Exception(exc_string)
 
-    # TODO currently untested!!
-    # def test_TF_conversion(self):
-    #     return
+    def test_TF_conversion_FLOPS(self):
+        filename = 'turbofan_22k.txt'
+
+        self.prepare_and_run(filename, data_format=EngineDeckType.FLOPS)
+        self.compare_files(filename)
+
+    def test_TF_conversion_GASP(self):
+        filename = 'turbofan_23k_1.eng'
+
+        self.prepare_and_run(filename, data_format=EngineDeckType.GASP)
+        self.compare_files(filename)
 
     def test_TP_conversion(self):
         filename = 'turboshaft_4465hp.eng'
 
-        args = self.prepare_and_run(filename, data_format=EngineDeckType.GASP_TS)
-        self.compare_files(filename, skip_list=['# created'])
+        self.prepare_and_run(filename, data_format=EngineDeckType.GASP_TS)
+        self.compare_files(filename)
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     unittest.main()
+    # test = TestEngineDeckConversion()
+    # test.test_TP_conversion()

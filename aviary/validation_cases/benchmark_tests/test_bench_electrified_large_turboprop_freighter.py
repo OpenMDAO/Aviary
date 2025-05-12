@@ -1,35 +1,26 @@
-import numpy as np
 import unittest
+
 import openmdao.api as om
-
-
-from numpy.testing import assert_almost_equal
 from openmdao.utils.testing_utils import use_tempdirs
 
 from aviary.interface.methods_for_level2 import AviaryProblem
-from aviary.subsystems.propulsion.turboprop_model import TurbopropModel
+from aviary.models.large_turboprop_freighter.phase_info import energy_phase_info
 from aviary.subsystems.propulsion.motor.motor_builder import MotorBuilder
+from aviary.subsystems.propulsion.turboprop_model import TurbopropModel
 from aviary.utils.process_input_decks import create_vehicle
 from aviary.variable_info.variables import Aircraft, Mission, Settings
-
-from aviary.models.large_turboprop_freighter.phase_info import (
-    two_dof_phase_info,
-    energy_phase_info,
-)
 
 
 @use_tempdirs
 # TODO need to add asserts with "truth" values
 class LargeElectrifiedTurbopropFreighterBenchmark(unittest.TestCase):
-
     def build_and_run_problem(self):
-
         # Build problem
-        prob = AviaryProblem()
+        prob = AviaryProblem(verbosity=0)
 
         # load inputs from .csv to build engine
         options, guesses = create_vehicle(
-            "models/large_turboprop_freighter/large_turboprop_freighter.csv"
+            'models/large_turboprop_freighter/large_turboprop_freighter_GASP.csv'
         )
 
         options.set_val(Settings.EQUATIONS_OF_MOTION, 'height_energy')
@@ -54,13 +45,11 @@ class LargeElectrifiedTurbopropFreighterBenchmark(unittest.TestCase):
             'motor',
         )
 
-        electroprop = TurbopropModel(
-            'electroprop', options=options, shaft_power_model=motor
-        )
+        electroprop = TurbopropModel('electroprop', options=options, shaft_power_model=motor)
 
         # load_inputs needs to be updated to accept an already existing aviary options
         prob.load_inputs(
-            options,  # "models/large_turboprop_freighter/large_turboprop_freighter.csv",
+            options,  # "models/large_turboprop_freighter/large_turboprop_freighter_GASP.csv",
             energy_phase_info,
             engine_builders=[electroprop],
         )
@@ -71,8 +60,8 @@ class LargeElectrifiedTurbopropFreighterBenchmark(unittest.TestCase):
         prob.aviary_inputs.set_val(Aircraft.Wing.AREA, 1744.59, 'ft**2')
         # prob.aviary_inputs.set_val(Aircraft.Wing.ASPECT_RATIO, 10.078)
         prob.aviary_inputs.set_val(
-            Aircraft.Wing.THICKNESS_TO_CHORD,
-            0.1500)  # average between root and chord T/C
+            Aircraft.Wing.THICKNESS_TO_CHORD, 0.1500
+        )  # average between root and chord T/C
         prob.aviary_inputs.set_val(Aircraft.Fuselage.MAX_WIDTH, 4.3, 'm')
         prob.aviary_inputs.set_val(Aircraft.Fuselage.MAX_HEIGHT, 3.95, 'm')
         prob.aviary_inputs.set_val(Aircraft.Fuselage.AVG_DIAMETER, 4.125, 'm')
@@ -82,7 +71,7 @@ class LargeElectrifiedTurbopropFreighterBenchmark(unittest.TestCase):
         prob.add_phases()
         prob.add_post_mission_systems()
         prob.link_phases()
-        prob.add_driver("IPOPT", max_iter=0, verbosity=0)
+        prob.add_driver('IPOPT', max_iter=0, verbosity=0)
         prob.add_design_variables()
         prob.add_objective()
 
@@ -91,7 +80,7 @@ class LargeElectrifiedTurbopropFreighterBenchmark(unittest.TestCase):
         om.n2(prob)
 
         prob.set_initial_guesses()
-        prob.run_aviary_problem("dymos_solution.db")
+        prob.run_aviary_problem('dymos_solution.db')
 
         om.n2(prob)
 

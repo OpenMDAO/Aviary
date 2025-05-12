@@ -10,7 +10,7 @@ The minimum supported version of Python is 3.9; we recommend using the latest re
 The simplest way to install Aviary to use pip in a terminal:
 
 ```python
-pip install om-aviary
+pip install aviary
 ```
 
 This will install the latest release of Aviary and all of its dependencies.
@@ -100,11 +100,11 @@ dependencies:
 
 In this file, the `name` can be anything you like. The version of python is not limited to 3.9, but we recommend that you stay with this version because it is the version that we use to fully test Aviary and that it is required for some packages later on. For example, if you are going to add `OpenVSP` to your environment, you will find that you need this version.
 
-In the list, we see the popular Python packages for scientific computations: `numpy`, `scipy`, `matplotlib` and `pandas`. Aviary follows a standard source code formatting convention. `autopep8` provides an easy way to check your source code for this purpose. `jupyter` and `jupyter-book` are used to create Aviary manual. `parameterized` and `testflo` are for Aviary testing. Aviary uses a lot of packages developed by [MDOLab](https://mdolab.engin.umich.edu/). So, we want to include its base classes. OpenMDAO records data in SQLite database and that is what `sqlitedict` comes for. `f90nml` is A Python module and command line tool for parsing Fortran namelist files. `bokeh` is an interactive visualization library for modern web browsers. It is needed to generate Aviary output (traj_results_report.html).
+In the list, we see the popular Python packages for scientific computations: `numpy`, `scipy`, `matplotlib` and `pandas`. Aviary follows a standard source code formatting convention. `ruff` provides an easy way to check your source code for this purpose. `jupyter` and `jupyter-book` are used to create Aviary manual. `parameterized` and `testflo` are for Aviary testing. Aviary uses a lot of packages developed by [MDOLab](https://mdolab.engin.umich.edu/). So, we want to include its base classes. OpenMDAO records data in SQLite database and that is what `sqlitedict` comes for. `f90nml` is A Python module and command line tool for parsing Fortran namelist files. `bokeh` is an interactive visualization library for modern web browsers. It is needed to generate Aviary output (traj_results_report.html).
 
 Since we are going to depend on `OpenMDAO` and `dymos`, we could have included them in the `pip` list. We leave them out because we will install the developer version later. In this way, we will get the latest working copies that Aviary depends on. But we do not intend to make changes to them.
 
-[pre-commit](https://pre-commit.com/) and [autopep8 formatter](https://pypi.org/project/autopep8/) are additionally required for developers who wish to contribute to the Aviary repository. Read our [coding standards](../developer_guide/coding_standards) for more information.
+[pre-commit](https://pre-commit.com/) is additionally required for developers who wish to contribute to the Aviary repository. Read our [coding standards](../developer_guide/coding_standards) for more information.
 
 Now, run create your new conda environment using this `.yml` file:
 
@@ -120,7 +120,7 @@ $ conda activate av1
 
 ### Installing Additional Dependencies
 
-Aviary can run in MPI. 
+Aviary can run in MPI.
 You do not need the `mpi4py` or `petsc4py` packages to use Aviary.
 They are useful when running large OpenMDAO models in parallel.
 If needed, you can install them with the following command:
@@ -136,7 +136,7 @@ $ cd ~/workspace
 $ git clone git@github.com:OpenMDAO/OpenMDAO.git
 ```
 
-You have a new subdirectory `workspace/OpenMDAO`. You are not expected to modify source code of OpenMDAO, but you want to keep up with the latests version of it. The best way to do is to install OpenMDAO in developer mode. This removes the need to reinstall OpenMDAO after changes are made. Go to this directory where you see a file `setup.py`. Run 
+You have a new subdirectory `workspace/OpenMDAO`. You are not expected to modify source code of OpenMDAO, but you want to keep up with the latests version of it. The best way to do is to install OpenMDAO in developer mode. This removes the need to reinstall OpenMDAO after changes are made. Go to this directory where you see a file `setup.py`. Run
 
 ```
 $ cd OpenMDAO
@@ -193,7 +193,7 @@ $ python -m pip install ./build_pyoptsparse
 `SNOPT` is a commercial optimizer that is free for academic use and available for purchase for commercial use. Users must obtain it themselves.
 ```
 
-Assuming you have the `SNOPT` source code already, copy it to the `workspace` directory. 
+Assuming you have the `SNOPT` source code already, copy it to the `workspace` directory.
 Run:
 
 ```
@@ -254,7 +254,7 @@ Successfully installed pyoptsparse-2.10.1
 
 ### Installing Aviary and Running Tests
 
-Now, we are ready to install Aviary. Assuming that you will become a contributor sooner or later, we want to install a copy from the main source. (You will need a GitHub account for this) Let us open `https://github.com/openMDAO/om-aviary/` in a web browser and click [fork](https://github.com/OpenMDAO/Aviary/fork) on the top-right corner. You then have created your own copy of Aviary on GitHub website. Now we create a copy on your local drive (supposing `USER_ID` is your GitHub account ID):
+Now, we are ready to install Aviary. Assuming that you will become a contributor sooner or later, we want to install a copy from the main source. (You will need a GitHub account for this) Let us open `https://github.com/openMDAO/aviary/` in a web browser and click [fork](https://github.com/OpenMDAO/Aviary/fork) on the top-right corner. You then have created your own copy of Aviary on GitHub website. Now we create a copy on your local drive (supposing `USER_ID` is your GitHub account ID):
 
 ```
 $ cd ~/workspace

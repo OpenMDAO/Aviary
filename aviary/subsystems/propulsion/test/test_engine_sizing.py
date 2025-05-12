@@ -40,8 +40,7 @@ class EngineSizingTest1(unittest.TestCase):
             Aircraft.Engine.REFERENCE_SLS_THRUST: ref_thrust,
         }
 
-        self.prob.model.add_subsystem('engine', SizeEngine(**options),
-                                      promotes=['*'])
+        self.prob.model.add_subsystem('engine', SizeEngine(**options), promotes=['*'])
 
         self.prob.setup(force_alloc_complex=True)
 
@@ -55,9 +54,9 @@ class EngineSizingTest1(unittest.TestCase):
 
         assert_near_equal(sls_thrust, expected_sls_thrust, tolerance=1e-8)
 
-        partial_data = self.prob.check_partials(out_stream=None, method="cs")
+        partial_data = self.prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-10)
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     unittest.main()
