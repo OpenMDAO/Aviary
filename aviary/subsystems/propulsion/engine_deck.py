@@ -1643,9 +1643,8 @@ def normalize(base_list, maximum=None, minimum=None):
 
 def extend_array(inp_array, size):
     """
-    Extends input array such that it is at least as large as the target size in all dimensions.
-    If input array is smaller in any dimension, extends input array to match target size in that
-    dimension. Works on arrays of any dimension.
+    Extends input array such that it is at least as large as the target size in each dimension.
+    Works on arrays of any dimension.
     Returns copy of input array extended in required dimensions with newly created points set to 0.
 
     Parameters
