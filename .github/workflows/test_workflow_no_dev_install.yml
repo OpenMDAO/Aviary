@@ -27,6 +27,7 @@ on:
         required: false
         default: false
 
+run-name:  ${{ inputs.run_name }}
 
 jobs:
 
