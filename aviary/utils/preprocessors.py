@@ -577,7 +577,7 @@ def preprocess_propulsion(
                         aviary_val = aviary_options.get_val(var, units)
                     # if the variable is not in aviary_options, use default from metadata
                     except (KeyError, IndexError):
-                        vec = np.append(vec, default_value)
+                        vec.append(default_value)
                     else:
                         # save value from aviary_options
                         if isiterable(aviary_val):
