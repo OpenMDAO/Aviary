@@ -44,7 +44,7 @@ class FlightPhaseOptions(AviaryOptionsDictionary):
 
         # TODO: These defaults aren't great, but need to keep things the same for now.
         defaults = {
-            'mass_ref': 1e4,
+            'mass_ref': 1e6,
             'mass_defect_ref': 1e6,
             'mass_bounds': (0.0, None),
         }
@@ -65,6 +65,8 @@ class FlightPhaseOptions(AviaryOptionsDictionary):
             'mach_ref': 0.5,
         }
         self.add_control_options('mach', units='unitless', defaults=defaults)
+
+        self.add_time_options(units='s')
 
         self.declare(
             name='throttle_enforcement',
@@ -115,28 +117,6 @@ class FlightPhaseOptions(AviaryOptionsDictionary):
         )
 
         self.declare(
-            'time_initial_bounds',
-            types=tuple,
-            default=(None, None),
-            units='min',
-            desc='Lower and upper bounds on the starting time for this phase relative to the '
-            'starting time of the mission, i.e., ((25, 45), "min") constrians this phase to '
-            'start between 25 and 45 minutes after the start of the mission.',
-        )
-
-        self.declare(
-            name='time_duration_bounds',
-            types=tuple,
-            default=(None, None),
-            units='min',
-            desc='Lower and upper bounds on the phase duration, in the form of a nested tuple: '
-            'i.e. ((20, 36), "min") This constrains the duration to be between 20 and 36 min.',
-        )
-
-
-        # untreated
-
-        self.declare(
             'reserve',
             types=bool,
             default=False,
@@ -155,22 +135,6 @@ class FlightPhaseOptions(AviaryOptionsDictionary):
         )
 
         self.declare(
-            'target_duration',
-            types=tuple,
-            default=None,
-            units='s',
-            desc='The amount of time taken by this phase added as a constraint.',
-        )
-
-        self.declare(
-            name='fix_duration',
-            types=bool,
-            default=True,
-            desc='If True, the time duration of the phase is not treated as a design '
-            'variable for the optimization problem.',
-        )
-
-        self.declare(
             name='no_climb',
             types=bool,
             default=False,
@@ -184,14 +148,6 @@ class FlightPhaseOptions(AviaryOptionsDictionary):
             default=False,
             desc='Set to True to prevent the aircraft from descending during the phase. This '
             'can be used to prevent unexpected descent during a climb phase.',
-        )
-
-        self.declare(
-            name='distance_solve_segments',
-            types=bool,
-            default=False,
-            desc='if True, use a nonlinear solver to converge the distance state variable to '
-            'the desired value. Otherwise uses the optimizer to converge the distance state.',
         )
 
 

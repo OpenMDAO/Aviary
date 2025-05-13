@@ -16,11 +16,6 @@ from aviary.utils.utils import wrapped_convert_units
 from aviary.variable_info.enums import AnalysisScheme, LegacyCode
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 
-if hasattr(TranscriptionBase, 'setup_polynomial_controls'):
-    use_new_dymos_syntax = False
-else:
-    use_new_dymos_syntax = True
-
 
 class HeightEnergyProblemConfigurator(ProblemConfiguratorBase):
     """
@@ -202,68 +197,49 @@ class HeightEnergyProblemConfigurator(ProblemConfiguratorBase):
         user_options : dict
             Subdictionary "user_options" from the phase_info.
         """
-        try:
-            fix_initial = user_options.get_val('fix_initial')
-        except KeyError:
-            fix_initial = False
+        initial = user_options['time_initial'][0]
+        duration = user_options['time_duration'][0]
+        initial_bounds = user_options['time_initial_bounds'][0]
+        duration_bounds = user_options['time_duration_bounds'][0]
+        initial_ref = user_options['time_initial_ref'][0]
+        duration_ref = user_options['time_duration_ref'][0]
+        time_units = 's'
 
-        try:
-            fix_duration = user_options.get_val('fix_duration')
-        except KeyError:
-            fix_duration = False
+        fix_initial = initial is not None
+        fix_duration = duration is not None
 
-        time_units = phase.time_options['units']
-
-        # Make a good guess for a reasonable intitial time scaler.
-        try:
-            initial_bounds = user_options.get_val('time_initial_bounds', units=time_units)
-        except KeyError:
-            initial_bounds = (None, None)
-
-        if initial_bounds[0] is not None and initial_bounds[1] != 0.0:
-            # Upper bound is good for a ref.
-            user_options.set_val('time_initial_ref', initial_bounds[1], units=time_units)
-        else:
-            user_options.set_val('time_initial_ref', 600.0, time_units)
-
-        duration_bounds = user_options.get_val('time_duration_bounds', time_units)
-        user_options.set_val(
-            'time_duration_ref', (duration_bounds[0] + duration_bounds[1]) / 2.0, time_units
-        )
-
-        # The rest of the phases includes all Height Energy method phases
-        # and any 2DOF phases that don't fall into the naming patterns
-        # above.
+        # All follow-on phases.
         input_initial = phase_idx > 0
 
-        if fix_initial or input_initial:
-            if prob.comm.size > 1:
-                # Phases are disconnected to run in parallel, so initial ref is
-                # valid.
-                initial_ref = user_options.get_val('time_initial_ref', time_units)
+        # Figure out resonable refs if they aren't given.
+        if initial_ref == 1.0:
+            if duration_bounds[1]:
+                initial_ref = duration_bounds[1]
             else:
-                # Redundant on a fixed input; raises a warning if specified.
-                initial_ref = None
-                initial_bounds = (None, None)
+                # TODO: Why were we using this value?
+                initial_ref = 600.0
 
-            phase.set_time_options(
-                fix_initial=fix_initial,
-                fix_duration=fix_duration,
-                units=time_units,
-                duration_bounds=user_options.get_val('time_duration_bounds', time_units),
-                duration_ref=user_options.get_val('time_duration_ref', time_units),
-                initial_ref=initial_ref,
-            )
+        if duration_ref == 1.0 and duration_bounds[0] and duration_bounds[1]:
+            # We have been using the average.
+            duration_ref = 0.5 * (duration_bounds[0] + duration_bounds[1])
+
+        if fix_initial or input_initial and prob.comm.size == 1:
+            # Redundant on a fixed input (unless MPI); raises a warning if specified.
+            initial_options = {}
         else:
-            phase.set_time_options(
-                fix_initial=fix_initial,
-                fix_duration=fix_duration,
-                units=time_units,
-                duration_bounds=user_options.get_val('time_duration_bounds', time_units),
-                duration_ref=user_options.get_val('time_duration_ref', time_units),
-                initial_bounds=initial_bounds,
-                initial_ref=user_options.get_val('time_initial_ref', time_units),
-            )
+            initial_options = {
+                'initial_ref': initial_ref,
+                'initial_bounds': initial_bounds,
+            }
+
+        phase.set_time_options(
+            fix_initial=fix_initial,
+            fix_duration=fix_duration,
+            units=time_units,
+            duration_bounds=duration_bounds,
+            duration_ref=duration_ref,
+            **initial_options,
+        )
 
     def link_phases(self, prob, phases, connect_directly=True):
         """
@@ -350,22 +326,19 @@ class HeightEnergyProblemConfigurator(ProblemConfiguratorBase):
             self._add_post_mission_takeoff_systems(prob)
         else:
             first_flight_phase_name = list(prob.phase_info.keys())[0]
+
+            # TODO: I don't think we have to do this anymore.
             first_flight_phase = prob.traj._phases[first_flight_phase_name]
             first_flight_phase.set_state_options(Dynamic.Vehicle.MASS, fix_initial=False)
 
-        if include_landing and prob.post_mission_info['include_landing']:
-            self._add_landing_systems(prob)
-
-        # connect summary mass to the initial guess of mass in the first phase
-        if not prob.pre_mission_info['include_takeoff']:
-            first_flight_phase_name = list(prob.phase_info.keys())[0]
-
+            # connect summary mass to the initial guess of mass in the first phase
             eq = prob.model.add_subsystem(
                 f'link_{first_flight_phase_name}_mass',
                 om.EQConstraintComp(),
                 promotes_inputs=[('rhs:mass', Mission.Summary.GROSS_MASS)],
             )
 
+            # TODO: replace hard_coded ref for this constraint.
             eq.add_eq_output(
                 'mass', eq_units='lbm', normalize=False, ref=100000.0, add_constraint=True
             )
@@ -376,6 +349,9 @@ class HeightEnergyProblemConfigurator(ProblemConfiguratorBase):
                 src_indices=[0],
                 flat_src_indices=True,
             )
+
+        if include_landing and prob.post_mission_info['include_landing']:
+            self._add_landing_systems(prob)
 
         prob.model.add_subsystem(
             'range_constraint',
@@ -392,6 +368,7 @@ class HeightEnergyProblemConfigurator(ProblemConfiguratorBase):
             promotes_outputs=[('range_resid', Mission.Constraints.RANGE_RESIDUAL)],
         )
 
+        # TODO: replace hard_coded ref for this constraint.
         prob.post_mission.add_constraint(Mission.Constraints.MASS_RESIDUAL, equals=0.0, ref=1.0e5)
 
     def _add_post_mission_takeoff_systems(self, prob):
@@ -411,11 +388,6 @@ class HeightEnergyProblemConfigurator(ProblemConfiguratorBase):
             f'traj.{first_flight_phase_name}.initial_states:distance',
         )
 
-        control_type_string = 'control_values'
-        if phase_options.get('use_polynomial_control', True):
-            if not use_new_dymos_syntax:
-                control_type_string = 'polynomial_control_values'
-
         if phase_options.get('mach_optimize', False):
             # Create an ExecComp to compute the difference in mach
             mach_diff_comp = om.ExecComp(
@@ -426,7 +398,7 @@ class HeightEnergyProblemConfigurator(ProblemConfiguratorBase):
             # Connect the inputs to the mach difference component
             prob.model.connect(Mission.Takeoff.FINAL_MACH, 'mach_diff_comp.final_mach')
             prob.model.connect(
-                f'traj.{first_flight_phase_name}.{control_type_string}:mach',
+                f'traj.{first_flight_phase_name}.control_values:mach',
                 'mach_diff_comp.initial_mach',
                 src_indices=[0],
             )
@@ -447,7 +419,7 @@ class HeightEnergyProblemConfigurator(ProblemConfiguratorBase):
 
             prob.model.connect(Mission.Takeoff.FINAL_ALTITUDE, 'alt_diff_comp.final_altitude')
             prob.model.connect(
-                f'traj.{first_flight_phase_name}.{control_type_string}:altitude',
+                f'traj.{first_flight_phase_name}.control_values:altitude',
                 'alt_diff_comp.initial_altitude',
                 src_indices=[0],
             )
@@ -473,15 +445,6 @@ class HeightEnergyProblemConfigurator(ProblemConfiguratorBase):
             promotes_outputs=['mission:*'],
         )
 
-        last_flight_phase_name = list(prob.phase_info.keys())[-1]
-
-        control_type_string = 'control_values'
-        if prob.phase_info[last_flight_phase_name]['user_options'].get(
-            'use_polynomial_control', True
-        ):
-            if not use_new_dymos_syntax:
-                control_type_string = 'polynomial_control_values'
-
         last_regular_phase = prob.regular_phases[-1]
         prob.model.connect(
             f'traj.{last_regular_phase}.states:mass',
@@ -489,7 +452,7 @@ class HeightEnergyProblemConfigurator(ProblemConfiguratorBase):
             src_indices=[-1],
         )
         prob.model.connect(
-            f'traj.{last_regular_phase}.{control_type_string}:altitude',
+            f'traj.{last_regular_phase}.control_values:altitude',
             Mission.Landing.INITIAL_ALTITUDE,
             src_indices=[0],
         )

@@ -43,11 +43,6 @@ except ImportError:
 
 from dymos.transcriptions.transcription_base import TranscriptionBase
 
-if hasattr(TranscriptionBase, 'setup_polynomial_controls'):
-    use_new_dymos_syntax = False
-else:
-    use_new_dymos_syntax = True
-
 FLOPS = LegacyCode.FLOPS
 
 # benchmark for simple sizing problem on the N3CC
@@ -555,18 +550,13 @@ def run_trajectory(sim=True):
     prob.set_val('traj.cruise.t_initial', t_i_cruise, units='s')
     prob.set_val('traj.cruise.t_duration', t_duration_cruise, units='s')
 
-    if use_new_dymos_syntax:
-        controls_str = 'controls'
-    else:
-        controls_str = 'polynomial_controls'
-
     prob.set_val(
-        f'traj.cruise.{controls_str}:altitude',
+        f'traj.cruise.controls:altitude',
         cruise.interp(Dynamic.Mission.ALTITUDE, ys=[alt_i_cruise, alt_f_cruise]),
         units='m',
     )
     prob.set_val(
-        f'traj.cruise.{controls_str}:mach',
+        f'traj.cruise.controls:mach',
         cruise.interp(Dynamic.Atmosphere.MACH, ys=[cruise_mach, cruise_mach]),
         units='unitless',
     )

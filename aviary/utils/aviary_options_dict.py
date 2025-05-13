@@ -383,3 +383,61 @@ class AviaryOptionsDictionary(om.OptionsDictionary):
             values=[None, 'positive', 'negative'],
             desc=desc,
         )
+
+    def add_time_options(self, units: str=None, defaults=None):
+        """
+        Adds all options for controlling time initial and duration.
+
+        This adds ref and bounds for both.
+
+        Parameters
+        ----------
+        units : str
+            Units for this control if it has them.
+        defaults : dict or None
+            Optional dictionary of default values for any control option.
+        """
+        if defaults is None:
+            defaults = {}
+
+        for stem in ['time_initial', 'time_duration']:
+
+            name = stem
+            default = defaults.get(name, None)
+            desc = f'Tuple of (value, units) containing value of {stem} '
+            desc += 'at the start of the phase.\n'
+            desc += 'When unspecified, the value comes from upstream.\n'
+            desc += f'When specified, a constraint is created on the initial {stem}.'
+            self.declare(
+                name=name,
+                default=default,
+                types=tuple,
+                allow_none=True,
+                units=units,
+                desc=desc,
+            )
+
+            name = f'{stem}_bounds'
+            default = defaults.get(name, (None, None))
+            desc = 'Tuple of form ((lower, upper), units) containing the upper and lower bounds for '
+            desc += f'all values of {stem} in the phase.\n'
+            desc += 'The default of None for upper or lower means that bound will not be declared.\n'
+            self.declare(
+                name=name,
+                default=default,
+                types=tuple,
+                units=units,
+                desc=desc,
+            )
+
+            name = f'{stem}_ref'
+            default = defaults.get(name, 1.0)
+            desc = f'Multiplicative scale factor "ref" for {stem}.\n'
+            desc += 'Default is 1.0'
+            self.declare(
+                name=name,
+                default=default,
+                types=float,
+                units=units,
+                desc=desc,
+            )

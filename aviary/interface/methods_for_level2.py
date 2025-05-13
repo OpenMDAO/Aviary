@@ -604,14 +604,13 @@ class AviaryProblem(om.Problem):
             for control_name, control_dict in control_dicts.items():
                 phase.add_control(control_name, **control_dict)
 
-        user_options = AviaryValues(phase_options.get('user_options', ()))
-
-        # TODO: Should some of this stuff be moved into the phase builder?
-        self.configurator.set_phase_options(self, phase_name, phase_idx, phase, user_options)
-
         # This fills in all defaults from the phase_builders user_options.
         full_options = phase_object.user_options.to_phase_info()
         self.phase_info[phase_name]['user_options'] = full_options
+
+        # TODO: Should some of this stuff be moved into the phase builder?
+        self.configurator.set_phase_options(self, phase_name, phase_idx, phase, full_options)
+
 
         return phase
 
@@ -956,7 +955,7 @@ class AviaryProblem(om.Problem):
                 )
 
             # this is only used for analytic phases with a target duration
-            target_duration = user_options.get('target_duration', None)
+            target_duration = user_options.get('time_duration', None)
             target_duration = wrapped_convert_units(target_duration, 'min')
             analytic = user_options.get('analytic', False)
 
