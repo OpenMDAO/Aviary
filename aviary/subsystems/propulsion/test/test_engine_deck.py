@@ -22,7 +22,7 @@ class EngineDeckTest(unittest.TestCase):
         # Test data grabbed from LEAPS uses the global throttle approach
         aviary_values.set_val(Aircraft.Engine.GLOBAL_THROTTLE, True)
 
-        model = build_engine_deck(aviary_values)[0]
+        model = build_engine_deck(aviary_values)
 
         expected_mach_number = []
         expected_altitude = []
@@ -59,7 +59,7 @@ class EngineDeckTest(unittest.TestCase):
 
         aviary_values = get_flops_inputs('LargeSingleAisle1FLOPS')
 
-        model = build_engine_deck(aviary_values)[0]
+        model = build_engine_deck(aviary_values)
 
         # hardcoded data of processed engine model from LEAPS1 after flight idle
         # point generation, sorted in Aviary order
