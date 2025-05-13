@@ -75,7 +75,7 @@ class ClimbPhaseOptions(AviaryOptionsDictionary):
         )
 
         self.declare(
-            name='final_altitude',
+            name='altitude_final',
             default=0.0,
             units='ft',
             desc='Altitude for final point in the phase.',
@@ -223,7 +223,7 @@ class ClimbPhase(PhaseBuilderBase):
 
         mach_cruise = user_options.get_val('mach_cruise')
         target_mach = user_options.get_val('target_mach')
-        final_altitude = user_options.get_val('final_altitude', units='ft')
+        altitude_final = user_options.get_val('altitude_final', units='ft')
         required_available_climb_rate = user_options.get_val(
             'required_available_climb_rate', units='ft/min'
         )
@@ -239,9 +239,9 @@ class ClimbPhase(PhaseBuilderBase):
         phase.add_boundary_constraint(
             Dynamic.Mission.ALTITUDE,
             loc='final',
-            equals=final_altitude,
+            equals=altitude_final,
             units='ft',
-            ref=final_altitude,
+            ref=altitude_final,
         )
 
         if required_available_climb_rate is not None:

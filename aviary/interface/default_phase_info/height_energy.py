@@ -12,11 +12,11 @@ phase_info = {
             'num_segments': 5,
             'order': 3,
             'distance_solve_segments': False,
-            'initial_mach': (0.2, 'unitless'),
-            'final_mach': (0.72, 'unitless'),
+            'mach_initial': (0.2, 'unitless'),
+            'mach_final': (0.72, 'unitless'),
             'mach_bounds': ((0.18, 0.74), 'unitless'),
-            'initial_altitude': (0.0, 'ft'),
-            'final_altitude': (32000.0, 'ft'),
+            'altitude_initial': (0.0, 'ft'),
+            'altitude_final': (32000.0, 'ft'),
             'altitude_bounds': ((0.0, 34000.0), 'ft'),
             'throttle_enforcement': 'path_constraint',
             'fix_initial': True,
@@ -34,11 +34,11 @@ phase_info = {
             'num_segments': 5,
             'order': 3,
             'distance_solve_segments': False,
-            'initial_mach': (0.72, 'unitless'),
-            'final_mach': (0.72, 'unitless'),
+            'mach_initial': (0.72, 'unitless'),
+            'mach_final': (0.72, 'unitless'),
             'mach_bounds': ((0.7, 0.74), 'unitless'),
-            'initial_altitude': (32000.0, 'ft'),
-            'final_altitude': (34000.0, 'ft'),
+            'altitude_initial': (32000.0, 'ft'),
+            'altitude_final': (34000.0, 'ft'),
             'altitude_bounds': ((23000.0, 38000.0), 'ft'),
             'throttle_enforcement': 'boundary_constraint',
             'fix_initial': False,
@@ -56,11 +56,11 @@ phase_info = {
             'num_segments': 5,
             'order': 3,
             'distance_solve_segments': False,
-            'initial_mach': (0.72, 'unitless'),
-            'final_mach': (0.36, 'unitless'),
+            'mach_initial': (0.72, 'unitless'),
+            'mach_final': (0.36, 'unitless'),
             'mach_bounds': ((0.34, 0.74), 'unitless'),
-            'initial_altitude': (34000.0, 'ft'),
-            'final_altitude': (500.0, 'ft'),
+            'altitude_initial': (34000.0, 'ft'),
+            'altitude_final': (500.0, 'ft'),
             'altitude_bounds': ((0.0, 38000.0), 'ft'),
             'throttle_enforcement': 'path_constraint',
             'fix_initial': False,
@@ -112,17 +112,17 @@ def phase_info_parameterization(phase_info, post_mission_info, aviary_inputs):
     # Altitude
     old_alt_cruise = 32000.0
     if alt_cruise != old_alt_cruise:
-        phase_info['climb']['user_options']['final_altitude'] = (alt_cruise, 'ft')
-        phase_info['cruise']['user_options']['initial_altitude'] = (alt_cruise, 'ft')
-        phase_info['cruise']['user_options']['final_altitude'] = (alt_cruise, 'ft')
-        phase_info['descent']['user_options']['initial_altitude'] = (alt_cruise, 'ft')
+        phase_info['climb']['user_options']['altitude_final'] = (alt_cruise, 'ft')
+        phase_info['cruise']['user_options']['altitude_initial'] = (alt_cruise, 'ft')
+        phase_info['cruise']['user_options']['altitude_final'] = (alt_cruise, 'ft')
+        phase_info['descent']['user_options']['altitude_initial'] = (alt_cruise, 'ft')
 
     # Mach
     old_mach_cruise = 0.72
     if mach_cruise != old_mach_cruise:
-        phase_info['climb']['user_options']['final_mach'] = (mach_cruise, 'unitless')
-        phase_info['cruise']['user_options']['initial_mach'] = (mach_cruise, 'unitless')
-        phase_info['cruise']['user_options']['final_mach'] = (mach_cruise, 'unitless')
-        phase_info['descent']['user_options']['initial_mach'] = (mach_cruise, 'unitless')
+        phase_info['climb']['user_options']['mach_final'] = (mach_cruise, 'unitless')
+        phase_info['cruise']['user_options']['mach_initial'] = (mach_cruise, 'unitless')
+        phase_info['cruise']['user_options']['mach_final'] = (mach_cruise, 'unitless')
+        phase_info['descent']['user_options']['mach_initial'] = (mach_cruise, 'unitless')
 
     return phase_info, post_mission_info

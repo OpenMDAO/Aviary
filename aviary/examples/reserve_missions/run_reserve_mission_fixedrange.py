@@ -21,7 +21,7 @@ reserve_phase_0 = deepcopy(phase_info['cruise'])
 reserve_phase_0['user_options']['reserve'] = True
 reserve_phase_0['user_options']['target_distance'] = (200, 'km')
 # remove the climb from the original cruise
-reserve_phase_0['user_options']['final_altitude'] = (32000.0, 'ft')
+reserve_phase_0['user_options']['altitude_final'] = (32000.0, 'ft')
 # This cruise is much shorter so we need to revise the duration_bounds for this phase
 reserve_phase_0['user_options']['time_duration_bounds'] = ((0, 120.0), 'min')
 

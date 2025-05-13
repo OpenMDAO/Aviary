@@ -172,12 +172,12 @@ class TwoDOFPhaseOptions(AviaryOptionsDictionary):
             name='constrain_final',
             types=bool,
             default=False,
-            desc='Fixes the final states (mach and altitude) to the values of final_altitude '
-            'and final_mach. These values will be unable to change during the optimization.',
+            desc='Fixes the final states (mach and altitude) to the values of altitude_final '
+            'and mach_final. These values will be unable to change during the optimization.',
         )
 
         self.declare(
-            name='initial_mach',
+            name='mach_initial',
             types=float,
             allow_none=True,
             default=None,
@@ -186,7 +186,7 @@ class TwoDOFPhaseOptions(AviaryOptionsDictionary):
         )
 
         self.declare(
-            name='final_mach',
+            name='mach_final',
             types=float,
             allow_none=True,
             default=None,
@@ -195,7 +195,7 @@ class TwoDOFPhaseOptions(AviaryOptionsDictionary):
         )
 
         self.declare(
-            name='initial_altitude',
+            name='altitude_initial',
             types=tuple,
             default=None,
             units='ft',
@@ -204,7 +204,7 @@ class TwoDOFPhaseOptions(AviaryOptionsDictionary):
         )
 
         self.declare(
-            name='final_altitude',
+            name='altitude_final',
             types=tuple,
             default=None,
             units='ft',

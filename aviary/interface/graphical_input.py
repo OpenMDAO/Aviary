@@ -1633,14 +1633,14 @@ def create_phase_info(
                 'num_segments': num_segments,
                 'order': orders[i],
                 'distance_solve_segments': False,
-                'initial_mach': (mach_values[i], units[2]),
-                'final_mach': (mach_values[i + 1], units[2]),
+                'mach_initial': (mach_values[i], units[2]),
+                'mach_final': (mach_values[i + 1], units[2]),
                 'mach_bounds': (
                     (np.min(mach_values[i : i + 2]) - 0.02, np.max(mach_values[i : i + 2]) + 0.02),
                     units[2],
                 ),
-                'initial_altitude': (altitudes[i], units[1]),
-                'final_altitude': (altitudes[i + 1], units[1]),
+                'altitude_initial': (altitudes[i], units[1]),
+                'altitude_final': (altitudes[i + 1], units[1]),
                 'altitude_bounds': (
                     (
                         max(np.min(altitudes[i : i + 2]) - alt_margin, 0.0),

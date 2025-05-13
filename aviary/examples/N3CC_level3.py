@@ -219,10 +219,10 @@ def run_trajectory(sim=True):
         'test_climb',
         user_options=AviaryValues(
             {
-                'initial_altitude': (alt_i_climb, 'm'),
-                'final_altitude': (alt_f_climb, 'm'),
-                'initial_mach': (mach_i_climb, 'unitless'),
-                'final_mach': (mach_f_climb, 'unitless'),
+                'altitude_initial': (alt_i_climb, 'm'),
+                'altitude_final': (alt_f_climb, 'm'),
+                'mach_initial': (mach_i_climb, 'unitless'),
+                'mach_final': (mach_f_climb, 'unitless'),
                 'fix_initial': (False, 'unitless'),
                 'input_initial': (True, 'unitless'),
                 'use_polynomial_control': (False, 'unitless'),
@@ -237,9 +237,9 @@ def run_trajectory(sim=True):
         'test_cruise',
         user_options=AviaryValues(
             {
-                'initial_altitude': (alt_min_cruise, 'm'),
-                'final_altitude': (alt_max_cruise, 'm'),
-                'initial_mach': (cruise_mach, 'unitless'),
+                'altitude_initial': (alt_min_cruise, 'm'),
+                'altitude_final': (alt_max_cruise, 'm'),
+                'mach_initial': (cruise_mach, 'unitless'),
                 'final_mach': (cruise_mach, 'unitless'),
                 'required_available_climb_rate': (300, 'ft/min'),
                 'fix_initial': (False, 'unitless'),
@@ -254,10 +254,10 @@ def run_trajectory(sim=True):
         'test_descent',
         user_options=AviaryValues(
             {
-                'final_altitude': (alt_f_descent, 'm'),
-                'initial_altitude': (alt_i_descent, 'm'),
-                'initial_mach': (mach_i_descent, 'unitless'),
-                'final_mach': (mach_f_descent, 'unitless'),
+                'altitude_final': (alt_f_descent, 'm'),
+                'altitude_initial': (alt_i_descent, 'm'),
+                'mach_initial': (mach_i_descent, 'unitless'),
+                'mach_final': (mach_f_descent, 'unitless'),
                 'fix_initial': (False, 'unitless'),
                 'use_polynomial_control': (False, 'unitless'),
             }

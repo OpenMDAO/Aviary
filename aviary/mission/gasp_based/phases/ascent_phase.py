@@ -103,7 +103,7 @@ class AscentPhaseOptions(AviaryOptionsDictionary):
         )
 
         self.declare(
-            name='final_altitude',
+            name='altitude_final',
             default=500.0,
             units='ft',
             desc='Altitude for final point in the phase.',

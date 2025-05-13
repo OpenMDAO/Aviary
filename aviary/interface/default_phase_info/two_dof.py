@@ -87,7 +87,7 @@ phase_info = {
             'alt_upper': (700, 'ft'),
             'alt_ref': (1000, 'ft'),
             'alt_defect_ref': (1000, 'ft'),
-            'final_altitude': (500, 'ft'),
+            'altitude_final': (500, 'ft'),
             'alt_constraint_ref': (500, 'ft'),
             'angle_lower': (-10, 'rad'),
             'angle_upper': (20, 'rad'),
@@ -146,7 +146,7 @@ phase_info = {
             'EAS_target': (250, 'kn'),
             'mach_cruise': 0.8,
             'target_mach': False,
-            'final_altitude': (10.0e3, 'ft'),
+            'altitude_final': (10.0e3, 'ft'),
             'time_duration_bounds': ((30, 300), 's'),
             'time_duration_ref': (1000, 's'),
             'alt_lower': (400, 'ft'),
@@ -176,7 +176,7 @@ phase_info = {
             'EAS_target': (270, 'kn'),
             'mach_cruise': 0.8,
             'target_mach': True,
-            'final_altitude': (37.5e3, 'ft'),
+            'altitude_final': (37.5e3, 'ft'),
             'required_available_climb_rate': (0.1, 'ft/min'),
             'time_duration_bounds': ((200, 17_000), 's'),
             'time_duration_ref': (5000, 's'),
@@ -224,7 +224,7 @@ phase_info = {
             'EAS_limit': (350, 'kn'),
             'mach_cruise': 0.8,
             'input_speed_type': SpeedType.MACH,
-            'final_altitude': (10.0e3, 'ft'),
+            'altitude_final': (10.0e3, 'ft'),
             'time_duration_bounds': ((300.0, 900.0), 's'),
             'time_duration_ref': (1000, 's'),
             'alt_lower': (1000, 'ft'),
@@ -260,7 +260,7 @@ phase_info = {
             'EAS_limit': (250, 'kn'),
             'mach_cruise': 0.80,
             'input_speed_type': SpeedType.EAS,
-            'final_altitude': (1000, 'ft'),
+            'altitude_final': (1000, 'ft'),
             'time_duration_bounds': ((100.0, 5000), 's'),
             'time_duration_ref': (500, 's'),
             'alt_lower': (500, 'ft'),
@@ -329,9 +329,9 @@ def phase_info_parameterization(phase_info, post_mission_info, aviary_inputs):
         range_scale = range_cruise / old_range_cruise
 
     # Altitude
-    old_alt_cruise = phase_info['climb2']['user_options']['final_altitude'][0]
+    old_alt_cruise = phase_info['climb2']['user_options']['altitude_final'][0]
     if alt_cruise != old_alt_cruise:
-        phase_info['climb2']['user_options']['final_altitude'] = (alt_cruise, 'ft')
+        phase_info['climb2']['user_options']['altitude_final'] = (alt_cruise, 'ft')
         phase_info['climb2']['initial_guesses']['altitude'] = ([10.0e3, alt_cruise], 'ft')
         phase_info['cruise']['initial_guesses']['altitude'] = (alt_cruise, 'ft')
         phase_info['desc1']['initial_guesses']['altitude'] = ([alt_cruise, 10.0e3], 'ft')
