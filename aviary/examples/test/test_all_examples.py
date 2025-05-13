@@ -18,6 +18,7 @@ SKIP_EXAMPLES = {
     'run_multimission_example_large_single_aisle.py': 'Broken due to OpenMDAO changes',
 }
 
+# TODO: temporary fix, waiting on https://github.com/OpenMDAO/OpenMDAO/issues/3510
 OPT, OPTIMIZER = set_pyoptsparse_opt('SNOPT')
 if OPT is None:
     reason = 'pyoptsparse is not installed. This example requires pyoptsparse to run.'
