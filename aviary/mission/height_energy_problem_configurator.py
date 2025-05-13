@@ -395,6 +395,10 @@ class HeightEnergyProblemConfigurator(ProblemConfiguratorBase):
         prob.post_mission.add_constraint(Mission.Constraints.MASS_RESIDUAL, equals=0.0, ref=1.0e5)
 
     def _add_post_mission_takeoff_systems(self, prob):
+        """
+        Adds residual and constraint components for the mach and alpha connections from takeoff
+        to the first flight phase.
+        """
         first_flight_phase_name = list(prob.phase_info.keys())[0]
         phase_options = prob.phase_info[first_flight_phase_name]['user_options']
 
