@@ -5,22 +5,7 @@ from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 
 import numpy as np
 
-"""
-The little bit of path code below is not important overall. This is for me to test 
-within the Docker container and VS Code before I push everything fully to the Github 
-repository. These lines can be deleted as things are updated further.
-
-"""
-
-import sys
-import os
-
-
-module_path = os.path.abspath("/home/omdao/Aviary/aviary/subsystems/mass")
-if module_path not in sys.path:
-    sys.path.append(module_path)
-   
-from simple_mass.tail import TailMassAndCOG
+from aviary.subsystems.mass.simple_mass.tail import TailMassAndCOG
 
 class TailMassTestCase(unittest.TestCase):
     """
