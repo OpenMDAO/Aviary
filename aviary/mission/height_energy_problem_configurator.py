@@ -412,7 +412,7 @@ class HeightEnergyProblemConfigurator(ProblemConfiguratorBase):
             if not use_new_dymos_syntax:
                 control_type_string = 'polynomial_control_values'
 
-        if prob.phase_info[first_flight_phase_name]['user_options'].get('optimize_mach', False):
+        if prob.phase_info[first_flight_phase_name]['user_options'].get('mach_optimize', False):
             # Create an ExecComp to compute the difference in mach
             mach_diff_comp = om.ExecComp(
                 'mach_resid_for_connecting_takeoff = final_mach - initial_mach'
