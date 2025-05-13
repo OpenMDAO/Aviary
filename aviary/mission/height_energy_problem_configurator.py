@@ -500,7 +500,8 @@ class HeightEnergyProblemConfigurator(ProblemConfiguratorBase):
         """
         pass
 
-    def add_guesses(self, prob, phase_name, phase, guesses, target_prob, parent_prefix):
+    def set_phase_initial_guesses(self, prob, phase_name, phase, guesses, target_prob,
+                                  parent_prefix):
         """
         Adds the initial guesses for each variable of a given phase to the problem.
 
@@ -542,6 +543,10 @@ class HeightEnergyProblemConfigurator(ProblemConfiguratorBase):
             altitude_initial = wrapped_convert_units(options['altitude_initial'], 'ft')
             altitude_final = wrapped_convert_units(options['altitude_final'], 'ft')
 
+            if altitude_initial is None:
+                # TODO: Pull from downstream phase.
+                altitude_initial = wrapped_convert_units(options['altitude_bounds'], 'ft')[0]
+
             if altitude_final is None:
                 # TODO: Pull from downstream phase.
                 altitude_final = altitude_initial
@@ -552,6 +557,10 @@ class HeightEnergyProblemConfigurator(ProblemConfiguratorBase):
             # Use values from fixed endpoints.
             mach_initial = wrapped_convert_units(options['mach_initial'], 'unitless')
             mach_final = wrapped_convert_units(options['mach_final'], 'unitless')
+
+            if mach_initial is None:
+                # TODO: Pull from downstream phase.
+                mach_initial = wrapped_convert_units(options['mach_bounds'], 'unitless')[0]
 
             if mach_final is None:
                 # TODO: Pull from downstream phase.

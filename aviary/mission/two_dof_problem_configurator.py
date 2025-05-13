@@ -684,7 +684,8 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
         """
         pass
 
-    def add_guesses(self, prob, phase_name, phase, guesses, target_prob, parent_prefix):
+    def set_phase_initial_guesses(self, prob, phase_name, phase, guesses, target_prob,
+                                  parent_prefix):
         """
         Adds the initial guesses for each variable of a given phase to the problem.
 

@@ -1709,8 +1709,8 @@ class AviaryProblem(om.Problem):
             self._add_subsystem_guesses(phase_name, phase, target_prob, parent_prefix)
 
             # Set initial guesses for states, controls and time for each phase.
-            self.configurator.add_guesses(self, phase_name, phase, guesses, target_prob,
-                                          parent_prefix)
+            self.configurator.set_phase_initial_guesses(self, phase_name, phase, guesses,
+                                                        target_prob, parent_prefix)
 
     def _process_guess_var(self, val, key, phase):
         """
