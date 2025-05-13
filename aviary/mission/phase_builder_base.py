@@ -437,7 +437,7 @@ class PhaseBuilderBase(ABC):
             solve_segments='forward' if solve_segments else None,
         )
 
-    def add_control(self, name, target, rate_targets, rate2_targets=None):
+    def add_control(self, name, target, rate_targets, rate2_targets=None, add_constraints=True):
         """
         Add a control to this phase using the options in the phase-info.
 
@@ -451,8 +451,12 @@ class PhaseBuilderBase(ABC):
             List of rate targets for this control.
         rate2_targets : Sequence of str or None
             (Optional) The parameter in the ODE to which the control 2nd derivative is connected.
+        add_constraints : bool
+            When True, add constraints on any declared initial and final values if this control is
+            being optimized. Default is True.
         """
         options = self.user_options
+        phase = self.phase
 
         initial, _ = options[f'{name}_initial']
         final, _ = options[f'{name}_final']
@@ -479,15 +483,37 @@ class PhaseBuilderBase(ABC):
         if rate2_targets is not None:
             extra_options['rate2_targets'] = rate2_targets
 
-        self.phase.add_control(
+        phase.add_control(
             target,
             targets=target,
             rate_targets=rate_targets,
-            fix_initial=initial is not None,
-            fix_final=final is not None,
             opt=opt,
             **extra_options
         )
+
+        if not add_constraints:
+            return
+
+        # Add a initial constraint.
+        if opt and initial is not None:
+            phase.add_boundary_constraint(
+                target,
+                loc='initial',
+                equals=initial,
+                units=units,
+                ref=ref
+            )
+
+        # Add a final constraint.
+        if opt and final is not None:
+            phase.add_boundary_constraint(
+                target,
+                loc='final',
+                equals=final,
+                units=units,
+                ref=ref
+            )
+
 
     def add_velocity_state(self, user_options):
         """Add velocity state: lower and upper bounds, reference, zero-reference, and state defect reference."""

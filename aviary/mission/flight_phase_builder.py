@@ -292,15 +292,7 @@ class FlightPhaseBase(PhaseBuilderBase):
 
         user_options = self.user_options
 
-        fix_initial = user_options['fix_initial']
-        constrain_final = user_options['constrain_final']
-        mach_optimize = user_options['mach_optimize']
         throttle_enforcement = user_options['throttle_enforcement']
-        altitude_bounds = user_options['altitude_bounds']
-        mach_initial = user_options['mach_initial']
-        mach_final = user_options['mach_final'][0]
-        initial_altitude = user_options['initial_altitude'][0]
-        final_altitude = user_options['final_altitude'][0]
         no_descent = user_options['no_descent']
         no_climb = user_options['no_climb']
         constraints = user_options['constraints']
@@ -340,14 +332,11 @@ class FlightPhaseBase(PhaseBuilderBase):
         self.add_control(
             'mach',
             Dynamic.Atmosphere.MACH,
-            rate_targets
+            rate_targets,
+            add_constraints=Dynamic.Atmosphere.MACH not in constraints
         )
 
-        if ground_roll:
-            # Ground roll hardcoded for now.
-            rate_targets = ['dh_dr']
-            rate2_targets = ['d2h_dr2']
-        elif phase_type is EquationsOfMotion.HEIGHT_ENERGY:
+        if phase_type is EquationsOfMotion.HEIGHT_ENERGY and not ground_roll:
             rate_targets = [Dynamic.Mission.ALTITUDE_RATE]
             rate2_targets = None
         else:
@@ -369,7 +358,8 @@ class FlightPhaseBase(PhaseBuilderBase):
             'altitude',
             Dynamic.Mission.ALTITUDE,
             rate_targets,
-            rate2_targets=rate2_targets
+            rate2_targets=rate2_targets,
+            add_constraints=Dynamic.Mission.ALTITUDE not in constraints
         )
 
         # dictionary of options for altitude control
@@ -498,37 +488,6 @@ class FlightPhaseBase(PhaseBuilderBase):
         ###################
         # Add Constraints #
         ###################
-        if mach_optimize and fix_initial and Dynamic.Atmosphere.MACH not in constraints:
-            phase.add_boundary_constraint(
-                Dynamic.Atmosphere.MACH,
-                loc='initial',
-                equals=mach_initial,
-            )
-
-        if constrain_final and Dynamic.Atmosphere.MACH not in constraints:
-            phase.add_boundary_constraint(
-                Dynamic.Atmosphere.MACH,
-                loc='final',
-                equals=mach_final,
-            )
-
-        if fix_initial and Dynamic.Mission.ALTITUDE not in constraints:
-            phase.add_boundary_constraint(
-                Dynamic.Mission.ALTITUDE,
-                loc='initial',
-                equals=initial_altitude,
-                units=altitude_bounds[1],
-                ref=1.0e4,
-            )
-
-        if constrain_final and Dynamic.Mission.ALTITUDE not in constraints:
-            phase.add_boundary_constraint(
-                Dynamic.Mission.ALTITUDE,
-                loc='final',
-                equals=final_altitude,
-                units=altitude_bounds[1],
-                ref=1.0e4,
-            )
 
         if no_descent and Dynamic.Mission.ALTITUDE_RATE not in constraints:
             phase.add_path_constraint(Dynamic.Mission.ALTITUDE_RATE, lower=0.0)
