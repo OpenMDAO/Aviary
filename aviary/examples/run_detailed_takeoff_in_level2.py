@@ -25,8 +25,8 @@ subsystem_options = {
 }
 # fmt: on
 
-optimize_mach = True
-optimize_altitude = True
+mach_optimize = True
+altitude_optimize = True
 optimizer = 'SLSQP'
 
 phase_info = {
@@ -62,8 +62,8 @@ phase_info = {
             'mach_bounds': ((0.18, 0.2), 'unitless'),
             'polynomial_control_order': 1,
             'throttle_enforcement': 'boundary_constraint',
-            'optimize_mach': optimize_mach,
-            'optimize_altitude': False,
+            'mach_optimize': mach_optimize,
+            'altitude_optimize': False,
             'rotation': True,
             'initial_mach': (0.18, 'unitless'),
             'final_mach': (0.2, 'unitless'),
@@ -106,8 +106,8 @@ phase_info = {
             'final_altitude': (50.0, 'ft'),
             'polynomial_control_order': 1,
             'throttle_enforcement': 'boundary_constraint',
-            'optimize_mach': optimize_mach,
-            'optimize_altitude': optimize_altitude,
+            'mach_optimize': mach_optimize,
+            'altitude_optimize': altitude_optimize,
             'rotation': False,
         },
         'subsystem_options': subsystem_options,
@@ -136,8 +136,8 @@ phase_info = {
             'final_altitude': (985.0, 'ft'),
             'polynomial_control_order': 1,
             'throttle_enforcement': 'boundary_constraint',
-            'optimize_mach': optimize_mach,
-            'optimize_altitude': optimize_altitude,
+            'mach_optimize': mach_optimize,
+            'altitude_optimize': altitude_optimize,
             'constraints': {
                 'altitude': {
                     'equals': 985.0,
@@ -173,8 +173,8 @@ phase_info = {
             'final_altitude': (1100.0, 'ft'),
             'polynomial_control_order': 1,
             'throttle_enforcement': 'path_constraint',
-            'optimize_mach': optimize_mach,
-            'optimize_altitude': optimize_altitude,
+            'mach_optimize': mach_optimize,
+            'altitude_optimize': altitude_optimize,
             'constraints': {
                 'distance': {
                     'upper': 19.0e3,
@@ -210,8 +210,8 @@ phase_info = {
             'initial_altitude': (1100.0, 'ft'),
             'final_altitude': (1200.0, 'ft'),
             'polynomial_control_order': 2,
-            'optimize_mach': optimize_mach,
-            'optimize_altitude': optimize_altitude,
+            'mach_optimize': mach_optimize,
+            'altitude_optimize': altitude_optimize,
             'throttle_enforcement': 'path_constraint',
             'constraints': {
                 'flight_path_angle': {
@@ -247,8 +247,8 @@ phase_info = {
             'initial_altitude': (1100.0, 'ft'),
             'final_altitude': (1200.0, 'ft'),
             'polynomial_control_order': 1,
-            'optimize_mach': optimize_mach,
-            'optimize_altitude': optimize_altitude,
+            'mach_optimize': mach_optimize,
+            'altitude_optimize': altitude_optimize,
             'throttle_enforcement': 'path_constraint',
             'constraints': {
                 'distance': {
@@ -291,8 +291,8 @@ phase_info = {
             'initial_altitude': (1200.0, 'ft'),
             'final_altitude': (2000.0, 'ft'),
             'polynomial_control_order': 1,
-            'optimize_mach': optimize_mach,
-            'optimize_altitude': optimize_altitude,
+            'mach_optimize': mach_optimize,
+            'altitude_optimize': altitude_optimize,
             'throttle_enforcement': 'boundary_constraint',
             'constraints': {
                 'flight_path_angle': {

@@ -97,8 +97,6 @@ def add_meta_data(
             'update_meta_data function instead.'
         )
 
-    if 'semispan' in key:
-        print(key)
     if units is None:
         units = 'unitless'
 

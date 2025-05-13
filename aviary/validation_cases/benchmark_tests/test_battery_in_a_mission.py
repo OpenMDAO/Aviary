@@ -22,8 +22,8 @@ class TestSubsystemsMission(unittest.TestCase):
                 'subsystem_options': {'core_aerodynamics': {'method': 'computed'}},
                 'external_subsystems': [BatteryBuilder()],
                 'user_options': {
-                    'optimize_mach': False,
-                    'optimize_altitude': False,
+                    'mach_optimize': False,
+                    'altitude_optimize': False,
                     'polynomial_control_order': 1,
                     'num_segments': 5,
                     'order': 3,
@@ -46,8 +46,8 @@ class TestSubsystemsMission(unittest.TestCase):
                 'subsystem_options': {'core_aerodynamics': {'method': 'computed'}},
                 'external_subsystems': [BatteryBuilder()],
                 'user_options': {
-                    'optimize_mach': False,
-                    'optimize_altitude': False,
+                    'mach_optimize': False,
+                    'altitude_optimize': False,
                     'polynomial_control_order': 1,
                     'num_segments': 5,
                     'order': 3,

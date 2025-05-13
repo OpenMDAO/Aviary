@@ -19,8 +19,8 @@ phase_info = {
         'user_options': {
             'fix_initial': False,
             'input_initial': True,
-            'optimize_mach': True,
-            'optimize_altitude': True,
+            'mach_optimize': True,
+            'altitude_optimize': True,
             'use_polynomial_control': False,
             'num_segments': 6,
             'order': 3,
@@ -43,8 +43,8 @@ phase_info = {
     'cruise': {
         'subsystem_options': {'core_aerodynamics': {'method': 'computed'}},
         'user_options': {
-            'optimize_mach': True,
-            'optimize_altitude': True,
+            'mach_optimize': True,
+            'altitude_optimize': True,
             'polynomial_control_order': 1,
             'use_polynomial_control': True,
             'num_segments': 1,
@@ -68,8 +68,8 @@ phase_info = {
     'descent': {
         'subsystem_options': {'core_aerodynamics': {'method': 'computed'}},
         'user_options': {
-            'optimize_mach': True,
-            'optimize_altitude': True,
+            'mach_optimize': True,
+            'altitude_optimize': True,
             'use_polynomial_control': False,
             'num_segments': 5,
             'order': 3,

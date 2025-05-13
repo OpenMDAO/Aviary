@@ -7,8 +7,8 @@ phase_info = {
     'climb': {
         'subsystem_options': {'core_aerodynamics': {'method': 'computed'}},
         'user_options': {
-            'optimize_mach': True,
-            'optimize_altitude': True,
+            'mach_optimize': True,
+            'altitude_optimize': True,
             'num_segments': 6,
             'order': 3,
             'distance_solve_segments': False,
@@ -33,8 +33,8 @@ phase_info = {
     'cruise': {
         'subsystem_options': {'core_aerodynamics': {'method': 'computed'}},
         'user_options': {
-            'optimize_mach': False,
-            'optimize_altitude': False,
+            'mach_optimize': False,
+            'altitude_optimize': False,
             'num_segments': 1,
             'order': 3,
             'distance_solve_segments': False,
@@ -55,8 +55,8 @@ phase_info = {
     'descent': {
         'subsystem_options': {'core_aerodynamics': {'method': 'computed'}},
         'user_options': {
-            'optimize_mach': True,
-            'optimize_altitude': True,
+            'mach_optimize': True,
+            'altitude_optimize': True,
             'num_segments': 5,
             'order': 3,
             'distance_solve_segments': False,

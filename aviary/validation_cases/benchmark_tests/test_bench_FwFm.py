@@ -114,15 +114,11 @@ class ProblemPhaseTestCase(unittest.TestCase):
             'climb': {
                 'subsystem_options': {'core_aerodynamics': {'method': 'computed'}},
                 'user_options': {
-                    'fix_initial': False,
-                    'input_initial': True,
-                    'optimize_mach': True,
-                    'optimize_altitude': True,
-                    'use_polynomial_control': False,
                     'num_segments': 6,
                     'order': 3,
-                    'distance_solve_segments': False,
-                    'initial_mach': (0.3, 'unitless'),
+                    'mach_optimize': True,
+                    'mach_initial': (0.3, 'unitless'),
+                    'altitude_optimize': True,
                     'final_mach': (0.79, 'unitless'),
                     'mach_bounds': ((0.1, 0.8), 'unitless'),
                     'initial_altitude': (35.0, 'ft'),
@@ -140,8 +136,8 @@ class ProblemPhaseTestCase(unittest.TestCase):
             'cruise': {
                 'subsystem_options': {'core_aerodynamics': {'method': 'computed'}},
                 'user_options': {
-                    'optimize_mach': True,
-                    'optimize_altitude': True,
+                    'mach_optimize': True,
+                    'altitude_optimize': True,
                     'polynomial_control_order': 1,
                     'use_polynomial_control': True,
                     'num_segments': 1,
@@ -165,8 +161,8 @@ class ProblemPhaseTestCase(unittest.TestCase):
             'descent': {
                 'subsystem_options': {'core_aerodynamics': {'method': 'computed'}},
                 'user_options': {
-                    'optimize_mach': True,
-                    'optimize_altitude': True,
+                    'mach_optimize': True,
+                    'altitude_optimize': True,
                     'use_polynomial_control': False,
                     'num_segments': 5,
                     'order': 3,

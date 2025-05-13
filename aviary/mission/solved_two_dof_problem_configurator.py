@@ -209,23 +209,23 @@ class SolvedTwoDOFProblemConfigurator(ProblemConfiguratorBase):
         # connect regular_phases with each other if you are optimizing alt or mach
         prob._link_phases_helper_with_options(
             prob.regular_phases,
-            'optimize_altitude',
+            'altitude_optimize',
             Dynamic.Mission.ALTITUDE,
             ref=1.0e4,
         )
         prob._link_phases_helper_with_options(
-            prob.regular_phases, 'optimize_mach', Dynamic.Atmosphere.MACH
+            prob.regular_phases, 'mach_optimize', Dynamic.Atmosphere.MACH
         )
 
         # connect reserve phases with each other if you are optimizing alt or mach
         prob._link_phases_helper_with_options(
             prob.reserve_phases,
-            'optimize_altitude',
+            'altitude_optimize',
             Dynamic.Mission.ALTITUDE,
             ref=1.0e4,
         )
         prob._link_phases_helper_with_options(
-            prob.reserve_phases, 'optimize_mach', Dynamic.Atmosphere.MACH
+            prob.reserve_phases, 'mach_optimize', Dynamic.Atmosphere.MACH
         )
 
         prob.traj.link_phases(phases, [Dynamic.Vehicle.MASS], connected=True)

@@ -13,8 +13,8 @@ class AircraftMissionTestSuite(unittest.TestCase):
         cruise_dict = {
             'subsystem_options': {'core_aerodynamics': {'method': 'computed'}},
             'user_options': {
-                'optimize_mach': False,
-                'optimize_altitude': False,
+                'mach_optimize': False,
+                'altitude_optimize': False,
                 'polynomial_control_order': 1,
                 'num_segments': 5,
                 'order': 3,
@@ -40,11 +40,11 @@ class AircraftMissionTestSuite(unittest.TestCase):
                 (56.5 + i * 10, 169.5 + i * 10),
                 'min',
             )
-        cruise_dicts[0]['user_options']['optimize_mach'] = True
-        cruise_dicts[1]['user_options']['optimize_mach'] = True
-        cruise_dicts[4]['user_options']['optimize_mach'] = True
-        cruise_dicts[2]['user_options']['optimize_altitude'] = True
-        cruise_dicts[3]['user_options']['optimize_altitude'] = True
+        cruise_dicts[0]['user_options']['mach_optimize'] = True
+        cruise_dicts[1]['user_options']['mach_optimize'] = True
+        cruise_dicts[4]['user_options']['mach_optimize'] = True
+        cruise_dicts[2]['user_options']['altitude_optimize'] = True
+        cruise_dicts[3]['user_options']['altitude_optimize'] = True
 
         # Create the phase_info
         self.phase_info = {
@@ -52,8 +52,8 @@ class AircraftMissionTestSuite(unittest.TestCase):
             'climb': {
                 'subsystem_options': {'core_aerodynamics': {'method': 'computed'}},
                 'user_options': {
-                    'optimize_mach': False,
-                    'optimize_altitude': False,
+                    'mach_optimize': False,
+                    'altitude_optimize': False,
                     'polynomial_control_order': 1,
                     'num_segments': 5,
                     'order': 3,
@@ -80,8 +80,8 @@ class AircraftMissionTestSuite(unittest.TestCase):
             'descent': {
                 'subsystem_options': {'core_aerodynamics': {'method': 'computed'}},
                 'user_options': {
-                    'optimize_mach': False,
-                    'optimize_altitude': False,
+                    'mach_optimize': False,
+                    'altitude_optimize': False,
                     'polynomial_control_order': 1,
                     'num_segments': 5,
                     'order': 3,

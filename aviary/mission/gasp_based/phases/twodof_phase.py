@@ -111,14 +111,14 @@ class TwoDOFPhaseOptions(AviaryOptionsDictionary):
         )
 
         self.declare(
-            name='optimize_mach',
+            name='mach_optimize',
             types=bool,
             default=False,
             desc='Adds the Mach number as a design variable controlled by the optimizer.',
         )
 
         self.declare(
-            name='optimize_altitude',
+            name='altitude_optimize',
             types=bool,
             default=False,
             desc='Adds the Altitude as a design variable controlled by the optimizer.',

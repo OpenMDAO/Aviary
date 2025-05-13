@@ -24,8 +24,8 @@ class AircraftMissionTestSuite(unittest.TestCase):
             'climb': {
                 'subsystem_options': {'core_aerodynamics': {'method': 'computed'}},
                 'user_options': {
-                    'optimize_mach': False,
-                    'optimize_altitude': False,
+                    'mach_optimize': False,
+                    'altitude_optimize': False,
                     'polynomial_control_order': 1,
                     'num_segments': 5,
                     'order': 3,
@@ -48,8 +48,8 @@ class AircraftMissionTestSuite(unittest.TestCase):
             'cruise': {
                 'subsystem_options': {'core_aerodynamics': {'method': 'computed'}},
                 'user_options': {
-                    'optimize_mach': False,
-                    'optimize_altitude': False,
+                    'mach_optimize': False,
+                    'altitude_optimize': False,
                     'polynomial_control_order': 1,
                     'num_segments': 5,
                     'order': 3,
@@ -72,8 +72,8 @@ class AircraftMissionTestSuite(unittest.TestCase):
             'descent': {
                 'subsystem_options': {'core_aerodynamics': {'method': 'computed'}},
                 'user_options': {
-                    'optimize_mach': False,
-                    'optimize_altitude': False,
+                    'mach_optimize': False,
+                    'altitude_optimize': False,
                     'polynomial_control_order': 1,
                     'num_segments': 5,
                     'order': 3,
@@ -162,20 +162,20 @@ class AircraftMissionTestSuite(unittest.TestCase):
 
     @require_pyoptsparse(optimizer='IPOPT')
     def test_mission_optimize_mach_only(self):
-        # Test with optimize_mach flag set to True
+        # Test with mach_optimize flag set to True
         modified_phase_info = self.phase_info.copy()
         for phase in ['climb', 'cruise', 'descent']:
-            modified_phase_info[phase]['user_options']['optimize_mach'] = True
+            modified_phase_info[phase]['user_options']['mach_optimize'] = True
         prob = self.run_mission(modified_phase_info, 'IPOPT')
         self.assertTrue(prob.problem_ran_successfully)
 
     @require_pyoptsparse(optimizer='IPOPT')
     def test_mission_optimize_altitude_and_mach(self):
-        # Test with optimize_altitude flag set to True
+        # Test with altitude_optimize flag set to True
         modified_phase_info = self.phase_info.copy()
         for phase in ['climb', 'cruise', 'descent']:
-            modified_phase_info[phase]['user_options']['optimize_altitude'] = True
-            modified_phase_info[phase]['user_options']['optimize_mach'] = True
+            modified_phase_info[phase]['user_options']['altitude_optimize'] = True
+            modified_phase_info[phase]['user_options']['mach_optimize'] = True
         modified_phase_info['climb']['user_options']['constraints'] = {
             Dynamic.Vehicle.Propulsion.THROTTLE: {
                 'lower': 0.2,
@@ -204,11 +204,11 @@ class AircraftMissionTestSuite(unittest.TestCase):
                 self.assertEqual(meta['lower'], 0.2)
 
     @require_pyoptsparse(optimizer='IPOPT')
-    def test_mission_optimize_altitude_only(self):
-        # Test with optimize_altitude flag set to True
+    def test_mission_altitude_optimize_only(self):
+        # Test with altitude_optimize flag set to True
         modified_phase_info = self.phase_info.copy()
         for phase in ['climb', 'cruise', 'descent']:
-            modified_phase_info[phase]['user_options']['optimize_altitude'] = True
+            modified_phase_info[phase]['user_options']['altitude_optimize'] = True
         prob = self.run_mission(modified_phase_info, 'IPOPT')
         self.assertTrue(prob.problem_ran_successfully)
 

@@ -21,19 +21,19 @@ from aviary.variable_info.variables import Aircraft
 # Build problem
 local_phase_info = deepcopy(phase_info)
 
-local_phase_info['climb']['user_options']['optimize_mach'] = False
-local_phase_info['climb']['user_options']['optimize_altitude'] = False
+local_phase_info['climb']['user_options']['mach_optimize'] = False
+local_phase_info['climb']['user_options']['altitude_optimize'] = False
 local_phase_info['climb']['user_options']['no_descent'] = True
 local_phase_info['climb']['user_options']['use_polynomial_control'] = True
 
-local_phase_info['cruise']['user_options']['optimize_mach'] = False
-local_phase_info['cruise']['user_options']['optimize_altitude'] = False
+local_phase_info['cruise']['user_options']['mach_optimize'] = False
+local_phase_info['cruise']['user_options']['altitude_optimize'] = False
 local_phase_info['cruise']['user_options']['altitude_bounds'] = ((32000.0, 34000.0), 'ft')
 local_phase_info['cruise']['user_options']['throttle_enforcement'] = 'path_constraint'
 local_phase_info['cruise']['user_options']['use_polynomial_control'] = True
 
-local_phase_info['descent']['user_options']['optimize_mach'] = False
-local_phase_info['descent']['user_options']['optimize_altitude'] = False
+local_phase_info['descent']['user_options']['mach_optimize'] = False
+local_phase_info['descent']['user_options']['altitude_optimize'] = False
 local_phase_info['descent']['user_options']['no_climb'] = True
 local_phase_info['descent']['user_options']['use_polynomial_control'] = True
 

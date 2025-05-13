@@ -28,8 +28,8 @@ subsystem_options = {
 subsystem_options_landing = subsystem_options.copy()
 subsystem_options_landing['core_aerodynamics']['drag_coefficient_factor'] = 3.0
 
-optimize_mach = False
-optimize_altitude = False
+mach_optimize = False
+altitude_optimize = False
 
 phase_info = {
     'pre_mission': {'include_takeoff': False, 'optimize_mass': False},
@@ -52,8 +52,8 @@ phase_info = {
             'altitude_bounds': ((0.0, 1000.0), 'ft'),
             'polynomial_control_order': 1,
             'throttle_enforcement': 'bounded',
-            'optimize_mach': optimize_mach,
-            'optimize_altitude': optimize_altitude,
+            'mach_optimize': mach_optimize,
+            'altitude_optimize': altitude_optimize,
             'rotation': False,
             'constraints': {
                 'flight_path_angle': {
@@ -90,8 +90,8 @@ phase_info = {
             'final_altitude': (50.0, 'ft'),
             'polynomial_control_order': 1,
             'throttle_enforcement': 'bounded',
-            'optimize_mach': optimize_mach,
-            'optimize_altitude': optimize_altitude,
+            'mach_optimize': mach_optimize,
+            'altitude_optimize': altitude_optimize,
             'rotation': False,
             'constraints': {
                 'flight_path_angle': {
@@ -128,8 +128,8 @@ phase_info = {
             'final_altitude': (0.0, 'ft'),
             'polynomial_control_order': 2,
             'throttle_enforcement': 'path_constraint',
-            'optimize_mach': False,
-            'optimize_altitude': True,
+            'mach_optimize': False,
+            'altitude_optimize': True,
             'rotation': False,
             'constraints': {},
         },

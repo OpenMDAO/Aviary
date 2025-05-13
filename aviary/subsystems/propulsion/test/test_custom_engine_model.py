@@ -160,8 +160,8 @@ class CustomEngineTest(unittest.TestCase):
             'cruise': {
                 'subsystem_options': {'core_aerodynamics': {'method': 'computed'}},
                 'user_options': {
-                    'optimize_mach': False,
-                    'optimize_altitude': False,
+                    'mach_optimize': False,
+                    'altitude_optimize': False,
                     'polynomial_control_order': 1,
                     'num_segments': 2,
                     'order': 3,
