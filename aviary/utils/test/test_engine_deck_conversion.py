@@ -7,7 +7,7 @@ from aviary.utils.engine_deck_conversion import convert_engine_deck, EngineDeckT
 from aviary.utils.functions import get_path
 
 
-# @use_tempdirs
+@use_tempdirs
 class TestEngineDeckConversion(unittest.TestCase):
     """Test engine deck conversion utility by comparing against previously converted engine deck files."""
 
