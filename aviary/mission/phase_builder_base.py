@@ -11,6 +11,7 @@ from collections import namedtuple
 
 import dymos as dm
 import openmdao.api as om
+import numpy as np
 
 from aviary.mission.flops_based.ode.energy_ODE import EnergyODE
 from aviary.mission.initial_guess_builders import InitialGuess
@@ -383,8 +384,8 @@ class PhaseBuilderBase(ABC):
     def set_time_options(self, user_options, targets=[]):
         """Set time options: fix_initial flag, duration upper bounds, duration reference."""
         fix_initial = user_options.get_val('fix_initial')
-        duration_bounds = user_options.get_val('duration_bounds', units='s')
-        duration_ref = user_options.get_val('duration_ref', units='s')
+        duration_bounds = user_options.get_val('time_duration_bounds', units='s')
+        duration_ref = user_options.get_val('time_duration_ref', units='s')
 
         self.phase.set_time_options(
             fix_initial=fix_initial,
@@ -466,6 +467,12 @@ class PhaseBuilderBase(ABC):
         polynomial_order = options[f'{name}_polynomial_order']
         opt = options[f'{name}_optimize']
 
+        if ref == 1.0:
+            # This has not been moved from default, so find a good value.
+            candidates = [x for x in (bounds[0], bounds[1], initial, final) if x is not None]
+            if len(candidates) > 0:
+                ref = np.max(np.abs(np.array(candidates)))
+
         extra_options = {}
         if polynomial_order is not None:
             extra_options['control_type'] = 'polynomial'
@@ -490,6 +497,9 @@ class PhaseBuilderBase(ABC):
             opt=opt,
             **extra_options
         )
+
+        # Add timeseries for any control.
+        phase.add_timeseries_output(target)
 
         if not add_constraints:
             return

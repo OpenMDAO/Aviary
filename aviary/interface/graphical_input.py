@@ -204,7 +204,7 @@ class AviaryMissionEditor(tk.Tk):
 
         self.advanced_options = {
             'constrain_range': tk.BooleanVar(value=True),
-            'solve_for_distance': tk.BooleanVar(),
+            'distance_solve_segments': tk.BooleanVar(),
             'include_takeoff': tk.BooleanVar(),
             'include_landing': tk.BooleanVar(),
             'polynomial_control_order': tk.IntVar(value=1),
@@ -1397,8 +1397,8 @@ class AviaryMissionEditor(tk.Tk):
                 units = [None] * 3
                 for phase_dict in phase_info.values():
                     if 'initial_guesses' in phase_dict:  # not a pre/post mission dict
-                        self.advanced_options['solve_for_distance'].set(
-                            value=phase_dict['user_options']['solve_for_distance']
+                        self.advanced_options['distance_solve_segments'].set(
+                            value=phase_dict['user_options']['distance_solve_segments']
                         )
                         self.advanced_options['polynomial_control_order'].set(
                             value=phase_dict['user_options']['polynomial_control_order']
@@ -1492,7 +1492,7 @@ class AviaryMissionEditor(tk.Tk):
             if not continue_saving:
                 return
         users = {
-            'solve_for_distance': self.advanced_options['solve_for_distance'].get(),
+            'distance_solve_segments': self.advanced_options['distance_solve_segments'].get(),
             'constrain_range': self.advanced_options['constrain_range'].get(),
             'include_takeoff': self.advanced_options['include_takeoff'].get(),
             'include_landing': self.advanced_options['include_landing'].get(),
@@ -1632,7 +1632,7 @@ def create_phase_info(
                 'use_polynomial_control': True,
                 'num_segments': num_segments,
                 'order': orders[i],
-                'solve_for_distance': False,
+                'distance_solve_segments': False,
                 'initial_mach': (mach_values[i], units[2]),
                 'final_mach': (mach_values[i + 1], units[2]),
                 'mach_bounds': (
@@ -1654,8 +1654,8 @@ def create_phase_info(
                 'fix_initial': True if i == 0 else False,
                 'constrain_final': True if i == (num_phases - 1) else False,
                 'fix_duration': False,
-                'initial_bounds': (cumulative_initial_bounds[i], units[0]),
-                'duration_bounds': (duration_bounds[i], units[0]),
+                'time_initial_bounds': (cumulative_initial_bounds[i], units[0]),
+                'time_duration_bounds': (duration_bounds[i], units[0]),
             },
             'initial_guesses': {
                 'time': ([times[i], times[i + 1] - times[i]], units[0]),
@@ -1674,7 +1674,7 @@ def create_phase_info(
             continue
         phase_info[phase_name]['user_options'].update(
             {
-                'solve_for_distance': user_choices.get('solve_for_distance', False),
+                'distance_solve_segments': user_choices.get('distance_solve_segments', False),
             }
         )
 

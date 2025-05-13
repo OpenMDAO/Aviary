@@ -87,7 +87,7 @@ class DescentPhaseOptions(AviaryOptionsDictionary):
         )
 
         self.declare(
-            name='duration_bounds',
+            name='time_duration_bounds',
             default=(0, 0),
             units='s',
             desc='Lower and upper bounds on the phase duration, in the form of a nested tuple: '
@@ -95,7 +95,7 @@ class DescentPhaseOptions(AviaryOptionsDictionary):
         )
 
         self.declare(
-            name='duration_ref', default=1.0, units='s', desc='Scale factor ref for duration.'
+            name='time_duration_ref', default=1.0, units='s', desc='Scale factor ref for duration.'
         )
 
         self.declare(

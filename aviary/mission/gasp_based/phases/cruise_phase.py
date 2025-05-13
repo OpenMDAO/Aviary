@@ -45,7 +45,7 @@ class CruisePhaseOptions(AviaryOptionsDictionary):
         )
 
         self.declare(
-            name='duration_bounds',
+            name='time_duration_bounds',
             default=(0, 3600),
             units='s',
             desc='Lower and upper bounds on the phase duration, in the form of a nested tuple: '
@@ -61,7 +61,7 @@ class CruisePhaseOptions(AviaryOptionsDictionary):
         )
 
         self.declare(
-            'initial_bounds',
+            'time_initial_bounds',
             types=tuple,
             default=(0.0, 100.0),
             units='s',

@@ -216,19 +216,19 @@ class HeightEnergyProblemConfigurator(ProblemConfiguratorBase):
 
         # Make a good guess for a reasonable intitial time scaler.
         try:
-            initial_bounds = user_options.get_val('initial_bounds', units=time_units)
+            initial_bounds = user_options.get_val('time_initial_bounds', units=time_units)
         except KeyError:
             initial_bounds = (None, None)
 
         if initial_bounds[0] is not None and initial_bounds[1] != 0.0:
             # Upper bound is good for a ref.
-            user_options.set_val('initial_ref', initial_bounds[1], units=time_units)
+            user_options.set_val('time_initial_ref', initial_bounds[1], units=time_units)
         else:
-            user_options.set_val('initial_ref', 600.0, time_units)
+            user_options.set_val('time_initial_ref', 600.0, time_units)
 
-        duration_bounds = user_options.get_val('duration_bounds', time_units)
+        duration_bounds = user_options.get_val('time_duration_bounds', time_units)
         user_options.set_val(
-            'duration_ref', (duration_bounds[0] + duration_bounds[1]) / 2.0, time_units
+            'time_duration_ref', (duration_bounds[0] + duration_bounds[1]) / 2.0, time_units
         )
 
         # The rest of the phases includes all Height Energy method phases
@@ -240,7 +240,7 @@ class HeightEnergyProblemConfigurator(ProblemConfiguratorBase):
             if prob.comm.size > 1:
                 # Phases are disconnected to run in parallel, so initial ref is
                 # valid.
-                initial_ref = user_options.get_val('initial_ref', time_units)
+                initial_ref = user_options.get_val('time_initial_ref', time_units)
             else:
                 # Redundant on a fixed input; raises a warning if specified.
                 initial_ref = None
@@ -250,8 +250,8 @@ class HeightEnergyProblemConfigurator(ProblemConfiguratorBase):
                 fix_initial=fix_initial,
                 fix_duration=fix_duration,
                 units=time_units,
-                duration_bounds=user_options.get_val('duration_bounds', time_units),
-                duration_ref=user_options.get_val('duration_ref', time_units),
+                duration_bounds=user_options.get_val('time_duration_bounds', time_units),
+                duration_ref=user_options.get_val('time_duration_ref', time_units),
                 initial_ref=initial_ref,
             )
         else:
@@ -259,10 +259,10 @@ class HeightEnergyProblemConfigurator(ProblemConfiguratorBase):
                 fix_initial=fix_initial,
                 fix_duration=fix_duration,
                 units=time_units,
-                duration_bounds=user_options.get_val('duration_bounds', time_units),
-                duration_ref=user_options.get_val('duration_ref', time_units),
+                duration_bounds=user_options.get_val('time_duration_bounds', time_units),
+                duration_ref=user_options.get_val('time_duration_ref', time_units),
                 initial_bounds=initial_bounds,
-                initial_ref=user_options.get_val('initial_ref', time_units),
+                initial_ref=user_options.get_val('time_initial_ref', time_units),
             )
 
     def link_phases(self, prob, phases, connect_directly=True):
@@ -396,9 +396,11 @@ class HeightEnergyProblemConfigurator(ProblemConfiguratorBase):
 
     def _add_post_mission_takeoff_systems(self, prob):
         first_flight_phase_name = list(prob.phase_info.keys())[0]
+        phase_options = prob.phase_info[first_flight_phase_name]['user_options']
 
         prob.model.connect(
-            Mission.Takeoff.FINAL_MASS, f'traj.{first_flight_phase_name}.initial_states:mass'
+            Mission.Takeoff.FINAL_MASS,
+            f'traj.{first_flight_phase_name}.initial_states:mass'
         )
         prob.model.connect(
             Mission.Takeoff.GROUND_DISTANCE,
@@ -406,13 +408,11 @@ class HeightEnergyProblemConfigurator(ProblemConfiguratorBase):
         )
 
         control_type_string = 'control_values'
-        if prob.phase_info[first_flight_phase_name]['user_options'].get(
-            'use_polynomial_control', True
-        ):
+        if phase_options.get('use_polynomial_control', True):
             if not use_new_dymos_syntax:
                 control_type_string = 'polynomial_control_values'
 
-        if prob.phase_info[first_flight_phase_name]['user_options'].get('mach_optimize', False):
+        if phase_options.get('mach_optimize', False):
             # Create an ExecComp to compute the difference in mach
             mach_diff_comp = om.ExecComp(
                 'mach_resid_for_connecting_takeoff = final_mach - initial_mach'
@@ -429,12 +429,11 @@ class HeightEnergyProblemConfigurator(ProblemConfiguratorBase):
 
             # Add constraint for mach difference
             prob.model.add_constraint(
-                'mach_diff_comp.mach_resid_for_connecting_takeoff', equals=0.0
+                'mach_diff_comp.mach_resid_for_connecting_takeoff',
+                equals=0.0
             )
 
-        if prob.phase_info[first_flight_phase_name]['user_options'].get(
-            'altitude_optimize', False
-        ):
+        if phase_options.get('altitude_optimize', False):
             # Similar steps for altitude difference
             alt_diff_comp = om.ExecComp(
                 'altitude_resid_for_connecting_takeoff = final_altitude - initial_altitude',
@@ -449,8 +448,10 @@ class HeightEnergyProblemConfigurator(ProblemConfiguratorBase):
                 src_indices=[0],
             )
 
+            # Add constraint for altitude difference
             prob.model.add_constraint(
-                'alt_diff_comp.altitude_resid_for_connecting_takeoff', equals=0.0
+                'alt_diff_comp.altitude_resid_for_connecting_takeoff',
+                equals=0.0
             )
 
     def _add_landing_systems(self, prob):
@@ -571,8 +572,8 @@ class HeightEnergyProblemConfigurator(ProblemConfiguratorBase):
         if 'time' not in guess_dict:
             # if time not in initial guesses, set it to the average of the
             # initial_bounds and the duration_bounds
-            initial_bounds = wrapped_convert_units(options['initial_bounds'], 's')
-            duration_bounds = wrapped_convert_units(options['duration_bounds'], 's'
+            initial_bounds = wrapped_convert_units(options['time_initial_bounds'], 's')
+            duration_bounds = wrapped_convert_units(options['time_duration_bounds'], 's'
                                                     )
             guess_dict['time'] = ([np.mean(initial_bounds[0]), np.mean(duration_bounds[0])], 's')
 

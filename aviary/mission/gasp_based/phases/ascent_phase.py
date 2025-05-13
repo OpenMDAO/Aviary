@@ -168,7 +168,7 @@ class AscentPhaseOptions(AviaryOptionsDictionary):
         )
 
         self.declare(
-            name='duration_ref', default=1.0, units='s', desc='Scale factor ref for duration.'
+            name='time_duration_ref', default=1.0, units='s', desc='Scale factor ref for duration.'
         )
 
         self.declare(

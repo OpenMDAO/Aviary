@@ -29,7 +29,7 @@ class AircraftMissionTestSuite(unittest.TestCase):
                     'polynomial_control_order': 1,
                     'num_segments': 5,
                     'order': 3,
-                    'solve_for_distance': False,
+                    'distance_solve_segments': False,
                     'initial_mach': (0.2, 'unitless'),
                     'final_mach': (0.72, 'unitless'),
                     'mach_bounds': ((0.18, 0.74), 'unitless'),
@@ -40,8 +40,8 @@ class AircraftMissionTestSuite(unittest.TestCase):
                     'fix_initial': True,
                     'constrain_final': False,
                     'fix_duration': False,
-                    'initial_bounds': ((0.0, 0.0), 'min'),
-                    'duration_bounds': ((64.0, 192.0), 'min'),
+                    'time_initial_bounds': ((0.0, 0.0), 'min'),
+                    'time_duration_bounds': ((64.0, 192.0), 'min'),
                 },
                 'initial_guesses': {'time': ([0, 128], 'min')},
             },
@@ -53,7 +53,7 @@ class AircraftMissionTestSuite(unittest.TestCase):
                     'polynomial_control_order': 1,
                     'num_segments': 5,
                     'order': 3,
-                    'solve_for_distance': False,
+                    'distance_solve_segments': False,
                     'initial_mach': (0.72, 'unitless'),
                     'final_mach': (0.72, 'unitless'),
                     'mach_bounds': ((0.7, 0.74), 'unitless'),
@@ -64,8 +64,8 @@ class AircraftMissionTestSuite(unittest.TestCase):
                     'fix_initial': False,
                     'constrain_final': False,
                     'fix_duration': False,
-                    'initial_bounds': ((64.0, 192.0), 'min'),
-                    'duration_bounds': ((56.5, 169.5), 'min'),
+                    'time_initial_bounds': ((64.0, 192.0), 'min'),
+                    'time_duration_bounds': ((56.5, 169.5), 'min'),
                 },
                 'initial_guesses': {'time': ([128, 113], 'min')},
             },
@@ -77,7 +77,7 @@ class AircraftMissionTestSuite(unittest.TestCase):
                     'polynomial_control_order': 1,
                     'num_segments': 5,
                     'order': 3,
-                    'solve_for_distance': False,
+                    'distance_solve_segments': False,
                     'initial_mach': (0.72, 'unitless'),
                     'final_mach': (0.36, 'unitless'),
                     'mach_bounds': ((0.34, 0.74), 'unitless'),
@@ -88,8 +88,8 @@ class AircraftMissionTestSuite(unittest.TestCase):
                     'fix_initial': False,
                     'constrain_final': True,
                     'fix_duration': False,
-                    'initial_bounds': ((120.5, 361.5), 'min'),
-                    'duration_bounds': ((29.0, 87.0), 'min'),
+                    'time_initial_bounds': ((120.5, 361.5), 'min'),
+                    'time_duration_bounds': ((29.0, 87.0), 'min'),
                 },
                 'initial_guesses': {'time': ([241, 58], 'min')},
             },
@@ -213,17 +213,17 @@ class AircraftMissionTestSuite(unittest.TestCase):
         self.assertTrue(prob.problem_ran_successfully)
 
     @require_pyoptsparse(optimizer='IPOPT')
-    def test_mission_solve_for_distance_IPOPT(self):
+    def test_mission_distance_solve_segments_IPOPT(self):
         modified_phase_info = self.phase_info.copy()
         for phase in ['climb', 'cruise', 'descent']:
-            modified_phase_info[phase]['user_options']['solve_for_distance'] = True
+            modified_phase_info[phase]['user_options']['distance_solve_segments'] = True
         prob = self.run_mission(modified_phase_info, 'IPOPT')
         self.assertTrue(prob.problem_ran_successfully)
 
-    def test_mission_solve_for_distance_SLSQP(self):
+    def test_mission_distance_solve_segments_SLSQP(self):
         modified_phase_info = self.phase_info.copy()
         for phase in ['climb', 'cruise', 'descent']:
-            modified_phase_info[phase]['user_options']['solve_for_distance'] = True
+            modified_phase_info[phase]['user_options']['distance_solve_segments'] = True
         prob = self.run_mission(modified_phase_info, 'SLSQP')
         self.assertTrue(prob.problem_ran_successfully)
 

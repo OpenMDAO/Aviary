@@ -350,7 +350,7 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
             )
 
         elif 'descent' in phase_name:
-            duration_ref = user_options.get_val('duration_ref', 's')
+            duration_ref = user_options.get_val('time_duration_ref', 's')
             phase.set_time_options(
                 duration_bounds=duration_bounds,
                 fix_initial=fix_initial,
@@ -364,19 +364,19 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
 
             # Make a good guess for a reasonable intitial time scaler.
             try:
-                initial_bounds = user_options.get_val('initial_bounds', units=time_units)
+                initial_bounds = user_options.get_val('time_initial_bounds', units=time_units)
             except KeyError:
                 initial_bounds = (None, None)
 
             if initial_bounds[0] is not None and initial_bounds[1] != 0.0:
                 # Upper bound is good for a ref.
-                user_options.set_val('initial_ref', initial_bounds[1], units=time_units)
+                user_options.set_val('time_initial_ref', initial_bounds[1], units=time_units)
             else:
-                user_options.set_val('initial_ref', 600.0, time_units)
+                user_options.set_val('time_initial_ref', 600.0, time_units)
 
-            duration_bounds = user_options.get_val('duration_bounds', time_units)
+            duration_bounds = user_options.get_val('time_duration_bounds', time_units)
             user_options.set_val(
-                'duration_ref', (duration_bounds[0] + duration_bounds[1]) / 2.0, time_units
+                'time_duration_ref', (duration_bounds[0] + duration_bounds[1]) / 2.0, time_units
             )
             input_initial = phase_idx > 0
 
@@ -384,7 +384,7 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
                 if prob.comm.size > 1:
                     # Phases are disconnected to run in parallel, so initial ref is
                     # valid.
-                    initial_ref = user_options.get_val('initial_ref', time_units)
+                    initial_ref = user_options.get_val('time_initial_ref', time_units)
                 else:
                     # Redundant on a fixed input; raises a warning if specified.
                     initial_ref = None
@@ -393,8 +393,8 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
                     fix_initial=fix_initial,
                     fix_duration=fix_duration,
                     units=time_units,
-                    duration_bounds=user_options.get_val('duration_bounds', time_units),
-                    duration_ref=user_options.get_val('duration_ref', time_units),
+                    duration_bounds=user_options.get_val('time_duration_bounds', time_units),
+                    duration_ref=user_options.get_val('time_duration_ref', time_units),
                     initial_ref=initial_ref,
                 )
 
@@ -403,8 +403,8 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
                     fix_initial=fix_initial,
                     fix_duration=fix_duration,
                     units=time_units,
-                    duration_bounds=user_options.get_val('duration_bounds', time_units),
-                    duration_ref=user_options.get_val('duration_ref', time_units),
+                    duration_bounds=user_options.get_val('time_duration_bounds', time_units),
+                    duration_ref=user_options.get_val('time_duration_ref', time_units),
                     initial_bounds=initial_bounds,
                     initial_ref=user_options.get_val('initial_ref', time_units),
                 )

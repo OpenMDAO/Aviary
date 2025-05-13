@@ -114,6 +114,25 @@ class FlightPhaseOptions(AviaryOptionsDictionary):
             '_add_user_defined_constraints().',
         )
 
+        self.declare(
+            'time_initial_bounds',
+            types=tuple,
+            default=(None, None),
+            units='min',
+            desc='Lower and upper bounds on the starting time for this phase relative to the '
+            'starting time of the mission, i.e., ((25, 45), "min") constrians this phase to '
+            'start between 25 and 45 minutes after the start of the mission.',
+        )
+
+        self.declare(
+            name='time_duration_bounds',
+            types=tuple,
+            default=(None, None),
+            units='min',
+            desc='Lower and upper bounds on the phase duration, in the form of a nested tuple: '
+            'i.e. ((20, 36), "min") This constrains the duration to be between 20 and 36 min.',
+        )
+
 
         # untreated
 
@@ -144,45 +163,11 @@ class FlightPhaseOptions(AviaryOptionsDictionary):
         )
 
         self.declare(
-            name='input_initial',
-            types=bool,
-            default=False,
-            desc='Links all states (mass, distance) to a calculation external to this phase.',
-        )
-
-        self.declare(
-            name='fix_initial',
-            types=bool,
-            default=True,
-            desc='Fixes the initial states (mass, distance) and does not allow them to '
-            'change during the optimization.',
-        )
-
-        self.declare(
             name='fix_duration',
             types=bool,
             default=True,
             desc='If True, the time duration of the phase is not treated as a design '
             'variable for the optimization problem.',
-        )
-
-        self.declare(
-            'initial_bounds',
-            types=tuple,
-            default=(None, None),
-            units='min',
-            desc='Lower and upper bounds on the starting time for this phase relative to the '
-            'starting time of the mission, i.e., ((25, 45), "min") constrians this phase to '
-            'start between 25 and 45 minutes after the start of the mission.',
-        )
-
-        self.declare(
-            name='duration_bounds',
-            types=tuple,
-            default=(None, None),
-            units='min',
-            desc='Lower and upper bounds on the phase duration, in the form of a nested tuple: '
-            'i.e. ((20, 36), "min") This constrains the duration to be between 20 and 36 min.',
         )
 
         self.declare(
@@ -202,43 +187,7 @@ class FlightPhaseOptions(AviaryOptionsDictionary):
         )
 
         self.declare(
-            name='constrain_final',
-            types=bool,
-            default=False,
-            desc='Fixes the final states (mach and altitude) to the values of final_altitude '
-            'and final_mach. These values will be unable to change during the optimization.',
-        )
-
-        self.declare(
-            name='initial_altitude',
-            types=tuple,
-            default=None,
-            units='ft',
-            desc='The initial altitude at the start of the phase. This option is only valid '
-            'when fix_initial is True.',
-        )
-
-        self.declare(
-            name='final_altitude',
-            types=tuple,
-            default=None,
-            units='ft',
-            desc='The final altitude at the end of the phase. This option is only valid '
-            'when fix_initial is True.',
-        )
-
-        self.declare(
-            name='altitude_bounds',
-            types=tuple,
-            default=(None, None),
-            units='ft',
-            desc='The lower and upper constraints on altitude during this phase i.e., '
-            '((0.0, 34000.0), "ft"). The optimizer is never allowed choose mach values '
-            'outside of these bounds constraints.',
-        )
-
-        self.declare(
-            name='solve_for_distance',
+            name='distance_solve_segments',
             types=bool,
             default=False,
             desc='if True, use a nonlinear solver to converge the distance state variable to '
@@ -362,27 +311,6 @@ class FlightPhaseBase(PhaseBuilderBase):
             add_constraints=Dynamic.Mission.ALTITUDE not in constraints
         )
 
-        # dictionary of options for altitude control
-        #control_dict = {
-            #'name': Dynamic.Mission.ALTITUDE,
-            #'targets': Dynamic.Mission.ALTITUDE,
-            #'units': altitude_bounds[1],
-            #'rate_targets': rate_targets,
-            #'rate2_targets': rate2_targets,
-            #'opt': optimize_altitude,
-        #}
-
-        #if optimize_altitude:
-            #control_dict['lower'] = altitude_bounds[0][0]
-            #control_dict['upper'] = altitude_bounds[0][1]
-            #control_dict['ref'] = altitude_bounds[0][1]
-
-        #if use_polynomial_control:
-            #control_dict['control_type'] = 'polynomial'
-            #control_dict['order'] = polynomial_control_order
-
-        #phase.add_control(**control_dict)
-
         # For heterogeneous-engine cases, we may have throttle allocation control.
         if phase_type is EquationsOfMotion.HEIGHT_ENERGY and num_engine_type > 1:
             allocation = user_options['throttle_allocation']
@@ -404,17 +332,12 @@ class FlightPhaseBase(PhaseBuilderBase):
                 )
 
             else:
-                if allocation == ThrottleAllocation.STATIC:
-                    opt = True
-                else:
-                    opt = False
-
                 phase.add_parameter(
                     'throttle_allocations',
                     units='unitless',
                     val=val,
                     shape=(num_engine_type - 1,),
-                    opt=opt,
+                    opt=allocation == ThrottleAllocation.STATIC,
                     lower=0.0,
                     upper=1.0,
                 )
@@ -422,12 +345,6 @@ class FlightPhaseBase(PhaseBuilderBase):
         ##################
         # Add Timeseries #
         ##################
-        phase.add_timeseries_output(
-            Dynamic.Atmosphere.MACH,
-            output_name=Dynamic.Atmosphere.MACH,
-            units='unitless',
-        )
-
         phase.add_timeseries_output(
             Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
             output_name=Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
@@ -474,8 +391,6 @@ class FlightPhaseBase(PhaseBuilderBase):
             output_name=Dynamic.Mission.VELOCITY,
             units='m/s',
         )
-
-        phase.add_timeseries_output(Dynamic.Mission.ALTITUDE)
 
         if phase_type is EquationsOfMotion.SOLVED_2DOF:
             phase.add_timeseries_output(Dynamic.Mission.FLIGHT_PATH_ANGLE)

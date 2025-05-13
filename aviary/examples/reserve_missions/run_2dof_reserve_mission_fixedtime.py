@@ -20,7 +20,7 @@ phase_info = deepcopy(phase_info)
 reserve_cruise = deepcopy(phase_info['cruise'])
 reserve_cruise['user_options']['reserve'] = True
 reserve_cruise['user_options']['target_duration'] = (30, 'min')
-reserve_cruise['user_options']['initial_bounds'] = ((149.5, 448.5), 'min')
+reserve_cruise['user_options']['time_initial_bounds'] = ((149.5, 448.5), 'min')
 reserve_cruise['initial_guesses']['initial_distance'] = (4000, 'nmi')
 
 phase_info.update({'reserve_cruise': reserve_cruise})

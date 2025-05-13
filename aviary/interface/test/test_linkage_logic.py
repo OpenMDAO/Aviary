@@ -18,7 +18,7 @@ class AircraftMissionTestSuite(unittest.TestCase):
                 'polynomial_control_order': 1,
                 'num_segments': 5,
                 'order': 3,
-                'solve_for_distance': False,
+                'distance_solve_segments': False,
                 'initial_mach': (0.72, 'unitless'),
                 'final_mach': (0.72, 'unitless'),
                 'mach_bounds': ((0.7, 0.74), 'unitless'),
@@ -29,14 +29,14 @@ class AircraftMissionTestSuite(unittest.TestCase):
                 'fix_initial': False,
                 'constrain_final': False,
                 'fix_duration': False,
-                'initial_bounds': ((64.0, 192.0), 'min'),
-                'duration_bounds': ((56.5, 169.5), 'min'),
+                'time_initial_bounds': ((64.0, 192.0), 'min'),
+                'time_duration_bounds': ((56.5, 169.5), 'min'),
             },
         }
         cruise_dicts = [copy.deepcopy(cruise_dict) for _ in range(5)]
         for i, cruise_dict in enumerate(cruise_dicts):
-            cruise_dict['user_options']['initial_bounds'] = ((64.0 + i * 10, 192.0 + i * 10), 'min')
-            cruise_dict['user_options']['duration_bounds'] = (
+            cruise_dict['user_options']['time_initial_bounds'] = ((64.0 + i * 10, 192.0 + i * 10), 'min')
+            cruise_dict['user_options']['time_duration_bounds'] = (
                 (56.5 + i * 10, 169.5 + i * 10),
                 'min',
             )
@@ -57,7 +57,7 @@ class AircraftMissionTestSuite(unittest.TestCase):
                     'polynomial_control_order': 1,
                     'num_segments': 5,
                     'order': 3,
-                    'solve_for_distance': False,
+                    'distance_solve_segments': False,
                     'initial_mach': (0.2, 'unitless'),
                     'final_mach': (0.72, 'unitless'),
                     'mach_bounds': ((0.18, 0.74), 'unitless'),
@@ -68,8 +68,8 @@ class AircraftMissionTestSuite(unittest.TestCase):
                     'fix_initial': True,
                     'constrain_final': False,
                     'fix_duration': False,
-                    'initial_bounds': ((0.0, 0.0), 'min'),
-                    'duration_bounds': ((64.0, 192.0), 'min'),
+                    'time_initial_bounds': ((0.0, 0.0), 'min'),
+                    'time_duration_bounds': ((64.0, 192.0), 'min'),
                 },
             },
             'cruise0': cruise_dicts[0],
@@ -85,7 +85,7 @@ class AircraftMissionTestSuite(unittest.TestCase):
                     'polynomial_control_order': 1,
                     'num_segments': 5,
                     'order': 3,
-                    'solve_for_distance': False,
+                    'distance_solve_segments': False,
                     'initial_mach': (0.72, 'unitless'),
                     'final_mach': (0.36, 'unitless'),
                     'mach_bounds': ((0.34, 0.74), 'unitless'),
@@ -96,8 +96,8 @@ class AircraftMissionTestSuite(unittest.TestCase):
                     'fix_initial': False,
                     'constrain_final': True,
                     'fix_duration': False,
-                    'initial_bounds': ((120.5, 361.5), 'min'),
-                    'duration_bounds': ((29.0, 87.0), 'min'),
+                    'time_initial_bounds': ((120.5, 361.5), 'min'),
+                    'time_duration_bounds': ((29.0, 87.0), 'min'),
                 },
             },
             'post_mission': {

@@ -125,7 +125,7 @@ class TwoDOFPhaseOptions(AviaryOptionsDictionary):
         )
 
         self.declare(
-            'initial_bounds',
+            'time_initial_bounds',
             types=tuple,
             default=(None, None),
             units='ft',
@@ -133,7 +133,7 @@ class TwoDOFPhaseOptions(AviaryOptionsDictionary):
         )
 
         self.declare(
-            name='duration_bounds',
+            name='time_duration_bounds',
             types=tuple,
             default=(None, None),
             units='ft',
@@ -253,7 +253,7 @@ class TwoDOFPhaseOptions(AviaryOptionsDictionary):
         )
 
         self.declare(
-            name='solve_for_distance',
+            name='distance_solve_segments',
             types=bool,
             default=False,
             desc='if True, use a nonlinear solver to converge the distance state variable to '
@@ -277,7 +277,7 @@ class TwoDOFPhaseOptions(AviaryOptionsDictionary):
         )
 
         self.declare(
-            name='duration_ref',
+            name='time_duration_ref',
             types=tuple,
             default=1000.0,
             units='ft',
@@ -348,14 +348,14 @@ class TwoDOFPhase(FlightPhaseBase):
         control_order = user_options.get_val('control_order')
 
         fix_initial = user_options.get_val('fix_initial')
-        duration_bounds = user_options.get_val('duration_bounds', units='ft')
-        duration_ref = user_options.get_val('duration_ref', units='ft')
+        duration_bounds = user_options.get_val('time_duration_bounds', units='ft')
+        duration_ref = user_options.get_val('time_duration_ref', units='ft')
         rotation = user_options.get_val('rotation')
 
         initial_kwargs = {}
         if not fix_initial:
             initial_kwargs = {
-                'initial_bounds': user_options.get_val('initial_bounds', units='ft'),
+                'initial_bounds': user_options.get_val('time_initial_bounds', units='ft'),
                 'initial_ref': user_options.get_val('initial_ref', units='ft'),
             }
 
