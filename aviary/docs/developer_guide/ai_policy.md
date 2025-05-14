@@ -13,15 +13,16 @@ Like all code contributions, it is important to run all unittests and benchmark 
 
 ## 3. AI should never be used as a source for data
 
+Generative AI, as the name implies, is not a tool that is good at "fetching" information - it generates a best guess for what you asked for. Therefore, it is extremely unreliable as a source of "truth" data. AI should not be used as the source of numerical data, such as default values, constants/conversion factors, aircraft performance data, or similar.
 
-Similarly, AI should not be used to write unittests. While writing unittests can be a tedious step that may be tempting to automate, they are extremely critical to get right. The test setup and which values are used must be carefully chosen to ensure the code is properly being verified (and potentially validated) including potential edge cases.
+AI should also not be used to write unittests. While writing unittests can be a tedious step that may be tempting to automate, they are extremely critical to get right. The test setup and which values are compared against must be carefully chosen to ensure the code is properly being verified (and potentially validated) including potential edge cases.
 
-## 3. Do not use AI for documentation
+## 4. Do not use AI for documentation
 
 AI tools should not be used for documentation. Current AI tools struggle with holding large codebases like Aviary in context, and hallucinations or general mistakes are harder to catch in text then they are in code - even with Aviary's documentation checking utilities (DocTAPE). Any AI written documentation pages will be rejected.
 
-## 4. Use common sense when using AI tools
+## 5. Use common sense when using AI tools
 
 In general, you should never just accept and copy/paste code an AI tool gives you. All AI-generated code should be reviewed and understood before you commit it.
 
-  The key takeaway is that you should always fully understand your code before submitting it to Aviary, no matter how it was created.
+The key takeaway is that you should always fully understand your code before submitting it to Aviary, no matter how it was created.
