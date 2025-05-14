@@ -46,6 +46,26 @@ def preprocess_options(aviary_options: AviaryValues, meta_data=_MetaData, verbos
     preprocess_propulsion(aviary_options, engine_models, meta_data, verbosity)
 
 
+def remove_preprocessed_options(aviary_options):
+    """
+    Remove options whose values will be computed in the preprocessors.
+
+    Parameters
+    ----------
+    aviary_options : AviaryValues
+        Options to be updated
+    """
+    pre_opt = [
+        Aircraft.CrewPayload.NUM_FLIGHT_CREW,
+        Aircraft.CrewPayload.NUM_FLIGHT_ATTENDANTS,
+        Aircraft.CrewPayload.NUM_GALLEY_CREW,
+        Aircraft.CrewPayload.BAGGAGE_MASS_PER_PASSENGER,
+    ]
+
+    for option in pre_opt:
+        aviary_options.delete(option)
+
+
 def preprocess_crewpayload(aviary_options: AviaryValues, meta_data=_MetaData, verbosity=None):
     """
     Calculates option values that are derived from other options, and are not direct inputs.
