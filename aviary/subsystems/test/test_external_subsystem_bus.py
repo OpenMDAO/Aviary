@@ -102,58 +102,112 @@ class PostMissionComp(om.ExplicitComponent):
 
 class CustomBuilder(SubsystemBuilderBase):
 
+    def __init__(self, name, mangle_names=False):
+        self.mangle_names = mangle_names
+        super().__init__(name)
+
     def build_pre_mission(self, aviary_inputs):
         shape = (aviary_inputs.get_val("the_shape_for_the_thing_dim0"),
                  aviary_inputs.get_val("the_shape_for_the_thing_dim1"))
-        return PreMissionComp(shape=shape)
+        if self.mangle_names:
+            sys = om.Group()
+            name = self.name
+            sys.add_subsystem(
+                    "foo", PreMissionComp(shape=shape),
+                    promotes_outputs=[("for_climb", f"{name}_for_climb"),
+                                      ("for_cruise", f"{name}_for_cruise"),
+                                      ("for_descent", f"{name}_for_descent")])
+
+        else:
+            sys = PreMissionComp(shape=shape)
+        return sys
 
     def build_mission(self, num_nodes, aviary_inputs):
         sub_group = om.Group()
         shape = (aviary_inputs.get_val("the_shape_for_the_thing_dim0"),
                  aviary_inputs.get_val("the_shape_for_the_thing_dim1"))
         comp = MissionComp(shape=shape, num_nodes=num_nodes)
-        sub_group.add_subsystem('electric', comp,
-                                promotes_inputs=['*'],
-                                promotes_outputs=['*'],
-                                )
+        if self.mangle_names:
+            name = self.name
+            sub_group.add_subsystem('electric', comp,
+                                    promotes_inputs=[ ("xx", f"{name}_xx") ],
+                                    promotes_outputs=[("yy", f"{name}_yy"),
+                                                      ("zz", f"{name}_zz")],
+                                    )
+        else:
+            sub_group.add_subsystem('electric', comp,
+                                    promotes_inputs=['*'],
+                                    promotes_outputs=['*'],
+                                    )
         return sub_group
 
     def get_bus_variables(self, aviary_inputs):
         shape = (aviary_inputs.get_val("the_shape_for_the_thing_dim0"),
                  aviary_inputs.get_val("the_shape_for_the_thing_dim1"))
-        vars_to_connect = {
-            f"{self.name}.for_climb": {
-                "mission_name": [f'{self.name}.xx'],
-                "post_mission_name": f'{self.name}.climb_xx',
-                "units": 'ft',
-                "shape": shape,
-                "phases": ['climb']
-            },
-            f"{self.name}.for_cruise": {
-                "mission_name": [f'{self.name}.xx'],
-                "post_mission_name": f'{self.name}.cruise_xx',
-                "units": 'ft',
-                "shape": shape,
-                "phases": ['cruise']
-            },
-            f"{self.name}.for_descent": {
-                "mission_name": [f'{self.name}.xx'],
-                "post_mission_name": [f'{self.name}.descent_xx'],
-                "units": 'ft',
-                "shape": shape,
-                "phases": ['descent']
-            },
-        }
+        name = self.name
+        if self.mangle_names:
+            vars_to_connect = {
+                f"{name}.{name}_for_climb": {
+                    "mission_name": [f'{name}.{name}_xx'],
+                    "post_mission_name": f'{name}.climb_{name}_xx',
+                    "units": 'ft',
+                    "shape": shape,
+                    "phases": ['climb']
+                },
+                f"{name}.{name}_for_cruise": {
+                    "mission_name": [f'{name}.{name}_xx'],
+                    "post_mission_name": f'{name}.cruise_{name}_xx',
+                    "units": 'ft',
+                    "shape": shape,
+                    "phases": ['cruise']
+                },
+                f"{name}.{name}_for_descent": {
+                    "mission_name": [f'{name}.{name}_xx'],
+                    "post_mission_name": [f'{name}.descent_{name}_xx'],
+                    "units": 'ft',
+                    "shape": shape,
+                    "phases": ['descent']
+                },
+            }
+        else:
+            vars_to_connect = {
+                f"{name}.for_climb": {
+                    "mission_name": [f'{name}.xx'],
+                    "post_mission_name": f'{name}.climb_xx',
+                    "units": 'ft',
+                    "shape": shape,
+                    "phases": ['climb']
+                },
+                f"{name}.for_cruise": {
+                    "mission_name": [f'{name}.xx'],
+                    "post_mission_name": f'{name}.cruise_xx',
+                    "units": 'ft',
+                    "shape": shape,
+                    "phases": ['cruise']
+                },
+                f"{name}.for_descent": {
+                    "mission_name": [f'{name}.xx'],
+                    "post_mission_name": [f'{name}.descent_xx'],
+                    "units": 'ft',
+                    "shape": shape,
+                    "phases": ['descent']
+                },
+            }
 
         return vars_to_connect
 
     def get_mission_bus_variables(self, aviary_inputs, phase_info):
+        name = self.name
         out = {}
         for phase_name, phase_data in phase_info.items():
             phase_d = {}
             if phase_data.get("do_the_zz_thing", False):
-                phase_d[f"{self.name}.zz"] = f"{self.name}.{phase_name}_zz"
-                phase_d[Dynamic.Mission.VELOCITY] = f"{self.name}.{phase_name}_velocity"
+                if self.mangle_names:
+                    phase_d[f"{name}.{name}_zz"] = f"{name}.{phase_name}_{name}_zz"
+                    phase_d[Dynamic.Mission.VELOCITY] = f"{name}.{phase_name}_{name}_velocity"
+                else:
+                    phase_d[f"{name}.zz"] = f"{name}.{phase_name}_zz"
+                    phase_d[Dynamic.Mission.VELOCITY] = f"{name}.{phase_name}_velocity"
             out[phase_name] = phase_d
         return out
 
@@ -161,32 +215,41 @@ class CustomBuilder(SubsystemBuilderBase):
         shape = (aviary_inputs.get_val("the_shape_for_the_thing_dim0"),
                  aviary_inputs.get_val("the_shape_for_the_thing_dim1"))
         group = om.Group()
+        name = self.name
         for phase_name, phase_data in phase_info.items():
             do_the_zz_thing = phase_data.get("do_the_zz_thing", False)
             num_nodes = phase_mission_bus_lengths[phase_name]
             comp = PostMissionComp(num_nodes=num_nodes, shape=shape,
                                    do_the_zz_thing=do_the_zz_thing)
-            pi = [("xx", f"{phase_name}_xx")]
-            if do_the_zz_thing:
-                pi.append(("zz", f"{phase_name}_zz"))
-                pi.append(("velocity", f"{phase_name}_velocity"))
-            po = [("zzz", f"{phase_name}_zzz")]
+            if self.mangle_names:
+                pi = [("xx", f"{phase_name}_{name}_xx")]
+                if do_the_zz_thing:
+                    pi.append(("zz", f"{phase_name}_{name}_zz"))
+                    pi.append(("velocity", f"{phase_name}_{name}_velocity"))
+                po = [("zzz", f"{phase_name}_{name}_zzz")]
+            else:
+                pi = [("xx", f"{phase_name}_xx")]
+                if do_the_zz_thing:
+                    pi.append(("zz", f"{phase_name}_zz"))
+                    pi.append(("velocity", f"{phase_name}_velocity"))
+                po = [("zzz", f"{phase_name}_zzz")]
             group.add_subsystem(
                 f"{phase_name}_post_mission", comp,
                 promotes_inputs=pi, promotes_outputs=po)
         return group
 
 
-@use_tempdirs
+# @use_tempdirs
 class TestExternalSubsystemBus(unittest.TestCase):
 
     def test_external_subsystem_bus(self):
         phase_info = deepcopy(ph_in)
-        phase_info['pre_mission']['external_subsystems'] = [CustomBuilder(name='test')]
-        phase_info['climb']['external_subsystems'] = [CustomBuilder(name='test')]
-        phase_info['cruise']['external_subsystems'] = [CustomBuilder(name='test')]
-        phase_info['descent']['external_subsystems'] = [CustomBuilder(name='test')]
-        phase_info['post_mission']['external_subsystems'] = [CustomBuilder(name='test')]
+        # Adding two `CustomBuilder` external subsystems will test that we can request `Dynamic.Mission.VELOCITY` be a mission bus variable twice.
+        phase_info['pre_mission']['external_subsystems'] = [CustomBuilder(name='test'), CustomBuilder(name='test2', mangle_names=True)]
+        phase_info['climb']['external_subsystems'] = [CustomBuilder(name='test'), CustomBuilder(name='test2', mangle_names=True)]
+        phase_info['cruise']['external_subsystems'] = [CustomBuilder(name='test'), CustomBuilder(name='test2', mangle_names=True)]
+        phase_info['descent']['external_subsystems'] = [CustomBuilder(name='test'), CustomBuilder(name='test2', mangle_names=True)]
+        phase_info['post_mission']['external_subsystems'] = [CustomBuilder(name='test'), CustomBuilder(name='test2', mangle_names=True)]
 
         phase_info['climb']['do_the_zz_thing'] = True
         phase_info['descent']['do_the_zz_thing'] = False
@@ -221,11 +284,27 @@ class TestExternalSubsystemBus(unittest.TestCase):
         zz_expected = 3.0*np.sum(xx)*range(len(zz_actual))
         assert_near_equal(zz_actual, zz_expected)
 
+        yy_actual = prob.model.get_val('traj.climb.rhs_all.test2.test2_yy')
+        xx = prob.model.get_val('pre_mission.test2.test2_for_climb')
+        yy_expected = 2.0*np.sum(xx)*range(len(yy_actual))
+        assert_near_equal(yy_actual, yy_expected)
+        zz_actual = prob.model.get_val('traj.climb.rhs_all.test2.test2_zz')
+        zz_expected = 3.0*np.sum(xx)*range(len(zz_actual))
+        assert_near_equal(zz_actual, zz_expected)
+
         yy_actual = prob.model.get_val('traj.cruise.rhs_all.test.yy')
         xx = prob.model.get_val('pre_mission.test.for_cruise')
         yy_expected = 2.0*np.sum(xx)*range(len(yy_actual))
         assert_near_equal(yy_actual, yy_expected)
         zz_actual = prob.model.get_val('traj.cruise.rhs_all.test.zz')
+        zz_expected = 3.0*np.sum(xx)*range(len(zz_actual))
+        assert_near_equal(zz_actual, zz_expected)
+
+        yy_actual = prob.model.get_val('traj.cruise.rhs_all.test2.test2_yy')
+        xx = prob.model.get_val('pre_mission.test2.test2_for_cruise')
+        yy_expected = 2.0*np.sum(xx)*range(len(yy_actual))
+        assert_near_equal(yy_actual, yy_expected)
+        zz_actual = prob.model.get_val('traj.cruise.rhs_all.test2.test2_zz')
         zz_expected = 3.0*np.sum(xx)*range(len(zz_actual))
         assert_near_equal(zz_actual, zz_expected)
 
@@ -245,13 +324,30 @@ class TestExternalSubsystemBus(unittest.TestCase):
         zzz_expected = np.sum(xx)*np.sum(zz*velocity)
         assert_near_equal(zzz_actual, zzz_expected)
 
+        zzz_actual = prob.model.get_val('test2.climb_test2_zzz')
+        xx = prob.model.get_val('pre_mission.test2.test2_for_climb')
+        zz = prob.model.get_val('traj.climb.mission_bus_variables.test2_zz')
+        velocity = prob.model.get_val('traj.climb.mission_bus_variables.velocity')
+        zzz_expected = np.sum(xx)*np.sum(zz*velocity)
+        assert_near_equal(zzz_actual, zzz_expected)
+
         zzz_actual = prob.model.get_val('test.cruise_zzz')
         xx = prob.model.get_val('pre_mission.test.for_cruise')
         zzz_expected = np.sum(xx)
         assert_near_equal(zzz_actual, zzz_expected)
 
+        zzz_actual = prob.model.get_val('test2.cruise_test2_zzz')
+        xx = prob.model.get_val('pre_mission.test2.test2_for_cruise')
+        zzz_expected = np.sum(xx)
+        assert_near_equal(zzz_actual, zzz_expected)
+
         zzz_actual = prob.model.get_val('test.descent_zzz')
         xx = prob.model.get_val('pre_mission.test.for_descent')
+        zzz_expected = np.sum(xx)
+        assert_near_equal(zzz_actual, zzz_expected)
+
+        zzz_actual = prob.model.get_val('test2.descent_test2_zzz')
+        xx = prob.model.get_val('pre_mission.test2.test2_for_descent')
         zzz_expected = np.sum(xx)
         assert_near_equal(zzz_actual, zzz_expected)
 
