@@ -108,7 +108,15 @@ class ForceComponentResolver(om.ExplicitComponent):
 
         # side slip angle
 
-        beta = np.arctan(v / np.sqrt(u**2 + w**2))
+        # divide by zero checks
+        if (V == 0) and ((u != 0 or w != 0)) :
+            beta = np.arctan(v / np.sqrt(u**2 + w**2))
+        elif (V == 0) and ((u == 0) and (w == 0)):
+            u = 1.0e-4
+            beta = np.arctan(v / np.sqrt(u**2 + w**2))
+        else:
+            beta = np.arcsin(v / V)
+        
 
         # some trig needed
 
