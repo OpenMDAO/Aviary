@@ -97,7 +97,7 @@ class MassParameters(om.ExplicitComponent):
         num_engines = self.options[Aircraft.Propulsion.TOTAL_NUM_ENGINES]
         max_mach = inputs['max_mach']
         strut_x = inputs[Aircraft.Strut.ATTACHMENT_LOCATION_DIMENSIONLESS]
-        gear_location = inputs[Aircraft.LandingGear.MAIN_GEAR_LOCATION]
+        loc_main_gear = inputs[Aircraft.LandingGear.MAIN_GEAR_LOCATION]
 
         tan_half_sweep = np.tan(sweep_c4) - (1.0 - taper_ratio) / (1.0 + taper_ratio) / AR
 
@@ -115,11 +115,11 @@ class MassParameters(om.ExplicitComponent):
         if self.options[Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES]:
             # smooth transition for c_gear_loc from 0.95 to 1 when gear_location varies
             # between 0 and 1% of span
-            c_gear_loc = 0.95 * sigmoidX(gear_location, 0.005, -0.01 / 320.0) + 1 * sigmoidX(
-                gear_location, 0.005, 0.01 / 320.0
+            c_gear_loc = 0.95 * sigmoidX(loc_main_gear, 0.005, -0.01 / 320.0) + 1 * sigmoidX(
+                loc_main_gear, 0.005, 0.01 / 320.0
             )
         else:
-            if gear_location == 0:
+            if loc_main_gear == 0:
                 c_gear_loc = 0.95
 
         c_eng_pos = 1.0 * sigmoidX(max_mach, 0.75, -1.0 / 320.0) + 1.05 * sigmoidX(
@@ -148,7 +148,7 @@ class MassParameters(om.ExplicitComponent):
         num_engines = self.options[Aircraft.Propulsion.TOTAL_NUM_ENGINES]
         max_mach = inputs['max_mach']
         strut_x = inputs[Aircraft.Strut.ATTACHMENT_LOCATION_DIMENSIONLESS]
-        gear_location = inputs[Aircraft.LandingGear.MAIN_GEAR_LOCATION]
+        loc_main_gear = inputs[Aircraft.LandingGear.MAIN_GEAR_LOCATION]
 
         tan_half_sweep = np.tan(sweep_c4) - (1.0 - taper_ratio) / (1.0 + taper_ratio) / AR
         half_sweep = np.arctan(tan_half_sweep)
@@ -214,8 +214,8 @@ class MassParameters(om.ExplicitComponent):
 
         if self.options[Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES]:
             J['c_gear_loc', Aircraft.LandingGear.MAIN_GEAR_LOCATION] = 0.95 * (-100) * dSigmoidXdx(
-                gear_location, 0.005, 0.01 / 320.0
-            ) + 1 * (100) * dSigmoidXdx(gear_location, 0.005, 0.01 / 320.0)
+                loc_main_gear, 0.005, 0.01 / 320.0
+            ) + 1 * (100) * dSigmoidXdx(loc_main_gear, 0.005, 0.01 / 320.0)
 
 
 class PayloadMass(om.ExplicitComponent):
