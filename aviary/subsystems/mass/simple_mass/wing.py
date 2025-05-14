@@ -215,15 +215,15 @@ if __name__ == '__main__':
     prob.setup()
 
     # Define some example inputs
-    prob.set_val('span', 1)  
-    prob.set_val('root_chord', 1)  
-    prob.set_val('tip_chord', 0.5)  
-    prob.set_val('twist', jnp.linspace(0, 0, 10))  
+    prob.set_val('span', 3.74904)  
+    prob.set_val('root_chord', 0.40005)  
+    prob.set_val('tip_chord', 0.100076)  
+    prob.set_val('twist', jnp.linspace(0,0,10))
     prob.set_val('thickness_dist', thickness_dist)  
 
 
     #prob.model.cog.options['airfoil_data_file'] = 'Clark_Y.dat'
-    prob.model.cog.options['material'] = 'Balsa'
+    prob.model.cog.options['material'] = 'Reinfoced Carbon-Carbon'
     prob.model.cog.options['airfoil_type'] = '2412'
 
     # Run the model

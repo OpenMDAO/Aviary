@@ -39,7 +39,7 @@ materials.set_val('Steel 321', 8030, units='kg/m**3') # Steel type 321
 materials.set_val('Carbon/Silicon-Carbide', 2080, units='kg/m**3') # Carbon fiber reinforced SiC 
 materials.set_val('Silicon-Carbide/Silicon-Carbide', 2400, units='kg/m**3') # SiC fiber reinforced SiC matrix
 materials.set_val('Advanced Carbon-Carbon Composite', 1600, units='kg/m**3') # ACC 
-materials.set_val('Reinfoced Carbon-Carbon', 1580, units='kg/m**3') 
+materials.set_val('Reinforced Carbon-Carbon', 1580, units='kg/m**3') 
 materials.set_val('Reinforced Carbon-Carbon Composite', 1580, units='kg/m**3') # Generally, ACC is better, but RCC is slightly cheaper
 
 """
