@@ -5,6 +5,8 @@ from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 
 from aviary.subsystems.geometry.gasp_based.wing import (
     BWBWingVolume,
+    BWBWingFoldVolume,
+    BWBWingGroup,
     ExposedWing,
     WingFoldArea,
     WingFoldVolume,
@@ -67,6 +69,142 @@ class WingSizeTestCase2(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
 
 
+class BWBWingSizeTestCase1(unittest.TestCase):
+    """
+    BWB model
+    """
+
+    def setUp(self):
+        self.prob = om.Problem()
+        self.prob.model.add_subsystem('size', WingSize(), promotes=['*'])
+
+        self.prob.model.set_input_defaults(Mission.Design.GROSS_MASS, 150000.0, units='lbm')
+        self.prob.model.set_input_defaults(Aircraft.Wing.LOADING, 70.0, units='lbf/ft**2')
+        self.prob.model.set_input_defaults(Aircraft.Wing.ASPECT_RATIO, 10.0, units='unitless')
+
+        self.prob.setup(check=False, force_alloc_complex=True)
+
+    def test_case1(self):
+        self.prob.run_model()
+
+        tol = 1e-7
+        assert_near_equal(self.prob[Aircraft.Wing.AREA], 2142.8571, tol)
+        assert_near_equal(self.prob[Aircraft.Wing.SPAN], 146.38501, tol)
+
+        partial_data = self.prob.check_partials(out_stream=None, method='cs')
+        assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
+
+
+class WingParametersTestCase1(
+    unittest.TestCase
+):  # actual GASP test case, input and output values based on large single aisle 1 v3 without bug fix
+    def setUp(self):
+        self.prob = om.Problem()
+        self.prob.model.add_subsystem('parameters', WingParameters(), promotes=['*'])
+
+        self.prob.model.set_input_defaults(Aircraft.Wing.AREA, 1370.3, units='ft**2')
+        self.prob.model.set_input_defaults(Aircraft.Wing.SPAN, 117.8, units='ft')
+        self.prob.model.set_input_defaults(Aircraft.Wing.ASPECT_RATIO, 10.13, units='unitless')
+        self.prob.model.set_input_defaults(Aircraft.Wing.TAPER_RATIO, 0.33, units='unitless')
+        self.prob.model.set_input_defaults(Aircraft.Wing.SWEEP, 25, units='deg')
+        self.prob.model.set_input_defaults(
+            Aircraft.Wing.THICKNESS_TO_CHORD_ROOT, 0.15, units='unitless'
+        )
+        self.prob.model.set_input_defaults(Aircraft.Fuselage.AVG_DIAMETER, 13.1, units='ft')
+        self.prob.model.set_input_defaults(
+            Aircraft.Wing.THICKNESS_TO_CHORD_TIP, 0.12, units='unitless'
+        )
+
+        self.prob.setup(check=False, force_alloc_complex=True)
+
+    def test_case1(self):
+        self.prob.run_model()
+
+        tol = 5e-4
+        assert_near_equal(self.prob[Aircraft.Wing.CENTER_CHORD], 17.49, tol)
+        assert_near_equal(self.prob[Aircraft.Wing.AVERAGE_CHORD], 12.615, tol)
+        assert_near_equal(self.prob[Aircraft.Wing.ROOT_CHORD], 16.41, tol)
+        assert_near_equal(
+            self.prob[Aircraft.Wing.THICKNESS_TO_CHORD_UNWEIGHTED], 0.1397, tol
+        )  # this is slightly different from the GASP output value, likely due to rounding error
+
+        partial_data = self.prob.check_partials(out_stream=None, method='cs')
+        assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
+
+
+class WingParametersTestCase2(unittest.TestCase):
+    def setUp(self):
+        options = get_option_defaults()
+        self.prob = om.Problem()
+        self.prob.model.add_subsystem('parameters', WingParameters(), promotes=['*'])
+
+        self.prob.model.set_input_defaults(Aircraft.Wing.AREA, 1370.3, units='ft**2')
+        self.prob.model.set_input_defaults(Aircraft.Wing.SPAN, 117.8, units='ft')
+        self.prob.model.set_input_defaults(Aircraft.Wing.ASPECT_RATIO, 10.13, units='unitless')
+        self.prob.model.set_input_defaults(Aircraft.Wing.TAPER_RATIO, 0.33, units='unitless')
+        self.prob.model.set_input_defaults(Aircraft.Wing.SWEEP, 25, units='deg')
+        self.prob.model.set_input_defaults(
+            Aircraft.Wing.THICKNESS_TO_CHORD_ROOT, 0.15, units='unitless'
+        )
+        self.prob.model.set_input_defaults(Aircraft.Fuselage.AVG_DIAMETER, 13.1, units='ft')
+        self.prob.model.set_input_defaults(
+            Aircraft.Wing.THICKNESS_TO_CHORD_TIP, 0.12, units='unitless'
+        )
+
+        setup_model_options(self.prob, options)
+
+        self.prob.setup(check=False, force_alloc_complex=True)
+
+    def test_case1(self):
+        self.prob.run_model()
+
+        tol = 5e-4
+        assert_near_equal(self.prob[Aircraft.Wing.CENTER_CHORD], 17.49, tol)
+        assert_near_equal(self.prob[Aircraft.Wing.AVERAGE_CHORD], 12.615, tol)
+        assert_near_equal(self.prob[Aircraft.Wing.ROOT_CHORD], 16.41, tol)
+        assert_near_equal(
+            self.prob[Aircraft.Wing.THICKNESS_TO_CHORD_UNWEIGHTED], 0.1397, tol
+        )  # this is slightly different from the GASP output value, likely due to rounding error
+
+        partial_data = self.prob.check_partials(out_stream=None, method='cs')
+        assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
+
+
+class BWBWingParametersTestCase1(unittest.TestCase):
+    """Test BWB data for BWBWingParameters"""
+
+    def setUp(self):
+        self.prob = om.Problem()
+        self.prob.model.add_subsystem('parameters', WingParameters(), promotes=['*'])
+
+        self.prob.model.set_input_defaults(Aircraft.Wing.AREA, 2142.85718, units='ft**2')
+        self.prob.model.set_input_defaults(Aircraft.Wing.SPAN, 146.385, units='ft')
+        self.prob.model.set_input_defaults(Aircraft.Wing.ASPECT_RATIO, 10.0, units='unitless')
+        self.prob.model.set_input_defaults(Aircraft.Wing.TAPER_RATIO, 0.27444, units='unitless')
+        self.prob.model.set_input_defaults(Aircraft.Wing.SWEEP, 30.0, units='deg')
+        self.prob.model.set_input_defaults(
+            Aircraft.Wing.THICKNESS_TO_CHORD_ROOT, 0.165, units='unitless'
+        )
+        self.prob.model.set_input_defaults(Aircraft.Fuselage.AVG_DIAMETER, 38.0, units='ft')
+        self.prob.model.set_input_defaults(
+            Aircraft.Wing.THICKNESS_TO_CHORD_TIP, 0.1, units='unitless'
+        )
+
+        self.prob.setup(check=False, force_alloc_complex=True)
+
+    def test_case1(self):
+        self.prob.run_model()
+
+        tol = 1e-7
+        assert_near_equal(self.prob[Aircraft.Wing.CENTER_CHORD], 22.97244663, tol)
+        assert_near_equal(self.prob[Aircraft.Wing.AVERAGE_CHORD], 16.2200537, tol)
+        assert_near_equal(self.prob[Aircraft.Wing.ROOT_CHORD], 20.33371818, tol)
+        assert_near_equal(self.prob[Aircraft.Wing.THICKNESS_TO_CHORD_UNWEIGHTED], 0.13596576, tol)
+
+        partial_data = self.prob.check_partials(out_stream=None, method='cs')
+        assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
+
+
 class WingVolumeTestCase1(
     unittest.TestCase
 ):  # actual GASP test case, input and output values based on large single aisle 1 v3 without bug fix
@@ -116,14 +254,14 @@ class BWBWingVolumeTestCase(unittest.TestCase):
             Aircraft.LandingGear.MAIN_GEAR_LOCATION, 0.0, units='unitless'
         )
         self.prob.model.set_input_defaults(
-            Aircraft.Wing.THICKNESS_TO_CHORD_REF, 0.165, units='unitless'
+            Aircraft.Wing.THICKNESS_TO_CHORD_ROOT, 0.165, units='unitless'
         )
         self.prob.model.set_input_defaults(
             Aircraft.Wing.THICKNESS_TO_CHORD_TIP, 0.1, units='unitless'
         )
         self.prob.model.set_input_defaults(Aircraft.Fuselage.AVG_DIAMETER, 38.0, units='ft')
         self.prob.model.set_input_defaults(Aircraft.Wing.SPAN, 146.385, units='ft')
-        self.prob.model.set_input_defaults(Aircraft.Wing.ROOT_CHORD, 22.9724445, units='ft')
+        self.prob.model.set_input_defaults(Aircraft.Wing.CENTER_CHORD, 22.9724445, units='ft')
         self.prob.model.set_input_defaults(Aircraft.Wing.TAPER_RATIO, 0.27444, units='unitless')
         self.prob.model.set_input_defaults(Aircraft.Fuel.WING_FUEL_FRACTION, 0.45, units='unitless')
 
@@ -141,51 +279,10 @@ class BWBWingVolumeTestCase(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e-11, rtol=1e-12)
 
 
-class WingParametersTestCase2(unittest.TestCase):
-    def setUp(self):
-        options = get_option_defaults()
-        self.prob = om.Problem()
-        self.prob.model.add_subsystem('parameters', WingParameters(), promotes=['*'])
-
-        self.prob.model.set_input_defaults(Aircraft.Wing.AREA, 1370.3, units='ft**2')
-        self.prob.model.set_input_defaults(Aircraft.Wing.SPAN, 117.8, units='ft')
-        self.prob.model.set_input_defaults(Aircraft.Wing.ASPECT_RATIO, 10.13, units='unitless')
-        self.prob.model.set_input_defaults(Aircraft.Wing.TAPER_RATIO, 0.33, units='unitless')
-        self.prob.model.set_input_defaults(Aircraft.Wing.SWEEP, 25, units='deg')
-        self.prob.model.set_input_defaults(
-            Aircraft.Wing.THICKNESS_TO_CHORD_ROOT, 0.15, units='unitless'
-        )
-        self.prob.model.set_input_defaults(Aircraft.Fuselage.AVG_DIAMETER, 13.1, units='ft')
-        self.prob.model.set_input_defaults(
-            Aircraft.Wing.THICKNESS_TO_CHORD_TIP, 0.12, units='unitless'
-        )
-
-        setup_model_options(self.prob, options)
-
-        self.prob.setup(check=False, force_alloc_complex=True)
-
-    def test_case1(self):
-        self.prob.run_model()
-
-        tol = 5e-4
-        assert_near_equal(self.prob[Aircraft.Wing.CENTER_CHORD], 17.49, tol)
-        assert_near_equal(self.prob[Aircraft.Wing.AVERAGE_CHORD], 12.615, tol)
-        assert_near_equal(self.prob[Aircraft.Wing.ROOT_CHORD], 16.41, tol)
-        assert_near_equal(
-            self.prob[Aircraft.Wing.THICKNESS_TO_CHORD_UNWEIGHTED], 0.1397, tol
-        )  # this is slightly different from the GASP output value, likely due to rounding error
-
-        partial_data = self.prob.check_partials(out_stream=None, method='cs')
-        assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
-
-
 class WingFoldAreaTestCase1(unittest.TestCase):
     def setUp(self):
         options = get_option_defaults()
         options.set_val(Aircraft.Wing.CHOOSE_FOLD_LOCATION, val=False, units='unitless')
-        options.set_val(
-            Aircraft.Wing.FOLD_DIMENSIONAL_LOCATION_SPECIFIED, val=True, units='unitless'
-        )
 
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
@@ -220,9 +317,6 @@ class WingFoldVolumeTestCase1(unittest.TestCase):
     def setUp(self):
         options = get_option_defaults()
         options.set_val(Aircraft.Wing.CHOOSE_FOLD_LOCATION, val=False, units='unitless')
-        options.set_val(
-            Aircraft.Wing.FOLD_DIMENSIONAL_LOCATION_SPECIFIED, val=True, units='unitless'
-        )
 
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
@@ -274,9 +368,6 @@ class WingFoldVolumeTestCase1(unittest.TestCase):
 class WingFoldAreaTestCase2(unittest.TestCase):
     def setUp(self):
         options = get_option_defaults()
-        options.set_val(
-            Aircraft.Wing.FOLD_DIMENSIONAL_LOCATION_SPECIFIED, val=True, units='unitless'
-        )
 
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
@@ -309,12 +400,92 @@ class WingFoldAreaTestCase2(unittest.TestCase):
         assert_check_partials(partial_data, atol=2e-12, rtol=1e-12)
 
 
+class BWBWingFoldAreaTestCase1(unittest.TestCase):
+    def setUp(self):
+        options = get_option_defaults()
+
+        self.prob = om.Problem()
+        self.prob.model.add_subsystem(
+            'group',
+            WingFoldArea(),
+            promotes=['*'],
+        )
+
+        self.prob.model.set_input_defaults(Aircraft.Wing.TAPER_RATIO, 0.27444, units='unitless')
+        self.prob.model.set_input_defaults(Aircraft.Wing.FOLDED_SPAN, 118, units='ft')
+        self.prob.model.set_input_defaults(Aircraft.Wing.AREA, 2142.85718, units='ft**2')
+        self.prob.model.set_input_defaults(Aircraft.Wing.SPAN, 146.385, units='ft')
+
+        setup_model_options(self.prob, options)
+
+        self.prob.setup(check=False, force_alloc_complex=True)
+
+    def test_case1(self):
+        self.prob.run_model()
+
+        tol = 1e-7
+
+        assert_near_equal(self.prob[Aircraft.Wing.FOLDING_AREA], 224.82521003, tol)
+
+        partial_data = self.prob.check_partials(out_stream=None, method='cs')
+        assert_check_partials(partial_data, atol=2e-12, rtol=1e-12)
+
+
+class WingFoldVolumeTestCase1(unittest.TestCase):
+    def setUp(self):
+        options = get_option_defaults()
+        options.set_val(Aircraft.Wing.CHOOSE_FOLD_LOCATION, val=False, units='unitless')
+
+        self.prob = om.Problem()
+        self.prob.model.add_subsystem(
+            'group',
+            WingFoldVolume(),
+            promotes=['*'],
+        )
+
+        self.prob.model.set_input_defaults(Aircraft.Wing.TAPER_RATIO, 0.33, units='unitless')
+        self.prob.model.set_input_defaults(
+            Aircraft.Wing.THICKNESS_TO_CHORD_ROOT, 0.15, units='unitless'
+        )
+        self.prob.model.set_input_defaults(
+            Aircraft.Wing.THICKNESS_TO_CHORD_TIP, 0.12, units='unitless'
+        )
+        self.prob.model.set_input_defaults('strut_y', val=25, units='ft')  # not actual GASP value
+        self.prob.model.set_input_defaults(Aircraft.Wing.AREA, val=1370.3, units='ft**2')
+        self.prob.model.set_input_defaults(Aircraft.Wing.SPAN, val=117.8, units='ft')
+        self.prob.model.set_input_defaults(Aircraft.Fuel.WING_FUEL_FRACTION, 0.6, units='unitless')
+        self.prob.model.set_input_defaults(Aircraft.Wing.FOLDING_AREA, val=620.0435, units='ft**2')
+
+        setup_model_options(self.prob, options)
+
+        self.prob.setup(check=False, force_alloc_complex=True)
+
+    def test_case1(self):
+        self.prob.run_model()
+
+        tol = 1e-4
+
+        assert_near_equal(
+            self.prob['nonfolded_taper_ratio'], 0.71561969, tol
+        )  # not actual GASP value
+        assert_near_equal(
+            self.prob['nonfolded_wing_area'], 750.25647754, tol
+        )  # not actual GASP value
+        assert_near_equal(
+            self.prob['tc_ratio_mean_folded'], 0.14363328, tol
+        )  # not actual GASP value
+        assert_near_equal(self.prob['nonfolded_AR'], 3.33219382, tol)  # not actual GASP value
+        assert_near_equal(
+            self.prob[Aircraft.Fuel.WING_VOLUME_GEOMETRIC_MAX], 712.3428037422319, tol
+        )  # not actual GASP value
+
+        partial_data = self.prob.check_partials(out_stream=None, method='cs')
+        assert_check_partials(partial_data, atol=1e-11, rtol=1e-12)
+
+
 class WingFoldVolumeTestCase2(unittest.TestCase):
     def setUp(self):
         options = get_option_defaults()
-        options.set_val(
-            Aircraft.Wing.FOLD_DIMENSIONAL_LOCATION_SPECIFIED, val=True, units='unitless'
-        )
 
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
@@ -365,9 +536,101 @@ class WingFoldVolumeTestCase2(unittest.TestCase):
         assert_check_partials(partial_data, atol=2e-12, rtol=1e-12)
 
 
-class WingGroupTestCase1(
-    unittest.TestCase
-):  # actual GASP test case, input and output values based on large single aisle 1 v3 without bug fix
+class BWBWingFoldVolumeTestCase1(unittest.TestCase):
+    """
+    Test against GASP BWB model, CHOOSE_FOLD_LOCATION = False
+    This case should not be allowed, but it is tested anyway.
+    """
+
+    def setUp(self):
+        options = get_option_defaults()
+        options.set_val(Aircraft.Wing.CHOOSE_FOLD_LOCATION, val=False, units='unitless')
+
+        self.prob = om.Problem()
+        self.prob.model.add_subsystem(
+            'group',
+            BWBWingFoldVolume(),
+            promotes=['*'],
+        )
+
+        self.prob.model.set_input_defaults(
+            Aircraft.Wing.THICKNESS_TO_CHORD_ROOT, 0.165, units='unitless'
+        )
+        self.prob.model.set_input_defaults(
+            Aircraft.Wing.THICKNESS_TO_CHORD_TIP, 0.1, units='unitless'
+        )
+        self.prob.model.set_input_defaults('strut_y', val=59, units='ft')
+        self.prob.model.set_input_defaults('wing_volume_no_fold', val=783.6209, units='ft**3')
+        self.prob.model.set_input_defaults(Aircraft.Fuselage.AVG_DIAMETER, 38.0, units='ft')
+        self.prob.model.set_input_defaults(Aircraft.Wing.SPAN, 146.38501, units='ft')
+
+        setup_model_options(self.prob, options)
+
+        self.prob.setup(check=False, force_alloc_complex=True)
+
+    def test_case1(self):
+        self.prob.run_model()
+
+        tol = 1e-7
+
+        assert_near_equal(self.prob[Aircraft.Fuel.WING_VOLUME_GEOMETRIC_MAX], 605.90774, tol)
+
+        partial_data = self.prob.check_partials(out_stream=None, method='cs')
+        assert_check_partials(partial_data, atol=1e-11, rtol=1e-12)
+
+
+class BWBWingFoldVolumeTestCase2(unittest.TestCase):
+    """
+    Test against GASP BWB model, CHOOSE_FOLD_LOCATION = True
+    """
+
+    def setUp(self):
+        options = get_option_defaults()
+        options.set_val(Aircraft.Wing.CHOOSE_FOLD_LOCATION, val=True, units='unitless')
+
+        self.prob = om.Problem()
+        self.prob.model.add_subsystem(
+            'group',
+            BWBWingFoldVolume(),
+            promotes=['*'],
+        )
+
+        self.prob.model.set_input_defaults(
+            Aircraft.Wing.THICKNESS_TO_CHORD_ROOT, 0.165, units='unitless'
+        )
+        self.prob.model.set_input_defaults(
+            Aircraft.Wing.THICKNESS_TO_CHORD_TIP, 0.1, units='unitless'
+        )
+        self.prob.model.set_input_defaults(Aircraft.Wing.FOLDED_SPAN, 118.0, units='ft')
+        self.prob.model.set_input_defaults('wing_volume_no_fold', val=783.6209, units='ft**3')
+        self.prob.model.set_input_defaults(Aircraft.Fuselage.AVG_DIAMETER, val=38.0, units='ft')
+        self.prob.model.set_input_defaults(Aircraft.Wing.SPAN, 146.38501, units='ft')
+
+        setup_model_options(self.prob, options)
+
+        self.prob.setup(check=False, force_alloc_complex=True)
+
+    def test_case1(self):
+        self.prob.run_model()
+
+        tol = 1e-7
+
+        assert_near_equal(self.prob[Aircraft.Fuel.WING_VOLUME_GEOMETRIC_MAX], 605.90774, tol)
+
+        partial_data = self.prob.check_partials(out_stream=None, method='cs')
+        assert_check_partials(partial_data, atol=1e-11, rtol=1e-12)
+
+
+class WingGroupTestCase1(unittest.TestCase):
+    """
+    actual GASP test case, input and output values based on large single aisle 1 v3 without bug fix
+    HAS_FOLD = False
+    HAS_STRUT = False
+    CHOOSE_FOLD_LOCATION = True
+    DIMENSIONAL_LOCATION_SPECIFIED = False
+    FOLD_DIMENSIONAL_LOCATION_SPECIFIED = False
+    """
+
     def setUp(self):
         self.prob = om.Problem()
         self.prob.model.add_subsystem('group', WingGroup(), promotes=['*'])
@@ -414,6 +677,11 @@ class WingGroupTestCase2(unittest.TestCase):
     """
     Wing with both folds and struts which has fold dimensional location and strut dimensional location specified
     with the fold at the strut connection.
+    HAS_FOLD = True
+    HAS_STRUT = True
+    CHOOSE_FOLD_LOCATION = False
+    DIMENSIONAL_LOCATION_SPECIFIED = True
+    FOLD_DIMENSIONAL_LOCATION_SPECIFIED = False
     """
 
     def setUp(self):
@@ -421,9 +689,6 @@ class WingGroupTestCase2(unittest.TestCase):
         options.set_val(Aircraft.Wing.HAS_FOLD, val=True, units='unitless')
         options.set_val(Aircraft.Wing.HAS_STRUT, val=True, units='unitless')
         options.set_val(Aircraft.Wing.CHOOSE_FOLD_LOCATION, val=False, units='unitless')
-        options.set_val(
-            Aircraft.Wing.FOLD_DIMENSIONAL_LOCATION_SPECIFIED, val=True, units='unitless'
-        )
         options.set_val(Aircraft.Strut.DIMENSIONAL_LOCATION_SPECIFIED, val=True, units='unitless')
 
         self.prob = om.Problem()
@@ -504,7 +769,14 @@ class WingGroupTestCase2(unittest.TestCase):
 
 
 class WingGroupTestCase3(unittest.TestCase):
-    """Wing with folds which has dimensional location specified."""
+    """
+    Wing with folds which has dimensional location specified.
+    HAS_FOLD = True
+    HAS_STRUT = False
+    CHOOSE_FOLD_LOCATION = True
+    DIMENSIONAL_LOCATION_SPECIFIED = True
+    FOLD_DIMENSIONAL_LOCATION_SPECIFIED = False
+    """
 
     def setUp(self):
         options = get_option_defaults()
@@ -582,7 +854,14 @@ class WingGroupTestCase3(unittest.TestCase):
 
 
 class WingGroupTestCase4(unittest.TestCase):
-    """Wing with both folds and struts which has fold dimensional location and strut dimensional location specified."""
+    """
+    Wing with both folds and struts which has fold dimensional location and strut dimensional location specified.
+    HAS_FOLD = True
+    HAS_STRUT = True
+    CHOOSE_FOLD_LOCATION = True
+    DIMENSIONAL_LOCATION_SPECIFIED = True
+    FOLD_DIMENSIONAL_LOCATION_SPECIFIED = True
+    """
 
     def setUp(self):
         options = get_option_defaults()
@@ -647,7 +926,14 @@ class WingGroupTestCase4(unittest.TestCase):
 
 
 class WingGroupTestCase5(unittest.TestCase):
-    """Wing with struts which has dimentional location specified."""
+    """
+    Wing with struts which has dimentional location specified.
+    HAS_FOLD = False
+    HAS_STRUT = True
+    CHOOSE_FOLD_LOCATION = False
+    DIMENSIONAL_LOCATION_SPECIFIED = True
+    FOLD_DIMENSIONAL_LOCATION_SPECIFIED = False
+    """
 
     def setUp(self):
         options = get_option_defaults()
@@ -714,6 +1000,81 @@ class WingGroupTestCase5(unittest.TestCase):
             self.prob[Aircraft.Strut.LENGTH], 14.42957033, tol
         )  # not actual GASP value
         assert_near_equal(self.prob[Aircraft.Strut.CHORD], 1.03953199, tol)  # not actual GASP value
+
+        partial_data = self.prob.check_partials(out_stream=None, method='cs')
+        assert_check_partials(partial_data, atol=2e-12, rtol=1e-12)
+
+
+class BWBWingGroupTestCase1(unittest.TestCase):
+    """
+    actual GASP test case, input and output values based on large single aisle 1 v3 without bug fix
+    HAS_FOLD = True
+    HAS_STRUT = False
+    CHOOSE_FOLD_LOCATION = True
+    FOLD_DIMENSIONAL_LOCATION_SPECIFIED = True
+    """
+
+    def setUp(self):
+        options = get_option_defaults()
+        options.set_val(Aircraft.Wing.HAS_FOLD, val=True, units='unitless')
+        options.set_val(Aircraft.Wing.CHOOSE_FOLD_LOCATION, val=True, units='unitless')
+        options.set_val(
+            Aircraft.Wing.FOLD_DIMENSIONAL_LOCATION_SPECIFIED, val=True, units='unitless'
+        )
+        self.prob = om.Problem()
+        self.prob.model.add_subsystem('group', BWBWingGroup(), promotes=['*'])
+
+        self.prob.model.set_input_defaults(Mission.Design.GROSS_MASS, 150000.0, units='lbm')
+        self.prob.model.set_input_defaults(Aircraft.Wing.LOADING, 70.0, units='lbf/ft**2')
+        self.prob.model.set_input_defaults(Aircraft.Wing.ASPECT_RATIO, 10.0, units='unitless')
+
+        self.prob.model.set_input_defaults(Aircraft.Wing.AREA, 2142.85718, units='ft**2')
+        self.prob.model.set_input_defaults(Aircraft.Wing.SPAN, 146.385, units='ft')
+        self.prob.model.set_input_defaults(Aircraft.Wing.TAPER_RATIO, 0.27444, units='unitless')
+        self.prob.model.set_input_defaults(Aircraft.Wing.SWEEP, 30.0, units='deg')
+        self.prob.model.set_input_defaults(
+            Aircraft.Wing.THICKNESS_TO_CHORD_ROOT, 0.165, units='unitless'
+        )
+        self.prob.model.set_input_defaults(Aircraft.Fuel.WING_FUEL_FRACTION, 0.45, units='unitless')
+        self.prob.model.set_input_defaults(Aircraft.Fuselage.AVG_DIAMETER, 38.0, units='ft')
+        self.prob.model.set_input_defaults(
+            Aircraft.Wing.THICKNESS_TO_CHORD_TIP, 0.1, units='unitless'
+        )
+
+        self.prob.model.set_input_defaults(
+            Aircraft.LandingGear.MAIN_GEAR_LOCATION, 0.0, units='unitless'
+        )
+        self.prob.model.set_input_defaults(Aircraft.Wing.CENTER_CHORD, 22.9724445, units='ft')
+
+        self.prob.model.set_input_defaults(Aircraft.Wing.FOLDED_SPAN, 118, units='ft')
+
+        self.prob.model.set_input_defaults(
+            Aircraft.Wing.VERTICAL_MOUNT_LOCATION, 0.5, units='unitless'
+        )
+        self.prob.model.set_input_defaults(
+            Aircraft.Fuselage.HEIGHT_TO_WIDTH_RATIO, 0.25970, units='unitless'
+        )
+
+        setup_model_options(self.prob, options)
+
+        self.prob.setup(check=False, force_alloc_complex=True)
+
+    def test_case1(self):
+        self.prob.run_model()
+
+        tol = 1e-7
+
+        assert_near_equal(self.prob[Aircraft.Wing.AREA], 2142.85714286, tol)
+        assert_near_equal(self.prob[Aircraft.Wing.SPAN], 146.38501094, tol)
+
+        assert_near_equal(self.prob[Aircraft.Wing.CENTER_CHORD], 22.97244452, tol)
+        assert_near_equal(self.prob[Aircraft.Wing.AVERAGE_CHORD], 16.2200522, tol)
+        assert_near_equal(self.prob[Aircraft.Wing.ROOT_CHORD], 20.33371617, tol)
+        assert_near_equal(self.prob[Aircraft.Wing.THICKNESS_TO_CHORD_UNWEIGHTED], 0.13596576, tol)
+        assert_near_equal(self.prob['wing_volume_no_fold'], 783.62100035, tol)
+        assert_near_equal(self.prob[Aircraft.Wing.FOLDING_AREA], 224.82529025, tol)
+        assert_near_equal(self.prob[Aircraft.Fuel.WING_VOLUME_GEOMETRIC_MAX], 605.90781747, tol)
+        assert_near_equal(self.prob[Aircraft.Wing.EXPOSED_AREA], 1352.1135998, tol)
 
         partial_data = self.prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=2e-12, rtol=1e-12)
@@ -823,7 +1184,4 @@ class ExposedWingTestCase(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    # unittest.main(T)
-    test = WingFoldVolumeTestCase2()
-    test.setUp()
-    test.test_case1()
+    unittest.main()

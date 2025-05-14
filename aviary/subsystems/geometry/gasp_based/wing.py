@@ -194,7 +194,7 @@ class WingParameters(om.ExplicitComponent):
         dCenterChord_dWingArea = 2 / (wingspan * (1 + taper_ratio))
         dCenterChord_dWingspan = -2 * wing_area / ((1 + taper_ratio) * wingspan**2)
         dCenterChord_dTaperRatio = -2 * wing_area / (wingspan * (1 + taper_ratio) ** 2)
-        dFHP_dTcRatioRoot = (
+        dFHP_dtc_ratio_rootatioRoot = (
             tc_ratio_root * center_chord * (cabin_width - tc_ratio_root * center_chord)
         ) ** (-0.5) * (center_chord * cabin_width - 2 * tc_ratio_root * center_chord**2)
         dFHP_dCabinWidth = (
@@ -241,7 +241,9 @@ class WingParameters(om.ExplicitComponent):
             + dFHP_dTaperRatio * (-tan_sweep_LE / 2 + tan_sweep_TE / 2)
             + FHP * (-dTanSweepLE_dTaperRatio / 2 + dTanSweepTE_dTaperRatio / 2)
         )
-        dRootChord_dTcRatioRoot = dFHP_dTcRatioRoot * (-tan_sweep_LE / 2 + tan_sweep_TE / 2)
+        dRootChord_dtc_ratio_rootatioRoot = dFHP_dtc_ratio_rootatioRoot * (
+            -tan_sweep_LE / 2 + tan_sweep_TE / 2
+        )
         dRootChord_dCabinWidth = dFHP_dCabinWidth * (-tan_sweep_LE / 2 + tan_sweep_TE / 2)
         dRootChord_dAR = FHP * (-dTanSweepLE_dAR / 2 + dTanSweepTE_dAR / 2)
         dRootChord_dSweepC4 = FHP * 0.5 * (-dTanSweepLE_dSweepC4 + dTanSweepTE_dSweepC4)
@@ -249,7 +251,9 @@ class WingParameters(om.ExplicitComponent):
         J[Aircraft.Wing.ROOT_CHORD, Aircraft.Wing.AREA] = dRootChord_dWingArea
         J[Aircraft.Wing.ROOT_CHORD, Aircraft.Wing.SPAN] = dRootChord_dWingspan
         J[Aircraft.Wing.ROOT_CHORD, Aircraft.Wing.TAPER_RATIO] = dRootChord_dTaperRatio
-        J[Aircraft.Wing.ROOT_CHORD, Aircraft.Wing.THICKNESS_TO_CHORD_ROOT] = dRootChord_dTcRatioRoot
+        J[Aircraft.Wing.ROOT_CHORD, Aircraft.Wing.THICKNESS_TO_CHORD_ROOT] = (
+            dRootChord_dtc_ratio_rootatioRoot
+        )
         J[Aircraft.Wing.ROOT_CHORD, Aircraft.Fuselage.AVG_DIAMETER] = dRootChord_dCabinWidth
         J[Aircraft.Wing.ROOT_CHORD, Aircraft.Wing.ASPECT_RATIO] = dRootChord_dAR
         J[Aircraft.Wing.ROOT_CHORD, Aircraft.Wing.SWEEP] = dRootChord_dSweepC4
@@ -408,10 +412,10 @@ class WingVolume(om.ExplicitComponent):
         dABC_dTR = a * cabin_width / wingspan + tc_ratio_tip
         dD_dTR = 1 + cabin_width / wingspan
 
-        dTCA_dTCR = (1 - cabin_width / wingspan) * b / d
+        dTCA_dtc_ratio_root = (1 - cabin_width / wingspan) * b / d
         dTCA_dCabW = (d * dAB_dCabW - (a * b + c) * dD_dCabW) / d**2
         dTCA_dWingspan = (d * dAB_dWingspan - (a * b + c) * dD_dWingspan) / d**2
-        dTCA_dTCT = (cabin_width / wingspan * b + taper_ratio) / d
+        dTCA_dtc_ratio_tip = (cabin_width / wingspan * b + taper_ratio) / d
         dTCA_dTR = (d * dABC_dTR - (a * b + c) * dD_dTR) / d**2
 
         fuel_vol_frac = inputs[Aircraft.Fuel.WING_FUEL_FRACTION]
@@ -452,7 +456,11 @@ class WingVolume(om.ExplicitComponent):
             / ((AR**1.5) * (taper_ratio + 1.0) ** 2.0)
         )
         J[Aircraft.Fuel.WING_VOLUME_GEOMETRIC_MAX, Aircraft.Wing.THICKNESS_TO_CHORD_ROOT] = (
-            fuel_vol_frac * 0.888889 * dTCA_dTCR * (wing_area**1.5) * (2.0 * taper_ratio + 1.0)
+            fuel_vol_frac
+            * 0.888889
+            * dTCA_dtc_ratio_root
+            * (wing_area**1.5)
+            * (2.0 * taper_ratio + 1.0)
         ) / ((AR**0.5) * ((taper_ratio + 1.0) ** 2.0))
         J[Aircraft.Fuel.WING_VOLUME_GEOMETRIC_MAX, Aircraft.Fuselage.AVG_DIAMETER] = (
             fuel_vol_frac * 0.888889 * dTCA_dCabW * (wing_area**1.5) * (2.0 * taper_ratio + 1.0)
@@ -461,7 +469,11 @@ class WingVolume(om.ExplicitComponent):
             fuel_vol_frac * 0.888889 * dTCA_dWingspan * (wing_area**1.5) * (2.0 * taper_ratio + 1.0)
         ) / ((AR**0.5) * ((taper_ratio + 1.0) ** 2.0))
         J[Aircraft.Fuel.WING_VOLUME_GEOMETRIC_MAX, Aircraft.Wing.THICKNESS_TO_CHORD_TIP] = (
-            fuel_vol_frac * 0.888889 * dTCA_dTCT * (wing_area**1.5) * (2.0 * taper_ratio + 1.0)
+            fuel_vol_frac
+            * 0.888889
+            * dTCA_dtc_ratio_tip
+            * (wing_area**1.5)
+            * (2.0 * taper_ratio + 1.0)
         ) / ((AR**0.5) * ((taper_ratio + 1.0) ** 2.0))
 
 
@@ -482,16 +494,17 @@ class BWBWingVolume(om.ExplicitComponent):
         add_aviary_input(
             self, Aircraft.LandingGear.MAIN_GEAR_LOCATION, units='unitless', desc='YMG'
         )
-        add_aviary_input(self, Aircraft.Wing.THICKNESS_TO_CHORD_REF, units='unitless', desc='TCR')
+        add_aviary_input(self, Aircraft.Wing.THICKNESS_TO_CHORD_ROOT, units='unitless', desc='TCR')
         add_aviary_input(self, Aircraft.Wing.THICKNESS_TO_CHORD_TIP, units='unitless', desc='TCT')
         add_aviary_input(self, Aircraft.Fuselage.AVG_DIAMETER, units='ft', desc='SWF')
         add_aviary_input(self, Aircraft.Wing.SPAN, units='ft', desc='B')
-        add_aviary_input(self, Aircraft.Wing.ROOT_CHORD, units='ft', desc='CROOT')
+        # In GASP, the variable is CROOT. But in Aviary, it is Aircraft.Wing.CENTER_CHORD
+        add_aviary_input(self, Aircraft.Wing.CENTER_CHORD, units='ft', desc='CROOT')
         add_aviary_input(self, Aircraft.Wing.TAPER_RATIO, units='unitless', desc='SLM')
         add_aviary_input(self, Aircraft.Fuel.WING_FUEL_FRACTION, units='unitless', desc='SKWF')
 
         if self.options[Aircraft.Wing.HAS_FOLD]:
-            self.add_output('wing_voume_no_fold', units='ft**3', desc='FVOLW_GEOMX')
+            self.add_output('wing_volume_no_fold', units='ft**3', desc='FVOLW_GEOMX')
         else:
             add_aviary_output(
                 self, Aircraft.Fuel.WING_VOLUME_GEOMETRIC_MAX, units='ft**3', desc='FVOLW_GEOM'
@@ -500,14 +513,14 @@ class BWBWingVolume(om.ExplicitComponent):
     def setup_partials(self):
         if self.options[Aircraft.Wing.HAS_FOLD]:
             self.declare_partials(
-                'wing_voume_no_fold',
+                'wing_volume_no_fold',
                 [
                     Aircraft.LandingGear.MAIN_GEAR_LOCATION,
-                    Aircraft.Wing.THICKNESS_TO_CHORD_REF,
+                    Aircraft.Wing.THICKNESS_TO_CHORD_ROOT,
                     Aircraft.Wing.THICKNESS_TO_CHORD_TIP,
                     Aircraft.Wing.SPAN,
                     Aircraft.Fuselage.AVG_DIAMETER,
-                    Aircraft.Wing.ROOT_CHORD,
+                    Aircraft.Wing.CENTER_CHORD,
                     Aircraft.Wing.TAPER_RATIO,
                     Aircraft.Fuel.WING_FUEL_FRACTION,
                 ],
@@ -517,11 +530,11 @@ class BWBWingVolume(om.ExplicitComponent):
                 Aircraft.Fuel.WING_VOLUME_GEOMETRIC_MAX,
                 [
                     Aircraft.LandingGear.MAIN_GEAR_LOCATION,
-                    Aircraft.Wing.THICKNESS_TO_CHORD_REF,
+                    Aircraft.Wing.THICKNESS_TO_CHORD_ROOT,
                     Aircraft.Wing.THICKNESS_TO_CHORD_TIP,
                     Aircraft.Wing.SPAN,
                     Aircraft.Fuselage.AVG_DIAMETER,
-                    Aircraft.Wing.ROOT_CHORD,
+                    Aircraft.Wing.CENTER_CHORD,
                     Aircraft.Wing.TAPER_RATIO,
                     Aircraft.Fuel.WING_FUEL_FRACTION,
                 ],
@@ -533,47 +546,51 @@ class BWBWingVolume(om.ExplicitComponent):
         smooth = self.options[Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES]
         mu = self.options['mu']
 
-        SLM = inputs[Aircraft.Wing.TAPER_RATIO]
-        YMG = inputs[Aircraft.LandingGear.MAIN_GEAR_LOCATION]
-        TCR = inputs[Aircraft.Wing.THICKNESS_TO_CHORD_REF]
-        TCT = inputs[Aircraft.Wing.THICKNESS_TO_CHORD_TIP]
-        SWF = inputs[Aircraft.Fuselage.AVG_DIAMETER]
+        taper_ratio = inputs[Aircraft.Wing.TAPER_RATIO]
+        loc_main_gear = inputs[Aircraft.LandingGear.MAIN_GEAR_LOCATION]
+        tc_ratio_root = inputs[Aircraft.Wing.THICKNESS_TO_CHORD_ROOT]
+        tc_ratio_tip = inputs[Aircraft.Wing.THICKNESS_TO_CHORD_TIP]
+        fuselage_width = inputs[Aircraft.Fuselage.AVG_DIAMETER]
         wingspan = inputs[Aircraft.Wing.SPAN]
-        SKWF = inputs[Aircraft.Fuel.WING_FUEL_FRACTION]
-        CROOT = inputs[Aircraft.Wing.ROOT_CHORD]
+        fuel_vol_frac = inputs[Aircraft.Fuel.WING_FUEL_FRACTION]
+        center_chort = inputs[Aircraft.Wing.CENTER_CHORD]
 
         if smooth:
-            WID_GRX = 6 * sigmoidX(YMG, 0.0, mu)
+            WID_GRX = 6 * sigmoidX(loc_main_gear, 0.0, mu)
         else:
-            if YMG > 0:
+            if loc_main_gear > 0:
                 WID_GRX = 6
             else:
                 WID_GRX = 0
 
-        CTIP = SLM * CROOT
-        TCF = TCR - 2.0 * (0.5 * SWF + WID_GRX) * (TCR - TCT) / wingspan
-        CFUEL = CROOT + 2.0 * (0.5 * SWF + WID_GRX) * (CTIP - CROOT) / wingspan
+        CTIP = taper_ratio * center_chort
+        TCF = (
+            tc_ratio_root
+            - 2.0 * (0.5 * fuselage_width + WID_GRX) * (tc_ratio_root - tc_ratio_tip) / wingspan
+        )
+        CFUEL = (
+            center_chort + 2.0 * (0.5 * fuselage_width + WID_GRX) * (CTIP - center_chort) / wingspan
+        )
         if CFUEL == 0.0:
             if verbosity > Verbosity.BRIEF:
                 print('warning: CFUEL is 0.0')
-        SW_NFX = (0.5 * wingspan - (0.5 * SWF + WID_GRX)) * (CFUEL + CTIP)
+        SW_NFX = (0.5 * wingspan - (0.5 * fuselage_width + WID_GRX)) * (CFUEL + CTIP)
         if SW_NFX == 0.0:
             if verbosity > Verbosity.BRIEF:
                 print('warning: SW_NFX is 0.0')
         SLM_NFX = CTIP / CFUEL
-        AR_NFX = (wingspan - SWF - 2.0 * WID_GRX) ** 2 / SW_NFX
+        AR_NFX = (wingspan - fuselage_width - 2.0 * WID_GRX) ** 2 / SW_NFX
         if AR_NFX == 0.0:
             if verbosity > Verbosity.BRIEF:
                 print('warning: AR_NFX is 0.0')
-        TCM = 0.5 * (TCF + TCT)
-        numer = SKWF * 0.888889 * TCM * SW_NFX**1.5 * (2.0 * SLM_NFX + 1.0)
+        TCM = 0.5 * (TCF + tc_ratio_tip)
+        # 0.888889 is some empirical factor derived from historical data to estimate
+        # the wing fuel volume based on the wing geometric characteristics.
+        numer = fuel_vol_frac * 0.888889 * TCM * SW_NFX**1.5 * (2.0 * SLM_NFX + 1.0)
         denom = AR_NFX**0.5 * (SLM_NFX + 1.0) ** 2
         FVOLW_GEOM = numer / denom
         if self.options[Aircraft.Wing.HAS_FOLD]:
-            # At this point, wing_voume_no_fold is the same as Aircraft.Fuel.WING_VOLUME_GEOMETRIC_MAX.
-            # If there are wing folds, Aircraft.Fuel.WING_VOLUME_GEOMETRIC_MAX will be updated using
-            # wing_voume_no_fold
-            outputs['wing_voume_no_fold'] = FVOLW_GEOM
+            outputs['wing_volume_no_fold'] = FVOLW_GEOM
         else:
             outputs[Aircraft.Fuel.WING_VOLUME_GEOMETRIC_MAX] = FVOLW_GEOM
 
@@ -581,175 +598,264 @@ class BWBWingVolume(om.ExplicitComponent):
         smooth = self.options[Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES]
         mu = self.options['mu']
 
-        SLM = inputs[Aircraft.Wing.TAPER_RATIO]
-        YMG = inputs[Aircraft.LandingGear.MAIN_GEAR_LOCATION]
-        TCR = inputs[Aircraft.Wing.THICKNESS_TO_CHORD_REF]
-        TCT = inputs[Aircraft.Wing.THICKNESS_TO_CHORD_TIP]
-        SWF = inputs[Aircraft.Fuselage.AVG_DIAMETER]
+        taper_ratio = inputs[Aircraft.Wing.TAPER_RATIO]
+        loc_main_gear = inputs[Aircraft.LandingGear.MAIN_GEAR_LOCATION]
+        tc_ratio_root = inputs[Aircraft.Wing.THICKNESS_TO_CHORD_ROOT]
+        tc_ratio_tip = inputs[Aircraft.Wing.THICKNESS_TO_CHORD_TIP]
+        fuselage_width = inputs[Aircraft.Fuselage.AVG_DIAMETER]
         wingspan = inputs[Aircraft.Wing.SPAN]
-        SKWF = inputs[Aircraft.Fuel.WING_FUEL_FRACTION]
-        CROOT = inputs[Aircraft.Wing.ROOT_CHORD]
+        fuel_vol_frac = inputs[Aircraft.Fuel.WING_FUEL_FRACTION]
+        center_chort = inputs[Aircraft.Wing.CENTER_CHORD]
 
         if smooth:
-            WID_GRX = 6 * sigmoidX(YMG, 0.0, mu)
-            dWID_GRX_dYMG = dSigmoidXdx(YMG, 0.0, mu) / mu
+            WID_GRX = 6 * sigmoidX(loc_main_gear, 0.0, mu)
+            dWID_GRX_dloc_main_gear = dSigmoidXdx(loc_main_gear, 0.0, mu) / mu
         else:
-            if YMG > 0:
+            if loc_main_gear > 0:
                 WID_GRX = 6.0
             else:
                 WID_GRX = 0.0
-            dWID_GRX_dYMG = 0.0
-        dWID_GRX_dSLM = 0.0
-        dWID_GRX_dTCR = 0.0
-        dWID_GRX_dTCT = 0.0
-        dWID_GRX_dSWF = 0.0
-        dWID_GRX_dwingspan = 0.0
-        dWID_GRX_dSKWF = 0.0
-        dWID_GRX_dCROOT = 0.0
+            dWID_GRX_dloc_main_gear = 0.0
 
-        TCF = TCR - 2.0 * (0.5 * SWF + WID_GRX) * (TCR - TCT) / wingspan
-        dTCF_dYMG = -2.0 * dWID_GRX_dYMG * (TCR - TCT) / wingspan
-        dTCF_dSLM = 0.0
-        dTCF_dCROOT = 0.0
-        dTCF_dTCR = 1.0 - 2.0 * (0.5 * SWF + WID_GRX) / wingspan
-        dTCF_dTCT = 2.0 * (0.5 * SWF + WID_GRX) / wingspan
-        dTCF_dSWF = -(TCR - TCT) / wingspan
-        dTCF_dwingspan = 2.0 * (0.5 * SWF + WID_GRX) * (TCR - TCT) / wingspan**2
-        dTCF_dSKWF = 0.0
+        TCF = (
+            tc_ratio_root
+            - 2.0 * (0.5 * fuselage_width + WID_GRX) * (tc_ratio_root - tc_ratio_tip) / wingspan
+        )
+        dTCF_dloc_main_gear = (
+            -2.0 * dWID_GRX_dloc_main_gear * (tc_ratio_root - tc_ratio_tip) / wingspan
+        )
+        dTCF_dtaper_ratio = 0.0
+        dTCF_dcenter_chord_wing = 0.0
+        dTCF_dtc_ratio_root = 1.0 - 2.0 * (0.5 * fuselage_width + WID_GRX) / wingspan
+        dTCF_dtc_ratio_tip = 2.0 * (0.5 * fuselage_width + WID_GRX) / wingspan
+        dTCF_dSWF = -(tc_ratio_root - tc_ratio_tip) / wingspan
+        dTCF_dwingspan = (
+            2.0 * (0.5 * fuselage_width + WID_GRX) * (tc_ratio_root - tc_ratio_tip) / wingspan**2
+        )
 
-        CFUEL = CROOT + 2.0 * (0.5 * SWF + WID_GRX) * (SLM - 1.0) * CROOT / wingspan
-        dCFUEL_dCROOT = 1.0 + 2.0 * (0.5 * SWF + WID_GRX) * (SLM - 1.0) / wingspan
-        dCFUEL_dSWF = (SLM - 1.0) * CROOT / wingspan
-        dCFUEL_dYMG = 2.0 * dWID_GRX_dYMG * (SLM - 1.0) / wingspan
-        dCFUEL_dSLM = 2.0 * (0.5 * SWF + WID_GRX) * CROOT / wingspan
-        dCFUEL_dwingspan = -2.0 * (0.5 * SWF + WID_GRX) * (SLM - 1.0) * CROOT / wingspan**2
+        CFUEL = (
+            center_chort
+            + 2.0 * (0.5 * fuselage_width + WID_GRX) * (taper_ratio - 1.0) * center_chort / wingspan
+        )
+        dCFUEL_dcenter_chord_wing = (
+            1.0 + 2.0 * (0.5 * fuselage_width + WID_GRX) * (taper_ratio - 1.0) / wingspan
+        )
+        dCFUEL_dSWF = (taper_ratio - 1.0) * center_chort / wingspan
+        dCFUEL_dloc_main_gear = 2.0 * dWID_GRX_dloc_main_gear * (taper_ratio - 1.0) / wingspan
+        dCFUEL_dtaper_ratio = 2.0 * (0.5 * fuselage_width + WID_GRX) * center_chort / wingspan
+        dCFUEL_dwingspan = (
+            -2.0
+            * (0.5 * fuselage_width + WID_GRX)
+            * (taper_ratio - 1.0)
+            * center_chort
+            / wingspan**2
+        )
 
-        SW_NFX = (0.5 * wingspan - (0.5 * SWF + WID_GRX)) * (CFUEL + SLM * CROOT)
-        dSW_NFX_dCROOT = (0.5 * wingspan - (0.5 * SWF + WID_GRX)) * (dCFUEL_dCROOT + SLM)
+        SW_NFX = (0.5 * wingspan - (0.5 * fuselage_width + WID_GRX)) * (
+            CFUEL + taper_ratio * center_chort
+        )
+        dSW_NFX_dcenter_chord_wing = (0.5 * wingspan - (0.5 * fuselage_width + WID_GRX)) * (
+            dCFUEL_dcenter_chord_wing + taper_ratio
+        )
         dSW_NFX_dSWF = (
-            -0.5 * (CFUEL + SLM * CROOT) + (0.5 * wingspan - (0.5 * SWF + WID_GRX)) * dCFUEL_dSWF
+            -0.5 * (CFUEL + taper_ratio * center_chort)
+            + (0.5 * wingspan - (0.5 * fuselage_width + WID_GRX)) * dCFUEL_dSWF
         )
-        dSW_NFX_dYMG = -dWID_GRX_dYMG * (CFUEL + SLM * CROOT)
-        dSW_NFX_dSLM = (0.5 * wingspan - (0.5 * SWF + WID_GRX)) * (dCFUEL_dSLM + CROOT)
+        dSW_NFX_dloc_main_gear = -dWID_GRX_dloc_main_gear * (CFUEL + taper_ratio * center_chort)
+        dSW_NFX_dtaper_ratio = (0.5 * wingspan - (0.5 * fuselage_width + WID_GRX)) * (
+            dCFUEL_dtaper_ratio + center_chort
+        )
         dSW_NFX_dwingspan = (
-            0.5 * (CFUEL + SLM * CROOT)
-            + (0.5 * wingspan - (0.5 * SWF + WID_GRX)) * dCFUEL_dwingspan
+            0.5 * (CFUEL + taper_ratio * center_chort)
+            + (0.5 * wingspan - (0.5 * fuselage_width + WID_GRX)) * dCFUEL_dwingspan
         )
 
-        SLM_NFX = SLM * CROOT / CFUEL
-        dSLM_NFX_dSLM = CROOT / CFUEL - SLM * CROOT * dCFUEL_dSLM / CFUEL**2
-        dSLM_NFX_dCROOT = SLM / CFUEL - SLM * CROOT * dCFUEL_dCROOT / CFUEL**2
-        dSLM_NFX_dSWF = -SLM * CROOT * dCFUEL_dSWF / CFUEL**2
-        dSLM_NFX_dYMG = -SLM * CROOT * dCFUEL_dYMG / CFUEL**2
-        dSLM_NFX_dwingspan = -SLM * CROOT * dCFUEL_dwingspan / CFUEL**2
+        SLM_NFX = taper_ratio * center_chort / CFUEL
+        dtaper_ratio_NFX_dtaper_ratio = (
+            center_chort / CFUEL - taper_ratio * center_chort * dCFUEL_dtaper_ratio / CFUEL**2
+        )
+        dtaper_ratio_NFX_dcenter_chord_wing = (
+            taper_ratio / CFUEL - taper_ratio * center_chort * dCFUEL_dcenter_chord_wing / CFUEL**2
+        )
+        dtaper_ratio_NFX_dSWF = -taper_ratio * center_chort * dCFUEL_dSWF / CFUEL**2
+        dtaper_ratio_NFX_dloc_main_gear = (
+            -taper_ratio * center_chort * dCFUEL_dloc_main_gear / CFUEL**2
+        )
+        dtaper_ratio_NFX_dwingspan = -taper_ratio * center_chort * dCFUEL_dwingspan / CFUEL**2
 
-        AR_NFX = (wingspan - SWF - 2.0 * WID_GRX) ** 2 / SW_NFX
-        dAR_NFX_dSLM = -((wingspan - SWF - 2.0 * WID_GRX) ** 2) * dSW_NFX_dSLM / SW_NFX**2
-        dAR_NFX_dCROOT = -((wingspan - SWF - 2.0 * WID_GRX) ** 2) * dSW_NFX_dCROOT / SW_NFX**2
+        AR_NFX = (wingspan - fuselage_width - 2.0 * WID_GRX) ** 2 / SW_NFX
+        dAR_NFX_dtaper_ratio = (
+            -((wingspan - fuselage_width - 2.0 * WID_GRX) ** 2) * dSW_NFX_dtaper_ratio / SW_NFX**2
+        )
+        dAR_NFX_dcenter_chord_wing = (
+            -((wingspan - fuselage_width - 2.0 * WID_GRX) ** 2)
+            * dSW_NFX_dcenter_chord_wing
+            / SW_NFX**2
+        )
         dAR_NFX_dSWF = (
-            -2 * (wingspan - SWF - 2.0 * WID_GRX) / SW_NFX
-            - (wingspan - SWF - 2.0 * WID_GRX) ** 2 * dSW_NFX_dSWF / SW_NFX**2
+            -2 * (wingspan - fuselage_width - 2.0 * WID_GRX) / SW_NFX
+            - (wingspan - fuselage_width - 2.0 * WID_GRX) ** 2 * dSW_NFX_dSWF / SW_NFX**2
         )
-        dAR_NFX_dYMG = -((wingspan - SWF - 2.0 * WID_GRX) ** 2) * dSW_NFX_dYMG / SW_NFX**2
+        dAR_NFX_dloc_main_gear = (
+            -((wingspan - fuselage_width - 2.0 * WID_GRX) ** 2) * dSW_NFX_dloc_main_gear / SW_NFX**2
+        )
         dAR_NFX_dwingspan = (
-            2 * (wingspan - SWF - 2.0 * WID_GRX) / SW_NFX
-            - (wingspan - SWF - 2.0 * WID_GRX) ** 2 * dSW_NFX_dwingspan / SW_NFX**2
+            2 * (wingspan - fuselage_width - 2.0 * WID_GRX) / SW_NFX
+            - (wingspan - fuselage_width - 2.0 * WID_GRX) ** 2 * dSW_NFX_dwingspan / SW_NFX**2
         )
 
-        TCM = 0.5 * (TCF + TCT)
-        dTCM_dYMG = 0.5 * dTCF_dYMG
-        dTCM_dSLM = 0.5 * dTCF_dSLM
-        dTCM_dCROOT = 0.5 * dTCF_dCROOT
-        dTCM_dTCR = 0.5 * dTCF_dTCR
-        dTCM_dTCT = 0.5 * dTCF_dTCT + 0.5
+        TCM = 0.5 * (TCF + tc_ratio_tip)
+        dTCM_dloc_main_gear = 0.5 * dTCF_dloc_main_gear
+        dTCM_dtaper_ratio = 0.5 * dTCF_dtaper_ratio
+        dTCM_dcenter_chord_wing = 0.5 * dTCF_dcenter_chord_wing
+        dTCM_dtc_ratio_root = 0.5 * dTCF_dtc_ratio_root
+        dTCM_dtc_ratio_tip = 0.5 * dTCF_dtc_ratio_tip + 0.5
         dTCM_dSWF = 0.5 * dTCF_dSWF
         dTCM_dwingspan = 0.5 * dTCF_dwingspan
 
-        numer = SKWF * 0.888889 * TCM * SW_NFX**1.5 * (2.0 * SLM_NFX + 1.0)
-        dnumer_dSKWF = 0.888889 * TCM * SW_NFX**1.5 * (2.0 * SLM_NFX + 1.0)
-        dnumer_dYMG = (
-            SKWF * 0.888889 * dTCM_dYMG * SW_NFX**1.5 * (2.0 * SLM_NFX + 1.0)
-            + SKWF * 0.888889 * TCM * 1.5 * dSW_NFX_dYMG * SW_NFX**0.5 * (2.0 * SLM_NFX + 1.0)
-            + SKWF * 0.888889 * TCM * SW_NFX**1.5 * (2.0 * dSLM_NFX_dYMG)
+        numer = fuel_vol_frac * 0.888889 * TCM * SW_NFX**1.5 * (2.0 * SLM_NFX + 1.0)
+        dnumer_dfuel_vol_frac = 0.888889 * TCM * SW_NFX**1.5 * (2.0 * SLM_NFX + 1.0)
+        dnumer_dloc_main_gear = (
+            fuel_vol_frac * 0.888889 * dTCM_dloc_main_gear * SW_NFX**1.5 * (2.0 * SLM_NFX + 1.0)
+            + fuel_vol_frac
+            * 0.888889
+            * TCM
+            * 1.5
+            * dSW_NFX_dloc_main_gear
+            * SW_NFX**0.5
+            * (2.0 * SLM_NFX + 1.0)
+            + fuel_vol_frac * 0.888889 * TCM * SW_NFX**1.5 * (2.0 * dtaper_ratio_NFX_dloc_main_gear)
         )
-        dnumer_dSLM = (
-            SKWF * 0.888889 * dTCM_dSLM * SW_NFX**1.5 * (2.0 * SLM_NFX + 1.0)
-            + SKWF * 0.888889 * TCM * 1.5 * dSW_NFX_dSLM * SW_NFX**0.5 * (2.0 * SLM_NFX + 1.0)
-            + SKWF * 0.888889 * TCM * SW_NFX**1.5 * (2.0 * dSLM_NFX_dSLM)
+        dnumer_dtaper_ratio = (
+            fuel_vol_frac * 0.888889 * dTCM_dtaper_ratio * SW_NFX**1.5 * (2.0 * SLM_NFX + 1.0)
+            + fuel_vol_frac
+            * 0.888889
+            * TCM
+            * 1.5
+            * dSW_NFX_dtaper_ratio
+            * SW_NFX**0.5
+            * (2.0 * SLM_NFX + 1.0)
+            + fuel_vol_frac * 0.888889 * TCM * SW_NFX**1.5 * (2.0 * dtaper_ratio_NFX_dtaper_ratio)
         )
-        dnumer_dCROOT = (
-            SKWF * 0.888889 * dTCM_dCROOT * SW_NFX**1.5 * (2.0 * SLM_NFX + 1.0)
-            + SKWF * 0.888889 * TCM * 1.5 * dSW_NFX_dCROOT * SW_NFX**0.5 * (2.0 * SLM_NFX + 1.0)
-            + SKWF * 0.888889 * TCM * SW_NFX**1.5 * (2.0 * dSLM_NFX_dCROOT)
+        dnumer_dcenter_chord_wing = (
+            fuel_vol_frac * 0.888889 * dTCM_dcenter_chord_wing * SW_NFX**1.5 * (2.0 * SLM_NFX + 1.0)
+            + fuel_vol_frac
+            * 0.888889
+            * TCM
+            * 1.5
+            * dSW_NFX_dcenter_chord_wing
+            * SW_NFX**0.5
+            * (2.0 * SLM_NFX + 1.0)
+            + fuel_vol_frac
+            * 0.888889
+            * TCM
+            * SW_NFX**1.5
+            * (2.0 * dtaper_ratio_NFX_dcenter_chord_wing)
         )
-        dnumer_dTCR = SKWF * 0.888889 * dTCM_dTCR * SW_NFX**1.5 * (2.0 * SLM_NFX + 1.0)
-        dnumer_dTCT = SKWF * 0.888889 * dTCM_dTCT * SW_NFX**1.5 * (2.0 * SLM_NFX + 1.0)
+        dnumer_dtc_ratio_root = (
+            fuel_vol_frac * 0.888889 * dTCM_dtc_ratio_root * SW_NFX**1.5 * (2.0 * SLM_NFX + 1.0)
+        )
+        dnumer_dtc_ratio_tip = (
+            fuel_vol_frac * 0.888889 * dTCM_dtc_ratio_tip * SW_NFX**1.5 * (2.0 * SLM_NFX + 1.0)
+        )
         dnumer_dSWF = (
-            SKWF * 0.888889 * dTCM_dSWF * SW_NFX**1.5 * (2.0 * SLM_NFX + 1.0)
-            + SKWF * 0.888889 * TCM * 1.5 * dSW_NFX_dSWF * SW_NFX**0.5 * (2.0 * SLM_NFX + 1.0)
-            + SKWF * 0.888889 * TCM * SW_NFX**1.5 * (2.0 * dSLM_NFX_dSWF)
+            fuel_vol_frac * 0.888889 * dTCM_dSWF * SW_NFX**1.5 * (2.0 * SLM_NFX + 1.0)
+            + fuel_vol_frac
+            * 0.888889
+            * TCM
+            * 1.5
+            * dSW_NFX_dSWF
+            * SW_NFX**0.5
+            * (2.0 * SLM_NFX + 1.0)
+            + fuel_vol_frac * 0.888889 * TCM * SW_NFX**1.5 * (2.0 * dtaper_ratio_NFX_dSWF)
         )
         dnumer_dwingspan = (
-            SKWF * 0.888889 * dTCM_dwingspan * SW_NFX**1.5 * (2.0 * SLM_NFX + 1.0)
-            + SKWF * 0.888889 * TCM * 1.5 * dSW_NFX_dwingspan * SW_NFX**0.5 * (2.0 * SLM_NFX + 1.0)
-            + SKWF * 0.888889 * TCM * SW_NFX**1.5 * (2.0 * dSLM_NFX_dwingspan)
+            fuel_vol_frac * 0.888889 * dTCM_dwingspan * SW_NFX**1.5 * (2.0 * SLM_NFX + 1.0)
+            + fuel_vol_frac
+            * 0.888889
+            * TCM
+            * 1.5
+            * dSW_NFX_dwingspan
+            * SW_NFX**0.5
+            * (2.0 * SLM_NFX + 1.0)
+            + fuel_vol_frac * 0.888889 * TCM * SW_NFX**1.5 * (2.0 * dtaper_ratio_NFX_dwingspan)
         )
 
         denom = AR_NFX**0.5 * (SLM_NFX + 1.0) ** 2
-        ddenom_dSLM = 0.5 * dAR_NFX_dSLM / AR_NFX**0.5 * (
+        ddenom_dtaper_ratio = 0.5 * dAR_NFX_dtaper_ratio / AR_NFX**0.5 * (
             SLM_NFX + 1.0
-        ) ** 2 + 2 * AR_NFX**0.5 * dSLM_NFX_dSLM * (SLM_NFX + 1.0)
-        ddenom_dCROOT = 0.5 * dAR_NFX_dCROOT / AR_NFX**0.5 * (
+        ) ** 2 + 2 * AR_NFX**0.5 * dtaper_ratio_NFX_dtaper_ratio * (SLM_NFX + 1.0)
+        ddenom_dcenter_chord_wing = 0.5 * dAR_NFX_dcenter_chord_wing / AR_NFX**0.5 * (
             SLM_NFX + 1.0
-        ) ** 2 + 2 * AR_NFX**0.5 * dSLM_NFX_dCROOT * (SLM_NFX + 1.0)
+        ) ** 2 + 2 * AR_NFX**0.5 * dtaper_ratio_NFX_dcenter_chord_wing * (SLM_NFX + 1.0)
         ddenom_dSWF = 0.5 * dAR_NFX_dSWF / AR_NFX**0.5 * (
             SLM_NFX + 1.0
-        ) ** 2 + 2 * AR_NFX**0.5 * dSLM_NFX_dSWF * (SLM_NFX + 1.0)
-        ddenom_dYMG = 0.5 * dAR_NFX_dYMG / AR_NFX**0.5 * (
+        ) ** 2 + 2 * AR_NFX**0.5 * dtaper_ratio_NFX_dSWF * (SLM_NFX + 1.0)
+        ddenom_dloc_main_gear = 0.5 * dAR_NFX_dloc_main_gear / AR_NFX**0.5 * (
             SLM_NFX + 1.0
-        ) ** 2 + 2 * AR_NFX**0.5 * dSLM_NFX_dYMG * (SLM_NFX + 1.0)
+        ) ** 2 + 2 * AR_NFX**0.5 * dtaper_ratio_NFX_dloc_main_gear * (SLM_NFX + 1.0)
         ddenom_dwingspan = 0.5 * dAR_NFX_dwingspan / AR_NFX**0.5 * (
             SLM_NFX + 1.0
-        ) ** 2 + 2 * AR_NFX**0.5 * dSLM_NFX_dwingspan * (SLM_NFX + 1.0)
-        ddenom_dSKWF = 0.0
-        ddenom_dTCR = 0.0
-        ddenom_dTCT = 0.0
+        ) ** 2 + 2 * AR_NFX**0.5 * dtaper_ratio_NFX_dwingspan * (SLM_NFX + 1.0)
+        ddenom_dfuel_vol_frac = 0.0
+        ddenom_dtc_ratio_root = 0.0
+        ddenom_dtc_ratio_tip = 0.0
 
-        FVOLW_GEOM = numer / denom
-        dFVOLW_GEOM_dSKWF = (dnumer_dSKWF * denom - numer * ddenom_dSKWF) / denom**2
-        dFVOLW_GEOM_dTCR = (dnumer_dTCR * denom - numer * ddenom_dTCR) / denom**2
-        dFVOLW_GEOM_dTCT = (dnumer_dTCT * denom - numer * ddenom_dTCT) / denom**2
-        dFVOLW_GEOM_dYMG = (dnumer_dYMG * denom - numer * ddenom_dYMG) / denom**2
-        dFVOLW_GEOM_dSLM = (dnumer_dSLM * denom - numer * ddenom_dSLM) / denom**2
-        dFVOLW_GEOM_dCROOT = (dnumer_dCROOT * denom - numer * ddenom_dCROOT) / denom**2
+        # FVOLW_GEOM = numer / denom
+        dFVOLW_GEOM_dfuel_vol_frac = (
+            dnumer_dfuel_vol_frac * denom - numer * ddenom_dfuel_vol_frac
+        ) / denom**2
+        dFVOLW_GEOM_dtc_ratio_root = (
+            dnumer_dtc_ratio_root * denom - numer * ddenom_dtc_ratio_root
+        ) / denom**2
+        dFVOLW_GEOM_dtc_ratio_tip = (
+            dnumer_dtc_ratio_tip * denom - numer * ddenom_dtc_ratio_tip
+        ) / denom**2
+        dFVOLW_GEOM_dloc_main_gear = (
+            dnumer_dloc_main_gear * denom - numer * ddenom_dloc_main_gear
+        ) / denom**2
+        dFVOLW_GEOM_dtaper_ratio = (
+            dnumer_dtaper_ratio * denom - numer * ddenom_dtaper_ratio
+        ) / denom**2
+        dFVOLW_GEOM_dcenter_chord_wing = (
+            dnumer_dcenter_chord_wing * denom - numer * ddenom_dcenter_chord_wing
+        ) / denom**2
         dFVOLW_GEOM_dSWF = (dnumer_dSWF * denom - numer * ddenom_dSWF) / denom**2
         dFVOLW_GEOM_dwingspan = (dnumer_dwingspan * denom - numer * ddenom_dwingspan) / denom**2
 
         if self.options[Aircraft.Wing.HAS_FOLD]:
-            J['wing_voume_no_fold', Aircraft.Fuel.WING_FUEL_FRACTION] = dFVOLW_GEOM_dSKWF
-            J['wing_voume_no_fold', Aircraft.LandingGear.MAIN_GEAR_LOCATION] = dFVOLW_GEOM_dYMG
-            J['wing_voume_no_fold', Aircraft.Wing.TAPER_RATIO] = dFVOLW_GEOM_dSLM
-            J['wing_voume_no_fold', Aircraft.Wing.ROOT_CHORD] = dFVOLW_GEOM_dCROOT
-            J['wing_voume_no_fold', Aircraft.Wing.THICKNESS_TO_CHORD_REF] = dFVOLW_GEOM_dTCR
-            J['wing_voume_no_fold', Aircraft.Wing.THICKNESS_TO_CHORD_TIP] = dFVOLW_GEOM_dTCT
-            J['wing_voume_no_fold', Aircraft.Fuselage.AVG_DIAMETER] = dFVOLW_GEOM_dSWF
-            J['wing_voume_no_fold', Aircraft.Wing.SPAN] = dFVOLW_GEOM_dwingspan
+            J['wing_volume_no_fold', Aircraft.Fuel.WING_FUEL_FRACTION] = dFVOLW_GEOM_dfuel_vol_frac
+            J['wing_volume_no_fold', Aircraft.LandingGear.MAIN_GEAR_LOCATION] = (
+                dFVOLW_GEOM_dloc_main_gear
+            )
+            J['wing_volume_no_fold', Aircraft.Wing.TAPER_RATIO] = dFVOLW_GEOM_dtaper_ratio
+            J['wing_volume_no_fold', Aircraft.Wing.CENTER_CHORD] = dFVOLW_GEOM_dcenter_chord_wing
+            J['wing_volume_no_fold', Aircraft.Wing.THICKNESS_TO_CHORD_ROOT] = (
+                dFVOLW_GEOM_dtc_ratio_root
+            )
+            J['wing_volume_no_fold', Aircraft.Wing.THICKNESS_TO_CHORD_TIP] = (
+                dFVOLW_GEOM_dtc_ratio_tip
+            )
+            J['wing_volume_no_fold', Aircraft.Fuselage.AVG_DIAMETER] = dFVOLW_GEOM_dSWF
+            J['wing_volume_no_fold', Aircraft.Wing.SPAN] = dFVOLW_GEOM_dwingspan
         else:
             J[Aircraft.Fuel.WING_VOLUME_GEOMETRIC_MAX, Aircraft.Fuel.WING_FUEL_FRACTION] = (
-                dFVOLW_GEOM_dSKWF
+                dFVOLW_GEOM_dfuel_vol_frac
             )
             J[Aircraft.Fuel.WING_VOLUME_GEOMETRIC_MAX, Aircraft.LandingGear.MAIN_GEAR_LOCATION] = (
-                dFVOLW_GEOM_dYMG
+                dFVOLW_GEOM_dloc_main_gear
             )
-            J[Aircraft.Fuel.WING_VOLUME_GEOMETRIC_MAX, Aircraft.Wing.TAPER_RATIO] = dFVOLW_GEOM_dSLM
-            J[Aircraft.Fuel.WING_VOLUME_GEOMETRIC_MAX, Aircraft.Wing.ROOT_CHORD] = (
-                dFVOLW_GEOM_dCROOT
+            J[Aircraft.Fuel.WING_VOLUME_GEOMETRIC_MAX, Aircraft.Wing.TAPER_RATIO] = (
+                dFVOLW_GEOM_dtaper_ratio
             )
-            J[Aircraft.Fuel.WING_VOLUME_GEOMETRIC_MAX, Aircraft.Wing.THICKNESS_TO_CHORD_REF] = (
-                dFVOLW_GEOM_dTCR
+            J[Aircraft.Fuel.WING_VOLUME_GEOMETRIC_MAX, Aircraft.Wing.CENTER_CHORD] = (
+                dFVOLW_GEOM_dcenter_chord_wing
+            )
+            J[Aircraft.Fuel.WING_VOLUME_GEOMETRIC_MAX, Aircraft.Wing.THICKNESS_TO_CHORD_ROOT] = (
+                dFVOLW_GEOM_dtc_ratio_root
             )
             J[Aircraft.Fuel.WING_VOLUME_GEOMETRIC_MAX, Aircraft.Wing.THICKNESS_TO_CHORD_TIP] = (
-                dFVOLW_GEOM_dTCT
+                dFVOLW_GEOM_dtc_ratio_tip
             )
             J[Aircraft.Fuel.WING_VOLUME_GEOMETRIC_MAX, Aircraft.Fuselage.AVG_DIAMETER] = (
                 dFVOLW_GEOM_dSWF
@@ -1108,32 +1214,37 @@ class WingFoldVolume(om.ExplicitComponent):
         J['nonfolded_wing_area', Aircraft.Wing.FOLDING_AREA] = dNFWA_dWingFoldArea
 
         tc_ratio_fold = tc_ratio_root + location * (tc_ratio_tip - tc_ratio_root) / (wingspan / 2.0)
-        dTcRatioFold_dTCR = 1 + location * (-1) / (wingspan / 2)
-        dTcRatioFold_dTCT = location / (wingspan / 2)
-        dTcRatioFold_dWingspan = (
+        dtc_ratio_rootatioFold_dtc_ratio_root = 1 + location * (-1) / (wingspan / 2)
+        dtc_ratio_rootatioFold_dtc_ratio_tip = location / (wingspan / 2)
+        dtc_ratio_rootatioFold_dWingspan = (
             (tc_ratio_tip - tc_ratio_root)
             * ((wingspan / 2) * dLoc_dWingspan - location * 0.5)
             / (wingspan / 2) ** 2
         )
-        dTcRatioFold_dy = dLoc_dy * (tc_ratio_tip - tc_ratio_root) / (wingspan / 2.0)
+        dtc_ratio_rootatioFold_dy = dLoc_dy * (tc_ratio_tip - tc_ratio_root) / (wingspan / 2.0)
 
         tc_ratio_mean_folded = 0.5 * (tc_ratio_root + tc_ratio_fold)
-        dTCRMeanFolded_dTCR = 0.5 * (1 + dTcRatioFold_dTCR)
-        dTCRMeanFolded_dTCT = 0.5 * dTcRatioFold_dTCT
-        dTCRMeanFolded_dWingspan = 0.5 * dTcRatioFold_dWingspan
-        dTCRMeanFolded_dy = 0.5 * dTcRatioFold_dy
+        dtc_ratio_rootMeanFolded_dtc_ratio_root = 0.5 * (1 + dtc_ratio_rootatioFold_dtc_ratio_root)
+        dtc_ratio_rootMeanFolded_dtc_ratio_tip = 0.5 * dtc_ratio_rootatioFold_dtc_ratio_tip
+        dtc_ratio_rootMeanFolded_dWingspan = 0.5 * dtc_ratio_rootatioFold_dWingspan
+        dtc_ratio_rootMeanFolded_dy = 0.5 * dtc_ratio_rootatioFold_dy
 
-        J['tc_ratio_mean_folded', Aircraft.Wing.THICKNESS_TO_CHORD_ROOT] = dTCRMeanFolded_dTCR
-        J['tc_ratio_mean_folded', Aircraft.Wing.THICKNESS_TO_CHORD_TIP] = dTCRMeanFolded_dTCT
-        J['tc_ratio_mean_folded', Aircraft.Wing.SPAN] = dTCRMeanFolded_dWingspan
-        J['tc_ratio_mean_folded', wrt] = dTCRMeanFolded_dy
+        J['tc_ratio_mean_folded', Aircraft.Wing.THICKNESS_TO_CHORD_ROOT] = (
+            dtc_ratio_rootMeanFolded_dtc_ratio_root
+        )
+        J['tc_ratio_mean_folded', Aircraft.Wing.THICKNESS_TO_CHORD_TIP] = (
+            dtc_ratio_rootMeanFolded_dtc_ratio_tip
+        )
+        J['tc_ratio_mean_folded', Aircraft.Wing.SPAN] = dtc_ratio_rootMeanFolded_dWingspan
+        J['tc_ratio_mean_folded', wrt] = dtc_ratio_rootMeanFolded_dy
 
         nonfolded_AR = 4.0 * location**2 / nonfolded_wing_area
-        dNFAR_dWingArea = -4 * location**2 / nonfolded_wing_area**2
-        dNFAR_dWingFoldArea = 4 * location**2 / nonfolded_wing_area**2
-        dNFAR_dWingspan = 4 * (2 * location * dLoc_dWingspan) / nonfolded_wing_area
+        dNFAR_dWingArea = -4.0 * location**2 / nonfolded_wing_area**2
+        dNFAR_dWingFoldArea = 4.0 * location**2 / nonfolded_wing_area**2
+        dNFAR_dWingspan = 4.0 * (2.0 * location * dLoc_dWingspan) / nonfolded_wing_area
         dNFAR_dTaperRatio = 0
-        dNFAR_dy = 4 * (2 * location * dLoc_dy) / nonfolded_wing_area
+        dNFAR_dy = 4 * (2.0 * location * dLoc_dy) / nonfolded_wing_area
+
         J['nonfolded_AR', Aircraft.Wing.AREA] = dNFAR_dWingArea
         J['nonfolded_AR', Aircraft.Wing.FOLDING_AREA] = dNFAR_dWingFoldArea
         J['nonfolded_AR', Aircraft.Wing.SPAN] = dNFAR_dWingspan
@@ -1145,11 +1256,11 @@ class WingFoldVolume(om.ExplicitComponent):
 
         num = fuel_vol_frac * 0.888889 * tc_ratio_mean_folded * a
         dNum_dWingspan = (
-            fuel_vol_frac * 0.888889 * dTCRMeanFolded_dWingspan * a
+            fuel_vol_frac * 0.888889 * dtc_ratio_rootMeanFolded_dWingspan * a
             + fuel_vol_frac * 0.888889 * tc_ratio_mean_folded * dA_dWingspan
         )
         dNum_dy = (
-            fuel_vol_frac * 0.888889 * dTCRMeanFolded_dy * a
+            fuel_vol_frac * 0.888889 * dtc_ratio_rootMeanFolded_dy * a
             + fuel_vol_frac * 0.888889 * tc_ratio_mean_folded * dA_dy
         )
         dNum_dWingArea = (
@@ -1197,14 +1308,12 @@ class WingFoldVolume(om.ExplicitComponent):
             * ((nonfolded_taper_ratio + 1.0) ** 2.0)
             + ((nonfolded_AR**0.5) * 2 * (nonfolded_taper_ratio + 1.0)) * dNFTR_dWingArea
         )
-
         dDen_dWingFoldArea = (
             0.5
             * (nonfolded_AR ** (-0.5))
             * dNFAR_dWingFoldArea
             * ((nonfolded_taper_ratio + 1.0) ** 2.0)
         )
-
         dDen_dTaperRatio = (
             0.5
             * (nonfolded_AR ** (-0.5))
@@ -1222,14 +1331,14 @@ class WingFoldVolume(om.ExplicitComponent):
         J[Aircraft.Fuel.WING_VOLUME_GEOMETRIC_MAX, Aircraft.Wing.THICKNESS_TO_CHORD_ROOT] = (
             fuel_vol_frac
             * 0.888889
-            * dTCRMeanFolded_dTCR
+            * dtc_ratio_rootMeanFolded_dtc_ratio_root
             * (nonfolded_wing_area**1.5)
             * (2.0 * nonfolded_taper_ratio + 1.0)
         ) / ((nonfolded_AR**0.5) * ((nonfolded_taper_ratio + 1.0) ** 2.0))
         J[Aircraft.Fuel.WING_VOLUME_GEOMETRIC_MAX, Aircraft.Wing.THICKNESS_TO_CHORD_TIP] = (
             fuel_vol_frac
             * 0.888889
-            * dTCRMeanFolded_dTCT
+            * dtc_ratio_rootMeanFolded_dtc_ratio_tip
             * (nonfolded_wing_area**1.5)
             * (2.0 * nonfolded_taper_ratio + 1.0)
         ) / ((nonfolded_AR**0.5) * ((nonfolded_taper_ratio + 1.0) ** 2.0))
@@ -1250,6 +1359,173 @@ class WingFoldVolume(om.ExplicitComponent):
         J[Aircraft.Fuel.WING_VOLUME_GEOMETRIC_MAX, wrt] = (den * dNum_dy - num * dDen_dy) / den**2
 
 
+class BWBWingFoldVolume(om.ExplicitComponent):
+    """
+    Computation of taper ratio between wing root and fold location, wing area of
+    part of wings that does not fold, mean value of thickess to chord ratio between
+    root and fold, aspect ratio of non-folding part of wing, wing tank fuel volume.
+    """
+
+    def initialize(self):
+        add_aviary_option(self, Aircraft.Wing.CHOOSE_FOLD_LOCATION)
+
+    def setup(self):
+        if not self.options[Aircraft.Wing.CHOOSE_FOLD_LOCATION]:
+            self.add_input(
+                'strut_y', val=25, units='ft', desc='YSTRUT: attachment location of strut'
+            )
+        else:
+            add_aviary_input(self, Aircraft.Wing.FOLDED_SPAN)
+
+        self.add_input('wing_volume_no_fold', units='ft**3', desc='FVOLW_GEOMX')
+        add_aviary_input(self, Aircraft.Fuselage.AVG_DIAMETER, units='ft')
+        add_aviary_input(self, Aircraft.Wing.THICKNESS_TO_CHORD_ROOT, units='unitless')
+        add_aviary_input(self, Aircraft.Wing.THICKNESS_TO_CHORD_TIP, units='unitless')
+        add_aviary_input(self, Aircraft.Wing.SPAN, units='ft')
+
+        add_aviary_output(self, Aircraft.Fuel.WING_VOLUME_GEOMETRIC_MAX, units='ft**3')
+
+    def setup_partials(self):
+        if not self.options[Aircraft.Wing.CHOOSE_FOLD_LOCATION]:
+            self.declare_partials(Aircraft.Fuel.WING_VOLUME_GEOMETRIC_MAX, 'strut_y')
+        else:
+            self.declare_partials(
+                Aircraft.Fuel.WING_VOLUME_GEOMETRIC_MAX, Aircraft.Wing.FOLDED_SPAN
+            )
+
+        self.declare_partials(
+            Aircraft.Fuel.WING_VOLUME_GEOMETRIC_MAX,
+            [
+                'wing_volume_no_fold',
+                Aircraft.Fuselage.AVG_DIAMETER,
+                Aircraft.Wing.THICKNESS_TO_CHORD_ROOT,
+                Aircraft.Wing.THICKNESS_TO_CHORD_TIP,
+                Aircraft.Wing.SPAN,
+            ],
+        )
+
+    def compute(self, inputs, outputs):
+        wingspan = inputs[Aircraft.Wing.SPAN]
+        tc_ratio_root = inputs[Aircraft.Wing.THICKNESS_TO_CHORD_ROOT]
+        tc_ratio_tip = inputs[Aircraft.Wing.THICKNESS_TO_CHORD_TIP]
+        fuselage_width = inputs[Aircraft.Fuselage.AVG_DIAMETER]
+        wing_volume_no_fold = inputs['wing_volume_no_fold']
+
+        if not self.options[Aircraft.Wing.CHOOSE_FOLD_LOCATION]:
+            strut_span = inputs['strut_y']  # assume fold at strut location
+            fold_span = strut_span * 2.0
+        else:
+            fold_span = inputs[Aircraft.Wing.FOLDED_SPAN]
+        location = fold_span / 2.0
+
+        tc_ratio_fold = tc_ratio_root + 2.0 * location * (tc_ratio_tip - tc_ratio_root) / wingspan
+        tc_fac = (1.0 + tc_ratio_fold / tc_ratio_root) / (1.0 + tc_ratio_tip / tc_ratio_root)
+        geometric_fuel_vol = (
+            tc_fac
+            * (fold_span - fuselage_width)
+            / (wingspan - fuselage_width)
+            * wing_volume_no_fold
+        )
+        outputs[Aircraft.Fuel.WING_VOLUME_GEOMETRIC_MAX] = geometric_fuel_vol
+
+    def compute_partials(self, inputs, J):
+        wingspan = inputs[Aircraft.Wing.SPAN]
+        tc_ratio_root = inputs[Aircraft.Wing.THICKNESS_TO_CHORD_ROOT]
+        tc_ratio_tip = inputs[Aircraft.Wing.THICKNESS_TO_CHORD_TIP]
+        fuselage_width = inputs[Aircraft.Fuselage.AVG_DIAMETER]
+        wing_volume_no_fold = inputs['wing_volume_no_fold']
+
+        if not self.options[Aircraft.Wing.CHOOSE_FOLD_LOCATION]:
+            strut_span = inputs['strut_y']
+            fold_span = strut_span * 2.0
+            wrt = 'strut_y'
+            dLoc_dspan = 1
+        else:
+            fold_span = inputs[Aircraft.Wing.FOLDED_SPAN]
+            wrt = Aircraft.Wing.FOLDED_SPAN
+            dLoc_dspan = 1 / 2
+        location = fold_span / 2.0
+        dlocation_wrt = dLoc_dspan
+
+        tc_ratio_fold = tc_ratio_root + 2.0 * location * (tc_ratio_tip - tc_ratio_root) / wingspan
+        dtc_ratio_fold_wrt = 2.0 * dlocation_wrt * (tc_ratio_tip - tc_ratio_root) / wingspan
+        dtc_ratio_fold_dwingspan = -2.0 * location * (tc_ratio_tip - tc_ratio_root) / wingspan**2
+        dtc_ratio_fold_dtc_ratio_root = 1 - 2.0 * location / wingspan
+        dtc_ratio_fold_dtc_ratio_tip = 2.0 * location / wingspan
+
+        u = 1.0 + tc_ratio_fold / tc_ratio_root
+        v = 1.0 + tc_ratio_tip / tc_ratio_root
+        tc_fac = (1.0 + tc_ratio_fold / tc_ratio_root) / (1.0 + tc_ratio_tip / tc_ratio_root)
+        dtc_fac_wrt = dtc_ratio_fold_wrt / tc_ratio_root / (1.0 + tc_ratio_tip / tc_ratio_root)
+        dtc_fac_dwingspan = (
+            dtc_ratio_fold_dwingspan / tc_ratio_root / (1.0 + tc_ratio_tip / tc_ratio_root)
+        )
+
+        du_tip = dtc_ratio_fold_dtc_ratio_tip / tc_ratio_root
+        dv_tip = 1.0 / tc_ratio_root
+        dtc_fac_dtc_ratio_tip = (du_tip * v - u * dv_tip) / v**2
+        du_root = (dtc_ratio_fold_dtc_ratio_root * tc_ratio_root - tc_ratio_fold) / tc_ratio_root**2
+        dv_root = -tc_ratio_tip / tc_ratio_root**2
+        dtc_fac_dtc_ratio_root = (du_root * v - u * dv_root) / v**2
+
+        dgeometric_fuel_vol_dtc_ratio_root = (
+            dtc_fac_dtc_ratio_root
+            * (fold_span - fuselage_width)
+            / (wingspan - fuselage_width)
+            * wing_volume_no_fold
+        )
+        dgeometric_fuel_vol_dtc_ratio_tip = (
+            dtc_fac_dtc_ratio_tip
+            * (fold_span - fuselage_width)
+            / (wingspan - fuselage_width)
+            * wing_volume_no_fold
+        )
+        dgeometric_fuel_vol_dwingspan = (
+            dtc_fac_dwingspan
+            * (fold_span - fuselage_width)
+            / (wingspan - fuselage_width)
+            * wing_volume_no_fold
+            - tc_fac
+            * (fold_span - fuselage_width)
+            / (wingspan - fuselage_width) ** 2
+            * wing_volume_no_fold
+        )
+        dgeometric_fuel_vol_wrt = (
+            dtc_fac_wrt
+            * (fold_span - fuselage_width)
+            / (wingspan - fuselage_width)
+            * wing_volume_no_fold
+            + tc_fac * 2 * dlocation_wrt / (wingspan - fuselage_width) * wing_volume_no_fold
+        )
+        dgeometric_fuel_vol_dwing_volume_no_fold = (
+            tc_fac * (fold_span - fuselage_width) / (wingspan - fuselage_width)
+        )
+        dgeometric_fuel_vol_dfuselage_width = (
+            -tc_fac
+            * (wingspan - fold_span)
+            / (wingspan - fuselage_width) ** 2
+            * wing_volume_no_fold
+        )
+
+        J[Aircraft.Fuel.WING_VOLUME_GEOMETRIC_MAX, 'wing_volume_no_fold'] = (
+            dgeometric_fuel_vol_dwing_volume_no_fold
+        )
+        J[Aircraft.Fuel.WING_VOLUME_GEOMETRIC_MAX, Aircraft.Fuselage.AVG_DIAMETER] = (
+            dgeometric_fuel_vol_dfuselage_width
+        )
+        J[Aircraft.Fuel.WING_VOLUME_GEOMETRIC_MAX, wrt] = dgeometric_fuel_vol_wrt
+        J[Aircraft.Fuel.WING_VOLUME_GEOMETRIC_MAX, Aircraft.Wing.SPAN] = (
+            dgeometric_fuel_vol_dwingspan
+        )
+
+        J[Aircraft.Fuel.WING_VOLUME_GEOMETRIC_MAX, Aircraft.Wing.THICKNESS_TO_CHORD_ROOT] = (
+            dgeometric_fuel_vol_dtc_ratio_root
+        )
+        J[Aircraft.Fuel.WING_VOLUME_GEOMETRIC_MAX, Aircraft.Wing.THICKNESS_TO_CHORD_TIP] = (
+            dgeometric_fuel_vol_dtc_ratio_tip
+        )
+
+
 class WingGroup(om.Group):
     """Group of WingSize, WingParameters, and WingFold for wing parameter computations."""
 
@@ -1257,10 +1533,8 @@ class WingGroup(om.Group):
         add_aviary_option(self, Aircraft.Wing.CHOOSE_FOLD_LOCATION)
         add_aviary_option(self, Aircraft.Wing.HAS_FOLD)
         add_aviary_option(self, Aircraft.Wing.HAS_STRUT)
-        add_aviary_option(self, Aircraft.Design.TYPE)
 
     def setup(self):
-        design_type = self.options[Aircraft.Design.TYPE]
         has_fold = self.options[Aircraft.Wing.HAS_FOLD]
         has_strut = self.options[Aircraft.Wing.HAS_STRUT]
 
@@ -1286,24 +1560,13 @@ class WingGroup(om.Group):
             promotes_outputs=['aircraft:*'],
         )
 
-        if design_type is AircraftTypes.BLENDED_WING_BODY:
+        if not has_fold:
             self.add_subsystem(
                 'wing_vol',
-                BWBWingVolume(),
+                WingVolume(),
                 promotes_inputs=['aircraft:*'],
+                promotes_outputs=['aircraft:*'],
             )
-            if has_fold:
-                self.promotes('wing_vol', outputs=['wing_voume_no_fold'])
-            else:
-                self.promotes('wing_vol', outputs=['aircraft:*'])
-        else:
-            if not has_fold:
-                self.add_subsystem(
-                    'wing_vol',
-                    WingVolume(),
-                    promotes_inputs=['aircraft:*'],
-                    promotes_outputs=['aircraft:*'],
-                )
 
         if has_strut:
             self.add_subsystem(
@@ -1334,13 +1597,81 @@ class WingGroup(om.Group):
                 self.promotes('fold_area', inputs=['strut_y'])
                 self.promotes('fold_vol', inputs=['strut_y'])
 
-        if design_type is AircraftTypes.BLENDED_WING_BODY:
+
+class BWBWingGroup(om.Group):
+    """
+    Group of WingSize, WingParameters, WingFoldArea and BWBWingVolumeArea for wing parameter computations.
+    """
+
+    def initialize(self):
+        add_aviary_option(self, Aircraft.Wing.CHOOSE_FOLD_LOCATION)
+        add_aviary_option(self, Aircraft.Wing.HAS_FOLD)
+        add_aviary_option(self, Aircraft.Wing.HAS_STRUT)
+        add_aviary_option(self, Settings.VERBOSITY)
+
+    def setup(self):
+        verbosity = self.options[Settings.VERBOSITY]
+        has_fold = self.options[Aircraft.Wing.HAS_FOLD]
+        has_strut = self.options[Aircraft.Wing.HAS_STRUT]
+
+        if has_strut:
+            if verbosity >= 1:
+                print('BWB does not have strut implemented.')
+        if not self.options[Aircraft.Wing.CHOOSE_FOLD_LOCATION]:
+            raise ('There is no strut. Aircraft.Wing.CHOOSE_FOLD_LOCATION must be True.')
+
+        self.add_subsystem(
+            'size',
+            WingSize(),
+            promotes_inputs=['aircraft:*', 'mission:*'],
+            promotes_outputs=['aircraft:*'],
+        )
+
+        if has_fold:
             self.add_subsystem(
-                'exposed_wing',
-                ExposedWing(),
+                'dimensionless_calcs',
+                DimensionalNonDimensionalInterchange(),
                 promotes_inputs=['aircraft:*'],
                 promotes_outputs=['aircraft:*'],
             )
+
+        self.add_subsystem(
+            'parameters',
+            WingParameters(),
+            promotes_inputs=['aircraft:*'],
+            promotes_outputs=['aircraft:*'],
+        )
+
+        self.add_subsystem(
+            'wing_vol',
+            BWBWingVolume(),
+            promotes_inputs=['aircraft:*'],
+        )
+        if has_fold:
+            self.promotes('wing_vol', outputs=['wing_volume_no_fold'])
+        else:
+            self.promotes('wing_vol', outputs=['aircraft:*'])
+
+        if has_fold:
+            self.add_subsystem(
+                'fold_area',
+                WingFoldArea(),
+                promotes_inputs=['aircraft:*'],
+                promotes_outputs=['aircraft:*'],
+            )
+            self.add_subsystem(
+                'fold_vol',
+                BWBWingFoldVolume(),
+                promotes_inputs=['aircraft:*', 'wing_volume_no_fold'],
+                promotes_outputs=['aircraft:*'],
+            )
+
+        self.add_subsystem(
+            'exposed_wing',
+            ExposedWing(),
+            promotes_inputs=['aircraft:*'],
+            promotes_outputs=['aircraft:*'],
+        )
 
 
 epsilon = 0.05
@@ -1432,7 +1763,10 @@ def dg2(x):
 
 
 class ExposedWing(om.ExplicitComponent):
-    """Computation of exposed wing area. This is useful for BWB, but is available to tube+wing model too."""
+    """
+    Computation of exposed wing area. This is useful for BWB,
+    but is available to tube + wing model too.
+    """
 
     def initialize(self):
         add_aviary_option(self, Aircraft.Design.TYPE)
