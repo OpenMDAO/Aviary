@@ -611,7 +611,6 @@ class AviaryProblem(om.Problem):
         # TODO: Should some of this stuff be moved into the phase builder?
         self.configurator.set_phase_options(self, phase_name, phase_idx, phase, full_options)
 
-
         return phase
 
     def add_phases(self, phase_info_parameterization=None, parallel_phases=True, verbosity=None):
@@ -925,7 +924,7 @@ class AviaryProblem(om.Problem):
         for phase_name in self.phase_info:
             user_options = self.phase_info[phase_name]['user_options']
 
-            target_distance = user_options.get('target_distance', None)
+            target_distance = user_options.get('target_distance', (None, 'nmi'))
             target_distance = wrapped_convert_units(target_distance, 'nmi')
             if target_distance is not None:
                 self.post_mission.add_subsystem(
@@ -955,7 +954,7 @@ class AviaryProblem(om.Problem):
                 )
 
             # this is only used for analytic phases with a target duration
-            target_duration = user_options.get('time_duration', None)
+            target_duration = user_options.get('time_duration', (None, 'min'))
             target_duration = wrapped_convert_units(target_duration, 'min')
             analytic = user_options.get('analytic', False)
 
