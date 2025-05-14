@@ -14,6 +14,21 @@ on:
   # Allow running the workflow manually from the Actions tab
   workflow_dispatch:
 
+    inputs:
+      run_name:
+        type: string
+        description: 'Name of workflow run as it will appear under Actions tab:'
+        required: false
+        default: ""
+
+      use_pypi:
+        type: boolean
+        description: 'Run tests against the published PyPI version of Aviary'
+        required: false
+        default: false
+
+run-name:  ${{ inputs.run_name }}
+
 jobs:
 
   test_ubuntu_no_dev_install:
@@ -71,7 +86,14 @@ jobs:
           echo "Temporarily install specific versions for now."
           pip install "numpy<2"
           pip install packaging
-          pip install .[all]
+          if [[  "${{ inputs.use_pypi }}" == "true" ]]; then
+            echo "-----------------------------------------------------------"
+            echo "Installing from PyPI"
+            echo "-----------------------------------------------------------"
+            python -m pip install aviary[all]
+          else
+            pip install .[all]
+          fi
 
       - name: Display conda environment info
         shell: bash -l {0}
