@@ -1,15 +1,12 @@
 import unittest
 
 import numpy as np
-import openmdao.api as om
 
-from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
-
+import aviary.api as av
 from aviary.subsystems.mass.mass_builder import CoreMassBuilder
 from aviary.variable_info.enums import LegacyCode
-from aviary.variable_info.variables import Aircraft
 from aviary.variable_info.variable_meta_data import _MetaData as BaseMetaData
-import aviary.api as av
+from aviary.variable_info.variables import Aircraft
 
 FLOPS = LegacyCode.FLOPS
 
@@ -23,12 +20,11 @@ class TestFLOPSMassBuilder(av.TestSubsystemBuilderBase):
 
     def setUp(self):
         self.subsystem_builder = CoreMassBuilder(
-            'test_core_mass', meta_data=BaseMetaData, code_origin=FLOPS)
+            'test_core_mass', meta_data=BaseMetaData, code_origin=FLOPS
+        )
         self.aviary_values = av.AviaryValues()
         self.aviary_values.set_val(Aircraft.Design.USE_ALT_MASS, False, units='unitless')
-        self.aviary_values.set_val(
-            Aircraft.Engine.NUM_ENGINES, np.array([1]), units='unitless'
-        )
+        self.aviary_values.set_val(Aircraft.Engine.NUM_ENGINES, np.array([1]), units='unitless')
         self.aviary_values.set_val(
             Aircraft.Engine.NUM_WING_ENGINES, np.array([2]), units='unitless'
         )
@@ -43,12 +39,11 @@ class TestFLOPSMassBuilderAltMass(av.TestSubsystemBuilderBase):
 
     def setUp(self):
         self.subsystem_builder = CoreMassBuilder(
-            'test_core_mass', meta_data=BaseMetaData, code_origin=FLOPS)
+            'test_core_mass', meta_data=BaseMetaData, code_origin=FLOPS
+        )
         self.aviary_values = av.AviaryValues()
         self.aviary_values.set_val(Aircraft.Design.USE_ALT_MASS, True, units='unitless')
-        self.aviary_values.set_val(
-            Aircraft.Engine.NUM_ENGINES, np.array([1]), units='unitless'
-        )
+        self.aviary_values.set_val(Aircraft.Engine.NUM_ENGINES, np.array([1]), units='unitless')
         self.aviary_values.set_val(
             Aircraft.Engine.NUM_WING_ENGINES, np.array([2]), units='unitless'
         )

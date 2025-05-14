@@ -20,9 +20,7 @@ class ExternalSubsystemGroup(om.Group):
 
 
 class BaseODE(om.Group):
-    """
-    The base class for all ODE components.
-    """
+    """The base class for all ODE components."""
 
     def initialize(self):
         self.options.declare('num_nodes', default=1, types=int)
@@ -52,16 +50,14 @@ class BaseODE(om.Group):
             desc='metadata associated with the variables to be passed into the ODE',
         )
         self.options.declare(
-            "analysis_scheme",
+            'analysis_scheme',
             default=AnalysisScheme.COLLOCATION,
             types=AnalysisScheme,
-            desc="The analysis method that will be used to close the trajectory; for example collocation or time integration",
+            desc='The analysis method that will be used to close the trajectory; for example collocation or time integration',
         )
 
     def add_atmosphere(self, **kwargs):
-        """
-        Adds Atmosphere component to ODE
-        """
+        """Adds Atmosphere component to ODE."""
         nn = self.options['num_nodes']
         self.add_subsystem(
             name='atmosphere',
@@ -71,7 +67,7 @@ class BaseODE(om.Group):
 
     def add_core_subsystems(self, solver_group=None):
         """
-        Adds all specified external subsystems to ODE in their own group
+        Adds all specified external subsystems to ODE in their own group.
 
         Parameters
         ----------
@@ -112,7 +108,7 @@ class BaseODE(om.Group):
 
     def add_external_subsystems(self, solver_group=None):
         """
-        Adds all specified external subsystems to ODE in their own group
+        Adds all specified external subsystems to ODE in their own group.
 
         Parameters
         ----------
@@ -139,12 +135,12 @@ class BaseODE(om.Group):
                 kwargs = {}
 
             subsystem_mission = subsystem.build_mission(
-                num_nodes=nn, aviary_inputs=aviary_options, **kwargs)
+                num_nodes=nn, aviary_inputs=aviary_options, **kwargs
+            )
 
             if subsystem_mission is not None:
                 target = external_subsystem_group
-                if subsystem.needs_mission_solver(
-                        aviary_options) and solver_group is not None:
+                if subsystem.needs_mission_solver(aviary_options) and solver_group is not None:
                     add_subsystem_group_solver = True
                     target = external_subsystem_group_solver
                 else:

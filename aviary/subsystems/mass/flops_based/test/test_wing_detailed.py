@@ -2,37 +2,33 @@ import unittest
 
 import numpy as np
 import openmdao.api as om
-
+from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 from parameterized import parameterized
 
-from aviary.subsystems.mass.flops_based.wing_detailed import \
-    DetailedWingBendingFact
-from aviary.utils.test_utils.variable_test import assert_match_varnames
-from aviary.validation_cases.validation_tests import (flops_validation_test,
-                                                      get_flops_case_names,
-                                                      get_flops_inputs,
-                                                      print_case)
-from aviary.variable_info.variables import Aircraft, Mission, Settings
+from aviary.subsystems.mass.flops_based.wing_detailed import DetailedWingBendingFact
+from aviary.subsystems.propulsion.engine_deck import EngineDeck
 from aviary.utils.aviary_values import AviaryValues
 from aviary.utils.preprocessors import preprocess_propulsion
-from aviary.subsystems.propulsion.engine_deck import EngineDeck
-from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
+from aviary.utils.test_utils.variable_test import assert_match_varnames
+from aviary.validation_cases.validation_tests import (
+    flops_validation_test,
+    get_flops_case_names,
+    get_flops_inputs,
+    print_case,
+)
+from aviary.variable_info.variables import Aircraft, Mission, Settings
 
 
 class DetailedWingBendingTest(unittest.TestCase):
-
     def setUp(self):
         self.prob = om.Problem()
 
     # Skip model that doesn't use detailed wing.
     @parameterized.expand(
-        get_flops_case_names(
-            omit=[
-                'LargeSingleAisle2FLOPS',
-                'LargeSingleAisle2FLOPSalt']),
-        name_func=print_case)
+        get_flops_case_names(omit=['LargeSingleAisle2FLOPS', 'LargeSingleAisle2FLOPSalt']),
+        name_func=print_case,
+    )
     def test_case(self, case_name):
-
         prob = self.prob
 
         inputs = get_flops_inputs(case_name, preprocess=True)
@@ -40,14 +36,20 @@ class DetailedWingBendingTest(unittest.TestCase):
         options = {
             Aircraft.Engine.NUM_ENGINES: inputs.get_val(Aircraft.Engine.NUM_ENGINES),
             Aircraft.Engine.NUM_WING_ENGINES: inputs.get_val(Aircraft.Engine.NUM_WING_ENGINES),
-            Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES: inputs.get_val(Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES),
+            Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES: inputs.get_val(
+                Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES
+            ),
             Aircraft.Wing.INPUT_STATION_DIST: inputs.get_val(Aircraft.Wing.INPUT_STATION_DIST),
-            Aircraft.Wing.LOAD_DISTRIBUTION_CONTROL: inputs.get_val(Aircraft.Wing.LOAD_DISTRIBUTION_CONTROL),
-            Aircraft.Wing.NUM_INTEGRATION_STATIONS: inputs.get_val(Aircraft.Wing.NUM_INTEGRATION_STATIONS),
+            Aircraft.Wing.LOAD_DISTRIBUTION_CONTROL: inputs.get_val(
+                Aircraft.Wing.LOAD_DISTRIBUTION_CONTROL
+            ),
+            Aircraft.Wing.NUM_INTEGRATION_STATIONS: inputs.get_val(
+                Aircraft.Wing.NUM_INTEGRATION_STATIONS
+            ),
         }
 
         self.prob.model.add_subsystem(
-            "wing",
+            'wing',
             DetailedWingBendingFact(**options),
             promotes_inputs=['*'],
             promotes_outputs=['*'],
@@ -88,8 +90,7 @@ class DetailedWingBendingTest(unittest.TestCase):
 
         engine_options = AviaryValues()
         engine_options.set_val(Aircraft.Engine.NUM_ENGINES, 2)
-        engine_options.set_val(Aircraft.Engine.DATA_FILE,
-                               'models/engines/turbofan_28k.deck')
+        engine_options.set_val(Aircraft.Engine.DATA_FILE, 'models/engines/turbofan_28k.deck')
         engine_options.set_val(Settings.VERBOSITY, 0)
         engineModel1 = EngineDeck(options=engine_options)
         engine_options.set_val(Aircraft.Engine.NUM_ENGINES, 2)
@@ -101,28 +102,41 @@ class DetailedWingBendingTest(unittest.TestCase):
 
         options = {
             Aircraft.Engine.NUM_ENGINES: aviary_options.get_val(Aircraft.Engine.NUM_ENGINES),
-            Aircraft.Engine.NUM_WING_ENGINES: aviary_options.get_val(Aircraft.Engine.NUM_WING_ENGINES),
-            Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES: aviary_options.get_val(Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES),
-            Aircraft.Wing.INPUT_STATION_DIST: aviary_options.get_val(Aircraft.Wing.INPUT_STATION_DIST),
-            Aircraft.Wing.LOAD_DISTRIBUTION_CONTROL: aviary_options.get_val(Aircraft.Wing.LOAD_DISTRIBUTION_CONTROL),
-            Aircraft.Wing.NUM_INTEGRATION_STATIONS: aviary_options.get_val(Aircraft.Wing.NUM_INTEGRATION_STATIONS),
+            Aircraft.Engine.NUM_WING_ENGINES: aviary_options.get_val(
+                Aircraft.Engine.NUM_WING_ENGINES
+            ),
+            Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES: aviary_options.get_val(
+                Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES
+            ),
+            Aircraft.Wing.INPUT_STATION_DIST: aviary_options.get_val(
+                Aircraft.Wing.INPUT_STATION_DIST
+            ),
+            Aircraft.Wing.LOAD_DISTRIBUTION_CONTROL: aviary_options.get_val(
+                Aircraft.Wing.LOAD_DISTRIBUTION_CONTROL
+            ),
+            Aircraft.Wing.NUM_INTEGRATION_STATIONS: aviary_options.get_val(
+                Aircraft.Wing.NUM_INTEGRATION_STATIONS
+            ),
         }
 
-        prob.model.add_subsystem('detailed_wing', DetailedWingBendingFact(**options),
-                                 promotes=['*'])
+        prob.model.add_subsystem(
+            'detailed_wing', DetailedWingBendingFact(**options), promotes=['*']
+        )
 
         prob.setup(force_alloc_complex=True)
 
-        input_keys = [Aircraft.Wing.LOAD_PATH_SWEEP_DIST,
-                      Aircraft.Wing.THICKNESS_TO_CHORD_DIST,
-                      Aircraft.Wing.CHORD_PER_SEMISPAN_DIST,
-                      Mission.Design.GROSS_MASS,
-                      Aircraft.Wing.ASPECT_RATIO,
-                      Aircraft.Wing.ASPECT_RATIO_REF,
-                      Aircraft.Wing.STRUT_BRACING_FACTOR,
-                      Aircraft.Wing.AEROELASTIC_TAILORING_FACTOR,
-                      Aircraft.Wing.THICKNESS_TO_CHORD,
-                      Aircraft.Wing.THICKNESS_TO_CHORD_REF]
+        input_keys = [
+            Aircraft.Wing.LOAD_PATH_SWEEP_DIST,
+            Aircraft.Wing.THICKNESS_TO_CHORD_DIST,
+            Aircraft.Wing.CHORD_PER_SEMISPAN_DIST,
+            Mission.Design.GROSS_MASS,
+            Aircraft.Wing.ASPECT_RATIO,
+            Aircraft.Wing.ASPECT_RATIO_REF,
+            Aircraft.Wing.STRUT_BRACING_FACTOR,
+            Aircraft.Wing.AEROELASTIC_TAILORING_FACTOR,
+            Aircraft.Wing.THICKNESS_TO_CHORD,
+            Aircraft.Wing.THICKNESS_TO_CHORD_REF,
+        ]
 
         for key in input_keys:
             val, units = aviary_options.get_item(key)
@@ -155,7 +169,8 @@ class DetailedWingBendingTest(unittest.TestCase):
             compact_print=True,
             show_only_incorrect=True,
             form='central',
-            method="fd")
+            method='fd',
+        )
         assert_check_partials(partial_data, atol=1e-5, rtol=1e-5)
 
     def test_case_fuselage_engines(self):
@@ -165,8 +180,7 @@ class DetailedWingBendingTest(unittest.TestCase):
 
         engine_options = AviaryValues()
         engine_options.set_val(Settings.VERBOSITY, 0)
-        engine_options.set_val(Aircraft.Engine.DATA_FILE,
-                               'models/engines/turbofan_28k.deck')
+        engine_options.set_val(Aircraft.Engine.DATA_FILE, 'models/engines/turbofan_28k.deck')
         engine_options.set_val(Aircraft.Engine.NUM_ENGINES, 2)
         engine_options.set_val(Aircraft.Engine.NUM_WING_ENGINES, 0)
         engine_options.set_val(Aircraft.Engine.NUM_FUSELAGE_ENGINES, 2)
@@ -176,11 +190,21 @@ class DetailedWingBendingTest(unittest.TestCase):
 
         options = {
             Aircraft.Engine.NUM_ENGINES: aviary_options.get_val(Aircraft.Engine.NUM_ENGINES),
-            Aircraft.Engine.NUM_WING_ENGINES: aviary_options.get_val(Aircraft.Engine.NUM_WING_ENGINES),
-            Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES: aviary_options.get_val(Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES),
-            Aircraft.Wing.INPUT_STATION_DIST: aviary_options.get_val(Aircraft.Wing.INPUT_STATION_DIST),
-            Aircraft.Wing.LOAD_DISTRIBUTION_CONTROL: aviary_options.get_val(Aircraft.Wing.LOAD_DISTRIBUTION_CONTROL),
-            Aircraft.Wing.NUM_INTEGRATION_STATIONS: aviary_options.get_val(Aircraft.Wing.NUM_INTEGRATION_STATIONS),
+            Aircraft.Engine.NUM_WING_ENGINES: aviary_options.get_val(
+                Aircraft.Engine.NUM_WING_ENGINES
+            ),
+            Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES: aviary_options.get_val(
+                Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES
+            ),
+            Aircraft.Wing.INPUT_STATION_DIST: aviary_options.get_val(
+                Aircraft.Wing.INPUT_STATION_DIST
+            ),
+            Aircraft.Wing.LOAD_DISTRIBUTION_CONTROL: aviary_options.get_val(
+                Aircraft.Wing.LOAD_DISTRIBUTION_CONTROL
+            ),
+            Aircraft.Wing.NUM_INTEGRATION_STATIONS: aviary_options.get_val(
+                Aircraft.Wing.NUM_INTEGRATION_STATIONS
+            ),
         }
 
         prob.model.add_subsystem(
@@ -191,16 +215,18 @@ class DetailedWingBendingTest(unittest.TestCase):
 
         prob.setup(force_alloc_complex=True)
 
-        input_keys = [Aircraft.Wing.LOAD_PATH_SWEEP_DIST,
-                      Aircraft.Wing.THICKNESS_TO_CHORD_DIST,
-                      Aircraft.Wing.CHORD_PER_SEMISPAN_DIST,
-                      Mission.Design.GROSS_MASS,
-                      Aircraft.Wing.ASPECT_RATIO,
-                      Aircraft.Wing.ASPECT_RATIO_REF,
-                      Aircraft.Wing.STRUT_BRACING_FACTOR,
-                      Aircraft.Wing.AEROELASTIC_TAILORING_FACTOR,
-                      Aircraft.Wing.THICKNESS_TO_CHORD,
-                      Aircraft.Wing.THICKNESS_TO_CHORD_REF]
+        input_keys = [
+            Aircraft.Wing.LOAD_PATH_SWEEP_DIST,
+            Aircraft.Wing.THICKNESS_TO_CHORD_DIST,
+            Aircraft.Wing.CHORD_PER_SEMISPAN_DIST,
+            Mission.Design.GROSS_MASS,
+            Aircraft.Wing.ASPECT_RATIO,
+            Aircraft.Wing.ASPECT_RATIO_REF,
+            Aircraft.Wing.STRUT_BRACING_FACTOR,
+            Aircraft.Wing.AEROELASTIC_TAILORING_FACTOR,
+            Aircraft.Wing.THICKNESS_TO_CHORD,
+            Aircraft.Wing.THICKNESS_TO_CHORD_REF,
+        ]
 
         for key in input_keys:
             val, units = aviary_options.get_item(key)
@@ -231,15 +257,13 @@ class DetailedWingBendingTest(unittest.TestCase):
         aviary_options = get_flops_inputs('LargeSingleAisle1FLOPS')
 
         engine_options = AviaryValues()
-        engine_options.set_val(Aircraft.Engine.DATA_FILE,
-                               'models/engines/turbofan_28k.deck')
+        engine_options.set_val(Aircraft.Engine.DATA_FILE, 'models/engines/turbofan_28k.deck')
         engine_options.set_val(Aircraft.Engine.NUM_ENGINES, 2)
         engine_options.set_val(Aircraft.Engine.NUM_WING_ENGINES, 2)
         engine_options.set_val(Aircraft.Engine.NUM_FUSELAGE_ENGINES, 0)
         engineModel1 = EngineDeck(options=engine_options)
 
-        engine_options.set_val(Aircraft.Engine.DATA_FILE,
-                               'models/engines/turbofan_22k.deck')
+        engine_options.set_val(Aircraft.Engine.DATA_FILE, 'models/engines/turbofan_22k.deck')
         engine_options.set_val(Aircraft.Engine.NUM_ENGINES, 2)
         engine_options.set_val(Aircraft.Engine.NUM_WING_ENGINES, 0)
         engine_options.set_val(Aircraft.Engine.NUM_FUSELAGE_ENGINES, 2)
@@ -249,11 +273,21 @@ class DetailedWingBendingTest(unittest.TestCase):
 
         options = {
             Aircraft.Engine.NUM_ENGINES: aviary_options.get_val(Aircraft.Engine.NUM_ENGINES),
-            Aircraft.Engine.NUM_WING_ENGINES: aviary_options.get_val(Aircraft.Engine.NUM_WING_ENGINES),
-            Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES: aviary_options.get_val(Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES),
-            Aircraft.Wing.INPUT_STATION_DIST: aviary_options.get_val(Aircraft.Wing.INPUT_STATION_DIST),
-            Aircraft.Wing.LOAD_DISTRIBUTION_CONTROL: aviary_options.get_val(Aircraft.Wing.LOAD_DISTRIBUTION_CONTROL),
-            Aircraft.Wing.NUM_INTEGRATION_STATIONS: aviary_options.get_val(Aircraft.Wing.NUM_INTEGRATION_STATIONS),
+            Aircraft.Engine.NUM_WING_ENGINES: aviary_options.get_val(
+                Aircraft.Engine.NUM_WING_ENGINES
+            ),
+            Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES: aviary_options.get_val(
+                Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES
+            ),
+            Aircraft.Wing.INPUT_STATION_DIST: aviary_options.get_val(
+                Aircraft.Wing.INPUT_STATION_DIST
+            ),
+            Aircraft.Wing.LOAD_DISTRIBUTION_CONTROL: aviary_options.get_val(
+                Aircraft.Wing.LOAD_DISTRIBUTION_CONTROL
+            ),
+            Aircraft.Wing.NUM_INTEGRATION_STATIONS: aviary_options.get_val(
+                Aircraft.Wing.NUM_INTEGRATION_STATIONS
+            ),
         }
 
         prob.model.add_subsystem(
@@ -264,16 +298,18 @@ class DetailedWingBendingTest(unittest.TestCase):
 
         prob.setup(force_alloc_complex=True)
 
-        input_keys = [Aircraft.Wing.LOAD_PATH_SWEEP_DIST,
-                      Aircraft.Wing.THICKNESS_TO_CHORD_DIST,
-                      Aircraft.Wing.CHORD_PER_SEMISPAN_DIST,
-                      Mission.Design.GROSS_MASS,
-                      Aircraft.Wing.ASPECT_RATIO,
-                      Aircraft.Wing.ASPECT_RATIO_REF,
-                      Aircraft.Wing.STRUT_BRACING_FACTOR,
-                      Aircraft.Wing.AEROELASTIC_TAILORING_FACTOR,
-                      Aircraft.Wing.THICKNESS_TO_CHORD,
-                      Aircraft.Wing.THICKNESS_TO_CHORD_REF]
+        input_keys = [
+            Aircraft.Wing.LOAD_PATH_SWEEP_DIST,
+            Aircraft.Wing.THICKNESS_TO_CHORD_DIST,
+            Aircraft.Wing.CHORD_PER_SEMISPAN_DIST,
+            Mission.Design.GROSS_MASS,
+            Aircraft.Wing.ASPECT_RATIO,
+            Aircraft.Wing.ASPECT_RATIO_REF,
+            Aircraft.Wing.STRUT_BRACING_FACTOR,
+            Aircraft.Wing.AEROELASTIC_TAILORING_FACTOR,
+            Aircraft.Wing.THICKNESS_TO_CHORD,
+            Aircraft.Wing.THICKNESS_TO_CHORD_REF,
+        ]
 
         for key in input_keys:
             val, units = aviary_options.get_item(key)
@@ -299,15 +335,13 @@ class DetailedWingBendingTest(unittest.TestCase):
         assert_near_equal(pod_inertia, pod_inertia_expected, tolerance=1e-10)
 
     def test_extreme_engine_loc(self):
-
         aviary_options = get_flops_inputs('LargeSingleAisle1FLOPS')
         aviary_options.set_val(Settings.VERBOSITY, 0)
 
         engine_options = AviaryValues()
         engine_options.set_val(Aircraft.Engine.NUM_ENGINES, 2)
         engine_options.set_val(Aircraft.Engine.NUM_WING_ENGINES, 2)
-        engine_options.set_val(Aircraft.Engine.DATA_FILE,
-                               'models/engines/turbofan_28k.deck')
+        engine_options.set_val(Aircraft.Engine.DATA_FILE, 'models/engines/turbofan_28k.deck')
         engine_options.set_val(Settings.VERBOSITY, 0)
         engineModel = EngineDeck(options=engine_options)
 
@@ -317,31 +351,43 @@ class DetailedWingBendingTest(unittest.TestCase):
 
         options = {
             Aircraft.Engine.NUM_ENGINES: aviary_options.get_val(Aircraft.Engine.NUM_ENGINES),
-            Aircraft.Engine.NUM_WING_ENGINES: aviary_options.get_val(Aircraft.Engine.NUM_WING_ENGINES),
-            Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES: aviary_options.get_val(Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES),
-            Aircraft.Wing.INPUT_STATION_DIST: aviary_options.get_val(Aircraft.Wing.INPUT_STATION_DIST),
-            Aircraft.Wing.LOAD_DISTRIBUTION_CONTROL: aviary_options.get_val(Aircraft.Wing.LOAD_DISTRIBUTION_CONTROL),
-            Aircraft.Wing.NUM_INTEGRATION_STATIONS: aviary_options.get_val(Aircraft.Wing.NUM_INTEGRATION_STATIONS),
+            Aircraft.Engine.NUM_WING_ENGINES: aviary_options.get_val(
+                Aircraft.Engine.NUM_WING_ENGINES
+            ),
+            Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES: aviary_options.get_val(
+                Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES
+            ),
+            Aircraft.Wing.INPUT_STATION_DIST: aviary_options.get_val(
+                Aircraft.Wing.INPUT_STATION_DIST
+            ),
+            Aircraft.Wing.LOAD_DISTRIBUTION_CONTROL: aviary_options.get_val(
+                Aircraft.Wing.LOAD_DISTRIBUTION_CONTROL
+            ),
+            Aircraft.Wing.NUM_INTEGRATION_STATIONS: aviary_options.get_val(
+                Aircraft.Wing.NUM_INTEGRATION_STATIONS
+            ),
         }
 
         self.prob.model.add_subsystem(
-            "wing",
+            'wing',
             DetailedWingBendingFact(**options),
             promotes_inputs=['*'],
             promotes_outputs=['*'],
         )
         self.prob.setup(check=False)
 
-        input_keys = [Aircraft.Wing.LOAD_PATH_SWEEP_DIST,
-                      Aircraft.Wing.THICKNESS_TO_CHORD_DIST,
-                      Aircraft.Wing.CHORD_PER_SEMISPAN_DIST,
-                      Mission.Design.GROSS_MASS,
-                      Aircraft.Wing.ASPECT_RATIO,
-                      Aircraft.Wing.ASPECT_RATIO_REF,
-                      Aircraft.Wing.STRUT_BRACING_FACTOR,
-                      Aircraft.Wing.AEROELASTIC_TAILORING_FACTOR,
-                      Aircraft.Wing.THICKNESS_TO_CHORD,
-                      Aircraft.Wing.THICKNESS_TO_CHORD_REF]
+        input_keys = [
+            Aircraft.Wing.LOAD_PATH_SWEEP_DIST,
+            Aircraft.Wing.THICKNESS_TO_CHORD_DIST,
+            Aircraft.Wing.CHORD_PER_SEMISPAN_DIST,
+            Mission.Design.GROSS_MASS,
+            Aircraft.Wing.ASPECT_RATIO,
+            Aircraft.Wing.ASPECT_RATIO_REF,
+            Aircraft.Wing.STRUT_BRACING_FACTOR,
+            Aircraft.Wing.AEROELASTIC_TAILORING_FACTOR,
+            Aircraft.Wing.THICKNESS_TO_CHORD,
+            Aircraft.Wing.THICKNESS_TO_CHORD_REF,
+        ]
 
         for key in input_keys:
             val, units = aviary_options.get_item(key)
@@ -367,7 +413,7 @@ class DetailedWingBendingTest(unittest.TestCase):
         assert_match_varnames(self.prob.model)
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     unittest.main()
     # test = DetailedWingBendingTest()
     # test.setUp()

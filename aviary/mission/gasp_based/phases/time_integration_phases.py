@@ -9,15 +9,15 @@ from aviary.mission.gasp_based.ode.groundroll_ode import GroundrollODE
 from aviary.mission.gasp_based.ode.rotation_ode import RotationODE
 from aviary.mission.gasp_based.ode.time_integration_base_classes import SimuPyProblem
 from aviary.variable_info.enums import AlphaModes, AnalysisScheme, SpeedType, Verbosity
-from aviary.variable_info.variables import Aircraft, Dynamic, Mission
+from aviary.variable_info.variables import Dynamic
 
 
 class SGMGroundroll(SimuPyProblem):
-    '''
+    """
     This creates a subproblem for the groundroll phase of the trajectory that will
     be solved using SGM.
     Groundroll ends when TAS reaches rotation speed.
-    '''
+    """
 
     def __init__(
         self,
@@ -26,11 +26,10 @@ class SGMGroundroll(SimuPyProblem):
         ode_args={},
         simupy_args={},
     ):
-
         super().__init__(
             GroundrollODE(analysis_scheme=AnalysisScheme.SHOOTING, **ode_args),
             problem_name=phase_name,
-            outputs=["normal_force"],
+            outputs=['normal_force'],
             states=[
                 Dynamic.Vehicle.MASS,
                 Dynamic.Mission.DISTANCE,
@@ -46,15 +45,15 @@ class SGMGroundroll(SimuPyProblem):
 
         self.phase_name = phase_name
         self.VR_value = VR_value
-        self.add_trigger(Dynamic.Mission.VELOCITY, "VR_value")
+        self.add_trigger(Dynamic.Mission.VELOCITY, 'VR_value')
 
 
 class SGMRotation(SimuPyProblem):
-    '''
+    """
     This creates a subproblem for the rotation phase of the trajectory that will
     be solved using SGM.
     Rotation ends when the normal force on the runway reaches 0.
-    '''
+    """
 
     def __init__(
         self,
@@ -65,7 +64,7 @@ class SGMRotation(SimuPyProblem):
         super().__init__(
             RotationODE(analysis_scheme=AnalysisScheme.SHOOTING, **ode_args),
             problem_name=phase_name,
-            outputs=["normal_force", Dynamic.Vehicle.ANGLE_OF_ATTACK],
+            outputs=['normal_force', Dynamic.Vehicle.ANGLE_OF_ATTACK],
             states=[
                 Dynamic.Vehicle.MASS,
                 Dynamic.Mission.DISTANCE,
@@ -80,7 +79,7 @@ class SGMRotation(SimuPyProblem):
         )
 
         self.phase_name = phase_name
-        self.add_trigger("normal_force", 0, units='lbf')
+        self.add_trigger('normal_force', 0, units='lbf')
 
 
 # TODO : turn these into parameters? inputs? they need to match between
@@ -94,12 +93,12 @@ ascent_termination_alt = 500.0
 
 
 class SGMAscent(SimuPyProblem):
-    '''
+    """
     This creates a subproblem for the ascent phase of the trajectory that will
     be solved using SGM.
     Ascent ends at ascent_termination_alt and retracts the gear and flaps at their
     respective retraction altitudes.
-    '''
+    """
 
     def __init__(
         self,
@@ -117,9 +116,9 @@ class SGMAscent(SimuPyProblem):
             ),
             problem_name=phase_name,
             outputs=[
-                "load_factor",
-                "fuselage_pitch",
-                "normal_force",
+                'load_factor',
+                'fuselage_pitch',
+                'normal_force',
                 Dynamic.Vehicle.ANGLE_OF_ATTACK,
             ],
             states=[
@@ -147,9 +146,9 @@ class SGMAscent(SimuPyProblem):
         self.num_events = len(self.event_channel_names)
 
         self.event_names = [
-            "termination",
-            "flaps",
-            "gear",
+            'termination',
+            'flaps',
+            'gear',
         ]
 
     def event_equation_function(self, t, x):
@@ -171,22 +170,22 @@ class SGMAscent(SimuPyProblem):
             return x
         elif 1 in event_channels:
             if self.verbosity >= Verbosity.VERBOSE:
-                print("flaps!", t)
-            self.set_val("t_init_flaps", t)
+                print('flaps!', t)
+            self.set_val('t_init_flaps', t)
         elif 2 in event_channels:
             if self.verbosity >= Verbosity.VERBOSE:
-                print("gear!", t)
-            self.set_val("t_init_gear", t)
+                print('gear!', t)
+            self.set_val('t_init_gear', t)
         else:
             return np.nan * np.ones(self.dim_state)
         return x
 
 
 class SGMAscentCombined(SGMAscent):
-    '''
+    """
     This combines the different methods of limiting angle of attack to ensure that
     none of the constraints are violated.
-    '''
+    """
 
     def __init__(
         self,
@@ -196,43 +195,71 @@ class SGMAscentCombined(SGMAscent):
         simupy_args={},
     ):
         self.ode_args = ode_args
-        super().__init__(phase_name=phase_name, alpha_mode=AlphaModes.DEFAULT,
-                         ode_args=ode_args, simupy_args=simupy_args)
+        super().__init__(
+            phase_name=phase_name,
+            alpha_mode=AlphaModes.DEFAULT,
+            ode_args=ode_args,
+            simupy_args=simupy_args,
+        )
 
         self.phase_name = phase_name
         self.fuselage_pitch_max = fuselage_pitch_max
 
-        ode0 = SGMAscent(alpha_mode=AlphaModes.DEFAULT, phase_name='ascent_ode0',
-                         ode_args=ode_args, simupy_args=simupy_args)
-        rotation = SGMAscent(alpha_mode=AlphaModes.ROTATION, phase_name='ascent_rotation',
-                             ode_args=ode_args, simupy_args=simupy_args)
-        load_factor = SGMAscent(alpha_mode=AlphaModes.LOAD_FACTOR, phase_name='ascent_load_factor',
-                                ode_args=ode_args, simupy_args=simupy_args)
-        fuselage_pitch = SGMAscent(alpha_mode=AlphaModes.FUSELAGE_PITCH, phase_name='ascent_pitch',
-                                   ode_args=ode_args, simupy_args=simupy_args)
-        decel = SGMAscent(alpha_mode=AlphaModes.DECELERATION, phase_name='ascent_decel',
-                          ode_args=ode_args, simupy_args=simupy_args)
-
-        self.odes = (ode0, rotation, load_factor, fuselage_pitch, decel,)
-        (
-            self.ode0,
-            self.rotation,
-            self.load_factor,
-            self.fuselage_pitch,
-            self.decel
-        ) = (
-            ode0, rotation, load_factor, fuselage_pitch, decel,
+        ode0 = SGMAscent(
+            alpha_mode=AlphaModes.DEFAULT,
+            phase_name='ascent_ode0',
+            ode_args=ode_args,
+            simupy_args=simupy_args,
+        )
+        rotation = SGMAscent(
+            alpha_mode=AlphaModes.ROTATION,
+            phase_name='ascent_rotation',
+            ode_args=ode_args,
+            simupy_args=simupy_args,
+        )
+        load_factor = SGMAscent(
+            alpha_mode=AlphaModes.LOAD_FACTOR,
+            phase_name='ascent_load_factor',
+            ode_args=ode_args,
+            simupy_args=simupy_args,
+        )
+        fuselage_pitch = SGMAscent(
+            alpha_mode=AlphaModes.FUSELAGE_PITCH,
+            phase_name='ascent_pitch',
+            ode_args=ode_args,
+            simupy_args=simupy_args,
+        )
+        decel = SGMAscent(
+            alpha_mode=AlphaModes.DECELERATION,
+            phase_name='ascent_decel',
+            ode_args=ode_args,
+            simupy_args=simupy_args,
         )
 
-        self.set_val("t_init_flaps", 500.0, units='s')
-        self.set_val("t_init_gear", 500.0, units='s')
+        self.odes = (
+            ode0,
+            rotation,
+            load_factor,
+            fuselage_pitch,
+            decel,
+        )
+        (self.ode0, self.rotation, self.load_factor, self.fuselage_pitch, self.decel) = (
+            ode0,
+            rotation,
+            load_factor,
+            fuselage_pitch,
+            decel,
+        )
+
+        self.set_val('t_init_flaps', 500.0, units='s')
+        self.set_val('t_init_gear', 500.0, units='s')
 
         self.ode_name = {
-            ode0: "ode0",
-            rotation: "rotation",
-            load_factor: "load_factor",
-            fuselage_pitch: "fuselage pitch",
-            decel: "decel"
+            ode0: 'ode0',
+            rotation: 'rotation',
+            load_factor: 'load_factor',
+            fuselage_pitch: 'fuselage pitch',
+            decel: 'decel',
         }
 
     def prepare_to_integrate(self, t0, x0):
@@ -267,40 +294,43 @@ class SGMAscentCombined(SGMAscent):
             # then check end SPEED -- keep tas_rate = 0 if tas > vend
             # (not implemented in gaspy)
             # then check decel, line search -alpha until satisfied
-            (ode0, rotation, load_factor, fuselage_pitch, decel,) = self.odes
+            (
+                ode0,
+                rotation,
+                load_factor,
+                fuselage_pitch,
+                decel,
+            ) = self.odes
             ode = self.last_prob
             SATISFIED_CONSTRAINTS = False
             for count in range(4):
                 alpha = self.compute_alpha(ode, t, x)
-                load_factor_val = ode.get_val("load_factor")
-                fuselage_pitch_val = ode.get_val("fuselage_pitch", units="deg")
-                velocity_rate_val = ode.get_val("velocity_rate")
-                if (
-                    (load_factor_val > load_factor_max) and not
-                    np.isclose(load_factor_val, load_factor_max)
+                load_factor_val = ode.get_val('load_factor')
+                fuselage_pitch_val = ode.get_val('fuselage_pitch', units='deg')
+                velocity_rate_val = ode.get_val('velocity_rate')
+                if (load_factor_val > load_factor_max) and not np.isclose(
+                    load_factor_val, load_factor_max
                 ):
-                    print('*'*20, 'switching to load_factor', '*'*20)
+                    print('*' * 20, 'switching to load_factor', '*' * 20)
                     ode = load_factor
                     continue
-                elif (
-                    (fuselage_pitch_val > fuselage_pitch_max) and not
-                    np.isclose(fuselage_pitch_val, fuselage_pitch_max)
+                elif (fuselage_pitch_val > fuselage_pitch_max) and not np.isclose(
+                    fuselage_pitch_val, fuselage_pitch_max
                 ):
-                    print('*'*20, 'switching to fuselage_pitch', '*'*20)
+                    print('*' * 20, 'switching to fuselage_pitch', '*' * 20)
                     ode = fuselage_pitch
                     continue
-                elif (
-                    (velocity_rate_val < velocity_rate_safety) and not
-                    np.isclose(velocity_rate_val, velocity_rate_safety)
+                elif (velocity_rate_val < velocity_rate_safety) and not np.isclose(
+                    velocity_rate_val, velocity_rate_safety
                 ):
-                    print('*'*20, 'switching to decel', '*'*20)
+                    print('*' * 20, 'switching to decel', '*' * 20)
                     ode = decel
                     continue
                 else:
                     if (
-                        np.isnan(load_factor_val) or
-                        np.isnan(fuselage_pitch_val) or
-                        np.isnan(velocity_rate_val)
+                        np.isnan(load_factor_val)
+                        or np.isnan(fuselage_pitch_val)
+                        or np.isnan(velocity_rate_val)
                     ):
                         continue
                     SATISFIED_CONSTRAINTS = True
@@ -310,11 +340,11 @@ class SGMAscentCombined(SGMAscent):
                 self.prob_cache[a_key] = ode
                 self.last_prob = ode
             else:
-                print("time :", t)
-                print("ode :", self.ode_name[ode])
-                for key in ["load_factor", "fuselage_pitch", "velocity_rate"]:
-                    print(key, ":", ode.get_val(key))
-                raise ValueError("Ascent could not satisfy all constraints")
+                print('time :', t)
+                print('ode :', self.ode_name[ode])
+                for key in ['load_factor', 'fuselage_pitch', 'velocity_rate']:
+                    print(key, ':', ode.get_val(key))
+                raise ValueError('Ascent could not satisfy all constraints')
 
         return alpha
 
@@ -354,16 +384,16 @@ class SGMAscentCombined(SGMAscent):
 
 
 class SGMAccel(SimuPyProblem):
-    '''
+    """
     This creates a subproblem for the acceleration phase of the trajectory that will
-    be solved using SGM
-    '''
+    be solved using SGM.
+    """
 
     def __init__(
         self,
         phase_name='accel',
         VC_value=250.0,
-        VC_units="kn",
+        VC_units='kn',
         ode_args={},
         simupy_args={},
     ):
@@ -371,7 +401,7 @@ class SGMAccel(SimuPyProblem):
         super().__init__(
             ode,
             problem_name=phase_name,
-            outputs=["EAS", "mach", Dynamic.Vehicle.ANGLE_OF_ATTACK],
+            outputs=['EAS', 'mach', Dynamic.Vehicle.ANGLE_OF_ATTACK],
             states=[
                 Dynamic.Vehicle.MASS,
                 Dynamic.Mission.DISTANCE,
@@ -386,22 +416,22 @@ class SGMAccel(SimuPyProblem):
         )
 
         self.phase_name = phase_name
-        self.add_trigger("EAS", VC_value, units=VC_units)
+        self.add_trigger('EAS', VC_value, units=VC_units)
 
 
 class SGMClimb(SimuPyProblem):
-    '''
+    """
     This creates a subproblem for the climb phase of the trajectory that will
-    be solved using SGM
-    '''
+    be solved using SGM.
+    """
 
     def __init__(
         self,
         phase_name='climb',
         input_speed_type=SpeedType.EAS,
-        input_speed_units="kn",
+        input_speed_units='kn',
         speed_trigger_units=None,
-        alt_trigger_units="ft",
+        alt_trigger_units='ft',
         ode_args={},
         simupy_args={},
     ):
@@ -415,11 +445,11 @@ class SGMClimb(SimuPyProblem):
         self.input_speed_type = input_speed_type
         self.input_speed_units = input_speed_units
         if input_speed_type is SpeedType.EAS:
-            self.speed_trigger_name = "mach"
+            self.speed_trigger_name = 'mach'
         elif input_speed_type is SpeedType.MACH:
-            self.speed_trigger_name = "TAS_violation"
+            self.speed_trigger_name = 'TAS_violation'
         else:
-            raise ValueError("bad speed type")
+            raise ValueError('bad speed type')
         self.speed_trigger_units = speed_trigger_units
         self.alt_trigger_units = alt_trigger_units
         super().__init__(
@@ -428,13 +458,13 @@ class SGMClimb(SimuPyProblem):
             outputs=[
                 Dynamic.Vehicle.ANGLE_OF_ATTACK,
                 Dynamic.Mission.FLIGHT_PATH_ANGLE,
-                "required_lift",
-                "lift",
-                "mach",
-                "EAS",
+                'required_lift',
+                'lift',
+                'mach',
+                'EAS',
                 Dynamic.Mission.VELOCITY,
                 Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
-                "drag",
+                'drag',
                 Dynamic.Mission.ALTITUDE_RATE,
             ],
             states=[
@@ -450,25 +480,22 @@ class SGMClimb(SimuPyProblem):
         )
 
         self.phase_name = phase_name
-        self.add_trigger(
-            Dynamic.Mission.ALTITUDE, "alt_trigger", units=self.alt_trigger_units
-        )
-        self.add_trigger(self.speed_trigger_name, "speed_trigger",
-                         units="speed_trigger_units")
+        self.add_trigger(Dynamic.Mission.ALTITUDE, 'alt_trigger', units=self.alt_trigger_units)
+        self.add_trigger(self.speed_trigger_name, 'speed_trigger', units='speed_trigger_units')
 
 
 class SGMCruise(SimuPyProblem):
-    '''
+    """
     This creates a subproblem for the cruise phase of the trajectory that will
-    be solved using SGM
-    '''
+    be solved using SGM.
+    """
 
     def __init__(
         self,
         phase_name='cruise',
         alpha_mode=AlphaModes.DEFAULT,
         input_speed_type=SpeedType.MACH,
-        input_speed_units="kn",
+        input_speed_units='kn',
         distance_trigger=(-1, 'ft'),
         mass_trigger=(0, 'lbm'),
         ode_args={},
@@ -479,7 +506,8 @@ class SGMCruise(SimuPyProblem):
             alpha_mode=alpha_mode,
             input_speed_type=input_speed_type,
             clean=True,
-            **ode_args,)
+            **ode_args,
+        )
 
         self.distance_trigger = distance_trigger
         self.mass_trigger = mass_trigger
@@ -489,11 +517,11 @@ class SGMCruise(SimuPyProblem):
             problem_name=phase_name,
             outputs=[
                 Dynamic.Vehicle.ANGLE_OF_ATTACK,  # ?
-                "lift",
-                "EAS",
+                'lift',
+                'EAS',
                 Dynamic.Mission.VELOCITY,
                 Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
-                "drag",
+                'drag',
                 Dynamic.Mission.ALTITUDE_RATE,
             ],
             states=[
@@ -510,23 +538,23 @@ class SGMCruise(SimuPyProblem):
         )
 
         self.phase_name = phase_name
-        self.add_trigger(Dynamic.Mission.DISTANCE, "distance_trigger")
+        self.add_trigger(Dynamic.Mission.DISTANCE, 'distance_trigger')
         self.add_trigger(Dynamic.Vehicle.MASS, 'mass_trigger')
 
 
 class SGMDescent(SimuPyProblem):
-    '''
+    """
     This creates a subproblem for the descent phase of the trajectory that will
-    be solved using SGM
-    '''
+    be solved using SGM.
+    """
 
     def __init__(
         self,
         phase_name='descent',
         input_speed_type=SpeedType.EAS,
-        input_speed_units="kn",
+        input_speed_units='kn',
         speed_trigger_units=None,
-        alt_trigger_units="ft",
+        alt_trigger_units='ft',
         ode_args={},
         simupy_args={},
     ):
@@ -540,11 +568,11 @@ class SGMDescent(SimuPyProblem):
         self.input_speed_type = input_speed_type
         self.input_speed_units = input_speed_units
         if input_speed_type is SpeedType.MACH:
-            self.speed_trigger_name = "EAS"
+            self.speed_trigger_name = 'EAS'
         elif input_speed_type is SpeedType.EAS:
-            self.speed_trigger_name = "TAS_violation"
+            self.speed_trigger_name = 'TAS_violation'
         else:
-            raise ValueError("bad speed type")
+            raise ValueError('bad speed type')
         self.speed_trigger_units = speed_trigger_units
         self.alt_trigger_units = alt_trigger_units
         super().__init__(
@@ -552,12 +580,12 @@ class SGMDescent(SimuPyProblem):
             problem_name=phase_name,
             outputs=[
                 Dynamic.Vehicle.ANGLE_OF_ATTACK,
-                "required_lift",
-                "lift",
-                "EAS",
+                'required_lift',
+                'lift',
+                'EAS',
                 Dynamic.Mission.VELOCITY,
                 Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
-                "drag",
+                'drag',
                 Dynamic.Mission.ALTITUDE_RATE,
             ],
             states=[
@@ -573,8 +601,5 @@ class SGMDescent(SimuPyProblem):
         )
 
         self.phase_name = phase_name
-        self.add_trigger(
-            Dynamic.Mission.ALTITUDE, "alt_trigger", units=self.alt_trigger_units
-        )
-        self.add_trigger(self.speed_trigger_name, "speed_trigger",
-                         units=self.speed_trigger_units)
+        self.add_trigger(Dynamic.Mission.ALTITUDE, 'alt_trigger', units=self.alt_trigger_units)
+        self.add_trigger(self.speed_trigger_name, 'speed_trigger', units=self.speed_trigger_units)

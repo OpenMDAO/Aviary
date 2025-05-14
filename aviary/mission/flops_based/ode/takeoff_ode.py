@@ -1,26 +1,17 @@
-'''
-Define the ODE for takeoff.
-'''
+"""Define the ODE for takeoff."""
 
 import numpy as np
 import openmdao.api as om
 
-from aviary.mission.flops_based.ode.takeoff_eom import StallSpeed, TakeoffEOM
-from aviary.mission.gasp_based.ode.time_integration_base_classes import (
-    add_SGM_required_inputs,
-)
 from aviary.mission.base_ode import BaseODE as _BaseODE
-from aviary.subsystems.atmosphere.atmosphere import Atmosphere
-from aviary.utils.aviary_values import AviaryValues
-from aviary.mission.utils import ExternalSubsystemGroup
+from aviary.mission.flops_based.ode.takeoff_eom import StallSpeed, TakeoffEOM
+from aviary.mission.gasp_based.ode.time_integration_base_classes import add_SGM_required_inputs
 from aviary.variable_info.enums import AnalysisScheme
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 
 
 class TakeoffODE(_BaseODE):
-    '''
-    Define the ODE for takeoff.
-    '''
+    """Define the ODE for takeoff."""
 
     # region : derived type customization points
     stall_speed_lift_coefficient_name = Mission.Takeoff.LIFT_COEFFICIENT_MAX
@@ -30,8 +21,7 @@ class TakeoffODE(_BaseODE):
         super().initialize()
         self.options.declare(
             'friction_key',
-            desc='current friction coefficient key, '
-            'either rolling friction or braking friction',
+            desc='current friction coefficient key, either rolling friction or braking friction',
         )
 
         self.options.declare(
@@ -44,7 +34,7 @@ class TakeoffODE(_BaseODE):
     def setup(self):
         options = self.options
 
-        nn = options["num_nodes"]
+        nn = options['num_nodes']
         analysis_scheme = options['analysis_scheme']
 
         if analysis_scheme is AnalysisScheme.SHOOTING:
@@ -64,15 +54,15 @@ class TakeoffODE(_BaseODE):
         #      mass to vary as needed as a function of time and variation in related
         #      optimization control variables.
         self.add_subsystem(
-            "stall_speed",
+            'stall_speed',
             StallSpeed(num_nodes=nn),
             promotes_inputs=[
-                "mass",
+                'mass',
                 Dynamic.Atmosphere.DENSITY,
                 ('area', Aircraft.Wing.AREA),
-                ("lift_coefficient_max", self.stall_speed_lift_coefficient_name),
+                ('lift_coefficient_max', self.stall_speed_lift_coefficient_name),
             ],
-            promotes_outputs=[("stall_speed", "v_stall")],
+            promotes_outputs=[('stall_speed', 'v_stall')],
         )
 
         self.add_core_subsystems()

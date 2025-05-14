@@ -22,19 +22,19 @@ class SkinFriction(om.ImplicitComponent):
         self.TAW = 1.0
         self.sea_level_pressure = 14.6959 * 144  # psi -> psf
 
-        self.nonlinear_solver = om.NewtonSolver(solve_subsystems=False,
-                                                atol=1e-12, rtol=1e-12)
+        self.nonlinear_solver = om.NewtonSolver(solve_subsystems=False, atol=1e-12, rtol=1e-12)
         self.linear_solver = om.DirectSolver()
         self.nonlinear_solver.options['iprint'] = -1
         self.linear_solver.options['iprint'] = -1
 
     def initialize(self):
-        """
-        Declare options.
-        """
+        """Declare options."""
         self.options.declare(
-            'num_nodes', types=int, default=1,
-            desc='The number of points at which the cross product is computed.')
+            'num_nodes',
+            types=int,
+            default=1,
+            desc='The number of points at which the cross product is computed.',
+        )
 
         add_aviary_option(self, Aircraft.Engine.NUM_ENGINES)
         add_aviary_option(self, Aircraft.Fuselage.NUM_FUSELAGES)
@@ -50,8 +50,7 @@ class SkinFriction(om.ImplicitComponent):
 
         # Simulation inputs
         add_aviary_input(self, Dynamic.Atmosphere.TEMPERATURE, shape=nn, units='degR')
-        add_aviary_input(self, Dynamic.Atmosphere.STATIC_PRESSURE,
-                         shape=nn, units='lbf/ft**2')
+        add_aviary_input(self, Dynamic.Atmosphere.STATIC_PRESSURE, shape=nn, units='lbf/ft**2')
         add_aviary_input(self, Dynamic.Atmosphere.MACH, shape=nn, units='unitless')
 
         # Aero subsystem inputs
@@ -63,22 +62,21 @@ class SkinFriction(om.ImplicitComponent):
         self.add_output('wall_temp', np.ones((nn, nc)), units='degR')
 
     def setup_partials(self):
-        nn = self.options["num_nodes"]
+        nn = self.options['num_nodes']
         nc = self.nc
         n = nn * nc
 
         row_col = np.arange(n)
         self.declare_partials('Re', 'Re', rows=row_col, cols=row_col, val=1.0)
         self.declare_partials(
-            'skin_friction_coeff', 'skin_friction_coeff',
-            rows=row_col, cols=row_col, val=1.0)
+            'skin_friction_coeff', 'skin_friction_coeff', rows=row_col, cols=row_col, val=1.0
+        )
 
+        self.declare_partials('cf_iter', ['wall_temp', 'cf_iter'], rows=row_col, cols=row_col)
+        self.declare_partials('wall_temp', ['wall_temp', 'cf_iter'], rows=row_col, cols=row_col)
         self.declare_partials(
-            'cf_iter', ['wall_temp', 'cf_iter'], rows=row_col, cols=row_col)
-        self.declare_partials(
-            'wall_temp', ['wall_temp', 'cf_iter'], rows=row_col, cols=row_col)
-        self.declare_partials(
-            'skin_friction_coeff', ['wall_temp', 'cf_iter'], rows=row_col, cols=row_col)
+            'skin_friction_coeff', ['wall_temp', 'cf_iter'], rows=row_col, cols=row_col
+        )
 
         col = np.arange(nn)
         cols = np.repeat(col, nc)
@@ -126,18 +124,17 @@ class SkinFriction(om.ImplicitComponent):
         col = np.arange(nc)
         cols = np.tile(col, nn)
         self.declare_partials('Re', 'characteristic_lengths', rows=row_col, cols=cols)
-        self.declare_partials(
-            'cf_iter', 'characteristic_lengths', rows=row_col, cols=cols)
+        self.declare_partials('cf_iter', 'characteristic_lengths', rows=row_col, cols=cols)
 
     def guess_nonlinear(self, inputs, outputs, resids):
-        nn = self.options["num_nodes"]
+        nn = self.options['num_nodes']
         nc = self.nc
 
         rankine, pressure, mach, length = inputs.values()
 
         Pratio = pressure / self.sea_level_pressure
         kelvin = rankine / 1.8
-        RE = 1.479301E9 * Pratio * (kelvin + 110.4) / kelvin ** 2
+        RE = 1.479301e9 * Pratio * (kelvin + 110.4) / kelvin**2
 
         # REYNOLDS NUMBER
         reynolds_num = np.einsum('i,i,j->ij', RE, mach, length)
@@ -160,42 +157,44 @@ class SkinFriction(om.ImplicitComponent):
 
         Pratio = pressure / self.sea_level_pressure
         kelvin = T / 1.8
-        RE = 1.479301E9 * Pratio * (kelvin + 110.4) / kelvin ** 2
+        RE = 1.479301e9 * Pratio * (kelvin + 110.4) / kelvin**2
 
         # SUTHERLAND'S CONSTANT IS 198.72 DEG R FROM 1962 ON
         suth_const = T + 198.72
         E = 0.80
 
         # COMBINED CONSTANT INCLUDING 1/RHO
-        combined_const = 4.593153E-6 * E * suth_const / (RE * mach * T ** 1.5)
+        combined_const = 4.593153e-6 * E * suth_const / (RE * mach * T**1.5)
 
         # REYNOLDS NUMBER
         reynolds_num = np.einsum('i,i,j->ij', RE, mach, length)
         residuals['Re'] = outputs['Re'] - reynolds_num
 
         # WALL TEMPERATURE RATIO
-        wall_temp_ratio = 1.0 + 0.45 * (np.einsum('ij,i->ij', wall_temp,  1.0 / T) - 1.0)
+        wall_temp_ratio = 1.0 + 0.45 * (np.einsum('ij,i->ij', wall_temp, 1.0 / T) - 1.0)
         fact = 0.035 * mach * mach
         for i in range(nc):
             wall_temp_ratio[:, i] += fact
 
         CFL = cf / (1.0 + 3.59 * np.sqrt(cf) * wall_temp_ratio)
 
-        prod = np.einsum('j,jk->jk', combined_const, wall_temp ** 3)
-        residuals['wall_temp'] = (
-            self.TAW / (1.0 + prod / CFL) + wall_temp) * 0.5 - wall_temp
+        prod = np.einsum('j,jk->jk', combined_const, wall_temp**3)
+        residuals['wall_temp'] = (self.TAW / (1.0 + prod / CFL) + wall_temp) * 0.5 - wall_temp
 
         RP = (
-            reynolds_num * (np.einsum('ij,i->ij', wall_temp_ratio, T) + 198.72)
-            / np.einsum('i,ij->ij', suth_const, wall_temp_ratio ** 2.5))
+            reynolds_num
+            * (np.einsum('ij,i->ij', wall_temp_ratio, T) + 198.72)
+            / np.einsum('i,ij->ij', suth_const, wall_temp_ratio**2.5)
+        )
 
         residuals['cf_iter'] = (0.242 * self.CONLOG / np.log(RP * cf)) ** 2 - cf
 
-        residuals['skin_friction_coeff'] = \
+        residuals['skin_friction_coeff'] = (
             outputs['skin_friction_coeff'] - outputs['cf_iter'] / wall_temp_ratio
+        )
 
     def linearize(self, inputs, outputs, partials):
-        nn = self.options["num_nodes"]
+        nn = self.options['num_nodes']
         nc = self.nc
 
         T, pressure, mach, length = inputs.values()
@@ -204,11 +203,10 @@ class SkinFriction(om.ImplicitComponent):
 
         Pratio = pressure / self.sea_level_pressure
         kelvin = T / 1.8
-        RE = 1.479301E9 * Pratio * (kelvin + 110.4) / kelvin ** 2
+        RE = 1.479301e9 * Pratio * (kelvin + 110.4) / kelvin**2
 
-        dRE_dp = 1.479301E9 * (kelvin + 110.4) / (self.sea_level_pressure * kelvin ** 2)
-        dRE_dT = -1.479301E9 / 1.8 * (
-            Pratio * (1.0 / kelvin ** 2 + 2.0 * 110.4 / kelvin ** 3))
+        dRE_dp = 1.479301e9 * (kelvin + 110.4) / (self.sea_level_pressure * kelvin**2)
+        dRE_dT = -1.479301e9 / 1.8 * (Pratio * (1.0 / kelvin**2 + 2.0 * 110.4 / kelvin**3))
 
         reynolds_num = np.einsum('i,i,j->ij', RE, mach, length)
         dreyn_dp = np.einsum('i,i,j->ij', dRE_dp, mach, length)
@@ -223,60 +221,60 @@ class SkinFriction(om.ImplicitComponent):
 
         suth_const = T + 198.72
         E = 0.80
-        combined_const = 4.593153E-6 * E * suth_const / (RE * mach * T ** 1.5)
-        dcomb_dRE = -4.593153E-6 * E * suth_const / (RE * RE * mach * T ** 1.5)
-        dcomb_dmach = -4.593153E-6 * E * suth_const / (RE * mach * mach * T ** 1.5)
-        dcomb_dT = 4.593153E-6 * E * (1.0 / T ** 1.5 - 1.5 * suth_const / T ** 2.5) / (
-            RE * mach) + dcomb_dRE * dRE_dT
+        combined_const = 4.593153e-6 * E * suth_const / (RE * mach * T**1.5)
+        dcomb_dRE = -4.593153e-6 * E * suth_const / (RE * RE * mach * T**1.5)
+        dcomb_dmach = -4.593153e-6 * E * suth_const / (RE * mach * mach * T**1.5)
+        dcomb_dT = (
+            4.593153e-6 * E * (1.0 / T**1.5 - 1.5 * suth_const / T**2.5) / (RE * mach)
+            + dcomb_dRE * dRE_dT
+        )
         dcomb_dp = dcomb_dRE * dRE_dp
 
-        wall_temp_ratio = 1.0 + 0.45 * (np.einsum('ij,i->ij', wall_temp,  1.0 / T) - 1.0)
+        wall_temp_ratio = 1.0 + 0.45 * (np.einsum('ij,i->ij', wall_temp, 1.0 / T) - 1.0)
         fact = 0.035 * mach * mach
         for i in range(nc):
             wall_temp_ratio[:, i] += fact
         dwtr_dmach = 0.07 * mach
-        dwtr_dT = -0.45 * np.einsum('ij,i->ij', wall_temp, 1.0 / T ** 2)
+        dwtr_dT = -0.45 * np.einsum('ij,i->ij', wall_temp, 1.0 / T**2)
         dwtr_dwt = 0.45 / T
 
         den = 1.0 + 3.59 * np.sqrt(cf) * wall_temp_ratio
         CFL = cf / den
-        dCFL_dcf = \
-            1.0 / den - cf * 3.59 * wall_temp_ratio * 0.5 / (np.sqrt(cf) * den ** 2)
-        dCFL_dwtr = - cf * 3.59 * np.sqrt(cf) / den ** 2
+        dCFL_dcf = 1.0 / den - cf * 3.59 * wall_temp_ratio * 0.5 / (np.sqrt(cf) * den**2)
+        dCFL_dwtr = -cf * 3.59 * np.sqrt(cf) / den**2
         dCFL_dmach = np.einsum('ij,i->ij', dCFL_dwtr, dwtr_dmach)
         dCFL_dT = dCFL_dwtr * dwtr_dT
         dCFL_dwt = np.einsum('ij,i->ij', dCFL_dwtr, dwtr_dwt)
 
-        term = np.einsum('i,ij->ij', combined_const, wall_temp ** 3)
+        term = np.einsum('i,ij->ij', combined_const, wall_temp**3)
         den = 1.0 + term / CFL
-        dreswt_dcomb = -0.5 * self.TAW * wall_temp ** 3 / (CFL * den ** 2)
+        dreswt_dcomb = -0.5 * self.TAW * wall_temp**3 / (CFL * den**2)
         dreswt_dCFL = 0.5 * self.TAW * term / (CFL * den) ** 2
-        dreswt_dwt = (
-            -0.5 - 1.5 * self.TAW * np.einsum('i,ij->ij', combined_const, wall_temp ** 2)
-            / (CFL * den ** 2))
+        dreswt_dwt = -0.5 - 1.5 * self.TAW * np.einsum('i,ij->ij', combined_const, wall_temp**2) / (
+            CFL * den**2
+        )
 
         partials['wall_temp', Dynamic.Atmosphere.STATIC_PRESSURE] = (
-            np.einsum('ij,i->ij', dreswt_dcomb, dcomb_dp)).ravel()
+            np.einsum('ij,i->ij', dreswt_dcomb, dcomb_dp)
+        ).ravel()
         partials['wall_temp', Dynamic.Atmosphere.TEMPERATURE] = (
-            np.einsum('ij,i->ij', dreswt_dcomb, dcomb_dT)
-            + dreswt_dCFL * dCFL_dT).ravel()
+            np.einsum('ij,i->ij', dreswt_dcomb, dcomb_dT) + dreswt_dCFL * dCFL_dT
+        ).ravel()
         partials['wall_temp', Dynamic.Atmosphere.MACH] = (
             np.einsum('ij,i->ij', dreswt_dcomb, dcomb_dmach) + dreswt_dCFL * dCFL_dmach
         ).ravel()
-        partials['wall_temp', 'wall_temp'] = (
-            dreswt_dCFL * dCFL_dwt + dreswt_dwt).ravel()
+        partials['wall_temp', 'wall_temp'] = (dreswt_dCFL * dCFL_dwt + dreswt_dwt).ravel()
         partials['wall_temp', 'cf_iter'] = (dreswt_dCFL * dCFL_dcf).ravel()
 
-        den = 1.0 / np.einsum('i,ij->ij', suth_const, wall_temp_ratio ** 2.5)
+        den = 1.0 / np.einsum('i,ij->ij', suth_const, wall_temp_ratio**2.5)
         num = np.einsum('ij,i->ij', wall_temp_ratio, T) + 198.72
         RP = reynolds_num * num * den
         dRP_dreyn = num * den
         term = np.einsum('i,ij->ij', T, 1.0 * den)
         dRP_dwtr = reynolds_num * (
-            term - num * 2.5
-            * np.einsum('i,ij->ij', suth_const, wall_temp_ratio ** 1.5) * den ** 2)
-        dRP_dT = reynolds_num * (
-            wall_temp_ratio * den - num * wall_temp_ratio ** 2.5 * den ** 2)
+            term - num * 2.5 * np.einsum('i,ij->ij', suth_const, wall_temp_ratio**1.5) * den**2
+        )
+        dRP_dT = reynolds_num * (wall_temp_ratio * den - num * wall_temp_ratio**2.5 * den**2)
         dRP_dp = dRP_dreyn * dreyn_dp
         dRP_dT = dRP_dreyn * dreyn_dT + dRP_dwtr * dwtr_dT + dRP_dT
         dRP_dmach = dRP_dreyn * dreyn_dmach + np.einsum('ij,i->ij', dRP_dwtr, dwtr_dmach)
@@ -287,22 +285,22 @@ class SkinFriction(om.ImplicitComponent):
         drescf_dRP = -2.0 * fact / (RP * np.log(RP * cf) ** 3)
         drescf_dcf = -2.0 * fact / (cf * np.log(RP * cf) ** 3) - 1.0
 
-        partials['cf_iter', Dynamic.Atmosphere.STATIC_PRESSURE] = (
-            drescf_dRP * dRP_dp).ravel()
-        partials['cf_iter', Dynamic.Atmosphere.TEMPERATURE] = (
-            drescf_dRP * dRP_dT).ravel()
+        partials['cf_iter', Dynamic.Atmosphere.STATIC_PRESSURE] = (drescf_dRP * dRP_dp).ravel()
+        partials['cf_iter', Dynamic.Atmosphere.TEMPERATURE] = (drescf_dRP * dRP_dT).ravel()
         partials['cf_iter', Dynamic.Atmosphere.MACH] = (drescf_dRP * dRP_dmach).ravel()
         partials['cf_iter', 'characteristic_lengths'] = (drescf_dRP * dRP_dlen).ravel()
         partials['cf_iter', 'wall_temp'] = (drescf_dRP * dRP_dwt).ravel()
         partials['cf_iter', 'cf_iter'] = drescf_dcf.ravel()
 
-        dskf_dwtr = outputs['cf_iter'] / wall_temp_ratio ** 2
+        dskf_dwtr = outputs['cf_iter'] / wall_temp_ratio**2
 
         partials['skin_friction_coeff', Dynamic.Atmosphere.TEMPERATURE] = (
-            dskf_dwtr * dwtr_dT).ravel()
+            dskf_dwtr * dwtr_dT
+        ).ravel()
         partials['skin_friction_coeff', Dynamic.Atmosphere.MACH] = np.einsum(
             'ij,i->ij', dskf_dwtr, dwtr_dmach
         ).ravel()
         partials['skin_friction_coeff', 'wall_temp'] = np.einsum(
-            'ij,i->ij', dskf_dwtr, dwtr_dwt).ravel()
-        partials['skin_friction_coeff', 'cf_iter'] = (- 1.0 / wall_temp_ratio).ravel()
+            'ij,i->ij', dskf_dwtr, dwtr_dwt
+        ).ravel()
+        partials['skin_friction_coeff', 'cf_iter'] = (-1.0 / wall_temp_ratio).ravel()

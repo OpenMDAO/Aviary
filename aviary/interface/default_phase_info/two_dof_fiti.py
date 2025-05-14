@@ -1,12 +1,19 @@
-from aviary.mission.gasp_based.phases.time_integration_phases import SGMGroundroll, \
-    SGMRotation, SGMAscentCombined, SGMAccel, SGMClimb, SGMCruise, SGMDescent
+from aviary.mission.gasp_based.phases.time_integration_phases import (
+    SGMAccel,
+    SGMAscentCombined,
+    SGMClimb,
+    SGMCruise,
+    SGMDescent,
+    SGMGroundroll,
+    SGMRotation,
+)
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.enums import AlphaModes, SpeedType, Verbosity
-from aviary.variable_info.variables import Aircraft, Mission, Dynamic, Settings
+from aviary.variable_info.variables import Aircraft, Dynamic, Mission, Settings
 
 # defaults for 2DOF based forward in time integeration phases
-cruise_alt = 35e3,
-cruise_mach = .8,
+cruise_alt = (35e3,)
+cruise_mach = (0.8,)
 
 takeoff_phases = {
     'groundroll': {
@@ -18,8 +25,7 @@ takeoff_phases = {
     },
     'rotation': {
         'builder': SGMRotation,
-        'user_options': {
-        },
+        'user_options': {},
     },
     'ascent': {
         'builder': SGMAscentCombined,
@@ -34,8 +40,7 @@ takeoff_phases = {
     },
     'accel': {
         'builder': SGMAccel,
-        'user_options': {
-        },
+        'user_options': {},
     },
 }
 climb_phases = {
@@ -79,21 +84,18 @@ climb_phases = {
         },
     },
 }
-ascent_phases = {
-    **takeoff_phases,
-    **climb_phases
-}
+ascent_phases = {**takeoff_phases, **climb_phases}
 cruise_phase = {
     'cruise': {
         'kwargs': dict(
             input_speed_type=SpeedType.MACH,
-            input_speed_units="unitless",
+            input_speed_units='unitless',
             alpha_mode=AlphaModes.REQUIRED_LIFT,
         ),
         'builder': SGMCruise,
         'user_options': {
             'mach': (cruise_mach, 'unitless'),
-            'attr:mass_trigger': ('SGMCruise_mass_trigger', 'lbm')
+            'attr:mass_trigger': ('SGMCruise_mass_trigger', 'lbm'),
         },
     },
 }
@@ -171,10 +173,9 @@ def phase_info_parameterization(phase_info, post_mission_info, aviary_inputs: Av
         Modified phase_info that has been changed to match the new mission
         parameters
     """
-
-    range_cruise = aviary_inputs.get_item(Mission.Design.RANGE)
+    # range_cruise = aviary_inputs.get_item(Mission.Design.RANGE)
     alt_cruise = aviary_inputs.get_item(Mission.Design.CRUISE_ALTITUDE)
-    gross_mass = aviary_inputs.get_item(Mission.Design.GROSS_MASS)
+    # gross_mass = aviary_inputs.get_item(Mission.Design.GROSS_MASS)
     mach_cruise = aviary_inputs.get_item(Mission.Design.MACH)
 
     phase_info['climb1']['user_options']['speed_trigger'] = mach_cruise
@@ -193,9 +194,7 @@ def phase_info_parameterization(phase_info, post_mission_info, aviary_inputs: Av
 
 
 def add_default_sgm_args(phase_info: dict, ode_args: dict, verbosity=None):
-    """
-    Add default SGM arguments to phase_info
-    """
+    """Add default SGM arguments to phase_info."""
     for phase_name, info in phase_info.items():
         kwargs = info.get('kwargs', {})
         if 'ode_args' not in kwargs:
@@ -203,6 +202,7 @@ def add_default_sgm_args(phase_info: dict, ode_args: dict, verbosity=None):
         if 'simupy_args' not in kwargs:
             if verbosity is None:
                 verbosity, _ = ode_args['aviary_options'].get_item(
-                    Settings.VERBOSITY, default=(Verbosity.QUIET, 'unitless'))
+                    Settings.VERBOSITY, default=(Verbosity.QUIET, 'unitless')
+                )
             kwargs['simupy_args'] = {'verbosity': verbosity}
         info['kwargs'] = kwargs

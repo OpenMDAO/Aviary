@@ -1,15 +1,13 @@
+import dymos as dm
 import numpy as np
 
-import dymos as dm
-
-from aviary.mission.initial_guess_builders import InitialGuessState
 from aviary.mission.flops_based.ode.energy_ODE import EnergyODE
 from aviary.mission.flops_based.phases.phase_utils import (
     add_subsystem_variables_to_phase,
     get_initial,
 )
+from aviary.mission.initial_guess_builders import InitialGuessState
 from aviary.mission.phase_builder_base import PhaseBuilderBase, register
-
 from aviary.utils.aviary_options_dict import AviaryOptionsDictionary
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.enums import EquationsOfMotion, ThrottleAllocation
@@ -26,9 +24,7 @@ from aviary.variable_info.variables import Aircraft, Dynamic
 
 
 class FlightPhaseOptions(AviaryOptionsDictionary):
-
     def declare_options(self):
-
         self.declare(
             'reserve',
             types=bool,
@@ -283,15 +279,13 @@ class FlightPhaseOptions(AviaryOptionsDictionary):
             default={},
             desc="Add in custom constraints i.e. 'flight_path_angle': {'equals': -3., "
             "'loc': 'initial', 'units': 'deg', 'type': 'boundary',}. For more details see "
-            "_add_user_defined_constraints().",
+            '_add_user_defined_constraints().',
         )
 
 
 @register
 class FlightPhaseBase(PhaseBuilderBase):
-    """
-    The base class for flight phase
-    """
+    """The base class for flight phase."""
 
     __slots__ = ('external_subsystems', 'meta_data')
 
@@ -307,7 +301,7 @@ class FlightPhaseBase(PhaseBuilderBase):
         aviary_options: AviaryValues = None,
         phase_type=EquationsOfMotion.HEIGHT_ENERGY,
     ):
-        '''
+        """
         Return a new energy phase for analysis using these constraints.
 
         If ode_class is None, default_ode_class is used.
@@ -323,7 +317,7 @@ class FlightPhaseBase(PhaseBuilderBase):
         Returns
         -------
         dymos.Phase
-        '''
+        """
         phase: dm.Phase = super().build_phase(aviary_options)
 
         num_engine_type = len(aviary_options.get_val(Aircraft.Engine.NUM_ENGINES))
@@ -369,7 +363,7 @@ class FlightPhaseBase(PhaseBuilderBase):
         if phase_type is EquationsOfMotion.HEIGHT_ENERGY:
             rate_source = Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL
         else:
-            rate_source = "dmass_dr"
+            rate_source = 'dmass_dr'
 
         phase.add_state(
             Dynamic.Vehicle.MASS,
@@ -385,12 +379,8 @@ class FlightPhaseBase(PhaseBuilderBase):
         )
 
         if phase_type is EquationsOfMotion.HEIGHT_ENERGY:
-            input_initial_distance = get_initial(
-                input_initial, Dynamic.Mission.DISTANCE
-            )
-            fix_initial_distance = get_initial(
-                fix_initial, Dynamic.Mission.DISTANCE, True
-            )
+            input_initial_distance = get_initial(input_initial, Dynamic.Mission.DISTANCE)
+            fix_initial_distance = get_initial(fix_initial, Dynamic.Mission.DISTANCE, True)
             phase.add_state(
                 Dynamic.Mission.DISTANCE,
                 fix_initial=fix_initial_distance,
@@ -404,9 +394,7 @@ class FlightPhaseBase(PhaseBuilderBase):
                 solve_segments='forward' if solve_for_distance else None,
             )
 
-        phase = add_subsystem_variables_to_phase(
-            phase, self.name, self.external_subsystems
-        )
+        phase = add_subsystem_variables_to_phase(phase, self.name, self.external_subsystems)
 
         ################
         # Add Controls #
@@ -454,11 +442,11 @@ class FlightPhaseBase(PhaseBuilderBase):
 
             if allocation == ThrottleAllocation.DYNAMIC:
                 phase.add_control(
-                    "throttle_allocations",
+                    'throttle_allocations',
                     shape=(num_engine_type - 1,),
                     val=val,
-                    targets="throttle_allocations",
-                    units="unitless",
+                    targets='throttle_allocations',
+                    units='unitless',
                     opt=True,
                     lower=0.0,
                     upper=1.0,
@@ -471,8 +459,8 @@ class FlightPhaseBase(PhaseBuilderBase):
                     opt = False
 
                 phase.add_parameter(
-                    "throttle_allocations",
-                    units="unitless",
+                    'throttle_allocations',
+                    units='unitless',
                     val=val,
                     shape=(num_engine_type - 1,),
                     opt=opt,
@@ -573,39 +561,29 @@ class FlightPhaseBase(PhaseBuilderBase):
         if phase_type is EquationsOfMotion.SOLVED_2DOF:
             phase.add_timeseries_output(Dynamic.Mission.FLIGHT_PATH_ANGLE)
             phase.add_timeseries_output(Dynamic.Vehicle.ANGLE_OF_ATTACK)
-            phase.add_timeseries_output(
-                "fuselage_pitch", output_name="theta", units="deg"
-            )
-            phase.add_timeseries_output("thrust_req", units="lbf")
-            phase.add_timeseries_output("normal_force")
-            phase.add_timeseries_output("time")
+            phase.add_timeseries_output('fuselage_pitch', output_name='theta', units='deg')
+            phase.add_timeseries_output('thrust_req', units='lbf')
+            phase.add_timeseries_output('normal_force')
+            phase.add_timeseries_output('time')
 
         ###################
         # Add Constraints #
         ###################
-        if optimize_mach and fix_initial and not Dynamic.Atmosphere.MACH in constraints:
+        if optimize_mach and fix_initial and Dynamic.Atmosphere.MACH not in constraints:
             phase.add_boundary_constraint(
                 Dynamic.Atmosphere.MACH,
                 loc='initial',
                 equals=initial_mach,
             )
 
-        if (
-            optimize_mach
-            and constrain_final
-            and not Dynamic.Atmosphere.MACH in constraints
-        ):
+        if optimize_mach and constrain_final and Dynamic.Atmosphere.MACH not in constraints:
             phase.add_boundary_constraint(
                 Dynamic.Atmosphere.MACH,
                 loc='final',
                 equals=final_mach,
             )
 
-        if (
-            optimize_altitude
-            and fix_initial
-            and not Dynamic.Mission.ALTITUDE in constraints
-        ):
+        if optimize_altitude and fix_initial and Dynamic.Mission.ALTITUDE not in constraints:
             phase.add_boundary_constraint(
                 Dynamic.Mission.ALTITUDE,
                 loc='initial',
@@ -614,11 +592,7 @@ class FlightPhaseBase(PhaseBuilderBase):
                 ref=1.0e4,
             )
 
-        if (
-            optimize_altitude
-            and constrain_final
-            and not Dynamic.Mission.ALTITUDE in constraints
-        ):
+        if optimize_altitude and constrain_final and Dynamic.Mission.ALTITUDE not in constraints:
             phase.add_boundary_constraint(
                 Dynamic.Mission.ALTITUDE,
                 loc='final',
@@ -627,19 +601,17 @@ class FlightPhaseBase(PhaseBuilderBase):
                 ref=1.0e4,
             )
 
-        if no_descent and not Dynamic.Mission.ALTITUDE_RATE in constraints:
+        if no_descent and Dynamic.Mission.ALTITUDE_RATE not in constraints:
             phase.add_path_constraint(Dynamic.Mission.ALTITUDE_RATE, lower=0.0)
 
-        if no_climb and not Dynamic.Mission.ALTITUDE_RATE in constraints:
+        if no_climb and Dynamic.Mission.ALTITUDE_RATE not in constraints:
             phase.add_path_constraint(Dynamic.Mission.ALTITUDE_RATE, upper=0.0)
 
-        required_available_climb_rate, units = user_options[
-            'required_available_climb_rate'
-        ]
+        required_available_climb_rate, units = user_options['required_available_climb_rate']
 
         if (
             required_available_climb_rate is not None
-            and not Dynamic.Mission.ALTITUDE_RATE_MAX in constraints
+            and Dynamic.Mission.ALTITUDE_RATE_MAX not in constraints
         ):
             phase.add_path_constraint(
                 Dynamic.Mission.ALTITUDE_RATE_MAX,
@@ -647,7 +619,7 @@ class FlightPhaseBase(PhaseBuilderBase):
                 units=units,
             )
 
-        if not Dynamic.Vehicle.Propulsion.THROTTLE in constraints:
+        if Dynamic.Vehicle.Propulsion.THROTTLE not in constraints:
             if throttle_enforcement == 'boundary_constraint':
                 phase.add_boundary_constraint(
                     Dynamic.Vehicle.Propulsion.THROTTLE,
@@ -676,9 +648,7 @@ class FlightPhaseBase(PhaseBuilderBase):
         return phase
 
     def make_default_transcription(self):
-        '''
-        Return a transcription object to be used by default in build_phase.
-        '''
+        """Return a transcription object to be used by default in build_phase."""
         user_options = self.user_options
 
         num_segments = user_options['num_segments']
@@ -696,9 +666,7 @@ class FlightPhaseBase(PhaseBuilderBase):
         return transcription
 
     def _extra_ode_init_kwargs(self):
-        """
-        Return extra kwargs required for initializing the ODE.
-        """
+        """Return extra kwargs required for initializing the ODE."""
         # TODO: support external_subsystems and meta_data in the base class
         return {
             'external_subsystems': self.external_subsystems,

@@ -1,11 +1,9 @@
-"""
-Test external subsystem bus API.
-"""
-from copy import deepcopy
+"""Test external subsystem bus API."""
+
 import unittest
+from copy import deepcopy
 
 import numpy as np
-
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_near_equal
 from openmdao.utils.testing_utils import use_tempdirs
@@ -60,7 +58,6 @@ class PreMissionComp(om.ExplicitComponent):
 
 
 class MissionComp(om.ExplicitComponent):
-
     def initialize(self):
         self.options.declare('shape', default=1)
         self.options.declare('num_nodes', default=1)
@@ -193,7 +190,6 @@ class CustomBuilder(SubsystemBuilderBase):
                     "phases": ['descent']
                 },
             }
-
         return vars_to_connect
 
     def get_post_mission_bus_variables(self, aviary_inputs, phase_info):
@@ -241,7 +237,6 @@ class CustomBuilder(SubsystemBuilderBase):
 
 @use_tempdirs
 class TestExternalSubsystemBus(unittest.TestCase):
-
     def test_external_subsystem_bus(self):
         phase_info = deepcopy(ph_in)
         # Adding two `CustomBuilder` external subsystems will test that we can request `Dynamic.Mission.VELOCITY` be a mission bus variable twice.
@@ -256,7 +251,7 @@ class TestExternalSubsystemBus(unittest.TestCase):
 
         prob = AviaryProblem()
 
-        csv_path = "models/test_aircraft/aircraft_for_bench_FwFm.csv"
+        csv_path = 'models/test_aircraft/aircraft_for_bench_FwFm.csv'
         prob.load_inputs(csv_path, phase_info)
         prob.aviary_inputs.set_val("the_shape_for_the_thing_dim0",
                                    3, meta_data=ExtendedMetaData)

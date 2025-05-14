@@ -1,4 +1,5 @@
-# GASP-derived aircraft input deck converted from generic_HWB_GASP.dat
+# created 04/01/25
+# GASP-derived aircraft input deck converted from Generic_HWB_Trade_Study.dat
 
 # Input Values
 aircraft:air_conditioning:mass_coefficient,1.155,unitless
@@ -94,7 +95,7 @@ aircraft:nacelle:core_diameter_ratio,1.2205,unitless
 aircraft:nacelle:fineness,1.3588,unitless
 aircraft:nacelle:form_factor,1.2,unitless
 aircraft:nacelle:mass_specific,2.5,lbm/ft**2
-aircraft:nacelle:percent_diameter_buried_in_fuselage,0,unitless
+aircraft:nacelle:percent_diam_buried_in_fuselage,0,unitless
 aircraft:strut:area_ratio,0,unitless
 aircraft:strut:attachment_location,0,ft
 aircraft:strut:attachment_location_dimensionless,0,unitless

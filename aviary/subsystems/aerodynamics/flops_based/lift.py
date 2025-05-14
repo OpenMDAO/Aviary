@@ -9,9 +9,7 @@ grav_metric = constants.GRAV_METRIC_FLOPS
 
 
 class SimpleLift(om.ExplicitComponent):
-    '''
-    Calculate lift as a function of wing area, dynamic pressure, and lift coefficient.
-    '''
+    """Calculate lift as a function of wing area, dynamic pressure, and lift coefficient."""
 
     def initialize(self):
         self.options.declare('num_nodes', types=int)
@@ -21,12 +19,11 @@ class SimpleLift(om.ExplicitComponent):
 
         add_aviary_input(self, Aircraft.Wing.AREA, units='m**2')
 
-        add_aviary_input(self, Dynamic.Atmosphere.DYNAMIC_PRESSURE,
-                         shape=nn, units='N/m**2')
+        add_aviary_input(self, Dynamic.Atmosphere.DYNAMIC_PRESSURE, shape=nn, units='N/m**2')
 
         self.add_input(
-            name='cl', val=np.ones(nn), desc='current coefficient of lift',
-            units='unitless')
+            name='cl', val=np.ones(nn), desc='current coefficient of lift', units='unitless'
+        )
 
         add_aviary_output(self, Dynamic.Vehicle.LIFT, shape=nn, units='N')
 
@@ -77,12 +74,11 @@ class LiftEqualsWeight(om.ExplicitComponent):
 
         add_aviary_input(self, Dynamic.Vehicle.MASS, shape=nn, units='kg')
 
-        add_aviary_input(self, Dynamic.Atmosphere.DYNAMIC_PRESSURE,
-                         shape=nn, units='N/m**2')
+        add_aviary_input(self, Dynamic.Atmosphere.DYNAMIC_PRESSURE, shape=nn, units='N/m**2')
 
         self.add_output(
-            name='cl', val=np.ones(nn), desc='current coefficient of lift',
-            units='unitless')
+            name='cl', val=np.ones(nn), desc='current coefficient of lift', units='unitless'
+        )
 
         add_aviary_output(self, Dynamic.Vehicle.LIFT, shape=nn, units='N')
 
@@ -91,7 +87,8 @@ class LiftEqualsWeight(om.ExplicitComponent):
         row_col = np.arange(nn)
 
         self.declare_partials(
-            Dynamic.Vehicle.LIFT, Dynamic.Vehicle.MASS, rows=row_col, cols=row_col, val=grav_metric)
+            Dynamic.Vehicle.LIFT, Dynamic.Vehicle.MASS, rows=row_col, cols=row_col, val=grav_metric
+        )
 
         self.declare_partials(
             Dynamic.Vehicle.LIFT,

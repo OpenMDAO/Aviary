@@ -1,25 +1,16 @@
-"""
-Test for some features when using an external subsystem in the mission.
-"""
+"""Test for some features when using an external subsystem in the mission."""
 
-from copy import deepcopy
 import unittest
+from copy import deepcopy
 
-import numpy as np
 import openmdao.api as om
 from openmdao.utils.testing_utils import use_tempdirs
-from openmdao.utils.assert_utils import assert_near_equal
 
-from aviary.interface.methods_for_level2 import AviaryProblem
-
-from aviary.subsystems.subsystem_builder_base import SubsystemBuilderBase
-from aviary.utils.csv_data_file import read_data_file
-from aviary.interface.default_phase_info.height_energy import (
-    phase_info as energy_phase_info,
-)
+from aviary.interface.default_phase_info.height_energy import phase_info as energy_phase_info
 from aviary.interface.default_phase_info.two_dof import phase_info as two_dof_phase_info
+from aviary.interface.methods_for_level2 import AviaryProblem
+from aviary.subsystems.subsystem_builder_base import SubsystemBuilderBase
 from aviary.variable_info.variables import Aircraft
-
 
 energy_phase_info = deepcopy(energy_phase_info)
 
@@ -43,18 +34,14 @@ energy_phase_info.pop('descent')
 
 @use_tempdirs
 class TestExternalSubsystems(unittest.TestCase):
-
     def test_mission_solver_energy(self):
-
         local_phase_info = deepcopy(energy_phase_info)
-        local_phase_info['cruise']['external_subsystems'] = [
-            SolverBuilder(name='solve_me')
-        ]
+        local_phase_info['cruise']['external_subsystems'] = [SolverBuilder(name='solve_me')]
 
         prob = AviaryProblem()
 
         prob.load_inputs(
-            "subsystems/aerodynamics/flops_based/test/data/high_wing_single_aisle.csv",
+            'subsystems/aerodynamics/flops_based/test/data/high_wing_single_aisle.csv',
             local_phase_info,
         )
 
@@ -76,12 +63,11 @@ class TestExternalSubsystems(unittest.TestCase):
         self.assertTrue(
             hasattr(
                 prob.model.traj.phases.cruise.rhs_all.solver_sub.external_subsystems,
-                "solve_me",
+                'solve_me',
             )
         )
 
     def test_no_mission_solver_energy(self):
-
         local_phase_info = deepcopy(energy_phase_info)
         local_phase_info['cruise']['external_subsystems'] = [
             NoSolverBuilder(name='do_not_solve_me')
@@ -90,7 +76,7 @@ class TestExternalSubsystems(unittest.TestCase):
         prob = AviaryProblem()
 
         prob.load_inputs(
-            "subsystems/aerodynamics/flops_based/test/data/high_wing_single_aisle.csv",
+            'subsystems/aerodynamics/flops_based/test/data/high_wing_single_aisle.csv',
             local_phase_info,
         )
 
@@ -112,21 +98,18 @@ class TestExternalSubsystems(unittest.TestCase):
         self.assertTrue(
             hasattr(
                 prob.model.traj.phases.cruise.rhs_all.external_subsystems,
-                "do_not_solve_me",
+                'do_not_solve_me',
             )
         )
 
     def test_mission_solver_2DOF(self):
-
         local_phase_info = deepcopy(two_dof_phase_info)
-        local_phase_info['cruise']['external_subsystems'] = [
-            SolverBuilder(name='solve_me')
-        ]
+        local_phase_info['cruise']['external_subsystems'] = [SolverBuilder(name='solve_me')]
 
         prob = AviaryProblem()
 
         prob.load_inputs(
-            "models/large_single_aisle_1/large_single_aisle_1_GASP.csv",
+            'models/large_single_aisle_1/large_single_aisle_1_GASP.csv',
             local_phase_info,
         )
 
@@ -149,12 +132,11 @@ class TestExternalSubsystems(unittest.TestCase):
         self.assertTrue(
             hasattr(
                 prob.model.traj.phases.cruise.rhs.external_subsystems,
-                "solve_me",
+                'solve_me',
             )
         )
 
     def test_no_mission_solver_2DOF(self):
-
         local_phase_info = deepcopy(two_dof_phase_info)
         local_phase_info['cruise']['external_subsystems'] = [
             NoSolverBuilder(name='do_not_solve_me')
@@ -163,7 +145,7 @@ class TestExternalSubsystems(unittest.TestCase):
         prob = AviaryProblem()
 
         prob.load_inputs(
-            "models/large_single_aisle_1/large_single_aisle_1_GASP.csv",
+            'models/large_single_aisle_1/large_single_aisle_1_GASP.csv',
             local_phase_info,
         )
 
@@ -185,28 +167,24 @@ class TestExternalSubsystems(unittest.TestCase):
         self.assertTrue(
             hasattr(
                 prob.model.traj.phases.cruise.rhs.external_subsystems,
-                "do_not_solve_me",
+                'do_not_solve_me',
             )
         )
 
 
 class ExternNoSolve(om.ExplicitComponent):
-    """
-    This component should not have a solver above it.
-    """
+    """This component should not have a solver above it."""
 
     def setup(self):
         self.add_input(Aircraft.Wing.AREA, 1.0, units='ft**2')
-        self.add_output("stuff", 1.0, units='ft**2')
+        self.add_output('stuff', 1.0, units='ft**2')
 
     def compute(self, inputs, outputs):
         pass
 
 
 class NoSolverBuilder(SubsystemBuilderBase):
-    """
-    Mission only. No solver.
-    """
+    """Mission only. No solver."""
 
     def needs_mission_solver(self, aviary_options):
         return False
@@ -216,9 +194,7 @@ class NoSolverBuilder(SubsystemBuilderBase):
 
 
 class SolverBuilder(SubsystemBuilderBase):
-    """
-    Mission only. Solver.
-    """
+    """Mission only. Solver."""
 
     def needs_mission_solver(self, aviary_options):
         return True
@@ -227,7 +203,7 @@ class SolverBuilder(SubsystemBuilderBase):
         return ExternNoSolve()
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     unittest.main()
     # test = TestExternalSubsystems()
     # test.test_no_mission_solver_2DOF()

@@ -1,7 +1,7 @@
 import openmdao.api as om
 
 from aviary.constants import GRAV_ENGLISH_LBM
-from aviary.variable_info.functions import add_aviary_input, add_aviary_output, add_aviary_option
+from aviary.variable_info.functions import add_aviary_input, add_aviary_option, add_aviary_output
 from aviary.variable_info.variables import Aircraft
 
 
@@ -29,7 +29,8 @@ class TransportAPUMass(om.ExplicitComponent):
         planform = inputs[Aircraft.Fuselage.PLANFORM_AREA]
 
         outputs[Aircraft.APU.MASS] = (
-            54.0 * planform ** 0.3 + 5.4 * pax ** 0.9) * scaler / GRAV_ENGLISH_LBM
+            (54.0 * planform**0.3 + 5.4 * pax**0.9) * scaler / GRAV_ENGLISH_LBM
+        )
 
     def compute_partials(self, inputs, J):
         pax = self.options[Aircraft.CrewPayload.Design.NUM_PASSENGERS]
@@ -37,6 +38,8 @@ class TransportAPUMass(om.ExplicitComponent):
         planform = inputs[Aircraft.Fuselage.PLANFORM_AREA]
 
         J[Aircraft.APU.MASS, Aircraft.APU.MASS_SCALER] = (
-            54.0 * planform ** 0.3 + 5.4 * pax ** 0.9) / GRAV_ENGLISH_LBM
-        J[Aircraft.APU.MASS, Aircraft.Fuselage.PLANFORM_AREA] = \
-            16.2 * planform ** -0.7 * scaler / GRAV_ENGLISH_LBM
+            54.0 * planform**0.3 + 5.4 * pax**0.9
+        ) / GRAV_ENGLISH_LBM
+        J[Aircraft.APU.MASS, Aircraft.Fuselage.PLANFORM_AREA] = (
+            16.2 * planform**-0.7 * scaler / GRAV_ENGLISH_LBM
+        )

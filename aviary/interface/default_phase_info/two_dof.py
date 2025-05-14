@@ -309,7 +309,6 @@ def phase_info_parameterization(phase_info, post_mission_info, aviary_inputs):
         Modified phase_info that has been changed to match the new mission
         parameters
     """
-
     range_cruise = aviary_inputs.get_val(Mission.Design.RANGE, units='NM')
     alt_cruise = aviary_inputs.get_val(Mission.Design.CRUISE_ALTITUDE, units='ft')
     gross_mass = aviary_inputs.get_val(Mission.Design.GROSS_MASS, units='lbm')
@@ -319,43 +318,39 @@ def phase_info_parameterization(phase_info, post_mission_info, aviary_inputs):
     old_range_cruise = phase_info['desc2']['initial_guesses']['distance'][0][1]
     range_scale = 1.0
     if range_cruise != old_range_cruise:
-
-        phase_info['desc1']['initial_guesses']['distance'] = \
-            ([.92*range_cruise, .96*range_cruise], 'NM')
-        phase_info['desc2']['initial_guesses']['distance'] = \
-            ([.96*range_cruise, range_cruise], 'NM')
+        phase_info['desc1']['initial_guesses']['distance'] = (
+            [0.92 * range_cruise, 0.96 * range_cruise],
+            'NM',
+        )
+        phase_info['desc2']['initial_guesses']['distance'] = (
+            [0.96 * range_cruise, range_cruise],
+            'NM',
+        )
         range_scale = range_cruise / old_range_cruise
 
     # Altitude
     old_alt_cruise = phase_info['climb2']['user_options']['final_altitude'][0]
     if alt_cruise != old_alt_cruise:
-
         phase_info['climb2']['user_options']['final_altitude'] = (alt_cruise, 'ft')
-        phase_info['climb2']['initial_guesses']['altitude'] = ([10.e3, alt_cruise], 'ft')
+        phase_info['climb2']['initial_guesses']['altitude'] = ([10.0e3, alt_cruise], 'ft')
         phase_info['cruise']['initial_guesses']['altitude'] = (alt_cruise, 'ft')
-        phase_info['desc1']['initial_guesses']['altitude'] = ([alt_cruise, 10.e3], 'ft')
+        phase_info['desc1']['initial_guesses']['altitude'] = ([alt_cruise, 10.0e3], 'ft')
 
         # TODO - Could adjust time guesses/bounds in climb2 and desc2.
 
     # Mass
     old_gross_mass = 175400.0
     if gross_mass != old_gross_mass:
-
         # Note, this requires that the guess for gross mass is pretty close to the
         # compute mass.
 
         fuel_used = 35000 * range_scale
-        phase_info['groundroll']['initial_guesses']['mass'] = \
-            ([gross_mass, gross_mass], 'lbm')
-        phase_info['rotation']['initial_guesses']['mass'] = \
-            ([gross_mass, gross_mass], 'lbm')
-        phase_info['accel']['initial_guesses']['mass'] = \
-            ([gross_mass, gross_mass], 'lbm')
-        phase_info['ascent']['initial_guesses']['mass'] = \
-            ([gross_mass, gross_mass], 'lbm')
+        phase_info['groundroll']['initial_guesses']['mass'] = ([gross_mass, gross_mass], 'lbm')
+        phase_info['rotation']['initial_guesses']['mass'] = ([gross_mass, gross_mass], 'lbm')
+        phase_info['accel']['initial_guesses']['mass'] = ([gross_mass, gross_mass], 'lbm')
+        phase_info['ascent']['initial_guesses']['mass'] = ([gross_mass, gross_mass], 'lbm')
 
-        phase_info['cruise']['initial_guesses']['mass'] = \
-            ([gross_mass, -fuel_used], 'lbm')
+        phase_info['cruise']['initial_guesses']['mass'] = ([gross_mass, -fuel_used], 'lbm')
 
         end_mass = gross_mass - fuel_used
         phase_info['desc1']['initial_guesses']['mass'] = (end_mass, 'lbm')
@@ -364,7 +359,6 @@ def phase_info_parameterization(phase_info, post_mission_info, aviary_inputs):
     # Mach
     old_mach_cruise = phase_info['cruise']['initial_guesses']['mach'][0]
     if mach_cruise != old_mach_cruise:
-
         phase_info['cruise']['initial_guesses']['mach'] = (mach_cruise, 'unitless')
 
     return phase_info, post_mission_info

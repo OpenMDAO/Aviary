@@ -5,7 +5,6 @@ from aviary.subsystems.propulsion.utils import EngineModelVariables, max_variabl
 from aviary.variable_info.functions import add_aviary_input, add_aviary_option
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 
-
 MACH = EngineModelVariables.MACH
 ALTITUDE = EngineModelVariables.ALTITUDE
 THROTTLE = EngineModelVariables.THROTTLE
@@ -27,13 +26,13 @@ skip_variables = [MACH, ALTITUDE, THROTTLE, HYBRID_THROTTLE, TEMPERATURE]
 
 
 class EngineScaling(om.ExplicitComponent):
-    '''
+    """
     Scales an engine's thrust, fuel flow rate, nox rate, exit area, and electric power
     based on provided scaling factors.
 
     Can be vectorized for all unique engine present on aircraft. Each index represents a
     single instance of an engine model.
-    '''
+    """
 
     def initialize(self):
         self.options.declare('num_nodes', types=int)
@@ -129,16 +128,22 @@ class EngineScaling(om.ExplicitComponent):
 
             # Calculate fuel flow rate scaling factor using FLOPS-derived equation
             fuel_flow_equation_scaling = (
-                1 + constant_fuel_term + linear_fuel_term * (1 - engine_scale_factor))
+                1 + constant_fuel_term + linear_fuel_term * (1 - engine_scale_factor)
+            )
 
             # use dtype to make complex safe
-            fuel_flow_mach_scaling = np.ones(
-                nn, dtype=engine_scale_factor.dtype) * subsonic_fuel_factor
+            fuel_flow_mach_scaling = (
+                np.ones(nn, dtype=engine_scale_factor.dtype) * subsonic_fuel_factor
+            )
             supersonic_idx = np.where(mach_number >= 1.0)
             fuel_flow_mach_scaling[supersonic_idx] = supersonic_fuel_factor
 
-            fuel_flow_scale_factor = engine_scale_factor * fuel_flow_mach_scaling\
-                * fuel_flow_equation_scaling * mission_fuel_scaler
+            fuel_flow_scale_factor = (
+                engine_scale_factor
+                * fuel_flow_mach_scaling
+                * fuel_flow_equation_scaling
+                * mission_fuel_scaler
+            )
 
             scale_factor = engine_scale_factor
 
@@ -152,9 +157,7 @@ class EngineScaling(om.ExplicitComponent):
                         + constant_fuel_flow
                     )
                 else:
-                    outputs[variable.value] = (
-                        inputs[variable.value + '_unscaled'] * scale_factor
-                    )
+                    outputs[variable.value] = inputs[variable.value + '_unscaled'] * scale_factor
 
                     if variable in max_variables:
                         outputs[variable.value + '_max'] = (
@@ -240,9 +243,7 @@ class EngineScaling(om.ExplicitComponent):
             if FUEL_FLOW in engine_variables:
                 # Calculate fuel flow rate scaling factor using FLOPS-derived equation
                 fuel_flow_equation_scaling = (
-                    1
-                    + constant_fuel_term
-                    + linear_fuel_term * (1 - engine_scale_factor)
+                    1 + constant_fuel_term + linear_fuel_term * (1 - engine_scale_factor)
                 )
 
                 fuel_flow_deriv = (
@@ -285,9 +286,7 @@ class EngineScaling(om.ExplicitComponent):
                     )
 
                     if variable in max_variables:
-                        J[variable.value + '_max', variable.value + '_max_unscaled'] = (
-                            scale_factor
-                        )
+                        J[variable.value + '_max', variable.value + '_max_unscaled'] = scale_factor
                         J[variable.value + '_max', Aircraft.Engine.SCALE_FACTOR] = (
                             inputs[variable.value + '_max_unscaled'] * deriv_factor
                         )

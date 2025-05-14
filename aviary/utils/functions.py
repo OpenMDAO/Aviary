@@ -1,31 +1,21 @@
-from typing import Union
-from pathlib import Path
-import importlib_resources
-from contextlib import ExitStack
 import atexit
 import os
+from contextlib import ExitStack
+from pathlib import Path
+from typing import Union
 
-import openmdao.api as om
+import importlib_resources
 import numpy as np
-from openmdao.utils.units import convert_units
+import openmdao.api as om
 
 from aviary.utils.aviary_values import AviaryValues, get_items
-from aviary.variable_info.enums import (
-    FlapType,
-    GASPEngineType,
-    ProblemType,
-    EquationsOfMotion,
-    LegacyCode,
-)
-from aviary.variable_info.functions import add_aviary_output, add_aviary_input
-from aviary.variable_info.variable_meta_data import _MetaData
 from aviary.variable_info.enums import Verbosity
+from aviary.variable_info.functions import add_aviary_input, add_aviary_output
+from aviary.variable_info.variable_meta_data import _MetaData
 
 
 class Null:
-    '''
-    This can be used to divert outputs, such as stdout, to improve performance
-    '''
+    """This can be used to divert outputs, such as stdout, to improve performance."""
 
     def write(self, *args, **kwargs):
         pass
@@ -38,11 +28,15 @@ def get_aviary_resource_path(resource_name: str) -> str:
     """
     Get the file path of a resource in the Aviary package.
 
-    Args:
-        resource_name (str): The name of the resource.
+    Parameters
+    ----------
+        resource_name : str
+            The name of the resource.
 
-    Returns:
-        str: The file path of the resource.
+    Returns
+    -------
+        Path
+            The file path of the resource.
 
     """
     file_manager = ExitStack()
@@ -75,14 +69,12 @@ def set_aviary_initial_values(prob, aviary_inputs: AviaryValues):
         try:
             prob.set_val(key, val, units)
 
-        except:
+        except BaseException:
             # Should be an option or an overridden output.
             continue
 
 
-def set_aviary_input_defaults(
-    model, inputs, aviary_inputs: AviaryValues, meta_data=_MetaData
-):
+def set_aviary_input_defaults(model, inputs, aviary_inputs: AviaryValues, meta_data=_MetaData):
     """
     This function sets the default values and units for any inputs prior to
     setup. This is needed to resolve ambiguities when inputs are promoted
@@ -113,138 +105,42 @@ def set_aviary_input_defaults(
         model.set_input_defaults(key, val=val, units=units)
 
 
-def convert_strings_to_data(string_list, data_type=None):
+def convert_strings_to_data(input_string):
     """
-    convert_strings_to_data will convert a list of strings to usable data.
-    Strings that can't be converted to numbers will attempt to store as a logical,
-    otherwise they are passed as is
+    convert_strings_to_data will convert a string or list of strings to usable data.
+    Strings that can't be converted to numbers will attempt to store as a boolean,
+    otherwise they are passed as is.
     """
-    value_list = [0] * len(string_list)
-    eNums = (FlapType, GASPEngineType)
-    for ii, dat in enumerate(string_list):
-        dat = dat.strip('[]')
-        if data_type is None:
-            try:
-                # if the value is a number store it as a float or an int as appropriate
-                # BUG this returns floats that can be converted to int (e.g. 1.0) as an int (1), even if the variable requires floats
-                value_list[ii] = (
-                    int(float(dat)) if float(dat).is_integer() else float(dat)
-                )
-            except ValueError:
-                # store value as a logical if it is a string that represents True or False
-                if dat.lower() == 'true':
-                    value_list[ii] = True
-                elif dat.lower() == 'false':
-                    value_list[ii] = False
-                else:
-                    # if the value isn't a number or a logial, store it as a string
-                    value_list[ii] = dat
-            except Exception as e:
-                print('Exception', e)
-        else:  # only when reading from .csv file
-            if not isinstance(data_type, tuple):
-                data_type = (data_type,)
-            err_msg = ''
-
-            for dtype in data_type:
-                if dtype is np.ndarray:  # It's always coupled with int or float
-                    pass
-                elif dtype is Path:  # In .csv file, it is always a string
-                    pass
-                elif dtype in eNums:
-                    if not dat.isnumeric():
-                        try:
-                            x = dtype.get_element_by_name(dat.upper())
-                            value_list[ii] = x.value
-                            err_msg = ''
-                            break
-                        except:
-                            err_msg += (
-                                f'Expected data type: {data_type}, but the data is '
-                                f'{dat}.\n'
-                            )
-                elif dtype is bool:
-                    if dat.lower() == 'true' or dat == '1' or dat == '1.0':
-                        value_list[ii] = True
-                        err_msg = ''
-                        break
-                    elif dat.lower() == 'false' or dat == '0' or dat == '0.0':
-                        value_list[ii] = False
-                        err_msg = ''
-                        break
-                    else:
-                        err_msg += (
-                            f'Expected data type: {data_type}, but the data is {dat}.\n'
-                        )
-                else:
-                    try:
-                        if dat.lower() == 'true':
-                            value_list[ii] = True
-                        elif dat.lower() == 'false':
-                            value_list[ii] = False
-                        else:
-                            value_list[ii] = dtype(dat.strip())
-                        err_msg = ''
-                        break
-                    except:
-                        err_msg += (
-                            f'Expected data type: {data_type}, but the data is {dat}.\n'
-                        )
-
-            if len(err_msg) > 0:
-                print(err_msg)
-
-    return value_list
-
-
-# TODO this function is only used in a single place (process_input_decks.py), and its
-#      functionality can get handled in other places (convert_strings_to_data being able
-#      to handle lists/arrays, and other special handling directly present in
-#      process_input_decks.py)
-def set_value(
-    var_name,
-    var_value,
-    aviary_values: AviaryValues,
-    units=None,
-    is_array=False,
-    meta_data=_MetaData,
-):
-    """
-    Wrapper for AviaryValues.set_val(). Existing value/units of the provided variable name are used as defaults if
-    they exist and not provided in this function. Special list handling provided: if 'is_array' is true, 'var_value' is
-    always added to 'aviary_values' as a numpy array. Otherwise, if 'var_value' is a list or numpy array of length
-    one and existing value in 'aviary_values' or default value in 'meta_data' is not a list or numpy array,
-    individual value is pulled out of 'var_value' to be stored in 'aviary_values'.
-    """
-    if var_name in aviary_values:
-        current_value, current_units = aviary_values.get_item(var_name)
+    # pack input_string into a list if it is not
+    # setup output list size
+    if isinstance(input_string, list):
+        islist = True
+        value_list = [0] * len(input_string)
     else:
-        current_value = meta_data[var_name]['default_value']
-        current_units = meta_data[var_name]['units']
+        islist = False
+        input_string = [input_string]
+        value_list = input_string
 
-    if units == None:
-        if current_units:
-            units = current_units
-        else:
-            units = meta_data[var_name]['units']
-        #     raise ValueError("You have specified a new variable without any units")
-
-    if is_array:
-        var_value = np.atleast_1d(var_value)
-    elif len(var_value) == 1 and not isinstance(current_value, (list, np.ndarray)):
-        # if only a single value is provided, don't store it as a list
-        var_value = var_value[0]
-
-    # TODO handle enums in an automated method via checking metadata for enum type
-    if var_name == 'settings:problem_type':
-        var_value = ProblemType(var_value)
-    if var_name == 'settings:equations_of_motion':
-        var_value = EquationsOfMotion(var_value)
-    if var_name == 'settings:mass_method':
-        var_value = LegacyCode(var_value)
-
-    aviary_values.set_val(var_name, val=var_value, units=units, meta_data=meta_data)
-    return aviary_values
+    for ii, dat in enumerate(input_string):
+        dat = dat.strip('[]')
+        try:
+            # if the value is a number store it as a float or an int as appropriate
+            # BUG this returns floats that can be converted to int (e.g. 1.0) as an
+            # int (1), even if the variable requires floats
+            value_list[ii] = int(dat) if '.' not in dat else float(dat)
+        except ValueError:
+            # store value as a boolean if it is a string that represents True or False
+            if dat.lower() == 'true':
+                value_list[ii] = True
+            elif dat.lower() == 'false':
+                value_list[ii] = False
+            else:
+                # if the value isn't a number or a boolean, store it as a string
+                value_list[ii] = dat
+    # unpack output value from list if it isn't supposed to be one
+    if not islist:
+        value_list = value_list[0]
+    return value_list
 
 
 def create_opts2vals(all_options: list, output_units: dict = {}):
@@ -275,9 +171,7 @@ def create_opts2vals(all_options: list, output_units: dict = {}):
     def configure_output(option_name: str, aviary_options: AviaryValues):
         option_data = aviary_options.get_item(option_name)
         out_units = (
-            output_units[option_name]
-            if option_name in output_units.keys()
-            else option_data[1]
+            output_units[option_name] if option_name in output_units.keys() else option_data[1]
         )
         return {'val': option_data[0], 'units': out_units}
 
@@ -291,9 +185,7 @@ def create_opts2vals(all_options: list, output_units: dict = {}):
 
         def setup(self):
             for option_name in all_options:
-                output_data = configure_output(
-                    option_name, self.options['aviary_options']
-                )
+                output_data = configure_output(option_name, self.options['aviary_options'])
                 add_aviary_output(
                     self,
                     option_name,
@@ -343,15 +235,11 @@ def add_opts2vals(Group: om.Group, OptionsToValues, aviary_options: AviaryValues
             )
 
         def setup(self):
-            self.add_subsystem(
-                'options_to_values', OptionsToValues(aviary_options=aviary_options)
-            )
+            self.add_subsystem('options_to_values', OptionsToValues(aviary_options=aviary_options))
 
         def configure(self):
             all_output_data = self.options_to_values.list_outputs(out_stream=None)
-            list_of_outputs = [
-                (name, 'option:' + name) for name, data in all_output_data
-            ]
+            list_of_outputs = [(name, 'option:' + name) for name, data in all_output_data]
             self.promotes('options_to_values', list_of_outputs)
 
     Group.add_subsystem(
@@ -361,9 +249,7 @@ def add_opts2vals(Group: om.Group, OptionsToValues, aviary_options: AviaryValues
     return Group
 
 
-def create_printcomp(
-    all_inputs: list, input_units: dict = {}, meta_data=_MetaData, num_nodes=1
-):
+def create_printcomp(all_inputs: list, input_units: dict = {}, meta_data=_MetaData, num_nodes=1):
     """
     Creates a component that prints the value of all inputs.
 
@@ -393,32 +279,24 @@ def create_printcomp(
             return None
 
     class PrintComp(om.ExplicitComponent):
-
         def setup(self):
             for variable_name in all_inputs:
                 units = get_units(variable_name)
                 if ':' in variable_name:
                     try:
-                        add_aviary_input(
-                            self, variable_name, units=units, shape=num_nodes
-                        )
+                        add_aviary_input(self, variable_name, units=units, shape=num_nodes)
                     except TypeError:
-                        self.add_input(
-                            variable_name, units=units, shape=num_nodes, val=1.23456
-                        )
+                        self.add_input(variable_name, units=units, shape=num_nodes, val=1.23456)
                 else:
-                    # using an arbitrary number that will stand out for unconnected variables
-                    self.add_input(
-                        variable_name, units=units, shape=num_nodes, val=1.23456
-                    )
+                    # using an arbitrary number that will stand out for unconnected
+                    # variables
+                    self.add_input(variable_name, units=units, shape=num_nodes, val=1.23456)
 
         def compute(self, inputs, outputs):
             print_string = ['v' * 20]
             for variable_name in all_inputs:
                 units = get_units(variable_name)
-                print_string.append(
-                    '{} {} {}'.format(variable_name, inputs[variable_name], units)
-                )
+                print_string.append('{} {} {}'.format(variable_name, inputs[variable_name], units))
             print_string.append('^' * 20)
             print('\n'.join(print_string))
 
@@ -426,18 +304,22 @@ def create_printcomp(
 
 
 def promote_aircraft_and_mission_vars(group):
-    """
-    Promotes inputs and outputs in Aircraft and Mission hierarchy categories for provided group.
-    """
+    """Promotes inputs and outputs in Aircraft and Mission hierarchy categories for provided group."""
     external_outputs = []
     for comp in group.system_iter(recurse=False):
-
         # Skip all aviary systems.
         if comp.name == 'core_subsystems':
             continue
 
-        out_names = [item for item in comp._var_allprocs_prom2abs_list['output']]
-        in_names = [item for item in comp._var_allprocs_prom2abs_list['input']]
+        try:
+            resolver = comp._resolver
+            out_names = [item for item in resolver.prom_iter(iotype='output')]
+            in_names = [item for item in resolver.prom_iter(iotype='input')]
+
+        except AttributeError:
+            # This is an older version of OpenMDAO
+            out_names = [item for item in comp._var_allprocs_prom2abs_list['output']]
+            in_names = [item for item in comp._var_allprocs_prom2abs_list['input']]
 
         external_outputs.extend(out_names)
 
@@ -493,7 +375,6 @@ def get_path(path: Union[str, Path], verbosity=Verbosity.BRIEF) -> Path:
     FileNotFoundError
         If the path is not found in any of the prioritized locations.
     """
-
     # Store the original path for reference in error messages.
     original_path = path
 
@@ -512,7 +393,7 @@ def get_path(path: Union[str, Path], verbosity=Verbosity.BRIEF) -> Path:
         if verbosity > Verbosity.BRIEF:  # VERBOSE, DEBUG
             print(
                 f"Unable to locate '{original_path}' as an absolute or relative path. "
-                "Trying Aviary package path."
+                'Trying Aviary package path.'
             )
         # Determine the path relative to the Aviary package.
         aviary_based_path = Path(get_aviary_resource_path(original_path))
@@ -524,7 +405,7 @@ def get_path(path: Union[str, Path], verbosity=Verbosity.BRIEF) -> Path:
         if verbosity > Verbosity.BRIEF:
             print(
                 f"Unable to locate '{aviary_based_path}' as an Aviary package path, "
-                "checking built-in models"
+                'checking built-in models'
             )
         try:
             hangar_based_path = get_model(original_path)
@@ -547,8 +428,8 @@ def get_path(path: Union[str, Path], verbosity=Verbosity.BRIEF) -> Path:
     return path
 
 
-def get_model(file_name: str) -> Path:
-    '''
+def get_model(file_name: str, verbosity=Verbosity.BRIEF) -> Path:
+    """
     This function attempts to find the path to a file or folder in aviary/models
     If the path cannot be found in any of the locations, a FileNotFoundError is raised.
 
@@ -566,8 +447,7 @@ def get_model(file_name: str) -> Path:
     ------
     FileNotFoundError
         If the path is not found.
-    '''
-
+    """
     # Get the path to Aviary's models
     path = Path('models', file_name)
     aviary_path = Path(get_aviary_resource_path(str(path)))
@@ -584,42 +464,14 @@ def get_model(file_name: str) -> Path:
 
     # If the path still doesn't exist, raise an error.
     if not aviary_path.exists():
-        raise FileNotFoundError(f"File or Folder not found in Aviary's hangar")
+        raise FileNotFoundError("File or Folder not found in Aviary's hangar")
+
     return aviary_path
-
-
-def wrapped_convert_units(val_unit_tuple, new_units):
-    """
-    Wrapper for OpenMDAO's convert_units function.
-
-    Parameters
-    ----------
-    val_unit_tuple : tuple
-        Tuple of the form (value, units) where value is a float and units is a
-        string.
-    new_units : str
-        New units to convert to.
-
-    Returns
-    -------
-    float
-        Value converted to new units.
-    """
-    value, units = val_unit_tuple
-
-    # can't convert units on None; return None
-    if value is None:
-        return None
-
-    if isinstance(value, (list, tuple)):
-        return [convert_units(v, units, new_units) for v in value]
-    else:
-        return convert_units(value, units, new_units)
 
 
 def sigmoidX(x, x0, alpha=1.0):
     """
-    Sigmoid used to smoothly transition between piecewise functions
+    Sigmoid used to smoothly transition between piecewise functions.
 
     Parameters
     ----------
@@ -630,13 +482,13 @@ def sigmoidX(x, x0, alpha=1.0):
     alpha: float
         steepness parameter.
 
-    returns
+    Returns
     -------
     float or array
         smoothed value from input parameter x.
     """
     if alpha == 0:
-        raise ValueError("alpha must be non-zero")
+        raise ValueError('alpha must be non-zero')
 
     if isinstance(x, np.ndarray):
         if np.isrealobj(x):
@@ -663,7 +515,7 @@ def sigmoidX(x, x0, alpha=1.0):
 
 def dSigmoidXdx(x, x0, alpha=1.0):
     """
-    Derivative of sigmoid function
+    Derivative of sigmoid function.
 
     Parameters
     ----------
@@ -673,13 +525,14 @@ def dSigmoidXdx(x, x0, alpha=1.0):
         the center of symmetry. When x = x0, sigmoidX = 1/2.
     alpha: float
         steepness parameter.
-    returns
+
+    Returns
     -------
     float or array
         smoothed derivative value from input parameter x.
     """
     if alpha == 0:
-        raise ValueError("alpha must be non-zero")
+        raise ValueError('alpha must be non-zero')
 
     if isinstance(x, np.ndarray):
         if np.isrealobj(x):

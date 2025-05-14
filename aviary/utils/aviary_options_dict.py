@@ -1,10 +1,7 @@
-from enum import Enum
-
-import numpy as np
-
 import openmdao.api as om
 from openmdao.core.constants import _UNDEFINED
-from openmdao.utils.units import convert_units
+
+from aviary.utils.utils import wrapped_convert_units
 
 
 def units_setter(opt_meta, value):
@@ -23,94 +20,13 @@ def units_setter(opt_meta, value):
     any
         Post processed value to set into the option.
     """
-    new_val, new_units = value
-    old_val, units = opt_meta['val']
-
-    if new_val is not None:
-        new_val = convert_units(new_val, new_units, units)
-
-    return (new_val, units)
-
-
-def bounds_units_setter(opt_meta, value):
-    """
-    Convert units for a tuple with form ((val1, val2, ...), "unitstring").
-
-    Parameters
-    ----------
-    opt_meta : dict
-        Dictionary of entries for the option.
-    value : any
-        New value for the option.
-
-    Returns
-    -------
-    any
-        Post processed value to set into the option.
-    """
-    val_tuple, new_units = value
+    new_val, _ = value
     _, units = opt_meta['val']
 
-    if units != new_units:
-        val_list = []
-        for val in val_tuple:
-            if val is not None:
-                val = convert_units(val, new_units, units)
-                val_list.append(val)
+    if new_val is not None:
+        new_val = wrapped_convert_units(value, units)
 
-        val_tuple = tuple(val_list)
-
-    return (val_tuple, units)
-
-
-def int_enum_setter(opt_meta, value):
-    """
-    Support setting the option with a string or int and converting it to the
-    proper enum object.
-
-    Parameters
-    ----------
-    opt_meta : dict
-        Dictionary of entries for the option.
-    value : any
-        New value for the option.
-
-    Returns
-    -------
-    any
-        Post processed value to set into the option.
-    """
-    types = opt_meta['types']
-    for type_ in types:
-        if type_ not in (list, np.ndarray):
-            enum_class = type_
-            break
-
-    if isinstance(value, Enum):
-        return value
-
-    elif isinstance(value, int):
-        return enum_class(value)
-
-    elif isinstance(value, str):
-        return getattr(enum_class, value)
-
-    elif isinstance(value, list):
-        values = []
-        for val in value:
-            if isinstance(val, Enum):
-                values.append(val)
-            elif isinstance(val, int):
-                values.append(enum_class(val))
-            elif isinstance(val, str):
-                values.append(getattr(enum_class, val))
-            else:
-                break
-        else:
-            return values
-
-    msg = f"Value '{value}' not valid for option with types {enum_class}"
-    raise TypeError(msg)
+    return (new_val, units)
 
 
 class AviaryOptionsDictionary(om.OptionsDictionary):
@@ -138,70 +54,38 @@ class AviaryOptionsDictionary(om.OptionsDictionary):
 
         # Loop over all user_options and set them.
         for name, val in data.items():
-
             # Support for legacy format (unitless)
-            if (isinstance(val, tuple) and
-                self._dict[name]['set_function'] is None and
-                    val[1] == "unitless"):
+            if (
+                isinstance(val, tuple)
+                and self._dict[name]['set_function'] is None
+                and val[1] == 'unitless'
+            ):
                 val = val[0]
 
             self[name] = val
 
     def declare_options(self):
-        """
-        Hook for declaring options for a phase builder.
-        """
+        """Hook for declaring options for a phase builder."""
         pass
 
-    def declare(self, name, default=_UNDEFINED, values=None, types=None, desc='', units=None,
-                upper=None, lower=None, check_valid=None, allow_none=False, deprecation=None):
-        r"""
-        Declare an option.
-
-        The value of the option must satisfy the following:
-        1. If values only was given when declaring, value must be in values.
-        2. If types only was given when declaring, value must satisfy isinstance(value, types).
-        3. It is an error if both values and types are given.
-
-        Parameters
-        ----------
-        name : str
-            Name of the option.
-        default : object or Null
-            Optional default value that must be valid under the above 3 conditions.
-        values : set or list or tuple or None
-            Optional list of acceptable option values.
-        types : type or tuple of types or None
-            Optional type or list of acceptable option types.
-        desc : str
-            Optional description of the option.
-        units : str
-            Units associated with the quantity in values.
-        upper : float or None
-            Maximum allowable value.
-        lower : float or None
-            Minimum allowable value.
-        check_valid : function or None
-            User-supplied function with arguments (name, value) that raises an exception
-            if the value is not valid.
-        allow_none : bool
-            If True, allow None as a value regardless of values or types.
-        deprecation : str or tuple or None
-            If None, it is not deprecated. If a str, use as a DeprecationWarning
-            during __setitem__ and __getitem__.  If a tuple of the form (msg, new_name),
-            display msg as with str, and forward any __setitem__/__getitem__ to new_name.
-        """
-
+    def declare(
+        self,
+        name,
+        default=_UNDEFINED,
+        values=None,
+        types=None,
+        desc='',
+        units=None,
+        upper=None,
+        lower=None,
+        check_valid=None,
+        allow_none=False,
+        deprecation=None,
+    ):
         if units is not None:
-
-            if isinstance(default, tuple):
-                set_function = bounds_units_setter
-            else:
-                set_function = units_setter
-
+            set_function = units_setter
             default = (default, units)
             types = tuple
-
         else:
             set_function = None
 
@@ -234,28 +118,17 @@ class AviaryOptionsDictionary(om.OptionsDictionary):
         -------
         val
         """
-
         if units is not None:
-
             if self._dict[key]['set_function'] is None:
-                self._raise(f"Option '{key}' does not have declared units.",
-                            exc_type=AttributeError)
+                self._raise(
+                    f"Option '{key}' does not have declared units.",
+                    exc_type=AttributeError,
+                )
 
             val, base_units = self[key]
 
             if units != base_units:
-
-                if isinstance(val, tuple):
-                    val_list = []
-                    for single_val in val:
-                        if single_val is not None:
-                            single_val = convert_units(single_val, base_units, units)
-                            val_list.append(single_val)
-
-                    val = tuple(val_list)
-
-                else:
-                    val = convert_units(val, base_units, units)
+                val = wrapped_convert_units((val, base_units), units)
 
         else:
             val = self[key]

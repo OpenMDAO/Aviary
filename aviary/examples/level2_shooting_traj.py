@@ -5,18 +5,33 @@ This theoretically could be the Level 2 (intermediate) user's
 entry point to Aviary.
 """
 
-from aviary.api import AviaryProblem
-from aviary.api import AnalysisScheme, SpeedType, AlphaModes, Verbosity
-from aviary.api import FlexibleTraj
-from aviary.api import SGMCruise, SGMDescent
-from aviary.api import Dynamic
+from aviary.api import (
+    AlphaModes,
+    AnalysisScheme,
+    AviaryProblem,
+    Dynamic,
+    FlexibleTraj,
+    SGMCruise,
+    SGMDescent,
+    SpeedType,
+    Verbosity,
+)
 
 
-def custom_run_aviary(aircraft_filename, optimizer=None,
-                      analysis_scheme=AnalysisScheme.COLLOCATION, objective_type=None,
-                      record_filename='dymos_solution.db', restart_filename=None, max_iter=50,
-                      run_driver=True, make_plots=True, phase_info_parameterization=None,
-                      optimization_history_filename=None, verbosity=Verbosity.BRIEF):
+def custom_run_aviary(
+    aircraft_filename,
+    optimizer=None,
+    analysis_scheme=AnalysisScheme.COLLOCATION,
+    objective_type=None,
+    record_filename='dymos_solution.db',
+    restart_filename=None,
+    max_iter=50,
+    run_driver=True,
+    make_plots=True,
+    phase_info_parameterization=None,
+    optimization_history_filename=None,
+    verbosity=Verbosity.BRIEF,
+):
     """
     This function runs the aviary optimization problem for the specified aircraft configuration and mission.
 
@@ -34,15 +49,18 @@ def custom_run_aviary(aircraft_filename, optimizer=None,
     # Build problem
     prob = AviaryProblem(analysis_scheme)
 
-    from aviary.interface.default_phase_info.two_dof_fiti import ascent_phases, \
-        add_default_sgm_args, phase_info_parameterization
+    from aviary.interface.default_phase_info.two_dof_fiti import (
+        add_default_sgm_args,
+        ascent_phases,
+        phase_info_parameterization,
+    )
 
     phase_info = {
         **ascent_phases,
         'cruise': {
             'kwargs': dict(
                 input_speed_type=SpeedType.MACH,
-                input_speed_units="unitless",
+                input_speed_units='unitless',
                 alpha_mode=AlphaModes.REQUIRED_LIFT,
             ),
             'builder': SGMCruise,
@@ -133,12 +151,15 @@ def custom_run_aviary(aircraft_filename, optimizer=None,
     prob.set_initial_guesses()
 
     prob.run_aviary_problem(
-        record_filename, restart_filename=restart_filename, run_driver=run_driver, make_plots=make_plots)
+        record_filename,
+        restart_filename=restart_filename,
+        run_driver=run_driver,
+        make_plots=make_plots,
+    )
 
     return prob
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     input_deck = 'models/large_single_aisle_1/large_single_aisle_1_GASP.csv'
-    custom_run_aviary(
-        input_deck, analysis_scheme=AnalysisScheme.SHOOTING, run_driver=False)
+    custom_run_aviary(input_deck, analysis_scheme=AnalysisScheme.SHOOTING, run_driver=False)

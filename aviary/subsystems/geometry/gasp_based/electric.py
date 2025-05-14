@@ -1,14 +1,12 @@
 import numpy as np
 import openmdao.api as om
 
-from aviary.variable_info.functions import add_aviary_input, add_aviary_output, add_aviary_option
+from aviary.variable_info.functions import add_aviary_input, add_aviary_option, add_aviary_output
 from aviary.variable_info.variables import Aircraft
 
 
 class CableSize(om.ExplicitComponent):
-    """
-    Computation of cable length for hybrid electric augmented system
-    """
+    """Computation of cable length for hybrid electric augmented system."""
 
     def initialize(self):
         add_aviary_option(self, Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES)
@@ -36,9 +34,8 @@ class CableSize(om.ExplicitComponent):
         )
 
         self.declare_partials(
-            Aircraft.Electrical.HYBRID_CABLE_LENGTH,
-            Aircraft.Fuselage.AVG_DIAMETER,
-            val=2.)
+            Aircraft.Electrical.HYBRID_CABLE_LENGTH, Aircraft.Fuselage.AVG_DIAMETER, val=2.0
+        )
 
     def compute(self, inputs, outputs):
         eng_span_frac = np.sum(inputs[Aircraft.Engine.WING_LOCATIONS])
@@ -57,5 +54,4 @@ class CableSize(om.ExplicitComponent):
             Aircraft.Electrical.HYBRID_CABLE_LENGTH,
             Aircraft.Engine.WING_LOCATIONS,
         ] = wingspan
-        J[Aircraft.Electrical.HYBRID_CABLE_LENGTH,
-            Aircraft.Wing.SPAN] = np.sum(eng_span_frac)
+        J[Aircraft.Electrical.HYBRID_CABLE_LENGTH, Aircraft.Wing.SPAN] = np.sum(eng_span_frac)

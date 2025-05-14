@@ -1,14 +1,13 @@
-import os
-from pathlib import Path
 import argparse
+import os
 import shutil
+from pathlib import Path
+
 from aviary.utils.functions import get_model
 
 
 def save_file(aviary_path: Path, outdir: Path, verbose=False) -> Path:
-    '''
-    Saves the file or folder specified into the output directory, creating directories as needed.
-    '''
+    """Saves the file or folder specified into the output directory, creating directories as needed."""
     outdir.mkdir(parents=True, exist_ok=True)
     if aviary_path.is_dir():
         if verbose:
@@ -27,17 +26,25 @@ def save_file(aviary_path: Path, outdir: Path, verbose=False) -> Path:
 
 
 def _setup_hangar_parser(parser: argparse.ArgumentParser):
-    def_outdir = os.path.join(os.getcwd(), "aviary_models")
+    def_outdir = os.path.join(os.getcwd(), 'aviary_models')
     parser.add_argument(
-        'input_decks', metavar='indecks', type=str, nargs='+', help='Name of file or folder to download from Aviary/models'
+        'input_decks',
+        metavar='indecks',
+        type=str,
+        nargs='+',
+        help='Name of file or folder to download from Aviary/models',
     )
     parser.add_argument(
-        "-o", "--outdir", default=def_outdir, help="Directory to write outputs. Defaults to aviary_models in the current directory."
+        '-o',
+        '--outdir',
+        default=def_outdir,
+        help='Directory to write outputs. Defaults to aviary_models in the current directory.',
     )
     parser.add_argument(
-        "-v", "--verbose",
-        action="store_true",
-        help="Enable verbose outputs",
+        '-v',
+        '--verbose',
+        action='store_true',
+        help='Enable verbose outputs',
     )
 
 

@@ -1,4 +1,3 @@
-import openmdao.api as om
 from openmdao.utils.assert_utils import assert_near_equal
 
 
@@ -28,7 +27,7 @@ def check_prob_outputs(prob, vals, rtol=1e-6):
         try:
             assert_near_equal(prob[path], val, tolerance=t)
         except ValueError as e:
-            errors.append(f"\n  {path}: {e}")
+            errors.append(f'\n  {path}: {e}')
 
     if errors:
-        raise ValueError("".join(errors))
+        raise ValueError(''.join(errors))

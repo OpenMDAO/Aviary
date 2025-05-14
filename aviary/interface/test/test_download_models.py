@@ -1,16 +1,15 @@
-import subprocess
+import shutil
 import unittest
 from pathlib import Path
-import shutil
 
-from aviary.utils.functions import get_aviary_resource_path
 from openmdao.utils.testing_utils import use_tempdirs
+
 from aviary.interface.download_models import get_model, save_file
+from aviary.utils.functions import get_aviary_resource_path
 
 
 @use_tempdirs
 class CommandEntryPointsTestCases(unittest.TestCase):
-
     def run_and_test_hangar(self, filenames, out_dir=''):
         # tests that the function runs successfully and that the files are generated
         if isinstance(filenames, str):
@@ -58,7 +57,7 @@ class CommandEntryPointsTestCases(unittest.TestCase):
         self.assertTrue(str(aviary_path) == str(expected_path))
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     unittest.main()
     # test = CommandEntryPointsTestCases()
     # test.test_single_file_with_path()
