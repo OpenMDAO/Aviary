@@ -13,7 +13,6 @@ Like all code contributions, it is important to run all unittests and benchmark 
 
 ## 3. AI should never be used as a source for data
 
-
 Similarly, AI should not be used to write unittests. While writing unittests can be a tedious step that may be tempting to automate, they are extremely critical to get right. The test setup and which values are used must be carefully chosen to ensure the code is properly being verified (and potentially validated) including potential edge cases.
 
 ## 3. Do not use AI for documentation
