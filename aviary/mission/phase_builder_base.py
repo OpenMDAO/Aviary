@@ -524,7 +524,6 @@ class PhaseBuilderBase(ABC):
                 ref=ref
             )
 
-
     def add_velocity_state(self, user_options):
         """Add velocity state: lower and upper bounds, reference, zero-reference, and state defect reference."""
         velocity_lower = user_options.get_val('velocity_lower', units='kn')
