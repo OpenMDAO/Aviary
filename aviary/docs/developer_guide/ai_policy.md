@@ -5,7 +5,7 @@ However, this advice is based on experience using current-generation AI models, 
 
 ## 1. Disclose any use of AI
 
-Any use of AI tools should be clearly disclosed. It is helpful to separate AI-generated code into their own commits, but is not always possible. Mention that AI was used in the commit messages. Give additional details in your pull request descriptions about how AI was used. Include a brief explanation of what you used the AI for (debugging, generating new code, etc.), which model you used, and which files were affected.
+Any use of AI tools should be clearly disclosed. It is helpful to separate AI-generated code into their own commits whenever possible. Mention that AI was used in the commit messages. Give additional details in your pull request descriptions about how AI was used. Include a brief explanation of what you used the AI for (debugging, generating new code, etc.), which model you used, and which files were affected.
 
 ## 2. Thoroughly test all AI-generated code
 
