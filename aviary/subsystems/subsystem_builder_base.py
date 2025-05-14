@@ -367,7 +367,9 @@ class SubsystemBuilderBase(ABC):
         """
         return {}
 
-    def build_post_mission(self, aviary_inputs, phase_info=None, phase_mission_bus_lengths=None, **kwargs):
+    def build_post_mission(
+        self, aviary_inputs, phase_info=None, phase_mission_bus_lengths=None, **kwargs
+    ):
         """
         Build an OpenMDAO System for the post-mission computations of the subsystem.
 

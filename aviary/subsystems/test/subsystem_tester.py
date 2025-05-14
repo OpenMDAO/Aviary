@@ -63,7 +63,9 @@ class TestSubsystemBuilderBase(unittest.TestCase):
         bus_variables = self.subsystem_builder.get_pre_mission_bus_variables()
 
         # Check that a dictionary is returned
-        self.assertIsInstance(bus_variables, dict, 'get_pre_mission_bus_variables should return a dictionary')
+        self.assertIsInstance(
+            bus_variables, dict, 'get_pre_mission_bus_variables should return a dictionary'
+        )
 
         for name, values in bus_variables.items():
             # Check that the bus_variable has the required keys
@@ -256,9 +258,10 @@ class TestSubsystemBuilderBase(unittest.TestCase):
         if not hasattr(self, 'aviary_values'):
             self.aviary_values = AviaryValues()
         phase_info = {}
-        phase_mission_bus_lengths = {"foo": 10, "bar": 11}
+        phase_mission_bus_lengths = {'foo': 10, 'bar': 11}
         post_mission_sys = self.subsystem_builder.build_post_mission(
-            self.aviary_values, phase_info, phase_mission_bus_lengths)
+            self.aviary_values, phase_info, phase_mission_bus_lengths
+        )
 
         if post_mission_sys is not None:
             # Check that post_mission_sys is an OpenMDAO system
