@@ -6,7 +6,7 @@
 # sls_airflow: 994.36
 # sfn_idle: 1.25
 
-Mach_Number (unitless), Altitude (ft), Throttle (unitless),        Thrust (lbf),Electric_Power (W),          T4 (degR)
+Mach_Number, Altitude (ft), Throttle,        Thrust (lbf),Electric_Power (W),          T4 (degR)
 0,0,0,   621.4719458090369,   621.4719458090369,0
 0,0,  0.4655924596050269,-1979.1619,-105.2491, 1556.0099999999998
 0,0,  0.5431912028725313,   1065.323499999999,   539.5527999999999, 1815.3449999999998
