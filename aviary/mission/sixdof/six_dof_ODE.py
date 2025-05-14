@@ -20,24 +20,6 @@ class SixDOF_ODE(_BaseODE):
         analysis_scheme = options['analysis_scheme']
         self.add_atmosphere(input_speed_type=SpeedType.MACH)
 
-        # self.add_subsystem(
-        #     name='veclocity_rate_comp',
-        #     subsys=om.ExecComp(
-        #         'velocity_rate = mach_rate * sos',
-        #         mach_rate = {'units': 'unitless/s', 'shape': (nn,)},
-        #         sos={'units': 'm/s', 'shape': (nn,)},
-        #         velocity_rate={'units': 'm/s**2', 'shape': (nn,)},
-        #         has_diag_partials=True,
-        #     ),
-        #     promotes_inputs=[
-        #         ('mach_rate', Dynamic.Atmosphere.MACH_RATE),
-        #         ('sos', Dynamic.Atmosphere.SPEED_OF_SOUND),
-        #     ],
-        #     promotes_outputs=[
-        #         'velocity_rate', Dynamic.Mission.VELOCITY_RATE
-        #     ],
-        # )
-
         sub1 = self.add_subsystem(
             'solver_sub',
             om.Group(),
