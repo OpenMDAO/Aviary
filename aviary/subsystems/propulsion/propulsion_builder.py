@@ -76,7 +76,7 @@ class CorePropulsionBuilder(PropulsionBuilderBase):
         Call get_controls() on all engine models and return combined result.
     get_linked_variables(self) -> dict:
         Call get_linked_variables() on all engine models and return combined result.
-    get_bus_variables(self) -> dict
+    get_pre_mission_bus_variables(self) -> dict
         Call get_linked_variables() on all engine models and return combined result.
     define_order(self) -> list:
         Call define_order() on all engine models and return combined result.
@@ -210,13 +210,13 @@ class CorePropulsionBuilder(PropulsionBuilderBase):
 
         return linked_vars
 
-    def get_bus_variables(self, aviary_inputs=None):
+    def get_pre_mission_bus_variables(self, aviary_inputs=None):
         """
         Call get_linked_variables() on all engine models and return combined result.
         """
         bus_vars = {}
         for engine in self.engine_models:
-            engine_bus_vars = engine.get_bus_variables(aviary_inputs)
+            engine_bus_vars = engine.get_pre_mission_bus_variables(aviary_inputs)
             bus_vars.update(engine_bus_vars)
 
         # append propulsion group name to all engine-level bus variables

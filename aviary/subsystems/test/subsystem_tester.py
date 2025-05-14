@@ -56,12 +56,12 @@ class TestSubsystemBuilderBase(unittest.TestCase):
         for var in linked_variables:
             self.assertIsInstance(var, str)
 
-    def test_get_bus_variables(self):
-        bus_variables = self.subsystem_builder.get_bus_variables()
+    def test_get_pre_mission_bus_variables(self):
+        bus_variables = self.subsystem_builder.get_pre_mission_bus_variables()
 
         # Check that a dictionary is returned
         self.assertIsInstance(
-            bus_variables, dict, 'get_bus_variables should return a dictionary')
+            bus_variables, dict, 'get_pre_mission_bus_variables should return a dictionary')
 
         for name, values in bus_variables.items():
             # Check that the bus_variable has the required keys

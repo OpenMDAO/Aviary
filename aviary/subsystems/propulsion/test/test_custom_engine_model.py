@@ -137,7 +137,7 @@ class SimpleTestEngine(EngineModel):
             controls_dict['different_throttle']['order'] = 3
         return controls_dict
 
-    def get_bus_variables(self, aviary_inputs):
+    def get_pre_mission_bus_variables(self, aviary_inputs):
         bus_dict = {
             "y": {
                 "mission_name": "y",

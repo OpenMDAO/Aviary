@@ -39,7 +39,7 @@ class TableEngineBuilder(EngineModel):
         Builds an OpenMDAO system for the pre-mission computations of the subsystem.
     build_mission(self, num_nodes, aviary_inputs) -> openmdao.core.System:
         Builds an OpenMDAO system for the mission computations of the subsystem.
-    get_bus_variables(self) -> dict:
+    get_pre_mission_bus_variables(self) -> dict:
         Transfer training data from pre-mission to mission.
     get_controls(self, phase_name) -> dict:
         Builds dictionary of controls for engine off-design.
@@ -185,7 +185,7 @@ class TableEngineBuilder(EngineModel):
         )
         return engine
 
-    def get_bus_variables(self):
+    def get_pre_mission_bus_variables(self):
         """Transfer training data from pre-mission to mission"""
         return vars_to_connect
 

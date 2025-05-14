@@ -772,7 +772,7 @@ class AviaryProblem(om.Problem):
                 timeseries_to_add = subsystem.get_outputs()
                 for timeseries in timeseries_to_add:
                     phase.add_timeseries_output(timeseries)
-                mbvars = subsystem.get_mission_bus_variables(
+                mbvars = subsystem.get_post_mission_bus_variables(
                     self.aviary_inputs, self.phase_info)
                 if mbvars:
                     mbvars_this_phase = mbvars.get(phase_name, None)
@@ -1638,7 +1638,7 @@ class AviaryProblem(om.Problem):
         base_phases = list(self.phase_info.keys())
 
         for external_subsystem in all_subsystems:
-            bus_variables = external_subsystem.get_bus_variables(self.aviary_inputs)
+            bus_variables = external_subsystem.get_pre_mission_bus_variables(self.aviary_inputs)
             if bus_variables is not None:
                 for bus_variable, variable_data in bus_variables.items():
                     mission_variable_name = variable_data['mission_name']
@@ -1718,7 +1718,7 @@ class AviaryProblem(om.Problem):
 
         # Loop through all external subsystems.
         for external_subsystem in all_subsystems:
-            for phase_name, var_mapping in external_subsystem.get_mission_bus_variables(aviary_inputs=self.aviary_inputs, phase_info=self.phase_info).items():
+            for phase_name, var_mapping in external_subsystem.get_post_mission_bus_variables(aviary_inputs=self.aviary_inputs, phase_info=self.phase_info).items():
                 for mission_variable_name, post_mission_variable_names in var_mapping.items():
 
                     if not isinstance(post_mission_variable_names, list):

@@ -141,7 +141,7 @@ class CustomBuilder(SubsystemBuilderBase):
                                     )
         return sub_group
 
-    def get_bus_variables(self, aviary_inputs):
+    def get_pre_mission_bus_variables(self, aviary_inputs):
         shape = (aviary_inputs.get_val("the_shape_for_the_thing_dim0"),
                  aviary_inputs.get_val("the_shape_for_the_thing_dim1"))
         name = self.name
@@ -196,7 +196,7 @@ class CustomBuilder(SubsystemBuilderBase):
 
         return vars_to_connect
 
-    def get_mission_bus_variables(self, aviary_inputs, phase_info):
+    def get_post_mission_bus_variables(self, aviary_inputs, phase_info):
         name = self.name
         out = {}
         for phase_name, phase_data in phase_info.items():
@@ -239,7 +239,7 @@ class CustomBuilder(SubsystemBuilderBase):
         return group
 
 
-# @use_tempdirs
+@use_tempdirs
 class TestExternalSubsystemBus(unittest.TestCase):
 
     def test_external_subsystem_bus(self):
