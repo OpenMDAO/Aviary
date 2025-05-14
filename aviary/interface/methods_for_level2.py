@@ -762,7 +762,7 @@ class AviaryProblem(om.Problem):
                 self.phase_info[phase_name]['external_subsystems']
             )
 
-            subsystem_options = phase_info[phase_name].get('subsystem_options',{})
+            subsystem_options = phase_info[phase_name].get('subsystem_options', {})
 
             for subsystem in all_subsystems:
                 if subsystem.name in subsystem_options:
