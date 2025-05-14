@@ -1,12 +1,13 @@
 import numpy as np
 import openmdao.api as om
 
-# Here will import the 6dof equations of motion
-
 from aviary.mission.base_ode import BaseODE as _BaseODE
 
 from aviary.variable_info.enums import AnalysisScheme, SpeedType, ThrottleAllocation
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
+
+from aviary.mission.sixdof.six_dof_EOM import SixDOF_EOM
+from aviary.mission.sixdof.force_component_calc import ForceComponentResolver
 
 class SixDOF_ODE(_BaseODE):
 
@@ -19,23 +20,23 @@ class SixDOF_ODE(_BaseODE):
         analysis_scheme = options['analysis_scheme']
         self.add_atmosphere(input_speed_type=SpeedType.MACH)
 
-        self.add_subsystem(
-            name='veclocity_rate_comp',
-            subsys=om.ExecComp(
-                'velocity_rate = mach_rate * sos',
-                mach_rate = {'units': 'unitless/s', 'shape': (nn,)},
-                sos={'units': 'm/s', 'shape': (nn,)},
-                velocity_rate={'units': 'm/s**2', 'shape': (nn,)},
-                has_diag_partials=True,
-            ),
-            promotes_inputs=[
-                ('mach_rate', Dynamic.Atmosphere.MACH_RATE),
-                ('sos', Dynamic.Atmosphere.SPEED_OF_SOUND),
-            ],
-            promotes_outputs=[
-                'velocity_rate', Dynamic.Mission.VELOCITY_RATE
-            ],
-        )
+        # self.add_subsystem(
+        #     name='veclocity_rate_comp',
+        #     subsys=om.ExecComp(
+        #         'velocity_rate = mach_rate * sos',
+        #         mach_rate = {'units': 'unitless/s', 'shape': (nn,)},
+        #         sos={'units': 'm/s', 'shape': (nn,)},
+        #         velocity_rate={'units': 'm/s**2', 'shape': (nn,)},
+        #         has_diag_partials=True,
+        #     ),
+        #     promotes_inputs=[
+        #         ('mach_rate', Dynamic.Atmosphere.MACH_RATE),
+        #         ('sos', Dynamic.Atmosphere.SPEED_OF_SOUND),
+        #     ],
+        #     promotes_outputs=[
+        #         'velocity_rate', Dynamic.Mission.VELOCITY_RATE
+        #     ],
+        # )
 
         sub1 = self.add_subsystem(
             'solver_sub',
@@ -43,13 +44,52 @@ class SixDOF_ODE(_BaseODE):
             promotes=['*']
         )
 
+        sub1.add_subsystem(
+            'true_airspeed_comp',
+            subsys=om.ExecComp(
+                'true_airspeed = (axial_vel**2 + lat_vel**2 + vert_vel**2)**0.5',
+                true_airspeed = {'units': 'm/s', 'shape': (nn,)},
+                axial_vel = {'units': 'm/s', 'shape': (nn,)},
+                lat_vel = {'units': 'm/s', 'shape': (nn,)}, 
+                vert_vel = {'units': 'm/s', 'shape': (nn,)},
+                has_diag_partials=True
+            ),
+            promotes_inputs=[
+                'axial_vel',
+                'lat_vel',
+                'vert_vel',
+            ],
+            promotes_outputs=[
+                'true_airspeed'
+            ]
+        )
+
+        sub1.add_subsystem(
+            'sum_forces_comp',
+            ForceComponentResolver(num_nodes=nn),
+            promotes_inputs=[
+                'u',
+                'v',
+                'w',
+                'drag',
+                'lift',
+                'side',
+                'thrust',
+            ],
+            promotes_outputs=[
+                'Fx',
+                'Fy',
+                'Fz',
+            ]
+        )
+
         self.add_core_subsystems(solver_group=sub1)
 
         self.add_external_subsystems(solver_group=sub1)
 
         sub1.add_subsystem(
-            name='SixDOF_EOM',
-            subsys=SixDOF_EOM(num_nodes=nn),
+            'SixDOF_EOM',
+            SixDOF_EOM(num_nodes=nn),
             promotes_inputs=[
                 'mass',
                 'axial_vel',
@@ -71,7 +111,7 @@ class SixDOF_ODE(_BaseODE):
                 'J_xz',
                 'J_xx',
                 'J_yy',
-                'J_zz',
+                'J_zz'
             ],
             promotes_outputs=[
                 'dx_accel',
@@ -85,15 +125,15 @@ class SixDOF_ODE(_BaseODE):
                 'yaw_angle_rate_eq',
                 'dx_dt',
                 'dy_dt',
-                'dz_dt',
+                'dz_dt'
             ]
         )
 
-        self.set_input_defaults(Dynamic.Atmosphere.MACH, val=np.ones(nn), units='unitless')
-        self.set_input_defaults(Dynamic.Vehicle.MASS, val=np.ones(nn), units='kg')
-        self.set_input_defaults(Dynamic.Mission.VELOCITY, val=np.ones(nn), units='m/s')
-        self.set_input_defaults(Dynamic.Mission.ALTITUDE, val=np.ones(nn), units='m')
-        self.set_input_defaults(Dynamic.Mission.ALTITUDE_RATE, val=np.ones(nn), units='m/s')
+        # self.set_input_defaults(Dynamic.Atmosphere.MACH, val=np.ones(nn), units='unitless')
+        # self.set_input_defaults(Dynamic.Vehicle.MASS, val=np.ones(nn), units='kg')
+        # self.set_input_defaults(Dynamic.Mission.VELOCITY, val=np.ones(nn), units='m/s')
+        # self.set_input_defaults(Dynamic.Mission.ALTITUDE, val=np.ones(nn), units='m')
+        # self.set_input_defaults(Dynamic.Mission.ALTITUDE_RATE, val=np.ones(nn), units='m/s')
 
         print_level = 0 if analysis_scheme is AnalysisScheme.SHOOTING else 2
 

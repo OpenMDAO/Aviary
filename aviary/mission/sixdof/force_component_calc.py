@@ -96,17 +96,17 @@ class ForceComponentResolver(om.ExplicitComponent):
         D = inputs['drag']
         T = inputs['thrust']
         L = inputs['lift']
-        S = inputs['side'] # side force 
+        S = inputs['side'] # side force -- assume 0 for now
 
         # true air speed
 
         V = np.sqrt(u**2 + v**2 + w**2)
 
-        # ------------------------------------------------------------------------------
-        # ----------------------------- Drag calculation -------------------------------
-        # ------------------------------------------------------------------------------
+        # angle of attack
 
         alpha = np.arctan(w / u)
+
+        # side slip angle
 
         beta = np.arctan(v / np.sqrt(u**2 + w**2))
 
@@ -117,9 +117,9 @@ class ForceComponentResolver(om.ExplicitComponent):
         sin_a = np.sin(alpha)
         sin_b = np.sin(beta)
 
-        Fx_NoThrust = -(cos_a * cos_b * D - cos_a * sin_b * S - sin_a * L)
-        Fy_NoThrust = -(sin_b * D + cos_b * S)
-        Fz_NoThrust = -(sin_a * cos_b * D + sin_a * sin_b * S + cos_a * L)
+        outputs['Fx'] = -(cos_a * cos_b * D - cos_a * sin_b * S - sin_a * L)
+        outputs['Fy'] = -(sin_b * D + cos_b * S)
+        outputs['Fz'] = -(sin_a * cos_b * D + sin_a * sin_b * S + cos_a * L)
 
 
 
