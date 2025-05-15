@@ -223,7 +223,7 @@ if __name__ == '__main__':
 
 
     #prob.model.cog.options['airfoil_data_file'] = 'Clark_Y.dat'
-    prob.model.cog.options['material'] = 'Reinfoced Carbon-Carbon'
+    prob.model.cog.options['material'] = 'Reinforced Carbon-Carbon'
     prob.model.cog.options['airfoil_type'] = '2412'
 
     # Run the model

@@ -18,15 +18,8 @@ class SixDOF_ODE(_BaseODE):
         options = self.options
         nn = options['num_nodes']
         analysis_scheme = options['analysis_scheme']
-        self.add_atmosphere(input_speed_type=SpeedType.MACH)
 
-        sub1 = self.add_subsystem(
-            'solver_sub',
-            om.Group(),
-            promotes=['*']
-        )
-
-        sub1.add_subsystem(
+        self.add_subsystem(
             'true_airspeed_comp',
             subsys=om.ExecComp(
                 'true_airspeed = (axial_vel**2 + lat_vel**2 + vert_vel**2)**0.5',
@@ -44,6 +37,14 @@ class SixDOF_ODE(_BaseODE):
             promotes_outputs=[
                 'true_airspeed'
             ]
+        )
+
+        self.add_atmosphere(input_speed_type=SpeedType.TAS) 
+
+        sub1 = self.add_subsystem(
+            'solver_sub',
+            om.Group(),
+            promotes=['*']
         )
 
         sub1.add_subsystem(

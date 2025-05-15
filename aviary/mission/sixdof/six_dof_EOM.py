@@ -15,104 +15,109 @@ class SixDOF_EOM(om.ExplicitComponent):
     Reference: https://youtu.be/hr_PqdkG6XY?si=_hFAZZMnk58eV9GJ
 
     """
+
+    def initialize(self):
+        self.options.declare('num_nodes', types=int)
     
     def setup(self):
+        nn = self.options['num_nodes']
+
         self.add_input(
             'mass',
-            val=0.0,
+            val=np.zeros(nn),
             units='kg',
             desc="mass -- assume constant"
         )
 
         self.add_input(
             'axial_vel',
-            val=0.0,
+            val=np.zeros(nn),
             units='m/s', # meters per second
             desc="axial velocity of CM wrt inertial CS resolved in aircraft body fixed CS"
         )
 
         self.add_input(
             'lat_vel',
-            val=0.0,
+            val=np.zeros(nn),
             units='m/s',
             desc="lateral velocity of CM wrt inertial CS resolved in aircraft body fixed CS"
         )
 
         self.add_input(
             'vert_vel',
-            val=0.0,
+            val=np.zeros(nn),
             units='m/s',
             desc="vertical velocity of CM wrt inertial CS resolved in aircraft body fixed CS"
         )
 
         self.add_input(
             'roll_ang_vel',
-            val=0.0,
+            val=np.zeros(nn),
             units='rad/s', # radians per second
             desc="roll angular velocity of body fixed CS wrt intertial CS"
         )
 
         self.add_input(
             'pitch_ang_vel',
-            val=0.0,
+            val=np.zeros(nn),
             units='rad/s',
             desc="pitch angular velocity of body fixed CS wrt intertial CS"
         )
 
         self.add_input(
             'yaw_ang_vel',
-            val=0.0,
+            val=np.zeros(nn),
             units='rad/s',
             desc="yaw angular velocity of body fixed CS wrt intertial CS"
         )
 
         self.add_input(
             'roll',
-            val=0.0,
+            val=np.zeros(nn),
             units='rad', # radians
             desc="roll angle"
         )
 
         self.add_input(
             'pitch',
-            val=0.0,
+            val=np.zeros(nn),
             units='rad',
             desc="pitch angle"
         )
 
         self.add_input(
             'yaw',
-            val=0.0,
+            val=np.zeros(nn),
             units='rad',
             desc="yaw angle"
         )
 
-        self.add_input(
-            'x',
-            val=0.0,
-            units='m',
-            desc="x-axis position of aircraft resolved in North-East-Down (NED) CS"
-        )
+        # self.add_input(
+        #     'x',
+        #     val=0.0,
+        #     units='m',
+        #     desc="x-axis position of aircraft resolved in North-East-Down (NED) CS"
+        # )
 
-        self.add_input(
-            'y',
-            val=0.0,
-            units='m',
-            desc="y-axis position of aircraft resolved in NED CS"
-        )
+        # self.add_input(
+        #     'y',
+        #     val=0.0,
+        #     units='m',
+        #     desc="y-axis position of aircraft resolved in NED CS"
+        # )
 
-        self.add_input(
-            'z',
-            val=0.0,
-            units='m',
-            desc="z-axis position of aircraft resolved in NED CS"
-        )
+        # self.add_input(
+        #     'z',
+        #     val=0.0,
+        #     units='m',
+        #     desc="z-axis position of aircraft resolved in NED CS"
+        # )
 
-        self.add_input(
-            'time',
-            val=0.0,
-            desc="scalar time in seconds"
-        )
+        # self.add_input(
+        #     'time',
+        #     val=0.0,
+        #     desc="scalar time in seconds"
+        # )
 
         self.add_input(
             'g',
@@ -123,42 +128,42 @@ class SixDOF_EOM(om.ExplicitComponent):
 
         self.add_input(
             'Fx_ext',
-            val=0.0,
+            val=np.zeros(nn),
             units='N',
             desc="external forces in the x direciton"
         )
 
         self.add_input(
             'Fy_ext',
-            val=0.0,
+            val=np.zeros(nn),
             units='N',
             desc="external forces in the y direction"
         )
 
         self.add_input(
             'Fz_ext',
-            val=0.0,
+            val=np.zeros(nn),
             units='N',
             desc="external forces in the z direction"
         )
 
         self.add_input(
             'lx_ext',
-            val=0.0,
+            val=np.zeros(nn),
             units='kg*m**2/s**2', # kg times m^2 / s^2
             desc="external moments in the x direction"
         )
 
         self.add_input(
             'ly_ext',
-            val=0.0,
+            val=np.zeros(nn),
             units='kg*m**2/s**2',
             desc="external moments in the y direction"
         )
 
         self.add_input(
             'lz_ext',
-            val=0.0,
+            val=np.zeros(nn),
             units='kg*m**2/s**2',
             desc="external moments in the z direction"
         )
@@ -170,7 +175,7 @@ class SixDOF_EOM(om.ExplicitComponent):
 
         self.add_input(
             'J_xz',
-            val=0.0,
+            val=np.zeros(1),
             units='kg*m**2',
             desc="x-z (top right and bottom left corner of 3x3 matrix, assuming symmetry) " \
             "component"
@@ -178,21 +183,21 @@ class SixDOF_EOM(om.ExplicitComponent):
 
         self.add_input(
             'J_xx',
-            val=0.0,
+            val=np.zeros(1),
             units='kg*m**2',
             desc="first diag component"
         )
 
         self.add_input(
             'J_yy',
-            val=0.0,
+            val=np.zeros(1),
             units='kg*m**2',
             desc="second diag component"
         )
 
         self.add_input(
             'J_zz',
-            val=0.0,
+            val=np.zeros(1),
             units='kg*m**2',
             desc="third diag component"
         )
@@ -201,7 +206,7 @@ class SixDOF_EOM(om.ExplicitComponent):
 
         self.add_output(
             'dx_accel',
-            val=0.0,
+            val=np.zeros(nn),
             units='m/s**2', # meters per seconds squared
             desc="x-axis (roll-axis) velocity equation, " \
             "state: axial_vel"
@@ -209,7 +214,7 @@ class SixDOF_EOM(om.ExplicitComponent):
 
         self.add_output(
             'dy_accel',
-            val=0.0,
+            val=np.zeros(nn),
             units='m/s**2',
             desc="y-axis (pitch axis) velocity equation, " \
             "state: lat_vel"
@@ -217,7 +222,7 @@ class SixDOF_EOM(om.ExplicitComponent):
 
         self.add_output(
             'dz_accel',
-            val=0.0,
+            val=np.zeros(nn),
             units='m/s**2',
             desc="z-axis (yaw axis) velocity equation, " \
             "state: vert_vel"
@@ -225,7 +230,7 @@ class SixDOF_EOM(om.ExplicitComponent):
 
         self.add_output(
             'roll_accel',
-            val=0.0,
+            val=np.zeros(nn),
             units='rad/s**2', # radians per second squared
             desc="roll equation, " \
             "state: roll_ang_vel"
@@ -233,7 +238,7 @@ class SixDOF_EOM(om.ExplicitComponent):
 
         self.add_output(
             'pitch_accel',
-            val=0.0,
+            val=np.zeros(nn),
             units='rad/s**2',
             desc="pitch equation, " \
             "state: pitch_ang_vel"
@@ -241,7 +246,7 @@ class SixDOF_EOM(om.ExplicitComponent):
 
         self.add_output(
             'yaw_accel',
-            val=0.0,
+            val=np.zeros(nn),
             units='rad/s**2',
             desc="yaw equation, " \
             "state: yaw_ang_vel"
@@ -249,42 +254,42 @@ class SixDOF_EOM(om.ExplicitComponent):
 
         self.add_output(
             'roll_angle_rate_eq',
-            val=0.0,
+            val=np.zeros(nn),
             units='rad/s',
             desc="Euler angular roll rate"
         )
 
         self.add_output(
             'pitch_angle_rate_eq',
-            val=0.0,
+            val=np.zeros(nn),
             units='rad/s',
             desc="Euler angular pitch rate"
         )
 
         self.add_output(
             'yaw_angle_rate_eq',
-            val=0.0,
+            val=np.zeros(nn),
             units='rad/s',
             desc="Euler angular yaw rate"
         )
 
         self.add_output(
             'dx_dt',
-            val=0.0,
+            val=np.zeros(nn),
             units='m/s',
             desc="x-position derivative of aircraft COM wrt point in NED CS" 
         )
 
         self.add_output(
             'dy_dt',
-            val=0.0,
+            val=np.zeros(nn),
             units='m/s',
             desc="y-position derivative of aircraft COM wrt point in NED CS"
         )
 
         self.add_output(
             'dz_dt',
-            val=0.0,
+            val=np.zeros(nn),
             units='m/s',
             desc="z-position derivative of aircraft COM wrt point in NED CS"
         )
@@ -310,10 +315,10 @@ class SixDOF_EOM(om.ExplicitComponent):
         roll = inputs['roll'] # phi
         pitch = inputs['pitch'] # theta
         yaw = inputs['yaw'] # psi
-        x = inputs['x'] # p1
-        y = inputs['y'] # p2
-        z = inputs['z'] # p3
-        time = inputs['time']
+        # x = inputs['x'] # p1
+        # y = inputs['y'] # p2
+        # z = inputs['z'] # p3
+        # time = inputs['time']
         g = inputs['g']
         Fx_ext = inputs['Fx_ext']
         Fy_ext = inputs['Fy_ext']
@@ -403,3 +408,58 @@ class SixDOF_EOM(om.ExplicitComponent):
         outputs['dx_dt'] = dx_dt
         outputs['dy_dt'] = dy_dt
         outputs['dz_dt'] = dz_dt
+
+
+if __name__ == "__main__":
+
+    p = om.Problem()
+    p.model = om.Group()
+    des_vars = p.model.add_subsystem('des_vars', om.IndepVarComp(), promotes=['*'])
+
+    des_vars.add_output('mass', 3.0, units='kg')
+    des_vars.add_output('axial_vel', 0.1, units='m/s')
+    des_vars.add_output('lat_vel', 0.7, units='m/s')
+    des_vars.add_output('vert_vel', 0.12, units='m/s')
+    des_vars.add_output('roll_ang_vel', 0.1, units='rad/s')
+    des_vars.add_output('pitch_ang_vel', 0.9, units='rad/s')
+    des_vars.add_output('yaw_ang_vel', 0.12, units='rad/s')
+    des_vars.add_output('roll', 0.9, units='rad')
+    des_vars.add_output('pitch', 0.19, units='rad')
+    des_vars.add_output('yaw', 0.70, units='rad')
+    des_vars.add_output('g', 9.81, units='m/s**2')
+    des_vars.add_output('Fx_ext', 0.1, units='N')
+    des_vars.add_output('Fy_ext', 0.9, units='N')
+    des_vars.add_output('Fz_ext', 0.12, units='N')
+    des_vars.add_output('lx_ext', 3.0, units='N*m')
+    des_vars.add_output('ly_ext', 4.0, units='N*m')
+    des_vars.add_output('lz_ext', 5.0, units='N*m')
+    des_vars.add_output('J_xz', 9.0, units='kg*m**2')
+    des_vars.add_output('J_xx', 50.0, units='kg*m**2')
+    des_vars.add_output('J_yy', 51.0, units='kg*m**2')
+    des_vars.add_output('J_zz', 52.0, units='kg*m**2')
+
+    p.model.add_subsystem('SixDOF_EOM', SixDOF_EOM(num_nodes=1), promotes=['*'])
+
+    p.setup(check=False, force_alloc_complex=True)
+
+    p.run_model()
+
+    dx_accel = p.get_val('dx_accel')
+    dy_accel = p.get_val('dy_accel')
+    dz_accel = p.get_val('dz_accel')
+    roll_accel = p.get_val('roll_accel')
+    pitch_accel = p.get_val('pitch_accel')
+    yaw_accel = p.get_val('yaw_accel')
+    roll_angle_rate_eq = p.get_val('roll_angle_rate_eq')
+    pitch_angle_rate_eq = p.get_val('pitch_angle_rate_eq')
+    yaw_angle_rate_eq = p.get_val('yaw_angle_rate_eq')
+    dx_dt = p.get_val('dx_dt')
+    dy_dt = p.get_val('dy_dt')
+    dz_dt = p.get_val('dz_dt')
+
+    print(f"Accelerations in x,y,z: {dx_accel}, {dy_accel}, {dz_accel}")
+    print(f"Euler angle accels in roll, pitch, yaw: {roll_accel}, {pitch_accel}, {yaw_accel}")
+    print(f"Euler angular rates: {roll_angle_rate_eq}, {pitch_angle_rate_eq}, {yaw_angle_rate_eq}")
+    print(f"velocities: {dx_dt}, {dy_dt}, {dz_dt}")
+
+
