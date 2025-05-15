@@ -327,9 +327,14 @@ class HeightEnergyProblemConfigurator(ProblemConfiguratorBase):
         else:
             first_flight_phase_name = list(prob.phase_info.keys())[0]
 
-            # TODO: I don't think we have to do this anymore.
+            # Since we don't have the takeoff subsystem, we need to use the gross mass as the
+            # source for the mass at the beginning of the first flight phase. It turns out to be
+            # more robust to use a constraint rather than connecting it directly.
             first_flight_phase = prob.traj._phases[first_flight_phase_name]
-            first_flight_phase.set_state_options(Dynamic.Vehicle.MASS, fix_initial=False)
+            first_flight_phase.set_state_options(
+                Dynamic.Vehicle.MASS,
+                fix_initial=False,
+                input_initial=False)
 
             # connect summary mass to the initial guess of mass in the first phase
             eq = prob.model.add_subsystem(

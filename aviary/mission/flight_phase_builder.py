@@ -44,7 +44,7 @@ class FlightPhaseOptions(AviaryOptionsDictionary):
 
         # TODO: These defaults aren't great, but need to keep things the same for now.
         defaults = {
-            'mass_ref': 1e6,
+            'mass_ref': 1e4,
             'mass_defect_ref': 1e6,
             'mass_bounds': (0.0, None),
         }
