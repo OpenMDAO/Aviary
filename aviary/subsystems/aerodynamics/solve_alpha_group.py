@@ -22,7 +22,7 @@ class SolveAlphaGroup(om.Group):
                 'required_lift = mass * grav_metric',
                 grav_metric={'val': constants.GRAV_METRIC_GASP},
                 mass={'units': 'kg', 'shape': num_nodes},
-                required_lift={'shape': num_nodes},
+                required_lift={'units': 'lbf', 'shape': num_nodes},
                 has_diag_partials=True,
             ),
             promotes_inputs=[
@@ -42,6 +42,7 @@ class SolveAlphaGroup(om.Group):
             res_ref=1.0e6,
             lhs_name=Dynamic.Vehicle.LIFT,
             rhs_name='required_lift',
+            eq_units='lbf',
         )
 
         self.connect(
