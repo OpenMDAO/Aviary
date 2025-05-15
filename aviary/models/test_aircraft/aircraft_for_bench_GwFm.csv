@@ -142,7 +142,7 @@ aircraft:wing:thickness_to_chord_root,0.15,unitless
 aircraft:wing:thickness_to_chord_tip,0.12,unitless
 aircraft:wing:zero_lift_angle,-1.2,deg
 mission:constraints:max_mach,0.785,unitless
-mission:design:cruise_altitude,35000,ft
+mission:design:cruise_altitude,37500,ft # double check against phase_info
 mission:design:gross_mass,175400.0,lbm
 mission:design:lift_coefficient_max_flaps_up,1.2596,unitless
 mission:design:mach,0.8,unitless
