@@ -1,4 +1,6 @@
-"""Define meta data associated with variables in the Aviary data hierarchy."""
+"""
+Define meta data associated with variables in the Aviary data hierarchy.
+"""
 
 from copy import deepcopy
 from pathlib import Path
@@ -341,23 +343,6 @@ add_meta_data(
 # ========================================================================================================================
 
 add_meta_data(
-    Aircraft.BWB.CABIN_AREA,
-    meta_data=_MetaData,
-    historical_name={
-        'GASP': None,
-        # ['&DEFINE.FUSEIN.ACABIN', 'WDEF.ACABIN'],
-        'FLOPS': 'FUSEIN.ACABIN',
-        'LEAPS1': [
-            'aircraft.inputs.L0_blended_wing_body_design.cabin_area',
-            'aircraft.cached.L0_blended_wing_body_design.cabin_area',
-        ],
-    },
-    units='ft**2',
-    desc='fixed area of passenger cabin for blended wing body transports',
-    default_value=0.0,
-)
-
-add_meta_data(
     Aircraft.BWB.NUM_BAYS,
     meta_data=_MetaData,
     historical_name={
@@ -386,7 +371,7 @@ add_meta_data(
     },
     units='deg',
     desc='forebody sweep angle',
-    default_value=45.0,
+    default_value=0.0,
 )
 
 #   _____                                      _
@@ -1815,6 +1800,15 @@ add_meta_data(
     default_value=1.0,
 )
 
+add_meta_data(
+    Aircraft.Electrical.SYSTEM_MASS_PER_PASSENGER,
+    meta_data=_MetaData,
+    historical_name={'GASP': 'INGASP.CW(15)', 'FLOPS': None, 'LEAPS1': None},
+    units='lbm',
+    desc='electrical system weight per passenger. In GASP, default 16.0',
+    default_value=0.0,
+)
+
 #  ______                   _
 # |  ____|                 (_)
 # | |__     _ __     __ _   _   _ __     ___
@@ -3124,7 +3118,7 @@ add_meta_data(
     meta_data=_MetaData,
     historical_name={'GASP': None, 'FLOPS': None, 'LEAPS1': None},
     units='lbm',
-    desc='Base furnishings system mass without additional 1% empty mass',
+    desc='For FLOPS based, base furnishings system mass without additional 1% empty mass',
     default_value=0.0,
 )
 
@@ -3138,8 +3132,21 @@ add_meta_data(
         'LEAPS1': 'aircraft.inputs.L0_overrides.furnishings_group_weight',
     },
     units='unitless',
-    desc='Furnishings system mass scaler',
+    desc='Furnishings system mass scaler. In GASP based, it is applicale if gross mass '
+    '> 10000 lbs and number of passengers >= 50. Set it to 0.0 if not use.',
     default_value=1.0,
+)
+
+add_meta_data(
+    Aircraft.Furnishings.USE_EMPIRICAL_EQUATION,
+    meta_data=_MetaData,
+    historical_name={'GASP': None, 'FLOPS': None, 'LEAPS1': None},
+    units='unitless',
+    desc='In GASP based, indicate whether use commonly used empirical furnishing weight equation. '
+    'This applies only when gross mass > 10000 and number of passengers >= 50.',
+    types=bool,
+    option=True,
+    default_value=True,
 )
 
 #  ______                        _
@@ -3192,6 +3199,23 @@ add_meta_data(
     },
     units='ft',
     desc='average fuselage diameter',
+    default_value=0.0,
+)
+
+add_meta_data(
+    Aircraft.Fuselage.CABIN_AREA,
+    meta_data=_MetaData,
+    historical_name={
+        'GASP': None,
+        # ['&DEFINE.FUSEIN.ACABIN', 'WDEF.ACABIN'],
+        'FLOPS': 'FUSEIN.ACABIN',
+        'LEAPS1': [
+            'aircraft.inputs.L0_blended_wing_body_design.cabin_area',
+            'aircraft.cached.L0_blended_wing_body_design.cabin_area',
+        ],
+    },
+    units='ft**2',
+    desc='fixed area of passenger cabin for blended wing body transports',
     default_value=0.0,
 )
 
@@ -7097,6 +7121,7 @@ add_meta_data(
     meta_data=_MetaData,
     historical_name={'GASP': 'INGASP.WFAREQ', 'FLOPS': None, 'LEAPS1': None},
     units='lbm',
+    # Note: In GASP, WFAREQ includes fuel margin, but this variable does not.
     desc='fuel carried by the aircraft when it is on the ramp at the '
     'beginning of the design mission',
     default_value=0.0,
@@ -7628,6 +7653,7 @@ add_meta_data(
     meta_data=_MetaData,
     historical_name={'GASP': 'INGASP.WFA', 'FLOPS': None, 'LEAPS1': None},
     units='lbm',
+    # Note: In GASP, WFA does not include fuel margin.
     desc='total fuel carried at the beginnning of a mission '
     'includes fuel burned in the mission, reserve fuel '
     'and fuel margin',
