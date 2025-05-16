@@ -15,7 +15,6 @@ except ImportError:
     PETScVector = None
 
 
-@use_tempdirs
 class ProblemPhaseTestCase(unittest.TestCase):
     """
     Setup of a large single aisle commercial transport aircraft using
