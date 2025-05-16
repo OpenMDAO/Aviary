@@ -151,7 +151,7 @@ class BWBEngineSizeGroupTestCase(unittest.TestCase):
 
     def setUp(self):
         aviary_options = AviaryValues()
-        aviary_options.set_val(Aircraft.Engine.NUM_ENGINES, [1])
+        aviary_options.set_val(Aircraft.Engine.NUM_ENGINES, [2])
 
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
