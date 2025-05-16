@@ -16,11 +16,7 @@ from aviary.subsystems.propulsion.utils import build_engine_deck
 from aviary.utils.aviary_values import get_items, get_keys
 from aviary.utils.functions import set_aviary_initial_values
 from aviary.utils.preprocessors import preprocess_options
-from aviary.validation_cases.validation_tests import (
-    get_flops_case_names,
-    get_flops_inputs,
-    get_flops_outputs,
-)
+from aviary.validation_cases.validation_tests import get_flops_case_names, get_flops_inputs
 from aviary.variable_info.enums import LegacyCode
 from aviary.variable_info.functions import setup_model_options
 from aviary.variable_info.variable_meta_data import _MetaData as BaseMetaData
@@ -71,9 +67,9 @@ class PreMissionTestCase(unittest.TestCase):
         input_options.delete(Aircraft.Fuel.TOTAL_CAPACITY)
         input_options.delete(Aircraft.Nacelle.AVG_LENGTH)
 
-        engine = build_engine_deck(input_options)
+        engines = [build_engine_deck(input_options)]
 
-        prop = CorePropulsionBuilder('core_propulsion', BaseMetaData, engine)
+        prop = CorePropulsionBuilder('core_propulsion', BaseMetaData, engines)
         mass = CoreMassBuilder('core_mass', BaseMetaData, GASP)
         aero = CoreAerodynamicsBuilder('core_aerodynamics', BaseMetaData, FLOPS)
         geom = CoreGeometryBuilder(
@@ -272,13 +268,13 @@ class PreMissionTestCase(unittest.TestCase):
         aviary_inputs = setup_options(GASP_input, FLOPS_input)
 
         aviary_inputs.delete(Aircraft.Fuselage.WETTED_AREA)
-        engine = build_engine_deck(aviary_inputs)
-        preprocess_options(aviary_inputs, engine_models=engine)
+        engines = [build_engine_deck(aviary_inputs)]
+        preprocess_options(aviary_inputs, engine_models=engines)
 
         prob = om.Problem()
         model = prob.model
 
-        prop = CorePropulsionBuilder('core_propulsion', BaseMetaData, engine)
+        prop = CorePropulsionBuilder('core_propulsion', BaseMetaData, engines)
         mass = CoreMassBuilder('core_mass', BaseMetaData, GASP)
         aero = CoreAerodynamicsBuilder('core_aerodynamics', BaseMetaData, FLOPS)
         geom = CoreGeometryBuilder(
