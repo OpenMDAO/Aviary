@@ -2,10 +2,10 @@
 Define meta data associated with variables in the Aviary data hierarchy.
 """
 
-import numpy as np
-
 from copy import deepcopy
 from pathlib import Path
+
+import numpy as np
 
 from aviary.utils.develop_metadata import add_meta_data
 from aviary.variable_info.enums import (
