@@ -3233,6 +3233,7 @@ add_meta_data(
     default_value=0.0,
 )
 
+# TODO this should be a design parameter? As it combines two physical categories?
 add_meta_data(
     Aircraft.Fuselage.DIAMETER_TO_WING_SPAN,
     meta_data=_MetaData,
@@ -6855,7 +6856,7 @@ add_meta_data(
     historical_name={'GASP': None, 'FLOPS': None, 'LEAPS1': None},
     units='ft/s',
     desc='linear propeller tip speed due to rotation (not airspeed at propeller tip)',
-    default_value=500.0,
+    default_value=0.0,
     multivalue=True,
 )
 

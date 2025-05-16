@@ -1,9 +1,13 @@
 import argparse
+from collections import defaultdict
+import functools
 import importlib.util
 import json
 import os
+from pathlib import Path
 import re
 import shutil
+import traceback
 import zipfile
 from collections import defaultdict
 from pathlib import Path
@@ -221,7 +225,39 @@ def _dashboard_cmd(options, user_args):
     )
 
 
-def create_table_pane_from_json(json_filepath, documentation):
+def _handle_pane_creation_errors():
+    """
+    A decorator used with the functions that creates panes for use in the dashboard.
+    If the function executes without throwing an exception, the pane is added
+    to the pane list that will be shown in the dashboard.
+    If the function does throw an exception, it puts the error message
+    and stack trace into the pane so the user can see why it failed.
+    """
+
+    def decorator(func):
+        @functools.wraps(func)
+        def wrapper(pane_title, pane_list, pane_documentation, *args, **kwargs):
+            try:
+                pane = func(pane_documentation, *args, **kwargs)
+                pane_list.append((pane_title, pane))
+                return pane
+            except Exception as e:
+                # Get the full stack trace as a string
+                stack_trace = traceback.format_exc()
+                pane = _create_message_pane(
+                    pane_documentation,
+                    f'Unable to create {pane_title} due to error: {e}\n\nStack trace:\n{stack_trace}',
+                )
+                pane_list.append((pane_title, pane))
+                return None
+
+        return wrapper
+
+    return decorator
+
+
+@_handle_pane_creation_errors()
+def create_table_pane_from_json(documentation, json_filepath):
     """
     Create a Tabulator Pane with Name and Value columns using tabular data
     from a JSON file.
@@ -256,14 +292,18 @@ def create_table_pane_from_json(json_filepath, documentation):
         )
         table_pane_with_doc = pn.Column(
             pn.pane.HTML(
-                f'<p>{documentation}</p>', styles={'text-align': documentation_text_align}
+                f'<p class="pane_doc">{documentation}</p>',
+                stylesheets=['assets/aviary_styles.css'],
+                styles={'text-align': documentation_text_align},
             ),
             table_pane,
         )
     except Exception:
         table_pane_with_doc = pn.Column(
             pn.pane.HTML(
-                f'<p>{documentation}</p>', styles={'text-align': documentation_text_align}
+                f'<p class="pane_doc">{documentation}</p>',
+                stylesheets=['assets/aviary_styles.css'],
+                styles={'text-align': documentation_text_align},
             ),
             pn.pane.Markdown(
                 f"# Table not shown because data source JSON file, '{json_filepath}', not found."
@@ -275,7 +315,8 @@ def create_table_pane_from_json(json_filepath, documentation):
 
 # functions for creating Panel Panes given different kinds of
 #    data inputs
-def create_csv_frame(csv_filepath, documentation):
+@_handle_pane_creation_errors()
+def create_csv_frame(documentation, csv_filepath):
     """
     Create a Panel Pane that contains a tabular display of the data in a CSV file.
 
@@ -304,14 +345,18 @@ def create_csv_frame(csv_filepath, documentation):
         )
         report_pane = pn.Column(
             pn.pane.HTML(
-                f'<p>{documentation}</p>', styles={'text-align': documentation_text_align}
+                f'<p class="pane_doc">{documentation}</p>',
+                stylesheets=['assets/aviary_styles.css'],
+                styles={'text-align': documentation_text_align},
             ),
             df_pane,
         )
     else:
         report_pane = pn.Column(
             pn.pane.HTML(
-                f'<p>{documentation}</p>', styles={'text-align': documentation_text_align}
+                f'<p class="pane_doc">{documentation}</p>',
+                stylesheets=['assets/aviary_styles.css'],
+                styles={'text-align': documentation_text_align},
             ),
             pn.pane.Markdown(
                 f"# Report not shown because data source CSV file, '{csv_filepath}', not found."
@@ -334,7 +379,25 @@ def get_run_status(status_filepath):
         return 'Unknown'
 
 
-def create_report_frame(format, text_filepath, documentation):
+def _create_message_pane(documentation, message):
+    """
+    A simple pane showing a text message. Mostly used for
+    showing error messages.
+    """
+    report_pane = pn.Column(
+        pn.pane.HTML(
+            f'<p class="pane_doc">{documentation}</p>',
+            stylesheets=['assets/aviary_styles.css'],
+            styles={'text-align': 'left'},
+        ),
+        # pn.pane.HTML(f"<p>{message}</p>", styles={'text-align': 'left'})
+        pn.pane.Str(f'<p>{message}</p>', styles={'text-align': 'left'}),
+    )
+    return report_pane
+
+
+@_handle_pane_creation_errors()
+def create_report_frame(documentation, format, text_filepath):
     """
     Create a Panel Pane that contains an embedded external file in HTML, Markdown, or text format,
     or a simple message in HTML format.
@@ -354,16 +417,15 @@ def create_report_frame(format, text_filepath, documentation):
         A Panel Pane object to be displayed in the dashboard. Or None if the file
         does not exist.
     """
-    if format == 'simple_message':
-        report_pane = pn.Column(
-            pn.pane.HTML(f'<p>{documentation}</p>', styles={'text-align': 'left'}),
-            pn.pane.HTML(f'<p>{text_filepath}</p>', styles={'text-align': 'left'}),
-        )
-    elif os.path.isfile(text_filepath):
+    if os.path.isfile(text_filepath):
         if format == 'html':
             iframe_css = 'width=1200px height=800px overflow-x="scroll" overflow="scroll" margin=0px padding=0px border=20px frameBorder=20px scrolling="yes"'
             report_pane = pn.Column(
-                pn.pane.HTML(f'<p>{documentation}</p>', styles={'text-align': 'left'}),
+                pn.pane.HTML(
+                    f'<p class="pane_doc">{documentation}</p>',
+                    stylesheets=['assets/aviary_styles.css'],
+                    styles={'text-align': 'left'},
+                ),
                 pn.pane.HTML(f'<iframe {iframe_css} src=/home/{text_filepath}></iframe>'),
             )
         elif format in ['markdown', 'text']:
@@ -376,13 +438,22 @@ def create_report_frame(format, text_filepath, documentation):
             elif format == 'text':
                 report_pane = pn.pane.Str(file_text)
             report_pane = pn.Column(
-                pn.pane.HTML(f'<p>{documentation}</p>', styles={'text-align': 'left'}), report_pane
+                pn.pane.HTML(
+                    f'<p class="pane_doc">{documentation}</p>',
+                    stylesheets=['assets/aviary_styles.css'],
+                    styles={'text-align': 'left'},
+                ),
+                report_pane,
             )
         else:
             raise RuntimeError(f'Report format of {format} is not supported.')
     else:
         report_pane = pn.Column(
-            pn.pane.HTML(f'<p>{documentation}</p>', styles={'text-align': 'left'}),
+            pn.pane.HTML(
+                f'<p class="pane_doc">{documentation}</p>',
+                stylesheets=['assets/aviary_styles.css'],
+                styles={'text-align': 'left'},
+            ),
             pn.pane.Markdown(
                 f"# Report not shown because report file, '{text_filepath}', not found."
             ),
@@ -821,295 +892,11 @@ def create_optimization_history_plot(case_recorder, df):
     return layout
 
 
-# The main script that generates all the tabs in the dashboard
-
-
-def dashboard(script_name, problem_recorder, driver_recorder, port, run_in_background=False):
+@_handle_pane_creation_errors()
+def _create_interactive_xy_plot_mission_variables(documentation, problem_recorder_path):
     """
-    Generate the dashboard app display.
-
-    Parameters
-    ----------
-    script_name : str
-        Name of the script file whose results will be displayed by this dashboard.
-    problem_recorder : str
-        Name of the recorder file containing the Problem cases.
-    driver_recorder : str or None
-        Name of the recorder file containing the Driver cases. If None, the driver tab will not be added
-    port : int
-        HTTP port used for the dashboard webapp. If 0, use any free port
+    Create a pane showing an XY plot of mission variables.
     """
-    reports_dir = f'{script_name}_out/reports/'
-    out_dir = f'{script_name}_out/'
-
-    if not Path(reports_dir).is_dir():
-        raise ValueError(
-            f"The script name, '{script_name}', does not have a reports folder "
-            f"associated with it. The directory '{reports_dir}' does not exist."
-        )
-
-    problem_recorder_path = Path(out_dir) / problem_recorder
-
-    if not os.path.isfile(problem_recorder_path):
-        issue_warning(f'Given Problem case recorder file {problem_recorder_path} does not exist.')
-
-    # TODO - use lists and functions to do this with a lot less code
-    ####### Model Tab #######
-    model_tabs_list = []
-
-    # Input Checks
-    input_checks_pane = create_report_frame(
-        'markdown', Path(reports_dir) / 'input_checks.md', 'Detailed checks on the model inputs.'
-    )
-    model_tabs_list.append(('Input Checks', input_checks_pane))
-
-    #  Debug Input List
-    input_list_pane = create_report_frame(
-        'text',
-        Path(reports_dir) / 'input_list.txt',
-        """
-       A plain text display of the model inputs. Recommended for beginners. Only created if Settings.VERBOSITY is set to at least 2 in the input deck.
-        The variables are listed in a tree structure. There are three columns. The left column is a list of variable names,
-        the middle column is the value, and the right column is the
-        promoted variable name. The hierarchy is phase, subgroups, components, and variables. An input variable can appear under
-        different phases and within different components. Its values can be different because its value has
-        been updated during the computation. On the top-left corner is the total number of inputs.
-        That number counts the duplicates because one variable can appear in different phases.""",
-    )
-    model_tabs_list.append(('Debug Input List', input_list_pane))
-
-    #  Debug Output List
-    output_list_pane = create_report_frame(
-        'text',
-        Path(reports_dir) / 'output_list.txt',
-        """
-       A plain text display of the model outputs. Recommended for beginners. Only created if Settings.VERBOSITY is set to at least 2 in the input deck.
-        The variables are listed in a tree structure. There are three columns. The left column is a list of variable names,
-        the middle column is the value, and the right column is the
-        promoted variable name. The hierarchy is phase, subgroups, components, and variables. An output variable can appear under
-        different phases and within different components. Its values can be different because its value has
-        been updated during the computation. On the top-left corner is the total number of outputs.
-        That number counts the duplicates because one variable can appear in different phases.""",
-    )
-    model_tabs_list.append(('Debug Output List', output_list_pane))
-
-    # Inputs
-    inputs_pane = create_report_frame(
-        'html', Path(reports_dir) / 'inputs.html', 'Detailed report on the model inputs.'
-    )
-    model_tabs_list.append(('Inputs', inputs_pane))
-
-    # N2
-    n2_pane = create_report_frame(
-        'html',
-        Path(reports_dir) / 'n2.html',
-        """
-        The N2 diagram, sometimes referred to as an eXtended Design Structure Matrix (XDSM), is a
-        powerful tool for understanding your model in OpenMDAO. It is an N-squared diagram in the
-        shape of a matrix representing functional or physical interfaces between system elements.
-        It can be used to systematically identify, define, tabulate, design, and analyze functional
-        and physical interfaces.""",
-    )
-    model_tabs_list.append(('N2', n2_pane))
-
-    # Trajectory Linkage
-    traj_linkage_report_pane = create_report_frame(
-        'html',
-        Path(reports_dir) / 'traj_linkage_report.html',
-        """
-        This is a Dymos linkage report in a customized N2 diagram. It provides a report detailing how phases
-        are linked together via constraint or connection. The diagram clearly shows how mission phases are linked.
-        It can be used to identify errant linkages between fixed quantities.
-        """,
-    )
-    model_tabs_list.append(('Trajectory Linkage', traj_linkage_report_pane))
-
-    # Driver scaling
-    driver_scaling_report_pane = create_report_frame(
-        'html',
-        Path(reports_dir) / 'driver_scaling_report.html',
-        """
-            This report is a summary of driver scaling information. After all design variables, objectives, and constraints
-            are declared and the problem has been set up, this report presents all the design variables and constraints
-            in all phases as well as the objectives. It also shows Jacobian information showing responses with respect to
-            design variables (DV).
-        """,
-    )
-    model_tabs_list.append(('Driver Scaling', driver_scaling_report_pane))
-
-    ####### Optimization Tab #######
-    optimization_tabs_list = []
-
-    # Optimization History Plot
-    if driver_recorder:
-        if os.path.isfile(driver_recorder):
-            df = convert_driver_case_recorder_file_to_df(f'{driver_recorder}')
-            cr = om.CaseReader(f'{driver_recorder}')
-            opt_history_pane = create_optimization_history_plot(cr, df)
-            optimization_tabs_list.append(('Optimization History', opt_history_pane))
-
-    # IPOPT report
-    if os.path.isfile(Path(reports_dir) / 'IPOPT.out'):
-        ipopt_pane = create_report_frame(
-            'text',
-            Path(reports_dir) / 'IPOPT.out',
-            """
-            This report is generated by the IPOPT optimizer.
-                                        """,
-        )
-        optimization_tabs_list.append(('IPOPT Output', ipopt_pane))
-
-    # Optimization report
-    opt_report_pane = create_report_frame(
-        'html',
-        Path(reports_dir) / 'opt_report.html',
-        """
-        This report is an OpenMDAO optimization report. All values are in unscaled, physical units.
-        On the top is a summary of the optimization, followed by the objective, design variables, constraints,
-        and optimizer settings. This report is important when dissecting optimal results produced by Aviary.""",
-    )
-    optimization_tabs_list.append(('Summary', opt_report_pane))
-
-    # PyOpt report
-    if os.path.isfile(Path(reports_dir) / 'pyopt_solution.out'):
-        pyopt_solution_pane = create_report_frame(
-            'text',
-            Path(reports_dir) / 'pyopt_solution.txt',
-            """
-            This report is generated by the pyOptSparse optimizer.
-        """,
-        )
-        optimization_tabs_list.append(('PyOpt Solution', pyopt_solution_pane))
-
-    # SNOPT report
-    if os.path.isfile(Path(reports_dir) / 'SNOPT_print.out'):
-        snopt_pane = create_report_frame(
-            'text',
-            Path(reports_dir) / 'SNOPT_print.out',
-            """
-            This report is generated by the SNOPT optimizer.
-                                        """,
-        )
-        optimization_tabs_list.append(('SNOPT Output', snopt_pane))
-
-    # SNOPT summary
-    if os.path.isfile(Path(reports_dir) / 'SNOPT_summary.out'):
-        snopt_summary_pane = create_report_frame(
-            'text',
-            Path(reports_dir) / 'SNOPT_summary.out',
-            """
-            This is a report generated by the SNOPT optimizer that summarizes the optimization results.""",
-        )
-        optimization_tabs_list.append(('SNOPT Summary', snopt_summary_pane))
-
-    # Coloring report
-    coloring_report_pane = create_report_frame(
-        'html',
-        Path(reports_dir) / 'total_coloring.html',
-        'The report shows metadata associated with the creation of the coloring.',
-    )
-    optimization_tabs_list.append(('Total Coloring', coloring_report_pane))
-
-    ####### Results Tab #######
-    results_tabs_list = []
-
-    # Aircraft 3d model display
-    if problem_recorder_path:
-        if os.path.isfile(problem_recorder_path):
-            try:
-                aircraft_3d_file = Path(reports_dir) / 'aircraft_3d.html'
-                create_aircraft_3d_file(problem_recorder_path, reports_dir, aircraft_3d_file)
-                aircraft_3d_pane = create_report_frame(
-                    'html', aircraft_3d_file, '3D model view of designed aircraft.'
-                )
-            except Exception as e:
-                aircraft_3d_pane = create_report_frame(
-                    'simple_message',
-                    f'Unable to create aircraft 3D model display due to error: {e}',
-                    '3D model view of designed aircraft.',
-                )
-            results_tabs_list.append(('Aircraft 3d model', aircraft_3d_pane))
-
-    # Make the Aviary variables table pane
-    if os.path.isfile(problem_recorder_path):
-        # Make dir reports/script_name/aviary_vars if needed
-        aviary_vars_dir = Path(reports_dir) / 'aviary_vars'
-        aviary_vars_dir.mkdir(parents=True, exist_ok=True)
-
-        # copy index.html file to reports/script_name/aviary_vars/index.html
-        aviary_dir = Path(importlib.util.find_spec('aviary').origin).parent
-
-        shutil.copy(
-            aviary_dir.joinpath('visualization/assets/aviary_vars/index.html'),
-            aviary_vars_dir.joinpath('index.html'),
-        )
-        shutil.copy(
-            aviary_dir.joinpath('visualization/assets/aviary_vars/script.js'),
-            aviary_vars_dir.joinpath('script.js'),
-        )
-        # copy script.js file to reports/script_name/aviary_vars/index.html.
-        # mod the script.js file to point at the json file
-        # create the json file and put it in
-        # reports/script_name/aviary_vars/aviary_vars.json
-        try:
-            create_aviary_variables_table_data_nested(
-                script_name, problem_recorder_path
-            )  # create the json file
-
-            aviary_vars_pane = create_report_frame(
-                'html',
-                Path(reports_dir) / 'aviary_vars/index.html',
-                'Table showing Aviary variables',
-            )
-            results_tabs_list.append(('Aviary Variables', aviary_vars_pane))
-        except Exception as e:
-            issue_warning(
-                f'Unable to create Aviary Variables tab in dashboard due to the error: {e}'
-            )
-
-    # Mission Summary
-    mission_summary_pane = create_report_frame(
-        'markdown',
-        Path(reports_dir) / 'mission_summary.md',
-        'A report of mission results from an Aviary problem',
-    )
-    results_tabs_list.append(('Mission Summary', mission_summary_pane))
-
-    # Run status pane
-    status_pane = create_table_pane_from_json(
-        Path(reports_dir) / 'status.json', 'A high level overview of the status of the run'
-    )
-    results_tabs_list.append(('Run status pane', status_pane))
-    run_status_pane_tab_number = len(results_tabs_list) - 1
-
-    # Timeseries Mission Output Report
-    mission_timeseries_pane = create_csv_frame(
-        Path(reports_dir) / 'mission_timeseries_data.csv',
-        """
-        The outputs of the aircraft trajectory.
-        Any value that is included in the timeseries data is included in this report.
-        This data is useful for post-processing, especially those used for acoustic analysis.
-        """,
-    )
-    results_tabs_list.append(('Timeseries Mission Output', mission_timeseries_pane))
-
-    # Trajectory results
-    traj_results_report_pane = create_report_frame(
-        'html',
-        Path(reports_dir) / 'traj_results_report.html',
-        """
-            This is one of the most important reports produced by Aviary. It will help you visualize and
-            understand the optimal trajectory produced by Aviary.
-            Users should play with it and try to grasp all possible features.
-            This report contains timeseries and phase parameters in different tabs.
-            On the timeseries tab, users can select which phases to view.
-            Other features include hovering the mouse over the solution points to see solution value and
-            zooming into a particular region for details, etc.
-        """,
-    )
-    results_tabs_list.append(('Trajectory Results', traj_results_report_pane))
-
-    # Interactive XY plot of mission variables
     if problem_recorder_path:
         if os.path.exists(problem_recorder_path):
             cr = om.CaseReader(problem_recorder_path)
@@ -1144,7 +931,7 @@ def dashboard(script_name, problem_recorder, driver_recorder, port, run_in_backg
             phases = set()
             varnames = set()
             # pattern used to parse out the phase names and variable names
-            pattern = rf'{traj_name}\.phases\.([a-zA-Z0-9_]+)\.timeseries\.timeseries_comp\.([a-zA-Z0-9_]+)'
+            pattern = rf'{traj_name}\.phases\.([a-zA-Z0-9_]+)\.timeseries\.([a-zA-Z0-9_]+)'
             for varname, meta in outputs:
                 match = re.match(pattern, varname)
                 if match:
@@ -1268,14 +1055,339 @@ def dashboard(script_name, problem_recorder, driver_recorder, port, run_in_backg
 
         interactive_mission_var_plot_pane_with_doc = pn.Column(
             pn.pane.HTML(
-                '<p>Plot of mission variables allowing user to select X and Y plot values.</p>',
+                f'<p class="pane_doc">{documentation}</p>',
+                stylesheets=['assets/aviary_styles.css'],
                 styles={'text-align': documentation_text_align},
             ),
             interactive_mission_var_plot_pane,
         )
-        results_tabs_list.append(
-            ('Interactive Mission Variable Plot', interactive_mission_var_plot_pane_with_doc)
+
+    return interactive_mission_var_plot_pane_with_doc
+
+
+# The main script that generates all the tabs in the dashboard
+def dashboard(script_name, problem_recorder, driver_recorder, port, run_in_background=False):
+    """
+    Generate the dashboard app display.
+
+    Parameters
+    ----------
+    script_name : str
+        Name of the script file whose results will be displayed by this dashboard.
+    problem_recorder : str
+        Name of the recorder file containing the Problem cases.
+    driver_recorder : str or None
+        Name of the recorder file containing the Driver cases. If None, the driver tab will not be added
+    port : int
+        HTTP port used for the dashboard webapp. If 0, use any free port
+    """
+    reports_dir = f'{script_name}_out/reports/'
+    out_dir = f'{script_name}_out/'
+
+    if not Path(reports_dir).is_dir():
+        raise ValueError(
+            f"The script name, '{script_name}', does not have a reports folder "
+            f"associated with it. The directory '{reports_dir}' does not exist."
         )
+
+    problem_recorder_path = Path(out_dir) / problem_recorder
+
+    if not os.path.isfile(problem_recorder_path):
+        issue_warning(f'Given Problem case recorder file {problem_recorder_path} does not exist.')
+
+    # TODO - use lists and functions to do this with a lot less code
+    ####### Model Tab #######
+    model_tabs_list = []
+
+    # Input Checks
+    create_report_frame(
+        'Input Checks',
+        model_tabs_list,
+        'Detailed checks on the model inputs.',
+        'markdown',
+        Path(reports_dir) / 'input_checks.md',
+    )
+
+    #  Debug Input List
+    create_report_frame(
+        'Debug Input List',
+        model_tabs_list,
+        """
+        A plain text display of the model inputs. Recommended for beginners. Only created if Settings.VERBOSITY is set to at least 2 in the input deck.
+        The variables are listed in a tree structure. There are three columns. The left column is a list of variable names,
+        the middle column is the value, and the right column is the
+        promoted variable name. The hierarchy is phase, subgroups, components, and variables. An input variable can appear under
+        different phases and within different components. Its values can be different because its value has
+        been updated during the computation. On the top-left corner is the total number of inputs.
+        That number counts the duplicates because one variable can appear in different phases.""",
+        'text',
+        Path(reports_dir) / 'input_list.txt',
+    )
+
+    #  Debug Output List
+    create_report_frame(
+        'Debug Output List',
+        model_tabs_list,
+        """
+       A plain text display of the model outputs. Recommended for beginners. Only created if Settings.VERBOSITY is set to at least 2 in the input deck.
+        The variables are listed in a tree structure. There are three columns. The left column is a list of variable names,
+        the middle column is the value, and the right column is the
+        promoted variable name. The hierarchy is phase, subgroups, components, and variables. An output variable can appear under
+        different phases and within different components. Its values can be different because its value has
+        been updated during the computation. On the top-left corner is the total number of outputs.
+        That number counts the duplicates because one variable can appear in different phases.""",
+        'text',
+        Path(reports_dir) / 'output_list.txt',
+    )
+
+    # Inputs
+    create_report_frame(
+        'Inputs',
+        model_tabs_list,
+        'Detailed report on the model inputs.',
+        'html',
+        Path(reports_dir) / 'inputs.html',
+    )
+
+    # N2
+    create_report_frame(
+        'N2',
+        model_tabs_list,
+        """
+        The N2 diagram, sometimes referred to as an eXtended Design Structure Matrix (XDSM), is a
+        powerful tool for understanding your model in OpenMDAO. It is an N-squared diagram in the
+        shape of a matrix representing functional or physical interfaces between system elements.
+        It can be used to systematically identify, define, tabulate, design, and analyze functional
+        and physical interfaces.""",
+        'html',
+        Path(reports_dir) / 'n2.html',
+    )
+
+    # Trajectory Linkage
+    create_report_frame(
+        'Trajectory Linkage',
+        model_tabs_list,
+        """
+        This is a Dymos linkage report in a customized N2 diagram. It provides a report detailing how phases
+        are linked together via constraint or connection. The diagram clearly shows how mission phases are linked.
+        It can be used to identify errant linkages between fixed quantities.
+        """,
+        'html',
+        Path(reports_dir) / 'traj_linkage_report.html',
+    )
+
+    # Driver scaling
+    create_report_frame(
+        'Driver Scaling',
+        model_tabs_list,
+        """
+            This report is a summary of driver scaling information. After all design variables, objectives, and constraints
+            are declared and the problem has been set up, this report presents all the design variables and constraints
+            in all phases as well as the objectives. It also shows Jacobian information showing responses with respect to
+            design variables (DV).
+        """,
+        'html',
+        Path(reports_dir) / 'driver_scaling_report.html',
+    )
+
+    ####### Optimization Tab #######
+    optimization_tabs_list = []
+
+    # Optimization History Plot
+    if driver_recorder:
+        if os.path.isfile(driver_recorder):
+            df = convert_driver_case_recorder_file_to_df(f'{driver_recorder}')
+            cr = om.CaseReader(f'{driver_recorder}')
+            opt_history_pane = create_optimization_history_plot(cr, df)
+            optimization_tabs_list.append(('Optimization History', opt_history_pane))
+
+    # IPOPT report
+    if os.path.isfile(Path(reports_dir) / 'IPOPT.out'):
+        ipopt_pane = create_report_frame(
+            'IPOPT Output',
+            optimization_tabs_list,
+            """
+            This report is generated by the IPOPT optimizer.
+                                        """,
+            'text',
+            Path(reports_dir) / 'IPOPT.out',
+        )
+
+    # Optimization report
+    opt_report_pane = create_report_frame(
+        'Summary',
+        optimization_tabs_list,
+        """
+        This report is an OpenMDAO optimization report. All values are in unscaled, physical units.
+        On the top is a summary of the optimization, followed by the objective, design variables, constraints,
+        and optimizer settings. This report is important when dissecting optimal results produced by Aviary.""",
+        'html',
+        Path(reports_dir) / 'opt_report.html',
+    )
+
+    # PyOpt report
+    if os.path.isfile(Path(reports_dir) / 'pyopt_solution.out'):
+        create_report_frame(
+            'PyOpt Solution',
+            optimization_tabs_list,
+            """
+            This report is generated by the pyOptSparse optimizer.
+            """,
+            'text',
+            Path(reports_dir) / 'pyopt_solution.txt',
+        )
+
+    # SNOPT report
+    if os.path.isfile(Path(reports_dir) / 'SNOPT_print.out'):
+        create_report_frame(
+            'SNOPT Output',
+            optimization_tabs_list,
+            """
+            This report is generated by the SNOPT optimizer.
+                                        """,
+            'text',
+            Path(reports_dir) / 'SNOPT_print.out',
+        )
+
+    # SNOPT summary
+    if os.path.isfile(Path(reports_dir) / 'SNOPT_summary.out'):
+        create_report_frame(
+            'SNOPT Summary',
+            optimization_tabs_list,
+            """
+            This is a report generated by the SNOPT optimizer that summarizes the optimization results.""",
+            'text',
+            Path(reports_dir) / 'SNOPT_summary.out',
+        )
+
+    # Coloring report
+    create_report_frame(
+        'Total Coloring',
+        optimization_tabs_list,
+        'The report shows metadata associated with the creation of the coloring.',
+        'html',
+        Path(reports_dir) / 'total_coloring.html',
+    )
+
+    ####### Results Tab #######
+    results_tabs_list = []
+
+    # Aircraft 3d model display
+    if problem_recorder_path:
+        if os.path.isfile(problem_recorder_path):
+            try:
+                aircraft_3d_file = Path(reports_dir) / 'aircraft_3d.html'
+                create_aircraft_3d_file(problem_recorder_path, reports_dir, aircraft_3d_file)
+                create_report_frame(
+                    'Aircraft 3d model',
+                    results_tabs_list,
+                    '3D model view of designed aircraft.',
+                    'html',
+                    aircraft_3d_file,
+                )
+            except Exception as e:
+                create_report_frame(
+                    'Aircraft 3d model',
+                    results_tabs_list,
+                    '3D model view of designed aircraft.',
+                    'simple_message',
+                    f'Unable to create aircraft 3D model display due to error: {e}',
+                )
+
+    # Make the Aviary variables table pane
+    if os.path.isfile(problem_recorder_path):
+        try:
+            # Make dir reports/script_name/aviary_vars if needed
+            aviary_vars_dir = Path(reports_dir) / 'aviary_vars'
+            aviary_vars_dir.mkdir(parents=True, exist_ok=True)
+
+            # copy index.html file to reports/script_name/aviary_vars/index.html
+            aviary_dir = Path(importlib.util.find_spec('aviary').origin).parent
+
+            shutil.copy(
+                aviary_dir.joinpath('visualization/assets/aviary_vars/index.html'),
+                aviary_vars_dir.joinpath('index.html'),
+            )
+            shutil.copy(
+                aviary_dir.joinpath('visualization/assets/aviary_vars/script.js'),
+                aviary_vars_dir.joinpath('script.js'),
+            )
+            # copy script.js file to reports/script_name/aviary_vars/index.html.
+            # mod the script.js file to point at the json file
+            # create the json file and put it in
+            # reports/script_name/aviary_vars/aviary_vars.json
+            create_aviary_variables_table_data_nested(
+                script_name, problem_recorder_path
+            )  # create the json file
+        except Exception as e:
+            pane = _create_message_pane(
+                'Table showing Aviary variables',
+                f"Unable to create 'Aviary Variables' pane in dashboard due to error: {e}.",
+            )
+            results_tabs_list.append(('Aviary Variables', pane))
+
+        create_report_frame(
+            'Aviary Variables',
+            results_tabs_list,
+            'Table showing Aviary variables.',
+            'html',
+            Path(reports_dir) / 'aviary_vars/index.html',
+        )
+
+    # Mission Summary
+    create_report_frame(
+        'Mission Summary',
+        results_tabs_list,
+        'A report of mission results from an Aviary problem.',
+        'markdown',
+        Path(reports_dir) / 'mission_summary.md',
+    )
+
+    # Run status pane
+    create_table_pane_from_json(
+        'Run status pane',
+        results_tabs_list,
+        'A high level overview of the status of the run.',
+        Path(reports_dir) / 'status.json',
+    )
+    run_status_pane_tab_number = len(results_tabs_list) - 1
+
+    # Timeseries Mission Output Report
+    create_csv_frame(
+        'Timeseries Mission Output',
+        results_tabs_list,
+        """
+        The outputs of the aircraft trajectory.
+        Any value that is included in the timeseries data is included in this report.
+        This data is useful for post-processing, especially those used for acoustic analysis.
+        """,
+        Path(reports_dir) / 'mission_timeseries_data.csv',
+    )
+
+    # Trajectory results
+    traj_results_report_pane = create_report_frame(
+        'Trajectory Results',
+        results_tabs_list,
+        """
+            This is one of the most important reports produced by Aviary. It will help you visualize and
+            understand the optimal trajectory produced by Aviary.
+            Users should play with it and try to grasp all possible features.
+            This report contains timeseries and phase parameters in different tabs.
+            On the timeseries tab, users can select which phases to view.
+            Other features include hovering the mouse over the solution points to see solution value and
+            zooming into a particular region for details, etc.
+        """,
+        'html',
+        Path(reports_dir) / 'traj_results_report.html',
+    )
+
+    # Interactive XY plot of mission variables
+    _create_interactive_xy_plot_mission_variables(
+        'Interactive Mission Variable Plot',
+        results_tabs_list,
+        'Plot of mission variables allowing user to select X and Y plot values.',
+        problem_recorder_path,
+    )
 
     ####### Subsystems Tab #######
     subsystem_tabs_list = []
@@ -1285,9 +1397,9 @@ def dashboard(script_name, problem_recorder, driver_recorder, port, run_in_backg
     # subsystem in the Aviary problem
 
     for md_file in sorted(Path(f'{reports_dir}subsystems').glob('*.md'), key=str):
-        subsystems_pane = create_report_frame(
-            'markdown',
-            str(md_file),
+        create_report_frame(
+            md_file.stem,
+            subsystem_tabs_list,
             f"""
 
         The subsystems report tab shows selected results for every major subsystem in the Aviary problem.
@@ -1295,8 +1407,9 @@ def dashboard(script_name, problem_recorder, driver_recorder, port, run_in_backg
             {md_file.stem}
              subsystem. Reports available currently are mass, geometry, and propulsion.
             """,
+            'markdown',
+            str(md_file),
         )
-        subsystem_tabs_list.append((md_file.stem, subsystems_pane))
 
     # Actually make the tabs from the list of Panes
     model_tabs = pn.Tabs(*model_tabs_list, stylesheets=['assets/aviary_styles.css'])
