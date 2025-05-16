@@ -58,9 +58,9 @@ class MultiengineTestcase(unittest.TestCase):
         test_phase_info['cruise']['user_options']['throttle_allocation'] = method
         test_phase_info['descent']['user_options']['throttle_allocation'] = method
 
-        engine1 = build_engine_deck(engine_1_inputs)[0]
+        engine1 = build_engine_deck(engine_1_inputs)
         engine1.name = 'engine_1'
-        engine2 = build_engine_deck(engine_2_inputs)[0]
+        engine2 = build_engine_deck(engine_2_inputs)
         engine2.name = 'engine_2'
 
         prob = AviaryProblem(verbosity=0)
@@ -100,8 +100,8 @@ class MultiengineTestcase(unittest.TestCase):
         test_phase_info['cruise']['user_options']['throttle_allocation'] = method
         test_phase_info['descent']['user_options']['throttle_allocation'] = method
 
-        engine1 = build_engine_deck(engine_1_inputs)[0]
-        engine2 = build_engine_deck(engine_2_inputs)[0]
+        engine1 = build_engine_deck(engine_1_inputs)
+        engine2 = build_engine_deck(engine_2_inputs)
 
         prob = AviaryProblem(verbosity=0)
 
@@ -142,8 +142,8 @@ class MultiengineTestcase(unittest.TestCase):
 
         prob = AviaryProblem(verbosity=0)
 
-        engine1 = build_engine_deck(engine_1_inputs)[0]
-        engine2 = build_engine_deck(engine_2_inputs)[0]
+        engine1 = build_engine_deck(engine_1_inputs)
+        engine2 = build_engine_deck(engine_2_inputs)
 
         prob.load_inputs(inputs, test_phase_info, engine_builders=[engine1, engine2])
 
