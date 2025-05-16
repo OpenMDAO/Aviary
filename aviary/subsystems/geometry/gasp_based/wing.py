@@ -498,7 +498,7 @@ class BWBWingVolume(om.ExplicitComponent):
         add_aviary_input(self, Aircraft.Wing.THICKNESS_TO_CHORD_TIP, units='unitless', desc='TCT')
         add_aviary_input(self, Aircraft.Fuselage.AVG_DIAMETER, units='ft', desc='SWF')
         add_aviary_input(self, Aircraft.Wing.SPAN, units='ft', desc='B')
-        # In GASP, the variable is CROOT. But in Aviary, it is Aircraft.Wing.CENTER_CHORD
+        # In GASP, the variable is CROOT. In Aviary, it is Aircraft.Wing.CENTER_CHORD
         add_aviary_input(self, Aircraft.Wing.CENTER_CHORD, units='ft', desc='CROOT')
         add_aviary_input(self, Aircraft.Wing.TAPER_RATIO, units='unitless', desc='SLM')
         add_aviary_input(self, Aircraft.Fuel.WING_FUEL_FRACTION, units='unitless', desc='SKWF')
@@ -877,7 +877,7 @@ class WingFoldArea(om.ExplicitComponent):
                 'strut_y', val=25, units='ft', desc='YSTRUT: attachment location of strut'
             )
         else:
-            add_aviary_input(self, Aircraft.Wing.FOLDED_SPAN)
+            add_aviary_input(self, Aircraft.Wing.FOLDED_SPAN, units='ft')
 
         add_aviary_input(self, Aircraft.Wing.AREA, units='ft**2')
         add_aviary_input(self, Aircraft.Wing.SPAN, units='ft')
@@ -1361,9 +1361,7 @@ class WingFoldVolume(om.ExplicitComponent):
 
 class BWBWingFoldVolume(om.ExplicitComponent):
     """
-    Computation of taper ratio between wing root and fold location, wing area of
-    part of wings that does not fold, mean value of thickess to chord ratio between
-    root and fold, aspect ratio of non-folding part of wing, wing tank fuel volume.
+    Computation of wing tank fuel volume.
     """
 
     def initialize(self):
