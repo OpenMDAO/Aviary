@@ -192,5 +192,62 @@ class TestEmpennageGroup(
         assert_check_partials(partial_data, **partial_tols)
 
 
+class BWBTestEmpennageGroup(unittest.TestCase):
+    """BWB model"""
+
+    def setUp(self):
+        self.prob = om.Problem()
+        self.prob.model.add_subsystem('emp', EmpennageSize(), promotes=['*'])
+
+        self.prob.model.set_input_defaults(
+            Aircraft.HorizontalTail.VOLUME_COEFFICIENT, val=0.000001, units='unitless'
+        )
+        self.prob.model.set_input_defaults(Aircraft.Wing.AREA, val=2142.85714286, units='ft**2')
+        self.prob.model.set_input_defaults(
+            Aircraft.HorizontalTail.MOMENT_RATIO, val=0.5463, units='unitless'
+        )
+        self.prob.model.set_input_defaults(Aircraft.Wing.AVERAGE_CHORD, val=16.2200522, units='ft')
+        self.prob.model.set_input_defaults(
+            Aircraft.HorizontalTail.ASPECT_RATIO, val=1.705, units='unitless'
+        )
+        self.prob.model.set_input_defaults(
+            Aircraft.HorizontalTail.TAPER_RATIO, val=0.366, units='unitless'
+        )
+
+        self.prob.model.set_input_defaults(
+            Aircraft.VerticalTail.VOLUME_COEFFICIENT, val=0.0150, units='unitless'
+        )
+        self.prob.model.set_input_defaults(
+            Aircraft.VerticalTail.MOMENT_RATIO, val=5.2615, units='unitless'
+        )
+        self.prob.model.set_input_defaults(Aircraft.Wing.SPAN, val=146.38501094, units='ft')
+        self.prob.model.set_input_defaults(
+            Aircraft.VerticalTail.ASPECT_RATIO, val=1.705, units='unitless'
+        )
+        self.prob.model.set_input_defaults(
+            Aircraft.VerticalTail.TAPER_RATIO, val=0.366, units='unitless'
+        )
+
+    def test_case1(self):
+        self.prob.setup(check=False, force_alloc_complex=True)
+
+        self.prob.run_model()
+
+        assert_near_equal(self.prob[Aircraft.HorizontalTail.AREA], 0.00117064, tol)
+        assert_near_equal(self.prob[Aircraft.HorizontalTail.SPAN], 0.04467601, tol)
+        assert_near_equal(self.prob[Aircraft.HorizontalTail.ROOT_CHORD], 0.03836448, tol)
+        assert_near_equal(self.prob[Aircraft.HorizontalTail.AVERAGE_CHORD], 0.02808445, tol)
+        assert_near_equal(self.prob[Aircraft.HorizontalTail.MOMENT_ARM], 29.69074172, tol)
+
+        assert_near_equal(self.prob[Aircraft.VerticalTail.AREA], 169.11964286, tol)
+        assert_near_equal(self.prob[Aircraft.VerticalTail.SPAN], 16.98084188, tol)
+        assert_near_equal(self.prob[Aircraft.VerticalTail.ROOT_CHORD], 14.58190052, tol)
+        assert_near_equal(self.prob[Aircraft.VerticalTail.AVERAGE_CHORD], 10.67457744, tol)
+        assert_near_equal(self.prob[Aircraft.VerticalTail.MOMENT_ARM], 27.82191598, tol)
+
+        partial_data = self.prob.check_partials(out_stream=None, method='cs')
+        assert_check_partials(partial_data, **partial_tols)
+
+
 if __name__ == '__main__':
     unittest.main()
