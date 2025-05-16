@@ -2,10 +2,11 @@
 
 ## GASP Based Geometry
 
-Comparing to traditional tube and wing model, Blended wing body (BWB) modeling has three major new changes in geometry subsystems:
+Comparing to traditional tube and wing model, Blended wing body (BWB) modeling has four major new changes in geometry subsystems:
 
 - partially buried engine in fuselage,
 - Fuselage layout and size parameters,
+- Computation of wing tank fuel volume (either with wing fold or not),
 - Exposed wing area computation.
 
 We will explain some details of each feature in this document.
@@ -58,6 +59,11 @@ The fuselage size group is shown as follows:
 
 ![Fuselage size](../images/BWB_GASP_Fuselage_Geometry.png)
 
+### Wing Fuel Volume Computation
+
+For the wing fuel volume, we first compute its value assuming no wing fold structure. In
+the case of wing fold, a simple adjustment model from the first computation for the wing fuel volume is implemented using linear interpolation plus factors for wing thickness.
+
 ### Exposed Wing Area Computation
 
 For blended wing body aircraft, the exposed wing area refers to the wing section that is not fully integrated or blended into the fuselage, but rather extends outwards, potentially with a distinct edge or separation from the body. It must be computed separately and it will be used in angle of attack computation.
@@ -74,3 +80,73 @@ Other design parameters are:
 | Aircraft.Wing.TAPER_RATIO | unitless |
 | Aircraft.Wing.AREA | ft**2 |
 | | |
+
+### Outputs from Wing Group
+
+Several geometric parameters are used:
+
+| Parameters | Units |
+| ---------- | ----- |
+| Aircraft.Wing.ASPECT_RATIO | unitless |
+| Aircraft.Wing.TAPER_RATIO | unitless |
+| Aircraft.Wing.SWEEP | deg |
+| Aircraft.Wing.THICKNESS_TO_CHORD_ROOT | unitless |
+| Aircraft.Fuselage.AVG_DIAMETER | ft |
+| Aircraft.Wing.THICKNESS_TO_CHORD_TIP | unitless |
+| Aircraft.LandingGear.MAIN_GEAR_LOCATION | ft |
+| Aircraft.Wing.TAPER_RATIO | unitless |
+| Aircraft.Fuel.WING_FUEL_FRACTION | unitless |
+| | |
+
+In BWB model, we assume that the wing has no strut. 
+
+If the wing has fold, then an additional geometric parameter is needed:
+
+| Parameters | Units |
+| ---------- | ----- |
+| Aircraft.Wing.FOLDED_SPAN | ft |
+| | |
+
+The wing group is shown as follows (assuming no fold):
+
+![Wing computation](../images/BWB_GASP_wing_Geom_no_fold.png)
+
+If we add fold structure, the diagram has two more components `BWBWingFoldArea` and 
+`BWBWingFoldVolume`. Let us de-emphasize other components by compressing all their inputs
+and outputs that are not related to fold structure. We also do not show dimensional and non-dimensional conversion of fold calculation.
+
+![Wing computation](../images/BWB_GASP_wing_Geom_w_fold.png)
+
+## GASP Base Mass
+
+After the changes in geometry, several mass computation must be updated. Comparing to traditional tube and wing model, Blended wing body (BWB) modeling has four major new changes in mass subsystems:
+
+- Computation of various design load speeds,
+- Computation of air conditioning mass and furnishing mass,
+- Computation of BWB fuselage,
+- Computation of wing mass for BWB
+
+### Design Load
+
+In the case of tube + wing design, we assume a given
+ wing loading. In the case of BWB, wing loading is replaced by gross mass over exposed wing area:
+
+<p align="center">wing loading = gross mass / exposed wing area</p>
+
+### Equipments Masses and Useful Load
+
+Air conditioning mass and furnishing mass are part of equipments and useful load masses. In the case of tube + wing design, Aviary uses `Aircraft.Fuselage.AVG_DIAMETER` as cabin width. In the case of BWB, this parameter must be replaced by hydraulic diameter (`Aircraft.Fuselage.HYDRAULIC_DIAMETER`). To compute hydraulic diameter, we use cabin width and cabin height to obtain the cabin cross area and then:
+
+<p align="center">hydraulic diameter = (4 * (fuselage cross area) / π)<sup>1/2<sup></p>
+
+### Fuselage Mass
+
+Because of the shape of BWB, the computation of fuselage mass is quite different from conventional aircraft. It is basically an empirical equation based on collected data.
+
+### Wing Mass
+
+In the wing mass computation of conventional aircraft, we assume the cabin width (or fuselage width) is small. But that is not the case for BWB. So, for BWB, wing span is replaced by:
+
+<p align="center">wing span - cabin width</p>
+
+All other steps are the same.
