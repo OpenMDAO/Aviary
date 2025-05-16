@@ -29,7 +29,7 @@ class TestPhaseInfo(unittest.TestCase):
         _climb_info = (name, phase_info_dict[name])
 
         # Removing the 'fix_duration' key from user_options for test comparison
-        _climb_info[1]['user_options'].pop('fix_duration')
+        # _climb_info[1]['user_options'].pop('fix_duration')
 
         # Convert phase info to a phase builder
         _phase_builder: PhaseBuilder = phase_info_to_builder(*_climb_info)
