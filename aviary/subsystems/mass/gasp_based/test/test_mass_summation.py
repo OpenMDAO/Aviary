@@ -3095,5 +3095,15 @@ class MassSummationTestCase9(unittest.TestCase):
         assert_check_partials(partial_data, atol=3e-9, rtol=6e-11)
 
 
+class BWBMassSummationTestCase(unittest.TestCase):
+    """
+    GASP BWB model
+    """
+
+    def setUp(self):
+        options = get_option_defaults()
+        options.set_val(Aircraft.Design.TYPE, val='BWB', units='unitless')
+
+
 if __name__ == '__main__':
     unittest.main()
