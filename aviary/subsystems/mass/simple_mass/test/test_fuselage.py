@@ -27,14 +27,14 @@ class FuselageMassTestCase(unittest.TestCase):
             units="m")
         
         self.prob.model.set_input_defaults(
-            "diameter",
-            val=0.4,
+            "base_diameter",
+            val=0.5,
             units="m"
         )
 
         self.prob.model.set_input_defaults(
-            "taper_ratio",
-            val=0.9999999999
+            "tip_diameter",
+            val=0.3
         )
 
         self.prob.model.set_input_defaults(
@@ -71,8 +71,8 @@ class FuselageMassTestCase(unittest.TestCase):
         tol=1e-3
 
         assert_near_equal(
-            self.prob["total_weight"],
-            167.35489,
+            self.prob["total_weight_fuse"],
+            467.3119,
             tol)
         
         partial_data = self.prob.check_partials(
