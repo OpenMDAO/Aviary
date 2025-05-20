@@ -1688,6 +1688,11 @@ class AviaryProblem(om.Problem):
         # Loop over each phase and set initial guesses for the state and control
         # variables
         for idx, (phase_name, phase) in enumerate(phase_items):
+
+            if not phase._is_local:
+                # Don't set anything if phase is not on this proc.
+                continue
+
             if self.mission_method is SOLVED_2DOF:
                 self.phase_objects[idx].apply_initial_guesses(self, 'traj', phase)
                 if (

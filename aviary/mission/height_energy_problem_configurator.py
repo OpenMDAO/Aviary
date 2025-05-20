@@ -197,13 +197,25 @@ class HeightEnergyProblemConfigurator(ProblemConfiguratorBase):
         user_options : dict
             Subdictionary "user_options" from the phase_info.
         """
+        time_units = 'min'
         initial = user_options['time_initial'][0]
         duration = user_options['time_duration'][0]
-        initial_bounds = user_options['time_initial_bounds'][0]
-        duration_bounds = user_options['time_duration_bounds'][0]
-        initial_ref = user_options['time_initial_ref'][0]
-        duration_ref = user_options['time_duration_ref'][0]
-        time_units = 's'
+        initial_bounds = wrapped_convert_units(
+            user_options['time_initial_bounds'],
+            time_units
+        )
+        duration_bounds = wrapped_convert_units(
+            user_options['time_duration_bounds'],
+            time_units
+        )
+        initial_ref = wrapped_convert_units(
+            user_options['time_initial_ref'],
+            time_units
+        )
+        duration_ref = wrapped_convert_units(
+            user_options['time_duration_ref'],
+            time_units
+        )
 
         fix_initial = initial is not None
         fix_duration = duration is not None
@@ -545,8 +557,7 @@ class HeightEnergyProblemConfigurator(ProblemConfiguratorBase):
             # if time not in initial guesses, set it to the average of the
             # initial_bounds and the duration_bounds
             initial_bounds = wrapped_convert_units(options['time_initial_bounds'], 's')
-            duration_bounds = wrapped_convert_units(options['time_duration_bounds'], 's'
-                                                    )
+            duration_bounds = wrapped_convert_units(options['time_duration_bounds'], 's')
             guess_dict['time'] = ([np.mean(initial_bounds[0]), np.mean(duration_bounds[0])], 's')
 
         for guess_key, guess_data in guess_dict.items():
