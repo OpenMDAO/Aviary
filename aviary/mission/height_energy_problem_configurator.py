@@ -235,7 +235,7 @@ class HeightEnergyProblemConfigurator(ProblemConfiguratorBase):
             # We have been using the average.
             duration_ref = 0.5 * (duration_bounds[0] + duration_bounds[1])
 
-        if fix_initial or input_initial and prob.comm.size == 1:
+        if (fix_initial or input_initial) and prob.comm.size == 1:
             # Redundant on a fixed input (unless MPI); raises a warning if specified.
             initial_options = {}
         else:
@@ -572,15 +572,41 @@ class HeightEnergyProblemConfigurator(ProblemConfiguratorBase):
 
             if 'time' == guess_key:
                 # Set initial guess for time variables
-                phase.set_time_val(initial=val[0], duration=val[1], units=units)
+                # Seems to be an openmdao bug. Switch to this when fixed.
+                # phase.set_time_val(initial=val[0], duration=val[1], units=units)
+
+                target_prob.set_val(
+                    parent_prefix + f'traj.{phase_name}.t_initial',
+                    val[0],
+                    units=units
+                )
+                target_prob.set_val(
+                    parent_prefix + f'traj.{phase_name}.t_duration',
+                    val[1],
+                    units=units
+                )
 
             elif guess_key in control_keys:
                 # Set initial guess for control variables
-                phase.set_control_val(guess_key, val, units=units)
+                # Seems to be an openmdao bug. Switch to this when fixed.
+                # phase.set_control_val(guess_key, val, units=units)
+
+                target_prob.set_val(
+                    parent_prefix + f'traj.{phase_name}.controls:{guess_key}',
+                    prob._process_guess_var(val, guess_key, phase),
+                    units=units
+                )
 
             elif guess_key in state_keys:
                 # Set initial guess for state variables
-                phase.set_state_val(guess_key, val, units=units)
+                # Seems to be an openmdao bug. Switch to this when fixed.
+                # phase.set_state_val(guess_key, val, units=units)
+
+                target_prob.set_val(
+                    parent_prefix + f'traj.{phase_name}.states:{guess_key}',
+                    prob._process_guess_var(val, guess_key, phase),
+                    units=units
+                )
 
             elif guess_key in prob_keys:
                 target_prob.set_val(parent_prefix + guess_key, val, units=units)

@@ -1097,7 +1097,6 @@ class AviaryProblem(om.Problem):
         true_unless_mpi = True
         if self.comm.size > 1 and self.traj.options['parallel_phases']:
             true_unless_mpi = False
-        #true_unless_mpi = False
 
         # loop over unique variable names
         for var in unique_vars:
@@ -1690,9 +1689,11 @@ class AviaryProblem(om.Problem):
         # variables
         for idx, (phase_name, phase) in enumerate(phase_items):
 
-            if not phase._is_local:
-                # Don't set anything if phase is not on this proc.
-                continue
+            # TODO: This will be uncommented when an openmdao bug is fixed.
+            # We are using a workaround for now.
+            #if not phase._is_local:
+            #    # Don't set anything if phase is not on this proc.
+            #    continue
 
             if self.mission_method is SOLVED_2DOF:
                 self.phase_objects[idx].apply_initial_guesses(self, 'traj', phase)

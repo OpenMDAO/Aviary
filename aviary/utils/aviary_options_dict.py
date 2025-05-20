@@ -226,13 +226,13 @@ class AviaryOptionsDictionary(om.OptionsDictionary):
         )
 
         name = f'{state_name}_ref0'
-        default = defaults.get(name, 0.0)
+        default = defaults.get(name, None)
         desc = f'Additive scale factor "ref0" for {state_name}.\n'
-        desc += 'Default is 0.0'
         self.declare(
             name=name,
             default=default,
             types=float,
+            allow_none=True,
             units=units,
             desc=desc,
         )
@@ -338,13 +338,13 @@ class AviaryOptionsDictionary(om.OptionsDictionary):
         )
 
         name = f'{ctrl_name}_ref0'
-        default = defaults.get(name, 0.0)
+        default = defaults.get(name, None)
         desc = f'Additive scale factor "ref0" for {ctrl_name}.\n'
-        desc += 'Default is 0.0'
         self.declare(
             name=name,
             default=default,
             types=float,
+            allow_none=True,
             units=units,
             desc=desc,
         )
