@@ -361,6 +361,8 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
                 duration_ref=duration_ref,
             )
 
+        else:
+
             # Make a good guess for a reasonable intitial time scaler.
             try:
                 initial_bounds = user_options['time_initial_bounds']
@@ -373,7 +375,7 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
             else:
                 time_initial_ref = 600.0
 
-            duration_bounds = user_options['time_duration_bounds']
+            duration_bounds = user_options['time_duration_bounds'][0]
             duration_ref = 0.5 * (duration_bounds[0] + duration_bounds[1])
 
             input_initial = phase_idx > 0
@@ -391,8 +393,8 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
                     fix_initial=fix_initial,
                     fix_duration=fix_duration,
                     units=time_units,
-                    duration_bounds=user_options['time_duration_bounds'],
-                    duration_ref=user_options['time_duration_ref'],
+                    duration_bounds=user_options['time_duration_bounds'][0],
+                    duration_ref=duration_ref,
                     initial_ref=initial_ref,
                 )
 
@@ -401,10 +403,10 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
                     fix_initial=fix_initial,
                     fix_duration=fix_duration,
                     units=time_units,
-                    duration_bounds=user_options['time_duration_bounds'],
-                    duration_ref=user_options['time_duration_ref'],
+                    duration_bounds=user_options['time_duration_bounds'][0],
+                    duration_ref=duration_ref,
                     initial_bounds=initial_bounds,
-                    initial_ref=user_options['initial_ref'],
+                    initial_ref=user_options['initial_ref'][0],
                 )
 
         if 'cruise' not in phase_name:
