@@ -312,6 +312,13 @@ class HeightEnergyProblemConfigurator(ProblemConfiguratorBase):
             connected=connect_directly,
         )
 
+        # Under MPI, the states aren't directly connected.
+        if not connect_directly:
+            for phase_name in phases[1:]:
+                phase = prob.traj._phases[phase_name]
+                phase.set_state_options(Dynamic.Vehicle.MASS, input_initial=False)
+                phase.set_state_options(Dynamic.Mission.DISTANCE, input_initial=False)
+
         prob.model.connect(
             f'traj.{prob.regular_phases[-1]}.timeseries.distance',
             Mission.Summary.RANGE,

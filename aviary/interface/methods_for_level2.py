@@ -1097,6 +1097,7 @@ class AviaryProblem(om.Problem):
         true_unless_mpi = True
         if self.comm.size > 1 and self.traj.options['parallel_phases']:
             true_unless_mpi = False
+        #true_unless_mpi = False
 
         # loop over unique variable names
         for var in unique_vars:
