@@ -47,7 +47,7 @@ class HeightEnergyProblemConfigurator(ProblemConfiguratorBase):
         aviary_inputs = prob.aviary_inputs
 
         if prob.engine_builders is None:
-            prob.engine_builders = build_engine_deck(aviary_inputs)
+            prob.engine_builders = [build_engine_deck(aviary_inputs)]
 
         prob.initialization_guesses = initialization_guessing(
             aviary_inputs, prob.initialization_guesses, prob.engine_builders
