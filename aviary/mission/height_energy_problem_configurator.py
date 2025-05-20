@@ -197,7 +197,7 @@ class HeightEnergyProblemConfigurator(ProblemConfiguratorBase):
         user_options : dict
             Subdictionary "user_options" from the phase_info.
         """
-        time_units = 'min'
+        time_units = 's'
         initial = user_options['time_initial'][0]
         duration = user_options['time_duration'][0]
         initial_bounds = wrapped_convert_units(

@@ -66,7 +66,7 @@ class FlightPhaseOptions(AviaryOptionsDictionary):
         }
         self.add_control_options('mach', units='unitless', defaults=defaults)
 
-        self.add_time_options(units='min')
+        self.add_time_options(units='s')
 
         self.declare(
             name='throttle_enforcement',
