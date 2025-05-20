@@ -22,8 +22,8 @@ class DLandTestCase(unittest.TestCase):
         self.prob = om.Problem()
 
         options = get_option_defaults()
-        engine = build_engine_deck(options)
-        core_subsystems = get_default_mission_subsystems('GASP', engine)
+        engines = [build_engine_deck(options)]
+        core_subsystems = get_default_mission_subsystems('GASP', engines)
 
         self.prob.model = LandingSegment(aviary_options=options, core_subsystems=core_subsystems)
 
