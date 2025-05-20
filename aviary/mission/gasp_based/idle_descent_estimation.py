@@ -82,7 +82,7 @@ def add_descent_estimation_as_submodel(
 
     all_bus_vars = set()
     for subsystem in all_subsystems:
-        bus_vars = subsystem.get_bus_variables()
+        bus_vars = subsystem.get_pre_mission_bus_variables()
         for var, data in bus_vars.items():
             mission_variable_name = data['mission_name']
             if not isinstance(mission_variable_name, list):
