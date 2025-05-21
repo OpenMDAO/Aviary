@@ -3341,4 +3341,7 @@ class BWBMassSummationTestCase(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    unittest.main()
+    # unittest.main()
+    test = MassSummationTestCase9()
+    test.setUp()
+    test.test_case1()

@@ -229,4 +229,7 @@ class TestElectricBreguetResults(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    unittest.main()
+    # unittest.main()
+    test = TestBreguetPartials2()
+    test.setUp()
+    test.test_partials()
