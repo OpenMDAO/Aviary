@@ -106,17 +106,69 @@ def phase_info_parameterization(phase_info, post_mission_info, aviary_inputs):
     # Altitude
     old_alt_cruise = 32000.0
     if alt_cruise != old_alt_cruise:
-        phase_info['climb']['user_options']['altitude_final'] = (alt_cruise, 'ft')
-        phase_info['cruise']['user_options']['altitude_initial'] = (alt_cruise, 'ft')
-        phase_info['cruise']['user_options']['altitude_final'] = (alt_cruise, 'ft')
-        phase_info['descent']['user_options']['altitude_initial'] = (alt_cruise, 'ft')
+        new_alt = (alt_cruise, 'ft')
+
+        climb = phase_info['climb']['user_options']
+        if 'altitude_final' in climb and climb['altitude_final'][0] is not None:
+            climb['altitude_final'] = new_alt
+
+        if 'initial_guesses' in climb and 'altitude' in climb['initial_guesses']:
+            if climb['initial_guesses']['altitude'][0] is not None:
+                init = climb['initial_guesses']['altitude'][0][0]
+                climb['initial_guesses']['altitude'] = ([init, alt_cruise], 'ft')
+
+        cruise = phase_info['cruise']['user_options']
+        if 'altitude_initial' in cruise and  cruise['altitude_initial'][0] is not None:
+            cruise['altitude_initial'] = new_alt
+
+        if 'altitude_final' in cruise and  cruise['altitude_final'][0] is not None:
+            cruise['altitude_final'] = new_alt
+
+        if 'initial_guesses' in cruise and 'altitude' in cruise['initial_guesses']:
+            if cruise['initial_guesses']['altitude'][0] is not None:
+                cruise['initial_guesses']['altitude'] = ([alt_cruise, alt_cruise], 'ft')
+
+        descent = phase_info['descent']['user_options']
+        if 'altitude_initial' in descent and descent['altitude_initial'][0] is not None:
+            descent['altitude_initial'] = new_alt
+
+        if 'initial_guesses' in descent and 'altitude' in descent['initial_guesses']:
+            if descent['initial_guesses']['altitude'][0] is not None:
+                final = climb['initial_guesses']['altitude'][0][0]
+                descent['initial_guesses']['altitude'] = ([alt_cruise, final], 'ft')
 
     # Mach
     old_mach_cruise = 0.72
     if mach_cruise != old_mach_cruise:
-        phase_info['climb']['user_options']['mach_final'] = (mach_cruise, 'unitless')
-        phase_info['cruise']['user_options']['mach_initial'] = (mach_cruise, 'unitless')
-        phase_info['cruise']['user_options']['mach_final'] = (mach_cruise, 'unitless')
-        phase_info['descent']['user_options']['mach_initial'] = (mach_cruise, 'unitless')
+        new_mach = (mach_cruise, 'unitless')
+
+        climb = phase_info['climb']['user_options']
+        if 'mach_final' in climb and climb['mach_final'][0] is not None:
+            climb['mach_final'] = new_mach
+
+        if 'initial_guesses' in climb and 'mach' in climb['initial_guesses']:
+            if climb['initial_guesses']['mach'][0] is not None:
+                init = climb['initial_guesses']['mach'][0][0]
+                climb['initial_guesses']['mach'] = ([init, alt_cruise], 'ft')
+
+        cruise = phase_info['cruise']['user_options']
+        if 'mach_initial' in cruise and  cruise['mach_initial'][0] is not None:
+            cruise['mach_initial'] = new_mach
+
+        if 'mach_final' in cruise and  cruise['mach_final'][0] is not None:
+            cruise['mach_final'] = new_mach
+
+        if 'initial_guesses' in cruise and 'mach' in cruise['initial_guesses']:
+            if cruise['initial_guesses']['mach'][0] is not None:
+                cruise['initial_guesses']['mach'] = ([alt_cruise, alt_cruise], 'ft')
+
+        descent = phase_info['descent']['user_options']
+        if 'mach_initial' in descent and descent['mach_initial'][0] is not None:
+            descent['mach_initial'] = new_mach
+
+        if 'initial_guesses' in descent and 'mach' in descent['initial_guesses']:
+            if descent['initial_guesses']['mach'][0] is not None:
+                final = climb['initial_guesses']['mach'][0][0]
+                descent['initial_guesses']['mach'] = ([alt_cruise, final], 'ft')
 
     return phase_info, post_mission_info
