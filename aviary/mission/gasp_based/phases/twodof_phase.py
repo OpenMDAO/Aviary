@@ -270,7 +270,7 @@ class TwoDOFPhaseOptions(AviaryOptionsDictionary):
         )
 
         self.declare(
-            name='initial_ref',
+            name='time_initial_ref',
             default=100.0,
             units='ft',
             desc='Scale factor initial ref for the phase integration variable, which is range.',
@@ -356,7 +356,7 @@ class TwoDOFPhase(FlightPhaseBase):
         if not fix_initial:
             initial_kwargs = {
                 'initial_bounds': user_options.get_val('time_initial_bounds', units='ft'),
-                'initial_ref': user_options.get_val('initial_ref', units='ft'),
+                'initial_ref': user_options.get_val('time_initial_ref', units='ft'),
             }
 
         phase.set_time_options(

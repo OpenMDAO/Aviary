@@ -240,8 +240,8 @@ class HeightEnergyProblemConfigurator(ProblemConfiguratorBase):
             initial_options = {}
         else:
             initial_options = {
-                'initial_ref': initial_ref,
-                'initial_bounds': initial_bounds,
+                'time_initial_ref': initial_ref,
+                'time_initial_bounds': initial_bounds,
             }
 
         phase.set_time_options(
