@@ -10,7 +10,6 @@ The minimum supported version of Python is 3.9; we recommend using the latest re
 
 The Detailed and Developer's installation guide assume you have git installed. The Developer's Guide also assumes that if you are using your own fork of Aviary, that you have your machine correctly configured with the proper permissions to pull from and push to your fork.
 
-
 ## Which Installation Guide Should I Use?
 The following guides are available:
 
@@ -186,6 +185,7 @@ Several additional packages are needed to build a copy of the Aviary documentati
 
 ## Updating Aviary
 To update your copy of Aviary to the latest development version, run this command:
+
 
 (verify-installation)=
 # Verify Your Installation
