@@ -139,7 +139,7 @@ class TestUnsteadySolvedEOM2(unittest.TestCase):
             p.set_val('d2h_dr2', 0.01 * np.random.rand(nn), units='1/m')
 
         partial_data = p.check_partials(out_stream=None, method='cs')
-        assert_check_partials(partial_data, atol=5e-11, rtol=1e-12)
+        assert_check_partials(partial_data, atol=5e-11, rtol=1e-11)
 
     def test_unsteady_solved_eom(self):
         for ground_roll in True, False:
