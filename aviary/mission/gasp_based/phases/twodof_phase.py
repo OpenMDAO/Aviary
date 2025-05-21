@@ -21,6 +21,34 @@ from aviary.variable_info.variables import Dynamic
 
 class TwoDOFPhaseOptions(AviaryOptionsDictionary):
     def declare_options(self):
+
+        # TODO: These defaults aren't great, but need to keep things the same for now.
+        defaults = {
+            'mass_ref': 1e4,
+            'mass_defect_ref': 1e6,
+            'mass_bounds': (0.0, None),
+        }
+        self.add_state_options('mass', units='kg', defaults=defaults)
+
+        # TODO: These defaults aren't great, but need to keep things the same for now.
+        defaults = {
+            'distance_ref': 1e6,
+            'distance_defect_ref': 1e8,
+            'distance_bounds': (0.0, None),
+            'mass_bounds': (0.0, None),
+        }
+        self.add_state_options('distance', units='m', defaults=defaults)
+
+        self.add_control_options('altitude', units='ft')
+
+        # TODO: These defaults aren't great, but need to keep things the same for now.
+        defaults = {
+            'mach_ref': 0.5,
+        }
+        self.add_control_options('mach', units='unitless', defaults=defaults)
+
+        # The options below have not yet been revamped.
+
         self.declare(
             'reserve',
             types=bool,
@@ -177,42 +205,6 @@ class TwoDOFPhaseOptions(AviaryOptionsDictionary):
         )
 
         self.declare(
-            name='mach_initial',
-            types=float,
-            allow_none=True,
-            default=None,
-            desc='The initial Mach number at the start of the phase. This option is only valid '
-            'when fix_initial is True.',
-        )
-
-        self.declare(
-            name='mach_final',
-            types=float,
-            allow_none=True,
-            default=None,
-            desc='The final Mach number at the end of the phase. This option is only valid '
-            'when fix_initial is True.',
-        )
-
-        self.declare(
-            name='altitude_initial',
-            types=tuple,
-            default=None,
-            units='ft',
-            desc='The initial altitude at the start of the phase. This option is only valid '
-            'when fix_initial is True.',
-        )
-
-        self.declare(
-            name='altitude_final',
-            types=tuple,
-            default=None,
-            units='ft',
-            desc='The final altitude at the end of the phase. This option is only valid '
-            'when fix_initial is True.',
-        )
-
-        self.declare(
             name='throttle_enforcement',
             default='path_constraint',
             values=['path_constraint', 'boundary_constraint', 'bounded', None],
@@ -231,25 +223,6 @@ class TwoDOFPhaseOptions(AviaryOptionsDictionary):
             desc='Specifies how to handle the throttles for multiple engines. FIXED is a '
             'user-specified value. STATIC is specified by the optimizer as one value for the '
             'whole phase. DYNAMIC is specified by the optimizer at each point in the phase.',
-        )
-
-        self.declare(
-            name='mach_bounds',
-            types=tuple,
-            default=(None, None),
-            desc='The lower and upper constraints on mach during this phase i.e., '
-            '((0.18, 0.74), "unitless"). The optimizer is never allowed choose mach values '
-            'outside of these bounds constraints.',
-        )
-
-        self.declare(
-            name='altitude_bounds',
-            types=tuple,
-            default=(None, None),
-            units='ft',
-            desc='The lower and upper constraints on altitude during this phase i.e., '
-            '((0.0, 34000.0), "ft"). The optimizer is never allowed choose mach values '
-            'outside of these bounds constraints.',
         )
 
         self.declare(

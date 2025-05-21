@@ -231,9 +231,15 @@ class HeightEnergyProblemConfigurator(ProblemConfiguratorBase):
                 # TODO: Why were we using this value?
                 initial_ref = 600.0
 
-        if duration_ref == 1.0 and duration_bounds[0] and duration_bounds[1]:
-            # We have been using the average.
-            duration_ref = 0.5 * (duration_bounds[0] + duration_bounds[1])
+        if duration_ref == 1.0:
+            # We have been using the average of the bounds if they exist.
+            lower, upper = duration_bounds
+            if lower is not None or upper is not None:
+                if lower is None:
+                    lower = 0.0
+                if upper is None:
+                    upper = 0.0
+                duration_ref = 0.5 * (lower + upper)
 
         if (fix_initial or input_initial) and prob.comm.size == 1:
             # Redundant on a fixed input (unless MPI); raises a warning if specified.
