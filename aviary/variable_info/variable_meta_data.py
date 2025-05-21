@@ -4347,7 +4347,7 @@ add_meta_data(
     historical_name={'GASP': 'INGASP.CLEARqDN', 'FLOPS': None, 'LEAPS1': None},
     units='unitless',
     desc='the minimum number of nacelle diameters above the ground that the bottom of the nacelle must be',
-    default_value=0.0,
+    default_value=0.0,  # should be at least 0.2
     multivalue=True,
 )
 
