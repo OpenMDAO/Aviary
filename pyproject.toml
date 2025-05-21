@@ -23,19 +23,18 @@ dependencies = [
 
 [project.optional-dependencies]
 docs = [
-    "nbformat",
     "jupyter-book",
-    "myst",
+    "itables"
 ]
 dev = [
     "pre-commit",
-    "ruff",
     "testflo",
     "ambiance",
     "openaerostruct",
-    "nbformat",
-    "jupyter-book",
-    "myst",
+]
+all = [
+    "aviary[docs]",
+    "aviary[dev]",
 ]
 
 [project.scripts]

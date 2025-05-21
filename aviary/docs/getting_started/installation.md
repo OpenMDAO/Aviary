@@ -124,14 +124,10 @@ The Developer's Guide installs an editable version of Aviary source code, cloned
 git clone https://github.com/OpenMDAO/Aviary
  ```
 
-Next, we will install Aviary in "editable" mode, which means that you can make changes to the code inside this Aviary directory. From inside the top-level Aviary directory (it should have a file called `pyproject.toml`), run:
+Next, we will install Aviary in "editable" mode, which means that you can make changes to the code inside this Aviary directory. The `[all]` tag will also install all optional dependencies - Aviary has several installation configurations you can use by adding the correct tag inside brackets after the period. The available tags are detailed [here](#optional-dependencies). From inside the top-level Aviary directory (it should have a file called `pyproject.toml`), run:
 
 ```
-pip install -e .
-```
-
-```
-Note: Aviary has several installation configurations you can use by adding the correct tag inside brackets after the period. The available tags are detailed [here](#optional-dependencies).
+pip install -e .[all]
 ```
 
 ## Step 2: Install pyOptSparse
@@ -146,20 +142,24 @@ You can automatically install these optional packages by specifying a tag inside
 pip install aviary[<tag>]
 ```
 
-The `docs` tag also installs [packages for building docs](#docs-packages), and the `dev` tag installs all optional dependencies specified in this section.
+The following tags are avaliable:
+- `docs`: installs [packages for building docs](#docs-packages)
+- `dev`: installs the [packages for running tests](#tests-packages) and [contributing code](#contribution-packages)
+- `all`: installs all optional packages listed in this section
 
+(tests-packages)=
 ### Packages For Running Tests
 In order to run Aviary's test suite, you will need the following packages:
 - *testflo*
 - *ambiance*
 - *openaerostruct*
 
-`Testflo` is the core package that automates testing. The other two packages, `ambiance` and `openaerostruct`, are needed to run example cases that use external subsystems. It is useful to be able to run these cases even if you have no interest in those analyses to ensure that the interface for external subsystems is working correctly when testing.
+`Testflo` is the core package that automates testing. The other two packages, `ambiance` and `openaerostruct`, are needed to run example cases that incorporate them external subsystems. It is useful to be able to run these cases even if you have no interest in those analyses to ensure that the interface for external subsystems is working correctly.
 
+(contribution-packages)=
 ### Packages For Contributing Code
-To contribute code, you will need to follow Aviary's [contribution guidelines](../developer_guide/contributing_guidelines.md). This involves the use of several additional packages.
+To contribute code, you will need to follow Aviary's [contribution guidelines](../developer_guide/contributing_guidelines.md). This involves the use of additional packages.
 - *pre-commit*
-- *ruff*
 
 The `pre-commit` package has an additional install step after you get the package through `pip` or `conda` commands.
 
@@ -171,9 +171,8 @@ pre-commit install
 (docs-packages)=
 ### Packages For Building Docs
 Several additional packages are needed to build a copy of the Aviary documentation locally.
-- *nbformat*
 - *jupyter-book*
-- *myst*
+- *itables*
 
 ## Updating Aviary
 To update your copy of Aviary to the latest development version, run this command:
