@@ -8,6 +8,8 @@ from aviary.mission.base_ode import BaseODE as _BaseODE
 from aviary.variable_info.enums import AnalysisScheme, SpeedType, ThrottleAllocation
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 
+from aviary.mission.sixdof.six_dof_EOM import SixDOF_EOM
+
 class SixDOF_ODE(_BaseODE):
 
     def initialize(self):

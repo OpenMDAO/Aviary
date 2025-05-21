@@ -92,26 +92,26 @@ class SixDOF_EOM(om.ExplicitComponent):
             desc="yaw angle"
         )
 
-        # self.add_input(
-        #     'x',
-        #     val=0.0,
-        #     units='m',
-        #     desc="x-axis position of aircraft resolved in North-East-Down (NED) CS"
-        # )
+        self.add_input(
+            'x',
+            val=np.zeros(nn),
+            units='m',
+            desc="x-axis position of aircraft resolved in North-East-Down (NED) CS"
+        )
 
-        # self.add_input(
-        #     'y',
-        #     val=0.0,
-        #     units='m',
-        #     desc="y-axis position of aircraft resolved in NED CS"
-        # )
+        self.add_input(
+            'y',
+            val=np.zeros(nn),
+            units='m',
+            desc="y-axis position of aircraft resolved in NED CS"
+        )
 
-        # self.add_input(
-        #     'z',
-        #     val=0.0,
-        #     units='m',
-        #     desc="z-axis position of aircraft resolved in NED CS"
-        # )
+        self.add_input(
+            'z',
+            val=np.zeros(nn),
+            units='m',
+            desc="z-axis position of aircraft resolved in NED CS"
+        )
 
         # self.add_input(
         #     'time',
@@ -209,7 +209,8 @@ class SixDOF_EOM(om.ExplicitComponent):
             val=np.zeros(nn),
             units='m/s**2', # meters per seconds squared
             desc="x-axis (roll-axis) velocity equation, " \
-            "state: axial_vel"
+            "state: axial_vel",
+            tags=['dymos.state_rate_source:axial_vel', 'dymos.state_units:m/s']
         )
 
         self.add_output(
@@ -217,7 +218,8 @@ class SixDOF_EOM(om.ExplicitComponent):
             val=np.zeros(nn),
             units='m/s**2',
             desc="y-axis (pitch axis) velocity equation, " \
-            "state: lat_vel"
+            "state: lat_vel",
+            tags=['dymos.state_rate_source:lat_vel', 'dymos.state_units:m/s']
         )
 
         self.add_output(
@@ -225,7 +227,8 @@ class SixDOF_EOM(om.ExplicitComponent):
             val=np.zeros(nn),
             units='m/s**2',
             desc="z-axis (yaw axis) velocity equation, " \
-            "state: vert_vel"
+            "state: vert_vel",
+            tags=['dymos.state_rate_source:vert_vel', 'dymos.state_units:m/s']
         )
 
         self.add_output(
@@ -233,7 +236,8 @@ class SixDOF_EOM(om.ExplicitComponent):
             val=np.zeros(nn),
             units='rad/s**2', # radians per second squared
             desc="roll equation, " \
-            "state: roll_ang_vel"
+            "state: roll_ang_vel",
+            tags=['dymos.state_rate_source:roll_ang_vel', 'dymos.state_units:rad/s']
         )
 
         self.add_output(
@@ -241,7 +245,8 @@ class SixDOF_EOM(om.ExplicitComponent):
             val=np.zeros(nn),
             units='rad/s**2',
             desc="pitch equation, " \
-            "state: pitch_ang_vel"
+            "state: pitch_ang_vel",
+            tags=['dymos.state_rate_source:pitch_ang_vel', 'dymos.state_units:rad/s']
         )
 
         self.add_output(
@@ -249,51 +254,152 @@ class SixDOF_EOM(om.ExplicitComponent):
             val=np.zeros(nn),
             units='rad/s**2',
             desc="yaw equation, " \
-            "state: yaw_ang_vel"
+            "state: yaw_ang_vel",
+            tags=['dymos.state_rate_source:yaw_ang_vel', 'dymos.state_units:rad/s']
         )
 
         self.add_output(
             'roll_angle_rate_eq',
             val=np.zeros(nn),
             units='rad/s',
-            desc="Euler angular roll rate"
+            desc="Euler angular roll rate",
+            tags=['dymos.state_rate_source:roll', 'dymos.state_units:rad']
         )
 
         self.add_output(
             'pitch_angle_rate_eq',
             val=np.zeros(nn),
             units='rad/s',
-            desc="Euler angular pitch rate"
+            desc="Euler angular pitch rate",
+            tags=['dymos.state_rate_source:pitch', 'dymos.state_units:rad']
         )
 
         self.add_output(
             'yaw_angle_rate_eq',
             val=np.zeros(nn),
             units='rad/s',
-            desc="Euler angular yaw rate"
+            desc="Euler angular yaw rate",
+            tags=['dymos.state_rate_source:yaw', 'dymos.state_units:rad']
         )
 
         self.add_output(
             'dx_dt',
             val=np.zeros(nn),
             units='m/s',
-            desc="x-position derivative of aircraft COM wrt point in NED CS" 
+            desc="x-position derivative of aircraft COM wrt point in NED CS",
+            tags=['dymos.state_rate_source:x', 'dymos.state_units:m'] 
         )
 
         self.add_output(
             'dy_dt',
             val=np.zeros(nn),
             units='m/s',
-            desc="y-position derivative of aircraft COM wrt point in NED CS"
+            desc="y-position derivative of aircraft COM wrt point in NED CS",
+            tags=['dymos.state_rate_source:y', 'dymos.state_units:m']
         )
 
         self.add_output(
             'dz_dt',
             val=np.zeros(nn),
             units='m/s',
-            desc="z-position derivative of aircraft COM wrt point in NED CS"
+            desc="z-position derivative of aircraft COM wrt point in NED CS",
+            tags=['dymos.state_rate_source:z', 'dymos.state_units:m']
         )
-    
+
+        ar = np.arange(nn)
+        self.declare_partials(of='dx_accel', wrt='mass', rows=ar, cols=ar)
+        self.declare_partials(of='dx_accel', wrt='Fx_ext', rows=ar, cols=ar)
+        self.declare_partials(of='dx_accel', wrt='lat_vel', rows=ar, cols=ar)
+        self.declare_partials(of='dx_accel', wrt='vert_vel', rows=ar, cols=ar)
+        self.declare_partials(of='dx_accel', wrt='yaw_ang_vel', rows=ar, cols=ar)
+        self.declare_partials(of='dx_accel', wrt='pitch_ang_vel', rows=ar, cols=ar)
+        self.declare_partials(of='dx_accel', wrt='g')
+        self.declare_partials(of='dx_accel', wrt='pitch', rows=ar, cols=ar)
+
+        self.declare_partials(of='dy_accel', wrt='mass', rows=ar, cols=ar)
+        self.declare_partials(of='dy_accel', wrt='Fy_ext', rows=ar, cols=ar)
+        self.declare_partials(of='dy_accel', wrt='axial_vel', rows=ar, cols=ar)
+        self.declare_partials(of='dy_accel', wrt='vert_vel', rows=ar, cols=ar)
+        self.declare_partials(of='dy_accel', wrt='yaw_ang_vel', rows=ar, cols=ar)
+        self.declare_partials(of='dy_accel', wrt='roll_ang_vel', rows=ar, cols=ar)
+        self.declare_partials(of='dy_accel', wrt='g')
+        self.declare_partials(of='dy_accel', wrt='roll', rows=ar, cols=ar)
+        self.declare_partials(of='dy_accel', wrt='pitch', rows=ar, cols=ar)
+
+        self.declare_partials(of='dz_accel', wrt='mass', rows=ar, cols=ar)
+        self.declare_partials(of='dz_accel', wrt='Fz_ext', rows=ar, cols=ar)
+        self.declare_partials(of='dz_accel', wrt='lat_vel', rows=ar, cols=ar)
+        self.declare_partials(of='dz_accel', wrt='axial_vel', rows=ar, cols=ar)
+        self.declare_partials(of='dz_accel', wrt='roll_ang_vel', rows=ar, cols=ar)
+        self.declare_partials(of='dz_accel', wrt='pitch_ang_vel', rows=ar, cols=ar)
+        self.declare_partials(of='dz_accel', wrt='g')
+        self.declare_partials(of='dz_accel', wrt='roll', rows=ar, cols=ar)
+        self.declare_partials(of='dz_accel', wrt='pitch', rows=ar, cols=ar)
+
+        self.declare_partials(of='roll_accel', wrt='J_xz')
+        self.declare_partials(of='roll_accel', wrt='J_xx')
+        self.declare_partials(of='roll_accel', wrt='J_yy')
+        self.declare_partials(of='roll_accel', wrt='J_zz')
+        self.declare_partials(of='roll_accel', wrt='roll_ang_vel', rows=ar, cols=ar)
+        self.declare_partials(of='roll_accel', wrt='pitch_ang_vel', rows=ar, cols=ar)
+        self.declare_partials(of='roll_accel', wrt='yaw_ang_vel', rows=ar, cols=ar)
+        self.declare_partials(of='roll_accel', wrt='lx_ext', rows=ar, cols=ar)
+        self.declare_partials(of='roll_accel', wrt='lz_ext', rows=ar, cols=ar)
+
+        self.declare_partials(of='pitch_accel', wrt='J_xz')
+        self.declare_partials(of='pitch_accel', wrt='J_xx')
+        self.declare_partials(of='pitch_accel', wrt='J_yy')
+        self.declare_partials(of='pitch_accel', wrt='J_zz')
+        self.declare_partials(of='pitch_accel', wrt='roll_ang_vel', rows=ar, cols=ar)
+        self.declare_partials(of='pitch_accel', wrt='yaw_ang_vel', rows=ar, cols=ar)
+        self.declare_partials(of='pitch_accel', wrt='ly_ext', rows=ar, cols=ar)
+
+        self.declare_partials(of='yaw_accel', wrt='J_xz')
+        self.declare_partials(of='yaw_accel', wrt='J_xx')
+        self.declare_partials(of='yaw_accel', wrt='J_yy')
+        self.declare_partials(of='yaw_accel', wrt='J_zz')
+        self.declare_partials(of='yaw_accel', wrt='roll_ang_vel', rows=ar, cols=ar)
+        self.declare_partials(of='yaw_accel', wrt='pitch_ang_vel', rows=ar, cols=ar)
+        self.declare_partials(of='yaw_accel', wrt='yaw_ang_vel', rows=ar, cols=ar)
+        self.declare_partials(of='yaw_accel', wrt='lx_ext', rows=ar, cols=ar)
+        self.declare_partials(of='yaw_accel', wrt='lz_ext', rows=ar, cols=ar)
+
+        self.declare_partials(of='roll_angle_rate_eq', wrt='roll_ang_vel', rows=ar, cols=ar)
+        self.declare_partials(of='roll_angle_rate_eq', wrt='pitch_ang_vel', rows=ar, cols=ar)
+        self.declare_partials(of='roll_angle_rate_eq', wrt='yaw_ang_vel', rows=ar, cols=ar)
+        self.declare_partials(of='roll_angle_rate_eq', wrt='roll', rows=ar, cols=ar)
+        self.declare_partials(of='roll_angle_rate_eq', wrt='pitch', rows=ar, cols=ar)
+
+        self.declare_partials(of='pitch_angle_rate_eq', wrt='pitch_ang_vel', rows=ar, cols=ar)
+        self.declare_partials(of='pitch_angle_rate_eq', wrt='yaw_ang_vel', rows=ar, cols=ar)
+        self.declare_partials(of='pitch_angle_rate_eq', wrt='roll', rows=ar, cols=ar)
+
+        self.declare_partials(of='yaw_angle_rate_eq', wrt='pitch_ang_vel', rows=ar, cols=ar)
+        self.declare_partials(of='yaw_angle_rate_eq', wrt='yaw_ang_vel', rows=ar, cols=ar)
+        self.declare_partials(of='yaw_angle_rate_eq', wrt='roll', rows=ar, cols=ar)
+        self.declare_partials(of='yaw_angle_rate_eq', wrt='pitch', rows=ar, cols=ar)
+
+        self.declare_partials(of='dx_dt', wrt='axial_vel', rows=ar, cols=ar)
+        self.declare_partials(of='dx_dt', wrt='lat_vel', rows=ar, cols=ar)
+        self.declare_partials(of='dx_dt', wrt='vert_vel', rows=ar, cols=ar)
+        self.declare_partials(of='dx_dt', wrt='roll', rows=ar, cols=ar)
+        self.declare_partials(of='dx_dt', wrt='pitch', rows=ar, cols=ar)
+        self.declare_partials(of='dx_dt', wrt='yaw', rows=ar, cols=ar)
+
+        self.declare_partials(of='dy_dt', wrt='axial_vel', rows=ar, cols=ar)
+        self.declare_partials(of='dy_dt', wrt='lat_vel', rows=ar, cols=ar)
+        self.declare_partials(of='dy_dt', wrt='vert_vel', rows=ar, cols=ar)
+        self.declare_partials(of='dy_dt', wrt='roll', rows=ar, cols=ar)
+        self.declare_partials(of='dy_dt', wrt='pitch', rows=ar, cols=ar)
+        self.declare_partials(of='dy_dt', wrt='yaw', rows=ar, cols=ar)
+
+        self.declare_partials(of='dz_dt', wrt='axial_vel', rows=ar, cols=ar)
+        self.declare_partials(of='dz_dt', wrt='lat_vel', rows=ar, cols=ar)
+        self.declare_partials(of='dz_dt', wrt='vert_vel', rows=ar, cols=ar)
+        self.declare_partials(of='dz_dt', wrt='roll', rows=ar, cols=ar)
+        self.declare_partials(of='dz_dt', wrt='pitch', rows=ar, cols=ar)
+        
+
     def compute(self, inputs, outputs):
         """
         Compute function for EOM. 
@@ -315,9 +421,9 @@ class SixDOF_EOM(om.ExplicitComponent):
         roll = inputs['roll'] # phi
         pitch = inputs['pitch'] # theta
         yaw = inputs['yaw'] # psi
-        # x = inputs['x'] # p1
-        # y = inputs['y'] # p2
-        # z = inputs['z'] # p3
+        x = inputs['x'] # p1
+        y = inputs['y'] # p2
+        z = inputs['z'] # p3
         # time = inputs['time']
         g = inputs['g']
         Fx_ext = inputs['Fx_ext']
@@ -408,6 +514,178 @@ class SixDOF_EOM(om.ExplicitComponent):
         outputs['dx_dt'] = dx_dt
         outputs['dy_dt'] = dy_dt
         outputs['dz_dt'] = dz_dt
+    
+    def compute_partials(self, inputs, J):
+        mass = inputs['mass']
+        axial_vel = inputs['axial_vel'] # u
+        lat_vel = inputs['lat_vel'] # v
+        vert_vel = inputs['vert_vel'] # w
+        roll_ang_vel = inputs['roll_ang_vel'] # p
+        pitch_ang_vel = inputs['pitch_ang_vel'] # q
+        yaw_ang_vel = inputs['yaw_ang_vel'] # r
+        roll = inputs['roll'] # phi
+        pitch = inputs['pitch'] # theta
+        yaw = inputs['yaw'] # psi
+        x = inputs['x'] # p1
+        y = inputs['y'] # p2
+        z = inputs['z'] # p3
+        # time = inputs['time']
+        g = inputs['g']
+        Fx_ext = inputs['Fx_ext']
+        Fy_ext = inputs['Fy_ext']
+        Fz_ext = inputs['Fz_ext']
+        lx_ext = inputs['lx_ext'] # l
+        ly_ext = inputs['ly_ext'] # m
+        lz_ext = inputs['lz_ext'] # n
+        J_xz = inputs['J_xz']
+        J_xx = inputs['J_xx']
+        J_yy = inputs['J_yy']
+        J_zz = inputs['J_zz']
+
+        # for roll and yaw
+        Den = J_xx * J_zz - J_xz**2
+
+        J['dx_accel', 'mass'] = -Fx_ext / mass**2
+        J['dx_accel', 'Fx_ext'] = 1 / mass
+        J['dx_accel', 'lat_vel'] = yaw_ang_vel
+        J['dx_accel', 'vert_vel'] = -pitch_ang_vel
+        J['dx_accel', 'yaw_ang_vel'] = lat_vel
+        J['dx_accel', 'pitch_ang_vel'] = -vert_vel
+        J['dx_accel', 'g'] = -np.sin(pitch)
+        J['dx_accel', 'pitch'] = -np.cos(pitch) * g
+
+        J['dy_accel', 'mass'] = -Fy_ext / mass**2
+        J['dy_accel', 'Fy_ext'] = 1 / mass
+        J['dy_accel', 'axial_vel'] = -yaw_ang_vel
+        J['dy_accel', 'vert_vel'] = roll_ang_vel
+        J['dy_accel', 'yaw_ang_vel'] = -axial_vel
+        J['dy_accel', 'roll_ang_vel'] = vert_vel
+        J['dy_accel', 'g'] = np.sin(roll) * np.cos(pitch)
+        J['dy_accel', 'roll'] = np.cos(roll) * np.cos(pitch) * g
+        J['dy_accel', 'pitch'] = -np.sin(roll) * np.sin(pitch) * g
+
+        J['dz_accel', 'mass'] = -Fz_ext / mass**2
+        J['dz_accel', 'Fz_ext'] = 1 / mass
+        J['dz_accel', 'lat_vel'] = -roll_ang_vel
+        J['dz_accel', 'axial_vel'] = pitch_ang_vel
+        J['dz_accel', 'roll_ang_vel'] = -lat_vel
+        J['dz_accel', 'pitch_ang_vel'] = axial_vel
+        J['dz_accel', 'g'] = np.cos(roll) * np.cos(pitch)
+        J['dz_accel', 'roll'] = -np.sin(roll) * np.cos(pitch) * g
+        J['dz_accel', 'pitch'] = -np.cos(roll) * np.sin(pitch) * g
+
+        J['roll_accel', 'J_xz'] = (Den * (
+            (J_xx - J_yy + J_zz) * roll_ang_vel * pitch_ang_vel - 2 * J_xz * pitch_ang_vel * yaw_ang_vel + lz_ext) - (
+                J_xz * (J_xx - J_yy + J_zz) * roll_ang_vel * pitch_ang_vel - 
+                   (J_zz * (J_zz - J_yy) + J_xz**2) * pitch_ang_vel * yaw_ang_vel + 
+                   J_zz * lx_ext + 
+                   J_xz * lz_ext) * -2 * J_xz) / Den**2
+        J['roll_accel', 'J_xx'] = (Den * (
+            J_xz * roll_ang_vel * pitch_ang_vel
+        ) - (J_xz * (J_xx - J_yy + J_zz) * roll_ang_vel * pitch_ang_vel - 
+                   (J_zz * (J_zz - J_yy) + J_xz**2) * pitch_ang_vel * yaw_ang_vel + 
+                   J_zz * lx_ext + 
+                   J_xz * lz_ext) * J_zz) / Den**2
+        J['roll_accel', 'J_yy'] = (-J_xz * roll_ang_vel * pitch_ang_vel + J_zz * pitch_ang_vel * yaw_ang_vel) / Den
+        J['roll_accel', 'J_zz'] = (Den * (
+            J_xz * roll_ang_vel * pitch_ang_vel - 2 * J_zz * pitch_ang_vel * yaw_ang_vel + J_yy * pitch_ang_vel * yaw_ang_vel + lx_ext
+        ) - (J_xz * (J_xx - J_yy + J_zz) * roll_ang_vel * pitch_ang_vel - 
+                   (J_zz * (J_zz - J_yy) + J_xz**2) * pitch_ang_vel * yaw_ang_vel + 
+                   J_zz * lx_ext + 
+                   J_xz * lz_ext) * J_xx) / Den**2
+        J['roll_accel', 'roll_ang_vel'] = (J_xz * (J_xx - J_yy + J_zz) * pitch_ang_vel) / Den
+        J['roll_accel', 'pitch_ang_vel'] = (J_xz * (J_xx - J_yy + J_zz) * roll_ang_vel - (J_zz * (J_zz - J_yy) + J_xz**2) * yaw_ang_vel) / Den
+        J['roll_accel', 'yaw_ang_vel'] = -((J_zz * (J_zz - J_yy) + J_xz**2) * pitch_ang_vel) / Den
+        J['roll_accel', 'lx_ext'] = J_zz / Den
+        J['roll_accel', 'lz_ext'] = J_xz / Den
+
+        J['pitch_accel', 'J_xz'] = -(roll_ang_vel**2 - yaw_ang_vel**2) / J_yy
+        J['pitch_accel', 'J_xx'] = -(roll_ang_vel * yaw_ang_vel) / J_yy
+        J['pitch_accel', 'J_yy'] = -((J_zz - J_xx) * roll_ang_vel * yaw_ang_vel - 
+                    J_xz * (roll_ang_vel**2 - yaw_ang_vel**2) + ly_ext) / J_yy**2
+        J['pitch_accel', 'J_zz'] = roll_ang_vel * yaw_ang_vel / J_yy
+        J['pitch_accel', 'roll_ang_vel'] = ((J_zz - J_xx) * yaw_ang_vel - 2 * J_xz * roll_ang_vel) / J_yy
+        J['pitch_accel', 'yaw_ang_vel'] = ((J_zz - J_xx) * roll_ang_vel + 2 * J_xz * yaw_ang_vel) / J_yy
+        J['pitch_accel', 'ly_ext'] = 1 / J_yy
+
+        J['yaw_accel', 'J_xz'] = (Den * (
+            2 * J_xz * roll_ang_vel * pitch_ang_vel + (J_xx - J_yy + J_zz) * pitch_ang_vel * yaw_ang_vel + lx_ext + lz_ext
+        ) - ((J_xx * (J_xx - J_yy) + J_xz**2) * roll_ang_vel * pitch_ang_vel + 
+                  J_xz * (J_xx - J_yy + J_zz) * pitch_ang_vel * yaw_ang_vel + 
+                  J_xz * lx_ext + 
+                  J_xz * lz_ext) * -2 * J_xz) / Den**2
+        J['yaw_accel', 'J_xx'] = (Den * (
+            2 * J_xx * roll_ang_vel * pitch_ang_vel - J_yy * roll_ang_vel * pitch_ang_vel + J_xz * pitch_ang_vel * yaw_ang_vel
+        ) - ((J_xx * (J_xx - J_yy) + J_xz**2) * roll_ang_vel * pitch_ang_vel + 
+                  J_xz * (J_xx - J_yy + J_zz) * pitch_ang_vel * yaw_ang_vel + 
+                  J_xz * lx_ext + 
+                  J_xz * lz_ext) * J_zz) / Den**2
+        J['yaw_accel', 'J_yy'] = (-J_xx * roll_ang_vel * pitch_ang_vel - J_xz * pitch_ang_vel * yaw_ang_vel) / Den
+        J['yaw_accel', 'J_zz'] = (Den * (
+            J_xz * pitch_ang_vel * yaw_ang_vel
+        ) - ((J_xx * (J_xx - J_yy) + J_xz**2) * roll_ang_vel * pitch_ang_vel + 
+                  J_xz * (J_xx - J_yy + J_zz) * pitch_ang_vel * yaw_ang_vel + 
+                  J_xz * lx_ext + 
+                  J_xz * lz_ext) * J_xx) / Den**2
+        J['yaw_accel', 'roll_ang_vel'] = ((J_xx * (J_xx - J_yy) + J_xz**2) * pitch_ang_vel) / Den
+        J['yaw_accel', 'pitch_ang_vel'] = ((J_xx * (J_xx - J_yy) + J_xz**2) * roll_ang_vel + J_xz * (J_xx - J_yy + J_zz) * yaw_ang_vel) / Den
+        J['yaw_accel', 'yaw_ang_vel'] = (J_xz * (J_xx - J_yy + J_zz) * pitch_ang_vel) / Den
+        J['yaw_accel', 'lx_ext'] = J_xz / Den
+        J['yaw_accel', 'lz_ext'] = J_xz / Den
+
+        J['roll_angle_rate_eq', 'roll_ang_vel'] = 1 
+        J['roll_angle_rate_eq', 'pitch_ang_vel'] = np.sin(roll) * np.tan(pitch)
+        J['roll_angle_rate_eq', 'yaw_ang_vel'] = np.cos(roll) * np.tan(pitch)
+        J['roll_angle_rate_eq', 'roll'] = np.cos(roll) * np.tan(pitch) * pitch_ang_vel - np.sin(roll) * np.tan(pitch) * yaw_ang_vel
+        J['roll_angle_rate_eq', 'pitch'] = np.sin(roll) * (1 / np.cos(pitch)**2) * pitch_ang_vel + np.cos(roll) * (1 / np.cos(pitch)**2) * yaw_ang_vel
+        
+        J['pitch_angle_rate_eq', 'pitch_ang_vel'] = np.cos(roll)
+        J['pitch_angle_rate_eq', 'yaw_ang_vel'] = -np.sin(roll)
+        J['pitch_angle_rate_eq', 'roll'] = -np.sin(roll) * pitch_ang_vel - np.cos(roll) * yaw_ang_vel
+
+        J['yaw_angle_rate_eq', 'pitch_ang_vel'] = np.sin(roll) / np.cos(pitch)
+        J['yaw_angle_rate_eq', 'yaw_ang_vel'] = np.cos(roll) / np.cos(pitch)
+        J['yaw_angle_rate_eq', 'roll'] = np.cos(roll) / np.cos(pitch) * pitch_ang_vel - np.sin(roll) / np.cos(pitch) * yaw_ang_vel
+        J['yaw_angle_rate_eq', 'pitch'] = np.sin(roll) * (np.tan(pitch) / np.cos(pitch)) * pitch_ang_vel + np.cos(roll) * (np.tan(pitch) / np.cos(pitch)) * yaw_ang_vel
+
+        # note: d/dx tan(x) = sec^2(x) = 1 / cos^2(x)
+        # note: d/dx 1 / cos(x) = d/dx sec(x) = sec(x)tan(x) = tan(x) / cos(x)
+
+        J['dx_dt', 'axial_vel'] = np.cos(pitch) * np.cos(yaw)
+        J['dx_dt', 'lat_vel'] = -np.cos(roll) * np.sin(yaw) + np.sin(roll) * np.sin(pitch) * np.cos(yaw)
+        J['dx_dt', 'vert_vel'] = np.sin(roll) * np.sin(yaw) + np.cos(roll) * np.sin(pitch) * np.cos(yaw)
+        J['dx_dt', 'roll'] = (np.sin(roll) * np.sin(yaw) + np.cos(roll) * np.sin(pitch) * np.cos(yaw)) * lat_vel + \
+                             (np.cos(roll) * np.sin(yaw) - np.sin(roll) * np.sin(pitch) * np.cos(yaw)) * vert_vel
+        J['dx_dt', 'pitch'] = -np.sin(pitch) * np.cos(yaw) * axial_vel + \
+                              np.sin(roll) * np.cos(pitch) * np.cos(yaw) * lat_vel + \
+                              np.cos(roll) * np.cos(pitch) * np.cos(yaw) * vert_vel
+        J['dx_dt', 'yaw'] = -np.cos(pitch) * np.sin(yaw) * axial_vel + \
+                            (-np.cos(roll) * np.cos(yaw) - np.sin(roll) * np.sin(pitch) * np.sin(yaw)) * lat_vel + \
+                            (np.sin(roll) * np.cos(yaw) - np.cos(roll) * np.sin(pitch) * np.sin(yaw)) * vert_vel
+        
+        J['dy_dt', 'axial_vel'] = np.cos(pitch) * np.sin(yaw)
+        J['dy_dt', 'lat_vel'] = np.cos(roll) * np.cos(yaw) + np.sin(roll) * np.sin(pitch) * np.sin(yaw)
+        J['dy_dt', 'vert_vel'] = -np.sin(roll) * np.cos(yaw) + np.cos(roll) * np.sin(pitch) * np.sin(yaw)
+        J['dy_dt', 'roll'] = (-np.sin(roll) * np.cos(yaw) + np.cos(roll) * np.sin(pitch) * np.sin(yaw)) * lat_vel + \
+                             (-np.cos(roll) * np.cos(yaw) - np.sin(roll) * np.sin(pitch) * np.sin(yaw)) * vert_vel
+        J['dy_dt', 'pitch'] = -np.sin(pitch) * np.sin(yaw) * axial_vel + \
+                              np.sin(roll) * np.cos(pitch) * np.sin(yaw) * lat_vel + \
+                              np.cos(roll) * np.cos(pitch) * np.sin(yaw) * vert_vel
+        J['dy_dt', 'yaw'] = np.cos(pitch) * np.cos(yaw) * axial_vel + \
+                            (-np.cos(roll) * np.sin(yaw) + np.sin(roll) * np.sin(pitch) * np.cos(yaw)) * lat_vel + \
+                            (np.sin(roll) * np.sin(yaw) + np.cos(roll) * np.sin(pitch) * np.cos(yaw)) * vert_vel
+        
+        J['dz_dt', 'axial_vel'] = -np.sin(pitch)
+        J['dz_dt', 'lat_vel'] = np.sin(roll) * np.cos(pitch)
+        J['dz_dt', 'vert_vel'] = np.cos(roll) * np.cos(pitch)
+        J['dz_dt', 'roll'] = np.cos(roll) * np.cos(pitch) * lat_vel - \
+                             np.sin(roll) * np.cos(pitch) * vert_vel
+        J['dz_dt', 'pitch'] = -np.cos(pitch) * axial_vel - \
+                              np.sin(roll) * np.sin(pitch) * lat_vel - \
+                              np.cos(roll) * np.sin(pitch) * vert_vel
+                             
+
+
 
 
 if __name__ == "__main__":
@@ -461,5 +739,7 @@ if __name__ == "__main__":
     print(f"Euler angle accels in roll, pitch, yaw: {roll_accel}, {pitch_accel}, {yaw_accel}")
     print(f"Euler angular rates: {roll_angle_rate_eq}, {pitch_angle_rate_eq}, {yaw_angle_rate_eq}")
     print(f"velocities: {dx_dt}, {dy_dt}, {dz_dt}")
+
+    p.check_partials(compact_print=True, show_only_incorrect=True, method='cs')
 
 
