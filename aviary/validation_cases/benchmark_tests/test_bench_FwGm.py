@@ -41,9 +41,7 @@ class ProblemPhaseTestCase(unittest.TestCase):
 
         assert_near_equal(prob.get_val(Mission.Summary.TOTAL_FUEL_MASS), 39979.0, tolerance=rtol)
 
-        assert_near_equal(
-            prob.get_val('landing.' + Mission.Landing.GROUND_DISTANCE), 2595.0, tolerance=rtol
-        )
+        assert_near_equal(prob.get_val(Mission.Landing.GROUND_DISTANCE), 2595.0, tolerance=rtol)
 
         assert_near_equal(
             prob.get_val('traj.desc2.timeseries.distance')[-1], 3675.0, tolerance=rtol
@@ -79,4 +77,4 @@ if __name__ == '__main__':
     test = ProblemPhaseTestCase()
     test.setUp()
     test.bench_test_swap_3_FwGm_SNOPT()
-    # test.bench_test_swap_3_FwGm_IPOPT()
+    #test.bench_test_swap_3_FwGm_IPOPT()
