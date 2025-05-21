@@ -259,21 +259,20 @@ class AviaryProblem(om.Problem):
         aviary_inputs = self.aviary_inputs
         # Target_distance verification for all phases
         # Checks to make sure target_distance is positive,
-        for idx, phase_name in enumerate(self.phase_info):
-            if 'user_options' in self.phase_info[phase_name]:
-                if 'target_distance' in self.phase_info[phase_name]['user_options']:
-                    target_distance = self.phase_info[phase_name]['user_options']['target_distance']
-                    if target_distance[0] <= 0:
-                        raise ValueError(
-                            f'Invalid target_distance in [{phase_name}].[user_options]. '
-                            f'Current (value: {target_distance[0]}), '
-                            f'(units: {target_distance[1]}) <= 0'
-                        )
+        for phase_name, phase in self.phase_info.items():
+            if 'user_options' in phase:
+                target_distance = phase['user_options'].get('target_distance', (None, 'm'))
+                if target_distance[0] is not None and target_distance[0] <= 0:
+                    raise ValueError(
+                        f'Invalid target_distance in [{phase_name}].[user_options]. '
+                        f'Current (value: {target_distance[0]}), '
+                        f'(units: {target_distance[1]}) <= 0'
+                    )
 
         # Checks to make sure target_duration is positive,
         # Sets duration_bounds, initial_guesses, and fixed_duration
-        for idx, phase_name in enumerate(self.phase_info):
-            if 'user_options' in self.phase_info[phase_name]:
+        for phase_name, phase in self.phase_info.items():
+            if 'user_options' in phase:
                 analytic = False
                 if (
                     self.analysis_scheme is AnalysisScheme.COLLOCATION
@@ -281,22 +280,22 @@ class AviaryProblem(om.Problem):
                 ):
                     try:
                         # if the user provided an option, use it
-                        analytic = self.phase_info[phase_name]['user_options']['analytic']
+                        analytic = phase['user_options']['analytic']
                     except KeyError:
                         # if it isn't specified, only the default 2DOF cruise for
                         # collocation is analytic
                         if 'cruise' in phase_name:
-                            analytic = self.phase_info[phase_name]['user_options']['analytic'] = (
+                            analytic = phase['user_options']['analytic'] = (
                                 True
                             )
                         else:
-                            analytic = self.phase_info[phase_name]['user_options']['analytic'] = (
+                            analytic = phase['user_options']['analytic'] = (
                                 False
                             )
 
-                if 'target_duration' in self.phase_info[phase_name]['user_options']:
-                    target_duration = self.phase_info[phase_name]['user_options']['target_duration']
-                    if target_duration[0] <= 0:
+                if 'target_duration' in phase['user_options']:
+                    target_duration = phase['user_options']['target_duration']
+                    if target_duration[0] is not None and target_duration[0] <= 0:
                         raise ValueError(
                             f'Invalid target_duration in phase_info[{phase_name}]'
                             f'[user_options]. Current (value: {target_duration[0]}), '
@@ -306,15 +305,15 @@ class AviaryProblem(om.Problem):
                     # Only applies to non-analytic phases (all HE and most 2DOF)
                     if not analytic:
                         # Set duration_bounds and initial_guesses for time:
-                        self.phase_info[phase_name]['user_options'].update(
+                        phase['user_options'].update(
                             {
-                                'duration_bounds': (
+                                'time_duration_bounds': (
                                     (target_duration[0], target_duration[0]),
                                     target_duration[1],
                                 )
                             }
                         )
-                        self.phase_info[phase_name].update(
+                        phase.update(
                             {
                                 'initial_guesses': {
                                     'time': (
@@ -325,7 +324,7 @@ class AviaryProblem(om.Problem):
                             }
                         )
                         # Set Fixed_duration to true:
-                        self.phase_info[phase_name]['user_options'].update({'fix_duration': True})
+                        phase['user_options'].update({'fix_duration': True})
 
         for phase_name in self.phase_info:
             for external_subsystem in self.phase_info[phase_name]['external_subsystems']:
