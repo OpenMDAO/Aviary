@@ -225,8 +225,8 @@ class HeightEnergyProblemConfigurator(ProblemConfiguratorBase):
 
         # Figure out resonable refs if they aren't given.
         if initial_ref == 1.0:
-            if duration_bounds[1]:
-                initial_ref = duration_bounds[1]
+            if initial_bounds[1]:
+                initial_ref = initial_bounds[1]
             else:
                 # TODO: Why were we using this value?
                 initial_ref = 600.0

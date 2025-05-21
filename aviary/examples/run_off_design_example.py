@@ -26,7 +26,7 @@ phase_info = {
             'throttle_enforcement': 'path_constraint',
             'time_initial_bounds': ((0.0, 2.0), 'min'),
             'time_duration_bounds': ((5.0, 50.0), 'min'),
-            'no_descent': True,
+            'no_descent': False,
         },
         'initial_guesses': {
             'time': ([0, 40.0], 'min'),
@@ -41,12 +41,10 @@ phase_info = {
             'order': 3,
             'mach_optimize': True,
             "mach_polynomial_order": 1,
-            'mach_initial': (0.79, 'unitless'),
-            'mach_bounds': ((0.78, 0.80), 'unitless'),
+            'mach_bounds': ((0.79, 0.79), 'unitless'),
             'altitude_optimize': True,
             "altitude_polynomial_order": 1,
-            'altitude_initial': (35000.0, 'ft'),
-            'altitude_bounds': ((34000.0, 36000.0), 'ft'),
+            'altitude_bounds': ((35000.0, 35000.0), 'ft'),
             'throttle_enforcement': 'boundary_constraint',
             'time_initial_bounds': ((64.0, 192.0), 'min'),
             'time_duration_bounds': ((60.0, 720.0), 'min'),
@@ -63,11 +61,9 @@ phase_info = {
             'num_segments': 5,
             'order': 3,
             'mach_optimize': True,
-            'mach_initial': (0.79, 'unitless'),
             'mach_final': (0.3, 'unitless'),
             'mach_bounds': ((0.2, 0.8), 'unitless'),
             'altitude_optimize': True,
-            'altitude_initial': (35000.0, 'ft'),
             'altitude_final': (35.0, 'ft'),
             'altitude_bounds': ((0.0, 35000.0), 'ft'),
             'throttle_enforcement': 'path_constraint',
@@ -75,7 +71,11 @@ phase_info = {
             'time_duration_bounds': ((5.0, 35.0), 'min'),
             'no_climb': True,
         },
-        'initial_guesses': {'time': ([241, 30], 'min')},
+        'initial_guesses': {
+            'time': ([241, 30], 'min'),
+            "altitude": ([35000, 35.0], "ft"),
+            "mach": ([0.79, 0.3], "unitless"),
+        },
     },
     'post_mission': {
         'include_landing': True,
@@ -83,7 +83,6 @@ phase_info = {
         'target_range': (3375.0, 'nmi'),
     },
 }
-
 
 ##################
 # Sizing Mission #
