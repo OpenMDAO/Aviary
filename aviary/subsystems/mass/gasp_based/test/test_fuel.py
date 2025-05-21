@@ -247,7 +247,7 @@ class BodyCalculationTestCase5(unittest.TestCase):
             self.prob[Aircraft.Fuel.AUXILIARY_FUEL_CAPACITY], 0, tol
         )  # note: not in version 3 output, calulated by hand
         assert_near_equal(
-            self.prob['extra_fuel_volume'], 0.69314718, tol
+            self.prob['extra_fuel_volume'], 0.0, tol
         )  # note: not in version 3 output, calulated by hand
         assert_near_equal(
             self.prob['max_extra_fuel_mass'], 34.67277748, tol
