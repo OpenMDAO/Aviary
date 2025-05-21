@@ -133,7 +133,7 @@ class TwoDOFPhaseOptions(AviaryOptionsDictionary):
         self.declare(
             name='fix_duration',
             types=bool,
-            default=True,
+            default=False,
             desc='If True, the time duration of the phase is not treated as a design '
             'variable for the optimization problem.',
         )
@@ -325,6 +325,13 @@ class TwoDOFPhase(FlightPhaseBase):
         duration_ref = user_options.get_val('time_duration_ref', units='ft')
         rotation = user_options.get_val('rotation')
 
+        # TODO: Revamp will remove fix initial.
+        if fix_initial:
+            phase.set_state_options(
+                Dynamic.Vehicle.MASS,
+                fix_initial=True,
+                input_initial=False,
+            )
         initial_kwargs = {}
         if not fix_initial:
             initial_kwargs = {

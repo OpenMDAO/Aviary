@@ -6,7 +6,9 @@ from aviary.mission.flops_based.phases.phase_utils import (
     add_subsystem_variables_to_phase,
     get_initial,
 )
-from aviary.mission.initial_guess_builders import InitialGuessState
+from aviary.mission.initial_guess_builders import (
+    InitialGuessState, InitialGuessControl,
+)
 from aviary.mission.phase_builder_base import PhaseBuilderBase, register
 from aviary.utils.aviary_options_dict import AviaryOptionsDictionary
 from aviary.utils.aviary_values import AviaryValues
@@ -441,11 +443,11 @@ class FlightPhaseBase(PhaseBuilderBase):
 
 
 FlightPhaseBase._add_initial_guess_meta_data(
-    InitialGuessState('altitude'), desc='initial guess for vertical distances'
+    InitialGuessControl('altitude'), desc='initial guess for vertical distances'
 )
 
 FlightPhaseBase._add_initial_guess_meta_data(
-    InitialGuessState('mach'), desc='initial guess for speed'
+    InitialGuessControl('mach'), desc='initial guess for speed'
 )
 
 FlightPhaseBase._add_initial_guess_meta_data(

@@ -129,8 +129,8 @@ phase_info = {
             'mach_final': (0.15, 'unitless'),
             'altitude_optimize': True,
             'altitude_polynomial_order': 2,
-            'altitude_initial': (50.0, 'ft'),
-            'altitude_final': (0.0, 'ft'),
+            #'altitude_initial': (50.0, 'ft'),
+            #'altitude_final': (0.0, 'ft'),
             'altitude_bounds': ((0.0, 1000.0), 'ft'),
             'throttle_enforcement': 'path_constraint',
             'rotation': False,
@@ -138,6 +138,7 @@ phase_info = {
         },
         'subsystem_options': subsystem_options_landing,
         'initial_guesses': {
+            'altitude': [(50.0, 0.0), 'ft'],
             'distance': [(8.5e3, 2.0e3), 'ft'],
             'time': [(50.0, 60.0), 's'],
             'mass': [(119.7e3, 119.67e3), 'lbm'],

@@ -315,6 +315,9 @@ class SolvedTwoDOFProblemConfigurator(ProblemConfiguratorBase):
         for guess_key, guess_data in guesses.items():
             val, units = guess_data
 
+            if val[0] is None or val[1] is None:
+                continue
+
             # Set initial guess for control variables
             if guess_key in control_keys:
                 try:
