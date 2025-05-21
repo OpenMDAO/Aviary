@@ -108,29 +108,32 @@ def phase_info_parameterization(phase_info, post_mission_info, aviary_inputs):
     if alt_cruise != old_alt_cruise:
         new_alt = (alt_cruise, 'ft')
 
-        climb = phase_info['climb']['user_options']
-        if 'altitude_final' in climb and climb['altitude_final'][0] is not None:
-            climb['altitude_final'] = new_alt
+        climb = phase_info['climb']
+        user = climb['user_options']
+        if 'altitude_final' in user and user['altitude_final'][0] is not None:
+            user['altitude_final'] = new_alt
 
         if 'initial_guesses' in climb and 'altitude' in climb['initial_guesses']:
             if climb['initial_guesses']['altitude'][0] is not None:
                 init = climb['initial_guesses']['altitude'][0][0]
                 climb['initial_guesses']['altitude'] = ([init, alt_cruise], 'ft')
 
-        cruise = phase_info['cruise']['user_options']
-        if 'altitude_initial' in cruise and  cruise['altitude_initial'][0] is not None:
-            cruise['altitude_initial'] = new_alt
+        cruise = phase_info['cruise']
+        user = cruise['user_options']
+        if 'altitude_initial' in user and  user['altitude_initial'][0] is not None:
+            user['altitude_initial'] = new_alt
 
-        if 'altitude_final' in cruise and  cruise['altitude_final'][0] is not None:
-            cruise['altitude_final'] = new_alt
+        if 'altitude_final' in user and  user['altitude_final'][0] is not None:
+            user['altitude_final'] = new_alt
 
         if 'initial_guesses' in cruise and 'altitude' in cruise['initial_guesses']:
             if cruise['initial_guesses']['altitude'][0] is not None:
                 cruise['initial_guesses']['altitude'] = ([alt_cruise, alt_cruise], 'ft')
 
-        descent = phase_info['descent']['user_options']
-        if 'altitude_initial' in descent and descent['altitude_initial'][0] is not None:
-            descent['altitude_initial'] = new_alt
+        descent = phase_info['descent']
+        user = descent['user_options']
+        if 'altitude_initial' in user and user['altitude_initial'][0] is not None:
+            user['altitude_initial'] = new_alt
 
         if 'initial_guesses' in descent and 'altitude' in descent['initial_guesses']:
             if descent['initial_guesses']['altitude'][0] is not None:
@@ -142,33 +145,36 @@ def phase_info_parameterization(phase_info, post_mission_info, aviary_inputs):
     if mach_cruise != old_mach_cruise:
         new_mach = (mach_cruise, 'unitless')
 
-        climb = phase_info['climb']['user_options']
-        if 'mach_final' in climb and climb['mach_final'][0] is not None:
-            climb['mach_final'] = new_mach
+        climb = phase_info['climb']
+        user = climb['user_options']
+        if 'mach_final' in user and user['mach_final'][0] is not None:
+            user['mach_final'] = new_mach
 
         if 'initial_guesses' in climb and 'mach' in climb['initial_guesses']:
             if climb['initial_guesses']['mach'][0] is not None:
                 init = climb['initial_guesses']['mach'][0][0]
-                climb['initial_guesses']['mach'] = ([init, mach_cruise], 'ft')
+                climb['initial_guesses']['mach'] = ([init, mach_cruise], 'unitless')
 
-        cruise = phase_info['cruise']['user_options']
-        if 'mach_initial' in cruise and  cruise['mach_initial'][0] is not None:
-            cruise['mach_initial'] = new_mach
+        cruise = phase_info['cruise']
+        user = cruise['user_options']
+        if 'mach_initial' in user and  user['mach_initial'][0] is not None:
+            user['mach_initial'] = new_mach
 
-        if 'mach_final' in cruise and  cruise['mach_final'][0] is not None:
-            cruise['mach_final'] = new_mach
+        if 'mach_final' in user and  user['mach_final'][0] is not None:
+            user['mach_final'] = new_mach
 
         if 'initial_guesses' in cruise and 'mach' in cruise['initial_guesses']:
             if cruise['initial_guesses']['mach'][0] is not None:
-                cruise['initial_guesses']['mach'] = ([mach_cruise, mach_cruise], 'ft')
+                cruise['initial_guesses']['mach'] = ([mach_cruise, mach_cruise], 'unitless')
 
-        descent = phase_info['descent']['user_options']
-        if 'mach_initial' in descent and descent['mach_initial'][0] is not None:
-            descent['mach_initial'] = new_mach
+        descent = phase_info['descent']
+        user = descent['user_options']
+        if 'mach_initial' in user and user['mach_initial'][0] is not None:
+            user['mach_initial'] = new_mach
 
         if 'initial_guesses' in descent and 'mach' in descent['initial_guesses']:
             if descent['initial_guesses']['mach'][0] is not None:
                 final = climb['initial_guesses']['mach'][0][0]
-                descent['initial_guesses']['mach'] = ([mach_cruise, final], 'ft')
+                descent['initial_guesses']['mach'] = ([mach_cruise, final], 'unitless')
 
     return phase_info, post_mission_info
