@@ -93,7 +93,6 @@ prob = av.AviaryProblem()
 # Load aircraft and options data from user
 # Allow for user overrides here
 prob.load_inputs('models/test_aircraft/aircraft_for_bench_FwFm.csv', phase_info)
-prob.aviary_inputs.set_val("Settings:VERBOSITY", 3)
 
 # Preprocess inputs
 prob.check_and_preprocess_inputs()
