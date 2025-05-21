@@ -232,7 +232,7 @@ aviary run_mission large_single_aisle_1_GASP.csv
 The example should finish without raising any errors - warnings and other printouts are ok. If you don't get any errors, you are ready to use Aviary!
 
 ## Developer Verification
-If you followed the Developer's Guide, then you also have access to testflo. To run testflo, run the following command from inside the top level of the Aviary repository. Be advised, running the full testsuite may take a significant amount of time to run, on the order of thirty minutes on weaker machines such as laptops.
+If you followed the Developer's Guide, then you also have access to testflo. To run testflo, run the following command from inside the top level of the Aviary repository. Be advised, running the full test suite may take a significant amount of time to run, on the order of thirty minutes on weaker machines such as laptops.
 
 ```
 testflo .
