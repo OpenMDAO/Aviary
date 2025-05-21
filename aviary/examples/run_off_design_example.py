@@ -20,15 +20,13 @@ phase_info = {
             'num_segments': 6,
             'order': 3,
             'mach_optimize': True,
-            'mach_initial': (0.3, 'unitless'),
             'mach_bounds': ((0.1, 0.8), 'unitless'),
             'altitude_optimize': True,
-            'altitude_initial': (35.0, 'ft'),
             'altitude_bounds': ((0.0, 35000.0), 'ft'),
             'throttle_enforcement': 'path_constraint',
             'time_initial_bounds': ((0.0, 2.0), 'min'),
             'time_duration_bounds': ((5.0, 50.0), 'min'),
-            'no_descent': False,
+            'no_descent': True,
         },
         'initial_guesses': {
             'time': ([0, 40.0], 'min'),
@@ -44,17 +42,17 @@ phase_info = {
             'mach_optimize': True,
             "mach_polynomial_order": 1,
             'mach_initial': (0.79, 'unitless'),
-            'mach_bounds': ((0.79, 0.79), 'unitless'),
+            'mach_bounds': ((0.78, 0.80), 'unitless'),
             'altitude_optimize': True,
             "altitude_polynomial_order": 1,
             'altitude_initial': (35000.0, 'ft'),
-            'altitude_bounds': ((35000.0, 35000.0), 'ft'),
+            'altitude_bounds': ((34000.0, 36000.0), 'ft'),
             'throttle_enforcement': 'boundary_constraint',
             'time_initial_bounds': ((64.0, 192.0), 'min'),
             'time_duration_bounds': ((60.0, 720.0), 'min'),
         },
         'initial_guesses': {
-            'time': ([128, 113], 'min'),
+            'time': ([64, 113], 'min'),
             "altitude": ([35000, 35000.0], "ft"),
             "mach": ([0.79, 0.79], "unitless"),
         },
@@ -85,6 +83,7 @@ phase_info = {
         'target_range': (3375.0, 'nmi'),
     },
 }
+
 
 ##################
 # Sizing Mission #

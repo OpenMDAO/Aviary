@@ -149,7 +149,7 @@ def phase_info_parameterization(phase_info, post_mission_info, aviary_inputs):
         if 'initial_guesses' in climb and 'mach' in climb['initial_guesses']:
             if climb['initial_guesses']['mach'][0] is not None:
                 init = climb['initial_guesses']['mach'][0][0]
-                climb['initial_guesses']['mach'] = ([init, alt_cruise], 'ft')
+                climb['initial_guesses']['mach'] = ([init, mach_cruise], 'ft')
 
         cruise = phase_info['cruise']['user_options']
         if 'mach_initial' in cruise and  cruise['mach_initial'][0] is not None:
@@ -160,7 +160,7 @@ def phase_info_parameterization(phase_info, post_mission_info, aviary_inputs):
 
         if 'initial_guesses' in cruise and 'mach' in cruise['initial_guesses']:
             if cruise['initial_guesses']['mach'][0] is not None:
-                cruise['initial_guesses']['mach'] = ([alt_cruise, alt_cruise], 'ft')
+                cruise['initial_guesses']['mach'] = ([mach_cruise, mach_cruise], 'ft')
 
         descent = phase_info['descent']['user_options']
         if 'mach_initial' in descent and descent['mach_initial'][0] is not None:
@@ -169,6 +169,6 @@ def phase_info_parameterization(phase_info, post_mission_info, aviary_inputs):
         if 'initial_guesses' in descent and 'mach' in descent['initial_guesses']:
             if descent['initial_guesses']['mach'][0] is not None:
                 final = climb['initial_guesses']['mach'][0][0]
-                descent['initial_guesses']['mach'] = ([alt_cruise, final], 'ft')
+                descent['initial_guesses']['mach'] = ([mach_cruise, final], 'ft')
 
     return phase_info, post_mission_info
