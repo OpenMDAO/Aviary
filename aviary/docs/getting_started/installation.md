@@ -61,7 +61,7 @@ pip install git+https://github.com/OpenMDAO/Aviary@main
 
 (install-pyoptsparse)=
 ## Step 2: Install pyOptSparse
-If you installed Aviary following the Quick Start Guide, you can "upgrade" your installation to use more optimizers by following just this step. Once you have pyoptsparse installed, proceed to [verifying your installation](#verify-installation).
+If you installed Aviary following the Quick Start Guide, you can "upgrade" your installation to use more optimizers by following this step. Once you have pyoptsparse installed, proceed to [verifying your installation](#verify-installation).
 
 ### Installing with conda
 If you have a conda environment, then you can install pyOptSparse with access to the IPOPT optimizer. This is the most commonly used optimizer in Aviary, as it is generally more performant than SLSQP while also being free. Simply install `pyoptsparse` using conda:
@@ -81,7 +81,9 @@ build_pyoptsparse
 ```
 
 #### Adding SNOPT
-[SNOPT](http://ccom.ucsd.edu/~optimizers/solvers/snopt/) is a proprietary, high-performance optimizer that is very good at solving large nonlinear problems and is commonly used by many OpenMDAO users. If you have a copy of SNOPT, instead run the following command to install `pyoptsparse` with both IPOPT and SNOPT available:
+[SNOPT](http://ccom.ucsd.edu/~optimizers/solvers/snopt/) is a proprietary, high-performance optimizer that is very good at solving large nonlinear problems and is used by many OpenMDAO users. SNOPT is only supported on Linux.
+
+If you have a copy of SNOPT, instead run the following command to install `pyoptsparse` with both IPOPT and SNOPT available:
 
 ```
 build_pyoptsparse -s /path_to_SNOPT_dir
