@@ -1,28 +1,35 @@
 # Installation
 
-Aviary can be installed on any OS, including Windows, Linux, and MacOS. We recommend using a conda environment, as it makes it easier to install Aviary with it's full feature set, which will be explained below.
+Aviary can be installed on any OS, including Windows, Linux, and macOS. We recommend using a conda environment, as it makes it easier to install Aviary with its full feature set, which will be explained below.
 
 We assume that you have a working Python or conda environment set up for all of our guides. Our recommended package manager is [miniforge](https://github.com/conda-forge/miniforge). Miniforge is an open-source alternative to miniconda, and functions identically.
-
-The Detailed and Developer's installation guide also assume you have git installed. The Developer's Guide also assumes that if you are using your own fork of Aviary, that you have your machine correctly configured with the proper permissions to pull from and push to your fork.
-
 
 ```{note}
 The minimum supported version of Python is 3.9; we recommend using the latest release of Python.
 ```
 
+The Detailed and Developer's installation guide assume you have git installed. The Developer's Guide also assumes that if you are using your own fork of Aviary, that you have your machine correctly configured with the proper permissions to pull from and push to your fork.
+
+
 ## Which Installation Guide Should I Use?
+The following guides are available:
+
+- [Quick Start Guide](#quick-start-guide)
+- [Detailed Installation Guide](#detailed-guide)
+- [Developer's Guide](#developers-guide)
+
 The different installation guides are intended to get users of various levels of experience and analysis need started. Here is a brief explanation of what can differ between Aviary installs.
 
 ### Optimizers
-Aviary uses the pyOptSparse package to get access to a variety of different optimizers. Many of the more powerful and robust optimizers do not come with pyOptSparse by default, and may require additional steps to install. You can always "upgrade" your pyOptSparse later with more optimizers. Using a conda environment simplifies that installation process.
+Aviary uses the `pyOptSparse` package to get access to a variety of different optimizers. Many of the more powerful and robust optimizers do not come with pyOptSparse by default, and may require additional steps to install. The Quick Start guide does not include pyOptSparse, however you can always "upgrade" your install with pyOptSparse later to get access to more optimizers. Using a conda environment simplifies that installation process.
 
 ### Editable Source Code
-If you do not follow the [Developer's Guide](#developers-guide), then you will not have an editable version of Aviary source code. Following that guide installs a copy of Aviary that you can freely modify.
+If you do not follow the Developer's Guide, then you will not have an editable version of Aviary source code. Following that guide installs a copy of Aviary that you can freely modify.
 
 ### Access to Development Versions
 The Quick Start Guide only grabs the latest version of Aviary, so if you need a new feature or bugfix you will have to wait until the next version release to get it. However, the other guides show how to directly get the latest Aviary code. These versions are generally stable and give you access to the latest features immediately. However, we recommend using tagged releases for studies, which makes documenting and replicating your work much easier.
 
+(quick-start-guide)=
 # Quick Start Guide
 ```
 Prerequisites: Python environment
@@ -44,6 +51,7 @@ When a new version of Aviary is released, you can update your local copy by runn
 pip install --upgrade aviary
 ```
 
+(detailed-guide)=
 # Detailed Installation Guide
 ```
 Prerequisites: Python environment (conda recommended), git (optional)
@@ -114,7 +122,7 @@ pip install --upgrade git+https://github.com/OpenMDAO/Aviary@main
 (developers-guide)=
 # Developer's Guide
 ```
-Prerequisites: Python environment (conda recommended), Git
+Prerequisites: Python environment (conda recommended), git
 Features: Editable install of latest version Aviary with additional optimizers, additional packages for development and testing
 ```
 The Developer's Guide installs an editable version of Aviary source code, cloned from github, as well as additional Python packages needed for Aviary development and contributing code to the project.
