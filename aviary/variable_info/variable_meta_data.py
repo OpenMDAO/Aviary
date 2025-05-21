@@ -4473,7 +4473,7 @@ add_meta_data(
 add_meta_data(
     Aircraft.Nacelle.SURFACE_AREA,
     meta_data=_MetaData,
-    historical_name={'GASP': 'INGASP.SN', 'FLOPS': None, 'LEAPS1': None},
+    historical_name={'GASP': 'INGASP.SN', 'FLOPS': None, 'LEAPS1': None},  # SN is wetted area
     units='ft**2',
     desc='surface area of the outside of one entire nacelle, not just the wetted area',
     multivalue=True,
@@ -5374,9 +5374,9 @@ add_meta_data(
 add_meta_data(
     Aircraft.Wing.CENTER_CHORD,
     meta_data=_MetaData,
-    historical_name={'GASP': 'INGASP.CRCLW', 'FLOPS': None, 'LEAPS1': None},
+    historical_name={'GASP': ['INGASP.CRCLW', 'INGASP.CROOT'], 'FLOPS': None, 'LEAPS1': None},
     units='ft',
-    desc='wing chord at fuselage centerline',
+    desc='wing chord at fuselage centerline, usally called root chord',
     default_value=0.0,
 )
 
@@ -6082,12 +6082,12 @@ add_meta_data(
     Aircraft.Wing.ROOT_CHORD,
     meta_data=_MetaData,
     historical_name={
-        'GASP': ['INGASP.CROOT', 'INGASP.CROOTW'],
+        'GASP': 'INGASP.CROOTW',
         'FLOPS': None,
         'LEAPS1': None,
     },
     units='ft',
-    desc='wing chord length at wing root',
+    desc='wing chord length at at the wing/fuselage intersection',
     default_value=0.0,
 )
 
@@ -7083,7 +7083,7 @@ add_meta_data(
 add_meta_data(
     Mission.Design.CRUISE_ALTITUDE,
     meta_data=_MetaData,
-    historical_name={'GASP': 'INGASP.CRALT', 'FLOPS': None, 'LEAPS1': None},
+    historical_name={'GASP': ['INGASP.CRALT', 'INGASP.HNCRU'], 'FLOPS': None, 'LEAPS1': None},
     units='ft',
     option=True,
     default_value=25000.0,
