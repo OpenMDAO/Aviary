@@ -149,6 +149,7 @@ class WingParameters(om.ExplicitComponent):
             sweep_c4 * (np.pi / 180)
         )
 
+        # For BWB, this formula might need correction
         FHP = (
             2.0
             * (tc_ratio_root * center_chord * (cabin_width - (tc_ratio_root * center_chord))) ** 0.5
