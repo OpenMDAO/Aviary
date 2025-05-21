@@ -1523,7 +1523,6 @@ class UsefulMassTestCase5(unittest.TestCase):
         tol = 1e-7
         assert_near_equal(
             self.prob[Aircraft.Design.FIXED_USEFUL_LOAD], 5241.42896854, tol
-
         )  # modified from GASP value to account for updated crew mass. GASP value is 4932
 
         partial_data = self.prob.check_partials(out_stream=None, method='cs')
