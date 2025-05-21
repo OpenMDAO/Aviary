@@ -240,7 +240,7 @@ testflo .
 
 The tests should begin running. You will see a series of characters printed to the screen, along with normal printouts from running Aviary cases. Periods are finished tests, "S" represents a skipped tests. Skipped tests are not a concern. Tests are flagged to be skipped for a variety of reasons, and do not mean there is a problem with your installation.
 
-If you are missing some optional packages, those tests will simply be skipped, so you should not be seeing any failures.
+If you are missing some optional packages, those tests will simply be skipped, so you should not be seeing any failures. If you run into an MPI error, you can add the `--nompi` option to the testflo command run.
 
 A successful test run should look like the following. The exact number of tests ran will vary as Aviary development continues, but there should be not be any failed tests.
 
