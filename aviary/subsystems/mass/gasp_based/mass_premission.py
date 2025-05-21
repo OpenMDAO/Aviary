@@ -47,7 +47,10 @@ class MassPremission(om.Group):
 
         wing_mass_inputs = wing_mass_fixed_mass_values
 
-        fuel_mass_inputs = fuel_mass_design_load_values + fuel_mass_fixed_mass_values
+        if design_type is AircraftTypes.BLENDED_WING_BODY:
+            fuel_mass_inputs = fuel_mass_fixed_mass_values
+        else:
+            fuel_mass_inputs = fuel_mass_design_load_values + fuel_mass_fixed_mass_values
 
         # create the instances of the groups
 

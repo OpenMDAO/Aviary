@@ -8,7 +8,7 @@ from aviary.subsystems.mass.gasp_based.equipment_and_useful_load import (
     BWBFurnishingMass,
     BWBEquipMassGroup,
     ACMass,
-    EquipMassPartial,
+    EquipMassPartialSum,
     FurnishingMass,
     EquipMassSum,
     EquipMassGroup,
@@ -32,7 +32,7 @@ class FixedEquipMassTestCase1(unittest.TestCase):
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
             'equip',
-            EquipMassPartial(),
+            EquipMassPartialSum(),
             promotes=['*'],
         )
 
@@ -98,7 +98,7 @@ class FixedEquipMassTestCase2(unittest.TestCase):
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
             'equip',
-            EquipMassPartial(),
+            EquipMassPartialSum(),
             promotes=['*'],
         )
 
@@ -166,7 +166,7 @@ class FixedEquipMassTestCase3(unittest.TestCase):
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
             'equip',
-            EquipMassPartial(),
+            EquipMassPartialSum(),
             promotes=['*'],
         )
 
@@ -247,7 +247,7 @@ class FixedEquipMassTestCase4(unittest.TestCase):
         prob = om.Problem()
         prob.model.add_subsystem(
             'equip',
-            EquipMassPartial(),
+            EquipMassPartialSum(),
             promotes=['*'],
         )
 
@@ -310,7 +310,7 @@ class FixedEquipMassTestCase5smooth(unittest.TestCase):
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
             'equip',
-            EquipMassPartial(),
+            EquipMassPartialSum(),
             promotes=['*'],
         )
 
@@ -378,7 +378,7 @@ class FixedEquipMassTestCase6smooth(unittest.TestCase):
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
             'equip',
-            EquipMassPartial(),
+            EquipMassPartialSum(),
             promotes=['*'],
         )
 
@@ -447,7 +447,7 @@ class FixedEquipMassTestCase7smooth(unittest.TestCase):
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
             'equip',
-            EquipMassPartial(),
+            EquipMassPartialSum(),
             promotes=['*'],
         )
 
@@ -522,7 +522,7 @@ class FixedEquipMassTestCase8(unittest.TestCase):
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
             'equip',
-            EquipMassPartial(),
+            EquipMassPartialSum(),
             promotes=['*'],
         )
 
@@ -597,7 +597,7 @@ class FixedEquipMassTestCase9smooth(unittest.TestCase):
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
             'equip',
-            EquipMassPartial(),
+            EquipMassPartialSum(),
             promotes=['*'],
         )
 

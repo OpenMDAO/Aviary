@@ -63,6 +63,7 @@ class MassParameters(om.ExplicitComponent):
         )
         self.add_output('half_sweep', val=0, units='rad', desc='SWC2: wing chord half sweep angle')
 
+    def setup_partials(self):
         self.declare_partials(
             Aircraft.Wing.MATERIAL_FACTOR,
             [
@@ -122,6 +123,7 @@ class MassParameters(om.ExplicitComponent):
             if loc_main_gear == 0:
                 c_gear_loc = 0.95
 
+        # why always use sigmoid function?
         c_eng_pos = 1.0 * sigmoidX(max_mach, 0.75, -1.0 / 320.0) + 1.05 * sigmoidX(
             max_mach, 0.75, 1.0 / 320.0
         )
@@ -242,6 +244,8 @@ class PayloadMass(om.ExplicitComponent):
             desc='WPLMAX: maximum payload that the aircraft is being asked to carry'
             ' (design payload + cargo)',
         )
+
+    def setup_partials(self):
         self.declare_partials(
             Aircraft.CrewPayload.TOTAL_PAYLOAD_MASS,
             [Aircraft.CrewPayload.CARGO_MASS],
@@ -629,6 +633,9 @@ class EngineMass(om.ExplicitComponent):
 
         self.add_output('prop_mass_all', val=0, units='lbm', desc='WPROP: mass of all propellers')
 
+    def setup_partials(self):
+        has_hybrid_system = self.options[Aircraft.Electrical.HAS_HYBRID_SYSTEM]
+
         self.declare_partials('prop_mass_all', ['prop_mass'])
         self.declare_partials('wing_mounted_mass', 'prop_mass')
 
@@ -738,6 +745,7 @@ class EngineMass(om.ExplicitComponent):
         pylon_wt = pylon_fac * ((dry_wt_eng + nacelle_wt) ** 0.736)
         pod_wt = nacelle_wt + pylon_wt
         # sec_wt_all = sum((nacelle_wt + pylon_wt) * num_engines)
+        # In GASP, WPEI = SKPEI * (WEP + ENP*WTGB), even though WTGB = 0.
         eng_instl_wt = c_instl * dry_wt_eng
         eng_instl_wt_all = sum(eng_instl_wt * num_engines)
 
@@ -748,6 +756,7 @@ class EngineMass(om.ExplicitComponent):
             sum(pod_wt * num_engines) / GRAV_ENGLISH_LBM
         )
         outputs[Aircraft.Engine.ADDITIONAL_MASS] = eng_instl_wt / GRAV_ENGLISH_LBM
+        # In GASP, WPSTAR=CK5*WEP+CK7*WPEI+WPROP+WTGB*ENP, even though the last two terms are 0.
         outputs['eng_comb_mass'] = (
             sum(CK5 * dry_wt_eng * num_engines) + CK7 * eng_instl_wt_all
         ) / GRAV_ENGLISH_LBM
@@ -774,6 +783,10 @@ class EngineMass(om.ExplicitComponent):
             # fmt: on
             idx = idx + num_engines[i]
 
+        # In GASP,
+        # WM = YP/(YP+.001)*(WEP+WPEI+WPES+WPROP+ENP*WTGB)
+        #      + WMG*YMG/(YMG+.001)
+        #      + WCMIN*YC/(YC+.001)
         outputs['wing_mounted_mass'] = (
             sum(span_frac_factor_sum * (dry_wt_eng + eng_instl_wt + pod_wt + prop_wt) * num_engines)
             + main_gear_wt * loc_main_gear / (loc_main_gear + 0.001)
@@ -1000,6 +1013,7 @@ class TailMass(om.ExplicitComponent):
         add_aviary_output(self, Aircraft.HorizontalTail.MASS, units='lbm')
         add_aviary_output(self, Aircraft.VerticalTail.MASS, units='lbm')
 
+    def setup_partials(self):
         self.declare_partials(
             'loc_MAC_vtail',
             [
@@ -1634,6 +1648,7 @@ class HighLiftMass(om.ExplicitComponent):
         )
         self.add_output('slat_mass', val=0, units='lbm', desc='WLED: mass of leading edge devices')
 
+    def setup_partials(self):
         self.declare_partials(
             'slat_mass',
             [
@@ -2468,6 +2483,7 @@ class ControlMass(om.ExplicitComponent):
         add_aviary_output(self, Aircraft.Controls.TOTAL_MASS, units='lbm')
         add_aviary_output(self, Aircraft.Wing.SURFACE_CONTROL_MASS, units='lbm')
 
+    def setup_partials(self):
         self.declare_partials(Aircraft.Controls.TOTAL_MASS, '*')
         self.declare_partials(
             Aircraft.Wing.SURFACE_CONTROL_MASS,
@@ -2675,6 +2691,7 @@ class GearMass(om.ExplicitComponent):
         add_aviary_output(self, Aircraft.LandingGear.TOTAL_MASS, units='lbm')
         add_aviary_output(self, Aircraft.LandingGear.MAIN_GEAR_MASS, units='lbm')
 
+    def setup_partials(self):
         self.declare_partials(
             Aircraft.LandingGear.TOTAL_MASS,
             [
@@ -2703,8 +2720,9 @@ class GearMass(om.ExplicitComponent):
         # A minimum gear height of 6 feet is enforced here using a smoothing function to
         # prevent discontinuities in the function and it's derivatives.
         gear_height_temp = gear_height_temp[0]
-        gear_height = gear_height_temp * sigmoidX(gear_height_temp, 6, 1 / 320.0)
-        +6 * sigmoidX(gear_height_temp, 6, -1 / 320.0)
+        gear_height = gear_height_temp * sigmoidX(gear_height_temp, 6, 1 / 320.0) + 6 * sigmoidX(
+            gear_height_temp, 6, -1 / 320.0
+        )
 
         # Low wing aircraft (defined as having the wing at the lowest position on the
         # fuselage) have a separate equation for calculating gear mass. A smoothing

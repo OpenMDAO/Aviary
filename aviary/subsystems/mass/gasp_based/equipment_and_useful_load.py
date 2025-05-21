@@ -56,7 +56,7 @@ def get_num_of_lavatories(num_pax):
     return num_lavatories
 
 
-class EquipMassPartial(om.ExplicitComponent):
+class EquipMassPartialSum(om.ExplicitComponent):
     """
     Computation of fixed equipment mass and useful load for GASP-based mass.
     AC and furnishing masses are removed. Others will be moved to individual components.
@@ -792,7 +792,7 @@ class EquipMassGroup(om.Group):
     def setup(self):
         self.add_subsystem(
             'equip_partial',
-            EquipMassPartial(),
+            EquipMassPartialSum(),
             promotes_inputs=['aircraft:*', 'mission:*'],
             promotes_outputs=['equip_mass_part'],
         )
@@ -1404,7 +1404,7 @@ class BWBEquipMassGroup(om.Group):
     def setup(self):
         self.add_subsystem(
             'equip_partial',
-            EquipMassPartial(),
+            EquipMassPartialSum(),
             promotes_inputs=['aircraft:*', 'mission:*'],
             promotes_outputs=['equip_mass_part'],
         )
