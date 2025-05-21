@@ -39,7 +39,7 @@ class DescentPhaseOptions(AviaryOptionsDictionary):
         )
 
         self.declare(
-            'target_duration',
+            'time_duration',
             default=None,
             units='s',
             desc='The amount of time taken by this phase added as a constraint.',

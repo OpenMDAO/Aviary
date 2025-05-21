@@ -269,7 +269,7 @@ class AviaryProblem(om.Problem):
                         f'(units: {target_distance[1]}) <= 0'
                     )
 
-        # Checks to make sure target_duration is positive,
+        # Checks to make sure time_duration is positive,
         # Sets duration_bounds, initial_guesses, and fixed_duration
         for phase_name, phase in self.phase_info.items():
             if 'user_options' in phase:
@@ -293,13 +293,13 @@ class AviaryProblem(om.Problem):
                                 False
                             )
 
-                if 'target_duration' in phase['user_options']:
-                    target_duration = phase['user_options']['target_duration']
-                    if target_duration[0] is not None and target_duration[0] <= 0:
+                if 'time_duration' in phase['user_options']:
+                    time_duration = phase['user_options']['time_duration']
+                    if time_duration[0] is not None and time_duration[0] <= 0:
                         raise ValueError(
-                            f'Invalid target_duration in phase_info[{phase_name}]'
-                            f'[user_options]. Current (value: {target_duration[0]}), '
-                            f'(units: {target_duration[1]}) <= 0")'
+                            f'Invalid time_duration in phase_info[{phase_name}]'
+                            f'[user_options]. Current (value: {time_duration[0]}), '
+                            f'(units: {time_duration[1]}) <= 0")'
                         )
 
                     # Only applies to non-analytic phases (all HE and most 2DOF)
@@ -308,8 +308,8 @@ class AviaryProblem(om.Problem):
                         phase['user_options'].update(
                             {
                                 'time_duration_bounds': (
-                                    (target_duration[0], target_duration[0]),
-                                    target_duration[1],
+                                    (time_duration[0], time_duration[0]),
+                                    time_duration[1],
                                 )
                             }
                         )
@@ -317,14 +317,12 @@ class AviaryProblem(om.Problem):
                             {
                                 'initial_guesses': {
                                     'time': (
-                                        (target_duration[0], target_duration[0]),
-                                        target_duration[1],
+                                        (time_duration[0], time_duration[0]),
+                                        time_duration[1],
                                     )
                                 }
                             }
                         )
-                        # Set Fixed_duration to true:
-                        phase['user_options'].update({'fix_duration': True})
 
         for phase_name in self.phase_info:
             for external_subsystem in self.phase_info[phase_name]['external_subsystems']:
@@ -953,17 +951,17 @@ class AviaryProblem(om.Problem):
                 )
 
             # this is only used for analytic phases with a target duration
-            target_duration = user_options.get('time_duration', (None, 'min'))
-            target_duration = wrapped_convert_units(target_duration, 'min')
+            time_duration = user_options.get('time_duration', (None, 'min'))
+            time_duration = wrapped_convert_units(time_duration, 'min')
             analytic = user_options.get('analytic', False)
 
-            if analytic and target_duration is not None:
+            if analytic and time_duration is not None:
                 self.post_mission.add_subsystem(
                     f'{phase_name}_duration_constraint',
                     om.ExecComp(
-                        'duration_resid = target_duration - (final_time - initial_time)',
+                        'duration_resid = time_duration - (final_time - initial_time)',
                         duration_resid={'units': 'min'},
-                        target_duration={'val': target_duration, 'units': 'min'},
+                        time_duration={'val': time_duration, 'units': 'min'},
                         final_time={'units': 'min'},
                         initial_time={'units': 'min'},
                     ),

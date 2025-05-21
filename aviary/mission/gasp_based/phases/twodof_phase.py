@@ -40,7 +40,7 @@ class TwoDOFPhaseOptions(AviaryOptionsDictionary):
         )
 
         self.declare(
-            'target_duration',
+            'time_duration',
             types=tuple,
             default=None,
             units='s',
