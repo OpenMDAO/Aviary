@@ -271,21 +271,19 @@ class BWBMassParametersTestCase(unittest.TestCase):
         options = get_option_defaults()
         options.set_val(Settings.VERBOSITY, 0)
 
-        self.prob = om.Problem()
+        prob = self.prob = om.Problem()
         self.prob.model.add_subsystem(
             'parameters',
             MassParameters(),
             promotes=['*'],
         )
 
-        self.prob.model.set_input_defaults(Aircraft.Wing.SWEEP, val=30.0, units='deg')
-        self.prob.model.set_input_defaults(Aircraft.Wing.TAPER_RATIO, val=0.27444, units='unitless')
-        self.prob.model.set_input_defaults(Aircraft.Wing.ASPECT_RATIO, val=10.0, units='unitless')
-        self.prob.model.set_input_defaults(Aircraft.Wing.SPAN, val=146.38501094, units='ft')
-        self.prob.model.set_input_defaults('max_mach', val=0.9, units='unitless')
-        self.prob.model.set_input_defaults(
-            Aircraft.LandingGear.MAIN_GEAR_LOCATION, val=0.0, units='unitless'
-        )
+        prob.model.set_input_defaults(Aircraft.Wing.SWEEP, 30.0, units='deg')
+        prob.model.set_input_defaults(Aircraft.Wing.TAPER_RATIO, 0.27444, units='unitless')
+        prob.model.set_input_defaults(Aircraft.Wing.ASPECT_RATIO, 10.0, units='unitless')
+        prob.model.set_input_defaults(Aircraft.Wing.SPAN, 146.38501094, units='ft')
+        prob.model.set_input_defaults('max_mach', 0.9, units='unitless')
+        prob.model.set_input_defaults(Aircraft.LandingGear.MAIN_GEAR_LOCATION, 0, units='unitless')
 
         setup_model_options(self.prob, options)
 
@@ -294,7 +292,7 @@ class BWBMassParametersTestCase(unittest.TestCase):
     def test_case1(self):
         self.prob.run_model()
 
-        tol = 1e-4
+        tol = 1e-7
         assert_near_equal(self.prob[Aircraft.Wing.MATERIAL_FACTOR], 1.19461189, tol)
         assert_near_equal(self.prob['c_strut_braced'], 1, tol)
         assert_near_equal(self.prob['c_gear_loc'], 0.95, tol)
@@ -357,9 +355,9 @@ class BWBPayloadMassTestCase(unittest.TestCase):
 
         self.prob = om.Problem()
         self.prob.model.add_subsystem('payload', PayloadMass(), promotes=['*'])
-        self.prob.model.set_input_defaults(Aircraft.CrewPayload.CARGO_MASS, val=0, units='lbm')
+        self.prob.model.set_input_defaults(Aircraft.CrewPayload.CARGO_MASS, 0.0, units='lbm')
         self.prob.model.set_input_defaults(
-            Aircraft.CrewPayload.Design.MAX_CARGO_MASS, val=15000, units='lbm'
+            Aircraft.CrewPayload.Design.MAX_CARGO_MASS, 15000.0, units='lbm'
         )
 
         setup_model_options(self.prob, options)
@@ -615,39 +613,25 @@ class BWBEngineTestCase(unittest.TestCase):
         options.set_val(Aircraft.Electrical.HAS_HYBRID_SYSTEM, val=False, units='unitless')
         options.set_val(Aircraft.Engine.ADDITIONAL_MASS_FRACTION, 0.04373)
 
-        self.prob = om.Problem()
+        prob = self.prob = om.Problem()
         self.prob.model.add_subsystem(
             'engine',
             EngineMass(),
             promotes=['*'],
         )
 
-        self.prob.model.set_input_defaults(
-            Aircraft.Engine.MASS_SPECIFIC, val=0.178884, units='lbm/lbf'
-        )
-        self.prob.model.set_input_defaults(
-            Aircraft.Engine.SCALED_SLS_THRUST, val=19580.1602, units='lbf'
-        )
-        self.prob.model.set_input_defaults(
-            Aircraft.Nacelle.MASS_SPECIFIC, val=2.5, units='lbm/ft**2'
-        )
-        self.prob.model.set_input_defaults(
-            Aircraft.Nacelle.SURFACE_AREA, val=194.957186763, units='ft**2'
+        prob.model.set_input_defaults(Aircraft.Engine.MASS_SPECIFIC, 0.178884, units='lbm/lbf')
+        prob.model.set_input_defaults(Aircraft.Engine.SCALED_SLS_THRUST, 19580.1602, units='lbf')
+        prob.model.set_input_defaults(Aircraft.Nacelle.MASS_SPECIFIC, 2.5, units='lbm/ft**2')
+        prob.model.set_input_defaults(
+            Aircraft.Nacelle.SURFACE_AREA, 194.957186763, units='ft**2'
         )  # 6.76*3.14159265*9.18
-        self.prob.model.set_input_defaults(Aircraft.Engine.PYLON_FACTOR, val=1.25, units='unitless')
-        self.prob.model.set_input_defaults(Aircraft.Engine.MASS_SCALER, val=1, units='unitless')
-        self.prob.model.set_input_defaults(
-            Aircraft.Propulsion.MISC_MASS_SCALER, val=1, units='unitless'
-        )
-        self.prob.model.set_input_defaults(
-            Aircraft.Engine.WING_LOCATIONS, val=0.0, units='unitless'
-        )
-        self.prob.model.set_input_defaults(
-            Aircraft.LandingGear.MAIN_GEAR_MASS, val=6630.0, units='lbm'
-        )
-        self.prob.model.set_input_defaults(
-            Aircraft.LandingGear.MAIN_GEAR_LOCATION, val=0.0, units='unitless'
-        )
+        prob.model.set_input_defaults(Aircraft.Engine.PYLON_FACTOR, 1.25, units='unitless')
+        prob.model.set_input_defaults(Aircraft.Engine.MASS_SCALER, 1.0, units='unitless')
+        prob.model.set_input_defaults(Aircraft.Propulsion.MISC_MASS_SCALER, 1.0, units='unitless')
+        prob.model.set_input_defaults(Aircraft.Engine.WING_LOCATIONS, 0.0, units='unitless')
+        prob.model.set_input_defaults(Aircraft.LandingGear.MAIN_GEAR_MASS, 6630.0, units='lbm')
+        prob.model.set_input_defaults(Aircraft.LandingGear.MAIN_GEAR_LOCATION, 0, units='unitless')
 
         setup_model_options(self.prob, options)
 
@@ -838,69 +822,51 @@ class BWBTailTestCase(unittest.TestCase):
     """GASP BWB model"""
 
     def setUp(self):
-        self.prob = om.Problem()
-        self.prob.model.add_subsystem('tail', TailMass(), promotes=['*'])
+        prob = self.prob = om.Problem()
+        prob.model.add_subsystem('tail', TailMass(), promotes=['*'])
 
-        self.prob.model.set_input_defaults(
-            Aircraft.VerticalTail.TAPER_RATIO, val=0.366, units='unitless'
+        prob.model.set_input_defaults(Aircraft.VerticalTail.TAPER_RATIO, 0.366, units='unitless')
+        prob.model.set_input_defaults(Aircraft.VerticalTail.ASPECT_RATIO, 1.705, units='unitless')
+        prob.model.set_input_defaults(Aircraft.VerticalTail.SWEEP, 0.0, units='rad')
+        prob.model.set_input_defaults(Aircraft.VerticalTail.SPAN, 16.98084188, units='ft')
+        prob.model.set_input_defaults(Mission.Design.GROSS_MASS, 150000.0, units='lbm')
+        prob.model.set_input_defaults(
+            Aircraft.HorizontalTail.MASS_COEFFICIENT, 0.124, units='unitless'
         )
-        self.prob.model.set_input_defaults(
-            Aircraft.VerticalTail.ASPECT_RATIO, val=1.705, units='unitless'
+        prob.model.set_input_defaults(Aircraft.Fuselage.LENGTH, 71.5245514, units='ft')
+        prob.model.set_input_defaults(Aircraft.HorizontalTail.SPAN, 0.04467601, units='ft')
+        prob.model.set_input_defaults(
+            Aircraft.LandingGear.TAIL_HOOK_MASS_SCALER, 1.0, units='unitless'
         )
-        self.prob.model.set_input_defaults(Aircraft.VerticalTail.SWEEP, val=0, units='rad')
-        self.prob.model.set_input_defaults(Aircraft.VerticalTail.SPAN, val=16.98084188, units='ft')
-        self.prob.model.set_input_defaults(Mission.Design.GROSS_MASS, val=150000, units='lbm')
-        self.prob.model.set_input_defaults(
-            Aircraft.HorizontalTail.MASS_COEFFICIENT, val=0.124, units='unitless'
+        prob.model.set_input_defaults(Aircraft.HorizontalTail.TAPER_RATIO, 0.366, units='unitless')
+        prob.model.set_input_defaults(
+            Aircraft.VerticalTail.MASS_COEFFICIENT, 0.119, units='unitless'
         )
-        self.prob.model.set_input_defaults(Aircraft.Fuselage.LENGTH, val=71.5245514, units='ft')
-        self.prob.model.set_input_defaults(Aircraft.HorizontalTail.SPAN, val=0.04467601, units='ft')
-        self.prob.model.set_input_defaults(
-            Aircraft.LandingGear.TAIL_HOOK_MASS_SCALER, val=1, units='unitless'
+        prob.model.set_input_defaults(Aircraft.Wing.SPAN, 146.38501094, units='ft')
+        prob.model.set_input_defaults(Aircraft.HorizontalTail.AREA, 0.00117064, units='ft**2')
+        prob.model.set_input_defaults('min_dive_vel', 420, units='kn')
+        prob.model.set_input_defaults(Aircraft.HorizontalTail.MOMENT_ARM, 29.6907417, units='ft')
+        prob.model.set_input_defaults(
+            Aircraft.HorizontalTail.THICKNESS_TO_CHORD, 0.1, units='unitless'
         )
-        self.prob.model.set_input_defaults(
-            Aircraft.HorizontalTail.TAPER_RATIO, val=0.366, units='unitless'
+        prob.model.set_input_defaults(Aircraft.HorizontalTail.ROOT_CHORD, 0.03836448, units='ft')
+        prob.model.set_input_defaults(
+            Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION, 0, units='unitless'
         )
-        self.prob.model.set_input_defaults(
-            Aircraft.VerticalTail.MASS_COEFFICIENT, val=0.119, units='unitless'
+        prob.model.set_input_defaults(Aircraft.VerticalTail.AREA, 169.11964286, units='ft**2')
+        prob.model.set_input_defaults(Aircraft.VerticalTail.MOMENT_ARM, 27.82191598, units='ft')
+        prob.model.set_input_defaults(
+            Aircraft.VerticalTail.THICKNESS_TO_CHORD, 0.1, units='unitless'
         )
-        self.prob.model.set_input_defaults(Aircraft.Wing.SPAN, val=146.38501094, units='ft')
-        self.prob.model.set_input_defaults(
-            Aircraft.HorizontalTail.AREA, val=0.00117064, units='ft**2'
-        )
-        self.prob.model.set_input_defaults('min_dive_vel', val=420, units='kn')
-        self.prob.model.set_input_defaults(
-            Aircraft.HorizontalTail.MOMENT_ARM, val=29.6907417, units='ft'
-        )
-        self.prob.model.set_input_defaults(
-            Aircraft.HorizontalTail.THICKNESS_TO_CHORD, val=0.1, units='unitless'
-        )
-        self.prob.model.set_input_defaults(
-            Aircraft.HorizontalTail.ROOT_CHORD, val=0.03836448, units='ft'
-        )
-        self.prob.model.set_input_defaults(
-            Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION, val=0, units='unitless'
-        )
-        self.prob.model.set_input_defaults(
-            Aircraft.VerticalTail.AREA, val=169.11964286, units='ft**2'
-        )
-        self.prob.model.set_input_defaults(
-            Aircraft.VerticalTail.MOMENT_ARM, val=27.82191598, units='ft'
-        )
-        self.prob.model.set_input_defaults(
-            Aircraft.VerticalTail.THICKNESS_TO_CHORD, val=0.1, units='unitless'
-        )
-        self.prob.model.set_input_defaults(
-            Aircraft.VerticalTail.ROOT_CHORD, val=14.58190052, units='ft'
-        )
+        prob.model.set_input_defaults(Aircraft.VerticalTail.ROOT_CHORD, 14.58190052, units='ft')
 
-        self.prob.setup(check=False, force_alloc_complex=True)
+        prob.setup(check=False, force_alloc_complex=True)
 
     def test_case1(self):
         self.prob.run_model()
 
         tol = 1e-7
-        assert_near_equal(self.prob['loc_MAC_vtail'], 0.97682958391, tol)
+        assert_near_equal(self.prob['loc_MAC_vtail'], 0.97683077, tol)
         assert_near_equal(self.prob[Aircraft.HorizontalTail.MASS], 1.02401953, tol)
         assert_near_equal(self.prob[Aircraft.VerticalTail.MASS], 864.17404177, tol)
 
@@ -965,40 +931,32 @@ class HighLiftTestCase(unittest.TestCase):
 @use_tempdirs
 class BWBHighLiftTestCase(unittest.TestCase):
     def setUp(self):
-        self.prob = om.Problem()
+        prob = self.prob = om.Problem()
 
         aviary_options = get_option_defaults()
         aviary_options.set_val(Aircraft.Wing.FLAP_TYPE, val=4)
         aviary_options.set_val(Aircraft.Wing.NUM_FLAP_SEGMENTS, val=2)
 
-        self.prob.model.add_subsystem('HL', HighLiftMass(), promotes=['*'])
+        prob.model.add_subsystem('HL', HighLiftMass(), promotes=['*'])
 
-        self.prob.model.set_input_defaults(
-            Aircraft.Wing.HIGH_LIFT_MASS_COEFFICIENT, val=1.0, units='unitless'
+        prob.model.set_input_defaults(
+            Aircraft.Wing.HIGH_LIFT_MASS_COEFFICIENT, 1.0, units='unitless'
         )
-        self.prob.model.set_input_defaults(Aircraft.Wing.AREA, val=2142.85714286, units='ft**2')
-        self.prob.model.set_input_defaults(
-            Aircraft.Wing.SLAT_CHORD_RATIO, val=0.0001, units='unitless'
+        prob.model.set_input_defaults(Aircraft.Wing.AREA, 2142.85714286, units='ft**2')
+        prob.model.set_input_defaults(Aircraft.Wing.SLAT_CHORD_RATIO, 0.0001, units='unitless')
+        prob.model.set_input_defaults(Aircraft.Wing.FLAP_CHORD_RATIO, 0.2, units='unitless')
+        prob.model.set_input_defaults(Aircraft.Wing.TAPER_RATIO, 0.27444, units='unitless')
+        prob.model.set_input_defaults(Aircraft.Wing.SLAT_SPAN_RATIO, 0.831687927, units='unitless')
+        prob.model.set_input_defaults(Aircraft.Wing.FLAP_SPAN_RATIO, 0.61, units='unitless')
+        prob.model.set_input_defaults(Aircraft.Wing.LOADING, 70.0, units='lbf/ft**2')
+        prob.model.set_input_defaults(
+            Aircraft.Wing.THICKNESS_TO_CHORD_ROOT, 0.165, units='unitless'
         )
-        self.prob.model.set_input_defaults(
-            Aircraft.Wing.FLAP_CHORD_RATIO, val=0.2, units='unitless'
-        )
-        self.prob.model.set_input_defaults(Aircraft.Wing.TAPER_RATIO, val=0.27444, units='unitless')
-        self.prob.model.set_input_defaults(
-            Aircraft.Wing.SLAT_SPAN_RATIO, val=0.831687927, units='unitless'
-        )
-        self.prob.model.set_input_defaults(
-            Aircraft.Wing.FLAP_SPAN_RATIO, val=0.61, units='unitless'
-        )
-        self.prob.model.set_input_defaults(Aircraft.Wing.LOADING, val=70.0, units='lbf/ft**2')
-        self.prob.model.set_input_defaults(
-            Aircraft.Wing.THICKNESS_TO_CHORD_ROOT, val=0.165, units='unitless'
-        )
-        self.prob.model.set_input_defaults(Aircraft.Wing.SPAN, val=146.38501094, units='ft')
-        self.prob.model.set_input_defaults(Aircraft.Fuselage.AVG_DIAMETER, val=38, units='ft')
-        self.prob.model.set_input_defaults(Aircraft.Wing.CENTER_CHORD, val=22.97244452, units='ft')
-        self.prob.model.set_input_defaults(
-            Mission.Landing.LIFT_COEFFICIENT_MAX, val=1.94034, units='unitless'
+        prob.model.set_input_defaults(Aircraft.Wing.SPAN, 146.38501094, units='ft')
+        prob.model.set_input_defaults(Aircraft.Fuselage.AVG_DIAMETER, 38, units='ft')
+        prob.model.set_input_defaults(Aircraft.Wing.CENTER_CHORD, 22.97244452, units='ft')
+        prob.model.set_input_defaults(
+            Mission.Landing.LIFT_COEFFICIENT_MAX, 1.94034, units='unitless'
         )  # 1.94034 is taken from .out file. In GASP, CLMAX is computed for different phases
 
         setup_model_options(self.prob, aviary_options)
@@ -1022,7 +980,7 @@ class BWBHighLiftTestCase(unittest.TestCase):
 class ControlMassTestCase(unittest.TestCase):
     def setUp(self):
         self.prob = om.Problem()
-        self.prob.model.add_subsystem('payload', ControlMass(), promotes=['*'])
+        self.prob.model.add_subsystem('control_mass', ControlMass(), promotes=['*'])
 
         self.prob.model.set_input_defaults(
             Aircraft.Wing.SURFACE_CONTROL_MASS_COEFFICIENT, val=0.95, units='unitless'
@@ -1076,38 +1034,36 @@ class BWBControlMassTestCase(unittest.TestCase):
     """GAST BWB model"""
 
     def setUp(self):
-        self.prob = om.Problem()
-        self.prob.model.add_subsystem('payload', ControlMass(), promotes=['*'])
+        prob = self.prob = om.Problem()
+        prob.model.add_subsystem('control_mass', ControlMass(), promotes=['*'])
 
-        self.prob.model.set_input_defaults(
-            Aircraft.Wing.SURFACE_CONTROL_MASS_COEFFICIENT, val=0.5, units='unitless'
+        prob.model.set_input_defaults(
+            Aircraft.Wing.SURFACE_CONTROL_MASS_COEFFICIENT, 0.5, units='unitless'
         )
-        self.prob.model.set_input_defaults(Aircraft.Wing.AREA, val=2142.85714286, units='ft**2')
-        self.prob.model.set_input_defaults(Mission.Design.GROSS_MASS, val=150000, units='lbm')
-        self.prob.model.set_input_defaults(
-            Aircraft.Wing.ULTIMATE_LOAD_FACTOR, val=3.97744787, units='unitless'
+        prob.model.set_input_defaults(Aircraft.Wing.AREA, 2142.85714286, units='ft**2')
+        prob.model.set_input_defaults(Mission.Design.GROSS_MASS, 150000, units='lbm')
+        prob.model.set_input_defaults(
+            Aircraft.Wing.ULTIMATE_LOAD_FACTOR, 3.97744787, units='unitless'
         )
-        self.prob.model.set_input_defaults('min_dive_vel', val=420, units='kn')
-        self.prob.model.set_input_defaults(
-            Aircraft.Design.COCKPIT_CONTROL_MASS_COEFFICIENT, val=16.5, units='unitless'
+        prob.model.set_input_defaults('min_dive_vel', 420, units='kn')
+        prob.model.set_input_defaults(
+            Aircraft.Design.COCKPIT_CONTROL_MASS_COEFFICIENT, 16.5, units='unitless'
         )
-        self.prob.model.set_input_defaults(
-            Aircraft.Controls.STABILITY_AUGMENTATION_SYSTEM_MASS, val=0, units='lbm'
+        prob.model.set_input_defaults(
+            Aircraft.Controls.STABILITY_AUGMENTATION_SYSTEM_MASS, 0, units='lbm'
         )
-        self.prob.model.set_input_defaults(
-            Aircraft.Controls.COCKPIT_CONTROL_MASS_SCALER, val=1, units='unitless'
+        prob.model.set_input_defaults(
+            Aircraft.Controls.COCKPIT_CONTROL_MASS_SCALER, 1, units='unitless'
         )
-        self.prob.model.set_input_defaults(
-            Aircraft.Wing.SURFACE_CONTROL_MASS_SCALER, val=1, units='unitless'
+        prob.model.set_input_defaults(
+            Aircraft.Wing.SURFACE_CONTROL_MASS_SCALER, 1, units='unitless'
         )
-        self.prob.model.set_input_defaults(
-            Aircraft.Controls.STABILITY_AUGMENTATION_SYSTEM_MASS_SCALER, val=1, units='unitless'
+        prob.model.set_input_defaults(
+            Aircraft.Controls.STABILITY_AUGMENTATION_SYSTEM_MASS_SCALER, 1, units='unitless'
         )
-        self.prob.model.set_input_defaults(
-            Aircraft.Controls.CONTROL_MASS_INCREMENT, val=0, units='lbm'
-        )
+        prob.model.set_input_defaults(Aircraft.Controls.CONTROL_MASS_INCREMENT, 0, units='lbm')
 
-        self.prob.setup(check=False, force_alloc_complex=True)
+        prob.setup(check=False, force_alloc_complex=True)
 
     def test_case1(self):
         self.prob.run_model()
@@ -1124,7 +1080,7 @@ class BWBControlMassTestCase(unittest.TestCase):
 class GearTestCase1(unittest.TestCase):  # this is the large single aisle 1 V3 test case
     def setUp(self):
         self.prob = om.Problem()
-        self.prob.model.add_subsystem('payload', GearMass(), promotes=['*'])
+        self.prob.model.add_subsystem('gear_mass', GearMass(), promotes=['*'])
 
         self.prob.model.set_input_defaults(
             Aircraft.LandingGear.MASS_COEFFICIENT, val=0.04, units='unitless'
@@ -1171,7 +1127,7 @@ class GearTestCase2(unittest.TestCase):
     def setUp(self):
         options = get_option_defaults()
         self.prob = om.Problem()
-        self.prob.model.add_subsystem('payload', GearMass(), promotes=['*'])
+        self.prob.model.add_subsystem('gear_mass', GearMass(), promotes=['*'])
 
         self.prob.model.set_input_defaults(
             Aircraft.LandingGear.MASS_COEFFICIENT, val=0.04, units='unitless'
@@ -1252,23 +1208,19 @@ class BWBGearTestCase(unittest.TestCase):
 
     def setUp(self):
         self.prob = om.Problem()
-        self.prob.model.add_subsystem('payload', GearMass(), promotes=['*'])
+        self.prob.model.add_subsystem('gear_mass', GearMass(), promotes=['*'])
 
         self.prob.model.set_input_defaults(
-            Aircraft.LandingGear.MASS_COEFFICIENT, val=0.0520, units='unitless'
+            Aircraft.LandingGear.MASS_COEFFICIENT, 0.0520, units='unitless'
         )
-        self.prob.model.set_input_defaults(Mission.Design.GROSS_MASS, val=150000, units='lbm')
+        self.prob.model.set_input_defaults(Mission.Design.GROSS_MASS, 150000, units='lbm')
         self.prob.model.set_input_defaults(
-            Aircraft.LandingGear.MAIN_GEAR_MASS_COEFFICIENT, val=0.85, units='unitless'
+            Aircraft.LandingGear.MAIN_GEAR_MASS_COEFFICIENT, 0.85, units='unitless'
         )
+        self.prob.model.set_input_defaults(Aircraft.Nacelle.CLEARANCE_RATIO, 0.2, units='unitless')
+        self.prob.model.set_input_defaults(Aircraft.Nacelle.AVG_DIAMETER, 7.35163168, units='ft')
         self.prob.model.set_input_defaults(
-            Aircraft.Nacelle.CLEARANCE_RATIO, val=0.2, units='unitless'
-        )  # hard coded in GASP
-        self.prob.model.set_input_defaults(
-            Aircraft.Nacelle.AVG_DIAMETER, val=7.35163168, units='ft'
-        )
-        self.prob.model.set_input_defaults(
-            Aircraft.Wing.VERTICAL_MOUNT_LOCATION, val=0.5, units='unitless'
+            Aircraft.Wing.VERTICAL_MOUNT_LOCATION, 0.5, units='unitless'
         )
 
         setup_model_options(
@@ -2022,143 +1974,113 @@ class BWBFixedMassGroupTestCase1(unittest.TestCase):
         options.set_val(Settings.VERBOSITY, 0)
         options.set_val(Aircraft.Engine.ADDITIONAL_MASS_FRACTION, 0.04373)
 
-        self.prob = om.Problem()
-        self.prob.model.add_subsystem(
+        prob = self.prob = om.Problem()
+        prob.model.add_subsystem(
             'group',
             FixedMassGroup(),
             promotes=['*'],
         )
 
-        self.prob.model.set_input_defaults(Aircraft.Wing.SPAN, val=146.38501094, units='ft')
-        self.prob.model.set_input_defaults(Mission.Design.GROSS_MASS, val=150000, units='lbm')
-        self.prob.model.set_input_defaults('min_dive_vel', val=420, units='kn')
-        self.prob.model.set_input_defaults(Aircraft.Wing.AREA, val=2142.85714286, units='ft**2')
+        prob.model.set_input_defaults(Aircraft.Wing.SPAN, 146.38501094, units='ft')
+        prob.model.set_input_defaults(Mission.Design.GROSS_MASS, 150000, units='lbm')
+        prob.model.set_input_defaults('min_dive_vel', 420, units='kn')
+        prob.model.set_input_defaults(Aircraft.Wing.AREA, 2142.85714286, units='ft**2')
 
-        self.prob.model.set_input_defaults(Aircraft.Wing.SWEEP, val=30, units='deg')
-        self.prob.model.set_input_defaults(Aircraft.Wing.TAPER_RATIO, val=0.27444, units='unitless')
-        self.prob.model.set_input_defaults(Aircraft.Wing.ASPECT_RATIO, val=10.0, units='unitless')
-        self.prob.model.set_input_defaults('max_mach', val=0.9, units='unitless')
-        self.prob.model.set_input_defaults(Aircraft.CrewPayload.CARGO_MASS, val=0, units='lbm')
-        self.prob.model.set_input_defaults(
-            Aircraft.CrewPayload.Design.MAX_CARGO_MASS, val=15000.0, units='lbm'
+        prob.model.set_input_defaults(Aircraft.Wing.SWEEP, 30, units='deg')
+        prob.model.set_input_defaults(Aircraft.Wing.TAPER_RATIO, 0.27444, units='unitless')
+        prob.model.set_input_defaults(Aircraft.Wing.ASPECT_RATIO, 10.0, units='unitless')
+        prob.model.set_input_defaults('max_mach', 0.9, units='unitless')
+        prob.model.set_input_defaults(Aircraft.CrewPayload.CARGO_MASS, 0, units='lbm')
+        prob.model.set_input_defaults(
+            Aircraft.CrewPayload.Design.MAX_CARGO_MASS, 15000.0, units='lbm'
         )
-        self.prob.model.set_input_defaults(
-            Aircraft.VerticalTail.TAPER_RATIO, val=0.366, units='unitless'
+        prob.model.set_input_defaults(Aircraft.VerticalTail.TAPER_RATIO, 0.366, units='unitless')
+        prob.model.set_input_defaults(Aircraft.VerticalTail.ASPECT_RATIO, 1.705, units='unitless')
+        prob.model.set_input_defaults(Aircraft.VerticalTail.SWEEP, 0.0, units='rad')
+        prob.model.set_input_defaults(Aircraft.VerticalTail.SPAN, 16.98084188, units='ft')
+        prob.model.set_input_defaults(
+            Aircraft.HorizontalTail.MASS_COEFFICIENT, 0.124, units='unitless'
         )
-        self.prob.model.set_input_defaults(
-            Aircraft.VerticalTail.ASPECT_RATIO, val=1.705, units='unitless'
+        prob.model.set_input_defaults(Aircraft.Fuselage.LENGTH, 71.5245514, units='ft')
+        prob.model.set_input_defaults(Aircraft.HorizontalTail.SPAN, 0.04467601, units='ft')
+        prob.model.set_input_defaults(
+            Aircraft.LandingGear.TAIL_HOOK_MASS_SCALER, 1, units='unitless'
         )
-        self.prob.model.set_input_defaults(Aircraft.VerticalTail.SWEEP, val=0.0, units='rad')
-        self.prob.model.set_input_defaults(Aircraft.VerticalTail.SPAN, val=16.98084188, units='ft')
-        self.prob.model.set_input_defaults(
-            Aircraft.HorizontalTail.MASS_COEFFICIENT, val=0.124, units='unitless'
+        prob.model.set_input_defaults(Aircraft.HorizontalTail.TAPER_RATIO, 0.366, units='unitless')
+        prob.model.set_input_defaults(
+            Aircraft.VerticalTail.MASS_COEFFICIENT, 0.119, units='unitless'
         )
-        self.prob.model.set_input_defaults(Aircraft.Fuselage.LENGTH, val=71.5245514, units='ft')
-        self.prob.model.set_input_defaults(Aircraft.HorizontalTail.SPAN, val=0.04467601, units='ft')
-        self.prob.model.set_input_defaults(
-            Aircraft.LandingGear.TAIL_HOOK_MASS_SCALER, val=1, units='unitless'
+        prob.model.set_input_defaults(Aircraft.HorizontalTail.AREA, 0.00117064, units='ft**2')
+        prob.model.set_input_defaults(Aircraft.HorizontalTail.MOMENT_ARM, 29.6907417, units='ft')
+        prob.model.set_input_defaults(
+            Aircraft.HorizontalTail.THICKNESS_TO_CHORD, 0.1, units='unitless'
         )
-        self.prob.model.set_input_defaults(
-            Aircraft.HorizontalTail.TAPER_RATIO, val=0.366, units='unitless'
+        prob.model.set_input_defaults(Aircraft.HorizontalTail.ROOT_CHORD, 0.03836448, units='ft')
+        prob.model.set_input_defaults(
+            Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION, 0, units='unitless'
         )
-        self.prob.model.set_input_defaults(
-            Aircraft.VerticalTail.MASS_COEFFICIENT, val=0.119, units='unitless'
+        prob.model.set_input_defaults(Aircraft.VerticalTail.AREA, 169.11964286, units='ft**2')
+        prob.model.set_input_defaults(Aircraft.VerticalTail.MOMENT_ARM, 27.82191598, units='ft')
+        prob.model.set_input_defaults(
+            Aircraft.VerticalTail.THICKNESS_TO_CHORD, 0.1, units='unitless'
         )
-        self.prob.model.set_input_defaults(
-            Aircraft.HorizontalTail.AREA, val=0.00117064, units='ft**2'
+        prob.model.set_input_defaults(Aircraft.VerticalTail.ROOT_CHORD, 14.58190052, units='ft')
+        prob.model.set_input_defaults(
+            Aircraft.Wing.HIGH_LIFT_MASS_COEFFICIENT, 1.0, units='unitless'
         )
-        self.prob.model.set_input_defaults(Aircraft.HorizontalTail.MOMENT_ARM, val=28.3, units='ft')
-        self.prob.model.set_input_defaults(
-            Aircraft.HorizontalTail.THICKNESS_TO_CHORD, val=0.1, units='unitless'
+        prob.model.set_input_defaults(
+            Mission.Landing.LIFT_COEFFICIENT_MAX, 1.94034, units='unitless'
         )
-        self.prob.model.set_input_defaults(
-            Aircraft.HorizontalTail.ROOT_CHORD, val=0.03836448, units='ft'
+        prob.model.set_input_defaults(
+            Aircraft.Wing.SURFACE_CONTROL_MASS_COEFFICIENT, 0.5, units='unitless'
         )
-        self.prob.model.set_input_defaults(
-            Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION, val=0, units='unitless'
+        prob.model.set_input_defaults(
+            Aircraft.Wing.ULTIMATE_LOAD_FACTOR, 3.97744787, units='unitless'
         )
-        self.prob.model.set_input_defaults(
-            Aircraft.VerticalTail.AREA, val=169.11964286, units='ft**2'
+        prob.model.set_input_defaults(
+            Aircraft.Design.COCKPIT_CONTROL_MASS_COEFFICIENT, 16.5, units='unitless'
         )
-        self.prob.model.set_input_defaults(
-            Aircraft.VerticalTail.MOMENT_ARM, val=27.82191598, units='ft'
+        prob.model.set_input_defaults(
+            Aircraft.Controls.STABILITY_AUGMENTATION_SYSTEM_MASS, 0, units='lbm'
         )
-        self.prob.model.set_input_defaults(
-            Aircraft.VerticalTail.THICKNESS_TO_CHORD, val=0.1, units='unitless'
+        prob.model.set_input_defaults(
+            Aircraft.Controls.COCKPIT_CONTROL_MASS_SCALER, 1, units='unitless'
         )
-        self.prob.model.set_input_defaults(
-            Aircraft.VerticalTail.ROOT_CHORD, val=14.58190052, units='ft'
+        prob.model.set_input_defaults(
+            Aircraft.Wing.SURFACE_CONTROL_MASS_SCALER, 1, units='unitless'
         )
-        self.prob.model.set_input_defaults(
-            Aircraft.Wing.HIGH_LIFT_MASS_COEFFICIENT, val=1.0, units='unitless'
+        prob.model.set_input_defaults(
+            Aircraft.Controls.STABILITY_AUGMENTATION_SYSTEM_MASS_SCALER, 1, units='unitless'
         )
-        self.prob.model.set_input_defaults(
-            Mission.Landing.LIFT_COEFFICIENT_MAX, val=1.94034, units='unitless'
+        prob.model.set_input_defaults(Aircraft.Controls.CONTROL_MASS_INCREMENT, 0, units='lbm')
+        prob.model.set_input_defaults(
+            Aircraft.LandingGear.MASS_COEFFICIENT, 0.0520, units='unitless'
         )
-        self.prob.model.set_input_defaults(
-            Aircraft.Wing.SURFACE_CONTROL_MASS_COEFFICIENT, val=0.5, units='unitless'
+        prob.model.set_input_defaults(
+            Aircraft.LandingGear.MAIN_GEAR_MASS_COEFFICIENT, 0.85, units='unitless'
         )
-        self.prob.model.set_input_defaults(
-            Aircraft.Wing.ULTIMATE_LOAD_FACTOR, val=3.75, units='unitless'
-        )
-        self.prob.model.set_input_defaults(
-            Aircraft.Design.COCKPIT_CONTROL_MASS_COEFFICIENT, val=16.5, units='unitless'
-        )
-        self.prob.model.set_input_defaults(
-            Aircraft.Controls.STABILITY_AUGMENTATION_SYSTEM_MASS, val=0, units='lbm'
-        )
-        self.prob.model.set_input_defaults(
-            Aircraft.Controls.COCKPIT_CONTROL_MASS_SCALER, val=1, units='unitless'
-        )
-        self.prob.model.set_input_defaults(
-            Aircraft.Wing.SURFACE_CONTROL_MASS_SCALER, val=1, units='unitless'
-        )
-        self.prob.model.set_input_defaults(
-            Aircraft.Controls.STABILITY_AUGMENTATION_SYSTEM_MASS_SCALER, val=1, units='unitless'
-        )
-        self.prob.model.set_input_defaults(
-            Aircraft.Controls.CONTROL_MASS_INCREMENT, val=0, units='lbm'
-        )
-        self.prob.model.set_input_defaults(
-            Aircraft.LandingGear.MASS_COEFFICIENT, val=0.0520, units='unitless'
-        )
-        self.prob.model.set_input_defaults(
-            Aircraft.LandingGear.MAIN_GEAR_MASS_COEFFICIENT, val=0.85, units='unitless'
-        )
-        self.prob.model.set_input_defaults(
-            Aircraft.Nacelle.CLEARANCE_RATIO, val=0.2, units='unitless'
-        )
-        self.prob.model.set_input_defaults(
-            Aircraft.Nacelle.AVG_DIAMETER, val=7.35163168, units='ft'
-        )
-        self.prob.model.set_input_defaults(
-            Aircraft.Engine.MASS_SPECIFIC, val=0.178884, units='lbm/lbf'
-        )
-        self.prob.model.set_input_defaults(
-            Aircraft.Engine.SCALED_SLS_THRUST, val=37451.0, units='lbf'
-        )
-        self.prob.model.set_input_defaults(
-            Aircraft.Nacelle.MASS_SPECIFIC, val=2.5, units='lbm/ft**2'
-        )
-        self.prob.model.set_input_defaults(
-            Aircraft.Nacelle.SURFACE_AREA, val=339.58410134, units='ft**2'
-        )
-        self.prob.model.set_input_defaults(Aircraft.Engine.PYLON_FACTOR, val=1.25, units='unitless')
-        self.prob.model.set_input_defaults(Aircraft.Engine.MASS_SCALER, val=1, units='unitless')
+        prob.model.set_input_defaults(Aircraft.Nacelle.CLEARANCE_RATIO, 0.2, units='unitless')
+        prob.model.set_input_defaults(Aircraft.Nacelle.AVG_DIAMETER, 7.35163168, units='ft')
+        prob.model.set_input_defaults(Aircraft.Engine.MASS_SPECIFIC, 0.178884, units='lbm/lbf')
+        prob.model.set_input_defaults(Aircraft.Engine.SCALED_SLS_THRUST, 19580.1602, units='lbf')
+        prob.model.set_input_defaults(Aircraft.Nacelle.MASS_SPECIFIC, 2.5, units='lbm/ft**2')
+        prob.model.set_input_defaults(Aircraft.Nacelle.SURFACE_AREA, 194.957186763, units='ft**2')
+        prob.model.set_input_defaults(Aircraft.Engine.PYLON_FACTOR, 1.25, units='unitless')
+        prob.model.set_input_defaults(Aircraft.Engine.MASS_SCALER, 1, units='unitless')
 
-        self.prob.model.set_input_defaults(
-            Aircraft.Engine.WING_LOCATIONS, val=0.0, units='unitless'
+        prob.model.set_input_defaults(Aircraft.Engine.WING_LOCATIONS, 0.0, units='unitless')
+        prob.model.set_input_defaults(
+            Aircraft.LandingGear.MAIN_GEAR_LOCATION, 0.0, units='unitless'
         )
-        self.prob.model.set_input_defaults(
-            Aircraft.LandingGear.MAIN_GEAR_LOCATION, val=0.0, units='unitless'
-        )
-        self.prob.model.set_input_defaults(Aircraft.Fuselage.AVG_DIAMETER, val=38)
-        self.prob.model.set_input_defaults(Aircraft.Wing.SLAT_CHORD_RATIO, val=0.0001)
-        self.prob.model.set_input_defaults(Aircraft.Wing.FLAP_CHORD_RATIO, val=0.2)
-        self.prob.model.set_input_defaults(Aircraft.Wing.SLAT_SPAN_RATIO, val=0.827296853)
-        self.prob.model.set_input_defaults(Aircraft.Wing.LOADING, val=70.0)
-        self.prob.model.set_input_defaults(Aircraft.Wing.THICKNESS_TO_CHORD_ROOT, val=0.165)
-        self.prob.model.set_input_defaults(Aircraft.Wing.CENTER_CHORD, val=22.97244452)
+        prob.model.set_input_defaults(Aircraft.Fuselage.AVG_DIAMETER, 38)
+        prob.model.set_input_defaults(Aircraft.Wing.SLAT_CHORD_RATIO, 0.0001)
+        prob.model.set_input_defaults(Aircraft.Wing.FLAP_CHORD_RATIO, 0.2)
+        prob.model.set_input_defaults(Aircraft.Wing.SLAT_SPAN_RATIO, 0.831687927)
+        prob.model.set_input_defaults(Aircraft.Wing.LOADING, 70.0)
+        prob.model.set_input_defaults(Aircraft.Wing.THICKNESS_TO_CHORD_ROOT, 0.165)
+        prob.model.set_input_defaults(Aircraft.Wing.CENTER_CHORD, 22.97244452)
+        prob.model.set_input_defaults(Aircraft.Wing.VERTICAL_MOUNT_LOCATION, 0.5, units='unitless')
+        prob.model.set_input_defaults(Aircraft.Wing.FLAP_SPAN_RATIO, 0.61, units='unitless')
 
         setup_model_options(self.prob, options)
 
@@ -2167,68 +2089,31 @@ class BWBFixedMassGroupTestCase1(unittest.TestCase):
     def test_case1(self):
         self.prob.run_model()
 
-        tol = 5e-4
-        assert_near_equal(self.prob[Aircraft.LandingGear.TOTAL_MASS], 6384.35, tol)
-        assert_near_equal(self.prob[Aircraft.LandingGear.MAIN_GEAR_MASS], 6384.35, tol)
-
-        assert_near_equal(self.prob[Aircraft.Wing.MATERIAL_FACTOR], 1.2203729275531838, tol)
-        assert_near_equal(self.prob['c_strut_braced'], 1, tol)  # bug fixed value and original value
-        assert_near_equal(self.prob['c_gear_loc'], 1, tol)  # bug fixed value and original value
-        assert_near_equal(
-            self.prob[Aircraft.Engine.POSITION_FACTOR], 0.95, tol
-        )  # bug fixed value and original value
-        assert_near_equal(
-            self.prob['half_sweep'], 0.3947081519145335, tol
-        )  # bug fixed value and original value
-
-        assert_near_equal(
-            self.prob[Aircraft.CrewPayload.PASSENGER_PAYLOAD_MASS], 36000, tol
-        )  # bug fixed value and original value
-        assert_near_equal(
-            self.prob['payload_mass_des'], 36000, tol
-        )  # bug fixed value and original value
-        assert_near_equal(
-            self.prob['payload_mass_max'], 46040, tol
-        )  # bug fixed value and original value
-
-        assert_near_equal(
-            self.prob['tail.loc_MAC_vtail'], 0.44959578484694906, tol
-        )  # bug fixed value
-        # bug fixed value
-        assert_near_equal(self.prob[Aircraft.HorizontalTail.MASS], 2285, tol)
-        assert_near_equal(self.prob[Aircraft.VerticalTail.MASS], 2312, tol)  # bug fixed value
-        # bug fixed value
-        assert_near_equal(self.prob[Aircraft.Wing.HIGH_LIFT_MASS], 4082.1, tol)
-
-        # bug fixed value
-        assert_near_equal(self.prob[Aircraft.Controls.TOTAL_MASS], 3945, tol)
-
-        assert_near_equal(
-            self.prob[Aircraft.LandingGear.TOTAL_MASS], 7511, tol
-        )  # bug fixed value and original value
-
-        assert_near_equal(
-            self.prob[Aircraft.Propulsion.TOTAL_ENGINE_MASS], 12606, tol
-        )  # bug fixed value and original value
-        assert_near_equal(
-            self.prob[Aircraft.Propulsion.TOTAL_ENGINE_POD_MASS], 3785, tol
-        )  # bug fixed value and original value
-        assert_near_equal(
-            self.prob[Aircraft.Engine.ADDITIONAL_MASS], 1765 / 2, tol
-        )  # bug fixed value and original value
-        assert_near_equal(
-            self.prob['eng_comb_mass'], 14370.8, tol
-        )  # bug fixed value and original value
-        assert_near_equal(
-            self.prob['wing_mounted_mass'], 24446.343040697346, tol
-        )  # bug fixed value and original value
+        tol = 1e-7
+        assert_near_equal(self.prob[Aircraft.LandingGear.TOTAL_MASS], 7800.0, tol)
+        assert_near_equal(self.prob[Aircraft.LandingGear.MAIN_GEAR_MASS], 6630.0, tol)
+        assert_near_equal(self.prob[Aircraft.Wing.MATERIAL_FACTOR], 1.19461189, tol)
+        assert_near_equal(self.prob['c_strut_braced'], 1, tol)
+        assert_near_equal(self.prob['c_gear_loc'], 0.95, tol)
+        assert_near_equal(self.prob[Aircraft.Engine.POSITION_FACTOR], 0.95, tol)
+        assert_near_equal(self.prob['half_sweep'], 0.47984874, tol)
+        assert_near_equal(self.prob[Aircraft.CrewPayload.PASSENGER_PAYLOAD_MASS], 33750.0, tol)
+        assert_near_equal(self.prob['payload_mass_des'], 33750, tol)
+        assert_near_equal(self.prob['payload_mass_max'], 48750, tol)
+        assert_near_equal(self.prob['tail.loc_MAC_vtail'], 0.97683077, tol)
+        assert_near_equal(self.prob[Aircraft.HorizontalTail.MASS], 1.02401953, tol)
+        assert_near_equal(self.prob[Aircraft.VerticalTail.MASS], 864.17404177, tol)
+        assert_near_equal(self.prob[Aircraft.Wing.HIGH_LIFT_MASS], 1068.88854499, tol)
+        assert_near_equal(self.prob[Aircraft.Controls.TOTAL_MASS], 2174.28611375, tol)
+        assert_near_equal(self.prob[Aircraft.Propulsion.TOTAL_ENGINE_MASS], 7005.15475443, tol)
+        assert_near_equal(self.prob[Aircraft.Propulsion.TOTAL_ENGINE_POD_MASS], 2092.30176475, tol)
+        assert_near_equal(self.prob[Aircraft.Engine.ADDITIONAL_MASS], 153.16770871, tol)
+        assert_near_equal(self.prob['eng_comb_mass'], 7311.49017184, tol)
+        assert_near_equal(self.prob['wing_mounted_mass'], 0.0, tol)
 
         partial_data = self.prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=3e-11, rtol=1e-12)
 
 
 if __name__ == '__main__':
-    # unittest.main()
-    test = BWBFixedMassGroupTestCase1()
-    test.setUp()
-    test.test_case1()
+    unittest.main()

@@ -756,24 +756,20 @@ class BWBACMassTestCase1(unittest.TestCase):
         options = get_option_defaults()
         options.set_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS, val=150, units='unitless')
 
-        self.prob = om.Problem()
+        prob = self.prob = om.Problem()
         self.prob.model.add_subsystem(
             'ac',
             BWBACMass(),
             promotes=['*'],
         )
 
-        self.prob.model.set_input_defaults(
-            Aircraft.AirConditioning.MASS_COEFFICIENT, val=1.155, units='unitless'
+        prob.model.set_input_defaults(
+            Aircraft.AirConditioning.MASS_COEFFICIENT, 1.155, units='unitless'
         )
-        self.prob.model.set_input_defaults(Mission.Design.GROSS_MASS, val=150000, units='lbm')
-        self.prob.model.set_input_defaults(Aircraft.Fuselage.LENGTH, val=71.52455, units='ft')
-        self.prob.model.set_input_defaults(
-            Aircraft.Fuselage.PRESSURE_DIFFERENTIAL, val=10.0, units='psi'
-        )
-        self.prob.model.set_input_defaults(
-            Aircraft.Fuselage.HYDRAULIC_DIAMETER, val=19.365, units='ft'
-        )
+        prob.model.set_input_defaults(Mission.Design.GROSS_MASS, 150000.0, units='lbm')
+        prob.model.set_input_defaults(Aircraft.Fuselage.LENGTH, 71.52455, units='ft')
+        prob.model.set_input_defaults(Aircraft.Fuselage.PRESSURE_DIFFERENTIAL, 10.0, units='psi')
+        prob.model.set_input_defaults(Aircraft.Fuselage.HYDRAULIC_DIAMETER, 19.365, units='ft')
 
         setup_model_options(self.prob, options)
 
@@ -937,22 +933,18 @@ class BWBFurnishingMassTestCase1(unittest.TestCase):
             Aircraft.Furnishings.USE_EMPIRICAL_EQUATION, val=True, units='unitless'
         )
 
-        self.prob = om.Problem()
-        self.prob.model.add_subsystem(
+        prob = self.prob = om.Problem()
+        prob.model.add_subsystem(
             'furnishing',
             BWBFurnishingMass(),
             promotes=['*'],
         )
 
-        self.prob.model.set_input_defaults(Mission.Design.GROSS_MASS, val=150000, units='lbm')
-        self.prob.model.set_input_defaults(
-            Aircraft.Fuselage.HYDRAULIC_DIAMETER, val=19.365, units='ft'
-        )
-        self.prob.model.set_input_defaults(Aircraft.Fuselage.LENGTH, 71.5245514, units='ft')
-        self.prob.model.set_input_defaults(Aircraft.Furnishings.MASS_SCALER, 40.0, units='unitless')
-        self.prob.model.set_input_defaults(
-            Aircraft.Fuselage.CABIN_AREA, val=1283.5249, units='ft**2'
-        )
+        prob.model.set_input_defaults(Mission.Design.GROSS_MASS, 150000, units='lbm')
+        prob.model.set_input_defaults(Aircraft.Fuselage.HYDRAULIC_DIAMETER, 19.365, units='ft')
+        prob.model.set_input_defaults(Aircraft.Fuselage.LENGTH, 71.5245514, units='ft')
+        prob.model.set_input_defaults(Aircraft.Furnishings.MASS_SCALER, 40.0, units='unitless')
+        prob.model.set_input_defaults(Aircraft.Fuselage.CABIN_AREA, 1283.5249, units='ft**2')
 
         setup_model_options(self.prob, self.options)
 
@@ -1034,22 +1026,18 @@ class BWBFurnishingMassTestCase2(unittest.TestCase):
         options = get_option_defaults()
         options.set_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS, val=150, units='unitless')
 
-        self.prob = om.Problem()
-        self.prob.model.add_subsystem(
+        prob = self.prob = om.Problem()
+        prob.model.add_subsystem(
             'furnishing',
             BWBFurnishingMass(),
             promotes=['*'],
         )
 
-        self.prob.model.set_input_defaults(Mission.Design.GROSS_MASS, val=9999.0, units='lbm')
-        self.prob.model.set_input_defaults(
-            Aircraft.Fuselage.HYDRAULIC_DIAMETER, val=19.365, units='ft'
-        )
-        self.prob.model.set_input_defaults(Aircraft.Fuselage.LENGTH, 71.5245514, units='ft')
-        self.prob.model.set_input_defaults(Aircraft.Furnishings.MASS_SCALER, 40.0, units='unitless')
-        self.prob.model.set_input_defaults(
-            Aircraft.Fuselage.CABIN_AREA, val=1283.5249, units='ft**2'
-        )
+        prob.model.set_input_defaults(Mission.Design.GROSS_MASS, 9999.0, units='lbm')
+        prob.model.set_input_defaults(Aircraft.Fuselage.HYDRAULIC_DIAMETER, 19.365, units='ft')
+        prob.model.set_input_defaults(Aircraft.Fuselage.LENGTH, 71.5245514, units='ft')
+        prob.model.set_input_defaults(Aircraft.Furnishings.MASS_SCALER, 40.0, units='unitless')
+        prob.model.set_input_defaults(Aircraft.Fuselage.CABIN_AREA, 1283.5249, units='ft**2')
 
         setup_model_options(self.prob, options)
 
@@ -1181,76 +1169,58 @@ class BWBFixedEquipMassGroupTest(unittest.TestCase):
         options.set_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS, val=150, units='unitless')
         options.set_val(Aircraft.LandingGear.FIXED_GEAR, val=False, units='unitless')
 
-        self.prob = om.Problem()
-        self.prob.model.add_subsystem(
+        prob = self.prob = om.Problem()
+        prob.model.add_subsystem(
             'group',
             BWBEquipMassGroup(),
             promotes=['*'],
         )
 
-        self.prob.model.set_input_defaults(Aircraft.APU.MASS, val=710.0, units='lbm')
-        self.prob.model.set_input_defaults(
-            Aircraft.Instruments.MASS_COEFFICIENT, val=0.116, units='unitless'
+        prob.model.set_input_defaults(Aircraft.APU.MASS, 710.0, units='lbm')
+        prob.model.set_input_defaults(
+            Aircraft.Instruments.MASS_COEFFICIENT, 0.116, units='unitless'
         )
-        self.prob.model.set_input_defaults(
-            Aircraft.Hydraulics.FLIGHT_CONTROL_MASS_COEFFICIENT, val=0.107, units='unitless'
+        prob.model.set_input_defaults(
+            Aircraft.Hydraulics.FLIGHT_CONTROL_MASS_COEFFICIENT, 0.107, units='unitless'
         )
-        self.prob.model.set_input_defaults(
-            Aircraft.Hydraulics.GEAR_MASS_COEFFICIENT, val=0.135, units='unitless'
+        prob.model.set_input_defaults(
+            Aircraft.Hydraulics.GEAR_MASS_COEFFICIENT, 0.135, units='unitless'
         )
-        self.prob.model.set_input_defaults(Aircraft.Avionics.MASS, val=3225.0, units='lbm')
-        self.prob.model.set_input_defaults(Aircraft.AntiIcing.MASS, val=236.0, units='lbm')
-        self.prob.model.set_input_defaults(
-            Aircraft.CrewPayload.PASSENGER_SERVICE_MASS_PER_PASSENGER, val=6.0, units='lbm'
+        prob.model.set_input_defaults(Aircraft.Avionics.MASS, 3225.0, units='lbm')
+        prob.model.set_input_defaults(Aircraft.AntiIcing.MASS, 236.0, units='lbm')
+        prob.model.set_input_defaults(
+            Aircraft.CrewPayload.PASSENGER_SERVICE_MASS_PER_PASSENGER, 6.0, units='lbm'
         )
-        self.prob.model.set_input_defaults(
-            Aircraft.CrewPayload.WATER_MASS_PER_OCCUPANT, val=3.0, units='lbm'
+        prob.model.set_input_defaults(Aircraft.CrewPayload.WATER_MASS_PER_OCCUPANT, 3, units='lbm')
+        prob.model.set_input_defaults(Aircraft.Design.EMERGENCY_EQUIPMENT_MASS, 100.0, units='lbm')
+        prob.model.set_input_defaults(
+            Aircraft.CrewPayload.CATERING_ITEMS_MASS_PER_PASSENGER, 7.6, units='lbm'
         )
-        self.prob.model.set_input_defaults(
-            Aircraft.Design.EMERGENCY_EQUIPMENT_MASS, val=100.0, units='lbm'
+        prob.model.set_input_defaults(
+            Aircraft.Fuel.UNUSABLE_FUEL_MASS_COEFFICIENT, 12.0, units='unitless'
         )
-        self.prob.model.set_input_defaults(
-            Aircraft.CrewPayload.CATERING_ITEMS_MASS_PER_PASSENGER, val=7.6, units='lbm'
+        prob.model.set_input_defaults(Mission.Design.GROSS_MASS, 150000, units='lbm')
+        prob.model.set_input_defaults(Aircraft.Fuselage.LENGTH, 71.5245514, units='ft')
+        prob.model.set_input_defaults(Aircraft.Wing.SPAN, 146.38501, units='ft')
+        prob.model.set_input_defaults(Aircraft.LandingGear.TOTAL_MASS, 7800.0, units='lbm')
+        prob.model.set_input_defaults(Aircraft.Controls.TOTAL_MASS, 2115.19946, units='lbm')
+        prob.model.set_input_defaults(Aircraft.Wing.AREA, 2142.85718, units='ft**2')
+        prob.model.set_input_defaults(Aircraft.HorizontalTail.AREA, 0.00170628, units='ft**2')
+        prob.model.set_input_defaults(Aircraft.VerticalTail.AREA, 169.119629, units='ft**2')
+        prob.model.set_input_defaults(
+            Aircraft.AirConditioning.MASS_COEFFICIENT, 1.155, units='unitless'
         )
-        self.prob.model.set_input_defaults(
-            Aircraft.Fuel.UNUSABLE_FUEL_MASS_COEFFICIENT, val=12.0, units='unitless'
-        )
-        self.prob.model.set_input_defaults(Mission.Design.GROSS_MASS, val=150000, units='lbm')
-        self.prob.model.set_input_defaults(Aircraft.Fuselage.LENGTH, val=71.5245514, units='ft')
-        self.prob.model.set_input_defaults(Aircraft.Wing.SPAN, val=146.38501, units='ft')
-        self.prob.model.set_input_defaults(Aircraft.LandingGear.TOTAL_MASS, val=7800.0, units='lbm')
-        self.prob.model.set_input_defaults(
-            Aircraft.Controls.TOTAL_MASS, val=2115.19946, units='lbm'
-        )
-        self.prob.model.set_input_defaults(Aircraft.Wing.AREA, val=2142.85718, units='ft**2')
-        self.prob.model.set_input_defaults(
-            Aircraft.HorizontalTail.AREA, val=0.001706279, units='ft**2'
-        )
-        self.prob.model.set_input_defaults(
-            Aircraft.VerticalTail.AREA, val=169.119629, units='ft**2'
-        )
-        self.prob.model.set_input_defaults(
-            Aircraft.AirConditioning.MASS_COEFFICIENT, val=1.155, units='unitless'
-        )
-        self.prob.model.set_input_defaults(
-            Aircraft.Fuselage.PRESSURE_DIFFERENTIAL, val=10.0, units='psi'
-        )
-        self.prob.model.set_input_defaults(
-            Aircraft.Fuselage.HYDRAULIC_DIAMETER, val=19.3650932, units='ft'
-        )
-        self.prob.model.set_input_defaults(
-            Aircraft.Fuselage.CABIN_AREA, val=1283.5249, units='ft**2'
-        )
-        self.prob.model.set_input_defaults(
-            Aircraft.Furnishings.MASS_SCALER, val=40.0, units='unitless'
-        )
-        self.prob.model.set_input_defaults(
-            Aircraft.Electrical.SYSTEM_MASS_PER_PASSENGER, val=11.45, units='lbm'
+        prob.model.set_input_defaults(Aircraft.Fuselage.PRESSURE_DIFFERENTIAL, 10.0, units='psi')
+        prob.model.set_input_defaults(Aircraft.Fuselage.HYDRAULIC_DIAMETER, 19.3650932, units='ft')
+        prob.model.set_input_defaults(Aircraft.Fuselage.CABIN_AREA, 1283.5249, units='ft**2')
+        prob.model.set_input_defaults(Aircraft.Furnishings.MASS_SCALER, 40.0, units='unitless')
+        prob.model.set_input_defaults(
+            Aircraft.Electrical.SYSTEM_MASS_PER_PASSENGER, 11.45, units='lbm'
         )
 
         setup_model_options(self.prob, options)
 
-        self.prob.setup(check=False, force_alloc_complex=True)
+        prob.setup(check=False, force_alloc_complex=True)
 
     def test_case1(self):
         self.prob.run_model()
@@ -1539,39 +1509,31 @@ class BWBUsefulMassTestCase1(unittest.TestCase):
         options.set_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS, val=150, units='unitless')
         options.set_val(Settings.VERBOSITY, 0)
 
-        self.prob = om.Problem()
-        self.prob.model.add_subsystem(
+        prob = self.prob = om.Problem()
+        prob.model.add_subsystem(
             'useful',
             UsefulLoadMass(),
             promotes=['*'],
         )
 
-        self.prob.model.set_input_defaults(
-            Aircraft.CrewPayload.PASSENGER_SERVICE_MASS_PER_PASSENGER, val=6.0, units='lbm'
+        prob.model.set_input_defaults(
+            Aircraft.CrewPayload.PASSENGER_SERVICE_MASS_PER_PASSENGER, 6.0, units='lbm'
         )
-        self.prob.model.set_input_defaults(
-            Aircraft.CrewPayload.WATER_MASS_PER_OCCUPANT, val=3.0, units='lbm'
+        prob.model.set_input_defaults(Aircraft.CrewPayload.WATER_MASS_PER_OCCUPANT, 3, units='lbm')
+        prob.model.set_input_defaults(Aircraft.Design.EMERGENCY_EQUIPMENT_MASS, 100.0, units='lbm')
+        prob.model.set_input_defaults(
+            Aircraft.CrewPayload.CATERING_ITEMS_MASS_PER_PASSENGER, 5.0, units='lbm'
         )
-        self.prob.model.set_input_defaults(
-            Aircraft.Design.EMERGENCY_EQUIPMENT_MASS, val=100.0, units='lbm'
+        prob.model.set_input_defaults(
+            Aircraft.Fuel.UNUSABLE_FUEL_MASS_COEFFICIENT, 12.0, units='unitless'
         )
-        self.prob.model.set_input_defaults(
-            Aircraft.CrewPayload.CATERING_ITEMS_MASS_PER_PASSENGER, val=5.0, units='lbm'
-        )
-        self.prob.model.set_input_defaults(
-            Aircraft.Fuel.UNUSABLE_FUEL_MASS_COEFFICIENT, val=12.0, units='unitless'
-        )
-        self.prob.model.set_input_defaults(Aircraft.Wing.AREA, val=2142.85718, units='ft**2')
-        self.prob.model.set_input_defaults(
-            Aircraft.Engine.SCALED_SLS_THRUST, val=[19580.1602], units='lbf'
-        )
-        self.prob.model.set_input_defaults(
-            Aircraft.Fuel.WING_FUEL_FRACTION, val=0.45, units='unitless'
-        )
+        prob.model.set_input_defaults(Aircraft.Wing.AREA, 2142.85718, units='ft**2')
+        prob.model.set_input_defaults(Aircraft.Engine.SCALED_SLS_THRUST, [19580.1602], units='lbf')
+        prob.model.set_input_defaults(Aircraft.Fuel.WING_FUEL_FRACTION, 0.45, units='unitless')
 
         setup_model_options(self.prob, options)
 
-        self.prob.setup(check=False, force_alloc_complex=True)
+        prob.setup(check=False, force_alloc_complex=True)
 
     def test_case1(self):
         self.prob.run_model()
@@ -1683,101 +1645,79 @@ class BWBFixedEquipAndUsefulMassGroupTest(unittest.TestCase):
         options.set_val(Aircraft.LandingGear.FIXED_GEAR, val=False, units='unitless')
         options.set_val(Aircraft.Design.TYPE, val='BWB', units='unitless')
 
-        self.prob = om.Problem()
-        self.prob.model.add_subsystem(
+        prob = self.prob = om.Problem()
+        prob.model.add_subsystem(
             'group',
             EquipAndUsefulLoadMassGroup(),
             promotes=['*'],
         )
 
         # inputs to BWBEquipMassGroup
-        self.prob.model.set_input_defaults(Aircraft.APU.MASS, val=710.0, units='lbm')
-        self.prob.model.set_input_defaults(
-            Aircraft.Instruments.MASS_COEFFICIENT, val=0.116, units='unitless'
+        prob.model.set_input_defaults(Aircraft.APU.MASS, 710.0, units='lbm')
+        prob.model.set_input_defaults(
+            Aircraft.Instruments.MASS_COEFFICIENT, 0.116, units='unitless'
         )
-        self.prob.model.set_input_defaults(
-            Aircraft.Hydraulics.FLIGHT_CONTROL_MASS_COEFFICIENT, val=0.107, units='unitless'
+        prob.model.set_input_defaults(
+            Aircraft.Hydraulics.FLIGHT_CONTROL_MASS_COEFFICIENT, 0.107, units='unitless'
         )
-        self.prob.model.set_input_defaults(
-            Aircraft.Hydraulics.GEAR_MASS_COEFFICIENT, val=0.135, units='unitless'
+        prob.model.set_input_defaults(
+            Aircraft.Hydraulics.GEAR_MASS_COEFFICIENT, 0.135, units='unitless'
         )
-        self.prob.model.set_input_defaults(Aircraft.Avionics.MASS, val=3225.0, units='lbm')
-        self.prob.model.set_input_defaults(Aircraft.AntiIcing.MASS, val=236.0, units='lbm')
-        self.prob.model.set_input_defaults(
-            Aircraft.CrewPayload.PASSENGER_SERVICE_MASS_PER_PASSENGER, val=6.0, units='lbm'
+        prob.model.set_input_defaults(Aircraft.Avionics.MASS, 3225.0, units='lbm')
+        prob.model.set_input_defaults(Aircraft.AntiIcing.MASS, 236.0, units='lbm')
+        prob.model.set_input_defaults(
+            Aircraft.CrewPayload.PASSENGER_SERVICE_MASS_PER_PASSENGER, 6.0, units='lbm'
         )
-        self.prob.model.set_input_defaults(
-            Aircraft.CrewPayload.WATER_MASS_PER_OCCUPANT, val=3.0, units='lbm'
+        prob.model.set_input_defaults(
+            Aircraft.CrewPayload.WATER_MASS_PER_OCCUPANT, 3.0, units='lbm'
         )
-        self.prob.model.set_input_defaults(
-            Aircraft.Design.EMERGENCY_EQUIPMENT_MASS, val=100.0, units='lbm'
+        prob.model.set_input_defaults(Aircraft.Design.EMERGENCY_EQUIPMENT_MASS, 100.0, units='lbm')
+        prob.model.set_input_defaults(
+            Aircraft.CrewPayload.CATERING_ITEMS_MASS_PER_PASSENGER, 7.6, units='lbm'
         )
-        self.prob.model.set_input_defaults(
-            Aircraft.CrewPayload.CATERING_ITEMS_MASS_PER_PASSENGER, val=7.6, units='lbm'
+        prob.model.set_input_defaults(
+            Aircraft.Fuel.UNUSABLE_FUEL_MASS_COEFFICIENT, 12.0, units='unitless'
         )
-        self.prob.model.set_input_defaults(
-            Aircraft.Fuel.UNUSABLE_FUEL_MASS_COEFFICIENT, val=12.0, units='unitless'
+        prob.model.set_input_defaults(Mission.Design.GROSS_MASS, 150000, units='lbm')
+        prob.model.set_input_defaults(Aircraft.Fuselage.LENGTH, 71.5245514, units='ft')
+        prob.model.set_input_defaults(Aircraft.Wing.SPAN, 146.38501, units='ft')
+        prob.model.set_input_defaults(Aircraft.LandingGear.TOTAL_MASS, 7800.0, units='lbm')
+        prob.model.set_input_defaults(Aircraft.Controls.TOTAL_MASS, 2115.19946, units='lbm')
+        prob.model.set_input_defaults(Aircraft.Wing.AREA, 2142.85718, units='ft**2')
+        prob.model.set_input_defaults(Aircraft.HorizontalTail.AREA, 0.001706279, units='ft**2')
+        prob.model.set_input_defaults(Aircraft.VerticalTail.AREA, 169.119629, units='ft**2')
+        prob.model.set_input_defaults(
+            Aircraft.AirConditioning.MASS_COEFFICIENT, 1.155, units='unitless'
         )
-        self.prob.model.set_input_defaults(Mission.Design.GROSS_MASS, val=150000, units='lbm')
-        self.prob.model.set_input_defaults(Aircraft.Fuselage.LENGTH, val=71.5245514, units='ft')
-        self.prob.model.set_input_defaults(Aircraft.Wing.SPAN, val=146.38501, units='ft')
-        self.prob.model.set_input_defaults(Aircraft.LandingGear.TOTAL_MASS, val=7800.0, units='lbm')
-        self.prob.model.set_input_defaults(
-            Aircraft.Controls.TOTAL_MASS, val=2115.19946, units='lbm'
-        )
-        self.prob.model.set_input_defaults(Aircraft.Wing.AREA, val=2142.85718, units='ft**2')
-        self.prob.model.set_input_defaults(
-            Aircraft.HorizontalTail.AREA, val=0.001706279, units='ft**2'
-        )
-        self.prob.model.set_input_defaults(
-            Aircraft.VerticalTail.AREA, val=169.119629, units='ft**2'
-        )
-        self.prob.model.set_input_defaults(
-            Aircraft.AirConditioning.MASS_COEFFICIENT, val=1.155, units='unitless'
-        )
-        self.prob.model.set_input_defaults(
-            Aircraft.Fuselage.PRESSURE_DIFFERENTIAL, val=10.0, units='psi'
-        )
-        self.prob.model.set_input_defaults(
-            Aircraft.Fuselage.HYDRAULIC_DIAMETER, val=19.3650932, units='ft'
-        )
-        self.prob.model.set_input_defaults(
-            Aircraft.Fuselage.CABIN_AREA, val=1283.5249, units='ft**2'
-        )
-        self.prob.model.set_input_defaults(
-            Aircraft.Furnishings.MASS_SCALER, val=40.0, units='unitless'
-        )
-        self.prob.model.set_input_defaults(
-            Aircraft.Electrical.SYSTEM_MASS_PER_PASSENGER, val=11.45, units='lbm'
+        prob.model.set_input_defaults(Aircraft.Fuselage.PRESSURE_DIFFERENTIAL, 10.0, units='psi')
+        prob.model.set_input_defaults(Aircraft.Fuselage.HYDRAULIC_DIAMETER, 19.3650932, units='ft')
+        prob.model.set_input_defaults(Aircraft.Fuselage.CABIN_AREA, 1283.5249, units='ft**2')
+        prob.model.set_input_defaults(Aircraft.Furnishings.MASS_SCALER, 40.0, units='unitless')
+        prob.model.set_input_defaults(
+            Aircraft.Electrical.SYSTEM_MASS_PER_PASSENGER, 11.45, units='lbm'
         )
 
         # inputs to UsefulLoadMass
-        self.prob.model.set_input_defaults(
-            Aircraft.CrewPayload.PASSENGER_SERVICE_MASS_PER_PASSENGER, val=6.0, units='lbm'
+        prob.model.set_input_defaults(
+            Aircraft.CrewPayload.PASSENGER_SERVICE_MASS_PER_PASSENGER, 6.0, units='lbm'
         )
-        self.prob.model.set_input_defaults(
-            Aircraft.CrewPayload.WATER_MASS_PER_OCCUPANT, val=3.0, units='lbm'
+        prob.model.set_input_defaults(
+            Aircraft.CrewPayload.WATER_MASS_PER_OCCUPANT, 3.0, units='lbm'
         )
-        self.prob.model.set_input_defaults(
-            Aircraft.Design.EMERGENCY_EQUIPMENT_MASS, val=100.0, units='lbm'
+        prob.model.set_input_defaults(Aircraft.Design.EMERGENCY_EQUIPMENT_MASS, 100.0, units='lbm')
+        prob.model.set_input_defaults(
+            Aircraft.CrewPayload.CATERING_ITEMS_MASS_PER_PASSENGER, 5.0, units='lbm'
         )
-        self.prob.model.set_input_defaults(
-            Aircraft.CrewPayload.CATERING_ITEMS_MASS_PER_PASSENGER, val=5.0, units='lbm'
+        prob.model.set_input_defaults(
+            Aircraft.Fuel.UNUSABLE_FUEL_MASS_COEFFICIENT, 12.0, units='unitless'
         )
-        self.prob.model.set_input_defaults(
-            Aircraft.Fuel.UNUSABLE_FUEL_MASS_COEFFICIENT, val=12.0, units='unitless'
-        )
-        self.prob.model.set_input_defaults(Aircraft.Wing.AREA, val=2142.85718, units='ft**2')
-        self.prob.model.set_input_defaults(
-            Aircraft.Engine.SCALED_SLS_THRUST, val=[19580.1602], units='lbf'
-        )
-        self.prob.model.set_input_defaults(
-            Aircraft.Fuel.WING_FUEL_FRACTION, val=0.45, units='unitless'
-        )
+        prob.model.set_input_defaults(Aircraft.Wing.AREA, 2142.85718, units='ft**2')
+        prob.model.set_input_defaults(Aircraft.Engine.SCALED_SLS_THRUST, [19580.1602], units='lbf')
+        prob.model.set_input_defaults(Aircraft.Fuel.WING_FUEL_FRACTION, 0.45, units='unitless')
 
         setup_model_options(self.prob, options)
 
-        self.prob.setup(check=False, force_alloc_complex=True)
+        prob.setup(check=False, force_alloc_complex=True)
 
     def test_case1(self):
         self.prob.run_model()
@@ -1791,7 +1731,4 @@ class BWBFixedEquipAndUsefulMassGroupTest(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    # unittest.main()
-    test = ACMassTestCase1()
-    test.setUp()
-    test.test_case1()
+    unittest.main()

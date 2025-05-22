@@ -640,32 +640,22 @@ class BWBWingMassSolveTestCase(unittest.TestCase):
     """this is the large single aisle 1 V3 test case"""
 
     def setUp(self):
-        self.prob = om.Problem()
-        self.prob.model.add_subsystem('wingfuel', BWBWingMassSolve(), promotes=['*'])
+        prob = self.prob = om.Problem()
+        prob.model.add_subsystem('wingfuel', BWBWingMassSolve(), promotes=['*'])
 
-        self.prob.model.set_input_defaults(Mission.Design.GROSS_MASS, val=175400, units='lbm')
-        self.prob.model.set_input_defaults(Aircraft.Wing.HIGH_LIFT_MASS, val=3645, units='lbm')
-        self.prob.model.set_input_defaults('c_strut_braced', val=1.0, units='unitless')
-        self.prob.model.set_input_defaults(
-            Aircraft.Wing.ULTIMATE_LOAD_FACTOR, val=3.893, units='unitless'
-        )
-        self.prob.model.set_input_defaults(
-            Aircraft.Wing.MASS_COEFFICIENT, val=102.5, units='unitless'
-        )
-        self.prob.model.set_input_defaults(
-            Aircraft.Wing.MATERIAL_FACTOR, val=1.2213063198183813, units='unitless'
-        )
-        self.prob.model.set_input_defaults(
-            Aircraft.Engine.POSITION_FACTOR, val=0.98, units='unitless'
-        )
-        self.prob.model.set_input_defaults('c_gear_loc', val=1.0, units='unitless')
-        self.prob.model.set_input_defaults(Aircraft.Wing.SPAN, val=155.8, units='ft')
-        self.prob.model.set_input_defaults(Aircraft.Fuselage.AVG_DIAMETER, val=38.0, units='ft')
-        self.prob.model.set_input_defaults(Aircraft.Wing.TAPER_RATIO, val=0.33, units='unitless')
-        self.prob.model.set_input_defaults(
-            Aircraft.Wing.THICKNESS_TO_CHORD_ROOT, val=0.15, units='unitless'
-        )
-        self.prob.model.set_input_defaults('half_sweep', val=0.3947081519145335, units='rad')
+        prob.model.set_input_defaults(Mission.Design.GROSS_MASS, 175400, units='lbm')
+        prob.model.set_input_defaults(Aircraft.Wing.HIGH_LIFT_MASS, 3645, units='lbm')
+        prob.model.set_input_defaults('c_strut_braced', 1.0, units='unitless')
+        prob.model.set_input_defaults(Aircraft.Wing.ULTIMATE_LOAD_FACTOR, 3.893, units='unitless')
+        prob.model.set_input_defaults(Aircraft.Wing.MASS_COEFFICIENT, 102.5, units='unitless')
+        prob.model.set_input_defaults(Aircraft.Wing.MATERIAL_FACTOR, 1.22130632, units='unitless')
+        prob.model.set_input_defaults(Aircraft.Engine.POSITION_FACTOR, 0.98, units='unitless')
+        prob.model.set_input_defaults('c_gear_loc', 1.0, units='unitless')
+        prob.model.set_input_defaults(Aircraft.Wing.SPAN, 155.8, units='ft')
+        prob.model.set_input_defaults(Aircraft.Fuselage.AVG_DIAMETER, 38.0, units='ft')
+        prob.model.set_input_defaults(Aircraft.Wing.TAPER_RATIO, 0.33, units='unitless')
+        prob.model.set_input_defaults(Aircraft.Wing.THICKNESS_TO_CHORD_ROOT, 0.15, units='unitless')
+        prob.model.set_input_defaults('half_sweep', 0.3947081519145335, units='rad')
 
         newton = self.prob.model.nonlinear_solver = om.NewtonSolver()
         newton.options['atol'] = 1e-9
@@ -681,19 +671,19 @@ class BWBWingMassSolveTestCase(unittest.TestCase):
         newton.linesearch.options['iprint'] = -1
         newton.options['err_on_non_converge'] = False
 
-        self.prob.model.linear_solver = om.DirectSolver(assemble_jac=True)
+        prob.model.linear_solver = om.DirectSolver(assemble_jac=True)
 
         setup_model_options(
             self.prob, AviaryValues({Aircraft.Engine.NUM_ENGINES: ([2], 'unitless')})
         )
 
-        self.prob.setup(check=False, force_alloc_complex=True)
+        prob.setup(check=False, force_alloc_complex=True)
 
     def test_case1(self):
         self.prob.run_model()
 
-        tol = 5e-4
-        assert_near_equal(self.prob['isolated_wing_mass'], 15830.0, tol)
+        tol = 1e-7
+        assert_near_equal(self.prob['isolated_wing_mass'], 15828.92030889, tol)
 
         partial_data = self.prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=1e-8, rtol=1e-8)
@@ -703,49 +693,39 @@ class BWBWingMassGroupTest(unittest.TestCase):
     """this is the large single aisle 1 V3 test case"""
 
     def setUp(self):
-        self.prob = om.Problem()
-        self.prob.model.add_subsystem(
+        prob = self.prob = om.Problem()
+        prob.model.add_subsystem(
             'group',
             BWBWingMassGroup(),
             promotes=['*'],
         )
 
-        self.prob.model.set_input_defaults(Mission.Design.GROSS_MASS, val=175400, units='lbm')
-        self.prob.model.set_input_defaults(Aircraft.Wing.HIGH_LIFT_MASS, val=3645, units='lbm')
-        self.prob.model.set_input_defaults('c_strut_braced', val=1.0, units='unitless')
-        self.prob.model.set_input_defaults(
-            Aircraft.Wing.ULTIMATE_LOAD_FACTOR, val=3.893, units='unitless'
-        )
-        self.prob.model.set_input_defaults(
-            Aircraft.Wing.MASS_COEFFICIENT, val=102.5, units='unitless'
-        )
-        self.prob.model.set_input_defaults(
-            Aircraft.Wing.MATERIAL_FACTOR, val=1.2213063198183813, units='unitless'
-        )
-        self.prob.model.set_input_defaults(
-            Aircraft.Engine.POSITION_FACTOR, val=0.98, units='unitless'
-        )
-        self.prob.model.set_input_defaults('c_gear_loc', val=1.0, units='unitless')
-        self.prob.model.set_input_defaults(Aircraft.Wing.SPAN, val=155.8, units='ft')
-        self.prob.model.set_input_defaults(Aircraft.Fuselage.AVG_DIAMETER, val=38.0, units='ft')
-        self.prob.model.set_input_defaults(Aircraft.Wing.TAPER_RATIO, val=0.33, units='unitless')
-        self.prob.model.set_input_defaults(
-            Aircraft.Wing.THICKNESS_TO_CHORD_ROOT, val=0.15, units='unitless'
-        )
-        self.prob.model.set_input_defaults('half_sweep', val=0.3947081519145335, units='rad')
+        prob.model.set_input_defaults(Mission.Design.GROSS_MASS, 175400, units='lbm')
+        prob.model.set_input_defaults(Aircraft.Wing.HIGH_LIFT_MASS, 3645, units='lbm')
+        prob.model.set_input_defaults('c_strut_braced', 1.0, units='unitless')
+        prob.model.set_input_defaults(Aircraft.Wing.ULTIMATE_LOAD_FACTOR, 3.893, units='unitless')
+        prob.model.set_input_defaults(Aircraft.Wing.MASS_COEFFICIENT, 102.5, units='unitless')
+        prob.model.set_input_defaults(Aircraft.Wing.MATERIAL_FACTOR, 1.22130632, units='unitless')
+        prob.model.set_input_defaults(Aircraft.Engine.POSITION_FACTOR, 0.98, units='unitless')
+        prob.model.set_input_defaults('c_gear_loc', 1.0, units='unitless')
+        prob.model.set_input_defaults(Aircraft.Wing.SPAN, 155.8, units='ft')
+        prob.model.set_input_defaults(Aircraft.Fuselage.AVG_DIAMETER, 38.0, units='ft')
+        prob.model.set_input_defaults(Aircraft.Wing.TAPER_RATIO, 0.33, units='unitless')
+        prob.model.set_input_defaults(Aircraft.Wing.THICKNESS_TO_CHORD_ROOT, 0.15, units='unitless')
+        prob.model.set_input_defaults('half_sweep', 0.3947081519145335, units='rad')
 
         setup_model_options(
             self.prob, AviaryValues({Aircraft.Engine.NUM_ENGINES: ([2], 'unitless')})
         )
 
-        self.prob.setup(check=False, force_alloc_complex=True)
+        prob.setup(check=False, force_alloc_complex=True)
 
     def test_case1(self):
         self.prob.run_model()
 
-        tol = 5e-4
-        assert_near_equal(self.prob[Aircraft.Wing.MASS], 15830, tol)
-        assert_near_equal(self.prob['isolated_wing_mass'], 15830, tol)
+        tol = 1e-7
+        assert_near_equal(self.prob[Aircraft.Wing.MASS], 15828.92030889, tol)
+        assert_near_equal(self.prob['isolated_wing_mass'], 15828.92030889, tol)
 
         partial_data = self.prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=1e-8, rtol=1e-8)
