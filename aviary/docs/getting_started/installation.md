@@ -16,6 +16,7 @@ The following guides are available:
 - [Quick Start Guide](#quick-start-guide)
 - [Detailed Installation Guide](#detailed-guide)
 - [Developer's Guide](#developers-guide)
+- Docker Installation Guide (upcoming)
 
 The different installation guides are intended to get users of various levels of experience and analysis need started. Here is a brief explanation of what can differ between Aviary installs.
 
@@ -201,7 +202,7 @@ Several additional packages are needed to build a copy of the Aviary documentati
 First, check that Aviary commands can be successfully executed.
 
 ```
-aviary -h
+aviary
 ```
 
 You should get a printout similar to below:
@@ -232,13 +233,13 @@ Tools:
     run_mission         Runs Aviary using a provided input deck
 ```
 
-Next try running the installation test script:
+Next try running the installation test command:
 
 ```
-python Aviary/test_install.py
+aviary test_installation
 ```
 
-The example should finish without raising any errors - warnings and other printouts are ok. If you don't get any errors, you are ready to use Aviary!
+The command should finish without raising any errors - warnings and other printouts are ok. If you don't get any errors, you are ready to use Aviary!
 
 ## Developer Verification
 If you followed the Developer's Guide, then you also have access to testflo. To run testflo, run the following command from inside the top level of the Aviary repository. Be advised, running the full test suite may take a significant amount of time to run, on the order of thirty minutes on weaker machines such as laptops.

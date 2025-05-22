@@ -4,7 +4,7 @@ NOTE this file cannot be a unittest, as testflo is an optional dependency. Inste
 """
 
 
-def installation_test():
+def _exec_installation_test():
     """
     Tests your Aviary installation by importing the API, and then running an example case.
     Printouts are provided to explain what was run in the case that there are multiple options, and
@@ -29,7 +29,7 @@ def installation_test():
     try:
         import aviary.api as av
     except Exception as import_error:
-        print(f'An error occured while importing Aviary API: {import_error}\n')
+        print(f'An error occurred while importing Aviary API: {import_error}\n')
         return False
     else:
         print('Imported aviary api')
@@ -63,7 +63,8 @@ def installation_test():
         try:
             OPT('IPOPT')
         except Exception:
-            print('WARNING: pyoptsparse is not providing IPOPT')
+            # IPOPT is optional, so it isn't an issue if we don't find it
+            pass
         else:
             optimizers.append('IPOPT')
         # Next test if SNOPT is available. Use it if so.
@@ -104,4 +105,4 @@ def installation_test():
 
 
 if __name__ == '__main__':
-    installation_test()
+    _exec_installation_test()
