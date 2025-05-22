@@ -5374,7 +5374,7 @@ add_meta_data(
 add_meta_data(
     Aircraft.Wing.CENTER_CHORD,
     meta_data=_MetaData,
-    historical_name={'GASP': ['INGASP.CRCLW', 'INGASP.CROOT'], 'FLOPS': None, 'LEAPS1': None},
+    historical_name={'GASP': 'INGASP.CRCLW', 'FLOPS': None, 'LEAPS1': None},
     units='ft',
     desc='wing chord at fuselage centerline, usally called root chord',
     default_value=0.0,
@@ -7083,7 +7083,7 @@ add_meta_data(
 add_meta_data(
     Mission.Design.CRUISE_ALTITUDE,
     meta_data=_MetaData,
-    historical_name={'GASP': ['INGASP.CRALT', 'INGASP.HNCRU'], 'FLOPS': None, 'LEAPS1': None},
+    historical_name={'GASP': 'INGASP.CRALT', 'FLOPS': None, 'LEAPS1': None},
     units='ft',
     option=True,
     default_value=25000.0,
