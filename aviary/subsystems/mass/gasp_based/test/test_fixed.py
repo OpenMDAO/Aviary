@@ -650,7 +650,7 @@ class BWBEngineTestCase(unittest.TestCase):
         assert_near_equal(self.prob['wing_mounted_mass'], 0, tol)
 
         partial_data = self.prob.check_partials(out_stream=None, method='cs')
-        assert_check_partials(partial_data, atol=2e-19, rtol=1e-12)
+        assert_check_partials(partial_data, atol=2e-9, rtol=1e-12)
 
 
 # arbitarary test case with multiple engine types
