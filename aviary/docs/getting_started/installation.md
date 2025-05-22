@@ -59,15 +59,8 @@ Features: Latest development version of Aviary with additional optimizers
 
 This installation guide will show you how to install Aviary with the ability to grab latest development versions, as well as a guide on how to install `pyoptsparse` with additional optimizers.
 
-## Step 1: Install Aviary
-Grab the latest version of Aviary directly from the github repository, rather than from PyPi. If you don't have git, you can download the files from github, and install it using pip from inside the top-level Aviary directory (`pip install .`)
-
-```
-pip install git+https://github.com/OpenMDAO/Aviary@main
-```
-
 (install-pyoptsparse)=
-## Step 2: Install pyOptSparse
+## Step 1: Install pyOptSparse
 If you installed Aviary following the Quick Start Guide, you can "upgrade" your installation to use more optimizers by following this step. Once you have pyoptsparse installed, proceed to [verifying your installation](#verify-installation).
 
 ### Installing with conda
@@ -75,6 +68,12 @@ If you have a conda environment, then you can install pyOptSparse with access to
 
 ```
 conda install pyoptsparse
+```
+
+```
+Note: There is currently an conflict caused by installing Aviary using pip *before* installing pyOptSparse with conda. Conda will overwrite the numpy version installed by pip with the latest available. This can cause problems, as Aviary does not yet support the latest versions of numpy (>=2.0). To resolve this issue, you may need need to re-install an older version of numpy:
+
+conda install "numpy<2.0"
 ```
 
 ### Installing with pip, or if you have SNOPT
@@ -96,7 +95,21 @@ If you have a copy of SNOPT, instead run the following command to install `pyopt
 build_pyoptsparse -s /path_to_SNOPT_dir
 ```
 
-### Troubleshooting
+## Step 2: Install Aviary
+Grab the latest version of Aviary directly from the github repository, rather than from PyPi. If you don't have git, you can download the files from github, and install it using pip from inside the top-level Aviary directory (`pip install .`)
+
+```
+pip install git+https://github.com/OpenMDAO/Aviary@main
+```
+
+### Updating Aviary
+To update your copy of Aviary to the latest development version, run this command:
+
+```
+pip install --upgrade git+https://github.com/OpenMDAO/Aviary@main
+```
+
+## Troubleshooting
 There are several places this installation can fail, here are a couple troubleshooting steps to take. First, try running `build_pyoptsparse -v` to get a more verbose output.
 
 *If you see an error for a missing command:*
@@ -111,13 +124,6 @@ subprocess.CalledProcessError: Command '['mamba', 'info', '--unsafe-channels']' 
 ```
 Try running `build_pyoptsparse -m` to disable use of mamba commands during installation. Adding `-e` will do the same for conda if your error specifically mentions `'conda'`.
 
-## Updating Aviary
-To update your copy of Aviary to the latest development version, run this command:
-
-```
-pip install --upgrade git+https://github.com/OpenMDAO/Aviary@main
-```
-
 (developers-guide)=
 # Developer's Guide
 ```
@@ -126,7 +132,10 @@ Features: Editable install of latest version Aviary with additional optimizers, 
 ```
 The Developer's Guide installs an editable version of Aviary source code, cloned from github, as well as additional Python packages needed for Aviary development and contributing code to the project.
 
-## Step 1: Install Aviary
+## Step 1: Install pyOptSparse
+The instructions for installing pyOptSparse are the same as the Detailed Installation Guide [here](#install-pyoptsparse).
+
+## Step 2: Install Aviary
  It is recommended for developers to fork Aviary and clone it. In these instructions we will use the main [github repository](https://github.com/OpenMDAO/Aviary), simply substitute the url for the one pointing to your own fork. Navigate to the folder where you'd like Aviary to be downloaded to, then run:
 
  ```
@@ -139,8 +148,11 @@ Next, we will install Aviary in "editable" mode, which means that you can make c
 pip install -e .[all]
 ```
 
-## Step 2: Install pyOptSparse
-The instructions for installing pyOptSparse are the same as the Detailed Installation Guide [here](#install-pyoptsparse).
+### Updating Aviary
+To update your copy of Aviary to the latest development version, run this command from anywhere inside the Aviary repository folder:
+```
+git pull
+```
 
 (optional-dependencies)=
 ## Step 3: Install Additional Dependencies
@@ -183,9 +195,6 @@ Several additional packages are needed to build a copy of the Aviary documentati
 - *jupyter-book*
 - *itables*
 
-## Updating Aviary
-To update your copy of Aviary to the latest development version, run this command:
-
 
 (verify-installation)=
 # Verify Your Installation
@@ -223,10 +232,10 @@ Tools:
     run_mission         Runs Aviary using a provided input deck
 ```
 
-Next try running one of the example models:
+Next try running the installation test script:
 
 ```
-aviary run_mission large_single_aisle_1_GASP.csv
+python Aviary/test_install.py
 ```
 
 The example should finish without raising any errors - warnings and other printouts are ok. If you don't get any errors, you are ready to use Aviary!
