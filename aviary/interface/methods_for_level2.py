@@ -1659,7 +1659,6 @@ class AviaryProblem(om.Problem):
         # Loop over each phase and set initial guesses for the state and control
         # variables
         for idx, (phase_name, phase) in enumerate(phase_items):
-
             # TODO: This will be uncommented when an openmdao bug is fixed.
             # We are using a workaround for now.
             # if not phase._is_local:

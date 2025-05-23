@@ -592,7 +592,7 @@ class HeightEnergyProblemConfigurator(ProblemConfiguratorBase):
                 target_prob.set_val(
                     parent_prefix + f'traj.{phase_name}.states:{guess_key}',
                     prob._process_guess_var(val, guess_key, phase),
-                    units=units
+                    units=units,
                 )
 
             elif guess_key in prob_keys:

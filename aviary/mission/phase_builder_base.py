@@ -491,7 +491,7 @@ class PhaseBuilderBase(ABC):
             extra_options['rate2_targets'] = rate2_targets
 
         phase.add_control(
-             target, targets=target, rate_targets=rate_targets, opt=opt, **extra_options
+            target, targets=target, rate_targets=rate_targets, opt=opt, **extra_options
         )
 
         # Add timeseries for any control.

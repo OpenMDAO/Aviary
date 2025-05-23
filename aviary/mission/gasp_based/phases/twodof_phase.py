@@ -21,7 +21,6 @@ from aviary.variable_info.variables import Dynamic
 
 class TwoDOFPhaseOptions(AviaryOptionsDictionary):
     def declare_options(self):
-
         # TODO: These defaults aren't great, but need to keep things the same for now.
         defaults = {
             'mass_ref': 1e4,
