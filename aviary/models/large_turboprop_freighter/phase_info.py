@@ -17,8 +17,8 @@ energy_phase_info = {
             'time_duration_bounds': ((24.0, 192.0), 'min'),
         },
         'initial_guesses': {
-            "altitude": ([0.0, 21_000.0], "ft"),
-            "mach": ([0.2, 0.475], "unitless"),
+            'altitude': ([0.0, 21_000.0], "ft"),
+            'mach': ([0.2, 0.475], "unitless"),
         },
     },
     'cruise': {
@@ -37,8 +37,8 @@ energy_phase_info = {
             'time_duration_bounds': ((56.5, 169.5), 'min'),
         },
         'initial_guesses': {
-            "altitude": ([21_000, 21_000.0], "ft"),
-            "mach": ([0.475, 0.475], "unitless"),
+            'altitude': ([21_000, 21_000.0], "ft"),
+            'mach': ([0.475, 0.475], "unitless"),
         },
     },
     'descent': {

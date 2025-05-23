@@ -73,7 +73,13 @@ class TestAviaryOptionsDict(unittest.TestCase):
         opts.add_state_options('zzz')
 
         stems = [
-            'initial', 'final', 'bounds', 'ref', 'ref0', 'defect_ref', 'solve_segments',
+            'initial',
+            'final',
+            'bounds',
+            'ref',
+            'ref0',
+            'defect_ref',
+            'solve_segments',
         ]
         for stem in stems:
             self.assertTrue(f'zzz_{stem}' in opts)
@@ -93,8 +99,14 @@ class TestAviaryOptionsDict(unittest.TestCase):
         opts.add_control_options('zzz')
 
         stems = [
-            'initial', 'final', 'bounds', 'ref', 'ref0', 'polynomial_order',
-            'optimize', 'rate_constraint'
+            'initial',
+            'final',
+            'bounds',
+            'ref',
+            'ref0',
+            'polynomial_order',
+            'optimize',
+            'rate_constraint',
         ]
         for stem in stems:
             self.assertTrue(f'zzz_{stem}' in opts)

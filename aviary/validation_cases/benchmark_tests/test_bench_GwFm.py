@@ -155,8 +155,8 @@ class ProblemPhaseTestCase(unittest.TestCase):
                 },
                 'initial_guesses': {
                     'time': ([0, 40.0], 'min'),
-                    "altitude": ([0, 35000.0], "ft"),
-                    "mach": ([0.2, 0.79], "unitless"),
+                    'altitude': ([0, 35000.0], "ft"),
+                    'mach': ([0.2, 0.79], "unitless"),
                 },
             },
             'cruise': {
@@ -178,8 +178,8 @@ class ProblemPhaseTestCase(unittest.TestCase):
                 },
                 'initial_guesses': {
                     'time': ([128, 113], 'min'),
-                    "altitude": ([35000, 35000.0], "ft"),
-                    "mach": ([0.79, 0.79], "unitless"),
+                    'altitude': ([35000, 35000.0], "ft"),
+                    'mach': ([0.79, 0.79], "unitless"),
                 },
             },
             'descent': {

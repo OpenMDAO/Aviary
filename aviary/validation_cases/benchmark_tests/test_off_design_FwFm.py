@@ -32,8 +32,8 @@ class HeightEnergyTestCase(unittest.TestCase):
                 },
                 'initial_guesses': {
                     'time': ([0, 40.0], 'min'),
-                    "altitude": ([35, 35000.0], "ft"),
-                    "mach": ([0.3, 0.79], "unitless"),                },
+                    'altitude': ([35, 35000.0], "ft"),
+                    'mach': ([0.3, 0.79], "unitless"),                },
             },
             'cruise': {
                 'subsystem_options': {'core_aerodynamics': {'method': 'computed'}},
@@ -54,8 +54,8 @@ class HeightEnergyTestCase(unittest.TestCase):
                 },
                 'initial_guesses': {
                     'time': ([40.0, 201], 'min'),
-                    "altitude": ([35000, 35000.0], "ft"),
-                    "mach": ([0.79, 0.79], "unitless"),
+                    'altitude': ([35000, 35000.0], "ft"),
+                    'mach': ([0.79, 0.79], "unitless"),
                 },
             },
             'descent': {

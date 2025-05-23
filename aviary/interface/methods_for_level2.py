@@ -1666,9 +1666,9 @@ class AviaryProblem(om.Problem):
 
             # TODO: This will be uncommented when an openmdao bug is fixed.
             # We are using a workaround for now.
-            #if not phase._is_local:
-            #    # Don't set anything if phase is not on this proc.
-            #    continue
+            # if not phase._is_local:
+            #     # Don't set anything if phase is not on this proc.
+            #     continue
 
             if self.mission_method is SOLVED_2DOF:
                 self.phase_objects[idx].apply_initial_guesses(self, 'traj', phase)

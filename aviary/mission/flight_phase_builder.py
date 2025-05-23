@@ -7,7 +7,8 @@ from aviary.mission.flops_based.phases.phase_utils import (
     get_initial,
 )
 from aviary.mission.initial_guess_builders import (
-    InitialGuessState, InitialGuessControl,
+    InitialGuessState,
+    InitialGuessControl,
 )
 from aviary.mission.phase_builder_base import PhaseBuilderBase, register
 from aviary.utils.aviary_options_dict import AviaryOptionsDictionary
@@ -214,18 +215,10 @@ class FlightPhaseBase(PhaseBuilderBase):
         else:
             rate_source = 'dmass_dr'
 
-        self.add_state(
-            'mass',
-            Dynamic.Vehicle.MASS,
-            rate_source
-        )
+        self.add_state('mass', Dynamic.Vehicle.MASS, rate_source)
 
         if phase_type is EquationsOfMotion.HEIGHT_ENERGY:
-            self.add_state(
-                'distance',
-                Dynamic.Mission.DISTANCE,
-                Dynamic.Mission.DISTANCE_RATE
-            )
+            self.add_state('distance', Dynamic.Mission.DISTANCE, Dynamic.Mission.DISTANCE_RATE)
 
         phase = add_subsystem_variables_to_phase(phase, self.name, self.external_subsystems)
 
@@ -241,7 +234,7 @@ class FlightPhaseBase(PhaseBuilderBase):
             'mach',
             Dynamic.Atmosphere.MACH,
             rate_targets,
-            add_constraints=Dynamic.Atmosphere.MACH not in constraints
+            add_constraints=Dynamic.Atmosphere.MACH not in constraints,
         )
 
         if phase_type is EquationsOfMotion.HEIGHT_ENERGY and not ground_roll:
@@ -253,21 +246,21 @@ class FlightPhaseBase(PhaseBuilderBase):
 
         # TODO: How do we handle hard-coding all of this stuff? Should be in phase-info.
         # ground_roll uses some hardcoded settings that overwrite user-provided ones
-        #if ground_roll:
-            #control_dict['control_type'] = 'polynomial'
-            #control_dict['order'] = 1
-            #control_dict['val'] = 0
-            #control_dict['opt'] = False
-            #control_dict['fix_initial'] = fix_initial
-            #control_dict['rate_targets'] = ['dh_dr']
-            #control_dict['rate2_targets'] = ['d2h_dr2']
+        # if ground_roll:
+        #    control_dict['control_type'] = 'polynomial'
+        #    control_dict['order'] = 1
+        #    control_dict['val'] = 0
+        #    control_dict['opt'] = False
+        #    control_dict['fix_initial'] = fix_initial
+        #    control_dict['rate_targets'] = ['dh_dr']
+        #    control_dict['rate2_targets'] = ['d2h_dr2']
 
         self.add_control(
             'altitude',
             Dynamic.Mission.ALTITUDE,
             rate_targets,
             rate2_targets=rate2_targets,
-            add_constraints=Dynamic.Mission.ALTITUDE not in constraints
+            add_constraints=Dynamic.Mission.ALTITUDE not in constraints,
         )
 
         # For heterogeneous-engine cases, we may have throttle allocation control.

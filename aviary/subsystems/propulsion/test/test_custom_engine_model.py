@@ -124,7 +124,7 @@ class SimpleTestEngine(EngineModel):
                 'upper': 0.1,
                 'control_type': 'polynomial',
                 'order': 3,
-                },
+            },
         }
         return controls_dict
 

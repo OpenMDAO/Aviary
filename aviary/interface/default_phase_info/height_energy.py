@@ -13,12 +13,12 @@ phase_info = {
             'mach_initial': (0.2, 'unitless'),
             'mach_final': (0.72, 'unitless'),
             'mach_bounds': ((0.18, 0.74), 'unitless'),
-            "mach_polynomial_order": 3,
+            'mach_polynomial_order': 3,
             'altitude_optimize': False,
             'altitude_initial': (0.0, 'ft'),
             'altitude_final': (32000.0, 'ft'),
             'altitude_bounds': ((0.0, 34000.0), 'ft'),
-            "altitude_polynomial_order": 3,
+            'altitude_polynomial_order': 3,
             'throttle_enforcement': 'path_constraint',
             'time_initial_bounds': ((0.0, 0.0), 'min'),
             'time_duration_bounds': ((64.0, 192.0), 'min'),
@@ -33,12 +33,12 @@ phase_info = {
             'mach_initial': (0.72, 'unitless'),
             'mach_final': (0.72, 'unitless'),
             'mach_bounds': ((0.7, 0.74), 'unitless'),
-            "mach_polynomial_order": 3,
+            'mach_polynomial_order': 3,
             'altitude_optimize': False,
             'altitude_initial': (32000.0, 'ft'),
             'altitude_final': (34000.0, 'ft'),
             'altitude_bounds': ((23000.0, 38000.0), 'ft'),
-            "altitude_polynomial_order": 3,
+            'altitude_polynomial_order': 3,
             'throttle_enforcement': 'boundary_constraint',
             'time_initial_bounds': ((64.0, 192.0), 'min'),
             'time_duration_bounds': ((56.5, 169.5), 'min'),
@@ -53,12 +53,12 @@ phase_info = {
             'mach_initial': (0.72, 'unitless'),
             'mach_final': (0.36, 'unitless'),
             'mach_bounds': ((0.34, 0.74), 'unitless'),
-            "mach_polynomial_order": 3,
+            'mach_polynomial_order': 3,
             'altitude_optimize': False,
             'altitude_initial': (34000.0, 'ft'),
             'altitude_final': (500.0, 'ft'),
             'altitude_bounds': ((0.0, 38000.0), 'ft'),
-            "altitude_polynomial_order": 3,
+            'altitude_polynomial_order': 3,
             'throttle_enforcement': 'path_constraint',
             'time_initial_bounds': ((120.5, 361.5), 'min'),
             'time_duration_bounds': ((29.0, 87.0), 'min'),
@@ -120,10 +120,10 @@ def phase_info_parameterization(phase_info, post_mission_info, aviary_inputs):
 
         cruise = phase_info['cruise']
         user = cruise['user_options']
-        if 'altitude_initial' in user and  user['altitude_initial'][0] is not None:
+        if 'altitude_initial' in user and user['altitude_initial'][0] is not None:
             user['altitude_initial'] = new_alt
 
-        if 'altitude_final' in user and  user['altitude_final'][0] is not None:
+        if 'altitude_final' in user and user['altitude_final'][0] is not None:
             user['altitude_final'] = new_alt
 
         if 'initial_guesses' in cruise and 'altitude' in cruise['initial_guesses']:
@@ -157,10 +157,10 @@ def phase_info_parameterization(phase_info, post_mission_info, aviary_inputs):
 
         cruise = phase_info['cruise']
         user = cruise['user_options']
-        if 'mach_initial' in user and  user['mach_initial'][0] is not None:
+        if 'mach_initial' in user and user['mach_initial'][0] is not None:
             user['mach_initial'] = new_mach
 
-        if 'mach_final' in user and  user['mach_final'][0] is not None:
+        if 'mach_final' in user and user['mach_final'][0] is not None:
             user['mach_final'] = new_mach
 
         if 'initial_guesses' in cruise and 'mach' in cruise['initial_guesses']:

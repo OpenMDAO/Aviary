@@ -150,7 +150,7 @@ class AviaryOptionsDictionary(om.OptionsDictionary):
 
         return phase_info
 
-    def add_state_options(self, state_name: str, units: str=None, defaults=None):
+    def add_state_options(self, state_name: str, units: str = None, defaults=None):
         """
         Adds all options needed for a state variable.
 
@@ -262,7 +262,7 @@ class AviaryOptionsDictionary(om.OptionsDictionary):
             desc=desc,
         )
 
-    def add_control_options(self, ctrl_name: str, units: str=None, defaults=None):
+    def add_control_options(self, ctrl_name: str, units: str = None, defaults=None):
         """
         Adds all options needed for a control variable.
 
@@ -384,7 +384,7 @@ class AviaryOptionsDictionary(om.OptionsDictionary):
             desc=desc,
         )
 
-    def add_time_options(self, units: str=None, defaults=None):
+    def add_time_options(self, units: str = None, defaults=None):
         """
         Adds all options for controlling time initial and duration.
 
@@ -401,7 +401,6 @@ class AviaryOptionsDictionary(om.OptionsDictionary):
             defaults = {}
 
         for stem in ['time_initial', 'time_duration']:
-
             name = stem
             default = defaults.get(name, None)
             desc = f'Tuple of (value, units) containing value of {stem} '
@@ -419,9 +418,10 @@ class AviaryOptionsDictionary(om.OptionsDictionary):
 
             name = f'{stem}_bounds'
             default = defaults.get(name, (None, None))
-            desc = 'Tuple of form ((lower, upper), units) containing the upper and lower bounds for '
-            desc += f'all values of {stem} in the phase.\n'
-            desc += 'The default of None for upper or lower means that bound will not be declared.\n'
+            desc = 'Tuple of form ((lower, upper), units) containing the upper and lower bounds '
+            desc += f'for all values of {stem} in the phase.\n'
+            desc += 'The default of None for upper or lower means that bound will not be '
+            desc += 'declared.\n'
             self.declare(
                 name=name,
                 default=default,

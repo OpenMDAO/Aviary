@@ -491,11 +491,7 @@ class PhaseBuilderBase(ABC):
             extra_options['rate2_targets'] = rate2_targets
 
         phase.add_control(
-            target,
-            targets=target,
-            rate_targets=rate_targets,
-            opt=opt,
-            **extra_options
+             target, targets=target, rate_targets=rate_targets, opt=opt, **extra_options
         )
 
         # Add timeseries for any control.
@@ -507,22 +503,12 @@ class PhaseBuilderBase(ABC):
         # Add a initial constraint.
         if opt and initial is not None:
             phase.add_boundary_constraint(
-                target,
-                loc='initial',
-                equals=initial,
-                units=units,
-                ref=ref
+                target, loc='initial', equals=initial, units=units, ref=ref
             )
 
         # Add a final constraint.
         if opt and final is not None:
-            phase.add_boundary_constraint(
-                target,
-                loc='final',
-                equals=final,
-                units=units,
-                ref=ref
-            )
+            phase.add_boundary_constraint(target, loc='final', equals=final, units=units, ref=ref)
 
     def add_velocity_state(self, user_options):
         """Add velocity state: lower and upper bounds, reference, zero-reference, and state defect reference."""

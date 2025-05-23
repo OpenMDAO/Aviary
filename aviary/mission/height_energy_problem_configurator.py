@@ -200,22 +200,10 @@ class HeightEnergyProblemConfigurator(ProblemConfiguratorBase):
         time_units = 's'
         initial = user_options['time_initial'][0]
         duration = user_options['time_duration'][0]
-        initial_bounds = wrapped_convert_units(
-            user_options['time_initial_bounds'],
-            time_units
-        )
-        duration_bounds = wrapped_convert_units(
-            user_options['time_duration_bounds'],
-            time_units
-        )
-        initial_ref = wrapped_convert_units(
-            user_options['time_initial_ref'],
-            time_units
-        )
-        duration_ref = wrapped_convert_units(
-            user_options['time_duration_ref'],
-            time_units
-        )
+        initial_bounds = wrapped_convert_units(user_options['time_initial_bounds'], time_units)
+        duration_bounds = wrapped_convert_units(user_options['time_duration_bounds'], time_units)
+        initial_ref = wrapped_convert_units(user_options['time_initial_ref'], time_units)
+        duration_ref = wrapped_convert_units(user_options['time_duration_ref'], time_units)
 
         fix_initial = initial is not None
         fix_duration = duration is not None
@@ -357,9 +345,8 @@ class HeightEnergyProblemConfigurator(ProblemConfiguratorBase):
             # more robust to use a constraint rather than connecting it directly.
             first_flight_phase = prob.traj._phases[first_flight_phase_name]
             first_flight_phase.set_state_options(
-                Dynamic.Vehicle.MASS,
-                fix_initial=False,
-                input_initial=False)
+                Dynamic.Vehicle.MASS, fix_initial=False, input_initial=False
+            )
 
             # connect summary mass to the initial guess of mass in the first phase
             eq = prob.model.add_subsystem(
@@ -410,8 +397,7 @@ class HeightEnergyProblemConfigurator(ProblemConfiguratorBase):
         phase_options = prob.phase_info[first_flight_phase_name]['user_options']
 
         prob.model.connect(
-            Mission.Takeoff.FINAL_MASS,
-            f'traj.{first_flight_phase_name}.initial_states:mass'
+            Mission.Takeoff.FINAL_MASS, f'traj.{first_flight_phase_name}.initial_states:mass'
         )
         prob.model.connect(
             Mission.Takeoff.GROUND_DISTANCE,
@@ -435,8 +421,7 @@ class HeightEnergyProblemConfigurator(ProblemConfiguratorBase):
 
             # Add constraint for mach difference
             prob.model.add_constraint(
-                'mach_diff_comp.mach_resid_for_connecting_takeoff',
-                equals=0.0
+                'mach_diff_comp.mach_resid_for_connecting_takeoff', equals=0.0
             )
 
         if phase_options.get('altitude_optimize', False):
@@ -456,8 +441,7 @@ class HeightEnergyProblemConfigurator(ProblemConfiguratorBase):
 
             # Add constraint for altitude difference
             prob.model.add_constraint(
-                'alt_diff_comp.altitude_resid_for_connecting_takeoff',
-                equals=0.0
+                'alt_diff_comp.altitude_resid_for_connecting_takeoff', equals=0.0
             )
 
     def _add_landing_systems(self, prob):
@@ -498,8 +482,9 @@ class HeightEnergyProblemConfigurator(ProblemConfiguratorBase):
         """
         pass
 
-    def set_phase_initial_guesses(self, prob, phase_name, phase, guesses, target_prob,
-                                  parent_prefix):
+    def set_phase_initial_guesses(
+            self, prob, phase_name, phase, guesses, target_prob, parent_prefix
+        ):
         """
         Adds the initial guesses for each variable of a given phase to the problem.
 
@@ -583,14 +568,10 @@ class HeightEnergyProblemConfigurator(ProblemConfiguratorBase):
                 # phase.set_time_val(initial=val[0], duration=val[1], units=units)
 
                 target_prob.set_val(
-                    parent_prefix + f'traj.{phase_name}.t_initial',
-                    val[0],
-                    units=units
+                    parent_prefix + f'traj.{phase_name}.t_initial', val[0], units=units
                 )
                 target_prob.set_val(
-                    parent_prefix + f'traj.{phase_name}.t_duration',
-                    val[1],
-                    units=units
+                    parent_prefix + f'traj.{phase_name}.t_duration', val[1], units=units
                 )
 
             elif guess_key in control_keys:
@@ -601,7 +582,7 @@ class HeightEnergyProblemConfigurator(ProblemConfiguratorBase):
                 target_prob.set_val(
                     parent_prefix + f'traj.{phase_name}.controls:{guess_key}',
                     prob._process_guess_var(val, guess_key, phase),
-                    units=units
+                    units=units,
                 )
 
             elif guess_key in state_keys:

@@ -142,10 +142,7 @@ class SolvedTwoDOFProblemConfigurator(ProblemConfiguratorBase):
 
         # Make a good guess for a reasonable intitial time scaler.
         try:
-            initial_bounds = wrapped_convert_units(
-                user_options['time_initial_bounds'],
-                time_units
-            )
+            initial_bounds = wrapped_convert_units(user_options['time_initial_bounds'], time_units)
         except KeyError:
             initial_bounds = (None, None)
 
@@ -155,10 +152,7 @@ class SolvedTwoDOFProblemConfigurator(ProblemConfiguratorBase):
         else:
             initial_ref = 600.0
 
-        duration_bounds = wrapped_convert_units(
-            user_options['time_duration_bounds'],
-            time_units
-        )
+        duration_bounds = wrapped_convert_units(user_options['time_duration_bounds'], time_units)
 
         duration_ref = (duration_bounds[0] + duration_bounds[1]) / 2.0
 
@@ -272,8 +266,9 @@ class SolvedTwoDOFProblemConfigurator(ProblemConfiguratorBase):
         """
         pass
 
-    def set_phase_initial_guesses(self, prob, phase_name, phase, guesses, target_prob,
-                                  parent_prefix):
+    def set_phase_initial_guesses(
+            self, prob, phase_name, phase, guesses, target_prob, parent_prefix
+        ):
         """
         Adds the initial guesses for each variable of a given phase to the problem.
 
