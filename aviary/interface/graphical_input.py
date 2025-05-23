@@ -2,6 +2,7 @@ import importlib.util  # used for opening existing phase info file
 import json
 import os
 import platform
+import pprint
 import shutil
 import subprocess
 import tkinter as tk  # base tkinter
@@ -1626,19 +1627,18 @@ def create_phase_info(
         phase_info[phase_name] = {
             'subsystem_options': {'core_aerodynamics': {'method': 'computed'}},
             'user_options': {
-                'mach_optimize': mach_optimize_phase_vars[i].get(),
-                'altitude_optimize': altitude_optimize_phase_vars[i].get(),
-                'polynomial_control_order': polynomial_order,
-                'use_polynomial_control': True,
                 'num_segments': num_segments,
                 'order': orders[i],
-                'distance_solve_segments': False,
+                'mach_optimize': mach_optimize_phase_vars[i].get(),
+                'mach_polynomial_control_order': polynomial_order,
                 'mach_initial': (mach_values[i], units[2]),
                 'mach_final': (mach_values[i + 1], units[2]),
                 'mach_bounds': (
                     (np.min(mach_values[i : i + 2]) - 0.02, np.max(mach_values[i : i + 2]) + 0.02),
                     units[2],
                 ),
+                'altitude_optimize': altitude_optimize_phase_vars[i].get(),
+                'altitude_polynomial_control_order': polynomial_order,
                 'altitude_initial': (altitudes[i], units[1]),
                 'altitude_final': (altitudes[i + 1], units[1]),
                 'altitude_bounds': (
@@ -1651,9 +1651,6 @@ def create_phase_info(
                 'throttle_enforcement': 'path_constraint'
                 if (i == (num_phases - 1) or i == 0)
                 else 'boundary_constraint',
-                'fix_initial': True if i == 0 else False,
-                'constrain_final': True if i == (num_phases - 1) else False,
-                'fix_duration': False,
                 'time_initial_bounds': (cumulative_initial_bounds[i], units[0]),
                 'time_duration_bounds': (duration_bounds[i], units[0]),
             },
@@ -1689,7 +1686,9 @@ def create_phase_info(
 
     # write a python file with the phase information
     with open(filename, 'w') as f:
-        f.write(f'phase_info = {phase_info}')
+        f.write('phase_info = ')
+        pp = pprint.PrettyPrinter(indent=4, stream=f, sort_dicts=False)
+        pp.pprint(phase_info)
 
     # Check for 'ruff' and format the file
     if shutil.which('ruff'):
