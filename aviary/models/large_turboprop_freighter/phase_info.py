@@ -18,7 +18,7 @@ energy_phase_info = {
         },
         'initial_guesses': {
             'altitude': ([0.0, 21_000.0], 'ft'),
-            'mach': ([0.2, 0.475], "unitless"),
+            'mach': ([0.2, 0.475], 'unitless'),
         },
     },
     'cruise': {
@@ -38,7 +38,7 @@ energy_phase_info = {
         },
         'initial_guesses': {
             'altitude': ([21_000, 21_000.0], 'ft'),
-            'mach': ([0.475, 0.475], "unitless"),
+            'mach': ([0.475, 0.475], 'unitless'),
         },
     },
     'descent': {
