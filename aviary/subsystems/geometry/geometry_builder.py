@@ -133,7 +133,10 @@ class CoreGeometryBuilder(GeometryBuilderBase):
                 var = getattr(Aircraft.Nacelle, entry)
                 if var in aviary_inputs:
                     if 'total' not in var:
-                        params[var] = {'shape': (num_engine_type), 'static_target': True}
+                        params[var] = {
+                            'shape': (num_engine_type),
+                            'static_target': True,
+                        }
 
         return params
 

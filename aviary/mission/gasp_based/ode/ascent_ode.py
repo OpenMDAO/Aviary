@@ -45,11 +45,12 @@ class AscentODE(TwoDOFODE):
 
         self.add_atmosphere()
 
-        self.options['subsystem_options']['core_aerodynamics'] = {
+        kwargs = {
             'method': 'low_speed',
             'retract_gear': True,
             'retract_flaps': True,
         }
+        self.options['subsystem_options'].setdefault('core_aerodynamics', {}).update(kwargs)
 
         self.add_core_subsystems()
 

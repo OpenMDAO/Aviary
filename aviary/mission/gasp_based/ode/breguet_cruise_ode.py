@@ -20,6 +20,7 @@ class BreguetCruiseODESolution(TwoDOFODE):
         nn = self.options['num_nodes']
         aviary_options = self.options['aviary_options']
         core_subsystems = self.options['core_subsystems']
+        subsystem_options = self.options['subsystem_options']
 
         # TODO: paramport
         self.add_subsystem('params', ParamPort(), promotes=['*'])
@@ -42,6 +43,9 @@ class BreguetCruiseODESolution(TwoDOFODE):
             'output_alpha': True,
         }
         for subsystem in core_subsystems:
+            # check if subsystem_options has entry for a subsystem of this name
+            if subsystem.name in subsystem_options:
+                kwargs.update(subsystem_options[subsystem.name])
             system = subsystem.build_mission(**kwargs)
             if system is not None:
                 if isinstance(subsystem, PropulsionBuilderBase):
