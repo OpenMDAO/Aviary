@@ -302,28 +302,6 @@ class AviaryProblem(om.Problem):
                             f'(units: {time_duration[1]}) <= 0")'
                         )
 
-                    ## Only applies to non-analytic phases (all HE and most 2DOF)
-                    #if not analytic:
-                        ## Set duration_bounds and initial_guesses for time:
-                        #phase['user_options'].update(
-                            #{
-                                #'time_duration_bounds': (
-                                    #(time_duration[0], time_duration[0]),
-                                    #time_duration[1],
-                                #)
-                            #}
-                        #)
-                        #phase.update(
-                            #{
-                                #'initial_guesses': {
-                                    #'time': (
-                                        #(time_duration[0], time_duration[0]),
-                                        #time_duration[1],
-                                    #)
-                                #}
-                            #}
-                        #)
-
         for phase_name in self.phase_info:
             for external_subsystem in self.phase_info[phase_name]['external_subsystems']:
                 aviary_inputs = external_subsystem.preprocess_inputs(aviary_inputs)
