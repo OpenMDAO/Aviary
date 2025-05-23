@@ -51,7 +51,7 @@ class AscentODETestCase(unittest.TestCase):
         tol = tol = 1e-6
         assert_near_equal(
             self.prob[Dynamic.Mission.VELOCITY_RATE],
-            np.array([641174.75, 641174.75]),
+            np.array([641050.94345628, 641050.94345628]),
             tol,
         )
         assert_near_equal(

@@ -3,7 +3,7 @@ from pathlib import Path
 
 from openmdao.utils.testing_utils import use_tempdirs
 
-from aviary.utils.engine_deck_conversion import EngineDeckConverter, EngineDeckType
+from aviary.utils.engine_deck_conversion import convert_engine_deck, EngineDeckType
 from aviary.utils.functions import get_path
 
 
@@ -23,7 +23,7 @@ class TestEngineDeckConversion(unittest.TestCase):
             output_file = str(Path(output_file))
 
         # Execute the conversion
-        EngineDeckConverter(input_file, output_file, data_format)
+        convert_engine_deck(input_file, output_file, data_format, True)
 
     def compare_files(self, filepath, skip_list=['# created']):
         """
@@ -41,7 +41,8 @@ class TestEngineDeckConversion(unittest.TestCase):
         with open('TEST_' + filename, 'r') as f_in, open(validation_data, 'r') as expected:
             for line in f_in:
                 if any(s in line for s in skip_list):
-                    break
+                    expected.readline()
+                    continue
                 # Remove whitespace and compare
                 expected_line = ''.join(expected.readline().split())
                 line_no_whitespace = ''.join(line.split())
