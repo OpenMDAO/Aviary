@@ -615,7 +615,7 @@ class AeroGeom(om.ExplicitComponent):
         # isn't a problem.
         reli_y1 = 700000 * np.ones(self.options['num_nodes'])
         reli_y2 = sos * mach / nu
-        sig = sigmoidX(mach, 0.1, alpha=0.005)
+        sig = sigmoidX(mach, 0.1, mu=0.005)
         reli = (1 - sig) * reli_y1 + sig * reli_y2
 
         # Re correction factors: fuselage, wing, nacelle, vtail, htail, strut, tip tank
@@ -990,7 +990,7 @@ class DragCoefClean(om.ExplicitComponent):
 
         mach_div = SA1 + SA2 * CL + div_drag_supercrit
 
-        sig = sigmoidX(mach, mach_div, alpha=0.005)
+        sig = sigmoidX(mach, mach_div, mu=0.005)
         delcdm = sig * (10 * (mach - mach_div) ** 3)
 
         # delcdm = np.zeros_like(mach)
