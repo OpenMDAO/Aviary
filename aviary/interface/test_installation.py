@@ -4,6 +4,11 @@ NOTE this file cannot be a unittest, as testflo is an optional dependency. Inste
 """
 
 
+def _setup_installation_test():
+    """There are no arguments for `aviary check`."""
+    pass
+
+
 def _exec_installation_test():
     """
     Tests your Aviary installation by importing the API, and then running an example case.
