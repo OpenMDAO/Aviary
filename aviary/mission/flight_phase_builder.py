@@ -28,7 +28,6 @@ from aviary.variable_info.variables import Aircraft, Dynamic
 
 class FlightPhaseOptions(AviaryOptionsDictionary):
     def declare_options(self):
-
         self.declare(
             name='num_segments',
             types=int,

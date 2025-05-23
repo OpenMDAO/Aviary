@@ -32,7 +32,7 @@ class AircraftMissionTestSuite(unittest.TestCase):
         for i, cruise_dict in enumerate(cruise_dicts):
             cruise_dict['user_options']['time_initial_bounds'] = (
                 (64.0 + i * 10, 192.0 + i * 10),
-                'min'
+                'min',
             )
             cruise_dict['user_options']['time_duration_bounds'] = (
                 (56.5 + i * 10, 169.5 + i * 10),

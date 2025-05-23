@@ -285,13 +285,9 @@ class AviaryProblem(om.Problem):
                         # if it isn't specified, only the default 2DOF cruise for
                         # collocation is analytic
                         if 'cruise' in phase_name:
-                            analytic = phase['user_options']['analytic'] = (
-                                True
-                            )
+                            analytic = phase['user_options']['analytic'] = True
                         else:
-                            analytic = phase['user_options']['analytic'] = (
-                                False
-                            )
+                            analytic = phase['user_options']['analytic'] = False
 
                 if 'time_duration' in phase['user_options']:
                     time_duration = phase['user_options']['time_duration']
@@ -1689,8 +1685,9 @@ class AviaryProblem(om.Problem):
             self._add_subsystem_guesses(phase_name, phase, target_prob, parent_prefix)
 
             # Set initial guesses for states, controls and time for each phase.
-            self.configurator.set_phase_initial_guesses(self, phase_name, phase, guesses,
-                                                        target_prob, parent_prefix)
+            self.configurator.set_phase_initial_guesses(
+                self, phase_name, phase, guesses, target_prob, parent_prefix
+            )
 
     def _process_guess_var(self, val, key, phase):
         """

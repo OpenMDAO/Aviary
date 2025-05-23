@@ -552,7 +552,6 @@ class HeightEnergyProblemConfigurator(ProblemConfiguratorBase):
             guess_dict['mach'] = ([mach_initial, mach_final], 'unitless')
 
         if 'time' not in guess_dict and options['time_duration'][0] is None:
-
             # if time not in initial guesses, set it to the average of the
             # initial_bounds and the duration_bounds
             initial_bounds = wrapped_convert_units(options['time_initial_bounds'], 's')

@@ -33,7 +33,8 @@ class HeightEnergyTestCase(unittest.TestCase):
                 'initial_guesses': {
                     'time': ([0, 40.0], 'min'),
                     'altitude': ([35, 35000.0], 'ft'),
-                    'mach': ([0.3, 0.79], 'unitless'),                },
+                    'mach': ([0.3, 0.79], 'unitless'),
+                },
             },
             'cruise': {
                 'subsystem_options': {'core_aerodynamics': {'method': 'computed'}},
