@@ -66,7 +66,7 @@ Users have complete control over the Aviary model and how the methods are called
 ## Familiarity with dependencies
 
 As users dig deeper into the Aviary code, they will encounter the various dependencies that Aviary relies on.
-The most important of these is OpenMDAO, which is the optimization framework that Aviary is built on top of. In addition to its [basic user guide](https://openmdao.org/newdocs/versions/latest/basic_user_guide/basic_user_guide.htmlAviary), users are encouraged to learn more about the following topics in the [OpenMDAO Advanced User Guide](https://openmdao.org/newdocs/versions/latest/advanced_user_guide/advanced_user_guide.html):
+The most important of these is OpenMDAO, which is the optimization framework that Aviary is built on top of. In addition to its [basic user guide](https://openmdao.org/newdocs/versions/latest/basic_user_guide/basic_user_guide.html), users are encouraged to learn more about the following topics in the [OpenMDAO Advanced User Guide](https://openmdao.org/newdocs/versions/latest/advanced_user_guide/advanced_user_guide.html):
   - [Implicit Components](https://openmdao.org/newdocs/versions/latest/features/core_features/working_with_components/implicit_component.html)
   - [N<sup>2</sup> Diagram](https://openmdao.org/newdocs/versions/latest/features/model_visualization/n2_details/n2_details.html)
   - [Nonlinear and Linear Solvers](https://openmdao.org/newdocs/versions/latest/features/core_features/controlling_solver_behavior/set_solvers.html)

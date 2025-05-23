@@ -20,7 +20,7 @@ class TestJson(unittest.TestCase):
     These tests just check that the json files can be saved or loaded
     They don't check that the files were properly created or that the
     off-design mission ran correctly.
-    run_off_design_example.py in aviary/examples tests the full functionality.
+    off_design_example.py in aviary/examples tests the full functionality.
     """
 
     def get_file(self, filename):

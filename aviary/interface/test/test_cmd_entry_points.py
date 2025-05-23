@@ -25,6 +25,12 @@ class CommandEntryPointsTestCases(unittest.TestCase):
         return filepath
 
 
+class InstallationTest(CommandEntryPointsTestCases):
+    def run_installation_test(self):
+        cmd = 'aviary check'
+        self.run_and_test_cmd(cmd)
+
+
 class run_missionTestCases(CommandEntryPointsTestCases):
     @require_pyoptsparse(optimizer='SNOPT')
     def bench_test_SNOPT_cmd(self):
