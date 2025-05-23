@@ -120,7 +120,8 @@ def aviary_cmd():
     cmdargs = [a for a in sys.argv[1:] if a not in ('-h',)]
 
     if len(args) == 1 and len(user_args) == 0:
-        if args[0] not in ('draw_mission', 'run_mission', 'plot_drag_polar'):
+        # if command requires arguments but is run without any, return help for that command
+        if args[0] not in ('check', 'draw_mission', 'run_mission', 'plot_drag_polar'):
             parser.parse_args([args[0], '-h'])
 
     if not set(args).intersection(subs.choices) and len(args) == 1 and os.path.isfile(cmdargs[0]):

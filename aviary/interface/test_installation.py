@@ -4,12 +4,12 @@ NOTE this file cannot be a unittest, as testflo is an optional dependency. Inste
 """
 
 
-def _setup_installation_test():
+def _setup_installation_test(parser):
     """There are no arguments for `aviary check`."""
     pass
 
 
-def _exec_installation_test():
+def _exec_installation_test(args, user_args):
     """
     Tests your Aviary installation by importing the API, and then running an example case.
     Printouts are provided to explain what was run in the case that there are multiple options, and
@@ -23,21 +23,25 @@ def _exec_installation_test():
     success = True
     print('Testing imports:')
     # Test that openmdao can be imported
+    print('Importing OpenMDAO')
     try:
         from openmdao.utils.testing_utils import use_tempdirs
     except ImportError:
         print('ERROR: OpenMDAO is not installed')
         return False
+    else:
+        print('success')
 
     # Try importing the Aviary api - there are many files imported here so a large number of errors
     # are possible. Catch any exception and show to user.
+    print('Importing Aviary api')
     try:
         import aviary.api as av
     except Exception as import_error:
         print(f'An error occurred while importing Aviary API: {import_error}\n')
         return False
     else:
-        print('Imported aviary api')
+        print('success')
 
     @use_tempdirs
     def _test_install(optimizer):
@@ -51,13 +55,14 @@ def _exec_installation_test():
         )
 
     # Check for pyoptsparse, let user know if it is found or not
+    print('Importing pyOptSparse')
     try:
         from pyoptsparse import OPT
     except ImportError:
-        print('pyoptsparse is not installed')
+        print('pyOptSparse is not installed')
         use_pyoptsparse = False
     else:
-        print('Imported pyoptsparse')
+        print('success')
         use_pyoptsparse = True
 
     # Check for which optimizers are available
