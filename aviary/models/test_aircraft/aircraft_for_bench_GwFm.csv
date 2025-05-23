@@ -25,7 +25,7 @@ aircraft:design:static_margin,0.03,unitless
 aircraft:design:structural_mass_increment,0,lbm
 aircraft:design:supercritical_drag_shift,0.033,unitless
 aircraft:engine:additional_mass_fraction,0.135,unitless
-aircraft:engine:data_file,models/engines/turbofan_23k_1.deck,unitless
+aircraft:engine:data_file,models/engines/turbofan_28k.deck,unitless
 aircraft:engine:generate_flight_idle,True,unitless
 aircraft:engine:global_throttle, True, unitless
 aircraft:engine:mass_scaler,1,unitless
