@@ -1,46 +1,19 @@
 """
-This is a slightly more complex Aviary example of running a coupled aircraft design-mission optimization.
-It runs the same mission as the `run_basic_aviary_example.py` script, but it uses the AviaryProblem class to set up the problem.
-This exposes more options and flexibility to the user and uses the "Level 2" API within Aviary.
+This is a straightforward and basic example of running a coupled aircraft design-mission optimization in Aviary.
+This uses the "level 1" API within Aviary.
 
-We define a `phase_info` object, which tells Aviary how to model the mission.
-Here we have climb, cruise, and descent phases.
-We then call the correct methods in order to set up and run an Aviary optimization problem.
+We use the pre-defined single aisle commercial transport aircraft definition and use a pre-defined phase_info object
+to describe the mission optimization problem to Aviary.
+This mission consists of climb, cruise, and descent phases.
+We then call the `run_aviary` function, which takes in the path to the aircraft model, the phase info, and some other options.
 This performs a coupled design-mission optimization and outputs the results from Aviary into the `reports` folder.
 """
 
-from example_phase_info import phase_info
-
 import aviary.api as av
 
-prob = av.AviaryProblem()
-
-# Load aircraft and options data from user
-# Allow for user overrides here
-prob.load_inputs('models/test_aircraft/aircraft_for_bench_FwFm.csv', phase_info)
-
-# Preprocess inputs
-prob.check_and_preprocess_inputs()
-
-prob.add_pre_mission_systems()
-
-prob.add_phases()
-
-prob.add_post_mission_systems()
-
-# Link phases and variables
-prob.link_phases()
-
-prob.add_driver('SLSQP', max_iter=100)
-
-prob.add_design_variables()
-
-# Load optimization problem formulation
-# Detail which variables the optimizer can control
-prob.add_objective()
-
-prob.setup()
-
-prob.set_initial_guesses()
-
-prob.run_aviary_problem()
+prob = av.run_aviary(
+    'models/test_aircraft/aircraft_for_bench_FwFm.csv',
+    av.default_height_energy_phase_info,
+    optimizer='SLSQP',
+    make_plots=True,
+)
