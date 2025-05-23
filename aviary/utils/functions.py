@@ -311,8 +311,15 @@ def promote_aircraft_and_mission_vars(group):
         if comp.name == 'core_subsystems':
             continue
 
-        out_names = [item for item in comp._var_allprocs_prom2abs_list['output']]
-        in_names = [item for item in comp._var_allprocs_prom2abs_list['input']]
+        try:
+            resolver = comp._resolver
+            out_names = [item for item in resolver.prom_iter(iotype='output')]
+            in_names = [item for item in resolver.prom_iter(iotype='input')]
+
+        except AttributeError:
+            # This is an older version of OpenMDAO
+            out_names = [item for item in comp._var_allprocs_prom2abs_list['output']]
+            in_names = [item for item in comp._var_allprocs_prom2abs_list['input']]
 
         external_outputs.extend(out_names)
 
@@ -462,7 +469,7 @@ def get_model(file_name: str, verbosity=Verbosity.BRIEF) -> Path:
     return aviary_path
 
 
-def sigmoidX(x, x0, alpha=1.0):
+def sigmoidX(x, x0, mu=1.0):
     """
     Sigmoid used to smoothly transition between piecewise functions.
 
@@ -472,7 +479,7 @@ def sigmoidX(x, x0, alpha=1.0):
         independent variable
     x0: float
         the center of symmetry. When x = x0, sigmoidX = 1/2.
-    alpha: float
+    mu: float
         steepness parameter.
 
     Returns
@@ -480,8 +487,8 @@ def sigmoidX(x, x0, alpha=1.0):
     float or array
         smoothed value from input parameter x.
     """
-    if alpha == 0:
-        raise ValueError('alpha must be non-zero')
+    if mu == 0:
+        raise ValueError('mu must be non-zero')
 
     if isinstance(x, np.ndarray):
         if np.isrealobj(x):
@@ -491,22 +498,22 @@ def sigmoidX(x, x0, alpha=1.0):
         n_size = x.size
         y = np.zeros(n_size, dtype=dtype)
         # avoid overflow in squared term, underflow seems to be ok
-        calc_idx = np.where((x.real - x0) / alpha > -320)
-        y[calc_idx] = 1 / (1 + np.exp(-(x[calc_idx] - x0) / alpha))
+        calc_idx = np.where((x.real - x0) / mu > -320)
+        y[calc_idx] = 1 / (1 + np.exp(-(x[calc_idx] - x0) / mu))
     else:
         if isinstance(x, float):
             dtype = float
         else:
             dtype = complex
         y = 0
-        if (x - x0) * alpha > -320:
-            y = 1 / (1 + np.exp(-(x - x0) / alpha))
+        if (x - x0) * mu > -320:
+            y = 1 / (1 + np.exp(-(x - x0) / mu))
     if dtype == float:
         y = y.real
     return y
 
 
-def dSigmoidXdx(x, x0, alpha=1.0):
+def dSigmoidXdx(x, x0, mu=1.0):
     """
     Derivative of sigmoid function.
 
@@ -516,7 +523,7 @@ def dSigmoidXdx(x, x0, alpha=1.0):
         independent variable
     x0: float
         the center of symmetry. When x = x0, sigmoidX = 1/2.
-    alpha: float
+    mu: float
         steepness parameter.
 
     Returns
@@ -524,8 +531,8 @@ def dSigmoidXdx(x, x0, alpha=1.0):
     float or array
         smoothed derivative value from input parameter x.
     """
-    if alpha == 0:
-        raise ValueError('alpha must be non-zero')
+    if mu == 0:
+        raise ValueError('mu must be non-zero')
 
     if isinstance(x, np.ndarray):
         if np.isrealobj(x):
@@ -537,16 +544,92 @@ def dSigmoidXdx(x, x0, alpha=1.0):
         term = np.zeros(n_size, dtype=dtype)
         term2 = np.zeros(n_size, dtype=dtype)
         # avoid overflow in squared term, underflow seems to be ok
-        calc_idx = np.where((x.real - x0) / alpha > -320)
-        term[calc_idx] = np.exp(-(x[calc_idx] - x0) / alpha)
+        calc_idx = np.where((x.real - x0) / mu > -320)
+        term[calc_idx] = np.exp(-(x[calc_idx] - x0) / mu)
         term2[calc_idx] = (1 + term[calc_idx]) * (1 + term[calc_idx])
-        y[calc_idx] = term[calc_idx] / alpha / term2[calc_idx]
+        y[calc_idx] = term[calc_idx] / mu / term2[calc_idx]
     else:
         y = 0
-        if (x - x0) * alpha > -320:
-            term = np.exp(-(x - x0) / alpha)
+        if (x - x0) * mu > -320:
+            term = np.exp(-(x - x0) / mu)
             term2 = (1 + term) * (1 + term)
-            y = term / alpha / term2
+            y = term / mu / term2
     if dtype == float:
         y = y.real
     return y
+
+
+def smooth_min(x, b, mu=100.0):
+    """
+    Smooth approximation of the min function using the log-sum-exp trick.
+
+    Parameters:
+    x (float or array-like): First value.
+    b (float or array-like): Second value.
+    mu (float): The smoothing factor. Higher values make it closer to the true minimum. Try between 75 and 275.
+
+    Returns:
+    float or array-like: The smooth approximation of min(x, b).
+    """
+    sum_log_exp = np.log(np.exp(np.multiply(-mu, x)) + np.exp(np.multiply(-mu, b)))
+    rv = -(1 / mu) * sum_log_exp
+    return rv
+
+
+def d_smooth_min(x, b, mu=100.0):
+    """
+    Derivative of function smooth_min(x)
+
+    Parameters:
+    x (float or array-like): First value.
+    b (float or array-like): Second value.
+    mu (float): The smoothing factor. Higher values make it closer to the true minimum. Try between 75 and 275.
+
+    Returns:
+    float or array-like: The smooth approximation of derivative of min(x, b).
+    """
+    d_sum_log_exp = np.exp(np.multiply(-mu, x)) / (
+        np.exp(np.multiply(-mu, x)) + np.exp(np.multiply(-mu, b))
+    )
+    return d_sum_log_exp
+
+
+def smooth_max(x, b, mu=10.0):
+    """
+    Smooth approximation of the min function using the log-sum-exp trick.
+
+    Parameters:
+    x (float or array-like): First value.
+    b (float or array-like): Second value.
+    mu (float): The smoothing factor. Higher values make it closer to the true maximum. Try between 75 and 275.
+
+    Returns:
+    float or array-like: The smooth approximation of max(x, b).
+    """
+    mu_x = mu * x
+    mu_b = mu * b
+    m = np.maximum(mu_x, mu_b)
+    sum_log_exp = (m + np.log(np.exp(mu_x - m) + np.exp(mu_b - m))) / mu
+
+    return sum_log_exp
+
+
+def d_smooth_max(x, b, mu=10.0):
+    """
+    Derivative of function smooth_min(x)
+
+    Parameters:
+    x (float or array-like): First value.
+    b (float or array-like): Second value.
+    mu (float): The smoothing factor. Higher values make it closer to the true minimum. Try between 75 and 275.
+
+    Returns:
+    float or array-like: The smooth approximation of derivative of min(x, b).
+    """
+    mu_x = mu * x
+    mu_b = mu * b
+    m = np.maximum(mu_x, mu_b)
+    numerator = np.exp(mu_x - m)
+    denominator = np.exp(mu_x - m) + np.exp(mu_b - m)
+    d_sum_log_exp = mu * numerator / denominator
+    return d_sum_log_exp

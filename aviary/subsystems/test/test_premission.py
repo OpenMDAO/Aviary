@@ -67,9 +67,9 @@ class PreMissionTestCase(unittest.TestCase):
         input_options.delete(Aircraft.Fuel.TOTAL_CAPACITY)
         input_options.delete(Aircraft.Nacelle.AVG_LENGTH)
 
-        engine = build_engine_deck(input_options)
+        engines = [build_engine_deck(input_options)]
 
-        prop = CorePropulsionBuilder('core_propulsion', BaseMetaData, engine)
+        prop = CorePropulsionBuilder('core_propulsion', BaseMetaData, engines)
         mass = CoreMassBuilder('core_mass', BaseMetaData, GASP)
         aero = CoreAerodynamicsBuilder('core_aerodynamics', BaseMetaData, FLOPS)
         geom = CoreGeometryBuilder(
@@ -265,13 +265,13 @@ class PreMissionTestCase(unittest.TestCase):
         aviary_inputs = setup_options(GASP_input, FLOPS_input)
 
         aviary_inputs.delete(Aircraft.Fuselage.WETTED_AREA)
-        engine = build_engine_deck(aviary_inputs)
-        preprocess_options(aviary_inputs, engine_models=engine)
+        engines = [build_engine_deck(aviary_inputs)]
+        preprocess_options(aviary_inputs, engine_models=engines)
 
         prob = om.Problem()
         model = prob.model
 
-        prop = CorePropulsionBuilder('core_propulsion', BaseMetaData, engine)
+        prop = CorePropulsionBuilder('core_propulsion', BaseMetaData, engines)
         mass = CoreMassBuilder('core_mass', BaseMetaData, GASP)
         aero = CoreAerodynamicsBuilder('core_aerodynamics', BaseMetaData, FLOPS)
         geom = CoreGeometryBuilder(
