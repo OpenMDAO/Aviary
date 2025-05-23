@@ -88,21 +88,6 @@ sig_figs = {
     TAILPIPE_THRUST: 6,
 }
 
-# number of sig figs to round each header to, if requested
-sig_figs = {
-    MACH: 4,
-    ALTITUDE: 7,
-    THROTTLE: 4,
-    THRUST: 7,
-    GROSS_THRUST: 7,
-    RAM_DRAG: 6,
-    FUEL_FLOW: 6,
-    NOX_RATE: 5,
-    TEMPERATURE: 6,
-    SHAFT_POWER_CORRECTED: 6,
-    TAILPIPE_THRUST: 6,
-}
-
 
 def convert_engine_deck(input_file, output_file, data_format: EngineDeckType, round_data=False):
     """
