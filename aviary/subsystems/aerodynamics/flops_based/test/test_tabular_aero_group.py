@@ -220,6 +220,9 @@ class TabularAeroGroupDataTest(unittest.TestCase):
         local_phase_info.pop('climb')
         local_phase_info.pop('descent')
 
+        # This is a somewhat contrived problem, so pick a mass.
+        local_phase_info['cruise']['user_options']['mass_initial'] = (150000.0, 'lbm')
+
         prob = AviaryProblem()
 
         prob.load_inputs(

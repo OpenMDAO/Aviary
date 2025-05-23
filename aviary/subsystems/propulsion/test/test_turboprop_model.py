@@ -165,7 +165,7 @@ class TurbopropMissionTest(unittest.TestCase):
         self.prob.set_val(Aircraft.Engine.Propeller.DIAMETER, 10.5, units='ft')
         self.prob.set_val(Aircraft.Engine.Propeller.ACTIVITY_FACTOR, 114.0, units='unitless')
         # self.prob.set_val(Dynamic.Mission.PERCENT_ROTOR_RPM_CORRECTED,
-        #                   np.array([1, 1, 0.7]), units="unitless")
+        #                   np.array([1, 1, 0.7]), units='unitless')
         self.prob.set_val(
             Aircraft.Engine.Propeller.INTEGRATED_LIFT_COEFFICIENT, 0.5, units='unitless'
         )
@@ -219,7 +219,7 @@ class TurbopropMissionTest(unittest.TestCase):
         self.prob.set_val(Aircraft.Engine.Propeller.DIAMETER, 10.5, units='ft')
         self.prob.set_val(Aircraft.Engine.Propeller.ACTIVITY_FACTOR, 114.0, units='unitless')
         # self.prob.set_val(Dynamic.Mission.PERCENT_ROTOR_RPM_CORRECTED,
-        #                   np.array([1,1,0.7]), units="unitless")
+        #                   np.array([1,1,0.7]), units='unitless')
         self.prob.set_val(
             Aircraft.Engine.Propeller.INTEGRATED_LIFT_COEFFICIENT, 0.5, units='unitless'
         )

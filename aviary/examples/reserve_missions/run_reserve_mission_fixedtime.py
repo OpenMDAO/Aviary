@@ -19,7 +19,7 @@ phase_info = deepcopy(phase_info)
 # Copy the current cruise phase, then make it a reserve phase
 reserve_phase_0 = deepcopy(phase_info['cruise'])
 reserve_phase_0['user_options']['reserve'] = True
-reserve_phase_0['user_options']['target_duration'] = (30, 'min')
+reserve_phase_0['user_options']['time_duration'] = (30, 'min')
 
 # Add the reserve phase to phase_info
 phase_info.update({'reserve_cruise': reserve_phase_0})

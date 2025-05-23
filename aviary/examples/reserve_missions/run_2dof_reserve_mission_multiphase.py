@@ -23,7 +23,7 @@ reserve_climb1['initial_guesses']['distance'] = ([3675, 3700], 'nmi')
 
 reserve_climb2 = deepcopy(phase_info['climb2'])
 reserve_climb2['user_options']['reserve'] = True
-reserve_climb2['user_options']['final_altitude'] = (25e3, 'ft')
+reserve_climb2['user_options']['altitude_final'] = (25e3, 'ft')
 reserve_climb2['user_options']['distance_upper'] = (5000, 'NM')
 reserve_climb2['initial_guesses']['altitude'] = ([10e3, 25e3], 'ft')
 reserve_climb2['initial_guesses']['distance'] = ([3700, 3725], 'nmi')
@@ -38,8 +38,8 @@ distance_cruise1['initial_guesses']['initial_distance'] = (3725, 'nmi')
 duration_cruise1 = deepcopy(phase_info['cruise'])
 duration_cruise1['user_options']['reserve'] = True
 duration_cruise1['user_options']['alt_cruise'] = (25e3, 'ft')
-duration_cruise1['user_options']['target_duration'] = (30, 'min')
-duration_cruise1['user_options']['initial_bounds'] = ((149.5, 448.5), 'min')
+duration_cruise1['user_options']['time_duration'] = (30, 'min')
+duration_cruise1['user_options']['time_initial_bounds'] = ((149.5, 448.5), 'min')
 duration_cruise1['initial_guesses']['altitude'] = (25e3, 'ft')
 duration_cruise1['initial_guesses']['initial_distance'] = (3825, 'nmi')
 
