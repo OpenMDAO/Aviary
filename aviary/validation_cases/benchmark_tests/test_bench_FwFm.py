@@ -168,7 +168,7 @@ class ProblemPhaseTestCase(unittest.TestCase):
                     'altitude_bounds': ((0.0, 35000.0), 'ft'),
                     'altitude_optimize': True,
                     'throttle_enforcement': 'path_constraint',
-                    'time_initial_bounds': ((90., 780.), 'min'),
+                    'time_initial_bounds': ((90.0, 780.0), 'min'),
                     'time_duration_bounds': ((5.0, 35.0), 'min'),
                     'no_climb': True,
                 },

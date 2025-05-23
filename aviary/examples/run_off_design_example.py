@@ -30,7 +30,7 @@ phase_info = {
         },
         'initial_guesses': {
             'time': ([0, 40.0], 'min'),
-            'altitude': ([35, 35000.0], "ft"),
+            'altitude': ([35, 35000.0], 'ft'),
             'mach': ([0.3, 0.79], "unitless"),
         },
     },
@@ -51,7 +51,7 @@ phase_info = {
         },
         'initial_guesses': {
             'time': ([64, 113], 'min'),
-            'altitude': ([35000, 35000.0], "ft"),
+            'altitude': ([35000, 35000.0], 'ft'),
             'mach': ([0.79, 0.79], "unitless"),
         },
     },
@@ -73,7 +73,7 @@ phase_info = {
         },
         'initial_guesses': {
             'time': ([241, 30], 'min'),
-            'altitude': ([35000, 35.0], "ft"),
+            'altitude': ([35000, 35.0], 'ft'),
             'mach': ([0.79, 0.3], "unitless"),
         },
     },
