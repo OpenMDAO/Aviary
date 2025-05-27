@@ -8,6 +8,7 @@ AerodynamicsBuilderBase : the interface for an aerodynamics subsystem builder.
 CoreAerodynamicsBuilder : the interface for Aviary's core aerodynamics subsystem builder
 """
 
+import warnings
 from copy import deepcopy
 
 import numpy as np
@@ -129,6 +130,14 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
         aero_group = None
 
         if self.code_origin is FLOPS:
+            try:
+                solve_alpha = arguments.pop('solve_alpha')
+            except KeyError:
+                warnings.warn(
+                    "The 'solve_alpha' flag has been set, but is not used for FLOPS-based "
+                    'aerodynamics.'
+                )
+
             if method is None:
                 aero_group = ComputedAeroGroup(num_nodes=num_nodes)
 
