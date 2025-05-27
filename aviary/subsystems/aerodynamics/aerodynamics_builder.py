@@ -244,10 +244,19 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
     #     return aero_group
 
     def mission_inputs(self, **kwargs):
-        method = kwargs['method']
+        arguments = deepcopy(kwargs)
+        try:
+            method = arguments.pop('method')
+        except KeyError:
+            method = None
+
         promotes = ['*']
 
         if self.code_origin is FLOPS:
+            # FLOPS default is 'computed'
+            if method is None:
+                method = 'computed'
+
             if method == 'computed':
                 promotes = [
                     Dynamic.Atmosphere.STATIC_PRESSURE,
@@ -288,6 +297,10 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
                 )
 
         elif self.code_origin is GASP:
+            # GASP default is 'cruise'
+            if method is None:
+                method = 'cruise'
+
             if method in ('low_speed', 'tabular_low_speed'):
                 promotes = [
                     '*',
@@ -318,13 +331,21 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
         return promotes
 
     def mission_outputs(self, **kwargs):
-        method = kwargs['method']
+        arguments = deepcopy(kwargs)
+        try:
+            method = arguments.pop('method')
+        except KeyError:
+            method = None
         promotes = ['*']
 
         if self.code_origin is FLOPS:
             promotes = [Dynamic.Vehicle.DRAG, Dynamic.Vehicle.LIFT]
 
         elif self.code_origin is GASP:
+            # GASP default is 'cruise'
+            if method is None:
+                method = 'cruise'
+
             if method in ('low_speed', 'tabular_low_speed'):
                 promotes = [
                     Dynamic.Vehicle.DRAG,
@@ -400,6 +421,9 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
             method = arguments.pop('method')
         except KeyError:
             method = None
+
+        if method == 'external':
+            return super().get_parameters()
 
         num_engine_type = len(aviary_inputs.get_val(Aircraft.Engine.NUM_ENGINES))
         params = {}
@@ -543,8 +567,8 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
         # GASP aero
         else:
             if method is None:
-                # GASP default is 'computed'
-                method = 'computed'
+                # GASP default is 'cruise'
+                method = 'cruise'
             try:
                 solve_alpha = arguments.pop('solve_alpha')
             except KeyError:
