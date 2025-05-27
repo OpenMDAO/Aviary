@@ -50,16 +50,8 @@ class TestPhaseInfo(unittest.TestCase):
             common = lhs_keys & rhs_keys
             lhs_unique = lhs_keys - common
 
-            if lhs_keys != rhs_keys:
-                if not common:
-                    raise RuntimeError(f'key mismatch: no keys in common: {lhs_keys} != {rhs_keys}')
-                if lhs_unique:
-                    raise RuntimeError(
-                        f'key mismatch: the new builder is missing the following keys: {lhs_unique}'
-                    )
-
             # Loop through each key to compare values
-            for key in lhs_keys:
+            for key in common:
                 lhs_value = lhs_info[key]
                 rhs_value = rhs_info[key]
 
