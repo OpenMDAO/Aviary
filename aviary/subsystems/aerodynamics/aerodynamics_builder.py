@@ -397,6 +397,9 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
         aero_options = arguments
 
         if self.code_origin is FLOPS:
+            # FLOPS default is 'computed'
+            if method is None:
+                method = 'computed'
             if aero_options != {}:
                 # Only some methods have connectable training inputs.
                 if method == 'tabular':
@@ -528,7 +531,11 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
 
                     params[var] = {'val': val, 'units': units, 'static_target': True}
 
+        # GASP aero
         else:
+            if method is None:
+                # GASP default is 'computed'
+                method = 'computed'
             try:
                 solve_alpha = arguments.pop('solve_alpha')
             except KeyError:

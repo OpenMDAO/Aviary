@@ -122,7 +122,7 @@ class CoreGeometryBuilder(GeometryBuilderBase):
         if method != 'external':
             geom_group = super().build_mission(num_nodes, aviary_inputs)
 
-        geom_group
+        return geom_group
 
     def get_parameters(self, aviary_inputs=None, phase_info=None):
         num_engine_type = len(aviary_inputs.get_val(Aircraft.Engine.NUM_ENGINES))
