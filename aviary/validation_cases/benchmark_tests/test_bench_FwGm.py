@@ -23,9 +23,10 @@ class ProblemPhaseTestCase(unittest.TestCase):
 
     @require_pyoptsparse(optimizer='IPOPT')
     def bench_test_swap_3_FwGm_IPOPT(self):
+        local_phase_info = deepcopy(phase_info)
         prob = run_aviary(
             'models/test_aircraft/aircraft_for_bench_FwGm.csv',
-            phase_info,
+            local_phase_info,
             max_iter=100,
             verbosity=0,
             optimizer='IPOPT',
