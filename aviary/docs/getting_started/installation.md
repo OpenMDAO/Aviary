@@ -1,8 +1,8 @@
 # Installation
 
-Aviary can be installed on any OS, including Windows, Linux, and macOS. We recommend using a conda environment, as it makes it easier to install Aviary with its full feature set, which will be explained below.
+Aviary can be installed on any OS, including Windows, Linux, and macOS (as well as integrated shells like unix on macOS or Linux through WSL on Windows). 
 
-We assume that you have a working Python or conda environment set up for all of our guides. Our recommended package manager is [miniforge](https://github.com/conda-forge/miniforge). Miniforge is an open-source alternative to miniconda, and functions identically.
+We recommend using a conda environment, as it makes it easier to install Aviary with its full feature set, which is explained in the next section. We assume that you have a working Python or conda environment set up for all of our guides. Our recommended package manager is [miniforge](https://github.com/conda-forge/miniforge). Miniforge is an open-source alternative to miniconda, and functions identically.
 
 ```{note}
 The minimum supported version of Python is 3.9; we recommend using the latest release of Python.
@@ -16,7 +16,7 @@ The following guides are available:
 - [Quick Start Guide](#quick-start-guide)
 - [Detailed Installation Guide](#detailed-guide)
 - [Developer's Guide](#developers-guide)
-- Docker Installation Guide (upcoming)
+- Docker Installation Guide (coming soon)
 
 The different installation guides are intended to get users of various levels of experience and analysis need started. Here is a brief explanation of what can differ between Aviary installs.
 
