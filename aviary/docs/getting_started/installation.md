@@ -137,7 +137,7 @@ The Developer's Guide installs an editable version of Aviary source code, cloned
 The instructions for installing pyOptSparse are the same as the Detailed Installation Guide [here](#install-pyoptsparse).
 
 ## Step 2: Install Aviary
- It is recommended for developers to fork Aviary and clone it. In these instructions we will use the main [github repository](https://github.com/OpenMDAO/Aviary), simply substitute the url for the one pointing to your own fork. Navigate to the folder where you'd like Aviary to be downloaded to, then run:
+ It is recommended for developers to create their own fork of Aviary and clone that. In these instructions we will use the main [github repository](https://github.com/OpenMDAO/Aviary), if you are using a fork simply substitute the url with your own. Navigate to the folder where you'd like Aviary to be downloaded to, then run:
 
  ```
 git clone https://github.com/OpenMDAO/Aviary
