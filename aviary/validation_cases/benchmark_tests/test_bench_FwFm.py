@@ -201,7 +201,6 @@ class ProblemPhaseTestCase(unittest.TestCase):
         _clear_problem_names()  # need to reset these to simulate separate runs
 
 
-@use_tempdirs
 class TestBenchFwFmSerial(ProblemPhaseTestCase):
     """Run the model in serial that is setup in ProblemPhaseTestCase class."""
 
@@ -236,7 +235,6 @@ class TestBenchFwFmSerial(ProblemPhaseTestCase):
         self.assertGreater(overall_fuel, 40000.0)
 
 
-@use_tempdirs
 @unittest.skipUnless(MPI and PETScVector, 'MPI and PETSc are required.')
 class TestBenchFwFmParallel(ProblemPhaseTestCase):
     """Run the model in parallel that is setup in ProblemPhaseTestCase class."""
