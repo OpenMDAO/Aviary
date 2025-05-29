@@ -2,6 +2,7 @@ import unittest
 
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
+from openmdao.utils.testing_utils import use_tempdirs
 
 from aviary.subsystems.mass.gasp_based.wing import WingMassGroup, WingMassSolve, WingMassTotal
 from aviary.subsystems.mass.gasp_based.wing import BWBWingMassSolve, BWBWingMassGroup
@@ -698,6 +699,7 @@ class BWBWingMassSolveTestCase(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e-8, rtol=1e-8)
 
 
+@use_tempdirs
 class BWBWingMassGroupTest(unittest.TestCase):
     """this is the large single aisle 1 V3 test case"""
 

@@ -2,6 +2,7 @@ import unittest
 
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
+from openmdao.utils.testing_utils import use_tempdirs
 
 from aviary.subsystems.mass.gasp_based.design_load import (
     DesignLoadGroup,
@@ -1427,6 +1428,7 @@ class BWBLoadFactorsTestCaseSmooth(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e-15, rtol=1e-14)
 
 
+@use_tempdirs
 class BWBDesignLoadGroupTestCaseNonsmooth(unittest.TestCase):
     def setUp(self):
         options = get_option_defaults()
@@ -1462,6 +1464,7 @@ class BWBDesignLoadGroupTestCaseNonsmooth(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e-15, rtol=1e-15)
 
 
+@use_tempdirs
 class BWBDesignLoadGroupTestCaseSmooth(unittest.TestCase):
     def setUp(self):
         options = get_option_defaults()

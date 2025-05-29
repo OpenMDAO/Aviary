@@ -2,6 +2,7 @@ import unittest
 
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
+from openmdao.utils.testing_utils import use_tempdirs
 
 from aviary.subsystems.mass.gasp_based.equipment_and_useful_load import (
     BWBACMass,
@@ -662,6 +663,7 @@ class FixedEquipMassTestCase9smooth(unittest.TestCase):
         assert_check_partials(partial_data, atol=8e-12, rtol=1e-12)
 
 
+@use_tempdirs
 class ACMassTestCase1(unittest.TestCase):
     """
     Created based on EquipMassTestCase1
@@ -742,44 +744,6 @@ class ACMassTestCase2(unittest.TestCase):
 
         self.prob.setup(check=False, force_alloc_complex=True)
         self.prob.run_model()
-
-        partial_data = self.prob.check_partials(out_stream=None, method='cs')
-        assert_check_partials(partial_data, atol=8e-12, rtol=1e-12)
-
-
-class BWBACMassTestCase1(unittest.TestCase):
-    """
-    Created based on GASP BWB model
-    """
-
-    def setUp(self):
-        options = get_option_defaults()
-        options.set_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS, val=150, units='unitless')
-
-        prob = self.prob = om.Problem()
-        self.prob.model.add_subsystem(
-            'ac',
-            BWBACMass(),
-            promotes=['*'],
-        )
-
-        prob.model.set_input_defaults(
-            Aircraft.AirConditioning.MASS_COEFFICIENT, 1.155, units='unitless'
-        )
-        prob.model.set_input_defaults(Mission.Design.GROSS_MASS, 150000.0, units='lbm')
-        prob.model.set_input_defaults(Aircraft.Fuselage.LENGTH, 71.52455, units='ft')
-        prob.model.set_input_defaults(Aircraft.Fuselage.PRESSURE_DIFFERENTIAL, 10.0, units='psi')
-        prob.model.set_input_defaults(Aircraft.Fuselage.HYDRAULIC_DIAMETER, 19.365, units='ft')
-
-        setup_model_options(self.prob, options)
-
-        self.prob.setup(check=False, force_alloc_complex=True)
-
-    def test_case1(self):
-        self.prob.run_model()
-
-        tol = 1e-7
-        assert_near_equal(self.prob[Aircraft.AirConditioning.MASS], 1301.5666, tol)
 
         partial_data = self.prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=8e-12, rtol=1e-12)
@@ -921,138 +885,6 @@ class FurnishingMassTestCase3(unittest.TestCase):
         assert_check_partials(partial_data, atol=8e-12, rtol=1e-12)
 
 
-class BWBFurnishingMassTestCase1(unittest.TestCase):
-    """
-    Created based on GASP BWB model
-    """
-
-    def setUp(self):
-        self.options = get_option_defaults()
-        self.options.set_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS, val=150, units='unitless')
-        self.options.set_val(
-            Aircraft.Furnishings.USE_EMPIRICAL_EQUATION, val=True, units='unitless'
-        )
-
-        prob = self.prob = om.Problem()
-        prob.model.add_subsystem(
-            'furnishing',
-            BWBFurnishingMass(),
-            promotes=['*'],
-        )
-
-        prob.model.set_input_defaults(Mission.Design.GROSS_MASS, 150000, units='lbm')
-        prob.model.set_input_defaults(Aircraft.Fuselage.HYDRAULIC_DIAMETER, 19.365, units='ft')
-        prob.model.set_input_defaults(Aircraft.Fuselage.LENGTH, 71.5245514, units='ft')
-        prob.model.set_input_defaults(Aircraft.Furnishings.MASS_SCALER, 40.0, units='unitless')
-        prob.model.set_input_defaults(Aircraft.Fuselage.CABIN_AREA, 1283.5249, units='ft**2')
-
-        setup_model_options(self.prob, self.options)
-
-        self.prob.setup(check=False, force_alloc_complex=True)
-
-    def test_case1(self):
-        """
-        USE_EMPIRICAL_EQUATION = True
-        SMOOTH_MASS_DISCONTINUITIES = False
-        """
-        self.prob.run_model()
-
-        tol = 1e-7
-        assert_near_equal(self.prob[Aircraft.Furnishings.MASS], 11269.863, tol)
-
-        partial_data = self.prob.check_partials(out_stream=None, method='cs')
-        assert_check_partials(partial_data, atol=8e-12, rtol=1e-12)
-
-    def test_case2(self):
-        # case 2A
-        self.options.set_val(
-            Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES, val=False, units='unitless'
-        )
-        self.options.set_val(
-            Aircraft.Furnishings.USE_EMPIRICAL_EQUATION, val=False, units='unitless'
-        )
-        setup_model_options(self.prob, self.options)
-        self.prob.setup(check=False, force_alloc_complex=True)
-        self.prob.run_model()
-
-        tol = 1e-7
-        assert_near_equal(self.prob[Aircraft.Furnishings.MASS], 18839.863, tol)
-
-        partial_data = self.prob.check_partials(out_stream=None, method='cs')
-        assert_check_partials(partial_data, atol=8e-12, rtol=1e-12)
-
-        # case 2B
-        self.options.set_val(
-            Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES, val=True, units='unitless'
-        )
-        self.options.set_val(
-            Aircraft.Furnishings.USE_EMPIRICAL_EQUATION, val=True, units='unitless'
-        )
-        setup_model_options(self.prob, self.options)
-        self.prob.setup(check=False, force_alloc_complex=True)
-        self.prob.run_model()
-
-        tol = 1e-7
-        # assert_near_equal(self.prob[Aircraft.Furnishings.MASS], 11269.863, tol)
-
-        partial_data = self.prob.check_partials(out_stream=None, method='cs')
-        assert_check_partials(partial_data, atol=8e-12, rtol=1e-12)
-
-        # case 2C
-        self.options.set_val(
-            Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES, val=True, units='unitless'
-        )
-        self.options.set_val(
-            Aircraft.Furnishings.USE_EMPIRICAL_EQUATION, val=False, units='unitless'
-        )
-        setup_model_options(self.prob, self.options)
-        self.prob.setup(check=False, force_alloc_complex=True)
-        self.prob.run_model()
-
-        tol = 1e-7
-        assert_near_equal(self.prob[Aircraft.Furnishings.MASS], 18839.863, tol)
-
-        partial_data = self.prob.check_partials(out_stream=None, method='cs')
-        assert_check_partials(partial_data, atol=8e-12, rtol=1e-12)
-
-
-class BWBFurnishingMassTestCase2(unittest.TestCase):
-    """
-    Created based on GASP BWB model
-    GROSS_MASS < 10000
-    """
-
-    def setUp(self):
-        options = get_option_defaults()
-        options.set_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS, val=150, units='unitless')
-
-        prob = self.prob = om.Problem()
-        prob.model.add_subsystem(
-            'furnishing',
-            BWBFurnishingMass(),
-            promotes=['*'],
-        )
-
-        prob.model.set_input_defaults(Mission.Design.GROSS_MASS, 9999.0, units='lbm')
-        prob.model.set_input_defaults(Aircraft.Fuselage.HYDRAULIC_DIAMETER, 19.365, units='ft')
-        prob.model.set_input_defaults(Aircraft.Fuselage.LENGTH, 71.5245514, units='ft')
-        prob.model.set_input_defaults(Aircraft.Furnishings.MASS_SCALER, 40.0, units='unitless')
-        prob.model.set_input_defaults(Aircraft.Fuselage.CABIN_AREA, 1283.5249, units='ft**2')
-
-        setup_model_options(self.prob, options)
-
-        self.prob.setup(check=False, force_alloc_complex=True)
-
-    def test_case1(self):
-        self.prob.run_model()
-
-        tol = 1e-7
-        assert_near_equal(self.prob[Aircraft.Furnishings.MASS], 590.935, tol)
-
-        partial_data = self.prob.check_partials(out_stream=None, method='cs')
-        assert_check_partials(partial_data, atol=8e-12, rtol=1e-12)
-
-
 class FixedEquipMassSumTestCase1(unittest.TestCase):
     """
     Created based on EquipMassTestCase1
@@ -1156,77 +988,6 @@ class FixedEquipMassGroupTest(unittest.TestCase):
 
         tol = 1e-7
         assert_near_equal(self.prob[Aircraft.Design.FIXED_EQUIPMENT_MASS], 20283.787, tol)
-
-        partial_data = self.prob.check_partials(out_stream=None, method='cs')
-        assert_check_partials(partial_data, atol=8e-12, rtol=1e-12)
-
-
-class BWBFixedEquipMassGroupTest(unittest.TestCase):
-    """Created based on GASP BWB modele"""
-
-    def setUp(self):
-        options = get_option_defaults()
-        options.set_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS, val=150, units='unitless')
-        options.set_val(Aircraft.LandingGear.FIXED_GEAR, val=False, units='unitless')
-
-        prob = self.prob = om.Problem()
-        prob.model.add_subsystem(
-            'group',
-            BWBEquipMassGroup(),
-            promotes=['*'],
-        )
-
-        prob.model.set_input_defaults(Aircraft.APU.MASS, 710.0, units='lbm')
-        prob.model.set_input_defaults(
-            Aircraft.Instruments.MASS_COEFFICIENT, 0.116, units='unitless'
-        )
-        prob.model.set_input_defaults(
-            Aircraft.Hydraulics.FLIGHT_CONTROL_MASS_COEFFICIENT, 0.107, units='unitless'
-        )
-        prob.model.set_input_defaults(
-            Aircraft.Hydraulics.GEAR_MASS_COEFFICIENT, 0.135, units='unitless'
-        )
-        prob.model.set_input_defaults(Aircraft.Avionics.MASS, 3225.0, units='lbm')
-        prob.model.set_input_defaults(Aircraft.AntiIcing.MASS, 236.0, units='lbm')
-        prob.model.set_input_defaults(
-            Aircraft.CrewPayload.PASSENGER_SERVICE_MASS_PER_PASSENGER, 6.0, units='lbm'
-        )
-        prob.model.set_input_defaults(Aircraft.CrewPayload.WATER_MASS_PER_OCCUPANT, 3, units='lbm')
-        prob.model.set_input_defaults(Aircraft.Design.EMERGENCY_EQUIPMENT_MASS, 100.0, units='lbm')
-        prob.model.set_input_defaults(
-            Aircraft.CrewPayload.CATERING_ITEMS_MASS_PER_PASSENGER, 7.6, units='lbm'
-        )
-        prob.model.set_input_defaults(
-            Aircraft.Fuel.UNUSABLE_FUEL_MASS_COEFFICIENT, 12.0, units='unitless'
-        )
-        prob.model.set_input_defaults(Mission.Design.GROSS_MASS, 150000, units='lbm')
-        prob.model.set_input_defaults(Aircraft.Fuselage.LENGTH, 71.5245514, units='ft')
-        prob.model.set_input_defaults(Aircraft.Wing.SPAN, 146.38501, units='ft')
-        prob.model.set_input_defaults(Aircraft.LandingGear.TOTAL_MASS, 7800.0, units='lbm')
-        prob.model.set_input_defaults(Aircraft.Controls.TOTAL_MASS, 2115.19946, units='lbm')
-        prob.model.set_input_defaults(Aircraft.Wing.AREA, 2142.85718, units='ft**2')
-        prob.model.set_input_defaults(Aircraft.HorizontalTail.AREA, 0.00170628, units='ft**2')
-        prob.model.set_input_defaults(Aircraft.VerticalTail.AREA, 169.119629, units='ft**2')
-        prob.model.set_input_defaults(
-            Aircraft.AirConditioning.MASS_COEFFICIENT, 1.155, units='unitless'
-        )
-        prob.model.set_input_defaults(Aircraft.Fuselage.PRESSURE_DIFFERENTIAL, 10.0, units='psi')
-        prob.model.set_input_defaults(Aircraft.Fuselage.HYDRAULIC_DIAMETER, 19.3650932, units='ft')
-        prob.model.set_input_defaults(Aircraft.Fuselage.CABIN_AREA, 1283.5249, units='ft**2')
-        prob.model.set_input_defaults(Aircraft.Furnishings.MASS_SCALER, 40.0, units='unitless')
-        prob.model.set_input_defaults(
-            Aircraft.Electrical.SYSTEM_MASS_PER_PASSENGER, 11.45, units='lbm'
-        )
-
-        setup_model_options(self.prob, options)
-
-        prob.setup(check=False, force_alloc_complex=True)
-
-    def test_case1(self):
-        self.prob.run_model()
-
-        tol = 1e-7
-        assert_near_equal(self.prob[Aircraft.Design.FIXED_EQUIPMENT_MASS], 20876.476, tol)
 
         partial_data = self.prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=8e-12, rtol=1e-12)
@@ -1499,52 +1260,6 @@ class UsefulMassTestCase5(unittest.TestCase):
         assert_check_partials(partial_data, atol=8e-12, rtol=1e-12)
 
 
-class BWBUsefulMassTestCase1(unittest.TestCase):
-    """
-    Created based on GASP BWB modele
-    """
-
-    def setUp(self):
-        options = get_option_defaults()
-        options.set_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS, val=150, units='unitless')
-        options.set_val(Settings.VERBOSITY, 0)
-
-        prob = self.prob = om.Problem()
-        prob.model.add_subsystem(
-            'useful',
-            UsefulLoadMass(),
-            promotes=['*'],
-        )
-
-        prob.model.set_input_defaults(
-            Aircraft.CrewPayload.PASSENGER_SERVICE_MASS_PER_PASSENGER, 6.0, units='lbm'
-        )
-        prob.model.set_input_defaults(Aircraft.CrewPayload.WATER_MASS_PER_OCCUPANT, 3, units='lbm')
-        prob.model.set_input_defaults(Aircraft.Design.EMERGENCY_EQUIPMENT_MASS, 100.0, units='lbm')
-        prob.model.set_input_defaults(
-            Aircraft.CrewPayload.CATERING_ITEMS_MASS_PER_PASSENGER, 5.0, units='lbm'
-        )
-        prob.model.set_input_defaults(
-            Aircraft.Fuel.UNUSABLE_FUEL_MASS_COEFFICIENT, 12.0, units='unitless'
-        )
-        prob.model.set_input_defaults(Aircraft.Wing.AREA, 2142.85718, units='ft**2')
-        prob.model.set_input_defaults(Aircraft.Engine.SCALED_SLS_THRUST, [19580.1602], units='lbf')
-        prob.model.set_input_defaults(Aircraft.Fuel.WING_FUEL_FRACTION, 0.45, units='unitless')
-
-        setup_model_options(self.prob, options)
-
-        prob.setup(check=False, force_alloc_complex=True)
-
-    def test_case1(self):
-        self.prob.run_model()
-
-        tol = 1e-7
-        assert_near_equal(self.prob[Aircraft.Design.FIXED_USEFUL_LOAD], 4156.795, tol)
-
-        partial_data = self.prob.check_partials(out_stream=None, method='cs')
-        assert_check_partials(partial_data, atol=8e-12, rtol=1e-12)
-
-
 class FixedEquipAndUsefulMassGroupTest(unittest.TestCase):
     """this is the large single aisle 1 V3 test case"""
 
@@ -1636,6 +1351,295 @@ class FixedEquipAndUsefulMassGroupTest(unittest.TestCase):
         assert_check_partials(partial_data, atol=8e-12, rtol=1e-12)
 
 
+class BWBACMassTestCase1(unittest.TestCase):
+    """
+    Created based on GASP BWB model
+    """
+
+    def setUp(self):
+        options = get_option_defaults()
+        options.set_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS, val=150, units='unitless')
+
+        prob = self.prob = om.Problem()
+        self.prob.model.add_subsystem(
+            'ac',
+            BWBACMass(),
+            promotes=['*'],
+        )
+
+        prob.model.set_input_defaults(
+            Aircraft.AirConditioning.MASS_COEFFICIENT, 1.155, units='unitless'
+        )
+        prob.model.set_input_defaults(Mission.Design.GROSS_MASS, 150000.0, units='lbm')
+        prob.model.set_input_defaults(Aircraft.Fuselage.LENGTH, 71.52455, units='ft')
+        prob.model.set_input_defaults(Aircraft.Fuselage.PRESSURE_DIFFERENTIAL, 10.0, units='psi')
+        prob.model.set_input_defaults(Aircraft.Fuselage.HYDRAULIC_DIAMETER, 19.365, units='ft')
+
+        setup_model_options(self.prob, options)
+
+        self.prob.setup(check=False, force_alloc_complex=True)
+
+    def test_case1(self):
+        self.prob.run_model()
+
+        tol = 1e-7
+        assert_near_equal(self.prob[Aircraft.AirConditioning.MASS], 1301.5666, tol)
+
+        partial_data = self.prob.check_partials(out_stream=None, method='cs')
+        assert_check_partials(partial_data, atol=8e-12, rtol=1e-12)
+
+
+class BWBFurnishingMassTestCase1(unittest.TestCase):
+    """
+    Created based on GASP BWB model
+    """
+
+    def setUp(self):
+        self.options = get_option_defaults()
+        self.options.set_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS, val=150, units='unitless')
+        self.options.set_val(
+            Aircraft.Furnishings.USE_EMPIRICAL_EQUATION, val=True, units='unitless'
+        )
+
+        prob = self.prob = om.Problem()
+        prob.model.add_subsystem(
+            'furnishing',
+            BWBFurnishingMass(),
+            promotes=['*'],
+        )
+
+        prob.model.set_input_defaults(Mission.Design.GROSS_MASS, 150000, units='lbm')
+        prob.model.set_input_defaults(Aircraft.Fuselage.HYDRAULIC_DIAMETER, 19.365, units='ft')
+        prob.model.set_input_defaults(Aircraft.Fuselage.LENGTH, 71.5245514, units='ft')
+        prob.model.set_input_defaults(Aircraft.Furnishings.MASS_SCALER, 40.0, units='unitless')
+        prob.model.set_input_defaults(Aircraft.Fuselage.CABIN_AREA, 1283.5249, units='ft**2')
+
+        setup_model_options(self.prob, self.options)
+
+        self.prob.setup(check=False, force_alloc_complex=True)
+
+    def test_case1(self):
+        """
+        USE_EMPIRICAL_EQUATION = True
+        SMOOTH_MASS_DISCONTINUITIES = False
+        """
+        self.prob.run_model()
+
+        tol = 1e-7
+        assert_near_equal(self.prob[Aircraft.Furnishings.MASS], 11269.863, tol)
+
+        partial_data = self.prob.check_partials(out_stream=None, method='cs')
+        assert_check_partials(partial_data, atol=8e-12, rtol=1e-12)
+
+    def test_case2(self):
+        # case 2A
+        self.options.set_val(
+            Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES, val=False, units='unitless'
+        )
+        self.options.set_val(
+            Aircraft.Furnishings.USE_EMPIRICAL_EQUATION, val=False, units='unitless'
+        )
+        setup_model_options(self.prob, self.options)
+        self.prob.setup(check=False, force_alloc_complex=True)
+        self.prob.run_model()
+
+        tol = 1e-7
+        assert_near_equal(self.prob[Aircraft.Furnishings.MASS], 18839.863, tol)
+
+        partial_data = self.prob.check_partials(out_stream=None, method='cs')
+        assert_check_partials(partial_data, atol=8e-12, rtol=1e-12)
+
+        # case 2B
+        self.options.set_val(
+            Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES, val=True, units='unitless'
+        )
+        self.options.set_val(
+            Aircraft.Furnishings.USE_EMPIRICAL_EQUATION, val=True, units='unitless'
+        )
+        setup_model_options(self.prob, self.options)
+        self.prob.setup(check=False, force_alloc_complex=True)
+        self.prob.run_model()
+
+        tol = 1e-7
+        # assert_near_equal(self.prob[Aircraft.Furnishings.MASS], 11269.863, tol)
+
+        partial_data = self.prob.check_partials(out_stream=None, method='cs')
+        assert_check_partials(partial_data, atol=8e-12, rtol=1e-12)
+
+        # case 2C
+        self.options.set_val(
+            Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES, val=True, units='unitless'
+        )
+        self.options.set_val(
+            Aircraft.Furnishings.USE_EMPIRICAL_EQUATION, val=False, units='unitless'
+        )
+        setup_model_options(self.prob, self.options)
+        self.prob.setup(check=False, force_alloc_complex=True)
+        self.prob.run_model()
+
+        tol = 1e-7
+        assert_near_equal(self.prob[Aircraft.Furnishings.MASS], 18839.863, tol)
+
+        partial_data = self.prob.check_partials(out_stream=None, method='cs')
+        assert_check_partials(partial_data, atol=8e-12, rtol=1e-12)
+
+
+class BWBFurnishingMassTestCase2(unittest.TestCase):
+    """
+    Created based on GASP BWB model
+    GROSS_MASS < 10000
+    """
+
+    def setUp(self):
+        options = get_option_defaults()
+        options.set_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS, val=150, units='unitless')
+
+        prob = self.prob = om.Problem()
+        prob.model.add_subsystem(
+            'furnishing',
+            BWBFurnishingMass(),
+            promotes=['*'],
+        )
+
+        prob.model.set_input_defaults(Mission.Design.GROSS_MASS, 9999.0, units='lbm')
+        prob.model.set_input_defaults(Aircraft.Fuselage.HYDRAULIC_DIAMETER, 19.365, units='ft')
+        prob.model.set_input_defaults(Aircraft.Fuselage.LENGTH, 71.5245514, units='ft')
+        prob.model.set_input_defaults(Aircraft.Furnishings.MASS_SCALER, 40.0, units='unitless')
+        prob.model.set_input_defaults(Aircraft.Fuselage.CABIN_AREA, 1283.5249, units='ft**2')
+
+        setup_model_options(self.prob, options)
+
+        self.prob.setup(check=False, force_alloc_complex=True)
+
+    def test_case1(self):
+        self.prob.run_model()
+
+        tol = 1e-7
+        assert_near_equal(self.prob[Aircraft.Furnishings.MASS], 590.935, tol)
+
+        partial_data = self.prob.check_partials(out_stream=None, method='cs')
+        assert_check_partials(partial_data, atol=8e-12, rtol=1e-12)
+
+
+@use_tempdirs
+class BWBFixedEquipMassGroupTest(unittest.TestCase):
+    """Created based on GASP BWB modele"""
+
+    def setUp(self):
+        options = get_option_defaults()
+        options.set_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS, val=150, units='unitless')
+        options.set_val(Aircraft.LandingGear.FIXED_GEAR, val=False, units='unitless')
+
+        prob = self.prob = om.Problem()
+        prob.model.add_subsystem(
+            'group',
+            BWBEquipMassGroup(),
+            promotes=['*'],
+        )
+
+        prob.model.set_input_defaults(Aircraft.APU.MASS, 710.0, units='lbm')
+        prob.model.set_input_defaults(
+            Aircraft.Instruments.MASS_COEFFICIENT, 0.116, units='unitless'
+        )
+        prob.model.set_input_defaults(
+            Aircraft.Hydraulics.FLIGHT_CONTROL_MASS_COEFFICIENT, 0.107, units='unitless'
+        )
+        prob.model.set_input_defaults(
+            Aircraft.Hydraulics.GEAR_MASS_COEFFICIENT, 0.135, units='unitless'
+        )
+        prob.model.set_input_defaults(Aircraft.Avionics.MASS, 3225.0, units='lbm')
+        prob.model.set_input_defaults(Aircraft.AntiIcing.MASS, 236.0, units='lbm')
+        prob.model.set_input_defaults(
+            Aircraft.CrewPayload.PASSENGER_SERVICE_MASS_PER_PASSENGER, 6.0, units='lbm'
+        )
+        prob.model.set_input_defaults(Aircraft.CrewPayload.WATER_MASS_PER_OCCUPANT, 3, units='lbm')
+        prob.model.set_input_defaults(Aircraft.Design.EMERGENCY_EQUIPMENT_MASS, 100.0, units='lbm')
+        prob.model.set_input_defaults(
+            Aircraft.CrewPayload.CATERING_ITEMS_MASS_PER_PASSENGER, 7.6, units='lbm'
+        )
+        prob.model.set_input_defaults(
+            Aircraft.Fuel.UNUSABLE_FUEL_MASS_COEFFICIENT, 12.0, units='unitless'
+        )
+        prob.model.set_input_defaults(Mission.Design.GROSS_MASS, 150000, units='lbm')
+        prob.model.set_input_defaults(Aircraft.Fuselage.LENGTH, 71.5245514, units='ft')
+        prob.model.set_input_defaults(Aircraft.Wing.SPAN, 146.38501, units='ft')
+        prob.model.set_input_defaults(Aircraft.LandingGear.TOTAL_MASS, 7800.0, units='lbm')
+        prob.model.set_input_defaults(Aircraft.Controls.TOTAL_MASS, 2115.19946, units='lbm')
+        prob.model.set_input_defaults(Aircraft.Wing.AREA, 2142.85718, units='ft**2')
+        prob.model.set_input_defaults(Aircraft.HorizontalTail.AREA, 0.00170628, units='ft**2')
+        prob.model.set_input_defaults(Aircraft.VerticalTail.AREA, 169.119629, units='ft**2')
+        prob.model.set_input_defaults(
+            Aircraft.AirConditioning.MASS_COEFFICIENT, 1.155, units='unitless'
+        )
+        prob.model.set_input_defaults(Aircraft.Fuselage.PRESSURE_DIFFERENTIAL, 10.0, units='psi')
+        prob.model.set_input_defaults(Aircraft.Fuselage.HYDRAULIC_DIAMETER, 19.3650932, units='ft')
+        prob.model.set_input_defaults(Aircraft.Fuselage.CABIN_AREA, 1283.5249, units='ft**2')
+        prob.model.set_input_defaults(Aircraft.Furnishings.MASS_SCALER, 40.0, units='unitless')
+        prob.model.set_input_defaults(
+            Aircraft.Electrical.SYSTEM_MASS_PER_PASSENGER, 11.45, units='lbm'
+        )
+
+        setup_model_options(self.prob, options)
+
+        prob.setup(check=False, force_alloc_complex=True)
+
+    def test_case1(self):
+        self.prob.run_model()
+
+        tol = 1e-7
+        assert_near_equal(self.prob[Aircraft.Design.FIXED_EQUIPMENT_MASS], 20876.476, tol)
+
+        partial_data = self.prob.check_partials(out_stream=None, method='cs')
+        assert_check_partials(partial_data, atol=8e-12, rtol=1e-12)
+
+
+class BWBUsefulMassTestCase1(unittest.TestCase):
+    """
+    Created based on GASP BWB modele
+    """
+
+    def setUp(self):
+        options = get_option_defaults()
+        options.set_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS, val=150, units='unitless')
+        options.set_val(Settings.VERBOSITY, 0)
+
+        prob = self.prob = om.Problem()
+        prob.model.add_subsystem(
+            'useful',
+            UsefulLoadMass(),
+            promotes=['*'],
+        )
+
+        prob.model.set_input_defaults(
+            Aircraft.CrewPayload.PASSENGER_SERVICE_MASS_PER_PASSENGER, 6.0, units='lbm'
+        )
+        prob.model.set_input_defaults(Aircraft.CrewPayload.WATER_MASS_PER_OCCUPANT, 3, units='lbm')
+        prob.model.set_input_defaults(Aircraft.Design.EMERGENCY_EQUIPMENT_MASS, 100.0, units='lbm')
+        prob.model.set_input_defaults(
+            Aircraft.CrewPayload.CATERING_ITEMS_MASS_PER_PASSENGER, 5.0, units='lbm'
+        )
+        prob.model.set_input_defaults(
+            Aircraft.Fuel.UNUSABLE_FUEL_MASS_COEFFICIENT, 12.0, units='unitless'
+        )
+        prob.model.set_input_defaults(Aircraft.Wing.AREA, 2142.85718, units='ft**2')
+        prob.model.set_input_defaults(Aircraft.Engine.SCALED_SLS_THRUST, [19580.1602], units='lbf')
+        prob.model.set_input_defaults(Aircraft.Fuel.WING_FUEL_FRACTION, 0.45, units='unitless')
+
+        setup_model_options(self.prob, options)
+
+        prob.setup(check=False, force_alloc_complex=True)
+
+    def test_case1(self):
+        self.prob.run_model()
+
+        tol = 1e-7
+        assert_near_equal(self.prob[Aircraft.Design.FIXED_USEFUL_LOAD], 4156.795, tol)
+
+        partial_data = self.prob.check_partials(out_stream=None, method='cs')
+        assert_check_partials(partial_data, atol=8e-12, rtol=1e-12)
+
+
+@use_tempdirs
 class BWBFixedEquipAndUsefulMassGroupTest(unittest.TestCase):
     """this is the large single aisle 1 V3 test case"""
 
