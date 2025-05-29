@@ -11,7 +11,7 @@ from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.enums import AlphaModes, SpeedType, Verbosity
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission, Settings
 
-# defaults for 2DOF based forward in time integeration phases
+# defaults for 2DOF based forward in time integration phases
 cruise_alt = (35e3,)
 cruise_mach = (0.8,)
 
