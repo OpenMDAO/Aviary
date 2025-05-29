@@ -346,7 +346,7 @@ def override_aviary_vars(
 
                 continue  # don't promote it
 
-            # This variable is not overriden, so the output is promoted.
+            # This variable is not overridden, so the output is promoted.
             comp_promoted_outputs.append(name)
 
         # NOTE Always promoting all inputs into the "global" namespace
