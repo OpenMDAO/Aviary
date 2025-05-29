@@ -209,7 +209,7 @@ class BodyCalculationTestCase4smooth(unittest.TestCase):
         )  # note: not in version 3 output, calculated by hand
         assert_near_equal(
             self.prob['max_extra_fuel_mass'], 34.67277748, tol
-        )  # note: not in version 3 output, calulated by hand
+        )  # note: not in version 3 output, calculated by hand
         assert_near_equal(self.prob['wingfuel_mass_min'], 32818.32722252, tol)
         # note: Aircraft.Fuel.TOTAL_CAPACITY is calculated differently in V3, so it is not included here
 
