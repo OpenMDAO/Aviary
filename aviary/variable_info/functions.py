@@ -131,7 +131,7 @@ def add_aviary_output(
         (Optional) Default value for variable. If not specified, the value from metadata
         is used.
     units: str
-        (Optional) when speficying val, units should also be specified.
+        (Optional) when specifying val, units should also be specified.
     desc: str
         (Optional) description text for the variable.
     shape_by_conn: bool
