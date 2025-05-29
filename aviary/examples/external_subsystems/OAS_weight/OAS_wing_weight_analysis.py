@@ -494,7 +494,7 @@ class OAStructures(om.ExplicitComponent):
         )
         prob.model.connect('AS_point_0.fuelburn', 'fuel_diff.fuelburn')
 
-        # add an objective funtion
+        # add an objective function
         prob.model.add_objective('AS_point_0.fuelburn', scaler=1e-5)
 
         # add design variables
