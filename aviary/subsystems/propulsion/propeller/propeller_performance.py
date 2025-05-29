@@ -624,7 +624,7 @@ class PropellerPerformance(om.Group):
     """
     Computation of propeller thrust coefficient based on the Hamilton Standard model or a user
     provided propeller map. Note that a propeller map allows either the helical Mach number or
-    free stream Mach number as input. This infomation will be detected automatically when the
+    free stream Mach number as input. This information will be detected automatically when the
     propeller map is loaded into memory.
     The installation loss factor is either a user input or computed internally.
     """
