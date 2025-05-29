@@ -100,7 +100,7 @@ class TestAviaryCSV(unittest.TestCase):
         with assert_warning(UserWarning, msg):
             parse_inputs(vehicle_deck, aircraft_values)
 
-        # remove the temperary csv file
+        # remove the temporary csv file
         os.remove(file_name)
 
     def _compare_csv_results(self, data, comments):
