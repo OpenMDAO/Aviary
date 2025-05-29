@@ -107,7 +107,7 @@ class SubsystemBuilderBase(ABC):
         """
         return {}
 
-    def get_parameters(self, aviary_inputs=None, phase_info=None):
+    def get_parameters(self, aviary_inputs=None, **kwargs):
         """
         Return a dictionary of fixed values for the subsystem.
 
@@ -125,8 +125,6 @@ class SubsystemBuilderBase(ABC):
         ----------
         aviary_inputs : dict
             A dictionary containing the inputs to the subsystem.
-        phase_info : dict
-            The phase_info subdict for this phase.
 
         Returns
         -------

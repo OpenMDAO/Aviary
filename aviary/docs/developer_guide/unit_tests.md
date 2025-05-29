@@ -27,7 +27,8 @@ Ran 888 tests using 16 processes
 Wall clock time:   00:00:54.15
 ```
 
-## Current Unit Tests
+## Writing Unit Tests
+To write your own unittests, you should use the following utilities.
 
 ### assert_near_equal
 
@@ -122,4 +123,4 @@ Add a new file to this directory with the name `test_<name_of_file>.py` where `<
 Within this file, add a class called `Test<name_of_file>` that inherits from `unittest.TestCase`.
 Within this class, add a method called `test_<name_of_test>` where `<name_of_test>` is the name of the test you're adding.
 
-Do not write docstrings to unit test methods as we explain in [Guidelines for Contributing Code](contributing_guidelines.md).
+Do not write docstrings for unittest methods, as they interfere with printouts while running testflo.

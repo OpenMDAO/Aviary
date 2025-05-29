@@ -7,6 +7,7 @@ name = "aviary"
 dynamic = ["version"]
 readme = "README.md"
 license = "Apache-2.0"
+requires_python = ">=3.9"
 dependencies = [
     "dymos>=1.8.1",
     "hvplot",
@@ -21,25 +22,19 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
+docs = [
+    "jupyter-book",
+    "itables"
+]
+dev = [
+    "pre-commit",
+    "testflo",
+    "ambiance",
+    "openaerostruct",
+]
 all = [
-    "ambiance",
-    "itables",
-    "myst-nb",
-    "openaerostruct",
-    "pre-commit",
-    "sphinx_book_theme==1.1.0",
-    "testflo",
-]
-examples = [
-    "ambiance",
-    "itables",
-    "openaerostruct",
-]
-test = [
-    "myst-nb",
-    "pre-commit",
-    "sphinx_book_theme==1.1.0",
-    "testflo",
+    "aviary[docs]",
+    "aviary[dev]",
 ]
 
 [project.scripts]
@@ -65,7 +60,7 @@ quote-style = "single"
 [tool.ruff.lint]
 # isort, pydocstyle
 extend-select = ["I", "D"]
-# disabling these rules will help current Aviary code pass a pre-commit lint check
+# disabling these rules help current Aviary code pass a lint check
 extend-ignore = [
     "D100",
     "D101",
