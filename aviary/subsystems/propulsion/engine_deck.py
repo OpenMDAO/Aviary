@@ -299,7 +299,7 @@ class EngineDeck(EngineModel):
     def _set_variable_flags(self):
         """
         Sets flags in EngineDeck to communicate which (non-required) variables are
-        avaliable to greater propulsion module.
+        available to greater propulsion module.
         """
         engine_variables = self.engine_variables
 
