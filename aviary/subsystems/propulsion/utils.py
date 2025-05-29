@@ -124,7 +124,7 @@ def build_engine_deck(
     meta_data=_MetaData,
 ):
     """
-    Creates an EngineDeck using avaliable inputs and options in aviary_options.
+    Creates an EngineDeck using available inputs and options in aviary_options.
 
     Parameter
     ----------
