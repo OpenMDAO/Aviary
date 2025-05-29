@@ -344,7 +344,7 @@ def preprocess_crewpayload(aviary_options: AviaryValues, meta_data=_MetaData, ve
                 if verbosity >= Verbosity.BRIEF:  # BRIEF, VERBOSE, DEBUG
                     warnings.warn(
                         'As-flown cargo mass was specified but design cargo mass and '
-                        'max cargo mass were not. To mantain backwards-compatibility '
+                        'max cargo mass were not. To maintain backwards-compatibility '
                         f'with converted GASP files, setting max cargo mass to {cargo} '
                         'and maximum and design cargo masses to zero.'
                     )
