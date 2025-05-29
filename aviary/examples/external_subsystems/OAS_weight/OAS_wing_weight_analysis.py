@@ -176,7 +176,7 @@ class OAStructures(om.ExplicitComponent):
         self.options.declare(
             'struct_weight_relief',
             default=True,
-            desc='if true, use structural weight as intertia relief loads',
+            desc='if true, use structural weight as inertia relief loads',
         )
         self.options.declare(
             'distributed_fuel_weight',
