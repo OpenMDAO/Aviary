@@ -506,7 +506,7 @@ class EngineDeck(EngineModel):
             # tailpipe thrust is not bookept separately in Aviary. Add to net thrust.
             if THRUST in engine_variables:
                 # Check that units are the same. Variables have already been checked for valid
-                # units, so it is assumed they are convertable. Prioritizes thrust units
+                # units, so it is assumed they are convertible. Prioritizes thrust units
                 if engine_variables[THRUST] != engine_variables[TAILPIPE_THRUST]:
                     data[TAILPIPE_THRUST] = convert_units(
                         data,
