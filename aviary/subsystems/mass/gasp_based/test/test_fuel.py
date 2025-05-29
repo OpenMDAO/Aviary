@@ -206,7 +206,7 @@ class BodyCalculationTestCase4smooth(unittest.TestCase):
         )  # note: not in version 3 output, calculated by hand
         assert_near_equal(
             self.prob['extra_fuel_volume'], 0.69314718, tol
-        )  # note: not in version 3 output, calulated by hand
+        )  # note: not in version 3 output, calculated by hand
         assert_near_equal(
             self.prob['max_extra_fuel_mass'], 34.67277748, tol
         )  # note: not in version 3 output, calulated by hand
