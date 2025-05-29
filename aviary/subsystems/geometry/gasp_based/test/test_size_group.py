@@ -753,9 +753,9 @@ class BWBSizeGroupTestCase1(unittest.TestCase):
         )
         self.prob.model.set_input_defaults(Aircraft.Engine.REFERENCE_DIAMETER, 5.8, units='ft')
         self.prob.model.set_input_defaults(
-            Aircraft.Nacelle.CORE_DIAMETER_RATIO, 1.25, units='unitless'
+            Aircraft.Nacelle.CORE_DIAMETER_RATIO, 1.2205, units='unitless'
         )
-        self.prob.model.set_input_defaults(Aircraft.Nacelle.FINENESS, 2.0, units='unitless')
+        self.prob.model.set_input_defaults(Aircraft.Nacelle.FINENESS, 1.3588, units='unitless')
         self.prob.model.set_input_defaults(
             Aircraft.LandingGear.MAIN_GEAR_LOCATION, 0.0, units='unitless'
         )
@@ -784,42 +784,78 @@ class BWBSizeGroupTestCase1(unittest.TestCase):
         self.prob.setup(check=False, force_alloc_complex=True)
 
     def test_case1(self):
+        """
+        Testing GASP data case:
+        Aircraft.Fuselage.AVG_DIAMETER -- SWF = 38.00
+        fuselage.cabin_height -- HC = 9.87
+        fuselage.cabin_len -- LC = 43.8
+        fuselage.parameters1.nose_height -- HN = 4.87
+        Aircraft.Fuselage.LENGTH -- ELF = 71.52
+        Aircraft.Fuselage.WETTED_AREA -- SF = 4574.
+        Aircraft.TailBoom.LENGTH -- ELFFC = 71.5
+        Aircraft.Wing.AREA -- SW = 2142.9
+        Aircraft.Wing.SPAN -- B = 146.4
+        Aircraft.Wing.CENTER_CHORD -- CROOT = 23.3
+        Aircraft.Wing.AVERAGE_CHORD -- CBARW = 16.22
+        Aircraft.Wing.ROOT_CHORD -- CROOTW = 20.0657883
+        Aircraft.Wing.THICKNESS_TO_CHORD_UNWEIGHTED TCM = 0.124
+        wing.wing_volume_no_fold -- FVOLW_GEOMX = 783.6
+        Aircraft.Fuel.WING_VOLUME_GEOMETRIC_MAX -- FVOLW_GEOM = 605.9
+        Aircraft.Wing.EXPOSED_AREA -- SW_EXP = 1352.1
+        Aircraft.HorizontalTail.AREA -- SHT = 0.
+        Aircraft.HorizontalTail.SPAN -- BHT = 0.04
+        Aircraft.HorizontalTail.ROOT_CHORD -- CRCLHT = 0.0383644775
+        Aircraft.HorizontalTail.AVERAGE_CHORD -- CBARHT = 0.03
+        Aircraft.HorizontalTail.MOMENT_ARM -- ELTH = 29.7
+        Aircraft.VerticalTail.AREA -- SVT = 169.1
+        Aircraft.VerticalTail.SPAN -- BVT = 16.98
+        Aircraft.VerticalTail.ROOT_CHORD -- CRCLVT = 14.5819016
+        Aircraft.VerticalTail.AVERAGE_CHORD -- CBARVT = 10.67
+        Aircraft.VerticalTail.MOMENT_ARM -- ELTV = 27.8
+        Aircraft.Nacelle.AVG_DIAMETER -- DBARN = 6.95
+        Aircraft.Nacelle.AVG_LENGTH -- ELN = 9.44
+        Aircraft.Nacelle.SURFACE_AREA -- SN = 205.965 (for one engine)
+        """
         self.prob.run_model()
 
         tol = 1e-4
+
+        # BWBFuselageGroup
         assert_near_equal(self.prob[Aircraft.Fuselage.AVG_DIAMETER], 38, tol)
         assert_near_equal(self.prob['fuselage.cabin_height'], 9.86859989, tol)
         assert_near_equal(self.prob['fuselage.cabin_len'], 43.83334, tol)
         assert_near_equal(self.prob['fuselage.parameters1.nose_height'], 4.86859989, tol)
-
         assert_near_equal(self.prob[Aircraft.Fuselage.LENGTH], 71.5245514, tol)
         assert_near_equal(self.prob[Aircraft.Fuselage.WETTED_AREA], 4573.42578, tol)
         assert_near_equal(self.prob[Aircraft.TailBoom.LENGTH], 71.5245514, tol)
 
+        # BWBWingGroup
         assert_near_equal(self.prob[Aircraft.Wing.AREA], 2142.85714286, tol)
         assert_near_equal(self.prob[Aircraft.Wing.SPAN], 146.38501094, tol)
-
         assert_near_equal(self.prob[Aircraft.Wing.CENTER_CHORD], 22.97244452, tol)
         assert_near_equal(self.prob[Aircraft.Wing.AVERAGE_CHORD], 16.2200522, tol)
         assert_near_equal(self.prob[Aircraft.Wing.ROOT_CHORD], 20.33371617, tol)
         assert_near_equal(self.prob[Aircraft.Wing.THICKNESS_TO_CHORD_UNWEIGHTED], 0.13596576, tol)
         assert_near_equal(self.prob['wing.wing_volume_no_fold'], 783.62100035, tol)
+        assert_near_equal(self.prob[Aircraft.Fuel.WING_VOLUME_GEOMETRIC_MAX], 605.90781747, tol)
+        assert_near_equal(self.prob[Aircraft.Wing.EXPOSED_AREA], 1352.1135998, tol)
 
+        # EmpennageSize
         assert_near_equal(self.prob[Aircraft.HorizontalTail.AREA], 0.00117064, tol)
         assert_near_equal(self.prob[Aircraft.HorizontalTail.SPAN], 0.04467601, tol)
         assert_near_equal(self.prob[Aircraft.HorizontalTail.ROOT_CHORD], 0.03836448, tol)
         assert_near_equal(self.prob[Aircraft.HorizontalTail.AVERAGE_CHORD], 0.02808445, tol)
         assert_near_equal(self.prob[Aircraft.HorizontalTail.MOMENT_ARM], 29.69074172, tol)
-
         assert_near_equal(self.prob[Aircraft.VerticalTail.AREA], 169.11964286, tol)
         assert_near_equal(self.prob[Aircraft.VerticalTail.SPAN], 16.98084188, tol)
         assert_near_equal(self.prob[Aircraft.VerticalTail.ROOT_CHORD], 14.58190052, tol)
         assert_near_equal(self.prob[Aircraft.VerticalTail.AVERAGE_CHORD], 10.67457744, tol)
         assert_near_equal(self.prob[Aircraft.VerticalTail.MOMENT_ARM], 27.82191598, tol)
 
-        assert_near_equal(self.prob[Aircraft.Nacelle.AVG_DIAMETER], 7.35163168, tol)
-        assert_near_equal(self.prob[Aircraft.Nacelle.AVG_LENGTH], 14.70326336, tol)
-        assert_near_equal(self.prob[Aircraft.Nacelle.SURFACE_AREA], 339.58410134, tol)
+        # BWBEngineSizeGroup
+        assert_near_equal(self.prob[Aircraft.Nacelle.AVG_DIAMETER], 7.17813375, tol)
+        assert_near_equal(self.prob[Aircraft.Nacelle.AVG_LENGTH], 9.75364814, tol)
+        assert_near_equal(self.prob[Aircraft.Nacelle.SURFACE_AREA], 219.95229788, tol)
 
         partial_data = self.prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=3e-9, rtol=3e-9)

@@ -1060,20 +1060,33 @@ class BWBWingGroupTestCase1(unittest.TestCase):
         self.prob.setup(check=False, force_alloc_complex=True)
 
     def test_case1(self):
+        """
+        Testing GASP data case:
+        Aircraft.Wing.AREA -- SW = 2142.9
+        Aircraft.Wing.SPAN -- B = 146.4
+        Aircraft.Wing.CENTER_CHORD -- CROOT = 23.3
+        Aircraft.Wing.AVERAGE_CHORD -- CBARW = 16.22
+        Aircraft.Wing.ROOT_CHORD -- CROOTW = 20.0657883
+        Aircraft.Wing.THICKNESS_TO_CHORD_UNWEIGHTED -- TCM = 0.124
+        wing_volume_no_fold -- FVOLW_GEOMX = 783.6
+        Aircraft.Fuel.WING_VOLUME_GEOMETRIC_MAX -- FVOLW_GEOM = 605.9
+        Aircraft.Wing.FOLDING_AREA -- SWFOLD = 224.8
+        Aircraft.Wing.EXPOSED_AREA -- SW_EXP = 1352.1
+        Note: CROOT in GASP matches with Aircraft.Wing.CENTER_CHORD
+        """
         self.prob.run_model()
 
         tol = 1e-7
 
         assert_near_equal(self.prob[Aircraft.Wing.AREA], 2142.85714286, tol)
         assert_near_equal(self.prob[Aircraft.Wing.SPAN], 146.38501094, tol)
-
         assert_near_equal(self.prob[Aircraft.Wing.CENTER_CHORD], 22.97244452, tol)
         assert_near_equal(self.prob[Aircraft.Wing.AVERAGE_CHORD], 16.2200522, tol)
         assert_near_equal(self.prob[Aircraft.Wing.ROOT_CHORD], 20.33371617, tol)
         assert_near_equal(self.prob[Aircraft.Wing.THICKNESS_TO_CHORD_UNWEIGHTED], 0.13596576, tol)
         assert_near_equal(self.prob['wing_volume_no_fold'], 783.62100035, tol)
-        assert_near_equal(self.prob[Aircraft.Wing.FOLDING_AREA], 224.82529025, tol)
         assert_near_equal(self.prob[Aircraft.Fuel.WING_VOLUME_GEOMETRIC_MAX], 605.90781747, tol)
+        assert_near_equal(self.prob[Aircraft.Wing.FOLDING_AREA], 224.82529025, tol)
         assert_near_equal(self.prob[Aircraft.Wing.EXPOSED_AREA], 1352.1135998, tol)
 
         partial_data = self.prob.check_partials(out_stream=None, method='cs')
