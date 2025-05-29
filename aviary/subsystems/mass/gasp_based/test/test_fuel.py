@@ -1572,8 +1572,8 @@ class BWBFuelMassGroupTest(unittest.TestCase):
         assert_near_equal(self.prob['body_tank.max_extra_fuel_mass'], 0.0, tol)
         assert_near_equal(self.prob['wingfuel_mass_min'], 18997.40162479, tol)
 
-        # partial_data = self.prob.check_partials(out_stream=None, method='cs')
-        # assert_check_partials(partial_data, atol=2e-11, rtol=1e-12)
+        partial_data = self.prob.check_partials(out_stream=None, method='cs')
+        assert_check_partials(partial_data, atol=2e-11, rtol=1e-12)
 
 
 if __name__ == '__main__':
