@@ -1171,7 +1171,7 @@ class EngineDeck(EngineModel):
                 # handle rounding + formatting
                 if isinstance(val, (np.ndarray, list, tuple)):
                     val = [round_it(item) for item in val]
-                    # if an interable with a length of 1, remove bracket/paretheses, etc.
+                    # if an interable with a length of 1, remove bracket/parentheses, etc.
                     if len(val) == 1:
                         val = val[0]
                 else:
