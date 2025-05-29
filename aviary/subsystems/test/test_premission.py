@@ -309,7 +309,7 @@ class PreMissionTestCase(unittest.TestCase):
 
         prob.setup()
 
-        # Problem in setup is FLOPS prioritized, so shared inputs for FLOPS will be manually overriden.
+        # Problem in setup is FLOPS prioritized, so shared inputs for FLOPS will be manually overridden.
 
         outs = prob.model.pre_mission.list_outputs(
             includes='*gasp*fuselage:avg_diam*', prom_name=True, out_stream=None
