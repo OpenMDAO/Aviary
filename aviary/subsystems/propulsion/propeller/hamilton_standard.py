@@ -58,7 +58,7 @@ def _unint(xa, ya, x):
                 ra = (xa[idx] - x) / (xa[idx] - xa[idx - 1])
             rb = 1.0 - ra
 
-            # get coefficeints and results
+            # get coefficients and results
             p1 = xa[jx1 + 1] - xa[jx1]
             p2 = xa[jx1 + 2] - xa[jx1 + 1]
             p3 = xa[jx1 + 3] - xa[jx1 + 2]
