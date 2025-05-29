@@ -336,7 +336,7 @@ def preprocess_crewpayload(aviary_options: AviaryValues, meta_data=_MetaData, ve
                         f'({des_cargo})'
                     )
             else:
-                # user has set cargo only: assume intention to set max only for backwards compatability.
+                # user has set cargo only: assume intention to set max only for backwards compatibility.
                 # TODO we eventually want to fix these and have des & flown cargo = max cargo
                 #      that fix will possibly require updating fortran_to_aviary
                 max_cargo = cargo
