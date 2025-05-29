@@ -1321,7 +1321,7 @@ add_meta_data(
     historical_name={'GASP': 'INGASP.WFE', 'FLOPS': None, 'LEAPS1': None},
     units='lbm',
     desc='total mass of fixed equipment: APU, Instruments, Hydraulics, Electrical, '
-    'Avionics, AC, Anti-Icing, Auxilary Equipment, and Furnishings',
+    'Avionics, AC, Anti-Icing, Auxiliary Equipment, and Furnishings',
     default_value=0.0,
 )
 
