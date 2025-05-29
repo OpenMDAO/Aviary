@@ -270,6 +270,7 @@ class BWBMassParametersTestCase(unittest.TestCase):
     def setUp(self):
         options = get_option_defaults()
         options.set_val(Settings.VERBOSITY, 0)
+        options.set_val(Aircraft.Engine.NUM_FUSELAGE_ENGINES, 2, units='unitless')
 
         prob = self.prob = om.Problem()
         self.prob.model.add_subsystem(
@@ -296,7 +297,7 @@ class BWBMassParametersTestCase(unittest.TestCase):
         assert_near_equal(self.prob[Aircraft.Wing.MATERIAL_FACTOR], 1.19461189, tol)
         assert_near_equal(self.prob['c_strut_braced'], 1, tol)
         assert_near_equal(self.prob['c_gear_loc'], 0.95, tol)
-        assert_near_equal(self.prob[Aircraft.Engine.POSITION_FACTOR], 0.95, tol)
+        assert_near_equal(self.prob[Aircraft.Engine.POSITION_FACTOR], 1.05, tol)
         assert_near_equal(self.prob['half_sweep'], 0.47984874, tol)
 
         partial_data = self.prob.check_partials(out_stream=None, method='cs')
@@ -967,7 +968,10 @@ class BWBHighLiftTestCase(unittest.TestCase):
         self.prob.run_model()
 
         tol = 1e-7
+
         assert_near_equal(self.prob[Aircraft.Wing.HIGH_LIFT_MASS], 1068.88854499, tol)
+        assert_near_equal(self.prob['flap_mass'], 1068.46572125, tol)  # WFLAP = 997.949249689
+        assert_near_equal(self.prob['slat_mass'], 0.42282374, tol)  # WLED
 
         partial_data = self.prob.check_partials(
             out_stream=None, method='cs', show_only_incorrect=True
@@ -1967,6 +1971,7 @@ class FixedMassGroupTestCase3(unittest.TestCase):
 class BWBFixedMassGroupTestCase1(unittest.TestCase):
     def setUp(self):
         options = get_option_defaults()
+        options.set_val(Aircraft.Design.TYPE, val='BWB', units='unitless')
         options.set_val(Aircraft.Electrical.HAS_HYBRID_SYSTEM, val=False, units='unitless')
         options.set_val(Aircraft.CrewPayload.NUM_PASSENGERS, val=150, units='unitless')
         options.set_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS, val=150, units='unitless')
@@ -2035,7 +2040,7 @@ class BWBFixedMassGroupTestCase1(unittest.TestCase):
             Aircraft.Wing.SURFACE_CONTROL_MASS_COEFFICIENT, 0.5, units='unitless'
         )
         prob.model.set_input_defaults(
-            Aircraft.Wing.ULTIMATE_LOAD_FACTOR, 3.97744787, units='unitless'
+            Aircraft.Wing.ULTIMATE_LOAD_FACTOR, 3.77335889, units='unitless'
         )
         prob.model.set_input_defaults(
             Aircraft.Design.COCKPIT_CONTROL_MASS_COEFFICIENT, 16.5, units='unitless'
@@ -2064,7 +2069,7 @@ class BWBFixedMassGroupTestCase1(unittest.TestCase):
         prob.model.set_input_defaults(Aircraft.Engine.MASS_SPECIFIC, 0.178884, units='lbm/lbf')
         prob.model.set_input_defaults(Aircraft.Engine.SCALED_SLS_THRUST, 19580.1602, units='lbf')
         prob.model.set_input_defaults(Aircraft.Nacelle.MASS_SPECIFIC, 2.5, units='lbm/ft**2')
-        prob.model.set_input_defaults(Aircraft.Nacelle.SURFACE_AREA, 194.957186763, units='ft**2')
+        prob.model.set_input_defaults(Aircraft.Nacelle.SURFACE_AREA, 219.95229788, units='ft**2')
         prob.model.set_input_defaults(Aircraft.Engine.PYLON_FACTOR, 1.25, units='unitless')
         prob.model.set_input_defaults(Aircraft.Engine.MASS_SCALER, 1, units='unitless')
 
@@ -2104,12 +2109,15 @@ class BWBFixedMassGroupTestCase1(unittest.TestCase):
         assert_near_equal(self.prob[Aircraft.HorizontalTail.MASS], 1.02401953, tol)
         assert_near_equal(self.prob[Aircraft.VerticalTail.MASS], 864.17404177, tol)
         assert_near_equal(self.prob[Aircraft.Wing.HIGH_LIFT_MASS], 1068.88854499, tol)
-        assert_near_equal(self.prob[Aircraft.Controls.TOTAL_MASS], 2174.28611375, tol)
+        assert_near_equal(self.prob[Aircraft.Controls.TOTAL_MASS], 2114.98158947, tol)
         assert_near_equal(self.prob[Aircraft.Propulsion.TOTAL_ENGINE_MASS], 7005.15475443, tol)
-        assert_near_equal(self.prob[Aircraft.Propulsion.TOTAL_ENGINE_POD_MASS], 2092.30176475, tol)
+        assert_near_equal(self.prob[Aircraft.Nacelle.MASS], 549.8807447, tol)
+        assert_near_equal(self.prob[Aircraft.Propulsion.TOTAL_ENGINE_POD_MASS], 2230.13208284, tol)
         assert_near_equal(self.prob[Aircraft.Engine.ADDITIONAL_MASS], 153.16770871, tol)
+        assert_near_equal(self.prob['pylon_mass'], 565.18529673, tol)
         assert_near_equal(self.prob['eng_comb_mass'], 7311.49017184, tol)
         assert_near_equal(self.prob['wing_mounted_mass'], 0.0, tol)
+        assert_near_equal(self.prob[Aircraft.Wing.SURFACE_CONTROL_MASS], 1986.25111783, tol)
 
         partial_data = self.prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=2e-9, rtol=1e-12)
