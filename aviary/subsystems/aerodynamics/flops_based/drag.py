@@ -143,7 +143,7 @@ class TotalDrag(om.Group):
     Apply an optional factor (default: 1.0) for increasing or decreasing the lift-
     independent drag coefficient before calculating the total drag coefficient.
 
-    Note, the lift-dependent drag coefficient includes contirbutions from the pressure
+    Note, the lift-dependent drag coefficient includes contributions from the pressure
     drag coefficient.
 
     Apply optional factors (default: 1.0) for increasing or decreasing the total drag
