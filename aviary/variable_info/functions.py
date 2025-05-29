@@ -508,7 +508,7 @@ def extract_options(aviary_inputs: AviaryValues, metadata=_MetaData) -> dict:
             options[key] = val
 
         else:
-            # Implement as (quanitity, unit)
+            # Implement as (quantity, unit)
             options[key] = (val, units)
 
     return options
