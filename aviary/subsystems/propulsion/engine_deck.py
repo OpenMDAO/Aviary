@@ -925,7 +925,7 @@ class EngineDeck(EngineModel):
                         'hybrid_throttle_max',
                         self.hybrid_throttle_max,
                         units='unitless',
-                        desc='max hybrid throttle avaliable at current flight condition',
+                        desc='max hybrid throttle available at current flight condition',
                     )
 
             # Calculation of max thrust currently done with a duplicate of the engine
