@@ -209,7 +209,7 @@ class PreMissionTestCase(unittest.TestCase):
         assert_check_partials(partial_data, atol=3e-10, rtol=1e-12)
 
     def test_manual_override(self):
-        # Problem in setup is GASP prioritized, so shared inputs for FLOPS will be manually overriden.
+        # Problem in setup is GASP prioritized, so shared inputs for FLOPS will be manually overridden.
 
         outs = self.prob.model.pre_mission.list_outputs(
             includes='*gasp*fuselage:avg_diam*', prom_name=True, out_stream=None
