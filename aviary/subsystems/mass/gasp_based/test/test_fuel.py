@@ -713,7 +713,7 @@ class FuelMassGroupTestCase1(unittest.TestCase):
         )  # note: not in version 3 output, calculated by hand
         assert_near_equal(
             self.prob['body_tank.extra_fuel_volume'], 0, tol
-        )  # note: not in version 3 output, calulated by hand
+        )  # note: not in version 3 output, calculated by hand
         assert_near_equal(
             self.prob['body_tank.max_extra_fuel_mass'], 0, tol
         )  # note: not in version 3 output, calulated by hand
