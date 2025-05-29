@@ -12,7 +12,7 @@ from aviary.variable_info.variables import Aircraft, Dynamic, Settings
 
 def _unint(xa, ya, x):
     """
-    Univariate table routine with seperate arrays for x and y
+    Univariate table routine with separate arrays for x and y
     This routine interpolates over a 4 point interval using a
     variation of 3nd degree interpolation to produce a continuity
     of slope between adjacent intervals.
