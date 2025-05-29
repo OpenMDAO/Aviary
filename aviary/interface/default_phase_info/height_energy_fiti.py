@@ -3,7 +3,7 @@ from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.enums import AlphaModes, SpeedType
 from aviary.variable_info.variables import Dynamic, Mission
 
-# defaults for height energy based forward in time integeration phases
+# defaults for height energy based forward in time integration phases
 cruise_mach = (0.8,)
 cruise_alt = (35e3,)
 
