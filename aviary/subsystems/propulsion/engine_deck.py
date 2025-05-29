@@ -437,7 +437,7 @@ class EngineDeck(EngineModel):
     def _check_data(self):
         """
         Checks for consistency of provided thrust and drag data, ensures no required
-        variables are missing, fills unused variabes with a default value of zero, and
+        variables are missing, fills unused variables with a default value of zero, and
         removes negative thrusts if requested.
 
         Raises
