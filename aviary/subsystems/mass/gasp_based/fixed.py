@@ -606,7 +606,7 @@ class EngineMass(om.ExplicitComponent):
             desc='WPYLON: mass of each pylon',
             val=np.zeros(num_engine_type),
         )
-        add_aviary_output(self, Aircraft.Propulsion.TOTAL_ENGINE_POD_MASS, units='lbm')
+        add_aviary_output(self, Aircraft.Propulsion.TOTAL_ENGINE_POD_MASS, units='lbm', desc='WPES')
         add_aviary_output(self, Aircraft.Engine.ADDITIONAL_MASS, shape=num_engine_type, units='lbm')
         self.add_output(
             'eng_comb_mass',
@@ -2913,7 +2913,7 @@ class FixedMassGroup(om.Group):
             + [
                 Aircraft.LandingGear.MAIN_GEAR_MASS,
             ],
-            promotes_outputs=['wing_mounted_mass', 'eng_comb_mass'] + ['aircraft:*'],
+            promotes_outputs=['pylon_mass', 'wing_mounted_mass', 'eng_comb_mass'] + ['aircraft:*'],
         )
 
         if has_hybrid_system:
