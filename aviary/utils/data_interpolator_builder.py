@@ -137,7 +137,7 @@ def build_data_interpolator(
 
     if not connect_training_data:
         # Sort and format data. Only if not using training data - since we have control
-        # over both input and output data they are guarenteed to match after reformatting
+        # over both input and output data they are guaranteed to match after reformatting
 
         # sort data in semistructured grid format
         # always sort unless data is in structured format
