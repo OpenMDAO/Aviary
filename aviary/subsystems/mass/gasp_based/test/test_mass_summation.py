@@ -3344,8 +3344,6 @@ class BWBMassSummationTestCase(unittest.TestCase):
         prob.model.set_input_defaults(Mission.Design.GROSS_MASS, 150000, units='lbm')
         prob.model.set_input_defaults(Aircraft.Fuselage.LENGTH, 71.5245514, units='ft')
         prob.model.set_input_defaults(Aircraft.Wing.SPAN, 146.38501, units='ft')
-        # prob.model.set_input_defaults(Aircraft.LandingGear.TOTAL_MASS, 7800.0, units='lbm')
-        # prob.model.set_input_defaults(Aircraft.Controls.TOTAL_MASS, 2115.19946, units='lbm')
         prob.model.set_input_defaults(Aircraft.Wing.AREA, 2142.85718, units='ft**2')
         prob.model.set_input_defaults(Aircraft.HorizontalTail.AREA, 0.001706279, units='ft**2')
         prob.model.set_input_defaults(Aircraft.VerticalTail.AREA, 169.119629, units='ft**2')
