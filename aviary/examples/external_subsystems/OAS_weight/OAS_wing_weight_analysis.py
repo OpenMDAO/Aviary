@@ -463,7 +463,7 @@ class OAStructures(om.ExplicitComponent):
         prob.model.connect('alpha', 'AS_point_0' + '.alpha')
         prob.model.connect('alpha_maneuver', 'AS_point_1' + '.alpha')
 
-        # Here we add the fuel volume constraint componenet to the model
+        # Here we add the fuel volume constraint component to the model
         prob.model.add_subsystem('fuel_vol_delta', WingboxFuelVolDelta(surface=surfaces[0]))
         prob.model.connect(name + '.struct_setup.fuel_vols', 'fuel_vol_delta.fuel_vols')
         prob.model.connect('AS_point_0.fuelburn', 'fuel_vol_delta.fuelburn')
