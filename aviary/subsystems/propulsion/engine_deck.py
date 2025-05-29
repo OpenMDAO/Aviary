@@ -460,7 +460,7 @@ class EngineDeck(EngineModel):
         engine_variables = self.engine_variables
 
         # Handle ram drag, net and gross thrust and potential conflicts in value or units
-        # Warn user if they provide partial info for calulated thrust
+        # Warn user if they provide partial info for calculated thrust
         # Not a fail state if net thrust is still provided
         # If both net thrust and components for calculated thrust both provided, a sanity
         #   check that they match is done after reading data
