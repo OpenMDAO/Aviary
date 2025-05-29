@@ -55,6 +55,7 @@ class BodyTankCalculations(om.ExplicitComponent):
         )
         add_aviary_output(self, Aircraft.Fuel.TOTAL_CAPACITY, units='lbm')
 
+    def setup_partials(self):
         self.declare_partials(
             Aircraft.Fuel.AUXILIARY_FUEL_CAPACITY,
             [Mission.Design.FUEL_MASS_REQUIRED, 'max_wingfuel_mass'],
@@ -511,6 +512,7 @@ class FuelAndOEMOutputs(om.ExplicitComponent):
         )
         add_aviary_output(self, Aircraft.Fuel.WING_VOLUME_STRUCTURAL_MAX, units='ft**3')
 
+    def setup_partials(self):
         self.declare_partials(
             'OEM_wingfuel_mass',
             [
@@ -831,6 +833,7 @@ class FuelSysAndFullFuselageMass(om.ExplicitComponent):
         )
         add_aviary_output(self, Aircraft.Fuel.FUEL_SYSTEM_MASS, units='lbm')
 
+    def setup_partials(self):
         self.declare_partials(
             Aircraft.Fuel.FUEL_SYSTEM_MASS,
             [
@@ -1352,6 +1355,7 @@ class FuelMass(om.ExplicitComponent):
             desc='WFAMIN: minimum value of fuel mass (set when max payload is carried)',
         )
 
+    def setup_partials(self):
         self.declare_partials(
             Mission.Design.FUEL_MASS,
             [
@@ -1415,6 +1419,7 @@ class FuelMass(om.ExplicitComponent):
         payload_wt_max = inputs['payload_mass_max'] * GRAV_ENGLISH_LBM
         fuel_margin = inputs[Aircraft.Fuel.FUEL_MARGIN]
 
+        # GASP code is updated later than the following formula.
         outputs[Mission.Design.FUEL_MASS] = (
             (
                 gross_wt_initial
