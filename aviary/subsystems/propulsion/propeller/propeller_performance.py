@@ -106,7 +106,7 @@ class TipSpeed(om.ExplicitComponent):
         diam = inputs[Aircraft.Engine.Propeller.DIAMETER]
 
         tip_speed_mach_limit = ((sos * tip_mach_max) ** 2 - velocity**2) ** 0.5
-        # use KSfunction for smooth derivitive across minimum
+        # use KSfunction for smooth derivative across minimum
         tip_speed_max_nn = np.tile(tip_speed_max, num_nodes)
         propeller_tip_speed_limit = -KSfunction.compute(
             -np.stack((tip_speed_max_nn, tip_speed_mach_limit), axis=1)
