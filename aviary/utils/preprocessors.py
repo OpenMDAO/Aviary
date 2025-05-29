@@ -134,7 +134,7 @@ def preprocess_crewpayload(aviary_options: AviaryValues, meta_data=_MetaData, ve
     num_pax = aviary_options.get_val(Aircraft.CrewPayload.NUM_PASSENGERS)
     design_num_pax = aviary_options.get_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS)
 
-    # TODO these don't have to be errors, we can recover in some cases, for exmaple
+    # TODO these don't have to be errors, we can recover in some cases, for example
     # defaulting to all economy class if passenger seat info is not provided. See the
     # engine count checks for an example of this.
     # Check summary data against individual data if individual data was entered
