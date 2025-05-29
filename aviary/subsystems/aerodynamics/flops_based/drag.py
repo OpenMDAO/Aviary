@@ -147,7 +147,7 @@ class TotalDrag(om.Group):
     drag coefficient.
 
     Apply optional factors (default: 1.0) for increasing or decreasing the total drag
-    coefficient before calculating drag. The effect is cummulative with the above
+    coefficient before calculating drag. The effect is cumulative with the above
     optional factors.
     """
 
