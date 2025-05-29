@@ -618,7 +618,7 @@ class EngineMass(om.ExplicitComponent):
             desc='WM: mass of gear and engine, basically everything mounted on the wing',
         )
 
-        # for multiengine implementation needs this to always be avaliable
+        # for multiengine implementation needs this to always be available
         self.add_input(
             'prop_mass',
             # val=np.full(num_engine_type, 0.000000001),
