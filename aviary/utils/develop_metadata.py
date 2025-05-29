@@ -171,7 +171,7 @@ def update_meta_data(
         Example: {"FLOPS":"WTIN.WNGWT", "LEAPS1": "aircraft.inputs.wing_weight", "GASP":
         "INGASP.WWGHT"}
 
-        NAMELIST nameing convention
+        NAMELIST naming convention
         &<function_name>.<namelist_name>.<var_name>
 
         Example: &DEFINE.CONFIN.GW
