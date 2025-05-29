@@ -3471,7 +3471,7 @@ add_meta_data(
     default_value=0.0,
 )
 
-# TODO are we keeping millitary cargo?
+# TODO are we keeping military cargo?
 add_meta_data(
     Aircraft.Fuselage.MILITARY_CARGO_FLOOR,
     meta_data=_MetaData,
