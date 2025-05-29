@@ -222,7 +222,7 @@ class AircraftModelReader(object):
     _cr : CaseReader
         CaseReader object.
     _problem_metadata : dict
-        Metadata about the problem, including the system hierachy and connections.
+        Metadata about the problem, including the system hierarchy and connections.
     _final_case : str
         Final Problem case from the case recorder file.
     """
