@@ -26,7 +26,7 @@ def build_data_interpolator(
     Parameters
     ----------
     num_nodes : int
-        Number of points that will be simultaneously interpolated during model executuion.
+        Number of points that will be simultaneously interpolated during model execution.
 
     interpolator_data : (str, Path, NamedValues)
         Path to the Aviary csv file containing all data required for interpolation, or
