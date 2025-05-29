@@ -46,7 +46,7 @@ homogeneous engines
     See also; heterogeneous engines.
 
 heterogeneous engines
-    Multiple sets of homogenous engines, with each set having unique performance characteristics.
+    Multiple sets of homogeneous engines, with each set having unique performance characteristics.
     This is useful if you are modeling an aircraft with engines of different sizes or types.
     Each set of unique engines uses a different `EngineModel` object in Aviary.
     See also; homogeneous engines.
