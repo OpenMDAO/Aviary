@@ -116,7 +116,7 @@ def build_data_interpolator(
                 if len(np.shape(val)) > 1:
                     # we assume user was *trying* to set up a structured grid
                     # if output is multi-dimensional array. If output is 1d it could
-                    # be a strucured grid with one input, or a semistructured grid
+                    # be a structured grid with one input, or a semistructured grid
                     raise ValueError(
                         f'shape of output <{key}>, {np.shape(val)}, does '
                         f'not match expected shape {tuple(shape)}'
