@@ -7630,7 +7630,7 @@ add_meta_data(
     meta_data=_MetaData,
     historical_name={'GASP': 'INGASP.WFA', 'FLOPS': None, 'LEAPS1': None},
     units='lbm',
-    desc='total fuel carried at the beginnning of a mission '
+    desc='total fuel carried at the beginning of a mission '
     'includes fuel burned in the mission, reserve fuel '
     'and fuel margin',
 )
