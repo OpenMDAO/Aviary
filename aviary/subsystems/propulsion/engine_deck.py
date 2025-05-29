@@ -531,7 +531,7 @@ class EngineDeck(EngineModel):
             self.data.pop(TAILPIPE_THRUST)
 
         # Handle shaft power (corrected and uncorrected). It is not possible to compare
-        # them for consistency, as that requires information not avaliable during setup
+        # them for consistency, as that requires information not available during setup
         # (freestream air temp and pressure). Instead, we must trust the source and
         # assume either data set is valid and can be used.
         if (
