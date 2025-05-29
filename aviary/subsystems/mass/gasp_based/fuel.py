@@ -831,7 +831,7 @@ class FuelSysAndFullFuselageMass(om.ExplicitComponent):
             units='lbm',
             desc='WX: mass of fuselage and contents, including empennage',
         )
-        add_aviary_output(self, Aircraft.Fuel.FUEL_SYSTEM_MASS, units='lbm')
+        add_aviary_output(self, Aircraft.Fuel.FUEL_SYSTEM_MASS, units='lbm', desc='WFSS?')
 
     def setup_partials(self):
         self.declare_partials(
@@ -1143,7 +1143,8 @@ class FuselageMass(om.ExplicitComponent):
 
 class BWBFuselageMass(om.ExplicitComponent):
     """
-    Computation of the fuselage structure mass of BWB type aircraft.
+    Computation of the fuselage structure mass of BWB type aircraft. The empirical
+    equation is completely different from tube and wing type aircraft.
     """
 
     def setup(self):
