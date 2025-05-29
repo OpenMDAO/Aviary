@@ -3058,7 +3058,7 @@ add_meta_data(
 add_meta_data(
     Aircraft.Fuel.WING_VOLUME_DESIGN,
     meta_data=_MetaData,
-    historical_name={'GASP': 'INGASP.FVOLW_DES', 'FLOPS': None, 'LEAPS1': None},
+    historical_name={'GASP': 'INGASP.FVOLREQ', 'FLOPS': None, 'LEAPS1': None},
     units='ft**3',
     desc='wing tank fuel volume when carrying design fuel plus fuel margin',
     default_value=0.0,
