@@ -3382,7 +3382,7 @@ add_meta_data(
     units='unitless',
     types=float,
     default_value=0.0,
-    desc='lift coefficent of body over lift coefficent of wing ratio',
+    desc='lift coefficient of body over lift coefficient of wing ratio',
 )
 
 add_meta_data(
