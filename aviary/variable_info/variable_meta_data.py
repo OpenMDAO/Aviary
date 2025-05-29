@@ -4441,7 +4441,7 @@ add_meta_data(
     meta_data=_MetaData,
     historical_name={'GASP': 'INGASP.HEBQDN', 'FLOPS': None, 'LEAPS1': None},
     units='unitless',
-    desc='percentage of nacelle diamter buried in fuselage over nacelle diameter',
+    desc='percentage of nacelle diameter buried in fuselage over nacelle diameter',
     default_value=0.0,
     multivalue=True,
 )
