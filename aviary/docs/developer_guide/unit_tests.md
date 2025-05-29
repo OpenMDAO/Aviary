@@ -73,7 +73,7 @@ data = prob.check_partials(out_stream=None, method="cs", step=1.01e-40)
 assert_check_partials(data, atol=1e-06, rtol=1e-06)
 ```
 
-Although the default method of `check_partials` is `fd` (finite difference), we prefer `cs` ([complex step](https://openmdao.org/newdocs/versions/latest/advanced_user_guide/complex_step.html) because it usally gives more accurate results.
+Although the default method of `check_partials` is `fd` (finite difference), we prefer `cs` ([complex step](https://openmdao.org/newdocs/versions/latest/advanced_user_guide/complex_step.html) because it usually gives more accurate results.
 
 ````{margin}
 ```{note}
