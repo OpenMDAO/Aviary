@@ -49,7 +49,7 @@ def round_it(x, sig=None):
 def write_markdown_variable_table(open_file, problem, outputs, metadata):
     """
     Writes a table of the provided variable names in outputs. Converts units to defaults
-    from metadata if avaliable.
+    from metadata if available.
 
     Parameters
     ----------
