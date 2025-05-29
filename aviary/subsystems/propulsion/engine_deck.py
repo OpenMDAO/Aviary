@@ -478,7 +478,7 @@ class EngineDeck(EngineModel):
 
         if RAM_DRAG in engine_variables and GROSS_THRUST in engine_variables:
             # Check that units are the same. Variables have already been checked for valid
-            # units, so it is assumed they are convertable. Prioritizes thrust units
+            # units, so it is assumed they are convertible. Prioritizes thrust units
             if engine_variables[RAM_DRAG] != engine_variables[GROSS_THRUST]:
                 data[RAM_DRAG] = convert_units(
                     original_data[RAM_DRAG],
