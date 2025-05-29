@@ -42,7 +42,7 @@ flight envelope
 homogeneous engines
     An individual engine or set of engines that all have identical performance characteristics.
     E.g. you might have four engines on an aircraft, but they are all assumed to have the same thrust, fuel consumption, etc.
-    All engines in a homogenous set use the same `EngineModel` object in Aviary.
+    All engines in a homogeneous set use the same `EngineModel` object in Aviary.
     See also; heterogeneous engines.
 
 heterogeneous engines
