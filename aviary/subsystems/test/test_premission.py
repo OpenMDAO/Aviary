@@ -118,7 +118,7 @@ class PreMissionTestCase(unittest.TestCase):
         # We set it to an unconverged value to test convergence.
         self.prob.set_val(Mission.Design.GROSS_MASS, val=1000.0)
 
-        # Set inital values for all variables.
+        # Set initial values for all variables.
         set_aviary_initial_values(self.prob, input_options)
 
         # Adjust WETTED_AREA_SCALER such that WETTED_AREA = 4000.0
