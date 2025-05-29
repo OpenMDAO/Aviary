@@ -227,7 +227,7 @@ def _biquad(T, i, xi, yi):
                 yc[j] = T[jy1]
                 jy1 = jy1 + 1
             # get coeff. in y sense
-            # coeffient routine - input y, y1, y2, y3, y4, ra_y, rb_y
+            # coefficient routine - input y, y1, y2, y3, y4, ra_y, rb_y
             p1 = yc[1] - yc[0]
             p2 = yc[2] - yc[1]
             p3 = yc[3] - yc[2]
