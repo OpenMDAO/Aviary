@@ -836,7 +836,7 @@ class EngineDeck(EngineModel):
     def build_mission(self, num_nodes, aviary_inputs, **kwargs) -> om.Group:
         """
         Creates interpolator objects to be added to mission-level propulsion subsystem.
-        Interpolators must be re-generated for each ODE due to potentialy different
+        Interpolators must be re-generated for each ODE due to potentially different
         num_nodes in each mission segment.
 
         Parameters
