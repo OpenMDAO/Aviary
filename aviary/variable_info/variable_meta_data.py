@@ -1111,6 +1111,8 @@ add_meta_data(
     units='lbm',
     desc='unit load device for cargo handling per passenger',
     default_value=0.0,
+    types=float,
+    option=True,
 )
 
 add_meta_data(
