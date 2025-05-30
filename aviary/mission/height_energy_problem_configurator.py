@@ -198,8 +198,8 @@ class HeightEnergyProblemConfigurator(ProblemConfiguratorBase):
             Subdictionary "user_options" from the phase_info.
         """
         time_units = 's'
-        initial = user_options['time_initial'][0]
-        duration = user_options['time_duration'][0]
+        initial = wrapped_convert_units(user_options['time_initial'], time_units)
+        duration = wrapped_convert_units(user_options['time_duration'], time_units)
         initial_bounds = wrapped_convert_units(user_options['time_initial_bounds'], time_units)
         duration_bounds = wrapped_convert_units(user_options['time_duration_bounds'], time_units)
         initial_ref = wrapped_convert_units(user_options['time_initial_ref'], time_units)

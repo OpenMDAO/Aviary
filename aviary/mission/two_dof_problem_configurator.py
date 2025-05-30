@@ -352,7 +352,7 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
             )
 
         elif 'descent' in phase_name:
-            duration_ref = user_options['time_duration_ref'][0]
+            duration_ref = wrapped_convert_units(user_options['time_duration_ref'], 's')
             phase.set_time_options(
                 duration_bounds=duration_bounds,
                 fix_initial=fix_initial,
@@ -364,7 +364,7 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
         else:
             # Make a good guess for a reasonable intitial time scaler.
             try:
-                initial_bounds = user_options['time_initial_bounds']
+                initial_bounds = wrapped_convert_units(user_options['time_initial_bounds'], 's')
             except KeyError:
                 initial_bounds = (None, None)
 
@@ -374,7 +374,7 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
             else:
                 time_initial_ref = 600.0
 
-            duration_bounds = user_options['time_duration_bounds'][0]
+            duration_bounds = wrapped_convert_units(user_options['time_duration_bounds'], 's')
             duration_ref = 0.5 * (duration_bounds[0] + duration_bounds[1])
 
             input_initial = phase_idx > 0
@@ -392,7 +392,7 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
                     fix_initial=fix_initial,
                     fix_duration=fix_duration,
                     units=time_units,
-                    duration_bounds=user_options['time_duration_bounds'][0],
+                    duration_bounds=duration_bounds,
                     duration_ref=duration_ref,
                     initial_ref=initial_ref,
                 )
@@ -402,10 +402,10 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
                     fix_initial=fix_initial,
                     fix_duration=fix_duration,
                     units=time_units,
-                    duration_bounds=user_options['time_duration_bounds'][0],
+                    duration_bounds=duration_bounds,
                     duration_ref=duration_ref,
                     initial_bounds=initial_bounds,
-                    initial_ref=user_options['time_initial_ref'][0],
+                    initial_ref=wrapped_convert_units(user_options['time_initial_ref'], 's')
                 )
 
         if 'cruise' not in phase_name:

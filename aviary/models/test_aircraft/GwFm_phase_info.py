@@ -1,7 +1,7 @@
 phase_info = {
     'pre_mission': {'include_takeoff': True, 'optimize_mass': True},
     'climb': {
-        'subsystem_options': {'core_aerodynamics': {'method': 'computed'}},
+        'subsystem_options': {'core_aerodynamics': {'method': 'cruise', 'solve_alpha': True}},
         'user_options': {
             'num_segments': 6,
             'order': 3,
@@ -21,7 +21,7 @@ phase_info = {
         },
     },
     'cruise': {
-        'subsystem_options': {'core_aerodynamics': {'method': 'computed'}},
+        'subsystem_options': {'core_aerodynamics': {'method': 'cruise', 'solve_alpha': True}},
         'user_options': {
             'num_segments': 1,
             'order': 3,
@@ -44,7 +44,7 @@ phase_info = {
         },
     },
     'descent': {
-        'subsystem_options': {'core_aerodynamics': {'method': 'computed'}},
+        'subsystem_options': {'core_aerodynamics': {'method': 'cruise', 'solve_alpha': True}},
         'user_options': {
             'num_segments': 5,
             'order': 3,
@@ -64,7 +64,7 @@ phase_info = {
         'initial_guesses': {'time': ([241, 30], 'min')},
     },
     'post_mission': {
-        'include_landing': True,
+        'include_landing': False,
         'constrain_range': True,
         'target_range': (3360.0, 'nmi'),
     },

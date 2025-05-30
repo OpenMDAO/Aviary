@@ -173,7 +173,7 @@ class AviaryOptionsDictionary(om.OptionsDictionary):
         default = defaults.get(name, None)
         desc = f'Tuple of (value, units) containing value of {state_name} '
         desc += 'at the start of the phase.\n'
-        desc += 'When unspecified, the value comes from upstream.\n'
+        desc += 'When unspecified, the optimizer controls the value.\n'
         desc += f'When specified, a constraint is created on the initial {state_name}.'
         self.declare(
             name=name,
@@ -281,6 +281,17 @@ class AviaryOptionsDictionary(om.OptionsDictionary):
         if defaults is None:
             defaults = {}
 
+        name = f'{ctrl_name}_optimize'
+        default = defaults.get(name, True)
+        desc = f'When True, the optimizer will set this value. When False, the initial value '
+        desc += 'for all nodes can be set in the initial_conditions section of the phase.'
+        self.declare(
+            name=name,
+            default=default,
+            types=bool,
+            desc=desc,
+        )
+
         name = f'{ctrl_name}_initial'
         default = defaults.get(name, None)
         desc = f'Tuple of (value, units) containing value of {ctrl_name} '
@@ -358,17 +369,6 @@ class AviaryOptionsDictionary(om.OptionsDictionary):
             default=default,
             types=int,
             allow_none=True,
-            desc=desc,
-        )
-
-        name = f'{ctrl_name}_optimize'
-        default = defaults.get(name, True)
-        desc = f'When True, the optimizer will set this value. When False, the initial value '
-        desc += 'can be set by the user in the initial_conditions section of the phase.'
-        self.declare(
-            name=name,
-            default=default,
-            types=bool,
             desc=desc,
         )
 
