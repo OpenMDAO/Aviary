@@ -7,68 +7,61 @@ phase_info = {
     'climb': {
         'subsystem_options': {'core_aerodynamics': {'method': 'computed'}},
         'user_options': {
-            'optimize_mach': False,
-            'optimize_altitude': False,
             'num_segments': 5,
             'order': 3,
-            'solve_for_distance': False,
-            'initial_mach': (0.2, 'unitless'),
-            'final_mach': (0.72, 'unitless'),
+            'mach_optimize': False,
+            'mach_initial': (0.2, 'unitless'),
+            'mach_final': (0.72, 'unitless'),
             'mach_bounds': ((0.18, 0.74), 'unitless'),
-            'initial_altitude': (0.0, 'ft'),
-            'final_altitude': (32000.0, 'ft'),
+            'mach_polynomial_order': 3,
+            'altitude_optimize': False,
+            'altitude_initial': (0.0, 'ft'),
+            'altitude_final': (32000.0, 'ft'),
             'altitude_bounds': ((0.0, 34000.0), 'ft'),
+            'altitude_polynomial_order': 3,
             'throttle_enforcement': 'path_constraint',
-            'fix_initial': True,
-            'constrain_final': False,
-            'fix_duration': False,
-            'initial_bounds': ((0.0, 0.0), 'min'),
-            'duration_bounds': ((64.0, 192.0), 'min'),
-            'add_initial_mass_constraint': False,
+            'time_initial_bounds': ((0.0, 0.0), 'min'),
+            'time_duration_bounds': ((64.0, 192.0), 'min'),
         },
     },
     'cruise': {
         'subsystem_options': {'core_aerodynamics': {'method': 'computed'}},
         'user_options': {
-            'optimize_mach': False,
-            'optimize_altitude': False,
             'num_segments': 5,
             'order': 3,
-            'solve_for_distance': False,
-            'initial_mach': (0.72, 'unitless'),
-            'final_mach': (0.72, 'unitless'),
+            'mach_optimize': False,
+            'mach_initial': (0.72, 'unitless'),
+            'mach_final': (0.72, 'unitless'),
             'mach_bounds': ((0.7, 0.74), 'unitless'),
-            'initial_altitude': (32000.0, 'ft'),
-            'final_altitude': (34000.0, 'ft'),
+            'mach_polynomial_order': 3,
+            'altitude_optimize': False,
+            'altitude_initial': (32000.0, 'ft'),
+            'altitude_final': (34000.0, 'ft'),
             'altitude_bounds': ((23000.0, 38000.0), 'ft'),
+            'altitude_polynomial_order': 3,
             'throttle_enforcement': 'boundary_constraint',
-            'fix_initial': False,
-            'constrain_final': False,
-            'fix_duration': False,
-            'initial_bounds': ((64.0, 192.0), 'min'),
-            'duration_bounds': ((56.5, 169.5), 'min'),
+            'time_initial_bounds': ((64.0, 192.0), 'min'),
+            'time_duration_bounds': ((56.5, 169.5), 'min'),
         },
     },
     'descent': {
         'subsystem_options': {'core_aerodynamics': {'method': 'computed'}},
         'user_options': {
-            'optimize_mach': False,
-            'optimize_altitude': False,
             'num_segments': 5,
             'order': 3,
-            'solve_for_distance': False,
-            'initial_mach': (0.72, 'unitless'),
-            'final_mach': (0.36, 'unitless'),
+            'mach_optimize': False,
+            'mach_initial': (0.72, 'unitless'),
+            'mach_final': (0.36, 'unitless'),
             'mach_bounds': ((0.34, 0.74), 'unitless'),
-            'initial_altitude': (34000.0, 'ft'),
-            'final_altitude': (500.0, 'ft'),
+            'mach_polynomial_order': 3,
+            'altitude_optimize': False,
+            'altitude_initial': (34000.0, 'ft'),
+            'altitude_final': (500.0, 'ft'),
             'altitude_bounds': ((0.0, 38000.0), 'ft'),
+            'altitude_polynomial_order': 3,
             'throttle_enforcement': 'path_constraint',
-            'fix_initial': False,
-            'constrain_final': True,
-            'fix_duration': False,
-            'initial_bounds': ((120.5, 361.5), 'min'),
-            'duration_bounds': ((29.0, 87.0), 'min'),
+            'time_initial_bounds': ((120.5, 361.5), 'min'),
+            'time_duration_bounds': ((29.0, 87.0), 'min'),
         },
     },
     'post_mission': {
@@ -113,17 +106,75 @@ def phase_info_parameterization(phase_info, post_mission_info, aviary_inputs):
     # Altitude
     old_alt_cruise = 32000.0
     if alt_cruise != old_alt_cruise:
-        phase_info['climb']['user_options']['final_altitude'] = (alt_cruise, 'ft')
-        phase_info['cruise']['user_options']['initial_altitude'] = (alt_cruise, 'ft')
-        phase_info['cruise']['user_options']['final_altitude'] = (alt_cruise, 'ft')
-        phase_info['descent']['user_options']['initial_altitude'] = (alt_cruise, 'ft')
+        new_alt = (alt_cruise, 'ft')
+
+        climb = phase_info['climb']
+        user = climb['user_options']
+        if 'altitude_final' in user and user['altitude_final'][0] is not None:
+            user['altitude_final'] = new_alt
+
+        if 'initial_guesses' in climb and 'altitude' in climb['initial_guesses']:
+            if climb['initial_guesses']['altitude'][0] is not None:
+                init = climb['initial_guesses']['altitude'][0][0]
+                climb['initial_guesses']['altitude'] = ([init, alt_cruise], 'ft')
+
+        cruise = phase_info['cruise']
+        user = cruise['user_options']
+        if 'altitude_initial' in user and user['altitude_initial'][0] is not None:
+            user['altitude_initial'] = new_alt
+
+        if 'altitude_final' in user and user['altitude_final'][0] is not None:
+            user['altitude_final'] = new_alt
+
+        if 'initial_guesses' in cruise and 'altitude' in cruise['initial_guesses']:
+            if cruise['initial_guesses']['altitude'][0] is not None:
+                cruise['initial_guesses']['altitude'] = ([alt_cruise, alt_cruise], 'ft')
+
+        descent = phase_info['descent']
+        user = descent['user_options']
+        if 'altitude_initial' in user and user['altitude_initial'][0] is not None:
+            user['altitude_initial'] = new_alt
+
+        if 'initial_guesses' in descent and 'altitude' in descent['initial_guesses']:
+            if descent['initial_guesses']['altitude'][0] is not None:
+                final = climb['initial_guesses']['altitude'][0][0]
+                descent['initial_guesses']['altitude'] = ([alt_cruise, final], 'ft')
 
     # Mach
     old_mach_cruise = 0.72
     if mach_cruise != old_mach_cruise:
-        phase_info['climb']['user_options']['final_mach'] = (mach_cruise, 'unitless')
-        phase_info['cruise']['user_options']['initial_mach'] = (mach_cruise, 'unitless')
-        phase_info['cruise']['user_options']['final_mach'] = (mach_cruise, 'unitless')
-        phase_info['descent']['user_options']['initial_mach'] = (mach_cruise, 'unitless')
+        new_mach = (mach_cruise, 'unitless')
+
+        climb = phase_info['climb']
+        user = climb['user_options']
+        if 'mach_final' in user and user['mach_final'][0] is not None:
+            user['mach_final'] = new_mach
+
+        if 'initial_guesses' in climb and 'mach' in climb['initial_guesses']:
+            if climb['initial_guesses']['mach'][0] is not None:
+                init = climb['initial_guesses']['mach'][0][0]
+                climb['initial_guesses']['mach'] = ([init, mach_cruise], 'unitless')
+
+        cruise = phase_info['cruise']
+        user = cruise['user_options']
+        if 'mach_initial' in user and user['mach_initial'][0] is not None:
+            user['mach_initial'] = new_mach
+
+        if 'mach_final' in user and user['mach_final'][0] is not None:
+            user['mach_final'] = new_mach
+
+        if 'initial_guesses' in cruise and 'mach' in cruise['initial_guesses']:
+            if cruise['initial_guesses']['mach'][0] is not None:
+                cruise['initial_guesses']['mach'] = ([mach_cruise, mach_cruise], 'unitless')
+
+        descent = phase_info['descent']
+        user = descent['user_options']
+        if 'mach_initial' in user and user['mach_initial'][0] is not None:
+            user['mach_initial'] = new_mach
+
+        if 'initial_guesses' in descent and 'mach' in descent['initial_guesses']:
+            if descent['initial_guesses']['mach'][0] is not None:
+                final = climb['initial_guesses']['mach'][0][0]
+                descent['initial_guesses']['mach'] = ([mach_cruise, final], 'unitless')
 
     return phase_info, post_mission_info

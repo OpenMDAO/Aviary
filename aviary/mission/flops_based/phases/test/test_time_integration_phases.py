@@ -137,7 +137,7 @@ class HE_SGMDescentTestCase(unittest.TestCase):
 
     # def test_takeoff(self):
     #     initial_values_takeoff = {
-    #         "traj.altitude_initial": {'val': 0, 'units': "ft"},
+    #         "traj.altitude_initial": {'val': 0, 'units': 'ft'},
     #         "traj.mass_initial": {'val': 171000, 'units': "lbm"},
     #         "traj.distance_initial": {'val': 0, 'units': "NM"},
     #         "traj.velocity": {'val': .1, 'units': "m/s"},
@@ -184,7 +184,7 @@ class HE_SGMDescentTestCase(unittest.TestCase):
 
     # def test_landing(self):
     #     initial_values_landing = {
-    #         "traj.altitude_initial": {'val': 35000, 'units': "ft"},
+    #         "traj.altitude_initial": {'val': 35000, 'units': 'ft'},
     #         "traj.mass_initial": {'val': 171000, 'units': "lbm"},
     #         "traj.distance_initial": {'val': 0, 'units': "NM"},
     #         "traj.velocity": {'val': 300, 'units': "m/s"},

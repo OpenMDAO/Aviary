@@ -24,74 +24,72 @@ class AircraftMissionTestSuite(unittest.TestCase):
             'climb': {
                 'subsystem_options': {'core_aerodynamics': {'method': 'computed'}},
                 'user_options': {
-                    'optimize_mach': False,
-                    'optimize_altitude': False,
-                    'polynomial_control_order': 1,
                     'num_segments': 5,
                     'order': 3,
-                    'solve_for_distance': False,
-                    'initial_mach': (0.2, 'unitless'),
-                    'final_mach': (0.72, 'unitless'),
+                    'mach_optimize': False,
+                    'mach_initial': (0.2, 'unitless'),
                     'mach_bounds': ((0.18, 0.74), 'unitless'),
-                    'initial_altitude': (0.0, 'ft'),
-                    'final_altitude': (32000.0, 'ft'),
+                    'mach_polynomial_order': 1,
+                    'altitude_optimize': False,
+                    'altitude_initial': (0.0, 'ft'),
                     'altitude_bounds': ((0.0, 34000.0), 'ft'),
+                    'altitude_polynomial_order': 1,
                     'throttle_enforcement': 'path_constraint',
-                    'fix_initial': True,
-                    'constrain_final': False,
-                    'fix_duration': False,
-                    'initial_bounds': ((0.0, 0.0), 'min'),
-                    'duration_bounds': ((64.0, 192.0), 'min'),
+                    'time_initial': (0.0, 's'),
+                    'time_initial_bounds': ((0.0, 0.0), 'min'),
+                    'time_duration_bounds': ((64.0, 192.0), 'min'),
                 },
-                'initial_guesses': {'time': ([0, 128], 'min')},
+                'initial_guesses': {
+                    'time': ([0, 128], 'min'),
+                    'mach': ([0.2, 0.72], 'unitless'),
+                    'altitude': ([0, 32000.0], 'ft'),
+                },
             },
             'cruise': {
                 'subsystem_options': {'core_aerodynamics': {'method': 'computed'}},
                 'user_options': {
-                    'optimize_mach': False,
-                    'optimize_altitude': False,
-                    'polynomial_control_order': 1,
                     'num_segments': 5,
                     'order': 3,
-                    'solve_for_distance': False,
-                    'initial_mach': (0.72, 'unitless'),
-                    'final_mach': (0.72, 'unitless'),
+                    'mach_optimize': False,
+                    'mach_initial': (0.72, 'unitless'),
                     'mach_bounds': ((0.7, 0.74), 'unitless'),
-                    'initial_altitude': (32000.0, 'ft'),
-                    'final_altitude': (34000.0, 'ft'),
+                    'mach_polynomial_order': 1,
+                    'altitude_optimize': False,
+                    'altitude_initial': (32000.0, 'ft'),
                     'altitude_bounds': ((23000.0, 38000.0), 'ft'),
+                    'altitude_polynomial_order': 1,
                     'throttle_enforcement': 'boundary_constraint',
-                    'fix_initial': False,
-                    'constrain_final': False,
-                    'fix_duration': False,
-                    'initial_bounds': ((64.0, 192.0), 'min'),
-                    'duration_bounds': ((56.5, 169.5), 'min'),
+                    'time_initial_bounds': ((64.0, 192.0), 'min'),
+                    'time_duration_bounds': ((56.5, 169.5), 'min'),
                 },
-                'initial_guesses': {'time': ([128, 113], 'min')},
+                'initial_guesses': {
+                    'time': ([128, 113], 'min'),
+                    'mach': ([0.72, 0.72], 'unitless'),
+                    'altitude': ([32000, 34000.0], 'ft'),
+                },
             },
             'descent': {
                 'subsystem_options': {'core_aerodynamics': {'method': 'computed'}},
                 'user_options': {
-                    'optimize_mach': False,
-                    'optimize_altitude': False,
-                    'polynomial_control_order': 1,
                     'num_segments': 5,
                     'order': 3,
-                    'solve_for_distance': False,
-                    'initial_mach': (0.72, 'unitless'),
-                    'final_mach': (0.36, 'unitless'),
+                    'mach_optimize': False,
+                    'mach_initial': (0.72, 'unitless'),
+                    'mach_final': (0.36, 'unitless'),
                     'mach_bounds': ((0.34, 0.74), 'unitless'),
-                    'initial_altitude': (34000.0, 'ft'),
-                    'final_altitude': (500.0, 'ft'),
+                    'mach_polynomial_order': 1,
+                    'altitude_optimize': False,
+                    'altitude_initial': (34000.0, 'ft'),
+                    'altitude_final': (500.0, 'ft'),
                     'altitude_bounds': ((0.0, 38000.0), 'ft'),
+                    'altitude_polynomial_order': 1,
                     'throttle_enforcement': 'path_constraint',
-                    'fix_initial': False,
-                    'constrain_final': True,
-                    'fix_duration': False,
-                    'initial_bounds': ((120.5, 361.5), 'min'),
-                    'duration_bounds': ((29.0, 87.0), 'min'),
+                    'time_initial_bounds': ((120.5, 361.5), 'min'),
+                    'time_duration_bounds': ((29.0, 87.0), 'min'),
                 },
-                'initial_guesses': {'time': ([241, 58], 'min')},
+                'initial_guesses': {
+                    'time': ([241, 58], 'min'),
+                },
             },
             'post_mission': {
                 'include_landing': False,
@@ -162,20 +160,20 @@ class AircraftMissionTestSuite(unittest.TestCase):
 
     @require_pyoptsparse(optimizer='IPOPT')
     def test_mission_optimize_mach_only(self):
-        # Test with optimize_mach flag set to True
+        # Test with mach_optimize flag set to True
         modified_phase_info = self.phase_info.copy()
         for phase in ['climb', 'cruise', 'descent']:
-            modified_phase_info[phase]['user_options']['optimize_mach'] = True
+            modified_phase_info[phase]['user_options']['mach_optimize'] = True
         prob = self.run_mission(modified_phase_info, 'IPOPT')
         self.assertTrue(prob.problem_ran_successfully)
 
     @require_pyoptsparse(optimizer='IPOPT')
     def test_mission_optimize_altitude_and_mach(self):
-        # Test with optimize_altitude flag set to True
+        # Test with altitude_optimize flag set to True
         modified_phase_info = self.phase_info.copy()
         for phase in ['climb', 'cruise', 'descent']:
-            modified_phase_info[phase]['user_options']['optimize_altitude'] = True
-            modified_phase_info[phase]['user_options']['optimize_mach'] = True
+            modified_phase_info[phase]['user_options']['altitude_optimize'] = True
+            modified_phase_info[phase]['user_options']['mach_optimize'] = True
         modified_phase_info['climb']['user_options']['constraints'] = {
             Dynamic.Vehicle.Propulsion.THROTTLE: {
                 'lower': 0.2,
@@ -204,26 +202,26 @@ class AircraftMissionTestSuite(unittest.TestCase):
                 self.assertEqual(meta['lower'], 0.2)
 
     @require_pyoptsparse(optimizer='IPOPT')
-    def test_mission_optimize_altitude_only(self):
-        # Test with optimize_altitude flag set to True
+    def test_mission_altitude_optimize_only(self):
+        # Test with altitude_optimize flag set to True
         modified_phase_info = self.phase_info.copy()
         for phase in ['climb', 'cruise', 'descent']:
-            modified_phase_info[phase]['user_options']['optimize_altitude'] = True
+            modified_phase_info[phase]['user_options']['altitude_optimize'] = True
         prob = self.run_mission(modified_phase_info, 'IPOPT')
         self.assertTrue(prob.problem_ran_successfully)
 
     @require_pyoptsparse(optimizer='IPOPT')
-    def test_mission_solve_for_distance_IPOPT(self):
+    def test_mission_distance_solve_segments_IPOPT(self):
         modified_phase_info = self.phase_info.copy()
         for phase in ['climb', 'cruise', 'descent']:
-            modified_phase_info[phase]['user_options']['solve_for_distance'] = True
+            modified_phase_info[phase]['user_options']['distance_solve_segments'] = True
         prob = self.run_mission(modified_phase_info, 'IPOPT')
         self.assertTrue(prob.problem_ran_successfully)
 
-    def test_mission_solve_for_distance_SLSQP(self):
+    def test_mission_distance_solve_segments_SLSQP(self):
         modified_phase_info = self.phase_info.copy()
         for phase in ['climb', 'cruise', 'descent']:
-            modified_phase_info[phase]['user_options']['solve_for_distance'] = True
+            modified_phase_info[phase]['user_options']['distance_solve_segments'] = True
         prob = self.run_mission(modified_phase_info, 'SLSQP')
         self.assertTrue(prob.problem_ran_successfully)
 

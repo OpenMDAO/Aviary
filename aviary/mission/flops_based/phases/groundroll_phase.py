@@ -53,7 +53,7 @@ class GroundrollPhaseOptions(AviaryOptionsDictionary):
         )
 
         self.declare(
-            'initial_bounds',
+            'time_initial_bounds',
             types=tuple,
             default=(0.0, 100.0),
             units='kn',
@@ -61,7 +61,7 @@ class GroundrollPhaseOptions(AviaryOptionsDictionary):
         )
 
         self.declare(
-            name='duration_bounds',
+            name='time_duration_bounds',
             types=tuple,
             default=(0.0, 3600.0),
             units='kn',
@@ -71,14 +71,14 @@ class GroundrollPhaseOptions(AviaryOptionsDictionary):
         )
 
         self.declare(
-            name='initial_ref',
+            name='time_initial_ref',
             default=100.0,
             units='kn',
             desc='Scale factor ref for the phase starting time.',
         )
 
         self.declare(
-            name='duration_ref',
+            name='time_duration_ref',
             types=tuple,
             default=100.0,
             units='kn',
@@ -138,8 +138,8 @@ class GroundrollPhase(PhaseBuilderBase):
 
         user_options: AviaryValues = self.user_options
 
-        duration_bounds = user_options.get_val('duration_bounds', units='kn')
-        duration_ref = user_options.get_val('duration_ref', units='kn')
+        duration_bounds = user_options.get_val('time_duration_bounds', units='kn')
+        duration_ref = user_options.get_val('time_duration_ref', units='kn')
         constraints = user_options.get_val('constraints')
 
         phase.set_time_options(

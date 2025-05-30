@@ -26,11 +26,6 @@ import numpy as np
 import openmdao.api as om
 from dymos.transcriptions.transcription_base import TranscriptionBase
 
-if hasattr(TranscriptionBase, 'setup_polynomial_controls'):
-    use_new_dymos_syntax = False
-else:
-    use_new_dymos_syntax = True
-
 
 class InitialGuess:
     """
@@ -126,10 +121,7 @@ class InitialGuessPolynomialControl(InitialGuess):
 
     def _get_complete_key(self, traj_name, phase_name):
         """Compose the complete key for setting the polynomial control initial guess."""
-        if use_new_dymos_syntax:
-            key = f'{traj_name}.{phase_name}.controls:{self.key}'
-        else:
-            key = f'{traj_name}.{phase_name}.polynomial_controls:{self.key}'
+        key = f'{traj_name}.{phase_name}.controls:{self.key}'
         return key
 
 
