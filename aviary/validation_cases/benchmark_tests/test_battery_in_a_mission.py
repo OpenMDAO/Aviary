@@ -176,7 +176,7 @@ class TestSubsystemsMission(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    # unittest.main()
-    test = TestSubsystemsMission()
-    test.setUp()
-    test.test_subsystems_in_a_mission()
+    unittest.main()
+    # test = TestSubsystemsMission()
+    # test.setUp()
+    # test.test_subsystems_in_a_mission()

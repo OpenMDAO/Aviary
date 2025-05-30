@@ -1,6 +1,6 @@
 """
 This is a slightly more complex Aviary example of running a coupled aircraft design-mission optimization.
-It runs the same mission as the `run_basic_aviary_example.py` script, but it uses the AviaryProblem class to set up the problem.
+It runs the same mission as the `level1_example.py` script, but it uses the AviaryProblem class to set up the problem.
 This exposes more options and flexibility to the user and uses the "Level 2" API within Aviary.
 
 We define a `phase_info` object, which tells Aviary how to model the mission.

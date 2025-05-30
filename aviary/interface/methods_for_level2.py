@@ -315,10 +315,25 @@ class AviaryProblem(om.Problem):
         ## Set Up Core Subsystems ##
         prop = CorePropulsionBuilder('core_propulsion', engine_models=self.engine_builders)
         mass = CoreMassBuilder('core_mass', code_origin=self.mass_method)
-        aero = CoreAerodynamicsBuilder('core_aerodynamics', code_origin=self.aero_method)
 
-        # TODO These values are currently hardcoded, in future should come from user?
-        code_origin_to_prioritize = None
+        # If all phases ask for tabular aero, we can skip pre-mission. Check phase_info
+        tabular = False
+        for phase in self.phase_info:
+            if phase not in ('pre_mission', 'post_mission'):
+                try:
+                    if (
+                        'tabular'
+                        in self.phase_info[phase]['subsystem_options']['core_aerodynamics'][
+                            'method'
+                        ]
+                    ):
+                        tabular = True
+                except KeyError:
+                    tabular = False
+
+        aero = CoreAerodynamicsBuilder(
+            'core_aerodynamics', code_origin=self.aero_method, tabular=tabular
+        )
 
         # which geometry methods should be used?
         geom_code_origin = None
@@ -703,10 +718,18 @@ class AviaryProblem(om.Problem):
             all_subsystems = self._get_all_subsystems(
                 self.phase_info[phase_name]['external_subsystems']
             )
+
+            subsystem_options = phase_info[phase_name].get('subsystem_options', {})
+
             for subsystem in all_subsystems:
+                if subsystem.name in subsystem_options:
+                    kwargs = subsystem_options[subsystem.name]
+                else:
+                    kwargs = {}
                 parameter_dict = subsystem.get_parameters(
                     phase_info=self.phase_info[phase_name],
                     aviary_inputs=self.aviary_inputs,
+                    **kwargs,
                 )
                 for parameter in parameter_dict:
                     external_parameters[phase_name][parameter] = parameter_dict[parameter]

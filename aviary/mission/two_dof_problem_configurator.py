@@ -417,7 +417,15 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
             )
 
         # TODO: This seems like a hack. We might want to find a better way.
-        prob.phase_info[phase_name]['phase_type'] = phase_name
+        #       The issue is that aero methods are hardcoded for GASP mission phases
+        #       instead of being defaulted somewhere, so they don't use phase_info
+        # prob.phase_info[phase_name]['phase_type'] = phase_name
+        if phase_name in ['ascent', 'groundroll', 'rotation']:
+            # safely add in default method in way that doesn't overwrite existing method
+            # and create nested structure if it doesn't already exist
+            prob.phase_info[phase_name].setdefault('subsystem_options', {}).setdefault(
+                'core_aerodynamics', {}
+            ).setdefault('method', 'low_speed')
 
     def link_phases(self, prob, phases, connect_directly=True):
         """

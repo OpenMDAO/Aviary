@@ -14,7 +14,9 @@ from aviary.variable_info.variables import Aircraft
 
 class EngineDeckTest(unittest.TestCase):
     def test_flight_idle(self):
-        tol = 1e-6
+        # original test data was created with old version of converted GASP engine deck w/o
+        # rounding, so tol must be lower here for comparison with modern engine
+        tol = 1e-4
 
         aviary_values = get_flops_inputs('LargeSingleAisle2FLOPS')
         # Test data grabbed from LEAPS uses the global throttle approach

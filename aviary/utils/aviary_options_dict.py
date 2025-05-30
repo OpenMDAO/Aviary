@@ -267,7 +267,7 @@ class AviaryOptionsDictionary(om.OptionsDictionary):
         Adds all options needed for a control variable.
 
         For a control named mach, these are mach_initial, mach_final, mach_bounds, mach_ref,
-        mach_ref0, mach_defect_ref, mach_solve_segments.
+        mach_ref0, mach_polynomial_order, mach_optimize, mach_rate_constraint.
 
         Parameters
         ----------
