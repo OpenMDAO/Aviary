@@ -23,6 +23,7 @@ from openmdao.utils.units import valid_units
 
 from aviary.utils.aviary_values import AviaryValues, get_keys
 from aviary.utils.functions import convert_strings_to_data, get_path
+from aviary.utils.preprocessors import remove_preprocessed_options
 from aviary.variable_info.enums import ProblemType, Verbosity
 from aviary.variable_info.options import get_option_defaults
 from aviary.variable_info.variable_meta_data import _MetaData
@@ -71,6 +72,7 @@ def create_vehicle(vehicle_deck='', meta_data=_MetaData, verbosity=Verbosity.BRI
         verbosity = Verbosity.BRIEF
 
     aircraft_values = get_option_defaults(engine=False)
+    remove_preprocessed_options(aircraft_values)
 
     # TODO remove all hardcoded GASP values here, find appropriate place for them
     aircraft_values.set_val('INGASP.JENGSZ', val=4)

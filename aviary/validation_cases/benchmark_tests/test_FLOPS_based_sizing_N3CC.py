@@ -7,6 +7,7 @@ Includes:
   N3CC data
 """
 
+from copy import deepcopy
 import unittest
 
 import numpy as np
@@ -25,9 +26,9 @@ from aviary.variable_info.variables import Mission
 # benchmark for simple sizing problem on the N3CC
 def run_trajectory(sim=True):
     prob = AviaryProblem()
+    local_phase_info = deepcopy(phase_info)
 
-    # load_inputs needs to be updated to accept an already existing aviary options
-    prob.load_inputs('models/N3CC/N3CC_FLOPS.csv', phase_info)
+    prob.load_inputs('models/N3CC/N3CC_FLOPS.csv', local_phase_info)
 
     ##########################################
     # Aircraft Input Variables and Options   #

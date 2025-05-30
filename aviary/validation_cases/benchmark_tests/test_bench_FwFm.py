@@ -15,10 +15,11 @@ except ImportError:
     PETScVector = None
 
 
+@use_tempdirs
 class ProblemPhaseTestCase(unittest.TestCase):
     """
     Setup of a large single aisle commercial transport aircraft using
-    FLOPS mass method and HEIGHT_ENERGY mission method. Expected outputs based
+    FLOPS mass and aero method and HEIGHT_ENERGY mission method. Expected outputs based
     on 'models/test_aircraft/aircraft_for_bench_FwFm.csv' model.
     """
 
@@ -34,11 +35,11 @@ class ProblemPhaseTestCase(unittest.TestCase):
                 [793.22306972], [845.99999224], [845.99999224], [966.85375884], [1133.60729014],
                 [1186.38421266], [1186.38421266], [1279.53480393], [1408.06360758], [1448.74253449],
                 [1448.74253449], [1492.50521853], [1552.88879042], [1571.99998447], [1571.99998447],
-                [10224.87383109], [22164.07366288], [25942.78958866], [25942.78958866], 
-                [26009.11685074], [26100.63493484], [26129.60009555], [26129.60009555], 
-                [26265.05921709], [26451.96515722], [26511.12024823], [26511.12024823], 
-                [26672.16774132], [26894.38041154], [26964.7099619], [26964.7099619], 
-                [27100.16908344], [27287.07502357], [27346.23011458], [27346.23011458], 
+                [10224.87383109], [22164.07366288], [25942.78958866], [25942.78958866],
+                [26009.11685074], [26100.63493484], [26129.60009555], [26129.60009555],
+                [26265.05921709], [26451.96515722], [26511.12024823], [26511.12024823],
+                [26672.16774132], [26894.38041154], [26964.7099619], [26964.7099619],
+                [27100.16908344], [27287.07502357], [27346.23011458], [27346.23011458],
                 [27412.55737667], [27504.07546076], [27533.04062147]
             ]
         )
@@ -200,7 +201,6 @@ class ProblemPhaseTestCase(unittest.TestCase):
         _clear_problem_names()  # need to reset these to simulate separate runs
 
 
-@use_tempdirs
 class TestBenchFwFmSerial(ProblemPhaseTestCase):
     """Run the model in serial that is setup in ProblemPhaseTestCase class."""
 
@@ -235,7 +235,6 @@ class TestBenchFwFmSerial(ProblemPhaseTestCase):
         self.assertGreater(overall_fuel, 40000.0)
 
 
-@use_tempdirs
 @unittest.skipUnless(MPI and PETScVector, 'MPI and PETSc are required.')
 class TestBenchFwFmParallel(ProblemPhaseTestCase):
     """Run the model in parallel that is setup in ProblemPhaseTestCase class."""

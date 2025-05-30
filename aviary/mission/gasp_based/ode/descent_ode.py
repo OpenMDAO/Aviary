@@ -50,6 +50,7 @@ class DescentODE(TwoDOFODE):
         analysis_scheme = self.options['analysis_scheme']
         aviary_options = self.options['aviary_options']
         core_subsystems = self.options['core_subsystems']
+        subsystem_options = self.options['subsystem_options']
         input_speed_type = self.options['input_speed_type']
 
         flight_condition_group = self
@@ -194,6 +195,9 @@ class DescentODE(TwoDOFODE):
         kwargs = {'num_nodes': nn, 'aviary_inputs': aviary_options, 'method': 'cruise'}
         # collect the propulsion group names for later use
         for subsystem in core_subsystems:
+            # check if subsystem_options has entry for a subsystem of this name
+            if subsystem.name in subsystem_options:
+                kwargs.update(subsystem_options[subsystem.name])
             system = subsystem.build_mission(**kwargs)
             if system is not None:
                 if isinstance(subsystem, AerodynamicsBuilderBase):

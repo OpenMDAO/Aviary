@@ -14,8 +14,8 @@ from aviary.variable_info.variables import Aircraft, Mission
 class ProblemPhaseTestCase(unittest.TestCase):
     """
     Test the setup and run of a large single aisle commercial transport aircraft using
-    FLOPS mass method and TWO_DEGREES_OF_FREEDOM mission method. Expected outputs
-    based on 'models/test_aircraft/aircraft_for_bench_FwFm.csv' model.
+    FLOPS mass method, GASP aero method, and TWO_DEGREES_OF_FREEDOM mission method.
+    Expected outputs based on 'models/test_aircraft/aircraft_for_bench_FwFm.csv' model.
     """
 
     def setUp(self):
@@ -41,9 +41,7 @@ class ProblemPhaseTestCase(unittest.TestCase):
 
         assert_near_equal(prob.get_val(Mission.Summary.TOTAL_FUEL_MASS), 39979.0, tolerance=rtol)
 
-        assert_near_equal(
-            prob.get_val('landing.' + Mission.Landing.GROUND_DISTANCE), 2595.0, tolerance=rtol
-        )
+        assert_near_equal(prob.get_val(Mission.Landing.GROUND_DISTANCE), 2595.0, tolerance=rtol)
 
         assert_near_equal(
             prob.get_val('traj.desc2.timeseries.distance')[-1], 3675.0, tolerance=rtol
@@ -78,5 +76,5 @@ class ProblemPhaseTestCase(unittest.TestCase):
 if __name__ == '__main__':
     test = ProblemPhaseTestCase()
     test.setUp()
-    test.bench_test_swap_3_FwGm_SNOPT()
-    # test.bench_test_swap_3_FwGm_IPOPT()
+    # test.bench_test_swap_3_FwGm_SNOPT()
+    test.bench_test_swap_3_FwGm_IPOPT()

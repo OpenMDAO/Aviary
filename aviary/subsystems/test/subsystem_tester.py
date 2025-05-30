@@ -102,11 +102,13 @@ class TestSubsystemBuilderBase(unittest.TestCase):
                 msg='The returned object from `build_pre_mission` is not an OpenMDAO System.',
             )
 
-    def test_build_mission(self):
+    def test_build_mission(self, **kwargs):
         if not hasattr(self, 'aviary_values'):
             self.aviary_values = AviaryValues()
         # Test that the method returns an OpenMDAO System object
-        mission_sys = self.subsystem_builder.build_mission(10, aviary_inputs=self.aviary_values)
+        mission_sys = self.subsystem_builder.build_mission(
+            10, aviary_inputs=self.aviary_values, **kwargs
+        )
         if mission_sys is not None:
             self.assertIsInstance(
                 mission_sys, System, 'The method should return an OpenMDAO System object.'
@@ -169,13 +171,13 @@ class TestSubsystemBuilderBase(unittest.TestCase):
                 "The dictionaries returned by get_design_vars() should have an 'upper' key",
             )
 
-    def test_get_parameters(self):
+    def test_get_parameters(self, **kwargs):
         if not hasattr(self, 'aviary_values'):
             self.aviary_values = AviaryValues()
 
         # Verify that the method returns a dictionary
         parameters = self.subsystem_builder.get_parameters(
-            aviary_inputs=self.aviary_values, phase_info={}
+            aviary_inputs=self.aviary_values, **kwargs
         )
         self.assertIsInstance(parameters, dict, 'get_parameters() should return a dictionary')
 
@@ -348,12 +350,12 @@ class TestSubsystemBuilderBase(unittest.TestCase):
                 mass_var_exists, f"Mass variable '{name}' not found in the pre-mission model."
             )
 
-    def test_check_parameters(self):
+    def test_check_parameters(self, **kwargs):
         if not hasattr(self, 'aviary_values'):
             self.aviary_values = AviaryValues()
 
         parameters = self.subsystem_builder.get_parameters(
-            aviary_inputs=self.aviary_values, phase_info={}
+            aviary_inputs=self.aviary_values, **kwargs
         )
 
         mission_sys = self.subsystem_builder.build_mission(
