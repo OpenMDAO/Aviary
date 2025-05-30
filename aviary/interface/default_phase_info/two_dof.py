@@ -299,7 +299,7 @@ phase_info = {
 
 def phase_info_parameterization(phase_info, post_mission_info, aviary_inputs):
     """
-    Modify the values in the phase_info dictionary to accomodate different values
+    Modify the values in the phase_info dictionary to accommodate different values
     for the following mission design inputs: cruise altitude, cruise Mach number,
     cruise range, design gross mass.
 

@@ -72,7 +72,7 @@ def register_custom_reports():
 
 def run_status(prob):
     """
-    Creates a JSON file that containts high level overview of the run.
+    Creates a JSON file that contains high level overview of the run.
 
     Parameters
     ----------

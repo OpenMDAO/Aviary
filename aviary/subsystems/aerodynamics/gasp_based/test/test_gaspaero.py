@@ -204,7 +204,7 @@ def _init_geom(prob):
     prob.set_val(Aircraft.Design.DRAG_COEFFICIENT_INCREMENT, setup_data['delcd'])
     prob.set_val(Aircraft.Fuselage.FLAT_PLATE_AREA_INCREMENT, setup_data['delfe'])
     prob.set_val(Aircraft.Wing.MIN_PRESSURE_LOCATION, setup_data['xcps'])
-    prob.set_val(Aircraft.Wing.MAX_THICKNESS_LOCATION, 0.4)  # overriden in standalone code
+    prob.set_val(Aircraft.Wing.MAX_THICKNESS_LOCATION, 0.4)  # overridden in standalone code
     prob.set_val(Aircraft.Strut.AREA_RATIO, setup_data['sstqsw'])
     prob.set_val(Aircraft.VerticalTail.AVERAGE_CHORD, setup_data['cbarvt'])
     prob.set_val(Aircraft.Fuselage.LENGTH, setup_data['elf'])

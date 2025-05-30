@@ -31,7 +31,7 @@ class PropulsionBuilderBase(SubsystemBuilderBase):
 
     Note
     ----
-    unlike the other subsystem builders, it is not reccomended to create additional
+    unlike the other subsystem builders, it is not recommended to create additional
     propulsion subsystems, as propulsion is intended to be an agnostic carrier of
     all propulsion-related subsystem builders in the form of EngineModels.
 

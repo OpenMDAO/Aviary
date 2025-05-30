@@ -855,7 +855,7 @@ class UsefulLoadMass(om.ExplicitComponent):
         if PAX >= 251.0:
             num_pilots = 3.0
 
-        # note: the average weight of a pilot was calulated using the following equation:
+        # note: the average weight of a pilot was calculated using the following equation:
         # avg_wt = pct_male*avg_wt_male + pct_female*avg_wt_female where
         # pct_male = the percentage of US airline pilots that are male (based on data from
         # the center for aviation in 2018, which listed this percentage as 95.6%, and slightly
@@ -866,7 +866,7 @@ class UsefulLoadMass(om.ExplicitComponent):
         # avg_wt_female is the average weight of females according to the CDC, and is 170.8 lbf
         # the resulting value is that the average weight of the US airline pilot is 198 lbf
         pilot_wt = 198 * num_pilots
-        # note: the average weight of a flight attendant was calulated using the following equation:
+        # note: the average weight of a flight attendant was calculated using the following equation:
         # avg_wt = pct_male*avg_wt_male + pct_female*avg_wt_female where
         # pct_male = the percentage of US flight attendants that are male (based on data from
         # the women in aerospace international organization in 2020, which listed this percentage as

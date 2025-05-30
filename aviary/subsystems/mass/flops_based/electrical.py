@@ -80,7 +80,7 @@ class ElectricalMass(om.ExplicitComponent):
 
 
 class AltElectricalMass(om.ExplicitComponent):
-    """Computes the mass of the electrical susbsystems using the alternate method."""
+    """Computes the mass of the electrical subsystems using the alternate method."""
 
     def initialize(self):
         add_aviary_option(self, Aircraft.CrewPayload.Design.NUM_PASSENGERS)

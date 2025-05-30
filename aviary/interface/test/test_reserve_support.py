@@ -11,7 +11,7 @@ from aviary.variable_info.variables import Aircraft, Mission
 
 
 # NOTE this test is probably in the wrong place, it isn't really testing a part of the
-#      interface. Also test name is `PreMissionGroupTest` which is completely innacurate.
+#      interface. Also test name is `PreMissionGroupTest` which is completely inaccurate.
 #      This test is for checking if reserve missions are being properly applied, which
 #      it only partially does (should be checking that the reserve mission properly
 #      exists in traj as well)

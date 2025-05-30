@@ -83,7 +83,7 @@ def _read_gasp_propeller(fp, cmts):
     Data table is returned as a dictionary.
     The table consists of both the independent variables and the dependent variable for
     the corresponding field. The table is a "tidy format" 2D array where the first three
-    columns are the independent varaiables (Advance ratio, Mach number, and power coefficient)
+    columns are the independent variables (Advance ratio, Mach number, and power coefficient)
     and the final column is the dependent variable thrust coefficient.
     """
     with open(fp, 'r') as f:

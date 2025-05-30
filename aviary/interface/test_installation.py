@@ -86,7 +86,7 @@ def _exec_installation_test(args, user_args):
         else:
             optimizers.append('SNOPT')
 
-    # Tell user which optimizers are avaliable
+    # Tell user which optimizers are available
     print(f'The following optimizers are available for use: {optimizers}')
     optimizer = optimizers[-1]
     print(f'\nRunning a basic Aviary model using the {optimizer} optimizer:')

@@ -1321,7 +1321,7 @@ add_meta_data(
     historical_name={'GASP': 'INGASP.WFE', 'FLOPS': None, 'LEAPS1': None},
     units='lbm',
     desc='total mass of fixed equipment: APU, Instruments, Hydraulics, Electrical, '
-    'Avionics, AC, Anti-Icing, Auxilary Equipment, and Furnishings',
+    'Avionics, AC, Anti-Icing, Auxiliary Equipment, and Furnishings',
     default_value=0.0,
 )
 
@@ -3382,7 +3382,7 @@ add_meta_data(
     units='unitless',
     types=float,
     default_value=0.0,
-    desc='lift coefficent of body over lift coefficent of wing ratio',
+    desc='lift coefficient of body over lift coefficient of wing ratio',
 )
 
 add_meta_data(
@@ -3471,7 +3471,7 @@ add_meta_data(
     default_value=0.0,
 )
 
-# TODO are we keeping millitary cargo?
+# TODO are we keeping military cargo?
 add_meta_data(
     Aircraft.Fuselage.MILITARY_CARGO_FLOOR,
     meta_data=_MetaData,
@@ -4441,7 +4441,7 @@ add_meta_data(
     meta_data=_MetaData,
     historical_name={'GASP': 'INGASP.HEBQDN', 'FLOPS': None, 'LEAPS1': None},
     units='unitless',
-    desc='percentage of nacelle diamter buried in fuselage over nacelle diameter',
+    desc='percentage of nacelle diameter buried in fuselage over nacelle diameter',
     default_value=0.0,
     multivalue=True,
 )
@@ -7630,7 +7630,7 @@ add_meta_data(
     meta_data=_MetaData,
     historical_name={'GASP': 'INGASP.WFA', 'FLOPS': None, 'LEAPS1': None},
     units='lbm',
-    desc='total fuel carried at the beginnning of a mission '
+    desc='total fuel carried at the beginning of a mission '
     'includes fuel burned in the mission, reserve fuel '
     'and fuel margin',
 )

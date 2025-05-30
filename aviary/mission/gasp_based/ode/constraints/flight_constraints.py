@@ -138,7 +138,7 @@ class FlightConstraints(om.ExplicitComponent):
         V_stall = (2 * weight / (wing_area * rho * CL_max)) ** 0.5  # stall speed
         TAS_min = (
             1.1 * V_stall
-        )  # minimum true airspeed accross each node, based on stall speed and safety margin
+        )  # minimum true airspeed across each node, based on stall speed and safety margin
         outputs['TAS_min'] = TAS_min
 
         outputs['theta'] = gamma - i_wing + alpha

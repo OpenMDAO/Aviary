@@ -362,7 +362,7 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
         else:
             time_units = phase.time_options['units']
 
-            # Make a good guess for a reasonable intitial time scaler.
+            # Make a good guess for a reasonable initial time scaler.
             try:
                 initial_bounds = user_options.get_val('initial_bounds', units=time_units)
             except KeyError:
@@ -464,7 +464,7 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
                     # if both phases are reserve phases or neither is a reserve phase
                     # (we are not on the boundary between the regular and reserve missions)
                     # and neither phase is ground roll or rotation (altitude isn't a state):
-                    # we want altitude to be continous as well
+                    # we want altitude to be continuous as well
                     if (
                         ((phase1 in prob.reserve_phases) == (phase2 in prob.reserve_phases))
                         and not ({'groundroll', 'rotation'} & {phase1, phase2})

@@ -45,7 +45,7 @@ class FlareODE(_BaseODE):
 
         self.add_subsystem(name='atmosphere', subsys=Atmosphere(num_nodes=nn), promotes=['*'])
 
-        # NOTE: the following are potentially signficant differences in implementation
+        # NOTE: the following are potentially significant differences in implementation
         # between FLOPS and Aviary:
         #    - FLOPS detailed takeoff/landing assumes constant mass for the duration of
         #      that specific analysis.

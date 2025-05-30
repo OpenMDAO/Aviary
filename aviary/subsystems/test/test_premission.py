@@ -118,7 +118,7 @@ class PreMissionTestCase(unittest.TestCase):
         # We set it to an unconverged value to test convergence.
         self.prob.set_val(Mission.Design.GROSS_MASS, val=1000.0)
 
-        # Set inital values for all variables.
+        # Set initial values for all variables.
         set_aviary_initial_values(self.prob, input_options)
 
         # Adjust WETTED_AREA_SCALER such that WETTED_AREA = 4000.0
@@ -209,7 +209,7 @@ class PreMissionTestCase(unittest.TestCase):
         assert_check_partials(partial_data, atol=3e-10, rtol=1e-12)
 
     def test_manual_override(self):
-        # Problem in setup is GASP prioritized, so shared inputs for FLOPS will be manually overriden.
+        # Problem in setup is GASP prioritized, so shared inputs for FLOPS will be manually overridden.
 
         outs = self.prob.model.pre_mission.list_outputs(
             includes='*gasp*fuselage:avg_diam*', prom_name=True, out_stream=None
@@ -309,7 +309,7 @@ class PreMissionTestCase(unittest.TestCase):
 
         prob.setup()
 
-        # Problem in setup is FLOPS prioritized, so shared inputs for FLOPS will be manually overriden.
+        # Problem in setup is FLOPS prioritized, so shared inputs for FLOPS will be manually overridden.
 
         outs = prob.model.pre_mission.list_outputs(
             includes='*gasp*fuselage:avg_diam*', prom_name=True, out_stream=None

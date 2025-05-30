@@ -12,7 +12,7 @@ from aviary.variable_info.variables import Aircraft, Dynamic, Settings
 
 def _unint(xa, ya, x):
     """
-    Univariate table routine with seperate arrays for x and y
+    Univariate table routine with separate arrays for x and y
     This routine interpolates over a 4 point interval using a
     variation of 3nd degree interpolation to produce a continuity
     of slope between adjacent intervals.
@@ -58,7 +58,7 @@ def _unint(xa, ya, x):
                 ra = (xa[idx] - x) / (xa[idx] - xa[idx - 1])
             rb = 1.0 - ra
 
-            # get coefficeints and results
+            # get coefficients and results
             p1 = xa[jx1 + 1] - xa[jx1]
             p2 = xa[jx1 + 2] - xa[jx1 + 1]
             p3 = xa[jx1 + 3] - xa[jx1 + 2]
@@ -227,7 +227,7 @@ def _biquad(T, i, xi, yi):
                 yc[j] = T[jy1]
                 jy1 = jy1 + 1
             # get coeff. in y sense
-            # coeffient routine - input y, y1, y2, y3, y4, ra_y, rb_y
+            # coefficient routine - input y, y1, y2, y3, y4, ra_y, rb_y
             p1 = yc[1] - yc[0]
             p2 = yc[2] - yc[1]
             p3 = yc[3] - yc[2]

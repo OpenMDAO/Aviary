@@ -87,7 +87,7 @@ def set_aviary_input_defaults(model, inputs, aviary_inputs: AviaryValues, meta_d
     model : System
         Top level aviary model.
     inputs : list
-        List of varibles that are causing promotion problems. This needs to
+        List of variables that are causing promotion problems. This needs to
         be crafted based on the openmdao exception messages.
     aviary_inputs : AviaryValues
         Instance of AviaryValues containing all initial values.
