@@ -1,19 +1,19 @@
 from aviary.subsystems.propulsion.propeller.propeller_performance import PropellerPerformance
 from aviary.subsystems.subsystem_builder_base import SubsystemBuilderBase
-from aviary.variable_info.variables import Aircraft, Dynamic, Mission
+from aviary.variable_info.variables import Aircraft, Dynamic, Mission, Settings
 
 
 class PropellerBuilder(SubsystemBuilderBase):
     """
-    Define the builder for a propeller model using the Hamilton Standard methodology that
-    provides methods to define the propeller subsystem's states, design variables,
-    fixed values, initial guesses, and mass names. It also provides methods to build
-    OpenMDAO systems for the pre-mission and mission computations of the subsystem,
-    to get the constraints for the subsystem, and to preprocess the inputs for
+    Define the builder for a propeller model using the Hamilton Standard methodology that provides
+    methods to define the propeller subsystem's states, design variables, fixed values, initial
+    guesses, and mass names. It also provides methods to build OpenMDAO systems for the pre-mission
+    and mission computations of the subsystem, to get the constraints for the subsystem, and to
+    preprocess the inputs for
     the subsystem.
     """
 
-    def __init__(self, name='HS_propeller'):
+    def __init__(self, name='propeller'):
         """Initializes the PropellerBuilder object with a given name."""
         super().__init__(name)
 

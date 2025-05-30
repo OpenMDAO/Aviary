@@ -69,8 +69,13 @@ class TestPropellerMapConversion(unittest.TestCase):
                     )
                     raise Exception(exc_string)
 
-    def test_PM_conversion(self):
+    def test_propfan_conversion(self):
         filename = 'PropFan.map'
+        self.prepare_and_run(filename, data_format=PropMapType.GASP)
+        self.compare_files(filename, skip_list=['# created'])
+
+    def test_GA_conversion(self):
+        filename = 'general_aviation.map'
         self.prepare_and_run(filename, data_format=PropMapType.GASP)
         self.compare_files(filename, skip_list=['# created'])
 
