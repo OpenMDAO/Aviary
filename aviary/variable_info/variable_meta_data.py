@@ -1105,6 +1105,15 @@ add_meta_data(
 )
 
 add_meta_data(
+    Aircraft.CrewPayload.UNIT_LOAD_DEVICE_PER_PASSENGER,
+    meta_data=_MetaData,
+    historical_name={'GASP': 'INGASP.CW(14)', 'FLOPS': None, 'LEAPS1': None},
+    units='lbm',
+    desc='unit load device for cargo handling per passenger',
+    default_value=0.0,
+)
+
+add_meta_data(
     Aircraft.CrewPayload.WATER_MASS_PER_OCCUPANT,
     meta_data=_MetaData,
     historical_name={'GASP': 'INGASP.CW(10)', 'FLOPS': None, 'LEAPS1': None},
