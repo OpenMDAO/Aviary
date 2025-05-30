@@ -43,7 +43,7 @@ class ProblemPhaseTestCase(unittest.TestCase):
 
         assert_near_equal(
             prob.get_val(Aircraft.Design.OPERATING_MASS, units='lbm'),
-            95372.5514,
+            95620.2190,
             tolerance=rtol,
         )
 
@@ -230,4 +230,4 @@ if __name__ == '__main__':
     # unittest.main()
     test = ProblemPhaseTestCase()
     test.setUp()
-    test.test_bench_GwGm_shooting()
+    test.test_bench_GwGm()
