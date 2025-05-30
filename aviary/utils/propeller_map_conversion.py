@@ -1,6 +1,7 @@
 #!/usr/bin/python
 import argparse
 import getpass
+
 from datetime import datetime
 from enum import Enum
 
@@ -19,7 +20,7 @@ class PropMapType(Enum):
         return self.value
 
 
-def PropDataConverter(input_file, output_file, data_format: PropMapType):
+def PropDataConverter(input_file, output_file, data_format: PropMapType = PropMapType.GASP):
     """
     This is a utility class to convert a propeller map file to Aviary format.
     Currently, there is only one option: from GASP format to Aviary format.
@@ -146,20 +147,22 @@ def _setup_PMC_parser(parser):
         nargs='?',
         help='path to file where new converted data will be written',
     )
-    parser.add_argument(
-        '-f',
-        '--data_format',
-        type=PropMapType,
-        choices=list(PropMapType),
-        nargs='?',
-        default='GASP',
-        help='data format used by input_file',
-    )
+    # currently removing as there is only one allowed map type at the moment
+    # parser.add_argument(
+    #     '-f',
+    #     '--data_format',
+    #     type=PropMapType,
+    #     choices=list(PropMapType),
+    #     nargs='?',
+    #     default='GASP',
+    #     help='data format used by input_file',
+    # )
 
 
 def _exec_PMC(args, user_args):
     PropDataConverter(
-        input_file=args.input_file, output_file=args.output_file, data_format=args.data_format
+        input_file=args.input_file,
+        output_file=args.output_file,  # , data_format=args.data_format
     )
 
 
