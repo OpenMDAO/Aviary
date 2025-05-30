@@ -67,6 +67,15 @@ max_variables = {
     EngineModelVariables.SHAFT_POWER: Dynamic.Vehicle.Propulsion.SHAFT_POWER_MAX,
 }
 
+# class InstallationDragFlag(Enum):
+#     """
+#     Define constants that map to supported options for scaling of installation drag.
+#     """
+#     OFF = auto()
+#     DELTA_MAX_NOZZLE_AREA = auto()
+#     MAX_NOZZLE_AREA = auto()
+#     REF_NOZZLE_EXIT_AREA = auto()
+
 
 def convert_geopotential_altitude(altitude):
     """
@@ -399,32 +408,3 @@ class UncorrectData(om.Group):
             ),
             promotes=['*'],
         )
-
-
-# class InstallationDragFlag(Enum):
-#     """
-#     Define constants that map to supported options for scaling of installation drag.
-#     """
-#     OFF = auto()
-#     DELTA_MAX_NOZZLE_AREA = auto()
-#     MAX_NOZZLE_AREA = auto()
-#     REF_NOZZLE_EXIT_AREA = auto()
-
-
-class PropellerModelVariables(Enum):
-    """Define constants that map to supported variable names in a propeller model."""
-
-    HELICAL_MACH = 'Helical_Mach'
-    MACH = 'Mach'
-    CP = 'CP'  # power coefficient
-    CT = 'CT'  # thrust coefficient
-    J = 'J'  # advanced ratio
-
-
-default_propeller_units = {
-    PropellerModelVariables.HELICAL_MACH: 'unitless',
-    PropellerModelVariables.MACH: 'unitless',
-    PropellerModelVariables.CP: 'unitless',
-    PropellerModelVariables.CT: 'unitless',
-    PropellerModelVariables.J: 'unitless',
-}
