@@ -210,6 +210,18 @@ class PhaseBuilderBase(ABC):
                 ode_class=ode_class, transcription=transcription, ode_init_kwargs=kwargs
             )
 
+        # Add a timeseries for the "mission bus variables" that will be a uniform grid, using Falck Magik™.
+        # https://stackoverflow.com/questions/67771242/openmdao-dymos-interpolate-the-results-of-a-phase-onto-an-equispaced-grid
+        if self.is_analytic_phase:
+            tx_mission_bus = dm.GaussLobatto(num_segments=self.num_nodes, order=3, compressed=True)
+        else:
+            tx_mission_bus = dm.GaussLobatto(
+                num_segments=transcription.options['num_segments'], order=3, compressed=True
+            )
+        phase.add_timeseries(
+            name='mission_bus_variables', transcription=tx_mission_bus, subset='all'
+        )
+
         # overrides should add state, controls, etc.
         return phase
 
