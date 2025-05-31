@@ -933,7 +933,7 @@ class UsefulMassTestCase1(unittest.TestCase):
 
         tol = 1e-4
         assert_near_equal(
-            self.prob[Aircraft.Design.FIXED_USEFUL_LOAD], 5176, tol
+            self.prob[Aircraft.Design.FIXED_USEFUL_LOAD], 5341.43, tol
         )  # modified from GASP value to account for updated crew mass. GASP value is 4932
 
         partial_data = self.prob.check_partials(out_stream=None, method='cs')
@@ -984,7 +984,7 @@ class UsefulMassTestCase2(unittest.TestCase):
 
         tol = 1e-4
         # not actual GASP value
-        assert_near_equal(self.prob[Aircraft.Design.FIXED_USEFUL_LOAD], 1235.4, tol)
+        assert_near_equal(self.prob[Aircraft.Design.FIXED_USEFUL_LOAD], 1400.43, tol)
 
         partial_data = self.prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=8e-12, rtol=1e-12)
@@ -1034,7 +1034,7 @@ class UsefulMassTestCase3(unittest.TestCase):
 
         tol = 1e-4
         # not actual GASP value
-        assert_near_equal(self.prob[Aircraft.Design.FIXED_USEFUL_LOAD], 892.83, tol)
+        assert_near_equal(self.prob[Aircraft.Design.FIXED_USEFUL_LOAD], 1057.83, tol)
 
         partial_data = self.prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=8e-12, rtol=1e-12)
@@ -1142,7 +1142,7 @@ class UsefulMassTestCase5(unittest.TestCase):
 
         tol = 1e-7
         assert_near_equal(
-            self.prob[Aircraft.Design.FIXED_USEFUL_LOAD], 5241.42896854, tol
+            self.prob[Aircraft.Design.FIXED_USEFUL_LOAD], 5406.429, tol
         )  # modified from GASP value to account for updated crew mass. GASP value is 4932
 
         partial_data = self.prob.check_partials(out_stream=None, method='cs')
@@ -1226,7 +1226,7 @@ class EquipAndUsefulMassGroupTest(unittest.TestCase):
 
         tol = 1e-7
         assert_near_equal(
-            self.prob[Aircraft.Design.FIXED_USEFUL_LOAD], 5176.429, tol
+            self.prob[Aircraft.Design.FIXED_USEFUL_LOAD], 5341.429, tol
         )  # modified from GASP value to account for updated crew mass. GASP value is 4932
         assert_near_equal(self.prob[Aircraft.Design.FIXED_EQUIPMENT_MASS], 21089.248, tol)
 
@@ -1235,7 +1235,4 @@ class EquipAndUsefulMassGroupTest(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    # unittest.main()
-    test = ACMassTestCase1()
-    test.setUp()
-    test.test_case1()
+    unittest.main()
