@@ -115,6 +115,7 @@ class Aircraft:
         PASSENGER_SERVICE_MASS_SCALER = 'aircraft:crew_and_payload:passenger_service_mass_scaler'
 
         TOTAL_PAYLOAD_MASS = 'aircraft:crew_and_payload:total_payload_mass'
+        UNIT_LOAD_DEVICE_PER_PASSENGER = 'aircraft:crew_and_payload:unit_load_device_per_passenger'
         WATER_MASS_PER_OCCUPANT = 'aircraft:crew_and_payload:water_mass_per_occupant'
         WING_CARGO = 'aircraft:crew_and_payload:wing_cargo'
 
