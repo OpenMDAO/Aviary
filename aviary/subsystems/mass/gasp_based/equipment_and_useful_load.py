@@ -827,6 +827,7 @@ class UsefulLoadMass(om.ExplicitComponent):
         add_aviary_option(self, Aircraft.Engine.TYPE)
         add_aviary_option(self, Aircraft.Propulsion.TOTAL_NUM_ENGINES)
         add_aviary_option(self, Settings.VERBOSITY)
+        add_aviary_option(self, Aircraft.CrewPayload.UNIT_LOAD_DEVICE_PER_PASSENGER, units='lbm')
 
     def setup(self):
         num_engine_type = len(self.options[Aircraft.Engine.NUM_ENGINES])
@@ -857,6 +858,7 @@ class UsefulLoadMass(om.ExplicitComponent):
         wing_area = inputs[Aircraft.Wing.AREA]
         Fn_SLS = inputs[Aircraft.Engine.SCALED_SLS_THRUST]
         fuel_vol_frac = inputs[Aircraft.Fuel.WING_FUEL_FRACTION]
+        uld_per_pax = self.options[Aircraft.CrewPayload.UNIT_LOAD_DEVICE_PER_PASSENGER][0]
 
         engine_type = self.options[Aircraft.Engine.TYPE][0]
         num_flight_attendants = get_num_of_flight_attendent(PAX)
@@ -955,6 +957,10 @@ class UsefulLoadMass(om.ExplicitComponent):
                 inputs[Aircraft.Fuel.UNUSABLE_FUEL_MASS_COEFFICIENT] * 0.18 * (wing_area**0.5)
             )
 
+        unit_weight_cargo_handling = 165.0
+        uld_per_pax = uld_per_pax.real
+        cargo_handling_wt = (int(PAX * uld_per_pax) + 1) * unit_weight_cargo_handling
+
         useful_wt = (
             pilot_wt
             + flight_attendant_wt
@@ -965,6 +971,7 @@ class UsefulLoadMass(om.ExplicitComponent):
             + emergency_wt
             + catering_wt
             + trapped_fuel_wt
+            + cargo_handling_wt
         )
 
         outputs[Aircraft.Design.FIXED_USEFUL_LOAD] = useful_wt / GRAV_ENGLISH_LBM
