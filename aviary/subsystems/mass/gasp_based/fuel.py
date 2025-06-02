@@ -28,7 +28,9 @@ class BodyTankCalculations(om.ExplicitComponent):
             units='lbm',
             desc='WFAMIN: minimum value of fuel mass (set when max payload is carried)',
         )
-        add_aviary_input(self, Mission.Design.FUEL_MASS_REQUIRED, units='lbm')
+        add_aviary_input(
+            self, Mission.Design.FUEL_MASS_REQUIRED, units='lbm', desc='WFAREQ: no margin'
+        )
         self.add_input('max_wingfuel_mass', val=6, units='lbm', desc='WFWMX: maximum wingfuel mass')
         add_aviary_input(self, Aircraft.Fuel.WING_VOLUME_GEOMETRIC_MAX, units='ft**3')
         add_aviary_input(self, Aircraft.Fuel.DENSITY, units='lbm/ft**3')
@@ -952,6 +954,7 @@ class FuselageMass(om.ExplicitComponent):
 
         add_aviary_output(self, Aircraft.Fuselage.MASS, units='lbm')
 
+    def setup_partials(self):
         self.declare_partials(
             Aircraft.Fuselage.MASS,
             [
@@ -1159,6 +1162,7 @@ class BWBFuselageMass(om.ExplicitComponent):
 
         add_aviary_output(self, Aircraft.Fuselage.MASS, units='lbm')
 
+    def setup_partials(self):
         self.declare_partials(
             Aircraft.Fuselage.MASS,
             [
@@ -1244,7 +1248,7 @@ class StructMass(om.ExplicitComponent):
         add_aviary_input(self, Aircraft.Propulsion.TOTAL_ENGINE_POD_MASS, units='lbm')
         add_aviary_input(self, Aircraft.Design.STRUCTURAL_MASS_INCREMENT, units='lbm')
 
-        add_aviary_output(self, Aircraft.Design.STRUCTURE_MASS, units='lbm')
+        add_aviary_output(self, Aircraft.Design.STRUCTURE_MASS, units='lbm', desc='WST')
 
         self.declare_partials(Aircraft.Design.STRUCTURE_MASS, '*')
 
@@ -1346,9 +1350,9 @@ class FuelMass(om.ExplicitComponent):
 
         add_aviary_input(self, Aircraft.Fuel.FUEL_MARGIN, units='unitless')
 
-        add_aviary_output(self, Mission.Design.FUEL_MASS, units='lbm')
-        add_aviary_output(self, Aircraft.Propulsion.MASS, units='lbm')
-        add_aviary_output(self, Mission.Design.FUEL_MASS_REQUIRED, units='lbm')
+        add_aviary_output(self, Mission.Design.FUEL_MASS, units='lbm', desc='WFADES')
+        add_aviary_output(self, Aircraft.Propulsion.MASS, units='lbm', desc='WP')
+        add_aviary_output(self, Mission.Design.FUEL_MASS_REQUIRED, units='lbm', desc='WFAREQ')
         self.add_output(
             'fuel_mass_min',
             val=0,
