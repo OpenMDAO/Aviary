@@ -160,14 +160,14 @@ class PreMissionTestCase(unittest.TestCase):
         # fuel values:
         # modified from GASP value to account for updated crew mass. GASP value is
         # 78843.6
-        assert_near_equal(self.prob['fuel_mass.fuel_and_oem.OEM_wingfuel_mass'], 78145.0, tol)
+        assert_near_equal(self.prob['fuel_mass.fuel_and_oem.OEM_wingfuel_mass'], 77977.7, tol)
         # modified from GASP value to account for updated crew mass. GASP value is
         # 102408.05695930264
-        assert_near_equal(self.prob['fuel_mass.fus_mass_full'], 102663.6529626, tol)
+        assert_near_equal(self.prob['fuel_mass.fus_mass_full'], 102812.6654177, tol)
         # modified from GASP value to account for updated crew mass. GASP value is
         # 1757
         assert_near_equal(
-            self.prob[Aircraft.Fuel.FUEL_SYSTEM_MASS], 1727.9, tol
+            self.prob[Aircraft.Fuel.FUEL_SYSTEM_MASS], 1721.08, tol
         )  # modified from GASP value to account for updated crew mass. GASP value is 1757
         assert_near_equal(self.prob[Aircraft.Design.STRUCTURE_MASS], 50931.4, tol)
         assert_near_equal(
@@ -177,25 +177,25 @@ class PreMissionTestCase(unittest.TestCase):
         # modified from GASP value to account for updated crew mass. GASP value is
         # 42843.6
         assert_near_equal(
-            self.prob[Mission.Design.FUEL_MASS_REQUIRED], 42145.0, tol
+            self.prob[Mission.Design.FUEL_MASS_REQUIRED], 41977.7, tol
         )  # modified from GASP value to account for updated crew mass. GASP value is 42843.6
         assert_near_equal(
             self.prob[Aircraft.Propulsion.MASS], 16098.7, tol
         )  # modified from GASP value to account for updated crew mass. GASP value is 16127
         assert_near_equal(
-            self.prob[Mission.Design.FUEL_MASS], 42145.0, tol
+            self.prob[Mission.Design.FUEL_MASS], 41977.68, tol
         )  # modified from GASP value to account for updated crew mass. GASP value is 42844.0
         assert_near_equal(
-            self.prob['fuel_mass.fuel_mass_min'], 32105.0, tol
+            self.prob['fuel_mass.fuel_mass_min'], 31937.68, tol
         )  # modified from GASP value to account for updated crew mass. GASP value is 32803.6
         assert_near_equal(
-            self.prob[Aircraft.Fuel.WING_VOLUME_DESIGN], 842.53, tol
+            self.prob[Aircraft.Fuel.WING_VOLUME_DESIGN], 839.18, tol
         )  # modified from GASP value to account for updated crew mass. GASP value is 856.4910800459031
         assert_near_equal(
-            self.prob['fuel_mass.fuel_and_oem.OEM_fuel_vol'], 1562.21, tol
+            self.prob['fuel_mass.fuel_and_oem.OEM_fuel_vol'], 1558.86, tol
         )  # modified from GASP value to account for updated crew mass. GASP value is 1576.1710061411081
         assert_near_equal(
-            self.prob[Aircraft.Design.OPERATING_MASS], 97255.0, tol
+            self.prob[Aircraft.Design.OPERATING_MASS], 97422.32, tol
         )  # modified from GASP value to account for updated crew mass. GASP value is 96556.0
         # extra_fuel_mass calculated differently in this version, so test for fuel_mass.fuel_and_oem.payload_mass_max_fuel not included
         assert_near_equal(self.prob['fuel_mass.fuel_and_oem.volume_wingfuel_mass'], 57066.3, tol)
