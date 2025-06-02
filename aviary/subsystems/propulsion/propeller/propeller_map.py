@@ -67,9 +67,9 @@ class PropellerMap(om.Group):
         if mach_types == ['helical_mach']:
             helical_mach = om.ExecComp(
                 'helical_mach=(mach**2 + tip_mach**2)**0.5',
-                helical_mach={'shape': np.ones(nn), 'units': 'unitless'},
-                mach={'shape': np.ones(nn), 'units': 'unitless'},
-                tip_mach={'shape': np.ones(nn), 'units': 'unitless'},
+                helical_mach={'val': np.ones(nn), 'units': 'unitless'},
+                mach={'val': np.ones(nn), 'units': 'unitless'},
+                tip_mach={'val': np.ones(nn), 'units': 'unitless'},
             )
             self.add_subsystem(
                 'helical_mach_calc', helical_mach, promotes=['*', ('mach', Dynamic.Atmosphere.MACH)]

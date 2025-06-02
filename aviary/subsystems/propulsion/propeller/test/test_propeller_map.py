@@ -26,7 +26,8 @@ class PropellerMapTest(unittest.TestCase):
         prob.model.add_subsystem('propeller_map', PropellerMap(), promotes=['*'])
         setup_model_options(prob, aviary_options)
         prob.setup()
-        prob.set_val('helical_mach', 0.8)
+        prob.set_val('mach', 0.56568)  # targeting helical mach of 0.8
+        prob.set_val('tip_mach', 0.56568)
         prob.set_val('power_coefficient', 0.1)
         prob.set_val('advance_ratio', 0.75)
         prob.run_model()
