@@ -82,6 +82,8 @@ class TestSubsystemsMission(unittest.TestCase):
             'models/test_aircraft/aircraft_for_bench_FwFm_with_electric.csv', phase_info
         )
 
+        prob.aviary_inputs.set_val(av.Aircraft.Battery.EFFICIENCY, 0.95, 'unitless')
+
         # Preprocess inputs
         prob.check_and_preprocess_inputs()
 
@@ -101,9 +103,6 @@ class TestSubsystemsMission(unittest.TestCase):
         prob.add_objective('fuel_burned')
 
         prob.setup()
-        import openmdao.api as om
-
-        om.n2(prob, show_browser=False)
 
         prob.set_initial_guesses()
 

@@ -112,6 +112,10 @@ class BatteryBuilder(SubsystemBuilderBase):
                 'val': 0.0,
                 'units': 'kJ',
             },
+            Aircraft.Battery.EFFICIENCY: {
+                'val': 1.0,
+                'units': 'unitless',
+            },
         }
         return params
 
