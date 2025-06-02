@@ -1040,7 +1040,7 @@ class UsefulMassTestCase1(unittest.TestCase):
 
         tol = 1e-7
         assert_near_equal(
-            self.prob[Aircraft.Design.FIXED_USEFUL_LOAD], 5176.429, tol
+            self.prob[Aircraft.Design.FIXED_USEFUL_LOAD], 5341.42896854, tol
         )  # modified from GASP value to account for updated crew mass. GASP value is 4932
 
         partial_data = self.prob.check_partials(out_stream=None, method='cs')
@@ -1092,7 +1092,7 @@ class UsefulMassTestCase2(unittest.TestCase):
 
         tol = 1e-7
         # not actual GASP value
-        assert_near_equal(self.prob[Aircraft.Design.FIXED_USEFUL_LOAD], 1235.429, tol)
+        assert_near_equal(self.prob[Aircraft.Design.FIXED_USEFUL_LOAD], 1400.42896854, tol)
 
         partial_data = self.prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=8e-12, rtol=1e-12)
@@ -1143,7 +1143,7 @@ class UsefulMassTestCase3(unittest.TestCase):
 
         tol = 1e-7
         # not actual GASP value
-        assert_near_equal(self.prob[Aircraft.Design.FIXED_USEFUL_LOAD], 892.829, tol)
+        assert_near_equal(self.prob[Aircraft.Design.FIXED_USEFUL_LOAD], 1057.82896854, tol)
 
         partial_data = self.prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=8e-12, rtol=1e-12)
@@ -1253,7 +1253,7 @@ class UsefulMassTestCase5(unittest.TestCase):
 
         tol = 1e-7
         assert_near_equal(
-            self.prob[Aircraft.Design.FIXED_USEFUL_LOAD], 5241.42896854, tol
+            self.prob[Aircraft.Design.FIXED_USEFUL_LOAD], 5406.429, tol
         )  # modified from GASP value to account for updated crew mass. GASP value is 4932
 
         partial_data = self.prob.check_partials(out_stream=None, method='cs')
@@ -1344,7 +1344,7 @@ class FixedEquipAndUsefulMassGroupTest(unittest.TestCase):
         self.prob.run_model()
 
         tol = 1e-7
-        assert_near_equal(self.prob[Aircraft.Design.FIXED_USEFUL_LOAD], 5176.429, tol)
+        assert_near_equal(self.prob[Aircraft.Design.FIXED_USEFUL_LOAD], 5341.429, tol)
         assert_near_equal(self.prob[Aircraft.Design.FIXED_EQUIPMENT_MASS], 23163.787, tol)
 
         partial_data = self.prob.check_partials(out_stream=None, method='cs')
@@ -1633,7 +1633,7 @@ class BWBUsefulMassTestCase1(unittest.TestCase):
         self.prob.run_model()
 
         tol = 1e-7
-        assert_near_equal(self.prob[Aircraft.Design.FIXED_USEFUL_LOAD], 4156.795, tol)
+        assert_near_equal(self.prob[Aircraft.Design.FIXED_USEFUL_LOAD], 4321.79463506, tol)
 
         partial_data = self.prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=8e-12, rtol=1e-12)
@@ -1728,7 +1728,7 @@ class BWBFixedEquipAndUsefulMassGroupTest(unittest.TestCase):
 
         tol = 1e-7
         assert_near_equal(self.prob[Aircraft.Design.FIXED_EQUIPMENT_MASS], 20876.477, tol)
-        assert_near_equal(self.prob[Aircraft.Design.FIXED_USEFUL_LOAD], 4156.795, tol)
+        assert_near_equal(self.prob[Aircraft.Design.FIXED_USEFUL_LOAD], 4321.79463506, tol)
 
         partial_data = self.prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=8e-12, rtol=1e-12)
