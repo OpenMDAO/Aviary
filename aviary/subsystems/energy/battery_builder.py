@@ -44,7 +44,7 @@ class BatteryBuilder(SubsystemBuilderBase):
             state_of_charge={'val': np.zeros(num_nodes), 'units': 'unitless'},
             energy_capacity={'val': 10.0, 'units': 'kJ'},
             cumulative_electric_energy_used={'val': np.zeros(num_nodes), 'units': 'kJ'},
-            efficiency={'val': 0.95, 'units': 'unitless'},
+            efficiency={'val': 1.0, 'units': 'unitless'},
             has_diag_partials=True,
         )
 
@@ -64,12 +64,12 @@ class BatteryBuilder(SubsystemBuilderBase):
 
         return battery_group
 
-    def mission_inputs(self, **kwargs):
-        return [
-            Aircraft.Battery.ENERGY_CAPACITY,
-            Dynamic.Vehicle.CUMULATIVE_ELECTRIC_ENERGY_USED,
-            Aircraft.Battery.EFFICIENCY,
-        ]
+    # def mission_inputs(self, **kwargs):
+    #     return [
+    #         Aircraft.Battery.ENERGY_CAPACITY,
+    #         Dynamic.Vehicle.CUMULATIVE_ELECTRIC_ENERGY_USED,
+    #         Aircraft.Battery.EFFICIENCY,
+    #     ]
 
     def mission_outputs(self, **kwargs):
         return [Dynamic.Vehicle.BATTERY_STATE_OF_CHARGE]
@@ -88,7 +88,7 @@ class BatteryBuilder(SubsystemBuilderBase):
                 'units': 'kJ',
                 'rate_source': Dynamic.Vehicle.Propulsion.ELECTRIC_POWER_IN_TOTAL,
                 'input_initial': 0.0,
-                'targets': Dynamic.Vehicle.CUMULATIVE_ELECTRIC_ENERGY_USED,
+                'targets': f'{self.name}.{Dynamic.Vehicle.CUMULATIVE_ELECTRIC_ENERGY_USED}',
             }
         }
 

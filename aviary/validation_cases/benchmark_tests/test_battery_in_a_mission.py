@@ -1,4 +1,5 @@
 import unittest
+from copy import deepcopy
 
 from openmdao.utils.assert_utils import assert_near_equal
 from openmdao.utils.testing_utils import use_tempdirs
@@ -73,7 +74,7 @@ class TestSubsystemsMission(unittest.TestCase):
         }
 
     def test_subsystems_in_a_mission(self):
-        phase_info = self.phase_info.copy()
+        phase_info = deepcopy(self.phase_info)
 
         prob = av.AviaryProblem(verbosity=0)
 
@@ -100,6 +101,9 @@ class TestSubsystemsMission(unittest.TestCase):
         prob.add_objective('fuel_burned')
 
         prob.setup()
+        import openmdao.api as om
+
+        om.n2(prob, show_browser=False)
 
         prob.set_initial_guesses()
 

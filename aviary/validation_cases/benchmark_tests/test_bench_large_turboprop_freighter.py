@@ -3,12 +3,12 @@ from copy import deepcopy
 
 from numpy.testing import assert_almost_equal
 from openmdao.utils.testing_utils import use_tempdirs
-
+import openmdao.api as om
 from aviary.interface.methods_for_level2 import AviaryProblem
 from aviary.models.large_turboprop_freighter.phase_info import energy_phase_info, two_dof_phase_info
 from aviary.subsystems.propulsion.turboprop_model import TurbopropModel
 from aviary.utils.process_input_decks import create_vehicle
-from aviary.variable_info.variables import Aircraft, Mission
+from aviary.variable_info.variables import Aircraft, Mission, Settings
 
 
 @use_tempdirs
@@ -40,32 +40,32 @@ class LargeTurbopropFreighterBenchmark(unittest.TestCase):
             phase_info,
             engine_builders=[turboprop],
         )
-        prob.aviary_inputs.set_val(Settings.VERBOSITY, 0)
-
-        if mission_method == 'energy':
-            # FLOPS aero specific stuff? Best guesses for values here
-            prob.aviary_inputs.set_val(Mission.Constraints.MAX_MACH, 0.5)
-            prob.aviary_inputs.set_val(Aircraft.Wing.AREA, 1744.59, 'ft**2')
-            # prob.aviary_inputs.set_val(Aircraft.Wing.ASPECT_RATIO, 10.078)
-            prob.aviary_inputs.set_val(
-                Aircraft.Wing.THICKNESS_TO_CHORD, 0.1500
-            )  # average between root and chord T/C
-            prob.aviary_inputs.set_val(Aircraft.Fuselage.MAX_WIDTH, 4.3, 'm')
-            prob.aviary_inputs.set_val(Aircraft.Fuselage.MAX_HEIGHT, 3.95, 'm')
-            prob.aviary_inputs.set_val(Aircraft.Fuselage.AVG_DIAMETER, 4.125, 'm')
+        # if mission_method == 'energy':
+        #     # FLOPS aero specific stuff? Best guesses for values here
+        #     prob.aviary_inputs.set_val(Mission.Constraints.MAX_MACH, 0.5)
+        #     prob.aviary_inputs.set_val(Aircraft.Wing.AREA, 1744.59, 'ft**2')
+        #     # prob.aviary_inputs.set_val(Aircraft.Wing.ASPECT_RATIO, 10.078)
+        #     prob.aviary_inputs.set_val(
+        #         Aircraft.Wing.THICKNESS_TO_CHORD, 0.1500
+        #     )  # average between root and chord T/C
+        #     prob.aviary_inputs.set_val(Aircraft.Fuselage.MAX_WIDTH, 4.3, 'm')
+        #     prob.aviary_inputs.set_val(Aircraft.Fuselage.MAX_HEIGHT, 3.95, 'm')
+        #     prob.aviary_inputs.set_val(Aircraft.Fuselage.AVG_DIAMETER, 4.125, 'm')
 
         prob.check_and_preprocess_inputs()
         prob.add_pre_mission_systems()
         prob.add_phases()
         prob.add_post_mission_systems()
         prob.link_phases()
-        prob.add_driver('IPOPT', max_iter=0, verbosity=0)
+        prob.add_driver('SNOPT', verbosity=2)
         prob.add_design_variables()
         prob.add_objective()
         prob.setup()
+        om.n2(prob, show_browser=False)
 
         prob.set_initial_guesses()
         prob.run_aviary_problem('dymos_solution.db')
+        om.n2(prob, show_browser=False)
 
         return prob
 

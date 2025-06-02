@@ -133,6 +133,8 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
             try:
                 solve_alpha = arguments.pop('solve_alpha')
             except KeyError:
+                pass
+            else:
                 warnings.warn(
                     "The 'solve_alpha' flag has been set, but is not used for FLOPS-based "
                     'aerodynamics.'
