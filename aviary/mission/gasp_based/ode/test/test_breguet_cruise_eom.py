@@ -189,7 +189,7 @@ class TestElectricBreguetResults(unittest.TestCase):
 
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
-            'e_range_comp', ElectricRangeComp(num_nodes=nn), promotes=['*']
+            'electric_range_comp', ElectricRangeComp(num_nodes=nn), promotes=['*']
         )
 
         self.prob.setup(check=False, force_alloc_complex=True)
