@@ -1,4 +1,4 @@
-from aviary.mission.gasp_based.ode.breguet_cruise_ode import BreguetCruiseODESolution
+from aviary.mission.gasp_based.ode.breguet_cruise_ode import BreguetCruiseODE
 from aviary.mission.initial_guess_builders import InitialGuessIntegrationVariable, InitialGuessState
 from aviary.mission.phase_builder_base import PhaseBuilderBase
 from aviary.utils.aviary_options_dict import AviaryOptionsDictionary
@@ -89,7 +89,7 @@ class CruisePhase(PhaseBuilderBase):
     """
 
     default_name = 'cruise_phase'
-    default_ode_class = BreguetCruiseODESolution
+    default_ode_class = BreguetCruiseODE
     default_options_class = CruisePhaseOptions
 
     _initial_guesses_meta_data_ = {}
@@ -123,7 +123,7 @@ class CruisePhase(PhaseBuilderBase):
         """
         Return a new cruise phase for analysis using these constraints.
 
-        If ode_class is None, BreguetCruiseODESolution is used as the default.
+        If ode_class is None, BreguetCruiseODE is used as the default.
 
         Parameters
         ----------

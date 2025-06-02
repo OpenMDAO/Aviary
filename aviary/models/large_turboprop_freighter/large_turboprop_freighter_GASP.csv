@@ -52,6 +52,7 @@ aircraft:engine:data_file, models/engines/turboshaft_4465hp.deck
 aircraft:engine:mass_scaler, 1, unitless
 aircraft:engine:mass_specific, 0.37026, lbm/lbf
 aircraft:engine:num_engines, 4, unitless
+aircraft:engine:num_wing_engines, 4, unitless
 aircraft:engine:propeller:num_blades, 4, unitless
 aircraft:engine:pod_mass_scaler, 1, unitless
 aircraft:engine:propeller:activity_factor, 167, unitless

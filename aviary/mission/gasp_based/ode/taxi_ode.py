@@ -60,11 +60,7 @@ class TaxiSegment(TwoDOFODE):
                 self.add_subsystem(
                     subsystem.name,
                     system,
-                    promotes_inputs=[
-                        '*',
-                        (Dynamic.Mission.ALTITUDE, Mission.Takeoff.AIRPORT_ALTITUDE),
-                        (Dynamic.Atmosphere.MACH, Mission.Taxi.MACH),
-                    ],
+                    promotes_inputs=['*'],
                     promotes_outputs=['*'],
                 )
 
