@@ -5,8 +5,9 @@ from numpy.testing import assert_almost_equal
 from openmdao.utils.testing_utils import use_tempdirs
 
 from aviary.interface.methods_for_level2 import AviaryProblem
-from aviary.subsystems.propulsion.turboprop_model import TurbopropModel
+from aviary.models.large_turboprop_freighter.phase_info import energy_phase_info
 from aviary.subsystems.propulsion.motor.motor_builder import MotorBuilder
+from aviary.subsystems.propulsion.turboprop_model import TurbopropModel
 from aviary.utils.process_input_decks import create_vehicle
 from aviary.variable_info.variables import Aircraft, Mission, Settings
 
@@ -19,7 +20,6 @@ from aviary.models.large_turboprop_freighter.electrified_phase_info import (
 # @use_tempdirs
 # TODO need to add asserts with "truth" values
 class LargeElectrifiedTurbopropFreighterBenchmark(unittest.TestCase):
-
     def build_and_run_problem(self, mission_method):
         if mission_method == 'energy':
             phase_info = deepcopy(energy_phase_info)
@@ -28,11 +28,11 @@ class LargeElectrifiedTurbopropFreighterBenchmark(unittest.TestCase):
             phase_info = deepcopy(two_dof_phase_info)
 
         # Build problem
-        prob = AviaryProblem()
+        prob = AviaryProblem(verbosity=0)
 
         # load inputs from .csv to build engine
         options, _ = create_vehicle(
-            "models/large_turboprop_freighter/large_turboprop_freighter_GASP.csv"
+            'models/large_turboprop_freighter/large_turboprop_freighter_GASP_GASP.csv'
         )
 
         if mission_method == 'energy':
@@ -58,13 +58,11 @@ class LargeElectrifiedTurbopropFreighterBenchmark(unittest.TestCase):
             'motor',
         )
 
-        electroprop = TurbopropModel(
-            'electroprop', options=options, shaft_power_model=motor
-        )
+        electroprop = TurbopropModel('electroprop', options=options, shaft_power_model=motor)
 
         # load_inputs needs to be updated to accept an already existing aviary options
         prob.load_inputs(
-            options,  # "models/large_turboprop_freighter/large_turboprop_freighter.csv",
+            options,  # "models/large_turboprop_freighter/large_turboprop_freighter_GASP.csv",
             phase_info,
             engine_builders=[electroprop],
         )
@@ -87,21 +85,21 @@ class LargeElectrifiedTurbopropFreighterBenchmark(unittest.TestCase):
         prob.add_phases()
         prob.add_post_mission_systems()
         prob.link_phases()
-        prob.add_driver("SNOPT")
+        prob.add_driver('IPOPT', max_iter=0, verbosity=0)
         prob.add_design_variables()
         prob.add_objective()
 
         prob.setup()
 
         prob.set_initial_guesses()
-        prob.run_aviary_problem("dymos_solution.db")
+        prob.run_aviary_problem('dymos_solution.db')
 
     def test_bench_2DOF(self):
         prob = self.build_and_run_problem('2DOF')
         # TODO asserts
 
     # NOTE unknown if this is still the primary issue breaking energy method
-    @unittest.skip("Skipping until all builders are updated with get_parameters()")
+    @unittest.skip('Skipping until all builders are updated with get_parameters()')
     def test_bench_energy(self):
         prob = self.build_and_run_problem('energy')
         # TODO asserts
@@ -110,4 +108,4 @@ class LargeElectrifiedTurbopropFreighterBenchmark(unittest.TestCase):
 if __name__ == '__main__':
     # unittest.main()
     test = LargeElectrifiedTurbopropFreighterBenchmark()
-    test.build_and_run_problem("2DOF")
+    test.build_and_run_problem('2DOF')

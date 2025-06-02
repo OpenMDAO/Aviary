@@ -5,20 +5,15 @@ from numpy.testing import assert_almost_equal
 from openmdao.utils.testing_utils import use_tempdirs
 
 from aviary.interface.methods_for_level2 import AviaryProblem
+from aviary.models.large_turboprop_freighter.phase_info import two_dof_phase_info
 from aviary.subsystems.propulsion.turboprop_model import TurbopropModel
 from aviary.utils.process_input_decks import create_vehicle
-from aviary.variable_info.variables import Aircraft, Mission, Settings
-
-from aviary.models.large_turboprop_freighter.phase_info import (
-    two_dof_phase_info,
-    energy_phase_info,
-)
+from aviary.variable_info.variables import Aircraft, Mission
 
 
 @use_tempdirs
-# TODO need to add asserts with "truth" values
+# TODO need to add asserts with "truth" values, only verifying no errors here
 class LargeTurbopropFreighterBenchmark(unittest.TestCase):
-
     def build_and_run_problem(self, mission_method):
         if mission_method == 'energy':
             phase_info = deepcopy(energy_phase_info)
@@ -27,11 +22,11 @@ class LargeTurbopropFreighterBenchmark(unittest.TestCase):
             phase_info = deepcopy(two_dof_phase_info)
 
         # Build problem
-        prob = AviaryProblem()
+        prob = AviaryProblem(verbosity=0)
 
         # load inputs from .csv to build engine
         options, _ = create_vehicle(
-            "models/large_turboprop_freighter/large_turboprop_freighter_GASP.csv"
+            'models/large_turboprop_freighter/large_turboprop_freighter_GASP.csv'
         )
 
         turboprop = TurbopropModel('turboprop', options=options)
@@ -64,13 +59,13 @@ class LargeTurbopropFreighterBenchmark(unittest.TestCase):
         prob.add_phases()
         prob.add_post_mission_systems()
         prob.link_phases()
-        prob.add_driver("SNOPT")
+        prob.add_driver('IPOPT', max_iter=0, verbosity=0)
         prob.add_design_variables()
         prob.add_objective()
         prob.setup()
 
         prob.set_initial_guesses()
-        prob.run_aviary_problem("dymos_solution.db")
+        prob.run_aviary_problem('dymos_solution.db')
 
         return prob
 
@@ -79,7 +74,7 @@ class LargeTurbopropFreighterBenchmark(unittest.TestCase):
         # TODO asserts
 
     # NOTE unknown if this is still the primary issue breaking energy method
-    @unittest.skip("Skipping until all builders are updated with get_parameters()")
+    @unittest.skip('Skipping until all builders are updated with get_parameters()')
     def test_bench_energy(self):
         prob = self.build_and_run_problem('energy')
         # TODO asserts

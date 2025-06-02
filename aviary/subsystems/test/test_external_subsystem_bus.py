@@ -1,11 +1,9 @@
-"""
-Test external subsystem bus API.
-"""
-from copy import deepcopy
+"""Test external subsystem bus API."""
+
 import unittest
+from copy import deepcopy
 
 import numpy as np
-
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_near_equal
 from openmdao.utils.testing_utils import use_tempdirs
@@ -16,7 +14,6 @@ from aviary.subsystems.subsystem_builder_base import SubsystemBuilderBase
 
 
 class PreMissionComp(om.ExplicitComponent):
-
     def setup(self):
         self.add_output('for_climb', np.ones((2, 1)), units='ft')
         self.add_output('for_cruise', np.ones((2, 1)), units='ft')
@@ -25,13 +22,12 @@ class PreMissionComp(om.ExplicitComponent):
     def compute(self, inputs, outputs):
         outputs['for_climb'] = np.array([[3.1], [1.7]])
         outputs['for_cruise'] = np.array([[1.2], [4.1]])
-        outputs['for_descent'] = np.array([[3.], [8.]])
+        outputs['for_descent'] = np.array([[3.0], [8.0]])
 
 
 class MissionComp(om.ExplicitComponent):
-
     def initialize(self):
-        self.options.declare('shape', default=(1, ))
+        self.options.declare('shape', default=(1,))
 
     def setup(self):
         shape = self.options['shape']
@@ -43,37 +39,38 @@ class MissionComp(om.ExplicitComponent):
 
 
 class CustomBuilder(SubsystemBuilderBase):
-
     def build_pre_mission(self, aviary_inputs):
         return PreMissionComp()
 
     def build_mission(self, num_nodes, aviary_inputs):
         sub_group = om.Group()
-        sub_group.add_subsystem('electric', MissionComp(shape=(2, 1)),
-                                promotes_inputs=['*'],
-                                promotes_outputs=['*'],
-                                )
+        sub_group.add_subsystem(
+            'electric',
+            MissionComp(shape=(2, 1)),
+            promotes_inputs=['*'],
+            promotes_outputs=['*'],
+        )
         return sub_group
 
     def get_bus_variables(self):
         vars_to_connect = {
-            "test.for_climb": {
-                "mission_name": ['test.xx'],
-                "units": 'ft',
-                "shape": (2, 1),
-                "phases": ['climb']
+            'test.for_climb': {
+                'mission_name': ['test.xx'],
+                'units': 'ft',
+                'shape': (2, 1),
+                'phases': ['climb'],
             },
-            "test.for_cruise": {
-                "mission_name": ['test.xx'],
-                "units": 'ft',
-                "shape": (2, 1),
-                "phases": ['cruise']
+            'test.for_cruise': {
+                'mission_name': ['test.xx'],
+                'units': 'ft',
+                'shape': (2, 1),
+                'phases': ['cruise'],
             },
-            "test.for_descent": {
-                "mission_name": ['test.xx'],
-                "units": 'ft',
-                "shape": (2, 1),
-                "phases": ['descent']
+            'test.for_descent': {
+                'mission_name': ['test.xx'],
+                'units': 'ft',
+                'shape': (2, 1),
+                'phases': ['descent'],
             },
         }
 
@@ -82,7 +79,6 @@ class CustomBuilder(SubsystemBuilderBase):
 
 @use_tempdirs
 class TestExternalSubsystemBus(unittest.TestCase):
-
     def test_external_subsystem_bus(self):
         phase_info = deepcopy(ph_in)
         phase_info['pre_mission']['external_subsystems'] = [CustomBuilder(name='test')]
@@ -92,7 +88,7 @@ class TestExternalSubsystemBus(unittest.TestCase):
 
         prob = AviaryProblem()
 
-        csv_path = "models/test_aircraft/aircraft_for_bench_FwFm.csv"
+        csv_path = 'models/test_aircraft/aircraft_for_bench_FwFm.csv'
         prob.load_inputs(csv_path, phase_info)
         prob.check_and_preprocess_inputs()
 
@@ -118,7 +114,7 @@ class TestExternalSubsystemBus(unittest.TestCase):
         )
         assert_near_equal(
             prob.model.get_val('traj.descent.rhs_all.test.yy'),
-            2.0 * np.array([[3.], [8.]]),
+            2.0 * np.array([[3.0], [8.0]]),
         )
 
 

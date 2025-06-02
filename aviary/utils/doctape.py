@@ -1,12 +1,13 @@
 import argparse
 import ast
 import inspect
+import re
 import subprocess
 import tempfile
-import numpy as np
-import re
-from aviary.interface.cmd_entry_points import _command_map
 
+import numpy as np
+
+from aviary.interface.cmd_entry_points import _command_map
 
 """
 # DocTAPE #
@@ -40,13 +41,12 @@ get_function_names returns the function names in a file as a set
 """
 
 
-class expected_error(Exception):
-    ...
+class expected_error(Exception): ...
 
 
 def gramatical_list(list_of_strings: list, cc='and', add_accents=False) -> str:
     """
-    Combines the elements of a list into a string with proper punctuation
+    Combines the elements of a list into a string with proper punctuation.
 
     Parameters
     ----------
@@ -62,19 +62,18 @@ def gramatical_list(list_of_strings: list, cc='and', add_accents=False) -> str:
     str
         A string that combines the elements of the list into a string with proper punctuation
     """
-    list_of_strings = ['`'+str(s)+'`' if add_accents else str(s)
-                       for s in list_of_strings]
+    list_of_strings = ['`' + str(s) + '`' if add_accents else str(s) for s in list_of_strings]
     if len(list_of_strings) == 1:
         return list_of_strings[0]
     elif len(list_of_strings) == 2:
-        return list_of_strings[0]+' '+cc+' '+list_of_strings[1]
+        return list_of_strings[0] + ' ' + cc + ' ' + list_of_strings[1]
     else:
-        return ', '.join(list_of_strings[:-1]+[cc+' '+list_of_strings[-1]])
+        return ', '.join(list_of_strings[:-1] + [cc + ' ' + list_of_strings[-1]])
 
 
 def get_previous_line(n=1) -> str:
     """
-    returns the previous n line(s) of code as a string
+    Returns the previous n line(s) of code as a string.
 
     Parameters
     ----------
@@ -93,13 +92,13 @@ def get_previous_line(n=1) -> str:
     # get the line number of the line that called this function
     lineno = pframe.f_lineno - first_line if first_line else pframe.f_lineno - 1
     # get the previous lines
-    return lines[lineno-n:lineno] if n > 1 else lines[lineno-1].strip()
+    return lines[lineno - n : lineno] if n > 1 else lines[lineno - 1].strip()
 
 
 def get_variable_name(*variables) -> str:
     """
-    returns the name of the variable passed to the function as a string
-    # NOTE: You cannot call this function multiple times on one line
+    Returns the name of the variable passed to the function as a string
+    # NOTE: You cannot call this function multiple times on one line.
 
     Parameters
     ----------
@@ -162,16 +161,21 @@ def check_value(val1, val2, error_type=ValueError):
     """
     if isinstance(val1, (str, int, float, list, tuple, dict, set, np.ndarray, type({}.keys()))):
         if val1 != val2:
-            raise error_type(f"{val1} is not equal to {val2}")
+            raise error_type(f'{val1} is not equal to {val2}')
     else:
         if val1 is not val2:
-            raise error_type(f"{val1} is not {val2}")
+            raise error_type(f'{val1} is not {val2}')
 
 
-def check_contains(expected_values, actual_values, error_string="{var} not in {actual_values}", error_type=RuntimeError):
+def check_contains(
+    expected_values,
+    actual_values,
+    error_string='{var} not in {actual_values}',
+    error_type=RuntimeError,
+):
     """
     Checks that all of the expected_values exist in actual_values
-    (It does not check for missing values)
+    (It does not check for missing values).
 
     Parameters
     ----------
@@ -197,7 +201,13 @@ def check_contains(expected_values, actual_values, error_string="{var} not in {a
             raise error_type(error_string.format(var=var, actual_values=actual_values))
 
 
-def check_args(func, expected_args: tuple[list, dict, str], args_to_ignore: tuple[list, tuple] = ['self'], exact=True, error_type=ValueError):
+def check_args(
+    func,
+    expected_args: tuple[list, dict, str],
+    args_to_ignore: tuple[list, tuple] = ['self'],
+    exact=True,
+    error_type=ValueError,
+):
     """
     Checks that the expected arguments are valid for a given function.
 
@@ -229,8 +239,7 @@ def check_args(func, expected_args: tuple[list, dict, str], args_to_ignore: tupl
         expected_args = [expected_args]
         exact = False
     params = inspect.signature(func).parameters
-    available_args = {
-        arg: params[arg].default for arg in params if arg not in args_to_ignore}
+    available_args = {arg: params[arg].default for arg in params if arg not in args_to_ignore}
     if exact:
         if isinstance(expected_args, dict):
             check_value(available_args, expected_args)
@@ -242,7 +251,8 @@ def check_args(func, expected_args: tuple[list, dict, str], args_to_ignore: tupl
                 raise error_type(f'{arg} is not a valid argument for {func.__name__}')
             elif isinstance(expected_args, dict) and expected_args[arg] != available_args[arg]:
                 raise error_type(
-                    f"the default value of {arg} is {available_args[arg]}, not {expected_args[arg]}")
+                    f'the default value of {arg} is {available_args[arg]}, not {expected_args[arg]}'
+                )
 
 
 def run_command_no_file_error(command: str, verbose=False):
@@ -273,8 +283,7 @@ def run_command_no_file_error(command: str, verbose=False):
             if err == 'FileNotFoundError':
                 if verbose:
                     print(info)
-                print(
-                    f"A file required by {command} couldn't be found, continuing anyway")
+                print(f"A file required by {command} couldn't be found, continuing anyway")
             else:
                 print(rc.stderr)
                 rc.check_returncode()
@@ -282,7 +291,7 @@ def run_command_no_file_error(command: str, verbose=False):
 
 def get_attribute_name(object: object, attribute, error_type=AttributeError) -> str:
     """
-    Gets the name of an object's attribute based on it's value
+    Gets the name of an object's attribute based on it's value.
 
     This is intended for use with Enums and other objects that have unique values.
     This method will return the name of the first attribute that has a value that
@@ -311,8 +320,7 @@ def get_attribute_name(object: object, attribute, error_type=AttributeError) -> 
         if val == attribute:
             return name
 
-    raise error_type(
-        f"`{object.__name__}` object has no attribute with a value of `{attribute}`")
+    raise error_type(f'`{object.__name__}` object has no attribute with a value of `{attribute}`')
 
 
 def get_all_keys(dict_of_dicts: dict, track_layers=False, all_keys=None) -> list:
@@ -320,7 +328,7 @@ def get_all_keys(dict_of_dicts: dict, track_layers=False, all_keys=None) -> list
     Recursively get all of the keys from a dict of dicts
     This can also be used to recursively get all of the attributes from a complex object, like the Aircraft hierarchy
     Note: this will not add duplicates of keys, but will
-    continue deeper even if a key is duplicated
+    continue deeper even if a key is duplicated.
 
     Parameters
     ----------
@@ -351,7 +359,7 @@ def get_all_keys(dict_of_dicts: dict, track_layers=False, all_keys=None) -> list
         elif track_layers:
             current_layer = track_layers
         if track_layers and current_layer:
-            key = current_layer+'.'+key
+            key = current_layer + '.' + key
         if key not in all_keys:
             all_keys.append(key)
         if isinstance(val, dict) or hasattr(val, '__dict__'):
@@ -365,7 +373,7 @@ def get_all_keys(dict_of_dicts: dict, track_layers=False, all_keys=None) -> list
 
 def get_value(dict_of_dicts: dict, comlpete_key: str):
     """
-    Recursively get a value from a dict of dicts
+    Recursively get a value from a dict of dicts.
 
     Parameters
     ----------
@@ -379,7 +387,6 @@ def get_value(dict_of_dicts: dict, comlpete_key: str):
     val : any
         The value found
     """
-
     for key in comlpete_key.split('.'):
         if not isinstance(dict_of_dicts, dict):
             dict_of_dicts = dict_of_dicts.__dict__
@@ -389,7 +396,7 @@ def get_value(dict_of_dicts: dict, comlpete_key: str):
 
 def glue_variable(name: str, val=None, md_code=False, display=True):
     """
-    Glue a variable for later use in markdown cells of notebooks
+    Glue a variable for later use in markdown cells of notebooks.
 
     Note:
     glue_variable(get_variable_name(Aircraft.APU.MASS))
@@ -406,9 +413,10 @@ def glue_variable(name: str, val=None, md_code=False, display=True):
         Whether to wrap the value in markdown code formatting (e.g. `code`)
     """
     # local import so myst isn't required unless glue is being used
-    from myst_nb import glue
     from IPython.display import Markdown
     from IPython.utils import io
+    from myst_nb import glue
+
     if val is None:
         val = name
     if md_code:
@@ -424,7 +432,7 @@ def glue_variable(name: str, val=None, md_code=False, display=True):
 
 def glue_keys(dict_of_dicts: dict, display=True) -> list:
     """
-    Recursively glue all of the keys from a dict of dicts
+    Recursively glue all of the keys from a dict of dicts.
 
     Parameters
     ----------
@@ -449,7 +457,7 @@ def glue_keys(dict_of_dicts: dict, display=True) -> list:
 
 def get_class_names(file_path) -> set:
     """
-    Retrieve all class names from a given file and return as a set
+    Retrieve all class names from a given file and return as a set.
 
     Parameters
     ----------
@@ -464,10 +472,7 @@ def get_class_names(file_path) -> set:
     tree = ast.parse(file_content)
 
     # Extract class names
-    class_names = [
-        node.name for node in ast.walk(tree)
-        if isinstance(node, ast.ClassDef)
-    ]
+    class_names = [node.name for node in ast.walk(tree) if isinstance(node, ast.ClassDef)]
 
     return set(class_names)
 
@@ -489,17 +494,14 @@ def get_function_names(file_path) -> set:
     tree = ast.parse(file_content)
 
     # Extract function names
-    function_names = [
-        node.name for node in ast.walk(tree)
-        if isinstance(node, ast.FunctionDef)
-    ]
+    function_names = [node.name for node in ast.walk(tree) if isinstance(node, ast.FunctionDef)]
 
     return set(function_names)
 
 
 def glue_actions(cmd, curr_glued=None, glue_default=False, glue_choices=False, md_code=True):
     """
-    Glue all Aviary CLI options
+    Glue all Aviary CLI options.
 
     Parameters
     ----------
@@ -539,7 +541,7 @@ def glue_actions(cmd, curr_glued=None, glue_default=False, glue_choices=False, m
 
 def glue_class_functions(obj, curr_glued=None, pre_fix=None, md_code=True):
     """
-    Glue all class functions
+    Glue all class functions.
 
     Parameters
     ----------
@@ -563,7 +565,7 @@ def glue_class_functions(obj, curr_glued=None, pre_fix=None, md_code=True):
 
 def glue_function_arguments(func, curr_glued=None, glue_default=False, md_code=False):
     """
-    Glue all function arguments and default values for a given function
+    Glue all function arguments and default values for a given function.
 
     Parameters
     ----------
@@ -586,9 +588,9 @@ def glue_function_arguments(func, curr_glued=None, glue_default=False, md_code=F
                     curr_glued.append(param_default)
 
 
-def glue_class_options(obj,  curr_glued=None, md_code=False):
+def glue_class_options(obj, curr_glued=None, md_code=False):
     """
-    Glue all class options for a given class
+    Glue all class options for a given class.
 
     Parameters
     ----------

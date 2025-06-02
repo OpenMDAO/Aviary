@@ -1,49 +1,47 @@
-"""
-OpenMDAO System to compute drag based on the methods in FLOPS AERO.
-"""
+"""OpenMDAO System to compute drag based on the methods in FLOPS AERO."""
+
 import numpy as np
 import openmdao.api as om
 
 from aviary.subsystems.aerodynamics.aero_common import DynamicPressure
 from aviary.subsystems.aerodynamics.flops_based.buffet_lift import BuffetLift
-from aviary.subsystems.aerodynamics.flops_based.compressibility_drag import \
-    CompressibilityDrag
+from aviary.subsystems.aerodynamics.flops_based.compressibility_drag import CompressibilityDrag
 from aviary.subsystems.aerodynamics.flops_based.drag import TotalDrag
 from aviary.subsystems.aerodynamics.flops_based.induced_drag import InducedDrag
 from aviary.subsystems.aerodynamics.flops_based.lift import LiftEqualsWeight
-from aviary.subsystems.aerodynamics.flops_based.lift_dependent_drag import \
-    LiftDependentDrag
+from aviary.subsystems.aerodynamics.flops_based.lift_dependent_drag import LiftDependentDrag
 from aviary.subsystems.aerodynamics.flops_based.mux_component import MuxComponent
 from aviary.subsystems.aerodynamics.flops_based.skin_friction import SkinFriction
-from aviary.subsystems.aerodynamics.flops_based.skin_friction_drag import \
-    SkinFrictionDrag
+from aviary.subsystems.aerodynamics.flops_based.skin_friction_drag import SkinFrictionDrag
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 
 
 class ComputedAeroGroup(om.Group):
-    """
-    FLOPS-based computed aero group
-    """
+    """FLOPS-based computed aero group."""
 
     def initialize(self):
         self.options.declare(
-            "num_nodes", default=1, types=int,
-            desc="Number of nodes along mission segment")
-        self.options.declare(
-            'gamma', default=1.4,
-            desc='Ratio of specific heats for air.')
+            'num_nodes', default=1, types=int, desc='Number of nodes along mission segment'
+        )
+        self.options.declare('gamma', default=1.4, desc='Ratio of specific heats for air.')
 
     def setup(self):
-        num_nodes = self.options["num_nodes"]
+        num_nodes = self.options['num_nodes']
         gamma = self.options['gamma']
 
         comp = MuxComponent()
         self.add_subsystem(
-            'Mux', comp,
+            'Mux',
+            comp,
             promotes_inputs=['aircraft:*'],
             promotes_outputs=[
-                'wetted_areas', 'fineness_ratios', 'characteristic_lengths',
-                'laminar_fractions_upper', 'laminar_fractions_lower'])
+                'wetted_areas',
+                'fineness_ratios',
+                'characteristic_lengths',
+                'laminar_fractions_upper',
+                'laminar_fractions_lower',
+            ],
+        )
 
         self.add_subsystem(
             'DynamicPressure',
@@ -85,8 +83,7 @@ class ComputedAeroGroup(om.Group):
             ],
         )
 
-        comp = InducedDrag(
-            num_nodes=num_nodes, gamma=gamma)
+        comp = InducedDrag(num_nodes=num_nodes, gamma=gamma)
         self.add_subsystem(
             'InducedDrag',
             comp,
@@ -137,11 +134,18 @@ class ComputedAeroGroup(om.Group):
 
         comp = SkinFrictionDrag(num_nodes=num_nodes)
         self.add_subsystem(
-            'SkinFrictionDrag', comp,
+            'SkinFrictionDrag',
+            comp,
             promotes_inputs=[
-                'skin_friction_coeff', 'Re', 'fineness_ratios', 'wetted_areas',
-                'laminar_fractions_upper', 'laminar_fractions_lower',
-                Aircraft.Wing.AREA])
+                'skin_friction_coeff',
+                'Re',
+                'fineness_ratios',
+                'wetted_areas',
+                'laminar_fractions_upper',
+                'laminar_fractions_lower',
+                Aircraft.Wing.AREA,
+            ],
+        )
 
         comp = ComputedDrag(num_nodes=num_nodes)
         self.add_subsystem(
@@ -175,34 +179,35 @@ class ComputedAeroGroup(om.Group):
 
         self.connect('PressureDrag.CD', 'Drag.pressure_drag_coeff')
         self.connect('InducedDrag.induced_drag_coeff', 'Drag.induced_drag_coeff')
-        self.connect(
-            'CompressibilityDrag.compress_drag_coeff', 'Drag.compress_drag_coeff')
-        self.connect(
-            'SkinFrictionDrag.skin_friction_drag_coeff', 'Drag.skin_friction_drag_coeff')
+        self.connect('CompressibilityDrag.compress_drag_coeff', 'Drag.compress_drag_coeff')
+        self.connect('SkinFrictionDrag.skin_friction_drag_coeff', 'Drag.skin_friction_drag_coeff')
 
 
 class ComputedDrag(om.Group):
-    """
-    FLOPS-based computed drag group
-    """
+    """FLOPS-based computed drag group."""
 
     def initialize(self):
         self.options.declare('num_nodes', types=int)
 
     def setup(self):
-        nn = self.options["num_nodes"]
+        nn = self.options['num_nodes']
 
         self._setup_drag_coeff(
             'CDI',
-            input0='pressure_drag_coeff', input1='induced_drag_coeff', output='CDI',
+            input0='pressure_drag_coeff',
+            input1='induced_drag_coeff',
+            output='CDI',
             desc='lift-dependent drag coefficient,'
-            ' including contributions from pressure drag coefficient')
+            ' including contributions from pressure drag coefficient',
+        )
 
         self._setup_drag_coeff(
             'CD0',
-            input0='skin_friction_drag_coeff', input1='compress_drag_coeff',
+            input0='skin_friction_drag_coeff',
+            input1='compress_drag_coeff',
             output='CD0',
-            desc='zero-lift drag coefficient')
+            desc='zero-lift drag coefficient',
+        )
 
         self.add_subsystem(
             Dynamic.Vehicle.DRAG,
@@ -221,10 +226,10 @@ class ComputedDrag(om.Group):
             promotes_outputs=['CD', Dynamic.Vehicle.DRAG],
         )
 
-        self.set_input_defaults(Aircraft.Wing.AREA, 1., 'ft**2')
+        self.set_input_defaults(Aircraft.Wing.AREA, 1.0, 'ft**2')
 
     def _setup_drag_coeff(self, name, input0, input1, output, desc=None):
-        nn = self.options["num_nodes"]
+        nn = self.options['num_nodes']
 
         input_args = {'val': np.ones(nn), 'units': 'unitless'}
         output_args = dict(input_args)
@@ -235,6 +240,9 @@ class ComputedDrag(om.Group):
         kwargs = {input0: input_args, input1: input_args, output: output_args}
 
         subsys = self.add_subsystem(
-            name, om.ExecComp(f'{output} = {input0} + {input1}', **kwargs),
-            promotes_inputs=[input0, input1], promotes_outputs=[output])
+            name,
+            om.ExecComp(f'{output} = {input0} + {input1}', **kwargs),
+            promotes_inputs=[input0, input1],
+            promotes_outputs=[output],
+        )
         subsys.declare_coloring(show_summary=False)

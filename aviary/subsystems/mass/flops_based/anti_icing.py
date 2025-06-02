@@ -5,16 +5,17 @@ from aviary.constants import GRAV_ENGLISH_LBM
 from aviary.subsystems.mass.flops_based.distributed_prop import (
     distributed_engine_count_factor,
     distributed_nacelle_diam_factor,
-    distributed_nacelle_diam_factor_deriv)
-from aviary.variable_info.functions import add_aviary_input, add_aviary_output, add_aviary_option
+    distributed_nacelle_diam_factor_deriv,
+)
+from aviary.variable_info.functions import add_aviary_input, add_aviary_option, add_aviary_output
 from aviary.variable_info.variables import Aircraft
 
 
 class AntiIcingMass(om.ExplicitComponent):
-    '''
+    """
     Calculates the mass of the anti-icing system. The methodology is based
     on the FLOPS weight equations, modified to output mass instead of weight.
-    '''
+    """
 
     def initialize(self):
         add_aviary_option(self, Aircraft.Engine.NUM_ENGINES)
@@ -25,15 +26,14 @@ class AntiIcingMass(om.ExplicitComponent):
 
         add_aviary_input(self, Aircraft.AntiIcing.MASS_SCALER, units='unitless')
         add_aviary_input(self, Aircraft.Fuselage.MAX_WIDTH, units='ft')
-        add_aviary_input(self, Aircraft.Nacelle.AVG_DIAMETER,
-                         shape=num_engine_type, units='ft')
+        add_aviary_input(self, Aircraft.Nacelle.AVG_DIAMETER, shape=num_engine_type, units='ft')
         add_aviary_input(self, Aircraft.Wing.SPAN, units='ft')
         add_aviary_input(self, Aircraft.Wing.SWEEP, units='deg')
 
         add_aviary_output(self, Aircraft.AntiIcing.MASS, units='lbm')
 
     def setup_partials(self):
-        self.declare_partials("*", "*")
+        self.declare_partials('*', '*')
 
     def compute(self, inputs, outputs):
         total_engines = self.options[Aircraft.Propulsion.TOTAL_NUM_ENGINES]
@@ -49,8 +49,14 @@ class AntiIcingMass(om.ExplicitComponent):
         f_nacelle = distributed_nacelle_diam_factor(avg_diam, num_engines)
 
         outputs[Aircraft.AntiIcing.MASS] = (
-            (span / np.cos(sweep * np.pi / 180))
-            + 3.8 * f_nacelle * count_factor + 1.5 * max_width) * scaler / GRAV_ENGLISH_LBM
+            (
+                (span / np.cos(sweep * np.pi / 180))
+                + 3.8 * f_nacelle * count_factor
+                + 1.5 * max_width
+            )
+            * scaler
+            / GRAV_ENGLISH_LBM
+        )
 
     def compute_partials(self, inputs, J):
         total_engines = self.options[Aircraft.Propulsion.TOTAL_NUM_ENGINES]
@@ -70,18 +76,17 @@ class AntiIcingMass(om.ExplicitComponent):
         sin_sweep = np.sin(sweep * np.pi / 180)
 
         J[Aircraft.AntiIcing.MASS, Aircraft.AntiIcing.MASS_SCALER] = (
-            span / cos_sweep + 3.8 * f_nacelle * count_factor +
-            1.5 * max_width) / GRAV_ENGLISH_LBM
+            span / cos_sweep + 3.8 * f_nacelle * count_factor + 1.5 * max_width
+        ) / GRAV_ENGLISH_LBM
 
-        J[Aircraft.AntiIcing.MASS, Aircraft.Fuselage.MAX_WIDTH] = \
-            1.5 * scaler / GRAV_ENGLISH_LBM
+        J[Aircraft.AntiIcing.MASS, Aircraft.Fuselage.MAX_WIDTH] = 1.5 * scaler / GRAV_ENGLISH_LBM
 
-        J[Aircraft.AntiIcing.MASS, Aircraft.Nacelle.AVG_DIAMETER] = \
+        J[Aircraft.AntiIcing.MASS, Aircraft.Nacelle.AVG_DIAMETER] = (
             3.8 * diam_deriv_fact * count_factor * scaler / GRAV_ENGLISH_LBM
+        )
 
-        J[Aircraft.AntiIcing.MASS, Aircraft.Wing.SPAN] = \
-            1 / cos_sweep * scaler / GRAV_ENGLISH_LBM
+        J[Aircraft.AntiIcing.MASS, Aircraft.Wing.SPAN] = 1 / cos_sweep * scaler / GRAV_ENGLISH_LBM
 
-        J[Aircraft.AntiIcing.MASS, Aircraft.Wing.SWEEP] = \
-            span * (np.pi / 180) * sin_sweep / (cos_sweep) ** 2 * \
-            scaler / GRAV_ENGLISH_LBM
+        J[Aircraft.AntiIcing.MASS, Aircraft.Wing.SWEEP] = (
+            span * (np.pi / 180) * sin_sweep / (cos_sweep) ** 2 * scaler / GRAV_ENGLISH_LBM
+        )

@@ -1,17 +1,15 @@
 import unittest
 
-import numpy as np
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 from openmdao.utils.testing_utils import use_tempdirs
 
 from aviary.subsystems.propulsion.motor.model.motor_premission import MotorPreMission
 from aviary.utils.aviary_values import AviaryValues
-from aviary.variable_info.variables import Aircraft, Dynamic
+from aviary.variable_info.variables import Aircraft
 
 
 class TestGearbox(unittest.TestCase):
-
     @use_tempdirs
     def test_motor_map(self):
         prob = om.Problem()
@@ -37,7 +35,7 @@ class TestGearbox(unittest.TestCase):
         assert_near_equal(torque_max, torque_max_expected, tolerance=1e-9)
         assert_near_equal(mass, mass_expected, tolerance=1e-9)
 
-        partial_data = prob.check_partials(out_stream=None, method="cs")
+        partial_data = prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
 
 

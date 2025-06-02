@@ -1,11 +1,11 @@
-'''
+"""
 This is a variable hierarchy that is for a single mission. Each mission
 gets a copy of this hierarchy.
-'''
+"""
 
 
 class Aircraft:
-    """Aircraft data hierarchy"""
+    """Aircraft data hierarchy."""
 
     class AirConditioning:
         MASS = 'aircraft:air_conditioning:mass'
@@ -38,7 +38,6 @@ class Aircraft:
     class BWB:
         CABIN_AREA = 'aircraft:blended_wing_body_design:cabin_area'
         NUM_BAYS = 'aircraft:blended_wing_body_design:num_bays'
-
         PASSENGER_LEADING_EDGE_SWEEP = (
             'aircraft:blended_wing_body_design:passenger_leading_edge_sweep'
         )
@@ -60,9 +59,7 @@ class Aircraft:
     class Controls:
         COCKPIT_CONTROL_MASS_SCALER = 'aircraft:controls:cockpit_control_mass_scaler'
         CONTROL_MASS_INCREMENT = 'aircraft:controls:control_mass_increment'
-        STABILITY_AUGMENTATION_SYSTEM_MASS = (
-            'aircraft:controls:stability_augmentation_system_mass'
-        )
+        STABILITY_AUGMENTATION_SYSTEM_MASS = 'aircraft:controls:stability_augmentation_system_mass'
         STABILITY_AUGMENTATION_SYSTEM_MASS_SCALER = (
             'aircraft:controls:stability_augmentation_system_mass_scaler'
         )
@@ -71,15 +68,11 @@ class Aircraft:
     class CrewPayload:
         BAGGAGE_MASS = 'aircraft:crew_and_payload:baggage_mass'
 
-        BAGGAGE_MASS_PER_PASSENGER = (
-            'aircraft:crew_and_payload:baggage_mass_per_passenger'
-        )
+        BAGGAGE_MASS_PER_PASSENGER = 'aircraft:crew_and_payload:baggage_mass_per_passenger'
 
         CARGO_CONTAINER_MASS = 'aircraft:crew_and_payload:cargo_container_mass'
 
-        CARGO_CONTAINER_MASS_SCALER = (
-            'aircraft:crew_and_payload:cargo_container_mass_scaler'
-        )
+        CARGO_CONTAINER_MASS_SCALER = 'aircraft:crew_and_payload:cargo_container_mass_scaler'
 
         CARGO_MASS = 'aircraft:crew_and_payload:cargo_mass'
         CATERING_ITEMS_MASS_PER_PASSENGER = (
@@ -96,9 +89,7 @@ class Aircraft:
 
         NON_FLIGHT_CREW_MASS = 'aircraft:crew_and_payload:non_flight_crew_mass'
 
-        NON_FLIGHT_CREW_MASS_SCALER = (
-            'aircraft:crew_and_payload:non_flight_crew_mass_scaler'
-        )
+        NON_FLIGHT_CREW_MASS_SCALER = 'aircraft:crew_and_payload:non_flight_crew_mass_scaler'
 
         NUM_BUSINESS_CLASS = 'aircraft:crew_and_payload:num_business_class'
         NUM_FIRST_CLASS = 'aircraft:crew_and_payload:num_first_class'
@@ -122,9 +113,7 @@ class Aircraft:
             'aircraft:crew_and_payload:passenger_service_mass_per_passenger'
         )
 
-        PASSENGER_SERVICE_MASS_SCALER = (
-            'aircraft:crew_and_payload:passenger_service_mass_scaler'
-        )
+        PASSENGER_SERVICE_MASS_SCALER = 'aircraft:crew_and_payload:passenger_service_mass_scaler'
 
         TOTAL_PAYLOAD_MASS = 'aircraft:crew_and_payload:total_payload_mass'
         WATER_MASS_PER_OCCUPANT = 'aircraft:crew_and_payload:water_mass_per_occupant'
@@ -145,9 +134,7 @@ class Aircraft:
         BASE_AREA = 'aircraft:design:base_area'
         CG_DELTA = 'aircraft:design:cg_delta'
         CHARACTERISTIC_LENGTHS = 'aircraft:design:characteristic_lengths'
-        COCKPIT_CONTROL_MASS_COEFFICIENT = (
-            'aircraft:design:cockpit_control_mass_coefficient'
-        )
+        COCKPIT_CONTROL_MASS_COEFFICIENT = 'aircraft:design:cockpit_control_mass_coefficient'
         COMPUTE_HTAIL_VOLUME_COEFF = 'aircraft:design:compute_htail_volume_coeff'
         COMPUTE_VTAIL_VOLUME_COEFF = 'aircraft:design:compute_vtail_volume_coeff'
         DRAG_COEFFICIENT_INCREMENT = 'aircraft:design:drag_increment'
@@ -170,9 +157,7 @@ class Aircraft:
         LANDING_TO_TAKEOFF_MASS_RATIO = 'aircraft:design:landing_to_takeoff_mass_ratio'
 
         LIFT_CURVE_SLOPE = 'aircraft:design:lift_curve_slope'
-        LIFT_DEPENDENT_DRAG_COEFF_FACTOR = (
-            'aircraft:design:lift_dependent_drag_coeff_factor'
-        )
+        LIFT_DEPENDENT_DRAG_COEFF_FACTOR = 'aircraft:design:lift_dependent_drag_coeff_factor'
 
         LIFT_DEPENDENT_DRAG_POLAR = 'aircraft:design:lift_dependent_drag_polar'
         LIFT_INDEPENDENT_DRAG_POLAR = 'aircraft:design:lift_independent_drag_polar'
@@ -201,6 +186,7 @@ class Aircraft:
         THRUST_TO_WEIGHT_RATIO = 'aircraft:design:thrust_to_weight_ratio'
         TOTAL_WETTED_AREA = 'aircraft:design:total_wetted_area'
         TOUCHDOWN_MASS = 'aircraft:design:touchdown_mass'
+        TYPE = 'aircraft:design:type'
         ULF_CALCULATED_FROM_MANEUVER = 'aircraft:design:ulf_calculated_from_maneuver'
         USE_ALT_MASS = 'aircraft:design:use_alt_mass'
         WETTED_AREAS = 'aircraft:design:wetted_areas'
@@ -223,9 +209,7 @@ class Aircraft:
         FLIGHT_IDLE_MAX_FRACTION = 'aircraft:engine:flight_idle_max_fraction'
         FLIGHT_IDLE_MIN_FRACTION = 'aircraft:engine:flight_idle_min_fraction'
         FLIGHT_IDLE_THRUST_FRACTION = 'aircraft:engine:flight_idle_thrust_fraction'
-        FUEL_FLOW_SCALER_CONSTANT_TERM = (
-            'aircraft:engine:fuel_flow_scaler_constant_term'
-        )
+        FUEL_FLOW_SCALER_CONSTANT_TERM = 'aircraft:engine:fuel_flow_scaler_constant_term'
         FUEL_FLOW_SCALER_LINEAR_TERM = 'aircraft:engine:fuel_flow_scaler_linear_term'
         GENERATE_FLIGHT_IDLE = 'aircraft:engine:generate_flight_idle'
         GEOPOTENTIAL_ALT = 'aircraft:engine:geopotential_alt'
@@ -265,7 +249,7 @@ class Aircraft:
             GEAR_RATIO = 'aircraft:engine:gearbox:gear_ratio'
             MASS = 'aircraft:engine:gearbox:mass'
             SHAFT_POWER_DESIGN = 'aircraft:engine:gearbox:shaft_power_design'
-            SPECIFIC_TORQUE = "aircraft:engine:gearbox:specific_torque"
+            SPECIFIC_TORQUE = 'aircraft:engine:gearbox:specific_torque'
 
         class Motor:
             MASS = 'aircraft:engine:motor:mass'
@@ -273,14 +257,10 @@ class Aircraft:
 
         class Propeller:
             ACTIVITY_FACTOR = 'aircraft:engine:propeller:activity_factor'
-            COMPUTE_INSTALLATION_LOSS = (
-                'aircraft:engine:propeller:compute_installation_loss'
-            )
+            COMPUTE_INSTALLATION_LOSS = 'aircraft:engine:propeller:compute_installation_loss'
             DATA_FILE = 'aircraft:engine:propeller:data_file'
             DIAMETER = 'aircraft:engine:propeller:diameter'
-            INTEGRATED_LIFT_COEFFICIENT = (
-                'aircraft:engine:propeller:integrated_lift_coefficient'
-            )
+            INTEGRATED_LIFT_COEFFICIENT = 'aircraft:engine:propeller:integrated_lift_coefficient'
             NUM_BLADES = 'aircraft:engine:propeller:num_blades'
             TIP_MACH_MAX = 'aircraft:engine:propeller:tip_mach_max'
             TIP_SPEED_MAX = 'aircraft:engine:propeller:tip_speed_max'
@@ -326,6 +306,8 @@ class Aircraft:
         MASS_SCALER = 'aircraft:furnishings:mass_scaler'
 
     class Fuselage:
+        AFTBODY_MASS = 'aircraft:fuselage:aftbody_mass'
+        AFTBODY_MASS_PER_UNIT_AREA = 'aircraft:fuselage:aftbody_mass_per_unit_area'
         AISLE_WIDTH = 'aircraft:fuselage:aisle_width'
         AVG_DIAMETER = 'aircraft:fuselage:avg_diameter'
         CHARACTERISTIC_LENGTH = 'aircraft:fuselage:characteristic_length'
@@ -334,11 +316,16 @@ class Aircraft:
         DIAMETER_TO_WING_SPAN = 'aircraft:fuselage:diameter_to_wing_span'
         FINENESS = 'aircraft:fuselage:fineness'
         FLAT_PLATE_AREA_INCREMENT = 'aircraft:fuselage:flat_plate_area_increment'
+        FOREBODY_MASS = 'aircraft:fuselage:forebody_mass'
         FORM_FACTOR = 'aircraft:fuselage:form_factor'
+        HEIGHT_TO_WIDTH_RATIO = 'aircraft:fuselage:height_to_width_ratio'
+        HYDRAULIC_DIAMETER = 'aircraft:fuselage:hydraulic_diameter'
         LAMINAR_FLOW_LOWER = 'aircraft:fuselage:laminar_flow_lower'
         LAMINAR_FLOW_UPPER = 'aircraft:fuselage:laminar_flow_upper'
         LENGTH = 'aircraft:fuselage:length'
         LENGTH_TO_DIAMETER = 'aircraft:fuselage:length_to_diameter'
+        LIFT_COEFFICENT_RATIO_BODY_TO_WING = 'aircraft:fuselage:lift_coefficient_ratio_body_to_wing'
+        LIFT_CURVE_SLOPE_MACH0 = 'aircraft:fuselage:lift_curve_slope_mach0'
         MASS = 'aircraft:fuselage:mass'
         MASS_COEFFICIENT = 'aircraft:fuselage:mass_coefficient'
         MASS_SCALER = 'aircraft:fuselage:mass_scaler'
@@ -355,10 +342,12 @@ class Aircraft:
         PILOT_COMPARTMENT_LENGTH = 'aircraft:fuselage:pilot_compartment_length'
         PLANFORM_AREA = 'aircraft:fuselage:planform_area'
         PRESSURE_DIFFERENTIAL = 'aircraft:fuselage:pressure_differential'
+        PRESSURIZED_WIDTH_ADDITIONAL = 'aircraft:fuselage:pressurized_width_additional'
         SEAT_PITCH = 'aircraft:fuselage:seat_pitch'
         SEAT_WIDTH = 'aircraft:fuselage:seat_width'
         TAIL_FINENESS = 'aircraft:fuselage:tail_fineness'
         WETTED_AREA = 'aircraft:fuselage:wetted_area'
+        WETTED_AREA_RATIO_AFTBODY_TO_TOTAL = 'aircraft:fuselage:wetted_area_ratio_aftbody_to_total'
         WETTED_AREA_SCALER = 'aircraft:fuselage:wetted_area_scaler'
 
     class HorizontalTail:
@@ -390,9 +379,7 @@ class Aircraft:
         WETTED_AREA_SCALER = 'aircraft:horizontal_tail:wetted_area_scaler'
 
     class Hydraulics:
-        FLIGHT_CONTROL_MASS_COEFFICIENT = (
-            'aircraft:hydraulics:flight_control_mass_coefficient'
-        )
+        FLIGHT_CONTROL_MASS_COEFFICIENT = 'aircraft:hydraulics:flight_control_mass_coefficient'
         GEAR_MASS_COEFFICIENT = 'aircraft:hydraulics:gear_mass_coefficient'
         MASS = 'aircraft:hydraulics:mass'
         MASS_SCALER = 'aircraft:hydraulics:mass_scaler'
@@ -404,7 +391,6 @@ class Aircraft:
         MASS_SCALER = 'aircraft:instruments:mass_scaler'
 
     class LandingGear:
-        CARRIER_BASED = 'aircraft:landing_gear:carrier_based'
         DRAG_COEFFICIENT = 'aircraft:landing_gear:drag_coefficient'
         FIXED_GEAR = 'aircraft:landing_gear:fixed_gear'
         MAIN_GEAR_LOCATION = 'aircraft:landing_gear:main_gear_location'
@@ -436,6 +422,7 @@ class Aircraft:
         MASS = 'aircraft:nacelle:mass'
         MASS_SCALER = 'aircraft:nacelle:mass_scaler'
         MASS_SPECIFIC = 'aircraft:nacelle:mass_specific'
+        PERCENT_DIAM_BURIED_IN_FUSELAGE = 'aircraft:nacelle:percent_diam_buried_in_fuselage'
         SURFACE_AREA = 'aircraft:nacelle:surface_area'
         TOTAL_WETTED_AREA = 'aircraft:nacelle:total_wetted_area'
         WETTED_AREA = 'aircraft:nacelle:wetted_area'
@@ -468,9 +455,7 @@ class Aircraft:
         AREA = 'aircraft:strut:area'
         AREA_RATIO = 'aircraft:strut:area_ratio'
         ATTACHMENT_LOCATION = 'aircraft:strut:attachment_location'
-        ATTACHMENT_LOCATION_DIMENSIONLESS = (
-            'aircraft:strut:attachment_location_dimensionless'
-        )
+        ATTACHMENT_LOCATION_DIMENSIONLESS = 'aircraft:strut:attachment_location_dimensionless'
         CHORD = 'aircraft:strut:chord'
         DIMENSIONAL_LOCATION_SPECIFIED = 'aircraft:strut:dimensional_location_specified'
         FUSELAGE_INTERFERENCE_FACTOR = 'aircraft:strut:fuselage_interference_factor'
@@ -532,6 +517,7 @@ class Aircraft:
         DETAILED_WING = 'aircraft:wing:detailed_wing'
         DIHEDRAL = 'aircraft:wing:dihedral'
         ENG_POD_INERTIA_FACTOR = 'aircraft:wing:eng_pod_inertia_factor'
+        EXPOSED_AREA = 'aircraft:wing:exposed_area'
         FINENESS = 'aircraft:wing:fineness'
         FLAP_CHORD_RATIO = 'aircraft:wing:flap_chord_ratio'
         FLAP_DEFLECTION_LANDING = 'aircraft:wing:flap_deflection_landing'
@@ -540,9 +526,7 @@ class Aircraft:
         FLAP_LIFT_INCREMENT_OPTIMUM = 'aircraft:wing:flap_lift_increment_optimum'
         FLAP_SPAN_RATIO = 'aircraft:wing:flap_span_ratio'
         FLAP_TYPE = 'aircraft:wing:flap_type'
-        FOLD_DIMENSIONAL_LOCATION_SPECIFIED = (
-            'aircraft:wing:fold_dimensional_location_specified'
-        )
+        FOLD_DIMENSIONAL_LOCATION_SPECIFIED = 'aircraft:wing:fold_dimensional_location_specified'
         FOLD_MASS = 'aircraft:wing:fold_mass'
         FOLD_MASS_COEFFICIENT = 'aircraft:wing:fold_mass_coefficient'
         FOLDED_SPAN = 'aircraft:wing:folded_span'
@@ -616,10 +600,10 @@ class Aircraft:
 
 
 class Dynamic:
-    """All time-dependent variables used during mission analysis"""
+    """All time-dependent variables used during mission analysis."""
 
     class Atmosphere:
-        """Atmospheric and freestream conditions"""
+        """Atmospheric and freestream conditions."""
 
         DENSITY = 'dynamic:atmosphere:density'
         DYNAMIC_PRESSURE = 'dynamic:atmosphere:dynamic_pressure'
@@ -657,9 +641,7 @@ class Dynamic:
 
         ANGLE_OF_ATTACK = 'dynamic:vehicle:angle_of_attack'
         BATTERY_STATE_OF_CHARGE = 'dynamic:vehicle:battery_state_of_charge'
-        CUMULATIVE_ELECTRIC_ENERGY_USED = (
-            'dynamic:vehicle:cumulative_electric_energy_used'
-        )
+        CUMULATIVE_ELECTRIC_ENERGY_USED = 'dynamic:vehicle:cumulative_electric_energy_used'
         DRAG = 'dynamic:vehicle:drag'
         LIFT = 'dynamic:vehicle:lift'
         MASS = 'dynamic:vehicle:mass'
@@ -668,14 +650,10 @@ class Dynamic:
         class Propulsion:
             # variables specific to the propulsion subsystem
             ELECTRIC_POWER_IN = 'dynamic:vehicle:propulsion:electric_power_in'
-            ELECTRIC_POWER_IN_TOTAL = (
-                'dynamic:vehicle:propulsion:electric_power_in_total'
-            )
+            ELECTRIC_POWER_IN_TOTAL = 'dynamic:vehicle:propulsion:electric_power_in_total'
             # EXIT_AREA = 'dynamic:vehicle:propulsion:exit_area'
             FUEL_FLOW_RATE = 'dynamic:vehicle:propulsion:fuel_flow_rate'
-            FUEL_FLOW_RATE_NEGATIVE = (
-                'dynamic:vehicle:propulsion:fuel_flow_rate_negative'
-            )
+            FUEL_FLOW_RATE_NEGATIVE = 'dynamic:vehicle:propulsion:fuel_flow_rate_negative'
             FUEL_FLOW_RATE_NEGATIVE_TOTAL = (
                 'dynamic:vehicle:propulsion:fuel_flow_rate_negative_total'
             )
@@ -698,7 +676,7 @@ class Dynamic:
 
 
 class Mission:
-    """Mission data hierarchy"""
+    """Mission data hierarchy."""
 
     class Constraints:
         # these can be residuals (for equality constraints),
@@ -733,9 +711,7 @@ class Mission:
         BRAKING_DELAY = 'mission:landing:braking_delay'
         BRAKING_FRICTION_COEFFICIENT = 'mission:landing:braking_friction_coefficient'
 
-        DRAG_COEFFICIENT_FLAP_INCREMENT = (
-            'mission:landing:drag_coefficient_flap_increment'
-        )
+        DRAG_COEFFICIENT_FLAP_INCREMENT = 'mission:landing:drag_coefficient_flap_increment'
         DRAG_COEFFICIENT_MIN = 'mission:landing:drag_coefficient_min'
 
         FIELD_LENGTH = 'mission:landing:field_length'
@@ -746,9 +722,7 @@ class Mission:
         INITIAL_MACH = 'mission:landing:initial_mach'
         INITIAL_VELOCITY = 'mission:landing:initial_velocity'
 
-        LIFT_COEFFICIENT_FLAP_INCREMENT = (
-            'mission:landing:lift_coefficient_flap_increment'
-        )
+        LIFT_COEFFICIENT_FLAP_INCREMENT = 'mission:landing:lift_coefficient_flap_increment'
 
         LIFT_COEFFICIENT_MAX = 'mission:landing:lift_coefficient_max'
         MAXIMUM_FLARE_LOAD_FACTOR = 'mission:landing:maximum_flare_load_factor'
@@ -787,13 +761,11 @@ class Mission:
         AIRPORT_ALTITUDE = 'mission:takeoff:airport_altitude'
         ANGLE_OF_ATTACK_RUNWAY = 'mission:takeoff:angle_of_attack_runway'
         ASCENT_DURATION = 'mission:takeoff:ascent_duration'
-        ASCENT_T_INTIIAL = 'mission:takeoff:ascent_t_initial'
+        ASCENT_T_INITIAL = 'mission:takeoff:ascent_t_initial'
         BRAKING_FRICTION_COEFFICIENT = 'mission:takeoff:braking_friction_coefficient'
         DECISION_SPEED_INCREMENT = 'mission:takeoff:decision_speed_increment'
 
-        DRAG_COEFFICIENT_FLAP_INCREMENT = (
-            'mission:takeoff:drag_coefficient_flap_increment'
-        )
+        DRAG_COEFFICIENT_FLAP_INCREMENT = 'mission:takeoff:drag_coefficient_flap_increment'
 
         DRAG_COEFFICIENT_MIN = 'mission:takeoff:drag_coefficient_min'
         FIELD_LENGTH = 'mission:takeoff:field_length'
@@ -804,9 +776,7 @@ class Mission:
         FUEL_SIMPLE = 'mission:takeoff:fuel_simple'
         GROUND_DISTANCE = 'mission:takeoff:ground_distance'
 
-        LIFT_COEFFICIENT_FLAP_INCREMENT = (
-            'mission:takeoff:lift_coefficient_flap_increment'
-        )
+        LIFT_COEFFICIENT_FLAP_INCREMENT = 'mission:takeoff:lift_coefficient_flap_increment'
 
         LIFT_COEFFICIENT_MAX = 'mission:takeoff:lift_coefficient_max'
         LIFT_OVER_DRAG = 'mission:takeoff:lift_over_drag'
@@ -824,8 +794,9 @@ class Mission:
 
 
 class Settings:
-    """Setting data hierarchy"""
+    """Setting data hierarchy."""
 
+    AERODYNAMICS_METHOD = 'settings:aerodynamics_method'
     EQUATIONS_OF_MOTION = 'settings:equations_of_motion'
     MASS_METHOD = 'settings:mass_method'
     PROBLEM_TYPE = 'settings:problem_type'

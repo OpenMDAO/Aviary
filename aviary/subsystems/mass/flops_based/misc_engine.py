@@ -1,13 +1,11 @@
-import numpy as np
-
 import openmdao.api as om
 
-from aviary.variable_info.functions import add_aviary_input, add_aviary_output, add_aviary_option
+from aviary.variable_info.functions import add_aviary_input, add_aviary_option, add_aviary_output
 from aviary.variable_info.variables import Aircraft
 
 
 class EngineMiscMass(om.ExplicitComponent):
-    '''
+    """
     Calculates miscellaneous mass for a set of a engine model.
 
     Assumptions
@@ -16,7 +14,7 @@ class EngineMiscMass(om.ExplicitComponent):
 
     Currently using engine-level additional mass (scaled by num_engines)
     and propulsion-level starter and controls mass, not heterogeneous engine safe!
-    '''
+    """
 
     def initialize(self):
         add_aviary_option(self, Aircraft.Engine.NUM_ENGINES)
@@ -24,22 +22,22 @@ class EngineMiscMass(om.ExplicitComponent):
     def setup(self):
         num_engine_type = len(self.options[Aircraft.Engine.NUM_ENGINES])
 
-        add_aviary_input(self, Aircraft.Engine.ADDITIONAL_MASS,
-                         shape=num_engine_type, units='lbm')
+        add_aviary_input(self, Aircraft.Engine.ADDITIONAL_MASS, shape=num_engine_type, units='lbm')
         add_aviary_input(self, Aircraft.Propulsion.MISC_MASS_SCALER, units='unitless')
-        add_aviary_input(self, Aircraft.Propulsion.TOTAL_ENGINE_CONTROLS_MASS,
-                         units='lbm')
+        add_aviary_input(self, Aircraft.Propulsion.TOTAL_ENGINE_CONTROLS_MASS, units='lbm')
         add_aviary_input(self, Aircraft.Propulsion.TOTAL_STARTER_MASS, units='lbm')
 
         add_aviary_output(self, Aircraft.Propulsion.TOTAL_MISC_MASS, units='lbm')
 
         self.declare_partials(
             of=Aircraft.Propulsion.TOTAL_MISC_MASS,
-            wrt=[Aircraft.Propulsion.TOTAL_ENGINE_CONTROLS_MASS,
-                 Aircraft.Propulsion.TOTAL_STARTER_MASS,
-                 Aircraft.Engine.ADDITIONAL_MASS,
-                 Aircraft.Propulsion.MISC_MASS_SCALER],
-            val=1
+            wrt=[
+                Aircraft.Propulsion.TOTAL_ENGINE_CONTROLS_MASS,
+                Aircraft.Propulsion.TOTAL_STARTER_MASS,
+                Aircraft.Engine.ADDITIONAL_MASS,
+                Aircraft.Propulsion.MISC_MASS_SCALER,
+            ],
+            val=1,
         )
 
     def compute(self, inputs, outputs):
@@ -66,18 +64,16 @@ class EngineMiscMass(om.ExplicitComponent):
         starter_mass = inputs[Aircraft.Propulsion.TOTAL_STARTER_MASS]
         scaler = inputs[Aircraft.Propulsion.MISC_MASS_SCALER]
 
-        J[Aircraft.Propulsion.TOTAL_MISC_MASS,
-          Aircraft.Propulsion.TOTAL_ENGINE_CONTROLS_MASS
-          ] = scaler
+        J[Aircraft.Propulsion.TOTAL_MISC_MASS, Aircraft.Propulsion.TOTAL_ENGINE_CONTROLS_MASS] = (
+            scaler
+        )
 
-        J[Aircraft.Propulsion.TOTAL_MISC_MASS,
-          Aircraft.Propulsion.TOTAL_STARTER_MASS
-          ] = scaler
+        J[Aircraft.Propulsion.TOTAL_MISC_MASS, Aircraft.Propulsion.TOTAL_STARTER_MASS] = scaler
 
-        J[Aircraft.Propulsion.TOTAL_MISC_MASS,
-          Aircraft.Engine.ADDITIONAL_MASS
-          ] = scaler * num_engines
+        J[Aircraft.Propulsion.TOTAL_MISC_MASS, Aircraft.Engine.ADDITIONAL_MASS] = (
+            scaler * num_engines
+        )
 
-        J[Aircraft.Propulsion.TOTAL_MISC_MASS,
-          Aircraft.Propulsion.MISC_MASS_SCALER
-          ] = starter_mass + sum(addtl_mass) + ctrl_mass
+        J[Aircraft.Propulsion.TOTAL_MISC_MASS, Aircraft.Propulsion.MISC_MASS_SCALER] = (
+            starter_mass + sum(addtl_mass) + ctrl_mass
+        )

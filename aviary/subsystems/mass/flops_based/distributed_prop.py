@@ -12,7 +12,6 @@ def distributed_engine_count_factor(total_num_eng: int) -> float:
     total_num_eng : int
         Total number of engines
     """
-
     factor = float(total_num_eng)
 
     if total_num_eng > 4:
@@ -32,7 +31,6 @@ def distributed_thrust_factor(max_sls_thrust: float, total_num_eng: int) -> floa
     total_num_eng : iterable or int
         Total number of engines
     """
-
     num_engine_factor = distributed_engine_count_factor(total_num_eng)
     return max_sls_thrust / num_engine_factor
 
@@ -50,7 +48,6 @@ def distributed_nacelle_diam_factor(diam_nacelle: list, num_eng: list) -> float:
     num_eng : iterable or int
         Number of engines for each engine model
     """
-
     # If there is more than one engine model, use the global average diameter
     try:
         total_num_eng = sum(num_eng)
@@ -61,14 +58,14 @@ def distributed_nacelle_diam_factor(diam_nacelle: list, num_eng: list) -> float:
 
     diam_factor = diam_avg
     if total_num_eng > 4:
-        diam_factor = 0.5 * diam_avg * total_num_eng ** 0.5
+        diam_factor = 0.5 * diam_avg * total_num_eng**0.5
 
     return diam_factor
 
 
 def distributed_nacelle_diam_factor_deriv(num_eng: int) -> float:
     """
-    Returns the derivative of the distributed propulsion nacelle average diameter factor 
+    Returns the derivative of the distributed propulsion nacelle average diameter factor
     w.r.t. the global nacelle average diameter.
 
     Parameters
@@ -76,7 +73,6 @@ def distributed_nacelle_diam_factor_deriv(num_eng: int) -> float:
     num_eng : iterable or int
         Number of engines for each engine model
     """
-
     try:
         total_num_engines = sum(num_eng)
     except TypeError:
@@ -84,7 +80,7 @@ def distributed_nacelle_diam_factor_deriv(num_eng: int) -> float:
 
     deriv = 1.0
     if total_num_engines > 4:
-        deriv = num_eng * (0.5 * total_num_engines ** 0.5)/total_num_engines
+        deriv = num_eng * (0.5 * total_num_engines**0.5) / total_num_engines
 
     return deriv
 
@@ -96,7 +92,7 @@ def nacelle_count_factor(num_eng):
     engine if the number of engines is odd (for each unique engine type).
 
     If there are multiple engine types, each engine type gets its own nacelle count
-    factor. This methodology does not account for potential conflict of engines present 
+    factor. This methodology does not account for potential conflict of engines present
     on the aircraft centerline.
 
     Parameters

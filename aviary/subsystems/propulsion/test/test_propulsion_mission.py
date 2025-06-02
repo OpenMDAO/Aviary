@@ -7,15 +7,14 @@ from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 from packaging import version
 
 from aviary.subsystems.propulsion.engine_deck import EngineDeck
-from aviary.subsystems.propulsion.propulsion_mission import (
-    PropulsionMission, PropulsionSum)
+from aviary.subsystems.propulsion.propulsion_mission import PropulsionMission, PropulsionSum
+from aviary.subsystems.propulsion.utils import build_engine_deck
 from aviary.utils.aviary_values import AviaryValues
-from aviary.utils.preprocessors import preprocess_propulsion
 from aviary.utils.functions import get_path
+from aviary.utils.preprocessors import preprocess_propulsion
 from aviary.validation_cases.validation_tests import get_flops_inputs
 from aviary.variable_info.functions import setup_model_options
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission, Settings
-from aviary.subsystems.propulsion.utils import build_engine_deck
 
 
 class PropulsionMissionTest(unittest.TestCase):
@@ -24,13 +23,15 @@ class PropulsionMissionTest(unittest.TestCase):
         self.options = AviaryValues()
         self.options.set_val(Settings.VERBOSITY, 0)
 
-    @unittest.skipIf(version.parse(openmdao.__version__) < version.parse("3.26"), "Skipping due to OpenMDAO version being too low (<3.26)")
+    @unittest.skipIf(
+        version.parse(openmdao.__version__) < version.parse('3.26'),
+        'Skipping due to OpenMDAO version being too low (<3.26)',
+    )
     def test_case_1(self):
         # 'clean' test using GASP-derived engine deck
         nn = 20
 
-        filename = get_path(
-            'models/engines/turbofan_24k_1.deck')
+        filename = get_path('models/engines/turbofan_24k_1.deck')
 
         options = self.options
         options.set_val(Aircraft.Engine.DATA_FILE, filename)
@@ -41,26 +42,18 @@ class PropulsionMissionTest(unittest.TestCase):
         options.set_val(Aircraft.Engine.FUEL_FLOW_SCALER_CONSTANT_TERM, 0.0)
         options.set_val(Aircraft.Engine.FUEL_FLOW_SCALER_LINEAR_TERM, 1.0)
         options.set_val(Aircraft.Engine.CONSTANT_FUEL_CONSUMPTION, 0.0, units='lbm/h')
-        options.set_val(Aircraft.Engine.SCALE_PERFORMANCE, True)
         options.set_val(Mission.Summary.FUEL_FLOW_SCALER, 1.0)
         options.set_val(Aircraft.Engine.SCALE_FACTOR, 0.5)
-        options.set_val(Aircraft.Engine.GENERATE_FLIGHT_IDLE, False)
         options.set_val(Aircraft.Engine.IGNORE_NEGATIVE_THRUST, False)
-        options.set_val(Aircraft.Engine.FLIGHT_IDLE_THRUST_FRACTION, 0.0)
-        options.set_val(Aircraft.Engine.FLIGHT_IDLE_MAX_FRACTION, 1.0)
-        options.set_val(Aircraft.Engine.FLIGHT_IDLE_MIN_FRACTION, 0.08)
-        options.set_val(Aircraft.Engine.GEOPOTENTIAL_ALT, False)
-        options.set_val(Aircraft.Engine.INTERPOLATION_METHOD, 'slinear')
 
         engine = EngineDeck(options=options)
         preprocess_propulsion(options, [engine])
 
         self.prob.model = PropulsionMission(
-            num_nodes=nn, aviary_options=options, engine_models=[engine])
-
-        IVC = om.IndepVarComp(
-            Dynamic.Atmosphere.MACH, np.linspace(0, 0.8, nn), units='unitless'
+            num_nodes=nn, aviary_options=options, engine_models=[engine]
         )
+
+        IVC = om.IndepVarComp(Dynamic.Atmosphere.MACH, np.linspace(0, 0.8, nn), units='unitless')
         IVC.add_output(Dynamic.Mission.ALTITUDE, np.linspace(0, 40000, nn), units='ft')
         IVC.add_output(
             Dynamic.Vehicle.Propulsion.THROTTLE,
@@ -72,14 +65,18 @@ class PropulsionMissionTest(unittest.TestCase):
         setup_model_options(self.prob, options)
 
         self.prob.setup(force_alloc_complex=True)
-        self.prob.set_val(Aircraft.Engine.SCALE_FACTOR, options.get_val(
-            Aircraft.Engine.SCALE_FACTOR), units='unitless')
+        self.prob.set_val(
+            Aircraft.Engine.SCALE_FACTOR,
+            options.get_val(Aircraft.Engine.SCALE_FACTOR),
+            units='unitless',
+        )
 
         self.prob.run_model()
 
         thrust = self.prob.get_val(Dynamic.Vehicle.Propulsion.THRUST_TOTAL, units='lbf')
         fuel_flow = self.prob.get_val(
-            Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL, units='lbm/h')
+            Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL, units='lbm/h'
+        )
 
         expected_thrust = np.array(
             [
@@ -134,7 +131,7 @@ class PropulsionMissionTest(unittest.TestCase):
         assert_near_equal(thrust, expected_thrust, tolerance=1e-10)
         assert_near_equal(fuel_flow, expected_fuel_flow, tolerance=1e-10)
 
-        partial_data = self.prob.check_partials(out_stream=None, method="cs")
+        partial_data = self.prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=1e-10, rtol=1e-10)
 
     def test_propulsion_sum(self):
@@ -143,10 +140,9 @@ class PropulsionMissionTest(unittest.TestCase):
             Aircraft.Engine.NUM_ENGINES: np.array([3, 2]),
         }
         self.prob.model = om.Group()
-        self.prob.model.add_subsystem('propsum',
-                                      PropulsionSum(num_nodes=nn,
-                                                    **options),
-                                      promotes=['*'])
+        self.prob.model.add_subsystem(
+            'propsum', PropulsionSum(num_nodes=nn, **options), promotes=['*']
+        )
 
         self.prob.setup(force_alloc_complex=True)
 
@@ -157,10 +153,13 @@ class PropulsionMissionTest(unittest.TestCase):
             Dynamic.Vehicle.Propulsion.THRUST_MAX,
             np.array([[602.11, 3554], [100, 9000]]),
         )
-        self.prob.set_val(Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE,
-                          np.array([[123, -221.44], [-765.2, -1]]))
-        self.prob.set_val(Dynamic.Vehicle.Propulsion.ELECTRIC_POWER_IN,
-                          np.array([[3.01, -12], [484.2, 8123]]))
+        self.prob.set_val(
+            Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE,
+            np.array([[123, -221.44], [-765.2, -1]]),
+        )
+        self.prob.set_val(
+            Dynamic.Vehicle.Propulsion.ELECTRIC_POWER_IN, np.array([[3.01, -12], [484.2, 8123]])
+        )
         self.prob.set_val(
             Dynamic.Vehicle.Propulsion.NOX_RATE, np.array([[322, 4610], [1.54, 2.844]])
         )
@@ -168,9 +167,7 @@ class PropulsionMissionTest(unittest.TestCase):
         self.prob.run_model()
 
         thrust = self.prob.get_val(Dynamic.Vehicle.Propulsion.THRUST_TOTAL, units='lbf')
-        thrust_max = self.prob.get_val(
-            Dynamic.Vehicle.Propulsion.THRUST_MAX_TOTAL, units='lbf'
-        )
+        thrust_max = self.prob.get_val(Dynamic.Vehicle.Propulsion.THRUST_MAX_TOTAL, units='lbf')
         fuel_flow = self.prob.get_val(
             Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL, units='lb/h'
         )
@@ -191,7 +188,7 @@ class PropulsionMissionTest(unittest.TestCase):
         assert_near_equal(electric_power_in, expected_electric_power_in, tolerance=1e-12)
         assert_near_equal(nox, expected_nox, tolerance=1e-12)
 
-        partial_data = self.prob.check_partials(out_stream=None, method="cs")
+        partial_data = self.prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=1e-10, rtol=1e-10)
 
     def test_case_multiengine(self):
@@ -202,8 +199,8 @@ class PropulsionMissionTest(unittest.TestCase):
         options.set_val(Settings.VERBOSITY, 0)
         options.set_val(Aircraft.Engine.GLOBAL_THROTTLE, True)
 
-        engine = build_engine_deck(options)[0]
-        engine2 = build_engine_deck(options)[0]
+        engine = build_engine_deck(options)
+        engine2 = build_engine_deck(options)
         engine2.name = 'engine2'
         engine_models = [engine, engine2]
         preprocess_propulsion(options, engine_models=engine_models)
@@ -214,22 +211,17 @@ class PropulsionMissionTest(unittest.TestCase):
             aviary_options=options,
             engine_models=engine_models,
         )
-        model.add_subsystem('core_propulsion', prop,
-                            promotes=['*'])
+        model.add_subsystem('core_propulsion', prop, promotes=['*'])
 
         self.prob.model.add_subsystem(
             Dynamic.Atmosphere.MACH,
-            om.IndepVarComp(
-                Dynamic.Atmosphere.MACH, np.linspace(0, 0.85, nn), units='unitless'
-            ),
+            om.IndepVarComp(Dynamic.Atmosphere.MACH, np.linspace(0, 0.85, nn), units='unitless'),
             promotes=['*'],
         )
 
         self.prob.model.add_subsystem(
             Dynamic.Mission.ALTITUDE,
-            om.IndepVarComp(
-                Dynamic.Mission.ALTITUDE, np.linspace(0, 40000, nn), units='ft'
-            ),
+            om.IndepVarComp(Dynamic.Mission.ALTITUDE, np.linspace(0, 40000, nn), units='ft'),
             promotes=['*'],
         )
         throttle = np.linspace(1.0, 0.6, nn)
@@ -254,70 +246,44 @@ class PropulsionMissionTest(unittest.TestCase):
         fuel_flow = self.prob.get_val(
             Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL, units='lbm/h'
         )
-        nox_rate = self.prob.get_val(
-            Dynamic.Vehicle.Propulsion.NOX_RATE_TOTAL, units='lbm/h'
-        )
+        nox_rate = self.prob.get_val(Dynamic.Vehicle.Propulsion.NOX_RATE_TOTAL, units='lbm/h')
 
+        # block auto-formatting of tables
+        # fmt: off
         expected_thrust = np.array(
             [
-                103583.64726051,
-                92899.15059987,
-                82826.62014006,
-                73006.74478288,
-                63491.73778033,
-                55213.71927899,
-                48317.05801159,
-                42277.98362824,
-                36870.43915515,
-                29716.58670587,
-                26271.29434561,
-                24680.25359966,
-                22043.65303425,
-                19221.1253513,
-                16754.1861966,
-                14405.43665682,
-                12272.31373152,
-                10141.72397926,
-                7869.3816548,
-                5792.62871788,
+                103583.64726051, 92899.15059987, 82826.62014006, 73006.74478288, 63491.73778033,
+                55213.71927899, 48317.05801159, 42277.98362824, 36870.43915515, 29716.58670587,
+                26271.29434561, 24680.25359966, 22043.65303425, 19221.1253513, 16754.1861966,
+                14405.43665682, 12272.31373152, 10141.72397926, 7869.3816548, 5792.62871788,
             ]
         )
 
         expected_fuel_flow = np.array(
             [
-                -38238.66614438,
-                -36078.76817864,
-                -33777.65206416,
-                -31057.41872898,
-                -28036.92997813,
-                -25279.48301301,
-                -22902.98616678,
-                -20749.08916211,
-                -19058.23299911,
-                -19972.32193796,
-                -17701.86829646,
-                -14370.68121827,
-                -12584.1724091,
-                -11320.06786905,
-                -10192.11938107,
-                -9100.08365082,
-                -8100.4835652,
-                -7069.62950088,
-                -5965.78834865,
-                -4914.94081538,
+                -38238.66614438, -36078.76817864, -33777.65206416, -31057.41872898, -28036.92997813,
+                -25279.48301301, -22902.98616678, -20749.08916211, -19058.23299911, -19972.32193796,
+                -17701.86829646, -14370.68121827, -12584.1724091, -11320.06786905, -10192.11938107,
+                -9100.08365082, -8100.4835652, -7069.62950088, -5965.78834865, -4914.94081538,
             ]
         )
 
         expected_nox_rate = np.array(
-            [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.])
+            [
+                0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 
+                0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+            ]
+        )
+
+        # fmt: on
 
         assert_near_equal(thrust, expected_thrust, tolerance=1e-10)
         assert_near_equal(fuel_flow, expected_fuel_flow, tolerance=1e-10)
         assert_near_equal(nox_rate, expected_nox_rate, tolerance=1e-9)
 
-        partial_data = self.prob.check_partials(out_stream=None, method="cs")
+        partial_data = self.prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=1e-10, rtol=1e-10)
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     unittest.main()

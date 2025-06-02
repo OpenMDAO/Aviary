@@ -41,19 +41,12 @@ class BatteryBuilder(SubsystemBuilderBase):
         # Here, the efficiency variable is used as an overall efficiency for the battery
         soc = om.ExecComp(
             'state_of_charge = (energy_capacity - (cumulative_electric_energy_used/efficiency)) / energy_capacity',
-            state_of_charge={
-                'val': np.zeros(num_nodes),
-                'units': 'unitless'},
-            energy_capacity={
-                'val': 10.0,
-                'units': 'kJ'},
-            cumulative_electric_energy_used={
-                'val': np.zeros(num_nodes),
-                'units': 'kJ'},
-            efficiency={
-                'val': 0.95,
-                'units': 'unitless'},
-            has_diag_partials=True)
+            state_of_charge={'val': np.zeros(num_nodes), 'units': 'unitless'},
+            energy_capacity={'val': 10.0, 'units': 'kJ'},
+            cumulative_electric_energy_used={'val': np.zeros(num_nodes), 'units': 'kJ'},
+            efficiency={'val': 0.95, 'units': 'unitless'},
+            has_diag_partials=True,
+        )
 
         battery_group.add_subsystem(
             'state_of_charge',
@@ -66,9 +59,7 @@ class BatteryBuilder(SubsystemBuilderBase):
                 ),
                 ('efficiency', Aircraft.Battery.EFFICIENCY),
             ],
-            promotes_outputs=[
-                ('state_of_charge', Dynamic.Vehicle.BATTERY_STATE_OF_CHARGE)
-            ],
+            promotes_outputs=[('state_of_charge', Dynamic.Vehicle.BATTERY_STATE_OF_CHARGE)],
         )
 
         return battery_group
@@ -113,7 +104,6 @@ class BatteryBuilder(SubsystemBuilderBase):
         return constraint_dict
 
     def get_parameters(self, aviary_inputs=None, phase_info=None):
-
         params = {
             Aircraft.Battery.ENERGY_CAPACITY: {
                 'val': 0.0,

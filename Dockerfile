@@ -8,7 +8,7 @@ ARG DEBIAN_FRONTEND=noninteractive
 
 # Install updates
 RUN apt-get update -y && apt-get install \
-    python3-dev python3-sphinx vim unzip wget file desktop-file-utils git sudo make cmake swig g++ gfortran doxygen graphviz texlive-latex-base \
+    python3-dev python3-sphinx vim nano bash-completion unzip wget file desktop-file-utils git sudo make cmake=3.28.3-1build7 swig g++ gfortran doxygen graphviz texlive-latex-base \
     libblas-dev liblapack-dev libxml2-dev libfltk1.3-dev libcpptest-dev libjpeg-dev libglm-dev libeigen3-dev libcminpack-dev libglew-dev -y
 
 RUN wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb ;\
@@ -39,6 +39,7 @@ RUN echo "## Always activate mdaowork environment on startup ##" >> ~/.bashrc ;\
     echo "conda activate mdaowork" >> ~/.bashrc ;\
     echo "" >> ~/.bashrc ;\
     echo "## OpenMPI settings" >> ~/.bashrc ;\
+    echo "export PRTE_MCA_rmaps_default_mapping_policy=:oversubscribe" >> ~/.bashrc ;\
     echo "export OMPI_MCA_rmaps_base_oversubscribe=1" >> ~/.bashrc ;\
     echo "export OMPI_MCA_btl=^openib" >> ~/.bashrc ;\
     echo "" >> ~/.bashrc ;\
@@ -75,14 +76,15 @@ RUN source $HOME/miniforge3/etc/profile.d/conda.sh ;\
     #
     # Install OpenMDAO/Dymos/Aviary dependencies and OpenVSP Python API
     #
-    conda install matplotlib graphviz -y ;\
-    conda install mpi4py petsc4py=3.20 -y ;\
+    conda install matplotlib graphviz -q -y ;\
+    conda install mpi4py openmpi petsc4py=3.20 pyoptsparse -q -y ;\
     python -m pip install pyparsing psutil objgraph plotly pyxdsm pydot ;\
     #
-    # Install pyoptsparse
+    # Install build_pyoptsparse
+    # (this will allow the user additional options for installing pyoptsparse, beyond the conda install above)
     #
     python -m pip install git+https://github.com/openmdao/build_pyoptsparse ;\
-    build_pyoptsparse -v ;\
+    # build_pyoptsparse -v ;\
     #
     # Install OpenMDAO
     #

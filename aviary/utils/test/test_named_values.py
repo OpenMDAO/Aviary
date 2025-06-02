@@ -1,6 +1,5 @@
-'''
-Unit test cases for class NamedValues.
-'''
+"""Unit test cases for class NamedValues."""
+
 import unittest
 
 from aviary.utils.named_values import NamedValues, get_items, get_keys, get_values
@@ -8,9 +7,7 @@ from aviary.variable_info.variables import Aircraft, Mission
 
 
 class NamedValuesTest(unittest.TestCase):
-    """
-    Test NamedValues class
-    """
+    """Test NamedValues class."""
 
     def test_init(self):
         d = NamedValues()
@@ -241,7 +238,7 @@ _data1 = {
     'NUM_FUSELAGES': (1, 'unitless'),
     'NUM_ENGINES': (2, 'unitless'),
     Aircraft.CrewPayload.BAGGAGE_MASS: (7500, 'lbm'),
-    Mission.Design.RANGE: (3500, 'NM')
+    Mission.Design.RANGE: (3500, 'NM'),
 }
 
 

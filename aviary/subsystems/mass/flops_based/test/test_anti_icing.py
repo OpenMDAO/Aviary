@@ -2,33 +2,30 @@ import unittest
 
 import numpy as np
 import openmdao.api as om
-from openmdao.utils.assert_utils import (assert_check_partials,
-                                         assert_near_equal)
+from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 from parameterized import parameterized
 
 from aviary.subsystems.mass.flops_based.anti_icing import AntiIcingMass
 from aviary.utils.test_utils.variable_test import assert_match_varnames
-from aviary.validation_cases.validation_tests import (flops_validation_test,
-                                                      get_flops_case_names,
-                                                      get_flops_inputs,
-                                                      get_flops_options,
-                                                      print_case)
+from aviary.validation_cases.validation_tests import (
+    flops_validation_test,
+    get_flops_case_names,
+    get_flops_options,
+    print_case,
+)
 from aviary.variable_info.variables import Aircraft
 
 
 class AntiIcingMassTest(unittest.TestCase):
-
     def setUp(self):
         self.prob = om.Problem()
 
-    @parameterized.expand(get_flops_case_names(),
-                          name_func=print_case)
+    @parameterized.expand(get_flops_case_names(), name_func=print_case)
     def test_case(self, case_name):
-
         prob = self.prob
 
         prob.model.add_subsystem(
-            "anti_icing",
+            'anti_icing',
             AntiIcingMass(),
             promotes_inputs=['*'],
             promotes_outputs=['*'],
@@ -41,13 +38,16 @@ class AntiIcingMassTest(unittest.TestCase):
         flops_validation_test(
             prob,
             case_name,
-            input_keys=[Aircraft.AntiIcing.MASS_SCALER,
-                        Aircraft.Fuselage.MAX_WIDTH,
-                        Aircraft.Nacelle.AVG_DIAMETER,
-                        Aircraft.Wing.SPAN,
-                        Aircraft.Wing.SWEEP],
+            input_keys=[
+                Aircraft.AntiIcing.MASS_SCALER,
+                Aircraft.Fuselage.MAX_WIDTH,
+                Aircraft.Nacelle.AVG_DIAMETER,
+                Aircraft.Wing.SPAN,
+                Aircraft.Wing.SWEEP,
+            ],
             output_keys=Aircraft.AntiIcing.MASS,
-            tol=3.0e-3)
+            tol=3.0e-3,
+        )
 
     def test_case_2(self):
         # test with more than four engines
@@ -58,7 +58,7 @@ class AntiIcingMassTest(unittest.TestCase):
         options[Aircraft.Propulsion.TOTAL_NUM_ENGINES] = 5
 
         prob.model.add_subsystem(
-            "anti_icing",
+            'anti_icing',
             AntiIcingMass(),
             promotes_inputs=['*'],
             promotes_outputs=['*'],
@@ -81,7 +81,7 @@ class AntiIcingMassTest(unittest.TestCase):
 
         assert_near_equal(mass, expected_mass, tolerance=1e-10)
 
-        partial_data = self.prob.check_partials(out_stream=None, method="cs")
+        partial_data = self.prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=1e-10, rtol=1e-10)
 
     def test_case_3(self):
@@ -93,7 +93,7 @@ class AntiIcingMassTest(unittest.TestCase):
         options[Aircraft.Propulsion.TOTAL_NUM_ENGINES] = 8
 
         prob.model.add_subsystem(
-            "anti_icing",
+            'anti_icing',
             AntiIcingMass(),
             promotes_inputs=['*'],
             promotes_outputs=['*'],
@@ -116,8 +116,7 @@ class AntiIcingMassTest(unittest.TestCase):
 
         assert_near_equal(mass, expected_mass, tolerance=1e-10)
 
-        partial_data = self.prob.check_partials(
-            out_stream=None, method="cs", compact_print=False)
+        partial_data = self.prob.check_partials(out_stream=None, method='cs', compact_print=False)
         assert_check_partials(partial_data, atol=1e-10, rtol=1e-10)
 
     def test_IO(self):
@@ -125,16 +124,16 @@ class AntiIcingMassTest(unittest.TestCase):
 
 
 class AntiIcingMassTest2(unittest.TestCase):
-    """
-    Test mass-weight conversion
-    """
+    """Test mass-weight conversion."""
 
     def setUp(self):
         import aviary.subsystems.mass.flops_based.anti_icing as antiicing
+
         antiicing.GRAV_ENGLISH_LBM = 1.1
 
     def tearDown(self):
         import aviary.subsystems.mass.flops_based.anti_icing as antiicing
+
         antiicing.GRAV_ENGLISH_LBM = 1.0
 
     def test_case_2(self):
@@ -145,7 +144,7 @@ class AntiIcingMassTest2(unittest.TestCase):
         options[Aircraft.Propulsion.TOTAL_NUM_ENGINES] = 5
 
         prob.model.add_subsystem(
-            "anti_icing",
+            'anti_icing',
             AntiIcingMass(),
             promotes_inputs=['*'],
             promotes_outputs=['*'],
@@ -160,9 +159,9 @@ class AntiIcingMassTest2(unittest.TestCase):
         prob.set_val(Aircraft.Wing.SPAN, 117.83, 'ft')
         prob.set_val(Aircraft.Wing.SWEEP, 25.0, 'deg')
 
-        partial_data = prob.check_partials(out_stream=None, method="cs")
+        partial_data = prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     unittest.main()

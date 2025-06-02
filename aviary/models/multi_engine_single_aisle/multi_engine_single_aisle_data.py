@@ -126,7 +126,6 @@ inputs.set_val(Aircraft.Instruments.MASS_SCALER, 1.0)
 
 # Landing Gear
 # ---------------------------
-inputs.set_val(Aircraft.LandingGear.CARRIER_BASED, False)
 inputs.set_val(Aircraft.LandingGear.MAIN_GEAR_OLEO_LENGTH, 84.0, 'inch')
 inputs.set_val(Aircraft.LandingGear.MAIN_GEAR_MASS_SCALER, 1.0)
 inputs.set_val(Aircraft.LandingGear.NOSE_GEAR_OLEO_LENGTH, 58.8, 'inch')
@@ -232,9 +231,7 @@ inputs.set_val(Aircraft.Wing.AIRFOIL_TECHNOLOGY, 1.87)
 inputs.set_val(Aircraft.Wing.AREA, 1341.0, 'ft**2')
 inputs.set_val(Aircraft.Wing.ASPECT_RATIO, 9.42519)
 inputs.set_val(Aircraft.Wing.BENDING_MATERIAL_MASS_SCALER, 1.0)
-inputs.set_val(
-    Aircraft.Wing.CHORD_PER_SEMISPAN_DIST, np.array([0.4441, 0.2313, 0.0729])
-)
+inputs.set_val(Aircraft.Wing.CHORD_PER_SEMISPAN_DIST, np.array([0.4441, 0.2313, 0.0729]))
 inputs.set_val(Aircraft.Wing.COMPOSITE_FRACTION, 0.0)
 inputs.set_val(Aircraft.Wing.CONTROL_SURFACE_AREA_RATIO, 0.333)
 inputs.set_val(Aircraft.Wing.GLOVE_AND_BAT, 0.0, 'ft**2')
@@ -287,6 +284,7 @@ inputs.set_val(Mission.Design.THRUST_TAKEOFF_PER_ENG, 24555.5, 'lbf')
 # Settings
 # ---------------------------
 inputs.set_val(Settings.EQUATIONS_OF_MOTION, EquationsOfMotion.HEIGHT_ENERGY)
+inputs.set_val(Settings.AERODYNAMICS_METHOD, LegacyCode.FLOPS)
 inputs.set_val(Settings.MASS_METHOD, LegacyCode.FLOPS)
 inputs.set_val(Settings.VERBOSITY, 0)
 
@@ -366,9 +364,7 @@ outputs.set_val(Aircraft.Nacelle.MASS, 1971.4, 'lbm')
 
 nacelle_wetted_area = np.array([273.45])
 nacelle_wetted_area_units = 'ft**2'
-outputs.set_val(
-    Aircraft.Nacelle.WETTED_AREA, nacelle_wetted_area, nacelle_wetted_area_units
-)
+outputs.set_val(Aircraft.Nacelle.WETTED_AREA, nacelle_wetted_area, nacelle_wetted_area_units)
 
 outputs.set_val(
     Aircraft.Nacelle.TOTAL_WETTED_AREA,
@@ -384,9 +380,7 @@ outputs.set_val(Aircraft.Propulsion.TOTAL_NUM_ENGINES, 4)
 
 engine_ctrls_mass = 88.44
 engine_ctrls_mass_units = 'lbm'
-outputs.set_val(
-    Aircraft.Engine.CONTROLS_MASS, engine_ctrls_mass, engine_ctrls_mass_units
-)
+outputs.set_val(Aircraft.Engine.CONTROLS_MASS, engine_ctrls_mass, engine_ctrls_mass_units)
 outputs.set_val(
     Aircraft.Propulsion.TOTAL_ENGINE_CONTROLS_MASS,
     engine_ctrls_mass,
@@ -398,9 +392,7 @@ outputs.set_val(Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES, 4)
 
 outputs.set_val(Aircraft.Propulsion.TOTAL_NUM_FUSELAGE_ENGINES, 0)
 
-outputs.set_val(
-    Aircraft.Engine.SCALED_SLS_THRUST, np.array([28928.1 / 2, 22200.5 / 2]), 'lbf'
-)
+outputs.set_val(Aircraft.Engine.SCALED_SLS_THRUST, np.array([28928.1 / 2, 22200.5 / 2]), 'lbf')
 outputs.set_val(Aircraft.Engine.MASS, 14800 / 2, 'lbm')
 outputs.set_val(Aircraft.Engine.POD_MASS, 9000, 'lbm')
 outputs.set_val(Aircraft.Engine.ADDITIONAL_MASS, 0.0, 'lbm')

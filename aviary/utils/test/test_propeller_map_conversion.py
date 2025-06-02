@@ -16,9 +16,7 @@ class DummyArgs(object):
 
 @use_tempdirs
 class TestPropellerMapConversion(unittest.TestCase):
-    """
-    Test GASP propeller data file conversion utility by comparing against already converted data files.
-    """
+    """Test GASP propeller data file conversion utility by comparing against already converted data files."""
 
     def prepare_and_run(self, filename, output_file=None, data_format=PropMapType.GASP):
         args = DummyArgs()
@@ -28,8 +26,8 @@ class TestPropellerMapConversion(unittest.TestCase):
 
         # Specify the output file
         if not output_file:
-            filename = filepath.stem+'.prop'
-            args.output_file = Path.cwd() / Path('TEST_'+filename)
+            filename = filepath.stem + '.prop'
+            args.output_file = Path.cwd() / Path('TEST_' + filename)
         else:
             args.output_file = str(Path(output_file))
 
@@ -47,12 +45,12 @@ class TestPropellerMapConversion(unittest.TestCase):
         to skip. This is useful for skipping data that Aviary might need but
         Fortran-based tools do not.
         """
-        filename = filepath.split('.')[0]+'.prop'
+        filename = filepath.split('.')[0] + '.prop'
 
         validation_data = get_path('models/engines/propellers/' + filename)
 
         # Open the converted and validation files
-        with open('TEST_'+filename, 'r') as f_in, open(validation_data, 'r') as expected:
+        with open('TEST_' + filename, 'r') as f_in, open(validation_data, 'r') as expected:
             for line in f_in:
                 if any(s in line for s in skip_list):
                     break
@@ -77,5 +75,5 @@ class TestPropellerMapConversion(unittest.TestCase):
         self.compare_files(filename, skip_list=['# created'])
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     unittest.main()

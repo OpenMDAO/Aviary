@@ -1,29 +1,24 @@
-import openmdao.api as om
 import numpy as np
+import openmdao.api as om
 
-from aviary.subsystems.atmosphere.atmosphere import Atmosphere
-from aviary.utils.aviary_values import AviaryValues
-from aviary.utils.functions import add_opts2vals, create_opts2vals
-
-from aviary.variable_info.enums import SpeedType
-from aviary.mission.gasp_based.ode.two_dof_ode import TwoDOFODE
 from aviary.mission.gasp_based.ode.params import ParamPort
 from aviary.mission.gasp_based.ode.taxi_eom import TaxiFuelComponent
-from aviary.subsystems.atmosphere.atmosphere import Atmosphere
+from aviary.mission.gasp_based.ode.two_dof_ode import TwoDOFODE
 from aviary.subsystems.propulsion.propulsion_builder import PropulsionBuilderBase
 from aviary.utils.aviary_values import AviaryValues
 from aviary.utils.functions import add_opts2vals, create_opts2vals
+from aviary.variable_info.enums import SpeedType
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 
 
 class TaxiSegment(TwoDOFODE):
-    """ODE for taxi phase of a 2DOF mission"""
+    """ODE for taxi phase of a 2DOF mission."""
 
     def setup(self):
         options: AviaryValues = self.options['aviary_options']
         core_subsystems = self.options['core_subsystems']
 
-        self.add_subsystem("params", ParamPort(), promotes=["*"])
+        self.add_subsystem('params', ParamPort(), promotes=['*'])
 
         add_opts2vals(self, create_opts2vals([Mission.Taxi.MACH]), options)
 
@@ -71,9 +66,7 @@ class TaxiSegment(TwoDOFODE):
 
         self.add_external_subsystems()
 
-        self.add_subsystem(
-            "taxifuel", TaxiFuelComponent(), promotes=["*"]
-        )
+        self.add_subsystem('taxifuel', TaxiFuelComponent(), promotes=['*'])
 
         ParamPort.set_default_vals(self)
         self.set_input_defaults(Mission.Taxi.MACH, 0)

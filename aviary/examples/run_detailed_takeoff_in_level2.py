@@ -1,34 +1,36 @@
 import openmdao.api as om
+
 import aviary.api as av
 
-
-subsystem_options = {'core_aerodynamics':
-                     {'method': 'low_speed',
-                      'ground_altitude': 0.,  # units='ft'
-                      'angles_of_attack': [
-                          -5.0, -4.0, -3.0, -2.0, -1.0,
-                          0.0, 1.0, 2.0, 3.0, 4.0, 5.0,
-                          6.0, 7.0, 8.0, 9.0, 10.0, 11.0,
-                          12.0, 13.0, 14.0, 15.0],  # units='deg'
-                      'lift_coefficients': [
-                          0.01, 0.1, 0.2, 0.3, 0.4,
-                          0.5178, 0.6, 0.75, 0.85, 0.95, 1.05,
-                          1.15, 1.25, 1.35, 1.5, 1.6, 1.7,
-                          1.8, 1.85, 1.9, 1.95],
-                      'drag_coefficients': [
-                          0.04, 0.02, 0.01, 0.02, 0.04,
-                          0.0674, 0.065, 0.065, 0.07, 0.072, 0.076,
-                          0.084, 0.09, 0.10, 0.11, 0.12, 0.13,
-                          0.15, 0.16, 0.18, 0.20],
-                      'lift_coefficient_factor': 1.,
-                      'drag_coefficient_factor': 1.}}
+# fmt: off
+subsystem_options = {
+    'core_aerodynamics': {
+        'method': 'low_speed',
+        'ground_altitude': 0.0,  # units='ft'
+        'angles_of_attack': [
+            -5.0, -4.0, -3.0, -2.0, -1.0, 0.0, 1.0, 2.0, 3.0, 4.0, 5.0,
+            6.0, 7.0, 8.0, 9.0, 10.0, 11.0, 12.0, 13.0, 14.0, 15.0,
+        ],  # units='deg'
+        'lift_coefficients': [
+            0.01, 0.1, 0.2, 0.3, 0.4, 0.5178, 0.6, 0.75, 0.85, 0.95,
+            1.05, 1.15, 1.25, 1.35, 1.5, 1.6, 1.7, 1.8, 1.85, 1.9, 1.95,
+        ],
+        'drag_coefficients': [
+            0.04, 0.02, 0.01, 0.02, 0.04, 0.0674, 0.065, 0.065, 0.07, 0.072,
+            0.076, 0.084, 0.09, 0.10, 0.11, 0.12, 0.13, 0.15, 0.16, 0.18, 0.20,
+        ],
+        'lift_coefficient_factor': 1.0,
+        'drag_coefficient_factor': 1.0,
+    }
+}
+# fmt: on
 
 optimize_mach = True
 optimize_altitude = True
-optimizer = "SLSQP"
+optimizer = 'SLSQP'
 
 phase_info = {
-    "pre_mission": {"include_takeoff": False, "optimize_mass": False},
+    'pre_mission': {'include_takeoff': False, 'optimize_mass': False},
     'AB': {
         'user_options': {
             'num_segments': 5,
@@ -247,7 +249,7 @@ phase_info = {
             'polynomial_control_order': 1,
             'optimize_mach': optimize_mach,
             'optimize_altitude': optimize_altitude,
-            'throttle_enforcement': 'bounded',
+            'throttle_enforcement': 'path_constraint',
             'constraints': {
                 'distance': {
                     'equals': 21325.0,
@@ -315,9 +317,9 @@ phase_info = {
             'time': [(90.0, 180.0), 's'],
         },
     },
-    "post_mission": {
-        "include_landing": False,
-        "constrain_range": False,
+    'post_mission': {
+        'include_landing': False,
+        'constrain_range': False,
     },
 }
 
@@ -326,8 +328,7 @@ if __name__ == '__main__':
 
     # Load aircraft and options data from user
     # Allow for user overrides here
-    prob.load_inputs(
-        'models/test_aircraft/aircraft_for_bench_solved2dof.csv', phase_info)
+    prob.load_inputs('models/test_aircraft/aircraft_for_bench_solved2dof.csv', phase_info)
 
     # Preprocess inputs
     prob.check_and_preprocess_inputs()
@@ -353,7 +354,7 @@ if __name__ == '__main__':
 
     prob.set_initial_guesses()
 
-    prob.run_aviary_problem(record_filename='detailed_takeoff.db')
+    prob.run_aviary_problem(record_filename='detailed_takeoff.db', suppress_solver_print=True)
 
     try:
         loc = prob.get_outputs_dir()
@@ -366,20 +367,26 @@ if __name__ == '__main__':
 
     output_data = {}
 
-    for (point_name, phase_name) in [['P1', 'EF_to_P1'], ['P2', 'CD_to_P2']]:
+    for point_name, phase_name in [['P1', 'EF_to_P1'], ['P2', 'CD_to_P2']]:
         output_data[point_name] = {}
-        output_data[point_name]['thrust_fraction'] = case.get_val(f'traj.{phase_name}.rhs_all.thrust_net', units='N')[
-            -1][0] / case.get_val(f'traj.{phase_name}.rhs_all.thrust_net_max', units='N')[-1][0]
+        output_data[point_name]['thrust_fraction'] = (
+            case.get_val(f'traj.{phase_name}.rhs_all.thrust_net', units='N')[-1][0]
+            / case.get_val(f'traj.{phase_name}.rhs_all.thrust_net_max', units='N')[-1][0]
+        )
         output_data[point_name]['true_airspeed'] = case.get_val(
-            f'traj.{phase_name}.timeseries.velocity', units='kn')[-1][0]
+            f'traj.{phase_name}.timeseries.velocity', units='kn'
+        )[-1][0]
         output_data[point_name]['angle_of_attack'] = case.get_val(
             f'traj.{phase_name}.timeseries.angle_of_attack', units='deg'
         )[-1][0]
         output_data[point_name]['flight_path_angle'] = case.get_val(
-            f'traj.{phase_name}.timeseries.flight_path_angle', units='deg')[-1][0]
+            f'traj.{phase_name}.timeseries.flight_path_angle', units='deg'
+        )[-1][0]
         output_data[point_name]['altitude'] = case.get_val(
-            f'traj.{phase_name}.timeseries.altitude', units='ft')[-1][0]
+            f'traj.{phase_name}.timeseries.altitude', units='ft'
+        )[-1][0]
         output_data[point_name]['distance'] = case.get_val(
-            f'traj.{phase_name}.timeseries.distance', units='ft')[-1][0]
+            f'traj.{phase_name}.timeseries.distance', units='ft'
+        )[-1][0]
 
     print(output_data)

@@ -15,7 +15,7 @@ aircraft:design:supercritical_drag_shift,0.033,unitless
 aircraft:engine:constant_fuel_consumption,0.,lbm/h
 aircraft:engine:data_file,models/engines/turbofan_23k_1.deck,unitless
 aircraft:engine:global_throttle, True, unitless
-aircraft:engine:enable_sizing,False,unitless
+aircraft:engine:scale_performance,False,unitless
 aircraft:engine:mass_specific,0.21366,lbm/lbf
 aircraft:engine:fuel_flow_scaler_constant_term,0.,unitless
 aircraft:engine:fuel_flow_scaler_linear_term,0.,unitless
@@ -162,6 +162,7 @@ aircraft:avionics:mass_scaler,1.2,unitless
 aircraft:canard:area,0.0,ft**2
 aircraft:canard:aspect_ratio,0.0,unitless
 aircraft:canard:thickness_to_chord,0.0,unitless
+aircraft:crew_and_payload:baggage_mass_per_passenger,44,lbm
 aircraft:crew_and_payload:cargo_container_mass_scaler,1.0,unitless
 aircraft:crew_and_payload:design:num_business_class,0,unitless
 aircraft:crew_and_payload:design:num_first_class,11,unitless
@@ -206,7 +207,6 @@ aircraft:horizontal_tail:mass_scaler,1.2,unitless
 aircraft:hydraulics:mass_scaler,1.0,unitless
 aircraft:hydraulics:system_pressure,3000.0,psi
 aircraft:instruments:mass_scaler,1.25,unitless
-aircraft:landing_gear:carrier_based,False,unitless
 aircraft:landing_gear:main_gear_mass_scaler,1.1,unitless
 aircraft:landing_gear:main_gear_oleo_length,102.0,inch
 aircraft:landing_gear:nose_gear_mass_scaler,1.0,unitless
@@ -219,7 +219,7 @@ aircraft:vertical_tail:mass_scaler,1.0,unitless
 aircraft:vertical_tail:num_tails,1,unitless
 aircraft:wing:aeroelastic_tailoring_factor,0.0,unitless
 aircraft:wing:airfoil_technology,1.92669766647637,unitless
-aircraft:wing:BENDING_MATERIAL_MASS_SCALER,1.0,unitless
+aircraft:wing:bending_material_mass_scaler,1.0,unitless
 aircraft:wing:chord_per_semispan,0.31,0.23,0.084,unitless
 aircraft:wing:composite_fraction,0.2,unitless
 aircraft:wing:control_surface_area,137,ft**2
@@ -251,6 +251,7 @@ mission:takeoff:lift_over_drag,17.354,unitless
 mission:takeoff:rolling_friction_coefficient,0.0175,unitless
 aircraft:fuel:burn_per_passenger_mile,0.1
 settings:equations_of_motion,2DOF
+settings:aerodynamics_method,GASP
 settings:mass_method,FLOPS
 
 # Initialization Guesses

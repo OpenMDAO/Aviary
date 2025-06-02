@@ -11,7 +11,7 @@ from aviary.variable_info.variables import Aircraft
 
 
 class CharacteristicLengthsTest(unittest.TestCase):
-    """Test characteristic length and fineness ratio calculations"""
+    """Test characteristic length and fineness ratio calculations."""
 
     def setUp(self):
         self.prob = om.Problem()
@@ -24,14 +24,16 @@ class CharacteristicLengthsTest(unittest.TestCase):
 
         aviary_options = {
             Aircraft.Engine.NUM_ENGINES: np.array([2, 2, 3]),
-            Aircraft.Wing.SPAN_EFFICIENCY_REDUCTION: aviary_inputs.get_val(Aircraft.Wing.SPAN_EFFICIENCY_REDUCTION),
+            Aircraft.Wing.SPAN_EFFICIENCY_REDUCTION: aviary_inputs.get_val(
+                Aircraft.Wing.SPAN_EFFICIENCY_REDUCTION
+            ),
         }
 
         prob.model.add_subsystem(
             'char_lengths',
             CharacteristicLengths(**aviary_options),
             promotes_outputs=['*'],
-            promotes_inputs=['*']
+            promotes_inputs=['*'],
         )
 
         prob.setup(check=False, force_alloc_complex=True)
@@ -52,7 +54,7 @@ class CharacteristicLengthsTest(unittest.TestCase):
             (Aircraft.Wing.ASPECT_RATIO, 'unitless'),
             (Aircraft.Wing.GLOVE_AND_BAT, 'ft**2'),
             (Aircraft.Wing.TAPER_RATIO, 'unitless'),
-            (Aircraft.Wing.THICKNESS_TO_CHORD, 'unitless')
+            (Aircraft.Wing.THICKNESS_TO_CHORD, 'unitless'),
         ]
         for var, units in input_list:
             prob.set_val(var, aviary_inputs.get_val(var, units))
@@ -68,7 +70,7 @@ class CharacteristicLengthsTest(unittest.TestCase):
         length = prob.get_val(Aircraft.Nacelle.CHARACTERISTIC_LENGTH)
         fineness = prob.get_val(Aircraft.Nacelle.FINENESS)
 
-        expected_length = np.array([8.4, 5.75, 10.])
+        expected_length = np.array([8.4, 5.75, 10.0])
         expected_fineness = np.array([1.4, 1.352941176470, 1.041666666667])
 
         assert_near_equal(length, expected_length, tolerance=1e-10)
@@ -76,14 +78,14 @@ class CharacteristicLengthsTest(unittest.TestCase):
 
         # getting nan for undefined partials?
         # don't see nan anymore.
-        partial_data = self.prob.check_partials(out_stream=None, method="cs")
+        partial_data = self.prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=1e-10, rtol=1e-10)
 
     def test_IO(self):
         assert_match_varnames(self.prob.model)
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     unittest.main()
     # test = CharacteristicLengthsTest()
     # test.setUp()

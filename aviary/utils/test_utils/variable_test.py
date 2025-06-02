@@ -5,7 +5,7 @@ import openmdao.api as om
 
 from aviary.variable_info.variable_meta_data import _MetaData
 
-base_path = os.path.abspath(os.path.join(__file__, "..", "..", ".."))
+base_path = os.path.abspath(os.path.join(__file__, '..', '..', '..'))
 
 
 def assert_no_duplicates(
@@ -30,9 +30,7 @@ def assert_no_duplicates(
                 duplicates.append(check_name)
         duplicates = list(set(duplicates))
 
-        raise ValueError(
-            f"The variables {duplicates} are duplicates in the provided list."
-        )
+        raise ValueError(f'The variables {duplicates} are duplicates in the provided list.')
 
     return duplicates
 
@@ -41,8 +39,8 @@ def assert_structure_alphabetization(file_loc):
     """
     Assert that an aviary variable hierarchy is properly sorted.
 
-    Parameters:
-    -----------
+    Parameters
+    ----------
     file_loc : str
         Location of the hierarchy file relative to the aviary top directory.
     """
@@ -51,8 +49,8 @@ def assert_structure_alphabetization(file_loc):
     with open(full_file_loc) as variable_file:
         lines = variable_file.readlines()
 
-    previous_line = ""
-    previous_stem = ""
+    previous_line = ''
+    previous_stem = ''
     nested_stems = {0: ''}
     bad_sort = []
     in_block_comment = False
@@ -79,8 +77,8 @@ def assert_structure_alphabetization(file_loc):
 
         if line.startswith('class'):
             # Class lines
-            class_name = line.split("class ")[-1]
-            current_stem = f"{nested_stems[leading_spaces]}{class_name}"
+            class_name = line.split('class ')[-1]
+            current_stem = f'{nested_stems[leading_spaces]}{class_name}'
             nested_stems[leading_spaces + 4] = current_stem
             current_stem_fix = current_stem.casefold()
 
@@ -88,12 +86,12 @@ def assert_structure_alphabetization(file_loc):
                 bad_sort.append(current_stem)
 
             previous_stem = current_stem_fix
-            previous_line = ""
+            previous_line = ''
 
-        elif "=" in line:
+        elif '=' in line:
             # Variable lines
-            var_name = line.split("=")[0].strip()
-            current_line = f"{nested_stems[leading_spaces]}{var_name}"
+            var_name = line.split('=')[0].strip()
+            current_line = f'{nested_stems[leading_spaces]}{var_name}'
             current_line_fix = current_line.casefold()
 
             if current_line_fix < previous_line:
@@ -102,7 +100,7 @@ def assert_structure_alphabetization(file_loc):
             previous_line = current_line_fix
 
         if leading_spaces % 4 > 0:
-            msg = "The variable file is not using proper Python spacing."
+            msg = 'The variable file is not using proper Python spacing.'
             raise ValueError(msg)
 
     if len(bad_sort) > 0:
@@ -112,18 +110,18 @@ def assert_structure_alphabetization(file_loc):
 
 
 def assert_metadata_alphabetization(metadata_variables_list):
-    previous_var = metadata_variables_list[0].split(":")
+    previous_var = metadata_variables_list[0].split(':')
     out_of_order_vars = []
 
     for var_name in metadata_variables_list[1:]:
-        current_var = var_name.split(":")
+        current_var = var_name.split(':')
         max_size = min(len(current_var), len(previous_var))
         same = [previous_var[ct] == current_var[ct] for ct in np.arange(max_size)]
         try:
             diff_idx = same.index(False)
         except ValueError:
             raise ValueError(
-                "There are two variables in the metadata file that have the same string name."
+                'There are two variables in the metadata file that have the same string name.'
             )
         # only compare up to class level, avoid comparing variables to classes
         if len(current_var) > len(previous_var):
@@ -141,16 +139,16 @@ def assert_metadata_alphabetization(metadata_variables_list):
 
     if out_of_order_vars:
         raise ValueError(
-            f"The variable(s) {out_of_order_vars} in the metadata are out of alphabetical order with their previous value."
+            f'The variable(s) {out_of_order_vars} in the metadata are out of alphabetical order with their previous value.'
         )
 
 
 def assert_match_varnames(system, MetaData=None, exclude_inputs=None, exclude_outputs=None):
     """
-    Assert that the inputs and outputs of the system match with those in MetaData
+    Assert that the inputs and outputs of the system match with those in MetaData.
 
-    Parameters:
-    -----------
+    Parameters
+    ----------
     exclude_inputs: set
         The inputs that are excluded from comparison with MetaData.
     exclude_outputs: set
@@ -161,39 +159,36 @@ def assert_match_varnames(system, MetaData=None, exclude_inputs=None, exclude_ou
     list
         List of all names in the hierarchy, including duplicates.
     """
-
     prob = om.Problem()
     prob.model = system
     prob.setup()
     prob.final_setup()
     sys_inputs = prob.model.list_inputs(out_stream=None, prom_name=True)
-    sys_inputs = set([val[1]["prom_name"] for val in sys_inputs])
+    sys_inputs = set([val[1]['prom_name'] for val in sys_inputs])
     sys_outputs = prob.model.list_outputs(out_stream=None, prom_name=True)
-    sys_outputs = set([val[1]["prom_name"] for val in sys_outputs])
+    sys_outputs = set([val[1]['prom_name'] for val in sys_outputs])
 
-    proper_var_names = set(
-        [key for key in (_MetaData if MetaData is None else MetaData)]
-    )
+    proper_var_names = set([key for key in (_MetaData if MetaData is None else MetaData)])
 
     input_overlap = sys_inputs.intersection(proper_var_names)
     output_overlap = sys_outputs.intersection(proper_var_names)
 
     if input_overlap != sys_inputs:
         diff = sys_inputs - input_overlap
-        if not exclude_inputs is None:
+        if exclude_inputs is not None:
             diff = diff - exclude_inputs
         if len(diff) > 0:
             raise ValueError(
-                f"The inputs {diff} in the provided subsystem are not found in the provided variable structure."
+                f'The inputs {diff} in the provided subsystem are not found in the provided variable structure.'
             )
 
     if output_overlap != sys_outputs:
         diff = sys_outputs - output_overlap
-        if not exclude_outputs is None:
+        if exclude_outputs is not None:
             diff = diff - exclude_outputs
         if len(diff) > 0:
             raise ValueError(
-                f"The outputs {diff} in the provided subsystem are not found in the provided variable structure."
+                f'The outputs {diff} in the provided subsystem are not found in the provided variable structure.'
             )
 
 
@@ -203,8 +198,8 @@ def get_names_from_hierarchy(hierarchy):
 
     This is used for finding duplicates names.
 
-    Parameters:
-    -----------
+    Parameters
+    ----------
     hierarchy: object
         Instance of a class hierarchy such as Aircraft.
 
@@ -234,7 +229,7 @@ def get_names_from_hierarchy(hierarchy):
 
 
 def filter_empty(entry):
-    if (entry != '') and (entry != None):
+    if (entry != '') and (entry is not None):
         return True
 
     else:
