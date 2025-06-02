@@ -405,7 +405,7 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
                     duration_bounds=duration_bounds,
                     duration_ref=duration_ref,
                     initial_bounds=initial_bounds,
-                    initial_ref=wrapped_convert_units(user_options['time_initial_ref'], 's')
+                    initial_ref=wrapped_convert_units(user_options['time_initial_ref'], 's'),
                 )
 
         if 'cruise' not in phase_name:
