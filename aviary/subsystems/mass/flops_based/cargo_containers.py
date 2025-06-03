@@ -16,7 +16,6 @@ class TransportCargoContainersMass(om.ExplicitComponent):
     def setup(self):
         add_aviary_input(self, Aircraft.CrewPayload.CARGO_CONTAINER_MASS_SCALER, units='unitless')
         add_aviary_input(self, Aircraft.CrewPayload.CARGO_MASS, units='lbm')
-        add_aviary_input(self, Aircraft.CrewPayload.BAGGAGE_MASS, units='lbm')
 
         add_aviary_output(self, Aircraft.CrewPayload.CARGO_CONTAINER_MASS, units='lbm')
 
@@ -26,9 +25,8 @@ class TransportCargoContainersMass(om.ExplicitComponent):
     def compute(self, inputs, outputs, discrete_inputs=None, discrete_outputs=None):
         scaler = inputs[Aircraft.CrewPayload.CARGO_CONTAINER_MASS_SCALER]
         cargo = inputs[Aircraft.CrewPayload.CARGO_MASS]
-        baggage = inputs[Aircraft.CrewPayload.BAGGAGE_MASS]
 
-        temp = (cargo + baggage) / 950.0 + 0.99
+        temp = (cargo) / 950.0 + 0.99
         container_count = sin_int4(temp)
         cargo_container_weight = container_count * 175.0 * scaler
 
@@ -39,9 +37,8 @@ class TransportCargoContainersMass(om.ExplicitComponent):
     def compute_partials(self, inputs, J, discrete_inputs=None):
         scaler = inputs[Aircraft.CrewPayload.CARGO_CONTAINER_MASS_SCALER]
         cargo = inputs[Aircraft.CrewPayload.CARGO_MASS]
-        baggage = inputs[Aircraft.CrewPayload.BAGGAGE_MASS]
 
-        temp = (cargo + baggage) / 950.0 + 0.99
+        temp = (cargo) / 950.0 + 0.99
         container_count = sin_int4(temp)
 
         partial = dydx_sin_int4(temp) / 950.0 * 175.0
@@ -55,9 +52,7 @@ class TransportCargoContainersMass(om.ExplicitComponent):
             partial * scaler / GRAV_ENGLISH_LBM
         )
 
-        J[Aircraft.CrewPayload.CARGO_CONTAINER_MASS, Aircraft.CrewPayload.BAGGAGE_MASS] = (
-            partial * scaler / GRAV_ENGLISH_LBM
-        )
+
 
 
 # region TODO: move this to an appropriate module for import
