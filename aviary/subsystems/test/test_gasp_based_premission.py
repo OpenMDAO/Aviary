@@ -14,10 +14,10 @@ from aviary.utils.test_utils.default_subsystems import (
     get_geom_and_mass_subsystems,
 )
 from aviary.variable_info.functions import setup_model_options
-from aviary.variable_info.variables import Aircraft, Mission, Settings
+from aviary.variable_info.variables import Aircraft, Mission
 
 
-# @use_tempdirs
+@use_tempdirs
 class PreMissionGroupTest(unittest.TestCase):
     def setUp(self):
         prob = self.prob = AviaryProblem()
