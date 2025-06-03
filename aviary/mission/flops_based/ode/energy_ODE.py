@@ -197,7 +197,7 @@ class EnergyODE(_BaseODE):
         )
         sub1.nonlinear_solver.linesearch = om.BoundsEnforceLS()
         sub1.linear_solver = om.DirectSolver(assemble_jac=True)
-        sub1.nonlinear_solver.options['err_on_non_converge'] = True
+        sub1.nonlinear_solver.options['err_on_non_converge'] = False
         sub1.nonlinear_solver.options['iprint'] = print_level
 
         self.options['auto_order'] = True
