@@ -30,7 +30,7 @@ class LargeElectrifiedTurbopropFreighterBenchmark(unittest.TestCase):
 
         # load inputs from .csv to build engine
         options, _ = create_vehicle(
-            'models/large_turboprop_freighter/large_turboprop_freighter_GASP_GASP.csv'
+            'models/large_turboprop_freighter/large_turboprop_freighter_GASP.csv'
         )
 
         if mission_method == 'energy':
@@ -66,17 +66,17 @@ class LargeElectrifiedTurbopropFreighterBenchmark(unittest.TestCase):
         )
         prob.aviary_inputs.set_val(Settings.VERBOSITY, 0)
 
-        if mission_method == 'energy':
-            # FLOPS aero specific stuff? Best guesses for values here
-            prob.aviary_inputs.set_val(Mission.Constraints.MAX_MACH, 0.5)
-            prob.aviary_inputs.set_val(Aircraft.Wing.AREA, 1744.59, 'ft**2')
-            # prob.aviary_inputs.set_val(Aircraft.Wing.ASPECT_RATIO, 10.078)
-            prob.aviary_inputs.set_val(
-                Aircraft.Wing.THICKNESS_TO_CHORD, 0.1500
-            )  # average between root and chord T/C
-            prob.aviary_inputs.set_val(Aircraft.Fuselage.MAX_WIDTH, 4.3, 'm')
-            prob.aviary_inputs.set_val(Aircraft.Fuselage.MAX_HEIGHT, 3.95, 'm')
-            prob.aviary_inputs.set_val(Aircraft.Fuselage.AVG_DIAMETER, 4.125, 'm')
+        # if mission_method == 'energy':
+        #     # FLOPS aero specific stuff? Best guesses for values here
+        #     prob.aviary_inputs.set_val(Mission.Constraints.MAX_MACH, 0.5)
+        #     prob.aviary_inputs.set_val(Aircraft.Wing.AREA, 1744.59, 'ft**2')
+        #     # prob.aviary_inputs.set_val(Aircraft.Wing.ASPECT_RATIO, 10.078)
+        #     prob.aviary_inputs.set_val(
+        #         Aircraft.Wing.THICKNESS_TO_CHORD, 0.1500
+        #     )  # average between root and chord T/C
+        #     prob.aviary_inputs.set_val(Aircraft.Fuselage.MAX_WIDTH, 4.3, 'm')
+        #     prob.aviary_inputs.set_val(Aircraft.Fuselage.MAX_HEIGHT, 3.95, 'm')
+        #     prob.aviary_inputs.set_val(Aircraft.Fuselage.AVG_DIAMETER, 4.125, 'm')
 
         prob.check_and_preprocess_inputs()
         prob.add_pre_mission_systems()
