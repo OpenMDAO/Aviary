@@ -124,7 +124,7 @@ def build_engine_deck(
     meta_data=_MetaData,
 ):
     """
-    Creates an EngineDeck using avaliable inputs and options in aviary_options.
+    Creates an EngineDeck using available inputs and options in aviary_options.
 
     Parameter
     ----------
@@ -233,7 +233,7 @@ class EngineDataInterpolator(om.Group):
         self.options.declare(
             'interpolator_outputs',
             types=dict,
-            desc='Dictionary describing which variables will be avaliable to the '
+            desc='Dictionary describing which variables will be available to the '
             'interpolator as training data at runtime, and their units',
         )
 

@@ -604,7 +604,7 @@ class WingGroupTestCase4(unittest.TestCase):
 
 
 class WingGroupTestCase5(unittest.TestCase):
-    """Wing with struts which has dimentional location specified."""
+    """Wing with struts which has dimensional location specified."""
 
     def setUp(self):
         options = get_option_defaults()

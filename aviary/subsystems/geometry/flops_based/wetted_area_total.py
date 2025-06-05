@@ -7,7 +7,7 @@ from aviary.variable_info.variables import Aircraft
 class TotalWettedArea(om.ExplicitComponent):
     """
     Sum of wetted areas of canard, fuselage, horizontal tail, nacelle, vertical tail and wing.
-    It is simple enought to skip unit test.
+    It is simple enough to skip unit test.
     """
 
     def setup(self):

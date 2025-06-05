@@ -395,7 +395,7 @@ def _read_gasp_engine(fp, is_turbo_prop=False):
     fuelflow, and airflow, since they may have different grids in general.
     Each table consists of both the independent variables and the dependent variable for
     the corresponding field. The table is a "tidy format" 2D array where the first three
-    columns are the independent varaiables (altitude, T4/T2, and Mach number) and the
+    columns are the independent variables (altitude, T4/T2, and Mach number) and the
     final column is the dependent variable (one of thrust, fuelflow, or airflow for
     turbofans or shaft_power_corrected, fuelflow, or tailpipe_thrust for turboshafts).
     """
