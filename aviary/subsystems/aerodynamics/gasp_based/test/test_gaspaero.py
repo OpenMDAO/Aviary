@@ -7,7 +7,11 @@ import openmdao.api as om
 import pandas as pd
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 
-from aviary.subsystems.aerodynamics.gasp_based.gaspaero import CruiseAero, LowSpeedAero
+from aviary.subsystems.aerodynamics.gasp_based.gaspaero import (
+    CruiseAero,
+    LowSpeedAero,
+    FormFactorAndSIWB,
+)
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.functions import setup_model_options
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
@@ -231,6 +235,33 @@ def _init_geom(prob):
     # ground: t_init_gear
     # ground: dt_gear
     # ground & cruise, mission: q
+
+
+class FormFactorTest(unittest.TestCase):
+    """Test fuselage form factor computation and SIWB computation"""
+
+    def test_case1(self):
+        prob = om.Problem()
+
+        prob.model.add_subsystem(
+            'form_factor',
+            FormFactorAndSIWB(),
+            promotes=['*'],
+        )
+
+        prob.model.set_input_defaults(Aircraft.Fuselage.AVG_DIAMETER, val=1.0, units='ft')
+        prob.model.set_input_defaults(Aircraft.Fuselage.LENGTH, val=1.0, units='ft')
+        prob.model.set_input_defaults(Aircraft.Wing.SPAN, val=10.0, units='ft')
+
+        prob.setup(check=False, force_alloc_complex=True)
+        prob.run_model()
+
+        tol = 1e-7
+        assert_near_equal(prob['body_form_factor'], 9.5, tol)
+        assert_near_equal(prob['siwb'], 0.98005906, tol)
+
+        partial_data = prob.check_partials(out_stream=None, method='cs')
+        assert_check_partials(partial_data, atol=1e-11, rtol=1e-11)
 
 
 if __name__ == '__main__':
