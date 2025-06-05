@@ -11,6 +11,7 @@ from aviary.api import NamedValues
 from aviary.utils.conversion_utils import _parse, _read_map, _rep
 from aviary.utils.csv_data_file import write_data_file
 from aviary.utils.functions import get_path
+from aviary.interface.utils.markdown_utils import round_it
 
 
 class PropMapType(Enum):
@@ -20,7 +21,18 @@ class PropMapType(Enum):
         return self.value
 
 
-def PropDataConverter(input_file, output_file, data_format: PropMapType = PropMapType.GASP):
+sig_figs = {
+    'Helical Mach': 6,
+    'Mach': 5,
+    'Power Coefficient': 5,
+    'Advance Ratio': 5,
+    'Thrust Coefficient': 6,
+}
+
+
+def convert_propeller_map(
+    input_file, output_file, data_format: PropMapType = PropMapType.GASP, round_data=False
+):
     """
     This is a utility class to convert a propeller map file to Aviary format.
     Currently, there is only one option: from GASP format to Aviary format.
@@ -41,7 +53,9 @@ def PropDataConverter(input_file, output_file, data_format: PropMapType = PropMa
         scalars, tables, fields = _read_gasp_propeller(data_file, comments)
 
         if scalars['iread'] == 1:
-            data['Helical Mach'] = tables['thrust_coefficient'][:, 0]
+            # GASP helical Mach is reported at 75% radius, Aviary uses tip helical Mach
+            data['Helical Mach'] = tables['thrust_coefficient'][:, 0] / 0.75
+            comments.append('Helical Mach numbers were converted to propeller tip (100% radius)')
         else:
             data['Mach'] = tables['thrust_coefficient'][:, 0]
         data['Power Coefficient'] = tables['thrust_coefficient'][:, 1]
@@ -50,10 +64,12 @@ def PropDataConverter(input_file, output_file, data_format: PropMapType = PropMa
 
         # data needs to be string so column length can be easily found later
         for var in data:
+            if round_data:
+                data[var] = np.array([round_it(val, sig_figs[var]) for val in data[var]])
             data[var] = np.array([str(item) for item in data[var]])
 
     else:
-        quit('Invalid propeller map format provided')
+        raise UserWarning('Invalid propeller map format provided')
 
     # store formatted data into NamedValues object
     write_data = NamedValues()
@@ -157,12 +173,15 @@ def _setup_PMC_parser(parser):
     #     default='GASP',
     #     help='data format used by input_file',
     # )
+    parser.add_argument('--round', action='store_true', help='round data to improve readability')
 
 
 def _exec_PMC(args, user_args):
-    PropDataConverter(
+    convert_propeller_map(
         input_file=args.input_file,
-        output_file=args.output_file,  # , data_format=args.data_format
+        output_file=args.output_file,
+        # data_format=args.data_format,
+        round_data=args.round,
     )
 
 

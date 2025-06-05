@@ -48,7 +48,8 @@ class PropellerMap(om.Group):
         data = read_data_file(data_file, aliases=aliases, verbosity=verbosity)
 
         # determine the mach type from data
-        mach_types = mach_types = [key for key in ['mach', 'helical_mach'] if key in data]
+        mach_types = [key for key in ['mach', 'helical_mach'] if key in data]
+
         # Both machs being present is fine. Default to Mach number
         if len(mach_types) > 1:
             if verbosity > Verbosity.BRIEF:  # VERBOSE, DEBUG

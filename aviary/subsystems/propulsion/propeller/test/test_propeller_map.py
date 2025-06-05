@@ -34,7 +34,7 @@ class PropellerMapTest(unittest.TestCase):
 
         # Mach, CP, J from general_aviation, expected CT: 0.0934
         ct = prob.get_val('thrust_coefficient')
-        assert_near_equal(ct, 0.0934, tolerance=tol)
+        assert_near_equal(ct, 0.1025, tolerance=tol)
 
     def test_propfan(self):
         # The case when prop_type is mach.

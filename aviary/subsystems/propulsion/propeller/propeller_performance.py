@@ -12,7 +12,6 @@ from aviary.subsystems.propulsion.propeller.hamilton_standard import (
 from aviary.subsystems.propulsion.propeller.propeller_map import PropellerMap
 from aviary.utils.aviary_values import AviaryValues
 from aviary.utils.functions import smooth_min, d_smooth_min
-from aviary.variable_info.enums import OutMachType
 from aviary.variable_info.functions import add_aviary_input, add_aviary_option, add_aviary_output
 from aviary.variable_info.variables import Aircraft, Dynamic, Settings
 
@@ -155,129 +154,6 @@ class TipSpeed(om.ExplicitComponent):
         J[Dynamic.Vehicle.Propulsion.PROPELLER_TIP_SPEED, Aircraft.Engine.Propeller.DIAMETER] = (
             rpm * math.pi / 60
         )
-
-
-class AreaSquareRatio(om.ExplicitComponent):
-    """Compute the area ratio nacelle and propeller with a maximum 0.5."""
-
-    def initialize(self):
-        self.options.declare('num_nodes', types=int)
-        self.options.declare('smooth_sqa', default=True, types=bool)
-        self.options.declare('mu', default=100.0, types=float)
-
-    def setup(self):
-        nn = self.options['num_nodes']
-        arange = np.arange(self.options['num_nodes'])
-        self.add_input('DiamNac', val=0.0, units='ft')
-        self.add_input('DiamProp', val=0.0, units='ft')
-
-        self.add_output('sqa_array', val=np.zeros(nn), units='unitless')
-
-        self.declare_partials(
-            'sqa_array',
-            [
-                'DiamNac',
-                'DiamProp',
-            ],
-            rows=arange,
-            cols=np.zeros(nn),
-        )
-
-    def compute(self, inputs, outputs):
-        nn = self.options['num_nodes']
-        diamNac = inputs['DiamNac']
-        diamProp = inputs['DiamProp']
-        sqa = diamNac**2 / diamProp**2
-
-        smooth = self.options['smooth_sqa']
-        if smooth:
-            mu = self.options['mu']
-            sqa = smooth_min(sqa, 0.50, mu)
-        else:
-            sqa = np.minimum(sqa, 0.50)
-        outputs['sqa_array'] = np.ones(nn) * sqa
-
-    def compute_partials(self, inputs, partials):
-        diamNac = inputs['DiamNac']
-        diamProp = inputs['DiamProp']
-        sqa = diamNac**2 / diamProp**2
-
-        dSQA_dNacDiam = 2 * diamNac / diamProp**2
-        dSQA_dPropDiam = -2 * diamNac**2 / diamProp**3
-
-        smooth = self.options['smooth_sqa']
-        if smooth:
-            mu = self.options['mu']
-            dSQA_dNacDiam = d_smooth_min(sqa, 0.50, mu) * dSQA_dNacDiam
-            dSQA_dPropDiam = d_smooth_min(sqa, 0.50, mu) * dSQA_dPropDiam
-        else:
-            dSQA_dNacDiam = np.piecewise(sqa, [sqa < 0.5, sqa >= 0.5], [1, 0]) * dSQA_dNacDiam
-            dSQA_dPropDiam = np.piecewise(sqa, [sqa < 0.5, sqa >= 0.5], [1, 0]) * dSQA_dPropDiam
-        partials['sqa_array', 'DiamNac'] = dSQA_dNacDiam
-        partials['sqa_array', 'DiamProp'] = dSQA_dPropDiam
-
-
-class AdvanceRatio(om.ExplicitComponent):
-    """Compute the advance ratio jze with a maximum 5.0."""
-
-    def initialize(self):
-        self.options.declare(
-            'num_nodes', types=int, default=1, desc='Number of nodes to be evaluated in the RHS'
-        )
-        self.options.declare('smooth_zje', default=True, types=bool)
-        self.options.declare('mu', default=100.0, types=float)
-
-    def setup(self):
-        nn = self.options['num_nodes']
-        range = np.arange(nn)
-        self.add_input('vtas', val=np.zeros(nn), units='ft/s')
-        self.add_input('tipspd', val=np.zeros(nn), units='ft/s')
-        self.add_input('sqa_array', val=np.zeros(nn), units='unitless')
-        self.add_output('equiv_adv_ratio', val=np.zeros(nn), units='unitless')
-
-        self.declare_partials('equiv_adv_ratio', ['vtas', 'tipspd'], rows=range, cols=range)
-
-        self.declare_partials('equiv_adv_ratio', ['sqa_array'], rows=range, cols=range)
-
-    def compute(self, inputs, outputs):
-        nn = self.options['num_nodes']
-        vtas = inputs['vtas']
-        tipspd = inputs['tipspd']
-        sqa_array = inputs['sqa_array']
-        equiv_adv_ratio = (1.0 - 0.254 * sqa_array) * math.pi * vtas / tipspd
-
-        smooth = self.options['smooth_zje']
-        if smooth:
-            mu = self.options['mu']
-            jze = smooth_min(equiv_adv_ratio, np.ones(nn) * 5.0, mu)
-        else:
-            jze = np.minimum(equiv_adv_ratio, np.ones(nn) * 5.0)
-        outputs['equiv_adv_ratio'] = jze
-
-    def compute_partials(self, inputs, partials):
-        nn = self.options['num_nodes']
-        vtas = inputs['vtas']
-        tipspd = inputs['tipspd']
-        sqa_array = inputs['sqa_array']
-        jze = (1.0 - 0.254 * sqa_array) * math.pi * vtas / tipspd
-
-        djze_dsqa = -0.254 * math.pi * vtas / tipspd
-        djze_dvtas = (1.0 - 0.254 * sqa_array) * math.pi / tipspd
-        djze_dtipspd = -(1.0 - 0.254 * sqa_array) * math.pi * vtas / tipspd**2
-
-        smooth = self.options['smooth_zje']
-        if smooth:
-            mu = self.options['mu']
-            djze_dsqa = d_smooth_min(jze, np.ones(nn) * 5.0, mu) * djze_dsqa
-            djze_dvtas = d_smooth_min(jze, np.ones(nn) * 5.0, mu) * djze_dvtas
-            djze_dtipspd = d_smooth_min(jze, np.ones(nn) * 5.0, mu) * djze_dtipspd
-        else:
-            djze_dsqa = np.piecewise(jze, [jze < 5, jze >= 5], [1, 0]) * djze_dsqa
-            djze_dvtas = np.piecewise(jze, [jze < 5, jze >= 5], [1, 0]) * djze_dvtas
-            djze_dtipspd = np.piecewise(jze, [jze < 5, jze >= 5], [1, 0]) * djze_dtipspd
-        partials['equiv_adv_ratio', 'sqa_array'] = djze_dsqa
-        partials['equiv_adv_ratio', 'vtas'] = djze_dvtas
-        partials['equiv_adv_ratio', 'tipspd'] = djze_dtipspd
 
 
 class AreaSquareRatio(om.ExplicitComponent):
