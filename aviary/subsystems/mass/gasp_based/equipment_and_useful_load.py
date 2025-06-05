@@ -799,6 +799,7 @@ class UsefulLoadMass(om.ExplicitComponent):
         add_aviary_option(self, Aircraft.Engine.NUM_ENGINES)
         add_aviary_option(self, Aircraft.Engine.TYPE)
         add_aviary_option(self, Aircraft.Propulsion.TOTAL_NUM_ENGINES)
+        add_aviary_option(self, Aircraft.CrewPayload.UNIT_LOAD_DEVICE_PER_PASSENGER, units='lbm')
 
     def setup(self):
         num_engine_type = len(self.options[Aircraft.Engine.NUM_ENGINES])
@@ -817,6 +818,8 @@ class UsefulLoadMass(om.ExplicitComponent):
             self, Aircraft.Engine.SCALED_SLS_THRUST, shape=num_engine_type, units='lbf'
         )
         add_aviary_input(self, Aircraft.Fuel.WING_FUEL_FRACTION, units='unitless')
+        # add_aviary_input(
+        #    self, Aircraft.CrewPayload.UNIT_LOAD_DEVICE_PER_PASSENGER, units='lbm')
 
         add_aviary_output(self, Aircraft.Design.FIXED_USEFUL_LOAD, units='lbm')
 
@@ -830,6 +833,7 @@ class UsefulLoadMass(om.ExplicitComponent):
         wing_area = inputs[Aircraft.Wing.AREA]
         Fn_SLS = inputs[Aircraft.Engine.SCALED_SLS_THRUST]
         fuel_vol_frac = inputs[Aircraft.Fuel.WING_FUEL_FRACTION]
+        uld_per_pax = self.options[Aircraft.CrewPayload.UNIT_LOAD_DEVICE_PER_PASSENGER][0]
 
         engine_type = self.options[Aircraft.Engine.TYPE][0]
 
@@ -955,6 +959,10 @@ class UsefulLoadMass(om.ExplicitComponent):
                 inputs[Aircraft.Fuel.UNUSABLE_FUEL_MASS_COEFFICIENT] * 0.18 * (wing_area**0.5)
             )
 
+        unit_weight_cargo_handling = 165.0
+        uld_per_pax = uld_per_pax.real
+        cargo_handling_wt = (int(PAX * uld_per_pax) + 1) * unit_weight_cargo_handling
+
         useful_wt = (
             pilot_wt
             + flight_attendant_wt
@@ -965,6 +973,7 @@ class UsefulLoadMass(om.ExplicitComponent):
             + emergency_wt
             + catering_wt
             + trapped_fuel_wt
+            + cargo_handling_wt
         )
 
         outputs[Aircraft.Design.FIXED_USEFUL_LOAD] = useful_wt / GRAV_ENGLISH_LBM
@@ -1050,8 +1059,8 @@ class UsefulLoadMass(om.ExplicitComponent):
             dtrapped_fuel_wt_dfuel_vol_frac = 0.0
 
         doil_wt_dFnSLS = num_engines * doil_per_eng_wt_dFn_SLS
-
         duseful_mass_dFn_SLS = doil_wt_dFnSLS / GRAV_ENGLISH_LBM
+
         duseful_mass_dmass_coeff_8 = dservice_wt_dmass_coeff_8 / GRAV_ENGLISH_LBM
         duseful_mass_dmass_coeff_9 = dwater_wt_dmass_coeff_9 / GRAV_ENGLISH_LBM
         duseful_mass_dmass_coeff_10 = demergency_wt_dmass_coeff_10 / GRAV_ENGLISH_LBM
