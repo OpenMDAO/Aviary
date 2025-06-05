@@ -101,12 +101,13 @@ class WingParametersTestCase1(
 ):  # actual GASP test case, input and output values based on large single aisle 1 v3 without bug fix
     def setUp(self):
         self.prob = om.Problem()
-        self.prob.model.add_subsystem('wing_vol', WingVolume(), promotes=['*'])
+        self.prob.model.add_subsystem('parameters', WingParameters(), promotes=['*'])
 
         self.prob.model.set_input_defaults(Aircraft.Wing.AREA, 1370.3, units='ft**2')
         self.prob.model.set_input_defaults(Aircraft.Wing.SPAN, 117.8, units='ft')
         self.prob.model.set_input_defaults(Aircraft.Wing.ASPECT_RATIO, 10.13, units='unitless')
         self.prob.model.set_input_defaults(Aircraft.Wing.TAPER_RATIO, 0.33, units='unitless')
+        self.prob.model.set_input_defaults(Aircraft.Wing.SWEEP, 25, units='deg')
         self.prob.model.set_input_defaults(
             Aircraft.Wing.THICKNESS_TO_CHORD_ROOT, 0.15, units='unitless'
         )
