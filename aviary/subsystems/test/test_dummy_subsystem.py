@@ -237,7 +237,7 @@ class PreOnlyBuilder(SubsystemBuilderBase):
 
 
 class PostOnlyBuilder(SubsystemBuilderBase):
-    def build_post_mission(self, aviary_values):
+    def build_post_mission(self, aviary_inputs, phase_info, phase_mission_bus_lengths):
         group = om.Group()
         group.add_subsystem('comp', om.ExecComp('y = x**2'), promotes=['*'])
         return group
