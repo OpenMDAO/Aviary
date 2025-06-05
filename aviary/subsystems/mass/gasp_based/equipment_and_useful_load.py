@@ -864,7 +864,7 @@ class UsefulLoadMass(om.ExplicitComponent):
         num_flight_attendants = get_num_of_flight_attendent(PAX)
         num_pilots = get_num_of_pilots(PAX, engine_type)
 
-        # note: the average weight of a pilot was calulated using the following equation:
+        # note: the average weight of a pilot was calculated using the following equation:
         # avg_wt = pct_male*avg_wt_male + pct_female*avg_wt_female where
         # pct_male = the percentage of US airline pilots that are male (based on data from
         # the center for aviation in 2018, which listed this percentage as 95.6%, and slightly

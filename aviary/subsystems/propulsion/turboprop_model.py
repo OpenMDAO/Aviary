@@ -130,13 +130,15 @@ class TurbopropModel(EngineModel):
 
         return turboprop_group
 
-    def build_post_mission(self, aviary_inputs, **kwargs):
+    def build_post_mission(self, aviary_inputs, phase_data, phase_mission_bus_lengths, **kwargs):
         shp_model = self.shaft_power_model
         gearbox_model = self.gearbox_model
         propeller_model = self.propeller_model
         turboprop_group = om.Group()
 
-        shp_model_post_mission = shp_model.build_post_mission(aviary_inputs, **kwargs)
+        shp_model_post_mission = shp_model.build_post_mission(
+            aviary_inputs, phase_data, phase_mission_bus_lengths, **kwargs
+        )
         if shp_model_post_mission is not None:
             turboprop_group.add_subsystem(
                 shp_model.name,
@@ -144,7 +146,12 @@ class TurbopropModel(EngineModel):
                 aviary_options=aviary_inputs,
             )
 
-        gearbox_model_post_mission = gearbox_model.build_post_mission(aviary_inputs, **kwargs)
+        gearbox_model_post_mission = gearbox_model.build_post_mission(
+            aviary_inputs,
+            phase_data,
+            phase_mission_bus_lengths,
+            **kwargs,
+        )
         if gearbox_model_post_mission is not None:
             turboprop_group.add_subsystem(
                 gearbox_model.name,
@@ -152,7 +159,12 @@ class TurbopropModel(EngineModel):
                 aviary_options=aviary_inputs,
             )
 
-        propeller_model_post_mission = propeller_model.build_post_mission(aviary_inputs, **kwargs)
+        propeller_model_post_mission = propeller_model.build_post_mission(
+            aviary_inputs,
+            phase_data,
+            phase_mission_bus_lengths,
+            **kwargs,
+        )
         if propeller_model_post_mission is not None:
             turboprop_group.add_subsystem(
                 propeller_model.name,
