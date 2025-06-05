@@ -49,7 +49,7 @@ def round_it(x, sig=None):
 def write_markdown_variable_table(open_file, problem, outputs, metadata):
     """
     Writes a table of the provided variable names in outputs. Converts units to defaults
-    from metadata if avaliable.
+    from metadata if available.
 
     Parameters
     ----------
@@ -93,7 +93,7 @@ def write_markdown_variable_table(open_file, problem, outputs, metadata):
         # handle rounding + formatting
         if isinstance(val, (np.ndarray, list, tuple)):
             val = [round_it(item) for item in val]
-            # if an interable with a length of 1, remove bracket/paretheses, etc.
+            # if an interable with a length of 1, remove bracket/parentheses, etc.
             if len(val) == 1:
                 val = val[0]
         else:
