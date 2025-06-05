@@ -2579,29 +2579,31 @@ def set_warning_format(verbosity):
     # if verbosity not set / not known yet, default to most simple warning format rather than no
     # warnings at all
     if verbosity is None:
-        verbosity = 1
+        verbosity = Verbosity.BRIEF
 
-    if verbosity == 0:
+    # Reset all warning filters
+    warnings.resetwarnings()
 
-        def simplified_warning(message, category, filename, lineno, line=None):
-            return ''
+    # NOTE identity comparison is preferred for Enum but here verbosity is often an int, so we need
+    # an equality comparison
+    if verbosity == Verbosity.QUIET:
+        # Suppress all warnings
+        warnings.filterwarnings('ignore')
 
-        warnings.formatwarning = simplified_warning
-
-    elif verbosity == 1:
+    elif verbosity == Verbosity.BRIEF:
 
         def simplified_warning(message, category, filename, lineno, line=None):
             return f'Warning: {message}\n\n'
 
         warnings.formatwarning = simplified_warning
 
-    elif verbosity == 2:
+    elif verbosity == Verbosity.VERBOSE:
 
         def simplified_warning(message, category, filename, lineno, line=None):
             return f'{category.__name__}: {message}\n\n'
 
         warnings.formatwarning = simplified_warning
 
-    elif verbosity >= 3:
+    else:  # DEBUG
         # use the default warning formatting
-        pass
+        warnings.filterwarnings('default')
