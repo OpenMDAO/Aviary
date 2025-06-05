@@ -164,7 +164,7 @@ You can automatically install these optional packages by specifying a tag inside
 pip install aviary[<tag>]
 ```
 
-The following tags are avaliable:
+The following tags are available:
 - `docs`: installs [packages for building docs](#docs-packages)
 - `dev`: installs the [packages for running tests](#tests-packages) and [contributing code](#contribution-packages)
 - `all`: installs all optional packages listed in this section

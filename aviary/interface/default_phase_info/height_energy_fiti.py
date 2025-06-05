@@ -3,7 +3,7 @@ from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.enums import AlphaModes, SpeedType
 from aviary.variable_info.variables import Dynamic, Mission
 
-# defaults for height energy based forward in time integeration phases
+# defaults for height energy based forward in time integration phases
 cruise_mach = (0.8,)
 cruise_alt = (35e3,)
 
@@ -45,7 +45,7 @@ phase_info = {
 
 def phase_info_parameterization(phase_info, post_mission_info, aviary_inputs: AviaryValues):
     """
-    Modify the values in the phase_info dictionary to accomodate different values
+    Modify the values in the phase_info dictionary to accommodate different values
     for the following mission design inputs: cruise altitude, cruise Mach number,
     cruise range, design gross mass.
 

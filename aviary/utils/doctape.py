@@ -18,7 +18,7 @@ A collection of utility functions (and wrappers for Glue) that are useful
 for automating the process of building and testing documentation to ensure that
 documentation doesn't get stale.
 
-expected_error is an execption that can be used in try/except blocks to allow desired errors to
+expected_error is an exception that can be used in try/except blocks to allow desired errors to
 pass while still raising unexpected errors.
 
 gramatical_list combines the elements of a list into a string with proper punctuation

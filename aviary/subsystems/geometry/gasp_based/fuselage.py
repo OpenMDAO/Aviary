@@ -71,7 +71,7 @@ class FuselageParameters(om.ExplicitComponent):
         outputs[Aircraft.Fuselage.AVG_DIAMETER] = cabin_width
         # There are separate equations for aircraft with a single seat per row vs. multiple seats per row.
         # Here and in compute_partials, these equations are smoothed using a sigmoid fnuction centered at
-        # 1.5 seats, the sigmoid function is steep enough that there should be no noticable difference
+        # 1.5 seats, the sigmoid function is steep enough that there should be no noticeable difference
         # between the smoothed function and the stepwise function at 1 and 2 seats.
         sig1 = sigmoidX(seats_abreast, 1.5, -0.01)
         sig2 = sigmoidX(seats_abreast, 1.5, 0.01)

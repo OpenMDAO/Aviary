@@ -26,7 +26,7 @@ def build_data_interpolator(
     Parameters
     ----------
     num_nodes : int
-        Number of points that will be simultaneously interpolated during model executuion.
+        Number of points that will be simultaneously interpolated during model execution.
 
     interpolator_data : (str, Path, NamedValues)
         Path to the Aviary csv file containing all data required for interpolation, or
@@ -116,7 +116,7 @@ def build_data_interpolator(
                 if len(np.shape(val)) > 1:
                     # we assume user was *trying* to set up a structured grid
                     # if output is multi-dimensional array. If output is 1d it could
-                    # be a strucured grid with one input, or a semistructured grid
+                    # be a structured grid with one input, or a semistructured grid
                     raise ValueError(
                         f'shape of output <{key}>, {np.shape(val)}, does '
                         f'not match expected shape {tuple(shape)}'
@@ -137,7 +137,7 @@ def build_data_interpolator(
 
     if not connect_training_data:
         # Sort and format data. Only if not using training data - since we have control
-        # over both input and output data they are guarenteed to match after reformatting
+        # over both input and output data they are guaranteed to match after reformatting
 
         # sort data in semistructured grid format
         # always sort unless data is in structured format

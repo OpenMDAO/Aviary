@@ -11,7 +11,7 @@ from aviary.mission.gasp_based.phases.time_integration_phases import (
 from aviary.variable_info.enums import SpeedType, Verbosity
 from aviary.variable_info.variables import Aircraft
 
-# defaults for 2DOF based forward in time integeration phases
+# defaults for 2DOF based forward in time integration phases
 
 
 def create_2dof_based_ascent_phases(

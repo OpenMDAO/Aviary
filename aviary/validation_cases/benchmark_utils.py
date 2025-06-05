@@ -51,7 +51,7 @@ def compare_against_expected_values(prob, expected_dict):
     # Altitude at the start and end of climb
     # Added because setting up phase options is a little tricky.
     assert_near_equal(altitudes[0], expected_altitudes[0], tolerance=rtol)
-    assert_near_equal(altitudes[19], expected_altitudes[19], tolerance=rtol)
+    assert_near_equal(altitudes[-1], expected_altitudes[-1], tolerance=rtol)
 
     # Check mission values.
 
