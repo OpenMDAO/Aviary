@@ -81,7 +81,7 @@ def read_data_file(
                 line_data = line_data[:index]
 
             # split by delimiters, remove whitespace and newline characters
-            line_data = re.split(r'[;,]\s*', line_data.strip())
+            line_data = re.split(r'[;,]\s*(?![^()]*\))', line_data.strip())
 
             # ignore empty lines
             if not line_data or line_data == ['']:
@@ -296,3 +296,7 @@ def write_data_file(
         header=', '.join(header),
         comments='\n'.join(comments),
     )
+
+
+if __name__ == '__main__':
+    read_data_file('test_data.csv')
