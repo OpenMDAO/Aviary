@@ -87,7 +87,12 @@ class AviaryProblem(om.Problem):
         super().__init__(**kwargs)
 
         self.timestamp = datetime.now()
+
+        # If verbosity is set to anything but None, this defines how warnings are formatted for the
+        # whole problem - warning format won't be updated if user requests a different verbosity
+        # level for a specific method
         self.verbosity = verbosity
+        set_warning_format(verbosity)
 
         self.model = AviaryGroup()
         self.pre_mission = PreMissionGroup()
@@ -138,11 +143,17 @@ class AviaryProblem(om.Problem):
             aircraft_data, meta_data=meta_data, verbosity=verbosity
         )
 
-        # update verbosity now that we have read the input data
-        self.verbosity = aviary_inputs.get_val(Settings.VERBOSITY)
-        # if user did not ask for verbosity override for this method, use value from data
+        # Update default verbosity now that we have read the input data, if a global verbosity
+        # override was not requested
+        if self.verbosity is None:
+            self.verbosity = aviary_inputs.get_val(Settings.VERBOSITY)
+            # set default warning format for the rest of the problem
+            set_warning_format(self.verbosity)
+
+        # If user did not ask for verbosity override for this method either, use the problem's
+        # default verbosity for the rest of the method
         if verbosity is None:
-            verbosity = aviary_inputs.get_val(Settings.VERBOSITY)
+            verbosity = self.verbosity
 
         # Now that the input file has been read, we have the desired verbosity for this
         # run stored in aviary_inputs. Save this to self.
@@ -2562,3 +2573,35 @@ def _load_off_design(
     # Load inputs
     prob.load_inputs(prob.aviary_inputs, phase_info)
     return prob
+
+
+def set_warning_format(verbosity):
+    # if verbosity not set / not known yet, default to most simple warning format rather than no
+    # warnings at all
+    if verbosity is None:
+        verbosity = 1
+
+    if verbosity == 0:
+
+        def simplified_warning(message, category, filename, lineno, line=None):
+            return ''
+
+        warnings.formatwarning = simplified_warning
+
+    elif verbosity == 1:
+
+        def simplified_warning(message, category, filename, lineno, line=None):
+            return f'Warning: {message}\n\n'
+
+        warnings.formatwarning = simplified_warning
+
+    elif verbosity == 2:
+
+        def simplified_warning(message, category, filename, lineno, line=None):
+            return f'{category.__name__}: {message}\n\n'
+
+        warnings.formatwarning = simplified_warning
+
+    elif verbosity >= 3:
+        # use the default warning formatting
+        pass
