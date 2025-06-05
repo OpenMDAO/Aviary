@@ -69,7 +69,7 @@ def read_data_file(
             aliases[key] = [re.sub('\\s', '_', item).lower() for item in aliases[key]]
 
     with open(filepath, newline=None, encoding='utf-8-sig') as file:
-        # csv.reader() and other avaliable packages that can read csv files are not used
+        # csv.reader() and other available packages that can read csv files are not used
         # Manual control of file reading ensures that comments are kept intact and other
         # checks can be performed
         check_for_header = True
