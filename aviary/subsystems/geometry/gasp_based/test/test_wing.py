@@ -1129,36 +1129,35 @@ class BWBExposedWingTestCase(unittest.TestCase):
         options = get_option_defaults()
         options.set_val(Aircraft.Design.TYPE, val='BWB', units='unitless')
 
-        self.prob = om.Problem()
-        self.prob.model.add_subsystem(
+        prob = self.prob = om.Problem()
+        prob.model.add_subsystem(
             'bwb_expo_wing',
             ExposedWing(),
             promotes=['*'],
         )
 
-        self.prob.model.set_input_defaults(Aircraft.Fuselage.AVG_DIAMETER, 38.0, units='ft')
-        self.prob.model.set_input_defaults(
-            Aircraft.Wing.VERTICAL_MOUNT_LOCATION, 0.5, units='unitless'
-        )
-        self.prob.model.set_input_defaults(
+        prob.model.set_input_defaults(Aircraft.Fuselage.AVG_DIAMETER, 38.0, units='ft')
+        prob.model.set_input_defaults(Aircraft.Wing.VERTICAL_MOUNT_LOCATION, 0.5, units='unitless')
+        prob.model.set_input_defaults(
             Aircraft.Fuselage.HEIGHT_TO_WIDTH_RATIO, 0.25970, units='unitless'
         )
-        self.prob.model.set_input_defaults(Aircraft.Wing.SPAN, 146.38501, units='ft')
-        self.prob.model.set_input_defaults(Aircraft.Wing.TAPER_RATIO, 0.274439991, units='unitless')
-        self.prob.model.set_input_defaults(Aircraft.Wing.AREA, 2142.85718, units='ft**2')
+        prob.model.set_input_defaults(Aircraft.Wing.SPAN, 146.38501, units='ft')
+        prob.model.set_input_defaults(Aircraft.Wing.TAPER_RATIO, 0.274439991, units='unitless')
+        prob.model.set_input_defaults(Aircraft.Wing.AREA, 2142.85718, units='ft**2')
 
-        setup_model_options(self.prob, options)
+        setup_model_options(prob, options)
 
-        self.prob.setup(check=False, force_alloc_complex=True)
+        prob.setup(check=False, force_alloc_complex=True)
 
     def test_case_middle(self):
-        self.prob.set_val(Aircraft.Wing.VERTICAL_MOUNT_LOCATION, 0.5, units='unitless')
-        self.prob.run_model()
+        prob = self.prob
+        prob.set_val(Aircraft.Wing.VERTICAL_MOUNT_LOCATION, 0.5, units='unitless')
+        prob.run_model()
         tol = 1e-7
 
-        assert_near_equal(self.prob[Aircraft.Wing.EXPOSED_AREA], 1352.11359987, tol)
+        assert_near_equal(prob[Aircraft.Wing.EXPOSED_AREA], 1352.11359987, tol)
 
-        partial_data = self.prob.check_partials(out_stream=None, method='cs')
+        partial_data = prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=1e-11, rtol=5e-11)
 
 
