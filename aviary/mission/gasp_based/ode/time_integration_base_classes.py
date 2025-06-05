@@ -338,7 +338,7 @@ class SimuPyProblem(SimulationMixin):
     def parameter(self, value):
         if np.all(self.parameter == value):
             return
-        for parameter_name, elem_val in zip(self.paramaters, value):
+        for parameter_name, elem_val in zip(self.parameters, value):
             self.prob.set_val(parameter_name, elem_val)
 
     @property

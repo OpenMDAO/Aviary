@@ -618,7 +618,7 @@ class EngineMass(om.ExplicitComponent):
             desc='WM: mass of gear and engine, basically everything mounted on the wing',
         )
 
-        # for multiengine implementation needs this to always be avaliable
+        # for multiengine implementation needs this to always be available
         self.add_input(
             'prop_mass',
             # val=np.full(num_engine_type, 0.000000001),
@@ -2709,7 +2709,7 @@ class GearMass(om.ExplicitComponent):
         # Low wing aircraft (defined as having the wing at the lowest position on the
         # fuselage) have a separate equation for calculating gear mass. A smoothing
         # function centered at a wing height of .5% smooths the equations between 0 and
-        # 1%. The equations should produce no noticable difference between the stepwise
+        # 1%. The equations should produce no noticeable difference between the stepwise
         # versions at 0% and at or above 1%.
         c_gear_mass_modified = (c_gear_mass * 0.85 * (1.0 + 0.1765 * gear_height / 6.0)) * sigmoidX(
             wing_loc, 0.005, -0.01 / 320
