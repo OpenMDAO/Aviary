@@ -21,6 +21,33 @@ from aviary.variable_info.variables import Dynamic
 
 class TwoDOFPhaseOptions(AviaryOptionsDictionary):
     def declare_options(self):
+        # TODO: These defaults aren't great, but need to keep things the same for now.
+        defaults = {
+            'mass_ref': 1e4,
+            'mass_defect_ref': 1e6,
+            'mass_bounds': (0.0, None),
+        }
+        self.add_state_options('mass', units='kg', defaults=defaults)
+
+        # TODO: These defaults aren't great, but need to keep things the same for now.
+        defaults = {
+            'distance_ref': 1e6,
+            'distance_defect_ref': 1e8,
+            'distance_bounds': (0.0, None),
+            'mass_bounds': (0.0, None),
+        }
+        self.add_state_options('distance', units='m', defaults=defaults)
+
+        self.add_control_options('altitude', units='ft')
+
+        # TODO: These defaults aren't great, but need to keep things the same for now.
+        defaults = {
+            'mach_ref': 0.5,
+        }
+        self.add_control_options('mach', units='unitless', defaults=defaults)
+
+        # The options below have not yet been revamped.
+
         self.declare(
             'reserve',
             types=bool,
@@ -40,7 +67,7 @@ class TwoDOFPhaseOptions(AviaryOptionsDictionary):
         )
 
         self.declare(
-            'target_duration',
+            'time_duration',
             types=tuple,
             default=None,
             units='s',
@@ -88,14 +115,6 @@ class TwoDOFPhaseOptions(AviaryOptionsDictionary):
         )
 
         self.declare(
-            name='add_initial_mass_constraint',
-            types=bool,
-            default=False,
-            desc='Use a constraint for mass instead of connected initial mass for this phase. '
-            'Overwrites input_initial=True and sets it to False.',
-        )
-
-        self.declare(
             name='input_initial',
             types=bool,
             default=False,
@@ -113,27 +132,27 @@ class TwoDOFPhaseOptions(AviaryOptionsDictionary):
         self.declare(
             name='fix_duration',
             types=bool,
-            default=True,
+            default=False,
             desc='If True, the time duration of the phase is not treated as a design '
             'variable for the optimization problem.',
         )
 
         self.declare(
-            name='optimize_mach',
+            name='mach_optimize',
             types=bool,
             default=False,
             desc='Adds the Mach number as a design variable controlled by the optimizer.',
         )
 
         self.declare(
-            name='optimize_altitude',
+            name='altitude_optimize',
             types=bool,
             default=False,
             desc='Adds the Altitude as a design variable controlled by the optimizer.',
         )
 
         self.declare(
-            'initial_bounds',
+            'time_initial_bounds',
             types=tuple,
             default=(None, None),
             units='ft',
@@ -141,7 +160,7 @@ class TwoDOFPhaseOptions(AviaryOptionsDictionary):
         )
 
         self.declare(
-            name='duration_bounds',
+            name='time_duration_bounds',
             types=tuple,
             default=(None, None),
             units='ft',
@@ -180,44 +199,8 @@ class TwoDOFPhaseOptions(AviaryOptionsDictionary):
             name='constrain_final',
             types=bool,
             default=False,
-            desc='Fixes the final states (mach and altitude) to the values of final_altitude '
-            'and final_mach. These values will be unable to change during the optimization.',
-        )
-
-        self.declare(
-            name='initial_mach',
-            types=float,
-            allow_none=True,
-            default=None,
-            desc='The initial Mach number at the start of the phase. This option is only valid '
-            'when fix_initial is True.',
-        )
-
-        self.declare(
-            name='final_mach',
-            types=float,
-            allow_none=True,
-            default=None,
-            desc='The final Mach number at the end of the phase. This option is only valid '
-            'when fix_initial is True.',
-        )
-
-        self.declare(
-            name='initial_altitude',
-            types=tuple,
-            default=None,
-            units='ft',
-            desc='The initial altitude at the start of the phase. This option is only valid '
-            'when fix_initial is True.',
-        )
-
-        self.declare(
-            name='final_altitude',
-            types=tuple,
-            default=None,
-            units='ft',
-            desc='The final altitude at the end of the phase. This option is only valid '
-            'when fix_initial is True.',
+            desc='Fixes the final states (mach and altitude) to the values of altitude_final '
+            'and mach_final. These values will be unable to change during the optimization.',
         )
 
         self.declare(
@@ -242,26 +225,7 @@ class TwoDOFPhaseOptions(AviaryOptionsDictionary):
         )
 
         self.declare(
-            name='mach_bounds',
-            types=tuple,
-            default=(None, None),
-            desc='The lower and upper constraints on mach during this phase i.e., '
-            '((0.18, 0.74), "unitless"). The optimizer is never allowed choose mach values '
-            'outside of these bounds constraints.',
-        )
-
-        self.declare(
-            name='altitude_bounds',
-            types=tuple,
-            default=(None, None),
-            units='ft',
-            desc='The lower and upper constraints on altitude during this phase i.e., '
-            '((0.0, 34000.0), "ft"). The optimizer is never allowed choose mach values '
-            'outside of these bounds constraints.',
-        )
-
-        self.declare(
-            name='solve_for_distance',
+            name='distance_solve_segments',
             types=bool,
             default=False,
             desc='if True, use a nonlinear solver to converge the distance state variable to '
@@ -278,14 +242,14 @@ class TwoDOFPhaseOptions(AviaryOptionsDictionary):
         )
 
         self.declare(
-            name='initial_ref',
+            name='time_initial_ref',
             default=100.0,
             units='ft',
             desc='Scale factor initial ref for the phase integration variable, which is range.',
         )
 
         self.declare(
-            name='duration_ref',
+            name='time_duration_ref',
             types=tuple,
             default=1000.0,
             units='ft',
@@ -356,15 +320,22 @@ class TwoDOFPhase(FlightPhaseBase):
         control_order = user_options.get_val('control_order')
 
         fix_initial = user_options.get_val('fix_initial')
-        duration_bounds = user_options.get_val('duration_bounds', units='ft')
-        duration_ref = user_options.get_val('duration_ref', units='ft')
+        duration_bounds = user_options.get_val('time_duration_bounds', units='ft')
+        duration_ref = user_options.get_val('time_duration_ref', units='ft')
         rotation = user_options.get_val('rotation')
 
+        # TODO: Revamp will remove fix initial.
+        if fix_initial:
+            phase.set_state_options(
+                Dynamic.Vehicle.MASS,
+                fix_initial=True,
+                input_initial=False,
+            )
         initial_kwargs = {}
         if not fix_initial:
             initial_kwargs = {
-                'initial_bounds': user_options.get_val('initial_bounds', units='ft'),
-                'initial_ref': user_options.get_val('initial_ref', units='ft'),
+                'initial_bounds': user_options.get_val('time_initial_bounds', units='ft'),
+                'initial_ref': user_options.get_val('time_initial_ref', units='ft'),
             }
 
         phase.set_time_options(

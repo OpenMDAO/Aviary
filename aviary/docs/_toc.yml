@@ -27,6 +27,7 @@ parts:
       - file: user_guide/examples_of_the_same_mission_at_different_UI_levels
       - file: user_guide/aviary_commands
       - file: user_guide/input_files
+      - file: user_guide/phase_info
     - file: user_guide/drawing_and_running_simple_missions
     - file: user_guide/pre_mission_and_mission
     - file: user_guide/postprocessing_and_visualizing_results

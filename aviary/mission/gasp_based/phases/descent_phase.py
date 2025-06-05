@@ -39,7 +39,7 @@ class DescentPhaseOptions(AviaryOptionsDictionary):
         )
 
         self.declare(
-            'target_duration',
+            'time_duration',
             default=None,
             units='s',
             desc='The amount of time taken by this phase added as a constraint.',
@@ -80,14 +80,14 @@ class DescentPhaseOptions(AviaryOptionsDictionary):
         )
 
         self.declare(
-            name='final_altitude',
+            name='altitude_final',
             default=0.0,
             units='ft',
             desc='Altitude for final point in the phase.',
         )
 
         self.declare(
-            name='duration_bounds',
+            name='time_duration_bounds',
             default=(0, 0),
             units='s',
             desc='Lower and upper bounds on the phase duration, in the form of a nested tuple: '
@@ -95,7 +95,7 @@ class DescentPhaseOptions(AviaryOptionsDictionary):
         )
 
         self.declare(
-            name='duration_ref', default=1.0, units='s', desc='Scale factor ref for duration.'
+            name='time_duration_ref', default=1.0, units='s', desc='Scale factor ref for duration.'
         )
 
         self.declare(
