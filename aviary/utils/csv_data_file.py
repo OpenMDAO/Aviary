@@ -335,7 +335,3 @@ def write_data_file(
         header=', '.join(header),
         comments='\n'.join(comments),
     )
-
-
-if __name__ == '__main__':
-    data, inputs, outputs = read_data_file('test_data.csv')
