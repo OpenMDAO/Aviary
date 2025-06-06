@@ -329,7 +329,7 @@ class HeightEnergyProblemConfigurator(ProblemConfiguratorBase):
             flat_src_indices=True,
         )
 
-    def add_post_mission_systems(self, prob, include_landing=True):
+    def add_post_mission_systems(self, prob):
         """
         Add any post mission systems.
 
@@ -351,7 +351,7 @@ class HeightEnergyProblemConfigurator(ProblemConfiguratorBase):
             first_flight_phase = prob.traj._phases[first_flight_phase_name]
             first_flight_phase.set_state_options(Dynamic.Vehicle.MASS, fix_initial=False)
 
-        if include_landing and prob.post_mission_info['include_landing']:
+        if prob.post_mission_info['include_landing']:
             self._add_landing_systems(prob)
 
         # connect summary mass to the initial guess of mass in the first phase
