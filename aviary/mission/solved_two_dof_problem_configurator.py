@@ -140,7 +140,7 @@ class SolvedTwoDOFProblemConfigurator(ProblemConfiguratorBase):
         input_initial = False
         time_units = phase.time_options['units']
 
-        # Make a good guess for a reasonable intitial time scaler.
+        # Make a good guess for a reasonable initial time scaler.
         try:
             initial_bounds = wrapped_convert_units(user_options['time_initial_bounds'], time_units)
         except KeyError:

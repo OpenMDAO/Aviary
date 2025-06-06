@@ -106,7 +106,7 @@ class TipSpeed(om.ExplicitComponent):
         diam = inputs[Aircraft.Engine.Propeller.DIAMETER]
 
         tip_speed_mach_limit = ((sos * tip_mach_max) ** 2 - velocity**2) ** 0.5
-        # use KSfunction for smooth derivitive across minimum
+        # use KSfunction for smooth derivative across minimum
         tip_speed_max_nn = np.tile(tip_speed_max, num_nodes)
         propeller_tip_speed_limit = -KSfunction.compute(
             -np.stack((tip_speed_max_nn, tip_speed_mach_limit), axis=1)
@@ -624,7 +624,7 @@ class PropellerPerformance(om.Group):
     """
     Computation of propeller thrust coefficient based on the Hamilton Standard model or a user
     provided propeller map. Note that a propeller map allows either the helical Mach number or
-    free stream Mach number as input. This infomation will be detected automatically when the
+    free stream Mach number as input. This information will be detected automatically when the
     propeller map is loaded into memory.
     The installation loss factor is either a user input or computed internally.
     """

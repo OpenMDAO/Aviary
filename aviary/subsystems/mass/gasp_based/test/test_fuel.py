@@ -55,13 +55,13 @@ class BodyCalculationTestCase1(unittest.TestCase):
         tol = 2e-4
         assert_near_equal(
             self.prob[Aircraft.Fuel.AUXILIARY_FUEL_CAPACITY], 0, tol
-        )  # note: not in version 3 output, calulated by hand
+        )  # note: not in version 3 output, calculated by hand
         assert_near_equal(
             self.prob['extra_fuel_volume'], 0, tol
-        )  # note: not in version 3 output, calulated by hand
+        )  # note: not in version 3 output, calculated by hand
         assert_near_equal(
             self.prob['max_extra_fuel_mass'], 0, tol
-        )  # note: not in version 3 output, calulated by hand
+        )  # note: not in version 3 output, calculated by hand
         assert_near_equal(self.prob['wingfuel_mass_min'], 32853.0, tol)
         # note: Aircraft.Fuel.TOTAL_CAPACITY is calculated differently in V3, so it is not included here
 
@@ -203,13 +203,13 @@ class BodyCalculationTestCase4smooth(unittest.TestCase):
         tol = 2e-4
         assert_near_equal(
             self.prob[Aircraft.Fuel.AUXILIARY_FUEL_CAPACITY], 0, tol
-        )  # note: not in version 3 output, calulated by hand
+        )  # note: not in version 3 output, calculated by hand
         assert_near_equal(
             self.prob['extra_fuel_volume'], 0.69314718, tol
-        )  # note: not in version 3 output, calulated by hand
+        )  # note: not in version 3 output, calculated by hand
         assert_near_equal(
             self.prob['max_extra_fuel_mass'], 34.67277748, tol
-        )  # note: not in version 3 output, calulated by hand
+        )  # note: not in version 3 output, calculated by hand
         assert_near_equal(self.prob['wingfuel_mass_min'], 32818.32722252, tol)
         # note: Aircraft.Fuel.TOTAL_CAPACITY is calculated differently in V3, so it is not included here
 
@@ -710,13 +710,13 @@ class FuelMassGroupTestCase1(unittest.TestCase):
         # body tank
         assert_near_equal(
             self.prob[Aircraft.Fuel.AUXILIARY_FUEL_CAPACITY], 0, tol
-        )  # note: not in version 3 output, calulated by hand
+        )  # note: not in version 3 output, calculated by hand
         assert_near_equal(
             self.prob['body_tank.extra_fuel_volume'], 0, tol
-        )  # note: not in version 3 output, calulated by hand
+        )  # note: not in version 3 output, calculated by hand
         assert_near_equal(
             self.prob['body_tank.max_extra_fuel_mass'], 0, tol
-        )  # note: not in version 3 output, calulated by hand
+        )  # note: not in version 3 output, calculated by hand
         # note: Aircraft.Fuel.TOTAL_CAPACITY is calculated differently in V3, so it is not included here
 
         partial_data = self.prob.check_partials(out_stream=None, method='cs')

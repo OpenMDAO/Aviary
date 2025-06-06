@@ -530,7 +530,7 @@ class EngineTestCase2(unittest.TestCase):
         assert_check_partials(partial_data, atol=2e-11, rtol=1e-12)
 
 
-# arbitarary test case with multiple engine types
+# arbitrary test case with multiple engine types
 @use_tempdirs
 class EngineTestCaseMultiEngine(unittest.TestCase):
     def test_case_1(self):

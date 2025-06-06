@@ -140,7 +140,7 @@ class MultiMissionProblem(om.Problem):
         )
         # weighted_str looks like: fuel_0 * weight[0] + fuel_1 * weight[1]
         # note that the fuel objective itself is the base aviary fuel objective
-        # which is also a function of climb time becuse climb is not very sensitive to fuel
+        # which is also a function of climb time because climb is not very sensitive to fuel
 
         # adding compound execComp to super problem
         self.model.add_subsystem(
