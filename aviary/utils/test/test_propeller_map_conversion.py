@@ -7,7 +7,7 @@ from aviary.utils.functions import get_path
 from aviary.utils.propeller_map_conversion import PropMapType, convert_propeller_map
 
 
-# @use_tempdirs
+@use_tempdirs
 class TestPropellerMapConversion(unittest.TestCase):
     """Test GASP propeller data file conversion utility by comparing against already converted data files."""
 
@@ -54,7 +54,7 @@ class TestPropellerMapConversion(unittest.TestCase):
                 try:
                     self.assertEqual(line_no_whitespace.count(expected_line), 1)
 
-                except:
+                except Exception:
                     exc_string = (
                         f'Error: {filename}\nFound: {line_no_whitespace}\nExpected: {expected_line}'
                     )

@@ -34,7 +34,7 @@ phase_info['cruise']['subsystem_options']['core_aerodynamics']['aero_data'] = po
 phase_info.pop('climb')
 phase_info.pop('descent')
 
-data = read_data_file(polar_file)
+data, _, _ = read_data_file(polar_file)
 ALTITUDE = data.get_val('Altitude', 'ft')
 MACH = data.get_val('Mach', 'unitless')
 ALPHA = data.get_val('Angle_of_Attack', 'deg')

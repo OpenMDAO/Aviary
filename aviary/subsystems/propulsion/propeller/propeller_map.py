@@ -45,7 +45,7 @@ class PropellerMap(om.Group):
         data_file = self.options[Aircraft.Engine.Propeller.DATA_FILE]
         verbosity = self.options[Settings.VERBOSITY]
 
-        data = read_data_file(data_file, aliases=aliases, verbosity=verbosity)
+        data, inputs, outputs = read_data_file(data_file, aliases=aliases, verbosity=verbosity)
 
         # determine the mach type from data
         mach_types = [key for key in ['mach', 'helical_mach'] if key in data]
@@ -78,9 +78,7 @@ class PropellerMap(om.Group):
 
         propeller_interp = build_data_interpolator(
             interpolator_data=data,
-            interpolator_outputs={
-                'thrust_coefficient': 'unitless',
-            },
+            interpolator_outputs=outputs,
             num_nodes=nn,
         )
         self.add_subsystem('propeller_map', propeller_interp, promotes=['*'])

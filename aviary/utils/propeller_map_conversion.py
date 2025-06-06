@@ -29,7 +29,7 @@ sig_figs = {
     'Thrust Coefficient': 6,
 }
 
-outputs = ['Coefficient of Thrust', 'Advance Ratio']
+outputs = ['Thrust Coefficient']
 
 
 def convert_propeller_map(
