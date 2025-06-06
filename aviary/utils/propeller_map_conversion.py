@@ -1,7 +1,6 @@
 #!/usr/bin/python
 import argparse
 import getpass
-import numpy as np
 from datetime import datetime
 from enum import Enum
 
@@ -26,6 +25,8 @@ MACH = PropellerModelVariables.MACH
 CP = PropellerModelVariables.CP
 CT = PropellerModelVariables.CT
 J = PropellerModelVariables.J
+
+outputs = ['Coefficient of Thrust', 'Advance Ratio']
 
 
 def PropDataConverter(input_file, output_file, data_format: PropMapType = PropMapType.GASP):
@@ -75,7 +76,7 @@ def PropDataConverter(input_file, output_file, data_format: PropMapType = PropMa
         else:
             ext = '.prop'
         output_file = data_file.stem + ext
-    write_data_file(output_file, write_data, comments, include_timestamp=False)
+    write_data_file(output_file, write_data, outputs, comments, include_timestamp=False)
 
 
 def _read_gasp_propeller(fp, cmts):

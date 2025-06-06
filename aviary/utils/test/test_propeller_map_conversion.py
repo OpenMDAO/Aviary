@@ -14,7 +14,7 @@ class DummyArgs(object):
         self.data_format = None
 
 
-@use_tempdirs
+# @use_tempdirs
 class TestPropellerMapConversion(unittest.TestCase):
     """Test GASP propeller data file conversion utility by comparing against already converted data files."""
 

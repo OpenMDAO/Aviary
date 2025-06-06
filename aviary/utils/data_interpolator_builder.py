@@ -32,12 +32,14 @@ def build_data_interpolator(
         Path to the Aviary csv file containing all data required for interpolation, or
         the data directly given as a NamedValues object.
 
-    interpolator_outputs : dict
+    interpolator_outputs : dict, optional
         Dictionary describing the names of dependent variables (keys) and their
         units (values). If connect_training_data is False, these variable names must reference
         variables in data_file or interpolator_data. If connect_training_data is True, then
         this dictionary describes the names and units for training data that will be
         provided via openMDAO connections during model execution.
+
+        Required if interpolator_data is a NamedValues object.
 
     method : str, optional
         Interpolation method for metamodel. See openMDAO documentation for valid
@@ -62,13 +64,49 @@ def build_data_interpolator(
         OpenMDAO metamodel component using the provided data and flags
     """
     # Argument checking #
-    if interpolator_outputs is None:
-        raise UserWarning('Independent variables for interpolation were not provided.')
     # if interpolator data is a filepath, get data from file
     if isinstance(interpolator_data, str):
         interpolator_data = get_path(interpolator_data)
     if isinstance(interpolator_data, Path):
-        interpolator_data = read_data_file(interpolator_data)
+        interpolator_data, inputs, outputs = read_data_file(interpolator_data)
+
+    # Determine if independent and dependent variables are accounted for
+    # Combine interpolator outputs & outputs found in data file
+    if interpolator_outputs is not None:
+        outputs = list(set(outputs + list(interpolator_outputs.keys())))
+
+    all_vars = get_keys(interpolator_data)
+
+    # Scenario 1: Only outputs provided in data file
+    if len(inputs) == 0 and len(outputs) != 0:
+        for key in all_vars:
+            if key not in outputs:
+                inputs.append(key)
+    # Scenario 2: Only inputs provided in data file
+    elif len(inputs) != 0 and len(outputs) == 0:
+        for key in all_vars:
+            if key not in inputs:
+                outputs.append(key)
+
+    # Raise UserWarning if Scenario 1 or 2 fails
+    if len(outputs) == 0:
+        raise UserWarning(
+            'Insufficient information on inputs and outputs for interpolation was provided'
+        )
+    # Scenario 3: Both inputs and outputs provided
+    # Check that nothing in interpolator_outputs conflicts with inputs - read_data_file() already
+    # checks for "double labeling" of inputs/outputs in data file
+    for key in interpolator_outputs:
+        if key in inputs:
+            raise UserWarning(f'Variable <{key}> was specified as both an input and a output.')
+    for key in all_vars:
+        if key in inputs:
+            continue
+        if key in outputs:
+            continue
+        raise UserWarning(
+            'Insufficient information on inputs and outputs for interpolation was provided'
+        )
 
     # Pre-format data: Independent variables placed before dependent variables - position
     #                  of these variables relative to others of their type is preserved
@@ -96,7 +134,7 @@ def build_data_interpolator(
     # check inputs, should be vector of unique values only
     for key, (val, units) in get_items(interpolator_data):
         if len(val.shape) == 1:
-            if key not in interpolator_outputs:
+            if key not in outputs:
                 # try:
                 if np.array_equal(np.unique(val), val):
                     # if vector is only unique values, could be structured!
@@ -110,7 +148,7 @@ def build_data_interpolator(
     # check outputs, should be array matching shape of input vector lengths
     # if we already know data needs formatting, don't bother checking outputs
     if data_pre_structured:
-        for key in interpolator_outputs:
+        for key in outputs:
             (val, units) = interpolator_data.get_item(key)
             if np.shape(val) != tuple(shape):
                 if len(np.shape(val)) > 1:
@@ -229,11 +267,11 @@ def build_data_interpolator(
         values, units = interpolator_data.get_item(key)
         interp_comp.add_input(key, training_data=values, units=units)
     # add interpolator outputs
-    for key in interpolator_outputs:
+    for key in outputs:
         if key in interpolator_data:
             values, units = interpolator_data.get_item(key)
         if connect_training_data:
-            units = interpolator_outputs[key]
+            units = outputs[key]
             interp_comp.add_output(key, units=units)
         else:
             interp_comp.add_output(key, training_data=values, units=units)
