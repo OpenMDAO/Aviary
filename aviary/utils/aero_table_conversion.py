@@ -31,6 +31,8 @@ allowed_headers = {
     'del_cd': 'Delta CD',
 }
 
+outputs = ['Flap Deflection', 'CL', 'CL', 'CD', 'Hob', 'Delta CL', 'Delta CD']
+
 
 def AeroDataConverter(input_file=None, output_file=None, data_format=None):
     """This is a utility class to convert a legacy aero data file to Aviary format.
@@ -68,8 +70,9 @@ def AeroDataConverter(input_file=None, output_file=None, data_format=None):
     if data_format is CodeOrigin.GASP:
         data, comments = _load_gasp_aero_table(data_file)
         comments = [stamp] + comments
+        outputs = []
 
-        write_data_file(output_file, data, comments, include_timestamp=True)
+        write_data_file(output_file, data, outputs, comments, include_timestamp=True)
     elif data_format is CodeOrigin.FLOPS:
         if type(output_file) is not list:
             # if only one filename is given, split into two

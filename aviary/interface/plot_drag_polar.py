@@ -22,7 +22,7 @@ def plot_drag_polar(input_file=None):
 
     try:
         input_path = get_path(input_file)
-        polar_data = av.read_data_file(
+        polar_data, _, _ = av.read_data_file(
             input_path,
             aliases={
                 'altitude': 'altitude',
