@@ -820,7 +820,7 @@ class AviaryProblem(om.Problem):
             ].grid_data.subset_num_nodes['all']
         return phase_mission_bus_lengths
 
-    def add_post_mission_systems(self, include_landing=True, verbosity=None):
+    def add_post_mission_systems(self, verbosity=None):
         """
         Add post-mission systems to the aircraft model. This is akin to the pre-mission
         group or the "premission_systems", but occurs after the mission in the execution
@@ -858,7 +858,7 @@ class AviaryProblem(om.Problem):
             promotes_outputs=['*'],
         )
 
-        self.builder.add_post_mission_systems(self, include_landing)
+        self.builder.add_post_mission_systems(self)
 
         # Add all post-mission external subsystems.
         phase_mission_bus_lengths = self._get_phase_mission_bus_lengths()
