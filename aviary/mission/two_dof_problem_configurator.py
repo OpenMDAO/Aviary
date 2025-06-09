@@ -592,6 +592,17 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
             if 'ascent' in prob.phase_info:
                 self._add_groundroll_eq_constraint(prob)
 
+    def check_trajectory(self, prob):
+        """
+        Checks the phase_info user options for any inconsistency.
+
+        Parameters
+        ----------
+        prob : AviaryProblem
+            Problem that owns this builder.
+        """
+        pass
+
     def _add_groundroll_eq_constraint(self, prob):
         """
         Add an equality constraint to the problem to ensure that the TAS at the end of the

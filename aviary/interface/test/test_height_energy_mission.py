@@ -1,8 +1,10 @@
 import os
 import subprocess
+import sys
 import unittest
 from copy import deepcopy
 
+from io import StringIO
 import dymos
 from openmdao.core.problem import _clear_problem_names
 from openmdao.utils.reports_system import clear_reports
@@ -312,6 +314,39 @@ class AircraftMissionTestSuite(unittest.TestCase):
 
         self.assertEqual(con1['name'], 'timeseries.throttle_1')
         self.assertEqual(con2['name'], 'timeseries.throttle_2')
+
+    def test_trajectory_warning(self):
+        modified_phase_info = deepcopy(self.phase_info)
+        modified_phase_info['climb']['user_options']['altitude_final'] = (1000.0, 'ft')
+        modified_phase_info['cruise']['user_options']['mach_final'] = (0.5, 'unitless')
+        prob = AviaryProblem(verbosity=1)
+
+        csv_path = 'models/test_aircraft/aircraft_for_bench_FwFm.csv'
+
+        prob.load_inputs(csv_path, modified_phase_info)
+        prob.check_and_preprocess_inputs()
+        prob.add_pre_mission_systems()
+        prob.add_phases()
+        prob.add_post_mission_systems()
+
+        stdout = sys.stdout
+        strout = StringIO()
+        sys.stdout = strout
+        try:
+            prob.link_phases()
+        finally:
+            sys.stdout = stdout
+        output = strout.getvalue().split('\n')
+
+        print('z')
+
+        self.assertEqual(output[1], 'The following issues were detected in your phase_info options.')
+        self.assertEqual(output[2], '  Constraint mismatch across phase boundary:')
+        self.assertEqual(output[3], "    climb altitude_final: (1000.0, 'ft')")
+        self.assertEqual(output[4], "    cruise altitude_initial: (32000.0, 'ft')")
+        self.assertEqual(output[5], '  Constraint mismatch across phase boundary:')
+        self.assertEqual(output[6], "    cruise mach_final: (0.5, 'unitless')")
+        self.assertEqual(output[7], "    descent mach_initial: (0.72, 'unitless')")
 
 
 if __name__ == '__main__':

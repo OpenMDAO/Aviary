@@ -238,6 +238,17 @@ class SolvedTwoDOFProblemConfigurator(ProblemConfiguratorBase):
                 connected=False,
             )
 
+    def check_trajectory(self, prob):
+        """
+        Checks the phase_info user options for any inconsistency.
+
+        Parameters
+        ----------
+        prob : AviaryProblem
+            Problem that owns this builder.
+        """
+        pass
+
     def add_post_mission_systems(self, prob, include_landing=True):
         """
         Add any post mission systems.

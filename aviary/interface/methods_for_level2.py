@@ -1130,6 +1130,8 @@ class AviaryProblem(om.Problem):
 
         self._connect_mission_bus_variables()
 
+        self.configurator.check_trajectory(self)
+
     def add_driver(self, optimizer=None, use_coloring=None, max_iter=50, verbosity=None):
         """
         Add an optimization driver to the Aviary problem.

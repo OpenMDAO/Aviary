@@ -13,7 +13,7 @@ from aviary.mission.problem_configurator import ProblemConfiguratorBase
 from aviary.subsystems.propulsion.utils import build_engine_deck
 from aviary.utils.process_input_decks import initialization_guessing
 from aviary.utils.utils import wrapped_convert_units
-from aviary.variable_info.enums import AnalysisScheme, LegacyCode
+from aviary.variable_info.enums import AnalysisScheme, LegacyCode, Verbosity
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 
 
@@ -22,17 +22,6 @@ class HeightEnergyProblemConfigurator(ProblemConfiguratorBase):
     A Height-Energy specific builder that customizes AviaryProblem() for use with
     height energy phases.
     """
-
-    def check_trajectory(self, prob):
-        """
-        Checks the phase_info user options for any inconsistency.
-
-        Parameters
-        ----------
-        prob : AviaryProblem
-            Problem that owns this builder.
-        """
-        pass
 
     def initial_guesses(self, prob):
         """
@@ -324,6 +313,48 @@ class HeightEnergyProblemConfigurator(ProblemConfiguratorBase):
             src_indices=[-1],
             flat_src_indices=True,
         )
+
+    def check_trajectory(self, prob):
+        """
+        Checks the phase_info user options for any inconsistency.
+
+        Parameters
+        ----------
+        prob : AviaryProblem
+            Problem that owns this builder.
+        """
+        phase_info = prob.phase_info
+        all_phases = [name for name in phase_info]
+
+        stems = [
+            Dynamic.Vehicle.MASS,
+            Dynamic.Mission.DISTANCE,
+            Dynamic.Atmosphere.MACH,
+            Dynamic.Mission.ALTITUDE,
+        ]
+
+        msg = ''
+        for j in range(1, len(all_phases)):
+            left_name = all_phases[j-1]
+            right_name = all_phases[j]
+            left = phase_info[left_name]['user_options']
+            right = phase_info[right_name]['user_options']
+
+            for stem in stems:
+                final = left[f'{stem}_final']
+                initial = right[f'{stem}_initial']
+
+                if initial[0] is None or final[0] is None:
+                    continue
+
+                if initial != final:
+                    msg += "  Constraint mismatch across phase boundary:\n"
+                    msg += f"    {left_name} {stem}_final: {final}\n"
+                    msg += f"    {right_name} {stem}_initial: {initial}\n"
+
+        if len(msg) > 0 and prob.verbosity > Verbosity.QUIET:
+            print("\nThe following issues were detected in your phase_info options.")
+            print(msg, '\n')
 
     def add_post_mission_systems(self, prob, include_landing=True):
         """
