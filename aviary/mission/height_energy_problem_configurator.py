@@ -335,7 +335,7 @@ class HeightEnergyProblemConfigurator(ProblemConfiguratorBase):
 
         msg = ''
         for j in range(1, len(all_phases)):
-            left_name = all_phases[j-1]
+            left_name = all_phases[j - 1]
             right_name = all_phases[j]
             left = phase_info[left_name]['user_options']
             right = phase_info[right_name]['user_options']
@@ -348,12 +348,12 @@ class HeightEnergyProblemConfigurator(ProblemConfiguratorBase):
                     continue
 
                 if initial != final:
-                    msg += "  Constraint mismatch across phase boundary:\n"
-                    msg += f"    {left_name} {stem}_final: {final}\n"
-                    msg += f"    {right_name} {stem}_initial: {initial}\n"
+                    msg += '  Constraint mismatch across phase boundary:\n'
+                    msg += f'    {left_name} {stem}_final: {final}\n'
+                    msg += f'    {right_name} {stem}_initial: {initial}\n'
 
         if len(msg) > 0 and prob.verbosity > Verbosity.QUIET:
-            print("\nThe following issues were detected in your phase_info options.")
+            print('\nThe following issues were detected in your phase_info options.')
             print(msg, '\n')
 
     def add_post_mission_systems(self, prob, include_landing=True):

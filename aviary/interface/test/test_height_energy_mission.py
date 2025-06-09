@@ -340,7 +340,9 @@ class AircraftMissionTestSuite(unittest.TestCase):
 
         print('z')
 
-        self.assertEqual(output[1], 'The following issues were detected in your phase_info options.')
+        self.assertEqual(
+            output[1], 'The following issues were detected in your phase_info options.'
+        )
         self.assertEqual(output[2], '  Constraint mismatch across phase boundary:')
         self.assertEqual(output[3], "    climb altitude_final: (1000.0, 'ft')")
         self.assertEqual(output[4], "    cruise altitude_initial: (32000.0, 'ft')")
