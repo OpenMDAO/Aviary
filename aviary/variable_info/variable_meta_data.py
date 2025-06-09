@@ -1105,11 +1105,11 @@ add_meta_data(
 )
 
 add_meta_data(
-    Aircraft.CrewPayload.UNIT_LOAD_DEVICE_PER_PASSENGER,
+    Aircraft.CrewPayload.UNIT_MASS_OF_ULD_PER_PASSENGER,
     meta_data=_MetaData,
     historical_name={'GASP': 'INGASP.CW(14)', 'FLOPS': None, 'LEAPS1': None},
     units='lbm',
-    desc='unit load device for cargo handling per passenger',
+    desc='unit mass of ULD (unit load device) for cargo handling per passenger',
     default_value=0.0,
     types=float,
     option=True,

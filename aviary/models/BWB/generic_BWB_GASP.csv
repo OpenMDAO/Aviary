@@ -17,7 +17,7 @@ aircraft:crew_and_payload:design:num_first_class,11,unitless
 aircraft:crew_and_payload:design:num_passengers,150,unitless
 aircraft:crew_and_payload:passenger_mass_with_bags,225,lbm
 aircraft:crew_and_payload:passenger_service_mass_per_passenger,6,lbm
-aircraft:crew_and_payload:unit_load_device_per_passenger,0.0667,lbm
+aircraft:crew_and_payload:unit_mass_of_uld_per_passenger,0.0667,lbm
 aircraft:crew_and_payload:water_mass_per_occupant,3,lbm
 aircraft:design:cg_delta,0.25,unitless
 aircraft:design:cockpit_control_mass_coefficient,16.5,unitless
