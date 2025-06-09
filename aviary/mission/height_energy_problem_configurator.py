@@ -23,11 +23,16 @@ class HeightEnergyProblemConfigurator(ProblemConfiguratorBase):
     height energy phases.
     """
 
-    def check_phase_options(self, prob):
-        """Returns the Options Dictionary used to instantiate the phases used by this ODE."""
-        ' This will be used by check_and_preprocess_inputs in M4L2 to ensure that the '
-        ' required inputs are in the phase_info.'
-        return FlightPhaseOptions
+    def check_trajectory(self, prob):
+        """
+        Checks the phase_info user options for any inconsistency.
+
+        Parameters
+        ----------
+        prob : AviaryProblem
+            Problem that owns this builder.
+        """
+        pass
 
     def initial_guesses(self, prob):
         """
