@@ -9,6 +9,7 @@ from aviary.utils.data_interpolator_builder import build_data_interpolator
 from aviary.variable_info.enums import Verbosity
 from aviary.variable_info.functions import add_aviary_option
 from aviary.variable_info.variables import Aircraft, Dynamic, Settings
+from aviary.utils.named_values import NamedValues
 
 aliases = {
     # whitespaces are replaced with underscores converted to lowercase before
@@ -37,15 +38,33 @@ class PropellerMap(om.Group):
 
     def initialize(self):
         self.options.declare('num_nodes', default=1, types=int)
+        self.options.declare(
+            'propeller_data',
+            types=NamedValues,
+            default=None,
+            desc='propeller performance data to be used instead of data file (optional)',
+        )
         add_aviary_option(self, Aircraft.Engine.Propeller.DATA_FILE)
         add_aviary_option(self, Settings.VERBOSITY)
 
     def setup(self):
         nn = self.options['num_nodes']
+        data = self.options['data']
         data_file = self.options[Aircraft.Engine.Propeller.DATA_FILE]
         verbosity = self.options[Settings.VERBOSITY]
 
-        data = read_data_file(data_file, aliases=aliases, verbosity=verbosity)
+        if data is None:
+            data = read_data_file(data_file, aliases=aliases, verbosity=verbosity)
+            if verbosity > Verbosity.BRIEF:
+                print(f'Reading propeller performance data from {data_file}')
+        else:
+            if verbosity > Verbosity.BRIEF:
+                if data_file is not None:
+                    warnings.warn(
+                        f'Propeller performance map provided as both a data file and as data '
+                        'passed in-memory. Provided data file will be not be used.'
+                    )
+                print(f'Reading propeller performance data from {data_file}')
 
         # determine the mach type from data
         mach_types = [key for key in ['mach', 'helical_mach'] if key in data]
