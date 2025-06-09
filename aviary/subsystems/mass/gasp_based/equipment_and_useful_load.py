@@ -129,7 +129,7 @@ class EquipMassPartialSum(om.ExplicitComponent):
             APU_wt = 26.2 * PAX**0.944 - 13.6 * PAX
         else:
             APU_wt = 0.0
-        # The following if-block should be removed. Aircraft.APU.MASS should be output, not input.
+        # TODO The following if-block should be removed. Aircraft.APU.MASS should be output, not input.
         if not (-1e-5 < inputs[Aircraft.APU.MASS] < 1e-5):
             # note: this technically creates a discontinuity
             APU_wt = inputs[Aircraft.APU.MASS] * GRAV_ENGLISH_LBM
@@ -189,7 +189,7 @@ class EquipMassPartialSum(om.ExplicitComponent):
             avionics_wt = 600.0
         if PAX > 100:
             avionics_wt = 2.8 * PAX + 1010.0
-        # The following if-block should be removed. Aircraft.Avionics.MASS should be output, not input.
+        # TODO The following if-block should be removed. Aircraft.Avionics.MASS should be output, not input.
         if not (-1e-5 < inputs[Aircraft.Avionics.MASS] < 1e-5):
             # note: this technically creates a discontinuity !WILL NOT CHANGE
             avionics_wt = inputs[Aircraft.Avionics.MASS] * GRAV_ENGLISH_LBM
@@ -204,7 +204,7 @@ class EquipMassPartialSum(om.ExplicitComponent):
         else:
             if icing_wt < 0.0:  # note: this technically creates a discontinuity
                 icing_wt = 0.0
-        # The following if-block should be removed. Aircraft.AntiIcing.MASS should be output, not input.
+        # TODO The following if-block should be removed. Aircraft.AntiIcing.MASS should be output, not input.
         if not (-1e-5 < inputs[Aircraft.AntiIcing.MASS] < 1e-5):
             # note: this technically creates a discontinuity !WILL NOT CHANGE
             icing_wt = inputs[Aircraft.AntiIcing.MASS] * GRAV_ENGLISH_LBM
@@ -255,7 +255,7 @@ class EquipMassPartialSum(om.ExplicitComponent):
         engine_type = self.options[Aircraft.Engine.TYPE][0]
 
         dAPU_wt_dmass_coeff_0 = 0.0
-        # The following if-block should be removed. Aircraft.APU.MASS should be output, not input.
+        # TODO The following if-block should be removed. Aircraft.APU.MASS should be output, not input.
         if not (-1e-5 < inputs[Aircraft.APU.MASS] < 1e-5):
             # note: this technically creates a discontinuity
             dAPU_wt_dmass_coeff_0 = GRAV_ENGLISH_LBM
@@ -326,7 +326,7 @@ class EquipMassPartialSum(om.ExplicitComponent):
                 davionics_wt_dgross_wt_initial = 0.0
         else:
             davionics_wt_dgross_wt_initial = 0.0
-        # The following if-block should be removed. Aircraft.Avionics.MASS should be output, not input.
+        # TODO The following if-block should be removed. Aircraft.Avionics.MASS should be output, not input.
         if not (-1e-5 < inputs[Aircraft.Avionics.MASS] < 1e-5):
             # note: this technically creates a discontinuity !WILL NOT CHANGE
             davionics_wt_dgross_wt_initial = 0.0
@@ -350,7 +350,7 @@ class EquipMassPartialSum(om.ExplicitComponent):
                 dicing_weight_dhtail_area = 0.0
                 dicing_weight_dvtail_area = 0.0
                 dicing_weight_dmass_coeff_6 = 0.0
-        # The following if-block should be removed. Aircraft.AntiIcing.MASS should be output, not input.
+        # TODO The following if-block should be removed. Aircraft.AntiIcing.MASS should be output, not input.
         if not (-1e-5 < inputs[Aircraft.AntiIcing.MASS] < 1e-5):
             # note: this technically creates a discontinuity !WILL NOT CHANGE
             icing_wt = inputs[Aircraft.AntiIcing.MASS] * GRAV_ENGLISH_LBM
@@ -827,7 +827,7 @@ class UsefulLoadMass(om.ExplicitComponent):
         add_aviary_option(self, Aircraft.Engine.TYPE)
         add_aviary_option(self, Aircraft.Propulsion.TOTAL_NUM_ENGINES)
         add_aviary_option(self, Settings.VERBOSITY)
-        add_aviary_option(self, Aircraft.CrewPayload.UNIT_LOAD_DEVICE_PER_PASSENGER, units='lbm')
+        add_aviary_option(self, Aircraft.CrewPayload.UNIT_MASS_OF_ULD_PER_PASSENGER, units='lbm')
 
     def setup(self):
         num_engine_type = len(self.options[Aircraft.Engine.NUM_ENGINES])
@@ -858,7 +858,7 @@ class UsefulLoadMass(om.ExplicitComponent):
         wing_area = inputs[Aircraft.Wing.AREA]
         Fn_SLS = inputs[Aircraft.Engine.SCALED_SLS_THRUST]
         fuel_vol_frac = inputs[Aircraft.Fuel.WING_FUEL_FRACTION]
-        uld_per_pax = self.options[Aircraft.CrewPayload.UNIT_LOAD_DEVICE_PER_PASSENGER][0]
+        uld_per_pax = self.options[Aircraft.CrewPayload.UNIT_MASS_OF_ULD_PER_PASSENGER][0]
 
         engine_type = self.options[Aircraft.Engine.TYPE][0]
         num_flight_attendants = get_num_of_flight_attendent(PAX)
@@ -934,7 +934,7 @@ class UsefulLoadMass(om.ExplicitComponent):
             emergency_wt = 15.0
         if PAX >= 35.0:
             emergency_wt = 25.0 * num_flight_attendants + 15.0
-        # The following if-block should be removed. Aircraft.Design.EMERGENCY_EQUIPMENT_MASS should be output, not input.
+        # TODO The following if-block should be removed. Aircraft.Design.EMERGENCY_EQUIPMENT_MASS should be output, not input.
         if not (-1e-5 < inputs[Aircraft.Design.EMERGENCY_EQUIPMENT_MASS] < 1e-5):
             emergency_wt = inputs[Aircraft.Design.EMERGENCY_EQUIPMENT_MASS] * GRAV_ENGLISH_LBM
 
@@ -1009,7 +1009,7 @@ class UsefulLoadMass(om.ExplicitComponent):
             dwater_wt_dmass_coeff_9 = (PAX + num_pilots + num_flight_attendants) * GRAV_ENGLISH_LBM
 
         demergency_wt_dmass_coeff_10 = 0.0
-        # The following if-block should be removed. Aircraft.Design.EMERGENCY_EQUIPMENT_MASS should be output, not input.
+        # TODO The following if-block should be removed. Aircraft.Design.EMERGENCY_EQUIPMENT_MASS should be output, not input.
         if not (-1e-5 < inputs[Aircraft.Design.EMERGENCY_EQUIPMENT_MASS] < 1e-5):
             demergency_wt_dmass_coeff_10 = GRAV_ENGLISH_LBM
 
