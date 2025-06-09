@@ -110,7 +110,7 @@ def rad2deg(r):
 
 
 def cla(ar, sweep, mach):
-    """Lift-curve slope of 3D wings from Seckel equation.
+    """Lift-curve slope of 3D wings from Seckel equation. cla is per radian.
 
     Parameters
     ----------
@@ -166,7 +166,7 @@ class WingTailRatios(om.ExplicitComponent):
         )
         self.add_output('bbar', units='unitless', desc='BBAR: Ratio of H tail area to wing area')
         self.add_output('sbar', units='unitless', desc='SBAR: Ratio of H tail area to wing area')
-        self.add_output('cbar', units='unitless', desc='SBAR: Ratio of H tail chord to wing chord')
+        self.add_output('cbar', units='unitless', desc='CBAR: Ratio of H tail chord to wing chord')
 
     def setup_partials(self):
         self.declare_partials(
@@ -1257,7 +1257,7 @@ class LiftCoeffClean(om.ExplicitComponent):
         self.add_input('lift_curve_slope', units='unitless', shape=nn, desc='Lift-curve slope')
         self.add_input('lift_ratio', units='unitless', shape=nn, desc='Lift ratio')
 
-        add_aviary_input(self, Aircraft.Wing.ZERO_LIFT_ANGLE, units='deg')
+        add_aviary_input(self, Aircraft.Wing.ZERO_LIFT_ANGLE, units='deg', desc='ALPHL0')
 
         add_aviary_input(self, Mission.Design.LIFT_COEFFICIENT_MAX_FLAPS_UP, units='unitless')
 
