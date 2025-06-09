@@ -4,6 +4,7 @@ from copy import deepcopy
 from numpy.testing import assert_almost_equal
 from openmdao.utils.testing_utils import use_tempdirs
 
+
 from aviary.interface.methods_for_level2 import AviaryProblem
 from aviary.models.large_turboprop_freighter.phase_info import energy_phase_info, two_dof_phase_info
 from aviary.subsystems.propulsion.turboprop_model import TurbopropModel
@@ -11,7 +12,7 @@ from aviary.utils.process_input_decks import create_vehicle
 from aviary.variable_info.variables import Aircraft, Mission, Settings
 
 
-# @use_tempdirs
+@use_tempdirs
 # TODO need to add asserts with "truth" values, only verifying no errors here
 class LargeTurbopropFreighterBenchmark(unittest.TestCase):
     def build_and_run_problem(self, mission_method):
@@ -59,7 +60,7 @@ class LargeTurbopropFreighterBenchmark(unittest.TestCase):
         prob.add_phases()
         prob.add_post_mission_systems()
         prob.link_phases()
-        prob.add_driver('SNOPT', verbosity=1)
+        prob.add_driver('SNOPT', verbosity=0)
         prob.add_design_variables()
         prob.add_objective()
         prob.setup()
@@ -83,5 +84,5 @@ class LargeTurbopropFreighterBenchmark(unittest.TestCase):
 if __name__ == '__main__':
     # unittest.main()
     test = LargeTurbopropFreighterBenchmark()
-    test.build_and_run_problem('2DOF')
-    # test.build_and_run_problem('energy')
+    # test.build_and_run_problem('2DOF')
+    test.build_and_run_problem('energy')
