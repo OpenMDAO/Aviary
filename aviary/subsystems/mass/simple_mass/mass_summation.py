@@ -6,6 +6,7 @@ import openmdao.jax as omj
 from aviary.subsystems.mass.simple_mass.fuselage import FuselageMassAndCOG
 from aviary.subsystems.mass.simple_mass.wing import WingMassAndCOG
 from aviary.subsystems.mass.simple_mass.tail import TailMassAndCOG
+from aviary.variable_info.variables import Aircraft
 # Maybe add some aviary inputs at some point here
 
 class MassSummation(om.Group):
@@ -23,21 +24,21 @@ class MassSummation(om.Group):
             'fuse_mass', 
             FuselageMassAndCOG(),
             promotes_inputs=['*'],
-            promotes_outputs=['total_weight_fuse']
+            promotes_outputs=[Aircraft.Fuselage.MASS]
         )
 
         self.add_subsystem(
             'wing_mass',
             WingMassAndCOG(),
             promotes_inputs=['*'],
-            promotes_outputs=['total_weight_wing']
+            promotes_outputs=[Aircraft.Wing.MASS]
         )
 
         self.add_subsystem(
             'tail_mass',
             TailMassAndCOG(),
             promotes_inputs=['*'],
-            promotes_outputs=['mass']
+            promotes_outputs=[Aircraft.HorizontalTail.MASS, Aircraft.VerticalTail.MASS]
         )
 
         self.add_subsystem(
@@ -47,14 +48,20 @@ class MassSummation(om.Group):
             promotes_outputs=['*']
         )
 
-
+# Horizontal tail only
 class StructureMass(om.JaxExplicitComponent):
 
     def setup(self):
         # Maybe later change these to Aviary inputs?
-        self.add_input('total_weight_wing', val=0.0, units='kg')
-        self.add_input('total_weight_fuse', val=0.0, units='kg')
-        self.add_input('mass', val=0.0, units='kg')
+        self.add_input(Aircraft.Wing.MASS, val=0.0, units='kg', primal_name='total_weight_wing')
+        self.add_input(Aircraft.Fuselage.MASS, val=0.0, units='kg', primal_name='total_weight_fuse')
+
+        #tail_type = self.tail_mass.options['tail_type']
+        
+        #if tail_type == 'horizontal':
+        self.add_input(Aircraft.HorizontalTail.MASS, val=0.0, units='kg', primal_name='mass')
+        #else:
+        self.add_input(Aircraft.HorizontalTail.MASS, val=0.0, units='kg', tags='mass')
         # More masses can be added, i.e., tail, spars, flaps, etc. as needed
 
         self.add_output('structure_mass', val=0.0, units='kg')

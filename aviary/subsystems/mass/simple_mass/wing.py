@@ -7,6 +7,9 @@ import os
 from scipy.interpolate import CubicSpline
 import jax.scipy.integrate as jint
 
+from aviary.variable_info.variables import Aircraft
+from aviary.utils.functions import add_aviary_input, add_aviary_output
+
 try:
     from quadax import quadgk
 except ImportError:
@@ -14,22 +17,7 @@ except ImportError:
         "quadax package not found. You can install it by running 'pip install quadax'."
     )
 
-"""
-The little bit of path code below is not important overall. This is for me to test 
-within the Docker container and VS Code before I push everything fully to the Github 
-repository. These lines can be deleted as things are updated further.
-
-"""
-
-import sys
-import os
-
-
-module_path = os.path.abspath("/home/omdao/Aviary/aviary/subsystems/mass")
-if module_path not in sys.path:
-    sys.path.append(module_path)
-
-from simple_mass.materials_database import materials
+from aviary.subsystems.mass.simple_mass.materials_database import materials
 
 from aviary.utils.named_values import get_keys
 
@@ -57,26 +45,26 @@ class WingMassAndCOG(om.JaxExplicitComponent):
         self.options['use_jit'] = not(Debug)
 
         # Inputs
-        self.add_input('span', 
-                       val=10.0, 
-                       units='m')  # Full wingspan (adjustable)
+        self.add_input(Aircraft.Wing.SPAN,
+                       units='m',
+                       primal_name='span')  # Full wingspan (adjustable)
         
-        self.add_input('root_chord', 
-                       val=2.0, 
-                       units='m')  # Root chord length
+        self.add_input(Aircraft.Wing.ROOT_CHORD, 
+                       units='m',
+                       primal_name='root_chord')  # Root chord length
         
         self.add_input('tip_chord', 
                        val=1.0, 
-                       units='m')  # Tip chord length
+                       units='m')  # Tip chord length -- no aviary input
         
         self.add_input('twist', 
                        val=jnp.zeros(self.options['num_sections']), 
-                       units='deg')  # Twist angles
+                       units='deg')  # Twist angles -- no aviary input
         
         self.add_input('thickness_dist', 
                        val=jnp.ones(self.options['num_sections']) * 0.1, 
                        shape=(self.options['num_sections'],),
-                       units='m')  # Thickness distribution of the wing (height)
+                       units='m')  # Thickness distribution of the wing (height) -- no aviary input
         
 
         # Outputs
@@ -92,9 +80,9 @@ class WingMassAndCOG(om.JaxExplicitComponent):
                         val=0.0, 
                         units='m')
         
-        self.add_output('total_weight_wing', 
-                        val=0.0, 
-                        units='kg')
+        self.add_output(Aircraft.Wing.MASS, 
+                        units='kg',
+                        primal_name='total_weight_wing')
 
     def compute_primal(self, span, root_chord, tip_chord, twist, thickness_dist):
         material = self.options['material'] # Material is taken from options
@@ -215,8 +203,8 @@ if __name__ == '__main__':
     prob.setup()
 
     # Define some example inputs
-    prob.set_val('span', 3.74904)  
-    prob.set_val('root_chord', 0.40005)  
+    prob.set_val(Aircraft.Wing.SPAN, 3.74904)  
+    prob.set_val(Aircraft.Wing.ROOT_CHORD, 0.40005)  
     prob.set_val('tip_chord', 0.100076)  
     prob.set_val('twist', jnp.linspace(0,0,10))
     prob.set_val('thickness_dist', thickness_dist)  
@@ -233,7 +221,7 @@ if __name__ == '__main__':
     center_of_gravity_x = prob.get_val('cog.center_of_gravity_x_wing')
     center_of_gravity_y = prob.get_val('cog.center_of_gravity_y_wing')
     center_of_gravity_z = prob.get_val('cog.center_of_gravity_z_wing')
-    total_weight = prob.get_val('cog.total_weight_wing')
+    total_weight = prob.get_val(Aircraft.Wing.MASS)
 
     print(f"Center of gravity: X = {center_of_gravity_x} m, Y = {center_of_gravity_y} m, Z = {center_of_gravity_z} m")
     print(f"Total mass of the wing: {total_weight} kg")

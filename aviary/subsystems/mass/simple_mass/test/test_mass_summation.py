@@ -6,7 +6,9 @@ import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 
 from aviary.subsystems.mass.simple_mass.mass_summation import MassSummation, StructureMass
+from aviary.variable_info.variables import Aircraft
 
+# Horizontal Tail Only
 class MassSummationTest(unittest.TestCase):
     """
     Total mass summation test case.
@@ -23,26 +25,41 @@ class MassSummationTest(unittest.TestCase):
             promotes_outputs=['*']
         )
 
+        #tail_type = self.prob.model.tot.options['tail_type']
+
         self.prob.model.set_input_defaults(
-            'span',
+            Aircraft.Wing.SPAN,
             val=1.0,
             units='m'
         )
 
         self.prob.model.set_input_defaults(
-            'span_tail',
+            Aircraft.Wing.ROOT_CHORD,
             val=1.0,
             units='m'
         )
 
+        #if tail_type == 'horizontal':
         self.prob.model.set_input_defaults(
-            "root_chord",
+        Aircraft.HorizontalTail.SPAN,
+        val=1,
+        units="m"
+        )
+
+        self.prob.model.set_input_defaults(
+            Aircraft.HorizontalTail.ROOT_CHORD,
             val=1,
             units="m"
         )
+        #else:
+        self.prob.model.set_input_defaults(
+        Aircraft.VerticalTail.SPAN,
+        val=1,
+        units="m"
+        )
 
         self.prob.model.set_input_defaults(
-            "root_chord_tail",
+            Aircraft.VerticalTail.ROOT_CHORD,
             val=1,
             units="m"
         )
@@ -83,7 +100,7 @@ class MassSummationTest(unittest.TestCase):
         )
 
         self.prob.model.set_input_defaults(
-            "length",
+            Aircraft.Fuselage.LENGTH,
             val=2.5,
             units="m")
         
@@ -148,11 +165,19 @@ class MassSummationTest(unittest.TestCase):
         #om.n2(self.prob)
 
         tol = 1e-10
+
+        #if tail_type == 'horizontal':
         assert_near_equal(
             self.prob['structure_mass'],
             440,
             tol
         )
+        # else:
+        #     assert_near_equal(
+        #         self.prob['structure_mass'],
+        #         440,
+        #         tol
+        #     )
 
         partial_data = self.prob.check_partials(
             out_stream=None,
@@ -180,25 +205,40 @@ class StructureMassTest(unittest.TestCase):
             promotes_outputs=['*'],
         )
 
+        #tail_type = self.prob.model.tot.options['tail_type']
+
         self.prob.setup(
             check=False,
             force_alloc_complex=True
         )
 
-        self.prob.set_val('total_weight_fuse', val=100.0)
-        self.prob.set_val('total_weight_wing', val=4.2)
-        self.prob.set_val('mass', val=4.25)
+        self.prob.set_val(Aircraft.Fuselage.MASS, val=100.0)
+        self.prob.set_val(Aircraft.Wing.MASS, val=4.2)
+
+        #if tail_type == 'horizontal':
+        self.prob.set_val(Aircraft.HorizontalTail.MASS, val=4.25)
+        #else:
+        self.prob.set_val(Aircraft.VerticalTail.MASS, val=4.25)
     
     def test_case(self):
 
         self.prob.run_model()
+        #tail_type = self.prob.model.tot.options['tail_type']
 
         tol = 1e-10
+
+        #if tail_type == 'horizontal':
         assert_near_equal(
             self.prob['structure_mass'],
             108.45,
             tol
         )
+        # else:
+        #     assert_near_equal(
+        #         self.prob['structure_mass'],
+        #         108.45,
+        #         tol
+        #     )
 
         partial_data = self.prob.check_partials(
             out_stream=None,

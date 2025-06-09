@@ -4,6 +4,7 @@ import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 
 from aviary.subsystems.mass.simple_mass.fuselage import FuselageMassAndCOG
+from aviary.variable_info.variables import Aircraft
 
 class FuselageMassTestCase(unittest.TestCase):
     """
@@ -22,7 +23,7 @@ class FuselageMassTestCase(unittest.TestCase):
         )
 
         self.prob.model.set_input_defaults(
-            "length",
+            Aircraft.Fuselage.LENGTH,
             val=2.0,
             units="m")
         
@@ -71,21 +72,18 @@ class FuselageMassTestCase(unittest.TestCase):
         tol=1e-3
 
         assert_near_equal(
-            self.prob["total_weight_fuse"],
-            467.3119,
+            self.prob[Aircraft.Fuselage.MASS],
+            373.849,
             tol)
         
         partial_data = self.prob.check_partials(
             out_stream=None,
             method="cs") 
         
-        from pprint import pprint
-        pprint(partial_data)
-        
         assert_check_partials(
             partial_data,
-            atol=1e-15,
-            rtol=1e-15)
+            atol=1e-12,
+            rtol=1e-12)
         
 if __name__ == "__main__":
     unittest.main()

@@ -113,12 +113,6 @@ class SixDOF_EOM(om.ExplicitComponent):
             desc="z-axis position of aircraft resolved in NED CS"
         )
 
-        # self.add_input(
-        #     'time',
-        #     val=0.0,
-        #     desc="scalar time in seconds"
-        # )
-
         self.add_input(
             'g',
             val=9.81,
@@ -127,21 +121,21 @@ class SixDOF_EOM(om.ExplicitComponent):
         )
 
         self.add_input(
-            'Fx_ext',
+            'Fx',
             val=np.zeros(nn),
             units='N',
             desc="external forces in the x direciton"
         )
 
         self.add_input(
-            'Fy_ext',
+            'Fy',
             val=np.zeros(nn),
             units='N',
             desc="external forces in the y direction"
         )
 
         self.add_input(
-            'Fz_ext',
+            'Fz',
             val=np.zeros(nn),
             units='N',
             desc="external forces in the z direction"
@@ -308,7 +302,7 @@ class SixDOF_EOM(om.ExplicitComponent):
 
         ar = np.arange(nn)
         self.declare_partials(of='dx_accel', wrt='mass', rows=ar, cols=ar)
-        self.declare_partials(of='dx_accel', wrt='Fx_ext', rows=ar, cols=ar)
+        self.declare_partials(of='dx_accel', wrt='Fx', rows=ar, cols=ar)
         self.declare_partials(of='dx_accel', wrt='lat_vel', rows=ar, cols=ar)
         self.declare_partials(of='dx_accel', wrt='vert_vel', rows=ar, cols=ar)
         self.declare_partials(of='dx_accel', wrt='yaw_ang_vel', rows=ar, cols=ar)
@@ -317,7 +311,7 @@ class SixDOF_EOM(om.ExplicitComponent):
         self.declare_partials(of='dx_accel', wrt='pitch', rows=ar, cols=ar)
 
         self.declare_partials(of='dy_accel', wrt='mass', rows=ar, cols=ar)
-        self.declare_partials(of='dy_accel', wrt='Fy_ext', rows=ar, cols=ar)
+        self.declare_partials(of='dy_accel', wrt='Fy', rows=ar, cols=ar)
         self.declare_partials(of='dy_accel', wrt='axial_vel', rows=ar, cols=ar)
         self.declare_partials(of='dy_accel', wrt='vert_vel', rows=ar, cols=ar)
         self.declare_partials(of='dy_accel', wrt='yaw_ang_vel', rows=ar, cols=ar)
@@ -327,7 +321,7 @@ class SixDOF_EOM(om.ExplicitComponent):
         self.declare_partials(of='dy_accel', wrt='pitch', rows=ar, cols=ar)
 
         self.declare_partials(of='dz_accel', wrt='mass', rows=ar, cols=ar)
-        self.declare_partials(of='dz_accel', wrt='Fz_ext', rows=ar, cols=ar)
+        self.declare_partials(of='dz_accel', wrt='Fz', rows=ar, cols=ar)
         self.declare_partials(of='dz_accel', wrt='lat_vel', rows=ar, cols=ar)
         self.declare_partials(of='dz_accel', wrt='axial_vel', rows=ar, cols=ar)
         self.declare_partials(of='dz_accel', wrt='roll_ang_vel', rows=ar, cols=ar)
@@ -426,9 +420,9 @@ class SixDOF_EOM(om.ExplicitComponent):
         z = inputs['z'] # p3
         # time = inputs['time']
         g = inputs['g']
-        Fx_ext = inputs['Fx_ext']
-        Fy_ext = inputs['Fy_ext']
-        Fz_ext = inputs['Fz_ext']
+        Fx = inputs['Fx']
+        Fy = inputs['Fy']
+        Fz = inputs['Fz']
         lx_ext = inputs['lx_ext'] # l
         ly_ext = inputs['ly_ext'] # m
         lz_ext = inputs['lz_ext'] # n
@@ -449,15 +443,15 @@ class SixDOF_EOM(om.ExplicitComponent):
 
         # roll-axis velocity equation
 
-        dx_accel = 1 / mass * Fx_ext + gx_b - vert_vel * pitch_ang_vel + lat_vel * yaw_ang_vel
+        dx_accel = 1 / mass * Fx + gx_b - vert_vel * pitch_ang_vel + lat_vel * yaw_ang_vel
 
         # pitch-axis velocity equation
 
-        dy_accel = 1 / mass * Fy_ext + gy_b - axial_vel * yaw_ang_vel + vert_vel * roll_ang_vel
+        dy_accel = 1 / mass * Fy + gy_b - axial_vel * yaw_ang_vel + vert_vel * roll_ang_vel
 
         # yaw-axis velocity equation
 
-        dz_accel = 1 / mass * Fz_ext + gz_b - lat_vel * roll_ang_vel + axial_vel * pitch_ang_vel
+        dz_accel = 1 / mass * Fz + gz_b - lat_vel * roll_ang_vel + axial_vel * pitch_ang_vel
 
         # Roll equation
 
@@ -514,6 +508,7 @@ class SixDOF_EOM(om.ExplicitComponent):
         outputs['dx_dt'] = dx_dt
         outputs['dy_dt'] = dy_dt
         outputs['dz_dt'] = dz_dt
+        
     
     def compute_partials(self, inputs, J):
         mass = inputs['mass']
@@ -531,9 +526,9 @@ class SixDOF_EOM(om.ExplicitComponent):
         z = inputs['z'] # p3
         # time = inputs['time']
         g = inputs['g']
-        Fx_ext = inputs['Fx_ext']
-        Fy_ext = inputs['Fy_ext']
-        Fz_ext = inputs['Fz_ext']
+        Fx = inputs['Fx']
+        Fy = inputs['Fy']
+        Fz = inputs['Fz']
         lx_ext = inputs['lx_ext'] # l
         ly_ext = inputs['ly_ext'] # m
         lz_ext = inputs['lz_ext'] # n
@@ -545,8 +540,8 @@ class SixDOF_EOM(om.ExplicitComponent):
         # for roll and yaw
         Den = J_xx * J_zz - J_xz**2
 
-        J['dx_accel', 'mass'] = -Fx_ext / mass**2
-        J['dx_accel', 'Fx_ext'] = 1 / mass
+        J['dx_accel', 'mass'] = -Fx / mass**2
+        J['dx_accel', 'Fx'] = 1 / mass
         J['dx_accel', 'lat_vel'] = yaw_ang_vel
         J['dx_accel', 'vert_vel'] = -pitch_ang_vel
         J['dx_accel', 'yaw_ang_vel'] = lat_vel
@@ -554,8 +549,8 @@ class SixDOF_EOM(om.ExplicitComponent):
         J['dx_accel', 'g'] = -np.sin(pitch)
         J['dx_accel', 'pitch'] = -np.cos(pitch) * g
 
-        J['dy_accel', 'mass'] = -Fy_ext / mass**2
-        J['dy_accel', 'Fy_ext'] = 1 / mass
+        J['dy_accel', 'mass'] = -Fy / mass**2
+        J['dy_accel', 'Fy'] = 1 / mass
         J['dy_accel', 'axial_vel'] = -yaw_ang_vel
         J['dy_accel', 'vert_vel'] = roll_ang_vel
         J['dy_accel', 'yaw_ang_vel'] = -axial_vel
@@ -564,8 +559,8 @@ class SixDOF_EOM(om.ExplicitComponent):
         J['dy_accel', 'roll'] = np.cos(roll) * np.cos(pitch) * g
         J['dy_accel', 'pitch'] = -np.sin(roll) * np.sin(pitch) * g
 
-        J['dz_accel', 'mass'] = -Fz_ext / mass**2
-        J['dz_accel', 'Fz_ext'] = 1 / mass
+        J['dz_accel', 'mass'] = -Fz / mass**2
+        J['dz_accel', 'Fz'] = 1 / mass
         J['dz_accel', 'lat_vel'] = -roll_ang_vel
         J['dz_accel', 'axial_vel'] = pitch_ang_vel
         J['dz_accel', 'roll_ang_vel'] = -lat_vel
@@ -705,9 +700,9 @@ if __name__ == "__main__":
     des_vars.add_output('pitch', 0.19, units='rad')
     des_vars.add_output('yaw', 0.70, units='rad')
     des_vars.add_output('g', 9.81, units='m/s**2')
-    des_vars.add_output('Fx_ext', 0.1, units='N')
-    des_vars.add_output('Fy_ext', 0.9, units='N')
-    des_vars.add_output('Fz_ext', 0.12, units='N')
+    des_vars.add_output('Fx', 0.1, units='N')
+    des_vars.add_output('Fy', 0.9, units='N')
+    des_vars.add_output('Fz', 0.12, units='N')
     des_vars.add_output('lx_ext', 3.0, units='N*m')
     des_vars.add_output('ly_ext', 4.0, units='N*m')
     des_vars.add_output('lz_ext', 5.0, units='N*m')

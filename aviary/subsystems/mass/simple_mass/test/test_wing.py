@@ -8,6 +8,7 @@ import numpy as np
 import jax.numpy as jnp
 
 from aviary.subsystems.mass.simple_mass.wing import WingMassAndCOG
+from aviary.variable_info.variables import Aircraft
 
 #@av.skipIfMissingDependencies(WingMassAndCOG)
 class WingMassTestCase(unittest.TestCase):
@@ -27,13 +28,13 @@ class WingMassTestCase(unittest.TestCase):
         )
 
         self.prob.model.set_input_defaults(
-            "span", 
+            Aircraft.Wing.SPAN, 
             val=1, 
             units="m"
         )
 
         self.prob.model.set_input_defaults(
-            "root_chord",
+            Aircraft.Wing.ROOT_CHORD,
             val=1,
             units="m"
         )
@@ -73,7 +74,7 @@ class WingMassTestCase(unittest.TestCase):
         self.prob.run_model()
 
         tol = 1e-10
-        assert_near_equal(self.prob["total_weight_wing"], 
+        assert_near_equal(self.prob[Aircraft.Wing.MASS], 
                           4.22032, 
                           tol) 
         

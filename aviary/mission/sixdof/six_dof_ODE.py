@@ -47,7 +47,13 @@ class SixDOF_ODE(_BaseODE):
             promotes=['*']
         )
 
-        sub1.add_subsystem(
+        # Need something here to figure out how to actually fly aircraft
+
+        self.add_core_subsystems(solver_group=sub1)
+
+        self.add_external_subsystems(solver_group=sub1)
+
+        self.add_subsystem(
             'sum_forces_comp',
             ForceComponentResolver(num_nodes=nn),
             promotes_inputs=[
@@ -66,11 +72,7 @@ class SixDOF_ODE(_BaseODE):
             ]
         )
 
-        self.add_core_subsystems(solver_group=sub1)
-
-        self.add_external_subsystems(solver_group=sub1)
-
-        sub1.add_subsystem(
+        self.add_subsystem(
             'SixDOF_EOM',
             SixDOF_EOM(num_nodes=nn),
             promotes_inputs=[

@@ -6,6 +6,7 @@ from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 import numpy as np
 
 from aviary.subsystems.mass.simple_mass.tail import TailMassAndCOG
+from aviary.variable_info.variables import Aircraft
 
 class TailMassTestCase(unittest.TestCase):
     """
@@ -23,17 +24,32 @@ class TailMassTestCase(unittest.TestCase):
             promotes_outputs=["*"],
         )
 
-        self.prob.model.set_input_defaults(
-            "span_tail",
-            val=1,
-            units="m"
-        )
+        tail_type = self.prob.model.Tail.options['tail_type']
 
-        self.prob.model.set_input_defaults(
-            "root_chord_tail",
+        if tail_type == 'horizontal':
+            self.prob.model.set_input_defaults(
+            Aircraft.HorizontalTail.SPAN,
             val=1,
             units="m"
-        )
+            )
+
+            self.prob.model.set_input_defaults(
+                Aircraft.HorizontalTail.ROOT_CHORD,
+                val=1,
+                units="m"
+            )
+        else:
+            self.prob.model.set_input_defaults(
+            Aircraft.VerticalTail.SPAN,
+            val=1,
+            units="m"
+            )
+
+            self.prob.model.set_input_defaults(
+                Aircraft.VerticalTail.ROOT_CHORD,
+                val=1,
+                units="m"
+            )
 
         self.prob.model.set_input_defaults(
             "tip_chord_tail",
@@ -63,15 +79,23 @@ class TailMassTestCase(unittest.TestCase):
             force_alloc_complex=True)
     
     def test_case(self):
+
+        tail_type = self.prob.model.Tail.options['tail_type']
         
         self.prob.run_model()
 
         tol = 1e-4
 
-        assert_near_equal(
-            self.prob["mass"],
-            4.22032, 
-            tol)
+        if tail_type == 'horizontal':
+            assert_near_equal(
+                self.prob[Aircraft.HorizontalTail.MASS],
+                4.22032, 
+                tol)
+        else:
+            assert_near_equal(
+                self.prob[Aircraft.VerticalTail.MASS],
+                4.22032, 
+                tol)
         
         partial_data = self.prob.check_partials(
             out_stream=None,

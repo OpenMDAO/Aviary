@@ -1,11 +1,12 @@
 import openmdao.api as om
 import openmdao.jax as omj
 import jax.numpy as jnp
-from jax.scipy.integrate import trapezoid as jtrapz
 import numpy as np
 from scipy.interpolate import interp1d
 from scipy.interpolate import CubicSpline
 import os 
+
+from aviary.variable_info.variables import Aircraft
 
 try:
     from quadax import quadgk
@@ -14,24 +15,9 @@ except ImportError:
         "quadax package not found. You can install it by running 'pip install quadax'."
     )
 
-"""
-The little bit of path code below is not important overall. This is for me to test 
-within the Docker container and VS Code before I push everything fully to the Github 
-repository. These lines can be deleted as things are updated further.
+from aviary.subsystems.mass.simple_mass.materials_database import materials
 
-"""
-
-import sys
-import os
-
-
-module_path = os.path.abspath("/home/omdao/Aviary/aviary/subsystems/mass")
-if module_path not in sys.path:
-    sys.path.append(module_path)
-
-from simple_mass.materials_database import materials
-
-from aviary.utils.named_values import get_keys, get_values
+from aviary.utils.named_values import get_keys
 
 Debug = True # set to enable printing
 
@@ -69,18 +55,32 @@ class TailMassAndCOG(om.JaxExplicitComponent):
     
     def setup(self):
         self.options['use_jit'] = not(Debug)
+        tail_type = self.options['tail_type']
 
         # Inputs
-        self.add_input('span_tail', 
-                       val=5.0, 
+        if tail_type == 'horizontal':
+            self.add_input(Aircraft.HorizontalTail.SPAN,
                        units='m', 
-                       desc="Tail span")
+                       desc="Tail span",
+                       primal_name='span_tail')
         
-        self.add_input('root_chord_tail', 
-                       val=1.2, 
+            self.add_input(Aircraft.HorizontalTail.ROOT_CHORD,
                        units='m', 
-                       desc="Root chord length")
+                       desc="Root chord length",
+                       primal_name='root_chord_tail')
+        else:
+            self.add_input(Aircraft.VerticalTail.SPAN,
+                       units='m', 
+                       desc="Tail span",
+                       primal_name='span_tail')
         
+            self.add_input(Aircraft.VerticalTail.ROOT_CHORD,
+                       units='m', 
+                       desc="Root chord length",
+                       primal_name='root_chord_tail')
+            
+        # The inputs below have no aviary input, so there is no distinction for now
+
         self.add_input('tip_chord_tail', 
                        val=0.8, 
                        units='m', 
@@ -101,10 +101,18 @@ class TailMassAndCOG(om.JaxExplicitComponent):
                        desc="Twist distribution")
         
         # Outputs
-        self.add_output('mass', 
-                        val=0.0, 
-                        units='kg', 
-                        desc="Total mass of the tail")
+        if tail_type == 'horizontal':
+            self.add_output(Aircraft.HorizontalTail.MASS,
+                            units='kg', 
+                            desc="Total mass of the tail",
+                            primal_name='mass')
+        else:
+            self.add_output(Aircraft.VerticalTail.MASS,
+                            units='kg', 
+                            desc="Total mass of the tail",
+                            primal_name='mass')
+            
+        # Same as above inputs
         
         self.add_output('cg_x', 
                         val=0.0, 
@@ -264,17 +272,27 @@ if __name__ == "__main__":
     prob.setup()
 
     # Input values
-    prob.set_val('span', 1)
-    prob.set_val('tip_chord', 0.5)
-    prob.set_val('root_chord', 1)
+    tail_type = prob.model.tail.options['tail_type']
+    prob.model.tail.options['tail_type'] = 'horizontal'
+    
+    if tail_type == 'horizontal':
+        prob.set_val(Aircraft.HorizontalTail.SPAN, 1.0)
+        prob.set_val(Aircraft.HorizontalTail.ROOT_CHORD, 1.0)
+    else:
+        prob.set_val(Aircraft.VerticalTail.SPAN, 1.0)
+        prob.set_val(Aircraft.VerticalTail.ROOT_CHORD, 1.0)
+
+    prob.set_val('tip_chord_tail', 0.5)
     prob.set_val('thickness_ratio', 0.12)
     prob.set_val('skin_thickness', 0.002)
-    prob.model.tail.options['tail_type'] = 'horizontal'
 
     prob.model.tail.options['material'] = 'Balsa'
 
     prob.run_model()
 
     # Print
-    print(f"Total mass of the tail: {prob.get_val('mass')} kg")
+    if tail_type == 'horizontal':
+        print(f"Total mass of the tail: {prob.get_val(Aircraft.HorizontalTail.MASS)} kg")
+    else:
+        print(f"Total mass of the tail: {prob.get_val(Aircraft.VerticalTail.MASS)} kg")
     print(f"Center of gravity (X: {prob.get_val('cg_x')} m, Y: {prob.get_val('cg_y')} m, Z: {prob.get_val('cg_z')} m)")

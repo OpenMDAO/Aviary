@@ -6,6 +6,8 @@ import jax.numpy as jnp
 import openmdao.jax as omj
 import jax.scipy.interpolate as jinterp
 
+from aviary.variable_info.variables import Aircraft
+
 try:
     from quadax import quadgk
 except ImportError:
@@ -13,22 +15,7 @@ except ImportError:
         "quadax package not found. You can install it by running 'pip install quadax'."
     )
 
-"""
-The little bit of path code below is not important overall. This is for me to test 
-within the Docker container and VS Code before I push everything fully to the Github 
-repository. These lines can be deleted as things are updated further.
-
-"""
-
-import sys
-import os
-
-
-module_path = os.path.abspath("/home/omdao/Aviary/aviary/subsystems/mass")
-if module_path not in sys.path:
-    sys.path.append(module_path)
-
-from simple_mass.materials_database import materials
+from aviary.subsystems.mass.simple_mass.materials_database import materials
 
 from aviary.utils.named_values import get_keys
 
@@ -55,17 +42,17 @@ class FuselageMassAndCOG(om.JaxExplicitComponent):
         self.options['use_jit'] = not(Debug)
 
         # Inputs
-        self.add_input('length', 
-                       val=2.0, 
-                       units='m')
+        self.add_input(Aircraft.Fuselage.LENGTH, 
+                       units='m',
+                       primal_name='length')
         
         self.add_input('base_diameter', 
                        val=0.4, 
-                       units='m')
+                       units='m') # no aviary input
 
         self.add_input('tip_diameter',
-                       val=0.2,
-                       units='m')
+                       val=0.2, 
+                       units='m') # no aviary input
         
         self.add_input('curvature', 
                        val=0.0, 
@@ -102,9 +89,9 @@ class FuselageMassAndCOG(om.JaxExplicitComponent):
                         val=0.0, 
                         units='m')
         
-        self.add_output('total_weight_fuse', 
-                        val=0.0, 
-                        units='kg')
+        self.add_output(Aircraft.Fuselage.MASS, 
+                        units='kg',
+                        primal_name='total_weight_fuse')
     
     def compute_primal(self, length, base_diameter, tip_diameter, curvature, thickness, y_offset, z_offset, is_hollow):
         # Input validation checks
@@ -193,11 +180,11 @@ class FuselageMassAndCOG(om.JaxExplicitComponent):
 if __name__ == "__main__":
     prob = om.Problem()
 
-    prob.model.add_subsystem('fuselage_cg', FuselageMassAndCOG(), promotes_inputs=['*'])
+    prob.model.add_subsystem('fuselage_cg', FuselageMassAndCOG(), promotes_inputs=['*'], promotes_outputs=['*'])
 
     prob.setup()
 
-    prob.set_val('length', 2.5)
+    prob.set_val(Aircraft.Fuselage.LENGTH, 2.5)
     prob.set_val('base_diameter', 0.5)
     prob.set_val('tip_diameter', 0.3)
     prob.set_val('curvature', 0.0)
@@ -218,7 +205,7 @@ if __name__ == "__main__":
     center_of_gravity_x = prob.get_val('fuselage_cg.center_of_gravity_x_fuse')
     center_of_gravity_y = prob.get_val('fuselage_cg.center_of_gravity_y_fuse')
     center_of_gravity_z = prob.get_val('fuselage_cg.center_of_gravity_z_fuse')
-    total_weight = prob.get_val('fuselage_cg.total_weight_fuse')
+    total_weight = prob.get_val(Aircraft.Fuselage.MASS)
 
     #data = prob.check_partials(compact_print=True, abs_err_tol=1e-04, rel_err_tol=1e-04, step=1e-8, step_calc='rel')
 
