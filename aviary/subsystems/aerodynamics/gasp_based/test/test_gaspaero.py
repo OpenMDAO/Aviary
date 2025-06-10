@@ -24,7 +24,10 @@ setup_data = json.load(open(os.path.join(here, 'data', 'aero_data_setup.json')))
 
 
 class GASPAeroTest(unittest.TestCase):
-    """Test overall pre-mission and mission aero systems in cruise and near-ground flight."""
+    """
+    Test overall pre-mission and mission aero systems in cruise and near-ground flight.
+    Note: The case output_alpha=True is not tested.
+    """
 
     cruise_tol = 1.5e-3
     ground_tol = 0.5e-3
@@ -306,4 +309,6 @@ class GroundEffectTest(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    unittest.main()
+    # unittest.main()
+    test = GASPAeroTest()
+    test.test_cruise2()
