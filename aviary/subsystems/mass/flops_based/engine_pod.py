@@ -69,7 +69,7 @@ class EnginePodMass(om.ExplicitComponent):
         )
 
     def compute(self, inputs, outputs, discrete_inputs=None, discrete_outputs=None):
-        # BUG this methodology completely ignores miscellaneous mass. There is a discrepency between this calculation
+        # BUG this methodology completely ignores miscellaneous mass. There is a discrepancy between this calculation
         #     and miscellaneous mass. Engine control, starter, and additional mass have a scaler applied to them, and
         #     if their calculated values are used directly this scaler is skipped
         num_eng = self.options[Aircraft.Engine.NUM_ENGINES]
