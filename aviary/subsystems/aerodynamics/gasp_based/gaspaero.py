@@ -1360,9 +1360,6 @@ class LiftCoeffClean(om.ExplicitComponent):
     def compute(self, inputs, outputs):
         _, lift_curve_slope, lift_ratio, alpha0, CL_max_flaps = inputs.values()
         if self.options['output_alpha']:
-            import pdb
-
-            pdb.set_trace()
             CL = inputs['CL']
             clw = CL / (1 + lift_ratio)
             outputs[Dynamic.Vehicle.ANGLE_OF_ATTACK] = rad2deg(clw / lift_curve_slope) + alpha0
