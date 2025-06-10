@@ -12,7 +12,7 @@ class CommandEntryPointsTestCases(unittest.TestCase):
     def run_and_test_cmd(self, cmd):
         # this only tests that a given command line tool returns a 0 return code. It doesn't
         # check the expected output at all. The underlying functions that implement the
-        # commands should be tested seperately.
+        # commands should be tested separately.
         try:
             subprocess.check_output(cmd.split())
         except subprocess.CalledProcessError as err:

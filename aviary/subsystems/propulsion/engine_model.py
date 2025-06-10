@@ -104,7 +104,7 @@ class EngineModel(SubsystemBuilderBase):
             f'been implemented in EngineModel <{self.name}>'
         )
 
-    def build_post_mission(self, aviary_inputs, **kwargs):
+    def build_post_mission(self, aviary_inputs, phase_info, phase_mission_bus_lengths, **kwargs):
         """
         Build an OpenMDAO system for the post-mission computations of the engine model.
 

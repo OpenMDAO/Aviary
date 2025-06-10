@@ -299,7 +299,7 @@ class EngineDeck(EngineModel):
     def _set_variable_flags(self):
         """
         Sets flags in EngineDeck to communicate which (non-required) variables are
-        avaliable to greater propulsion module.
+        available to greater propulsion module.
         """
         engine_variables = self.engine_variables
 
@@ -437,7 +437,7 @@ class EngineDeck(EngineModel):
     def _check_data(self):
         """
         Checks for consistency of provided thrust and drag data, ensures no required
-        variables are missing, fills unused variabes with a default value of zero, and
+        variables are missing, fills unused variables with a default value of zero, and
         removes negative thrusts if requested.
 
         Raises
@@ -460,7 +460,7 @@ class EngineDeck(EngineModel):
         engine_variables = self.engine_variables
 
         # Handle ram drag, net and gross thrust and potential conflicts in value or units
-        # Warn user if they provide partial info for calulated thrust
+        # Warn user if they provide partial info for calculated thrust
         # Not a fail state if net thrust is still provided
         # If both net thrust and components for calculated thrust both provided, a sanity
         #   check that they match is done after reading data
@@ -478,7 +478,7 @@ class EngineDeck(EngineModel):
 
         if RAM_DRAG in engine_variables and GROSS_THRUST in engine_variables:
             # Check that units are the same. Variables have already been checked for valid
-            # units, so it is assumed they are convertable. Prioritizes thrust units
+            # units, so it is assumed they are convertible. Prioritizes thrust units
             if engine_variables[RAM_DRAG] != engine_variables[GROSS_THRUST]:
                 data[RAM_DRAG] = convert_units(
                     original_data[RAM_DRAG],
@@ -506,7 +506,7 @@ class EngineDeck(EngineModel):
             # tailpipe thrust is not bookept separately in Aviary. Add to net thrust.
             if THRUST in engine_variables:
                 # Check that units are the same. Variables have already been checked for valid
-                # units, so it is assumed they are convertable. Prioritizes thrust units
+                # units, so it is assumed they are convertible. Prioritizes thrust units
                 if engine_variables[THRUST] != engine_variables[TAILPIPE_THRUST]:
                     data[TAILPIPE_THRUST] = convert_units(
                         data,
@@ -531,7 +531,7 @@ class EngineDeck(EngineModel):
             self.data.pop(TAILPIPE_THRUST)
 
         # Handle shaft power (corrected and uncorrected). It is not possible to compare
-        # them for consistency, as that requires information not avaliable during setup
+        # them for consistency, as that requires information not available during setup
         # (freestream air temp and pressure). Instead, we must trust the source and
         # assume either data set is valid and can be used.
         if (
@@ -836,7 +836,7 @@ class EngineDeck(EngineModel):
     def build_mission(self, num_nodes, aviary_inputs, **kwargs) -> om.Group:
         """
         Creates interpolator objects to be added to mission-level propulsion subsystem.
-        Interpolators must be re-generated for each ODE due to potentialy different
+        Interpolators must be re-generated for each ODE due to potentially different
         num_nodes in each mission segment.
 
         Parameters
@@ -918,14 +918,14 @@ class EngineDeck(EngineModel):
                         'throttle_max',
                         self.throttle_max,
                         units='unitless',
-                        desc='max throttle avaliable at current flight condition',
+                        desc='max throttle available at current flight condition',
                     )
                 if not self.global_hybrid_throttle and self.use_hybrid_throttle:
                     interp_throttles.add_output(
                         'hybrid_throttle_max',
                         self.hybrid_throttle_max,
                         units='unitless',
-                        desc='max hybrid throttle avaliable at current flight condition',
+                        desc='max hybrid throttle available at current flight condition',
                     )
 
             # Calculation of max thrust currently done with a duplicate of the engine
@@ -1171,7 +1171,7 @@ class EngineDeck(EngineModel):
                 # handle rounding + formatting
                 if isinstance(val, (np.ndarray, list, tuple)):
                     val = [round_it(item) for item in val]
-                    # if an interable with a length of 1, remove bracket/paretheses, etc.
+                    # if an interable with a length of 1, remove bracket/parentheses, etc.
                     if len(val) == 1:
                         val = val[0]
                 else:
