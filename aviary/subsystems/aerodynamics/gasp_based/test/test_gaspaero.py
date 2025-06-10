@@ -11,6 +11,7 @@ from aviary.subsystems.aerodynamics.gasp_based.gaspaero import (
     CruiseAero,
     LowSpeedAero,
     FormFactorAndSIWB,
+    GroundEffect,
 )
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.functions import setup_model_options
@@ -237,7 +238,7 @@ def _init_geom(prob):
     # ground & cruise, mission: q
 
 
-class FormFactorTest(unittest.TestCase):
+class FormFactorAndSIWBTest(unittest.TestCase):
     """Test fuselage form factor computation and SIWB computation"""
 
     def test_case1(self):
@@ -262,6 +263,46 @@ class FormFactorTest(unittest.TestCase):
 
         partial_data = prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=1e-11, rtol=1e-11)
+
+
+class GroundEffectTest(unittest.TestCase):
+    """Test fuselage form factor computation and SIWB computation"""
+
+    def test_case1(self):
+        prob = om.Problem()
+
+        prob.model.add_subsystem(
+            'kclge',
+            GroundEffect(num_nodes=2),
+            promotes=['*'],
+        )
+
+        # mission inputs
+        prob.model.set_input_defaults(Dynamic.Vehicle.ANGLE_OF_ATTACK, [-2.0, -2.0], units='deg')
+        prob.model.set_input_defaults(Dynamic.Mission.ALTITUDE, [0.0, 0.0], units='ft')
+        prob.model.set_input_defaults(
+            'lift_curve_slope', [4.87625889, 4.87625889], units='unitless'
+        )
+        # user inputs
+        prob.model.set_input_defaults(Aircraft.Wing.ZERO_LIFT_ANGLE, -1.2, units='deg')
+        prob.model.set_input_defaults(Aircraft.Wing.SWEEP, 25, units='deg')
+        prob.model.set_input_defaults(Aircraft.Wing.ASPECT_RATIO, 10.13, units='unitless')
+        prob.model.set_input_defaults(Aircraft.Wing.HEIGHT, 8, units='ft')
+        prob.model.set_input_defaults('airport_alt', 0.0, units='ft')
+        prob.model.set_input_defaults('flap_defl', 10.0, units='deg')
+        prob.model.set_input_defaults(Aircraft.Wing.FLAP_CHORD_RATIO, 0.3, units='unitless')
+        prob.model.set_input_defaults(Aircraft.Wing.TAPER_RATIO, 0.33, units='unitless')
+        # from flaps
+        prob.model.set_input_defaults('dCL_flaps_model', 0.4182, units='unitless')
+        # from sizing
+        prob.model.set_input_defaults(Aircraft.Wing.AVERAGE_CHORD, 12.61453152, units='ft')
+        prob.model.set_input_defaults(Aircraft.Wing.SPAN, 117.8187662, units='ft')
+
+        prob.setup(check=False, force_alloc_complex=True)
+        prob.run_model()
+
+        tol = 1e-7
+        assert_near_equal(prob['kclge'], [1.15131091, 1.15131091], tol)
 
 
 if __name__ == '__main__':
