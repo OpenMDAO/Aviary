@@ -309,6 +309,4 @@ class GroundEffectTest(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    # unittest.main()
-    test = GASPAeroTest()
-    test.test_cruise2()
+    unittest.main()
