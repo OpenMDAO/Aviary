@@ -49,7 +49,7 @@ class PropellerMap(om.Group):
 
     def setup(self):
         nn = self.options['num_nodes']
-        data = self.options['data']
+        data = self.options['propeller_data']
         data_file = self.options[Aircraft.Engine.Propeller.DATA_FILE]
         verbosity = self.options[Settings.VERBOSITY]
 
