@@ -3,10 +3,11 @@ from aviary.variable_info.variables import Mission
 # defaults for height energy based phases
 
 phase_info = {
-    'pre_mission': {'include_takeoff': False, 'optimize_mass': True},
+    'pre_mission': {'include_takeoff': True, 'optimize_mass': True},
     'climb': {
         'subsystem_options': {'core_aerodynamics': {'method': 'computed'}},
         'user_options': {
+            'input_initial': True,
             'optimize_mach': False,
             'optimize_altitude': False,
             'num_segments': 5,
@@ -19,13 +20,14 @@ phase_info = {
             'final_altitude': (32000.0, 'ft'),
             'altitude_bounds': ((0.0, 34000.0), 'ft'),
             'throttle_enforcement': 'path_constraint',
-            'fix_initial': True,
+            'fix_initial': False,
             'constrain_final': False,
             'fix_duration': False,
             'initial_bounds': ((0.0, 0.0), 'min'),
-            'duration_bounds': ((64.0, 192.0), 'min'),
+            'duration_bounds': ((8.0, 192.0), 'min'),
             'add_initial_mass_constraint': False,
         },
+        'initial_guesses': {'time': ([0, 184.0], 'min')},
     },
     'cruise': {
         'subsystem_options': {'core_aerodynamics': {'method': 'computed'}},
@@ -46,8 +48,9 @@ phase_info = {
             'constrain_final': False,
             'fix_duration': False,
             'initial_bounds': ((64.0, 192.0), 'min'),
-            'duration_bounds': ((56.5, 169.5), 'min'),
+            'duration_bounds': ((24.0, 600.0), 'min'),
         },
+        'initial_guesses': {'time': ([184.0, 576.0], 'min')},
     },
     'descent': {
         'subsystem_options': {'core_aerodynamics': {'method': 'computed'}},
@@ -68,13 +71,13 @@ phase_info = {
             'constrain_final': True,
             'fix_duration': False,
             'initial_bounds': ((120.5, 361.5), 'min'),
-            'duration_bounds': ((29.0, 87.0), 'min'),
+            'duration_bounds': ((12.0, 90.0), 'min'),
         },
+        'initial_guesses': {'time': ([760.0, 78], 'min')},
     },
     'post_mission': {
-        'include_landing': False,
+        'include_landing': True,
         'constrain_range': True,
         'target_range': (1906.0, 'nmi'),
     },
 }
-
