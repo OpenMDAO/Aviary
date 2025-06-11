@@ -119,14 +119,11 @@ def convert_engine_deck(input_file, output_file, data_format: EngineDeckType, ro
         must compute T4 or require extrapolation to fill out sparse flight throttle ranges.
         Defaults to False.
     """
-    timestamp = datetime.now().strftime('%m/%d/%y at %H:%M')
-    user = getpass.getuser()
     comments = []
     data = {}
 
     data_file = get_path(input_file)
 
-    comments.append(f'# created {timestamp} by {user}')
     legacy_code = data_format.value
     engine_type = 'engine'
     if legacy_code == 'GASP_TS':
@@ -354,7 +351,7 @@ def convert_engine_deck(input_file, output_file, data_format: EngineDeckType, ro
         else:
             ext = '.deck'
         output_file = data_file.stem + ext
-    write_data_file(output_file, write_data, outputs, comments, include_timestamp=False)
+    write_data_file(output_file, write_data, outputs, comments, include_timestamp=True)
 
 
 def _read_flops_engine(input_file):

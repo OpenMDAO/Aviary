@@ -272,7 +272,10 @@ def write_data_file(
             user = ' by ' + getpass.getuser()
         except Exception:
             user = ''
-        stamp = [f'# created {timestamp}{user}\n']
+        stamp = [f'# created {timestamp}{user}']
+        # edge case of no comments but timestamp, make sure there is a space before data
+        if comments == []:
+            comments = ['\n']
         comments = stamp + comments
 
     # assemble separate variable name, units, and dependence information into single list for header
