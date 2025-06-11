@@ -2018,7 +2018,10 @@ class AviaryProblem(om.Problem):
             # 1 numpy array
             #fixes issue wherein an alternate mission with no inputs "alternate_mission()" attempts to run the range
             #within the CSV file instead of in the phase_info.
-            mission_range = self.phase_info['post_mission']['target_range'][0]
+            if mass_method == LegacyCode.GASP:
+                mission_range = self.get_val(Mission.Design.RANGE)[0]
+            elif mass_method == LegacyCode.FLOPS:
+                mission_range = self.phase_info['post_mission']['target_range'][0]
 
         # gross mass is sliced from a column vector numpy array, i.e. it is a len 1 numpy
         # array
