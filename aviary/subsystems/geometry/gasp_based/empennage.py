@@ -23,7 +23,7 @@ class TailVolCoef(om.ExplicitComponent):
         )
 
     def setup(self):
-        veritcal = self.options['orientation']=='vertical'
+        veritcal = self.options['orientation'] == 'vertical'
         if veritcal:
             self.io_names = {
                 'vol_coef': Aircraft.VerticalTail.VOLUME_COEFFICIENT,
@@ -60,7 +60,9 @@ class TailVolCoef(om.ExplicitComponent):
         htail_loc, fus_len, cab_w, wing_area, wing_ref = inputs.values()
         k1, k2, k3 = self.k
         ch1 = k1 - k2 * htail_loc
-        outputs[self.io_names['vol_coef']] = k3 * fus_len * cab_w**2 / (wing_area * wing_ref) + ch1
+        outputs[self.io_names['vol_coef']] = (
+            k3 * fus_len * cab_w**2 / (wing_area * wing_ref) + ch1
+        )
 
     def compute_partials(self, inputs, J):
         str_vol_coef = self.io_names['vol_coef']
@@ -118,7 +120,7 @@ class TailSize(om.ExplicitComponent):
                 'span': Aircraft.VerticalTail.SPAN,
                 'rchord': Aircraft.VerticalTail.ROOT_CHORD,
                 'chord': Aircraft.VerticalTail.AVERAGE_CHORD,
-                'arm': Aircraft.VerticalTail.MOMENT_ARM
+                'arm': Aircraft.VerticalTail.MOMENT_ARM,
             }
 
         vol_coef = self.io_names['vol_coef']

@@ -77,7 +77,7 @@ class TestTailComp(
         assert_near_equal(prob[Aircraft.HorizontalTail.AREA], 375.9, tol)
         assert_near_equal(prob[Aircraft.HorizontalTail.SPAN], 42.25, tol)
 
-         # (potentially not actual GASP value, it is calculated twice in different places)
+        # (potentially not actual GASP value, it is calculated twice in different places)
         assert_near_equal(prob[Aircraft.HorizontalTail.ROOT_CHORD], 13.16130387591471, tol)
 
         assert_near_equal(prob[Aircraft.HorizontalTail.AVERAGE_CHORD], 9.57573, tol)
