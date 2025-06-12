@@ -188,14 +188,7 @@ class TurbopropMissionTest(unittest.TestCase):
         filename = get_path('models/engines/turboshaft_1120hp.deck')
         test_points = [(0.001, 0, 0), (0, 0, 1), (0.6, 25000, 1)]
         truth_vals = [
-            (
-                111.99470252,
-                37.507375,
-                610.74316702,
-                648.25054202,
-                4174.71017,
-                -195.787625,
-            ),
+            (111.99470752, 37.507376, 610.74316698, 648.25054298, 4174.71028286, -195.78762),
             (
                 1119.992378878607,
                 136.29999999999967,
@@ -370,7 +363,3 @@ class ExamplePropModel(SubsystemBuilderBase):
 
 if __name__ == '__main__':
     unittest.main()
-    # test = TurbopropTest()
-    # test.setUp()
-    # test.test_electroprop()
-    # test.test_case_2()

@@ -26,19 +26,19 @@ from aviary.variable_info.variables import Aircraft, Dynamic
 class TestFLOPSDetailedLanding(unittest.TestCase):
     """Test detailed landing using N3CC data."""
 
-    # @require_pyoptsparse(optimizer='IPOPT')
-    # def bench_test_IPOPT(self):
-    #     driver = om.pyOptSparseDriver()
+    @require_pyoptsparse(optimizer='IPOPT')
+    def bench_test_IPOPT(self):
+        driver = om.pyOptSparseDriver()
 
-    #     optimizer = 'IPOPT'
-    #     driver.options['optimizer'] = optimizer
+        optimizer = 'IPOPT'
+        driver.options['optimizer'] = optimizer
 
-    #     driver.opt_settings['max_iter'] = 100
-    #     driver.opt_settings['tol'] = 1.0E-6
-    #     driver.opt_settings['print_level'] = 4
-    #     driver.opt_settings['mu_init'] = 1e-5
+        driver.opt_settings['max_iter'] = 100
+        driver.opt_settings['tol'] = 1.0e-6
+        driver.opt_settings['print_level'] = 4
+        driver.opt_settings['mu_init'] = 1e-5
 
-    #     self._do_run(driver, optimizer)
+        self._do_run(driver, optimizer)
 
     @require_pyoptsparse(optimizer='SNOPT')
     def bench_test_SNOPT(self):
@@ -67,10 +67,10 @@ class TestFLOPSDetailedLanding(unittest.TestCase):
 
         driver.recording_options['record_derivatives'] = False
 
-        engine = build_engine_deck(aviary_options)
-        preprocess_options(aviary_options, engine_models=engine)
+        engines = [build_engine_deck(aviary_options)]
+        preprocess_options(aviary_options, engine_models=engines)
 
-        default_premission_subsystems = get_default_mission_subsystems('FLOPS', engine)
+        default_premission_subsystems = get_default_mission_subsystems('FLOPS', engines)
 
         # Upstream static analysis for aero
         landing.model.add_subsystem(

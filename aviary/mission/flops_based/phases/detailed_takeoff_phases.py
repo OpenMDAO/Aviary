@@ -2996,12 +2996,9 @@ class TakeoffTrajectory:
 
             aero = CoreAerodynamicsBuilder('core_aerodynamics', BaseMetaData, LegacyCode('FLOPS'))
 
-            phase_info = {}
-            phase_info['subsystem_options'] = {}
-            phase_info['subsystem_options']['core_aerodynamics'] = {}
-            phase_info['subsystem_options']['core_aerodynamics']['method'] = 'low_speed'
+            kwargs = {'method': 'low_speed'}
 
-            params = aero.get_parameters(aviary_options, phase_info)
+            params = aero.get_parameters(aviary_options, **kwargs)
 
             # takeoff introduces this one.
             params[Mission.Takeoff.LIFT_COEFFICIENT_MAX] = {

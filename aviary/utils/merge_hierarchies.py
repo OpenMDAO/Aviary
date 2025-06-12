@@ -128,7 +128,7 @@ def merge_two_hierarchies(base_hierarchy, hierarchy_b):
         the attributes of the base and the other hierarchy.
 
     hierarchy_b : class
-        An Aviary variable hierarchy. This hierarchy will function as the 'auxiliary' hierarhcy,
+        An Aviary variable hierarchy. This hierarchy will function as the 'auxiliary' hierarchy,
         which is the hierarchy whose unique attributes are added onto a base in order to combine the
         attributes of the base and the auxiliary.
 

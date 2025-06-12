@@ -129,12 +129,13 @@ def fortran_to_aviary(
     # Add settings
     if legacy_code is FLOPS:
         eom = ['height_energy']
-        mass = ['FLOPS']
+        aero = mass = ['FLOPS']
     if legacy_code is GASP:
         eom = ['2DOF']
-        mass = ['GASP']
+        aero = mass = ['GASP']
     vehicle_data['input_values'].set_val(Settings.EQUATIONS_OF_MOTION, eom)
     vehicle_data['input_values'].set_val(Settings.MASS_METHOD, mass)
+    vehicle_data['input_values'].set_val(Settings.AERODYNAMICS_METHOD, aero)
 
     if not out_file.is_file():
         # default outputted file to be in same directory as input

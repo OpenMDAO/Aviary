@@ -107,7 +107,7 @@ class SubsystemBuilderBase(ABC):
         """
         return {}
 
-    def get_parameters(self, aviary_inputs=None, phase_info=None):
+    def get_parameters(self, aviary_inputs=None, **kwargs):
         """
         Return a dictionary of fixed values for the subsystem.
 
@@ -125,8 +125,6 @@ class SubsystemBuilderBase(ABC):
         ----------
         aviary_inputs : dict
             A dictionary containing the inputs to the subsystem.
-        phase_info : dict
-            The phase_info subdict for this phase.
 
         Returns
         -------
@@ -176,10 +174,15 @@ class SubsystemBuilderBase(ABC):
         """
         return []
 
-    def get_bus_variables(self):
+    def get_pre_mission_bus_variables(self, aviary_inputs=None):
         """
         Return a dictionary of variables that will be passed from the pre-mission
         to mission systems.
+
+        Parameters
+        ----------
+        aviary_inputs : dict
+            A dictionary containing the inputs to the subsystem.
 
         Returns
         -------
@@ -325,11 +328,59 @@ class SubsystemBuilderBase(ABC):
         """
         return []
 
-    def build_post_mission(self, aviary_inputs, **kwargs):
+    def get_post_mission_bus_variables(self, aviary_inputs=None, phase_info=None):
+        """
+        Return a dict mapping phase names to a dict mapping mission variable names to (a list of) post-mission variable names.
+
+        Mission variables local to a given external subsystem should be prefixed with that subsystem's name.
+        For example, to connect a variable 'bar' that is an output of the external subsystem "foo"'s mission to the post-mission variable "cruise_foo", map "foo.bar" to "cruise_foo".
+
+        Parameters
+        ----------
+        aviary_inputs : dict
+            A dictionary containing the inputs to the subsystem.
+        phase_info : dict
+            The phase_info dict for all phases
+
+        Example
+        -------
+        out = {}
+        if phase_info:
+            for phase_name, phase_data in phase_info.items():
+                phase_d = {}
+                if phase_data["do_the_thing"]:
+                    phase_d[f"{self.name}.mission_variable_a"] = f"{self.name}.{phase_name}_post_mission_variable_a"
+                    phase_d[f"{self.name}.mission_variable_b"] = [f"{self.name}.{phase_name}_post_mission_variable_b_name1", f"{self.name}.{phase_name}_post_mission_variable_b_name2"]
+                    phase_d[f"{self.name}.mission_variable_c"] = [f"{self.name}.{phase_name}_post_mission_variable_c_name1"]
+                    phase_d[Dynamic.Mission.VELOCITY] = [f"{self.name}.{phase_name}_post_mission_velocity_name1"]
+                if phase_data["do_the_other_thing"]:
+                    phase_d[f"{self.name}.mission_variable_d"] = f"{self.name}.{phase_name}_post_mission_variable_d"
+                    phase_d[f"{self.name}.mission_variable_e"] = [f"{self.name}.{phase_name}_post_mission_variable_e_name1", f"{self.name}.{phase_name}_post_mission_variable_e_name2"]
+                    phase_d[f"{self.name}.mission_variable_f"] = [f"{self.name}.{phase_name}_post_mission_variable_f_name1"]
+                    phase_d[Dynamic.Atmosphere.KINEMATIC_VISCOSITY] = f"{self.name}.{phase_name}_post_mission_nu_name1"
+
+                out[phase_name] = phase_d
+
+        return out
+        """
+        return {}
+
+    def build_post_mission(
+        self, aviary_inputs, phase_info=None, phase_mission_bus_lengths=None, **kwargs
+    ):
         """
         Build an OpenMDAO System for the post-mission computations of the subsystem.
 
         Required for subsystems with post-mission-based analyses.
+
+        Parameters
+        ----------
+        aviary_inputs : dict
+            A dictionary containing the inputs to the subsystem.
+        phase_info : dict
+            The phase_info dict for all phases
+        phase_mission_bus_lengths : dict
+            Mapping from phase names to the lengths of the phase's "mission_bus_variables" timeseries
 
         Returns
         -------

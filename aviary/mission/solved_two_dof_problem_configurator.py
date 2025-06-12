@@ -24,7 +24,7 @@ class SolvedTwoDOFProblemConfigurator(ProblemConfiguratorBase):
             Problem that owns this builder.
         """
         if prob.engine_builders is None:
-            prob.engine_builders = build_engine_deck(prob.aviary_inputs)
+            prob.engine_builders = [build_engine_deck(prob.aviary_inputs)]
 
         # This doesn't really have much value, but is needed for initializing
         # an objective-related component that still lives in level 2.
@@ -140,7 +140,7 @@ class SolvedTwoDOFProblemConfigurator(ProblemConfiguratorBase):
         input_initial = False
         time_units = phase.time_options['units']
 
-        # Make a good guess for a reasonable intitial time scaler.
+        # Make a good guess for a reasonable initial time scaler.
         try:
             initial_bounds = user_options.get_val('initial_bounds', units=time_units)
         except KeyError:

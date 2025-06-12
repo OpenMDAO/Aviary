@@ -1,5 +1,7 @@
 #!/usr/bin/python
 import argparse
+import getpass
+import numpy as np
 from datetime import datetime
 from enum import Enum
 
@@ -26,7 +28,7 @@ CT = PropellerModelVariables.CT
 J = PropellerModelVariables.J
 
 
-def PropDataConverter(input_file, output_file, data_format: PropMapType):
+def PropDataConverter(input_file, output_file, data_format: PropMapType = PropMapType.GASP):
     """
     This is a utility class to convert a propeller map file to Aviary format.
     Currently, there is only one option: from GASP format to Aviary format.
@@ -34,12 +36,13 @@ def PropDataConverter(input_file, output_file, data_format: PropMapType):
     aviary convert_prop_table -f GASP input_file output_file.
     """
     timestamp = datetime.now().strftime('%m/%d/%y at %H:%M')
+    user = getpass.getuser()
     comments = []
     data = {}
 
     data_file = get_path(input_file)
 
-    comments.append(f'# created {timestamp}')
+    comments.append(f'# created {timestamp} by {user}')
     comments.append(f'# {data_format} propeller map converted from {input_file}')
 
     if data_format is PropMapType.GASP:
@@ -80,7 +83,7 @@ def _read_gasp_propeller(fp, cmts):
     Data table is returned as a dictionary.
     The table consists of both the independent variables and the dependent variable for
     the corresponding field. The table is a "tidy format" 2D array where the first three
-    columns are the independent varaiables (Advance ratio, Mach number, and power coefficient)
+    columns are the independent variables (Advance ratio, Mach number, and power coefficient)
     and the final column is the dependent variable thrust coefficient.
     """
     with open(fp, 'r') as f:
@@ -154,20 +157,22 @@ def _setup_PMC_parser(parser):
         nargs='?',
         help='path to file where new converted data will be written',
     )
-    parser.add_argument(
-        '-f',
-        '--data_format',
-        type=PropMapType,
-        choices=list(PropMapType),
-        nargs='?',
-        default='GASP',
-        help='data format used by input_file',
-    )
+    # currently removing as there is only one allowed map type at the moment
+    # parser.add_argument(
+    #     '-f',
+    #     '--data_format',
+    #     type=PropMapType,
+    #     choices=list(PropMapType),
+    #     nargs='?',
+    #     default='GASP',
+    #     help='data format used by input_file',
+    # )
 
 
 def _exec_PMC(args, user_args):
     PropDataConverter(
-        input_file=args.input_file, output_file=args.output_file, data_format=args.data_format
+        input_file=args.input_file,
+        output_file=args.output_file,  # , data_format=args.data_format
     )
 
 

@@ -61,6 +61,8 @@ FUEL_FLOW = EngineModelVariables.FUEL_FLOW
 ELECTRIC_POWER_IN = EngineModelVariables.ELECTRIC_POWER_IN
 NOX_RATE = EngineModelVariables.NOX_RATE
 TEMPERATURE = EngineModelVariables.TEMPERATURE_T4
+RPM = EngineModelVariables.RPM
+
 # EXIT_AREA = EngineModelVariables.EXIT_AREA
 
 # EngineDeck assumes all aliases point to an enum, these are used internally only
@@ -86,6 +88,7 @@ aliases = {
     SHAFT_POWER: ['shaft_power', 'shp'],
     SHAFT_POWER_CORRECTED: ['shaft_power_corrected', 'shpcor', 'corrected_horsepower'],
     TAILPIPE_THRUST: ['tailpipe_thrust'],
+    RPM: ['rpm', 'rotations_per_minute'],
 }
 
 # these variables must be present in engine performance data
@@ -98,6 +101,7 @@ required_options = (
     Aircraft.Engine.IGNORE_NEGATIVE_THRUST,
     Aircraft.Engine.GEOPOTENTIAL_ALT,
     Aircraft.Engine.GENERATE_FLIGHT_IDLE,
+    Aircraft.Engine.INTERPOLATION_METHOD,
     # TODO fuel flow scaler is required for the EngineScaling component but does not need
     #      to be defined on a per-engine basis, so it could exist only in the problem-
     #      level aviary_options without issue. Is this a propulsion_preprocessor task?
@@ -295,7 +299,7 @@ class EngineDeck(EngineModel):
     def _set_variable_flags(self):
         """
         Sets flags in EngineDeck to communicate which (non-required) variables are
-        avaliable to greater propulsion module.
+        available to greater propulsion module.
         """
         engine_variables = self.engine_variables
 
@@ -314,19 +318,13 @@ class EngineDeck(EngineModel):
 
     def _setup(self, data):
         """
-        Read in and process engine data:
-
-            Check data consistency.
-
-            Convert altitudes to geometric.
-
-            Sort and pack data.
-
-            Determine reference thrust.
-
-            Normalize throttles/hybrid throttles.
-
-            Fill flight idle points.
+        Read in and process engine data.
+        - Check data consistency.
+        - Convert altitudes to geometric.
+        - Sort and pack data.
+        - Determine reference thrust.
+        - Normalize throttles & hybrid throttles.
+        - Fill flight idle points if requested.
         """
         self._read_data(data)
 
@@ -439,7 +437,7 @@ class EngineDeck(EngineModel):
     def _check_data(self):
         """
         Checks for consistency of provided thrust and drag data, ensures no required
-        variables are missing, fills unused variabes with a default value of zero, and
+        variables are missing, fills unused variables with a default value of zero, and
         removes negative thrusts if requested.
 
         Raises
@@ -462,7 +460,7 @@ class EngineDeck(EngineModel):
         engine_variables = self.engine_variables
 
         # Handle ram drag, net and gross thrust and potential conflicts in value or units
-        # Warn user if they provide partial info for calulated thrust
+        # Warn user if they provide partial info for calculated thrust
         # Not a fail state if net thrust is still provided
         # If both net thrust and components for calculated thrust both provided, a sanity
         #   check that they match is done after reading data
@@ -480,7 +478,7 @@ class EngineDeck(EngineModel):
 
         if RAM_DRAG in engine_variables and GROSS_THRUST in engine_variables:
             # Check that units are the same. Variables have already been checked for valid
-            # units, so it is assumed they are convertable. Prioritizes thrust units
+            # units, so it is assumed they are convertible. Prioritizes thrust units
             if engine_variables[RAM_DRAG] != engine_variables[GROSS_THRUST]:
                 data[RAM_DRAG] = convert_units(
                     original_data[RAM_DRAG],
@@ -508,7 +506,7 @@ class EngineDeck(EngineModel):
             # tailpipe thrust is not bookept separately in Aviary. Add to net thrust.
             if THRUST in engine_variables:
                 # Check that units are the same. Variables have already been checked for valid
-                # units, so it is assumed they are convertable. Prioritizes thrust units
+                # units, so it is assumed they are convertible. Prioritizes thrust units
                 if engine_variables[THRUST] != engine_variables[TAILPIPE_THRUST]:
                     data[TAILPIPE_THRUST] = convert_units(
                         data,
@@ -533,7 +531,7 @@ class EngineDeck(EngineModel):
             self.data.pop(TAILPIPE_THRUST)
 
         # Handle shaft power (corrected and uncorrected). It is not possible to compare
-        # them for consistency, as that requires information not avaliable during setup
+        # them for consistency, as that requires information not available during setup
         # (freestream air temp and pressure). Instead, we must trust the source and
         # assume either data set is valid and can be used.
         if (
@@ -694,15 +692,21 @@ class EngineDeck(EngineModel):
 
                 # if there is only one data point at this Mach, alt combination, use
                 # thrust fraction instead of extrapolation
-                # TODO idle currently calculated using lowest index data points - this is not
-                #      guaranteed to be at hybrid throttle idle point, could be negative
                 if data_indices[M, A] == 1:
+                    # Find the point closest to hybrid throttle idle (0) if hybrid throttle is present
+                    if self.use_hybrid_throttle:
+                        hybrid_throttle_data = packed_data[HYBRID_THROTTLE][M, A]
+                        # Find index of point closest to hybrid throttle idle (0)
+                        idle_idx = np.argmin(np.abs(hybrid_throttle_data))
+                    else:
+                        idle_idx = 0
+
                     for key in packed_data:
                         if (
                             key
                             not in [MACH, ALTITUDE, THROTTLE, HYBRID_THROTTLE] + direct_calc_vars
                         ):
-                            idle_value = packed_data[key][M, A, 0] * idle_thrust_fract
+                            idle_value = packed_data[key][M, A, idle_idx] * idle_thrust_fract
                             var_min = packed_data[key][M, A, -1] * idle_min_fract
                             var_max = packed_data[key][M, A, -1] * idle_max_fract
 
@@ -714,14 +718,12 @@ class EngineDeck(EngineModel):
                             idle_points[key] = np.append(
                                 idle_points[key], [idle_value] * num_points
                             )
-                            # add Mach, alt combination to idle_points with idle power
-                            # codes
 
                     # thrust, shaft powers do not get idle_min/max checks
                     for var in direct_calc_vars:
                         idle_points[var] = np.append(
                             idle_points[var],
-                            [[packed_data[var][M, A, 0] * idle_thrust_fract]] * num_points,
+                            [[packed_data[var][M, A, idle_idx] * idle_thrust_fract]] * num_points,
                         )
                     # move to next data point
                     continue
@@ -809,7 +811,7 @@ class EngineDeck(EngineModel):
 
         # add inputs and outputs to interpolator
         independent_variables = [MACH, ALTITUDE, THROTTLE, HYBRID_THROTTLE]
-        no_scale_variables = [TEMPERATURE]
+        no_scale_variables = [TEMPERATURE, RPM]
         for variable in self.engine_variables:
             if variable in independent_variables:
                 engine.add_input(
@@ -834,7 +836,7 @@ class EngineDeck(EngineModel):
     def build_mission(self, num_nodes, aviary_inputs, **kwargs) -> om.Group:
         """
         Creates interpolator objects to be added to mission-level propulsion subsystem.
-        Interpolators must be re-generated for each ODE due to potentialy different
+        Interpolators must be re-generated for each ODE due to potentially different
         num_nodes in each mission segment.
 
         Parameters
@@ -916,14 +918,14 @@ class EngineDeck(EngineModel):
                         'throttle_max',
                         self.throttle_max,
                         units='unitless',
-                        desc='max throttle avaliable at current flight condition',
+                        desc='max throttle available at current flight condition',
                     )
                 if not self.global_hybrid_throttle and self.use_hybrid_throttle:
                     interp_throttles.add_output(
                         'hybrid_throttle_max',
                         self.hybrid_throttle_max,
                         units='unitless',
-                        desc='max hybrid throttle avaliable at current flight condition',
+                        desc='max hybrid throttle available at current flight condition',
                     )
 
             # Calculation of max thrust currently done with a duplicate of the engine
@@ -1075,6 +1077,7 @@ class EngineDeck(EngineModel):
             HYBRID_THROTTLE,
             TEMPERATURE,
             SHAFT_POWER_CORRECTED,
+            RPM,
         ]
 
         for variable in self.engine_variables:
@@ -1168,7 +1171,7 @@ class EngineDeck(EngineModel):
                 # handle rounding + formatting
                 if isinstance(val, (np.ndarray, list, tuple)):
                     val = [round_it(item) for item in val]
-                    # if an interable with a length of 1, remove bracket/paretheses, etc.
+                    # if an interable with a length of 1, remove bracket/parentheses, etc.
                     if len(val) == 1:
                         val = val[0]
                 else:
@@ -1340,8 +1343,9 @@ class EngineDeck(EngineModel):
 
         def _hybrid_throttle_norm(hybrid_throttle_list):
             """
-            Normalize hybrid throttle to the scale:
+            Normalizes hybrid throttle.
 
+            Uses the scale:
             [-1 (minimum negative hybrid throttle)
             <-> 0 (idle hybrid throttle)
             <-> 1 (max positive hybrid throttle)]
@@ -1644,11 +1648,11 @@ def normalize(base_list, maximum=None, minimum=None):
 
 def extend_array(inp_array, size):
     """
-    Extends input array such that it is at least as large as the target size in
-    all dimensions. If input array is smaller in any dimension, extends input
-    array to match target size in that dimension. Works on arrays up to 3
-    dimensions. Returns copy of input array extended in required dimensions with newly
-    created points set to 0.
+    Extends input array such that it is at least as large as the target size in each dimension.
+    Works on arrays of any dimension.
+    Returns copy of input array extended in required dimensions with newly created points set to 0.
+    If requested size is smaller than inp_array in any dimensions, original inp_array is not
+    modified along that dimension.
 
     Parameters
     ----------
@@ -1660,21 +1664,28 @@ def extend_array(inp_array, size):
     Returns
     -------
     inp_array : numpy.ndarray
-        The provided array extended in the desired dimensions with with newly created
-        points set to 0.
+        The provided array extended in the desired dimensions with newly created points set to 0.
     """
-    # TODO may be built-in numpy functions that can replace this and support n dimensions
-    dims = np.array(np.shape(inp_array))
-    while size[0] > dims[0]:
-        inp_array = np.concatenate((inp_array, np.zeros((1, *dims[1:]))), 0)
-        dims[0] += 1
-    if len(dims) > 1:
-        while size[1] > dims[1]:
-            inp_array = np.concatenate((inp_array, np.zeros((dims[0], 1, *dims[2:]))), 1)
-            dims[1] += 1
-        if len(dims) > 2:
-            while size[2] > dims[2]:
-                inp_array = np.concatenate((inp_array, np.zeros((*dims[:2], 1))), 2)
-                dims[2] += 1
+    # Convert input to numpy array if it isn't already
+    inp_array = np.asarray(inp_array)
 
-    return inp_array
+    # Calculate padding needed for each dimension
+    current_shape = np.array(inp_array.shape)
+    target_shape = np.array(size)
+
+    # If target has more dimensions, add new dimensions to input array
+    if len(target_shape) > len(current_shape):
+        # Create new shape with additional dimensions of size 1
+        new_shape = np.ones(len(target_shape), dtype=int)
+        new_shape[: len(current_shape)] = current_shape
+        # Reshape input array to add new dimensions
+        inp_array = inp_array.reshape(new_shape)
+        current_shape = np.array(inp_array.shape)
+
+    padding = np.maximum(0, target_shape - current_shape)
+
+    # Create padding tuple for np.pad
+    pad_width = tuple((0, p) for p in padding)
+
+    # Pad array with zeros
+    return np.pad(inp_array, pad_width, mode='constant', constant_values=0)

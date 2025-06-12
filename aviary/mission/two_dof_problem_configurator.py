@@ -49,7 +49,7 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
         aviary_inputs = update_GASP_options(aviary_inputs)
 
         if prob.engine_builders is None:
-            prob.engine_builders = build_engine_deck(aviary_inputs)
+            prob.engine_builders = [build_engine_deck(aviary_inputs)]
 
         prob.initialization_guesses = initialization_guessing(
             aviary_inputs, prob.initialization_guesses, prob.engine_builders
@@ -362,7 +362,7 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
         else:
             time_units = phase.time_options['units']
 
-            # Make a good guess for a reasonable intitial time scaler.
+            # Make a good guess for a reasonable initial time scaler.
             try:
                 initial_bounds = user_options.get_val('initial_bounds', units=time_units)
             except KeyError:
@@ -418,7 +418,15 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
             )
 
         # TODO: This seems like a hack. We might want to find a better way.
-        prob.phase_info[phase_name]['phase_type'] = phase_name
+        #       The issue is that aero methods are hardcoded for GASP mission phases
+        #       instead of being defaulted somewhere, so they don't use phase_info
+        # prob.phase_info[phase_name]['phase_type'] = phase_name
+        if phase_name in ['ascent', 'groundroll', 'rotation']:
+            # safely add in default method in way that doesn't overwrite existing method
+            # and create nested structure if it doesn't already exist
+            prob.phase_info[phase_name].setdefault('subsystem_options', {}).setdefault(
+                'core_aerodynamics', {}
+            ).setdefault('method', 'low_speed')
 
     def link_phases(self, prob, phases, connect_directly=True):
         """
@@ -456,7 +464,7 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
                     # if both phases are reserve phases or neither is a reserve phase
                     # (we are not on the boundary between the regular and reserve missions)
                     # and neither phase is ground roll or rotation (altitude isn't a state):
-                    # we want altitude to be continous as well
+                    # we want altitude to be continuous as well
                     if (
                         ((phase1 in prob.reserve_phases) == (phase2 in prob.reserve_phases))
                         and not ({'groundroll', 'rotation'} & {phase1, phase2})

@@ -23,7 +23,7 @@ class AccelerationODETestCase(unittest.TestCase):
         aviary_options = get_option_defaults()
         aviary_options.set_val(Aircraft.Engine.GLOBAL_THROTTLE, True)
         default_mission_subsystems = get_default_mission_subsystems(
-            'GASP', build_engine_deck(aviary_options)
+            'GASP', [build_engine_deck(aviary_options)]
         )
 
         self.sys = self.prob.model = AccelODE(
@@ -54,8 +54,8 @@ class AccelerationODETestCase(unittest.TestCase):
         testvals = {
             Dynamic.Vehicle.LIFT: [174974, 174878],
             Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL: [
-                -13262.73,
-                -13567.53,
+                -13264.82336817,
+                -13567.23449581,
             ],  # lbm/h
         }
         check_prob_outputs(self.prob, testvals, rtol=1e-6)

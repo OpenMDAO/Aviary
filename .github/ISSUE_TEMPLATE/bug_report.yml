@@ -21,7 +21,7 @@ body:
     attributes:
       label: Aviary Version
       description: What version of Aviary is being used.
-      placeholder: "0.9.10-dev"
+      placeholder: "0.10.0-dev"
     validations:
       required: true
   - type: textarea

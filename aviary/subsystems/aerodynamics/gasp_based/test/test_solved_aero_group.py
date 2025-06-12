@@ -16,6 +16,7 @@ from aviary.interface.methods_for_level2 import AviaryProblem
 from aviary.subsystems.subsystem_builder_base import SubsystemBuilderBase
 from aviary.utils.csv_data_file import read_data_file
 from aviary.utils.named_values import NamedValues
+from aviary.variable_info.enums import LegacyCode
 from aviary.variable_info.variables import Aircraft
 
 # The drag-polar-generating component reads this in, instead of computing the polars.
@@ -27,7 +28,8 @@ phase_info = deepcopy(phase_info)
 
 phase_info['pre_mission']['include_takeoff'] = False
 phase_info['post_mission']['include_landing'] = False
-phase_info['cruise']['subsystem_options']['core_aerodynamics']['method'] = 'solved_alpha'
+phase_info['cruise']['subsystem_options']['core_aerodynamics']['method'] = 'tabular_cruise'
+phase_info['cruise']['subsystem_options']['core_aerodynamics']['solve_alpha'] = True
 phase_info['cruise']['subsystem_options']['core_aerodynamics']['aero_data'] = polar_file
 phase_info.pop('climb')
 phase_info.pop('descent')
@@ -43,8 +45,8 @@ CD = data.get_val('CD').reshape(shape)
 
 
 class TestSolvedAero(unittest.TestCase):
-    def test_solved_aero_pass_polar(self):
-        # Test that passing training data provides the same results
+    def get_baseline_tabular_results(self):
+        # Get the CL, CD of the baseline tabular aero problem
         local_phase_info = deepcopy(phase_info)
 
         prob = AviaryProblem()
@@ -53,6 +55,7 @@ class TestSolvedAero(unittest.TestCase):
             'subsystems/aerodynamics/flops_based/test/data/high_wing_single_aisle.csv',
             local_phase_info,
         )
+        prob.aero_method = LegacyCode.GASP
 
         # Preprocess inputs
         prob.check_and_preprocess_inputs()
@@ -69,10 +72,15 @@ class TestSolvedAero(unittest.TestCase):
 
         prob.run_model()
 
-        CL_base = prob.get_val('traj.cruise.rhs_all.core_aerodynamics.tabular_aero.CL')
-        CD_base = prob.get_val('traj.cruise.rhs_all.core_aerodynamics.tabular_aero.CD')
+        CL_base = prob.get_val('traj.cruise.rhs_all.core_aerodynamics.CL')
+        CD_base = prob.get_val('traj.cruise.rhs_all.core_aerodynamics.CD')
 
+        return CL_base, CD_base
+
+    def test_solved_aero_pass_polar(self):
+        # Test that passing training data provides the same results
         # Lift and Drag polars passed from external component in pre-mission.
+        CL_base, CD_base = self.get_baseline_tabular_results()
 
         ph_in = deepcopy(phase_info)
 
@@ -83,7 +91,8 @@ class TestSolvedAero(unittest.TestCase):
         aero_data.set_val('angle_of_attack', ALPHA, 'deg')
 
         subsystem_options = {
-            'method': 'solved_alpha',
+            'method': 'tabular_cruise',
+            'solve_alpha': True,
             'aero_data': aero_data,
             'connect_training_data': True,
         }
@@ -97,6 +106,7 @@ class TestSolvedAero(unittest.TestCase):
             'subsystems/aerodynamics/flops_based/test/data/high_wing_single_aisle.csv',
             ph_in,
         )
+        prob.aero_method = LegacyCode.GASP
 
         # Preprocess inputs
         prob.check_and_preprocess_inputs()
@@ -116,15 +126,15 @@ class TestSolvedAero(unittest.TestCase):
 
         prob.run_model()
 
-        CL_pass = prob.get_val('traj.cruise.rhs_all.core_aerodynamics.tabular_aero.CL')
-        CD_pass = prob.get_val('traj.cruise.rhs_all.core_aerodynamics.tabular_aero.CD')
+        CL_pass = prob.get_val('traj.cruise.rhs_all.core_aerodynamics.CL')
+        CD_pass = prob.get_val('traj.cruise.rhs_all.core_aerodynamics.CD')
 
         assert_near_equal(CL_pass, CL_base, 1e-6)
         assert_near_equal(CD_pass, CD_base, 1e-6)
 
     def test_parameters(self):
         # This test is to make sure that the aero builder creates a parameter
-        # for wing area. It addreses a bug where this was absent.
+        # for wing area. It addresses a bug where this was absent.
 
         local_phase_info = deepcopy(phase_info)
 
@@ -134,6 +144,7 @@ class TestSolvedAero(unittest.TestCase):
             'subsystems/aerodynamics/flops_based/test/data/high_wing_single_aisle.csv',
             local_phase_info,
         )
+        prob.aero_method = LegacyCode.GASP
 
         # Change value just to be certain.
         prob.aviary_inputs.set_val(Aircraft.Wing.AREA, 7777, units='ft**2')
@@ -166,6 +177,7 @@ class TestSolvedAero(unittest.TestCase):
 
         csv_path = 'subsystems/aerodynamics/flops_based/test/data/high_wing_single_aisle.csv'
         prob.load_inputs(csv_path, local_phase_info)
+        prob.aero_method = LegacyCode.GASP
 
         # Preprocess inputs
         prob.check_and_preprocess_inputs()
@@ -182,8 +194,8 @@ class TestSolvedAero(unittest.TestCase):
 
         prob.run_model()
 
-        CL_base = prob.get_val('traj.cruise.rhs_all.core_aerodynamics.tabular_aero.CL')
-        CD_base = prob.get_val('traj.cruise.rhs_all.core_aerodynamics.tabular_aero.CD')
+        CL_base = prob.get_val('traj.cruise.rhs_all.core_aerodynamics.CL')
+        CD_base = prob.get_val('traj.cruise.rhs_all.core_aerodynamics.CD')
 
         # Lift and Drag polars passed from external component in pre-mission.
 
@@ -218,7 +230,8 @@ class TestSolvedAero(unittest.TestCase):
         aero_data.set_val('angle_of_attack', alpha, 'deg')
 
         subsystem_options = {
-            'method': 'solved_alpha',
+            'method': 'tabular_cruise',
+            'solve_alpha': True,
             'aero_data': aero_data,
             'connect_training_data': True,
         }
@@ -229,6 +242,7 @@ class TestSolvedAero(unittest.TestCase):
         prob = AviaryProblem()
 
         prob.load_inputs(csv_path, ph_in)
+        prob.aero_method = LegacyCode.GASP
 
         # Preprocess inputs
         prob.check_and_preprocess_inputs()
@@ -248,8 +262,8 @@ class TestSolvedAero(unittest.TestCase):
 
         prob.run_model()
 
-        CL_pass = prob.get_val('traj.cruise.rhs_all.core_aerodynamics.tabular_aero.CL')
-        CD_pass = prob.get_val('traj.cruise.rhs_all.core_aerodynamics.tabular_aero.CD')
+        CL_pass = prob.get_val('traj.cruise.rhs_all.core_aerodynamics.CL')
+        CD_pass = prob.get_val('traj.cruise.rhs_all.core_aerodynamics.CD')
 
         assert_near_equal(CL_pass, CL_base, 1e-6)
         assert_near_equal(CD_pass, CD_base, 1e-6)

@@ -50,7 +50,7 @@ class HeightEnergyProblemConfigurator(ProblemConfiguratorBase):
         aviary_inputs = prob.aviary_inputs
 
         if prob.engine_builders is None:
-            prob.engine_builders = build_engine_deck(aviary_inputs)
+            prob.engine_builders = [build_engine_deck(aviary_inputs)]
 
         prob.initialization_guesses = initialization_guessing(
             aviary_inputs, prob.initialization_guesses, prob.engine_builders
@@ -212,7 +212,7 @@ class HeightEnergyProblemConfigurator(ProblemConfiguratorBase):
 
         time_units = phase.time_options['units']
 
-        # Make a good guess for a reasonable intitial time scaler.
+        # Make a good guess for a reasonable initial time scaler.
         try:
             initial_bounds = user_options.get_val('initial_bounds', units=time_units)
         except KeyError:

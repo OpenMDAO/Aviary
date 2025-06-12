@@ -22,7 +22,7 @@ class RotationODETestCase(unittest.TestCase):
         aviary_options = get_option_defaults()
         aviary_options.set_val(Aircraft.Engine.GLOBAL_THROTTLE, True)
         default_mission_subsystems = get_default_mission_subsystems(
-            'GASP', build_engine_deck(aviary_options)
+            'GASP', [build_engine_deck(aviary_options)]
         )
 
         self.prob.model = RotationODE(
@@ -54,7 +54,7 @@ class RotationODETestCase(unittest.TestCase):
         tol = 1e-6
         assert_near_equal(
             self.prob[Dynamic.Mission.VELOCITY_RATE],
-            np.array([13.66655, 13.66655]),
+            np.array([13.66381874, 13.66381874]),
             tol,
         )
         assert_near_equal(

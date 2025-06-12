@@ -16,11 +16,7 @@ from aviary.subsystems.propulsion.utils import build_engine_deck
 from aviary.utils.aviary_values import get_items, get_keys
 from aviary.utils.functions import set_aviary_initial_values
 from aviary.utils.preprocessors import preprocess_options
-from aviary.validation_cases.validation_tests import (
-    get_flops_case_names,
-    get_flops_inputs,
-    get_flops_outputs,
-)
+from aviary.validation_cases.validation_tests import get_flops_case_names, get_flops_inputs
 from aviary.variable_info.enums import LegacyCode
 from aviary.variable_info.functions import setup_model_options
 from aviary.variable_info.variable_meta_data import _MetaData as BaseMetaData
@@ -71,9 +67,9 @@ class PreMissionTestCase(unittest.TestCase):
         input_options.delete(Aircraft.Fuel.TOTAL_CAPACITY)
         input_options.delete(Aircraft.Nacelle.AVG_LENGTH)
 
-        engine = build_engine_deck(input_options)
+        engines = [build_engine_deck(input_options)]
 
-        prop = CorePropulsionBuilder('core_propulsion', BaseMetaData, engine)
+        prop = CorePropulsionBuilder('core_propulsion', BaseMetaData, engines)
         mass = CoreMassBuilder('core_mass', BaseMetaData, GASP)
         aero = CoreAerodynamicsBuilder('core_aerodynamics', BaseMetaData, FLOPS)
         geom = CoreGeometryBuilder(
@@ -122,7 +118,7 @@ class PreMissionTestCase(unittest.TestCase):
         # We set it to an unconverged value to test convergence.
         self.prob.set_val(Mission.Design.GROSS_MASS, val=1000.0)
 
-        # Set inital values for all variables.
+        # Set initial values for all variables.
         set_aviary_initial_values(self.prob, input_options)
 
         # Adjust WETTED_AREA_SCALER such that WETTED_AREA = 4000.0
@@ -213,7 +209,7 @@ class PreMissionTestCase(unittest.TestCase):
         assert_check_partials(partial_data, atol=3e-10, rtol=1e-12)
 
     def test_manual_override(self):
-        # Problem in setup is GASP prioritized, so shared inputs for FLOPS will be manually overriden.
+        # Problem in setup is GASP prioritized, so shared inputs for FLOPS will be manually overridden.
 
         outs = self.prob.model.pre_mission.list_outputs(
             includes='*gasp*fuselage:avg_diam*', prom_name=True, out_stream=None
@@ -269,13 +265,13 @@ class PreMissionTestCase(unittest.TestCase):
         aviary_inputs = setup_options(GASP_input, FLOPS_input)
 
         aviary_inputs.delete(Aircraft.Fuselage.WETTED_AREA)
-        engine = build_engine_deck(aviary_inputs)
-        preprocess_options(aviary_inputs, engine_models=engine)
+        engines = [build_engine_deck(aviary_inputs)]
+        preprocess_options(aviary_inputs, engine_models=engines)
 
         prob = om.Problem()
         model = prob.model
 
-        prop = CorePropulsionBuilder('core_propulsion', BaseMetaData, engine)
+        prop = CorePropulsionBuilder('core_propulsion', BaseMetaData, engines)
         mass = CoreMassBuilder('core_mass', BaseMetaData, GASP)
         aero = CoreAerodynamicsBuilder('core_aerodynamics', BaseMetaData, FLOPS)
         geom = CoreGeometryBuilder(
@@ -313,7 +309,7 @@ class PreMissionTestCase(unittest.TestCase):
 
         prob.setup()
 
-        # Problem in setup is FLOPS prioritized, so shared inputs for FLOPS will be manually overriden.
+        # Problem in setup is FLOPS prioritized, so shared inputs for FLOPS will be manually overridden.
 
         outs = prob.model.pre_mission.list_outputs(
             includes='*gasp*fuselage:avg_diam*', prom_name=True, out_stream=None

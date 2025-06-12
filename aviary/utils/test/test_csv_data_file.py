@@ -88,7 +88,7 @@ class TestAviaryCSV(unittest.TestCase):
     @use_tempdirs
     def test_parse_input(self):
         aircraft_values = get_option_defaults(engine=False)
-        # create a temperary csv file for testing non-existing variable name
+        # create a temporary csv file for testing non-existing variable name
         file_name = 'aircraft_for_invalid_var.csv'
         with open(file_name, 'w') as file:
             file.write('test_string,0\n')  # be ignored
@@ -100,7 +100,7 @@ class TestAviaryCSV(unittest.TestCase):
         with assert_warning(UserWarning, msg):
             parse_inputs(vehicle_deck, aircraft_values)
 
-        # remove the temperary csv file
+        # remove the temporary csv file
         os.remove(file_name)
 
     def _compare_csv_results(self, data, comments):
