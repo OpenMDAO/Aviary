@@ -408,7 +408,6 @@ class FlightPhaseBase(PhaseBuilderBase):
         control_dict = {
             'name': Dynamic.Atmosphere.MACH,
             'targets': Dynamic.Atmosphere.MACH,
-            # 'units': mach_bounds[1],
             'rate_targets': rate_targets,
             'opt': optimize_mach,
         }
