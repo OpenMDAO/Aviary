@@ -14,7 +14,7 @@ dependencies = [
     "importlib_resources",
     "matplotlib",
     "numpy<2",
-    "openmdao>=3.36.0",
+    "openmdao>=3.37.0",
     "pandas",
     "panel>=1.0.0",
     "parameterized",
