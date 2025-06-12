@@ -77,7 +77,7 @@ class GASPEngineType(Enum):
     """
     Defines the type of engine to use in GASP-based mass calculations.
     Note that only the value for the first engine model will be used.
-    Currenly only the TURBOJET and TURBOPROP options are implemented, but other types of engines will be added in the future.
+    Currently only the TURBOJET and TURBOPROP options are implemented, but other types of engines will be added in the future.
     """
 
     # Reciprocating engine with carburator
