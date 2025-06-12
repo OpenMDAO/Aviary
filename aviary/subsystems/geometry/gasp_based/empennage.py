@@ -60,9 +60,7 @@ class TailVolCoef(om.ExplicitComponent):
         htail_loc, fus_len, cab_w, wing_area, wing_ref = inputs.values()
         k1, k2, k3 = self.k
         ch1 = k1 - k2 * htail_loc
-        outputs[self.io_names['vol_coef']] = (
-            k3 * fus_len * cab_w**2 / (wing_area * wing_ref) + ch1
-        )
+        outputs[self.io_names['vol_coef']] = k3 * fus_len * cab_w**2 / (wing_area * wing_ref) + ch1
 
     def compute_partials(self, inputs, J):
         str_vol_coef = self.io_names['vol_coef']
@@ -72,7 +70,9 @@ class TailVolCoef(om.ExplicitComponent):
         k1, k2, k3 = self.k
         J[str_vol_coef, Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION] = -k2
         J[str_vol_coef, Aircraft.Fuselage.LENGTH] = k3 * cab_w**2 / (wing_area * wing_ref)
-        J[str_vol_coef, Aircraft.Fuselage.AVG_DIAMETER] = 2 * k3 * fus_len * cab_w / (wing_area * wing_ref)
+        J[str_vol_coef, Aircraft.Fuselage.AVG_DIAMETER] = (
+            2 * k3 * fus_len * cab_w / (wing_area * wing_ref)
+        )
         J[str_vol_coef, Aircraft.Wing.AREA] = -k3 * fus_len * cab_w**2 / (wing_area**2 * wing_ref)
         J[str_vol_coef, str_wing_ref] = -k3 * fus_len * cab_w**2 / (wing_area * wing_ref**2)
 
