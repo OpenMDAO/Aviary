@@ -10,6 +10,7 @@ import numpy as np
 import openmdao.api as om
 from openmdao.components.interp_util.interp import InterpND
 
+from aviary.interface.utils.markdown_utils import round_it
 from aviary.subsystems.atmosphere.atmosphere import Atmosphere
 from aviary.subsystems.propulsion.engine_deck import normalize
 from aviary.subsystems.propulsion.utils import EngineModelVariables, default_units
@@ -58,22 +59,37 @@ _flops_keys = [
 _gasp_keys = [MACH, ALTITUDE, THROTTLE, FUEL_FLOW, TEMPERATURE]
 
 header_names = {
-    MACH: 'Mach_Number',
+    MACH: 'Mach Number',
     ALTITUDE: 'Altitude',
     THROTTLE: 'Throttle',
     THRUST: 'Thrust',
-    GROSS_THRUST: 'Gross_Thrust',
-    RAM_DRAG: 'Ram_Drag',
-    FUEL_FLOW: 'Fuel_Flow',
-    NOX_RATE: 'NOx_Rate',
+    GROSS_THRUST: 'Gross Thrust',
+    RAM_DRAG: 'Ram Drag',
+    FUEL_FLOW: 'Fuel Flow',
+    NOX_RATE: 'NOx Rate',
     TEMPERATURE: 'T4',
-    SHAFT_POWER_CORRECTED: 'Shaft_Power_Corrected',
-    TAILPIPE_THRUST: 'Tailpipe_Thrust',
+    SHAFT_POWER_CORRECTED: 'Shaft Power Corrected',
+    TAILPIPE_THRUST: 'Tailpipe Thrust',
     # EXIT_AREA: 'Exit Area',
 }
 
+# number of sig figs to round each header to, if requested
+sig_figs = {
+    MACH: 4,
+    ALTITUDE: 7,
+    THROTTLE: 4,
+    THRUST: 7,
+    GROSS_THRUST: 7,
+    RAM_DRAG: 6,
+    FUEL_FLOW: 6,
+    NOX_RATE: 5,
+    TEMPERATURE: 6,
+    SHAFT_POWER_CORRECTED: 6,
+    TAILPIPE_THRUST: 6,
+}
 
-def EngineDeckConverter(input_file, output_file, data_format: EngineDeckType):
+
+def convert_engine_deck(input_file, output_file, data_format: EngineDeckType, round_data=False):
     """
     Converts FLOPS- or GASP-formatted engine decks into Aviary csv format.
     FLOPS decks are changed from column-delimited to csv format with added headers.
@@ -88,13 +104,14 @@ def EngineDeckConverter(input_file, output_file, data_format: EngineDeckType):
         path to file where new converted data will be written
     data_format : (EngineDeckType)
         data format used by input_file (FLOPS or GASP)
+    round_data : bool, optional
+        Sets if any generated data should be rounded. This primarily applies to GASP engines that
+        must compute T4 or require extrapolation to fill out sparse flight throttle ranges.
+        Defaults to False.
     """
-    # TODO rounding for calculated values?
-
     timestamp = datetime.now().strftime('%m/%d/%y at %H:%M')
     user = getpass.getuser()
     comments = []
-    header = {}
     data = {}
 
     data_file = get_path(input_file)
@@ -109,7 +126,6 @@ def EngineDeckConverter(input_file, output_file, data_format: EngineDeckType):
     comments.append(f'# {legacy_code}-derived {engine_type} deck converted from {data_file.name}')
 
     if data_format == EngineDeckType.FLOPS:
-        header = {key: default_units[key] for key in _flops_keys}
         data = {key: np.array([]) for key in _flops_keys}
 
         with open(data_file, newline='', encoding='utf-8-sig') as file:
@@ -135,7 +151,7 @@ def EngineDeckConverter(input_file, output_file, data_format: EngineDeckType):
 
     elif data_format in (EngineDeckType.GASP, EngineDeckType.GASP_TS):
         # prevent modifications to gasp_keys from overwriting base _gasp_keys, to avoid
-        # errors when `EngineDeckConverter()` is ran multiple times in a row
+        # errors when `convert_engine_deck()` is ran multiple times in a row
         gasp_keys = deepcopy(_gasp_keys)
         is_turbo_prop = True if data_format == EngineDeckType.GASP_TS else False
         temperature = gasp_keys.pop()
@@ -157,7 +173,7 @@ def EngineDeckConverter(input_file, output_file, data_format: EngineDeckType):
         if t4max <= 100 or throttle_type == 3:
             throttle_step = 2
         else:
-            throttle_step = 0.05
+            throttle_step = 0.5
 
         # save scalars as comments
         comments.extend(['# ' + key + ': ' + str(scalars[key]) for key in scalars.keys()])
@@ -165,6 +181,9 @@ def EngineDeckConverter(input_file, output_file, data_format: EngineDeckType):
         # recommended to always generate structured grid
         structure_data = True
         if structure_data:
+            structured_data = _make_structured_grid(
+                tables, method='lagrange3', fields=fields, throttle_step=throttle_step
+            )
             structured_data = _make_structured_grid(
                 tables, method='lagrange3', fields=fields, throttle_step=throttle_step
             )
@@ -193,7 +212,10 @@ def EngineDeckConverter(input_file, output_file, data_format: EngineDeckType):
         generate_flight_idle = True
         if generate_flight_idle and not is_turbo_prop:
             data, T4T2 = _generate_flight_idle(
-                data, T4T2, ref_sls_airflow=scalars['sls_airflow'], ref_sfn_idle=scalars['sfn_idle']
+                data,
+                T4T2,
+                ref_sls_airflow=scalars['sls_airflow'],
+                ref_sfn_idle=scalars['sfn_idle'],
             )
 
         # if t4max 100 or less, it is actually throttle. Remove temperature as variable
@@ -204,9 +226,6 @@ def EngineDeckConverter(input_file, output_file, data_format: EngineDeckType):
             gasp_keys.pop(-1)
         else:
             compute_T4 = True
-
-        # define header now that we know what is in the engine deck
-        header = {key: default_units[key] for key in gasp_keys}
 
         if compute_T4:
             # compute T4 using atmospheric model
@@ -256,9 +275,9 @@ def EngineDeckConverter(input_file, output_file, data_format: EngineDeckType):
             #   consistent with fraction of T4max
             # TODO flight condition dependent throttle range?
             # NOTE this often leaves max throttles less than 1 in the deck - this causes
-            #     problems when finding reference SLS thrust, as there is often no max
-            #     power data at that point in the engine deck. It is recommended GASP
-            #     engine decks override Aircraft.Engine.REFERENCE_THRUST in EngineDecks
+            #      problems when finding reference SLS thrust, as there is often no max
+            #      power data at that point in the engine deck. It is recommended GASP
+            #      engine decks override Aircraft.Engine.REFERENCE_THRUST in EngineDecks
             data[THROTTLE] = normalize(data[TEMPERATURE], minimum=0.0, maximum=t4max)
 
         else:
@@ -281,6 +300,11 @@ def EngineDeckConverter(input_file, output_file, data_format: EngineDeckType):
             data[TAILPIPE_THRUST] = data[TAILPIPE_THRUST][valid_idx]
         else:
             data[THRUST] = data[THRUST][valid_idx]
+
+        # round data if requested, using sig_figs as guide
+        if round_data:
+            for key in data:
+                data[key] = np.array([round_it(val, sig_figs[key]) for val in data[key]])
 
         # data needs to be string so column length can be easily found later
         for var in data:
@@ -371,7 +395,7 @@ def _read_gasp_engine(fp, is_turbo_prop=False):
     fuelflow, and airflow, since they may have different grids in general.
     Each table consists of both the independent variables and the dependent variable for
     the corresponding field. The table is a "tidy format" 2D array where the first three
-    columns are the independent varaiables (altitude, T4/T2, and Mach number) and the
+    columns are the independent variables (altitude, T4/T2, and Mach number) and the
     final column is the dependent variable (one of thrust, fuelflow, or airflow for
     turbofans or shaft_power_corrected, fuelflow, or tailpipe_thrust for turboshafts).
     """
@@ -442,8 +466,8 @@ def _read_table(f, is_turbo_prop=False):
     """
     tab_data = None
 
-    # table title
-    title = f.readline().strip()
+    # strip out table title, not used
+    f.readline().strip()
     # number of maps in the table
     (nmaps,) = _parse(f, [(int, 5)])
     # blank line
@@ -465,7 +489,7 @@ def _read_table(f, is_turbo_prop=False):
 
 
 def _make_structured_grid(
-    data, method='lagrange3', fields=['thrust', 'fuelflow', 'airflow'], throttle_step=0.05
+    data, method='lagrange3', fields=['thrust', 'fuelflow', 'airflow'], throttle_step=0.5
 ):
     """Generate a structured grid of unique mach/T4:T2/alt values in the deck."""
     # step size in t4/t2 ratio used in generating the structured grid
@@ -720,11 +744,15 @@ def _setup_EDC_parser(parser):
         choices=list(EngineDeckType),
         help='data format used by input_file',
     )
+    parser.add_argument('--round', action='store_true', help='round data to improve readability')
 
 
 def _exec_EDC(args, user_args):
-    EngineDeckConverter(
-        input_file=args.input_file, output_file=args.output_file, data_format=args.data_format
+    convert_engine_deck(
+        input_file=args.input_file,
+        output_file=args.output_file,
+        data_format=args.data_format,
+        round_data=args.round,
     )
 
 

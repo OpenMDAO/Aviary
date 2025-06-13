@@ -11,6 +11,7 @@ from collections import namedtuple
 
 import dymos as dm
 import openmdao.api as om
+import numpy as np
 
 from aviary.mission.flops_based.ode.energy_ODE import EnergyODE
 from aviary.mission.initial_guess_builders import InitialGuess
@@ -210,6 +211,18 @@ class PhaseBuilderBase(ABC):
                 ode_class=ode_class, transcription=transcription, ode_init_kwargs=kwargs
             )
 
+        # Add a timeseries for the "mission bus variables" that will be a uniform grid, using Falck Magik™.
+        # https://stackoverflow.com/questions/67771242/openmdao-dymos-interpolate-the-results-of-a-phase-onto-an-equispaced-grid
+        if self.is_analytic_phase:
+            tx_mission_bus = dm.GaussLobatto(num_segments=self.num_nodes, order=3, compressed=True)
+        else:
+            tx_mission_bus = dm.GaussLobatto(
+                num_segments=transcription.options['num_segments'], order=3, compressed=True
+            )
+        phase.add_timeseries(
+            name='mission_bus_variables', transcription=tx_mission_bus, subset='all'
+        )
+
         # overrides should add state, controls, etc.
         return phase
 
@@ -383,8 +396,8 @@ class PhaseBuilderBase(ABC):
     def set_time_options(self, user_options, targets=[]):
         """Set time options: fix_initial flag, duration upper bounds, duration reference."""
         fix_initial = user_options.get_val('fix_initial')
-        duration_bounds = user_options.get_val('duration_bounds', units='s')
-        duration_ref = user_options.get_val('duration_ref', units='s')
+        duration_bounds = user_options.get_val('time_duration_bounds', units='s')
+        duration_ref = user_options.get_val('time_duration_ref', units='s')
 
         self.phase.set_time_options(
             fix_initial=fix_initial,
@@ -393,6 +406,121 @@ class PhaseBuilderBase(ABC):
             targets=targets,
             duration_ref=duration_ref,
         )
+
+    def add_state(self, name, target, rate_source):
+        """
+        Add a state to this phase using the options in the phase_info.
+
+        Parameters
+        ----------
+        name : str
+            The name of this state in the phase_info options.
+        target : str
+            State promoted variable path to the ODE.
+        rate_source : str
+            Source of the state rate in the ODE.
+        """
+        options = self.user_options
+
+        initial, _ = options[f'{name}_initial']
+        final, _ = options[f'{name}_final']
+        bounds, units = options[f'{name}_bounds']
+        ref, _ = options[f'{name}_ref']
+        ref0, _ = options[f'{name}_ref0']
+        defect_ref, _ = options[f'{name}_defect_ref']
+        solve_segments = options[f'{name}_solve_segments']
+
+        # If a value is specified for the starting node, then fix_initial is True.
+        # Otherwise, input_initial is True.
+        # The problem configurator may change input_initial to False requested or necessary, (e.g.,
+        # for parallel phases in MPI.)
+
+        self.phase.add_state(
+            target,
+            fix_initial=initial is not None,
+            input_initial=initial is None,
+            fix_final=final is not None,
+            lower=bounds[0],
+            upper=bounds[1],
+            units=units,
+            rate_source=rate_source,
+            ref=ref,
+            ref0=ref0,
+            defect_ref=defect_ref,
+            solve_segments='forward' if solve_segments else None,
+        )
+
+    def add_control(self, name, target, rate_targets, rate2_targets=None, add_constraints=True):
+        """
+        Add a control to this phase using the options in the phase-info.
+
+        Parameters
+        ----------
+        name : str
+            The name of this control in the phase_info options.
+        target : str
+            Control promoted variable path to the ODE.
+        rate_source : list of str
+            List of rate targets for this control.
+        rate2_targets : Sequence of str or None
+            (Optional) The parameter in the ODE to which the control 2nd derivative is connected.
+        add_constraints : bool
+            When True, add constraints on any declared initial and final values if this control is
+            being optimized. Default is True.
+        """
+        options = self.user_options
+        phase = self.phase
+
+        initial, _ = options[f'{name}_initial']
+        final, _ = options[f'{name}_final']
+        bounds, units = options[f'{name}_bounds']
+        ref, _ = options[f'{name}_ref']
+        ref0, _ = options[f'{name}_ref0']
+        polynomial_order = options[f'{name}_polynomial_order']
+        opt = options[f'{name}_optimize']
+
+        if ref == 1.0:
+            # This has not been moved from default, so find a good value.
+            candidates = [x for x in (bounds[0], bounds[1], initial, final) if x is not None]
+            if len(candidates) > 0:
+                ref = np.max(np.abs(np.array(candidates)))
+
+        extra_options = {}
+        if polynomial_order is not None:
+            extra_options['control_type'] = 'polynomial'
+            extra_options['order'] = polynomial_order
+
+        if opt is True:
+            extra_options['lower'] = bounds[0]
+            extra_options['upper'] = bounds[1]
+            extra_options['ref'] = ref
+            extra_options['ref0'] = ref0
+
+        if units not in ['unitless', None]:
+            extra_options['units'] = units
+
+        if rate2_targets is not None:
+            extra_options['rate2_targets'] = rate2_targets
+
+        phase.add_control(
+            target, targets=target, rate_targets=rate_targets, opt=opt, **extra_options
+        )
+
+        # Add timeseries for any control.
+        phase.add_timeseries_output(target)
+
+        if not add_constraints:
+            return
+
+        # Add a initial constraint.
+        if opt and initial is not None:
+            phase.add_boundary_constraint(
+                target, loc='initial', equals=initial, units=units, ref=ref
+            )
+
+        # Add a final constraint.
+        if opt and final is not None:
+            phase.add_boundary_constraint(target, loc='final', equals=final, units=units, ref=ref)
 
     def add_velocity_state(self, user_options):
         """Add velocity state: lower and upper bounds, reference, zero-reference, and state defect reference."""
@@ -497,7 +625,7 @@ class PhaseBuilderBase(ABC):
 
     def add_altitude_constraint(self, user_options):
         """Add altitude constraint: final altitude and altitude constraint reference."""
-        final_altitude = user_options.get_val('final_altitude', units='ft')
+        final_altitude = user_options.get_val('altitude_final', units='ft')
         alt_constraint_ref = user_options.get_val('alt_constraint_ref', units='ft')
         self.phase.add_boundary_constraint(
             Dynamic.Mission.ALTITUDE,

@@ -140,7 +140,7 @@ class MultiMissionProblem(om.Problem):
         )
         # weighted_str looks like: fuel_0 * weight[0] + fuel_1 * weight[1]
         # note that the fuel objective itself is the base aviary fuel objective
-        # which is also a function of climb time becuse climb is not very sensitive to fuel
+        # which is also a function of climb time because climb is not very sensitive to fuel
 
         # adding compound execComp to super problem
         self.model.add_subsystem(
@@ -244,8 +244,8 @@ def large_single_aisle_example(makeN2=False, show_plots=False):
     for phaseinfo in phase_infos:
         for key in phaseinfo.keys():
             if 'user_options' in phaseinfo[key].keys():
-                phaseinfo[key]['user_options']['optimize_mach'] = optmach
-                phaseinfo[key]['user_options']['optimize_altitude'] = optalt
+                phaseinfo[key]['user_options']['mach_optimize'] = optmach
+                phaseinfo[key]['user_options']['altitude_optimize'] = optalt
 
     # how much each mission should be valued by the optimizer, larger numbers = more significance
     weights = [9, 1]

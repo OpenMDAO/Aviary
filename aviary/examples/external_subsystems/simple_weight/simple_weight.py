@@ -1,6 +1,6 @@
 """
 This is a simplified example of a component that computes a weight for the
-wing and horiztonal tail. The calculation is nonsensical, but it shows how
+wing and horizontal tail. The calculation is nonsensical, but it shows how
 a basic external subsystem an use hierarchy inputs and set new values for
 parts of the weight calculation.
 

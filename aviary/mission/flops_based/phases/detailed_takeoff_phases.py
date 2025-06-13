@@ -98,7 +98,7 @@ class TakeoffBrakeReleaseToDecisionSpeedOptions(AviaryOptionsDictionary):
         )
 
         self.declare(
-            name='duration_ref', default=10.0, units='s', desc='Scale factor ref for duration.'
+            name='time_duration_ref', default=10.0, units='s', desc='Scale factor ref for duration.'
         )
 
         self.declare(
@@ -127,7 +127,7 @@ class TakeoffBrakeReleaseToDecisionSpeed(PhaseBuilderBase):
 
         supported options:
             - max_duration (1000.0, 's')
-            - duration_ref (10.0, 's')
+            - time_duration_ref (10.0, 's')
             - distance_max (1000.0, 'ft')
             - max_velocity (100.0, 'ft/s')
 
@@ -192,7 +192,7 @@ class TakeoffBrakeReleaseToDecisionSpeed(PhaseBuilderBase):
         user_options: AviaryValues = self.user_options
 
         max_duration, units = user_options['max_duration']
-        duration_ref = user_options.get_val('duration_ref', units)
+        duration_ref = user_options.get_val('time_duration_ref', units)
 
         phase.set_time_options(
             fix_initial=True,
@@ -287,11 +287,11 @@ class TakeoffDecisionSpeedToRotateOptions(AviaryOptionsDictionary):
         )
 
         self.declare(
-            name='duration_ref', default=1.0, units='s', desc='Scale factor ref for duration.'
+            name='time_duration_ref', default=1.0, units='s', desc='Scale factor ref for duration.'
         )
 
         self.declare(
-            name='initial_ref',
+            name='time_initial_ref',
             default=10.0,
             units='s',
             desc='Scale factor ref for the phase starting time.',
@@ -322,8 +322,8 @@ class TakeoffDecisionSpeedToRotate(PhaseBuilderBase):
 
         supported options:
             - max_duration (1000.0, 's')
-            - duration_ref (1.0, 's')
-            - initial_ref (10.0, 's')
+            - time_duration_ref (1.0, 's')
+            - time_initial_ref (10.0, 's')
             - distance_max (1000.0, 'ft')
             - max_velocity (100.0, 'ft/s')
 
@@ -389,8 +389,8 @@ class TakeoffDecisionSpeedToRotate(PhaseBuilderBase):
         user_options: AviaryValues = self.user_options
 
         max_duration, units = user_options['max_duration']
-        duration_ref = user_options.get_val('duration_ref', units)
-        initial_ref = user_options.get_val('initial_ref', units)
+        duration_ref = user_options.get_val('time_duration_ref', units)
+        initial_ref = user_options.get_val('time_initial_ref', units)
 
         phase.set_time_options(
             fix_initial=False,
@@ -494,11 +494,11 @@ class TakeoffDecisionSpeedBrakeDelayOptions(AviaryOptionsDictionary):
         )
 
         self.declare(
-            name='duration_ref', default=1.0, units='s', desc='Scale factor ref for duration.'
+            name='time_duration_ref', default=1.0, units='s', desc='Scale factor ref for duration.'
         )
 
         self.declare(
-            name='initial_ref',
+            name='time_initial_ref',
             default=10.0,
             units='s',
             desc='Scale factor ref for the phase starting time.',
@@ -529,8 +529,8 @@ class TakeoffDecisionSpeedBrakeDelay(TakeoffDecisionSpeedToRotate):
 
         supported options:
             - max_duration (1000.0, 's')
-            - duration_ref (1.0, 's')
-            - initial_ref (10.0, 's')
+            - time_duration_ref (1.0, 's')
+            - time_initial_ref (10.0, 's')
             - distance_max (1000.0, 'ft')
             - max_velocity (100.0, 'ft/s')
 
@@ -611,11 +611,11 @@ class TakeoffRotateToLiftoffOptions(AviaryOptionsDictionary):
         )
 
         self.declare(
-            name='duration_ref', default=1.0, units='s', desc='Scale factor ref for duration.'
+            name='time_duration_ref', default=1.0, units='s', desc='Scale factor ref for duration.'
         )
 
         self.declare(
-            name='initial_ref',
+            name='time_initial_ref',
             default=10.0,
             units='s',
             desc='Scale factor ref for the phase starting time.',
@@ -652,8 +652,8 @@ class TakeoffRotateToLiftoff(PhaseBuilderBase):
 
         supported options:
             - max_duration (5.0, 's')
-            - duration_ref (1.0, 's')
-            - initial_ref (10.0, 's')
+            - time_duration_ref (1.0, 's')
+            - time_initial_ref (10.0, 's')
             - distance_max (1000.0, 'ft')
             - max_velocity (100.0, 'ft/s')
             - max_angle_of_attack (10.0, 'deg')
@@ -720,8 +720,8 @@ class TakeoffRotateToLiftoff(PhaseBuilderBase):
         user_options: AviaryValues = self.user_options
 
         max_duration, units = user_options['max_duration']
-        duration_ref = user_options.get_val('duration_ref', units)
-        initial_ref = user_options.get_val('initial_ref', units)
+        duration_ref = user_options.get_val('time_duration_ref', units)
+        initial_ref = user_options.get_val('time_initial_ref', units)
 
         phase.set_time_options(
             fix_initial=False,
@@ -833,11 +833,11 @@ class TakeoffLiftoffToObstacleOptions(AviaryOptionsDictionary):
         )
 
         self.declare(
-            name='duration_ref', default=1.0, units='s', desc='Scale factor ref for duration.'
+            name='time_duration_ref', default=1.0, units='s', desc='Scale factor ref for duration.'
         )
 
         self.declare(
-            name='initial_ref',
+            name='time_initial_ref',
             default=10.0,
             units='s',
             desc='Scale factor ref for the phase starting time.',
@@ -901,8 +901,8 @@ class TakeoffLiftoffToObstacle(PhaseBuilderBase):
 
         supported options:
             - max_duration (100.0, 's')
-            - duration_ref (1.0, 's')
-            - initial_ref (10.0, 's')
+            - time_duration_ref (1.0, 's')
+            - time_initial_ref (10.0, 's')
             - distance_max (1000.0, 'ft')
             - max_velocity (100.0, 'ft/s')
             - altitude_ref (1.0, 'ft')
@@ -975,8 +975,8 @@ class TakeoffLiftoffToObstacle(PhaseBuilderBase):
         user_options: AviaryValues = self.user_options
 
         max_duration, units = user_options['max_duration']
-        duration_ref = user_options.get_val('duration_ref', units)
-        initial_ref = user_options.get_val('initial_ref', units)
+        duration_ref = user_options.get_val('time_duration_ref', units)
+        initial_ref = user_options.get_val('time_initial_ref', units)
 
         phase.set_time_options(
             fix_initial=False,
@@ -1140,11 +1140,11 @@ class TakeoffObstacleToMicP2Options(AviaryOptionsDictionary):
         )
 
         self.declare(
-            name='duration_ref', default=1.0, units='s', desc='Scale factor ref for duration.'
+            name='time_duration_ref', default=1.0, units='s', desc='Scale factor ref for duration.'
         )
 
         self.declare(
-            name='initial_ref',
+            name='time_initial_ref',
             default=10.0,
             units='s',
             desc='Scale factor ref for the phase starting time.',
@@ -1212,8 +1212,8 @@ class TakeoffObstacleToMicP2(PhaseBuilderBase):
 
         supported options:
             - max_duration (100.0, 's')
-            - duration_ref (1.0, 's')
-            - initial_ref (10.0, 's')
+            - time_duration_ref (1.0, 's')
+            - time_initial_ref (10.0, 's')
             - distance_max (1000.0, 'ft')
             - max_velocity (100.0, 'ft/s')
             - altitude_ref (1.0, 'ft')
@@ -1287,8 +1287,8 @@ class TakeoffObstacleToMicP2(PhaseBuilderBase):
         user_options: AviaryValues = self.user_options
 
         max_duration, units = user_options['max_duration']
-        duration_ref = user_options.get_val('duration_ref', units)
-        initial_ref = user_options.get_val('initial_ref', units)
+        duration_ref = user_options.get_val('time_duration_ref', units)
+        initial_ref = user_options.get_val('time_initial_ref', units)
 
         phase.set_time_options(
             fix_initial=False,
@@ -1444,11 +1444,11 @@ class TakeoffMicP2ToEngineCutbackOptions(AviaryOptionsDictionary):
         )
 
         self.declare(
-            name='duration_ref', default=1.0, units='s', desc='Scale factor ref for duration.'
+            name='time_duration_ref', default=1.0, units='s', desc='Scale factor ref for duration.'
         )
 
         self.declare(
-            name='initial_ref',
+            name='time_initial_ref',
             default=10.0,
             units='s',
             desc='Scale factor ref for the phase starting time.',
@@ -1516,8 +1516,8 @@ class TakeoffMicP2ToEngineCutback(PhaseBuilderBase):
 
         supported options:
             - max_duration (100.0, 's')
-            - duration_ref (1.0, 's')
-            - initial_ref (10.0, 's')
+            - time_duration_ref (1.0, 's')
+            - time_initial_ref (10.0, 's')
             - distance_max (1000.0, 'ft')
             - max_velocity (100.0, 'ft/s')
             - altitude_ref (1.0, 'ft')
@@ -1591,8 +1591,8 @@ class TakeoffMicP2ToEngineCutback(PhaseBuilderBase):
         user_options: AviaryValues = self.user_options
 
         max_duration, units = user_options['max_duration']
-        duration_ref = user_options.get_val('duration_ref', units)
-        initial_ref = user_options.get_val('initial_ref', units)
+        duration_ref = user_options.get_val('time_duration_ref', units)
+        initial_ref = user_options.get_val('time_initial_ref', units)
 
         phase.set_time_options(
             fix_initial=False,
@@ -1741,7 +1741,7 @@ TakeoffMicP2ToEngineCutback._add_initial_guess_meta_data(
 class TakeoffEngineCutbackOptions(AviaryOptionsDictionary):
     def declare_options(self):
         self.declare(
-            name='initial_ref',
+            name='time_initial_ref',
             default=10.0,
             units='s',
             desc='Scale factor ref for the phase starting time.',
@@ -1804,7 +1804,7 @@ class TakeoffEngineCutback(PhaseBuilderBase):
         state/path constraint values and flags
 
         supported options:
-            - initial_ref (10.0, 's')
+            - time_initial_ref (10.0, 's')
             - distance_max (1000.0, 'ft')
             - max_velocity (100.0, 'ft/s')
             - altitude_ref (1.0, 'ft')
@@ -1876,7 +1876,7 @@ class TakeoffEngineCutback(PhaseBuilderBase):
 
         user_options: AviaryValues = self.user_options
 
-        initial_ref, units = user_options['initial_ref']
+        initial_ref, units = user_options['time_initial_ref']
 
         phase.set_time_options(
             fix_initial=False,
@@ -2016,11 +2016,11 @@ class TakeoffEngineCutbackToMicP1Options(AviaryOptionsDictionary):
         )
 
         self.declare(
-            name='duration_ref', default=1.0, units='s', desc='Scale factor ref for duration.'
+            name='time_duration_ref', default=1.0, units='s', desc='Scale factor ref for duration.'
         )
 
         self.declare(
-            name='initial_ref',
+            name='time_initial_ref',
             default=10.0,
             units='s',
             desc='Scale factor ref for the phase starting time.',
@@ -2088,8 +2088,8 @@ class TakeoffEngineCutbackToMicP1(PhaseBuilderBase):
 
         supported options:
             - max_duration (100.0, 's')
-            - duration_ref (1.0, 's')
-            - initial_ref (10.0, 's')
+            - time_duration_ref (1.0, 's')
+            - time_initial_ref (10.0, 's')
             - distance_max (1000.0, 'ft')
             - max_velocity (100.0, 'ft/s')
             - altitude_ref (1.0, 'ft')
@@ -2163,8 +2163,8 @@ class TakeoffEngineCutbackToMicP1(PhaseBuilderBase):
         user_options: AviaryValues = self.user_options
 
         max_duration, units = user_options['max_duration']
-        duration_ref = user_options.get_val('duration_ref', units)
-        initial_ref = user_options.get_val('initial_ref', units)
+        duration_ref = user_options.get_val('time_duration_ref', units)
+        initial_ref = user_options.get_val('time_initial_ref', units)
 
         phase.set_time_options(
             fix_initial=False,
@@ -2316,11 +2316,11 @@ class TakeoffMicP1ToClimbOptions(AviaryOptionsDictionary):
         )
 
         self.declare(
-            name='duration_ref', default=1.0, units='s', desc='Scale factor ref for duration.'
+            name='time_duration_ref', default=1.0, units='s', desc='Scale factor ref for duration.'
         )
 
         self.declare(
-            name='initial_ref',
+            name='time_initial_ref',
             default=10.0,
             units='s',
             desc='Scale factor ref for the phase starting time.',
@@ -2388,8 +2388,8 @@ class TakeoffMicP1ToClimb(PhaseBuilderBase):
 
         supported options:
             - max_duration (100.0, 's')
-            - duration_ref (1.0, 's')
-            - initial_ref (10.0, 's')
+            - time_duration_ref (1.0, 's')
+            - time_initial_ref (10.0, 's')
             - distance_max (1000.0, 'ft')
             - max_velocity (100.0, 'ft/s')
             - altitude_ref (1.0, 'ft')
@@ -2463,8 +2463,8 @@ class TakeoffMicP1ToClimb(PhaseBuilderBase):
         user_options: AviaryValues = self.user_options
 
         max_duration, units = user_options['max_duration']
-        duration_ref = user_options.get_val('duration_ref', units)
-        initial_ref = user_options.get_val('initial_ref', units)
+        duration_ref = user_options.get_val('time_duration_ref', units)
+        initial_ref = user_options.get_val('time_initial_ref', units)
 
         phase.set_time_options(
             fix_initial=False,
@@ -2616,11 +2616,11 @@ class TakeoffBrakeToAbortOptions(AviaryOptionsDictionary):
         )
 
         self.declare(
-            name='duration_ref', default=1.0, units='s', desc='Scale factor ref for duration.'
+            name='time_duration_ref', default=1.0, units='s', desc='Scale factor ref for duration.'
         )
 
         self.declare(
-            name='initial_ref',
+            name='time_initial_ref',
             default=10.0,
             units='s',
             desc='Scale factor ref for the phase starting time.',
@@ -2651,8 +2651,8 @@ class TakeoffBrakeToAbort(PhaseBuilderBase):
 
         supported options:
             - max_duration (1000.0, 's')
-            - duration_ref (1.0, 's')
-            - initial_ref (10.0, 's')
+            - time_duration_ref (1.0, 's')
+            - time_initial_ref (10.0, 's')
             - distance_max (1000.0, 'ft')
             - max_velocity (100.0, 'ft/s')
 
@@ -2718,8 +2718,8 @@ class TakeoffBrakeToAbort(PhaseBuilderBase):
         user_options: AviaryValues = self.user_options
 
         max_duration, units = user_options['max_duration']
-        duration_ref = user_options.get_val('duration_ref', units)
-        initial_ref = user_options.get_val('initial_ref', units)
+        duration_ref = user_options.get_val('time_duration_ref', units)
+        initial_ref = user_options.get_val('time_initial_ref', units)
 
         phase.set_time_options(
             fix_initial=False,
@@ -2996,12 +2996,9 @@ class TakeoffTrajectory:
 
             aero = CoreAerodynamicsBuilder('core_aerodynamics', BaseMetaData, LegacyCode('FLOPS'))
 
-            phase_info = {}
-            phase_info['subsystem_options'] = {}
-            phase_info['subsystem_options']['core_aerodynamics'] = {}
-            phase_info['subsystem_options']['core_aerodynamics']['method'] = 'low_speed'
+            kwargs = {'method': 'low_speed'}
 
-            params = aero.get_parameters(aviary_options, phase_info)
+            params = aero.get_parameters(aviary_options, **kwargs)
 
             # takeoff introduces this one.
             params[Mission.Takeoff.LIFT_COEFFICIENT_MAX] = {

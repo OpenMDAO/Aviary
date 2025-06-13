@@ -122,7 +122,7 @@ class CoreGeometryBuilder(GeometryBuilderBase):
         if method != 'external':
             geom_group = super().build_mission(num_nodes, aviary_inputs)
 
-        geom_group
+        return geom_group
 
     def get_parameters(self, aviary_inputs=None, phase_info=None):
         num_engine_type = len(aviary_inputs.get_val(Aircraft.Engine.NUM_ENGINES))
@@ -133,7 +133,10 @@ class CoreGeometryBuilder(GeometryBuilderBase):
                 var = getattr(Aircraft.Nacelle, entry)
                 if var in aviary_inputs:
                     if 'total' not in var:
-                        params[var] = {'shape': (num_engine_type), 'static_target': True}
+                        params[var] = {
+                            'shape': (num_engine_type),
+                            'static_target': True,
+                        }
 
         return params
 

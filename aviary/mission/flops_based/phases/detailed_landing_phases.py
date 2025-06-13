@@ -59,11 +59,11 @@ class LandingApproachToMicP3Options(AviaryOptionsDictionary):
         )
 
         self.declare(
-            name='duration_ref', default=1.0, units='s', desc='Scale factor ref for duration.'
+            name='time_duration_ref', default=1.0, units='s', desc='Scale factor ref for duration.'
         )
 
         self.declare(
-            name='initial_ref',
+            name='time_initial_ref',
             default=10.0,
             units='s',
             desc='Scale factor ref for the phase starting time.',
@@ -124,8 +124,8 @@ class LandingApproachToMicP3(PhaseBuilderBase):
 
         supported options:
             - max_duration (100.0, 's')
-            - duration_ref (1.0, 's')
-            - initial_ref (10.0, 's')
+            - time_duration_ref (1.0, 's')
+            - time_initial_ref (10.0, 's')
             - distance_max (1000.0, 'ft')
             - max_velocity (100.0, 'ft/s')
             - altitude_ref (1.0, 'ft')
@@ -197,8 +197,8 @@ class LandingApproachToMicP3(PhaseBuilderBase):
         user_options: AviaryValues = self.user_options
 
         max_duration, units = user_options['max_duration']
-        duration_ref = user_options.get_val('duration_ref', units)
-        initial_ref = user_options.get_val('initial_ref', units)
+        duration_ref = user_options.get_val('time_duration_ref', units)
+        initial_ref = user_options.get_val('time_initial_ref', units)
 
         phase.set_time_options(
             duration_bounds=(1, max_duration),
@@ -346,8 +346,8 @@ class LandingMicP3ToObstacle(LandingApproachToMicP3):
 
         supported options:
             - max_duration (100.0, 's')
-            - duration_ref (1.0, 's')
-            - initial_ref (10.0, 's')
+            - time_duration_ref (1.0, 's')
+            - time_initial_ref (10.0, 's')
             - distance_max (1000.0, 'ft')
             - max_velocity (100.0, 'ft/s')
             - altitude_ref (1.0, 'ft')
@@ -654,11 +654,11 @@ class LandingFlareToTouchdownOptions(AviaryOptionsDictionary):
         )
 
         self.declare(
-            name='duration_ref', default=1.0, units='s', desc='Scale factor ref for duration.'
+            name='time_duration_ref', default=1.0, units='s', desc='Scale factor ref for duration.'
         )
 
         self.declare(
-            name='initial_ref',
+            name='time_initial_ref',
             default=10.0,
             units='s',
             desc='Scale factor ref for the phase starting time.',
@@ -715,8 +715,8 @@ class LandingFlareToTouchdown(PhaseBuilderBase):
 
         supported options:
             - max_duration (100.0, 's')
-            - duration_ref (1.0, 's')
-            - initial_ref (10.0, 's')
+            - time_duration_ref (1.0, 's')
+            - time_initial_ref (10.0, 's')
             - distance_max (1000.0, 'ft')
             - max_velocity (100.0, 'ft/s')
             - altitude_ref (1.0, 'ft')
@@ -788,8 +788,8 @@ class LandingFlareToTouchdown(PhaseBuilderBase):
         user_options: AviaryValues = self.user_options
 
         max_duration, units = user_options['max_duration']
-        duration_ref = user_options.get_val('duration_ref', units)
-        initial_ref = user_options.get_val('initial_ref', units)
+        duration_ref = user_options.get_val('time_duration_ref', units)
+        initial_ref = user_options.get_val('time_initial_ref', units)
 
         phase.set_time_options(
             fix_initial=False,
@@ -929,11 +929,11 @@ class LandingTouchdownToNoseDownOptions(AviaryOptionsDictionary):
         )
 
         self.declare(
-            name='duration_ref', default=1.0, units='s', desc='Scale factor ref for duration.'
+            name='time_duration_ref', default=1.0, units='s', desc='Scale factor ref for duration.'
         )
 
         self.declare(
-            name='initial_ref',
+            name='time_initial_ref',
             default=10.0,
             units='s',
             desc='Scale factor ref for the phase starting time.',
@@ -974,8 +974,8 @@ class LandingTouchdownToNoseDown(PhaseBuilderBase):
 
         supported options:
             - max_duration (5.0, 's')
-            - duration_ref (1.0, 's')
-            - initial_ref (10.0, 's')
+            - time_duration_ref (1.0, 's')
+            - time_initial_ref (10.0, 's')
             - distance_max (1000.0, 'ft')
             - max_velocity (100.0, 'ft/s')
             - max_angle_of_attack (10.0, 'deg')
@@ -1042,8 +1042,8 @@ class LandingTouchdownToNoseDown(PhaseBuilderBase):
         user_options: AviaryValues = self.user_options
 
         max_duration, units = user_options['max_duration']
-        duration_ref = user_options.get_val('duration_ref', units)
-        initial_ref = user_options.get_val('initial_ref', units)
+        duration_ref = user_options.get_val('time_duration_ref', units)
+        initial_ref = user_options.get_val('time_initial_ref', units)
 
         phase.set_time_options(
             fix_initial=False,
@@ -1150,11 +1150,11 @@ class LandingNoseDownToStopOptions(AviaryOptionsDictionary):
         )
 
         self.declare(
-            name='duration_ref', default=10.0, units='s', desc='Scale factor ref for duration.'
+            name='time_duration_ref', default=10.0, units='s', desc='Scale factor ref for duration.'
         )
 
         self.declare(
-            name='initial_ref',
+            name='time_initial_ref',
             default=10.0,
             units='s',
             desc='Scale factor ref for the phase starting time.',
@@ -1184,7 +1184,7 @@ class LandingNoseDownToStop(PhaseBuilderBase):
 
         supported options:
             - max_duration
-            - duration_ref
+            - time_duration_ref
             - distance_max
             - max_velocity
 
@@ -1250,8 +1250,8 @@ class LandingNoseDownToStop(PhaseBuilderBase):
         user_options: AviaryValues = self.user_options
 
         max_duration, units = user_options['max_duration']
-        duration_ref = user_options.get_val('duration_ref', units)
-        initial_ref = user_options.get_val('initial_ref', units)
+        duration_ref = user_options.get_val('time_duration_ref', units)
+        initial_ref = user_options.get_val('time_initial_ref', units)
 
         phase.set_time_options(
             fix_initial=False,
@@ -1474,9 +1474,9 @@ class LandingTrajectory:
 
             aero = CoreAerodynamicsBuilder('core_aerodynamics', BaseMetaData, LegacyCode('FLOPS'))
 
-            phase_info = {'subsystem_options': {'core_aerodynamics': {'method': 'low_speed'}}}
+            args = {'method': 'low_speed'}
 
-            params = aero.get_parameters(aviary_options, phase_info)
+            params = aero.get_parameters(aviary_options, **args)
 
             # takeoff introduces this one.
             params[Mission.Landing.LIFT_COEFFICIENT_MAX] = {

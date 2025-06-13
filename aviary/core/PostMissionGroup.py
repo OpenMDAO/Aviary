@@ -8,7 +8,7 @@ class PostMissionGroup(om.Group):
 
     def configure(self):
         """
-        Congigure this group for post-mission.
+        Configure this group for post-mission.
         Promote aircraft and mission variables.
         """
         promote_aircraft_and_mission_vars(self)

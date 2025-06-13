@@ -62,8 +62,7 @@ from aviary.interface.default_phase_info.height_energy import (
 from aviary.interface.methods_for_level1 import run_level_1
 from aviary.interface.methods_for_level1 import run_aviary
 from aviary.interface.methods_for_level2 import AviaryProblem
-from aviary.interface.utils.check_phase_info import check_phase_info
-from aviary.utils.engine_deck_conversion import EngineDeckConverter
+from aviary.utils.engine_deck_conversion import convert_engine_deck
 from aviary.utils.fortran_to_aviary import fortran_to_aviary
 from aviary.utils.functions import (
     get_path,
