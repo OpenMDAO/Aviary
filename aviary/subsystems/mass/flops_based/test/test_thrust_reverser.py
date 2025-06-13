@@ -60,7 +60,7 @@ class ThrustReverserMassTest(unittest.TestCase):
         engine_options = AviaryValues()
         engine_options.set_val(Settings.VERBOSITY, 0)
         engine_options.set_val(Aircraft.Engine.NUM_ENGINES, 2)
-        engine_options.set_val(Aircraft.Engine.DATA_FILE, 'models/engines/turbofan_28k.deck')
+        engine_options.set_val(Aircraft.Engine.DATA_FILE, 'models/engines/turbofan_28k.csv')
         engineModel1 = EngineDeck(options=engine_options)
         engine_options.set_val(Aircraft.Engine.NUM_ENGINES, 2)
         engineModel2 = EngineDeck(options=engine_options)

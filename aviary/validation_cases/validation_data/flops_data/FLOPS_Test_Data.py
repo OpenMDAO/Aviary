@@ -13,7 +13,7 @@ from aviary.models.large_single_aisle_2.large_single_aisle_2_FLOPS_data import (
 from aviary.models.multi_engine_single_aisle.multi_engine_single_aisle_data import (
     MultiEngineSingleAisle,
 )
-from aviary.models.N3CC.N3CC_data import N3CC
+from aviary.models.advanced_single_aisle.advanced_single_aisle_data import N3CC
 
 FLOPS_Test_Data = {}
 

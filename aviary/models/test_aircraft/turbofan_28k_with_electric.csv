@@ -1,5 +1,5 @@
 # created 04/22/25
-# custom engine deck derived from turbofan_28k.deck, modified to have arbitrary electric power consumption
+# custom engine deck derived from turbofan_28k.csv, modified to have arbitrary electric power consumption
 # NOTE: this engine is for example/testing purposes only, and does not represent a realistic hybrid-electric turbofan
 
 Mach_Number, Altitude (ft),   Throttle, Gross_Thrust (lbf), Ram_Drag (lbf), Fuel_Flow (lb/h), NOx_Rate (lb/h), Electric_Power (kW)

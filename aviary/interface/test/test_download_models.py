@@ -27,11 +27,11 @@ class CommandEntryPointsTestCases(unittest.TestCase):
             self.assertTrue(path.exists())
 
     def test_single_file_without_path(self):
-        filename = 'turbofan_22k.deck'
+        filename = 'turbofan_22k.csv'
         self.run_and_test_hangar(filename)
 
     def test_single_file_with_path(self):
-        filename = 'engines/turbofan_22k.deck'
+        filename = 'engines/turbofan_22k.csv'
         self.run_and_test_hangar(filename)
 
     def test_multiple_files(self):

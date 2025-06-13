@@ -5,7 +5,7 @@ import unittest
 
 from openmdao.utils.assert_utils import assert_near_equal
 
-from aviary.examples.external_subsystems.engine_NPSS.define_simple_engine_problem import (
+from aviary.examples.external_subsystems.engine_NPSS.NPSS_model_example import (
     define_aviary_NPSS_problem,
 )
 

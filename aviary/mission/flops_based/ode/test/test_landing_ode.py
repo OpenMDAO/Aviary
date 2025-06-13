@@ -3,7 +3,11 @@ import unittest
 import openmdao.api as om
 
 from aviary.mission.flops_based.ode.landing_ode import FlareODE
-from aviary.models.N3CC.N3CC_data import detailed_landing_flare, inputs, landing_subsystem_options
+from aviary.models.advanced_single_aisle.advanced_single_aisle_data import (
+    detailed_landing_flare,
+    inputs,
+    landing_subsystem_options,
+)
 from aviary.subsystems.propulsion.utils import build_engine_deck
 from aviary.utils.aviary_values import AviaryValues
 from aviary.utils.functions import set_aviary_initial_values

@@ -148,7 +148,7 @@ inputs.set_val(Aircraft.Propulsion.ENGINE_OIL_MASS_SCALER, 1.0)
 inputs.set_val(Aircraft.Propulsion.MISC_MASS_SCALER, 1.0)
 
 # Engine 1: turbofan_28k
-filename = get_path('models/engines/turbofan_28k.deck')
+filename = get_path('models/engines/turbofan_28k.csv')
 
 engine_1_inputs = AviaryValues()
 engine_1_inputs.set_val(Aircraft.Engine.DATA_FILE, filename)
@@ -181,7 +181,7 @@ engine_1_inputs.set_val(Aircraft.Engine.INTERPOLATION_METHOD, 'slinear')
 engine_1_inputs.set_val(Mission.Summary.FUEL_FLOW_SCALER, 1.0)
 
 # Engine 2:
-filename = get_path('models/engines/turbofan_22k.deck')
+filename = get_path('models/engines/turbofan_22k.csv')
 
 engine_2_inputs = AviaryValues()
 engine_2_inputs.set_val(Aircraft.Engine.DATA_FILE, filename)

@@ -17,7 +17,7 @@ from openmdao.utils.testing_utils import use_tempdirs
 from openmdao.utils.testing_utils import require_pyoptsparse
 
 from aviary.interface.methods_for_level2 import AviaryProblem
-from aviary.models.N3CC.phase_info import phase_info
+from aviary.models.advanced_single_aisle.phase_info import phase_info
 from aviary.utils.test_utils.assert_utils import warn_timeseries_near_equal
 from aviary.validation_cases.benchmark_utils import compare_against_expected_values
 from aviary.variable_info.variables import Mission

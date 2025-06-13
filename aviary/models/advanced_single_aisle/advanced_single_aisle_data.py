@@ -200,7 +200,7 @@ inputs.set_val(Aircraft.Propulsion.TOTAL_ENGINE_CONTROLS_MASS, 0.0, 'lbm')
 # Must set this to zero if misc_mass is zero.
 inputs.set_val(Aircraft.Propulsion.TOTAL_STARTER_MASS, 0.0, 'lbm')
 
-filename = get_path('models/engines/turbofan_22k.deck')
+filename = get_path('models/engines/turbofan_22k.csv')
 
 inputs.set_val(Aircraft.Engine.DATA_FILE, filename)
 inputs.set_val(Aircraft.Engine.MASS, 6293.8, 'lbm')

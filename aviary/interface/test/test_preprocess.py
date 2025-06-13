@@ -8,7 +8,7 @@ import unittest
 from openmdao.utils.testing_utils import use_tempdirs
 
 from aviary.interface.methods_for_level2 import AviaryProblem
-from aviary.models.N3CC.phase_info import phase_info
+from aviary.models.advanced_single_aisle.phase_info import phase_info
 from aviary.variable_info.variables import Aircraft
 
 

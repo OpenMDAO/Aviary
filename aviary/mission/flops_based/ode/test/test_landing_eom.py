@@ -10,7 +10,10 @@ from aviary.mission.flops_based.ode.landing_eom import (
     GlideSlopeForces,
     GroundSumForces,
 )
-from aviary.models.N3CC.N3CC_data import detailed_landing_flare, inputs
+from aviary.models.advanced_single_aisle.advanced_single_aisle_data import (
+    detailed_landing_flare,
+    inputs,
+)
 from aviary.subsystems.propulsion.utils import build_engine_deck
 from aviary.utils.preprocessors import preprocess_options
 from aviary.utils.test_utils.variable_test import assert_match_varnames

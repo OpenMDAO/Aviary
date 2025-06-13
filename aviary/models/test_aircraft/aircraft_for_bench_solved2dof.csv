@@ -32,7 +32,7 @@ aircraft:design:zero_lift_drag_coeff_factor,0.930890028006548,unitless
 aircraft:electrical:mass_scaler,1.25,unitless
 aircraft:engine:additional_mass_fraction,0.,unitless
 aircraft:engine:constant_fuel_consumption,0.,lbm/h
-aircraft:engine:data_file,models/engines/turbofan_28k.deck,unitless
+aircraft:engine:data_file,models/engines/turbofan_28k.csv,unitless
 aircraft:engine:flight_idle_thrust_fraction,0.0,unitless
 aircraft:engine:flight_idle_max_fraction,1.0,unitless
 aircraft:engine:flight_idle_min_fraction,0.08,unitless

@@ -153,7 +153,7 @@ inputs.set_val(Aircraft.Paint.MASS_PER_UNIT_AREA, 0.07, 'lbm/ft**2')
 inputs.set_val(Aircraft.Propulsion.ENGINE_OIL_MASS_SCALER, 1.0)
 inputs.set_val(Aircraft.Propulsion.MISC_MASS_SCALER, 1.0)
 
-filename = get_path('models/engines/turbofan_24k_1.deck')
+filename = get_path('models/engines/turbofan_24k_1.csv')
 
 inputs.set_val(Aircraft.Engine.DATA_FILE, filename)
 inputs.set_val(Aircraft.Engine.MASS, 8071.35, 'lbm')

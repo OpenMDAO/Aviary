@@ -106,7 +106,7 @@ class hangarTestCases(CommandEntryPointsTestCases):
 class convert_engineTestCases(CommandEntryPointsTestCases):
     def test_GASP_conversion(self):
         filepath = self.get_file('utils/test/data/GASP_turbofan_23k_1.eng')
-        outfile = Path.cwd() / 'turbofan_23k_1_lbm_s.deck'
+        outfile = Path.cwd() / 'turbofan_23k_1.csv'
         cmd = f'aviary convert_engine {filepath} {outfile} -f GASP'
         self.run_and_test_cmd(cmd)
 
