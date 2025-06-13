@@ -1275,9 +1275,6 @@ class LiftCoeff(om.ExplicitComponent):
             kclge,
         ) = inputs.values()
 
-        # clw = kclge * lift_curve_slope * np.pi / 180.0 * (alpha - alpha0) + dCL_flaps_model
-        # outputs['CL_base'] = clw * (1 + lift_ratio)
-        # TODO: The following computation does not include dCL_flaps_model and seems to be an error
         outputs['CL_base'] = kclge * lift_curve_slope * deg2rad(alpha - alpha0) * (1 + lift_ratio)
         outputs['dCL_flaps_full'] = dCL_flaps_model * (1 + lift_ratio)
         outputs['alpha_stall'] = (
