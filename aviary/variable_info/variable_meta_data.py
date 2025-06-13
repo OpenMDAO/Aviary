@@ -8039,6 +8039,17 @@ add_meta_data(
     default_value=Verbosity.BRIEF,
 )
 
+add_meta_data(
+    Settings.PAYLOAD_RANGE,
+    meta_data=_MetaData,
+    historical_name={'GASP': None, 'FLOPS': None, 'LEAPS1': None},
+    units='unitless',
+    option=True,
+    default_value=False,
+    types=bool,
+    desc='if true, aviary runs 2 off design missions and creates a payload range diagram.',
+)
+
 # here we create a copy of the Aviary-core metadata. The reason for this
 # copy is that if we simply imported the Aviary _MetaData in all the
 # external subsystem extensions, we would be modifying the original and

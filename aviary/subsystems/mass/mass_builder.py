@@ -104,6 +104,7 @@ class CoreMassBuilder(MassBuilderBase):
             Aircraft.Canard.MASS,
             Aircraft.Fuselage.MASS,
             Aircraft.LandingGear.TOTAL_MASS,
+            Aircraft.Paint.MASS,
             Aircraft.Nacelle.MASS,
             Aircraft.Design.STRUCTURE_MASS,
             Aircraft.Propulsion.TOTAL_ENGINE_MASS,
@@ -111,7 +112,7 @@ class CoreMassBuilder(MassBuilderBase):
             Aircraft.Propulsion.TOTAL_MISC_MASS,
             Aircraft.Fuel.FUEL_SYSTEM_MASS,
             Aircraft.Propulsion.MASS,
-            Aircraft.Controls.TOTAL_MASS,
+            Aircraft.Wing.SURFACE_CONTROL_MASS,
             Aircraft.APU.MASS,
             Aircraft.Instruments.MASS,
             Aircraft.Hydraulics.MASS,
@@ -137,6 +138,7 @@ class CoreMassBuilder(MassBuilderBase):
             Mission.Design.FUEL_MASS,
             Mission.Summary.TOTAL_FUEL_MASS,
             Mission.Summary.GROSS_MASS,
+            Mission.Summary.RANGE
         ]
 
         with open(filepath, mode='w') as f:

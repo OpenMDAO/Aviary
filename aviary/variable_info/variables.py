@@ -799,3 +799,4 @@ class Settings:
     MASS_METHOD = 'settings:mass_method'
     PROBLEM_TYPE = 'settings:problem_type'
     VERBOSITY = 'settings:verbosity'
+    PAYLOAD_RANGE = 'settings:payload_range'
