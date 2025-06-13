@@ -249,7 +249,7 @@ class SolvedTwoDOFProblemConfigurator(ProblemConfiguratorBase):
         """
         pass
 
-    def add_post_mission_systems(self, prob, include_landing=True):
+    def add_post_mission_systems(self, prob):
         """
         Add any post mission systems.
 
@@ -261,8 +261,6 @@ class SolvedTwoDOFProblemConfigurator(ProblemConfiguratorBase):
         ----------
         prob : AviaryProblem
             Problem that owns this builder.
-        include_landing : bool
-            When True, include the landing systems.
         """
         pass
 
