@@ -1,3 +1,5 @@
+from copy import deepcopy
+
 import numpy as np
 import openmdao.api as om
 from dymos.transcriptions.transcription_base import TranscriptionBase
@@ -11,13 +13,8 @@ from aviary.mission.problem_configurator import ProblemConfiguratorBase
 from aviary.subsystems.propulsion.utils import build_engine_deck
 from aviary.utils.process_input_decks import initialization_guessing
 from aviary.utils.utils import wrapped_convert_units
-from aviary.variable_info.enums import AnalysisScheme, LegacyCode
+from aviary.variable_info.enums import AnalysisScheme, LegacyCode, Verbosity
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
-
-if hasattr(TranscriptionBase, 'setup_polynomial_controls'):
-    use_new_dymos_syntax = False
-else:
-    use_new_dymos_syntax = True
 
 
 class HeightEnergyProblemConfigurator(ProblemConfiguratorBase):
@@ -25,12 +22,6 @@ class HeightEnergyProblemConfigurator(ProblemConfiguratorBase):
     A Height-Energy specific builder that customizes AviaryProblem() for use with
     height energy phases.
     """
-
-    def check_phase_options(self, prob):
-        """Returns the Options Dictionary used to instantiate the phases used by this ODE."""
-        ' This will be used by check_and_preprocess_inputs in M4L2 to ensure that the '
-        ' required inputs are in the phase_info.'
-        return FlightPhaseOptions
 
     def initial_guesses(self, prob):
         """
@@ -200,68 +191,55 @@ class HeightEnergyProblemConfigurator(ProblemConfiguratorBase):
         user_options : dict
             Subdictionary "user_options" from the phase_info.
         """
-        try:
-            fix_initial = user_options.get_val('fix_initial')
-        except KeyError:
-            fix_initial = False
+        time_units = 's'
+        initial = wrapped_convert_units(user_options['time_initial'], time_units)
+        duration = wrapped_convert_units(user_options['time_duration'], time_units)
+        initial_bounds = wrapped_convert_units(user_options['time_initial_bounds'], time_units)
+        duration_bounds = wrapped_convert_units(user_options['time_duration_bounds'], time_units)
+        initial_ref = wrapped_convert_units(user_options['time_initial_ref'], time_units)
+        duration_ref = wrapped_convert_units(user_options['time_duration_ref'], time_units)
 
-        try:
-            fix_duration = user_options.get_val('fix_duration')
-        except KeyError:
-            fix_duration = False
+        fix_initial = initial is not None
+        fix_duration = duration is not None
 
-        time_units = phase.time_options['units']
-
-        # Make a good guess for a reasonable initial time scaler.
-        try:
-            initial_bounds = user_options.get_val('initial_bounds', units=time_units)
-        except KeyError:
-            initial_bounds = (None, None)
-
-        if initial_bounds[0] is not None and initial_bounds[1] != 0.0:
-            # Upper bound is good for a ref.
-            user_options.set_val('initial_ref', initial_bounds[1], units=time_units)
-        else:
-            user_options.set_val('initial_ref', 600.0, time_units)
-
-        duration_bounds = user_options.get_val('duration_bounds', time_units)
-        user_options.set_val(
-            'duration_ref', (duration_bounds[0] + duration_bounds[1]) / 2.0, time_units
-        )
-
-        # The rest of the phases includes all Height Energy method phases
-        # and any 2DOF phases that don't fall into the naming patterns
-        # above.
+        # All follow-on phases.
         input_initial = phase_idx > 0
 
-        if fix_initial or input_initial:
-            if prob.comm.size > 1:
-                # Phases are disconnected to run in parallel, so initial ref is
-                # valid.
-                initial_ref = user_options.get_val('initial_ref', time_units)
+        # Figure out resonable refs if they aren't given.
+        if initial_ref == 1.0:
+            if initial_bounds[1]:
+                initial_ref = initial_bounds[1]
             else:
-                # Redundant on a fixed input; raises a warning if specified.
-                initial_ref = None
-                initial_bounds = (None, None)
+                # TODO: Why were we using this value?
+                initial_ref = 600.0
 
-            phase.set_time_options(
-                fix_initial=fix_initial,
-                fix_duration=fix_duration,
-                units=time_units,
-                duration_bounds=user_options.get_val('duration_bounds', time_units),
-                duration_ref=user_options.get_val('duration_ref', time_units),
-                initial_ref=initial_ref,
-            )
+        if duration_ref == 1.0:
+            # We have been using the average of the bounds if they exist.
+            lower, upper = duration_bounds
+            if lower is not None or upper is not None:
+                if lower is None:
+                    lower = 0.0
+                if upper is None:
+                    upper = 0.0
+                duration_ref = 0.5 * (lower + upper)
+
+        if (fix_initial or input_initial) and prob.comm.size == 1:
+            # Redundant on a fixed input (unless MPI); raises a warning if specified.
+            initial_options = {}
         else:
-            phase.set_time_options(
-                fix_initial=fix_initial,
-                fix_duration=fix_duration,
-                units=time_units,
-                duration_bounds=user_options.get_val('duration_bounds', time_units),
-                duration_ref=user_options.get_val('duration_ref', time_units),
-                initial_bounds=initial_bounds,
-                initial_ref=user_options.get_val('initial_ref', time_units),
-            )
+            initial_options = {
+                'initial_ref': initial_ref,
+                'initial_bounds': initial_bounds,
+            }
+
+        phase.set_time_options(
+            fix_initial=fix_initial,
+            fix_duration=fix_duration,
+            units=time_units,
+            duration_bounds=duration_bounds,
+            duration_ref=duration_ref,
+            **initial_options,
+        )
 
     def link_phases(self, prob, phases, connect_directly=True):
         """
@@ -285,23 +263,23 @@ class HeightEnergyProblemConfigurator(ProblemConfiguratorBase):
         # connect regular_phases with each other if you are optimizing alt or mach
         prob._link_phases_helper_with_options(
             prob.regular_phases,
-            'optimize_altitude',
+            'altitude_optimize',
             Dynamic.Mission.ALTITUDE,
             ref=1.0e4,
         )
         prob._link_phases_helper_with_options(
-            prob.regular_phases, 'optimize_mach', Dynamic.Atmosphere.MACH
+            prob.regular_phases, 'mach_optimize', Dynamic.Atmosphere.MACH
         )
 
         # connect reserve phases with each other if you are optimizing alt or mach
         prob._link_phases_helper_with_options(
             prob.reserve_phases,
-            'optimize_altitude',
+            'altitude_optimize',
             Dynamic.Mission.ALTITUDE,
             ref=1.0e4,
         )
         prob._link_phases_helper_with_options(
-            prob.reserve_phases, 'optimize_mach', Dynamic.Atmosphere.MACH
+            prob.reserve_phases, 'mach_optimize', Dynamic.Atmosphere.MACH
         )
 
         # connect mass and distance between all phases regardless of reserve /
@@ -322,12 +300,61 @@ class HeightEnergyProblemConfigurator(ProblemConfiguratorBase):
             connected=connect_directly,
         )
 
+        # Under MPI, the states aren't directly connected.
+        if not connect_directly:
+            for phase_name in phases[1:]:
+                phase = prob.traj._phases[phase_name]
+                phase.set_state_options(Dynamic.Vehicle.MASS, input_initial=False)
+                phase.set_state_options(Dynamic.Mission.DISTANCE, input_initial=False)
+
         prob.model.connect(
             f'traj.{prob.regular_phases[-1]}.timeseries.distance',
             Mission.Summary.RANGE,
             src_indices=[-1],
             flat_src_indices=True,
         )
+
+    def check_trajectory(self, prob):
+        """
+        Checks the phase_info user options for any inconsistency.
+
+        Parameters
+        ----------
+        prob : AviaryProblem
+            Problem that owns this builder.
+        """
+        phase_info = prob.phase_info
+        all_phases = [name for name in phase_info]
+
+        stems = [
+            Dynamic.Vehicle.MASS,
+            Dynamic.Mission.DISTANCE,
+            Dynamic.Atmosphere.MACH,
+            Dynamic.Mission.ALTITUDE,
+        ]
+
+        msg = ''
+        for j in range(1, len(all_phases)):
+            left_name = all_phases[j - 1]
+            right_name = all_phases[j]
+            left = phase_info[left_name]['user_options']
+            right = phase_info[right_name]['user_options']
+
+            for stem in stems:
+                final = left[f'{stem}_final']
+                initial = right[f'{stem}_initial']
+
+                if initial[0] is None or final[0] is None:
+                    continue
+
+                if initial != final:
+                    msg += '  Constraint mismatch across phase boundary:\n'
+                    msg += f'    {left_name} {stem}_final: {final}\n'
+                    msg += f'    {right_name} {stem}_initial: {initial}\n'
+
+        if len(msg) > 0 and prob.verbosity > Verbosity.QUIET:
+            print('\nThe following issues were detected in your phase_info options.')
+            print(msg, '\n')
 
     def add_post_mission_systems(self, prob, include_landing=True):
         """
@@ -348,22 +375,23 @@ class HeightEnergyProblemConfigurator(ProblemConfiguratorBase):
             self._add_post_mission_takeoff_systems(prob)
         else:
             first_flight_phase_name = list(prob.phase_info.keys())[0]
+
+            # Since we don't have the takeoff subsystem, we need to use the gross mass as the
+            # source for the mass at the beginning of the first flight phase. It turns out to be
+            # more robust to use a constraint rather than connecting it directly.
             first_flight_phase = prob.traj._phases[first_flight_phase_name]
-            first_flight_phase.set_state_options(Dynamic.Vehicle.MASS, fix_initial=False)
+            first_flight_phase.set_state_options(
+                Dynamic.Vehicle.MASS, fix_initial=False, input_initial=False
+            )
 
-        if include_landing and prob.post_mission_info['include_landing']:
-            self._add_landing_systems(prob)
-
-        # connect summary mass to the initial guess of mass in the first phase
-        if not prob.pre_mission_info['include_takeoff']:
-            first_flight_phase_name = list(prob.phase_info.keys())[0]
-
+            # connect summary mass to the initial guess of mass in the first phase
             eq = prob.model.add_subsystem(
                 f'link_{first_flight_phase_name}_mass',
                 om.EQConstraintComp(),
                 promotes_inputs=[('rhs:mass', Mission.Summary.GROSS_MASS)],
             )
 
+            # TODO: replace hard_coded ref for this constraint.
             eq.add_eq_output(
                 'mass', eq_units='lbm', normalize=False, ref=100000.0, add_constraint=True
             )
@@ -374,6 +402,9 @@ class HeightEnergyProblemConfigurator(ProblemConfiguratorBase):
                 src_indices=[0],
                 flat_src_indices=True,
             )
+
+        if include_landing and prob.post_mission_info['include_landing']:
+            self._add_landing_systems(prob)
 
         prob.model.add_subsystem(
             'range_constraint',
@@ -390,70 +421,64 @@ class HeightEnergyProblemConfigurator(ProblemConfiguratorBase):
             promotes_outputs=[('range_resid', Mission.Constraints.RANGE_RESIDUAL)],
         )
 
+        # TODO: replace hard_coded ref for this constraint.
         prob.post_mission.add_constraint(Mission.Constraints.MASS_RESIDUAL, equals=0.0, ref=1.0e5)
 
     def _add_post_mission_takeoff_systems(self, prob):
+        """
+        Adds residual and constraint components for the mach and alpha connections from takeoff
+        to the first flight phase.
+        """
         first_flight_phase_name = list(prob.phase_info.keys())[0]
-        connect_takeoff_to_climb = not prob.phase_info[first_flight_phase_name]['user_options'].get(
-            'add_initial_mass_constraint', True
+        phase_options = prob.phase_info[first_flight_phase_name]['user_options']
+
+        prob.model.connect(
+            Mission.Takeoff.FINAL_MASS, f'traj.{first_flight_phase_name}.initial_states:mass'
+        )
+        prob.model.connect(
+            Mission.Takeoff.GROUND_DISTANCE,
+            f'traj.{first_flight_phase_name}.initial_states:distance',
         )
 
-        if connect_takeoff_to_climb:
-            prob.model.connect(
-                Mission.Takeoff.FINAL_MASS, f'traj.{first_flight_phase_name}.initial_states:mass'
+        if phase_options.get('mach_optimize', False):
+            # Create an ExecComp to compute the difference in mach
+            mach_diff_comp = om.ExecComp(
+                'mach_resid_for_connecting_takeoff = final_mach - initial_mach'
             )
+            prob.model.add_subsystem('mach_diff_comp', mach_diff_comp)
+
+            # Connect the inputs to the mach difference component
+            prob.model.connect(Mission.Takeoff.FINAL_MACH, 'mach_diff_comp.final_mach')
             prob.model.connect(
-                Mission.Takeoff.GROUND_DISTANCE,
-                f'traj.{first_flight_phase_name}.initial_states:distance',
+                f'traj.{first_flight_phase_name}.control_values:mach',
+                'mach_diff_comp.initial_mach',
+                src_indices=[0],
             )
 
-            control_type_string = 'control_values'
-            if prob.phase_info[first_flight_phase_name]['user_options'].get(
-                'use_polynomial_control', True
-            ):
-                if not use_new_dymos_syntax:
-                    control_type_string = 'polynomial_control_values'
+            # Add constraint for mach difference
+            prob.model.add_constraint(
+                'mach_diff_comp.mach_resid_for_connecting_takeoff', equals=0.0
+            )
 
-            if prob.phase_info[first_flight_phase_name]['user_options'].get('optimize_mach', False):
-                # Create an ExecComp to compute the difference in mach
-                mach_diff_comp = om.ExecComp(
-                    'mach_resid_for_connecting_takeoff = final_mach - initial_mach'
-                )
-                prob.model.add_subsystem('mach_diff_comp', mach_diff_comp)
+        if phase_options.get('altitude_optimize', False):
+            # Similar steps for altitude difference
+            alt_diff_comp = om.ExecComp(
+                'altitude_resid_for_connecting_takeoff = final_altitude - initial_altitude',
+                units='ft',
+            )
+            prob.model.add_subsystem('alt_diff_comp', alt_diff_comp)
 
-                # Connect the inputs to the mach difference component
-                prob.model.connect(Mission.Takeoff.FINAL_MACH, 'mach_diff_comp.final_mach')
-                prob.model.connect(
-                    f'traj.{first_flight_phase_name}.{control_type_string}:mach',
-                    'mach_diff_comp.initial_mach',
-                    src_indices=[0],
-                )
+            prob.model.connect(Mission.Takeoff.FINAL_ALTITUDE, 'alt_diff_comp.final_altitude')
+            prob.model.connect(
+                f'traj.{first_flight_phase_name}.control_values:altitude',
+                'alt_diff_comp.initial_altitude',
+                src_indices=[0],
+            )
 
-                # Add constraint for mach difference
-                prob.model.add_constraint(
-                    'mach_diff_comp.mach_resid_for_connecting_takeoff', equals=0.0
-                )
-
-            if prob.phase_info[first_flight_phase_name]['user_options'].get(
-                'optimize_altitude', False
-            ):
-                # Similar steps for altitude difference
-                alt_diff_comp = om.ExecComp(
-                    'altitude_resid_for_connecting_takeoff = final_altitude - initial_altitude',
-                    units='ft',
-                )
-                prob.model.add_subsystem('alt_diff_comp', alt_diff_comp)
-
-                prob.model.connect(Mission.Takeoff.FINAL_ALTITUDE, 'alt_diff_comp.final_altitude')
-                prob.model.connect(
-                    f'traj.{first_flight_phase_name}.{control_type_string}:altitude',
-                    'alt_diff_comp.initial_altitude',
-                    src_indices=[0],
-                )
-
-                prob.model.add_constraint(
-                    'alt_diff_comp.altitude_resid_for_connecting_takeoff', equals=0.0
-                )
+            # Add constraint for altitude difference
+            prob.model.add_constraint(
+                'alt_diff_comp.altitude_resid_for_connecting_takeoff', equals=0.0
+            )
 
     def _add_landing_systems(self, prob):
         landing_options = Landing(
@@ -470,15 +495,6 @@ class HeightEnergyProblemConfigurator(ProblemConfiguratorBase):
             promotes_outputs=['mission:*'],
         )
 
-        last_flight_phase_name = list(prob.phase_info.keys())[-1]
-
-        control_type_string = 'control_values'
-        if prob.phase_info[last_flight_phase_name]['user_options'].get(
-            'use_polynomial_control', True
-        ):
-            if not use_new_dymos_syntax:
-                control_type_string = 'polynomial_control_values'
-
         last_regular_phase = prob.regular_phases[-1]
         prob.model.connect(
             f'traj.{last_regular_phase}.states:mass',
@@ -486,7 +502,7 @@ class HeightEnergyProblemConfigurator(ProblemConfiguratorBase):
             src_indices=[-1],
         )
         prob.model.connect(
-            f'traj.{last_regular_phase}.{control_type_string}:altitude',
+            f'traj.{last_regular_phase}.control_values:altitude',
             Mission.Landing.INITIAL_ALTITUDE,
             src_indices=[0],
         )
@@ -502,14 +518,17 @@ class HeightEnergyProblemConfigurator(ProblemConfiguratorBase):
         """
         pass
 
-    def add_guesses(self, prob, phase_name, phase, guesses, target_prob, parent_prefix):
+    def set_phase_initial_guesses(
+        self, prob, phase_name, phase, guesses, target_prob, parent_prefix
+    ):
         """
         Adds the initial guesses for each variable of a given phase to the problem.
-        This method sets the initial guesses for time, control, state, and problem-specific
-        variables for a given phase. If using the GASP model, it also handles some special
-        cases that are not covered in the `phase_info` object. These include initial guesses
-        for mass, time, and distance, which are determined based on the phase name and other
-        mission-related variables.
+
+        This method sets the initial guesses into the openmdao model for time, controls, states,
+        and problem-specific variables for a given phase. If using the GASP model, it also handles
+        some special cases that are not covered in the `phase_info` object. These include initial
+        guesses for mass, time, and distance, which are determined based on the phase name and
+        other mission-related variables.
 
         Parameters
         ----------
@@ -526,55 +545,63 @@ class HeightEnergyProblemConfigurator(ProblemConfiguratorBase):
         """
         control_keys = ['mach', 'altitude']
         state_keys = ['mass', Dynamic.Mission.DISTANCE]
-
         prob_keys = ['tau_gear', 'tau_flaps']
 
-        # for the simple mission method, use the provided initial and final mach
-        # and altitude values from phase_info
-        initial_altitude = wrapped_convert_units(
-            prob.phase_info[phase_name]['user_options']['initial_altitude'], 'ft'
-        )
-        final_altitude = wrapped_convert_units(
-            prob.phase_info[phase_name]['user_options']['final_altitude'], 'ft'
-        )
-        initial_mach = prob.phase_info[phase_name]['user_options']['initial_mach']
-        final_mach = prob.phase_info[phase_name]['user_options']['final_mach']
+        options = prob.phase_info[phase_name]['user_options']
 
-        guesses['mach'] = ([initial_mach[0], final_mach[0]], 'unitless')
-        guesses['altitude'] = ([initial_altitude, final_altitude], 'ft')
+        # Let's preserve the original user-specified initial conditions.
+        guess_dict = deepcopy(guesses)
 
-        # if time not in initial guesses, set it to the average of the
-        # initial_bounds and the duration_bounds
-        if 'time' not in guesses:
-            initial_bounds = wrapped_convert_units(
-                prob.phase_info[phase_name]['user_options']['initial_bounds'], 's'
-            )
-            duration_bounds = wrapped_convert_units(
-                prob.phase_info[phase_name]['user_options']['duration_bounds'], 's'
-            )
-            guesses['time'] = ([np.mean(initial_bounds[0]), np.mean(duration_bounds[0])], 's')
+        if 'mass' not in guess_dict:
+            mass_guess = prob.aviary_inputs.get_val(Mission.Design.GROSS_MASS, units='lbm')
 
-        # if time not in initial guesses, set it to the average of the
-        # initial_bounds and the duration_bounds
-        if 'time' not in guesses:
-            initial_bounds = prob.phase_info[phase_name]['user_options']['initial_bounds']
-            duration_bounds = prob.phase_info[phase_name]['user_options']['duration_bounds']
-            # Add a check for the initial and duration bounds, raise an error if they
-            # are not consistent
-            if initial_bounds[1] != duration_bounds[1]:
-                raise ValueError(
-                    f'Initial and duration bounds for {phase_name} are not consistent.'
-                )
-            guesses['time'] = (
-                [np.mean(initial_bounds[0]), np.mean(duration_bounds[0])],
-                initial_bounds[1],
-            )
+            guess_dict['mass'] = (mass_guess, 'lbm')
 
-        for guess_key, guess_data in guesses.items():
+        if 'altitude' not in guess_dict:
+            # Use values from fixed endpoints.
+            altitude_initial = wrapped_convert_units(options['altitude_initial'], 'ft')
+            altitude_final = wrapped_convert_units(options['altitude_final'], 'ft')
+
+            if altitude_initial is None:
+                # TODO: Pull from downstream phase.
+                altitude_initial = wrapped_convert_units(options['altitude_bounds'], 'ft')[0]
+
+            if altitude_final is None:
+                # TODO: Pull from downstream phase.
+                altitude_final = altitude_initial
+
+            guess_dict['altitude'] = ([altitude_initial, altitude_final], 'ft')
+
+        if 'mach' not in guess_dict:
+            # Use values from fixed endpoints.
+            mach_initial = wrapped_convert_units(options['mach_initial'], 'unitless')
+            mach_final = wrapped_convert_units(options['mach_final'], 'unitless')
+
+            if mach_initial is None:
+                # TODO: Pull from downstream phase.
+                mach_initial = wrapped_convert_units(options['mach_bounds'], 'unitless')[0]
+
+            if mach_final is None:
+                # TODO: Pull from downstream phase.
+                mach_final = mach_initial
+
+            guess_dict['mach'] = ([mach_initial, mach_final], 'unitless')
+
+        if 'time' not in guess_dict and options['time_duration'][0] is None:
+            # if time not in initial guesses, set it to the average of the
+            # initial_bounds and the duration_bounds
+            initial_bounds = wrapped_convert_units(options['time_initial_bounds'], 's')
+            duration_bounds = wrapped_convert_units(options['time_duration_bounds'], 's')
+            guess_dict['time'] = ([np.mean(initial_bounds[0]), np.mean(duration_bounds[0])], 's')
+
+        for guess_key, guess_data in guess_dict.items():
             val, units = guess_data
 
-            # Set initial guess for time variables
             if 'time' == guess_key:
+                # Set initial guess for time variables
+                # Seems to be an openmdao bug. Switch to this when fixed.
+                # phase.set_time_val(initial=val[0], duration=val[1], units=units)
+
                 target_prob.set_val(
                     parent_prefix + f'traj.{phase_name}.t_initial', val[0], units=units
                 )
@@ -582,63 +609,40 @@ class HeightEnergyProblemConfigurator(ProblemConfiguratorBase):
                     parent_prefix + f'traj.{phase_name}.t_duration', val[1], units=units
                 )
 
-            else:
+            elif guess_key in control_keys:
                 # Set initial guess for control variables
-                if guess_key in control_keys:
-                    try:
-                        target_prob.set_val(
-                            parent_prefix + f'traj.{phase_name}.controls:{guess_key}',
-                            prob._process_guess_var(val, guess_key, phase),
-                            units=units,
-                        )
+                # Seems to be an openmdao bug. Switch to this when fixed.
+                # phase.set_control_val(guess_key, val, units=units)
 
-                    except KeyError:
-                        try:
-                            target_prob.set_val(
-                                parent_prefix
-                                + f'traj.{phase_name}.polynomial_controls:{guess_key}',
-                                prob._process_guess_var(val, guess_key, phase),
-                                units=units,
-                            )
+                target_prob.set_val(
+                    parent_prefix + f'traj.{phase_name}.controls:{guess_key}',
+                    prob._process_guess_var(val, guess_key, phase),
+                    units=units,
+                )
 
-                        except KeyError:
-                            target_prob.set_val(
-                                parent_prefix + f'traj.{phase_name}.bspline_controls:',
-                                {guess_key},
-                                prob._process_guess_var(val, guess_key, phase),
-                                units=units,
-                            )
-
-                if guess_key in control_keys:
-                    pass
-
+            elif guess_key in state_keys:
                 # Set initial guess for state variables
-                elif guess_key in state_keys:
-                    target_prob.set_val(
-                        parent_prefix + f'traj.{phase_name}.states:{guess_key}',
-                        prob._process_guess_var(val, guess_key, phase),
-                        units=units,
-                    )
+                # Seems to be an openmdao bug. Switch to this when fixed.
+                # phase.set_state_val(guess_key, val, units=units)
 
-                elif guess_key in prob_keys:
-                    target_prob.set_val(parent_prefix + guess_key, val, units=units)
+                target_prob.set_val(
+                    parent_prefix + f'traj.{phase_name}.states:{guess_key}',
+                    prob._process_guess_var(val, guess_key, phase),
+                    units=units,
+                )
 
-                elif ':' in guess_key:
-                    target_prob.set_val(
-                        parent_prefix + f'traj.{phase_name}.{guess_key}',
-                        prob._process_guess_var(val, guess_key, phase),
-                        units=units,
-                    )
-                else:
-                    # raise error if the guess key is not recognized
-                    raise ValueError(
-                        f'Initial guess key {guess_key} in {phase_name} is not recognized.'
-                    )
+            elif guess_key in prob_keys:
+                target_prob.set_val(parent_prefix + guess_key, val, units=units)
 
-        if 'mass' not in guesses:
-            mass_guess = prob.aviary_inputs.get_val(Mission.Design.GROSS_MASS, units='lbm')
-
-            # Set the mass guess as the initial value for the mass state variable
-            target_prob.set_val(
-                parent_prefix + f'traj.{phase_name}.states:mass', mass_guess, units='lbm'
-            )
+            elif ':' in guess_key:
+                # These may come from external subsystems.
+                target_prob.set_val(
+                    parent_prefix + f'traj.{phase_name}.{guess_key}',
+                    prob._process_guess_var(val, guess_key, phase),
+                    units=units,
+                )
+            else:
+                # raise error if the guess key is not recognized
+                raise ValueError(
+                    f'Initial guess key {guess_key} in {phase_name} is not recognized.'
+                )
