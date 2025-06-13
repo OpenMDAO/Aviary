@@ -133,9 +133,35 @@ class GASPOverrideTestCase(unittest.TestCase):
         assert_near_equal(self.prob[Aircraft.VerticalTail.FORM_FACTOR], 2, 1e-6)
         assert_near_equal(self.prob[Aircraft.Strut.FUSELAGE_INTERFERENCE_FACTOR], 1.125, 1e-6)
 
+    def test_case_emp_geo(self):
+        # Make sure we can override horizontal and veritcal tail geo vars.
+        prob = self.prob
+
+        self.aviary_inputs.set_val(Aircraft.HorizontalTail.AREA, val=7777.0, units='ft**2')
+        self.aviary_inputs.set_val(Aircraft.VerticalTail.SPAN, val=8888.0, units='ft')
+
+        setup_model_options(prob, self.aviary_inputs)
+
+        with warnings.catch_warnings():
+            warnings.simplefilter('ignore', om.PromotionWarning)
+            prob.setup()
+
+        prob.run_model()
+
+        assert_near_equal(
+            self.prob.get_val(Aircraft.HorizontalTail.AREA, units='ft**2'),
+            7777.0,
+            1e-6,
+        )
+        assert_near_equal(
+            self.prob.get_val(Aircraft.VerticalTail.SPAN, units='ft'),
+            8888.0,
+            1e-6,
+        )
+
 
 if __name__ == '__main__':
     # unittest.main()
     test = GASPOverrideTestCase()
     test.setUp()
-    test.test_case_aero_coeffs()
+    test.test_case_emp_geo()

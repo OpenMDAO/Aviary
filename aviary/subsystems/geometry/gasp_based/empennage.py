@@ -1,7 +1,7 @@
 import numpy as np
 import openmdao.api as om
 
-from aviary.variable_info.functions import add_aviary_input, add_aviary_option
+from aviary.variable_info.functions import add_aviary_input, add_aviary_output, add_aviary_option
 from aviary.variable_info.variables import Aircraft
 
 
@@ -17,18 +17,26 @@ class TailVolCoef(om.ExplicitComponent):
 
     def initialize(self):
         self.options.declare(
-            'vertical',
-            default=False,
-            types=bool,
-            desc=(
-                'Use vertical tail volume coefficient relationship, '
-                'otherwise assume a horizontal tail'
-            ),
+            'orientation',
+            values=['horizontal', 'vertical'],
+            desc='Tail orientation, can be horizontal or vertical.',
         )
 
     def setup(self):
+        veritcal = self.options['orientation'] == 'vertical'
+        if veritcal:
+            self.io_names = {
+                'vol_coef': Aircraft.VerticalTail.VOLUME_COEFFICIENT,
+                'wing_ref': Aircraft.Wing.SPAN,
+            }
+        else:
+            self.io_names = {
+                'vol_coef': Aircraft.HorizontalTail.VOLUME_COEFFICIENT,
+                'wing_ref': Aircraft.Wing.AVERAGE_CHORD,
+            }
+
         # coefficients used in the empirical equation
-        if self.options['vertical']:
+        if veritcal:
             self.k = [0.07, 0.0434, 0.336]
         else:
             self.k = [0.43, 0.38, 0.85]
@@ -37,39 +45,36 @@ class TailVolCoef(om.ExplicitComponent):
 
         add_aviary_input(self, Aircraft.Fuselage.LENGTH, units='ft')
 
-        self.add_input('cab_w', 13.1, units='ft', desc='SWF: Cabin width')
+        add_aviary_input(self, Aircraft.Fuselage.AVG_DIAMETER, val=13.1, units='ft')
 
         add_aviary_input(self, Aircraft.Wing.AREA, units='ft**2')
 
-        self.add_input(
-            'wing_ref',
-            12.615,
-            units='ft',
-            desc=(
-                'CBARW | B: Wing reference parameter. Wing chord for a '
-                'horizontal tail. Wing span for a vertical tail.'
-            ),
-        )
+        add_aviary_input(self, self.io_names['wing_ref'], val=12.612, units='ft')
 
-        self.add_output('vol_coef', units='unitless', desc='VBARH | VBARV: Tail volume coefficient')
+        add_aviary_output(self, self.io_names['vol_coef'], units='unitless')
 
     def setup_partials(self):
-        self.declare_partials('vol_coef', '*')
+        self.declare_partials(self.io_names['vol_coef'], '*')
 
     def compute(self, inputs, outputs):
         htail_loc, fus_len, cab_w, wing_area, wing_ref = inputs.values()
         k1, k2, k3 = self.k
         ch1 = k1 - k2 * htail_loc
-        outputs['vol_coef'] = k3 * fus_len * cab_w**2 / (wing_area * wing_ref) + ch1
+        outputs[self.io_names['vol_coef']] = k3 * fus_len * cab_w**2 / (wing_area * wing_ref) + ch1
 
     def compute_partials(self, inputs, J):
+        str_vol_coef = self.io_names['vol_coef']
+        str_wing_ref = self.io_names['wing_ref']
+
         htail_loc, fus_len, cab_w, wing_area, wing_ref = inputs.values()
         k1, k2, k3 = self.k
-        J['vol_coef', Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION] = -k2
-        J['vol_coef', Aircraft.Fuselage.LENGTH] = k3 * cab_w**2 / (wing_area * wing_ref)
-        J['vol_coef', 'cab_w'] = 2 * k3 * fus_len * cab_w / (wing_area * wing_ref)
-        J['vol_coef', Aircraft.Wing.AREA] = -k3 * fus_len * cab_w**2 / (wing_area**2 * wing_ref)
-        J['vol_coef', 'wing_ref'] = -k3 * fus_len * cab_w**2 / (wing_area * wing_ref**2)
+        J[str_vol_coef, Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION] = -k2
+        J[str_vol_coef, Aircraft.Fuselage.LENGTH] = k3 * cab_w**2 / (wing_area * wing_ref)
+        J[str_vol_coef, Aircraft.Fuselage.AVG_DIAMETER] = (
+            2 * k3 * fus_len * cab_w / (wing_area * wing_ref)
+        )
+        J[str_vol_coef, Aircraft.Wing.AREA] = -k3 * fus_len * cab_w**2 / (wing_area**2 * wing_ref)
+        J[str_vol_coef, str_wing_ref] = -k3 * fus_len * cab_w**2 / (wing_area * wing_ref**2)
 
 
 class TailSize(om.ExplicitComponent):
@@ -81,54 +86,94 @@ class TailSize(om.ExplicitComponent):
     to tail moment arm and the wing span are input.
     """
 
-    def setup(self):
-        # defaults here for Large Single Aisle 1 horizontal tail
-        self.add_input(
-            'vol_coef',
-            1.189,
-            units='unitless',
-            desc='VBARH | VBARV: Horizontal tail volume coefficient',
+    def initialize(self):
+        self.options.declare(
+            'orientation',
+            values=['horizontal', 'vertical'],
+            desc='Tail orientation, can be horizontal or vertical.',
         )
+
+    def setup(self):
+        orientation = self.options['orientation']
+
+        if orientation == 'horizontal':
+            self.io_names = {
+                'vol_coef': Aircraft.HorizontalTail.VOLUME_COEFFICIENT,
+                'r_arm': Aircraft.HorizontalTail.MOMENT_RATIO,
+                'wing_ref': Aircraft.Wing.AVERAGE_CHORD,
+                'ar': Aircraft.HorizontalTail.ASPECT_RATIO,
+                'tr': Aircraft.HorizontalTail.TAPER_RATIO,
+                'area': Aircraft.HorizontalTail.AREA,
+                'span': Aircraft.HorizontalTail.SPAN,
+                'rchord': Aircraft.HorizontalTail.ROOT_CHORD,
+                'chord': Aircraft.HorizontalTail.AVERAGE_CHORD,
+                'arm': Aircraft.HorizontalTail.MOMENT_ARM,
+            }
+        else:
+            self.io_names = {
+                'vol_coef': Aircraft.VerticalTail.VOLUME_COEFFICIENT,
+                'r_arm': Aircraft.VerticalTail.MOMENT_RATIO,
+                'wing_ref': Aircraft.Wing.SPAN,
+                'ar': Aircraft.VerticalTail.ASPECT_RATIO,
+                'tr': Aircraft.VerticalTail.TAPER_RATIO,
+                'area': Aircraft.VerticalTail.AREA,
+                'span': Aircraft.VerticalTail.SPAN,
+                'rchord': Aircraft.VerticalTail.ROOT_CHORD,
+                'chord': Aircraft.VerticalTail.AVERAGE_CHORD,
+                'arm': Aircraft.VerticalTail.MOMENT_ARM,
+            }
+
+        vol_coef = self.io_names['vol_coef']
+        r_arm = self.io_names['r_arm']
+        wing_ref = self.io_names['wing_ref']
+        ar = self.io_names['ar']
+        tr = self.io_names['tr']
+        area = self.io_names['area']
+        span = self.io_names['span']
+        rchord = self.io_names['rchord']
+        chord = self.io_names['chord']
+        arm = self.io_names['arm']
+
+        add_aviary_input(self, vol_coef, units='unitless')
 
         add_aviary_input(self, Aircraft.Wing.AREA)
 
-        self.add_input(
-            'r_arm',
-            0.2307,
-            units='unitless',
-            desc=(
-                'COELTH | BOELTV: For a horizontal tail, the ratio of '
-                'wing chord to tail moment arm. For a vertical tail, the '
-                'ratio of wing span to vertical tail moment arm.'
-            ),
-        )
-        self.add_input(
-            'wing_ref',
-            12.615,
-            units='ft',
-            desc=(
-                'CBARW | B: Reference wing parameter for tail moment arm. '
-                'For a horizontal tail, the mean wing chord. For a '
-                'vertical tail, the wing span.'
-            ),
-        )
-        self.add_input('ar', 0.0, units='unitless', desc='ARHT | ARVT: Tail aspect ratio.')
-        self.add_input('tr', 0.0, units='unitless', desc='SLMH | SLMV: Tail taper ratio.')
+        add_aviary_input(self, r_arm, units='unitless')
+        add_aviary_input(self, wing_ref, units='ft')
+        add_aviary_input(self, ar, units='unitless')
+        add_aviary_input(self, tr, units='unitless')
 
-        self.add_output('area', units='ft**2', desc='SHT | SVT: Tail area')
-        self.add_output('span', units='ft', desc='BHT | BVT: Tail span')
-        self.add_output('rchord', units='ft', desc='CRCLHT | CRCLVT: Tail root chord')
-        self.add_output('chord', units='ft', desc='CBARHT | CBARVT: Tail mean aerodynamic chord')
-        self.add_output('arm', units='ft', desc='ELTH | ELTV: Tail moment arm')
+        add_aviary_output(self, area, units='ft**2')
+        add_aviary_output(self, span, units='ft')
+        add_aviary_output(self, rchord, units='ft')
+        add_aviary_output(self, chord, units='ft')
+        add_aviary_output(self, arm, units='ft')
 
     def setup_partials(self):
-        self.declare_partials('area', ['vol_coef', Aircraft.Wing.AREA, 'r_arm'])
-        self.declare_partials('span', ['vol_coef', Aircraft.Wing.AREA, 'r_arm', 'ar'])
-        self.declare_partials('rchord', ['vol_coef', Aircraft.Wing.AREA, 'r_arm', 'ar', 'tr'])
-        self.declare_partials('chord', ['vol_coef', Aircraft.Wing.AREA, 'r_arm', 'ar', 'tr'])
-        self.declare_partials('arm', ['r_arm', 'wing_ref'])
+        vol_coef = self.io_names['vol_coef']
+        r_arm = self.io_names['r_arm']
+        wing_ref = self.io_names['wing_ref']
+        ar = self.io_names['ar']
+        tr = self.io_names['tr']
+        area = self.io_names['area']
+        span = self.io_names['span']
+        rchord = self.io_names['rchord']
+        chord = self.io_names['chord']
+        arm = self.io_names['arm']
+
+        self.declare_partials(area, [vol_coef, Aircraft.Wing.AREA, r_arm])
+        self.declare_partials(span, [vol_coef, Aircraft.Wing.AREA, r_arm, ar])
+        self.declare_partials(rchord, [vol_coef, Aircraft.Wing.AREA, r_arm, ar, tr])
+        self.declare_partials(chord, [vol_coef, Aircraft.Wing.AREA, r_arm, ar, tr])
+        self.declare_partials(arm, [r_arm, wing_ref])
 
     def compute(self, inputs, outputs):
+        str_area = self.io_names['area']
+        str_span = self.io_names['span']
+        str_rchord = self.io_names['rchord']
+        str_chord = self.io_names['chord']
+        str_arm = self.io_names['arm']
+
         vol_coef, wing_area, r_arm, wing_ref, ar, tr = inputs.values()
 
         area = vol_coef * wing_area * r_arm
@@ -137,41 +182,52 @@ class TailSize(om.ExplicitComponent):
         chord = 2 / 3.0 * rchord * ((1 + tr) - (tr / (1 + tr)))
         arm = wing_ref / r_arm
 
-        outputs['area'] = area
-        outputs['span'] = span
-        outputs['rchord'] = rchord
-        outputs['chord'] = chord
-        outputs['arm'] = arm
+        outputs[str_area] = area
+        outputs[str_span] = span
+        outputs[str_rchord] = rchord
+        outputs[str_chord] = chord
+        outputs[str_arm] = arm
 
     def compute_partials(self, inputs, J):
+        str_vol_coef = self.io_names['vol_coef']
+        str_r_arm = self.io_names['r_arm']
+        str_wing_ref = self.io_names['wing_ref']
+        str_ar = self.io_names['ar']
+        str_tr = self.io_names['tr']
+        str_area = self.io_names['area']
+        str_span = self.io_names['span']
+        str_rchord = self.io_names['rchord']
+        str_chord = self.io_names['chord']
+        str_arm = self.io_names['arm']
+
         vol_coef, wing_area, r_arm, wing_ref, ar, tr = inputs.values()
 
-        J['area', 'vol_coef'] = wing_area * r_arm
-        J['area', Aircraft.Wing.AREA] = vol_coef * r_arm
-        J['area', 'r_arm'] = vol_coef * wing_area
+        J[str_area, str_vol_coef] = wing_area * r_arm
+        J[str_area, Aircraft.Wing.AREA] = vol_coef * r_arm
+        J[str_area, str_r_arm] = vol_coef * wing_area
 
         cse1 = np.sqrt(vol_coef * wing_area * r_arm * ar)
-        J['span', 'vol_coef'] = cse1 / (2 * vol_coef)
-        J['span', Aircraft.Wing.AREA] = cse1 / (2 * wing_area)
-        J['span', 'r_arm'] = cse1 / (2 * r_arm)
-        J['span', 'ar'] = cse1 / (2 * ar)
+        J[str_span, str_vol_coef] = cse1 / (2 * vol_coef)
+        J[str_span, Aircraft.Wing.AREA] = cse1 / (2 * wing_area)
+        J[str_span, str_r_arm] = cse1 / (2 * r_arm)
+        J[str_span, str_ar] = cse1 / (2 * ar)
 
         cse2 = cse1 * (tr + 1)
-        J['rchord', 'vol_coef'] = wing_area * r_arm / cse2
-        J['rchord', Aircraft.Wing.AREA] = vol_coef * r_arm / cse2
-        J['rchord', 'r_arm'] = wing_area * vol_coef / cse2
-        J['rchord', 'ar'] = -vol_coef * wing_area * r_arm / (ar * cse2)
-        J['rchord', 'tr'] = -2 * vol_coef * wing_area * r_arm / (cse2 * (tr + 1))
+        J[str_rchord, str_vol_coef] = wing_area * r_arm / cse2
+        J[str_rchord, Aircraft.Wing.AREA] = vol_coef * r_arm / cse2
+        J[str_rchord, str_r_arm] = wing_area * vol_coef / cse2
+        J[str_rchord, str_ar] = -vol_coef * wing_area * r_arm / (ar * cse2)
+        J[str_rchord, str_tr] = -2 * vol_coef * wing_area * r_arm / (cse2 * (tr + 1))
 
         cse3 = tr - (tr / (tr + 1)) + 1
-        J['chord', 'vol_coef'] = 2 / 3.0 * wing_area * r_arm * cse3 / cse2
-        J['chord', Aircraft.Wing.AREA] = 2 / 3.0 * vol_coef * r_arm * cse3 / cse2
-        J['chord', 'r_arm'] = 2 / 3.0 * vol_coef * wing_area * cse3 / cse2
-        J['chord', 'ar'] = -2 / 3.0 * vol_coef * wing_area * r_arm * cse3 / (ar * cse2)
-        J['chord', 'tr'] = 4 / 3.0 * cse1 * (tr - 1) / (ar * (tr + 1) ** 3)
+        J[str_chord, str_vol_coef] = 2 / 3.0 * wing_area * r_arm * cse3 / cse2
+        J[str_chord, Aircraft.Wing.AREA] = 2 / 3.0 * vol_coef * r_arm * cse3 / cse2
+        J[str_chord, str_r_arm] = 2 / 3.0 * vol_coef * wing_area * cse3 / cse2
+        J[str_chord, str_ar] = -2 / 3.0 * vol_coef * wing_area * r_arm * cse3 / (ar * cse2)
+        J[str_chord, str_tr] = 4 / 3.0 * cse1 * (tr - 1) / (ar * (tr + 1) ** 3)
 
-        J['arm', 'r_arm'] = -wing_ref / r_arm**2
-        J['arm', 'wing_ref'] = 1.0 / r_arm
+        J[str_arm, str_r_arm] = -wing_ref / r_arm**2
+        J[str_arm, str_wing_ref] = 1.0 / r_arm
 
 
 class EmpennageSize(om.Group):
@@ -193,107 +249,31 @@ class EmpennageSize(om.Group):
         # overrides the H tail aspect ratio. H tail taper ratio is used in landing gear
         # mass calculation.
 
-        # higher inputs that are input to groups other than this one, or calculated in groups other than this one
-        higher_level_inputs_htail_vc = [
-            ('cab_w', Aircraft.Fuselage.AVG_DIAMETER),
-            ('wing_ref', Aircraft.Wing.AVERAGE_CHORD),
-        ]
-        higher_level_inputs_vtail_vc = [
-            ('cab_w', Aircraft.Fuselage.AVG_DIAMETER),
-            ('wing_ref', Aircraft.Wing.SPAN),
-        ]
-        higher_level_inputs_htail = [
-            ('wing_ref', Aircraft.Wing.AVERAGE_CHORD),
-            ('tr', Aircraft.HorizontalTail.TAPER_RATIO),
-        ]
-        higher_level_inputs_vtail = [
-            ('wing_ref', Aircraft.Wing.SPAN),
-            ('ar', Aircraft.VerticalTail.ASPECT_RATIO),
-        ]
-
-        # inputs to htail and vtail that are purely promoted to change the name
-        rename_inputs_htail = [
-            ('r_arm', Aircraft.HorizontalTail.MOMENT_RATIO),
-            ('ar', Aircraft.HorizontalTail.ASPECT_RATIO),
-        ]
-        rename_inputs_vtail = [
-            ('r_arm', Aircraft.VerticalTail.MOMENT_RATIO),
-            ('tr', Aircraft.VerticalTail.TAPER_RATIO),
-        ]
-
-        # outputs that are used in groups other than this one
-        higher_level_outputs_htail = [
-            ('area', Aircraft.HorizontalTail.AREA),
-            ('span', Aircraft.HorizontalTail.SPAN),
-            ('rchord', Aircraft.HorizontalTail.ROOT_CHORD),
-            ('arm', Aircraft.HorizontalTail.MOMENT_ARM),
-        ]
-        higher_level_outputs_vtail = [
-            ('area', Aircraft.VerticalTail.AREA),
-            ('span', Aircraft.VerticalTail.SPAN),
-            ('rchord', Aircraft.VerticalTail.ROOT_CHORD),
-            ('arm', Aircraft.VerticalTail.MOMENT_ARM),
-        ]
-
-        # outputs from htail and vtail that are purely promoted to change the name
-        rename_outputs_htail = [
-            ('chord', Aircraft.HorizontalTail.AVERAGE_CHORD),
-        ]
-        rename_outputs_vtail = [
-            ('chord', Aircraft.VerticalTail.AVERAGE_CHORD),
-        ]
-
-        # outputs from components in this group that are used in this group
-        connected_outputs_htail_vc = [
-            ('vol_coef', Aircraft.HorizontalTail.VOLUME_COEFFICIENT),
-        ]
-        connected_outputs_vtail_vc = [
-            ('vol_coef', Aircraft.VerticalTail.VOLUME_COEFFICIENT),
-        ]
-
-        # inputs to components in this group that are calculated in this group
-        connected_inputs_htail = [
-            ('vol_coef', Aircraft.HorizontalTail.VOLUME_COEFFICIENT),
-        ]
-        connected_inputs_vtail = [
-            ('vol_coef', Aircraft.VerticalTail.VOLUME_COEFFICIENT),
-        ]
-
         if self.options[Aircraft.Design.COMPUTE_HTAIL_VOLUME_COEFF]:
             self.add_subsystem(
                 'htail_vc',
-                TailVolCoef(),
-                promotes_inputs=higher_level_inputs_htail_vc + ['aircraft:*'],
-                promotes_outputs=connected_outputs_htail_vc,
+                TailVolCoef(orientation='horizontal'),
+                promotes_inputs=['aircraft:*'],
+                promotes_outputs=['aircraft:*'],
             )
         if self.options[Aircraft.Design.COMPUTE_VTAIL_VOLUME_COEFF]:
             self.add_subsystem(
                 'vtail_vc',
-                TailVolCoef(vertical=True),
-                promotes_inputs=higher_level_inputs_vtail_vc + ['aircraft:*'],
-                promotes_outputs=connected_outputs_vtail_vc,
+                TailVolCoef(orientation='vertical'),
+                promotes_inputs=['aircraft:*'],
+                promotes_outputs=['aircraft:*'],
             )
 
         self.add_subsystem(
             'htail',
-            TailSize(),
-            promotes_inputs=higher_level_inputs_htail
-            + rename_inputs_htail
-            + connected_inputs_htail
-            + ['aircraft:*'],
-            promotes_outputs=higher_level_outputs_htail + rename_outputs_htail,
+            TailSize(orientation='horizontal'),
+            promotes_inputs=['aircraft:*'],
+            promotes_outputs=['aircraft:*'],
         )
 
         self.add_subsystem(
             'vtail',
-            TailSize(),
-            promotes_inputs=higher_level_inputs_vtail
-            + rename_inputs_vtail
-            + connected_inputs_vtail
-            + ['aircraft:*'],
-            promotes_outputs=higher_level_outputs_vtail + rename_outputs_vtail,
+            TailSize(orientation='vertical'),
+            promotes_inputs=['aircraft:*'],
+            promotes_outputs=['aircraft:*'],
         )
-
-        # override vertical tail defaults
-        self.set_input_defaults(Aircraft.VerticalTail.ASPECT_RATIO, 0.0)
-        self.set_input_defaults(Aircraft.VerticalTail.TAPER_RATIO, 0.0)

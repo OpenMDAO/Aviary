@@ -96,7 +96,6 @@ aircraft:fuselage:tail_fineness, 2.9, unitless
 aircraft:fuselage:wetted_area_scaler, 1, unitless
 
 # H-Tail
-aircraft:horizontal_tail:area, 0, ft**2
 aircraft:horizontal_tail:aspect_ratio, 6.03, unitless
 aircraft:horizontal_tail:form_factor, 1.25, unitless
 aircraft:horizontal_tail:mass_coefficient, 0.2285, unitless
@@ -123,7 +122,6 @@ aircraft:nacelle:form_factor, 1.5, unitless
 aircraft:nacelle:mass_specific, 3, lbm/ft**2
 
 # V-Tail
-aircraft:vertical_tail:area, 0, ft**2
 aircraft:vertical_tail:aspect_ratio, 1.81, unitless
 aircraft:vertical_tail:form_factor, 1.25, unitless
 aircraft:vertical_tail:mass_coefficient, 0.2035, unitless

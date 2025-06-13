@@ -66,6 +66,8 @@ class PreMissionTestCase(unittest.TestCase):
         input_options.delete(Aircraft.Wing.ULTIMATE_LOAD_FACTOR)
         input_options.delete(Aircraft.Fuel.TOTAL_CAPACITY)
         input_options.delete(Aircraft.Nacelle.AVG_LENGTH)
+        input_options.delete(Aircraft.HorizontalTail.AREA)
+        input_options.delete(Aircraft.VerticalTail.AREA)
 
         engines = [build_engine_deck(input_options)]
 
