@@ -1421,6 +1421,98 @@ class LiftCoeff(om.ExplicitComponent):
         outputs['CL_max'] = CL_max_flaps * (1 + lift_ratio)
 
 
+class LiftCoeffUnclean(om.ExplicitComponent):
+    """GASP lift coefficient calculation for low-speed near-ground flight."""
+
+    def initialize(self):
+        self.options.declare('num_nodes', default=1, types=int)
+
+    def setup(self):
+        nn = self.options['num_nodes']
+
+        add_aviary_input(self, Dynamic.Vehicle.ANGLE_OF_ATTACK, shape=nn, units='deg')
+        self.add_input(
+            'lift_curve_slope', units='unitless', shape=nn, desc='CLAW: Lift-curve slope'
+        )
+        self.add_input('lift_ratio', units='unitless', shape=nn, desc='BARL: Lift ratio')
+
+        add_aviary_input(self, Aircraft.Wing.ZERO_LIFT_ANGLE, units='deg')
+
+        # from flaps
+        self.add_input(
+            'CL_max_flaps',
+            units='unitless',
+            desc='CLMWTO | CLMWLD: Max lift coefficient from flaps model (takeoff | landing)',
+        )
+        self.add_input(
+            'dCL_flaps_model',
+            val=0.0,
+            units='unitless',
+            desc='Delta CL from flaps model',
+        )
+
+        self.add_input(
+            'kclge', units='unitless', shape=nn, desc='factor of CL due to ground effect'
+        )
+
+        self.add_output('CL_base', units='unitless', shape=nn, desc='Base lift coefficient')
+        self.add_output(
+            'dCL_flaps_full',
+            units='unitless',
+            shape=nn,
+            desc='CL increment with full flap deflection',
+        )
+        self.add_output('alpha_stall', units='deg', shape=nn, desc='Stall angle of attack')
+        self.add_output('CL_max', units='unitless', shape=nn, desc='Max lift coefficient')
+
+    def setup_partials(self):
+        # self.declare_coloring(method="cs", show_summary=False)
+        self.declare_partials('*', '*', dependent=False)
+        ar = np.arange(self.options['num_nodes'])
+
+        dynvars = [
+            Dynamic.Vehicle.ANGLE_OF_ATTACK,
+            'lift_curve_slope',
+            'lift_ratio',
+            'kclge',
+        ]
+
+        self.declare_partials('CL_base', ['*'], method='cs')
+        self.declare_partials('CL_base', dynvars, rows=ar, cols=ar, method='cs')
+
+        self.declare_partials('dCL_flaps_full', ['dCL_flaps_model'], method='cs')
+        self.declare_partials('dCL_flaps_full', ['lift_ratio'], rows=ar, cols=ar, method='cs')
+
+        self.declare_partials('alpha_stall', ['*'], method='cs')
+        self.declare_partials('alpha_stall', dynvars, rows=ar, cols=ar, method='cs')
+
+        self.declare_partials('CL_max', ['CL_max_flaps'], method='cs')
+        self.declare_partials('CL_max', ['lift_ratio'], rows=ar, cols=ar, method='cs')
+
+    def compute(self, inputs, outputs):
+        (
+            alpha,
+            lift_curve_slope,
+            lift_ratio,
+            alpha0,
+            CL_max_flaps,
+            dCL_flaps_model,
+            kclge,
+        ) = inputs.values()
+
+        clw_base = kclge * lift_curve_slope * deg2rad(alpha - alpha0)
+        clw = clw_base + dCL_flaps_model
+
+        outputs['CL_base'] = kclge * lift_curve_slope * deg2rad(alpha - alpha0) * (1 + lift_ratio)
+        outputs['dCL_flaps_full'] = dCL_flaps_model * (1 + lift_ratio)
+        outputs['alpha_stall'] = (
+            rad2deg((CL_max_flaps - dCL_flaps_model) / (kclge * lift_curve_slope)) + alpha0
+        )
+        outputs['CL_max'] = CL_max_flaps * (1 + lift_ratio)
+
+        outputs['CL'] = clw * (1 + lift_ratio)
+
+
 class LiftCoeffClean(om.ExplicitComponent):
     """Clean wing lift coefficient for high-speed flight."""
 
@@ -1915,7 +2007,7 @@ class LowSpeedAero(om.Group):
                 promotes_inputs=['*'],
                 # little bit of a hack here - input CL bypasses CL increment ramp
                 # so ensure this is what's passed to DragCoef
-                promotes_outputs=[('CL', 'CL_full_flaps')],
+                promotes_outputs=[('CL')],
             )
             # NOTE Alpha is NOT an output from LowSpeedAero.
         else:
@@ -1938,11 +2030,9 @@ class LowSpeedAero(om.Group):
                 om.ExecComp(
                     [
                         # "CL = CL_base + dCL_flaps",
-                        'CL_full_flaps = CL_base + dCL_flaps_full',
                         'CL = CL_base + flap_factor * dCL_flaps_full',
                     ],
                     CL=dict(shape=nn, units='unitless'),
-                    CL_full_flaps=dict(shape=nn, units='unitless'),
                     CL_base=dict(shape=nn, units='unitless'),
                     # dCL_flaps=dict(shape=nn, units='unitless'),
                     flap_factor=dict(shape=nn, units='unitless'),
@@ -1958,9 +2048,7 @@ class LowSpeedAero(om.Group):
         interp.add_output('CDI_factor', 1.0, units='unitless', training_data=adel6)
         self.add_subsystem('cdi_flap_interp', interp, promotes=['*'])
 
-        self.add_subsystem(
-            'drag_coef', DragCoef(num_nodes=nn), promotes=['*', ('CL', 'CL_full_flaps')]
-        )
+        self.add_subsystem('drag_coef', DragCoef(num_nodes=nn), promotes=['*', ('CL')])
 
         self.add_subsystem(
             'total_cd',
