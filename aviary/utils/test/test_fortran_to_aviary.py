@@ -40,6 +40,7 @@ class TestFortranToAviary(unittest.TestCase):
         with open('TEST_' + filename, 'r') as f_in, open(validation_data, 'r') as expected:
             for line in f_in:
                 if any(s in line for s in skip_list):
+                    # expected.readline()
                     continue
 
                 # Remove whitespace and compare
@@ -52,9 +53,7 @@ class TestFortranToAviary(unittest.TestCase):
 
                 except Exception:
                     exc_string = (
-                        f'Error: {filename}\n'
-                        f'Found:    {line_no_whitespace}\n'
-                        f'Expected: {expected_line}'
+                        f'Error: {filename}\nFound: {line_no_whitespace}\nExpected: {expected_line}'
                     )
                     raise Exception(exc_string)
 
