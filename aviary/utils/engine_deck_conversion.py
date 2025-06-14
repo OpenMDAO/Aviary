@@ -1,5 +1,4 @@
 #!/usr/bin/python
-
 import argparse
 import getpass
 from copy import deepcopy

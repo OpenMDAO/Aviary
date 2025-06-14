@@ -9,9 +9,9 @@ from aviary.utils.named_values import NamedValues, get_items, get_keys
 
 
 def build_data_interpolator(
-    num_nodes,
     interpolator_data=None,
     interpolator_outputs=None,
+    num_nodes=1,
     method='slinear',
     extrapolate=True,
     structured=None,
@@ -38,6 +38,9 @@ def build_data_interpolator(
         variables in data_file or interpolator_data. If connect_training_data is True, then
         this dictionary describes the names and units for training data that will be
         provided via openMDAO connections during model execution.
+
+    num_nodes : int
+        Number of points that will be simultaneously interpolated during model executuion.
 
     method : str, optional
         Interpolation method for metamodel. See openMDAO documentation for valid
@@ -230,12 +233,11 @@ def build_data_interpolator(
         interp_comp.add_input(key, training_data=values, units=units)
     # add interpolator outputs
     for key in interpolator_outputs:
-        if key in interpolator_data:
-            values, units = interpolator_data.get_item(key)
         if connect_training_data:
             units = interpolator_outputs[key]
             interp_comp.add_output(key, units=units)
         else:
+            values, units = interpolator_data.get_item(key)
             interp_comp.add_output(key, training_data=values, units=units)
 
     return interp_comp
