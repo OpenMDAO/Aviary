@@ -653,8 +653,10 @@ class AeroGeom(om.ExplicitComponent):
 
         self.add_input('interference_independent_of_shielded_area', units='unitless')
         (self.add_input('drag_loss_due_to_shielded_wing_area', units='unitless'),)
-        self.add_input('body_form_factor', units='unitless')
-        self.add_input('siwb', units='unitless')
+        self.add_input(
+            'body_form_factor', units='unitless', desc='FFFUS: fuselage form drag factor'
+        )
+        self.add_input('siwb', units='unitless', desc='SIWB: correction factor')
 
         # outputs
         for i in range(7):
@@ -1454,6 +1456,7 @@ class LiftCoeffUnclean(om.ExplicitComponent):
         self.add_input(
             'kclge', units='unitless', shape=nn, desc='factor of CL due to ground effect'
         )
+        self.add_input('flap_factor', shape=nn, desc='factor of CL due to flap deployment')
 
         self.add_output('CL_base', units='unitless', shape=nn, desc='Base lift coefficient')
         self.add_output(
@@ -1464,6 +1467,14 @@ class LiftCoeffUnclean(om.ExplicitComponent):
         )
         self.add_output('alpha_stall', units='deg', shape=nn, desc='Stall angle of attack')
         self.add_output('CL_max', units='unitless', shape=nn, desc='Max lift coefficient')
+
+        self.add_output(
+            'CL_full_flaps',
+            units='unitless',
+            shape=nn,
+            desc='lift coefficient with full flaps deployed',
+        )
+        self.add_output('CL', units='unitless', shape=nn, desc='lift coefficient')
 
     def setup_partials(self):
         # self.declare_coloring(method="cs", show_summary=False)
@@ -1489,6 +1500,16 @@ class LiftCoeffUnclean(om.ExplicitComponent):
         self.declare_partials('CL_max', ['CL_max_flaps'], method='cs')
         self.declare_partials('CL_max', ['lift_ratio'], rows=ar, cols=ar, method='cs')
 
+        self.declare_partials('CL_full_flaps', ['*'], method='cs')
+        self.declare_partials('CL_full_flaps', dynvars, rows=ar, cols=ar, method='cs')
+        self.declare_partials('CL_full_flaps', ['dCL_flaps_model'], method='cs')
+        self.declare_partials('CL_full_flaps', ['lift_ratio'], rows=ar, cols=ar, method='cs')
+
+        self.declare_partials('CL', ['*'], method='cs')
+        self.declare_partials('CL', dynvars, rows=ar, cols=ar, method='cs')
+        self.declare_partials('CL', ['dCL_flaps_model'], method='cs')
+        self.declare_partials('CL', ['lift_ratio'], rows=ar, cols=ar, method='cs')
+
     def compute(self, inputs, outputs):
         (
             alpha,
@@ -1498,10 +1519,11 @@ class LiftCoeffUnclean(om.ExplicitComponent):
             CL_max_flaps,
             dCL_flaps_model,
             kclge,
+            flap_factor,
         ) = inputs.values()
 
-        clw_base = kclge * lift_curve_slope * deg2rad(alpha - alpha0)
-        clw = clw_base + dCL_flaps_model
+        # clw_base = kclge * lift_curve_slope * deg2rad(alpha - alpha0)
+        # clw = clw_base + dCL_flaps_model
 
         outputs['CL_base'] = kclge * lift_curve_slope * deg2rad(alpha - alpha0) * (1 + lift_ratio)
         outputs['dCL_flaps_full'] = dCL_flaps_model * (1 + lift_ratio)
@@ -1510,7 +1532,8 @@ class LiftCoeffUnclean(om.ExplicitComponent):
         )
         outputs['CL_max'] = CL_max_flaps * (1 + lift_ratio)
 
-        outputs['CL'] = clw * (1 + lift_ratio)
+        outputs['CL_full_flaps'] = outputs['CL_base'] + outputs['dCL_flaps_full']
+        outputs['CL'] = outputs['CL_base'] + flap_factor * outputs['dCL_flaps_full']
 
 
 class LiftCoeffClean(om.ExplicitComponent):
@@ -2007,7 +2030,7 @@ class LowSpeedAero(om.Group):
                 promotes_inputs=['*'],
                 # little bit of a hack here - input CL bypasses CL increment ramp
                 # so ensure this is what's passed to DragCoef
-                promotes_outputs=[('CL')],
+                promotes_outputs=[('CL', 'CL_full_flaps')],
             )
             # NOTE Alpha is NOT an output from LowSpeedAero.
         else:
@@ -2030,9 +2053,11 @@ class LowSpeedAero(om.Group):
                 om.ExecComp(
                     [
                         # "CL = CL_base + dCL_flaps",
+                        'CL_full_flaps = CL_base + dCL_flaps_full',
                         'CL = CL_base + flap_factor * dCL_flaps_full',
                     ],
                     CL=dict(shape=nn, units='unitless'),
+                    CL_full_flaps=dict(shape=nn, units='unitless'),
                     CL_base=dict(shape=nn, units='unitless'),
                     # dCL_flaps=dict(shape=nn, units='unitless'),
                     flap_factor=dict(shape=nn, units='unitless'),
@@ -2048,7 +2073,153 @@ class LowSpeedAero(om.Group):
         interp.add_output('CDI_factor', 1.0, units='unitless', training_data=adel6)
         self.add_subsystem('cdi_flap_interp', interp, promotes=['*'])
 
-        self.add_subsystem('drag_coef', DragCoef(num_nodes=nn), promotes=['*', ('CL')])
+        self.add_subsystem(
+            'drag_coef', DragCoef(num_nodes=nn), promotes=['*', ('CL', 'CL_full_flaps')]
+        )
+
+        self.add_subsystem(
+            'total_cd',
+            om.ExecComp(
+                'CD = CD_base + flap_factor * dCD_flaps_full + gear_factor * dCD_gear_full',
+                # "CD = CD_base + dCD_flaps + dCD_gear",
+                CD=dict(shape=nn, units='unitless'),
+                CD_base=dict(shape=nn, units='unitless'),
+                # dCD_flaps=dict(shape=nn, units='unitless'),
+                # dCD_gear=dict(shape=nn, units='unitless'),
+                flap_factor=dict(shape=nn, units='unitless'),
+                gear_factor=dict(shape=nn, units='unitless'),
+                dCD_gear_full=dict(shape=nn, units='unitless'),
+                dCD_flaps_full=dict(shape=nn, units='unitless'),
+                has_diag_partials=True,
+            ),
+            promotes=['*'],
+        )
+
+        self.add_subsystem('forces', AeroForces(num_nodes=nn), promotes=['*'])
+
+        self.set_input_defaults(Dynamic.Mission.ALTITUDE, np.zeros(nn))
+
+        if self.options['retract_gear']:
+            # takeoff defaults
+            self.set_input_defaults('dt_gear', 7)
+        # gear not dynamically extended during landing
+
+        if self.options['retract_flaps']:
+            # takeoff defaults
+            self.set_input_defaults('flap_defl', 10)
+            self.set_input_defaults('dt_flaps', 3)
+        else:
+            # landing defaults
+            self.set_input_defaults('flap_defl', 40)
+            # flaps not dynamically extended during landing
+
+
+class LowSpeedAero_mod(om.Group):
+    """Top-level aerodynamics group for near-ground flight."""
+
+    def initialize(self):
+        self.options.declare('num_nodes', default=1, types=int)
+        self.options.declare(
+            'retract_gear',
+            default=True,
+            types=bool,
+            desc='True to start with gear landing gear down, False for reverse',
+        )
+        self.options.declare(
+            'retract_flaps',
+            default=True,
+            types=bool,
+            desc='True to start with flaps applied, False for reverse',
+        )
+        self.options.declare(
+            'lift_required',
+            default=False,
+            types=bool,
+            desc='If True, compute CL from lift required (mass). If False, compute lift '
+            'from current flight conditions including angle of attack.',
+        )
+        self.options.declare(
+            'input_atmos',
+            default=False,
+            types=bool,
+            desc='Directly input speed of sound and kinematic viscosity instead of '
+            'computing them with an atmospherics component. For testing.',
+        )
+
+    def setup(self):
+        nn = self.options['num_nodes']
+        lift_required = self.options['lift_required']
+        self.add_subsystem(
+            'aero_setup',
+            AeroSetup(
+                num_nodes=nn,
+                input_atmos=self.options['input_atmos'],
+            ),
+            promotes=['*'],
+        )
+
+        aero_ramps = TanhRampComp(time_units='s', num_nodes=nn)
+        aero_ramps.add_ramp(
+            'flap_factor',
+            output_units='unitless',
+            initial_val=1.0 if self.options['retract_flaps'] else 0.0,
+            final_val=0.0 if self.options['retract_flaps'] else 1.0,
+        )
+        aero_ramps.add_ramp(
+            'gear_factor',
+            output_units='unitless',
+            initial_val=1.0 if self.options['retract_gear'] else 0.0,
+            final_val=0.0 if self.options['retract_gear'] else 1.0,
+        )
+
+        self.add_subsystem(
+            'aero_ramps',
+            aero_ramps,
+            promotes_inputs=[
+                ('time', 't_curr'),
+                ('flap_factor:t_init', 't_init_flaps'),
+                ('flap_factor:t_duration', 'dt_flaps'),
+                ('gear_factor:t_init', 't_init_gear'),
+                ('gear_factor:t_duration', 'dt_gear'),
+            ],
+            promotes_outputs=['flap_factor', 'gear_factor'],
+        )
+
+        if lift_required:
+            # lift_req -> CL
+            self.add_subsystem(
+                'lift2cl',
+                CLFromLift(num_nodes=nn),
+                promotes_inputs=['*'],
+                # little bit of a hack here - input CL bypasses CL increment ramp
+                # so ensure this is what's passed to DragCoef
+                promotes_outputs=[('CL', 'CL_full_flaps')],
+            )
+            # NOTE Alpha is NOT an output from LowSpeedAero.
+        else:
+            self.add_subsystem(
+                'kclge',
+                GroundEffect(num_nodes=nn),
+                promotes_inputs=['*'],
+                promotes_outputs=['*'],
+            )
+
+            self.add_subsystem(
+                'lift_coef',
+                LiftCoeffUnclean(num_nodes=nn),
+                promotes_inputs=['*'],
+                promotes_outputs=['*'],
+            )
+
+        interp = om.MetaModelStructuredComp(method='slinear')
+        interp.add_input('flap_defl', 10.0, units='deg', training_data=adelfd)
+        interp.add_output('dCL_flaps_coef', 0.0, units='unitless', training_data=asigma)
+        interp.add_output('CDI_factor', 1.0, units='unitless', training_data=adel6)
+        self.add_subsystem('cdi_flap_interp', interp, promotes=['*'])
+
+        self.add_subsystem(
+            'drag_coef', DragCoef(num_nodes=nn), promotes=['*', ('CL', 'CL_full_flaps')]
+        )
 
         self.add_subsystem(
             'total_cd',

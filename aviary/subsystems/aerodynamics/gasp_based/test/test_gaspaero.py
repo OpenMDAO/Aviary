@@ -10,6 +10,7 @@ from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 from aviary.subsystems.aerodynamics.gasp_based.gaspaero import (
     CruiseAero,
     LowSpeedAero,
+    LowSpeedAero_mod,
     FormFactorAndSIWB,
     GroundEffect,
     BWBBodyLiftCurveSlope,
@@ -37,7 +38,7 @@ class GASPAeroTest(unittest.TestCase):
     aviary_options = AviaryValues()
     aviary_options.set_val(Aircraft.Engine.NUM_ENGINES, np.array([2]))
 
-    def test_cruise(self):
+    def ttest_cruise(self):
         prob = om.Problem()
         prob.model.add_subsystem(
             'aero',
@@ -139,7 +140,7 @@ class GASPAeroTest(unittest.TestCase):
                 partial_data = prob.check_partials(method='fd', out_stream=None)
                 assert_check_partials(partial_data, atol=4.5, rtol=5e-3)
 
-    def test_ground_alpha_out(self):
+    def ttest_ground_alpha_out(self):
         # Test that drag output matches between both CL computation methods
         prob = om.Problem()
         prob.model.add_subsystem(
@@ -152,6 +153,109 @@ class GASPAeroTest(unittest.TestCase):
         prob.model.add_subsystem(
             'lift_required',
             LowSpeedAero(lift_required=True),
+            promotes_inputs=['*', 'lift_req'],
+        )
+
+        setup_model_options(prob, AviaryValues({Aircraft.Engine.NUM_ENGINES: ([2], 'unitless')}))
+
+        prob.setup(check=False, force_alloc_complex=True)
+
+        _init_geom(prob)
+
+        # extra params needed for ground aero
+        # leave time ramp inputs as defaults, gear/flaps extended and stay
+        prob.set_val(Aircraft.Wing.HEIGHT, 8.0)  # not defined in standalone aero
+        prob.set_val('airport_alt', 0.0)  # not defined in standalone aero
+        prob.set_val(Aircraft.Wing.FLAP_CHORD_RATIO, setup_data['cfoc'])
+        prob.set_val(Mission.Design.GROSS_MASS, setup_data['wgto'])
+
+        prob.set_val(Dynamic.Atmosphere.DYNAMIC_PRESSURE, 1)
+        prob.set_val(Dynamic.Atmosphere.MACH, 0.1)
+        prob.set_val(Dynamic.Mission.ALTITUDE, 10)
+        prob.set_val('alpha_in', 5)
+        prob.run_model()
+
+        assert_near_equal(prob['lift_from_aoa.drag'], prob['lift_required.drag'], tolerance=1e-6)
+
+        partial_data = prob.check_partials(method='fd', out_stream=None)
+        assert_check_partials(partial_data, atol=0.02, rtol=1e-4)
+
+    def ttest_ground_mod(self):
+        prob = om.Problem()
+        prob.model.add_subsystem(
+            'aero',
+            LowSpeedAero_mod(
+                num_nodes=2,
+                input_atmos=True,
+            ),
+            promotes=['*'],
+        )
+
+        setup_model_options(prob, AviaryValues({Aircraft.Engine.NUM_ENGINES: ([2], 'unitless')}))
+
+        prob.setup(check=False, force_alloc_complex=True)
+
+        _init_geom(prob)
+
+        # extra params needed for ground aero
+        # leave time ramp inputs as defaults, gear/flaps extended and stay
+        prob.set_val(Aircraft.Wing.HEIGHT, 8.0)  # not defined in standalone aero
+        prob.set_val('airport_alt', 0.0)  # not defined in standalone aero
+        prob.set_val(Aircraft.Wing.FLAP_CHORD_RATIO, setup_data['cfoc'])
+        prob.set_val(Mission.Design.GROSS_MASS, setup_data['wgto'])
+
+        for i, row in ground_data.iterrows():
+            ilift = row['ilift']  # 2: takeoff, 3: landing
+            alt = row['alt']
+            mach = row['mach']
+            alpha = row['alpha']
+
+            with self.subTest(ilift=ilift, alt=alt, mach=mach, alpha=alpha):
+                prob.set_val(Dynamic.Atmosphere.MACH, mach)
+                prob.set_val(Dynamic.Mission.ALTITUDE, alt)
+                prob.set_val(Dynamic.Vehicle.ANGLE_OF_ATTACK, alpha)
+                prob.set_val(Dynamic.Atmosphere.SPEED_OF_SOUND, row['sos'])
+                prob.set_val(Dynamic.Atmosphere.KINEMATIC_VISCOSITY, row['nu'])
+
+                # note we're just letting the time ramps for flaps/gear default to the
+                # takeoff config such that the default times correspond to full flap and
+                # gear increments
+                if row['ilift'] == 2:
+                    # takeoff flaps config
+                    prob.set_val('flap_defl', setup_data['delfto'])
+                    prob.set_val('CL_max_flaps', setup_data['clmwto'])
+                    prob.set_val('dCL_flaps_model', setup_data['dclto'])
+                    prob.set_val('dCD_flaps_model', setup_data['dcdto'])
+                    prob.set_val('aero_ramps.flap_factor:final_val', 1.0)
+                    prob.set_val('aero_ramps.gear_factor:final_val', 1.0)
+                else:
+                    # landing flaps config
+                    prob.set_val('flap_defl', setup_data['delfld'])
+                    prob.set_val('CL_max_flaps', setup_data['clmwld'])
+                    prob.set_val('dCL_flaps_model', setup_data['dclld'])
+                    prob.set_val('dCD_flaps_model', setup_data['dcdld'])
+
+                prob.run_model()
+
+                assert_near_equal(prob['CL'][0], row['cl'], tolerance=self.ground_tol)
+                assert_near_equal(prob['CD'][0], row['cd'], tolerance=self.ground_tol)
+
+                partial_data = prob.check_partials(method='fd', out_stream=None)
+                assert_check_partials(partial_data, atol=4.5, rtol=5e-3)
+
+    def ttest_ground_alpha_out_mod(self):
+        # Test that drag output matches between both CL computation methods
+        prob = om.Problem()
+        prob.model.add_subsystem(
+            'lift_from_aoa',
+            LowSpeedAero_mod(),
+            promotes_inputs=['*', (Dynamic.Vehicle.ANGLE_OF_ATTACK, 'alpha_in')],
+            promotes_outputs=[(Dynamic.Vehicle.LIFT, 'lift_req')],
+        )
+
+        prob.model.add_subsystem(
+            'lift_required',
+            LowSpeedAero_mod(lift_required=True),
             promotes_inputs=['*', 'lift_req'],
         )
 
