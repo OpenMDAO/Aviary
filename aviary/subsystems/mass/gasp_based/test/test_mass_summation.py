@@ -3129,7 +3129,7 @@ class BWBMassSummationTestCase(unittest.TestCase):
         options.set_val(Aircraft.CrewPayload.PASSENGER_MASS_WITH_BAGS, val=225, units='lbm')
         options.set_val(Aircraft.Engine.ADDITIONAL_MASS_FRACTION, 0.04373, units='unitless')
         options.set_val(Aircraft.Engine.NUM_FUSELAGE_ENGINES, 2, units='unitless')
-        options.set_val(Aircraft.CrewPayload.UNIT_MASS_OF_ULD_PER_PASSENGER, 0.0667, units='lbm')
+        options.set_val(Aircraft.CrewPayload.ULD_MASS_PER_PASSENGER, 0.0667, units='lbm')
 
         prob = self.prob = om.Problem()
         prob.model.add_subsystem(
