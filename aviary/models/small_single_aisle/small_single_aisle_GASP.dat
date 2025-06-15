@@ -120,7 +120,7 @@
  CW(11)=50.0,   ! emergency equipment
  CW(12)=6.0,   	! catering items lbsf per passenger CW(13)=6.0,
  CW(13)=12.,    ! trapped fuel factor
- !CW(14)=0.11,   ! cargo handling, number of ULD's per passemger
+ CW(14)=0.11,   ! cargo handling, number of ULD's per passemger
  !CW(15)=12.5,   ! electrical system weight per passenger (16.0)
  !CW(16)=520.,   ! other operating items (0)
  CKFF=1.000,    ! factor on installed engine fuel flow
