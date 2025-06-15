@@ -104,7 +104,7 @@ class BWBFurnishingsGroupMassTest(unittest.TestCase):
         # These inputs aren't in the FLOPS input data so we'll give dummy values here,
         # instead of trying to transfer them from the FLOPS input data. The test
         # case will only check the partials.
-        prob.set_val(Aircraft.BWB.CABIN_AREA, 1000.0, units='ft**2')
+        prob.set_val(Aircraft.Fuselage.CABIN_AREA, 1000.0, units='ft**2')
         prob.set_val(Aircraft.BWB.PASSENGER_LEADING_EDGE_SWEEP, 30.0, units='deg')
 
         flops_validation_test(
@@ -112,7 +112,7 @@ class BWBFurnishingsGroupMassTest(unittest.TestCase):
             case_name,
             input_keys=[
                 Aircraft.Furnishings.MASS_SCALER,
-                # Aircraft.BWB.CABIN_AREA,
+                # Aircraft.Fuselage.CABIN_AREA,
                 # Aircraft.BWB.PASSENGER_LEADING_EDGE_SWEEP,
                 Aircraft.Fuselage.MAX_WIDTH,
                 Aircraft.Fuselage.MAX_HEIGHT,
@@ -169,7 +169,7 @@ class BWBFurnishingsGroupMassTest2(unittest.TestCase):
             promotes_outputs=['*'],
             promotes_inputs=['*'],
         )
-        prob.model.set_input_defaults(Aircraft.BWB.CABIN_AREA, val=100.0, units='ft**2')
+        prob.model.set_input_defaults(Aircraft.Fuselage.CABIN_AREA, val=100.0, units='ft**2')
         prob.model.set_input_defaults(Aircraft.Fuselage.MAX_WIDTH, val=30.0, units='ft')
         prob.model.set_input_defaults(Aircraft.Fuselage.MAX_HEIGHT, val=15.0, units='ft')
         prob.setup(check=False, force_alloc_complex=True)
