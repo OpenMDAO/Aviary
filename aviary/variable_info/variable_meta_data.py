@@ -1105,7 +1105,7 @@ add_meta_data(
 )
 
 add_meta_data(
-    Aircraft.CrewPayload.UNIT_MASS_OF_ULD_PER_PASSENGER,
+    Aircraft.CrewPayload.ULD_MASS_PER_PASSENGER,
     meta_data=_MetaData,
     historical_name={'GASP': 'INGASP.CW(14)', 'FLOPS': None, 'LEAPS1': None},
     units='lbm',
