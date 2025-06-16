@@ -17,7 +17,6 @@ from openmdao.utils.reports_system import _default_reports
 from aviary.core.AviaryGroup import AviaryGroup
 from aviary.core.PostMissionGroup import PostMissionGroup
 from aviary.core.PreMissionGroup import PreMissionGroup
-from aviary.interface.utils.check_phase_info import check_phase_info
 from aviary.mission.gasp_based.phases.time_integration_traj import FlexibleTraj
 from aviary.mission.height_energy_problem_configurator import HeightEnergyProblemConfigurator
 from aviary.mission.solved_two_dof_problem_configurator import SolvedTwoDOFProblemConfigurator
