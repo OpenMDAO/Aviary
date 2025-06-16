@@ -1,8 +1,10 @@
 import copy
 import unittest
 
-from aviary.interface.default_phase_info.height_energy import phase_info as phase_info_height_energy
-from aviary.interface.default_phase_info.two_dof import phase_info as phase_info_two_dof
+from aviary.models.missions.default_phase_info.height_energy import (
+    phase_info as phase_info_height_energy,
+)
+from aviary.models.missions.default_phase_info.two_dof import phase_info as phase_info_two_dof
 from aviary.interface.utils.check_phase_info import check_phase_info
 from aviary.variable_info.enums import EquationsOfMotion
 

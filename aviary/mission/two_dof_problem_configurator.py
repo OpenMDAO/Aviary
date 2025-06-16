@@ -1,7 +1,7 @@
 import openmdao.api as om
 
 from aviary.constants import GRAV_ENGLISH_LBM, RHO_SEA_LEVEL_ENGLISH
-from aviary.interface.default_phase_info.two_dof_fiti import add_default_sgm_args
+from aviary.models.missions.default_phase_info.two_dof_fiti import add_default_sgm_args
 from aviary.mission.gasp_based.idle_descent_estimation import add_descent_estimation_as_submodel
 from aviary.mission.gasp_based.ode.landing_ode import LandingSegment
 from aviary.mission.gasp_based.ode.params import ParamPort
@@ -117,10 +117,10 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
             General default phase_info.
         """
         if prob.analysis_scheme is AnalysisScheme.COLLOCATION:
-            from aviary.interface.default_phase_info.two_dof import phase_info
+            from aviary.models.missions.default_phase_info.two_dof import phase_info
 
         elif prob.analysis_scheme is AnalysisScheme.SHOOTING:
-            from aviary.interface.default_phase_info.two_dof_fiti import (
+            from aviary.models.missions.default_phase_info.two_dof_fiti import (
                 phase_info,
                 phase_info_parameterization,
             )

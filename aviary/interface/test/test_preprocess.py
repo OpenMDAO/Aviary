@@ -8,7 +8,7 @@ import unittest
 from openmdao.utils.testing_utils import use_tempdirs
 
 from aviary.interface.methods_for_level2 import AviaryProblem
-from aviary.models.N3CC.phase_info import phase_info
+from aviary.models.aircraft.advanced_single_aisle.phase_info import phase_info
 from aviary.variable_info.variables import Aircraft
 
 
@@ -19,7 +19,10 @@ class TestLevel2Preprocessing(unittest.TestCase):
         prob = AviaryProblem()
         local_phase_info = deepcopy(phase_info)
 
-        prob.load_inputs('models/N3CC/N3CC_FLOPS.csv', local_phase_info)
+        prob.load_inputs(
+            'models/aircraft/advanced_single_aisle/advanced_single_aisle_FLOPS.csv',
+            local_phase_info,
+        )
         prob.check_and_preprocess_inputs()
         aviary_inputs = prob.aviary_inputs
 

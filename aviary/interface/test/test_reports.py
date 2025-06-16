@@ -7,7 +7,7 @@ import openmdao.api as om
 from openmdao.core.problem import _clear_problem_names
 from openmdao.utils.testing_utils import set_env_vars, use_tempdirs
 
-from aviary.interface.default_phase_info.height_energy import phase_info
+from aviary.models.missions.default_phase_info.height_energy import phase_info
 from aviary.interface.methods_for_level1 import run_aviary
 from aviary.interface.methods_for_level2 import AviaryProblem
 from aviary.subsystems.subsystem_builder_base import SubsystemBuilderBase
@@ -25,7 +25,7 @@ class TestReports(unittest.TestCase):
     def test_timeseries_report(self):
         local_phase_info = deepcopy(phase_info)
         self.prob = run_aviary(
-            'models/test_aircraft/aircraft_for_bench_FwFm.csv',
+            'models/aircraft/test_aircraft/aircraft_for_bench_FwFm.csv',
             local_phase_info,
             optimizer='SLSQP',
             max_iter=0,
@@ -115,7 +115,7 @@ class TestReports(unittest.TestCase):
 
         prob = AviaryProblem()
         prob.load_inputs(
-            'models/test_aircraft/aircraft_for_bench_FwFm.csv',
+            'models/aircraft/test_aircraft/aircraft_for_bench_FwFm.csv',
             local_phase_info,
         )
         prob.check_and_preprocess_inputs()

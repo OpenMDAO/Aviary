@@ -4,7 +4,7 @@ from openmdao.utils.assert_utils import assert_near_equal
 from openmdao.utils.testing_utils import require_pyoptsparse, use_tempdirs
 
 import aviary.api as av
-from aviary.interface.default_phase_info.height_energy import phase_info_parameterization
+from aviary.models.missions.default_phase_info.height_energy import phase_info_parameterization
 from aviary.variable_info.enums import ProblemType, Verbosity
 
 
@@ -115,7 +115,7 @@ class TestOffDesign(HeightEnergyTestCase):
         # Fallout Mission
         prob_fallout = av.AviaryProblem()
         prob_fallout.load_inputs(
-            'models/test_aircraft/aircraft_for_bench_FwFm.csv',
+            'models/aircraft/test_aircraft/aircraft_for_bench_FwFm.csv',
             self.phase_info,
             verbosity=Verbosity.QUIET,
         )
@@ -144,7 +144,7 @@ class TestOffDesign(HeightEnergyTestCase):
         # Alternate Mission
         prob_alternate = av.AviaryProblem()
         prob_alternate.load_inputs(
-            'models/test_aircraft/aircraft_for_bench_FwFm.csv',
+            'models/aircraft/test_aircraft/aircraft_for_bench_FwFm.csv',
             self.phase_info,
             verbosity=Verbosity.QUIET,
         )
@@ -182,7 +182,7 @@ class TestOffDesign(HeightEnergyTestCase):
         # Fallout Mission
         prob_fallout = av.AviaryProblem()
         prob_fallout.load_inputs(
-            'models/test_aircraft/aircraft_for_bench_FwFm.csv',
+            'models/aircraft/test_aircraft/aircraft_for_bench_FwFm.csv',
             self.phase_info,
             verbosity=Verbosity.QUIET,
         )
@@ -211,7 +211,7 @@ class TestOffDesign(HeightEnergyTestCase):
         # Alternate Mission
         prob_alternate = av.AviaryProblem()
         prob_alternate.load_inputs(
-            'models/test_aircraft/aircraft_for_bench_FwFm.csv',
+            'models/aircraft/test_aircraft/aircraft_for_bench_FwFm.csv',
             self.phase_info,
             verbosity=Verbosity.QUIET,
         )

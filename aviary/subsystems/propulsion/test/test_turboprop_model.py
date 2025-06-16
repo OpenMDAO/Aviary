@@ -118,7 +118,7 @@ class TurbopropMissionTest(unittest.TestCase):
 
     def test_case_1(self):
         # test case using GASP-derived engine deck and "user specified" prop model
-        filename = get_path('models/engines/turboshaft_1120hp.deck')
+        filename = get_path('models/engines/turboshaft_1120hp.csv')
         # Mach, alt, throttle @ idle, SLS, TOC
         test_points = [(0, 0, 0), (0, 0, 1), (0.6, 25000, 1)]
         # shp, tailpipe thrust, prop_thrust, total_thrust, max_thrust, fuel flow
@@ -185,7 +185,7 @@ class TurbopropMissionTest(unittest.TestCase):
 
     def test_case_2(self):
         # test case using GASP-derived engine deck and default HS prop model.
-        filename = get_path('models/engines/turboshaft_1120hp.deck')
+        filename = get_path('models/engines/turboshaft_1120hp.csv')
         test_points = [(0.001, 0, 0), (0, 0, 1), (0.6, 25000, 1)]
         truth_vals = [
             (111.99470752, 37.507376, 610.74316698, 648.25054298, 4174.71028286, -195.78762),
@@ -232,7 +232,7 @@ class TurbopropMissionTest(unittest.TestCase):
     def test_case_3(self):
         # test case using GASP-derived engine deck w/o tailpipe thrust and default
         # HS prop model.
-        filename = get_path('models/engines/turboshaft_1120hp_no_tailpipe.deck')
+        filename = get_path('models/engines/turboshaft_1120hp_no_tailpipe.csv')
         test_points = [(0, 0, 0), (0, 0, 1), (0.6, 25000, 1)]
         truth_vals = [
             (
