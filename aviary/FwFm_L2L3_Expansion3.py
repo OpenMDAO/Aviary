@@ -214,8 +214,27 @@ prob.model.connect(
     src_indices=[-1],
 )
 
-# maybe should split this out and define explicitly
-prob._add_fuel_reserve_component()
+RESERVE_FUEL_ADDITIONAL = prob.aviary_inputs.get_val(
+    Aircraft.Design.RESERVE_FUEL_ADDITIONAL, units='lbm'
+)
+
+reserve_fuel = om.ExecComp(
+    'reserve_fuel = reserve_fuel_frac_mass + reserve_fuel_additional + reserve_fuel_burned',
+    reserve_fuel={'units': 'lbm', 'shape': 1},
+    reserve_fuel_frac_mass={'units': 'lbm', 'val': 0},
+    reserve_fuel_additional={'units': 'lbm', 'val': RESERVE_FUEL_ADDITIONAL},
+    reserve_fuel_burned={'units': 'lbm', 'val': 0},
+)
+prob.model.post_mission.add_subsystem(
+    'reserve_fuel',
+    reserve_fuel,
+    promotes_inputs=[
+        'reserve_fuel_frac_mass',
+        ('reserve_fuel_additional', Aircraft.Design.RESERVE_FUEL_ADDITIONAL),
+        ('reserve_fuel_burned', Mission.Summary.RESERVE_FUEL_BURNED),
+    ],
+    promotes_outputs=[('reserve_fuel', Mission.Design.RESERVE_FUEL)],
+)
 
 ecomp = om.ExecComp(
     'overall_fuel = (1 + fuel_margin/100)*fuel_burned + reserve_fuel',
@@ -276,7 +295,7 @@ all_subsystems = []
 # else:
 #    all_subsystems.extend(external_subsystems)
 
-all_subsystems.append(prob.core_subsystems['aerodynamics'])
+# all_subsystems.append(prob.core_subsystems['aerodynamics'])
 all_subsystems.append(prob.core_subsystems['propulsion'])
 
 ### Spelling this out
@@ -292,7 +311,7 @@ base_phases = ['climb', 'cruise', 'descent']
 
 for external_subsystem in all_subsystems:  # I think this is badly named - this is not just 'external subsystems' so I ignored this entire block of code at first!
     ### Think this line needs to just be replaced by an engine call? Engine will need to be defined above
-    bus_variables = external_subsystem.get_bus_variables()
+    bus_variables = external_subsystem.get_pre_mission_bus_variables()
     # if bus_variables is not None:
     for bus_variable, variable_data in bus_variables.items():
         mission_variable_name = variable_data['mission_name']
@@ -434,6 +453,21 @@ prob.model.add_subsystem(
 )
 prob.model.add_objective(Mission.Objectives.FUEL, ref=1)
 
+prob.model.add_subsystem(
+    'range_obj',
+    om.ExecComp(
+        'reg_objective = -actual_range/1000 + ascent_duration/30.',
+        reg_objective={'val': 0.0, 'units': 'unitless'},
+        ascent_duration={'units': 's', 'shape': 1},
+        actual_range={'val': prob.target_range, 'units': 'NM'},
+    ),
+    promotes_inputs=[
+        ('actual_range', Mission.Summary.RANGE),
+        ('ascent_duration', Mission.Takeoff.ASCENT_DURATION),
+    ],
+    promotes_outputs=[('reg_objective', Mission.Objectives.RANGE)],
+)
+
 ##########
 # What does this actually do?
 # is it worth splitting this out in more detail?
@@ -492,23 +526,16 @@ prob.set_val(
     prob.model.traj.phases.climb.interp('altitude', xs=[-1, 1], ys=guesses['altitude_descent'][0]),
     units='ft',
 )
-prob.set_val('traj.climb.states:mass', 125000, units='lbm')
+# prob.set_val('traj.climb.states:mass', 125000, units='lbm')
 prob.set_val('traj.cruise.states:mass', 125000, units='lbm')
 prob.set_val('traj.descent.states:mass', 125000, units='lbm')
 
+prob.set_val(Mission.Design.GROSS_MASS, 150000, units='lbm')
+prob.set_val(Mission.Summary.GROSS_MASS, 150000, units='lbm')
+
 prob.verbosity = Verbosity.VERBOSE
 
-"""
-try:
-    prob.run_model()
-except:
-    pass
-"""
-
-# prob.model.list_vars(units=True, print_arrays=True)
-
+prob.model.list_vars(units=True, print_arrays=True)
 prob.run_aviary_problem()
-
-# prob.model.list_vars(out_stream='FwFm_L2L3_listvars_postrun.txt')
-
 prob.list_driver_vars()
+prob.model.list_vars(units=True, print_arrays=True)

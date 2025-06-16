@@ -31,8 +31,7 @@ prob.setup()
 prob.set_initial_guesses()
 
 # prob.run_model()
-# prob.model.list_vars(units=True, print_arrays=True)
+prob.model.list_vars(units=True, print_arrays=True)
 prob.run_aviary_problem()
-
-# prob.model.list_vars()
 prob.list_driver_vars()
+prob.model.list_vars(units=True, print_arrays=True)
