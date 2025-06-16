@@ -1217,7 +1217,7 @@ class LiftCoeff(om.ExplicitComponent):
         self.add_input(
             'CL_max_flaps',
             units='unitless',
-            desc='CLMWTO | CLMWLD: Max lift coefficient from flaps model',
+            desc='CLMWTO | CLMWLD: Max lift coefficient from flaps model (takeoff | landing)',
         )
         self.add_input(
             'dCL_flaps_model',
@@ -1229,6 +1229,7 @@ class LiftCoeff(om.ExplicitComponent):
         self.add_input(
             'kclge', units='unitless', shape=nn, desc='factor of CL due to ground effect'
         )
+        self.add_input('flap_factor', shape=nn, desc='factor of CL due to flap deployment')
 
         self.add_output('CL_base', units='unitless', shape=nn, desc='Base lift coefficient')
         self.add_output(
@@ -1239,6 +1240,14 @@ class LiftCoeff(om.ExplicitComponent):
         )
         self.add_output('alpha_stall', units='deg', shape=nn, desc='Stall angle of attack')
         self.add_output('CL_max', units='unitless', shape=nn, desc='Max lift coefficient')
+
+        self.add_output(
+            'CL_full_flaps',
+            units='unitless',
+            shape=nn,
+            desc='lift coefficient with full flaps deployed',
+        )
+        self.add_output('CL', units='unitless', shape=nn, desc='lift coefficient')
 
     def setup_partials(self):
         # self.declare_coloring(method="cs", show_summary=False)
@@ -1264,6 +1273,16 @@ class LiftCoeff(om.ExplicitComponent):
         self.declare_partials('CL_max', ['CL_max_flaps'], method='cs')
         self.declare_partials('CL_max', ['lift_ratio'], rows=ar, cols=ar, method='cs')
 
+        self.declare_partials('CL_full_flaps', ['*'], method='cs')
+        self.declare_partials('CL_full_flaps', dynvars, rows=ar, cols=ar, method='cs')
+        self.declare_partials('CL_full_flaps', ['dCL_flaps_model'], method='cs')
+        self.declare_partials('CL_full_flaps', ['lift_ratio'], rows=ar, cols=ar, method='cs')
+
+        self.declare_partials('CL', ['*'], method='cs')
+        self.declare_partials('CL', dynvars, rows=ar, cols=ar, method='cs')
+        self.declare_partials('CL', ['dCL_flaps_model'], method='cs')
+        self.declare_partials('CL', ['lift_ratio'], rows=ar, cols=ar, method='cs')
+
     def compute(self, inputs, outputs):
         (
             alpha,
@@ -1273,7 +1292,11 @@ class LiftCoeff(om.ExplicitComponent):
             CL_max_flaps,
             dCL_flaps_model,
             kclge,
+            flap_factor,
         ) = inputs.values()
+
+        # clw_base = kclge * lift_curve_slope * deg2rad(alpha - alpha0)
+        # clw = clw_base + dCL_flaps_model
 
         outputs['CL_base'] = kclge * lift_curve_slope * deg2rad(alpha - alpha0) * (1 + lift_ratio)
         outputs['dCL_flaps_full'] = dCL_flaps_model * (1 + lift_ratio)
@@ -1281,6 +1304,9 @@ class LiftCoeff(om.ExplicitComponent):
             rad2deg((CL_max_flaps - dCL_flaps_model) / (kclge * lift_curve_slope)) + alpha0
         )
         outputs['CL_max'] = CL_max_flaps * (1 + lift_ratio)
+
+        outputs['CL_full_flaps'] = outputs['CL_base'] + outputs['dCL_flaps_full']
+        outputs['CL'] = outputs['CL_base'] + flap_factor * outputs['dCL_flaps_full']
 
 
 class LiftCoeffClean(om.ExplicitComponent):
@@ -1522,25 +1548,6 @@ class LowSpeedAero(om.Group):
                 LiftCoeff(num_nodes=nn),
                 promotes_inputs=['*'],
                 promotes_outputs=['*'],
-            )
-
-            self.add_subsystem(
-                'total_cl',
-                om.ExecComp(
-                    [
-                        # "CL = CL_base + dCL_flaps",
-                        'CL_full_flaps = CL_base + dCL_flaps_full',
-                        'CL = CL_base + flap_factor * dCL_flaps_full',
-                    ],
-                    CL=dict(shape=nn, units='unitless'),
-                    CL_full_flaps=dict(shape=nn, units='unitless'),
-                    CL_base=dict(shape=nn, units='unitless'),
-                    # dCL_flaps=dict(shape=nn, units='unitless'),
-                    flap_factor=dict(shape=nn, units='unitless'),
-                    dCL_flaps_full=dict(shape=nn, units='unitless'),
-                    has_diag_partials=True,
-                ),
-                promotes=['*'],
             )
 
         interp = om.MetaModelStructuredComp(method='slinear')
