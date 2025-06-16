@@ -58,7 +58,6 @@ aircraft:fuselage:seat_pitch,29,inch
 aircraft:fuselage:seat_width,20.2,inch
 aircraft:fuselage:tail_fineness,3,unitless
 aircraft:fuselage:wetted_area,4000,ft**2
-aircraft:horizontal_tail:area,0,ft**2
 aircraft:horizontal_tail:aspect_ratio,4.75,unitless
 aircraft:horizontal_tail:form_factor,1.25,unitless
 aircraft:horizontal_tail:mass_coefficient,0.232,unitless
@@ -89,7 +88,6 @@ aircraft:strut:dimensional_location_specified,False,unitless
 aircraft:strut:fuselage_interference_factor,0,unitless
 aircraft:strut:mass_coefficient,0,unitless
 aircraft:strut:thickness_to_chord,0,unitless
-aircraft:vertical_tail:area,0,ft**2
 aircraft:vertical_tail:aspect_ratio,1.67,unitless
 aircraft:vertical_tail:form_factor,1.25,unitless
 aircraft:vertical_tail:mass_coefficient,0.289,unitless

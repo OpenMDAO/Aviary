@@ -107,7 +107,7 @@ class AviaryGroup(om.Group):
             # TODO: Future updates to dymos may make this unnecessary.
             for phase in self.traj.phases.system_iter(recurse=False):
                 # Don't move the solvers if we are using solve segments.
-                if phase_info[phase.name]['user_options'].get('solve_for_distance'):
+                if phase_info[phase.name]['user_options'].get('distance_solve_segments'):
                     continue
 
                 phase.nonlinear_solver = om.NonlinearRunOnce()
