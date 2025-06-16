@@ -7,6 +7,7 @@ import openmdao.jax as omj
 import jax.scipy.interpolate as jinterp
 
 from aviary.variable_info.variables import Aircraft
+from aviary.variable_info.functions import add_aviary_output, add_aviary_input
 
 try:
     from quadax import quadgk
@@ -42,9 +43,9 @@ class FuselageMassAndCOG(om.JaxExplicitComponent):
         self.options['use_jit'] = not(Debug)
 
         # Inputs
-        self.add_input(Aircraft.Fuselage.LENGTH, 
-                       units='m',
-                       primal_name='length')
+        add_aviary_input(self,
+                         Aircraft.Fuselage.LENGTH, 
+                         units='m')
         
         self.add_input('base_diameter', 
                        val=0.4, 
@@ -89,13 +90,13 @@ class FuselageMassAndCOG(om.JaxExplicitComponent):
                         val=0.0, 
                         units='m')
         
-        self.add_output(Aircraft.Fuselage.MASS, 
-                        units='kg',
-                        primal_name='total_weight_fuse')
+        add_aviary_output(self,
+                          Aircraft.Fuselage.MASS, 
+                          units='kg')
     
-    def compute_primal(self, length, base_diameter, tip_diameter, curvature, thickness, y_offset, z_offset, is_hollow):
+    def compute_primal(self, aircraft__fuselage__length, base_diameter, tip_diameter, curvature, thickness, y_offset, z_offset, is_hollow):
         # Input validation checks
-        if length <= 0:
+        if aircraft__fuselage__length <= 0:
             raise ValueError("Length must be greater than zero.")
         
         if base_diameter <= 0 or tip_diameter <= 0:
@@ -108,13 +109,13 @@ class FuselageMassAndCOG(om.JaxExplicitComponent):
         material = self.options['material']
         num_sections = self.options['num_sections']
         
-        self.validate_inputs(length, base_diameter, thickness, tip_diameter, is_hollow)
+        self.validate_inputs(aircraft__fuselage__length, base_diameter, thickness, tip_diameter, is_hollow)
 
         density, _ = materials.get_item(material)
 
-        section_locations = jnp.linspace(0, length, num_sections)
+        section_locations = jnp.linspace(0, aircraft__fuselage__length, num_sections)
         
-        total_weight_fuse = 0
+        aircraft__fuselage__mass = 0
         total_moment_x = 0
         total_moment_y = 0
         total_moment_z = 0
@@ -123,25 +124,25 @@ class FuselageMassAndCOG(om.JaxExplicitComponent):
 
         # Loop through each section
         for location in section_locations:
-            section_diameter = self.get_section_diameter(location, length, base_diameter, tip_diameter, interpolate_diameter)
+            section_diameter = self.get_section_diameter(location, aircraft__fuselage__length, base_diameter, tip_diameter, interpolate_diameter)
             outer_radius = section_diameter / 2.0 
             inner_radius = jnp.where(is_hollow, omj.smooth_max(0, outer_radius - thickness), 0)
 
-            section_volume = jnp.pi * (outer_radius**2 - inner_radius**2) * (length / num_sections)
+            section_volume = jnp.pi * (outer_radius**2 - inner_radius**2) * (aircraft__fuselage__length / num_sections)
             section_weight = density * section_volume
 
-            centroid_x, centroid_y, centroid_z = self.compute_centroid(location, length, y_offset, z_offset, curvature, base_diameter, tip_diameter)
+            centroid_x, centroid_y, centroid_z = self.compute_centroid(location, aircraft__fuselage__length, y_offset, z_offset, curvature, base_diameter, tip_diameter)
 
-            total_weight_fuse += section_weight
+            aircraft__fuselage__mass += section_weight
             total_moment_x += centroid_x * section_weight
             total_moment_y += centroid_y * section_weight
             total_moment_z += centroid_z * section_weight
 
-        center_of_gravity_x_fuse = total_moment_x / total_weight_fuse
-        center_of_gravity_y_fuse = total_moment_y / total_weight_fuse
-        center_of_gravity_z_fuse = total_moment_z / total_weight_fuse
+        center_of_gravity_x_fuse = total_moment_x / aircraft__fuselage__mass
+        center_of_gravity_y_fuse = total_moment_y / aircraft__fuselage__mass
+        center_of_gravity_z_fuse = total_moment_z / aircraft__fuselage__mass
 
-        return center_of_gravity_x_fuse, center_of_gravity_y_fuse, center_of_gravity_z_fuse, total_weight_fuse
+        return center_of_gravity_x_fuse, center_of_gravity_y_fuse, center_of_gravity_z_fuse, aircraft__fuselage__mass
 
     def validate_inputs(self, length, base_diameter, thickness, tip_diameter, is_hollow):
         if length <= 0 or base_diameter <= 0 or tip_diameter <= 0 or thickness <= 0:

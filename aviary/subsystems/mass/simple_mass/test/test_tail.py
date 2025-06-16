@@ -24,32 +24,29 @@ class TailMassTestCase(unittest.TestCase):
             promotes_outputs=["*"],
         )
 
-        tail_type = self.prob.model.Tail.options['tail_type']
+        self.prob.model.set_input_defaults(
+        Aircraft.HorizontalTail.SPAN,
+        val=1,
+        units="m"
+        )
 
-        if tail_type == 'horizontal':
-            self.prob.model.set_input_defaults(
-            Aircraft.HorizontalTail.SPAN,
+        self.prob.model.set_input_defaults(
+            Aircraft.HorizontalTail.ROOT_CHORD,
             val=1,
             units="m"
-            )
+        )
+        #else:
+        self.prob.model.set_input_defaults(
+        Aircraft.VerticalTail.SPAN,
+        val=1,
+        units="m"
+        )
 
-            self.prob.model.set_input_defaults(
-                Aircraft.HorizontalTail.ROOT_CHORD,
-                val=1,
-                units="m"
-            )
-        else:
-            self.prob.model.set_input_defaults(
-            Aircraft.VerticalTail.SPAN,
+        self.prob.model.set_input_defaults(
+            Aircraft.VerticalTail.ROOT_CHORD,
             val=1,
             units="m"
-            )
-
-            self.prob.model.set_input_defaults(
-                Aircraft.VerticalTail.ROOT_CHORD,
-                val=1,
-                units="m"
-            )
+        )
 
         self.prob.model.set_input_defaults(
             "tip_chord_tail",
@@ -79,14 +76,13 @@ class TailMassTestCase(unittest.TestCase):
             force_alloc_complex=True)
     
     def test_case(self):
-
-        tail_type = self.prob.model.Tail.options['tail_type']
+        self.prob.model.Tail.options['tail_type'] = 'vertical'
         
         self.prob.run_model()
 
         tol = 1e-4
 
-        if tail_type == 'horizontal':
+        if self.prob.model.Tail.options['tail_type'] == 'horizontal':
             assert_near_equal(
                 self.prob[Aircraft.HorizontalTail.MASS],
                 4.22032, 

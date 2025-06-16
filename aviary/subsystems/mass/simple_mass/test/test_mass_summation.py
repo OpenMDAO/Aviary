@@ -21,11 +21,8 @@ class MassSummationTest(unittest.TestCase):
         self.prob.model.add_subsystem(
             'tot',
             MassSummation(),
-            promotes_inputs=['*'],
-            promotes_outputs=['*']
+            promotes=['*']
         )
-
-        #tail_type = self.prob.model.tot.options['tail_type']
 
         self.prob.model.set_input_defaults(
             Aircraft.Wing.SPAN,
@@ -39,7 +36,6 @@ class MassSummationTest(unittest.TestCase):
             units='m'
         )
 
-        #if tail_type == 'horizontal':
         self.prob.model.set_input_defaults(
         Aircraft.HorizontalTail.SPAN,
         val=1,
@@ -51,7 +47,7 @@ class MassSummationTest(unittest.TestCase):
             val=1,
             units="m"
         )
-        #else:
+        
         self.prob.model.set_input_defaults(
         Aircraft.VerticalTail.SPAN,
         val=1,
@@ -105,14 +101,14 @@ class MassSummationTest(unittest.TestCase):
             units="m")
         
         self.prob.model.set_input_defaults(
-            "diameter",
-            val=0.5,
+            "base_diameter",
+            val=0.4,
             units="m"
         )
 
         self.prob.model.set_input_defaults(
-            "taper_ratio",
-            val=0.5
+            "tip_diameter",
+            val=0.2
         )
 
         self.prob.model.set_input_defaults(
@@ -160,24 +156,26 @@ class MassSummationTest(unittest.TestCase):
             force_alloc_complex=True
         )
 
+        self.prob.model.tot.tail_mass.options['tail_type'] = 'horizontal'
+
         self.prob.run_model()
 
         #om.n2(self.prob)
 
         tol = 1e-10
 
-        #if tail_type == 'horizontal':
-        assert_near_equal(
-            self.prob['structure_mass'],
-            440,
-            tol
-        )
-        # else:
-        #     assert_near_equal(
-        #         self.prob['structure_mass'],
-        #         440,
-        #         tol
-        #     )
+        if self.prob.model.tot.tail_mass.options['tail_type'] == 'horizontal':
+            assert_near_equal(
+                self.prob['structure_mass'],
+                342.23558104,
+                tol
+            )
+        else:
+            assert_near_equal(
+                self.prob['structure_mass'],
+                342.23558104,
+                tol
+            )
 
         partial_data = self.prob.check_partials(
             out_stream=None,
@@ -205,40 +203,42 @@ class StructureMassTest(unittest.TestCase):
             promotes_outputs=['*'],
         )
 
-        #tail_type = self.prob.model.tot.options['tail_type']
-
         self.prob.setup(
             check=False,
             force_alloc_complex=True
         )
 
-        self.prob.set_val(Aircraft.Fuselage.MASS, val=100.0)
-        self.prob.set_val(Aircraft.Wing.MASS, val=4.2)
-
-        #if tail_type == 'horizontal':
-        self.prob.set_val(Aircraft.HorizontalTail.MASS, val=4.25)
-        #else:
-        self.prob.set_val(Aircraft.VerticalTail.MASS, val=4.25)
+        self.prob.set_val(Aircraft.Fuselage.MASS, 
+                          val=100.0)
+        
+        self.prob.set_val(Aircraft.Wing.MASS, 
+                          val=4.2)
+        
+        self.prob.set_val(Aircraft.HorizontalTail.MASS, 
+                          val=4.25)
+        
+        self.prob.set_val(Aircraft.VerticalTail.MASS, 
+                          val=4.25)
     
     def test_case(self):
 
         self.prob.run_model()
-        #tail_type = self.prob.model.tot.options['tail_type']
 
         tol = 1e-10
+        self.prob.model.tot.options['tail_type'] = 'horizontal'
 
-        #if tail_type == 'horizontal':
-        assert_near_equal(
-            self.prob['structure_mass'],
-            108.45,
-            tol
-        )
-        # else:
-        #     assert_near_equal(
-        #         self.prob['structure_mass'],
-        #         108.45,
-        #         tol
-        #     )
+        if self.prob.model.tot.options['tail_type'] == 'horizontal':
+            assert_near_equal(
+                self.prob['structure_mass'],
+                108.45,
+                tol
+            )
+        else:
+            assert_near_equal(
+                self.prob['structure_mass'],
+                108.45,
+                tol
+            )
 
         partial_data = self.prob.check_partials(
             out_stream=None,

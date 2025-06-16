@@ -45,13 +45,13 @@ class WingMassAndCOG(om.JaxExplicitComponent):
         self.options['use_jit'] = not(Debug)
 
         # Inputs
-        self.add_input(Aircraft.Wing.SPAN,
-                       units='m',
-                       primal_name='span')  # Full wingspan (adjustable)
+        add_aviary_input(self,
+                         Aircraft.Wing.SPAN,
+                         units='m')  # Full wingspan (adjustable)
         
-        self.add_input(Aircraft.Wing.ROOT_CHORD, 
-                       units='m',
-                       primal_name='root_chord')  # Root chord length
+        add_aviary_input(self,
+                         Aircraft.Wing.ROOT_CHORD, 
+                         units='m')  # Root chord length
         
         self.add_input('tip_chord', 
                        val=1.0, 
@@ -80,11 +80,11 @@ class WingMassAndCOG(om.JaxExplicitComponent):
                         val=0.0, 
                         units='m')
         
-        self.add_output(Aircraft.Wing.MASS, 
-                        units='kg',
-                        primal_name='total_weight_wing')
+        add_aviary_output(self,
+                          Aircraft.Wing.MASS, 
+                          units='kg')
 
-    def compute_primal(self, span, root_chord, tip_chord, twist, thickness_dist):
+    def compute_primal(self, aircraft__wing__span, aircraft__wing__root_chord, tip_chord, twist, thickness_dist):
         material = self.options['material'] # Material is taken from options
         airfoil_type = self.options['airfoil_type'] # NACA airfoil type 
         airfoil_data_file = self.options['airfoil_data_file']
@@ -108,35 +108,35 @@ class WingMassAndCOG(om.JaxExplicitComponent):
             num_sections = self.options['num_sections']
         
         # Wing spanwise distribution
-        span_locations = jnp.linspace(0, span, num_sections)
+        span_locations = jnp.linspace(0, aircraft__wing__span, num_sections)
 
         n_points = num_sections
         x_points = jnp.linspace(0, 1, n_points)
         dx = 1 / (n_points - 1)
         
-        weight_function = lambda x: density * self.airfoil_thickness(x, max_thickness) * (root_chord - (root_chord - tip_chord) * (x / span)) * span
+        weight_function = lambda x: density * self.airfoil_thickness(x, max_thickness) * (aircraft__wing__root_chord - (aircraft__wing__root_chord - tip_chord) * (x / aircraft__wing__span)) * aircraft__wing__span
     
-        total_weight_wing, _ = quadgk(weight_function, [0, 1], epsabs=1e-9, epsrel=1e-9)
+        aircraft__wing__mass, _ = quadgk(weight_function, [0, 1], epsabs=1e-9, epsrel=1e-9)
         
-        center_of_gravity_x_num, _ = quadgk(lambda x: x * self.airfoil_thickness(x, max_thickness) * (root_chord - (root_chord - tip_chord) * (x / span) * jnp.cos(twist)) - 
-                                     self.airfoil_camber_line(x, camber, camber_location) * self.airfoil_thickness(x, max_thickness) * (root_chord - (root_chord - tip_chord) * (x / span)) * jnp.sin(twist), 
+        center_of_gravity_x_num, _ = quadgk(lambda x: x * self.airfoil_thickness(x, max_thickness) * (aircraft__wing__root_chord - (aircraft__wing__root_chord - tip_chord) * (x / aircraft__wing__span) * jnp.cos(twist)) - 
+                                     self.airfoil_camber_line(x, camber, camber_location) * self.airfoil_thickness(x, max_thickness) * (aircraft__wing__root_chord - (aircraft__wing__root_chord - tip_chord) * (x / aircraft__wing__span)) * jnp.sin(twist), 
                                      [0, 1], epsabs=1e-9, epsrel=1e-9) 
-        center_of_gravity_x_denom, _ = quadgk(lambda x: self.airfoil_thickness(x, max_thickness) * (root_chord - (root_chord - tip_chord) * (x / span)), [0, 1], epsabs=1e-9, epsrel=1e-9)
+        center_of_gravity_x_denom, _ = quadgk(lambda x: self.airfoil_thickness(x, max_thickness) * (aircraft__wing__root_chord - (aircraft__wing__root_chord - tip_chord) * (x / aircraft__wing__span)), [0, 1], epsabs=1e-9, epsrel=1e-9)
 
         center_of_gravity_x = center_of_gravity_x_num / center_of_gravity_x_denom
         center_of_gravity_x_wing = center_of_gravity_x[0]
         
-        center_of_gravity_z_num, _ = quadgk(lambda x: x * self.airfoil_thickness(x, max_thickness) * (root_chord - (root_chord - tip_chord) * (x / span) * jnp.sin(twist)) + 
-                                     self.airfoil_camber_line(x, camber, camber_location) * self.airfoil_thickness(x, max_thickness) * (root_chord - (root_chord - tip_chord) * (x / span)) * jnp.cos(twist), 
+        center_of_gravity_z_num, _ = quadgk(lambda x: x * self.airfoil_thickness(x, max_thickness) * (aircraft__wing__root_chord - (aircraft__wing__root_chord - tip_chord) * (x / aircraft__wing__span) * jnp.sin(twist)) + 
+                                     self.airfoil_camber_line(x, camber, camber_location) * self.airfoil_thickness(x, max_thickness) * (aircraft__wing__root_chord - (aircraft__wing__root_chord - tip_chord) * (x / aircraft__wing__span)) * jnp.cos(twist), 
                                      [0, 1], epsabs=1e-9, epsrel=1e-9)
         
-        center_of_gravity_z_denom, _ = quadgk(lambda x: self.airfoil_thickness(x, max_thickness) * (root_chord - (root_chord - tip_chord) * (x / span)), [0, 1], epsabs=1e-9, epsrel=1e-9)
+        center_of_gravity_z_denom, _ = quadgk(lambda x: self.airfoil_thickness(x, max_thickness) * (aircraft__wing__root_chord - (aircraft__wing__root_chord - tip_chord) * (x / aircraft__wing__span)), [0, 1], epsabs=1e-9, epsrel=1e-9)
 
         center_of_gravity_z = center_of_gravity_z_num / center_of_gravity_z_denom
         center_of_gravity_z_wing = center_of_gravity_z[0]
-        center_of_gravity_y_wing, _ = quadgk(lambda x: x * span, [0, 1], epsabs=1e-9, epsrel=1e-9)
+        center_of_gravity_y_wing, _ = quadgk(lambda x: x * aircraft__wing__span, [0, 1], epsabs=1e-9, epsrel=1e-9)
 
-        return center_of_gravity_x_wing, center_of_gravity_y_wing, center_of_gravity_z_wing, total_weight_wing
+        return center_of_gravity_x_wing, center_of_gravity_y_wing, center_of_gravity_z_wing, aircraft__wing__mass
     
     def precompute_airfoil_geometry(self):
         num_sections = self.options['num_sections']

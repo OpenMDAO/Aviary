@@ -7,7 +7,8 @@ from aviary.subsystems.mass.simple_mass.fuselage import FuselageMassAndCOG
 from aviary.subsystems.mass.simple_mass.wing import WingMassAndCOG
 from aviary.subsystems.mass.simple_mass.tail import TailMassAndCOG
 from aviary.variable_info.variables import Aircraft
-# Maybe add some aviary inputs at some point here
+from aviary.variable_info.functions import add_aviary_input
+
 
 class MassSummation(om.Group):
     """
@@ -38,7 +39,7 @@ class MassSummation(om.Group):
             'tail_mass',
             TailMassAndCOG(),
             promotes_inputs=['*'],
-            promotes_outputs=[Aircraft.HorizontalTail.MASS, Aircraft.VerticalTail.MASS]
+            promotes_outputs=[Aircraft.HorizontalTail.MASS]
         )
 
         self.add_subsystem(
@@ -50,24 +51,48 @@ class MassSummation(om.Group):
 
 # Horizontal tail only
 class StructureMass(om.JaxExplicitComponent):
+    def initialize(self):
+        self.options.declare('tail_type', 
+                     default='horizontal',
+                     values=['horizontal', 'vertical'],
+                     desc="Tail type used for the tail mass from tail.py file")
 
     def setup(self):
-        # Maybe later change these to Aviary inputs?
-        self.add_input(Aircraft.Wing.MASS, val=0.0, units='kg', primal_name='total_weight_wing')
-        self.add_input(Aircraft.Fuselage.MASS, val=0.0, units='kg', primal_name='total_weight_fuse')
+        tail_type = self.options['tail_type']
 
-        #tail_type = self.tail_mass.options['tail_type']
+        add_aviary_input(self, 
+                         Aircraft.Wing.MASS, 
+                         val=0.0, 
+                         units='kg')
         
-        #if tail_type == 'horizontal':
-        self.add_input(Aircraft.HorizontalTail.MASS, val=0.0, units='kg', primal_name='mass')
-        #else:
-        self.add_input(Aircraft.HorizontalTail.MASS, val=0.0, units='kg', tags='mass')
+        add_aviary_input(self, 
+                         Aircraft.Fuselage.MASS, 
+                         val=0.0, 
+                         units='kg')
+
+        add_aviary_input(self, 
+                         Aircraft.HorizontalTail.MASS, 
+                         val=0.0, 
+                         units='kg')
+        
+        add_aviary_input(self, 
+                         Aircraft.VerticalTail.MASS, 
+                         val=0.0, 
+                         units='kg')
+        
         # More masses can be added, i.e., tail, spars, flaps, etc. as needed
 
-        self.add_output('structure_mass', val=0.0, units='kg')
+        self.add_output('structure_mass', 
+                        val=0.0, 
+                        units='kg')
 
-    def compute_primal(self, total_weight_wing, total_weight_fuse, mass):
-        
-        structure_mass = total_weight_wing + total_weight_fuse + mass
+    def compute_primal(self, aircraft__wing__mass, aircraft__fuselage__mass, aircraft__horizontal_tail__mass, aircraft__vertical_tail__mass):
+
+        tail_type = self.options['tail_type']
+
+        if tail_type == 'horizontal':
+            structure_mass = aircraft__wing__mass + aircraft__fuselage__mass + aircraft__horizontal_tail__mass
+        else:
+            structure_mass = aircraft__wing__mass + aircraft__fuselage__mass + aircraft__vertical_tail__mass
 
         return structure_mass
