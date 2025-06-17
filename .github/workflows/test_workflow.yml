@@ -41,7 +41,7 @@ jobs:
             SCIPY: '1.6'
             PYOPTSPARSE: 'v2.9.1'
             SNOPT: '7.7'
-            OPENMDAO: '3.36.0'
+            OPENMDAO: '3.37.0'
             DYMOS: '1.13.1'
 
           # latest versions of openmdao/dymos
