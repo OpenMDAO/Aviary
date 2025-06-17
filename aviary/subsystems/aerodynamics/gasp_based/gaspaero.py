@@ -110,7 +110,7 @@ def rad2deg(r):
 
 
 def cla(ar, sweep, mach):
-    """Lift-curve slope of 3D wings from Seckel equation. cla is per radian.
+    """Lift-curve slope of 3D wings from Seckel equation.
 
     Parameters
     ----------
@@ -166,7 +166,7 @@ class WingTailRatios(om.ExplicitComponent):
         )
         self.add_output('bbar', units='unitless', desc='BBAR: Ratio of H tail area to wing area')
         self.add_output('sbar', units='unitless', desc='SBAR: Ratio of H tail area to wing area')
-        self.add_output('cbar', units='unitless', desc='CBAR: Ratio of H tail chord to wing chord')
+        self.add_output('cbar', units='unitless', desc='SBAR: Ratio of H tail chord to wing chord')
 
     def setup_partials(self):
         self.declare_partials(
@@ -255,10 +255,8 @@ class Xlifts(om.ExplicitComponent):
         self.add_input('hbar', units='unitless', desc='HBAR: Ratio of HGAP(?) to wing span')
         self.add_input('bbar', units='unitless', desc='BBAR: Ratio of H tail area to wing area')
 
-        self.add_output(
-            'lift_curve_slope', units='unitless', shape=nn, desc='CLAW: Lift-curve slope'
-        )
-        self.add_output('lift_ratio', units='unitless', shape=nn, desc='BARL: Lift ratio')
+        self.add_output('lift_curve_slope', units='unitless', shape=nn, desc='Lift-curve slope')
+        self.add_output('lift_ratio', units='unitless', shape=nn, desc='Lift ratio')
 
     def setup_partials(self):
         ar = np.arange(self.options['num_nodes'])
@@ -336,94 +334,6 @@ class Xlifts(om.ExplicitComponent):
         outputs['lift_ratio'] = lift_ratio
 
 
-class FormFactorAndSIWB(om.ExplicitComponent):
-    """
-    Compute body form factor and SIWB for tube+wing aircraft
-    Incompressible form factor for streamlined bodies. From Hoerner's "Fluid Dynamic Drag", p. 6-17.
-    """
-
-    def setup(self):
-        add_aviary_input(self, Aircraft.Fuselage.AVG_DIAMETER, units='ft')
-        add_aviary_input(self, Aircraft.Fuselage.LENGTH, units='ft')
-        add_aviary_input(self, Aircraft.Wing.SPAN, units='ft')
-
-        self.add_output(
-            'body_form_factor',
-            units='unitless',
-            desc='FFFUS: fuselage form factor',
-        )
-        self.add_output(
-            'siwb',
-            units='unitless',
-            desc='SIWB',
-        )
-
-    def setup_partials(self):
-        self.declare_partials(
-            'body_form_factor',
-            [
-                Aircraft.Fuselage.AVG_DIAMETER,
-                Aircraft.Fuselage.LENGTH,
-            ],
-        )
-        self.declare_partials(
-            'siwb',
-            [
-                Aircraft.Fuselage.AVG_DIAMETER,
-                Aircraft.Wing.SPAN,
-            ],
-        )
-
-    def compute(self, inputs, outputs):
-        fus_len = inputs[Aircraft.Fuselage.LENGTH]
-        cabin_width = inputs[Aircraft.Fuselage.AVG_DIAMETER]
-        wingspan = inputs[Aircraft.Wing.SPAN]
-
-        # fuselage form drag factor
-        fffus = 1 + 1.5 * (cabin_width / fus_len) ** 1.5 + 7 * (cabin_width / fus_len) ** 3
-        outputs['body_form_factor'] = fffus
-
-        wfob = cabin_width / wingspan
-        siwb = 1 - 0.0088 * wfob - 1.7364 * wfob**2 - 2.303 * wfob**3 + 6.0606 * wfob**4
-        outputs['siwb'] = siwb
-
-    def compute_partials(self, inputs, J):
-        fus_len = inputs[Aircraft.Fuselage.LENGTH]
-        cabin_width = inputs[Aircraft.Fuselage.AVG_DIAMETER]
-        wingspan = inputs[Aircraft.Wing.SPAN]
-
-        dfffus_dcabin_width = (
-            2.25 * (cabin_width / fus_len) ** 0.5 / fus_len
-            + 21 * (cabin_width / fus_len) ** 2.0 / fus_len
-        )
-        dfffus_dfus_len = (
-            -2.25 * (cabin_width / fus_len) ** 0.5 * cabin_width / fus_len**2.0
-            - 21.0 * (cabin_width / fus_len) ** 2.0 * cabin_width / fus_len**2.0
-        )
-
-        wfob = cabin_width / wingspan
-        siwb = 1 - 0.0088 * wfob - 1.7364 * wfob**2 - 2.303 * wfob**3 + 6.0606 * wfob**4
-
-        dsiwb_dcabin_width = (
-            -0.0088 / wingspan
-            - 2 * 1.7364 * wfob / wingspan
-            - 3 * 2.303 * wfob**2 / wingspan
-            + 4 * 6.0606 * wfob**3 / wingspan
-        )
-
-        dsiwb_dwingspan = (
-            0.0088 / wingspan**2
-            + 2 * 1.7364 * wfob * cabin_width / wingspan**2
-            + 3 * 2.303 * wfob**2 * cabin_width / wingspan**2
-            - 4 * 6.0606 * wfob**3 * cabin_width / wingspan**2
-        )
-
-        J['body_form_factor', Aircraft.Fuselage.AVG_DIAMETER] = dfffus_dcabin_width
-        J['body_form_factor', Aircraft.Fuselage.LENGTH] = dfffus_dfus_len
-        J['siwb', Aircraft.Fuselage.AVG_DIAMETER] = dsiwb_dcabin_width
-        J['siwb', Aircraft.Wing.SPAN] = dsiwb_dwingspan
-
-
 class AeroGeom(om.ExplicitComponent):
     """Compute drag parameters from cruise conditions and geometric parameters.
 
@@ -489,6 +399,8 @@ class AeroGeom(om.ExplicitComponent):
 
         # geometric data from sizing
 
+        add_aviary_input(self, Aircraft.Wing.SPAN, units='ft')
+
         add_aviary_input(self, Aircraft.Wing.AVERAGE_CHORD, units='ft')
 
         add_aviary_input(self, Aircraft.HorizontalTail.AVERAGE_CHORD, units='ft')
@@ -507,6 +419,8 @@ class AeroGeom(om.ExplicitComponent):
 
         add_aviary_input(self, Aircraft.Wing.AREA, units='ft**2')
 
+        add_aviary_input(self, Aircraft.Fuselage.AVG_DIAMETER, units='ft')
+
         add_aviary_input(self, Aircraft.VerticalTail.AREA, units='ft**2')
 
         add_aviary_input(self, Aircraft.Wing.THICKNESS_TO_CHORD_UNWEIGHTED, units='unitless')
@@ -514,9 +428,7 @@ class AeroGeom(om.ExplicitComponent):
         add_aviary_input(self, Aircraft.Strut.CHORD, units='ft')
 
         self.add_input('interference_independent_of_shielded_area', units='unitless')
-        (self.add_input('drag_loss_due_to_shielded_wing_area', units='unitless'),)
-        self.add_input('body_form_factor', units='unitless')
-        self.add_input('siwb', units='unitless')
+        self.add_input('drag_loss_due_to_shielded_wing_area', units='unitless')
 
         # outputs
         for i in range(7):
@@ -620,6 +532,7 @@ class AeroGeom(om.ExplicitComponent):
             Aircraft.Fuselage.FLAT_PLATE_AREA_INCREMENT,
             Aircraft.Wing.TAPER_RATIO,
             Aircraft.Strut.AREA_RATIO,
+            Aircraft.Wing.SPAN,
             Aircraft.Wing.AVERAGE_CHORD,
             Aircraft.HorizontalTail.AVERAGE_CHORD,
             Aircraft.VerticalTail.AVERAGE_CHORD,
@@ -629,6 +542,7 @@ class AeroGeom(om.ExplicitComponent):
             Aircraft.Fuselage.WETTED_AREA,
             Aircraft.Nacelle.SURFACE_AREA,
             Aircraft.Wing.AREA,
+            Aircraft.Fuselage.AVG_DIAMETER,
             Aircraft.VerticalTail.AREA,
             'interference_independent_of_shielded_area',
             'drag_loss_due_to_shielded_wing_area',
@@ -639,7 +553,7 @@ class AeroGeom(om.ExplicitComponent):
         )
         self.declare_partials(
             'SA7',
-            most_params + [Aircraft.Wing.ASPECT_RATIO, Aircraft.Wing.SWEEP] + ['siwb'],
+            most_params + [Aircraft.Wing.ASPECT_RATIO, Aircraft.Wing.SWEEP],
             method='cs',
         )
 
@@ -664,6 +578,7 @@ class AeroGeom(om.ExplicitComponent):
             sweep_c4,
             taper_ratio,
             strut_wing_area_ratio,
+            wingspan,
             avg_chord,
             htail_chord,
             vtail_chord,
@@ -673,13 +588,12 @@ class AeroGeom(om.ExplicitComponent):
             fus_SA,
             nacelle_area,
             wing_area,
+            cabin_width,
             vtail_area,
             tc_ratio,
             strut_chord,
             feintwf,
             areashieldwf,
-            fffus,
-            siwb,
         ) = inputs.values()
         # skin friction coeff at Re = 10**7
         cf = 0.455 / 7**2.58 / (1 + 0.144 * mach**2) ** 0.65
@@ -724,7 +638,7 @@ class AeroGeom(om.ExplicitComponent):
             fstrtre = (np.log10(reli[good_mask] * strut_chord) / 7) ** -2.6
 
         # fuselage form drag factor
-        # fffus = 1 + 1.5 * (cabin_width / fus_len) ** 1.5 + 7 * (cabin_width / fus_len) ** 3
+        fffus = 1 + 1.5 * (cabin_width / fus_len) ** 1.5 + 7 * (cabin_width / fus_len) ** 3
 
         # flat plate equivalent areas
         fef = ff_fus * fus_SA * cf * ffre * fffus + fe_fus_inc
@@ -746,8 +660,8 @@ class AeroGeom(om.ExplicitComponent):
         # total flat plate equivalent area
         fe = few + fef + fevt + feht + fen + feiwf + festrt + cd0_inc * wing_area
 
-        # wfob = cabin_width / wingspan
-        # siwb = 1 - 0.0088 * wfob - 1.7364 * wfob**2 - 2.303 * wfob**3 + 6.0606 * wfob**4
+        wfob = cabin_width / wingspan
+        siwb = 1 - 0.0088 * wfob - 1.7364 * wfob**2 - 2.303 * wfob**3 + 6.0606 * wfob**4
 
         # wing-free profile drag coefficient
         cdpo = (fe - few) / wing_area
@@ -810,7 +724,6 @@ class AeroSetup(om.Group):
         interp.add_output('sigstr', 0.0, units='unitless', training_data=sig2)
         self.add_subsystem('interp', interp, promotes=['*'])
 
-        # Note: It should hold ufac <= 0.975 for BWB
         self.add_subsystem(
             'ufac_calc',
             om.ExecComp(
@@ -848,7 +761,6 @@ class AeroSetup(om.Group):
                 ],
             )
 
-        self.add_subsystem('form_factor', FormFactorAndSIWB(), promotes=['*'])
         self.add_subsystem('geom', AeroGeom(num_nodes=nn), promotes=['*'])
 
 
@@ -1100,8 +1012,8 @@ class DragCoefClean(om.ExplicitComponent):
         outputs['CD'] = CD_scaled
 
 
-class GroundEffect(om.ExplicitComponent):
-    """Factor of CL due to ground effect."""
+class LiftCoeff(om.ExplicitComponent):
+    """GASP lift coefficient calculation for low-speed near-ground flight."""
 
     def initialize(self):
         self.options.declare('num_nodes', default=1, types=int)
@@ -1112,21 +1024,33 @@ class GroundEffect(om.ExplicitComponent):
         # mission inputs
         add_aviary_input(self, Dynamic.Vehicle.ANGLE_OF_ATTACK, shape=nn, units='deg')
         add_aviary_input(self, Dynamic.Mission.ALTITUDE, shape=nn, units='ft')
-        self.add_input(
-            'lift_curve_slope', units='unitless', shape=nn, desc='CLAW: Lift-curve slope'
-        )
+        self.add_input('lift_curve_slope', units='unitless', shape=nn, desc='Lift-curve slope')
+        self.add_input('lift_ratio', units='unitless', shape=nn, desc='Lift ratio')
 
         # user inputs
+
         add_aviary_input(self, Aircraft.Wing.ZERO_LIFT_ANGLE, units='deg')
+
         add_aviary_input(self, Aircraft.Wing.SWEEP, units='deg')
+
         add_aviary_input(self, Aircraft.Wing.ASPECT_RATIO, units='unitless')
+
         add_aviary_input(self, Aircraft.Wing.HEIGHT, units='ft')
+
         self.add_input('airport_alt', val=0.0, units='ft', desc='HPORT: Airport altitude')
+
         self.add_input('flap_defl', val=10.0, units='deg', desc='Full flap deflection')
+
         add_aviary_input(self, Aircraft.Wing.FLAP_CHORD_RATIO, units='unitless')
+
         add_aviary_input(self, Aircraft.Wing.TAPER_RATIO, units='unitless')
 
         # from flaps
+        self.add_input(
+            'CL_max_flaps',
+            units='unitless',
+            desc='CLMWTO | CLMWLD: Max lift coefficient from flaps model',
+        )
         self.add_input(
             'dCL_flaps_model',
             val=0.0,
@@ -1135,12 +1059,20 @@ class GroundEffect(om.ExplicitComponent):
         )
 
         # from sizing
+
         add_aviary_input(self, Aircraft.Wing.AVERAGE_CHORD, units='ft')
+
         add_aviary_input(self, Aircraft.Wing.SPAN, units='ft')
 
+        self.add_output('CL_base', units='unitless', shape=nn, desc='Base lift coefficient')
         self.add_output(
-            'kclge', units='unitless', shape=nn, desc='LCLGE: factor of CL due to ground effect'
+            'dCL_flaps_full',
+            units='unitless',
+            shape=nn,
+            desc='CL increment with full flap deflection',
         )
+        self.add_output('alpha_stall', units='deg', shape=nn, desc='Stall angle of attack')
+        self.add_output('CL_max', units='unitless', shape=nn, desc='Max lift coefficient')
 
     def setup_partials(self):
         # self.declare_coloring(method="cs", show_summary=False)
@@ -1151,16 +1083,27 @@ class GroundEffect(om.ExplicitComponent):
             Dynamic.Vehicle.ANGLE_OF_ATTACK,
             Dynamic.Mission.ALTITUDE,
             'lift_curve_slope',
+            'lift_ratio',
         ]
 
-        self.declare_partials('kclge', ['*'], method='cs')
-        self.declare_partials('kclge', dynvars, rows=ar, cols=ar, method='cs')
+        self.declare_partials('CL_base', ['*'], method='cs')
+        self.declare_partials('CL_base', dynvars, rows=ar, cols=ar, method='cs')
+
+        self.declare_partials('dCL_flaps_full', ['dCL_flaps_model'], method='cs')
+        self.declare_partials('dCL_flaps_full', ['lift_ratio'], rows=ar, cols=ar, method='cs')
+
+        self.declare_partials('alpha_stall', ['*'], method='cs')
+        self.declare_partials('alpha_stall', dynvars, rows=ar, cols=ar, method='cs')
+
+        self.declare_partials('CL_max', ['CL_max_flaps'], method='cs')
+        self.declare_partials('CL_max', ['lift_ratio'], rows=ar, cols=ar, method='cs')
 
     def compute(self, inputs, outputs):
         (
             alpha,
             alt,
             lift_curve_slope,
+            lift_ratio,
             alpha0,
             sweep_c4,
             AR,
@@ -1169,6 +1112,7 @@ class GroundEffect(om.ExplicitComponent):
             flap_defl,
             flap_chord_ratio,
             taper_ratio,
+            CL_max_flaps,
             dCL_flaps_model,
             avg_chord,
             wingspan,
@@ -1193,120 +1137,13 @@ class GroundEffect(om.ExplicitComponent):
         )
         kclge = np.clip(kclge, 1.0, None)
 
-        outputs['kclge'] = kclge
-
-
-class LiftCoeff(om.ExplicitComponent):
-    """GASP lift coefficient calculation for low-speed near-ground flight."""
-
-    def initialize(self):
-        self.options.declare('num_nodes', default=1, types=int)
-
-    def setup(self):
-        nn = self.options['num_nodes']
-
-        add_aviary_input(self, Dynamic.Vehicle.ANGLE_OF_ATTACK, shape=nn, units='deg')
-        self.add_input(
-            'lift_curve_slope', units='unitless', shape=nn, desc='CLAW: Lift-curve slope'
-        )
-        self.add_input('lift_ratio', units='unitless', shape=nn, desc='BARL: Lift ratio')
-
-        add_aviary_input(self, Aircraft.Wing.ZERO_LIFT_ANGLE, units='deg')
-
-        # from flaps
-        self.add_input(
-            'CL_max_flaps',
-            units='unitless',
-            desc='CLMWTO | CLMWLD: Max lift coefficient from flaps model (takeoff | landing)',
-        )
-        self.add_input(
-            'dCL_flaps_model',
-            val=0.0,
-            units='unitless',
-            desc='Delta CL from flaps model',
-        )
-
-        self.add_input(
-            'kclge', units='unitless', shape=nn, desc='factor of CL due to ground effect'
-        )
-        self.add_input('flap_factor', shape=nn, desc='factor of CL due to flap deployment')
-
-        self.add_output('CL_base', units='unitless', shape=nn, desc='Base lift coefficient')
-        self.add_output(
-            'dCL_flaps_full',
-            units='unitless',
-            shape=nn,
-            desc='CL increment with full flap deflection',
-        )
-        self.add_output('alpha_stall', units='deg', shape=nn, desc='Stall angle of attack')
-        self.add_output('CL_max', units='unitless', shape=nn, desc='Max lift coefficient')
-
-        self.add_output(
-            'CL_full_flaps',
-            units='unitless',
-            shape=nn,
-            desc='lift coefficient with full flaps deployed',
-        )
-        self.add_output('CL', units='unitless', shape=nn, desc='lift coefficient')
-
-    def setup_partials(self):
-        # self.declare_coloring(method="cs", show_summary=False)
-        self.declare_partials('*', '*', dependent=False)
-        ar = np.arange(self.options['num_nodes'])
-
-        dynvars = [
-            Dynamic.Vehicle.ANGLE_OF_ATTACK,
-            'lift_curve_slope',
-            'lift_ratio',
-            'kclge',
-        ]
-
-        self.declare_partials('CL_base', ['*'], method='cs')
-        self.declare_partials('CL_base', dynvars, rows=ar, cols=ar, method='cs')
-
-        self.declare_partials('dCL_flaps_full', ['dCL_flaps_model'], method='cs')
-        self.declare_partials('dCL_flaps_full', ['lift_ratio'], rows=ar, cols=ar, method='cs')
-
-        self.declare_partials('alpha_stall', ['*'], method='cs')
-        self.declare_partials('alpha_stall', dynvars, rows=ar, cols=ar, method='cs')
-
-        self.declare_partials('CL_max', ['CL_max_flaps'], method='cs')
-        self.declare_partials('CL_max', ['lift_ratio'], rows=ar, cols=ar, method='cs')
-
-        self.declare_partials('CL_full_flaps', ['*'], method='cs')
-        self.declare_partials('CL_full_flaps', dynvars, rows=ar, cols=ar, method='cs')
-        self.declare_partials('CL_full_flaps', ['dCL_flaps_model'], method='cs')
-        self.declare_partials('CL_full_flaps', ['lift_ratio'], rows=ar, cols=ar, method='cs')
-
-        self.declare_partials('CL', ['*'], method='cs')
-        self.declare_partials('CL', dynvars, rows=ar, cols=ar, method='cs')
-        self.declare_partials('CL', ['dCL_flaps_model'], method='cs')
-        self.declare_partials('CL', ['lift_ratio'], rows=ar, cols=ar, method='cs')
-
-    def compute(self, inputs, outputs):
-        (
-            alpha,
-            lift_curve_slope,
-            lift_ratio,
-            alpha0,
-            CL_max_flaps,
-            dCL_flaps_model,
-            kclge,
-            flap_factor,
-        ) = inputs.values()
-
-        # clw_base = kclge * lift_curve_slope * deg2rad(alpha - alpha0)
-        # clw = clw_base + dCL_flaps_model
-
         outputs['CL_base'] = kclge * lift_curve_slope * deg2rad(alpha - alpha0) * (1 + lift_ratio)
         outputs['dCL_flaps_full'] = dCL_flaps_model * (1 + lift_ratio)
+
         outputs['alpha_stall'] = (
             rad2deg((CL_max_flaps - dCL_flaps_model) / (kclge * lift_curve_slope)) + alpha0
         )
         outputs['CL_max'] = CL_max_flaps * (1 + lift_ratio)
-
-        outputs['CL_full_flaps'] = outputs['CL_base'] + outputs['dCL_flaps_full']
-        outputs['CL'] = outputs['CL_base'] + flap_factor * outputs['dCL_flaps_full']
 
 
 class LiftCoeffClean(om.ExplicitComponent):
@@ -1331,12 +1168,10 @@ class LiftCoeffClean(om.ExplicitComponent):
             add_aviary_input(self, Dynamic.Vehicle.ANGLE_OF_ATTACK, shape=nn, units='deg')
             self.add_output('CL', val=1.0, units='unitless', shape=nn, desc='Lift coefficient')
 
-        self.add_input(
-            'lift_curve_slope', units='unitless', shape=nn, desc='CLAW: Lift-curve slope'
-        )
-        self.add_input('lift_ratio', units='unitless', shape=nn, desc='BARL: Lift ratio')
+        self.add_input('lift_curve_slope', units='unitless', shape=nn, desc='Lift-curve slope')
+        self.add_input('lift_ratio', units='unitless', shape=nn, desc='Lift ratio')
 
-        add_aviary_input(self, Aircraft.Wing.ZERO_LIFT_ANGLE, units='deg', desc='ALPHL0')
+        add_aviary_input(self, Aircraft.Wing.ZERO_LIFT_ANGLE, units='deg')
 
         add_aviary_input(self, Mission.Design.LIFT_COEFFICIENT_MAX_FLAPS_UP, units='unitless')
 
@@ -1371,17 +1206,18 @@ class LiftCoeffClean(om.ExplicitComponent):
             )
             self.declare_partials('CL', [Aircraft.Wing.ZERO_LIFT_ANGLE], method='cs')
 
-        self.declare_partials('alpha_stall', ['lift_curve_slope'], rows=ar, cols=ar)
+        self.declare_partials('alpha_stall', ['lift_curve_slope'], rows=ar, cols=ar, method='cs')
         self.declare_partials(
             'alpha_stall',
             [
                 Mission.Design.LIFT_COEFFICIENT_MAX_FLAPS_UP,
                 Aircraft.Wing.ZERO_LIFT_ANGLE,
             ],
+            method='cs',
         )
 
-        self.declare_partials('CL_max', ['lift_ratio'], rows=ar, cols=ar)
-        self.declare_partials('CL_max', [Mission.Design.LIFT_COEFFICIENT_MAX_FLAPS_UP])
+        self.declare_partials('CL_max', ['lift_ratio'], rows=ar, cols=ar, method='cs')
+        self.declare_partials('CL_max', [Mission.Design.LIFT_COEFFICIENT_MAX_FLAPS_UP], method='cs')
 
     def compute(self, inputs, outputs):
         _, lift_curve_slope, lift_ratio, alpha0, CL_max_flaps = inputs.values()
@@ -1395,20 +1231,6 @@ class LiftCoeffClean(om.ExplicitComponent):
 
         outputs['alpha_stall'] = rad2deg(CL_max_flaps / lift_curve_slope) + alpha0
         outputs['CL_max'] = CL_max_flaps * (1 + lift_ratio)
-
-    def compute_partials(self, inputs, J):
-        lift_curve_slope = inputs['lift_curve_slope']
-        lift_ratio = inputs['lift_ratio']
-        alpha0 = inputs[Aircraft.Wing.ZERO_LIFT_ANGLE]
-        CL_max_flaps = inputs[Mission.Design.LIFT_COEFFICIENT_MAX_FLAPS_UP]
-
-        J['alpha_stall', Mission.Design.LIFT_COEFFICIENT_MAX_FLAPS_UP] = (
-            180.0 / np.pi / lift_curve_slope
-        )
-        J['alpha_stall', 'lift_curve_slope'] = -180.0 / np.pi * CL_max_flaps / lift_curve_slope**2
-        J['alpha_stall', Aircraft.Wing.ZERO_LIFT_ANGLE] = 1
-        J['CL_max', Mission.Design.LIFT_COEFFICIENT_MAX_FLAPS_UP] = 1 + lift_ratio
-        J['CL_max', 'lift_ratio'] = CL_max_flaps
 
 
 class CruiseAero(om.Group):
@@ -1537,17 +1359,29 @@ class LowSpeedAero(om.Group):
             # NOTE Alpha is NOT an output from LowSpeedAero.
         else:
             self.add_subsystem(
-                'kclge',
-                GroundEffect(num_nodes=nn),
+                'lift_coef',
+                LiftCoeff(num_nodes=nn),
                 promotes_inputs=['*'],
                 promotes_outputs=['*'],
             )
 
             self.add_subsystem(
-                'lift_coef',
-                LiftCoeff(num_nodes=nn),
-                promotes_inputs=['*'],
-                promotes_outputs=['*'],
+                'total_cl',
+                om.ExecComp(
+                    [
+                        # "CL = CL_base + dCL_flaps",
+                        'CL_full_flaps = CL_base + dCL_flaps_full',
+                        'CL = CL_base + flap_factor * dCL_flaps_full',
+                    ],
+                    CL=dict(shape=nn, units='unitless'),
+                    CL_full_flaps=dict(shape=nn, units='unitless'),
+                    CL_base=dict(shape=nn, units='unitless'),
+                    # dCL_flaps=dict(shape=nn, units='unitless'),
+                    flap_factor=dict(shape=nn, units='unitless'),
+                    dCL_flaps_full=dict(shape=nn, units='unitless'),
+                    has_diag_partials=True,
+                ),
+                promotes=['*'],
             )
 
         interp = om.MetaModelStructuredComp(method='slinear')

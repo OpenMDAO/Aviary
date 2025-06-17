@@ -7,12 +7,7 @@ import openmdao.api as om
 import pandas as pd
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 
-from aviary.subsystems.aerodynamics.gasp_based.gaspaero import (
-    CruiseAero,
-    LowSpeedAero,
-    FormFactorAndSIWB,
-    GroundEffect,
-)
+from aviary.subsystems.aerodynamics.gasp_based.gaspaero import CruiseAero, LowSpeedAero
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.functions import setup_model_options
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
@@ -24,10 +19,7 @@ setup_data = json.load(open(os.path.join(here, 'data', 'aero_data_setup.json')))
 
 
 class GASPAeroTest(unittest.TestCase):
-    """
-    Test overall pre-mission and mission aero systems in cruise and near-ground flight.
-    Note: The case output_alpha=True is not tested.
-    """
+    """Test overall pre-mission and mission aero systems in cruise and near-ground flight."""
 
     cruise_tol = 1.5e-3
     ground_tol = 0.5e-3
@@ -239,73 +231,6 @@ def _init_geom(prob):
     # ground: t_init_gear
     # ground: dt_gear
     # ground & cruise, mission: q
-
-
-class FormFactorAndSIWBTest(unittest.TestCase):
-    """Test fuselage form factor computation and SIWB computation"""
-
-    def test_case1(self):
-        prob = om.Problem()
-
-        prob.model.add_subsystem(
-            'form_factor',
-            FormFactorAndSIWB(),
-            promotes=['*'],
-        )
-
-        prob.model.set_input_defaults(Aircraft.Fuselage.AVG_DIAMETER, val=1.0, units='ft')
-        prob.model.set_input_defaults(Aircraft.Fuselage.LENGTH, val=1.0, units='ft')
-        prob.model.set_input_defaults(Aircraft.Wing.SPAN, val=10.0, units='ft')
-
-        prob.setup(check=False, force_alloc_complex=True)
-        prob.run_model()
-
-        tol = 1e-7
-        assert_near_equal(prob['body_form_factor'], 9.5, tol)
-        assert_near_equal(prob['siwb'], 0.98005906, tol)
-
-        partial_data = prob.check_partials(out_stream=None, method='cs')
-        assert_check_partials(partial_data, atol=1e-11, rtol=1e-11)
-
-
-class GroundEffectTest(unittest.TestCase):
-    """Test fuselage form factor computation and SIWB computation"""
-
-    def test_case1(self):
-        prob = om.Problem()
-
-        prob.model.add_subsystem(
-            'kclge',
-            GroundEffect(num_nodes=2),
-            promotes=['*'],
-        )
-
-        # mission inputs
-        prob.model.set_input_defaults(Dynamic.Vehicle.ANGLE_OF_ATTACK, [-2.0, -2.0], units='deg')
-        prob.model.set_input_defaults(Dynamic.Mission.ALTITUDE, [0.0, 0.0], units='ft')
-        prob.model.set_input_defaults(
-            'lift_curve_slope', [4.87625889, 4.87625889], units='unitless'
-        )
-        # user inputs
-        prob.model.set_input_defaults(Aircraft.Wing.ZERO_LIFT_ANGLE, -1.2, units='deg')
-        prob.model.set_input_defaults(Aircraft.Wing.SWEEP, 25, units='deg')
-        prob.model.set_input_defaults(Aircraft.Wing.ASPECT_RATIO, 10.13, units='unitless')
-        prob.model.set_input_defaults(Aircraft.Wing.HEIGHT, 8, units='ft')
-        prob.model.set_input_defaults('airport_alt', 0.0, units='ft')
-        prob.model.set_input_defaults('flap_defl', 10.0, units='deg')
-        prob.model.set_input_defaults(Aircraft.Wing.FLAP_CHORD_RATIO, 0.3, units='unitless')
-        prob.model.set_input_defaults(Aircraft.Wing.TAPER_RATIO, 0.33, units='unitless')
-        # from flaps
-        prob.model.set_input_defaults('dCL_flaps_model', 0.4182, units='unitless')
-        # from sizing
-        prob.model.set_input_defaults(Aircraft.Wing.AVERAGE_CHORD, 12.61453152, units='ft')
-        prob.model.set_input_defaults(Aircraft.Wing.SPAN, 117.8187662, units='ft')
-
-        prob.setup(check=False, force_alloc_complex=True)
-        prob.run_model()
-
-        tol = 1e-7
-        assert_near_equal(prob['kclge'], [1.15131091, 1.15131091], tol)
 
 
 if __name__ == '__main__':
