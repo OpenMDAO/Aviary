@@ -229,13 +229,12 @@ class FlightPhaseBase(PhaseBuilderBase):
         else:
             rate_targets = ['dmach_dr']
 
-        # dictionary of options for Mach control
-        control_dict = {
-            'name': Dynamic.Atmosphere.MACH,
-            'targets': Dynamic.Atmosphere.MACH,
-            'rate_targets': rate_targets,
-            'opt': optimize_mach,
-        }
+        self.add_control(
+            'mach',
+            Dynamic.Atmosphere.MACH,
+            rate_targets,
+            add_constraints=Dynamic.Atmosphere.MACH not in constraints,
+        )
 
         if phase_type is EquationsOfMotion.HEIGHT_ENERGY and not ground_roll:
             rate_targets = [Dynamic.Mission.ALTITUDE_RATE]
