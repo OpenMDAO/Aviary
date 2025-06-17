@@ -89,7 +89,7 @@ class AviaryProblem(om.Problem):
         self.verbosity = verbosity
 
         self.model = AviaryGroup()
-        self.pre_mission = PreMissionGroup()
+        # self.pre_mission = PreMissionGroup()
         self.post_mission = PostMissionGroup()
 
         self.aviary_inputs = None
@@ -121,258 +121,268 @@ class AviaryProblem(om.Problem):
         This method is not strictly necessary; a user could also supply
         an AviaryValues object and/or phase_info dict of their own.
         """
-        # We haven't read the input data yet, we don't know what desired run verbosity is
-        # `self.verbosity` is "true" verbosity for entire run. `verbosity` is verbosity
-        # override for just this method
-        if verbosity is not None:
-            # compatibility with being passed int for verbosity
-            verbosity = Verbosity(verbosity)
-        else:
-            verbosity = self.verbosity  # usually None
+        return self.model.load_inputs(self,
+                aircraft_data,
+                phase_info=phase_info,
+                engine_builders=engine_builders,
+                problem_configurator=problem_configurator,
+                meta_data=meta_data,
+                verbosity=verbosity)
 
-        ## LOAD INPUT FILE ###
-        # Create AviaryValues object from file (or process existing AviaryValues object
-        # with default values from metadata) and generate initial guesses
-        aviary_inputs, self.initialization_guesses = create_vehicle(
-            aircraft_data, meta_data=meta_data, verbosity=verbosity
-        )
+        # # We haven't read the input data yet, we don't know what desired run verbosity is
+        # # `self.verbosity` is "true" verbosity for entire run. `verbosity` is verbosity
+        # # override for just this method
+        # if verbosity is not None:
+        #     # compatibility with being passed int for verbosity
+        #     verbosity = Verbosity(verbosity)
+        # else:
+        #     verbosity = self.verbosity  # usually None
 
-        # update verbosity now that we have read the input data
-        self.verbosity = aviary_inputs.get_val(Settings.VERBOSITY)
-        # if user did not ask for verbosity override for this method, use value from data
-        if verbosity is None:
-            verbosity = aviary_inputs.get_val(Settings.VERBOSITY)
+        # ## LOAD INPUT FILE ###
+        # # Create AviaryValues object from file (or process existing AviaryValues object
+        # # with default values from metadata) and generate initial guesses
+        # aviary_inputs, self.initialization_guesses = create_vehicle(
+        #     aircraft_data, meta_data=meta_data, verbosity=verbosity
+        # )
 
-        # Now that the input file has been read, we have the desired verbosity for this
-        # run stored in aviary_inputs. Save this to self.
-        self.aviary_inputs = aviary_inputs
+        # # update verbosity now that we have read the input data
+        # self.verbosity = aviary_inputs.get_val(Settings.VERBOSITY)
+        # # if user did not ask for verbosity override for this method, use value from data
+        # if verbosity is None:
+        #     verbosity = aviary_inputs.get_val(Settings.VERBOSITY)
 
-        # pull which methods will be used for subsystems and mission
-        self.mission_method = mission_method = aviary_inputs.get_val(Settings.EQUATIONS_OF_MOTION)
-        self.mass_method = mass_method = aviary_inputs.get_val(Settings.MASS_METHOD)
-        self.aero_method = aero_method = aviary_inputs.get_val(Settings.AERODYNAMICS_METHOD)
+        # # Now that the input file has been read, we have the desired verbosity for this
+        # # run stored in aviary_inputs. Save this to self.
+        # self.aviary_inputs = aviary_inputs
 
-        # Create engine_builder
-        self.engine_builders = engine_builders
+        # # pull which methods will be used for subsystems and mission
+        # self.mission_method = mission_method = aviary_inputs.get_val(Settings.EQUATIONS_OF_MOTION)
+        # self.mass_method = mass_method = aviary_inputs.get_val(Settings.MASS_METHOD)
+        # self.aero_method = aero_method = aviary_inputs.get_val(Settings.AERODYNAMICS_METHOD)
 
-        # Determine which problem configurator to use based on mission_method
-        if mission_method is HEIGHT_ENERGY:
-            self.configurator = HeightEnergyProblemConfigurator()
-        elif mission_method is TWO_DEGREES_OF_FREEDOM:
-            self.configurator = TwoDOFProblemConfigurator()
-        elif mission_method is SOLVED_2DOF:
-            self.configurator = SolvedTwoDOFProblemConfigurator()
-        elif mission_method is CUSTOM:
-            if problem_configurator:
-                self.configurator = problem_configurator()
-                # TODO: make draft / example custom builder
-            else:
-                raise ValueError(
-                    'When using "settings:equations_of_motion,custom", a '
-                    'problem_configurator must be specified in load_inputs().'
-                )
-        else:
-            raise ValueError(
-                'settings:equations_of_motion must be one of: height_energy, 2DOF, '
-                'solved_2DOF, or custom'
-            )
+        # # Create engine_builder
+        # self.engine_builders = engine_builders
 
-        # TODO this should be a preprocessor step if it is required here
-        if mass_method is GASP or aero_method is GASP:
-            aviary_inputs = update_GASP_options(aviary_inputs)
+        # # Determine which problem configurator to use based on mission_method
+        # if mission_method is HEIGHT_ENERGY:
+        #     self.configurator = HeightEnergyProblemConfigurator()
+        # elif mission_method is TWO_DEGREES_OF_FREEDOM:
+        #     self.configurator = TwoDOFProblemConfigurator()
+        # elif mission_method is SOLVED_2DOF:
+        #     self.configurator = SolvedTwoDOFProblemConfigurator()
+        # elif mission_method is CUSTOM:
+        #     if problem_configurator:
+        #         self.configurator = problem_configurator()
+        #         # TODO: make draft / example custom builder
+        #     else:
+        #         raise ValueError(
+        #             'When using "settings:equations_of_motion,custom", a '
+        #             'problem_configurator must be specified in load_inputs().'
+        #         )
+        # else:
+        #     raise ValueError(
+        #         'settings:equations_of_motion must be one of: height_energy, 2DOF, '
+        #         'solved_2DOF, or custom'
+        #     )
 
-        ## LOAD PHASE_INFO ###
-        if phase_info is None:
-            # check if the user generated a phase_info from gui
-            # Load the phase info dynamically from the current working directory
-            phase_info_module_path = Path.cwd() / 'outputted_phase_info.py'
+        # # TODO this should be a preprocessor step if it is required here
+        # if mass_method is GASP or aero_method is GASP:
+        #     aviary_inputs = update_GASP_options(aviary_inputs)
 
-            if phase_info_module_path.exists():
-                spec = importlib.util.spec_from_file_location(
-                    'outputted_phase_info', phase_info_module_path
-                )
-                outputted_phase_info = importlib.util.module_from_spec(spec)
-                sys.modules['outputted_phase_info'] = outputted_phase_info
-                spec.loader.exec_module(outputted_phase_info)
+        # ## LOAD PHASE_INFO ###
+        # if phase_info is None:
+        #     # check if the user generated a phase_info from gui
+        #     # Load the phase info dynamically from the current working directory
+        #     phase_info_module_path = Path.cwd() / 'outputted_phase_info.py'
 
-                # Access the phase_info variable from the loaded module
-                phase_info = outputted_phase_info.phase_info
+        #     if phase_info_module_path.exists():
+        #         spec = importlib.util.spec_from_file_location(
+        #             'outputted_phase_info', phase_info_module_path
+        #         )
+        #         outputted_phase_info = importlib.util.module_from_spec(spec)
+        #         sys.modules['outputted_phase_info'] = outputted_phase_info
+        #         spec.loader.exec_module(outputted_phase_info)
 
-                # if verbosity level is BRIEF or higher, print that we're using the
-                # outputted phase info
-                if verbosity >= Verbosity.BRIEF:
-                    print('Using outputted phase_info from current working directory')
-            else:
-                phase_info = self.configurator.get_default_phase_info(self)
+        #         # Access the phase_info variable from the loaded module
+        #         phase_info = outputted_phase_info.phase_info
 
-                if verbosity is not None and verbosity >= Verbosity.BRIEF:
-                    print(
-                        'Loaded default phase_info for '
-                        f'{self.mission_method.value.lower()} equations of motion'
-                    )
+        #         # if verbosity level is BRIEF or higher, print that we're using the
+        #         # outputted phase info
+        #         if verbosity >= Verbosity.BRIEF:
+        #             print('Using outputted phase_info from current working directory')
+        #     else:
+        #         phase_info = self.configurator.get_default_phase_info(self)
 
-        # create a new dictionary that only contains the phases from phase_info
-        self.phase_info = {}
+        #         if verbosity is not None and verbosity >= Verbosity.BRIEF:
+        #             print(
+        #                 'Loaded default phase_info for '
+        #                 f'{self.mission_method.value.lower()} equations of motion'
+        #             )
 
-        for phase_name in phase_info:
-            if 'external_subsystems' not in phase_info[phase_name]:
-                phase_info[phase_name]['external_subsystems'] = []
+        # # create a new dictionary that only contains the phases from phase_info
+        # self.phase_info = {}
 
-            if phase_name not in ['pre_mission', 'post_mission']:
-                self.phase_info[phase_name] = phase_info[phase_name]
+        # for phase_name in phase_info:
+        #     if 'external_subsystems' not in phase_info[phase_name]:
+        #         phase_info[phase_name]['external_subsystems'] = []
 
-        # pre_mission and post_mission are stored in their own dictionaries.
-        if 'pre_mission' in phase_info:
-            self.pre_mission_info = phase_info['pre_mission']
-        else:
-            self.pre_mission_info = {}
+        #     if phase_name not in ['pre_mission', 'post_mission']:
+        #         self.phase_info[phase_name] = phase_info[phase_name]
 
-        if 'post_mission' in phase_info:
-            self.post_mission_info = phase_info['post_mission']
-        else:
-            self.post_mission_info = {}
+        # # pre_mission and post_mission are stored in their own dictionaries.
+        # if 'pre_mission' in phase_info:
+        #     self.pre_mission_info = phase_info['pre_mission']
+        # else:
+        #     self.pre_mission_info = {}
 
-        self.problem_type = aviary_inputs.get_val(Settings.PROBLEM_TYPE)
+        # if 'post_mission' in phase_info:
+        #     self.post_mission_info = phase_info['post_mission']
+        # else:
+        #     self.post_mission_info = {}
 
-        self.configurator.initial_guesses(self)
-        # This function sets all the following defaults if they were not already set
-        # self.engine_builders, self.pre_mission_info, self_post_mission_info
-        # self.require_range_residual, self.target_range
-        # Other specific self.*** are defined in here as well that are specific to
-        # each builder
+        # self.problem_type = aviary_inputs.get_val(Settings.PROBLEM_TYPE)
 
-        return self.aviary_inputs
+        # self.configurator.initial_guesses(self)
+        # # This function sets all the following defaults if they were not already set
+        # # self.engine_builders, self.pre_mission_info, self_post_mission_info
+        # # self.require_range_residual, self.target_range
+        # # Other specific self.*** are defined in here as well that are specific to
+        # # each builder
+
+        # return self.aviary_inputs
 
     def check_and_preprocess_inputs(self, verbosity=None):
         """
         This method checks the user-supplied input values for any potential problems
         and preprocesses the inputs to prepare them for use in the Aviary problem.
         """
-        # `self.verbosity` is "true" verbosity for entire run. `verbosity` is verbosity
-        # override for just this method
-        if verbosity is not None:
-            # compatibility with being passed int for verbosity
-            verbosity = Verbosity(verbosity)
-        else:
-            verbosity = self.verbosity  # defaults to BRIEF
+        self.model.check_and_preprocess_inputs(self, verbosity=verbosity)
+        
+        # # `self.verbosity` is "true" verbosity for entire run. `verbosity` is verbosity
+        # # override for just this method
+        # if verbosity is not None:
+        #     # compatibility with being passed int for verbosity
+        #     verbosity = Verbosity(verbosity)
+        # else:
+        #     verbosity = self.verbosity  # defaults to BRIEF
 
-        aviary_inputs = self.aviary_inputs
-        # Target_distance verification for all phases
-        # Checks to make sure target_distance is positive,
-        for phase_name, phase in self.phase_info.items():
-            if 'user_options' in phase:
-                target_distance = phase['user_options'].get('target_distance', (None, 'm'))
-                if target_distance[0] is not None and target_distance[0] <= 0:
-                    raise ValueError(
-                        f'Invalid target_distance in [{phase_name}].[user_options]. '
-                        f'Current (value: {target_distance[0]}), '
-                        f'(units: {target_distance[1]}) <= 0'
-                    )
+        # aviary_inputs = self.aviary_inputs
+        # # Target_distance verification for all phases
+        # # Checks to make sure target_distance is positive,
+        # for phase_name, phase in self.phase_info.items():
+        #     if 'user_options' in phase:
+        #         target_distance = phase['user_options'].get('target_distance', (None, 'm'))
+        #         if target_distance[0] is not None and target_distance[0] <= 0:
+        #             raise ValueError(
+        #                 f'Invalid target_distance in [{phase_name}].[user_options]. '
+        #                 f'Current (value: {target_distance[0]}), '
+        #                 f'(units: {target_distance[1]}) <= 0'
+        #             )
 
-        # Checks to make sure time_duration is positive,
-        # Sets duration_bounds, initial_guesses, and fixed_duration
-        for phase_name, phase in self.phase_info.items():
-            if 'user_options' in phase:
-                analytic = False
-                if (
-                    self.analysis_scheme is AnalysisScheme.COLLOCATION
-                    and self.mission_method is EquationsOfMotion.TWO_DEGREES_OF_FREEDOM
-                ):
-                    try:
-                        # if the user provided an option, use it
-                        analytic = phase['user_options']['analytic']
-                    except KeyError:
-                        # if it isn't specified, only the default 2DOF cruise for
-                        # collocation is analytic
-                        if 'cruise' in phase_name:
-                            analytic = phase['user_options']['analytic'] = True
-                        else:
-                            analytic = phase['user_options']['analytic'] = False
+        # # Checks to make sure time_duration is positive,
+        # # Sets duration_bounds, initial_guesses, and fixed_duration
+        # for phase_name, phase in self.phase_info.items():
+        #     if 'user_options' in phase:
+        #         analytic = False
+        #         if (
+        #             self.analysis_scheme is AnalysisScheme.COLLOCATION
+        #             and self.mission_method is EquationsOfMotion.TWO_DEGREES_OF_FREEDOM
+        #         ):
+        #             try:
+        #                 # if the user provided an option, use it
+        #                 analytic = phase['user_options']['analytic']
+        #             except KeyError:
+        #                 # if it isn't specified, only the default 2DOF cruise for
+        #                 # collocation is analytic
+        #                 if 'cruise' in phase_name:
+        #                     analytic = phase['user_options']['analytic'] = True
+        #                 else:
+        #                     analytic = phase['user_options']['analytic'] = False
 
-                if 'time_duration' in phase['user_options']:
-                    time_duration = phase['user_options']['time_duration']
-                    if time_duration[0] is not None and time_duration[0] <= 0:
-                        raise ValueError(
-                            f'Invalid time_duration in phase_info[{phase_name}]'
-                            f'[user_options]. Current (value: {time_duration[0]}), '
-                            f'(units: {time_duration[1]}) <= 0")'
-                        )
+        #         if 'time_duration' in phase['user_options']:
+        #             time_duration = phase['user_options']['time_duration']
+        #             if time_duration[0] is not None and time_duration[0] <= 0:
+        #                 raise ValueError(
+        #                     f'Invalid time_duration in phase_info[{phase_name}]'
+        #                     f'[user_options]. Current (value: {time_duration[0]}), '
+        #                     f'(units: {time_duration[1]}) <= 0")'
+        #                 )
 
-        for phase_name in self.phase_info:
-            for external_subsystem in self.phase_info[phase_name]['external_subsystems']:
-                aviary_inputs = external_subsystem.preprocess_inputs(aviary_inputs)
+        # for phase_name in self.phase_info:
+        #     for external_subsystem in self.phase_info[phase_name]['external_subsystems']:
+        #         aviary_inputs = external_subsystem.preprocess_inputs(aviary_inputs)
 
-        # PREPROCESSORS #
-        # BUG we can't provide updated metadata to preprocessors, because we need the
-        #     processed options to build our subsystems to begin with
-        preprocess_options(
-            aviary_inputs,
-            engine_models=self.engine_builders,
-            verbosity=verbosity,
-            # metadata=self.meta_data
-        )
+        # # PREPROCESSORS #
+        # # BUG we can't provide updated metadata to preprocessors, because we need the
+        # #     processed options to build our subsystems to begin with
+        # preprocess_options(
+        #     aviary_inputs,
+        #     engine_models=self.engine_builders,
+        #     verbosity=verbosity,
+        #     # metadata=self.meta_data
+        # )
 
-        ## Set Up Core Subsystems ##
-        prop = CorePropulsionBuilder('core_propulsion', engine_models=self.engine_builders)
-        mass = CoreMassBuilder('core_mass', code_origin=self.mass_method)
+        # ## Set Up Core Subsystems ##
+        # prop = CorePropulsionBuilder('core_propulsion', engine_models=self.engine_builders)
+        # mass = CoreMassBuilder('core_mass', code_origin=self.mass_method)
 
-        # If all phases ask for tabular aero, we can skip pre-mission. Check phase_info
-        tabular = False
-        for phase in self.phase_info:
-            if phase not in ('pre_mission', 'post_mission'):
-                try:
-                    if (
-                        'tabular'
-                        in self.phase_info[phase]['subsystem_options']['core_aerodynamics'][
-                            'method'
-                        ]
-                    ):
-                        tabular = True
-                except KeyError:
-                    tabular = False
+        # # If all phases ask for tabular aero, we can skip pre-mission. Check phase_info
+        # tabular = False
+        # for phase in self.phase_info:
+        #     if phase not in ('pre_mission', 'post_mission'):
+        #         try:
+        #             if (
+        #                 'tabular'
+        #                 in self.phase_info[phase]['subsystem_options']['core_aerodynamics'][
+        #                     'method'
+        #                 ]
+        #             ):
+        #                 tabular = True
+        #         except KeyError:
+        #             tabular = False
 
-        aero = CoreAerodynamicsBuilder(
-            'core_aerodynamics', code_origin=self.aero_method, tabular=tabular
-        )
+        # aero = CoreAerodynamicsBuilder(
+        #     'core_aerodynamics', code_origin=self.aero_method, tabular=tabular
+        # )
 
-        # which geometry methods should be used?
-        geom_code_origin = None
+        # # which geometry methods should be used?
+        # geom_code_origin = None
 
-        if (self.aero_method is FLOPS) and (self.mass_method is FLOPS):
-            geom_code_origin = FLOPS
-        elif (self.aero_method is GASP) and (self.mass_method is GASP):
-            geom_code_origin = GASP
-        else:
-            geom_code_origin = (FLOPS, GASP)
+        # if (self.aero_method is FLOPS) and (self.mass_method is FLOPS):
+        #     geom_code_origin = FLOPS
+        # elif (self.aero_method is GASP) and (self.mass_method is GASP):
+        #     geom_code_origin = GASP
+        # else:
+        #     geom_code_origin = (FLOPS, GASP)
 
-        # which geometry method gets prioritized in case of conflicting outputs
-        code_origin_to_prioritize = self.configurator.get_code_origin(self)
+        # # which geometry method gets prioritized in case of conflicting outputs
+        # code_origin_to_prioritize = self.configurator.get_code_origin(self)
 
-        geom = CoreGeometryBuilder(
-            'core_geometry',
-            code_origin=geom_code_origin,
-            code_origin_to_prioritize=code_origin_to_prioritize,
-        )
+        # geom = CoreGeometryBuilder(
+        #     'core_geometry',
+        #     code_origin=geom_code_origin,
+        #     code_origin_to_prioritize=code_origin_to_prioritize,
+        # )
 
-        subsystems = self.core_subsystems = {
-            'propulsion': prop,
-            'geometry': geom,
-            'mass': mass,
-            'aerodynamics': aero,
-        }
+        # subsystems = self.core_subsystems = {
+        #     'propulsion': prop,
+        #     'geometry': geom,
+        #     'mass': mass,
+        #     'aerodynamics': aero,
+        # }
 
-        # TODO optionally accept which subsystems to load from phase_info
-        default_mission_subsystems = [
-            subsystems['aerodynamics'],
-            subsystems['propulsion'],
-        ]
-        self.ode_args = {
-            'aviary_options': aviary_inputs,
-            'core_subsystems': default_mission_subsystems,
-        }
+        # # TODO optionally accept which subsystems to load from phase_info
+        # default_mission_subsystems = [
+        #     subsystems['aerodynamics'],
+        #     subsystems['propulsion'],
+        # ]
+        # self.ode_args = {
+        #     'aviary_options': aviary_inputs,
+        #     'core_subsystems': default_mission_subsystems,
+        # }
 
-        self._update_metadata_from_subsystems()
-        self._check_reserve_phase_separation()
+        # self._update_metadata_from_subsystems()
+        # self._check_reserve_phase_separation()
 
     def _update_metadata_from_subsystems(self):
         """Merge metadata from user-defined subsystems into problem metadata."""
@@ -455,102 +465,104 @@ class AviaryProblem(om.Problem):
         else:
             verbosity = self.verbosity  # defaults to BRIEF
 
-        pre_mission = self.pre_mission
-        self.model.add_subsystem(
-            'pre_mission',
-            pre_mission,
-            promotes_inputs=['aircraft:*', 'mission:*'],
-            promotes_outputs=['aircraft:*', 'mission:*'],
-        )
+        prob.model.add_pre_mission_systems(self, verbosity=verbosity)
 
-        if 'linear_solver' in self.pre_mission_info:
-            pre_mission.linear_solver = self.pre_mission_info['linear_solver']
+        #     pre_mission = self.pre_mission
+        #     self.model.add_subsystem(
+        #         'pre_mission',
+        #         pre_mission,
+        #         promotes_inputs=['aircraft:*', 'mission:*'],
+        #         promotes_outputs=['aircraft:*', 'mission:*'],
+        #     )
 
-        if 'nonlinear_solver' in self.pre_mission_info:
-            pre_mission.nonlinear_solver = self.pre_mission_info['nonlinear_solver']
+        #     if 'linear_solver' in self.pre_mission_info:
+        #         pre_mission.linear_solver = self.pre_mission_info['linear_solver']
 
-        self._add_premission_external_subsystems()
+        #     if 'nonlinear_solver' in self.pre_mission_info:
+        #         pre_mission.nonlinear_solver = self.pre_mission_info['nonlinear_solver']
 
-        subsystems = self.core_subsystems
+        #     self._add_premission_external_subsystems()
 
-        # Propulsion isn't included in core pre-mission group to avoid override step in
-        # configure() - instead add it now
-        pre_mission.add_subsystem(
-            'core_propulsion',
-            subsystems['propulsion'].build_pre_mission(self.aviary_inputs),
-        )
+        #     subsystems = self.core_subsystems
 
-        default_subsystems = [
-            subsystems['geometry'],
-            subsystems['aerodynamics'],
-            subsystems['mass'],
-        ]
+        #     # Propulsion isn't included in core pre-mission group to avoid override step in
+        #     # configure() - instead add it now
+        #     pre_mission.add_subsystem(
+        #         'core_propulsion',
+        #         subsystems['propulsion'].build_pre_mission(self.aviary_inputs),
+        #     )
 
-        pre_mission.add_subsystem(
-            'core_subsystems',
-            CorePreMission(
-                aviary_options=self.aviary_inputs,
-                subsystems=default_subsystems,
-                process_overrides=False,
-            ),
-            promotes_inputs=['*'],
-            promotes_outputs=['*'],
-        )
+        #     default_subsystems = [
+        #         subsystems['geometry'],
+        #         subsystems['aerodynamics'],
+        #         subsystems['mass'],
+        #     ]
 
-        if self.pre_mission_info['include_takeoff']:
-            self.configurator.add_takeoff_systems(self)
+        #     pre_mission.add_subsystem(
+        #         'core_subsystems',
+        #         CorePreMission(
+        #             aviary_options=self.aviary_inputs,
+        #             subsystems=default_subsystems,
+        #             process_overrides=False,
+        #         ),
+        #         promotes_inputs=['*'],
+        #         promotes_outputs=['*'],
+        #     )
 
-    def _add_premission_external_subsystems(self):
-        """
-        This private method adds each external subsystem to the pre-mission subsystem and
-        a mass component that captures external subsystem masses for use in mass buildups.
+        #     if self.pre_mission_info['include_takeoff']:
+        #         self.configurator.add_takeoff_systems(self)
 
-        Firstly, the method iterates through all external subsystems in the pre-mission
-        information. For each subsystem, it builds the pre-mission instance of the
-        subsystem.
+    # def _add_premission_external_subsystems(self):
+    #     """
+    #     This private method adds each external subsystem to the pre-mission subsystem and
+    #     a mass component that captures external subsystem masses for use in mass buildups.
 
-        Secondly, the method collects the mass names of the added subsystems. This
-        expression is then used to define an ExecComp (a component that evaluates a
-        simple equation given input values).
+    #     Firstly, the method iterates through all external subsystems in the pre-mission
+    #     information. For each subsystem, it builds the pre-mission instance of the
+    #     subsystem.
 
-        The method promotes the input and output of this ExecComp to the top level of the
-        pre-mission object, allowing this calculated subsystem mass to be accessed
-        directly from the pre-mission object.
-        """
-        mass_names = []
-        # Loop through all the phases in this subsystem.
-        for external_subsystem in self.pre_mission_info['external_subsystems']:
-            # Get all the subsystem builders for this phase.
-            subsystem_premission = external_subsystem.build_pre_mission(self.aviary_inputs)
+    #     Secondly, the method collects the mass names of the added subsystems. This
+    #     expression is then used to define an ExecComp (a component that evaluates a
+    #     simple equation given input values).
 
-            if subsystem_premission is not None:
-                self.pre_mission.add_subsystem(external_subsystem.name, subsystem_premission)
+    #     The method promotes the input and output of this ExecComp to the top level of the
+    #     pre-mission object, allowing this calculated subsystem mass to be accessed
+    #     directly from the pre-mission object.
+    #     """
+    #     mass_names = []
+    #     # Loop through all the phases in this subsystem.
+    #     for external_subsystem in self.pre_mission_info['external_subsystems']:
+    #         # Get all the subsystem builders for this phase.
+    #         subsystem_premission = external_subsystem.build_pre_mission(self.aviary_inputs)
 
-                mass_names.extend(external_subsystem.get_mass_names())
+    #         if subsystem_premission is not None:
+    #             self.pre_mission.add_subsystem(external_subsystem.name, subsystem_premission)
 
-        if mass_names:
-            formatted_names = []
-            for name in mass_names:
-                formatted_name = name.replace(':', '_')
-                formatted_names.append(formatted_name)
+    #             mass_names.extend(external_subsystem.get_mass_names())
 
-            # Define the expression for computing the sum of masses
-            expr = 'subsystem_mass = ' + ' + '.join(formatted_names)
+    #     if mass_names:
+    #         formatted_names = []
+    #         for name in mass_names:
+    #             formatted_name = name.replace(':', '_')
+    #             formatted_names.append(formatted_name)
 
-            promotes_inputs_list = [
-                (formatted_name, original_name)
-                for formatted_name, original_name in zip(formatted_names, mass_names)
-            ]
+    #         # Define the expression for computing the sum of masses
+    #         expr = 'subsystem_mass = ' + ' + '.join(formatted_names)
 
-            # Create the ExecComp
-            self.pre_mission.add_subsystem(
-                'external_comp_sum',
-                om.ExecComp(expr, units='kg'),
-                promotes_inputs=promotes_inputs_list,
-                promotes_outputs=[('subsystem_mass', Aircraft.Design.EXTERNAL_SUBSYSTEMS_MASS)],
-            )
+    #         promotes_inputs_list = [
+    #             (formatted_name, original_name)
+    #             for formatted_name, original_name in zip(formatted_names, mass_names)
+    #         ]
 
-    def _get_phase(self, phase_name, phase_idx):
+    #         # Create the ExecComp
+    #         self.pre_mission.add_subsystem(
+    #             'external_comp_sum',
+    #             om.ExecComp(expr, units='kg'),
+    #             promotes_inputs=promotes_inputs_list,
+    #             promotes_outputs=[('subsystem_mass', Aircraft.Design.EXTERNAL_SUBSYSTEMS_MASS)],
+    #         )
+
+    def _get_phase(self, phase_name, phase_idx): # <- move whole thing
         phase_options = self.phase_info[phase_name]
 
         # TODO optionally accept which subsystems to load from phase_info
@@ -758,7 +770,8 @@ class AviaryProblem(om.Problem):
 
         return traj
 
-    def _get_phase_mission_bus_lengths(self):
+    def _get_phase_mission_bus_lengths(self): # <- move whole thing
+        # TODO: convert to utility function, does not need to be a method
         phase_mission_bus_lengths = {}
         for phase_name, phase in self.traj._phases.items():
             phase_mission_bus_lengths[phase_name] = phase._timeseries['mission_bus_variables'][
@@ -1132,7 +1145,7 @@ class AviaryProblem(om.Problem):
 
         self.configurator.check_trajectory(self)
 
-    def add_driver(self, optimizer=None, use_coloring=None, max_iter=50, verbosity=None):
+    def add_driver(self, optimizer=None, use_coloring=None, max_iter=50, verbosity=None): # stays
         """
         Add an optimization driver to the Aviary problem.
 
@@ -1264,7 +1277,7 @@ class AviaryProblem(om.Problem):
                     'objs',
                 ]
 
-    def add_design_variables(self, verbosity=None):
+    def add_design_variables(self, verbosity=None): # forward
         """
         Adds design variables to the Aviary problem.
 
@@ -1567,7 +1580,7 @@ class AviaryProblem(om.Problem):
             else:
                 raise ValueError(f'{self.problem_type} is not a valid problem type.')
 
-    def _add_bus_variables_and_connect(self):
+    def _add_bus_variables_and_connect(self): # move
         all_subsystems = self._get_all_subsystems()
 
         base_phases = list(self.phase_info.keys())
@@ -1645,7 +1658,7 @@ class AviaryProblem(om.Problem):
                                 post_mission_var_name,
                             )
 
-    def _connect_mission_bus_variables(self):
+    def _connect_mission_bus_variables(self): # move
         all_subsystems = self._get_all_subsystems()
 
         # Loop through all external subsystems.
@@ -1674,6 +1687,7 @@ class AviaryProblem(om.Problem):
 
         # suppress warnings:
         # "input variable '...' promoted using '*' was already promoted using 'aircraft:*'
+        # TODO: will need to setup warnings on each AviaryGroup()
         with warnings.catch_warnings():
             self.model.options['aviary_options'] = self.aviary_inputs
             self.model.options['aviary_metadata'] = self.meta_data
@@ -1684,7 +1698,7 @@ class AviaryProblem(om.Problem):
 
             super().setup(**kwargs)
 
-    def set_initial_guesses(self, parent_prob=None, parent_prefix='', verbosity=None):
+    def set_initial_guesses(self, parent_prob=None, parent_prefix='', verbosity=None): # has to forward
         """
         Call `set_val` on the trajectory for states and controls to seed the problem with
         reasonable initial guesses. This is especially important for collocation methods.
@@ -1763,6 +1777,7 @@ class AviaryProblem(om.Problem):
             )
 
     def _process_guess_var(self, val, key, phase):
+        # TODO: change to util function
         """
         Process the guess variable, which can either be a float or an array of floats.
         This method is responsible for interpolating initial guesses when the user
@@ -1814,7 +1829,7 @@ class AviaryProblem(om.Problem):
         # Return the processed guess value(s)
         return val
 
-    def _add_subsystem_guesses(self, phase_name, phase, target_prob, parent_prefix):
+    def _add_subsystem_guesses(self, phase_name, phase, target_prob, parent_prefix): # move
         """
         Adds the initial guesses for each subsystem of a given phase to the problem.
         This method first fetches all subsystems associated with the given phase.
@@ -2205,7 +2220,7 @@ class AviaryProblem(om.Problem):
             prob_fallout.run_aviary_problem(record_filename='fallout_problem_history.db')
         return prob_fallout
 
-    def save_sizing_to_json(self, json_filename='sizing_problem.json'):
+    def save_sizing_to_json(self, json_filename='sizing_problem.json'): # leave in place for now
         """
         This function saves an aviary problem object into a json file.
 
