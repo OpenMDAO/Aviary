@@ -5,7 +5,7 @@ import warnings
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_near_equal
 
-from aviary.models.missions.default_phase_info.two_dof_fiti import (
+from aviary.models.missions.two_dof_fiti_default import (
     add_default_sgm_args,
     descent_phases,
 )

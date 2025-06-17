@@ -68,7 +68,7 @@ class fortran_to_aviaryTestCases(CommandEntryPointsTestCases):
 
     def test_FLOPS_conversion(self):
         filepath = get_aviary_resource_path(
-            'models/advanced_single_aisle/N3CC_generic_low_speed_polars_FLOPS.txt'
+            'models/aircraft/advanced_single_aisle/N3CC_generic_low_speed_polars_FLOPS.txt'
         )
         outfile = Path.cwd() / 'advanced_single_aisle' / 'output.dat'
         cmd = f'aviary fortran_to_aviary {filepath} -o {outfile} -l FLOPS'
@@ -140,7 +140,7 @@ class convert_aero_tableTestCases(CommandEntryPointsTestCases):
 
     def test_FLOPS_conversion(self):
         filepath = self.get_file(
-            'models/advanced_single_aisle/N3CC_generic_low_speed_polars_FLOPSinp.txt'
+            'models/aircraft/advanced_single_aisle/N3CC_generic_low_speed_polars_FLOPSinp.txt'
         )
         outfile = Path.cwd() / 'advanced_single_aisle' / 'output.dat'
         cmd = f'aviary fortran_to_aviary {filepath} -o {outfile} -l FLOPS'

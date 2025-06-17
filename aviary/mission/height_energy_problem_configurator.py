@@ -95,7 +95,7 @@ class HeightEnergyProblemConfigurator(ProblemConfiguratorBase):
             General default phase_info.
         """
         if prob.analysis_scheme is AnalysisScheme.COLLOCATION:
-            from aviary.models.missions.default_phase_info.height_energy import phase_info
+            from aviary.models.missions.height_energy_default import phase_info
         else:
             raise RuntimeError('Height Energy requires that a phase_info is specified.')
 

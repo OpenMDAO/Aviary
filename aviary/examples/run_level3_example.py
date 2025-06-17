@@ -84,7 +84,7 @@ def run_trajectory(sim=True):
     # Level 2 Equivalent: loads inputs through the prob.load_inputs function,
     # with arguments for the input csv and phase info python file.
 
-    aviary_inputs = get_flops_inputs('N3CC')
+    aviary_inputs = get_flops_inputs('AdvancedSingleAisle')
 
     aviary_inputs.set_val(Mission.Landing.LIFT_COEFFICIENT_MAX, 2.4, units='unitless')
     aviary_inputs.set_val(Mission.Takeoff.LIFT_COEFFICIENT_MAX, 2.0, units='unitless')

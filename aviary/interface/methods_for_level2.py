@@ -21,7 +21,7 @@ from aviary.mission.gasp_based.phases.time_integration_traj import FlexibleTraj
 from aviary.mission.height_energy_problem_configurator import HeightEnergyProblemConfigurator
 from aviary.mission.solved_two_dof_problem_configurator import SolvedTwoDOFProblemConfigurator
 from aviary.mission.two_dof_problem_configurator import TwoDOFProblemConfigurator
-from aviary.models.missions.default_phase_info.two_dof_fiti import add_default_sgm_args
+from aviary.models.missions.two_dof_fiti_default import add_default_sgm_args
 from aviary.subsystems.aerodynamics.aerodynamics_builder import CoreAerodynamicsBuilder
 from aviary.subsystems.geometry.geometry_builder import CoreGeometryBuilder
 from aviary.subsystems.mass.mass_builder import CoreMassBuilder

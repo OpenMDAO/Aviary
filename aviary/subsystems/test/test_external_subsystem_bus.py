@@ -9,7 +9,7 @@ from openmdao.utils.assert_utils import assert_near_equal
 from openmdao.utils.testing_utils import use_tempdirs
 
 import aviary.api as av
-from aviary.models.missions.default_phase_info.height_energy import phase_info as ph_in
+from aviary.models.missions.height_energy_default import phase_info as ph_in
 from aviary.interface.methods_for_level2 import AviaryProblem
 from aviary.subsystems.subsystem_builder_base import SubsystemBuilderBase
 from aviary.variable_info.variables import Dynamic

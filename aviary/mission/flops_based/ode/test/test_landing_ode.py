@@ -19,7 +19,7 @@ from aviary.variable_info.variables import Aircraft, Dynamic
 
 
 class FlareODETest(unittest.TestCase):
-    """Test against data of detailed_landing_flare from models/advanced_single_aisle/advanced_single_aisle_data.py."""
+    """Test against data of detailed_landing_flare from models/aircraft/advanced_single_aisle/advanced_single_aisle_data.py."""
 
     def test_case(self):
         prob = om.Problem()

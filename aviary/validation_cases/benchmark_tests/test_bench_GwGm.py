@@ -5,7 +5,7 @@ from openmdao.core.problem import _clear_problem_names
 from openmdao.utils.assert_utils import assert_near_equal
 from openmdao.utils.testing_utils import require_pyoptsparse, use_tempdirs
 
-from aviary.models.missions.default_phase_info.two_dof import phase_info
+from aviary.models.missions.two_dof_default import phase_info
 from aviary.interface.methods_for_level1 import run_aviary
 from aviary.variable_info.enums import AnalysisScheme
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
@@ -120,7 +120,7 @@ class ProblemPhaseTestCase(unittest.TestCase):
     def test_bench_GwGm_shooting(self):
         self.skipTest('SGM currently failing this test.')
 
-        from aviary.models.missions.default_phase_info.two_dof_fiti import (
+        from aviary.models.missions.two_dof_fiti_default import (
             phase_info,
             phase_info_parameterization,
         )

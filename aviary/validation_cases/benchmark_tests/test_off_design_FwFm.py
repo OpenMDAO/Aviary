@@ -4,7 +4,7 @@ from openmdao.utils.assert_utils import assert_near_equal
 from openmdao.utils.testing_utils import require_pyoptsparse, use_tempdirs
 
 import aviary.api as av
-from aviary.models.missions.default_phase_info.height_energy import phase_info_parameterization
+from aviary.models.missions.height_energy_default import phase_info_parameterization
 from aviary.variable_info.enums import ProblemType, Verbosity
 
 

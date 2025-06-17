@@ -29,7 +29,7 @@ def run_trajectory(sim=True):
     local_phase_info = deepcopy(phase_info)
 
     prob.load_inputs(
-        'models/advanced_single_aisle/advanced_single_aisle_FLOPS.csv', local_phase_info
+        'models/aircraft/advanced_single_aisle/advanced_single_aisle_FLOPS.csv', local_phase_info
     )
 
     ##########################################

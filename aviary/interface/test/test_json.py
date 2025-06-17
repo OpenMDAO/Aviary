@@ -5,7 +5,7 @@ from pathlib import Path
 from openmdao.utils.testing_utils import use_tempdirs
 
 import aviary.api as av
-from aviary.models.missions.default_phase_info.height_energy import (
+from aviary.models.missions.height_energy_default import (
     phase_info,
     phase_info_parameterization,
 )

@@ -49,7 +49,7 @@ def custom_run_aviary(
     # Build problem
     prob = AviaryProblem(analysis_scheme)
 
-    from aviary.models.missions.default_phase_info.two_dof_fiti import (
+    from aviary.models.missions.two_dof_fiti_default import (
         add_default_sgm_args,
         ascent_phases,
         phase_info_parameterization,
