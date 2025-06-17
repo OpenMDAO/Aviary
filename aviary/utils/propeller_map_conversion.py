@@ -53,9 +53,7 @@ def convert_propeller_map(
         scalars, tables, fields = _read_gasp_propeller(data_file, comments)
 
         if scalars['iread'] == 1:
-            # GASP helical Mach is reported at 75% radius, Aviary uses tip helical Mach
-            data['Helical Mach'] = tables['thrust_coefficient'][:, 0] / 0.75
-            comments.append('Helical Mach numbers were converted to propeller tip (100% radius)')
+            data['Helical Mach'] = tables['thrust_coefficient'][:, 0]
         else:
             data['Mach'] = tables['thrust_coefficient'][:, 0]
         data['Power Coefficient'] = tables['thrust_coefficient'][:, 1]
