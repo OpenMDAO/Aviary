@@ -40,7 +40,7 @@ class AscentPhaseOptions(AviaryOptionsDictionary):
         )
 
         self.declare(
-            'target_duration',
+            'time_duration',
             default=None,
             units='s',
             desc='The amount of time taken by this phase added as a constraint.',
@@ -103,7 +103,7 @@ class AscentPhaseOptions(AviaryOptionsDictionary):
         )
 
         self.declare(
-            name='final_altitude',
+            name='altitude_final',
             default=500.0,
             units='ft',
             desc='Altitude for final point in the phase.',
@@ -168,7 +168,7 @@ class AscentPhaseOptions(AviaryOptionsDictionary):
         )
 
         self.declare(
-            name='duration_ref', default=1.0, units='s', desc='Scale factor ref for duration.'
+            name='time_duration_ref', default=1.0, units='s', desc='Scale factor ref for duration.'
         )
 
         self.declare(

@@ -13,38 +13,36 @@ class AircraftMissionTestSuite(unittest.TestCase):
         cruise_dict = {
             'subsystem_options': {'core_aerodynamics': {'method': 'computed'}},
             'user_options': {
-                'optimize_mach': False,
-                'optimize_altitude': False,
-                'polynomial_control_order': 1,
                 'num_segments': 5,
                 'order': 3,
-                'solve_for_distance': False,
-                'initial_mach': (0.72, 'unitless'),
-                'final_mach': (0.72, 'unitless'),
+                'mach_optimize': False,
+                'mach_initial': (0.72, 'unitless'),
+                'mach_final': (0.72, 'unitless'),
                 'mach_bounds': ((0.7, 0.74), 'unitless'),
-                'initial_altitude': (32000.0, 'ft'),
-                'final_altitude': (34000.0, 'ft'),
+                'altitude_optimize': False,
+                'altitude_initial': (32000.0, 'ft'),
+                'altitude_final': (34000.0, 'ft'),
                 'altitude_bounds': ((23000.0, 38000.0), 'ft'),
                 'throttle_enforcement': 'boundary_constraint',
-                'fix_initial': False,
-                'constrain_final': False,
-                'fix_duration': False,
-                'initial_bounds': ((64.0, 192.0), 'min'),
-                'duration_bounds': ((56.5, 169.5), 'min'),
+                'time_initial_bounds': ((64.0, 192.0), 'min'),
+                'time_duration_bounds': ((56.5, 169.5), 'min'),
             },
         }
         cruise_dicts = [copy.deepcopy(cruise_dict) for _ in range(5)]
         for i, cruise_dict in enumerate(cruise_dicts):
-            cruise_dict['user_options']['initial_bounds'] = ((64.0 + i * 10, 192.0 + i * 10), 'min')
-            cruise_dict['user_options']['duration_bounds'] = (
+            cruise_dict['user_options']['time_initial_bounds'] = (
+                (64.0 + i * 10, 192.0 + i * 10),
+                'min',
+            )
+            cruise_dict['user_options']['time_duration_bounds'] = (
                 (56.5 + i * 10, 169.5 + i * 10),
                 'min',
             )
-        cruise_dicts[0]['user_options']['optimize_mach'] = True
-        cruise_dicts[1]['user_options']['optimize_mach'] = True
-        cruise_dicts[4]['user_options']['optimize_mach'] = True
-        cruise_dicts[2]['user_options']['optimize_altitude'] = True
-        cruise_dicts[3]['user_options']['optimize_altitude'] = True
+        cruise_dicts[0]['user_options']['mach_optimize'] = True
+        cruise_dicts[1]['user_options']['mach_optimize'] = True
+        cruise_dicts[4]['user_options']['mach_optimize'] = True
+        cruise_dicts[2]['user_options']['altitude_optimize'] = True
+        cruise_dicts[3]['user_options']['altitude_optimize'] = True
 
         # Create the phase_info
         self.phase_info = {
@@ -52,24 +50,21 @@ class AircraftMissionTestSuite(unittest.TestCase):
             'climb': {
                 'subsystem_options': {'core_aerodynamics': {'method': 'computed'}},
                 'user_options': {
-                    'optimize_mach': False,
-                    'optimize_altitude': False,
-                    'polynomial_control_order': 1,
                     'num_segments': 5,
                     'order': 3,
-                    'solve_for_distance': False,
-                    'initial_mach': (0.2, 'unitless'),
-                    'final_mach': (0.72, 'unitless'),
+                    'mach_optimize': False,
+                    'mach_polynomial_order': 1,
+                    'mach_initial': (0.2, 'unitless'),
+                    'mach_final': (0.72, 'unitless'),
                     'mach_bounds': ((0.18, 0.74), 'unitless'),
-                    'initial_altitude': (0.0, 'ft'),
-                    'final_altitude': (32000.0, 'ft'),
+                    'altitude_optimize': False,
+                    'altitude_polynomial_order': 1,
+                    'altitude_initial': (0.0, 'ft'),
+                    'altitude_final': (32000.0, 'ft'),
                     'altitude_bounds': ((0.0, 34000.0), 'ft'),
                     'throttle_enforcement': 'path_constraint',
-                    'fix_initial': True,
-                    'constrain_final': False,
-                    'fix_duration': False,
-                    'initial_bounds': ((0.0, 0.0), 'min'),
-                    'duration_bounds': ((64.0, 192.0), 'min'),
+                    'time_initial_bounds': ((0.0, 0.0), 'min'),
+                    'time_duration_bounds': ((64.0, 192.0), 'min'),
                 },
             },
             'cruise0': cruise_dicts[0],
@@ -80,24 +75,21 @@ class AircraftMissionTestSuite(unittest.TestCase):
             'descent': {
                 'subsystem_options': {'core_aerodynamics': {'method': 'computed'}},
                 'user_options': {
-                    'optimize_mach': False,
-                    'optimize_altitude': False,
-                    'polynomial_control_order': 1,
                     'num_segments': 5,
                     'order': 3,
-                    'solve_for_distance': False,
-                    'initial_mach': (0.72, 'unitless'),
-                    'final_mach': (0.36, 'unitless'),
+                    'mach_optimize': False,
+                    'mach_polynomial_order': 1,
+                    'mach_initial': (0.72, 'unitless'),
+                    'mach_final': (0.36, 'unitless'),
                     'mach_bounds': ((0.34, 0.74), 'unitless'),
-                    'initial_altitude': (34000.0, 'ft'),
-                    'final_altitude': (500.0, 'ft'),
+                    'altitude_optimize': False,
+                    'altitude_polynomial_order': 1,
+                    'altitude_initial': (34000.0, 'ft'),
+                    'altitude_final': (500.0, 'ft'),
                     'altitude_bounds': ((0.0, 38000.0), 'ft'),
                     'throttle_enforcement': 'path_constraint',
-                    'fix_initial': False,
-                    'constrain_final': True,
-                    'fix_duration': False,
-                    'initial_bounds': ((120.5, 361.5), 'min'),
-                    'duration_bounds': ((29.0, 87.0), 'min'),
+                    'time_initial_bounds': ((120.5, 361.5), 'min'),
+                    'time_duration_bounds': ((29.0, 87.0), 'min'),
                 },
             },
             'post_mission': {

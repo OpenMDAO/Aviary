@@ -11,11 +11,6 @@ from aviary.subsystems.propulsion.engine_model import EngineModel
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.variables import Dynamic
 
-if hasattr(TranscriptionBase, 'setup_polynomial_controls'):
-    use_new_dymos_syntax = False
-else:
-    use_new_dymos_syntax = True
-
 
 class PreMissionEngine(om.Group):
     def setup(self):
@@ -123,11 +118,14 @@ class SimpleTestEngine(EngineModel):
 
     def get_controls(self, **kwargs):
         controls_dict = {
-            'different_throttle': {'units': 'unitless', 'lower': 0.0, 'upper': 0.1},
+            'different_throttle': {
+                'units': 'unitless',
+                'lower': 0.0,
+                'upper': 0.1,
+                'control_type': 'polynomial',
+                'order': 3,
+            },
         }
-        if use_new_dymos_syntax:
-            controls_dict['different_throttle']['control_type'] = 'polynomial'
-            controls_dict['different_throttle']['order'] = 3
         return controls_dict
 
     def get_pre_mission_bus_variables(self, aviary_inputs):
@@ -162,24 +160,21 @@ class CustomEngineTest(unittest.TestCase):
             'cruise': {
                 'subsystem_options': {'core_aerodynamics': {'method': 'computed'}},
                 'user_options': {
-                    'optimize_mach': False,
-                    'optimize_altitude': False,
-                    'polynomial_control_order': 1,
                     'num_segments': 2,
                     'order': 3,
-                    'solve_for_distance': False,
-                    'initial_mach': (0.72, 'unitless'),
-                    'final_mach': (0.72, 'unitless'),
+                    'mach_optimize': False,
+                    'mach_polynomial_order': 1,
+                    'mach_initial': (0.72, 'unitless'),
+                    'mach_final': (0.72, 'unitless'),
                     'mach_bounds': ((0.7, 0.74), 'unitless'),
-                    'initial_altitude': (35000.0, 'ft'),
-                    'final_altitude': (35000.0, 'ft'),
+                    'altitude_optimize': False,
+                    'altitude_polynomial_order': 1,
+                    'altitude_initial': (35000.0, 'ft'),
+                    'altitude_final': (35000.0, 'ft'),
                     'altitude_bounds': ((23000.0, 38000.0), 'ft'),
                     'throttle_enforcement': 'boundary_constraint',
-                    'fix_initial': False,
-                    'constrain_final': False,
-                    'fix_duration': False,
-                    'initial_bounds': ((0.0, 0.0), 'min'),
-                    'duration_bounds': ((10.0, 30.0), 'min'),
+                    'time_initial_bounds': ((0.0, 0.0), 'min'),
+                    'time_duration_bounds': ((10.0, 30.0), 'min'),
                 },
                 'initial_guesses': {'time': ([0, 30], 'min')},
             },

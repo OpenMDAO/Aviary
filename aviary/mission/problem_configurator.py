@@ -131,7 +131,18 @@ class ProblemConfiguratorBase:
         """
         pass
 
-    def add_post_mission_systems(self, prob, include_landing=True):
+    def check_trajectory(self, prob):
+        """
+        Checks the phase_info user options for any inconsistency.
+
+        Parameters
+        ----------
+        prob : AviaryProblem
+            Problem that owns this builder.
+        """
+        pass
+
+    def add_post_mission_systems(self, prob):
         """
         Add any post mission systems.
 
@@ -143,8 +154,6 @@ class ProblemConfiguratorBase:
         ----------
         prob : AviaryProblem
             Problem that owns this builder.
-        include_landing : bool
-            When True, include the landing systems.
         """
         pass
 
@@ -159,14 +168,17 @@ class ProblemConfiguratorBase:
         """
         pass
 
-    def add_guesses(self, prob, phase_name, phase, guesses, target_prob, parent_prefix):
+    def set_phase_initial_guesses(
+        self, prob, phase_name, phase, guesses, target_prob, parent_prefix
+    ):
         """
         Adds the initial guesses for each variable of a given phase to the problem.
-        This method sets the initial guesses for time, control, state, and problem-specific
-        variables for a given phase. If using the GASP model, it also handles some special
-        cases that are not covered in the `phase_info` object. These include initial guesses
-        for mass, time, and distance, which are determined based on the phase name and other
-        mission-related variables.
+
+        This method sets the initial guesses into the openmdao model for time, controls, states,
+        and problem-specific variables for a given phase. If using the GASP model, it also handles
+        some special cases that are not covered in the `phase_info` object. These include initial
+        guesses for mass, time, and distance, which are determined based on the phase name and
+        other mission-related variables.
 
         Parameters
         ----------
