@@ -20,24 +20,6 @@ SKIP_EXAMPLES = {
 
 # TODO: temporary fix, waiting on https://github.com/OpenMDAO/OpenMDAO/issues/3510
 OPT, OPTIMIZER = set_pyoptsparse_opt('SNOPT')
-if OPT is None:
-    reason = 'pyoptsparse is not installed. This example requires pyoptsparse to run.'
-    SKIP_EXAMPLES.update(
-        {
-            'run_2dof_reserve_mission_fixedrange.py': reason,
-            'run_2dof_reserve_mission_fixedtime.py': reason,
-            'run_2dof_reserve_mission_multiphase.py': reason,
-        }
-    )
-elif OPTIMIZER != 'SNOPT':
-    reason = 'pyoptsparse is not providing SNOPT. This example requires SNOPT to run.'
-    SKIP_EXAMPLES.update(
-        {
-            'run_2dof_reserve_mission_fixedrange.py': reason,
-            'run_2dof_reserve_mission_fixedtime.py': reason,
-            'run_2dof_reserve_mission_multiphase.py': reason,
-        }
-    )
 
 
 def find_examples():

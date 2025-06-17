@@ -5,7 +5,7 @@ from openmdao.utils.assert_utils import assert_near_equal
 from openmdao.utils.testing_utils import require_pyoptsparse, use_tempdirs
 
 import aviary.api as av
-from aviary.interface.default_phase_info.two_dof import phase_info
+from aviary.models.missions.two_dof_default import phase_info
 from aviary.variable_info.enums import ProblemType, Verbosity
 
 
@@ -28,7 +28,7 @@ class TestOffDesign(TwoDOFTestCase):
         # Fallout Mission
         prob_fallout = av.AviaryProblem()
         prob_fallout.load_inputs(
-            'models/test_aircraft/aircraft_for_bench_GwGm.csv',
+            'models/aircraft/test_aircraft/aircraft_for_bench_GwGm.csv',
             self.phase_info,
             verbosity=Verbosity.QUIET,
         )
@@ -57,7 +57,7 @@ class TestOffDesign(TwoDOFTestCase):
         # Alternate Mission
         prob_alternate = av.AviaryProblem()
         prob_alternate.load_inputs(
-            'models/test_aircraft/aircraft_for_bench_GwGm.csv',
+            'models/aircraft/test_aircraft/aircraft_for_bench_GwGm.csv',
             self.phase_info,
             verbosity=Verbosity.QUIET,
         )
@@ -95,7 +95,7 @@ class TestOffDesign(TwoDOFTestCase):
         # Fallout Mission
         prob_fallout = av.AviaryProblem()
         prob_fallout.load_inputs(
-            'models/test_aircraft/aircraft_for_bench_GwGm.csv',
+            'models/aircraft/test_aircraft/aircraft_for_bench_GwGm.csv',
             self.phase_info,
             verbosity=Verbosity.QUIET,
         )
@@ -124,7 +124,7 @@ class TestOffDesign(TwoDOFTestCase):
         # Alternate Mission
         prob_alternate = av.AviaryProblem()
         prob_alternate.load_inputs(
-            'models/test_aircraft/aircraft_for_bench_GwGm.csv',
+            'models/aircraft/test_aircraft/aircraft_for_bench_GwGm.csv',
             self.phase_info,
             verbosity=Verbosity.QUIET,
         )

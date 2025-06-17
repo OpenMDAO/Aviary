@@ -3,7 +3,7 @@ import unittest
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 
-from aviary.models.large_single_aisle_1.V3_bug_fixed_IO import (
+from aviary.models.aircraft.large_single_aisle_1.V3_bug_fixed_IO import (
     V3_bug_fixed_non_metadata,
     V3_bug_fixed_options,
 )

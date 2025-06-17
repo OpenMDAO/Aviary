@@ -26,7 +26,7 @@ class TestPropellerMapConversion(unittest.TestCase):
 
         # Specify the output file
         if not output_file:
-            filename = filepath.stem + '.prop'
+            filename = filepath.stem + '.csv'
             args.output_file = Path.cwd() / Path('TEST_' + filename)
         else:
             args.output_file = str(Path(output_file))
@@ -45,7 +45,7 @@ class TestPropellerMapConversion(unittest.TestCase):
         to skip. This is useful for skipping data that Aviary might need but
         Fortran-based tools do not.
         """
-        filename = filepath.split('.')[0] + '.prop'
+        filename = filepath.split('.')[0] + '.csv'
 
         validation_data = get_path('models/engines/propellers/' + filename)
 
@@ -77,3 +77,5 @@ class TestPropellerMapConversion(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
+    # test = TestPropellerMapConversion()
+    # test.test_PM_conversion()

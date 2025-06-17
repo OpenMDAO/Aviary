@@ -22,7 +22,7 @@ class EngineScalingTest(unittest.TestCase):
         nn = 4
         count = 1
 
-        filename = 'models/engines/turbofan_28k.deck'
+        filename = 'models/engines/turbofan_28k.csv'
         filename = get_path(filename)
 
         options = AviaryValues()

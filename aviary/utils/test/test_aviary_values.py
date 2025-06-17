@@ -223,7 +223,7 @@ class TestVariableExtension(unittest.TestCase):
     def test_set_val_metadata_extension(self):
         option_defaults = AviaryValues()
 
-        filename = get_path('models/engines/turbofan_23k_1.deck')
+        filename = get_path('models/engines/turbofan_23k_1.csv')
         option_defaults.set_val(ExtendedAircraft.Engine.DATA_FILE, filename)
         option_defaults.set_val(
             ExtendedAircraft.Wing.AERO_CENTER, val=5.0, units='ft', meta_data=ExtendedMetaData

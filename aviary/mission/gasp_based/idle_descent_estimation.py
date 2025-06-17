@@ -23,8 +23,8 @@ def add_descent_estimation_as_submodel(
     The user can specify certain initial conditions or requirements such as cruise Mach number, reserve fuel required, etc.
     """
     if phases is None:
-        from aviary.interface.default_phase_info.two_dof_fiti import add_default_sgm_args
-        from aviary.interface.default_phase_info.two_dof_fiti import descent_phases as phases
+        from aviary.models.missions.two_dof_fiti_default import add_default_sgm_args
+        from aviary.models.missions.two_dof_fiti_default import descent_phases as phases
 
         add_default_sgm_args(phases, ode_args)
 

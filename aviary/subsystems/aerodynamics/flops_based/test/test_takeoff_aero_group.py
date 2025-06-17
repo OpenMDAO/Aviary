@@ -4,7 +4,7 @@ import numpy as np
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 
-from aviary.models.N3CC.N3CC_data import (
+from aviary.models.aircraft.advanced_single_aisle.advanced_single_aisle_data import (
     N3CC,
     takeoff_subsystem_options,
     takeoff_subsystem_options_spoilers,

@@ -32,28 +32,6 @@ def _exec_installation_test(args, user_args):
     else:
         print('success')
 
-    # Try importing the Aviary api - there are many files imported here so a large number of errors
-    # are possible. Catch any exception and show to user.
-    print('Importing Aviary api')
-    try:
-        import aviary.api as av
-    except Exception as import_error:
-        print(f'An error occurred while importing Aviary API: {import_error}\n')
-        return False
-    else:
-        print('success')
-
-    @use_tempdirs
-    def _test_install(optimizer):
-        """Runs an example Aviary problem using the requested optimizers in a temporary directory."""
-        return av.run_aviary(
-            'models/test_aircraft/aircraft_for_bench_FwFm.csv',
-            av.default_height_energy_phase_info,
-            optimizer=optimizer,
-            make_plots=False,
-            verbosity=0,
-        )
-
     # Check for pyoptsparse, let user know if it is found or not
     print('Importing pyOptSparse')
     try:
@@ -89,8 +67,30 @@ def _exec_installation_test(args, user_args):
     # Tell user which optimizers are available
     print(f'The following optimizers are available for use: {optimizers}')
     optimizer = optimizers[-1]
-    print(f'\nRunning a basic Aviary model using the {optimizer} optimizer:')
 
+    # Try importing the Aviary api - there are many files imported here so a large number of errors
+    # are possible. Catch any exception and show to user.
+    print('Importing Aviary api')
+    try:
+        import aviary.api as av
+    except Exception as import_error:
+        print(f'An error occurred while importing Aviary API: {import_error}\n')
+        return False
+    else:
+        print('success')
+
+    @use_tempdirs
+    def _test_install(optimizer):
+        """Runs an example Aviary problem using the requested optimizer in a temporary directory."""
+        return av.run_aviary(
+            'models/aircraft/test_aircraft/aircraft_for_bench_FwFm.csv',
+            av.default_height_energy_phase_info,
+            optimizer=optimizer,
+            make_plots=False,
+            verbosity=0,
+        )
+
+    print(f'\nRunning a basic Aviary model using the {optimizer} optimizer:')
     try:
         prob = _test_install(optimizer)
     except Exception as error:
@@ -115,4 +115,4 @@ def _exec_installation_test(args, user_args):
 
 
 if __name__ == '__main__':
-    _exec_installation_test()
+    _exec_installation_test(None, None)

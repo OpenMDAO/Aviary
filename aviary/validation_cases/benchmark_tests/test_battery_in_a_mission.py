@@ -71,7 +71,7 @@ class TestSubsystemsMission(unittest.TestCase):
         prob = av.AviaryProblem(verbosity=0)
 
         prob.load_inputs(
-            'models/test_aircraft/aircraft_for_bench_FwFm_with_electric.csv', phase_info
+            'models/aircraft/test_aircraft/aircraft_for_bench_FwFm_with_electric.csv', phase_info
         )
 
         # Preprocess inputs

@@ -9,12 +9,14 @@ from copy import deepcopy
 from openmdao.utils.assert_utils import assert_near_equal
 from openmdao.utils.testing_utils import use_tempdirs
 
-from aviary.interface.default_phase_info.height_energy import phase_info as ph_in_height_energy
-from aviary.interface.default_phase_info.height_energy import (
+from aviary.models.missions.height_energy_default import (
+    phase_info as ph_in_height_energy,
+)
+from aviary.models.missions.height_energy_default import (
     phase_info_parameterization as phase_info_parameterization_height_energy,
 )
-from aviary.interface.default_phase_info.two_dof import phase_info as ph_in_two_dof
-from aviary.interface.default_phase_info.two_dof import (
+from aviary.models.missions.two_dof_default import phase_info as ph_in_two_dof
+from aviary.models.missions.two_dof_default import (
     phase_info_parameterization as phase_info_parameterization_two_dof,
 )
 from aviary.interface.methods_for_level2 import AviaryProblem
@@ -30,7 +32,7 @@ class TestParameterizePhaseInfo(unittest.TestCase):
 
         prob = AviaryProblem()
 
-        csv_path = 'models/small_single_aisle/small_single_aisle_GASP.csv'
+        csv_path = 'models/aircraft/small_single_aisle/small_single_aisle_GASP.csv'
 
         prob.load_inputs(csv_path, phase_info)
         prob.check_and_preprocess_inputs()
@@ -68,7 +70,7 @@ class TestParameterizePhaseInfo(unittest.TestCase):
 
         prob = AviaryProblem()
 
-        csv_path = 'models/test_aircraft/aircraft_for_bench_FwFm.csv'
+        csv_path = 'models/aircraft/test_aircraft/aircraft_for_bench_FwFm.csv'
 
         prob.load_inputs(csv_path, phase_info)
         prob.check_and_preprocess_inputs()

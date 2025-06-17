@@ -6,7 +6,7 @@ import openmdao.api as om
 from openmdao.utils.assert_utils import assert_near_equal
 from openmdao.utils.testing_utils import use_tempdirs
 
-from aviary.interface.default_phase_info.two_dof_fiti import add_default_sgm_args
+from aviary.models.missions.two_dof_fiti_default import add_default_sgm_args
 from aviary.interface.methods_for_level2 import AviaryGroup
 from aviary.mission.flops_based.phases.time_integration_phases import SGMHeightEnergy
 from aviary.mission.gasp_based.phases.time_integration_traj import FlexibleTraj
@@ -33,7 +33,7 @@ class HE_SGMDescentTestCase(unittest.TestCase):
 
     def setUp(self):
         aviary_inputs, initialization_guesses = create_vehicle(
-            'models/test_aircraft/aircraft_for_bench_FwFm.csv'
+            'models/aircraft/test_aircraft/aircraft_for_bench_FwFm.csv'
         )
         aviary_inputs.set_val(Aircraft.Engine.SCALED_SLS_THRUST, val=28690, units='lbf')
         aviary_inputs.set_val(Aircraft.Engine.SCALE_FACTOR, val=0.9917)
