@@ -12,6 +12,8 @@ from aviary.subsystems.aerodynamics.gasp_based.gaspaero import (
     LowSpeedAero,
     FormFactorAndSIWB,
     GroundEffect,
+    LiftCoeff,
+    LiftCoeffClean,
 )
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.functions import setup_model_options
@@ -241,6 +243,94 @@ def _init_geom(prob):
     # ground & cruise, mission: q
 
 
+class LiftCoeffTest(unittest.TestCase):
+    """Test partials of LiftCoeff"""
+
+    def test_case1(self):
+        prob = om.Problem()
+
+        prob.model.add_subsystem(
+            'lift_coeff',
+            LiftCoeff(num_nodes=2),
+            promotes=['*'],
+        )
+
+        prob.model.set_input_defaults(Dynamic.Vehicle.ANGLE_OF_ATTACK, [-2.0, -2.0], units='deg')
+        prob.model.set_input_defaults('lift_curve_slope', [4.876, 4.876], units='unitless')
+        prob.model.set_input_defaults('lift_ratio', [0.5, 0.5], units='unitless')
+        prob.model.set_input_defaults(Aircraft.Wing.ZERO_LIFT_ANGLE, -1.2, units='deg')
+        prob.model.set_input_defaults('CL_max_flaps', 2.188, units='unitless')
+        prob.model.set_input_defaults('dCL_flaps_model', 0.418, units='unitless')
+        prob.model.set_input_defaults('kclge', [1.15, 1.15], units='unitless')
+        prob.model.set_input_defaults('flap_factor', [1.0, 1.0], units='unitless')
+
+        prob.setup(check=False, force_alloc_complex=True)
+        prob.run_model()
+
+        partial_data = prob.check_partials(out_stream=None, method='cs')
+        assert_check_partials(partial_data, atol=1e-11, rtol=1e-11)
+
+
+class LiftCoeffCleanTest(unittest.TestCase):
+    """Test partials of LiftCoeffClean"""
+
+    def test_case1(self):
+        prob = om.Problem()
+
+        prob.model.add_subsystem(
+            'lift_coeff',
+            LiftCoeffClean(num_nodes=2, output_alpha=False),
+            promotes=['*'],
+        )
+
+        prob.model.set_input_defaults(Dynamic.Vehicle.ANGLE_OF_ATTACK, [-2.0, -2.0], units='deg')
+        prob.model.set_input_defaults('lift_curve_slope', [5.975, 5.975], units='unitless')
+        prob.model.set_input_defaults('lift_ratio', [0.0357, 0.0357], units='unitless')
+        prob.model.set_input_defaults(Aircraft.Wing.ZERO_LIFT_ANGLE, -1.2, units='deg')
+        prob.model.set_input_defaults(
+            Mission.Design.LIFT_COEFFICIENT_MAX_FLAPS_UP, 1.8885, units='unitless'
+        )
+
+        prob.setup(check=False, force_alloc_complex=True)
+        prob.run_model()
+
+        tol = 1e-7
+        assert_near_equal(prob['CL'], [-0.08640507, -0.08640507], tol)
+        assert_near_equal(prob['alpha_stall'], [16.90930203, 16.90930203], tol)
+        assert_near_equal(prob['CL_max'], [1.95591945, 1.95591945], tol)
+
+        partial_data = prob.check_partials(out_stream=None, method='cs')
+        assert_check_partials(partial_data, atol=1e-11, rtol=1e-11)
+
+    def test_case2(self):
+        prob = om.Problem()
+
+        prob.model.add_subsystem(
+            'lift_coeff',
+            LiftCoeffClean(num_nodes=2, output_alpha=True),
+            promotes=['*'],
+        )
+
+        prob.model.set_input_defaults('CL', [-0.08640507, -0.08640507], units='unitless')
+        prob.model.set_input_defaults('lift_curve_slope', [5.975, 5.975], units='unitless')
+        prob.model.set_input_defaults('lift_ratio', [0.0357, 0.0357], units='unitless')
+        prob.model.set_input_defaults(Aircraft.Wing.ZERO_LIFT_ANGLE, -1.2, units='deg')
+        prob.model.set_input_defaults(
+            Mission.Design.LIFT_COEFFICIENT_MAX_FLAPS_UP, 1.8885, units='unitless'
+        )
+
+        prob.setup(check=False, force_alloc_complex=True)
+        prob.run_model()
+
+        tol = 1e-7
+        assert_near_equal(prob[Dynamic.Vehicle.ANGLE_OF_ATTACK], [-1.99999997, -1.99999997], tol)
+        assert_near_equal(prob['alpha_stall'], [16.90930203, 16.90930203], tol)
+        assert_near_equal(prob['CL_max'], [1.95591945, 1.95591945], tol)
+
+        partial_data = prob.check_partials(out_stream=None, method='cs')
+        assert_check_partials(partial_data, atol=1e-11, rtol=1e-11)
+
+
 class FormFactorAndSIWBTest(unittest.TestCase):
     """Test fuselage form factor computation and SIWB computation"""
 
@@ -309,4 +399,6 @@ class GroundEffectTest(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    unittest.main()
+    # unittest.main()
+    test = LiftCoeffCleanTest()
+    test.test_case2()
