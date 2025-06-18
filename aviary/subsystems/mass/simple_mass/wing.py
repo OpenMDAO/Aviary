@@ -68,17 +68,17 @@ class WingMassAndCOG(om.JaxExplicitComponent):
         
 
         # Outputs
-        self.add_output('center_of_gravity_x_wing', 
-                        val=0.0, 
-                        units='m')
+        # self.add_output('center_of_gravity_x_wing', 
+        #                 val=0.0, 
+        #                 units='m')
         
-        self.add_output('center_of_gravity_y_wing', 
-                        val=0.0, 
-                        units='m')
+        # self.add_output('center_of_gravity_y_wing', 
+        #                 val=0.0, 
+        #                 units='m')
         
-        self.add_output('center_of_gravity_z_wing', 
-                        val=0.0, 
-                        units='m')
+        # self.add_output('center_of_gravity_z_wing', 
+        #                 val=0.0, 
+        #                 units='m')
         
         add_aviary_output(self,
                           Aircraft.Wing.MASS, 
@@ -118,25 +118,26 @@ class WingMassAndCOG(om.JaxExplicitComponent):
     
         aircraft__wing__mass, _ = quadgk(weight_function, [0, 1], epsabs=1e-9, epsrel=1e-9)
         
-        center_of_gravity_x_num, _ = quadgk(lambda x: x * self.airfoil_thickness(x, max_thickness) * (aircraft__wing__root_chord - (aircraft__wing__root_chord - tip_chord) * (x / aircraft__wing__span) * jnp.cos(twist)) - 
-                                     self.airfoil_camber_line(x, camber, camber_location) * self.airfoil_thickness(x, max_thickness) * (aircraft__wing__root_chord - (aircraft__wing__root_chord - tip_chord) * (x / aircraft__wing__span)) * jnp.sin(twist), 
-                                     [0, 1], epsabs=1e-9, epsrel=1e-9) 
-        center_of_gravity_x_denom, _ = quadgk(lambda x: self.airfoil_thickness(x, max_thickness) * (aircraft__wing__root_chord - (aircraft__wing__root_chord - tip_chord) * (x / aircraft__wing__span)), [0, 1], epsabs=1e-9, epsrel=1e-9)
+        # center_of_gravity_x_num, _ = quadgk(lambda x: x * self.airfoil_thickness(x, max_thickness) * (aircraft__wing__root_chord - (aircraft__wing__root_chord - tip_chord) * (x / aircraft__wing__span) * jnp.cos(twist)) - 
+        #                              self.airfoil_camber_line(x, camber, camber_location) * self.airfoil_thickness(x, max_thickness) * (aircraft__wing__root_chord - (aircraft__wing__root_chord - tip_chord) * (x / aircraft__wing__span)) * jnp.sin(twist), 
+        #                              [0, 1], epsabs=1e-9, epsrel=1e-9) 
+        # center_of_gravity_x_denom, _ = quadgk(lambda x: self.airfoil_thickness(x, max_thickness) * (aircraft__wing__root_chord - (aircraft__wing__root_chord - tip_chord) * (x / aircraft__wing__span)), [0, 1], epsabs=1e-9, epsrel=1e-9)
 
-        center_of_gravity_x = center_of_gravity_x_num / center_of_gravity_x_denom
-        center_of_gravity_x_wing = center_of_gravity_x[0]
+        # center_of_gravity_x = center_of_gravity_x_num / center_of_gravity_x_denom
+        # center_of_gravity_x_wing = center_of_gravity_x[0]
         
-        center_of_gravity_z_num, _ = quadgk(lambda x: x * self.airfoil_thickness(x, max_thickness) * (aircraft__wing__root_chord - (aircraft__wing__root_chord - tip_chord) * (x / aircraft__wing__span) * jnp.sin(twist)) + 
-                                     self.airfoil_camber_line(x, camber, camber_location) * self.airfoil_thickness(x, max_thickness) * (aircraft__wing__root_chord - (aircraft__wing__root_chord - tip_chord) * (x / aircraft__wing__span)) * jnp.cos(twist), 
-                                     [0, 1], epsabs=1e-9, epsrel=1e-9)
+        # center_of_gravity_z_num, _ = quadgk(lambda x: x * self.airfoil_thickness(x, max_thickness) * (aircraft__wing__root_chord - (aircraft__wing__root_chord - tip_chord) * (x / aircraft__wing__span) * jnp.sin(twist)) + 
+        #                              self.airfoil_camber_line(x, camber, camber_location) * self.airfoil_thickness(x, max_thickness) * (aircraft__wing__root_chord - (aircraft__wing__root_chord - tip_chord) * (x / aircraft__wing__span)) * jnp.cos(twist), 
+        #                              [0, 1], epsabs=1e-9, epsrel=1e-9)
         
-        center_of_gravity_z_denom, _ = quadgk(lambda x: self.airfoil_thickness(x, max_thickness) * (aircraft__wing__root_chord - (aircraft__wing__root_chord - tip_chord) * (x / aircraft__wing__span)), [0, 1], epsabs=1e-9, epsrel=1e-9)
+        # center_of_gravity_z_denom, _ = quadgk(lambda x: self.airfoil_thickness(x, max_thickness) * (aircraft__wing__root_chord - (aircraft__wing__root_chord - tip_chord) * (x / aircraft__wing__span)), [0, 1], epsabs=1e-9, epsrel=1e-9)
 
-        center_of_gravity_z = center_of_gravity_z_num / center_of_gravity_z_denom
-        center_of_gravity_z_wing = center_of_gravity_z[0]
-        center_of_gravity_y_wing, _ = quadgk(lambda x: x * aircraft__wing__span, [0, 1], epsabs=1e-9, epsrel=1e-9)
+        # center_of_gravity_z = center_of_gravity_z_num / center_of_gravity_z_denom
+        # center_of_gravity_z_wing = center_of_gravity_z[0]
+        # center_of_gravity_y_wing, _ = quadgk(lambda x: x * aircraft__wing__span, [0, 1], epsabs=1e-9, epsrel=1e-9)
 
-        return center_of_gravity_x_wing, center_of_gravity_y_wing, center_of_gravity_z_wing, aircraft__wing__mass
+        # return center_of_gravity_x_wing, center_of_gravity_y_wing, center_of_gravity_z_wing, aircraft__wing__mass
+        return aircraft__wing__mass
     
     def precompute_airfoil_geometry(self):
         num_sections = self.options['num_sections']
@@ -218,12 +219,12 @@ if __name__ == '__main__':
     prob.run_model()
 
     # Get the results
-    center_of_gravity_x = prob.get_val('cog.center_of_gravity_x_wing')
-    center_of_gravity_y = prob.get_val('cog.center_of_gravity_y_wing')
-    center_of_gravity_z = prob.get_val('cog.center_of_gravity_z_wing')
+    #center_of_gravity_x = prob.get_val('cog.center_of_gravity_x_wing')
+    #center_of_gravity_y = prob.get_val('cog.center_of_gravity_y_wing')
+    #center_of_gravity_z = prob.get_val('cog.center_of_gravity_z_wing')
     total_weight = prob.get_val(Aircraft.Wing.MASS)
 
-    print(f"Center of gravity: X = {center_of_gravity_x} m, Y = {center_of_gravity_y} m, Z = {center_of_gravity_z} m")
+    #print(f"Center of gravity: X = {center_of_gravity_x} m, Y = {center_of_gravity_y} m, Z = {center_of_gravity_z} m")
     print(f"Total mass of the wing: {total_weight} kg")
 
 
