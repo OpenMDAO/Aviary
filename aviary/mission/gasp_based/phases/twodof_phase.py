@@ -21,6 +21,22 @@ from aviary.variable_info.variables import Dynamic
 
 class TwoDOFPhaseOptions(AviaryOptionsDictionary):
     def declare_options(self):
+        self.declare(
+            name='num_segments',
+            types=int,
+            default=1,
+            desc='The number of segments in transcription creation in Dymos. '
+            'The default value is 1.',
+        )
+
+        self.declare(
+            name='order',
+            types=int,
+            default=3,
+            desc='The order of polynomials for interpolation in the transcription '
+            'created in Dymos. The default value is 3.',
+        )
+
         # TODO: These defaults aren't great, but need to keep things the same for now.
         defaults = {
             'mass_ref': 1e4,
@@ -72,22 +88,6 @@ class TwoDOFPhaseOptions(AviaryOptionsDictionary):
             default=None,
             units='s',
             desc='The amount of time taken by this phase added as a constraint.',
-        )
-
-        self.declare(
-            name='num_segments',
-            types=int,
-            default=1,
-            desc='The number of segments in transcription creation in Dymos. '
-            'The default value is 1.',
-        )
-
-        self.declare(
-            name='order',
-            types=int,
-            default=3,
-            desc='The order of polynomials for interpolation in the transcription '
-            'created in Dymos. The default value is 3.',
         )
 
         self.declare(

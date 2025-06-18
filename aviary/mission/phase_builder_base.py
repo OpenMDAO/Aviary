@@ -512,7 +512,7 @@ class PhaseBuilderBase(ABC):
         if not add_constraints:
             return
 
-        # Add a initial constraint.
+        # Add an initial constraint.
         if opt and initial is not None:
             phase.add_boundary_constraint(
                 target, loc='initial', equals=initial, units=units, ref=ref

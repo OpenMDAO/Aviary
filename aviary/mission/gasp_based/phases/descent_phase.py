@@ -14,6 +14,38 @@ from aviary.variable_info.variables import Dynamic
 class DescentPhaseOptions(AviaryOptionsDictionary):
     def declare_options(self):
         self.declare(
+            name='num_segments',
+            types=int,
+            default=None,
+            desc='The number of segments in transcription creation in Dymos. ',
+        )
+
+        self.declare(
+            name='order',
+            types=int,
+            default=None,
+            desc='The order of polynomials for interpolation in the transcription '
+            'created in Dymos.',
+        )
+
+        defaults = {
+            'mass_bounds': (0.0, None),
+        }
+        self.add_state_options('mass', units='lbm', defaults=defaults)
+
+        defaults = {
+            'distance_bounds': (0.0, None),
+        }
+        self.add_state_options('distance', units='NM', defaults=defaults)
+
+        defaults = {
+            'altitude_bounds': (0.0, None),
+        }
+        self.add_state_options('altitude', units='ft', defaults=defaults)
+
+        # The options below have not yet been revamped.
+
+        self.declare(
             'analytic',
             types=bool,
             default=False,
@@ -99,91 +131,10 @@ class DescentPhaseOptions(AviaryOptionsDictionary):
         )
 
         self.declare(
-            name='alt_lower', types=tuple, default=0.0, units='ft', desc='Lower bound for altitude.'
-        )
-
-        self.declare(name='alt_upper', default=0.0, units='ft', desc='Upper bound for altitude.')
-
-        self.declare(name='alt_ref', default=1.0, units='ft', desc='Scale factor ref for altitude.')
-
-        self.declare(
-            name='alt_ref0', default=0.0, units='ft', desc='Scale factor ref0 for altitude.'
-        )
-
-        self.declare(
-            name='alt_defect_ref',
-            default=None,
-            units='ft',
-            desc='Scale factor ref for altitude defect.',
-        )
-
-        self.declare(
-            name='alt_constraint_ref',
-            default=None,
-            units='ft',
-            desc='Scale factor ref for altitude defect.',
-        )
-
-        self.declare(
             name='alt_constraint_ref',
             default=100.0,
             units='ft',
             desc='Scaling ref for the final altitude constraint.',
-        )
-
-        self.declare(
-            name='mass_lower', types=tuple, default=0.0, units='lbm', desc='Lower bound for mass.'
-        )
-
-        self.declare(name='mass_upper', default=0.0, units='lbm', desc='Upper bound for mass.')
-
-        self.declare(name='mass_ref', default=1.0, units='lbm', desc='Scale factor ref for mass.')
-
-        self.declare(name='mass_ref0', default=0.0, units='lbm', desc='Scale factor ref0 for mass.')
-
-        self.declare(
-            name='mass_defect_ref',
-            default=None,
-            units='lbm',
-            desc='Scale factor ref for mass defect.',
-        )
-
-        self.declare(
-            name='distance_lower', default=0.0, units='NM', desc='Lower bound for distance.'
-        )
-
-        self.declare(
-            name='distance_upper', default=0.0, units='NM', desc='Upper bound for distance.'
-        )
-
-        self.declare(
-            name='distance_ref', default=1.0, units='NM', desc='Scale factor ref for distance.'
-        )
-
-        self.declare(
-            name='distance_ref0', default=0.0, units='NM', desc='Scale factor ref0 for distance.'
-        )
-
-        self.declare(
-            name='distance_defect_ref',
-            default=None,
-            units='NM',
-            desc='Scale factor ref for distance defect.',
-        )
-
-        self.declare(
-            name='num_segments',
-            types=int,
-            default=None,
-            desc='The number of segments in transcription creation in Dymos. ',
-        )
-
-        self.declare(
-            name='order',
-            types=int,
-            default=None,
-            desc='The order of polynomials for interpolation in the transcription '
-            'created in Dymos.',
         )
 
 
@@ -219,14 +170,16 @@ class DescentPhase(PhaseBuilderBase):
         EAS_limit = user_options.get_val('EAS_limit', units='kn')
 
         # Add states
-        self.add_altitude_state(user_options)
-
-        self.add_mass_state(user_options)
-
-        self.add_distance_state(user_options)
+        self.add_state(
+            'mass',
+            Dynamic.Vehicle.MASS,
+            Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
+        )
+        self.add_state('distance', Dynamic.Mission.DISTANCE, Dynamic.Mission.DISTANCE_RATE)
+        self.add_state('altitude', Dynamic.Mission.ALTITUDE, Dynamic.Mission.ALTITUDE_RATE)
 
         # Add boundary constraint
-        self.add_altitude_constraint(user_options)
+        #self.add_altitude_constraint(user_options)
 
         # Add parameter if necessary
         if input_speed_type == SpeedType.EAS:

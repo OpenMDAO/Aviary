@@ -57,7 +57,6 @@ class FlightPhaseOptions(AviaryOptionsDictionary):
             'distance_ref': 1e6,
             'distance_defect_ref': 1e8,
             'distance_bounds': (0.0, None),
-            'mass_bounds': (0.0, None),
         }
         self.add_state_options('distance', units='m', defaults=defaults)
 

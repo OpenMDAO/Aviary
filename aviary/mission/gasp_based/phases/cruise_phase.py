@@ -8,6 +8,8 @@ from aviary.variable_info.variables import Dynamic
 
 class CruisePhaseOptions(AviaryOptionsDictionary):
     def declare_options(self):
+        # The options below have not yet been revamped.
+
         self.declare(name='alt_cruise', default=0.0, units='ft', desc='Cruise altitude.')
 
         self.declare(name='mach_cruise', default=0.0, desc='Cruise Mach number.')

@@ -13,6 +13,39 @@ from aviary.variable_info.variables import Dynamic
 class AccelPhaseOptions(AviaryOptionsDictionary):
     def declare_options(self):
         self.declare(
+            name='num_segments',
+            types=int,
+            default=1,
+            desc='The number of segments in transcription creation in Dymos. '
+            'The default value is 1.',
+        )
+
+        self.declare(
+            name='order',
+            types=int,
+            default=3,
+            desc='The order of polynomials for interpolation in the transcription '
+            'created in Dymos. The default value is 3.',
+        )
+
+        defaults = {
+            'mass_bounds': (0.0, None),
+        }
+        self.add_state_options('mass', units='lbm', defaults=defaults)
+
+        defaults = {
+            'distance_bounds': (0.0, None),
+        }
+        self.add_state_options('distance', units='NM', defaults=defaults)
+
+        defaults = {
+            'velocity_bounds': (0.0, None),
+        }
+        self.add_state_options('velocity', units='kn', defaults=defaults)
+
+        # The options below have not yet been revamped.
+
+        self.declare(
             'analytic',
             types=bool,
             default=False,
@@ -71,87 +104,9 @@ class AccelPhaseOptions(AviaryOptionsDictionary):
             name='time_duration_ref', default=1.0, units='s', desc='Scale factor ref for duration.'
         )
 
-        self.declare(
-            name='velocity_lower', default=0.0, units='kn', desc='Lower bound for velocity.'
-        )
-
-        self.declare(
-            name='velocity_upper', default=0.0, units='kn', desc='Upper bound for velocity.'
-        )
-
-        self.declare(
-            name='velocity_ref', default=1.0, units='kn', desc='Scale factor ref for velocity.'
-        )
-
-        self.declare(
-            name='velocity_ref0', default=0.0, units='kn', desc='Scale factor ref0 for velocity.'
-        )
-
-        self.declare(
-            name='velocity_defect_ref',
-            default=None,
-            units='kn',
-            desc='Scale factor ref for velocity defect.',
-        )
-
-        self.declare(
-            name='mass_lower', types=tuple, default=0.0, units='lbm', desc='Lower bound for mass.'
-        )
-
-        self.declare(name='mass_upper', default=0.0, units='lbm', desc='Upper bound for mass.')
-
-        self.declare(name='mass_ref', default=1.0, units='lbm', desc='Scale factor ref for mass.')
-
-        self.declare(name='mass_ref0', default=0.0, units='lbm', desc='Scale factor ref0 for mass.')
-
-        self.declare(
-            name='mass_defect_ref',
-            default=0.0,
-            units='lbm',
-            desc='Scale factor ref for mass defect.',
-        )
-
-        self.declare(
-            name='distance_lower', default=0.0, units='NM', desc='Lower bound for distance.'
-        )
-
-        self.declare(
-            name='distance_upper', default=0.0, units='ft', desc='Upper bound for distance.'
-        )
-
-        self.declare(
-            name='distance_ref', default=1.0, units='ft', desc='Scale factor ref for distance.'
-        )
-
-        self.declare(
-            name='distance_ref0', default=0.0, units='ft', desc='Scale factor ref0 for distance.'
-        )
-
-        self.declare(
-            name='distance_defect_ref',
-            default=None,
-            units='ft',
-            desc='Scale factor ref for distance defect.',
-        )
 
         self.declare(
             name='alt', default=500.0, units='ft', desc='Constant altitude for this phase.'
-        )
-
-        self.declare(
-            name='num_segments',
-            types=int,
-            default=1,
-            desc='The number of segments in transcription creation in Dymos. '
-            'The default value is 1.',
-        )
-
-        self.declare(
-            name='order',
-            types=int,
-            default=3,
-            desc='The order of polynomials for interpolation in the transcription '
-            'created in Dymos. The default value is 3.',
         )
 
 
@@ -200,11 +155,13 @@ class AccelPhase(PhaseBuilderBase):
         alt = user_options.get_val('alt', 'ft')
 
         # States
-        self.add_velocity_state(user_options)
-
-        self.add_mass_state(user_options)
-
-        self.add_distance_state(user_options)
+        self.add_state('velocity', Dynamic.Mission.VELOCITY, Dynamic.Mission.VELOCITY_RATE)
+        self.add_state(
+            'mass',
+            Dynamic.Vehicle.MASS,
+            Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
+        )
+        self.add_state('distance', Dynamic.Mission.DISTANCE, Dynamic.Mission.DISTANCE_RATE)
 
         # Boundary Constraints
         phase.add_boundary_constraint(
