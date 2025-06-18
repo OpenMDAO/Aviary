@@ -231,18 +231,3 @@ class Verbosity(IntEnum):
     @classmethod
     def values(cls):
         return {c.value for c in cls}
-
-
-class OutMachType(Enum):
-    """
-    OutMachType is an indicator which Mach number to output.
-    helical_mach = sqrt(mach*mach + tip_mach*tip_mach).
-    """
-
-    MACH = 'mach'
-    TIP_MACH = 'tip_mach'
-    HELICAL_MACH = 'helical_mach'
-
-    @classmethod
-    def get_element_by_value(cls, val: str):
-        return next((c for c in cls if c.value == val), None)
