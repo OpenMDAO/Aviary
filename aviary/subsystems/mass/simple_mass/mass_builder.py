@@ -1,8 +1,8 @@
 from aviary.interface.utils.markdown_utils import write_markdown_variable_table
 from aviary.subsystems.subsystem_builder_base import SubsystemBuilderBase
 from aviary.subsystems.mass.mass_builder import MassBuilderBase
-from aviary.subsystems.mass.simple_mass.mass_premission import MassPremission # This will be the new folder in there \
-# along with flops_based and gasp_based folders. I just called it simple_mass for now.
+from aviary.subsystems.mass.simple_mass.mass_premission import MassPremission
+from aviary.variable_info.variables import Aircraft
 
 """
 
@@ -23,26 +23,26 @@ StructureMassBuilder: the interface for Aviary's core mass builder -- in this ca
 
 _default_name = 'mass'
 
-#class MassBuilderBase(SubsystemBuilderBase):
-    #"""
-    #Base mass builder
-    #
-    #This class is basically copied line by line from the mass subsystems folder
-    #** Ask Jason if this is even necessary. 
-    #
-    #"""
+class MassBuilderBase(SubsystemBuilderBase):
+    """
+    Base mass builder
+    
+    This class is basically copied line by line from the mass subsystems folder
+    ** Ask Jason if this is even necessary. 
+    
+    """
 
-    #def __init__(self, name=None, meta_data=None):
-    #    if name is None:
-    #        name = _default_name
-    #
-    #    super().__init__(name=name, meta_data=meta_data)
-    #
-    #def mission_inputs(self, **kwargs):
-    #    return ['*']
-    #
-    #def mission_outputs(self, **kwargs):
-    #    return ['*']
+    def __init__(self, name=None, meta_data=None):
+       if name is None:
+           name = _default_name
+    
+       super().__init__(name=name, meta_data=meta_data)
+    
+    def mission_inputs(self, **kwargs):
+       return ['*']
+    
+    def mission_outputs(self, **kwargs):
+       return ['*']
 
 class StructureMassBuilder(MassBuilderBase):
     """
@@ -81,7 +81,11 @@ class StructureMassBuilder(MassBuilderBase):
 
          # Ask Jason about how I should format this
          outputs = [
-             
+             Aircraft.Wing.MASS,
+             Aircraft.HorizontalTail.MASS,
+             Aircraft.VerticalTail.MASS,
+             Aircraft.Fuselage.MASS,
+             'structure_mass'
          ]
 
          with open(filepath, mode='w') as f:
