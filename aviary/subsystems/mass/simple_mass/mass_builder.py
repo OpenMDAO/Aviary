@@ -27,7 +27,7 @@ class MassBuilderBase(SubsystemBuilderBase):
     """
     Base mass builder
     
-    This class is basically copied line by line from the mass subsystems folder
+    This class is basically copied line by line from the mass subsystems folder.
     ** Ask Jason if this is even necessary. 
     
     """
