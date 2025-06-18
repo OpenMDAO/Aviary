@@ -1,4 +1,3 @@
-#
 #  Incremental Lift and Drag Coeff. for Flaps
 #  Reference Area = 1370. sqft
 #    DELFLP    MACH   ALPHA   DEL_CL   DEL_CD
