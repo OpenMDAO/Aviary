@@ -1172,6 +1172,8 @@ class MassSummationTestCase4(unittest.TestCase):
         )  # calculated by hand,  #modified from GASP value to account for updated crew mass. GASP value is 102501.95695930265
         assert_near_equal(
             self.prob[Aircraft.Fuel.FUEL_SYSTEM_MASS], 1923.73, tol
+        )
+        assert_near_equal(
             self.prob['fuel_mass.fuel_and_oem.OEM_wingfuel_mass'], 79474.11569854, tol
         )  # modified from GASP value to account for updated crew mass. GASP value is 78966.7
 
