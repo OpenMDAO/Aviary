@@ -30,6 +30,7 @@ aircraft:design:static_margin,0.05,unitless
 aircraft:design:structural_mass_increment,0.0,lbm
 aircraft:design:supercritical_drag_shift,0.025,unitless
 aircraft:design:type,BWB,unitless
+aircraft:electrical:system_mass_per_passenger,11.45,lbm
 aircraft:engine:additional_mass_fraction,0.04373,unitless
 aircraft:engine:global_throttle,True,unitless
 aircraft:engine:mass_scaler,1,unitless
@@ -189,7 +190,7 @@ INGASP.CLIAB,1984
 INGASP.CMF,15
 INGASP.CMV,0.15
 INGASP.CRWOH,15
-INGASP.CW,,0,0,0,0,0,0,0,0,0,0,0,0,0,11.45,0
+INGASP.CW,,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 INGASP.DCDSE,0.001
 INGASP.DYR,12
 INGASP.EL_FLGC,8
