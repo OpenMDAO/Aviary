@@ -151,7 +151,7 @@ class BWBEngineSizeGroupTestCase(unittest.TestCase):
 
     def setUp(self):
         aviary_options = AviaryValues()
-        aviary_options.set_val(Aircraft.Engine.NUM_ENGINES, [1])
+        aviary_options.set_val(Aircraft.Engine.NUM_ENGINES, [2])
 
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
@@ -165,24 +165,31 @@ class BWBEngineSizeGroupTestCase(unittest.TestCase):
         )
 
         self.prob.model.set_input_defaults(Aircraft.Engine.REFERENCE_DIAMETER, 5.8, units='ft')
-        self.prob.model.set_input_defaults(Aircraft.Engine.SCALE_FACTOR, 1.028233, units='unitless')
+        self.prob.model.set_input_defaults(Aircraft.Engine.SCALE_FACTOR, 1.02823, units='unitless')
         self.prob.model.set_input_defaults(
-            Aircraft.Nacelle.CORE_DIAMETER_RATIO, 1.25, units='unitless'
+            Aircraft.Nacelle.CORE_DIAMETER_RATIO, 1.2205, units='unitless'
         )
-        self.prob.model.set_input_defaults(Aircraft.Nacelle.FINENESS, 2.0, units='unitless')
+        self.prob.model.set_input_defaults(Aircraft.Nacelle.FINENESS, 1.3588, units='unitless')
 
         setup_model_options(self.prob, aviary_options)
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
     def test_case1(self):
-        """Testing GASP data case."""
+        """
+        Testing GASP data case:
+        Aircraft.Nacelle.AVG_DIAMETER -- DBARN = 6.95
+        Aircraft.Nacelle.AVG_LENGTH -- ELN = 9.44
+        Aircraft.Nacelle.SURFACE_AREA -- SN/2 = 205.965 (for one engine)
+        Note: Aviary uses reference diameter which is different from GASP. So, the outpus are
+        not the same.
+        """
         self.prob.run_model()
 
         tol = 1e-4
-        assert_near_equal(self.prob[Aircraft.Nacelle.AVG_DIAMETER], 7.35163, tol)
-        assert_near_equal(self.prob[Aircraft.Nacelle.AVG_LENGTH], 14.70326, tol)
-        assert_near_equal(self.prob[Aircraft.Nacelle.SURFACE_AREA], 339.58389, tol)
+        assert_near_equal(self.prob[Aircraft.Nacelle.AVG_DIAMETER], 7.17813375, tol)
+        assert_near_equal(self.prob[Aircraft.Nacelle.AVG_LENGTH], 9.75364814, tol)
+        assert_near_equal(self.prob[Aircraft.Nacelle.SURFACE_AREA], 219.95229788, tol)
 
         partial_data = self.prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=1e-8, rtol=1e-8)
