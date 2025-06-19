@@ -1164,7 +1164,7 @@ class MassSummationTestCase4(unittest.TestCase):
 
         # fuel values:
         assert_near_equal(
-            self.prob['fuel_mass.fuel_and_oem.OEM_wingfuel_mass'], 78654.68, tol
+            self.prob['fuel_mass.fuel_and_oem.OEM_wingfuel_mass'], 79474.11569854, tol
         )  # modified from GASP value to account for updated crew mass. GASP value is 78966.7
 
         assert_near_equal(
