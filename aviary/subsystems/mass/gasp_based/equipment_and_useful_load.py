@@ -827,7 +827,7 @@ class UsefulLoadMass(om.ExplicitComponent):
         add_aviary_option(self, Aircraft.Engine.TYPE)
         add_aviary_option(self, Aircraft.Propulsion.TOTAL_NUM_ENGINES)
         add_aviary_option(self, Settings.VERBOSITY)
-        add_aviary_option(self, Aircraft.CrewPayload.UNIT_MASS_OF_ULD_PER_PASSENGER, units='lbm')
+        add_aviary_option(self, Aircraft.CrewPayload.ULD_MASS_PER_PASSENGER, units='lbm')
 
     def setup(self):
         num_engine_type = len(self.options[Aircraft.Engine.NUM_ENGINES])
@@ -858,7 +858,7 @@ class UsefulLoadMass(om.ExplicitComponent):
         wing_area = inputs[Aircraft.Wing.AREA]
         Fn_SLS = inputs[Aircraft.Engine.SCALED_SLS_THRUST]
         fuel_vol_frac = inputs[Aircraft.Fuel.WING_FUEL_FRACTION]
-        uld_per_pax = self.options[Aircraft.CrewPayload.UNIT_MASS_OF_ULD_PER_PASSENGER][0]
+        uld_per_pax = self.options[Aircraft.CrewPayload.ULD_MASS_PER_PASSENGER][0]
 
         engine_type = self.options[Aircraft.Engine.TYPE][0]
         num_flight_attendants = get_num_of_flight_attendent(PAX)
