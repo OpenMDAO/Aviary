@@ -86,7 +86,12 @@ class AviaryProblem(om.Problem):
         super().__init__(**kwargs)
 
         self.timestamp = datetime.now()
+
+        # If verbosity is set to anything but None, this defines how warnings are formatted for the
+        # whole problem - warning format won't be updated if user requests a different verbosity
+        # level for a specific method
         self.verbosity = verbosity
+        set_warning_format(verbosity)
 
         self.model = AviaryGroup()
         self.pre_mission = PreMissionGroup()
@@ -137,11 +142,17 @@ class AviaryProblem(om.Problem):
             aircraft_data, meta_data=meta_data, verbosity=verbosity
         )
 
-        # update verbosity now that we have read the input data
-        self.verbosity = aviary_inputs.get_val(Settings.VERBOSITY)
-        # if user did not ask for verbosity override for this method, use value from data
+        # Update default verbosity now that we have read the input data, if a global verbosity
+        # override was not requested
+        if self.verbosity is None:
+            self.verbosity = aviary_inputs.get_val(Settings.VERBOSITY)
+            # set default warning format for the rest of the problem
+            set_warning_format(self.verbosity)
+
+        # If user did not ask for verbosity override for this method either, use the problem's
+        # default verbosity for the rest of the method
         if verbosity is None:
-            verbosity = aviary_inputs.get_val(Settings.VERBOSITY)
+            verbosity = self.verbosity
 
         # Now that the input file has been read, we have the desired verbosity for this
         # run stored in aviary_inputs. Save this to self.
@@ -766,7 +777,7 @@ class AviaryProblem(om.Problem):
             ].grid_data.subset_num_nodes['all']
         return phase_mission_bus_lengths
 
-    def add_post_mission_systems(self, include_landing=True, verbosity=None):
+    def add_post_mission_systems(self, verbosity=None):
         """
         Add post-mission systems to the aircraft model. This is akin to the pre-mission
         group or the "premission_systems", but occurs after the mission in the execution
@@ -804,7 +815,7 @@ class AviaryProblem(om.Problem):
             promotes_outputs=['*'],
         )
 
-        self.configurator.add_post_mission_systems(self, include_landing)
+        self.configurator.add_post_mission_systems(self)
 
         # Add all post-mission external subsystems.
         phase_mission_bus_lengths = self._get_phase_mission_bus_lengths()
@@ -2575,3 +2586,37 @@ def _load_off_design(
     # Load inputs
     prob.load_inputs(prob.aviary_inputs, phase_info)
     return prob
+
+
+def set_warning_format(verbosity):
+    # if verbosity not set / not known yet, default to most simple warning format rather than no
+    # warnings at all
+    if verbosity is None:
+        verbosity = Verbosity.BRIEF
+
+    # Reset all warning filters
+    warnings.resetwarnings()
+
+    # NOTE identity comparison is preferred for Enum but here verbosity is often an int, so we need
+    # an equality comparison
+    if verbosity == Verbosity.QUIET:
+        # Suppress all warnings
+        warnings.filterwarnings('ignore')
+
+    elif verbosity == Verbosity.BRIEF:
+
+        def simplified_warning(message, category, filename, lineno, line=None):
+            return f'Warning: {message}\n\n'
+
+        warnings.formatwarning = simplified_warning
+
+    elif verbosity == Verbosity.VERBOSE:
+
+        def simplified_warning(message, category, filename, lineno, line=None):
+            return f'{category.__name__}: {message}\n\n'
+
+        warnings.formatwarning = simplified_warning
+
+    else:  # DEBUG
+        # use the default warning formatting
+        warnings.filterwarnings('default')
