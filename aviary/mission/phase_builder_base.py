@@ -428,7 +428,6 @@ class PhaseBuilderBase(ABC):
         ref, _ = options[f'{name}_ref']
         ref0, _ = options[f'{name}_ref0']
         defect_ref, _ = options[f'{name}_defect_ref']
-        constraint_ref, _ = options[f'{name}_constraint_ref']
         solve_segments = options[f'{name}_solve_segments']
 
         # If a value is specified for the starting node, then fix_initial is True.
@@ -451,12 +450,16 @@ class PhaseBuilderBase(ABC):
         )
 
         if final is not None:
+            constraint_ref, _ = options[f'{name}_constraint_ref']
+            if constraint_ref is None:
+                # If unspecified, final is a good value for it.
+                constraint_ref = final
             self.phase.add_boundary_constraint(
                 target,
                 loc='final',
                 equals=final,
                 units=units,
-                ref=constraint_ref,
+                ref=final,
             )
 
     def add_control(self, name, target, rate_targets, rate2_targets=None, add_constraints=True):

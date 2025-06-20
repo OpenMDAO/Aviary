@@ -265,6 +265,8 @@ class AviaryOptionsDictionary(om.OptionsDictionary):
         name = f'{state_name}_constraint_ref'
         default = defaults.get(name, None)
         desc = f'Multiplicative scale factor "ref" for the {state_name} boundary constraint.\n'
+        desc += f'If unspecified, then the value in {state_name}_final is used. '
+        desc += 'At present, only a final constraint is added.'
         self.declare(
             name=name,
             default=default,
