@@ -42,6 +42,8 @@ class ClimbPhaseOptions(AviaryOptionsDictionary):
         }
         self.add_state_options('altitude', units='ft', defaults=defaults)
 
+        self.add_time_options(units='s')
+
         # The options below have not yet been revamped.
 
         self.declare(
@@ -74,14 +76,6 @@ class ClimbPhaseOptions(AviaryOptionsDictionary):
             default=None,
             units='s',
             desc='The amount of time taken by this phase added as a constraint.',
-        )
-
-        self.declare(
-            name='fix_initial',
-            types=bool,
-            default=False,
-            desc='Fixes the initial states (mass, distance) and does not allow them to '
-            'change during the optimization.',
         )
 
         self.declare(
@@ -121,18 +115,6 @@ class ClimbPhaseOptions(AviaryOptionsDictionary):
             'smaller than required_available_climb_rate. This helps to ensure that the '
             'propulsion system is large enough to handle emergency maneuvers at all points '
             'throughout the flight envelope. Default value is None for no constraint.',
-        )
-
-        self.declare(
-            name='time_duration_bounds',
-            default=(0, 0),
-            units='s',
-            desc='Lower and upper bounds on the phase duration, in the form of a nested tuple: '
-            'i.e. ((20, 36), "min") This constrains the duration to be between 20 and 36 min.',
-        )
-
-        self.declare(
-            name='time_duration_ref', default=1.0, units='s', desc='Scale factor ref for duration.'
         )
 
 
@@ -187,22 +169,13 @@ class ClimbPhase(PhaseBuilderBase):
         )
 
         # States
+        self.add_state('altitude', Dynamic.Mission.ALTITUDE, Dynamic.Mission.ALTITUDE_RATE)
         self.add_state(
             'mass',
             Dynamic.Vehicle.MASS,
             Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
         )
         self.add_state('distance', Dynamic.Mission.DISTANCE, Dynamic.Mission.DISTANCE_RATE)
-        self.add_state('altitude', Dynamic.Mission.ALTITUDE, Dynamic.Mission.ALTITUDE_RATE)
-
-        # Boundary Constraints
-        phase.add_boundary_constraint(
-            Dynamic.Mission.ALTITUDE,
-            loc='final',
-            equals=altitude_final,
-            units='ft',
-            ref=altitude_final,
-        )
 
         if required_available_climb_rate is not None:
             # TODO: this should be altitude rate max

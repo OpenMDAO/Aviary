@@ -43,6 +43,8 @@ class AccelPhaseOptions(AviaryOptionsDictionary):
         }
         self.add_state_options('velocity', units='kn', defaults=defaults)
 
+        self.add_time_options(units='s')
+
         # The options below have not yet been revamped.
 
         self.declare(
@@ -71,39 +73,11 @@ class AccelPhaseOptions(AviaryOptionsDictionary):
         )
 
         self.declare(
-            'time_duration',
-            default=None,
-            units='s',
-            desc='The amount of time taken by this phase added as a constraint.',
-        )
-
-        self.declare(
-            name='fix_initial',
-            types=bool,
-            default=False,
-            desc='Fixes the initial states (mass, distance) and does not allow them to '
-            'change during the optimization.',
-        )
-
-        self.declare(
             name='EAS_constraint_eq',
             default=250.0,
             units='kn',
             desc='Airspeed constraint applied at the end of the phase.',
         )
-
-        self.declare(
-            name='time_duration_bounds',
-            default=(None, None),
-            units='s',
-            desc='Lower and upper bounds on the phase duration, in the form of a nested tuple: '
-            'i.e. ((20, 36), "min") This constrains the duration to be between 20 and 36 min.',
-        )
-
-        self.declare(
-            name='time_duration_ref', default=1.0, units='s', desc='Scale factor ref for duration.'
-        )
-
 
         self.declare(
             name='alt', default=500.0, units='ft', desc='Constant altitude for this phase.'

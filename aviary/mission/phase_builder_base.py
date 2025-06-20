@@ -438,8 +438,7 @@ class PhaseBuilderBase(ABC):
         self.phase.add_state(
             target,
             fix_initial=initial is not None,
-            input_initial=initial is None,
-            fix_final=final is not None,
+            input_initial=False,
             lower=bounds[0],
             upper=bounds[1],
             units=units,
@@ -449,6 +448,15 @@ class PhaseBuilderBase(ABC):
             defect_ref=defect_ref,
             solve_segments='forward' if solve_segments else None,
         )
+
+        if final is not None:
+            self.phase.add_boundary_constraint(
+                target,
+                loc='final',
+                equals=final,
+                units=units,
+                ref=ref,
+            )
 
     def add_control(self, name, target, rate_targets, rate2_targets=None, add_constraints=True):
         """
@@ -521,119 +529,6 @@ class PhaseBuilderBase(ABC):
         # Add a final constraint.
         if opt and final is not None:
             phase.add_boundary_constraint(target, loc='final', equals=final, units=units, ref=ref)
-
-    def add_velocity_state(self, user_options):
-        """Add velocity state: lower and upper bounds, reference, zero-reference, and state defect reference."""
-        velocity_lower = user_options.get_val('velocity_lower', units='kn')
-        velocity_upper = user_options.get_val('velocity_upper', units='kn')
-        velocity_ref = user_options.get_val('velocity_ref', units='kn')
-        velocity_ref0 = user_options.get_val('velocity_ref0', units='kn')
-        velocity_defect_ref = user_options.get_val('velocity_defect_ref', units='kn')
-        self.phase.add_state(
-            Dynamic.Mission.VELOCITY,
-            fix_initial=user_options.get_val('fix_initial'),
-            fix_final=False,
-            lower=velocity_lower,
-            upper=velocity_upper,
-            units='kn',
-            rate_source=Dynamic.Mission.VELOCITY_RATE,
-            targets=Dynamic.Mission.VELOCITY,
-            ref=velocity_ref,
-            ref0=velocity_ref0,
-            defect_ref=velocity_defect_ref,
-        )
-
-    def add_mass_state(self, user_options):
-        """Add mass state: lower and upper bounds, reference, zero-reference, and state defect reference."""
-        mass_lower = user_options.get_val('mass_lower', units='lbm')
-        mass_upper = user_options.get_val('mass_upper', units='lbm')
-        mass_ref = user_options.get_val('mass_ref', units='lbm')
-        mass_ref0 = user_options.get_val('mass_ref0', units='lbm')
-        mass_defect_ref = user_options.get_val('mass_defect_ref', units='lbm')
-        self.phase.add_state(
-            Dynamic.Vehicle.MASS,
-            fix_initial=user_options.get_val('fix_initial'),
-            fix_final=False,
-            lower=mass_lower,
-            upper=mass_upper,
-            units='lbm',
-            rate_source=Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
-            targets=Dynamic.Vehicle.MASS,
-            ref=mass_ref,
-            ref0=mass_ref0,
-            defect_ref=mass_defect_ref,
-        )
-
-    def add_distance_state(self, user_options, units='NM'):
-        """Add distance state: lower and upper bounds, reference, zero-reference, and state defect reference."""
-        distance_lower = user_options.get_val('distance_lower', units=units)
-        distance_upper = user_options.get_val('distance_upper', units=units)
-        distance_ref = user_options.get_val('distance_ref', units=units)
-        distance_ref0 = user_options.get_val('distance_ref0', units=units)
-        distance_defect_ref = user_options.get_val('distance_defect_ref', units=units)
-        self.phase.add_state(
-            Dynamic.Mission.DISTANCE,
-            fix_initial=user_options.get_val('fix_initial'),
-            fix_final=False,
-            lower=distance_lower,
-            upper=distance_upper,
-            units=units,
-            rate_source=Dynamic.Mission.DISTANCE_RATE,
-            ref=distance_ref,
-            ref0=distance_ref0,
-            defect_ref=distance_defect_ref,
-        )
-
-    def add_flight_path_angle_state(self, user_options):
-        """Add flight path angle state: lower and upper bounds, reference, zero-reference, and state defect reference."""
-        angle_lower = user_options.get_val('angle_lower', units='rad')
-        angle_upper = user_options.get_val('angle_upper', units='rad')
-        angle_ref = user_options.get_val('angle_ref', units='rad')
-        angle_ref0 = user_options.get_val('angle_ref0', units='rad')
-        angle_defect_ref = user_options.get_val('angle_defect_ref', units='rad')
-        self.phase.add_state(
-            Dynamic.Mission.FLIGHT_PATH_ANGLE,
-            fix_initial=True,
-            fix_final=False,
-            lower=angle_lower,
-            upper=angle_upper,
-            units='rad',
-            rate_source=Dynamic.Mission.FLIGHT_PATH_ANGLE_RATE,
-            ref=angle_ref,
-            defect_ref=angle_defect_ref,
-            ref0=angle_ref0,
-        )
-
-    def add_altitude_state(self, user_options, units='ft'):
-        """Add altitude state: lower and upper bounds, reference, zero-reference, and state defect reference."""
-        alt_lower = user_options.get_val('alt_lower', units=units)
-        alt_upper = user_options.get_val('alt_upper', units=units)
-        alt_ref = user_options.get_val('alt_ref', units=units)
-        alt_ref0 = user_options.get_val('alt_ref0', units=units)
-        alt_defect_ref = user_options.get_val('alt_defect_ref', units=units)
-        self.phase.add_state(
-            Dynamic.Mission.ALTITUDE,
-            fix_final=False,
-            lower=alt_lower,
-            upper=alt_upper,
-            units=units,
-            rate_source=Dynamic.Mission.ALTITUDE_RATE,
-            ref=alt_ref,
-            defect_ref=alt_defect_ref,
-            ref0=alt_ref0,
-        )
-
-    def add_altitude_constraint(self, user_options):
-        """Add altitude constraint: final altitude and altitude constraint reference."""
-        final_altitude = user_options.get_val('altitude_final', units='ft')
-        alt_constraint_ref = user_options.get_val('alt_constraint_ref', units='ft')
-        self.phase.add_boundary_constraint(
-            Dynamic.Mission.ALTITUDE,
-            loc='final',
-            equals=final_altitude,
-            units='ft',
-            ref=alt_constraint_ref,
-        )
 
 
 _registered_phase_builder_types = []

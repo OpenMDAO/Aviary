@@ -63,6 +63,8 @@ class AscentPhaseOptions(AviaryOptionsDictionary):
         }
         self.add_state_options('flight_path_angle', units='rad', defaults=defaults)
 
+        self.add_time_options(units='s')
+
         # The options below have not yet been revamped.
 
         self.declare(
@@ -88,25 +90,6 @@ class AscentPhaseOptions(AviaryOptionsDictionary):
             desc='The total distance traveled by the aircraft from takeoff to landing '
             'for the primary mission, not including reserve missions. This value must '
             'be positive.',
-        )
-
-        self.declare(
-            'time_duration',
-            default=None,
-            units='s',
-            desc='The amount of time taken by this phase added as a constraint.',
-        )
-
-        self.declare(
-            name='fix_initial',
-            types=bool,
-            default=False,
-            desc='Fixes the initial states (mass, distance) and does not allow them to '
-            'change during the optimization.',
-        )
-
-        self.declare(
-            name='time_duration_ref', default=1.0, units='s', desc='Scale factor ref for duration.'
         )
 
         self.declare(
@@ -188,6 +171,12 @@ class AscentPhase(PhaseBuilderBase):
         alpha_constraint_upper = user_options.get_val('alpha_constraint_upper', units='rad')
         alpha_constraint_ref = user_options.get_val('alpha_constraint_ref', units='rad')
 
+        self.add_state(
+            'flight_path_angle',
+            Dynamic.Mission.FLIGHT_PATH_ANGLE,
+            Dynamic.Mission.FLIGHT_PATH_ANGLE_RATE,
+        )
+        self.add_state('altitude', Dynamic.Mission.ALTITUDE, Dynamic.Mission.ALTITUDE_RATE)
         self.add_state('velocity', Dynamic.Mission.VELOCITY, Dynamic.Mission.VELOCITY_RATE)
         self.add_state(
             'mass',
@@ -195,14 +184,6 @@ class AscentPhase(PhaseBuilderBase):
             Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
         )
         self.add_state('distance', Dynamic.Mission.DISTANCE, Dynamic.Mission.DISTANCE_RATE)
-        self.add_state('altitude', Dynamic.Mission.ALTITUDE, Dynamic.Mission.ALTITUDE_RATE)
-        self.add_state(
-            'flight_path_angle',
-            Dynamic.Mission.FLIGHT_PATH_ANGLE,
-            Dynamic.Mission.FLIGHT_PATH_ANGLE_RATE,
-        )
-
-        #self.add_altitude_constraint(user_options)
 
         phase.add_path_constraint('load_factor', upper=1.10, lower=0.0)
 

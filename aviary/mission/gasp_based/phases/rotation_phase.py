@@ -54,6 +54,11 @@ class RotationPhaseOptions(AviaryOptionsDictionary):
         }
         self.add_state_options('angle_of_attack', units='rad', defaults=defaults)
 
+        defaults = {
+            'time_duration_bounds': (1.0, 100.0),
+        }
+        self.add_time_options(units='s', defaults=defaults)
+
         # The options below have not yet been revamped.
 
         self.declare(
@@ -79,29 +84,6 @@ class RotationPhaseOptions(AviaryOptionsDictionary):
             desc='The total distance traveled by the aircraft from takeoff to landing '
             'for the primary mission, not including reserve missions. This value must '
             'be positive.',
-        )
-
-        self.declare(
-            'time_duration',
-            default=None,
-            units='s',
-            desc='The amount of time taken by this phase added as a constraint.',
-        )
-
-        self.declare(
-            name='fix_initial',
-            types=bool,
-            default=False,
-            desc='Fixes the initial states (mass, distance) and does not allow them to '
-            'change during the optimization.',
-        )
-
-        self.declare(
-            name='time_duration_bounds',
-            default=(1.0, 100.0),
-            units='s',
-            desc='Lower and upper bounds on the phase duration, in the form of a nested tuple: '
-            'i.e. ((20, 36), "min") This constrains the duration to be between 20 and 36 min.',
         )
 
         self.declare(
@@ -159,11 +141,15 @@ class RotationPhase(PhaseBuilderBase):
 
         # Retrieve user options values
         user_options = self.user_options
-        fix_initial = user_options.get_val('fix_initial')
         normal_ref = user_options.get_val('normal_ref', units='lbf')
         normal_ref0 = user_options.get_val('normal_ref0', units='lbf')
 
         # Add states
+        self.add_state(
+            'angle_of_attack',
+            Dynamic.Vehicle.ANGLE_OF_ATTACK,
+            'angle_of_attack_rate'
+        )
         self.add_state('velocity', Dynamic.Mission.VELOCITY, Dynamic.Mission.VELOCITY_RATE)
         self.add_state(
             'mass',
@@ -171,11 +157,6 @@ class RotationPhase(PhaseBuilderBase):
             Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
         )
         self.add_state('distance', Dynamic.Mission.DISTANCE, Dynamic.Mission.DISTANCE_RATE)
-        self.add_state(
-            'angle_of_attack',
-            Dynamic.Vehicle.ANGLE_OF_ATTACK,
-            'angle_of_attack_rate'
-        )
 
         # Add parameters
         phase.add_parameter('t_init_gear', units='s', static_target=True, opt=False, val=100)

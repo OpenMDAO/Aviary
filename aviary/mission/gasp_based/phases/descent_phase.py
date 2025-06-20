@@ -43,6 +43,8 @@ class DescentPhaseOptions(AviaryOptionsDictionary):
         }
         self.add_state_options('altitude', units='ft', defaults=defaults)
 
+        self.add_time_options(units='s')
+
         # The options below have not yet been revamped.
 
         self.declare(
@@ -71,28 +73,6 @@ class DescentPhaseOptions(AviaryOptionsDictionary):
         )
 
         self.declare(
-            'time_duration',
-            default=None,
-            units='s',
-            desc='The amount of time taken by this phase added as a constraint.',
-        )
-
-        self.declare(
-            name='fix_initial',
-            types=bool,
-            default=False,
-            desc='Fixes the initial states (mass, distance) and does not allow them to '
-            'change during the optimization.',
-        )
-
-        self.declare(
-            name='input_initial',
-            types=bool,
-            default=False,
-            desc='Links all states to a calculation external to this phase.',
-        )
-
-        self.declare(
             name='EAS_limit',
             default=0.0,
             units='kn',
@@ -116,18 +96,6 @@ class DescentPhaseOptions(AviaryOptionsDictionary):
             default=0.0,
             units='ft',
             desc='Altitude for final point in the phase.',
-        )
-
-        self.declare(
-            name='time_duration_bounds',
-            default=(0, 0),
-            units='s',
-            desc='Lower and upper bounds on the phase duration, in the form of a nested tuple: '
-            'i.e. ((20, 36), "min") This constrains the duration to be between 20 and 36 min.',
-        )
-
-        self.declare(
-            name='time_duration_ref', default=1.0, units='s', desc='Scale factor ref for duration.'
         )
 
         self.declare(
@@ -170,16 +138,13 @@ class DescentPhase(PhaseBuilderBase):
         EAS_limit = user_options.get_val('EAS_limit', units='kn')
 
         # Add states
+        self.add_state('altitude', Dynamic.Mission.ALTITUDE, Dynamic.Mission.ALTITUDE_RATE)
         self.add_state(
             'mass',
             Dynamic.Vehicle.MASS,
             Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
         )
         self.add_state('distance', Dynamic.Mission.DISTANCE, Dynamic.Mission.DISTANCE_RATE)
-        self.add_state('altitude', Dynamic.Mission.ALTITUDE, Dynamic.Mission.ALTITUDE_RATE)
-
-        # Add boundary constraint
-        #self.add_altitude_constraint(user_options)
 
         # Add parameter if necessary
         if input_speed_type == SpeedType.EAS:

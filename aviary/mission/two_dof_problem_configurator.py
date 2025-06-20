@@ -427,6 +427,10 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
                 'core_aerodynamics', {}
             ).setdefault('method', 'low_speed')
 
+        # Mass is always input to the first phase.
+        #if phase_idx == 0:
+        #    phase.set_state_options(Dynamic.Vehicle.MASS, fix_initial=False, input_initial=False)
+
     def link_phases(self, prob, phases, connect_directly=True):
         """
         Apply any additional phase linking.

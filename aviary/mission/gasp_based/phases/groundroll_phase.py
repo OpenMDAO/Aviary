@@ -35,6 +35,11 @@ class GroundrollPhaseOptions(AviaryOptionsDictionary):
         }
         self.add_state_options('mass', units='lbm', defaults=defaults)
 
+        defaults = {
+            'time_duration_bounds': (1.0, 100.0),
+        }
+        self.add_time_options(units='s', defaults=defaults)
+
         # NOTE: All GASP phases before accel are in 'ft'.
         defaults = {
             'distance_bounds': (0.0, 4000.0),
@@ -55,41 +60,6 @@ class GroundrollPhaseOptions(AviaryOptionsDictionary):
             types=bool,
             default=False,
             desc='When set to True, this is an analytic phase.',
-        )
-
-        self.declare(
-            name='fix_initial',
-            types=bool,
-            default=True,
-            desc='Fixes the initial state (distance only) and does not allow it to '
-            'change during the optimization.',
-        )
-
-        self.declare(
-            name='fix_initial_mass',
-            types=bool,
-            default=False,
-            desc='Fixes the initial state for mass and does not allow it to '
-            'change during the optimization.',
-        )
-
-        self.declare(
-            name='connect_initial_mass',
-            types=bool,
-            default=True,
-            desc='When true, initial mass is connected to an outside value.',
-        )
-
-        self.declare(
-            name='time_duration_bounds',
-            default=(1.0, 100.0),
-            units='s',
-            desc='Lower and upper bounds on the phase duration, in the form of a nested tuple: '
-            'i.e. ((20, 36), "min") This constrains the duration to be between 20 and 36 min.',
-        )
-
-        self.declare(
-            name='time_duration_ref', default=1.0, units='s', desc='Scale factor ref for duration.'
         )
 
         self.declare(
@@ -126,12 +96,6 @@ class GroundrollPhase(PhaseBuilderBase):
 
     def build_phase(self, aviary_options: AviaryValues = None):
         phase = self.phase = super().build_phase(aviary_options)
-
-        # Retrieve user options values
-        user_options = self.user_options
-        fix_initial = user_options['fix_initial']
-        fix_initial_mass = user_options['fix_initial_mass']
-        connect_initial_mass = user_options['connect_initial_mass']
 
         # Add states
         self.add_state('velocity', Dynamic.Mission.VELOCITY, Dynamic.Mission.VELOCITY_RATE)
