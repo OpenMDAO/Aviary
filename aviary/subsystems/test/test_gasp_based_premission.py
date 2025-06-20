@@ -187,7 +187,4 @@ class PreMissionGroupTest(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    # unittest.main()
-    test = PreMissionGroupTest()
-    test.setUp()
-    test.test_case2()
+    unittest.main()
