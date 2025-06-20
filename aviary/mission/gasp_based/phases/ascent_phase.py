@@ -53,6 +53,7 @@ class AscentPhaseOptions(AviaryOptionsDictionary):
         defaults = {
             'altitude_ref': 100.0,
             'altitude_bounds': (0.0, 700.0),
+            'altitude_constraint_ref': 100.0,
         }
         self.add_state_options('altitude', units='ft', defaults=defaults)
 
