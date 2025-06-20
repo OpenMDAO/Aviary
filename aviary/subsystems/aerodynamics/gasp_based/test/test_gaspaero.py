@@ -16,10 +16,12 @@ from aviary.subsystems.aerodynamics.gasp_based.gaspaero import (
     LiftCoeffClean,
     BWBBodyLiftCurveSlope,
     BWBFormFactorAndSIWB,
+    BWBLiftCoeff,
     BWBLiftCoeffClean,
 )
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.functions import setup_model_options
+from aviary.variable_info.options import get_option_defaults
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 
 here = os.path.abspath(os.path.dirname(__file__))
@@ -454,6 +456,82 @@ class BWBBodyLiftCurveSlopeTest(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e-11, rtol=1e-11)
 
 
+class BWBLiftCoeffTest(unittest.TestCase):
+    """Body lift curve slope test for BWB"""
+
+    def test_case1(self):
+        prob = om.Problem()
+
+        prob.model.add_subsystem(
+            'lift_coeff',
+            BWBLiftCoeff(num_nodes=2),
+            promotes=['*'],
+        )
+
+        prob.model.set_input_defaults(Dynamic.Vehicle.ANGLE_OF_ATTACK, [-2.0, -2.0], units='deg')
+        prob.model.set_input_defaults('lift_curve_slope', [4.876, 4.876], units='unitless')
+        prob.model.set_input_defaults(
+            'body_lift_curve_slope', [3.04416704, 3.04416704], units='unitless'
+        )
+        prob.model.set_input_defaults('lift_ratio', [0.5, 0.5], units='unitless')
+        prob.model.set_input_defaults(Aircraft.Wing.ZERO_LIFT_ANGLE, -1.2, units='deg')
+        prob.model.set_input_defaults('CL_max_flaps', 2.188, units='unitless')
+        prob.model.set_input_defaults('dCL_flaps_model', 0.418, units='unitless')
+        prob.model.set_input_defaults('kclge', [1.15, 1.15], units='unitless')
+        prob.model.set_input_defaults('flap_factor', [0.9, 0.9], units='unitless')
+
+        prob.model.set_input_defaults(Aircraft.Wing.AREA, 2142.85718, units='ft**2')
+        prob.model.set_input_defaults(Aircraft.Wing.EXPOSED_AREA, 1352.11353, units='ft**2')
+        prob.model.set_input_defaults(Aircraft.Fuselage.PLANFORM_AREA, 1943.76587, units='ft**2')
+
+        prob.setup(check=False, force_alloc_complex=True)
+        prob.run_model()
+
+        tol = 1e-6
+        assert_near_equal(prob['CL'], [0.23762299, 0.23762299], tol)
+        assert_near_equal(prob['alpha_stall'], [16.88565997, 16.88565997], tol)
+        assert_near_equal(prob['CL_max'], [3.282, 3.282], tol)
+
+        partial_data = prob.check_partials(out_stream=None, method='cs')
+        assert_check_partials(partial_data, atol=1e-11, rtol=1e-11)
+
+    def test_case2(self):
+        prob = om.Problem()
+
+        prob.model.add_subsystem(
+            'lift_coeff',
+            BWBLiftCoeff(num_nodes=2),
+            promotes=['*'],
+        )
+
+        prob.model.set_input_defaults(Dynamic.Vehicle.ANGLE_OF_ATTACK, [21.4, 21.4], units='deg')
+        prob.model.set_input_defaults('lift_curve_slope', [4.6386786, 4.6386786], units='unitless')
+        prob.model.set_input_defaults(
+            'body_lift_curve_slope', [1.85912228, 1.85912228], units='unitless'
+        )
+        prob.model.set_input_defaults('lift_ratio', [-0.140812159, -0.140812159], units='unitless')
+        prob.model.set_input_defaults(Aircraft.Wing.ZERO_LIFT_ANGLE, 0.0, units='deg')
+        prob.model.set_input_defaults('CL_max_flaps', 2.12823462, units='unitless')
+        prob.model.set_input_defaults('dCL_flaps_model', 0.390711457, units='unitless')
+        prob.model.set_input_defaults('kclge', [1.001, 1.001], units='unitless')
+        prob.model.set_input_defaults('flap_factor', [0.9, 0.9], units='unitless')
+
+        prob.model.set_input_defaults(Aircraft.Wing.AREA, 2142.85718, units='ft**2')
+        prob.model.set_input_defaults(Aircraft.Wing.EXPOSED_AREA, 1352.11353, units='ft**2')
+        prob.model.set_input_defaults(Aircraft.Fuselage.PLANFORM_AREA, 1943.76587, units='ft**2')
+
+        prob.setup(check=False, force_alloc_complex=True)
+        prob.run_model()
+
+        tol = 1e-6
+        assert_near_equal(prob['CL'], [1.76135088, 1.761350889], tol)
+        assert_near_equal(prob['alpha_stall'], [21.44000465, 21.44000465], tol)
+        assert_near_equal(prob['CL_max'], [1.82855331, 1.82855331], tol)
+
+        partial_data = prob.check_partials(out_stream=None, method='cs')
+        assert_check_partials(partial_data, atol=1e-11, rtol=1e-11)
+
+
 class BWBLiftCoeffCleanTest(unittest.TestCase):
     """Body lift curve slope test for BWB"""
 
@@ -461,7 +539,7 @@ class BWBLiftCoeffCleanTest(unittest.TestCase):
         prob = om.Problem()
 
         prob.model.add_subsystem(
-            'body_lift_curve_slope',
+            'lift_coeff_clean',
             BWBLiftCoeffClean(num_nodes=2, output_alpha=True),
             promotes=['*'],
         )
@@ -535,5 +613,27 @@ class BWBLiftCoeffCleanTest(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e-11, rtol=1e-11)
 
 
+class BWBCruiseAeroTest(unittest.TestCase):
+    def test_cruise(self):
+        options = get_option_defaults()
+        options.set_val(Aircraft.Design.TYPE, val='BWB', units='unitless')
+        options.set_val(Aircraft.Engine.NUM_ENGINES, np.array([2]))
+
+        prob = om.Problem()
+        prob.model.add_subsystem(
+            'aero',
+            CruiseAero(num_nodes=2, input_atmos=True),
+            promotes=['*'],
+        )
+
+        prob.model.set_input_defaults(Aircraft.Wing.AREA, 2142.85718, units='ft**2')
+
+        setup_model_options(prob, options)
+
+        prob.setup(check=False, force_alloc_complex=True)
+
+
 if __name__ == '__main__':
-    unittest.main()
+    # unittest.main()
+    test = BWBLiftCoeffTest()
+    test.test_case2()
