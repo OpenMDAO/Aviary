@@ -59,15 +59,6 @@ class RotationPhaseOptions(AviaryOptionsDictionary):
         }
         self.add_time_options(units='s', defaults=defaults)
 
-        # The options below have not yet been revamped.
-
-        self.declare(
-            'analytic',
-            types=bool,
-            default=False,
-            desc='When set to True, this is an analytic phase.',
-        )
-
         self.declare(
             'reserve',
             types=bool,
@@ -86,8 +77,13 @@ class RotationPhaseOptions(AviaryOptionsDictionary):
             'be positive.',
         )
 
+        # The options below have not yet been revamped.
+
         self.declare(
-            name='time_duration_ref', default=1.0, units='s', desc='Scale factor ref for duration.'
+            'analytic',
+            types=bool,
+            default=False,
+            desc='When set to True, this is an analytic phase.',
         )
 
         self.declare(

@@ -276,7 +276,6 @@ class AviaryOptionsDictionary(om.OptionsDictionary):
             desc=desc,
         )
 
-
     def add_control_options(self, ctrl_name: str, units: str = None, defaults=None):
         """
         Adds all options needed for a control variable.

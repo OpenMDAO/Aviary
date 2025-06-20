@@ -462,7 +462,7 @@ class PhaseBuilderBase(ABC):
                 ref=final,
             )
 
-    def add_control(self, name, target, rate_targets, rate2_targets=None, add_constraints=True):
+    def add_control(self, name, target, rate_targets=None, rate2_targets=None, add_constraints=True):
         """
         Add a control to this phase using the options in the phase-info.
 
@@ -511,11 +511,14 @@ class PhaseBuilderBase(ABC):
         if units not in ['unitless', None]:
             extra_options['units'] = units
 
+        if rate_targets is not None:
+            extra_options['rate_targets'] = rate_targets
+
         if rate2_targets is not None:
             extra_options['rate2_targets'] = rate2_targets
 
         phase.add_control(
-            target, targets=target, rate_targets=rate_targets, opt=opt, **extra_options
+            target, targets=target, opt=opt, **extra_options
         )
 
         # Add timeseries for any control.

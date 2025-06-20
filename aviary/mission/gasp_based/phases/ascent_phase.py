@@ -64,16 +64,14 @@ class AscentPhaseOptions(AviaryOptionsDictionary):
         }
         self.add_state_options('flight_path_angle', units='rad', defaults=defaults)
 
+        defaults = {
+            'angle_of_attack_ref': np.deg2rad(5),
+            'angle_of_attack_bounds': (np.deg2rad(-30), np.deg2rad(30)),
+            'angle_of_attack_optimize': True,
+        }
+        self.add_control_options('angle_of_attack', units='rad')
+
         self.add_time_options(units='s')
-
-        # The options below have not yet been revamped.
-
-        self.declare(
-            'analytic',
-            types=bool,
-            default=False,
-            desc='When set to True, this is an analytic phase.',
-        )
 
         self.declare(
             'reserve',
@@ -91,6 +89,15 @@ class AscentPhaseOptions(AviaryOptionsDictionary):
             desc='The total distance traveled by the aircraft from takeoff to landing '
             'for the primary mission, not including reserve missions. This value must '
             'be positive.',
+        )
+
+        # The options below have not yet been revamped.
+
+        self.declare(
+            'analytic',
+            types=bool,
+            default=False,
+            desc='When set to True, this is an analytic phase.',
         )
 
         self.declare(
@@ -112,27 +119,6 @@ class AscentPhaseOptions(AviaryOptionsDictionary):
             default=1.0,
             units='deg',
             desc='Scale factor ref for the pitch constraint.',
-        )
-
-        self.declare(
-            name='alpha_constraint_lower',
-            default=np.deg2rad(-30),
-            units='rad',
-            desc='Angle of attack lower bound constraint.',
-        )
-
-        self.declare(
-            name='alpha_constraint_upper',
-            default=np.deg2rad(30),
-            units='rad',
-            desc='Angle of attack upper bound constraint.',
-        )
-
-        self.declare(
-            name='alpha_constraint_ref',
-            default=np.deg2rad(5),
-            units='rad',
-            desc='Scale factor ref for the Angle of attack constraint.',
         )
 
 
@@ -168,9 +154,6 @@ class AscentPhase(PhaseBuilderBase):
         pitch_constraint_lower = user_options.get_val('pitch_constraint_lower', units='deg')
         pitch_constraint_upper = user_options.get_val('pitch_constraint_upper', units='deg')
         pitch_constraint_ref = user_options.get_val('pitch_constraint_ref', units='deg')
-        alpha_constraint_lower = user_options.get_val('alpha_constraint_lower', units='rad')
-        alpha_constraint_upper = user_options.get_val('alpha_constraint_upper', units='rad')
-        alpha_constraint_ref = user_options.get_val('alpha_constraint_ref', units='rad')
 
         self.add_state(
             'flight_path_angle',
@@ -186,6 +169,11 @@ class AscentPhase(PhaseBuilderBase):
         )
         self.add_state('distance', Dynamic.Mission.DISTANCE, Dynamic.Mission.DISTANCE_RATE)
 
+        self.add_control(
+            'angle_of_attack',
+            Dynamic.Vehicle.ANGLE_OF_ATTACK,
+        )
+
         phase.add_path_constraint('load_factor', upper=1.10, lower=0.0)
 
         phase.add_path_constraint(
@@ -195,16 +183,6 @@ class AscentPhase(PhaseBuilderBase):
             upper=pitch_constraint_upper,
             units='deg',
             ref=pitch_constraint_ref,
-        )
-
-        phase.add_control(
-            Dynamic.Vehicle.ANGLE_OF_ATTACK,
-            val=0,
-            lower=alpha_constraint_lower,
-            upper=alpha_constraint_upper,
-            units='rad',
-            ref=alpha_constraint_ref,
-            opt=True,
         )
 
         phase.add_parameter('t_init_gear', units='s', static_target=True, opt=False, val=38.25)

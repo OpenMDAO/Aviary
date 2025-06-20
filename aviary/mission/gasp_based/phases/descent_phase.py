@@ -46,15 +46,6 @@ class DescentPhaseOptions(AviaryOptionsDictionary):
 
         self.add_time_options(units='s')
 
-        # The options below have not yet been revamped.
-
-        self.declare(
-            'analytic',
-            types=bool,
-            default=False,
-            desc='When set to True, this is an analytic phase.',
-        )
-
         self.declare(
             'reserve',
             types=bool,
@@ -71,6 +62,15 @@ class DescentPhaseOptions(AviaryOptionsDictionary):
             desc='The total distance traveled by the aircraft from takeoff to landing '
             'for the primary mission, not including reserve missions. This value must '
             'be positive.',
+        )
+
+        # The options below have not yet been revamped.
+
+        self.declare(
+            'analytic',
+            types=bool,
+            default=False,
+            desc='When set to True, this is an analytic phase.',
         )
 
         self.declare(
@@ -90,20 +90,6 @@ class DescentPhaseOptions(AviaryOptionsDictionary):
             values=[SpeedType.MACH, SpeedType.EAS, SpeedType.TAS],
             desc='Determines which speed variable is independent. The other two will be .'
             'computed from it.',
-        )
-
-        self.declare(
-            name='altitude_final',
-            default=0.0,
-            units='ft',
-            desc='Altitude for final point in the phase.',
-        )
-
-        self.declare(
-            name='alt_constraint_ref',
-            default=100.0,
-            units='ft',
-            desc='Scaling ref for the final altitude constraint.',
         )
 
 

@@ -44,15 +44,6 @@ class ClimbPhaseOptions(AviaryOptionsDictionary):
 
         self.add_time_options(units='s')
 
-        # The options below have not yet been revamped.
-
-        self.declare(
-            'analytic',
-            types=bool,
-            default=False,
-            desc='When set to True, this is an analytic phase.',
-        )
-
         self.declare(
             'reserve',
             types=bool,
@@ -72,10 +63,22 @@ class ClimbPhaseOptions(AviaryOptionsDictionary):
         )
 
         self.declare(
-            'time_duration',
+            name='required_available_climb_rate',
             default=None,
-            units='s',
-            desc='The amount of time taken by this phase added as a constraint.',
+            units='ft/min',
+            desc='Adds a constraint requiring Dynamic.Mission.ALTITUDE_RATE_MAX to be no '
+            'smaller than required_available_climb_rate. This helps to ensure that the '
+            'propulsion system is large enough to handle emergency maneuvers at all points '
+            'throughout the flight envelope. Default value is None for no constraint.',
+        )
+
+        # The options below have not yet been revamped.
+
+        self.declare(
+            'analytic',
+            types=bool,
+            default=False,
+            desc='When set to True, this is an analytic phase.',
         )
 
         self.declare(
@@ -98,23 +101,6 @@ class ClimbPhaseOptions(AviaryOptionsDictionary):
             default=False,
             desc='Set to true to enforce a mach_constraint at the phase endpoint. '
             'The mach value is set in "mach_cruise".',
-        )
-
-        self.declare(
-            name='altitude_final',
-            default=0.0,
-            units='ft',
-            desc='Altitude for final point in the phase.',
-        )
-
-        self.declare(
-            name='required_available_climb_rate',
-            default=None,
-            units='ft/min',
-            desc='Adds a constraint requiring Dynamic.Mission.ALTITUDE_RATE_MAX to be no '
-            'smaller than required_available_climb_rate. This helps to ensure that the '
-            'propulsion system is large enough to handle emergency maneuvers at all points '
-            'throughout the flight envelope. Default value is None for no constraint.',
         )
 
 
