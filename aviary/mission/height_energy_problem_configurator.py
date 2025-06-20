@@ -314,6 +314,12 @@ class HeightEnergyProblemConfigurator(ProblemConfiguratorBase):
             flat_src_indices=True,
         )
 
+        if prob.pre_mission_info['include_takeoff']:
+            # Allow these to connect to outputs in the pre-mission takeoff system.
+            phase = prob.traj._phases[phases[0]]
+            phase.set_state_options(Dynamic.Vehicle.MASS, input_initial=True)
+            phase.set_state_options(Dynamic.Mission.DISTANCE, input_initial=True)
+
     def check_trajectory(self, prob):
         """
         Checks the phase_info user options for any inconsistency.

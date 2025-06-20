@@ -18,13 +18,13 @@ phase_info = deepcopy(phase_info)
 # Add reserve phase(s)
 reserve_climb1 = deepcopy(phase_info['climb1'])
 reserve_climb1['user_options']['reserve'] = True
-reserve_climb1['user_options']['distance_upper'] = (5000, 'NM')
+reserve_climb1['user_options']['distance_bounds'] = ((0.0, 5000), 'NM')
 reserve_climb1['initial_guesses']['distance'] = ([3675, 3700], 'nmi')
 
 reserve_climb2 = deepcopy(phase_info['climb2'])
 reserve_climb2['user_options']['reserve'] = True
 reserve_climb2['user_options']['altitude_final'] = (25e3, 'ft')
-reserve_climb2['user_options']['distance_upper'] = (5000, 'NM')
+reserve_climb2['user_options']['distance_bounds'] = ((0.0, 5000), 'NM')
 reserve_climb2['initial_guesses']['altitude'] = ([10e3, 25e3], 'ft')
 reserve_climb2['initial_guesses']['distance'] = ([3700, 3725], 'nmi')
 
