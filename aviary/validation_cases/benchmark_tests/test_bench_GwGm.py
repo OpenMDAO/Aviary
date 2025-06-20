@@ -230,4 +230,4 @@ if __name__ == '__main__':
     # unittest.main()
     test = ProblemPhaseTestCase()
     test.setUp()
-    test.test_bench_GwGm_SNOPT()
+    test.test_bench_GwGm()

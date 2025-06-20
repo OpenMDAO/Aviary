@@ -9,7 +9,7 @@ readme = "README.md"
 license = "Apache-2.0"
 requires_python = ">=3.9"
 dependencies = [
-    "dymos>=1.8.1",
+    "dymos>=1.14.0",
     "hvplot",
     "importlib_resources",
     "matplotlib",
