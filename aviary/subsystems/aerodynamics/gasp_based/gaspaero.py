@@ -165,7 +165,7 @@ class WingTailRatios(om.ExplicitComponent):
             units='unitless',
             desc='HBAR: Ratio of HGAP(?) to wing span',
         )
-        self.add_output('bbar', units='unitless', desc='BBAR: Ratio of H tail area to wing area')
+        self.add_output('bbar', units='unitless', desc='BBAR: Ratio of H tail area to wing span')
         self.add_output('sbar', units='unitless', desc='SBAR: Ratio of H tail area to wing area')
         self.add_output('cbar', units='unitless', desc='CBAR: Ratio of H tail chord to wing chord')
 
@@ -305,7 +305,7 @@ class Xlifts(om.ExplicitComponent):
         self.add_input('sbar', units='unitless', desc='SBAR: Ratio of H tail area to wing area')
         self.add_input('cbar', units='unitless', desc='CBAR: Ratio of H tail chord to wing chord')
         self.add_input('hbar', units='unitless', desc='HBAR: Ratio of HGAP(?) to wing span')
-        self.add_input('bbar', units='unitless', desc='BBAR: Ratio of H tail area to wing area')
+        self.add_input('bbar', units='unitless', desc='BBAR: Ratio of H tail area to wing span')
 
         self.add_output(
             'lift_curve_slope', units='unitless', shape=nn, desc='CLAW: Lift-curve slope'
@@ -563,6 +563,112 @@ class BWBFormFactorAndSIWB(om.ExplicitComponent):
         J['siwb', Aircraft.Wing.SPAN] = dsiwb_dwingspan
 
 
+class UFac(om.ExplicitComponent):
+    def initialize(self):
+        self.options.declare('num_nodes', default=1, types=int)
+        add_aviary_option(self, Aircraft.Design.TYPE)
+        self.options.declare('smooth_ufac', default=True, types=bool)  # only for BWB
+        self.options.declare('mu', default=100.0, types=float)  # only for BWB
+
+    def setup(self):
+        nn = self.options['num_nodes']
+        self.add_input('lift_ratio', units='unitless', shape=nn, desc='BARL: Lift ratio')
+        # bbar is the ratio of horizontal tail span over wing span.
+        self.add_input('bbar', units='unitless', desc='BBAR')
+        self.add_input('sigma', units='unitless', desc='interference factor')
+        self.add_input('sigstr', units='unitless', desc='nonelliptic interference factor')
+        self.add_output('ufac', shape=nn, units='unitless')
+
+    def setup_partials(self):
+        ar = np.arange(self.options['num_nodes'])
+        self.declare_partials(
+            'ufac',
+            [
+                'lift_ratio',
+            ],
+            rows=ar,
+            cols=ar,
+        )
+        self.declare_partials(
+            'ufac',
+            [
+                'bbar',
+                'sigma',
+                'sigstr',
+            ],
+        )
+
+    def compute(self, inputs, outputs):
+        design_type = self.options[Aircraft.Design.TYPE]
+        lift_ratio = inputs['lift_ratio']
+        bbar = inputs['bbar']
+        sigma = inputs['sigma']
+        sigstr = inputs['sigstr']
+
+        ufac = (1 + lift_ratio) ** 2 / (
+            sigstr * (lift_ratio / bbar) ** 2 + 2 * sigma * lift_ratio / bbar + 1
+        )
+        if design_type is AircraftTypes.BLENDED_WING_BODY:
+            # For BWB, GASP has to limit UFAC under 0.975 for good result
+            smooth = self.options['smooth_ufac']
+            if smooth:
+                mu = self.options['mu']
+                ufac = smooth_min(ufac, 0.975, mu)
+            else:
+                ufac = np.minimum(ufac, 0.975)
+
+        outputs['ufac'] = ufac
+
+    def compute_partials(self, inputs, J):
+        design_type = self.options[Aircraft.Design.TYPE]
+        lift_ratio = inputs['lift_ratio']
+        bbar = inputs['bbar']
+        sigma = inputs['sigma']
+        sigstr = inputs['sigstr']
+
+        numer = (1 + lift_ratio) ** 2
+        denom = sigstr * (lift_ratio / bbar) ** 2 + 2 * sigma * lift_ratio / bbar + 1
+        ufac = numer / denom
+
+        # w.r.t. lift_ratio
+        dnumer = 2 * (1 + lift_ratio) / bbar
+        ddenom = 2 * sigstr * (lift_ratio / bbar) / bbar + 2 * sigma / bbar
+        dufac_dlift_ratio = (dnumer * denom - numer * ddenom) / denom**2
+
+        dufac_dsigstr = -numer * (lift_ratio / bbar) ** 2 / denom**2
+        dufac_dsigma = -numer * 2 * lift_ratio / bbar / denom**2
+
+        ddenom_dbbar = (
+            -2 * sigstr * (lift_ratio / bbar) * lift_ratio / bbar**2
+            - 2 * sigma * lift_ratio / bbar**2
+        )
+        dufac_dbbar = -numer * ddenom_dbbar / denom**2
+
+        if design_type is AircraftTypes.BLENDED_WING_BODY:
+            smooth = self.options['smooth_ufac']
+            if smooth:
+                mu = self.options['mu']
+                dufac_dsigstr = d_smooth_min(ufac, 0.975, mu) * dufac_dsigstr
+                dufac_dsigma = d_smooth_min(ufac, 0.975, mu) * dufac_dsigma
+                dufac_dbbar = d_smooth_min(ufac, 0.975, mu) * dufac_dbbar
+            else:
+                ufac = np.minimum(ufac, 0.975)
+                dufac_dsigstr = (
+                    np.piecewise(ufac, [ufac < 0.975, ufac >= 0.975], [1, 0]) * dufac_dsigstr
+                )
+                dufac_dsigma = (
+                    np.piecewise(ufac, [ufac < 0.975, ufac >= 0.975], [1, 0]) * dufac_dsigma
+                )
+                dufac_dbbar = (
+                    np.piecewise(ufac, [ufac < 0.975, ufac >= 0.975], [1, 0]) * dufac_dbbar
+                )
+
+        J['ufac', 'lift_ratio'] = dufac_dlift_ratio
+        J['ufac', 'bbar'] = dufac_dbbar
+        J['ufac', 'sigma'] = dufac_dsigma
+        J['ufac', 'sigstr'] = dufac_dsigstr
+
+
 class AeroGeom(om.ExplicitComponent):
     """Compute drag parameters from cruise conditions and geometric parameters.
 
@@ -636,7 +742,7 @@ class AeroGeom(om.ExplicitComponent):
 
         add_aviary_input(self, Aircraft.Fuselage.LENGTH, units='ft')
 
-        add_aviary_input(self, Aircraft.Nacelle.AVG_LENGTH, shape=num_engine_type)
+        add_aviary_input(self, Aircraft.Nacelle.AVG_LENGTH, shape=num_engine_type, units='ft')
 
         add_aviary_input(self, Aircraft.HorizontalTail.AREA, units='ft**2')
 
@@ -652,8 +758,10 @@ class AeroGeom(om.ExplicitComponent):
 
         add_aviary_input(self, Aircraft.Strut.CHORD, units='ft')
 
-        self.add_input('interference_independent_of_shielded_area', units='unitless')
-        (self.add_input('drag_loss_due_to_shielded_wing_area', units='unitless'),)
+        self.add_input(
+            'interference_independent_of_shielded_area', units='unitless'
+        )  # Is this used?
+        (self.add_input('drag_loss_due_to_shielded_wing_area', units='unitless'),)  # Is this used?
         self.add_input(
             'body_form_factor', units='unitless', desc='FFFUS: fuselage form drag factor'
         )
@@ -922,77 +1030,6 @@ class AeroGeom(om.ExplicitComponent):
         outputs['SA6'] = sa6
         outputs['SA7'] = sa7
         outputs['cf'] = cf
-
-
-class UFac(om.ExplicitComponent):
-    def initialize(self):
-        self.options.declare('num_nodes', default=1, types=int)
-        add_aviary_option(self, Aircraft.Design.TYPE)
-        self.options.declare('smooth_ufac', default=True, types=bool)
-        self.options.declare('mu', default=100.0, types=float)
-
-    def setup(self):
-        nn = self.options['num_nodes']
-        self.add_input('lift_ratio', units='unitless', shape=nn, desc='BARL: Lift ratio')
-        self.add_input('bbar', units='unitless', desc='BBAR')
-        self.add_input('sigma', units='unitless')
-        self.add_input('sigstr', units='unitless')
-        self.add_output('ufac', shape=nn, units='unitless')
-
-    def setup_partials(self):
-        self.declare_partials(
-            'ufac',
-            [
-                'lift_ratio',
-                'bbar',
-                'sigma',
-                'sigstr',
-            ],
-        )
-
-    def compute(self, inputs, outputs):
-        design_type = self.options[Aircraft.Design.TYPE]
-        lift_ratio = inputs['lift_ratio']
-        bbar = inputs['bbar']
-        sigma = inputs['sigma']
-        sigstr = inputs['sigstr']
-
-        ufac = (1 + lift_ratio) ** 2 / (
-            sigstr * (lift_ratio / bbar) ** 2 + 2 * sigma * lift_ratio / bbar + 1
-        )
-        if design_type is AircraftTypes.BLENDED_WING_BODY:
-            # For BWB, GASP has to limit UFAC under 0.975 for good result
-            smooth = self.options['smooth_ufac']
-            if smooth:
-                mu = self.options['mu']
-                ufac = smooth_min(ufac, 0.975, mu)
-            else:
-                ufac = np.minimum(ufac, 0.975)
-        outputs['ufac'] = ufac
-
-    def compute_partials(self, inputs, J):
-        design_type = self.options[Aircraft.Design.TYPE]
-        lift_ratio = inputs['lift_ratio']
-        bbar = inputs['bbar']
-        sigma = inputs['sigma']
-        sigstr = inputs['sigstr']
-
-        numer = (1 + lift_ratio) ** 2
-        denom = sigstr * (lift_ratio / bbar) ** 2 + 2 * sigma * lift_ratio / bbar + 1
-
-        # w.r.t. lift_ratio
-        dnumer = 2 * (1 + lift_ratio) / bbar
-        ddenom = 2 * sigstr * (lift_ratio / bbar) / bbar + 2 * sigma / bbar
-        dufac_dlift_ratio = (dnumer * denom - numer * ddenom) / denom**2
-
-        dufac_dsigstr = numer * (lift_ratio / bbar) ** 2 / denom**2
-        dufac_dsigma = numer * 2 * lift_ratio / bbar / denom**2
-        dufac_dbbar = -numer * 2 * (sigstr * lift_ratio / bbar + sigma) * lift_ratio / bbar**2
-
-        J['ufac', 'lift_ratio'] = dufac_dlift_ratio
-        J['ufac', 'bbar'] = dufac_dbbar
-        J['ufac', 'sigma'] = dufac_dsigma
-        J['ufac', 'sigstr'] = dufac_dsigstr
 
 
 class AeroSetup(om.Group):
