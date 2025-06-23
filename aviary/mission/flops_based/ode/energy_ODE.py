@@ -59,7 +59,7 @@ class EnergyODE(_BaseODE):
             name='velocity_rate_comp',
             subsys=om.ExecComp(
                 'velocity_rate = mach_rate * sos',
-                mach_rate={'units': 'unitless/s', 'shape': (nn,)},
+                mach_rate={'units': '1/s', 'shape': (nn,)},
                 sos={'units': 'm/s', 'shape': (nn,)},
                 velocity_rate={'units': 'm/s**2', 'shape': (nn,)},
                 has_diag_partials=True,
