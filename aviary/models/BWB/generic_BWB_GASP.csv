@@ -17,6 +17,7 @@ aircraft:crew_and_payload:design:num_first_class,11,unitless
 aircraft:crew_and_payload:design:num_passengers,150,unitless
 aircraft:crew_and_payload:passenger_mass_with_bags,225,lbm
 aircraft:crew_and_payload:passenger_service_mass_per_passenger,6,lbm
+aircraft:crew_and_payload:uld_mass_per_passenger,0.0667,lbm
 aircraft:crew_and_payload:water_mass_per_occupant,3,lbm
 aircraft:design:cg_delta,0.25,unitless
 aircraft:design:cockpit_control_mass_coefficient,16.5,unitless
@@ -70,7 +71,6 @@ aircraft:fuselage:seat_width,21,inch
 aircraft:fuselage:tail_fineness,1.75,unitless
 aircraft:fuselage:wetted_area_ratio_aftbody_to_total,0.2,unitless
 aircraft:fuselage:wetted_area_scaler,1.0001,unitless
-aircraft:horizontal_tail:area,0,ft**2
 aircraft:horizontal_tail:aspect_ratio,1.705,unitless
 aircraft:horizontal_tail:mass_coefficient,0.124,unitless
 aircraft:horizontal_tail:moment_ratio,0.5463,unitless
@@ -103,7 +103,6 @@ aircraft:strut:dimensional_location_specified,False,unitless
 aircraft:strut:fuselage_interference_factor,0,unitless
 aircraft:strut:mass_coefficient,0,unitless
 aircraft:strut:thickness_to_chord,0,unitless
-aircraft:vertical_tail:area,0,ft**2
 aircraft:vertical_tail:aspect_ratio,1.705,unitless
 aircraft:vertical_tail:mass_coefficient,0.119,unitless
 aircraft:vertical_tail:moment_ratio,5.2615,unitless
