@@ -62,7 +62,7 @@ class TwoDOFPhaseOptions(AviaryOptionsDictionary):
         }
         self.add_control_options('mach', units='unitless', defaults=defaults)
 
-        # The options below have not yet been revamped.
+        self.add_time_options(units='ft')
 
         self.declare(
             'reserve',
@@ -82,29 +82,7 @@ class TwoDOFPhaseOptions(AviaryOptionsDictionary):
             'be positive.',
         )
 
-        self.declare(
-            'time_duration',
-            types=tuple,
-            default=None,
-            units='s',
-            desc='The amount of time taken by this phase added as a constraint.',
-        )
-
-        self.declare(
-            name='polynomial_control_order',
-            types=int,
-            default=3,
-            desc='The order of the polynomial fit to control values. '
-            'Only used if polynomial_control = True',
-        )
-
-        self.declare(
-            name='use_polynomial_control',
-            types=bool,
-            default=True,
-            desc='Set fo True to use polynomial controls in this phase, which smooths the '
-            'control inputs.',
-        )
+        # The options below have not yet been revamped.
 
         self.declare(
             name='ground_roll',
@@ -112,13 +90,6 @@ class TwoDOFPhaseOptions(AviaryOptionsDictionary):
             default=False,
             desc='Set to True only for phases where the aircraft is rolling on the ground. '
             'All other phases of flight (climb, cruise, descent) this must be set to False.',
-        )
-
-        self.declare(
-            name='input_initial',
-            types=bool,
-            default=False,
-            desc='Links all states (mass, distance) to a calculation external to this phase.',
         )
 
         self.declare(
@@ -135,38 +106,6 @@ class TwoDOFPhaseOptions(AviaryOptionsDictionary):
             default=False,
             desc='If True, the time duration of the phase is not treated as a design '
             'variable for the optimization problem.',
-        )
-
-        self.declare(
-            name='mach_optimize',
-            types=bool,
-            default=False,
-            desc='Adds the Mach number as a design variable controlled by the optimizer.',
-        )
-
-        self.declare(
-            name='altitude_optimize',
-            types=bool,
-            default=False,
-            desc='Adds the Altitude as a design variable controlled by the optimizer.',
-        )
-
-        self.declare(
-            'time_initial_bounds',
-            types=tuple,
-            default=(None, None),
-            units='ft',
-            desc='Lower and upper bounds on the integration variable, which is speed.',
-        )
-
-        self.declare(
-            name='time_duration_bounds',
-            types=tuple,
-            default=(None, None),
-            units='ft',
-            desc='Lower and upper bounds on the integration variable, which is speed. It is'
-            'in the form of a nested tuple: '
-            'i.e. ((20, 36), "min") This constrains the duration to be between 20 and 36 min.',
         )
 
         self.declare(
@@ -225,35 +164,12 @@ class TwoDOFPhaseOptions(AviaryOptionsDictionary):
         )
 
         self.declare(
-            name='distance_solve_segments',
-            types=bool,
-            default=False,
-            desc='if True, use a nonlinear solver to converge the distance state variable to '
-            'the desired value. Otherwise uses the optimizer to converge the distance state.',
-        )
-
-        self.declare(
             name='constraints',
             types=dict,
             default={},
             desc="Add in custom constraints i.e. 'flight_path_angle': {'equals': -3., "
             "'loc': 'initial', 'units': 'deg', 'type': 'boundary',}. For more details see "
             '_add_user_defined_constraints().',
-        )
-
-        self.declare(
-            name='time_initial_ref',
-            default=100.0,
-            units='ft',
-            desc='Scale factor initial ref for the phase integration variable, which is range.',
-        )
-
-        self.declare(
-            name='time_duration_ref',
-            types=tuple,
-            default=1000.0,
-            units='ft',
-            desc='Scale factor duration ref for the phase integration variable, which is range.',
         )
 
         self.declare(
@@ -275,14 +191,6 @@ class TwoDOFPhaseOptions(AviaryOptionsDictionary):
             types=bool,
             default=False,
             desc='Set to true to use clean aero with no ground effects.',
-        )
-
-        self.declare(
-            name='ground_roll',
-            types=bool,
-            default=False,
-            desc='Set to True only for phases where the aircraft is rolling on the ground. '
-            'All other phases of flight (climb, cruise, descent) this must be set to False.',
         )
 
 
