@@ -11,9 +11,10 @@ from aviary.subsystems.propulsion.propeller.hamilton_standard import (
 )
 from aviary.subsystems.propulsion.propeller.propeller_map import PropellerMap
 from aviary.utils.aviary_values import AviaryValues
-from aviary.utils.functions import smooth_min, d_smooth_min
+from aviary.utils.functions import d_smooth_min, smooth_min
+from aviary.utils.named_values import NamedValues
 from aviary.variable_info.functions import add_aviary_input, add_aviary_option, add_aviary_output
-from aviary.variable_info.variables import Aircraft, Dynamic, Settings
+from aviary.variable_info.variables import Aircraft, Dynamic
 
 
 class TipSpeed(om.ExplicitComponent):
@@ -395,6 +396,13 @@ class PropellerPerformance(om.Group):
             desc='collection of Aircraft/Mission specific options',
         )
 
+        self.options.declare(
+            'propeller_data',
+            types=NamedValues,
+            default=None,
+            desc='propeller performance data to be used instead of data file (optional)',
+        )
+
         add_aviary_option(self, Aircraft.Engine.Propeller.COMPUTE_INSTALLATION_LOSS)
         add_aviary_option(self, Aircraft.Engine.Propeller.DATA_FILE)
 
@@ -402,6 +410,7 @@ class PropellerPerformance(om.Group):
         options = self.options
         nn = options['num_nodes']
         aviary_options = options['aviary_options']
+        data = options['propeller_data']
 
         # TODO options are lists here when using full Aviary problem - need
         # further investigation
@@ -410,14 +419,17 @@ class PropellerPerformance(om.Group):
         if isinstance(compute_installation_loss, (list, np.ndarray)):
             compute_installation_loss = compute_installation_loss[0]
 
-        try:
-            prop_file_path = aviary_options.get_val(Aircraft.Engine.Propeller.DATA_FILE)
-        except KeyError:
-            use_propeller_map = False
+        if data is None:
+            try:
+                prop_file_path = aviary_options.get_val(Aircraft.Engine.Propeller.DATA_FILE)
+            except KeyError:
+                use_propeller_map = False
+            else:
+                use_propeller_map = True
+                if isinstance(prop_file_path, (list, np.ndarray)):
+                    prop_file_path = prop_file_path[0]
         else:
             use_propeller_map = True
-            if isinstance(prop_file_path, (list, np.ndarray)):
-                prop_file_path = prop_file_path[0]
 
         # compute the propeller tip speed based on the input RPM and diameter of the propeller
         # NOTE allows for violation of tip speed limits
@@ -459,7 +471,7 @@ class PropellerPerformance(om.Group):
         )
 
         if use_propeller_map:
-            propeller_map = PropellerMap(num_nodes=nn)
+            propeller_map = PropellerMap(num_nodes=nn, propeller_data=data)
 
             self.add_subsystem(
                 name='propeller_map',

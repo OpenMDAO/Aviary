@@ -28,7 +28,7 @@ class TestPropellerMapConversion(unittest.TestCase):
         # Execute the conversion
         convert_propeller_map(input_file, output_file, round_data=True)
 
-    def compare_files(self, filepath, skip_list=['# created']):
+    def compare_files(self, filepath, skip_list=[]):
         """
         Compares the converted file with a validation file.
 
@@ -63,12 +63,12 @@ class TestPropellerMapConversion(unittest.TestCase):
     def test_propfan_conversion(self):
         filename = 'PropFan.map'
         self.prepare_and_run(filename, data_format=PropMapType.GASP)
-        self.compare_files(filename)
+        self.compare_files(filename, skip_list=['# created'])
 
     def test_GA_conversion(self):
         filename = 'general_aviation.map'
         self.prepare_and_run(filename, data_format=PropMapType.GASP)
-        self.compare_files(filename)
+        self.compare_files(filename, skip_list=['# created'])
 
 
 if __name__ == '__main__':
