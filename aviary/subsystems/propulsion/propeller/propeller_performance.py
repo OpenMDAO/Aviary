@@ -11,8 +11,8 @@ from aviary.subsystems.propulsion.propeller.hamilton_standard import (
 )
 from aviary.subsystems.propulsion.propeller.propeller_map import PropellerMap
 from aviary.utils.aviary_values import AviaryValues
-from aviary.utils.functions import smooth_min, d_smooth_min
-from aviary.variable_info.enums import OutMachType
+from aviary.utils.functions import d_smooth_min, smooth_min
+from aviary.utils.named_values import NamedValues
 from aviary.variable_info.functions import add_aviary_input, add_aviary_option, add_aviary_output
 from aviary.variable_info.variables import Aircraft, Dynamic
 
@@ -155,253 +155,6 @@ class TipSpeed(om.ExplicitComponent):
         J[Dynamic.Vehicle.Propulsion.PROPELLER_TIP_SPEED, Aircraft.Engine.Propeller.DIAMETER] = (
             rpm * math.pi / 60
         )
-
-
-class OutMachs(om.ExplicitComponent):
-    """
-    This utility sets up relations among helical Mach, free stream Mach and propeller tip Mach.
-    helical_mach = sqrt(mach^2 + tip_mach^2).
-    It computes the value of one from the inputs of the other two.
-    """
-
-    def initialize(self):
-        self.options.declare('num_nodes', types=int)
-        self.options.declare(
-            'output_mach_type',
-            default=OutMachType.HELICAL_MACH,
-            types=OutMachType,
-            desc='get one type of Mach number from the other two',
-        )
-
-    def setup(self):
-        nn = self.options['num_nodes']
-        out_type = self.options['output_mach_type']
-        arange = np.arange(self.options['num_nodes'])
-
-        if out_type is OutMachType.HELICAL_MACH:
-            self.add_input(
-                'mach',
-                val=np.zeros(nn),
-                units='unitless',
-                desc='Mach number',
-            )
-            self.add_input(
-                'tip_mach',
-                val=np.zeros(nn),
-                units='unitless',
-                desc='tip Mach number of a blade',
-            )
-            self.add_output(
-                'helical_mach',
-                val=np.zeros(nn),
-                units='unitless',
-                desc='helical Mach number',
-            )
-            self.declare_partials('helical_mach', ['tip_mach', 'mach'], rows=arange, cols=arange)
-        elif out_type is OutMachType.MACH:
-            self.add_input(
-                'tip_mach',
-                val=np.zeros(nn),
-                units='unitless',
-                desc='tip Mach number of a blade',
-            )
-            self.add_input(
-                'helical_mach',
-                val=np.zeros(nn),
-                units='unitless',
-                desc='helical Mach number',
-            )
-            self.add_output(
-                'mach',
-                val=np.zeros(nn),
-                units='unitless',
-                desc='Mach number',
-            )
-            self.declare_partials('mach', ['tip_mach', 'helical_mach'], rows=arange, cols=arange)
-        elif out_type is OutMachType.TIP_MACH:
-            self.add_input(
-                'mach',
-                val=np.zeros(nn),
-                units='unitless',
-                desc='Mach number',
-            )
-            self.add_input(
-                'helical_mach',
-                val=np.zeros(nn),
-                units='unitless',
-                desc='helical Mach number',
-            )
-            self.add_output(
-                'tip_mach',
-                val=np.zeros(nn),
-                units='unitless',
-                desc='tip Mach number of a blade',
-            )
-            self.declare_partials('tip_mach', ['mach', 'helical_mach'], rows=arange, cols=arange)
-
-    def compute(self, inputs, outputs):
-        out_type = self.options['output_mach_type']
-
-        if out_type is OutMachType.HELICAL_MACH:
-            mach = inputs['mach']
-            tip_mach = inputs['tip_mach']
-            outputs['helical_mach'] = np.sqrt(mach * mach + tip_mach * tip_mach)
-        elif out_type is OutMachType.MACH:
-            tip_mach = inputs['tip_mach']
-            helical_mach = inputs['helical_mach']
-            outputs['mach'] = np.sqrt(helical_mach * helical_mach - tip_mach * tip_mach)
-        elif out_type is OutMachType.TIP_MACH:
-            mach = inputs['mach']
-            helical_mach = inputs['helical_mach']
-            outputs['tip_mach'] = np.sqrt(helical_mach * helical_mach - mach * mach)
-
-    def compute_partials(self, inputs, J):
-        out_type = self.options['output_mach_type']
-
-        if out_type is OutMachType.HELICAL_MACH:
-            mach = inputs['mach']
-            tip_mach = inputs['tip_mach']
-            J['helical_mach', 'mach'] = mach / np.sqrt(mach * mach + tip_mach * tip_mach)
-            J['helical_mach', 'tip_mach'] = tip_mach / np.sqrt(mach * mach + tip_mach * tip_mach)
-        elif out_type is OutMachType.MACH:
-            tip_mach = inputs['tip_mach']
-            helical_mach = inputs['helical_mach']
-            J['mach', 'helical_mach'] = helical_mach / np.sqrt(
-                helical_mach * helical_mach - tip_mach * tip_mach
-            )
-            J['mach', 'tip_mach'] = -tip_mach / np.sqrt(
-                helical_mach * helical_mach - tip_mach * tip_mach
-            )
-        elif out_type is OutMachType.TIP_MACH:
-            mach = inputs['mach']
-            helical_mach = inputs['helical_mach']
-            J['tip_mach', 'helical_mach'] = helical_mach / np.sqrt(
-                helical_mach * helical_mach - mach * mach
-            )
-            J['tip_mach', 'mach'] = -mach / np.sqrt(helical_mach * helical_mach - mach * mach)
-
-
-class AreaSquareRatio(om.ExplicitComponent):
-    """Compute the area ratio nacelle and propeller with a maximum 0.5."""
-
-    def initialize(self):
-        self.options.declare('num_nodes', types=int)
-        self.options.declare('smooth_sqa', default=True, types=bool)
-        self.options.declare('mu', default=100.0, types=float)
-
-    def setup(self):
-        nn = self.options['num_nodes']
-        arange = np.arange(self.options['num_nodes'])
-        self.add_input('DiamNac', val=0.0, units='ft')
-        self.add_input('DiamProp', val=0.0, units='ft')
-
-        self.add_output('sqa_array', val=np.zeros(nn), units='unitless')
-
-        self.declare_partials(
-            'sqa_array',
-            [
-                'DiamNac',
-                'DiamProp',
-            ],
-            rows=arange,
-            cols=np.zeros(nn),
-        )
-
-    def compute(self, inputs, outputs):
-        nn = self.options['num_nodes']
-        diamNac = inputs['DiamNac']
-        diamProp = inputs['DiamProp']
-        sqa = diamNac**2 / diamProp**2
-
-        smooth = self.options['smooth_sqa']
-        if smooth:
-            mu = self.options['mu']
-            sqa = smooth_min(sqa, 0.50, mu)
-        else:
-            sqa = np.minimum(sqa, 0.50)
-        outputs['sqa_array'] = np.ones(nn) * sqa
-
-    def compute_partials(self, inputs, partials):
-        diamNac = inputs['DiamNac']
-        diamProp = inputs['DiamProp']
-        sqa = diamNac**2 / diamProp**2
-
-        dSQA_dNacDiam = 2 * diamNac / diamProp**2
-        dSQA_dPropDiam = -2 * diamNac**2 / diamProp**3
-
-        smooth = self.options['smooth_sqa']
-        if smooth:
-            mu = self.options['mu']
-            dSQA_dNacDiam = d_smooth_min(sqa, 0.50, mu) * dSQA_dNacDiam
-            dSQA_dPropDiam = d_smooth_min(sqa, 0.50, mu) * dSQA_dPropDiam
-        else:
-            dSQA_dNacDiam = np.piecewise(sqa, [sqa < 0.5, sqa >= 0.5], [1, 0]) * dSQA_dNacDiam
-            dSQA_dPropDiam = np.piecewise(sqa, [sqa < 0.5, sqa >= 0.5], [1, 0]) * dSQA_dPropDiam
-        partials['sqa_array', 'DiamNac'] = dSQA_dNacDiam
-        partials['sqa_array', 'DiamProp'] = dSQA_dPropDiam
-
-
-class AdvanceRatio(om.ExplicitComponent):
-    """Compute the advance ratio jze with a maximum 5.0."""
-
-    def initialize(self):
-        self.options.declare(
-            'num_nodes', types=int, default=1, desc='Number of nodes to be evaluated in the RHS'
-        )
-        self.options.declare('smooth_zje', default=True, types=bool)
-        self.options.declare('mu', default=100.0, types=float)
-
-    def setup(self):
-        nn = self.options['num_nodes']
-        range = np.arange(nn)
-        self.add_input('vtas', val=np.zeros(nn), units='ft/s')
-        self.add_input('tipspd', val=np.zeros(nn), units='ft/s')
-        self.add_input('sqa_array', val=np.zeros(nn), units='unitless')
-        self.add_output('equiv_adv_ratio', val=np.zeros(nn), units='unitless')
-
-        self.declare_partials('equiv_adv_ratio', ['vtas', 'tipspd'], rows=range, cols=range)
-
-        self.declare_partials('equiv_adv_ratio', ['sqa_array'], rows=range, cols=range)
-
-    def compute(self, inputs, outputs):
-        nn = self.options['num_nodes']
-        vtas = inputs['vtas']
-        tipspd = inputs['tipspd']
-        sqa_array = inputs['sqa_array']
-        equiv_adv_ratio = (1.0 - 0.254 * sqa_array) * math.pi * vtas / tipspd
-
-        smooth = self.options['smooth_zje']
-        if smooth:
-            mu = self.options['mu']
-            jze = smooth_min(equiv_adv_ratio, np.ones(nn) * 5.0, mu)
-        else:
-            jze = np.minimum(equiv_adv_ratio, np.ones(nn) * 5.0)
-        outputs['equiv_adv_ratio'] = jze
-
-    def compute_partials(self, inputs, partials):
-        nn = self.options['num_nodes']
-        vtas = inputs['vtas']
-        tipspd = inputs['tipspd']
-        sqa_array = inputs['sqa_array']
-        jze = (1.0 - 0.254 * sqa_array) * math.pi * vtas / tipspd
-
-        djze_dsqa = -0.254 * math.pi * vtas / tipspd
-        djze_dvtas = (1.0 - 0.254 * sqa_array) * math.pi / tipspd
-        djze_dtipspd = -(1.0 - 0.254 * sqa_array) * math.pi * vtas / tipspd**2
-
-        smooth = self.options['smooth_zje']
-        if smooth:
-            mu = self.options['mu']
-            djze_dsqa = d_smooth_min(jze, np.ones(nn) * 5.0, mu) * djze_dsqa
-            djze_dvtas = d_smooth_min(jze, np.ones(nn) * 5.0, mu) * djze_dvtas
-            djze_dtipspd = d_smooth_min(jze, np.ones(nn) * 5.0, mu) * djze_dtipspd
-        else:
-            djze_dsqa = np.piecewise(jze, [jze < 5, jze >= 5], [1, 0]) * djze_dsqa
-            djze_dvtas = np.piecewise(jze, [jze < 5, jze >= 5], [1, 0]) * djze_dvtas
-            djze_dtipspd = np.piecewise(jze, [jze < 5, jze >= 5], [1, 0]) * djze_dtipspd
-        partials['equiv_adv_ratio', 'sqa_array'] = djze_dsqa
-        partials['equiv_adv_ratio', 'vtas'] = djze_dvtas
-        partials['equiv_adv_ratio', 'tipspd'] = djze_dtipspd
 
 
 class AreaSquareRatio(om.ExplicitComponent):
@@ -643,6 +396,13 @@ class PropellerPerformance(om.Group):
             desc='collection of Aircraft/Mission specific options',
         )
 
+        self.options.declare(
+            'propeller_data',
+            types=NamedValues,
+            default=None,
+            desc='propeller performance data to be used instead of data file (optional)',
+        )
+
         add_aviary_option(self, Aircraft.Engine.Propeller.COMPUTE_INSTALLATION_LOSS)
         add_aviary_option(self, Aircraft.Engine.Propeller.DATA_FILE)
 
@@ -650,6 +410,7 @@ class PropellerPerformance(om.Group):
         options = self.options
         nn = options['num_nodes']
         aviary_options = options['aviary_options']
+        data = options['propeller_data']
 
         # TODO options are lists here when using full Aviary problem - need
         # further investigation
@@ -658,12 +419,17 @@ class PropellerPerformance(om.Group):
         if isinstance(compute_installation_loss, (list, np.ndarray)):
             compute_installation_loss = compute_installation_loss[0]
 
-        try:
-            prop_file_path = aviary_options.get_val(Aircraft.Engine.Propeller.DATA_FILE)
-        except KeyError:
-            prop_file_path = None
-        if isinstance(prop_file_path, (list, np.ndarray)):
-            prop_file_path = prop_file_path[0]
+        if data is None:
+            try:
+                prop_file_path = aviary_options.get_val(Aircraft.Engine.Propeller.DATA_FILE)
+            except KeyError:
+                use_propeller_map = False
+            else:
+                use_propeller_map = True
+                if isinstance(prop_file_path, (list, np.ndarray)):
+                    prop_file_path = prop_file_path[0]
+        else:
+            use_propeller_map = True
 
         # compute the propeller tip speed based on the input RPM and diameter of the propeller
         # NOTE allows for violation of tip speed limits
@@ -704,39 +470,13 @@ class PropellerPerformance(om.Group):
             ],
         )
 
-        if prop_file_path is not None:
-            prop_model = PropellerMap('prop', aviary_options)
-            mach_type = prop_model.read_and_set_mach_type(prop_file_path)
-            if mach_type == OutMachType.HELICAL_MACH:
-                self.add_subsystem(
-                    name='selectedMach',
-                    subsys=OutMachs(num_nodes=nn, output_mach_type=OutMachType.HELICAL_MACH),
-                    promotes_inputs=[('mach', Dynamic.Atmosphere.MACH), 'tip_mach'],
-                    promotes_outputs=[('helical_mach', 'selected_mach')],
-                )
-            else:
-                self.add_subsystem(
-                    name='selectedMach',
-                    subsys=om.ExecComp(
-                        'selected_mach = mach',
-                        mach={'units': 'unitless', 'shape': nn},
-                        selected_mach={'units': 'unitless', 'shape': nn},
-                        has_diag_partials=True,
-                    ),
-                    promotes_inputs=[
-                        ('mach', Dynamic.Atmosphere.MACH),
-                    ],
-                    promotes_outputs=['selected_mach'],
-                )
-            propeller = prop_model.build_propeller_interpolator(nn, aviary_options)
+        if use_propeller_map:
+            propeller_map = PropellerMap(num_nodes=nn, propeller_data=data)
+
             self.add_subsystem(
                 name='propeller_map',
-                subsys=propeller,
-                promotes_inputs=[
-                    'selected_mach',
-                    'power_coefficient',
-                    'advance_ratio',
-                ],
+                subsys=propeller_map,
+                promotes_inputs=['*'],
                 promotes_outputs=[
                     'thrust_coefficient',
                 ],
