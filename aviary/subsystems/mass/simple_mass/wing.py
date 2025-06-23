@@ -2,7 +2,6 @@ import openmdao.api as om
 import openmdao.jax as omj
 import numpy as np
 import jax.numpy as jnp
-import jax
 import os
 from scipy.interpolate import CubicSpline
 import jax.scipy.integrate as jint
