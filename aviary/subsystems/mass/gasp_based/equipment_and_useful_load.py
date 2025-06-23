@@ -1040,8 +1040,8 @@ class UsefulLoadMass(om.ExplicitComponent):
             dtrapped_fuel_wt_dfuel_vol_frac = 0.0
 
         doil_wt_dFnSLS = num_engines * doil_per_eng_wt_dFn_SLS
-
         duseful_mass_dFn_SLS = doil_wt_dFnSLS / GRAV_ENGLISH_LBM
+
         duseful_mass_dmass_coeff_8 = dservice_wt_dmass_coeff_8 / GRAV_ENGLISH_LBM
         duseful_mass_dmass_coeff_9 = dwater_wt_dmass_coeff_9 / GRAV_ENGLISH_LBM
         duseful_mass_dmass_coeff_10 = demergency_wt_dmass_coeff_10 / GRAV_ENGLISH_LBM
