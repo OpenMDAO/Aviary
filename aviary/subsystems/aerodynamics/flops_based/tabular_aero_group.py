@@ -109,7 +109,7 @@ class TabularAeroGroup(om.Group):
             method = '2D-lagrange3'
 
         CD0_interp = build_data_interpolator(
-            nn,
+            num_nodes=nn,
             interpolator_data=CD0_table,
             interpolator_outputs={'zero_lift_drag_coefficient': 'unitless'},
             method=method,
@@ -118,7 +118,7 @@ class TabularAeroGroup(om.Group):
         )
 
         CDI_interp = build_data_interpolator(
-            nn,
+            num_nodes=nn,
             interpolator_data=CDI_table,
             interpolator_outputs={'lift_dependent_drag_coefficient': 'unitless'},
             method=method,

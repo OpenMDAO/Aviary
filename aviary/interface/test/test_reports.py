@@ -40,7 +40,7 @@ class TestReports(unittest.TestCase):
             'electric_power_in_total (kW)',
             'fuel_flow_rate_negative_total (lbm/h)',
             'mach (unitless)',
-            'mach_rate (unitless/s)',
+            'mach_rate (1/s)',
             'mass (kg)',
             'specific_energy_rate_excess (m/s)',
             'throttle (unitless)',
