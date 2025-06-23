@@ -17,7 +17,7 @@ from aviary.variable_info.variables import Aircraft, Dynamic
 
 class GroundEffect(om.ExplicitComponent):
     """
-    Define a component for adjusting lift and drag to accomodate ground effect.
+    Define a component for adjusting lift and drag to accommodate ground effect.
 
     Note
     ----

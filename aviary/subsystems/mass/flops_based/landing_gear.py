@@ -305,7 +305,7 @@ class MainGearLength(om.ExplicitComponent):
         # TODO temp using first engine, heterogeneous engines not supported
         num_wing_eng = self.options[Aircraft.Engine.NUM_WING_ENGINES][0]
 
-        # TODO: high engine-count configuation.
+        # TODO: high engine-count configuration.
         y_eng_aft = 0
 
         if num_wing_eng > 0:

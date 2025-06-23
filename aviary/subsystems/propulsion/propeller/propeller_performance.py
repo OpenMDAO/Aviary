@@ -11,48 +11,10 @@ from aviary.subsystems.propulsion.propeller.hamilton_standard import (
 )
 from aviary.subsystems.propulsion.propeller.propeller_map import PropellerMap
 from aviary.utils.aviary_values import AviaryValues
+from aviary.utils.functions import smooth_min, d_smooth_min
 from aviary.variable_info.enums import OutMachType
 from aviary.variable_info.functions import add_aviary_input, add_aviary_option, add_aviary_output
 from aviary.variable_info.variables import Aircraft, Dynamic
-
-
-def smooth_min(x, b, alpha=100.0):
-    """
-    Smooth approximation of the min function using the log-sum-exp trick.
-
-    Parameters
-    ----------
-    x (float or array-like): First value.
-    b (float or array-like): Second value.
-    alpha (float): The smoothing factor. Higher values make it closer to the true minimum. Try between 75 and 275.
-
-    Returns
-    -------
-    float or array-like: The smooth approximation of min(x, b).
-    """
-    sum_log_exp = np.log(np.exp(np.multiply(-alpha, x)) + np.exp(np.multiply(-alpha, b)))
-    rv = -(1 / alpha) * sum_log_exp
-    return rv
-
-
-def d_smooth_min(x, b, alpha=100.0):
-    """
-    Derivative of function smooth_min(x).
-
-    Parameters
-    ----------
-    x (float or array-like): First value.
-    b (float or array-like): Second value.
-    alpha (float): The smoothing factor. Higher values make it closer to the true minimum. Try between 75 and 275.
-
-    Returns
-    -------
-    float or array-like: The smooth approximation of derivative of min(x, b).
-    """
-    d_sum_log_exp = np.exp(np.multiply(-alpha, x)) / (
-        np.exp(np.multiply(-alpha, x)) + np.exp(np.multiply(-alpha, b))
-    )
-    return d_sum_log_exp
 
 
 class TipSpeed(om.ExplicitComponent):
@@ -144,7 +106,7 @@ class TipSpeed(om.ExplicitComponent):
         diam = inputs[Aircraft.Engine.Propeller.DIAMETER]
 
         tip_speed_mach_limit = ((sos * tip_mach_max) ** 2 - velocity**2) ** 0.5
-        # use KSfunction for smooth derivitive across minimum
+        # use KSfunction for smooth derivative across minimum
         tip_speed_max_nn = np.tile(tip_speed_max, num_nodes)
         propeller_tip_speed_limit = -KSfunction.compute(
             -np.stack((tip_speed_max_nn, tip_speed_mach_limit), axis=1)
@@ -325,7 +287,7 @@ class AreaSquareRatio(om.ExplicitComponent):
     def initialize(self):
         self.options.declare('num_nodes', types=int)
         self.options.declare('smooth_sqa', default=True, types=bool)
-        self.options.declare('alpha', default=100.0, types=float)
+        self.options.declare('mu', default=100.0, types=float)
 
     def setup(self):
         nn = self.options['num_nodes']
@@ -353,8 +315,8 @@ class AreaSquareRatio(om.ExplicitComponent):
 
         smooth = self.options['smooth_sqa']
         if smooth:
-            alpha = self.options['alpha']
-            sqa = smooth_min(sqa, 0.50, alpha)
+            mu = self.options['mu']
+            sqa = smooth_min(sqa, 0.50, mu)
         else:
             sqa = np.minimum(sqa, 0.50)
         outputs['sqa_array'] = np.ones(nn) * sqa
@@ -369,9 +331,9 @@ class AreaSquareRatio(om.ExplicitComponent):
 
         smooth = self.options['smooth_sqa']
         if smooth:
-            alpha = self.options['alpha']
-            dSQA_dNacDiam = d_smooth_min(sqa, 0.50, alpha) * dSQA_dNacDiam
-            dSQA_dPropDiam = d_smooth_min(sqa, 0.50, alpha) * dSQA_dPropDiam
+            mu = self.options['mu']
+            dSQA_dNacDiam = d_smooth_min(sqa, 0.50, mu) * dSQA_dNacDiam
+            dSQA_dPropDiam = d_smooth_min(sqa, 0.50, mu) * dSQA_dPropDiam
         else:
             dSQA_dNacDiam = np.piecewise(sqa, [sqa < 0.5, sqa >= 0.5], [1, 0]) * dSQA_dNacDiam
             dSQA_dPropDiam = np.piecewise(sqa, [sqa < 0.5, sqa >= 0.5], [1, 0]) * dSQA_dPropDiam
@@ -387,7 +349,7 @@ class AdvanceRatio(om.ExplicitComponent):
             'num_nodes', types=int, default=1, desc='Number of nodes to be evaluated in the RHS'
         )
         self.options.declare('smooth_zje', default=True, types=bool)
-        self.options.declare('alpha', default=100.0, types=float)
+        self.options.declare('mu', default=100.0, types=float)
 
     def setup(self):
         nn = self.options['num_nodes']
@@ -410,8 +372,8 @@ class AdvanceRatio(om.ExplicitComponent):
 
         smooth = self.options['smooth_zje']
         if smooth:
-            alpha = self.options['alpha']
-            jze = smooth_min(equiv_adv_ratio, np.ones(nn) * 5.0, alpha)
+            mu = self.options['mu']
+            jze = smooth_min(equiv_adv_ratio, np.ones(nn) * 5.0, mu)
         else:
             jze = np.minimum(equiv_adv_ratio, np.ones(nn) * 5.0)
         outputs['equiv_adv_ratio'] = jze
@@ -429,10 +391,10 @@ class AdvanceRatio(om.ExplicitComponent):
 
         smooth = self.options['smooth_zje']
         if smooth:
-            alpha = self.options['alpha']
-            djze_dsqa = d_smooth_min(jze, np.ones(nn) * 5.0, alpha) * djze_dsqa
-            djze_dvtas = d_smooth_min(jze, np.ones(nn) * 5.0, alpha) * djze_dvtas
-            djze_dtipspd = d_smooth_min(jze, np.ones(nn) * 5.0, alpha) * djze_dtipspd
+            mu = self.options['mu']
+            djze_dsqa = d_smooth_min(jze, np.ones(nn) * 5.0, mu) * djze_dsqa
+            djze_dvtas = d_smooth_min(jze, np.ones(nn) * 5.0, mu) * djze_dvtas
+            djze_dtipspd = d_smooth_min(jze, np.ones(nn) * 5.0, mu) * djze_dtipspd
         else:
             djze_dsqa = np.piecewise(jze, [jze < 5, jze >= 5], [1, 0]) * djze_dsqa
             djze_dvtas = np.piecewise(jze, [jze < 5, jze >= 5], [1, 0]) * djze_dvtas
@@ -448,7 +410,7 @@ class AreaSquareRatio(om.ExplicitComponent):
     def initialize(self):
         self.options.declare('num_nodes', types=int)
         self.options.declare('smooth_sqa', default=True, types=bool)
-        self.options.declare('alpha', default=100.0, types=float)
+        self.options.declare('mu', default=100.0, types=float)
 
     def setup(self):
         nn = self.options['num_nodes']
@@ -476,8 +438,8 @@ class AreaSquareRatio(om.ExplicitComponent):
 
         smooth = self.options['smooth_sqa']
         if smooth:
-            alpha = self.options['alpha']
-            sqa = smooth_min(sqa, 0.50, alpha)
+            mu = self.options['mu']
+            sqa = smooth_min(sqa, 0.50, mu)
         else:
             sqa = np.minimum(sqa, 0.50)
         outputs['sqa_array'] = np.ones(nn) * sqa
@@ -492,9 +454,9 @@ class AreaSquareRatio(om.ExplicitComponent):
 
         smooth = self.options['smooth_sqa']
         if smooth:
-            alpha = self.options['alpha']
-            dSQA_dNacDiam = d_smooth_min(sqa, 0.50, alpha) * dSQA_dNacDiam
-            dSQA_dPropDiam = d_smooth_min(sqa, 0.50, alpha) * dSQA_dPropDiam
+            mu = self.options['mu']
+            dSQA_dNacDiam = d_smooth_min(sqa, 0.50, mu) * dSQA_dNacDiam
+            dSQA_dPropDiam = d_smooth_min(sqa, 0.50, mu) * dSQA_dPropDiam
         else:
             dSQA_dNacDiam = np.piecewise(sqa, [sqa < 0.5, sqa >= 0.5], [1, 0]) * dSQA_dNacDiam
             dSQA_dPropDiam = np.piecewise(sqa, [sqa < 0.5, sqa >= 0.5], [1, 0]) * dSQA_dPropDiam
@@ -510,7 +472,7 @@ class AdvanceRatio(om.ExplicitComponent):
             'num_nodes', types=int, default=1, desc='Number of nodes to be evaluated in the RHS'
         )
         self.options.declare('smooth_zje', default=True, types=bool)
-        self.options.declare('alpha', default=100.0, types=float)
+        self.options.declare('mu', default=100.0, types=float)
 
     def setup(self):
         nn = self.options['num_nodes']
@@ -533,8 +495,8 @@ class AdvanceRatio(om.ExplicitComponent):
 
         smooth = self.options['smooth_zje']
         if smooth:
-            alpha = self.options['alpha']
-            jze = smooth_min(equiv_adv_ratio, np.ones(nn) * 5.0, alpha)
+            mu = self.options['mu']
+            jze = smooth_min(equiv_adv_ratio, np.ones(nn) * 5.0, mu)
         else:
             jze = np.minimum(equiv_adv_ratio, np.ones(nn) * 5.0)
         outputs['equiv_adv_ratio'] = jze
@@ -552,10 +514,10 @@ class AdvanceRatio(om.ExplicitComponent):
 
         smooth = self.options['smooth_zje']
         if smooth:
-            alpha = self.options['alpha']
-            djze_dsqa = d_smooth_min(jze, np.ones(nn) * 5.0, alpha) * djze_dsqa
-            djze_dvtas = d_smooth_min(jze, np.ones(nn) * 5.0, alpha) * djze_dvtas
-            djze_dtipspd = d_smooth_min(jze, np.ones(nn) * 5.0, alpha) * djze_dtipspd
+            mu = self.options['mu']
+            djze_dsqa = d_smooth_min(jze, np.ones(nn) * 5.0, mu) * djze_dsqa
+            djze_dvtas = d_smooth_min(jze, np.ones(nn) * 5.0, mu) * djze_dvtas
+            djze_dtipspd = d_smooth_min(jze, np.ones(nn) * 5.0, mu) * djze_dtipspd
         else:
             djze_dsqa = np.piecewise(jze, [jze < 5, jze >= 5], [1, 0]) * djze_dsqa
             djze_dvtas = np.piecewise(jze, [jze < 5, jze >= 5], [1, 0]) * djze_dvtas
@@ -662,7 +624,7 @@ class PropellerPerformance(om.Group):
     """
     Computation of propeller thrust coefficient based on the Hamilton Standard model or a user
     provided propeller map. Note that a propeller map allows either the helical Mach number or
-    free stream Mach number as input. This infomation will be detected automatically when the
+    free stream Mach number as input. This information will be detected automatically when the
     propeller map is loaded into memory.
     The installation loss factor is either a user input or computed internally.
     """

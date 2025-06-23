@@ -1,6 +1,6 @@
 """
 This is a slightly more complex Aviary example of running a coupled aircraft design-mission optimization.
-It runs the same mission as the `run_basic_aviary_example.py` script, but it uses the AviaryProblem class to set up the problem.
+It runs the same mission as the `level1_example.py` script, but it uses the AviaryProblem class to set up the problem.
 This exposes more options and flexibility to the user and uses the "Level 2" API within Aviary.
 
 We define a `phase_info` object, which tells Aviary how to model the mission.
@@ -19,8 +19,8 @@ phase_info = deepcopy(phase_info)
 # Add reserve phase(s)
 reserve_cruise = deepcopy(phase_info['cruise'])
 reserve_cruise['user_options']['reserve'] = True
-reserve_cruise['user_options']['target_duration'] = (30, 'min')
-reserve_cruise['user_options']['initial_bounds'] = ((149.5, 448.5), 'min')
+reserve_cruise['user_options']['time_duration'] = (30, 'min')
+reserve_cruise['user_options']['time_initial_bounds'] = ((149.5, 448.5), 'min')
 reserve_cruise['initial_guesses']['initial_distance'] = (4000, 'nmi')
 
 phase_info.update({'reserve_cruise': reserve_cruise})

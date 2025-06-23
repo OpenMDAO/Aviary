@@ -21,7 +21,7 @@ class AscentODETestCase(unittest.TestCase):
         aviary_options = get_option_defaults()
         aviary_options.set_val(Aircraft.Engine.GLOBAL_THROTTLE, True)
         default_mission_subsystems = get_default_mission_subsystems(
-            'GASP', build_engine_deck(aviary_options)
+            'GASP', [build_engine_deck(aviary_options)]
         )
 
         self.prob.model = AscentODE(
@@ -51,7 +51,7 @@ class AscentODETestCase(unittest.TestCase):
         tol = tol = 1e-6
         assert_near_equal(
             self.prob[Dynamic.Mission.VELOCITY_RATE],
-            np.array([641174.75, 641174.75]),
+            np.array([641050.94345628, 641050.94345628]),
             tol,
         )
         assert_near_equal(

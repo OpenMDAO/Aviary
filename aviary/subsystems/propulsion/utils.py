@@ -32,6 +32,7 @@ class EngineModelVariables(Enum):
     SHAFT_POWER = Dynamic.Vehicle.Propulsion.SHAFT_POWER
     SHAFT_POWER_CORRECTED = 'shaft_power_corrected'
     RAM_DRAG = 'ram_drag'
+    RPM = Dynamic.Vehicle.Propulsion.RPM
     FUEL_FLOW = Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE
     ELECTRIC_POWER_IN = Dynamic.Vehicle.Propulsion.ELECTRIC_POWER_IN
     NOX_RATE = Dynamic.Vehicle.Propulsion.NOX_RATE
@@ -56,6 +57,7 @@ default_units = {
     EngineModelVariables.NOX_RATE: 'lb/h',
     EngineModelVariables.TEMPERATURE_T4: 'degR',
     EngineModelVariables.TORQUE: 'ft*lbf',
+    EngineModelVariables.RPM: 'rpm',
     # EngineModelVariables.EXIT_AREA: 'ft**2',
 }
 
@@ -115,19 +117,35 @@ def convert_geopotential_altitude(altitude):
 
 # TODO build test for this function
 # TODO upgrade to be able to turn vectorized AviaryValues into multiple engine decks
-def build_engine_deck(aviary_options: AviaryValues, meta_data=_MetaData):
+def build_engine_deck(
+    options: AviaryValues,
+    name: str = None,
+    required_variables=None,
+    meta_data=_MetaData,
+):
     """
-    Creates an EngineDeck using avaliable inputs and options in aviary_options.
+    Creates an EngineDeck using available inputs and options in aviary_options.
 
     Parameter
     ----------
-    aviary_options : AviaryValues
-        Options to use in creation of EngineDecks.
+    options : AviaryValues
+        Options to use in creation of EngineDeck
+
+    name : str, optional
+        The name of the newly created EngineDeck
+
+    required_variables : set, optional
+        A set of required variables (from EngineModelVariables) for the newly created
+        EngineDeck. Defaults to the required set {ALTITUDE, MACH, THROTTLE, THRUST}.
+
+    meta_data : dict, optional
+        The metadata to be used while creating the EngineDeck. If None, use Aviary's
+        default metadata.
 
     Returns
     -------
-    engine_models : <list of EngineDecks>
-        List of EngineDecks created using provided aviary_options.
+    EngineDeck
+        EngineDeck created using provided options.
     """
     # Required engine vars include one setting from Mission.Summary
     engine_vars = [item for item in Aircraft.Engine.__dict__.values()]
@@ -144,12 +162,13 @@ def build_engine_deck(aviary_options: AviaryValues, meta_data=_MetaData):
             continue
         else:
             try:
-                aviary_val = aviary_options.get_val(var, units)
+                aviary_val = options.get_val(var, units)
+            # if not, use default value from _MetaData?
             except KeyError:
                 # currently skipping filling "missing" variables with defaults
                 # engine_options.set_val(var, meta_data[var]['default_value'], units)
                 continue
-            # add value from aviary_options to engine_options
+            # add value from options to engine_options
             else:
                 if isiterable(aviary_val):
                     try:
@@ -168,17 +187,23 @@ def build_engine_deck(aviary_options: AviaryValues, meta_data=_MetaData):
                     aviary_val = np.array(aviary_val).item()
                 engine_options.set_val(var, aviary_val, units)
 
-    # name engine deck after filename
+    # Build EngineDeck object
+    # gather arguments for building EngineDeck
+    kwargs = {'options': engine_options}
+
+    # name engine deck after filename if name is not provided
+    if name is None:
+        kwargs['name'] = Path(engine_options.get_val(Aircraft.Engine.DATA_FILE)).stem
+    else:
+        kwargs['name'] = name
+
+    if required_variables is not None:
+        kwargs['required_variables'] = required_variables
+
     # local import to avoid circular import
     from aviary.subsystems.propulsion.engine_deck import EngineDeck
 
-    # name engine deck after filename
-    return [
-        EngineDeck(
-            Path(engine_options.get_val(Aircraft.Engine.DATA_FILE)).stem,
-            options=engine_options,
-        )
-    ]
+    return EngineDeck(**kwargs)
 
 
 # TODO combine with aviary/utils/data_interpolator_builder.py build_data_interpolator
@@ -208,7 +233,7 @@ class EngineDataInterpolator(om.Group):
         self.options.declare(
             'interpolator_outputs',
             types=dict,
-            desc='Dictionary describing which variables will be avaliable to the '
+            desc='Dictionary describing which variables will be available to the '
             'interpolator as training data at runtime, and their units',
         )
 

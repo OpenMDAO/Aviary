@@ -62,8 +62,7 @@ from aviary.interface.default_phase_info.height_energy import (
 from aviary.interface.methods_for_level1 import run_level_1
 from aviary.interface.methods_for_level1 import run_aviary
 from aviary.interface.methods_for_level2 import AviaryProblem
-from aviary.interface.utils.check_phase_info import check_phase_info
-from aviary.utils.engine_deck_conversion import EngineDeckConverter
+from aviary.utils.engine_deck_conversion import convert_engine_deck
 from aviary.utils.fortran_to_aviary import fortran_to_aviary
 from aviary.utils.functions import (
     get_path,
@@ -229,7 +228,9 @@ from aviary.subsystems.mass.mass_builder import MassBuilderBase, CoreMassBuilder
 # Propulsion
 from aviary.subsystems.propulsion.engine_deck import EngineDeck
 from aviary.subsystems.propulsion.engine_model import EngineModel
+from aviary.subsystems.propulsion.motor.motor_builder import MotorBuilder
 from aviary.subsystems.propulsion.propulsion_builder import (
     PropulsionBuilderBase,
     CorePropulsionBuilder,
 )
+from aviary.subsystems.propulsion.turboprop_model import TurbopropModel

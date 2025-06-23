@@ -21,21 +21,24 @@ from aviary.variable_info.variables import Aircraft
 # Build problem
 local_phase_info = deepcopy(phase_info)
 
-local_phase_info['climb']['user_options']['optimize_mach'] = False
-local_phase_info['climb']['user_options']['optimize_altitude'] = False
+local_phase_info['climb']['user_options']['mach_optimize'] = False
+local_phase_info['climb']['user_options']['mach_polynomial_order'] = 1
+local_phase_info['climb']['user_options']['altitude_optimize'] = False
+local_phase_info['climb']['user_options']['altitude_polynomial_order'] = 1
 local_phase_info['climb']['user_options']['no_descent'] = True
-local_phase_info['climb']['user_options']['use_polynomial_control'] = True
 
-local_phase_info['cruise']['user_options']['optimize_mach'] = False
-local_phase_info['cruise']['user_options']['optimize_altitude'] = False
+local_phase_info['cruise']['user_options']['mach_optimize'] = False
+local_phase_info['cruise']['user_options']['mach_polynomial_order'] = 1
+local_phase_info['cruise']['user_options']['altitude_optimize'] = False
+local_phase_info['cruise']['user_options']['altitude_polynomial_order'] = 1
 local_phase_info['cruise']['user_options']['altitude_bounds'] = ((32000.0, 34000.0), 'ft')
 local_phase_info['cruise']['user_options']['throttle_enforcement'] = 'path_constraint'
-local_phase_info['cruise']['user_options']['use_polynomial_control'] = True
 
-local_phase_info['descent']['user_options']['optimize_mach'] = False
-local_phase_info['descent']['user_options']['optimize_altitude'] = False
+local_phase_info['descent']['user_options']['mach_optimize'] = False
+local_phase_info['descent']['user_options']['mach_polynomial_order'] = 1
+local_phase_info['descent']['user_options']['altitude_optimize'] = False
+local_phase_info['descent']['user_options']['altitude_polynomial_order'] = 1
 local_phase_info['descent']['user_options']['no_climb'] = True
-local_phase_info['descent']['user_options']['use_polynomial_control'] = True
 
 inputs.set_val(Aircraft.Nacelle.LAMINAR_FLOW_LOWER, np.zeros(2))
 inputs.set_val(Aircraft.Nacelle.LAMINAR_FLOW_UPPER, np.zeros(2))
@@ -58,9 +61,9 @@ class MultiengineTestcase(unittest.TestCase):
         test_phase_info['cruise']['user_options']['throttle_allocation'] = method
         test_phase_info['descent']['user_options']['throttle_allocation'] = method
 
-        engine1 = build_engine_deck(engine_1_inputs)[0]
+        engine1 = build_engine_deck(engine_1_inputs)
         engine1.name = 'engine_1'
-        engine2 = build_engine_deck(engine_2_inputs)[0]
+        engine2 = build_engine_deck(engine_2_inputs)
         engine2.name = 'engine_2'
 
         prob = AviaryProblem(verbosity=0)
@@ -100,8 +103,8 @@ class MultiengineTestcase(unittest.TestCase):
         test_phase_info['cruise']['user_options']['throttle_allocation'] = method
         test_phase_info['descent']['user_options']['throttle_allocation'] = method
 
-        engine1 = build_engine_deck(engine_1_inputs)[0]
-        engine2 = build_engine_deck(engine_2_inputs)[0]
+        engine1 = build_engine_deck(engine_1_inputs)
+        engine2 = build_engine_deck(engine_2_inputs)
 
         prob = AviaryProblem(verbosity=0)
 
@@ -142,8 +145,8 @@ class MultiengineTestcase(unittest.TestCase):
 
         prob = AviaryProblem(verbosity=0)
 
-        engine1 = build_engine_deck(engine_1_inputs)[0]
-        engine2 = build_engine_deck(engine_2_inputs)[0]
+        engine1 = build_engine_deck(engine_1_inputs)
+        engine2 = build_engine_deck(engine_2_inputs)
 
         prob.load_inputs(inputs, test_phase_info, engine_builders=[engine1, engine2])
 

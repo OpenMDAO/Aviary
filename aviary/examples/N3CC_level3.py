@@ -43,11 +43,6 @@ except ImportError:
 
 from dymos.transcriptions.transcription_base import TranscriptionBase
 
-if hasattr(TranscriptionBase, 'setup_polynomial_controls'):
-    use_new_dymos_syntax = False
-else:
-    use_new_dymos_syntax = True
-
 FLOPS = LegacyCode.FLOPS
 
 # benchmark for simple sizing problem on the N3CC
@@ -213,9 +208,9 @@ def run_trajectory(sim=True):
 
     # Level 2 Equivalent: Load inputs creates the engine
     # default subsystems
-    engine = build_engine_deck(aviary_inputs)
-    preprocess_propulsion(aviary_inputs, engine)
-    default_mission_subsystems = get_default_mission_subsystems('FLOPS', engine)
+    engines = [build_engine_deck(aviary_inputs)]
+    preprocess_propulsion(aviary_inputs, engines)
+    default_mission_subsystems = get_default_mission_subsystems('FLOPS', engines)
 
     # Level 2 Equivalent: Phase options are specified during the add_phases function.
     # In this example, the height energy problem configurator would pass the proper phase
@@ -224,10 +219,10 @@ def run_trajectory(sim=True):
         'test_climb',
         user_options=AviaryValues(
             {
-                'initial_altitude': (alt_i_climb, 'm'),
-                'final_altitude': (alt_f_climb, 'm'),
-                'initial_mach': (mach_i_climb, 'unitless'),
-                'final_mach': (mach_f_climb, 'unitless'),
+                'altitude_initial': (alt_i_climb, 'm'),
+                'altitude_final': (alt_f_climb, 'm'),
+                'mach_initial': (mach_i_climb, 'unitless'),
+                'mach_final': (mach_f_climb, 'unitless'),
                 'fix_initial': (False, 'unitless'),
                 'input_initial': (True, 'unitless'),
                 'use_polynomial_control': (False, 'unitless'),
@@ -242,9 +237,9 @@ def run_trajectory(sim=True):
         'test_cruise',
         user_options=AviaryValues(
             {
-                'initial_altitude': (alt_min_cruise, 'm'),
-                'final_altitude': (alt_max_cruise, 'm'),
-                'initial_mach': (cruise_mach, 'unitless'),
+                'altitude_initial': (alt_min_cruise, 'm'),
+                'altitude_final': (alt_max_cruise, 'm'),
+                'mach_initial': (cruise_mach, 'unitless'),
                 'final_mach': (cruise_mach, 'unitless'),
                 'required_available_climb_rate': (300, 'ft/min'),
                 'fix_initial': (False, 'unitless'),
@@ -259,10 +254,10 @@ def run_trajectory(sim=True):
         'test_descent',
         user_options=AviaryValues(
             {
-                'final_altitude': (alt_f_descent, 'm'),
-                'initial_altitude': (alt_i_descent, 'm'),
-                'initial_mach': (mach_i_descent, 'unitless'),
-                'final_mach': (mach_f_descent, 'unitless'),
+                'altitude_final': (alt_f_descent, 'm'),
+                'altitude_initial': (alt_i_descent, 'm'),
+                'mach_initial': (mach_i_descent, 'unitless'),
+                'mach_final': (mach_f_descent, 'unitless'),
                 'fix_initial': (False, 'unitless'),
                 'use_polynomial_control': (False, 'unitless'),
             }
@@ -284,7 +279,7 @@ def run_trajectory(sim=True):
     # check_and_preprocess_inputs level 2 function
     preprocess_crewpayload(aviary_inputs)
 
-    prop = CorePropulsionBuilder('core_propulsion', BaseMetaData, engine)
+    prop = CorePropulsionBuilder('core_propulsion', BaseMetaData, engines)
     mass = CoreMassBuilder('core_mass', BaseMetaData, FLOPS)
     aero = CoreAerodynamicsBuilder('core_aerodynamics', BaseMetaData, FLOPS)
     geom = CoreGeometryBuilder('core_geometry', BaseMetaData, code_origin=FLOPS)
@@ -555,18 +550,13 @@ def run_trajectory(sim=True):
     prob.set_val('traj.cruise.t_initial', t_i_cruise, units='s')
     prob.set_val('traj.cruise.t_duration', t_duration_cruise, units='s')
 
-    if use_new_dymos_syntax:
-        controls_str = 'controls'
-    else:
-        controls_str = 'polynomial_controls'
-
     prob.set_val(
-        f'traj.cruise.{controls_str}:altitude',
+        f'traj.cruise.controls:altitude',
         cruise.interp(Dynamic.Mission.ALTITUDE, ys=[alt_i_cruise, alt_f_cruise]),
         units='m',
     )
     prob.set_val(
-        f'traj.cruise.{controls_str}:mach',
+        f'traj.cruise.controls:mach',
         cruise.interp(Dynamic.Atmosphere.MACH, ys=[cruise_mach, cruise_mach]),
         units='unitless',
     )

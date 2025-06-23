@@ -25,7 +25,7 @@ class DescentODETestCase(unittest.TestCase):
 
         aviary_options = get_option_defaults()
         default_mission_subsystems = get_default_mission_subsystems(
-            'GASP', build_engine_deck(aviary_options)
+            'GASP', [build_engine_deck(aviary_options)]
         )
 
         self.sys = self.prob.model = DescentODE(
@@ -67,17 +67,17 @@ class DescentODETestCase(unittest.TestCase):
             'CL': np.array([0.5169255, 0.25908651]),
             'CD': np.array([0.02786507, 0.01862951]),
             # ft/s
-            Dynamic.Mission.ALTITUDE_RATE: np.array([-39.28806432, -47.9587925]),
+            Dynamic.Mission.ALTITUDE_RATE: np.array([-39.28140894, -47.95697037]),
             # TAS (ft/s) * cos(gamma), [458.67774, 437.62297] kts
             Dynamic.Mission.DISTANCE_RATE: [773.1451, 736.9446],  # ft/s
             # lbm/h
             Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL: np.array(
-                [-451.02392, -997.0488]
+                [-452.29466667, -997.41373745]
             ),
             'EAS': [418.50757579, 590.73344999],  # ft/s ([247.95894, 349.99997] kts)
             Dynamic.Atmosphere.MACH: [0.8, 0.697125],
             # gamma, rad ([-2.908332, -3.723388] deg)
-            Dynamic.Mission.FLIGHT_PATH_ANGLE: [-0.05077223, -0.06498624],
+            Dynamic.Mission.FLIGHT_PATH_ANGLE: [-0.05076362, -0.06498377],
         }
         check_prob_outputs(self.prob, testvals, rtol=1e-6)
 
@@ -111,11 +111,12 @@ class DescentODETestCase(unittest.TestCase):
             Dynamic.Vehicle.ANGLE_OF_ATTACK: 4.19956,
             'CL': 0.507578,
             'CD': 0.0268404,
-            Dynamic.Mission.ALTITUDE_RATE: -18.97635475,
+            Dynamic.Mission.ALTITUDE_RATE: -18.97632876,
             # TAS (ft/s) * cos(gamma) = 255.5613 * 1.68781 * cos(-0.0440083)
             Dynamic.Mission.DISTANCE_RATE: 430.92063193,
-            Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL: -1295.11,
-            Dynamic.Mission.FLIGHT_PATH_ANGLE: -0.0440083,  # rad (-2.52149 deg)
+            Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL: -1295.11818529,
+            # rad (-2.52149 deg)
+            Dynamic.Mission.FLIGHT_PATH_ANGLE: -0.0440083,
         }
         check_prob_outputs(self.prob, testvals, rtol=1e-6)
 
@@ -126,7 +127,7 @@ class DescentODETestCase(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    # unittest.main()
-    test = DescentODETestCase()
-    test.setUp()
-    test.test_high_alt()
+    unittest.main()
+    # test = DescentODETestCase()
+    # test.setUp()
+    # test.test_high_alt()

@@ -27,7 +27,8 @@ Ran 888 tests using 16 processes
 Wall clock time:   00:00:54.15
 ```
 
-## Current Unit Tests
+## Writing Unit Tests
+To write your own unittests, you should use the following utilities.
 
 ### assert_near_equal
 
@@ -61,7 +62,7 @@ assert_check_partials(data, atol=1e-06, rtol=1e-06)
 This assert makes sure that the computed derivatives in the code match those computed numerically within the given absolute and relative tolerances.
 
 In Aviary, there are two ways to compute a component's derivatives: analytically or numerically. When the derivatives are analytic, it is best practice to use `check_partials` to compare them against the complex step (`cs`) or finite difference (`fd`) estimates.
-Complex step is much more acurate, but all code in your component's `compute` method must be complex-safe to use this -- in other words, no calculation that squelches the imaginary part of the calculation (like `abs`.)
+Complex step is much more accurate, but all code in your component's `compute` method must be complex-safe to use this -- in other words, no calculation that squelches the imaginary part of the calculation (like `abs`.)
 Note that there are some complex-safe alternatives to commonly-used calculations in the openmdao library. If your code is not complex-safe, or it wraps an external component that doesn't support complex numbers, then finite difference should be used.
 
 If your component computes its derivatives numerically, there is less reason to test it because you are testing one numerical method against another.  If you choose to do this, you will need to use a different method, form, or step.
@@ -72,7 +73,7 @@ data = prob.check_partials(out_stream=None, method="cs", step=1.01e-40)
 assert_check_partials(data, atol=1e-06, rtol=1e-06)
 ```
 
-Although the default method of `check_partials` is `fd` (finite difference), we prefer `cs` ([complex step](https://openmdao.org/newdocs/versions/latest/advanced_user_guide/complex_step.html) because it usally gives more accurate results.
+Although the default method of `check_partials` is `fd` (finite difference), we prefer `cs` ([complex step](https://openmdao.org/newdocs/versions/latest/advanced_user_guide/complex_step.html) because it usually gives more accurate results.
 
 ````{margin}
 ```{note}
@@ -122,4 +123,4 @@ Add a new file to this directory with the name `test_<name_of_file>.py` where `<
 Within this file, add a class called `Test<name_of_file>` that inherits from `unittest.TestCase`.
 Within this class, add a method called `test_<name_of_test>` where `<name_of_test>` is the name of the test you're adding.
 
-Do not write docstrings to unit test methods as we explain in [Guidelines for Contributing Code](contributing_guidelines.md).
+Do not write docstrings for unittest methods, as they interfere with printouts while running testflo.

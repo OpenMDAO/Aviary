@@ -24,7 +24,7 @@ class SolvedTwoDOFProblemConfigurator(ProblemConfiguratorBase):
             Problem that owns this builder.
         """
         if prob.engine_builders is None:
-            prob.engine_builders = build_engine_deck(prob.aviary_inputs)
+            prob.engine_builders = [build_engine_deck(prob.aviary_inputs)]
 
         # This doesn't really have much value, but is needed for initializing
         # an objective-related component that still lives in level 2.
@@ -128,43 +128,39 @@ class SolvedTwoDOFProblemConfigurator(ProblemConfiguratorBase):
             Subdictionary "user_options" from the phase_info.
         """
         try:
-            fix_initial = user_options.get_val('fix_initial')
+            fix_initial = user_options['fix_initial']
         except KeyError:
             fix_initial = False
 
         try:
-            fix_duration = user_options.get_val('fix_duration')
+            fix_duration = user_options['fix_duration']
         except KeyError:
             fix_duration = False
 
         input_initial = False
         time_units = phase.time_options['units']
 
-        # Make a good guess for a reasonable intitial time scaler.
+        # Make a good guess for a reasonable initial time scaler.
         try:
-            initial_bounds = user_options.get_val('initial_bounds', units=time_units)
+            initial_bounds = wrapped_convert_units(user_options['time_initial_bounds'], time_units)
         except KeyError:
             initial_bounds = (None, None)
 
         if initial_bounds[0] is not None and initial_bounds[1] != 0.0:
             # Upper bound is good for a ref.
-            user_options.set_val('initial_ref', initial_bounds[1], units=time_units)
+            initial_ref = initial_bounds[1]
         else:
-            user_options.set_val('initial_ref', 600.0, time_units)
+            initial_ref = 600.0
 
-        duration_bounds = user_options.get_val('duration_bounds', time_units)
-        user_options.set_val(
-            'duration_ref', (duration_bounds[0] + duration_bounds[1]) / 2.0, time_units
-        )
+        duration_bounds = wrapped_convert_units(user_options['time_duration_bounds'], time_units)
+
+        duration_ref = (duration_bounds[0] + duration_bounds[1]) / 2.0
+
         if phase_idx > 0:
             input_initial = True
 
         if fix_initial or input_initial:
-            if prob.comm.size > 1:
-                # Phases are disconnected to run in parallel, so initial ref is
-                # valid.
-                initial_ref = user_options.get_val('initial_ref', time_units)
-            else:
+            if prob.comm.size == 1:
                 # Redundant on a fixed input; raises a warning if specified.
                 initial_ref = None
 
@@ -172,8 +168,8 @@ class SolvedTwoDOFProblemConfigurator(ProblemConfiguratorBase):
                 fix_initial=fix_initial,
                 fix_duration=fix_duration,
                 units=time_units,
-                duration_bounds=user_options.get_val('duration_bounds', time_units),
-                duration_ref=user_options.get_val('duration_ref', time_units),
+                duration_bounds=duration_bounds,
+                duration_ref=duration_ref,
                 initial_ref=initial_ref,
             )
         else:  # TODO: figure out how to handle this now that fix_initial is dict
@@ -181,10 +177,10 @@ class SolvedTwoDOFProblemConfigurator(ProblemConfiguratorBase):
                 fix_initial=fix_initial,
                 fix_duration=fix_duration,
                 units=time_units,
-                duration_bounds=user_options.get_val('duration_bounds', time_units),
-                duration_ref=user_options.get_val('duration_ref', time_units),
+                duration_bounds=duration_bounds,
+                duration_ref=duration_ref,
                 initial_bounds=initial_bounds,
-                initial_ref=user_options.get_val('initial_ref', time_units),
+                initial_ref=initial_ref,
             )
 
     def link_phases(self, prob, phases, connect_directly=True):
@@ -209,23 +205,23 @@ class SolvedTwoDOFProblemConfigurator(ProblemConfiguratorBase):
         # connect regular_phases with each other if you are optimizing alt or mach
         prob._link_phases_helper_with_options(
             prob.regular_phases,
-            'optimize_altitude',
+            'altitude_optimize',
             Dynamic.Mission.ALTITUDE,
             ref=1.0e4,
         )
         prob._link_phases_helper_with_options(
-            prob.regular_phases, 'optimize_mach', Dynamic.Atmosphere.MACH
+            prob.regular_phases, 'mach_optimize', Dynamic.Atmosphere.MACH
         )
 
         # connect reserve phases with each other if you are optimizing alt or mach
         prob._link_phases_helper_with_options(
             prob.reserve_phases,
-            'optimize_altitude',
+            'altitude_optimize',
             Dynamic.Mission.ALTITUDE,
             ref=1.0e4,
         )
         prob._link_phases_helper_with_options(
-            prob.reserve_phases, 'optimize_mach', Dynamic.Atmosphere.MACH
+            prob.reserve_phases, 'mach_optimize', Dynamic.Atmosphere.MACH
         )
 
         prob.traj.link_phases(phases, [Dynamic.Vehicle.MASS], connected=True)
@@ -241,6 +237,17 @@ class SolvedTwoDOFProblemConfigurator(ProblemConfiguratorBase):
                 units='rad',
                 connected=False,
             )
+
+    def check_trajectory(self, prob):
+        """
+        Checks the phase_info user options for any inconsistency.
+
+        Parameters
+        ----------
+        prob : AviaryProblem
+            Problem that owns this builder.
+        """
+        pass
 
     def add_post_mission_systems(self, prob, include_landing=True):
         """
@@ -270,14 +277,17 @@ class SolvedTwoDOFProblemConfigurator(ProblemConfiguratorBase):
         """
         pass
 
-    def add_guesses(self, prob, phase_name, phase, guesses, target_prob, parent_prefix):
+    def set_phase_initial_guesses(
+        self, prob, phase_name, phase, guesses, target_prob, parent_prefix
+    ):
         """
         Adds the initial guesses for each variable of a given phase to the problem.
-        This method sets the initial guesses for time, control, state, and problem-specific
-        variables for a given phase. If using the GASP model, it also handles some special
-        cases that are not covered in the `phase_info` object. These include initial guesses
-        for mass, time, and distance, which are determined based on the phase name and other
-        mission-related variables.
+
+        This method sets the initial guesses into the openmdao model for time, controls, states,
+        and problem-specific variables for a given phase. If using the GASP model, it also handles
+        some special cases that are not covered in the `phase_info` object. These include initial
+        guesses for mass, time, and distance, which are determined based on the phase name and
+        other mission-related variables.
 
         Parameters
         ----------
@@ -297,19 +307,22 @@ class SolvedTwoDOFProblemConfigurator(ProblemConfiguratorBase):
         # for the simple mission method, use the provided initial and final mach
         # and altitude values from phase_info
         initial_altitude = wrapped_convert_units(
-            prob.phase_info[phase_name]['user_options']['initial_altitude'], 'ft'
+            prob.phase_info[phase_name]['user_options']['altitude_initial'], 'ft'
         )
         final_altitude = wrapped_convert_units(
-            prob.phase_info[phase_name]['user_options']['final_altitude'], 'ft'
+            prob.phase_info[phase_name]['user_options']['altitude_final'], 'ft'
         )
-        initial_mach = prob.phase_info[phase_name]['user_options']['initial_mach']
-        final_mach = prob.phase_info[phase_name]['user_options']['final_mach']
+        initial_mach = prob.phase_info[phase_name]['user_options']['mach_initial']
+        final_mach = prob.phase_info[phase_name]['user_options']['mach_final']
 
         guesses['mach'] = ([initial_mach[0], final_mach[0]], 'unitless')
         guesses['altitude'] = ([initial_altitude, final_altitude], 'ft')
 
         for guess_key, guess_data in guesses.items():
             val, units = guess_data
+
+            if val[0] is None or val[1] is None:
+                continue
 
             # Set initial guess for control variables
             if guess_key in control_keys:

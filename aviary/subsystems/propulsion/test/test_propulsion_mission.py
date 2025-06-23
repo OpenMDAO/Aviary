@@ -42,16 +42,9 @@ class PropulsionMissionTest(unittest.TestCase):
         options.set_val(Aircraft.Engine.FUEL_FLOW_SCALER_CONSTANT_TERM, 0.0)
         options.set_val(Aircraft.Engine.FUEL_FLOW_SCALER_LINEAR_TERM, 1.0)
         options.set_val(Aircraft.Engine.CONSTANT_FUEL_CONSUMPTION, 0.0, units='lbm/h')
-        options.set_val(Aircraft.Engine.SCALE_PERFORMANCE, True)
         options.set_val(Mission.Summary.FUEL_FLOW_SCALER, 1.0)
         options.set_val(Aircraft.Engine.SCALE_FACTOR, 0.5)
-        options.set_val(Aircraft.Engine.GENERATE_FLIGHT_IDLE, False)
         options.set_val(Aircraft.Engine.IGNORE_NEGATIVE_THRUST, False)
-        options.set_val(Aircraft.Engine.FLIGHT_IDLE_THRUST_FRACTION, 0.0)
-        options.set_val(Aircraft.Engine.FLIGHT_IDLE_MAX_FRACTION, 1.0)
-        options.set_val(Aircraft.Engine.FLIGHT_IDLE_MIN_FRACTION, 0.08)
-        options.set_val(Aircraft.Engine.GEOPOTENTIAL_ALT, False)
-        options.set_val(Aircraft.Engine.INTERPOLATION_METHOD, 'slinear')
 
         engine = EngineDeck(options=options)
         preprocess_propulsion(options, [engine])
@@ -87,51 +80,51 @@ class PropulsionMissionTest(unittest.TestCase):
 
         expected_thrust = np.array(
             [
-                26559.90955398,
-                24186.4637312,
-                21938.65874407,
-                19715.77939805,
-                17507.00655484,
-                15461.29892872,
-                13781.56317005,
-                12281.64477782,
-                10975.64977233,
-                9457.34056514,
-                7994.85977229,
-                7398.22905691,
-                7147.50679938,
-                6430.71565916,
-                5774.57932944,
-                5165.15558103,
-                4583.1380952,
-                3991.15088149,
-                3338.98524687,
-                2733.56788119,
+                26561.59369395,
+                24186.86894359,
+                21938.27488056,
+                19715.05735655,
+                17506.16718894,
+                15460.34459449,
+                13780.48894973,
+                12280.8193203,
+                10975.41682925,
+                9457.56468145,
+                7995.21902953,
+                7398.69940308,
+                7148.11078578,
+                6431.41457704,
+                5775.06520451,
+                5165.40974506,
+                4583.11663348,
+                3991.15103423,
+                3339.07858092,
+                2733.73087418,
             ]
         )
 
         expected_fuel_flow = np.array(
             [
-                -14707.1792863,
-                -14065.2831058,
-                -13383.11681516,
-                -12535.21693425,
-                -11524.37848035,
-                -10514.44342419,
-                -9697.03653898,
-                -8936.66146966,
-                -8203.85487648,
-                -8447.54167564,
-                -8705.14277314,
-                -7470.29404109,
-                -5980.15247732,
-                -5493.23821772,
-                -5071.79842346,
-                -4660.12833977,
-                -4260.89619679,
-                -3822.61002621,
-                -3344.41332545,
-                -2889.68646353,
+                -14708.13129181,
+                -14065.48817451,
+                -13382.86563425,
+                -12534.77028836,
+                -11523.83568308,
+                -10513.77300372,
+                -9696.27706444,
+                -8936.08244404,
+                -8203.69933068,
+                -8447.76373904,
+                -8705.57372767,
+                -7470.81543322,
+                -5980.73136927,
+                -5493.90702754,
+                -5072.25036487,
+                -4660.36809371,
+                -4260.86577106,
+                -3822.5941721,
+                -3344.49786121,
+                -2889.82801889,
             ]
         )
 
@@ -206,8 +199,8 @@ class PropulsionMissionTest(unittest.TestCase):
         options.set_val(Settings.VERBOSITY, 0)
         options.set_val(Aircraft.Engine.GLOBAL_THROTTLE, True)
 
-        engine = build_engine_deck(options)[0]
-        engine2 = build_engine_deck(options)[0]
+        engine = build_engine_deck(options)
+        engine2 = build_engine_deck(options)
         engine2.name = 'engine2'
         engine_models = [engine, engine2]
         preprocess_propulsion(options, engine_models=engine_models)
@@ -259,19 +252,19 @@ class PropulsionMissionTest(unittest.TestCase):
         # fmt: off
         expected_thrust = np.array(
             [
-                103583.64726051, 92899.15059987, 82826.62014006, 73006.74478288, 63491.73778033,
-                55213.71927899, 48317.05801159, 42277.98362824, 36870.43915515, 29716.58670587,
-                26271.29434561, 24680.25359966, 22043.65303425, 19221.1253513, 16754.1861966,
-                14405.43665682, 12272.31373152, 10141.72397926, 7869.3816548, 5792.62871788,
+                103590.21540641, 92900.83040046, 82825.70799328, 73005.10411666, 63489.74235503,
+                55210.75770546, 48313.84938232, 42275.86826606, 36870.28719096, 29717.82022574,
+                26272.78176894, 24682.2638022, 22044.68474877, 19221.64939296, 16753.74585058,
+                14404.83725986, 12273.31369208, 10143.03504195, 7869.72781898, 5794.48172967
             ]
         )
 
         expected_fuel_flow = np.array(
             [
-                -38238.66614438, -36078.76817864, -33777.65206416, -31057.41872898, -28036.92997813,
-                -25279.48301301, -22902.98616678, -20749.08916211, -19058.23299911, -19972.32193796,
-                -17701.86829646, -14370.68121827, -12584.1724091, -11320.06786905, -10192.11938107,
-                -9100.08365082, -8100.4835652, -7069.62950088, -5965.78834865, -4914.94081538,
+                -38241.14135872, -36079.34764117, -33777.26289895, -31056.78302442, -28036.07645153,
+                -25278.09940003, -22901.48613868, -20748.0936975, -19058.14550597, -19973.09349768,
+                -17702.71563899, -14371.77422339, -12584.74775338, -11320.39115751, -10191.86597545,
+                -9099.77210032, -8101.06611515, -7070.33673028, -5965.98165626, -4915.97493174
             ]
         )
 

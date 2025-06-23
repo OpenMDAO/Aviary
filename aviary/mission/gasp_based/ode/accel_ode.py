@@ -51,10 +51,11 @@ class AccelODE(TwoDOFODE):
             promotes_outputs=['weight'],
         )
 
-        self.options['subsystem_options']['core_aerodynamics'] = {
+        kwargs = {
             'method': 'cruise',
             'output_alpha': True,
         }
+        self.options['subsystem_options'].setdefault('core_aerodynamics', {}).update(kwargs)
 
         self.add_core_subsystems()
 

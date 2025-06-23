@@ -94,6 +94,8 @@ def add_aviary_input(
     val = cast_type(varname, val, meta_data)
     check_type(varname, val, meta_data)
 
+    primal_name = varname.replace(':', '__')
+
     comp.add_input(
         varname,
         val=val,
@@ -101,6 +103,7 @@ def add_aviary_input(
         desc=desc,
         shape_by_conn=shape_by_conn,
         shape=shape,
+        primal_name=primal_name,
     )
 
 
@@ -131,7 +134,7 @@ def add_aviary_output(
         (Optional) Default value for variable. If not specified, the value from metadata
         is used.
     units: str
-        (Optional) when speficying val, units should also be specified.
+        (Optional) when specifying val, units should also be specified.
     desc: str
         (Optional) description text for the variable.
     shape_by_conn: bool
@@ -181,12 +184,15 @@ def add_aviary_output(
     val = cast_type(varname, val, meta_data)
     check_type(varname, val, meta_data)
 
+    primal_name = varname.replace(':', '__')
+
     comp.add_output(
         varname,
         val=val,
         units=units,
         desc=desc,
         shape_by_conn=shape_by_conn,
+        primal_name=primal_name,
     )
 
 
@@ -346,7 +352,7 @@ def override_aviary_vars(
 
                 continue  # don't promote it
 
-            # This variable is not overriden, so the output is promoted.
+            # This variable is not overridden, so the output is promoted.
             comp_promoted_outputs.append(name)
 
         # NOTE Always promoting all inputs into the "global" namespace
@@ -508,7 +514,7 @@ def extract_options(aviary_inputs: AviaryValues, metadata=_MetaData) -> dict:
             options[key] = val
 
         else:
-            # Implement as (quanitity, unit)
+            # Implement as (quantity, unit)
             options[key] = (val, units)
 
     return options
