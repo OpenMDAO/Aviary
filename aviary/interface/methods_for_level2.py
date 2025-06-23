@@ -2564,7 +2564,7 @@ def _load_off_design(
     prob.aviary_inputs.set_val(Aircraft.CrewPayload.CARGO_MASS, cargo_mass, 'lbm')
 
     if problem_type == ProblemType.ALTERNATE:
-        #reset payload range toggle to FAslo
+        # Reset payload range toggle to False
         prob.aviary_inputs.set_val(Settings.PAYLOAD_RANGE, False)
 
         # Set mission range, aviary will calculate required fuel
@@ -2583,7 +2583,7 @@ def _load_off_design(
             phase_info['post_mission']['target_range'] = (mission_range, 'nmi')
 
     elif problem_type == ProblemType.FALLOUT:
-        #reset payload range toggle to FAslo
+        # Reset payload range toggle to False
         prob.aviary_inputs.set_val(Settings.PAYLOAD_RANGE, False)
         # Set mission fuel and calculate gross weight, aviary will calculate range
         if mission_gross_mass is None:
