@@ -97,7 +97,7 @@ class BWBFurnishingsGroupMass(om.ExplicitComponent):
 
     def setup(self):
         add_aviary_input(self, Aircraft.Furnishings.MASS_SCALER, units='unitless')
-        add_aviary_input(self, Aircraft.BWB.CABIN_AREA, units='ft**2')
+        add_aviary_input(self, Aircraft.Fuselage.CABIN_AREA, units='ft**2')
 
         add_aviary_input(self, Aircraft.Fuselage.MAX_WIDTH, units='ft')
 
@@ -128,7 +128,7 @@ class BWBFurnishingsGroupMass(om.ExplicitComponent):
         # outputs[Aircraft.Furnishings.MASS] = weight / GRAV_ENGLISH_LBM
 
         if not self.options[Aircraft.Fuselage.MILITARY_CARGO_FLOOR]:
-            acabin = inputs[Aircraft.BWB.CABIN_AREA]
+            acabin = inputs[Aircraft.Fuselage.CABIN_AREA]
             nbay = self.options[Aircraft.BWB.NUM_BAYS]
 
             cos = np.cos(np.pi / 180 * (inputs[Aircraft.BWB.PASSENGER_LEADING_EDGE_SWEEP]))
@@ -156,7 +156,7 @@ class BWBFurnishingsGroupMass(om.ExplicitComponent):
         ) / GRAV_ENGLISH_LBM
 
         if self.options[Aircraft.Fuselage.MILITARY_CARGO_FLOOR]:
-            J[Aircraft.Furnishings.MASS, Aircraft.BWB.CABIN_AREA] = 0.0
+            J[Aircraft.Furnishings.MASS, Aircraft.Fuselage.CABIN_AREA] = 0.0
 
             J[Aircraft.Furnishings.MASS, Aircraft.Fuselage.MAX_WIDTH] = 0.0
 
@@ -169,11 +169,11 @@ class BWBFurnishingsGroupMass(om.ExplicitComponent):
             cos = np.cos(d2r)
             tan = np.tan(d2r)
 
-            acabin = inputs[Aircraft.BWB.CABIN_AREA]
+            acabin = inputs[Aircraft.Fuselage.CABIN_AREA]
             nbay = self.options[Aircraft.BWB.NUM_BAYS]
             fuse_max_width = inputs[Aircraft.Fuselage.MAX_WIDTH]
             fuse_max_height = inputs[Aircraft.Fuselage.MAX_HEIGHT]
-            cabin_area = inputs[Aircraft.BWB.CABIN_AREA]
+            cabin_area = inputs[Aircraft.Fuselage.CABIN_AREA]
 
             J[Aircraft.Furnishings.MASS, Aircraft.Furnishings.MASS_SCALER] += (
                 2.6
@@ -184,7 +184,7 @@ class BWBFurnishingsGroupMass(om.ExplicitComponent):
                 / GRAV_ENGLISH_LBM
             )
 
-            J[Aircraft.Furnishings.MASS, Aircraft.BWB.CABIN_AREA] = (
+            J[Aircraft.Furnishings.MASS, Aircraft.Fuselage.CABIN_AREA] = (
                 2.6 * scaler * (fuse_max_width + fuse_max_height * nbay) / fuse_max_width
             ) / GRAV_ENGLISH_LBM
 
