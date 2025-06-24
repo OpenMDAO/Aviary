@@ -361,7 +361,7 @@ class HeightEnergyProblemConfigurator(ProblemConfiguratorBase):
             print('\nThe following issues were detected in your phase_info options.')
             print(msg, '\n')
 
-    def add_post_mission_systems(self, model, include_landing=True):
+    def add_post_mission_systems(self, model):
         """
         Add any post mission systems.
 
@@ -371,10 +371,8 @@ class HeightEnergyProblemConfigurator(ProblemConfiguratorBase):
 
         Parameters
         ----------
-        prob : AviaryProblem
-            Problem that owns this builder.
-        include_landing : bool
-            When True, include the landing systems.
+        model : AviaryModel
+            Aviary model that owns this builder.
         """
         if model.pre_mission_info['include_takeoff']:
             self._add_post_mission_takeoff_systems(model)
@@ -408,7 +406,7 @@ class HeightEnergyProblemConfigurator(ProblemConfiguratorBase):
                 flat_src_indices=True,
             )
 
-        if include_landing and model.post_mission_info['include_landing']:
+        if model.post_mission_info['include_landing']:
             self._add_landing_systems(prob)
 
         model.add_subsystem(

@@ -125,7 +125,7 @@ def subsystem_report(prob, **kwargs):
     reports_folder.mkdir(exist_ok=True)
 
     # TODO external subsystems??
-    core_subsystems = prob.core_subsystems
+    core_subsystems = prob.model.core_subsystems
 
     for subsystem in core_subsystems.values():
         subsystem.report(prob, reports_folder, **kwargs)

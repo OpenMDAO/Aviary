@@ -18,7 +18,7 @@ from openmdao.utils.reports_system import _default_reports
 from aviary.core.AviaryGroup import AviaryGroup
 
 from aviary.utils.aviary_values import AviaryValues
-from aviary.utils.functions import convert_strings_to_data
+from aviary.utils.functions import convert_strings_to_data, set_warning_format
 from aviary.utils.merge_variable_metadata import merge_meta_data
 
 from aviary.variable_info.enums import (
@@ -68,7 +68,12 @@ class AviaryProblem(om.Problem):
         super().__init__(**kwargs)
 
         self.timestamp = datetime.now()
+
+        # If verbosity is set to anything but None, this defines how warnings are formatted for the
+        # whole problem - warning format won't be updated if user requests a different verbosity
+        # level for a specific method
         self.verbosity = verbosity
+        set_warning_format(verbosity)
 
         self.model = AviaryGroup()
 
@@ -109,13 +114,18 @@ class AviaryProblem(om.Problem):
             verbosity = self.verbosity  # usually None
 
         # TODO: We cannot pass self.verbosity back up from load inputs for mulit-mission because there could be multiple .csv files
-        self.aviary_inputs, self.verbosity = self.model.load_inputs(
+        aviary_inputs, verbosity = self.model.load_inputs(
                 aircraft_data=aircraft_data,
                 phase_info=phase_info,
                 engine_builders=engine_builders,
                 problem_configurator=problem_configurator,
                 meta_data=meta_data,
                 verbosity=verbosity)
+
+        # When there is only 1 aircraft model/mission, preserve old behavior.
+        self.phase_info = self.model.phase_info
+        self.aviary_inputs = aviary_inputs
+        self.verbosity = verbosity
 
         return self.aviary_inputs
 
@@ -210,7 +220,7 @@ class AviaryProblem(om.Problem):
 
         return self.model.add_phases(phase_info_parameterization=phase_info_parameterization, parallel_phases=parallel_phases, verbosity=verbosity, comm=self.comm)
 
-    def add_post_mission_systems(self, include_landing=True, verbosity=None): # forward
+    def add_post_mission_systems(self, verbosity=None): # forward
         """
         Add post-mission systems to the aircraft model. This is akin to the pre-mission
         group or the "premission_systems", but occurs after the mission in the execution
@@ -241,7 +251,7 @@ class AviaryProblem(om.Problem):
         else:
             verbosity = self.verbosity  # defaults to BRIEF
 
-        self.model.add_post_mission_systems(include_landing=include_landing, verbosity=verbosity)
+        self.model.add_post_mission_systems(verbosity=verbosity)
 
     def link_phases(self, verbosity=None): # forward
         """

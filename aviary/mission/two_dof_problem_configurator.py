@@ -625,7 +625,7 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
             flat_src_indices=True,
         )
 
-    def add_post_mission_systems(self, prob, include_landing=True):
+    def add_post_mission_systems(self, model):
         """
         Add any post mission systems.
 
@@ -635,12 +635,10 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
 
         Parameters
         ----------
-        prob : AviaryProblem
-            Problem that owns this builder.
-        include_landing : bool
-            When True, include the landing systems.
+        model : AviaryModel
+            Aviary model that owns this builder.
         """
-        if include_landing and prob.post_mission_info['include_landing']:
+        if prob.post_mission_info['include_landing']:
             self._add_landing_systems(prob)
 
         if prob.analysis_scheme is AnalysisScheme.COLLOCATION:

@@ -182,9 +182,9 @@ class ProblemConfiguratorBase:
 
             # Link the phases for the current group
             if len(phases_to_link) > 1:
-                self.traj.link_phases(phases=phases_to_link, vars=[var], **kwargs)    
+                self.traj.link_phases(phases=phases_to_link, vars=[var], **kwargs)
 
-    def add_post_mission_systems(self, prob, include_landing=True):
+    def add_post_mission_systems(self, model):
         """
         Add any post mission systems.
 
@@ -194,10 +194,8 @@ class ProblemConfiguratorBase:
 
         Parameters
         ----------
-        prob : AviaryProblem
-            Problem that owns this builder.
-        include_landing : bool
-            When True, include the landing systems.
+        model : AviaryModel
+            Aviary model that owns this builder.
         """
         pass
 

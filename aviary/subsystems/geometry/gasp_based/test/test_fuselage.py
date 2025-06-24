@@ -122,6 +122,7 @@ class FuselageSizeTestCase1(unittest.TestCase):
         assert_near_equal(
             self.prob[Aircraft.TailBoom.LENGTH], 129.5, tol
         )  # note: this is the actual GASP value, but for version 3.5. Version 3 has 129.4
+        assert_near_equal(self.prob[Aircraft.Fuselage.CABIN_AREA], 1068.96, tol)
 
         partial_data = self.prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=1e-8, rtol=1e-8)
@@ -152,7 +153,7 @@ class FuselageSizeTestCase2(unittest.TestCase):
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
-    def test_case2(self):
+    def test_case1(self):
         self.prob.run_model()
 
         tol = 3e-4
@@ -161,6 +162,7 @@ class FuselageSizeTestCase2(unittest.TestCase):
             self.prob[Aircraft.Fuselage.WETTED_AREA], 4209, tol
         )  # not actual GASP value
         assert_near_equal(self.prob[Aircraft.TailBoom.LENGTH], 119.03, tol)  # not actual GASP value
+        assert_near_equal(self.prob[Aircraft.Fuselage.CABIN_AREA], 931.41, tol)
 
         partial_data2 = self.prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data2, atol=1e-8, rtol=1e-8)
@@ -533,7 +535,7 @@ class BWBFuselageParameters2TestCase(unittest.TestCase):
 
         tol = 1e-7
         assert_near_equal(self.prob[Aircraft.Fuselage.PLANFORM_AREA], 1943.76594, tol)
-        assert_near_equal(self.prob[Aircraft.BWB.CABIN_AREA], 1283.52497, tol)
+        assert_near_equal(self.prob[Aircraft.Fuselage.CABIN_AREA], 1283.52497, tol)
         assert_near_equal(self.prob['cabin_len'], 43.83334, tol)
 
         partial_data = self.prob.check_partials(out_stream=None, method='cs')
@@ -636,7 +638,7 @@ class BWBFuselageGroupTestCase(unittest.TestCase):
         tol = 1e-4
         assert_near_equal(self.prob[Aircraft.Fuselage.AVG_DIAMETER], 38.0, tol)
         assert_near_equal(self.prob[Aircraft.Fuselage.HYDRAULIC_DIAMETER], 19.36509, tol)
-        assert_near_equal(self.prob[Aircraft.BWB.CABIN_AREA], 1283.52497, tol)
+        assert_near_equal(self.prob[Aircraft.Fuselage.CABIN_AREA], 1283.52497, tol)
         assert_near_equal(self.prob[Aircraft.Fuselage.PLANFORM_AREA], 1943.76594, tol)
         assert_near_equal(self.prob[Aircraft.Fuselage.LENGTH], 71.5245514, tol)
         assert_near_equal(self.prob[Aircraft.Fuselage.WETTED_AREA], 4573.42510, tol)
@@ -656,4 +658,7 @@ class BWBFuselageGroupTestCase(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    unittest.main()
+    # unittest.main()
+    test = FuselageSizeTestCase2()
+    test.setUp()
+    test.test_case1()

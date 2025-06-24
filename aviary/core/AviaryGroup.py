@@ -1,6 +1,8 @@
+import inspect
+
+import dymos as dm
 import openmdao.api as om
 from openmdao.utils.mpi import MPI
-import inspect
 
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.enums import EquationsOfMotion
@@ -24,6 +26,7 @@ from aviary.subsystems.geometry.geometry_builder import CoreGeometryBuilder
 from aviary.subsystems.mass.mass_builder import CoreMassBuilder
 from aviary.subsystems.premission import CorePreMission
 from aviary.subsystems.propulsion.propulsion_builder import CorePropulsionBuilder
+from aviary.utils.functions import set_warning_format
 from aviary.utils.utils import get_phase_mission_bus_lengths, process_guess_var
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission, Settings
 from aviary.variable_info.variable_meta_data import _MetaData as BaseMetaData
@@ -34,7 +37,6 @@ from aviary.utils.process_input_decks import create_vehicle, update_GASP_options
 from aviary.utils.utils import wrapped_convert_units
 from aviary.interface.default_phase_info.two_dof_fiti import add_default_sgm_args
 from aviary.variable_info.functions import setup_trajectory_params
-import dymos as dm
 
 TWO_DEGREES_OF_FREEDOM = EquationsOfMotion.TWO_DEGREES_OF_FREEDOM
 HEIGHT_ENERGY = EquationsOfMotion.HEIGHT_ENERGY
@@ -181,15 +183,6 @@ class AviaryGroup(om.Group):
         This method is not strictly necessary; a user could also supply
         an AviaryValues object and/or phase_info dict of their own.
         """
-        # We haven't read the input data yet, we don't know what desired run verbosity is
-        # `self.verbosity` is "true" verbosity for entire run. `verbosity` is verbosity
-        # override for just this method
-        if verbosity is not None:
-            # compatibility with being passed int for verbosity
-            verbosity = Verbosity(verbosity)
-        else:
-            verbosity = self.verbosity  # usually None
-
         ## LOAD INPUT FILE ###
         # Create AviaryValues object from file (or process existing AviaryValues object
         # with default values from metadata) and generate initial guesses
@@ -197,12 +190,18 @@ class AviaryGroup(om.Group):
             aircraft_data, meta_data=meta_data, verbosity=verbosity
         )
 
-        # update verbosity now that we have read the input data
-        self.verbosity = aviary_inputs.get_val(Settings.VERBOSITY)
-        # if user did not ask for verbosity override for this method, use value from data
+        # Update default verbosity now that we have read the input data, if a global verbosity
+        # override was not requested
+        if self.verbosity is None:
+            self.verbosity = aviary_inputs.get_val(Settings.VERBOSITY)
+            # set default warning format for the rest of the problem
+            set_warning_format(self.verbosity)
+
+        # If user did not ask for verbosity override for this method either, use the problem's
+        # default verbosity for the rest of the method
         if verbosity is None:
             verbosity = aviary_inputs.get_val(Settings.VERBOSITY)
-
+            verbosity = self.verbosity
         # Now that the input file has been read, we have the desired verbosity for this
         # run stored in aviary_inputs. Save this to self.
         self.aviary_inputs = aviary_inputs
@@ -637,7 +636,7 @@ class AviaryGroup(om.Group):
         self.configurator.set_phase_options(self, phase_name, phase_idx, phase, full_options, comm)
 
         return phase
-    
+
     def add_phases(self, phase_info_parameterization=None, parallel_phases=True, verbosity=None, comm=None):
         """
         Add the mission phases to the problem trajectory based on the user-specified
@@ -796,8 +795,8 @@ class AviaryGroup(om.Group):
         self.traj = traj
 
         return traj
-    
-    def add_post_mission_systems(self, include_landing=True, verbosity=None):
+
+    def add_post_mission_systems(self, verbosity=None):
         """
         Add post-mission systems to the aircraft model. This is akin to the pre-mission
         group or the "premission_systems", but occurs after the mission in the execution
@@ -836,10 +835,10 @@ class AviaryGroup(om.Group):
             promotes_outputs=['*'],
         )
 
-        self.configurator.add_post_mission_systems(self, include_landing)
+        self.configurator.add_post_mission_systems(self)
 
         # Add all post-mission external subsystems.
-        phase_mission_bus_lengths = get_phase_mission_bus_lengths(self.traj) 
+        phase_mission_bus_lengths = get_phase_mission_bus_lengths(self.traj)
         for external_subsystem in self.post_mission_info['external_subsystems']:
             subsystem_postmission = external_subsystem.build_post_mission(
                 aviary_inputs=self.aviary_inputs,
@@ -1480,7 +1479,7 @@ class AviaryGroup(om.Group):
         all_subsystems.append(self.core_subsystems['propulsion'])
 
         return all_subsystems
-    
+
     def _add_subsystem_guesses(self, phase_name, phase, target_prob, parent_prefix): # move
         """
         Adds the initial guesses for each subsystem of a given phase to the problem.
