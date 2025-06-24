@@ -15,7 +15,7 @@ from aviary.utils.process_input_decks import initialization_guessing
 from aviary.utils.utils import wrapped_convert_units
 from aviary.variable_info.enums import AnalysisScheme, LegacyCode, Verbosity
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
-
+from aviary.utils.utils import process_guess_var
 
 class HeightEnergyProblemConfigurator(ProblemConfiguratorBase):
     """
@@ -133,7 +133,7 @@ class HeightEnergyProblemConfigurator(ProblemConfiguratorBase):
 
         # Build and add takeoff subsystem
         takeoff = takeoff_options.build_phase(False)
-        prob.model.add_subsystem(
+        prob.add_subsystem(
             'takeoff',
             takeoff,
             promotes_inputs=['aircraft:*', 'mission:*'],
@@ -172,7 +172,7 @@ class HeightEnergyProblemConfigurator(ProblemConfiguratorBase):
 
         return phase_builder
 
-    def set_phase_options(self, prob, phase_name, phase_idx, phase, user_options):
+    def set_phase_options(self, prob, phase_name, phase_idx, phase, user_options, comm):
         """
         Set any necessary problem-related options on the phase.
 
@@ -223,7 +223,8 @@ class HeightEnergyProblemConfigurator(ProblemConfiguratorBase):
                     upper = 0.0
                 duration_ref = 0.5 * (lower + upper)
 
-        if (fix_initial or input_initial) and prob.comm.size == 1:
+        # if (fix_initial or input_initial) and prob.comm.size == 1:
+        if (fix_initial or input_initial) and comm.size == 1:
             # Redundant on a fixed input (unless MPI); raises a warning if specified.
             initial_options = {}
         else:
@@ -261,24 +262,28 @@ class HeightEnergyProblemConfigurator(ProblemConfiguratorBase):
             handled by constraints if `phases` is a parallel group under MPI.
         """
         # connect regular_phases with each other if you are optimizing alt or mach
-        prob._link_phases_helper_with_options(
+        self.link_phases_helper_with_options(
+            prob,
             prob.regular_phases,
             'altitude_optimize',
             Dynamic.Mission.ALTITUDE,
             ref=1.0e4,
         )
-        prob._link_phases_helper_with_options(
+        self.link_phases_helper_with_options(
+            prob,
             prob.regular_phases, 'mach_optimize', Dynamic.Atmosphere.MACH
         )
 
         # connect reserve phases with each other if you are optimizing alt or mach
-        prob._link_phases_helper_with_options(
+        self.link_phases_helper_with_options(
+            prob,
             prob.reserve_phases,
             'altitude_optimize',
             Dynamic.Mission.ALTITUDE,
             ref=1.0e4,
         )
-        prob._link_phases_helper_with_options(
+        self.link_phases_helper_with_options(
+            prob,
             prob.reserve_phases, 'mach_optimize', Dynamic.Atmosphere.MACH
         )
 
@@ -307,7 +312,7 @@ class HeightEnergyProblemConfigurator(ProblemConfiguratorBase):
                 phase.set_state_options(Dynamic.Vehicle.MASS, input_initial=False)
                 phase.set_state_options(Dynamic.Mission.DISTANCE, input_initial=False)
 
-        prob.model.connect(
+        prob.connect(
             f'traj.{prob.regular_phases[-1]}.timeseries.distance',
             Mission.Summary.RANGE,
             src_indices=[-1],
@@ -356,7 +361,7 @@ class HeightEnergyProblemConfigurator(ProblemConfiguratorBase):
             print('\nThe following issues were detected in your phase_info options.')
             print(msg, '\n')
 
-    def add_post_mission_systems(self, prob, include_landing=True):
+    def add_post_mission_systems(self, model, include_landing=True):
         """
         Add any post mission systems.
 
@@ -371,21 +376,21 @@ class HeightEnergyProblemConfigurator(ProblemConfiguratorBase):
         include_landing : bool
             When True, include the landing systems.
         """
-        if prob.pre_mission_info['include_takeoff']:
-            self._add_post_mission_takeoff_systems(prob)
+        if model.pre_mission_info['include_takeoff']:
+            self._add_post_mission_takeoff_systems(model)
         else:
-            first_flight_phase_name = list(prob.phase_info.keys())[0]
+            first_flight_phase_name = list(model.phase_info.keys())[0]
 
             # Since we don't have the takeoff subsystem, we need to use the gross mass as the
             # source for the mass at the beginning of the first flight phase. It turns out to be
             # more robust to use a constraint rather than connecting it directly.
-            first_flight_phase = prob.traj._phases[first_flight_phase_name]
+            first_flight_phase = model.traj._phases[first_flight_phase_name]
             first_flight_phase.set_state_options(
                 Dynamic.Vehicle.MASS, fix_initial=False, input_initial=False
             )
 
             # connect summary mass to the initial guess of mass in the first phase
-            eq = prob.model.add_subsystem(
+            eq = model.add_subsystem(
                 f'link_{first_flight_phase_name}_mass',
                 om.EQConstraintComp(),
                 promotes_inputs=[('rhs:mass', Mission.Summary.GROSS_MASS)],
@@ -396,22 +401,22 @@ class HeightEnergyProblemConfigurator(ProblemConfiguratorBase):
                 'mass', eq_units='lbm', normalize=False, ref=100000.0, add_constraint=True
             )
 
-            prob.model.connect(
+            model.connect(
                 f'traj.{first_flight_phase_name}.states:mass',
                 f'link_{first_flight_phase_name}_mass.lhs:mass',
                 src_indices=[0],
                 flat_src_indices=True,
             )
 
-        if include_landing and prob.post_mission_info['include_landing']:
+        if include_landing and model.post_mission_info['include_landing']:
             self._add_landing_systems(prob)
 
-        prob.model.add_subsystem(
+        model.add_subsystem(
             'range_constraint',
             om.ExecComp(
                 'range_resid = target_range - actual_range',
-                target_range={'val': prob.target_range, 'units': 'NM'},
-                actual_range={'val': prob.target_range, 'units': 'NM'},
+                target_range={'val': model.target_range, 'units': 'NM'},
+                actual_range={'val': model.target_range, 'units': 'NM'},
                 range_resid={'val': 30, 'units': 'NM'},
             ),
             promotes_inputs=[
@@ -422,7 +427,7 @@ class HeightEnergyProblemConfigurator(ProblemConfiguratorBase):
         )
 
         # TODO: replace hard_coded ref for this constraint.
-        prob.post_mission.add_constraint(Mission.Constraints.MASS_RESIDUAL, equals=0.0, ref=1.0e5)
+        model.post_mission.add_constraint(Mission.Constraints.MASS_RESIDUAL, equals=0.0, ref=1.0e5)
 
     def _add_post_mission_takeoff_systems(self, prob):
         """
@@ -432,10 +437,10 @@ class HeightEnergyProblemConfigurator(ProblemConfiguratorBase):
         first_flight_phase_name = list(prob.phase_info.keys())[0]
         phase_options = prob.phase_info[first_flight_phase_name]['user_options']
 
-        prob.model.connect(
+        prob.connect(
             Mission.Takeoff.FINAL_MASS, f'traj.{first_flight_phase_name}.initial_states:mass'
         )
-        prob.model.connect(
+        prob.connect(
             Mission.Takeoff.GROUND_DISTANCE,
             f'traj.{first_flight_phase_name}.initial_states:distance',
         )
@@ -445,18 +450,18 @@ class HeightEnergyProblemConfigurator(ProblemConfiguratorBase):
             mach_diff_comp = om.ExecComp(
                 'mach_resid_for_connecting_takeoff = final_mach - initial_mach'
             )
-            prob.model.add_subsystem('mach_diff_comp', mach_diff_comp)
+            prob.add_subsystem('mach_diff_comp', mach_diff_comp)
 
             # Connect the inputs to the mach difference component
-            prob.model.connect(Mission.Takeoff.FINAL_MACH, 'mach_diff_comp.final_mach')
-            prob.model.connect(
+            prob.connect(Mission.Takeoff.FINAL_MACH, 'mach_diff_comp.final_mach')
+            prob.connect(
                 f'traj.{first_flight_phase_name}.control_values:mach',
                 'mach_diff_comp.initial_mach',
                 src_indices=[0],
             )
 
             # Add constraint for mach difference
-            prob.model.add_constraint(
+            prob.add_constraint(
                 'mach_diff_comp.mach_resid_for_connecting_takeoff', equals=0.0
             )
 
@@ -466,17 +471,17 @@ class HeightEnergyProblemConfigurator(ProblemConfiguratorBase):
                 'altitude_resid_for_connecting_takeoff = final_altitude - initial_altitude',
                 units='ft',
             )
-            prob.model.add_subsystem('alt_diff_comp', alt_diff_comp)
+            prob.add_subsystem('alt_diff_comp', alt_diff_comp)
 
-            prob.model.connect(Mission.Takeoff.FINAL_ALTITUDE, 'alt_diff_comp.final_altitude')
-            prob.model.connect(
+            prob.connect(Mission.Takeoff.FINAL_ALTITUDE, 'alt_diff_comp.final_altitude')
+            prob.connect(
                 f'traj.{first_flight_phase_name}.control_values:altitude',
                 'alt_diff_comp.initial_altitude',
                 src_indices=[0],
             )
 
             # Add constraint for altitude difference
-            prob.model.add_constraint(
+            prob.add_constraint(
                 'alt_diff_comp.altitude_resid_for_connecting_takeoff', equals=0.0
             )
 
@@ -488,7 +493,7 @@ class HeightEnergyProblemConfigurator(ProblemConfiguratorBase):
 
         landing = landing_options.build_phase(False)
 
-        prob.model.add_subsystem(
+        prob.add_subsystem(
             'landing',
             landing,
             promotes_inputs=['aircraft:*', 'mission:*'],
@@ -496,27 +501,16 @@ class HeightEnergyProblemConfigurator(ProblemConfiguratorBase):
         )
 
         last_regular_phase = prob.regular_phases[-1]
-        prob.model.connect(
+        prob.connect(
             f'traj.{last_regular_phase}.states:mass',
             Mission.Landing.TOUCHDOWN_MASS,
             src_indices=[-1],
         )
-        prob.model.connect(
+        prob.connect(
             f'traj.{last_regular_phase}.control_values:altitude',
             Mission.Landing.INITIAL_ALTITUDE,
             src_indices=[0],
         )
-
-    def add_objective(self, prob):
-        """
-        Add any additional components related to objectives.
-
-        Parameters
-        ----------
-        prob : AviaryProblem
-            Problem that owns this builder.
-        """
-        pass
 
     def set_phase_initial_guesses(
         self, prob, phase_name, phase, guesses, target_prob, parent_prefix
@@ -616,7 +610,7 @@ class HeightEnergyProblemConfigurator(ProblemConfiguratorBase):
 
                 target_prob.set_val(
                     parent_prefix + f'traj.{phase_name}.controls:{guess_key}',
-                    prob._process_guess_var(val, guess_key, phase),
+                    process_guess_var(val, guess_key, phase),
                     units=units,
                 )
 
@@ -627,7 +621,7 @@ class HeightEnergyProblemConfigurator(ProblemConfiguratorBase):
 
                 target_prob.set_val(
                     parent_prefix + f'traj.{phase_name}.states:{guess_key}',
-                    prob._process_guess_var(val, guess_key, phase),
+                    process_guess_var(val, guess_key, phase),
                     units=units,
                 )
 
@@ -638,7 +632,7 @@ class HeightEnergyProblemConfigurator(ProblemConfiguratorBase):
                 # These may come from external subsystems.
                 target_prob.set_val(
                     parent_prefix + f'traj.{phase_name}.{guess_key}',
-                    prob._process_guess_var(val, guess_key, phase),
+                    process_guess_var(val, guess_key, phase),
                     units=units,
                 )
             else:

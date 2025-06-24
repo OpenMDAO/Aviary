@@ -203,24 +203,24 @@ class SolvedTwoDOFProblemConfigurator(ProblemConfiguratorBase):
             handled by constraints if `phases` is a parallel group under MPI.
         """
         # connect regular_phases with each other if you are optimizing alt or mach
-        prob._link_phases_helper_with_options(
+        prob.link_phases_helper_with_options(
             prob.regular_phases,
             'altitude_optimize',
             Dynamic.Mission.ALTITUDE,
             ref=1.0e4,
         )
-        prob._link_phases_helper_with_options(
+        prob.link_phases_helper_with_options(
             prob.regular_phases, 'mach_optimize', Dynamic.Atmosphere.MACH
         )
 
         # connect reserve phases with each other if you are optimizing alt or mach
-        prob._link_phases_helper_with_options(
+        prob.link_phases_helper_with_options(
             prob.reserve_phases,
             'altitude_optimize',
             Dynamic.Mission.ALTITUDE,
             ref=1.0e4,
         )
-        prob._link_phases_helper_with_options(
+        prob.link_phases_helper_with_options(
             prob.reserve_phases, 'mach_optimize', Dynamic.Atmosphere.MACH
         )
 
@@ -263,17 +263,6 @@ class SolvedTwoDOFProblemConfigurator(ProblemConfiguratorBase):
             Problem that owns this builder.
         include_landing : bool
             When True, include the landing systems.
-        """
-        pass
-
-    def add_objective(self, prob):
-        """
-        Add any additional components related to objectives.
-
-        Parameters
-        ----------
-        prob : AviaryProblem
-            Problem that owns this builder.
         """
         pass
 

@@ -142,6 +142,48 @@ class ProblemConfiguratorBase:
         """
         pass
 
+    def link_phases_helper_with_options(self, model, phases, option_name, var, **kwargs):
+        # Initialize a list to keep track of indices where option_name is True
+        true_option_indices = []
+
+        # Loop through phases to find where option_name is True
+        for idx, phase_name in enumerate(phases):
+            if model.phase_info[phase_name]['user_options'].get(option_name, False):
+                true_option_indices.append(idx)
+
+        # Determine the groups of phases to link based on consecutive indices
+        groups_to_link = []
+        current_group = []
+
+        for idx in true_option_indices:
+            if not current_group or idx == current_group[-1] + 1:
+                # If the current index is consecutive, add it to the current group
+                current_group.append(idx)
+            else:
+                # Otherwise, start a new group and save the previous one
+                groups_to_link.append(current_group)
+                current_group = [idx]
+
+        # Add the last group if it exists
+        if current_group:
+            groups_to_link.append(current_group)
+
+        # Loop through each group and determine the phases to link
+        for group in groups_to_link:
+            # Extend the group to include the phase before the first True option and
+            # after the last True option, if applicable
+            if group[0] > 0:
+                group.insert(0, group[0] - 1)
+            if group[-1] < len(phases) - 1:
+                group.append(group[-1] + 1)
+
+            # Extract the phase names for the current group
+            phases_to_link = [phases[idx] for idx in group]
+
+            # Link the phases for the current group
+            if len(phases_to_link) > 1:
+                self.traj.link_phases(phases=phases_to_link, vars=[var], **kwargs)    
+
     def add_post_mission_systems(self, prob, include_landing=True):
         """
         Add any post mission systems.

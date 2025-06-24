@@ -691,17 +691,6 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
             'landing.drag_loss_due_to_shielded_wing_area',
         )
 
-    def add_objective(self, prob):
-        """
-        Add any additional components related to objectives.
-
-        Parameters
-        ----------
-        prob : AviaryProblem
-            Problem that owns this builder.
-        """
-        pass
-
     def set_phase_initial_guesses(
         self, prob, phase_name, phase, guesses, target_prob, parent_prefix
     ):
