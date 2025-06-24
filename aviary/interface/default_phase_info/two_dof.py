@@ -84,8 +84,7 @@ phase_info = {
             'flight_path_angle_ref': (57.2958, 'deg'),
             'flight_path_angle_defect_ref': (57.2958, 'deg'),
             'flight_path_angle_initial': (0.0, 'deg'),
-            'pitch_constraint_lower': (0.0, 'deg'),
-            'pitch_constraint_upper': (15.0, 'deg'),
+            'pitch_constraint_bounds': ((0.0, 15.0), 'deg'),
             'pitch_constraint_ref': (1.0, 'deg'),
         },
         'initial_guesses': {

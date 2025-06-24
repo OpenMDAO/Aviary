@@ -92,8 +92,6 @@ class TwoDOFPhaseOptions(AviaryOptionsDictionary):
             'be positive.',
         )
 
-        # The options below have not yet been revamped.
-
         self.declare(
             name='ground_roll',
             types=bool,
@@ -102,20 +100,14 @@ class TwoDOFPhaseOptions(AviaryOptionsDictionary):
             'All other phases of flight (climb, cruise, descent) this must be set to False.',
         )
 
+        # The options below have not yet been revamped.
+
         self.declare(
             name='fix_initial',
             types=bool,
             default=True,
             desc='Fixes the initial states (mass, distance) and does not allow them to '
             'change during the optimization.',
-        )
-
-        self.declare(
-            name='fix_duration',
-            types=bool,
-            default=False,
-            desc='If True, the time duration of the phase is not treated as a design '
-            'variable for the optimization problem.',
         )
 
         self.declare(
@@ -142,14 +134,6 @@ class TwoDOFPhaseOptions(AviaryOptionsDictionary):
             default=False,
             desc='Set to True to prevent the aircraft from descending during the phase. This '
             'can be used to prevent unexpected descent during a climb phase.',
-        )
-
-        self.declare(
-            name='constrain_final',
-            types=bool,
-            default=False,
-            desc='Fixes the final states (mach and altitude) to the values of altitude_final '
-            'and mach_final. These values will be unable to change during the optimization.',
         )
 
         self.declare(

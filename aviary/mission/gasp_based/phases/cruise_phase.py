@@ -8,8 +8,6 @@ from aviary.variable_info.variables import Dynamic
 
 class CruisePhaseOptions(AviaryOptionsDictionary):
     def declare_options(self):
-        # The options below have not yet been revamped.
-
         self.declare(name='alt_cruise', default=0.0, units='ft', desc='Cruise altitude.')
 
         self.declare(name='mach_cruise', default=0.0, desc='Cruise Mach number.')
@@ -52,14 +50,6 @@ class CruisePhaseOptions(AviaryOptionsDictionary):
             units='s',
             desc='Lower and upper bounds on the phase duration, in the form of a nested tuple: '
             'i.e. ((20, 36), "min") This constrains the duration to be between 20 and 36 min.',
-        )
-
-        self.declare(
-            name='fix_duration',
-            types=bool,
-            default=False,
-            desc='If True, the time duration of the phase is not treated as a design '
-            'variable for the optimization problem.',
         )
 
         self.declare(

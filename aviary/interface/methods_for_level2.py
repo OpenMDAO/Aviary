@@ -1753,8 +1753,8 @@ class AviaryProblem(om.Problem):
             if self.mission_method is SOLVED_2DOF:
                 self.phase_objects[idx].apply_initial_guesses(self, 'traj', phase)
                 if (
-                    self.phase_info[phase_name]['user_options']['ground_roll']
-                    and self.phase_info[phase_name]['user_options']['fix_initial']
+                    self.phase_info[phase_name]['user_options'].get('ground_roll')
+                    and not self.phase_info[phase_name]['user_options'].get('rotation')
                 ):
                     continue
 

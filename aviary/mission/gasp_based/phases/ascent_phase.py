@@ -69,7 +69,7 @@ class AscentPhaseOptions(AviaryOptionsDictionary):
             'angle_of_attack_bounds': (np.deg2rad(-30), np.deg2rad(30)),
             'angle_of_attack_optimize': True,
         }
-        self.add_control_options('angle_of_attack', units='rad')
+        self.add_control_options('angle_of_attack', units='rad', defaults=defaults)
 
         self.add_time_options(units='s')
 
@@ -101,17 +101,13 @@ class AscentPhaseOptions(AviaryOptionsDictionary):
         )
 
         self.declare(
-            name='pitch_constraint_lower',
-            default=0.0,
+            name='pitch_constraint_bounds',
+            default=(0.0, 15.0),
+            types=tuple,
             units='deg',
-            desc='Pitch lower bound constraint.',
-        )
-
-        self.declare(
-            name='pitch_constraint_upper',
-            default=15.0,
-            units='deg',
-            desc='Pitch upper bound constraint.',
+            allow_none=True,
+            desc='Tuple containing the lower and upper bounds of the pitch constraint, '
+            'with unit string.',
         )
 
         self.declare(
@@ -151,8 +147,7 @@ class AscentPhase(PhaseBuilderBase):
         # Retrieve user options values
         user_options = self.user_options
 
-        pitch_constraint_lower = user_options.get_val('pitch_constraint_lower', units='deg')
-        pitch_constraint_upper = user_options.get_val('pitch_constraint_upper', units='deg')
+        pitch_constraint_bounds = user_options.get_val('pitch_constraint_bounds', units='deg')
         pitch_constraint_ref = user_options.get_val('pitch_constraint_ref', units='deg')
 
         self.add_state(
@@ -179,8 +174,8 @@ class AscentPhase(PhaseBuilderBase):
         phase.add_path_constraint(
             'fuselage_pitch',
             'theta',
-            lower=pitch_constraint_lower,
-            upper=pitch_constraint_upper,
+            lower=pitch_constraint_bounds[0],
+            upper=pitch_constraint_bounds[1],
             units='deg',
             ref=pitch_constraint_ref,
         )
