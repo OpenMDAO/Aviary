@@ -46,7 +46,7 @@ class run_missionTestCases(CommandEntryPointsTestCases):
     def bench_test_phase_info_cmd(self):
         cmd = (
             'aviary run_mission models/aircraft/test_aircraft/aircraft_for_bench_GwGm.csv --optimizer IPOPT --max_iter 1'
-            ' --phase_info interface/default_phase_info/two_dof.py'
+            ' --phase_info models/missions/two_dof_default.py'
         )
         self.run_and_test_cmd(cmd)
 
