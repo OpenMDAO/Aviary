@@ -71,8 +71,6 @@ class AviaryProblem(om.Problem):
         self.verbosity = verbosity
 
         self.model = AviaryGroup()
-        # self.pre_mission = PreMissionGroup()
-        # self.post_mission = PostMissionGroup()
 
         self.aviary_inputs = None
 
@@ -80,8 +78,6 @@ class AviaryProblem(om.Problem):
 
         self.analysis_scheme = analysis_scheme
 
-        self.regular_phases = []
-        self.reserve_phases = []
         self.configurator = None
 
     def load_inputs(
@@ -120,7 +116,7 @@ class AviaryProblem(om.Problem):
                 problem_configurator=problem_configurator,
                 meta_data=meta_data,
                 verbosity=verbosity)
-        
+
         return self.aviary_inputs
 
     def check_and_preprocess_inputs(self, verbosity=None): # forward
@@ -128,7 +124,7 @@ class AviaryProblem(om.Problem):
         This method checks the user-supplied input values for any potential problems
         and preprocesses the inputs to prepare them for use in the Aviary problem.
         """
-        
+
         # `self.verbosity` is "true" verbosity for entire run. `verbosity` is verbosity
         # override for just this method
         if verbosity is not None:
@@ -146,9 +142,9 @@ class AviaryProblem(om.Problem):
         self.meta_data = BaseMetaData.copy()
 
         # loop through phase_info and external subsystems
-        for phase_name in self.model.phase_info: 
+        for phase_name in self.model.phase_info:
             # TODO: phase_info now resides in AviaryGroup. Accessing it as self.model.phase_info is just a temporary stop-gap
-            # it will be necessary to combine multiple self.models 
+            # it will be necessary to combine multiple self.models
             external_subsystems = self.model.get_all_subsystems(
                 self.model.phase_info[phase_name]['external_subsystems']
             )
@@ -156,7 +152,7 @@ class AviaryProblem(om.Problem):
             for subsystem in external_subsystems:
                 meta_data = subsystem.meta_data.copy()
                 self.meta_data = merge_meta_data([self.meta_data, meta_data])
-            
+
         self.model.meta_data = self.meta_data # TODO: temporary fix
 
     def add_pre_mission_systems(self, verbosity=None): # forward
@@ -521,7 +517,7 @@ class AviaryProblem(om.Problem):
         if objective_type is not None:
             ref = ref if ref is not None else default_ref_values.get(objective_type, 1)
 
-            final_phase_name = self.regular_phases[-1]
+            final_phase_name = self.model.regular_phases[-1]
 
             if objective_type == 'mass':
                 if self.analysis_scheme is AnalysisScheme.COLLOCATION:
