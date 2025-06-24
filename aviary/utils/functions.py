@@ -24,7 +24,7 @@ class Null:
         pass
 
 
-def get_aviary_resource_path(resource_name: str) -> str:
+def get_aviary_resource_path(resource_name: str) -> Path:
     """
     Get the file path of a resource in the Aviary package.
 
@@ -35,7 +35,7 @@ def get_aviary_resource_path(resource_name: str) -> str:
 
     Returns
     -------
-        Path
+        path : Path
             The file path of the resource.
 
     """
@@ -451,22 +451,21 @@ def get_model(file_name: str, verbosity=Verbosity.BRIEF) -> Path:
     # Get the path to Aviary's models
     path = Path('models', file_name)
     aviary_path = Path(get_aviary_resource_path(str(path)))
+    # Check if provided path is valid
+    if aviary_path.exists():
+        return aviary_path
+    # otherwise check models folder contents
+    else:
+        contents = [x for x in get_aviary_resource_path('models').rglob('*')]
+        for item in contents:
+            print(item, flush=True)
+            # check if full filepath, file name with extension, or just file (or folder) name
+            # matches target
+            if aviary_path == item or path.name == item.name or path.stem == item.stem:
+                return item
 
-    # If the file name was provided without a path, check in the subfolders
-    if not aviary_path.exists():
-        sub_dirs = [x[0] for x in os.walk(get_aviary_resource_path('models'))]
-        for sub_dir in sub_dirs:
-            temp_path = Path(sub_dir, file_name)
-            if temp_path.exists():
-                # only return the first matching file
-                aviary_path = temp_path
-                continue
-
-    # If the path still doesn't exist, raise an error.
-    if not aviary_path.exists():
-        raise FileNotFoundError("File or Folder not found in Aviary's hangar")
-
-    return aviary_path
+    # If the path doesn't exist, raise an error.
+    raise FileNotFoundError("File or Folder not found in Aviary's hangar")
 
 
 def sigmoidX(x, x0, mu=1.0):
