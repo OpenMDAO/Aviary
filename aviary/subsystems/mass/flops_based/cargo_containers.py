@@ -82,7 +82,7 @@ def dydx_sin_int4(val):
     return dydx
 
 
-# 'int' function can be approximated by recursively applying this sin function
+# 'int' function can be approximated by recursively applying this sin_int function
 # which makes a smooth, differentialbe function
 def sin_int(val):
     """
