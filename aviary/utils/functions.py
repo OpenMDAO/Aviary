@@ -449,19 +449,24 @@ def get_model(file_name: str, verbosity=Verbosity.BRIEF) -> Path:
         If the path is not found.
     """
     # Get the path to Aviary's models
-    path = Path('models', file_name)
-    aviary_path = Path(get_aviary_resource_path(str(path)))
+    aviary_path = Path(get_aviary_resource_path(str(Path('models', file_name))))
     # Check if provided path is valid
     if aviary_path.exists():
         return aviary_path
     # otherwise check models folder contents
     else:
-        contents = [x for x in get_aviary_resource_path('models').rglob('*')]
+        from glob import glob
+
+        contents = glob(str(get_aviary_resource_path('models') / '**'), recursive=True)
         for item in contents:
-            print(item, flush=True)
+            item = Path(item)
             # check if full filepath, file name with extension, or just file (or folder) name
             # matches target
-            if aviary_path == item or path.name == item.name or path.stem == item.stem:
+            if (
+                aviary_path == item
+                or aviary_path.name == item.name
+                or aviary_path.stem == item.stem
+            ):
                 return item
 
     # If the path doesn't exist, raise an error.
