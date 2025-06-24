@@ -1934,8 +1934,11 @@ class AviaryProblem(om.Problem):
             with open('output_list.txt', 'w') as outfile:
                 self.model.list_outputs(out_stream=outfile)
         
+
         if payload_range_bool:
             self.aviary_inputs.set_val(Settings.PAYLOAD_RANGE, False)
+
+            self.save_sizing_to_json(json_filename='payload_range_point_2.json')
 
             #point 1 along the y axis (range=0)
             payload_1 = float(self.get_val(Aircraft.CrewPayload.TOTAL_PAYLOAD_MASS))
@@ -1948,7 +1951,7 @@ class AviaryProblem(om.Problem):
             gross_mass = float(self.get_val(Mission.Summary.GROSS_MASS))
             operating_mass=float(self.get_val(Aircraft.Design.OPERATING_MASS))
             fuel_capacity=float(self.get_val(Aircraft.Fuel.TOTAL_CAPACITY))
-            payload=float(self.get_val(Aircraft.CrewPayload.PASSENGER_PAYLOAD_MASS))
+            payload=float(self.get_val(Aircraft.CrewPayload.TOTAL_PAYLOAD_MASS))
 
             payload_allowed_mass=gross_mass-operating_mass-fuel_capacity
 
@@ -1961,8 +1964,9 @@ class AviaryProblem(om.Problem):
             num_bus_allowed=int((self.aviary_inputs.get_val(Aircraft.CrewPayload.Design.NUM_BUSINESS_CLASS))*payload_frac)
             num_tourist_allowed=int((self.aviary_inputs.get_val(Aircraft.CrewPayload.Design.NUM_TOURIST_CLASS))*payload_frac)
 
-            prob_fallout_max_fuel = self.fallout_mission(num_first= num_first_allowed, num_business= num_bus_allowed, num_tourist= num_tourist_allowed,
-                                                wing_cargo=wing_cargo_allowed, misc_cargo=misc_cargo_allowed)
+            prob_fallout_max_fuel = self.fallout_mission(json_filename='payload_range_point_2.json',
+                                        num_first= num_first_allowed, num_business= num_bus_allowed, num_tourist= num_tourist_allowed,
+                                        wing_cargo=wing_cargo_allowed, misc_cargo=misc_cargo_allowed)
 
 
             payload_3=float(prob_fallout_max_fuel.get_val(Aircraft.CrewPayload.TOTAL_PAYLOAD_MASS))
@@ -1971,8 +1975,9 @@ class AviaryProblem(om.Problem):
             #point 4, ferry mission with max fuel and 0 payload,
             allowed_mission_mass=operating_mass+fuel_capacity
             #Aviary as of 06/13/2025 does not allow for off-design missions of 0 passengers, therefore 1 will be used
-            prob_fallout_ferry = self.fallout_mission(num_first= 0, num_business= 0, num_tourist= 1, num_pax=1,
-                                    wing_cargo=0, cargo_mass= 0, mission_mass=allowed_mission_mass)
+            prob_fallout_ferry = self.fallout_mission(json_filename='payload_range_point_2.json',
+                                        num_first= 0, num_business= 0, num_tourist= 1, num_pax=1,
+                                        wing_cargo=0, cargo_mass= 0, mission_mass=allowed_mission_mass)
             
             payload_4=float(prob_fallout_ferry.get_val(Aircraft.CrewPayload.TOTAL_PAYLOAD_MASS))
             range_4=float(prob_fallout_ferry.get_val(Mission.Summary.RANGE))
@@ -2102,6 +2107,8 @@ class AviaryProblem(om.Problem):
         prob_alternate.add_post_mission_systems()
         prob_alternate.link_phases()
         prob_alternate.add_driver(optimizer, verbosity=verbosity)
+        prob_alternate.driver.options=self.driver.options
+        prob_alternate.driver.opt_settings=self.driver.opt_settings
         prob_alternate.add_design_variables()
         prob_alternate.add_objective()
         prob_alternate.setup()
@@ -2220,6 +2227,8 @@ class AviaryProblem(om.Problem):
         prob_fallout.add_post_mission_systems()
         prob_fallout.link_phases()
         prob_fallout.add_driver(optimizer, verbosity=verbosity)
+        prob_fallout.driver.options=self.driver.options
+        prob_fallout.driver.opt_settings=self.driver.opt_settings
         prob_fallout.add_design_variables()
         prob_fallout.add_objective()
         prob_fallout.setup()
