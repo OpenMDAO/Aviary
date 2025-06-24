@@ -62,6 +62,16 @@ class TwoDOFPhaseOptions(AviaryOptionsDictionary):
         }
         self.add_control_options('mach', units='unitless', defaults=defaults)
 
+        defaults = {
+            'angle_of_attack_polynomial_order': 1,
+            'angle_of_attack_optimize': True,
+            'angle_of_attack_ref': 10.0,
+            'angle_of_attack_bounds': (0., 15.),
+            'angle_of_attack_optimize': True,
+            'angle_of_attack_initial': 0.0,
+        }
+        self.add_control_options('angle_of_attack', units='deg')
+
         self.add_time_options(units='ft')
 
         self.declare(
@@ -173,13 +183,6 @@ class TwoDOFPhaseOptions(AviaryOptionsDictionary):
         )
 
         self.declare(
-            name='control_order',
-            types=int,
-            default=1,
-            desc='The polynomial order for the angle of attack control.',
-        )
-
-        self.declare(
             name='rotation',
             types=bool,
             default=False,
@@ -225,8 +228,6 @@ class TwoDOFPhase(FlightPhaseBase):
 
         user_options = self.user_options
 
-        control_order = user_options.get_val('control_order')
-
         fix_initial = user_options.get_val('fix_initial')
         duration_bounds = user_options.get_val('time_duration_bounds', units='ft')
         duration_ref = user_options.get_val('time_duration_ref', units='ft')
@@ -266,17 +267,9 @@ class TwoDOFPhase(FlightPhaseBase):
         )
 
         if rotation:
-            phase.add_control(
+            self.add_control(
+                'angle_of_attack',
                 Dynamic.Vehicle.ANGLE_OF_ATTACK,
-                control_type='polynomial',
-                order=control_order,
-                fix_initial=True,
-                lower=0,
-                upper=15,
-                units='deg',
-                ref=10.0,
-                val=0.0,
-                opt=True,
             )
 
         phase.add_timeseries_output('EAS', units='kn')
