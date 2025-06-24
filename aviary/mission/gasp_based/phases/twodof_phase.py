@@ -70,7 +70,7 @@ class TwoDOFPhaseOptions(AviaryOptionsDictionary):
             'angle_of_attack_optimize': True,
             'angle_of_attack_initial': 0.0,
         }
-        self.add_control_options('angle_of_attack', units='deg')
+        self.add_control_options('angle_of_attack', units='deg', defaults=defaults)
 
         self.add_time_options(units='ft')
 
