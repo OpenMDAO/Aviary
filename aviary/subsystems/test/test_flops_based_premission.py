@@ -132,9 +132,62 @@ class PreMissionGroupTest(unittest.TestCase):
             flops_outputs=flops_outputs,
         )
 
+    def test_mass_aero_only(self):
+        # tests geom, mass, aero only, similar to IANAL=2 mode in FLOPS
+        prob = om.Problem()
+
+        flops_inputs = get_flops_inputs('LargeSingleAisle2FLOPS')
+        flops_outputs = get_flops_outputs('LargeSingleAisle2FLOPS')
+        flops_inputs.set_val(Settings.VERBOSITY, 0)
+
+        engines = [build_engine_deck(flops_inputs)]
+
+        preprocess_options(flops_inputs, engine_models=engines)
+
+        default_premission_subsystems = get_default_premission_subsystems('FLOPS', engines=engines)[
+            1:
+        ]
+
+        prob.model.add_subsystem(
+            'mass_and_aero_premission',
+            CorePreMission(aviary_options=flops_inputs, subsystems=default_premission_subsystems),
+            promotes=['*'],
+        )
+
+        setup_model_options(prob, flops_inputs)
+        prob.setup()
+        set_aviary_initial_values(prob, flops_inputs)
+
+        prob.set_val(
+            Aircraft.Propulsion.TOTAL_SCALED_SLS_THRUST,
+            flops_outputs.get_val(Aircraft.Propulsion.TOTAL_SCALED_SLS_THRUST, 'lbf'),
+            'lbf',
+        )
+        prob.run_model()
+
+        flops_validation_test(
+            prob,
+            'LargeSingleAisle2FLOPS',
+            input_keys=[],
+            output_keys=[
+                Aircraft.Design.STRUCTURE_MASS,
+                Aircraft.Propulsion.MASS,
+                Aircraft.Design.SYSTEMS_EQUIP_MASS,
+                Aircraft.Design.EMPTY_MASS,
+                Aircraft.Design.OPERATING_MASS,
+                Aircraft.Design.ZERO_FUEL_MASS,
+                Mission.Design.FUEL_MASS,
+            ],
+            atol=1e-4,
+            rtol=1e-4,
+            check_partials=False,
+            flops_inputs=flops_inputs,
+            flops_outputs=flops_outputs,
+        )
+
 
 if __name__ == '__main__':
     unittest.main()
     # test = PreMissionGroupTest()
     # test.setUp()
-    # test.test_diff_configuration_mass()
+    # test.test_mass_aero_only()
