@@ -1,6 +1,8 @@
 import inspect
+from pathlib import Path
 
 import dymos as dm
+from dymos.utils.misc import _unspecified
 import openmdao.api as om
 from openmdao.utils.mpi import MPI
 
@@ -45,6 +47,7 @@ CUSTOM = EquationsOfMotion.CUSTOM
 
 FLOPS = LegacyCode.FLOPS
 GASP = LegacyCode.GASP
+
 
 class AviaryGroup(om.Group):
     """
@@ -1516,7 +1519,7 @@ class AviaryGroup(om.Group):
                     path_string = 'controls'
 
                 # Process the guess variable (handles array interpolation)
-                # val['val'] = self._process_guess_var(val['val'], key, phase)
+                # val['val'] = self.process_guess_var(val['val'], key, phase)
                 val['val'] = process_guess_var(val['val'], key, phase)
 
                 # Set the initial guess in the problem

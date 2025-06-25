@@ -12,7 +12,6 @@ from pathlib import Path
 import dymos as dm
 import numpy as np
 import openmdao.api as om
-from dymos.utils.misc import _unspecified
 from openmdao.utils.reports_system import _default_reports
 
 from aviary.core.AviaryGroup import AviaryGroup
@@ -79,11 +78,7 @@ class AviaryProblem(om.Problem):
 
         self.aviary_inputs = None
 
-        self.traj = None
-
         self.analysis_scheme = analysis_scheme
-
-        self.configurator = None
 
     def load_inputs(
         self,
@@ -208,7 +203,8 @@ class AviaryProblem(om.Problem):
 
         Returns
         -------
-        traj: The Dymos Trajectory object containing the added mission phases.
+        <Trajectory>
+            The Dymos Trajectory object containing the added mission phases.
         """
         # `self.verbosity` is "true" verbosity for entire run. `verbosity` is verbosity
         # override for just this method
@@ -218,7 +214,12 @@ class AviaryProblem(om.Problem):
         else:
             verbosity = self.verbosity  # defaults to BRIEF
 
-        return self.model.add_phases(phase_info_parameterization=phase_info_parameterization, parallel_phases=parallel_phases, verbosity=verbosity, comm=self.comm)
+        return self.model.add_phases(
+            phase_info_parameterization=phase_info_parameterization,
+            parallel_phases=parallel_phases,
+            verbosity=verbosity,
+            comm=self.comm
+        )
 
     def add_post_mission_systems(self, verbosity=None): # forward
         """
@@ -537,7 +538,7 @@ class AviaryProblem(om.Problem):
                         ref=ref,
                     )
                 else:
-                    last_phase = self.traj._phases.items()[final_phase_name]
+                    last_phase = self.model.traj._phases.items()[final_phase_name]
                     last_phase.add_objective(Dynamic.Vehicle.MASS, loc='final', ref=ref)
 
             elif objective_type == 'time':
