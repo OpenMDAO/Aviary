@@ -2337,7 +2337,8 @@ class BWBLiftCoeffClean(om.ExplicitComponent):
                 + planform / wing_area * body_lift_curve_slope
             )
             outputs['mod_lift_curve_slope'] = mod_lift_curve_slope
-            outputs[Dynamic.Vehicle.ANGLE_OF_ATTACK] = rad2deg(CL / mod_lift_curve_slope) + alpha0
+            alpha = rad2deg(CL / mod_lift_curve_slope) + alpha0
+            outputs[Dynamic.Vehicle.ANGLE_OF_ATTACK] = alpha
         else:
             alpha = inputs[Dynamic.Vehicle.ANGLE_OF_ATTACK]
             clw = lift_curve_slope * np.pi / 180.0 * (alpha - alpha0)
@@ -2353,6 +2354,7 @@ class BWBLiftCoeffClean(om.ExplicitComponent):
                 print(
                     f'Some angle of attack {alpha} might be greater than alpha stall {alpha_stall}.'
                 )
+
         # TODO: check with Jeff
         # Used similar formula CLW = (SREF/SW_EXP)*CLTOT*(1. - CLBqCLW)
         outputs['CL_max'] = wing_area / exp_wing_area * CL_max_flaps * (1 - CL_ratio_body_wing)
