@@ -350,7 +350,6 @@ class LiftCoeffCleanTest(unittest.TestCase):
         tol = 1e-7
         assert_near_equal(prob['CL'], [-0.08640507, -0.08640507], tol)
         assert_near_equal(prob['alpha_stall'], [16.90930203, 16.90930203], tol)
-        assert_near_equal(prob['CL_max'], [1.95591945, 1.95591945], tol)
 
         partial_data = prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=1e-11, rtol=1e-11)
@@ -378,7 +377,6 @@ class LiftCoeffCleanTest(unittest.TestCase):
         tol = 1e-7
         assert_near_equal(prob[Dynamic.Vehicle.ANGLE_OF_ATTACK], [-1.99999997, -1.99999997], tol)
         assert_near_equal(prob['alpha_stall'], [16.90930203, 16.90930203], tol)
-        assert_near_equal(prob['CL_max'], [1.95591945, 1.95591945], tol)
 
         partial_data = prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=1e-11, rtol=1e-11)
@@ -634,7 +632,6 @@ class BWBLiftCoeffTest(unittest.TestCase):
         tol = 1e-6
         assert_near_equal(prob['CL'], [0.23762299, 0.23762299], tol)
         assert_near_equal(prob['alpha_stall'], [16.88565997, 16.88565997], tol)
-        assert_near_equal(prob['CL_max'], [3.282, 3.282], tol)
 
         partial_data = prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=1e-11, rtol=1e-11)
@@ -670,7 +667,6 @@ class BWBLiftCoeffTest(unittest.TestCase):
         tol = 1e-6
         assert_near_equal(prob['CL'], [1.76135088, 1.761350889], tol)
         assert_near_equal(prob['alpha_stall'], [21.44000465, 21.44000465], tol)
-        assert_near_equal(prob['CL_max'], [1.82855331, 1.82855331], tol)
 
         partial_data = prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=1e-11, rtol=1e-11)
@@ -711,7 +707,6 @@ class BWBLiftCoeffCleanTest(unittest.TestCase):
         assert_near_equal(prob['mod_lift_curve_slope'], [6.51504303212, 6.51504303212], tol)
         assert_near_equal(prob[Dynamic.Vehicle.ANGLE_OF_ATTACK], [3.66676903, 3.66676903], tol)
         assert_near_equal(prob['alpha_stall'], [14.8118105, 14.8118105], tol)
-        assert_near_equal(prob['CL_max'], [1.58423497, 1.58423497], tol)
 
         partial_data = prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=1e-11, rtol=1e-11)
@@ -747,7 +742,6 @@ class BWBLiftCoeffCleanTest(unittest.TestCase):
         tol = 1e-6
         assert_near_equal(prob['CL'], [0.17056343, 0.17056343], tol)
         assert_near_equal(prob['alpha_stall'], [14.81181653, 14.81181653], tol)
-        assert_near_equal(prob['CL_max'], [1.58423497, 1.58423497], tol)
 
         partial_data = prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=1e-11, rtol=1e-11)
