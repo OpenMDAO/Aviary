@@ -205,25 +205,33 @@ class SolvedTwoDOFProblemConfigurator(ProblemConfiguratorBase):
             handled by constraints if `phases` is a parallel group under MPI.
         """
         # connect regular_phases with each other if you are optimizing alt or mach
-        aviary_group.link_phases_helper_with_options(
+        self.link_phases_helper_with_options(
+            aviary_group,
             aviary_group.regular_phases,
             'altitude_optimize',
             Dynamic.Mission.ALTITUDE,
             ref=1.0e4,
         )
-        aviary_group.link_phases_helper_with_options(
-            aviary_group.regular_phases, 'mach_optimize', Dynamic.Atmosphere.MACH
+        self.link_phases_helper_with_options(
+            aviary_group,
+            aviary_group.regular_phases,
+            'mach_optimize',
+            Dynamic.Atmosphere.MACH,
         )
 
         # connect reserve phases with each other if you are optimizing alt or mach
-        aviary_group.link_phases_helper_with_options(
+        self.link_phases_helper_with_options(
+            aviary_group,
             aviary_group.reserve_phases,
             'altitude_optimize',
             Dynamic.Mission.ALTITUDE,
             ref=1.0e4,
         )
-        aviary_group.link_phases_helper_with_options(
-            aviary_group.reserve_phases, 'mach_optimize', Dynamic.Atmosphere.MACH
+        self.link_phases_helper_with_options(
+            aviary_group,
+            aviary_group.reserve_phases,
+            'mach_optimize',
+            Dynamic.Atmosphere.MACH,
         )
 
         aviary_group.traj.link_phases(phases, [Dynamic.Vehicle.MASS], connected=True)

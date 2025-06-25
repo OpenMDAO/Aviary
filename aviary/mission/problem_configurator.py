@@ -144,13 +144,13 @@ class ProblemConfiguratorBase:
         """
         pass
 
-    def link_phases_helper_with_options(self, model, phases, option_name, var, **kwargs):
+    def link_phases_helper_with_options(self, aviary_group, phases, option_name, var, **kwargs):
         # Initialize a list to keep track of indices where option_name is True
         true_option_indices = []
 
         # Loop through phases to find where option_name is True
         for idx, phase_name in enumerate(phases):
-            if model.phase_info[phase_name]['user_options'].get(option_name, False):
+            if aviary_group.phase_info[phase_name]['user_options'].get(option_name, False):
                 true_option_indices.append(idx)
 
         # Determine the groups of phases to link based on consecutive indices
@@ -184,7 +184,7 @@ class ProblemConfiguratorBase:
 
             # Link the phases for the current group
             if len(phases_to_link) > 1:
-                model.traj.link_phases(phases=phases_to_link, vars=[var], **kwargs)
+                aviary_group.traj.link_phases(phases=phases_to_link, vars=[var], **kwargs)
 
     def add_post_mission_systems(self, aviary_group):
         """
