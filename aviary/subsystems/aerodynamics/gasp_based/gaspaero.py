@@ -168,6 +168,9 @@ class WingTailRatios(om.ExplicitComponent):
         self.add_output('bbar', units='unitless', desc='BBAR: Ratio of H tail area to wing span')
         self.add_output('sbar', units='unitless', desc='SBAR: Ratio of H tail area to wing area')
         self.add_output('cbar', units='unitless', desc='CBAR: Ratio of H tail chord to wing chord')
+        self.add_output(
+            'bbar_alt', units='unitless', desc='BHTqB: Ratio of H tail area to wing span'
+        )
 
     def setup_partials(self):
         self.declare_partials(
@@ -195,6 +198,9 @@ class WingTailRatios(om.ExplicitComponent):
             [Aircraft.HorizontalTail.AVERAGE_CHORD, Aircraft.Wing.AVERAGE_CHORD],
             method='cs',
         )
+        self.declare_partials(
+            'bbar_alt', [Aircraft.HorizontalTail.SPAN, Aircraft.Wing.SPAN], method='cs'
+        )
 
     def compute(self, inputs, outputs):
         (
@@ -218,6 +224,11 @@ class WingTailRatios(om.ExplicitComponent):
         outputs['bbar'] = span_htail / wingspan
         outputs['sbar'] = htail_area / wing_area
         outputs['cbar'] = htail_chord / avg_chord
+        # bbar_alt is a modified bbar for tailless BWB
+        if span_htail < 0.01 * wingspan:
+            outputs['bbar_alt'] = 1.0
+        else:
+            outputs['bbar_alt'] = outputs['bbar']
 
 
 class BWBBodyLiftCurveSlope(om.ExplicitComponent):
@@ -564,19 +575,22 @@ class BWBFormFactorAndSIWB(om.ExplicitComponent):
 
 
 class UFac(om.ExplicitComponent):
+    """GASP EAERO subroutine"""
+
     def initialize(self):
         self.options.declare('num_nodes', default=1, types=int)
         add_aviary_option(self, Aircraft.Design.TYPE)
-        self.options.declare('smooth_ufac', default=True, types=bool)  # only for BWB
+        self.options.declare('smooth_ufac', default=False, types=bool)  # only for BWB
         self.options.declare('mu', default=100.0, types=float)  # only for BWB
 
     def setup(self):
         nn = self.options['num_nodes']
         self.add_input('lift_ratio', units='unitless', shape=nn, desc='BARL: Lift ratio')
         # bbar is the ratio of horizontal tail span over wing span.
-        self.add_input('bbar', units='unitless', desc='BBAR')
+        self.add_input('bbar_alt', units='unitless', desc='BBAR')
         self.add_input('sigma', units='unitless', desc='interference factor')
         self.add_input('sigstr', units='unitless', desc='nonelliptic interference factor')
+        add_aviary_input(self, Aircraft.Wing.SPAN, units='ft', desc='B')
         self.add_output('ufac', shape=nn, units='unitless')
 
     def setup_partials(self):
@@ -592,7 +606,7 @@ class UFac(om.ExplicitComponent):
         self.declare_partials(
             'ufac',
             [
-                'bbar',
+                'bbar_alt',
                 'sigma',
                 'sigstr',
             ],
@@ -601,14 +615,22 @@ class UFac(om.ExplicitComponent):
     def compute(self, inputs, outputs):
         design_type = self.options[Aircraft.Design.TYPE]
         lift_ratio = inputs['lift_ratio']
-        bbar = inputs['bbar']
+        bbar = inputs['bbar_alt']
         sigma = inputs['sigma']
         sigstr = inputs['sigstr']
+        wingspan = inputs[Aircraft.Wing.SPAN]
 
-        ufac = (1 + lift_ratio) ** 2 / (
-            sigstr * (lift_ratio / bbar) ** 2 + 2 * sigma * lift_ratio / bbar + 1
-        )
-        if design_type is AircraftTypes.BLENDED_WING_BODY:
+        if design_type is AircraftTypes.TRANSPORT:
+            ufac = (1 + lift_ratio) ** 2 / (
+                sigstr * (lift_ratio / bbar) ** 2 + 2 * sigma * lift_ratio / bbar + 1
+            )
+        else:
+            # Modify for tailless "BWB"
+            if bbar < 0.01 * wingspan:
+                bbar = 1.0
+            ufac = (1 + lift_ratio) ** 2 / (
+                sigstr * (lift_ratio / bbar) ** 2 + 2 * sigma * lift_ratio / bbar + 1
+            )
             # For BWB, GASP has to limit UFAC under 0.975 for good result
             smooth = self.options['smooth_ufac']
             if smooth:
@@ -622,7 +644,7 @@ class UFac(om.ExplicitComponent):
     def compute_partials(self, inputs, J):
         design_type = self.options[Aircraft.Design.TYPE]
         lift_ratio = inputs['lift_ratio']
-        bbar = inputs['bbar']
+        bbar = inputs['bbar_alt']
         sigma = inputs['sigma']
         sigstr = inputs['sigstr']
 
@@ -664,7 +686,7 @@ class UFac(om.ExplicitComponent):
                 )
 
         J['ufac', 'lift_ratio'] = dufac_dlift_ratio
-        J['ufac', 'bbar'] = dufac_dbbar
+        J['ufac', 'bbar_alt'] = dufac_dbbar
         J['ufac', 'sigma'] = dufac_dsigma
         J['ufac', 'sigstr'] = dufac_dsigstr
 
@@ -976,6 +998,7 @@ class AeroGeom(om.ExplicitComponent):
         # fffus = 1 + 1.5 * (cabin_width / fus_len) ** 1.5 + 7 * (cabin_width / fus_len) ** 3
 
         # flat plate equivalent areas
+        # GASP uses different values of cf for wing, nacelle, fuselage, etc.
         fef = ff_fus * fus_SA * cf * ffre * fffus + fe_fus_inc
         few = ff_wing * wing_area * cf * fwre
         # TODO replace 2 with num_engines
@@ -993,6 +1016,7 @@ class AeroGeom(om.ExplicitComponent):
         # end INTERFERENCE
 
         # total flat plate equivalent area
+        # In GASP, nacelle is excluded.
         fe = few + fef + fevt + feht + fen + feiwf + festrt + cd0_inc * wing_area
 
         # wfob = cabin_width / wingspan
@@ -1059,7 +1083,6 @@ class AeroSetup(om.Group):
         interp.add_output('sigstr', 0.0, units='unitless', training_data=sig2)
         self.add_subsystem('interp', interp, promotes=['*'])
 
-        # Note: It should hold ufac <= 0.975 for BWB
         self.add_subsystem(
             'ufac_calc',
             om.ExecComp(
@@ -1124,7 +1147,7 @@ class BWBAeroSetup(om.Group):
 
         # implements EAERO
         interp = om.MetaModelStructuredComp(method='2D-slinear')
-        interp.add_input('bbar', 0.0, units='unitless', training_data=xbbar)
+        interp.add_input('bbar_alt', 0.0, units='unitless', training_data=xbbar)
         interp.add_input('hbar', 0.0, units='unitless', training_data=xhbar)
         interp.add_output('sigma', 0.0, units='unitless', training_data=sig1)
         interp.add_output('sigstr', 0.0, units='unitless', training_data=sig2)
@@ -2065,7 +2088,7 @@ class LiftCoeffClean(om.ExplicitComponent):
 
         add_aviary_input(self, Mission.Design.LIFT_COEFFICIENT_MAX_FLAPS_UP, units='unitless')
 
-        self.add_output('alpha_stall', shape=nn, desc='Stall angle of attack')
+        self.add_output('alpha_stall', shape=nn, units='deg', desc='Stall angle of attack')
         self.add_output('CL_max', units='unitless', shape=nn, desc='Max lift coefficient')
 
     def setup_partials(self):
@@ -2169,6 +2192,7 @@ class BWBLiftCoeffClean(om.ExplicitComponent):
             types=bool,
             desc='If True, output alpha for a given input CL',
         )
+        add_aviary_option(self, Settings.VERBOSITY)
 
     def setup(self):
         nn = self.options['num_nodes']
@@ -2293,6 +2317,8 @@ class BWBLiftCoeffClean(om.ExplicitComponent):
         )
 
     def compute(self, inputs, outputs):
+        verbosity = self.options[Settings.VERBOSITY]
+
         lift_curve_slope = inputs['lift_curve_slope']
         body_lift_curve_slope = inputs['body_lift_curve_slope']
         lift_ratio = inputs['lift_ratio']
@@ -2320,9 +2346,18 @@ class BWBLiftCoeffClean(om.ExplicitComponent):
                 + planform / wing_area * deg2rad(alpha - alpha0) * body_lift_curve_slope
             )
 
-        outputs['alpha_stall'] = rad2deg(CL_max_flaps / lift_curve_slope) + alpha0
+        alpha_stall = rad2deg(CL_max_flaps / lift_curve_slope) + alpha0
+        outputs['alpha_stall'] = alpha_stall
+        if any(x > 0.0 for x in alpha.real - alpha_stall.real):
+            if verbosity >= Verbosity.BRIEF:
+                print(
+                    f'Some angle of attack {alpha} might be greater than alpha stall {alpha_stall}.'
+                )
         # TODO: check with Jeff
+        # Used similar formula CLW = (SREF/SW_EXP)*CLTOT*(1. - CLBqCLW)
         outputs['CL_max'] = wing_area / exp_wing_area * CL_max_flaps * (1 - CL_ratio_body_wing)
+        # Not sure how to compute CL_max. This output is not used anyway.
+        # outputs['CL_max'] = CL_max_flaps * (1 + lift_ratio)
 
     def compute_partials(self, inputs, J):
         lift_curve_slope = inputs['lift_curve_slope']
