@@ -350,6 +350,7 @@ class LiftCoeffCleanTest(unittest.TestCase):
         tol = 1e-7
         assert_near_equal(prob['CL'], [-0.08640507, -0.08640507], tol)
         assert_near_equal(prob['alpha_stall'], [16.90930203, 16.90930203], tol)
+        assert_near_equal(prob['CL_max'], [1.95591945, 1.95591945], tol)
 
         partial_data = prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=1e-11, rtol=1e-11)
@@ -377,6 +378,7 @@ class LiftCoeffCleanTest(unittest.TestCase):
         tol = 1e-7
         assert_near_equal(prob[Dynamic.Vehicle.ANGLE_OF_ATTACK], [-1.99999997, -1.99999997], tol)
         assert_near_equal(prob['alpha_stall'], [16.90930203, 16.90930203], tol)
+        assert_near_equal(prob['CL_max'], [1.95591945, 1.95591945], tol)
 
         partial_data = prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=1e-11, rtol=1e-11)
