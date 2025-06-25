@@ -94,7 +94,7 @@ class hangarTestCases(CommandEntryPointsTestCases):
         self.run_and_test_cmd(cmd)
 
     def test_copy_deck(self):
-        cmd = 'aviary hangar turbofan_22k.txt'
+        cmd = 'aviary hangar turbofan_22k.csv'
         self.run_and_test_cmd(cmd)
 
     def test_copy_n3cc_data(self):
@@ -120,7 +120,7 @@ class convert_engineTestCases(CommandEntryPointsTestCases):
 
     def test_FLOPS_conversion(self):
         filepath = self.get_file('utils/test/data/FLOPS_turbofan_22k.txt')
-        outfile = Path.cwd() / 'turbofan_22k.txt'
+        outfile = Path.cwd() / 'turbofan_22k.csv'
         cmd = f'aviary convert_engine {filepath} {outfile} -f FLOPS'
         self.run_and_test_cmd(cmd)
 

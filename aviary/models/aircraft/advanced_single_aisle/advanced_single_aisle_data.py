@@ -3,7 +3,7 @@ FLOPS derived input/output for use with Aviary unit tests and benchmarks
 - FLOPS title: "REF MDL N3CC (26616) AR11 1220t 1340p turbofan_22k M785 20210721"
 - FLOPS input file: "N3CC FLOPS In- generic low speed polars.txt"
 - FLOPS output file: "N3CC FLOPS Out -low speed polar input echo deleted.txt"
-- FLOPS engine deck: "turbofan_22k.txt".
+- FLOPS engine deck: "turbofan_22k.csv".
 """
 
 import numpy as np
