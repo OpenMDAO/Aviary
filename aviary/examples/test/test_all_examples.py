@@ -15,7 +15,7 @@ from parameterized import parameterized
 
 # TODO: Address any issue that requires a skip.
 SKIP_EXAMPLES = {
-    'run_multimission_example_large_single_aisle.py': 'Broken due to OpenMDAO changes',
+    'run_multimission_example.py': 'Broken due to OpenMDAO changes',
 }
 
 # TODO: temporary fix, waiting on https://github.com/OpenMDAO/OpenMDAO/issues/3510
