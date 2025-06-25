@@ -43,7 +43,8 @@ def preprocess_options(aviary_options: AviaryValues, meta_data=_MetaData, verbos
             aviary_options.set_val(Settings.VERBOSITY, verbosity)
 
     preprocess_crewpayload(aviary_options, meta_data, verbosity)
-    preprocess_propulsion(aviary_options, engine_models, meta_data, verbosity)
+    if not engine_models is None:
+        preprocess_propulsion(aviary_options, engine_models, meta_data, verbosity)
 
 
 def remove_preprocessed_options(aviary_options):
@@ -494,10 +495,6 @@ def preprocess_propulsion(
 ):
     """
     Updates AviaryValues object with values taken from provided EngineModels.
-
-    If no EngineModels are provided, either in engine_models or included in
-    aviary_options, an EngineDeck is created using available inputs and options in
-    aviary_options.
 
     Vectorizes variables in aviary_options in the correct order for vehicles with
     heterogeneous engines.

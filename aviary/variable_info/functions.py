@@ -94,6 +94,8 @@ def add_aviary_input(
     val = cast_type(varname, val, meta_data)
     check_type(varname, val, meta_data)
 
+    primal_name = varname.replace(':', '__')
+
     comp.add_input(
         varname,
         val=val,
@@ -101,6 +103,7 @@ def add_aviary_input(
         desc=desc,
         shape_by_conn=shape_by_conn,
         shape=shape,
+        primal_name=primal_name,
     )
 
 
@@ -181,12 +184,15 @@ def add_aviary_output(
     val = cast_type(varname, val, meta_data)
     check_type(varname, val, meta_data)
 
+    primal_name = varname.replace(':', '__')
+
     comp.add_output(
         varname,
         val=val,
         units=units,
         desc=desc,
         shape_by_conn=shape_by_conn,
+        primal_name=primal_name,
     )
 
 
@@ -548,9 +554,12 @@ def setup_model_options(
         # No engine data.
         return
 
+    # TODO: Modify this method for multi mission/model.
+    aviary_group = prob.model
+
     if num_engine_models > 1:
         if engine_models is None:
-            engine_models = prob.engine_builders
+            engine_models = aviary_group.engine_builders
 
         for idx in range(num_engine_models):
             eng_name = engine_models[idx].name

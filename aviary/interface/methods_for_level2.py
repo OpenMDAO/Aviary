@@ -12,13 +12,12 @@ from pathlib import Path
 import dymos as dm
 import numpy as np
 import openmdao.api as om
-from dymos.utils.misc import _unspecified
 from openmdao.utils.reports_system import _default_reports
 
 from aviary.core.AviaryGroup import AviaryGroup
 
 from aviary.utils.aviary_values import AviaryValues
-from aviary.utils.functions import convert_strings_to_data
+from aviary.utils.functions import convert_strings_to_data, set_warning_format
 from aviary.utils.merge_variable_metadata import merge_meta_data
 
 from aviary.variable_info.enums import (
@@ -68,21 +67,18 @@ class AviaryProblem(om.Problem):
         super().__init__(**kwargs)
 
         self.timestamp = datetime.now()
+
+        # If verbosity is set to anything but None, this defines how warnings are formatted for the
+        # whole problem - warning format won't be updated if user requests a different verbosity
+        # level for a specific method
         self.verbosity = verbosity
+        set_warning_format(verbosity)
 
         self.model = AviaryGroup()
-        # self.pre_mission = PreMissionGroup()
-        # self.post_mission = PostMissionGroup()
 
         self.aviary_inputs = None
 
-        self.traj = None
-
         self.analysis_scheme = analysis_scheme
-
-        self.regular_phases = []
-        self.reserve_phases = []
-        self.configurator = None
 
     def load_inputs(
         self,
@@ -113,14 +109,19 @@ class AviaryProblem(om.Problem):
             verbosity = self.verbosity  # usually None
 
         # TODO: We cannot pass self.verbosity back up from load inputs for mulit-mission because there could be multiple .csv files
-        self.aviary_inputs, self.verbosity = self.model.load_inputs(
+        aviary_inputs, verbosity = self.model.load_inputs(
                 aircraft_data=aircraft_data,
                 phase_info=phase_info,
                 engine_builders=engine_builders,
                 problem_configurator=problem_configurator,
                 meta_data=meta_data,
                 verbosity=verbosity)
-        
+
+        # When there is only 1 aircraft model/mission, preserve old behavior.
+        self.phase_info = self.model.phase_info
+        self.aviary_inputs = aviary_inputs
+        self.verbosity = verbosity
+
         return self.aviary_inputs
 
     def check_and_preprocess_inputs(self, verbosity=None): # forward
@@ -128,7 +129,7 @@ class AviaryProblem(om.Problem):
         This method checks the user-supplied input values for any potential problems
         and preprocesses the inputs to prepare them for use in the Aviary problem.
         """
-        
+
         # `self.verbosity` is "true" verbosity for entire run. `verbosity` is verbosity
         # override for just this method
         if verbosity is not None:
@@ -146,9 +147,9 @@ class AviaryProblem(om.Problem):
         self.meta_data = BaseMetaData.copy()
 
         # loop through phase_info and external subsystems
-        for phase_name in self.model.phase_info: 
+        for phase_name in self.model.phase_info:
             # TODO: phase_info now resides in AviaryGroup. Accessing it as self.model.phase_info is just a temporary stop-gap
-            # it will be necessary to combine multiple self.models 
+            # it will be necessary to combine multiple self.models
             external_subsystems = self.model.get_all_subsystems(
                 self.model.phase_info[phase_name]['external_subsystems']
             )
@@ -156,7 +157,7 @@ class AviaryProblem(om.Problem):
             for subsystem in external_subsystems:
                 meta_data = subsystem.meta_data.copy()
                 self.meta_data = merge_meta_data([self.meta_data, meta_data])
-            
+
         self.model.meta_data = self.meta_data # TODO: temporary fix
 
     def add_pre_mission_systems(self, verbosity=None): # forward
@@ -202,7 +203,8 @@ class AviaryProblem(om.Problem):
 
         Returns
         -------
-        traj: The Dymos Trajectory object containing the added mission phases.
+        <Trajectory>
+            The Dymos Trajectory object containing the added mission phases.
         """
         # `self.verbosity` is "true" verbosity for entire run. `verbosity` is verbosity
         # override for just this method
@@ -212,9 +214,14 @@ class AviaryProblem(om.Problem):
         else:
             verbosity = self.verbosity  # defaults to BRIEF
 
-        return self.model.add_phases(phase_info_parameterization=phase_info_parameterization, parallel_phases=parallel_phases, verbosity=verbosity, comm=self.comm)
+        return self.model.add_phases(
+            phase_info_parameterization=phase_info_parameterization,
+            parallel_phases=parallel_phases,
+            verbosity=verbosity,
+            comm=self.comm
+        )
 
-    def add_post_mission_systems(self, include_landing=True, verbosity=None): # forward
+    def add_post_mission_systems(self, verbosity=None): # forward
         """
         Add post-mission systems to the aircraft model. This is akin to the pre-mission
         group or the "premission_systems", but occurs after the mission in the execution
@@ -245,7 +252,7 @@ class AviaryProblem(om.Problem):
         else:
             verbosity = self.verbosity  # defaults to BRIEF
 
-        self.model.add_post_mission_systems(include_landing=include_landing, verbosity=verbosity)
+        self.model.add_post_mission_systems(verbosity=verbosity)
 
     def link_phases(self, verbosity=None): # forward
         """
@@ -521,7 +528,7 @@ class AviaryProblem(om.Problem):
         if objective_type is not None:
             ref = ref if ref is not None else default_ref_values.get(objective_type, 1)
 
-            final_phase_name = self.regular_phases[-1]
+            final_phase_name = self.model.regular_phases[-1]
 
             if objective_type == 'mass':
                 if self.analysis_scheme is AnalysisScheme.COLLOCATION:
@@ -531,7 +538,7 @@ class AviaryProblem(om.Problem):
                         ref=ref,
                     )
                 else:
-                    last_phase = self.traj._phases.items()[final_phase_name]
+                    last_phase = self.model.traj._phases.items()[final_phase_name]
                     last_phase.add_objective(Dynamic.Vehicle.MASS, loc='final', ref=ref)
 
             elif objective_type == 'time':

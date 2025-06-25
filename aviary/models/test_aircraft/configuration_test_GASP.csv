@@ -24,6 +24,7 @@ aircraft:design:reserve_fuel_fraction,0.15,unitless
 aircraft:design:static_margin,0.05,unitless
 aircraft:design:structural_mass_increment,0,lbm
 aircraft:design:supercritical_drag_shift,0.033,unitless
+aircraft:electrical:system_mass_per_passenger,16.0,lbm
 aircraft:engine:additional_mass_fraction,0.165,unitless
 aircraft:engine:data_file,models/engines/turbofan_23k_1.deck,unitless
 aircraft:engine:global_throttle,True
@@ -59,7 +60,6 @@ aircraft:fuselage:seat_pitch,44.2,inch
 aircraft:fuselage:seat_width,20.2,inch
 aircraft:fuselage:tail_fineness,1.18,unitless
 aircraft:fuselage:wetted_area_scaler,1,unitless
-aircraft:horizontal_tail:area,0,ft**2
 aircraft:horizontal_tail:aspect_ratio,4.025,unitless
 aircraft:horizontal_tail:form_factor,1.7,unitless
 aircraft:horizontal_tail:mass_coefficient,0.2076,unitless
@@ -89,7 +89,6 @@ aircraft:strut:dimensional_location_specified,True,unitless
 aircraft:strut:fuselage_interference_factor,1.125,unitless
 aircraft:strut:mass_coefficient,0.238,unitless
 aircraft:strut:thickness_to_chord,0.1,unitless
-aircraft:vertical_tail:area,0,ft**2
 aircraft:vertical_tail:aspect_ratio,0.825,unitless
 aircraft:vertical_tail:form_factor,2,unitless
 aircraft:vertical_tail:mass_coefficient,0.2587,unitless
@@ -166,7 +165,7 @@ fuel_burn_per_passenger_mile,0
 reserves,0
 rotation_mass,0
 time_to_climb,0
-	 
+
 # Unconverted Values
 INGASP.ALR,1.11
 INGASP.BENGOB,0.05
