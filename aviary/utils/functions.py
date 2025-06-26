@@ -1,8 +1,9 @@
 import atexit
-import os
 from contextlib import ExitStack
+import os
 from pathlib import Path
 from typing import Union
+import warnings
 
 import importlib_resources
 import numpy as np
@@ -301,6 +302,40 @@ def create_printcomp(all_inputs: list, input_units: dict = {}, meta_data=_MetaDa
             print('\n'.join(print_string))
 
     return PrintComp
+
+
+def set_warning_format(verbosity):
+    # if verbosity not set / not known yet, default to most simple warning format rather than no
+    # warnings at all
+    if verbosity is None:
+        verbosity = Verbosity.BRIEF
+
+    # Reset all warning filters
+    warnings.resetwarnings()
+
+    # NOTE identity comparison is preferred for Enum but here verbosity is often an int, so we need
+    # an equality comparison
+    if verbosity == Verbosity.QUIET:
+        # Suppress all warnings
+        warnings.filterwarnings('ignore')
+
+    elif verbosity == Verbosity.BRIEF:
+
+        def simplified_warning(message, category, filename, lineno, line=None):
+            return f'Warning: {message}\n\n'
+
+        warnings.formatwarning = simplified_warning
+
+    elif verbosity == Verbosity.VERBOSE:
+
+        def simplified_warning(message, category, filename, lineno, line=None):
+            return f'{category.__name__}: {message}\n\n'
+
+        warnings.formatwarning = simplified_warning
+
+    else:  # DEBUG
+        # use the default warning formatting
+        warnings.filterwarnings('default')
 
 
 def promote_aircraft_and_mission_vars(group):
