@@ -1936,57 +1936,72 @@ class AviaryProblem(om.Problem):
         
 
         if payload_range_bool:
-            self.aviary_inputs.set_val(Settings.PAYLOAD_RANGE, False)
-
-            self.save_sizing_to_json(json_filename='payload_range_point_2.json')
-
-            #point 1 along the y axis (range=0)
-            payload_1 = float(self.get_val(Aircraft.CrewPayload.TOTAL_PAYLOAD_MASS))
-            range_1 = 0 
-            #point 2, sizing mission payload and range
-            payload_2 = payload_1
-            range_2=float(self.get_val(Mission.Summary.RANGE))
-
-            #point 3, fallout mission with max fuel and payload on top of that
-            gross_mass = float(self.get_val(Mission.Summary.GROSS_MASS))
-            operating_mass=float(self.get_val(Aircraft.Design.OPERATING_MASS))
-            fuel_capacity=float(self.get_val(Aircraft.Fuel.TOTAL_CAPACITY))
-            payload=float(self.get_val(Aircraft.CrewPayload.TOTAL_PAYLOAD_MASS))
-
-            payload_allowed_mass=gross_mass-operating_mass-fuel_capacity
-
-            payload_frac=payload_allowed_mass/payload
-
-            #cargo does not invoke "aviary_inputs" because it is of units lbm, while payload frac is not
-            wing_cargo_allowed=int(self.get_val(Aircraft.CrewPayload.WING_CARGO))*payload_frac
-            misc_cargo_allowed=int(self.get_val(Aircraft.CrewPayload.MISC_CARGO))*payload_frac
-            num_first_allowed=int((self.aviary_inputs.get_val(Aircraft.CrewPayload.Design.NUM_FIRST_CLASS))*payload_frac)
-            num_bus_allowed=int((self.aviary_inputs.get_val(Aircraft.CrewPayload.Design.NUM_BUSINESS_CLASS))*payload_frac)
-            num_tourist_allowed=int((self.aviary_inputs.get_val(Aircraft.CrewPayload.Design.NUM_TOURIST_CLASS))*payload_frac)
-
-            prob_fallout_max_fuel = self.fallout_mission(json_filename='payload_range_point_2.json',
-                                        num_first= num_first_allowed, num_business= num_bus_allowed, num_tourist= num_tourist_allowed,
-                                        wing_cargo=wing_cargo_allowed, misc_cargo=misc_cargo_allowed)
+            payload_range_matrix=self.run_payload_range()
+            print(payload_range_matrix[1])
+            print(payload_range_matrix[0])
 
 
-            payload_3=float(prob_fallout_max_fuel.get_val(Aircraft.CrewPayload.TOTAL_PAYLOAD_MASS))
-            range_3=float(prob_fallout_max_fuel.get_val(Mission.Summary.RANGE))
+    def run_payload_range(self):
+        #Ensure proper transfer of json files. 
+        self.save_sizing_to_json(json_filename='payload_range_sizing.json')
 
-            #point 4, ferry mission with max fuel and 0 payload,
-            allowed_mission_mass=operating_mass+fuel_capacity
-            #Aviary as of 06/13/2025 does not allow for off-design missions of 0 passengers, therefore 1 will be used
-            prob_fallout_ferry = self.fallout_mission(json_filename='payload_range_point_2.json',
-                                        num_first= 0, num_business= 0, num_tourist= 1, num_pax=1,
-                                        wing_cargo=0, cargo_mass= 0, mission_mass=allowed_mission_mass)
-            
-            payload_4=float(prob_fallout_ferry.get_val(Aircraft.CrewPayload.TOTAL_PAYLOAD_MASS))
-            range_4=float(prob_fallout_ferry.get_val(Mission.Summary.RANGE))
+        #Automatically Adjust duration bounds of phase information within the cruise stage 
+        #to allow the optimizer to arrive at a local maxima.
+        min_duration = self.phase_info['cruise']['user_options']['duration_bounds'][0][0]
+        max_duration = self.phase_info['cruise']['user_options']['duration_bounds'][0][1]
+        cruise_units = self.phase_info['cruise']['user_options']['duration_bounds'][1]
+
+        #Simply doubling the amount of time the optimizer is allowed to stay in the cruise phase, as well as ensure cruise is optimized
+        self.phase_info['cruise']['user_options'].update({'duration_bounds':((min_duration,2*max_duration), cruise_units)})
+
+        #point 1 along the y axis (range=0)
+        payload_1 = float(self.get_val(Aircraft.CrewPayload.TOTAL_PAYLOAD_MASS))
+        range_1 = 0 
+        #point 2, sizing mission payload and range
+        payload_2 = payload_1
+        range_2=float(self.get_val(Mission.Summary.RANGE))
+
+        #point 3, fallout mission with max fuel and payload on top of that
+        gross_mass = float(self.get_val(Mission.Summary.GROSS_MASS))
+        operating_mass=float(self.get_val(Aircraft.Design.OPERATING_MASS))
+        fuel_capacity=float(self.get_val(Aircraft.Fuel.TOTAL_CAPACITY))
+        payload=float(self.get_val(Aircraft.CrewPayload.TOTAL_PAYLOAD_MASS))
+
+        payload_allowed_mass=gross_mass-operating_mass-fuel_capacity
+
+        payload_frac=payload_allowed_mass/payload
+
+        #cargo does not invoke "aviary_inputs" because it is of units lbm, while payload frac is not
+        wing_cargo_allowed=int(self.get_val(Aircraft.CrewPayload.WING_CARGO))*payload_frac
+        misc_cargo_allowed=int(self.get_val(Aircraft.CrewPayload.MISC_CARGO))*payload_frac
+        num_first_allowed=int((self.aviary_inputs.get_val(Aircraft.CrewPayload.Design.NUM_FIRST_CLASS))*payload_frac)
+        num_bus_allowed=int((self.aviary_inputs.get_val(Aircraft.CrewPayload.Design.NUM_BUSINESS_CLASS))*payload_frac)
+        num_tourist_allowed=int((self.aviary_inputs.get_val(Aircraft.CrewPayload.Design.NUM_TOURIST_CLASS))*payload_frac)
+
+        prob_fallout_max_fuel = self.fallout_mission(json_filename='payload_range_sizing.json',
+                                    num_first= num_first_allowed, num_business= num_bus_allowed, num_tourist= num_tourist_allowed,
+                                    wing_cargo=wing_cargo_allowed, misc_cargo=misc_cargo_allowed)
 
 
-            payload_points=[payload_1, payload_2, payload_3, payload_4]
-            range_points=[range_1, range_2, range_3, range_4]        
-            print(payload_points, range_points)    
+        payload_3=float(prob_fallout_max_fuel.get_val(Aircraft.CrewPayload.TOTAL_PAYLOAD_MASS))
+        range_3=float(prob_fallout_max_fuel.get_val(Mission.Summary.RANGE))
 
+        #point 4, ferry mission with max fuel and 0 payload,
+        allowed_mission_mass=operating_mass+fuel_capacity
+        #Aviary as of 06/13/2025 does not allow for off-design missions of 0 passengers, therefore 1 will be used
+        prob_fallout_ferry = self.fallout_mission(json_filename='payload_range_sizing.json',
+                                    num_first= 0, num_business= 0, num_tourist= 1, num_pax=1,
+                                    wing_cargo=0, misc_cargo=0, cargo_mass= 0, mission_mass=allowed_mission_mass)
+        
+        payload_4=float(prob_fallout_ferry.get_val(Aircraft.CrewPayload.TOTAL_PAYLOAD_MASS))
+        range_4=float(prob_fallout_ferry.get_val(Mission.Summary.RANGE))
+
+
+        payload_points=["Payload (lbs)", payload_1, payload_2, payload_3, payload_4]
+        range_points=["Range (NM)", range_1, range_2, range_3, range_4]
+
+        return(payload_points, range_points)   
+    
     def alternate_mission(
         self,
         run_mission=True,
@@ -2102,6 +2117,7 @@ class AviaryProblem(om.Problem):
         )
 
         prob_alternate.check_and_preprocess_inputs()
+        prob_alternate.phase_info=self.phase_info
         prob_alternate.add_pre_mission_systems()
         prob_alternate.add_phases()
         prob_alternate.add_post_mission_systems()
@@ -2114,7 +2130,7 @@ class AviaryProblem(om.Problem):
         prob_alternate.setup()
         prob_alternate.set_initial_guesses()
         if run_mission:
-            prob_alternate.run_aviary_problem(record_filename='alternate_problem_history.db')
+            prob_alternate.run_aviary_problem()
         return prob_alternate
 
     def fallout_mission(
@@ -2227,6 +2243,7 @@ class AviaryProblem(om.Problem):
         prob_fallout.add_post_mission_systems()
         prob_fallout.link_phases()
         prob_fallout.add_driver(optimizer, verbosity=verbosity)
+        prob_fallout.options=self.options
         prob_fallout.driver.options=self.driver.options
         prob_fallout.driver.opt_settings=self.driver.opt_settings
         prob_fallout.add_design_variables()
@@ -2234,7 +2251,7 @@ class AviaryProblem(om.Problem):
         prob_fallout.setup()
         prob_fallout.set_initial_guesses()
         if run_mission:
-            prob_fallout.run_aviary_problem(record_filename='fallout_problem_history.db')
+            prob_fallout.run_aviary_problem()
         return prob_fallout
 
     def save_sizing_to_json(self, json_filename='sizing_problem.json'):
