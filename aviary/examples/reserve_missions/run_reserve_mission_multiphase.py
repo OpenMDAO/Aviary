@@ -37,7 +37,7 @@ phase_info.update(
                 'altitude_final': (32000.0, 'ft'),
                 'throttle_enforcement': 'path_constraint',
                 'time_initial_bounds': ((0.0, 0.0), 'min'),
-                'time_duration_bounds': ((64.0, 192.0), 'min'),
+                'time_duration_bounds': ((30.0, 192.0), 'min'),
             },
             'initial_guesses': {
                 'time': ([0, 128], 'min'),
@@ -85,7 +85,7 @@ phase_info.update(
                 'altitude_initial': (32000.0, 'ft'),
                 'altitude_final': (32000.0, 'ft'),
                 'throttle_enforcement': 'boundary_constraint',
-                'time_initial_bounds': ((149.5, 448.5), 'min'),
+                'time_initial_bounds': ((60, 448.5), 'min'),
             },
         },
         'reserve_descent': {
@@ -107,7 +107,7 @@ phase_info.update(
                 'time_duration_bounds': ((29.0, 87.0), 'min'),
             },
             'initial_guesses': {
-                'time': ([241, 58], 'min'),
+                'time': ([60, 500], 'min'),
             },
         },
     }
@@ -147,4 +147,4 @@ prob.setup()
 
 prob.set_initial_guesses()
 
-prob.run_aviary_problem(record_filename='reserve_mission_multiphase.db')
+prob.run_aviary_problem()
