@@ -1407,6 +1407,9 @@ class DragCoefClean(om.ExplicitComponent):
             SA7,
         ) = inputs.values()
 
+        import pdb
+
+        pdb.set_trace()
         mach_div = SA1 + SA2 * CL + div_drag_supercrit
 
         sig = sigmoidX(mach, mach_div, mu=0.005)
@@ -2306,15 +2309,7 @@ class BWBLiftCoeffClean(om.ExplicitComponent):
         )
 
         self.declare_partials('CL_max', ['lift_ratio'], rows=ar, cols=ar)
-        self.declare_partials(
-            'CL_max',
-            [
-                Aircraft.Wing.AREA,
-                Aircraft.Wing.EXPOSED_AREA,
-                Mission.Design.LIFT_COEFFICIENT_MAX_FLAPS_UP,
-                Aircraft.Fuselage.LIFT_COEFFICENT_RATIO_BODY_TO_WING,
-            ],
-        )
+        self.declare_partials('CL_max', [Mission.Design.LIFT_COEFFICIENT_MAX_FLAPS_UP])
 
     def compute(self, inputs, outputs):
         verbosity = self.options[Settings.VERBOSITY]
@@ -2340,6 +2335,9 @@ class BWBLiftCoeffClean(om.ExplicitComponent):
             alpha = rad2deg(CL / mod_lift_curve_slope) + alpha0
             outputs[Dynamic.Vehicle.ANGLE_OF_ATTACK] = alpha
         else:
+            import pdb
+
+            # pdb.set_trace()
             alpha = inputs[Dynamic.Vehicle.ANGLE_OF_ATTACK]
             clw = lift_curve_slope * np.pi / 180.0 * (alpha - alpha0)
             outputs['CL'] = (
@@ -2355,11 +2353,7 @@ class BWBLiftCoeffClean(om.ExplicitComponent):
                     f'Some angle of attack {alpha} might be greater than alpha stall {alpha_stall}.'
                 )
 
-        # TODO: check with Jeff
-        # Used similar formula CLW = (SREF/SW_EXP)*CLTOT*(1. - CLBqCLW)
-        outputs['CL_max'] = wing_area / exp_wing_area * CL_max_flaps * (1 - CL_ratio_body_wing)
-        # Not sure how to compute CL_max. This output is not used anyway.
-        # outputs['CL_max'] = CL_max_flaps * (1 + lift_ratio)
+        outputs['CL_max'] = CL_max_flaps * (1 + lift_ratio)
 
     def compute_partials(self, inputs, J):
         lift_curve_slope = inputs['lift_curve_slope']
@@ -2451,18 +2445,8 @@ class BWBLiftCoeffClean(om.ExplicitComponent):
         )
         J['alpha_stall', 'lift_curve_slope'] = -180.0 / np.pi * CL_max_flaps / lift_curve_slope**2
         J['alpha_stall', Aircraft.Wing.ZERO_LIFT_ANGLE] = 1
-        J['CL_max', Mission.Design.LIFT_COEFFICIENT_MAX_FLAPS_UP] = (
-            wing_area / exp_wing_area * (1 - CL_ratio_body_wing)
-        )
-        J['CL_max', Aircraft.Fuselage.LIFT_COEFFICENT_RATIO_BODY_TO_WING] = (
-            -wing_area / exp_wing_area * CL_max_flaps
-        )
-        J['CL_max', Aircraft.Wing.AREA] = (
-            1.0 / exp_wing_area * CL_max_flaps * (1 - CL_ratio_body_wing)
-        )
-        J['CL_max', Aircraft.Wing.EXPOSED_AREA] = (
-            -wing_area / exp_wing_area**2 * CL_max_flaps * (1 - CL_ratio_body_wing)
-        )
+        J['CL_max', Mission.Design.LIFT_COEFFICIENT_MAX_FLAPS_UP] = 1 + lift_ratio
+        J['CL_max', 'lift_ratio'] = CL_max_flaps
 
 
 class CruiseAero(om.Group):
