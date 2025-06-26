@@ -58,7 +58,7 @@ class TestUnsteadyFlightConditions(unittest.TestCase):
         else:
             p.set_val(Dynamic.Mission.ALTITUDE, 37500, units='ft')
             p.set_val(Dynamic.Atmosphere.MACH, 0.78, units='unitless')
-            p.set_val('dmach_dr', np.zeros(nn), units='unitless/km')
+            p.set_val('dmach_dr', np.zeros(nn), units='1/km')
 
         p.run_model()
 
