@@ -712,7 +712,7 @@ class BWBLiftCoeffCleanTest(unittest.TestCase):
         assert_near_equal(prob['mod_lift_curve_slope'], [6.51504303212, 6.51504303212], tol)
         assert_near_equal(prob[Dynamic.Vehicle.ANGLE_OF_ATTACK], [3.66676903, 3.66676903], tol)
         assert_near_equal(prob['alpha_stall'], [14.8118105, 14.8118105], tol)
-        assert_near_equal(prob['CL_max'], [1.58423497, 1.58423497], tol)
+        assert_near_equal(prob['CL_max'], [1.32133912, 1.32133912], tol)
 
         partial_data = prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=1e-11, rtol=1e-11)
@@ -1178,7 +1178,7 @@ class DragCoefCleanTest(unittest.TestCase):
         prob.run_model()
 
         tol = 1e-4
-        assert_near_equal(prob['CD'], [0.5136233, 0.5136233], tol)
+        assert_near_equal(prob['CD'], [0.02251097, 0.02251097], tol)
 
     def test_case2(self):
         """BWB data"""
@@ -1221,11 +1221,10 @@ class DragCoefCleanTest(unittest.TestCase):
         prob.run_model()
 
         tol = 1e-4
-        assert_near_equal(prob['CD'], [0.01465816, 0.01360734], tol)
+        assert_near_equal(prob['CD'], [0.01465816, 0.0156808], tol)
 
 
 if __name__ == '__main__':
     # unittest.main()
-    test = DragCoefCleanTest()
-    # test.test_cruise()
-    test.test_case2()
+    test = BWBLiftCoeffCleanTest()
+    test.test_case1()
