@@ -161,6 +161,12 @@ class EngineDeck(EngineModel):
         # also calls _preprocess_inputs() as part of EngineModel __init__
         super().__init__(name, options, meta_data=meta_data)
 
+        # custom error messages depending on data type
+        if self.read_from_file:
+            self.error_message = f'<{self.get_val(Aircraft.Engine.DATA_FILE)}>'
+        else:
+            self.error_message = f'EngineDeck <{self.name}>'
+
         # copy of raw data read from data_file or memory, never modified or used outside
         #     EngineDeck
         self._original_data = {key: np.array([]) for key in EngineModelVariables}
@@ -364,18 +370,12 @@ class EngineDeck(EngineModel):
         ValueError
             If non-numerical data found in DATA_FILE (not including header or comments).
         """
-        # custom error messages depending on data type
-        if self.read_from_file:
-            message = f'<{self.get_val(Aircraft.Engine.DATA_FILE)}>'
-        else:
-            message = f'EngineDeck <{self.name}>'
-
         # get data (as NamedValues object) from data file
         if self.read_from_file:
             data_file = self.get_val(Aircraft.Engine.DATA_FILE)
 
             # read csv file - currently not saving comments
-            raw_data = read_data_file(data_file, aliases=aliases)
+            raw_data, self.inputs, self.outputs = read_data_file(data_file, aliases=aliases)
 
         else:
             # run provided data through aliases
@@ -408,7 +408,7 @@ class EngineDeck(EngineModel):
                     val = np.array([convert_units(i, units, default_units[key]) for i in val])
                 except TypeError:
                     raise TypeError(
-                        f"{message}: units of '{units}' provided for "
+                        f"{self.error_message}: units of '{units}' provided for "
                         f'<{key.name}> are not compatible with expected '
                         f'units of {default_units[key]}'
                     )
@@ -420,14 +420,14 @@ class EngineDeck(EngineModel):
             else:
                 if self.get_val(Settings.VERBOSITY) >= Verbosity.BRIEF:
                     warnings.warn(
-                        f'{message}: header <{key}> was not recognized, and will be skipped'
+                        f'{self.error_message}: header <{key}> was not recognized, and will be skipped'
                     )
 
             # save all data in self._original_data, including skipped variables
             self._original_data[key] = val
 
         if not self.engine_variables:
-            raise UserWarning(f'No valid engine variables found in data for {message}')
+            raise UserWarning(f'No valid engine variables found in data for {self.error_message}')
 
         # Copy data from original data (never modified) to working data (changed through
         #    sorting, generating missing data, etc.)
@@ -451,12 +451,6 @@ class EngineDeck(EngineModel):
         original_data = self._original_data
         data = self.data
 
-        # custom error messages depending on data type
-        if self.read_from_file:
-            message = f'<{self.get_val(Aircraft.Engine.DATA_FILE)}>'
-        else:
-            message = f'EngineDeck <{self.name}>'
-
         engine_variables = self.engine_variables
 
         # Handle ram drag, net and gross thrust and potential conflicts in value or units
@@ -468,11 +462,11 @@ class EngineDeck(EngineModel):
             # if thrust is present, but gross thrust or ram drag also present raise warning
             if GROSS_THRUST in engine_variables and RAM_DRAG not in engine_variables:
                 warnings.warn(
-                    f'{message} contains both net and gross thrust. Only net thrust will be used.'
+                    f'{self.error_message} contains both net and gross thrust. Only net thrust will be used.'
                 )
             if GROSS_THRUST not in engine_variables and RAM_DRAG in engine_variables:
                 warnings.warn(
-                    f'{message} contains both net thrust '
+                    f'{self.error_message} contains both net thrust '
                     'and ram drag. Only net thrust will be used.'
                 )
 
@@ -495,7 +489,7 @@ class EngineDeck(EngineModel):
                     raise UserWarning(
                         'Provided net thrust is not equal to difference '
                         '(within tolerance) between gross thrust and ram '
-                        f'drag in {message}'
+                        f'drag in {self.error_message}'
                     )
             else:
                 # store net thrust in THRUST key instead of gross thrust
@@ -541,7 +535,7 @@ class EngineDeck(EngineModel):
         ):
             warnings.warn(
                 'Both corrected and uncorrected shaft horsepower are '
-                f'present in {message}. The two cannot be validated for '
+                f'present in {self.error_message}. The two cannot be validated for '
                 'consistency, and only uncorrected shaft power will be used.'
             )
             engine_variables.pop(SHAFT_POWER_CORRECTED)
@@ -562,7 +556,7 @@ class EngineDeck(EngineModel):
             # if missing_variables is not empty
             if not missing_variables:
                 raise UserWarning(
-                    f'Required variables {missing_variables} are missing from {message}'
+                    f'Required variables {missing_variables} are missing from {self.error_message}'
                 )
 
         # Set all unused variables to default value of zero
@@ -810,10 +804,21 @@ class EngineDeck(EngineModel):
         self.engine_variable_units = units
 
         # add inputs and outputs to interpolator
+        # independent variables that currently MUST be inputs
         independent_variables = [MACH, ALTITUDE, THROTTLE, HYBRID_THROTTLE]
+        if self.inputs == []:
+            self.inputs = independent_variables
+        else:
+            for var in independent_variables:
+                if var in self.outputs:
+                    raise UserWarning(
+                        f'Variable {var} is defined as an output in {self.error_message}, but '
+                        'Aviary requires it to be an input.'
+                    )
+
         no_scale_variables = [TEMPERATURE, RPM]
         for variable in self.engine_variables:
-            if variable in independent_variables:
+            if variable in self.inputs:
                 engine.add_input(
                     variable.value,
                     self.data[variable],

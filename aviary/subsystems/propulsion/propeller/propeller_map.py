@@ -54,7 +54,7 @@ class PropellerMap(om.Group):
         verbosity = self.options[Settings.VERBOSITY]
 
         if data is None:
-            data = read_data_file(data_file, aliases=aliases, verbosity=verbosity)
+            data, inputs, outputs = read_data_file(data_file, aliases=aliases, verbosity=verbosity)
             if verbosity > Verbosity.BRIEF:
                 print(f'Reading propeller performance data from {data_file}')
         else:
@@ -97,9 +97,7 @@ class PropellerMap(om.Group):
 
         propeller_interp = build_data_interpolator(
             interpolator_data=data,
-            interpolator_outputs={
-                'thrust_coefficient': 'unitless',
-            },
+            interpolator_outputs=outputs,
             num_nodes=nn,
         )
         self.add_subsystem('propeller_map', propeller_interp, promotes=['*'])
