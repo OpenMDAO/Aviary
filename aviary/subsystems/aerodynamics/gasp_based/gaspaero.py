@@ -1407,9 +1407,6 @@ class DragCoefClean(om.ExplicitComponent):
             SA7,
         ) = inputs.values()
 
-        import pdb
-
-        pdb.set_trace()
         mach_div = SA1 + SA2 * CL + div_drag_supercrit
 
         sig = sigmoidX(mach, mach_div, mu=0.005)
@@ -2335,9 +2332,6 @@ class BWBLiftCoeffClean(om.ExplicitComponent):
             alpha = rad2deg(CL / mod_lift_curve_slope) + alpha0
             outputs[Dynamic.Vehicle.ANGLE_OF_ATTACK] = alpha
         else:
-            import pdb
-
-            # pdb.set_trace()
             alpha = inputs[Dynamic.Vehicle.ANGLE_OF_ATTACK]
             clw = lift_curve_slope * np.pi / 180.0 * (alpha - alpha0)
             outputs['CL'] = (
