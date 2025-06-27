@@ -326,7 +326,11 @@ class AviaryProblem(om.Problem):
                             msg += f'Using fixed value of {time_duration} {units} instead.'
                             print(msg)
 
-                        guesses['time'][0][1] = time_duration
+                        time_duration_conv = wrapped_convert_units(
+                            (time_duration, units),
+                            units_guess
+                        )
+                        guesses['time'] = ((time_guess[0], time_duration_conv), units_guess)
 
                     else:
                         guesses['time'] = ((None, time_duration), units)
