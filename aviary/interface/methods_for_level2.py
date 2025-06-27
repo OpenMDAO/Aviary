@@ -330,7 +330,6 @@ class AviaryProblem(om.Problem):
 
                     else:
                         guesses['time'] = ((None, time_duration), units)
-                    guesses = self.phase_info[phase_name]['initial_guesses']
 
         for phase_name in self.phase_info:
             for external_subsystem in self.phase_info[phase_name]['external_subsystems']:
