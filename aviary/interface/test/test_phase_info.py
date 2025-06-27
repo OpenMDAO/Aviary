@@ -96,6 +96,44 @@ class TestParameterizePhaseInfo(unittest.TestCase):
         assert_near_equal(prob.get_val('traj.cruise.timeseries.mach')[0], 0.6)
 
 
+@use_tempdirs
+class TestPhaseInfoAPI(unittest.TestCase):
+    def test_time_duration(self):
+        phase_info = {
+            'only_cruise': {
+                'user_options': {
+                    'num_segments': 5,
+                    'order': 3,
+                    'mach_initial': (0.72, 'unitless'),
+                    'mach_final': (0.72, 'unitless'),
+                    'altitude_initial': (32000.0, 'ft'),
+                    'altitude_final': (32000.0, 'ft'),
+                    'time_duration': (77, 's'),
+                },
+            },
+        }
+        prob = AviaryProblem()
+
+        csv_path = 'models/test_aircraft/aircraft_for_bench_FwFm.csv'
+
+        prob.load_inputs(csv_path, phase_info)
+        prob.check_and_preprocess_inputs()
+
+        prob.add_pre_mission_systems()
+        prob.add_phases()
+        prob.add_post_mission_systems()
+
+        prob.link_phases()
+
+        prob.setup()
+        prob.set_initial_guesses()
+
+        prob.run_aviary_problem()
+
+        time = prob.get_val('traj.only_cruise.timeseries.time', units='s')[-1]
+        assert_near_equal(time, 77.0, 1e-5)
+
+
 # To run the tests
 if __name__ == '__main__':
     unittest.main()
