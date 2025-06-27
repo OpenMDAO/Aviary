@@ -1339,7 +1339,7 @@ class DragCoef(om.ExplicitComponent):
         dcd_gear = (grfe / wing_area) * (1 - 0.454545 * flap_defl / 50)
 
         outputs['CD_base'] = cd0 + cdi + dcd_ground
-        outputs['dCD_flaps_full'] = dCD_flaps_model
+        outputs['dCD_flaps_full'] = dCD_flaps_model  # same as inputs['dCD_flaps_model']
         outputs['dCD_gear_full'] = dcd_gear
 
 
@@ -1470,7 +1470,7 @@ class GroundEffect(om.ExplicitComponent):
         add_aviary_input(self, Aircraft.Wing.SPAN, units='ft')
 
         self.add_output(
-            'kclge', units='unitless', shape=nn, desc='LCLGE: factor of CL due to ground effect'
+            'kclge', units='unitless', shape=nn, desc='KCLGE: factor of CL due to ground effect'
         )
 
     def setup_partials(self):
@@ -1522,6 +1522,7 @@ class GroundEffect(om.ExplicitComponent):
             - sig * AR * np.cos(rlmc2) / c3
             - c4 * (cloge - lift_curve_slope / (16 * hac / avg_chord))
         )
+        # make sure kclge >= 1.0
         kclge = np.clip(kclge, 1.0, None)
 
         outputs['kclge'] = kclge
@@ -2218,9 +2219,6 @@ class BWBLiftCoeffClean(om.ExplicitComponent):
         add_aviary_input(self, Aircraft.Wing.AREA, units='ft**2', desc='SREF')
         add_aviary_input(self, Aircraft.Wing.EXPOSED_AREA, units='ft**2', desc='SW_EXP')
         add_aviary_input(self, Aircraft.Fuselage.PLANFORM_AREA, units='ft**2', desc='SPF_BODY')
-        add_aviary_input(
-            self, Aircraft.Fuselage.LIFT_COEFFICENT_RATIO_BODY_TO_WING, units='unitless'
-        )  # CLBqCLW
 
         if self.options['output_alpha']:
             self.add_output('mod_lift_curve_slope', units='unitless', shape=nn)
@@ -2319,7 +2317,6 @@ class BWBLiftCoeffClean(om.ExplicitComponent):
         wing_area = inputs[Aircraft.Wing.AREA]
         exp_wing_area = inputs[Aircraft.Wing.EXPOSED_AREA]
         planform = inputs[Aircraft.Fuselage.PLANFORM_AREA]
-        CL_ratio_body_wing = inputs[Aircraft.Fuselage.LIFT_COEFFICENT_RATIO_BODY_TO_WING]
 
         if self.options['output_alpha']:
             CL = inputs['CL']
@@ -2358,7 +2355,6 @@ class BWBLiftCoeffClean(om.ExplicitComponent):
         wing_area = inputs[Aircraft.Wing.AREA]
         exp_wing_area = inputs[Aircraft.Wing.EXPOSED_AREA]
         planform = inputs[Aircraft.Fuselage.PLANFORM_AREA]
-        CL_ratio_body_wing = inputs[Aircraft.Fuselage.LIFT_COEFFICENT_RATIO_BODY_TO_WING]
 
         if self.options['output_alpha']:
             CL = inputs['CL']
