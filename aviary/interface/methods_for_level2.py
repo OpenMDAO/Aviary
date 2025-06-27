@@ -283,7 +283,6 @@ class AviaryProblem(om.Problem):
         # Checks to make sure time_duration is positive,
         # Sets duration_bounds, initial_guesses, and fixed_duration
         for phase_name, phase in self.phase_info.items():
-
             if 'user_options' in phase:
                 analytic = False
                 if (
