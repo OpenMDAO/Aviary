@@ -85,7 +85,7 @@ class TransportHydraulicsGroupMassTest2(unittest.TestCase):
     def test_case(self):
         prob = om.Problem()
 
-        inputs = get_flops_inputs('N3CC', preprocess=True)
+        inputs = get_flops_inputs('AdvancedSingleAisle', preprocess=True)
 
         options = {
             Aircraft.Propulsion.TOTAL_NUM_FUSELAGE_ENGINES: inputs.get_val(

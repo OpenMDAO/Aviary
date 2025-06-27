@@ -471,7 +471,7 @@ class PropellerPerformanceTest(unittest.TestCase):
             val=False,
             units='unitless',
         )
-        prop_file_path = 'models/engines/propellers/PropFan.prop'
+        prop_file_path = 'models/engines/propellers/PropFan.csv'
         options.set_val(Aircraft.Engine.Propeller.DATA_FILE, val=prop_file_path, units='unitless')
 
         setup_model_options(prob, options)

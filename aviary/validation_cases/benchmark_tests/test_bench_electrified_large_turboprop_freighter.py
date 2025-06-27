@@ -4,7 +4,7 @@ import openmdao.api as om
 from openmdao.utils.testing_utils import use_tempdirs
 
 from aviary.interface.methods_for_level2 import AviaryProblem
-from aviary.models.large_turboprop_freighter.phase_info import energy_phase_info
+from aviary.models.aircraft.large_turboprop_freighter.phase_info import energy_phase_info
 from aviary.subsystems.propulsion.motor.motor_builder import MotorBuilder
 from aviary.subsystems.propulsion.turboprop_model import TurbopropModel
 from aviary.utils.process_input_decks import create_vehicle
@@ -20,7 +20,7 @@ class LargeElectrifiedTurbopropFreighterBenchmark(unittest.TestCase):
 
         # load inputs from .csv to build engine
         options, guesses = create_vehicle(
-            'models/large_turboprop_freighter/large_turboprop_freighter_GASP.csv'
+            'models/aircraft/large_turboprop_freighter/large_turboprop_freighter_GASP.csv'
         )
 
         options.set_val(Settings.EQUATIONS_OF_MOTION, 'height_energy')
@@ -49,7 +49,7 @@ class LargeElectrifiedTurbopropFreighterBenchmark(unittest.TestCase):
 
         # load_inputs needs to be updated to accept an already existing aviary options
         prob.load_inputs(
-            options,  # "models/large_turboprop_freighter/large_turboprop_freighter_GASP.csv",
+            options,  # "models/aircraft/large_turboprop_freighter/large_turboprop_freighter_GASP.csv",
             energy_phase_info,
             engine_builders=[electroprop],
         )

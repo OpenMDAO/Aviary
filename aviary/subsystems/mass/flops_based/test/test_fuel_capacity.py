@@ -24,7 +24,7 @@ from aviary.variable_info.variables import Aircraft
 
 
 class FuelCapacityGroupTest(unittest.TestCase):
-    @parameterized.expand(get_flops_case_names(only=['N3CC']), name_func=print_case)
+    @parameterized.expand(get_flops_case_names(only=['AdvancedSingleAisle']), name_func=print_case)
     def test_case(self, case_name):
         class PreMission(om.Group):
             def initialize(self):

@@ -90,7 +90,7 @@ class DetailedWingBendingTest(unittest.TestCase):
 
         engine_options = AviaryValues()
         engine_options.set_val(Aircraft.Engine.NUM_ENGINES, 2)
-        engine_options.set_val(Aircraft.Engine.DATA_FILE, 'models/engines/turbofan_28k.deck')
+        engine_options.set_val(Aircraft.Engine.DATA_FILE, 'models/engines/turbofan_28k.csv')
         engine_options.set_val(Settings.VERBOSITY, 0)
         engineModel1 = EngineDeck(options=engine_options)
         engine_options.set_val(Aircraft.Engine.NUM_ENGINES, 2)
@@ -180,7 +180,7 @@ class DetailedWingBendingTest(unittest.TestCase):
 
         engine_options = AviaryValues()
         engine_options.set_val(Settings.VERBOSITY, 0)
-        engine_options.set_val(Aircraft.Engine.DATA_FILE, 'models/engines/turbofan_28k.deck')
+        engine_options.set_val(Aircraft.Engine.DATA_FILE, 'models/engines/turbofan_28k.csv')
         engine_options.set_val(Aircraft.Engine.NUM_ENGINES, 2)
         engine_options.set_val(Aircraft.Engine.NUM_WING_ENGINES, 0)
         engine_options.set_val(Aircraft.Engine.NUM_FUSELAGE_ENGINES, 2)
@@ -257,13 +257,13 @@ class DetailedWingBendingTest(unittest.TestCase):
         aviary_options = get_flops_inputs('LargeSingleAisle1FLOPS')
 
         engine_options = AviaryValues()
-        engine_options.set_val(Aircraft.Engine.DATA_FILE, 'models/engines/turbofan_28k.deck')
+        engine_options.set_val(Aircraft.Engine.DATA_FILE, 'models/engines/turbofan_28k.csv')
         engine_options.set_val(Aircraft.Engine.NUM_ENGINES, 2)
         engine_options.set_val(Aircraft.Engine.NUM_WING_ENGINES, 2)
         engine_options.set_val(Aircraft.Engine.NUM_FUSELAGE_ENGINES, 0)
         engineModel1 = EngineDeck(options=engine_options)
 
-        engine_options.set_val(Aircraft.Engine.DATA_FILE, 'models/engines/turbofan_22k.deck')
+        engine_options.set_val(Aircraft.Engine.DATA_FILE, 'models/engines/turbofan_22k.csv')
         engine_options.set_val(Aircraft.Engine.NUM_ENGINES, 2)
         engine_options.set_val(Aircraft.Engine.NUM_WING_ENGINES, 0)
         engine_options.set_val(Aircraft.Engine.NUM_FUSELAGE_ENGINES, 2)
@@ -341,7 +341,7 @@ class DetailedWingBendingTest(unittest.TestCase):
         engine_options = AviaryValues()
         engine_options.set_val(Aircraft.Engine.NUM_ENGINES, 2)
         engine_options.set_val(Aircraft.Engine.NUM_WING_ENGINES, 2)
-        engine_options.set_val(Aircraft.Engine.DATA_FILE, 'models/engines/turbofan_28k.deck')
+        engine_options.set_val(Aircraft.Engine.DATA_FILE, 'models/engines/turbofan_28k.csv')
         engine_options.set_val(Settings.VERBOSITY, 0)
         engineModel = EngineDeck(options=engine_options)
 

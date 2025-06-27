@@ -144,7 +144,7 @@ class BWBFurnishingsGroupMassTest2(unittest.TestCase):
     def test_case(self):
         prob = om.Problem()
 
-        flops_inputs = get_flops_inputs('N3CC', preprocess=True)
+        flops_inputs = get_flops_inputs('AdvancedSingleAisle', preprocess=True)
 
         opts = {
             Aircraft.BWB.NUM_BAYS: 5,

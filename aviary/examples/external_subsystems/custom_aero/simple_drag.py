@@ -20,14 +20,14 @@ class SimplestDragCoeff(om.ExplicitComponent):
         )
 
         self.options.declare('CD_zero', default=0.01)
-        self.options.declare('k', default=0.065)
+        self.options.declare('k', default=0.04)
 
     def setup(self):
         nn = self.options['num_nodes']
 
-        self.add_input('cl', val=np.zeros(nn))
+        self.add_input('cl', val=np.zeros(nn), units='unitless')
 
-        self.add_output('CD', val=np.zeros(nn))
+        self.add_output('CD', val=np.zeros(nn), units='unitless')
 
     def setup_partials(self):
         nn = self.options['num_nodes']

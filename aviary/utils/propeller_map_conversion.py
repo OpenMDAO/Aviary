@@ -75,12 +75,7 @@ def convert_propeller_map(
         write_data.set_val(key, data[key], 'unitless')
 
     if output_file is None:
-        sfx = data_file.suffix
-        if sfx == '.prop':
-            ext = '_aviary.prop'
-        else:
-            ext = '.prop'
-        output_file = data_file.stem + ext
+        output_file = data_file.stem + '.csv'
     write_data_file(output_file, write_data, comments, include_timestamp=False)
 
 

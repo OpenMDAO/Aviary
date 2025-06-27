@@ -5,7 +5,10 @@ import warnings
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_near_equal
 
-from aviary.interface.default_phase_info.two_dof_fiti import add_default_sgm_args, descent_phases
+from aviary.models.missions.two_dof_fiti_default import (
+    add_default_sgm_args,
+    descent_phases,
+)
 from aviary.mission.gasp_based.idle_descent_estimation import add_descent_estimation_as_submodel
 from aviary.mission.gasp_based.ode.params import set_params_for_unit_tests
 from aviary.subsystems.propulsion.utils import build_engine_deck
@@ -28,7 +31,7 @@ class IdleDescentTestCase(unittest.TestCase):
     """Test idle descent for 2DOF mission."""
 
     def setUp(self):
-        input_deck = 'models/large_single_aisle_1/large_single_aisle_1_GASP.csv'
+        input_deck = 'models/aircraft/large_single_aisle_1/large_single_aisle_1_GASP.csv'
         aviary_inputs, _ = create_vehicle(input_deck)
         aviary_inputs.set_val(Settings.VERBOSITY, 0)
         aviary_inputs.set_val(Aircraft.Engine.SCALED_SLS_THRUST, val=28690, units='lbf')
