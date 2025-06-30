@@ -1939,6 +1939,8 @@ class AviaryProblem(om.Problem):
             payload_range_matrix=self.run_payload_range()
             print(payload_range_matrix[1])
             print(payload_range_matrix[0])
+        
+        self.problem_ran_successfully = not failed
 
 
     def run_payload_range(self):
