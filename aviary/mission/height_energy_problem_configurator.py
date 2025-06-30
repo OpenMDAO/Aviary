@@ -226,20 +226,22 @@ class HeightEnergyProblemConfigurator(ProblemConfiguratorBase):
 
         if (fix_initial or input_initial) and comm.size == 1:
             # Redundant on a fixed input (unless MPI); raises a warning if specified.
-            initial_options = {}
+            extra_options = {}
         else:
-            initial_options = {
+            extra_options = {
                 'initial_ref': initial_ref,
                 'initial_bounds': initial_bounds,
             }
+
+        if not fix_duration:
+            extra_options['duration_bounds'] = duration_bounds
+            extra_options['duration_ref'] = duration_ref
 
         phase.set_time_options(
             fix_initial=fix_initial,
             fix_duration=fix_duration,
             units=time_units,
-            duration_bounds=duration_bounds,
-            duration_ref=duration_ref,
-            **initial_options,
+            **extra_options,
         )
 
     def link_phases(self, aviary_group, phases, connect_directly=True):
@@ -594,12 +596,14 @@ class HeightEnergyProblemConfigurator(ProblemConfiguratorBase):
                 # Seems to be an openmdao bug. Switch to this when fixed.
                 # phase.set_time_val(initial=val[0], duration=val[1], units=units)
 
-                target_prob.set_val(
-                    parent_prefix + f'traj.{phase_name}.t_initial', val[0], units=units
-                )
-                target_prob.set_val(
-                    parent_prefix + f'traj.{phase_name}.t_duration', val[1], units=units
-                )
+                if val[0] is not None:
+                    target_prob.set_val(
+                        parent_prefix + f'traj.{phase_name}.t_initial', val[0], units=units
+                    )
+                if val[1] is not None:
+                    target_prob.set_val(
+                        parent_prefix + f'traj.{phase_name}.t_duration', val[1], units=units
+                    )
 
             elif guess_key in control_keys:
                 # Set initial guess for control variables
