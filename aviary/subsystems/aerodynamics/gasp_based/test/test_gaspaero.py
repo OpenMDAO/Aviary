@@ -493,9 +493,9 @@ class FormFactorAndSIWBTest(unittest.TestCase):
             promotes=['*'],
         )
 
-        prob.model.set_input_defaults(Aircraft.Fuselage.AVG_DIAMETER, val=19.365, units='ft')
-        prob.model.set_input_defaults(Aircraft.Fuselage.LENGTH, val=71.5245514, units='ft')
-        prob.model.set_input_defaults(Aircraft.Wing.SPAN, val=146.38501, units='ft')
+        prob.model.set_input_defaults(Aircraft.Fuselage.AVG_DIAMETER, val=1.0, units='ft')
+        prob.model.set_input_defaults(Aircraft.Fuselage.LENGTH, val=1.0, units='ft')
+        prob.model.set_input_defaults(Aircraft.Wing.SPAN, val=10.0, units='ft')
 
         prob.setup(check=False, force_alloc_complex=True)
         prob.run_model()
