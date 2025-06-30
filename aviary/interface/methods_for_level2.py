@@ -327,8 +327,7 @@ class AviaryProblem(om.Problem):
                             print(msg)
 
                         time_duration_conv = wrapped_convert_units(
-                            (time_duration, units),
-                            units_guess
+                            (time_duration, units), units_guess
                         )
                         guesses['time'] = ((time_guess[0], time_duration_conv), units_guess)
 
