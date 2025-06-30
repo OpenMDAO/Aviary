@@ -1083,6 +1083,7 @@ class AeroSetup(om.Group):
         interp.add_output('sigstr', 0.0, units='unitless', training_data=sig2)
         self.add_subsystem('interp', interp, promotes=['*'])
 
+        # Note: It should hold ufac <= 0.975 for BWB
         self.add_subsystem(
             'ufac_calc',
             om.ExecComp(
