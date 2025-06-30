@@ -95,6 +95,7 @@ class HeightEnergyProblemConfigurator(ProblemConfiguratorBase):
             General default phase_info.
         """
         from aviary.interface.default_phase_info.height_energy import phase_info
+
         return phase_info
 
     def get_code_origin(self, prob):

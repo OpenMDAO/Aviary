@@ -6,7 +6,7 @@ from aviary.mission.gasp_based.ode.params import ParamPort
 from aviary.mission.gasp_based.ode.two_dof_ode import TwoDOFODE
 from aviary.subsystems.mass.mass_to_weight import MassToWeight
 from aviary.subsystems.propulsion.propulsion_builder import PropulsionBuilderBase
-from aviary.variable_info.enums import AlphaModes,  SpeedType
+from aviary.variable_info.enums import AlphaModes, SpeedType
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 
 

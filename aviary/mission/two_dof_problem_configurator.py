@@ -115,6 +115,7 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
             General default phase_info.
         """
         from aviary.interface.default_phase_info.two_dof import phase_info
+
         return phase_info
 
     def get_code_origin(self, prob):
@@ -466,9 +467,7 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
                         elif state in initial_guesses2:
                             kwargs = {'units': initial_guesses2[state][-1]}
 
-                    prob.traj.link_phases(
-                        [phase1, phase2], [state], connected=connected, **kwargs
-                    )
+                    prob.traj.link_phases([phase1, phase2], [state], connected=connected, **kwargs)
 
             # if either phase is analytic we have to use a linkage_constraint
             else:
@@ -508,9 +507,7 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
 
         # imitate input_initial for taxi -> groundroll
         eq = prob.model.add_subsystem('taxi_groundroll_mass_constraint', om.EQConstraintComp())
-        eq.add_eq_output(
-            'mass', eq_units='lbm', normalize=False, ref=10000.0, add_constraint=True
-        )
+        eq.add_eq_output('mass', eq_units='lbm', normalize=False, ref=10000.0, add_constraint=True)
         prob.model.connect('taxi.mass', 'taxi_groundroll_mass_constraint.rhs:mass')
         prob.model.connect(
             'traj.groundroll.states:mass',

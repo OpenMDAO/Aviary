@@ -122,11 +122,7 @@ def run_aviary(
 
 
 def run_level_1(
-    input_deck,
-    optimizer='IPOPT',
-    phase_info=None,
-    max_iter=50,
-    verbosity=Verbosity.BRIEF
+    input_deck, optimizer='IPOPT', phase_info=None, max_iter=50, verbosity=Verbosity.BRIEF
 ):
     """
     This file enables running aviary from the command line with a user specified input deck.
@@ -186,5 +182,5 @@ def _exec_level1(args, user_args):
         optimizer=args.optimizer,
         phase_info=args.phase_info,
         max_iter=args.max_iter,
-        verbosity=args.verbosity
+        verbosity=args.verbosity,
     )

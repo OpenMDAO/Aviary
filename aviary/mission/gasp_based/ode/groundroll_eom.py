@@ -141,7 +141,6 @@ class GroundrollEOM(om.ExplicitComponent):
         self.declare_partials('angle_of_attack_rate', ['*'])
 
     def compute(self, inputs, outputs):
-
         mu = MU_TAKEOFF
 
         weight = inputs[Dynamic.Vehicle.MASS] * GRAV_ENGLISH_LBM

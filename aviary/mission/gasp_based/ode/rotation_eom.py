@@ -144,7 +144,6 @@ class RotationEOM(om.ExplicitComponent):
         self.declare_partials('fuselage_pitch', Aircraft.Wing.INCIDENCE, val=-1)
 
     def compute(self, inputs, outputs):
-
         weight = inputs[Dynamic.Vehicle.MASS] * GRAV_ENGLISH_LBM
         thrust = inputs[Dynamic.Vehicle.Propulsion.THRUST_TOTAL]
         incremented_lift = inputs[Dynamic.Vehicle.LIFT]
