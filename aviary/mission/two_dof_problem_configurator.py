@@ -1,8 +1,6 @@
 import openmdao.api as om
 
 from aviary.constants import GRAV_ENGLISH_LBM, RHO_SEA_LEVEL_ENGLISH
-from aviary.interface.default_phase_info.two_dof_fiti import add_default_sgm_args
-from aviary.mission.gasp_based.idle_descent_estimation import add_descent_estimation_as_submodel
 from aviary.mission.gasp_based.ode.landing_ode import LandingSegment
 from aviary.mission.gasp_based.ode.params import ParamPort
 from aviary.mission.gasp_based.ode.taxi_ode import TaxiSegment
@@ -19,7 +17,7 @@ from aviary.subsystems.propulsion.utils import build_engine_deck
 from aviary.utils.functions import add_opts2vals, create_opts2vals
 from aviary.utils.process_input_decks import initialization_guessing, update_GASP_options
 from aviary.utils.utils import wrapped_convert_units
-from aviary.variable_info.enums import AnalysisScheme, LegacyCode
+from aviary.variable_info.enums import LegacyCode
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 
 
@@ -116,17 +114,7 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
         AviaryValues
             General default phase_info.
         """
-        if prob.analysis_scheme is AnalysisScheme.COLLOCATION:
-            from aviary.interface.default_phase_info.two_dof import phase_info
-
-        elif prob.analysis_scheme is AnalysisScheme.SHOOTING:
-            from aviary.interface.default_phase_info.two_dof_fiti import (
-                phase_info,
-                phase_info_parameterization,
-            )
-
-            phase_info, _ = phase_info_parameterization(phase_info, None, prob.aviary_inputs)
-
+        from aviary.interface.default_phase_info.two_dof import phase_info
         return phase_info
 
     def get_code_origin(self, prob):
@@ -163,20 +151,6 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
 
         add_opts2vals(prob.model, OptionsToValues, prob.aviary_inputs)
 
-        if prob.analysis_scheme is AnalysisScheme.SHOOTING:
-            prob._add_fuel_reserve_component(
-                post_mission=False, reserves_name='reserve_fuel_estimate'
-            )
-            add_default_sgm_args(prob.descent_phases, prob.ode_args)
-            add_descent_estimation_as_submodel(
-                prob,
-                phases=prob.descent_phases,
-                cruise_mach=prob.cruise_mach,
-                cruise_alt=prob.cruise_alt,
-                reserve_fuel='reserve_fuel_estimate',
-                all_subsystems=prob._get_all_subsystems(),
-            )
-
         # Add thrust-to-weight ratio subsystem
         prob.model.add_subsystem(
             'tw_ratio',
@@ -195,27 +169,26 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
 
         prob.cruise_alt = prob.aviary_inputs.get_val(Mission.Design.CRUISE_ALTITUDE, units='ft')
 
-        if prob.analysis_scheme is AnalysisScheme.COLLOCATION:
-            # Add event transformation subsystem
-            prob.model.add_subsystem(
-                'event_xform',
-                om.ExecComp(
-                    ['t_init_gear=m*tau_gear+b', 't_init_flaps=m*tau_flaps+b'],
-                    t_init_gear={'units': 's'},  # initial time that gear comes up
-                    t_init_flaps={'units': 's'},  # initial time that flaps retract
-                    tau_gear={'units': 'unitless'},
-                    tau_flaps={'units': 'unitless'},
-                    m={'units': 's'},
-                    b={'units': 's'},
-                ),
-                promotes_inputs=[
-                    'tau_gear',  # design var
-                    'tau_flaps',  # design var
-                    ('m', Mission.Takeoff.ASCENT_DURATION),
-                    ('b', Mission.Takeoff.ASCENT_T_INITIAL),
-                ],
-                promotes_outputs=['t_init_gear', 't_init_flaps'],  # link to h_fit
-            )
+        # Add event transformation subsystem
+        prob.model.add_subsystem(
+            'event_xform',
+            om.ExecComp(
+                ['t_init_gear=m*tau_gear+b', 't_init_flaps=m*tau_flaps+b'],
+                t_init_gear={'units': 's'},  # initial time that gear comes up
+                t_init_flaps={'units': 's'},  # initial time that flaps retract
+                tau_gear={'units': 'unitless'},
+                tau_flaps={'units': 'unitless'},
+                m={'units': 's'},
+                b={'units': 's'},
+            ),
+            promotes_inputs=[
+                'tau_gear',  # design var
+                'tau_flaps',  # design var
+                ('m', Mission.Takeoff.ASCENT_DURATION),
+                ('b', Mission.Takeoff.ASCENT_T_INITIAL),
+            ],
+            promotes_outputs=['t_init_gear', 't_init_flaps'],  # link to h_fit
+        )
 
         # Add taxi subsystem
         prob.model.add_subsystem(
@@ -446,138 +419,123 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
             When True, then connected=True. This allows the connections to be
             handled by constraints if `phases` is a parallel group under MPI.
         """
-        if prob.analysis_scheme is AnalysisScheme.COLLOCATION:
-            for ii in range(len(phases) - 1):
-                phase1, phase2 = phases[ii : ii + 2]
-                analytic1 = prob.phase_info[phase1]['user_options']['analytic']
-                analytic2 = prob.phase_info[phase2]['user_options']['analytic']
+        for ii in range(len(phases) - 1):
+            phase1, phase2 = phases[ii : ii + 2]
+            analytic1 = prob.phase_info[phase1]['user_options']['analytic']
+            analytic2 = prob.phase_info[phase2]['user_options']['analytic']
 
-                if not (analytic1 or analytic2):
-                    # we always want time, distance, and mass to be continuous
-                    states_to_link = {
-                        'time': connect_directly,
-                        Dynamic.Mission.DISTANCE: connect_directly,
-                        Dynamic.Vehicle.MASS: False,
-                    }
+            if not (analytic1 or analytic2):
+                # we always want time, distance, and mass to be continuous
+                states_to_link = {
+                    'time': connect_directly,
+                    Dynamic.Mission.DISTANCE: connect_directly,
+                    Dynamic.Vehicle.MASS: False,
+                }
 
-                    # if both phases are reserve phases or neither is a reserve phase
-                    # (we are not on the boundary between the regular and reserve missions)
-                    # and neither phase is ground roll or rotation (altitude isn't a state):
-                    # we want altitude to be continuous as well
-                    if (
-                        ((phase1 in prob.reserve_phases) == (phase2 in prob.reserve_phases))
-                        and not ({'groundroll', 'rotation'} & {phase1, phase2})
-                        and not ('accel', 'climb1') == (phase1, phase2)
-                    ):  # required for convergence of FwGm
-                        states_to_link[Dynamic.Mission.ALTITUDE] = connect_directly
+                # if both phases are reserve phases or neither is a reserve phase
+                # (we are not on the boundary between the regular and reserve missions)
+                # and neither phase is ground roll or rotation (altitude isn't a state):
+                # we want altitude to be continuous as well
+                if (
+                    ((phase1 in prob.reserve_phases) == (phase2 in prob.reserve_phases))
+                    and not ({'groundroll', 'rotation'} & {phase1, phase2})
+                    and not ('accel', 'climb1') == (phase1, phase2)
+                ):  # required for convergence of FwGm
+                    states_to_link[Dynamic.Mission.ALTITUDE] = connect_directly
 
-                    # if either phase is rotation, we need to connect velocity
-                    # ascent to accel also requires velocity
-                    if 'rotation' in (phase1, phase2) or ('ascent', 'accel') == (phase1, phase2):
-                        states_to_link[Dynamic.Mission.VELOCITY] = connect_directly
-                        # if the first phase is rotation, we also need alpha
-                        if phase1 == 'rotation':
-                            states_to_link[Dynamic.Vehicle.ANGLE_OF_ATTACK] = False
+                # if either phase is rotation, we need to connect velocity
+                # ascent to accel also requires velocity
+                if 'rotation' in (phase1, phase2) or ('ascent', 'accel') == (phase1, phase2):
+                    states_to_link[Dynamic.Mission.VELOCITY] = connect_directly
+                    # if the first phase is rotation, we also need alpha
+                    if phase1 == 'rotation':
+                        states_to_link[Dynamic.Vehicle.ANGLE_OF_ATTACK] = False
 
-                    for state, connected in states_to_link.items():
-                        # in initial guesses, all of the states, other than time use
-                        # the same name
-                        initial_guesses1 = prob.phase_info[phase1]['initial_guesses']
-                        initial_guesses2 = prob.phase_info[phase2]['initial_guesses']
+                for state, connected in states_to_link.items():
+                    # in initial guesses, all of the states, other than time use
+                    # the same name
+                    initial_guesses1 = prob.phase_info[phase1]['initial_guesses']
+                    initial_guesses2 = prob.phase_info[phase2]['initial_guesses']
 
-                        # if a state is in the initial guesses, get the units of the
-                        # initial guess
-                        kwargs = {}
-                        if not connected:
-                            if state in initial_guesses1:
-                                kwargs = {'units': initial_guesses1[state][-1]}
-                            elif state in initial_guesses2:
-                                kwargs = {'units': initial_guesses2[state][-1]}
+                    # if a state is in the initial guesses, get the units of the
+                    # initial guess
+                    kwargs = {}
+                    if not connected:
+                        if state in initial_guesses1:
+                            kwargs = {'units': initial_guesses1[state][-1]}
+                        elif state in initial_guesses2:
+                            kwargs = {'units': initial_guesses2[state][-1]}
 
-                        prob.traj.link_phases(
-                            [phase1, phase2], [state], connected=connected, **kwargs
-                        )
+                    prob.traj.link_phases(
+                        [phase1, phase2], [state], connected=connected, **kwargs
+                    )
 
-                # if either phase is analytic we have to use a linkage_constraint
+            # if either phase is analytic we have to use a linkage_constraint
+            else:
+                # analytic phases use the prefix "initial" for time and distance,
+                # but not mass
+                if analytic2:
+                    prefix = 'initial_'
                 else:
-                    # analytic phases use the prefix "initial" for time and distance,
-                    # but not mass
-                    if analytic2:
-                        prefix = 'initial_'
-                    else:
-                        prefix = ''
+                    prefix = ''
 
-                    prob.traj.add_linkage_constraint(
-                        phase1, phase2, 'time', prefix + 'time', connected=True
-                    )
-                    prob.traj.add_linkage_constraint(
-                        phase1, phase2, 'distance', prefix + 'distance', connected=True
-                    )
-                    prob.traj.add_linkage_constraint(
-                        phase1, phase2, 'mass', 'mass', connected=False, ref=1.0e5
-                    )
+                prob.traj.add_linkage_constraint(
+                    phase1, phase2, 'time', prefix + 'time', connected=True
+                )
+                prob.traj.add_linkage_constraint(
+                    phase1, phase2, 'distance', prefix + 'distance', connected=True
+                )
+                prob.traj.add_linkage_constraint(
+                    phase1, phase2, 'mass', 'mass', connected=False, ref=1.0e5
+                )
 
-            # add all params and promote them to prob.model level
-            ParamPort.promote_params(
-                prob.model,
-                trajs=['traj'],
-                phases=[[*prob.regular_phases, *prob.reserve_phases]],
-            )
+        # add all params and promote them to prob.model level
+        ParamPort.promote_params(
+            prob.model,
+            trajs=['traj'],
+            phases=[[*prob.regular_phases, *prob.reserve_phases]],
+        )
 
-            prob.model.promotes(
-                'traj',
-                inputs=[
-                    ('ascent.parameters:t_init_gear', 't_init_gear'),
-                    ('ascent.parameters:t_init_flaps', 't_init_flaps'),
-                    ('ascent.t_initial', Mission.Takeoff.ASCENT_T_INITIAL),
-                    ('ascent.t_duration', Mission.Takeoff.ASCENT_DURATION),
-                ],
-            )
+        prob.model.promotes(
+            'traj',
+            inputs=[
+                ('ascent.parameters:t_init_gear', 't_init_gear'),
+                ('ascent.parameters:t_init_flaps', 't_init_flaps'),
+                ('ascent.t_initial', Mission.Takeoff.ASCENT_T_INITIAL),
+                ('ascent.t_duration', Mission.Takeoff.ASCENT_DURATION),
+            ],
+        )
 
-            # imitate input_initial for taxi -> groundroll
-            eq = prob.model.add_subsystem('taxi_groundroll_mass_constraint', om.EQConstraintComp())
-            eq.add_eq_output(
-                'mass', eq_units='lbm', normalize=False, ref=10000.0, add_constraint=True
-            )
-            prob.model.connect('taxi.mass', 'taxi_groundroll_mass_constraint.rhs:mass')
-            prob.model.connect(
-                'traj.groundroll.states:mass',
-                'taxi_groundroll_mass_constraint.lhs:mass',
-                src_indices=[0],
-                flat_src_indices=True,
-            )
+        # imitate input_initial for taxi -> groundroll
+        eq = prob.model.add_subsystem('taxi_groundroll_mass_constraint', om.EQConstraintComp())
+        eq.add_eq_output(
+            'mass', eq_units='lbm', normalize=False, ref=10000.0, add_constraint=True
+        )
+        prob.model.connect('taxi.mass', 'taxi_groundroll_mass_constraint.rhs:mass')
+        prob.model.connect(
+            'traj.groundroll.states:mass',
+            'taxi_groundroll_mass_constraint.lhs:mass',
+            src_indices=[0],
+            flat_src_indices=True,
+        )
 
-            prob.model.connect('traj.ascent.timeseries.time', 'h_fit.time_cp')
-            prob.model.connect('traj.ascent.timeseries.altitude', 'h_fit.h_cp')
+        prob.model.connect('traj.ascent.timeseries.time', 'h_fit.time_cp')
+        prob.model.connect('traj.ascent.timeseries.altitude', 'h_fit.h_cp')
 
-            prob.model.connect(
-                f'traj.{prob.regular_phases[-1]}.states:mass',
-                Mission.Landing.TOUCHDOWN_MASS,
-                src_indices=[-1],
-            )
+        prob.model.connect(
+            f'traj.{prob.regular_phases[-1]}.states:mass',
+            Mission.Landing.TOUCHDOWN_MASS,
+            src_indices=[-1],
+        )
 
-            connect_map = {
-                f'traj.{prob.regular_phases[-1]}.timeseries.distance': Mission.Summary.RANGE,
-            }
-
-        else:
-            connect_map = {
-                'taxi.mass': 'traj.mass_initial',
-                Mission.Takeoff.ROTATION_VELOCITY: 'traj.SGMGroundroll_velocity_trigger',
-                'traj.distance_final': Mission.Summary.RANGE,
-                'traj.mass_final': Mission.Landing.TOUCHDOWN_MASS,
-            }
+        connect_map = {
+            f'traj.{prob.regular_phases[-1]}.timeseries.distance': Mission.Summary.RANGE,
+        }
 
         # promote all ParamPort inputs for analytic segments as well
         param_list = list(ParamPort.param_data)
         prob.model.promotes('taxi', inputs=param_list)
         prob.model.promotes('landing', inputs=param_list)
-        if prob.analysis_scheme is AnalysisScheme.SHOOTING:
-            param_list.append(Aircraft.Design.MAX_FUSELAGE_PITCH_ANGLE)
-            prob.model.promotes('traj', inputs=param_list)
-            # prob.model.list_inputs()
-            # prob.model.promotes("traj", inputs=['ascent.ODE_group.eoms.'+Aircraft.Design.MAX_FUSELAGE_PITCH_ANGLE])
-
         prob.model.connect('taxi.mass', 'vrot.mass')
 
         for source, target in connect_map.items():
@@ -588,9 +546,8 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
                 flat_src_indices=True,
             )
 
-        if prob.analysis_scheme is AnalysisScheme.COLLOCATION:
-            if 'ascent' in prob.phase_info:
-                self._add_groundroll_eq_constraint(prob)
+        if 'ascent' in prob.phase_info:
+            self._add_groundroll_eq_constraint(prob)
 
     def check_trajectory(self, prob):
         """
@@ -641,15 +598,14 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
         if prob.post_mission_info['include_landing']:
             self._add_landing_systems(prob)
 
-        if prob.analysis_scheme is AnalysisScheme.COLLOCATION:
-            ascent_phase = getattr(prob.traj.phases, 'ascent')
-            ascent_tx = ascent_phase.options['transcription']
-            ascent_num_nodes = ascent_tx.grid_data.num_nodes
-            prob.model.add_subsystem(
-                'h_fit',
-                PolynomialFit(N_cp=ascent_num_nodes),
-                promotes_inputs=['t_init_gear', 't_init_flaps'],
-            )
+        ascent_phase = getattr(prob.traj.phases, 'ascent')
+        ascent_tx = ascent_phase.options['transcription']
+        ascent_num_nodes = ascent_tx.grid_data.num_nodes
+        prob.model.add_subsystem(
+            'h_fit',
+            PolynomialFit(N_cp=ascent_num_nodes),
+            promotes_inputs=['t_init_gear', 't_init_flaps'],
+        )
 
         prob.model.add_subsystem(
             'range_constraint',

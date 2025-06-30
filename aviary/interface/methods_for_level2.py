@@ -18,8 +18,6 @@ from openmdao.utils.reports_system import _default_reports
 from aviary.core.AviaryGroup import AviaryGroup
 from aviary.core.PostMissionGroup import PostMissionGroup
 from aviary.core.PreMissionGroup import PreMissionGroup
-from aviary.interface.default_phase_info.two_dof_fiti import add_default_sgm_args
-from aviary.mission.gasp_based.phases.time_integration_traj import FlexibleTraj
 from aviary.mission.height_energy_problem_configurator import HeightEnergyProblemConfigurator
 from aviary.mission.solved_two_dof_problem_configurator import SolvedTwoDOFProblemConfigurator
 from aviary.mission.two_dof_problem_configurator import TwoDOFProblemConfigurator
@@ -35,7 +33,6 @@ from aviary.utils.preprocessors import preprocess_options
 from aviary.utils.process_input_decks import create_vehicle, update_GASP_options
 from aviary.utils.utils import wrapped_convert_units
 from aviary.variable_info.enums import (
-    AnalysisScheme,
     EquationsOfMotion,
     LegacyCode,
     ProblemType,
@@ -70,7 +67,7 @@ class AviaryProblem(om.Problem):
     additional methods to help users create and solve Aviary problems.
     """
 
-    def __init__(self, analysis_scheme=AnalysisScheme.COLLOCATION, verbosity=None, **kwargs):
+    def __init__(self, verbosity=None, **kwargs):
         # Modify OpenMDAO's default_reports for this session.
         new_reports = [
             'subsystems',
@@ -100,8 +97,6 @@ class AviaryProblem(om.Problem):
         self.aviary_inputs = None
 
         self.traj = None
-
-        self.analysis_scheme = analysis_scheme
 
         self.regular_phases = []
         self.reserve_phases = []
@@ -285,10 +280,7 @@ class AviaryProblem(om.Problem):
         for phase_name, phase in self.phase_info.items():
             if 'user_options' in phase:
                 analytic = False
-                if (
-                    self.analysis_scheme is AnalysisScheme.COLLOCATION
-                    and self.mission_method is EquationsOfMotion.TWO_DEGREES_OF_FREEDOM
-                ):
+                if self.mission_method is EquationsOfMotion.TWO_DEGREES_OF_FREEDOM:
                     try:
                         # if the user provided an option, use it
                         analytic = phase['user_options']['analytic']
@@ -404,7 +396,6 @@ class AviaryProblem(om.Problem):
         This method checks for reserve=True & False
         Returns an error if a non-reserve phase is specified after a reserve phase.
         return two dictionaries of phases: regular_phases and reserve_phases
-        For shooting trajectories, this will also check if a phase is part of the descent.
         """
         # Check to ensure no non-reserve phases are specified after reserve phases
         start_reserve = False
@@ -434,13 +425,6 @@ class AviaryProblem(om.Problem):
                 f'Regular Phases : {self.regular_phases} | '
                 f'Reserve Phases : {self.reserve_phases} '
             )
-
-        if self.analysis_scheme is AnalysisScheme.SHOOTING:
-            self.descent_phases = {}
-            for name, info in self.phase_info.items():
-                descent = info.get('descent_phase', False)
-                if descent:
-                    self.descent_phases[name] = info
 
     def add_pre_mission_systems(self, verbosity=None):
         """
@@ -644,69 +628,8 @@ class AviaryProblem(om.Problem):
 
         phase_info = self.phase_info
 
-        if self.analysis_scheme is AnalysisScheme.COLLOCATION:
-            phases = list(phase_info.keys())
-            traj = self.model.add_subsystem('traj', dm.Trajectory(parallel_phases=parallel_phases))
-
-        elif self.analysis_scheme is AnalysisScheme.SHOOTING:
-            vb = self.aviary_inputs.get_val(Settings.VERBOSITY)
-            add_default_sgm_args(self.phase_info, self.ode_args, vb)
-
-            full_traj = FlexibleTraj(
-                Phases=self.phase_info,
-                traj_final_state_output=[
-                    Dynamic.Vehicle.MASS,
-                    Dynamic.Mission.DISTANCE,
-                ],
-                traj_initial_state_input=[
-                    Dynamic.Vehicle.MASS,
-                    Dynamic.Mission.DISTANCE,
-                    Dynamic.Mission.ALTITUDE,
-                ],
-                traj_event_trigger_input=[
-                    # specify ODE, output_name, with units that SimuPyProblem expects
-                    # assume event function is of form ODE.output_name - value
-                    # third key is event_idx associated with input
-                    ('groundroll', Dynamic.Mission.VELOCITY, 0),
-                    ('climb3', Dynamic.Mission.ALTITUDE, 0),
-                    ('cruise', Dynamic.Vehicle.MASS, 0),
-                ],
-                traj_intermediate_state_output=[
-                    ('cruise', Dynamic.Mission.DISTANCE),
-                    ('cruise', Dynamic.Vehicle.MASS),
-                ],
-            )
-            traj = self.model.add_subsystem(
-                'traj',
-                full_traj,
-                promotes_inputs=[('altitude_initial', Mission.Design.CRUISE_ALTITUDE)],
-            )
-
-            self.model.add_subsystem(
-                'actual_descent_fuel',
-                om.ExecComp(
-                    'actual_descent_fuel = traj_cruise_mass_final - traj_mass_final',
-                    actual_descent_fuel={'units': 'lbm'},
-                    traj_cruise_mass_final={'units': 'lbm'},
-                    traj_mass_final={'units': 'lbm'},
-                ),
-            )
-
-            self.model.connect('start_of_descent_mass', 'traj.SGMCruise_mass_trigger')
-            self.model.connect(
-                'traj.mass_final',
-                'actual_descent_fuel.traj_mass_final',
-                src_indices=[-1],
-                flat_src_indices=True,
-            )
-            self.model.connect(
-                'traj.cruise_mass_final',
-                'actual_descent_fuel.traj_cruise_mass_final',
-                src_indices=[-1],
-                flat_src_indices=True,
-            )
-            self.traj = full_traj
-            return traj
+        phases = list(phase_info.keys())
+        traj = self.model.add_subsystem('traj', dm.Trajectory(parallel_phases=parallel_phases))
 
         def add_subsystem_timeseries_outputs(phase, phase_name):
             phase_options = self.phase_info[phase_name]
@@ -727,11 +650,10 @@ class AviaryProblem(om.Problem):
                                 timeseries, timeseries='mission_bus_variables'
                             )
 
-        if self.analysis_scheme is AnalysisScheme.COLLOCATION:
-            self.phase_objects = []
-            for phase_idx, phase_name in enumerate(phases):
-                phase = traj.add_phase(phase_name, self._get_phase(phase_name, phase_idx))
-                add_subsystem_timeseries_outputs(phase, phase_name)
+        self.phase_objects = []
+        for phase_idx, phase_name in enumerate(phases):
+            phase = traj.add_phase(phase_name, self._get_phase(phase_name, phase_idx))
+            add_subsystem_timeseries_outputs(phase, phase_name)
 
         # loop through phase_info and external subsystems
         external_parameters = {}
@@ -853,35 +775,25 @@ class AviaryProblem(om.Problem):
             promotes=[('fuel_burned', Mission.Summary.FUEL_BURNED)],
         )
 
-        if self.analysis_scheme is AnalysisScheme.SHOOTING:
-            # shooting method currently doesn't have timeseries
+        if self.pre_mission_info['include_takeoff']:
             self.post_mission.promotes(
                 'fuel_burned',
-                [
-                    ('initial_mass', Mission.Summary.GROSS_MASS),
-                    ('mass_final', Mission.Landing.TOUCHDOWN_MASS),
-                ],
+                [('initial_mass', Mission.Summary.GROSS_MASS)],
             )
         else:
-            if self.pre_mission_info['include_takeoff']:
-                self.post_mission.promotes(
-                    'fuel_burned',
-                    [('initial_mass', Mission.Summary.GROSS_MASS)],
-                )
-            else:
-                # timeseries has to be used because Breguet cruise phases don't have
-                # states
-                self.model.connect(
-                    f'traj.{self.regular_phases[0]}.timeseries.mass',
-                    'fuel_burned.initial_mass',
-                    src_indices=[0],
-                )
-
+            # timeseries has to be used because Breguet cruise phases don't have
+            # states
             self.model.connect(
-                f'traj.{self.regular_phases[-1]}.timeseries.mass',
-                'fuel_burned.mass_final',
-                src_indices=[-1],
+                f'traj.{self.regular_phases[0]}.timeseries.mass',
+                'fuel_burned.initial_mass',
+                src_indices=[0],
             )
+
+        self.model.connect(
+            f'traj.{self.regular_phases[-1]}.timeseries.mass',
+            'fuel_burned.mass_final',
+            src_indices=[-1],
+        )
 
         # Fuel burn in reserve phases
         if self.reserve_phases:
@@ -898,30 +810,18 @@ class AviaryProblem(om.Problem):
                 promotes=[('reserve_fuel_burned', Mission.Summary.RESERVE_FUEL_BURNED)],
             )
 
-            if self.analysis_scheme is AnalysisScheme.SHOOTING:
-                # shooting method currently doesn't have timeseries
-                self.post_mission.promotes(
-                    'reserve_fuel_burned',
-                    [('initial_mass', Mission.Landing.TOUCHDOWN_MASS)],
-                )
-                self.model.connect(
-                    f'traj.{self.reserve_phases[-1]}.states:mass',
-                    'reserve_fuel_burned.mass_final',
-                    src_indices=[-1],
-                )
-            else:
-                # timeseries has to be used because Breguet cruise phases don't have
-                # states
-                self.model.connect(
-                    f'traj.{self.reserve_phases[0]}.timeseries.mass',
-                    'reserve_fuel_burned.initial_mass',
-                    src_indices=[0],
-                )
-                self.model.connect(
-                    f'traj.{self.reserve_phases[-1]}.timeseries.mass',
-                    'reserve_fuel_burned.mass_final',
-                    src_indices=[-1],
-                )
+            # timeseries has to be used because Breguet cruise phases don't have
+            # states
+            self.model.connect(
+                f'traj.{self.reserve_phases[0]}.timeseries.mass',
+                'reserve_fuel_burned.initial_mass',
+                src_indices=[0],
+            )
+            self.model.connect(
+                f'traj.{self.reserve_phases[-1]}.timeseries.mass',
+                'reserve_fuel_burned.mass_final',
+                src_indices=[-1],
+            )
 
         self._add_fuel_reserve_component()
 
@@ -1188,7 +1088,7 @@ class AviaryProblem(om.Problem):
         if optimizer is None:
             optimizer = 'IPOPT'
         if use_coloring is None:
-            use_coloring = False if self.analysis_scheme is AnalysisScheme.SHOOTING else True
+            use_coloring = True
 
         # check if optimizer is SLSQP
         if optimizer == 'SLSQP':
@@ -1428,10 +1328,7 @@ class AviaryProblem(om.Problem):
 
                 self.model.add_constraint('gross_mass_resid', lower=0)
 
-            if (
-                self.mission_method is TWO_DEGREES_OF_FREEDOM
-                and self.analysis_scheme is AnalysisScheme.COLLOCATION
-            ):
+            if self.mission_method is TWO_DEGREES_OF_FREEDOM:
                 # problem formulation to make the trajectory work
                 self.model.add_design_var(
                     Mission.Takeoff.ASCENT_T_INITIAL, lower=0, upper=100, ref=30.0
@@ -1530,16 +1427,11 @@ class AviaryProblem(om.Problem):
             final_phase_name = self.regular_phases[-1]
 
             if objective_type == 'mass':
-                if self.analysis_scheme is AnalysisScheme.COLLOCATION:
-                    self.model.add_objective(
-                        f'traj.{final_phase_name}.timeseries.{Dynamic.Vehicle.MASS}',
-                        index=-1,
-                        ref=ref,
-                    )
-                else:
-                    last_phase = self.traj._phases.items()[final_phase_name]
-                    last_phase.add_objective(Dynamic.Vehicle.MASS, loc='final', ref=ref)
-
+                self.model.add_objective(
+                    f'traj.{final_phase_name}.timeseries.{Dynamic.Vehicle.MASS}',
+                    index=-1,
+                    ref=ref,
+                )
             elif objective_type == 'time':
                 self.model.add_objective(
                     f'traj.{final_phase_name}.timeseries.time', index=-1, ref=ref
@@ -1719,22 +1611,6 @@ class AviaryProblem(om.Problem):
         target_prob = self
         if parent_prob is not None and parent_prefix != '':
             target_prob = parent_prob
-
-        # Grab the trajectory object from the model
-        if self.analysis_scheme is AnalysisScheme.SHOOTING:
-            if self.problem_type is ProblemType.SIZING:
-                target_prob.set_val(
-                    parent_prefix + Mission.Summary.GROSS_MASS,
-                    self.get_val(Mission.Design.GROSS_MASS),
-                )
-
-            target_prob.set_val(
-                parent_prefix + 'traj.SGMClimb_' + Dynamic.Mission.ALTITUDE + '_trigger',
-                val=self.cruise_alt,
-                units='ft',
-            )
-
-            return
 
         traj = self.model.traj
 
@@ -1942,13 +1818,10 @@ class AviaryProblem(om.Problem):
             #      should be removed, or rework this option to be more helpful (store
             # entire "failed" object?) and implement more rigorously in benchmark
             # tests
-            if self.analysis_scheme is AnalysisScheme.SHOOTING:
-                self.problem_ran_successfully = not failed
+            if failed.exit_status == 'FAIL':
+                self.problem_ran_successfully = False
             else:
-                if failed.exit_status == 'FAIL':
-                    self.problem_ran_successfully = False
-                else:
-                    self.problem_ran_successfully = True
+                self.problem_ran_successfully = True
             # Manually print out a failure message for low verbosity modes that suppress
             # optimizer printouts, which may include the results message. Assumes success,
             # alerts user on a failure

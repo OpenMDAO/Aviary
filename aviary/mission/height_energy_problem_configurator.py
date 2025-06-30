@@ -13,7 +13,7 @@ from aviary.mission.problem_configurator import ProblemConfiguratorBase
 from aviary.subsystems.propulsion.utils import build_engine_deck
 from aviary.utils.process_input_decks import initialization_guessing
 from aviary.utils.utils import wrapped_convert_units
-from aviary.variable_info.enums import AnalysisScheme, LegacyCode, Verbosity
+from aviary.variable_info.enums import LegacyCode, Verbosity
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 
 
@@ -94,11 +94,7 @@ class HeightEnergyProblemConfigurator(ProblemConfiguratorBase):
         AviaryValues
             General default phase_info.
         """
-        if prob.analysis_scheme is AnalysisScheme.COLLOCATION:
-            from aviary.interface.default_phase_info.height_energy import phase_info
-        else:
-            raise RuntimeError('Height Energy requires that a phase_info is specified.')
-
+        from aviary.interface.default_phase_info.height_energy import phase_info
         return phase_info
 
     def get_code_origin(self, prob):
