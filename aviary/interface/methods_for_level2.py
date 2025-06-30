@@ -288,13 +288,38 @@ class AviaryProblem(om.Problem):
                             analytic = phase['user_options']['analytic'] = False
 
                 if 'time_duration' in phase['user_options']:
-                    time_duration = phase['user_options']['time_duration']
-                    if time_duration[0] is not None and time_duration[0] <= 0:
+                    time_duration, units = phase['user_options']['time_duration']
+
+                    if time_duration is None:
+                        continue
+
+                    if time_duration <= 0:
                         raise ValueError(
                             f'Invalid time_duration in phase_info[{phase_name}]'
                             f'[user_options]. Current (value: {time_duration[0]}), '
                             f'(units: {time_duration[1]}) <= 0")'
                         )
+
+                    if 'initial_guesses' not in phase:
+                        phase['initial_guesses'] = {}
+
+                    guesses = phase['initial_guesses']
+                    if 'time' in guesses:
+                        time_guess, units_guess = guesses['time']
+
+                        if time_guess[1] is not None:
+                            msg = f'Duration initial guess of {time_guess[1]} {units_guess} '
+                            msg += f'specified on fixed duration phase for phase {phase_name}. '
+                            msg += f'Using fixed value of {time_duration} {units} instead.'
+                            print(msg)
+
+                        time_duration_conv = wrapped_convert_units(
+                            (time_duration, units), units_guess
+                        )
+                        guesses['time'] = ((time_guess[0], time_duration_conv), units_guess)
+
+                    else:
+                        guesses['time'] = ((None, time_duration), units)
 
         for phase_name in self.phase_info:
             for external_subsystem in self.phase_info[phase_name]['external_subsystems']:

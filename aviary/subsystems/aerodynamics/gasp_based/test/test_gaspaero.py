@@ -7,7 +7,14 @@ import openmdao.api as om
 import pandas as pd
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 
-from aviary.subsystems.aerodynamics.gasp_based.gaspaero import CruiseAero, LowSpeedAero
+from aviary.subsystems.aerodynamics.gasp_based.gaspaero import (
+    CruiseAero,
+    LowSpeedAero,
+    FormFactorAndSIWB,
+    GroundEffect,
+    LiftCoeff,
+    LiftCoeffClean,
+)
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.functions import setup_model_options
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
@@ -20,7 +27,10 @@ with open(os.path.join(here, 'data', 'aero_data_setup.json')) as file:
 
 
 class GASPAeroTest(unittest.TestCase):
-    """Test overall pre-mission and mission aero systems in cruise and near-ground flight."""
+    """
+    Test overall pre-mission and mission aero systems in cruise and near-ground flight.
+    Note: The case output_alpha=True is not tested.
+    """
 
     cruise_tol = 1.5e-3
     ground_tol = 0.5e-3
@@ -232,6 +242,161 @@ def _init_geom(prob):
     # ground: t_init_gear
     # ground: dt_gear
     # ground & cruise, mission: q
+
+
+class LiftCoeffTest(unittest.TestCase):
+    """Test partials of LiftCoeff"""
+
+    def test_case1(self):
+        prob = om.Problem()
+
+        prob.model.add_subsystem(
+            'lift_coeff',
+            LiftCoeff(num_nodes=2),
+            promotes=['*'],
+        )
+
+        prob.model.set_input_defaults(Dynamic.Vehicle.ANGLE_OF_ATTACK, [-2.0, -2.0], units='deg')
+        prob.model.set_input_defaults('lift_curve_slope', [4.876, 4.876], units='unitless')
+        prob.model.set_input_defaults('lift_ratio', [0.5, 0.5], units='unitless')
+        prob.model.set_input_defaults(Aircraft.Wing.ZERO_LIFT_ANGLE, -1.2, units='deg')
+        prob.model.set_input_defaults('CL_max_flaps', 2.188, units='unitless')
+        prob.model.set_input_defaults('dCL_flaps_model', 0.418, units='unitless')
+        prob.model.set_input_defaults('kclge', [1.15, 1.15], units='unitless')
+        prob.model.set_input_defaults('flap_factor', [1.0, 1.0], units='unitless')
+
+        prob.setup(check=False, force_alloc_complex=True)
+        prob.run_model()
+
+        partial_data = prob.check_partials(out_stream=None, method='cs')
+        assert_check_partials(partial_data, atol=1e-11, rtol=1e-11)
+
+
+class LiftCoeffCleanTest(unittest.TestCase):
+    """Test partials of LiftCoeffClean"""
+
+    def test_case1(self):
+        prob = om.Problem()
+
+        prob.model.add_subsystem(
+            'lift_coeff',
+            LiftCoeffClean(num_nodes=2, output_alpha=False),
+            promotes=['*'],
+        )
+
+        prob.model.set_input_defaults(Dynamic.Vehicle.ANGLE_OF_ATTACK, [-2.0, -2.0], units='deg')
+        prob.model.set_input_defaults('lift_curve_slope', [5.975, 5.975], units='unitless')
+        prob.model.set_input_defaults('lift_ratio', [0.0357, 0.0357], units='unitless')
+        prob.model.set_input_defaults(Aircraft.Wing.ZERO_LIFT_ANGLE, -1.2, units='deg')
+        prob.model.set_input_defaults(
+            Mission.Design.LIFT_COEFFICIENT_MAX_FLAPS_UP, 1.8885, units='unitless'
+        )
+
+        prob.setup(check=False, force_alloc_complex=True)
+        prob.run_model()
+
+        tol = 1e-7
+        assert_near_equal(prob['CL'], [-0.08640507, -0.08640507], tol)
+        assert_near_equal(prob['alpha_stall'], [16.90930203, 16.90930203], tol)
+        assert_near_equal(prob['CL_max'], [1.95591945, 1.95591945], tol)
+
+        partial_data = prob.check_partials(out_stream=None, method='cs')
+        assert_check_partials(partial_data, atol=1e-11, rtol=1e-11)
+
+    def test_case2(self):
+        prob = om.Problem()
+
+        prob.model.add_subsystem(
+            'lift_coeff',
+            LiftCoeffClean(num_nodes=2, output_alpha=True),
+            promotes=['*'],
+        )
+
+        prob.model.set_input_defaults('CL', [-0.08640507, -0.08640507], units='unitless')
+        prob.model.set_input_defaults('lift_curve_slope', [5.975, 5.975], units='unitless')
+        prob.model.set_input_defaults('lift_ratio', [0.0357, 0.0357], units='unitless')
+        prob.model.set_input_defaults(Aircraft.Wing.ZERO_LIFT_ANGLE, -1.2, units='deg')
+        prob.model.set_input_defaults(
+            Mission.Design.LIFT_COEFFICIENT_MAX_FLAPS_UP, 1.8885, units='unitless'
+        )
+
+        prob.setup(check=False, force_alloc_complex=True)
+        prob.run_model()
+
+        tol = 1e-7
+        assert_near_equal(prob[Dynamic.Vehicle.ANGLE_OF_ATTACK], [-1.99999997, -1.99999997], tol)
+        assert_near_equal(prob['alpha_stall'], [16.90930203, 16.90930203], tol)
+        assert_near_equal(prob['CL_max'], [1.95591945, 1.95591945], tol)
+
+        partial_data = prob.check_partials(out_stream=None, method='cs')
+        assert_check_partials(partial_data, atol=1e-11, rtol=1e-11)
+
+
+class FormFactorAndSIWBTest(unittest.TestCase):
+    """Test fuselage form factor computation and SIWB computation"""
+
+    def test_case1(self):
+        prob = om.Problem()
+
+        prob.model.add_subsystem(
+            'form_factor',
+            FormFactorAndSIWB(),
+            promotes=['*'],
+        )
+
+        prob.model.set_input_defaults(Aircraft.Fuselage.AVG_DIAMETER, val=1.0, units='ft')
+        prob.model.set_input_defaults(Aircraft.Fuselage.LENGTH, val=1.0, units='ft')
+        prob.model.set_input_defaults(Aircraft.Wing.SPAN, val=10.0, units='ft')
+
+        prob.setup(check=False, force_alloc_complex=True)
+        prob.run_model()
+
+        tol = 1e-7
+        assert_near_equal(prob['body_form_factor'], 9.5, tol)
+        assert_near_equal(prob['siwb'], 0.98005906, tol)
+
+        partial_data = prob.check_partials(out_stream=None, method='cs')
+        assert_check_partials(partial_data, atol=1e-11, rtol=1e-11)
+
+
+class GroundEffectTest(unittest.TestCase):
+    """Test fuselage form factor computation and SIWB computation"""
+
+    def test_case1(self):
+        prob = om.Problem()
+
+        prob.model.add_subsystem(
+            'kclge',
+            GroundEffect(num_nodes=2),
+            promotes=['*'],
+        )
+
+        # mission inputs
+        prob.model.set_input_defaults(Dynamic.Vehicle.ANGLE_OF_ATTACK, [-2.0, -2.0], units='deg')
+        prob.model.set_input_defaults(Dynamic.Mission.ALTITUDE, [0.0, 0.0], units='ft')
+        prob.model.set_input_defaults(
+            'lift_curve_slope', [4.87625889, 4.87625889], units='unitless'
+        )
+        # user inputs
+        prob.model.set_input_defaults(Aircraft.Wing.ZERO_LIFT_ANGLE, -1.2, units='deg')
+        prob.model.set_input_defaults(Aircraft.Wing.SWEEP, 25, units='deg')
+        prob.model.set_input_defaults(Aircraft.Wing.ASPECT_RATIO, 10.13, units='unitless')
+        prob.model.set_input_defaults(Aircraft.Wing.HEIGHT, 8, units='ft')
+        prob.model.set_input_defaults('airport_alt', 0.0, units='ft')
+        prob.model.set_input_defaults('flap_defl', 10.0, units='deg')
+        prob.model.set_input_defaults(Aircraft.Wing.FLAP_CHORD_RATIO, 0.3, units='unitless')
+        prob.model.set_input_defaults(Aircraft.Wing.TAPER_RATIO, 0.33, units='unitless')
+        # from flaps
+        prob.model.set_input_defaults('dCL_flaps_model', 0.4182, units='unitless')
+        # from sizing
+        prob.model.set_input_defaults(Aircraft.Wing.AVERAGE_CHORD, 12.61453152, units='ft')
+        prob.model.set_input_defaults(Aircraft.Wing.SPAN, 117.8187662, units='ft')
+
+        prob.setup(check=False, force_alloc_complex=True)
+        prob.run_model()
+
+        tol = 1e-7
+        assert_near_equal(prob['kclge'], [1.15131091, 1.15131091], tol)
 
 
 if __name__ == '__main__':
