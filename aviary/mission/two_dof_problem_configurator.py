@@ -125,7 +125,9 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
                 phase_info_parameterization,
             )
 
-            phase_info, _ = phase_info_parameterization(phase_info, None, aviary_group.aviary_inputs)
+            phase_info, _ = phase_info_parameterization(
+                phase_info, None, aviary_group.aviary_inputs
+            )
 
         return phase_info
 
@@ -193,7 +195,9 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
             promotes_outputs=[('TW_ratio', Aircraft.Design.THRUST_TO_WEIGHT_RATIO)],
         )
 
-        aviary_group.cruise_alt = aviary_group.aviary_inputs.get_val(Mission.Design.CRUISE_ALTITUDE, units='ft')
+        aviary_group.cruise_alt = aviary_group.aviary_inputs.get_val(
+            Mission.Design.CRUISE_ALTITUDE, units='ft'
+        )
 
         if aviary_group.analysis_scheme is AnalysisScheme.COLLOCATION:
             # Add event transformation subsystem
@@ -467,7 +471,10 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
                     # and neither phase is ground roll or rotation (altitude isn't a state):
                     # we want altitude to be continuous as well
                     if (
-                        ((phase1 in aviary_group.reserve_phases) == (phase2 in aviary_group.reserve_phases))
+                        (
+                            (phase1 in aviary_group.reserve_phases) 
+                            == (phase2 in aviary_group.reserve_phases)
+                        )
                         and not ({'groundroll', 'rotation'} & {phase1, phase2})
                         and not ('accel', 'climb1') == (phase1, phase2)
                     ):  # required for convergence of FwGm
@@ -537,7 +544,9 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
             )
 
             # imitate input_initial for taxi -> groundroll
-            eq = aviary_group.add_subsystem('taxi_groundroll_mass_constraint', om.EQConstraintComp())
+            eq = aviary_group.add_subsystem(
+                'taxi_groundroll_mass_constraint', om.EQConstraintComp()
+            )
             eq.add_eq_output(
                 'mass', eq_units='lbm', normalize=False, ref=10000.0, add_constraint=True
             )
@@ -666,7 +675,9 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
             promotes_outputs=[('range_resid', Mission.Constraints.RANGE_RESIDUAL)],
         )
 
-        aviary_group.post_mission.add_constraint(Mission.Constraints.MASS_RESIDUAL, equals=0.0, ref=1.0e5)
+        aviary_group.post_mission.add_constraint(
+            Mission.Constraints.MASS_RESIDUAL, equals=0.0, ref=1.0e5
+        )
 
     def _add_landing_systems(self, aviary_group):
         aviary_group.add_subsystem(

@@ -28,7 +28,9 @@ class SolvedTwoDOFProblemConfigurator(ProblemConfiguratorBase):
 
         # This doesn't really have much value, but is needed for initializing
         # an objective-related component that still lives in level 2.
-        aviary_group.target_range = aviary_group.aviary_inputs.get_val(Mission.Design.RANGE, units='NM')
+        aviary_group.target_range = aviary_group.aviary_inputs.get_val(
+            Mission.Design.RANGE, units='NM'
+        )
 
     def get_default_phase_info(self, aviary_group):
         """

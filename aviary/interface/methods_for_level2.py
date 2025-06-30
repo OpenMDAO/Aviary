@@ -110,12 +110,13 @@ class AviaryProblem(om.Problem):
 
         # TODO: We cannot pass self.verbosity back up from load inputs for mulit-mission because there could be multiple .csv files
         aviary_inputs, verbosity = self.model.load_inputs(
-                aircraft_data=aircraft_data,
-                phase_info=phase_info,
-                engine_builders=engine_builders,
-                problem_configurator=problem_configurator,
-                meta_data=meta_data,
-                verbosity=verbosity)
+            aircraft_data=aircraft_data,
+            phase_info=phase_info,
+            engine_builders=engine_builders,
+            problem_configurator=problem_configurator,
+            meta_data=meta_data,
+            verbosity=verbosity,
+        )
 
         # When there is only 1 aircraft model/mission, preserve old behavior.
         self.phase_info = self.model.phase_info
@@ -186,7 +187,12 @@ class AviaryProblem(om.Problem):
 
         self.model.add_pre_mission_systems(verbosity=verbosity)
 
-    def add_phases(self, phase_info_parameterization=None, parallel_phases=True, verbosity=None):
+    def add_phases(
+            self, 
+            phase_info_parameterization=None, 
+            parallel_phases=True, 
+            verbosity=None,
+        ):
         """
         Add the mission phases to the problem trajectory based on the user-specified
         phase_info dictionary.
@@ -218,7 +224,7 @@ class AviaryProblem(om.Problem):
             phase_info_parameterization=phase_info_parameterization,
             parallel_phases=parallel_phases,
             verbosity=verbosity,
-            comm=self.comm
+            comm=self.comm,
         )
 
     def add_post_mission_systems(self, verbosity=None):
@@ -498,13 +504,14 @@ class AviaryProblem(om.Problem):
             promotes_outputs=[('reg_objective', Mission.Objectives.FUEL)],
         )
 
+        # TODO: All references to self.model. will need to be updated
         self.model.add_subsystem(
             'range_obj',
             om.ExecComp(
                 'reg_objective = -actual_range/1000 + ascent_duration/30.',
                 reg_objective={'val': 0.0, 'units': 'unitless'},
                 ascent_duration={'units': 's', 'shape': 1},
-                actual_range={'val': self.model.target_range, 'units': 'NM'}, # TODO: All references to self.model. will need to be updated
+                actual_range={'val': self.model.target_range, 'units': 'NM'}, 
             ),
             promotes_inputs=[
                 ('actual_range', Mission.Summary.RANGE),
@@ -619,7 +626,11 @@ class AviaryProblem(om.Problem):
         else:
             verbosity = self.verbosity  # defaults to BRIEF
 
-        self.model.set_initial_guesses(parent_prob=parent_prob, parent_prefix=parent_prefix, verbosity=verbosity)
+        self.model.set_initial_guesses(
+            parent_prob=parent_prob, 
+            parent_prefix=parent_prefix, 
+            verbosity=verbosity,
+        )
 
     def run_aviary_problem(
         self,

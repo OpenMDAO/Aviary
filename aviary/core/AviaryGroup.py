@@ -77,7 +77,7 @@ class AviaryGroup(om.Group):
             'aviary_metadata', types=dict, desc='metadata dictionary of the full aviary problem.'
         )
         self.options.declare('phase_info', types=dict, desc='phase-specific settings.')
-        self.builder = [] # what does this do?
+        self.builder = []
 
     def configure(self):
         """Configure the Aviary group."""
@@ -175,7 +175,7 @@ class AviaryGroup(om.Group):
         problem_configurator=None,
         meta_data=BaseMetaData,
         verbosity=None,
-        ):
+    ):
         """
         This method loads the aviary_values inputs and options that the
         user specifies. They could specify files to load and values to
@@ -493,7 +493,8 @@ class AviaryGroup(om.Group):
             raise ValueError(
                 'In phase_info, reserve=False cannot be specified after a phase where '
                 'reserve=True. All reserve phases must happen after non-reserve phases. '
-                f'Regular Phases : {self.regular_phases} | ' # TODO: will need to pre-pend current group level to all error messages!!
+                # TODO: will need to pre-pend current group level to all error messages!!
+                f'Regular Phases : {self.regular_phases} | '  
                 f'Reserve Phases : {self.reserve_phases} '
             )
 
@@ -665,7 +666,13 @@ class AviaryGroup(om.Group):
 
         return phase
 
-    def add_phases(self, phase_info_parameterization=None, parallel_phases=True, verbosity=None, comm=None):
+    def add_phases(
+        self, 
+        phase_info_parameterization=None, 
+        parallel_phases=True, 
+        verbosity=None, 
+        comm=None
+    ):
         """
         Add the mission phases to the problem trajectory based on the user-specified
         phase_info dictionary.
@@ -1403,22 +1410,19 @@ class AviaryGroup(om.Group):
                 and self.analysis_scheme is AnalysisScheme.COLLOCATION
             ):
                 # problem formulation to make the trajectory work
-                self.add_design_var(
-                    Mission.Takeoff.ASCENT_T_INITIAL, lower=0, upper=100, ref=30.0
-                )
-                self.add_design_var(
-                    Mission.Takeoff.ASCENT_DURATION, lower=1, upper=1000, ref=10.0
-                )
-                self.add_design_var(
-                    'tau_gear', lower=0.01, upper=1.0, units='unitless', ref=1
-                )
-                self.add_design_var(
-                    'tau_flaps', lower=0.01, upper=1.0, units='unitless', ref=1
-                )
+                self.add_design_var(Mission.Takeoff.ASCENT_T_INITIAL, lower=0, upper=100, ref=30.0)
+                self.add_design_var(Mission.Takeoff.ASCENT_DURATION, lower=1, upper=1000, ref=10.0)
+                self.add_design_var('tau_gear', lower=0.01, upper=1.0, units='unitless', ref=1)
+                self.add_design_var('tau_flaps', lower=0.01, upper=1.0, units='unitless', ref=1)
                 self.add_constraint('h_fit.h_init_gear', equals=50.0, units='ft', ref=50.0)
                 self.add_constraint('h_fit.h_init_flaps', equals=400.0, units='ft', ref=400.0)
 
-    def set_initial_guesses(self, parent_prob=None, parent_prefix='', verbosity=None):
+    def set_initial_guesses(
+        self, 
+        parent_prob=None, 
+        parent_prefix='', 
+        verbosity=None
+    ):
         """
         Call `set_val` on the trajectory for states and controls to seed the problem with
         reasonable initial guesses. This is especially important for collocation methods.
@@ -1525,9 +1529,7 @@ class AviaryGroup(om.Group):
             The phase object for which the subsystem guesses are being added.
         """
         # Get all subsystems associated with the phase
-        all_subsystems = self.get_all_subsystems(
-            self.phase_info[phase_name]['external_subsystems']
-        )
+        all_subsystems = self.get_all_subsystems(self.phase_info[phase_name]['external_subsystems'])
 
         # Loop over each subsystem
         for subsystem in all_subsystems:

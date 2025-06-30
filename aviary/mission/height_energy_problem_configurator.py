@@ -67,7 +67,9 @@ class HeightEnergyProblemConfigurator(ProblemConfiguratorBase):
                 units='NM',
             )
             aviary_group.require_range_residual = True
-            aviary_group.target_range = wrapped_convert_units(aviary_group.post_mission_info['target_range'], 'NM')
+            aviary_group.target_range = wrapped_convert_units(
+                aviary_group.post_mission_info['target_range'], 'NM'
+            )
         else:
             aviary_group.require_range_residual = False
             # still instantiate target_range because it is used for default guesses
@@ -272,8 +274,7 @@ class HeightEnergyProblemConfigurator(ProblemConfiguratorBase):
             ref=1.0e4,
         )
         self.link_phases_helper_with_options(
-            aviary_group,
-            aviary_group.regular_phases, 'mach_optimize', Dynamic.Atmosphere.MACH
+            aviary_group, aviary_group.regular_phases, 'mach_optimize', Dynamic.Atmosphere.MACH
         )
 
         # connect reserve phases with each other if you are optimizing alt or mach
@@ -285,8 +286,7 @@ class HeightEnergyProblemConfigurator(ProblemConfiguratorBase):
             ref=1.0e4,
         )
         self.link_phases_helper_with_options(
-            aviary_group,
-            aviary_group.reserve_phases, 'mach_optimize', Dynamic.Atmosphere.MACH
+            aviary_group, aviary_group.reserve_phases, 'mach_optimize', Dynamic.Atmosphere.MACH
         )
 
         # connect mass and distance between all phases regardless of reserve /
@@ -427,7 +427,9 @@ class HeightEnergyProblemConfigurator(ProblemConfiguratorBase):
         )
 
         # TODO: replace hard_coded ref for this constraint.
-        aviary_group.post_mission.add_constraint(Mission.Constraints.MASS_RESIDUAL, equals=0.0, ref=1.0e5)
+        aviary_group.post_mission.add_constraint(
+            Mission.Constraints.MASS_RESIDUAL, equals=0.0, ref=1.0e5
+        )
 
     def _add_post_mission_takeoff_systems(self, aviary_group):
         """
@@ -488,7 +490,9 @@ class HeightEnergyProblemConfigurator(ProblemConfiguratorBase):
     def _add_landing_systems(self, aviary_group):
         landing_options = Landing(
             ref_wing_area=aviary_group.aviary_inputs.get_val(Aircraft.Wing.AREA, units='ft**2'),
-            Cl_max_ldg=aviary_group.aviary_inputs.get_val(Mission.Landing.LIFT_COEFFICIENT_MAX),  # no units
+            Cl_max_ldg=aviary_group.aviary_inputs.get_val(
+                Mission.Landing.LIFT_COEFFICIENT_MAX
+            ),  # no units
         )
 
         landing = landing_options.build_phase(False)
