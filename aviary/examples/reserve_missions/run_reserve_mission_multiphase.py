@@ -72,7 +72,7 @@ phase_info.update(
             'user_options': {
                 'reserve': True,
                 # Time length of this phase
-                'time_duration': (45, 'min'),
+                'time_duration': (30, 'min'),
                 'num_segments': 5,
                 'order': 3,
                 'distance_solve_segments': False,
