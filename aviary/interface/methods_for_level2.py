@@ -1936,12 +1936,19 @@ class AviaryProblem(om.Problem):
         
 
         if payload_range_bool:
-            payload_range_matrix=self.run_payload_range()
-            print(payload_range_matrix[1])
-            print(payload_range_matrix[0])
-        
-        self.problem_ran_successfully = not failed
+            #Checks to determine if the set gross mass for off design would be greater
+            #Than the gross mass of the sizing mission. 
+            gross_mass = float(self.get_val(Mission.Summary.GROSS_MASS))
+            operating_mass=float(self.get_val(Aircraft.Design.OPERATING_MASS))
+            fuel_capacity=float(self.get_val(Aircraft.Fuel.TOTAL_CAPACITY))
 
+            if operating_mass + fuel_capacity < gross_mass:
+                payload_range_matrix=self.run_payload_range()
+                print(payload_range_matrix[1])
+                print(payload_range_matrix[0])
+            else: 
+                print("Off-design gross mass exceeds sizing limitations, payload/range cannot be generated")
+        
 
     def run_payload_range(self):
         #Ensure proper transfer of json files. 
@@ -2119,7 +2126,6 @@ class AviaryProblem(om.Problem):
         )
 
         prob_alternate.check_and_preprocess_inputs()
-        prob_alternate.phase_info=self.phase_info
         prob_alternate.add_pre_mission_systems()
         prob_alternate.add_phases()
         prob_alternate.add_post_mission_systems()
