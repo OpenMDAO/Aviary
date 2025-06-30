@@ -152,11 +152,11 @@ def check_type(key, val, meta_data=_MetaData):
     def _flatten_iters(iterable):
         """Flattens iterables of any type and dimension."""
         for item in iterable:
-            try:
-                yield from iter(item)
-            except TypeError:
+            if isiterable(item):
+                yield from _flatten_iters(item)
+            else:
                 yield item
-
+                
     # make a copy of val, so we do not modify it
     input_val = deepcopy(val)
     expected_types = meta_data[key]['types']

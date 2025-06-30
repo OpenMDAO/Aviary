@@ -2290,15 +2290,21 @@ class AviaryProblem(om.Problem):
                     # Convert numpy arrays to lists
                     if type_value == np.ndarray:
                         value = value.tolist()
+                        type_value = list
 
                     # Lists are fine except if they contain enums or Paths
                     if type_value == list:
-                        if isinstance(value[0], Enum) or isinstance(value[0], Path):
+                        if isinstance(value[0], Enum):
+                            for i in range(len(value)):
+                                value[i] = value[i].name
+                        elif isinstance(value[0], Path):
                             for i in range(len(value)):
                                 value[i] = str(value[i])
 
                     # Enums and Paths need converting to a string
-                    if isinstance(value, Enum) or isinstance(value, Path):
+                    if isinstance(value, Enum):
+                        value = value.name
+                    elif isinstance(value, Path):
                         value = str(value)
 
                 # Append the data to the list
@@ -2458,6 +2464,7 @@ def _read_sizing_json(aviary_problem, json_filename):
                         tmp_var_values = var_values[i].split(':')[-1]
                         var_values[i] = (
                             tmp_var_values.replace('>', '')
+                            .replace('<', '')
                             .replace(']', '')
                             .replace("'", '')
                             .replace(' ', '')
@@ -2470,9 +2477,12 @@ def _read_sizing_json(aviary_problem, json_filename):
             # Identify enums and manipulate the string to find the value
             tmp_var_values = var_values.split(':')[-1]
             var_values = (
-                tmp_var_values.replace('>', '').replace(']', '').replace("'", '').replace(' ', '')
+                tmp_var_values.replace('>', '').replace('<', '').replace(']', '').replace("'", '').replace(' ', '')
             )
             var_values = convert_strings_to_data([var_values])
+
+        if var_name == "aircraft:design:lift_polar":
+            print('here!')
 
         # Check if the variable is in meta data
         if var_name in BaseMetaData.keys():
