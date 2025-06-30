@@ -494,7 +494,7 @@ class AviaryGroup(om.Group):
                 'In phase_info, reserve=False cannot be specified after a phase where '
                 'reserve=True. All reserve phases must happen after non-reserve phases. '
                 # TODO: will need to pre-pend current group level to all error messages!!
-                f'Regular Phases : {self.regular_phases} | '  
+                f'Regular Phases : {self.regular_phases} | '
                 f'Reserve Phases : {self.reserve_phases} '
             )
 
@@ -666,12 +666,7 @@ class AviaryGroup(om.Group):
 
         return phase
 
-    def add_phases(
-        self, 
-        phase_info_parameterization=None, 
-        parallel_phases=True, 
-        verbosity=None, 
-        comm=None
+    def add_phases(self, phase_info_parameterization=None, parallel_phases=True, verbosity=None, comm=None
     ):
         """
         Add the mission phases to the problem trajectory based on the user-specified
@@ -1417,12 +1412,7 @@ class AviaryGroup(om.Group):
                 self.add_constraint('h_fit.h_init_gear', equals=50.0, units='ft', ref=50.0)
                 self.add_constraint('h_fit.h_init_flaps', equals=400.0, units='ft', ref=400.0)
 
-    def set_initial_guesses(
-        self, 
-        parent_prob=None, 
-        parent_prefix='', 
-        verbosity=None
-    ):
+    def set_initial_guesses(self, parent_prob=None, parent_prefix='', verbosity=None):
         """
         Call `set_val` on the trajectory for states and controls to seed the problem with
         reasonable initial guesses. This is especially important for collocation methods.

@@ -159,7 +159,7 @@ class AviaryProblem(om.Problem):
                 meta_data = subsystem.meta_data.copy()
                 self.meta_data = merge_meta_data([self.meta_data, meta_data])
 
-        self.model.meta_data = self.meta_data # TODO: temporary fix
+        self.model.meta_data = self.meta_data  # TODO: temporary fix
 
     def add_pre_mission_systems(self, verbosity=None):
         """
@@ -188,11 +188,11 @@ class AviaryProblem(om.Problem):
         self.model.add_pre_mission_systems(verbosity=verbosity)
 
     def add_phases(
-            self, 
-            phase_info_parameterization=None, 
-            parallel_phases=True, 
-            verbosity=None,
-        ):
+        self, 
+        phase_info_parameterization=None, 
+        parallel_phases=True, 
+        verbosity=None,
+    ):
         """
         Add the mission phases to the problem trajectory based on the user-specified
         phase_info dictionary.
@@ -260,7 +260,7 @@ class AviaryProblem(om.Problem):
 
         self.model.add_post_mission_systems(verbosity=verbosity)
 
-    def link_phases(self, verbosity=None): # forward
+    def link_phases(self, verbosity=None):
         """
         Link phases together after they've been added.
 
@@ -511,7 +511,7 @@ class AviaryProblem(om.Problem):
                 'reg_objective = -actual_range/1000 + ascent_duration/30.',
                 reg_objective={'val': 0.0, 'units': 'unitless'},
                 ascent_duration={'units': 's', 'shape': 1},
-                actual_range={'val': self.model.target_range, 'units': 'NM'}, 
+                actual_range={'val': self.model.target_range, 'units': 'NM'},
             ),
             promotes_inputs=[
                 ('actual_range', Mission.Summary.RANGE),
@@ -627,8 +627,8 @@ class AviaryProblem(om.Problem):
             verbosity = self.verbosity  # defaults to BRIEF
 
         self.model.set_initial_guesses(
-            parent_prob=parent_prob, 
-            parent_prefix=parent_prefix, 
+            parent_prob=parent_prob,
+            parent_prefix=parent_prefix,
             verbosity=verbosity,
         )
 
@@ -984,7 +984,7 @@ class AviaryProblem(om.Problem):
             prob_fallout.run_aviary_problem(record_filename='fallout_problem_history.db')
         return prob_fallout
 
-    def save_sizing_to_json(self, json_filename='sizing_problem.json'): # leave in place for now
+    def save_sizing_to_json(self, json_filename='sizing_problem.json'):
         """
         This function saves an aviary problem object into a json file.
 
@@ -1076,7 +1076,6 @@ class AviaryProblem(om.Problem):
             for name, value_units in sorted(self.aviary_inputs):
                 value, units = value_units
                 writer.writerow({'name': name, 'value': value, 'units': units})
-
 
 
 def _read_sizing_json(aviary_problem, json_filename):

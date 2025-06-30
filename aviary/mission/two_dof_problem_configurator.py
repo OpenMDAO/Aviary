@@ -472,7 +472,7 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
                     # we want altitude to be continuous as well
                     if (
                         (
-                            (phase1 in aviary_group.reserve_phases) 
+                            (phase1 in aviary_group.reserve_phases)
                             == (phase2 in aviary_group.reserve_phases)
                         )
                         and not ({'groundroll', 'rotation'} & {phase1, phase2})
