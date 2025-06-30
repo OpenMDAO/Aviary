@@ -188,9 +188,9 @@ class AviaryProblem(om.Problem):
         self.model.add_pre_mission_systems(verbosity=verbosity)
 
     def add_phases(
-        self, 
-        phase_info_parameterization=None, 
-        parallel_phases=True, 
+        self,
+        phase_info_parameterization=None,
+        parallel_phases=True,
         verbosity=None,
     ):
         """

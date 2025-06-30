@@ -666,7 +666,8 @@ class AviaryGroup(om.Group):
 
         return phase
 
-    def add_phases(self, phase_info_parameterization=None, parallel_phases=True, verbosity=None, comm=None
+    def add_phases(
+        self, phase_info_parameterization=None, parallel_phases=True, verbosity=None, comm=None
     ):
         """
         Add the mission phases to the problem trajectory based on the user-specified
