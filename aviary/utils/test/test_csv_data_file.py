@@ -28,6 +28,8 @@ class TestAviaryCSV(unittest.TestCase):
             }
         )
         self.comments = ['comment 1', 'comment 2# more comment 2', 'inline comment']
+        self.inputs = ['aircraft:wing:span', 'aircraft:crew_and_payload:num_passengers']
+        self.outputs = ['fake_var']
 
         # what the csv should look like after writing
         self.expected_contents = [
@@ -35,15 +37,15 @@ class TestAviaryCSV(unittest.TestCase):
             '# comment 2# more comment 2',
             '# inline comment',
             '',
-            'aircraft:wing:span (ft), aircraft:crew_and_payload:num_passengers, fake_var (lbm)',
-            '                  15.24,                                      125,          0.932',
-            '                    118,                                       28,        1023.54',
-            '                     90,                                    0.355,              0',
-            '                    171,                                       44,            -13',
+            'aircraft:wing:span (ft, input), aircraft:crew_and_payload:num_passengers (input), fake_var (lbm, output)',
+            '                         15.24,                                              125,                  0.932',
+            '                           118,                                               28,                1023.54',
+            '                            90,                                            0.355,                      0',
+            '                           171,                                               44,                    -13',
         ]
 
     def test_write_data_file(self):
-        write_data_file('write.csv', self.data, self.comments)
+        write_data_file('write.csv', self.data, self.outputs, self.comments)
         read_contents = []
         with open('write.csv') as file:
             for line in file:
@@ -59,15 +61,18 @@ class TestAviaryCSV(unittest.TestCase):
         warnings.filterwarnings('error')
 
         try:
-            data, comments = read_data_file(self.filename, CoreMetaData)
+            data, inputs, outputs, comments = read_data_file(self.filename, CoreMetaData)
         except UserWarning:
             # disable warnings as errors behavior for future tests
             warnings.resetwarnings()
             # run read_data_file() without catching warnings as errors so it completes
-            data, comments = read_data_file(self.filename, CoreMetaData, save_comments=True)
+            data, inputs, outputs, comments = read_data_file(
+                self.filename, CoreMetaData, save_comments=True
+            )
             if 'fake_var' in get_keys(data):
                 raise RuntimeError('fake_var should be skipped when reading csv')
-            self._compare_csv_results(data, comments)
+            # output 'fake_var' should be missing, so provide self.outputs so comparison passes
+            self._compare_csv_results(data, inputs, self.outputs, comments)
         else:
             # disable warnings as errors behavior for future tests
             warnings.resetwarnings()
@@ -79,7 +84,7 @@ class TestAviaryCSV(unittest.TestCase):
 
     def test_aliases_csv(self):
         aliases = {'Real Var': 'Fake Var'}
-        data = read_data_file(self.filename, aliases=aliases)
+        data, _, _ = read_data_file(self.filename, aliases=aliases)
         if 'fake_var' in get_keys(data):
             raise RuntimeError("'fake_var' should be converted to 'Real Var'")
         if 'Real Var' not in get_keys(data):
@@ -103,13 +108,17 @@ class TestAviaryCSV(unittest.TestCase):
         # remove the temporary csv file
         os.remove(file_name)
 
-    def _compare_csv_results(self, data, comments):
+    def _compare_csv_results(self, data, inputs, outputs, comments):
         expected_data = self.data
 
         if comments != self.comments:
             raise ValueError(
                 f'Comments read from {self.filename.name} do not match expected values'
             )
+        if inputs != self.inputs:
+            raise ValueError(f'Inputs read from {self.filename.name} do not match expected values')
+        if outputs != self.outputs:
+            raise ValueError(f'Outputs read from {self.filename.name} do not match expected values')
         for item in get_items(data):
             key = item[0]
             val = item[1][0]
