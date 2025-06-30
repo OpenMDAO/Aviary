@@ -731,6 +731,9 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
                         parent_prefix + f'traj.{phase_name}.t_duration', val[1], units=units
                     )
 
+                elif guess_key == 'time':
+                    # Time needs to be dealt with elsewhere.
+                    continue
                 else:
                     # Otherwise, set the value of the parameter in the trajectory
                     # phase

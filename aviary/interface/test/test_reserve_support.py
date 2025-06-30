@@ -16,7 +16,7 @@ from aviary.variable_info.variables import Aircraft, Mission
 #      it only partially does (should be checking that the reserve mission properly
 #      exists in traj as well)
 @use_tempdirs
-class PreMissionGroupTest(unittest.TestCase):
+class ReserveTest(unittest.TestCase):
     def test_post_mission_promotion(self):
         phase_info = deepcopy(ph_in_flops)
 
