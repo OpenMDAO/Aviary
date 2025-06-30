@@ -1453,6 +1453,8 @@ class BWBLowSpeedAeroTest(unittest.TestCase):
         prob.run_model()
 
         tol = 1e-6
+        assert_near_equal(prob['flap_factor'], [[0.89035722], [0.89035722]], tol)
+        assert_near_equal(prob['gear_factor'], [[0.98888178], [0.98888178]], tol)
 
         assert_near_equal(prob['lift_ratio'], [-0.140812203, -0.140812203], tol)
         assert_near_equal(prob['lift_curve_slope'], [5.94845697, 5.94845697], tol)
@@ -1467,9 +1469,66 @@ class BWBLowSpeedAeroTest(unittest.TestCase):
         assert_near_equal(prob[Dynamic.Vehicle.LIFT], [212.8010781, 212.8010781], tol)
         assert_near_equal(prob[Dynamic.Vehicle.DRAG], [33.33738488, 33.33738488], tol)
 
+    def test_case2(self):
+        """BWB data with lift_required = False"""
+        prob = self.prob
+        options = self.options
+        options.set_val('output_alpha', False)
+
+        prob.model.add_subsystem(
+            'aero',
+            LowSpeedAero(num_nodes=2, input_atmos=True, retract_gear=False, retract_flaps=False),
+            promotes=['*'],
+        )
+
+        # GroundEffect/mission inputs
+        prob.model.set_input_defaults(Dynamic.Vehicle.ANGLE_OF_ATTACK, [-2.0, -2.0], units='deg')
+        prob.model.set_input_defaults(Dynamic.Mission.ALTITUDE, [0.0, 0.0], units='ft')
+        # GroundEffect/user inputs
+        prob.model.set_input_defaults(Aircraft.Wing.ZERO_LIFT_ANGLE, -1.2, units='deg')
+        prob.model.set_input_defaults(Aircraft.Wing.HEIGHT, 8, units='ft')
+        prob.model.set_input_defaults('airport_alt', 0.0, units='ft')
+        prob.model.set_input_defaults('flap_defl', 10.0, units='deg')
+        prob.model.set_input_defaults(Aircraft.Wing.FLAP_CHORD_RATIO, 0.3, units='unitless')
+        # GroundEffect/from flaps
+        prob.model.set_input_defaults('dCL_flaps_model', 0.4182, units='unitless')
+
+        # BWBBodyLiftCurveSlope
+        prob.model.set_input_defaults(
+            Aircraft.Fuselage.LIFT_CURVE_SLOPE_MACH0, 1.8265, units='1/rad'
+        )
+
+        # BWBLiftCoeff
+        prob.model.set_input_defaults('CL_max_flaps', 2.188, units='unitless')
+        prob.model.set_input_defaults('flap_factor', [0.9, 0.9], units='unitless')
+        prob.model.set_input_defaults(Aircraft.Wing.EXPOSED_AREA, 1352.11353, units='ft**2')
+        prob.model.set_input_defaults(Aircraft.Fuselage.PLANFORM_AREA, 1943.76587, units='ft**2')
+
+        setup_model_options(prob, options)
+
+        prob.setup(check=False, force_alloc_complex=True)
+        prob.run_model()
+
+        tol = 1e-6
+        assert_near_equal(prob['flap_factor'], [[0.99813604], [0.99813604]], tol)
+        assert_near_equal(prob['gear_factor'], [[0.99813604], [0.99813604]], tol)
+
+        assert_near_equal(prob['lift_ratio'], [-0.140812203, -0.140812203], tol)
+        assert_near_equal(prob['lift_curve_slope'], [5.94845697, 5.94845697], tol)
+        assert_near_equal(prob['kclge'], [1.22698872, 1.22698872], tol)
+        assert_near_equal(prob['body_lift_curve_slope'], [3.04416667, 3.04416667], tol)
+
+        assert_near_equal(prob['CL'], [0.12374291, 0.12374291], tol)
+        assert_near_equal(prob['alpha_stall'], [12.69318858, 12.69318858], tol)
+        assert_near_equal(prob['CL_max'], [1.87990288, 1.87990288], tol)
+
+        assert_near_equal(prob['CD'], [0.01555745, 0.01555745], tol)
+        assert_near_equal(prob[Dynamic.Vehicle.LIFT], [265.16337754, 265.16337754], tol)
+        assert_near_equal(prob[Dynamic.Vehicle.DRAG], [33.33738488, 33.33738488], tol)
+
 
 if __name__ == '__main__':
-    unittest.main()
-    # test = DragCoefTest()
-    # test.setUp()
-    # test.test_case2()
+    # unittest.main()
+    test = BWBLowSpeedAeroTest()
+    test.setUp()
+    test.test_case2()
