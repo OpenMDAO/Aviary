@@ -22,18 +22,15 @@ prob.load_inputs('models/test_aircraft/aircraft_for_bench_FwFm.csv', phase_info)
 # Preprocess inputs
 prob.check_and_preprocess_inputs()
 
-# make all 4 of these the same thing
-# prob.build_mission()
+prob.add_pre_mission_systems()
 
-prob.add_pre_mission_systems() # <- combine
+prob.add_phases()
 
-prob.add_phases() # <- combine 
-
-prob.add_post_mission_systems() # <- combine
+prob.add_post_mission_systems()
 
 # Link phases and variables
-prob.link_phases() # <- combine
- 
+prob.link_phases()
+
 prob.add_driver('SLSQP', max_iter=100)
 
 prob.add_design_variables()

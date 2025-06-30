@@ -124,7 +124,7 @@ class AviaryProblem(om.Problem):
 
         return self.aviary_inputs
 
-    def check_and_preprocess_inputs(self, verbosity=None): # forward
+    def check_and_preprocess_inputs(self, verbosity=None):
         """
         This method checks the user-supplied input values for any potential problems
         and preprocesses the inputs to prepare them for use in the Aviary problem.
@@ -142,7 +142,7 @@ class AviaryProblem(om.Problem):
 
         self._update_metadata_from_subsystems()
 
-    def _update_metadata_from_subsystems(self): # keep to ensure single metadata
+    def _update_metadata_from_subsystems(self):
         """Merge metadata from user-defined subsystems into problem metadata."""
         self.meta_data = BaseMetaData.copy()
 
@@ -160,7 +160,7 @@ class AviaryProblem(om.Problem):
 
         self.model.meta_data = self.meta_data # TODO: temporary fix
 
-    def add_pre_mission_systems(self, verbosity=None): # forward
+    def add_pre_mission_systems(self, verbosity=None):
         """
         Add pre-mission systems to the Aviary problem. These systems are executed before
         the mission.
@@ -186,7 +186,7 @@ class AviaryProblem(om.Problem):
 
         self.model.add_pre_mission_systems(verbosity=verbosity)
 
-    def add_phases(self, phase_info_parameterization=None, parallel_phases=True, verbosity=None): # forward
+    def add_phases(self, phase_info_parameterization=None, parallel_phases=True, verbosity=None):
         """
         Add the mission phases to the problem trajectory based on the user-specified
         phase_info dictionary.
@@ -221,7 +221,7 @@ class AviaryProblem(om.Problem):
             comm=self.comm
         )
 
-    def add_post_mission_systems(self, verbosity=None): # forward
+    def add_post_mission_systems(self, verbosity=None):
         """
         Add post-mission systems to the aircraft model. This is akin to the pre-mission
         group or the "premission_systems", but occurs after the mission in the execution
@@ -272,7 +272,7 @@ class AviaryProblem(om.Problem):
 
         self.model.link_phases(verbosity=verbosity, comm=self.comm)
 
-    def add_driver(self, optimizer=None, use_coloring=None, max_iter=50, verbosity=None): # stays
+    def add_driver(self, optimizer=None, use_coloring=None, max_iter=50, verbosity=None):
         """
         Add an optimization driver to the Aviary problem.
 
@@ -328,9 +328,6 @@ class AviaryProblem(om.Problem):
         driver.options['optimizer'] = optimizer
         if use_coloring:
             # define coloring options by verbosity
-            print("verbosity", verbosity)
-            print("Verbosity.VERBOSE", Verbosity.VERBOSE)
-            print("self.verbosity", self.verbosity)
             if verbosity < Verbosity.VERBOSE:  # QUIET, BRIEF
                 driver.declare_coloring(show_summary=False)
             elif verbosity == Verbosity.VERBOSE:
@@ -407,7 +404,7 @@ class AviaryProblem(om.Problem):
                     'objs',
                 ]
 
-    def add_design_variables(self, verbosity=None): # forward
+    def add_design_variables(self, verbosity=None):
         """
         Adds design variables to the Aviary problem.
 
@@ -451,7 +448,7 @@ class AviaryProblem(om.Problem):
 
         self.model.add_design_variables(verbosity=verbosity)
 
-    def add_objective(self, objective_type=None, ref=None, verbosity=None): # stays
+    def add_objective(self, objective_type=None, ref=None, verbosity=None):
         """
         Add the objective function based on the given objective_type and ref.
 
@@ -579,7 +576,7 @@ class AviaryProblem(om.Problem):
             else:
                 raise ValueError(f'{self.model.problem_type} is not a valid problem type.')
 
-    def setup(self, **kwargs): # stays
+    def setup(self, **kwargs):
         """Lightly wrapped setup() method for the problem."""
         # verbosity is not used in this method, but it is understandable that a user
         # might try and include it (only method that doesn't accept it). Capture it
@@ -601,7 +598,7 @@ class AviaryProblem(om.Problem):
 
             super().setup(**kwargs)
 
-    def set_initial_guesses(self, parent_prob=None, parent_prefix='', verbosity=None): # forward
+    def set_initial_guesses(self, parent_prob=None, parent_prefix='', verbosity=None):
         """
         Call `set_val` on the trajectory for states and controls to seed the problem with
         reasonable initial guesses. This is especially important for collocation methods.

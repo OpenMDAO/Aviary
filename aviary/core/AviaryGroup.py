@@ -436,7 +436,7 @@ class AviaryGroup(om.Group):
         # self._update_metadata_from_subsystems()
         self._check_reserve_phase_separation()
 
-    def _check_reserve_phase_separation(self): # TODO: probably push into self.model
+    def _check_reserve_phase_separation(self):
         """
         This method checks for reserve=True & False
         Returns an error if a non-reserve phase is specified after a reserve phase.
@@ -1124,7 +1124,7 @@ class AviaryGroup(om.Group):
 
         self.configurator.check_trajectory(self)
 
-    def _add_bus_variables_and_connect(self): # move
+    def _add_bus_variables_and_connect(self):
         all_subsystems = self.get_all_subsystems()
 
         base_phases = list(self.phase_info.keys())
@@ -1202,7 +1202,7 @@ class AviaryGroup(om.Group):
                                 post_mission_var_name,
                             )
 
-    def _connect_mission_bus_variables(self): # move
+    def _connect_mission_bus_variables(self):
         all_subsystems = self.get_all_subsystems()
 
         # Loop through all external subsystems.
@@ -1220,7 +1220,7 @@ class AviaryGroup(om.Group):
                         src_name = f'traj.{phase_name}.mission_bus_variables.{mvn_basename}'
                         self.connect(src_name, post_mission_var_name)
 
-    def add_design_variables(self, verbosity=None): # forward
+    def add_design_variables(self, verbosity=None):
         """
         Adds design variables to the Aviary problem.
 
@@ -1393,7 +1393,7 @@ class AviaryGroup(om.Group):
                 self.add_constraint('h_fit.h_init_gear', equals=50.0, units='ft', ref=50.0)
                 self.add_constraint('h_fit.h_init_flaps', equals=400.0, units='ft', ref=400.0)
 
-    def set_initial_guesses(self, parent_prob=None, parent_prefix='', verbosity=None): # has to forward
+    def set_initial_guesses(self, parent_prob=None, parent_prefix='', verbosity=None):
         """
         Call `set_val` on the trajectory for states and controls to seed the problem with
         reasonable initial guesses. This is especially important for collocation methods.
@@ -1483,7 +1483,7 @@ class AviaryGroup(om.Group):
 
         return all_subsystems
 
-    def _add_subsystem_guesses(self, phase_name, phase, target_prob, parent_prefix): # move
+    def _add_subsystem_guesses(self, phase_name, phase, target_prob, parent_prefix):
         """
         Adds the initial guesses for each subsystem of a given phase to the problem.
         This method first fetches all subsystems associated with the given phase.
