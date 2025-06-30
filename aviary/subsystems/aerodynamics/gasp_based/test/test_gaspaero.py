@@ -15,7 +15,8 @@ from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 here = os.path.abspath(os.path.dirname(__file__))
 cruise_data = pd.read_csv(os.path.join(here, 'data', 'aero_data_cruise.csv'))
 ground_data = pd.read_csv(os.path.join(here, 'data', 'aero_data_ground.csv'))
-setup_data = json.load(open(os.path.join(here, 'data', 'aero_data_setup.json')))
+with open(os.path.join(here, 'data', 'aero_data_setup.json')) as file:
+    setup_data = json.load(file)
 
 
 class GASPAeroTest(unittest.TestCase):
