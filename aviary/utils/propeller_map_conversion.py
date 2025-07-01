@@ -29,6 +29,8 @@ sig_figs = {
     'Thrust Coefficient': 6,
 }
 
+outputs = ['Thrust Coefficient']
+
 
 def convert_propeller_map(
     input_file, output_file, data_format: PropMapType = PropMapType.GASP, round_data=False
