@@ -463,10 +463,7 @@ def get_model(file_name: str, verbosity=Verbosity.BRIEF) -> Path:
             item = Path(item)
             # check if full filepath, file name with extension, or just file (or folder) name
             # matches target
-            if (
-                aviary_path == item
-                or aviary_path.name == item.name
-            ):
+            if aviary_path == item or aviary_path.name == item.name:
                 return item
             elif aviary_path.stem == item.stem:
                 close_match = item
