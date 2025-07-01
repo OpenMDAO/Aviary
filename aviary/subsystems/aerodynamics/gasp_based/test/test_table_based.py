@@ -23,7 +23,7 @@ class TestCruiseAero(unittest.TestCase):
     def test_climb(self):
         prob = om.Problem()
 
-        fp = 'subsystems/aerodynamics/gasp_based/data/large_single_aisle_1_aero_free.txt'
+        fp = 'models/large_single_aisle_1/large_single_aisle_1_aero_free.csv'
         prob.model = TabularCruiseAero(num_nodes=8, aero_data=fp)
 
         prob.setup(force_alloc_complex=True)
@@ -53,7 +53,7 @@ class TestCruiseAero(unittest.TestCase):
     )
     def test_cruise(self):
         prob = om.Problem()
-        ref = 'subsystems/aerodynamics/gasp_based/data/large_single_aisle_1_aero_free.txt'
+        ref = 'models/large_single_aisle_1/large_single_aisle_1_aero_free.csv'
         fp = get_aviary_resource_path(ref)
         prob.model = TabularCruiseAero(num_nodes=2, aero_data=fp)
         prob.setup(force_alloc_complex=True)
@@ -82,13 +82,13 @@ class TestLowSpeedAero(unittest.TestCase):
     flap_defl_to = 10
 
     free_data = get_aviary_resource_path(
-        'subsystems/aerodynamics/gasp_based/data/large_single_aisle_1_aero_free.txt'
+        'models/large_single_aisle_1/large_single_aisle_1_aero_free.csv'
     )
     flaps_data = get_aviary_resource_path(
-        'subsystems/aerodynamics/gasp_based/data/large_single_aisle_1_aero_flaps.txt'
+        'models/large_single_aisle_1/large_single_aisle_1_aero_flaps.csv'
     )
     ground_data = get_aviary_resource_path(
-        'subsystems/aerodynamics/gasp_based/data/large_single_aisle_1_aero_ground.txt'
+        'models/large_single_aisle_1/large_single_aisle_1_aero_ground.csv'
     )
 
     @unittest.skipIf(

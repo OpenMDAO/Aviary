@@ -97,11 +97,11 @@ class TabularAeroGroup(om.Group):
         if isinstance(CDI_table, str):
             CDI_table = get_path(CDI_table)
         if isinstance(CDI_table, Path):
-            CDI_table = read_data_file(CDI_table, aliases=aliases)
+            CDI_table, _, _ = read_data_file(CDI_table, aliases=aliases)
         if isinstance(CD0_table, str):
             CD0_table = get_path(CD0_table)
         if isinstance(CD0_table, Path):
-            CD0_table = read_data_file(CD0_table, aliases=aliases)
+            CD0_table, _, _ = read_data_file(CD0_table, aliases=aliases)
 
         if connect_training_data or not structured:
             method = 'lagrange3'
