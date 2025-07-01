@@ -78,7 +78,7 @@ def convert_propeller_map(
 
     if output_file is None:
         output_file = data_file.stem + '.csv'
-    write_data_file(output_file, write_data, comments, include_timestamp=False)
+    write_data_file(output_file, write_data, outputs, comments, include_timestamp=False)
 
 
 def _read_gasp_propeller(fp, cmts):
@@ -97,7 +97,7 @@ def _read_gasp_propeller(fp, cmts):
         if scalars['iread'] == 1:
             cmts.append('# CT = f(Helical Mach at 75% Radius, Adv ratio & CP)')
         elif scalars['iread'] == 2:
-            cmts.append('Propfan format - CT = f(Mach, Adv Ratio & CP)')
+            cmts.append('# Propfan format - CT = f(Mach, Adv Ratio & CP)')
         else:
             raise RuntimeError(f'IREAD = 1 or 2 expected, got {scalars["iread"]}')
 
