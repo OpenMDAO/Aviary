@@ -418,7 +418,7 @@ class FormFactorAndSIWB(om.ExplicitComponent):
         self.add_output(
             'siwb',
             units='unitless',
-            desc='SIWB',
+            desc='SIWB: curve fitting correction factor for Oswald efficiency',
         )
 
     def setup_partials(self):
@@ -446,6 +446,7 @@ class FormFactorAndSIWB(om.ExplicitComponent):
         fffus = 1 + 1.5 * (cabin_width / fus_len) ** 1.5 + 7 * (cabin_width / fus_len) ** 3
         outputs['body_form_factor'] = fffus
 
+        # fuselage width over wing span
         wfob = cabin_width / wingspan
         siwb = 1 - 0.0088 * wfob - 1.7364 * wfob**2 - 2.303 * wfob**3 + 6.0606 * wfob**4
         outputs['siwb'] = siwb
@@ -506,7 +507,7 @@ class BWBFormFactorAndSIWB(om.ExplicitComponent):
         self.add_output(
             'siwb',
             units='unitless',
-            desc='SIWB',
+            desc='SIWB: curve fitting correction factor for Oswald efficiency',
         )
 
     def setup_partials(self):
@@ -534,6 +535,7 @@ class BWBFormFactorAndSIWB(om.ExplicitComponent):
         fffus = 1 + 1.5 * (diam / fus_len) ** 1.5 + 7 * (diam / fus_len) ** 3
         outputs['body_form_factor'] = fffus
 
+        # hydraulic diameter over wing span
         wfob = diam / wingspan
         siwb = 1 - 0.0088 * wfob - 1.7364 * wfob**2 - 2.303 * wfob**3 + 6.0606 * wfob**4
         outputs['siwb'] = siwb
@@ -787,7 +789,11 @@ class AeroGeom(om.ExplicitComponent):
         self.add_input(
             'body_form_factor', units='unitless', desc='FFFUS: fuselage form drag factor'
         )
-        self.add_input('siwb', units='unitless', desc='SIWB: correction factor')
+        self.add_input(
+            'siwb',
+            units='unitless',
+            desc='SIWB: curve fitting correction factor for Oswald efficiency',
+        )
 
         # outputs
         for i in range(7):
@@ -1219,7 +1225,7 @@ class DragCoef(om.ExplicitComponent):
             'dCL_flaps_model',
             val=0.0,
             units='unitless',
-            desc='Delta CL from flaps model',
+            desc='DELCL: Delta CL from flaps model',
         )
         self.add_input(
             'dCD_flaps_model',

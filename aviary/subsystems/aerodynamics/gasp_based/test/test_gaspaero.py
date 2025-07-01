@@ -1526,9 +1526,345 @@ class BWBLowSpeedAeroTest(unittest.TestCase):
         assert_near_equal(prob[Dynamic.Vehicle.LIFT], [265.16337754, 265.16337754], tol)
         assert_near_equal(prob[Dynamic.Vehicle.DRAG], [33.33738488, 33.33738488], tol)
 
+    def test_case3(self):
+        """
+        BWB data with lift_required = False
+        Take off
+        ALPHA = -2.0
+        ADELF(2) = DFLPTO = 15
+        DELCL = DCLTO = 0.38993
+        DELCDF = DCDTO = 0.0062256
+        CL = 0.07507
+        CD = 0.01853
+        CL/CD = 4.05136
+        """
+        prob = self.prob
+        options = self.options
+        options.set_val('output_alpha', False)
+
+        prob.model.add_subsystem(
+            'aero',
+            LowSpeedAero(num_nodes=2, input_atmos=True, retract_gear=True, retract_flaps=True),
+            promotes=['*'],
+        )
+
+        # GroundEffect/mission inputs
+        prob.model.set_input_defaults(Dynamic.Vehicle.ANGLE_OF_ATTACK, [-2.0, -2.0], units='deg')
+        prob.model.set_input_defaults(Dynamic.Mission.ALTITUDE, [0.0, 0.0], units='ft')
+        # GroundEffect/user inputs
+        prob.model.set_input_defaults(Aircraft.Wing.ZERO_LIFT_ANGLE, -1.2, units='deg')
+        prob.model.set_input_defaults(Aircraft.Wing.HEIGHT, 8, units='ft')
+        prob.model.set_input_defaults('airport_alt', 0.0, units='ft')
+        prob.model.set_input_defaults('flap_defl', 15.0, units='deg')
+        prob.model.set_input_defaults(Aircraft.Wing.FLAP_CHORD_RATIO, 0.3, units='unitless')
+        # GroundEffect/from flaps
+        prob.model.set_input_defaults('dCL_flaps_model', 0.38993, units='unitless')
+        prob.model.set_input_defaults('dCD_flaps_model', 0.0062256, units='unitless')
+
+        # BWBBodyLiftCurveSlope
+        prob.model.set_input_defaults(
+            Aircraft.Fuselage.LIFT_CURVE_SLOPE_MACH0, 1.8265, units='1/rad'
+        )
+
+        # BWBLiftCoeff
+        prob.model.set_input_defaults('CL_max_flaps', 2.188, units='unitless')
+        prob.model.set_input_defaults(Aircraft.Wing.EXPOSED_AREA, 1352.11353, units='ft**2')
+        prob.model.set_input_defaults(Aircraft.Fuselage.PLANFORM_AREA, 1943.76587, units='ft**2')
+
+        setup_model_options(prob, options)
+
+        prob.setup(check=False, force_alloc_complex=True)
+        prob.run_model()
+
+        tol = 1e-6
+        assert_near_equal(prob['CL'], [0.08517459, 0.08517459], tol)
+        assert_near_equal(prob['CD'], [0.02112148, 0.02112148], tol)
+        CL_over_CD = prob['CL'] / prob['CD']
+        assert_near_equal(CL_over_CD, [4.03260564, 4.03260564], tol)
+
+    def test_case4(self):
+        """
+        BWB data with lift_required = False
+        Landing
+        ALPHA = -2.0
+        ADELF(3) = DFLPTO = 25
+        DELCL = DCLLD = 0.56964
+        DELCDF = DCDTO = 0.0105864
+        CL = 0.18551
+        CD = 0.02299
+        CL/CD = 8.06918
+        """
+        prob = self.prob
+        options = self.options
+        options.set_val('output_alpha', False)
+
+        prob.model.add_subsystem(
+            'aero',
+            LowSpeedAero(num_nodes=2, input_atmos=True, retract_gear=True, retract_flaps=True),
+            promotes=['*'],
+        )
+
+        # GroundEffect/mission inputs
+        prob.model.set_input_defaults(Dynamic.Vehicle.ANGLE_OF_ATTACK, [-2.0, -2.0], units='deg')
+        prob.model.set_input_defaults(Dynamic.Mission.ALTITUDE, [0.0, 0.0], units='ft')
+        # GroundEffect/user inputs
+        prob.model.set_input_defaults(Aircraft.Wing.ZERO_LIFT_ANGLE, -1.2, units='deg')
+        prob.model.set_input_defaults(Aircraft.Wing.HEIGHT, 8, units='ft')
+        prob.model.set_input_defaults('airport_alt', 0.0, units='ft')
+        prob.model.set_input_defaults('flap_defl', 15.0, units='deg')
+        prob.model.set_input_defaults(Aircraft.Wing.FLAP_CHORD_RATIO, 0.3, units='unitless')
+        # GroundEffect/from flaps
+        prob.model.set_input_defaults('dCL_flaps_model', 0.56964, units='unitless')
+        prob.model.set_input_defaults('dCD_flaps_model', 0.0105864, units='unitless')
+
+        # BWBBodyLiftCurveSlope
+        prob.model.set_input_defaults(
+            Aircraft.Fuselage.LIFT_CURVE_SLOPE_MACH0, 1.8265, units='1/rad'
+        )
+
+        # BWBLiftCoeff
+        prob.model.set_input_defaults('CL_max_flaps', 2.188, units='unitless')
+        prob.model.set_input_defaults(Aircraft.Wing.EXPOSED_AREA, 1352.11353, units='ft**2')
+        prob.model.set_input_defaults(Aircraft.Fuselage.PLANFORM_AREA, 1943.76587, units='ft**2')
+
+        setup_model_options(prob, options)
+
+        prob.setup(check=False, force_alloc_complex=True)
+        prob.run_model()
+
+        tol = 1e-6
+        assert_near_equal(prob['CL'], [0.17411132, 0.17411132], tol)
+        assert_near_equal(prob['CD'], [0.02497873, 0.02497873], tol)
+        CL_over_CD = prob['CL'] / prob['CD']
+        assert_near_equal(CL_over_CD, [6.97038362, 6.97038362], tol)
+
+    def test_case5(self):
+        """
+        BWB data with lift_required = False
+        Take off
+        ALPHA = 0.0
+        ADELF(2) = DFLPTO = 25
+        DELCL = DCLTO = 0.38993
+        DELCDF = DCDTO = 0.0062256
+        CL = 0.23964
+        CD = 0.01866
+        CL/CD = 12.84433
+        """
+        prob = self.prob
+        options = self.options
+        options.set_val('output_alpha', False)
+
+        prob.model.add_subsystem(
+            'aero',
+            LowSpeedAero(num_nodes=2, input_atmos=True, retract_gear=True, retract_flaps=True),
+            promotes=['*'],
+        )
+
+        # GroundEffect/mission inputs
+        prob.model.set_input_defaults(Dynamic.Vehicle.ANGLE_OF_ATTACK, [0.0, 0.0], units='deg')
+        prob.model.set_input_defaults(Dynamic.Mission.ALTITUDE, [0.0, 0.0], units='ft')
+        # GroundEffect/user inputs
+        prob.model.set_input_defaults(Aircraft.Wing.ZERO_LIFT_ANGLE, -1.2, units='deg')
+        prob.model.set_input_defaults(Aircraft.Wing.HEIGHT, 8, units='ft')
+        prob.model.set_input_defaults('airport_alt', 0.0, units='ft')
+        prob.model.set_input_defaults('flap_defl', 25.0, units='deg')
+        prob.model.set_input_defaults(Aircraft.Wing.FLAP_CHORD_RATIO, 0.3, units='unitless')
+        # GroundEffect/from flaps
+        prob.model.set_input_defaults('dCL_flaps_model', 0.56964, units='unitless')
+        prob.model.set_input_defaults('dCD_flaps_model', 0.0105864, units='unitless')
+
+        # BWBBodyLiftCurveSlope
+        prob.model.set_input_defaults(
+            Aircraft.Fuselage.LIFT_CURVE_SLOPE_MACH0, 1.8265, units='1/rad'
+        )
+
+        # BWBLiftCoeff
+        prob.model.set_input_defaults('CL_max_flaps', 2.188, units='unitless')
+        prob.model.set_input_defaults(Aircraft.Wing.EXPOSED_AREA, 1352.11353, units='ft**2')
+        prob.model.set_input_defaults(Aircraft.Fuselage.PLANFORM_AREA, 1943.76587, units='ft**2')
+
+        setup_model_options(prob, options)
+
+        prob.setup(check=False, force_alloc_complex=True)
+        prob.run_model()
+
+        tol = 1e-6
+        assert_near_equal(prob['CL'], [0.4228225, 0.4228225], tol)
+        assert_near_equal(prob['CD'], [0.02544356, 0.02544356], tol)
+        CL_over_CD = prob['CL'] / prob['CD']
+        assert_near_equal(CL_over_CD, [16.61805398, 16.61805398], tol)
+
+    def test_case6(self):
+        """
+        BWB data with lift_required = False
+        Landing
+        ALPHA = 0.0
+        ADELF(3) = DFLPTO = 25
+        DELCL = DCLLD = 0.56964
+        DELCDF = DCDTO = 0.0105864
+        CL = 0.35009
+        CD = 0.02292
+        CL/CD = 15.27225
+        """
+        prob = self.prob
+        options = self.options
+        options.set_val('output_alpha', False)
+
+        prob.model.add_subsystem(
+            'aero',
+            LowSpeedAero(num_nodes=2, input_atmos=True, retract_gear=True, retract_flaps=True),
+            promotes=['*'],
+        )
+
+        # GroundEffect/mission inputs
+        prob.model.set_input_defaults(Dynamic.Vehicle.ANGLE_OF_ATTACK, [0.0, 0.0], units='deg')
+        prob.model.set_input_defaults(Dynamic.Mission.ALTITUDE, [0.0, 0.0], units='ft')
+        # GroundEffect/user inputs
+        prob.model.set_input_defaults(Aircraft.Wing.ZERO_LIFT_ANGLE, -1.2, units='deg')
+        prob.model.set_input_defaults(Aircraft.Wing.HEIGHT, 8, units='ft')
+        prob.model.set_input_defaults('airport_alt', 0.0, units='ft')
+        prob.model.set_input_defaults('flap_defl', 25.0, units='deg')
+        prob.model.set_input_defaults(Aircraft.Wing.FLAP_CHORD_RATIO, 0.3, units='unitless')
+        # GroundEffect/from flaps
+        prob.model.set_input_defaults('dCL_flaps_model', 0.56964, units='unitless')
+        prob.model.set_input_defaults('dCD_flaps_model', 0.0105864, units='unitless')
+
+        # BWBBodyLiftCurveSlope
+        prob.model.set_input_defaults(
+            Aircraft.Fuselage.LIFT_CURVE_SLOPE_MACH0, 1.8265, units='1/rad'
+        )
+
+        # BWBLiftCoeff
+        prob.model.set_input_defaults('CL_max_flaps', 2.188, units='unitless')
+        prob.model.set_input_defaults(Aircraft.Wing.EXPOSED_AREA, 1352.11353, units='ft**2')
+        prob.model.set_input_defaults(Aircraft.Fuselage.PLANFORM_AREA, 1943.76587, units='ft**2')
+
+        setup_model_options(prob, options)
+
+        prob.setup(check=False, force_alloc_complex=True)
+        prob.run_model()
+
+        tol = 1e-6
+        assert_near_equal(prob['CL'], [0.4228225, 0.4228225], tol)
+        assert_near_equal(prob['CD'], [0.02544356, 0.02544356], tol)
+        CL_over_CD = prob['CL'] / prob['CD']
+        assert_near_equal(CL_over_CD, [16.61805398, 16.61805398], tol)
+
+    def test_case7(self):
+        """
+        BWB data with lift_required = False
+        Take off
+        ALPHA = 2.0
+        ADELF(2) = DFLPTO = 25
+        DELCL = DCLTO = 0.38993
+        DELCDF = DCDTO = 0.0062256
+        CL = 0.40422
+        CD = 0.02070
+        CL/CD = 19.53199
+        """
+        prob = self.prob
+        options = self.options
+        options.set_val('output_alpha', False)
+
+        prob.model.add_subsystem(
+            'aero',
+            LowSpeedAero(num_nodes=2, input_atmos=True, retract_gear=True, retract_flaps=True),
+            promotes=['*'],
+        )
+
+        # GroundEffect/mission inputs
+        prob.model.set_input_defaults(Dynamic.Vehicle.ANGLE_OF_ATTACK, [2.0, 2.0], units='deg')
+        prob.model.set_input_defaults(Dynamic.Mission.ALTITUDE, [0.0, 0.0], units='ft')
+        # GroundEffect/user inputs
+        prob.model.set_input_defaults(Aircraft.Wing.ZERO_LIFT_ANGLE, -1.2, units='deg')
+        prob.model.set_input_defaults(Aircraft.Wing.HEIGHT, 8, units='ft')
+        prob.model.set_input_defaults('airport_alt', 0.0, units='ft')
+        prob.model.set_input_defaults('flap_defl', 25.0, units='deg')
+        prob.model.set_input_defaults(Aircraft.Wing.FLAP_CHORD_RATIO, 0.3, units='unitless')
+        # GroundEffect/from flaps
+        prob.model.set_input_defaults('dCL_flaps_model', 0.56964, units='unitless')
+        prob.model.set_input_defaults('dCD_flaps_model', 0.0105864, units='unitless')
+
+        # BWBBodyLiftCurveSlope
+        prob.model.set_input_defaults(
+            Aircraft.Fuselage.LIFT_CURVE_SLOPE_MACH0, 1.8265, units='1/rad'
+        )
+
+        # BWBLiftCoeff
+        prob.model.set_input_defaults('CL_max_flaps', 2.188, units='unitless')
+        prob.model.set_input_defaults(Aircraft.Wing.EXPOSED_AREA, 1352.11353, units='ft**2')
+        prob.model.set_input_defaults(Aircraft.Fuselage.PLANFORM_AREA, 1943.76587, units='ft**2')
+
+        setup_model_options(prob, options)
+
+        prob.setup(check=False, force_alloc_complex=True)
+        prob.run_model()
+
+        tol = 1e-6
+        assert_near_equal(prob['CL'], [0.65907212, 0.65907212], tol)
+        assert_near_equal(prob['CD'], [0.02746615, 0.02746615], tol)
+        CL_over_CD = prob['CL'] / prob['CD']
+        assert_near_equal(CL_over_CD, [23.99579684, 23.99579684], tol)
+
+    def test_case8(self):
+        """
+        BWB data with lift_required = False
+        Landing
+        ALPHA = 2.0
+        ADELF(3) = DFLPTO = 25
+        DELCL = DCLLD = 0.56964
+        DELCDF = DCDTO = 0.0105864
+        CL = 0.51467
+        CD = 0.02482
+        CL/CD = 20.74018
+        """
+        prob = self.prob
+        options = self.options
+        options.set_val('output_alpha', False)
+
+        prob.model.add_subsystem(
+            'aero',
+            LowSpeedAero(num_nodes=2, input_atmos=True, retract_gear=True, retract_flaps=True),
+            promotes=['*'],
+        )
+
+        # GroundEffect/mission inputs
+        prob.model.set_input_defaults(Dynamic.Vehicle.ANGLE_OF_ATTACK, [2.0, 2.0], units='deg')
+        prob.model.set_input_defaults(Dynamic.Mission.ALTITUDE, [0.0, 0.0], units='ft')
+        # GroundEffect/user inputs
+        prob.model.set_input_defaults(Aircraft.Wing.ZERO_LIFT_ANGLE, -1.2, units='deg')
+        prob.model.set_input_defaults(Aircraft.Wing.HEIGHT, 8, units='ft')
+        prob.model.set_input_defaults('airport_alt', 0.0, units='ft')
+        prob.model.set_input_defaults('flap_defl', 25.0, units='deg')
+        prob.model.set_input_defaults(Aircraft.Wing.FLAP_CHORD_RATIO, 0.3, units='unitless')
+        # GroundEffect/from flaps
+        prob.model.set_input_defaults('dCL_flaps_model', 0.56964, units='unitless')
+        prob.model.set_input_defaults('dCD_flaps_model', 0.0105864, units='unitless')
+
+        # BWBBodyLiftCurveSlope
+        prob.model.set_input_defaults(
+            Aircraft.Fuselage.LIFT_CURVE_SLOPE_MACH0, 1.8265, units='1/rad'
+        )
+
+        # BWBLiftCoeff
+        prob.model.set_input_defaults('CL_max_flaps', 2.188, units='unitless')
+        prob.model.set_input_defaults(Aircraft.Wing.EXPOSED_AREA, 1352.11353, units='ft**2')
+        prob.model.set_input_defaults(Aircraft.Fuselage.PLANFORM_AREA, 1943.76587, units='ft**2')
+
+        setup_model_options(prob, options)
+
+        prob.setup(check=False, force_alloc_complex=True)
+        prob.run_model()
+
+        tol = 1e-6
+        assert_near_equal(prob['CL'], [0.65907212, 0.65907212], tol)
+        assert_near_equal(prob['CD'], [0.02746615, 0.02746615], tol)
+        CL_over_CD = prob['CL'] / prob['CD']
+        assert_near_equal(CL_over_CD, [23.99579684, 23.99579684], tol)
+
 
 if __name__ == '__main__':
-    unittest.main()
-    # test = BWBLowSpeedAeroTest()
-    # test.setUp()
-    # test.test_case2()
+    # unittest.main()
+    test = BWBLowSpeedAeroTest()
+    test.setUp()
+    test.test_case8()
