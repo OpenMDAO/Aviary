@@ -458,6 +458,7 @@ def get_model(file_name: str, verbosity=Verbosity.BRIEF) -> Path:
         from glob import glob
 
         contents = glob(str(get_aviary_resource_path('models') / '**'), recursive=True)
+        close_match = None
         for item in contents:
             item = Path(item)
             # check if full filepath, file name with extension, or just file (or folder) name
@@ -465,9 +466,14 @@ def get_model(file_name: str, verbosity=Verbosity.BRIEF) -> Path:
             if (
                 aviary_path == item
                 or aviary_path.name == item.name
-                or aviary_path.stem == item.stem
             ):
                 return item
+            elif aviary_path.stem == item.stem:
+                close_match = item
+
+    if close_match is not None:
+        # Probably requested the wrong file extension.
+        return close_match
 
     # If the path doesn't exist, raise an error.
     raise FileNotFoundError("File or Folder not found in Aviary's hangar")

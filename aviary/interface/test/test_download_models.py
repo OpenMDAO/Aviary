@@ -36,7 +36,7 @@ class TestDownloadModels(unittest.TestCase):
 
     def test_single_file_custom_outdir(self):
         filename = 'small_single_aisle_GASP.csv'
-        out_dir = '~/test_hangar'
+        out_dir = 'test_hangar'
         self.run_and_test_hangar(filename, out_dir)
         shutil.rmtree(out_dir)
 
