@@ -554,9 +554,12 @@ def setup_model_options(
         # No engine data.
         return
 
+    # TODO: Modify this method for multi mission/model.
+    aviary_group = prob.model
+
     if num_engine_models > 1:
         if engine_models is None:
-            engine_models = prob.engine_builders
+            engine_models = aviary_group.engine_builders
 
         for idx in range(num_engine_models):
             eng_name = engine_models[idx].name
