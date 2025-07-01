@@ -29,6 +29,8 @@ sig_figs = {
     'Thrust Coefficient': 6,
 }
 
+outputs = ['Thrust Coefficient']
+
 
 def convert_propeller_map(
     input_file, output_file, data_format: PropMapType = PropMapType.GASP, round_data=False
@@ -81,7 +83,7 @@ def convert_propeller_map(
         else:
             ext = '.prop'
         output_file = data_file.stem + ext
-    write_data_file(output_file, write_data, comments, include_timestamp=False)
+    write_data_file(output_file, write_data, outputs, comments, include_timestamp=False)
 
 
 def _read_gasp_propeller(fp, cmts):

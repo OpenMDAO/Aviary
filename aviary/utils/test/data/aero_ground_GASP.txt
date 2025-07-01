@@ -1,4 +1,3 @@
-#
 # Incremental Lift and Drag Coeff. for Ground Effects
 # Reference Area = 1370. sqft / Flap Deflection = 10 deg (T.O. Setting)
 #     MACH   ALPHA     HOB   DEL_CL   DEL_CD

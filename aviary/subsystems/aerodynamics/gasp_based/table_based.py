@@ -450,7 +450,7 @@ def _build_free_aero_interp(
     if isinstance(aero_data, str):
         aero_data = get_path(aero_data)
     if isinstance(aero_data, Path):
-        aero_data = read_data_file(aero_data, aliases=aliases)
+        aero_data, _, _ = read_data_file(aero_data, aliases=aliases)
 
     # aero_data is modified in-place, deepcopy required
     interp_data = aero_data.deepcopy()
@@ -537,7 +537,7 @@ def _build_flaps_aero_interp(
     if isinstance(aero_data, str):
         aero_data = get_path(aero_data)
     if isinstance(aero_data, Path):
-        aero_data = read_data_file(aero_data, aliases=aliases)
+        aero_data, _, _ = read_data_file(aero_data, aliases=aliases)
 
     # aero_data is modified in-place, deepcopy required
     interp_data = aero_data.deepcopy()
@@ -606,7 +606,7 @@ def _build_ground_aero_interp(
     if isinstance(aero_data, str):
         aero_data = get_path(aero_data)
     if isinstance(aero_data, Path):
-        aero_data = read_data_file(aero_data, aliases=aliases)
+        aero_data, _, _ = read_data_file(aero_data, aliases=aliases)
 
     # aero_data is modified in-place, deepcopy required
     interp_data = aero_data.deepcopy()
