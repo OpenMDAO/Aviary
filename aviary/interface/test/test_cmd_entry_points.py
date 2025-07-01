@@ -86,7 +86,7 @@ class hangarTestCases(CommandEntryPointsTestCases):
         self.run_and_test_cmd(cmd)
 
     def test_copy_deck(self):
-        cmd = 'aviary hangar turbofan_22k.txt'
+        cmd = 'aviary hangar turbofan_22k.deck'
         self.run_and_test_cmd(cmd)
 
     def test_copy_n3cc_data(self):
