@@ -3,7 +3,6 @@ import openmdao.api as om
 from aviary.subsystems.atmosphere.atmosphere import Atmosphere
 from aviary.utils.aviary_values import AviaryValues
 from aviary.utils.functions import promote_aircraft_and_mission_vars
-from aviary.variable_info.enums import AnalysisScheme
 from aviary.variable_info.variable_meta_data import _MetaData
 
 
@@ -48,12 +47,6 @@ class BaseODE(om.Group):
             'meta_data',
             default=_MetaData,
             desc='metadata associated with the variables to be passed into the ODE',
-        )
-        self.options.declare(
-            'analysis_scheme',
-            default=AnalysisScheme.COLLOCATION,
-            types=AnalysisScheme,
-            desc='The analysis method that will be used to close the trajectory; for example collocation or time integration',
         )
 
     def add_atmosphere(self, **kwargs):

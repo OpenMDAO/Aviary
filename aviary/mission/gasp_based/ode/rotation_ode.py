@@ -3,9 +3,7 @@ import openmdao.api as om
 
 from aviary.mission.gasp_based.ode.params import ParamPort
 from aviary.mission.gasp_based.ode.rotation_eom import RotationEOM
-from aviary.mission.gasp_based.ode.time_integration_base_classes import add_SGM_required_inputs
 from aviary.mission.gasp_based.ode.two_dof_ode import TwoDOFODE
-from aviary.variable_info.enums import AnalysisScheme
 from aviary.variable_info.variables import Aircraft, Dynamic
 
 
@@ -18,15 +16,6 @@ class RotationODE(TwoDOFODE):
 
     def setup(self):
         nn = self.options['num_nodes']
-        analysis_scheme = self.options['analysis_scheme']
-
-        if analysis_scheme is AnalysisScheme.SHOOTING:
-            add_SGM_required_inputs(
-                self,
-                {
-                    Dynamic.Mission.DISTANCE: {'units': 'ft'},
-                },
-            )
 
         # TODO: paramport
         self.add_subsystem('params', ParamPort(), promotes=['*'])
@@ -39,28 +28,6 @@ class RotationODE(TwoDOFODE):
         self.add_core_subsystems()
 
         self.add_external_subsystems()
-
-        if analysis_scheme is AnalysisScheme.SHOOTING:
-            alpha_comp = om.ExecComp(
-                'alpha=rotation_rate*(t_curr-start_rotation)+alpha_init',
-                alpha=dict(val=0.0, units='deg'),
-                rotation_rate=dict(val=10.0 / 3.0, units='deg/s'),
-                t_curr=dict(val=0.0, units='s'),
-                start_rotation=dict(val=0.0, units='s'),
-                alpha_init=dict(val=0.0, units='deg'),
-            )
-            alpha_comp_inputs = [
-                'rotation_rate',
-                't_curr',
-                'start_rotation',
-                ('alpha_init', Aircraft.Wing.INCIDENCE),
-            ]
-            self.add_subsystem(
-                'alpha_comp',
-                alpha_comp,
-                promotes_inputs=alpha_comp_inputs,
-                promotes_outputs=[('alpha', Dynamic.Vehicle.ANGLE_OF_ATTACK)],
-            )
 
         self.add_subsystem('rotation_eom', RotationEOM(num_nodes=nn), promotes=['*'])
 
