@@ -239,7 +239,7 @@ class UnsteadySolvedFlightConditions(om.ExplicitComponent):
             self.add_input(
                 'dmach_dr',
                 val=np.zeros(nn),
-                units='unitless/distance_units',
+                units='1/distance_units',
                 desc='change in Mach number per unit range',
             )
             self.add_input(

@@ -55,7 +55,7 @@ class TestSolvedAero(unittest.TestCase):
             'subsystems/aerodynamics/flops_based/test/data/high_wing_single_aisle.csv',
             local_phase_info,
         )
-        prob.aero_method = LegacyCode.GASP
+        prob.model.aero_method = LegacyCode.GASP
 
         # Preprocess inputs
         prob.check_and_preprocess_inputs()
@@ -106,7 +106,7 @@ class TestSolvedAero(unittest.TestCase):
             'subsystems/aerodynamics/flops_based/test/data/high_wing_single_aisle.csv',
             ph_in,
         )
-        prob.aero_method = LegacyCode.GASP
+        prob.model.aero_method = LegacyCode.GASP
 
         # Preprocess inputs
         prob.check_and_preprocess_inputs()
@@ -144,7 +144,7 @@ class TestSolvedAero(unittest.TestCase):
             'subsystems/aerodynamics/flops_based/test/data/high_wing_single_aisle.csv',
             local_phase_info,
         )
-        prob.aero_method = LegacyCode.GASP
+        prob.model.aero_method = LegacyCode.GASP
 
         # Change value just to be certain.
         prob.aviary_inputs.set_val(Aircraft.Wing.AREA, 7777, units='ft**2')
@@ -177,7 +177,7 @@ class TestSolvedAero(unittest.TestCase):
 
         csv_path = 'subsystems/aerodynamics/flops_based/test/data/high_wing_single_aisle.csv'
         prob.load_inputs(csv_path, local_phase_info)
-        prob.aero_method = LegacyCode.GASP
+        prob.model.aero_method = LegacyCode.GASP
 
         # Preprocess inputs
         prob.check_and_preprocess_inputs()
@@ -242,7 +242,7 @@ class TestSolvedAero(unittest.TestCase):
         prob = AviaryProblem()
 
         prob.load_inputs(csv_path, ph_in)
-        prob.aero_method = LegacyCode.GASP
+        prob.model.aero_method = LegacyCode.GASP
 
         # Preprocess inputs
         prob.check_and_preprocess_inputs()
