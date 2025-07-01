@@ -1,0 +1,47 @@
+aircraft:DBFwing:number_of_spars,2,unitless
+aircraft:DBFwing:spar_thickness,0.125,in
+aircraft:DBFwing:spar_density,0.017,lbm/in**3
+aircraft:DBFwing:span,48.0,in
+aircraft:DBFwing:number_of_ribs,8,unitless
+aircraft:DBFwing:rib_thickness,0.125,in
+aircraft:DBFwing:rib_density,0.01,lbm/in**3
+aircraft:DBFwing:airfoil_x_coords,"[0.0, 0.5, 1.0, 0.8, 0.2, 0.0]",unitless
+aircraft:DBFwing:airfoil_y_coords,"[0.0, 0.1, 0.0, -0.05, -0.05, 0.0]",unitless
+aircraft:DBFwing:root_chord,8.0,in
+aircraft:DBFwing:wetted_area,384.0,in**2
+aircraft:DBFwing:skin_density,0.005,lbm/in**2
+aircraft:DBFHorizontalTail:number_of_spars,1,unitless
+aircraft:DBFHorizontalTail:spar_thickness,0.1,in
+aircraft:DBFHorizontalTail:spar_density,0.017,lbm/in**3
+aircraft:DBFHorizontalTail:span,24.0,in
+aircraft:DBFHorizontalTail:number_of_ribs,6,unitless
+aircraft:DBFHorizontalTail:rib_thickness,0.1,in
+aircraft:DBFHorizontalTail:rib_density,0.01,lbm/in**3
+aircraft:DBFHorizontalTail:airfoil_x_coords,"[0.0, 0.5, 1.0, 0.8, 0.2, 0.0]",unitless
+aircraft:DBFHorizontalTail:airfoil_y_coords,"[0.0, 0.08, 0.0, -0.04, -0.04, 0.0]",unitless
+aircraft:DBFHorizontalTail:root_chord,4.0,in
+aircraft:DBFHorizontalTail:wetted_area,120.0,in**2
+aircraft:DBFHorizontalTail:skin_density,0.004,lbm/in**2
+aircraft:DBFVerticalTail:number_of_spars,1,unitless
+aircraft:DBFVerticalTail:spar_thickness,0.1,in
+aircraft:DBFVerticalTail:spar_density,0.017,lbm/in**3
+aircraft:DBFVerticalTail:span,10.0,in
+aircraft:DBFVerticalTail:number_of_ribs,5,unitless
+aircraft:DBFVerticalTail:rib_thickness,0.1,in
+aircraft:DBFVerticalTail:rib_density,0.01,lbm/in**3
+aircraft:DBFVerticalTail:airfoil_x_coords,"[0.0, 0.5, 1.0, 0.8, 0.2, 0.0]",unitless
+aircraft:DBFVerticalTail:airfoil_y_coords,"[0.0, 0.09, 0.0, -0.045, -0.045, 0.0]",unitless
+aircraft:DBFVerticalTail:root_chord,5.0,in
+aircraft:DBFVerticalTail:wetted_area,80.0,in**2
+aircraft:DBFVerticalTail:skin_density,0.004,lbm/in**2
+aircraft:DBFFuselage:number_of_spars,2,unitless
+aircraft:DBFFuselage:spar_thickness,0.15,in
+aircraft:DBFFuselage:spar_density,0.017,lbm/in**3
+aircraft:DBFFuselage:number_of_ribs,6,unitless
+aircraft:DBFFuselage:rib_thickness,0.125,in
+aircraft:DBFFuselage:rib_density,0.01,lbm/in**3
+aircraft:DBFFuselage:wetted_area,500.0,in**2
+aircraft:DBFFuselage:skin_density,0.005,lbm/in**2
+aircraft:DBFFuselage:fuselage_height,6.0,in
+aircraft:DBFFuselage:fuselage_width,4.0,in
+aircraft:DBFFuselage:length,30.0,in

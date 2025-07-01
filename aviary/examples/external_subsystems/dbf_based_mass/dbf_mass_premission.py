@@ -1,12 +1,12 @@
-import numpy as np
 import openmdao.api as om
 
-from aviary.subsystems.dbf_based_mass.dbf_structure_mass import (
+from aviary.examples.external_subsystems.dbf_based_mass.dbf_structure_mass import (
     DBFWingMass,
     DBFHorizontalTailMass,
     DBFVerticalTailMass,
+    DBFFuselageMass,
 )
-from aviary.subsystems.dbf_based_mass.dbf_mass_variables import Aircraft
+from aviary.examples.external_subsystems.dbf_based_mass.dbf_mass_variables import Aircraft
 
 
 class MassPremission(om.Group):
@@ -27,4 +27,11 @@ class MassPremission(om.Group):
             DBFVerticalTailMass(),
             promotes_inputs=['*'],
             promotes_outputs=[Aircraft.VerticalTail.MASS],
+        )
+
+        self.add_subsystem(
+            'fuselage_mass',
+            DBFFuselageMass(),
+            promotes_inputs=['*'],
+            promotes_outputs=[Aircraft.Fuselage.MASS],
         )
