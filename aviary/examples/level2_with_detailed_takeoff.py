@@ -35,10 +35,10 @@ phase_info = {
         'user_options': {
             'num_segments': 5,
             'order': 3,
-            'fix_initial': True,
             'ground_roll': True,
             'time_duration_ref': (100.0, 'kn'),
             'time_duration_bounds': ((100.0, 500.0), 'kn'),
+            'time_initial': (0.0, 'kn'),
         },
         'subsystem_options': subsystem_options,
         'initial_guesses': {
@@ -52,7 +52,6 @@ phase_info = {
         'user_options': {
             'num_segments': 5,
             'order': 3,
-            'fix_initial': False,
             'ground_roll': True,
             'clean': False,
             'time_initial_ref': (1.0e3, 'ft'),
@@ -91,8 +90,6 @@ phase_info = {
         'user_options': {
             'num_segments': 5,
             'order': 3,
-            'fix_initial': False,
-            'ground_roll': False,
             'clean': False,
             'time_initial_ref': (1.0e3, 'ft'),
             'time_initial_bounds': ((1.0, 16.0e3), 'ft'),
@@ -120,8 +117,6 @@ phase_info = {
         'user_options': {
             'num_segments': 4,
             'order': 3,
-            'fix_initial': False,
-            'ground_roll': False,
             'clean': False,
             'time_initial_ref': (1.0e3, 'ft'),
             'time_initial_bounds': ((1.0e3, 20.0e3), 'ft'),
@@ -157,8 +152,6 @@ phase_info = {
         'user_options': {
             'num_segments': 4,
             'order': 3,
-            'fix_initial': False,
-            'ground_roll': False,
             'clean': False,
             'time_initial_ref': (1.0e3, 'ft'),
             'time_initial_bounds': ((1.0e3, 20.0e3), 'ft'),
@@ -194,8 +187,6 @@ phase_info = {
         'user_options': {
             'num_segments': 3,
             'order': 3,
-            'fix_initial': False,
-            'ground_roll': False,
             'clean': False,
             'time_initial_ref': (1.0e3, 'ft'),
             'time_initial_bounds': ((500.0, 30.0e3), 'ft'),
@@ -230,8 +221,6 @@ phase_info = {
         'user_options': {
             'num_segments': 3,
             'order': 3,
-            'fix_initial': False,
-            'ground_roll': False,
             'clean': False,
             'time_initial_ref': (1.0e3, 'ft'),
             'time_initial_bounds': ((500.0, 50.0e3), 'ft'),
@@ -273,8 +262,6 @@ phase_info = {
         'user_options': {
             'num_segments': 5,
             'order': 3,
-            'fix_initial': False,
-            'ground_roll': False,
             'clean': False,
             'time_initial_ref': (1.0e3, 'ft'),
             'time_initial_bounds': ((20.0e3, 50.0e3), 'ft'),
@@ -317,6 +304,7 @@ phase_info = {
         'constrain_range': False,
     },
 }
+
 
 if __name__ == '__main__':
     prob = av.AviaryProblem()

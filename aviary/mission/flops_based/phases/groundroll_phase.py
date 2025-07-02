@@ -49,14 +49,6 @@ class GroundrollPhaseOptions(AviaryOptionsDictionary):
         # The options below have not yet been revamped.
 
         self.declare(
-            name='fix_initial',
-            types=bool,
-            default=False,
-            desc='Fixes the initial states (mass, distance) and does not allow them to '
-            'change during the optimization.',
-        )
-
-        self.declare(
             name='constraints',
             types=dict,
             default={},

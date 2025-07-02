@@ -393,20 +393,6 @@ class PhaseBuilderBase(ABC):
                 kwargs.pop('type')
                 phase.add_path_constraint(constraint_name, **kwargs)
 
-    def set_time_options(self, user_options, targets=[]):
-        """Set time options: fix_initial flag, duration upper bounds, duration reference."""
-        fix_initial = user_options.get_val('fix_initial')
-        duration_bounds = user_options.get_val('time_duration_bounds', units='s')
-        duration_ref = user_options.get_val('time_duration_ref', units='s')
-
-        self.phase.set_time_options(
-            fix_initial=fix_initial,
-            duration_bounds=duration_bounds,
-            units='s',
-            targets=targets,
-            duration_ref=duration_ref,
-        )
-
     def add_state(self, name, target, rate_source):
         """
         Add a state to this phase using the options in the phase_info.

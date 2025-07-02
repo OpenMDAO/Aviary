@@ -249,9 +249,6 @@ class FlightPhaseBase(PhaseBuilderBase):
         #    control_dict['order'] = 1
         #    control_dict['val'] = 0
         #    control_dict['opt'] = False
-        #    control_dict['fix_initial'] = fix_initial
-        #    control_dict['rate_targets'] = ['dh_dr']
-        #    control_dict['rate2_targets'] = ['d2h_dr2']
 
         self.add_control(
             'altitude',

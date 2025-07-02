@@ -136,34 +136,32 @@ class SolvedTwoDOFProblemConfigurator(ProblemConfiguratorBase):
         duration = wrapped_convert_units(user_options['time_duration'], time_units)
         initial_bounds = wrapped_convert_units(user_options['time_initial_bounds'], time_units)
         duration_bounds = wrapped_convert_units(user_options['time_duration_bounds'], time_units)
-        #initial_ref = wrapped_convert_units(user_options['time_initial_ref'], time_units)
+        initial_ref = wrapped_convert_units(user_options['time_initial_ref'], time_units)
         duration_ref = wrapped_convert_units(user_options['time_duration_ref'], time_units)
 
         fix_duration = duration is not None
         fix_initial = initial is not None
 
-        try:
-            fix_initial = user_options['fix_initial']
-        except KeyError:
-            fix_initial = False
-
-        # Make a good guess for a reasonable initial time scaler.
-        if initial_bounds[0] is not None and initial_bounds[1] != 0.0:
-            # Upper bound is good for a ref.
-            initial_ref = initial_bounds[1]
-        else:
-            initial_ref = 600.0
+        if initial_ref is None:
+            # Make a good guess for a reasonable initial time scaler.
+            if initial_bounds[0] is not None and initial_bounds[1] != 0.0:
+                # Upper bound is good for a ref.
+                initial_ref = initial_bounds[1]
+            else:
+                initial_ref = 600.0
 
         if duration_ref is None:
             duration_ref = (duration_bounds[0] + duration_bounds[1]) / 2.0
 
         extra_options = {}
-        if phase_idx > 0:
+        if not fix_initial:
             extra_options['initial_bounds'] = initial_bounds
 
-        if comm.size == 1:
+        if comm.size == 1 or fix_initial:
             # Redundant on a fixed input; raises a warning if specified.
             extra_options['initial_ref'] = None
+        else:
+            extra_options['initial_ref'] = initial_ref
 
         phase.set_time_options(
             fix_initial=fix_initial,

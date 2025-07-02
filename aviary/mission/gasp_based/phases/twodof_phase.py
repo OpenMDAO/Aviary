@@ -9,6 +9,7 @@ from aviary.mission.initial_guess_builders import (
 )
 from aviary.utils.aviary_options_dict import AviaryOptionsDictionary
 from aviary.utils.aviary_values import AviaryValues
+from aviary.utils.utils import wrapped_convert_units
 from aviary.variable_info.enums import EquationsOfMotion, SpeedType, ThrottleAllocation
 from aviary.variable_info.variables import Dynamic
 
@@ -212,33 +213,37 @@ class TwoDOFPhase(FlightPhaseBase):
 
         user_options = self.user_options
 
-        fix_initial = user_options.get_val('fix_initial')
-        duration_bounds = user_options.get_val('time_duration_bounds', units='ft')
-        duration_ref = user_options.get_val('time_duration_ref', units='ft')
+        time_units = 'ft'
+        initial = wrapped_convert_units(user_options['time_initial'], time_units)
+        duration = wrapped_convert_units(user_options['time_duration'], time_units)
+        initial_bounds = wrapped_convert_units(user_options['time_initial_bounds'], time_units)
+        duration_bounds = wrapped_convert_units(user_options['time_duration_bounds'], time_units)
+        initial_ref = wrapped_convert_units(user_options['time_initial_ref'], time_units)
+        duration_ref = wrapped_convert_units(user_options['time_duration_ref'], time_units)
         rotation = user_options.get_val('rotation')
 
-        # TODO: Revamp will remove fix initial.
-        if fix_initial:
-            phase.set_state_options(
-                Dynamic.Vehicle.MASS,
-                fix_initial=True,
-                input_initial=False,
-            )
-        initial_kwargs = {}
+        fix_duration = duration is not None
+        fix_initial = initial is not None
+
+        extra_options = {}
         if not fix_initial:
-            initial_kwargs = {
-                'initial_bounds': user_options.get_val('time_initial_bounds', units='ft'),
-                'initial_ref': user_options.get_val('time_initial_ref', units='ft'),
+            extra_options = {
+                'initial_bounds': initial_bounds,
+                'initial_ref': initial_ref,
+            }
+
+        if not fix_duration:
+            extra_options = {
+                'duration_bounds': duration_bounds,
+                'duration_ref': duration_ref,
             }
 
         phase.set_time_options(
             fix_initial=fix_initial,
-            fix_duration=False,
-            units='ft',
+            fix_duration=fix_duration,
+            units=time_units,
             name=Dynamic.Mission.DISTANCE,
-            duration_bounds=duration_bounds,
-            duration_ref=duration_ref,
-            **initial_kwargs,
+            **extra_options,
         )
 
         phase.set_state_options(
