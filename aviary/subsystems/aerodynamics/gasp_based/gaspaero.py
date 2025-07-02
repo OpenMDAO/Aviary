@@ -1532,6 +1532,11 @@ class GroundEffect(om.ExplicitComponent):
         # make sure kclge >= 1.0
         kclge = np.clip(kclge, 1.0, None)
 
+        hob = hac / wingspan
+        for i_node in range(self.options['num_nodes']):
+            if hob[i_node] >= 10.0:
+                kclge[i_node] = 1.0
+
         outputs['kclge'] = kclge
 
 
@@ -1725,7 +1730,6 @@ class BWBLiftCoeff(om.ExplicitComponent):
         self.add_input(
             'lift_curve_slope', units='unitless', shape=nn, desc='CLAW: Lift-curve slope'
         )
-        self.add_input('lift_ratio', units='unitless', shape=nn, desc='BARL: Lift ratio')
 
         add_aviary_input(self, Aircraft.Wing.ZERO_LIFT_ANGLE, units='deg')
 
@@ -1794,7 +1798,6 @@ class BWBLiftCoeff(om.ExplicitComponent):
             [
                 Dynamic.Vehicle.ANGLE_OF_ATTACK,
                 'lift_curve_slope',
-                'lift_ratio',
                 'kclge',
             ],
             rows=ar,
@@ -1802,7 +1805,6 @@ class BWBLiftCoeff(om.ExplicitComponent):
         )
 
         self.declare_partials('dCL_flaps_full', ['dCL_flaps_model'])
-        self.declare_partials('dCL_flaps_full', ['lift_ratio'], rows=ar, cols=ar)
 
         self.declare_partials('alpha_stall', ['lift_curve_slope', 'kclge'], rows=ar, cols=ar)
         self.declare_partials(
@@ -1815,16 +1817,13 @@ class BWBLiftCoeff(om.ExplicitComponent):
         )
 
         self.declare_partials('CL_max', ['CL_max_flaps'])
-        self.declare_partials('CL_max', ['lift_ratio'], rows=ar, cols=ar)
 
         self.declare_partials(
             'CL_full_flaps',
             [
                 Dynamic.Vehicle.ANGLE_OF_ATTACK,
                 'lift_curve_slope',
-                'lift_ratio',
                 'kclge',
-                'lift_ratio',
                 'body_lift_curve_slope',
             ],
             rows=ar,
@@ -1847,9 +1846,7 @@ class BWBLiftCoeff(om.ExplicitComponent):
             [
                 Dynamic.Vehicle.ANGLE_OF_ATTACK,
                 'lift_curve_slope',
-                'lift_ratio',
                 'kclge',
-                'lift_ratio',
                 'flap_factor',
                 'body_lift_curve_slope',
             ],
@@ -1872,7 +1869,6 @@ class BWBLiftCoeff(om.ExplicitComponent):
 
         alpha = inputs[Dynamic.Vehicle.ANGLE_OF_ATTACK]
         lift_curve_slope = inputs['lift_curve_slope']
-        lift_ratio = inputs['lift_ratio']
         alpha0 = inputs[Aircraft.Wing.ZERO_LIFT_ANGLE]
         CL_max_flaps = inputs['CL_max_flaps']
         dCL_flaps_model = inputs['dCL_flaps_model']
@@ -1883,12 +1879,12 @@ class BWBLiftCoeff(om.ExplicitComponent):
         exp_wing_area = inputs[Aircraft.Wing.EXPOSED_AREA]
         planform = inputs[Aircraft.Fuselage.PLANFORM_AREA]
 
-        # clw_base = kclge * lift_curve_slope * deg2rad(alpha - alpha0)
-        # clw = clw_base + dCL_flaps_model
+        clw_base = kclge * lift_curve_slope * deg2rad(alpha - alpha0)
+        clw = clw_base + dCL_flaps_model
 
         # This is actually CLw_base
-        outputs['CL_base'] = kclge * lift_curve_slope * deg2rad(alpha - alpha0) * (1 + lift_ratio)
-        outputs['dCL_flaps_full'] = dCL_flaps_model * (1 + lift_ratio)
+        outputs['CL_base'] = kclge * lift_curve_slope * deg2rad(alpha - alpha0)
+        outputs['dCL_flaps_full'] = dCL_flaps_model
         alpha_stall = (
             rad2deg((CL_max_flaps - dCL_flaps_model) / (kclge * lift_curve_slope)) + alpha0
         )
@@ -1898,7 +1894,7 @@ class BWBLiftCoeff(om.ExplicitComponent):
                 print(
                     f'Some angle of attack {alpha} might be greater than alpha stall {alpha_stall}.'
                 )
-        outputs['CL_max'] = CL_max_flaps * (1 + lift_ratio)
+        outputs['CL_max'] = CL_max_flaps
 
         CLw_full_flaps = outputs['CL_base'] + outputs['dCL_flaps_full']
         # CL when flaps is partially deployed
@@ -1913,7 +1909,6 @@ class BWBLiftCoeff(om.ExplicitComponent):
     def compute_partials(self, inputs, J):
         alpha = inputs[Dynamic.Vehicle.ANGLE_OF_ATTACK]
         lift_curve_slope = inputs['lift_curve_slope']
-        lift_ratio = inputs['lift_ratio']
         alpha0 = inputs[Aircraft.Wing.ZERO_LIFT_ANGLE]
         CL_max_flaps = inputs['CL_max_flaps']
         dCL_flaps_model = inputs['dCL_flaps_model']
@@ -1925,18 +1920,12 @@ class BWBLiftCoeff(om.ExplicitComponent):
         exp_wing_area = inputs[Aircraft.Wing.EXPOSED_AREA]
         planform = inputs[Aircraft.Fuselage.PLANFORM_AREA]
 
-        J['CL_base', 'kclge'] = lift_curve_slope * deg2rad(alpha - alpha0) * (1 + lift_ratio)
-        J['CL_base', 'lift_curve_slope'] = kclge * deg2rad(alpha - alpha0) * (1 + lift_ratio)
-        J['CL_base', Dynamic.Vehicle.ANGLE_OF_ATTACK] = (
-            kclge * lift_curve_slope * np.pi / 180.0 * (1 + lift_ratio)
-        )
-        J['CL_base', Aircraft.Wing.ZERO_LIFT_ANGLE] = (
-            -kclge * lift_curve_slope * np.pi / 180.0 * (1 + lift_ratio)
-        )
-        J['CL_base', 'lift_ratio'] = kclge * lift_curve_slope * deg2rad(alpha - alpha0)
+        J['CL_base', 'kclge'] = lift_curve_slope * deg2rad(alpha - alpha0)
+        J['CL_base', 'lift_curve_slope'] = kclge * deg2rad(alpha - alpha0)
+        J['CL_base', Dynamic.Vehicle.ANGLE_OF_ATTACK] = kclge * lift_curve_slope * np.pi / 180.0
+        J['CL_base', Aircraft.Wing.ZERO_LIFT_ANGLE] = -kclge * lift_curve_slope * np.pi / 180.0
 
-        J['dCL_flaps_full', 'dCL_flaps_model'] = 1 + lift_ratio
-        J['dCL_flaps_full', 'lift_ratio'] = dCL_flaps_model
+        J['dCL_flaps_full', 'dCL_flaps_model'] = 1
 
         J['alpha_stall', 'CL_max_flaps'] = 180.0 / np.pi / (kclge * lift_curve_slope)
         J['alpha_stall', 'dCL_flaps_model'] = -180.0 / np.pi / (kclge * lift_curve_slope)
@@ -1948,8 +1937,7 @@ class BWBLiftCoeff(om.ExplicitComponent):
         )
         J['alpha_stall', Aircraft.Wing.ZERO_LIFT_ANGLE] = 1
 
-        J['CL_max', 'CL_max_flaps'] = 1 + lift_ratio
-        J['CL_max', 'lift_ratio'] = CL_max_flaps
+        J['CL_max', 'CL_max_flaps'] = 1
 
         # with planform/wing_area factor
         # CL_body = planform / wing_area * kclge * body_lift_curve_slope * deg2rad(alpha - alpha0)
@@ -1965,32 +1953,24 @@ class BWBLiftCoeff(om.ExplicitComponent):
 
         # with exp_wing_area/wing_area factor
         # CLw_full_flaps = exp_wing_area / wing_area * (kclge * lift_curve_slope * deg2rad(alpha - alpha0)
-        #                  * (1 + lift_ratio) + dCL_flaps_model * (1 + lift_ratio))
+        #                  + dCL_flaps_model)
 
         dCLw_full_flaps_dkclge = (
-            exp_wing_area
-            / wing_area
-            * lift_curve_slope
-            * deg2rad(alpha - alpha0)
-            * (1 + lift_ratio)
+            exp_wing_area / wing_area * lift_curve_slope * deg2rad(alpha - alpha0)
         )
         dCLw_full_flaps_dlift_curve_slope = (
-            exp_wing_area / wing_area * kclge * deg2rad(alpha - alpha0) * (1 + lift_ratio)
+            exp_wing_area / wing_area * kclge * deg2rad(alpha - alpha0)
         )
         dCLw_full_flaps_dalpha = (
-            exp_wing_area / wing_area * kclge * lift_curve_slope * np.pi / 180.0 * (1 + lift_ratio)
+            exp_wing_area / wing_area * kclge * lift_curve_slope * np.pi / 180.0
         )
         dCLw_full_flaps_dalpha0 = (
-            -exp_wing_area / wing_area * kclge * lift_curve_slope * np.pi / 180.0 * (1 + lift_ratio)
+            -exp_wing_area / wing_area * kclge * lift_curve_slope * np.pi / 180.0
         )
-        dCLw_full_flaps_dlift_ratio = (
-            exp_wing_area / wing_area * kclge * lift_curve_slope * deg2rad(alpha - alpha0)
-            + exp_wing_area / wing_area * dCL_flaps_model
-        )
-        dCLw_full_flaps_ddCL_flaps_model = exp_wing_area / wing_area * (1 + lift_ratio)
+        dCLw_full_flaps_ddCL_flaps_model = exp_wing_area / wing_area
 
-        CL_base = kclge * lift_curve_slope * deg2rad(alpha - alpha0) * (1 + lift_ratio)
-        dCLw_full_flaps = dCL_flaps_model * (1 + lift_ratio)
+        CL_base = kclge * lift_curve_slope * deg2rad(alpha - alpha0)
+        dCLw_full_flaps = dCL_flaps_model
         CLw_full_flaps = CL_base + dCLw_full_flaps
 
         J['CL_full_flaps', 'kclge'] = dCLw_full_flaps_dkclge + dCL_body_dkclge
@@ -2001,7 +1981,6 @@ class BWBLiftCoeff(om.ExplicitComponent):
         J['CL_full_flaps', Aircraft.Wing.ZERO_LIFT_ANGLE] = (
             dCLw_full_flaps_dalpha0 + dCL_body_dalpha0
         )
-        J['CL_full_flaps', 'lift_ratio'] = dCLw_full_flaps_dlift_ratio
         J['CL_full_flaps', 'dCL_flaps_model'] = dCLw_full_flaps_ddCL_flaps_model
 
         J['CL_full_flaps', Aircraft.Fuselage.PLANFORM_AREA] = dCL_body_dplanform
@@ -2015,43 +1994,30 @@ class BWBLiftCoeff(om.ExplicitComponent):
         # CL when flaps is partially deployed
         # with exp_wing_area/wing_area factor
         # CLw_partial_flaps = exp_wing_area / wing_area * (kclge * lift_curve_slope * deg2rad(alpha - alpha0)
-        #                  * (1 + lift_ratio) + flap_factor * dCL_flaps_model * (1 + lift_ratio))
+        #                   + flap_factor * dCL_flaps_model)
 
         dCLw_partial_flaps_dkclge = (
-            exp_wing_area
-            / wing_area
-            * lift_curve_slope
-            * deg2rad(alpha - alpha0)
-            * (1 + lift_ratio)
+            exp_wing_area / wing_area * lift_curve_slope * deg2rad(alpha - alpha0)
         )
         dCLw_partial_flaps_dlift_curve_slope = (
-            exp_wing_area / wing_area * kclge * deg2rad(alpha - alpha0) * (1 + lift_ratio)
+            exp_wing_area / wing_area * kclge * deg2rad(alpha - alpha0)
         )
         dCLw_partial_flaps_dalpha = (
-            exp_wing_area / wing_area * kclge * lift_curve_slope * np.pi / 180.0 * (1 + lift_ratio)
+            exp_wing_area / wing_area * kclge * lift_curve_slope * np.pi / 180.0
         )
         dCLw_partial_flaps_dalpha0 = (
-            -exp_wing_area / wing_area * kclge * lift_curve_slope * np.pi / 180.0 * (1 + lift_ratio)
+            -exp_wing_area / wing_area * kclge * lift_curve_slope * np.pi / 180.0
         )
-        dCLw_partial_flaps_dlift_ratio = (
-            exp_wing_area / wing_area * kclge * lift_curve_slope * deg2rad(alpha - alpha0)
-            + exp_wing_area / wing_area * flap_factor * dCL_flaps_model
-        )
-        dCLw_partial_flaps_ddCL_flaps_model = (
-            exp_wing_area / wing_area * flap_factor * (1 + lift_ratio)
-        )
-        dCLw_partial_flaps_dflap_factor = (
-            exp_wing_area / wing_area * dCL_flaps_model * (1 + lift_ratio)
-        )
+        dCLw_partial_flaps_ddCL_flaps_model = exp_wing_area / wing_area * flap_factor
+        dCLw_partial_flaps_dflap_factor = exp_wing_area / wing_area * dCL_flaps_model
 
-        dCLw_partial_flaps = flap_factor * dCL_flaps_model * (1 + lift_ratio)
+        dCLw_partial_flaps = flap_factor * dCL_flaps_model
         CLw_partial_flaps = CL_base + dCLw_partial_flaps
 
         J['CL', 'kclge'] = dCLw_partial_flaps_dkclge + dCL_body_dkclge
         J['CL', 'lift_curve_slope'] = dCLw_partial_flaps_dlift_curve_slope
         J['CL', Dynamic.Vehicle.ANGLE_OF_ATTACK] = dCLw_partial_flaps_dalpha + dCL_body_dalpha
         J['CL', Aircraft.Wing.ZERO_LIFT_ANGLE] = dCLw_partial_flaps_dalpha0 + dCL_body_dalpha0
-        J['CL', 'lift_ratio'] = dCLw_partial_flaps_dlift_ratio
         J['CL', 'dCL_flaps_model'] = dCLw_partial_flaps_ddCL_flaps_model
 
         J['CL', Aircraft.Fuselage.PLANFORM_AREA] = dCL_body_dplanform
@@ -2219,7 +2185,6 @@ class BWBLiftCoeffClean(om.ExplicitComponent):
             shape=nn,
             desc='CLALPH_B: Lift-curve slope of fuselage for the given Mach',
         )
-        self.add_input('lift_ratio', units='unitless', shape=nn, desc='BARL: Lift ratio')
         add_aviary_input(self, Aircraft.Wing.ZERO_LIFT_ANGLE, units='deg', desc='ALPHL0')
         add_aviary_input(self, Mission.Design.LIFT_COEFFICIENT_MAX_FLAPS_UP, units='unitless')
 
@@ -2262,7 +2227,6 @@ class BWBLiftCoeffClean(om.ExplicitComponent):
                 Dynamic.Vehicle.ANGLE_OF_ATTACK,
                 [
                     'CL',
-                    'lift_ratio',
                     'lift_curve_slope',
                     'body_lift_curve_slope',
                 ],
@@ -2310,7 +2274,6 @@ class BWBLiftCoeffClean(om.ExplicitComponent):
             ],
         )
 
-        self.declare_partials('CL_max', ['lift_ratio'], rows=ar, cols=ar)
         self.declare_partials('CL_max', [Mission.Design.LIFT_COEFFICIENT_MAX_FLAPS_UP])
 
     def compute(self, inputs, outputs):
@@ -2318,7 +2281,6 @@ class BWBLiftCoeffClean(om.ExplicitComponent):
 
         lift_curve_slope = inputs['lift_curve_slope']
         body_lift_curve_slope = inputs['body_lift_curve_slope']
-        lift_ratio = inputs['lift_ratio']
         alpha0 = inputs[Aircraft.Wing.ZERO_LIFT_ANGLE]
         CL_max_flaps = inputs[Mission.Design.LIFT_COEFFICIENT_MAX_FLAPS_UP]
         wing_area = inputs[Aircraft.Wing.AREA]
@@ -2327,7 +2289,7 @@ class BWBLiftCoeffClean(om.ExplicitComponent):
 
         if self.options['output_alpha']:
             CL = inputs['CL']
-            # clw = wing_area / exp_wing_area * CL / (1 + lift_ratio)
+            # clw = wing_area / exp_wing_area * CL
             mod_lift_curve_slope = (
                 exp_wing_area / wing_area * lift_curve_slope
                 + planform / wing_area * body_lift_curve_slope
@@ -2351,12 +2313,11 @@ class BWBLiftCoeffClean(om.ExplicitComponent):
                     f'Some angle of attack {alpha} might be greater than alpha stall {alpha_stall}.'
                 )
 
-        outputs['CL_max'] = CL_max_flaps * (1 + lift_ratio)
+        outputs['CL_max'] = CL_max_flaps
 
     def compute_partials(self, inputs, J):
         lift_curve_slope = inputs['lift_curve_slope']
         body_lift_curve_slope = inputs['body_lift_curve_slope']
-        lift_ratio = inputs['lift_ratio']
         alpha0 = inputs[Aircraft.Wing.ZERO_LIFT_ANGLE]
         CL_max_flaps = inputs[Mission.Design.LIFT_COEFFICIENT_MAX_FLAPS_UP]
         wing_area = inputs[Aircraft.Wing.AREA]
@@ -2442,8 +2403,7 @@ class BWBLiftCoeffClean(om.ExplicitComponent):
         )
         J['alpha_stall', 'lift_curve_slope'] = -180.0 / np.pi * CL_max_flaps / lift_curve_slope**2
         J['alpha_stall', Aircraft.Wing.ZERO_LIFT_ANGLE] = 1
-        J['CL_max', Mission.Design.LIFT_COEFFICIENT_MAX_FLAPS_UP] = 1 + lift_ratio
-        J['CL_max', 'lift_ratio'] = CL_max_flaps
+        J['CL_max', Mission.Design.LIFT_COEFFICIENT_MAX_FLAPS_UP] = 1
 
 
 class CruiseAero(om.Group):
