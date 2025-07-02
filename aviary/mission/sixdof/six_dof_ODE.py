@@ -47,7 +47,29 @@ class SixDOF_ODE(_BaseODE):
             promotes=['*']
         )
 
-        # Need something here to figure out how to actually fly aircraft
+        T_vert_comp = om.ExecComp(
+            'T_z = ...',
+            # variables + units etc. -- see energy_ODE.py line 60,
+            promotes_inputs=[...],
+            promotes_outputs=[...]
+        )
+
+        comp = om.BalanceComp(
+            name=Dynamic.Vehicle.Propulsion.THROTTLE,
+            units='unitless',
+            val=np.ones((nn,)),
+            lhs_name='thrust_required',
+            rhs_name= 'T_z',
+            eq_units='N',
+            normalize=False,
+        )
+
+        sub1.add_subsystem(
+            'throttle_balance',
+            subsys=comp,
+            promotes_inputs=['*'],
+            promotes_outputs=['*'],
+        )
 
         self.add_core_subsystems(solver_group=sub1)
 

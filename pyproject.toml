@@ -1,0 +1,94 @@
+[build-system]
+requires = ["hatchling", "numpy>=2.0"]
+build-backend = "hatchling.build"
+
+[project]
+name = "aviary"
+dynamic = ["version"]
+readme = "README.md"
+license = "Apache-2.0"
+dependencies = [
+    "dymos>=1.8.1",
+    "hvplot",
+    "importlib_resources",
+    "matplotlib",
+    "numpy<2",
+    "openmdao>=3.36.0",
+    "pandas",
+    "panel>=1.0.0",
+    "parameterized",
+    "simupy",
+]
+
+[project.optional-dependencies]
+all = [
+    "ambiance",
+    "itables",
+    "myst-nb",
+    "openaerostruct",
+    "pre-commit",
+    "sphinx_book_theme==1.1.0",
+    "testflo",
+]
+examples = [
+    "ambiance",
+    "itables",
+    "openaerostruct",
+]
+test = [
+    "myst-nb",
+    "pre-commit",
+    "sphinx_book_theme==1.1.0",
+    "testflo",
+]
+
+[project.scripts]
+aviary = "aviary.interface.cmd_entry_points:aviary_cmd"
+
+[project.entry-points.openmdao_report]
+aviary_reports = "aviary.interface.reports:register_custom_reports"
+
+[tool.hatch.version]
+path = "aviary/__init__.py"
+
+[tool.hatch.build.targets.sdist]
+include = [
+    "/aviary",
+]
+
+[tool.ruff]
+line-length = 100
+
+[tool.ruff.format]
+quote-style = "single"
+
+[tool.ruff.lint]
+# isort, pydocstyle
+extend-select = ["I", "D"]
+# disabling these rules will help current Aviary code pass a pre-commit lint check
+extend-ignore = [
+    "D100",
+    "D101",
+    "D102",
+    "D103",
+    "D104",
+    "D105",
+    "D106",
+    "D204",
+    "D205",
+    "D401",
+    "D404",
+]
+
+[tool.ruff.lint.isort]
+split-on-trailing-comma = false
+
+[tool.ruff.lint.pydocstyle]
+convention = "numpy"
+
+[tool.ruff.lint.per-file-ignores]
+# Ignore `F401` (unused import) in api and doc files.
+# Ignore `I001` (sort and format imports) in api.
+# Ignore `E402` (module import not at top of file) for doc cells.
+"api.py" = ["F401", "I001"]
+"*.ipynb" = ["F401", "E402"]

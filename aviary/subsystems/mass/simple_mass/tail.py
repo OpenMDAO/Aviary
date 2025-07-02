@@ -2,7 +2,6 @@ import openmdao.api as om
 import openmdao.jax as omj
 import jax.numpy as jnp
 import numpy as np
-from scipy.interpolate import interp1d
 from scipy.interpolate import CubicSpline
 import os 
 
@@ -55,10 +54,8 @@ class TailMassAndCOG(om.JaxExplicitComponent):
     
     def setup(self):
         self.options['use_jit'] = not(Debug)
-        #tail_type = self.options['tail_type']
 
         # Inputs
-        #if tail_type == 'horizontal':
         add_aviary_input(self,
                             Aircraft.HorizontalTail.SPAN,
                             units='m', 
@@ -101,7 +98,6 @@ class TailMassAndCOG(om.JaxExplicitComponent):
                        desc="Twist distribution")
         
         # Outputs
-        #if tail_type == 'horizontal':
         add_aviary_output(self,
                             Aircraft.HorizontalTail.MASS,
                             units='kg', 
@@ -111,23 +107,6 @@ class TailMassAndCOG(om.JaxExplicitComponent):
                             Aircraft.VerticalTail.MASS,
                             units='kg', 
                             desc="Total mass of the tail")
-            
-        # Same as above inputs
-        
-        # self.add_output('cg_x', 
-        #                 val=0.0, 
-        #                 units='m', 
-        #                 desc="X location of the center of gravity")
-        
-        # self.add_output('cg_y', 
-        #                 val=0.0, 
-        #                 units='m', 
-        #                 desc="Y location of the center of gravity")
-        
-        # self.add_output('cg_z', 
-        #                 val=0.0, 
-        #                 units='m', 
-        #                 desc="Z location of the center of gravity")
 
     def compute_primal(self, 
                        aircraft__horizontal_tail__span, 
@@ -147,8 +126,9 @@ class TailMassAndCOG(om.JaxExplicitComponent):
         NACA_digits = self.options['NACA_digits']
 
         # This is just so that the differentiation and unittest do not break. If tail_type = horizontal, ignore the vertical tail mass and vice versa.
-        aircraft__horizontal_tail__mass = 0.0
-        aircraft__vertical_tail__mass = 0.0 
+        # TODO: Potentially write these tails as separate files. 
+        aircraft__horizontal_tail__mass = 0.0 * thickness_ratio
+        aircraft__vertical_tail__mass = 0.0 * thickness_ratio
 
         # File check
         if airfoil_type == 'file':
@@ -188,57 +168,13 @@ class TailMassAndCOG(om.JaxExplicitComponent):
         # Thickness distribution
         thickness_dist = self.airfoil_thickness(x_points, max_thickness)
 
-        # if tail_type == 'horizontal':
-        #     aircraft__vertical_tail__mass = None
-        # elif tail_type == 'vertical':
-        #     aircraft__horizontal_tail__mass = None
-
         if tail_type == 'horizontal':
             total_mass, _ = quadgk(lambda x: density * self.airfoil_thickness(x, max_thickness) * (aircraft__horizontal_tail__root_chord - (aircraft__horizontal_tail__root_chord - tip_chord_tail) * (x / aircraft__horizontal_tail__span)) * aircraft__horizontal_tail__span, [0, 1], epsabs=1e-9, epsrel=1e-9)
-
-            area, _ = quadgk(lambda x: self.airfoil_thickness(x, max_thickness) * (aircraft__horizontal_tail__root_chord- (aircraft__horizontal_tail__root_chord - tip_chord_tail) * (x / aircraft__horizontal_tail__span)), [0, 1], epsabs=1e-9, epsrel=1e-9)
-
-            # cg_x_num, _ = quadgk(lambda x: (x * self.airfoil_thickness(x, max_thickness) * (aircraft__horizontal_tail__root_chord - (aircraft__horizontal_tail__root_chord - tip_chord_tail) * (x / aircraft__horizontal_tail__span)) * jnp.cos(twist_tail)) - 
-            #                             (self.airfoil_camber_line(x, camber, camber_location) * self.airfoil_thickness(x, max_thickness) * (aircraft__horizontal_tail__root_chord - (aircraft__horizontal_tail__root_chord - tip_chord_tail) * (x / aircraft__horizontal_tail__span))) * jnp.sin(twist_tail), 
-            #                             [0, 1], epsabs=1e-9, epsrel=1e-9) 
             
-            # cg_x = cg_x_num / area
-            # cg_x = cg_x[0]
-
-            # cgz_function = lambda x: (x * self.airfoil_thickness(x, max_thickness) * (aircraft__horizontal_tail__root_chord - (aircraft__horizontal_tail__root_chord - tip_chord_tail) * (x / aircraft__horizontal_tail__span))) * jnp.sin(twist_tail) + (self.airfoil_camber_line(x, camber, camber_location) * self.airfoil_thickness(x, max_thickness) * (aircraft__horizontal_tail__root_chord - (aircraft__horizontal_tail__root_chord - tip_chord_tail) * (x / aircraft__horizontal_tail__span))) * jnp.cos(twist_tail)
-            # cgy_function = lambda x: x * aircraft__horizontal_tail__span
-            
-
-            # cg_y, _ = quadgk(cgy_function, [0, 1], epsabs=1e-9, epsrel=1e-9)
-
-            # cg_z_num, _ = quadgk(cgz_function, [0, 1], epsabs=1e-9, epsrel=1e-9)
-
-            # cg_z = cg_z_num / area
-            # cg_z = cg_z[0]
-
             aircraft__horizontal_tail__mass = total_mass
+
         elif tail_type == 'vertical':
             total_mass, _ = quadgk(lambda x: density * self.airfoil_thickness(x, max_thickness) * (aircraft__vertical_tail__root_chord - (aircraft__vertical_tail__root_chord - tip_chord_tail) * (x / aircraft__vertical_tail__span)) * aircraft__vertical_tail__span, [0, 1], epsabs=1e-9, epsrel=1e-9)
-
-            #area, _ = quadgk(lambda x: self.airfoil_thickness(x, max_thickness) * (aircraft__vertical_tail__root_chord- (aircraft__vertical_tail__root_chord - tip_chord_tail) * (x / aircraft__vertical_tail__span)), [0, 1], epsabs=1e-9, epsrel=1e-9)
-
-            # cg_x_num, _ = quadgk(lambda x: (x * self.airfoil_thickness(x, max_thickness) * (aircraft__vertical_tail__root_chord - (aircraft__vertical_tail__root_chord - tip_chord_tail) * (x / aircraft__vertical_tail__span)) * jnp.cos(twist_tail)) - 
-            #                             (self.airfoil_camber_line(x, camber, camber_location) * self.airfoil_thickness(x, max_thickness) * (aircraft__vertical_tail__root_chord - (aircraft__vertical_tail__root_chord - tip_chord_tail) * (x / aircraft__vertical_tail__span))) * jnp.sin(twist_tail), 
-            #                             [0, 1], epsabs=1e-9, epsrel=1e-9) 
-            
-            # cg_x = cg_x_num / area
-            # cg_x = cg_x[0]
-
-            # cgy_function = lambda x: (x * self.airfoil_thickness(x, max_thickness) * (aircraft__vertical_tail__root_chord - (aircraft__vertical_tail__root_chord - tip_chord_tail) * (x / aircraft__vertical_tail__span))) * jnp.sin(twist_tail) + (self.airfoil_camber_line(x, camber, camber_location) * self.airfoil_thickness(x, max_thickness) * (aircraft__vertical_tail__root_chord - (aircraft__vertical_tail__root_chord - tip_chord_tail) * (x / aircraft__vertical_tail__span))) * jnp.cos(twist_tail)
-            # cgz_function = lambda x: x * aircraft__vertical_tail__span
-            
-
-            # cg_z, _ = quadgk(cgz_function, [0, 1], epsabs=1e-9, epsrel=1e-9)
-
-            # cg_y_num, _ = quadgk(cgy_function, [0, 1], epsabs=1e-9, epsrel=1e-9)
-
-            # cg_y = cg_y_num / area
-            # cg_y = cg_y[0]
 
             aircraft__vertical_tail__mass = total_mass
         
@@ -333,7 +269,5 @@ if __name__ == "__main__":
     # Print
     if prob.model.tail.options['tail_type'] == 'horizontal':
         print(f"Total mass of the horizontal tail: {prob.get_val(Aircraft.HorizontalTail.MASS)} kg")
-        #print(f"Center of gravity of horizontal tail (X: {prob.get_val('cg_x')} m, Y: {prob.get_val('cg_y')} m, Z: {prob.get_val('cg_z')} m)")
     elif prob.model.tail.options['tail_type'] == 'vertical':
         print(f"Total mass of the vertical tail: {prob.get_val(Aircraft.VerticalTail.MASS)} kg")
-        #print(f"Center of gravity of vertical tail (X: {prob.get_val('cg_x')} m, Y: {prob.get_val('cg_y')} m, Z: {prob.get_val('cg_z')} m)")

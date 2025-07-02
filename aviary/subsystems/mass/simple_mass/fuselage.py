@@ -78,18 +78,6 @@ class FuselageMassAndCOG(om.JaxExplicitComponent):
         
 
         # Outputs
-        # self.add_output('center_of_gravity_x_fuse', 
-        #                 val=0.0, 
-        #                 units='m')
-        
-        # self.add_output('center_of_gravity_y_fuse', 
-        #                 val=0.0, 
-        #                 units='m')
-        
-        # self.add_output('center_of_gravity_z_fuse', 
-        #                 val=0.0, 
-        #                 units='m')
-        
         add_aviary_output(self,
                           Aircraft.Fuselage.MASS, 
                           units='kg')
@@ -138,11 +126,6 @@ class FuselageMassAndCOG(om.JaxExplicitComponent):
             total_moment_y += centroid_y * section_weight
             total_moment_z += centroid_z * section_weight
 
-        # center_of_gravity_x_fuse = total_moment_x / aircraft__fuselage__mass
-        # center_of_gravity_y_fuse = total_moment_y / aircraft__fuselage__mass
-        # center_of_gravity_z_fuse = total_moment_z / aircraft__fuselage__mass
-
-        # return center_of_gravity_x_fuse, center_of_gravity_y_fuse, center_of_gravity_z_fuse, aircraft__fuselage__mass
         return aircraft__fuselage__mass
 
     def validate_inputs(self, length, base_diameter, thickness, tip_diameter, is_hollow):
@@ -204,13 +187,7 @@ if __name__ == "__main__":
 
     prob.run_model()
 
-    # center_of_gravity_x = prob.get_val('fuselage_cg.center_of_gravity_x_fuse')
-    # center_of_gravity_y = prob.get_val('fuselage_cg.center_of_gravity_y_fuse')
-    # center_of_gravity_z = prob.get_val('fuselage_cg.center_of_gravity_z_fuse')
     total_weight = prob.get_val(Aircraft.Fuselage.MASS)
 
-    #data = prob.check_partials(compact_print=True, abs_err_tol=1e-04, rel_err_tol=1e-04, step=1e-8, step_calc='rel')
-
-    # print(f"Center of gravity of the fuselage: X = {center_of_gravity_x} m, Y = {center_of_gravity_y} m, Z = {center_of_gravity_z} m")
     print(f"Total mass of the fuselage: {total_weight} kg")
 
