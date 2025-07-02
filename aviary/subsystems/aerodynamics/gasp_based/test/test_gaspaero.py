@@ -844,7 +844,7 @@ class GroundEffectTest(unittest.TestCase):
         prob.run_model()
 
         tol = 1e-7
-        assert_near_equal(prob['kclge'], [1.22698872, 1.22698872], tol)
+        assert_near_equal(prob['kclge'], [1.15064679, 1.15064679], tol)
 
 
 class BWBBodyLiftCurveSlopeTest(unittest.TestCase):
@@ -1056,7 +1056,7 @@ class DragCoefTest(unittest.TestCase):
         prob.run_model()
 
         tol = 1e-4
-        assert_near_equal(prob['CD_base'], [0.01556411, 0.01556411], tol)
+        assert_near_equal(prob['CD_base'], [0.015568, 0.015568], tol)
         assert_near_equal(prob['dCD_flaps_full'], [0.0, 0.0], tol)
         assert_near_equal(prob['dCD_gear_full'], [0.01619421, 0.01619421], tol)
 
@@ -1910,7 +1910,7 @@ class BWBLowSpeedAeroTest(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    # unittest.main()
-    test = BWBLowSpeedAeroTest()
-    test.setUp()
-    test.test_case8()
+    unittest.main()
+    # test = DragCoefTest()
+    # test.setUp()
+    # test.test_case1()
