@@ -1,18 +1,20 @@
 import unittest
-
+from aviary.examples.external_subsystems.dbf_based_mass.dbf_mass_variable_meta_data import (
+    ExtendedMetaData,
+)
 import aviary.api as av
 
-MassBuilder = av.TestSubsystemBuilderBase.import_builder(
+DBFMassBuilder = av.TestSubsystemBuilderBase.import_builder(
     'dbf_based_mass.dbf_mass_builder.DBFMassBuilder'
 )
 
 
-@av.skipIfMissingDependencies(MassBuilder)
+@av.skipIfMissingDependencies(DBFMassBuilder)
 class TestDBFMass(av.TestSubsystemBuilderBase):
     """Test mass builder."""
 
     def setUp(self):
-        self.subsystem_builder = MassBuilder()
+        self.subsystem_builder = DBFMassBuilder(meta_data=ExtendedMetaData)
         self.aviary_values = av.AviaryValues()
 
 

@@ -9,7 +9,6 @@ from aviary.examples.external_subsystems.dbf_based_mass.dbf_mass_variable_meta_d
     ExtendedMetaData,
 )
 from aviary.examples.external_subsystems.dbf_based_mass.dbf_mass_variables import Aircraft
-from aviary.examples.external_subsystems.dbf_based_mass.dbf_mass_builder import StructureMassBuilder
 from aviary.examples.external_subsystems.dbf_based_mass.dbf_mass_builder import DBFMassBuilder
 
 phase_info = deepcopy(av.default_height_energy_phase_info)

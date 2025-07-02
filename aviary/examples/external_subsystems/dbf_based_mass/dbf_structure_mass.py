@@ -12,29 +12,45 @@ from aviary.examples.external_subsystems.dbf_based_mass.dbf_mass_variable_meta_d
 class DBFWingMass(om.ExplicitComponent):
     def setup(self):
         # Spar-related inputs
-        add_aviary_input(self, Aircraft.Wing.NUM_SPARS, units='unitless')
-        add_aviary_input(self, Aircraft.Wing.SPAR_THICKNESS, units='in')
-        add_aviary_input(self, Aircraft.Wing.SPAR_DENSITY, units='lbm/in**3')
-        add_aviary_input(self, Aircraft.Wing.SPAN, units='in')
+        add_aviary_input(
+            self, Aircraft.Wing.NUM_SPARS, units='unitless', meta_data=ExtendedMetaData
+        )
+        add_aviary_input(
+            self, Aircraft.Wing.SPAR_THICKNESS, units='inch', meta_data=ExtendedMetaData
+        )
+        add_aviary_input(
+            self, Aircraft.Wing.SPAR_DENSITY, units='lbm/ft**3', meta_data=ExtendedMetaData
+        )
+        add_aviary_input(self, Aircraft.Wing.SPAN, units='inch', meta_data=ExtendedMetaData)
 
         # Rib-related inputs
-        add_aviary_input(self, Aircraft.Wing.NUM_RIBS, units='unitless')
-        add_aviary_input(self, Aircraft.Wing.RIB_THICKNESS, units='in')
-        add_aviary_input(self, Aircraft.Wing.RIB_DENSITY, units='lbm/in**3')
-        add_aviary_input(self, Aircraft.Wing.AIRFOIL_X_COORDS, units='unitless')
-        add_aviary_input(self, Aircraft.Wing.AIRFOIL_Y_COORDS, units='unitless')
-        add_aviary_input(self, Aircraft.Wing.ROOT_CHORD, units='in')
+        add_aviary_input(self, Aircraft.Wing.NUM_RIBS, units='unitless', meta_data=ExtendedMetaData)
+        add_aviary_input(
+            self, Aircraft.Wing.RIB_THICKNESS, units='inch', meta_data=ExtendedMetaData
+        )
+        add_aviary_input(
+            self, Aircraft.Wing.RIB_DENSITY, units='lbm/ft**3', meta_data=ExtendedMetaData
+        )
+        add_aviary_input(
+            self, Aircraft.Wing.AIRFOIL_X_COORDS, units='unitless', meta_data=ExtendedMetaData
+        )
+        add_aviary_input(
+            self, Aircraft.Wing.AIRFOIL_Y_COORDS, units='unitless', meta_data=ExtendedMetaData
+        )
+        add_aviary_input(self, Aircraft.Wing.ROOT_CHORD, units='inch', meta_data=ExtendedMetaData)
 
         # Skin
-        add_aviary_input(self, Aircraft.Wing.WETTED_AREA, units='in**2')
-        add_aviary_input(self, Aircraft.Wing.SKIN_DENSITY, units='lbm/in**2')
+        add_aviary_input(self, Aircraft.Wing.WETTED_AREA, units='ft**2', meta_data=ExtendedMetaData)
+        add_aviary_input(
+            self, Aircraft.Wing.SKIN_DENSITY, units='unitless', meta_data=ExtendedMetaData
+        )
 
-        add_aviary_output(self, Aircraft.Wing.MASS, units='lbm')
+        add_aviary_output(self, Aircraft.Wing.MASS, units='lbm', meta_data=ExtendedMetaData)
 
     def setup_partials(self):
         self.declare_partials('*', '*', method='cs')
 
-    def shoelace_area(x, y):
+    def shoelace_area(self, x, y):
         return 0.5 * np.abs(np.dot(x, np.roll(y, -1)) - np.dot(y, np.roll(x, -1)))
 
     def compute(self, inputs, outputs):
@@ -67,29 +83,64 @@ class DBFWingMass(om.ExplicitComponent):
 class DBFHorizontalTailMass(om.ExplicitComponent):
     def setup(self):
         # Spar-related inputs
-        add_aviary_input(self, Aircraft.HorizontalTail.NUM_SPARS, units='unitless')
-        add_aviary_input(self, Aircraft.HorizontalTail.SPAR_THICKNESS, units='in')
-        add_aviary_input(self, Aircraft.HorizontalTail.SPAR_DENSITY, units='lbm/in**3')
-        add_aviary_input(self, Aircraft.HorizontalTail.SPAN, units='in')
+        add_aviary_input(
+            self, Aircraft.HorizontalTail.NUM_SPARS, units='unitless', meta_data=ExtendedMetaData
+        )
+        add_aviary_input(
+            self, Aircraft.HorizontalTail.SPAR_THICKNESS, units='inch', meta_data=ExtendedMetaData
+        )
+        add_aviary_input(
+            self,
+            Aircraft.HorizontalTail.SPAR_DENSITY,
+            units='lbm/ft**3',
+            meta_data=ExtendedMetaData,
+        )
+        add_aviary_input(
+            self, Aircraft.HorizontalTail.SPAN, units='inch', meta_data=ExtendedMetaData
+        )
 
         # Rib-related inputs
-        add_aviary_input(self, Aircraft.HorizontalTail.NUM_RIBS, units='unitless')
-        add_aviary_input(self, Aircraft.HorizontalTail.RIB_THICKNESS, units='in')
-        add_aviary_input(self, Aircraft.HorizontalTail.RIB_DENSITY, units='lbm/in**3')
-        add_aviary_input(self, Aircraft.HorizontalTail.AIRFOIL_X_COORDS, units='unitless')
-        add_aviary_input(self, Aircraft.HorizontalTail.AIRFOIL_Y_COORDS, units='unitless')
-        add_aviary_input(self, Aircraft.HorizontalTail.ROOT_CHORD, units='in')
+        add_aviary_input(
+            self, Aircraft.HorizontalTail.NUM_RIBS, units='unitless', meta_data=ExtendedMetaData
+        )
+        add_aviary_input(
+            self, Aircraft.HorizontalTail.RIB_THICKNESS, units='inch', meta_data=ExtendedMetaData
+        )
+        add_aviary_input(
+            self, Aircraft.HorizontalTail.RIB_DENSITY, units='lbm/ft**3', meta_data=ExtendedMetaData
+        )
+        add_aviary_input(
+            self,
+            Aircraft.HorizontalTail.AIRFOIL_X_COORDS,
+            units='unitless',
+            meta_data=ExtendedMetaData,
+        )
+        add_aviary_input(
+            self,
+            Aircraft.HorizontalTail.AIRFOIL_Y_COORDS,
+            units='unitless',
+            meta_data=ExtendedMetaData,
+        )
+        add_aviary_input(
+            self, Aircraft.HorizontalTail.ROOT_CHORD, units='inch', meta_data=ExtendedMetaData
+        )
 
         # Skin
-        add_aviary_input(self, Aircraft.HorizontalTail.WETTED_AREA, units='in**2')
-        add_aviary_input(self, Aircraft.HorizontalTail.SKIN_DENSITY, units='lbm/in**2')
+        add_aviary_input(
+            self, Aircraft.HorizontalTail.WETTED_AREA, units='ft**2', meta_data=ExtendedMetaData
+        )
+        add_aviary_input(
+            self, Aircraft.HorizontalTail.SKIN_DENSITY, units='unitless', meta_data=ExtendedMetaData
+        )
 
-        add_aviary_output(self, Aircraft.HorizontalTail.MASS, units='lbm')
+        add_aviary_output(
+            self, Aircraft.HorizontalTail.MASS, units='lbm', meta_data=ExtendedMetaData
+        )
 
     def setup_partials(self):
         self.declare_partials('*', '*', method='cs')
 
-    def shoelace_area(x, y):
+    def shoelace_area(self, x, y):
         return 0.5 * np.abs(np.dot(x, np.roll(y, -1)) - np.dot(y, np.roll(x, -1)))
 
     def compute(self, inputs, outputs):
@@ -122,29 +173,57 @@ class DBFHorizontalTailMass(om.ExplicitComponent):
 class DBFVerticalTailMass(om.ExplicitComponent):
     def setup(self):
         # Spar-related inputs
-        add_aviary_input(self, Aircraft.VerticalTail.NUM_SPARS, units='unitless')
-        add_aviary_input(self, Aircraft.VerticalTail.SPAR_THICKNESS, units='in')
-        add_aviary_input(self, Aircraft.VerticalTail.SPAR_DENSITY, units='lbm/in**3')
-        add_aviary_input(self, Aircraft.VerticalTail.SPAN, units='in')
+        add_aviary_input(
+            self, Aircraft.VerticalTail.NUM_SPARS, units='unitless', meta_data=ExtendedMetaData
+        )
+        add_aviary_input(
+            self, Aircraft.VerticalTail.SPAR_THICKNESS, units='inch', meta_data=ExtendedMetaData
+        )
+        add_aviary_input(
+            self, Aircraft.VerticalTail.SPAR_DENSITY, units='lbm/ft**3', meta_data=ExtendedMetaData
+        )
+        add_aviary_input(self, Aircraft.VerticalTail.SPAN, units='inch', meta_data=ExtendedMetaData)
 
         # Rib-related inputs
-        add_aviary_input(self, Aircraft.VerticalTail.NUM_RIBS, units='unitless')
-        add_aviary_input(self, Aircraft.VerticalTail.RIB_THICKNESS, units='in')
-        add_aviary_input(self, Aircraft.VerticalTail.RIB_DENSITY, units='lbm/in**3')
-        add_aviary_input(self, Aircraft.VerticalTail.AIRFOIL_X_COORDS, units='unitless')
-        add_aviary_input(self, Aircraft.VerticalTail.AIRFOIL_Y_COORDS, units='unitless')
-        add_aviary_input(self, Aircraft.VerticalTail.ROOT_CHORD, units='in')
+        add_aviary_input(
+            self, Aircraft.VerticalTail.NUM_RIBS, units='unitless', meta_data=ExtendedMetaData
+        )
+        add_aviary_input(
+            self, Aircraft.VerticalTail.RIB_THICKNESS, units='inch', meta_data=ExtendedMetaData
+        )
+        add_aviary_input(
+            self, Aircraft.VerticalTail.RIB_DENSITY, units='lbm/ft**3', meta_data=ExtendedMetaData
+        )
+        add_aviary_input(
+            self,
+            Aircraft.VerticalTail.AIRFOIL_X_COORDS,
+            units='unitless',
+            meta_data=ExtendedMetaData,
+        )
+        add_aviary_input(
+            self,
+            Aircraft.VerticalTail.AIRFOIL_Y_COORDS,
+            units='unitless',
+            meta_data=ExtendedMetaData,
+        )
+        add_aviary_input(
+            self, Aircraft.VerticalTail.ROOT_CHORD, units='inch', meta_data=ExtendedMetaData
+        )
 
         # Skin
-        add_aviary_input(self, Aircraft.VerticalTail.WETTED_AREA, units='in**2')
-        add_aviary_input(self, Aircraft.VerticalTail.SKIN_DENSITY, units='lbm/in**2')
+        add_aviary_input(
+            self, Aircraft.VerticalTail.WETTED_AREA, units='ft**2', meta_data=ExtendedMetaData
+        )
+        add_aviary_input(
+            self, Aircraft.VerticalTail.SKIN_DENSITY, units='unitless', meta_data=ExtendedMetaData
+        )
 
-        add_aviary_output(self, Aircraft.VerticalTail.MASS, units='lbm')
+        add_aviary_output(self, Aircraft.VerticalTail.MASS, units='lbm', meta_data=ExtendedMetaData)
 
     def setup_partials(self):
         self.declare_partials('*', '*', method='cs')
 
-    def shoelace_area(x, y):
+    def shoelace_area(self, x, y):
         return 0.5 * np.abs(np.dot(x, np.roll(y, -1)) - np.dot(y, np.roll(x, -1)))
 
     def compute(self, inputs, outputs):
@@ -177,25 +256,45 @@ class DBFVerticalTailMass(om.ExplicitComponent):
 class DBFFuselageMass(om.ExplicitComponent):
     def setup(self):
         # Spar-related inputs
-        add_aviary_input(self, Aircraft.Fuselage.NUM_SPARS, units='unitless')
-        add_aviary_input(self, Aircraft.Fuselage.SPAR_THICKNESS, units='in')
-        add_aviary_input(self, Aircraft.Fuselage.SPAR_DENSITY, units='lbm/in**3')
+        add_aviary_input(
+            self, Aircraft.Fuselage.NUM_SPARS, units='unitless', meta_data=ExtendedMetaData
+        )
+        add_aviary_input(
+            self, Aircraft.Fuselage.SPAR_THICKNESS, units='inch', meta_data=ExtendedMetaData
+        )
+        add_aviary_input(
+            self, Aircraft.Fuselage.SPAR_DENSITY, units='lbm/ft**3', meta_data=ExtendedMetaData
+        )
 
         # Rib-related inputs
-        add_aviary_input(self, Aircraft.Fuselage.NUM_RIBS, units='unitless')
-        add_aviary_input(self, Aircraft.Fuselage.RIB_THICKNESS, units='in')
-        add_aviary_input(self, Aircraft.Fuselage.RIB_DENSITY, units='lbm/in**3')
+        add_aviary_input(
+            self, Aircraft.Fuselage.NUM_RIBS, units='unitless', meta_data=ExtendedMetaData
+        )
+        add_aviary_input(
+            self, Aircraft.Fuselage.RIB_THICKNESS, units='inch', meta_data=ExtendedMetaData
+        )
+        add_aviary_input(
+            self, Aircraft.Fuselage.RIB_DENSITY, units='lbm/ft**3', meta_data=ExtendedMetaData
+        )
 
         # Skin
-        add_aviary_input(self, Aircraft.Fuselage.WETTED_AREA, units='in**2')
-        add_aviary_input(self, Aircraft.Fuselage.SKIN_DENSITY, units='lbm/in**2')
+        add_aviary_input(
+            self, Aircraft.Fuselage.WETTED_AREA, units='ft**2', meta_data=ExtendedMetaData
+        )
+        add_aviary_input(
+            self, Aircraft.Fuselage.SKIN_DENSITY, units='unitless', meta_data=ExtendedMetaData
+        )
 
         # Main Body
-        add_aviary_input(self, Aircraft.Fuselage.FUSELAGE_HEIGHT, units='in')
-        add_aviary_input(self, Aircraft.Fuselage.FUSELAGE_WIDTH, units='in')
-        add_aviary_input(self, Aircraft.Fuselage.LENGTH, units='in')
+        add_aviary_input(
+            self, Aircraft.Fuselage.FUSELAGE_HEIGHT, units='inch', meta_data=ExtendedMetaData
+        )
+        add_aviary_input(
+            self, Aircraft.Fuselage.FUSELAGE_WIDTH, units='inch', meta_data=ExtendedMetaData
+        )
+        add_aviary_input(self, Aircraft.Fuselage.LENGTH, units='inch', meta_data=ExtendedMetaData)
 
-        add_aviary_output(self, Aircraft.Fuselage.MASS, units='lbm')
+        add_aviary_output(self, Aircraft.Fuselage.MASS, units='lbm', meta_data=ExtendedMetaData)
 
     def setup_partials(self):
         self.declare_partials('*', '*', method='cs')
