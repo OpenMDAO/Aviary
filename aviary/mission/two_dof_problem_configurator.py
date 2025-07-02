@@ -38,7 +38,7 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
         Parameters
         ----------
         aviary_group : AviaryGroup
-            Aviary model that owns this builder.
+            Aviary model that owns this configurator.
         """
         # TODO: This should probably be moved to the set_initial_guesses() method in AviaryProblem class
         # Defines how the problem should build it's initial guesses for load_inputs()
@@ -109,7 +109,7 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
         Parameters
         ----------
         aviary_group : AviaryGroup
-            Aviary model that owns this builder.
+            Aviary model that owns this configurator.
 
         Returns
         -------
@@ -138,7 +138,7 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
         Parameters
         ----------
         aviary_group : AviaryGroup
-            Aviary model that owns this builder.
+            Aviary model that owns this configurator.
 
         Returns
         -------
@@ -154,7 +154,7 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
         Parameters
         ----------
         aviary_group : AviaryProblem
-            Problem that owns this builder.
+            Problem that owns this configurator.
         """
         OptionsToValues = create_opts2vals(
             [
@@ -267,7 +267,7 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
         Parameters
         ----------
         aviary_group : AviaryGroup
-            Aviary model that owns this builder.
+            Aviary model that owns this configurator.
         phase_name : str
             Name of the requested phase.
         phase_options : dict
@@ -309,7 +309,7 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
         Parameters
         ----------
         aviary_group : AviaryGroup
-            Aviary model that owns this builder.
+            Aviary model that owns this configurator.
         phase_name : str
             Name of the requested phase.
         phase_idx : int
@@ -445,7 +445,7 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
         Parameters
         ----------
         aviary_group : AviaryGroup
-            Aviary model that owns this builder.
+            Aviary model that owns this configurator.
         phases : Phase
             Phases to be linked.
         connect_directly : bool
@@ -608,7 +608,7 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
         Parameters
         ----------
         aviary_group : AviaryGroup
-            Aviary model that owns this builder.
+            Aviary model that owns this configurator.
         """
         pass
 
@@ -645,7 +645,7 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
         Parameters
         ----------
         aviary_group : AviaryGroup
-            Aviary model that owns this builder.
+            Aviary model that owns this configurator.
         """
         if aviary_group.post_mission_info['include_landing']:
             self._add_landing_systems(aviary_group)
@@ -715,7 +715,7 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
         Parameters
         ----------
         aviary_group : AviaryGroup
-            Aviary model that owns this builder.
+            Aviary model that owns this configurator.
         phase_name : str
             The name of the phase for which the guesses are being added.
         phase : Phase

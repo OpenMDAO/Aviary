@@ -32,7 +32,7 @@ class HeightEnergyProblemConfigurator(ProblemConfiguratorBase):
         Parameters
         ----------
         aviary_group : AviaryGroup
-            Aviary model that owns this builder.
+            Aviary model that owns this configurator.
         """
         # TODO: This should probably be moved to the set_initial_guesses() method in AviaryProblem class
         # Defines how the problem should build it's initial guesses for load_inputs()
@@ -89,7 +89,7 @@ class HeightEnergyProblemConfigurator(ProblemConfiguratorBase):
         Parameters
         ----------
         aviary_group : AviaryGroup
-            Aviary model that owns this builder.
+            Aviary model that owns this configurator.
 
         Returns
         -------
@@ -110,7 +110,7 @@ class HeightEnergyProblemConfigurator(ProblemConfiguratorBase):
         Parameters
         ----------
         aviary_group : AviaryGroup
-            Aviary model that owns this builder.
+            Aviary model that owns this configurator.
 
         Returns
         -------
@@ -126,7 +126,7 @@ class HeightEnergyProblemConfigurator(ProblemConfiguratorBase):
         Parameters
         ----------
         aviary_group : AviaryGroup
-            Aviary model that owns this builder.
+            Aviary model that owns this configurator.
         """
         takeoff_options = Takeoff(
             airport_altitude=0.0,  # ft
@@ -151,7 +151,7 @@ class HeightEnergyProblemConfigurator(ProblemConfiguratorBase):
         Parameters
         ----------
         aviary_group : AviaryGroup
-            Aviary model that owns this builder.
+            Aviary model that owns this configurator.
         phase_name : str
             Name of the requested phase.
         phase_options : dict
@@ -183,7 +183,7 @@ class HeightEnergyProblemConfigurator(ProblemConfiguratorBase):
         Parameters
         ----------
         aviary_group : AviaryGroup
-            Aviary model that owns this builder.
+            Aviary model that owns this configurator.
         phase_name : str
             Name of the requested phase.
         phase_idx : int
@@ -259,7 +259,7 @@ class HeightEnergyProblemConfigurator(ProblemConfiguratorBase):
         Parameters
         ----------
         aviary_group : AviaryGroup
-            Aviary model that owns this builder.
+            Aviary model that owns this configurator.
         phases : Phase
             Phases to be linked.
         connect_directly : bool
@@ -329,7 +329,7 @@ class HeightEnergyProblemConfigurator(ProblemConfiguratorBase):
         Parameters
         ----------
         aviary_group : AviaryGroup
-            Aviary model that owns this builder.
+            Aviary model that owns this configurator.
         """
         phase_info = aviary_group.phase_info
         all_phases = [name for name in phase_info]
@@ -375,7 +375,7 @@ class HeightEnergyProblemConfigurator(ProblemConfiguratorBase):
         Parameters
         ----------
         aviary_group : AviaryGroup
-            Aviary model that owns this builder.
+            Aviary model that owns this configurator.
         """
         if aviary_group.pre_mission_info['include_takeoff']:
             self._add_post_mission_takeoff_systems(aviary_group)

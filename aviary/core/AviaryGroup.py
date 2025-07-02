@@ -51,9 +51,12 @@ GASP = LegacyCode.GASP
 
 class AviaryGroup(om.Group):
     """
-    A standard OpenMDAO group that handles Aviary's promotions in the configure
-    method. This assures that we only call set_input_defaults on variables
-    that are present in the model.
+    A standard OpenMDAO group where all elements of a given aviary aircraft design and mission are defined.
+    This includes pre_mission, mission, and post_mission analysis. This group also contains methods
+    for loading data from .csv and phase_info files, setting initial values on the group, and connecting
+    all the phases inside the mission analysis to each other.
+    Instantiating multiple AviaryGroups allows for analysis and optimization of multiple aircraft or 
+    one aircraft in multiple missions simultaneously.
     """
 
     def __init__(self, analysis_scheme=AnalysisScheme.COLLOCATION, verbosity=None, **kwargs):
@@ -203,7 +206,6 @@ class AviaryGroup(om.Group):
         # If user did not ask for verbosity override for this method either, use the problem's
         # default verbosity for the rest of the method
         if verbosity is None:
-            verbosity = aviary_inputs.get_val(Settings.VERBOSITY)
             verbosity = self.verbosity
         # Now that the input file has been read, we have the desired verbosity for this
         # run stored in aviary_inputs. Save this to self.

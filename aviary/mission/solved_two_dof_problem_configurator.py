@@ -21,7 +21,7 @@ class SolvedTwoDOFProblemConfigurator(ProblemConfiguratorBase):
         Parameters
         ----------
         aviary_group : AviaryGroup
-            Aviary model that owns this builder.
+            Aviary model that owns this configurator.
         """
         if aviary_group.engine_builders is None:
             aviary_group.engine_builders = [build_engine_deck(aviary_group.aviary_inputs)]
@@ -44,7 +44,7 @@ class SolvedTwoDOFProblemConfigurator(ProblemConfiguratorBase):
         Parameters
         ----------
         aviary_group : AviaryGroup
-            Aviary model that owns this builder.
+            Aviary model that owns this configurator.
 
         Returns
         -------
@@ -60,7 +60,7 @@ class SolvedTwoDOFProblemConfigurator(ProblemConfiguratorBase):
         Parameters
         ----------
         aviary_group : AviaryGroup
-            Aviary model that owns this builder.
+            Aviary model that owns this configurator.
 
         Returns
         -------
@@ -76,7 +76,7 @@ class SolvedTwoDOFProblemConfigurator(ProblemConfiguratorBase):
         Parameters
         ----------
         aviary_group : AviaryGroup
-            Aviary model that owns this builder.
+            Aviary model that owns this configurator.
         """
         pass
 
@@ -89,7 +89,7 @@ class SolvedTwoDOFProblemConfigurator(ProblemConfiguratorBase):
         Parameters
         ----------
         aviary_group : AviaryGroup
-            Aviary model that owns this builder.
+            Aviary model that owns this configurator.
         phase_name : str
             Name of the requested phase.
         phase_options : dict
@@ -119,7 +119,7 @@ class SolvedTwoDOFProblemConfigurator(ProblemConfiguratorBase):
         Parameters
         ----------
         aviary_group : AviaryGroup
-            Aviary model that owns this builder.
+            Aviary model that owns this configurator.
         phase_name : str
             Name of the requested phase.
         phase_idx : int
@@ -199,7 +199,7 @@ class SolvedTwoDOFProblemConfigurator(ProblemConfiguratorBase):
         Parameters
         ----------
         aviary_group : AviaryGroup
-            Aviary model that owns this builder.
+            Aviary model that owns this configurator.
         phases : Phase
             Phases to be linked.
         connect_directly : bool
@@ -257,7 +257,7 @@ class SolvedTwoDOFProblemConfigurator(ProblemConfiguratorBase):
         Parameters
         ----------
         aviary_group : AviaryGroup
-            Aviary model that owns this builder.
+            Aviary model that owns this configurator.
         """
         pass
 
@@ -272,7 +272,7 @@ class SolvedTwoDOFProblemConfigurator(ProblemConfiguratorBase):
         Parameters
         ----------
         aviary_group : AviaryGroup
-            Aviary model that owns this builder.
+            Aviary model that owns this configurator.
         """
         pass
 
@@ -291,7 +291,7 @@ class SolvedTwoDOFProblemConfigurator(ProblemConfiguratorBase):
         Parameters
         ----------
         aviary_group : AviaryGroup
-            Aviary model that owns this builder.
+            Aviary model that owns this configurator.
         phase_name : str
             The name of the phase for which the guesses are being added.
         phase : Phase
