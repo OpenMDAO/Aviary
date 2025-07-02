@@ -1934,6 +1934,7 @@ class AviaryProblem(om.Problem):
             with open('output_list.txt', 'w') as outfile:
                 self.model.list_outputs(out_stream=outfile)
         
+        self.problem_ran_successfully = not failed
 
         if payload_range_bool:
             #Checks to determine if the set gross mass for off design would be greater
@@ -2091,8 +2092,9 @@ class AviaryProblem(om.Problem):
         if phase_info is None:
             #Somewhere between the sizing and off-design self.pre_mission_info gets deleted
             phase_info = self.phase_info
-            phase_info['pre_mission']=self.pre_mission_info
-            phase_info['post_mission']=self.post_mission_info
+            #Bug in MBSA&E where off design missions cannot run with Sandc.
+            # phase_info['pre_mission']=self.pre_mission_info
+            # phase_info['post_mission']=self.post_mission_info
         if mission_range is None:
             # mission range is sliced from a column vector numpy array, i.e. it is a len
             # 1 numpy array
@@ -2131,6 +2133,7 @@ class AviaryProblem(om.Problem):
         prob_alternate.add_post_mission_systems()
         prob_alternate.link_phases()
         prob_alternate.add_driver(optimizer, verbosity=verbosity)
+        prob_alternate.options=self.options
         prob_alternate.driver.options=self.driver.options
         prob_alternate.driver.opt_settings=self.driver.opt_settings
         prob_alternate.add_design_variables()
@@ -2220,6 +2223,9 @@ class AviaryProblem(om.Problem):
 
         if phase_info is None:
             phase_info = self.phase_info
+            #Bug in MBSA&E where off design missions cannot run with Sandc.
+            # phase_info['pre_mission']=self.pre_mission_info
+            # phase_info['post_mission']=self.post_mission_info
         if mission_mass is None:
             # mission mass is sliced from a column vector numpy array, i.e. it is a len 1
             # numpy array
