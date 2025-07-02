@@ -1,7 +1,7 @@
 import numpy as np
 
 import openmdao.api as om
-import openmdao.jax as omj
+
 
 from aviary.subsystems.mass.simple_mass.fuselage import FuselageMassAndCOG
 from aviary.subsystems.mass.simple_mass.wing import WingMassAndCOG
@@ -49,7 +49,6 @@ class MassSummation(om.Group):
             promotes_outputs=['*']
         )
 
-# Horizontal tail only
 class StructureMass(om.JaxExplicitComponent):
     def initialize(self):
         self.options.declare('tail_type', 
