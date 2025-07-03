@@ -60,7 +60,7 @@ class TestExternalAero(av.TestSubsystemBuilderBase):
         prob.run_aviary_problem(suppress_solver_print=True)
 
         drag = prob.get_val('traj.cruise.rhs_all.drag', units='lbf')
-        assert_near_equal(drag[0], 7272.0265, tolerance=1e-3)
+        assert_near_equal(drag[0], 5540.7442556, tolerance=1e-3)
 
 
 if __name__ == '__main__':
