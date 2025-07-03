@@ -22,7 +22,7 @@ from aviary.utils.named_values import get_keys
 
 Debug = True
 
-class FuselageMassAndCOG(om.JaxExplicitComponent):
+class FuselageMass(om.JaxExplicitComponent):
     def initialize(self):
         self.options.declare('num_sections', 
                              types=int, 

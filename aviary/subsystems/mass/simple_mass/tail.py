@@ -21,7 +21,7 @@ from aviary.utils.named_values import get_keys
 
 Debug = True # set to enable printing
 
-class TailMassAndCOG(om.JaxExplicitComponent):
+class TailMass(om.JaxExplicitComponent):
     def initialize(self):
         #self.options['default_shape'] = () # Sets the default shape to scalar
 
