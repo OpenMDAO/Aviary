@@ -267,9 +267,9 @@ class BWBBodyLiftCurveSlope(om.ExplicitComponent):
     def compute(self, inputs, outputs):
         verbosity = self.options[Settings.VERBOSITY]
         mach = inputs[Dynamic.Atmosphere.MACH]
-        if np.any(mach < 0.0) or np.any(mach >= 1.0):
+        if any(x < 0.0 or x >= 1.0 for x in mach.real):
             raise om.AnalysisError('Mach number must be within the range (0, 1).')
-        elif mach > 0.8:
+        elif any(x > 0.8 for x in mach.real):
             if verbosity > Verbosity.BRIEF:
                 print("Mach range should be less or equal to 0.8. You've provided a Mach {mach}.")
         CLALPH_B0 = inputs[Aircraft.Fuselage.LIFT_CURVE_SLOPE_MACH0]
