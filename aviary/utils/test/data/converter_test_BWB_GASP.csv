@@ -16,6 +16,7 @@ aircraft:crew_and_payload:design:num_first_class,11,unitless
 aircraft:crew_and_payload:design:num_passengers,150.0,unitless
 aircraft:crew_and_payload:passenger_mass_with_bags,225.0,lbm
 aircraft:crew_and_payload:passenger_service_mass_per_passenger,6.0,lbm
+aircraft:crew_and_payload:uld_mass_per_passenger,0.0667,lbm
 aircraft:crew_and_payload:water_mass_per_occupant,3.0,lbm
 aircraft:design:cg_delta,0.25,unitless
 aircraft:design:cockpit_control_mass_coefficient,16.5,unitless
@@ -29,6 +30,7 @@ aircraft:design:static_margin,0.05,unitless
 aircraft:design:structural_mass_increment,0.0,lbm
 aircraft:design:supercritical_drag_shift,0.025,unitless
 aircraft:design:type,BWB,unitless
+aircraft:electrical:system_mass_per_passenger,11.45,lbm
 aircraft:engine:additional_mass_fraction,0.04373,unitless
 aircraft:engine:global_throttle,True,unitless
 aircraft:engine:mass_scaler,1,unitless
@@ -69,7 +71,6 @@ aircraft:fuselage:seat_width,21.0,inch
 aircraft:fuselage:tail_fineness,1.75,unitless
 aircraft:fuselage:wetted_area_ratio_aftbody_to_total,0.2,unitless
 aircraft:fuselage:wetted_area_scaler,1.0001,unitless
-aircraft:horizontal_tail:area,0,ft**2
 aircraft:horizontal_tail:aspect_ratio,1.705,unitless
 aircraft:horizontal_tail:mass_coefficient,0.124,unitless
 aircraft:horizontal_tail:moment_ratio,0.5463,unitless
@@ -102,7 +103,6 @@ aircraft:strut:dimensional_location_specified,False,unitless
 aircraft:strut:fuselage_interference_factor,0,unitless
 aircraft:strut:mass_coefficient,0.0,unitless
 aircraft:strut:thickness_to_chord,0.0,unitless
-aircraft:vertical_tail:area,0,ft**2
 aircraft:vertical_tail:aspect_ratio,1.705,unitless
 aircraft:vertical_tail:mass_coefficient,0.119,unitless
 aircraft:vertical_tail:moment_ratio,5.2615,unitless
@@ -167,6 +167,7 @@ mission:summary:fuel_flow_scaler,1.0,unitless
 mission:takeoff:decision_speed_increment,10.0,kn
 mission:takeoff:rotation_speed_increment,5.0,kn
 mission:taxi:duration,0.1677,h
+settings:aerodynamics_method,GASP,unitless
 settings:equations_of_motion,2DOF,unitless
 settings:mass_method,GASP,unitless
 
@@ -189,7 +190,7 @@ INGASP.CLIAB,1984
 INGASP.CMF,15
 INGASP.CMV,0.15
 INGASP.CRWOH,15
-INGASP.CW,,0,0,0,0,0,0,0,0,0,0,0,0,0.0667,11.45,0
+INGASP.CW,,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 INGASP.DCDSE,0.001
 INGASP.DYR,12
 INGASP.EL_FLGC,8

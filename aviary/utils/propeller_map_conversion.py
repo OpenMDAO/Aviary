@@ -1,15 +1,17 @@
 #!/usr/bin/python
 import argparse
+import getpass
+
 from datetime import datetime
 from enum import Enum
 
 import numpy as np
 
 from aviary.api import NamedValues
-from aviary.subsystems.propulsion.utils import PropellerModelVariables, default_propeller_units
 from aviary.utils.conversion_utils import _parse, _read_map, _rep
 from aviary.utils.csv_data_file import write_data_file
 from aviary.utils.functions import get_path
+from aviary.interface.utils.markdown_utils import round_it
 
 
 class PropMapType(Enum):
@@ -19,14 +21,20 @@ class PropMapType(Enum):
         return self.value
 
 
-HELICAL_MACH = PropellerModelVariables.HELICAL_MACH
-MACH = PropellerModelVariables.MACH
-CP = PropellerModelVariables.CP
-CT = PropellerModelVariables.CT
-J = PropellerModelVariables.J
+sig_figs = {
+    'Helical Mach': 6,
+    'Mach': 5,
+    'Power Coefficient': 5,
+    'Advance Ratio': 5,
+    'Thrust Coefficient': 6,
+}
+
+outputs = ['Thrust Coefficient']
 
 
-def PropDataConverter(input_file, output_file, data_format: PropMapType):
+def convert_propeller_map(
+    input_file, output_file, data_format: PropMapType = PropMapType.GASP, round_data=False
+):
     """
     This is a utility class to convert a propeller map file to Aviary format.
     Currently, there is only one option: from GASP format to Aviary format.
@@ -34,36 +42,39 @@ def PropDataConverter(input_file, output_file, data_format: PropMapType):
     aviary convert_prop_table -f GASP input_file output_file.
     """
     timestamp = datetime.now().strftime('%m/%d/%y at %H:%M')
+    user = getpass.getuser()
     comments = []
     data = {}
 
     data_file = get_path(input_file)
 
-    comments.append(f'# created {timestamp}')
-    comments.append(f'# {data_format} propeller map converted from {input_file}')
+    comments.append(f'# created {timestamp} by {user}')
+    comments.append(f'# {data_format}-derived propeller map converted from {data_file.name}')
 
     if data_format is PropMapType.GASP:
         scalars, tables, fields = _read_gasp_propeller(data_file, comments)
 
-        data[J] = tables['thrust_coefficient'][:, 2]
         if scalars['iread'] == 1:
-            data[HELICAL_MACH] = tables['thrust_coefficient'][:, 0]
+            data['Helical Mach'] = tables['thrust_coefficient'][:, 0]
         else:
-            data[MACH] = tables['thrust_coefficient'][:, 0]
-        data[CP] = tables['thrust_coefficient'][:, 1]
-        data[CT] = tables['thrust_coefficient'][:, 3]
+            data['Mach'] = tables['thrust_coefficient'][:, 0]
+        data['Power Coefficient'] = tables['thrust_coefficient'][:, 1]
+        data['Advance Ratio'] = tables['thrust_coefficient'][:, 2]
+        data['Thrust Coefficient'] = tables['thrust_coefficient'][:, 3]
 
         # data needs to be string so column length can be easily found later
         for var in data:
+            if round_data:
+                data[var] = np.array([round_it(val, sig_figs[var]) for val in data[var]])
             data[var] = np.array([str(item) for item in data[var]])
 
     else:
-        quit('Invalid propeller map format provided')
+        raise UserWarning('Invalid propeller map format provided')
 
     # store formatted data into NamedValues object
     write_data = NamedValues()
     for key in data:
-        write_data.set_val(key.value, data[key], default_propeller_units[key])
+        write_data.set_val(key, data[key], 'unitless')
 
     if output_file is None:
         sfx = data_file.suffix
@@ -72,7 +83,7 @@ def PropDataConverter(input_file, output_file, data_format: PropMapType):
         else:
             ext = '.prop'
         output_file = data_file.stem + ext
-    write_data_file(output_file, write_data, comments, include_timestamp=False)
+    write_data_file(output_file, write_data, outputs, comments, include_timestamp=False)
 
 
 def _read_gasp_propeller(fp, cmts):
@@ -80,7 +91,7 @@ def _read_gasp_propeller(fp, cmts):
     Data table is returned as a dictionary.
     The table consists of both the independent variables and the dependent variable for
     the corresponding field. The table is a "tidy format" 2D array where the first three
-    columns are the independent varaiables (Advance ratio, Mach number, and power coefficient)
+    columns are the independent variables (Advance ratio, Mach number, and power coefficient)
     and the final column is the dependent variable thrust coefficient.
     """
     with open(fp, 'r') as f:
@@ -90,10 +101,8 @@ def _read_gasp_propeller(fp, cmts):
         scalars = _read_pm_header(f)
         if scalars['iread'] == 1:
             cmts.append('# CT = f(Helical Mach at 75% Radius, Adv ratio & CP)')
-            cmts.append('# mach_type = helical_mach')
         elif scalars['iread'] == 2:
             cmts.append('Propfan format - CT = f(Mach, Adv Ratio & CP)')
-            cmts.append('# mach_type = mach')
         else:
             raise RuntimeError(f'IREAD = 1 or 2 expected, got {scalars["iread"]}')
 
@@ -154,20 +163,25 @@ def _setup_PMC_parser(parser):
         nargs='?',
         help='path to file where new converted data will be written',
     )
-    parser.add_argument(
-        '-f',
-        '--data_format',
-        type=PropMapType,
-        choices=list(PropMapType),
-        nargs='?',
-        default='GASP',
-        help='data format used by input_file',
-    )
+    # currently removing as there is only one allowed map type at the moment
+    # parser.add_argument(
+    #     '-f',
+    #     '--data_format',
+    #     type=PropMapType,
+    #     choices=list(PropMapType),
+    #     nargs='?',
+    #     default='GASP',
+    #     help='data format used by input_file',
+    # )
+    parser.add_argument('--round', action='store_true', help='round data to improve readability')
 
 
 def _exec_PMC(args, user_args):
-    PropDataConverter(
-        input_file=args.input_file, output_file=args.output_file, data_format=args.data_format
+    convert_propeller_map(
+        input_file=args.input_file,
+        output_file=args.output_file,
+        # data_format=args.data_format,
+        round_data=args.round,
     )
 
 

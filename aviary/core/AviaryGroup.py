@@ -104,10 +104,10 @@ class AviaryGroup(om.Group):
             # in the state input component. Since this solver can cause some
             # numerical problems, and can slow things down, we need to move it down
             # into the state interp component.
-            # TODO: Future updates to dymos may make this unneccesary.
+            # TODO: Future updates to dymos may make this unnecessary.
             for phase in self.traj.phases.system_iter(recurse=False):
-                # Don't move the solvers if we are using solve segements.
-                if phase_info[phase.name]['user_options'].get('solve_for_distance'):
+                # Don't move the solvers if we are using solve segments.
+                if phase_info[phase.name]['user_options'].get('distance_solve_segments'):
                     continue
 
                 phase.nonlinear_solver = om.NonlinearRunOnce()

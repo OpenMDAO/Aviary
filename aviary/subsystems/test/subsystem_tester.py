@@ -18,7 +18,7 @@ class TestSubsystemBuilderBase(unittest.TestCase):
     @staticmethod
     def import_builder(path_to_builder: str, base_package='aviary.examples.external_subsystems'):
         """
-        Import a subsytem builder.
+        Import a subsystem builder.
 
         This is intended to be used with skipIfMissingDependencies
         """
@@ -59,11 +59,13 @@ class TestSubsystemBuilderBase(unittest.TestCase):
         for var in linked_variables:
             self.assertIsInstance(var, str)
 
-    def test_get_bus_variables(self):
-        bus_variables = self.subsystem_builder.get_bus_variables()
+    def test_get_pre_mission_bus_variables(self):
+        bus_variables = self.subsystem_builder.get_pre_mission_bus_variables()
 
         # Check that a dictionary is returned
-        self.assertIsInstance(bus_variables, dict, 'get_bus_variables should return a dictionary')
+        self.assertIsInstance(
+            bus_variables, dict, 'get_pre_mission_bus_variables should return a dictionary'
+        )
 
         for name, values in bus_variables.items():
             # Check that the bus_variable has the required keys
@@ -100,11 +102,13 @@ class TestSubsystemBuilderBase(unittest.TestCase):
                 msg='The returned object from `build_pre_mission` is not an OpenMDAO System.',
             )
 
-    def test_build_mission(self):
+    def test_build_mission(self, **kwargs):
         if not hasattr(self, 'aviary_values'):
             self.aviary_values = AviaryValues()
         # Test that the method returns an OpenMDAO System object
-        mission_sys = self.subsystem_builder.build_mission(10, aviary_inputs=self.aviary_values)
+        mission_sys = self.subsystem_builder.build_mission(
+            10, aviary_inputs=self.aviary_values, **kwargs
+        )
         if mission_sys is not None:
             self.assertIsInstance(
                 mission_sys, System, 'The method should return an OpenMDAO System object.'
@@ -167,13 +171,13 @@ class TestSubsystemBuilderBase(unittest.TestCase):
                 "The dictionaries returned by get_design_vars() should have an 'upper' key",
             )
 
-    def test_get_parameters(self):
+    def test_get_parameters(self, **kwargs):
         if not hasattr(self, 'aviary_values'):
             self.aviary_values = AviaryValues()
 
         # Verify that the method returns a dictionary
         parameters = self.subsystem_builder.get_parameters(
-            aviary_inputs=self.aviary_values, phase_info={}
+            aviary_inputs=self.aviary_values, **kwargs
         )
         self.assertIsInstance(parameters, dict, 'get_parameters() should return a dictionary')
 
@@ -255,7 +259,11 @@ class TestSubsystemBuilderBase(unittest.TestCase):
         # Perform post-mission operations
         if not hasattr(self, 'aviary_values'):
             self.aviary_values = AviaryValues()
-        post_mission_sys = self.subsystem_builder.build_post_mission(self.aviary_values)
+        phase_info = {}
+        phase_mission_bus_lengths = {'foo': 10, 'bar': 11}
+        post_mission_sys = self.subsystem_builder.build_post_mission(
+            self.aviary_values, phase_info, phase_mission_bus_lengths
+        )
 
         if post_mission_sys is not None:
             # Check that post_mission_sys is an OpenMDAO system
@@ -342,12 +350,12 @@ class TestSubsystemBuilderBase(unittest.TestCase):
                 mass_var_exists, f"Mass variable '{name}' not found in the pre-mission model."
             )
 
-    def test_check_parameters(self):
+    def test_check_parameters(self, **kwargs):
         if not hasattr(self, 'aviary_values'):
             self.aviary_values = AviaryValues()
 
         parameters = self.subsystem_builder.get_parameters(
-            aviary_inputs=self.aviary_values, phase_info={}
+            aviary_inputs=self.aviary_values, **kwargs
         )
 
         mission_sys = self.subsystem_builder.build_mission(

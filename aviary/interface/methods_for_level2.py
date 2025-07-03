@@ -19,7 +19,6 @@ from aviary.core.AviaryGroup import AviaryGroup
 from aviary.core.PostMissionGroup import PostMissionGroup
 from aviary.core.PreMissionGroup import PreMissionGroup
 from aviary.interface.default_phase_info.two_dof_fiti import add_default_sgm_args
-from aviary.interface.utils.check_phase_info import check_phase_info
 from aviary.mission.gasp_based.phases.time_integration_traj import FlexibleTraj
 from aviary.mission.height_energy_problem_configurator import HeightEnergyProblemConfigurator
 from aviary.mission.solved_two_dof_problem_configurator import SolvedTwoDOFProblemConfigurator
@@ -87,7 +86,13 @@ class AviaryProblem(om.Problem):
         super().__init__(**kwargs)
 
         self.timestamp = datetime.now()
+
+        # If verbosity is set to anything but None, this defines how warnings are formatted for the
+        # whole problem - warning format won't be updated if user requests a different verbosity
+        # level for a specific method
         self.verbosity = verbosity
+        set_warning_format(verbosity)
+
         self.model = AviaryGroup()
         self.pre_mission = PreMissionGroup()
         self.post_mission = PostMissionGroup()
@@ -100,7 +105,7 @@ class AviaryProblem(om.Problem):
 
         self.regular_phases = []
         self.reserve_phases = []
-        self.builder = None
+        self.configurator = None
 
     def load_inputs(
         self,
@@ -137,11 +142,17 @@ class AviaryProblem(om.Problem):
             aircraft_data, meta_data=meta_data, verbosity=verbosity
         )
 
-        # update verbosity now that we have read the input data
-        self.verbosity = aviary_inputs.get_val(Settings.VERBOSITY)
-        # if user did not ask for verbosity override for this method, use value from data
+        # Update default verbosity now that we have read the input data, if a global verbosity
+        # override was not requested
+        if self.verbosity is None:
+            self.verbosity = aviary_inputs.get_val(Settings.VERBOSITY)
+            # set default warning format for the rest of the problem
+            set_warning_format(self.verbosity)
+
+        # If user did not ask for verbosity override for this method either, use the problem's
+        # default verbosity for the rest of the method
         if verbosity is None:
-            verbosity = aviary_inputs.get_val(Settings.VERBOSITY)
+            verbosity = self.verbosity
 
         # Now that the input file has been read, we have the desired verbosity for this
         # run stored in aviary_inputs. Save this to self.
@@ -157,14 +168,14 @@ class AviaryProblem(om.Problem):
 
         # Determine which problem configurator to use based on mission_method
         if mission_method is HEIGHT_ENERGY:
-            self.builder = HeightEnergyProblemConfigurator()
+            self.configurator = HeightEnergyProblemConfigurator()
         elif mission_method is TWO_DEGREES_OF_FREEDOM:
-            self.builder = TwoDOFProblemConfigurator()
+            self.configurator = TwoDOFProblemConfigurator()
         elif mission_method is SOLVED_2DOF:
-            self.builder = SolvedTwoDOFProblemConfigurator()
+            self.configurator = SolvedTwoDOFProblemConfigurator()
         elif mission_method is CUSTOM:
             if problem_configurator:
-                self.builder = problem_configurator()
+                self.configurator = problem_configurator()
                 # TODO: make draft / example custom builder
             else:
                 raise ValueError(
@@ -203,7 +214,7 @@ class AviaryProblem(om.Problem):
                 if verbosity >= Verbosity.BRIEF:
                     print('Using outputted phase_info from current working directory')
             else:
-                phase_info = self.builder.get_default_phase_info(self)
+                phase_info = self.configurator.get_default_phase_info(self)
 
                 if verbosity is not None and verbosity >= Verbosity.BRIEF:
                     print(
@@ -234,7 +245,7 @@ class AviaryProblem(om.Problem):
 
         self.problem_type = aviary_inputs.get_val(Settings.PROBLEM_TYPE)
 
-        self.builder.initial_guesses(self)
+        self.configurator.initial_guesses(self)
         # This function sets all the following defaults if they were not already set
         # self.engine_builders, self.pre_mission_info, self_post_mission_info
         # self.require_range_residual, self.target_range
@@ -259,21 +270,20 @@ class AviaryProblem(om.Problem):
         aviary_inputs = self.aviary_inputs
         # Target_distance verification for all phases
         # Checks to make sure target_distance is positive,
-        for idx, phase_name in enumerate(self.phase_info):
-            if 'user_options' in self.phase_info[phase_name]:
-                if 'target_distance' in self.phase_info[phase_name]['user_options']:
-                    target_distance = self.phase_info[phase_name]['user_options']['target_distance']
-                    if target_distance[0] <= 0:
-                        raise ValueError(
-                            f'Invalid target_distance in [{phase_name}].[user_options]. '
-                            f'Current (value: {target_distance[0]}), '
-                            f'(units: {target_distance[1]}) <= 0'
-                        )
+        for phase_name, phase in self.phase_info.items():
+            if 'user_options' in phase:
+                target_distance = phase['user_options'].get('target_distance', (None, 'm'))
+                if target_distance[0] is not None and target_distance[0] <= 0:
+                    raise ValueError(
+                        f'Invalid target_distance in [{phase_name}].[user_options]. '
+                        f'Current (value: {target_distance[0]}), '
+                        f'(units: {target_distance[1]}) <= 0'
+                    )
 
-        # Checks to make sure target_duration is positive,
+        # Checks to make sure time_duration is positive,
         # Sets duration_bounds, initial_guesses, and fixed_duration
-        for idx, phase_name in enumerate(self.phase_info):
-            if 'user_options' in self.phase_info[phase_name]:
+        for phase_name, phase in self.phase_info.items():
+            if 'user_options' in phase:
                 analytic = False
                 if (
                     self.analysis_scheme is AnalysisScheme.COLLOCATION
@@ -281,54 +291,48 @@ class AviaryProblem(om.Problem):
                 ):
                     try:
                         # if the user provided an option, use it
-                        analytic = self.phase_info[phase_name]['user_options']['analytic']
+                        analytic = phase['user_options']['analytic']
                     except KeyError:
                         # if it isn't specified, only the default 2DOF cruise for
                         # collocation is analytic
                         if 'cruise' in phase_name:
-                            analytic = self.phase_info[phase_name]['user_options']['analytic'] = (
-                                True
-                            )
+                            analytic = phase['user_options']['analytic'] = True
                         else:
-                            analytic = self.phase_info[phase_name]['user_options']['analytic'] = (
-                                False
-                            )
+                            analytic = phase['user_options']['analytic'] = False
 
-                if 'target_duration' in self.phase_info[phase_name]['user_options']:
-                    target_duration = self.phase_info[phase_name]['user_options']['target_duration']
-                    if target_duration[0] <= 0:
+                if 'time_duration' in phase['user_options']:
+                    time_duration, units = phase['user_options']['time_duration']
+
+                    if time_duration is None:
+                        continue
+
+                    if time_duration <= 0:
                         raise ValueError(
-                            f'Invalid target_duration in phase_info[{phase_name}]'
-                            f'[user_options]. Current (value: {target_duration[0]}), '
-                            f'(units: {target_duration[1]}) <= 0")'
+                            f'Invalid time_duration in phase_info[{phase_name}]'
+                            f'[user_options]. Current (value: {time_duration[0]}), '
+                            f'(units: {time_duration[1]}) <= 0")'
                         )
 
-                    # Only applies to non-analytic phases (all HE and most 2DOF)
-                    if not analytic:
-                        # Set duration_bounds and initial_guesses for time:
-                        self.phase_info[phase_name]['user_options'].update(
-                            {
-                                'duration_bounds': (
-                                    (target_duration[0], target_duration[0]),
-                                    target_duration[1],
-                                )
-                            }
-                        )
-                        self.phase_info[phase_name].update(
-                            {
-                                'initial_guesses': {
-                                    'time': (
-                                        (target_duration[0], target_duration[0]),
-                                        target_duration[1],
-                                    )
-                                }
-                            }
-                        )
-                        # Set Fixed_duration to true:
-                        self.phase_info[phase_name]['user_options'].update({'fix_duration': True})
+                    if 'initial_guesses' not in phase:
+                        phase['initial_guesses'] = {}
 
-        if self.analysis_scheme is AnalysisScheme.COLLOCATION:
-            check_phase_info(self.phase_info, self.mission_method)
+                    guesses = phase['initial_guesses']
+                    if 'time' in guesses:
+                        time_guess, units_guess = guesses['time']
+
+                        if time_guess[1] is not None:
+                            msg = f'Duration initial guess of {time_guess[1]} {units_guess} '
+                            msg += f'specified on fixed duration phase for phase {phase_name}. '
+                            msg += f'Using fixed value of {time_duration} {units} instead.'
+                            print(msg)
+
+                        time_duration_conv = wrapped_convert_units(
+                            (time_duration, units), units_guess
+                        )
+                        guesses['time'] = ((time_guess[0], time_duration_conv), units_guess)
+
+                    else:
+                        guesses['time'] = ((None, time_duration), units)
 
         for phase_name in self.phase_info:
             for external_subsystem in self.phase_info[phase_name]['external_subsystems']:
@@ -347,10 +351,25 @@ class AviaryProblem(om.Problem):
         ## Set Up Core Subsystems ##
         prop = CorePropulsionBuilder('core_propulsion', engine_models=self.engine_builders)
         mass = CoreMassBuilder('core_mass', code_origin=self.mass_method)
-        aero = CoreAerodynamicsBuilder('core_aerodynamics', code_origin=self.aero_method)
 
-        # TODO These values are currently hardcoded, in future should come from user?
-        code_origin_to_prioritize = None
+        # If all phases ask for tabular aero, we can skip pre-mission. Check phase_info
+        tabular = False
+        for phase in self.phase_info:
+            if phase not in ('pre_mission', 'post_mission'):
+                try:
+                    if (
+                        'tabular'
+                        in self.phase_info[phase]['subsystem_options']['core_aerodynamics'][
+                            'method'
+                        ]
+                    ):
+                        tabular = True
+                except KeyError:
+                    tabular = False
+
+        aero = CoreAerodynamicsBuilder(
+            'core_aerodynamics', code_origin=self.aero_method, tabular=tabular
+        )
 
         # which geometry methods should be used?
         geom_code_origin = None
@@ -363,7 +382,7 @@ class AviaryProblem(om.Problem):
             geom_code_origin = (FLOPS, GASP)
 
         # which geometry method gets prioritized in case of conflicting outputs
-        code_origin_to_prioritize = self.builder.get_code_origin(self)
+        code_origin_to_prioritize = self.configurator.get_code_origin(self)
 
         geom = CoreGeometryBuilder(
             'core_geometry',
@@ -515,7 +534,7 @@ class AviaryProblem(om.Problem):
         )
 
         if self.pre_mission_info['include_takeoff']:
-            self.builder.add_takeoff_systems(self)
+            self.configurator.add_takeoff_systems(self)
 
     def _add_premission_external_subsystems(self):
         """
@@ -568,19 +587,7 @@ class AviaryProblem(om.Problem):
             )
 
     def _get_phase(self, phase_name, phase_idx):
-        base_phase_options = self.phase_info[phase_name]
-
-        # We need to exclude some things from the phase_options that we pass down
-        # to the phases. Instead of "popping" keys, we just create new outer
-        # dictionaries.
-
-        phase_options = {}
-        for key, val in base_phase_options.items():
-            phase_options[key] = val
-
-        phase_options['user_options'] = {}
-        for key, val in base_phase_options['user_options'].items():
-            phase_options['user_options'][key] = val
+        phase_options = self.phase_info[phase_name]
 
         # TODO optionally accept which subsystems to load from phase_info
         subsystems = self.core_subsystems
@@ -589,7 +596,7 @@ class AviaryProblem(om.Problem):
             subsystems['propulsion'],
         ]
 
-        phase_builder = self.builder.get_phase_builder(self, phase_name, phase_options)
+        phase_builder = self.configurator.get_phase_builder(self, phase_name, phase_options)
 
         phase_object = phase_builder.from_phase_info(
             phase_name,
@@ -619,10 +626,12 @@ class AviaryProblem(om.Problem):
             for control_name, control_dict in control_dicts.items():
                 phase.add_control(control_name, **control_dict)
 
-        user_options = AviaryValues(phase_options.get('user_options', ()))
+        # This fills in all defaults from the phase_builders user_options.
+        full_options = phase_object.user_options.to_phase_info()
+        self.phase_info[phase_name]['user_options'] = full_options
 
         # TODO: Should some of this stuff be moved into the phase builder?
-        self.builder.set_phase_options(self, phase_name, phase_idx, phase, user_options)
+        self.configurator.set_phase_options(self, phase_name, phase_idx, phase, full_options)
 
         return phase
 
@@ -731,6 +740,17 @@ class AviaryProblem(om.Problem):
                 timeseries_to_add = subsystem.get_outputs()
                 for timeseries in timeseries_to_add:
                     phase.add_timeseries_output(timeseries)
+                mbvars = subsystem.get_post_mission_bus_variables(
+                    self.aviary_inputs, self.phase_info
+                )
+                if mbvars:
+                    mbvars_this_phase = mbvars.get(phase_name, None)
+                    if mbvars_this_phase:
+                        timeseries_to_add = mbvars_this_phase.keys()
+                        for timeseries in timeseries_to_add:
+                            phase.add_timeseries_output(
+                                timeseries, timeseries='mission_bus_variables'
+                            )
 
         if self.analysis_scheme is AnalysisScheme.COLLOCATION:
             self.phase_objects = []
@@ -745,10 +765,18 @@ class AviaryProblem(om.Problem):
             all_subsystems = self._get_all_subsystems(
                 self.phase_info[phase_name]['external_subsystems']
             )
+
+            subsystem_options = phase_info[phase_name].get('subsystem_options', {})
+
             for subsystem in all_subsystems:
+                if subsystem.name in subsystem_options:
+                    kwargs = subsystem_options[subsystem.name]
+                else:
+                    kwargs = {}
                 parameter_dict = subsystem.get_parameters(
                     phase_info=self.phase_info[phase_name],
                     aviary_inputs=self.aviary_inputs,
+                    **kwargs,
                 )
                 for parameter in parameter_dict:
                     external_parameters[phase_name][parameter] = parameter_dict[parameter]
@@ -766,7 +794,15 @@ class AviaryProblem(om.Problem):
 
         return traj
 
-    def add_post_mission_systems(self, include_landing=True, verbosity=None):
+    def _get_phase_mission_bus_lengths(self):
+        phase_mission_bus_lengths = {}
+        for phase_name, phase in self.traj._phases.items():
+            phase_mission_bus_lengths[phase_name] = phase._timeseries['mission_bus_variables'][
+                'transcription'
+            ].grid_data.subset_num_nodes['all']
+        return phase_mission_bus_lengths
+
+    def add_post_mission_systems(self, verbosity=None):
         """
         Add post-mission systems to the aircraft model. This is akin to the pre-mission
         group or the "premission_systems", but occurs after the mission in the execution
@@ -804,11 +840,16 @@ class AviaryProblem(om.Problem):
             promotes_outputs=['*'],
         )
 
-        self.builder.add_post_mission_systems(self, include_landing)
+        self.configurator.add_post_mission_systems(self)
 
         # Add all post-mission external subsystems.
+        phase_mission_bus_lengths = self._get_phase_mission_bus_lengths()
         for external_subsystem in self.post_mission_info['external_subsystems']:
-            subsystem_postmission = external_subsystem.build_post_mission(self.aviary_inputs)
+            subsystem_postmission = external_subsystem.build_post_mission(
+                aviary_inputs=self.aviary_inputs,
+                phase_info=self.phase_info,
+                phase_mission_bus_lengths=phase_mission_bus_lengths,
+            )
 
             if subsystem_postmission is not None:
                 self.post_mission.add_subsystem(external_subsystem.name, subsystem_postmission)
@@ -935,11 +976,11 @@ class AviaryProblem(om.Problem):
         # distance (or time) is measured from the start of this phase to the end
         # of this phase
         for phase_name in self.phase_info:
-            if 'target_distance' in self.phase_info[phase_name]['user_options']:
-                target_distance = wrapped_convert_units(
-                    self.phase_info[phase_name]['user_options']['target_distance'],
-                    'nmi',
-                )
+            user_options = self.phase_info[phase_name]['user_options']
+
+            target_distance = user_options.get('target_distance', (None, 'nmi'))
+            target_distance = wrapped_convert_units(target_distance, 'nmi')
+            if target_distance is not None:
                 self.post_mission.add_subsystem(
                     f'{phase_name}_distance_constraint',
                     om.ExecComp(
@@ -967,19 +1008,17 @@ class AviaryProblem(om.Problem):
                 )
 
             # this is only used for analytic phases with a target duration
-            if 'target_duration' in self.phase_info[phase_name]['user_options'] and self.phase_info[
-                phase_name
-            ]['user_options'].get('analytic', False):
-                target_duration = wrapped_convert_units(
-                    self.phase_info[phase_name]['user_options']['target_duration'],
-                    'min',
-                )
+            time_duration = user_options.get('time_duration', (None, 'min'))
+            time_duration = wrapped_convert_units(time_duration, 'min')
+            analytic = user_options.get('analytic', False)
+
+            if analytic and time_duration is not None:
                 self.post_mission.add_subsystem(
                     f'{phase_name}_duration_constraint',
                     om.ExecComp(
-                        'duration_resid = target_duration - (final_time - initial_time)',
+                        'duration_resid = time_duration - (final_time - initial_time)',
                         duration_resid={'units': 'min'},
-                        target_duration={'val': target_duration, 'units': 'min'},
+                        time_duration={'val': time_duration, 'units': 'min'},
                         final_time={'units': 'min'},
                         initial_time={'units': 'min'},
                     ),
@@ -1123,7 +1162,11 @@ class AviaryProblem(om.Problem):
             if len(phases_to_link) > 1:  # TODO: hack
                 self.traj.link_phases(phases=phases_to_link, vars=[var], connected=True)
 
-        self.builder.link_phases(self, phases, connect_directly=true_unless_mpi)
+        self.configurator.link_phases(self, phases, connect_directly=true_unless_mpi)
+
+        self._connect_mission_bus_variables()
+
+        self.configurator.check_trajectory(self)
 
     def add_driver(self, optimizer=None, use_coloring=None, max_iter=50, verbosity=None):
         """
@@ -1465,7 +1508,7 @@ class AviaryProblem(om.Problem):
         else:
             verbosity = self.verbosity  # defaults to BRIEF
 
-        self.builder.add_objective(self)
+        self.configurator.add_objective(self)
 
         self.model.add_subsystem(
             'fuel_obj',
@@ -1566,7 +1609,7 @@ class AviaryProblem(om.Problem):
         base_phases = list(self.phase_info.keys())
 
         for external_subsystem in all_subsystems:
-            bus_variables = external_subsystem.get_bus_variables()
+            bus_variables = external_subsystem.get_pre_mission_bus_variables(self.aviary_inputs)
             if bus_variables is not None:
                 for bus_variable, variable_data in bus_variables.items():
                     mission_variable_name = variable_data['mission_name']
@@ -1626,12 +1669,35 @@ class AviaryProblem(om.Problem):
                                     'traj.parameters:' + mission_var_name,
                                 )
 
-                        if 'post_mission_name' in variable_data:
+                    if 'post_mission_name' in variable_data:
+                        # check if post_mission_variable_name is a list
+                        post_mission_variable_name = variable_data['post_mission_name']
+                        if not isinstance(post_mission_variable_name, list):
+                            post_mission_variable_name = [post_mission_variable_name]
+
+                        for post_mission_var_name in post_mission_variable_name:
                             self.model.connect(
-                                f'pre_mission.{external_subsystem.name}.{bus_variable}',
-                                f'post_mission.{external_subsystem.name}.'
-                                f'{variable_data["post_mission_name"]}',
+                                f'pre_mission.{bus_variable}',
+                                post_mission_var_name,
                             )
+
+    def _connect_mission_bus_variables(self):
+        all_subsystems = self._get_all_subsystems()
+
+        # Loop through all external subsystems.
+        for external_subsystem in all_subsystems:
+            for phase_name, var_mapping in external_subsystem.get_post_mission_bus_variables(
+                aviary_inputs=self.aviary_inputs, phase_info=self.phase_info
+            ).items():
+                for mission_variable_name, post_mission_variable_names in var_mapping.items():
+                    if not isinstance(post_mission_variable_names, list):
+                        post_mission_variable_names = [post_mission_variable_names]
+
+                    for post_mission_var_name in post_mission_variable_names:
+                        # Remove possible prefix before a `.`, like <external_subsystem_name>.<var_name>"
+                        mvn_basename = mission_variable_name.rpartition('.')[-1]
+                        src_name = f'traj.{phase_name}.mission_bus_variables.{mvn_basename}'
+                        self.model.connect(src_name, post_mission_var_name)
 
     def setup(self, **kwargs):
         """Lightly wrapped setup() method for the problem."""
@@ -1656,17 +1722,16 @@ class AviaryProblem(om.Problem):
 
     def set_initial_guesses(self, parent_prob=None, parent_prefix='', verbosity=None):
         """
-        Call `set_val` on the trajectory for states and controls to seed
-        the problem with reasonable initial guesses. This is especially
-        important for collocation methods.
-        This method first identifies all phases in the trajectory then
-        loops over each phase. Specific initial guesses
-        are added depending on the phase and mission method. Cruise is treated
-        as a special phase for GASP-based missions because it is an AnalyticPhase
-        in Dymos. For this phase, we handle the initial guesses first separately
-        and continue to the next phase after that. For other phases, we set the initial
-        guesses for states and controls according to the information available
-        in the 'initial_guesses' attribute of the phase.
+        Call `set_val` on the trajectory for states and controls to seed the problem with
+        reasonable initial guesses. This is especially important for collocation methods.
+
+        This method first identifies all phases in the trajectory then loops over each phase.
+        Specific initial guesses are added depending on the phase and mission method. Cruise is
+        treated as a special phase for GASP-based missions because it is an AnalyticPhase in
+        Dymos. For this phase, we handle the initial guesses first separately and continue to the
+        next phase after that. For other phases, we set the initial guesses for states and
+        controls according to the information available in the 'initial_guesses' attribute of the
+        phase.
         """
         # `self.verbosity` is "true" verbosity for entire run. `verbosity` is verbosity
         # override for just this method
@@ -1704,6 +1769,12 @@ class AviaryProblem(om.Problem):
         # Loop over each phase and set initial guesses for the state and control
         # variables
         for idx, (phase_name, phase) in enumerate(phase_items):
+            # TODO: This will be uncommented when an openmdao bug is fixed.
+            # We are using a workaround for now.
+            # if not phase._is_local:
+            #     # Don't set anything if phase is not on this proc.
+            #     continue
+
             if self.mission_method is SOLVED_2DOF:
                 self.phase_objects[idx].apply_initial_guesses(self, 'traj', phase)
                 if (
@@ -1722,8 +1793,10 @@ class AviaryProblem(om.Problem):
             # Add subsystem guesses
             self._add_subsystem_guesses(phase_name, phase, target_prob, parent_prefix)
 
-            # Set initial guesses for states and controls for each phase
-            self.builder.add_guesses(self, phase_name, phase, guesses, target_prob, parent_prefix)
+            # Set initial guesses for states, controls and time for each phase.
+            self.configurator.set_phase_initial_guesses(
+                self, phase_name, phase, guesses, target_prob, parent_prefix
+            )
 
     def _process_guess_var(self, val, key, phase):
         """
@@ -2652,3 +2725,37 @@ def _load_off_design(
     # Load inputs
     prob.load_inputs(prob.aviary_inputs, phase_info)
     return prob
+
+
+def set_warning_format(verbosity):
+    # if verbosity not set / not known yet, default to most simple warning format rather than no
+    # warnings at all
+    if verbosity is None:
+        verbosity = Verbosity.BRIEF
+
+    # Reset all warning filters
+    warnings.resetwarnings()
+
+    # NOTE identity comparison is preferred for Enum but here verbosity is often an int, so we need
+    # an equality comparison
+    if verbosity == Verbosity.QUIET:
+        # Suppress all warnings
+        warnings.filterwarnings('ignore')
+
+    elif verbosity == Verbosity.BRIEF:
+
+        def simplified_warning(message, category, filename, lineno, line=None):
+            return f'Warning: {message}\n\n'
+
+        warnings.formatwarning = simplified_warning
+
+    elif verbosity == Verbosity.VERBOSE:
+
+        def simplified_warning(message, category, filename, lineno, line=None):
+            return f'{category.__name__}: {message}\n\n'
+
+        warnings.formatwarning = simplified_warning
+
+    else:  # DEBUG
+        # use the default warning formatting
+        warnings.filterwarnings('default')

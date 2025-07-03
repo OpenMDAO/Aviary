@@ -63,7 +63,6 @@ aircraft:fuselage:seat_pitch,29.0,inch
 aircraft:fuselage:seat_width,20.2,inch
 aircraft:fuselage:tail_fineness,3.0,unitless
 aircraft:fuselage:wetted_area,4000.0,ft**2
-aircraft:horizontal_tail:area,0,ft**2
 aircraft:horizontal_tail:aspect_ratio,4.75,unitless
 aircraft:horizontal_tail:form_factor,1.25,unitless
 aircraft:horizontal_tail:mass_coefficient,0.232,unitless
@@ -94,7 +93,6 @@ aircraft:strut:dimensional_location_specified,False,unitless
 aircraft:strut:fuselage_interference_factor,0.0,unitless
 aircraft:strut:mass_coefficient,0.0,unitless
 aircraft:strut:thickness_to_chord,0.0,unitless
-aircraft:vertical_tail:area,0,ft**2
 aircraft:vertical_tail:aspect_ratio,1.67,unitless
 aircraft:vertical_tail:form_factor,1.25,unitless
 aircraft:vertical_tail:mass_coefficient,0.289,unitless
@@ -143,7 +141,7 @@ aircraft:wing:sweep,25.0,deg
 aircraft:wing:taper_ratio,0.33,unitless
 aircraft:wing:thickness_to_chord_root,0.15,unitless
 aircraft:wing:thickness_to_chord_tip,0.12,unitless
-aircraft:wing:vertical_mount_location,0.0,unitless 
+aircraft:wing:vertical_mount_location,0.0,unitless
 aircraft:wing:zero_lift_angle,-1.2,deg
 mission:design:cruise_altitude,37500.0,ft
 mission:design:gross_mass,175400.0,lbm
@@ -161,6 +159,7 @@ mission:summary:fuel_flow_scaler,1.0,unitless
 mission:takeoff:decision_speed_increment,10.0,kn
 mission:takeoff:rotation_speed_increment,5.0,kn
 mission:taxi:duration,0.1677,h
+settings:aerodynamics_method,GASP
 settings:equations_of_motion,2DOF
 settings:mass_method,GASP
 

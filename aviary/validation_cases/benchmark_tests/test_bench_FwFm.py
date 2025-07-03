@@ -15,10 +15,11 @@ except ImportError:
     PETScVector = None
 
 
+@use_tempdirs
 class ProblemPhaseTestCase(unittest.TestCase):
     """
     Setup of a large single aisle commercial transport aircraft using
-    FLOPS mass method and HEIGHT_ENERGY mission method. Expected outputs based
+    FLOPS mass and aero method and HEIGHT_ENERGY mission method. Expected outputs based
     on 'models/test_aircraft/aircraft_for_bench_FwFm.csv' model.
     """
 
@@ -34,11 +35,11 @@ class ProblemPhaseTestCase(unittest.TestCase):
                 [793.22306972], [845.99999224], [845.99999224], [966.85375884], [1133.60729014],
                 [1186.38421266], [1186.38421266], [1279.53480393], [1408.06360758], [1448.74253449],
                 [1448.74253449], [1492.50521853], [1552.88879042], [1571.99998447], [1571.99998447],
-                [10224.87383109], [22164.07366288], [25942.78958866], [25942.78958866], 
-                [26009.11685074], [26100.63493484], [26129.60009555], [26129.60009555], 
-                [26265.05921709], [26451.96515722], [26511.12024823], [26511.12024823], 
-                [26672.16774132], [26894.38041154], [26964.7099619], [26964.7099619], 
-                [27100.16908344], [27287.07502357], [27346.23011458], [27346.23011458], 
+                [10224.87383109], [22164.07366288], [25942.78958866], [25942.78958866],
+                [26009.11685074], [26100.63493484], [26129.60009555], [26129.60009555],
+                [26265.05921709], [26451.96515722], [26511.12024823], [26511.12024823],
+                [26672.16774132], [26894.38041154], [26964.7099619], [26964.7099619],
+                [27100.16908344], [27287.07502357], [27346.23011458], [27346.23011458],
                 [27412.55737667], [27504.07546076], [27533.04062147]
             ]
         )
@@ -114,79 +115,67 @@ class ProblemPhaseTestCase(unittest.TestCase):
             'climb': {
                 'subsystem_options': {'core_aerodynamics': {'method': 'computed'}},
                 'user_options': {
-                    'fix_initial': False,
-                    'input_initial': True,
-                    'optimize_mach': True,
-                    'optimize_altitude': True,
-                    'use_polynomial_control': False,
                     'num_segments': 6,
                     'order': 3,
-                    'solve_for_distance': False,
-                    'initial_mach': (0.3, 'unitless'),
-                    'final_mach': (0.79, 'unitless'),
                     'mach_bounds': ((0.1, 0.8), 'unitless'),
-                    'initial_altitude': (35.0, 'ft'),
-                    'final_altitude': (35000.0, 'ft'),
+                    'mach_optimize': True,
                     'altitude_bounds': ((0.0, 35000.0), 'ft'),
+                    'altitude_optimize': True,
                     'throttle_enforcement': 'path_constraint',
-                    'constrain_final': False,
-                    'fix_duration': False,
-                    'initial_bounds': ((0.0, 2.0), 'min'),
-                    'duration_bounds': ((5.0, 50.0), 'min'),
-                    'no_descent': False,
-                    'add_initial_mass_constraint': False,
+                    'time_initial_bounds': ((0.0, 2.0), 'min'),
+                    'time_duration_bounds': ((20.0, 60.0), 'min'),
+                    'no_descent': True,
                 },
-                'initial_guesses': {'time': ([0, 40.0], 'min')},
+                'initial_guesses': {
+                    'time': ([0, 40.0], 'min'),
+                    'altitude': ([35, 35000.0], 'ft'),
+                    'mach': ([0.3, 0.79], 'unitless'),
+                },
             },
             'cruise': {
                 'subsystem_options': {'core_aerodynamics': {'method': 'computed'}},
                 'user_options': {
-                    'optimize_mach': True,
-                    'optimize_altitude': True,
-                    'polynomial_control_order': 1,
-                    'use_polynomial_control': True,
                     'num_segments': 1,
                     'order': 3,
-                    'solve_for_distance': False,
-                    'initial_mach': (0.79, 'unitless'),
-                    'final_mach': (0.79, 'unitless'),
+                    'mach_initial': (0.79, 'unitless'),
                     'mach_bounds': ((0.79, 0.79), 'unitless'),
-                    'initial_altitude': (35000.0, 'ft'),
-                    'final_altitude': (35000.0, 'ft'),
+                    'mach_optimize': True,
+                    'mach_polynomial_order': 1,
+                    'altitude_initial': (35000.0, 'ft'),
                     'altitude_bounds': ((35000.0, 35000.0), 'ft'),
+                    'altitude_optimize': True,
+                    'altitude_polynomial_order': 1,
                     'throttle_enforcement': 'boundary_constraint',
-                    'fix_initial': False,
-                    'constrain_final': False,
-                    'fix_duration': False,
-                    'initial_bounds': ((64.0, 192.0), 'min'),
-                    'duration_bounds': ((60.0, 720.0), 'min'),
+                    'time_initial_bounds': ((24.0, 60.0), 'min'),
+                    'time_duration_bounds': ((60.0, 720.0), 'min'),
                 },
-                'initial_guesses': {'time': ([128, 113], 'min')},
+                'initial_guesses': {
+                    'time': ([40, 200], 'min'),
+                    'altitude': ([35000, 35000.0], 'ft'),
+                    'mach': ([0.79, 0.79], 'unitless'),
+                },
             },
             'descent': {
                 'subsystem_options': {'core_aerodynamics': {'method': 'computed'}},
                 'user_options': {
-                    'optimize_mach': True,
-                    'optimize_altitude': True,
-                    'use_polynomial_control': False,
                     'num_segments': 5,
                     'order': 3,
-                    'solve_for_distance': False,
-                    'initial_mach': (0.79, 'unitless'),
-                    'final_mach': (0.3, 'unitless'),
+                    'mach_initial': (0.79, 'unitless'),
+                    'mach_final': (0.3, 'unitless'),
                     'mach_bounds': ((0.2, 0.8), 'unitless'),
-                    'initial_altitude': (35000.0, 'ft'),
-                    'final_altitude': (35.0, 'ft'),
+                    'mach_optimize': True,
+                    'altitude_initial': (35000.0, 'ft'),
+                    'altitude_final': (35.0, 'ft'),
                     'altitude_bounds': ((0.0, 35000.0), 'ft'),
+                    'altitude_optimize': True,
                     'throttle_enforcement': 'path_constraint',
-                    'fix_initial': False,
-                    'constrain_final': True,
-                    'fix_duration': False,
-                    'initial_bounds': ((120.0, 800.0), 'min'),
-                    'duration_bounds': ((5.0, 35.0), 'min'),
+                    'time_initial_bounds': ((90.0, 780.0), 'min'),
+                    'time_duration_bounds': ((5.0, 35.0), 'min'),
                     'no_climb': True,
                 },
-                'initial_guesses': {'time': ([241, 30], 'min')},
+                'initial_guesses': {
+                    'time': ([240, 30], 'min'),
+                },
             },
             'post_mission': {
                 'include_landing': True,
@@ -200,7 +189,6 @@ class ProblemPhaseTestCase(unittest.TestCase):
         _clear_problem_names()  # need to reset these to simulate separate runs
 
 
-@use_tempdirs
 class TestBenchFwFmSerial(ProblemPhaseTestCase):
     """Run the model in serial that is setup in ProblemPhaseTestCase class."""
 
@@ -235,7 +223,6 @@ class TestBenchFwFmSerial(ProblemPhaseTestCase):
         self.assertGreater(overall_fuel, 40000.0)
 
 
-@use_tempdirs
 @unittest.skipUnless(MPI and PETScVector, 'MPI and PETSc are required.')
 class TestBenchFwFmParallel(ProblemPhaseTestCase):
     """Run the model in parallel that is setup in ProblemPhaseTestCase class."""

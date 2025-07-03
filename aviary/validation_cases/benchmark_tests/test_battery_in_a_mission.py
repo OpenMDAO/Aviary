@@ -22,48 +22,41 @@ class TestSubsystemsMission(unittest.TestCase):
                 'subsystem_options': {'core_aerodynamics': {'method': 'computed'}},
                 'external_subsystems': [BatteryBuilder()],
                 'user_options': {
-                    'optimize_mach': False,
-                    'optimize_altitude': False,
-                    'polynomial_control_order': 1,
                     'num_segments': 5,
                     'order': 3,
-                    'solve_for_distance': False,
-                    'initial_mach': (0.72, 'unitless'),
-                    'final_mach': (0.72, 'unitless'),
+                    'mach_optimize': False,
+                    'mach_polynomial_order': 1,
+                    'mach_initial': (0.72, 'unitless'),
                     'mach_bounds': ((0.7, 0.74), 'unitless'),
-                    'initial_altitude': (35000.0, 'ft'),
-                    'final_altitude': (35000.0, 'ft'),
+                    'altitude_optimize': False,
+                    'altitude_polynomial_order': 1,
+                    'altitude_initial': (35000.0, 'ft'),
+                    'altitude_final': (35000.0, 'ft'),
                     'altitude_bounds': ((23000.0, 38000.0), 'ft'),
                     'throttle_enforcement': 'boundary_constraint',
-                    'fix_initial': True,
-                    'constrain_final': False,
-                    'fix_duration': False,
-                    'initial_bounds': ((0.0, 0.0), 'min'),
-                    'duration_bounds': ((5.0, 30.0), 'min'),
+                    'time_initial_bounds': ((0.0, 0.0), 'min'),
+                    'time_duration_bounds': ((5.0, 30.0), 'min'),
                 },
             },
             'cruise2': {
                 'subsystem_options': {'core_aerodynamics': {'method': 'computed'}},
                 'external_subsystems': [BatteryBuilder()],
                 'user_options': {
-                    'optimize_mach': False,
-                    'optimize_altitude': False,
-                    'polynomial_control_order': 1,
                     'num_segments': 5,
                     'order': 3,
-                    'solve_for_distance': False,
-                    'initial_mach': (0.72, 'unitless'),
-                    'final_mach': (0.72, 'unitless'),
+                    'mach_optimize': False,
+                    'mach_polynomial_order': 1,
+                    'mach_initial': (0.72, 'unitless'),
+                    'mach_final': (0.72, 'unitless'),
                     'mach_bounds': ((0.7, 0.74), 'unitless'),
-                    'initial_altitude': (35000.0, 'ft'),
-                    'final_altitude': (35000.0, 'ft'),
+                    'altitude_optimize': False,
+                    'altitude_polynomial_order': 1,
+                    'altitude_initial': (35000.0, 'ft'),
+                    'altitude_final': (35000.0, 'ft'),
                     'altitude_bounds': ((23000.0, 38000.0), 'ft'),
                     'throttle_enforcement': 'boundary_constraint',
-                    'fix_initial': False,
-                    'constrain_final': False,
-                    'fix_duration': False,
-                    'initial_bounds': ((0.0, 0.0), 'min'),
-                    'duration_bounds': ((5.0, 30.0), 'min'),
+                    'time_initial_bounds': ((0.0, 0.0), 'min'),
+                    'time_duration_bounds': ((5.0, 30.0), 'min'),
                 },
             },
             'post_mission': {
@@ -183,7 +176,7 @@ class TestSubsystemsMission(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    # unittest.main()
-    test = TestSubsystemsMission()
-    test.setUp()
-    test.test_subsystems_in_a_mission()
+    unittest.main()
+    # test = TestSubsystemsMission()
+    # test.setUp()
+    # test.test_subsystems_in_a_mission()

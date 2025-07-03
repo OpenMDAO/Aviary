@@ -71,7 +71,7 @@ class FuselageParameters(om.ExplicitComponent):
         outputs[Aircraft.Fuselage.AVG_DIAMETER] = cabin_width
         # There are separate equations for aircraft with a single seat per row vs. multiple seats per row.
         # Here and in compute_partials, these equations are smoothed using a sigmoid fnuction centered at
-        # 1.5 seats, the sigmoid function is steep enough that there should be no noticable difference
+        # 1.5 seats, the sigmoid function is steep enough that there should be no noticeable difference
         # between the smoothed function and the stepwise function at 1 and 2 seats.
         sig1 = sigmoidX(seats_abreast, 1.5, -0.01)
         sig2 = sigmoidX(seats_abreast, 1.5, 0.01)
@@ -105,6 +105,7 @@ class FuselageSize(om.ExplicitComponent):
         add_aviary_output(self, Aircraft.Fuselage.LENGTH, units='ft', desc='ELF')
         add_aviary_output(self, Aircraft.Fuselage.WETTED_AREA, units='ft**2')
         add_aviary_output(self, Aircraft.TailBoom.LENGTH, units='ft', desc='ELFFC')
+        add_aviary_output(self, Aircraft.Fuselage.CABIN_AREA, units='ft**2', desc='ACABIN')
 
         self.declare_partials(
             Aircraft.Fuselage.LENGTH,
@@ -143,6 +144,11 @@ class FuselageSize(om.ExplicitComponent):
             ],
         )
 
+        self.declare_partials(
+            Aircraft.Fuselage.CABIN_AREA,
+            ['cabin_len', 'cabin_height', Aircraft.Fuselage.PILOT_COMPARTMENT_LENGTH],
+        )
+
     def compute(self, inputs, outputs):
         # length to diameter ratio of nose cone of fuselage
         LoverD_nose = inputs[Aircraft.Fuselage.NOSE_FINENESS]
@@ -165,9 +171,13 @@ class FuselageSize(om.ExplicitComponent):
 
         cabin_len_tailboom = fus_len
 
+        cabin_width = cabin_height  # assume tube shape
+        cabin_area = cabin_width * (cockpit_len + cabin_len)
+
         outputs[Aircraft.Fuselage.LENGTH] = fus_len
         outputs[Aircraft.Fuselage.WETTED_AREA] = fus_SA
         outputs[Aircraft.TailBoom.LENGTH] = cabin_len_tailboom
+        outputs[Aircraft.Fuselage.CABIN_AREA] = cabin_area
 
     def compute_partials(self, inputs, J):
         LoverD_nose = inputs[Aircraft.Fuselage.NOSE_FINENESS]
@@ -216,6 +226,10 @@ class FuselageSize(om.ExplicitComponent):
         J[Aircraft.TailBoom.LENGTH, 'cabin_len'] = 1
         J[Aircraft.TailBoom.LENGTH, Aircraft.Fuselage.TAIL_FINENESS] = cabin_height
         J[Aircraft.TailBoom.LENGTH, 'cabin_height'] = LoverD_tail
+
+        J[Aircraft.Fuselage.CABIN_AREA, 'cabin_len'] = cabin_height
+        J[Aircraft.Fuselage.CABIN_AREA, 'cabin_height'] = cabin_len + cockpit_len
+        J[Aircraft.Fuselage.CABIN_AREA, Aircraft.Fuselage.PILOT_COMPARTMENT_LENGTH] = cabin_height
 
 
 class FuselageGroup(om.Group):
@@ -560,7 +574,7 @@ class BWBFuselageParameters2(om.ExplicitComponent):
         self.add_input('nose_length', val=0.0, units='ft', desc='L_NOSE: length of nose')
         self.add_input('cabin_height', val=0.0, units='ft', desc='HC: height of cabin')
 
-        add_aviary_output(self, Aircraft.BWB.CABIN_AREA, units='ft**2', desc='ACABIN')
+        add_aviary_output(self, Aircraft.Fuselage.CABIN_AREA, units='ft**2', desc='ACABIN')
         add_aviary_output(self, Aircraft.Fuselage.PLANFORM_AREA, units='ft**2', desc='SPF_BODY')
         self.add_output('cabin_len', units='ft', desc='LC: length of cabin')
         self.add_output('forebody_len', units='ft', desc='L_FBODY: length of forebody')
@@ -603,7 +617,7 @@ class BWBFuselageParameters2(om.ExplicitComponent):
         )
 
         self.declare_partials(
-            Aircraft.BWB.CABIN_AREA,
+            Aircraft.Fuselage.CABIN_AREA,
             [
                 Aircraft.BWB.PASSENGER_LEADING_EDGE_SWEEP,
                 Aircraft.Fuselage.AVG_DIAMETER,
@@ -658,7 +672,7 @@ class BWBFuselageParameters2(om.ExplicitComponent):
         outputs['forebody_len'] = forebody_len
         outputs['aftbody_len'] = aftbody_len
         outputs['nose_area'] = area_nose_planform
-        outputs[Aircraft.BWB.CABIN_AREA] = area_cabin
+        outputs[Aircraft.Fuselage.CABIN_AREA] = area_cabin
         outputs[Aircraft.Fuselage.PLANFORM_AREA] = area_body_planform
 
     def compute_partials(self, inputs, J):
@@ -717,21 +731,23 @@ class BWBFuselageParameters2(om.ExplicitComponent):
         # cabin_area = forebody + aftbody
         #
         d_cabin_area_d_body_len = d_forebody_area_d_bd_width + d_aftbody_area_d_bd_width
-        J[Aircraft.BWB.CABIN_AREA, Aircraft.Fuselage.AVG_DIAMETER] = d_cabin_area_d_body_len
+        J[Aircraft.Fuselage.CABIN_AREA, Aircraft.Fuselage.AVG_DIAMETER] = d_cabin_area_d_body_len
 
         d_cabin_area_d_nose_len = d_forebody_area_d_ns_length
-        J[Aircraft.BWB.CABIN_AREA, 'nose_length'] = d_cabin_area_d_nose_len
+        J[Aircraft.Fuselage.CABIN_AREA, 'nose_length'] = d_cabin_area_d_nose_len
 
         d_cabin_area_d_fuselage_aft = d_aftbody_area_d_fuselage_aft
-        J[Aircraft.BWB.CABIN_AREA, 'fuselage_station_aft'] = d_cabin_area_d_fuselage_aft
+        J[Aircraft.Fuselage.CABIN_AREA, 'fuselage_station_aft'] = d_cabin_area_d_fuselage_aft
 
         d_cabin_area_d_additional = d_forebody_area_d_add_length + d_aftbody_area_d_additional
-        J[Aircraft.BWB.CABIN_AREA, Aircraft.Fuselage.PRESSURIZED_WIDTH_ADDITIONAL] = (
+        J[Aircraft.Fuselage.CABIN_AREA, Aircraft.Fuselage.PRESSURIZED_WIDTH_ADDITIONAL] = (
             d_cabin_area_d_additional
         )
 
         d_cabin_area_d_sweep = d_forebody_area_d_sweep + d_aftbody_area_d_sweep
-        J[Aircraft.BWB.CABIN_AREA, Aircraft.BWB.PASSENGER_LEADING_EDGE_SWEEP] = d_cabin_area_d_sweep
+        J[Aircraft.Fuselage.CABIN_AREA, Aircraft.BWB.PASSENGER_LEADING_EDGE_SWEEP] = (
+            d_cabin_area_d_sweep
+        )
 
         d_nose_pf_area_d_nose_len = 2 * nose_len / fb_tan
         J['nose_area', 'nose_length'] = d_nose_pf_area_d_nose_len

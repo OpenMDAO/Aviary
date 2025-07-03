@@ -15,8 +15,8 @@ from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 class ProblemPhaseTestCase(unittest.TestCase):
     """
     Test the setup and run of a large single aisle commercial transport aircraft using
-    GASP mass method and TWO_DEGREES_OF_FREEDOM mission method. Expected outputs
-    based on 'models/test_aircraft/aircraft_for_bench_GwGm.csv' model.
+    GASP mass and aero method and TWO_DEGREES_OF_FREEDOM mission method. Expected outputs
+    based on 'models/test_aircraft/aircraft_for_bench_FwFm.csv' model.
     """
 
     def setUp(self):
@@ -37,19 +37,19 @@ class ProblemPhaseTestCase(unittest.TestCase):
         # There are no truth values for these.
         assert_near_equal(
             prob.get_val(Mission.Design.GROSS_MASS, units='lbm'),
-            173481.8915,
+            173806.9409,
             tolerance=rtol,
         )
 
         assert_near_equal(
             prob.get_val(Aircraft.Design.OPERATING_MASS, units='lbm'),
-            95372.5514,
+            95620.2190,
             tolerance=rtol,
         )
 
         assert_near_equal(
             prob.get_val(Mission.Summary.TOTAL_FUEL_MASS, units='lbm'),
-            42109.3401,
+            42186.7219,
             tolerance=rtol,
         )
 
@@ -63,7 +63,7 @@ class ProblemPhaseTestCase(unittest.TestCase):
 
         assert_near_equal(
             prob.get_val(Mission.Landing.TOUCHDOWN_MASS, units='lbm'),
-            136370.5514,
+            136618.2190,
             tolerance=rtol,
         )
 
@@ -82,19 +82,19 @@ class ProblemPhaseTestCase(unittest.TestCase):
         # There are no truth values for these.
         assert_near_equal(
             prob.get_val(Mission.Design.GROSS_MASS, units='lbm'),
-            173479.4770,
+            173806.9386,
             tolerance=rtol,
         )
 
         assert_near_equal(
             prob.get_val(Aircraft.Design.OPERATING_MASS, units='lbm'),
-            95371.9673,
+            95620.2185,
             tolerance=rtol,
         )
 
         assert_near_equal(
             prob.get_val(Mission.Summary.TOTAL_FUEL_MASS, units='lbm'),
-            42107.5096,
+            42186.7201,
             tolerance=rtol,
         )
 
@@ -108,7 +108,7 @@ class ProblemPhaseTestCase(unittest.TestCase):
 
         assert_near_equal(
             prob.get_val(Mission.Landing.TOUCHDOWN_MASS, units='lbm'),
-            136369.9673,
+            136618.2185,
             tolerance=rtol,
         )
 
@@ -127,19 +127,19 @@ class ProblemPhaseTestCase(unittest.TestCase):
         # There are no truth values for these.
         assert_near_equal(
             prob.get_val(Mission.Design.GROSS_MASS, units='lbm'),
-            173481.6392,
+            173807.5346,
             tolerance=rtol,
         )
 
         assert_near_equal(
             prob.get_val(Aircraft.Design.OPERATING_MASS, units='lbm'),
-            95372.4904,
+            95620.3626,
             tolerance=rtol,
         )
 
         assert_near_equal(
             prob.get_val(Mission.Summary.TOTAL_FUEL_MASS, units='lbm'),
-            42109.1488,
+            42187.1719,
             tolerance=rtol,
         )
 
@@ -153,7 +153,7 @@ class ProblemPhaseTestCase(unittest.TestCase):
 
         assert_near_equal(
             prob.get_val(Mission.Landing.TOUCHDOWN_MASS, units='lbm'),
-            136370.4904,
+            136618.3626,
             tolerance=rtol,
         )
 
@@ -227,7 +227,7 @@ class ProblemPhaseTestCase(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    unittest.main()
-    # test = ProblemPhaseTestCase()
-    # test.setUp()
-    # test.test_bench_GwGm_SNOPT()
+    # unittest.main()
+    test = ProblemPhaseTestCase()
+    test.setUp()
+    test.test_bench_GwGm()

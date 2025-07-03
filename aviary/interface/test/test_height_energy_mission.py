@@ -1,8 +1,10 @@
 import os
 import subprocess
+import sys
 import unittest
 from copy import deepcopy
 
+from io import StringIO
 import dymos
 from openmdao.core.problem import _clear_problem_names
 from openmdao.utils.reports_system import clear_reports
@@ -24,74 +26,72 @@ class AircraftMissionTestSuite(unittest.TestCase):
             'climb': {
                 'subsystem_options': {'core_aerodynamics': {'method': 'computed'}},
                 'user_options': {
-                    'optimize_mach': False,
-                    'optimize_altitude': False,
-                    'polynomial_control_order': 1,
                     'num_segments': 5,
                     'order': 3,
-                    'solve_for_distance': False,
-                    'initial_mach': (0.2, 'unitless'),
-                    'final_mach': (0.72, 'unitless'),
+                    'mach_optimize': False,
+                    'mach_initial': (0.2, 'unitless'),
                     'mach_bounds': ((0.18, 0.74), 'unitless'),
-                    'initial_altitude': (0.0, 'ft'),
-                    'final_altitude': (32000.0, 'ft'),
+                    'mach_polynomial_order': 1,
+                    'altitude_optimize': False,
+                    'altitude_initial': (0.0, 'ft'),
                     'altitude_bounds': ((0.0, 34000.0), 'ft'),
+                    'altitude_polynomial_order': 1,
                     'throttle_enforcement': 'path_constraint',
-                    'fix_initial': True,
-                    'constrain_final': False,
-                    'fix_duration': False,
-                    'initial_bounds': ((0.0, 0.0), 'min'),
-                    'duration_bounds': ((64.0, 192.0), 'min'),
+                    'time_initial': (0.0, 's'),
+                    'time_initial_bounds': ((0.0, 0.0), 'min'),
+                    'time_duration_bounds': ((64.0, 192.0), 'min'),
                 },
-                'initial_guesses': {'time': ([0, 128], 'min')},
+                'initial_guesses': {
+                    'time': ([0, 128], 'min'),
+                    'mach': ([0.2, 0.72], 'unitless'),
+                    'altitude': ([0, 32000.0], 'ft'),
+                },
             },
             'cruise': {
                 'subsystem_options': {'core_aerodynamics': {'method': 'computed'}},
                 'user_options': {
-                    'optimize_mach': False,
-                    'optimize_altitude': False,
-                    'polynomial_control_order': 1,
                     'num_segments': 5,
                     'order': 3,
-                    'solve_for_distance': False,
-                    'initial_mach': (0.72, 'unitless'),
-                    'final_mach': (0.72, 'unitless'),
+                    'mach_optimize': False,
+                    'mach_initial': (0.72, 'unitless'),
                     'mach_bounds': ((0.7, 0.74), 'unitless'),
-                    'initial_altitude': (32000.0, 'ft'),
-                    'final_altitude': (34000.0, 'ft'),
+                    'mach_polynomial_order': 1,
+                    'altitude_optimize': False,
+                    'altitude_initial': (32000.0, 'ft'),
                     'altitude_bounds': ((23000.0, 38000.0), 'ft'),
+                    'altitude_polynomial_order': 1,
                     'throttle_enforcement': 'boundary_constraint',
-                    'fix_initial': False,
-                    'constrain_final': False,
-                    'fix_duration': False,
-                    'initial_bounds': ((64.0, 192.0), 'min'),
-                    'duration_bounds': ((56.5, 169.5), 'min'),
+                    'time_initial_bounds': ((64.0, 192.0), 'min'),
+                    'time_duration_bounds': ((56.5, 169.5), 'min'),
                 },
-                'initial_guesses': {'time': ([128, 113], 'min')},
+                'initial_guesses': {
+                    'time': ([128, 113], 'min'),
+                    'mach': ([0.72, 0.72], 'unitless'),
+                    'altitude': ([32000, 34000.0], 'ft'),
+                },
             },
             'descent': {
                 'subsystem_options': {'core_aerodynamics': {'method': 'computed'}},
                 'user_options': {
-                    'optimize_mach': False,
-                    'optimize_altitude': False,
-                    'polynomial_control_order': 1,
                     'num_segments': 5,
                     'order': 3,
-                    'solve_for_distance': False,
-                    'initial_mach': (0.72, 'unitless'),
-                    'final_mach': (0.36, 'unitless'),
+                    'mach_optimize': False,
+                    'mach_initial': (0.72, 'unitless'),
+                    'mach_final': (0.36, 'unitless'),
                     'mach_bounds': ((0.34, 0.74), 'unitless'),
-                    'initial_altitude': (34000.0, 'ft'),
-                    'final_altitude': (500.0, 'ft'),
+                    'mach_polynomial_order': 1,
+                    'altitude_optimize': False,
+                    'altitude_initial': (34000.0, 'ft'),
+                    'altitude_final': (500.0, 'ft'),
                     'altitude_bounds': ((0.0, 38000.0), 'ft'),
+                    'altitude_polynomial_order': 1,
                     'throttle_enforcement': 'path_constraint',
-                    'fix_initial': False,
-                    'constrain_final': True,
-                    'fix_duration': False,
-                    'initial_bounds': ((120.5, 361.5), 'min'),
-                    'duration_bounds': ((29.0, 87.0), 'min'),
+                    'time_initial_bounds': ((120.5, 361.5), 'min'),
+                    'time_duration_bounds': ((29.0, 87.0), 'min'),
                 },
-                'initial_guesses': {'time': ([241, 58], 'min')},
+                'initial_guesses': {
+                    'time': ([241, 58], 'min'),
+                },
             },
             'post_mission': {
                 'include_landing': False,
@@ -148,7 +148,7 @@ class AircraftMissionTestSuite(unittest.TestCase):
         )
         # this only tests that a given command line tool returns a 0 return code. It doesn't
         # check the expected output at all.  The underlying functions that implement the
-        # commands should be tested seperately.
+        # commands should be tested separately.
         try:
             subprocess.check_output(cmd.split())
         except subprocess.CalledProcessError as err:
@@ -162,20 +162,20 @@ class AircraftMissionTestSuite(unittest.TestCase):
 
     @require_pyoptsparse(optimizer='IPOPT')
     def test_mission_optimize_mach_only(self):
-        # Test with optimize_mach flag set to True
+        # Test with mach_optimize flag set to True
         modified_phase_info = self.phase_info.copy()
         for phase in ['climb', 'cruise', 'descent']:
-            modified_phase_info[phase]['user_options']['optimize_mach'] = True
+            modified_phase_info[phase]['user_options']['mach_optimize'] = True
         prob = self.run_mission(modified_phase_info, 'IPOPT')
         self.assertTrue(prob.problem_ran_successfully)
 
     @require_pyoptsparse(optimizer='IPOPT')
     def test_mission_optimize_altitude_and_mach(self):
-        # Test with optimize_altitude flag set to True
+        # Test with altitude_optimize flag set to True
         modified_phase_info = self.phase_info.copy()
         for phase in ['climb', 'cruise', 'descent']:
-            modified_phase_info[phase]['user_options']['optimize_altitude'] = True
-            modified_phase_info[phase]['user_options']['optimize_mach'] = True
+            modified_phase_info[phase]['user_options']['altitude_optimize'] = True
+            modified_phase_info[phase]['user_options']['mach_optimize'] = True
         modified_phase_info['climb']['user_options']['constraints'] = {
             Dynamic.Vehicle.Propulsion.THROTTLE: {
                 'lower': 0.2,
@@ -204,26 +204,26 @@ class AircraftMissionTestSuite(unittest.TestCase):
                 self.assertEqual(meta['lower'], 0.2)
 
     @require_pyoptsparse(optimizer='IPOPT')
-    def test_mission_optimize_altitude_only(self):
-        # Test with optimize_altitude flag set to True
+    def test_mission_altitude_optimize_only(self):
+        # Test with altitude_optimize flag set to True
         modified_phase_info = self.phase_info.copy()
         for phase in ['climb', 'cruise', 'descent']:
-            modified_phase_info[phase]['user_options']['optimize_altitude'] = True
+            modified_phase_info[phase]['user_options']['altitude_optimize'] = True
         prob = self.run_mission(modified_phase_info, 'IPOPT')
         self.assertTrue(prob.problem_ran_successfully)
 
     @require_pyoptsparse(optimizer='IPOPT')
-    def test_mission_solve_for_distance_IPOPT(self):
+    def test_mission_distance_solve_segments_IPOPT(self):
         modified_phase_info = self.phase_info.copy()
         for phase in ['climb', 'cruise', 'descent']:
-            modified_phase_info[phase]['user_options']['solve_for_distance'] = True
+            modified_phase_info[phase]['user_options']['distance_solve_segments'] = True
         prob = self.run_mission(modified_phase_info, 'IPOPT')
         self.assertTrue(prob.problem_ran_successfully)
 
-    def test_mission_solve_for_distance_SLSQP(self):
+    def test_mission_distance_solve_segments_SLSQP(self):
         modified_phase_info = self.phase_info.copy()
         for phase in ['climb', 'cruise', 'descent']:
-            modified_phase_info[phase]['user_options']['solve_for_distance'] = True
+            modified_phase_info[phase]['user_options']['distance_solve_segments'] = True
         prob = self.run_mission(modified_phase_info, 'SLSQP')
         self.assertTrue(prob.problem_ran_successfully)
 
@@ -314,6 +314,41 @@ class AircraftMissionTestSuite(unittest.TestCase):
 
         self.assertEqual(con1['name'], 'timeseries.throttle_1')
         self.assertEqual(con2['name'], 'timeseries.throttle_2')
+
+    def test_trajectory_warning(self):
+        modified_phase_info = deepcopy(self.phase_info)
+        modified_phase_info['climb']['user_options']['altitude_final'] = (1000.0, 'ft')
+        modified_phase_info['cruise']['user_options']['mach_final'] = (0.5, 'unitless')
+        prob = AviaryProblem(verbosity=1)
+
+        csv_path = 'models/test_aircraft/aircraft_for_bench_FwFm.csv'
+
+        prob.load_inputs(csv_path, modified_phase_info)
+        prob.check_and_preprocess_inputs()
+        prob.add_pre_mission_systems()
+        prob.add_phases()
+        prob.add_post_mission_systems()
+
+        stdout = sys.stdout
+        strout = StringIO()
+        sys.stdout = strout
+        try:
+            prob.link_phases()
+        finally:
+            sys.stdout = stdout
+        output = strout.getvalue().split('\n')
+
+        print('z')
+
+        self.assertEqual(
+            output[1], 'The following issues were detected in your phase_info options.'
+        )
+        self.assertEqual(output[2], '  Constraint mismatch across phase boundary:')
+        self.assertEqual(output[3], "    climb altitude_final: (1000.0, 'ft')")
+        self.assertEqual(output[4], "    cruise altitude_initial: (32000.0, 'ft')")
+        self.assertEqual(output[5], '  Constraint mismatch across phase boundary:')
+        self.assertEqual(output[6], "    cruise mach_final: (0.5, 'unitless')")
+        self.assertEqual(output[7], "    descent mach_initial: (0.72, 'unitless')")
 
 
 if __name__ == '__main__':

@@ -11,6 +11,7 @@ aircraft:crew_and_payload:catering_items_mass_per_passenger,6,lbm
 aircraft:crew_and_payload:design:num_passengers,96,unitless
 aircraft:crew_and_payload:passenger_mass_with_bags,210,lbm
 aircraft:crew_and_payload:passenger_service_mass_per_passenger,7.6,lbm
+aircraft:crew_and_payload:uld_mass_per_passenger,0.11,lbm
 aircraft:crew_and_payload:water_mass_per_occupant,3,lbm
 aircraft:design:cg_delta,0.25,unitless
 aircraft:design:cockpit_control_mass_coefficient,16.5,unitless
@@ -58,7 +59,6 @@ aircraft:fuselage:seat_pitch,31,inch
 aircraft:fuselage:seat_width,24,inch
 aircraft:fuselage:tail_fineness,3.368,unitless
 aircraft:fuselage:wetted_area_scaler,1,unitless
-aircraft:horizontal_tail:area,0,ft**2
 aircraft:horizontal_tail:aspect_ratio,4.26,unitless
 aircraft:horizontal_tail:form_factor,1.55,unitless
 aircraft:horizontal_tail:mass_coefficient,0.325,unitless
@@ -88,7 +88,6 @@ aircraft:strut:attachment_location_dimensionless,0,unitless
 aircraft:strut:dimensional_location_specified,False,unitless
 aircraft:strut:fuselage_interference_factor,0,unitless
 aircraft:strut:mass_coefficient,0,unitless
-aircraft:vertical_tail:area,0,ft**2
 aircraft:vertical_tail:aspect_ratio,1.84,unitless
 aircraft:vertical_tail:form_factor,1.55,unitless
 aircraft:vertical_tail:mass_coefficient,0.425,unitless

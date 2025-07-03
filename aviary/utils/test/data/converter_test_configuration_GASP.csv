@@ -63,7 +63,6 @@ aircraft:fuselage:seat_pitch,44.2,inch
 aircraft:fuselage:seat_width,20.2,inch
 aircraft:fuselage:tail_fineness,1.18,unitless
 aircraft:fuselage:wetted_area_scaler,1.0,unitless
-aircraft:horizontal_tail:area,0,ft**2
 aircraft:horizontal_tail:aspect_ratio,4.025,unitless
 aircraft:horizontal_tail:form_factor,1.7,unitless
 aircraft:horizontal_tail:mass_coefficient,0.2076,unitless
@@ -93,7 +92,6 @@ aircraft:strut:dimensional_location_specified,True,unitless
 aircraft:strut:fuselage_interference_factor,1.125,unitless
 aircraft:strut:mass_coefficient,0.238,unitless
 aircraft:strut:thickness_to_chord,0.1,unitless
-aircraft:vertical_tail:area,0,ft**2
 aircraft:vertical_tail:aspect_ratio,0.825,unitless
 aircraft:vertical_tail:form_factor,2.0,unitless
 aircraft:vertical_tail:mass_coefficient,0.2587,unitless
@@ -159,6 +157,7 @@ mission:summary:fuel_flow_scaler,1.0,unitless
 mission:takeoff:decision_speed_increment,10.0,kn
 mission:takeoff:rotation_speed_increment,5.0,kn
 mission:taxi:duration,0.1677,h
+settings:aerodynamics_method,GASP
 settings:equations_of_motion,2DOF
 settings:mass_method,GASP
 
@@ -171,7 +170,7 @@ fuel_burn_per_passenger_mile,0
 reserves,0
 rotation_mass,0
 time_to_climb,0
-	 
+
 # Unconverted Values
 INGASP.ALR,1.11
 INGASP.BENGOB,0.05
