@@ -236,6 +236,7 @@ class BWBBodyLiftCurveSlope(om.ExplicitComponent):
 
     def initialize(self):
         self.options.declare('num_nodes', default=1, types=int)
+        add_aviary_option(self, Settings.VERBOSITY)
 
     def setup(self):
         nn = self.options['num_nodes']
@@ -264,9 +265,13 @@ class BWBBodyLiftCurveSlope(om.ExplicitComponent):
         )
 
     def compute(self, inputs, outputs):
+        verbosity = self.options[Settings.VERBOSITY]
         mach = inputs[Dynamic.Atmosphere.MACH]
         if np.any(mach < 0.0) or np.any(mach >= 1.0):
-            raise om.AnalysisError('Mach number much be within the range (0, 1).')
+            raise om.AnalysisError('Mach number must be within the range (0, 1).')
+        elif mach > 0.8:
+            if verbosity > Verbosity.BRIEF:
+                print("Mach range should be less or equal to 0.8. You've provided a Mach {mach}.")
         CLALPH_B0 = inputs[Aircraft.Fuselage.LIFT_CURVE_SLOPE_MACH0]
         CLALPH_B = CLALPH_B0 / np.sqrt(1.0 - mach**2)
         outputs['body_lift_curve_slope'] = CLALPH_B
@@ -1879,8 +1884,8 @@ class BWBLiftCoeff(om.ExplicitComponent):
         exp_wing_area = inputs[Aircraft.Wing.EXPOSED_AREA]
         planform = inputs[Aircraft.Fuselage.PLANFORM_AREA]
 
-        clw_base = kclge * lift_curve_slope * deg2rad(alpha - alpha0)
-        clw = clw_base + dCL_flaps_model
+        # clw_base = kclge * lift_curve_slope * deg2rad(alpha - alpha0)
+        # clw = clw_base + dCL_flaps_model
 
         # This is actually CLw_base
         outputs['CL_base'] = kclge * lift_curve_slope * deg2rad(alpha - alpha0)
