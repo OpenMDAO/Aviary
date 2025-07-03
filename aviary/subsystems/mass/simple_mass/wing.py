@@ -101,7 +101,8 @@ class WingMassAndCOG(om.JaxExplicitComponent):
         x_points = jnp.linspace(0, 1, n_points)
         dx = 1 / (n_points - 1)
         
-        weight_function = lambda x: density * self.airfoil_thickness(x, max_thickness) * (aircraft__wing__root_chord - (aircraft__wing__root_chord - tip_chord) * (x / aircraft__wing__span)) * aircraft__wing__span
+        weight_function = lambda x: density * self.airfoil_thickness(x, max_thickness) * (aircraft__wing__root_chord - 
+                                                                                          (aircraft__wing__root_chord - tip_chord) * (x / aircraft__wing__span)) * aircraft__wing__span
     
         aircraft__wing__mass, _ = quadgk(weight_function, [0, 1], epsabs=1e-9, epsrel=1e-9)
         
@@ -167,7 +168,8 @@ if __name__ == '__main__':
     n_points = 10 # = num_sections
     x = jnp.linspace(0, 1, n_points)
     max_thickness_chord_ratio = 0.12
-    thickness_dist = 5 * max_thickness_chord_ratio * (0.2969 * jnp.sqrt(x) - 0.1260 * x - 0.3516 * x**2 + 0.2843 * x**3 - 0.1015 * x**4) 
+    thickness_dist = 5 * max_thickness_chord_ratio * (
+        0.2969 * jnp.sqrt(x) - 0.1260 * x - 0.3516 * x**2 + 0.2843 * x**3 - 0.1015 * x**4) 
 
     # Setup the problem
     prob.setup()

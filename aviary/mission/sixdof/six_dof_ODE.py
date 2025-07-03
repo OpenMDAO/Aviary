@@ -5,6 +5,7 @@ from aviary.mission.base_ode import BaseODE as _BaseODE
 
 from aviary.variable_info.enums import AnalysisScheme, SpeedType, ThrottleAllocation
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
+from aviary.constants import GRAV_METRIC_FLOPS
 
 from aviary.mission.sixdof.six_dof_EOM import SixDOF_EOM
 from aviary.mission.sixdof.force_component_calc import ForceComponentResolver
@@ -48,18 +49,27 @@ class SixDOF_ODE(_BaseODE):
         )
 
         T_vert_comp = om.ExecComp(
-            'T_z = ...',
-            # variables + units etc. -- see energy_ODE.py line 60,
-            promotes_inputs=[...],
-            promotes_outputs=[...]
-        )
+            'T_z = cos(roll) * cos(pitch) * mass * g',
+            roll = {'units': 'rad', 'shape': (nn,)},
+            pitch = {'units': 'rad', 'shape': (nn,)},
+            mass = {'units': 'kg', 'shape': (nn,)},
+            g = {'val': GRAV_METRIC_FLOPS, 'units': 'm/s**2'},
+            promotes_inputs=[
+                ('roll', 'roll'),
+                ('pitch', 'pitch'),
+                ('mass', 'mass'),
+            ],
+            promotes_outputs=[
+                ('T_z', 'T_z'),
+            ]
+        ) # body-relative CS
 
         comp = om.BalanceComp(
             name=Dynamic.Vehicle.Propulsion.THROTTLE,
             units='unitless',
             val=np.ones((nn,)),
-            lhs_name='thrust_required',
-            rhs_name= 'T_z',
+            lhs_name='T_z',
+            rhs_name= Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
             eq_units='N',
             normalize=False,
         )
