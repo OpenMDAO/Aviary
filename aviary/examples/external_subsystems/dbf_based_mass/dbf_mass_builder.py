@@ -19,7 +19,7 @@ class DBFMassBuilder(SubsystemBuilderBase):
 
     def __init__(self, name='dbf_mass', meta_data=None):
         super().__init__(name)
-        self.meta_data = ExtendedMetaData
+        self.meta_data = meta_data
 
     def build_pre_mission(self, aviary_inputs):
         group = om.Group()

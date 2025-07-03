@@ -13,7 +13,7 @@ from aviary.examples.external_subsystems.dbf_based_mass.dbf_mass_builder import 
 
 phase_info = deepcopy(av.default_height_energy_phase_info)
 # Here we just add the simple weight system to only the pre-mission
-phase_info['pre_mission']['external_subsystems'] = [DBFMassBuilder()]
+phase_info['pre_mission']['external_subsystems'] = [DBFMassBuilder(meta_data=ExtendedMetaData)]
 
 if __name__ == '__main__':
     prob = av.AviaryProblem()
@@ -22,9 +22,12 @@ if __name__ == '__main__':
     # Allow for user overrides here
     prob.load_inputs(
         'models/test_aircraft/aircraft_for_bench_FwFm.csv',
+        # 'aviary/examples/external_subsystems/dbf_based_mass/dbf_aircraft_inputs.csv',
         phase_info,
         meta_data=ExtendedMetaData,
     )
+
+    print(sorted(dir(prob)))
 
     # Preprocess inputs
     prob.check_and_preprocess_inputs()

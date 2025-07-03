@@ -1,47 +1,89 @@
-aircraft:DBFwing:number_of_spars,2,unitless
-aircraft:DBFwing:spar_thickness,0.125,in
-aircraft:DBFwing:spar_density,0.017,lbm/in**3
-aircraft:DBFwing:span,48.0,in
-aircraft:DBFwing:number_of_ribs,8,unitless
-aircraft:DBFwing:rib_thickness,0.125,in
-aircraft:DBFwing:rib_density,0.01,lbm/in**3
-aircraft:DBFwing:airfoil_x_coords,"[0.0, 0.5, 1.0, 0.8, 0.2, 0.0]",unitless
-aircraft:DBFwing:airfoil_y_coords,"[0.0, 0.1, 0.0, -0.05, -0.05, 0.0]",unitless
-aircraft:DBFwing:root_chord,8.0,in
-aircraft:DBFwing:wetted_area,384.0,in**2
-aircraft:DBFwing:skin_density,0.005,lbm/in**2
-aircraft:DBFHorizontalTail:number_of_spars,1,unitless
-aircraft:DBFHorizontalTail:spar_thickness,0.1,in
-aircraft:DBFHorizontalTail:spar_density,0.017,lbm/in**3
-aircraft:DBFHorizontalTail:span,24.0,in
-aircraft:DBFHorizontalTail:number_of_ribs,6,unitless
-aircraft:DBFHorizontalTail:rib_thickness,0.1,in
-aircraft:DBFHorizontalTail:rib_density,0.01,lbm/in**3
-aircraft:DBFHorizontalTail:airfoil_x_coords,"[0.0, 0.5, 1.0, 0.8, 0.2, 0.0]",unitless
-aircraft:DBFHorizontalTail:airfoil_y_coords,"[0.0, 0.08, 0.0, -0.04, -0.04, 0.0]",unitless
-aircraft:DBFHorizontalTail:root_chord,4.0,in
-aircraft:DBFHorizontalTail:wetted_area,120.0,in**2
-aircraft:DBFHorizontalTail:skin_density,0.004,lbm/in**2
-aircraft:DBFVerticalTail:number_of_spars,1,unitless
-aircraft:DBFVerticalTail:spar_thickness,0.1,in
-aircraft:DBFVerticalTail:spar_density,0.017,lbm/in**3
-aircraft:DBFVerticalTail:span,10.0,in
-aircraft:DBFVerticalTail:number_of_ribs,5,unitless
-aircraft:DBFVerticalTail:rib_thickness,0.1,in
-aircraft:DBFVerticalTail:rib_density,0.01,lbm/in**3
-aircraft:DBFVerticalTail:airfoil_x_coords,"[0.0, 0.5, 1.0, 0.8, 0.2, 0.0]",unitless
-aircraft:DBFVerticalTail:airfoil_y_coords,"[0.0, 0.09, 0.0, -0.045, -0.045, 0.0]",unitless
-aircraft:DBFVerticalTail:root_chord,5.0,in
-aircraft:DBFVerticalTail:wetted_area,80.0,in**2
-aircraft:DBFVerticalTail:skin_density,0.004,lbm/in**2
-aircraft:DBFFuselage:number_of_spars,2,unitless
-aircraft:DBFFuselage:spar_thickness,0.15,in
-aircraft:DBFFuselage:spar_density,0.017,lbm/in**3
-aircraft:DBFFuselage:number_of_ribs,6,unitless
-aircraft:DBFFuselage:rib_thickness,0.125,in
-aircraft:DBFFuselage:rib_density,0.01,lbm/in**3
-aircraft:DBFFuselage:wetted_area,500.0,in**2
-aircraft:DBFFuselage:skin_density,0.005,lbm/in**2
-aircraft:DBFFuselage:fuselage_height,6.0,in
-aircraft:DBFFuselage:fuselage_width,4.0,in
-aircraft:DBFFuselage:length,30.0,in
+aircraft:wing:number_of_spars,2,unitless
+aircraft:wing:spar_thickness,0.125,in
+aircraft:wing:spar_density,0.017,lbm/in**3
+aircraft:wing:span,48.0,in
+aircraft:wing:number_of_ribs,8,unitless
+aircraft:wing:rib_thickness,0.125,in
+aircraft:wing:rib_density,0.01,lbm/in**3
+aircraft:wing:airfoil_x_coords,"[0.0, 0.5, 1.0, 0.8, 0.2, 0.0]",unitless
+aircraft:wing:airfoil_y_coords,"[0.0, 0.1, 0.0, -0.05, -0.05, 0.0]",unitless
+aircraft:wing:root_chord,8.0,in
+aircraft:wing:wetted_area,384.0,in**2
+aircraft:wing:skin_density,0.005,lbm/in**2
+aircraft:horizontal_tail:number_of_spars,1,unitless
+aircraft:horizontal_tail:spar_thickness,0.1,in
+aircraft:horizontal_tail:spar_density,0.017,lbm/in**3
+aircraft:horizontal_tail:span,24.0,in
+aircraft:horizontal_tail:number_of_ribs,6,unitless
+aircraft:horizontal_tail:rib_thickness,0.1,in
+aircraft:horizontal_tail:rib_density,0.01,lbm/in**3
+aircraft:horizontal_tail:airfoil_x_coords,"[0.0, 0.5, 1.0, 0.8, 0.2, 0.0]",unitless
+aircraft:horizontal_tail:airfoil_y_coords,"[0.0, 0.08, 0.0, -0.04, -0.04, 0.0]",unitless
+aircraft:horizontal_tail:root_chord,4.0,in
+aircraft:horizontal_tail:wetted_area,120.0,in**2
+aircraft:horizontal_tail:skin_density,0.004,lbm/in**2
+aircraft:vertical_tail:number_of_spars,1,unitless
+aircraft:vertical_tail:spar_thickness,0.1,in
+aircraft:vertical_tail:spar_density,0.017,lbm/in**3
+aircraft:vertical_tail:span,10.0,in
+aircraft:vertical_tail:number_of_ribs,5,unitless
+aircraft:vertical_tail:rib_thickness,0.1,in
+aircraft:vertical_tail:rib_density,0.01,lbm/in**3
+aircraft:vertical_tail:airfoil_x_coords,"[0.0, 0.5, 1.0, 0.8, 0.2, 0.0]",unitless
+aircraft:vertical_tail:airfoil_y_coords,"[0.0, 0.09, 0.0, -0.045, -0.045, 0.0]",unitless
+aircraft:vertical_tail:root_chord,5.0,in
+aircraft:vertical_tail:wetted_area,80.0,in**2
+aircraft:vertical_tail:skin_density,0.004,lbm/in**2
+aircraft:fuselage:number_of_spars,2,unitless
+aircraft:fuselage:spar_thickness,0.15,in
+aircraft:fuselage:spar_density,0.017,lbm/in**3
+aircraft:fuselage:number_of_ribs,6,unitless
+aircraft:fuselage:rib_thickness,0.125,in
+aircraft:fuselage:rib_density,0.01,lbm/in**3
+aircraft:fuselage:wetted_area,500.0,in**2
+aircraft:fuselage:skin_density,0.005,lbm/in**2
+aircraft:fuselage:fuselage_height,6.0,in
+aircraft:fuselage:fuselage_width,4.0,in
+aircraft:fuselage:length,30.0,in
+aircraft:engine:data_file,models/engines/turbofan_28k.deck,unitless
+aircraft:engine:additional_mass_fraction,0.,unitless
+aircraft:engine:constant_fuel_consumption,0.,lbm/h
+aircraft:engine:data_file,models/engines/turbofan_28k.deck,unitless
+aircraft:engine:flight_idle_thrust_fraction,0.0,unitless
+aircraft:engine:flight_idle_max_fraction,1.0,unitless
+aircraft:engine:flight_idle_min_fraction,0.08,unitless
+aircraft:engine:fuel_flow_scaler_constant_term,0.,unitless
+aircraft:engine:fuel_flow_scaler_linear_term,0.,unitless
+aircraft:engine:generate_flight_idle,True,unitless
+aircraft:engine:geopotential_alt,False,unitless
+aircraft:engine:ignore_negative_thrust,False,unitless
+aircraft:engine:interpolation_method,slinear,unitless
+aircraft:engine:mass_scaler,1.15,unitless
+aircraft:engine:mass,7400,lbm
+aircraft:engine:num_engines,2,unitless
+aircraft:engine:num_fuselage_engines,0,unitless
+aircraft:engine:num_wing_engines,2,unitless
+aircraft:engine:reference_mass,7400,lbm
+aircraft:engine:reference_sls_thrust,28928.1,lbf
+aircraft:engine:scale_factor,1.0,unitless
+aircraft:engine:scale_mass,True,unitless
+aircraft:engine:scale_performance,True,unitless
+aircraft:engine:scaled_sls_thrust,28928.1,lbf
+aircraft:engine:subsonic_fuel_flow_scaler,1.,unitless
+aircraft:engine:supersonic_fuel_flow_scaler,1.,unitless
+aircraft:engine:thrust_reversers_mass_scaler,0.0,unitless
+aircraft:engine:wing_locations,[0.26869218],unitless
+mission:constraints:max_mach,0.785,unitless
+mission:design:cruise_altitude,35000,ft
+mission:design:gross_mass,175400.0,lbm
+mission:design:range,3500,NM
+mission:design:thrust_takeoff_per_eng,28928.1,lbf
+mission:landing:lift_coefficient_max,2.0,unitless
+mission:summary:cruise_mach,0.785,unitless
+mission:summary:fuel_flow_scaler,1.0,unitless
+mission:takeoff:fuel_simple,577,lbm
+mission:takeoff:lift_coefficient_max,3.0,unitless
+mission:takeoff:lift_over_drag,17.354,unitless
+settings:equations_of_motion,height_energy
+settings:aerodynamics_method,FLOPS
+settings:mass_method,FLOPS

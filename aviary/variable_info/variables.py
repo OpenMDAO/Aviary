@@ -350,6 +350,17 @@ class Aircraft:
         WETTED_AREA_RATIO_AFTBODY_TO_TOTAL = 'aircraft:fuselage:wetted_area_ratio_aftbody_to_total'
         WETTED_AREA_SCALER = 'aircraft:fuselage:wetted_area_scaler'
 
+        # ADDED FOR DBF -- NEED TO SORT LATER
+        NUM_SPARS = 'aircraft:fuselage:number_of_spars'
+        SPAR_THICKNESS = 'aircraft:fuselage:spar_thickness'
+        NUM_RIBS = 'aircraft:fuselage:number_of_ribs'
+        RIB_THICKNESS = 'aircraft:fuselage:rib_thickness'
+        SPAR_DENSITY = 'aircraft:fuselage:spar_density'
+        RIB_DENSITY = 'aircraft:fuselage:rib_density'
+        SKIN_DENSITY = 'aircraft:fuselage:skin_density'
+        FUSELAGE_HEIGHT = 'aircraft:fuselage:fuselage_height'
+        FUSELAGE_WIDTH = 'aircraft:fuselage:fuselage_width'
+
     class HorizontalTail:
         AREA = 'aircraft:horizontal_tail:area'
         ASPECT_RATIO = 'aircraft:horizontal_tail:aspect_ratio'
@@ -377,6 +388,17 @@ class Aircraft:
         VOLUME_COEFFICIENT = 'aircraft:horizontal_tail:volume_coefficient'
         WETTED_AREA = 'aircraft:horizontal_tail:wetted_area'
         WETTED_AREA_SCALER = 'aircraft:horizontal_tail:wetted_area_scaler'
+
+        # ADDED FOR DBF -- NEED TO SORT LATER
+        NUM_SPARS = 'aircraft:horizontaltail:number_of_spars'
+        SPAR_THICKNESS = 'aircraft:horizontaltail:spar_thickness'
+        NUM_RIBS = 'aircraft:horizontaltail:number_of_ribs'
+        RIB_THICKNESS = 'aircraft:horizontaltail:rib_thickness'
+        SPAR_DENSITY = 'aircraft:horizontaltail:spar_density'
+        RIB_DENSITY = 'aircraft:horizontaltail:rib_density'
+        SKIN_DENSITY = 'aircraft:horizontaltail:skin_density'
+        AIRFOIL_X_COORDS = 'aircraft:horizontaltail:airfoil_x_coords'
+        AIRFOIL_Y_COORDS = 'aircraft:horizontaltail:airfoil_y_coords'
 
     class Hydraulics:
         FLIGHT_CONTROL_MASS_COEFFICIENT = 'aircraft:hydraulics:flight_control_mass_coefficient'
@@ -491,6 +513,17 @@ class Aircraft:
         WETTED_AREA = 'aircraft:vertical_tail:wetted_area'
         WETTED_AREA_SCALER = 'aircraft:vertical_tail:wetted_area_scaler'
 
+        # ADDED FOR DBF -- NEED TO SORT LATER
+        NUM_SPARS = 'aircraft:verticaltail:number_of_spars'
+        SPAR_THICKNESS = 'aircraft:verticaltail:spar_thickness'
+        NUM_RIBS = 'aircraft:verticaltail:number_of_ribs'
+        RIB_THICKNESS = 'aircraft:verticaltail:rib_thickness'
+        SPAR_DENSITY = 'aircraft:verticaltail:spar_density'
+        RIB_DENSITY = 'aircraft:verticaltail:rib_density'
+        SKIN_DENSITY = 'aircraft:verticaltail:skin_density'
+        AIRFOIL_X_COORDS = 'aircraft:verticaltail:airfoil_x_coords'
+        AIRFOIL_Y_COORDS = 'aircraft:verticaltail:airfoil_y_coords'
+
     class Wing:
         AEROELASTIC_TAILORING_FACTOR = 'aircraft:wing:aeroelastic_tailoring_factor'
 
@@ -597,6 +630,17 @@ class Aircraft:
         WETTED_AREA = 'aircraft:wing:wetted_area'
         WETTED_AREA_SCALER = 'aircraft:wing:wetted_area_scaler'
         ZERO_LIFT_ANGLE = 'aircraft:wing:zero_lift_angle'
+
+        # ADDED FOR DBF -- NEED TO SORT LATER
+        NUM_SPARS = 'aircraft:wing:number_of_spars'
+        SPAR_THICKNESS = 'aircraft:wing:spar_thickness'
+        NUM_RIBS = 'aircraft:wing:number_of_ribs'
+        RIB_THICKNESS = 'aircraft:wing:rib_thickness'
+        SPAR_DENSITY = 'aircraft:wing:spar_density'
+        RIB_DENSITY = 'aircraft:wing:rib_density'
+        SKIN_DENSITY = 'aircraft:wing:skin_density'
+        AIRFOIL_X_COORDS = 'aircraft:wing:airfoil_x_coords'
+        AIRFOIL_Y_COORDS = 'aircraft:wing:airfoil_y_coords'
 
 
 class Dynamic:
