@@ -84,7 +84,7 @@ class ElectricCruiseODETestCase(unittest.TestCase):
         aviary_options.set_val(Aircraft.Engine.GLOBAL_THROTTLE, True)
         aviary_options.set_val(
             Aircraft.Engine.DATA_FILE,
-            'mission/gasp_based/ode/test/test_data/turbofan_23k_electrified.deck',
+            'mission/gasp_based/ode/test/test_data/turbofan_23k_electrified.csv',
         )
         default_mission_subsystems = get_default_mission_subsystems(
             'GASP', build_engine_deck(aviary_options)

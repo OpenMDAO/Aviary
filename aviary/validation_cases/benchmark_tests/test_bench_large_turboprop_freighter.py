@@ -3,7 +3,7 @@ import unittest
 from openmdao.utils.testing_utils import use_tempdirs
 
 from aviary.interface.methods_for_level2 import AviaryProblem
-from aviary.models.large_turboprop_freighter.phase_info import two_dof_phase_info
+from aviary.models.aircraft.large_turboprop_freighter.phase_info import two_dof_phase_info
 from aviary.subsystems.propulsion.turboprop_model import TurbopropModel
 from aviary.utils.process_input_decks import create_vehicle
 from aviary.variable_info.variables import Aircraft, Mission
@@ -18,14 +18,14 @@ class LargeTurbopropFreighterBenchmark(unittest.TestCase):
 
         # load inputs from .csv to build engine
         options, _ = create_vehicle(
-            'models/large_turboprop_freighter/large_turboprop_freighter_GASP.csv'
+            'models/aircraft/large_turboprop_freighter/large_turboprop_freighter_GASP.csv'
         )
 
         turboprop = TurbopropModel('turboprop', options=options)
 
         # load_inputs needs to be updated to accept an already existing aviary options
         prob.load_inputs(
-            'models/large_turboprop_freighter/large_turboprop_freighter_GASP.csv',
+            'models/aircraft/large_turboprop_freighter/large_turboprop_freighter_GASP.csv',
             two_dof_phase_info,
             engine_builders=[turboprop],
         )

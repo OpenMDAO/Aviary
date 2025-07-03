@@ -9,7 +9,7 @@ from openmdao.utils.assert_utils import assert_near_equal
 from openmdao.utils.testing_utils import use_tempdirs
 
 import aviary.api as av
-from aviary.interface.default_phase_info.height_energy import phase_info as ph_in
+from aviary.models.missions.height_energy_default import phase_info as ph_in
 from aviary.interface.methods_for_level2 import AviaryProblem
 from aviary.subsystems.subsystem_builder_base import SubsystemBuilderBase
 from aviary.variable_info.variables import Dynamic
@@ -279,7 +279,7 @@ class TestExternalSubsystemBus(unittest.TestCase):
 
         prob = AviaryProblem()
 
-        csv_path = 'models/test_aircraft/aircraft_for_bench_FwFm.csv'
+        csv_path = 'models/aircraft/test_aircraft/aircraft_for_bench_FwFm.csv'
         prob.load_inputs(csv_path, phase_info)
         prob.aviary_inputs.set_val('the_shape_for_the_thing_dim0', 3, meta_data=ExtendedMetaData)
         prob.aviary_inputs.set_val('the_shape_for_the_thing_dim1', 4, meta_data=ExtendedMetaData)

@@ -85,7 +85,7 @@ class TransportUnusableFuelMassTest2(unittest.TestCase):
             promotes_inputs=['*'],
         )
 
-        prob.model_options['*'] = get_flops_options('N3CC', preprocess=True)
+        prob.model_options['*'] = get_flops_options('AdvancedSingleAisle', preprocess=True)
 
         prob.setup(check=False, force_alloc_complex=True)
         prob.set_val(Aircraft.Fuel.TOTAL_CAPACITY, 30000.0, 'lbm')

@@ -193,7 +193,7 @@ class StructureMassTest(unittest.TestCase):
         options = AviaryValues()
 
         options.set_val(Aircraft.Engine.NUM_ENGINES, 4)
-        options.set_val(Aircraft.Engine.DATA_FILE, 'models/engines/turbofan_28k.deck')
+        options.set_val(Aircraft.Engine.DATA_FILE, 'models/engines/turbofan_28k.csv')
         # suppress some warning messages about required option for EngineDecks
         options.set_val(Settings.VERBOSITY, 0)
         engineModel1 = EngineDeck(options=options)

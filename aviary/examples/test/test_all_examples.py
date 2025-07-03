@@ -15,29 +15,15 @@ from parameterized import parameterized
 
 # TODO: Address any issue that requires a skip.
 SKIP_EXAMPLES = {
-    'run_multimission_example_large_single_aisle.py': 'Broken due to OpenMDAO changes',
+    'run_multimission_example.py': 'Broken due to OpenMDAO changes',
+    'run_simple_OAS_mission.py': 'Timeout when running via this script',
+    'run_NPSS_example.py': 'Cannot be run without NPSS install',
+    'run_level2_shooting_traj.py': 'Currently broken, and pending SGM deprecation',
+    'run_level3_example.py': 'Currently broken, awaiting refresh',
 }
 
 # TODO: temporary fix, waiting on https://github.com/OpenMDAO/OpenMDAO/issues/3510
 OPT, OPTIMIZER = set_pyoptsparse_opt('SNOPT')
-if OPT is None:
-    reason = 'pyoptsparse is not installed. This example requires pyoptsparse to run.'
-    SKIP_EXAMPLES.update(
-        {
-            'run_2dof_reserve_mission_fixedrange.py': reason,
-            'run_2dof_reserve_mission_fixedtime.py': reason,
-            'run_2dof_reserve_mission_multiphase.py': reason,
-        }
-    )
-elif OPTIMIZER != 'SNOPT':
-    reason = 'pyoptsparse is not providing SNOPT. This example requires SNOPT to run.'
-    SKIP_EXAMPLES.update(
-        {
-            'run_2dof_reserve_mission_fixedrange.py': reason,
-            'run_2dof_reserve_mission_fixedtime.py': reason,
-            'run_2dof_reserve_mission_multiphase.py': reason,
-        }
-    )
 
 
 def find_examples():

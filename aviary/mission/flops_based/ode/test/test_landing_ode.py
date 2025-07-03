@@ -3,7 +3,11 @@ import unittest
 import openmdao.api as om
 
 from aviary.mission.flops_based.ode.landing_ode import FlareODE
-from aviary.models.N3CC.N3CC_data import detailed_landing_flare, inputs, landing_subsystem_options
+from aviary.models.aircraft.advanced_single_aisle.advanced_single_aisle_data import (
+    detailed_landing_flare,
+    inputs,
+    landing_subsystem_options,
+)
 from aviary.subsystems.propulsion.utils import build_engine_deck
 from aviary.utils.aviary_values import AviaryValues
 from aviary.utils.functions import set_aviary_initial_values
@@ -15,7 +19,7 @@ from aviary.variable_info.variables import Aircraft, Dynamic
 
 
 class FlareODETest(unittest.TestCase):
-    """Test against data of detailed_landing_flare from models/N3CC/N3CC_data.py."""
+    """Test against data of detailed_landing_flare from models/aircraft/advanced_single_aisle/advanced_single_aisle_data.py."""
 
     def test_case(self):
         prob = om.Problem()

@@ -68,7 +68,7 @@ class APUMassTest2(unittest.TestCase):
             promotes_outputs=['*'],
         )
 
-        prob.model_options['*'] = get_flops_options('N3CC', preprocess=True)
+        prob.model_options['*'] = get_flops_options('AdvancedSingleAisle', preprocess=True)
 
         prob.setup(check=False, force_alloc_complex=True)
         prob.set_val(Aircraft.Fuselage.PLANFORM_AREA, 100.0, 'ft**2')

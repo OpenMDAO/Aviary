@@ -5,7 +5,7 @@ from openmdao.core.problem import _clear_problem_names
 from openmdao.utils.assert_utils import assert_near_equal
 from openmdao.utils.testing_utils import require_pyoptsparse, use_tempdirs
 
-from aviary.interface.default_phase_info.two_dof import phase_info
+from aviary.models.missions.two_dof_default import phase_info
 from aviary.interface.methods_for_level1 import run_aviary
 from aviary.variable_info.variables import Aircraft, Mission
 
@@ -15,7 +15,7 @@ class ProblemPhaseTestCase(unittest.TestCase):
     """
     Test the setup and run of a large single aisle commercial transport aircraft using
     FLOPS mass method, GASP aero method, and TWO_DEGREES_OF_FREEDOM mission method.
-    Expected outputs based on 'models/test_aircraft/aircraft_for_bench_FwFm.csv' model.
+    Expected outputs based on 'models/aircraft/test_aircraft/aircraft_for_bench_FwFm.csv' model.
     """
 
     def setUp(self):
@@ -25,7 +25,7 @@ class ProblemPhaseTestCase(unittest.TestCase):
     def bench_test_swap_3_FwGm_IPOPT(self):
         local_phase_info = deepcopy(phase_info)
         prob = run_aviary(
-            'models/test_aircraft/aircraft_for_bench_FwGm.csv',
+            'models/aircraft/test_aircraft/aircraft_for_bench_FwGm.csv',
             local_phase_info,
             max_iter=100,
             verbosity=0,
@@ -51,7 +51,7 @@ class ProblemPhaseTestCase(unittest.TestCase):
     def bench_test_swap_3_FwGm_SNOPT(self):
         local_phase_info = deepcopy(phase_info)
         prob = run_aviary(
-            'models/test_aircraft/aircraft_for_bench_FwGm.csv',
+            'models/aircraft/test_aircraft/aircraft_for_bench_FwGm.csv',
             local_phase_info,
             verbosity=0,
             optimizer='SNOPT',

@@ -146,7 +146,7 @@ class AltEngineOilMassTest2(unittest.TestCase):
     def test_case(self):
         prob = om.Problem()
 
-        inputs = get_flops_inputs('N3CC', preprocess=True)
+        inputs = get_flops_inputs('AdvancedSingleAisle', preprocess=True)
 
         options = {
             Aircraft.CrewPayload.Design.NUM_PASSENGERS: inputs.get_val(

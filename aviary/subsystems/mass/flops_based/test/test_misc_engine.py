@@ -61,7 +61,7 @@ class MiscEngineMassTest(unittest.TestCase):
         options = AviaryValues()
 
         options.set_val(Aircraft.Engine.NUM_ENGINES, 4)
-        options.set_val(Aircraft.Engine.DATA_FILE, get_path('models/engines/turbofan_28k.deck'))
+        options.set_val(Aircraft.Engine.DATA_FILE, get_path('models/engines/turbofan_28k.csv'))
         options.set_val(Settings.VERBOSITY, 0)
         engineModel1 = EngineDeck(options=options)
         options.set_val(Aircraft.Engine.NUM_ENGINES, 2)

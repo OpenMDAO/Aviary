@@ -74,7 +74,7 @@ class VerticalTailMassTest2(unittest.TestCase):
             promotes_outputs=['*'],
         )
 
-        prob.model_options['*'] = get_flops_options('N3CC', preprocess=True)
+        prob.model_options['*'] = get_flops_options('AdvancedSingleAisle', preprocess=True)
 
         prob.setup(check=False, force_alloc_complex=True)
         prob.set_val(Aircraft.VerticalTail.AREA, 100, 'ft**2')
