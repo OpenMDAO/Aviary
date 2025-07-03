@@ -2092,9 +2092,11 @@ class AviaryProblem(om.Problem):
         if phase_info is None:
             #Somewhere between the sizing and off-design self.pre_mission_info gets deleted
             phase_info = self.phase_info
-            #Bug in MBSA&E where off design missions cannot run with Sandc.
-            # phase_info['pre_mission']=self.pre_mission_info
-            # phase_info['post_mission']=self.post_mission_info
+            #Bug in MBSA&E where off design missions external subsystems cannot run with Sandc.
+            phase_info['pre_mission']=self.pre_mission_info
+            phase_info['pre_mission']['external_subsystems'] = []
+            phase_info['post_mission']=self.post_mission_info
+            phase_info['post_mission']['external_subsystems'] = []
         if mission_range is None:
             # mission range is sliced from a column vector numpy array, i.e. it is a len
             # 1 numpy array
@@ -2223,9 +2225,11 @@ class AviaryProblem(om.Problem):
 
         if phase_info is None:
             phase_info = self.phase_info
-            #Bug in MBSA&E where off design missions cannot run with Sandc.
-            # phase_info['pre_mission']=self.pre_mission_info
-            # phase_info['post_mission']=self.post_mission_info
+            #Bug in MBSA&E where off design missions external subsystems cannot run with Sandc.
+            phase_info['pre_mission']=self.pre_mission_info
+            phase_info['pre_mission']['external_subsystems'] = []
+            phase_info['post_mission']=self.post_mission_info
+            phase_info['post_mission']['external_subsystems'] = []
         if mission_mass is None:
             # mission mass is sliced from a column vector numpy array, i.e. it is a len 1
             # numpy array
