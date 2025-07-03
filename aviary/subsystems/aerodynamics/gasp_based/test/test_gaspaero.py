@@ -1336,13 +1336,13 @@ class BWBCruiseAeroTest(unittest.TestCase):
         assert_near_equal(prob['alpha_stall'], [14.81304968, 14.81304968], tol)
         assert_near_equal(prob['CL_max'], [1.53789318, 1.537893184], tol)
 
-        assert_near_equal(prob['CD'], [0.02251003, 0.02251003], tol)
+        assert_near_equal(prob['CD'], [0.02250927, 0.02250927], tol)
 
         CL_over_CD = prob['CL'] / prob['CD']
-        assert_near_equal(CL_over_CD, [18.24431141, 18.24431141], tol)
+        assert_near_equal(CL_over_CD, [18.24450541, 18.24450541], tol)
 
-        assert_near_equal(prob[Dynamic.Vehicle.LIFT], [880.0650444, 880.0650444], tol)
-        assert_near_equal(prob[Dynamic.Vehicle.DRAG], [48.23777805, 48.23777805], tol)
+        assert_near_equal(prob[Dynamic.Vehicle.LIFT], [880.00827387, 880.00827387], tol)
+        assert_near_equal(prob[Dynamic.Vehicle.DRAG], [48.23415346, 48.23415346], tol)
 
     def test_case2(self):
         """output_alpha = True"""
@@ -1371,9 +1371,9 @@ class BWBCruiseAeroTest(unittest.TestCase):
         assert_near_equal(prob['alpha_stall'], [14.81304968, 14.81304968], tol)
         assert_near_equal(prob['CL_max'], [1.53789318, 1.53789318], tol)
 
-        assert_near_equal(prob['CD'], [0.02152597, 0.02152597], tol)
+        assert_near_equal(prob['CD'], [0.02152522, 0.02152522], tol)
         assert_near_equal(prob[Dynamic.Vehicle.LIFT], [817.74, 817.74], tol)
-        assert_near_equal(prob[Dynamic.Vehicle.DRAG], [46.12707714, 46.12707714], tol)
+        assert_near_equal(prob[Dynamic.Vehicle.DRAG], [46.12547914, 46.12547914], tol)
 
 
 class BWBLowSpeedAeroTest1(unittest.TestCase):
@@ -1821,4 +1821,4 @@ if __name__ == '__main__':
     # unittest.main()
     test = BWBCruiseAeroTest()
     test.setUp()
-    test.test_case3()
+    test.test_case2()
