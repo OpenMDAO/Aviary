@@ -169,12 +169,18 @@ class TailMassAndCOG(om.JaxExplicitComponent):
         thickness_dist = self.airfoil_thickness(x_points, max_thickness)
 
         if tail_type == 'horizontal':
-            total_mass, _ = quadgk(lambda x: density * self.airfoil_thickness(x, max_thickness) * (aircraft__horizontal_tail__root_chord - (aircraft__horizontal_tail__root_chord - tip_chord_tail) * (x / aircraft__horizontal_tail__span)) * aircraft__horizontal_tail__span, [0, 1], epsabs=1e-9, epsrel=1e-9)
+            total_mass, _ = quadgk(
+                lambda x: density * self.airfoil_thickness(x, max_thickness) * (
+                    aircraft__horizontal_tail__root_chord - (aircraft__horizontal_tail__root_chord - tip_chord_tail) * (x / aircraft__horizontal_tail__span)
+                    ) * aircraft__horizontal_tail__span, [0, 1], epsabs=1e-9, epsrel=1e-9)
             
             aircraft__horizontal_tail__mass = total_mass
 
         elif tail_type == 'vertical':
-            total_mass, _ = quadgk(lambda x: density * self.airfoil_thickness(x, max_thickness) * (aircraft__vertical_tail__root_chord - (aircraft__vertical_tail__root_chord - tip_chord_tail) * (x / aircraft__vertical_tail__span)) * aircraft__vertical_tail__span, [0, 1], epsabs=1e-9, epsrel=1e-9)
+            total_mass, _ = quadgk(
+                lambda x: density * self.airfoil_thickness(x, max_thickness) * (
+                    aircraft__vertical_tail__root_chord - (aircraft__vertical_tail__root_chord - tip_chord_tail) * (x / aircraft__vertical_tail__span)
+                    ) * aircraft__vertical_tail__span, [0, 1], epsabs=1e-9, epsrel=1e-9)
 
             aircraft__vertical_tail__mass = total_mass
         
