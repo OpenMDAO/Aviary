@@ -2008,20 +2008,23 @@ class AviaryProblem(om.Problem):
                 self.model.list_outputs(out_stream=outfile)
         
         self.problem_ran_successfully = not failed
+        
+        
+        mass_method = self.aviary_inputs.get_val(Settings.MASS_METHOD)
+        if mass_method == LegacyCode.FLOPS:
+            if payload_range_bool:
+                #Checks to determine if the set gross mass for off design would be greater
+                #Than the gross mass of the sizing mission. 
+                gross_mass = float(self.get_val(Mission.Summary.GROSS_MASS))
+                operating_mass=float(self.get_val(Aircraft.Design.OPERATING_MASS))
+                fuel_capacity=float(self.get_val(Aircraft.Fuel.TOTAL_CAPACITY))
 
-        if payload_range_bool:
-            #Checks to determine if the set gross mass for off design would be greater
-            #Than the gross mass of the sizing mission. 
-            gross_mass = float(self.get_val(Mission.Summary.GROSS_MASS))
-            operating_mass=float(self.get_val(Aircraft.Design.OPERATING_MASS))
-            fuel_capacity=float(self.get_val(Aircraft.Fuel.TOTAL_CAPACITY))
-
-            if operating_mass + fuel_capacity < gross_mass:
-                payload_range_matrix=self.run_payload_range()
-                print(payload_range_matrix[1])
-                print(payload_range_matrix[0])
-            else: 
-                print("Off-design gross mass exceeds sizing limitations, payload/range cannot be generated")
+                if operating_mass + fuel_capacity < gross_mass:
+                    payload_range_matrix=self.run_payload_range()
+                    print(payload_range_matrix[1])
+                    print(payload_range_matrix[0])
+                else: 
+                    print("Off-design gross mass exceeds sizing limitations, payload/range cannot be generated")
         
 
     def run_payload_range(self):
@@ -2030,12 +2033,12 @@ class AviaryProblem(om.Problem):
 
         #Automatically Adjust duration bounds of phase information within the cruise stage 
         #to allow the optimizer to arrive at a local maxima.
-        min_duration = self.phase_info['cruise']['user_options']['duration_bounds'][0][0]
-        max_duration = self.phase_info['cruise']['user_options']['duration_bounds'][0][1]
-        cruise_units = self.phase_info['cruise']['user_options']['duration_bounds'][1]
+        min_duration = self.phase_info['cruise']['user_options']['time_duration_bounds'][0][0]
+        max_duration = self.phase_info['cruise']['user_options']['time_duration_bounds'][0][1]
+        cruise_units = self.phase_info['cruise']['user_options']['time_duration_bounds'][1]
 
         #Simply doubling the amount of time the optimizer is allowed to stay in the cruise phase, as well as ensure cruise is optimized
-        self.phase_info['cruise']['user_options'].update({'duration_bounds':((min_duration,2*max_duration), cruise_units)})
+        self.phase_info['cruise']['user_options'].update({'time_duration_bounds':((min_duration,2*max_duration), cruise_units)})
 
         #point 1 along the y axis (range=0)
         payload_1 = float(self.get_val(Aircraft.CrewPayload.TOTAL_PAYLOAD_MASS))
