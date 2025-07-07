@@ -12,6 +12,7 @@ from aviary.utils.preprocessors import preprocess_options
 from aviary.utils.test_utils.default_subsystems import (
     get_default_premission_subsystems,
     get_geom_and_mass_subsystems,
+    get_geom_subsystem,
 )
 from aviary.variable_info.functions import setup_model_options
 from aviary.variable_info.variables import Aircraft, Mission
@@ -22,7 +23,7 @@ class PreMissionGroupTest(unittest.TestCase):
     def setUp(self):
         prob = self.prob = AviaryProblem()
 
-        csv_path = 'models/test_aircraft/aircraft_for_bench_GwGm.csv'
+        csv_path = 'models/aircraft/test_aircraft/aircraft_for_bench_GwGm.csv'
         self.gasp_inputs = prob.load_inputs(csv_path)
         prob.check_and_preprocess_inputs()
 
@@ -186,5 +187,59 @@ class PreMissionGroupTest(unittest.TestCase):
         assert_near_equal(prob[Aircraft.Fuel.AUXILIARY_FUEL_CAPACITY], 0, tol)
 
 
+class BWBPreMissionGroupTest(unittest.TestCase):
+    def setUp(self):
+        prob = self.prob = AviaryProblem()
+
+        csv_path = 'models/aircraft/blended_wing_body/generic_BWB_GASP.csv'
+        self.gasp_inputs = prob.load_inputs(csv_path)
+        prob.check_and_preprocess_inputs()
+
+    def test_case1(self):
+        """premission: geometry + mass"""
+
+        prob = self.prob
+        preprocess_options(self.gasp_inputs)
+        geom_and_mass_subsystems = get_geom_and_mass_subsystems('GASP')
+
+        prob.model.add_subsystem(
+            'pre_mission',
+            CorePreMission(aviary_options=self.gasp_inputs, subsystems=geom_and_mass_subsystems),
+            promotes_inputs=['*'],
+            promotes_outputs=['*'],
+        )
+
+        setup_model_options(prob, self.gasp_inputs)
+        prob.setup(check=False)
+        set_aviary_initial_values(prob, self.gasp_inputs)
+
+        prob.set_val(Mission.Landing.LIFT_COEFFICIENT_MAX, val=1.94302452, units='unitless')
+        prob.set_val(Aircraft.Engine.SCALED_SLS_THRUST, val=37451.0, units='lbf')
+
+        prob.run_model()
+
+        tol = 1e-5
+
+    def test_case2(self):
+        """premission: geometry"""
+
+        prob = self.prob
+        preprocess_options(self.gasp_inputs)
+        geom_and_mass_subsystems = get_geom_subsystem('GASP')
+
+        prob.model.add_subsystem(
+            'pre_mission',
+            CorePreMission(aviary_options=self.gasp_inputs, subsystems=geom_and_mass_subsystems),
+            promotes_inputs=['*'],
+            promotes_outputs=['*'],
+        )
+
+        setup_model_options(prob, self.gasp_inputs)
+        prob.setup(check=False)
+
+
 if __name__ == '__main__':
-    unittest.main()
+    # unittest.main()
+    test = BWBPreMissionGroupTest()
+    test.setUp()
+    test.test_case2()
