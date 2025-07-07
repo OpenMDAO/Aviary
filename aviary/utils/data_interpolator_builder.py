@@ -9,19 +9,18 @@ from aviary.utils.named_values import NamedValues, get_items, get_keys
 
 
 def build_data_interpolator(
-    num_nodes,
     interpolator_data=None,
     interpolator_outputs=None,
+    num_nodes=1,
     method='slinear',
     extrapolate=True,
     structured=None,
     connect_training_data=False,
 ):
     """
-    Builder for openMDAO metamodel components using data provided via data file, directly
-    provided as an argument, or training data passed through openMDAO connections.
-    If using a structured grid, data can either be converted from a semistructured
-    grid format, or directly provided in structured grid format.
+    Builder for openMDAO metamodel components using data provided via data file, directly provided
+    as an argument, or training data passed through openMDAO connections. Data is converted to a
+    structured grid format if possible, otherwise a semistructured grid is assumed.
 
     Parameters
     ----------
@@ -29,32 +28,37 @@ def build_data_interpolator(
         Number of points that will be simultaneously interpolated during model execution.
 
     interpolator_data : (str, Path, NamedValues)
-        Path to the Aviary csv file containing all data required for interpolation, or
-        the data directly given as a NamedValues object.
+        Path to the Aviary csv file containing all data required for interpolation, or the data
+        directly given as a NamedValues object.
 
-    interpolator_outputs : dict
-        Dictionary describing the names of dependent variables (keys) and their
-        units (values). If connect_training_data is False, these variable names must reference
-        variables in data_file or interpolator_data. If connect_training_data is True, then
-        this dictionary describes the names and units for training data that will be
-        provided via openMDAO connections during model execution.
+    interpolator_outputs : list, dict, optional
+        if connect_training_data is true, a dictionary describing the names of dependent variables
+        (keys) and their units (values). This dictionary describes the names and units for training
+        data that will be provided via openMDAO connections during model execution.
+
+        If connect_training_data is False, a list of the names of dependent variables in
+        interpolator_data. These variable names should reference variables in interpolator_data,
+        and are ignored otherwise.
+
+        Required if interpolator_data is a NamedValues object.
+
+    num_nodes : int
+        Number of points that will be simultaneously interpolated during model executuion.
 
     method : str, optional
-        Interpolation method for metamodel. See openMDAO documentation for valid
-        options.
+        Interpolation method for metamodel. See openMDAO documentation for valid options.
 
     extrapolate : bool, optional
         Flag that sets if metamodel should allow extrapolation
 
     structured : bool, optional
-        Flag to set if interpolation data is a structure grid. If True, the
-        structured metamodel component is used, if False, the semistructured metamodel is
-        used. If None, the builder chooses based on provided data structure.
+        Flag to set if interpolation data is a structure grid. If True, the structured metamodel
+        component is used, if False, the semistructured metamodel is used. If None, the builder
+        chooses based on provided data structure.
 
     connect_training_data : bool, optional
-        Flag that sets if dependent data for interpolation will be passed via openMDAO
-        connections. If True, any provided values for dependent variables will
-        be ignored.
+        Flag that sets if dependent data for interpolation will be passed via openMDAO connections.
+        If True, any provided values for dependent variables will be ignored.
 
     Returns
     -------
@@ -62,13 +66,56 @@ def build_data_interpolator(
         OpenMDAO metamodel component using the provided data and flags
     """
     # Argument checking #
-    if interpolator_outputs is None:
-        raise UserWarning('Independent variables for interpolation were not provided.')
     # if interpolator data is a filepath, get data from file
     if isinstance(interpolator_data, str):
         interpolator_data = get_path(interpolator_data)
     if isinstance(interpolator_data, Path):
-        interpolator_data = read_data_file(interpolator_data)
+        interpolator_data, inputs, outputs = read_data_file(interpolator_data)
+    else:
+        inputs = []
+        outputs = []
+
+    # Determine if independent and dependent variables are accounted for
+    # Combine interpolator_outputs & outputs found in data file
+    if interpolator_outputs is not None:
+        if isinstance(interpolator_outputs, dict):
+            addtl_outputs = list(interpolator_outputs.keys())
+        else:
+            addtl_outputs = interpolator_outputs
+        outputs = list(set(outputs + addtl_outputs))
+
+    all_vars = get_keys(interpolator_data)
+
+    # Scenario 1: Only outputs provided in data file
+    if len(inputs) == 0 and len(outputs) != 0:
+        for key in all_vars:
+            if key not in outputs:
+                inputs.append(key)
+    # Scenario 2: Only inputs provided in data file
+    elif len(inputs) != 0 and len(outputs) == 0:
+        for key in all_vars:
+            if key not in inputs:
+                outputs.append(key)
+
+    # Raise UserWarning if Scenario 1 or 2 fails
+    if len(outputs) == 0:
+        raise UserWarning(
+            'Insufficient information on inputs and outputs for interpolation was provided'
+        )
+    # Scenario 3: Both inputs and outputs provided
+    # Check that nothing in interpolator_outputs conflicts with inputs - read_data_file() already
+    # checks for "double labeling" of inputs/outputs in data file
+    for key in interpolator_outputs:
+        if key in inputs:
+            raise UserWarning(f'Variable <{key}> was specified as both an input and a output.')
+    for key in all_vars:
+        if key in inputs:
+            continue
+        if key in outputs:
+            continue
+        raise UserWarning(
+            'Insufficient information on inputs and outputs for interpolation was provided'
+        )
 
     # Pre-format data: Independent variables placed before dependent variables - position
     #                  of these variables relative to others of their type is preserved
@@ -96,7 +143,7 @@ def build_data_interpolator(
     # check inputs, should be vector of unique values only
     for key, (val, units) in get_items(interpolator_data):
         if len(val.shape) == 1:
-            if key not in interpolator_outputs:
+            if key not in outputs:
                 # try:
                 if np.array_equal(np.unique(val), val):
                     # if vector is only unique values, could be structured!
@@ -110,7 +157,7 @@ def build_data_interpolator(
     # check outputs, should be array matching shape of input vector lengths
     # if we already know data needs formatting, don't bother checking outputs
     if data_pre_structured:
-        for key in interpolator_outputs:
+        for key in outputs:
             (val, units) = interpolator_data.get_item(key)
             if np.shape(val) != tuple(shape):
                 if len(np.shape(val)) > 1:
@@ -229,13 +276,13 @@ def build_data_interpolator(
         values, units = interpolator_data.get_item(key)
         interp_comp.add_input(key, training_data=values, units=units)
     # add interpolator outputs
-    for key in interpolator_outputs:
-        if key in interpolator_data:
-            values, units = interpolator_data.get_item(key)
-        if connect_training_data:
+    if connect_training_data:
+        for key in interpolator_outputs:
             units = interpolator_outputs[key]
             interp_comp.add_output(key, units=units)
-        else:
+    else:
+        for key in outputs:
+            values, units = interpolator_data.get_item(key)
             interp_comp.add_output(key, training_data=values, units=units)
 
     return interp_comp

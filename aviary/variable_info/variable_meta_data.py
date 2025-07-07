@@ -1,4 +1,6 @@
-"""Define meta data associated with variables in the Aviary data hierarchy."""
+"""
+Define meta data associated with variables in the Aviary data hierarchy.
+"""
 
 from copy import deepcopy
 from pathlib import Path
@@ -341,23 +343,6 @@ add_meta_data(
 # ========================================================================================================================
 
 add_meta_data(
-    Aircraft.BWB.CABIN_AREA,
-    meta_data=_MetaData,
-    historical_name={
-        'GASP': None,
-        # ['&DEFINE.FUSEIN.ACABIN', 'WDEF.ACABIN'],
-        'FLOPS': 'FUSEIN.ACABIN',
-        'LEAPS1': [
-            'aircraft.inputs.L0_blended_wing_body_design.cabin_area',
-            'aircraft.cached.L0_blended_wing_body_design.cabin_area',
-        ],
-    },
-    units='ft**2',
-    desc='fixed area of passenger cabin for blended wing body transports',
-    default_value=0.0,
-)
-
-add_meta_data(
     Aircraft.BWB.NUM_BAYS,
     meta_data=_MetaData,
     historical_name={
@@ -386,7 +371,7 @@ add_meta_data(
     },
     units='deg',
     desc='forebody sweep angle',
-    default_value=45.0,
+    default_value=0.0,
 )
 
 #   _____                                      _
@@ -1105,6 +1090,17 @@ add_meta_data(
 )
 
 add_meta_data(
+    Aircraft.CrewPayload.ULD_MASS_PER_PASSENGER,
+    meta_data=_MetaData,
+    historical_name={'GASP': 'INGASP.CW(14)', 'FLOPS': None, 'LEAPS1': None},
+    units='lbm',
+    desc='unit mass of ULD (unit load device) for cargo handling per passenger',
+    default_value=0.0,
+    types=float,
+    option=True,
+)
+
+add_meta_data(
     Aircraft.CrewPayload.WATER_MASS_PER_OCCUPANT,
     meta_data=_MetaData,
     historical_name={'GASP': 'INGASP.CW(10)', 'FLOPS': None, 'LEAPS1': None},
@@ -1813,6 +1809,15 @@ add_meta_data(
     units='unitless',
     desc='mass scaler for the electrical system',
     default_value=1.0,
+)
+
+add_meta_data(
+    Aircraft.Electrical.SYSTEM_MASS_PER_PASSENGER,
+    meta_data=_MetaData,
+    historical_name={'GASP': 'INGASP.CW(15)', 'FLOPS': None, 'LEAPS1': None},
+    units='lbm',
+    desc='electrical system weight per passenger. In GASP, default 16.0',
+    default_value=0.0,
 )
 
 #  ______                   _
@@ -3064,7 +3069,7 @@ add_meta_data(
 add_meta_data(
     Aircraft.Fuel.WING_VOLUME_DESIGN,
     meta_data=_MetaData,
-    historical_name={'GASP': 'INGASP.FVOLW_DES', 'FLOPS': None, 'LEAPS1': None},
+    historical_name={'GASP': 'INGASP.FVOLREQ', 'FLOPS': None, 'LEAPS1': None},
     units='ft**3',
     desc='wing tank fuel volume when carrying design fuel plus fuel margin',
     default_value=0.0,
@@ -3124,7 +3129,7 @@ add_meta_data(
     meta_data=_MetaData,
     historical_name={'GASP': None, 'FLOPS': None, 'LEAPS1': None},
     units='lbm',
-    desc='Base furnishings system mass without additional 1% empty mass',
+    desc='For FLOPS based, base furnishings system mass without additional 1% empty mass',
     default_value=0.0,
 )
 
@@ -3138,8 +3143,21 @@ add_meta_data(
         'LEAPS1': 'aircraft.inputs.L0_overrides.furnishings_group_weight',
     },
     units='unitless',
-    desc='Furnishings system mass scaler',
+    desc='Furnishings system mass scaler. In GASP based, it is applicale if gross mass '
+    '> 10000 lbs and number of passengers >= 50. Set it to 0.0 if not use.',
     default_value=1.0,
+)
+
+add_meta_data(
+    Aircraft.Furnishings.USE_EMPIRICAL_EQUATION,
+    meta_data=_MetaData,
+    historical_name={'GASP': None, 'FLOPS': None, 'LEAPS1': None},
+    units='unitless',
+    desc='In GASP based, indicate whether use commonly used empirical furnishing weight equation. '
+    'This applies only when gross mass > 10000 and number of passengers >= 50.',
+    types=bool,
+    option=True,
+    default_value=True,
 )
 
 #  ______                        _
@@ -3192,6 +3210,23 @@ add_meta_data(
     },
     units='ft',
     desc='average fuselage diameter',
+    default_value=0.0,
+)
+
+add_meta_data(
+    Aircraft.Fuselage.CABIN_AREA,
+    meta_data=_MetaData,
+    historical_name={
+        'GASP': None,
+        # ['&DEFINE.FUSEIN.ACABIN', 'WDEF.ACABIN'],
+        'FLOPS': 'FUSEIN.ACABIN',
+        'LEAPS1': [
+            'aircraft.inputs.L0_blended_wing_body_design.cabin_area',
+            'aircraft.cached.L0_blended_wing_body_design.cabin_area',
+        ],
+    },
+    units='ft**2',
+    desc='fixed area of passenger cabin for blended wing body transports',
     default_value=0.0,
 )
 
@@ -4470,7 +4505,7 @@ add_meta_data(
     historical_name={'GASP': 'INGASP.CLEARqDN', 'FLOPS': None, 'LEAPS1': None},
     units='unitless',
     desc='the minimum number of nacelle diameters above the ground that the bottom of the nacelle must be',
-    default_value=0.0,
+    default_value=0.0,  # should be at least 0.2
     multivalue=True,
 )
 
@@ -4596,7 +4631,7 @@ add_meta_data(
 add_meta_data(
     Aircraft.Nacelle.SURFACE_AREA,
     meta_data=_MetaData,
-    historical_name={'GASP': 'INGASP.SN', 'FLOPS': None, 'LEAPS1': None},
+    historical_name={'GASP': 'INGASP.SN', 'FLOPS': None, 'LEAPS1': None},  # SN is wetted area
     units='ft**2',
     desc='surface area of the outside of one entire nacelle, not just the wetted area',
     multivalue=True,
@@ -5573,7 +5608,7 @@ add_meta_data(
     meta_data=_MetaData,
     historical_name={'GASP': 'INGASP.CRCLW', 'FLOPS': None, 'LEAPS1': None},
     units='ft',
-    desc='wing chord at fuselage centerline',
+    desc='wing chord at fuselage centerline, usually called root chord',
     default_value=0.0,
 )
 
@@ -6279,12 +6314,12 @@ add_meta_data(
     Aircraft.Wing.ROOT_CHORD,
     meta_data=_MetaData,
     historical_name={
-        'GASP': ['INGASP.CROOT', 'INGASP.CROOTW'],
+        'GASP': 'INGASP.CROOTW',
         'FLOPS': None,
         'LEAPS1': None,
     },
     units='ft',
-    desc='wing chord length at wing root',
+    desc='wing chord length at at the wing/fuselage intersection',
     default_value=0.0,
 )
 
@@ -7924,7 +7959,8 @@ add_meta_data(
     meta_data=_MetaData,
     historical_name={'GASP': 'INGASP.WFA', 'FLOPS': None, 'LEAPS1': None},
     units='lbm',
-    desc='total fuel carried at the beginning of a mission '
+    # Note: In GASP, WFA does not include fuel margin.
+    desc='total fuel carried at the beginnning of a mission '
     'includes fuel burned in the mission, reserve fuel '
     'and fuel margin',
 )
