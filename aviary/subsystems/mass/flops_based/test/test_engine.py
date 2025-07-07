@@ -78,7 +78,7 @@ class EngineMassTest(unittest.TestCase):
         options.set_val(Aircraft.Engine.FLIGHT_IDLE_MAX_FRACTION, 1.0)
         options.set_val(Aircraft.Engine.FLIGHT_IDLE_MIN_FRACTION, 0.08)
 
-        options.set_val(Aircraft.Engine.DATA_FILE, get_path('models/engines/turbofan_28k.deck'))
+        options.set_val(Aircraft.Engine.DATA_FILE, get_path('models/engines/turbofan_28k.csv'))
         engine = EngineDeck(options=options)
         options.set_val(Aircraft.Engine.SCALE_MASS, False)
         engine2 = EngineDeck(name='engine2', options=options)

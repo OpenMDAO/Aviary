@@ -162,8 +162,8 @@ class MissionDragTest(unittest.TestCase):
         assert_near_equal(CD[:134], data[:134], 0.004)
 
     def test_n3cc_drag(self):
-        flops_inputs = get_flops_inputs('N3CC')
-        flops_outputs = get_flops_outputs('N3CC')
+        flops_inputs = get_flops_inputs('AdvancedSingleAisle')
+        flops_outputs = get_flops_outputs('AdvancedSingleAisle')
 
         # comparison data is unscaled drag
         flops_inputs.set_val(Aircraft.Design.LIFT_DEPENDENT_DRAG_COEFF_FACTOR, 1.0)
@@ -443,6 +443,6 @@ class MissionDragTest(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    # unittest.main()
-    test = MissionDragTest()
-    test.test_large_single_aisle_2_drag()
+    unittest.main()
+    # test = MissionDragTest()
+    # test.test_large_single_aisle_2_drag()

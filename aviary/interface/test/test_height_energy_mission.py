@@ -100,7 +100,7 @@ class AircraftMissionTestSuite(unittest.TestCase):
             },
         }
 
-        self.aircraft_definition_file = 'models/test_aircraft/aircraft_for_bench_FwFm.csv'
+        self.aircraft_definition_file = 'models/aircraft/test_aircraft/aircraft_for_bench_FwFm.csv'
         self.make_plots = False
         self.max_iter = 100
 
@@ -282,7 +282,7 @@ class AircraftMissionTestSuite(unittest.TestCase):
 
         prob = AviaryProblem()
 
-        csv_path = 'models/test_aircraft/aircraft_for_bench_FwFm.csv'
+        csv_path = 'models/aircraft/test_aircraft/aircraft_for_bench_FwFm.csv'
 
         prob.load_inputs(csv_path, modified_phase_info)
         prob.check_and_preprocess_inputs()
