@@ -31,7 +31,7 @@ class PropulsionMissionTest(unittest.TestCase):
         # 'clean' test using GASP-derived engine deck
         nn = 20
 
-        filename = get_path('models/engines/turbofan_24k_1.deck')
+        filename = get_path('models/engines/turbofan_24k_1.csv')
 
         options = self.options
         options.set_val(Aircraft.Engine.DATA_FILE, filename)
