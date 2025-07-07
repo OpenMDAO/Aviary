@@ -295,9 +295,5 @@ class BWBEngineSizeGroup(om.Group):
                 'aircraft:nacelle:fineness',
                 'percent_exposed',
             ],
-            promotes_outputs=[
-                'aircraft:nacelle:avg_diameter',
-                'aircraft:nacelle:avg_length',
-                'aircraft:nacelle:surface_area',
-            ],
+            promotes_outputs=['*'],
         )
