@@ -14,7 +14,11 @@ from aviary.mission.flops_based.ode.takeoff_eom import (
     TakeoffEOM,
     VelocityRate,
 )
-from aviary.models.N3CC.N3CC_data import detailed_takeoff_climbing, detailed_takeoff_ground, inputs
+from aviary.models.aircraft.advanced_single_aisle.advanced_single_aisle_data import (
+    detailed_takeoff_climbing,
+    detailed_takeoff_ground,
+    inputs,
+)
 from aviary.utils.test_utils.variable_test import assert_match_varnames
 from aviary.validation_cases.validation_tests import do_validation_test
 from aviary.variable_info.functions import setup_model_options

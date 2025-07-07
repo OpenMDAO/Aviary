@@ -3,10 +3,12 @@ from copy import deepcopy
 
 from openmdao.utils.testing_utils import require_pyoptsparse, use_tempdirs
 
-from aviary.interface.default_phase_info.height_energy import phase_info as height_energy_phase_info
-from aviary.interface.default_phase_info.two_dof import phase_info as two_dof_phase_info
+from aviary.models.missions.height_energy_default import (
+    phase_info as height_energy_phase_info,
+)
+from aviary.models.missions.two_dof_default import phase_info as two_dof_phase_info
 from aviary.interface.methods_for_level2 import AviaryProblem
-from aviary.models.N3CC.N3CC_data import inputs
+from aviary.models.aircraft.advanced_single_aisle.advanced_single_aisle_data import inputs
 
 
 class BaseProblemPhaseTestCase(unittest.TestCase):
@@ -37,7 +39,7 @@ class TwoDOFZeroItersTestCase(BaseProblemPhaseTestCase):
     def test_zero_iters_2DOF(self):
         local_phase_info = deepcopy(two_dof_phase_info)
         self.build_and_run_problem(
-            'models/test_aircraft/aircraft_for_bench_GwGm.csv', local_phase_info
+            'models/aircraft/test_aircraft/aircraft_for_bench_GwGm.csv', local_phase_info
         )
 
 

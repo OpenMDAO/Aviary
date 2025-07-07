@@ -346,10 +346,10 @@ def convert_engine_deck(input_file, output_file, data_format: EngineDeckType, ro
 
     if output_file is None:
         sfx = data_file.suffix
-        if sfx == '.deck':
-            ext = '_aviary.deck'
+        if sfx == '.csv':
+            ext = '_aviary.csv'
         else:
-            ext = '.deck'
+            ext = '.csv'
         output_file = data_file.stem + ext
     write_data_file(output_file, write_data, outputs, comments, include_timestamp=True)
 

@@ -70,7 +70,7 @@ class AltFuelSystemTest2(unittest.TestCase):
     def test_case(self):
         prob = om.Problem()
 
-        inputs = get_flops_inputs('N3CC', preprocess=True)
+        inputs = get_flops_inputs('AdvancedSingleAisle', preprocess=True)
 
         options = {
             Aircraft.Fuel.NUM_TANKS: inputs.get_val(Aircraft.Fuel.NUM_TANKS),
@@ -144,7 +144,7 @@ class TransportFuelSystemTest2(unittest.TestCase):
     def test_case(self):
         prob = om.Problem()
 
-        inputs = get_flops_inputs('N3CC', preprocess=True)
+        inputs = get_flops_inputs('AdvancedSingleAisle', preprocess=True)
 
         options = {
             Aircraft.Propulsion.TOTAL_NUM_ENGINES: inputs.get_val(

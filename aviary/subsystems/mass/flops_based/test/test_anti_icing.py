@@ -139,7 +139,7 @@ class AntiIcingMassTest2(unittest.TestCase):
     def test_case_2(self):
         prob = om.Problem()
 
-        options = get_flops_options('N3CC')
+        options = get_flops_options('AdvancedSingleAisle')
         options[Aircraft.Engine.NUM_ENGINES] = np.array([5])
         options[Aircraft.Propulsion.TOTAL_NUM_ENGINES] = 5
 

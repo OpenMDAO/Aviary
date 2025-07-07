@@ -77,13 +77,13 @@ class ElectricMassTest0(unittest.TestCase):
             ],
         )
 
-        prob.model_options['*'] = get_flops_options('N3CC', preprocess=True)
+        prob.model_options['*'] = get_flops_options('AdvancedSingleAisle', preprocess=True)
 
         prob.setup(check=False, force_alloc_complex=True)
 
         flops_validation_test(
             self.prob,
-            'N3CC',
+            'AdvancedSingleAisle',
             input_keys=[
                 Aircraft.Fuselage.LENGTH,
                 Aircraft.Fuselage.MAX_WIDTH,
@@ -123,7 +123,7 @@ class ElectricMassTest2(unittest.TestCase):
             ],
         )
 
-        prob.model_options['*'] = get_flops_options('N3CC', preprocess=True)
+        prob.model_options['*'] = get_flops_options('AdvancedSingleAisle', preprocess=True)
 
         prob.setup(check=False, force_alloc_complex=True)
         prob.set_val(Aircraft.Fuselage.LENGTH, 100.0, 'ft')
