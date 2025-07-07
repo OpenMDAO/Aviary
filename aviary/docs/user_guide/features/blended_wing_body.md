@@ -159,7 +159,7 @@ All the BWB related modifications in aerodynamics reside in `aerodynamics/gasp_b
 
 In the computation of body form drag factor `body_form_factor`, the fuselage fineness ratio is based on hydraulic diameter instead of fuselage average diameter. It holds
 
-<p align="center">body_form_factor $(x) = 1 + 1.5x^{1.5} + 7x^3$</p>
+<p align="center">${\rm body_form_factor}(x) = 1 + 1.5x^{1.5} + 7x^3$</p>
 
 where $x$ = (hydraulic diameter) / (fuselage length).
 
@@ -169,7 +169,7 @@ In GASP and Aviary, there is a parameter named `siwb`. It is basically the curve
 
 <p align="center">${\rm siwb}(x) = 1 - 0.0088x - 1.7364x^2 - 2.303x^3 + 6.0606x^4$</p>
 
-For conventional aircraft, $x$ = (cabin width) / (wing span). For BWB, $x$ is replaced by hydraulic diameter over wing span.
+For conventional aircraft, $x = ({\rm cabin width}) / ({\rm wing span})$. For BWB, $x$ is replaced by hydraulic diameter over wing span.
 
 3. Computation of unified induced drag correction factor
 
@@ -183,7 +183,7 @@ All three parameters above are fed into the main component `AeroGeom` of aero dy
 
 For BWB aircraft, lift coefficient depends on both the wing and the body. A new component `BWBBodyLiftCurveSlope` is added to compute the body lift curve slope of fuselage for a given Mach number (`CLALPH_B`). Suppose that we are given the lift curve slope of fuselage at Mach 0 (`CLALPH_B0`), then for any given Mach, we define
 
-<p align="center">$CLALPH_B = CLALPH_B0 / (1.0 - mach<sup>2</sup>)<sup>1/2</sup></p>
+<p align="center">${\rm CLALPH_B} = {\rm CLALPH_B0} / (1.0 - mach^2)^{1/2}$</p>
 
 Note: This formula is valid only for Mach number less than 1. We advise that a BWB model should limit the Mach number to within 0.8 for accuracy. For Mach number greater than 0.8, please consider using table based aero model.
 
@@ -198,3 +198,5 @@ For cruise:
 For low speed:
 
 ![BWB low speed aero](../images/BWB_GASP_Aero_lowspeed.png)
+
+This model has its limitations. Generally speaking, it is good for number of passengers fewer than 250. There are other limitations. For detailed discussions, we refer readers to developer guide.
