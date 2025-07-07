@@ -200,3 +200,7 @@ For low speed:
 ![BWB low speed aero](../images/BWB_GASP_Aero_lowspeed.png)
 
 This model has its limitations. Generally speaking, it is good for number of passengers fewer than 250. There are other limitations. For detailed discussions, we refer readers to developer guide.
+
+6. Computation of total lift coefficient
+
+The total lift coefficient is a scaled sum of lift coeficient of the wings and the lift coefficient of the body. For the wing, the ratio of the exposed wing area vs the wing area scales the the lift coefficient of the wings. For the body, the ratio of planform area over the the wing area.
