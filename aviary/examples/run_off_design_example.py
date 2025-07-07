@@ -10,10 +10,6 @@ This performs a coupled design-mission optimization and outputs the results from
 """
 
 import aviary.api as av
-<<<<<<< HEAD:aviary/examples/off_design_example.py
-=======
-from aviary.models.missions.height_energy_default import phase_info_parameterization
->>>>>>> f72f49632cf6d28e5dc9061005baac43157b98b4:aviary/examples/run_off_design_example.py
 
 phase_info=av.default_height_energy_phase_info
 
