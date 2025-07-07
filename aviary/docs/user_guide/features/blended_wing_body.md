@@ -167,7 +167,7 @@ where $x$ = (hydraulic diameter) / (fuselage length).
 
 In GASP and Aviary, there is a parameter named `siwb`. It is basically the curve fitting correction factor for Oswald efficiency. 
 
-<p align="center">siwb($x$) = 1 - 0.0088<i>x</i> - 1.7364<i>x</i><sup>2</sup> - 2.303<i>x</i><sup>3</sup> + 6.0606<i>x</i><sup>4</sup></p>
+<p align="center">${\rm siwb}(x) = 1 - 0.0088x - 1.7364x^2 - 2.303x^3 + 6.0606x^4$</p>
 
 For conventional aircraft, $x$ = (cabin width) / (wing span). For BWB, $x$ is replaced by hydraulic diameter over wing span.
 
