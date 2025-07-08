@@ -18,10 +18,10 @@ from aviary.mission.problem_configurator import ProblemConfiguratorBase
 from aviary.subsystems.propulsion.utils import build_engine_deck
 from aviary.utils.functions import add_opts2vals, create_opts2vals
 from aviary.utils.process_input_decks import initialization_guessing, update_GASP_options
-from aviary.utils.utils import wrapped_convert_units, process_guess_var
+from aviary.utils.utils import wrapped_convert_units
 from aviary.variable_info.enums import AnalysisScheme, LegacyCode
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
-
+from aviary.mission.utils import process_guess_var
 
 class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
     """

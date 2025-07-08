@@ -4,10 +4,10 @@ from aviary.mission.flops_based.phases.groundroll_phase import (
 from aviary.mission.gasp_based.phases.twodof_phase import TwoDOFPhase
 from aviary.mission.problem_configurator import ProblemConfiguratorBase
 from aviary.subsystems.propulsion.utils import build_engine_deck
-from aviary.utils.utils import wrapped_convert_units, process_guess_var
+from aviary.utils.utils import wrapped_convert_units
 from aviary.variable_info.enums import LegacyCode
 from aviary.variable_info.variables import Dynamic, Mission
-
+from aviary.mission.utils import process_guess_var
 
 class SolvedTwoDOFProblemConfigurator(ProblemConfiguratorBase):
     """The Solved 2DOF builder is used for detailed take-off and landing."""
