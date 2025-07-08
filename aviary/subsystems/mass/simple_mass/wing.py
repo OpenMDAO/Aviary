@@ -77,7 +77,7 @@ class WingMass(om.JaxExplicitComponent):
         airfoil_data_file = self.options['airfoil_data_file']
         
         # Get material density
-        density, _ = materials.get_item(material)  # in kg/m^3
+        density = materials.get_val(material, 'kg/m**3')
 
         if airfoil_data_file and os.path.exists(airfoil_data_file):
             airfoil_data = np.loadtxt(airfoil_data_file)
