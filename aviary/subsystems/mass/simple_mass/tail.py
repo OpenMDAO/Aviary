@@ -191,18 +191,6 @@ class TailMass(om.JaxExplicitComponent):
         dx = 1 / (n_points - 1)
         return x_points, dx
     
-    def compute_airfoil_geometry(self, chord, camber, camber_location, thickness_dist, x_points, dx):
-
-        section_area = jnp.trapezoid(thickness_dist, x_points, dx=dx) 
-        section_area *= chord
-
-        centroid_x = jnp.trapezoid(x_points * thickness_dist, x_points, dx=dx)
-        centroid_x = (centroid_x * chord) / section_area
-
-        centroid_z = jnp.trapezoid(self.airfoil_camber_line(x_points, camber, camber_location) * thickness_dist, x_points, dx=dx)
-        centroid_z = (centroid_z * chord) / section_area
-        return section_area, centroid_x, centroid_z
-    
     def airfoil_thickness(self, x, max_thickness):
         return 5 * max_thickness * (0.2969 * jnp.sqrt(x) - 0.1260 * x - 0.3516 * x**2 + 0.2843 * x**3 - 0.1015 * x**4)
     
