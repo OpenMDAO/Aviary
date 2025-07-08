@@ -9,6 +9,7 @@ from aviary.variable_info.enums import LegacyCode
 from aviary.variable_info.variables import Dynamic, Mission
 from aviary.mission.utils import process_guess_var
 
+
 class SolvedTwoDOFProblemConfigurator(ProblemConfiguratorBase):
     """The Solved 2DOF builder is used for detailed take-off and landing."""
 

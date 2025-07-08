@@ -23,6 +23,7 @@ from aviary.variable_info.enums import AnalysisScheme, LegacyCode
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 from aviary.mission.utils import process_guess_var
 
+
 class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
     """
     A 2DOF specific builder that customizes AviaryProblem() for use with
