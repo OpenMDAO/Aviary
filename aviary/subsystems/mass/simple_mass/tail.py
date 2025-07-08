@@ -120,7 +120,7 @@ class TailMass(om.JaxExplicitComponent):
         tail_type = self.options["tail_type"]
         airfoil_type = self.options["airfoil_type"]
         material = self.options['material']
-        density, _ = materials.get_item(material)
+        density = materials.get_val(material, 'kg/m**3')
         airfoil_file = self.options['airfoil_file']
         num_sections = self.options['num_sections']
         NACA_digits = self.options['NACA_digits']
