@@ -152,8 +152,8 @@ class FuselageMass(om.JaxExplicitComponent):
     def get_section_diameter(self, location, length, base_diameter, tip_diameter, interpolate_diameter):
         if self.custom_fuselage_function:
             return self.custom_fuselage_function(location)
-        elif self.load_fuselage_data:
-            return interpolate_diameter(location) if interpolate_diameter is not None else base_diameter + ((tip_diameter - base_diameter) / length) * location
+        elif self.load_fuselage_data and interpolate_diameter is not None:
+            return interpolate_diameter(location)
         else:
             return base_diameter + ((tip_diameter - base_diameter) / length) * location
     
