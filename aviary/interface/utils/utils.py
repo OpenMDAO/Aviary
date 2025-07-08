@@ -1,6 +1,9 @@
 from math import floor, log10
 
 import numpy as np
+import warnings
+
+from aviary.variable_info.enums import Verbosity
 
 # TODO openMDAO has generate_table() that might be able to replace this
 
