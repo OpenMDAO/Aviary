@@ -23,17 +23,17 @@ class SixDOF_ODE(_BaseODE):
         self.add_subsystem(
             'true_airspeed_comp',
             subsys=om.ExecComp(
-                'true_airspeed = (axial_vel**2 + lat_vel**2 + vert_vel**2)**0.5',
+                'true_airspeed = (u**2 + v**2 + w**2)**0.5',
                 true_airspeed = {'units': 'm/s', 'shape': (nn,)},
-                axial_vel = {'units': 'm/s', 'shape': (nn,)},
-                lat_vel = {'units': 'm/s', 'shape': (nn,)}, 
-                vert_vel = {'units': 'm/s', 'shape': (nn,)},
+                u = {'units': 'm/s', 'shape': (nn,)},
+                v = {'units': 'm/s', 'shape': (nn,)}, 
+                w = {'units': 'm/s', 'shape': (nn,)},
                 has_diag_partials=True
             ),
             promotes_inputs=[
-                'axial_vel',
-                'lat_vel',
-                'vert_vel',
+                'u',
+                'v',
+                'w',
             ],
             promotes_outputs=[
                 'true_airspeed'
@@ -48,7 +48,9 @@ class SixDOF_ODE(_BaseODE):
             promotes=['*']
         )
 
-        T_vert_comp = om.ExecComp(
+        self.add_subsystem(
+            'thrust_comp',
+            subsys=om.ExecComp(
             'T_z = cos(roll) * cos(pitch) * mass * g',
             roll = {'units': 'rad', 'shape': (nn,)},
             pitch = {'units': 'rad', 'shape': (nn,)},
@@ -62,7 +64,7 @@ class SixDOF_ODE(_BaseODE):
             promotes_outputs=[
                 ('T_z', 'T_z'),
             ]
-        ) # body-relative CS
+        )) # body-relative CS
 
         comp = om.BalanceComp(
             name=Dynamic.Vehicle.Propulsion.THROTTLE,
@@ -96,6 +98,8 @@ class SixDOF_ODE(_BaseODE):
                 'lift',
                 'side',
                 'thrust',
+                'heading_angle',
+                Dynamic.Mission.FLIGHT_PATH_ANGLE,
             ],
             promotes_outputs=[
                 'Fx',
@@ -109,9 +113,9 @@ class SixDOF_ODE(_BaseODE):
             SixDOF_EOM(num_nodes=nn),
             promotes_inputs=[
                 'mass',
-                'axial_vel',
-                'lat_vel',
-                'vert_vel',
+                'u',
+                'v',
+                'w',
                 'roll_ang_vel',
                 'pitch_ang_vel',
                 'yaw_ang_vel',
@@ -119,12 +123,12 @@ class SixDOF_ODE(_BaseODE):
                 'pitch',
                 'yaw',
                 'g',
-                'Fx_ext',
-                'Fy_ext',
-                'Fz_ext',
-                'lx_ext',
-                'ly_ext',
-                'lz_ext',
+                'Fx',
+                'Fy',
+                'Fz',
+                'lx',
+                'ly',
+                'lz',
                 'J_xz',
                 'J_xx',
                 'J_yy',
