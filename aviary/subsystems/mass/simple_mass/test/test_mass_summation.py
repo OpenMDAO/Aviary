@@ -218,7 +218,7 @@ class StructureMassTest(unittest.TestCase):
                           val=4.25)
         
         self.prob.set_val(Aircraft.VerticalTail.MASS, 
-                          val=4.25)
+                          val=4.5)
     
     def test_case(self):
 
