@@ -131,9 +131,9 @@ class FuselageMass(om.JaxExplicitComponent):
 
     def validate_inputs(self, length, base_diameter, thickness, tip_diameter, is_hollow):
         if length <= 0 or base_diameter <= 0 or tip_diameter <= 0 or thickness <= 0:
-            raise ValueError("Length, diameter, and thickness must be positive values.")
+            raise AnalysisError("Length, diameter, and thickness must be positive values.")
         if is_hollow and thickness >= base_diameter / 2:
-            raise ValueError("Wall thickness is too large for a hollow fuselage.")
+            raise AnalysisError("Wall thickness is too large for a hollow fuselage.")
     
     def load_fuselage_data(self, custom_fuselage_data_file):
         if custom_fuselage_data_file:
