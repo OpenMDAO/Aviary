@@ -35,7 +35,7 @@ class TailMassTestCase(unittest.TestCase):
             val=1,
             units="m"
         )
-        #else:
+        
         self.prob.model.set_input_defaults(
         Aircraft.VerticalTail.SPAN,
         val=1,
