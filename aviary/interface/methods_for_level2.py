@@ -89,14 +89,14 @@ class AviaryProblem(om.Problem):
         verbosity=None,
     ):
         """
-        This method loads the aviary_values inputs and options that the
-        user specifies. They could specify files to load and values to
-        replace here as well.
-        Phase info is also loaded if provided by the user. If phase_info is None,
-        the appropriate default phase_info based on mission analysis method is used.
+        This method loads the aviary_values inputs and options that the user specifies. They could
+        specify files to load and values to replace here as well.
 
-        This method is not strictly necessary; a user could also supply
-        an AviaryValues object and/or phase_info dict of their own.
+        Phase info is also loaded if provided by the user. If phase_info is None, the appropriate
+        default phase_info based on mission analysis method is used.
+
+        This method is not strictly necessary; a user could also supply an AviaryValues object
+        and/or phase_info dict of their own.
         """
         # We haven't read the input data yet, we don't know what desired run verbosity is
         # `self.verbosity` is "true" verbosity for entire run. `verbosity` is verbosity
