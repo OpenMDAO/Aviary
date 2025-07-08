@@ -22,7 +22,7 @@ class WingMassTestCase(unittest.TestCase):
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
             "wing_mass",
-            WingMassAndCOG(),
+            WingMass(),
             promotes_inputs=["*"],
             promotes_outputs=['*'],
         )
