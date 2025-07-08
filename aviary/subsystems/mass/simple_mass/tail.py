@@ -185,8 +185,7 @@ class TailMass(om.JaxExplicitComponent):
         return aircraft__horizontal_tail__mass, aircraft__vertical_tail__mass
     
     def precompute_airfoil_geometry(self):
-        num_sections = self.options['num_sections']
-        n_points = num_sections
+        n_points = self.options['num_sections']
         x_points = jnp.linspace(0, 1, n_points)
         dx = 1 / (n_points - 1)
         return x_points, dx
