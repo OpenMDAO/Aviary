@@ -10,7 +10,7 @@ from aviary.variable_info.variables import Aircraft
 from aviary.variable_info.functions import add_aviary_input
 
 
-class MassSummation(om.Group):
+class SimpleMassSummation(om.Group):
     """
 
     Group to compute various design masses for this mass group.
