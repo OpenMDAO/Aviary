@@ -29,7 +29,7 @@ from aviary.subsystems.geometry.geometry_builder import CoreGeometryBuilder
 from aviary.subsystems.mass.mass_builder import CoreMassBuilder
 from aviary.subsystems.premission import CorePreMission
 from aviary.subsystems.propulsion.propulsion_builder import CorePropulsionBuilder
-from aviary.interface.utils.utils import set_warning_format
+from aviary.interface.utils import set_warning_format
 from aviary.mission.utils import get_phase_mission_bus_lengths, process_guess_var
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission, Settings
 from aviary.variable_info.variable_meta_data import _MetaData as BaseMetaData
@@ -53,10 +53,13 @@ GASP = LegacyCode.GASP
 
 class AviaryGroup(om.Group):
     """
-    A standard OpenMDAO group where all elements of a given aviary aircraft design and mission are defined.
+    A standard OpenMDAO group where all elements of a given aviary aircraft design and mission are
+    defined.
+
     This includes pre_mission, mission, and post_mission analysis. This group also contains methods
-    for loading data from .csv and phase_info files, setting initial values on the group, and connecting
-    all the phases inside the mission analysis to each other.
+    for loading data from .csv and phase_info files, setting initial values on the group, and
+    connecting all the phases inside the mission analysis to each other.
+
     Instantiating multiple AviaryGroups allows for analysis and optimization of multiple aircraft or
     one aircraft in multiple missions simultaneously.
     """

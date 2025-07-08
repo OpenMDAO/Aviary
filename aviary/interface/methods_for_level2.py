@@ -16,7 +16,7 @@ from aviary.core.AviaryGroup import AviaryGroup
 
 from aviary.utils.aviary_values import AviaryValues
 from aviary.utils.functions import convert_strings_to_data
-from aviary.interface.utils.utils import set_warning_format
+from aviary.interface.utils import set_warning_format
 from aviary.utils.merge_variable_metadata import merge_meta_data
 
 from aviary.variable_info.enums import (
@@ -107,7 +107,7 @@ class AviaryProblem(om.Problem):
         else:
             verbosity = self.verbosity  # usually None
 
-        # TODO: We cannot pass self.verbosity back up from load inputs for mulit-mission because there could be multiple .csv files
+        # TODO: We cannot pass self.verbosity back up from load inputs for multi-mission because there could be multiple .csv files
         aviary_inputs, verbosity = self.model.load_inputs(
             aircraft_data=aircraft_data,
             phase_info=phase_info,
