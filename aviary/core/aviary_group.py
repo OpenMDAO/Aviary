@@ -11,8 +11,8 @@ from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.enums import EquationsOfMotion
 from aviary.variable_info.variables import Settings
 from aviary.variable_info.enums import Verbosity
-from aviary.core.PreMissionGroup import PreMissionGroup
-from aviary.core.PostMissionGroup import PostMissionGroup
+from Aviary.aviary.core.pre_mission_group import PreMissionGroup
+from Aviary.aviary.core.post_mission_group import PostMissionGroup
 from aviary.utils.preprocessors import preprocess_options
 from aviary.variable_info.enums import (
     AnalysisScheme,

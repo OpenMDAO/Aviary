@@ -12,7 +12,7 @@ import numpy as np
 import openmdao.api as om
 from openmdao.utils.reports_system import _default_reports
 
-from aviary.core.AviaryGroup import AviaryGroup
+from Aviary.aviary.core.aviary_group import AviaryGroup
 
 from aviary.utils.aviary_values import AviaryValues
 from aviary.utils.functions import convert_strings_to_data
