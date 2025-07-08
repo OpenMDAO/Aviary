@@ -20,7 +20,7 @@ class MassSummationTest(unittest.TestCase):
 
         self.prob.model.add_subsystem(
             'tot',
-            MassSummation(),
+            SimpleMassSummation(),
             promotes=['*']
         )
 
