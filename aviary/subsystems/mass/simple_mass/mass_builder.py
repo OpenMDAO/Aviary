@@ -3,16 +3,11 @@ from aviary.subsystems.mass.simple_mass.mass_premission import MassPremission
 
 
 """
-
-Define subsystem builder for Aviary core mass.
+Define subsystem builder for Aviary simple mass.
 
 Classes
---------------------------------------------------------------------------------------------------
-
-MassBuilderBase: the interface for a mass subsystem builder. **Not sure how necessary this is for
-                 my work right now, but wanted to include it as a just in case. I basically copied
-                 it over from the mass_builder.py under the mass subsystems folder in Aviary github.
-
+--------
+SimpleMassBuilderBase: the interface for the simple mass subsystem builder. 
 """
 
 _default_name = 'simple_mass'
