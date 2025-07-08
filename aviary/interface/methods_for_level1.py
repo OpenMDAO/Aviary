@@ -55,11 +55,11 @@ def run_aviary(
     make_plots : bool, optional
         If True, generate plots during the optimization, defaults to True.
     phase_info_parameterization : function, optional
-        Additional information to parameterize the phase_info object based on
-        desired cruise altitude and Mach.
+        Additional information to parameterize the phase_info object based on desired cruise
+        altitude and Mach.
     optimization_history_filename : str or Path
-        The name of the database file where the driver iterations are to be recorded. The
-        default is None.
+        The name of the database file where the driver iterations are to be recorded. The default is
+        None.
     verbosity : Verbosity or int, optional
         Sets level of information outputted to the terminal during model execution.
         If provided, overrides verbosity specified in aircraft_data.

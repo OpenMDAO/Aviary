@@ -4,7 +4,7 @@ import numpy as np
 import openmdao.api as om
 from openmdao.utils.file_wrap import FileParser
 
-from aviary.examples.external_subsystems.engine_NPSS.engine_variables import Aircraft
+from aviary.examples.external_subsystems.engine_NPSS.NPSS_variables import Aircraft
 from aviary.utils.functions import get_path
 
 

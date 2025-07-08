@@ -1,9 +1,7 @@
 import csv
-import importlib.util
 import inspect
 import json
 import os
-import sys
 import warnings
 from datetime import datetime
 from enum import Enum
@@ -17,7 +15,8 @@ from openmdao.utils.reports_system import _default_reports
 from aviary.core.AviaryGroup import AviaryGroup
 
 from aviary.utils.aviary_values import AviaryValues
-from aviary.utils.functions import convert_strings_to_data, set_warning_format
+from aviary.utils.functions import convert_strings_to_data
+from aviary.interface.utils.utils import set_warning_format
 from aviary.utils.merge_variable_metadata import merge_meta_data
 
 from aviary.variable_info.enums import (

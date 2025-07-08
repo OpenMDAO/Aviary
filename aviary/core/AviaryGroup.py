@@ -1,5 +1,6 @@
 import inspect
 from pathlib import Path
+from importlib.machinery import SourceFileLoader
 
 import dymos as dm
 from dymos.utils.misc import _unspecified
@@ -34,10 +35,11 @@ from aviary.variable_info.variables import Aircraft, Dynamic, Mission, Settings
 from aviary.variable_info.variable_meta_data import _MetaData as BaseMetaData
 from aviary.mission.gasp_based.phases.time_integration_traj import FlexibleTraj
 
+from aviary.utils.functions import get_path
 from aviary.utils.preprocessors import preprocess_options
 from aviary.utils.process_input_decks import create_vehicle, update_GASP_options
 from aviary.utils.utils import wrapped_convert_units
-from aviary.interface.default_phase_info.two_dof_fiti import add_default_sgm_args
+from aviary.models.missions.two_dof_fiti_default import add_default_sgm_args
 from aviary.variable_info.functions import setup_trajectory_params
 
 TWO_DEGREES_OF_FREEDOM = EquationsOfMotion.TWO_DEGREES_OF_FREEDOM
@@ -246,34 +248,21 @@ class AviaryGroup(om.Group):
             aviary_inputs = update_GASP_options(aviary_inputs)
 
         ## LOAD PHASE_INFO ###
+        # if phase info is a file, load it
+        if isinstance(phase_info, str) or isinstance(phase_info, Path):
+            phase_info_path = get_path(phase_info)
+            phase_info_file = SourceFileLoader(
+                'phase_info_file', str(phase_info_path)
+            ).load_module()
+            phase_info = getattr(phase_info_file, 'phase_info')
+
         if phase_info is None:
-            # check if the user generated a phase_info from gui
-            # Load the phase info dynamically from the current working directory
-            phase_info_module_path = Path.cwd() / 'outputted_phase_info.py'
-
-            if phase_info_module_path.exists():
-                spec = importlib.util.spec_from_file_location(
-                    'outputted_phase_info', phase_info_module_path
+            phase_info = self.configurator.get_default_phase_info(self)
+            if verbosity is not None and verbosity >= Verbosity.BRIEF:
+                print(
+                    f'Loaded default phase_info for {self.mission_method.value.lower()} equations '
+                    'of motion.'
                 )
-                outputted_phase_info = importlib.util.module_from_spec(spec)
-                sys.modules['outputted_phase_info'] = outputted_phase_info
-                spec.loader.exec_module(outputted_phase_info)
-
-                # Access the phase_info variable from the loaded module
-                phase_info = outputted_phase_info.phase_info
-
-                # if verbosity level is BRIEF or higher, print that we're using the
-                # outputted phase info
-                if verbosity >= Verbosity.BRIEF:
-                    print('Using outputted phase_info from current working directory')
-            else:
-                phase_info = self.configurator.get_default_phase_info(self)
-
-                if verbosity is not None and verbosity >= Verbosity.BRIEF:
-                    print(
-                        'Loaded default phase_info for '
-                        f'{self.mission_method.value.lower()} equations of motion'
-                    )
 
         # create a new dictionary that only contains the phases from phase_info
         self.phase_info = {}

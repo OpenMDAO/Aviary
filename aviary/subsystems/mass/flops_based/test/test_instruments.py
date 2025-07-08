@@ -77,7 +77,7 @@ class TransportInstrumentsMassTest2(unittest.TestCase):
     def test_case(self):
         prob = om.Problem()
 
-        inputs = get_flops_inputs('N3CC', preprocess=True)
+        inputs = get_flops_inputs('AdvancedSingleAisle', preprocess=True)
 
         options = {
             Aircraft.CrewPayload.NUM_FLIGHT_CREW: inputs.get_val(
