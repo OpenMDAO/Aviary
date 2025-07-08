@@ -139,11 +139,12 @@ class FuselageMass(om.JaxExplicitComponent):
             try:
                 # Load the file
                 custom_data = np.loadtxt(custom_fuselage_data_file)
+            except FileNotFoundError as e:
+                raise FileNotFoundError(f'Fuselage data file {e}')
+            else:
                 fuselage_locations = custom_data[:, 0]
                 fuselage_diameters = custom_data[:, 1]
                 return jinterp.RegularGridInterpolator(fuselage_locations, fuselage_diameters, kind='linear', fill_value='extrapolate')
-            except Exception as e:
-                raise ValueError(f"Error loading fuselage data file: {e}")
         else:
             return None
     
