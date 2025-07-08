@@ -14,18 +14,18 @@ class SimpleMassPremission(om.Group):
 
         self.add_subsystem(
             'Wing',
-            WingMassAndCOG(),
+            WingMass(),
             promotes_inputs=['*'], promotes_outputs=['*']
         )
 
         self.add_subsystem(
             'Fuselage',
-            FuselageMassAndCOG(),
+            FuselageMass(),
             promotes_inputs=['*'], promotes_outputs=['*']
         )
 
         self.add_subsystem(
             'Tail',
-            TailMassAndCOG(tail_type='horizontal'),
+            TailMass(tail_type='horizontal'),
             promotes_inputs=['*'], promotes_outputs=['*']
         )
