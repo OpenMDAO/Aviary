@@ -1,5 +1,7 @@
 import numpy as np
 import openmdao.api as om
+from aviary.variable_info.variables import Dynamic
+from aviary.utils.functions import add_aviary_input
 
 
 class ForceComponentResolver(om.ExplicitComponent):
@@ -9,6 +11,12 @@ class ForceComponentResolver(om.ExplicitComponent):
     
     This class assumes that the total force is given and needs to be resolved 
     into the separate components.
+
+    Assumptions:
+        - Thrust is entirely in -z direction (T = (0,0,-T_z)^T) w.r.t. body CS
+        - Assuming F_i is in body CS, and D, S, and L are in wind CS. Wind -> body rotation matrix
+          was applied for coordinate transformations
+        - Thrust is initially in NED CS. So, two rotations (NED -> wind and wind -> body) are applied
 
     """
 
@@ -69,6 +77,17 @@ class ForceComponentResolver(om.ExplicitComponent):
             desc="Side vector (unresolved)"
         )
 
+        self.add_input(
+            'heading_angle',
+            val=np.zeros(nn),
+            units='rad',
+            desc='Heading angle'
+        )
+
+        add_aviary_input(self,
+                         Dynamic.Mission.FLIGHT_PATH_ANGLE,
+                         units='rad')
+
         # self.add_input(
         #     'true_air_speed',
         #     val=np.zeros(nn),
@@ -107,6 +126,9 @@ class ForceComponentResolver(om.ExplicitComponent):
         self.declare_partials(of='Fx', wrt='drag', rows=ar, cols=ar)
         self.declare_partials(of='Fx', wrt='lift', rows=ar, cols=ar)
         self.declare_partials(of='Fx', wrt='side', rows=ar, cols=ar)
+        self.declare_partials(of='Fx', wrt='thrust', rows=ar, cols=ar)
+        self.declare_partials(of='Fx', wrt='heading_angle', rows=ar, cols=ar)
+        self.declare_partials(of='Fx', wrt=Dynamic.Mission.FLIGHT_PATH_ANGLE, rows=ar, cols=ar)
 
         self.declare_partials(of='Fy', wrt='u', rows=ar, cols=ar)
         self.declare_partials(of='Fy', wrt='v', rows=ar, cols=ar)
@@ -114,6 +136,9 @@ class ForceComponentResolver(om.ExplicitComponent):
         self.declare_partials(of='Fy', wrt='drag', rows=ar, cols=ar)
         self.declare_partials(of='Fy', wrt='lift', rows=ar, cols=ar)
         self.declare_partials(of='Fy', wrt='side', rows=ar, cols=ar)
+        self.declare_partials(of='Fy', wrt='thrust', rows=ar, cols=ar)
+        self.declare_partials(of='Fy', wrt='heading_angle', rows=ar, cols=ar)
+        self.declare_partials(of='Fy', wrt=Dynamic.Mission.FLIGHT_PATH_ANGLE, rows=ar, cols=ar)
 
         self.declare_partials(of='Fz', wrt='u', rows=ar, cols=ar)
         self.declare_partials(of='Fz', wrt='v', rows=ar, cols=ar)
@@ -121,6 +146,9 @@ class ForceComponentResolver(om.ExplicitComponent):
         self.declare_partials(of='Fz', wrt='drag', rows=ar, cols=ar)
         self.declare_partials(of='Fz', wrt='lift', rows=ar, cols=ar)
         self.declare_partials(of='Fz', wrt='side', rows=ar, cols=ar)
+        self.declare_partials(of='Fz', wrt='thrust', rows=ar, cols=ar)
+        self.declare_partials(of='Fz', wrt='heading_angle', rows=ar, cols=ar)
+        self.declare_partials(of='Fz', wrt=Dynamic.Mission.FLIGHT_PATH_ANGLE, rows=ar, cols=ar)
 
     def compute(self, inputs, outputs):
 
@@ -131,6 +159,8 @@ class ForceComponentResolver(om.ExplicitComponent):
         T = inputs['thrust']
         L = inputs['lift']
         S = inputs['side'] # side force -- assume 0 for now
+        chi = inputs['heading_angle']
+        gamma = inputs[Dynamic.Mission.FLIGHT_PATH_ANGLE]
 
         nn = self.options['num_nodes']
 
@@ -138,14 +168,14 @@ class ForceComponentResolver(om.ExplicitComponent):
 
         V = np.sqrt(u**2 + v**2 + w**2)
 
-        # flight path angle
+        # angle of attack
 
         # divide by zero checks
         if np.any(u == 0):
             u[u == 0] = 1e-4
-            gamma = np.arctan(w / u)
+            alpha = np.arctan(w / u)
         else:
-            gamma = np.arctan(w / u)
+            alpha = np.arctan(w / u)
 
         # side slip angle
 
@@ -161,14 +191,14 @@ class ForceComponentResolver(om.ExplicitComponent):
 
         # some trig needed
 
-        cos_a = np.cos(gamma)
+        cos_a = np.cos(alpha)
         cos_b = np.cos(beta)
-        sin_a = np.sin(gamma)
+        sin_a = np.sin(alpha)
         sin_b = np.sin(beta)
 
-        outputs['Fx'] = -(cos_a * cos_b * D - cos_a * sin_b * S - sin_a * L)
-        outputs['Fy'] = -(sin_b * D + cos_b * S)
-        outputs['Fz'] = -(sin_a * cos_b * D + sin_a * sin_b * S + cos_a * L)
+        outputs['Fx'] = -(cos_a * cos_b * D - cos_a * sin_b * S - sin_a * L) - T * cos_b * np.sin(alpha - gamma)
+        outputs['Fy'] = -(sin_b * D + cos_b * S) - T * sin_b * np.sin(alpha - gamma)
+        outputs['Fz'] = -(sin_a * cos_b * D + sin_a * sin_b * S + cos_a * L) - T * np.cos(alpha - gamma)
     
     def compute_partials(self, inputs, J):
 
@@ -179,15 +209,17 @@ class ForceComponentResolver(om.ExplicitComponent):
         T = inputs['thrust']
         L = inputs['lift']
         S = inputs['side'] # side force -- assume 0 for now
+        gamma = inputs[Dynamic.Mission.FLIGHT_PATH_ANGLE]
+        chi = inputs['heading_angle']
 
         V = np.sqrt(u**2 + v**2 + w**2)
 
         # divide by zero checks
         if u == 0:
             u = 1e-4
-            gamma = np.arctan(w / u)
+            alpha = np.arctan(w / u)
         else:
-            gamma = np.arctan(w / u)
+            alpha = np.arctan(w / u)
 
         # side slip angle
 
@@ -203,34 +235,51 @@ class ForceComponentResolver(om.ExplicitComponent):
         # note: d/dx arctan(x / sqrt(a^2 + b^2)) = sqrt(a^2 + b^2) / (a^2 + b^2 + x^2)
         # note: d/dx arctan(x/a) = a / (a^2 + x^2)
 
-        J['Fx', 'u'] = np.cos(gamma) * np.sin(beta) * ((-v * u) / ((V**2 * np.sqrt(w**2 + u**2)))) * D + \
-                         np.cos(beta) * np.sin(gamma) * (-w / (w**2 + u**2)) * D + \
-                         (np.cos(gamma) * np.cos(beta) * ((-v * u) / ((V**2 * np.sqrt(w**2 + u**2)))) * S - np.sin(beta) * np.sin(gamma) * (-w / (w**2 + u**2)) * S) + \
-                         (np.cos(gamma) * (-w / (w**2 + u**2)) * L)
-        J['Fx', 'v'] = np.cos(gamma) * np.sin(beta) * (np.sqrt(w**2 + u**2) / V**2) * D + np.cos(gamma) * np.cos(beta) * (np.sqrt(w**2 + u**2) / V**2) * S
-        J['Fx', 'w'] = np.cos(gamma) * np.sin(beta) * ((-w * v) / ((V**2 * np.sqrt(w**2 + u**2)))) * D + np.sin(gamma) * np.cos(beta) * (u / (w**2 + u**2)) * D + \
-                       np.cos(gamma) * np.cos(beta) * ((-w * v) / ((V**2 * np.sqrt(w**2 + u**2)))) * S - np.sin(gamma) * np.sin(beta) * (u / (w**2 + u**2)) * S + \
-                       np.cos(gamma) * (u / (w**2 + u**2)) * L
-        J['Fx', 'drag'] = -np.cos(gamma) * np.cos(beta)
-        J['Fx', 'lift'] = np.sin(gamma)
-        J['Fx', 'side'] = np.cos(gamma) * np.sin(beta)
+        J['Fx', 'u'] = np.cos(alpha) * np.sin(beta) * ((-v * u) / ((V**2 * np.sqrt(w**2 + u**2)))) * D + \
+                         np.cos(beta) * np.sin(alpha) * (-w / (w**2 + u**2)) * D + \
+                         (np.cos(alpha) * np.cos(beta) * ((-v * u) / ((V**2 * np.sqrt(w**2 + u**2)))) * S - np.sin(beta) * np.sin(alpha) * (-w / (w**2 + u**2)) * S) + \
+                         (np.cos(alpha) * (-w / (w**2 + u**2)) * L) + np.sin(beta) * ((-v * u) / ((V**2 * np.sqrt(w**2 + u**2)))) * T * np.sin(alpha - gamma) - \
+                         np.cos(alpha - gamma) * (-w / (w**2 + u**2)) * np.cos(beta) * T
+        J['Fx', 'v'] = np.cos(alpha) * np.sin(beta) * (np.sqrt(w**2 + u**2) / V**2) * D + np.cos(alpha) * np.cos(beta) * (np.sqrt(w**2 + u**2) / V**2) * S + \
+                       np.sin(beta) * (np.sqrt(w**2 + u**2) / V**2) * T * np.sin(alpha - gamma)
+        J['Fx', 'w'] = np.cos(alpha) * np.sin(beta) * ((-w * v) / ((V**2 * np.sqrt(w**2 + u**2)))) * D + np.sin(alpha) * np.cos(beta) * (u / (w**2 + u**2)) * D + \
+                       np.cos(alpha) * np.cos(beta) * ((-w * v) / ((V**2 * np.sqrt(w**2 + u**2)))) * S - np.sin(alpha) * np.sin(beta) * (u / (w**2 + u**2)) * S + \
+                       np.cos(alpha) * (u / (w**2 + u**2)) * L + np.sin(beta) * ((-w * v) / ((V**2 * np.sqrt(w**2 + u**2)))) * T * np.sin(alpha - gamma) - \
+                       np.cos(alpha - gamma) * (u / (w**2 + u**2)) * T * np.cos(beta)
+        J['Fx', 'drag'] = -np.cos(alpha) * np.cos(beta)
+        J['Fx', 'lift'] = np.sin(alpha)
+        J['Fx', 'side'] = np.cos(alpha) * np.sin(beta)
+        J['Fx', 'thrust'] = -np.cos(beta) * np.sin(alpha - gamma)
+        J['Fx', Dynamic.Mission.FLIGHT_PATH_ANGLE] = T * np.cos(beta) * np.cos(alpha - gamma)
+        J['Fx', 'heading_angle'] = 0
 
-        J['Fy', 'u'] = -np.cos(beta) * ((-v * u) / ((V**2 * np.sqrt(w**2 + u**2)))) * D + np.sin(beta) * ((-v * u) / ((V**2 * np.sqrt(w**2 + u**2)))) * S
-        J['Fy', 'v'] = -np.cos(beta) * (np.sqrt(w**2 + u**2) / V**2) * D + np.sin(beta) * (np.sqrt(w**2 + u**2) / V**2) * S
-        J['Fy', 'w'] = -np.cos(beta) * ((-w * v) / ((V**2 * np.sqrt(w**2 + u**2)))) * D + np.sin(beta) * ((-w * v) / ((V**2 * np.sqrt(w**2 + u**2)))) * S
+        J['Fy', 'u'] = -np.cos(beta) * ((-v * u) / ((V**2 * np.sqrt(w**2 + u**2)))) * D + np.sin(beta) * ((-v * u) / ((V**2 * np.sqrt(w**2 + u**2)))) * S - \
+                        np.cos(beta) * ((-v * u) / ((V**2 * np.sqrt(w**2 + u**2)))) * T * np.sin(alpha - gamma) - \
+                        np.cos(alpha - gamma) * (-w / (w**2 + u**2)) * T * np.sin(beta)
+        J['Fy', 'v'] = -np.cos(beta) * (np.sqrt(w**2 + u**2) / V**2) * D + np.sin(beta) * (np.sqrt(w**2 + u**2) / V**2) * S - \
+                        np.cos(beta) * (np.sqrt(w**2 + u**2) / V**2) * T * np.sin(alpha - gamma)
+        J['Fy', 'w'] = -np.cos(beta) * ((-w * v) / ((V**2 * np.sqrt(w**2 + u**2)))) * D + np.sin(beta) * ((-w * v) / ((V**2 * np.sqrt(w**2 + u**2)))) * S - \
+                        np.cos(beta) * ((-w * v) / ((V**2 * np.sqrt(w**2 + u**2)))) * T * np.sin(alpha - gamma) - \
+                        np.cos(alpha - gamma) * (u / (w**2 + u**2)) * T * np.sin(beta)
         J['Fy', 'drag'] = -np.sin(beta)
         J['Fy', 'side'] = -np.cos(beta)
+        J['Fy', 'thrust'] = -np.sin(beta) * np.sin(alpha - gamma)
+        J['Fy', Dynamic.Mission.FLIGHT_PATH_ANGLE] = T * np.sin(beta) * np.cos(alpha - gamma)
+        J['Fy', 'heading_angle'] = 0
 
-        J['Fz', 'u'] = np.sin(gamma) * np.sin(beta) * ((-v * u) / ((V**2 * np.sqrt(w**2 + u**2)))) * D - np.cos(gamma) * np.cos(beta) * (-w / (w**2 + u**2)) * D - \
-                       np.sin(gamma) * np.cos(beta) * ((-v * u) / ((V**2 * np.sqrt(w**2 + u**2)))) * S - np.cos(gamma) * np.sin(beta) * (-w / (w**2 + u**2)) * S + \
-                       np.sin(gamma) * (-w / (w**2 + u**2)) * L
-        J['Fz', 'v'] = np.sin(gamma) * np.sin(beta) * (np.sqrt(w**2 + u**2) / V**2) * D - np.sin(gamma) * np.cos(beta) * (np.sqrt(w**2 + u**2) / V**2) * S 
-        J['Fz', 'w'] = np.sin(gamma) * np.sin(beta) * ((-w * v) / ((V**2 * np.sqrt(w**2 + u**2)))) * D - np.cos(gamma) * np.cos(beta) * (u / (w**2 + u**2)) * D - \
-                       np.sin(gamma) * np.cos(beta) * ((-w * v) / ((V**2 * np.sqrt(w**2 + u**2)))) * S - np.cos(gamma) * np.sin(beta) * (u / (w**2 + u**2)) * S + \
-                       np.sin(gamma) * (u / (w**2 + u**2)) * L
-        J['Fz', 'drag'] = -np.sin(gamma) * np.cos(beta) 
-        J['Fz', 'lift'] = -np.cos(gamma)
-        J['Fz', 'side'] = -np.sin(gamma) * np.sin(beta)
+        J['Fz', 'u'] = np.sin(alpha) * np.sin(beta) * ((-v * u) / ((V**2 * np.sqrt(w**2 + u**2)))) * D - np.cos(alpha) * np.cos(beta) * (-w / (w**2 + u**2)) * D - \
+                       np.sin(alpha) * np.cos(beta) * ((-v * u) / ((V**2 * np.sqrt(w**2 + u**2)))) * S - np.cos(alpha) * np.sin(beta) * (-w / (w**2 + u**2)) * S + \
+                       np.sin(alpha) * (-w / (w**2 + u**2)) * L + np.sin(alpha - gamma) * (-w / (w**2 + u**2)) * T
+        J['Fz', 'v'] = np.sin(alpha) * np.sin(beta) * (np.sqrt(w**2 + u**2) / V**2) * D - np.sin(alpha) * np.cos(beta) * (np.sqrt(w**2 + u**2) / V**2) * S 
+        J['Fz', 'w'] = np.sin(alpha) * np.sin(beta) * ((-w * v) / ((V**2 * np.sqrt(w**2 + u**2)))) * D - np.cos(alpha) * np.cos(beta) * (u / (w**2 + u**2)) * D - \
+                       np.sin(alpha) * np.cos(beta) * ((-w * v) / ((V**2 * np.sqrt(w**2 + u**2)))) * S - np.cos(alpha) * np.sin(beta) * (u / (w**2 + u**2)) * S + \
+                       np.sin(alpha) * (u / (w**2 + u**2)) * L + np.sin(alpha - gamma) * (u / (w**2 + u**2)) * T
+        J['Fz', 'drag'] = -np.sin(alpha) * np.cos(beta) 
+        J['Fz', 'lift'] = -np.cos(alpha)
+        J['Fz', 'side'] = -np.sin(alpha) * np.sin(beta)
+        J['Fz', 'thrust'] = -np.cos(alpha - gamma)
+        J['Fz', Dynamic.Mission.FLIGHT_PATH_ANGLE] = -T * np.sin(alpha - gamma)
+        J['Fz', 'heading_angle'] = 0
 
 if __name__ == "__main__":
     p = om.Problem()
