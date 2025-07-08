@@ -1,4 +1,4 @@
-from aviary.subsystems.subsystem_builder_base import SubsystemBuilderBase
+from aviary.subsystems.mass.mass_builder import MassBuilderBase
 from aviary.subsystems.mass.simple_mass.mass_premission import MassPremission
 
 
