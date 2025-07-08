@@ -158,41 +158,6 @@ class WingMass(om.JaxExplicitComponent):
 
         return camber, camber_location, max_thickness_value, thickness, camber_line
 
-if __name__ == '__main__':
 
-    # Build OpenMDAO problem
-    prob = om.Problem()
-
-    # Add the center of gravity component
-    prob.model.add_subsystem('cog', WingMassAndCOG() , promotes_inputs=['*'], promotes_outputs=['*'])
-
-    n_points = 10 # = num_sections
-    x = jnp.linspace(0, 1, n_points)
-    max_thickness_chord_ratio = 0.12
-    thickness_dist = 5 * max_thickness_chord_ratio * (
-        0.2969 * jnp.sqrt(x) - 0.1260 * x - 0.3516 * x**2 + 0.2843 * x**3 - 0.1015 * x**4) 
-
-    # Setup the problem
-    prob.setup()
-
-    # Define some example inputs
-    prob.set_val(Aircraft.Wing.SPAN, 3.74904)  
-    prob.set_val(Aircraft.Wing.ROOT_CHORD, 0.40005)  
-    prob.set_val('tip_chord', 0.100076)  
-    prob.set_val('twist', jnp.linspace(0,0,10))
-    prob.set_val('thickness_dist', thickness_dist)  
-
-
-    #prob.model.cog.options['airfoil_data_file'] = 'Clark_Y.dat'
-    prob.model.cog.options['material'] = 'Balsa'
-    prob.model.cog.options['airfoil_type'] = '2412'
-
-    # Run the model
-    prob.run_model()
-
-    # Get the results
-    total_weight = prob.get_val(Aircraft.Wing.MASS)
-
-    print(f"Total mass of the wing: {total_weight} kg")
 
 
