@@ -1631,7 +1631,8 @@ class BWBWingGroup(om.Group):
                 'dimensionless_calcs',
                 DimensionalNonDimensionalInterchange(),
                 promotes_inputs=['aircraft:*'],
-                promotes_outputs=['aircraft:*'],
+                # promotes_outputs=['aircraft:*'],
+                promotes_outputs=['*'],
             )
 
         self.add_subsystem(
