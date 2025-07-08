@@ -800,6 +800,6 @@ class Settings:
     AERODYNAMICS_METHOD = 'settings:aerodynamics_method'
     EQUATIONS_OF_MOTION = 'settings:equations_of_motion'
     MASS_METHOD = 'settings:mass_method'
+    PAYLOAD_RANGE = 'settings:payload_range'
     PROBLEM_TYPE = 'settings:problem_type'
     VERBOSITY = 'settings:verbosity'
-    PAYLOAD_RANGE = 'settings:payload_range'

@@ -2,6 +2,7 @@ import csv
 import inspect
 import json
 import os
+import sys
 import warnings
 from datetime import datetime
 from enum import Enum
@@ -2070,6 +2071,26 @@ class AviaryProblem(om.Problem):
         range_4=float(prob_fallout_ferry.get_val(Mission.Summary.RANGE))
 
 
+        #writes csv file in dashboard
+        script_name = os.path.splitext(os.path.basename(sys.argv[0]))[0]
+        output_dir = f"{script_name}_out"
+        reports_dir = os.path.join(output_dir, "reports")
+        
+        os.makedirs(reports_dir, exist_ok=True)
+
+        csv_filepath = os.path.join(reports_dir, 'payload_range_data.csv')
+        with open(csv_filepath, 'w', newline='') as csvfile:
+            writer = csv.writer(csvfile)
+            
+            # Write header row
+            writer.writerow(['Point', 'Payload (lbs)', 'Range (NM)'])
+            
+            # Write the four points directly
+            writer.writerow(['Max Payload Zero Fuel', payload_1, range_1])
+            writer.writerow(['Sizing Mission', payload_2, range_2])
+            writer.writerow(['Max Fuel Plus Payload', payload_3, range_3])
+            writer.writerow(['Ferry Mission', payload_4, range_4])
+
         payload_points=["Payload (lbs)", payload_1, payload_2, payload_3, payload_4]
         range_points=["Range (NM)", range_1, range_2, range_3, range_4]
 
@@ -2155,11 +2176,8 @@ class AviaryProblem(om.Problem):
         if phase_info is None:
             #Somewhere between the sizing and off-design self.pre_mission_info gets deleted
             phase_info = self.phase_info
-            #Bug in MBSA&E where off design missions external subsystems cannot run with Sandc.
             phase_info['pre_mission']=self.pre_mission_info
-            phase_info['pre_mission']['external_subsystems'] = []
             phase_info['post_mission']=self.post_mission_info
-            phase_info['post_mission']['external_subsystems'] = []
         if mission_range is None:
             # mission range is sliced from a column vector numpy array, i.e. it is a len
             # 1 numpy array
@@ -2168,7 +2186,7 @@ class AviaryProblem(om.Problem):
             if mass_method == LegacyCode.GASP:
                 mission_range = self.get_val(Mission.Design.RANGE)[0]
             elif mass_method == LegacyCode.FLOPS:
-                mission_range = self.phase_info['post_mission']['target_range'][0]
+                mission_range = self.post_mission_info['target_range'][0]
 
         # gross mass is sliced from a column vector numpy array, i.e. it is a len 1 numpy
         # array
@@ -2288,11 +2306,8 @@ class AviaryProblem(om.Problem):
 
         if phase_info is None:
             phase_info = self.phase_info
-            #Bug in MBSA&E where off design missions external subsystems cannot run with Sandc.
             phase_info['pre_mission']=self.pre_mission_info
-            phase_info['pre_mission']['external_subsystems'] = []
             phase_info['post_mission']=self.post_mission_info
-            phase_info['post_mission']['external_subsystems'] = []
         if mission_mass is None:
             # mission mass is sliced from a column vector numpy array, i.e. it is a len 1
             # numpy array
