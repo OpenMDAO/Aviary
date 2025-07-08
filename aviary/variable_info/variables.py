@@ -190,6 +190,7 @@ class Aircraft:
         ULF_CALCULATED_FROM_MANEUVER = 'aircraft:design:ulf_calculated_from_maneuver'
         USE_ALT_MASS = 'aircraft:design:use_alt_mass'
         WETTED_AREAS = 'aircraft:design:wetted_areas'
+        WING_LOADING = 'aircraft:design:wing_loading'
         ZERO_FUEL_MASS = 'aircraft:design:zero_fuel_mass'
         ZERO_LIFT_DRAG_COEFF_FACTOR = 'aircraft:design:zero_lift_drag_coeff_factor'
 
