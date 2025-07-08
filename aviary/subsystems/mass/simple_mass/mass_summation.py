@@ -23,21 +23,21 @@ class SimpleMassSummation(om.Group):
 
         self.add_subsystem(
             'fuse_mass', 
-            FuselageMassAndCOG(),
+            FuselageMass(),
             promotes_inputs=['*'],
             promotes_outputs=[Aircraft.Fuselage.MASS]
         )
 
         self.add_subsystem(
             'wing_mass',
-            WingMassAndCOG(),
+            WingMass(),
             promotes_inputs=['*'],
             promotes_outputs=[Aircraft.Wing.MASS]
         )
 
         self.add_subsystem(
             'tail_mass',
-            TailMassAndCOG(),
+            TailMass(),
             promotes_inputs=['*'],
             promotes_outputs=[Aircraft.HorizontalTail.MASS]
         )
