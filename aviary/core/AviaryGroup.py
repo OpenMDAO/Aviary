@@ -57,7 +57,7 @@ class AviaryGroup(om.Group):
     This includes pre_mission, mission, and post_mission analysis. This group also contains methods
     for loading data from .csv and phase_info files, setting initial values on the group, and connecting
     all the phases inside the mission analysis to each other.
-    Instantiating multiple AviaryGroups allows for analysis and optimization of multiple aircraft or 
+    Instantiating multiple AviaryGroups allows for analysis and optimization of multiple aircraft or
     one aircraft in multiple missions simultaneously.
     """
 

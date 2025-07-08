@@ -7,6 +7,7 @@ class ExternalSubsystemGroup(om.Group):
     def configure(self):
         promote_aircraft_and_mission_vars(self)
 
+
 def get_phase_mission_bus_lengths(traj):
     phase_mission_bus_lengths = {}
     for phase_name, phase in traj._phases.items():
@@ -14,6 +15,7 @@ def get_phase_mission_bus_lengths(traj):
             'transcription'
         ].grid_data.subset_num_nodes['all']
     return phase_mission_bus_lengths
+
 
 def process_guess_var(val, key, phase):
     """
