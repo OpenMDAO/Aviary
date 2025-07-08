@@ -99,7 +99,7 @@ class FuselageMass(om.JaxExplicitComponent):
         
         self.validate_inputs(aircraft__fuselage__length, base_diameter, thickness, tip_diameter, is_hollow)
 
-        density, _ = materials.get_item(material)
+        density = materials.get_val(material, 'kg/m**3')
 
         section_locations = jnp.linspace(0, aircraft__fuselage__length, num_sections)
         
