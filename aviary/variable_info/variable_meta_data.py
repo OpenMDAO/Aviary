@@ -1622,6 +1622,10 @@ add_meta_data(
     meta_data=_MetaData,
     historical_name={
         'GASP': None,
+        'FLOPS': None,
+        'LEAPS1': None,
+        # NOTE TWR != THRUST_TO_WEIGHT_RATIO because Aviary's value is the actual T/W, while TWR is
+        #      the desired T/W ratio
         # 'FLOPS': 'CONFIN.TWR',
         # 'LEAPS1': 'ipropulsion.req_thrust_weight_ratio',
     },

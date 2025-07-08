@@ -177,22 +177,6 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
                 all_subsystems=prob._get_all_subsystems(),
             )
 
-        # Add thrust-to-weight ratio subsystem
-        prob.model.add_subsystem(
-            'tw_ratio',
-            om.ExecComp(
-                f'TW_ratio = Fn_SLS / (takeoff_mass * {GRAV_ENGLISH_LBM})',
-                TW_ratio={'units': 'unitless'},
-                Fn_SLS={'units': 'lbf'},
-                takeoff_mass={'units': 'lbm'},
-            ),
-            promotes_inputs=[
-                ('Fn_SLS', Aircraft.Propulsion.TOTAL_SCALED_SLS_THRUST),
-                ('takeoff_mass', Mission.Summary.GROSS_MASS),
-            ],
-            promotes_outputs=[('TW_ratio', Aircraft.Design.THRUST_TO_WEIGHT_RATIO)],
-        )
-
         prob.cruise_alt = prob.aviary_inputs.get_val(Mission.Design.CRUISE_ALTITUDE, units='ft')
 
         if prob.analysis_scheme is AnalysisScheme.COLLOCATION:
