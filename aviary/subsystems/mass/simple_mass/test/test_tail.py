@@ -19,7 +19,7 @@ class TailMassTestCase(unittest.TestCase):
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
             "Tail",
-            TailMassAndCOG(),
+            TailMass(),
             promotes_inputs=["*"],
             promotes_outputs=["*"],
         )
