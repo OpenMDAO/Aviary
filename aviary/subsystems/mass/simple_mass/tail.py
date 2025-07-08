@@ -153,10 +153,6 @@ class TailMass(om.JaxExplicitComponent):
             camber_location = int(NACA_digits[1]) / 10.0 # Location of max camber
             max_thickness = int(NACA_digits[2:4]) / 100.0 # Max thickness
         
-        # Tail type check
-        if tail_type not in ['horizontal', 'vertical']:
-            raise ValueError("Invalid tail_type. Must be 'horizontal' or 'vertical'.")
-
         if tail_type == 'horizontal':
             span_locations = jnp.linspace(0, aircraft__horizontal_tail__span, num_sections)
         elif tail_type == 'vertical':
