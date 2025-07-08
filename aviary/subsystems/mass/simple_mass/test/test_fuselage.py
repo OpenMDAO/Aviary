@@ -17,7 +17,7 @@ class FuselageMassTestCase(unittest.TestCase):
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
             "fuselage",
-            FuselageMassAndCOG(),
+            FuselageMass(),
             promotes_inputs=["*"],
             promotes_outputs=["*"],
         )
