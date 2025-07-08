@@ -700,7 +700,7 @@ class WingMassGroup(om.Group):
             'half_sweep',
         ]
         if self.options[Aircraft.Wing.HAS_FOLD] or self.options[Aircraft.Wing.HAS_STRUT]:
-            higher_level_inputs_total = ['aircraft:*']
+            higher_level_inputs_total = ['*']
         else:
             higher_level_inputs_total = []
 
@@ -715,7 +715,7 @@ class WingMassGroup(om.Group):
         isolated_mass = self.add_subsystem(
             'isolated_mass',
             WingMassSolve(),
-            promotes_inputs=higher_level_inputs_isolated + ['aircraft:*', 'mission:*'],
+            promotes_inputs=['*'],
             promotes_outputs=connected_outputs_isolated,
         )
 
@@ -723,7 +723,7 @@ class WingMassGroup(om.Group):
             'total_mass',
             WingMassTotal(),
             promotes_inputs=connected_inputs_total + higher_level_inputs_total,
-            promotes_outputs=['aircraft:*'],
+            promotes_outputs=['*'],
         )
 
         newton = isolated_mass.nonlinear_solver = om.NewtonSolver()
@@ -755,13 +755,8 @@ class BWBWingMassGroup(om.Group):
 
     def setup(self):
         # variables that are calculated at a higher level
-        higher_level_inputs_isolated = [
-            'c_strut_braced',
-            'c_gear_loc',
-            'half_sweep',
-        ]
         if self.options[Aircraft.Wing.HAS_FOLD] or self.options[Aircraft.Wing.HAS_STRUT]:
-            higher_level_inputs_total = ['aircraft:*']
+            higher_level_inputs_total = ['*']
         else:
             higher_level_inputs_total = []
 
@@ -776,7 +771,7 @@ class BWBWingMassGroup(om.Group):
         isolated_mass = self.add_subsystem(
             'isolated_mass',
             BWBWingMassSolve(),
-            promotes_inputs=higher_level_inputs_isolated + ['aircraft:*', 'mission:*'],
+            promotes_inputs=['*'],
             promotes_outputs=connected_outputs_isolated,
         )
 
@@ -784,7 +779,7 @@ class BWBWingMassGroup(om.Group):
             'total_mass',
             WingMassTotal(),
             promotes_inputs=connected_inputs_total + higher_level_inputs_total,
-            promotes_outputs=['aircraft:*'],
+            promotes_outputs=['*'],
         )
 
         newton = isolated_mass.nonlinear_solver = om.NewtonSolver()

@@ -793,26 +793,26 @@ class EquipMassGroup(om.Group):
         self.add_subsystem(
             'equip_partial',
             EquipMassPartialSum(),
-            promotes_inputs=['aircraft:*', 'mission:*'],
+            promotes_inputs=['*'],
             promotes_outputs=['equip_mass_part'],
         )
         self.add_subsystem(
             'ac',
             ACMass(),
-            promotes_inputs=['aircraft:*', 'mission:*'],
-            promotes_outputs=['aircraft:*'],
+            promotes_inputs=['*'],
+            promotes_outputs=['*'],
         )
         self.add_subsystem(
             'furnishing',
             FurnishingMass(),
-            promotes_inputs=['aircraft:*', 'mission:*'],
-            promotes_outputs=['aircraft:*'],
+            promotes_inputs=['*'],
+            promotes_outputs=['*'],
         )
         self.add_subsystem(
             'equip_sum',
             EquipMassSum(),
-            promotes_inputs=['equip_mass_part', 'aircraft:*'],
-            promotes_outputs=['aircraft:*'],
+            promotes_inputs=['*'],
+            promotes_outputs=['*'],
         )
 
 
@@ -1412,26 +1412,26 @@ class BWBEquipMassGroup(om.Group):
         self.add_subsystem(
             'equip_partial',
             EquipMassPartialSum(),
-            promotes_inputs=['aircraft:*', 'mission:*'],
+            promotes_inputs=['*'],
             promotes_outputs=['equip_mass_part'],
         )
         self.add_subsystem(
             'ac',
             BWBACMass(),
-            promotes_inputs=['aircraft:*', 'mission:*'],
-            promotes_outputs=['aircraft:*'],
+            promotes_inputs=['*'],
+            promotes_outputs=['*'],
         )
         self.add_subsystem(
             'furnishing',
             BWBFurnishingMass(),
-            promotes_inputs=['aircraft:*', 'mission:*'],
-            promotes_outputs=['aircraft:*'],
+            promotes_inputs=['*'],
+            promotes_outputs=['*'],
         )
         self.add_subsystem(
             'equip_sum',
             EquipMassSum(),
-            promotes_inputs=['equip_mass_part', 'aircraft:*'],
-            promotes_outputs=['aircraft:*'],
+            promotes_inputs=['*'],
+            promotes_outputs=['*'],
         )
 
 
@@ -1446,20 +1446,20 @@ class EquipAndUsefulLoadMassGroup(om.Group):
             self.add_subsystem(
                 'equip',
                 BWBEquipMassGroup(),
-                promotes_inputs=['aircraft:*', 'mission:*'],
-                promotes_outputs=['aircraft:*'],
+                promotes_inputs=['*'],
+                promotes_outputs=['*'],
             )
         else:
             self.add_subsystem(
                 'equip',
                 EquipMassGroup(),
-                promotes_inputs=['aircraft:*', 'mission:*'],
-                promotes_outputs=['aircraft:*'],
+                promotes_inputs=['*'],
+                promotes_outputs=['*'],
             )
 
         self.add_subsystem(
             'useful',
             UsefulLoadMass(),
-            promotes_inputs=['aircraft:*'],
-            promotes_outputs=['aircraft:*'],
+            promotes_inputs=['*'],
+            promotes_outputs=['*'],
         )

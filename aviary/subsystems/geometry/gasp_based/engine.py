@@ -281,19 +281,13 @@ class BWBEngineSizeGroup(om.Group):
         self.add_subsystem(
             'perc',
             PercentNotInFuselage(),
-            promotes_inputs=['aircraft:nacelle:percent_diam_buried_in_fuselage'],
-            promotes_outputs=['percent_exposed'],
+            promotes_inputs=['*'],
+            promotes_outputs=['*'],
         )
 
         self.add_subsystem(
             'eng_size',
             EngineSize(),
-            promotes_inputs=[
-                'aircraft:engine:reference_diameter',
-                'aircraft:engine:scale_factor',
-                'aircraft:nacelle:core_diameter_ratio',
-                'aircraft:nacelle:fineness',
-                'percent_exposed',
-            ],
+            promotes_inputs=['*'],
             promotes_outputs=['*'],
         )
