@@ -63,6 +63,16 @@ class LandingGearMass(om.ExplicitComponent):
                 Aircraft.Design.TOUCHDOWN_MASS,
             ],
         )
+        self.declare_partials(
+            Aircraft.LandingGear.TOTAL_MASS,
+            [
+                Aircraft.LandingGear.NOSE_GEAR_OLEO_LENGTH,
+                Aircraft.LandingGear.NOSE_GEAR_MASS_SCALER,
+                Aircraft.LandingGear.MAIN_GEAR_OLEO_LENGTH,
+                Aircraft.LandingGear.MAIN_GEAR_MASS_SCALER,
+                Aircraft.Design.TOUCHDOWN_MASS,
+            ],
+        )
 
     def compute(self, inputs, outputs):
         main_gear_length = inputs[Aircraft.LandingGear.MAIN_GEAR_OLEO_LENGTH]
@@ -133,6 +143,27 @@ class LandingGearMass(om.ExplicitComponent):
             0.03216 * landing_weight**-0.33 * nose_gear_length_exp * nose_gear_scaler
         )
 
+        J[Aircraft.LandingGear.TOTAL_MASS, Aircraft.LandingGear.MAIN_GEAR_OLEO_LENGTH] = (
+            J[Aircraft.LandingGear.MAIN_GEAR_MASS, Aircraft.LandingGear.MAIN_GEAR_OLEO_LENGTH]
+            )
+
+        J[Aircraft.LandingGear.TOTAL_MASS, Aircraft.LandingGear.MAIN_GEAR_MASS_SCALER] = (
+            J[Aircraft.LandingGear.MAIN_GEAR_MASS, Aircraft.LandingGear.MAIN_GEAR_MASS_SCALER]
+        )
+
+        J[Aircraft.LandingGear.TOTAL_MASS, Aircraft.LandingGear.NOSE_GEAR_OLEO_LENGTH] = (
+            J[Aircraft.LandingGear.NOSE_GEAR_MASS, Aircraft.LandingGear.NOSE_GEAR_OLEO_LENGTH]
+        )
+
+        J[Aircraft.LandingGear.TOTAL_MASS, Aircraft.LandingGear.NOSE_GEAR_MASS_SCALER] = (
+            J[Aircraft.LandingGear.NOSE_GEAR_MASS, Aircraft.LandingGear.NOSE_GEAR_MASS_SCALER]
+        )
+
+        J[Aircraft.LandingGear.TOTAL_MASS, Aircraft.Design.TOUCHDOWN_MASS] = (
+            J[Aircraft.LandingGear.MAIN_GEAR_MASS, Aircraft.Design.TOUCHDOWN_MASS] +
+            J[Aircraft.LandingGear.NOSE_GEAR_MASS, Aircraft.Design.TOUCHDOWN_MASS]
+        )
+
 
 class AltLandingGearMass(om.ExplicitComponent):
     """
@@ -168,6 +199,16 @@ class AltLandingGearMass(om.ExplicitComponent):
                 Aircraft.LandingGear.MAIN_GEAR_OLEO_LENGTH,
                 Aircraft.LandingGear.NOSE_GEAR_OLEO_LENGTH,
                 Aircraft.LandingGear.NOSE_GEAR_MASS_SCALER,
+                Mission.Design.GROSS_MASS,
+            ],
+        )
+        self.declare_partials(
+            Aircraft.LandingGear.TOTAL_MASS,
+            [
+                Aircraft.LandingGear.NOSE_GEAR_OLEO_LENGTH,
+                Aircraft.LandingGear.NOSE_GEAR_MASS_SCALER,
+                Aircraft.LandingGear.MAIN_GEAR_OLEO_LENGTH,
+                Aircraft.LandingGear.MAIN_GEAR_MASS_SCALER,
                 Mission.Design.GROSS_MASS,
             ],
         )
@@ -245,7 +286,29 @@ class AltLandingGearMass(om.ExplicitComponent):
         J[Aircraft.LandingGear.NOSE_GEAR_MASS, Mission.Design.GROSS_MASS] = (
             0.15 * total_gear_fact * nose_gear_scaler
         )
+        
+        J[Aircraft.LandingGear.TOTAL_MASS, Aircraft.LandingGear.MAIN_GEAR_MASS_SCALER] = (
+        J[Aircraft.LandingGear.MAIN_GEAR_MASS, Aircraft.LandingGear.MAIN_GEAR_MASS_SCALER]
+        )
 
+        J[Aircraft.LandingGear.TOTAL_MASS, Aircraft.LandingGear.NOSE_GEAR_MASS_SCALER] = (
+        J[Aircraft.LandingGear.NOSE_GEAR_MASS, Aircraft.LandingGear.NOSE_GEAR_MASS_SCALER]
+        )
+
+        J[Aircraft.LandingGear.TOTAL_MASS, Aircraft.LandingGear.MAIN_GEAR_OLEO_LENGTH] = (
+        J[Aircraft.LandingGear.MAIN_GEAR_MASS, Aircraft.LandingGear.MAIN_GEAR_OLEO_LENGTH] +
+        J[Aircraft.LandingGear.NOSE_GEAR_MASS, Aircraft.LandingGear.MAIN_GEAR_OLEO_LENGTH]
+        )
+
+        J[Aircraft.LandingGear.TOTAL_MASS, Aircraft.LandingGear.NOSE_GEAR_OLEO_LENGTH] = (
+        J[Aircraft.LandingGear.MAIN_GEAR_MASS, Aircraft.LandingGear.NOSE_GEAR_OLEO_LENGTH] +
+        J[Aircraft.LandingGear.NOSE_GEAR_MASS, Aircraft.LandingGear.NOSE_GEAR_OLEO_LENGTH]
+        )
+
+        J[Aircraft.LandingGear.TOTAL_MASS, Mission.Design.GROSS_MASS] = (
+        J[Aircraft.LandingGear.MAIN_GEAR_MASS, Mission.Design.GROSS_MASS] +
+        J[Aircraft.LandingGear.NOSE_GEAR_MASS, Mission.Design.GROSS_MASS]
+)
 
 class NoseGearLength(om.ExplicitComponent):
     """
