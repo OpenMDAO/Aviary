@@ -17,7 +17,7 @@ MassBuilderBase: the interface for a mass subsystem builder. **Not sure how nece
 
 _default_name = 'simple_mass'
 
-class MassBuilderBase(SubsystemBuilderBase):
+class SimpleMassBuilder(MassBuilderBase):
     """
     Base mass builder
     
