@@ -4,7 +4,7 @@ from aviary.subsystems.mass.simple_mass.wing import WingMassAndCOG
 from aviary.subsystems.mass.simple_mass.fuselage import FuselageMassAndCOG
 from aviary.subsystems.mass.simple_mass.tail import TailMassAndCOG
 
-class MassPremission(om.Group):
+class SimpleMassPremission(om.Group):
     """
     Pre-mission group of top-level mass estimation groups and components for 
     the simple small-scale aircraft mass build-up.
