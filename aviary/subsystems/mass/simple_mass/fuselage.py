@@ -86,7 +86,7 @@ class FuselageMass(om.JaxExplicitComponent):
     def compute_primal(self, aircraft__fuselage__length, base_diameter, tip_diameter, curvature, thickness, y_offset, z_offset, is_hollow):
         # Input validation checks
         if aircraft__fuselage__length <= 0:
-            raise ValueError("Length must be greater than zero.")
+            raise AnalysisError("Length must be greater than zero.")
         
         if base_diameter <= 0 or tip_diameter <= 0:
             raise ValueError("Diameter must be greater than zero.")
