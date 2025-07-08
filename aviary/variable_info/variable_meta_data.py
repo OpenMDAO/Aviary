@@ -1622,11 +1622,13 @@ add_meta_data(
     meta_data=_MetaData,
     historical_name={
         'GASP': None,
-        'FLOPS': 'CONFIN.TWR',
-        'LEAPS1': 'ipropulsion.req_thrust_weight_ratio',
+        # 'FLOPS': 'CONFIN.TWR',
+        # 'LEAPS1': 'ipropulsion.req_thrust_weight_ratio',
     },
     units='unitless',
-    desc='required thrust-to-weight ratio of aircraft',
+    default_value=0.0,
+    types=float,
+    desc='ratio of total sea-level-static thrust to aircraft takeoff gross weight',
 )
 
 add_meta_data(
@@ -1716,6 +1718,19 @@ add_meta_data(
     },
     units='ft**2',
     desc='table of component wetted areas',
+)
+
+add_meta_data(
+    Aircraft.Design.WING_LOADING,
+    meta_data=_MetaData,
+    historical_name={
+        'GASP': None,
+        'FLOPS': None,  # 'MISSA.SWET',
+    },
+    default_value=0,
+    types=float,
+    units='lbf/ft**2',
+    desc='ratio of aircraft gross takeoff weight to projected wing area',
 )
 
 add_meta_data(
