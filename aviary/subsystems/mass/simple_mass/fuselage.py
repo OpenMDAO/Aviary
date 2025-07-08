@@ -32,10 +32,11 @@ class FuselageMass(om.JaxExplicitComponent):
                              default='Aluminum Oxide', 
                              values=list(get_keys(materials)))
         
-        self.options.declare('custom_fuselage_data_file', 
-                             types=(str, type(None)), 
+        self.options.declare('fuselage_data_file', 
+                             types=(Path, str), 
                              default=None, 
-                             allow_none=True)
+                             allow_none=True,
+                             desc='optional data file of fuselage geometry')
         
         self.custom_fuselage_function = None
 
