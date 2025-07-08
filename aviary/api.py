@@ -59,6 +59,9 @@ from aviary.models.missions.two_dof_fiti_deprecated import (
 from aviary.models.missions.height_energy_default import (
     phase_info as default_height_energy_phase_info,
 )
+from aviary.models.missions.off_design_height_energy import(
+    phase_info as default_off_design_hight_energy_phase_info
+)
 from aviary.interface.methods_for_level1 import run_level_1
 from aviary.interface.methods_for_level1 import run_aviary
 from aviary.interface.methods_for_level2 import AviaryProblem
