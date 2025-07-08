@@ -232,34 +232,3 @@ class TailMass(om.JaxExplicitComponent):
 
         return camber, camber_location, max_thickness_value
 
-if __name__ == "__main__":
-    prob = om.Problem()
-
-    prob.model.add_subsystem('tail', TailMassAndCOG(), promotes_inputs=['*'], promotes_outputs=['*'])
-
-    prob.setup()
-
-    # Input values
-    #tail_type = prob.model.tail.options['tail_type']
-    prob.model.tail.options['tail_type'] = 'vertical'
-    
-    if prob.model.tail.options['tail_type'] == 'horizontal':
-        prob.set_val(Aircraft.HorizontalTail.SPAN, 1.0)
-        prob.set_val(Aircraft.HorizontalTail.ROOT_CHORD, 1.0)
-    elif prob.model.tail.options['tail_type'] == 'vertical':
-        prob.set_val(Aircraft.VerticalTail.SPAN, 1.0)
-        prob.set_val(Aircraft.VerticalTail.ROOT_CHORD, 1.0)
-
-    prob.set_val('tip_chord_tail', 0.5)
-    prob.set_val('thickness_ratio', 0.12)
-    prob.set_val('skin_thickness', 0.002)
-
-    prob.model.tail.options['material'] = 'Balsa'
-
-    prob.run_model()
-
-    # Print
-    if prob.model.tail.options['tail_type'] == 'horizontal':
-        print(f"Total mass of the horizontal tail: {prob.get_val(Aircraft.HorizontalTail.MASS)} kg")
-    elif prob.model.tail.options['tail_type'] == 'vertical':
-        print(f"Total mass of the vertical tail: {prob.get_val(Aircraft.VerticalTail.MASS)} kg")
