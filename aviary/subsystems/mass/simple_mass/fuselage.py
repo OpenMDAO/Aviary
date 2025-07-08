@@ -89,7 +89,7 @@ class FuselageMass(om.JaxExplicitComponent):
             raise AnalysisError("Length must be greater than zero.")
         
         if base_diameter <= 0 or tip_diameter <= 0:
-            raise ValueError("Diameter must be greater than zero.")
+            raise AnalysisError("Diameter must be greater than zero.")
 
         custom_fuselage_function = getattr(self, 'custom_fuselage_function', None) # Custom fuselage model function -- if provided
 
@@ -164,32 +164,5 @@ class FuselageMass(om.JaxExplicitComponent):
         return centroid_x, centroid_y, centroid_z
 
 
-if __name__ == "__main__":
-    prob = om.Problem()
 
-    prob.model.add_subsystem('fuselage_cg', FuselageMassAndCOG(), promotes_inputs=['*'], promotes_outputs=['*'])
-
-    prob.setup()
-
-    prob.set_val(Aircraft.Fuselage.LENGTH, 2.5)
-    prob.set_val('base_diameter', 0.5)
-    prob.set_val('tip_diameter', 0.3)
-    prob.set_val('curvature', 0.0)
-    prob.set_val('thickness', 0.05) # Wall thickness of 5 cm
-    #prob.set_val('is_hollow', False) # Default is True, uncomment to use False -- for testing purposes
-
-    # Example using custom function -- uncomment to run 
-    #def custom_fuselage_model(location):
-    #    return 0.5 * jnp.exp(-0.1 * location)
-
-    #prob.model.fuselage_cg.custom_fuselage_function = custom_fuselage_model
-
-    # Example for custom .dat file -- uncomment to run
-    #prob.model.fuselage_cg.options['custom_fuselage_data_file'] = 'Custom_Fuselage.dat'
-
-    prob.run_model()
-
-    total_weight = prob.get_val(Aircraft.Fuselage.MASS)
-
-    print(f"Total mass of the fuselage: {total_weight} kg")
 
