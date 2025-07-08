@@ -1,9 +1,7 @@
 import csv
-import importlib.util
 import inspect
 import json
 import os
-import sys
 import warnings
 from datetime import datetime
 from enum import Enum
@@ -14,10 +12,11 @@ import numpy as np
 import openmdao.api as om
 from openmdao.utils.reports_system import _default_reports
 
-from aviary.core.AviaryGroup import AviaryGroup
+from Aviary.aviary.core.aviary_group import AviaryGroup
 
 from aviary.utils.aviary_values import AviaryValues
-from aviary.utils.functions import convert_strings_to_data, set_warning_format
+from aviary.utils.functions import convert_strings_to_data
+from aviary.interface.utils import set_warning_format
 from aviary.utils.merge_variable_metadata import merge_meta_data
 
 from aviary.variable_info.enums import (
@@ -90,14 +89,14 @@ class AviaryProblem(om.Problem):
         verbosity=None,
     ):
         """
-        This method loads the aviary_values inputs and options that the
-        user specifies. They could specify files to load and values to
-        replace here as well.
-        Phase info is also loaded if provided by the user. If phase_info is None,
-        the appropriate default phase_info based on mission analysis method is used.
+        This method loads the aviary_values inputs and options that the user specifies. They could
+        specify files to load and values to replace here as well.
 
-        This method is not strictly necessary; a user could also supply
-        an AviaryValues object and/or phase_info dict of their own.
+        Phase info is also loaded if provided by the user. If phase_info is None, the appropriate
+        default phase_info based on mission analysis method is used.
+
+        This method is not strictly necessary; a user could also supply an AviaryValues object
+        and/or phase_info dict of their own.
         """
         # We haven't read the input data yet, we don't know what desired run verbosity is
         # `self.verbosity` is "true" verbosity for entire run. `verbosity` is verbosity
@@ -108,7 +107,7 @@ class AviaryProblem(om.Problem):
         else:
             verbosity = self.verbosity  # usually None
 
-        # TODO: We cannot pass self.verbosity back up from load inputs for mulit-mission because there could be multiple .csv files
+        # TODO: We cannot pass self.verbosity back up from load inputs for multi-mission because there could be multiple .csv files
         aviary_inputs, verbosity = self.model.load_inputs(
             aircraft_data=aircraft_data,
             phase_info=phase_info,

@@ -25,7 +25,7 @@ class Null:
         pass
 
 
-def get_aviary_resource_path(resource_name: str) -> str:
+def get_aviary_resource_path(resource_name: str) -> Path:
     """
     Get the file path of a resource in the Aviary package.
 
@@ -36,7 +36,7 @@ def get_aviary_resource_path(resource_name: str) -> str:
 
     Returns
     -------
-        Path
+        path : Path
             The file path of the resource.
 
     """
@@ -304,40 +304,6 @@ def create_printcomp(all_inputs: list, input_units: dict = {}, meta_data=_MetaDa
     return PrintComp
 
 
-def set_warning_format(verbosity):
-    # if verbosity not set / not known yet, default to most simple warning format rather than no
-    # warnings at all
-    if verbosity is None:
-        verbosity = Verbosity.BRIEF
-
-    # Reset all warning filters
-    warnings.resetwarnings()
-
-    # NOTE identity comparison is preferred for Enum but here verbosity is often an int, so we need
-    # an equality comparison
-    if verbosity == Verbosity.QUIET:
-        # Suppress all warnings
-        warnings.filterwarnings('ignore')
-
-    elif verbosity == Verbosity.BRIEF:
-
-        def simplified_warning(message, category, filename, lineno, line=None):
-            return f'Warning: {message}\n\n'
-
-        warnings.formatwarning = simplified_warning
-
-    elif verbosity == Verbosity.VERBOSE:
-
-        def simplified_warning(message, category, filename, lineno, line=None):
-            return f'{category.__name__}: {message}\n\n'
-
-        warnings.formatwarning = simplified_warning
-
-    else:  # DEBUG
-        # use the default warning formatting
-        warnings.filterwarnings('default')
-
-
 def promote_aircraft_and_mission_vars(group):
     """Promotes inputs and outputs in Aircraft and Mission hierarchy categories for provided group."""
     external_outputs = []
@@ -484,24 +450,31 @@ def get_model(file_name: str, verbosity=Verbosity.BRIEF) -> Path:
         If the path is not found.
     """
     # Get the path to Aviary's models
-    path = Path('models', file_name)
-    aviary_path = Path(get_aviary_resource_path(str(path)))
+    aviary_path = Path(get_aviary_resource_path(str(Path('models', file_name))))
+    # Check if provided path is valid
+    if aviary_path.exists():
+        return aviary_path
+    # otherwise check models folder contents
+    else:
+        from glob import glob
 
-    # If the file name was provided without a path, check in the subfolders
-    if not aviary_path.exists():
-        sub_dirs = [x[0] for x in os.walk(get_aviary_resource_path('models'))]
-        for sub_dir in sub_dirs:
-            temp_path = Path(sub_dir, file_name)
-            if temp_path.exists():
-                # only return the first matching file
-                aviary_path = temp_path
-                continue
+        contents = glob(str(get_aviary_resource_path('models') / '**'), recursive=True)
+        close_match = None
+        for item in contents:
+            item = Path(item)
+            # check if full filepath, file name with extension, or just file (or folder) name
+            # matches target
+            if aviary_path == item or aviary_path.name == item.name:
+                return item
+            elif aviary_path.stem == item.stem:
+                close_match = item
 
-    # If the path still doesn't exist, raise an error.
-    if not aviary_path.exists():
-        raise FileNotFoundError("File or Folder not found in Aviary's hangar")
+    if close_match is not None:
+        # Probably requested the wrong file extension.
+        return close_match
 
-    return aviary_path
+    # If the path doesn't exist, raise an error.
+    raise FileNotFoundError("File or Folder not found in Aviary's hangar")
 
 
 def sigmoidX(x, x0, mu=1.0):

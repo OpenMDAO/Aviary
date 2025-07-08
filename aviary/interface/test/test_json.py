@@ -5,7 +5,7 @@ from pathlib import Path
 from openmdao.utils.testing_utils import use_tempdirs
 
 import aviary.api as av
-from aviary.interface.default_phase_info.height_energy import (
+from aviary.models.missions.height_energy_default import (
     phase_info,
     phase_info_parameterization,
 )
@@ -33,7 +33,9 @@ class TestJson(unittest.TestCase):
         self.prob = prob = av.AviaryProblem()
         # Load aircraft and options data from user
         # Allow for user overrides here
-        prob.load_inputs('models/test_aircraft/aircraft_for_bench_FwFm.csv', local_phase_info)
+        prob.load_inputs(
+            'models/aircraft/test_aircraft/aircraft_for_bench_FwFm.csv', local_phase_info
+        )
 
         # Preprocess inputs
         prob.check_and_preprocess_inputs()

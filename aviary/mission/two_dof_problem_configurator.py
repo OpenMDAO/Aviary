@@ -1,7 +1,7 @@
 import openmdao.api as om
 
 from aviary.constants import GRAV_ENGLISH_LBM, RHO_SEA_LEVEL_ENGLISH
-from aviary.interface.default_phase_info.two_dof_fiti import add_default_sgm_args
+from aviary.models.missions.two_dof_fiti_default import add_default_sgm_args
 from aviary.mission.gasp_based.idle_descent_estimation import add_descent_estimation_as_submodel
 from aviary.mission.gasp_based.ode.landing_ode import LandingSegment
 from aviary.mission.gasp_based.ode.params import ParamPort
@@ -18,9 +18,10 @@ from aviary.mission.problem_configurator import ProblemConfiguratorBase
 from aviary.subsystems.propulsion.utils import build_engine_deck
 from aviary.utils.functions import add_opts2vals, create_opts2vals
 from aviary.utils.process_input_decks import initialization_guessing, update_GASP_options
-from aviary.utils.utils import wrapped_convert_units, process_guess_var
+from aviary.utils.utils import wrapped_convert_units
 from aviary.variable_info.enums import AnalysisScheme, LegacyCode
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
+from aviary.mission.utils import process_guess_var
 
 
 class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
@@ -38,7 +39,7 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
         Parameters
         ----------
         aviary_group : AviaryGroup
-            Aviary model that owns this builder.
+            Aviary model that owns this configurator.
         """
         # TODO: This should probably be moved to the set_initial_guesses() method in AviaryProblem class
         # Defines how the problem should build it's initial guesses for load_inputs()
@@ -109,7 +110,7 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
         Parameters
         ----------
         aviary_group : AviaryGroup
-            Aviary model that owns this builder.
+            Aviary model that owns this configurator.
 
         Returns
         -------
@@ -117,10 +118,10 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
             General default phase_info.
         """
         if aviary_group.analysis_scheme is AnalysisScheme.COLLOCATION:
-            from aviary.interface.default_phase_info.two_dof import phase_info
+            from aviary.models.missions.two_dof_default import phase_info
 
         elif aviary_group.analysis_scheme is AnalysisScheme.SHOOTING:
-            from aviary.interface.default_phase_info.two_dof_fiti import (
+            from aviary.models.missions.two_dof_fiti_default import (
                 phase_info,
                 phase_info_parameterization,
             )
@@ -138,7 +139,7 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
         Parameters
         ----------
         aviary_group : AviaryGroup
-            Aviary model that owns this builder.
+            Aviary model that owns this configurator.
 
         Returns
         -------
@@ -154,7 +155,7 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
         Parameters
         ----------
         aviary_group : AviaryProblem
-            Problem that owns this builder.
+            Problem that owns this configurator.
         """
         OptionsToValues = create_opts2vals(
             [
@@ -267,7 +268,7 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
         Parameters
         ----------
         aviary_group : AviaryGroup
-            Aviary model that owns this builder.
+            Aviary model that owns this configurator.
         phase_name : str
             Name of the requested phase.
         phase_options : dict
@@ -309,7 +310,7 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
         Parameters
         ----------
         aviary_group : AviaryGroup
-            Aviary model that owns this builder.
+            Aviary model that owns this configurator.
         phase_name : str
             Name of the requested phase.
         phase_idx : int
@@ -437,7 +438,7 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
         Parameters
         ----------
         aviary_group : AviaryGroup
-            Aviary model that owns this builder.
+            Aviary model that owns this configurator.
         phases : Phase
             Phases to be linked.
         connect_directly : bool
@@ -600,7 +601,7 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
         Parameters
         ----------
         aviary_group : AviaryGroup
-            Aviary model that owns this builder.
+            Aviary model that owns this configurator.
         """
         pass
 
@@ -637,7 +638,7 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
         Parameters
         ----------
         aviary_group : AviaryGroup
-            Aviary model that owns this builder.
+            Aviary model that owns this configurator.
         """
         if aviary_group.post_mission_info['include_landing']:
             self._add_landing_systems(aviary_group)
@@ -707,7 +708,7 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
         Parameters
         ----------
         aviary_group : AviaryGroup
-            Aviary model that owns this builder.
+            Aviary model that owns this configurator.
         phase_name : str
             The name of the phase for which the guesses are being added.
         phase : Phase

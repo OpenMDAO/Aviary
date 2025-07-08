@@ -5,7 +5,7 @@ import openmdao.api as om
 from openmdao.utils.testing_utils import use_tempdirs
 
 from aviary.interface.methods_for_level2 import AviaryProblem
-from aviary.models.test_aircraft.GwFm_phase_info import phase_info as ph_in
+from aviary.models.aircraft.test_aircraft.GwFm_phase_info import phase_info as ph_in
 from aviary.subsystems.subsystem_builder_base import SubsystemBuilderBase
 from aviary.utils.functions import get_aviary_resource_path
 from aviary.variable_info.variables import Aircraft
@@ -67,7 +67,9 @@ class PreMissionGroupTest(unittest.TestCase):
 
         prob = AviaryProblem()
 
-        csv_path = get_aviary_resource_path('models/test_aircraft/aircraft_for_bench_GwFm.csv')
+        csv_path = get_aviary_resource_path(
+            'models/aircraft/test_aircraft/aircraft_for_bench_GwFm.csv'
+        )
         prob.load_inputs(csv_path, phase_info)
 
         # Preprocess inputs
@@ -100,7 +102,9 @@ class PreMissionGroupTest(unittest.TestCase):
 
         prob = AviaryProblem()
 
-        csv_path = get_aviary_resource_path('models/test_aircraft/aircraft_for_bench_GwFm.csv')
+        csv_path = get_aviary_resource_path(
+            'models/aircraft/test_aircraft/aircraft_for_bench_GwFm.csv'
+        )
         prob.load_inputs(csv_path, phase_info)
 
         # Preprocess inputs
