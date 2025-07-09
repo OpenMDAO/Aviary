@@ -59,7 +59,6 @@ aircraft:fuselage:aisle_width,22,inch
 aircraft:fuselage:delta_diameter,5,ft
 aircraft:fuselage:flat_plate_area_increment,0.25,ft**2
 aircraft:fuselage:height_to_width_ratio,0.2597,unitless
-aircraft:fuselage:length,0,ft
 aircraft:fuselage:lift_coefficient_ratio_body_to_wing,0.35,unitless
 aircraft:fuselage:lift_curve_slope_mach0,1.8265,1/rad
 aircraft:fuselage:mass_coefficient,0.889,unitless
@@ -91,8 +90,8 @@ aircraft:landing_gear:main_gear_mass_coefficient,0.85,unitless
 aircraft:landing_gear:mass_coefficient,0.052,unitless
 aircraft:landing_gear:tail_hook_mass_scaler,1,unitless
 aircraft:landing_gear:total_mass_scaler,1,unitless
-aircraft:nacelle:avg_diameter,7.5,ft
-aircraft:nacelle:avg_length,18.11,ft
+aircraft:nacelle:avg_diameter,6.95,ft
+aircraft:nacelle:avg_length,9.44,ft
 aircraft:nacelle:clearance_ratio,0.2,unitless
 aircraft:nacelle:core_diameter_ratio,1.2205,unitless
 aircraft:nacelle:fineness,1.3588,unitless
@@ -114,7 +113,6 @@ aircraft:vertical_tail:taper_ratio,0.366,unitless
 aircraft:vertical_tail:thickness_to_chord,0.1,unitless
 aircraft:vertical_tail:volume_coefficient,0.015,unitless
 aircraft:wing:aspect_ratio,10,unitless
-aircraft:wing:average_chord,12.615,ft
 aircraft:wing:center_distance,0.463,unitless
 aircraft:wing:choose_fold_location,True,unitless
 aircraft:wing:flap_chord_ratio,0.2,unitless
@@ -146,7 +144,6 @@ aircraft:wing:optimum_slat_deflection,20,deg
 aircraft:wing:slat_chord_ratio,0.0001,unitless
 aircraft:wing:slat_lift_increment_optimum,0.93,unitless
 aircraft:wing:slat_span_ratio,0.9,unitless
-aircraft:wing:span,117.8,ft
 aircraft:wing:surface_ctrl_mass_coefficient,0.5,unitless
 aircraft:wing:sweep,30,deg
 aircraft:wing:taper_ratio,0.27444,unitless
