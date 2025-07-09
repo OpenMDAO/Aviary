@@ -124,7 +124,7 @@ class TailMass(om.JaxExplicitComponent):
             x_coords = airfoil_data[:, 0]
             y_coords = airfoil_data[:, 1]
 
-            self.camber, self.camber_location, self.max_thickness, camber_line, thickness = self.extract_airfoil_features(x_coords, y_coords)
+            self.camber, self.camber_location, self.max_thickness, self.camber_line, self.thickness = self.extract_airfoil_features(x_coords, y_coords)
         else:
             # Parse the NACA airfoil type (4-digit)
             self.camber = int(NACA_digits[0]) / 100.0 # Maximum camber
@@ -135,6 +135,8 @@ class TailMass(om.JaxExplicitComponent):
         return (self.camber,
                 self.camber_location,
                 self.max_thickness,
+                self.camber_line,
+                self.thickness,
                 self.options['tail_type'],
                 self.options['material'],
                 self.options['num_sections'],
@@ -159,34 +161,13 @@ class TailMass(om.JaxExplicitComponent):
         camber = self.camber
         camber_location = self.camber_location
         max_thickness = self.max_thickness
+        camber_line = self.camber_line
+        thickness = self.thickness
 
         # This is just so that the differentiation and unittest do not break. If tail_type = horizontal, ignore the vertical tail mass and vice versa.
         # TODO: Potentially write these tails as separate files. 
         aircraft__horizontal_tail__mass = 0.0 * thickness_ratio
         aircraft__vertical_tail__mass = 0.0 * thickness_ratio
-
-        # # File check
-        # if airfoil_type == 'file':
-        #     if airfoil_type == 'file' and (airfoil_file is None or not os.path.isfile(airfoil_file)):
-        #         raise FileNotFoundError(f"Airfoil file '{airfoil_file}' not found or not provided.")
-        #     try: 
-        #         airfoil_data = np.loadtxt(airfoil_file, skiprows=1) # Assume a header
-        #         x_coords, y_coords = airfoil_data[:, 0], airfoil_data[:, 1]
-        #     except Exception as e:
-        #         raise ValueError(f"Error reading airfoil file: {e}")
-        
-        # # Compute section airfoil geometry
-        # if airfoil_file and os.path.exists(airfoil_file):
-        #     airfoil_data = np.loadtxt(airfoil_file)
-        #     x_coords = airfoil_data[:, 0]
-        #     y_coords = airfoil_data[:, 1]
-
-        #     camber, camber_location, max_thickness, camber_line, thickness = self.extract_airfoil_features(x_coords, y_coords)
-        # else:
-        #     # Parse the NACA airfoil type (4-digit)
-        #     camber = int(NACA_digits[0]) / 100.0 # Maximum camber
-        #     camber_location = int(NACA_digits[1]) / 10.0 # Location of max camber
-        #     max_thickness = int(NACA_digits[2:4]) / 100.0 # Max thickness
         
         if tail_type == 'horizontal':
             span_locations = jnp.linspace(0, aircraft__horizontal_tail__span, num_sections)
