@@ -30,7 +30,7 @@ import numpy as np
 import openmdao.api as om
 from openmdao.utils.units import convert_units
 
-from aviary.interface.utils.markdown_utils import round_it
+from aviary.interface.utils import round_it
 from aviary.subsystems.propulsion.engine_model import EngineModel
 from aviary.subsystems.propulsion.engine_scaling import EngineScaling
 from aviary.subsystems.propulsion.engine_sizing import SizeEngine
