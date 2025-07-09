@@ -40,6 +40,7 @@ class FuselageMass(om.JaxExplicitComponent):
         
         self.options.declare('custom_fuselage_function',
                              types=FunctionType,
+                             default=None,
                              allow_none=True,
                              desc='optional custom function generation for fuselage geometry')
 
