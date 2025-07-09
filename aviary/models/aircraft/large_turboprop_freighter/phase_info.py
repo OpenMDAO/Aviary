@@ -109,8 +109,8 @@ two_dof_phase_info = {
             'distance_defect_ref': (5000, 'ft'),
             'angle_of_attack_initial': (0.0, 'rad'),
             'angle_of_attack_bounds': ((0.0, 5.0), 'rad'),
-            'angle_ref': (5.0, 'rad'),
-            'angle_defect_ref': (5.0, 'rad'),
+            'angle_of_attack_ref': (5.0, 'rad'),
+            'angle_of_attack_defect_ref': (5.0, 'rad'),
             'normal_ref': (10000, 'lbf'),
         },
         'initial_guesses': {
@@ -240,7 +240,7 @@ two_dof_phase_info = {
     },
     'cruise': {
         'user_options': {
-            'altitude_cruise': (21_000, 'ft'),
+            'alt_cruise': (21_000, 'ft'),
             'mach_cruise': 0.475,
         },
         'initial_guesses': {
@@ -256,8 +256,6 @@ two_dof_phase_info = {
         'user_options': {
             'num_segments': 3,
             'order': 3,
-            'fix_initial': False,
-            'input_initial': False,
             'EAS_limit': (160, 'kn'),
             'mach_cruise': 0.475,
             'input_speed_type': SpeedType.MACH,
@@ -289,8 +287,6 @@ two_dof_phase_info = {
         'user_options': {
             'num_segments': 1,
             'order': 7,
-            'fix_initial': False,
-            'input_initial': False,
             'EAS_limit': (250, 'kn'),
             'mach_cruise': 0.80,
             'input_speed_type': SpeedType.EAS,

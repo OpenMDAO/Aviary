@@ -104,14 +104,6 @@ class TwoDOFPhaseOptions(AviaryOptionsDictionary):
         # The options below have not yet been revamped.
 
         self.declare(
-            name='fix_initial',
-            types=bool,
-            default=True,
-            desc='Fixes the initial states (mass, distance) and does not allow them to '
-            'change during the optimization.',
-        )
-
-        self.declare(
             name='required_available_climb_rate',
             default=None,
             units='ft/s',
