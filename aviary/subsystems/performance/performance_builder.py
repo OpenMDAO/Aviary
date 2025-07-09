@@ -1,9 +1,21 @@
 import openmdao.api as om
 
+from aviary.mission.ode.specific_energy_rate import SpecificEnergyRate
 from aviary.subsystems.subsystem_builder_base import SubsystemBuilderBase
-from aviary.variable_info.variables import Aircraft, Mission
+from aviary.subsystems.performance.performance_premission import PerformancePremission
+from aviary.variable_info.variables import Aircraft, Mission, Dynamic
 
-analysis_dict = {'example': om.Group}
+analysis_dict = {'climb_rate': SpecificEnergyRate}
+conditions_dict = {
+    'altitude': Dynamic.Mission.ALTITUDE,
+    'velocity': Dynamic.Mission.VELOCITY,
+    'mach': Dynamic.Atmosphere.MACH,
+    'throttle': Dynamic.Vehicle.Propulsion.THROTTLE,
+    'mass': Dynamic.Vehicle.MASS,
+    'fuel_fraction': 'fuel_fraction',
+    'delta_weight': 'delta_weight',
+    'load_factor': 'load_factor',
+}
 
 
 class CorePerformanceBuilder(SubsystemBuilderBase):
@@ -16,22 +28,20 @@ class CorePerformanceBuilder(SubsystemBuilderBase):
         super().__init__(name=name, meta_data=meta_data)
 
     def build_pre_mission(self, aviary_inputs, **kwargs):
-        return PerformancePreMission()
+        return PerformancePremission()
 
-    def build_mission(self, num_nodes, aviary_inputs, **kwargs):
-        try:
-            analyses = kwargs.pop('analyses')
-        except KeyError:
+    def build_post_mission(self, num_nodes, aviary_inputs, **kwargs):
+        if len(kwargs) > 0:
+            analyses = [analyses]
+            perf_group = om.Group()
+        else:
             analyses = []
             perf_group = None
-        else:
-            if not isinstance(analyses, list):
-                analyses = [analyses]
-                perf_group = om.Group()
 
-        for analysis in analyses:
-            conditions = analyses[analysis]
-            perf_comp = analysis_dict[analysis](*conditions)
-            perf_group.add_subsystem(name=analysis, subsys=perf_comp, promotes=['*'])
+        for perf_analysis in kwargs:
+            conditions = kwargs[perf_analysis]
+            perf_comp = analysis_dict[perf_analysis]
+            # set_input_defaults on perf_comp based on conditions
+            perf_group.add_subsystem(name=perf_analysis, subsys=perf_comp(), promotes=['*'])
 
         return perf_group
