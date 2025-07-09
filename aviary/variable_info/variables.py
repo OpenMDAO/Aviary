@@ -517,7 +517,7 @@ class Aircraft:
         COMPOSITE_FRACTION = 'aircraft:wing:composite_fraction'
         CONTROL_SURFACE_AREA = 'aircraft:wing:control_surface_area'
         CONTROL_SURFACE_AREA_RATIO = 'aircraft:wing:control_surface_area_ratio'
-        DETAILED_MASS = 'aircraft:wing:detailed_mass'
+        USE_DETAILED_MASS = 'aircraft:wing:use_detailed_mass'
         DIHEDRAL = 'aircraft:wing:dihedral'
         ENG_POD_INERTIA_FACTOR = 'aircraft:wing:eng_pod_inertia_factor'
         EXPOSED_AREA = 'aircraft:wing:exposed_area'
