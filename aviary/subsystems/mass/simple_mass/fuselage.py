@@ -38,7 +38,10 @@ class FuselageMass(om.JaxExplicitComponent):
                              allow_none=True,
                              desc='optional data file of fuselage geometry')
         
-        self.custom_fuselage_function = None
+        self.options.declare('custom_fuselage_function',
+                             types=FunctionType,
+                             allow_none=True,
+                             desc='optional custom function generation for fuselage geometry')
 
     def setup(self):
         self.options['use_jit'] = not(Debug)
@@ -91,7 +94,8 @@ class FuselageMass(om.JaxExplicitComponent):
         if base_diameter <= 0 or tip_diameter <= 0:
             raise AnalysisError("Diameter must be greater than zero.")
 
-        custom_fuselage_function = getattr(self, 'custom_fuselage_function', None) # Custom fuselage model function -- if provided
+        # custom_fuselage_function = getattr(self, 'custom_fuselage_function', None) # Custom fuselage model function -- if provided
+        custom_fuselage_function = self.options['custom_fuselage_function']
 
         custom_fuselage_data_file = self.options['custom_fuselage_data_file']
 
