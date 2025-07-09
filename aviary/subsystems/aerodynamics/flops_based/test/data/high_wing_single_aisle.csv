@@ -103,6 +103,7 @@ aircraft:wing:chord_per_semispan,0.13,0.115,0.06,unitless
 aircraft:wing:composite_fraction,0.01,unitless   #check
 aircraft:wing:dihedral,-1.0,deg
 aircraft:wing:control_surface_area_ratio,0.2234,unitless
+aircraft:wing:use_detailed_mass,True,unitless
 aircraft:wing:glove_and_bat,0.01,ft**2   #check
 aircraft:wing:input_station_dist,0.,0.5,1.,unitless
 aircraft:wing:load_distribution_control,3,unitless

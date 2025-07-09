@@ -1,10 +1,10 @@
 import openmdao.api as om
 
 import aviary.api as av
-from aviary.examples.external_subsystems.OAS_weight.OAS_wing_weight_analysis import OAStructures
+from aviary.examples.external_subsystems.OAS_mass.OAS_wing_mass_analysis import OAStructures
 
 
-class OASWingWeightBuilder(av.SubsystemBuilderBase):
+class OASWingMassBuilder(av.SubsystemBuilderBase):
     """
     Builder for an OpenAeroStruct component that computes a new wing mass.
 
@@ -12,18 +12,18 @@ class OASWingWeightBuilder(av.SubsystemBuilderBase):
 
     Attributes
     ----------
-    name : str ('wing_weight')
+    name : str ('wing_mass')
         object label
 
     Methods
     -------
-    __init__(self, name='wing_weight'):
-        Initializes the OASWingWeightBuilder object with a given name.
+    __init__(self, name='wing_mass'):
+        Initializes the OASWingmassBuilder object with a given name.
     build_pre_mission(self) -> openmdao.core.System:
         Build an OpenMDAO system for the pre-mission computations of the subsystem.
     """
 
-    def __init__(self, name='wing_weight'):
+    def __init__(self, name='wing_mass'):
         super().__init__(name)
 
     def build_pre_mission(self, aviary_inputs):
@@ -51,7 +51,7 @@ class OASWingWeightBuilder(av.SubsystemBuilderBase):
             promotes_inputs=[
                 ('fuel', av.Mission.Design.FUEL_MASS),
             ],
-            promotes_outputs=[('wing_weight', av.Aircraft.Wing.MASS)],
+            promotes_outputs=[('wing_mass', av.Aircraft.Wing.MASS)],
         )
 
         return wing_group

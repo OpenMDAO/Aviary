@@ -20,7 +20,7 @@ class WingMassGroup(om.Group):
         # TODO this requires a special workaround in
         #      variable_info/functions.py, add_aviary_output()
         # default to None instead of default value
-        add_aviary_option(self, Aircraft.Wing.INPUT_STATION_DIST, None)
+        add_aviary_option(self, Aircraft.Wing.USE_DETAILED_MASS)
 
     def setup(self):
         self.add_subsystem(
@@ -30,7 +30,7 @@ class WingMassGroup(om.Group):
             promotes_outputs=['*'],
         )
 
-        if self.options[Aircraft.Wing.INPUT_STATION_DIST] is not None:
+        if self.options[Aircraft.Wing.USE_DETAILED_MASS]:
             self.add_subsystem(
                 'wing_bending_material_factor',
                 DetailedWingBendingFact(),

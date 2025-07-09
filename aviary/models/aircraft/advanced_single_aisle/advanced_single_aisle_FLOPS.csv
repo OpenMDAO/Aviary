@@ -136,6 +136,7 @@ aircraft:wing:chord_per_semispan,0.273522534166506,0.204274849507037,0.088815294
 aircraft:wing:composite_fraction,0.33333,unitless
 aircraft:wing:control_surface_area_ratio,0.333,unitless
 aircraft:wing:dihedral,6,deg
+aircraft:wing:use_detailed_mass,True,unitless
 aircraft:wing:glove_and_bat,0,ft**2
 aircraft:wing:height,8.6,ft
 aircraft:wing:input_station_dist,0,0.34453777998,0.919,1,unitless
