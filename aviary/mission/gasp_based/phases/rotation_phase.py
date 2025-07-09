@@ -141,11 +141,7 @@ class RotationPhase(PhaseBuilderBase):
         normal_ref0 = user_options.get_val('normal_ref0', units='lbf')
 
         # Add states
-        self.add_state(
-            'angle_of_attack',
-            Dynamic.Vehicle.ANGLE_OF_ATTACK,
-            'angle_of_attack_rate'
-        )
+        self.add_state('angle_of_attack', Dynamic.Vehicle.ANGLE_OF_ATTACK, 'angle_of_attack_rate')
         self.add_state('velocity', Dynamic.Mission.VELOCITY, Dynamic.Mission.VELOCITY_RATE)
         self.add_state(
             'mass',

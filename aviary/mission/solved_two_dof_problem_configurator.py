@@ -101,10 +101,9 @@ class SolvedTwoDOFProblemConfigurator(ProblemConfiguratorBase):
         PhaseBuilderBase
             Phase builder for requested phase.
         """
-        if (
-            phase_options['user_options'].get('ground_roll')
-            and not phase_options['user_options'].get('rotation')
-        ):
+        if phase_options['user_options'].get('ground_roll') and not phase_options[
+            'user_options'
+        ].get('rotation'):
             phase_builder = GroundrollPhaseVelocityIntegrated
         else:
             phase_builder = TwoDOFPhase
