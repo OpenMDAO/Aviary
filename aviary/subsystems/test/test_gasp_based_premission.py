@@ -219,23 +219,89 @@ class BWBPreMissionGroupTest(unittest.TestCase):
         prob.run_model()
 
         tol = 1e-5
+        # geometry subsystem
+        assert_near_equal(prob[Aircraft.Fuselage.AVG_DIAMETER], 38, tol)
+        assert_near_equal(prob[Aircraft.Fuselage.LENGTH], 71.5245514, tol)
+        assert_near_equal(prob[Aircraft.Fuselage.WETTED_AREA], 4573.42578, tol)
+        assert_near_equal(prob[Aircraft.Wing.AREA], 2142.85714286, tol)
+        assert_near_equal(prob[Aircraft.Wing.SPAN], 146.38501094, tol)
+        assert_near_equal(prob[Aircraft.Wing.CENTER_CHORD], 22.97244452, tol)
+        assert_near_equal(prob[Aircraft.Wing.AVERAGE_CHORD], 16.2200522, tol)
+        assert_near_equal(prob[Aircraft.Wing.ROOT_CHORD], 20.33371617, tol)
+        assert_near_equal(prob[Aircraft.Wing.THICKNESS_TO_CHORD_UNWEIGHTED], 0.13596576, tol)
+        assert_near_equal(prob[Aircraft.Fuel.WING_VOLUME_GEOMETRIC_MAX], 605.90781747, tol)
+        assert_near_equal(prob[Aircraft.HorizontalTail.AREA], 0.00117064, tol)
+        assert_near_equal(prob[Aircraft.HorizontalTail.SPAN], 0.04467601, tol)
+        assert_near_equal(prob[Aircraft.HorizontalTail.ROOT_CHORD], 0.03836448, tol)
+        assert_near_equal(prob[Aircraft.HorizontalTail.AVERAGE_CHORD], 0.02808445, tol)
+        assert_near_equal(prob[Aircraft.HorizontalTail.MOMENT_ARM], 29.69074172, tol)
+        assert_near_equal(prob[Aircraft.VerticalTail.AREA], 169.11964286, tol)
+        assert_near_equal(prob[Aircraft.VerticalTail.SPAN], 16.98084188, tol)
+        assert_near_equal(prob[Aircraft.VerticalTail.ROOT_CHORD], 14.58190052, tol)
+        assert_near_equal(prob[Aircraft.VerticalTail.AVERAGE_CHORD], 10.67457744, tol)
+        assert_near_equal(prob[Aircraft.VerticalTail.MOMENT_ARM], 27.82191598, tol)
+
+        assert_near_equal(prob[Aircraft.Nacelle.AVG_DIAMETER], 7.17813375, tol)
+        assert_near_equal(prob[Aircraft.Nacelle.AVG_LENGTH], 9.75364814, tol)
+        assert_near_equal(prob[Aircraft.Nacelle.SURFACE_AREA], 219.95229788, tol)
 
     def test_case2(self):
         """premission: geometry"""
 
         prob = self.prob
         preprocess_options(self.gasp_inputs)
-        geom_and_mass_subsystems = get_geom_subsystem('GASP')
+        geom_subsystem = get_geom_subsystem('GASP')
 
         prob.model.add_subsystem(
             'pre_mission',
-            CorePreMission(aviary_options=self.gasp_inputs, subsystems=geom_and_mass_subsystems),
+            CorePreMission(aviary_options=self.gasp_inputs, subsystems=geom_subsystem),
             promotes_inputs=['*'],
             promotes_outputs=['*'],
         )
 
         setup_model_options(prob, self.gasp_inputs)
         prob.setup(check=False)
+        set_aviary_initial_values(prob, self.gasp_inputs)
+
+        # prob.set_val(Mission.Landing.LIFT_COEFFICIENT_MAX, val=1.94302452, units='unitless')
+        # prob.set_val(Aircraft.Engine.SCALED_SLS_THRUST, val=37451.0, units='lbf')
+
+        prob.run_model()
+
+        tol = 1e-5
+        # geometry subsystem
+        assert_near_equal(prob[Aircraft.Fuselage.AVG_DIAMETER], 38, tol)
+        assert_near_equal(prob[Aircraft.Fuselage.LENGTH], 71.5245514, tol)
+        # assert_near_equal(prob[Aircraft.Fuselage.WETTED_AREA], 4573.42578, tol)
+        assert_near_equal(prob[Aircraft.Wing.AREA], 2142.85714286, tol)
+        assert_near_equal(prob[Aircraft.Wing.SPAN], 146.38501094, tol)
+        assert_near_equal(prob[Aircraft.Wing.CENTER_CHORD], 22.97244452, tol)
+        assert_near_equal(prob[Aircraft.Wing.AVERAGE_CHORD], 16.2200522, tol)
+        assert_near_equal(prob[Aircraft.Wing.ROOT_CHORD], 20.33371617, tol)
+        assert_near_equal(prob[Aircraft.Wing.THICKNESS_TO_CHORD_UNWEIGHTED], 0.13596576, tol)
+        assert_near_equal(prob[Aircraft.Fuel.WING_VOLUME_GEOMETRIC_MAX], 605.90781747, tol)
+        assert_near_equal(prob[Aircraft.HorizontalTail.AREA], 0.00117064, tol)
+        assert_near_equal(prob[Aircraft.HorizontalTail.SPAN], 0.04467601, tol)
+        assert_near_equal(prob[Aircraft.HorizontalTail.ROOT_CHORD], 0.03836448, tol)
+        assert_near_equal(prob[Aircraft.HorizontalTail.AVERAGE_CHORD], 0.02808445, tol)
+        # assert_near_equal(prob[Aircraft.HorizontalTail.MOMENT_ARM], 29.69074172, tol)
+        assert_near_equal(prob[Aircraft.VerticalTail.AREA], 169.11964286, tol)
+        assert_near_equal(prob[Aircraft.VerticalTail.SPAN], 16.98084188, tol)
+        assert_near_equal(prob[Aircraft.VerticalTail.ROOT_CHORD], 14.58190052, tol)
+        assert_near_equal(prob[Aircraft.VerticalTail.AVERAGE_CHORD], 10.67457744, tol)
+        assert_near_equal(prob[Aircraft.VerticalTail.MOMENT_ARM], 27.82191598, tol)
+        import pdb
+
+        pdb.set_trace()
+        x = prob['AUTO_OVERRIDE:aircraft:nacelle:avg_diameter']
+        y = prob['AUTO_OVERRIDE:aircraft:nacelle:avg_length']
+        assert_near_equal(
+            prob[Aircraft.Nacelle.AVG_DIAMETER], 6.95, tol
+        )  # it's an input from .csv file
+        assert_near_equal(
+            prob[Aircraft.Nacelle.AVG_LENGTH], 9.44, tol
+        )  # it's an input from .csv file
+        assert_near_equal(prob[Aircraft.Nacelle.SURFACE_AREA], 219.95229788, tol)
 
 
 if __name__ == '__main__':
