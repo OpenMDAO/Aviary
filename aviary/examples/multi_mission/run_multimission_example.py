@@ -53,6 +53,92 @@ aviary_inputs_deadhead.set_val(Aircraft.CrewPayload.NUM_FIRST_CLASS, 0, 'unitles
 Optimizer = 'SLSQP'  # SLSQP or SNOPT
 
 
+
+# =======================================
+# START MULTIMISSION EXAMPLE
+# =======================================
+# write out use cases
+
+# A) One aircraft flying multiple different missions with different number of passengers and payload 
+#       on each mission, minimize fuel burn of both missions combined
+# B) Two different aircraft flying different missions but having a common part (i.e. engine)
+#       size engine and minimize fuel burn for both aircraft
+# C) A or B above except with some of the missions being off-design (not included in objective function)
+# D) any of the above but with uncertain inputs & outputs
+# multiple trajectories but same pre / post mission
+# same wing
+
+prob = av.AviaryProblem()
+
+# set constraints in the background to allow Mission.Summary.GROSS_MASS to be acceptible as long as it's 
+# less than Mission.Design.GROSS_MASS. Also turns on Mission.Constraints.RANGE_RESIDUAL =0, forcong
+# the mission to fly the target_range specified in the phase_info
+prob.problem_type = ProblemType.MULTI_MISSION 
+
+prob.add_aviary_group('model1')
+
+# Load aircraft in first configuration
+prob.model1.load_inputs(aviary_inputs_primary, phase_info)
+
+# Create an alias for the next 5 processes
+# prob.model1.check_and_preprocess_inputs() <- ken things separate this out
+# prob.model1.add_pre_mission_systems()
+# prob.model1.add_phases()
+# prob.model1.add_post_mission_systems()
+# prob.model1.link_phases()
+prob.model1.build_model() # jason to choose a name
+
+# Load aircraft in second configuration for same mission
+prob.add_model('Model2')
+
+prob.model2.load_inputs(aviary_inputs_deadhead, phase_info)
+
+prob.model2.build_model()
+
+# Link Key design variables to ensure both aircraft are modelled the same:
+# promote specific variables from inside specific models to a new name specified by the user
+# model3 & model4 could be an aircraft with the same engine but a different GROSS_MASS and RANGE and SWEEP, we need to be able to link those two as well
+# so we want to enable promotion to the problem level with alias
+# If you link design_range here then we will extract the maximum design range from the phase_info and insert that into both models
+prob.link_inputs([model1, model2], [(Mission.Design.GROSS_MASS, 'Aircraft1:GROSS_MASS'), (Mission.Design.RANGE, 'Aircraft1.RANGE'), (Aircraft.Wing.SWEEP, 'Aircraft1.SWEEP')])
+prob.link_inputs([model3, model4], [(Mission.Design.GROSS_MASS, 'Aircraft2:GROSS_MASS'), (Mission.Design.RANGE, 'Aircraft2.RANGE'), (Aircraft.Wing.SWEEP, 'Aircraft2.SWEEP')])
+
+prob.add_design_variables('Aircraft1:GROSS_MASS', lower=, uppwer=, units=)
+prob.add_design_variables('Aircraft1.SWEEP', units=, val=)
+prob.add_design_variables('Aircraft2:GROSS_MASS', lower=, uppwer=, units=)
+prob.add_design_variables('Aircraft2.SWEEP', units=, val=)
+
+# Add objective
+# create an objective by adding both values from the specified models based on the weighting
+# if there are models3, and model4, they may contribute constraints, but do not need to be included as part of the objective
+prob.add_multimission_objetive([model1, model2], weights=[2,1], Mission.Summary.FUEL_BURNED, ref=)
+
+# can we make a pareto front of designs?
+# prob.run_aviary_DOE() ?
+
+
+# optimizer and iteration limit are optional provided here
+prob.add_driver(Optimizer, max_iter=50)
+
+prob.setup()
+
+# we have to set val for design vars here
+
+# design.range must be the same for similar aircraft to ensure that navigation gear is designed similarly
+# this could be simpllified in the future if there was a single pre-mission for similar aircraft
+max_range_1 = utils.get_design_range(model1, model2)
+prob.model1.set_initial_guesses('Aircraft1.RANGE', units=, val=max_range_1)
+prob.model2.set_initial_guesses('Aircraft2.RANGE', units=, val=)
+
+# jason - what if 2 csv w/ wing laminar flow, take the higher value
+
+prob.run_aviary_problem()
+
+
+
+
+
+
 class MultiMissionProblem(om.Problem):
     def __init__(self, aviary_values, phase_infos, weights):
         super().__init__()
