@@ -12,18 +12,12 @@ compared.
 import numpy as np
 
 import aviary.api as av
-from aviary.examples.external_subsystems.OAS_weight.OAS_wing_weight_builder import (
-    OASWingWeightBuilder,
-)
+from aviary.examples.external_subsystems.OAS_mass.OAS_wing_mass_builder import OASWingMassBuilder
 
 #################
 # Problem Setup #
 #################
-
-# flag to turn on/off OpenAeroStruct subsystem for comparison testing
-use_OAS = True
-
-wing_weight_builder = OASWingWeightBuilder()
+wing_mass_builder = OASWingMassBuilder()
 
 # Load the phase_info and other common setup tasks
 phase_info = {
@@ -99,8 +93,7 @@ phase_info = {
 }
 
 phase_info['pre_mission'] = {'include_takeoff': False, 'optimize_mass': True}
-if use_OAS:
-    phase_info['pre_mission']['external_subsystems'] = [wing_weight_builder]
+phase_info['pre_mission']['external_subsystems'] = [wing_mass_builder]
 
 aircraft_definition_file = 'models/aircraft/test_aircraft/aircraft_for_bench_FwFm.csv'
 make_plots = False
@@ -121,7 +114,7 @@ prob.add_objective()
 prob.setup()
 
 # define OAS inputs
-OAS_sys = 'pre_mission.wing_weight.aerostructures.'
+OAS_sys = 'pre_mission.wing_mass.aerostructures.'
 # block auto-formatting of tables
 # fmt: off
 prob.set_val(
