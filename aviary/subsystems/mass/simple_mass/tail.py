@@ -146,7 +146,7 @@ class TailMass(om.JaxExplicitComponent):
             x_coords = airfoil_data[:, 0]
             y_coords = airfoil_data[:, 1]
 
-            camber, camber_location, max_thickness = self.extract_airfoil_features(x_coords, y_coords)
+            camber, camber_location, max_thickness, camber_line, thickness = self.extract_airfoil_features(x_coords, y_coords)
         else:
             # Parse the NACA airfoil type (4-digit)
             camber = int(NACA_digits[0]) / 100.0 # Maximum camber
@@ -165,24 +165,27 @@ class TailMass(om.JaxExplicitComponent):
         thickness_dist = self.airfoil_thickness(x_points, max_thickness)
 
         if tail_type == 'horizontal':
-            total_mass, _ = quadgk(
-                lambda x: density * self.airfoil_thickness(x, max_thickness) * (
-                    aircraft__horizontal_tail__root_chord - (aircraft__horizontal_tail__root_chord - tip_chord_tail) * (x / aircraft__horizontal_tail__span)
-                    ) * aircraft__horizontal_tail__span, [0, 1], epsabs=1e-9, epsrel=1e-9
-                    )
+            if airfoil_type:
+                total_mass_first_part, _ = quadgk(lambda x: density * 2 * jnp.atleast_1d(self.airfoil_thickness(x, max_thickness)) * jnp.sqrt(1 + (
+                    (camber / camber_location**2) * (2 * camber_location - 2 * x))**2), [0, camber_location], epsabs=1e-9, epsrel=1e-9)
+                total_mass_second_part, _ = quadgk(lambda x: density * 2 * jnp.atleast_1d(self.airfoil_thickness(x, max_thickness)) * jnp.sqrt(1 + (
+                    (camber / (1 - camber_location)**2 * (2 * camber_location - 2 * x)))**2), [camber_location, 1], epsabs=1e-9, epsrel=1e-9)
             
-            aircraft__horizontal_tail__mass = total_mass
-
+                aircraft__horizontal_tail__mass = total_mass_first_part + total_mass_second_part
+            elif airfoil_file is not None:
+                aircraft__horizontal_tail__mass, _ = quadgk(density * 2 * thickness * jnp.sqrt(1 + jnp.gradient(camber_line)**2), [0, 1], epsabs=1e-9, epsrel=1e-9)
         elif tail_type == 'vertical':
-            total_mass, _ = quadgk(
-                lambda x: density * self.airfoil_thickness(x, max_thickness) * (
-                    aircraft__vertical_tail__root_chord - (aircraft__vertical_tail__root_chord - tip_chord_tail) * (x / aircraft__vertical_tail__span)
-                    ) * aircraft__vertical_tail__span, [0, 1], epsabs=1e-9, epsrel=1e-9
-                    )
-
-            aircraft__vertical_tail__mass = total_mass
+            if airfoil_type:
+                total_mass_first_part, _ = quadgk(lambda x: density * 2 * jnp.atleast_1d(self.airfoil_thickness(x, max_thickness)) * jnp.sqrt(1 + (
+                    (camber / camber_location**2) * (2 * camber_location - 2 * x))**2), [0, camber_location], epsabs=1e-9, epsrel=1e-9)
+                total_mass_second_part, _ = quadgk(lambda x: density * 2 * jnp.atleast_1d(self.airfoil_thickness(x, max_thickness)) * jnp.sqrt(1 + (
+                    (camber / (1 - camber_location)**2 * (2 * camber_location - 2 * x)))**2), [camber_location, 1], epsabs=1e-9, epsrel=1e-9)
+            
+                aircraft__vertical_tail__mass = total_mass_first_part + total_mass_second_part
+            elif airfoil_file is not None:
+                aircraft__vertical_tail__mass, _ = quadgk(density * 2 * thickness * jnp.sqrt(1 + jnp.gradient(camber_line)**2), [0, 1], epsabs=1e-9, epsrel=1e-9)
         
-        return aircraft__horizontal_tail__mass, aircraft__vertical_tail__mass
+        return aircraft__horizontal_tail__mass, aircraft__vertical_tail__masss
     
     def precompute_airfoil_geometry(self):
         n_points = self.options['num_sections']
@@ -229,5 +232,5 @@ class TailMass(om.JaxExplicitComponent):
 
         camber = camber_line[camber_location_index]
 
-        return camber, camber_location, max_thickness_value
+        return camber, camber_location, max_thickness_value, camber_line, thickness
 
