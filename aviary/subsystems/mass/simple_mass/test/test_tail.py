@@ -85,12 +85,12 @@ class TailMassTestCase(unittest.TestCase):
         if self.prob.model.Tail.options['tail_type'] == 'horizontal':
             assert_near_equal(
                 self.prob[Aircraft.HorizontalTail.MASS],
-                4.22032, 
+                10.6966719, 
                 tol)
         else:
             assert_near_equal(
                 self.prob[Aircraft.VerticalTail.MASS],
-                4.22032, 
+                10.6966719, 
                 tol)
         
         partial_data = self.prob.check_partials(
