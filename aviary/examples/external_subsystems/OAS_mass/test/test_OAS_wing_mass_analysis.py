@@ -89,7 +89,7 @@ class Test_OAStructures(unittest.TestCase):
 
         prob.run_model()
 
-        print('wing weight = ', prob.model.get_val('OAS.wing_weight', units='lbm'))
+        print('wing mass = ', prob.model.get_val('OAS.wing_mass', units='lbm'))
         print('fuel burn = ', prob.model.get_val('OAS.fuel_burn', units='lbm'))
 
 
