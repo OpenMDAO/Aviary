@@ -2280,7 +2280,7 @@ add_meta_data(
     Aircraft.Engine.REFERENCE_SLS_THRUST,
     meta_data=_MetaData,
     historical_name={
-        'GASP': 'INGASP.FN_REF',
+        'GASP': 'INGASP.FN_REF',  # no FN_REF in GASP
         'FLOPS': 'WTIN.THRSO',
         'LEAPS1': 'aircraft.inputs.L0_engine*.thrust',
     },

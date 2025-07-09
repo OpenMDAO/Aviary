@@ -87,7 +87,7 @@ gasp_default_values = NamedValues(
         'INGASP.ENP': (2, 'unitless'),
         'INGASP.EYEW': (1.5, 'deg'),
         'INGASP.FLAPN': (1, 'unitless'),
-        'INGASP.FN_REF': (28690, 'lbf'),
+        'INGASP.FN_REF': (28690, 'lbf'),  # no FN_REF in GASP
         'INGASP.FPYL': (0.7, 'unitless'),
         'INGASP.FRESF': (4998, 'lbm'),
         'INGASP.FUELD': (6.687, 'lbm/galUS'),
