@@ -370,12 +370,6 @@
         "<class 'bool'>"
     ],
     [
-        "aircraft:wing:detailed_wing",
-        false,
-        "unitless",
-        "<class 'bool'>"
-    ],
-    [
         "aircraft:wing:flap_type",
         "<FlapType.DOUBLE_SLOTTED: 4>",
         "unitless",
@@ -1078,7 +1072,7 @@
         "<class 'int'>"
     ],
     [
-        "aircraft:wing:detailed_wing",
+        "aircraft:wing:detailed_mass",
         true,
         "unitless",
         "<class 'bool'>"
