@@ -1078,6 +1078,12 @@
         "<class 'int'>"
     ],
     [
+        "aircraft:wing:detailed_wing",
+        true,
+        "unitless",
+        "<class 'bool'>"
+    ],
+    [
         "aircraft:wing:control_surface_area_ratio",
         0.1,
         "unitless",

@@ -119,6 +119,7 @@ aircraft:wing:bwb_aft_body_mass_scaler,1.0,unitless
 aircraft:wing:chord_per_semispan,0.273522534166506,0.204274849507037,0.0888152947868224,0.0725353313595661,unitless
 aircraft:wing:composite_fraction,0.33333,unitless
 aircraft:wing:control_surface_area_ratio,0.333,unitless
+aircraft:wing:detailed_wing,True,unitless
 aircraft:wing:dihedral,6.0,deg
 aircraft:wing:glove_and_bat,0.0,ft**2
 aircraft:wing:input_station_dist,0.0,0.34453777998,0.919,1.0,unitless
