@@ -71,6 +71,29 @@ class WingMass(om.JaxExplicitComponent):
                           Aircraft.Wing.MASS, 
                           units='kg')
 
+        if airfoil_data_file and os.path.exists(airfoil_data_file):
+            airfoil_data = np.loadtxt(airfoil_data_file)
+            x_coords = airfoil_data[:, 0]
+            y_coords = airfoil_data[:, 1]
+
+            self.camber, self.camber_location, self.max_thickness, self.thickness, self.camber_line = self.extract_airfoil_features(x_coords, y_coords)
+            num_sections = len(x_coords)
+        else:
+            # Parse the NACA airfoil type (4-digit)
+            self.camber = int(airfoil_type[0]) / 100.0 # Maximum camber
+            self.camber_location = int(airfoil_type[1]) / 10.0 # Location of max camber
+            self.max_thickness = int(airfoil_type[2:4]) / 100.0 # Max thickness 
+            num_sections = self.options['num_sections']
+
+    def get_self_statics(self):
+        return (self.camber,
+                self.camber_location,
+                self.max_thickness,
+                self.thickness,
+                self.camber_line,
+                self.options['material'])
+                
+
     def compute_primal(self, aircraft__wing__span, aircraft__wing__root_chord, tip_chord, twist, thickness_dist):
         material = self.options['material'] # Material is taken from options
         airfoil_type = self.options['airfoil_type'] # NACA airfoil type 
