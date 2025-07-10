@@ -3,7 +3,7 @@ import openmdao.api as om
 
 from aviary.variable_info.enums import Verbosity
 from aviary.variable_info.functions import add_aviary_input, add_aviary_option, add_aviary_output
-from aviary.variable_info.variables import Aircraft, Settings
+from aviary.variable_info.variables import Aircraft, Mission, Settings
 
 epsilon = 0.05
 
@@ -162,7 +162,8 @@ class PercentNotInFuselage(om.ExplicitComponent):
 class EngineSize(om.ExplicitComponent):
     """
     GASP engine geometry calculation. It returns Aircraft.Nacelle.AVG_DIAMETER,
-    Nacelle.AVG_LENGTH, and Aircraft.Nacelle.SURFACE_AREA.
+    Nacelle.AVG_LENGTH, and Aircraft.Nacelle.SURFACE_AREA. This does not follow GASP
+    algorithm exactly.
     """
 
     def initialize(self):
@@ -274,6 +275,53 @@ class EngineSize(om.ExplicitComponent):
         J[Aircraft.Nacelle.SURFACE_AREA, 'percent_exposed'] = (
             np.pi * d_eng * d_nac_eng * ld_nac * d_eng * d_nac_eng
         )
+
+
+class BWBEngineSize(om.ExplicitComponent):
+    """
+    GASP engine geometry calculation for BWB. It returns Aircraft.Nacelle.AVG_DIAMETER,
+    Nacelle.AVG_LENGTH, and Aircraft.Nacelle.SURFACE_AREA. It follows the algorithm in GASP. 
+    """
+
+    def initialize(self):
+        add_aviary_option(self, Aircraft.Engine.NUM_ENGINES)
+        add_aviary_option(self, Settings.VERBOSITY)
+
+    def setup(self):
+        num_engine_type = len(self.options[Aircraft.Engine.NUM_ENGINES])
+
+        add_aviary_input(
+            self, Mission.Design.GROSS_MASS, units='lbm'
+        )
+        add_aviary_input(
+            self, Aircraft.Nacelle.CORE_DIAMETER_RATIO, units='unitless'
+        )
+        add_aviary_input(
+            self, Aircraft.Nacelle.FINENESS, units='unitless'
+        )
+        self.add_input('percent_exposed', val=np.ones(num_engine_type), units='unitless')
+
+    def setup_partials(self):
+        num_engine_type = len(self.options[Aircraft.Engine.NUM_ENGINES])
+
+    def compute(self, inputs, outputs):
+        verbosity = self.options[Settings.VERBOSITY]
+        num_engine_type = len(self.options[Aircraft.Engine.NUM_ENGINES])
+
+        gross_mass = inputs[Mission.Design.GROSS_MASS]
+        core_diam_ratio = inputs[Aircraft.Nacelle.CORE_DIAMETER_RATIO]
+        fineness_nac = inputs[Aircraft.Nacelle.FINENESS]
+        pct_exposed = inputs['percent_exposed']
+
+        ae = 0.3 * gross_mass / 1500.0 / num_engine_type
+        diam_engine = np.sqrt(4.0 * ae / np.pi)
+        diam_nacelle = core_diam_ratio * diam_engine
+        len_nacelle = fineness_nac * diam_nacelle
+        surf_area_nacelle = np.pi * diam_nacelle * len_nacelle * pct_exposed
+
+        outputs[Aircraft.Nacelle.AVG_DIAMETER] = diam_nacelle
+        outputs[Aircraft.Nacelle.AVG_LENGTH] = len_nacelle
+        outputs[Aircraft.Nacelle.SURFACE_AREA] = surf_area_nacelle
 
 
 class BWBEngineSizeGroup(om.Group):
