@@ -45,24 +45,6 @@ class AlphaModes(Enum):
     FLIGHT_PATH_ANGLE = auto()
 
 
-class AnalysisScheme(Enum):
-    """
-    AnalysisScheme is used to select from Collocation and shooting.
-
-    COLLOCATION uses the collocation method to optimize all points simultaneously
-    and can be run in parallel. However, it requires reasonable initial guesses
-    for the trajectory and is fairly sensitive to those initial guesses.
-
-    SHOOTING is a forward in time integration method that simulates the trajectory.
-    This does not require initial guesses and will always produce physically valid
-    trajectories, even during optimizer failures. The shooting method cannot be run
-    in parallel.
-    """
-
-    COLLOCATION = auto()
-    SHOOTING = auto()
-
-
 class EquationsOfMotion(Enum):
     """Available equations of motion for use during mission analysis."""
 

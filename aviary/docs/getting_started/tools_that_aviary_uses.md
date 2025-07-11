@@ -79,14 +79,6 @@ NASA has used Dymos in various projects, from optimizing the trajectory of space
 efficient electric aircraft flight profiles subject to thermal constraints.
 These projects have benefited from Dymos's capabilities and Dymos has in turn grown as a more than capable tool, hence its usage in Aviary.
 
-## Simupy
-
-[**Simupy**](https://simupy.readthedocs.io/en/latest/) is a Python package for the simulation of dynamic systems.
-It provides a framework for defining and solving differential equations, including the ability to handle
-discontinuities and events.
-As Aviary is further developed, Simupy will be available to handle the time integration of the system dynamics.
-This capability is not currently fully integrated into Aviary.
-
 ## FLOPS
 
 The following description has been adapted from the FLOPS User's Guide[^FLOPSMAN]. For
