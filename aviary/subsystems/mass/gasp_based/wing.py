@@ -715,7 +715,7 @@ class WingMassGroup(om.Group):
         isolated_mass = self.add_subsystem(
             'isolated_mass',
             WingMassSolve(),
-            promotes_inputs=['*'],
+            promotes_inputs=higher_level_inputs_isolated + ['*'],
             promotes_outputs=connected_outputs_isolated,
         )
 
@@ -755,6 +755,7 @@ class BWBWingMassGroup(om.Group):
 
     def setup(self):
         # variables that are calculated at a higher level
+        higher_level_inputs_isolated = ['c_strut_braced', 'c_gear_loc', 'half_sweep']
         if self.options[Aircraft.Wing.HAS_FOLD] or self.options[Aircraft.Wing.HAS_STRUT]:
             higher_level_inputs_total = ['*']
         else:
@@ -771,7 +772,7 @@ class BWBWingMassGroup(om.Group):
         isolated_mass = self.add_subsystem(
             'isolated_mass',
             BWBWingMassSolve(),
-            promotes_inputs=['*'],
+            promotes_inputs=higher_level_inputs_isolated + ['*'],
             promotes_outputs=connected_outputs_isolated,
         )
 
