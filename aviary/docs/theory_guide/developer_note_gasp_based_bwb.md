@@ -5,6 +5,7 @@ The following notes are taken from PR submissions
 ## BWB geometry and mass
 
 - For design load, variable `Aircraft.Wing.LOADING` is replaced by `Mission.Design.GROSS_MASS / Aircraft.Wing.EXPOSED_WING_AREA`. As a result, `BWBLoadSpeeds` and `BWBLoadFactors` replace `LoadSpeeds` and `LoadFactors`. A new group `BWBDesignLoadGroup` is created to include these two new components.
+- Aviary engine geometry uses different empirical equation. In GASP, the sizing relation is based on aircraft gross weight and the number of engines. For BWB, we adopt GASP implementation. We also allow the engines are partially buried into the fuselage. This implementation can be applied to conventional aircraft.
 
 ### Equip And Useful Load
 
@@ -34,11 +35,10 @@ The following notes are taken from PR submissions
 
 | Aviary | &nbsp; &nbsp; | GASP | &nbsp; &nbsp; | Observation |
 | ------- | ------- | ------- | -------- | ------------- |
-| Aircraft.Nacelle.AVG_DIAMETER | 7.18 | DBARN | 6.95 | Different algorithms. Aviary use Aircraft.Engine.REFERENCE_DIAMETER |
 | Aircraft.Design.FIXED_USEFUL_LOAD | 5972 | WFUL | 5775 | different unit weight of pilots and attendents |
 | Aircraft.Wing.HIGH_LIFT_MASS | 1069 | WHLDEV | 974 | In GAST, wing loading is a variable, but in Aviary, it is a constant |
 | Aircraft.Wing.MASS | 7056 | WW | 6962 | GASP includes winglet (7645 - 682.6) |
-| Mission.Design.FUEL_MASS | 35320 | WFADES | 33268 | BodyTank algorithm is different |
+| Mission.Design.FUEL_MASS | 34095 | WFADES | 33268 | BodyTank algorithm is different |
 | Aircraft.Fuel.TOTAL_CAPACITY | 36836 | WFAMAX | 33268 | BodyTank algorithm is different |
 | | | | |
 
