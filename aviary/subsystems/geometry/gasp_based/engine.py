@@ -279,8 +279,9 @@ class EngineSize(om.ExplicitComponent):
 
 class BWBEngineSize(om.ExplicitComponent):
     """
-    GASP engine geometry calculation for BWB. It returns Aircraft.Nacelle.AVG_DIAMETER,
-    Nacelle.AVG_LENGTH, and Aircraft.Nacelle.SURFACE_AREA. It follows the algorithm in GASP. 
+    Engine geometry calculation for BWB. It returns Aircraft.Nacelle.AVG_DIAMETER,
+    Nacelle.AVG_LENGTH, and Aircraft.Nacelle.SURFACE_AREA. It follows the algorithm in GASP.
+    Users can use this component instead of EngineSize.
     """
 
     def initialize(self):
@@ -290,38 +291,125 @@ class BWBEngineSize(om.ExplicitComponent):
     def setup(self):
         num_engine_type = len(self.options[Aircraft.Engine.NUM_ENGINES])
 
+        add_aviary_input(self, Mission.Design.GROSS_MASS, units='lbm')
         add_aviary_input(
-            self, Mission.Design.GROSS_MASS, units='lbm'
+            self, Aircraft.Nacelle.CORE_DIAMETER_RATIO, shape=num_engine_type, units='unitless'
         )
-        add_aviary_input(
-            self, Aircraft.Nacelle.CORE_DIAMETER_RATIO, units='unitless'
-        )
-        add_aviary_input(
-            self, Aircraft.Nacelle.FINENESS, units='unitless'
-        )
+        add_aviary_input(self, Aircraft.Nacelle.FINENESS, shape=num_engine_type, units='unitless')
         self.add_input('percent_exposed', val=np.ones(num_engine_type), units='unitless')
+
+        add_aviary_output(self, Aircraft.Nacelle.AVG_DIAMETER, shape=num_engine_type, units='ft')
+        add_aviary_output(self, Aircraft.Nacelle.AVG_LENGTH, shape=num_engine_type, units='ft')
+        add_aviary_output(self, Aircraft.Nacelle.SURFACE_AREA, shape=num_engine_type, units='ft**2')
 
     def setup_partials(self):
         num_engine_type = len(self.options[Aircraft.Engine.NUM_ENGINES])
+        shape = np.arange(num_engine_type)
+        self.declare_partials(
+            Aircraft.Nacelle.AVG_DIAMETER,
+            [
+                Mission.Design.GROSS_MASS,
+                Aircraft.Nacelle.CORE_DIAMETER_RATIO,
+            ],
+            rows=shape,
+            cols=shape,
+        )
+        self.declare_partials(
+            Aircraft.Nacelle.AVG_LENGTH,
+            [
+                Mission.Design.GROSS_MASS,
+                Aircraft.Nacelle.CORE_DIAMETER_RATIO,
+                Aircraft.Nacelle.FINENESS,
+            ],
+            rows=shape,
+            cols=shape,
+        )
+        self.declare_partials(
+            Aircraft.Nacelle.SURFACE_AREA,
+            [
+                Mission.Design.GROSS_MASS,
+                Aircraft.Nacelle.CORE_DIAMETER_RATIO,
+                Aircraft.Nacelle.FINENESS,
+                'percent_exposed',
+            ],
+            rows=shape,
+            cols=shape,
+        )
 
     def compute(self, inputs, outputs):
         verbosity = self.options[Settings.VERBOSITY]
-        num_engine_type = len(self.options[Aircraft.Engine.NUM_ENGINES])
+        num_engine = self.options[Aircraft.Engine.NUM_ENGINES][0]
 
         gross_mass = inputs[Mission.Design.GROSS_MASS]
         core_diam_ratio = inputs[Aircraft.Nacelle.CORE_DIAMETER_RATIO]
         fineness_nac = inputs[Aircraft.Nacelle.FINENESS]
         pct_exposed = inputs['percent_exposed']
 
-        ae = 0.3 * gross_mass / 1500.0 / num_engine_type
-        diam_engine = np.sqrt(4.0 * ae / np.pi)
+        area_engine = 0.3 * gross_mass / 1500.0 / num_engine
+        diam_engine = np.sqrt(4.0 * area_engine / np.pi)
         diam_nacelle = core_diam_ratio * diam_engine
         len_nacelle = fineness_nac * diam_nacelle
-        surf_area_nacelle = np.pi * diam_nacelle * len_nacelle * pct_exposed
+        wet_area_nacelle = np.pi * diam_nacelle * len_nacelle * pct_exposed
 
         outputs[Aircraft.Nacelle.AVG_DIAMETER] = diam_nacelle
         outputs[Aircraft.Nacelle.AVG_LENGTH] = len_nacelle
-        outputs[Aircraft.Nacelle.SURFACE_AREA] = surf_area_nacelle
+        outputs[Aircraft.Nacelle.SURFACE_AREA] = wet_area_nacelle
+
+    def compute_partials(self, inputs, J):
+        num_engine = self.options[Aircraft.Engine.NUM_ENGINES][0]
+
+        gross_mass = inputs[Mission.Design.GROSS_MASS]
+        core_diam_ratio = inputs[Aircraft.Nacelle.CORE_DIAMETER_RATIO]
+        fineness_nac = inputs[Aircraft.Nacelle.FINENESS]
+        pct_exposed = inputs['percent_exposed']
+
+        area_engine = 0.3 * gross_mass / 1500.0 / num_engine
+        diam_engine = np.sqrt(4.0 * area_engine / np.pi)
+        diam_nacelle = core_diam_ratio * diam_engine
+        len_nacelle = fineness_nac * diam_nacelle
+        wet_area_nacelle = np.pi * diam_nacelle * len_nacelle * pct_exposed
+
+        darea_engine_dgross_mass = 0.3 / 1500.0 / num_engine
+        ddiam_engine_dgross_mass = 2 / np.pi / diam_engine * darea_engine_dgross_mass
+        ddiam_nacelle_dgross_mass = core_diam_ratio * ddiam_engine_dgross_mass
+        ddiam_nacelle_dcore_diam_ratio = diam_engine
+        J[Aircraft.Nacelle.AVG_DIAMETER, Mission.Design.GROSS_MASS] = ddiam_nacelle_dgross_mass
+        J[Aircraft.Nacelle.AVG_DIAMETER, Aircraft.Nacelle.CORE_DIAMETER_RATIO] = (
+            ddiam_nacelle_dcore_diam_ratio
+        )
+        dlen_nacelle_dgross_mass = fineness_nac * ddiam_nacelle_dgross_mass
+        dlen_nacelle_dcore_diam_ratio = fineness_nac * ddiam_nacelle_dcore_diam_ratio
+        dlen_nacelle_dfineness_nac = diam_nacelle
+        J[Aircraft.Nacelle.AVG_LENGTH, Mission.Design.GROSS_MASS] = dlen_nacelle_dgross_mass
+        J[Aircraft.Nacelle.AVG_LENGTH, Aircraft.Nacelle.CORE_DIAMETER_RATIO] = (
+            dlen_nacelle_dcore_diam_ratio
+        )
+        J[Aircraft.Nacelle.AVG_LENGTH, Aircraft.Nacelle.FINENESS] = dlen_nacelle_dfineness_nac
+        dwet_area_nacelle_dgross_mass = (
+            np.pi
+            * pct_exposed
+            * (ddiam_nacelle_dgross_mass * len_nacelle + diam_nacelle * dlen_nacelle_dgross_mass)
+        )
+        dwet_area_nacelle_dcore_diam_ratio = (
+            np.pi
+            * pct_exposed
+            * (
+                ddiam_nacelle_dcore_diam_ratio * len_nacelle
+                + diam_nacelle * dlen_nacelle_dcore_diam_ratio
+            )
+        )
+        dwet_area_nacelle_dfineness_nac = (
+            np.pi * pct_exposed * diam_nacelle * dlen_nacelle_dfineness_nac
+        )
+        dwet_area_nacelle_dpct_exposed = np.pi * diam_nacelle * len_nacelle
+        J[Aircraft.Nacelle.SURFACE_AREA, Mission.Design.GROSS_MASS] = dwet_area_nacelle_dgross_mass
+        J[Aircraft.Nacelle.SURFACE_AREA, Aircraft.Nacelle.CORE_DIAMETER_RATIO] = (
+            dwet_area_nacelle_dcore_diam_ratio
+        )
+        J[Aircraft.Nacelle.SURFACE_AREA, Aircraft.Nacelle.FINENESS] = (
+            dwet_area_nacelle_dfineness_nac
+        )
+        J[Aircraft.Nacelle.SURFACE_AREA, 'percent_exposed'] = dwet_area_nacelle_dpct_exposed
 
 
 class BWBEngineSizeGroup(om.Group):
@@ -330,12 +418,12 @@ class BWBEngineSizeGroup(om.Group):
             'perc',
             PercentNotInFuselage(),
             promotes_inputs=['*'],
-            promotes_outputs=['*'],
+            promotes_outputs=['percent_exposed'],
         )
 
         self.add_subsystem(
             'eng_size',
-            EngineSize(),
-            promotes_inputs=['*'],
+            BWBEngineSize(),
+            promotes_inputs=['*'] + ['percent_exposed'],
             promotes_outputs=['*'],
         )
