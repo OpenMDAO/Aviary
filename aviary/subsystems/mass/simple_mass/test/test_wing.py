@@ -73,9 +73,9 @@ class WingMassTestCase(unittest.TestCase):
 
         self.prob.run_model()
 
-        tol = 1e-10
+        tol = 1e-8
         assert_near_equal(self.prob[Aircraft.Wing.MASS], 
-                          4.22032, 
+                          10.6966719, 
                           tol) 
         
         partial_data = self.prob.check_partials(

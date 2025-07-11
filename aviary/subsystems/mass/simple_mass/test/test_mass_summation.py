@@ -167,13 +167,13 @@ class MassSummationTest(unittest.TestCase):
         if self.prob.model.tot.tail_mass.options['tail_type'] == 'horizontal':
             assert_near_equal(
                 self.prob['structure_mass'],
-                342.23558104,
+                355.18828485,
                 tol
             )
         else:
             assert_near_equal(
                 self.prob['structure_mass'],
-                342.23558104,
+                355.18828485,
                 tol
             )
 

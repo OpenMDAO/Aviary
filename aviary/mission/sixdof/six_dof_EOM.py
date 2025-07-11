@@ -11,8 +11,6 @@ class SixDOF_EOM(om.ExplicitComponent):
         - (aircraft) mass is constant
         - aircraft is a rigid body
         - Symmetry in the xz plane (for moment of inertia matrix -- J_xy = J_yx = J_zy = J_yz = 0)
-    
-    Reference: https://youtu.be/hr_PqdkG6XY?si=_hFAZZMnk58eV9GJ
 
     """
 
