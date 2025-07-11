@@ -32,7 +32,6 @@ from aviary.interface.utils import set_warning_format
 from aviary.mission.utils import get_phase_mission_bus_lengths, process_guess_var
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission, Settings
 from aviary.variable_info.variable_meta_data import _MetaData as BaseMetaData
-from aviary.mission.gasp_based.phases.time_integration_traj import FlexibleTraj
 
 from aviary.utils.functions import get_path
 from aviary.utils.preprocessors import preprocess_options
