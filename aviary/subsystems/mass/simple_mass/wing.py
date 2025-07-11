@@ -68,7 +68,7 @@ class WingMassAndCOG(om.JaxExplicitComponent):
 
         # Outputs
         add_aviary_output(self,
-                          Aircraft.Wing.MASS, 
+                          Aircraft.Wing.MASS,
                           units='kg')
 
     def compute_primal(self, aircraft__wing__span, aircraft__wing__root_chord, tip_chord, twist, thickness_dist):
@@ -100,14 +100,19 @@ class WingMassAndCOG(om.JaxExplicitComponent):
         n_points = num_sections
         x_points = jnp.linspace(0, 1, n_points)
         dx = 1 / (n_points - 1)
-        
-        weight_function = lambda x: density * self.airfoil_thickness(x, max_thickness) * (aircraft__wing__root_chord - 
-                                                                                          (aircraft__wing__root_chord - tip_chord) * (x / aircraft__wing__span)
-                                                                                          ) * aircraft__wing__span
-    
-        aircraft__wing__mass, _ = quadgk(weight_function, [0, 1], epsabs=1e-9, epsrel=1e-9)
-        
-        
+
+        if airfoil_type:
+            aircraft__wing__mass_first_part, _ = quadgk(lambda x: density * 2 * jnp.atleast_1d(self.airfoil_thickness(x, max_thickness)) * jnp.sqrt(1 + (
+                (camber / camber_location**2) * (2 * camber_location - 2 * x))**2), [0, camber_location], epsabs=1e-9, epsrel=1e-9)
+            aircraft__wing__mass_second_part, _ = quadgk(lambda x: density * 2 * jnp.atleast_1d(self.airfoil_thickness(x, max_thickness)) * jnp.sqrt(1 + (
+                (camber / (1 - camber_location)**2 * (2 * camber_location - 2 * x)))**2), [camber_location, 1], epsabs=1e-9, epsrel=1e-9)
+
+            aircraft__wing__mass = aircraft__wing__mass_first_part + aircraft__wing__mass_second_part
+            
+        elif airfoil_data_file is not None:
+           aircraft__wing__mass, _ = quadgk(density * 2 * thickness_dist * jnp.sqrt(1 + jnp.gradient(camber_line)**2), [0, 1], epsabs=1e-9, epsrel=1e-9)
+            
+
         return aircraft__wing__mass
     
     def precompute_airfoil_geometry(self):
@@ -193,6 +198,6 @@ if __name__ == '__main__':
     # Get the results
     total_weight = prob.get_val(Aircraft.Wing.MASS)
 
-    print(f"Total mass of the wing: {total_weight} kg")
+    print(f"Total mass of the wing: {total_weight} kg, shape = {jnp.shape(total_weight)}")
 
 
