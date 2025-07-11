@@ -51,8 +51,6 @@ class DescentODE(TwoDOFODE):
         subsystem_options = self.options['subsystem_options']
         input_speed_type = self.options['input_speed_type']
 
-        flight_condition_group = self
-
         # TODO: paramport
         self.add_subsystem('params', ParamPort(), promotes=['*'])
 
@@ -122,6 +120,8 @@ class DescentODE(TwoDOFODE):
                 promotes_outputs=['KS'],
             )
             flight_condition_group = mach_balance_group
+        else:
+            flight_condition_group = self
 
         lift_balance_group = self.add_subsystem(
             'lift_balance_group', subsys=om.Group(), promotes=['*']
