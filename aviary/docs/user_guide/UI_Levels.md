@@ -69,8 +69,7 @@ Levels 2 and 3 will require code to control the more detailed aspects of the ana
 |                  **Level 1**                 |            **Level 2**            |       **Level 3**      |
 |:--------------------------------------------:|:---------------------------------:|:----------------------:|
 |   Mission Type (Sizing, Fallout)             |   All Level 1 Controls            |   All Level 2 Controls |
-|   Integration Method (Collocation, Shooting) |   Specify phase order and options |   Custom ODEs and EOMs |
-|   Optimizer (IPOPT, SNOPT)                   |                                   |                        |
+|   Optimizer (IPOPT, SNOPT)                   |   Specify phase order and options |   Custom ODEs and EOMs |
 |   Mission Description (Altitude, Mach, etc)  |                                   |                        |
 
 ## User Interaction with Code
