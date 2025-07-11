@@ -145,8 +145,62 @@ Because of the shape of BWB, the computation of fuselage mass is quite different
 
 ### Wing Mass
 
-In the wing mass computation of conventional aircraft, we assume the cabin width (or fuselage width) is small. But that is not the case for BWB. So, for BWB, wing span is replaced by:
+In the wing mass computation of conventional aircraft, we assume the cabin width (or fuselage width) is small. But that is not the case for BWB. So, for BWB aircraft, wing span is replaced by:
 
 <p align="center">wing span - cabin width</p>
 
 All other steps are the same.
+
+## GASP Based Aerodynamics
+
+All the BWB related modifications in aerodynamics reside in `aerodynamics/gasp_based/gaspaero.py`. The primary goal is to compute the lift coefficient `CL` and the drag coefficient `CD`. Because of the shape of fuselage, the lift effect from the body can not be ignored. The main features are:
+
+1. Computation of body form factor
+
+In the computation of body form drag factor `body_form_factor`, the fuselage fineness ratio is based on hydraulic diameter instead of fuselage average diameter. It holds
+
+<p align="center">${\rm body_form_factor}(x) = 1 + 1.5x^{1.5} + 7x^3$</p>
+
+where $x$ = (hydraulic diameter) / (fuselage length).
+
+2. Computation of curve fitting correction factor for Oswald efficiency
+
+In GASP and Aviary, there is a parameter named `siwb`. It is basically the curve fitting correction factor for Oswald efficiency. 
+
+<p align="center">${\rm siwb}(x) = 1 - 0.0088x - 1.7364x^2 - 2.303x^3 + 6.0606x^4$</p>
+
+For conventional aircraft, $x = ({\rm cabin width}) / ({\rm wing span})$. For BWB, $x$ is replaced by hydraulic diameter over wing span.
+
+3. Computation of unified induced drag correction factor
+
+In GASP and Aviary, there is a parameter named `ufac`. It is basically the unified induced drag correction factor. For conventional aircraft, this factor is usually around 1. For BWB aircraft, we need to set an upper limit 0.975.
+
+All three parameters above are fed into the main component `AeroGeom` of aero dynamics system `AeroSetup` for BWB aircraft. This system computes the drag parameters from cruise conditions and geometric parameters. The basic diagram is shown below:
+
+![BWB aero setup](../images/BWB_GASP_Aero_setup.png)
+
+4. Computation of body lift curve slope of fuselage
+
+For BWB aircraft, lift coefficient depends on both the wing and the body. A new component `BWBBodyLiftCurveSlope` is added to compute the body lift curve slope of fuselage for a given Mach number (`CLALPH_B`). Suppose that we are given the lift curve slope of fuselage at Mach 0 (`CLALPH_B0`), then for any given Mach, we define
+
+<p align="center">${\rm CLALPH_B} = {\rm CLALPH_B0} / (1.0 - mach^2)^{1/2}$</p>
+
+Note: This formula is valid only for Mach number less than 1. We advise that a BWB model should limit the Mach number to within 0.8 for accuracy. For Mach number greater than 0.8, please consider using table based aero model.
+
+5. Computation of lift coeficient from the wing
+
+Depending on whether it is during a cruise flight or low speed flight, the computations of lift coefficient are different. For cruise, the computation is relative clean while for low speed, we must take ground effect into considerations. The two situations are shown in the following two diagrams.
+
+For cruise:
+
+![BWB cruise aero](../images/BWB_GASP_Aero_cruise.png)
+
+For low speed:
+
+![BWB low speed aero](../images/BWB_GASP_Aero_lowspeed.png)
+
+This model has its limitations. Generally speaking, it is good for number of passengers fewer than 250. There are other limitations. For detailed discussions, we refer readers to developer guide.
+
+6. Computation of total lift coefficient
+
+The total lift coefficient is a scaled sum of lift coeficient of the wings and the lift coefficient of the body. For the wing, the ratio of the exposed wing area vs the wing area scales the the lift coefficient of the wings. For the body, the ratio of planform area over the the wing area.
