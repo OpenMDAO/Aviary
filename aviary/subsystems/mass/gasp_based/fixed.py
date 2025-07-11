@@ -2835,34 +2835,34 @@ class FixedMassGroup(om.Group):
         self.add_subsystem(
             'params',
             MassParameters(),
-            promotes_inputs=['*'],
-            promotes_outputs=['*'],
+            promotes_inputs=['max_mach'] + ['*'],
+            promotes_outputs=['c_strut_braced', 'c_gear_loc', 'half_sweep'] + ['*'],
         )
 
         self.add_subsystem(
             'payload',
             PayloadMass(),
             promotes_inputs=['*'],
-            promotes_outputs=['*'],
+            promotes_outputs=['payload_mass_des', 'payload_mass_max'] + ['*'],
         )
 
         self.add_subsystem(
             'tail',
             TailMass(),
-            promotes_inputs=['*'],
+            promotes_inputs=['*'] + ['min_dive_vel'],
             promotes_outputs=['*'],
         )
         self.add_subsystem(
             'HL',
             HighLiftMass(),
-            promotes_inputs=['*'],
+            promotes_inputs=['*'] + ['density'],
             promotes_outputs=['*'],
         )
 
         self.add_subsystem(
             'controls',
             ControlMass(),
-            promotes_inputs=['*'],
+            promotes_inputs=['*'] + ['min_dive_vel'],
             promotes_outputs=['*'],
         )
 
@@ -2887,7 +2887,7 @@ class FixedMassGroup(om.Group):
             'engine',
             EngineMass(),
             promotes_inputs=['*'],
-            promotes_outputs=['*'],
+            promotes_outputs=['*'] + ['pylon_mass', 'wing_mounted_mass', 'eng_comb_mass'],
         )
 
         if has_hybrid_system:
