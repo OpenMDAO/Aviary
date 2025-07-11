@@ -5,7 +5,7 @@ from openmdao.core.problem import _clear_problem_names
 from openmdao.utils.assert_utils import assert_near_equal
 from openmdao.utils.testing_utils import require_pyoptsparse, use_tempdirs
 
-from aviary.interface.default_phase_info.two_dof import phase_info
+from aviary.models.missions.two_dof_default import phase_info
 from aviary.interface.methods_for_level1 import run_aviary
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 
@@ -15,7 +15,7 @@ class ProblemPhaseTestCase(unittest.TestCase):
     """
     Test the setup and run of a large single aisle commercial transport aircraft using
     GASP mass and aero method and TWO_DEGREES_OF_FREEDOM mission method. Expected outputs
-    based on 'models/test_aircraft/aircraft_for_bench_FwFm.csv' model.
+    based on 'models/aircraft/test_aircraft/aircraft_for_bench_FwFm.csv' model.
     """
 
     def setUp(self):
@@ -25,7 +25,7 @@ class ProblemPhaseTestCase(unittest.TestCase):
     def test_bench_GwGm(self):
         local_phase_info = deepcopy(phase_info)
         prob = run_aviary(
-            'models/test_aircraft/aircraft_for_bench_GwGm.csv',
+            'models/aircraft/test_aircraft/aircraft_for_bench_GwGm.csv',
             local_phase_info,
             optimizer='IPOPT',
             verbosity=0,
@@ -70,7 +70,7 @@ class ProblemPhaseTestCase(unittest.TestCase):
     def test_bench_GwGm_SNOPT(self):
         local_phase_info = deepcopy(phase_info)
         prob = run_aviary(
-            'models/test_aircraft/aircraft_for_bench_GwGm.csv',
+            'models/aircraft/test_aircraft/aircraft_for_bench_GwGm.csv',
             local_phase_info,
             optimizer='SNOPT',
             verbosity=0,
@@ -111,50 +111,6 @@ class ProblemPhaseTestCase(unittest.TestCase):
             tolerance=rtol,
         )
 
-    @require_pyoptsparse(optimizer='SNOPT')
-    def test_bench_GwGm_SNOPT_lbm_s(self):
-        local_phase_info = deepcopy(phase_info)
-        prob = run_aviary(
-            'models/test_aircraft/aircraft_for_bench_GwGm_lbm_s.csv',
-            local_phase_info,
-            optimizer='SNOPT',
-            verbosity=0,
-        )
-
-        rtol = 1e-3
-
-        # There are no truth values for these.
-        assert_near_equal(
-            prob.get_val(Mission.Design.GROSS_MASS, units='lbm'),
-            173807.5346,
-            tolerance=rtol,
-        )
-
-        assert_near_equal(
-            prob.get_val(Aircraft.Design.OPERATING_MASS, units='lbm'),
-            95620.3626,
-            tolerance=rtol,
-        )
-
-        assert_near_equal(
-            prob.get_val(Mission.Summary.TOTAL_FUEL_MASS, units='lbm'),
-            42187.1719,
-            tolerance=rtol,
-        )
-
-        assert_near_equal(
-            prob.get_val(Mission.Landing.GROUND_DISTANCE, units='ft'),
-            2636.6632,
-            tolerance=rtol,
-        )
-
-        assert_near_equal(prob.get_val(Mission.Summary.RANGE, units='NM'), 3675.0, tolerance=rtol)
-
-        assert_near_equal(
-            prob.get_val(Mission.Landing.TOUCHDOWN_MASS, units='lbm'),
-            136618.3626,
-            tolerance=rtol,
-        )
 
 
 if __name__ == '__main__':

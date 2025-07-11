@@ -20,7 +20,7 @@ class ProblemPhaseTestCase(unittest.TestCase):
     """
     Setup of a large single aisle commercial transport aircraft using
     FLOPS mass and aero method and HEIGHT_ENERGY mission method. Expected outputs based
-    on 'models/test_aircraft/aircraft_for_bench_FwFm.csv' model.
+    on 'models/aircraft/test_aircraft/aircraft_for_bench_FwFm.csv' model.
     """
 
     def setUp(self):
@@ -195,7 +195,7 @@ class TestBenchFwFmSerial(ProblemPhaseTestCase):
     @require_pyoptsparse(optimizer='IPOPT')
     def test_bench_FwFm_IPOPT(self):
         prob = run_aviary(
-            'models/test_aircraft/aircraft_for_bench_FwFm.csv',
+            'models/aircraft/test_aircraft/aircraft_for_bench_FwFm.csv',
             self.phase_info,
             verbosity=0,
             max_iter=50,
@@ -207,7 +207,7 @@ class TestBenchFwFmSerial(ProblemPhaseTestCase):
     @require_pyoptsparse(optimizer='SNOPT')
     def test_bench_FwFm_SNOPT(self):
         prob = run_aviary(
-            'models/test_aircraft/aircraft_for_bench_FwFm.csv',
+            'models/aircraft/test_aircraft/aircraft_for_bench_FwFm.csv',
             self.phase_info,
             verbosity=0,
             max_iter=50,
@@ -232,7 +232,7 @@ class TestBenchFwFmParallel(ProblemPhaseTestCase):
     @require_pyoptsparse(optimizer='SNOPT')
     def test_bench_FwFm_SNOPT_MPI(self):
         prob = run_aviary(
-            'models/test_aircraft/aircraft_for_bench_FwFm.csv',
+            'models/aircraft/test_aircraft/aircraft_for_bench_FwFm.csv',
             self.phase_info,
             verbosity=0,
             max_iter=50,

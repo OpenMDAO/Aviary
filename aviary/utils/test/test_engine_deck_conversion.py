@@ -3,7 +3,7 @@ from pathlib import Path
 
 from openmdao.utils.testing_utils import use_tempdirs
 
-from aviary.utils.engine_deck_conversion import convert_engine_deck, EngineDeckType
+from aviary.utils.engine_deck_conversion import EngineDeckType, convert_engine_deck
 from aviary.utils.functions import get_path
 
 
@@ -17,7 +17,7 @@ class TestEngineDeckConversion(unittest.TestCase):
 
         # Specify the output file
         if not output_file:
-            filename = input_file.stem + '.deck'
+            filename = input_file.stem + '.csv'
             output_file = Path.cwd() / Path('TEST_' + filename)
         else:
             output_file = str(Path(output_file))
@@ -29,11 +29,10 @@ class TestEngineDeckConversion(unittest.TestCase):
         """
         Compares the converted file with a validation file.
 
-        Use the `skip_list` input to specify strings that are in lines you want
-        to skip. This is useful for skipping data that Aviary might need but
-        Fortran-based tools do not.
+        Use the `skip_list` input to specify strings that are in lines you want to skip. This is
+        useful for skipping data that Aviary might need but Fortran-based tools do not.
         """
-        filename = filepath.split('.')[0] + '.deck'
+        filename = filepath.split('.')[0] + '.csv'
 
         validation_data = get_path('models/engines/' + filename)
 
@@ -52,9 +51,7 @@ class TestEngineDeckConversion(unittest.TestCase):
                     self.assertEqual(line_no_whitespace.count(expected_line), 1)
 
                 except Exception:
-                    exc_string = (
-                        f'Error: {filename}\nFound: {line_no_whitespace}\nExpected: {expected_line}'
-                    )
+                    exc_string = f'Error: TEST_{filename}\nFound: {line_no_whitespace}\nExpected: {expected_line}'
                     raise Exception(exc_string)
 
     def test_TF_conversion_FLOPS(self):

@@ -47,9 +47,8 @@ from aviary.variable_info.enums import (
     SpeedType,
     Verbosity,
 )
-from aviary.interface.default_phase_info.two_dof import phase_info as default_2DOF_phase_info
-
-from aviary.interface.default_phase_info.height_energy import (
+from aviary.models.missions.two_dof_default import phase_info as default_2DOF_phase_info
+from aviary.models.missions.height_energy_default import (
     phase_info as default_height_energy_phase_info,
 )
 from aviary.interface.methods_for_level1 import run_level_1
@@ -89,7 +88,6 @@ from aviary.subsystems.propulsion.utils import build_engine_deck
 ###################
 
 # Miscellaneous
-from aviary.interface.methods_for_level2 import PreMissionGroup, PostMissionGroup
 from aviary.subsystems.premission import CorePreMission
 from aviary.subsystems.subsystem_builder_base import SubsystemBuilderBase
 from aviary.utils.preprocessors import (
