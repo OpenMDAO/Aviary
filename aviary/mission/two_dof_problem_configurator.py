@@ -441,7 +441,10 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
                 # and neither phase is ground roll or rotation (altitude isn't a state):
                 # we want altitude to be continuous as well
                 if (
-                    ((phase1 in aviary_group.reserve_phases) == (phase2 in aviary_group.reserve_phases))
+                    (
+                            (phase1 in aviary_group.reserve_phases)
+                            == (phase2 in aviary_group.reserve_phases)
+                    )
                     and not ({'groundroll', 'rotation'} & {phase1, phase2})
                     and not ('accel', 'climb1') == (phase1, phase2)
                 ):  # required for convergence of FwGm
@@ -511,12 +514,8 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
         )
 
         # imitate input_initial for taxi -> groundroll
-        eq = aviary_group.add_subsystem(
-            'taxi_groundroll_mass_constraint', om.EQConstraintComp()
-        )
-        eq.add_eq_output(
-            'mass', eq_units='lbm', normalize=False, ref=10000.0, add_constraint=True
-        )
+        eq = aviary_group.add_subsystem('taxi_groundroll_mass_constraint', om.EQConstraintComp())
+        eq.add_eq_output('mass', eq_units='lbm', normalize=False, ref=10000.0, add_constraint=True)
         aviary_group.connect('taxi.mass', 'taxi_groundroll_mass_constraint.rhs:mass')
         aviary_group.connect(
             'traj.groundroll.states:mass',

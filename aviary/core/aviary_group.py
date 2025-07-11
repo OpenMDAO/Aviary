@@ -486,7 +486,6 @@ class AviaryGroup(om.Group):
                 f'Reserve Phases : {self.reserve_phases} '
             )
 
-
     def add_pre_mission_systems(self, verbosity=None):
         """
         Add pre-mission systems to the Aviary group. These systems are executed before
@@ -824,7 +823,6 @@ class AviaryGroup(om.Group):
             promotes=[('fuel_burned', Mission.Summary.FUEL_BURNED)],
         )
 
-
         if self.pre_mission_info['include_takeoff']:
             post_mission.promotes(
                 'fuel_burned',
@@ -859,7 +857,6 @@ class AviaryGroup(om.Group):
                 ecomp,
                 promotes=[('reserve_fuel_burned', Mission.Summary.RESERVE_FUEL_BURNED)],
             )
-
 
             # timeseries has to be used because Breguet cruise phases don't have
             # states
