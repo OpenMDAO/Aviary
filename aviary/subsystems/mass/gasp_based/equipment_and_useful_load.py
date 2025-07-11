@@ -811,7 +811,7 @@ class EquipMassGroup(om.Group):
         self.add_subsystem(
             'equip_sum',
             EquipMassSum(),
-            promotes_inputs=['*'],
+            promotes_inputs=['*'] + ['equip_mass_part'],
             promotes_outputs=['*'],
         )
 
@@ -1430,7 +1430,7 @@ class BWBEquipMassGroup(om.Group):
         self.add_subsystem(
             'equip_sum',
             EquipMassSum(),
-            promotes_inputs=['*'],
+            promotes_inputs=['*'] + ['equip_mass_part'],
             promotes_outputs=['*'],
         )
 
