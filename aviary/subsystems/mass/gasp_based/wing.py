@@ -413,7 +413,7 @@ class BWBWingMassSolve(om.ImplicitComponent):
             'half_sweep', val=0.3947081519, units='rad', desc='SWC2: wing half-chord sweep angle'
         )
         add_aviary_input(
-            self, Aircraft.Fuselage.LIFT_COEFFICENT_RATIO_BODY_TO_WING, units='unitless'
+            self, Aircraft.Fuselage.LIFT_COEFFICIENT_RATIO_BODY_TO_WING, units='unitless'
         )
 
         self.add_output(
@@ -439,7 +439,7 @@ class BWBWingMassSolve(om.ImplicitComponent):
         taper_ratio = inputs[Aircraft.Wing.TAPER_RATIO]
         tc_ratio_root = inputs[Aircraft.Wing.THICKNESS_TO_CHORD_ROOT]
         half_sweep = inputs['half_sweep']
-        CLBqCLW = inputs[Aircraft.Fuselage.LIFT_COEFFICENT_RATIO_BODY_TO_WING]
+        CLBqCLW = inputs[Aircraft.Fuselage.LIFT_COEFFICIENT_RATIO_BODY_TO_WING]
 
         isolated_wing_wt = outputs['isolated_wing_mass'] * GRAV_ENGLISH_LBM
 
@@ -473,7 +473,7 @@ class BWBWingMassSolve(om.ImplicitComponent):
         taper_ratio = inputs[Aircraft.Wing.TAPER_RATIO]
         tc_ratio_root = inputs[Aircraft.Wing.THICKNESS_TO_CHORD_ROOT]
         half_sweep = inputs['half_sweep']
-        CLBqCLW = inputs[Aircraft.Fuselage.LIFT_COEFFICENT_RATIO_BODY_TO_WING]
+        CLBqCLW = inputs[Aircraft.Fuselage.LIFT_COEFFICIENT_RATIO_BODY_TO_WING]
 
         isolated_wing_wt = outputs['isolated_wing_mass'] * GRAV_ENGLISH_LBM
 
@@ -542,7 +542,7 @@ class BWBWingMassSolve(om.ImplicitComponent):
             / foo_denom
             / GRAV_ENGLISH_LBM
         )
-        J['isolated_wing_mass', Aircraft.Fuselage.LIFT_COEFFICENT_RATIO_BODY_TO_WING] = (
+        J['isolated_wing_mass', Aircraft.Fuselage.LIFT_COEFFICIENT_RATIO_BODY_TO_WING] = (
             (
                 c_wing_mass
                 * c_material
