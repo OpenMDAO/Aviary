@@ -144,6 +144,7 @@ class EquipMassPartialSum(om.ExplicitComponent):
             * fus_len**0.05
             * wingspan**0.696
         )
+
         hydraulic_wt = inputs[
             Aircraft.Hydraulics.FLIGHT_CONTROL_MASS_COEFFICIENT
         ] * control_wt + inputs[Aircraft.Hydraulics.GEAR_MASS_COEFFICIENT] * landing_gear_wt * (
@@ -375,10 +376,8 @@ class EquipMassPartialSum(om.ExplicitComponent):
         dfixed_equip_wt_dgross_wt_initial = (
             dinstrument_wt_dgross_wt_initial
             + delectrical_wt_dgross_wt_initial
-            #    + dfurnishing_wt_dgross_wt_initial
             + davionics_wt_dgross_wt_initial
             + d_aux_wt_dgross_wt_initial
-            #    + dfurnishing_wt_dcabin_width
         )
         dfixed_equip_wt_delec_mass_coeff = delectrical_wt_delec_mass_coeff / GRAV_ENGLISH_LBM
         dfixed_equip_mass_dfus_len = (
@@ -529,7 +528,6 @@ class FurnishingMass(om.ExplicitComponent):
         self.options.declare('mu', default=1.0, types=float)
 
     def setup(self):
-        add_aviary_input(self, Mission.Design.GROSS_MASS, units='lbm')
         add_aviary_input(self, Aircraft.Fuselage.AVG_DIAMETER, units='ft')
         add_aviary_input(self, Aircraft.Fuselage.LENGTH, units='ft')
         add_aviary_input(self, Aircraft.Furnishings.MASS_SCALER, units='unitless')
