@@ -3411,7 +3411,7 @@ add_meta_data(
 )
 
 add_meta_data(
-    Aircraft.Fuselage.LIFT_COEFFICENT_RATIO_BODY_TO_WING,
+    Aircraft.Fuselage.LIFT_COEFFICIENT_RATIO_BODY_TO_WING,
     meta_data=_MetaData,
     historical_name={'GASP': 'INGASP.CLBqCLW', 'FLOPS': None, 'LEAPS1': None},
     units='unitless',
