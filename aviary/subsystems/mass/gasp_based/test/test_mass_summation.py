@@ -3331,7 +3331,7 @@ class BWBMassSummationTestCase(unittest.TestCase):
         prob.model.set_input_defaults(Aircraft.Wing.ULTIMATE_LOAD_FACTOR, 3.7734, units='unitless')
 
         prob.model.set_input_defaults(
-            Aircraft.Fuselage.LIFT_COEFFICENT_RATIO_BODY_TO_WING, 0.35, units='unitless'
+            Aircraft.Fuselage.LIFT_COEFFICIENT_RATIO_BODY_TO_WING, 0.35, units='unitless'
         )
         prob.model.set_input_defaults(
             Aircraft.Fuselage.WETTED_AREA_RATIO_AFTBODY_TO_TOTAL, 0.2, units='unitless'
