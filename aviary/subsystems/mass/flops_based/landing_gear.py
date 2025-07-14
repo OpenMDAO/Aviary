@@ -429,8 +429,8 @@ class MainGearLength(om.ExplicitComponent):
 
 class LandingGearTotalMass(om.ExplicitComponent):
     """
-    Component calculates total landing gear mass
-    """
+    Component calculates total landing gear mass.
+    """  
 
     def setup(self):
         add_aviary_input(self, Aircraft.LandingGear.MAIN_GEAR_MASS, units='lbm')
@@ -441,11 +441,10 @@ class LandingGearTotalMass(om.ExplicitComponent):
 
     def setup_partials(self):
         self.declare_partials(
-            Aircraft.LandingGear.TOTAL_MASS,
-            [
+                Aircraft.LandingGear.TOTAL_MASS,
                 Aircraft.LandingGear.MAIN_GEAR_MASS,
                 Aircraft.LandingGear.NOSE_GEAR_MASS,
-            ],
+                val=1.0,
         )
 
     def compute(self, inputs, outputs):
