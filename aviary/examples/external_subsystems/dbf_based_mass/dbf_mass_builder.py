@@ -1,15 +1,13 @@
 import openmdao.api as om
+
 import aviary as av
 from aviary.subsystems.subsystem_builder_base import SubsystemBuilderBase
-from aviary.examples.external_subsystems.dbf_based_mass.dbf_mass_variable_meta_data import (
-    ExtendedMetaData,
-)
-from aviary.examples.external_subsystems.dbf_based_mass.dbf_structure_mass import (
-    DBFWingMass,
+from aviary.examples.external_subsystems.dbf_based_mass.dbf_wing import DBFWingMass
+from aviary.examples.external_subsystems.dbf_based_mass.dbf_fuselage import DBFFuselageMass
+from aviary.examples.external_subsystems.dbf_based_mass.dbf_horizontaltail import (
     DBFHorizontalTailMass,
-    DBFVerticalTailMass,
-    DBFFuselageMass,
 )
+from aviary.examples.external_subsystems.dbf_based_mass.dbf_verticaltail import DBFVerticalTailMass
 
 
 class DBFMassBuilder(SubsystemBuilderBase):
@@ -17,9 +15,11 @@ class DBFMassBuilder(SubsystemBuilderBase):
     Builder for DBF mass models including wing, horizontal tail, vertical tail, and fuselage.
     """
 
-    def __init__(self, name='dbf_mass', meta_data=None):
-        super().__init__(name)
-        self.meta_data = meta_data
+    def __init__(self, name='dbf_mass'):
+        if name is None:
+            name = _default_name
+
+        super().__init__(name=name)
 
     def build_pre_mission(self, aviary_inputs):
         group = om.Group()
