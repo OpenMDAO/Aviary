@@ -4,7 +4,7 @@ from copy import deepcopy
 import openmdao.api as om
 
 from aviary.mission.flops_based.ode.takeoff_ode import TakeoffODE
-from aviary.models.N3CC.N3CC_data import (
+from aviary.models.aircraft.advanced_single_aisle.advanced_single_aisle_data import (
     detailed_takeoff_climbing,
     detailed_takeoff_ground,
     inputs,

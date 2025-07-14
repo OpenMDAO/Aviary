@@ -674,7 +674,7 @@
     [
         "aircraft:engine:data_file",
         [
-            "models/engines/turbofan_28k.deck"
+            "models/engines/turbofan_28k.csv"
         ],
         "unitless",
         "<class 'list'>"

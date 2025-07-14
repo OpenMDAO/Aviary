@@ -58,7 +58,7 @@ class TestFortranToAviary(unittest.TestCase):
                     raise Exception(exc_string)
 
     def test_large_single_aisle(self):
-        filepath = 'models/large_single_aisle_1/large_single_aisle_1_GASP.dat'
+        filepath = 'models/aircraft/large_single_aisle_1/large_single_aisle_1_GASP.dat'
         comparison_filepath = 'utils/test/data/converter_test_large_single_aisle_1_GASP.csv'
 
         self.prepare_and_run(
@@ -68,7 +68,7 @@ class TestFortranToAviary(unittest.TestCase):
         self.compare_files(comparison_filepath)
 
     def test_small_single_aisle(self):
-        filepath = 'models/small_single_aisle/small_single_aisle_GASP.dat'
+        filepath = 'models/aircraft/small_single_aisle/small_single_aisle_GASP.dat'
         comparison_filepath = 'utils/test/data/converter_test_small_single_aisle_GASP.csv'
 
         self.prepare_and_run(
@@ -85,7 +85,7 @@ class TestFortranToAviary(unittest.TestCase):
         self.compare_files(comparison_filepath)
 
     def test_bwb_gasp(self):
-        filepath = 'models/BWB/generic_BWB_GASP.dat'
+        filepath = 'models/aircraft/blended_wing_body/generic_BWB_GASP.dat'
         comparison_filepath = 'utils/test/data/converter_test_BWB_GASP.csv'
 
         self.prepare_and_run(
@@ -94,12 +94,12 @@ class TestFortranToAviary(unittest.TestCase):
         )
         self.compare_files(comparison_filepath)
 
-    def test_N3CC(self):
+    def test_advanced_single_aisle(self):
         # Note: The csv comparison file N3CC_generic_low_speed_polars_FLOPSinp.csv was generated using the fortran-to-Aviary converter
         # and was not evaluated for comparison to the original. Thus, until this file is evaluated, this test is purely a regression
         # test.
 
-        filepath = 'models/N3CC/N3CC_generic_low_speed_polars_FLOPS.txt'
+        filepath = 'models/aircraft/advanced_single_aisle/N3CC_generic_low_speed_polars_FLOPS.txt'
         comparison_filepath = 'utils/test/data/converter_test_N3CC_FLOPS.csv'
         self.prepare_and_run(
             filepath,

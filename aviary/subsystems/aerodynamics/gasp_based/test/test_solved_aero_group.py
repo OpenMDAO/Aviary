@@ -11,7 +11,7 @@ import numpy as np
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_near_equal
 
-from aviary.interface.default_phase_info.height_energy import phase_info
+from aviary.models.missions.height_energy_default import phase_info
 from aviary.interface.methods_for_level2 import AviaryProblem
 from aviary.subsystems.subsystem_builder_base import SubsystemBuilderBase
 from aviary.utils.csv_data_file import read_data_file
@@ -53,7 +53,7 @@ class TestSolvedAero(unittest.TestCase):
             'subsystems/aerodynamics/flops_based/test/data/high_wing_single_aisle.csv',
             local_phase_info,
         )
-        prob.aero_method = LegacyCode.GASP
+        prob.model.aero_method = LegacyCode.GASP
 
         # Preprocess inputs
         prob.check_and_preprocess_inputs()
@@ -104,7 +104,7 @@ class TestSolvedAero(unittest.TestCase):
             'subsystems/aerodynamics/flops_based/test/data/high_wing_single_aisle.csv',
             ph_in,
         )
-        prob.aero_method = LegacyCode.GASP
+        prob.model.aero_method = LegacyCode.GASP
 
         # Preprocess inputs
         prob.check_and_preprocess_inputs()
@@ -142,7 +142,7 @@ class TestSolvedAero(unittest.TestCase):
             'subsystems/aerodynamics/flops_based/test/data/high_wing_single_aisle.csv',
             local_phase_info,
         )
-        prob.aero_method = LegacyCode.GASP
+        prob.model.aero_method = LegacyCode.GASP
 
         # Change value just to be certain.
         prob.aviary_inputs.set_val(Aircraft.Wing.AREA, 7777, units='ft**2')
@@ -175,7 +175,7 @@ class TestSolvedAero(unittest.TestCase):
 
         csv_path = 'subsystems/aerodynamics/flops_based/test/data/high_wing_single_aisle.csv'
         prob.load_inputs(csv_path, local_phase_info)
-        prob.aero_method = LegacyCode.GASP
+        prob.model.aero_method = LegacyCode.GASP
 
         # Preprocess inputs
         prob.check_and_preprocess_inputs()
@@ -240,7 +240,7 @@ class TestSolvedAero(unittest.TestCase):
         prob = AviaryProblem()
 
         prob.load_inputs(csv_path, ph_in)
-        prob.aero_method = LegacyCode.GASP
+        prob.model.aero_method = LegacyCode.GASP
 
         # Preprocess inputs
         prob.check_and_preprocess_inputs()
