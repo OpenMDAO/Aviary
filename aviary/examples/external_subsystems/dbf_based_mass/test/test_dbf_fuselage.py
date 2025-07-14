@@ -42,7 +42,7 @@ class TestDBFFuselageMass(unittest.TestCase):
         self.dbf.options['spar_outer_diameter'] = (1, 'inch')
         self.dbf.options['spar_wall_thickness'] = (0.0625, 'inch')
 
-        self.prob.setup()
+        self.prob.setup(force_alloc_complex=True)
 
         # === Inputs ===
         self.prob.set_val(Aircraft.Fuselage.LENGTH, val=4, units='ft')
@@ -63,7 +63,6 @@ class TestDBFFuselageMass(unittest.TestCase):
         assert_near_equal(actual_mass, expected_mass, tolerance=tol)
 
     def test_partials(self):
-        self.prob.setup(force_alloc_complex=True)
         self.prob.run_model()
         partials_data = self.prob.check_partials(compact_print=True, method='cs')
         assert_check_partials(partials_data, atol=1e-6, rtol=1e-6)

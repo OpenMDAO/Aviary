@@ -157,7 +157,7 @@ class DBFWingMass(om.ExplicitComponent):
         rib_materials = self.options['rib_materials']
         airfoil_data_file = self.options['airfoil_data_file']
 
-        rho_rib = np.array([float(materials.get_item(m)[0]) for m in rib_materials])
+        rho_rib = np.array([(materials.get_item(m)[0]) for m in rib_materials])
 
         x_coords, y_coords = self.load_airfoil_csv(airfoil_data_file, header=True)
         n_area = self.shoelace_area(x_coords, y_coords)

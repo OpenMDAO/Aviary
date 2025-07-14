@@ -44,7 +44,7 @@ class TestDBFHorizontalTailMass(unittest.TestCase):
             'aviary/examples/external_subsystems/dbf_based_mass/mh84-il.csv'
         )
 
-        self.prob.setup()
+        self.prob.setup(force_alloc_complex=True)
 
         # Inputs to the component (defined via add_aviary_input)
         self.prob.set_val(Aircraft.HorizontalTail.ROOT_CHORD, val=20, units='inch')
@@ -63,7 +63,6 @@ class TestDBFHorizontalTailMass(unittest.TestCase):
         assert_near_equal(actual_mass, expected_mass, tolerance=tol)
 
     def test_partials(self):
-        self.prob.setup(force_alloc_complex=True)
         self.prob.run_model()
         partials_data = self.prob.check_partials(compact_print=True, method='cs')
         assert_check_partials(partials_data, atol=1e-6, rtol=1e-6)
