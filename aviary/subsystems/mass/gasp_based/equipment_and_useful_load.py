@@ -528,6 +528,7 @@ class FurnishingMass(om.ExplicitComponent):
         self.options.declare('mu', default=1.0, types=float)
 
     def setup(self):
+        add_aviary_input(self, Mission.Design.GROSS_MASS, units='lbm')
         add_aviary_input(self, Aircraft.Fuselage.AVG_DIAMETER, units='ft')
         add_aviary_input(self, Aircraft.Fuselage.LENGTH, units='ft')
         add_aviary_input(self, Aircraft.Furnishings.MASS_SCALER, units='unitless')
