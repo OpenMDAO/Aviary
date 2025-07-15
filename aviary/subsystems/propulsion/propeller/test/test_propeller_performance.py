@@ -8,11 +8,9 @@ from aviary.subsystems.atmosphere.atmosphere import Atmosphere
 from aviary.subsystems.propulsion.propeller.propeller_performance import (
     AdvanceRatio,
     AreaSquareRatio,
-    OutMachs,
     PropellerPerformance,
     TipSpeed,
 )
-from aviary.variable_info.enums import OutMachType
 from aviary.variable_info.functions import setup_model_options
 from aviary.variable_info.options import get_option_defaults
 from aviary.variable_info.variables import Aircraft, Dynamic, Settings
@@ -473,9 +471,8 @@ class PropellerPerformanceTest(unittest.TestCase):
             val=False,
             units='unitless',
         )
-        prop_file_path = 'models/engines/propellers/PropFan.prop'
+        prop_file_path = 'models/engines/propellers/PropFan.csv'
         options.set_val(Aircraft.Engine.Propeller.DATA_FILE, val=prop_file_path, units='unitless')
-        options.set_val(Aircraft.Engine.INTERPOLATION_METHOD, val='slinear', units='unitless')
 
         setup_model_options(prob, options)
 
@@ -493,6 +490,7 @@ class PropellerPerformanceTest(unittest.TestCase):
         prob.set_val(Aircraft.Engine.Propeller.TIP_SPEED_MAX, 769.70, units='ft/s')
 
         prob.run_model()
+
         self.compare_results(case_idx_begin=15, case_idx_end=17)
 
         partial_data = prob.check_partials(
@@ -507,103 +505,6 @@ class PropellerPerformanceTest(unittest.TestCase):
             includes=['*selectedMach*'],
         )
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
-
-
-class OutMachsTest(unittest.TestCase):
-    """
-    Test the computation of OutMachs: Given two of Mach, helical Mach, and tip Mach,
-    compute the other.
-    """
-
-    def test_helical_mach(self):
-        # Given Mach and tip Mach, compute helical Mach.
-        tol = 1e-5
-        prob = om.Problem()
-        prob.model.add_subsystem(
-            'group',
-            OutMachs(num_nodes=2, output_mach_type=OutMachType.HELICAL_MACH),
-            promotes=['*'],
-        )
-        prob.setup()
-        prob.set_val('mach', val=[0.5, 0.7], units='unitless')
-        prob.set_val('tip_mach', val=[0.5, 0.7], units='unitless')
-        prob.run_model()
-        y = prob.get_val('helical_mach')
-        y_exact = np.sqrt([0.5 * 0.5 + 0.5 * 0.5, 0.7 * 0.7 + 0.7 * 0.7])
-
-        assert_near_equal(y, y_exact, tolerance=tol)
-
-        partial_data = prob.check_partials(
-            out_stream=None,
-            compact_print=True,
-            show_only_incorrect=True,
-            form='central',
-            method='fd',
-            minimum_step=1e-12,
-            abs_err_tol=5.0e-4,
-            rel_err_tol=5.0e-5,
-        )
-        assert_check_partials(partial_data, atol=1e-4, rtol=1e-4)
-
-    def test_mach(self):
-        # Given helical Mach and tip Mach, compute Mach.
-        tol = 1e-5
-        prob = om.Problem()
-        prob.model.add_subsystem(
-            'group',
-            OutMachs(num_nodes=2, output_mach_type=OutMachType.MACH),
-            promotes=['*'],
-        )
-        prob.setup()
-        prob.set_val('helical_mach', val=[0.7, 0.8], units='unitless')
-        prob.set_val('tip_mach', val=[0.5, 0.4], units='unitless')
-        prob.run_model()
-        y = prob.get_val('mach')
-        y_exact = np.sqrt([0.7 * 0.7 - 0.5 * 0.5, 0.8 * 0.8 - 0.4 * 0.4])
-
-        assert_near_equal(y, y_exact, tolerance=tol)
-
-        partial_data = prob.check_partials(
-            out_stream=None,
-            compact_print=True,
-            show_only_incorrect=True,
-            form='central',
-            method='fd',
-            minimum_step=1e-12,
-            abs_err_tol=5.0e-4,
-            rel_err_tol=5.0e-5,
-        )
-        assert_check_partials(partial_data, atol=1e-4, rtol=1e-4)
-
-    def test_tip_mach(self):
-        # Given helical Mach and Mach, compute tip Mach.
-        tol = 1e-5
-        prob = om.Problem()
-        prob.model.add_subsystem(
-            'group',
-            OutMachs(num_nodes=2, output_mach_type=OutMachType.TIP_MACH),
-            promotes=['*'],
-        )
-        prob.setup()
-        prob.set_val('helical_mach', val=[0.7, 0.8], units='unitless')
-        prob.set_val('mach', val=[0.5, 0.4], units='unitless')
-        prob.run_model()
-        y = prob.get_val('tip_mach')
-        y_exact = np.sqrt([0.7 * 0.7 - 0.5 * 0.5, 0.8 * 0.8 - 0.4 * 0.4])
-
-        assert_near_equal(y, y_exact, tolerance=tol)
-
-        partial_data = prob.check_partials(
-            out_stream=None,
-            compact_print=True,
-            show_only_incorrect=True,
-            form='central',
-            method='fd',
-            minimum_step=1e-12,
-            abs_err_tol=5.0e-4,
-            rel_err_tol=5.0e-5,
-        )
-        assert_check_partials(partial_data, atol=1e-4, rtol=1e-4)
 
 
 class TipSpeedLimitTest(unittest.TestCase):
@@ -764,4 +665,4 @@ if __name__ == '__main__':
     unittest.main()
     # test = PropellerPerformanceTest()
     # test.setUp()
-    # test.test_case_3_4_5()
+    # test.test_case_15_16_17()

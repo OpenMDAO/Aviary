@@ -17,7 +17,7 @@ from openmdao.utils.testing_utils import use_tempdirs
 from openmdao.utils.testing_utils import require_pyoptsparse
 
 from aviary.interface.methods_for_level2 import AviaryProblem
-from aviary.models.N3CC.phase_info import phase_info
+from aviary.models.aircraft.advanced_single_aisle.phase_info import phase_info
 from aviary.utils.test_utils.assert_utils import warn_timeseries_near_equal
 from aviary.validation_cases.benchmark_utils import compare_against_expected_values
 from aviary.variable_info.variables import Mission
@@ -28,7 +28,9 @@ def run_trajectory(sim=True):
     prob = AviaryProblem()
     local_phase_info = deepcopy(phase_info)
 
-    prob.load_inputs('models/N3CC/N3CC_FLOPS.csv', local_phase_info)
+    prob.load_inputs(
+        'models/aircraft/advanced_single_aisle/advanced_single_aisle_FLOPS.csv', local_phase_info
+    )
 
     ##########################################
     # Aircraft Input Variables and Options   #

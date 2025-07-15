@@ -496,10 +496,6 @@ def preprocess_propulsion(
     """
     Updates AviaryValues object with values taken from provided EngineModels.
 
-    If no EngineModels are provided, either in engine_models or included in
-    aviary_options, an EngineDeck is created using available inputs and options in
-    aviary_options.
-
     Vectorizes variables in aviary_options in the correct order for vehicles with
     heterogeneous engines.
 

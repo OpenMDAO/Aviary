@@ -78,7 +78,7 @@ class TransportAirCondMassTest2(unittest.TestCase):
             promotes_outputs=['*'],
         )
 
-        prob.model_options['*'] = get_flops_options('N3CC')
+        prob.model_options['*'] = get_flops_options('AdvancedSingleAisle')
 
         prob.model.set_input_defaults(
             Aircraft.AirConditioning.MASS_SCALER, val=0.98094, units='unitless'
@@ -150,7 +150,7 @@ class AltAirCondMassTest2(unittest.TestCase):
             promotes_outputs=['*'],
         )
 
-        prob.model_options['*'] = get_flops_options('N3CC')
+        prob.model_options['*'] = get_flops_options('AdvancedSingleAisle')
 
         prob.model.set_input_defaults(
             Aircraft.AirConditioning.MASS_SCALER, val=0.98094, units='unitless'

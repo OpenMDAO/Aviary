@@ -1,5 +1,4 @@
 #!/usr/bin/python
-
 import argparse
 import getpass
 from copy import deepcopy
@@ -10,7 +9,7 @@ import numpy as np
 import openmdao.api as om
 from openmdao.components.interp_util.interp import InterpND
 
-from aviary.interface.utils.markdown_utils import round_it
+from aviary.interface.utils import round_it
 from aviary.subsystems.atmosphere.atmosphere import Atmosphere
 from aviary.subsystems.propulsion.engine_deck import normalize
 from aviary.subsystems.propulsion.utils import EngineModelVariables, default_units
@@ -73,6 +72,17 @@ header_names = {
     # EXIT_AREA: 'Exit Area',
 }
 
+outputs = [
+    'Thrust',
+    'Gross Thrust',
+    'Ram Drag',
+    'Fuel Flow',
+    'NOx Rate',
+    'T4',
+    'Shaft Power Corrected',
+    'Tailpipe Thrust',
+]
+
 # number of sig figs to round each header to, if requested
 sig_figs = {
     MACH: 4,
@@ -109,14 +119,11 @@ def convert_engine_deck(input_file, output_file, data_format: EngineDeckType, ro
         must compute T4 or require extrapolation to fill out sparse flight throttle ranges.
         Defaults to False.
     """
-    timestamp = datetime.now().strftime('%m/%d/%y at %H:%M')
-    user = getpass.getuser()
     comments = []
     data = {}
 
     data_file = get_path(input_file)
 
-    comments.append(f'# created {timestamp} by {user}')
     legacy_code = data_format.value
     engine_type = 'engine'
     if legacy_code == 'GASP_TS':
@@ -156,10 +163,12 @@ def convert_engine_deck(input_file, output_file, data_format: EngineDeckType, ro
         is_turbo_prop = True if data_format == EngineDeckType.GASP_TS else False
         temperature = gasp_keys.pop()
         fuelflow = gasp_keys.pop()
+
         if is_turbo_prop:
             gasp_keys.extend((SHAFT_POWER_CORRECTED, TAILPIPE_THRUST))
         else:
             gasp_keys.extend((THRUST,))  # must keep "," here
+
         gasp_keys.extend((fuelflow, temperature))
 
         data = {key: [] for key in gasp_keys}
@@ -337,12 +346,12 @@ def convert_engine_deck(input_file, output_file, data_format: EngineDeckType, ro
 
     if output_file is None:
         sfx = data_file.suffix
-        if sfx == '.deck':
-            ext = '_aviary.deck'
+        if sfx == '.csv':
+            ext = '_aviary.csv'
         else:
-            ext = '.deck'
+            ext = '.csv'
         output_file = data_file.stem + ext
-    write_data_file(output_file, write_data, comments, include_timestamp=False)
+    write_data_file(output_file, write_data, outputs, comments, include_timestamp=True)
 
 
 def _read_flops_engine(input_file):
