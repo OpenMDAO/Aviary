@@ -108,6 +108,10 @@ prob.model.pre_mission.core_subsystems.add_subsystem(
 # prob.add_phases()
 phases = ['climb', 'cruise', 'descent']
 prob.traj = prob.model.add_subsystem('traj', dm.Trajectory())
+default_mission_subsystems = [
+    prob.core_subsystems['aerodynamics'],
+    prob.core_subsystems['propulsion'],
+]
 for phase_idx, phase_name in enumerate(phases):
     base_phase_options = prob.phase_info[phase_name]
     phase_options = {}
@@ -116,19 +120,12 @@ for phase_idx, phase_name in enumerate(phases):
     phase_options['user_options'] = {}
     for key, val in base_phase_options['user_options'].items():
         phase_options['user_options'][key] = val
-    default_mission_subsystems = [
-        prob.core_subsystems['aerodynamics'],
-        prob.core_subsystems['propulsion'],
-    ]
     phase_builder = EnergyPhase
     phase_object = phase_builder.from_phase_info(
         phase_name, phase_options, default_mission_subsystems, meta_data=prob.meta_data
     )
     phase = phase_object.build_phase(aviary_options=aviary_inputs)
-
-    user_options = AviaryValues(phase_options.get('user_options', ()))
-
-    phase = prob.traj.add_phase(phase_name, phase)
+    prob.traj.add_phase(phase_name, phase)
 
 externs = {'climb': {}, 'cruise': {}, 'descent': {}}
 for default_subsys in default_mission_subsystems:
@@ -154,7 +151,9 @@ prob.model.add_subsystem(
     promotes_outputs=['*'],
 )
 
-prob.traj._phases['climb'].set_state_options(Dynamic.Vehicle.MASS, fix_initial=False)
+prob.traj._phases['climb'].set_state_options(
+    Dynamic.Vehicle.MASS, fix_initial=False, input_initial=False
+)
 
 eq = prob.model.add_subsystem(
     f'link_climb_mass',
@@ -283,97 +282,9 @@ prob.model.post_mission.add_subsystem(
 
 ##########
 # prob.link_phases()
-### Adding the code for the _add_bus_variables_and_connect function
-# self._add_bus_variables_and_connect()
-### Adding the code for the _get_all_subsystems function
-# all_subsystems = self._get_all_subsystems()
+
 all_subsystems = []
-### external_subsystems defaults to None. Also don't believe there are any
-### external subsystems in the phase info for N3CC, so commenting out
-# if external_subsystems is None:
-# all_subsystems.extend(self.pre_mission_info['external_subsystems'])
-# else:
-#    all_subsystems.extend(external_subsystems)
-
-# all_subsystems.append(prob.core_subsystems['aerodynamics'])
 all_subsystems.append(prob.core_subsystems['propulsion'])
-
-### Spelling this out
-# base_phases = list(self.phase_info.keys())
-base_phases = ['climb', 'cruise', 'descent']
-
-### Dont have any external subsystems though right? Or is this just iterating through whatever is there?
-### Think this might be the CoreAerodynamicsBuilder and CorePropulsionBuilder
-### Aerodynamics does nothing since this isn't a gasp model
-### PropulsionBuilder has some output from get_bus_variables() - not for FwFm
-
-### Only external subsystem with bus variables is the engine I believe - I don't see any bus variables when running L2!
-
-for external_subsystem in all_subsystems:  # I think this is badly named - this is not just 'external subsystems' so I ignored this entire block of code at first!
-    ### Think this line needs to just be replaced by an engine call? Engine will need to be defined above
-    bus_variables = external_subsystem.get_pre_mission_bus_variables()
-    # if bus_variables is not None:
-    for bus_variable, variable_data in bus_variables.items():
-        mission_variable_name = variable_data['mission_name']
-
-        # check if mission_variable_name is a list
-        if not isinstance(mission_variable_name, list):
-            mission_variable_name = [mission_variable_name]
-
-        # loop over the mission_variable_name list and add each variable to
-        # the trajectory
-        for mission_var_name in mission_variable_name:
-            if mission_var_name not in prob.meta_data:
-                # base_units = self.model.get_io_metadata(includes=f'pre_mission.{external_subsystem.name}.{bus_variable}')[f'pre_mission.{external_subsystem.name}.{bus_variable}']['units']
-                base_units = variable_data['units']
-
-                shape = variable_data.get('shape', _unspecified)
-
-                targets = mission_var_name
-                if '.' in mission_var_name:
-                    # Support for non-hierarchy variables as parameters.
-                    mission_var_name = mission_var_name.split('.')[-1]
-
-                if 'phases' in variable_data:
-                    # Support for connecting bus variables into a subset of
-                    # phases.
-                    for phase_name in variable_data['phases']:
-                        phase = getattr(prob.traj.phases, phase_name)
-
-                        phase.add_parameter(
-                            mission_var_name,
-                            opt=False,
-                            static_target=True,
-                            units=base_units,
-                            shape=shape,
-                            targets=targets,
-                        )
-
-                        prob.model.connect(
-                            f'pre_mission.{bus_variable}',
-                            f'traj.{phase_name}.parameters:{mission_var_name}',
-                        )
-
-                else:
-                    prob.traj.add_parameter(
-                        mission_var_name,
-                        opt=False,
-                        static_target=True,
-                        units=base_units,
-                        shape=shape,
-                        targets={phase_name: [mission_var_name] for phase_name in base_phases},
-                    )
-
-                    prob.model.connect(
-                        f'pre_mission.{bus_variable}',
-                        'traj.parameters:' + mission_var_name,
-                    )
-
-            if 'post_mission_name' in variable_data:
-                prob.model.connect(
-                    f'pre_mission.{external_subsystem.name}.{bus_variable}',
-                    f'post_mission.{external_subsystem.name}.{variable_data["post_mission_name"]}',
-                )
 
 phases = list(prob.phase_info.keys())
 prob.traj.link_phases(phases, ['time'], ref=None, connected=True)
@@ -386,6 +297,7 @@ prob.model.connect(
     src_indices=[-1],
     flat_src_indices=True,
 )
+#### End of link_phases
 
 ##########
 # prob.add_driver('IPOPT', max_iter=50)
@@ -401,20 +313,20 @@ prob.driver.opt_settings['max_iter'] = 50
 prob.driver.opt_settings['nlp_scaling_method'] = 'gradient-based'
 prob.driver.opt_settings['alpha_for_y'] = 'safer-min-dual-infeas'
 prob.driver.opt_settings['mu_strategy'] = 'monotone'
-prob.driver.options['print_results'] = 'minimal'
+# prob.driver.options['print_results'] = 'minimal'
 
 ##########
 # prob.add_design_variables()
 prob.model.add_design_var(
     Mission.Design.GROSS_MASS,
-    lower=10.0,
+    lower=140000.0,
     upper=None,
     units='lbm',
     ref=175e3,
 )
 prob.model.add_design_var(
     Mission.Summary.GROSS_MASS,
-    lower=10.0,
+    lower=140000.0,
     upper=None,
     units='lbm',
     ref=175e3,
@@ -526,7 +438,7 @@ prob.set_val(
     prob.model.traj.phases.climb.interp('altitude', xs=[-1, 1], ys=guesses['altitude_descent'][0]),
     units='ft',
 )
-# prob.set_val('traj.climb.states:mass', 125000, units='lbm')
+prob.set_val('traj.climb.states:mass', 125000, units='lbm')
 prob.set_val('traj.cruise.states:mass', 125000, units='lbm')
 prob.set_val('traj.descent.states:mass', 125000, units='lbm')
 
