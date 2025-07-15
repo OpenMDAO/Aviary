@@ -338,7 +338,7 @@ class BWBEngineSize(om.ExplicitComponent):
 
     def compute(self, inputs, outputs):
         verbosity = self.options[Settings.VERBOSITY]
-        num_engine = self.options[Aircraft.Engine.NUM_ENGINES][0]
+        num_engine = self.options[Aircraft.Engine.NUM_ENGINES]
 
         gross_mass = inputs[Mission.Design.GROSS_MASS]
         core_diam_ratio = inputs[Aircraft.Nacelle.CORE_DIAMETER_RATIO]
@@ -356,7 +356,7 @@ class BWBEngineSize(om.ExplicitComponent):
         outputs[Aircraft.Nacelle.SURFACE_AREA] = wet_area_nacelle
 
     def compute_partials(self, inputs, J):
-        num_engine = self.options[Aircraft.Engine.NUM_ENGINES][0]
+        num_engine = self.options[Aircraft.Engine.NUM_ENGINES]
 
         gross_mass = inputs[Mission.Design.GROSS_MASS]
         core_diam_ratio = inputs[Aircraft.Nacelle.CORE_DIAMETER_RATIO]
@@ -369,7 +369,7 @@ class BWBEngineSize(om.ExplicitComponent):
         len_nacelle = fineness_nac * diam_nacelle
         wet_area_nacelle = np.pi * diam_nacelle * len_nacelle * pct_exposed
 
-        darea_engine_dgross_mass = 0.3 / 1500.0 / num_engine
+        darea_engine_dgross_mass = 0.3 * np.ones(1) / 1500.0 / num_engine
         ddiam_engine_dgross_mass = 2 / np.pi / diam_engine * darea_engine_dgross_mass
         ddiam_nacelle_dgross_mass = core_diam_ratio * ddiam_engine_dgross_mass
         ddiam_nacelle_dcore_diam_ratio = diam_engine
