@@ -1,12 +1,13 @@
 import numpy as np
+import os
 
 import openmdao.api as om
 from openmdao.utils.cs_safe import abs as cs_abs
 
-from aviary.variable_info.functions import add_aviary_input, add_aviary_output
-from aviary.variable_info.variables import Aircraft
 from aviary.examples.external_subsystems.dbf_based_mass.materials_database import materials
 from aviary.utils.utils import wrapped_convert_units
+from aviary.variable_info.functions import add_aviary_input, add_aviary_output
+from aviary.variable_info.variables import Aircraft
 
 
 def make_units_option(name, default_val, target_units, desc=None):
@@ -59,6 +60,9 @@ class DBFVerticalTailMass(om.ExplicitComponent):
         )
 
     def load_airfoil_csv(self, file_path, delimiter=',', header=False):
+        if not os.path.exists(file_path):
+            raise FileNotFoundError(f"Airfoil CSV file '{file_path}' not found.")
+
         skip = 1 if header else 0
         data = np.loadtxt(file_path, delimiter=delimiter, skiprows=skip)
 
@@ -89,37 +93,61 @@ class DBFVerticalTailMass(om.ExplicitComponent):
         chord = inputs[Aircraft.VerticalTail.ROOT_CHORD]
         wetted_area = inputs[Aircraft.VerticalTail.WETTED_AREA]
 
+        if span <= 0:
+            raise ValueError(f'VerticalTail span must be > 0, got {span}')
+        if chord <= 0:
+            raise ValueError(f'Root chord must be > 0, got {chord}')
+        if wetted_area <= 0:
+            raise ValueError(f'Wetted area must be > 0, got {wetted_area}')
+
         # From options
-        ns = self.options['num_spars'][0]
-        rlf = self.options['rib_lightening_factor'][0]
-        rt = self.options['rib_thicknesses'][0]
+        num_spars = self.options['num_spars'][0]
+        rib_lightening_factor = self.options['rib_lightening_factor'][0]
+        rib_thickness = self.options['rib_thicknesses'][0]
         rho_skin = self.options['skin_density'][0]
-        st = self.options['spar_outer_diameter'][0]
+        spar_outer_diameter = self.options['spar_outer_diameter'][0]
         rho_spar = self.options['spar_density'][0]
-        swt = self.options['spar_wall_thickness'][0]
-        gf = self.options['glue_factor'][0]
-        stringer_thick = self.options['stringer_thickness'][0]
+        spar_wall_thickness = self.options['spar_wall_thickness'][0]
+        glue_factor = self.options['glue_factor'][0]
+        stringer_thickness = self.options['stringer_thickness'][0]
         rho_stringer = self.options['stringer_density'][0]
-        sheeting_thick = self.options['sheeting_thickness'][0]
+        sheeting_thickness = self.options['sheeting_thickness'][0]
         sheeting_coverage = self.options['sheeting_coverage'][0]
         rho_sheeting = self.options['sheeting_density'][0]
-        slf = self.options['sheeting_lightening_factor'][0]
+        sheeting_lightening_factor = self.options['sheeting_lightening_factor'][0]
         num_stringer = self.options['num_stringers'][0]
         rib_materials = self.options['rib_materials']
         airfoil_data_file = self.options['airfoil_data_file']
 
-        nr = len(rib_materials)
+        if len(rib_materials) != len(rib_thickness):
+            raise ValueError(
+                f'Length mismatch: {len(rib_materials)} rib_materials vs '
+                f'{len(rib_thickness)} rib_thicknesses. These must match.'
+            )
+
         rho_rib = np.array([(materials.get_item(m)[0]) for m in rib_materials])
 
         x_coords, y_coords = self.load_airfoil_csv(airfoil_data_file, header=True)
         n_area = self.shoelace_area(x_coords, y_coords)
-        cs_area = n_area * (chord**2) * rlf
 
-        rib_volumes = cs_area * rt
+        if n_area < 0.01:
+            raise ValueError(
+                f'Computed normalized airfoil area is suspiciously small: {n_area:.5f}'
+            )
 
-        spar_volume = ns * span * np.pi * (st * swt - swt**2)
-        sheeting_volume = wetted_area * sheeting_coverage * slf * sheeting_thick
-        stringer_volume = stringer_thick**2 * num_stringer * span
+        cs_area = n_area * (chord**2) * rib_lightening_factor
+
+        rib_volumes = cs_area * rib_thickness
+        spar_volume = (
+            num_spars
+            * span
+            * np.pi
+            * (spar_outer_diameter * spar_wall_thickness - spar_wall_thickness**2)
+        )
+        sheeting_volume = (
+            wetted_area * sheeting_coverage * sheeting_lightening_factor * sheeting_thickness
+        )
+        stringer_volume = stringer_thickness**2 * num_stringer * span
 
         rib_mass = np.sum(rib_volumes * rho_rib)
         sheeting_mass = sheeting_volume * rho_sheeting
@@ -128,59 +156,61 @@ class DBFVerticalTailMass(om.ExplicitComponent):
         skin_mass = rho_skin * wetted_area
 
         structural_mass = stringer_mass + sheeting_mass + rib_mass + spar_mass + skin_mass
-        total_mass = (1 + gf) * structural_mass
+        total_mass = (1 + glue_factor) * structural_mass
 
         outputs[Aircraft.VerticalTail.MASS] = total_mass
 
     def compute_partials(self, inputs, J):
         # From inputs
-        span = inputs[Aircraft.VerticalTail.SPAN]
         chord = inputs[Aircraft.VerticalTail.ROOT_CHORD]
-        wetted_area = inputs[Aircraft.VerticalTail.WETTED_AREA]
 
         # From options
-        ns = self.options['num_spars'][0]
-        rlf = self.options['rib_lightening_factor'][0]
-        rt = self.options['rib_thicknesses'][0]
+        num_spars = self.options['num_spars'][0]
+        rib_lightening_factor = self.options['rib_lightening_factor'][0]
+        rib_thickness = self.options['rib_thicknesses'][0]
         rho_skin = self.options['skin_density'][0]
-        st = self.options['spar_outer_diameter'][0]
+        spar_outer_diameter = self.options['spar_outer_diameter'][0]
         rho_spar = self.options['spar_density'][0]
-        swt = self.options['spar_wall_thickness'][0]
-        gf = self.options['glue_factor'][0]
-        stringer_thick = self.options['stringer_thickness'][0]
+        spar_wall_thickness = self.options['spar_wall_thickness'][0]
+        glue_factor = self.options['glue_factor'][0]
+        stringer_thickness = self.options['stringer_thickness'][0]
         rho_stringer = self.options['stringer_density'][0]
-        sheeting_thick = self.options['sheeting_thickness'][0]
+        sheeting_thickness = self.options['sheeting_thickness'][0]
         sheeting_coverage = self.options['sheeting_coverage'][0]
         rho_sheeting = self.options['sheeting_density'][0]
-        slf = self.options['sheeting_lightening_factor'][0]
+        sheeting_lightening_factor = self.options['sheeting_lightening_factor'][0]
         num_stringer = self.options['num_stringers'][0]
         rib_materials = self.options['rib_materials']
         airfoil_data_file = self.options['airfoil_data_file']
 
-        rho_rib = np.array([float(materials.get_item(m)[0]) for m in rib_materials])
+        rho_rib = np.array([(materials.get_item(m)[0]) for m in rib_materials])
 
         x_coords, y_coords = self.load_airfoil_csv(airfoil_data_file, header=True)
         n_area = self.shoelace_area(x_coords, y_coords)
 
         J[Aircraft.VerticalTail.MASS, Aircraft.VerticalTail.SPAN] = (
-            num_stringer * rho_stringer * stringer_thick**2
-            + ns * rho_spar * np.pi * (st * swt - swt**2)
-        ) * (1 + gf)
+            num_stringer * rho_stringer * stringer_thickness**2
+            + num_spars
+            * rho_spar
+            * np.pi
+            * (spar_outer_diameter * spar_wall_thickness - spar_wall_thickness**2)
+        ) * (1 + glue_factor)
 
         J[Aircraft.VerticalTail.MASS, Aircraft.VerticalTail.WETTED_AREA] = (
-            rho_skin + (sheeting_coverage * slf * sheeting_thick * rho_sheeting)
-        ) * (1 + gf)
+            rho_skin
+            + (sheeting_coverage * sheeting_lightening_factor * sheeting_thickness * rho_sheeting)
+        ) * (1 + glue_factor)
 
         J[Aircraft.VerticalTail.MASS, Aircraft.VerticalTail.ROOT_CHORD] = (
-            2 * chord * rlf * n_area * np.sum(rt * rho_rib)
-        ) * (1 + gf)
+            2 * chord * rib_lightening_factor * n_area * np.sum(rib_thickness * rho_rib)
+        ) * (1 + glue_factor)
 
 
 if __name__ == '__main__':
     prob = om.Problem()
 
     prob.model.add_subsystem(
-        'dbf_vertical_tail', DBFVerticalTailMass(), promotes_inputs=['*'], promotes_outputs=['*']
+        'dbf_vert_tail', DBFVerticalTailMass(), promotes_inputs=['*'], promotes_outputs=['*']
     )
 
     ribs = np.array([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1])
@@ -188,26 +218,26 @@ if __name__ == '__main__':
     rib_thicks = np.where(ribs != 0, 0.125, 0.125)
 
     # Set required options
-    vertical_tail = prob.model.dbf_vertical_tail
-    vertical_tail.options['rib_materials'] = rib_materials
-    vertical_tail.options['airfoil_data_file'] = (
+    vert_tail = prob.model.dbf_vert_tail
+    vert_tail.options['rib_materials'] = rib_materials
+    vert_tail.options['airfoil_data_file'] = (
         r'aviary\examples\external_subsystems\dbf_based_mass\mh84-il.csv'
     )
-    vertical_tail.options['sheeting_coverage'] = (0.4, 'unitless')
-    vertical_tail.options['sheeting_density'] = (160, 'kg/m**3')
-    vertical_tail.options['sheeting_lightening_factor'] = (1, 'unitless')
-    vertical_tail.options['sheeting_thickness'] = (0.03125, 'inch')
-    vertical_tail.options['stringer_density'] = (160, 'kg/m**3')
-    vertical_tail.options['stringer_thickness'] = (0.375, 'inch')
-    vertical_tail.options['num_stringers'] = (2.5, 'unitless')
-    vertical_tail.options['glue_factor'] = (0.15, 'unitless')
-    vertical_tail.options['num_spars'] = (1.1, 'unitless')
-    vertical_tail.options['rib_lightening_factor'] = (2 / 3, 'unitless')
-    vertical_tail.options['rib_thicknesses'] = (rib_thicks, 'inch')
-    vertical_tail.options['skin_density'] = (20, 'g/m**2')
-    vertical_tail.options['spar_density'] = (2, 'g/cm**3')
-    vertical_tail.options['spar_outer_diameter'] = (1, 'inch')
-    vertical_tail.options['spar_wall_thickness'] = (0.0625, 'inch')
+    vert_tail.options['sheeting_coverage'] = (0.4, 'unitless')
+    vert_tail.options['sheeting_density'] = (160, 'kg/m**3')
+    vert_tail.options['sheeting_lightening_factor'] = (1, 'unitless')
+    vert_tail.options['sheeting_thickness'] = (0.03125, 'inch')
+    vert_tail.options['stringer_density'] = (160, 'kg/m**3')
+    vert_tail.options['stringer_thickness'] = (0.375, 'inch')
+    vert_tail.options['num_stringers'] = (2.5, 'unitless')
+    vert_tail.options['glue_factor'] = (0.15, 'unitless')
+    vert_tail.options['num_spars'] = (1.1, 'unitless')
+    vert_tail.options['rib_lightening_factor'] = (2 / 3, 'unitless')
+    vert_tail.options['rib_thicknesses'] = (rib_thicks, 'inch')
+    vert_tail.options['skin_density'] = (20, 'g/m**2')
+    vert_tail.options['spar_density'] = (2, 'g/cm**3')
+    vert_tail.options['spar_outer_diameter'] = (1, 'inch')
+    vert_tail.options['spar_wall_thickness'] = (0.0625, 'inch')
 
     # Setup problem with constant above options
     prob.setup()

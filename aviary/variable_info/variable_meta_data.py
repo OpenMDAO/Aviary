@@ -3711,6 +3711,7 @@ add_meta_data(
     desc='Number of fuselage spars',
     default_value=2,
     meta_data=_MetaData,
+    option=True,
 )
 
 add_meta_data(
@@ -3719,6 +3720,7 @@ add_meta_data(
     desc='Diameter/thickness of a single spar (assumed cylindrical)',
     default_value=0.25,
     meta_data=_MetaData,
+    option=True,
 )
 
 add_meta_data(
@@ -3727,6 +3729,7 @@ add_meta_data(
     desc='Material density of the spar',
     default_value=0.015,
     meta_data=_MetaData,
+    option=True,
 )
 
 add_meta_data(
@@ -3735,6 +3738,7 @@ add_meta_data(
     desc='Number of fuselage ribs',
     default_value=10,
     meta_data=_MetaData,
+    option=True,
 )
 
 add_meta_data(
@@ -3745,6 +3749,7 @@ add_meta_data(
     default_value=[0.0],
     meta_data=_MetaData,
     multivalue=True,
+    option=True,
 )
 
 add_meta_data(
@@ -3755,6 +3760,7 @@ add_meta_data(
     default_value=[0.0],
     meta_data=_MetaData,
     multivalue=True,
+    option=True,
 )
 
 add_meta_data(
@@ -3763,6 +3769,7 @@ add_meta_data(
     desc='Surface density of fuselage skin',
     default_value=0.02,
     meta_data=_MetaData,
+    option=True,
 )
 
 add_meta_data(
@@ -3771,6 +3778,7 @@ add_meta_data(
     desc='Density of fuselage floor',
     default_value=0.02,
     meta_data=_MetaData,
+    option=True,
 )
 
 add_meta_data(
@@ -3779,6 +3787,7 @@ add_meta_data(
     desc='Thickness of fuselage floor',
     default_value=0.0125,
     meta_data=_MetaData,
+    option=True,
 )
 
 add_meta_data(
@@ -3787,6 +3796,7 @@ add_meta_data(
     desc='length of fuselage floor',
     default_value=2.0,
     meta_data=_MetaData,
+    option=True,
 )
 
 add_meta_data(
@@ -3795,6 +3805,7 @@ add_meta_data(
     desc='Height of fuselage (assumed rectangular prism shape)',
     default_value=12,
     meta_data=_MetaData,
+    option=True,
 )
 
 add_meta_data(
@@ -3803,6 +3814,7 @@ add_meta_data(
     desc='Width of fuselage (assumed rectangular prism shape)',
     default_value=12,
     meta_data=_MetaData,
+    option=True,
 )
 
 add_meta_data(
@@ -3811,6 +3823,7 @@ add_meta_data(
     desc='Thickness of spar wall',
     default_value=0.0625,
     meta_data=_MetaData,
+    option=True,
 )
 
 add_meta_data(
@@ -3819,6 +3832,7 @@ add_meta_data(
     desc='Fraction of the rib area that remains after lightening cuts',
     default_value=0.5,
     meta_data=_MetaData,
+    option=True,
 )
 
 add_meta_data(
@@ -3827,6 +3841,7 @@ add_meta_data(
     desc='Added margin for glue. Only added to ribs, spars, and stringers',
     default_value=0.15,
     meta_data=_MetaData,
+    option=True,
 )
 
 add_meta_data(
@@ -3835,6 +3850,7 @@ add_meta_data(
     desc='Material density of the stringer',
     default_value=250,
     meta_data=_MetaData,
+    option=True,
 )
 
 add_meta_data(
@@ -3843,6 +3859,7 @@ add_meta_data(
     desc='Thickness of stringers',
     default_value=0.0625,
     meta_data=_MetaData,
+    option=True,
 )
 
 add_meta_data(
@@ -3851,6 +3868,7 @@ add_meta_data(
     desc='Thickness of sheeting',
     default_value=0.03125,
     meta_data=_MetaData,
+    option=True,
 )
 
 add_meta_data(
@@ -3859,6 +3877,7 @@ add_meta_data(
     desc='Material density of the sheeting',
     default_value=250,
     meta_data=_MetaData,
+    option=True,
 )
 
 add_meta_data(
@@ -3867,6 +3886,7 @@ add_meta_data(
     desc='Fraction of the sheeting area that remains after lightening cuts',
     default_value=0.5,
     meta_data=_MetaData,
+    option=True,
 )
 
 add_meta_data(
@@ -3875,6 +3895,7 @@ add_meta_data(
     desc='Fraction of the wetted area covered by sheeting',
     default_value=1.0,
     meta_data=_MetaData,
+    option=True,
 )
 
 #  _    _                  _                         _             _   _______           _   _
@@ -4173,6 +4194,7 @@ add_meta_data(
     desc='Number of tail spars',
     default_value=2,
     meta_data=_MetaData,
+    option=True,
 )
 
 add_meta_data(
@@ -4181,6 +4203,7 @@ add_meta_data(
     desc='Diameter/thickness of a single spar (assumed cylindrical)',
     default_value=0.25,
     meta_data=_MetaData,
+    option=True,
 )
 
 add_meta_data(
@@ -4189,6 +4212,7 @@ add_meta_data(
     desc='Material density of the spar',
     default_value=0.015,
     meta_data=_MetaData,
+    option=True,
 )
 
 add_meta_data(
@@ -4197,6 +4221,7 @@ add_meta_data(
     desc='Number of wing ribs',
     default_value=10,
     meta_data=_MetaData,
+    option=True,
 )
 
 add_meta_data(
@@ -4205,6 +4230,7 @@ add_meta_data(
     desc='Thickness of a single rib',
     default_value=0.125,
     meta_data=_MetaData,
+    option=True,
 )
 
 add_meta_data(
@@ -4213,6 +4239,7 @@ add_meta_data(
     desc='Material density of the rib',
     default_value=0.012,
     meta_data=_MetaData,
+    option=True,
 )
 
 add_meta_data(
@@ -4221,6 +4248,7 @@ add_meta_data(
     desc='Surface density of tail skin',
     default_value=0.02,
     meta_data=_MetaData,
+    option=True,
 )
 
 add_meta_data(
@@ -4229,6 +4257,7 @@ add_meta_data(
     desc='Thickness of spar wall',
     default_value=0.0625,
     meta_data=_MetaData,
+    option=True,
 )
 
 add_meta_data(
@@ -4237,6 +4266,7 @@ add_meta_data(
     desc='Fraction of the rib area that remains after lightening cuts',
     default_value=0.5,
     meta_data=_MetaData,
+    option=True,
 )
 
 #  _    _               _                          _   _
@@ -5442,6 +5472,7 @@ add_meta_data(
     desc='Number of tail spars',
     default_value=2,
     meta_data=_MetaData,
+    option=True,
 )
 
 add_meta_data(
@@ -5450,6 +5481,7 @@ add_meta_data(
     desc='Diameter/thickness of a single spar (assumed cylindrical)',
     default_value=0.25,
     meta_data=_MetaData,
+    option=True,
 )
 
 add_meta_data(
@@ -5458,6 +5490,7 @@ add_meta_data(
     desc='Material density of the spar',
     default_value=0.015,
     meta_data=_MetaData,
+    option=True,
 )
 
 add_meta_data(
@@ -5466,6 +5499,7 @@ add_meta_data(
     desc='Number of wing ribs',
     default_value=10,
     meta_data=_MetaData,
+    option=True,
 )
 
 add_meta_data(
@@ -5474,6 +5508,7 @@ add_meta_data(
     desc='Thickness of a single rib',
     default_value=0.125,
     meta_data=_MetaData,
+    option=True,
 )
 
 add_meta_data(
@@ -5482,6 +5517,7 @@ add_meta_data(
     desc='Material density of the rib',
     default_value=0.012,
     meta_data=_MetaData,
+    option=True,
 )
 
 add_meta_data(
@@ -5490,6 +5526,7 @@ add_meta_data(
     desc='Surface density of tail skin',
     default_value=0.02,
     meta_data=_MetaData,
+    option=True,
 )
 
 add_meta_data(
@@ -5498,6 +5535,7 @@ add_meta_data(
     desc='Thickness of spar wall',
     default_value=0.0625,
     meta_data=_MetaData,
+    option=True,
 )
 
 add_meta_data(
@@ -5506,6 +5544,7 @@ add_meta_data(
     desc='Fraction of the rib area that remains after lightening cuts',
     default_value=0.5,
     meta_data=_MetaData,
+    option=True,
 )
 
 # __          __  _
@@ -6804,6 +6843,7 @@ add_meta_data(
     desc='Number of wing spars',
     default_value=2,
     meta_data=_MetaData,
+    option=True,
 )
 
 add_meta_data(
@@ -6812,6 +6852,7 @@ add_meta_data(
     desc='Diameter/thickness of a single spar (assumed cylindrical)',
     default_value=0.25,
     meta_data=_MetaData,
+    option=True,
 )
 
 add_meta_data(
@@ -6820,6 +6861,7 @@ add_meta_data(
     desc='Material density of the spar',
     default_value=0.015,
     meta_data=_MetaData,
+    option=True,
 )
 
 add_meta_data(
@@ -6828,6 +6870,7 @@ add_meta_data(
     desc='Number of wing ribs',
     default_value=10,
     meta_data=_MetaData,
+    option=True,
 )
 
 add_meta_data(
@@ -6838,6 +6881,7 @@ add_meta_data(
     default_value=[0.0],
     meta_data=_MetaData,
     multivalue=True,
+    option=True,
 )
 
 add_meta_data(
@@ -6846,6 +6890,7 @@ add_meta_data(
     desc='Fraction of the rib area that remains after lightening cuts',
     default_value=0.5,
     meta_data=_MetaData,
+    option=True,
 )
 
 add_meta_data(
@@ -6856,6 +6901,7 @@ add_meta_data(
     default_value=[0.0],
     meta_data=_MetaData,
     multivalue=True,
+    option=True,
 )
 
 add_meta_data(
@@ -6864,6 +6910,7 @@ add_meta_data(
     desc='Surface density of wing skin',
     default_value=0.02,
     meta_data=_MetaData,
+    option=True,
 )
 
 add_meta_data(
@@ -6872,6 +6919,7 @@ add_meta_data(
     desc='Thickness of spar wall',
     default_value=0.0625,
     meta_data=_MetaData,
+    option=True,
 )
 
 add_meta_data(
@@ -6880,6 +6928,7 @@ add_meta_data(
     desc='Added margin for glue. Only added to ribs, spars, and stringers',
     default_value=0.15,
     meta_data=_MetaData,
+    option=True,
 )
 
 add_meta_data(
@@ -6888,6 +6937,7 @@ add_meta_data(
     desc='Material density of the stringer',
     default_value=250,
     meta_data=_MetaData,
+    option=True,
 )
 
 add_meta_data(
@@ -6896,6 +6946,7 @@ add_meta_data(
     desc='Thickness of stringers',
     default_value=0.0625,
     meta_data=_MetaData,
+    option=True,
 )
 
 add_meta_data(
@@ -6904,6 +6955,7 @@ add_meta_data(
     desc='Thickness of sheeting',
     default_value=0.03125,
     meta_data=_MetaData,
+    option=True,
 )
 
 add_meta_data(
@@ -6912,6 +6964,7 @@ add_meta_data(
     desc='Material density of the sheeting',
     default_value=250,
     meta_data=_MetaData,
+    option=True,
 )
 
 add_meta_data(
@@ -6920,6 +6973,7 @@ add_meta_data(
     desc='Fraction of the sheeting area that remains after lightening cuts',
     default_value=0.5,
     meta_data=_MetaData,
+    option=True,
 )
 
 add_meta_data(
@@ -6928,6 +6982,7 @@ add_meta_data(
     desc='Fraction of the wetted area covered by sheeting',
     default_value=1.0,
     meta_data=_MetaData,
+    option=True,
 )
 
 add_meta_data(
@@ -6936,6 +6991,7 @@ add_meta_data(
     desc='Number of stringers(assumed length=span)',
     default_value=2.0,
     meta_data=_MetaData,
+    option=True,
 )
 
 # ============================================================================================================================================
