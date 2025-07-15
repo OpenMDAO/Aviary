@@ -2251,7 +2251,11 @@ add_meta_data(
 add_meta_data(
     Aircraft.Engine.REFERENCE_DIAMETER,
     meta_data=_MetaData,
-    historical_name={'GASP': 'INGASP.DIAM_REF', 'FLOPS': None, 'LEAPS1': None},
+    historical_name={
+        'GASP': 'INGASP.DIAM_REF',
+        'FLOPS': None,
+        'LEAPS1': None,
+    },  # no DIAM_REF in GASP
     units='ft',
     desc='engine reference diameter',
     default_value=0.0,
