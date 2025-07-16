@@ -8,7 +8,7 @@ MassBuilderBase : the interface for a mass subsystem builder.
 CoreMassBuilder : the interface for Aviary's core mass subsystem builder
 """
 
-from aviary.interface.utils.markdown_utils import write_markdown_variable_table
+from aviary.interface.utils import write_markdown_variable_table
 from aviary.subsystems.mass.flops_based.mass_premission import MassPremission as MassPremissionFLOPS
 from aviary.subsystems.mass.gasp_based.mass_premission import MassPremission as MassPremissionGASP
 from aviary.subsystems.subsystem_builder_base import SubsystemBuilderBase

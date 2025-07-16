@@ -29,7 +29,7 @@ from bokeh.models import (
 )
 from bokeh.palettes import Category20, d3
 from bokeh.plotting import figure
-from openmdao.utils.general_utils import env_truthy
+from openmdao.utils.general_utils import env_truthy, make_serializable
 from openmdao.utils.units import conversion_to_base_units
 
 try:
@@ -523,6 +523,8 @@ def create_aviary_variables_table_data_nested(script_name, recorder_file):
             var_info = grouped[group_name][0]
             prom_name = outputs[var_info]['prom_name']
             aviary_metadata = av.CoreMetaData.get(prom_name)
+            # the metadata has some object types, like "type", that don't serialize normally
+            aviary_metadata = make_serializable(aviary_metadata)
             table_data_nested.append(
                 {
                     'abs_name': group_name,
@@ -538,6 +540,8 @@ def create_aviary_variables_table_data_nested(script_name, recorder_file):
             for children_name in grouped[group_name]:
                 prom_name = outputs[children_name]['prom_name']
                 aviary_metadata = av.CoreMetaData.get(prom_name)
+                # the metadata has some object types, like "type", that don't serialize normally
+                aviary_metadata = make_serializable(aviary_metadata)
                 children_list.append(
                     {
                         'abs_name': children_name,
@@ -878,7 +882,7 @@ def create_optimization_history_plot(case_recorder, df):
         f"""
         <label style="display:block; margin-bottom:5px;">
             <input type="checkbox" value="{variable_name}"
-                onchange="Bokeh.documents[0].get_model_by_id('{variable_checkbox_callback.id}').execute({index: {i}, checked: this.checked} )">
+                onchange="Bokeh.documents[0].get_model_by_id('{variable_checkbox_callback.id}').execute({{index: {i}, checked: this.checked}} )">
             {variable_name}
         </label>
     """

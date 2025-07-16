@@ -9,7 +9,7 @@ import pandas as pd
 from openmdao.utils.mpi import MPI
 from openmdao.utils.reports_system import register_report
 
-from aviary.interface.utils.markdown_utils import write_markdown_variable_table
+from aviary.interface.utils import write_markdown_variable_table
 from aviary.utils.named_values import NamedValues
 from aviary.utils.utils import wrapped_convert_units
 
@@ -125,7 +125,7 @@ def subsystem_report(prob, **kwargs):
     reports_folder.mkdir(exist_ok=True)
 
     # TODO external subsystems??
-    core_subsystems = prob.core_subsystems
+    core_subsystems = prob.model.core_subsystems  # TODO: redo for multimissions
 
     for subsystem in core_subsystems.values():
         subsystem.report(prob, reports_folder, **kwargs)
@@ -186,7 +186,7 @@ def mission_report(prob, **kwargs):
 
     # read per-phase data from trajectory
     data = {}
-    for idx, phase in enumerate(prob.phase_info):
+    for idx, phase in enumerate(prob.model.phase_info):  # TODO: redo for multimissions
         # TODO for traj in trajectories, currently assuming single one named "traj"
         # TODO delta mass and fuel consumption need to be tracked separately
         fuel_burn = _get_phase_diff('traj', phase, 'mass', 'lbm', [-1, 0])
