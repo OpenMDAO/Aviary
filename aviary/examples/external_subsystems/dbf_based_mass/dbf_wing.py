@@ -4,7 +4,7 @@ import os
 import openmdao.api as om
 from openmdao.utils.cs_safe import abs as cs_abs
 
-from aviary.subsystems.dbf_based_mass.materials_database import materials
+from aviary.examples.external_subsystems.dbf_based_mass.materials_database import materials
 from aviary.utils.utils import wrapped_convert_units
 from aviary.variable_info.functions import add_aviary_input, add_aviary_output
 from aviary.variable_info.variables import Aircraft
@@ -19,7 +19,7 @@ def make_units_option(name, default_val, target_units, desc=None):
     }
 
 
-class DBFVerticalTailMass(om.ExplicitComponent):
+class DBFWingMass(om.ExplicitComponent):
     def initialize(self):
         self.options.declare('airfoil_data_file', types=str, allow_none=False)
         self.options.declare('rib_materials', types=(list,))
@@ -43,19 +43,19 @@ class DBFVerticalTailMass(om.ExplicitComponent):
 
     def setup(self):
         # Still user inputs:
-        add_aviary_input(self, Aircraft.VerticalTail.SPAN, units='m')
-        add_aviary_input(self, Aircraft.VerticalTail.ROOT_CHORD, units='m')
-        add_aviary_input(self, Aircraft.VerticalTail.WETTED_AREA, units='m**2')
+        add_aviary_input(self, Aircraft.Wing.SPAN, units='m')
+        add_aviary_input(self, Aircraft.Wing.ROOT_CHORD, units='m')
+        add_aviary_input(self, Aircraft.Wing.WETTED_AREA, units='m**2')
 
-        add_aviary_output(self, Aircraft.VerticalTail.MASS, units='kg')
+        add_aviary_output(self, Aircraft.Wing.MASS, units='kg')
 
     def setup_partials(self):
         self.declare_partials(
-            of=Aircraft.VerticalTail.MASS,
+            of=Aircraft.Wing.MASS,
             wrt=[
-                Aircraft.VerticalTail.SPAN,
-                Aircraft.VerticalTail.ROOT_CHORD,
-                Aircraft.VerticalTail.WETTED_AREA,
+                Aircraft.Wing.SPAN,
+                Aircraft.Wing.ROOT_CHORD,
+                Aircraft.Wing.WETTED_AREA,
             ],
         )
 
@@ -89,12 +89,12 @@ class DBFVerticalTailMass(om.ExplicitComponent):
 
     def compute(self, inputs, outputs):
         # From inputs
-        span = inputs[Aircraft.VerticalTail.SPAN]
-        chord = inputs[Aircraft.VerticalTail.ROOT_CHORD]
-        wetted_area = inputs[Aircraft.VerticalTail.WETTED_AREA]
+        span = inputs[Aircraft.Wing.SPAN]
+        chord = inputs[Aircraft.Wing.ROOT_CHORD]
+        wetted_area = inputs[Aircraft.Wing.WETTED_AREA]
 
         if span <= 0:
-            raise ValueError(f'VerticalTail span must be > 0, got {span}')
+            raise ValueError(f'Wing span must be > 0, got {span}')
         if chord <= 0:
             raise ValueError(f'Root chord must be > 0, got {chord}')
         if wetted_area <= 0:
@@ -158,11 +158,11 @@ class DBFVerticalTailMass(om.ExplicitComponent):
         structural_mass = stringer_mass + sheeting_mass + rib_mass + spar_mass + skin_mass
         total_mass = (1 + glue_factor) * structural_mass
 
-        outputs[Aircraft.VerticalTail.MASS] = total_mass
+        outputs[Aircraft.Wing.MASS] = total_mass
 
     def compute_partials(self, inputs, J):
         # From inputs
-        chord = inputs[Aircraft.VerticalTail.ROOT_CHORD]
+        chord = inputs[Aircraft.Wing.ROOT_CHORD]
 
         # From options
         num_spars = self.options['num_spars'][0]
@@ -188,7 +188,7 @@ class DBFVerticalTailMass(om.ExplicitComponent):
         x_coords, y_coords = self.load_airfoil_csv(airfoil_data_file, header=True)
         n_area = self.shoelace_area(x_coords, y_coords)
 
-        J[Aircraft.VerticalTail.MASS, Aircraft.VerticalTail.SPAN] = (
+        J[Aircraft.Wing.MASS, Aircraft.Wing.SPAN] = (
             num_stringer * rho_stringer * stringer_thickness**2
             + num_spars
             * rho_spar
@@ -196,12 +196,12 @@ class DBFVerticalTailMass(om.ExplicitComponent):
             * (spar_outer_diameter * spar_wall_thickness - spar_wall_thickness**2)
         ) * (1 + glue_factor)
 
-        J[Aircraft.VerticalTail.MASS, Aircraft.VerticalTail.WETTED_AREA] = (
+        J[Aircraft.Wing.MASS, Aircraft.Wing.WETTED_AREA] = (
             rho_skin
             + (sheeting_coverage * sheeting_lightening_factor * sheeting_thickness * rho_sheeting)
         ) * (1 + glue_factor)
 
-        J[Aircraft.VerticalTail.MASS, Aircraft.VerticalTail.ROOT_CHORD] = (
+        J[Aircraft.Wing.MASS, Aircraft.Wing.ROOT_CHORD] = (
             2 * chord * rib_lightening_factor * n_area * np.sum(rib_thickness * rho_rib)
         ) * (1 + glue_factor)
 
@@ -210,7 +210,7 @@ if __name__ == '__main__':
     prob = om.Problem()
 
     prob.model.add_subsystem(
-        'dbf_vert_tail', DBFVerticalTailMass(), promotes_inputs=['*'], promotes_outputs=['*']
+        'dbf_wing', DBFWingMass(), promotes_inputs=['*'], promotes_outputs=['*']
     )
 
     ribs = np.array([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1])
@@ -218,36 +218,36 @@ if __name__ == '__main__':
     rib_thicks = np.where(ribs != 0, 0.125, 0.125)
 
     # Set required options
-    vert_tail = prob.model.dbf_vert_tail
-    vert_tail.options['rib_materials'] = rib_materials
-    vert_tail.options['airfoil_data_file'] = (
-        r'aviary\examples\external_subsystems\dbf_based_mass\mh84-il.csv'
+    wing = prob.model.dbf_wing
+    wing.options['rib_materials'] = rib_materials
+    wing.options['airfoil_data_file'] = (
+        r'aviary\subsystems\mass\dbf_based_mass\mh84-il.csv'
     )
-    vert_tail.options['sheeting_coverage'] = (0.4, 'unitless')
-    vert_tail.options['sheeting_density'] = (160, 'kg/m**3')
-    vert_tail.options['sheeting_lightening_factor'] = (1, 'unitless')
-    vert_tail.options['sheeting_thickness'] = (0.03125, 'inch')
-    vert_tail.options['stringer_density'] = (160, 'kg/m**3')
-    vert_tail.options['stringer_thickness'] = (0.375, 'inch')
-    vert_tail.options['num_stringers'] = (2.5, 'unitless')
-    vert_tail.options['glue_factor'] = (0.15, 'unitless')
-    vert_tail.options['num_spars'] = (1.1, 'unitless')
-    vert_tail.options['rib_lightening_factor'] = (2 / 3, 'unitless')
-    vert_tail.options['rib_thicknesses'] = (rib_thicks, 'inch')
-    vert_tail.options['skin_density'] = (20, 'g/m**2')
-    vert_tail.options['spar_density'] = (2, 'g/cm**3')
-    vert_tail.options['spar_outer_diameter'] = (1, 'inch')
-    vert_tail.options['spar_wall_thickness'] = (0.0625, 'inch')
+    wing.options['sheeting_coverage'] = (0.4, 'unitless')
+    wing.options['sheeting_density'] = (160, 'kg/m**3')
+    wing.options['sheeting_lightening_factor'] = (1, 'unitless')
+    wing.options['sheeting_thickness'] = (0.03125, 'inch')
+    wing.options['stringer_density'] = (160, 'kg/m**3')
+    wing.options['stringer_thickness'] = (0.375, 'inch')
+    wing.options['num_stringers'] = (2.5, 'unitless')
+    wing.options['glue_factor'] = (0.15, 'unitless')
+    wing.options['num_spars'] = (1.1, 'unitless')
+    wing.options['rib_lightening_factor'] = (2 / 3, 'unitless')
+    wing.options['rib_thicknesses'] = (rib_thicks, 'inch')
+    wing.options['skin_density'] = (20, 'g/m**2')
+    wing.options['spar_density'] = (2, 'g/cm**3')
+    wing.options['spar_outer_diameter'] = (1, 'inch')
+    wing.options['spar_wall_thickness'] = (0.0625, 'inch')
 
     # Setup problem with constant above options
     prob.setup()
 
     # Set values for aero-driving variables
-    prob.set_val(Aircraft.VerticalTail.ROOT_CHORD, val=20, units='inch')
-    prob.set_val(Aircraft.VerticalTail.SPAN, val=4.667, units='ft')
-    prob.set_val(Aircraft.VerticalTail.WETTED_AREA, val=0.85, units='m**2')
+    prob.set_val(Aircraft.Wing.ROOT_CHORD, val=20, units='inch')
+    prob.set_val(Aircraft.Wing.SPAN, val=4.667, units='ft')
+    prob.set_val(Aircraft.Wing.WETTED_AREA, val=0.85, units='m**2')
 
     prob.run_model()
 
-    total_mass = prob.get_val(Aircraft.VerticalTail.MASS)
-    print(f'Total mass of the dbf vertical tail: {float(total_mass):.3f} kg')
+    total_mass = prob.get_val(Aircraft.Wing.MASS)
+    print(f'Total mass of the dbf wing: {float(total_mass):.3f} kg')

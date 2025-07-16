@@ -4,7 +4,7 @@ import numpy as np
 import openmdao.api as om
 
 from aviary.variable_info.variables import Aircraft
-from aviary.subsystems.dbf_based_mass.dbf_verticaltail import DBFVerticalTailMass
+from aviary.examples.external_subsystems.dbf_based_mass.dbf_verticaltail import DBFVerticalTailMass
 from openmdao.utils.assert_utils import assert_near_equal, assert_check_partials
 
 
