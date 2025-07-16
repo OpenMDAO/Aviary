@@ -4,7 +4,7 @@ import os
 import openmdao.api as om
 from openmdao.utils.cs_safe import abs as cs_abs
 
-from aviary.examples.external_subsystems.dbf_based_mass.materials_database import materials
+from aviary.subsystems.mass.dbf_based_mass.materials_database import materials
 from aviary.utils.utils import wrapped_convert_units
 from aviary.variable_info.functions import add_aviary_input, add_aviary_output
 from aviary.variable_info.variables import Aircraft

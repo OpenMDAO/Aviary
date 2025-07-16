@@ -2,12 +2,10 @@ import openmdao.api as om
 
 import aviary as av
 from aviary.subsystems.subsystem_builder_base import SubsystemBuilderBase
-from aviary.examples.external_subsystems.dbf_based_mass.dbf_wing import DBFWingMass
-from aviary.examples.external_subsystems.dbf_based_mass.dbf_fuselage import DBFFuselageMass
-from aviary.examples.external_subsystems.dbf_based_mass.dbf_horizontaltail import (
-    DBFHorizontalTailMass,
-)
-from aviary.examples.external_subsystems.dbf_based_mass.dbf_verticaltail import DBFVerticalTailMass
+from aviary.subsystems.mass.dbf_based_mass.dbf_wing import DBFWingMass
+from aviary.subsystems.mass.dbf_based_mass.dbf_fuselage import DBFFuselageMass
+from aviary.subsystems.mass.dbf_based_mass.dbf_horizontaltail import DBFHorizontalTailMass
+from aviary.subsystems.mass.dbf_based_mass.dbf_verticaltail import DBFVerticalTailMass
 
 
 class DBFMassBuilder(SubsystemBuilderBase):

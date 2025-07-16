@@ -1,11 +1,9 @@
 import openmdao.api as om
 
-from aviary.examples.external_subsystems.dbf_based_mass.dbf_wing import DBFWingMass
-from aviary.examples.external_subsystems.dbf_based_mass.dbf_fuselage import DBFFuselageMass
-from aviary.examples.external_subsystems.dbf_based_mass.dbf_horizontaltail import (
-    DBFHorizontalTailMass,
-)
-from aviary.examples.external_subsystems.dbf_based_mass.dbf_verticaltail import DBFVerticalTailMass
+from aviary.subsystems.mass.dbf_based_mass.dbf_wing import DBFWingMass
+from aviary.subsystems.mass.dbf_based_mass.dbf_fuselage import DBFFuselageMass
+from aviary.subsystems.mass.dbf_based_mass.dbf_horizontaltail import DBFHorizontalTailMass
+from aviary.subsystems.mass.dbf_based_mass.dbf_verticaltail import DBFVerticalTailMass
 
 from aviary.variable_info.variables import Aircraft
 
