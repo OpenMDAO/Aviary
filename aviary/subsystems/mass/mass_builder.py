@@ -138,7 +138,6 @@ class CoreMassBuilder(MassBuilderBase):
             Mission.Design.FUEL_MASS,
             Mission.Summary.TOTAL_FUEL_MASS,
             Mission.Summary.GROSS_MASS,
-            Mission.Summary.RANGE
         ]
 
         with open(filepath, mode='w') as f:

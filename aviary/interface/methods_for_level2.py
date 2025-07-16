@@ -1936,9 +1936,6 @@ class AviaryProblem(om.Problem):
         #Creates a flag to determine if the user would or would not like a payload/range diagram
         payload_range_bool = self.aviary_inputs.get_val(Settings.PAYLOAD_RANGE)
 
-        #Set it back to false, 
-        self.aviary_inputs.set_val(Settings.PAYLOAD_RANGE, False)
-
         if suppress_solver_print:
             self.set_solver_print(level=0)
 
@@ -1999,73 +1996,78 @@ class AviaryProblem(om.Problem):
         
         
         mass_method = self.aviary_inputs.get_val(Settings.MASS_METHOD)
-        if mass_method == LegacyCode.FLOPS:
-            if payload_range_bool:
+        mission_method = self.mission_method
+
+        #Off-design missions do not currently work for GASP masses or missions.
+        if mass_method == LegacyCode.FLOPS and mission_method is HEIGHT_ENERGY:
+            if payload_range_bool and self.problem_type is ProblemType.SIZING:
                 #Checks to determine if the set gross mass for off design would be greater
                 #Than the gross mass of the sizing mission. 
-                gross_mass = float(self.get_val(Mission.Summary.GROSS_MASS))
-                operating_mass=float(self.get_val(Aircraft.Design.OPERATING_MASS))
-                fuel_capacity=float(self.get_val(Aircraft.Fuel.TOTAL_CAPACITY))
-
-                if operating_mass + fuel_capacity < gross_mass:
-                    payload_range_matrix=self.run_payload_range()
-                    print(payload_range_matrix[1])
-                    print(payload_range_matrix[0])
-                else: 
-                    print("Off-design gross mass exceeds sizing limitations, payload/range cannot be generated")
+                self.run_payload_range()
         
 
     def run_payload_range(self):
         #Ensure proper transfer of json files. 
         self.save_sizing_to_json(json_filename='payload_range_sizing.json')
 
+
         #Automatically Adjust duration bounds of phase information within the cruise stage 
         #to allow the optimizer to arrive at a local maxima.
-        min_duration = self.phase_info['cruise']['user_options']['time_duration_bounds'][0][0]
-        max_duration = self.phase_info['cruise']['user_options']['time_duration_bounds'][0][1]
-        cruise_units = self.phase_info['cruise']['user_options']['time_duration_bounds'][1]
 
-        #Simply doubling the amount of time the optimizer is allowed to stay in the cruise phase, as well as ensure cruise is optimized
-        self.phase_info['cruise']['user_options'].update({'time_duration_bounds':((min_duration,2*max_duration), cruise_units)})
+        #This checks if the 'cruise' phase exists, then elongates the duration
+        if self.phase_info['cruise']:
+            min_duration = self.phase_info['cruise']['user_options']['time_duration_bounds'][0][0]
+            max_duration = self.phase_info['cruise']['user_options']['time_duration_bounds'][0][1]
+            cruise_units = self.phase_info['cruise']['user_options']['time_duration_bounds'][1]
+
+            #Simply doubling the amount of time the optimizer is allowed to stay in the cruise phase, as well as ensure cruise is optimized
+            self.phase_info['cruise']['user_options'].update({'time_duration_bounds':((min_duration,2*max_duration), cruise_units)})
 
         #point 1 along the y axis (range=0)
-        payload_1 = float(self.get_val(Aircraft.CrewPayload.TOTAL_PAYLOAD_MASS))
+        payload_1 = float(self.get_val(Aircraft.CrewPayload.TOTAL_PAYLOAD_MASS)[0])
         range_1 = 0 
-        #point 2, sizing mission payload and range
+        #point 2, sizing mission which is assumed to be the point of max payload + fuel on the payload and range diagram
         payload_2 = payload_1
-        range_2=float(self.get_val(Mission.Summary.RANGE))
-
-        #point 3, fallout mission with max fuel and payload on top of that
-        gross_mass = float(self.get_val(Mission.Summary.GROSS_MASS))
-        operating_mass=float(self.get_val(Aircraft.Design.OPERATING_MASS))
-        fuel_capacity=float(self.get_val(Aircraft.Fuel.TOTAL_CAPACITY))
-        payload=float(self.get_val(Aircraft.CrewPayload.TOTAL_PAYLOAD_MASS))
-
-        payload_allowed_mass=gross_mass-operating_mass-fuel_capacity
-
-        payload_frac=payload_allowed_mass/payload
-
-        #cargo does not invoke "aviary_inputs" because it is of units lbm, while payload frac is not
-        wing_cargo_allowed=int(self.get_val(Aircraft.CrewPayload.WING_CARGO))*payload_frac
-        misc_cargo_allowed=int(self.get_val(Aircraft.CrewPayload.MISC_CARGO))*payload_frac
-        num_first_allowed=int((self.aviary_inputs.get_val(Aircraft.CrewPayload.Design.NUM_FIRST_CLASS))*payload_frac)
-        num_bus_allowed=int((self.aviary_inputs.get_val(Aircraft.CrewPayload.Design.NUM_BUSINESS_CLASS))*payload_frac)
-        num_tourist_allowed=int((self.aviary_inputs.get_val(Aircraft.CrewPayload.Design.NUM_TOURIST_CLASS))*payload_frac)
-
-        prob_fallout_max_fuel = self.fallout_mission(json_filename='payload_range_sizing.json',
-                                    num_first= num_first_allowed, num_business= num_bus_allowed, num_tourist= num_tourist_allowed,
-                                    wing_cargo=wing_cargo_allowed, misc_cargo=misc_cargo_allowed)
+        range_2 = float(self.get_val(Mission.Summary.RANGE)[0])
 
 
-        payload_3=float(prob_fallout_max_fuel.get_val(Aircraft.CrewPayload.TOTAL_PAYLOAD_MASS))
-        range_3=float(prob_fallout_max_fuel.get_val(Mission.Summary.RANGE))
+        #check if fuel capacity does not exceed sizing mission design gross mass
+        gross_mass = float(self.get_val(Mission.Summary.GROSS_MASS)[0])
+        operating_mass = float(self.get_val(Aircraft.Design.OPERATING_MASS)[0])
+        fuel_capacity = float(self.get_val(Aircraft.Fuel.TOTAL_CAPACITY)[0])
+        max_payload = float(self.get_val(Aircraft.CrewPayload.TOTAL_PAYLOAD_MASS)[0])
+        if operating_mass + fuel_capacity < gross_mass:
+            #point 3, fallout mission with max fuel and payload
+            #The payload allowed is the payload that fits on the aircraft at maximum fuel capacity
+            max_fuel_plus_payload_total_payload = gross_mass-operating_mass-fuel_capacity
 
-        #point 4, ferry mission with max fuel and 0 payload,
-        allowed_mission_mass=operating_mass+fuel_capacity
+            payload_frac = max_fuel_plus_payload_total_payload/max_payload
+
+            #Calculates Different payload quantities 
+            max_fuel_plus_payload_wing_cargo = int(self.aviary_inputs.get_val(Aircraft.CrewPayload.WING_CARGO,'lbm'))*payload_frac
+            max_fuel_plus_payload_misc_cargo = int(self.aviary_inputs.get_val(Aircraft.CrewPayload.MISC_CARGO,'lbm'))*payload_frac
+            max_fuel_plus_payload_num_first = int((self.aviary_inputs.get_val(Aircraft.CrewPayload.Design.NUM_FIRST_CLASS))*payload_frac)
+            max_fuel_plus_payload_num_bus = int((self.aviary_inputs.get_val(Aircraft.CrewPayload.Design.NUM_BUSINESS_CLASS))*payload_frac)
+            max_fuel_plus_payload_num_tourist = int((self.aviary_inputs.get_val(Aircraft.CrewPayload.Design.NUM_TOURIST_CLASS))*payload_frac)
+
+            prob_fallout_max_fuel = self.fallout_mission(json_filename='payload_range_sizing.json',
+                                        num_first= max_fuel_plus_payload_num_first, num_business= max_fuel_plus_payload_num_bus, num_tourist= max_fuel_plus_payload_num_tourist,
+                                        wing_cargo=max_fuel_plus_payload_wing_cargo, misc_cargo=max_fuel_plus_payload_misc_cargo)
+
+
+            payload_3 = float(prob_fallout_max_fuel.get_val(Aircraft.CrewPayload.TOTAL_PAYLOAD_MASS))
+            range_3 = float(prob_fallout_max_fuel.get_val(Mission.Summary.RANGE))
+        else:
+            fuel_capacity = gross_mass-operating_mass
+            payload_3 = payload_2
+            range_3 = range_2
+
+        #Point 4, ferry mission with maximum fuel and 0 payload,
+        max_fuel_0_payload_payload=operating_mass+fuel_capacity
         #Aviary as of 06/13/2025 does not allow for off-design missions of 0 passengers, therefore 1 will be used
         prob_fallout_ferry = self.fallout_mission(json_filename='payload_range_sizing.json',
                                     num_first= 0, num_business= 0, num_tourist= 1, num_pax=1,
-                                    wing_cargo=0, misc_cargo=0, cargo_mass= 0, mission_mass=allowed_mission_mass)
+                                    wing_cargo=0, misc_cargo=0, cargo_mass= 0, mission_mass=max_fuel_0_payload_payload)
         
         payload_4=float(prob_fallout_ferry.get_val(Aircraft.CrewPayload.TOTAL_PAYLOAD_MASS))
         range_4=float(prob_fallout_ferry.get_val(Mission.Summary.RANGE))
@@ -2087,7 +2089,7 @@ class AviaryProblem(om.Problem):
             
             # Write the four points directly
             writer.writerow(['Max Payload Zero Fuel', payload_1, range_1])
-            writer.writerow(['Sizing Mission', payload_2, range_2])
+            writer.writerow(['Max Payload Plus Fuel', payload_2, range_2])
             writer.writerow(['Max Fuel Plus Payload', payload_3, range_3])
             writer.writerow(['Ferry Mission', payload_4, range_4])
 
@@ -2577,9 +2579,6 @@ def _read_sizing_json(aviary_problem, json_filename):
             )
             var_values = convert_strings_to_data([var_values])
 
-        if var_name == "aircraft:design:lift_polar":
-            print('here!')
-
         # Check if the variable is in meta data
         if var_name in BaseMetaData.keys():
             try:
@@ -2696,9 +2695,6 @@ def _load_off_design(
     prob.aviary_inputs.set_val(Aircraft.CrewPayload.CARGO_MASS, cargo_mass, 'lbm')
 
     if problem_type == ProblemType.ALTERNATE:
-        # Reset payload range toggle to False
-        prob.aviary_inputs.set_val(Settings.PAYLOAD_RANGE, False)
-
         # Set mission range, aviary will calculate required fuel
         if mission_range is None:
             if verbosity > Verbosity.BRIEF:  # VERBOSE, DEBUG
@@ -2715,8 +2711,6 @@ def _load_off_design(
             phase_info['post_mission']['target_range'] = (mission_range, 'nmi')
 
     elif problem_type == ProblemType.FALLOUT:
-        # Reset payload range toggle to False
-        prob.aviary_inputs.set_val(Settings.PAYLOAD_RANGE, False)
         # Set mission fuel and calculate gross weight, aviary will calculate range
         if mission_gross_mass is None:
             if verbosity > Verbosity.BRIEF:  # VERBOSE, DEBUG
