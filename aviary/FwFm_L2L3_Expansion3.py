@@ -1,6 +1,7 @@
 import aviary.api as av
+from aviary.core.pre_mission_group import PreMissionGroup
 import openmdao.api as om
-from aviary.interface.default_phase_info.height_energy import phase_info
+from aviary.models.missions.height_energy_default import phase_info
 from aviary.variable_info.variables import Aircraft, Mission, Dynamic, Settings
 from aviary.mission.flops_based.phases.energy_phase import EnergyPhase
 from aviary.variable_info.variable_meta_data import _MetaData as BaseMetaData
@@ -34,10 +35,10 @@ aviary_inputs, _ = av.create_vehicle('models/test_aircraft/aircraft_for_bench_Fw
 
 engine = av.build_engine_deck(aviary_inputs)
 
-prob.phase_info = {}
+prob.model.phase_info = {}
 for phase_name in phase_info:
     if phase_name not in ['pre_mission', 'post_mission']:
-        prob.phase_info[phase_name] = phase_info[phase_name]
+        prob.model.phase_info[phase_name] = phase_info[phase_name]
 aviary_inputs.set_val(Mission.Summary.RANGE, 1906.0, units='NM')
 prob.require_range_residual = True
 prob.target_range = 1906.0
@@ -54,7 +55,7 @@ geometry = av.CoreGeometryBuilder(code_origin=av.LegacyCode('FLOPS'))
 mass = av.CoreMassBuilder(code_origin=av.LegacyCode('FLOPS'))
 propulsion = av.CorePropulsionBuilder(engine_models=engine)
 
-prob.core_subsystems = {
+prob.model.core_subsystems = {
     'propulsion': propulsion,
     'geometry': geometry,
     'mass': mass,
@@ -66,7 +67,7 @@ prob.meta_data = BaseMetaData.copy()
 # overwrites calculated values in pre-mission with override values from .csv
 prob.model.add_subsystem(
     'pre_mission',
-    av.PreMissionGroup(),
+    PreMissionGroup(),
     promotes_inputs=['aircraft:*', 'mission:*'],
     promotes_outputs=['aircraft:*', 'mission:*'],
 )
@@ -109,11 +110,11 @@ prob.model.pre_mission.core_subsystems.add_subsystem(
 phases = ['climb', 'cruise', 'descent']
 prob.traj = prob.model.add_subsystem('traj', dm.Trajectory())
 default_mission_subsystems = [
-    prob.core_subsystems['aerodynamics'],
-    prob.core_subsystems['propulsion'],
+    prob.model.core_subsystems['aerodynamics'],
+    prob.model.core_subsystems['propulsion'],
 ]
 for phase_idx, phase_name in enumerate(phases):
-    base_phase_options = prob.phase_info[phase_name]
+    base_phase_options = prob.model.phase_info[phase_name]
     phase_options = {}
     for key, val in base_phase_options.items():
         phase_options[key] = val
@@ -284,9 +285,9 @@ prob.model.post_mission.add_subsystem(
 # prob.link_phases()
 
 all_subsystems = []
-all_subsystems.append(prob.core_subsystems['propulsion'])
+all_subsystems.append(prob.model.core_subsystems['propulsion'])
 
-phases = list(prob.phase_info.keys())
+phases = list(prob.model.phase_info.keys())
 prob.traj.link_phases(phases, ['time'], ref=None, connected=True)
 prob.traj.link_phases(phases, [Dynamic.Vehicle.MASS], ref=None, connected=True)
 prob.traj.link_phases(phases, [Dynamic.Mission.DISTANCE], ref=None, connected=True)
@@ -302,7 +303,7 @@ prob.model.connect(
 ##########
 # prob.add_driver('IPOPT', max_iter=50)
 prob.driver = om.pyOptSparseDriver()
-prob.driver.options['optimizer'] = 'IPOPT'
+prob.driver.options['optimizer'] = 'SNOPT'
 prob.driver.declare_coloring(show_summary=False)
 prob.driver.opt_settings['print_user_options'] = 'no'
 prob.driver.opt_settings['print_frequency_iter'] = 10
@@ -314,7 +315,12 @@ prob.driver.opt_settings['nlp_scaling_method'] = 'gradient-based'
 prob.driver.opt_settings['alpha_for_y'] = 'safer-min-dual-infeas'
 prob.driver.opt_settings['mu_strategy'] = 'monotone'
 # prob.driver.options['print_results'] = 'minimal'
-
+prob.driver.opt_settings['iSumm'] = 6
+prob.driver.opt_settings['iPrint'] = 0
+# Optimizer Settings #
+prob.driver.opt_settings['Major iterations limit'] = 50
+prob.driver.opt_settings['Major optimality tolerance'] = 1e-4
+prob.driver.opt_settings['Major feasibility tolerance'] = 1e-7
 ##########
 # prob.add_design_variables()
 prob.model.add_design_var(

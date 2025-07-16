@@ -1,5 +1,5 @@
 import aviary.api as av
-from aviary.interface.default_phase_info.height_energy import phase_info
+from aviary.models.missions.height_energy_default import phase_info
 
 csv_path = 'models/test_aircraft/aircraft_for_bench_FwFm.csv'
 
@@ -20,7 +20,7 @@ prob.add_post_mission_systems()
 # Link phases and variables
 prob.link_phases()
 
-prob.add_driver('IPOPT', max_iter=50)
+prob.add_driver('SNOPT', max_iter=50)
 
 prob.add_design_variables()
 
