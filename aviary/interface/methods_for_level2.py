@@ -2010,11 +2010,9 @@ class AviaryProblem(om.Problem):
         #Ensure proper transfer of json files. 
         self.save_sizing_to_json(json_filename='payload_range_sizing.json')
 
-
-        #Automatically Adjust duration bounds of phase information within the cruise stage 
-        #to allow the optimizer to arrive at a local maxima.
-
-        #This checks if the 'cruise' phase exists, then elongates the duration
+        #
+        #This checks if the 'cruise' phase exists, then automatically adjusts duration bounds of the cruise stage 
+        #to allow the optimizer to arrive at a local maxim for the max_fuel_plus_payload and the ferry ranges.
         if self.phase_info['cruise']:
             min_duration = self.phase_info['cruise']['user_options']['time_duration_bounds'][0][0]
             max_duration = self.phase_info['cruise']['user_options']['time_duration_bounds'][0][1]
@@ -2064,7 +2062,7 @@ class AviaryProblem(om.Problem):
 
         #Point 4, ferry mission with maximum fuel and 0 payload,
         max_fuel_0_payload_payload=operating_mass+fuel_capacity
-        #Aviary as of 06/13/2025 does not allow for off-design missions of 0 passengers, therefore 1 will be used
+        #Aviary does not currently allow for off-design missions of 0 passengers, therefore 1 will be used
         prob_fallout_ferry = self.fallout_mission(json_filename='payload_range_sizing.json',
                                     num_first= 0, num_business= 0, num_tourist= 1, num_pax=1,
                                     wing_cargo=0, misc_cargo=0, cargo_mass= 0, mission_mass=max_fuel_0_payload_payload)
