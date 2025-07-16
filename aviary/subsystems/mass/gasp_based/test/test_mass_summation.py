@@ -3110,7 +3110,7 @@ class BWBMassSummationTestCase(unittest.TestCase):
         )
         prob.model.set_input_defaults(Mission.Design.GROSS_MASS, 150000, units='lbm')
         prob.model.set_input_defaults(Aircraft.Wing.LOADING, 70.0, units='lbf/ft**2')
-        prob.model.set_input_defaults(Aircraft.VerticalTail.ASPECT_RATIO, 1.705, units='unitless')
+        # prob.model.set_input_defaults(Aircraft.VerticalTail.ASPECT_RATIO, 1.705, units='unitless')
         prob.model.set_input_defaults(Aircraft.HorizontalTail.TAPER_RATIO, 0.366, units='unitless')
         prob.model.set_input_defaults(Aircraft.VerticalTail.TAPER_RATIO, 0.366, units='unitless')
         prob.model.set_input_defaults(Aircraft.Fuel.WING_FUEL_FRACTION, 0.45, units='unitless')
@@ -3135,9 +3135,9 @@ class BWBMassSummationTestCase(unittest.TestCase):
             Aircraft.Nacelle.CORE_DIAMETER_RATIO, 1.2205, units='unitless'
         )
         prob.model.set_input_defaults(Aircraft.Nacelle.FINENESS, 1.3588, units='unitless')
-        prob.model.set_input_defaults(
-            Aircraft.LandingGear.MAIN_GEAR_LOCATION, 0.0, units='unitless'
-        )
+        # prob.model.set_input_defaults(
+        #    Aircraft.LandingGear.MAIN_GEAR_LOCATION, 0.0, units='unitless'
+        # )
         prob.model.set_input_defaults(Aircraft.Wing.FOLDED_SPAN, 118, units='ft')
         prob.model.set_input_defaults(Aircraft.Wing.VERTICAL_MOUNT_LOCATION, 0.5, units='unitless')
         prob.model.set_input_defaults(
@@ -3155,40 +3155,38 @@ class BWBMassSummationTestCase(unittest.TestCase):
         self.prob.model.set_input_defaults(
             Aircraft.HorizontalTail.ROOT_CHORD, val=0.03836448, units='ft'
         )
-        prob.model.set_input_defaults(
-            Aircraft.Hydraulics.FLIGHT_CONTROL_MASS_COEFFICIENT, 0.107, units='unitless'
-        )
-        prob.model.set_input_defaults(
-            Aircraft.Hydraulics.GEAR_MASS_COEFFICIENT, 0.135, units='unitless'
-        )
-        prob.model.set_input_defaults(Aircraft.Avionics.MASS, 1504.0, units='lbm')
+        # prob.model.set_input_defaults(
+        #    Aircraft.Hydraulics.FLIGHT_CONTROL_MASS_COEFFICIENT, 0.107, units='unitless'
+        # )
+        # prob.model.set_input_defaults(
+        #    Aircraft.Hydraulics.GEAR_MASS_COEFFICIENT, 0.135, units='unitless'
+        # )
+        # prob.model.set_input_defaults(Aircraft.Avionics.MASS, 1504.0, units='lbm')
         prob.model.set_input_defaults(
             Aircraft.AirConditioning.MASS_COEFFICIENT, 1.155, units='unitless'
         )
-        prob.model.set_input_defaults(Aircraft.AntiIcing.MASS, 236.0, units='lbm')
+        # prob.model.set_input_defaults(Aircraft.AntiIcing.MASS, 236.0, units='lbm')
         prob.model.set_input_defaults(Aircraft.Furnishings.MASS, 9114.0, units='lbm')
         prob.model.set_input_defaults(
             Aircraft.CrewPayload.PASSENGER_SERVICE_MASS_PER_PASSENGER, 6.0, units='lbm'
-        )
-        prob.model.set_input_defaults(
-            Aircraft.CrewPayload.WATER_MASS_PER_OCCUPANT, 3.0, units='lbm'
         )
         prob.model.set_input_defaults(Aircraft.Design.EMERGENCY_EQUIPMENT_MASS, 100.0, units='lbm')
         prob.model.set_input_defaults(
             Aircraft.CrewPayload.CATERING_ITEMS_MASS_PER_PASSENGER, 5.0, units='lbm'
         )
-        prob.model.set_input_defaults(
-            Aircraft.Fuel.UNUSABLE_FUEL_MASS_COEFFICIENT, 12.0, units='unitless'
-        )
-        prob.model.set_input_defaults(Aircraft.Fuselage.PRESSURE_DIFFERENTIAL, 7.5, units='psi')
-        prob.model.set_input_defaults(Aircraft.Engine.SCALED_SLS_THRUST, 19580.1602, units='lbf')
+        # prob.model.set_input_defaults(
+        #    Aircraft.Fuel.UNUSABLE_FUEL_MASS_COEFFICIENT, 12.0, units='unitless'
+        # )
         prob.model.set_input_defaults(Aircraft.CrewPayload.CARGO_MASS, 0, units='lbm')
+        prob.model.set_input_defaults(Aircraft.CrewPayload.Design.CARGO_MASS, 15000.0, units='lbm')
         prob.model.set_input_defaults(
             Aircraft.CrewPayload.Design.MAX_CARGO_MASS, 15000.0, units='lbm'
         )
         prob.model.set_input_defaults(Aircraft.Engine.MASS_SPECIFIC, 0.178884, units='lbm/lbf')
         prob.model.set_input_defaults(Aircraft.Nacelle.MASS_SPECIFIC, 2.5, units='lbm/ft**2')
-        prob.model.set_input_defaults(Aircraft.Engine.PYLON_FACTOR, 1.25, units='unitless')
+        prob.model.set_input_defaults(
+            Aircraft.Engine.PYLON_FACTOR, 1.25, units='unitless'
+        )  # PYL default and the GASP manual don't agree.  Think(?) the default should be 0.7,and not 0.
         prob.model.set_input_defaults(Aircraft.Engine.MASS_SCALER, 1.0, units='unitless')
         prob.model.set_input_defaults(Aircraft.Propulsion.MISC_MASS_SCALER, 1.0, units='unitless')
         prob.model.set_input_defaults(Aircraft.Engine.WING_LOCATIONS, 0.0, units='unitless')
@@ -3217,8 +3215,8 @@ class BWBMassSummationTestCase(unittest.TestCase):
             Aircraft.Wing.HIGH_LIFT_MASS_COEFFICIENT, 1.0, units='unitless'
         )
         prob.model.set_input_defaults(
-            Mission.Landing.LIFT_COEFFICIENT_MAX, 1.94034, units='unitless'
-        )  # 1.94034 is taken from .out file. In GASP, CLMAX is computed for different phases
+            Mission.Landing.LIFT_COEFFICIENT_MAX, 2.13421583, units='unitless'
+        )  # 2.13421583 is for landing. In GASP, CLMAX is computed for different phases. For takeoff, 1.94302452
         prob.model.set_input_defaults(
             Aircraft.Wing.SURFACE_CONTROL_MASS_COEFFICIENT, 0.5, units='unitless'
         )
@@ -3282,52 +3280,29 @@ class BWBMassSummationTestCase(unittest.TestCase):
         prob.model.set_input_defaults(Aircraft.Avionics.MASS, 3225.0, units='lbm')
         prob.model.set_input_defaults(Aircraft.AntiIcing.MASS, 236.0, units='lbm')
         prob.model.set_input_defaults(
-            Aircraft.CrewPayload.PASSENGER_SERVICE_MASS_PER_PASSENGER, 6.0, units='lbm'
-        )
-        prob.model.set_input_defaults(
             Aircraft.CrewPayload.WATER_MASS_PER_OCCUPANT, 3.0, units='lbm'
         )
-        prob.model.set_input_defaults(Aircraft.Design.EMERGENCY_EQUIPMENT_MASS, 100.0, units='lbm')
-        prob.model.set_input_defaults(
-            Aircraft.CrewPayload.CATERING_ITEMS_MASS_PER_PASSENGER, 7.6, units='lbm'
-        )
-        prob.model.set_input_defaults(
-            Aircraft.Fuel.UNUSABLE_FUEL_MASS_COEFFICIENT, 12.0, units='unitless'
-        )
-        prob.model.set_input_defaults(Mission.Design.GROSS_MASS, 150000, units='lbm')
+        # prob.model.set_input_defaults(
+        #    Aircraft.Fuel.UNUSABLE_FUEL_MASS_COEFFICIENT, 12.0, units='unitless'
+        # )
         prob.model.set_input_defaults(Aircraft.Fuselage.LENGTH, 71.5245514, units='ft')
         prob.model.set_input_defaults(Aircraft.Wing.SPAN, 146.38501, units='ft')
-        prob.model.set_input_defaults(Aircraft.Wing.AREA, 2142.85718, units='ft**2')
+        # prob.model.set_input_defaults(Aircraft.Wing.AREA, 2142.85718, units='ft**2')
         prob.model.set_input_defaults(Aircraft.HorizontalTail.AREA, 0.001706279, units='ft**2')
         prob.model.set_input_defaults(Aircraft.VerticalTail.AREA, 169.119629, units='ft**2')
-        prob.model.set_input_defaults(
-            Aircraft.AirConditioning.MASS_COEFFICIENT, 1.155, units='unitless'
-        )
         prob.model.set_input_defaults(Aircraft.Fuselage.PRESSURE_DIFFERENTIAL, 10.0, units='psi')
         prob.model.set_input_defaults(Aircraft.Fuselage.HYDRAULIC_DIAMETER, 19.3650932, units='ft')
         prob.model.set_input_defaults(Aircraft.Fuselage.CABIN_AREA, 1283.5249, units='ft**2')
-        prob.model.set_input_defaults(Aircraft.Furnishings.MASS_SCALER, 40.0, units='unitless')
         prob.model.set_input_defaults(
             Aircraft.Electrical.SYSTEM_MASS_PER_PASSENGER, 11.45, units='lbm'
         )
 
         # inputs to UsefulLoadMass
         prob.model.set_input_defaults(
-            Aircraft.CrewPayload.PASSENGER_SERVICE_MASS_PER_PASSENGER, 6.0, units='lbm'
-        )
-        prob.model.set_input_defaults(
-            Aircraft.CrewPayload.WATER_MASS_PER_OCCUPANT, 3.0, units='lbm'
-        )
-        prob.model.set_input_defaults(Aircraft.Design.EMERGENCY_EQUIPMENT_MASS, 100.0, units='lbm')
-        prob.model.set_input_defaults(
-            Aircraft.CrewPayload.CATERING_ITEMS_MASS_PER_PASSENGER, 5.0, units='lbm'
-        )
-        prob.model.set_input_defaults(
             Aircraft.Fuel.UNUSABLE_FUEL_MASS_COEFFICIENT, 12.0, units='unitless'
         )
-        prob.model.set_input_defaults(Aircraft.Wing.AREA, 2142.85718, units='ft**2')
+        # prob.model.set_input_defaults(Aircraft.Wing.AREA, 2142.85718, units='ft**2')
         prob.model.set_input_defaults(Aircraft.Engine.SCALED_SLS_THRUST, [19580.1602], units='lbf')
-        prob.model.set_input_defaults(Aircraft.Fuel.WING_FUEL_FRACTION, 0.45, units='unitless')
         prob.model.set_input_defaults(Aircraft.Wing.ULTIMATE_LOAD_FACTOR, 3.7734, units='unitless')
 
         prob.model.set_input_defaults(
@@ -3368,7 +3343,7 @@ class BWBMassSummationTestCase(unittest.TestCase):
         Aircraft.Wing.MASS -- WW = 7645.
         Aircraft.Strut.MASS -- WSTRUT = 0
         Aircraft.Wing.FOLD_MASS -- WWFOLD = 107.9
-        Aircraft.Fuel.FUEL_SYSTEM_MASS -- WFSS = 1281
+        Aircraft.Fuel.FUEL_SYSTEM_MASS -- WFSS = 1280.8
         fus_mass_full -- WX = 142354.9
         Aircraft.Fuselage.MASS -- WB = 27160
         Aircraft.Fuel.WING_VOLUME_DESIGN -- FVOLREQ = 731.6
@@ -3392,94 +3367,100 @@ class BWBMassSummationTestCase(unittest.TestCase):
         tol = 5e-4
 
         # outputs from SizeGroup
-        assert_near_equal(self.prob[Aircraft.Fuselage.AVG_DIAMETER], 38, tol)
+        assert_near_equal(prob[Aircraft.Fuselage.AVG_DIAMETER], 38, tol)
 
-        assert_near_equal(self.prob[Aircraft.Fuselage.LENGTH], 71.5245514, tol)
-        assert_near_equal(self.prob[Aircraft.Fuselage.WETTED_AREA], 4573.42578, tol)
-        assert_near_equal(self.prob[Aircraft.TailBoom.LENGTH], 71.5245514, tol)
+        assert_near_equal(prob[Aircraft.Fuselage.LENGTH], 71.5245514, tol)
+        assert_near_equal(prob[Aircraft.Fuselage.WETTED_AREA], 4573.42578, tol)
+        assert_near_equal(prob[Aircraft.TailBoom.LENGTH], 71.5245514, tol)
 
-        assert_near_equal(self.prob[Aircraft.Wing.AREA], 2142.85714286, tol)
-        assert_near_equal(self.prob[Aircraft.Wing.SPAN], 146.38501094, tol)
+        assert_near_equal(prob[Aircraft.Wing.AREA], 2142.85714286, tol)
+        assert_near_equal(prob[Aircraft.Wing.SPAN], 146.38501094, tol)
 
-        assert_near_equal(self.prob[Aircraft.Wing.CENTER_CHORD], 22.97244452, tol)
-        assert_near_equal(self.prob[Aircraft.Wing.AVERAGE_CHORD], 16.2200522, tol)
-        assert_near_equal(self.prob[Aircraft.Wing.ROOT_CHORD], 20.33371617, tol)
-        assert_near_equal(self.prob[Aircraft.Wing.THICKNESS_TO_CHORD_UNWEIGHTED], 0.13596576, tol)
+        assert_near_equal(prob[Aircraft.Wing.CENTER_CHORD], 22.97244452, tol)
+        assert_near_equal(prob[Aircraft.Wing.AVERAGE_CHORD], 16.2200522, tol)
+        assert_near_equal(prob[Aircraft.Wing.ROOT_CHORD], 20.33371617, tol)
+        assert_near_equal(prob[Aircraft.Wing.THICKNESS_TO_CHORD_UNWEIGHTED], 0.13596576, tol)
 
-        assert_near_equal(self.prob[Aircraft.HorizontalTail.AREA], 0.00117064, tol)
-        assert_near_equal(self.prob[Aircraft.HorizontalTail.SPAN], 0.04467601, tol)
-        assert_near_equal(self.prob[Aircraft.HorizontalTail.ROOT_CHORD], 0.03836448, tol)
-        assert_near_equal(self.prob[Aircraft.HorizontalTail.AVERAGE_CHORD], 0.02808445, tol)
-        assert_near_equal(self.prob[Aircraft.HorizontalTail.MOMENT_ARM], 29.69074172, tol)
+        assert_near_equal(prob[Aircraft.HorizontalTail.AREA], 0.00117064, tol)
+        assert_near_equal(prob[Aircraft.HorizontalTail.SPAN], 0.04467601, tol)
+        assert_near_equal(prob[Aircraft.HorizontalTail.ROOT_CHORD], 0.03836448, tol)
+        assert_near_equal(prob[Aircraft.HorizontalTail.AVERAGE_CHORD], 0.02808445, tol)
+        assert_near_equal(prob[Aircraft.HorizontalTail.MOMENT_ARM], 29.69074172, tol)
 
-        assert_near_equal(self.prob[Aircraft.VerticalTail.AREA], 169.11964286, tol)
-        assert_near_equal(self.prob[Aircraft.VerticalTail.SPAN], 16.98084188, tol)
-        assert_near_equal(self.prob[Aircraft.VerticalTail.ROOT_CHORD], 14.58190052, tol)
-        assert_near_equal(self.prob[Aircraft.VerticalTail.AVERAGE_CHORD], 10.67457744, tol)
-        assert_near_equal(self.prob[Aircraft.VerticalTail.MOMENT_ARM], 27.82191598, tol)
+        assert_near_equal(prob[Aircraft.VerticalTail.AREA], 169.11964286, tol)
+        assert_near_equal(prob[Aircraft.VerticalTail.SPAN], 16.98084188, tol)
+        assert_near_equal(prob[Aircraft.VerticalTail.ROOT_CHORD], 14.58190052, tol)
+        assert_near_equal(prob[Aircraft.VerticalTail.AVERAGE_CHORD], 10.67457744, tol)
+        assert_near_equal(prob[Aircraft.VerticalTail.MOMENT_ARM], 27.82191598, tol)
 
-        assert_near_equal(self.prob[Aircraft.Nacelle.AVG_DIAMETER], 5.33382144, tol)
-        assert_near_equal(self.prob[Aircraft.Nacelle.AVG_LENGTH], 7.24759657, tol)
-        assert_near_equal(self.prob[Aircraft.Nacelle.SURFACE_AREA], 121.44575974, tol)
+        assert_near_equal(prob[Aircraft.Nacelle.AVG_DIAMETER], 5.33382144, tol)
+        assert_near_equal(prob[Aircraft.Nacelle.AVG_LENGTH], 7.24759657, tol)
+        assert_near_equal(prob[Aircraft.Nacelle.SURFACE_AREA], 121.44575974, tol)
 
         # outputs from MassPremission
-        assert_near_equal(self.prob[Aircraft.LandingGear.TOTAL_MASS], 7800.0, tol)
-        assert_near_equal(self.prob[Aircraft.LandingGear.MAIN_GEAR_MASS], 6630.0, tol)
-        assert_near_equal(self.prob[Aircraft.Wing.MATERIAL_FACTOR], 1.19461189, tol)
-        assert_near_equal(self.prob['c_strut_braced'], 1, tol)
-        assert_near_equal(self.prob['c_gear_loc'], 0.95, tol)
-        assert_near_equal(self.prob[Aircraft.Engine.POSITION_FACTOR], 1.05, tol)
-        assert_near_equal(self.prob['half_sweep'], 0.47984874, tol)  # SWC2 = 0.479839474
-        assert_near_equal(self.prob[Aircraft.CrewPayload.PASSENGER_PAYLOAD_MASS], 33750.0, tol)
-        assert_near_equal(self.prob['payload_mass_des'], 33750, tol)
-        assert_near_equal(self.prob['payload_mass_max'], 48750, tol)
-        assert_near_equal(self.prob[Aircraft.HorizontalTail.MASS], 1.02401953, tol)
-        assert_near_equal(self.prob[Aircraft.VerticalTail.MASS], 864.17404177, tol)
-        assert_near_equal(self.prob[Aircraft.Wing.HIGH_LIFT_MASS], 1068.88854499, tol)
-        assert_near_equal(self.prob[Aircraft.Controls.TOTAL_MASS], 2114.98159054, tol)
-        assert_near_equal(self.prob[Aircraft.Propulsion.TOTAL_ENGINE_MASS], 7005.15475443, tol)
-        assert_near_equal(self.prob[Aircraft.Nacelle.MASS], 303.61439936, tol)
-        assert_near_equal(self.prob[Aircraft.Propulsion.TOTAL_ENGINE_POD_MASS], 1686.62563123, tol)
-        assert_near_equal(self.prob[Aircraft.Engine.ADDITIONAL_MASS], 153.16770871, tol)
-        assert_near_equal(self.prob[Aircraft.Engine.POSITION_FACTOR], 1.05, tol)
-        assert_near_equal(self.prob[Aircraft.CrewPayload.PASSENGER_PAYLOAD_MASS], 33750.0, tol)
-        assert_near_equal(self.prob[Aircraft.Design.FIXED_EQUIPMENT_MASS], 20876.477, tol)
-        assert_near_equal(self.prob[Aircraft.Design.FIXED_USEFUL_LOAD], 5971.79463002, tol)
-        assert_near_equal(self.prob[Aircraft.Wing.SURFACE_CONTROL_MASS], 1986.25111783, tol)
+        assert_near_equal(prob[Aircraft.LandingGear.TOTAL_MASS], 7800.0, tol)
+        assert_near_equal(prob[Aircraft.LandingGear.MAIN_GEAR_MASS], 6630.0, tol)
+        assert_near_equal(prob[Aircraft.Wing.MATERIAL_FACTOR], 1.19461189, tol)
+        assert_near_equal(prob['c_strut_braced'], 1, tol)
+        assert_near_equal(prob['c_gear_loc'], 0.95, tol)
+        assert_near_equal(prob[Aircraft.Engine.POSITION_FACTOR], 1.05, tol)
+        assert_near_equal(prob['half_sweep'], 0.47984874, tol)  # SWC2 = 0.479839474
+        assert_near_equal(prob[Aircraft.CrewPayload.PASSENGER_PAYLOAD_MASS], 33750.0, tol)
+        assert_near_equal(prob['payload_mass_des'], 48750.0, tol)
+        assert_near_equal(prob['payload_mass_max'], 48750, tol)
+        assert_near_equal(prob[Aircraft.HorizontalTail.MASS], 1.02401953, tol)
+        assert_near_equal(prob[Aircraft.VerticalTail.MASS], 864.17404177, tol)
+        assert_near_equal(prob[Aircraft.Wing.HIGH_LIFT_MASS], 971.82476285, tol)
+        assert_near_equal(prob[Aircraft.Controls.TOTAL_MASS], 2114.98159054, tol)
+        assert_near_equal(prob[Aircraft.Propulsion.TOTAL_ENGINE_MASS], 7005.15475443, tol)
+        assert_near_equal(prob[Aircraft.Nacelle.MASS], 303.61439936, tol)  # WNAC = 514.9
+        assert_near_equal(
+            prob[Aircraft.Propulsion.TOTAL_ENGINE_POD_MASS], 1686.626, tol
+        )  # WPES = 2153
+        assert_near_equal(prob[Aircraft.Engine.ADDITIONAL_MASS], 153.16770871, tol)
+        assert_near_equal(prob[Aircraft.Engine.POSITION_FACTOR], 1.05, tol)
+        assert_near_equal(prob[Aircraft.Design.FIXED_EQUIPMENT_MASS], 20876.477, tol)
+        assert_near_equal(
+            prob[Aircraft.Design.FIXED_USEFUL_LOAD], 5971.79463002, tol
+        )  # WFUL = 5775.
+        assert_near_equal(prob[Aircraft.Wing.SURFACE_CONTROL_MASS], 1986.25111783, tol)
 
         # BWBWingMassGroup
-        assert_near_equal(self.prob[Aircraft.Wing.MASS], 7055.94400025, tol)
-        assert_near_equal(self.prob[Aircraft.Strut.MASS], 0, tol)
-        assert_near_equal(self.prob[Aircraft.Wing.FOLD_MASS], 109.32367334, tol)
+        assert_near_equal(prob[Aircraft.Wing.MASS], 6959.72619224, tol)  # WW = 7645.
+        assert_near_equal(prob[Aircraft.Strut.MASS], 0, tol)
+        assert_near_equal(prob[Aircraft.Wing.FOLD_MASS], 107.83351322, tol)
 
         # FuelMassGroup
         # FuelSysAndFullFuselageMass
-        assert_near_equal(self.prob[Aircraft.Fuel.FUEL_SYSTEM_MASS], 1312.6785963, tol)
-        assert_near_equal(self.prob['fus_mass_full'], 130992.40631171, tol)
+        assert_near_equal(prob[Aircraft.Fuel.FUEL_SYSTEM_MASS], 760.15513516, tol)
+        assert_near_equal(prob['fus_mass_full'], 123295.985, tol)
         # BWBFuselageMass
-        assert_near_equal(self.prob[Aircraft.Fuselage.MASS], 27159.69841266, tol)
+        assert_near_equal(prob[Aircraft.Fuselage.MASS], 27159.69841266, tol)
         # StructMass
-        assert_near_equal(self.prob[Aircraft.Design.STRUCTURE_MASS], 44567.05423183, tol)
+        assert_near_equal(prob[Aircraft.Design.STRUCTURE_MASS], 44470.83642382, tol)
         # FuelMass
-        assert_near_equal(self.prob[Mission.Design.FUEL_MASS], 34095.54795589, tol)
-        assert_near_equal(self.prob[Aircraft.Propulsion.MASS], 8624.16876815, tol)
-        assert_near_equal(self.prob[Mission.Design.FUEL_MASS_REQUIRED], 34095.54795589, tol)
-        assert_near_equal(self.prob['fuel_mass_min'], 19095.54795589, tol)
+        assert_near_equal(prob[Mission.Design.FUEL_MASS], 19744.28922504, tol)
+        assert_near_equal(prob[Aircraft.Propulsion.MASS], 8071.64530701, tol)
+        assert_near_equal(prob[Mission.Design.FUEL_MASS_REQUIRED], 19744.28922504, tol)
+        assert_near_equal(prob['fuel_mass_min'], 19744.28922504, tol)
         # FuelAndOEMOutputs
-        assert_near_equal(self.prob['OEM_wingfuel_mass'], 67845.54795589, tol)
-        assert_near_equal(self.prob['OEM_fuel_vol'], 1356.30756158, tol)
-        assert_near_equal(self.prob['payload_mass_max_fuel'], 29963.3208078, tol)
-        assert_near_equal(self.prob['volume_wingfuel_mass'], 30308.8688, tol)
-        assert_near_equal(self.prob['max_wingfuel_mass'], 30308.86876369, tol)
-        assert_near_equal(self.prob[Aircraft.Fuel.WING_VOLUME_DESIGN], 749.76849613, tol)
-        assert_near_equal(self.prob[Aircraft.Design.OPERATING_MASS], 82154.45204411, tol)
+        assert_near_equal(prob['OEM_wingfuel_mass'], 68494.28922504, tol)
+        assert_near_equal(prob['OEM_fuel_vol'], 1369.27661726, tol)
+        assert_near_equal(prob['payload_mass_max_fuel'], 48750.0, tol)
+        assert_near_equal(prob['volume_wingfuel_mass'], 30308.8688, tol)
+        assert_near_equal(prob['max_wingfuel_mass'], 30308.86876369, tol)
+        assert_near_equal(prob[Aircraft.Fuel.WING_VOLUME_DESIGN], 434.18120332, tol)
+        assert_near_equal(prob[Aircraft.Design.OPERATING_MASS], 81505.71077496, tol)
         # BodyTankCalculations
-        assert_near_equal(self.prob[Aircraft.Fuel.AUXILIARY_FUEL_CAPACITY], 3786.6791922, tol)
-        assert_near_equal(self.prob[Aircraft.Fuel.TOTAL_CAPACITY], 37882.22714809, tol)
-        assert_near_equal(self.prob['extra_fuel_volume'], 143.86067865, tol)
-        assert_near_equal(self.prob['max_extra_fuel_mass'], 7196.23398779, tol)
-        assert_near_equal(self.prob['wingfuel_mass_min'], 11899.3139681, tol)
+        assert_near_equal(prob[Aircraft.Fuel.AUXILIARY_FUEL_CAPACITY], 0.0, tol)
+        assert_near_equal(prob[Aircraft.Fuel.TOTAL_CAPACITY], 19744.28922504, tol)
+        assert_near_equal(prob['extra_fuel_volume'], 0.0, tol)
+        assert_near_equal(prob['max_extra_fuel_mass'], 0.0, tol)
+        assert_near_equal(prob['wingfuel_mass_min'], 19744.28922504, tol)
 
 
 if __name__ == '__main__':
-    unittest.main()
+    # unittest.main()
+    test = BWBMassSummationTestCase()
+    test.setUp()
+    test.test_case1()
