@@ -782,8 +782,8 @@ class AviaryProblem(om.Problem):
         range_1 = 0 
 
         #Set variables for variable hierarchy
-        self.aviary_inputs.set_val(Payload_Range.MAX_PAYLOAD_0_FUEL_PAYLOAD, payload_1, 'lbm')
-        self.aviary_inputs.set_val(Payload_Range.MAX_PAYLOAD_0_FUEL_RANGE, range_1, 'NM')
+        self.aviary_inputs.set_val(Payload_Range.MAX_PAYLOAD_ZERO_FUEL_PAYLOAD, payload_1, 'lbm')
+        self.aviary_inputs.set_val(Payload_Range.MAX_PAYLOAD_ZERO_FUEL_RANGE, range_1, 'NM')
         
         #point 2, sizing mission which is assumed to be the point of max payload + fuel on the payload and range diagram
         payload_2 = payload_1
@@ -829,18 +829,18 @@ class AviaryProblem(om.Problem):
         self.aviary_inputs.set_val(Payload_Range.MAX_FUEL_PLUS_PAYLOAD_RANGE, range_3, 'NM')
 
         #Point 4, ferry mission with maximum fuel and 0 payload,
-        max_fuel_0_payload_payload=operating_mass+fuel_capacity
+        max_fuel_zero_payload_payload=operating_mass+fuel_capacity
         #Aviary does not currently allow for off-design missions of 0 passengers, therefore 1 will be used
         prob_fallout_ferry = self.fallout_mission(json_filename='payload_range_sizing.json',
                                     num_first= 0, num_business= 0, num_tourist= 1, num_pax=1,
-                                    wing_cargo=0, misc_cargo=0, cargo_mass= 0, mission_mass=max_fuel_0_payload_payload)
+                                    wing_cargo=0, misc_cargo=0, cargo_mass= 0, mission_mass=max_fuel_zero_payload_payload)
         
         payload_4=float(prob_fallout_ferry.get_val(Aircraft.CrewPayload.TOTAL_PAYLOAD_MASS))
         range_4=float(prob_fallout_ferry.get_val(Mission.Summary.RANGE))
         
         #Set variables for variable hierarchy
-        self.aviary_inputs.set_val(Payload_Range.MAX_FUEL_0_PAYLOAD_PAYLOAD, payload_4, 'lbm')
-        self.aviary_inputs.set_val(Payload_Range.MAX_FUEL_0_PAYLOAD_RANGE, range_4, 'NM')
+        self.aviary_inputs.set_val(Payload_Range.MAX_FUEL_ZERO_PAYLOAD_PAYLOAD, payload_4, 'lbm')
+        self.aviary_inputs.set_val(Payload_Range.MAX_FUEL_ZERO_PAYLOAD_RANGE, range_4, 'NM')
 
         #writes csv file in dashboard
         script_name = os.path.splitext(os.path.basename(sys.argv[0]))[0]
