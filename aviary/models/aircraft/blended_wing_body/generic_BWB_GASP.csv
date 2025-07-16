@@ -11,7 +11,9 @@ aircraft:controls:cockpit_control_mass_scaler,1,unitless
 aircraft:controls:control_mass_increment,0,lbm
 aircraft:controls:stability_augmentation_system_mass,0,lbm
 aircraft:controls:stability_augmentation_system_mass_scaler,1,unitless
+aircraft:crew_and_payload:cargo_mass,15000,lbm
 aircraft:crew_and_payload:catering_items_mass_per_passenger,5,lbm
+aircraft:crew_and_payload:design:cargo_mass,15000,lbm
 aircraft:crew_and_payload:design:max_cargo_mass,15000,lbm
 aircraft:crew_and_payload:design:num_business_class,0,unitless
 aircraft:crew_and_payload:design:num_first_class,11,unitless
@@ -25,7 +27,6 @@ aircraft:design:cg_delta,0.25,unitless
 aircraft:design:cockpit_control_mass_coefficient,16.5,unitless
 aircraft:design:drag_increment,0.00025,unitless
 aircraft:design:emergency_equipment_mass,100,lbm
-aircraft:design:lift_curve_slope,7.1765,1/rad
 aircraft:design:max_structural_speed,402.5,mi/h
 aircraft:design:part25_structural_category,3,unitless
 aircraft:design:reserve_fuel_additional,0.2222,lbm
@@ -33,18 +34,18 @@ aircraft:design:static_margin,0.05,unitless
 aircraft:design:structural_mass_increment,0,lbm
 aircraft:design:supercritical_drag_shift,0.025,unitless
 aircraft:design:type,BWB,unitless
+aircraft:electrical:system_mass_per_passenger,11.45,lbm
 aircraft:engine:additional_mass_fraction,0.04373,unitless
-aircraft:engine:data_file,models/engines/turbofan_23k_1.deck,unitless
+aircraft:engine:data_file,models/engines/turbofan_23k_1.csv,unitless
 aircraft:engine:global_throttle,True,unitless
 aircraft:engine:mass_scaler,1,unitless
 aircraft:engine:mass_specific,0.178884,lbm/lbf
 aircraft:engine:num_engines,2,unitless
+aircraft:engine:num_fuselage_engines,2,unitless
 aircraft:engine:pod_mass_scaler,1,unitless
 aircraft:engine:pylon_factor,1.25,unitless
-aircraft:engine:reference_diameter,5.8,ft
-aircraft:engine:reference_sls_thrust,28690,lbf
-aircraft:engine:scale_factor,1.3053677239456256,unitless
-aircraft:engine:scaled_sls_thrust,37451,lbf
+aircraft:engine:reference_sls_thrust,19580.2,lbf
+aircraft:engine:scaled_sls_thrust,19580.1602,lbf
 aircraft:engine:type,7,unitless
 aircraft:engine:wing_locations,0.0,unitless
 aircraft:fuel:density,6.687,lbm/galUS
@@ -53,7 +54,7 @@ aircraft:fuel:fuel_system_mass_coefficient,0.035,unitless
 aircraft:fuel:fuel_system_mass_scaler,1,unitless
 aircraft:fuel:unusable_fuel_mass_coefficient,12,unitless
 aircraft:fuel:wing_fuel_fraction,0.45,unitless
-aircraft:furnishings:mass,-40,lbm
+aircraft:furnishings:mass_scaler,40,unitless
 aircraft:fuselage:aftbody_mass_per_unit_area,5,lbm/ft**2
 aircraft:fuselage:aisle_width,22,inch
 aircraft:fuselage:delta_diameter,5,ft
@@ -90,8 +91,6 @@ aircraft:landing_gear:main_gear_mass_coefficient,0.85,unitless
 aircraft:landing_gear:mass_coefficient,0.052,unitless
 aircraft:landing_gear:tail_hook_mass_scaler,1,unitless
 aircraft:landing_gear:total_mass_scaler,1,unitless
-aircraft:nacelle:avg_diameter,6.95,ft
-aircraft:nacelle:avg_length,9.44,ft
 aircraft:nacelle:clearance_ratio,0.2,unitless
 aircraft:nacelle:core_diameter_ratio,1.2205,unitless
 aircraft:nacelle:fineness,1.3588,unitless
@@ -143,7 +142,6 @@ aircraft:wing:optimum_flap_deflection,55,deg
 aircraft:wing:optimum_slat_deflection,20,deg
 aircraft:wing:slat_chord_ratio,0.0001,unitless
 aircraft:wing:slat_lift_increment_optimum,0.93,unitless
-aircraft:wing:slat_span_ratio,0.9,unitless
 aircraft:wing:surface_ctrl_mass_coefficient,0.5,unitless
 aircraft:wing:sweep,30,deg
 aircraft:wing:taper_ratio,0.27444,unitless
@@ -159,6 +157,7 @@ mission:design:rate_of_climb_at_top_of_climb,300,ft/min
 mission:landing:airport_altitude,0,ft
 mission:landing:braking_delay,1,s
 mission:landing:glide_to_stall_ratio,1.3,unitless
+mission:landing:lift_coefficient_max,1.94034,unitless
 mission:landing:maximum_flare_load_factor,1.15,unitless
 mission:landing:maximum_sink_rate,900,ft/min
 mission:landing:obstacle_height,50,ft
