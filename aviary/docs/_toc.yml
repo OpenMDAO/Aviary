@@ -84,7 +84,7 @@ parts:
           - file: theory_guide/turboprop
     - file: theory_guide/optimization_algorithms
     - file: theory_guide/validation
-    - file: theory_guide/developer_note_gasp_based_bwb
+    - file: theory_guide/gasp_based_bwb
 
 - caption: Developer Guide
   chapters:
