@@ -154,7 +154,7 @@ def check_type(key, val, meta_data=_MetaData):
                 yield from _flatten_iters(item)
             else:
                 yield item
-                
+
     # make a copy of val, so we do not modify it
     input_val = deepcopy(val)
     expected_types = meta_data[key]['types']

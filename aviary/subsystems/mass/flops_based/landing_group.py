@@ -5,7 +5,7 @@ from aviary.subsystems.mass.flops_based.landing_gear import (
     LandingGearMass,
     MainGearLength,
     NoseGearLength,
-    LandingGearTotalMass
+    LandingGearTotalMass,
 )
 from aviary.subsystems.mass.flops_based.landing_mass import LandingMass, LandingTakeoffMassRatio
 from aviary.variable_info.functions import add_aviary_option

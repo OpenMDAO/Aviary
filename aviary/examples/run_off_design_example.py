@@ -11,7 +11,7 @@ This performs a coupled design-mission optimization and outputs the results from
 
 import aviary.api as av
 
-phase_info=av.default_height_energy_phase_info
+phase_info = av.default_height_energy_phase_info
 
 ##################
 # Sizing Mission #

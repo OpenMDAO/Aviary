@@ -1068,6 +1068,7 @@ def _create_interactive_xy_plot_mission_variables(documentation, problem_recorde
 
     return interactive_mission_var_plot_pane_with_doc
 
+
 def create_payload_range_frame(title, results_tabs_list, documentation, csv_filepath):
     """
     Create a Panel Pane that contains a Bokeh chart display of the data in a CSV file.
@@ -1090,37 +1091,31 @@ def create_payload_range_frame(title, results_tabs_list, documentation, csv_file
     """
     if os.path.isfile(csv_filepath):
         df = pd.read_csv(csv_filepath)
-        
-        #column data source for hover
-        source = ColumnDataSource(data=dict(
-            x=df['Range (NM)'],
-            y=df['Payload (lbs)'],
-            point_name=df['Point']
-        ))
-            
+
+        # column data source for hover
+        source = ColumnDataSource(
+            data=dict(x=df['Range (NM)'], y=df['Payload (lbs)'], point_name=df['Point'])
+        )
+
         # Create Bokeh figure with hover tool
         p = figure(
-            title="Aircraft Payload-Range Envelope",
-            x_axis_label="Range (NM)",
-            y_axis_label="Payload (lbs)",
+            title='Aircraft Payload-Range Envelope',
+            x_axis_label='Range (NM)',
+            y_axis_label='Payload (lbs)',
             width=600,
             height=400,
-            tools=["pan,wheel_zoom, hover, box_zoom,reset,save"]
+            tools=['pan,wheel_zoom, hover, box_zoom,reset,save'],
         )
-        p.hover.tooltips = [
-            ("Point", "@point_name"),
-            ("Range (NM)", "@x"),
-            ("Payload (lbs)", "@y")
-        ]
+        p.hover.tooltips = [('Point', '@point_name'), ('Range (NM)', '@x'), ('Payload (lbs)', '@y')]
         # Add scatter points
         p.scatter('x', 'y', size=10, color='rgb(0, 212, 169)', source=source)
-        
+
         # Add lines connecting the points to show envelope
         p.line('x', 'y', line_width=2, color='rgb(0, 212, 169)', source=source)
-        
+
         # Create Panel pane with the chart
         chart_pane = pn.pane.Bokeh(p)
-        
+
         report_pane = pn.Column(
             pn.pane.HTML(
                 f'<p class="pane_doc">{documentation}</p>',
@@ -1138,8 +1133,9 @@ def create_payload_range_frame(title, results_tabs_list, documentation, csv_file
                 f"# Chart not shown because data source CSV file, '{csv_filepath}', not found."
             ),
         )
-    
+
     results_tabs_list.append((title, report_pane))
+
 
 # The main script that generates all the tabs in the dashboard
 def dashboard(script_name, problem_recorder, driver_recorder, port, run_in_background=False):
@@ -1447,9 +1443,9 @@ def dashboard(script_name, problem_recorder, driver_recorder, port, run_in_backg
         """
         Defines key operating points on the aircraft's payload-range envelope from Design and Fallout missions.
         """,
-        Path(reports_dir)/'payload_range_data.csv'
+        Path(reports_dir) / 'payload_range_data.csv',
     )
-    
+
     # Trajectory results
     traj_results_report_pane = create_report_frame(
         'Trajectory Results',

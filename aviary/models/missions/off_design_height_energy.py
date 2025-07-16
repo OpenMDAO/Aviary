@@ -1,4 +1,4 @@
-# defaults for height energy based phases adjusted for off_design functionality. 
+# defaults for height energy based phases adjusted for off_design functionality.
 
 phase_info = {
     'pre_mission': {'include_takeoff': True, 'optimize_mass': True},

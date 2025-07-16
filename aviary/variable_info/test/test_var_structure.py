@@ -10,6 +10,7 @@ from aviary.utils.test_utils.variable_test import (
 from aviary.variable_info.variable_meta_data import _MetaData
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission, Settings, Payload_Range
 
+
 class DuplicateHierarchy:
     """A sample data set with a duplicate name in two different classes."""
 
