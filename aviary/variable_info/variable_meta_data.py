@@ -5495,6 +5495,17 @@ add_meta_data(
 )
 
 add_meta_data(
+    Aircraft.Wing.DETAILED_WING,
+    meta_data=_MetaData,
+    historical_name={'GASP': None, 'FLOPS': None, 'LEAPS1': None},
+    units='unitless',
+    desc='use a detailed wing model',
+    option=True,
+    types=bool,
+    default_value=False,
+)
+
+add_meta_data(
     Aircraft.Wing.DIHEDRAL,
     meta_data=_MetaData,
     historical_name={
@@ -6399,17 +6410,6 @@ add_meta_data(
     units='unitless',
     desc='structural ultimate load factor',
     default_value=0.0,
-)
-
-add_meta_data(
-    Aircraft.Wing.USE_DETAILED_MASS,
-    meta_data=_MetaData,
-    historical_name={'GASP': None, 'FLOPS': None, 'LEAPS1': None},
-    units='unitless',
-    desc='Flag that sets if FLOPS mass should use the detailed wing model',
-    option=True,
-    types=bool,
-    default_value=False,
 )
 
 add_meta_data(
@@ -8039,7 +8039,7 @@ add_meta_data(
     meta_data=_MetaData,
     historical_name={'GASP': None, 'FLOPS': None, 'LEAPS1': None},
     units='lbm',
-    desc='payload value during a ferry mission, should be 0',
+    desc='payload value for a ferry range mission',
     option=True,
     default_value=0.0,
 )
@@ -8049,7 +8049,7 @@ add_meta_data(
     meta_data=_MetaData,
     historical_name={'GASP': None, 'FLOPS': None, 'LEAPS1': None},
     units='NM',
-    desc='maximum range the aircraft can fly with full fuel, and 0 payload',
+    desc='maximum range the aircraft can fly with at fuel capacity with 0 payload',
     option=True,
     default_value=0.0,
 )
@@ -8059,7 +8059,7 @@ add_meta_data(
     meta_data=_MetaData,
     historical_name={'GASP': None, 'FLOPS': None, 'LEAPS1': None},
     units='lbm',
-    desc='payload added after fuel is at capacity to maintain the same gross mass as the sizing mission',
+    desc='payload capacity when the aircraft is at fuel capacity',
     option=True,
     default_value=0.0,
 )
@@ -8069,7 +8069,7 @@ add_meta_data(
     meta_data=_MetaData,
     historical_name={'GASP': None, 'FLOPS': None, 'LEAPS1': None},
     units='NM',
-    desc='maximum range the aircraft can fly with payload added after fuel is at capacity to maintain the same gross mass as the sizing mission',
+    desc='range achieved with maximum fuel and remaining payload capacity',
     option=True,
     default_value=0.0,
 )

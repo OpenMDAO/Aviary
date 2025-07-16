@@ -749,10 +749,11 @@ class AviaryProblem(om.Problem):
         
         
         mass_method = self.aviary_inputs.get_val(Settings.MASS_METHOD)
-        mission_method = self.mission_method
+        equations_of_motion = self.aviary_inputs.get_val(Settings.EQUATIONS_OF_MOTION)
+
 
         #Off-design missions do not currently work for GASP masses or missions.
-        if mass_method == LegacyCode.FLOPS and mission_method is HEIGHT_ENERGY:
+        if mass_method == LegacyCode.FLOPS and equations_of_motion is EquationsOfMotion.HEIGHT_ENERGY:
             if payload_range_bool and self.problem_type is ProblemType.SIZING:
                 #Checks to determine if the set gross mass for off design would be greater
                 #Than the gross mass of the sizing mission. 
@@ -945,14 +946,10 @@ class AviaryProblem(om.Problem):
             num_first = num_business = num_tourist = wing_cargo = misc_cargo = 0
 
         if phase_info is None:
-<<<<<<< HEAD
             #Somewhere between the sizing and off-design self.pre_mission_info gets deleted
-            phase_info = self.phase_info
-            phase_info['pre_mission']=self.pre_mission_info
-            phase_info['post_mission']=self.post_mission_info
-=======
             phase_info = self.model.phase_info
->>>>>>> 867efc5fb259a40cfbd74656062f73e94a96a7d2
+            phase_info['pre_mission']=self.model.pre_mission_info
+            phase_info['post_mission']=self.model.post_mission_info
         if mission_range is None:
             # mission range is sliced from a column vector numpy array, i.e. it is a len
             # 1 numpy array
@@ -1081,13 +1078,10 @@ class AviaryProblem(om.Problem):
             num_first = num_business = num_tourist = wing_cargo = misc_cargo = 0
 
         if phase_info is None:
-<<<<<<< HEAD
-            phase_info = self.phase_info
-            phase_info['pre_mission']=self.pre_mission_info
-            phase_info['post_mission']=self.post_mission_info
-=======
+            #Somewhere between the sizing and off-design self.pre_mission_info gets deleted
             phase_info = self.model.phase_info
->>>>>>> 867efc5fb259a40cfbd74656062f73e94a96a7d2
+            phase_info['pre_mission']=self.model.pre_mission_info
+            phase_info['post_mission']=self.model.post_mission_info
         if mission_mass is None:
             # mission mass is sliced from a column vector numpy array, i.e. it is a len 1
             # numpy array
