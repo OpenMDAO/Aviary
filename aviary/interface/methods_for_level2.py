@@ -79,6 +79,11 @@ class AviaryProblem(om.Problem):
 
         self.analysis_scheme = analysis_scheme
 
+    def add_aviary_group(self, model_name=str):
+        """
+        This method creates an aviary group based on the model_name supplied."""
+        self.add_model(model_name, AviaryGroup())
+
     def load_inputs(
         self,
         aircraft_data,
@@ -581,6 +586,95 @@ class AviaryProblem(om.Problem):
 
             else:
                 raise ValueError(f'{self.model.problem_type} is not a valid problem type.')
+
+    def add_design_var_default(self, name:str, lower:float = None, upper:float = None, units:str = None, src_shape=None, default_val:float = None):
+        """
+        Add a design variable to the problem as well as initialized a default value for that design variable.
+        The default value can be over-written after setup with prob.set_val()
+        """
+        self.add_design_var(name=name, lower=lower, upper=upper, units=units)
+        self.set_input_defaults(name=name, val=default_val, units=units, src_shape=src_shape)
+        
+    def add_multimission_objetive(self, missions=list[str], mission_weights:list[float] = None, outputs:list[str] = None, output_weights:list[float] = None, ref:float = 1.0):
+        """
+        Create a final objective based on the selected missions and output values.
+        Each mission is weighted independently, and each output can also be weighted independently.
+        """
+
+        # Setup mission and output lengths if they are not already given
+        if mission_weights is None:
+            mission_weights = np.ones(len(missions))
+
+        if output_weights is None:
+            output_weights = no.ones(len(outputs))
+
+        # # Make an ExecComp
+        # for mission in missions:
+        #     for output in outputs:
+
+        # weights are normalized - e.g. for given weights 3:1, the normalized
+        # weights are 0.75:0.25
+        # TODO: Remove before push
+        # output_weights = [2,1]
+        # mission_weights = [1,1]
+        # missions = ['model1','model2']
+        # outputs = ['fuelburn','gross_mass']
+        weighted_exprs = []
+        promoted_names = []
+        output_weights = [float(weight / sum(output_weights)) for weight in output_weights]
+        mission_weights = [float(weight / sum(mission_weights)) for weight in mission_weights]
+        for mission, mission_weight in zip(missions, mission_weights):
+            for output, output_weight in zip(outputs, output_weights):
+                promoted_names.append(f'{mission}.{output}')
+                weighted_exprs.append(f'{mission}.{output}*{output_weight}*{mission_weight}')
+        final_expr = ' + '.join(weighted_exprs)
+        # weighted_str looks like:  model1.fuelburn*0.67*0.5 + model1.gross_mass*0.33*0.5 + model2.fuelburn*0.67*0.5 + model2.gross_mass*0.33*0.5
+
+        # adding compound execComp to super problem
+        self.model.add_subsystem(
+            'compound_objective',
+            om.ExecComp('compound = ' + final_expr, has_diag_partials=True),
+            promotes_inputs=promoted_names,
+            promotes_outputs=['compound'],
+        )
+        self.model.add_objective('compound', ref=ref)
+
+
+
+    def build_model(self, verbosity=None):
+        """
+        This method combines multiple other methods defined in this script to decrease verbosity 
+        by the user if they don't need the extra functionality.
+        """
+        # `self.verbosity` is "true" verbosity for entire run. `verbosity` is verbosity
+        # override for just this method
+        if verbosity is not None:
+            # compatibility with being passed int for verbosity
+            verbosity = Verbosity(verbosity)
+        else:
+            verbosity = self.verbosity  # defaults to BRIEF
+
+        self.model.build_model(verbosity=verbosity)
+
+    def promote_inputs(self, missions:list[str], var_pairs:list[tuple[str, str]]):
+            """
+            Link a promoted input to multiple groups' unpromoted inputs using an internal IVC.
+            
+            Parameters
+            ----------
+            self : om.Problem
+                The Problem instance this is being called from.
+            
+            missions : list of str
+                The subsystem names receiving the connection.
+            
+            var_pairs : list of (str, str)
+                Each pair is (input_name_in_group, top_level_name_to_use)
+            """
+
+            for mission_name in missions:
+                self.promotes(mission_name, inputs=var_pairs)
+
 
     def setup(self, **kwargs):
         """Lightly wrapped setup() method for the problem."""

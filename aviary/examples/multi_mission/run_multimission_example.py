@@ -79,17 +79,19 @@ prob.add_aviary_group('model1')
 
 # Load aircraft in first configuration
 prob.model1.load_inputs(aviary_inputs_primary, phase_info)
+# prob.model1.check_and_preprocess_inputs() <- moved into load_inputs
 
-# Create an alias for the next 5 processes
-# prob.model1.check_and_preprocess_inputs() <- ken things separate this out
+# make build model just called once at top level <- TODO
+
+prob.model1.build_model()
+# contains the following 4 processes:
 # prob.model1.add_pre_mission_systems()
 # prob.model1.add_phases()
 # prob.model1.add_post_mission_systems()
 # prob.model1.link_phases()
-prob.model1.build_model() # jason to choose a name
 
 # Load aircraft in second configuration for same mission
-prob.add_model('Model2')
+prob.add_aviary_group('model2')
 
 prob.model2.load_inputs(aviary_inputs_deadhead, phase_info)
 
@@ -100,18 +102,20 @@ prob.model2.build_model()
 # model3 & model4 could be an aircraft with the same engine but a different GROSS_MASS and RANGE and SWEEP, we need to be able to link those two as well
 # so we want to enable promotion to the problem level with alias
 # If you link design_range here then we will extract the maximum design range from the phase_info and insert that into both models
-prob.link_inputs([model1, model2], [(Mission.Design.GROSS_MASS, 'Aircraft1:GROSS_MASS'), (Mission.Design.RANGE, 'Aircraft1.RANGE'), (Aircraft.Wing.SWEEP, 'Aircraft1.SWEEP')])
-prob.link_inputs([model3, model4], [(Mission.Design.GROSS_MASS, 'Aircraft2:GROSS_MASS'), (Mission.Design.RANGE, 'Aircraft2.RANGE'), (Aircraft.Wing.SWEEP, 'Aircraft2.SWEEP')])
+prob.promote_inputs(['model1', 'model2'], [(Mission.Design.GROSS_MASS, 'Aircraft1:GROSS_MASS'), (Mission.Design.RANGE, 'Aircraft1.RANGE'), (Aircraft.Wing.SWEEP, 'Aircraft1.SWEEP')])
+prob.promote_inputs(['model3', 'model4'], [(Mission.Design.GROSS_MASS, 'Aircraft2:GROSS_MASS'), (Mission.Design.RANGE, 'Aircraft2.RANGE'), (Aircraft.Wing.SWEEP, 'Aircraft2.SWEEP')])
 
-prob.add_design_variables('Aircraft1:GROSS_MASS', lower=, uppwer=, units=)
-prob.add_design_variables('Aircraft1.SWEEP', units=, val=)
-prob.add_design_variables('Aircraft2:GROSS_MASS', lower=, uppwer=, units=)
-prob.add_design_variables('Aircraft2.SWEEP', units=, val=)
+# You can add design_vars onto 
+prob.add_design_var_default('Aircraft1:GROSS_MASS', lower=, uppwer=, units=, default_val=)
+prob.add_design_var_default('Aircraft1.SWEEP', units=, val=)
+prob.add_design_var_default('Aircraft2:GROSS_MASS', lower=, uppwer=, units=)
+prob.add_design_var_default('Aircraft2.SWEEP', units=, val=)
+prob.add_design_var_default()
 
 # Add objective
 # create an objective by adding both values from the specified models based on the weighting
 # if there are models3, and model4, they may contribute constraints, but do not need to be included as part of the objective
-prob.add_multimission_objetive([model1, model2], weights=[2,1], Mission.Summary.FUEL_BURNED, ref=)
+prob.add_multimission_objetive(missions=['model1', 'model2'], mission_weights=[2,1], outputs=[Mission.Summary.FUEL_BURNED, Mission.Summary.CO2], output_weights=[1,1]  ref=)
 
 # can we make a pareto front of designs?
 # prob.run_aviary_DOE() ?
@@ -129,6 +133,7 @@ prob.setup()
 max_range_1 = utils.get_design_range(model1, model2)
 prob.model1.set_initial_guesses('Aircraft1.RANGE', units=, val=max_range_1)
 prob.model2.set_initial_guesses('Aircraft2.RANGE', units=, val=)
+
 
 # jason - what if 2 csv w/ wing laminar flow, take the higher value
 
