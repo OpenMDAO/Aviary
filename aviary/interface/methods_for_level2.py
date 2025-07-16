@@ -754,7 +754,7 @@ class AviaryProblem(om.Problem):
 
         #Off-design missions do not currently work for GASP masses or missions.
         if mass_method == LegacyCode.FLOPS and equations_of_motion is EquationsOfMotion.HEIGHT_ENERGY:
-            if payload_range_bool and self.problem_type is ProblemType.SIZING:
+            if payload_range_bool and self.model.problem_type is ProblemType.SIZING:
                 #Checks to determine if the set gross mass for off design would be greater
                 #Than the gross mass of the sizing mission. 
                 payload_range_matrix=self.run_payload_range()
