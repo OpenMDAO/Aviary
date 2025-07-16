@@ -24,7 +24,6 @@ class TestDBFFuselageMass(unittest.TestCase):
 
         self.dbf.options['bulkhead_materials'] = bulkhead_materials
         self.dbf.options['bulkhead_thicknesses'] = (rib_thicks, 'inch')
-        self.dbf.options['num_bulkheads'] = (20, 'unitless')
         self.dbf.options['num_spars'] = (0.5, 'unitless')
         self.dbf.options['bulkhead_lightening_factor'] = (0.18, 'unitless')
         self.dbf.options['sheeting_coverage'] = (1, 'unitless')
@@ -58,7 +57,7 @@ class TestDBFFuselageMass(unittest.TestCase):
 
         # Update expected_mass based on verified value
         expected_mass = 0.405
-        tol = 1e-2
+        tol = 1e-3
 
         assert_near_equal(actual_mass, expected_mass, tolerance=tol)
 
