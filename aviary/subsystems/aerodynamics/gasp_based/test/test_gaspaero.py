@@ -1820,7 +1820,4 @@ class BWBLowSpeedAeroTest3(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    # unittest.main()
-    test = GASPAeroTest()
-    test.setUp()
-    test.test_ground_alpha_out()
+    unittest.main()
