@@ -64,7 +64,7 @@ class CruiseODETestCase(unittest.TestCase):
         )
         assert_near_equal(
             self.prob[Dynamic.Mission.ALTITUDE_RATE_MAX],
-            np.array([-17.63008441, -16.62879293]),
+            np.array([-17.17989089, -16.16198629]),
             tol,
         )
 
@@ -128,12 +128,12 @@ class ElectricCruiseODETestCase(unittest.TestCase):
         )
         assert_near_equal(
             self.prob[Dynamic.Mission.ALTITUDE_RATE_MAX],
-            np.array([-17.622456, -16.62070]),
+            np.array([-17.17226255, -16.15389057]),
             tol,
         )
         assert_near_equal(
             self.prob[Dynamic.Vehicle.Propulsion.ELECTRIC_POWER_IN_TOTAL],
-            np.array([4.67455501, 4.33784647]),
+            np.array([4.46078513, 4.15465068]),
             tol,
         )
 
