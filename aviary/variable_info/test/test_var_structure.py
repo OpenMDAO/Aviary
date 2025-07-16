@@ -8,8 +8,7 @@ from aviary.utils.test_utils.variable_test import (
     get_names_from_hierarchy,
 )
 from aviary.variable_info.variable_meta_data import _MetaData
-from aviary.variable_info.variables import Aircraft, Dynamic, Mission, Settings
-
+from aviary.variable_info.variables import Aircraft, Dynamic, Mission, Settings, Payload_Range
 
 class DuplicateHierarchy:
     """A sample data set with a duplicate name in two different classes."""
@@ -49,6 +48,7 @@ class MetaDataTest(unittest.TestCase):
             + get_names_from_hierarchy(Mission)
             + get_names_from_hierarchy(Dynamic)
             + get_names_from_hierarchy(Settings)
+            + get_names_from_hierarchy(Payload_Range)
         )
 
         metadata_dict = deepcopy(_MetaData)
@@ -76,6 +76,7 @@ class VariableStructureTest(unittest.TestCase):
             + get_names_from_hierarchy(Mission)
             + get_names_from_hierarchy(Dynamic)
             + get_names_from_hierarchy(Settings)
+            + get_names_from_hierarchy(Payload_Range)
         )
 
         assert_no_duplicates(aviary_names)

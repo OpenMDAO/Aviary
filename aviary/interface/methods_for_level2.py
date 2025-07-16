@@ -43,7 +43,7 @@ from aviary.variable_info.enums import (
 )
 from aviary.variable_info.functions import setup_model_options, setup_trajectory_params
 from aviary.variable_info.variable_meta_data import _MetaData as BaseMetaData
-from aviary.variable_info.variables import Aircraft, Dynamic, Mission, Settings
+from aviary.variable_info.variables import Aircraft, Dynamic, Mission, Payload_Range, Settings
 
 FLOPS = LegacyCode.FLOPS
 GASP = LegacyCode.GASP
@@ -2003,7 +2003,9 @@ class AviaryProblem(om.Problem):
             if payload_range_bool and self.problem_type is ProblemType.SIZING:
                 #Checks to determine if the set gross mass for off design would be greater
                 #Than the gross mass of the sizing mission. 
-                self.run_payload_range()
+                payload_range_matrix=self.run_payload_range()
+                print(payload_range_matrix[1])
+                print(payload_range_matrix[0])
         
 
     def run_payload_range(self):
@@ -2024,10 +2026,18 @@ class AviaryProblem(om.Problem):
         #point 1 along the y axis (range=0)
         payload_1 = float(self.get_val(Aircraft.CrewPayload.TOTAL_PAYLOAD_MASS)[0])
         range_1 = 0 
+
+        #Set variables for variable hierarchy
+        self.aviary_inputs.set_val(Payload_Range.MAX_PAYLOAD_0_FUEL_PAYLOAD, payload_1, 'lbm')
+        self.aviary_inputs.set_val(Payload_Range.MAX_PAYLOAD_0_FUEL_RANGE, range_1, 'NM')
+        
         #point 2, sizing mission which is assumed to be the point of max payload + fuel on the payload and range diagram
         payload_2 = payload_1
         range_2 = float(self.get_val(Mission.Summary.RANGE)[0])
 
+        #Set variables for variable hierarchy
+        self.aviary_inputs.set_val(Payload_Range.MAX_PAYLOAD_PLUS_FUEL_PAYLOAD, payload_2, 'lbm')
+        self.aviary_inputs.set_val(Payload_Range.MAX_PAYLOAD_PLUS_FUEL_RANGE, range_2, 'NM')
 
         #check if fuel capacity does not exceed sizing mission design gross mass
         gross_mass = float(self.get_val(Mission.Summary.GROSS_MASS)[0])
@@ -2060,6 +2070,10 @@ class AviaryProblem(om.Problem):
             payload_3 = payload_2
             range_3 = range_2
 
+        #Set variables for variable hierarchy
+        self.aviary_inputs.set_val(Payload_Range.MAX_FUEL_PLUS_PAYLOAD_PAYLOAD, payload_3, 'lbm')
+        self.aviary_inputs.set_val(Payload_Range.MAX_FUEL_PLUS_PAYLOAD_RANGE, range_3, 'NM')
+
         #Point 4, ferry mission with maximum fuel and 0 payload,
         max_fuel_0_payload_payload=operating_mass+fuel_capacity
         #Aviary does not currently allow for off-design missions of 0 passengers, therefore 1 will be used
@@ -2069,7 +2083,10 @@ class AviaryProblem(om.Problem):
         
         payload_4=float(prob_fallout_ferry.get_val(Aircraft.CrewPayload.TOTAL_PAYLOAD_MASS))
         range_4=float(prob_fallout_ferry.get_val(Mission.Summary.RANGE))
-
+        
+        #Set variables for variable hierarchy
+        self.aviary_inputs.set_val(Payload_Range.MAX_FUEL_0_PAYLOAD_PAYLOAD, payload_4, 'lbm')
+        self.aviary_inputs.set_val(Payload_Range.MAX_FUEL_0_PAYLOAD_RANGE, range_4, 'NM')
 
         #writes csv file in dashboard
         script_name = os.path.splitext(os.path.basename(sys.argv[0]))[0]

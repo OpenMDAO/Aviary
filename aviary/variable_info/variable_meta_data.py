@@ -17,7 +17,7 @@ from aviary.variable_info.enums import (
     ProblemType,
     Verbosity,
 )
-from aviary.variable_info.variables import Aircraft, Dynamic, Mission, Settings
+from aviary.variable_info.variables import Aircraft, Dynamic, Mission, Payload_Range, Settings
 
 # ---------------------------
 # Meta data associated with variables in the aircraft data hierarchy.
@@ -8009,6 +8009,109 @@ add_meta_data(
     desc='speed during taxi, must be nonzero if pycycle is enabled',
     option=True,
     default_value=0.0001,
+)
+
+#  .----------------.  .----------------.  .----------------.  .----------------.  .----------------.  .----------------.  .----------------.  .----------------. 
+# | .--------------. || .--------------. || .--------------. || .--------------. || .--------------. || .--------------. || .--------------. || .--------------. |
+# | |   ______     | || |      __      | || |  ____  ____  | || |   _____      | || |     ____     | || |      __      | || |  ________    | || |              | |
+# | |  |_   __ \   | || |     /  \     | || | |_  _||_  _| | || |  |_   _|     | || |   .'    `.   | || |     /  \     | || | |_   ___ `.  | || |              | |
+# | |    | |__) |  | || |    / /\ \    | || |   \ \  / /   | || |    | |       | || |  /  .--.  \  | || |    / /\ \    | || |   | |   `. \ | || |    ______    | |
+# | |    |  ___/   | || |   / ____ \   | || |    \ \/ /    | || |    | |   _   | || |  | |    | |  | || |   / ____ \   | || |   | |    | | | || |   |______|   | |
+# | |   _| |_      | || | _/ /    \ \_ | || |    _|  |_    | || |   _| |__/ |  | || |  \  `--'  /  | || | _/ /    \ \_ | || |  _| |___.' / | || |              | |
+# | |  |_____|     | || ||____|  |____|| || |   |______|   | || |  |________|  | || |   `.____.'   | || ||____|  |____|| || | |________.'  | || |              | |
+# | |              | || |              | || |              | || |              | || |              | || |              | || |              | || |              | |
+# | '--------------' || '--------------' || '--------------' || '--------------' || '--------------' || '--------------' || '--------------' || '--------------' |
+#  '----------------'  '----------------'  '----------------'  '----------------'  '----------------'  '----------------'  '----------------'  '----------------' 
+#  .----------------.  .----------------.  .-----------------. .----------------.  .----------------.                                                             
+# | .--------------. || .--------------. || .--------------. || .--------------. || .--------------. |                                                            
+# | |  _______     | || |      __      | || | ____  _____  | || |    ______    | || |  _________   | |                                                            
+# | | |_   __ \    | || |     /  \     | || ||_   \|_   _| | || |  .' ___  |   | || | |_   ___  |  | |                                                            
+# | |   | |__) |   | || |    / /\ \    | || |  |   \ | |   | || | / .'   \_|   | || |   | |_  \_|  | |                                                            
+# | |   |  __ /    | || |   / ____ \   | || |  | |\ \| |   | || | | |    ____  | || |   |  _|  _   | |                                                            
+# | |  _| |  \ \_  | || | _/ /    \ \_ | || | _| |_\   |_  | || | \ `.___]  _| | || |  _| |___/ |  | |                                                            
+# | | |____| |___| | || ||____|  |____|| || ||_____|\____| | || |  `._____.'   | || | |_________|  | |                                                            
+# | |              | || |              | || |              | || |              | || |              | |                                                            
+# | '--------------' || '--------------' || '--------------' || '--------------' || '--------------' |                                                            
+#  '----------------'  '----------------'  '----------------'  '----------------'  '----------------'   
+
+add_meta_data(
+    Payload_Range.MAX_FUEL_0_PAYLOAD_PAYLOAD,
+    meta_data=_MetaData,
+    historical_name={'GASP': None, 'FLOPS': None, 'LEAPS1': None},
+    units='lbm',
+    desc='payload value during a ferry mission, should be 0',
+    option=True,
+    default_value=0.0,
+)
+
+add_meta_data(
+    Payload_Range.MAX_FUEL_0_PAYLOAD_RANGE,
+    meta_data=_MetaData,
+    historical_name={'GASP': None, 'FLOPS': None, 'LEAPS1': None},
+    units='NM',
+    desc='maximum range the aircraft can fly with full fuel, and 0 payload',
+    option=True,
+    default_value=0.0,
+)
+
+add_meta_data(
+    Payload_Range.MAX_FUEL_PLUS_PAYLOAD_PAYLOAD,
+    meta_data=_MetaData,
+    historical_name={'GASP': None, 'FLOPS': None, 'LEAPS1': None},
+    units='lbm',
+    desc='payload added after fuel is at capacity to maintain the same gross mass as the sizing mission',
+    option=True,
+    default_value=0.0,
+)
+
+add_meta_data(
+    Payload_Range.MAX_FUEL_PLUS_PAYLOAD_RANGE,
+    meta_data=_MetaData,
+    historical_name={'GASP': None, 'FLOPS': None, 'LEAPS1': None},
+    units='NM',
+    desc='maximum range the aircraft can fly with payload added after fuel is at capacity to maintain the same gross mass as the sizing mission',
+    option=True,
+    default_value=0.0,
+)
+
+add_meta_data(
+    Payload_Range.MAX_PAYLOAD_0_FUEL_PAYLOAD,
+    meta_data=_MetaData,
+    historical_name={'GASP': None, 'FLOPS': None, 'LEAPS1': None},
+    units='lbm',
+    desc='maximum structural payload capacity',
+    option=True,
+    default_value=0.0,
+)
+
+add_meta_data(
+    Payload_Range.MAX_PAYLOAD_0_FUEL_RANGE,
+    meta_data=_MetaData,
+    historical_name={'GASP': None, 'FLOPS': None, 'LEAPS1': None},
+    units='NM',
+    desc='range value with maximum payload and 0 fuel, will always be 0',
+    option=True,
+    default_value=0.0,
+)
+
+add_meta_data(
+    Payload_Range.MAX_PAYLOAD_PLUS_FUEL_PAYLOAD,
+    meta_data=_MetaData,
+    historical_name={'GASP': None, 'FLOPS': None, 'LEAPS1': None},
+    units='lbm',
+    desc='maximum payload capacity with fuel for design mission',
+    option=True,
+    default_value=0.0,
+)
+
+add_meta_data(
+    Payload_Range.MAX_PAYLOAD_PLUS_FUEL_RANGE,
+    meta_data=_MetaData,
+    historical_name={'GASP': None, 'FLOPS': None, 'LEAPS1': None},
+    units='NM',
+    desc='range achieved with user input paylod and designed fuel',
+    option=True,
+    default_value=0.0,
 )
 
 #  .----------------.  .----------------.  .----------------.  .----------------.  .----------------.  .-----------------. .----------------.  .----------------.
