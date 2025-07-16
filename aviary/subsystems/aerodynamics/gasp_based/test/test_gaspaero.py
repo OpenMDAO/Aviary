@@ -542,7 +542,7 @@ class FormFactorAndSIWBTest(unittest.TestCase):
         prob.run_model()
 
         tol = 1e-5
-        assert_near_equal(prob['body_form_factor'], 1.35024726, tol)
+        assert_near_equal(prob[Aircraft.Fuselage.FORM_FACTOR], 1.35024726, tol)
         assert_near_equal(prob['siwb'], 0.964972794, tol)
 
         partial_data = prob.check_partials(out_stream=None, method='cs')
@@ -569,7 +569,7 @@ class BWBFormFactorAndSIWBTest(unittest.TestCase):
         prob.run_model()
 
         tol = 1e-5
-        assert_near_equal(prob['body_form_factor'], 1.35024726, tol)
+        assert_near_equal(prob[Aircraft.Fuselage.FORM_FACTOR], 1.35024726, tol)
         assert_near_equal(prob['siwb'], 0.964972794, tol)
 
         partial_data = prob.check_partials(out_stream=None, method='cs')
@@ -673,7 +673,7 @@ class AeroGeomTest(unittest.TestCase):
         prob.model.set_input_defaults(Aircraft.Strut.CHORD, 0.0, units='ft')
         prob.model.set_input_defaults('ufac', [0.975, 0.975], units='unitless')
         prob.model.set_input_defaults('siwb', 0.96497277, units='unitless')
-        prob.model.set_input_defaults('body_form_factor', 1.35024721, units='unitless')
+        prob.model.set_input_defaults(Aircraft.Fuselage.FORM_FACTOR, 1.35024721, units='unitless')
 
         setup_model_options(prob, options)
 
@@ -688,9 +688,9 @@ class AeroGeomTest(unittest.TestCase):
         assert_near_equal(prob['SA2'], [-0.13650645, -0.13650645], tol)
         assert_near_equal(prob['SA3'], [0.03398855, 0.03398855], tol)
         assert_near_equal(prob['SA4'], [0.10197432, 0.10197432], tol)
-        assert_near_equal(prob['SA5'], [0.00962771, 0.00962771], tol)
+        assert_near_equal(prob['SA5'], [0.00773867, 0.00773867], tol)
         assert_near_equal(prob['SA6'], [2.09276756, 2.09276756], tol)
-        assert_near_equal(prob['SA7'], [0.04049836, 0.04049836], tol)
+        assert_near_equal(prob['SA7'], [0.03978045, 0.03978045], tol)
 
 
 class BWBAeroSetupTest(unittest.TestCase):
@@ -800,11 +800,11 @@ class BWBAeroSetupTest(unittest.TestCase):
         assert_near_equal(prob['SA2'], [-0.13650645, -0.13650645], tol)
         assert_near_equal(prob['SA3'], [0.03398855, 0.03398855], tol)
         assert_near_equal(prob['SA4'], [0.10197432, 0.10197432], tol)
-        assert_near_equal(prob['SA5'], [0.00962771, 0.00962771], tol)
+        assert_near_equal(prob['SA5'], [0.00773867, 0.00773867], tol)
         assert_near_equal(prob['SA6'], [2.09276756, 2.09276756], tol)
-        assert_near_equal(prob['SA7'], [0.04049829, 0.04049829], tol)
+        assert_near_equal(prob['SA7'], [0.03978045, 0.03978045], tol)
 
-        assert_near_equal(prob['body_form_factor'], 1.35024721, tol)
+        assert_near_equal(prob[Aircraft.Fuselage.FORM_FACTOR], 1.35024721, tol)
         assert_near_equal(prob['siwb'], 0.96497277, tol)
 
 
@@ -1337,13 +1337,13 @@ class BWBCruiseAeroTest(unittest.TestCase):
         assert_near_equal(prob['alpha_stall'], [14.81304968, 14.81304968], tol)
         assert_near_equal(prob['CL_max'], [1.53789318, 1.537893184], tol)
 
-        assert_near_equal(prob['CD'], [0.02250927, 0.02250927], tol)
+        assert_near_equal(prob['CD'], [0.02049917, 0.02049917], tol)
 
         CL_over_CD = prob['CL'] / prob['CD']
-        assert_near_equal(CL_over_CD, [18.24450541, 18.24450541], tol)
+        assert_near_equal(CL_over_CD, [20.03351946, 20.03351946], tol)
 
         assert_near_equal(prob[Dynamic.Vehicle.LIFT], [880.00827387, 880.00827387], tol)
-        assert_near_equal(prob[Dynamic.Vehicle.DRAG], [48.23415346, 48.23415346], tol)
+        assert_near_equal(prob[Dynamic.Vehicle.DRAG], [43.92679357, 43.92679357], tol)
 
     def test_case2(self):
         """output_alpha = True"""
@@ -1372,9 +1372,9 @@ class BWBCruiseAeroTest(unittest.TestCase):
         assert_near_equal(prob['alpha_stall'], [14.81304968, 14.81304968], tol)
         assert_near_equal(prob['CL_max'], [1.53789318, 1.53789318], tol)
 
-        assert_near_equal(prob['CD'], [0.02152522, 0.02152522], tol)
+        assert_near_equal(prob['CD'], [0.01953165, 0.01953165], tol)
         assert_near_equal(prob[Dynamic.Vehicle.LIFT], [817.74, 817.74], tol)
-        assert_near_equal(prob[Dynamic.Vehicle.DRAG], [46.12547914, 46.12547914], tol)
+        assert_near_equal(prob[Dynamic.Vehicle.DRAG], [41.8535328, 41.8535328], tol)
 
 
 class BWBLowSpeedAeroTest1(unittest.TestCase):
@@ -1512,9 +1512,9 @@ class BWBLowSpeedAeroTest1(unittest.TestCase):
         assert_near_equal(prob['alpha_stall'], [17.98090961, 17.98090961], tol)
         assert_near_equal(prob['CL_max'], [2.188, 2.188], tol)
 
-        assert_near_equal(prob['CD'], [0.02004037, 0.02004037], tol)
+        assert_near_equal(prob['CD'], [0.01760887, 0.01760887], tol)
         assert_near_equal(prob[Dynamic.Vehicle.LIFT], [345.98630135, 345.98630135], tol)
-        assert_near_equal(prob[Dynamic.Vehicle.DRAG], [42.94364828, 42.94364828], tol)
+        assert_near_equal(prob[Dynamic.Vehicle.DRAG], [37.73329763, 37.73329763], tol)
 
 
 class BWBLowSpeedAeroTest2(unittest.TestCase):
@@ -1650,8 +1650,8 @@ class BWBLowSpeedAeroTest2(unittest.TestCase):
         aoas = [-2.0, 0.0, 2.0]
         CLs = [0.0578734, 0.21906393, 0.38025445]
         CL_Full_Flaps = [0.08484997, 0.24604049, 0.40723101]
-        CDs = [0.02565371, 0.02592178, 0.02843794]
-        CL_Over_CDs = [3.30751, 9.49165041, 14.31999033]
+        CDs = [0.02322085, 0.02348309, 0.02594446]
+        CL_Over_CDs = [3.65404194, 10.47734718, 15.69626012]
         n = len(aoas)
         for i in range(n):
             prob.model.set_input_defaults(
@@ -1800,8 +1800,8 @@ class BWBLowSpeedAeroTest3(unittest.TestCase):
         aoas = [-2.0, 0.0, 2.0]
         CLs = [0.15883506, 0.32002558, 0.4812161]
         CL_Full_Flaps = [0.19824452, 0.35943504, 0.52062556]
-        CDs = [0.02962435, 0.02970182, 0.03208621]
-        CL_Over_CDs = [6.69194377, 12.10144948, 16.22583432]
+        CDs = [0.02718958, 0.02726536, 0.02959784]
+        CL_Over_CDs = [7.29119323, 13.18284568, 17.5899862]
         n = len(aoas)
         for i in range(n):
             print(f'i = {i}')
@@ -1820,6 +1820,6 @@ class BWBLowSpeedAeroTest3(unittest.TestCase):
 
 if __name__ == '__main__':
     # unittest.main()
-    test = BWBCruiseAeroTest()
+    test = GASPAeroTest()
     test.setUp()
-    test.test_case2()
+    test.test_cruise()
