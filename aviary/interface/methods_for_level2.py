@@ -29,7 +29,7 @@ from aviary.variable_info.enums import (
 )
 from aviary.variable_info.functions import setup_model_options
 from aviary.variable_info.variable_meta_data import _MetaData as BaseMetaData
-from aviary.variable_info.variables import Aircraft, Dynamic, Mission, Payload_Range, Settings
+from aviary.variable_info.variables import Aircraft, Dynamic, Mission, Settings
 
 FLOPS = LegacyCode.FLOPS
 GASP = LegacyCode.GASP
@@ -751,16 +751,17 @@ class AviaryProblem(om.Problem):
         equations_of_motion = self.aviary_inputs.get_val(Settings.EQUATIONS_OF_MOTION)
 
         # Off-design missions do not currently work for GASP masses or missions.
-        if (
-            mass_method == LegacyCode.FLOPS
-            and equations_of_motion is EquationsOfMotion.HEIGHT_ENERGY
-        ):
-            if payload_range_bool and self.model.problem_type is ProblemType.SIZING:
-                # Checks to determine if the set gross mass for off design would be greater
-                # Than the gross mass of the sizing mission.
-                payload_range_matrix = self.run_payload_range()
-                print(payload_range_matrix[1])
-                print(payload_range_matrix[0])
+        if self.problem_ran_successfully:
+            if (
+                mass_method == LegacyCode.FLOPS
+                and equations_of_motion is EquationsOfMotion.HEIGHT_ENERGY
+            ):
+                if payload_range_bool and self.model.problem_type is ProblemType.SIZING:
+                    # Checks to determine if the set gross mass for off design would be greater
+                    # Than the gross mass of the sizing mission.
+                    payload_range_matrix = self.run_payload_range()
+                    print(payload_range_matrix[1])
+                    print(payload_range_matrix[0])
 
     def run_payload_range(self):
         # Ensure proper transfer of json files.
@@ -784,16 +785,20 @@ class AviaryProblem(om.Problem):
         range_1 = 0
 
         # Set variables for variable hierarchy
-        self.aviary_inputs.set_val(Payload_Range.MAX_PAYLOAD_ZERO_FUEL_PAYLOAD, payload_1, 'lbm')
-        self.aviary_inputs.set_val(Payload_Range.MAX_PAYLOAD_ZERO_FUEL_RANGE, range_1, 'NM')
+        self.aviary_inputs.set_val(
+            Mission.PayloadRange.MAX_PAYLOAD_ZERO_FUEL_PAYLOAD, payload_1, 'lbm'
+        )
+        self.aviary_inputs.set_val(Mission.PayloadRange.MAX_PAYLOAD_ZERO_FUEL_RANGE, range_1, 'NM')
 
         # point 2, sizing mission which is assumed to be the point of max payload + fuel on the payload and range diagram
         payload_2 = payload_1
         range_2 = float(self.get_val(Mission.Summary.RANGE)[0])
 
         # Set variables for variable hierarchy
-        self.aviary_inputs.set_val(Payload_Range.MAX_PAYLOAD_PLUS_FUEL_PAYLOAD, payload_2, 'lbm')
-        self.aviary_inputs.set_val(Payload_Range.MAX_PAYLOAD_PLUS_FUEL_RANGE, range_2, 'NM')
+        self.aviary_inputs.set_val(
+            Mission.PayloadRange.MAX_PAYLOAD_PLUS_FUEL_PAYLOAD, payload_2, 'lbm'
+        )
+        self.aviary_inputs.set_val(Mission.PayloadRange.MAX_PAYLOAD_PLUS_FUEL_RANGE, range_2, 'NM')
 
         # check if fuel capacity does not exceed sizing mission design gross mass
         gross_mass = float(self.get_val(Mission.Summary.GROSS_MASS)[0])
@@ -848,8 +853,10 @@ class AviaryProblem(om.Problem):
             range_3 = range_2
 
         # Set variables for variable hierarchy
-        self.aviary_inputs.set_val(Payload_Range.MAX_FUEL_PLUS_PAYLOAD_PAYLOAD, payload_3, 'lbm')
-        self.aviary_inputs.set_val(Payload_Range.MAX_FUEL_PLUS_PAYLOAD_RANGE, range_3, 'NM')
+        self.aviary_inputs.set_val(
+            Mission.PayloadRange.MAX_FUEL_PLUS_PAYLOAD_PAYLOAD, payload_3, 'lbm'
+        )
+        self.aviary_inputs.set_val(Mission.PayloadRange.MAX_FUEL_PLUS_PAYLOAD_RANGE, range_3, 'NM')
 
         # Point 4, ferry mission with maximum fuel and 0 payload,
         max_fuel_zero_payload_payload = operating_mass + fuel_capacity
@@ -870,8 +877,10 @@ class AviaryProblem(om.Problem):
         range_4 = float(prob_fallout_ferry.get_val(Mission.Summary.RANGE))
 
         # Set variables for variable hierarchy
-        self.aviary_inputs.set_val(Payload_Range.MAX_FUEL_ZERO_PAYLOAD_PAYLOAD, payload_4, 'lbm')
-        self.aviary_inputs.set_val(Payload_Range.MAX_FUEL_ZERO_PAYLOAD_RANGE, range_4, 'NM')
+        self.aviary_inputs.set_val(
+            Mission.PayloadRange.MAX_FUEL_ZERO_PAYLOAD_PAYLOAD, payload_4, 'lbm'
+        )
+        self.aviary_inputs.set_val(Mission.PayloadRange.MAX_FUEL_ZERO_PAYLOAD_RANGE, range_4, 'NM')
 
         # writes csv file in dashboard
         script_name = os.path.splitext(os.path.basename(sys.argv[0]))[0]

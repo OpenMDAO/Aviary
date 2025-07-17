@@ -1438,7 +1438,7 @@ def dashboard(script_name, problem_recorder, driver_recorder, port, run_in_backg
 
     # Paylaod Range Output Pane
     create_payload_range_frame(
-        'Payload/Range Output Chart',
+        'Payload/Range Diagram',
         results_tabs_list,
         """
         Defines key operating points on the aircraft's payload-range envelope from Design and Fallout missions.

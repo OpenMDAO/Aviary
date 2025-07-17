@@ -742,6 +742,22 @@ class Mission:
         FUEL = 'mission:objectives:fuel'
         RANGE = 'mission:objectives:range'
 
+    class PayloadRange:
+        # These values are the outputs from a payload-range analysis
+        # for the given mission.
+
+        MAX_FUEL_PLUS_PAYLOAD_PAYLOAD = 'payload_range:max_fuel_plus_payload_payload'
+        MAX_FUEL_PLUS_PAYLOAD_RANGE = 'payload_range:max_fuel_plus_payload_range'
+
+        MAX_FUEL_ZERO_PAYLOAD_PAYLOAD = 'payload_range:max_fuel_zero_payload_payload'
+        MAX_FUEL_ZERO_PAYLOAD_RANGE = 'payload_range:max_fuel_zero_payload_range'
+
+        MAX_PAYLOAD_PLUS_FUEL_PAYLOAD = 'payload_range:max_payload_plus_fuel_payload'
+        MAX_PAYLOAD_PLUS_FUEL_RANGE = 'payload_range:max_payload_plus_fuel_range'
+
+        MAX_PAYLOAD_ZERO_FUEL_PAYLOAD = 'payload_range:max_payload_zero_fuel_payload'
+        MAX_PAYLOAD_ZERO_FUEL_RANGE = 'payload_range:max_payload_zero_fuel_range'
+
     class Summary:
         # These values are inputs and outputs to/from mission analysis
         # for the given mission (whether it is design or off-design).
@@ -792,22 +808,6 @@ class Mission:
     class Taxi:
         DURATION = 'mission:taxi:duration'
         MACH = 'mission:taxi:mach'
-
-
-class Payload_Range:
-    """Payload_Range data hierarchy."""
-
-    MAX_FUEL_PLUS_PAYLOAD_PAYLOAD = 'payload_range:max_fuel_plus_payload_payload'
-    MAX_FUEL_PLUS_PAYLOAD_RANGE = 'payload_range:max_fuel_plus_payload_range'
-
-    MAX_FUEL_ZERO_PAYLOAD_PAYLOAD = 'payload_range:max_fuel_zero_payload_payload'
-    MAX_FUEL_ZERO_PAYLOAD_RANGE = 'payload_range:max_fuel_zero_payload_range'
-
-    MAX_PAYLOAD_PLUS_FUEL_PAYLOAD = 'payload_range:max_payload_plus_fuel_payload'
-    MAX_PAYLOAD_PLUS_FUEL_RANGE = 'payload_range:max_payload_plus_fuel_range'
-
-    MAX_PAYLOAD_ZERO_FUEL_PAYLOAD = 'payload_range:max_payload_zero_fuel_payload'
-    MAX_PAYLOAD_ZERO_FUEL_RANGE = 'payload_range:max_payload_zero_fuel_range'
 
 
 class Settings:
