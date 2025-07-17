@@ -425,29 +425,3 @@ class MainGearLength(om.ExplicitComponent):
             partials[Aircraft.LandingGear.MAIN_GEAR_OLEO_LENGTH, Aircraft.Wing.SPAN] = (
                 dcmlg_dyee * dyee_dspan
             )
-
-
-class LandingGearTotalMass(om.ExplicitComponent):
-    """
-    Component calculates total landing gear mass.
-    """
-
-    def setup(self):
-        add_aviary_input(self, Aircraft.LandingGear.MAIN_GEAR_MASS, units='lbm')
-        add_aviary_input(self, Aircraft.LandingGear.NOSE_GEAR_MASS, units='lbm')
-
-        add_aviary_output(self, Aircraft.LandingGear.TOTAL_MASS, units='lbm')
-
-    def setup_partials(self):
-        self.declare_partials(
-            Aircraft.LandingGear.TOTAL_MASS,
-            Aircraft.LandingGear.MAIN_GEAR_MASS,
-            Aircraft.LandingGear.NOSE_GEAR_MASS,
-            val=1.0,
-        )
-
-    def compute(self, inputs, outputs):
-        main_gear_mass = inputs[Aircraft.LandingGear.MAIN_GEAR_MASS] * GRAV_ENGLISH_LBM
-        nose_gear_mass = inputs[Aircraft.LandingGear.NOSE_GEAR_MASS] * GRAV_ENGLISH_LBM
-
-        outputs[Aircraft.LandingGear.TOTAL_MASS] = main_gear_mass + nose_gear_mass
