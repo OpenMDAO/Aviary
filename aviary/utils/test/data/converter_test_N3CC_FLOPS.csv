@@ -143,6 +143,7 @@ aircraft:wing:thickness_to_chord,0.12233,0.0,0.0,0.0,0.0,0.0,unitless
 aircraft:wing:thickness_to_chord_dist,0.14233,0.12233,0.1108,0.1058,unitless
 aircraft:wing:thickness_to_chord_reference,0.116565,unitless
 aircraft:wing:ultimate_load_factor,3.75,unitless
+aircraft:wing:use_detailed_mass,True,unitless
 aircraft:wing:var_sweep_mass_penalty,0.0,unitless
 aircraft:wing:wetted_area,2210.280228,ft**2
 mission:constraints:max_mach,0.785,unitless
