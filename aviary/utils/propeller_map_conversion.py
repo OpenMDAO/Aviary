@@ -156,7 +156,7 @@ def _setup_PMC_parser(parser):
         'output_file',
         type=str,
         nargs='?',
-        help='path to file where new converted data will be written',
+        help='path to file where new converted data will be written (optional)',
     )
     # currently removing as there is only one allowed map type at the moment
     # parser.add_argument(
