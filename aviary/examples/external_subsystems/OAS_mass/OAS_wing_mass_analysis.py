@@ -211,7 +211,7 @@ class OAStructures(om.ExplicitComponent):
         self.add_input('engine_mass', val=0.0, units='kg')
         self.add_input('engine_location', val=np.array([0.0, 0.0, 0.0]), units='m')
 
-        self.add_output('wing_weight', units='kg')
+        self.add_output('wing_mass', units='kg')
         self.add_output('fuel_burn', units='kg')
 
         self.declare_partials(of=['*'], wrt=['fuel'], method='fd')
@@ -221,7 +221,7 @@ class OAStructures(om.ExplicitComponent):
     def compute(self, inputs, outputs):
         start_time = time.time()
 
-        # perform the wing structural optimization and return the wing weight
+        # perform the wing structural optimization and return the wing mass
 
         mesh = user_mesh()
 
@@ -551,7 +551,7 @@ class OAStructures(om.ExplicitComponent):
         self.previous_DV_values['alpha_maneuver'] = prob['alpha_maneuver']
 
         # output wing weight and fuel burn
-        outputs['wing_weight'] = prob[name + '.structural_mass'][0]
+        outputs['wing_mass'] = prob[name + '.structural_mass'][0]
         outputs['fuel_burn'] = prob['AS_point_0.fuelburn'][0]
 
         # calculate execution time
