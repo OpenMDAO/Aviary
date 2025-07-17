@@ -55,7 +55,7 @@ class BodyTankCalculations(om.ExplicitComponent):
         self.add_output(
             'wingfuel_mass_min', val=0, units='lbm', desc='WFWMIN: minimum wing fuel mass'
         )
-        add_aviary_output(self, Aircraft.Fuel.TOTAL_CAPACITY, units='lbm')
+        add_aviary_output(self, Aircraft.Fuel.TOTAL_CAPACITY, units='lbm', desc='WFAMAX')
 
     def setup_partials(self):
         self.declare_partials(
