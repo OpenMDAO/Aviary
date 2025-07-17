@@ -199,6 +199,7 @@ inputs.set_val(Aircraft.Wing.CHORD_PER_SEMISPAN_DIST, np.array([0.31, 0.23, 0.08
 inputs.set_val(Aircraft.Wing.COMPOSITE_FRACTION, 0.2)
 inputs.set_val(Aircraft.Wing.CONTROL_SURFACE_AREA, 137, 'ft**2')
 inputs.set_val(Aircraft.Wing.CONTROL_SURFACE_AREA_RATIO, 0.1)
+inputs.set_val(Aircraft.Wing.USE_DETAILED_MASS, True)
 inputs.set_val(Aircraft.Wing.GLOVE_AND_BAT, 134.0, 'ft**2')
 inputs.set_val(Aircraft.Wing.INPUT_STATION_DIST, np.array([0.0, 0.2759, 0.9367]))
 inputs.set_val(Aircraft.Wing.LOAD_DISTRIBUTION_CONTROL, 2.0)
