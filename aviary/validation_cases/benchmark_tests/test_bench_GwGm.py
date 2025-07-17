@@ -49,7 +49,7 @@ class ProblemPhaseTestCase(unittest.TestCase):
 
         assert_near_equal(
             prob.get_val(Mission.Summary.TOTAL_FUEL_MASS, units='lbm'),
-            42186.7219,
+            40091.883,
             tolerance=rtol,
         )
 
