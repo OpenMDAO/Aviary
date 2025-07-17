@@ -1466,7 +1466,7 @@ class AviaryGroup(om.Group):
                 self.phase_objects[idx].apply_initial_guesses(self, 'traj', phase)
                 if (
                     self.phase_info[phase_name]['user_options'].get('ground_roll')
-                    and not self.phase_info[phase_name]['user_options'].get('rotation')
+                    and idx==0
                 ):
                     continue
 
