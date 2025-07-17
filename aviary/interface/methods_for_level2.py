@@ -883,13 +883,7 @@ class AviaryProblem(om.Problem):
         self.aviary_inputs.set_val(Mission.PayloadRange.MAX_FUEL_ZERO_PAYLOAD_RANGE, range_4, 'NM')
 
         # writes csv file in dashboard
-        script_name = os.path.splitext(os.path.basename(sys.argv[0]))[0]
-        output_dir = f'{script_name}_out'
-        reports_dir = os.path.join(output_dir, 'reports')
-
-        os.makedirs(reports_dir, exist_ok=True)
-
-        csv_filepath = os.path.join(reports_dir, 'payload_range_data.csv')
+        csv_filepath = Path(self.get_reports_dir()) / 'payload_range_data.csv'
         with open(csv_filepath, 'w', newline='') as csvfile:
             writer = csv.writer(csvfile)
 
