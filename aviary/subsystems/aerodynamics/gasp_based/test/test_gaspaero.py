@@ -219,7 +219,6 @@ def _init_geom(prob):
     prob.set_val(Aircraft.HorizontalTail.MOMENT_RATIO, setup_data['coelth'])
     # ground & cruise, mission: alt
     prob.set_val(Aircraft.Wing.FORM_FACTOR, setup_data['ckw'])
-    prob.set_val(Aircraft.Fuselage.FORM_FACTOR, setup_data['ckf'])
     prob.set_val(Aircraft.Nacelle.FORM_FACTOR, setup_data['ckn'])
     prob.set_val(Aircraft.VerticalTail.FORM_FACTOR, setup_data['ckvt'])
     prob.set_val(Aircraft.HorizontalTail.FORM_FACTOR, setup_data['ckht'])
@@ -636,7 +635,6 @@ class AeroGeomTest(unittest.TestCase):
             Dynamic.Atmosphere.KINEMATIC_VISCOSITY, [0.00034882, 0.00034882], units='ft**2/s'
         )
         prob.model.set_input_defaults(Aircraft.Wing.FORM_FACTOR, 2.563, units='unitless')
-        prob.model.set_input_defaults(Aircraft.Fuselage.FORM_FACTOR, 1.35, units='unitless')
         prob.model.set_input_defaults(Aircraft.Nacelle.FORM_FACTOR, 1.2, units='unitless')
         prob.model.set_input_defaults(Aircraft.VerticalTail.FORM_FACTOR, 2.361, units='unitless')
         prob.model.set_input_defaults(Aircraft.HorizontalTail.FORM_FACTOR, 2.413, units='unitless')
@@ -749,7 +747,6 @@ class BWBAeroSetupTest(unittest.TestCase):
             Dynamic.Atmosphere.KINEMATIC_VISCOSITY, [0.00034882, 0.00034882], units='ft**2/s'
         )
         prob.model.set_input_defaults(Aircraft.Wing.FORM_FACTOR, 2.563, units='unitless')
-        prob.model.set_input_defaults(Aircraft.Fuselage.FORM_FACTOR, 1.35, units='unitless')
         prob.model.set_input_defaults(Aircraft.Nacelle.FORM_FACTOR, 1.2, units='unitless')
         prob.model.set_input_defaults(Aircraft.VerticalTail.FORM_FACTOR, 2.361, units='unitless')
         prob.model.set_input_defaults(Aircraft.HorizontalTail.FORM_FACTOR, 2.413, units='unitless')
@@ -1242,7 +1239,6 @@ class BWBCruiseAeroTest(unittest.TestCase):
             Dynamic.Atmosphere.KINEMATIC_VISCOSITY, [0.00034882, 0.00034882], units='ft**2/s'
         )
         prob.model.set_input_defaults(Aircraft.Wing.FORM_FACTOR, 2.5627, units='unitless')
-        prob.model.set_input_defaults(Aircraft.Fuselage.FORM_FACTOR, 1.35, units='unitless')
         prob.model.set_input_defaults(Aircraft.Nacelle.FORM_FACTOR, 1.2, units='unitless')
         prob.model.set_input_defaults(Aircraft.VerticalTail.FORM_FACTOR, 2.361, units='unitless')
         prob.model.set_input_defaults(Aircraft.HorizontalTail.FORM_FACTOR, 2.413, units='unitless')
@@ -1428,7 +1424,6 @@ class BWBLowSpeedAeroTest1(unittest.TestCase):
             Dynamic.Atmosphere.KINEMATIC_VISCOSITY, [0.00034882, 0.00034882], units='ft**2/s'
         )
         prob.model.set_input_defaults(Aircraft.Wing.FORM_FACTOR, 2.563, units='unitless')
-        prob.model.set_input_defaults(Aircraft.Fuselage.FORM_FACTOR, 1.35, units='unitless')
         prob.model.set_input_defaults(Aircraft.Nacelle.FORM_FACTOR, 1.2, units='unitless')
         prob.model.set_input_defaults(Aircraft.VerticalTail.FORM_FACTOR, 2.361, units='unitless')
         prob.model.set_input_defaults(Aircraft.HorizontalTail.FORM_FACTOR, 2.413, units='unitless')
@@ -1569,7 +1564,6 @@ class BWBLowSpeedAeroTest2(unittest.TestCase):
             Dynamic.Atmosphere.KINEMATIC_VISCOSITY, [0.00034882, 0.00034882], units='ft**2/s'
         )
         prob.model.set_input_defaults(Aircraft.Wing.FORM_FACTOR, 2.563, units='unitless')
-        prob.model.set_input_defaults(Aircraft.Fuselage.FORM_FACTOR, 1.35, units='unitless')
         prob.model.set_input_defaults(Aircraft.Nacelle.FORM_FACTOR, 1.2, units='unitless')
         prob.model.set_input_defaults(Aircraft.VerticalTail.FORM_FACTOR, 2.361, units='unitless')
         prob.model.set_input_defaults(Aircraft.HorizontalTail.FORM_FACTOR, 2.413, units='unitless')
@@ -1719,7 +1713,6 @@ class BWBLowSpeedAeroTest3(unittest.TestCase):
             Dynamic.Atmosphere.KINEMATIC_VISCOSITY, [0.00034882, 0.00034882], units='ft**2/s'
         )
         prob.model.set_input_defaults(Aircraft.Wing.FORM_FACTOR, 2.563, units='unitless')
-        prob.model.set_input_defaults(Aircraft.Fuselage.FORM_FACTOR, 1.35, units='unitless')
         prob.model.set_input_defaults(Aircraft.Nacelle.FORM_FACTOR, 1.2, units='unitless')
         prob.model.set_input_defaults(Aircraft.VerticalTail.FORM_FACTOR, 2.361, units='unitless')
         prob.model.set_input_defaults(Aircraft.HorizontalTail.FORM_FACTOR, 2.413, units='unitless')
@@ -1820,4 +1813,7 @@ class BWBLowSpeedAeroTest3(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    unittest.main()
+    # unittest.main()
+    test = BWBLowSpeedAeroTest3()
+    test.setUp()
+    test.test_case1()

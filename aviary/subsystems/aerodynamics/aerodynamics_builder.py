@@ -750,7 +750,6 @@ AERO_2DOF_INPUTS = [
     Aircraft.Design.STATIC_MARGIN,
     Aircraft.Fuselage.AVG_DIAMETER,
     Aircraft.Fuselage.FLAT_PLATE_AREA_INCREMENT,
-    Aircraft.Fuselage.FORM_FACTOR,
     Aircraft.Fuselage.LENGTH,
     Aircraft.Fuselage.WETTED_AREA,
     Aircraft.HorizontalTail.AREA,
