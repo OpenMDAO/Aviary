@@ -12,7 +12,6 @@ from aviary.utils.preprocessors import preprocess_options
 from aviary.utils.test_utils.default_subsystems import (
     get_default_premission_subsystems,
     get_geom_and_mass_subsystems,
-    get_geom_subsystem,
 )
 from aviary.variable_info.functions import setup_model_options
 from aviary.variable_info.variables import Aircraft, Mission
