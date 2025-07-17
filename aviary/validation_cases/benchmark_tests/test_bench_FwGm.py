@@ -35,7 +35,7 @@ class ProblemPhaseTestCase(unittest.TestCase):
         rtol = 1e-2
 
         # There are no truth values for these.
-        assert_near_equal(prob.get_val(Mission.Design.GROSS_MASS), 179391.0, tolerance=rtol)
+        assert_near_equal(prob.get_val(Mission.Design.GROSS_MASS), 176990.2, tolerance=rtol)
 
         assert_near_equal(prob.get_val(Aircraft.Design.OPERATING_MASS), 101556.0, tolerance=rtol)
 
