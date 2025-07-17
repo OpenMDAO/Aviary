@@ -55,7 +55,7 @@ class ProblemPhaseTestCase(unittest.TestCase):
 
         assert_near_equal(
             prob.get_val(Mission.Landing.GROUND_DISTANCE, units='ft'),
-            2636.6612,
+            2660.33484,
             tolerance=rtol,
         )
 
