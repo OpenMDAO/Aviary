@@ -1,6 +1,4 @@
-# Developer's Notes: GASP based BWB model implementation
-
-The following notes are taken from PR submissions
+# GASP based BWB model implementation
 
 ## BWB geometry and mass
 
@@ -36,11 +34,15 @@ The following notes are taken from PR submissions
 | Aviary | &nbsp; &nbsp; | GASP | &nbsp; &nbsp; | Observation |
 | ------- | ------- | ------- | -------- | ------------- |
 | Aircraft.Design.FIXED_USEFUL_LOAD | 5972 | WFUL | 5775 | different unit weight of pilots and attendents |
-| Aircraft.Wing.HIGH_LIFT_MASS | 1069 | WHLDEV | 974 | In GAST, wing loading is a variable, but in Aviary, it is a constant |
-| Aircraft.Wing.MASS | 7056 | WW | 6962 | GASP includes winglet (7645 - 682.6) |
-| Mission.Design.FUEL_MASS | 34095 | WFADES | 33268 | BodyTank algorithm is different |
-| Aircraft.Fuel.TOTAL_CAPACITY | 36836 | WFAMAX | 33268 | BodyTank algorithm is different |
+| Aircraft.Wing.HIGH_LIFT_MASS | 972 | WHLDEV | 974 | In GAST, wing loading is a variable, but in Aviary, it is a constant |
+| Aircraft.Fuel.FUEL_SYSTEM_MASS | 760 | WFSS | 1281 | the mass in GAST is computed after engine sizing. |
+| Aircraft.Design.STRUCTURE_MASS | 44471 | WST | 45623 | the mass in GAST is computed after engine sizing. |
+| Mission.Design.FUEL_MASS | 19744 | WFADES | 33268 | BodyTank algorithm is different and the mass in GAST is computed after engine sizing. |
+| Aircraft.Propulsion.MASS | 8072 | WP | 8592 | the mass in GAST is computed after engine sizing. |
+| Aircraft.Fuel.TOTAL_CAPACITY | 19744 | WFAMAX | 33268 | BodyTank algorithm is different and the mass in GAST is computed after engine sizing. |
 | | | | |
+
+As we see, the fuel related masses are quite different from GASP. This is mainly due to the fact that GASP computes the fuel masses after engine sizing.
 
 ## BWB aerodynamics
 
