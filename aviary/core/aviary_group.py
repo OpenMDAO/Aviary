@@ -1464,10 +1464,8 @@ class AviaryGroup(om.Group):
 
             if self.mission_method is SOLVED_2DOF:
                 self.phase_objects[idx].apply_initial_guesses(self, 'traj', phase)
-                if (
-                    self.phase_info[phase_name]['user_options'].get('ground_roll')
-                    and idx==0
-                ):
+
+                if self.phase_info[phase_name]['user_options'].get('ground_roll') and idx==0:
                     continue
 
             # If not, fetch the initial guesses specific to the phase
