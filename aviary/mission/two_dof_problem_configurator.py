@@ -1,8 +1,6 @@
 import openmdao.api as om
 
 from aviary.constants import GRAV_ENGLISH_LBM, RHO_SEA_LEVEL_ENGLISH
-from aviary.models.missions.two_dof_fiti_default import add_default_sgm_args
-from aviary.mission.gasp_based.idle_descent_estimation import add_descent_estimation_as_submodel
 from aviary.mission.gasp_based.ode.landing_ode import LandingSegment
 from aviary.mission.gasp_based.ode.params import ParamPort
 from aviary.mission.gasp_based.ode.taxi_ode import TaxiSegment
@@ -19,7 +17,7 @@ from aviary.subsystems.propulsion.utils import build_engine_deck
 from aviary.utils.functions import add_opts2vals, create_opts2vals
 from aviary.utils.process_input_decks import initialization_guessing, update_GASP_options
 from aviary.utils.utils import wrapped_convert_units
-from aviary.variable_info.enums import AnalysisScheme, LegacyCode
+from aviary.variable_info.enums import LegacyCode
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 from aviary.mission.utils import process_guess_var
 
@@ -117,18 +115,7 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
         AviaryValues
             General default phase_info.
         """
-        if aviary_group.analysis_scheme is AnalysisScheme.COLLOCATION:
-            from aviary.models.missions.two_dof_default import phase_info
-
-        elif aviary_group.analysis_scheme is AnalysisScheme.SHOOTING:
-            from aviary.models.missions.two_dof_fiti_default import (
-                phase_info,
-                phase_info_parameterization,
-            )
-
-            phase_info, _ = phase_info_parameterization(
-                phase_info, None, aviary_group.aviary_inputs
-            )
+        from aviary.models.missions.two_dof_default import phase_info
 
         return phase_info
 
@@ -164,22 +151,6 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
             ]
         )
 
-        add_opts2vals(aviary_group, OptionsToValues, aviary_group.aviary_inputs)
-
-        if aviary_group.analysis_scheme is AnalysisScheme.SHOOTING:
-            aviary_group._add_fuel_reserve_component(
-                post_mission=False, reserves_name='reserve_fuel_estimate'
-            )
-            add_default_sgm_args(aviary_group.descent_phases, aviary_group.ode_args)
-            add_descent_estimation_as_submodel(
-                aviary_group,
-                phases=aviary_group.descent_phases,
-                cruise_mach=aviary_group.cruise_mach,
-                cruise_alt=aviary_group.cruise_alt,
-                reserve_fuel='reserve_fuel_estimate',
-                all_subsystems=aviary_group._get_all_subsystems(),
-            )
-
         # Add thrust-to-weight ratio subsystem
         aviary_group.add_subsystem(
             'tw_ratio',
@@ -200,27 +171,26 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
             Mission.Design.CRUISE_ALTITUDE, units='ft'
         )
 
-        if aviary_group.analysis_scheme is AnalysisScheme.COLLOCATION:
-            # Add event transformation subsystem
-            aviary_group.add_subsystem(
-                'event_xform',
-                om.ExecComp(
-                    ['t_init_gear=m*tau_gear+b', 't_init_flaps=m*tau_flaps+b'],
-                    t_init_gear={'units': 's'},  # initial time that gear comes up
-                    t_init_flaps={'units': 's'},  # initial time that flaps retract
-                    tau_gear={'units': 'unitless'},
-                    tau_flaps={'units': 'unitless'},
-                    m={'units': 's'},
-                    b={'units': 's'},
-                ),
-                promotes_inputs=[
-                    'tau_gear',  # design var
-                    'tau_flaps',  # design var
-                    ('m', Mission.Takeoff.ASCENT_DURATION),
-                    ('b', Mission.Takeoff.ASCENT_T_INITIAL),
-                ],
-                promotes_outputs=['t_init_gear', 't_init_flaps'],  # link to h_fit
-            )
+        # Add event transformation subsystem
+        aviary_group.add_subsystem(
+            'event_xform',
+            om.ExecComp(
+                ['t_init_gear=m*tau_gear+b', 't_init_flaps=m*tau_flaps+b'],
+                t_init_gear={'units': 's'},  # initial time that gear comes up
+                t_init_flaps={'units': 's'},  # initial time that flaps retract
+                tau_gear={'units': 'unitless'},
+                tau_flaps={'units': 'unitless'},
+                m={'units': 's'},
+                b={'units': 's'},
+            ),
+            promotes_inputs=[
+                'tau_gear',  # design var
+                'tau_flaps',  # design var
+                ('m', Mission.Takeoff.ASCENT_DURATION),
+                ('b', Mission.Takeoff.ASCENT_T_INITIAL),
+            ],
+            promotes_outputs=['t_init_gear', 't_init_flaps'],  # link to h_fit
+        )
 
         # Add taxi subsystem
         aviary_group.add_subsystem(
@@ -453,141 +423,124 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
             When True, then connected=True. This allows the connections to be
             handled by constraints if `phases` is a parallel group under MPI.
         """
-        if aviary_group.analysis_scheme is AnalysisScheme.COLLOCATION:
-            for ii in range(len(phases) - 1):
-                phase1, phase2 = phases[ii : ii + 2]
-                analytic1 = aviary_group.phase_info[phase1]['user_options']['analytic']
-                analytic2 = aviary_group.phase_info[phase2]['user_options']['analytic']
+        for ii in range(len(phases) - 1):
+            phase1, phase2 = phases[ii : ii + 2]
+            analytic1 = aviary_group.phase_info[phase1]['user_options']['analytic']
+            analytic2 = aviary_group.phase_info[phase2]['user_options']['analytic']
 
-                if not (analytic1 or analytic2):
-                    # we always want time, distance, and mass to be continuous
-                    states_to_link = {
-                        'time': connect_directly,
-                        Dynamic.Mission.DISTANCE: connect_directly,
-                        Dynamic.Vehicle.MASS: False,
-                    }
+            if not (analytic1 or analytic2):
+                # we always want time, distance, and mass to be continuous
+                states_to_link = {
+                    'time': connect_directly,
+                    Dynamic.Mission.DISTANCE: connect_directly,
+                    Dynamic.Vehicle.MASS: False,
+                }
 
-                    # if both phases are reserve phases or neither is a reserve phase
-                    # (we are not on the boundary between the regular and reserve missions)
-                    # and neither phase is ground roll or rotation (altitude isn't a state):
-                    # we want altitude to be continuous as well
-                    if (
-                        (
-                            (phase1 in aviary_group.reserve_phases)
-                            == (phase2 in aviary_group.reserve_phases)
-                        )
-                        and not ({'groundroll', 'rotation'} & {phase1, phase2})
-                        and not ('accel', 'climb1') == (phase1, phase2)
-                    ):  # required for convergence of FwGm
-                        states_to_link[Dynamic.Mission.ALTITUDE] = connect_directly
+                # if both phases are reserve phases or neither is a reserve phase
+                # (we are not on the boundary between the regular and reserve missions)
+                # and neither phase is ground roll or rotation (altitude isn't a state):
+                # we want altitude to be continuous as well
+                if (
+                    (
+                        (phase1 in aviary_group.reserve_phases)
+                        == (phase2 in aviary_group.reserve_phases)
+                    )
+                    and not ({'groundroll', 'rotation'} & {phase1, phase2})
+                    and not ('accel', 'climb1') == (phase1, phase2)
+                ):  # required for convergence of FwGm
+                    states_to_link[Dynamic.Mission.ALTITUDE] = connect_directly
 
-                    # if either phase is rotation, we need to connect velocity
-                    # ascent to accel also requires velocity
-                    if 'rotation' in (phase1, phase2) or ('ascent', 'accel') == (phase1, phase2):
-                        states_to_link[Dynamic.Mission.VELOCITY] = connect_directly
-                        # if the first phase is rotation, we also need alpha
-                        if phase1 == 'rotation':
-                            states_to_link[Dynamic.Vehicle.ANGLE_OF_ATTACK] = False
+                # if either phase is rotation, we need to connect velocity
+                # ascent to accel also requires velocity
+                if 'rotation' in (phase1, phase2) or ('ascent', 'accel') == (phase1, phase2):
+                    states_to_link[Dynamic.Mission.VELOCITY] = connect_directly
+                    # if the first phase is rotation, we also need alpha
+                    if phase1 == 'rotation':
+                        states_to_link[Dynamic.Vehicle.ANGLE_OF_ATTACK] = False
 
-                    for state, connected in states_to_link.items():
-                        # in initial guesses, all of the states, other than time use
-                        # the same name
-                        initial_guesses1 = aviary_group.phase_info[phase1]['initial_guesses']
-                        initial_guesses2 = aviary_group.phase_info[phase2]['initial_guesses']
+                for state, connected in states_to_link.items():
+                    # in initial guesses, all of the states, other than time use
+                    # the same name
+                    initial_guesses1 = aviary_group.phase_info[phase1]['initial_guesses']
+                    initial_guesses2 = aviary_group.phase_info[phase2]['initial_guesses']
 
-                        # if a state is in the initial guesses, get the units of the
-                        # initial guess
-                        kwargs = {}
-                        if not connected:
-                            if state in initial_guesses1:
-                                kwargs = {'units': initial_guesses1[state][-1]}
-                            elif state in initial_guesses2:
-                                kwargs = {'units': initial_guesses2[state][-1]}
+                    # if a state is in the initial guesses, get the units of the
+                    # initial guess
+                    kwargs = {}
+                    if not connected:
+                        if state in initial_guesses1:
+                            kwargs = {'units': initial_guesses1[state][-1]}
+                        elif state in initial_guesses2:
+                            kwargs = {'units': initial_guesses2[state][-1]}
 
-                        aviary_group.traj.link_phases(
-                            [phase1, phase2], [state], connected=connected, **kwargs
-                        )
+                    aviary_group.traj.link_phases(
+                        [phase1, phase2], [state], connected=connected, **kwargs
+                    )
 
-                # if either phase is analytic we have to use a linkage_constraint
+            # if either phase is analytic we have to use a linkage_constraint
+            else:
+                # analytic phases use the prefix "initial" for time and distance,
+                # but not mass
+                if analytic2:
+                    prefix = 'initial_'
                 else:
-                    # analytic phases use the prefix "initial" for time and distance,
-                    # but not mass
-                    if analytic2:
-                        prefix = 'initial_'
-                    else:
-                        prefix = ''
+                    prefix = ''
 
-                    aviary_group.traj.add_linkage_constraint(
-                        phase1, phase2, 'time', prefix + 'time', connected=True
-                    )
-                    aviary_group.traj.add_linkage_constraint(
-                        phase1, phase2, 'distance', prefix + 'distance', connected=True
-                    )
-                    aviary_group.traj.add_linkage_constraint(
-                        phase1, phase2, 'mass', 'mass', connected=False, ref=1.0e5
-                    )
+                aviary_group.traj.add_linkage_constraint(
+                    phase1, phase2, 'time', prefix + 'time', connected=True
+                )
+                aviary_group.traj.add_linkage_constraint(
+                    phase1, phase2, 'distance', prefix + 'distance', connected=True
+                )
+                aviary_group.traj.add_linkage_constraint(
+                    phase1, phase2, 'mass', 'mass', connected=False, ref=1.0e5
+                )
 
-            # add all params and promote them to aviary_group level
-            ParamPort.promote_params(
-                aviary_group,
-                trajs=['traj'],
-                phases=[[*aviary_group.regular_phases, *aviary_group.reserve_phases]],
-            )
+        # add all params and promote them to aviary_group level
+        ParamPort.promote_params(
+            aviary_group,
+            trajs=['traj'],
+            phases=[[*aviary_group.regular_phases, *aviary_group.reserve_phases]],
+        )
 
-            aviary_group.promotes(
-                'traj',
-                inputs=[
-                    ('ascent.parameters:t_init_gear', 't_init_gear'),
-                    ('ascent.parameters:t_init_flaps', 't_init_flaps'),
-                    ('ascent.t_initial', Mission.Takeoff.ASCENT_T_INITIAL),
-                    ('ascent.t_duration', Mission.Takeoff.ASCENT_DURATION),
-                ],
-            )
+        aviary_group.promotes(
+            'traj',
+            inputs=[
+                ('ascent.parameters:t_init_gear', 't_init_gear'),
+                ('ascent.parameters:t_init_flaps', 't_init_flaps'),
+                ('ascent.t_initial', Mission.Takeoff.ASCENT_T_INITIAL),
+                ('ascent.t_duration', Mission.Takeoff.ASCENT_DURATION),
+            ],
+        )
 
-            # imitate input_initial for taxi -> groundroll
-            eq = aviary_group.add_subsystem(
-                'taxi_groundroll_mass_constraint', om.EQConstraintComp()
-            )
-            eq.add_eq_output(
-                'mass', eq_units='lbm', normalize=False, ref=10000.0, add_constraint=True
-            )
-            aviary_group.connect('taxi.mass', 'taxi_groundroll_mass_constraint.rhs:mass')
-            aviary_group.connect(
-                'traj.groundroll.states:mass',
-                'taxi_groundroll_mass_constraint.lhs:mass',
-                src_indices=[0],
-                flat_src_indices=True,
-            )
+        # imitate input_initial for taxi -> groundroll
+        eq = aviary_group.add_subsystem('taxi_groundroll_mass_constraint', om.EQConstraintComp())
+        eq.add_eq_output('mass', eq_units='lbm', normalize=False, ref=10000.0, add_constraint=True)
+        aviary_group.connect('taxi.mass', 'taxi_groundroll_mass_constraint.rhs:mass')
+        aviary_group.connect(
+            'traj.groundroll.states:mass',
+            'taxi_groundroll_mass_constraint.lhs:mass',
+            src_indices=[0],
+            flat_src_indices=True,
+        )
 
-            aviary_group.connect('traj.ascent.timeseries.time', 'h_fit.time_cp')
-            aviary_group.connect('traj.ascent.timeseries.altitude', 'h_fit.h_cp')
+        aviary_group.connect('traj.ascent.timeseries.time', 'h_fit.time_cp')
+        aviary_group.connect('traj.ascent.timeseries.altitude', 'h_fit.h_cp')
 
-            aviary_group.connect(
-                f'traj.{aviary_group.regular_phases[-1]}.states:mass',
-                Mission.Landing.TOUCHDOWN_MASS,
-                src_indices=[-1],
-            )
+        aviary_group.connect(
+            f'traj.{aviary_group.regular_phases[-1]}.states:mass',
+            Mission.Landing.TOUCHDOWN_MASS,
+            src_indices=[-1],
+        )
 
-            connect_map = {
-                f'traj.{aviary_group.regular_phases[-1]}.timeseries.distance': Mission.Summary.RANGE,
-            }
-
-        else:
-            connect_map = {
-                'taxi.mass': 'traj.mass_initial',
-                Mission.Takeoff.ROTATION_VELOCITY: 'traj.SGMGroundroll_velocity_trigger',
-                'traj.distance_final': Mission.Summary.RANGE,
-                'traj.mass_final': Mission.Landing.TOUCHDOWN_MASS,
-            }
+        connect_map = {
+            f'traj.{aviary_group.regular_phases[-1]}.timeseries.distance': Mission.Summary.RANGE,
+        }
 
         # promote all ParamPort inputs for analytic segments as well
         param_list = list(ParamPort.param_data)
         aviary_group.promotes('taxi', inputs=param_list)
         aviary_group.promotes('landing', inputs=param_list)
-        if aviary_group.analysis_scheme is AnalysisScheme.SHOOTING:
-            param_list.append(Aircraft.Design.MAX_FUSELAGE_PITCH_ANGLE)
-            aviary_group.promotes('traj', inputs=param_list)
-
         aviary_group.connect('taxi.mass', 'vrot.mass')
 
         for source, target in connect_map.items():
@@ -598,9 +551,8 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
                 flat_src_indices=True,
             )
 
-        if aviary_group.analysis_scheme is AnalysisScheme.COLLOCATION:
-            if 'ascent' in aviary_group.phase_info:
-                self._add_groundroll_eq_constraint(aviary_group)
+        if 'ascent' in aviary_group.phase_info:
+            self._add_groundroll_eq_constraint(aviary_group)
 
     def check_trajectory(self, aviary_group):
         """
@@ -651,15 +603,14 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
         if aviary_group.post_mission_info['include_landing']:
             self._add_landing_systems(aviary_group)
 
-        if aviary_group.analysis_scheme is AnalysisScheme.COLLOCATION:
-            ascent_phase = getattr(aviary_group.traj.phases, 'ascent')
-            ascent_tx = ascent_phase.options['transcription']
-            ascent_num_nodes = ascent_tx.grid_data.num_nodes
-            aviary_group.add_subsystem(
-                'h_fit',
-                PolynomialFit(N_cp=ascent_num_nodes),
-                promotes_inputs=['t_init_gear', 't_init_flaps'],
-            )
+        ascent_phase = getattr(aviary_group.traj.phases, 'ascent')
+        ascent_tx = ascent_phase.options['transcription']
+        ascent_num_nodes = ascent_tx.grid_data.num_nodes
+        aviary_group.add_subsystem(
+            'h_fit',
+            PolynomialFit(N_cp=ascent_num_nodes),
+            promotes_inputs=['t_init_gear', 't_init_flaps'],
+        )
 
         aviary_group.add_subsystem(
             'range_constraint',
