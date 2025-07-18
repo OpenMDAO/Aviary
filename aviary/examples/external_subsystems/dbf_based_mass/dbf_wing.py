@@ -40,7 +40,7 @@ class DBFWingMass(om.ExplicitComponent):
         self.options.declare(**make_units_option('sheeting_coverage', 0.4, 'unitless'))
         self.options.declare(**make_units_option('sheeting_lightening_factor', 1.0, 'unitless'))
         self.options.declare(**make_units_option('num_stringers', 1.0, 'unitless'))
-        self.options.declare(**make_units_option('miscel_mass', 100.0, 'kg'))
+        self.options.declare(**make_units_option('miscel_mass', 0.0, 'kg'))
 
     def setup(self):
         # Still user inputs:
