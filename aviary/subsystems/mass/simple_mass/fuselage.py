@@ -66,10 +66,12 @@ class FuselageMass(om.JaxExplicitComponent):
     ):
         # Validate inputs
         if (
-            aircraft__fuselage__length[0] <= 0
-            or base_diameter[0] <= 0
-            or tip_diameter[0] <= 0
-            or thickness[0] <= 0
+            jnp.select(
+                condlist=[aircraft__fuselage__length[0] <= 0], choicelist=[True], default=False
+            )
+            or jnp.select(condlist=[base_diameter[0] <= 0], choicelist=[True], default=False)
+            or jnp.select(condlist=[tip_diameter[0] <= 0], choicelist=[True], default=False)
+            or jnp.select(condlist=[thickness[0] <= 0], choicelist=[True], default=False)
         ):
             raise om.AnalysisError('Length, diameter, and thickness must be positive values.')
 
@@ -112,7 +114,7 @@ class FuselageMass(om.JaxExplicitComponent):
             # if self.options['custom_fuselage_function'] is not None:
             #     section_diameter = self.options['custom_fuselage_function'](location)
             # should be elif below once fixed
-            if self.options['fuselage_data_file'] and interpolate_diameter is not None:
+            if self.options['fuselage_data_file'] is not None and interpolate_diameter is not None:
                 section_diameter = interpolate_diameter(location)
             else:
                 section_diameter = (

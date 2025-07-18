@@ -1,8 +1,8 @@
 import openmdao.api as om
 
-from aviary.subsystems.mass.simple_mass.wing import WingMassAndCOG
-from aviary.subsystems.mass.simple_mass.fuselage import FuselageMassAndCOG
-from aviary.subsystems.mass.simple_mass.tail import TailMassAndCOG
+from aviary.subsystems.mass.simple_mass.fuselage import FuselageMass
+from aviary.subsystems.mass.simple_mass.tail import TailMass
+from aviary.subsystems.mass.simple_mass.wing import WingMass
 
 
 class SimpleMassPremission(om.Group):

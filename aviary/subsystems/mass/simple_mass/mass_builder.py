@@ -1,6 +1,5 @@
 from aviary.subsystems.mass.mass_builder import MassBuilderBase
-from aviary.subsystems.mass.simple_mass.mass_premission import MassPremission
-
+from aviary.subsystems.mass.simple_mass.mass_premission import SimpleMassPremission
 
 """
 Define subsystem builder for Aviary simple mass.
@@ -14,10 +13,7 @@ _default_name = 'simple_mass'
 
 
 class SimpleMassBuilder(MassBuilderBase):
-    """
-    Base mass builder
-
-    """
+    """Base mass builder"""
 
     def __init__(self, name=None):
         if name is None:
@@ -26,4 +22,4 @@ class SimpleMassBuilder(MassBuilderBase):
         super().__init__(name=name)
 
     def build_pre_mission(self, aviary_inputs):
-        return MassPremission()
+        return SimpleMassPremission()
