@@ -36,7 +36,6 @@ class Aircraft:
         VOLUME = 'aircraft:battery:volume'
 
     class BWB:
-        CABIN_AREA = 'aircraft:blended_wing_body_design:cabin_area'
         NUM_BAYS = 'aircraft:blended_wing_body_design:num_bays'
         PASSENGER_LEADING_EDGE_SWEEP = (
             'aircraft:blended_wing_body_design:passenger_leading_edge_sweep'
@@ -116,6 +115,7 @@ class Aircraft:
         PASSENGER_SERVICE_MASS_SCALER = 'aircraft:crew_and_payload:passenger_service_mass_scaler'
 
         TOTAL_PAYLOAD_MASS = 'aircraft:crew_and_payload:total_payload_mass'
+        ULD_MASS_PER_PASSENGER = 'aircraft:crew_and_payload:uld_mass_per_passenger'
         WATER_MASS_PER_OCCUPANT = 'aircraft:crew_and_payload:water_mass_per_occupant'
         WING_CARGO = 'aircraft:crew_and_payload:wing_cargo'
 
@@ -198,6 +198,7 @@ class Aircraft:
         HYBRID_CABLE_LENGTH = 'aircraft:electrical:hybrid_cable_length'
         MASS = 'aircraft:electrical:mass'
         MASS_SCALER = 'aircraft:electrical:mass_scaler'
+        SYSTEM_MASS_PER_PASSENGER = 'aircraft:electrical:system_mass_per_passenger'
 
     class Engine:
         ADDITIONAL_MASS = 'aircraft:engine:additional_mass'
@@ -304,12 +305,14 @@ class Aircraft:
         MASS = 'aircraft:furnishings:mass'
         MASS_BASE = 'aircraft:furnishings:mass_base'
         MASS_SCALER = 'aircraft:furnishings:mass_scaler'
+        USE_EMPIRICAL_EQUATION = 'aircraft:furnishings:use_empirical_equation'
 
     class Fuselage:
         AFTBODY_MASS = 'aircraft:fuselage:aftbody_mass'
         AFTBODY_MASS_PER_UNIT_AREA = 'aircraft:fuselage:aftbody_mass_per_unit_area'
         AISLE_WIDTH = 'aircraft:fuselage:aisle_width'
         AVG_DIAMETER = 'aircraft:fuselage:avg_diameter'
+        CABIN_AREA = 'aircraft:fuselage:cabin_area'
         CHARACTERISTIC_LENGTH = 'aircraft:fuselage:characteristic_length'
         CROSS_SECTION = 'aircraft:fuselage:cross_section'
         DELTA_DIAMETER = 'aircraft:fuselage:delta_diameter'
@@ -514,7 +517,6 @@ class Aircraft:
         COMPOSITE_FRACTION = 'aircraft:wing:composite_fraction'
         CONTROL_SURFACE_AREA = 'aircraft:wing:control_surface_area'
         CONTROL_SURFACE_AREA_RATIO = 'aircraft:wing:control_surface_area_ratio'
-        DETAILED_WING = 'aircraft:wing:detailed_wing'
         DIHEDRAL = 'aircraft:wing:dihedral'
         ENG_POD_INERTIA_FACTOR = 'aircraft:wing:eng_pod_inertia_factor'
         EXPOSED_AREA = 'aircraft:wing:exposed_area'
@@ -592,6 +594,7 @@ class Aircraft:
         THICKNESS_TO_CHORD_TIP = 'aircraft:wing:thickness_to_chord_tip'
         THICKNESS_TO_CHORD_UNWEIGHTED = 'aircraft:wing:thickness_to_chord_unweighted'
         ULTIMATE_LOAD_FACTOR = 'aircraft:wing:ultimate_load_factor'
+        USE_DETAILED_MASS = 'aircraft:wing:use_detailed_mass'
         VAR_SWEEP_MASS_PENALTY = 'aircraft:wing:var_sweep_mass_penalty'
         VERTICAL_MOUNT_LOCATION = 'aircraft:wing:vertical_mount_location'
         WETTED_AREA = 'aircraft:wing:wetted_area'

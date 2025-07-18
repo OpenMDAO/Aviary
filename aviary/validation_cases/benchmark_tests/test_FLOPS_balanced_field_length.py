@@ -10,11 +10,15 @@ from openmdao.core.driver import Driver
 from openmdao.utils.assert_utils import assert_near_equal
 from openmdao.utils.testing_utils import require_pyoptsparse, use_tempdirs
 
-from aviary.models.N3CC.N3CC_data import (
+from aviary.models.aircraft.advanced_single_aisle.advanced_single_aisle_data import (
     balanced_liftoff_user_options as _takeoff_liftoff_user_options,
 )
-from aviary.models.N3CC.N3CC_data import balanced_trajectory_builder as _takeoff_trajectory_builder
-from aviary.models.N3CC.N3CC_data import inputs as _inputs
+from aviary.models.aircraft.advanced_single_aisle.advanced_single_aisle_data import (
+    balanced_trajectory_builder as _takeoff_trajectory_builder,
+)
+from aviary.models.aircraft.advanced_single_aisle.advanced_single_aisle_data import (
+    inputs as _inputs,
+)
 from aviary.subsystems.premission import CorePreMission
 from aviary.subsystems.propulsion.utils import build_engine_deck
 from aviary.utils.functions import set_aviary_initial_values, set_aviary_input_defaults

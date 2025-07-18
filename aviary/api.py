@@ -48,21 +48,20 @@ from aviary.variable_info.enums import (
     SpeedType,
     Verbosity,
 )
-from aviary.interface.default_phase_info.two_dof import phase_info as default_2DOF_phase_info
-from aviary.interface.default_phase_info.two_dof_fiti import (
+from aviary.models.missions.two_dof_default import phase_info as default_2DOF_phase_info
+from aviary.models.missions.two_dof_fiti_default import (
     phase_info as default_2DOF_fiti_phase_info,
 )
-from aviary.interface.default_phase_info.two_dof_fiti_deprecated import (
+from aviary.models.missions.two_dof_fiti_deprecated import (
     create_2dof_based_ascent_phases,
     create_2dof_based_descent_phases,
 )
-from aviary.interface.default_phase_info.height_energy import (
+from aviary.models.missions.height_energy_default import (
     phase_info as default_height_energy_phase_info,
 )
 from aviary.interface.methods_for_level1 import run_level_1
 from aviary.interface.methods_for_level1 import run_aviary
 from aviary.interface.methods_for_level2 import AviaryProblem
-from aviary.interface.utils.check_phase_info import check_phase_info
 from aviary.utils.engine_deck_conversion import convert_engine_deck
 from aviary.utils.fortran_to_aviary import fortran_to_aviary
 from aviary.utils.functions import (
@@ -97,7 +96,6 @@ from aviary.subsystems.propulsion.utils import build_engine_deck
 ###################
 
 # Miscellaneous
-from aviary.interface.methods_for_level2 import PreMissionGroup, PostMissionGroup
 from aviary.subsystems.premission import CorePreMission
 from aviary.subsystems.subsystem_builder_base import SubsystemBuilderBase
 from aviary.utils.preprocessors import (

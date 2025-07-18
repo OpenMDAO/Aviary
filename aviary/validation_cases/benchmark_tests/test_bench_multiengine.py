@@ -7,9 +7,9 @@ from openmdao.core.problem import _clear_problem_names
 from openmdao.utils.assert_utils import assert_near_equal
 from openmdao.utils.testing_utils import require_pyoptsparse, use_tempdirs
 
-from aviary.interface.default_phase_info.height_energy import phase_info
+from aviary.models.missions.height_energy_default import phase_info
 from aviary.interface.methods_for_level2 import AviaryProblem
-from aviary.models.multi_engine_single_aisle.multi_engine_single_aisle_data import (
+from aviary.models.aircraft.multi_engine_single_aisle.multi_engine_single_aisle_data import (
     engine_1_inputs,
     engine_2_inputs,
     inputs,
@@ -21,21 +21,24 @@ from aviary.variable_info.variables import Aircraft
 # Build problem
 local_phase_info = deepcopy(phase_info)
 
-local_phase_info['climb']['user_options']['optimize_mach'] = False
-local_phase_info['climb']['user_options']['optimize_altitude'] = False
+local_phase_info['climb']['user_options']['mach_optimize'] = False
+local_phase_info['climb']['user_options']['mach_polynomial_order'] = 1
+local_phase_info['climb']['user_options']['altitude_optimize'] = False
+local_phase_info['climb']['user_options']['altitude_polynomial_order'] = 1
 local_phase_info['climb']['user_options']['no_descent'] = True
-local_phase_info['climb']['user_options']['use_polynomial_control'] = True
 
-local_phase_info['cruise']['user_options']['optimize_mach'] = False
-local_phase_info['cruise']['user_options']['optimize_altitude'] = False
+local_phase_info['cruise']['user_options']['mach_optimize'] = False
+local_phase_info['cruise']['user_options']['mach_polynomial_order'] = 1
+local_phase_info['cruise']['user_options']['altitude_optimize'] = False
+local_phase_info['cruise']['user_options']['altitude_polynomial_order'] = 1
 local_phase_info['cruise']['user_options']['altitude_bounds'] = ((32000.0, 34000.0), 'ft')
 local_phase_info['cruise']['user_options']['throttle_enforcement'] = 'path_constraint'
-local_phase_info['cruise']['user_options']['use_polynomial_control'] = True
 
-local_phase_info['descent']['user_options']['optimize_mach'] = False
-local_phase_info['descent']['user_options']['optimize_altitude'] = False
+local_phase_info['descent']['user_options']['mach_optimize'] = False
+local_phase_info['descent']['user_options']['mach_polynomial_order'] = 1
+local_phase_info['descent']['user_options']['altitude_optimize'] = False
+local_phase_info['descent']['user_options']['altitude_polynomial_order'] = 1
 local_phase_info['descent']['user_options']['no_climb'] = True
-local_phase_info['descent']['user_options']['use_polynomial_control'] = True
 
 inputs.set_val(Aircraft.Nacelle.LAMINAR_FLOW_LOWER, np.zeros(2))
 inputs.set_val(Aircraft.Nacelle.LAMINAR_FLOW_UPPER, np.zeros(2))

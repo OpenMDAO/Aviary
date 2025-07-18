@@ -27,9 +27,9 @@ from aviary.subsystems.aerodynamics.gasp_based.table_based import (
 from aviary.subsystems.aerodynamics.solve_alpha_group import SolveAlphaGroup
 from aviary.subsystems.subsystem_builder_base import SubsystemBuilderBase
 from aviary.utils.named_values import NamedValues
-from aviary.variable_info.enums import LegacyCode
+from aviary.variable_info.enums import LegacyCode, Verbosity
 from aviary.variable_info.variable_meta_data import _MetaData
-from aviary.variable_info.variables import Aircraft, Dynamic, Mission
+from aviary.variable_info.variables import Aircraft, Dynamic, Mission, Settings
 
 GASP = LegacyCode.GASP
 FLOPS = LegacyCode.FLOPS
@@ -128,13 +128,12 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
         aero_group = None
 
         if self.code_origin is FLOPS:
-            try:
-                solve_alpha = kwargs.pop('solve_alpha')
-            except KeyError:
-                warnings.warn(
-                    "The 'solve_alpha' flag has been set, but is not used for FLOPS-based "
-                    'aerodynamics.'
-                )
+            if 'solve_alpha' in kwargs:
+                if aviary_inputs.get_val(Settings.VERBOSITY) >= Verbosity.BRIEF:
+                    warnings.warn(
+                        "The 'solve_alpha' flag has been set, but is not used for FLOPS-based "
+                        'aerodynamics.'
+                    )
 
             if method is None:
                 aero_group = ComputedAeroGroup(num_nodes=num_nodes)

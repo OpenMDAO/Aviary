@@ -16,7 +16,7 @@ class EngineSizingTest1(unittest.TestCase):
         self.prob = om.Problem()
 
     def test_case_multiengine(self):
-        filename = 'models/engines/turbofan_28k.deck'
+        filename = 'models/engines/turbofan_28k.csv'
         filename = get_path(filename)
 
         options = AviaryValues()

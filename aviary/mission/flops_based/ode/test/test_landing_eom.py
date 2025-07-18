@@ -10,7 +10,10 @@ from aviary.mission.flops_based.ode.landing_eom import (
     GlideSlopeForces,
     GroundSumForces,
 )
-from aviary.models.N3CC.N3CC_data import detailed_landing_flare, inputs
+from aviary.models.aircraft.advanced_single_aisle.advanced_single_aisle_data import (
+    detailed_landing_flare,
+    inputs,
+)
 from aviary.subsystems.propulsion.utils import build_engine_deck
 from aviary.utils.preprocessors import preprocess_options
 from aviary.utils.test_utils.variable_test import assert_match_varnames
@@ -19,7 +22,7 @@ from aviary.variable_info.variables import Dynamic
 
 
 class FlareEOMTest(unittest.TestCase):
-    """Test against data of detailed_landing_flare from models/N3CC/N3CC_data.py."""
+    """Test against data of detailed_landing_flare from models/aircraft/advanced_single_aisle/advanced_single_aisle_data.py."""
 
     def setUp(self):
         prob = self.prob = om.Problem()
@@ -89,7 +92,7 @@ class FlareEOMTest(unittest.TestCase):
 class OtherTest(unittest.TestCase):
     """
     Test against data of detailed landing glide slope forces, flare sum forces,
-    and ground sum forces from models/N3CC/N3CC_data.py.
+    and ground sum forces from models/aircraft/advanced_single_aisle/advanced_single_aisle_data.py.
     """
 
     def test_GlideSlopeForces(self):
@@ -99,7 +102,7 @@ class OtherTest(unittest.TestCase):
         aviary_options = inputs
         prob = om.Problem()
 
-        # use data from detailed_landing_flare in models/N3CC/N3CC_data.py
+        # use data from detailed_landing_flare in models/aircraft/advanced_single_aisle/advanced_single_aisle_data.py
         prob.model.add_subsystem(
             'glide', GlideSlopeForces(num_nodes=2, aviary_options=aviary_options), promotes=['*']
         )
@@ -137,7 +140,7 @@ class OtherTest(unittest.TestCase):
             'flare', FlareSumForces(num_nodes=2, aviary_options=aviary_options), promotes=['*']
         )
 
-        # use data from detailed_landing_flare in models/N3CC/N3CC_data.py
+        # use data from detailed_landing_flare in models/aircraft/advanced_single_aisle/advanced_single_aisle_data.py
         prob.model.set_input_defaults(Dynamic.Vehicle.MASS, np.array([106292, 106292]), units='lbm')
         prob.model.set_input_defaults(
             Dynamic.Vehicle.DRAG, np.array([47447.13138523, 44343.01567596]), units='N'
@@ -174,7 +177,7 @@ class OtherTest(unittest.TestCase):
             'ground', GroundSumForces(num_nodes=2, friction_coefficient=0.025), promotes=['*']
         )
 
-        # use data from detailed_landing_flare in models/N3CC/N3CC_data.py
+        # use data from detailed_landing_flare in models/aircraft/advanced_single_aisle/advanced_single_aisle_data.py
         prob.model.set_input_defaults(Dynamic.Vehicle.MASS, np.array([106292, 106292]), units='lbm')
         prob.model.set_input_defaults(
             Dynamic.Vehicle.DRAG, np.array([47447.13138523, 44343.01567596]), units='N'
