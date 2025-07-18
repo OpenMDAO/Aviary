@@ -4,28 +4,20 @@ from aviary.subsystems.mass.simple_mass.wing import WingMassAndCOG
 from aviary.subsystems.mass.simple_mass.fuselage import FuselageMassAndCOG
 from aviary.subsystems.mass.simple_mass.tail import TailMassAndCOG
 
+
 class SimpleMassPremission(om.Group):
     """
-    Pre-mission group of top-level mass estimation groups and components for 
+    Pre-mission group of top-level mass estimation groups and components for
     the simple small-scale aircraft mass build-up.
     """
 
     def setup(self):
+        self.add_subsystem('Wing', WingMass(), promotes_inputs=['*'], promotes_outputs=['*'])
 
         self.add_subsystem(
-            'Wing',
-            WingMass(),
-            promotes_inputs=['*'], promotes_outputs=['*']
+            'Fuselage', FuselageMass(), promotes_inputs=['*'], promotes_outputs=['*']
         )
 
         self.add_subsystem(
-            'Fuselage',
-            FuselageMass(),
-            promotes_inputs=['*'], promotes_outputs=['*']
-        )
-
-        self.add_subsystem(
-            'Tail',
-            TailMass(tail_type='horizontal'),
-            promotes_inputs=['*'], promotes_outputs=['*']
+            'Tail', TailMass(tail_type='horizontal'), promotes_inputs=['*'], promotes_outputs=['*']
         )
