@@ -3703,10 +3703,15 @@ add_meta_data(
     default_value=1.0,
 )
 
+#   ___    _       __ 
+#  |   \  | |__   / _|
+#  | |) | | '_ \ |  _|
+#  |___/  |_.__/ |_|  
+# ====================
 ### CUSTOM FOR DBF -- NEED TO SORT LATER ###
 
 add_meta_data(
-    Aircraft.Fuselage.NUM_SPARS,
+    Aircraft.Fuselage.Dbf.NUM_SPARS,
     units='unitless',
     desc='Number of fuselage spars',
     default_value=2,
@@ -3715,7 +3720,7 @@ add_meta_data(
 )
 
 add_meta_data(
-    Aircraft.Fuselage.SPAR_OUTER_DIAMETER,
+    Aircraft.Fuselage.Dbf.SPAR_OUTER_DIAMETER,
     units='inch',
     desc='Diameter/thickness of a single spar (assumed cylindrical)',
     default_value=0.25,
@@ -3724,7 +3729,7 @@ add_meta_data(
 )
 
 add_meta_data(
-    Aircraft.Fuselage.SPAR_DENSITY,
+    Aircraft.Fuselage.Dbf.SPAR_DENSITY,
     units='lbm/ft**3',
     desc='Material density of the spar',
     default_value=0.015,
@@ -3733,7 +3738,7 @@ add_meta_data(
 )
 
 add_meta_data(
-    Aircraft.Fuselage.NUM_BULKHEADS,
+    Aircraft.Fuselage.Dbf.NUM_BULKHEADS,
     units='unitless',
     desc='Number of fuselage ribs',
     default_value=10,
@@ -3742,7 +3747,7 @@ add_meta_data(
 )
 
 add_meta_data(
-    Aircraft.Fuselage.BULKHEAD_THICKNESS,
+    Aircraft.Fuselage.Dbf.BULKHEAD_THICKNESS,
     units='inch',
     types=float,
     desc='Thickness of a single rib',
@@ -3753,7 +3758,7 @@ add_meta_data(
 )
 
 add_meta_data(
-    Aircraft.Fuselage.BULKHEAD_DENSITY,
+    Aircraft.Fuselage.Dbf.BULKHEAD_DENSITY,
     units='lbm/ft**3',
     types=float,
     desc='Material density of the rib',
@@ -3764,7 +3769,7 @@ add_meta_data(
 )
 
 add_meta_data(
-    Aircraft.Fuselage.SKIN_DENSITY,
+    Aircraft.Fuselage.Dbf.SKIN_DENSITY,
     units='lbm/inch**2',
     desc='Surface density of fuselage skin',
     default_value=0.02,
@@ -3773,7 +3778,7 @@ add_meta_data(
 )
 
 add_meta_data(
-    Aircraft.Fuselage.FLOOR_DENSITY,
+    Aircraft.Fuselage.Dbf.FLOOR_DENSITY,
     units='lbm/inch**3',
     desc='Density of fuselage floor',
     default_value=0.02,
@@ -3782,7 +3787,7 @@ add_meta_data(
 )
 
 add_meta_data(
-    Aircraft.Fuselage.FLOOR_THICKNESS,
+    Aircraft.Fuselage.Dbf.FLOOR_THICKNESS,
     units='inch',
     desc='Thickness of fuselage floor',
     default_value=0.0125,
@@ -3791,7 +3796,7 @@ add_meta_data(
 )
 
 add_meta_data(
-    Aircraft.Fuselage.FLOOR_LENGTH,
+    Aircraft.Fuselage.Dbf.FLOOR_LENGTH,
     units='ft',
     desc='length of fuselage floor',
     default_value=2.0,
@@ -3818,7 +3823,7 @@ add_meta_data(
 )
 
 add_meta_data(
-    Aircraft.Fuselage.SPAR_WALL_THICKNESS,
+    Aircraft.Fuselage.Dbf.SPAR_WALL_THICKNESS,
     units='inch',
     desc='Thickness of spar wall',
     default_value=0.0625,
@@ -3827,7 +3832,7 @@ add_meta_data(
 )
 
 add_meta_data(
-    Aircraft.Fuselage.BULKHEAD_LIGHTENING_FACTOR,
+    Aircraft.Fuselage.Dbf.BULKHEAD_LIGHTENING_FACTOR,
     units='unitless',
     desc='Fraction of the rib area that remains after lightening cuts',
     default_value=0.5,
@@ -3836,7 +3841,7 @@ add_meta_data(
 )
 
 add_meta_data(
-    Aircraft.Fuselage.GLUE_FACTOR,
+    Aircraft.Fuselage.Dbf.GLUE_FACTOR,
     units='unitless',
     desc='Added margin for glue. Only added to ribs, spars, and stringers',
     default_value=0.15,
@@ -3845,7 +3850,7 @@ add_meta_data(
 )
 
 add_meta_data(
-    Aircraft.Fuselage.STRINGER_DENSITY,
+    Aircraft.Fuselage.Dbf.STRINGER_DENSITY,
     units='lbm/ft**3',
     desc='Material density of the stringer',
     default_value=250,
@@ -3854,7 +3859,7 @@ add_meta_data(
 )
 
 add_meta_data(
-    Aircraft.Fuselage.STRINGER_THICKNESS,
+    Aircraft.Fuselage.Dbf.STRINGER_THICKNESS,
     units='inch',
     desc='Thickness of stringers',
     default_value=0.0625,
@@ -3863,7 +3868,7 @@ add_meta_data(
 )
 
 add_meta_data(
-    Aircraft.Fuselage.SHEETING_THICKNESS,
+    Aircraft.Fuselage.Dbf.SHEETING_THICKNESS,
     units='inch',
     desc='Thickness of sheeting',
     default_value=0.03125,
@@ -3872,7 +3877,7 @@ add_meta_data(
 )
 
 add_meta_data(
-    Aircraft.Fuselage.SHEETING_DENSITY,
+    Aircraft.Fuselage.Dbf.SHEETING_DENSITY,
     units='lbm/ft**3',
     desc='Material density of the sheeting',
     default_value=250,
@@ -3881,7 +3886,7 @@ add_meta_data(
 )
 
 add_meta_data(
-    Aircraft.Fuselage.SHEETING_LIGHTENING_FACTOR,
+    Aircraft.Fuselage.Dbf.SHEETING_LIGHTENING_FACTOR,
     units='unitless',
     desc='Fraction of the sheeting area that remains after lightening cuts',
     default_value=0.5,
@@ -3890,10 +3895,19 @@ add_meta_data(
 )
 
 add_meta_data(
-    Aircraft.Fuselage.SHEETING_COVERAGE,
+    Aircraft.Fuselage.Dbf.SHEETING_COVERAGE,
     units='unitless',
     desc='Fraction of the wetted area covered by sheeting',
     default_value=1.0,
+    meta_data=_MetaData,
+    option=True,
+)
+
+add_meta_data(
+    Aircraft.Fuselage.Dbf.MISC_MASS,
+    units='kg',
+    desc='Mass made up of smaller, non structural components. Can be used for higher fidelity options as well',
+    default_value=0.0,
     meta_data=_MetaData,
     option=True,
 )
@@ -4187,18 +4201,23 @@ add_meta_data(
     default_value=1.0,
 )
 
+#   ___    _       __ 
+#  |   \  | |__   / _|
+#  | |) | | '_ \ |  _|
+#  |___/  |_.__/ |_|  
+# ====================
 ### CUSTOM ADDED FOR DBF -- NEED TO SORT LATER ###
 add_meta_data(
-    Aircraft.HorizontalTail.NUM_SPARS,
+    Aircraft.HorizontalTail.Dbf.NUM_SPARS,
     units='unitless',
-    desc='Number of tail spars',
+    desc='Number of wing spars',
     default_value=2,
     meta_data=_MetaData,
     option=True,
 )
 
 add_meta_data(
-    Aircraft.HorizontalTail.SPAR_OUTER_DIAMETER,
+    Aircraft.HorizontalTail.Dbf.SPAR_OUTER_DIAMETER,
     units='inch',
     desc='Diameter/thickness of a single spar (assumed cylindrical)',
     default_value=0.25,
@@ -4207,7 +4226,7 @@ add_meta_data(
 )
 
 add_meta_data(
-    Aircraft.HorizontalTail.SPAR_DENSITY,
+    Aircraft.HorizontalTail.Dbf.SPAR_DENSITY,
     units='lbm/ft**3',
     desc='Material density of the spar',
     default_value=0.015,
@@ -4216,7 +4235,7 @@ add_meta_data(
 )
 
 add_meta_data(
-    Aircraft.HorizontalTail.NUM_RIBS,
+    Aircraft.HorizontalTail.Dbf.NUM_RIBS,
     units='unitless',
     desc='Number of wing ribs',
     default_value=10,
@@ -4225,34 +4244,47 @@ add_meta_data(
 )
 
 add_meta_data(
-    Aircraft.HorizontalTail.RIB_THICKNESS,
+    Aircraft.HorizontalTail.Dbf.RIB_THICKNESS,
     units='inch',
+    types=float,
     desc='Thickness of a single rib',
-    default_value=0.125,
+    default_value=[0.0],
+    meta_data=_MetaData,
+    multivalue=True,
+    option=True,
+)
+
+add_meta_data(
+    Aircraft.HorizontalTail.Dbf.RIB_LIGHTENING_FACTOR,
+    units='unitless',
+    desc='Fraction of the rib area that remains after lightening cuts',
+    default_value=0.5,
     meta_data=_MetaData,
     option=True,
 )
 
 add_meta_data(
-    Aircraft.HorizontalTail.RIB_DENSITY,
+    Aircraft.HorizontalTail.Dbf.RIB_DENSITY,
     units='lbm/ft**3',
+    types=float,
     desc='Material density of the rib',
-    default_value=0.012,
+    default_value=[0.0],
     meta_data=_MetaData,
+    multivalue=True,
     option=True,
 )
 
 add_meta_data(
-    Aircraft.HorizontalTail.SKIN_DENSITY,
+    Aircraft.HorizontalTail.Dbf.SKIN_DENSITY,
     units='lbm/inch**2',
-    desc='Surface density of tail skin',
+    desc='Surface density of wing skin',
     default_value=0.02,
     meta_data=_MetaData,
     option=True,
 )
 
 add_meta_data(
-    Aircraft.HorizontalTail.SPAR_WALL_THICKNESS,
+    Aircraft.HorizontalTail.Dbf.SPAR_WALL_THICKNESS,
     units='inch',
     desc='Thickness of spar wall',
     default_value=0.0625,
@@ -4261,10 +4293,82 @@ add_meta_data(
 )
 
 add_meta_data(
-    Aircraft.HorizontalTail.RIB_LIGHTENING_FACTOR,
+    Aircraft.HorizontalTail.Dbf.GLUE_FACTOR,
     units='unitless',
-    desc='Fraction of the rib area that remains after lightening cuts',
+    desc='Added margin for glue. Only added to ribs, spars, and stringers',
+    default_value=0.15,
+    meta_data=_MetaData,
+    option=True,
+)
+
+add_meta_data(
+    Aircraft.HorizontalTail.Dbf.STRINGER_DENSITY,
+    units='lbm/ft**3',
+    desc='Material density of the stringer',
+    default_value=250,
+    meta_data=_MetaData,
+    option=True,
+)
+
+add_meta_data(
+    Aircraft.HorizontalTail.Dbf.STRINGER_THICKNESS,
+    units='inch',
+    desc='Thickness of stringers',
+    default_value=0.0625,
+    meta_data=_MetaData,
+    option=True,
+)
+
+add_meta_data(
+    Aircraft.HorizontalTail.Dbf.SHEETING_THICKNESS,
+    units='inch',
+    desc='Thickness of sheeting',
+    default_value=0.03125,
+    meta_data=_MetaData,
+    option=True,
+)
+
+add_meta_data(
+    Aircraft.HorizontalTail.Dbf.SHEETING_DENSITY,
+    units='lbm/ft**3',
+    desc='Material density of the sheeting',
+    default_value=250,
+    meta_data=_MetaData,
+    option=True,
+)
+
+add_meta_data(
+    Aircraft.HorizontalTail.Dbf.SHEETING_LIGHTENING_FACTOR,
+    units='unitless',
+    desc='Fraction of the sheeting area that remains after lightening cuts',
     default_value=0.5,
+    meta_data=_MetaData,
+    option=True,
+)
+
+add_meta_data(
+    Aircraft.HorizontalTail.Dbf.SHEETING_COVERAGE,
+    units='unitless',
+    desc='Fraction of the wetted area covered by sheeting',
+    default_value=1.0,
+    meta_data=_MetaData,
+    option=True,
+)
+
+add_meta_data(
+    Aircraft.HorizontalTail.Dbf.NUM_STRINGERS,
+    units='unitless',
+    desc='Number of stringers(assumed length=span)',
+    default_value=2.0,
+    meta_data=_MetaData,
+    option=True,
+)
+
+add_meta_data(
+    Aircraft.HorizontalTail.Dbf.MISC_MASS,
+    units='kg',
+    desc='Mass made up of smaller, non structural components. Can be used for higher fidelity options as well',
+    default_value=0.0,
     meta_data=_MetaData,
     option=True,
 )
@@ -5465,18 +5569,23 @@ add_meta_data(
     default_value=1.0,
 )
 
+#   ___    _       __ 
+#  |   \  | |__   / _|
+#  | |) | | '_ \ |  _|
+#  |___/  |_.__/ |_|  
+# ====================
 ### CUSTOM ADDED FOR DBF -- NEED TO SORT LATER ###
 add_meta_data(
-    Aircraft.VerticalTail.NUM_SPARS,
+    Aircraft.VerticalTail.Dbf.NUM_SPARS,
     units='unitless',
-    desc='Number of tail spars',
+    desc='Number of wing spars',
     default_value=2,
     meta_data=_MetaData,
     option=True,
 )
 
 add_meta_data(
-    Aircraft.VerticalTail.SPAR_OUTER_DIAMETER,
+    Aircraft.VerticalTail.Dbf.SPAR_OUTER_DIAMETER,
     units='inch',
     desc='Diameter/thickness of a single spar (assumed cylindrical)',
     default_value=0.25,
@@ -5485,7 +5594,7 @@ add_meta_data(
 )
 
 add_meta_data(
-    Aircraft.VerticalTail.SPAR_DENSITY,
+    Aircraft.VerticalTail.Dbf.SPAR_DENSITY,
     units='lbm/ft**3',
     desc='Material density of the spar',
     default_value=0.015,
@@ -5494,7 +5603,7 @@ add_meta_data(
 )
 
 add_meta_data(
-    Aircraft.VerticalTail.NUM_RIBS,
+    Aircraft.VerticalTail.Dbf.NUM_RIBS,
     units='unitless',
     desc='Number of wing ribs',
     default_value=10,
@@ -5503,34 +5612,47 @@ add_meta_data(
 )
 
 add_meta_data(
-    Aircraft.VerticalTail.RIB_THICKNESS,
+    Aircraft.VerticalTail.Dbf.RIB_THICKNESS,
     units='inch',
+    types=float,
     desc='Thickness of a single rib',
-    default_value=0.125,
+    default_value=[0.0],
+    meta_data=_MetaData,
+    multivalue=True,
+    option=True,
+)
+
+add_meta_data(
+    Aircraft.VerticalTail.Dbf.RIB_LIGHTENING_FACTOR,
+    units='unitless',
+    desc='Fraction of the rib area that remains after lightening cuts',
+    default_value=0.5,
     meta_data=_MetaData,
     option=True,
 )
 
 add_meta_data(
-    Aircraft.VerticalTail.RIB_DENSITY,
+    Aircraft.VerticalTail.Dbf.RIB_DENSITY,
     units='lbm/ft**3',
+    types=float,
     desc='Material density of the rib',
-    default_value=0.012,
+    default_value=[0.0],
     meta_data=_MetaData,
+    multivalue=True,
     option=True,
 )
 
 add_meta_data(
-    Aircraft.VerticalTail.SKIN_DENSITY,
+    Aircraft.VerticalTail.Dbf.SKIN_DENSITY,
     units='lbm/inch**2',
-    desc='Surface density of tail skin',
+    desc='Surface density of wing skin',
     default_value=0.02,
     meta_data=_MetaData,
     option=True,
 )
 
 add_meta_data(
-    Aircraft.VerticalTail.SPAR_WALL_THICKNESS,
+    Aircraft.VerticalTail.Dbf.SPAR_WALL_THICKNESS,
     units='inch',
     desc='Thickness of spar wall',
     default_value=0.0625,
@@ -5539,10 +5661,82 @@ add_meta_data(
 )
 
 add_meta_data(
-    Aircraft.VerticalTail.RIB_LIGHTENING_FACTOR,
+    Aircraft.VerticalTail.Dbf.GLUE_FACTOR,
     units='unitless',
-    desc='Fraction of the rib area that remains after lightening cuts',
+    desc='Added margin for glue. Only added to ribs, spars, and stringers',
+    default_value=0.15,
+    meta_data=_MetaData,
+    option=True,
+)
+
+add_meta_data(
+    Aircraft.VerticalTail.Dbf.STRINGER_DENSITY,
+    units='lbm/ft**3',
+    desc='Material density of the stringer',
+    default_value=250,
+    meta_data=_MetaData,
+    option=True,
+)
+
+add_meta_data(
+    Aircraft.VerticalTail.Dbf.STRINGER_THICKNESS,
+    units='inch',
+    desc='Thickness of stringers',
+    default_value=0.0625,
+    meta_data=_MetaData,
+    option=True,
+)
+
+add_meta_data(
+    Aircraft.VerticalTail.Dbf.SHEETING_THICKNESS,
+    units='inch',
+    desc='Thickness of sheeting',
+    default_value=0.03125,
+    meta_data=_MetaData,
+    option=True,
+)
+
+add_meta_data(
+    Aircraft.VerticalTail.Dbf.SHEETING_DENSITY,
+    units='lbm/ft**3',
+    desc='Material density of the sheeting',
+    default_value=250,
+    meta_data=_MetaData,
+    option=True,
+)
+
+add_meta_data(
+    Aircraft.VerticalTail.Dbf.SHEETING_LIGHTENING_FACTOR,
+    units='unitless',
+    desc='Fraction of the sheeting area that remains after lightening cuts',
     default_value=0.5,
+    meta_data=_MetaData,
+    option=True,
+)
+
+add_meta_data(
+    Aircraft.VerticalTail.Dbf.SHEETING_COVERAGE,
+    units='unitless',
+    desc='Fraction of the wetted area covered by sheeting',
+    default_value=1.0,
+    meta_data=_MetaData,
+    option=True,
+)
+
+add_meta_data(
+    Aircraft.VerticalTail.Dbf.NUM_STRINGERS,
+    units='unitless',
+    desc='Number of stringers(assumed length=span)',
+    default_value=2.0,
+    meta_data=_MetaData,
+    option=True,
+)
+
+add_meta_data(
+    Aircraft.VerticalTail.Dbf.MISC_MASS,
+    units='kg',
+    desc='Mass made up of smaller, non structural components. Can be used for higher fidelity options as well',
+    default_value=0.0,
     meta_data=_MetaData,
     option=True,
 )
@@ -6836,9 +7030,14 @@ add_meta_data(
     default_value=0.0,
 )
 
+#   ___    _       __ 
+#  |   \  | |__   / _|
+#  | |) | | '_ \ |  _|
+#  |___/  |_.__/ |_|  
+# ====================
 ### CUSTOM ADDED FOR DBF -- NEED TO SORT LATER ###
 add_meta_data(
-    Aircraft.Wing.NUM_SPARS,
+    Aircraft.Wing.Dbf.NUM_SPARS,
     units='unitless',
     desc='Number of wing spars',
     default_value=2,
@@ -6847,7 +7046,7 @@ add_meta_data(
 )
 
 add_meta_data(
-    Aircraft.Wing.SPAR_OUTER_DIAMETER,
+    Aircraft.Wing.Dbf.SPAR_OUTER_DIAMETER,
     units='inch',
     desc='Diameter/thickness of a single spar (assumed cylindrical)',
     default_value=0.25,
@@ -6856,7 +7055,7 @@ add_meta_data(
 )
 
 add_meta_data(
-    Aircraft.Wing.SPAR_DENSITY,
+    Aircraft.Wing.Dbf.SPAR_DENSITY,
     units='lbm/ft**3',
     desc='Material density of the spar',
     default_value=0.015,
@@ -6865,7 +7064,7 @@ add_meta_data(
 )
 
 add_meta_data(
-    Aircraft.Wing.NUM_RIBS,
+    Aircraft.Wing.Dbf.NUM_RIBS,
     units='unitless',
     desc='Number of wing ribs',
     default_value=10,
@@ -6874,7 +7073,7 @@ add_meta_data(
 )
 
 add_meta_data(
-    Aircraft.Wing.RIB_THICKNESS,
+    Aircraft.Wing.Dbf.RIB_THICKNESS,
     units='inch',
     types=float,
     desc='Thickness of a single rib',
@@ -6885,7 +7084,7 @@ add_meta_data(
 )
 
 add_meta_data(
-    Aircraft.Wing.RIB_LIGHTENING_FACTOR,
+    Aircraft.Wing.Dbf.RIB_LIGHTENING_FACTOR,
     units='unitless',
     desc='Fraction of the rib area that remains after lightening cuts',
     default_value=0.5,
@@ -6894,7 +7093,7 @@ add_meta_data(
 )
 
 add_meta_data(
-    Aircraft.Wing.RIB_DENSITY,
+    Aircraft.Wing.Dbf.RIB_DENSITY,
     units='lbm/ft**3',
     types=float,
     desc='Material density of the rib',
@@ -6905,7 +7104,7 @@ add_meta_data(
 )
 
 add_meta_data(
-    Aircraft.Wing.SKIN_DENSITY,
+    Aircraft.Wing.Dbf.SKIN_DENSITY,
     units='lbm/inch**2',
     desc='Surface density of wing skin',
     default_value=0.02,
@@ -6914,7 +7113,7 @@ add_meta_data(
 )
 
 add_meta_data(
-    Aircraft.Wing.SPAR_WALL_THICKNESS,
+    Aircraft.Wing.Dbf.SPAR_WALL_THICKNESS,
     units='inch',
     desc='Thickness of spar wall',
     default_value=0.0625,
@@ -6923,7 +7122,7 @@ add_meta_data(
 )
 
 add_meta_data(
-    Aircraft.Wing.GLUE_FACTOR,
+    Aircraft.Wing.Dbf.GLUE_FACTOR,
     units='unitless',
     desc='Added margin for glue. Only added to ribs, spars, and stringers',
     default_value=0.15,
@@ -6932,7 +7131,7 @@ add_meta_data(
 )
 
 add_meta_data(
-    Aircraft.Wing.STRINGER_DENSITY,
+    Aircraft.Wing.Dbf.STRINGER_DENSITY,
     units='lbm/ft**3',
     desc='Material density of the stringer',
     default_value=250,
@@ -6941,7 +7140,7 @@ add_meta_data(
 )
 
 add_meta_data(
-    Aircraft.Wing.STRINGER_THICKNESS,
+    Aircraft.Wing.Dbf.STRINGER_THICKNESS,
     units='inch',
     desc='Thickness of stringers',
     default_value=0.0625,
@@ -6950,7 +7149,7 @@ add_meta_data(
 )
 
 add_meta_data(
-    Aircraft.Wing.SHEETING_THICKNESS,
+    Aircraft.Wing.Dbf.SHEETING_THICKNESS,
     units='inch',
     desc='Thickness of sheeting',
     default_value=0.03125,
@@ -6959,7 +7158,7 @@ add_meta_data(
 )
 
 add_meta_data(
-    Aircraft.Wing.SHEETING_DENSITY,
+    Aircraft.Wing.Dbf.SHEETING_DENSITY,
     units='lbm/ft**3',
     desc='Material density of the sheeting',
     default_value=250,
@@ -6968,7 +7167,7 @@ add_meta_data(
 )
 
 add_meta_data(
-    Aircraft.Wing.SHEETING_LIGHTENING_FACTOR,
+    Aircraft.Wing.Dbf.SHEETING_LIGHTENING_FACTOR,
     units='unitless',
     desc='Fraction of the sheeting area that remains after lightening cuts',
     default_value=0.5,
@@ -6977,7 +7176,7 @@ add_meta_data(
 )
 
 add_meta_data(
-    Aircraft.Wing.SHEETING_COVERAGE,
+    Aircraft.Wing.Dbf.SHEETING_COVERAGE,
     units='unitless',
     desc='Fraction of the wetted area covered by sheeting',
     default_value=1.0,
@@ -6986,10 +7185,19 @@ add_meta_data(
 )
 
 add_meta_data(
-    Aircraft.Wing.NUM_STRINGERS,
+    Aircraft.Wing.Dbf.NUM_STRINGERS,
     units='unitless',
     desc='Number of stringers(assumed length=span)',
     default_value=2.0,
+    meta_data=_MetaData,
+    option=True,
+)
+
+add_meta_data(
+    Aircraft.Wing.Dbf.MISC_MASS,
+    units='kg',
+    desc='Mass made up of smaller, non structural components. Can be used for higher fidelity options as well',
+    default_value=0.0,
     meta_data=_MetaData,
     option=True,
 )

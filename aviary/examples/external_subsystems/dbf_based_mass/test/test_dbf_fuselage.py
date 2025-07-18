@@ -40,6 +40,7 @@ class TestDBFFuselageMass(unittest.TestCase):
         self.dbf.options['spar_density'] = (2, 'g/cm**3')
         self.dbf.options['spar_outer_diameter'] = (1, 'inch')
         self.dbf.options['spar_wall_thickness'] = (0.0625, 'inch')
+        self.dbf.options['misc_mass'] = (0.0, 'kg')
 
         self.prob.setup(force_alloc_complex=True)
 

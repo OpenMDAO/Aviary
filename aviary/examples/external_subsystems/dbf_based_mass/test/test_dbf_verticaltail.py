@@ -41,6 +41,7 @@ class TestDBFVerticalTailMass(unittest.TestCase):
         self.dbf.options['airfoil_data_file'] = (
             'aviary/examples/external_subsystems/dbf_based_mass/mh84-il.csv'
         )
+        self.dbf.options['misc_mass'] = (0.0, 'kg')
 
         self.prob.setup(force_alloc_complex=True)
 

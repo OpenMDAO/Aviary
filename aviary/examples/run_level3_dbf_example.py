@@ -8,6 +8,7 @@ from aviary.examples.external_subsystems.dbf_based_mass.dbf_fuselage import DBFF
 from aviary.examples.external_subsystems.dbf_based_mass.dbf_verticaltail import DBFVerticalTailMass
 from aviary.examples.external_subsystems.dbf_based_mass.dbf_horizontaltail import DBFHorizontalTailMass
 from aviary.examples.external_subsystems.dbf_based_mass.dbf_wing import DBFWingMass
+from aviary.examples.external_subsystems.dbf_based_mass.mass_summation import MassSummation
 from aviary.variable_info.variables import Aircraft
 
 
@@ -47,54 +48,54 @@ def run_level3_dbf_example():
     # Configure vertical tail
     # -----------------------------
     vtail = DBFVerticalTailMass()
-    rib_thicks_v = np.array([0.125]*20)
-    rib_materials_v = ['Balsa'] * 15 + ['Ply'] * 5
+    rib_thicks_v = np.array([0.125]*5)
+    rib_materials_v = ['Balsa'] * 4 + ['Ply'] * 1
     vtail.options['rib_materials'] = rib_materials_v
     vtail.options['rib_thicknesses'] = (rib_thicks_v, 'inch')
     vtail.options['airfoil_data_file'] = os.path.join(
-        'aviary', 'examples', 'external_subsystems', 'dbf_based_mass', 'mh84-il.csv'
+        'aviary', 'examples', 'external_subsystems', 'dbf_based_mass', 'n0012-il.csv'
     )
-    vtail.options['sheeting_coverage'] = (0.4, 'unitless')
+    vtail.options['sheeting_coverage'] = (0.7, 'unitless')
     vtail.options['sheeting_density'] = (160, 'kg/m**3')
     vtail.options['sheeting_lightening_factor'] = (1.0, 'unitless')
     vtail.options['sheeting_thickness'] = (0.03125, 'inch')
     vtail.options['stringer_density'] = (160, 'kg/m**3')
     vtail.options['stringer_thickness'] = (0.375, 'inch')
     vtail.options['num_stringers'] = (2.5, 'unitless')
-    vtail.options['glue_factor'] = (0.15, 'unitless')
-    vtail.options['num_spars'] = (1.1, 'unitless')
+    vtail.options['glue_factor'] = (0.05, 'unitless')
+    vtail.options['num_spars'] = (0, 'unitless')
     vtail.options['rib_lightening_factor'] = (2/3, 'unitless')
     vtail.options['skin_density'] = (20, 'g/m**2')
-    vtail.options['spar_density'] = (2, 'g/cm**3')
-    vtail.options['spar_outer_diameter'] = (1, 'inch')
-    vtail.options['spar_wall_thickness'] = (0.0625, 'inch')
+    vtail.options['spar_density'] = (0, 'g/cm**3')
+    vtail.options['spar_outer_diameter'] = (0, 'inch')
+    vtail.options['spar_wall_thickness'] = (0.0, 'inch')
     model.add_subsystem('vtail', vtail, promotes_inputs=['*'], promotes_outputs=['*'])
 
     # -----------------------------
     # Configure horizontal tail
     # -----------------------------
     htail = DBFHorizontalTailMass()
-    rib_thicks_h = np.array([0.125]*20)
-    rib_materials_h = ['Balsa'] * 15 + ['Ply'] * 5
+    rib_thicks_h = np.array([0.125]*8)
+    rib_materials_h = ['Balsa'] * 6 + ['Ply'] * 2
     htail.options['rib_materials'] = rib_materials_h
     htail.options['rib_thicknesses'] = (rib_thicks_h, 'inch')
     htail.options['airfoil_data_file'] = os.path.join(
-        'aviary', 'examples', 'external_subsystems', 'dbf_based_mass', 'mh84-il.csv'
+        'aviary', 'examples', 'external_subsystems', 'dbf_based_mass', 'n0012-il.csv'
     )
-    htail.options['sheeting_coverage'] = (0.4, 'unitless')
+    htail.options['sheeting_coverage'] = (0.7, 'unitless')
     htail.options['sheeting_density'] = (160, 'kg/m**3')
     htail.options['sheeting_lightening_factor'] = (1.0, 'unitless')
     htail.options['sheeting_thickness'] = (0.03125, 'inch')
     htail.options['stringer_density'] = (160, 'kg/m**3')
     htail.options['stringer_thickness'] = (0.375, 'inch')
     htail.options['num_stringers'] = (2.5, 'unitless')
-    htail.options['glue_factor'] = (0.15, 'unitless')
-    htail.options['num_spars'] = (1.1, 'unitless')
+    htail.options['glue_factor'] = (0.05, 'unitless')
+    htail.options['num_spars'] = (0, 'unitless')
     htail.options['rib_lightening_factor'] = (2/3, 'unitless')
     htail.options['skin_density'] = (20, 'g/m**2')
-    htail.options['spar_density'] = (2, 'g/cm**3')
-    htail.options['spar_outer_diameter'] = (1, 'inch')
-    htail.options['spar_wall_thickness'] = (0.0625, 'inch')
+    htail.options['spar_density'] = (0, 'g/cm**3')
+    htail.options['spar_outer_diameter'] = (0, 'inch')
+    htail.options['spar_wall_thickness'] = (0, 'inch')
     model.add_subsystem('htail', htail, promotes_inputs=['*'], promotes_outputs=['*'])
 
     # -----------------------------
@@ -115,7 +116,7 @@ def run_level3_dbf_example():
     wing.options['stringer_density'] = (160, 'kg/m**3')
     wing.options['stringer_thickness'] = (0.375, 'inch')
     wing.options['num_stringers'] = (2.5, 'unitless')
-    wing.options['glue_factor'] = (0.15, 'unitless')
+    wing.options['glue_factor'] = (0.08, 'unitless')
     wing.options['num_spars'] = (1.1, 'unitless')
     wing.options['rib_lightening_factor'] = (2/3, 'unitless')
     wing.options['skin_density'] = (20, 'g/m**2')
@@ -127,22 +128,8 @@ def run_level3_dbf_example():
     # -----------------------------
     # Total mass calculation
     # -----------------------------
-    model.add_subsystem(
-        'total_mass',
-        om.ExecComp(
-            'mass_total = wing + htail + vtail + fuse',
-            wing={'units': 'kg'},
-            htail={'units': 'kg'},
-            vtail={'units': 'kg'},
-            fuse={'units': 'kg'},
-            mass_total={'units': 'kg'},
-        ),
-        promotes_outputs=['mass_total']
-    )
-    model.connect(Aircraft.Wing.MASS, 'total_mass.wing')
-    model.connect(Aircraft.HorizontalTail.MASS, 'total_mass.htail')
-    model.connect(Aircraft.VerticalTail.MASS, 'total_mass.vtail')
-    model.connect(Aircraft.Fuselage.MASS, 'total_mass.fuse')
+    model.add_subsystem('mass_group', MassSummation(), promotes_inputs=['*'], promotes_outputs=['*'])
+
 
     # -----------------------------
     # Setup + Run
@@ -154,13 +141,13 @@ def run_level3_dbf_example():
     prob.set_val(Aircraft.Fuselage.AVG_WIDTH, 4, units='inch')
     prob.set_val(Aircraft.Fuselage.WETTED_AREA, 904, units='inch**2')
 
-    prob.set_val(Aircraft.VerticalTail.ROOT_CHORD, 20, units='inch')
-    prob.set_val(Aircraft.VerticalTail.SPAN, 4.667, units='ft')
-    prob.set_val(Aircraft.VerticalTail.WETTED_AREA, 0.85, units='m**2')
+    prob.set_val(Aircraft.VerticalTail.ROOT_CHORD, 8.75, units='inch')
+    prob.set_val(Aircraft.VerticalTail.SPAN, 1, units='ft')
+    prob.set_val(Aircraft.VerticalTail.WETTED_AREA, 0.139, units='m**2')
 
-    prob.set_val(Aircraft.HorizontalTail.ROOT_CHORD, 20, units='inch')
-    prob.set_val(Aircraft.HorizontalTail.SPAN, 4.667, units='ft')
-    prob.set_val(Aircraft.HorizontalTail.WETTED_AREA, 0.85, units='m**2')
+    prob.set_val(Aircraft.HorizontalTail.ROOT_CHORD, 8.75, units='inch')
+    prob.set_val(Aircraft.HorizontalTail.SPAN, 28, units='inch')
+    prob.set_val(Aircraft.HorizontalTail.WETTED_AREA, 0.352, units='m**2')
 
     prob.set_val(Aircraft.Wing.ROOT_CHORD, 20, units='inch')
     prob.set_val(Aircraft.Wing.SPAN, 4.667, units='ft')
@@ -176,7 +163,7 @@ def run_level3_dbf_example():
     print(f"Vertical Tail Mass: {prob.get_val(Aircraft.VerticalTail.MASS)[0]:.4f} kg")
     print(f"H-Tail Mass: {prob.get_val(Aircraft.HorizontalTail.MASS)[0]:.4f} kg")
     print(f"Wing Mass: {prob.get_val(Aircraft.Wing.MASS)[0]:.4f} kg")
-    print(f"Total Mass: {prob.get_val('mass_total')[0]:.4f} kg")
+    print(f"Total Mass: {prob.get_val('structure_mass')[0]:.4f} kg")
 
 
 if __name__ == '__main__':

@@ -11,7 +11,10 @@ from aviary.variable_info.variables import Aircraft
 class MassPremission(om.Group):
     def setup(self):
         self.add_subsystem(
-            'wing_mass', DBFWingMass(), promotes_inputs=['*'], promotes_outputs=[Aircraft.Wing.MASS]
+            'wing_mass', 
+            DBFWingMass(), 
+            promotes_inputs=['*'], 
+            promotes_outputs=[Aircraft.Wing.MASS],
         )
 
         self.add_subsystem(

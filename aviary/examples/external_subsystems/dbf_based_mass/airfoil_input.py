@@ -111,7 +111,7 @@ def load_airfoil_csv(file_path, delimiter=',', header=False):
 # ==== Example usage ====
 chord_length = 13.4  # in
 x, y = load_airfoil_csv(
-    r'aviary/examples/external_subsystems/dbf_based_mass/mh84-il.csv', header=True
+    r'aviary/examples/external_subsystems/dbf_based_mass/n0012-il.csv', header=True
 )
 
 area, t_max, x_t_max = visualize_airfoil_area(x, y)

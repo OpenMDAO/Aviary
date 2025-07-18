@@ -40,6 +40,7 @@ class DBFWingMass(om.ExplicitComponent):
         self.options.declare(**make_units_option('sheeting_coverage', 0.4, 'unitless'))
         self.options.declare(**make_units_option('sheeting_lightening_factor', 1.0, 'unitless'))
         self.options.declare(**make_units_option('num_stringers', 1.0, 'unitless'))
+        self.options.declare(**make_units_option('miscel_mass', 100.0, 'kg'))
 
     def setup(self):
         # Still user inputs:
@@ -118,6 +119,7 @@ class DBFWingMass(om.ExplicitComponent):
         num_stringer = self.options['num_stringers'][0]
         rib_materials = self.options['rib_materials']
         airfoil_data_file = self.options['airfoil_data_file']
+        misc_mass = self.options['miscel_mass'][0]
 
         if len(rib_materials) != len(rib_thickness):
             raise ValueError(
@@ -156,7 +158,7 @@ class DBFWingMass(om.ExplicitComponent):
         skin_mass = rho_skin * wetted_area
 
         structural_mass = stringer_mass + sheeting_mass + rib_mass + spar_mass + skin_mass
-        total_mass = (1 + glue_factor) * structural_mass
+        total_mass = (1 + glue_factor) * structural_mass + misc_mass
 
         outputs[Aircraft.Wing.MASS] = total_mass
 
@@ -221,7 +223,7 @@ if __name__ == '__main__':
     wing = prob.model.dbf_wing
     wing.options['rib_materials'] = rib_materials
     wing.options['airfoil_data_file'] = (
-        r'aviary\subsystems\mass\dbf_based_mass\mh84-il.csv'
+        r'aviary\examples\external_subsystems\dbf_based_mass\mh84-il.csv'
     )
     wing.options['sheeting_coverage'] = (0.4, 'unitless')
     wing.options['sheeting_density'] = (160, 'kg/m**3')
@@ -238,6 +240,7 @@ if __name__ == '__main__':
     wing.options['spar_density'] = (2, 'g/cm**3')
     wing.options['spar_outer_diameter'] = (1, 'inch')
     wing.options['spar_wall_thickness'] = (0.0625, 'inch')
+    wing.options['miscel_mass'] = (0.0, 'kg')
 
     # Setup problem with constant above options
     prob.setup()

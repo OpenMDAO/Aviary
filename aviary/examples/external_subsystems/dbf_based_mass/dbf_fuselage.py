@@ -39,6 +39,7 @@ class DBFFuselageMass(om.ExplicitComponent):
         self.options.declare(**make_units_option('sheeting_density', 160.0, 'kg/m**3'))
         self.options.declare(**make_units_option('sheeting_coverage', 0.4, 'unitless'))
         self.options.declare(**make_units_option('sheeting_lightening_factor', 1.0, 'unitless'))
+        self.options.declare(**make_units_option('misc_mass', 0.0, 'kg'))
 
     def setup(self):
         # Required geometry inputs
@@ -90,6 +91,7 @@ class DBFFuselageMass(om.ExplicitComponent):
         rho_sheeting = self.options['sheeting_density'][0]
         sheeting_lightening_factor = self.options['sheeting_lightening_factor'][0]
         bulkhead_materials = self.options['bulkhead_materials']
+        misc_mass = self.options['misc_mass'][0]
 
         rho_rib = np.array([(materials.get_item(m)[0]) for m in bulkhead_materials])
         cs_area = width * height * bulkhead_lightening_factor
@@ -122,8 +124,9 @@ class DBFFuselageMass(om.ExplicitComponent):
             rib_mass + spar_mass + floor_mass + stringer_mass + sheeting_mass + skin_mass
         )
 
-        # Final output
-        outputs[Aircraft.Fuselage.MASS] = structural_mass * (1 + glue_factor)
+        total_mass = structural_mass * (1 + glue_factor) + misc_mass
+
+        outputs[Aircraft.Fuselage.MASS] = total_mass
 
     def compute_partials(self, inputs, J):
         # Inputs
@@ -204,6 +207,7 @@ if __name__ == '__main__':
     fuse.options['spar_density'] = (2, 'g/cm**3')
     fuse.options['spar_outer_diameter'] = (1, 'inch')
     fuse.options['spar_wall_thickness'] = (0.0625, 'inch')
+    fuse.options['misc_mass'] = (0.0, 'kg')
 
     prob.model.add_subsystem('dbf_fuselage', fuse, promotes_inputs=['*'], promotes_outputs=['*'])
     prob.setup()
