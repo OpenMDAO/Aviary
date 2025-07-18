@@ -173,7 +173,9 @@ class BodyTankCalculations(om.ExplicitComponent):
         outputs['extra_fuel_volume'] = extra_fuel_volume
         outputs['max_extra_fuel_mass'] = max_extra_fuel_wt / GRAV_ENGLISH_LBM
 
+        # pass back to FuelSysAndFullFuselageMass
         outputs['wingfuel_mass_min'] = wingfuel_wt_min / GRAV_ENGLISH_LBM
+        # pass back to FuelAndOEMOutputs
         outputs[Aircraft.Fuel.TOTAL_CAPACITY] = max_fuel_avail / GRAV_ENGLISH_LBM
 
     def compute_partials(self, inputs, J):
@@ -619,11 +621,12 @@ class FuelAndOEMOutputs(om.ExplicitComponent):
         OEW = propulsion_wt + control_wt + struct_wt + fixed_equip_wt + useful_wt
 
         volume_wingfuel_wt = geometric_fuel_vol * rho_fuel
+        # always smoothing
         max_wingfuel_wt = OEM_wingfuel_wt * sigmoidX(
             volume_wingfuel_wt - OEM_wingfuel_wt, 0, 1 / 95.0
         ) + volume_wingfuel_wt * sigmoidX(OEM_wingfuel_wt - volume_wingfuel_wt, 0, 1 / 95.0)
         payload_wt_max_fuel = gross_wt_initial - OEW - max_fuel_avail
-        max_wingfuel_vol = max_wingfuel_wt / (rho_fuel)
+        max_wingfuel_vol = max_wingfuel_wt / rho_fuel
 
         outputs['OEM_wingfuel_mass'] = OEM_wingfuel_wt / GRAV_ENGLISH_LBM
         outputs['OEM_fuel_vol'] = OEM_fuel_vol
