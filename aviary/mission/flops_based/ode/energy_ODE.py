@@ -3,12 +3,9 @@ import openmdao.api as om
 
 from aviary.mission.base_ode import BaseODE as _BaseODE
 from aviary.mission.flops_based.ode.mission_EOM import MissionEOM
-from aviary.mission.gasp_based.ode.time_integration_base_classes import (
-    add_SGM_required_inputs,
-    add_SGM_required_outputs,
-)
+
 from aviary.subsystems.propulsion.throttle_allocation import ThrottleAllocator
-from aviary.variable_info.enums import AnalysisScheme, SpeedType, ThrottleAllocation
+from aviary.variable_info.enums import SpeedType, ThrottleAllocation
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 
 
@@ -41,16 +38,8 @@ class EnergyODE(_BaseODE):
     def setup(self):
         options = self.options
         nn = options['num_nodes']
-        analysis_scheme = options['analysis_scheme']
         aviary_options = options['aviary_options']
         num_engine_type = len(aviary_options.get_val(Aircraft.Engine.NUM_ENGINES))
-
-        if analysis_scheme is AnalysisScheme.SHOOTING:
-            SGM_required_inputs = {
-                't_curr': {'units': 's'},
-                Dynamic.Mission.DISTANCE: {'units': 'm'},
-            }
-            add_SGM_required_inputs(self, SGM_required_inputs)
 
         self.add_atmosphere(input_speed_type=SpeedType.MACH)
 
@@ -182,13 +171,7 @@ class EnergyODE(_BaseODE):
             promotes_outputs=['initial_mass_residual'],
         )
 
-        if analysis_scheme is AnalysisScheme.SHOOTING:
-            SGM_required_outputs = {
-                Dynamic.Mission.ALTITUDE_RATE: {'units': 'm/s'},
-            }
-            add_SGM_required_outputs(self, SGM_required_outputs)
-
-        print_level = 0 if analysis_scheme is AnalysisScheme.SHOOTING else 2
+        print_level = 2
 
         sub1.nonlinear_solver = om.NewtonSolver(
             solve_subsystems=True,
