@@ -687,7 +687,9 @@ class AviaryProblem(om.Problem):
                 self.model.list_inputs(out_stream=outfile)
 
         # Creates a flag to determine if the user would or would not like a payload/range diagram
-        payload_range_bool = self.aviary_inputs.get_val(Settings.PAYLOAD_RANGE)
+        payload_range_bool = False
+        if Settings.PAYLOAD_RANGE in self.aviary_inputs:
+            payload_range_bool = self.aviary_inputs.get_val(Settings.PAYLOAD_RANGE)
 
         if suppress_solver_print:
             self.set_solver_print(level=0)
