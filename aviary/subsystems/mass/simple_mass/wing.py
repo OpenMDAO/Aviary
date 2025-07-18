@@ -72,13 +72,13 @@ class WingMass(om.JaxExplicitComponent):
                 self.thickness,
                 self.camber_line,
             ) = self.extract_airfoil_features(x_coords, y_coords)
-            num_sections = len(x_coords)
+            len(x_coords)
         else:
             # Parse the NACA airfoil type (4-digit)
             self.camber = int(airfoil_type[0]) / 100.0  # Maximum camber
             self.camber_location = int(airfoil_type[1]) / 10.0  # Location of max camber
             self.max_thickness = int(airfoil_type[2:4]) / 100.0  # Max thickness
-            num_sections = self.options['num_sections']
+            self.options['num_sections']
 
     def get_self_statics(self):
         return (
@@ -118,11 +118,11 @@ class WingMass(om.JaxExplicitComponent):
             num_sections = self.options['num_sections']
 
         # Wing spanwise distribution
-        span_locations = jnp.linspace(0, aircraft__wing__span, num_sections)
+        jnp.linspace(0, aircraft__wing__span, num_sections)
 
         n_points = num_sections
-        x_points = jnp.linspace(0, 1, n_points)
-        dx = 1 / (n_points - 1)
+        jnp.linspace(0, 1, n_points)
+        1 / (n_points - 1)
 
         if airfoil_type:
             aircraft__wing__mass_first_part, _ = quadgk(

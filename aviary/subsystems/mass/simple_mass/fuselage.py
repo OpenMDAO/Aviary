@@ -1,5 +1,6 @@
 from pathlib import Path
 
+import jax
 import jax.numpy as jnp
 import jax.scipy.interpolate as jinterp
 import numpy as np
@@ -26,6 +27,12 @@ class FuselageMass(om.JaxExplicitComponent):
             desc='optional data file of fuselage geometry',
         )
 
+        self.options.declare(
+            'hollow_fuselage',
+            default=True,
+            desc='flag for if the fuselage should be hollow (wall thickness is not used if False)',
+        )
+
         # TODO FunctionType is not defined?
         # self.options.declare(
         #     'custom_fuselage_function',
@@ -46,9 +53,6 @@ class FuselageMass(om.JaxExplicitComponent):
         # Allow for asymmetry in the y and z axes -- this value acts as a slope for linear variation along these axes
         self.add_input('y_offset', val=0.0, units='m')
         self.add_input('z_offset', val=0.0, units='m')
-        self.add_input(
-            'is_hollow', val=True, units=None
-        )  # Whether the fuselage is hollow or not (default is hollow)
 
         # Outputs
         add_aviary_output(self, Aircraft.Fuselage.MASS, units='kg')
@@ -62,21 +66,12 @@ class FuselageMass(om.JaxExplicitComponent):
         thickness,
         y_offset,
         z_offset,
-        is_hollow,
     ):
-        # Validate inputs
-        if (
-            jnp.select(
-                condlist=[aircraft__fuselage__length[0] <= 0], choicelist=[True], default=False
-            )
-            or jnp.select(condlist=[base_diameter[0] <= 0], choicelist=[True], default=False)
-            or jnp.select(condlist=[tip_diameter[0] <= 0], choicelist=[True], default=False)
-            or jnp.select(condlist=[thickness[0] <= 0], choicelist=[True], default=False)
-        ):
-            raise om.AnalysisError('Length, diameter, and thickness must be positive values.')
+        is_hollow = self.options['hollow_fuselage']
 
-        if is_hollow and thickness >= base_diameter / 2:
-            raise om.AnalysisError('Wall thickness is too large for a hollow fuselage.')
+        self.validate_inputs(
+            aircraft__fuselage__length, base_diameter, tip_diameter, thickness, is_hollow
+        )
 
         custom_fuselage_data_file = self.options['fuselage_data_file']
         material = self.options['material']
@@ -145,3 +140,45 @@ class FuselageMass(om.JaxExplicitComponent):
             total_moment_z += centroid_z * section_weight
 
         return aircraft__fuselage__mass
+
+    def validate_inputs(self, length, base_diameter, tip_diameter, thickness, is_hollow):
+        jax.lax.cond(
+            length[0] <= 0,
+            lambda: jax.debug.callback(
+                raise_error, om.AnalysisError('Length must be a positive value.')
+            ),
+            lambda: None,
+        )
+        jax.lax.cond(
+            base_diameter[0] <= 0,
+            lambda: jax.debug.callback(
+                raise_error, om.AnalysisError('Base Diameter must be a positive value.')
+            ),
+            lambda: None,
+        )
+        jax.lax.cond(
+            tip_diameter[0] <= 0,
+            lambda: jax.debug.callback(
+                raise_error, om.AnalysisError('Tip Diameter must be a positive value.')
+            ),
+            lambda: None,
+        )
+        jax.lax.cond(
+            thickness[0] <= 0,
+            lambda: jax.debug.callback(
+                raise_error, om.AnalysisError('Thickness must be a positive value.')
+            ),
+            lambda: None,
+        )
+
+        jax.lax.cond(
+            is_hollow and thickness[0] >= base_diameter[0] / 2,
+            lambda: jax.debug.callback(
+                raise_error, om.AnalysisError('Wall thickness is too large for a hollow fuselage.')
+            ),
+            lambda: None,
+        )
+
+
+def raise_error(exception):
+    raise exception

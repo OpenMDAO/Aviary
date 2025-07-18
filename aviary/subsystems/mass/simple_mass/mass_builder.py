@@ -13,7 +13,7 @@ _default_name = 'simple_mass'
 
 
 class SimpleMassBuilder(MassBuilderBase):
-    """Base mass builder"""
+    """Base mass builder."""
 
     def __init__(self, name=None):
         if name is None:

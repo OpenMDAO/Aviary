@@ -6,7 +6,6 @@ This database will be expanded as needed.
 """
 
 from aviary.utils.named_values import NamedValues
-from aviary.utils.named_values import get_keys, get_values, get_items
 
 materials = NamedValues()
 

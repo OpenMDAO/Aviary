@@ -1,8 +1,5 @@
 import openmdao.api as om
 
-from aviary.subsystems.mass.simple_mass.fuselage import FuselageMass
-from aviary.subsystems.mass.simple_mass.tail import TailMass
-from aviary.subsystems.mass.simple_mass.wing import WingMass
 from aviary.variable_info.functions import add_aviary_input
 from aviary.variable_info.variables import Aircraft
 
@@ -18,37 +15,11 @@ class SimpleMassSummation(om.Group):
 
     def setup(self):
         self.add_subsystem(
-            'fuse_mass',
-            FuselageMass(),
-            promotes_inputs=['*'],
-            promotes_outputs=[Aircraft.Fuselage.MASS],
-        )
-
-        self.add_subsystem(
-            'wing_mass', WingMass(), promotes_inputs=['*'], promotes_outputs=[Aircraft.Wing.MASS]
-        )
-
-        self.add_subsystem(
-            'tail_mass',
-            TailMass(),
-            promotes_inputs=['*'],
-            promotes_outputs=[Aircraft.HorizontalTail.MASS],
-        )
-
-        self.add_subsystem(
             'structure_mass', StructureMass(), promotes_inputs=['*'], promotes_outputs=['*']
         )
 
 
-class StructureMass(om.JaxExplicitComponent):
-    def initialize(self):
-        self.options.declare(
-            'tail_type',
-            default='horizontal',
-            values=['horizontal', 'vertical'],
-            desc='Tail type used for the tail mass from tail.py file',
-        )
-
+class StructureMass(om.ExplicitComponent):
     def setup(self):
         add_aviary_input(self, Aircraft.Wing.MASS, val=0.0, units='kg')
         add_aviary_input(self, Aircraft.Fuselage.MASS, val=0.0, units='kg')
@@ -57,24 +28,17 @@ class StructureMass(om.JaxExplicitComponent):
 
         # More masses can be added, i.e., tail, spars, flaps, etc. as needed
 
-        self.add_output('structure_mass', val=0.0, units='kg')
+        self.add_output(Aircraft.Design.STRUCTURE_MASS, val=0.0, units='kg')
 
-    def compute_primal(
-        self,
-        aircraft__wing__mass,
-        aircraft__fuselage__mass,
-        aircraft__horizontal_tail__mass,
-        aircraft__vertical_tail__mass,
-    ):
-        tail_type = self.options['tail_type']
+    def setup_partials(self):
+        self.declare_partials(Aircraft.Design.STRUCTURE_MASS, '*', val=1)
 
-        if tail_type == 'horizontal':
-            structure_mass = (
-                aircraft__wing__mass + aircraft__fuselage__mass + aircraft__horizontal_tail__mass
-            )
-        else:
-            structure_mass = (
-                aircraft__wing__mass + aircraft__fuselage__mass + aircraft__vertical_tail__mass
-            )
+    def compute(self, inputs, outputs):
+        wing_mass = inputs[Aircraft.Wing.MASS]
+        fuselage_mass = inputs[Aircraft.Fuselage.MASS]
+        htail_mass = inputs[Aircraft.HorizontalTail.MASS]
+        vtail_mass = inputs[Aircraft.VerticalTail.MASS]
 
-        return structure_mass
+        structure_mass = wing_mass + fuselage_mass + htail_mass + vtail_mass
+
+        outputs[Aircraft.Design.STRUCTURE_MASS] = structure_mass

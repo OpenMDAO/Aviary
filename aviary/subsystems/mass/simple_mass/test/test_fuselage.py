@@ -31,8 +31,6 @@ class FuselageMassTestCase(unittest.TestCase):
 
         self.prob.model.set_input_defaults('z_offset', val=0.0, units='m')
 
-        self.prob.model.set_input_defaults('is_hollow', val=True)
-
         self.prob.setup(check=False, force_alloc_complex=True)
 
     def test_case(self):

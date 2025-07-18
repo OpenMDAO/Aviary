@@ -7,7 +7,7 @@ from scipy.interpolate import CubicSpline
 from aviary.subsystems.mass.simple_mass.materials_database import materials
 from aviary.utils.functions import get_path
 from aviary.utils.named_values import get_keys
-from aviary.variable_info.functions import add_aviary_input, add_aviary_output
+from aviary.variable_info.functions import add_aviary_output
 from aviary.variable_info.variables import Aircraft
 
 try:
