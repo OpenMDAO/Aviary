@@ -832,7 +832,7 @@ class FuelMassGroupTestCase1(unittest.TestCase):
         self.prob.model.set_input_defaults(Aircraft.Fuselage.WETTED_AREA, val=4000, units='ft**2')
         self.prob.model.set_input_defaults(Aircraft.Fuselage.AVG_DIAMETER, val=13.1, units='ft')
         self.prob.model.set_input_defaults(Aircraft.TailBoom.LENGTH, val=129.4, units='ft')
-        self.prob.model.set_input_defaults('fuselage.pylon_len', val=0, units='ft')
+        self.prob.model.set_input_defaults('pylon_len', val=0, units='ft')
         self.prob.model.set_input_defaults('min_dive_vel', val=420, units='kn')
         self.prob.model.set_input_defaults(
             Aircraft.Fuselage.PRESSURE_DIFFERENTIAL, val=7.5, units='psi'
@@ -840,7 +840,7 @@ class FuelMassGroupTestCase1(unittest.TestCase):
         self.prob.model.set_input_defaults(
             Aircraft.Wing.ULTIMATE_LOAD_FACTOR, val=3.893, units='unitless'
         )
-        self.prob.model.set_input_defaults('fuselage.MAT', val=0, units='lbm')
+        self.prob.model.set_input_defaults('MAT', val=0, units='lbm')
         self.prob.model.set_input_defaults(Aircraft.Wing.MASS_SCALER, val=1, units='unitless')
         self.prob.model.set_input_defaults(
             Aircraft.HorizontalTail.MASS_SCALER, val=1, units='unitless'
@@ -861,7 +861,7 @@ class FuelMassGroupTestCase1(unittest.TestCase):
         )
         self.prob.model.set_input_defaults(Aircraft.Fuselage.AVG_DIAMETER, val=13.1, units='ft')
         self.prob.model.set_input_defaults(Aircraft.TailBoom.LENGTH, val=129.4, units='ft')
-        self.prob.model.set_input_defaults('fuselage.pylon_len', val=0, units='ft')
+        self.prob.model.set_input_defaults('pylon_len', val=0, units='ft')
         self.prob.model.set_input_defaults('min_dive_vel', val=420, units='kn')
         self.prob.model.set_input_defaults(
             Aircraft.Fuselage.PRESSURE_DIFFERENTIAL, val=7.5, units='psi'
@@ -869,7 +869,7 @@ class FuelMassGroupTestCase1(unittest.TestCase):
         self.prob.model.set_input_defaults(
             Aircraft.Wing.ULTIMATE_LOAD_FACTOR, val=3.893, units='unitless'
         )
-        self.prob.model.set_input_defaults('fuselage.MAT', val=0, units='lbm')
+        self.prob.model.set_input_defaults('MAT', val=0, units='lbm')
         self.prob.model.set_input_defaults(Aircraft.Wing.MASS_SCALER, val=1, units='unitless')
         self.prob.model.set_input_defaults(
             Aircraft.HorizontalTail.MASS_SCALER, val=1, units='unitless'
@@ -910,13 +910,13 @@ class FuelMassGroupTestCase1(unittest.TestCase):
         tol = 5e-4
 
         # wingfuel
-        assert_near_equal(self.prob['fuel_and_oem.OEM_wingfuel_mass'], 78894, tol)
-        assert_near_equal(self.prob['fuel_and_oem.OEM_fuel_vol'], 1577.160566039489, tol)
+        assert_near_equal(self.prob['OEM_wingfuel_mass'], 78894, tol)
+        assert_near_equal(self.prob['OEM_fuel_vol'], 1577.160566039489, tol)
         assert_near_equal(self.prob[Aircraft.Design.OPERATING_MASS], 96508.0, tol)
         assert_near_equal(
-            self.prob['fuel_and_oem.payload_mass_max_fuel'], 36000, tol
+            self.prob['payload_mass_max_fuel'], 36000, tol
         )  # note: this is calculated differently in V3, so this is the V3.6 value
-        assert_near_equal(self.prob['fuel_and_oem.volume_wingfuel_mass'], 55725.1, tol)
+        assert_near_equal(self.prob['volume_wingfuel_mass'], 55725.1, tol)
         assert_near_equal(self.prob['max_wingfuel_mass'], 55725.1, tol)
 
         # sys and fus
@@ -938,10 +938,10 @@ class FuelMassGroupTestCase1(unittest.TestCase):
             self.prob[Aircraft.Fuel.AUXILIARY_FUEL_CAPACITY], 0, tol
         )  # note: not in version 3 output, calculated by hand
         assert_near_equal(
-            self.prob['body_tank.extra_fuel_volume'], 0, tol
+            self.prob['extra_fuel_volume'], 0, tol
         )  # note: not in version 3 output, calculated by hand
         assert_near_equal(
-            self.prob['body_tank.max_extra_fuel_mass'], 0, tol
+            self.prob['max_extra_fuel_mass'], 0, tol
         )  # note: not in version 3 output, calculated by hand
         # note: Aircraft.Fuel.TOTAL_CAPACITY is calculated differently in V3, so it is not included here
 
@@ -992,7 +992,7 @@ class FuelMassGroupTestCase2(
             Aircraft.TailBoom.LENGTH, val=129.5, units='ft'
         )  # note: calculated by hand
         self.prob.model.set_input_defaults(
-            'fuselage.pylon_len', val=0, units='ft'
+            'pylon_len', val=0, units='ft'
         )  # note: calculated by hand
         self.prob.model.set_input_defaults('min_dive_vel', val=420, units='kn')
         self.prob.model.set_input_defaults(
@@ -1001,7 +1001,7 @@ class FuelMassGroupTestCase2(
         self.prob.model.set_input_defaults(
             Aircraft.Wing.ULTIMATE_LOAD_FACTOR, val=3.75, units='unitless'
         )
-        self.prob.model.set_input_defaults('fuselage.MAT', val=0, units='lbm')
+        self.prob.model.set_input_defaults('MAT', val=0, units='lbm')
         self.prob.model.set_input_defaults(
             Aircraft.HorizontalTail.MASS_SCALER, val=1, units='unitless'
         )
@@ -1041,11 +1041,11 @@ class FuelMassGroupTestCase2(
         tol = 5e-4
 
         # wingfuel
-        assert_near_equal(self.prob['fuel_and_oem.OEM_wingfuel_mass'], 80982.7, tol)
-        assert_near_equal(self.prob['fuel_and_oem.OEM_fuel_vol'], 1618.9, tol)
+        assert_near_equal(self.prob['OEM_wingfuel_mass'], 80982.7, tol)
+        assert_near_equal(self.prob['OEM_fuel_vol'], 1618.9, tol)
         assert_near_equal(self.prob[Aircraft.Design.OPERATING_MASS], 94417.0, tol)
-        assert_near_equal(self.prob['fuel_and_oem.payload_mass_max_fuel'], 34879.2, tol)
-        assert_near_equal(self.prob['fuel_and_oem.volume_wingfuel_mass'], 43852.1, tol)
+        assert_near_equal(self.prob['payload_mass_max_fuel'], 34879.2, tol)
+        assert_near_equal(self.prob['volume_wingfuel_mass'], 43852.1, tol)
         assert_near_equal(self.prob['max_wingfuel_mass'], 43852.1, tol)
 
         # sys and fus
@@ -1071,10 +1071,10 @@ class FuelMassGroupTestCase2(
             self.prob[Aircraft.Fuel.AUXILIARY_FUEL_CAPACITY], 1130.6, 0.0112
         )  # tol is slightly higher because GASP iteration is less rigorous, and also because of numerical issues with inputs.
         assert_near_equal(
-            self.prob['body_tank.extra_fuel_volume'], 112.5, 0.0022
+            self.prob['extra_fuel_volume'], 112.5, 0.0022
         )  # tol is slightly higher because GASP iteration is less rigorous.
         assert_near_equal(
-            self.prob['body_tank.max_extra_fuel_mass'], 5628.9, 0.0025
+            self.prob['max_extra_fuel_mass'], 5628.9, 0.0025
         )  # tol is slightly higher because GASP iteration is less rigorous.
 
         partial_data = self.prob.check_partials(out_stream=None, method='cs')
@@ -1117,7 +1117,7 @@ class FuelMassGroupTestCase3(unittest.TestCase):  # this is v 3.6 advanced tube 
         self.prob.model.set_input_defaults(Aircraft.Fuselage.WETTED_AREA, val=4209, units='ft**2')
         self.prob.model.set_input_defaults(Aircraft.Fuselage.AVG_DIAMETER, val=13.1, units='ft')
         self.prob.model.set_input_defaults(Aircraft.TailBoom.LENGTH, val=119.03, units='ft')
-        self.prob.model.set_input_defaults('fuselage.pylon_len', val=0, units='ft')
+        self.prob.model.set_input_defaults('pylon_len', val=0, units='ft')
         self.prob.model.set_input_defaults('min_dive_vel', val=420, units='kn')
         self.prob.model.set_input_defaults(
             Aircraft.Fuselage.PRESSURE_DIFFERENTIAL, val=7.5, units='psi'
@@ -1125,7 +1125,7 @@ class FuelMassGroupTestCase3(unittest.TestCase):  # this is v 3.6 advanced tube 
         self.prob.model.set_input_defaults(
             Aircraft.Wing.ULTIMATE_LOAD_FACTOR, val=4.484, units='unitless'
         )
-        self.prob.model.set_input_defaults('fuselage.MAT', val=0, units='lbm')
+        self.prob.model.set_input_defaults('MAT', val=0, units='lbm')
         self.prob.model.set_input_defaults(Aircraft.Wing.MASS_SCALER, val=1, units='unitless')
         self.prob.model.set_input_defaults(
             Aircraft.HorizontalTail.MASS_SCALER, val=1, units='unitless'
@@ -1146,7 +1146,7 @@ class FuelMassGroupTestCase3(unittest.TestCase):  # this is v 3.6 advanced tube 
         )
         self.prob.model.set_input_defaults(Aircraft.Fuselage.AVG_DIAMETER, val=13.1, units='ft')
         self.prob.model.set_input_defaults(Aircraft.TailBoom.LENGTH, val=119.03, units='ft')
-        self.prob.model.set_input_defaults('fuselage.pylon_len', val=0, units='ft')
+        self.prob.model.set_input_defaults('pylon_len', val=0, units='ft')
         self.prob.model.set_input_defaults('min_dive_vel', val=420, units='kn')
         self.prob.model.set_input_defaults(
             Aircraft.Fuselage.PRESSURE_DIFFERENTIAL, val=7.5, units='psi'
@@ -1154,7 +1154,7 @@ class FuelMassGroupTestCase3(unittest.TestCase):  # this is v 3.6 advanced tube 
         self.prob.model.set_input_defaults(
             Aircraft.Wing.ULTIMATE_LOAD_FACTOR, val=4.484, units='unitless'
         )
-        self.prob.model.set_input_defaults('fuselage.MAT', val=0, units='lbm')
+        self.prob.model.set_input_defaults('MAT', val=0, units='lbm')
         self.prob.model.set_input_defaults(Aircraft.Wing.MASS_SCALER, val=1, units='unitless')
         self.prob.model.set_input_defaults(
             Aircraft.HorizontalTail.MASS_SCALER, val=1, units='unitless'
@@ -1195,10 +1195,10 @@ class FuelMassGroupTestCase3(unittest.TestCase):  # this is v 3.6 advanced tube 
         tol = 5e-4
 
         # wingfuel
-        assert_near_equal(self.prob['fuel_and_oem.OEM_wingfuel_mass'], 62427.2, tol)
-        assert_near_equal(self.prob['fuel_and_oem.OEM_fuel_vol'], 1248.0, tol)
+        assert_near_equal(self.prob['OEM_wingfuel_mass'], 62427.2, tol)
+        assert_near_equal(self.prob['OEM_fuel_vol'], 1248.0, tol)
         assert_near_equal(self.prob[Aircraft.Design.OPERATING_MASS], 82961.0, tol)
-        assert_near_equal(self.prob['fuel_and_oem.volume_wingfuel_mass'], 33892.8, tol)
+        assert_near_equal(self.prob['volume_wingfuel_mass'], 33892.8, tol)
         assert_near_equal(self.prob['max_wingfuel_mass'], 33892.8, tol)
 
         # sys and fus
@@ -1216,7 +1216,7 @@ class FuelMassGroupTestCase3(unittest.TestCase):  # this is v 3.6 advanced tube 
 
         # body tank
         assert_near_equal(self.prob[Aircraft.Fuel.AUXILIARY_FUEL_CAPACITY], 0, tol)
-        assert_near_equal(self.prob['body_tank.extra_fuel_volume'], 17.9, tol)
+        assert_near_equal(self.prob['extra_fuel_volume'], 17.9, tol)
 
         partial_data = self.prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=3e-9, rtol=6e-11)
@@ -1549,10 +1549,10 @@ class BWBFuelMassGroupTest(unittest.TestCase):
 
         # wingfuel
         assert_near_equal(self.prob[Aircraft.Design.OPERATING_MASS], 82252.59837521, tol)
-        assert_near_equal(self.prob['fuel_and_oem.OEM_wingfuel_mass'], 67747.40162479, tol)
-        assert_near_equal(self.prob['fuel_and_oem.OEM_fuel_vol'], 1354.34550784, tol)
-        assert_near_equal(self.prob['fuel_and_oem.payload_mass_max_fuel'], 33750.0, tol)
-        # assert_near_equal(self.prob['fuel_and_oem.volume_wingfuel_mass'], 26646.849, tol)
+        assert_near_equal(self.prob['OEM_wingfuel_mass'], 67747.40162479, tol)
+        assert_near_equal(self.prob['OEM_fuel_vol'], 1354.34550784, tol)
+        assert_near_equal(self.prob['payload_mass_max_fuel'], 33750.0, tol)
+        # assert_near_equal(self.prob['volume_wingfuel_mass'], 26646.849, tol)
         assert_near_equal(self.prob['max_wingfuel_mass'], 39197.43049744, tol)
 
         # fus and struct
@@ -1568,8 +1568,8 @@ class BWBFuelMassGroupTest(unittest.TestCase):
         # body tank
         assert_near_equal(self.prob[Aircraft.Fuel.AUXILIARY_FUEL_CAPACITY], 0.0, tol)
         assert_near_equal(self.prob[Aircraft.Fuel.TOTAL_CAPACITY], 33997.40162479, tol)
-        assert_near_equal(self.prob['body_tank.extra_fuel_volume'], 0.0, tol)
-        assert_near_equal(self.prob['body_tank.max_extra_fuel_mass'], 0.0, tol)
+        assert_near_equal(self.prob['extra_fuel_volume'], 0.0, tol)
+        assert_near_equal(self.prob['max_extra_fuel_mass'], 0.0, tol)
         assert_near_equal(self.prob['wingfuel_mass_min'], 18997.40162479, tol)
 
         partial_data = self.prob.check_partials(out_stream=None, method='cs')

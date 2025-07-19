@@ -662,7 +662,7 @@ class BWBWingMassSolveTestCase(unittest.TestCase):
         )
         prob.model.set_input_defaults('half_sweep', 0.479839474, units='rad')
         prob.model.set_input_defaults(
-            Aircraft.Fuselage.LIFT_COEFFICENT_RATIO_BODY_TO_WING, 0.35, units='unitless'
+            Aircraft.Fuselage.LIFT_COEFFICIENT_RATIO_BODY_TO_WING, 0.35, units='unitless'
         )
 
         newton = self.prob.model.nonlinear_solver = om.NewtonSolver()
@@ -736,7 +736,7 @@ class BWBWingMassGroupTest(unittest.TestCase):
         prob.model.set_input_defaults(Aircraft.Wing.FOLDING_AREA, 224.82529025, units='ft**2')
         prob.model.set_input_defaults(Aircraft.Wing.FOLD_MASS_COEFFICIENT, 0.15, units='unitless')
         prob.model.set_input_defaults(
-            Aircraft.Fuselage.LIFT_COEFFICENT_RATIO_BODY_TO_WING, 0.35, units='unitless'
+            Aircraft.Fuselage.LIFT_COEFFICIENT_RATIO_BODY_TO_WING, 0.35, units='unitless'
         )
 
         setup_model_options(self.prob, options)

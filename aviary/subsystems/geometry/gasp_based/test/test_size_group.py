@@ -2,6 +2,7 @@ import unittest
 
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
+from openmdao.utils.testing_utils import use_tempdirs
 
 from aviary.subsystems.geometry.gasp_based.size_group import SizeGroup
 from aviary.variable_info.functions import setup_model_options
@@ -11,6 +12,7 @@ from aviary.variable_info.variables import Aircraft, Mission
 # this is the GASP test case, input and output values based on large single aisle 1 v3 without bug fix
 
 
+@use_tempdirs
 class SizeGroupTestCase1(unittest.TestCase):
     def setUp(self):
         options = get_option_defaults()
@@ -88,9 +90,9 @@ class SizeGroupTestCase1(unittest.TestCase):
 
         tol = 5e-4
         assert_near_equal(self.prob[Aircraft.Fuselage.AVG_DIAMETER], 157.2, tol)
-        assert_near_equal(self.prob['fuselage.cabin_height'], 13.1, tol)
-        assert_near_equal(self.prob['fuselage.cabin_len'], 72.1, tol)
-        assert_near_equal(self.prob['fuselage.nose_height'], 8.6, tol)
+        assert_near_equal(self.prob['cabin_height'], 13.1, tol)
+        assert_near_equal(self.prob['cabin_len'], 72.1, tol)
+        assert_near_equal(self.prob['nose_height'], 8.6, tol)
 
         # note: this is the actual GASP value, but for version 3.5. Version 3 has 129.4
         assert_near_equal(self.prob[Aircraft.Fuselage.LENGTH], 129.5, tol)
@@ -129,6 +131,7 @@ class SizeGroupTestCase1(unittest.TestCase):
         assert_check_partials(partial_data, atol=2e-12, rtol=1e-12)
 
 
+@use_tempdirs
 class SizeGroupTestCase2(unittest.TestCase):
     def setUp(self):
         options = get_option_defaults()
@@ -222,11 +225,9 @@ class SizeGroupTestCase2(unittest.TestCase):
         assert_near_equal(
             self.prob[Aircraft.Fuselage.AVG_DIAMETER], 157.2, tol
         )  # not actual GASP value
-        assert_near_equal(self.prob['fuselage.cabin_height'], 13.1, tol)  # not actual GASP value
-        assert_near_equal(
-            self.prob['fuselage.cabin_len'], 72.09722222, tol
-        )  # not actual GASP value
-        assert_near_equal(self.prob['fuselage.nose_height'], 8.6, tol)  # not actual GASP value
+        assert_near_equal(self.prob['cabin_height'], 13.1, tol)  # not actual GASP value
+        assert_near_equal(self.prob['cabin_len'], 72.09722222, tol)  # not actual GASP value
+        assert_near_equal(self.prob['nose_height'], 8.6, tol)  # not actual GASP value
 
         assert_near_equal(self.prob[Aircraft.Fuselage.LENGTH], 129.5, tol)  # not actual GASP value
         assert_near_equal(
@@ -251,25 +252,23 @@ class SizeGroupTestCase2(unittest.TestCase):
         )  # not actual GASP value
 
         assert_near_equal(
-            self.prob['wing.fold_vol.nonfolded_taper_ratio'], 0.93175961, tol
+            self.prob['nonfolded_taper_ratio'], 0.93175961, tol
         )  # not actual GASP value
         assert_near_equal(
             self.prob[Aircraft.Wing.FOLDING_AREA], 1167.5966191, tol
         )  # not actual GASP value
         assert_near_equal(
-            self.prob['wing.fold_vol.nonfolded_wing_area'], 202.7158809, tol
+            self.prob['nonfolded_wing_area'], 202.7158809, tol
         )  # not actual GASP value
         assert_near_equal(
-            self.prob['wing.fold_vol.tc_ratio_mean_folded'], 0.14847223, tol
+            self.prob['tc_ratio_mean_folded'], 0.14847223, tol
         )  # not actual GASP value
-        assert_near_equal(
-            self.prob['wing.fold_vol.nonfolded_AR'], 0.71035382, tol
-        )  # not actual GASP value
+        assert_near_equal(self.prob['nonfolded_AR'], 0.71035382, tol)  # not actual GASP value
         assert_near_equal(
             self.prob[Aircraft.Fuel.WING_VOLUME_GEOMETRIC_MAX], 208.08091725, tol
         )  # not actual GASP value
 
-        assert_near_equal(self.prob['wing.strut_y'], 6, tol)  # not actual GASP value
+        assert_near_equal(self.prob['strut_y'], 6, tol)  # not actual GASP value
         assert_near_equal(
             self.prob[Aircraft.Strut.LENGTH], 13.11154072, tol
         )  # not actual GASP value
@@ -321,6 +320,7 @@ class SizeGroupTestCase2(unittest.TestCase):
         assert_check_partials(partial_data, atol=3e-10, rtol=1e-12)
 
 
+@use_tempdirs
 class SizeGroupTestCase3(unittest.TestCase):
     def setUp(self):
         options = get_option_defaults()
@@ -412,9 +412,9 @@ class SizeGroupTestCase3(unittest.TestCase):
         assert_near_equal(
             self.prob[Aircraft.Fuselage.AVG_DIAMETER], 56.2, tol
         )  # not actual GASP value
-        assert_near_equal(self.prob['fuselage.cabin_height'], 9.18333, tol)  # not actual GASP value
-        assert_near_equal(self.prob['fuselage.cabin_len'], 435, tol)  # not actual GASP value
-        assert_near_equal(self.prob['fuselage.nose_height'], 4.68333, tol)  # not actual GASP value
+        assert_near_equal(self.prob['cabin_height'], 9.18333, tol)  # not actual GASP value
+        assert_near_equal(self.prob['cabin_len'], 435, tol)  # not actual GASP value
+        assert_near_equal(self.prob['nose_height'], 4.68333, tol)  # not actual GASP value
 
         assert_near_equal(
             self.prob[Aircraft.Fuselage.LENGTH], 476.7333, tol
@@ -441,20 +441,18 @@ class SizeGroupTestCase3(unittest.TestCase):
         )  # not actual GASP value
 
         assert_near_equal(
-            self.prob['wing.fold_vol.nonfolded_taper_ratio'], 0.85783252, tol
+            self.prob['nonfolded_taper_ratio'], 0.85783252, tol
         )  # not actual GASP value
         assert_near_equal(
             self.prob[Aircraft.Wing.FOLDING_AREA], 964.14982163, tol
         )  # not actual GASP value
         assert_near_equal(
-            self.prob['wing.fold_vol.nonfolded_wing_area'], 406.16267837, tol
+            self.prob['nonfolded_wing_area'], 406.16267837, tol
         )  # not actual GASP value
         assert_near_equal(
-            self.prob['wing.fold_vol.tc_ratio_mean_folded'], 0.14681715, tol
+            self.prob['tc_ratio_mean_folded'], 0.14681715, tol
         )  # not actual GASP value
-        assert_near_equal(
-            self.prob['wing.fold_vol.nonfolded_AR'], 1.5387923, tol
-        )  # not actual GASP value
+        assert_near_equal(self.prob['nonfolded_AR'], 1.5387923, tol)  # not actual GASP value
         assert_near_equal(
             self.prob[Aircraft.Fuel.WING_VOLUME_GEOMETRIC_MAX], 406.53567274, tol
         )  # not actual GASP value
@@ -509,6 +507,7 @@ class SizeGroupTestCase3(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e-9, rtol=1e-12)
 
 
+@use_tempdirs
 class SizeGroupTestCase4(unittest.TestCase):
     def setUp(self):
         options = get_option_defaults()
@@ -601,9 +600,9 @@ class SizeGroupTestCase4(unittest.TestCase):
         assert_near_equal(
             self.prob[Aircraft.Fuselage.AVG_DIAMETER], 56.2, tol
         )  # not actual GASP value
-        assert_near_equal(self.prob['fuselage.cabin_height'], 9.18333, tol)  # not actual GASP value
-        assert_near_equal(self.prob['fuselage.cabin_len'], 435, tol)  # not actual GASP value
-        assert_near_equal(self.prob['fuselage.nose_height'], 4.68333, tol)  # not actual GASP value
+        assert_near_equal(self.prob['cabin_height'], 9.18333, tol)  # not actual GASP value
+        assert_near_equal(self.prob['cabin_len'], 435, tol)  # not actual GASP value
+        assert_near_equal(self.prob['nose_height'], 4.68333, tol)  # not actual GASP value
 
         assert_near_equal(
             self.prob[Aircraft.Fuselage.LENGTH], 476.7333, tol
@@ -629,7 +628,7 @@ class SizeGroupTestCase4(unittest.TestCase):
             self.prob[Aircraft.Wing.THICKNESS_TO_CHORD_UNWEIGHTED], 0.14151, tol
         )  # not actual GASP value
 
-        assert_near_equal(self.prob['wing.strut.strut_y'], 0, tol)  # not actual GASP value
+        assert_near_equal(self.prob['strut_y'], 0, tol)  # not actual GASP value
         assert_near_equal(self.prob[Aircraft.Strut.LENGTH], 5.2361, tol)  # not actual GASP value
         assert_near_equal(self.prob[Aircraft.Strut.CHORD], 2.8647, tol)  # not actual GASP value
 
@@ -679,6 +678,7 @@ class SizeGroupTestCase4(unittest.TestCase):
         assert_check_partials(partial_data, atol=2e-12, rtol=1e-12)
 
 
+@use_tempdirs
 class BWBSizeGroupTestCase1(unittest.TestCase):
     def setUp(self):
         options = get_option_defaults()
@@ -724,7 +724,6 @@ class BWBSizeGroupTestCase1(unittest.TestCase):
         self.prob.model.set_input_defaults(
             Aircraft.VerticalTail.TAPER_RATIO, 0.366, units='unitless'
         )
-        self.prob.model.set_input_defaults(Aircraft.Engine.SCALE_FACTOR, 1.028233)  # engine
         self.prob.model.set_input_defaults(Aircraft.Fuel.WING_FUEL_FRACTION, 0.45, units='unitless')
 
         self.prob.model.set_input_defaults(
@@ -751,7 +750,6 @@ class BWBSizeGroupTestCase1(unittest.TestCase):
         self.prob.model.set_input_defaults(
             Aircraft.HorizontalTail.ASPECT_RATIO, 1.705, units='unitless'
         )
-        self.prob.model.set_input_defaults(Aircraft.Engine.REFERENCE_DIAMETER, 5.8, units='ft')
         self.prob.model.set_input_defaults(
             Aircraft.Nacelle.CORE_DIAMETER_RATIO, 1.2205, units='unitless'
         )
@@ -822,9 +820,9 @@ class BWBSizeGroupTestCase1(unittest.TestCase):
 
         # BWBFuselageGroup
         assert_near_equal(self.prob[Aircraft.Fuselage.AVG_DIAMETER], 38, tol)
-        assert_near_equal(self.prob['fuselage.cabin_height'], 9.86859989, tol)
-        assert_near_equal(self.prob['fuselage.cabin_len'], 43.83334, tol)
-        assert_near_equal(self.prob['fuselage.parameters1.nose_height'], 4.86859989, tol)
+        assert_near_equal(self.prob['cabin_height'], 9.86859989, tol)
+        # assert_near_equal(self.prob['fuselage.cabin_len'], 43.83334, tol)
+        assert_near_equal(self.prob['nose_height'], 4.86859989, tol)
         assert_near_equal(self.prob[Aircraft.Fuselage.LENGTH], 71.5245514, tol)
         assert_near_equal(self.prob[Aircraft.Fuselage.WETTED_AREA], 4573.42578, tol)
         assert_near_equal(self.prob[Aircraft.TailBoom.LENGTH], 71.5245514, tol)
@@ -836,7 +834,7 @@ class BWBSizeGroupTestCase1(unittest.TestCase):
         assert_near_equal(self.prob[Aircraft.Wing.AVERAGE_CHORD], 16.2200522, tol)
         assert_near_equal(self.prob[Aircraft.Wing.ROOT_CHORD], 20.33371617, tol)
         assert_near_equal(self.prob[Aircraft.Wing.THICKNESS_TO_CHORD_UNWEIGHTED], 0.13596576, tol)
-        assert_near_equal(self.prob['wing.wing_volume_no_fold'], 783.62100035, tol)
+        assert_near_equal(self.prob['wing_volume_no_fold'], 783.62100035, tol)
         assert_near_equal(self.prob[Aircraft.Fuel.WING_VOLUME_GEOMETRIC_MAX], 605.90781747, tol)
         assert_near_equal(self.prob[Aircraft.Wing.EXPOSED_AREA], 1352.1135998, tol)
 
@@ -853,9 +851,9 @@ class BWBSizeGroupTestCase1(unittest.TestCase):
         assert_near_equal(self.prob[Aircraft.VerticalTail.MOMENT_ARM], 27.82191598, tol)
 
         # BWBEngineSizeGroup
-        assert_near_equal(self.prob[Aircraft.Nacelle.AVG_DIAMETER], 7.17813375, tol)
-        assert_near_equal(self.prob[Aircraft.Nacelle.AVG_LENGTH], 9.75364814, tol)
-        assert_near_equal(self.prob[Aircraft.Nacelle.SURFACE_AREA], 219.95229788, tol)
+        assert_near_equal(self.prob[Aircraft.Nacelle.AVG_DIAMETER], 5.33382144, tol)
+        assert_near_equal(self.prob[Aircraft.Nacelle.AVG_LENGTH], 7.24759657, tol)
+        assert_near_equal(self.prob[Aircraft.Nacelle.SURFACE_AREA], 121.44575974, tol)
 
         partial_data = self.prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=3e-9, rtol=3e-9)

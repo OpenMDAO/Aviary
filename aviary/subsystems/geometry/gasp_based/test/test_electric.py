@@ -3,6 +3,7 @@ import unittest
 import numpy as np
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
+from openmdao.utils.testing_utils import use_tempdirs
 
 from aviary.subsystems.geometry.gasp_based.electric import CableSize
 from aviary.utils.aviary_values import AviaryValues
@@ -10,6 +11,7 @@ from aviary.variable_info.functions import setup_model_options
 from aviary.variable_info.variables import Aircraft
 
 
+@use_tempdirs
 class ElectricTestCase(unittest.TestCase):
     def setUp(self):
         self.prob = om.Problem()
@@ -45,6 +47,7 @@ class ElectricTestCase(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e-8, rtol=1e-8)
 
 
+@use_tempdirs
 class ElectricTestCaseMultiEngine(unittest.TestCase):
     def test_case_multiengine(self):
         prob = om.Problem()

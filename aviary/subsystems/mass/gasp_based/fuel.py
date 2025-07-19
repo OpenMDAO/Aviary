@@ -55,7 +55,7 @@ class BodyTankCalculations(om.ExplicitComponent):
         self.add_output(
             'wingfuel_mass_min', val=0, units='lbm', desc='WFWMIN: minimum wing fuel mass'
         )
-        add_aviary_output(self, Aircraft.Fuel.TOTAL_CAPACITY, units='lbm')
+        add_aviary_output(self, Aircraft.Fuel.TOTAL_CAPACITY, units='lbm', desc='WFAMAX')
 
     def setup_partials(self):
         self.declare_partials(
@@ -173,7 +173,9 @@ class BodyTankCalculations(om.ExplicitComponent):
         outputs['extra_fuel_volume'] = extra_fuel_volume
         outputs['max_extra_fuel_mass'] = max_extra_fuel_wt / GRAV_ENGLISH_LBM
 
+        # pass back to FuelSysAndFullFuselageMass
         outputs['wingfuel_mass_min'] = wingfuel_wt_min / GRAV_ENGLISH_LBM
+        # pass back to FuelAndOEMOutputs
         outputs[Aircraft.Fuel.TOTAL_CAPACITY] = max_fuel_avail / GRAV_ENGLISH_LBM
 
     def compute_partials(self, inputs, J):
@@ -619,11 +621,12 @@ class FuelAndOEMOutputs(om.ExplicitComponent):
         OEW = propulsion_wt + control_wt + struct_wt + fixed_equip_wt + useful_wt
 
         volume_wingfuel_wt = geometric_fuel_vol * rho_fuel
+        # always smoothing
         max_wingfuel_wt = OEM_wingfuel_wt * sigmoidX(
             volume_wingfuel_wt - OEM_wingfuel_wt, 0, 1 / 95.0
         ) + volume_wingfuel_wt * sigmoidX(OEM_wingfuel_wt - volume_wingfuel_wt, 0, 1 / 95.0)
         payload_wt_max_fuel = gross_wt_initial - OEW - max_fuel_avail
-        max_wingfuel_vol = max_wingfuel_wt / (rho_fuel)
+        max_wingfuel_vol = max_wingfuel_wt / rho_fuel
 
         outputs['OEM_wingfuel_mass'] = OEM_wingfuel_wt / GRAV_ENGLISH_LBM
         outputs['OEM_fuel_vol'] = OEM_fuel_vol
@@ -1592,51 +1595,51 @@ class FuelMassGroup(om.Group):
         self.add_subsystem(
             'sys_and_full_fus',
             FuelSysAndFullFuselageMass(),
-            promotes_inputs=connected_inputs1 + higher_level_inputs1 + ['aircraft:*', 'mission:*'],
-            promotes_outputs=connected_outputs1 + ['aircraft:*'],
+            promotes_inputs=connected_inputs1 + higher_level_inputs1 + ['*'],
+            promotes_outputs=connected_outputs1 + ['*'],
         )
 
         if design_type is AircraftTypes.BLENDED_WING_BODY:
             self.add_subsystem(
                 'fuselage',
                 BWBFuselageMass(),
-                promotes_inputs=['aircraft:*', 'mission:*'],
-                promotes_outputs=['aircraft:*'],
+                promotes_inputs=['*'],
+                promotes_outputs=['*'],
             )
         else:
             self.add_subsystem(
                 'fuselage',
                 FuselageMass(),
-                promotes_inputs=connected_inputs2 + higher_level_inputs2 + ['aircraft:*'],
-                promotes_outputs=['aircraft:*'],
+                promotes_inputs=connected_inputs2 + higher_level_inputs2 + ['*'],
+                promotes_outputs=['*'],
             )
 
         self.add_subsystem(
             'struct',
             StructMass(),
-            promotes_inputs=['aircraft:*'],
-            promotes_outputs=['aircraft:*'],
+            promotes_inputs=['*'],
+            promotes_outputs=['*'],
         )
 
         self.add_subsystem(
             'fuel',
             FuelMass(),
-            promotes_inputs=higher_level_inputs3 + ['aircraft:*', 'mission:*'],
-            promotes_outputs=connected_outputs3 + ['aircraft:*', 'mission:*'],
+            promotes_inputs=higher_level_inputs3 + ['*'],
+            promotes_outputs=connected_outputs3 + ['*'],
         )
 
         self.add_subsystem(
             'fuel_and_oem',
             FuelAndOEMOutputs(),
-            promotes_inputs=['aircraft:*', 'mission:*'],
-            promotes_outputs=connected_outputs4 + ['aircraft:*'],
+            promotes_inputs=['*'],
+            promotes_outputs=connected_outputs4 + ['*'],
         )
 
         self.add_subsystem(
             'body_tank',
             BodyTankCalculations(),
-            promotes_inputs=connected_inputs5 + ['aircraft:*', 'mission:*'],
-            promotes_outputs=connected_outputs5 + ['aircraft:*'],
+            promotes_inputs=connected_inputs5 + ['*'],
+            promotes_outputs=connected_outputs5 + ['*'],
         )
 
         self.set_input_defaults(Aircraft.Fuel.DENSITY, units='lbm/galUS')

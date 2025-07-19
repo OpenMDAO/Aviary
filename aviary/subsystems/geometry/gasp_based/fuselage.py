@@ -242,15 +242,15 @@ class FuselageGroup(om.Group):
         self.add_subsystem(
             'parameters',
             FuselageParameters(),
-            promotes_inputs=['aircraft:*'],
-            promotes_outputs=['aircraft:*'] + connected_input_outputs,
+            promotes_inputs=['*'],
+            promotes_outputs=['*'] + connected_input_outputs,
         )
 
         self.add_subsystem(
             'size',
             FuselageSize(),
-            promotes_inputs=connected_input_outputs + ['aircraft:*'],
-            promotes_outputs=['aircraft:*'],
+            promotes_inputs=connected_input_outputs + ['*'],
+            promotes_outputs=['*'],
         )
 
 
@@ -975,30 +975,28 @@ class BWBFuselageGroup(om.Group):
         self.add_subsystem(
             'parameters1',
             BWBFuselageParameters1(),
-            promotes_inputs=['aircraft:*'],
-            promotes_outputs=['aircraft:*'] + ['nose_length', 'cabin_height'],
+            promotes_inputs=['*'],
+            promotes_outputs=['*'] + ['nose_length', 'cabin_height'],
         )
 
         self.add_subsystem(
             'layout',
             BWBCabinLayout(),
-            promotes_inputs=['aircraft:*'] + ['nose_length'],
+            promotes_inputs=['*'] + ['nose_length'],
             promotes_outputs=['fuselage_station_aft'],
         )
 
         self.add_subsystem(
             'parameters2',
             BWBFuselageParameters2(),
-            promotes_inputs=['aircraft:*']
-            + ['nose_length', 'cabin_height', 'fuselage_station_aft'],
-            promotes_outputs=['aircraft:*']
-            + ['forebody_len', 'nose_area', 'aftbody_len', 'cabin_len'],
+            promotes_inputs=['*'] + ['nose_length', 'cabin_height', 'fuselage_station_aft'],
+            promotes_outputs=['*'] + ['forebody_len', 'nose_area', 'aftbody_len', 'cabin_len'],
         )
 
         self.add_subsystem(
             'size',
             BWBFuselageSize(),
-            promotes_inputs=['aircraft:*']
+            promotes_inputs=['*']
             + [
                 'nose_length',
                 'cabin_height',
@@ -1008,5 +1006,5 @@ class BWBFuselageGroup(om.Group):
                 'aftbody_len',
                 'cabin_len',
             ],
-            promotes_outputs=['aircraft:*'],
+            promotes_outputs=['*'],
         )
