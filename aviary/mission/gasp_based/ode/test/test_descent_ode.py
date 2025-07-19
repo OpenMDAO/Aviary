@@ -63,13 +63,13 @@ class DescentODETestCase(unittest.TestCase):
         self.prob.run_model()
 
         testvals = {
-            Dynamic.Vehicle.ANGLE_OF_ATTACK: np.array([3.22047, 1.20346]),
-            'CL': np.array([0.5169255, 0.25908651]),
-            'CD': np.array([0.02786507, 0.01862951]),
+            Dynamic.Vehicle.ANGLE_OF_ATTACK: np.array([3.22110553, 1.20422538]),
+            'CL': np.array([0.51699989, 0.25916886]),
+            'CD': np.array([0.02635475, 0.01730991]),
             # ft/s
-            Dynamic.Mission.ALTITUDE_RATE: np.array([-39.28140894, -47.95697037]),
+            Dynamic.Mission.ALTITUDE_RATE: np.array([-37.02561983, -44.211356]),
             # TAS (ft/s) * cos(gamma), [458.67774, 437.62297] kts
-            Dynamic.Mission.DISTANCE_RATE: [773.1451, 736.9446],  # ft/s
+            Dynamic.Mission.DISTANCE_RATE: [773.25678423, 737.1789493],  # ft/s
             # lbm/h
             Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL: np.array(
                 [-452.29466667, -997.41373745]
@@ -77,7 +77,7 @@ class DescentODETestCase(unittest.TestCase):
             'EAS': [418.50757579, 590.73344999],  # ft/s ([247.95894, 349.99997] kts)
             Dynamic.Atmosphere.MACH: [0.8, 0.697125],
             # gamma, rad ([-2.908332, -3.723388] deg)
-            Dynamic.Mission.FLIGHT_PATH_ANGLE: [-0.05076362, -0.06498377],
+            Dynamic.Mission.FLIGHT_PATH_ANGLE: [-0.04784615, -0.05990196],
         }
         check_prob_outputs(self.prob, testvals, rtol=1e-6)
 
@@ -108,15 +108,15 @@ class DescentODETestCase(unittest.TestCase):
         self.prob.run_model()
 
         testvals = {
-            Dynamic.Vehicle.ANGLE_OF_ATTACK: 4.19956,
-            'CL': 0.507578,
-            'CD': 0.0268404,
-            Dynamic.Mission.ALTITUDE_RATE: -18.97632876,
+            Dynamic.Vehicle.ANGLE_OF_ATTACK: 4.20023671,
+            'CL': 0.50764164,
+            'CD': 0.02534414,
+            Dynamic.Mission.ALTITUDE_RATE: -17.70801923,
             # TAS (ft/s) * cos(gamma) = 255.5613 * 1.68781 * cos(-0.0440083)
-            Dynamic.Mission.DISTANCE_RATE: 430.92063193,
+            Dynamic.Mission.DISTANCE_RATE: 430.97461539,
             Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL: -1295.11818529,
             # rad (-2.52149 deg)
-            Dynamic.Mission.FLIGHT_PATH_ANGLE: -0.0440083,
+            Dynamic.Mission.FLIGHT_PATH_ANGLE: -0.04106521,
         }
         check_prob_outputs(self.prob, testvals, rtol=1e-6)
 

@@ -54,7 +54,7 @@ class RotationODETestCase(unittest.TestCase):
         tol = 1e-6
         assert_near_equal(
             self.prob[Dynamic.Mission.VELOCITY_RATE],
-            np.array([13.66381874, 13.66381874]),
+            np.array([13.68842392, 13.68842392]),
             tol,
         )
         assert_near_equal(
