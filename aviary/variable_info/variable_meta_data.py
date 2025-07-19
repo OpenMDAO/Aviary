@@ -7563,6 +7563,88 @@ add_meta_data(
     desc='regularized objective that maximizes range subject to other necessary additions',
 )
 
+#   _____                    _                       _   _____
+#  |  __ \                  | |                     | | |  __ \
+#  | |__) |   __ _   _   _  | |   ___     __ _    __| | | |__) |   __ _   _ __     __ _    ___
+#  |  ___/   / _` | | | | | | |  / _ \   / _` |  / _` | |  _  /   / _` | | '_ \   / _` |  / _ \
+#  | |      | (_| | | |_| | | | | (_) | | (_| | | (_| | | | \ \  | (_| | | | | | | (_| | |  __/
+#  |_|       \__,_|  \__, | |_|  \___/   \__,_|  \__,_| |_|  \_\  \__,_| |_| |_|  \__, |  \___|
+#                     __/ |                                                        __/ |
+#                    |___/                                                        |___/
+# =============================================================================================
+
+add_meta_data(
+    Mission.PayloadRange.MAX_FUEL_PLUS_PAYLOAD_PAYLOAD,
+    meta_data=_MetaData,
+    historical_name={'GASP': None, 'FLOPS': None, 'LEAPS1': None},
+    units='lbm',
+    desc='payload capacity when the aircraft is at fuel capacity',
+    default_value=0.0,
+)
+
+add_meta_data(
+    Mission.PayloadRange.MAX_FUEL_PLUS_PAYLOAD_RANGE,
+    meta_data=_MetaData,
+    historical_name={'GASP': None, 'FLOPS': None, 'LEAPS1': None},
+    units='NM',
+    desc='range achieved with maximum fuel and remaining payload capacity',
+    default_value=0.0,
+)
+
+add_meta_data(
+    Mission.PayloadRange.MAX_FUEL_ZERO_PAYLOAD_PAYLOAD,
+    meta_data=_MetaData,
+    historical_name={'GASP': None, 'FLOPS': None, 'LEAPS1': None},
+    units='lbm',
+    desc='payload value for a ferry range mission',
+    default_value=0.0,
+)
+
+add_meta_data(
+    Mission.PayloadRange.MAX_FUEL_ZERO_PAYLOAD_RANGE,
+    meta_data=_MetaData,
+    historical_name={'GASP': None, 'FLOPS': None, 'LEAPS1': None},
+    units='NM',
+    desc='maximum range the aircraft can fly with at fuel capacity with 0 payload',
+    default_value=0.0,
+)
+
+add_meta_data(
+    Mission.PayloadRange.MAX_PAYLOAD_PLUS_FUEL_PAYLOAD,
+    meta_data=_MetaData,
+    historical_name={'GASP': None, 'FLOPS': None, 'LEAPS1': None},
+    units='lbm',
+    desc='maximum payload capacity with fuel for design mission',
+    default_value=0.0,
+)
+
+add_meta_data(
+    Mission.PayloadRange.MAX_PAYLOAD_PLUS_FUEL_RANGE,
+    meta_data=_MetaData,
+    historical_name={'GASP': None, 'FLOPS': None, 'LEAPS1': None},
+    units='NM',
+    desc='range achieved with user input paylod and designed fuel',
+    default_value=0.0,
+)
+
+add_meta_data(
+    Mission.PayloadRange.MAX_PAYLOAD_ZERO_FUEL_PAYLOAD,
+    meta_data=_MetaData,
+    historical_name={'GASP': None, 'FLOPS': None, 'LEAPS1': None},
+    units='lbm',
+    desc='maximum structural payload capacity',
+    default_value=0.0,
+)
+
+add_meta_data(
+    Mission.PayloadRange.MAX_PAYLOAD_ZERO_FUEL_RANGE,
+    meta_data=_MetaData,
+    historical_name={'GASP': None, 'FLOPS': None, 'LEAPS1': None},
+    units='NM',
+    desc='range value with maximum payload and 0 fuel, will always be 0',
+    default_value=0.0,
+)
+
 #   _____
 #  / ____|
 # | (___    _   _   _ __ ___    _ __ ___     __ _   _ __   _   _
@@ -8054,6 +8136,17 @@ add_meta_data(
 )
 
 add_meta_data(
+    Settings.PAYLOAD_RANGE,
+    meta_data=_MetaData,
+    historical_name={'GASP': None, 'FLOPS': None, 'LEAPS1': None},
+    units='unitless',
+    option=True,
+    default_value=False,
+    types=bool,
+    desc='if true, aviary runs 2 off design missions and creates a payload range diagram.',
+)
+
+add_meta_data(
     Settings.PROBLEM_TYPE,
     meta_data=_MetaData,
     historical_name={'GASP': None, 'FLOPS': None, 'LEAPS1': None},
@@ -8076,6 +8169,7 @@ add_meta_data(
     types=Verbosity,
     default_value=Verbosity.BRIEF,
 )
+
 
 # here we create a copy of the Aviary-core metadata. The reason for this
 # copy is that if we simply imported the Aviary _MetaData in all the
