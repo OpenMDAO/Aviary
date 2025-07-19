@@ -336,6 +336,7 @@ class SizeGroupTestCase3(unittest.TestCase):
         options.set_val(Aircraft.Fuselage.NUM_SEATS_ABREAST, 1)
         options.set_val(Aircraft.Fuselage.SEAT_PITCH, 29, units='inch')
         options.set_val(Aircraft.Fuselage.SEAT_WIDTH, 20.2, units='inch')
+        options.set_val(Aircraft.Electrical.HAS_HYBRID_SYSTEM, val=True, units='unitless')
 
         self.prob = om.Problem()
         self.prob.model.add_subsystem(

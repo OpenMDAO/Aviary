@@ -79,9 +79,12 @@ def create_vehicle(vehicle_deck='', meta_data=_MetaData, verbosity=Verbosity.BRI
     aircraft_values.set_val('test_mode', val=False)
     aircraft_values.set_val('use_surrogates', val=True)
     aircraft_values.set_val('mass_defect', val=10000, units='lbm')
-    # TODO problem_type should get set by get_option_defaults??
+
+    # setting defaults for variables needed outside OM problem during load_inputs()
     aircraft_values.set_val(Settings.PROBLEM_TYPE, val=ProblemType.SIZING)
-    aircraft_values.set_val(Aircraft.Electrical.HAS_HYBRID_SYSTEM, val=False)
+    aircraft_values.set_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS, val=0)
+    aircraft_values.set_val(Aircraft.Design.RESERVE_FUEL_ADDITIONAL, val=0, units='lbm')
+    aircraft_values.set_val(Aircraft.Design.RESERVE_FUEL_FRACTION, val=0)
 
     initialization_guesses = {
         # initialization_guesses is a dictionary that contains values used to initialize the trajectory

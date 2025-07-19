@@ -1764,7 +1764,7 @@ add_meta_data(
     historical_name={'GASP': None, 'FLOPS': None, 'LEAPS1': None},
     units='unitless',
     option=True,
-    default_value=True,
+    default_value=False,
     types=bool,
     desc='if true there is an augmented electrical system',
 )
