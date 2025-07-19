@@ -320,6 +320,15 @@ class HeightEnergyProblemConfigurator(ProblemConfiguratorBase):
             flat_src_indices=True,
         )
 
+        phase = aviary_group.traj._phases[phases[0]]
+
+        # Currently expects Distance to be an input.
+        phase.set_state_options(Dynamic.Mission.DISTANCE, input_initial=True)
+
+        if aviary_group.pre_mission_info['include_takeoff']:
+            # Allow these to connect to outputs in the pre-mission takeoff system.
+            phase.set_state_options(Dynamic.Vehicle.MASS, input_initial=True)
+
     def check_trajectory(self, aviary_group):
         """
         Checks the phase_info user options for any inconsistency.

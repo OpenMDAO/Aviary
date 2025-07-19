@@ -148,7 +148,7 @@ class TestFLOPSDetailedLanding(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    use_SNOPT = True
+    use_SNOPT = False
 
     z = TestFLOPSDetailedLanding()
 
