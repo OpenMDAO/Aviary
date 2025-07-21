@@ -1,5 +1,6 @@
 import unittest
 
+import numpy as np
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 
@@ -19,12 +20,12 @@ class TailMassTestCase(unittest.TestCase):
             promotes_outputs=['*'],
         )
 
-        # self.prob.model.set_input_defaults(Aircraft.HorizontalTail.SPAN, val=1, units='m')
-        # self.prob.model.set_input_defaults(Aircraft.HorizontalTail.ROOT_CHORD, val=1, units='m')
-        # self.prob.model.set_input_defaults('tip_chord_tail', val=0.5, units='m')
+        prob.model.set_input_defaults(Aircraft.HorizontalTail.SPAN, val=1, units='m')
+        prob.model.set_input_defaults(Aircraft.HorizontalTail.ROOT_CHORD, val=1, units='m')
+        prob.model.set_input_defaults('tip_chord_tail', val=0.5, units='m')
         prob.model.set_input_defaults('thickness_ratio', val=0.12)
-        # self.prob.model.set_input_defaults('skin_thickness', val=0.002, units='m')
-        # self.prob.model.set_input_defaults('twist_tail', val=np.zeros(10), units='deg')
+        prob.model.set_input_defaults('skin_thickness', val=0.002, units='m')
+        prob.model.set_input_defaults('twist_tail', val=np.zeros(10), units='deg')
 
         prob.setup(check=False, force_alloc_complex=True)
 
@@ -47,12 +48,12 @@ class TailMassTestCase(unittest.TestCase):
             promotes_outputs=['*'],
         )
 
-        # self.prob.model.set_input_defaults(Aircraft.VerticalTail.SPAN, val=1, units='m')
-        # self.prob.model.set_input_defaults(Aircraft.VerticalTail.ROOT_CHORD, val=1, units='m')
-        # self.prob.model.set_input_defaults('tip_chord_tail', val=0.5, units='m')
+        prob.model.set_input_defaults(Aircraft.VerticalTail.SPAN, val=1, units='m')
+        prob.model.set_input_defaults(Aircraft.VerticalTail.ROOT_CHORD, val=1, units='m')
+        prob.model.set_input_defaults('tip_chord_tail', val=0.5, units='m')
         prob.model.set_input_defaults('thickness_ratio', val=0.12)
-        # self.prob.model.set_input_defaults('skin_thickness', val=0.002, units='m')
-        # self.prob.model.set_input_defaults('twist_tail', val=np.zeros(10), units='deg')
+        prob.model.set_input_defaults('skin_thickness', val=0.002, units='m')
+        prob.model.set_input_defaults('twist_tail', val=np.zeros(10), units='deg')
 
         prob.setup(check=False, force_alloc_complex=True)
 

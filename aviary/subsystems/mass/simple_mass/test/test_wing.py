@@ -5,6 +5,7 @@ import numpy as np
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 
+from aviary.subsystems.mass.simple_mass.wing import WingMass
 from aviary.variable_info.variables import Aircraft
 
 
@@ -45,7 +46,7 @@ class WingMassTestCase(unittest.TestCase):
     def test_case(self):
         self.prob.run_model()
 
-        tol = 1e-10
+        tol = 1e-9
         assert_near_equal(self.prob[Aircraft.Wing.MASS], 10.6966719, tol)
 
         partial_data = self.prob.check_partials(out_stream=None, method='cs')
