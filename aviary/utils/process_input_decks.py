@@ -1,11 +1,12 @@
 """
-This module, process_input_decks.py, is responsible for reading vehicle input decks, initializing options,
-and setting initial guesses for aircraft design parameters. It works primarily with .csv files,
-allowing for the specification of units, comments, and lists within these files.
+This module, process_input_decks.py, is responsible for reading vehicle input decks, initializing
+options, and setting initial guesses for aircraft design parameters. It works primarily with .csv
+files, allowing for the specification of units, comments, and lists within these files.
 
-The module supports various functions like creating a vehicle, parsing input files, updating options based
-on inputs, and handling initial guesses for different aircraft design aspects. It heavily relies on the
-aviary and openMDAO libraries for processing and interpreting the aircraft design parameters.
+The module supports various functions like creating a vehicle, parsing input files, updating options
+based on inputs, and handling initial guesses for different aircraft design aspects. It heavily
+relies on the aviary and openMDAO libraries for processing and interpreting the aircraft design
+parameters.
 
 Functions:
     create_vehicle(vehicle_deck=''): Create and initialize a vehicle with default or specified parameters.
@@ -23,9 +24,7 @@ from openmdao.utils.units import valid_units
 
 from aviary.utils.aviary_values import AviaryValues, get_keys
 from aviary.utils.functions import convert_strings_to_data, get_path
-from aviary.utils.preprocessors import remove_preprocessed_options
 from aviary.variable_info.enums import ProblemType, Verbosity
-from aviary.variable_info.options import get_option_defaults
 from aviary.variable_info.variable_meta_data import _MetaData
 from aviary.variable_info.variables import Aircraft, Mission, Settings
 
@@ -71,10 +70,12 @@ def create_vehicle(vehicle_deck='', meta_data=_MetaData, verbosity=Verbosity.BRI
     if verbosity is None:
         verbosity = Verbosity.BRIEF
 
-    aircraft_values = get_option_defaults(engine=False)
-    remove_preprocessed_options(aircraft_values)
+    # aircraft_values = get_option_defaults(engine=False)
+    # remove_preprocessed_options(aircraft_values)
+    aircraft_values = AviaryValues()
 
     # TODO remove all hardcoded GASP values here, find appropriate place for them
+    # We should only set FLOPS- or GASP-specific variables for those aircraft models
     aircraft_values.set_val('INGASP.JENGSZ', val=4)
     aircraft_values.set_val('test_mode', val=False)
     aircraft_values.set_val('use_surrogates', val=True)
@@ -85,6 +86,8 @@ def create_vehicle(vehicle_deck='', meta_data=_MetaData, verbosity=Verbosity.BRI
     aircraft_values.set_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS, val=0)
     aircraft_values.set_val(Aircraft.Design.RESERVE_FUEL_ADDITIONAL, val=0, units='lbm')
     aircraft_values.set_val(Aircraft.Design.RESERVE_FUEL_FRACTION, val=0)
+    # used in initialization_guessing()
+    aircraft_values.set_val(Mission.Design.CRUISE_ALTITUDE, val=25000.0, units='ft')
 
     initialization_guesses = {
         # initialization_guesses is a dictionary that contains values used to initialize the trajectory
@@ -216,9 +219,6 @@ def parse_inputs(
                     UserWarning,
                 )
                 continue
-
-            if aircraft_values.get_val(Settings.VERBOSITY) >= Verbosity.VERBOSE:
-                print('Unused:', var_name, var_value, comment)
 
     return aircraft_values, initialization_guesses
 

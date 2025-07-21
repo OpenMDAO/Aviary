@@ -6402,7 +6402,7 @@ add_meta_data(
 )
 
 add_meta_data(
-    Aircraft.Wing.USE_DETAILED_MASS,
+    Aircraft.Wing.DETAILED_WING,
     meta_data=_MetaData,
     historical_name={'GASP': None, 'FLOPS': None, 'LEAPS1': None},
     units='unitless',
