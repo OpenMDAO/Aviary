@@ -2587,7 +2587,9 @@ add_meta_data(
     meta_data=_MetaData,
     historical_name={'GASP': None, 'FLOPS': None, 'LEAPS1': None},
     units='A',
+    # types=(float, np.ndarray),
     desc='The idle or no-load current from a single motor.',
+    multivalue=True
 )
 
 add_meta_data(
@@ -2605,6 +2607,7 @@ add_meta_data(
     historical_name={'GASP': None, 'FLOPS': None, 'LEAPS1': None},
     units='A',
     desc='Maximum instantaneous current that flows through a single motor.',
+    multivalue=True,
 )
 
 add_meta_data(
@@ -2613,6 +2616,7 @@ add_meta_data(
     historical_name={'GASP': None, 'FLOPS': None, 'LEAPS1': None},
     units='ohm',
     desc='Resistance from windings of a single motor.',
+    multivalue=True,
 )
 
 
@@ -2697,6 +2701,7 @@ add_meta_data(
     historical_name={'GASP': None, 'FLOPS': None, 'LEAPS1': None},
     units='inch',
     desc='Forward distance a propeller advances through one revolution.',
+    multivalue=True,
 )
 
 add_meta_data(

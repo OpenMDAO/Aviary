@@ -1,22 +1,24 @@
 from aviary.subsystems.propulsion.rc_electric.model.rcpropulsion_premission import RCPropPreMission
 from aviary.subsystems.propulsion.rc_electric.model.rcpropulsion_mission import RCPropMission
 from aviary.utils.aviary_values import AviaryValues
+from aviary.subsystems.propulsion.engine_model import EngineModel
+
 from aviary.subsystems.subsystem_builder_base import SubsystemBuilderBase
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 
-class RCBuilder(SubsystemBuilderBase):
-    def __init__(self, name='rc_eletric'):
+class RCBuilder(EngineModel):
+    def __init__(self, options: AviaryValues = None, name='rc_electric'): #options: AviaryValues = None,
         """Initializes the PropellerBuilder object with a given name."""
-        aviary_inputs = AviaryValues()
-        super().__init__(name)
+        # aviary_inputs = AviaryValues()
+        super().__init__(name, options)
 
-    def build_pre_mission(self, m, b, aviary_inputs):
+    def build_pre_mission(self, m, b, aviary_inputs, **kwargs):
         """Builds an OpenMDAO system for the pre-mission computations of the subsystem."""
-        return RCPropPreMission(m=m, b=b, aviary_options=aviary_inputs)
+        return RCPropPreMission(m=m, b=b, aviary_options=self.options)
 
-    def build_mission(num_nodes, aviary_inputs):
+    def build_mission(self, num_nodes, aviary_inputs, **kwargs):
         """Builds an OpenMDAO system for the mission computations of the subsystem."""
-        return RCPropMission(num_nodes=num_nodes, aviary_options=aviary_inputs)
+        return RCPropMission(num_nodes=num_nodes, aviary_options=self.options)
 
     def get_design_vars(self):
         """
@@ -139,10 +141,6 @@ class RCBuilder(SubsystemBuilderBase):
                 'val': 0.0,
                 'units': 'inch',
             },
-            Aircraft.Engine.NUM_ENGINES: {
-                'val': 1,
-                'units':'unitless',
-            }
         }
 
         return parameters

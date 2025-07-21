@@ -7,6 +7,8 @@ from openmdao.utils.testing_utils import use_tempdirs
 
 from aviary.subsystems.propulsion.rc_electric.model.rcpropulsion_mission import RCPropMission
 from aviary.variable_info.variables import Aircraft, Dynamic
+from aviary.utils.aviary_values import AviaryValues
+
 
 
 class TestRCPropMission(unittest.TestCase):
@@ -15,9 +17,10 @@ class TestRCPropMission(unittest.TestCase):
         nn = 3
 
         prob = om.Problem()
-
-        prob.model.add_subsystem('rc_prop_group', RCPropMission(num_nodes=nn), promotes=['*'])
-
+        options = AviaryValues()
+        options.set_val(Aircraft.Engine.NUM_ENGINES, 1)
+        prob.model.add_subsystem('rc_prop_group', RCPropMission(num_nodes=nn, aviary_options= options), promotes=['*'])
+        
         prob.setup(force_alloc_complex=True)
 
         prob.set_val(Aircraft.Battery.VOLTAGE, 22.2, units='V')
@@ -30,7 +33,6 @@ class TestRCPropMission(unittest.TestCase):
         prob.set_val(Dynamic.Atmosphere.DENSITY, 1.225, units='kg/m**3')
         prob.set_val(Aircraft.Engine.Propeller.DIAMETER, 20, units='inch')
         prob.set_val(Aircraft.Engine.Propeller.PITCH, 10, units='inch')
-        prob.set_val(Aircraft.Engine.NUM_ENGINES, 1, units='unitless')
         prob.set_val(Dynamic.Mission.VELOCITY, 20, units='ft/s')
 
         prob.run_model()

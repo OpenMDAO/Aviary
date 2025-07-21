@@ -14,10 +14,9 @@ class TestRCPropPre(unittest.TestCase):
     def test_premission_calcs(self):
         prob = om.Problem()
         options = AviaryValues()
-        # options.set_val(Aircraft.Engine.RPM_DESIGN, 6000, 'rpm')
 
         prob.model.add_subsystem(
-            'rc_calcs', RCPropPreMission(m=1.3132, b=0.01, aviary_inputs=options), promotes=['*']
+            'rc_calcs', RCPropPreMission(m=1.3132, b=0.01, aviary_options=options), promotes=['*']
         )
 
         prob.setup(force_alloc_complex=True)

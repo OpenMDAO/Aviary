@@ -1,6 +1,5 @@
 import openmdao.api as om
 
-from aviary.subsystems.propulsion.rc_electric.model.rc_performance import RCPropGroup
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.variables import Aircraft, Dynamic
 
@@ -12,7 +11,7 @@ class RCPropPreMission(om.Group):
         self.options.declare('m', default = 1.3132, desc='m coefficient for kv(mass, peak_current): kv = m * peak_current/mass + b')
         self.options.declare('b', default = 0.01, desc='b coefficient for kv(mass, peak_current): kv = m * peak_current/mass + b')
         self.options.declare(
-            'aviary_inputs',
+            'aviary_options',
             types=AviaryValues,
             desc='collection of Aircraft/Mission specific options',
             default=None,

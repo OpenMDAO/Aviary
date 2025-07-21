@@ -13,7 +13,7 @@ class RCPropMission(om.Group):
     def initialize(self):
         self.options.declare('num_nodes', types=int)
         self.options.declare(
-            'aviary_inputs',
+            'aviary_options',
             types=AviaryValues,
             desc='collection of Aircraft/Mission specific options',
             default=None,
@@ -77,7 +77,7 @@ class RCPropMission(om.Group):
                 Dynamic.Vehicle.Propulsion.RPM, 
                 'ct', 
                 'cp', 
-                Aircraft.Engine.NUM_ENGINES, 
+                # Aircraft.Engine.NUM_ENGINES, 
                 Dynamic.Atmosphere.DENSITY
                 ],
             promotes_outputs=[
