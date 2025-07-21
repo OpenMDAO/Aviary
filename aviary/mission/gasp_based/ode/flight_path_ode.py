@@ -3,11 +3,10 @@ import openmdao.api as om
 
 from aviary.mission.gasp_based.ode.flight_path_eom import FlightPathEOM
 from aviary.mission.gasp_based.ode.params import ParamPort
-from aviary.mission.gasp_based.ode.time_integration_base_classes import add_SGM_required_inputs
 from aviary.mission.gasp_based.ode.two_dof_ode import TwoDOFODE
 from aviary.subsystems.mass.mass_to_weight import MassToWeight
 from aviary.subsystems.propulsion.propulsion_builder import PropulsionBuilderBase
-from aviary.variable_info.enums import AlphaModes, AnalysisScheme, SpeedType
+from aviary.variable_info.enums import AlphaModes, SpeedType
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 
 
@@ -45,7 +44,6 @@ class FlightPathODE(TwoDOFODE):
         nn = self.options['num_nodes']
         aviary_options = self.options['aviary_options']
         alpha_mode = self.options['alpha_mode']
-        analysis_scheme = self.options['analysis_scheme']
         input_speed_type = self.options['input_speed_type']
 
         print_level = 0
@@ -66,34 +64,11 @@ class FlightPathODE(TwoDOFODE):
         if not self.options['ground_roll']:
             EOM_inputs.append(Dynamic.Vehicle.ANGLE_OF_ATTACK)
 
-        if analysis_scheme is AnalysisScheme.SHOOTING:
-            SGM_required_inputs = {
-                't_curr': {'units': 's'},
-                'distance_trigger': {'units': 'ft'},
-                Dynamic.Mission.ALTITUDE: {'units': 'ft'},
-                Dynamic.Mission.DISTANCE: {'units': 'ft'},
-            }
-            if kwargs['method'] == 'cruise':
-                SGM_required_inputs[Dynamic.Mission.FLIGHT_PATH_ANGLE] = {
-                    'val': 0,
-                    'units': 'deg',
-                }
-            add_SGM_required_inputs(self, SGM_required_inputs)
-            prop_group = om.Group()
-        else:
-            prop_group = self
         core_subsystems = self.options['core_subsystems']
 
         # TODO: paramport
         flight_path_params = ParamPort()
-        if analysis_scheme is AnalysisScheme.SHOOTING and kwargs['method'] == 'cruise':
-            flight_path_params.add_params(
-                {
-                    Aircraft.Design.OPERATING_MASS: dict(units='lbm', val=0),
-                    Aircraft.CrewPayload.PASSENGER_PAYLOAD_MASS: dict(units='lbm', val=0),
-                    Mission.Design.RESERVE_FUEL: dict(units='lbm', val=0),
-                }
-            )
+
         self.add_subsystem('params', flight_path_params, promotes=['*'])
 
         self.add_atmosphere(input_speed_type=input_speed_type)
@@ -142,7 +117,7 @@ class FlightPathODE(TwoDOFODE):
             system = subsystem.build_mission(**kwargs)
             if system is not None:
                 if isinstance(subsystem, PropulsionBuilderBase):
-                    prop_group.add_subsystem(
+                    self.add_subsystem(
                         subsystem.name,
                         system,
                         promotes_inputs=subsystem.mission_inputs(**kwargs),
@@ -157,32 +132,6 @@ class FlightPathODE(TwoDOFODE):
                     )
 
         self.add_external_subsystems()
-
-        if analysis_scheme is AnalysisScheme.SHOOTING:
-            prop_group.add_subsystem(
-                'calc_thrust',
-                om.ExecComp(
-                    # TODO fix engines not providing thrust in the right direction
-                    # + weight*sin(alpha + gamma)
-                    'required_thrust = ( drag  ) / cos(i_wing)',
-                    required_thrust={'val': 0, 'units': 'lbf'},
-                    drag={'val': 0, 'units': 'lbf'},
-                    # weight={'val': 0, 'units': 'lbf'},
-                    # alpha={'val': 0, 'units': 'rad'},
-                    # gamma={'val': 0, 'units': 'rad'},
-                    i_wing={'val': 0, 'units': 'rad'},
-                ),
-                promotes_inputs=[
-                    ('drag', Dynamic.Vehicle.DRAG),
-                    # 'weight',
-                    # Dynamic.Vehicle.ANGLE_OF_ATTACK,
-                    # ('gamma', Dynamic.Mission.FLIGHT_PATH_ANGLE),
-                    ('i_wing', Aircraft.Wing.INCIDENCE),
-                ],
-                promotes_outputs=['required_thrust'],
-            )
-
-            self.add_throttle_control(prop_group=prop_group, atol=1e-8, print_level=print_level)
 
         self.add_subsystem(
             'flight_path_eom',
