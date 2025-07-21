@@ -76,10 +76,9 @@ class WingMass(om.JaxExplicitComponent):
         airfoil_data_file = self.options['airfoil_data_file']
         if airfoil_data_file is not None:
             airfoil_data_file = get_path(airfoil_data_file)
-            # try:
             airfoil_data = np.loadtxt(airfoil_data_file)
-            x_coords = airfoil_data[:, 0]
-            y_coords = airfoil_data[:, 1]
+
+            x_coords, y_coords = airfoil_data[:, 0], airfoil_data[:, 1]
 
             (
                 self.camber,
@@ -88,23 +87,24 @@ class WingMass(om.JaxExplicitComponent):
                 self.thickness,
                 self.camber_line,
             ) = extract_airfoil_features(x_coords, y_coords)
-            len(x_coords)
+
         else:
             NACA_digits = str(self.options['NACA_digits'])
             # Parse the NACA airfoil type (4-digit)
             self.camber = int(NACA_digits[0]) / 100.0  # Maximum camber
             self.camber_location = int(NACA_digits[1]) / 10.0  # Location of max camber
             self.max_thickness = int(NACA_digits[2:4]) / 100.0  # Max thickness
-            self.options['num_sections']
 
     def get_self_statics(self):
         return (
             self.camber,
             self.camber_location,
             self.max_thickness,
-            self.thickness,
             self.camber_line,
+            self.thickness,
             self.options['material'],
+            self.options['num_sections'],
+            self.options['NACA_digits'],
         )
 
     def compute_primal(
