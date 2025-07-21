@@ -137,6 +137,9 @@ def run_level3_dbf_example():
     # -----------------------------
     prob.setup()
 
+    prob.set_val(Aircraft.Battery.MASS, 0.707, units='kg')
+    prob.set_val(Aircraft.Engine.Motor.MASS, 0.288, units='kg')
+
     prob.set_val(Aircraft.Fuselage.LENGTH, 4, units='ft')
     prob.set_val(Aircraft.Fuselage.AVG_HEIGHT, 5, units='inch')
     prob.set_val(Aircraft.Fuselage.AVG_WIDTH, 4, units='inch')
