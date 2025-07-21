@@ -3,10 +3,8 @@ import openmdao.api as om
 
 from aviary.mission.gasp_based.ode.groundroll_eom import GroundrollEOM
 from aviary.mission.gasp_based.ode.params import ParamPort
-from aviary.mission.gasp_based.ode.time_integration_base_classes import add_SGM_required_inputs
 from aviary.mission.gasp_based.ode.two_dof_ode import TwoDOFODE
 from aviary.subsystems.aerodynamics.aerodynamics_builder import AerodynamicsBuilderBase
-from aviary.variable_info.enums import AnalysisScheme
 from aviary.variable_info.variables import Aircraft, Dynamic
 
 
@@ -26,18 +24,9 @@ class GroundrollODE(TwoDOFODE):
 
     def setup(self):
         nn = self.options['num_nodes']
-        analysis_scheme = self.options['analysis_scheme']
         aviary_options = self.options['aviary_options']
         core_subsystems = self.options['core_subsystems']
         subsystem_options = self.options['subsystem_options']
-
-        if analysis_scheme is AnalysisScheme.SHOOTING:
-            add_SGM_required_inputs(
-                self,
-                {
-                    Dynamic.Mission.DISTANCE: {'units': 'ft'},
-                },
-            )
 
         # TODO: paramport
         self.add_subsystem('params', ParamPort(), promotes=['*'])

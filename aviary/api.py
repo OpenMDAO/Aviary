@@ -39,7 +39,6 @@ from aviary.utils.csv_data_file import read_data_file, write_data_file
 from aviary.utils.data_interpolator_builder import build_data_interpolator
 from aviary.variable_info.enums import (
     AlphaModes,
-    AnalysisScheme,
     EquationsOfMotion,
     FlapType,
     GASPEngineType,
@@ -49,13 +48,6 @@ from aviary.variable_info.enums import (
     Verbosity,
 )
 from aviary.models.missions.two_dof_default import phase_info as default_2DOF_phase_info
-from aviary.models.missions.two_dof_fiti_default import (
-    phase_info as default_2DOF_fiti_phase_info,
-)
-from aviary.models.missions.two_dof_fiti_deprecated import (
-    create_2dof_based_ascent_phases,
-    create_2dof_based_descent_phases,
-)
 from aviary.models.missions.height_energy_default import (
     phase_info as default_height_energy_phase_info,
 )
@@ -185,23 +177,6 @@ from aviary.mission.flops_based.phases.detailed_landing_phases import (
 )
 from aviary.mission.flops_based.phases.detailed_takeoff_phases import (
     TakeoffTrajectory as DetailedTakeoffTrajectoryBuilder,
-)
-
-# SimuPy
-from aviary.mission.gasp_based.ode.time_integration_base_classes import SimuPyProblem
-from aviary.mission.gasp_based.phases.time_integration_phases import (
-    SGMAccel,
-    SGMAscent,
-    SGMAscentCombined,
-    SGMClimb,
-    SGMCruise,
-    SGMDescent,
-    SGMGroundroll,
-    SGMRotation,
-)
-from aviary.mission.gasp_based.phases.time_integration_traj import (
-    FlexibleTraj,
-    TimeIntegrationTrajBase,
 )
 
 ##############

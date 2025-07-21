@@ -52,7 +52,6 @@ parts:
       - file: user_guide/reserve_missions
       - file: user_guide/multi_mission
       - file: user_guide/off_design_missions
-      - file: user_guide/SGM_capabilities
       - file: user_guide/features/blended_wing_body
     - file: user_guide/troubleshooting
 
@@ -84,6 +83,7 @@ parts:
           - file: theory_guide/turboprop
     - file: theory_guide/optimization_algorithms
     - file: theory_guide/validation
+    - file: theory_guide/gasp_based_bwb
 
 - caption: Developer Guide
   chapters:

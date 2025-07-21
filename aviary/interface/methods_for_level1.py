@@ -5,14 +5,13 @@ from pathlib import Path
 
 from aviary.interface.methods_for_level2 import AviaryProblem
 from aviary.utils.functions import get_path
-from aviary.variable_info.enums import AnalysisScheme, Verbosity
+from aviary.variable_info.enums import Verbosity
 
 
 def run_aviary(
     aircraft_data,
     phase_info,
     optimizer=None,
-    analysis_scheme=AnalysisScheme.COLLOCATION,
     objective_type=None,
     record_filename='problem_history.db',
     restart_filename=None,
@@ -40,8 +39,6 @@ def run_aviary(
         Information about the phases of the mission.
     optimizer : str
         The optimizer to use.
-    analysis_scheme : AnalysisScheme, optional
-        The analysis scheme to use, defaults to AnalysisScheme.COLLOCATION.
     objective_type : str, optional
         Type of the optimization objective.
     record_filename : str, optional
@@ -82,7 +79,7 @@ def run_aviary(
         name = None
 
     # Build problem
-    prob = AviaryProblem(analysis_scheme, name=name, verbosity=verbosity)
+    prob = AviaryProblem(name=name, verbosity=verbosity)
 
     # Load aircraft and options data from user
     # Allow for user overrides here
@@ -125,28 +122,13 @@ def run_aviary(
 
 
 def run_level_1(
-    input_deck,
-    optimizer='IPOPT',
-    phase_info=None,
-    max_iter=50,
-    verbosity=Verbosity.BRIEF,
-    analysis_scheme=AnalysisScheme.COLLOCATION,
+    input_deck, optimizer='IPOPT', phase_info=None, max_iter=50, verbosity=Verbosity.BRIEF
 ):
     """
     This file enables running aviary from the command line with a user specified input deck.
     usage: aviary run_mission [input_deck] [opt_args].
     """
-    kwargs = {
-        'max_iter': max_iter,
-    }
-
-    if analysis_scheme is AnalysisScheme.SHOOTING:
-        kwargs['analysis_scheme'] = AnalysisScheme.SHOOTING
-        kwargs['run_driver'] = False
-    #     kwargs['optimizer'] = 'IPOPT'
-    # else:
-    kwargs['optimizer'] = optimizer
-    kwargs['verbosity'] = Verbosity(verbosity)
+    kwargs = {'max_iter': max_iter, 'optimizer': optimizer, 'verbosity': Verbosity(verbosity)}
 
     if isinstance(phase_info, str):
         phase_info_path = get_path(phase_info)
@@ -179,11 +161,6 @@ def _setup_level1_parser(parser):
     parser.add_argument('--phase_info', type=str, default=None, help='Path to phase info file')
     parser.add_argument('--max_iter', type=int, default=50, help='maximum number of iterations')
     parser.add_argument(
-        '--shooting',
-        action='store_true',
-        help='Use shooting instead of collocation',
-    )
-    parser.add_argument(
         '--verbosity',
         type=int,
         default=1,
@@ -193,11 +170,6 @@ def _setup_level1_parser(parser):
 
 
 def _exec_level1(args, user_args):
-    if args.shooting:
-        analysis_scheme = AnalysisScheme.SHOOTING
-    else:
-        analysis_scheme = AnalysisScheme.COLLOCATION
-
     if args.optimizer == 'None':
         args.optimizer = None
 
@@ -211,5 +183,4 @@ def _exec_level1(args, user_args):
         phase_info=args.phase_info,
         max_iter=args.max_iter,
         verbosity=args.verbosity,
-        analysis_scheme=analysis_scheme,
     )

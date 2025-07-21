@@ -2,7 +2,6 @@ import numpy as np
 import openmdao.api as om
 
 from aviary.constants import GRAV_ENGLISH_GASP, GRAV_ENGLISH_LBM, MU_TAKEOFF
-from aviary.variable_info.enums import AnalysisScheme
 from aviary.variable_info.functions import add_aviary_input
 from aviary.variable_info.variables import Aircraft, Dynamic
 
@@ -12,15 +11,8 @@ class GroundrollEOM(om.ExplicitComponent):
 
     def initialize(self):
         self.options.declare('num_nodes', types=int)
-        self.options.declare(
-            'analysis_scheme',
-            types=AnalysisScheme,
-            default=AnalysisScheme.COLLOCATION,
-            desc='The analysis method that will be used to close the trajectory; for example collocation or time integration',
-        )
 
     def setup(self):
-        analysis_scheme = self.options['analysis_scheme']
         nn = self.options['num_nodes']
         arange = np.arange(nn)
 
@@ -142,16 +134,13 @@ class GroundrollEOM(om.ExplicitComponent):
         )
         self.declare_partials('fuselage_pitch', Aircraft.Wing.INCIDENCE, val=-1)
 
-        if analysis_scheme is AnalysisScheme.COLLOCATION:
-            self.add_output(
-                'angle_of_attack_rate', val=np.ones(nn), desc='angle of attack rate', units='deg/s'
-            )
+        self.add_output(
+            'angle_of_attack_rate', val=np.ones(nn), desc='angle of attack rate', units='deg/s'
+        )
 
-            self.declare_partials('angle_of_attack_rate', ['*'])
+        self.declare_partials('angle_of_attack_rate', ['*'])
 
     def compute(self, inputs, outputs):
-        analysis_scheme = self.options['analysis_scheme']
-
         mu = MU_TAKEOFF
 
         weight = inputs[Dynamic.Vehicle.MASS] * GRAV_ENGLISH_LBM
@@ -187,9 +176,7 @@ class GroundrollEOM(om.ExplicitComponent):
         outputs['normal_force'] = normal_force
 
         outputs['fuselage_pitch'] = gamma * 180 / np.pi - i_wing + alpha
-
-        if analysis_scheme is AnalysisScheme.COLLOCATION:
-            outputs['angle_of_attack_rate'] = np.zeros(nn)
+        outputs['angle_of_attack_rate'] = np.zeros(nn)
 
     def compute_partials(self, inputs, J):
         mu = MU_TAKEOFF
