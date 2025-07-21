@@ -982,7 +982,7 @@ class AviaryProblem(om.Problem):
             num_first = num_business = num_tourist = wing_cargo = misc_cargo = 0
 
         if phase_info is None:
-            # Somewhere between the sizing and off-design self.pre_mission_info gets deleted
+            # model.phase_info only contains mission information
             phase_info = self.model.phase_info
             phase_info['pre_mission'] = self.model.pre_mission_info
             phase_info['post_mission'] = self.model.post_mission_info
