@@ -29,8 +29,17 @@ class MassSummation(om.Group):
                 Aircraft.HorizontalTail.MASS,
                 Aircraft.VerticalTail.MASS,
             ],
-            promotes_outputs=['structure_mass']
-        )
+            promotes_outputs=['structure_mass'])
+
+        self.add_subsystem(
+            'total_mass_sum',
+            TotalMass(),
+            promotes_inputs=[
+                'structure_mass',
+                Aircraft.Battery.MASS,
+                Aircraft.Engine.Motor.MASS
+            ],
+            promotes_outputs=['total_mass'])
         
 class StructureMass(om.ExplicitComponent):
     def setup(self):
@@ -66,4 +75,19 @@ class StructureMass(om.ExplicitComponent):
             inputs[Aircraft.Fuselage.MASS] +
             inputs[Aircraft.HorizontalTail.MASS] +
             inputs[Aircraft.VerticalTail.MASS]
+        )
+
+class TotalMass(om.ExplicitComponent):
+    def setup(self):
+        self.add_input('structure_mass', val=0.0, units='kg')
+        add_aviary_input(self, Aircraft.Battery.MASS, val=0.0, units='kg')
+        add_aviary_input(self, Aircraft.Engine.Motor.MASS, val=0.0, units='kg')
+
+        self.add_output('total_mass', val=0.0, units='kg')
+
+    def compute(self, inputs, outputs):
+        outputs['total_mass'] = (
+            inputs['structure_mass'] +
+            inputs[Aircraft.Battery.MASS] +
+            inputs[Aircraft.Engine.Motor.MASS]
         )

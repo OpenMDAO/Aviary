@@ -164,7 +164,9 @@ def run_level3_dbf_example():
     print(f"Vertical Tail Mass: {prob.get_val(Aircraft.VerticalTail.MASS)[0]:.4f} kg")
     print(f"H-Tail Mass: {prob.get_val(Aircraft.HorizontalTail.MASS)[0]:.4f} kg")
     print(f"Wing Mass: {prob.get_val(Aircraft.Wing.MASS)[0]:.4f} kg")
-    print(f"Total Mass: {prob.get_val('structure_mass')[0]:.4f} kg")
+    print(f"Battery Mass: {prob.get_val(Aircraft.Battery.MASS)[0]:.4f} kg")
+    print(f"Motor Mass: {prob.get_val(Aircraft.Engine.Motor.MASS)[0]:.4f} kg")
+    print(f"Total Mass: {prob.get_val('total_mass')[0]:.4f} kg")
 
 
 if __name__ == '__main__':
