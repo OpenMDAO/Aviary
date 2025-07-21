@@ -6,6 +6,7 @@ import warnings
 from datetime import datetime
 from enum import Enum
 from pathlib import Path
+import enum
 
 import dymos as dm
 import numpy as np
@@ -79,10 +80,7 @@ class AviaryProblem(om.Problem):
 
         self.analysis_scheme = analysis_scheme
 
-    def add_aviary_group(self, model_name=str):
-        """
-        This method creates an aviary group based on the model_name supplied."""
-        self.add_model(model_name, AviaryGroup())
+        self.aviary_groups_dict = {}
 
     def load_inputs(
         self,
@@ -143,27 +141,46 @@ class AviaryProblem(om.Problem):
         else:
             verbosity = self.verbosity  # defaults to BRIEF
 
-        self.model.check_and_preprocess_inputs(verbosity=verbosity)
-
-        self._update_metadata_from_subsystems()
-
-    def _update_metadata_from_subsystems(self):
-        """Merge metadata from user-defined subsystems into problem metadata."""
+        # Seed Meta Data for later modification
         self.meta_data = BaseMetaData.copy()
 
+        if self.problem_type == ProblemType.MULTI_MISSION:
+            for name, group in self.aviary_groups_dict.items():
+                group.check_and_preprocess_inputs(verbosity=verbosity)
+
+                self._update_metadata_from_subsystems(group)
+        else:
+            self.model.check_and_preprocess_inputs(verbosity=verbosity)
+
+            self._update_metadata_from_subsystems(self.model)
+
+    def _update_metadata_from_subsystems(self, group):
+        """Merge metadata from user-defined subsystems into problem metadata."""
+        
+
         # loop through phase_info and external subsystems
-        for phase_name in self.model.phase_info:
-            # TODO: phase_info now resides in AviaryGroup. Accessing it as self.model.phase_info is just a temporary stop-gap
-            # it will be necessary to combine multiple self.models
-            external_subsystems = self.model.get_all_subsystems(
-                self.model.phase_info[phase_name]['external_subsystems']
+        for phase_name in group.phase_info:
+            external_subsystems = group.get_all_subsystems(
+                group.phase_info[phase_name]['external_subsystems']
             )
 
             for subsystem in external_subsystems:
                 meta_data = subsystem.meta_data.copy()
                 self.meta_data = merge_meta_data([self.meta_data, meta_data])
 
-        self.model.meta_data = self.meta_data  # TODO: temporary fix
+        # Create a meta data reference to use inside of AviaryGroup
+        group.meta_data = self.meta_data
+
+    def add_aviary_group(self, name:str, aircraft, mission:dict, verbosity=None):
+        """
+        Create a dictionary of all aviary_groups() in this problem so we can iterate over them later.
+        """
+        sub = self.model.add_subsystem(name, AviaryGroup())
+        sub.load_inputs(aircraft, mission, verbosity=verbosity)
+
+        self.aviary_groups_dict[name] = sub
+    
+        return sub
 
     def add_pre_mission_systems(self, verbosity=None):
         """
@@ -592,13 +609,56 @@ class AviaryProblem(om.Problem):
         Add a design variable to the problem as well as initialized a default value for that design variable.
         The default value can be over-written after setup with prob.set_val()
         """
-        self.add_design_var(name=name, lower=lower, upper=upper, units=units)
-        self.set_input_defaults(name=name, val=default_val, units=units, src_shape=src_shape)
+        self.model.add_design_var(name=name, lower=lower, upper=upper, units=units)
+        if default_val is not None:
+            self.model.set_input_defaults(name=name, val=default_val, units=units, src_shape=src_shape)
         
-    def add_multimission_objetive(self, missions=list[str], mission_weights:list[float] = None, outputs:list[str] = None, output_weights:list[float] = None, ref:float = 1.0):
+    def match_design_range(self, missions:list[str], range:str):
         """
-        Create a final objective based on the selected missions and output values.
-        Each mission is weighted independently, and each output can also be weighted independently.
+        Finds the longest mission and sets its range as the design range for all
+        Aviary problems. Used within Aviary for sizing subsystems (avionics and AC).
+        this could be simpllified in the future if there was a single pre-mission 
+        for similar aircraft
+        """
+
+        design_range = []
+        for mission in len(missions):
+            design_range.append(self.get_val(f'{mission}.{Mission.Design.RANGE}', units='nmi'))
+        design_range_max = np.max(design_range)
+        self.set_val(range, val=design_range_max, units='nmi')
+
+    def add_multimission_objetive(self, missions:list[str], outputs:list[str], mission_weights:list[float] = None, output_weights:list[float] = None, ref:float = 1.0):
+        """
+        Adds a composite objective function to the OpenMDAO problem by aggregating 
+        output values across multiple mission models, with independent weighting 
+        for both missions and outputs.
+
+        Parameters
+        ----------
+        missions : list of str
+            List of subsystem names (e.g., 'model1', 'model2') corresponding to different missions.
+
+        outputs : list of str
+            List of output variable names (e.g., Mission.Summary.FUEL_BURNED, Mission.Summary.GROSS_MASS) to be included
+            in the objective from each mission.
+        
+        mission_weights : list of float, optional
+            Weights assigned to each mission. If None, equal weighting is assumed.
+            These weights will be normalized internally to sum to 1.0.
+        
+        output_weights : list of float, optional
+            Weights assigned to each output variable. If None, equal weighting is assumed.
+            These weights will also be normalized internally to sum to 1.0.
+        
+        ref : float, optional
+            Reference value for the final objective. Passed to `add_objective()` for scaling.
+
+        Behavior
+        --------
+        - Connects each specified mission output into a newly created `ExecComp` block.
+        - Computes a weighted sum: each output is weighted by both its output weight
+        and the weight of the mission it came from.
+        - Adds the result as the final objective named `'compound'`, accessible at the top level model.
         """
 
         # Setup mission and output lengths if they are not already given
@@ -606,7 +666,7 @@ class AviaryProblem(om.Problem):
             mission_weights = np.ones(len(missions))
 
         if output_weights is None:
-            output_weights = no.ones(len(outputs))
+            output_weights = np.ones(len(outputs))
 
         # # Make an ExecComp
         # for mission in missions:
@@ -620,26 +680,27 @@ class AviaryProblem(om.Problem):
         # missions = ['model1','model2']
         # outputs = ['fuelburn','gross_mass']
         weighted_exprs = []
-        promoted_names = []
+        connection_names = []
         output_weights = [float(weight / sum(output_weights)) for weight in output_weights]
         mission_weights = [float(weight / sum(mission_weights)) for weight in mission_weights]
         for mission, mission_weight in zip(missions, mission_weights):
             for output, output_weight in zip(outputs, output_weights):
-                promoted_names.append(f'{mission}.{output}')
-                weighted_exprs.append(f'{mission}.{output}*{output_weight}*{mission_weight}')
+                connection_names.append([f'compound_objective.{mission}_{output}', f'{mission}.{output}'])
+                weighted_exprs.append(f'{mission}_{output}*{output_weight}*{mission_weight}')
         final_expr = ' + '.join(weighted_exprs)
-        # weighted_str looks like:  model1.fuelburn*0.67*0.5 + model1.gross_mass*0.33*0.5 + model2.fuelburn*0.67*0.5 + model2.gross_mass*0.33*0.5
+        # weighted_str looks like:  'model1.fuelburn*0.67*0.5 + model1.gross_mass*0.33*0.5 + model2.fuelburn*0.67*0.5 + model2.gross_mass*0.33*0.5'
 
         # adding compound execComp to super problem
         self.model.add_subsystem(
             'compound_objective',
             om.ExecComp('compound = ' + final_expr, has_diag_partials=True),
-            promotes_inputs=promoted_names,
             promotes_outputs=['compound'],
         )
+        # connect from inside of the models to the compound objective
+        for target, source in connection_names:
+            self.model.connect(target, source)
+        # finally add the objective
         self.model.add_objective('compound', ref=ref)
-
-
 
     def build_model(self, verbosity=None):
         """
@@ -654,9 +715,19 @@ class AviaryProblem(om.Problem):
         else:
             verbosity = self.verbosity  # defaults to BRIEF
 
-        self.model.build_model(verbosity=verbosity)
+        if self.problem_type == ProblemType.MULTI_MISSION:
+            for name, group in self.aviary_groups_dict.items():
+                group.add_pre_mission_systems(verbosity=verbosity)
+                group.add_phases(verbosity=verbosity, comm=self.comm)
+                group.add_post_mission_systems(verbosity=verbosity)
+                group.link_phases(verbosity=verbosity, comm=self.comm)
+        else:
+            self.model.add_pre_mission_systems(verbosity=verbosity)
+            self.model.add_phases(verbosity=verbosity, comm=self.comm)
+            self.model.add_post_mission_systems(verbosity=verbosity)
+            self.model.link_phases(verbosity=verbosity, comm=self.comm)
 
-    def promote_inputs(self, missions:list[str], var_pairs:list[tuple[str, str]]):
+    def promote_inputs(self, mission_names:list[str], var_pairs:list[tuple[str, str]]):
             """
             Link a promoted input to multiple groups' unpromoted inputs using an internal IVC.
             
@@ -672,8 +743,12 @@ class AviaryProblem(om.Problem):
                 Each pair is (input_name_in_group, top_level_name_to_use)
             """
 
-            for mission_name in missions:
-                self.promotes(mission_name, inputs=var_pairs)
+            # 
+            for name, group in self.aviary_groups_dict.items():
+                for mission_name in mission_names:
+                    if name == mission_name:
+                        # the group name matches the mission name, 
+                        group.promotes(var_pairs)
 
 
     def setup(self, **kwargs):

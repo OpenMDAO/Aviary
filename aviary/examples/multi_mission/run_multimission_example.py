@@ -27,6 +27,7 @@ from aviary.validation_cases.validation_tests import get_flops_inputs
 from aviary.variable_info.enums import ProblemType
 from aviary.variable_info.functions import setup_model_options
 from aviary.variable_info.variables import Aircraft, Mission, Settings
+from aviary.core.aviary_group import AviaryGroup
 
 # fly the same mission twice with two different passenger loads
 phase_info_primary = copy.deepcopy(phase_info)
@@ -52,22 +53,6 @@ aviary_inputs_deadhead.set_val(Aircraft.CrewPayload.NUM_FIRST_CLASS, 0, 'unitles
 
 Optimizer = 'SLSQP'  # SLSQP or SNOPT
 
-
-
-# =======================================
-# START MULTIMISSION EXAMPLE
-# =======================================
-# write out use cases
-
-# A) One aircraft flying multiple different missions with different number of passengers and payload 
-#       on each mission, minimize fuel burn of both missions combined
-# B) Two different aircraft flying different missions but having a common part (i.e. engine)
-#       size engine and minimize fuel burn for both aircraft
-# C) A or B above except with some of the missions being off-design (not included in objective function)
-# D) any of the above but with uncertain inputs & outputs
-# multiple trajectories but same pre / post mission
-# same wing
-
 prob = av.AviaryProblem()
 
 # set constraints in the background to allow Mission.Summary.GROSS_MASS to be acceptible as long as it's 
@@ -75,336 +60,160 @@ prob = av.AviaryProblem()
 # the mission to fly the target_range specified in the phase_info
 prob.problem_type = ProblemType.MULTI_MISSION 
 
-prob.add_aviary_group('model1')
-
-# Load aircraft in first configuration
-prob.model1.load_inputs(aviary_inputs_primary, phase_info)
-# prob.model1.check_and_preprocess_inputs() <- moved into load_inputs
-
-# make build model just called once at top level <- TODO
-
-prob.model1.build_model()
-# contains the following 4 processes:
-# prob.model1.add_pre_mission_systems()
-# prob.model1.add_phases()
-# prob.model1.add_post_mission_systems()
-# prob.model1.link_phases()
+prob.add_aviary_group('mission1', aircraft=aviary_inputs_primary, mission=phase_info, verbosity=None)
 
 # Load aircraft in second configuration for same mission
-prob.add_aviary_group('model2')
+prob.add_aviary_group('mission2', aircraft=aviary_inputs_deadhead, mission=phase_info, verbosity=None)
 
-prob.model2.load_inputs(aviary_inputs_deadhead, phase_info)
+prob.check_and_preprocess_inputs(verbosity=None)
 
-prob.model2.build_model()
+prob.build_model(verbosity=None)
 
 # Link Key design variables to ensure both aircraft are modelled the same:
-# promote specific variables from inside specific models to a new name specified by the user
-# model3 & model4 could be an aircraft with the same engine but a different GROSS_MASS and RANGE and SWEEP, we need to be able to link those two as well
-# so we want to enable promotion to the problem level with alias
-# If you link design_range here then we will extract the maximum design range from the phase_info and insert that into both models
-prob.promote_inputs(['model1', 'model2'], [(Mission.Design.GROSS_MASS, 'Aircraft1:GROSS_MASS'), (Mission.Design.RANGE, 'Aircraft1.RANGE'), (Aircraft.Wing.SWEEP, 'Aircraft1.SWEEP')])
-prob.promote_inputs(['model3', 'model4'], [(Mission.Design.GROSS_MASS, 'Aircraft2:GROSS_MASS'), (Mission.Design.RANGE, 'Aircraft2.RANGE'), (Aircraft.Wing.SWEEP, 'Aircraft2.SWEEP')])
+prob.promote_inputs(['mission1', 'mission2'], [(Mission.Design.GROSS_MASS, 'Aircraft1.GROSS_MASS'), (Mission.Design.RANGE, 'Aircraft1.RANGE'), (Aircraft.Wing.SWEEP, 'Aircraft1.SWEEP')])
 
-# You can add design_vars onto 
-prob.add_design_var_default('Aircraft1:GROSS_MASS', lower=, uppwer=, units=, default_val=)
-prob.add_design_var_default('Aircraft1.SWEEP', units=, val=)
-prob.add_design_var_default('Aircraft2:GROSS_MASS', lower=, uppwer=, units=)
-prob.add_design_var_default('Aircraft2.SWEEP', units=, val=)
-prob.add_design_var_default()
+prob.add_design_var_default('Aircraft1:GROSS_MASS', lower=10.0, upper=900e3, units='lbm', default_val=100000)
+prob.add_design_var_default('Aircraft1.SWEEP', lower=23.0, upper=27.0, units='deg', default_val=25)
+
+# TODO: Do we have to run prob.add_design_variables() <- this adds some special stuff for multimission
 
 # Add objective
 # create an objective by adding both values from the specified models based on the weighting
-# if there are models3, and model4, they may contribute constraints, but do not need to be included as part of the objective
-prob.add_multimission_objetive(missions=['model1', 'model2'], mission_weights=[2,1], outputs=[Mission.Summary.FUEL_BURNED, Mission.Summary.CO2], output_weights=[1,1]  ref=)
-
-# can we make a pareto front of designs?
-# prob.run_aviary_DOE() ?
-
+# TODO: Revise add_objective in follow-on
+prob.add_multimission_objetive(missions=['mission1', 'mission2'], mission_weights=[2,1], outputs=[Mission.Summary.FUEL_BURNED, CO2], output_weights=[1,1],  ref=1)
 
 # optimizer and iteration limit are optional provided here
 prob.add_driver(Optimizer, max_iter=50)
 
 prob.setup()
 
-# we have to set val for design vars here
+# set_val goes here if needed
 
-# design.range must be the same for similar aircraft to ensure that navigation gear is designed similarly
-# this could be simpllified in the future if there was a single pre-mission for similar aircraft
-max_range_1 = utils.get_design_range(model1, model2)
-prob.model1.set_initial_guesses('Aircraft1.RANGE', units=, val=max_range_1)
-prob.model2.set_initial_guesses('Aircraft2.RANGE', units=, val=)
+# Ensure that design_range is the same for similar aircraft to ensure that navigation gear is designed similarly
+prob.match_design_range('model1', 'model2', range='Aircraft1.RANGE')
 
-
-# jason - what if 2 csv w/ wing laminar flow, take the higher value
+# TODO: how to handle "aircraft that the user says are the same but are not the same i.e. wing design is different"
 
 prob.run_aviary_problem()
 
 
 
 
+# class MultiMissionProblem(om.Problem):
+
+#     def setup_wrapper(self):
+#         """Wrapper for om.Problem setup with warning ignoring and setting options."""
+#         for i, prob in enumerate(self.probs):
+#             prob.model.options['aviary_options'] = prob.aviary_inputs
+#             prob.model.options['aviary_metadata'] = prob.meta_data
+#             prob.model.options['phase_info'] = prob.phase_info
+
+#             # Use OpenMDAO's model options to pass all options through the system hierarchy.
+#             prefix = self.group_prefix + f'_{i}'
+#             setup_model_options(self, prob.aviary_inputs, prob.meta_data, prefix=f'{prefix}.')
+
+#         # Aviary's problem setup wrapper uses these ignored warnings to suppress
+#         # some warnings related to variable promotion. Replicating that here with
+#         # setup for the super problem
+#         with warnings.catch_warnings():
+#             warnings.simplefilter('ignore', om.OpenMDAOWarning)
+#             warnings.simplefilter('ignore', om.PromotionWarning)
+#             self.setup(check='all')
+
+#     def run(self):
+#         self.model.set_solver_print(0)
+#         dm.run_problem(self, make_plots=False)
+
+#     def create_timeseries_plots(self, plotvars=[], show=True):
+#         """
+#         Temporary create plots manually because graphing won't work for dual-trajectories.
+#         Creates timeseries plots for any variables within timeseries. Specify variables
+#         and units by setting plotvars = [('altitude','ft')]. Any number of vars can be added.
+#         """
+#         plt.figure()
+#         for plotidx, (var, unit) in enumerate(plotvars):
+#             plt.subplot(int(np.ceil(len(plotvars) / 2)), 2, plotidx + 1)
+#             for i in range(self.num_missions):
+#                 time = np.array([])
+#                 yvar = np.array([])
+#                 # this loop concatenates data from all phases
+#                 for phase in self.phases[f'{self.group_prefix}_{i}']:
+#                     rawt = self.get_val(
+#                         f'{self.group_prefix}_{i}.traj.{phase}.timeseries.time', units='s'
+#                     )
+#                     rawy = self.get_val(
+#                         f'{self.group_prefix}_{i}.traj.{phase}.timeseries.{var}', units=unit
+#                     )
+#                     time = np.hstack([time, np.ndarray.flatten(rawt)])
+#                     yvar = np.hstack([yvar, np.ndarray.flatten(rawy)])
+#                 plt.plot(time, yvar, linewidth=self.num_missions - i)
+#             plt.xlabel('Time (s)')
+#             plt.ylabel(f'{var.title()} ({unit})')
+#             plt.grid()
+#         plt.figlegend([f'Mission {i}' for i in range(self.num_missions)])
+#         if show:
+#             plt.show()
+
+#     def print_vars(self, vars=[]):
+#         """Specify vars with name and unit in a tuple, e.g. vars = [ (Mission.Summary.FUEL_BURNED, 'lbm') ]."""
+#         print('\n\n=========================\n')
+#         print(f'{"":40}', end=': ')
+#         for i in range(self.num_missions):
+#             name = f'Mission {i}'
+#             print(f'{name:^30}', end='| ')
+#         print()
+#         for var, unit in vars:
+#             varname = f'{var.replace(":", ".").upper()}'
+#             print(f'{varname:40}', end=': ')
+#             for i in range(self.num_missions):
+#                 try:
+#                     val = self.get_val(f'group_{i}.{var}', units=unit)[0]
+#                     printstatement = f'{val} ({unit})'
+#                 except:
+#                     printstatement = f'unable get get_val({var})'
+#                 print(f'{printstatement:^30}', end='| ')
+#             print()
 
 
-class MultiMissionProblem(om.Problem):
-    def __init__(self, aviary_values, phase_infos, weights):
-        super().__init__()
-        self.num_missions = len(aviary_values)
-        # phase infos and aviary_values length must match - this maybe unnecessary if
-        # different aviary_values (payloads) fly same mission (say pax vs cargo)
-        # or if same payload flies 2 different missions (altitude/mach differences)
-        if self.num_missions != len(phase_infos):
-            raise Exception('Length of aviary_values and phase_infos must be the same!')
+#     if show_plots:
+#         printoutputs = [
+#             (Mission.Design.GROSS_MASS, 'lbm'),
+#             (Aircraft.Design.EMPTY_MASS, 'lbm'),
+#             (Aircraft.Wing.SWEEP, 'deg'),
+#             (Aircraft.LandingGear.MAIN_GEAR_MASS, 'lbm'),
+#             (Aircraft.LandingGear.NOSE_GEAR_MASS, 'lbm'),
+#             (Aircraft.Design.LANDING_TO_TAKEOFF_MASS_RATIO, 'unitless'),
+#             (Aircraft.Furnishings.MASS, 'lbm'),
+#             (Aircraft.CrewPayload.PASSENGER_SERVICE_MASS, 'lbm'),
+#             (Mission.Summary.GROSS_MASS, 'lbm'),
+#             (Mission.Summary.FUEL_BURNED, 'lbm'),
+#             (Aircraft.CrewPayload.PASSENGER_MASS, 'lbm'),
+#             (Aircraft.CrewPayload.PASSENGER_PAYLOAD_MASS, 'lbm'),
+#             (Aircraft.CrewPayload.CARGO_MASS, 'lbm'),
+#             (Aircraft.CrewPayload.TOTAL_PAYLOAD_MASS, 'lbm'),
+#         ]
+#         super_prob.print_vars(vars=printoutputs)
 
-        # if fewer weights than aviary_values are provided, assign equal weights for all aviary_values
-        if len(weights) < self.num_missions:
-            weights = [1] * self.num_missions
-        # if more weights than aviary_values, raise exception
-        elif len(weights) > self.num_missions:
-            raise Exception('Length of weights cannot exceed length of aviary_values!')
-        self.weights = weights
-        self.phase_infos = phase_infos
+#         plotvars = [
+#             ('altitude', 'ft'),
+#             ('mass', 'lbm'),
+#             ('drag', 'lbf'),
+#             ('distance', 'nmi'),
+#             ('throttle', 'unitless'),
+#             ('mach', 'unitless'),
+#         ]
+#         super_prob.create_timeseries_plots(plotvars=plotvars, show=False)
 
-        self.group_prefix = 'group'
-        self.probs = []
-        self.fuel_vars = []
-        self.phases = {}
-        # define individual aviary problems
-        for i, (aviary_values, phase_info) in enumerate(zip(aviary_values, phase_infos)):
-            prob = av.AviaryProblem()
-            prob.load_inputs(aviary_values, phase_info)
-            prob.check_and_preprocess_inputs()
-            prob.add_pre_mission_systems()
-            prob.add_phases()
-            prob.add_post_mission_systems()
-            prob.link_phases()
+#         plt.show()
 
-            # alternate prevents use of equality constraint b/w design and summary gross mass
-            prob.problem_type = ProblemType.MULTI_MISSION
-            prob.add_design_variables()
-            self.probs.append(prob)
-            # phase names for each traj (can be used later to make plots/print outputs)
-            self.phases[f'{self.group_prefix}_{i}'] = list(prob.traj._phases.keys())
-
-            # design range and gross mass are promoted, these are Max Range/Max Takeoff Mass
-            # and must be the same for each aviary problem. Subsystems within aviary are sized
-            # using these - empty mass is same across all aviary problems.
-            # the fuel objective is also promoted since that's used in the compound objective
-            promoted_name = f'{self.group_prefix}_{i}_fuelobj'
-            self.fuel_vars.append(promoted_name)
-            self.model.add_subsystem(
-                self.group_prefix + f'_{i}',
-                prob.model,
-                promotes_inputs=[
-                    Mission.Design.GROSS_MASS,
-                    Mission.Design.RANGE,
-                    Aircraft.Wing.SWEEP,
-                ],
-                promotes_outputs=[(Mission.Summary.FUEL_BURNED, promoted_name)],
-            )
-
-    def add_design_variables(self):
-        self.model.add_design_var(Mission.Design.GROSS_MASS, lower=10.0, upper=900e3, units='lbm')
-        self.model.add_design_var(Aircraft.Wing.SWEEP, lower=23.0, upper=27.0, units='deg')
-
-    def add_driver(self):
-        self.driver = om.pyOptSparseDriver()
-        if Optimizer == 'SLSQP':
-            self.driver.options['optimizer'] = 'SLSQP'
-        elif Optimizer == 'SNOPT':
-            self.driver.options['optimizer'] = 'SNOPT'
-            self.driver.opt_settings['Major optimality tolerance'] = 1e-7
-            self.driver.opt_settings['Major feasibility tolerance'] = 1e-7
-            # self.driver.opt_settings["Major iterations"] = 0
-            self.driver.opt_settings['iSumm'] = 6
-            self.driver.opt_settings['iPrint'] = 9
-            self.driver.opt_settings['Verify level'] = -1
-            self.driver.opt_settings['Nonderivative linesearch'] = None
-        self.driver.declare_coloring()
-        # linear solver causes nan entry error for landing to takeoff mass ratio param
-        # self.model.linear_solver = om.DirectSolver()
-
-    def add_objective(self):
-        # weights are normalized - e.g. for given weights 3:1, the normalized
-        # weights are 0.75:0.25
-        weights = [float(weight / sum(self.weights)) for weight in self.weights]
-        weighted_str = '+'.join(
-            [f'{fuelobj}*{weight}' for fuelobj, weight in zip(self.fuel_vars, weights)]
-        )
-        # weighted_str looks like: fuel_0 * weight[0] + fuel_1 * weight[1]
-        # note that the fuel objective itself is the base aviary fuel objective
-        # which is also a function of climb time because climb is not very sensitive to fuel
-
-        # adding compound execComp to super problem
-        self.model.add_subsystem(
-            'compound_fuel_burn_objective',
-            om.ExecComp('compound = ' + weighted_str, has_diag_partials=True),
-            promotes_inputs=self.fuel_vars,
-            promotes_outputs=['compound'],
-        )
-        self.model.add_objective('compound')
-
-    def setup_wrapper(self):
-        """Wrapper for om.Problem setup with warning ignoring and setting options."""
-        for i, prob in enumerate(self.probs):
-            prob.model.options['aviary_options'] = prob.aviary_inputs
-            prob.model.options['aviary_metadata'] = prob.meta_data
-            prob.model.options['phase_info'] = prob.phase_info
-
-            # Use OpenMDAO's model options to pass all options through the system hierarchy.
-            prefix = self.group_prefix + f'_{i}'
-            setup_model_options(self, prob.aviary_inputs, prob.meta_data, prefix=f'{prefix}.')
-
-        # Aviary's problem setup wrapper uses these ignored warnings to suppress
-        # some warnings related to variable promotion. Replicating that here with
-        # setup for the super problem
-        with warnings.catch_warnings():
-            warnings.simplefilter('ignore', om.OpenMDAOWarning)
-            warnings.simplefilter('ignore', om.PromotionWarning)
-            self.setup(check='all')
-
-    def run(self):
-        self.model.set_solver_print(0)
-        dm.run_problem(self, make_plots=False)
-
-    def get_design_range(self):
-        """
-        Finds the longest mission and sets its range as the design range for all
-        Aviary problems. Used within Aviary for sizing subsystems (avionics and AC).
-        """
-        design_range = []
-        for phase_info in self.phase_infos:
-            design_range.append(phase_info['post_mission']['target_range'][0])  # TBD add units
-        design_range_min = np.min(design_range)
-        design_range_max = np.max(design_range)
-        return design_range_max, design_range_min  # design_range_min
-
-    def create_timeseries_plots(self, plotvars=[], show=True):
-        """
-        Temporary create plots manually because graphing won't work for dual-trajectories.
-        Creates timeseries plots for any variables within timeseries. Specify variables
-        and units by setting plotvars = [('altitude','ft')]. Any number of vars can be added.
-        """
-        plt.figure()
-        for plotidx, (var, unit) in enumerate(plotvars):
-            plt.subplot(int(np.ceil(len(plotvars) / 2)), 2, plotidx + 1)
-            for i in range(self.num_missions):
-                time = np.array([])
-                yvar = np.array([])
-                # this loop concatenates data from all phases
-                for phase in self.phases[f'{self.group_prefix}_{i}']:
-                    rawt = self.get_val(
-                        f'{self.group_prefix}_{i}.traj.{phase}.timeseries.time', units='s'
-                    )
-                    rawy = self.get_val(
-                        f'{self.group_prefix}_{i}.traj.{phase}.timeseries.{var}', units=unit
-                    )
-                    time = np.hstack([time, np.ndarray.flatten(rawt)])
-                    yvar = np.hstack([yvar, np.ndarray.flatten(rawy)])
-                plt.plot(time, yvar, linewidth=self.num_missions - i)
-            plt.xlabel('Time (s)')
-            plt.ylabel(f'{var.title()} ({unit})')
-            plt.grid()
-        plt.figlegend([f'Mission {i}' for i in range(self.num_missions)])
-        if show:
-            plt.show()
-
-    def print_vars(self, vars=[]):
-        """Specify vars with name and unit in a tuple, e.g. vars = [ (Mission.Summary.FUEL_BURNED, 'lbm') ]."""
-        print('\n\n=========================\n')
-        print(f'{"":40}', end=': ')
-        for i in range(self.num_missions):
-            name = f'Mission {i}'
-            print(f'{name:^30}', end='| ')
-        print()
-        for var, unit in vars:
-            varname = f'{var.replace(":", ".").upper()}'
-            print(f'{varname:40}', end=': ')
-            for i in range(self.num_missions):
-                try:
-                    val = self.get_val(f'group_{i}.{var}', units=unit)[0]
-                    printstatement = f'{val} ({unit})'
-                except:
-                    printstatement = f'unable get get_val({var})'
-                print(f'{printstatement:^30}', end='| ')
-            print()
+#     return super_prob
 
 
-def large_single_aisle_example(makeN2=False, show_plots=False):
-    aviary_values = [aviary_inputs_primary, aviary_inputs_deadhead]
-    phase_infos = [phase_info_primary, phase_info_deadhead]
-    optalt, optmach = False, False
-    for phaseinfo in phase_infos:
-        for key in phaseinfo.keys():
-            if 'user_options' in phaseinfo[key].keys():
-                phaseinfo[key]['user_options']['mach_optimize'] = optmach
-                phaseinfo[key]['user_options']['altitude_optimize'] = optalt
+# if __name__ == '__main__':
+#     makeN2 = True if (len(sys.argv) > 1 and 'n2' in sys.argv[1]) else False
 
-    # how much each mission should be valued by the optimizer, larger numbers = more significance
-    weights = [9, 1]
+#     super_prob = large_single_aisle_example(makeN2=makeN2)
 
-    super_prob = MultiMissionProblem(aviary_values, phase_infos, weights)
-    super_prob.add_driver()
-    super_prob.add_design_variables()
-    super_prob.add_objective()
-    # set input default to prevent error, value doesn't matter since set val is used later
-    super_prob.model.set_input_defaults(Mission.Design.RANGE, val=1.0)
-    super_prob.setup_wrapper()
-    super_prob.set_val(Mission.Design.RANGE, super_prob.get_design_range()[0])
-
-    for i, prob in enumerate(super_prob.probs):
-        prob.set_initial_guesses(super_prob, super_prob.group_prefix + f'_{i}.')
-
-    if makeN2:
-        # TODO: Not sure we need this at all.
-        from os.path import abspath, basename, dirname, join
-
-        from openmdao.api import n2
-
-        def createN2(fileref, prob):
-            n2folder = join(dirname(abspath(__file__)), 'N2s')
-            n2(prob, outfile=join(n2folder, f'n2_{basename(fileref).split(".")[0]}.html'))
-
-        createN2(__file__, super_prob)
-
-    super_prob.run()
-    if show_plots:
-        printoutputs = [
-            (Mission.Design.GROSS_MASS, 'lbm'),
-            (Aircraft.Design.EMPTY_MASS, 'lbm'),
-            (Aircraft.Wing.SWEEP, 'deg'),
-            (Aircraft.LandingGear.MAIN_GEAR_MASS, 'lbm'),
-            (Aircraft.LandingGear.NOSE_GEAR_MASS, 'lbm'),
-            (Aircraft.Design.LANDING_TO_TAKEOFF_MASS_RATIO, 'unitless'),
-            (Aircraft.Furnishings.MASS, 'lbm'),
-            (Aircraft.CrewPayload.PASSENGER_SERVICE_MASS, 'lbm'),
-            (Mission.Summary.GROSS_MASS, 'lbm'),
-            (Mission.Summary.FUEL_BURNED, 'lbm'),
-            (Aircraft.CrewPayload.PASSENGER_MASS, 'lbm'),
-            (Aircraft.CrewPayload.PASSENGER_PAYLOAD_MASS, 'lbm'),
-            (Aircraft.CrewPayload.CARGO_MASS, 'lbm'),
-            (Aircraft.CrewPayload.TOTAL_PAYLOAD_MASS, 'lbm'),
-        ]
-        super_prob.print_vars(vars=printoutputs)
-
-        plotvars = [
-            ('altitude', 'ft'),
-            ('mass', 'lbm'),
-            ('drag', 'lbf'),
-            ('distance', 'nmi'),
-            ('throttle', 'unitless'),
-            ('mach', 'unitless'),
-        ]
-        super_prob.create_timeseries_plots(plotvars=plotvars, show=False)
-
-        plt.show()
-
-    return super_prob
-
-
-if __name__ == '__main__':
-    makeN2 = True if (len(sys.argv) > 1 and 'n2' in sys.argv[1]) else False
-
-    super_prob = large_single_aisle_example(makeN2=makeN2)
-
-    # Uncomment the following lines to see mass breakdown details for each mission.
-    # super_prob.model.group_1.list_vars(val=True, units=True, print_arrays=False)
-    # super_prob.model.group_2.list_vars(val=True, units=True, print_arrays=False)
+#     # Uncomment the following lines to see mass breakdown details for each mission.
+#     # super_prob.model.group_1.list_vars(val=True, units=True, print_arrays=False)
+#     # super_prob.model.group_2.list_vars(val=True, units=True, print_arrays=False)

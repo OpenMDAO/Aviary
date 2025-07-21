@@ -1409,24 +1409,6 @@ class AviaryGroup(om.Group):
                 self.add_constraint('h_fit.h_init_gear', equals=50.0, units='ft', ref=50.0)
                 self.add_constraint('h_fit.h_init_flaps', equals=400.0, units='ft', ref=400.0)
 
-    def build_model(self, verbosity=None):
-        """
-        This method combines multiple other methods defined in this script to decrease verbosity 
-        by the user if they don't need the extra functionality.
-        """
-                # `self.verbosity` is "true" verbosity for entire run. `verbosity` is verbosity
-        # override for just this method
-        if verbosity is not None:
-            # compatibility with being passed int for verbosity
-            verbosity = Verbosity(verbosity)
-        else:
-            verbosity = self.verbosity  # defaults to BRIEF
-
-        self.add_pre_mission_systems()
-        self.add_phases()
-        self.add_post_mission_systems()
-        self.link_phases()
-
     def set_initial_guesses(self, parent_prob=None, parent_prefix='', verbosity=None):
         """
         Call `set_val` on the trajectory for states and controls to seed the problem with
