@@ -627,6 +627,97 @@ class AviaryProblem(om.Problem):
         design_range_max = np.max(design_range)
         self.set_val(range, val=design_range_max, units='nmi')
 
+    def add_multi_obj_2(self, *args, output_weights:list[float] = None, mission_weights:list[float] = None, ref=1.0):
+        # Acceptible Inputs
+        # prob.add_objetive(Mission.Summary.FUEL_BURNED, ref=)
+
+        # prob.add_objetive(('model1',Mission.Summary.FUEL_BURNED), ref=)
+
+        # prob.add_objetive(Mission.Summary.FUEL_BURNED, Mission.Summary.CO2, ref=)
+
+        # prob.add_objetive((Mission.Summary.FUEL_BURNED, 1.0), (Mission.Summary.CO2, 2.0) ref=)
+
+        # prob.add_objetive(Mission.Summary.FUEL_BURNED, Mission.Summary.CO2, output_weights=[1,2], ref=)
+
+        # prob.add_objetive(('model1',Mission.Summary.FUEL_BURNED), ('model2', Mission.Summary.CO2), ref=)
+
+        # prob.add_objetive(('model1',Mission.Summary.FUEL_BURNED, 1.0), ('model2', Mission.Summary.CO2, 2.0), ref=)
+
+        # prob.add_objetive(('model1',Mission.Summary.FUEL_BURNED), ('model2', Mission.Summary.CO2), output_weights=[], ref=)
+
+        # prob.add_objetive(('model1',Mission.Summary.FUEL_BURNED), ('model2', Mission.Summary.CO2), output_weights=, mission_weights=, ref=)
+
+        # prob.add_objetive(('model1',Mission.Summary.FUEL_BURNED), ('model2', Mission.Summary.CO2), ('model1', Mission.Summary.CO2), output_weights=, mission_weights=, ref=)
+
+        # Setup mission and output lengths if they are not already given
+        if mission_weights is None:
+            mission_weights = np.ones(len(args))
+
+        if output_weights is None:
+            output_weights = np.ones(len(args))
+
+        # Check length of inputs to make sure we have the same sizes
+        if len(args) != len(output_weights):
+            raise ValueError(f"output_weights is {output_weights} is not the same length as {args}.")
+        elif len(args) != len(mission_weights):
+            raise ValueError(f"mission_weights is {mission_weights} is not the same length as {args}.")
+        
+
+        
+
+        
+
+        default_model = 'model'
+        default_weight = 1.0
+        objectives = []
+
+        for arg in args:
+            if isinstance(arg, tuple) and len(arg) == 3:
+                model, output, weight = arg
+                if model not in self.aviary_groups_dict:
+                    raise ValueError(f"The first element specified in {arg} must be the model name.")
+            elif isinstance(arg, tuple) and len(arg) == 2:
+                first, second = arg
+                if isinstance(first, str) and isinstance(second, str):
+                    if first in self.aviary_groups_dict:
+                        # we have the model and output but no weight
+                        model, output, weight = first, second, default_weight
+                    else:
+                        raise ValueError(f"The first element specified in {arg} must be the model name.")
+                elif isinstance(first, str) and isinstance(second, (float, int)):
+                    if first in self.aviary_groups_dict:
+                        raise ValueError(
+                            f"When specifying {arg}, the user specified a model name and a weight "
+                            f"but did not specify what output from that model the weight should be applied to."
+                        )
+                    else:
+                        # we have the output and the weight but not model
+                        model, output, weight = default_model, first, second
+                else:
+                    raise ValueError(f"The user specified {arg} which is not a 2-tuple of (model, output) or (output, weight).")
+            elif isinstance(arg, str):
+                if arg in self.aviary_groups_dict:
+                    raise ValueError(
+                        f"When specifying '{arg}', the user provided only a model name "
+                        f"but did not specify what output from that model should be used as the objective."
+                    )
+                else:
+                    # we have an output and we use the default model and weights
+                    model, output, weight = default_model, arg, default_weight
+            else:
+                raise ValueError(
+                    f"Unrecognized objective format: {arg}. "
+                    f"Each argument must be one of the following: "
+                    f"(output), (output, weight), (model, output), or (model, output, weight)."
+                )
+            objectives.append((model, output, weight))
+            # objectives = [
+                # ('model1', Mission.Summary.FUEL_BURNED, 1),
+                # ('model2', Mission.Summary.CO2, 1),
+                #  ...
+                # ]
+
+
     def add_multimission_objetive(self, missions:list[str], outputs:list[str], mission_weights:list[float] = None, output_weights:list[float] = None, ref:float = 1.0):
         """
         Adds a composite objective function to the OpenMDAO problem by aggregating 
