@@ -4,7 +4,7 @@ import numpy as np
 import openmdao.api as om
 
 from aviary.constants import GRAV_ENGLISH_LBM
-from aviary.subsystems.aerodynamics.flops_based.drag import SimpleCD
+from aviary.subsystems.aerodynamics.flops_based.drag import ScaledCD
 from aviary.subsystems.aerodynamics.gasp_based.common import AeroForces, TimeRamp
 from aviary.utils.csv_data_file import read_data_file
 from aviary.utils.data_interpolator_builder import build_data_interpolator
@@ -98,7 +98,8 @@ class TabularCruiseAero(om.Group):
             promotes_outputs=[('lift_coefficient', 'CL'), ('drag_coefficient', 'CD_prescaled')],
         )
 
-        self.add_subsystem('simple_CD', SimpleCD(num_nodes=nn), promotes=['*'])
+        #
+        self.add_subsystem('simple_CD', ScaledCD(num_nodes=nn), promotes=['*'])
 
         self.add_subsystem('forces', AeroForces(num_nodes=nn), promotes=['*'])
 
