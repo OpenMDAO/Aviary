@@ -34,6 +34,9 @@ class Aircraft:
         PACK_MASS = 'aircraft:battery:pack_mass'
         PACK_VOLUMETRIC_DENSITY = 'aircraft:battery:pack_volumetric_density'
         VOLUME = 'aircraft:battery:volume'
+        VOLTAGE = 'aircraft:battery:voltage'
+        RESISTANCE = 'aircraft:battery:resistance'
+
 
     class BWB:
         NUM_BAYS = 'aircraft:blended_wing_body_design:num_bays'
@@ -255,6 +258,10 @@ class Aircraft:
         class Motor:
             MASS = 'aircraft:engine:motor:mass'
             TORQUE_MAX = 'aircraft:engine:motor:torque_max'
+            IDLE_CURRENT = 'aircraft:engine:motor:idle_current'
+            PEAK_CURRENT = 'aircraft:engine:motor:peak_current'
+            RESISTANCE = 'aircraft:engine:motor:resistance'
+            KV = 'aircraft:engine:motor:kv'
 
         class Propeller:
             ACTIVITY_FACTOR = 'aircraft:engine:propeller:activity_factor'
@@ -265,6 +272,7 @@ class Aircraft:
             NUM_BLADES = 'aircraft:engine:propeller:num_blades'
             TIP_MACH_MAX = 'aircraft:engine:propeller:tip_mach_max'
             TIP_SPEED_MAX = 'aircraft:engine:propeller:tip_speed_max'
+            PITCH = 'aircraft:engine:propeller:pitch'
 
     class Fins:
         AREA = 'aircraft:fins:area'
@@ -759,6 +767,7 @@ class Dynamic:
             THRUST_TOTAL = 'thrust_net_total'
             TORQUE = 'torque'
             TORQUE_MAX = 'torque_max'
+            PROP_POWER = 'prop_power'
 
 
 class Mission:
