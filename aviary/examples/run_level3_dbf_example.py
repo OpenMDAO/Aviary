@@ -1,5 +1,4 @@
 import numpy as np
-import os
 
 import openmdao.api as om
 
@@ -19,29 +18,29 @@ def run_level3_dbf_example():
     # -----------------------------
     # Configure fuselage
     # -----------------------------
+    
+    fuselage = DBFFuselageMass()
     ribs = np.array([0]*14 + [1]*5 + [2])
     bulkhead_materials = np.where(ribs != 0, 'Ply', 'Balsa').tolist()
     rib_thicks = np.where(ribs == 2, 0.25, 0.125)
-
-    fuselage = DBFFuselageMass()
     fuselage.options['bulkhead_materials'] = bulkhead_materials
-    fuselage.options['bulkhead_thicknesses'] = (rib_thicks, 'inch')
-    fuselage.options['num_spars'] = (0.5, 'unitless')
-    fuselage.options['bulkhead_lightening_factor'] = (0.18, 'unitless')
-    fuselage.options['sheeting_coverage'] = (1, 'unitless')
-    fuselage.options['sheeting_density'] = (160, 'kg/m**3')
-    fuselage.options['sheeting_lightening_factor'] = (0.3, 'unitless')
-    fuselage.options['sheeting_thickness'] = (0.03125, 'inch')
-    fuselage.options['glue_factor'] = (0.08, 'unitless')
-    fuselage.options['stringer_density'] = (160, 'kg/m**3')
-    fuselage.options['stringer_thickness'] = (0.375, 'inch')
-    fuselage.options['floor_length'] = (2, 'ft')
-    fuselage.options['floor_density'] = (340, 'kg/m**3')
-    fuselage.options['floor_thickness'] = (0.125, 'inch')
-    fuselage.options['skin_density'] = (20, 'g/m**2')
-    fuselage.options['spar_density'] = (2, 'g/cm**3')
-    fuselage.options['spar_outer_diameter'] = (1, 'inch')
-    fuselage.options['spar_wall_thickness'] = (0.0625, 'inch')
+    fuselage.set_option(Aircraft.Fuselage.Dbf.BULKHEAD_THICKNESS, val=rib_thicks, units='inch')
+    fuselage.set_option(Aircraft.Fuselage.Dbf.NUM_SPARS, val=0.5, units='unitless')
+    fuselage.set_option(Aircraft.Fuselage.Dbf.BULKHEAD_LIGHTENING_FACTOR, val=0.18, units='unitless')
+    fuselage.set_option(Aircraft.Fuselage.Dbf.SHEETING_COVERAGE, val=1, units='unitless')
+    fuselage.set_option(Aircraft.Fuselage.Dbf.SHEETING_DENSITY, val=160, units='kg/m**3')
+    fuselage.set_option(Aircraft.Fuselage.Dbf.SHEETING_LIGHTENING_FACTOR, val=0.3, units='unitless')
+    fuselage.set_option(Aircraft.Fuselage.Dbf.SHEETING_THICKNESS, val=0.03125, units='inch')
+    fuselage.set_option(Aircraft.Fuselage.Dbf.GLUE_FACTOR, val=0.08, units='unitless')
+    fuselage.set_option(Aircraft.Fuselage.Dbf.STRINGER_DENSITY, val=160, units='kg/m**3')
+    fuselage.set_option(Aircraft.Fuselage.Dbf.STRINGER_THICKNESS, val=0.375, units='inch')
+    fuselage.set_option(Aircraft.Fuselage.Dbf.FLOOR_LENGTH, val=2, units='ft')
+    fuselage.set_option(Aircraft.Fuselage.Dbf.FLOOR_DENSITY, val=340, units='kg/m**3')
+    fuselage.set_option(Aircraft.Fuselage.Dbf.FLOOR_THICKNESS, val=0.125, units='inch')
+    fuselage.set_option(Aircraft.Fuselage.Dbf.SKIN_DENSITY, val=20, units='g/m**2')
+    fuselage.set_option(Aircraft.Fuselage.Dbf.SPAR_DENSITY, val=2, units='g/cm**3')
+    fuselage.set_option(Aircraft.Fuselage.Dbf.SPAR_OUTER_DIAMETER, val=1, units='inch')
+    fuselage.set_option(Aircraft.Fuselage.Dbf.SPAR_WALL_THICKNESS, val=0.0625, units='inch')
     model.add_subsystem('fuselage', fuselage, promotes_inputs=['*'], promotes_outputs=['*'])
 
     # -----------------------------
@@ -51,24 +50,24 @@ def run_level3_dbf_example():
     rib_thicks_v = np.array([0.125]*5)
     rib_materials_v = ['Balsa'] * 4 + ['Ply'] * 1
     vtail.options['rib_materials'] = rib_materials_v
-    vtail.options['rib_thicknesses'] = (rib_thicks_v, 'inch')
-    vtail.options['airfoil_data_file'] = os.path.join(
-        'aviary', 'examples', 'external_subsystems', 'dbf_based_mass', 'n0012-il.csv'
+    vtail.options['airfoil_data_file'] = (
+        r'aviary\examples\external_subsystems\dbf_based_mass\n0012-il.csv'
     )
-    vtail.options['sheeting_coverage'] = (0.7, 'unitless')
-    vtail.options['sheeting_density'] = (160, 'kg/m**3')
-    vtail.options['sheeting_lightening_factor'] = (1.0, 'unitless')
-    vtail.options['sheeting_thickness'] = (0.03125, 'inch')
-    vtail.options['stringer_density'] = (160, 'kg/m**3')
-    vtail.options['stringer_thickness'] = (0.375, 'inch')
-    vtail.options['num_stringers'] = (2.5, 'unitless')
-    vtail.options['glue_factor'] = (0.05, 'unitless')
-    vtail.options['num_spars'] = (0, 'unitless')
-    vtail.options['rib_lightening_factor'] = (2/3, 'unitless')
-    vtail.options['skin_density'] = (20, 'g/m**2')
-    vtail.options['spar_density'] = (0, 'g/cm**3')
-    vtail.options['spar_outer_diameter'] = (0, 'inch')
-    vtail.options['spar_wall_thickness'] = (0.0, 'inch')
+    vtail.set_option(Aircraft.VerticalTail.Dbf.RIB_THICKNESS, val=rib_thicks_v, units='inch')
+    vtail.set_option(Aircraft.VerticalTail.Dbf.SHEETING_COVERAGE, val=0.7, units='unitless')
+    vtail.set_option(Aircraft.VerticalTail.Dbf.SHEETING_DENSITY, val=160, units='kg/m**3')
+    vtail.set_option(Aircraft.VerticalTail.Dbf.SHEETING_LIGHTENING_FACTOR, val=1.0, units='unitless')
+    vtail.set_option(Aircraft.VerticalTail.Dbf.SHEETING_THICKNESS, val=0.03125, units='inch')
+    vtail.set_option(Aircraft.VerticalTail.Dbf.STRINGER_DENSITY, val=160, units='kg/m**3')
+    vtail.set_option(Aircraft.VerticalTail.Dbf.STRINGER_THICKNESS, val=0.375, units='inch')
+    vtail.set_option(Aircraft.VerticalTail.Dbf.NUM_STRINGERS, val=2.5, units='unitless')
+    vtail.set_option(Aircraft.VerticalTail.Dbf.GLUE_FACTOR, val=0.05, units='unitless')
+    vtail.set_option(Aircraft.VerticalTail.Dbf.NUM_SPARS, val=0, units='unitless')
+    vtail.set_option(Aircraft.VerticalTail.Dbf.RIB_LIGHTENING_FACTOR, val=2/3, units='unitless')
+    vtail.set_option(Aircraft.VerticalTail.Dbf.SKIN_DENSITY, val=20, units='g/m**2')
+    vtail.set_option(Aircraft.VerticalTail.Dbf.SPAR_DENSITY, val=0, units='g/cm**3')
+    vtail.set_option(Aircraft.VerticalTail.Dbf.SPAR_OUTER_DIAMETER, val=0, units='inch')
+    vtail.set_option(Aircraft.VerticalTail.Dbf.SPAR_WALL_THICKNESS, val=0.0, units='inch')
     model.add_subsystem('vtail', vtail, promotes_inputs=['*'], promotes_outputs=['*'])
 
     # -----------------------------
@@ -78,51 +77,53 @@ def run_level3_dbf_example():
     rib_thicks_h = np.array([0.125]*8)
     rib_materials_h = ['Balsa'] * 6 + ['Ply'] * 2
     htail.options['rib_materials'] = rib_materials_h
-    htail.options['rib_thicknesses'] = (rib_thicks_h, 'inch')
-    htail.options['airfoil_data_file'] = os.path.join(
-        'aviary', 'examples', 'external_subsystems', 'dbf_based_mass', 'n0012-il.csv'
+    htail.options['airfoil_data_file'] = (
+        r'aviary\examples\external_subsystems\dbf_based_mass\n0012-il.csv'
     )
-    htail.options['sheeting_coverage'] = (0.7, 'unitless')
-    htail.options['sheeting_density'] = (160, 'kg/m**3')
-    htail.options['sheeting_lightening_factor'] = (1.0, 'unitless')
-    htail.options['sheeting_thickness'] = (0.03125, 'inch')
-    htail.options['stringer_density'] = (160, 'kg/m**3')
-    htail.options['stringer_thickness'] = (0.375, 'inch')
-    htail.options['num_stringers'] = (2.5, 'unitless')
-    htail.options['glue_factor'] = (0.05, 'unitless')
-    htail.options['num_spars'] = (0, 'unitless')
-    htail.options['rib_lightening_factor'] = (2/3, 'unitless')
-    htail.options['skin_density'] = (20, 'g/m**2')
-    htail.options['spar_density'] = (0, 'g/cm**3')
-    htail.options['spar_outer_diameter'] = (0, 'inch')
-    htail.options['spar_wall_thickness'] = (0, 'inch')
+    htail.set_option(Aircraft.HorizontalTail.Dbf.RIB_THICKNESS, val=rib_thicks_h, units='inch')
+    htail.set_option(Aircraft.HorizontalTail.Dbf.SHEETING_COVERAGE, val=0.7, units='unitless')
+    htail.set_option(Aircraft.HorizontalTail.Dbf.SHEETING_DENSITY, val=160, units='kg/m**3')
+    htail.set_option(Aircraft.HorizontalTail.Dbf.SHEETING_LIGHTENING_FACTOR, val=1.0, units='unitless')
+    htail.set_option(Aircraft.HorizontalTail.Dbf.SHEETING_THICKNESS, val=0.03125, units='inch')
+    htail.set_option(Aircraft.HorizontalTail.Dbf.STRINGER_DENSITY, val=160, units='kg/m**3')
+    htail.set_option(Aircraft.HorizontalTail.Dbf.STRINGER_THICKNESS, val=0.375, units='inch')
+    htail.set_option(Aircraft.HorizontalTail.Dbf.NUM_STRINGERS, val=2.5, units='unitless')
+    htail.set_option(Aircraft.HorizontalTail.Dbf.GLUE_FACTOR, val=0.05, units='unitless')
+    htail.set_option(Aircraft.HorizontalTail.Dbf.NUM_SPARS, val=0, units='unitless')
+    htail.set_option(Aircraft.HorizontalTail.Dbf.RIB_LIGHTENING_FACTOR, val=2/3, units='unitless')
+    htail.set_option(Aircraft.HorizontalTail.Dbf.SKIN_DENSITY, val=20, units='g/m**2')
+    htail.set_option(Aircraft.HorizontalTail.Dbf.SPAR_DENSITY, val=0, units='g/cm**3')
+    htail.set_option(Aircraft.HorizontalTail.Dbf.SPAR_OUTER_DIAMETER, val=0, units='inch')
+    htail.set_option(Aircraft.HorizontalTail.Dbf.SPAR_WALL_THICKNESS, val=0, units='inch')
     model.add_subsystem('htail', htail, promotes_inputs=['*'], promotes_outputs=['*'])
 
     # -----------------------------
     # Configure wing
     # -----------------------------
     wing = DBFWingMass()
-    rib_thicks_w = np.array([0.125]*20)
-    rib_materials_w = ['Balsa'] * 15 + ['Ply'] * 5
-    wing.options['rib_materials'] = rib_materials_w
-    wing.options['rib_thicknesses'] = (rib_thicks_w, 'inch')
-    wing.options['airfoil_data_file'] = os.path.join(
-        'aviary', 'examples', 'external_subsystems', 'dbf_based_mass', 'mh84-il.csv'
+    ribs = np.array([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1])
+    rib_materials = ['Balsa'] * 15 + ['Ply'] * 5
+    rib_thicks = np.where(ribs != 0, 0.125, 0.125)
+    wing.options['rib_materials'] = rib_materials
+    wing.options['airfoil_data_file'] = (
+        r'aviary\examples\external_subsystems\dbf_based_mass\mh84-il.csv'
     )
-    wing.options['sheeting_coverage'] = (0.4, 'unitless')
-    wing.options['sheeting_density'] = (160, 'kg/m**3')
-    wing.options['sheeting_lightening_factor'] = (1.0, 'unitless')
-    wing.options['sheeting_thickness'] = (0.03125, 'inch')
-    wing.options['stringer_density'] = (160, 'kg/m**3')
-    wing.options['stringer_thickness'] = (0.375, 'inch')
-    wing.options['num_stringers'] = (2.5, 'unitless')
-    wing.options['glue_factor'] = (0.08, 'unitless')
-    wing.options['num_spars'] = (1.1, 'unitless')
-    wing.options['rib_lightening_factor'] = (2/3, 'unitless')
-    wing.options['skin_density'] = (20, 'g/m**2')
-    wing.options['spar_density'] = (2, 'g/cm**3')
-    wing.options['spar_outer_diameter'] = (1, 'inch')
-    wing.options['spar_wall_thickness'] = (0.0625, 'inch')
+    wing.set_option(Aircraft.Wing.Dbf.SHEETING_COVERAGE, val=0.4, units='unitless')
+    wing.set_option(Aircraft.Wing.Dbf.SHEETING_DENSITY, val=160, units='kg/m**3')
+    wing.set_option(Aircraft.Wing.Dbf.SHEETING_LIGHTENING_FACTOR, val=1, units='unitless')
+    wing.set_option(Aircraft.Wing.Dbf.SHEETING_THICKNESS, val=0.03125, units='inch')
+    wing.set_option(Aircraft.Wing.Dbf.STRINGER_DENSITY, val=160, units='kg/m**3')
+    wing.set_option(Aircraft.Wing.Dbf.STRINGER_THICKNESS, val=0.375, units='inch')
+    wing.set_option(Aircraft.Wing.Dbf.NUM_STRINGERS, val=2.5, units='unitless')
+    wing.set_option(Aircraft.Wing.Dbf.GLUE_FACTOR, val=0.15, units='unitless')
+    wing.set_option(Aircraft.Wing.Dbf.NUM_SPARS, val=1.1, units='unitless')
+    wing.set_option(Aircraft.Wing.Dbf.RIB_LIGHTENING_FACTOR, val=2/3, units='unitless')
+    wing.set_option(Aircraft.Wing.Dbf.RIB_THICKNESS, val=rib_thicks, units='inch')
+    wing.set_option(Aircraft.Wing.Dbf.SKIN_DENSITY, val=20, units='g/m**2')
+    wing.set_option(Aircraft.Wing.Dbf.SPAR_DENSITY, val=2, units='g/cm**3')
+    wing.set_option(Aircraft.Wing.Dbf.SPAR_OUTER_DIAMETER, val=1, units='inch')
+    wing.set_option(Aircraft.Wing.Dbf.SPAR_WALL_THICKNESS, val=0.0625, units='inch')
+    wing.set_option(Aircraft.Wing.Dbf.MISC_MASS, val=0.0, units='kg')
     model.add_subsystem('wing', wing, promotes_inputs=['*'], promotes_outputs=['*'])
 
     # -----------------------------

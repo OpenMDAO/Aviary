@@ -6,13 +6,25 @@ from aviary.examples.external_subsystems.dbf_based_mass.materials_database impor
 from aviary.utils.utils import wrapped_convert_units
 from aviary.variable_info.functions import add_aviary_input, add_aviary_output
 from aviary.variable_info.variables import Aircraft
+from aviary.variable_info.variable_meta_data import _MetaData
 
 
-def make_units_option(name, default_val, target_units, desc=None):
+def make_units_option(var_key, units=None, default_val=None, desc=None, meta_data=_MetaData):
+    meta = meta_data[var_key]
+
+    default_units = meta['units']
+
+    if units is None:
+        units = default_units
+    if desc is None:
+        desc = meta['desc']
+    if default_val is None:
+        default_val = meta['default_value']
+
     return {
-        'name': name,
-        'default': (default_val, target_units),
-        'set_function': lambda meta, val: (wrapped_convert_units(val, target_units), target_units),
+        'name': var_key,
+        'default': (default_val, units),
+        'set_function': lambda meta, val: (wrapped_convert_units(val, units), units),
         'desc': desc,
     }
 
@@ -21,25 +33,26 @@ class DBFFuselageMass(om.ExplicitComponent):
     def initialize(self):
         self.options.declare('bulkhead_materials', types=(list,))
 
-        # Options with unit conversion
-        self.options.declare(**make_units_option('num_spars', 1.0, 'unitless'))
-        self.options.declare(**make_units_option('spar_outer_diameter', 0.05, 'm'))
-        self.options.declare(**make_units_option('spar_density', 160.0, 'kg/m**3'))
-        self.options.declare(**make_units_option('spar_wall_thickness', 0.005, 'm'))
-        self.options.declare(**make_units_option('bulkhead_thicknesses', np.zeros(1), 'm'))
-        self.options.declare(**make_units_option('bulkhead_lightening_factor', 2 / 3, 'unitless'))
-        self.options.declare(**make_units_option('skin_density', 20.0, 'kg/m**2'))
-        self.options.declare(**make_units_option('floor_density', 160.0, 'kg/m**3'))
-        self.options.declare(**make_units_option('floor_thickness', 0.01, 'm'))
-        self.options.declare(**make_units_option('floor_length', 1.0, 'm'))
-        self.options.declare(**make_units_option('glue_factor', 0.15, 'unitless'))
-        self.options.declare(**make_units_option('stringer_density', 160.0, 'kg/m**3'))
-        self.options.declare(**make_units_option('stringer_thickness', 0.01, 'm'))
-        self.options.declare(**make_units_option('sheeting_thickness', 0.01, 'm'))
-        self.options.declare(**make_units_option('sheeting_density', 160.0, 'kg/m**3'))
-        self.options.declare(**make_units_option('sheeting_coverage', 0.4, 'unitless'))
-        self.options.declare(**make_units_option('sheeting_lightening_factor', 1.0, 'unitless'))
-        self.options.declare(**make_units_option('misc_mass', 0.0, 'kg'))
+        # Declare options using Aircraft.Fuselage.Dbf metadata keys
+        # Note: These may need to be adjusted based on actual metadata keys available
+        self.options.declare(**make_units_option(Aircraft.Fuselage.Dbf.NUM_SPARS, 'unitless'))
+        self.options.declare(**make_units_option(Aircraft.Fuselage.Dbf.SPAR_OUTER_DIAMETER, 'm'))
+        self.options.declare(**make_units_option(Aircraft.Fuselage.Dbf.SPAR_DENSITY, 'kg/m**3'))
+        self.options.declare(**make_units_option(Aircraft.Fuselage.Dbf.SPAR_WALL_THICKNESS, 'm'))
+        self.options.declare(**make_units_option(Aircraft.Fuselage.Dbf.BULKHEAD_THICKNESS, 'm'))
+        self.options.declare(**make_units_option(Aircraft.Fuselage.Dbf.BULKHEAD_LIGHTENING_FACTOR, 'unitless'))
+        self.options.declare(**make_units_option(Aircraft.Fuselage.Dbf.SKIN_DENSITY, 'kg/m**2'))
+        self.options.declare(**make_units_option(Aircraft.Fuselage.Dbf.FLOOR_DENSITY, 'kg/m**3'))
+        self.options.declare(**make_units_option(Aircraft.Fuselage.Dbf.FLOOR_THICKNESS, 'm'))
+        self.options.declare(**make_units_option(Aircraft.Fuselage.Dbf.FLOOR_LENGTH, 'm'))
+        self.options.declare(**make_units_option(Aircraft.Fuselage.Dbf.GLUE_FACTOR, 'unitless'))
+        self.options.declare(**make_units_option(Aircraft.Fuselage.Dbf.STRINGER_DENSITY, 'kg/m**3'))
+        self.options.declare(**make_units_option(Aircraft.Fuselage.Dbf.STRINGER_THICKNESS, 'm'))
+        self.options.declare(**make_units_option(Aircraft.Fuselage.Dbf.SHEETING_THICKNESS, 'm'))
+        self.options.declare(**make_units_option(Aircraft.Fuselage.Dbf.SHEETING_DENSITY, 'kg/m**3'))
+        self.options.declare(**make_units_option(Aircraft.Fuselage.Dbf.SHEETING_COVERAGE, 'unitless'))
+        self.options.declare(**make_units_option(Aircraft.Fuselage.Dbf.SHEETING_LIGHTENING_FACTOR, 'unitless'))
+        self.options.declare(**make_units_option(Aircraft.Fuselage.Dbf.MISC_MASS, 'kg'))
 
     def setup(self):
         # Required geometry inputs
@@ -65,6 +78,31 @@ class DBFFuselageMass(om.ExplicitComponent):
             ],
         )
 
+    def set_option(self, option_key, val=None, units=None):
+        """
+        Helper to set an OpenMDAO component option with units.
+
+        Parameters
+        ----------
+        comp : om.Component
+            The component instance owning the option.
+        option_key : str or key
+            The option key (usually Aircraft.Fuselage.Dbf.*).
+        val : any
+            The value to set.
+        units : str or None
+            Optional units string. If None, attempts to get default units from metadata.
+        """
+        from aviary.variable_info.variable_meta_data import _MetaData
+
+        # Get default units from metadata if none given
+        if units is None and option_key in _MetaData:
+            units = _MetaData[option_key]['units']
+        if val is None and option_key in _MetaData:
+            val = _MetaData[option_key]['default_value']
+
+        self.options[option_key] = (val, units)
+
     def compute(self, inputs, outputs):
         # Inputs
         length = inputs[Aircraft.Fuselage.LENGTH]
@@ -73,25 +111,25 @@ class DBFFuselageMass(om.ExplicitComponent):
         wetted_area = inputs[Aircraft.Fuselage.WETTED_AREA]
 
         # From options
-        num_spars = self.options['num_spars'][0]
-        spar_outer_diameter = self.options['spar_outer_diameter'][0]
-        rho_spar = self.options['spar_density'][0]
-        spar_wall_thickness = self.options['spar_wall_thickness'][0]
-        bulkhead_thickness = self.options['bulkhead_thicknesses'][0]
-        bulkhead_lightening_factor = self.options['bulkhead_lightening_factor'][0]
-        rho_skin = self.options['skin_density'][0]
-        rho_floor = self.options['floor_density'][0]
-        floor_thickness = self.options['floor_thickness'][0]
-        floor_length = self.options['floor_length'][0]
-        glue_factor = self.options['glue_factor'][0]
-        stringer_thickness = self.options['stringer_thickness'][0]
-        rho_stringer = self.options['stringer_density'][0]
-        sheeting_thick = self.options['sheeting_thickness'][0]
-        sheeting_coverage = self.options['sheeting_coverage'][0]
-        rho_sheeting = self.options['sheeting_density'][0]
-        sheeting_lightening_factor = self.options['sheeting_lightening_factor'][0]
+        num_spars = self.options[Aircraft.Fuselage.Dbf.NUM_SPARS][0]
+        spar_outer_diameter = self.options[Aircraft.Fuselage.Dbf.SPAR_OUTER_DIAMETER][0]
+        rho_spar = self.options[Aircraft.Fuselage.Dbf.SPAR_DENSITY][0]
+        spar_wall_thickness = self.options[Aircraft.Fuselage.Dbf.SPAR_WALL_THICKNESS][0]
+        bulkhead_thickness = self.options[Aircraft.Fuselage.Dbf.BULKHEAD_THICKNESS][0]
+        bulkhead_lightening_factor = self.options[Aircraft.Fuselage.Dbf.BULKHEAD_LIGHTENING_FACTOR][0]
+        rho_skin = self.options[Aircraft.Fuselage.Dbf.SKIN_DENSITY][0]
+        rho_floor = self.options[Aircraft.Fuselage.Dbf.FLOOR_DENSITY][0]
+        floor_thickness = self.options[Aircraft.Fuselage.Dbf.FLOOR_THICKNESS][0]
+        floor_length = self.options[Aircraft.Fuselage.Dbf.FLOOR_LENGTH][0]
+        glue_factor = self.options[Aircraft.Fuselage.Dbf.GLUE_FACTOR][0]
+        stringer_thickness = self.options[Aircraft.Fuselage.Dbf.STRINGER_THICKNESS][0]
+        rho_stringer = self.options[Aircraft.Fuselage.Dbf.STRINGER_DENSITY][0]
+        sheeting_thick = self.options[Aircraft.Fuselage.Dbf.SHEETING_THICKNESS][0]
+        sheeting_coverage = self.options[Aircraft.Fuselage.Dbf.SHEETING_COVERAGE][0]
+        rho_sheeting = self.options[Aircraft.Fuselage.Dbf.SHEETING_DENSITY][0]
+        sheeting_lightening_factor = self.options[Aircraft.Fuselage.Dbf.SHEETING_LIGHTENING_FACTOR][0]
         bulkhead_materials = self.options['bulkhead_materials']
-        misc_mass = self.options['misc_mass'][0]
+        misc_mass = self.options[Aircraft.Fuselage.Dbf.MISC_MASS][0]
 
         rho_rib = np.array([(materials.get_item(m)[0]) for m in bulkhead_materials])
         cs_area = width * height * bulkhead_lightening_factor
@@ -134,23 +172,23 @@ class DBFFuselageMass(om.ExplicitComponent):
         width = inputs[Aircraft.Fuselage.AVG_WIDTH]
 
         # From options
-        num_spars = self.options['num_spars'][0]
-        spar_outer_diameter = self.options['spar_outer_diameter'][0]
-        rho_spar = self.options['spar_density'][0]
-        spar_wall_thickness = self.options['spar_wall_thickness'][0]
-        bulkhead_thickness = self.options['bulkhead_thicknesses'][0]
-        bulkhead_lightening_factor = self.options['bulkhead_lightening_factor'][0]
-        rho_skin = self.options['skin_density'][0]
-        rho_floor = self.options['floor_density'][0]
-        floor_thickness = self.options['floor_thickness'][0]
-        floor_length = self.options['floor_length'][0]
-        glue_factor = self.options['glue_factor'][0]
-        stringer_thickness = self.options['stringer_thickness'][0]
-        rho_stringer = self.options['stringer_density'][0]
-        sheeting_thick = self.options['sheeting_thickness'][0]
-        sheeting_coverage = self.options['sheeting_coverage'][0]
-        rho_sheeting = self.options['sheeting_density'][0]
-        sheeting_lightening_factor = self.options['sheeting_lightening_factor'][0]
+        num_spars = self.options[Aircraft.Fuselage.Dbf.NUM_SPARS][0]
+        spar_outer_diameter = self.options[Aircraft.Fuselage.Dbf.SPAR_OUTER_DIAMETER][0]
+        rho_spar = self.options[Aircraft.Fuselage.Dbf.SPAR_DENSITY][0]
+        spar_wall_thickness = self.options[Aircraft.Fuselage.Dbf.SPAR_WALL_THICKNESS][0]
+        bulkhead_thickness = self.options[Aircraft.Fuselage.Dbf.BULKHEAD_THICKNESS][0]
+        bulkhead_lightening_factor = self.options[Aircraft.Fuselage.Dbf.BULKHEAD_LIGHTENING_FACTOR][0]
+        rho_skin = self.options[Aircraft.Fuselage.Dbf.SKIN_DENSITY][0]
+        rho_floor = self.options[Aircraft.Fuselage.Dbf.FLOOR_DENSITY][0]
+        floor_thickness = self.options[Aircraft.Fuselage.Dbf.FLOOR_THICKNESS][0]
+        floor_length = self.options[Aircraft.Fuselage.Dbf.FLOOR_LENGTH][0]
+        glue_factor = self.options[Aircraft.Fuselage.Dbf.GLUE_FACTOR][0]
+        stringer_thickness = self.options[Aircraft.Fuselage.Dbf.STRINGER_THICKNESS][0]
+        rho_stringer = self.options[Aircraft.Fuselage.Dbf.STRINGER_DENSITY][0]
+        sheeting_thick = self.options[Aircraft.Fuselage.Dbf.SHEETING_THICKNESS][0]
+        sheeting_coverage = self.options[Aircraft.Fuselage.Dbf.SHEETING_COVERAGE][0]
+        rho_sheeting = self.options[Aircraft.Fuselage.Dbf.SHEETING_DENSITY][0]
+        sheeting_lightening_factor = self.options[Aircraft.Fuselage.Dbf.SHEETING_LIGHTENING_FACTOR][0]
         bulkhead_materials = self.options['bulkhead_materials']
 
         rho_rib = np.array([(materials.get_item(m)[0]) for m in bulkhead_materials])
@@ -188,28 +226,33 @@ if __name__ == '__main__':
     bulkhead_materials = np.where(ribs != 0, 'Ply', 'Balsa').tolist()
     rib_thicks = np.where(ribs == 2, 0.25, 0.125)
 
-    fuse = DBFFuselageMass()
-    fuse.options['bulkhead_materials'] = bulkhead_materials
-    fuse.options['bulkhead_thicknesses'] = (rib_thicks, 'inch')
-    fuse.options['num_spars'] = (0.5, 'unitless')
-    fuse.options['bulkhead_lightening_factor'] = (0.18, 'unitless')
-    fuse.options['sheeting_coverage'] = (1, 'unitless')
-    fuse.options['sheeting_density'] = (160, 'kg/m**3')
-    fuse.options['sheeting_lightening_factor'] = (0.3, 'unitless')
-    fuse.options['sheeting_thickness'] = (0.03125, 'inch')
-    fuse.options['glue_factor'] = (0.08, 'unitless')
-    fuse.options['stringer_density'] = (160, 'kg/m**3')
-    fuse.options['stringer_thickness'] = (0.375, 'inch')
-    fuse.options['floor_length'] = (2, 'ft')
-    fuse.options['floor_density'] = (340, 'kg/m**3')
-    fuse.options['floor_thickness'] = (0.125, 'inch')
-    fuse.options['skin_density'] = (20, 'g/m**2')
-    fuse.options['spar_density'] = (2, 'g/cm**3')
-    fuse.options['spar_outer_diameter'] = (1, 'inch')
-    fuse.options['spar_wall_thickness'] = (0.0625, 'inch')
-    fuse.options['misc_mass'] = (0.0, 'kg')
+    prob.model.add_subsystem(
+        'dbf_fuselage', DBFFuselageMass(), promotes_inputs=['*'], promotes_outputs=['*']
+    )
 
-    prob.model.add_subsystem('dbf_fuselage', fuse, promotes_inputs=['*'], promotes_outputs=['*'])
+    # Set required options
+    fuselage = prob.model.dbf_fuselage
+    fuselage.options['bulkhead_materials'] = bulkhead_materials
+    fuselage.set_option(Aircraft.Fuselage.Dbf.BULKHEAD_THICKNESS, val=rib_thicks, units='inch')
+    fuselage.set_option(Aircraft.Fuselage.Dbf.NUM_SPARS, val=0.5, units='unitless')
+    fuselage.set_option(Aircraft.Fuselage.Dbf.BULKHEAD_LIGHTENING_FACTOR, val=0.18, units='unitless')
+    fuselage.set_option(Aircraft.Fuselage.Dbf.SHEETING_COVERAGE, val=1, units='unitless')
+    fuselage.set_option(Aircraft.Fuselage.Dbf.SHEETING_DENSITY, val=160, units='kg/m**3')
+    fuselage.set_option(Aircraft.Fuselage.Dbf.SHEETING_LIGHTENING_FACTOR, val=0.3, units='unitless')
+    fuselage.set_option(Aircraft.Fuselage.Dbf.SHEETING_THICKNESS, val=0.03125, units='inch')
+    fuselage.set_option(Aircraft.Fuselage.Dbf.GLUE_FACTOR, val=0.08, units='unitless')
+    fuselage.set_option(Aircraft.Fuselage.Dbf.STRINGER_DENSITY, val=160, units='kg/m**3')
+    fuselage.set_option(Aircraft.Fuselage.Dbf.STRINGER_THICKNESS, val=0.375, units='inch')
+    fuselage.set_option(Aircraft.Fuselage.Dbf.FLOOR_LENGTH, val=2, units='ft')
+    fuselage.set_option(Aircraft.Fuselage.Dbf.FLOOR_DENSITY, val=340, units='kg/m**3')
+    fuselage.set_option(Aircraft.Fuselage.Dbf.FLOOR_THICKNESS, val=0.125, units='inch')
+    fuselage.set_option(Aircraft.Fuselage.Dbf.SKIN_DENSITY, val=20, units='g/m**2')
+    fuselage.set_option(Aircraft.Fuselage.Dbf.SPAR_DENSITY, val=2, units='g/cm**3')
+    fuselage.set_option(Aircraft.Fuselage.Dbf.SPAR_OUTER_DIAMETER, val=1, units='inch')
+    fuselage.set_option(Aircraft.Fuselage.Dbf.SPAR_WALL_THICKNESS, val=0.0625, units='inch')
+    fuselage.set_option(Aircraft.Fuselage.Dbf.MISC_MASS, val=0.0, units='kg')
+
+    # Setup problem with constant above options
     prob.setup()
 
     prob.set_val(Aircraft.Fuselage.LENGTH, val=4, units='ft')

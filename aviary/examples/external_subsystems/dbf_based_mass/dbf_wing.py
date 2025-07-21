@@ -6,41 +6,52 @@ from openmdao.utils.cs_safe import abs as cs_abs
 
 from aviary.examples.external_subsystems.dbf_based_mass.materials_database import materials
 from aviary.utils.utils import wrapped_convert_units
-from aviary.variable_info.functions import add_aviary_input, add_aviary_output
+from aviary.variable_info.functions import add_aviary_input, add_aviary_output, add_aviary_option
 from aviary.variable_info.variables import Aircraft
+from aviary.variable_info.variable_meta_data import _MetaData
 
 
-def make_units_option(name, default_val, target_units, desc=None):
+def make_units_option(var_key, units=None, default_val=None, desc=None, meta_data=_MetaData):
+    meta = meta_data[var_key]
+
+    default_units = meta['units']
+
+    if units is None:
+        units = default_units
+    if desc is None:
+        desc = meta['desc']
+    if default_val is None:
+        default_val = meta['default_value']
+
     return {
-        'name': name,
-        'default': (default_val, target_units),
-        'set_function': lambda meta, val: (wrapped_convert_units(val, target_units), target_units),
+        'name': var_key,
+        'default': (default_val, units),
+        'set_function': lambda meta, val: (wrapped_convert_units(val, units), units),
         'desc': desc,
     }
-
 
 class DBFWingMass(om.ExplicitComponent):
     def initialize(self):
         self.options.declare('airfoil_data_file', types=str, allow_none=False)
         self.options.declare('rib_materials', types=(list,))
 
-        # Options with unit conversion
-        self.options.declare(**make_units_option('num_spars', 1.0, 'unitless'))
-        self.options.declare(**make_units_option('spar_outer_diameter', 1.0, 'm'))
-        self.options.declare(**make_units_option('spar_density', 160.0, 'kg/m**3'))
-        self.options.declare(**make_units_option('spar_wall_thickness', 0.01, 'm'))
-        self.options.declare(**make_units_option('rib_thicknesses', np.zeros(1), 'm'))
-        self.options.declare(**make_units_option('rib_lightening_factor', 2 / 3, 'unitless'))
-        self.options.declare(**make_units_option('skin_density', 20.0, 'kg/m**2'))
-        self.options.declare(**make_units_option('glue_factor', 0.15, 'unitless'))
-        self.options.declare(**make_units_option('stringer_density', 160.0, 'kg/m**3'))
-        self.options.declare(**make_units_option('stringer_thickness', 0.01, 'm'))
-        self.options.declare(**make_units_option('sheeting_thickness', 0.01, 'm'))
-        self.options.declare(**make_units_option('sheeting_density', 160.0, 'kg/m**3'))
-        self.options.declare(**make_units_option('sheeting_coverage', 0.4, 'unitless'))
-        self.options.declare(**make_units_option('sheeting_lightening_factor', 1.0, 'unitless'))
-        self.options.declare(**make_units_option('num_stringers', 1.0, 'unitless'))
-        self.options.declare(**make_units_option('miscel_mass', 0.0, 'kg'))
+        # Declare options using Aircraft.Wing.Dbf metadata keys
+        self.options.declare(**make_units_option(Aircraft.Wing.Dbf.NUM_SPARS, 'unitless'))
+        self.options.declare(**make_units_option(Aircraft.Wing.Dbf.SPAR_OUTER_DIAMETER, 'm'))
+        self.options.declare(**make_units_option(Aircraft.Wing.Dbf.SPAR_DENSITY, 'kg/m**3'))
+        self.options.declare(**make_units_option(Aircraft.Wing.Dbf.SPAR_WALL_THICKNESS, 'm'))
+        self.options.declare(**make_units_option(Aircraft.Wing.Dbf.RIB_THICKNESS, 'm'))
+        self.options.declare(**make_units_option(Aircraft.Wing.Dbf.RIB_LIGHTENING_FACTOR, 'unitless'))
+        self.options.declare(**make_units_option(Aircraft.Wing.Dbf.SKIN_DENSITY, 'kg/m**2'))
+        self.options.declare(**make_units_option(Aircraft.Wing.Dbf.GLUE_FACTOR, 'unitless'))
+        self.options.declare(**make_units_option(Aircraft.Wing.Dbf.STRINGER_DENSITY, 'kg/m**3'))
+        self.options.declare(**make_units_option(Aircraft.Wing.Dbf.STRINGER_THICKNESS, 'm'))
+        self.options.declare(**make_units_option(Aircraft.Wing.Dbf.SHEETING_THICKNESS, 'm'))
+        self.options.declare(**make_units_option(Aircraft.Wing.Dbf.SHEETING_DENSITY, 'kg/m**3'))
+        self.options.declare(**make_units_option(Aircraft.Wing.Dbf.SHEETING_COVERAGE, 'unitless'))
+        self.options.declare(**make_units_option(Aircraft.Wing.Dbf.SHEETING_LIGHTENING_FACTOR, 'unitless'))
+        self.options.declare(**make_units_option(Aircraft.Wing.Dbf.NUM_STRINGERS, 'unitless'))
+        self.options.declare(**make_units_option(Aircraft.Wing.Dbf.MISC_MASS, 'kg'))
 
     def setup(self):
         # Still user inputs:
@@ -59,6 +70,32 @@ class DBFWingMass(om.ExplicitComponent):
                 Aircraft.Wing.WETTED_AREA,
             ],
         )
+
+    def set_option(self, option_key, val=None, units=None):
+        """
+        Helper to set an OpenMDAO component option with units.
+
+        Parameters
+        ----------
+        comp : om.Component
+            The component instance owning the option.
+        option_key : str or key
+            The option key (usually Aircraft.Wing.Dbf.*).
+        val : any
+            The value to set.
+        units : str or None
+            Optional units string. If None, attempts to get default units from metadata.
+        """
+        from aviary.variable_info.variable_meta_data import _MetaData
+
+        # Get default units from metadata if none given
+        if units is None and option_key in _MetaData:
+            units = _MetaData[option_key]['units']
+        if val is None and option_key in _MetaData:
+            val = _MetaData[option_key]['default_value']
+
+        self.options[option_key] = (val, units)
+
 
     def load_airfoil_csv(self, file_path, delimiter=',', header=False):
         if not os.path.exists(file_path):
@@ -102,24 +139,24 @@ class DBFWingMass(om.ExplicitComponent):
             raise ValueError(f'Wetted area must be > 0, got {wetted_area}')
 
         # From options
-        num_spars = self.options['num_spars'][0]
-        rib_lightening_factor = self.options['rib_lightening_factor'][0]
-        rib_thickness = self.options['rib_thicknesses'][0]
-        rho_skin = self.options['skin_density'][0]
-        spar_outer_diameter = self.options['spar_outer_diameter'][0]
-        rho_spar = self.options['spar_density'][0]
-        spar_wall_thickness = self.options['spar_wall_thickness'][0]
-        glue_factor = self.options['glue_factor'][0]
-        stringer_thickness = self.options['stringer_thickness'][0]
-        rho_stringer = self.options['stringer_density'][0]
-        sheeting_thickness = self.options['sheeting_thickness'][0]
-        sheeting_coverage = self.options['sheeting_coverage'][0]
-        rho_sheeting = self.options['sheeting_density'][0]
-        sheeting_lightening_factor = self.options['sheeting_lightening_factor'][0]
-        num_stringer = self.options['num_stringers'][0]
-        rib_materials = self.options['rib_materials']
-        airfoil_data_file = self.options['airfoil_data_file']
-        misc_mass = self.options['miscel_mass'][0]
+        num_spars = self.options[Aircraft.Wing.Dbf.NUM_SPARS][0]
+        rib_lightening_factor = self.options[Aircraft.Wing.Dbf.RIB_LIGHTENING_FACTOR][0]
+        rib_thickness = self.options[Aircraft.Wing.Dbf.RIB_THICKNESS][0]
+        rho_skin = self.options[Aircraft.Wing.Dbf.SKIN_DENSITY][0]
+        spar_outer_diameter = self.options[Aircraft.Wing.Dbf.SPAR_OUTER_DIAMETER][0]
+        rho_spar = self.options[Aircraft.Wing.Dbf.SPAR_DENSITY][0]
+        spar_wall_thickness = self.options[Aircraft.Wing.Dbf.SPAR_WALL_THICKNESS][0]
+        glue_factor = self.options[Aircraft.Wing.Dbf.GLUE_FACTOR][0]
+        stringer_thickness = self.options[Aircraft.Wing.Dbf.STRINGER_THICKNESS][0]
+        rho_stringer = self.options[Aircraft.Wing.Dbf.STRINGER_DENSITY][0]
+        sheeting_thickness = self.options[Aircraft.Wing.Dbf.SHEETING_THICKNESS][0]
+        sheeting_coverage = self.options[Aircraft.Wing.Dbf.SHEETING_COVERAGE][0]
+        rho_sheeting = self.options[Aircraft.Wing.Dbf.SHEETING_DENSITY][0]
+        sheeting_lightening_factor = self.options[Aircraft.Wing.Dbf.SHEETING_LIGHTENING_FACTOR][0]
+        num_stringer = self.options[Aircraft.Wing.Dbf.NUM_STRINGERS][0]
+        rib_materials = self.options['rib_materials']  # stays string key
+        airfoil_data_file = self.options['airfoil_data_file']  # stays string key
+        misc_mass = self.options[Aircraft.Wing.Dbf.MISC_MASS][0]
 
         if len(rib_materials) != len(rib_thickness):
             raise ValueError(
@@ -167,21 +204,21 @@ class DBFWingMass(om.ExplicitComponent):
         chord = inputs[Aircraft.Wing.ROOT_CHORD]
 
         # From options
-        num_spars = self.options['num_spars'][0]
-        rib_lightening_factor = self.options['rib_lightening_factor'][0]
-        rib_thickness = self.options['rib_thicknesses'][0]
-        rho_skin = self.options['skin_density'][0]
-        spar_outer_diameter = self.options['spar_outer_diameter'][0]
-        rho_spar = self.options['spar_density'][0]
-        spar_wall_thickness = self.options['spar_wall_thickness'][0]
-        glue_factor = self.options['glue_factor'][0]
-        stringer_thickness = self.options['stringer_thickness'][0]
-        rho_stringer = self.options['stringer_density'][0]
-        sheeting_thickness = self.options['sheeting_thickness'][0]
-        sheeting_coverage = self.options['sheeting_coverage'][0]
-        rho_sheeting = self.options['sheeting_density'][0]
-        sheeting_lightening_factor = self.options['sheeting_lightening_factor'][0]
-        num_stringer = self.options['num_stringers'][0]
+        num_spars = self.options[Aircraft.Wing.Dbf.NUM_SPARS][0]
+        rib_lightening_factor = self.options[Aircraft.Wing.Dbf.RIB_LIGHTENING_FACTOR][0]
+        rib_thickness = self.options[Aircraft.Wing.Dbf.RIB_THICKNESS][0]
+        rho_skin = self.options[Aircraft.Wing.Dbf.SKIN_DENSITY][0]
+        spar_outer_diameter = self.options[Aircraft.Wing.Dbf.SPAR_OUTER_DIAMETER][0]
+        rho_spar = self.options[Aircraft.Wing.Dbf.SPAR_DENSITY][0]
+        spar_wall_thickness = self.options[Aircraft.Wing.Dbf.SPAR_WALL_THICKNESS][0]
+        glue_factor = self.options[Aircraft.Wing.Dbf.GLUE_FACTOR][0]
+        stringer_thickness = self.options[Aircraft.Wing.Dbf.STRINGER_THICKNESS][0]
+        rho_stringer = self.options[Aircraft.Wing.Dbf.STRINGER_DENSITY][0]
+        sheeting_thickness = self.options[Aircraft.Wing.Dbf.SHEETING_THICKNESS][0]
+        sheeting_coverage = self.options[Aircraft.Wing.Dbf.SHEETING_COVERAGE][0]
+        rho_sheeting = self.options[Aircraft.Wing.Dbf.SHEETING_DENSITY][0]
+        sheeting_lightening_factor = self.options[Aircraft.Wing.Dbf.SHEETING_LIGHTENING_FACTOR][0]
+        num_stringer = self.options[Aircraft.Wing.Dbf.NUM_STRINGERS][0]
         rib_materials = self.options['rib_materials']
         airfoil_data_file = self.options['airfoil_data_file']
 
@@ -225,22 +262,22 @@ if __name__ == '__main__':
     wing.options['airfoil_data_file'] = (
         r'aviary\examples\external_subsystems\dbf_based_mass\mh84-il.csv'
     )
-    wing.options['sheeting_coverage'] = (0.4, 'unitless')
-    wing.options['sheeting_density'] = (160, 'kg/m**3')
-    wing.options['sheeting_lightening_factor'] = (1, 'unitless')
-    wing.options['sheeting_thickness'] = (0.03125, 'inch')
-    wing.options['stringer_density'] = (160, 'kg/m**3')
-    wing.options['stringer_thickness'] = (0.375, 'inch')
-    wing.options['num_stringers'] = (2.5, 'unitless')
-    wing.options['glue_factor'] = (0.15, 'unitless')
-    wing.options['num_spars'] = (1.1, 'unitless')
-    wing.options['rib_lightening_factor'] = (2 / 3, 'unitless')
-    wing.options['rib_thicknesses'] = (rib_thicks, 'inch')
-    wing.options['skin_density'] = (20, 'g/m**2')
-    wing.options['spar_density'] = (2, 'g/cm**3')
-    wing.options['spar_outer_diameter'] = (1, 'inch')
-    wing.options['spar_wall_thickness'] = (0.0625, 'inch')
-    wing.options['miscel_mass'] = (0.0, 'kg')
+    wing.set_option(Aircraft.Wing.Dbf.SHEETING_COVERAGE, val=0.4, units='unitless')
+    wing.set_option(Aircraft.Wing.Dbf.SHEETING_DENSITY, val=160, units='kg/m**3')
+    wing.set_option(Aircraft.Wing.Dbf.SHEETING_LIGHTENING_FACTOR, val=1, units='unitless')
+    wing.set_option(Aircraft.Wing.Dbf.SHEETING_THICKNESS, val=0.03125, units='inch')
+    wing.set_option(Aircraft.Wing.Dbf.STRINGER_DENSITY, val=160, units='kg/m**3')
+    wing.set_option(Aircraft.Wing.Dbf.STRINGER_THICKNESS, val=0.375, units='inch')
+    wing.set_option(Aircraft.Wing.Dbf.NUM_STRINGERS, val=2.5, units='unitless')
+    wing.set_option(Aircraft.Wing.Dbf.GLUE_FACTOR, val=0.15, units='unitless')
+    wing.set_option(Aircraft.Wing.Dbf.NUM_SPARS, val=1.1, units='unitless')
+    wing.set_option(Aircraft.Wing.Dbf.RIB_LIGHTENING_FACTOR, val=2/3, units='unitless')
+    wing.set_option(Aircraft.Wing.Dbf.RIB_THICKNESS, val=rib_thicks, units='inch')
+    wing.set_option(Aircraft.Wing.Dbf.SKIN_DENSITY, val=20, units='g/m**2')
+    wing.set_option(Aircraft.Wing.Dbf.SPAR_DENSITY, val=2, units='g/cm**3')
+    wing.set_option(Aircraft.Wing.Dbf.SPAR_OUTER_DIAMETER, val=1, units='inch')
+    wing.set_option(Aircraft.Wing.Dbf.SPAR_WALL_THICKNESS, val=0.0625, units='inch')
+    wing.set_option(Aircraft.Wing.Dbf.MISC_MASS, val=0.0, units='kg')
 
     # Setup problem with constant above options
     prob.setup()
