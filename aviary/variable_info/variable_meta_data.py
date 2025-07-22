@@ -7642,6 +7642,13 @@ add_meta_data(
 )
 
 add_meta_data(
+    Mission.Summary.MASS,
+    historical_name={'GASP': 'None', 'FLOPS': None, 'LEAPS1': None}, #TODO: Check on these
+    units='lbm',
+    desc='The final weight of the vehicle at the end of the last regular_phase.'
+)
+
+add_meta_data(
     Mission.Summary.RANGE,
     meta_data=_MetaData,
     historical_name={'GASP': None, 'FLOPS': None, 'LEAPS1': None},
@@ -7658,6 +7665,15 @@ add_meta_data(
     units='lbm',
     desc='fuel burned during reserve phases, this does not include fuel burned in regular phases',
     default_value=0.0,
+)
+
+add_meta_data(
+    Mission.Summary.TIME,
+    meta_data=_MetaData,
+    historical_name={'GASP': 'None', 'FLOPS': None, 'LEAPS1': None}, #TODO: Check on these
+    units='min',
+    desc='Total mission time from the start of the first regular_phase'
+    'to the end of the last regular_phase.'
 )
 
 add_meta_data(
