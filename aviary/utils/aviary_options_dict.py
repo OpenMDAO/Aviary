@@ -155,7 +155,7 @@ class AviaryOptionsDictionary(om.OptionsDictionary):
         Adds all options needed for a state variable.
 
         For a state named mass, these are mass_initial, mass_final, mass_bounds, mass_ref,
-        mass_ref0, mass_defect_ref, mass_solve_segments.
+        mass_ref0, mass_defect_ref, mass_solve_segments, mass_constraint_ref.
 
         Parameters
         ----------
@@ -259,6 +259,20 @@ class AviaryOptionsDictionary(om.OptionsDictionary):
             name=name,
             default=default,
             types=bool,
+            desc=desc,
+        )
+
+        name = f'{state_name}_constraint_ref'
+        default = defaults.get(name, None)
+        desc = f'Multiplicative scale factor "ref" for the {state_name} boundary constraint.\n'
+        desc += f'If unspecified, then the value in {state_name}_final is used. '
+        desc += 'At present, only a final constraint is added.'
+        self.declare(
+            name=name,
+            default=default,
+            types=float,
+            allow_none=True,
+            units=units,
             desc=desc,
         )
 
