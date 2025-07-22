@@ -1,7 +1,7 @@
 # defaults for height energy based phases adjusted for off_design functionality.
 
 phase_info = {
-    'pre_mission': {'include_takeoff': True, 'optimize_mass': True},
+    'pre_mission': {'include_takeoff': False, 'optimize_mass': True},
     'climb': {
         'subsystem_options': {'core_aerodynamics': {'method': 'computed'}},
         'user_options': {
@@ -19,7 +19,7 @@ phase_info = {
             'altitude_polynomial_order': 3,
             'throttle_enforcement': 'path_constraint',
             'time_initial_bounds': ((0.0, 0.0), 'min'),
-            'time_duration_bounds': ((8.0, 192.0), 'min'),
+            'time_duration_bounds': ((64.0, 192.0), 'min'),
         },
     },
     'cruise': {
@@ -39,7 +39,7 @@ phase_info = {
             'altitude_polynomial_order': 3,
             'throttle_enforcement': 'boundary_constraint',
             'time_initial_bounds': ((64.0, 192.0), 'min'),
-            'time_duration_bounds': ((24.0, 600.0), 'min'),
+            'time_duration_bounds': ((56.5, 300.0), 'min'),
         },
     },
     'descent': {
@@ -59,7 +59,7 @@ phase_info = {
             'altitude_polynomial_order': 3,
             'throttle_enforcement': 'path_constraint',
             'time_initial_bounds': ((120.5, 361.5), 'min'),
-            'time_duration_bounds': ((12.0, 90.0), 'min'),
+            'time_duration_bounds': ((29.0, 87.0), 'min'),
         },
     },
     'post_mission': {
