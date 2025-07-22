@@ -805,6 +805,16 @@ class AviaryProblem(om.Problem):
         operating_mass = float(self.get_val(Aircraft.Design.OPERATING_MASS)[0])
         fuel_capacity = float(self.get_val(Aircraft.Fuel.TOTAL_CAPACITY)[0])
         max_payload = float(self.get_val(Aircraft.CrewPayload.TOTAL_PAYLOAD_MASS)[0])
+
+        # When a mission is run with a target range significantly shorter than the aircraft's design range,
+        # the "design" mission may not accurately represent the aircraft's sizing requirements. In this scenario,
+        # the aircraft would be sized based on gross mass and operating mass values where adding the full fuel
+        # capacity to the operating mass would exceed the originally designed gross mass limit.
+        #
+        # Under these conditions, we will still generate a payload/range diagram, but the max_fuel_plus_payload
+        # and max_payload_plus_fuel missions will be identical since the aircraft cannot utilize its full
+        # fuel capacity without exceeding design constraints.
+
         if operating_mass + fuel_capacity < gross_mass:
             # point 3, fallout mission with max fuel and payload
             # The payload allowed is the payload that fits on the aircraft at maximum fuel capacity
@@ -848,6 +858,9 @@ class AviaryProblem(om.Problem):
             )
             range_3 = float(prob_fallout_max_fuel.get_val(Mission.Summary.RANGE))
         else:
+            # If the fuel capacity from the aviary_inputs csv file plus the sized operating mass exceeds the gross mass,
+            # the fuel_capacity will be adjusted to equal the difference between the gross mass and the operating mass.
+
             fuel_capacity = gross_mass - operating_mass
             payload_3 = payload_2
             range_3 = range_2
@@ -992,7 +1005,10 @@ class AviaryProblem(om.Problem):
             if mass_method == LegacyCode.GASP:
                 mission_range = self.get_val(Mission.Design.RANGE)[0]
             elif mass_method == LegacyCode.FLOPS:
-                mission_range = self.model.post_mission_info['target_range'][0]
+                try:
+                    mission_range = self.model.post_mission_info['target_range'][0]
+                except:
+                    mission_range = self.get_val(Mission.Design.RANGE)[0]
 
         # gross mass is sliced from a column vector numpy array, i.e. it is a len 1 numpy
         # array
