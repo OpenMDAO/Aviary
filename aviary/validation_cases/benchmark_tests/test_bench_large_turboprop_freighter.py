@@ -4,7 +4,6 @@ from copy import deepcopy
 from numpy.testing import assert_almost_equal
 from openmdao.utils.testing_utils import use_tempdirs
 
-
 from aviary.interface.methods_for_level2 import AviaryProblem
 from aviary.models.aircraft.large_turboprop_freighter.phase_info import (
     energy_phase_info,
@@ -45,7 +44,7 @@ class LargeTurbopropFreighterBenchmark(unittest.TestCase):
             engine_builders=[turboprop],
         )
         # if mission_method == 'energy':
-        #     energy method needs flight idle to converge in descent?
+        #     # energy method needs flight idle to converge in descent?
         #     prob.aviary_inputs.set_val(Aircraft.Engine.GENERATE_FLIGHT_IDLE, True)
         #     # FLOPS aero specific stuff? Best guesses for values here
         #     prob.aviary_inputs.set_val(Mission.Constraints.MAX_MACH, 0.5)
@@ -70,6 +69,10 @@ class LargeTurbopropFreighterBenchmark(unittest.TestCase):
 
         prob.set_initial_guesses()
         prob.run_aviary_problem()
+
+        import openmdao.api as om
+
+        om.n2(prob, show_browser=False)
 
         return prob
 

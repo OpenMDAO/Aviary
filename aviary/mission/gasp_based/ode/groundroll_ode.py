@@ -64,7 +64,7 @@ class GroundrollODE(TwoDOFODE):
                     promotes_inputs=subsystem.mission_inputs(**kwargs),
                     promotes_outputs=subsystem.mission_outputs(**kwargs),
                 )
-            if type(subsystem) is AerodynamicsBuilderBase:
+            if isinstance(subsystem, AerodynamicsBuilderBase):
                 self.promotes(
                     subsystem.name,
                     inputs=[Dynamic.Vehicle.ANGLE_OF_ATTACK],

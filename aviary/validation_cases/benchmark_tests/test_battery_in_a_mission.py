@@ -10,7 +10,7 @@ from aviary.subsystems.energy.battery_builder import BatteryBuilder
 
 @use_tempdirs
 class TestSubsystemsMission(unittest.TestCase):
-    """Test the setup and run optimization model with a bettery subsystem."""
+    """Test the setup and run optimization model with a battery subsystem."""
 
     def setUp(self):
         self.phase_info = {

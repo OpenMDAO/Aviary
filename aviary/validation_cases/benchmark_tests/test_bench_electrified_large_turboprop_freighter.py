@@ -36,7 +36,7 @@ class LargeElectrifiedTurbopropFreighterBenchmark(unittest.TestCase):
         if mission_method == 'energy':
             options.set_val(Settings.EQUATIONS_OF_MOTION, 'height_energy')
 
-        # set up electric propulsions
+        # set up electric propulsion
         # TODO make separate input file for electroprop freighter?
         scale_factor = 17.77  # target is ~32 kN*m torque
         options.set_val(Aircraft.Engine.RPM_DESIGN, 6000, 'rpm')  # max RPM of motor map
@@ -83,8 +83,15 @@ class LargeElectrifiedTurbopropFreighterBenchmark(unittest.TestCase):
         prob.add_phases()
         prob.add_post_mission_systems()
         prob.link_phases()
-        prob.add_driver('IPOPT', max_iter=0, verbosity=0)
+        prob.add_driver('SNOPT', max_iter=0, verbosity=0)
         prob.add_design_variables()
+        # prob.model.add_design_var(
+        #     Aircraft.Engine.SCALE_FACTOR,
+        #     units='unitless',
+        #     lower=1,
+        #     upper=25,
+        #     ref=10,
+        # )
         prob.add_objective()
 
         prob.setup()
