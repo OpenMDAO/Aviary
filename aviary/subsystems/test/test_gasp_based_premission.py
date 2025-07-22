@@ -203,6 +203,7 @@ class BWBPreMissionGroupTest(unittest.TestCase):
         Aircraft.Design.LIFT_CURVE_SLOPE -- CLALPH = 6.515
           Note: In GASP, CLALPH is first calculated in CLA() and get 5.9485 and
                 later updated in CLIFT() and get 6.515.
+        Aircraft.Propulsion.TOTAL_ENGINE_POD_MASS -- WPES = 2055
         Aircraft.Wing.ULTIMATE_LOAD_FACTOR -- ULF = 3.7734
         Aircraft.Wing.MATERIAL_FACTOR -- SKNO = 1.19461238
         Aircraft.CrewPayload.PASSENGER_PAYLOAD_MASS -- WPL = 33750
@@ -284,6 +285,7 @@ class BWBPreMissionGroupTest(unittest.TestCase):
         assert_near_equal(prob[Aircraft.Nacelle.AVG_LENGTH], 7.2476, tol)
         assert_near_equal(prob[Aircraft.Nacelle.SURFACE_AREA], 121.4458, tol)
         # mass subsystem
+        assert_near_equal(prob[Aircraft.Propulsion.TOTAL_ENGINE_POD_MASS], 1686.6256, tol)
         assert_near_equal(prob[Aircraft.Design.LIFT_CURVE_SLOPE], 5.948, tol)
         assert_near_equal(prob[Aircraft.Wing.ULTIMATE_LOAD_FACTOR], 3.77336, tol)
         assert_near_equal(prob[Aircraft.Wing.MATERIAL_FACTOR], 1.194612, tol)
@@ -374,6 +376,7 @@ class BWBPreMissionGroupTest(unittest.TestCase):
         assert_near_equal(prob[Aircraft.Nacelle.AVG_LENGTH], 7.2476, tol)
         assert_near_equal(prob[Aircraft.Nacelle.SURFACE_AREA], 121.4458, tol)
         # mass subsystem
+        assert_near_equal(prob[Aircraft.Propulsion.TOTAL_ENGINE_POD_MASS], 1686.6256, tol)
         assert_near_equal(prob[Aircraft.Design.LIFT_CURVE_SLOPE], 5.948, tol)
         assert_near_equal(prob[Aircraft.Wing.ULTIMATE_LOAD_FACTOR], 3.77336, tol)
         assert_near_equal(prob[Aircraft.Wing.MATERIAL_FACTOR], 1.194612, tol)

@@ -3322,6 +3322,7 @@ class BWBMassSummationTestCase(unittest.TestCase):
     def test_case1(self):
         """
         Testing GASP data case:
+        Aircraft.Propulsion.TOTAL_ENGINE_POD_MASS -- WPES = 2055
         Aircraft.LandingGear.TOTAL_MASS -- WLG = 7800
         Aircraft.LandingGear.MAIN_GEAR_MASS -- WMG = 6630
         Aircraft.Wing.MATERIAL_FACTOR -- SKNO = 1.19461238
@@ -3428,6 +3429,7 @@ class BWBMassSummationTestCase(unittest.TestCase):
 
         # FuelMassGroup
         # FuelSysAndFullFuselageMass
+        assert_near_equal(prob[Aircraft.Propulsion.TOTAL_ENGINE_POD_MASS], 1686.62563123, tol)
         assert_near_equal(prob[Aircraft.Fuel.FUEL_SYSTEM_MASS], 1316.24565033, tol)
         assert_near_equal(prob['fus_mass_full'], 131150.22491506, tol)
         # BWBFuselageMass
