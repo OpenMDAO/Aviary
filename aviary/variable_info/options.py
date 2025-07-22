@@ -29,7 +29,7 @@ def get_option_defaults(engine=True, meta_data=_MetaData) -> AviaryValues:
     if engine:
         engine_options = option_defaults.deepcopy()
         engine_options.set_val(
-            Aircraft.Engine.DATA_FILE, get_path('models/engines/turbofan_23k_1.deck')
+            Aircraft.Engine.DATA_FILE, get_path('models/engines/turbofan_23k_1.csv')
         )
         engine_options.set_val(Aircraft.Engine.REFERENCE_SLS_THRUST, 28690, 'lbf')
         engine_deck = EngineDeck(options=engine_options)

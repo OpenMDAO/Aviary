@@ -45,24 +45,6 @@ class AlphaModes(Enum):
     FLIGHT_PATH_ANGLE = auto()
 
 
-class AnalysisScheme(Enum):
-    """
-    AnalysisScheme is used to select from Collocation and shooting.
-
-    COLLOCATION uses the collocation method to optimize all points simultaneously
-    and can be run in parallel. However, it requires reasonable initial guesses
-    for the trajectory and is fairly sensitive to those initial guesses.
-
-    SHOOTING is a forward in time integration method that simulates the trajectory.
-    This does not require initial guesses and will always produce physically valid
-    trajectories, even during optimizer failures. The shooting method cannot be run
-    in parallel.
-    """
-
-    COLLOCATION = auto()
-    SHOOTING = auto()
-
-
 class EquationsOfMotion(Enum):
     """Available equations of motion for use during mission analysis."""
 
@@ -77,7 +59,7 @@ class GASPEngineType(Enum):
     """
     Defines the type of engine to use in GASP-based mass calculations.
     Note that only the value for the first engine model will be used.
-    Currenly only the TURBOJET and TURBOPROP options are implemented, but other types of engines will be added in the future.
+    Currently only the TURBOJET and TURBOPROP options are implemented, but other types of engines will be added in the future.
     """
 
     # Reciprocating engine with carburator
@@ -231,18 +213,3 @@ class Verbosity(IntEnum):
     @classmethod
     def values(cls):
         return {c.value for c in cls}
-
-
-class OutMachType(Enum):
-    """
-    OutMachType is an indicator which Mach number to output.
-    helical_mach = sqrt(mach*mach + tip_mach*tip_mach).
-    """
-
-    MACH = 'mach'
-    TIP_MACH = 'tip_mach'
-    HELICAL_MACH = 'helical_mach'
-
-    @classmethod
-    def get_element_by_value(cls, val: str):
-        return next((c for c in cls if c.value == val), None)

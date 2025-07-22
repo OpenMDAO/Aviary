@@ -4,14 +4,7 @@ from pathlib import Path
 from openmdao.utils.testing_utils import use_tempdirs
 
 from aviary.utils.functions import get_path
-from aviary.utils.propeller_map_conversion import PropMapType, _exec_PMC
-
-
-class DummyArgs(object):
-    def __init__(self):
-        self.input_file = None
-        self.output_file = None
-        self.data_format = None
+from aviary.utils.propeller_map_conversion import PropMapType, convert_propeller_map
 
 
 @use_tempdirs
@@ -19,23 +12,21 @@ class TestPropellerMapConversion(unittest.TestCase):
     """Test GASP propeller data file conversion utility by comparing against already converted data files."""
 
     def prepare_and_run(self, filename, output_file=None, data_format=PropMapType.GASP):
-        args = DummyArgs()
-
         # Specify the input file
-        args.input_file = filepath = get_path('models/engines/propellers/' + filename)
+        input_file = filepath = get_path('models/engines/propellers/' + filename)
 
         # Specify the output file
         if not output_file:
-            filename = filepath.stem + '.prop'
-            args.output_file = Path.cwd() / Path('TEST_' + filename)
+            filename = filepath.stem + '.csv'
+            output_file = Path.cwd() / Path('TEST_' + filename)
         else:
-            args.output_file = str(Path(output_file))
+            output_file = str(Path(output_file))
 
         # Specify the legacy code and propeller map
-        args.data_format = data_format
+        data_format = data_format
 
         # Execute the conversion
-        _exec_PMC(args, None)
+        convert_propeller_map(input_file, output_file, round_data=True)
 
     def compare_files(self, filepath, skip_list=[]):
         """
@@ -45,7 +36,7 @@ class TestPropellerMapConversion(unittest.TestCase):
         to skip. This is useful for skipping data that Aviary might need but
         Fortran-based tools do not.
         """
-        filename = filepath.split('.')[0] + '.prop'
+        filename = filepath.split('.')[0] + '.csv'
 
         validation_data = get_path('models/engines/propellers/' + filename)
 
@@ -53,7 +44,8 @@ class TestPropellerMapConversion(unittest.TestCase):
         with open('TEST_' + filename, 'r') as f_in, open(validation_data, 'r') as expected:
             for line in f_in:
                 if any(s in line for s in skip_list):
-                    break
+                    expected.readline()
+                    continue
                 # Remove whitespace and compare
                 expected_line = ''.join(expected.readline().split())
                 line_no_whitespace = ''.join(line.split())
@@ -62,18 +54,24 @@ class TestPropellerMapConversion(unittest.TestCase):
                 try:
                     self.assertEqual(line_no_whitespace.count(expected_line), 1)
 
-                except:
+                except Exception:
                     exc_string = (
-                        f'Error:  {filename}\nFound: {line_no_whitespace}'
-                        f'\nExpected:  {expected_line}'
+                        f'Error: {filename}\nFound: {line_no_whitespace}\nExpected: {expected_line}'
                     )
                     raise Exception(exc_string)
 
-    def test_PM_conversion(self):
+    def test_propfan_conversion(self):
         filename = 'PropFan.map'
+        self.prepare_and_run(filename, data_format=PropMapType.GASP)
+        self.compare_files(filename, skip_list=['# created'])
+
+    def test_GA_conversion(self):
+        filename = 'general_aviation.map'
         self.prepare_and_run(filename, data_format=PropMapType.GASP)
         self.compare_files(filename, skip_list=['# created'])
 
 
 if __name__ == '__main__':
     unittest.main()
+    # test = TestPropellerMapConversion()
+    # test.test_PM_conversion()

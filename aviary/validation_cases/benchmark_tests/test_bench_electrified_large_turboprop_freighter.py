@@ -5,7 +5,7 @@ from numpy.testing import assert_almost_equal
 from openmdao.utils.testing_utils import use_tempdirs
 
 from aviary.interface.methods_for_level2 import AviaryProblem
-from aviary.models.large_turboprop_freighter.electrified_phase_info import (
+from aviary.models.aircraft.large_turboprop_freighter.electrified_phase_info import (
     energy_phase_info,
     two_dof_phase_info,
 )
@@ -30,7 +30,7 @@ class LargeElectrifiedTurbopropFreighterBenchmark(unittest.TestCase):
 
         # load inputs from .csv to build engine
         options, _ = create_vehicle(
-            'models/large_turboprop_freighter/large_turboprop_freighter_GASP.csv'
+            'models/aircraft/large_turboprop_freighter/large_turboprop_freighter_GASP.csv'
         )
 
         if mission_method == 'energy':
@@ -60,7 +60,7 @@ class LargeElectrifiedTurbopropFreighterBenchmark(unittest.TestCase):
 
         # load_inputs needs to be updated to accept an already existing aviary options
         prob.load_inputs(
-            options,  # "models/large_turboprop_freighter/large_turboprop_freighter_GASP.csv",
+            options,  # "models/aircraft/large_turboprop_freighter/large_turboprop_freighter_GASP.csv",
             phase_info,
             engine_builders=[electroprop],
         )

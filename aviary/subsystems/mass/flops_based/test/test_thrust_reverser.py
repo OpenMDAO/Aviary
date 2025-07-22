@@ -24,7 +24,8 @@ class ThrustReverserMassTest(unittest.TestCase):
         self.prob = om.Problem()
 
     @parameterized.expand(
-        get_flops_case_names(omit=['LargeSingleAisle1FLOPS', 'N3CC']), name_func=print_case
+        get_flops_case_names(omit=['LargeSingleAisle1FLOPS', 'AdvancedSingleAisle']),
+        name_func=print_case,
     )
     def test_case(self, case_name):
         prob = self.prob
@@ -60,7 +61,7 @@ class ThrustReverserMassTest(unittest.TestCase):
         engine_options = AviaryValues()
         engine_options.set_val(Settings.VERBOSITY, 0)
         engine_options.set_val(Aircraft.Engine.NUM_ENGINES, 2)
-        engine_options.set_val(Aircraft.Engine.DATA_FILE, 'models/engines/turbofan_28k.deck')
+        engine_options.set_val(Aircraft.Engine.DATA_FILE, 'models/engines/turbofan_28k.csv')
         engineModel1 = EngineDeck(options=engine_options)
         engine_options.set_val(Aircraft.Engine.NUM_ENGINES, 2)
         engineModel2 = EngineDeck(options=engine_options)
@@ -129,7 +130,7 @@ class ThrustReverserMassTest2(unittest.TestCase):
     def test_case(self):
         prob = om.Problem()
 
-        inputs = get_flops_inputs('N3CC', preprocess=True)
+        inputs = get_flops_inputs('AdvancedSingleAisle', preprocess=True)
 
         options = {
             Aircraft.Engine.NUM_ENGINES: inputs.get_val(Aircraft.Engine.NUM_ENGINES),

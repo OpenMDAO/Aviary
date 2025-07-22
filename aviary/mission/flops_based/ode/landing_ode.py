@@ -13,9 +13,7 @@ from aviary.mission.base_ode import BaseODE as _BaseODE
 from aviary.mission.flops_based.ode.landing_eom import FlareEOM
 from aviary.mission.flops_based.ode.takeoff_ode import StallSpeed
 from aviary.mission.flops_based.ode.takeoff_ode import TakeoffODE as _TakeoffODE
-from aviary.mission.gasp_based.ode.time_integration_base_classes import add_SGM_required_inputs
 from aviary.subsystems.atmosphere.atmosphere import Atmosphere
-from aviary.variable_info.enums import AnalysisScheme
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 
 
@@ -34,18 +32,9 @@ class FlareODE(_BaseODE):
         options = self.options
 
         nn = options['num_nodes']
-        analysis_scheme = options['analysis_scheme']
-
-        if analysis_scheme is AnalysisScheme.SHOOTING:
-            SGM_required_inputs = {
-                't_curr': {'units': 's'},
-                Dynamic.Mission.DISTANCE: {'units': 'm'},
-            }
-            add_SGM_required_inputs(self, SGM_required_inputs)
-
         self.add_subsystem(name='atmosphere', subsys=Atmosphere(num_nodes=nn), promotes=['*'])
 
-        # NOTE: the following are potentially signficant differences in implementation
+        # NOTE: the following are potentially significant differences in implementation
         # between FLOPS and Aviary:
         #    - FLOPS detailed takeoff/landing assumes constant mass for the duration of
         #      that specific analysis.

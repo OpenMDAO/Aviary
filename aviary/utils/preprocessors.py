@@ -43,7 +43,8 @@ def preprocess_options(aviary_options: AviaryValues, meta_data=_MetaData, verbos
             aviary_options.set_val(Settings.VERBOSITY, verbosity)
 
     preprocess_crewpayload(aviary_options, meta_data, verbosity)
-    preprocess_propulsion(aviary_options, engine_models, meta_data, verbosity)
+    if not engine_models is None:
+        preprocess_propulsion(aviary_options, engine_models, meta_data, verbosity)
 
 
 def remove_preprocessed_options(aviary_options):
@@ -134,7 +135,7 @@ def preprocess_crewpayload(aviary_options: AviaryValues, meta_data=_MetaData, ve
     num_pax = aviary_options.get_val(Aircraft.CrewPayload.NUM_PASSENGERS)
     design_num_pax = aviary_options.get_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS)
 
-    # TODO these don't have to be errors, we can recover in some cases, for exmaple
+    # TODO these don't have to be errors, we can recover in some cases, for example
     # defaulting to all economy class if passenger seat info is not provided. See the
     # engine count checks for an example of this.
     # Check summary data against individual data if individual data was entered
@@ -336,7 +337,7 @@ def preprocess_crewpayload(aviary_options: AviaryValues, meta_data=_MetaData, ve
                         f'({des_cargo})'
                     )
             else:
-                # user has set cargo only: assume intention to set max only for backwards compatability.
+                # user has set cargo only: assume intention to set max only for backwards compatibility.
                 # TODO we eventually want to fix these and have des & flown cargo = max cargo
                 #      that fix will possibly require updating fortran_to_aviary
                 max_cargo = cargo
@@ -344,7 +345,7 @@ def preprocess_crewpayload(aviary_options: AviaryValues, meta_data=_MetaData, ve
                 if verbosity >= Verbosity.BRIEF:  # BRIEF, VERBOSE, DEBUG
                     warnings.warn(
                         'As-flown cargo mass was specified but design cargo mass and '
-                        'max cargo mass were not. To mantain backwards-compatibility '
+                        'max cargo mass were not. To maintain backwards-compatibility '
                         f'with converted GASP files, setting max cargo mass to {cargo} '
                         'and maximum and design cargo masses to zero.'
                     )
@@ -494,10 +495,6 @@ def preprocess_propulsion(
 ):
     """
     Updates AviaryValues object with values taken from provided EngineModels.
-
-    If no EngineModels are provided, either in engine_models or included in
-    aviary_options, an EngineDeck is created using available inputs and options in
-    aviary_options.
 
     Vectorizes variables in aviary_options in the correct order for vehicles with
     heterogeneous engines.

@@ -9,7 +9,6 @@ CoreAerodynamicsBuilder : the interface for Aviary's core aerodynamics subsystem
 """
 
 import warnings
-from copy import deepcopy
 
 import numpy as np
 import openmdao.api as om
@@ -28,9 +27,9 @@ from aviary.subsystems.aerodynamics.gasp_based.table_based import (
 from aviary.subsystems.aerodynamics.solve_alpha_group import SolveAlphaGroup
 from aviary.subsystems.subsystem_builder_base import SubsystemBuilderBase
 from aviary.utils.named_values import NamedValues
-from aviary.variable_info.enums import LegacyCode
+from aviary.variable_info.enums import LegacyCode, Verbosity
 from aviary.variable_info.variable_meta_data import _MetaData
-from aviary.variable_info.variables import Aircraft, Dynamic, Mission
+from aviary.variable_info.variables import Aircraft, Dynamic, Mission, Settings
 
 GASP = LegacyCode.GASP
 FLOPS = LegacyCode.FLOPS
@@ -118,9 +117,8 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
             return Design()
 
     def build_mission(self, num_nodes, aviary_inputs, **kwargs):
-        arguments = deepcopy(kwargs)
         try:
-            method = arguments.pop('method')
+            method = kwargs.pop('method')
         except KeyError:
             method = None
 
@@ -130,33 +128,30 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
         aero_group = None
 
         if self.code_origin is FLOPS:
-            try:
-                solve_alpha = arguments.pop('solve_alpha')
-            except KeyError:
-                pass
-            else:
-                warnings.warn(
-                    "The 'solve_alpha' flag has been set, but is not used for FLOPS-based "
-                    'aerodynamics.'
-                )
+            if 'solve_alpha' in kwargs:
+                if aviary_inputs.get_val(Settings.VERBOSITY) >= Verbosity.BRIEF:
+                    warnings.warn(
+                        "The 'solve_alpha' flag has been set, but is not used for FLOPS-based "
+                        'aerodynamics.'
+                    )
 
             if method is None:
                 aero_group = ComputedAeroGroup(num_nodes=num_nodes)
 
             elif method == 'computed':
-                aero_group = ComputedAeroGroup(num_nodes=num_nodes, **arguments)
+                aero_group = ComputedAeroGroup(num_nodes=num_nodes, **kwargs)
 
             elif method == 'low_speed':
                 aero_group = TakeoffAeroGroup(
-                    num_nodes=num_nodes, aviary_options=aviary_inputs, **arguments
+                    num_nodes=num_nodes, aviary_options=aviary_inputs, **kwargs
                 )
 
             elif method == 'tabular':
                 aero_group = TabularAeroGroup(
                     num_nodes=num_nodes,
-                    CD0_data=arguments.pop('CD0_data'),
-                    CDI_data=arguments.pop('CDI_data'),
-                    **arguments,
+                    CD0_data=kwargs.pop('CD0_data'),
+                    CDI_data=kwargs.pop('CDI_data'),
+                    **kwargs,
                 )
 
             else:
@@ -167,7 +162,7 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
 
         elif self.code_origin is GASP:
             try:
-                solve_alpha = arguments.pop('solve_alpha')
+                solve_alpha = kwargs.pop('solve_alpha')
             except KeyError:
                 solve_alpha = False
 
@@ -175,27 +170,27 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
                 aero_group = CruiseAero(num_nodes=num_nodes)
 
             elif method == 'cruise':
-                aero_group = CruiseAero(num_nodes=num_nodes, **arguments)
+                aero_group = CruiseAero(num_nodes=num_nodes, **kwargs)
 
             elif method == 'tabular_cruise':
-                # if 'aero_data' in arguments:
+                # if 'aero_data' in kwargs:
                 aero_group = TabularCruiseAero(
                     num_nodes=num_nodes,
-                    aero_data=arguments.pop('aero_data'),
-                    **arguments,
+                    aero_data=kwargs.pop('aero_data'),
+                    **kwargs,
                 )
 
             elif method == 'low_speed':
-                aero_group = LowSpeedAero(num_nodes=num_nodes, **arguments)
+                aero_group = LowSpeedAero(num_nodes=num_nodes, **kwargs)
 
             elif method == 'tabular_low_speed':
                 data_tables = [
-                    key in arguments
+                    key in kwargs
                     for key in ['free_aero_data', 'free_flaps_data', 'free_ground_data']
                 ]
 
                 if all(data_tables):
-                    aero_group = TabularLowSpeedAero(num_nodes=num_nodes, **arguments)
+                    aero_group = TabularLowSpeedAero(num_nodes=num_nodes, **kwargs)
                 # raise error if only some data types are provided (at this point we know
                 # not all are present, now need to see if any were provided at all)
                 elif any(data_tables):
@@ -240,15 +235,14 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
         return aero_group
 
     # TODO DragPolar comp is unfinished and currently does nothing
-    # def build_post_mission(self, aviary_inputs, **kwargs):
+    # def build_post_mission(self, aviary_inputs, phase_info, phase_mission_bus_lengths, **kwargs):
     #     aero_group = DragPolar(aviary_options=aviary_inputs),
 
     #     return aero_group
 
     def mission_inputs(self, **kwargs):
-        arguments = deepcopy(kwargs)
         try:
-            method = arguments.pop('method')
+            method = kwargs.pop('method')
         except KeyError:
             method = None
 
@@ -333,9 +327,8 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
         return promotes
 
     def mission_outputs(self, **kwargs):
-        arguments = deepcopy(kwargs)
         try:
-            method = arguments.pop('method')
+            method = kwargs.pop('method')
         except KeyError:
             method = None
         promotes = ['*']
@@ -418,9 +411,8 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
             - any additional keyword arguments required by OpenMDAO for the fixed
               variable.
         """
-        arguments = deepcopy(kwargs)
         try:
-            method = arguments.pop('method')
+            method = kwargs.pop('method')
         except KeyError:
             method = None
 
@@ -429,7 +421,7 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
 
         num_engine_type = len(aviary_inputs.get_val(Aircraft.Engine.NUM_ENGINES))
         params = {}
-        aero_options = arguments
+        aero_options = kwargs
 
         if self.code_origin is FLOPS:
             # FLOPS default is 'computed'
@@ -572,12 +564,12 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
                 # GASP default is 'cruise'
                 method = 'cruise'
             try:
-                solve_alpha = arguments.pop('solve_alpha')
+                solve_alpha = kwargs.pop('solve_alpha')
             except KeyError:
                 solve_alpha = False
 
             if solve_alpha and 'tabular' in method:
-                aero_data = arguments['aero_data']
+                aero_data = kwargs['aero_data']
 
                 if isinstance(aero_data, NamedValues):
                     altitude = aero_data.get_item('altitude')[0]
@@ -624,7 +616,7 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
             elif method == 'tabular_low_speed':
                 all_vars = AERO_2DOF_TABULAR_LS_INPUTS
             elif method == 'tabular_cruise':
-                all_vars = AERO_2DOF_TABULAR_CLEAN_INPUTS
+                all_vars = TABULAR_CORE_INPUTS
             else:
                 raise ValueError(
                     'GASP-based aero method is not one of the following: (cruise, '
@@ -650,7 +642,7 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
 
         return params
 
-    def get_bus_variables(self):
+    def get_pre_mission_bus_variables(self, aviary_inputs=None):
         if self.code_origin is GASP and not self.tabular:
             return {
                 'interference_independent_of_shielded_area': {
@@ -731,6 +723,8 @@ COMPUTED_CORE_INPUTS = [
 
 TABULAR_CORE_INPUTS = [
     Aircraft.Wing.AREA,
+    Aircraft.Design.SUBSONIC_DRAG_COEFF_FACTOR,
+    Aircraft.Design.SUPERSONIC_DRAG_COEFF_FACTOR,
 ]
 
 # Parameters for low speed aero.
@@ -792,8 +786,6 @@ AERO_2DOF_INPUTS = [
     Aircraft.Wing.VERTICAL_MOUNT_LOCATION,
     Aircraft.Wing.ZERO_LIFT_ANGLE,
 ]
-
-AERO_2DOF_TABULAR_CLEAN_INPUTS = [Aircraft.Wing.AREA]
 
 AERO_2DOF_TABULAR_LS_INPUTS = [Aircraft.Wing.SPAN, Aircraft.Wing.HEIGHT]
 

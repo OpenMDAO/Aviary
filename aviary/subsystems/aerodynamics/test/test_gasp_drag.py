@@ -5,7 +5,7 @@ from copy import deepcopy
 
 from openmdao.utils.assert_utils import assert_near_equal
 
-from aviary.interface.default_phase_info.two_dof import phase_info
+from aviary.models.missions.two_dof_default import phase_info
 from aviary.interface.methods_for_level2 import AviaryProblem
 from aviary.variable_info.variables import Aircraft
 
@@ -13,14 +13,14 @@ from aviary.variable_info.variables import Aircraft
 class TestAeroBuilderGasp(unittest.TestCase):
     def test_parameters(self):
         # This test is to make sure that the aero builder creates a parameter
-        # for wing height. It addreses a bug where this was absent.
+        # for wing height. It addresses a bug where this was absent.
 
         local_phase_info = deepcopy(phase_info)
 
         prob = AviaryProblem()
 
         prob.load_inputs(
-            'models/test_aircraft/aircraft_for_bench_GwGm.csv',
+            'models/aircraft/test_aircraft/aircraft_for_bench_GwGm.csv',
             local_phase_info,
         )
 

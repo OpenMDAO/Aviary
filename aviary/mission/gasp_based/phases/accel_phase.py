@@ -38,7 +38,7 @@ class AccelPhaseOptions(AviaryOptionsDictionary):
         )
 
         self.declare(
-            'target_duration',
+            'time_duration',
             default=None,
             units='s',
             desc='The amount of time taken by this phase added as a constraint.',
@@ -60,7 +60,7 @@ class AccelPhaseOptions(AviaryOptionsDictionary):
         )
 
         self.declare(
-            name='duration_bounds',
+            name='time_duration_bounds',
             default=(None, None),
             units='s',
             desc='Lower and upper bounds on the phase duration, in the form of a nested tuple: '
@@ -68,7 +68,7 @@ class AccelPhaseOptions(AviaryOptionsDictionary):
         )
 
         self.declare(
-            name='duration_ref', default=1.0, units='s', desc='Scale factor ref for duration.'
+            name='time_duration_ref', default=1.0, units='s', desc='Scale factor ref for duration.'
         )
 
         self.declare(

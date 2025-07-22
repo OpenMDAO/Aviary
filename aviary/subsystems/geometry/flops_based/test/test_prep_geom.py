@@ -43,7 +43,7 @@ unit_data_sets = get_flops_case_names(
 )
 wetted_area_overide = get_flops_case_names(
     only=[
-        'N3CC',
+        'AdvancedSingleAisle',
         'LargeSingleAisle2FLOPS',
         'LargeSingleAisle2FLOPSdw',
         'LargeSingleAisle2FLOPSalt',

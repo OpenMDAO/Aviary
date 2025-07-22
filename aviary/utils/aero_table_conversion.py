@@ -31,8 +31,10 @@ allowed_headers = {
     'del_cd': 'Delta CD',
 }
 
+outputs = ['CL', 'CL', 'CD', 'Hob', 'Delta CL', 'Delta CD']
 
-def AeroDataConverter(input_file=None, output_file=None, data_format=None):
+
+def convert_aero_table(input_file=None, output_file=None, data_format=None):
     """This is a utility class to convert a legacy aero data file to Aviary format.
     There are two options for the legacy aero data file format: FLOPS and GASP.
     As an Aviary command, the usage is:
@@ -51,8 +53,7 @@ def AeroDataConverter(input_file=None, output_file=None, data_format=None):
             # '_aviary' appended to filename
             path = data_file.parents[0]
             name = data_file.stem
-            suffix = data_file.suffix
-            output_file = path / (name + '_aviary' + suffix)
+            output_file = path / (name + '_aviary.csv')
         elif data_format is CodeOrigin.FLOPS:
             # Default output file name is same location and name as input file, with
             # '_aviary' appended to filename
@@ -69,7 +70,7 @@ def AeroDataConverter(input_file=None, output_file=None, data_format=None):
         data, comments = _load_gasp_aero_table(data_file)
         comments = [stamp] + comments
 
-        write_data_file(output_file, data, comments, include_timestamp=True)
+        write_data_file(output_file, data, outputs, comments, include_timestamp=True)
     elif data_format is CodeOrigin.FLOPS:
         if type(output_file) is not list:
             # if only one filename is given, split into two
@@ -274,7 +275,7 @@ def _setup_ATC_parser(parser):
 
 
 def _exec_ATC(args, user_args):
-    AeroDataConverter(
+    convert_aero_table(
         input_file=args.input_file, output_file=args.output_file, data_format=args.data_format
     )
 

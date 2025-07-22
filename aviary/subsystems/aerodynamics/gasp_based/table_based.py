@@ -4,6 +4,7 @@ import numpy as np
 import openmdao.api as om
 
 from aviary.constants import GRAV_ENGLISH_LBM
+from aviary.subsystems.aerodynamics.flops_based.drag import ScaledCD
 from aviary.subsystems.aerodynamics.gasp_based.common import AeroForces, TimeRamp
 from aviary.utils.csv_data_file import read_data_file
 from aviary.utils.data_interpolator_builder import build_data_interpolator
@@ -94,8 +95,11 @@ class TabularCruiseAero(om.Group):
                 Dynamic.Vehicle.ANGLE_OF_ATTACK,
             ]
             + extra_promotes,
-            promotes_outputs=[('lift_coefficient', 'CL'), ('drag_coefficient', 'CD')],
+            promotes_outputs=[('lift_coefficient', 'CL'), ('drag_coefficient', 'CD_prescaled')],
         )
+
+        #
+        self.add_subsystem('simple_CD', ScaledCD(num_nodes=nn), promotes=['*'])
 
         self.add_subsystem('forces', AeroForces(num_nodes=nn), promotes=['*'])
 
@@ -450,7 +454,7 @@ def _build_free_aero_interp(
     if isinstance(aero_data, str):
         aero_data = get_path(aero_data)
     if isinstance(aero_data, Path):
-        aero_data = read_data_file(aero_data, aliases=aliases)
+        aero_data, _, _ = read_data_file(aero_data, aliases=aliases)
 
     # aero_data is modified in-place, deepcopy required
     interp_data = aero_data.deepcopy()
@@ -537,7 +541,7 @@ def _build_flaps_aero_interp(
     if isinstance(aero_data, str):
         aero_data = get_path(aero_data)
     if isinstance(aero_data, Path):
-        aero_data = read_data_file(aero_data, aliases=aliases)
+        aero_data, _, _ = read_data_file(aero_data, aliases=aliases)
 
     # aero_data is modified in-place, deepcopy required
     interp_data = aero_data.deepcopy()
@@ -606,7 +610,7 @@ def _build_ground_aero_interp(
     if isinstance(aero_data, str):
         aero_data = get_path(aero_data)
     if isinstance(aero_data, Path):
-        aero_data = read_data_file(aero_data, aliases=aliases)
+        aero_data, _, _ = read_data_file(aero_data, aliases=aliases)
 
     # aero_data is modified in-place, deepcopy required
     interp_data = aero_data.deepcopy()

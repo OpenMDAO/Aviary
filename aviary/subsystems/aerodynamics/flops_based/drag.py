@@ -6,9 +6,9 @@ from aviary.variable_info.variable_meta_data import _MetaData as _meta_data
 from aviary.variable_info.variables import Aircraft, Dynamic
 
 
-class SimpleCD(om.ExplicitComponent):
+class ScaledCD(om.ExplicitComponent):
     """
-    Apply the final drag coefficent factors to the unscaled drag.
+    Apply the final drag coefficient factors to the unscaled drag.
 
     These optional factors (default: 1.0) increase or decrease the drag
     coefficient before calculating drag.
@@ -143,11 +143,11 @@ class TotalDrag(om.Group):
     Apply an optional factor (default: 1.0) for increasing or decreasing the lift-
     independent drag coefficient before calculating the total drag coefficient.
 
-    Note, the lift-dependent drag coefficient includes contirbutions from the pressure
+    Note, the lift-dependent drag coefficient includes contributions from the pressure
     drag coefficient.
 
     Apply optional factors (default: 1.0) for increasing or decreasing the total drag
-    coefficient before calculating drag. The effect is cummulative with the above
+    coefficient before calculating drag. The effect is cumulative with the above
     optional factors.
     """
 
@@ -188,5 +188,5 @@ class TotalDrag(om.Group):
         )
         total_drag_comp.declare_coloring(show_summary=False)
 
-        self.add_subsystem('simple_CD', SimpleCD(num_nodes=nn), promotes=['*'])
+        self.add_subsystem('simple_CD', ScaledCD(num_nodes=nn), promotes=['*'])
         self.add_subsystem('simple_drag', SimpleDrag(num_nodes=nn), promotes=['*'])
