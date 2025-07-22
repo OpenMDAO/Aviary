@@ -13,11 +13,36 @@ from aviary.variable_info.variables import Dynamic
 class ClimbPhaseOptions(AviaryOptionsDictionary):
     def declare_options(self):
         self.declare(
-            'analytic',
-            types=bool,
-            default=False,
-            desc='When set to True, this is an analytic phase.',
+            name='num_segments',
+            types=int,
+            default=None,
+            desc='The number of segments in transcription creation in Dymos. ',
         )
+
+        self.declare(
+            name='order',
+            types=int,
+            default=None,
+            desc='The order of polynomials for interpolation in the transcription '
+            'created in Dymos.',
+        )
+
+        defaults = {
+            'mass_bounds': (0.0, None),
+        }
+        self.add_state_options('mass', units='lbm', defaults=defaults)
+
+        defaults = {
+            'distance_bounds': (0.0, None),
+        }
+        self.add_state_options('distance', units='NM', defaults=defaults)
+
+        defaults = {
+            'altitude_bounds': (0.0, None),
+        }
+        self.add_state_options('altitude', units='ft', defaults=defaults)
+
+        self.add_time_options(units='s')
 
         self.declare(
             'reserve',
@@ -38,18 +63,22 @@ class ClimbPhaseOptions(AviaryOptionsDictionary):
         )
 
         self.declare(
-            'time_duration',
+            name='required_available_climb_rate',
             default=None,
-            units='s',
-            desc='The amount of time taken by this phase added as a constraint.',
+            units='ft/min',
+            desc='Adds a constraint requiring Dynamic.Mission.ALTITUDE_RATE_MAX to be no '
+            'smaller than required_available_climb_rate. This helps to ensure that the '
+            'propulsion system is large enough to handle emergency maneuvers at all points '
+            'throughout the flight envelope. Default value is None for no constraint.',
         )
 
+        # The options below have not yet been revamped.
+
         self.declare(
-            name='fix_initial',
+            'analytic',
             types=bool,
             default=False,
-            desc='Fixes the initial states (mass, distance) and does not allow them to '
-            'change during the optimization.',
+            desc='When set to True, this is an analytic phase.',
         )
 
         self.declare(
@@ -72,109 +101,6 @@ class ClimbPhaseOptions(AviaryOptionsDictionary):
             default=False,
             desc='Set to true to enforce a mach_constraint at the phase endpoint. '
             'The mach value is set in "mach_cruise".',
-        )
-
-        self.declare(
-            name='altitude_final',
-            default=0.0,
-            units='ft',
-            desc='Altitude for final point in the phase.',
-        )
-
-        self.declare(
-            name='required_available_climb_rate',
-            default=None,
-            units='ft/min',
-            desc='Adds a constraint requiring Dynamic.Mission.ALTITUDE_RATE_MAX to be no '
-            'smaller than required_available_climb_rate. This helps to ensure that the '
-            'propulsion system is large enough to handle emergency maneuvers at all points '
-            'throughout the flight envelope. Default value is None for no constraint.',
-        )
-
-        self.declare(
-            name='time_duration_bounds',
-            default=(0, 0),
-            units='s',
-            desc='Lower and upper bounds on the phase duration, in the form of a nested tuple: '
-            'i.e. ((20, 36), "min") This constrains the duration to be between 20 and 36 min.',
-        )
-
-        self.declare(
-            name='time_duration_ref', default=1.0, units='s', desc='Scale factor ref for duration.'
-        )
-
-        self.declare(
-            name='alt_lower', types=tuple, default=0.0, units='ft', desc='Lower bound for altitude.'
-        )
-
-        self.declare(name='alt_upper', default=0.0, units='ft', desc='Upper bound for altitude.')
-
-        self.declare(name='alt_ref', default=1.0, units='ft', desc='Scale factor ref for altitude.')
-
-        self.declare(
-            name='alt_ref0', default=0.0, units='ft', desc='Scale factor ref0 for altitude.'
-        )
-
-        self.declare(
-            name='alt_defect_ref',
-            default=None,
-            units='ft',
-            desc='Scale factor ref for altitude defect.',
-        )
-
-        self.declare(
-            name='mass_lower', types=tuple, default=0.0, units='lbm', desc='Lower bound for mass.'
-        )
-
-        self.declare(name='mass_upper', default=0.0, units='lbm', desc='Upper bound for mass.')
-
-        self.declare(name='mass_ref', default=1.0, units='lbm', desc='Scale factor ref for mass.')
-
-        self.declare(name='mass_ref0', default=0.0, units='lbm', desc='Scale factor ref0 for mass.')
-
-        self.declare(
-            name='mass_defect_ref',
-            default=None,
-            units='lbm',
-            desc='Scale factor ref for mass defect.',
-        )
-
-        self.declare(
-            name='distance_lower', default=0.0, units='NM', desc='Lower bound for distance.'
-        )
-
-        self.declare(
-            name='distance_upper', default=0.0, units='NM', desc='Upper bound for distance.'
-        )
-
-        self.declare(
-            name='distance_ref', default=1.0, units='NM', desc='Scale factor ref for distance.'
-        )
-
-        self.declare(
-            name='distance_ref0', default=0.0, units='NM', desc='Scale factor ref0 for distance.'
-        )
-
-        self.declare(
-            name='distance_defect_ref',
-            default=None,
-            units='NM',
-            desc='Scale factor ref for distance defect.',
-        )
-
-        self.declare(
-            name='num_segments',
-            types=int,
-            default=None,
-            desc='The number of segments in transcription creation in Dymos. ',
-        )
-
-        self.declare(
-            name='order',
-            types=int,
-            default=None,
-            desc='The order of polynomials for interpolation in the transcription '
-            'created in Dymos.',
         )
 
 
@@ -229,20 +155,13 @@ class ClimbPhase(PhaseBuilderBase):
         )
 
         # States
-        self.add_altitude_state(user_options)
-
-        self.add_mass_state(user_options)
-
-        self.add_distance_state(user_options)
-
-        # Boundary Constraints
-        phase.add_boundary_constraint(
-            Dynamic.Mission.ALTITUDE,
-            loc='final',
-            equals=altitude_final,
-            units='ft',
-            ref=altitude_final,
+        self.add_state('altitude', Dynamic.Mission.ALTITUDE, Dynamic.Mission.ALTITUDE_RATE)
+        self.add_state(
+            'mass',
+            Dynamic.Vehicle.MASS,
+            Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
         )
+        self.add_state('distance', Dynamic.Mission.DISTANCE, Dynamic.Mission.DISTANCE_RATE)
 
         if required_available_climb_rate is not None:
             # TODO: this should be altitude rate max
