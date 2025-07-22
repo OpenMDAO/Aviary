@@ -13,7 +13,7 @@ aircraft:controls:stability_augmentation_system_mass,0,lbm
 aircraft:controls:stability_augmentation_system_mass_scaler,1,unitless
 aircraft:crew_and_payload:cargo_mass,15000,lbm
 aircraft:crew_and_payload:catering_items_mass_per_passenger,5,lbm
-aircraft:crew_and_payload:design:cargo_mass,15000,lbm
+aircraft:crew_and_payload:design:cargo_mass,0.0,lbm
 aircraft:crew_and_payload:design:max_cargo_mass,15000,lbm
 aircraft:crew_and_payload:design:num_business_class,0,unitless
 aircraft:crew_and_payload:design:num_first_class,11,unitless

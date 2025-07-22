@@ -3177,8 +3177,8 @@ class BWBMassSummationTestCase(unittest.TestCase):
         # prob.model.set_input_defaults(
         #    Aircraft.Fuel.UNUSABLE_FUEL_MASS_COEFFICIENT, 12.0, units='unitless'
         # )
-        prob.model.set_input_defaults(Aircraft.CrewPayload.CARGO_MASS, 0, units='lbm')
-        prob.model.set_input_defaults(Aircraft.CrewPayload.Design.CARGO_MASS, 15000.0, units='lbm')
+        prob.model.set_input_defaults(Aircraft.CrewPayload.CARGO_MASS, 0.0, units='lbm')
+        prob.model.set_input_defaults(Aircraft.CrewPayload.Design.CARGO_MASS, 0.0, units='lbm')
         prob.model.set_input_defaults(
             Aircraft.CrewPayload.Design.MAX_CARGO_MASS, 15000.0, units='lbm'
         )
@@ -3364,7 +3364,7 @@ class BWBMassSummationTestCase(unittest.TestCase):
         prob = self.prob
         prob.run_model()
 
-        tol = 5e-4
+        tol = 1e-5
 
         # outputs from SizeGroup
         assert_near_equal(prob[Aircraft.Fuselage.AVG_DIAMETER], 38, tol)
@@ -3404,63 +3404,56 @@ class BWBMassSummationTestCase(unittest.TestCase):
         assert_near_equal(prob['c_strut_braced'], 1, tol)
         assert_near_equal(prob['c_gear_loc'], 0.95, tol)
         assert_near_equal(prob[Aircraft.Engine.POSITION_FACTOR], 1.05, tol)
-        assert_near_equal(prob['half_sweep'], 0.47984874, tol)  # SWC2 = 0.479839474
+        assert_near_equal(prob['half_sweep'], 0.47984874, tol)
         assert_near_equal(prob[Aircraft.CrewPayload.PASSENGER_PAYLOAD_MASS], 33750.0, tol)
-        assert_near_equal(prob['payload_mass_des'], 48750.0, tol)
+        assert_near_equal(prob['payload_mass_des'], 33750.0, tol)
         assert_near_equal(prob['payload_mass_max'], 48750, tol)
         assert_near_equal(prob[Aircraft.HorizontalTail.MASS], 1.02401953, tol)
         assert_near_equal(prob[Aircraft.VerticalTail.MASS], 864.17404177, tol)
         assert_near_equal(prob[Aircraft.Wing.HIGH_LIFT_MASS], 971.82476285, tol)
         assert_near_equal(prob[Aircraft.Controls.TOTAL_MASS], 2114.98159054, tol)
         assert_near_equal(prob[Aircraft.Propulsion.TOTAL_ENGINE_MASS], 7005.15475443, tol)
-        assert_near_equal(prob[Aircraft.Nacelle.MASS], 303.61439936, tol)  # WNAC = 514.9
-        assert_near_equal(
-            prob[Aircraft.Propulsion.TOTAL_ENGINE_POD_MASS], 1686.626, tol
-        )  # WPES = 2153
+        assert_near_equal(prob[Aircraft.Nacelle.MASS], 303.61439936, tol)
+        assert_near_equal(prob[Aircraft.Propulsion.TOTAL_ENGINE_POD_MASS], 1686.626, tol)
         assert_near_equal(prob[Aircraft.Engine.ADDITIONAL_MASS], 153.16770871, tol)
         assert_near_equal(prob[Aircraft.Engine.POSITION_FACTOR], 1.05, tol)
         assert_near_equal(prob[Aircraft.Design.FIXED_EQUIPMENT_MASS], 20876.477, tol)
-        assert_near_equal(
-            prob[Aircraft.Design.FIXED_USEFUL_LOAD], 5971.79463002, tol
-        )  # WFUL = 5775.
+        assert_near_equal(prob[Aircraft.Design.FIXED_USEFUL_LOAD], 5971.79463002, tol)
         assert_near_equal(prob[Aircraft.Wing.SURFACE_CONTROL_MASS], 1986.25111783, tol)
 
         # BWBWingMassGroup
-        assert_near_equal(prob[Aircraft.Wing.MASS], 6959.72619224, tol)  # WW = 7645.
+        assert_near_equal(prob[Aircraft.Wing.MASS], 6959.72619224, tol)
         assert_near_equal(prob[Aircraft.Strut.MASS], 0, tol)
         assert_near_equal(prob[Aircraft.Wing.FOLD_MASS], 107.83351322, tol)
 
         # FuelMassGroup
         # FuelSysAndFullFuselageMass
-        assert_near_equal(prob[Aircraft.Fuel.FUEL_SYSTEM_MASS], 760.15513516, tol)
-        assert_near_equal(prob['fus_mass_full'], 123295.985, tol)
+        assert_near_equal(prob[Aircraft.Fuel.FUEL_SYSTEM_MASS], 1316.24565033, tol)
+        assert_near_equal(prob['fus_mass_full'], 131150.22491506, tol)
         # BWBFuselageMass
-        assert_near_equal(prob[Aircraft.Fuselage.MASS], 27159.69841266, tol)
+        assert_near_equal(prob[Aircraft.Fuselage.MASS], 27159.28655493, tol)
         # StructMass
         assert_near_equal(prob[Aircraft.Design.STRUCTURE_MASS], 44470.83642382, tol)
         # FuelMass
-        assert_near_equal(prob[Mission.Design.FUEL_MASS], 19744.28922504, tol)
-        assert_near_equal(prob[Aircraft.Propulsion.MASS], 8071.64530701, tol)
-        assert_near_equal(prob[Mission.Design.FUEL_MASS_REQUIRED], 19744.28922504, tol)
-        assert_near_equal(prob['fuel_mass_min'], 19744.28922504, tol)
+        assert_near_equal(prob[Mission.Design.FUEL_MASS], 34188.19870988, tol)
+        assert_near_equal(prob[Aircraft.Propulsion.MASS], 8627.73582218, tol)
+        assert_near_equal(prob[Mission.Design.FUEL_MASS_REQUIRED], 34188.19870988, tol)
+        assert_near_equal(prob['fuel_mass_min'], 19188.19870988, tol)
         # FuelAndOEMOutputs
-        assert_near_equal(prob['OEM_wingfuel_mass'], 68494.28922504, tol)
-        assert_near_equal(prob['OEM_fuel_vol'], 1369.27661726, tol)
-        assert_near_equal(prob['payload_mass_max_fuel'], 48750.0, tol)
+        assert_near_equal(prob['OEM_wingfuel_mass'], 67938.19870988, tol)
+        assert_near_equal(prob['OEM_fuel_vol'], 1358.15975265, tol)
+        assert_near_equal(prob['payload_mass_max_fuel'], 29870.67005382, tol)
         assert_near_equal(prob['volume_wingfuel_mass'], 30308.8688, tol)
         assert_near_equal(prob['max_wingfuel_mass'], 30308.86876369, tol)
-        assert_near_equal(prob[Aircraft.Fuel.WING_VOLUME_DESIGN], 434.18120332, tol)
-        assert_near_equal(prob[Aircraft.Design.OPERATING_MASS], 81505.71077496, tol)
+        assert_near_equal(prob[Aircraft.Fuel.WING_VOLUME_DESIGN], 751.80590631, tol)
+        assert_near_equal(prob[Aircraft.Design.OPERATING_MASS], 82061.80129012, tol)
         # BodyTankCalculations
-        assert_near_equal(prob[Aircraft.Fuel.AUXILIARY_FUEL_CAPACITY], 0.0, tol)
-        assert_near_equal(prob[Aircraft.Fuel.TOTAL_CAPACITY], 19744.28922504, tol)
-        assert_near_equal(prob['extra_fuel_volume'], 0.0, tol)
-        assert_near_equal(prob['max_extra_fuel_mass'], 0.0, tol)
-        assert_near_equal(prob['wingfuel_mass_min'], 19744.28922504, tol)
+        assert_near_equal(prob[Aircraft.Fuel.AUXILIARY_FUEL_CAPACITY], 3879.32994618, tol)
+        assert_near_equal(prob[Aircraft.Fuel.TOTAL_CAPACITY], 38067.52865606, tol)
+        assert_near_equal(prob['extra_fuel_volume'], 145.89808883, tol)
+        assert_near_equal(prob['max_extra_fuel_mass'], 7298.14981717, tol)
+        assert_near_equal(prob['wingfuel_mass_min'], 11890.0488927, tol)
 
 
 if __name__ == '__main__':
-    # unittest.main()
-    test = BWBMassSummationTestCase()
-    test.setUp()
-    test.test_case1()
+    unittest.main()
