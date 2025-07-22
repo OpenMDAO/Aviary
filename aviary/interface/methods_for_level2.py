@@ -627,50 +627,38 @@ class AviaryProblem(om.Problem):
         design_range_max = np.max(design_range)
         self.set_val(range, val=design_range_max, units='nmi')
 
-    def add_multi_obj_2(self, *args, output_weights:list[float] = None, mission_weights:list[float] = None, ref=1.0):
-        # Acceptible Inputs
-        # prob.add_objetive(Mission.Summary.FUEL_BURNED, ref=)
-
-        # prob.add_objetive(('model1',Mission.Summary.FUEL_BURNED), ref=)
-
-        # prob.add_objetive(Mission.Summary.FUEL_BURNED, Mission.Summary.CO2, ref=)
-
-        # prob.add_objetive((Mission.Summary.FUEL_BURNED, 1.0), (Mission.Summary.CO2, 2.0) ref=)
-
-        # prob.add_objetive(Mission.Summary.FUEL_BURNED, Mission.Summary.CO2, output_weights=[1,2], ref=)
-
-        # prob.add_objetive(('model1',Mission.Summary.FUEL_BURNED), ('model2', Mission.Summary.CO2), ref=)
-
-        # prob.add_objetive(('model1',Mission.Summary.FUEL_BURNED, 1.0), ('model2', Mission.Summary.CO2, 2.0), ref=)
-
-        # prob.add_objetive(('model1',Mission.Summary.FUEL_BURNED), ('model2', Mission.Summary.CO2), output_weights=[], ref=)
-
-        # prob.add_objetive(('model1',Mission.Summary.FUEL_BURNED), ('model2', Mission.Summary.CO2), output_weights=, mission_weights=, ref=)
-
-        # prob.add_objetive(('model1',Mission.Summary.FUEL_BURNED), ('model2', Mission.Summary.CO2), ('model1', Mission.Summary.CO2), output_weights=, mission_weights=, ref=)
-
-        # Setup mission and output lengths if they are not already given
-        if mission_weights is None:
-            mission_weights = np.ones(len(args))
-
-        if output_weights is None:
-            output_weights = np.ones(len(args))
-
-        # Check length of inputs to make sure we have the same sizes
-        if len(args) != len(output_weights):
-            raise ValueError(f"output_weights is {output_weights} is not the same length as {args}.")
-        elif len(args) != len(mission_weights):
-            raise ValueError(f"mission_weights is {mission_weights} is not the same length as {args}.")
+    def add_composite_objective(self, *args, ref:float=None):
+        """
+        Parameters
+        ----------
+        *args : a list of 3-tuple, 2-tuple, str. Or it can be left empty
+            if left empty, information will be populated based on problem_type
+            Example inputs can be any of the following:
+            ('fuel')
+            (Mission.Summary.FUEL_BURNED)
+            (Mission.Summary.FUEL_BURNED, Mission.Summary.CO2)
+            ('model1',Mission.Summary.FUEL_BURNED)
+            ('Mission.Summary.FUEL_BURNED, 1.0)
+            (Mission.Summary.FUEL_BURNED, 1.0), (Mission.Summary.CO2, 2.0)
+            ('model1',Mission.Summary.FUEL_BURNED), ('model2', Mission.Summary.CO2)
+            ('model1',Mission.Summary.FUEL_BURNED, 1.0), ('model2', Mission.Summary.CO2, 2.0)
         
+        ref : float, optional
+            Reference value for the final objective. Passed to `add_objective()` for scaling.
 
-        
+        Behavior
+        --------
+        - Connects each specified mission output into a newly created `ExecComp` block.
+        - Computes a weighted sum: each output is weighted by both the total weights 
+        - Adds the result as the final objective named `'composite'`, accessible at the top level model.
+        """
 
-        
-
+        # There are LOTS of different ways for the users to input str, 2-tuple, or 3-tuple into *args
+        # Correct combinations are (output), (output, weight), (model, output), or (model, output, weight).
+        # We have to catch every case and advise the user on how to corect their errors and add defaults as needed.
         default_model = 'model'
         default_weight = 1.0
         objectives = []
-
         for arg in args:
             if isinstance(arg, tuple) and len(arg) == 3:
                 model, output, weight = arg
@@ -704,11 +692,21 @@ class AviaryProblem(om.Problem):
                 else:
                     # we have an output and we use the default model and weights
                     model, output, weight = default_model, arg, default_weight
+
+            # in some cases the users provides no input and we can derive the objectie from the problem type:
+            elif self.model.problem_type is ProblemType.SIZING:
+                    model, output, weight = default_model, Mission.Objectives.FUEL, default_weight
+            elif self.model.problem_type is ProblemType.ALTERNATE:
+                    model, output, weight = default_model, Mission.Objectives.FUEL, default_weight
+            elif self.model.problem_type is ProblemType.FALLOUT:
+                model, output, weight = default_model, Mission.Objectives.RANGE, default_weight
             else:
                 raise ValueError(
                     f"Unrecognized objective format: {arg}. "
                     f"Each argument must be one of the following: "
                     f"(output), (output, weight), (model, output), or (model, output, weight)."
+                    f"Outputs can be from the variable meta data, or can be: fuel_burned, fuel"
+                    f"Or problem type must be set to SIZING, ALTERNATE, or FALLOUT"
                 )
             objectives.append((model, output, weight))
             # objectives = [
@@ -717,8 +715,55 @@ class AviaryProblem(om.Problem):
                 #  ...
                 # ]
 
+        # Dictionary for default reference values
+        default_ref_values = {
+            'mass': -5e4,
+            'hybrid_objective': -5e4,
+            'fuel_burned': 1e4,
+            'fuel': 1e4,
+        }
 
-    def add_multimission_objetive(self, missions:list[str], outputs:list[str], mission_weights:list[float] = None, output_weights:list[float] = None, ref:float = 1.0):
+        # Now checkout the output and see if we have recognizable strings and replace them with the variable meta data name
+        for model, output, weight in objectives:
+            if output == 'fuel_burned':
+                output = Mission.Summary.FUEL_BURNED
+                if len(args) == 1 and ref == None:
+                    # set a default ref
+                    ref = default_ref_values['fuel_burned']
+            elif output == 'fuel':
+                output = Mission.Objectives.FUEL
+                if len(args) == 1 and ref == None:
+                    # set a default ref
+                    ref = default_ref_values['fuel']
+            else:
+                pass
+            # TODO add output = 'time', 'mass'
+
+        # Create the calculation string for the ExecComp() and the promotion reference values
+        weighted_exprs = []
+        connection_names = []
+        total_weight = sum(weight for _, _, weight in objectives)
+        for model, output, weight in objectives:
+            weighted_exprs.append(f'{model}_{output}*{weight}/{total_weight}') # we use "_" here because ExecComp() cannot intake "."
+            connection_names.append([f'composite_objective.{model}_{output}', f'{model}.{output}'])
+        final_expr = ' + '.join(weighted_exprs)    
+        # weighted_str looks like:  'model1_fuelburn*0.67*0.5 + model1_gross_mass*0.33*0.5 + model2_fuelburn*0.67*0.5 + model2_gross_mass*0.33*0.5'
+            
+        # adding composite execComp to super problem
+        self.model.add_subsystem(
+            'composite_objective',
+            om.ExecComp('composite = ' + final_expr, has_diag_partials=True),
+            promotes_outputs=['composite'],
+        )
+
+        # connect from inside of the models to the composite objective
+        for target, source in connection_names:
+            self.model.connect(target, source)
+        # finally add the objective
+        self.model.add_objective('composite', ref=ref)
+
+
+    def add_composite_objetive_adv(self, missions:list[str], outputs:list[str], mission_weights:list[float] = None, output_weights:list[float] = None, ref:float = 1.0):
         """
         Adds a composite objective function to the OpenMDAO problem by aggregating 
         output values across multiple mission models, with independent weighting 
@@ -749,7 +794,7 @@ class AviaryProblem(om.Problem):
         - Connects each specified mission output into a newly created `ExecComp` block.
         - Computes a weighted sum: each output is weighted by both its output weight
         and the weight of the mission it came from.
-        - Adds the result as the final objective named `'compound'`, accessible at the top level model.
+        - Adds the result as the final objective named `'composite'`, accessible at the top level model.
         """
 
         # Setup mission and output lengths if they are not already given
@@ -776,22 +821,22 @@ class AviaryProblem(om.Problem):
         mission_weights = [float(weight / sum(mission_weights)) for weight in mission_weights]
         for mission, mission_weight in zip(missions, mission_weights):
             for output, output_weight in zip(outputs, output_weights):
-                connection_names.append([f'compound_objective.{mission}_{output}', f'{mission}.{output}'])
+                connection_names.append([f'composite_objective.{mission}_{output}', f'{mission}.{output}'])
                 weighted_exprs.append(f'{mission}_{output}*{output_weight}*{mission_weight}')
         final_expr = ' + '.join(weighted_exprs)
         # weighted_str looks like:  'model1.fuelburn*0.67*0.5 + model1.gross_mass*0.33*0.5 + model2.fuelburn*0.67*0.5 + model2.gross_mass*0.33*0.5'
 
-        # adding compound execComp to super problem
+        # adding composite execComp to super problem
         self.model.add_subsystem(
-            'compound_objective',
-            om.ExecComp('compound = ' + final_expr, has_diag_partials=True),
-            promotes_outputs=['compound'],
+            'composite_objective',
+            om.ExecComp('composite = ' + final_expr, has_diag_partials=True),
+            promotes_outputs=['composite'],
         )
-        # connect from inside of the models to the compound objective
+        # connect from inside of the models to the composite objective
         for target, source in connection_names:
             self.model.connect(target, source)
         # finally add the objective
-        self.model.add_objective('compound', ref=ref)
+        self.model.add_objective('composite', ref=ref)
 
     def build_model(self, verbosity=None):
         """
