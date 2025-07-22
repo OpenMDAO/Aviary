@@ -6,7 +6,7 @@ from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 from parameterized import parameterized
 
 from aviary.subsystems.aerodynamics.flops_based.computed_aero_group import ComputedDrag
-from aviary.subsystems.aerodynamics.flops_based.drag import SimpleCD, SimpleDrag, TotalDrag
+from aviary.subsystems.aerodynamics.flops_based.drag import ScaledCD, SimpleDrag, TotalDrag
 from aviary.utils.aviary_values import AviaryValues
 from aviary.validation_cases.validation_tests import (
     get_flops_case_names,
@@ -59,7 +59,7 @@ class SimpleDragTest(unittest.TestCase):
         q, _ = mission_data.get_item(Dynamic.Atmosphere.DYNAMIC_PRESSURE)
         nn = len(q)
         model.add_subsystem('simple_drag', SimpleDrag(num_nodes=nn), promotes=['*'])
-        model.add_subsystem('simple_cd', SimpleCD(num_nodes=nn), promotes=['*'])
+        model.add_subsystem('simple_cd', ScaledCD(num_nodes=nn), promotes=['*'])
 
         prob.setup(force_alloc_complex=True)
 
