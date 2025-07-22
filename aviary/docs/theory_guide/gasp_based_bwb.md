@@ -35,14 +35,16 @@
 | ------- | ------- | ------- | -------- | ------------- |
 | Aircraft.Design.FIXED_USEFUL_LOAD | 5972 | WFUL | 5775 | different unit weight of pilots and attendents |
 | Aircraft.Wing.HIGH_LIFT_MASS | 972 | WHLDEV | 974 | In GASP, wing loading is a variable, but in Aviary, it is a constant |
-| Aircraft.Fuel.FUEL_SYSTEM_MASS | 760 | WFSS | 1281 | the mass in GASP is computed after engine sizing. |
+| Aircraft.Fuel.FUEL_SYSTEM_MASS | 1316 | WFSS | 1281 | the mass in GASP is computed after engine sizing. |
 | Aircraft.Design.STRUCTURE_MASS | 44471 | WST | 45623 | the mass in GASP is computed after engine sizing. |
-| Mission.Design.FUEL_MASS | 19744 | WFADES | 33268 | BodyTank algorithm is different and the mass in GASP is computed after engine sizing. |
-| Aircraft.Propulsion.MASS | 8072 | WP | 8592 | the mass in GASP is computed after engine sizing. |
-| Aircraft.Fuel.TOTAL_CAPACITY | 19744 | WFAMAX | 33268 | BodyTank algorithm is different and the mass in GASP is computed after engine sizing. |
+| Mission.Design.FUEL_MASS | 34188 | WFADES | 33268 | The mass in GASP is computed after engine sizing. |
+| Aircraft.Propulsion.MASS | 8628 | WP | 8592 | the mass in GASP is computed after engine sizing. |
+| Aircraft.Fuel.TOTAL_CAPACITY | 38068 | WFAMAX | 33268 | The mass in GASP is computed after engine sizing. |
+| Aircraft.Propulsion.TOTAL_ENGINE_POD_MASS | 1687 | WPES | the mass in GASP is computed after engine sizing. |
+| Mission.Design.FUEL_MASS_REQUIRED | 34188 | WFAREQ | 36595 | Aviary does not include margin. |
 | | | | |
 
-Because most of the variables match pretty well. We show those with significant differences. As we see, the fuel related masses are quite different from GASP. This is mainly due to the fact that GASP computes the fuel masses after engine sizing.
+Because most of the variables match pretty well. We show those with significant differences. As we see, most differences are due to the fact that GASP computes the fuel masses after engine sizing.
 
 ## BWB aerodynamics
 
