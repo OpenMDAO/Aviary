@@ -2,9 +2,8 @@ import numpy as np
 
 from aviary.mission.gasp_based.ode.ascent_eom import AscentEOM
 from aviary.mission.gasp_based.ode.params import ParamPort
-from aviary.mission.gasp_based.ode.time_integration_base_classes import add_SGM_required_inputs
 from aviary.mission.gasp_based.ode.two_dof_ode import TwoDOFODE
-from aviary.variable_info.enums import AlphaModes, AnalysisScheme
+from aviary.variable_info.enums import AlphaModes
 from aviary.variable_info.variables import Aircraft, Dynamic
 
 
@@ -23,24 +22,9 @@ class AscentODE(TwoDOFODE):
     def setup(self):
         nn = self.options['num_nodes']
         alpha_mode = self.options['alpha_mode']
-        analysis_scheme = self.options['analysis_scheme']
 
         # TODO: paramport
         ascent_params = ParamPort()
-        if analysis_scheme is AnalysisScheme.SHOOTING:
-            add_SGM_required_inputs(
-                self,
-                {
-                    Dynamic.Mission.ALTITUDE: {'units': 'ft'},
-                    Dynamic.Mission.DISTANCE: {'units': 'ft'},
-                },
-            )
-
-            ascent_params.add_params(
-                {
-                    Aircraft.Design.MAX_FUSELAGE_PITCH_ANGLE: dict(units='deg', val=0),
-                }
-            )
         self.add_subsystem('params', ascent_params, promotes=['*'])
 
         self.add_atmosphere()
