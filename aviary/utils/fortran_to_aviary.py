@@ -700,6 +700,10 @@ def update_flops_options(vehicle_data):
             )
             input_values.set_val(Aircraft.Propulsion.MISC_MASS_SCALER, [0.0])
 
+    # Set detailed wing flag if model supports it
+    if Aircraft.Wing.INPUT_STATION_DIST in input_values:
+        input_values.set_val(Aircraft.Wing.USE_DETAILED_MASS, [True])
+
     vehicle_data['input_values'] = input_values
     return vehicle_data
 

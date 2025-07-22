@@ -53,14 +53,6 @@ class CruisePhaseOptions(AviaryOptionsDictionary):
         )
 
         self.declare(
-            name='fix_duration',
-            types=bool,
-            default=False,
-            desc='If True, the time duration of the phase is not treated as a design '
-            'variable for the optimization problem.',
-        )
-
-        self.declare(
             'time_initial_bounds',
             types=tuple,
             default=(0.0, 100.0),

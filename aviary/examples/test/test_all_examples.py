@@ -16,9 +16,8 @@ from parameterized import parameterized
 # TODO: Address any issue that requires a skip.
 SKIP_EXAMPLES = {
     'run_multimission_example.py': 'Broken due to OpenMDAO changes',
-    'run_simple_OAS_mission.py': 'Timeout when running via this script',
+    'run_OAS_wing_mass_example.py': 'Timeout when running via this script',
     'run_NPSS_example.py': 'Cannot be run without NPSS install',
-    'run_level2_shooting_traj.py': 'Currently broken, and pending SGM deprecation',
     'run_level3_example.py': 'Currently broken, awaiting refresh',
 }
 

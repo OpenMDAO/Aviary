@@ -27,9 +27,9 @@ from aviary.subsystems.aerodynamics.gasp_based.table_based import (
 from aviary.subsystems.aerodynamics.solve_alpha_group import SolveAlphaGroup
 from aviary.subsystems.subsystem_builder_base import SubsystemBuilderBase
 from aviary.utils.named_values import NamedValues
-from aviary.variable_info.enums import LegacyCode
+from aviary.variable_info.enums import LegacyCode, Verbosity
 from aviary.variable_info.variable_meta_data import _MetaData
-from aviary.variable_info.variables import Aircraft, Dynamic, Mission
+from aviary.variable_info.variables import Aircraft, Dynamic, Mission, Settings
 
 GASP = LegacyCode.GASP
 FLOPS = LegacyCode.FLOPS
@@ -128,13 +128,12 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
         aero_group = None
 
         if self.code_origin is FLOPS:
-            try:
-                solve_alpha = kwargs.pop('solve_alpha')
-            except KeyError:
-                warnings.warn(
-                    "The 'solve_alpha' flag has been set, but is not used for FLOPS-based "
-                    'aerodynamics.'
-                )
+            if 'solve_alpha' in kwargs:
+                if aviary_inputs.get_val(Settings.VERBOSITY) >= Verbosity.BRIEF:
+                    warnings.warn(
+                        "The 'solve_alpha' flag has been set, but is not used for FLOPS-based "
+                        'aerodynamics.'
+                    )
 
             if method is None:
                 aero_group = ComputedAeroGroup(num_nodes=num_nodes)
@@ -617,7 +616,7 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
             elif method == 'tabular_low_speed':
                 all_vars = AERO_2DOF_TABULAR_LS_INPUTS
             elif method == 'tabular_cruise':
-                all_vars = AERO_2DOF_TABULAR_CLEAN_INPUTS
+                all_vars = TABULAR_CORE_INPUTS
             else:
                 raise ValueError(
                     'GASP-based aero method is not one of the following: (cruise, '
@@ -724,6 +723,8 @@ COMPUTED_CORE_INPUTS = [
 
 TABULAR_CORE_INPUTS = [
     Aircraft.Wing.AREA,
+    Aircraft.Design.SUBSONIC_DRAG_COEFF_FACTOR,
+    Aircraft.Design.SUPERSONIC_DRAG_COEFF_FACTOR,
 ]
 
 # Parameters for low speed aero.
@@ -785,8 +786,6 @@ AERO_2DOF_INPUTS = [
     Aircraft.Wing.VERTICAL_MOUNT_LOCATION,
     Aircraft.Wing.ZERO_LIFT_ANGLE,
 ]
-
-AERO_2DOF_TABULAR_CLEAN_INPUTS = [Aircraft.Wing.AREA]
 
 AERO_2DOF_TABULAR_LS_INPUTS = [Aircraft.Wing.SPAN, Aircraft.Wing.HEIGHT]
 
