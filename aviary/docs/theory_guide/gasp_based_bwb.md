@@ -46,6 +46,14 @@
 
 Because most of the variables match pretty well. We show those with significant differences. As we see, most differences are due to the fact that GASP computes the fuel masses after engine sizing.
 
+The fuel computation is a nonlinear system of equations. A simplied XDSM diagram is shown below:
+
+![GASP based fuel mass computation](images/gasp_bwb_fuel_mass.png)
+
+A Newton solver is applied until `Mission.Design.FUEL_MASS`, `wingfuel_mass_min` and `Aircraft.Fuel.TOTAL_CAPACITY` are converged.
+
+For conventional aircraft, `BWBFuselageMass` is replaced by `FuselageMass`.
+
 ## BWB aerodynamics
 
 This feature implements GASP aerodynamics subsystems for BWB aircraft. Five new components are added:
