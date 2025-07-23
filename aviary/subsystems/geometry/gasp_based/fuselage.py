@@ -976,35 +976,26 @@ class BWBFuselageGroup(om.Group):
             'parameters1',
             BWBFuselageParameters1(),
             promotes_inputs=['*'],
-            promotes_outputs=['*'] + ['nose_length', 'cabin_height'],
+            promotes_outputs=['*'],
         )
 
         self.add_subsystem(
             'layout',
             BWBCabinLayout(),
-            promotes_inputs=['*'] + ['nose_length'],
+            promotes_inputs=['*'],
             promotes_outputs=['fuselage_station_aft'],
         )
 
         self.add_subsystem(
             'parameters2',
             BWBFuselageParameters2(),
-            promotes_inputs=['*'] + ['nose_length', 'cabin_height', 'fuselage_station_aft'],
-            promotes_outputs=['*'] + ['forebody_len', 'nose_area', 'aftbody_len', 'cabin_len'],
+            promotes_inputs=['*'],
+            promotes_outputs=['*'],
         )
 
         self.add_subsystem(
             'size',
             BWBFuselageSize(),
-            promotes_inputs=['*']
-            + [
-                'nose_length',
-                'cabin_height',
-                'fuselage_station_aft',
-                'forebody_len',
-                'nose_area',
-                'aftbody_len',
-                'cabin_len',
-            ],
+            promotes_inputs=['*'],
             promotes_outputs=['*'],
         )

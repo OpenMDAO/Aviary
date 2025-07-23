@@ -72,8 +72,8 @@ class MassPremission(om.Group):
         self.add_subsystem(
             'fixed_mass',
             FixedMassGroup(),
-            promotes_inputs=fixed_mass_inputs + ['*'],
-            promotes_outputs=fixed_mass_outputs + ['*'],
+            promotes_inputs=['*'],
+            promotes_outputs=['*'],
         )
 
         self.add_subsystem(
@@ -87,20 +87,20 @@ class MassPremission(om.Group):
             self.add_subsystem(
                 'wing_mass',
                 BWBWingMassGroup(),
-                promotes_inputs=wing_mass_inputs + ['*'],
+                promotes_inputs=['*'],
                 promotes_outputs=['*'],
             )
         else:
             self.add_subsystem(
                 'wing_mass',
                 WingMassGroup(),
-                promotes_inputs=wing_mass_inputs + ['*'],
+                promotes_inputs=['*'],
                 promotes_outputs=['*'],
             )
 
         self.add_subsystem(
             'fuel_mass',
             FuelMassGroup(),
-            promotes_inputs=fuel_mass_inputs + ['*'],
+            promotes_inputs=['*'],
             promotes_outputs=['*'],
         )

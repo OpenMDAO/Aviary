@@ -1661,7 +1661,7 @@ class BWBWingGroup(om.Group):
             self.add_subsystem(
                 'fold_vol',
                 BWBWingFoldVolume(),
-                promotes_inputs=['*'] + ['wing_volume_no_fold'],
+                promotes_inputs=['*'],
                 promotes_outputs=['*'],
             )
 

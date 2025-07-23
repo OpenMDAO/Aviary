@@ -15,7 +15,7 @@ class BodyTankCalculations(om.ExplicitComponent):
     """
 
     def initialize(self):
-        add_aviary_option(self, Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES)
+        add_aviary_option(self, Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES, True)
         add_aviary_option(self, Settings.VERBOSITY)
         self.options.declare('mu', default=1.0, types=float)
 
@@ -1577,26 +1577,11 @@ class FuelMassGroup(om.Group):
     def setup(self):
         design_type = self.options[Aircraft.Design.TYPE]
 
-        # variables that are calculated at a higher level
-        higher_level_inputs1 = ['wing_mounted_mass']
-        higher_level_inputs2 = ['min_dive_vel']
-        higher_level_inputs3 = ['payload_mass_des', 'payload_mass_max', 'eng_comb_mass']
-
-        # variables that are passed within the group but not used at a higher level
-        connected_inputs1 = ['wingfuel_mass_min']
-        connected_inputs2 = ['fus_mass_full']
-        connected_inputs5 = ['fuel_mass_min', 'max_wingfuel_mass']
-
-        connected_outputs1 = ['fus_mass_full']
-        connected_outputs3 = ['fuel_mass_min']
-        connected_outputs4 = ['max_wingfuel_mass']
-        connected_outputs5 = ['wingfuel_mass_min']
-
         self.add_subsystem(
             'sys_and_full_fus',
             FuelSysAndFullFuselageMass(),
-            promotes_inputs=connected_inputs1 + higher_level_inputs1 + ['*'],
-            promotes_outputs=connected_outputs1 + ['*'],
+            promotes_inputs=['*'],
+            promotes_outputs=['*'],
         )
 
         if design_type is AircraftTypes.BLENDED_WING_BODY:
@@ -1610,7 +1595,7 @@ class FuelMassGroup(om.Group):
             self.add_subsystem(
                 'fuselage',
                 FuselageMass(),
-                promotes_inputs=connected_inputs2 + higher_level_inputs2 + ['*'],
+                promotes_inputs=['*'],
                 promotes_outputs=['*'],
             )
 
@@ -1624,22 +1609,22 @@ class FuelMassGroup(om.Group):
         self.add_subsystem(
             'fuel',
             FuelMass(),
-            promotes_inputs=higher_level_inputs3 + ['*'],
-            promotes_outputs=connected_outputs3 + ['*'],
+            promotes_inputs=['*'],
+            promotes_outputs=['*'],
         )
 
         self.add_subsystem(
             'fuel_and_oem',
             FuelAndOEMOutputs(),
             promotes_inputs=['*'],
-            promotes_outputs=connected_outputs4 + ['*'],
+            promotes_outputs=['*'],
         )
 
         self.add_subsystem(
             'body_tank',
             BodyTankCalculations(),
-            promotes_inputs=connected_inputs5 + ['*'],
-            promotes_outputs=connected_outputs5 + ['*'],
+            promotes_inputs=['*'],
+            promotes_outputs=['*'],
         )
 
         self.set_input_defaults(Aircraft.Fuel.DENSITY, units='lbm/galUS')
