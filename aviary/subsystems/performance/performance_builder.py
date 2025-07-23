@@ -1,11 +1,11 @@
 import openmdao.api as om
 
-from aviary.mission.ode.specific_energy_rate import SpecificEnergyRate
+from aviary.subsystems.performance.ode.load_factor import LoadFactor
 from aviary.subsystems.subsystem_builder_base import SubsystemBuilderBase
 from aviary.subsystems.performance.performance_premission import PerformancePremission
 from aviary.variable_info.variables import Aircraft, Mission, Dynamic
 
-analysis_dict = {'climb_rate': SpecificEnergyRate}
+analysis_dict = {'sustained_load_factor': LoadFactor}
 conditions_dict = {
     'altitude': Dynamic.Mission.ALTITUDE,
     'velocity': Dynamic.Mission.VELOCITY,

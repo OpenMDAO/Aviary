@@ -28,7 +28,6 @@ class PerformanceODE(_BaseODE):
         nn = options['num_nodes']
         equations_of_motion = options['equations_of_motion']
         speed_type = options['speed_type']
-        aviary_options = options['aviary_options']
 
         self.add_atmosphere(input_speed_type=speed_type)
 
@@ -52,7 +51,7 @@ class PerformanceODE(_BaseODE):
 
         self.options['auto_order'] = True
 
-    def add_eom(self, equations_of_motion=None, num_nodes=1, solver_group=None):
+    def add_eom(self, equations_of_motion: System, num_nodes=1, solver_group=None):
         if solver_group is not None:
             target = solver_group
         else:
