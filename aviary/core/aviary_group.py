@@ -812,7 +812,7 @@ class AviaryGroup(om.Group):
 
         # Fuel burn in regular phases
         ecomp = om.ExecComp(
-            'fuel_burned = initial_mass - mass_final',
+            'fuel_burned = initial_mass - mass_final', # TODO: Fix to be difference in cumulative fuel burn
             initial_mass={'units': 'lbm'},
             mass_final={'units': 'lbm'},
             fuel_burned={'units': 'lbm'},
@@ -847,7 +847,7 @@ class AviaryGroup(om.Group):
         # Fuel burn in reserve phases
         if self.reserve_phases:
             ecomp = om.ExecComp(
-                'reserve_fuel_burned = initial_mass - mass_final',
+                'reserve_fuel_burned = initial_mass - mass_final', # TODO: Fix to be different in cumulative fuel burn
                 initial_mass={'units': 'lbm'},
                 mass_final={'units': 'lbm'},
                 reserve_fuel_burned={'units': 'lbm'},
@@ -1049,6 +1049,34 @@ class AviaryGroup(om.Group):
         self._connect_mission_bus_variables()
 
         self.configurator.check_trajectory(self)
+
+        # Make dymos state outputs easy to access later
+        self.add_subsystem('bus_output',
+                                   om.ExecComp('mass_final = mass_in', 
+                                               'time_final = time_in',
+                                               'range_final = range_in',
+                                               mass_in={'units': 'lbf'}, 
+                                               mass_final={'units': 'lbf'}), 
+                                               promotes_outputs={
+                                                   ('mass_final', Mission.Summary.FINAL_MASS),
+                                                   ('time_final', Mission.Summary.FINAL_TIME),
+                                                   ('range_final', Mission.Summary.RANGE)})
+        final_phase = self.regular_phases[-1]
+        self.connect(
+            f'traj.{final_phase}.states:mass',
+            self.bus_output.mass_in,
+            src_indices=[-1],
+        )
+        self.connect(
+            f'traj.{final_phase}.timeseries.distance',
+            self.bus_output.range_in,
+            src_indices=[-1],
+        )
+        self.connect(
+            f'traj.{final_phase}.timeseries.time',
+            self.bus_output.time_in,
+            src_indices=[-1]
+        )
 
     def _add_bus_variables_and_connect(self):
         all_subsystems = self.get_all_subsystems()

@@ -525,23 +525,11 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
             src_indices=[-1],
         )
 
-        connect_map = {
-            f'traj.{aviary_group.regular_phases[-1]}.timeseries.distance': Mission.Summary.RANGE,
-        }
-
         # promote all ParamPort inputs for analytic segments as well
         param_list = list(ParamPort.param_data)
         aviary_group.promotes('taxi', inputs=param_list)
         aviary_group.promotes('landing', inputs=param_list)
         aviary_group.connect('taxi.mass', 'vrot.mass')
-
-        for source, target in connect_map.items():
-            aviary_group.connect(
-                source,
-                target,
-                src_indices=[-1],
-                flat_src_indices=True,
-            )
 
         if 'ascent' in aviary_group.phase_info:
             self._add_groundroll_eq_constraint(aviary_group)

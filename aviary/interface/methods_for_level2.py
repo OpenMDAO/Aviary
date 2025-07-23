@@ -716,6 +716,7 @@ class AviaryProblem(om.Problem):
         }
 
         # Now checkout the output and see if we have recognizable strings and replace them with the variable meta data name
+        objectives_cleaned = []
         for model, output, weight in objectives:
             if output == 'fuel_burned':
                 output = Mission.Summary.FUEL_BURNED
@@ -727,15 +728,14 @@ class AviaryProblem(om.Problem):
                 if len(args) == 1 and ref == None:
                     # set a default ref
                     ref = default_ref_values['fuel']
-            else:
-                pass
+            objectives_cleaned.append((model, output, weight))
             # TODO add output = 'time', 'mass'
 
         # Create the calculation string for the ExecComp() and the promotion reference values
         weighted_exprs = []
         connection_names = []
-        total_weight = sum(weight for _, _, weight in objectives)
-        for model, output, weight in objectives:
+        total_weight = sum(weight for _, _, weight in objectives_cleaned)
+        for model, output, weight in objectives_cleaned:
             weighted_exprs.append(f'{model}_{output}*{weight}/{total_weight}') # we use "_" here because ExecComp() cannot intake "."
             connection_names.append([f'composite_objective.{model}_{output}', f'{model}.{output}'])
         final_expr = ' + '.join(weighted_exprs)    
