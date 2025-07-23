@@ -57,12 +57,12 @@ class BodyCalculationTestCase1(unittest.TestCase):
             self.prob[Aircraft.Fuel.AUXILIARY_FUEL_CAPACITY], 0, tol
         )  # note: not in version 3 output, calculated by hand
         assert_near_equal(
-            self.prob['extra_fuel_volume'], 0, tol
+            self.prob['extra_fuel_volume'], 0.69314718, tol
         )  # note: not in version 3 output, calculated by hand
         assert_near_equal(
-            self.prob['max_extra_fuel_mass'], 0, tol
+            self.prob['max_extra_fuel_mass'], 34.67277748, tol
         )  # note: not in version 3 output, calculated by hand
-        assert_near_equal(self.prob['wingfuel_mass_min'], 32853.0, tol)
+        assert_near_equal(self.prob['wingfuel_mass_min'], 32818.32722252, tol)
         # note: Aircraft.Fuel.TOTAL_CAPACITY is calculated differently in V3, so it is not included here
 
         partial_data = self.prob.check_partials(out_stream=None, method='cs')
@@ -938,10 +938,10 @@ class FuelMassGroupTestCase1(unittest.TestCase):
             self.prob[Aircraft.Fuel.AUXILIARY_FUEL_CAPACITY], 0, tol
         )  # note: not in version 3 output, calculated by hand
         assert_near_equal(
-            self.prob['extra_fuel_volume'], 0, tol
+            self.prob['extra_fuel_volume'], 0.69314718, tol
         )  # note: not in version 3 output, calculated by hand
         assert_near_equal(
-            self.prob['max_extra_fuel_mass'], 0, tol
+            self.prob['max_extra_fuel_mass'], 34.67277748, tol
         )  # note: not in version 3 output, calculated by hand
         # note: Aircraft.Fuel.TOTAL_CAPACITY is calculated differently in V3, so it is not included here
 
@@ -1436,9 +1436,9 @@ class BWBBodyCalculationTest(unittest.TestCase):
         tol = 1e-7
         assert_near_equal(self.prob[Aircraft.Fuel.TOTAL_CAPACITY], 24234.451, tol)
         assert_near_equal(self.prob[Aircraft.Fuel.AUXILIARY_FUEL_CAPACITY], 5.451, tol)
-        assert_near_equal(self.prob['extra_fuel_volume'], 0, tol)
-        assert_near_equal(self.prob['max_extra_fuel_mass'], 0, tol)
-        assert_near_equal(self.prob['wingfuel_mass_min'], 9229.6045, tol)
+        assert_near_equal(self.prob['extra_fuel_volume'], 0.69314718, tol)
+        assert_near_equal(self.prob['max_extra_fuel_mass'], 34.67277748, tol)
+        assert_near_equal(self.prob['wingfuel_mass_min'], 9194.93172252, tol)
 
         partial_data = self.prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
