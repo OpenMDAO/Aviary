@@ -19,7 +19,7 @@ class PropellerMapTest(unittest.TestCase):
         # The case when prop_type is helical_mach.
         tol = 0.005
         aviary_options = AviaryValues()
-        prop_file_path = 'models/engines/propellers/general_aviation.prop'
+        prop_file_path = 'models/engines/propellers/general_aviation.csv'
         aviary_options.set_val(Aircraft.Engine.Propeller.DATA_FILE, prop_file_path)
 
         prob = om.Problem()
@@ -40,7 +40,7 @@ class PropellerMapTest(unittest.TestCase):
         # The case when prop_type is mach.
         tol = 0.005
         aviary_options = AviaryValues()
-        prop_file_path = 'models/engines/propellers/PropFan.prop'
+        prop_file_path = 'models/engines/propellers/PropFan.csv'
         aviary_options.set_val(
             Aircraft.Engine.Propeller.DATA_FILE, val=prop_file_path, units='unitless'
         )

@@ -39,7 +39,6 @@ from aviary.utils.csv_data_file import read_data_file, write_data_file
 from aviary.utils.data_interpolator_builder import build_data_interpolator
 from aviary.variable_info.enums import (
     AlphaModes,
-    AnalysisScheme,
     EquationsOfMotion,
     FlapType,
     GASPEngineType,
@@ -48,15 +47,8 @@ from aviary.variable_info.enums import (
     SpeedType,
     Verbosity,
 )
-from aviary.interface.default_phase_info.two_dof import phase_info as default_2DOF_phase_info
-from aviary.interface.default_phase_info.two_dof_fiti import (
-    phase_info as default_2DOF_fiti_phase_info,
-)
-from aviary.interface.default_phase_info.two_dof_fiti_deprecated import (
-    create_2dof_based_ascent_phases,
-    create_2dof_based_descent_phases,
-)
-from aviary.interface.default_phase_info.height_energy import (
+from aviary.models.missions.two_dof_default import phase_info as default_2DOF_phase_info
+from aviary.models.missions.height_energy_default import (
     phase_info as default_height_energy_phase_info,
 )
 from aviary.interface.methods_for_level1 import run_level_1
@@ -96,7 +88,6 @@ from aviary.subsystems.propulsion.utils import build_engine_deck
 ###################
 
 # Miscellaneous
-from aviary.interface.methods_for_level2 import PreMissionGroup, PostMissionGroup
 from aviary.subsystems.premission import CorePreMission
 from aviary.subsystems.subsystem_builder_base import SubsystemBuilderBase
 from aviary.utils.preprocessors import (
@@ -186,23 +177,6 @@ from aviary.mission.flops_based.phases.detailed_landing_phases import (
 )
 from aviary.mission.flops_based.phases.detailed_takeoff_phases import (
     TakeoffTrajectory as DetailedTakeoffTrajectoryBuilder,
-)
-
-# SimuPy
-from aviary.mission.gasp_based.ode.time_integration_base_classes import SimuPyProblem
-from aviary.mission.gasp_based.phases.time_integration_phases import (
-    SGMAccel,
-    SGMAscent,
-    SGMAscentCombined,
-    SGMClimb,
-    SGMCruise,
-    SGMDescent,
-    SGMGroundroll,
-    SGMRotation,
-)
-from aviary.mission.gasp_based.phases.time_integration_traj import (
-    FlexibleTraj,
-    TimeIntegrationTrajBase,
 )
 
 ##############

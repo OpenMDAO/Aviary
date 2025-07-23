@@ -6,7 +6,7 @@ from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 from parameterized import parameterized
 
 from aviary.subsystems.aerodynamics.flops_based.computed_aero_group import ComputedDrag
-from aviary.subsystems.aerodynamics.flops_based.drag import SimpleCD, SimpleDrag, TotalDrag
+from aviary.subsystems.aerodynamics.flops_based.drag import ScaledCD, SimpleDrag, TotalDrag
 from aviary.utils.aviary_values import AviaryValues
 from aviary.validation_cases.validation_tests import (
     get_flops_case_names,
@@ -15,7 +15,9 @@ from aviary.validation_cases.validation_tests import (
 )
 from aviary.variable_info.variables import Aircraft, Dynamic
 
-data_sets = get_flops_case_names(only=['LargeSingleAisle1FLOPS', 'LargeSingleAisle2FLOPS', 'N3CC'])
+data_sets = get_flops_case_names(
+    only=['LargeSingleAisle1FLOPS', 'LargeSingleAisle2FLOPS', 'advanced_single_aisle']
+)
 
 
 class SimpleDragTest(unittest.TestCase):
@@ -57,7 +59,7 @@ class SimpleDragTest(unittest.TestCase):
         q, _ = mission_data.get_item(Dynamic.Atmosphere.DYNAMIC_PRESSURE)
         nn = len(q)
         model.add_subsystem('simple_drag', SimpleDrag(num_nodes=nn), promotes=['*'])
-        model.add_subsystem('simple_cd', SimpleCD(num_nodes=nn), promotes=['*'])
+        model.add_subsystem('simple_cd', ScaledCD(num_nodes=nn), promotes=['*'])
 
         prob.setup(force_alloc_complex=True)
 
@@ -289,7 +291,7 @@ mission_simple_drag[key] = np.array([42452.271402, 42310.935148, 41861.228883])
 mission_total_CD[key] = np.array([0.03304, 0.03293, 0.03258])
 mission_total_drag[key] = np.array([42452.27140246, 42310.93514779, 41861.22888293])
 
-key = 'N3CC'
+key = 'AdvancedSingleAisle'
 mission_test_data[key] = _mission_data = AviaryValues()
 _mission_data.set_val(Dynamic.Atmosphere.DYNAMIC_PRESSURE, [208.4, 288.5, 364.0], 'lbf/ft**2')
 _mission_data.set_val(Dynamic.Vehicle.MASS, [128777.0, 128721.0, 128667.0], 'lbm')

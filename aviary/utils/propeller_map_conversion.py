@@ -11,7 +11,7 @@ from aviary.api import NamedValues
 from aviary.utils.conversion_utils import _parse, _read_map, _rep
 from aviary.utils.csv_data_file import write_data_file
 from aviary.utils.functions import get_path
-from aviary.interface.utils.markdown_utils import round_it
+from aviary.interface.utils import round_it
 
 
 class PropMapType(Enum):
@@ -77,12 +77,7 @@ def convert_propeller_map(
         write_data.set_val(key, data[key], 'unitless')
 
     if output_file is None:
-        sfx = data_file.suffix
-        if sfx == '.prop':
-            ext = '_aviary.prop'
-        else:
-            ext = '.prop'
-        output_file = data_file.stem + ext
+        output_file = data_file.stem + '.csv'
     write_data_file(output_file, write_data, outputs, comments, include_timestamp=False)
 
 
@@ -102,7 +97,7 @@ def _read_gasp_propeller(fp, cmts):
         if scalars['iread'] == 1:
             cmts.append('# CT = f(Helical Mach at 75% Radius, Adv ratio & CP)')
         elif scalars['iread'] == 2:
-            cmts.append('Propfan format - CT = f(Mach, Adv Ratio & CP)')
+            cmts.append('# Propfan format - CT = f(Mach, Adv Ratio & CP)')
         else:
             raise RuntimeError(f'IREAD = 1 or 2 expected, got {scalars["iread"]}')
 
@@ -161,7 +156,7 @@ def _setup_PMC_parser(parser):
         'output_file',
         type=str,
         nargs='?',
-        help='path to file where new converted data will be written',
+        help='path to file where new converted data will be written (optional)',
     )
     # currently removing as there is only one allowed map type at the moment
     # parser.add_argument(

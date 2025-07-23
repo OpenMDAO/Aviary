@@ -7,7 +7,7 @@ from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 from openmdao.utils.testing_utils import use_tempdirs
 from parameterized import parameterized
 
-from aviary.interface.default_phase_info.height_energy import phase_info
+from aviary.models.missions.height_energy_default import phase_info
 from aviary.interface.methods_for_level2 import AviaryProblem
 from aviary.subsystems.aerodynamics.aerodynamics_builder import CoreAerodynamicsBuilder
 from aviary.subsystems.atmosphere.atmosphere import Atmosphere
@@ -252,7 +252,7 @@ class TabularAeroGroupDataTest(unittest.TestCase):
         assert_near_equal(prob.get_val('traj.cruise.rhs_all.drag', units='lbf')[0], 9907.0, 1.0e-3)
 
 
-data_sets = ['LargeSingleAisle1FLOPS', 'LargeSingleAisle2FLOPS', 'N3CC']
+data_sets = ['LargeSingleAisle1FLOPS', 'LargeSingleAisle2FLOPS', 'AdvancedSingleAisle']
 
 
 class ComputedVsTabularTest(unittest.TestCase):
@@ -699,7 +699,7 @@ _design_altitudes = AviaryValues(
     {
         'LargeSingleAisle1FLOPS': (41000, 'ft'),
         'LargeSingleAisle2FLOPS': (41000, 'ft'),
-        'N3CC': (43000, 'ft'),
+        'AdvancedSingleAisle': (43000, 'ft'),
     }
 )
 # endregion - computed aero data
