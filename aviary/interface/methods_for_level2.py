@@ -117,6 +117,7 @@ class AviaryProblem(om.Problem):
             verbosity=verbosity,
         )
 
+        # TODO: Can we remove this?
         # When there is only 1 aircraft model/mission, preserve old behavior.
         self.phase_info = self.model.phase_info
         self.aviary_inputs = aviary_inputs
@@ -176,6 +177,8 @@ class AviaryProblem(om.Problem):
         sub.load_inputs(aircraft, mission, verbosity=verbosity)
 
         self.aviary_groups_dict[name] = sub
+
+        self.verbosity = sub.verbosity # TODO: Needs fixed because old verbosity is over-written
     
         return sub
 
@@ -470,7 +473,11 @@ class AviaryProblem(om.Problem):
         else:
             verbosity = self.verbosity  # defaults to BRIEF
 
-        self.model.add_design_variables(verbosity=verbosity)
+        if self.problem_type == ProblemType.MULTI_MISSION:
+            for name, group in self.aviary_groups_dict.items():
+                group.add_design_variables(verbosity=verbosity)
+        else:
+            self.model.add_design_variables(verbosity=verbosity)
 
     def add_objective(self, objective_type=None, ref=None, verbosity=None):
         """
@@ -720,16 +727,23 @@ class AviaryProblem(om.Problem):
         for model, output, weight in objectives:
             if output == 'fuel_burned':
                 output = Mission.Summary.FUEL_BURNED
+                # default scaling is valid only if this is the only argument and the ref has not yet been set
                 if len(args) == 1 and ref == None:
                     # set a default ref
                     ref = default_ref_values['fuel_burned']
             elif output == 'fuel':
                 output = Mission.Objectives.FUEL
                 if len(args) == 1 and ref == None:
-                    # set a default ref
                     ref = default_ref_values['fuel']
+            elif output == 'mass':
+                output = Mission.Summary.FINAL_MASS
+                if len(args) == 1 and ref == None:
+                    ref = default_ref_values['mass']
+            elif output == 'time':
+                output = Mission.Summary.FINAL_TIME
+            elif output == 'range':
+                output = Mission.Summary.RANGE # Unsure if this will work
             objectives_cleaned.append((model, output, weight))
-            # TODO add output = 'time', 'mass'
 
         # Create the calculation string for the ExecComp() and the promotion reference values
         weighted_exprs = []

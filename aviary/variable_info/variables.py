@@ -753,10 +753,10 @@ class Mission:
         FUEL_BURNED = 'mission:summary:fuel_burned'
         FUEL_FLOW_SCALER = 'mission:summary:fuel_flow_scaler'
         GROSS_MASS = 'mission:summary:gross_mass'
-        MASS = 'mission:summary:mass'
+        FINAL_MASS = 'mission:summary:final_mass'
         RANGE = 'mission:summary:range'
         RESERVE_FUEL_BURNED = 'mission:summary:reserve_fuel_burned'
-        TIME = 'mission:summary:time'
+        FINAL_TIME = 'mission:summary:final_time'
         TOTAL_FUEL_MASS = 'mission:summary:total_fuel_mass'
 
     class Takeoff:

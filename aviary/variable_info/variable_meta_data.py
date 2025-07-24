@@ -7642,10 +7642,11 @@ add_meta_data(
 )
 
 add_meta_data(
-    Mission.Summary.MASS,
+    Mission.Summary.FINAL_MASS,
+    meta_data=_MetaData,
     historical_name={'GASP': 'None', 'FLOPS': None, 'LEAPS1': None}, #TODO: Check on these
     units='lbm',
-    desc='The final weight of the vehicle at the end of the last regular_phase.'
+    desc='The final weight of the vehicle at the end of the last regular_phase (does not include reserve phases).'
 )
 
 add_meta_data(
@@ -7668,12 +7669,12 @@ add_meta_data(
 )
 
 add_meta_data(
-    Mission.Summary.TIME,
+    Mission.Summary.FINAL_TIME,
     meta_data=_MetaData,
     historical_name={'GASP': 'None', 'FLOPS': None, 'LEAPS1': None}, #TODO: Check on these
     units='min',
     desc='Total mission time from the start of the first regular_phase'
-    'to the end of the last regular_phase.'
+    'to the end of the last regular_phase (does not include reserve phases).'
 )
 
 add_meta_data(

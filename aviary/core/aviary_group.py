@@ -1051,12 +1051,17 @@ class AviaryGroup(om.Group):
         self.configurator.check_trajectory(self)
 
         # Make dymos state outputs easy to access later
-        self.add_subsystem('bus_output',
-                                   om.ExecComp('mass_final = mass_in', 
+        self.add_subsystem('state_output',
+                                   om.ExecComp(['mass_final = mass_in', 
                                                'time_final = time_in',
-                                               'range_final = range_in',
+                                               'range_final = range_in'],
                                                mass_in={'units': 'lbf'}, 
-                                               mass_final={'units': 'lbf'}), 
+                                               mass_final={'units': 'lbf'},
+                                               time_in={'units': 'min'}, 
+                                               time_out={'units': 'min'},
+                                               range_in={'units': 'nmi'},
+                                               range_out={'units': 'nmi'},
+                                               ), 
                                                promotes_outputs={
                                                    ('mass_final', Mission.Summary.FINAL_MASS),
                                                    ('time_final', Mission.Summary.FINAL_TIME),
@@ -1064,17 +1069,17 @@ class AviaryGroup(om.Group):
         final_phase = self.regular_phases[-1]
         self.connect(
             f'traj.{final_phase}.states:mass',
-            self.bus_output.mass_in,
+            f'{self.state_output}.mass_in',
             src_indices=[-1],
         )
         self.connect(
             f'traj.{final_phase}.timeseries.distance',
-            self.bus_output.range_in,
+            f'{self.state_output}.range_in',
             src_indices=[-1],
         )
         self.connect(
             f'traj.{final_phase}.timeseries.time',
-            self.bus_output.time_in,
+            f'{self.state_output}.time_in',
             src_indices=[-1]
         )
 
@@ -1229,7 +1234,7 @@ class AviaryGroup(om.Group):
             for dv_name, dv_dict in dv_dict.items():
                 self.add_design_var(dv_name, **dv_dict)
 
-        if self.mission_method is SOLVED_2DOF:
+        if self.mission_method is SOLVED_2DOF: # This is getting nuked
             optimize_mass = self.pre_mission_info.get('optimize_mass')
             if optimize_mass:
                 self.add_design_var(
@@ -1240,7 +1245,7 @@ class AviaryGroup(om.Group):
                     ref=175.0e3,
                 )
 
-        elif self.mission_method in (HEIGHT_ENERGY, TWO_DEGREES_OF_FREEDOM):
+        elif self.mission_method in (HEIGHT_ENERGY, TWO_DEGREES_OF_FREEDOM): # This becomes generic as soon as SOLVED_2DOF is nuked
             # vehicle sizing problem
             # size the vehicle (via design GTOW) to meet a target range using all fuel
             # capacity
@@ -1327,7 +1332,7 @@ class AviaryGroup(om.Group):
 
                 self.add_constraint('gross_mass_resid', lower=0)
 
-            if self.mission_method is TWO_DEGREES_OF_FREEDOM:
+            if self.mission_method is TWO_DEGREES_OF_FREEDOM: # TODO: This should be moved into the problem configurator b/c it's 2DOF specific
                 # problem formulation to make the trajectory work
                 self.add_design_var(Mission.Takeoff.ASCENT_T_INITIAL, lower=0, upper=100, ref=30.0)
                 self.add_design_var(Mission.Takeoff.ASCENT_DURATION, lower=1, upper=1000, ref=10.0)

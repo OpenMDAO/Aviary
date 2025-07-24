@@ -60,14 +60,14 @@ prob = av.AviaryProblem()
 # the mission to fly the target_range specified in the phase_info
 prob.problem_type = ProblemType.MULTI_MISSION 
 
-prob.add_aviary_group('mission1', aircraft=aviary_inputs_primary, mission=phase_info, verbosity=None)
+prob.add_aviary_group('mission1', aircraft=aviary_inputs_primary, mission=phase_info)
 
 # Load aircraft in second configuration for same mission
-prob.add_aviary_group('mission2', aircraft=aviary_inputs_deadhead, mission=phase_info, verbosity=None)
+prob.add_aviary_group('mission2', aircraft=aviary_inputs_deadhead, mission=phase_info)
 
-prob.check_and_preprocess_inputs(verbosity=None)
+prob.check_and_preprocess_inputs()
 
-prob.build_model(verbosity=None)
+prob.build_model()
 
 # Link Key design variables to ensure both aircraft are modelled the same:
 prob.promote_inputs(['mission1', 'mission2'], [(Mission.Design.GROSS_MASS, 'Aircraft1.GROSS_MASS'), (Mission.Design.RANGE, 'Aircraft1.RANGE'), (Aircraft.Wing.SWEEP, 'Aircraft1.SWEEP')])
@@ -76,11 +76,12 @@ prob.add_design_var_default('Aircraft1:GROSS_MASS', lower=10.0, upper=900e3, uni
 prob.add_design_var_default('Aircraft1.SWEEP', lower=23.0, upper=27.0, units='deg', default_val=25)
 
 # TODO: Do we have to run prob.add_design_variables() <- this adds some special stuff for multimission
+prob.add_design_variables()
 
 # Add objective
-# create an objective by adding both values from the specified models based on the weighting
-# TODO: Revise add_objective in follow-on
-prob.add_multimission_objetive(missions=['mission1', 'mission2'], mission_weights=[2,1], outputs=[Mission.Summary.FUEL_BURNED, CO2], output_weights=[1,1],  ref=1)
+# Mission 1 is flown 2x more times than mission2
+prob.add_composite_objective(('mission1', Mission.Summary.FUEL_BURNED, 2), ('mission2', Mission.Summary.FUEL_BURNED, 1))
+# prob.add_composite_objective_adv(missions=['mission1', 'mission2'], mission_weights=[2,1], outputs=[Mission.Summary.FUEL_BURNED],  ref=1)
 
 # optimizer and iteration limit are optional provided here
 prob.add_driver(Optimizer, max_iter=50)
