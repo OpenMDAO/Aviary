@@ -117,7 +117,6 @@ class AviaryProblem(om.Problem):
             verbosity=verbosity,
         )
 
-        # TODO: Can we remove this?
         # When there is only 1 aircraft model/mission, preserve old behavior.
         self.phase_info = self.model.phase_info
         self.aviary_inputs = aviary_inputs
@@ -750,9 +749,11 @@ class AviaryProblem(om.Problem):
         connection_names = []
         total_weight = sum(weight for _, _, weight in objectives_cleaned)
         for model, output, weight in objectives_cleaned:
-            weighted_exprs.append(f'{model}_{output}*{weight}/{total_weight}') # we use "_" here because ExecComp() cannot intake "."
-            connection_names.append([f'composite_objective.{model}_{output}', f'{model}.{output}'])
-        final_expr = ' + '.join(weighted_exprs)    
+            output_safe = output.replace(":", "_")
+            weighted_exprs.append(f'{model}_{output_safe}*{weight}/{total_weight}') # we use "_" here because ExecComp() cannot intake "."
+            connection_names.append([f'composite_objective.{model}_{output_safe}', f'{model}.{output}'])
+        final_expr = ' + '.join(weighted_exprs)  
+
         # weighted_str looks like:  'model1_fuelburn*0.67*0.5 + model1_gross_mass*0.33*0.5 + model2_fuelburn*0.67*0.5 + model2_gross_mass*0.33*0.5'
             
         # adding composite execComp to super problem
@@ -900,16 +901,24 @@ class AviaryProblem(om.Problem):
         if 'verbosity' in kwargs:
             kwargs.pop('verbosity')
         # Use OpenMDAO's model options to pass all options through the system hierarchy.
-        setup_model_options(self, self.aviary_inputs, self.meta_data)
 
-        # suppress warnings:
-        # "input variable '...' promoted using '*' was already promoted using 'aircraft:*'
-        # TODO: will need to setup warnings on each AviaryGroup()
+        if self.problem_type == ProblemType.MULTI_MISSION:
+            for name, group in self.aviary_groups_dict.items():
+                setup_model_options(self, group.aviary_inputs, group.meta_data)
+                with warnings.catch_warnings():
+                    group.options['aviary_options'] = group.aviary_inputs
+                    group.options['aviary_metadata'] = group.meta_data
+                    group.options['phase_info'] = group.phase_info
+        else:
+            setup_model_options(self, self.aviary_inputs, self.meta_data)
+            # suppress warnings:
+            # "input variable '...' promoted using '*' was already promoted using 'aircraft:*'
+            with warnings.catch_warnings():
+                self.model.options['aviary_options'] = self.aviary_inputs
+                self.model.options['aviary_metadata'] = self.meta_data
+                self.model.options['phase_info'] = self.model.phase_info
+
         with warnings.catch_warnings():
-            self.model.options['aviary_options'] = self.aviary_inputs
-            self.model.options['aviary_metadata'] = self.meta_data
-            self.model.options['phase_info'] = self.model.phase_info
-
             warnings.simplefilter('ignore', om.OpenMDAOWarning)
             warnings.simplefilter('ignore', om.PromotionWarning)
 

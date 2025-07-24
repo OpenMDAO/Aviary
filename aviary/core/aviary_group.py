@@ -70,6 +70,9 @@ class AviaryGroup(om.Group):
         self.regular_phases = []
         self.reserve_phases = []
 
+        self.aviary_inputs = None
+        self.phase_info = None
+
     def initialize(self):
         """Declare options."""
         self.options.declare(
@@ -1058,9 +1061,9 @@ class AviaryGroup(om.Group):
                                                mass_in={'units': 'lbf'}, 
                                                mass_final={'units': 'lbf'},
                                                time_in={'units': 'min'}, 
-                                               time_out={'units': 'min'},
+                                               time_final={'units': 'min'},
                                                range_in={'units': 'nmi'},
-                                               range_out={'units': 'nmi'},
+                                               range_final={'units': 'nmi'},
                                                ), 
                                                promotes_outputs={
                                                    ('mass_final', Mission.Summary.FINAL_MASS),
