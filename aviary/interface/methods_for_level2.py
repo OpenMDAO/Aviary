@@ -50,7 +50,7 @@ class AviaryProblem(om.Problem):
     additional methods to help users create and solve Aviary problems.
     """
 
-    def __init__(self, verbosity=None, **kwargs):
+    def __init__(self, problem_type:ProblemType, verbosity=None, **kwargs):
         # Modify OpenMDAO's default_reports for this session.
         new_reports = [
             'subsystems',
@@ -73,7 +73,12 @@ class AviaryProblem(om.Problem):
         self.verbosity = verbosity
         set_warning_format(verbosity)
 
-        self.model = AviaryGroup()
+        if problem_type == ProblemType.MULTI_MISSION:
+            self.problem_type = ProblemType.MULTI_MISSION
+            self.model = om.Group()
+        else:
+            self.model = AviaryGroup()
+        
 
         self.aviary_inputs = None
 
@@ -907,7 +912,7 @@ class AviaryProblem(om.Problem):
                 setup_model_options(self, group.aviary_inputs, group.meta_data)
                 with warnings.catch_warnings():
                     group.options['aviary_options'] = group.aviary_inputs
-                    group.options['aviary_metadata'] = group.meta_data
+                    group.options['aviary_metadata'] = self.meta_data 
                     group.options['phase_info'] = group.phase_info
         else:
             setup_model_options(self, self.aviary_inputs, self.meta_data)

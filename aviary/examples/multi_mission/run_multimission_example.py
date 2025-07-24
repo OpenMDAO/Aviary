@@ -53,12 +53,11 @@ aviary_inputs_deadhead.set_val(Aircraft.CrewPayload.NUM_FIRST_CLASS, 0, 'unitles
 
 Optimizer = 'SLSQP'  # SLSQP or SNOPT
 
-prob = av.AviaryProblem()
+prob = av.AviaryProblem(problem_type = ProblemType.MULTI_MISSION )
 
 # set constraints in the background to allow Mission.Summary.GROSS_MASS to be acceptible as long as it's 
 # less than Mission.Design.GROSS_MASS. Also turns on Mission.Constraints.RANGE_RESIDUAL =0, forcong
 # the mission to fly the target_range specified in the phase_info
-prob.problem_type = ProblemType.MULTI_MISSION 
 
 prob.add_aviary_group('mission1', aircraft=aviary_inputs_primary, mission=phase_info)
 

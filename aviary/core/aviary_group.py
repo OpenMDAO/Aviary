@@ -88,8 +88,8 @@ class AviaryGroup(om.Group):
 
     def configure(self):
         """Configure the Aviary group."""
-        aviary_options = self.options['aviary_options']
-        aviary_metadata = self.options['aviary_metadata']
+        aviary_options = self.aviary_inputs
+        aviary_metadata = self.meta_data
 
         # Find promoted name of every input in the model.
         all_prom_inputs = []
