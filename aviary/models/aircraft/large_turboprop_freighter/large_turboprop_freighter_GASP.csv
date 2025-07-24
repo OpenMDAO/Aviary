@@ -152,7 +152,7 @@ aircraft:wing:has_strut, False, unitless
 aircraft:wing:height, 14.5, ft
 aircraft:wing:high_lift_mass_coefficient, 1.2, unitless
 aircraft:wing:incidence, 2, deg
-aircraft:wing:loading, 88.846, lbf/ft**2
+aircraft:design:wing_loading, 88.846, lbf/ft**2
 aircraft:wing:mass_coefficient, 131.32, unitless
 aircraft:wing:max_lift_ref, 1.5, unitless
 aircraft:wing:max_slat_deflection_landing, 0, deg

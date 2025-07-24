@@ -1728,8 +1728,9 @@ add_meta_data(
     Aircraft.Design.WING_LOADING,
     meta_data=_MetaData,
     historical_name={
-        'GASP': None,
+        'GASP': ['INGASP.WGS', 'INGASP.WOS'],
         'FLOPS': None,  # 'MISSA.SWET',
+        'LEAPS1': None,
     },
     default_value=0,
     types=float,
@@ -5885,19 +5886,7 @@ add_meta_data(
     multivalue=True,
 )
 
-add_meta_data(
-    Aircraft.Wing.LOADING,
-    meta_data=_MetaData,
-    historical_name={
-        'GASP': ['INGASP.WGS', 'INGASP.WOS'],
-        'FLOPS': None,
-        'LEAPS1': None,
-    },
-    units='lbf/ft**2',
-    desc='wing loading',
-    default_value=0.0,
-)
-
+# TODO this variable may be uneccessary since we can just check wing loading's value where needed
 add_meta_data(
     Aircraft.Wing.LOADING_ABOVE_20,
     meta_data=_MetaData,

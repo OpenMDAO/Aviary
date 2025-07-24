@@ -551,7 +551,6 @@ class Aircraft:
         LOAD_DISTRIBUTION_CONTROL = 'aircraft:wing:load_distribution_control'
         LOAD_FRACTION = 'aircraft:wing:load_fraction'
         LOAD_PATH_SWEEP_DIST = 'aircraft:wing:load_path_sweep_dist'
-        LOADING = 'aircraft:wing:loading'
         LOADING_ABOVE_20 = 'aircraft:wing:loading_above_20'
         MASS = 'aircraft:wing:mass'
         MASS_COEFFICIENT = 'aircraft:wing:mass_coefficient'
