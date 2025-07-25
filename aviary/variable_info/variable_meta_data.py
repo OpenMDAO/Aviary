@@ -3342,7 +3342,7 @@ add_meta_data(
 add_meta_data(
     Aircraft.Fuselage.HYDRAULIC_DIAMETER,
     meta_data=_MetaData,
-    historical_name={'GASP': 'DHYDRAUL', 'FLOPS': None, 'LEAPS1': None},
+    historical_name={'GASP': 'DHYDRAL', 'FLOPS': None, 'LEAPS1': None},
     units='ft',
     types=float,
     default_value=0.0,
@@ -3609,7 +3609,7 @@ add_meta_data(
     Aircraft.Fuselage.PLANFORM_AREA,
     meta_data=_MetaData,
     historical_name={
-        'GASP': None,
+        'GASP': 'SPF_BODY',
         'FLOPS': None,  # '~WEIGHT.FPAREA',
         'LEAPS1': '(WeightABC)self._fuselage_planform_area',
     },
