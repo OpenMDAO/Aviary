@@ -3829,6 +3829,17 @@ add_meta_data(
 )
 
 add_meta_data(
+    Aircraft.Fuselage.Dbf.BULKHEAD_MATERIALS,
+    units='unitless',
+    types=str,
+    desc='Material density of the bulkhead',
+    default_value=[''],
+    meta_data=_MetaData,
+    multivalue=True,
+    option=True,
+)
+
+add_meta_data(
     Aircraft.Fuselage.Dbf.SKIN_DENSITY,
     units='lbm/inch**2',
     desc='Surface density of fuselage skin',
@@ -4430,6 +4441,27 @@ add_meta_data(
     desc='Mass made up of smaller, non structural components. Can be used for higher fidelity options as well',
     default_value=0.0,
     meta_data=_MetaData,
+    option=True,
+)
+
+add_meta_data(
+    Aircraft.HorizontalTail.Dbf.AIRFOIL_PATH,
+    units='unitless',
+    types=str,
+    desc='Path to csv file containing airfoil data',
+    default_value='',
+    meta_data=_MetaData,
+    option=True,
+)
+
+add_meta_data(
+    Aircraft.HorizontalTail.Dbf.RIB_MATERIALS,
+    units='unitless',
+    types=str,
+    desc='Material of the rib',
+    default_value=[''],
+    meta_data=_MetaData,
+    multivalue=True,
     option=True,
 )
 
@@ -5801,6 +5833,27 @@ add_meta_data(
     option=True,
 )
 
+add_meta_data(
+    Aircraft.VerticalTail.Dbf.AIRFOIL_PATH,
+    units='unitless',
+    types=str,
+    desc='Path to csv file containing airfoil data',
+    default_value='',
+    meta_data=_MetaData,
+    option=True,
+)
+
+add_meta_data(
+    Aircraft.VerticalTail.Dbf.RIB_MATERIALS,
+    units='unitless',
+    types=str,
+    desc='Material of the rib',
+    default_value=[''],
+    meta_data=_MetaData,
+    multivalue=True,
+    option=True,
+)
+
 # __          __  _
 # \ \        / / (_)
 #  \ \  /\  / /   _   _ __     __ _
@@ -7164,6 +7217,17 @@ add_meta_data(
 )
 
 add_meta_data(
+    Aircraft.Wing.Dbf.RIB_MATERIALS,
+    units='unitless',
+    types=str,
+    desc='Material of the rib',
+    default_value=[''],
+    meta_data=_MetaData,
+    multivalue=True,
+    option=True,
+)
+
+add_meta_data(
     Aircraft.Wing.Dbf.SKIN_DENSITY,
     units='lbm/inch**2',
     desc='Surface density of wing skin',
@@ -7258,6 +7322,16 @@ add_meta_data(
     units='kg',
     desc='Mass made up of smaller, non structural components. Can be used for higher fidelity options as well',
     default_value=0.0,
+    meta_data=_MetaData,
+    option=True,
+)
+
+add_meta_data(
+    Aircraft.Wing.Dbf.AIRFOIL_PATH,
+    units='unitless',
+    types=str,
+    desc='Path to csv file containing airfoil data',
+    default_value='',
     meta_data=_MetaData,
     option=True,
 )

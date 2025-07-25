@@ -370,6 +370,7 @@ class Aircraft:
             BULKHEAD_THICKNESS = 'aircraft:fuselage:dbf:bulkhead_thickness'
             SPAR_DENSITY = 'aircraft:fuselage:dbf:spar_density'
             BULKHEAD_DENSITY = 'aircraft:fuselage:dbf:bulkhead_density'
+            BULKHEAD_MATERIALS = 'aircraft:fuselage:dbf:bulkhead_materials'
             SKIN_DENSITY = 'aircraft:fuselage:dbf:skin_density'
             FLOOR_DENSITY = 'aircraft:fuselage:dbf:floor_density'
             FLOOR_THICKNESS = 'aircraft:fuselage:dbf:floor_thickness'
@@ -432,6 +433,8 @@ class Aircraft:
             SHEETING_DENSITY = 'aircraft:horizontal_tail:dbf:sheeting_density'
             NUM_STRINGERS = 'aircraft:horizontal_tail:dbf:number_of_stringers'
             MISC_MASS = 'aircraft:horizontal_tail:dbf:misc_mass'
+            AIRFOIL_PATH = 'aircraft:horizontal_tail:dbf:airfoil_path'
+            RIB_MATERIALS = 'aircraft:horizontal_tail:dbf:rib_materials'
         
 
     class Hydraulics:
@@ -566,6 +569,8 @@ class Aircraft:
             SHEETING_DENSITY = 'aircraft:vertical_tail:dbf:sheeting_density'
             NUM_STRINGERS = 'aircraft:vertical_tail:dbf:number_of_stringers'
             MISC_MASS = 'aircraft:vertical_tail:dbf:misc_mass'
+            AIRFOIL_PATH = 'aircraft:vertical_tail:dbf:airfoil_path'
+            RIB_MATERIALS = 'aircraft:vertical_tail:dbf:rib_materials'
 
     class Wing:
         AEROELASTIC_TAILORING_FACTOR = 'aircraft:wing:aeroelastic_tailoring_factor'
@@ -681,6 +686,7 @@ class Aircraft:
             RIB_THICKNESS = 'aircraft:wing:dbf:rib_thickness'
             SPAR_DENSITY = 'aircraft:wing:dbf:spar_density'
             RIB_DENSITY = 'aircraft:wing:dbf:rib_density'
+            RIB_MATERIALS = 'aircraft:wing:dbf:rib_materials'
             SKIN_DENSITY = 'aircraft:wing:dbf:skin_density'
             SPAR_WALL_THICKNESS = 'aircraft:wing:dbf:spar_wall_thickness'
             RIB_LIGHTENING_FACTOR = 'aircraft:wing:dbf:rib_lightening_factor'
@@ -693,6 +699,7 @@ class Aircraft:
             SHEETING_DENSITY = 'aircraft:wing:dbf:sheeting_density'
             NUM_STRINGERS = 'aircraft:wing:dbf:number_of_stringers'
             MISC_MASS = 'aircraft:wing:dbf:misc_mass'
+            AIRFOIL_PATH = 'aircraft:wing:dbf:airfoil_path'
 
 
 class Dynamic:

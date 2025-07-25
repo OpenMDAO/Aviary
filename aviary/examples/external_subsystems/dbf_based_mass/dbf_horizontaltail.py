@@ -13,7 +13,6 @@ from aviary.variable_info.variable_meta_data import _MetaData
 
 def make_units_option(var_key, units=None, default_val=None, desc=None, meta_data=_MetaData):
     meta = meta_data[var_key]
-
     default_units = meta['units']
 
     if units is None:
@@ -23,17 +22,25 @@ def make_units_option(var_key, units=None, default_val=None, desc=None, meta_dat
     if default_val is None:
         default_val = meta['default_value']
 
+    # Capture units locally so it's always available
+    def set_func(meta_unused, val):
+        # val might be tuple or raw value
+        if isinstance(val, tuple):
+            return wrapped_convert_units(val, units)
+        else:
+            return wrapped_convert_units((val, units), units)
+
     return {
         'name': var_key,
         'default': (default_val, units),
-        'set_function': lambda meta, val: (wrapped_convert_units(val, units), units),
+        'set_function': set_func,
         'desc': desc,
     }
 
 class DBFHorizontalTailMass(om.ExplicitComponent):
     def initialize(self):
-        self.options.declare('airfoil_data_file', types=str, allow_none=False)
-        self.options.declare('rib_materials', types=(list,))
+        self.options.declare(Aircraft.HorizontalTail.Dbf.AIRFOIL_PATH, types=str, allow_none=False)
+        self.options.declare(Aircraft.HorizontalTail.Dbf.RIB_MATERIALS, types=(list,))
 
         # Declare options using Aircraft.HorizontalTail.Dbf metadata keys
         self.options.declare(**make_units_option(Aircraft.HorizontalTail.Dbf.NUM_SPARS, 'unitless'))
@@ -139,24 +146,24 @@ class DBFHorizontalTailMass(om.ExplicitComponent):
             raise ValueError(f'Wetted area must be > 0, got {wetted_area}')
 
         # From options
-        num_spars = self.options[Aircraft.HorizontalTail.Dbf.NUM_SPARS][0]
-        rib_lightening_factor = self.options[Aircraft.HorizontalTail.Dbf.RIB_LIGHTENING_FACTOR][0]
-        rib_thickness = self.options[Aircraft.HorizontalTail.Dbf.RIB_THICKNESS][0]
-        rho_skin = self.options[Aircraft.HorizontalTail.Dbf.SKIN_DENSITY][0]
-        spar_outer_diameter = self.options[Aircraft.HorizontalTail.Dbf.SPAR_OUTER_DIAMETER][0]
-        rho_spar = self.options[Aircraft.HorizontalTail.Dbf.SPAR_DENSITY][0]
-        spar_wall_thickness = self.options[Aircraft.HorizontalTail.Dbf.SPAR_WALL_THICKNESS][0]
-        glue_factor = self.options[Aircraft.HorizontalTail.Dbf.GLUE_FACTOR][0]
-        stringer_thickness = self.options[Aircraft.HorizontalTail.Dbf.STRINGER_THICKNESS][0]
-        rho_stringer = self.options[Aircraft.HorizontalTail.Dbf.STRINGER_DENSITY][0]
-        sheeting_thickness = self.options[Aircraft.HorizontalTail.Dbf.SHEETING_THICKNESS][0]
-        sheeting_coverage = self.options[Aircraft.HorizontalTail.Dbf.SHEETING_COVERAGE][0]
-        rho_sheeting = self.options[Aircraft.HorizontalTail.Dbf.SHEETING_DENSITY][0]
-        sheeting_lightening_factor = self.options[Aircraft.HorizontalTail.Dbf.SHEETING_LIGHTENING_FACTOR][0]
-        num_stringer = self.options[Aircraft.HorizontalTail.Dbf.NUM_STRINGERS][0]
-        rib_materials = self.options['rib_materials']  # stays string key
-        airfoil_data_file = self.options['airfoil_data_file']  # stays string key
-        misc_mass = self.options[Aircraft.HorizontalTail.Dbf.MISC_MASS][0]
+        num_spars = self.options[Aircraft.HorizontalTail.Dbf.NUM_SPARS]
+        rib_lightening_factor = self.options[Aircraft.HorizontalTail.Dbf.RIB_LIGHTENING_FACTOR]
+        rib_thickness = self.options[Aircraft.HorizontalTail.Dbf.RIB_THICKNESS]
+        rho_skin = self.options[Aircraft.HorizontalTail.Dbf.SKIN_DENSITY]
+        spar_outer_diameter = self.options[Aircraft.HorizontalTail.Dbf.SPAR_OUTER_DIAMETER]
+        rho_spar = self.options[Aircraft.HorizontalTail.Dbf.SPAR_DENSITY]
+        spar_wall_thickness = self.options[Aircraft.HorizontalTail.Dbf.SPAR_WALL_THICKNESS]
+        glue_factor = self.options[Aircraft.HorizontalTail.Dbf.GLUE_FACTOR]
+        stringer_thickness = self.options[Aircraft.HorizontalTail.Dbf.STRINGER_THICKNESS]
+        rho_stringer = self.options[Aircraft.HorizontalTail.Dbf.STRINGER_DENSITY]
+        sheeting_thickness = self.options[Aircraft.HorizontalTail.Dbf.SHEETING_THICKNESS]
+        sheeting_coverage = self.options[Aircraft.HorizontalTail.Dbf.SHEETING_COVERAGE]
+        rho_sheeting = self.options[Aircraft.HorizontalTail.Dbf.SHEETING_DENSITY]
+        sheeting_lightening_factor = self.options[Aircraft.HorizontalTail.Dbf.SHEETING_LIGHTENING_FACTOR]
+        num_stringer = self.options[Aircraft.HorizontalTail.Dbf.NUM_STRINGERS]
+        rib_materials = self.options[Aircraft.HorizontalTail.Dbf.RIB_MATERIALS]  # stays string key
+        airfoil_data_file = self.options[Aircraft.HorizontalTail.Dbf.AIRFOIL_PATH]  # stays string key
+        misc_mass = self.options[Aircraft.HorizontalTail.Dbf.MISC_MASS]
 
         if len(rib_materials) != len(rib_thickness):
             raise ValueError(
@@ -204,23 +211,23 @@ class DBFHorizontalTailMass(om.ExplicitComponent):
         chord = inputs[Aircraft.HorizontalTail.ROOT_CHORD]
 
         # From options
-        num_spars = self.options[Aircraft.HorizontalTail.Dbf.NUM_SPARS][0]
-        rib_lightening_factor = self.options[Aircraft.HorizontalTail.Dbf.RIB_LIGHTENING_FACTOR][0]
-        rib_thickness = self.options[Aircraft.HorizontalTail.Dbf.RIB_THICKNESS][0]
-        rho_skin = self.options[Aircraft.HorizontalTail.Dbf.SKIN_DENSITY][0]
-        spar_outer_diameter = self.options[Aircraft.HorizontalTail.Dbf.SPAR_OUTER_DIAMETER][0]
-        rho_spar = self.options[Aircraft.HorizontalTail.Dbf.SPAR_DENSITY][0]
-        spar_wall_thickness = self.options[Aircraft.HorizontalTail.Dbf.SPAR_WALL_THICKNESS][0]
-        glue_factor = self.options[Aircraft.HorizontalTail.Dbf.GLUE_FACTOR][0]
-        stringer_thickness = self.options[Aircraft.HorizontalTail.Dbf.STRINGER_THICKNESS][0]
-        rho_stringer = self.options[Aircraft.HorizontalTail.Dbf.STRINGER_DENSITY][0]
-        sheeting_thickness = self.options[Aircraft.HorizontalTail.Dbf.SHEETING_THICKNESS][0]
-        sheeting_coverage = self.options[Aircraft.HorizontalTail.Dbf.SHEETING_COVERAGE][0]
-        rho_sheeting = self.options[Aircraft.HorizontalTail.Dbf.SHEETING_DENSITY][0]
-        sheeting_lightening_factor = self.options[Aircraft.HorizontalTail.Dbf.SHEETING_LIGHTENING_FACTOR][0]
-        num_stringer = self.options[Aircraft.HorizontalTail.Dbf.NUM_STRINGERS][0]
-        rib_materials = self.options['rib_materials']
-        airfoil_data_file = self.options['airfoil_data_file']
+        num_spars = self.options[Aircraft.HorizontalTail.Dbf.NUM_SPARS]
+        rib_lightening_factor = self.options[Aircraft.HorizontalTail.Dbf.RIB_LIGHTENING_FACTOR]
+        rib_thickness = self.options[Aircraft.HorizontalTail.Dbf.RIB_THICKNESS]
+        rho_skin = self.options[Aircraft.HorizontalTail.Dbf.SKIN_DENSITY]
+        spar_outer_diameter = self.options[Aircraft.HorizontalTail.Dbf.SPAR_OUTER_DIAMETER]
+        rho_spar = self.options[Aircraft.HorizontalTail.Dbf.SPAR_DENSITY]
+        spar_wall_thickness = self.options[Aircraft.HorizontalTail.Dbf.SPAR_WALL_THICKNESS]
+        glue_factor = self.options[Aircraft.HorizontalTail.Dbf.GLUE_FACTOR]
+        stringer_thickness = self.options[Aircraft.HorizontalTail.Dbf.STRINGER_THICKNESS]
+        rho_stringer = self.options[Aircraft.HorizontalTail.Dbf.STRINGER_DENSITY]
+        sheeting_thickness = self.options[Aircraft.HorizontalTail.Dbf.SHEETING_THICKNESS]
+        sheeting_coverage = self.options[Aircraft.HorizontalTail.Dbf.SHEETING_COVERAGE]
+        rho_sheeting = self.options[Aircraft.HorizontalTail.Dbf.SHEETING_DENSITY]
+        sheeting_lightening_factor = self.options[Aircraft.HorizontalTail.Dbf.SHEETING_LIGHTENING_FACTOR]
+        num_stringer = self.options[Aircraft.HorizontalTail.Dbf.NUM_STRINGERS]
+        rib_materials = self.options[Aircraft.HorizontalTail.Dbf.RIB_MATERIALS]  # stays string key
+        airfoil_data_file = self.options[Aircraft.HorizontalTail.Dbf.AIRFOIL_PATH]
 
         rho_rib = np.array([(materials.get_item(m)[0]) for m in rib_materials])
 
@@ -258,8 +265,8 @@ if __name__ == '__main__':
 
     # Set required options
     htail = prob.model.dbf_htail
-    htail.options['rib_materials'] = rib_materials
-    htail.options['airfoil_data_file'] = (
+    htail.options[Aircraft.HorizontalTail.Dbf.RIB_MATERIALS] = rib_materials
+    htail.options[Aircraft.HorizontalTail.Dbf.AIRFOIL_PATH] = (
         r'aviary\examples\external_subsystems\dbf_based_mass\mh84-il.csv'
     )
     htail.set_option(Aircraft.HorizontalTail.Dbf.SHEETING_COVERAGE, val=0.4, units='unitless')
