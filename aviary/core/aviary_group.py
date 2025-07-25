@@ -15,7 +15,6 @@ from aviary.core.pre_mission_group import PreMissionGroup
 from aviary.core.post_mission_group import PostMissionGroup
 from aviary.utils.preprocessors import preprocess_options
 from aviary.variable_info.enums import (
-    AnalysisScheme,
     EquationsOfMotion,
     LegacyCode,
     ProblemType,
@@ -33,13 +32,11 @@ from aviary.interface.utils import set_warning_format
 from aviary.mission.utils import get_phase_mission_bus_lengths, process_guess_var
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission, Settings
 from aviary.variable_info.variable_meta_data import _MetaData as BaseMetaData
-from aviary.mission.gasp_based.phases.time_integration_traj import FlexibleTraj
 
 from aviary.utils.functions import get_path
 from aviary.utils.preprocessors import preprocess_options
 from aviary.utils.process_input_decks import create_vehicle, update_GASP_options
 from aviary.utils.utils import wrapped_convert_units
-from aviary.models.missions.two_dof_fiti_default import add_default_sgm_args
 from aviary.variable_info.functions import setup_trajectory_params
 
 TWO_DEGREES_OF_FREEDOM = EquationsOfMotion.TWO_DEGREES_OF_FREEDOM
@@ -64,13 +61,12 @@ class AviaryGroup(om.Group):
     one aircraft in multiple missions simultaneously.
     """
 
-    def __init__(self, analysis_scheme=AnalysisScheme.COLLOCATION, verbosity=None, **kwargs):
+    def __init__(self, verbosity=None, **kwargs):
         super().__init__(**kwargs)
 
         self.pre_mission = PreMissionGroup()
         self.post_mission = PostMissionGroup()
         self.verbosity = verbosity
-        self.analysis_scheme = analysis_scheme
         self.regular_phases = []
         self.reserve_phases = []
 
@@ -330,10 +326,7 @@ class AviaryGroup(om.Group):
         for phase_name, phase in self.phase_info.items():
             if 'user_options' in phase:
                 analytic = False
-                if (
-                    self.analysis_scheme is AnalysisScheme.COLLOCATION
-                    and self.mission_method is EquationsOfMotion.TWO_DEGREES_OF_FREEDOM
-                ):
+                if self.mission_method is EquationsOfMotion.TWO_DEGREES_OF_FREEDOM:
                     try:
                         # if the user provided an option, use it
                         analytic = phase['user_options']['analytic']
@@ -491,13 +484,6 @@ class AviaryGroup(om.Group):
                 f'Regular Phases : {self.regular_phases} | '
                 f'Reserve Phases : {self.reserve_phases} '
             )
-
-        if self.analysis_scheme is AnalysisScheme.SHOOTING:
-            self.descent_phases = {}
-            for name, info in self.phase_info.items():
-                descent = info.get('descent_phase', False)
-                if descent:
-                    self.descent_phases[name] = info
 
     def add_pre_mission_systems(self, verbosity=None):
         """
@@ -696,69 +682,8 @@ class AviaryGroup(om.Group):
 
         phase_info = self.phase_info
 
-        if self.analysis_scheme is AnalysisScheme.COLLOCATION:
-            phases = list(phase_info.keys())
-            traj = self.add_subsystem('traj', dm.Trajectory(parallel_phases=parallel_phases))
-
-        elif self.analysis_scheme is AnalysisScheme.SHOOTING:
-            vb = self.aviary_inputs.get_val(Settings.VERBOSITY)
-            add_default_sgm_args(self.phase_info, self.ode_args, vb)
-
-            full_traj = FlexibleTraj(
-                Phases=self.phase_info,
-                traj_final_state_output=[
-                    Dynamic.Vehicle.MASS,
-                    Dynamic.Mission.DISTANCE,
-                ],
-                traj_initial_state_input=[
-                    Dynamic.Vehicle.MASS,
-                    Dynamic.Mission.DISTANCE,
-                    Dynamic.Mission.ALTITUDE,
-                ],
-                traj_event_trigger_input=[
-                    # specify ODE, output_name, with units that SimuPyProblem expects
-                    # assume event function is of form ODE.output_name - value
-                    # third key is event_idx associated with input
-                    ('groundroll', Dynamic.Mission.VELOCITY, 0),
-                    ('climb3', Dynamic.Mission.ALTITUDE, 0),
-                    ('cruise', Dynamic.Vehicle.MASS, 0),
-                ],
-                traj_intermediate_state_output=[
-                    ('cruise', Dynamic.Mission.DISTANCE),
-                    ('cruise', Dynamic.Vehicle.MASS),
-                ],
-            )
-            traj = self.add_subsystem(
-                'traj',
-                full_traj,
-                promotes_inputs=[('altitude_initial', Mission.Design.CRUISE_ALTITUDE)],
-            )
-
-            self.add_subsystem(
-                'actual_descent_fuel',
-                om.ExecComp(
-                    'actual_descent_fuel = traj_cruise_mass_final - traj_mass_final',
-                    actual_descent_fuel={'units': 'lbm'},
-                    traj_cruise_mass_final={'units': 'lbm'},
-                    traj_mass_final={'units': 'lbm'},
-                ),
-            )
-
-            self.connect('start_of_descent_mass', 'traj.SGMCruise_mass_trigger')
-            self.connect(
-                'traj.mass_final',
-                'actual_descent_fuel.traj_mass_final',
-                src_indices=[-1],
-                flat_src_indices=True,
-            )
-            self.connect(
-                'traj.cruise_mass_final',
-                'actual_descent_fuel.traj_cruise_mass_final',
-                src_indices=[-1],
-                flat_src_indices=True,
-            )
-            self.traj = full_traj
-            return traj
+        phases = list(phase_info.keys())
+        traj = self.add_subsystem('traj', dm.Trajectory(parallel_phases=parallel_phases))
 
         def add_subsystem_timeseries_outputs(phase, phase_name):
             phase_options = self.phase_info[phase_name]
@@ -779,11 +704,10 @@ class AviaryGroup(om.Group):
                                 timeseries, timeseries='mission_bus_variables'
                             )
 
-        if self.analysis_scheme is AnalysisScheme.COLLOCATION:
-            self.phase_objects = []
-            for phase_idx, phase_name in enumerate(phases):
-                phase = traj.add_phase(phase_name, self._get_phase(phase_name, phase_idx, comm))
-                add_subsystem_timeseries_outputs(phase, phase_name)
+        self.phase_objects = []
+        for phase_idx, phase_name in enumerate(phases):
+            phase = traj.add_phase(phase_name, self._get_phase(phase_name, phase_idx, comm))
+            add_subsystem_timeseries_outputs(phase, phase_name)
 
         # loop through phase_info and external subsystems
         external_parameters = {}
@@ -898,35 +822,25 @@ class AviaryGroup(om.Group):
             promotes=[('fuel_burned', Mission.Summary.FUEL_BURNED)],
         )
 
-        if self.analysis_scheme is AnalysisScheme.SHOOTING:
-            # shooting method currently doesn't have timeseries
+        if self.pre_mission_info['include_takeoff']:
             post_mission.promotes(
                 'fuel_burned',
-                [
-                    ('initial_mass', Mission.Summary.GROSS_MASS),
-                    ('mass_final', Mission.Landing.TOUCHDOWN_MASS),
-                ],
+                [('initial_mass', Mission.Summary.GROSS_MASS)],
             )
         else:
-            if self.pre_mission_info['include_takeoff']:
-                post_mission.promotes(
-                    'fuel_burned',
-                    [('initial_mass', Mission.Summary.GROSS_MASS)],
-                )
-            else:
-                # timeseries has to be used because Breguet cruise phases don't have
-                # states
-                self.connect(
-                    f'traj.{self.regular_phases[0]}.timeseries.mass',
-                    'fuel_burned.initial_mass',
-                    src_indices=[0],
-                )
-
+            # timeseries has to be used because Breguet cruise phases don't have
+            # states
             self.connect(
-                f'traj.{self.regular_phases[-1]}.timeseries.mass',
-                'fuel_burned.mass_final',
-                src_indices=[-1],
+                f'traj.{self.regular_phases[0]}.timeseries.mass',
+                'fuel_burned.initial_mass',
+                src_indices=[0],
             )
+
+        self.connect(
+            f'traj.{self.regular_phases[-1]}.timeseries.mass',
+            'fuel_burned.mass_final',
+            src_indices=[-1],
+        )
 
         # Fuel burn in reserve phases
         if self.reserve_phases:
@@ -943,30 +857,18 @@ class AviaryGroup(om.Group):
                 promotes=[('reserve_fuel_burned', Mission.Summary.RESERVE_FUEL_BURNED)],
             )
 
-            if self.analysis_scheme is AnalysisScheme.SHOOTING:
-                # shooting method currently doesn't have timeseries
-                post_mission.promotes(
-                    'reserve_fuel_burned',
-                    [('initial_mass', Mission.Landing.TOUCHDOWN_MASS)],
-                )
-                self.connect(
-                    f'traj.{self.reserve_phases[-1]}.states:mass',
-                    'reserve_fuel_burned.mass_final',
-                    src_indices=[-1],
-                )
-            else:
-                # timeseries has to be used because Breguet cruise phases don't have
-                # states
-                self.connect(
-                    f'traj.{self.reserve_phases[0]}.timeseries.mass',
-                    'reserve_fuel_burned.initial_mass',
-                    src_indices=[0],
-                )
-                self.connect(
-                    f'traj.{self.reserve_phases[-1]}.timeseries.mass',
-                    'reserve_fuel_burned.mass_final',
-                    src_indices=[-1],
-                )
+            # timeseries has to be used because Breguet cruise phases don't have
+            # states
+            self.connect(
+                f'traj.{self.reserve_phases[0]}.timeseries.mass',
+                'reserve_fuel_burned.initial_mass',
+                src_indices=[0],
+            )
+            self.connect(
+                f'traj.{self.reserve_phases[-1]}.timeseries.mass',
+                'reserve_fuel_burned.mass_final',
+                src_indices=[-1],
+            )
 
         self.add_fuel_reserve_component()
 
@@ -1395,10 +1297,7 @@ class AviaryGroup(om.Group):
 
                 self.add_constraint('gross_mass_resid', lower=0)
 
-            if (
-                self.mission_method is TWO_DEGREES_OF_FREEDOM
-                and self.analysis_scheme is AnalysisScheme.COLLOCATION
-            ):
+            if self.mission_method is TWO_DEGREES_OF_FREEDOM:
                 # problem formulation to make the trajectory work
                 self.add_design_var(Mission.Takeoff.ASCENT_T_INITIAL, lower=0, upper=100, ref=30.0)
                 self.add_design_var(Mission.Takeoff.ASCENT_DURATION, lower=1, upper=1000, ref=10.0)
@@ -1432,22 +1331,6 @@ class AviaryGroup(om.Group):
         if parent_prob is not None and parent_prefix != '':
             target_prob = parent_prob
 
-        # Grab the trajectory object from the model
-        if self.analysis_scheme is AnalysisScheme.SHOOTING:
-            if self.problem_type is ProblemType.SIZING:
-                target_prob.set_val(
-                    parent_prefix + Mission.Summary.GROSS_MASS,
-                    self.get_val(Mission.Design.GROSS_MASS),
-                )
-
-            target_prob.set_val(
-                parent_prefix + 'traj.SGMClimb_' + Dynamic.Mission.ALTITUDE + '_trigger',
-                val=self.cruise_alt,
-                units='ft',
-            )
-
-            return
-
         traj = self.traj
 
         # Determine which phases to loop over, fetching them from the trajectory
@@ -1464,10 +1347,8 @@ class AviaryGroup(om.Group):
 
             if self.mission_method is SOLVED_2DOF:
                 self.phase_objects[idx].apply_initial_guesses(self, 'traj', phase)
-                if (
-                    self.phase_info[phase_name]['user_options']['ground_roll']
-                    and self.phase_info[phase_name]['user_options']['fix_initial']
-                ):
+
+                if self.phase_info[phase_name]['user_options'].get('ground_roll') and idx == 0:
                     continue
 
             # If not, fetch the initial guesses specific to the phase

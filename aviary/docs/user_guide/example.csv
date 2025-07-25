@@ -1,7 +1,4 @@
-# This is test data generated using write_data_file
-# Aviary data tables can support multiple comments
-
-aircraft:wing:span (ft), Scale Factor
-                     79,          0.5
-                    118,         0.75
-                    171,          0.8
+aircraft:wing:span (ft, input), Scale Factor (input)
+                            79,                  0.5
+                           118,                 0.75
+                           171,                  0.8

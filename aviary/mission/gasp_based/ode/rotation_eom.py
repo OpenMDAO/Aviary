@@ -2,7 +2,6 @@ import numpy as np
 import openmdao.api as om
 
 from aviary.constants import GRAV_ENGLISH_GASP, GRAV_ENGLISH_LBM, MU_TAKEOFF
-from aviary.variable_info.enums import AnalysisScheme
 from aviary.variable_info.functions import add_aviary_input
 from aviary.variable_info.variables import Aircraft, Dynamic
 
@@ -12,16 +11,9 @@ class RotationEOM(om.ExplicitComponent):
 
     def initialize(self):
         self.options.declare('num_nodes', types=int)
-        self.options.declare(
-            'analysis_scheme',
-            types=AnalysisScheme,
-            default=AnalysisScheme.COLLOCATION,
-            desc='The analysis method that will be used to close the trajectory; for example collocation or time integration',
-        )
 
     def setup(self):
         nn = self.options['num_nodes']
-        analysis_scheme = self.options['analysis_scheme']
 
         self.add_input(Dynamic.Vehicle.MASS, val=np.ones(nn), desc='aircraft mass', units='lbm')
         self.add_input(
@@ -86,13 +78,11 @@ class RotationEOM(om.ExplicitComponent):
         )
         self.add_output('normal_force', val=np.ones(nn), desc='normal forces', units='lbf')
         self.add_output('fuselage_pitch', val=np.ones(nn), desc='fuselage pitch angle', units='deg')
+        self.add_output(
+            'angle_of_attack_rate', val=np.ones(nn), desc='angle of attack rate', units='deg/s'
+        )
 
-        if analysis_scheme is AnalysisScheme.COLLOCATION:
-            self.add_output(
-                'angle_of_attack_rate', val=np.ones(nn), desc='angle of attack rate', units='deg/s'
-            )
-
-            self.declare_partials('angle_of_attack_rate', ['*'])
+        self.declare_partials('angle_of_attack_rate', ['*'])
 
     def setup_partials(self):
         arange = np.arange(self.options['num_nodes'])
@@ -154,8 +144,6 @@ class RotationEOM(om.ExplicitComponent):
         self.declare_partials('fuselage_pitch', Aircraft.Wing.INCIDENCE, val=-1)
 
     def compute(self, inputs, outputs):
-        analysis_scheme = self.options['analysis_scheme']
-
         weight = inputs[Dynamic.Vehicle.MASS] * GRAV_ENGLISH_LBM
         thrust = inputs[Dynamic.Vehicle.Propulsion.THRUST_TOTAL]
         incremented_lift = inputs[Dynamic.Vehicle.LIFT]
@@ -190,11 +178,8 @@ class RotationEOM(om.ExplicitComponent):
         outputs[Dynamic.Mission.ALTITUDE_RATE] = TAS * np.sin(gamma)
         outputs[Dynamic.Mission.DISTANCE_RATE] = TAS * np.cos(gamma)
         outputs['normal_force'] = normal_force
-
         outputs['fuselage_pitch'] = gamma * 180 / np.pi - i_wing + alpha
-
-        if analysis_scheme is AnalysisScheme.COLLOCATION:
-            outputs['angle_of_attack_rate'] = np.full(nn, 3.33)
+        outputs['angle_of_attack_rate'] = np.full(nn, 3.33)
 
     def compute_partials(self, inputs, J):
         mu = MU_TAKEOFF
