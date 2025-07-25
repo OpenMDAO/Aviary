@@ -69,10 +69,10 @@ prob.check_and_preprocess_inputs()
 prob.build_model()
 
 # Link Key design variables to ensure both aircraft are modelled the same:
-prob.promote_inputs(['mission1', 'mission2'], [(Mission.Design.GROSS_MASS, 'Aircraft1.GROSS_MASS'), (Mission.Design.RANGE, 'Aircraft1.RANGE'), (Aircraft.Wing.SWEEP, 'Aircraft1.SWEEP')])
+prob.promote_inputs(['mission1', 'mission2'], [(Mission.Design.GROSS_MASS, 'Aircraft1:GROSS_MASS'), (Mission.Design.RANGE, 'Aircraft1:RANGE'), (Aircraft.Wing.SWEEP, 'Aircraft1:SWEEP')])
 
 prob.add_design_var_default('Aircraft1:GROSS_MASS', lower=10.0, upper=900e3, units='lbm', default_val=100000)
-prob.add_design_var_default('Aircraft1.SWEEP', lower=23.0, upper=27.0, units='deg', default_val=25)
+prob.add_design_var_default('Aircraft1:SWEEP', lower=23.0, upper=27.0, units='deg', default_val=25)
 
 # TODO: Do we have to run prob.add_design_variables() <- this adds some special stuff for multimission
 prob.add_design_variables()
@@ -90,7 +90,7 @@ prob.setup()
 # set_val goes here if needed
 
 # Ensure that design_range is the same for similar aircraft to ensure that navigation gear is designed similarly
-prob.match_design_range('model1', 'model2', range='Aircraft1.RANGE')
+prob.set_design_range(('mission1', 'mission2'), range='Aircraft1:RANGE')
 
 # TODO: how to handle "aircraft that the user says are the same but are not the same i.e. wing design is different"
 

@@ -12,6 +12,7 @@ import dymos as dm
 import numpy as np
 import openmdao.api as om
 from openmdao.utils.reports_system import _default_reports
+from openmdao.utils.units import convert_units
 
 from aviary.core.aviary_group import AviaryGroup
 
@@ -78,7 +79,6 @@ class AviaryProblem(om.Problem):
             self.model = om.Group()
         else:
             self.model = AviaryGroup()
-        
 
         self.aviary_inputs = None
 
@@ -607,7 +607,7 @@ class AviaryProblem(om.Problem):
             else:
                 raise ValueError(f'{self.model.problem_type} is not a valid problem type.')
 
-    def add_design_var_default(self, name:str, lower:float = None, upper:float = None, units:str = None, src_shape=None, default_val:float = None):
+    def add_design_var_default(self, name:str, lower:float = None, upper:float = None, units:str = None, src_shape=None, default_val:float = None): #TODO: Add Ref
         """
         Add a design variable to the problem as well as initialized a default value for that design variable.
         The default value can be over-written after setup with prob.set_val()
@@ -616,17 +616,25 @@ class AviaryProblem(om.Problem):
         if default_val is not None:
             self.model.set_input_defaults(name=name, val=default_val, units=units, src_shape=src_shape)
         
-    def match_design_range(self, missions:list[str], range:str):
+    def set_design_range(self, missions:list[str], range:str):
+        # TODO: What happens if design range is specified in CSV??? should be able to access from group.aviary_values
         """
         Finds the longest mission and sets its range as the design range for all
         Aviary problems. Used within Aviary for sizing subsystems (avionics and AC).
         this could be simpllified in the future if there was a single pre-mission 
         for similar aircraft
         """
-
+        matching_names = [
+            (name, group)
+            for name, group in self.aviary_groups_dict.items()
+            if name in missions
+        ]
         design_range = []
-        for mission in len(missions):
-            design_range.append(self.get_val(f'{mission}.{Mission.Design.RANGE}', units='nmi'))
+        # loop through all the phase_info and extract target ranges
+        for name, group in matching_names:
+            target_range, units = group.post_mission_info['target_range']
+            design_range.append(convert_units(target_range, units, 'nmi'))
+        # TODO: loop through all the .csv files and extract Mission.Design.RANGE
         design_range_max = np.max(design_range)
         self.set_val(range, val=design_range_max, units='nmi')
 
@@ -756,7 +764,7 @@ class AviaryProblem(om.Problem):
         for model, output, weight in objectives_cleaned:
             output_safe = output.replace(":", "_")
             weighted_exprs.append(f'{model}_{output_safe}*{weight}/{total_weight}') # we use "_" here because ExecComp() cannot intake "."
-            connection_names.append([f'composite_objective.{model}_{output_safe}', f'{model}.{output}'])
+            connection_names.append([f'{model}.{output}',f'composite_objective.{model}_{output_safe}'])
         final_expr = ' + '.join(weighted_exprs)  
 
         # weighted_str looks like:  'model1_fuelburn*0.67*0.5 + model1_gross_mass*0.33*0.5 + model2_fuelburn*0.67*0.5 + model2_gross_mass*0.33*0.5'
@@ -769,8 +777,8 @@ class AviaryProblem(om.Problem):
         )
 
         # connect from inside of the models to the composite objective
-        for target, source in connection_names:
-            self.model.connect(target, source)
+        for source, target in connection_names:
+            self.model.connect(source, target)
         # finally add the objective
         self.model.add_objective('composite', ref=ref)
 
@@ -896,7 +904,9 @@ class AviaryProblem(om.Problem):
                 for mission_name in mission_names:
                     if name == mission_name:
                         # the group name matches the mission name, 
-                        group.promotes(var_pairs)
+                        #group.promotes(var_pairs)
+                        #print("var_pairs",var_pairs)
+                        self.model.promotes(mission_name, inputs=var_pairs)
 
 
     def setup(self, **kwargs):
@@ -1588,7 +1598,6 @@ def _load_off_design(
             # TODO is there a reason we can't use set_default() to make sure target range exists and
             #      has a value if not already in dictionary?
             try:
-                phase_info['post_mission']['target_range']
                 phase_info['post_mission']['target_range'] = (mission_range, 'nmi')
             except KeyError:
                 warnings.warn('no target range to update')

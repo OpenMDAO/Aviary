@@ -1058,8 +1058,8 @@ class AviaryGroup(om.Group):
                                    om.ExecComp(['mass_final = mass_in', 
                                                'time_final = time_in',
                                                'range_final = range_in'],
-                                               mass_in={'units': 'lbf'}, 
-                                               mass_final={'units': 'lbf'},
+                                               mass_in={'units': 'lbm'}, 
+                                               mass_final={'units': 'lbm'},
                                                time_in={'units': 'min'}, 
                                                time_final={'units': 'min'},
                                                range_in={'units': 'nmi'},
@@ -1072,17 +1072,17 @@ class AviaryGroup(om.Group):
         final_phase = self.regular_phases[-1]
         self.connect(
             f'traj.{final_phase}.states:mass',
-            f'{self.state_output}.mass_in',
+            'state_output.mass_in',
             src_indices=[-1],
         )
         self.connect(
             f'traj.{final_phase}.timeseries.distance',
-            f'{self.state_output}.range_in',
+            'state_output.range_in',
             src_indices=[-1],
         )
         self.connect(
             f'traj.{final_phase}.timeseries.time',
-            f'{self.state_output}.time_in',
+            'state_output.time_in',
             src_indices=[-1]
         )
 
