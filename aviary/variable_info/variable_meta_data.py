@@ -2619,6 +2619,26 @@ add_meta_data(
     multivalue=True,
 )
 
+add_meta_data(
+    Aircraft.Engine.Motor.KV_EQ_SLOPE,
+    meta_data=_MetaData,
+    units='unitless',
+    default_value = 1.3132,
+    desc='__', #TODO
+    option=True,
+    multivalue=True,
+)
+
+add_meta_data(
+    Aircraft.Engine.Motor.KV_EQ_INT,
+    meta_data=_MetaData,
+    units='unitless',
+    default_value= 0.01,
+    desc='__',
+    option=True,
+    multivalue=True,
+)
+
 
 #   ___                            _   _
 #  | _ \  _ _   ___   _ __   ___  | | | |  ___   _ _
@@ -6850,6 +6870,14 @@ add_meta_data(
 #                    |_|
 # ==========================================================
 
+add_meta_data(
+    Dynamic.Vehicle.Propulsion.CURRENT, 
+    meta_data=_MetaData,
+    historical_name={'GASP': None, 'FLOPS': None, 'LEAPS1': None},
+    units='A',
+    desc='Electrical current flow through an engine',
+    multivalue=True,
+)
 add_meta_data(
     Dynamic.Vehicle.Propulsion.ELECTRIC_POWER_IN,
     meta_data=_MetaData,

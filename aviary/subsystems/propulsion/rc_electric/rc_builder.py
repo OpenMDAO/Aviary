@@ -12,13 +12,22 @@ class RCBuilder(EngineModel):
         # aviary_inputs = AviaryValues()
         super().__init__(name, options)
 
-    def build_pre_mission(self, m, b, aviary_inputs, **kwargs):
+    def build_pre_mission(self, aviary_inputs, **kwargs):  # m, b,
         """Builds an OpenMDAO system for the pre-mission computations of the subsystem."""
-        return RCPropPreMission(m=m, b=b, aviary_options=self.options)
+        return RCPropPreMission(aviary_options=self.options)
 
     def build_mission(self, num_nodes, aviary_inputs, **kwargs):
         """Builds an OpenMDAO system for the mission computations of the subsystem."""
         return RCPropMission(num_nodes=num_nodes, aviary_options=self.options)
+    def get_constraints(self):
+        constraints = {
+            Dynamic.Vehicle.Propulsion.CURRENT: {
+                'lower': 0,
+                'type': 'path',
+            },
+        }
+
+        return constraints
 
     def get_design_vars(self):
         """
@@ -42,12 +51,13 @@ class RCBuilder(EngineModel):
                 'upper': None,
                 # 'val': 100,  
             },
-            Dynamic.Vehicle.Propulsion.THROTTLE: {
-                'units': 'unitless',
-                'lower': 0.01,
-                'upper': 1.0,
-                # 'val': 0.5,  
-            },
+            #TODO: Alex see why this is an issue 
+            # Dynamic.Vehicle.Propulsion.THROTTLE: {
+            #     'units': 'unitless',
+            #     'lower': 0.01,
+            #     'upper': 1.0,
+            #     # 'val': 0.5,  
+            # },
             Aircraft.Engine.Motor.IDLE_CURRENT: {
                 'units': 'A',
                 'lower': 1.0,
@@ -101,10 +111,6 @@ class RCBuilder(EngineModel):
 
         #TODO add new variables, including dvs and optional inputs
         parameters = {
-            Aircraft.Battery.MASS: {
-                'val': 1.0, 
-                'units': 'kg',
-            },
             Aircraft.Battery.VOLTAGE: {
                 'val': 22.2, 
                 'units': 'V',
@@ -129,10 +135,6 @@ class RCBuilder(EngineModel):
                 'val': 100,  
                 'units': 'A',
             },
-            Aircraft.Engine.Motor.MASS: {
-                'val': 0.0, 
-                'units': 'kg', 
-            },
             Aircraft.Engine.Propeller.DIAMETER: {
                 'val': 0.0,
                 'units': 'm',
@@ -151,7 +153,9 @@ class RCBuilder(EngineModel):
     #TODO add new outputs
     def get_outputs(self):
         return [
-            Dynamic.Vehicle.Propulsion.PROP_POWER + '_out',
-            Dynamic.Vehicle.Propulsion.RPM + '_out',
-            Dynamic.Vehicle.Propulsion.THRUST + '_out',
+            #TODO: Alex see why this is an issue 
+            # Dynamic.Vehicle.Propulsion.THROTTLE
+            # Dynamic.Vehicle.Propulsion.SHAFT_POWER + '_out',
+            # Dynamic.Vehicle.Propulsion.RPM + '_out',
+            # Dynamic.Vehicle.Propulsion.THRUST + '_out',
         ]

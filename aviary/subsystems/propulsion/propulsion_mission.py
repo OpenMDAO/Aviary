@@ -418,7 +418,6 @@ class PropulsionSum(om.ExplicitComponent):
 
     def compute(self, inputs, outputs):
         num_engines = self.options[Aircraft.Engine.NUM_ENGINES]
-
         thrust = inputs[Dynamic.Vehicle.Propulsion.THRUST]
         thrust_max = inputs[Dynamic.Vehicle.Propulsion.THRUST_MAX]
         fuel_flow = inputs[Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE]

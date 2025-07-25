@@ -28,7 +28,8 @@ class RCPropMission(om.Group):
             Battery(num_nodes=nn), 
             promotes_inputs=[
                 Aircraft.Battery.VOLTAGE,  
-                Aircraft.Battery.RESISTANCE
+                Aircraft.Battery.RESISTANCE,
+                Dynamic.Vehicle.Propulsion.CURRENT,
             ]
         )
 
@@ -36,7 +37,8 @@ class RCPropMission(om.Group):
             'esc', 
             ElectronicSpeedController(num_nodes=nn), 
             promotes_inputs=[
-                Dynamic.Vehicle.Propulsion.THROTTLE
+                Dynamic.Vehicle.Propulsion.THROTTLE,
+                Dynamic.Vehicle.Propulsion.CURRENT
             ]
         )
 
@@ -46,6 +48,7 @@ class RCPropMission(om.Group):
                 Aircraft.Engine.Motor.PEAK_CURRENT,
                 Aircraft.Engine.Motor.RESISTANCE, 
                 Aircraft.Engine.Motor.KV,
+                Dynamic.Vehicle.Propulsion.CURRENT,
                 ],
             promotes_outputs=[
                 Dynamic.Vehicle.Propulsion.RPM,
@@ -91,7 +94,10 @@ class RCPropMission(om.Group):
             PowerResiduals(num_nodes=nn), 
             promotes_inputs=[
                 Dynamic.Vehicle.Propulsion.PROP_POWER
-                ]
+                ],
+            promotes_outputs=[
+                Dynamic.Vehicle.Propulsion.CURRENT,
+            ]
             )
 
         self.connect('battery.voltage_out', 'esc.voltage_in')
@@ -102,7 +108,7 @@ class RCPropMission(om.Group):
         self.connect('battery.power', 'power_net.power_batt')
         self.connect('esc.power', 'power_net.power_esc')
         self.connect('motor.power', 'power_net.power_motor')
-        self.connect('power_net.current', ['battery.current', 'esc.current_in', 'motor.current'])
+        # self.connect('power_net.current', ['battery.current', 'esc.current_in', 'motor.current'])
 
         self.nonlinear_solver = om.NewtonSolver(solve_subsystems=True)
         self.nonlinear_solver.options["maxiter"] = 30

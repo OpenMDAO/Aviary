@@ -2,14 +2,19 @@ import openmdao.api as om
 
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.variables import Aircraft, Dynamic
+from aviary.variable_info.functions import add_aviary_input, add_aviary_option, add_aviary_output
 
 
 class RCPropPreMission(om.Group):
     """Calculate electric motor mass for a single motor."""
 
     def initialize(self):
-        self.options.declare('m', default = 1.3132, desc='m coefficient for kv(mass, peak_current): kv = m * peak_current/mass + b')
-        self.options.declare('b', default = 0.01, desc='b coefficient for kv(mass, peak_current): kv = m * peak_current/mass + b')
+        # self.options.declare('m', default = 1.3132, desc='m coefficient for kv(mass, peak_current): kv = m * peak_current/mass + b')
+        # self.options.declare('b', default = 0.01, desc='b coefficient for kv(mass, peak_current): kv = m * peak_current/mass + b')
+        
+        add_aviary_option(self, Aircraft.Engine.Motor.KV_EQ_SLOPE)
+        add_aviary_option(self, Aircraft.Engine.Motor.KV_EQ_INT)
+        
         self.options.declare(
             'aviary_options',
             types=AviaryValues,
@@ -60,8 +65,8 @@ class RCPropPreMission(om.Group):
                 kv={'val': 0.0, 'units': 'rpm/V'},
                 peak_current={'val': 0.0, 'units': 'A'},
                 motor_mass={'val': 0.0, 'units': 'kg'},
-                m=self.options['m'],
-                b=self.options['b'],
+                m=self.options[Aircraft.Engine.Motor.KV_EQ_SLOPE],
+                b=self.options[Aircraft.Engine.Motor.KV_EQ_INT],
             ),
             promotes_inputs=[
                 ('peak_current', Aircraft.Engine.Motor.PEAK_CURRENT),

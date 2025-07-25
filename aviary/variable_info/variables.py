@@ -262,6 +262,8 @@ class Aircraft:
             PEAK_CURRENT = 'aircraft:engine:motor:peak_current'
             RESISTANCE = 'aircraft:engine:motor:resistance'
             KV = 'aircraft:engine:motor:kv'
+            KV_EQ_SLOPE = 'aircraft:engine:motor:kv_eq_slope'
+            KV_EQ_INT = 'aircraft:engine:motor:kv_eq_int'
 
         class Propeller:
             ACTIVITY_FACTOR = 'aircraft:engine:propeller:activity_factor'
@@ -660,6 +662,7 @@ class Dynamic:
 
         class Propulsion:
             # variables specific to the propulsion subsystem
+            CURRENT = 'current_flow'
             ELECTRIC_POWER_IN = 'electric_power_in'
             ELECTRIC_POWER_IN_TOTAL = 'electric_power_in_total'
             # EXIT_AREA = 'exit_area'
