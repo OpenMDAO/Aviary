@@ -91,6 +91,14 @@ class TestAeroTableConversion(unittest.TestCase):
 
         self.compare_files(filename, validation_file)
 
+    def test_GASP_table_5(self):
+        filename = 'BWB_modified_aero.txt'
+        validation_file = 'models/blended_wing_body/temp.csv'
+
+        self.prepare_and_run(filename, data_format='GASP_ALT')
+
+        self.compare_files(filename, validation_file)
+
     # def test_FLOPS_table(self):
     #     # fmt: off
     #     expected_cd0_alt = np.array(
@@ -198,6 +206,6 @@ class TestAeroTableConversion(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    unittest.main()
-    # test = TestAeroTableConversion()
-    # test.test_GASP_table_1()
+    # unittest.main()
+    test = TestAeroTableConversion()
+    test.test_GASP_table_5()

@@ -6,8 +6,11 @@ from enum import Enum
 from pathlib import Path
 
 import numpy as np
+from openmdao.components.interp_util.interp import InterpND
 
 from aviary.api import NamedValues
+from aviary.interface.utils import round_it
+from aviary.utils.conversion_utils import _parse, _read_map, _rep
 from aviary.utils.csv_data_file import write_data_file
 from aviary.utils.functions import get_path
 
@@ -15,6 +18,17 @@ from aviary.utils.functions import get_path
 class CodeOrigin(Enum):
     FLOPS = 'FLOPS'
     GASP = 'GASP'
+    GASP_ALT = 'GASP_ALT'  # alternative format
+
+
+_gasp_keys = ['Mach', 'Altitude', 'Angle of Attack']
+default_units = {
+    'Mach': 'unitless',
+    'Altitude': 'ft',
+    'Angle of Attack': 'deg',
+    'CL': 'unitless',
+    'CD': 'unitless',
+}
 
 
 allowed_headers = {
@@ -24,14 +38,23 @@ allowed_headers = {
     'mach': 'Mach',
     'delflp': 'Flap Deflection',
     'cltot': 'CL',
-    'cl': 'CL',
-    'cd': 'CD',
+    'CL': 'CL',
+    'CD': 'CD',
     'hob': 'Hob',
     'del_cl': 'Delta CL',
     'del_cd': 'Delta CD',
 }
 
 outputs = ['CL', 'CL', 'CD', 'Hob', 'Delta CL', 'Delta CD']
+
+# number of sig figs to round each header to, if requested
+sig_figs = {
+    'Mach': 4,
+    'Altitude': 7,
+    'Angle of Attack': 4,
+    'CL': 4,
+    'CD': 4,
+}
 
 
 def convert_aero_table(input_file=None, output_file=None, data_format=None):
@@ -48,7 +71,7 @@ def convert_aero_table(input_file=None, output_file=None, data_format=None):
         for ii, file in enumerate(output_file):
             output_file[ii] = Path(file)
     if not output_file:
-        if data_format is CodeOrigin.GASP:
+        if data_format in (CodeOrigin.GASP, CodeOrigin.GASP_ALT):
             # Default output file name is same location and name as input file, with
             # '_aviary' appended to filename
             path = data_file.parents[0]
@@ -66,11 +89,75 @@ def convert_aero_table(input_file=None, output_file=None, data_format=None):
 
     stamp = f'# {data_format.value}-derived aerodynamics data converted from {data_file.name}'
 
-    if data_format is CodeOrigin.GASP:
-        data, comments = _load_gasp_aero_table(data_file)
-        comments = [stamp] + comments
+    if data_format in (CodeOrigin.GASP, CodeOrigin.GASP_ALT):
+        is_alternative = True if data_format == CodeOrigin.GASP_ALT else False
+        if is_alternative:
+            data = {key: [] for key in _gasp_keys}
+            scalars, tables, fields = _load_gasp_alt_aero_table(data_file)
+            # save scalars as comments
+            comments = []
+            comments.extend(['# ' + key + ': ' + str(scalars[key]) for key in scalars.keys()])
+            structured_data = _make_structured_grid(tables, method='lagrange3', fields=fields)
+            data['Mach'] = structured_data['CL']['machs']
+            data['Altitude'] = structured_data['CL']['alts']
+            data['Angle of Attack'] = structured_data['CL']['aoas']
+            data['CL'] = structured_data['CL']['vals']
+            data['CD'] = structured_data['CD']['vals']
 
-        write_data_file(output_file, data, outputs, comments, include_timestamp=True)
+            # round data if requested, using sig_figs as guide
+            round_data = True
+            if round_data:
+                for key in data:
+                    data[key] = np.array([round_it(val, sig_figs[key]) for val in data[key]])
+
+            # data needs to be string so column length can be easily found later
+            for var in data:
+                data[var] = np.array([str(item) for item in data[var]])
+
+            # sort data
+            # create parallel dict to data that stores floats
+            formatted_data = {}
+            for key in data:
+                formatted_data[key] = data[key].astype(float)
+
+            # convert engine_data from dict to list so it can be sorted
+            sorted_values = np.array(list(formatted_data.values())).transpose()
+
+            # Sort by mach, then altitude, then throttle, then hybrid throttle
+            sorted_values = sorted_values[
+                np.lexsort(
+                    [
+                        formatted_data['Angle of Attack'],
+                        formatted_data['Altitude'],
+                        formatted_data['Mach'],
+                    ]
+                )
+            ]
+            for idx, key in enumerate(formatted_data):
+                formatted_data[key] = sorted_values[:, idx]
+
+            # store formatted data into NamedValues object
+            write_data = NamedValues()
+
+            header_names = {
+                'Mach': 'Mach Number',
+                'Altitude': 'Altitude',
+                'Angle of Attack': 'Angle of Attack',
+                'CL': 'CL',
+                'CD': 'CD',
+            }
+            for key in data:
+                write_data.set_val(header_names[key], formatted_data[key], default_units[key])
+
+            import pdb
+
+            pdb.set_trace()
+            comments = [stamp] + comments
+            write_data_file(output_file, write_data, outputs, comments, include_timestamp=True)
+        else:
+            data, comments = _load_gasp_aero_table(data_file)
+            comments = [stamp] + comments
+            write_data_file(output_file, data, outputs, comments, include_timestamp=True)
     elif data_format is CodeOrigin.FLOPS:
         if type(output_file) is not list:
             # if only one filename is given, split into two
@@ -255,6 +342,142 @@ def _load_gasp_aero_table(filepath: Path):
             data.set_val(allowed_headers[var.lower()], raw_data[:, idx], units[idx])
 
     return data, comments
+
+
+def _load_gasp_alt_aero_table(filepath: Path):
+    with open(filepath, 'r') as f:
+        fields = ['CL', 'CD']
+        scalars = _read_header(f)
+        import pdb
+
+        # pdb.set_trace()
+        tables = {k: _read_table(f) for k in fields}
+
+    return scalars, tables, fields
+
+
+def _read_header(f):
+    """Read GASP aero header, returning the area scalars in a dict."""
+    # file header: FORMAT(4I5,10X,2F10.4)
+    iread, iprint, icd0, icompss, sref_at, cbar_at = _parse(
+        f, [*_rep(4, (int, 5)), *_rep(2, (float, 10))]
+    )
+
+    return {
+        'sref_at': sref_at,
+        'cbar_at': cbar_at,
+    }
+
+
+def _read_table(f, is_turbo_prop=False):
+    """Read an entire table from a GASP area file.
+    The table data is returned as a "tidy format" array with three columns for the
+    independent variables (altitude, alpha, and Mach number) and the final columns for
+    the table field (CL and CD).
+    """
+    tab_data = None
+
+    # strip out table title, not used
+    f.readline().strip()
+    # number of maps in the table
+    (nmaps,) = _parse(f, [(int, 5)])
+    # blank line
+    f.readline()
+
+    for i in range(nmaps):
+        map_data = _read_map(f, is_turbo_prop)
+
+        # blank line following all but the last map in the table
+        if i < nmaps - 1:
+            f.readline()
+
+        if tab_data is None:
+            tab_data = map_data
+        else:
+            tab_data = np.r_[tab_data, map_data]
+
+    return tab_data
+
+
+def _make_structured_grid(data, method='lagrange3', fields=['CL', 'CD']):
+    """Generate a structured grid of unique mach/aoa/alt values in the deck."""
+    aoa_step = 0.05
+    # step size in Mach number used in generating the structured grid
+    # mach_step = 0.02 # original value
+    mach_step = 0.05
+
+    structured_data = {}
+
+    # find min/max from CL table
+    aoa = data['CL'][:, 1]
+    tma = data['CL'][:, 2]
+    cl_min_aoa = min(aoa)
+    cl_max_aoa = max(aoa)
+    cl_min_tma = min(tma)
+    cl_max_tma = max(tma)
+    # find min/max from CD table
+    aoa = data['CD'][:, 1]
+    tma = data['CD'][:, 2]
+    cd_min_aoa = min(aoa)
+    cd_max_aoa = max(aoa)
+    cd_min_tma = min(tma)
+    cd_max_tma = max(tma)
+    # combine both
+    min_aoa = min(cl_min_aoa, cd_min_aoa)
+    max_aoa = max(cl_max_aoa, cd_max_aoa) + aoa_step
+    min_tma = min(cl_min_tma, cd_min_tma)
+    max_tma = max(cl_max_tma, cd_max_tma) + mach_step
+
+    import pdb
+
+    # pdb.set_trace()
+    aoas = np.arange(min_aoa, max_aoa + aoa_step, aoa_step)
+    machs = np.arange(min_tma, max_tma + mach_step, mach_step)
+
+    # need t4t2 in first column, mach varies on each row
+    pts = np.dstack(np.meshgrid(aoas, machs, indexing='ij')).reshape(-1, 2)
+    npts = pts.shape[0]
+
+    for field in fields:
+        map_data = data[field]
+        all_alts = map_data[:, 0]
+        alts = np.unique(all_alts)
+
+        sizes = (alts.size, aoas.size, machs.size)
+        vals = np.zeros(np.prod(sizes), dtype=float)
+        alt_vec = np.zeros(np.prod(sizes), dtype=float)
+        mach_vec = np.zeros(np.prod(sizes), dtype=float)
+        aoa_vec = np.zeros(np.prod(sizes), dtype=float)
+
+        for i, alt in enumerate(alts):
+            d = map_data[all_alts == alt]
+            aoa = np.unique(d[:, 1])
+            mach = np.unique(d[:, 2])
+            f = d[:, 3].reshape(aoa.size, mach.size)
+
+            # would explicitly use lagrange3 here to mimic GASP, but some aero
+            # tables may not have enough points per dimension
+            # For GASP aero table, try to provide at least 4 Mach numbers.
+            # avoid devide-by-zero RuntimeWarning
+            if len(mach) == 3 and method == 'lagrange3':
+                method = 'lagrange2'
+            elif len(mach) == 2:
+                method = 'slinear'
+            interp = InterpND(method='2D-' + method, points=(aoa, mach), values=f, extrapolate=True)
+            sl = slice(i * npts, (i + 1) * npts)
+            vals[sl] = interp.interpolate(pts)
+            alt_vec[sl] = [alt] * len(pts)
+            aoa_vec[sl] = pts[:, 0]
+            mach_vec[sl] = pts[:, 1]
+
+        structured_data[field] = {
+            'vals': vals,
+            'alts': alt_vec,
+            'aoas': aoa_vec,
+            'machs': mach_vec,
+        }
+
+    return structured_data
 
 
 def _setup_ATC_parser(parser):
