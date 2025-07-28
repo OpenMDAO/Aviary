@@ -1,6 +1,7 @@
 import argparse
 import ast
 import inspect
+import os
 import re
 import subprocess
 import tempfile
@@ -276,17 +277,24 @@ def run_command_no_file_error(command: str, verbose=False):
     CalledProcessError
         If the command returns a non-zero exit code (except for FileNotFoundError).
     """
-    with tempfile.TemporaryDirectory() as tempdir:
-        rc = subprocess.run(command.split(), cwd=tempdir, capture_output=True, text=True)
-        if rc.returncode:
-            err, info = rc.stderr.split('\n')[-2].split(':', 1)
-            if err == 'FileNotFoundError':
-                if verbose:
-                    print(info)
-                print(f"A file required by {command} couldn't be found, continuing anyway")
-            else:
-                print(rc.stderr)
-                rc.check_returncode()
+    # Save the current directory
+    original_cwd = os.getcwd()
+
+    try:
+        with tempfile.TemporaryDirectory() as tempdir:
+            rc = subprocess.run(command.split(), cwd=tempdir, capture_output=True, text=True)
+            if rc.returncode:
+                err, info = rc.stderr.split('\n')[-2].split(':', 1)
+                if err == 'FileNotFoundError':
+                    if verbose:
+                        print(info)
+                    print(f"A file required by {command} couldn't be found, continuing anyway")
+                else:
+                    print(rc.stderr)
+                    rc.check_returncode()
+    finally:
+        # Always restore the original directory
+        os.chdir(original_cwd)
 
 
 def get_attribute_name(object: object, attribute, error_type=AttributeError) -> str:

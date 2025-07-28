@@ -101,10 +101,9 @@ class SolvedTwoDOFProblemConfigurator(ProblemConfiguratorBase):
         PhaseBuilderBase
             Phase builder for requested phase.
         """
-        if (
-            phase_options['user_options']['ground_roll']
-            and phase_options['user_options']['fix_initial']
-        ):
+        if phase_options['user_options'].get('ground_roll') and not phase_options[
+            'user_options'
+        ].get('rotation'):
             phase_builder = GroundrollPhaseVelocityIntegrated
         else:
             phase_builder = TwoDOFPhase
@@ -132,61 +131,46 @@ class SolvedTwoDOFProblemConfigurator(ProblemConfiguratorBase):
         comm : MPI.Comm or <FakeComm>
             MPI Communicator from OpenMDAO problem.
         """
-        try:
-            fix_initial = user_options['fix_initial']
-        except KeyError:
-            fix_initial = False
-
-        try:
-            fix_duration = user_options['fix_duration']
-        except KeyError:
-            fix_duration = False
-
-        input_initial = False
         time_units = phase.time_options['units']
-
-        # Make a good guess for a reasonable initial time scaler.
-        try:
-            initial_bounds = wrapped_convert_units(user_options['time_initial_bounds'], time_units)
-        except KeyError:
-            initial_bounds = (None, None)
-
-        if initial_bounds[0] is not None and initial_bounds[1] != 0.0:
-            # Upper bound is good for a ref.
-            initial_ref = initial_bounds[1]
-        else:
-            initial_ref = 600.0
-
+        initial = wrapped_convert_units(user_options['time_initial'], time_units)
+        duration = wrapped_convert_units(user_options['time_duration'], time_units)
+        initial_bounds = wrapped_convert_units(user_options['time_initial_bounds'], time_units)
         duration_bounds = wrapped_convert_units(user_options['time_duration_bounds'], time_units)
+        initial_ref = wrapped_convert_units(user_options['time_initial_ref'], time_units)
+        duration_ref = wrapped_convert_units(user_options['time_duration_ref'], time_units)
 
-        duration_ref = (duration_bounds[0] + duration_bounds[1]) / 2.0
+        fix_duration = duration is not None
+        fix_initial = initial is not None
 
-        if phase_idx > 0:
-            input_initial = True
+        if initial_ref is None:
+            # Make a good guess for a reasonable initial time scaler.
+            if initial_bounds[0] is not None and initial_bounds[1] != 0.0:
+                # Upper bound is good for a ref.
+                initial_ref = initial_bounds[1]
+            else:
+                initial_ref = 600.0
 
-        if fix_initial or input_initial:
-            if comm.size == 1:
-                # Redundant on a fixed input; raises a warning if specified.
-                initial_ref = None
+        if duration_ref is None:
+            duration_ref = (duration_bounds[0] + duration_bounds[1]) / 2.0
 
-            phase.set_time_options(
-                fix_initial=fix_initial,
-                fix_duration=fix_duration,
-                units=time_units,
-                duration_bounds=duration_bounds,
-                duration_ref=duration_ref,
-                initial_ref=initial_ref,
-            )
-        else:  # TODO: figure out how to handle this now that fix_initial is dict
-            phase.set_time_options(
-                fix_initial=fix_initial,
-                fix_duration=fix_duration,
-                units=time_units,
-                duration_bounds=duration_bounds,
-                duration_ref=duration_ref,
-                initial_bounds=initial_bounds,
-                initial_ref=initial_ref,
-            )
+        extra_options = {}
+        if not fix_initial:
+            extra_options['initial_bounds'] = initial_bounds
+
+        if comm.size == 1 or fix_initial:
+            # Redundant on a fixed input; raises a warning if specified.
+            extra_options['initial_ref'] = None
+        else:
+            extra_options['initial_ref'] = initial_ref
+
+        phase.set_time_options(
+            fix_initial=fix_initial,
+            fix_duration=fix_duration,
+            units=time_units,
+            duration_bounds=duration_bounds,
+            duration_ref=duration_ref,
+            **extra_options,
+        )
 
     def link_phases(self, aviary_group, phases, connect_directly=True):
         """
