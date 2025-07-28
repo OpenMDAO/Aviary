@@ -92,6 +92,7 @@ class TestAeroTableConversion(unittest.TestCase):
         self.compare_files(filename, validation_file)
 
     def test_GASP_table_5(self):
+        """Test GASP aero table in alternative format (which is actually the default format)"""
         filename = 'BWB_modified_aero.txt'
         validation_file = 'models/blended_wing_body/temp.csv'
 
@@ -206,6 +207,4 @@ class TestAeroTableConversion(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    # unittest.main()
-    test = TestAeroTableConversion()
-    test.test_GASP_table_5()
+    unittest.main()
