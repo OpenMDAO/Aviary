@@ -18,13 +18,13 @@ from aviary.utils.functions import get_path
 class CodeOrigin(Enum):
     FLOPS = 'FLOPS'
     GASP = 'GASP'
-    GASP_ALT = 'GASP_ALT'  # alternative format
+    GASP_ALT = 'GASP_ALT'  # alternative format (the actual format that GASP assumes)
 
 
-_gasp_keys = ['Mach', 'Altitude', 'Angle of Attack']
+_gasp_keys = ['Altitude', 'Mach', 'Angle of Attack']
 default_units = {
-    'Mach': 'unitless',
     'Altitude': 'ft',
+    'Mach': 'unitless',
     'Angle of Attack': 'deg',
     'CL': 'unitless',
     'CD': 'unitless',
@@ -45,12 +45,12 @@ allowed_headers = {
     'del_cd': 'Delta CD',
 }
 
-outputs = ['CL', 'CL', 'CD', 'Hob', 'Delta CL', 'Delta CD']
+outputs = ['CL', 'cl', 'CD', 'Hob', 'Delta CL', 'Delta CD']
 
 # number of sig figs to round each header to, if requested
 sig_figs = {
-    'Mach': 4,
     'Altitude': 7,
+    'Mach': 4,
     'Angle of Attack': 4,
     'CL': 4,
     'CD': 4,
@@ -61,7 +61,8 @@ def convert_aero_table(input_file=None, output_file=None, data_format=None):
     """This is a utility class to convert a legacy aero data file to Aviary format.
     There are two options for the legacy aero data file format: FLOPS and GASP.
     As an Aviary command, the usage is:
-    aviary convert_aero_table -F {FLOPS|GASP} input_file output_file.
+    aviary convert_aero_table -F {FLOPS|GASP|GASP_ALT} input_file output_file.
+    Note: In case of GASP_ALT, reading of a possible cd0 table is not implemented yet.
     """
     data_format = CodeOrigin(data_format)
     data_file = get_path(input_file)
@@ -98,8 +99,8 @@ def convert_aero_table(input_file=None, output_file=None, data_format=None):
             comments = []
             comments.extend(['# ' + key + ': ' + str(scalars[key]) for key in scalars.keys()])
             structured_data = _make_structured_grid(tables, method='lagrange3', fields=fields)
-            data['Mach'] = structured_data['CL']['machs']
             data['Altitude'] = structured_data['CL']['alts']
+            data['Mach'] = structured_data['CL']['machs']
             data['Angle of Attack'] = structured_data['CL']['aoas']
             data['CL'] = structured_data['CL']['vals']
             data['CD'] = structured_data['CD']['vals']
@@ -123,13 +124,13 @@ def convert_aero_table(input_file=None, output_file=None, data_format=None):
             # convert engine_data from dict to list so it can be sorted
             sorted_values = np.array(list(formatted_data.values())).transpose()
 
-            # Sort by mach, then altitude, then throttle, then hybrid throttle
+            # Sort by altitude, then mach, then angle of attack
             sorted_values = sorted_values[
                 np.lexsort(
                     [
                         formatted_data['Angle of Attack'],
-                        formatted_data['Altitude'],
                         formatted_data['Mach'],
+                        formatted_data['Altitude'],
                     ]
                 )
             ]
@@ -140,8 +141,8 @@ def convert_aero_table(input_file=None, output_file=None, data_format=None):
             write_data = NamedValues()
 
             header_names = {
-                'Mach': 'Mach Number',
                 'Altitude': 'Altitude',
+                'Mach': 'Mach Number',
                 'Angle of Attack': 'Angle of Attack',
                 'CL': 'CL',
                 'CD': 'CD',
@@ -149,9 +150,6 @@ def convert_aero_table(input_file=None, output_file=None, data_format=None):
             for key in data:
                 write_data.set_val(header_names[key], formatted_data[key], default_units[key])
 
-            import pdb
-
-            pdb.set_trace()
             comments = [stamp] + comments
             write_data_file(output_file, write_data, outputs, comments, include_timestamp=True)
         else:
@@ -348,9 +346,6 @@ def _load_gasp_alt_aero_table(filepath: Path):
     with open(filepath, 'r') as f:
         fields = ['CL', 'CD']
         scalars = _read_header(f)
-        import pdb
-
-        # pdb.set_trace()
         tables = {k: _read_table(f) for k in fields}
 
     return scalars, tables, fields
@@ -428,13 +423,10 @@ def _make_structured_grid(data, method='lagrange3', fields=['CL', 'CD']):
     min_tma = min(cl_min_tma, cd_min_tma)
     max_tma = max(cl_max_tma, cd_max_tma) + mach_step
 
-    import pdb
-
-    # pdb.set_trace()
     aoas = np.arange(min_aoa, max_aoa + aoa_step, aoa_step)
     machs = np.arange(min_tma, max_tma + mach_step, mach_step)
 
-    # need t4t2 in first column, mach varies on each row
+    # need altitude in first column, mach varies on each row
     pts = np.dstack(np.meshgrid(aoas, machs, indexing='ij')).reshape(-1, 2)
     npts = pts.shape[0]
 
@@ -467,14 +459,14 @@ def _make_structured_grid(data, method='lagrange3', fields=['CL', 'CD']):
             sl = slice(i * npts, (i + 1) * npts)
             vals[sl] = interp.interpolate(pts)
             alt_vec[sl] = [alt] * len(pts)
-            aoa_vec[sl] = pts[:, 0]
             mach_vec[sl] = pts[:, 1]
+            aoa_vec[sl] = pts[:, 0]
 
         structured_data[field] = {
-            'vals': vals,
             'alts': alt_vec,
-            'aoas': aoa_vec,
             'machs': mach_vec,
+            'aoas': aoa_vec,
+            'vals': vals,
         }
 
     return structured_data
