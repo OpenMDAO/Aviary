@@ -94,7 +94,7 @@ class TestAeroTableConversion(unittest.TestCase):
     def test_GASP_table_5(self):
         """Test GASP aero table in alternative format (which is actually the default format)"""
         filename = 'BWB_modified_aero.txt'
-        validation_file = 'models/blended_wing_body/temp.csv'
+        validation_file = 'models/aircraft/blended_wing_body/generic_BWB_GASP_aero.csv'
 
         self.prepare_and_run(filename, data_format='GASP_ALT')
 

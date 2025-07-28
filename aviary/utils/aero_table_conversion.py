@@ -38,14 +38,14 @@ allowed_headers = {
     'mach': 'Mach',
     'delflp': 'Flap Deflection',
     'cltot': 'CL',
-    'CL': 'CL',
-    'CD': 'CD',
+    'cl': 'CL',
+    'cd': 'CD',
     'hob': 'Hob',
     'del_cl': 'Delta CL',
     'del_cd': 'Delta CD',
 }
 
-outputs = ['CL', 'cl', 'CD', 'Hob', 'Delta CL', 'Delta CD']
+outputs = ['CL', 'CL', 'CD', 'Hob', 'Delta CL', 'Delta CD']
 
 # number of sig figs to round each header to, if requested
 sig_figs = {
@@ -142,7 +142,7 @@ def convert_aero_table(input_file=None, output_file=None, data_format=None):
 
             header_names = {
                 'Altitude': 'Altitude',
-                'Mach': 'Mach Number',
+                'Mach': 'Mach',
                 'Angle of Attack': 'Angle of Attack',
                 'CL': 'CL',
                 'CD': 'CD',
