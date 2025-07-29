@@ -85,10 +85,10 @@ class RCPropMission(om.Group):
                 ],
             promotes_outputs=[
                 Dynamic.Vehicle.Propulsion.PROP_POWER, 
-                Dynamic.Vehicle.Propulsion.THRUST
+                Dynamic.Vehicle.Propulsion.THRUST,
+                # Dynamic.Vehicle.Propulsion.THRUST_MAX,
                 ]
         )
-
         self.add_subsystem(
             'power_net', 
             PowerResiduals(num_nodes=nn), 
@@ -99,7 +99,7 @@ class RCPropMission(om.Group):
                 Dynamic.Vehicle.Propulsion.CURRENT,
             ]
             )
-
+        
         self.connect('battery.voltage_out', 'esc.voltage_in')
         self.connect('esc.voltage_out', 'motor.voltage_in')
         # self.connect('esc.current_out', 'motor.current')

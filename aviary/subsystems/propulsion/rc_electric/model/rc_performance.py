@@ -124,7 +124,6 @@ class Motor(om.ExplicitComponent):
         add_aviary_input(self, Aircraft.Engine.Motor.PEAK_CURRENT, val=0.0, units='A')
         add_aviary_input(self, Aircraft.Engine.Motor.RESISTANCE, val=0.0, units='ohm')
         add_aviary_input(self, Aircraft.Engine.Motor.KV, val=0.0, units='rpm/V')
-        add_aviary_input(self, Aircraft.Engine.Motor.MASS, val=0.0, units ='kg')
         self.add_input('voltage_in', val=np.zeros(nn), units = 'V')
         add_aviary_input(self, Dynamic.Vehicle.Propulsion.CURRENT, val=np.zeros(nn), units='A')
 

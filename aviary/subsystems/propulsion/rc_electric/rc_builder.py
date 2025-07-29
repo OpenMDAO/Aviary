@@ -7,7 +7,7 @@ from aviary.subsystems.subsystem_builder_base import SubsystemBuilderBase
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 
 class RCBuilder(EngineModel):
-    def __init__(self, options: AviaryValues = None, name='rc_electric'): #options: AviaryValues = None,
+    def __init__(self, options: AviaryValues = None, name='rc_electric'):
         """Initializes the PropellerBuilder object with a given name."""
         # aviary_inputs = AviaryValues()
         super().__init__(name, options)
@@ -151,10 +151,10 @@ class RCBuilder(EngineModel):
         return [Aircraft.Battery.MASS, Aircraft.Engine.Motor.MASS]
     
     #TODO add new outputs
-    def get_outputs(self):
+    def mission_outputs(self):
         return [
             #TODO: Alex see why this is an issue 
-            # Dynamic.Vehicle.Propulsion.THROTTLE
+            # Dynamic.Vehicle.Propulsion.THROTTLE,
             # Dynamic.Vehicle.Propulsion.SHAFT_POWER + '_out',
             # Dynamic.Vehicle.Propulsion.RPM + '_out',
             # Dynamic.Vehicle.Propulsion.THRUST + '_out',

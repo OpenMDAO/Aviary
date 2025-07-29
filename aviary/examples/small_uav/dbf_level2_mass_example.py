@@ -39,12 +39,14 @@ if __name__ == '__main__':
 
     prob.set_initial_guesses()
 
-    # prob.run_model()
+    prob.run_model(max_iter=1)
 
-    prob.run_aviary_problem(suppress_solver_print=True)
-
+    # prob.run_aviary_problem(suppress_solver_print=True)
+    print('Total Mass', prob.get_val(av.Aircraft.Design.OPERATING_MASS))
     print('Engine Mass', prob.get_val(av.Aircraft.Engine.MASS))
+    print('Fuselage Mass', prob.get_val(av.Aircraft.Fuselage.MASS))
     print('Wing Mass', prob.get_val(av.Aircraft.Wing.MASS))
+    print('V tail mass', prob.get_val(av.Aircraft.VerticalTail.MASS))
     print('Horizontal Tail Mass', prob.get_val(av.Aircraft.HorizontalTail.MASS))
 
     print('done')

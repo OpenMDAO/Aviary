@@ -3,15 +3,31 @@ Define an aviary mission with an NPSS defined engine. During pre-mission the eng
 an engine deck is made. During the mission the deck is used for performance. Weight is estimated
 using the default Aviary method. The engine model was developed using NPSS v3.2.
 """
-
+from copy import deepcopy
+import numpy as np
 import aviary.api as av
 from aviary.examples.small_uav.dbf_example_phase import phase_info
+from aviary.examples.external_subsystems.dbf_based_mass.dbf_mass_builder import DBFMassBuilder
 from aviary.subsystems.propulsion.rc_electric.rc_builder import RCBuilder
+from aviary.examples.external_subsystems.custom_aero.custom_aero_builder import CustomAeroBuilder
+
 rc_prop = RCBuilder()
 # phase_info = av.default_height_energy_phase_info
-phase_info = phase_info
+phase_info = deepcopy(phase_info)
 
-prob = av.AviaryProblem()
+phase_info.pop('climb')
+phase_info.pop('descent')
+
+phase_info['pre_mission']['external_subsystems'] = [DBFMassBuilder()]
+phase_info['cruise']['external_subsystems'] = [CustomAeroBuilder()]
+
+phase_info['cruise']['subsystem_options']['core_aerodynamics'] = {
+    'method': 'external',
+}
+# phase_info['cruise']['subsystem_options']['core_mass'] = {
+#     'method': 'external',
+# }
+prob = av.AviaryProblem(verbosity=3)
 
 prob.options['group_by_pre_opt_post'] = True
 
@@ -40,10 +56,12 @@ prob.add_driver('IPOPT')
 prob.add_design_variables()
 
 prob.add_objective()
-
 prob.setup()
 
 prob.set_initial_guesses()
 
-# prob.run_aviary_problem(suppress_solver_print=False)
-prob.run_model()
+# prob.run_aviary_problem(suppress_solver_print= False)
+try:
+    prob.run_model()
+except: 
+    prob.model.list_vars(print_arrays=True, units=True)

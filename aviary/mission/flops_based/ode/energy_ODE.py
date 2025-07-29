@@ -41,24 +41,26 @@ class EnergyODE(_BaseODE):
         aviary_options = options['aviary_options']
         num_engine_type = len(aviary_options.get_val(Aircraft.Engine.NUM_ENGINES))
 
-        self.add_atmosphere(input_speed_type=SpeedType.MACH)
+        self.add_atmosphere(input_speed_type=SpeedType.TAS)
 
         # add execcomp to compute velocity_rate based off mach_rate and sos
-        self.add_subsystem(
-            name='velocity_rate_comp',
-            subsys=om.ExecComp(
-                'velocity_rate = mach_rate * sos',
-                mach_rate={'units': '1/s', 'shape': (nn,)},
-                sos={'units': 'm/s', 'shape': (nn,)},
-                velocity_rate={'units': 'm/s**2', 'shape': (nn,)},
-                has_diag_partials=True,
-            ),
-            promotes_inputs=[
-                ('mach_rate', Dynamic.Atmosphere.MACH_RATE),
-                ('sos', Dynamic.Atmosphere.SPEED_OF_SOUND),
-            ],
-            promotes_outputs=[('velocity_rate', Dynamic.Mission.VELOCITY_RATE)],
-        )
+        # self.add_subsystem(
+        #     name='velocity_rate_comp',
+        #     subsys=om.ExecComp(
+        #         'velocity_rate = mach_rate * sos',
+        #         mach_rate={'units': '1/s', 'shape': (nn,)},
+        #         sos={'units': 'm/s', 'shape': (nn,)},
+        #         velocity_rate={'units': 'm/s**2', 'shape': (nn,)},
+        #         has_diag_partials=True,
+        #     ),
+        #     promotes_inputs=[
+        #         ('mach_rate', Dynamic.Atmosphere.MACH_RATE),
+        #         ('sos', Dynamic.Atmosphere.SPEED_OF_SOUND),
+        #     ],
+        #     promotes_outputs=[('velocity_rate', Dynamic.Mission.VELOCITY_RATE)],
+        # )
+        self.set_input_defaults(Dynamic.Mission.VELOCITY_RATE, val=np.ones(nn), units='m/s**2')
+
 
         sub1 = self.add_subsystem('solver_sub', om.Group(), promotes=['*'])
 
@@ -139,7 +141,7 @@ class EnergyODE(_BaseODE):
 
             self.set_input_defaults(Dynamic.Vehicle.Propulsion.THROTTLE, val=1.0, units='unitless')
 
-        self.set_input_defaults(Dynamic.Atmosphere.MACH, val=np.ones(nn), units='unitless')
+        # self.set_input_defaults(Dynamic.Atmosphere.MACH, val=np.ones(nn), units='unitless')
         self.set_input_defaults(Dynamic.Vehicle.MASS, val=np.ones(nn), units='kg')
         self.set_input_defaults(Dynamic.Mission.VELOCITY, val=np.ones(nn), units='m/s')
         self.set_input_defaults(Dynamic.Mission.ALTITUDE, val=np.ones(nn), units='m')
