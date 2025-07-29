@@ -20,7 +20,6 @@ from aviary.interface.utils import set_warning_format
 from aviary.utils.merge_variable_metadata import merge_meta_data
 
 from aviary.variable_info.enums import (
-    AnalysisScheme,
     EquationsOfMotion,
     LegacyCode,
     ProblemType,
@@ -50,7 +49,7 @@ class AviaryProblem(om.Problem):
     additional methods to help users create and solve Aviary problems.
     """
 
-    def __init__(self, analysis_scheme=AnalysisScheme.COLLOCATION, verbosity=None, **kwargs):
+    def __init__(self, verbosity=None, **kwargs):
         # Modify OpenMDAO's default_reports for this session.
         new_reports = [
             'subsystems',
@@ -76,8 +75,6 @@ class AviaryProblem(om.Problem):
         self.model = AviaryGroup()
 
         self.aviary_inputs = None
-
-        self.analysis_scheme = analysis_scheme
 
     def load_inputs(
         self,
@@ -318,11 +315,11 @@ class AviaryProblem(om.Problem):
         else:
             verbosity = self.verbosity  # defaults to BRIEF
 
-        # Set defaults for optimizer and use_coloring based on analysis scheme
+        # Set defaults for optimizer and use_coloring
         if optimizer is None:
             optimizer = 'IPOPT'
         if use_coloring is None:
-            use_coloring = False if self.analysis_scheme is AnalysisScheme.SHOOTING else True
+            use_coloring = True
 
         # check if optimizer is SLSQP
         if optimizer == 'SLSQP':
@@ -534,16 +531,11 @@ class AviaryProblem(om.Problem):
             final_phase_name = self.model.regular_phases[-1]
 
             if objective_type == 'mass':
-                if self.analysis_scheme is AnalysisScheme.COLLOCATION:
-                    self.model.add_objective(
-                        f'traj.{final_phase_name}.timeseries.{Dynamic.Vehicle.MASS}',
-                        index=-1,
-                        ref=ref,
-                    )
-                else:
-                    last_phase = self.model.traj._phases.items()[final_phase_name]
-                    last_phase.add_objective(Dynamic.Vehicle.MASS, loc='final', ref=ref)
-
+                self.model.add_objective(
+                    f'traj.{final_phase_name}.timeseries.{Dynamic.Vehicle.MASS}',
+                    index=-1,
+                    ref=ref,
+                )
             elif objective_type == 'time':
                 self.model.add_objective(
                     f'traj.{final_phase_name}.timeseries.time', index=-1, ref=ref
@@ -707,13 +699,10 @@ class AviaryProblem(om.Problem):
             #      should be removed, or rework this option to be more helpful (store
             # entire "failed" object?) and implement more rigorously in benchmark
             # tests
-            if self.analysis_scheme is AnalysisScheme.SHOOTING:
-                self.problem_ran_successfully = not failed
+            if failed.exit_status == 'FAIL':
+                self.problem_ran_successfully = False
             else:
-                if failed.exit_status == 'FAIL':
-                    self.problem_ran_successfully = False
-                else:
-                    self.problem_ran_successfully = True
+                self.problem_ran_successfully = True
             # Manually print out a failure message for low verbosity modes that suppress
             # optimizer printouts, which may include the results message. Assumes success,
             # alerts user on a failure
