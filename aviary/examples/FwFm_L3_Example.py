@@ -156,6 +156,28 @@ prob.traj._phases['climb'].set_state_options(
     Dynamic.Vehicle.MASS, fix_initial=False, input_initial=False
 )
 
+prob.traj._phases['climb'].set_state_options(
+    Dynamic.Mission.DISTANCE, fix_initial=True, input_initial=False
+)
+
+prob.traj._phases['climb'].set_time_options(
+    fix_initial=False,
+    initial_bounds=(0, 0),
+    initial_ref=600,
+    duration_bounds=(3840, 11520),
+    duration_ref=7680.0,
+)
+
+prob.traj._phases['cruise'].set_time_options(
+    duration_bounds=(3390, 10170),
+    duration_ref=6780.0,
+)
+
+prob.traj._phases['descent'].set_time_options(
+    duration_bounds=(1740, 5220),
+    duration_ref=3480.0,
+)
+
 eq = prob.model.add_subsystem(
     f'link_climb_mass',
     om.EQConstraintComp(),
@@ -448,12 +470,43 @@ prob.set_val('traj.climb.states:mass', 125000, units='lbm')
 prob.set_val('traj.cruise.states:mass', 125000, units='lbm')
 prob.set_val('traj.descent.states:mass', 125000, units='lbm')
 
-prob.set_val(Mission.Design.GROSS_MASS, 150000, units='lbm')
-prob.set_val(Mission.Summary.GROSS_MASS, 150000, units='lbm')
+prob.set_val(Mission.Design.GROSS_MASS, 175400, units='lbm')
+prob.set_val(Mission.Summary.GROSS_MASS, 175400, units='lbm')
 
 prob.verbosity = Verbosity.VERBOSE
 
-prob.model.list_vars(units=True, print_arrays=True)
 prob.run_aviary_problem()
-prob.list_driver_vars()
 prob.model.list_vars(units=True, print_arrays=True)
+prob.list_driver_vars(
+    print_arrays=True,
+    desvar_opts=[
+        'lower',
+        'upper',
+        'ref',
+        'ref0',
+        'indices',
+        'adder',
+        'scaler',
+        'parallel_deriv_color',
+        'cache_linear_solution',
+        'units',
+        'min',
+        'max',
+    ],
+    cons_opts=[
+        'lower',
+        'upper',
+        'equals',
+        'ref',
+        'ref0',
+        'indices',
+        'adder',
+        'scaler',
+        'linear',
+        'parallel_deriv_color',
+        'cache_linear_solution',
+        'units',
+        'min',
+        'max',
+    ],
+)
