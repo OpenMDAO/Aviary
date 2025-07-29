@@ -739,9 +739,7 @@ class AviaryProblem(om.Problem):
         self.problem_ran_successfully = not failed
 
         # Checks of the payload/range toggle in the aviary inputs csv file has been set and that the current problem is a sizing mission.
-        if payload_range_bool and self.model.problem_type is ProblemType.SIZING:
-            # Checks to determine if the set gross mass for off design would be greater
-            # Than the gross mass of the sizing mission.
+        if payload_range_bool:
             self.run_payload_range()
 
     def run_payload_range(self, verbosity=None):
@@ -761,8 +759,8 @@ class AviaryProblem(om.Problem):
             verbosity = self.verbosity  # defaults to BRIEF
 
         # Checks if the sizing mission has run successfully.
-        # If the problem has not run successfully, then we do not run the payload/range function.
-        if self.problem_ran_successfully:
+        # If the problem is both a sizing problem has run successfully, if not, we do not run the payload/range function.
+        if self.problem_ran_successfully and self.model.problem_type is ProblemType.SIZING:
             # Off-design missions do not currently work for GASP masses or missions.
             mass_method = self.aviary_inputs.get_val(Settings.MASS_METHOD)
             equations_of_motion = self.aviary_inputs.get_val(Settings.EQUATIONS_OF_MOTION)
@@ -941,9 +939,14 @@ class AviaryProblem(om.Problem):
                     'FAILURE: The payload/range analysis is only supported for FLOPS missions with Height Energy equations of motion; the payload/range analysis will not be run.'
                 )
         else:
-            warnings.warn(
-                'FAILURE: The sizing problem has not run successfully; therefore, the payload/range analysis will not be run.'
-            )
+            if self.model.problem_type is ProblemType.SIZING:
+                warnings.warn(
+                    'FAILURE: The sizing problem has not run successfully; therefore, the payload/range analysis will not be run.'
+                )
+            else:
+                warnings.warn(
+                    'FAILURE: Payload/range analysis is only available for sizing problem types'
+                )
 
     def alternate_mission(
         self,
