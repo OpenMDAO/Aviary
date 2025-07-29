@@ -2,7 +2,7 @@
 
 ## BWB geometry and mass
 
-- For design load, variable `Aircraft.Wing.LOADING` is replaced by `Mission.Design.GROSS_MASS / Aircraft.Wing.EXPOSED_WING_AREA`. As a result, `BWBLoadSpeeds` and `BWBLoadFactors` replace `LoadSpeeds` and `LoadFactors`. A new group `BWBDesignLoadGroup` is created to include these two new components.
+- For design load, variable `Aircraft.Design.WING_LOADING` is replaced by `Mission.Design.GROSS_MASS / Aircraft.Wing.EXPOSED_WING_AREA`. As a result, `BWBLoadSpeeds` and `BWBLoadFactors` replace `LoadSpeeds` and `LoadFactors`. A new group `BWBDesignLoadGroup` is created to include these two new components.
 - Aviary engine geometry uses different empirical equation. In GASP, the sizing relation is based on aircraft gross weight and the number of engines. For BWB, we adopt GASP implementation. We also allow the engines are partially buried into the fuselage. This implementation can be applied to conventional aircraft.
 
 ### Equip And Useful Load

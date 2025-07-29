@@ -144,29 +144,6 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
         aviary_group : AviaryProblem
             Problem that owns this configurator.
         """
-        OptionsToValues = create_opts2vals(
-            [
-                Aircraft.CrewPayload.NUM_PASSENGERS,
-                Mission.Design.CRUISE_ALTITUDE,
-            ]
-        )
-
-        # Add thrust-to-weight ratio subsystem
-        aviary_group.add_subsystem(
-            'tw_ratio',
-            om.ExecComp(
-                f'TW_ratio = Fn_SLS / (takeoff_mass * {GRAV_ENGLISH_LBM})',
-                TW_ratio={'units': 'unitless'},
-                Fn_SLS={'units': 'lbf'},
-                takeoff_mass={'units': 'lbm'},
-            ),
-            promotes_inputs=[
-                ('Fn_SLS', Aircraft.Propulsion.TOTAL_SCALED_SLS_THRUST),
-                ('takeoff_mass', Mission.Summary.GROSS_MASS),
-            ],
-            promotes_outputs=[('TW_ratio', Aircraft.Design.THRUST_TO_WEIGHT_RATIO)],
-        )
-
         aviary_group.cruise_alt = aviary_group.aviary_inputs.get_val(
             Mission.Design.CRUISE_ALTITUDE, units='ft'
         )

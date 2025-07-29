@@ -29,7 +29,7 @@ class LoadSpeeds(om.ExplicitComponent):
         add_aviary_input(self, Aircraft.Design.MAX_STRUCTURAL_SPEED, units='mi/h')
 
         if self.options[Aircraft.Design.PART25_STRUCTURAL_CATEGORY] < 3:
-            add_aviary_input(self, Aircraft.Wing.LOADING, units='lbf/ft**2')
+            add_aviary_input(self, Aircraft.Design.WING_LOADING, units='lbf/ft**2')
 
         self.add_output(
             'max_airspeed',
@@ -60,7 +60,7 @@ class LoadSpeeds(om.ExplicitComponent):
         max_struct_speed_kts = max_struct_speed_mph / 1.15
 
         if CATD < 3:
-            wing_loading = inputs[Aircraft.Wing.LOADING]
+            wing_loading = inputs[Aircraft.Design.WING_LOADING]
 
             VCMAX = 0.9 * max_struct_speed_kts
             VCCOF = 33.0
@@ -144,7 +144,7 @@ class LoadSpeeds(om.ExplicitComponent):
         dmax_struct_speed_kts_dwing_loading = 0.0
 
         if CATD < 3:
-            wing_loading = inputs[Aircraft.Wing.LOADING]
+            wing_loading = inputs[Aircraft.Design.WING_LOADING]
             VCMAX = 0.9 * max_struct_speed_kts
             VCCOF = 33.0
             dVCCOF_dwing_loading = 0.0
@@ -293,17 +293,19 @@ class LoadSpeeds(om.ExplicitComponent):
                         dmax_struct_speed_kts_dmax_struct_speed_mph
                     )
 
-            partials['min_dive_vel', Aircraft.Wing.LOADING] = dmin_dive_vel_dwing_loading
+            partials['min_dive_vel', Aircraft.Design.WING_LOADING] = dmin_dive_vel_dwing_loading
             partials['min_dive_vel', Aircraft.Design.MAX_STRUCTURAL_SPEED] = (
                 dmin_dive_vel_dmax_struct_speed_mph
             )
 
-            partials['max_airspeed', Aircraft.Wing.LOADING] = 0.85 * dmin_dive_vel_dwing_loading
+            partials['max_airspeed', Aircraft.Design.WING_LOADING] = (
+                0.85 * dmin_dive_vel_dwing_loading
+            )
             partials['max_airspeed', Aircraft.Design.MAX_STRUCTURAL_SPEED] = (
                 0.85 * dmin_dive_vel_dmax_struct_speed_mph
             )
 
-            partials['vel_c', Aircraft.Wing.LOADING] = dVCMIN_dwing_loading
+            partials['vel_c', Aircraft.Design.WING_LOADING] = dVCMIN_dwing_loading
             partials['vel_c', Aircraft.Design.MAX_STRUCTURAL_SPEED] = dVCMIN_dmax_struct_speed_mph
 
         if CATD == 3:
@@ -661,7 +663,7 @@ class LoadFactors(om.ExplicitComponent):
         add_aviary_option(self, Aircraft.Design.ULF_CALCULATED_FROM_MANEUVER)
 
     def setup(self):
-        add_aviary_input(self, Aircraft.Wing.LOADING, units='lbf/ft**2')
+        add_aviary_input(self, Aircraft.Design.WING_LOADING, units='lbf/ft**2')
 
         self.add_input(
             'density_ratio',
@@ -691,7 +693,7 @@ class LoadFactors(om.ExplicitComponent):
         self.declare_partials(Aircraft.Wing.ULTIMATE_LOAD_FACTOR, '*')
 
     def compute(self, inputs, outputs):
-        wing_loading = inputs[Aircraft.Wing.LOADING]
+        wing_loading = inputs[Aircraft.Design.WING_LOADING]
         density_ratio = inputs['density_ratio']
         V9 = inputs['V9']
         min_dive_vel = inputs['min_dive_vel']
@@ -741,7 +743,7 @@ class LoadFactors(om.ExplicitComponent):
         outputs[Aircraft.Wing.ULTIMATE_LOAD_FACTOR] = ULF
 
     def compute_partials(self, inputs, partials):
-        wing_loading = inputs[Aircraft.Wing.LOADING]
+        wing_loading = inputs[Aircraft.Design.WING_LOADING]
         density_ratio = inputs['density_ratio']
         V9 = inputs['V9']
         min_dive_vel = inputs['min_dive_vel']
@@ -1124,7 +1126,9 @@ class LoadFactors(om.ExplicitComponent):
         partials[Aircraft.Wing.ULTIMATE_LOAD_FACTOR, 'max_maneuver_factor'] = (
             dULF_dmax_maneuver_factor
         )
-        partials[Aircraft.Wing.ULTIMATE_LOAD_FACTOR, Aircraft.Wing.LOADING] = dULF_dwing_loading
+        partials[Aircraft.Wing.ULTIMATE_LOAD_FACTOR, Aircraft.Design.WING_LOADING] = (
+            dULF_dwing_loading
+        )
         partials[Aircraft.Wing.ULTIMATE_LOAD_FACTOR, 'density_ratio'] = dULF_ddensity_ratio
         partials[Aircraft.Wing.ULTIMATE_LOAD_FACTOR, Aircraft.Wing.AVERAGE_CHORD] = dULF_davg_chord
         partials[Aircraft.Wing.ULTIMATE_LOAD_FACTOR, Aircraft.Design.LIFT_CURVE_SLOPE] = (

@@ -1,43 +1,34 @@
 import inspect
-from pathlib import Path
 from importlib.machinery import SourceFileLoader
+from pathlib import Path
 
 import dymos as dm
-from dymos.utils.misc import _unspecified
 import openmdao.api as om
+from dymos.utils.misc import _unspecified
 from openmdao.utils.mpi import MPI
 
-from aviary.utils.aviary_values import AviaryValues
-from aviary.variable_info.enums import EquationsOfMotion
-from aviary.variable_info.variables import Settings
-from aviary.variable_info.enums import Verbosity
-from aviary.core.pre_mission_group import PreMissionGroup
 from aviary.core.post_mission_group import PostMissionGroup
-from aviary.utils.preprocessors import preprocess_options
-from aviary.variable_info.enums import (
-    EquationsOfMotion,
-    LegacyCode,
-    ProblemType,
-    Verbosity,
-)
+from aviary.core.pre_mission_group import PreMissionGroup
+from aviary.interface.utils import set_warning_format
 from aviary.mission.height_energy_problem_configurator import HeightEnergyProblemConfigurator
 from aviary.mission.solved_two_dof_problem_configurator import SolvedTwoDOFProblemConfigurator
 from aviary.mission.two_dof_problem_configurator import TwoDOFProblemConfigurator
+from aviary.mission.utils import get_phase_mission_bus_lengths, process_guess_var
 from aviary.subsystems.aerodynamics.aerodynamics_builder import CoreAerodynamicsBuilder
 from aviary.subsystems.geometry.geometry_builder import CoreGeometryBuilder
 from aviary.subsystems.mass.mass_builder import CoreMassBuilder
 from aviary.subsystems.premission import CorePreMission
 from aviary.subsystems.propulsion.propulsion_builder import CorePropulsionBuilder
-from aviary.interface.utils import set_warning_format
-from aviary.mission.utils import get_phase_mission_bus_lengths, process_guess_var
-from aviary.variable_info.variables import Aircraft, Dynamic, Mission, Settings
-from aviary.variable_info.variable_meta_data import _MetaData as BaseMetaData
-
+from aviary.subsystems.performance.performance_builder import CorePerformanceBuilder
+from aviary.utils.aviary_values import AviaryValues
 from aviary.utils.functions import get_path
 from aviary.utils.preprocessors import preprocess_options
 from aviary.utils.process_input_decks import create_vehicle, update_GASP_options
 from aviary.utils.utils import wrapped_convert_units
+from aviary.variable_info.enums import EquationsOfMotion, LegacyCode, ProblemType, Verbosity
 from aviary.variable_info.functions import setup_trajectory_params
+from aviary.variable_info.variable_meta_data import _MetaData as BaseMetaData
+from aviary.variable_info.variables import Aircraft, Dynamic, Mission, Settings
 
 TWO_DEGREES_OF_FREEDOM = EquationsOfMotion.TWO_DEGREES_OF_FREEDOM
 HEIGHT_ENERGY = EquationsOfMotion.HEIGHT_ENERGY
@@ -387,6 +378,7 @@ class AviaryGroup(om.Group):
         )
 
         ## Set Up Core Subsystems ##
+        perf = CorePerformanceBuilder('core_performance')
         prop = CorePropulsionBuilder('core_propulsion', engine_models=self.engine_builders)
         mass = CoreMassBuilder('core_mass', code_origin=self.mass_method)
 
@@ -433,6 +425,7 @@ class AviaryGroup(om.Group):
             'geometry': geom,
             'mass': mass,
             'aerodynamics': aero,
+            'performance': perf,
         }
 
         # TODO optionally accept which subsystems to load from phase_info
@@ -531,6 +524,7 @@ class AviaryGroup(om.Group):
             subsystems['geometry'],
             subsystems['aerodynamics'],
             subsystems['mass'],
+            subsystems['performance'],
         ]
 
         pre_mission.add_subsystem(
