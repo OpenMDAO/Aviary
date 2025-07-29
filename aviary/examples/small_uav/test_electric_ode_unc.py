@@ -25,7 +25,7 @@ from aviary.variable_info.enums import LegacyCode
 #     def test_case(self):
 inputs = AviaryValues()
 
-inputs.set_val(av.Aircraft.Engine.NUM_ENGINES, 1)
+inputs.set_val(av.Aircraft.Engine.NUM_ENGINES, 2)
 # inputs.set_val(av.Aircraft.Wing.AREA, 3.17750636, units = 'ft**2')
 inputs.set_val(av.Settings.MASS_METHOD, LegacyCode.FLOPS)
 inputs.set_val(av.Mission.Landing.LIFT_COEFFICIENT_MAX, 1.3)
@@ -42,6 +42,8 @@ inputs.set_val(av.Aircraft.Engine.Propeller.PITCH, 10, units='inch')
 inputs.set_val(av.Dynamic.Mission.ALTITUDE, 200, units='ft')
 inputs.set_val(av.Dynamic.Mission.VELOCITY, 20, units='m/s')
 inputs.set_val(Dynamic.Atmosphere.DENSITY, 1.225, units='kg/m**3')
+# inputs.set_val(Dynamic.Atmosphere.MACH, 0.031, units='unitless')
+
 # inputs.set_val(av.Dynamic.Atmosphere.)
 
 prob = om.Problem()
@@ -78,36 +80,8 @@ prob.setup(check=False, force_alloc_complex=True)
 set_aviary_initial_values(prob, aviary_options)
 
 prob.run_model()
-prob.model.list_vars(print_arrays=True, units=True)
+prob.model.list_outputs(print_arrays=True, units=True)
 # try:
 #     prob.run_model()
 # except: 
 #     prob.model.list_vars(print_arrays=True, units=True)
-# do_validation_test(
-#     prob,
-#     'landing_flare_ode',
-#     input_validation_data=detailed_landing_flare,
-#     output_validation_data=detailed_landing_flare,
-#     input_keys=[
-#         Dynamic.Vehicle.ANGLE_OF_ATTACK,
-#         Dynamic.Mission.FLIGHT_PATH_ANGLE,
-#         Dynamic.Mission.VELOCITY,
-#         Dynamic.Vehicle.MASS,
-#         Dynamic.Vehicle.LIFT,
-#         Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
-#         Dynamic.Vehicle.DRAG,
-#     ],
-#     output_keys=[
-#         Dynamic.Mission.DISTANCE_RATE,
-#         Dynamic.Mission.ALTITUDE_RATE,
-#     ],
-#     tol=1e-2,
-#     atol=5e-9,
-#     rtol=5e-9,
-#     check_values=False,
-#     check_partials=True,
-# )
-
-
-# if __name__ == '__main__':
-#     unittest.main()

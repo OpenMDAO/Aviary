@@ -236,6 +236,17 @@ class FlightPhaseBase(PhaseBuilderBase):
             add_constraints=Dynamic.Atmosphere.MACH not in constraints,
         )
 
+        #TODO Alex unhard code
+        # if phase_type is EquationsOfMotion.HEIGHT_ENERGY:
+        #     rate_targets = [Dynamic.Mission.VELOCITY_RATE]
+
+        # self.add_control(
+        #     'velocity',
+        #     Dynamic.Mission.VELOCITY,
+        #     rate_targets,
+        #     # add_constraints=Dynamic.Atmosphere.MACH not in constraints,
+        # )
+
         if phase_type is EquationsOfMotion.HEIGHT_ENERGY and not ground_roll:
             rate_targets = [Dynamic.Mission.ALTITUDE_RATE]
             rate2_targets = None
