@@ -616,7 +616,7 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
             elif method == 'tabular_low_speed':
                 all_vars = AERO_2DOF_TABULAR_LS_INPUTS
             elif method == 'tabular_cruise':
-                all_vars = AERO_2DOF_TABULAR_CLEAN_INPUTS
+                all_vars = TABULAR_CORE_INPUTS
             else:
                 raise ValueError(
                     'GASP-based aero method is not one of the following: (cruise, '
@@ -723,6 +723,8 @@ COMPUTED_CORE_INPUTS = [
 
 TABULAR_CORE_INPUTS = [
     Aircraft.Wing.AREA,
+    Aircraft.Design.SUBSONIC_DRAG_COEFF_FACTOR,
+    Aircraft.Design.SUPERSONIC_DRAG_COEFF_FACTOR,
 ]
 
 # Parameters for low speed aero.
@@ -784,8 +786,6 @@ AERO_2DOF_INPUTS = [
     Aircraft.Wing.VERTICAL_MOUNT_LOCATION,
     Aircraft.Wing.ZERO_LIFT_ANGLE,
 ]
-
-AERO_2DOF_TABULAR_CLEAN_INPUTS = [Aircraft.Wing.AREA]
 
 AERO_2DOF_TABULAR_LS_INPUTS = [Aircraft.Wing.SPAN, Aircraft.Wing.HEIGHT]
 
