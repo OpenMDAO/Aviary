@@ -4,6 +4,7 @@ import argparse
 import re
 from enum import Enum
 from pathlib import Path
+from scipy.interpolate import interp1d
 
 import numpy as np
 from openmdao.components.interp_util.interp import InterpND
@@ -92,7 +93,11 @@ def convert_aero_table(input_file=None, output_file=None, data_format=None):
 
     if data_format in (CodeOrigin.GASP, CodeOrigin.GASP_ALT):
         is_alternative = True if data_format == CodeOrigin.GASP_ALT else False
-        if is_alternative:
+        if not is_alternative:
+            data, comments = _load_gasp_aero_table(data_file)
+            comments = [stamp] + comments
+            write_data_file(output_file, data, outputs, comments, include_timestamp=True)
+        else:
             data = {key: [] for key in _gasp_keys}
             scalars, tables, fields = _load_gasp_alt_aero_table(data_file)
             # save scalars as comments
@@ -152,10 +157,6 @@ def convert_aero_table(input_file=None, output_file=None, data_format=None):
 
             comments = [stamp] + comments
             write_data_file(output_file, write_data, outputs, comments, include_timestamp=True)
-        else:
-            data, comments = _load_gasp_aero_table(data_file)
-            comments = [stamp] + comments
-            write_data_file(output_file, data, outputs, comments, include_timestamp=True)
     elif data_format is CodeOrigin.FLOPS:
         if type(output_file) is not list:
             # if only one filename is given, split into two
@@ -348,6 +349,29 @@ def _load_gasp_alt_aero_table(filepath: Path):
         scalars = _read_header(f)
         tables = {k: _read_table(f) for k in fields}
 
+    # Now, tables['CD'] is a function of altitude, Mach, and CL.
+    # For Aviary table, we need to convert it to a function of Altitude, Mach and alpha.
+    cl_table = tables['CL']
+    cd_table = tables['CD']
+    n = len(cl_table)
+    cd_table_new = np.zeros((n, 4))
+    i = 0
+    for elem in cl_table:
+        alt = elem[0]
+        alpha = elem[1]
+        mach = elem[2]
+        cl = elem[3]
+        selected_cd_table = cd_table[(cd_table[:, 0] == alt) & (cd_table[:, 2] == mach)]
+        # print(selected_cd_table)
+        x = selected_cd_table[:, 1]
+        y = selected_cd_table[:, 3]
+        f_interp = interp1d(x, y, kind='linear', fill_value='extrapolate')
+        z = float(f_interp(cl))
+        new_elem = [alt, alpha, mach, z]
+        cd_table_new[i] = new_elem
+        i = i + 1
+    tables['CD'] = cd_table_new
+
     return scalars, tables, fields
 
 
@@ -357,6 +381,10 @@ def _read_header(f):
     iread, iprint, icd0, icompss, sref_at, cbar_at = _parse(
         f, [*_rep(4, (int, 5)), *_rep(2, (float, 10))]
     )
+    if iread == 1:
+        raise Exception('Reading of Reynolds number is not implemented yet.')
+    if icd0 == 1:
+        raise Exception('Reading of CD0 table is not implemented yet.')
 
     return {
         'sref_at': sref_at,
@@ -406,22 +434,10 @@ def _make_structured_grid(data, method='lagrange3', fields=['CL', 'CD']):
     # find min/max from CL table
     aoa = data['CL'][:, 1]
     tma = data['CL'][:, 2]
-    cl_min_aoa = min(aoa)
-    cl_max_aoa = max(aoa)
-    cl_min_tma = min(tma)
-    cl_max_tma = max(tma)
-    # find min/max from CD table
-    aoa = data['CD'][:, 1]
-    tma = data['CD'][:, 2]
-    cd_min_aoa = min(aoa)
-    cd_max_aoa = max(aoa)
-    cd_min_tma = min(tma)
-    cd_max_tma = max(tma)
-    # combine both
-    min_aoa = min(cl_min_aoa, cd_min_aoa)
-    max_aoa = max(cl_max_aoa, cd_max_aoa) + aoa_step
-    min_tma = min(cl_min_tma, cd_min_tma)
-    max_tma = max(cl_max_tma, cd_max_tma) + mach_step
+    min_aoa = min(aoa)
+    max_aoa = max(aoa) + aoa_step
+    min_tma = min(tma)
+    max_tma = max(tma) + mach_step
 
     aoas = np.arange(min_aoa, max_aoa + aoa_step, aoa_step)
     machs = np.arange(min_tma, max_tma + mach_step, mach_step)
