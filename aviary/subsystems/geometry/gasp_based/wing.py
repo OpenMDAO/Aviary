@@ -1540,53 +1540,53 @@ class WingGroup(om.Group):
         self.add_subsystem(
             'size',
             WingSize(),
-            promotes_inputs=['aircraft:*', 'mission:*'],
-            promotes_outputs=['aircraft:*'],
+            promotes_inputs=['*'],
+            promotes_outputs=['*'],
         )
 
         if has_fold or has_strut:
             self.add_subsystem(
                 'dimensionless_calcs',
                 DimensionalNonDimensionalInterchange(),
-                promotes_inputs=['aircraft:*'],
-                promotes_outputs=['aircraft:*'],
+                promotes_inputs=['*'],
+                promotes_outputs=['*'],
             )
 
         self.add_subsystem(
             'parameters',
             WingParameters(),
-            promotes_inputs=['aircraft:*'],
-            promotes_outputs=['aircraft:*'],
+            promotes_inputs=['*'],
+            promotes_outputs=['*'],
         )
 
         if not has_fold:
             self.add_subsystem(
                 'wing_vol',
                 WingVolume(),
-                promotes_inputs=['aircraft:*'],
-                promotes_outputs=['aircraft:*'],
+                promotes_inputs=['*'],
+                promotes_outputs=['*'],
             )
 
         if has_strut:
             self.add_subsystem(
                 'strut',
                 StrutGeom(),
-                promotes_inputs=['aircraft:*'],
-                promotes_outputs=['aircraft:*'],
+                promotes_inputs=['*'],
+                promotes_outputs=['*'],
             )
 
         if has_fold:
             self.add_subsystem(
                 'fold_area',
                 WingFoldArea(),
-                promotes_inputs=['aircraft:*'],
-                promotes_outputs=['aircraft:*'],
+                promotes_inputs=['*'],
+                promotes_outputs=['*'],
             )
             self.add_subsystem(
                 'fold_vol',
                 WingFoldVolume(),
-                promotes_inputs=['aircraft:*'],
-                promotes_outputs=['aircraft:*'],
+                promotes_inputs=['*'],
+                promotes_outputs=['*'],
             )
 
             choose_fold_location = self.options[Aircraft.Wing.CHOOSE_FOLD_LOCATION]
@@ -1622,54 +1622,54 @@ class BWBWingGroup(om.Group):
         self.add_subsystem(
             'size',
             WingSize(),
-            promotes_inputs=['aircraft:*', 'mission:*'],
-            promotes_outputs=['aircraft:*'],
+            promotes_inputs=['*'],
+            promotes_outputs=['*'],
         )
 
         if has_fold:
             self.add_subsystem(
                 'dimensionless_calcs',
                 DimensionalNonDimensionalInterchange(),
-                promotes_inputs=['aircraft:*'],
-                promotes_outputs=['aircraft:*'],
+                promotes_inputs=['*'],
+                promotes_outputs=['*'],
             )
 
         self.add_subsystem(
             'parameters',
             WingParameters(),
-            promotes_inputs=['aircraft:*'],
-            promotes_outputs=['aircraft:*'],
+            promotes_inputs=['*'],
+            promotes_outputs=['*'],
         )
 
         self.add_subsystem(
             'wing_vol',
             BWBWingVolume(),
-            promotes_inputs=['aircraft:*'],
+            promotes_inputs=['*'],
         )
         if has_fold:
             self.promotes('wing_vol', outputs=['wing_volume_no_fold'])
         else:
-            self.promotes('wing_vol', outputs=['aircraft:*'])
+            self.promotes('wing_vol', outputs=['*'])
 
         if has_fold:
             self.add_subsystem(
                 'fold_area',
                 WingFoldArea(),
-                promotes_inputs=['aircraft:*'],
-                promotes_outputs=['aircraft:*'],
+                promotes_inputs=['*'],
+                promotes_outputs=['*'],
             )
             self.add_subsystem(
                 'fold_vol',
                 BWBWingFoldVolume(),
-                promotes_inputs=['aircraft:*', 'wing_volume_no_fold'],
-                promotes_outputs=['aircraft:*'],
+                promotes_inputs=['*'],
+                promotes_outputs=['*'],
             )
 
         self.add_subsystem(
             'exposed_wing',
             ExposedWing(),
-            promotes_inputs=['aircraft:*'],
-            promotes_outputs=['aircraft:*'],
+            promotes_inputs=['*'],
+            promotes_outputs=['*'],
         )
 
 
