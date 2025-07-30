@@ -142,9 +142,7 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
                 aero_group = ComputedAeroGroup(num_nodes=num_nodes, **kwargs)
 
             elif method == 'low_speed':
-                aero_group = TakeoffAeroGroup(
-                    num_nodes=num_nodes, aviary_options=aviary_inputs, **kwargs
-                )
+                aero_group = TakeoffAeroGroup(num_nodes=num_nodes, **kwargs)
 
             elif method == 'tabular':
                 aero_group = TabularAeroGroup(
