@@ -2251,7 +2251,11 @@ add_meta_data(
 add_meta_data(
     Aircraft.Engine.REFERENCE_DIAMETER,
     meta_data=_MetaData,
-    historical_name={'GASP': 'INGASP.DIAM_REF', 'FLOPS': None, 'LEAPS1': None},
+    historical_name={
+        'GASP': 'INGASP.DIAM_REF',
+        'FLOPS': None,
+        'LEAPS1': None,
+    },  # no DIAM_REF in GASP
     units='ft',
     desc='engine reference diameter',
     default_value=0.0,
@@ -2280,7 +2284,7 @@ add_meta_data(
     Aircraft.Engine.REFERENCE_SLS_THRUST,
     meta_data=_MetaData,
     historical_name={
-        'GASP': 'INGASP.FN_REF',
+        'GASP': 'INGASP.FN_REF',  # no FN_REF in GASP
         'FLOPS': 'WTIN.THRSO',
         'LEAPS1': 'aircraft.inputs.L0_engine*.thrust',
     },
@@ -3338,7 +3342,7 @@ add_meta_data(
 add_meta_data(
     Aircraft.Fuselage.HYDRAULIC_DIAMETER,
     meta_data=_MetaData,
-    historical_name={'GASP': 'DHYDRAUL', 'FLOPS': None, 'LEAPS1': None},
+    historical_name={'GASP': 'DHYDRAL', 'FLOPS': None, 'LEAPS1': None},
     units='ft',
     types=float,
     default_value=0.0,
@@ -3411,7 +3415,7 @@ add_meta_data(
 )
 
 add_meta_data(
-    Aircraft.Fuselage.LIFT_COEFFICENT_RATIO_BODY_TO_WING,
+    Aircraft.Fuselage.LIFT_COEFFICIENT_RATIO_BODY_TO_WING,
     meta_data=_MetaData,
     historical_name={'GASP': 'INGASP.CLBqCLW', 'FLOPS': None, 'LEAPS1': None},
     units='unitless',
@@ -3605,7 +3609,7 @@ add_meta_data(
     Aircraft.Fuselage.PLANFORM_AREA,
     meta_data=_MetaData,
     historical_name={
-        'GASP': None,
+        'GASP': 'SPF_BODY',
         'FLOPS': None,  # '~WEIGHT.FPAREA',
         'LEAPS1': '(WeightABC)self._fuselage_planform_area',
     },
