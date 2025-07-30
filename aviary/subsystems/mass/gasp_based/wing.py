@@ -413,7 +413,7 @@ class BWBWingMassSolve(om.ImplicitComponent):
             'half_sweep', val=0.3947081519, units='rad', desc='SWC2: wing half-chord sweep angle'
         )
         add_aviary_input(
-            self, Aircraft.Fuselage.LIFT_COEFFICENT_RATIO_BODY_TO_WING, units='unitless'
+            self, Aircraft.Fuselage.LIFT_COEFFICIENT_RATIO_BODY_TO_WING, units='unitless'
         )
 
         self.add_output(
@@ -439,7 +439,7 @@ class BWBWingMassSolve(om.ImplicitComponent):
         taper_ratio = inputs[Aircraft.Wing.TAPER_RATIO]
         tc_ratio_root = inputs[Aircraft.Wing.THICKNESS_TO_CHORD_ROOT]
         half_sweep = inputs['half_sweep']
-        CLBqCLW = inputs[Aircraft.Fuselage.LIFT_COEFFICENT_RATIO_BODY_TO_WING]
+        CLBqCLW = inputs[Aircraft.Fuselage.LIFT_COEFFICIENT_RATIO_BODY_TO_WING]
 
         isolated_wing_wt = outputs['isolated_wing_mass'] * GRAV_ENGLISH_LBM
 
@@ -473,7 +473,7 @@ class BWBWingMassSolve(om.ImplicitComponent):
         taper_ratio = inputs[Aircraft.Wing.TAPER_RATIO]
         tc_ratio_root = inputs[Aircraft.Wing.THICKNESS_TO_CHORD_ROOT]
         half_sweep = inputs['half_sweep']
-        CLBqCLW = inputs[Aircraft.Fuselage.LIFT_COEFFICENT_RATIO_BODY_TO_WING]
+        CLBqCLW = inputs[Aircraft.Fuselage.LIFT_COEFFICIENT_RATIO_BODY_TO_WING]
 
         isolated_wing_wt = outputs['isolated_wing_mass'] * GRAV_ENGLISH_LBM
 
@@ -542,7 +542,7 @@ class BWBWingMassSolve(om.ImplicitComponent):
             / foo_denom
             / GRAV_ENGLISH_LBM
         )
-        J['isolated_wing_mass', Aircraft.Fuselage.LIFT_COEFFICENT_RATIO_BODY_TO_WING] = (
+        J['isolated_wing_mass', Aircraft.Fuselage.LIFT_COEFFICIENT_RATIO_BODY_TO_WING] = (
             (
                 c_wing_mass
                 * c_material
@@ -700,7 +700,7 @@ class WingMassGroup(om.Group):
             'half_sweep',
         ]
         if self.options[Aircraft.Wing.HAS_FOLD] or self.options[Aircraft.Wing.HAS_STRUT]:
-            higher_level_inputs_total = ['aircraft:*']
+            higher_level_inputs_total = ['*']
         else:
             higher_level_inputs_total = []
 
@@ -715,7 +715,7 @@ class WingMassGroup(om.Group):
         isolated_mass = self.add_subsystem(
             'isolated_mass',
             WingMassSolve(),
-            promotes_inputs=higher_level_inputs_isolated + ['aircraft:*', 'mission:*'],
+            promotes_inputs=higher_level_inputs_isolated + ['*'],
             promotes_outputs=connected_outputs_isolated,
         )
 
@@ -723,7 +723,7 @@ class WingMassGroup(om.Group):
             'total_mass',
             WingMassTotal(),
             promotes_inputs=connected_inputs_total + higher_level_inputs_total,
-            promotes_outputs=['aircraft:*'],
+            promotes_outputs=['*'],
         )
 
         newton = isolated_mass.nonlinear_solver = om.NewtonSolver()
@@ -755,13 +755,8 @@ class BWBWingMassGroup(om.Group):
 
     def setup(self):
         # variables that are calculated at a higher level
-        higher_level_inputs_isolated = [
-            'c_strut_braced',
-            'c_gear_loc',
-            'half_sweep',
-        ]
         if self.options[Aircraft.Wing.HAS_FOLD] or self.options[Aircraft.Wing.HAS_STRUT]:
-            higher_level_inputs_total = ['aircraft:*']
+            higher_level_inputs_total = ['*']
         else:
             higher_level_inputs_total = []
 
@@ -776,7 +771,7 @@ class BWBWingMassGroup(om.Group):
         isolated_mass = self.add_subsystem(
             'isolated_mass',
             BWBWingMassSolve(),
-            promotes_inputs=higher_level_inputs_isolated + ['aircraft:*', 'mission:*'],
+            promotes_inputs=['*'],
             promotes_outputs=connected_outputs_isolated,
         )
 
@@ -784,7 +779,7 @@ class BWBWingMassGroup(om.Group):
             'total_mass',
             WingMassTotal(),
             promotes_inputs=connected_inputs_total + higher_level_inputs_total,
-            promotes_outputs=['aircraft:*'],
+            promotes_outputs=['*'],
         )
 
         newton = isolated_mass.nonlinear_solver = om.NewtonSolver()

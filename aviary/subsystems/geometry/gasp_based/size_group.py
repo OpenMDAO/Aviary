@@ -24,57 +24,57 @@ class SizeGroup(om.Group):
             self.add_subsystem(
                 'fuselage',
                 BWBFuselageGroup(),
-                promotes_inputs=['aircraft:*'],
-                promotes_outputs=['aircraft:*'],
+                promotes_inputs=['*'],
+                promotes_outputs=['*'],
             )
         else:
             self.add_subsystem(
                 'fuselage',
                 FuselageGroup(),
-                promotes_inputs=['aircraft:*'],
-                promotes_outputs=['aircraft:*'],
+                promotes_inputs=['*'],
+                promotes_outputs=['*'],
             )
 
         if design_type is AircraftTypes.BLENDED_WING_BODY:
             self.add_subsystem(
                 'wing',
                 BWBWingGroup(),
-                promotes=['aircraft:*', 'mission:*'],
+                promotes=['*'],
             )
         else:
             self.add_subsystem(
                 'wing',
                 WingGroup(),
-                promotes=['aircraft:*', 'mission:*'],
+                promotes=['*'],
             )
 
         self.add_subsystem(
             'empennage',
             EmpennageSize(),
-            promotes=['aircraft:*'],
+            promotes=['*'],
         )
 
         if design_type is AircraftTypes.BLENDED_WING_BODY:
             self.add_subsystem(
                 'engine',
                 BWBEngineSizeGroup(),
-                promotes_inputs=['aircraft:*'],
-                promotes_outputs=['aircraft:*'],
+                promotes_inputs=['*'],
+                promotes_outputs=['*'],
             )
         else:
             self.add_subsystem(
                 'engine',
                 EngineSize(),
-                promotes_inputs=['aircraft:*'],
-                promotes_outputs=['aircraft:*'],
+                promotes_inputs=['*'],
+                promotes_outputs=['*'],
             )
 
         if self.options[Aircraft.Electrical.HAS_HYBRID_SYSTEM]:
             self.add_subsystem(
                 'cable',
                 CableSize(),
-                promotes_inputs=['aircraft:*'],
-                promotes_outputs=['aircraft:*'],
+                promotes_inputs=['*'],
+                promotes_outputs=['*'],
             )
 
         self.set_input_defaults(Aircraft.Fuselage.AVG_DIAMETER, units='inch')
