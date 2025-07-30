@@ -869,10 +869,8 @@ class AviaryProblem(om.Problem):
                 else:
                     # If the fuel capacity from the aviary_inputs csv file plus the sized operating mass exceeds the gross mass
                     # the fuel_capacity will be adjusted to equal the difference between the gross mass and the operating mass
-
+                    prob_3_skip = True
                     fuel_capacity = gross_mass - operating_mass
-                    payload_3 = payload_2
-                    range_3 = range_2
 
                 # Point 4, ferry mission with maximum fuel and 0 payload
                 max_fuel_zero_payload_payload = operating_mass + fuel_capacity
@@ -894,6 +892,12 @@ class AviaryProblem(om.Problem):
                     prob_fallout_ferry.get_val(Aircraft.CrewPayload.TOTAL_PAYLOAD_MASS)
                 )
                 range_4 = float(prob_fallout_ferry.get_val(Mission.Summary.RANGE))
+
+                # if problem 3 was skipped, prob_falloout_fuel_plus_payload is redefined so it still exists despite being the same as prob_fallout_ferry
+                if prob_3_skip:
+                    prob_fallout_max_fuel_plus_payload = prob_fallout_ferry
+                    payload_3 = payload_4
+                    range_3 = range_4
 
                 # Check if fallout missions ran successfully before writing to csv file
                 # If both missions ran successfully, writes the payload/range data to a csv file
@@ -932,21 +936,19 @@ class AviaryProblem(om.Problem):
                     return (prob_fallout_max_fuel_plus_payload, prob_fallout_ferry)
                 else:
                     warnings.warn(
-                        'FAILURE: One or both of the fallout missions did not run successfully; payload/range diagram was not generated.'
+                        'One or both of the fallout missions did not run successfully; payload/range diagram was not generated.'
                     )
             else:
                 warnings.warn(
-                    'FAILURE: The payload/range analysis is only supported for FLOPS missions with Height Energy equations of motion; the payload/range analysis will not be run.'
+                    'The payload/range analysis is only supported for FLOPS missions with Height Energy equations of motion; the payload/range analysis will not be run.'
                 )
         else:
             if self.model.problem_type is ProblemType.SIZING:
                 warnings.warn(
-                    'FAILURE: The sizing problem has not run successfully; therefore, the payload/range analysis will not be run.'
+                    'The sizing problem has not run successfully; therefore, the payload/range analysis will not be run.'
                 )
             else:
-                warnings.warn(
-                    'FAILURE: Payload/range analysis is only available for sizing problem types'
-                )
+                warnings.warn('Payload/range analysis is only available for sizing problem types')
 
     def alternate_mission(
         self,
