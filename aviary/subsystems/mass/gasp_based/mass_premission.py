@@ -58,49 +58,49 @@ class MassPremission(om.Group):
             self.add_subsystem(
                 'design_load',
                 BWBDesignLoadGroup(),
-                promotes_inputs=['aircraft:*', 'mission:*'],
+                promotes_inputs=['*'],
                 promotes_outputs=['*'],
             )
         else:
             self.add_subsystem(
                 'design_load',
                 DesignLoadGroup(),
-                promotes_inputs=['aircraft:*', 'mission:*'],
+                promotes_inputs=['*'],
                 promotes_outputs=['*'],
             )
 
         self.add_subsystem(
             'fixed_mass',
             FixedMassGroup(),
-            promotes_inputs=fixed_mass_inputs + ['aircraft:*', 'mission:*'],
-            promotes_outputs=fixed_mass_outputs + ['aircraft:*'],
+            promotes_inputs=['*'],
+            promotes_outputs=['*'],
         )
 
         self.add_subsystem(
             'equip_and_useful_mass',
             EquipAndUsefulLoadMassGroup(),
-            promotes_inputs=['aircraft:*', 'mission:*'],
-            promotes_outputs=['aircraft:*'],
+            promotes_inputs=['*'],
+            promotes_outputs=['*'],
         )
 
         if design_type is AircraftTypes.BLENDED_WING_BODY:
             self.add_subsystem(
                 'wing_mass',
                 BWBWingMassGroup(),
-                promotes_inputs=wing_mass_inputs + ['aircraft:*', 'mission:*'],
-                promotes_outputs=['aircraft:*'],
+                promotes_inputs=['*'],
+                promotes_outputs=['*'],
             )
         else:
             self.add_subsystem(
                 'wing_mass',
                 WingMassGroup(),
-                promotes_inputs=wing_mass_inputs + ['aircraft:*', 'mission:*'],
-                promotes_outputs=['aircraft:*'],
+                promotes_inputs=['*'],
+                promotes_outputs=['*'],
             )
 
         self.add_subsystem(
             'fuel_mass',
             FuelMassGroup(),
-            promotes_inputs=fuel_mass_inputs + ['aircraft:*', 'mission:*'],
-            promotes_outputs=['aircraft:*', 'mission:*'],
+            promotes_inputs=['*'],
+            promotes_outputs=['*'],
         )
