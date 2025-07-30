@@ -2,7 +2,7 @@ import aviary.api as av
 from aviary.core.pre_mission_group import PreMissionGroup
 import openmdao.api as om
 from aviary.models.missions.height_energy_default import phase_info
-from aviary.variable_info.variables import Aircraft, Mission, Dynamic, Settings
+from aviary.variable_info.variables import Aircraft, Mission, Dynamic
 from aviary.mission.flops_based.phases.energy_phase import EnergyPhase
 from aviary.variable_info.variable_meta_data import _MetaData as BaseMetaData
 from aviary.utils.aviary_values import AviaryValues
@@ -24,14 +24,12 @@ class L3SubsystemsGroup(om.Group):
 
 
 prob = av.AviaryProblem()
-# prob = om.Problem() maybe we need to set up L3 as a
 
+#####
 # prob.load_inputs(csv_path, phase_info)
 csv_path = 'models/test_aircraft/aircraft_for_bench_FwFm.csv'
 
 aviary_inputs, _ = av.create_vehicle('models/test_aircraft/aircraft_for_bench_FwFm.csv')
-
-# let's change this to be a 'proper example' N3CC
 
 engine = av.build_engine_deck(aviary_inputs)
 
@@ -43,12 +41,11 @@ aviary_inputs.set_val(Mission.Summary.RANGE, 1906.0, units='NM')
 prob.require_range_residual = True
 prob.target_range = 1906.0
 
-# prob.pre_mission_info = phase_info['pre_mission']
-# prob.post_mission_info = phase_info['post_mission']
-
+#####
 # prob.check_and_preprocess_inputs()
 av.preprocess_options(aviary_inputs, engine_models=[engine])
 
+#####
 # prob.add_pre_mission_systems()
 aerodynamics = av.CoreAerodynamicsBuilder(code_origin=av.LegacyCode('FLOPS'))
 geometry = av.CoreGeometryBuilder(code_origin=av.LegacyCode('FLOPS'))
@@ -63,6 +60,7 @@ prob.model.core_subsystems = {
 }
 prob.meta_data = BaseMetaData.copy()
 
+#####
 # prob.add_pre_mission_systems()
 # overwrites calculated values in pre-mission with override values from .csv
 prob.model.add_subsystem(
@@ -72,6 +70,7 @@ prob.model.add_subsystem(
     promotes_outputs=['aircraft:*', 'mission:*'],
 )
 
+#####
 # This is a combination of prob.add_pre_mission_systems and prob.setup()
 # In the aviary code add_pre_mission_systems only instantiates the objects and methods, the build method is called in prob.setup()
 prob.model.pre_mission.add_subsystem(
@@ -79,7 +78,7 @@ prob.model.pre_mission.add_subsystem(
     propulsion.build_pre_mission(aviary_inputs),
 )
 
-# add another group subsystem to match the L2 example
+# adding another group subsystem to match the L2 example
 prob.model.pre_mission.add_subsystem(
     'core_subsystems',
     L3SubsystemsGroup(aviary_options=aviary_inputs),
@@ -105,7 +104,7 @@ prob.model.pre_mission.core_subsystems.add_subsystem(
     promotes_outputs=['*'],
 )
 
-##########
+#####
 # prob.add_phases()
 phases = ['climb', 'cruise', 'descent']
 prob.traj = prob.model.add_subsystem('traj', dm.Trajectory())
@@ -143,7 +142,7 @@ prob.traj = setup_trajectory_params(
 # this maybe needs a better location in this script.
 prob.aviary_inputs = aviary_inputs
 
-##########
+#####
 #  prob.add_post_mission_systems()
 prob.model.add_subsystem(
     'post_mission',
@@ -303,7 +302,7 @@ prob.model.post_mission.add_subsystem(
     promotes_outputs=[('mass_resid', Mission.Constraints.MASS_RESIDUAL)],
 )
 
-##########
+#####
 # prob.link_phases()
 
 all_subsystems = []
@@ -322,28 +321,38 @@ prob.model.connect(
 )
 #### End of link_phases
 
-##########
-# prob.add_driver('IPOPT', max_iter=50)
-prob.driver = om.pyOptSparseDriver()
-prob.driver.options['optimizer'] = 'SNOPT'
+#####
+# prob.add_driver('SLSQP', max_iter=50)
+# SLSQP Optimizer Settings
+prob.driver = om.ScipyOptimizeDriver()
+prob.driver.options['optimizer'] = 'SLSQP'
 prob.driver.declare_coloring(show_summary=False)
-prob.driver.opt_settings['print_user_options'] = 'no'
-prob.driver.opt_settings['print_frequency_iter'] = 10
-prob.driver.opt_settings['print_level'] = 3
-prob.driver.opt_settings['tol'] = 1.0e-6
-prob.driver.opt_settings['mu_init'] = 1e-5
-prob.driver.opt_settings['max_iter'] = 50
-prob.driver.opt_settings['nlp_scaling_method'] = 'gradient-based'
-prob.driver.opt_settings['alpha_for_y'] = 'safer-min-dual-infeas'
-prob.driver.opt_settings['mu_strategy'] = 'monotone'
+prob.driver.options['disp'] = True
+prob.driver.options['tol'] = 1e-9
+prob.driver.options['maxiter'] = 50
+
+# IPOPT Optimizer Settings
+# prob.driver.opt_settings['print_user_options'] = 'no'
+# prob.driver.opt_settings['print_frequency_iter'] = 10
+# prob.driver.opt_settings['print_level'] = 3
+# prob.driver.opt_settings['tol'] = 1.0e-6
+# prob.driver.opt_settings['mu_init'] = 1e-5
+# prob.driver.opt_settings['max_iter'] = 50
+# prob.driver.opt_settings['nlp_scaling_method'] = 'gradient-based'
+# prob.driver.opt_settings['alpha_for_y'] = 'safer-min-dual-infeas'
+# prob.driver.opt_settings['mu_strategy'] = 'monotone'
 # prob.driver.options['print_results'] = 'minimal'
-prob.driver.opt_settings['iSumm'] = 6
-prob.driver.opt_settings['iPrint'] = 0
-# Optimizer Settings #
-prob.driver.opt_settings['Major iterations limit'] = 50
-prob.driver.opt_settings['Major optimality tolerance'] = 1e-4
-prob.driver.opt_settings['Major feasibility tolerance'] = 1e-7
-##########
+# prob.driver.opt_settings['iSumm'] = 6
+# prob.driver.opt_settings['iPrint'] = 0
+
+# SNOPT Optimizer Settings #
+# prob.driver.opt_settings['Major iterations limit'] = 50
+# prob.driver.opt_settings['Major optimality tolerance'] = 1e-4
+# prob.driver.opt_settings['Major feasibility tolerance'] = 1e-7
+# prob.driver.opt_settings['iSumm'] = 6
+# prob.driver.opt_settings['iPrint'] = 0
+
+#####
 # prob.add_design_variables()
 prob.model.add_design_var(
     Mission.Design.GROSS_MASS,
@@ -375,7 +384,7 @@ prob.model.add_subsystem(
 )
 prob.model.add_constraint(Mission.Constraints.RANGE_RESIDUAL, equals=0, ref=10)
 
-##########
+#####
 # prob.add_objective()
 prob.model.add_subsystem(
     'fuel_obj',
@@ -408,12 +417,10 @@ prob.model.add_subsystem(
     promotes_outputs=[('reg_objective', Mission.Objectives.RANGE)],
 )
 
-##########
-# What does this actually do?
-# is it worth splitting this out in more detail?
+#####
 prob.setup()
 
-##########
+#####
 # prob.set_initial_guesses()
 control_keys = ['mach', 'altitude']
 state_keys = ['mass', Dynamic.Mission.DISTANCE]
