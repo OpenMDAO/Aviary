@@ -111,9 +111,9 @@ class RCPropMission(om.Group):
         # self.connect('power_net.current', ['battery.current', 'esc.current_in', 'motor.current'])
 
         self.nonlinear_solver = om.NewtonSolver(solve_subsystems=True)
-        self.nonlinear_solver.options["maxiter"] = 30
+        self.nonlinear_solver.options["maxiter"] = 15
         self.nonlinear_solver.options["err_on_non_converge"] = False
         self.nonlinear_solver.linesearch = om.BoundsEnforceLS()
         self.nonlinear_solver.linesearch.options["bound_enforcement"] = "scalar"
-        self.nonlinear_solver.linesearch.options["print_bound_enforce"] = True
+        self.nonlinear_solver.linesearch.options["print_bound_enforce"] = False
         self.linear_solver = om.DirectSolver(assemble_jac=True)#, rhs_checking =True)

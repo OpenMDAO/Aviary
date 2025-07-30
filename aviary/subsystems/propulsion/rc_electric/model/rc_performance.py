@@ -305,8 +305,13 @@ class PowerResiduals(om.ImplicitComponent):
         add_aviary_input(self, Dynamic.Vehicle.Propulsion.PROP_POWER, val=np.zeros(nn), units='W') 
         
         #We want to make a good initial guess on the current
-        add_aviary_output(self, Dynamic.Vehicle.Propulsion.CURRENT, val=np.ones(nn)*30, units='A')
-        # self.add_output('current', val=np.ones(nn)*30, units='A') 
+
+        #What I have to do:
+        self.add_output(Dynamic.Vehicle.Propulsion.CURRENT, lower=0, val=np.ones(nn)*30, units='A')
+
+        #What should work:
+        # add_aviary_output(self, Dynamic.Vehicle.Propulsion.CURRENT, lower=np.zeros(nn), val=np.ones(nn)*30, units='A')
+
         self.add_residual('power_net', shape=(nn, ), units='W')
 
         self.declare_partials('*', '*', method='cs') #TODO try to change

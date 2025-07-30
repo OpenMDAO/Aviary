@@ -27,7 +27,7 @@ phase_info['cruise']['subsystem_options']['core_aerodynamics'] = {
 # phase_info['cruise']['subsystem_options']['core_mass'] = {
 #     'method': 'external',
 # }
-prob = av.AviaryProblem(verbosity=3)
+prob = av.AviaryProblem()
 
 prob.options['group_by_pre_opt_post'] = True
 
@@ -61,6 +61,8 @@ prob.setup()
 prob.set_initial_guesses()
 
 # prob.run_aviary_problem(suppress_solver_print= False)
+# prob.run_model()
+
 try:
     prob.run_model()
 except: 

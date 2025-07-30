@@ -64,6 +64,7 @@ prob.model.add_subsystem(
     TempEnergyODE(
         num_nodes=nn,
         # subsystem_options=landing_subsystem_options,
+        throttle_enforcement='bounded',
         core_subsystems=[prop],
         aviary_options=aviary_options,
     ),
@@ -71,7 +72,7 @@ prob.model.add_subsystem(
     promotes_outputs=['*'],
 )
 
-prob.model.set_input_defaults(Dynamic.Vehicle.DRAG, val=np.ones(nn) * 42, units='N')
+prob.model.set_input_defaults(Dynamic.Vehicle.DRAG, val=np.ones(nn) * 0.2, units='N')
 
 setup_model_options(prob, aviary_options)
 
@@ -80,7 +81,7 @@ prob.setup(check=False, force_alloc_complex=True)
 set_aviary_initial_values(prob, aviary_options)
 
 prob.run_model()
-prob.model.list_outputs(print_arrays=True, units=True)
+prob.model.list_vars(print_arrays=True, units=True)
 # try:
 #     prob.run_model()
 # except: 

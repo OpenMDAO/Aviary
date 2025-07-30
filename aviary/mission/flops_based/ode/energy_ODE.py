@@ -138,12 +138,12 @@ class EnergyODE(_BaseODE):
             )
 
             self.set_input_defaults(Dynamic.Vehicle.Propulsion.THROTTLE, val=1.0, units='unitless')
-
+        self.set_input_defaults(Dynamic.Atmosphere.MACH_RATE, val=np.zeros(nn))
         self.set_input_defaults(Dynamic.Atmosphere.MACH, val=np.ones(nn), units='unitless')
         self.set_input_defaults(Dynamic.Vehicle.MASS, val=np.ones(nn), units='kg')
         self.set_input_defaults(Dynamic.Mission.VELOCITY, val=np.ones(nn), units='m/s')
         self.set_input_defaults(Dynamic.Mission.ALTITUDE, val=np.ones(nn), units='m')
-        self.set_input_defaults(Dynamic.Mission.ALTITUDE_RATE, val=np.ones(nn), units='m/s')
+        self.set_input_defaults(Dynamic.Mission.ALTITUDE_RATE, val=np.zeros(nn), units='m/s')
 
         if options['use_actual_takeoff_mass']:
             exec_comp_string = 'initial_mass_residual = initial_mass - mass[0]'
@@ -179,6 +179,7 @@ class EnergyODE(_BaseODE):
             rtol=1.0e-10,
         )
         sub1.nonlinear_solver.linesearch = om.BoundsEnforceLS()
+        sub1.nonlinear_solver.options["maxiter"] = 20
         sub1.linear_solver = om.DirectSolver(assemble_jac=True)
         sub1.nonlinear_solver.options['err_on_non_converge'] = True
         sub1.nonlinear_solver.options['iprint'] = print_level

@@ -56,7 +56,7 @@ class RCPropPreMission(om.Group):
             promotes_inputs=[('idle_current', Aircraft.Engine.Motor.IDLE_CURRENT)],
             promotes_outputs=[('resistance', Aircraft.Engine.Motor.RESISTANCE)]
         )
-        print("this runs")
+        
         #TODO: Cite
         self.add_subsystem(
             'motor_kv_calc',

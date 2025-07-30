@@ -42,7 +42,7 @@ inputs.set_val(av.Aircraft.Engine.Propeller.PITCH, 10, units='inch')
 inputs.set_val(av.Dynamic.Mission.ALTITUDE, 200, units='ft')
 inputs.set_val(av.Dynamic.Mission.VELOCITY, 20, units='m/s')
 inputs.set_val(Dynamic.Atmosphere.DENSITY, 1.225, units='kg/m**3')
-# inputs.set_val(Dynamic.Atmosphere.MACH, 0.031, units='unitless')
+inputs.set_val(Dynamic.Atmosphere.MACH, 0.031, units='unitless')
 
 # inputs.set_val(av.Dynamic.Atmosphere.)
 
@@ -63,6 +63,7 @@ prob.model.add_subsystem(
     'energy_ode',
     EnergyODE(
         num_nodes=nn,
+        throttle_enforcement='bounded',
         # subsystem_options=landing_subsystem_options,
         core_subsystems=[prop],
         aviary_options=aviary_options,
@@ -71,7 +72,7 @@ prob.model.add_subsystem(
     promotes_outputs=['*'],
 )
 
-prob.model.set_input_defaults(Dynamic.Vehicle.DRAG, val=np.ones(nn) * 42, units='N')
+prob.model.set_input_defaults(Dynamic.Vehicle.DRAG, val=np.ones(nn) * 19, units='N')
 
 setup_model_options(prob, aviary_options)
 
@@ -79,9 +80,9 @@ prob.setup(check=False, force_alloc_complex=True)
 
 set_aviary_initial_values(prob, aviary_options)
 
-prob.run_model()
-prob.model.list_outputs(print_arrays=True, units=True)
-# try:
-#     prob.run_model()
-# except: 
-#     prob.model.list_vars(print_arrays=True, units=True)
+# prob.run_model()
+# prob.model.list_vars(print_arrays=True, units=True)
+try:
+    prob.run_model()
+except: 
+    prob.model.list_vars(print_arrays=True, units=True)
