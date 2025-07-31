@@ -866,6 +866,8 @@ class AviaryProblem(om.Problem):
                     range_3 = float(
                         prob_fallout_max_fuel_plus_payload.get_val(Mission.Summary.RANGE)
                     )
+
+                    prob_3_skip = False
                 else:
                     # If the fuel capacity from the aviary_inputs csv file plus the sized operating mass exceeds the gross mass
                     # the fuel_capacity will be adjusted to equal the difference between the gross mass and the operating mass
