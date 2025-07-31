@@ -4,6 +4,7 @@ from aviary.mission.phase_builder_base import PhaseBuilderBase
 from aviary.utils.aviary_options_dict import AviaryOptionsDictionary
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.variables import Dynamic
+from aviary.mission.phase_utils import add_subsystem_variables_to_phase
 
 
 class CruisePhaseOptions(AviaryOptionsDictionary):
@@ -141,6 +142,8 @@ class CruisePhase(PhaseBuilderBase):
 
         mach_cruise = user_options.get_val('mach_cruise')
         alt_cruise, alt_units = user_options['alt_cruise']
+
+        add_subsystem_variables_to_phase(phase, self.name, self.external_subsystems)
 
         phase.add_parameter(Dynamic.Mission.ALTITUDE, opt=False, val=alt_cruise, units=alt_units)
         phase.add_parameter(Dynamic.Atmosphere.MACH, opt=False, val=mach_cruise)

@@ -10,6 +10,7 @@ from aviary.mission.phase_builder_base import PhaseBuilderBase
 from aviary.utils.aviary_options_dict import AviaryOptionsDictionary
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.variables import Dynamic
+from aviary.mission.phase_utils import add_subsystem_variables_to_phase
 
 
 class AscentPhaseOptions(AviaryOptionsDictionary):
@@ -294,6 +295,8 @@ class AscentPhase(PhaseBuilderBase):
         self.add_velocity_state(user_options)
         self.add_mass_state(user_options)
         self.add_distance_state(user_options, units='ft')
+
+        add_subsystem_variables_to_phase(phase, self.name, self.external_subsystems)
 
         self.add_altitude_constraint(user_options)
 

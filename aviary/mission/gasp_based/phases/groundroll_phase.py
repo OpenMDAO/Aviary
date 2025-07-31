@@ -8,6 +8,7 @@ from aviary.mission.phase_builder_base import PhaseBuilderBase
 from aviary.utils.aviary_options_dict import AviaryOptionsDictionary
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.variables import Dynamic
+from aviary.mission.phase_utils import add_subsystem_variables_to_phase
 
 
 class GroundrollPhaseOptions(AviaryOptionsDictionary):
@@ -215,6 +216,8 @@ class GroundrollPhase(PhaseBuilderBase):
             defect_ref=distance_defect_ref,
             ref0=distance_ref0,
         )
+
+        add_subsystem_variables_to_phase(phase, self.name, self.external_subsystems)
 
         phase.add_parameter('t_init_gear', units='s', static_target=True, opt=False, val=100)
         phase.add_parameter('t_init_flaps', units='s', static_target=True, opt=False, val=100)

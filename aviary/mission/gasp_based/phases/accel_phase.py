@@ -8,6 +8,7 @@ from aviary.mission.phase_builder_base import PhaseBuilderBase, register
 from aviary.utils.aviary_options_dict import AviaryOptionsDictionary
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.variables import Dynamic
+from aviary.mission.phase_utils import add_subsystem_variables_to_phase
 
 
 class AccelPhaseOptions(AviaryOptionsDictionary):
@@ -205,6 +206,8 @@ class AccelPhase(PhaseBuilderBase):
         self.add_mass_state(user_options)
 
         self.add_distance_state(user_options)
+
+        add_subsystem_variables_to_phase(phase, self.name, self.external_subsystems)
 
         # Boundary Constraints
         phase.add_boundary_constraint(

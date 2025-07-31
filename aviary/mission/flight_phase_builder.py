@@ -2,7 +2,7 @@ import dymos as dm
 import numpy as np
 
 from aviary.mission.flops_based.ode.energy_ODE import EnergyODE
-from aviary.mission.flops_based.phases.phase_utils import (
+from aviary.mission.phase_utils import (
     add_subsystem_variables_to_phase,
     get_initial,
 )
