@@ -70,8 +70,6 @@ def create_vehicle(vehicle_deck='', meta_data=_MetaData, verbosity=Verbosity.BRI
     if verbosity is None:
         verbosity = Verbosity.BRIEF
 
-    # aircraft_values = get_option_defaults(engine=False)
-    # remove_preprocessed_options(aircraft_values)
     aircraft_values = AviaryValues()
 
     # TODO remove all hardcoded GASP values here, find appropriate place for them
@@ -81,12 +79,12 @@ def create_vehicle(vehicle_deck='', meta_data=_MetaData, verbosity=Verbosity.BRI
     aircraft_values.set_val('use_surrogates', val=True)
     aircraft_values.set_val('mass_defect', val=10000, units='lbm')
 
-    # setting defaults for variables needed outside OM problem during load_inputs()
+    # TODO setting defaults for variables needed outside OM problem during load_inputs()
     aircraft_values.set_val(Settings.PROBLEM_TYPE, val=ProblemType.SIZING)
     aircraft_values.set_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS, val=0)
     aircraft_values.set_val(Aircraft.Design.RESERVE_FUEL_ADDITIONAL, val=0, units='lbm')
     aircraft_values.set_val(Aircraft.Design.RESERVE_FUEL_FRACTION, val=0)
-    # used in initialization_guessing()
+    # these are used in initialization_guessing()
     aircraft_values.set_val(Mission.Design.CRUISE_ALTITUDE, val=25000.0, units='ft')
     aircraft_values.set_val(Aircraft.CrewPayload.PASSENGER_MASS_WITH_BAGS, val=0, units='lbm')
 
