@@ -5,7 +5,7 @@ from aviary.mission.gasp_based.ode.flight_path_eom import FlightPathEOM
 from aviary.mission.gasp_based.ode.params import ParamPort
 from aviary.mission.gasp_based.ode.two_dof_ode import TwoDOFODE
 from aviary.subsystems.mass.mass_to_weight import MassToWeight
-from aviary.subsystems.propulsion.propulsion_builder import PropulsionBuilderBase
+from aviary.subsystems.propulsion.propulsion_builder import PropulsionBuilder
 from aviary.variable_info.enums import AlphaModes, SpeedType
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 
@@ -116,7 +116,7 @@ class FlightPathODE(TwoDOFODE):
         for subsystem in core_subsystems:
             system = subsystem.build_mission(**kwargs)
             if system is not None:
-                if isinstance(subsystem, PropulsionBuilderBase):
+                if isinstance(subsystem, PropulsionBuilder):
                     self.add_subsystem(
                         subsystem.name,
                         system,

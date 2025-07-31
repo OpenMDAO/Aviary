@@ -31,7 +31,7 @@ class TestExternalAero(av.TestSubsystemBuilderBase):
 
         # Disable internal aero
         # TODO: This API for replacing aero will be changed an upcoming release.
-        phase_info['cruise']['subsystem_options']['core_aerodynamics'] = {
+        phase_info['cruise']['subsystem_options']['aerodynamics'] = {
             'method': 'external',
         }
 

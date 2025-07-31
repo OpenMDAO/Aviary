@@ -71,11 +71,11 @@ class PreMissionTestCase(unittest.TestCase):
 
         engines = [build_engine_deck(input_options)]
 
-        prop = CorePropulsionBuilder('core_propulsion', BaseMetaData, engines)
-        mass = CoreMassBuilder('core_mass', BaseMetaData, GASP)
-        aero = CoreAerodynamicsBuilder('core_aerodynamics', BaseMetaData, FLOPS)
+        prop = CorePropulsionBuilder('propulsion', BaseMetaData, engines)
+        mass = CoreMassBuilder('mass', BaseMetaData, GASP)
+        aero = CoreAerodynamicsBuilder('aerodynamics', BaseMetaData, FLOPS)
         geom = CoreGeometryBuilder(
-            'core_geometry',
+            'geometry',
             BaseMetaData,
             code_origin=(FLOPS, GASP),
             code_origin_to_prioritize=GASP,
@@ -222,7 +222,7 @@ class PreMissionTestCase(unittest.TestCase):
 
         self.assertTrue(
             outs[0][0]
-            == f'core_geometry.gasp_based_geom.fuselage.parameters.{Aircraft.Fuselage.AVG_DIAMETER}'
+            == f'geometry.gasp_based_geom.fuselage.parameters.{Aircraft.Fuselage.AVG_DIAMETER}'
         )
         self.assertTrue('MANUAL_OVERRIDE' not in outs[0][1]['prom_name'])
 
@@ -232,7 +232,7 @@ class PreMissionTestCase(unittest.TestCase):
 
         self.assertTrue(
             outs[0][0]
-            == f'core_geometry.flops_based_geom.fuselage_prelim.{Aircraft.Fuselage.AVG_DIAMETER}'
+            == f'geometry.flops_based_geom.fuselage_prelim.{Aircraft.Fuselage.AVG_DIAMETER}'
         )
         self.assertTrue('MANUAL_OVERRIDE' in outs[0][1]['prom_name'])
 
@@ -241,8 +241,7 @@ class PreMissionTestCase(unittest.TestCase):
         )
 
         self.assertTrue(
-            outs[0][0]
-            == f'core_geometry.gasp_based_geom.fuselage.size.{Aircraft.Fuselage.WETTED_AREA}'
+            outs[0][0] == f'geometry.gasp_based_geom.fuselage.size.{Aircraft.Fuselage.WETTED_AREA}'
         )
         self.assertTrue('MANUAL_OVERRIDE' not in outs[0][1]['prom_name'])
 
@@ -251,7 +250,7 @@ class PreMissionTestCase(unittest.TestCase):
         )
 
         self.assertTrue(
-            outs[0][0] == f'core_geometry.flops_based_geom.fuselage.{Aircraft.Fuselage.WETTED_AREA}'
+            outs[0][0] == f'geometry.flops_based_geom.fuselage.{Aircraft.Fuselage.WETTED_AREA}'
         )
         self.assertTrue('MANUAL_OVERRIDE' in outs[0][1]['prom_name'])
 
@@ -276,11 +275,11 @@ class PreMissionTestCase(unittest.TestCase):
         prob = om.Problem()
         model = prob.model
 
-        prop = CorePropulsionBuilder('core_propulsion', BaseMetaData, engines)
-        mass = CoreMassBuilder('core_mass', BaseMetaData, GASP)
-        aero = CoreAerodynamicsBuilder('core_aerodynamics', BaseMetaData, FLOPS)
+        prop = CorePropulsionBuilder('propulsion', BaseMetaData, engines)
+        mass = CoreMassBuilder('mass', BaseMetaData, GASP)
+        aero = CoreAerodynamicsBuilder('aerodynamics', BaseMetaData, FLOPS)
         geom = CoreGeometryBuilder(
-            'core_geometry',
+            'geometry',
             BaseMetaData,
             code_origin=(FLOPS, GASP),
             code_origin_to_prioritize=FLOPS,
@@ -322,7 +321,7 @@ class PreMissionTestCase(unittest.TestCase):
 
         self.assertTrue(
             outs[0][0]
-            == f'core_geometry.gasp_based_geom.fuselage.parameters.{Aircraft.Fuselage.AVG_DIAMETER}'
+            == f'geometry.gasp_based_geom.fuselage.parameters.{Aircraft.Fuselage.AVG_DIAMETER}'
         )
         self.assertTrue('MANUAL_OVERRIDE' in outs[0][1]['prom_name'])
 
@@ -332,7 +331,7 @@ class PreMissionTestCase(unittest.TestCase):
 
         self.assertTrue(
             outs[0][0]
-            == f'core_geometry.flops_based_geom.fuselage_prelim.{Aircraft.Fuselage.AVG_DIAMETER}'
+            == f'geometry.flops_based_geom.fuselage_prelim.{Aircraft.Fuselage.AVG_DIAMETER}'
         )
         self.assertTrue('MANUAL_OVERRIDE' not in outs[0][1]['prom_name'])
 
@@ -341,8 +340,7 @@ class PreMissionTestCase(unittest.TestCase):
         )
 
         self.assertTrue(
-            outs[0][0]
-            == f'core_geometry.gasp_based_geom.fuselage.size.{Aircraft.Fuselage.WETTED_AREA}'
+            outs[0][0] == f'geometry.gasp_based_geom.fuselage.size.{Aircraft.Fuselage.WETTED_AREA}'
         )
         self.assertTrue('MANUAL_OVERRIDE' in outs[0][1]['prom_name'])
 
@@ -351,7 +349,7 @@ class PreMissionTestCase(unittest.TestCase):
         )
 
         self.assertTrue(
-            outs[0][0] == f'core_geometry.flops_based_geom.fuselage.{Aircraft.Fuselage.WETTED_AREA}'
+            outs[0][0] == f'geometry.flops_based_geom.fuselage.{Aircraft.Fuselage.WETTED_AREA}'
         )
         self.assertTrue('MANUAL_OVERRIDE' not in outs[0][1]['prom_name'])
 

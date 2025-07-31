@@ -28,6 +28,7 @@ from aviary.variable_info.enums import (
 from aviary.variable_info.functions import setup_model_options
 from aviary.variable_info.variable_meta_data import _MetaData as BaseMetaData
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission, Settings
+from aviary.subsystems.subsystem_builder_base import SubsystemBuilderBase
 
 FLOPS = LegacyCode.FLOPS
 GASP = LegacyCode.GASP
@@ -73,7 +74,7 @@ class AviaryProblem(om.Problem):
         set_warning_format(verbosity)
 
         self.model = AviaryGroup()
-
+        self.meta_data = BaseMetaData.copy()
         self.aviary_inputs = None
 
     def load_inputs(
@@ -121,12 +122,37 @@ class AviaryProblem(om.Problem):
 
         return self.aviary_inputs
 
+    def load_external_subsystems(self, external_subsystems: list = [], verbosity=None):
+        """
+        This method takes user-provided SubsystemBuilders and saves them for later use alongside
+        the core Aviary subsystems.
+        """
+        # `self.verbosity` is "true" verbosity for entire run. `verbosity` is verbosity
+        # override for just this method
+        if verbosity is not None:
+            # compatibility with being passed int for verbosity
+            verbosity = Verbosity(verbosity)
+        else:
+            verbosity = self.verbosity  # defaults to BRIEF
+
+        for subsystem in external_subsystems:
+            if not isinstance(subsystem, SubsystemBuilderBase) and verbosity >= verbosity.BRIEF:
+                warnings.warn(
+                    'Provided external subsystem is not a SubsystemBuilder object and will not be '
+                    'loaded.'
+                )
+            else:
+                self.model.external_subsystems.append(subsystem)
+                meta_data = subsystem.meta_data.copy()
+                self.meta_data = merge_meta_data([self.meta_data, meta_data])
+
+        self.model.meta_data = self.meta_data  # TODO: temporary fix
+
     def check_and_preprocess_inputs(self, verbosity=None):
         """
-        This method checks the user-supplied input values for any potential problems
-        and preprocesses the inputs to prepare them for use in the Aviary problem.
+        This method checks the user-supplied input values for any potential problems and
+        preprocesses the inputs to prepare them for use in the Aviary problem.
         """
-
         # `self.verbosity` is "true" verbosity for entire run. `verbosity` is verbosity
         # override for just this method
         if verbosity is not None:
@@ -137,38 +163,17 @@ class AviaryProblem(om.Problem):
 
         self.model.check_and_preprocess_inputs(verbosity=verbosity)
 
-        self._update_metadata_from_subsystems()
-
-    def _update_metadata_from_subsystems(self):
-        """Merge metadata from user-defined subsystems into problem metadata."""
-        self.meta_data = BaseMetaData.copy()
-
-        # loop through phase_info and external subsystems
-        for phase_name in self.model.phase_info:
-            # TODO: phase_info now resides in AviaryGroup. Accessing it as self.model.phase_info is just a temporary stop-gap
-            # it will be necessary to combine multiple self.models
-            external_subsystems = self.model.get_all_subsystems(
-                self.model.phase_info[phase_name]['external_subsystems']
-            )
-
-            for subsystem in external_subsystems:
-                meta_data = subsystem.meta_data.copy()
-                self.meta_data = merge_meta_data([self.meta_data, meta_data])
-
-        self.model.meta_data = self.meta_data  # TODO: temporary fix
-
     def add_pre_mission_systems(self, verbosity=None):
         """
-        Add pre-mission systems to the Aviary problem. These systems are executed before
-        the mission.
+        Add pre-mission systems to the Aviary problem. These systems are executed before the
+        mission.
 
-        Depending on the mission model specified (`FLOPS` or `GASP`), this method adds
-        various subsystems to the aircraft model. For the `FLOPS` mission model, a
-        takeoff phase is added using the Takeoff class with the number of engines and
-        airport altitude specified. For the `GASP` mission model, three subsystems are
-        added: a TaxiSegment subsystem, an ExecComp to calculate the time to initiate
-        gear and flaps, and an ExecComp to calculate the speed at which to initiate
-        rotation. All subsystems are promoted with aircraft and mission inputs and
+        Depending on the mission model specified (`FLOPS` or `GASP`), this method adds various
+        subsystems to the aircraft model. For the `FLOPS` mission model, a takeoff phase is added
+        using the Takeoff class with the number of engines and airport altitude specified. For the
+        `GASP` mission model, three subsystems are added: a TaxiSegment subsystem, an ExecComp to
+        calculate the time to initiate gear and flaps, and an ExecComp to calculate the speed at
+        which to initiate rotation. All subsystems are promoted with aircraft and mission inputs and
         outputs as appropriate.
 
         A user can override this method with their own pre-mission systems as desired.
@@ -195,13 +200,11 @@ class AviaryProblem(om.Problem):
 
         Parameters
         ----------
-        phase_info_parameterization (function, optional): A function that takes in the
-            phase_info dictionary and aviary_inputs and returns modified phase_info.
-            Defaults to None.
+        phase_info_parameterization (function, optional): A function that takes in the phase_info
+            dictionary and aviary_inputs and returns modified phase_info. Defaults to None.
 
-        parallel_phases (bool, optional): If True, the top-level container of all phases
-            will be a ParallelGroup, otherwise it will be a standard OpenMDAO Group.
-            Defaults to True.
+        parallel_phases (bool, optional): If True, the top-level container of all phases will be a
+            ParallelGroup, otherwise it will be a standard OpenMDAO Group. Defaults to True.
 
         Returns
         -------
@@ -260,9 +263,9 @@ class AviaryProblem(om.Problem):
         """
         Link phases together after they've been added.
 
-        Based on which phases the user has selected, we might need
-        special logic to do the Dymos linkages correctly. Some of those
-        connections for the simple GASP and FLOPS mission are shown here.
+        Based on which phases the user has selected, we might need special logic to do the Dymos
+        linkages correctly. Some of those connections for the simple GASP and FLOPS mission are
+        shown here.
         """
         # `self.verbosity` is "true" verbosity for entire run. `verbosity` is verbosity
         # override for just this method
@@ -278,26 +281,25 @@ class AviaryProblem(om.Problem):
         """
         Add an optimization driver to the Aviary problem.
 
-        Depending on the provided optimizer, the method instantiates the relevant
-        driver (ScipyOptimizeDriver or pyOptSparseDriver) and sets the optimizer
-        options. Options for 'SNOPT', 'IPOPT', and 'SLSQP' are specified. The method
-        also allows for the declaration of coloring and setting debug print options.
+        Depending on the provided optimizer, the method instantiates the relevant driver
+        (ScipyOptimizeDriver or pyOptSparseDriver) and sets the optimizer options. Options for
+        'SNOPT', 'IPOPT', and 'SLSQP' are specified. The method also allows for the declaration of
+        coloring and setting debug print options.
 
         Parameters
         ----------
         optimizer : str
-            The name of the optimizer to use. It can be "SLSQP", "SNOPT", "IPOPT" or
-            others supported by OpenMDAO. If "SLSQP", it will instantiate a
-            ScipyOptimizeDriver, else it will instantiate a pyOptSparseDriver.
+            The name of the optimizer to use. It can be "SLSQP", "SNOPT", "IPOPT" or others
+            supported by OpenMDAO. If "SLSQP", it will instantiate a ScipyOptimizeDriver, else it
+            will instantiate a pyOptSparseDriver.
 
         use_coloring : bool, optional
-            If True (default), the driver will declare coloring, which can speed up
-            derivative computations.
+            If True (default), the driver will declare coloring, which can speed up derivative
+            computations.
 
         max_iter : int, optional
-            The maximum number of iterations allowed for the optimization process.
-            Default is 50. This option is applicable to "SNOPT", "IPOPT", and "SLSQP"
-            optimizers.
+            The maximum number of iterations allowed for the optimization process. Default is 50.
+            This option is applicable to "SNOPT", "IPOPT", and "SLSQP" optimizers.
 
         verbosity : Verbosity or int, optional
             Controls the level of printouts for this method. If None, uses the value of

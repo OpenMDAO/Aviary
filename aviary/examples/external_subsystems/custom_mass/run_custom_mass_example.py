@@ -16,6 +16,7 @@ if __name__ == '__main__':
     # Allow for user overrides here
     prob.load_inputs('models/aircraft/test_aircraft/aircraft_for_bench_FwFm.csv', phase_info)
 
+    prob.load_external_subsystems([WingMassBuilder()])
     # Preprocess inputs
     prob.check_and_preprocess_inputs()
 

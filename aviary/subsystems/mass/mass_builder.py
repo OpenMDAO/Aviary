@@ -3,7 +3,7 @@ Define subsystem builder for Aviary core mass.
 
 Classes
 -------
-MassBuilderBase : the interface for a mass subsystem builder.
+MassBuilder : the interface for a mass subsystem builder.
 
 CoreMassBuilder : the interface for Aviary's core mass subsystem builder
 """
@@ -21,7 +21,7 @@ FLOPS = LegacyCode.FLOPS
 _default_name = 'mass'
 
 
-class MassBuilderBase(SubsystemBuilderBase):
+class MassBuilder(SubsystemBuilderBase):
     """Base mass builder."""
 
     def __init__(self, name=None, meta_data=None):
@@ -37,12 +37,12 @@ class MassBuilderBase(SubsystemBuilderBase):
         return ['*']
 
 
-class CoreMassBuilder(MassBuilderBase):
+class CoreMassBuilder(MassBuilder):
     """Core mass subsystem builder."""
 
     def __init__(self, name=None, meta_data=None, code_origin=None):
         if name is None:
-            name = 'core_mass'
+            name = 'mass'
 
         if code_origin not in (FLOPS, GASP):
             raise ValueError('Code origin is not one of the following: (FLOPS, GASP)')

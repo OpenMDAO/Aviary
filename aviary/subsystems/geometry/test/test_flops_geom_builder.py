@@ -22,7 +22,7 @@ class TestFLOPSGeomBuilder(av.TestSubsystemBuilderBase):
 
     def setUp(self):
         self.subsystem_builder = CoreGeometryBuilder(
-            'core_geometry',
+            'geometry',
             BaseMetaData,
             code_origin=FLOPS,
             code_origin_to_prioritize=FLOPS,
@@ -57,7 +57,7 @@ class TestFLOPSGeomBuilderHybrid(av.TestSubsystemBuilderBase):
 
     def setUp(self):
         self.subsystem_builder = CoreGeometryBuilder(
-            'core_geometry',
+            'geometry',
             BaseMetaData,
             code_origin=(FLOPS, GASP),
             code_origin_to_prioritize=FLOPS,

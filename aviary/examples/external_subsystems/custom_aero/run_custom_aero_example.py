@@ -17,7 +17,7 @@ phase_info['cruise']['external_subsystems'] = [CustomAeroBuilder()]
 
 # Disable internal aero
 # TODO: This API for replacing aero will be changed an upcoming release.
-phase_info['cruise']['subsystem_options']['core_aerodynamics'] = {
+phase_info['cruise']['subsystem_options']['aerodynamics'] = {
     'method': 'external',
 }
 
@@ -28,6 +28,8 @@ if __name__ == '__main__':
     # Load aircraft and options data from user
     # Allow for user overrides here
     prob.load_inputs('models/aircraft/test_aircraft/aircraft_for_bench_FwFm.csv', phase_info)
+
+    prob.load_external_subsystems([CustomAeroBuilder()])
 
     # Preprocess inputs
     prob.check_and_preprocess_inputs()

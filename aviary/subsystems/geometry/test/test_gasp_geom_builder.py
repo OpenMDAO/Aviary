@@ -22,7 +22,7 @@ class TestGASPGeomBuilder(av.TestSubsystemBuilderBase):
 
     def setUp(self):
         self.subsystem_builder = CoreGeometryBuilder(
-            'core_geometry',
+            'geometry',
             BaseMetaData,
             code_origin=GASP,
             code_origin_to_prioritize=GASP,
@@ -57,7 +57,7 @@ class TestGASPGeomBuilderHybrid(av.TestSubsystemBuilderBase):
 
     def setUp(self):
         self.subsystem_builder = CoreGeometryBuilder(
-            'core_geometry',
+            'geometry',
             BaseMetaData,
             code_origin=(GASP, FLOPS),
             code_origin_to_prioritize=GASP,

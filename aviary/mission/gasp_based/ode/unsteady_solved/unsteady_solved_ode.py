@@ -9,9 +9,9 @@ from aviary.mission.gasp_based.ode.unsteady_solved.unsteady_solved_eom import Un
 from aviary.mission.gasp_based.ode.unsteady_solved.unsteady_solved_flight_conditions import (
     UnsteadySolvedFlightConditions,
 )
-from aviary.subsystems.aerodynamics.aerodynamics_builder import AerodynamicsBuilderBase
+from aviary.subsystems.aerodynamics.aerodynamics_builder import AerodyanmicsBuilder
 from aviary.subsystems.atmosphere.atmosphere import Atmosphere
-from aviary.subsystems.propulsion.propulsion_builder import PropulsionBuilderBase
+from aviary.subsystems.propulsion.propulsion_builder import PropulsionBuilder
 from aviary.variable_info.enums import LegacyCode, SpeedType
 from aviary.variable_info.variable_meta_data import _MetaData
 from aviary.variable_info.variables import Dynamic
@@ -179,7 +179,7 @@ class UnsteadySolvedODE(TwoDOFODE):
                 kwargs.update(subsystem_options[subsystem.name])
             system = subsystem.build_mission(**kwargs)
             if system is not None:
-                if isinstance(subsystem, AerodynamicsBuilderBase):
+                if isinstance(subsystem, AerodyanmicsBuilder):
                     mission_inputs = subsystem.mission_inputs(**kwargs)
                     if (
                         subsystem.code_origin is LegacyCode.FLOPS
@@ -193,7 +193,7 @@ class UnsteadySolvedODE(TwoDOFODE):
                         promotes_inputs=mission_inputs,
                         promotes_outputs=subsystem.mission_outputs(**kwargs),
                     )
-                elif isinstance(subsystem, PropulsionBuilderBase):
+                elif isinstance(subsystem, PropulsionBuilder):
                     throttle_balance_group.add_subsystem(
                         subsystem.name,
                         system,

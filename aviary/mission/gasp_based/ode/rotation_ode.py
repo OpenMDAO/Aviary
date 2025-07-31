@@ -23,7 +23,7 @@ class RotationODE(TwoDOFODE):
         self.add_atmosphere()
 
         kwargs = {'method': 'low_speed'}
-        self.options['subsystem_options'].setdefault('core_aerodynamics', {}).update(kwargs)
+        self.options['subsystem_options'].setdefault('aerodynamics', {}).update(kwargs)
 
         self.add_core_subsystems()
 

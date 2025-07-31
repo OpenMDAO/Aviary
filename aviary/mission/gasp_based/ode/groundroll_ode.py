@@ -4,7 +4,7 @@ import openmdao.api as om
 from aviary.mission.gasp_based.ode.groundroll_eom import GroundrollEOM
 from aviary.mission.gasp_based.ode.params import ParamPort
 from aviary.mission.gasp_based.ode.two_dof_ode import TwoDOFODE
-from aviary.subsystems.aerodynamics.aerodynamics_builder import AerodynamicsBuilderBase
+from aviary.subsystems.aerodynamics.aerodynamics_builder import AerodyanmicsBuilder
 from aviary.variable_info.variables import Aircraft, Dynamic
 
 
@@ -64,7 +64,7 @@ class GroundrollODE(TwoDOFODE):
                     promotes_inputs=subsystem.mission_inputs(**kwargs),
                     promotes_outputs=subsystem.mission_outputs(**kwargs),
                 )
-            if type(subsystem) is AerodynamicsBuilderBase:
+            if type(subsystem) is AerodyanmicsBuilder:
                 self.promotes(
                     subsystem.name,
                     inputs=[Dynamic.Vehicle.ANGLE_OF_ATTACK],

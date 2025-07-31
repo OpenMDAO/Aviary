@@ -20,6 +20,7 @@ class SubsystemBuilderBase(ABC):
 
     # derived type customization point
     default_name = 'default_subsystem_name'
+    default_metadata = _MetaData
 
     def __init__(self, name=None, meta_data=None):
         if name is None:
@@ -27,7 +28,7 @@ class SubsystemBuilderBase(ABC):
         self.name = name
 
         if meta_data is None:
-            meta_data = _MetaData
+            meta_data = self.default_metadata
         self.meta_data = meta_data
 
     def needs_mission_solver(self, aviary_inputs):

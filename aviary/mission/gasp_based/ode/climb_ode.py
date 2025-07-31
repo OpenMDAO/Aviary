@@ -6,7 +6,7 @@ from aviary.mission.gasp_based.ode.constraints.flight_constraints import FlightC
 from aviary.mission.gasp_based.ode.constraints.speed_constraints import SpeedConstraints
 from aviary.mission.gasp_based.ode.params import ParamPort
 from aviary.mission.gasp_based.ode.two_dof_ode import TwoDOFODE
-from aviary.subsystems.aerodynamics.aerodynamics_builder import AerodynamicsBuilderBase
+from aviary.subsystems.aerodynamics.aerodynamics_builder import AerodyanmicsBuilder
 from aviary.subsystems.atmosphere.atmosphere import Atmosphere
 from aviary.subsystems.atmosphere.flight_conditions import FlightConditions
 from aviary.variable_info.enums import AlphaModes, SpeedType
@@ -145,7 +145,7 @@ class ClimbODE(TwoDOFODE):
                 kwargs.update(subsystem_options[subsystem.name])
             system = subsystem.build_mission(**kwargs)
             if system is not None:
-                if isinstance(subsystem, AerodynamicsBuilderBase):
+                if isinstance(subsystem, AerodyanmicsBuilder):
                     lift_balance_group.add_subsystem(
                         subsystem.name,
                         system,

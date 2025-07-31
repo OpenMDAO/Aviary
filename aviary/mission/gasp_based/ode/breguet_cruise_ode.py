@@ -8,7 +8,7 @@ from aviary.mission.ode.altitude_rate import AltitudeRate
 from aviary.mission.ode.specific_energy_rate import SpecificEnergyRate
 from aviary.subsystems.atmosphere.atmosphere import Atmosphere
 from aviary.subsystems.mass.mass_to_weight import MassToWeight
-from aviary.subsystems.propulsion.propulsion_builder import PropulsionBuilderBase
+from aviary.subsystems.propulsion.propulsion_builder import PropulsionBuilder
 from aviary.variable_info.enums import SpeedType
 from aviary.variable_info.variables import Dynamic
 
@@ -48,7 +48,7 @@ class BreguetCruiseODESolution(TwoDOFODE):
                 kwargs.update(subsystem_options[subsystem.name])
             system = subsystem.build_mission(**kwargs)
             if system is not None:
-                if isinstance(subsystem, PropulsionBuilderBase):
+                if isinstance(subsystem, PropulsionBuilder):
                     prop_group.add_subsystem(
                         subsystem.name,
                         system,
@@ -191,7 +191,7 @@ class E_BreguetCruiseODESolution(TwoDOFODE):
         for subsystem in core_subsystems:
             system = subsystem.build_mission(**kwargs)
             if system is not None:
-                if isinstance(subsystem, PropulsionBuilderBase):
+                if isinstance(subsystem, PropulsionBuilder):
                     prop_group.add_subsystem(
                         subsystem.name,
                         system,

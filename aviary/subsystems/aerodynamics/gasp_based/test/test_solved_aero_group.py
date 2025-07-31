@@ -26,9 +26,9 @@ phase_info = deepcopy(phase_info)
 
 phase_info['pre_mission']['include_takeoff'] = False
 phase_info['post_mission']['include_landing'] = False
-phase_info['cruise']['subsystem_options']['core_aerodynamics']['method'] = 'tabular_cruise'
-phase_info['cruise']['subsystem_options']['core_aerodynamics']['solve_alpha'] = True
-phase_info['cruise']['subsystem_options']['core_aerodynamics']['aero_data'] = polar_file
+phase_info['cruise']['subsystem_options']['aerodynamics']['method'] = 'tabular_cruise'
+phase_info['cruise']['subsystem_options']['aerodynamics']['solve_alpha'] = True
+phase_info['cruise']['subsystem_options']['aerodynamics']['aero_data'] = polar_file
 phase_info.pop('climb')
 phase_info.pop('descent')
 
@@ -96,7 +96,7 @@ class TestSolvedAero(unittest.TestCase):
         }
         ph_in['pre_mission']['external_subsystems'] = [polar_builder]
 
-        ph_in['cruise']['subsystem_options'] = {'core_aerodynamics': subsystem_options}
+        ph_in['cruise']['subsystem_options'] = {'aerodynamics': subsystem_options}
 
         prob = AviaryProblem()
 
@@ -247,7 +247,7 @@ class TestSolvedAero(unittest.TestCase):
         }
         ph_in['pre_mission']['external_subsystems'] = [polar_builder]
 
-        ph_in['cruise']['subsystem_options'] = {'core_aerodynamics': subsystem_options}
+        ph_in['cruise']['subsystem_options'] = {'aerodynamics': subsystem_options}
 
         prob = AviaryProblem()
 

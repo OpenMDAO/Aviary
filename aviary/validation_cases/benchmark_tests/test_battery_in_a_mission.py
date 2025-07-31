@@ -19,7 +19,7 @@ class TestSubsystemsMission(unittest.TestCase):
                 'optimize_mass': True,
             },
             'cruise1': {
-                'subsystem_options': {'core_aerodynamics': {'method': 'computed'}},
+                'subsystem_options': {'aerodynamics': {'method': 'computed'}},
                 'external_subsystems': [BatteryBuilder()],
                 'user_options': {
                     'num_segments': 5,
@@ -39,7 +39,7 @@ class TestSubsystemsMission(unittest.TestCase):
                 },
             },
             'cruise2': {
-                'subsystem_options': {'core_aerodynamics': {'method': 'computed'}},
+                'subsystem_options': {'aerodynamics': {'method': 'computed'}},
                 'external_subsystems': [BatteryBuilder()],
                 'user_options': {
                     'num_segments': 5,

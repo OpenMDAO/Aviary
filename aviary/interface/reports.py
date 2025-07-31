@@ -124,10 +124,9 @@ def subsystem_report(prob, **kwargs):
     reports_folder = Path(prob.get_reports_dir() / 'subsystems')
     reports_folder.mkdir(exist_ok=True)
 
-    # TODO external subsystems??
-    core_subsystems = prob.model.core_subsystems  # TODO: redo for multimissions
+    subsystems = prob.model.subsystems  # TODO: redo for multimissions
 
-    for subsystem in core_subsystems.values():
+    for subsystem in subsystems:
         subsystem.report(prob, reports_folder, **kwargs)
 
 

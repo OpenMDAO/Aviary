@@ -1625,7 +1625,7 @@ def create_phase_info(
         phase_name = f'{phase_type}_{phase_count}'
 
         phase_info[phase_name] = {
-            'subsystem_options': {'core_aerodynamics': {'method': 'computed'}},
+            'subsystem_options': {'aerodynamics': {'method': 'computed'}},
             'user_options': {
                 'num_segments': num_segments,
                 'order': orders[i],

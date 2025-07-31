@@ -456,7 +456,7 @@ takeoff_trajectory_builder = TakeoffTrajectory('detailed_takeoff')
 # block auto-formatting of tables
 # fmt: off
 takeoff_subsystem_options = {
-    'core_aerodynamics': {
+    'aerodynamics': {
         'method': 'low_speed',
         'ground_altitude': 0.0,  # units='m'
         'angles_of_attack': [
@@ -477,8 +477,8 @@ takeoff_subsystem_options = {
 # fmt: on
 
 takeoff_subsystem_options_spoilers = {
-    'core_aerodynamics': {
-        **takeoff_subsystem_options['core_aerodynamics'],
+    'aerodynamics': {
+        **takeoff_subsystem_options['aerodynamics'],
         'use_spoilers': True,
         'spoiler_drag_coefficient': inputs.get_val(Mission.Takeoff.SPOILER_DRAG_COEFFICIENT),
         'spoiler_lift_coefficient': inputs.get_val(Mission.Takeoff.SPOILER_LIFT_COEFFICIENT),
@@ -1115,7 +1115,7 @@ landing_trajectory_builder = LandingTrajectory('detailed_landing')
 
 # region - landing aero
 landing_subsystem_options = {
-    'core_aerodynamics': {
+    'aerodynamics': {
         'method': 'low_speed',
         'ground_altitude': 0.0,  # units='m'
         'angles_of_attack': [
@@ -1138,8 +1138,8 @@ landing_subsystem_options = {
 # fmt: on
 
 landing_subsystem_options_spoilers = {
-    'core_aerodynamics': {
-        **landing_subsystem_options['core_aerodynamics'],
+    'aerodynamics': {
+        **landing_subsystem_options['aerodynamics'],
         'use_spoilers': True,
         'spoiler_lift_coefficient': -0.81,
         'spoiler_drag_coefficient': 0.085,

@@ -3,7 +3,7 @@ Define subsystem builder for Aviary core propulsion.
 
 Classes
 -------
-PropulsionBuilderBase : the interface for a propulsion subsystem builder.
+PropulsionBuilder : the interface for a propulsion subsystem builder.
 
 CorePropulsionBuilder : the interface for Aviary's core propulsion subsystem builder
 """
@@ -25,15 +25,15 @@ from aviary.variable_info.variables import Aircraft
 _default_name = 'propulsion'
 
 
-class PropulsionBuilderBase(SubsystemBuilderBase):
+class PropulsionBuilder(SubsystemBuilderBase):
     """
     Base class for propulsion builder.
 
     Note
     ----
-    unlike the other subsystem builders, it is not recommended to create additional
-    propulsion subsystems, as propulsion is intended to be an agnostic carrier of
-    all propulsion-related subsystem builders in the form of EngineModels.
+    Unlike the other subsystem builders, it is not recommended to create additional propulsion
+    subsystems, as propulsion is intended to be an agnostic carrier of all propulsion-related
+    subsystem builders in the form of EngineModels.
 
     Methods
     -------
@@ -56,7 +56,7 @@ class PropulsionBuilderBase(SubsystemBuilderBase):
         return ['*']
 
 
-class CorePropulsionBuilder(PropulsionBuilderBase):
+class CorePropulsionBuilder(PropulsionBuilder):
     """
     Core propulsion builder.
 
@@ -94,7 +94,7 @@ class CorePropulsionBuilder(PropulsionBuilderBase):
 
     def __init__(self, name=None, meta_data=None, engine_models=None, **kwargs):
         if name is None:
-            name = 'core_propulsion'
+            name = 'propulsion'
 
         super().__init__(name=name, meta_data=meta_data)
 
