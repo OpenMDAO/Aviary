@@ -73,10 +73,16 @@ class FlightPhaseOptions(AviaryOptionsDictionary):
         self.declare(
             name='throttle_enforcement',
             default='path_constraint',
-            values=['path_constraint', 'boundary_constraint', 'bounded', None],
+            values=['path_constraint', 'boundary_constraint', 'bounded', 'design_var', None],
             desc='Flag to enforce engine throttle constraints on the path or at the segment '
-            'boundaries or using solver bounds.',
+            'boundaries or "bounded" using solver bounds. Aler',
         )
+
+        # Throttle is a solver variable, unless you set throttle_enforcement to design_var.
+        defaults = {
+            'throttle_bounds': (0.0, 1.0),
+        }
+        self.add_control_options('throttle', units='unitless', defaults=defaults)
 
         self.declare(
             name='throttle_allocation',
@@ -249,6 +255,14 @@ class FlightPhaseBase(PhaseBuilderBase):
             rate2_targets=rate2_targets,
             add_constraints=Dynamic.Mission.ALTITUDE not in constraints,
         )
+
+        if throttle_enforcement == 'design_var':
+            self.add_control(
+                'throttle',
+                Dynamic.Vehicle.Propulsion.THROTTLE,
+                rate_targets=None,
+                add_constraints=True,
+            )
 
         # For heterogeneous-engine cases, we may have throttle allocation control.
         if phase_type is EquationsOfMotion.HEIGHT_ENERGY and num_engine_type > 1:
