@@ -72,7 +72,7 @@ prob.model.add_subsystem(
     promotes_outputs=['*'],
 )
 
-prob.model.set_input_defaults(Dynamic.Vehicle.DRAG, val=np.ones(nn) * 0.2, units='N')
+prob.model.set_input_defaults(Dynamic.Vehicle.DRAG, val=np.ones(nn) * 20, units='N')
 
 setup_model_options(prob, aviary_options)
 

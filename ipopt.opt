@@ -1,0 +1,23 @@
+# Options for IPOPT
+
+# Output file
+output_file IPOPT_print.out
+file_print_level 5
+print_info_string yes
+
+# Termination Criteria
+max_iter 100
+tol 1e-5
+constr_viol_tol 1e-7
+
+#Stop and consider acceptable if the objective has barely changed 
+#and the constraints are satisfied for a number of iterations
+acceptable_iter 20
+acceptable_obj_change_tol 1e-5
+acceptable_tol 1e-1
+acceptable_constr_viol_tol 1e-5
+
+#Algorithm options
+limited_memory_max_history 9999
+hessian_approximation limited-memory
+alpha_for_y safer-min-dual-infeas

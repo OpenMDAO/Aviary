@@ -75,3 +75,14 @@ class RCPropPreMission(om.Group):
             promotes_outputs=[('kv', Aircraft.Engine.Motor.KV)]
         )
 
+        # self.add_subsystem(
+        #     'total_mass',
+        #     om.ExecComp(
+        #         'engine_mass = batt_mass + motor_mass',
+        #         batt_mass={'val': 0.0, 'units': 'kg'},
+        #         motor_mass={'val': 0.0, 'units': 'kg'},
+        #         engine_mass={'val': 0.0, 'units': 'kg'},
+        #     ),
+        #     promotes_inputs=[('batt_mass', Aircraft.Battery.MASS), ('motor_mass', Aircraft.Engine.Motor.MASS)],
+        #     promotes_outputs=[('engine_mass', Aircraft.Engine.MASS)]
+        # )

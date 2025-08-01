@@ -19,7 +19,7 @@ class SimplestDragCoeff(om.ExplicitComponent):
             'num_nodes', default=1, types=int, desc='Number of nodes along mission segment'
         )
 
-        self.options.declare('CD_zero', default=0.01)
+        self.options.declare('CD_zero', default=0.05)
         self.options.declare('k', default=0.04)
 
     def setup(self):

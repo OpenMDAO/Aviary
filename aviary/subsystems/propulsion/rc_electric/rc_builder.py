@@ -60,7 +60,7 @@ class RCBuilder(EngineModel):
             # },
             Aircraft.Engine.Motor.IDLE_CURRENT: {
                 'units': 'A',
-                'lower': 1.0,
+                'lower': 0.5,
                 'upper': 3.6, #TODO: this placeholder can be varied
                 # 'val': 2.2,  
             },
@@ -148,7 +148,7 @@ class RCBuilder(EngineModel):
         return parameters
 
     def get_mass_names(self):
-        return [Aircraft.Battery.MASS, Aircraft.Engine.Motor.MASS]
+        return [Aircraft.Battery.MASS, Aircraft.Engine.Motor.MASS]#, Aircraft.Engine.MASS]
     
     #TODO add new outputs
     def mission_outputs(self):

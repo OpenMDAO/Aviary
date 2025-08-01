@@ -175,17 +175,17 @@ class EnergyODE(_BaseODE):
 
         print_level = 2
 
-        sub1.nonlinear_solver = om.NewtonSolver(
-            solve_subsystems=True,
-            atol=1.0e-10,
-            rtol=1.0e-10,
-        )
-        sub1.nonlinear_solver.linesearch = om.BoundsEnforceLS()
-        ############## ALEX LOPEZ ADDITION ###############
-        sub1.nonlinear_solver.options["maxiter"] = 20 #changed from 10 to 20
-        ############## ALEX LOPEZ ADDITION ###############
-        sub1.linear_solver = om.DirectSolver(assemble_jac=True)
-        sub1.nonlinear_solver.options['err_on_non_converge'] = True
-        sub1.nonlinear_solver.options['iprint'] = print_level
+        # sub1.nonlinear_solver = om.NewtonSolver(
+        #     solve_subsystems=True,
+        #     atol=1.0e-10,
+        #     rtol=1.0e-10,
+        # )
+        # sub1.nonlinear_solver.linesearch = om.BoundsEnforceLS()
+        # ############## ALEX LOPEZ ADDITION ###############
+        # sub1.nonlinear_solver.options["maxiter"] = 20 #changed from 10 to 20
+        # ############## ALEX LOPEZ ADDITION ###############
+        # sub1.linear_solver = om.DirectSolver(assemble_jac=True)
+        # sub1.nonlinear_solver.options['err_on_non_converge'] = True
+        # sub1.nonlinear_solver.options['iprint'] = print_level
 
-        self.options['auto_order'] = True
+        # self.options['auto_order'] = True

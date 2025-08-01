@@ -12,22 +12,23 @@ from aviary.subsystems.propulsion.rc_electric.rc_builder import RCBuilder
 from aviary.examples.external_subsystems.custom_aero.custom_aero_builder import CustomAeroBuilder
 
 rc_prop = RCBuilder()
-# phase_info = av.default_height_energy_phase_info
+
 phase_info = deepcopy(phase_info)
 
-phase_info.pop('climb')
+# phase_info.pop('climb')
+phase_info.pop('cruise')
 phase_info.pop('descent')
 
 phase_info['pre_mission']['external_subsystems'] = [DBFMassBuilder()]
-phase_info['cruise']['external_subsystems'] = [CustomAeroBuilder()]
+phase_info['climb']['external_subsystems'] = [CustomAeroBuilder()]
 
-phase_info['cruise']['subsystem_options']['core_aerodynamics'] = {
+phase_info['climb']['subsystem_options']['core_aerodynamics'] = {
     'method': 'external',
 }
 # phase_info['cruise']['subsystem_options']['core_mass'] = {
 #     'method': 'external',
 # }
-prob = av.AviaryProblem()
+prob = av.AviaryProblem(verbosity=1)
 
 prob.options['group_by_pre_opt_post'] = True
 
@@ -45,25 +46,33 @@ prob.check_and_preprocess_inputs()
 prob.add_pre_mission_systems()
 
 prob.add_phases()
-
 prob.add_post_mission_systems()
 
 # Link phases and variables
 prob.link_phases()
 
 prob.add_driver('IPOPT')
+prob.driver.options["debug_print"] = ["desvars", "nl_cons", "objs"]
 
-prob.add_design_variables()
-
-prob.add_objective()
+# prob.add_design_variables()
+prob.model.add_design_var(av.Mission.Design.GROSS_MASS, lower=0.5, upper=40, units='kg', scaler=1)
+prob.add_objective('time')
 prob.setup()
 
+prob.set_solver_print(level=0)
+
+prob.model.set_val(av.Mission.Design.GROSS_MASS, 6, units='kg')
+prob.model.set_val('traj.climb.timeseries.input_values:throttle', 1.0, units='unitless')
 prob.set_initial_guesses()
 
-# prob.run_aviary_problem(suppress_solver_print= False)
+prob.run_aviary_problem(suppress_solver_print= False)
+with open("aviary\examples\small_uav\level2_vars.txt", "w") as f:
+        prob.model.list_vars(print_arrays=True,out_stream=f, units=True)
 # prob.run_model()
 
-try:
-    prob.run_model()
-except: 
-    prob.model.list_vars(print_arrays=True, units=True)
+# try:
+#     prob.run_aviary_problem(suppress_solver_print= False)
+# except: 
+#     with open("aviary\examples\small_uav\level2_vars.txt", "w") as f:
+#         prob.model.list_vars(print_arrays=True,out_stream=f, units=True)
+#         # f.write(str(names))

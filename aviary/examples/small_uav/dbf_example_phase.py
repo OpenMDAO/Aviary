@@ -5,20 +5,21 @@ phase_info = {
         'user_options': {
             'num_segments': 5,
             'order': 3,
-            'mach_optimize': False,
+            'mach_optimize': True,
             'mach_polynomial_order': 3,
-            'mach_initial': (0.01, 'unitless'),
-            'mach_final': (0.031, 'unitless'),
+            'mach_initial': (0.04, 'unitless'),
+            # 'mach_final': (0., 'unitless'),
             'altitude_optimize': False,
             'altitude_polynomial_order': 3,
             'altitude_initial': (0.0, 'ft'),
             'altitude_final': (200.0, 'ft'),
             'throttle_enforcement': 'path_constraint',
             'time_initial': (0.0, 'min'),
-            'time_duration_bounds': ((1, 50), 's'),
+            'time_duration_bounds': ((1, 40), 's'),
         },
         'initial_guesses': {
-            'time': ([0, 10], 's'),
+            'time': ([0, 15], 's'),
+            'mach': ([0.04, 0.04], 'unitless')
         },
     },
     'cruise': {
@@ -63,7 +64,7 @@ phase_info = {
     },
     'post_mission': {
         'include_landing': False,
-        'target_range': (200, 'ft'),
+        # 'target_range': (200, 'ft'),
         'constraint_range':True, 
     },
 }

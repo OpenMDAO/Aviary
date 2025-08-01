@@ -40,9 +40,9 @@ inputs.set_val(Aircraft.Engine.Motor.RESISTANCE, 0.032, units='ohm')
 inputs.set_val(av.Aircraft.Engine.Propeller.DIAMETER, 20, units='inch')
 inputs.set_val(av.Aircraft.Engine.Propeller.PITCH, 10, units='inch')
 inputs.set_val(av.Dynamic.Mission.ALTITUDE, 200, units='ft')
-inputs.set_val(av.Dynamic.Mission.VELOCITY, 20, units='m/s')
+# inputs.set_val(av.Dynamic.Mission.VELOCITY, 20, units='m/s')
 inputs.set_val(Dynamic.Atmosphere.DENSITY, 1.225, units='kg/m**3')
-inputs.set_val(Dynamic.Atmosphere.MACH, 0.031, units='unitless')
+inputs.set_val(Dynamic.Atmosphere.MACH, 0.058309, units='unitless')
 
 # inputs.set_val(av.Dynamic.Atmosphere.)
 
@@ -72,7 +72,7 @@ prob.model.add_subsystem(
     promotes_outputs=['*'],
 )
 
-prob.model.set_input_defaults(Dynamic.Vehicle.DRAG, val=np.ones(nn) * 19, units='N')
+prob.model.set_input_defaults(Dynamic.Vehicle.DRAG, val=np.ones(nn) * 0.2, units='N')
 
 setup_model_options(prob, aviary_options)
 

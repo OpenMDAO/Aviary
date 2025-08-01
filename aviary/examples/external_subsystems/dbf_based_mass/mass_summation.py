@@ -7,8 +7,8 @@ from aviary.examples.external_subsystems.dbf_based_mass.dbf_fuselage import DBFF
 from aviary.examples.external_subsystems.dbf_based_mass.dbf_verticaltail import DBFVerticalTailMass
 from aviary.examples.external_subsystems.dbf_based_mass.dbf_horizontaltail import DBFHorizontalTailMass
 from aviary.examples.external_subsystems.dbf_based_mass.dbf_wing import DBFWingMass
-from aviary.variable_info.variables import Aircraft
-from aviary.variable_info.functions import add_aviary_input
+from aviary.variable_info.variables import Aircraft, Mission
+from aviary.variable_info.functions import add_aviary_input, add_aviary_output
 
 
 class MassSummation(om.Group):
@@ -29,17 +29,17 @@ class MassSummation(om.Group):
                 Aircraft.HorizontalTail.MASS,
                 Aircraft.VerticalTail.MASS,
             ],
-            promotes_outputs=['structure_mass'])
+            promotes_outputs=[Aircraft.Design.STRUCTURE_MASS])
 
         self.add_subsystem(
             'total_mass_sum',
             TotalMass(),
             promotes_inputs=[
-                'structure_mass',
+                Aircraft.Design.STRUCTURE_MASS,
                 Aircraft.Battery.MASS,
                 Aircraft.Engine.Motor.MASS
             ],
-            promotes_outputs=['total_mass'])
+            promotes_outputs=[Aircraft.Design.OPERATING_MASS])
         
 class StructureMass(om.ExplicitComponent):
     def setup(self):
@@ -65,12 +65,10 @@ class StructureMass(om.ExplicitComponent):
         
         # More masses can be added, i.e., tail, spars, flaps, etc. as needed
 
-        self.add_output('structure_mass', 
-                        val=0.0, 
-                        units='kg')
+        add_aviary_output(self, Aircraft.Design.STRUCTURE_MASS, units='kg')
 
     def compute(self, inputs, outputs):
-        outputs['structure_mass'] = (
+        outputs[Aircraft.Design.STRUCTURE_MASS] = (
             inputs[Aircraft.Wing.MASS] +
             inputs[Aircraft.Fuselage.MASS] +
             inputs[Aircraft.HorizontalTail.MASS] +
@@ -79,15 +77,15 @@ class StructureMass(om.ExplicitComponent):
 
 class TotalMass(om.ExplicitComponent):
     def setup(self):
-        self.add_input('structure_mass', val=0.0, units='kg')
+        add_aviary_input(self, Aircraft.Design.STRUCTURE_MASS, val=0.0, units='kg')
         add_aviary_input(self, Aircraft.Battery.MASS, val=0.0, units='kg')
         add_aviary_input(self, Aircraft.Engine.Motor.MASS, val=0.0, units='kg')
 
-        self.add_output('total_mass', val=0.0, units='kg')
+        add_aviary_output(self, Aircraft.Design.OPERATING_MASS, units='kg')
 
     def compute(self, inputs, outputs):
-        outputs['total_mass'] = (
-            inputs['structure_mass'] +
+        outputs[Aircraft.Design.OPERATING_MASS] = (
+            inputs[Aircraft.Design.STRUCTURE_MASS] +
             inputs[Aircraft.Battery.MASS] +
             inputs[Aircraft.Engine.Motor.MASS]
         )
