@@ -52,14 +52,23 @@ class InitialGuess:
         #    - to interpolate, or not to interpolate: that is the question
         #    - the solution should probably be a value decoration (a wrapper) that is
         #      both lightweight and easy to check and unpack
-        if isinstance(val, np.ndarray) or (isinstance(val, Sequence) and not isinstance(val, str)):
-            val = phase.interp(self.key, val)
+        if self.key in phase.state_options:
+            phase.set_state_val(self.key, val, units=units)
+        elif self.key in phase.control_options:
+            phase.set_control_val(self.key, val, units=units)
+        elif self.key in phase.parameter_options:
+            phase.set_parameter_val(self.key, val, units=units)
+        else:
+            prob.set_val(complete_key, val, units=units)
 
-        try:
-            prob.set_val(complete_key, val, units)
-        except KeyError:
-            complete_key = complete_key.replace('polynomial_controls', 'controls')
-            prob.set_val(complete_key, val, units)
+        # if isinstance(val, np.ndarray) or (isinstance(val, Sequence) and not isinstance(val, str)):
+        #     val = phase.interp(self.key, val)
+
+        # try:
+        #     prob.set_val(complete_key, val, units)
+        # except KeyError:
+        #     complete_key = complete_key.replace('polynomial_controls', 'controls')
+        #     prob.set_val(complete_key, val, units)
 
     def _get_complete_key(self, traj_name, phase_name):
         """Compose the complete key for setting the initial guess."""
@@ -166,11 +175,5 @@ class InitialGuessIntegrationVariable(InitialGuess):
     def apply_initial_guess(
         self, prob: om.Problem, traj_name, phase: dm.Phase, phase_name, val, units
     ):
-        _ = phase
-
-        name = f'{traj_name}.{phase_name}.t_initial'
         t_initial, t_duration = val
-        prob.set_val(name, t_initial, units)
-
-        name = f'{traj_name}.{phase_name}.t_duration'
-        prob.set_val(name, t_duration, units)
+        phase.set_integ_var_val(initial=t_initial, duration=t_duration, units=units)

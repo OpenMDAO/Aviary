@@ -42,6 +42,7 @@ TakeoffTrajectory : a trajectory builder for detailed takeoff
 """
 
 from collections import namedtuple
+from platform import node
 
 import dymos as dm
 import openmdao.api as om
@@ -259,11 +260,199 @@ class TakeoffBrakeReleaseToDecisionSpeed(PhaseBuilderBase):
             Dynamic.Vehicle.DRAG, output_name=Dynamic.Vehicle.DRAG, units='lbf'
         )
 
+        phase.add_calc_expr('v_to_go = velocity - (dV1 + v_stall)',
+                            v={'units': 'kn'},
+                            dv1={'units': 'kn'},
+                            v_to_go={'units': 'kn'})
+        phase.add_boundary_balance(param='t_duration', name='v_to_go', tgt_val=0.0, loc='final')
+
+        phase.options['auto_order'] = True
+        phase.nonlinear_solver = om.NewtonSolver(solve_subsystems=True, maxiter=100, iprint=2, atol=1.0E-6, rtol=1.0E-6, debug_print=True)
+        phase.nonlinear_solver.linesearch = om.BoundsEnforceLS()
+        phase.linear_solver = om.DirectSolver()
+
         return phase
 
     def make_default_transcription(self):
         """Return a transcription object to be used by default in build_phase."""
         transcription = dm.Radau(num_segments=3, order=3, compressed=True)
+        transcription = dm.PicardShooting(num_segments=1, nodes_per_seg=10)
+
+        return transcription
+
+    def _extra_ode_init_kwargs(self):
+        """Return extra kwargs required for initializing the ODE."""
+        return {'climbing': False, 'friction_key': Mission.Takeoff.ROLLING_FRICTION_COEFFICIENT}
+
+
+TakeoffBrakeReleaseToDecisionSpeed._add_initial_guess_meta_data(
+    InitialGuessParameter(Dynamic.Vehicle.ANGLE_OF_ATTACK)
+)
+
+@_init_initial_guess_meta_data
+class TakeoffBrakeReleaseToEngineFailure(PhaseBuilderBase):
+    """
+    Define a phase builder for the first phase of takeoff, from brake release to decision
+    speed, the maximum speed at which takeoff can be safely brought to full stop using
+    zero thrust while braking.
+
+    Attributes
+    ----------
+    name : str ('takeoff_brake_release')
+        object label
+
+    user_options : AviaryValues (<empty>)
+        state/path constraint values and flags
+
+        supported options:
+            - max_duration (1000.0, 's')
+            - time_duration_ref (10.0, 's')
+            - distance_max (1000.0, 'ft')
+            - max_velocity (100.0, 'ft/s')
+
+    initial_guesses : AviaryValues (<empty>)
+        state/path beginning values to be set on the problem
+
+        supported options:
+            - time
+            - range
+            - velocity
+            - mass
+            - throttle
+            - angle_of_attack
+
+    ode_class : type (None)
+        advanced: the type of system defining the ODE
+
+    transcription : "Dymos transcription object" (None)
+        advanced: an object providing the transcription technique of the
+        optimal control problem
+
+    default_name : str
+        class attribute: derived type customization point; the default value
+        for name
+
+    default_ode_class : type
+        class attribute: derived type customization point; the default value
+        for ode_class used by build_phase
+
+    Methods
+    -------
+    build_phase
+    make_default_transcription
+    """
+
+    __slots__ = ()
+
+    default_name = 'takeoff_to_engine_failure'
+    default_ode_class = TakeoffODE
+    default_options_class = TakeoffBrakeReleaseToDecisionSpeedOptions
+
+    def build_phase(self, aviary_options=None):
+        """
+        Return a new phase object for analysis using these constraints.
+
+        If ode_class is None, default_ode_class is used.
+
+        If transcription is None, the return value from calling
+        make_default_transcription is used.
+
+        Parameters
+        ----------
+        aviary_options : AviaryValues (empty)
+            collection of Aircraft/Mission specific options
+
+        Returns
+        -------
+        dymos.Phase
+        """
+        phase: dm.Phase = super().build_phase(aviary_options)
+
+        user_options: AviaryValues = self.user_options
+
+        max_duration, units = user_options['max_duration']
+        duration_ref = user_options.get_val('time_duration_ref', units)
+
+        phase.set_time_options(
+            fix_initial=True,
+            duration_bounds=(1, max_duration),
+            duration_ref=duration_ref,
+            units=units,
+        )
+
+        distance_max, units = user_options['distance_max']
+
+        phase.add_state(
+            Dynamic.Mission.DISTANCE,
+            fix_initial=True,
+            lower=0,
+            ref=distance_max,
+            defect_ref=distance_max,
+            units=units,
+            upper=distance_max,
+            rate_source=Dynamic.Mission.DISTANCE_RATE,
+        )
+
+        max_velocity, units = user_options['max_velocity']
+
+        phase.add_state(
+            Dynamic.Mission.VELOCITY,
+            fix_initial=True,
+            lower=0,
+            ref=max_velocity,
+            defect_ref=max_velocity,
+            units=units,
+            upper=max_velocity,
+            rate_source=Dynamic.Mission.VELOCITY_RATE,
+        )
+
+        phase.add_state(
+            Dynamic.Vehicle.MASS,
+            fix_initial=True,
+            fix_final=False,
+            lower=0.0,
+            upper=1e9,
+            ref=5e4,
+            units='kg',
+            rate_source=Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
+            targets=Dynamic.Vehicle.MASS,
+        )
+
+        # TODO: Energy phase places this under an if num_engines > 0.
+        # phase.add_control(
+        #     Dynamic.Vehicle.Propulsion.THROTTLE,
+        #     targets=Dynamic.Vehicle.Propulsion.THROTTLE,
+        #     units='unitless',
+        #     opt=False,
+        # )
+
+        # phase.add_parameter(Dynamic.Vehicle.Propulsion.THROTTLE,
+        #                     targets=Dynamic.Vehicle.Propulsion.THROTTLE,
+        #                     val=1.0, opt=False, units='unitless')
+        phase.add_parameter(Dynamic.Vehicle.ANGLE_OF_ATTACK, val=0.0, opt=False, units='deg')
+
+        phase.add_parameter('v_ef', val=100.0, opt=False, units='kn')
+        phase.add_calc_expr('v_to_go = v - v_ef',
+                                v={'units': 'kn'},
+                                v_ef={'units': 'kn'},
+                                v_to_go={'units': 'kn'})
+        phase.add_boundary_balance(param='t_duration', name='v_to_go', tgt_val=0.0, loc='final')
+
+        phase.add_timeseries_output(
+            Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
+            output_name=Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
+            units='lbf',
+        )
+
+        phase.add_timeseries_output(
+            Dynamic.Vehicle.DRAG, output_name=Dynamic.Vehicle.DRAG, units='lbf'
+        )
+
+        return phase
+
+    def make_default_transcription(self):
+        """Return a transcription object to be used by default in build_phase."""
+        transcription = dm.PicardShooting(num_segments=1, nodes_per_seg=11)
 
         return transcription
 
@@ -3046,99 +3235,99 @@ class TakeoffTrajectory:
 
         self._add_phase(self._brake_release_to_decision_speed, aviary_options)
 
-        self._add_phase(self._decision_speed_to_rotate, aviary_options)
+        # self._add_phase(self._decision_speed_to_rotate, aviary_options)
 
-        self._add_phase(self._rotate_to_liftoff, aviary_options)
+        # self._add_phase(self._rotate_to_liftoff, aviary_options)
 
-        self._add_phase(self._liftoff_to_obstacle, aviary_options)
+        # self._add_phase(self._liftoff_to_obstacle, aviary_options)
 
-        obstacle_to_mic_p2 = self._obstacle_to_mic_p2
+        # obstacle_to_mic_p2 = self._obstacle_to_mic_p2
 
-        if obstacle_to_mic_p2 is not None:
-            self._add_phase(obstacle_to_mic_p2, aviary_options)
+        # if obstacle_to_mic_p2 is not None:
+        #     self._add_phase(obstacle_to_mic_p2, aviary_options)
 
-            self._add_phase(self._mic_p2_to_engine_cutback, aviary_options)
+        #     self._add_phase(self._mic_p2_to_engine_cutback, aviary_options)
 
-            self._add_phase(self._engine_cutback, aviary_options)
+        #     self._add_phase(self._engine_cutback, aviary_options)
 
-            self._add_phase(self._engine_cutback_to_mic_p1, aviary_options)
+        #     self._add_phase(self._engine_cutback_to_mic_p1, aviary_options)
 
-            self._add_phase(self._mic_p1_to_climb, aviary_options)
+        #     self._add_phase(self._mic_p1_to_climb, aviary_options)
 
-        decision_speed_to_brake = self._decision_speed_to_brake
+        # decision_speed_to_brake = self._decision_speed_to_brake
 
-        if decision_speed_to_brake is not None:
-            self._add_phase(decision_speed_to_brake, aviary_options)
+        # if decision_speed_to_brake is not None:
+        #     self._add_phase(decision_speed_to_brake, aviary_options)
 
-            self._add_phase(self._brake_to_abort, aviary_options)
+        #     self._add_phase(self._brake_to_abort, aviary_options)
 
     def _link_phases(self):
         traj: dm.Trajectory = self._traj
 
-        brake_release_name = self._brake_release_to_decision_speed.name
-        decision_speed_name = self._decision_speed_to_rotate.name
+        # brake_release_name = self._brake_release_to_decision_speed.name
+        # decision_speed_name = self._decision_speed_to_rotate.name
 
-        basic_vars = ['time', 'distance', 'velocity', 'mass']
+        # basic_vars = ['time', 'distance', 'velocity', 'mass']
 
-        traj.link_phases([brake_release_name, decision_speed_name], vars=basic_vars)
+        # traj.link_phases([brake_release_name, decision_speed_name], vars=basic_vars)
 
-        rotate_name = self._rotate_to_liftoff.name
+        # rotate_name = self._rotate_to_liftoff.name
 
-        ext_vars = basic_vars + ['angle_of_attack']
+        # ext_vars = basic_vars + ['angle_of_attack']
 
-        traj.link_phases([decision_speed_name, rotate_name], vars=ext_vars)
+        # traj.link_phases([decision_speed_name, rotate_name], vars=ext_vars)
 
-        liftoff_name = self._liftoff_to_obstacle.name
+        # liftoff_name = self._liftoff_to_obstacle.name
 
-        traj.link_phases([rotate_name, liftoff_name], vars=ext_vars)
+        # traj.link_phases([rotate_name, liftoff_name], vars=ext_vars)
 
-        obstacle_to_mic_p2 = self._obstacle_to_mic_p2
+        # obstacle_to_mic_p2 = self._obstacle_to_mic_p2
 
-        if obstacle_to_mic_p2 is not None:
-            obstacle_to_mic_p2_name = obstacle_to_mic_p2.name
-            mic_p2_to_engine_cutback_name = self._mic_p2_to_engine_cutback.name
-            engine_cutback_name = self._engine_cutback.name
-            engine_cutback_to_mic_p1_name = self._engine_cutback_to_mic_p1.name
-            mic_p1_to_climb_name = self._mic_p1_to_climb.name
+        # if obstacle_to_mic_p2 is not None:
+        #     obstacle_to_mic_p2_name = obstacle_to_mic_p2.name
+        #     mic_p2_to_engine_cutback_name = self._mic_p2_to_engine_cutback.name
+        #     engine_cutback_name = self._engine_cutback.name
+        #     engine_cutback_to_mic_p1_name = self._engine_cutback_to_mic_p1.name
+        #     mic_p1_to_climb_name = self._mic_p1_to_climb.name
 
-            acoustics_vars = ext_vars + [Dynamic.Mission.FLIGHT_PATH_ANGLE, 'altitude']
+        #     acoustics_vars = ext_vars + [Dynamic.Mission.FLIGHT_PATH_ANGLE, 'altitude']
 
-            traj.link_phases([liftoff_name, obstacle_to_mic_p2_name], vars=acoustics_vars)
+        #     traj.link_phases([liftoff_name, obstacle_to_mic_p2_name], vars=acoustics_vars)
 
-            traj.link_phases(
-                [obstacle_to_mic_p2_name, mic_p2_to_engine_cutback_name], vars=acoustics_vars
-            )
+        #     traj.link_phases(
+        #         [obstacle_to_mic_p2_name, mic_p2_to_engine_cutback_name], vars=acoustics_vars
+        #     )
 
-            traj.link_phases(
-                [mic_p2_to_engine_cutback_name, engine_cutback_name], vars=acoustics_vars
-            )
+        #     traj.link_phases(
+        #         [mic_p2_to_engine_cutback_name, engine_cutback_name], vars=acoustics_vars
+        #     )
 
-            traj.link_phases(
-                [engine_cutback_name, engine_cutback_to_mic_p1_name], vars=acoustics_vars
-            )
+        #     traj.link_phases(
+        #         [engine_cutback_name, engine_cutback_to_mic_p1_name], vars=acoustics_vars
+        #     )
 
-            traj.link_phases(
-                [engine_cutback_to_mic_p1_name, mic_p1_to_climb_name], vars=acoustics_vars
-            )
+        #     traj.link_phases(
+        #         [engine_cutback_to_mic_p1_name, mic_p1_to_climb_name], vars=acoustics_vars
+        #     )
 
-        decision_speed_to_brake = self._decision_speed_to_brake
+        # decision_speed_to_brake = self._decision_speed_to_brake
 
-        if decision_speed_to_brake is not None:
-            brake_name = decision_speed_to_brake.name
-            abort_name = self._brake_to_abort.name
+        # if decision_speed_to_brake is not None:
+        #     brake_name = decision_speed_to_brake.name
+        #     abort_name = self._brake_to_abort.name
 
-            traj.link_phases([brake_release_name, brake_name], vars=basic_vars)
-            traj.link_phases([brake_name, abort_name], vars=basic_vars)
+        #     traj.link_phases([brake_release_name, brake_name], vars=basic_vars)
+        #     traj.link_phases([brake_name, abort_name], vars=basic_vars)
 
-            traj.add_linkage_constraint(
-                phase_a=abort_name,
-                var_a='distance',
-                loc_a='final',
-                phase_b=liftoff_name,
-                var_b='distance',
-                loc_b='final',
-                ref=self._balanced_field_ref,
-            )
+        #     traj.add_linkage_constraint(
+        #         phase_a=abort_name,
+        #         var_a='distance',
+        #         loc_a='final',
+        #         phase_b=liftoff_name,
+        #         var_b='distance',
+        #         loc_b='final',
+        #         ref=self._balanced_field_ref,
+        #     )
 
     def _add_phase(self, phase_builder: PhaseBuilderBase, aviary_options: AviaryValues):
         name = phase_builder.name
