@@ -1220,6 +1220,15 @@ add_meta_data(
 )
 
 add_meta_data(
+    Aircraft.Design.DRAG_DIVERGENCE_SHIFT,
+    meta_data=_MetaData,
+    historical_name={'GASP': 'INGASP.SCFAC', 'FLOPS': None, 'LEAPS1': None},
+    units='unitless',
+    desc='shift in drag divergence Mach number due to supercritical design',
+    default_value=0.0,
+)
+
+add_meta_data(
     Aircraft.Design.DRAG_POLAR,
     meta_data=_MetaData,
     historical_name={'GASP': None, 'FLOPS': None, 'LEAPS1': None},
@@ -1562,15 +1571,6 @@ add_meta_data(
     units='unitless',
     default_value=1.0,
     desc='Scaling factor for subsonic drag',
-)
-
-add_meta_data(
-    Aircraft.Design.SUPERCRITICAL_DIVERGENCE_SHIFT,
-    meta_data=_MetaData,
-    historical_name={'GASP': 'INGASP.SCFAC', 'FLOPS': None, 'LEAPS1': None},
-    units='unitless',
-    desc='shift in drag divergence Mach number due to supercritical design',
-    default_value=0.0,
 )
 
 add_meta_data(

@@ -1369,7 +1369,7 @@ class DragCoefClean(om.ExplicitComponent):
         self.add_input('CL', val=1.0, units='unitless', shape=nn, desc='Lift coefficient')
 
         # user inputs
-        add_aviary_input(self, Aircraft.Design.SUPERCRITICAL_DIVERGENCE_SHIFT, units='unitless')
+        add_aviary_input(self, Aircraft.Design.DRAG_DIVERGENCE_SHIFT, units='unitless')
         add_aviary_input(self, Aircraft.Design.SUBSONIC_DRAG_COEFF_FACTOR, units='unitless')
         add_aviary_input(self, Aircraft.Design.SUPERSONIC_DRAG_COEFF_FACTOR, units='unitless')
         add_aviary_input(self, Aircraft.Design.LIFT_DEPENDENT_DRAG_COEFF_FACTOR, units='unitless')
@@ -1400,7 +1400,7 @@ class DragCoefClean(om.ExplicitComponent):
             cols=ar,
             method='cs',
         )
-        self.declare_partials('CD', [Aircraft.Design.SUPERCRITICAL_DIVERGENCE_SHIFT], method='cs')
+        self.declare_partials('CD', [Aircraft.Design.DRAG_DIVERGENCE_SHIFT], method='cs')
 
     def compute(self, inputs, outputs):
         (

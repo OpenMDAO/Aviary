@@ -32,7 +32,7 @@ aircraft:design:part25_structural_category,3,unitless
 aircraft:design:reserve_fuel_additional,0.2222,lbm
 aircraft:design:static_margin,0.05,unitless
 aircraft:design:structural_mass_increment,0,lbm
-aircraft:design:supercritical_drag_shift,0.025,unitless
+aircraft:design:drag_divergence_shift,0.025,unitless
 aircraft:design:type,BWB,unitless
 aircraft:electrical:system_mass_per_passenger,11.45,lbm
 aircraft:engine:additional_mass_fraction,0.04373,unitless

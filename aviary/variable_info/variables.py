@@ -138,6 +138,7 @@ class Aircraft:
         COMPUTE_HTAIL_VOLUME_COEFF = 'aircraft:design:compute_htail_volume_coeff'
         COMPUTE_VTAIL_VOLUME_COEFF = 'aircraft:design:compute_vtail_volume_coeff'
         DRAG_COEFFICIENT_INCREMENT = 'aircraft:design:drag_increment'
+        DRAG_DIVERGENCE_SHIFT = 'aircraft:design:drag_divergence_shift'
         DRAG_POLAR = 'aircraft:design:drag_polar'
 
         EMERGENCY_EQUIPMENT_MASS = 'aircraft:design:emergency_equipment_mass'
@@ -176,8 +177,6 @@ class Aircraft:
         STRUCTURE_MASS = 'aircraft:design:structure_mass'
 
         SUBSONIC_DRAG_COEFF_FACTOR = 'aircraft:design:subsonic_drag_coeff_factor'
-
-        SUPERCRITICAL_DIVERGENCE_SHIFT = 'aircraft:design:supercritical_drag_shift'
 
         SUPERSONIC_DRAG_COEFF_FACTOR = 'aircraft:design:supersonic_drag_coeff_factor'
 

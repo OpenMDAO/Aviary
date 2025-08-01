@@ -65,7 +65,7 @@ class GASPAeroTest(unittest.TestCase):
 
         # extra params needed for cruise aero
         prob.set_val(Mission.Design.LIFT_COEFFICIENT_MAX_FLAPS_UP, setup_data['clmwfu'])
-        prob.set_val(Aircraft.Design.SUPERCRITICAL_DIVERGENCE_SHIFT, setup_data['scfac'])
+        prob.set_val(Aircraft.Design.DRAG_DIVERGENCE_SHIFT, setup_data['scfac'])
 
         for i, row in cruise_data.iterrows():
             alt = row['alt']
@@ -1118,7 +1118,7 @@ class DragCoefCleanTest(unittest.TestCase):
 
         # user inputs
         prob.model.set_input_defaults(
-            Aircraft.Design.SUPERCRITICAL_DIVERGENCE_SHIFT, 0.025, units='unitless'
+            Aircraft.Design.DRAG_DIVERGENCE_SHIFT, 0.025, units='unitless'
         )
         prob.model.set_input_defaults(
             Aircraft.Design.SUBSONIC_DRAG_COEFF_FACTOR, 1.0, units='unitless'
@@ -1161,7 +1161,7 @@ class DragCoefCleanTest(unittest.TestCase):
 
         # user inputs
         prob.model.set_input_defaults(
-            Aircraft.Design.SUPERCRITICAL_DIVERGENCE_SHIFT, 0.025, units='unitless'
+            Aircraft.Design.DRAG_DIVERGENCE_SHIFT, 0.025, units='unitless'
         )
         prob.model.set_input_defaults(
             Aircraft.Design.SUBSONIC_DRAG_COEFF_FACTOR, 1.0, units='unitless'
@@ -1285,7 +1285,7 @@ class BWBCruiseAeroTest(unittest.TestCase):
 
         # DragCoefClean
         prob.model.set_input_defaults(
-            Aircraft.Design.SUPERCRITICAL_DIVERGENCE_SHIFT, 0.025, units='unitless'
+            Aircraft.Design.DRAG_DIVERGENCE_SHIFT, 0.025, units='unitless'
         )
         prob.model.set_input_defaults(
             Aircraft.Design.SUBSONIC_DRAG_COEFF_FACTOR, 1.0, units='unitless'

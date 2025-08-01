@@ -27,7 +27,7 @@ aircraft:design:reserve_fuel_additional,0,lbm
 aircraft:design:reserve_fuel_fraction,0.125,unitless
 aircraft:design:static_margin,0.05,unitless
 aircraft:design:structural_mass_increment,0.0,lbm
-aircraft:design:supercritical_drag_shift,0.025,unitless
+aircraft:design:drag_divergence_shift,0.025,unitless
 aircraft:design:type,transport,unitless
 aircraft:engine:additional_mass_fraction,0.14,unitless
 aircraft:engine:global_throttle,True,unitless
