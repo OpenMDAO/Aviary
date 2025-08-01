@@ -126,7 +126,7 @@ def fortran_to_aviary(
         vehicle_data = update_flops_options(vehicle_data)
     vehicle_data = update_aviary_options(vehicle_data)
 
-    # Add settings
+    # Add settings and engine data file
     if legacy_code is FLOPS:
         eom = ['height_energy']
         aero = mass = ['FLOPS']
@@ -136,6 +136,7 @@ def fortran_to_aviary(
     vehicle_data['input_values'].set_val(Settings.EQUATIONS_OF_MOTION, eom)
     vehicle_data['input_values'].set_val(Settings.MASS_METHOD, mass)
     vehicle_data['input_values'].set_val(Settings.AERODYNAMICS_METHOD, aero)
+    vehicle_data['input_values'].set_val(Aircraft.Engine.DATA_FILE, ['engine_data_file'])
 
     if not out_file.is_file():
         # default outputted file to be in same directory as input
@@ -529,6 +530,10 @@ def update_gasp_options(vehicle_data):
         num_passengers = input_values.get_val(
             Aircraft.CrewPayload.Design.NUM_PASSENGERS, 'unitless'
         )[0]
+        num_passengers = int(num_passengers)
+        input_values.set_val(
+            Aircraft.CrewPayload.Design.NUM_PASSENGERS, [num_passengers], 'unitless'
+        )
         # In GASP, percentage of total number of passengers is given. Convert it to the actual first class passengers.
         pct_first_class = input_values.get_val(
             Aircraft.CrewPayload.Design.NUM_FIRST_CLASS, 'unitless'
@@ -537,6 +542,22 @@ def update_gasp_options(vehicle_data):
         input_values.set_val(
             Aircraft.CrewPayload.Design.NUM_FIRST_CLASS, [num_first_class], 'unitless'
         )
+        num_tourist_class = num_passengers - num_first_class
+        input_values.set_val(
+            Aircraft.CrewPayload.Design.NUM_TOURIST_CLASS, [num_tourist_class], 'unitless'
+        )
+
+    except:
+        pass
+
+    ## Seats ##
+    try:
+        num_aisles = input_values.get_val(Aircraft.Fuselage.NUM_AISLES, 'unitless')[0]
+        num_aisles = int(num_aisles)
+        num_seat_abreast = input_values.get_val(Aircraft.Fuselage.NUM_SEATS_ABREAST, 'unitless')[0]
+        input_values.set_val(Aircraft.Fuselage.NUM_AISLES, [num_aisles], 'unitless')
+        num_seat_abreast = int(num_seat_abreast)
+        input_values.set_val(Aircraft.Fuselage.NUM_SEATS_ABREAST, [num_seat_abreast], 'unitless')
     except:
         pass
 
@@ -552,8 +573,10 @@ def update_gasp_options(vehicle_data):
         input_values.set_val(Aircraft.Wing.HAS_FOLD, [False], 'unitless')
     else:
         input_values.set_val(Aircraft.Wing.HAS_FOLD, [True], 'unitless')
-        if strut_loc >= 0:
+        if strut_loc > 0:
             input_values.set_val(Aircraft.Wing.CHOOSE_FOLD_LOCATION, [False], 'unitless')
+        elif strut_loc == 0:
+            input_values.set_val(Aircraft.Wing.CHOOSE_FOLD_LOCATION, [True], 'unitless')
 
     if strut_loc < 0:
         input_values.set_val(Aircraft.Wing.HAS_FOLD, [True], 'unitless')
@@ -618,7 +641,14 @@ def update_gasp_options(vehicle_data):
             Aircraft.Wing.FLAP_DRAG_INCREMENT_OPTIMUM,
             [[0.12, 0.23, 0.13, 0.23, 0.23, 0.1, 0.15][flap_ind]],
         )
+    try:
+        num_flap_segments = input_values.get_val(Aircraft.Wing.NUM_FLAP_SEGMENTS, 'unitless')[0]
+        num_flap_segments = int(num_flap_segments)
+        input_values.set_val(Aircraft.Wing.NUM_FLAP_SEGMENTS, [num_flap_segments], 'unitless')
+    except:
+        pass
 
+    ## Fuel ##
     reserve_fuel_additional = input_values.get_val(
         Aircraft.Design.RESERVE_FUEL_ADDITIONAL, units='lbm'
     )[0]
@@ -646,8 +676,11 @@ def update_gasp_options(vehicle_data):
         input_values.delete(Aircraft.Fuselage.FORM_FACTOR)
     if input_values.get_val(Aircraft.Nacelle.FORM_FACTOR)[0] < 0:
         input_values.delete(Aircraft.Nacelle.FORM_FACTOR)
-    if input_values.get_val(Aircraft.Strut.FUSELAGE_INTERFERENCE_FACTOR)[0] < 0:
-        input_values.delete(Aircraft.Strut.FUSELAGE_INTERFERENCE_FACTOR)
+    try:
+        if input_values.get_val(Aircraft.Strut.FUSELAGE_INTERFERENCE_FACTOR)[0] < 0:
+            input_values.delete(Aircraft.Strut.FUSELAGE_INTERFERENCE_FACTOR)
+    except:
+        pass
 
     # GASP-converted engine decks have uneven throttle ranges, which require the enabling
     # of global throttle range. This will result in extrapolation of the engine deck,
@@ -662,6 +695,47 @@ def update_gasp_options(vehicle_data):
         ratios = input_values.get_val(Aircraft.Engine.Gearbox.GEAR_RATIO)
         ratios = [1 / val for val in ratios]
         input_values.set_val(Aircraft.Engine.Gearbox.GEAR_RATIO, ratios, units='unitless')
+
+    # CARGO
+    try:
+        if input_values.get_val(Aircraft.CrewPayload.Design.MAX_CARGO_MASS, 'lbm')[0] >= 0:
+            input_values.set_val(Aircraft.CrewPayload.Design.CARGO_MASS, [0.0], 'lbm')
+            input_values.set_val(Aircraft.CrewPayload.CARGO_MASS, [0.0], 'lbm')
+    except:
+        pass
+
+    # ENGINE
+    try:
+        num_engines = input_values.get_val(Aircraft.Engine.NUM_ENGINES, 'unitless')[0]
+        num_engines = int(num_engines)
+        input_values.set_val(Aircraft.Engine.NUM_ENGINES, [num_engines], 'unitless')
+        design_type = input_values.get_val(Aircraft.Design.TYPE, 'unitless')[0]
+        if design_type == 'BWB':
+            num_fuselage_engines = num_engines
+            # assume all engines are fuselage engines
+            input_values.set_val(
+                Aircraft.Engine.NUM_FUSELAGE_ENGINES, [num_fuselage_engines], 'unitless'
+            )
+            # BWB engine sizing algorithm does not use reference diameter
+            input_values.delete(Aircraft.Engine.REFERENCE_DIAMETER)
+    except:
+        pass
+
+    # FURNISHING
+    try:
+        furnishing_mass_scaler = input_values.get_val(Aircraft.Furnishings.MASS, 'lbm')[0]
+        if furnishing_mass_scaler < 0:
+            furnishing_mass_scaler = abs(furnishing_mass_scaler)
+            input_values.set_val(Aircraft.Furnishings.MASS_SCALER, [furnishing_mass_scaler], 'lbm')
+            input_values.delete(Aircraft.Furnishings.MASS)
+    except:
+        pass
+
+    unused_values = vehicle_data['unused_values']
+    knac = unused_values.get_item('INGASP.KNAC')[0][0]
+    if knac != 2:
+        input_values.delete(Aircraft.Nacelle.AVG_DIAMETER)
+        input_values.delete(Aircraft.Nacelle.AVG_LENGTH)
 
     vehicle_data['input_values'] = input_values
     return vehicle_data
@@ -716,6 +790,8 @@ def update_aviary_options(vehicle_data):
     try:
         ref_thrust = input_values.get_val(Aircraft.Engine.REFERENCE_SLS_THRUST, 'lbf')[0]
         scaled_thrust = input_values.get_val(Aircraft.Engine.SCALED_SLS_THRUST, 'lbf')[0]
+        ref_thrust = float(ref_thrust)
+        input_values.set_val(Aircraft.Engine.REFERENCE_SLS_THRUST, [ref_thrust], 'lbf')
     except KeyError:
         pass
     else:
