@@ -73,9 +73,10 @@ class FlightPhaseOptions(AviaryOptionsDictionary):
         self.declare(
             name='throttle_enforcement',
             default='path_constraint',
-            values=['path_constraint', 'boundary_constraint', 'bounded', 'design_var', None],
-            desc='Flag to enforce engine throttle constraints on the path or at the segment '
-            'boundaries or "bounded" using solver bounds. Aler',
+            values=['path_constraint', 'boundary_constraint', 'bounded', 'control', None],
+            desc='Flag to enforce engine throttle bounds as path constraints, boundary '
+            'constraints, solver bounds. You can also select "control" to turn throttle into a '
+            'control, which allows you to assign a value or let the optimizer choose it.'
         )
 
         # Throttle is a solver variable, unless you set throttle_enforcement to design_var.
@@ -430,6 +431,7 @@ class FlightPhaseBase(PhaseBuilderBase):
             'subsystem_options': self.subsystem_options,
             'throttle_enforcement': self.user_options['throttle_enforcement'],
             'throttle_allocation': self.user_options['throttle_allocation'],
+            'throttle_optimize': self.user_options['throttle_optimize'],
         }
 
 

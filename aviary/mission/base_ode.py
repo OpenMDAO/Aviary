@@ -110,6 +110,10 @@ class BaseODE(om.Group):
             (subsystem.needs_mission_solver() == True) are placed inside solver_group.
             If None, all external subsystems are added to BaseODE regardless of if they
             request a solver. TODO add solver compatibility to all ODEs
+
+        Returns
+        bool
+            True if any subsystem needs a solver.
         """
         nn = self.options['num_nodes']
         aviary_options = self.options['aviary_options']
@@ -162,3 +166,5 @@ class BaseODE(om.Group):
                 promotes_inputs=['*'],
                 promotes_outputs=['*'],
             )
+
+        return add_subsystem_group_solver

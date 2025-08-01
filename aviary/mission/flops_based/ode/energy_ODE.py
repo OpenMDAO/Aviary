@@ -60,12 +60,21 @@ class EnergyODE(_BaseODE):
             promotes_outputs=[('velocity_rate', Dynamic.Mission.VELOCITY_RATE)],
         )
 
+        throttle_enforcement = options['throttle_enforcement']
+
         sub1 = self.add_subsystem('solver_sub', om.Group(), promotes=['*'])
 
-        self.add_core_subsystems(solver_group=sub1)
+        if throttle_enforcement == 'control':
+            solver_group = None
+            core_needs_solver = False
+        else:
+            solver_group = sub1
+            core_needs_solver = True
 
-        self.add_external_subsystems(solver_group=sub1)
+        self.add_core_subsystems(solver_group=solver_group)
 
+        ext_needs_solver = self.add_external_subsystems(solver_group=sub1)
+        
         sub1.add_subsystem(
             name='mission_EOM',
             subsys=MissionEOM(num_nodes=nn),
@@ -118,24 +127,39 @@ class EnergyODE(_BaseODE):
         else:
             # Single Engine
 
-            # Add a balance comp to compute throttle based on the required thrust.
-            sub1.add_subsystem(
-                name='throttle_balance',
-                subsys=om.BalanceComp(
-                    name=Dynamic.Vehicle.Propulsion.THROTTLE,
-                    units='unitless',
-                    val=np.ones((nn,)),
-                    lhs_name='thrust_required',
-                    rhs_name=Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
-                    eq_units='lbf',
-                    normalize=False,
-                    lower=0.0 if options['throttle_enforcement'] == 'bounded' else None,
-                    upper=1.0 if options['throttle_enforcement'] == 'bounded' else None,
-                    res_ref=1.0e6,
-                ),
-                promotes_inputs=['*'],
-                promotes_outputs=['*'],
-            )
+            if throttle_optimize:
+                self.add_subsystem(
+                    'throttle_balance',
+                    om.ExecComp(
+                        'thrust_residual=thrust_required-thrust',
+                        thrust={'val': np.ones((nn, ))},
+                        thrust_required={'val': np.ones((nn, ))},
+                        thrust_residual={'val': np.ones((nn, ))},
+                    ),
+                    promotes_inputs=[('thrust', Dynamic.Vehicle.Propulsion.THRUST_TOTAL), 'thrust_required'],
+                    promotes_outputs=['*']
+                )
+                self.add_constraint('thrust_residual', ref=10000.0)
+            else:
+
+                # Add a balance comp to compute throttle based on the required thrust.
+                sub1.add_subsystem(
+                    name='throttle_balance',
+                    subsys=om.BalanceComp(
+                        name=Dynamic.Vehicle.Propulsion.THROTTLE,
+                        units='unitless',
+                        val=np.ones((nn,)),
+                        lhs_name='thrust_required',
+                        rhs_name=Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
+                        eq_units='lbf',
+                        normalize=False,
+                        lower=0.0 if throttle_enforcement == 'bounded' else None,
+                        upper=1.0 if throttle_enforcement == 'bounded' else None,
+                        res_ref=1.0e6,
+                    ),
+                    promotes_inputs=['*'],
+                    promotes_outputs=['*'],
+                )
 
             self.set_input_defaults(Dynamic.Vehicle.Propulsion.THROTTLE, val=1.0, units='unitless')
 
@@ -171,16 +195,17 @@ class EnergyODE(_BaseODE):
             promotes_outputs=['initial_mass_residual'],
         )
 
-        print_level = 2
+        if core_needs_solver or ext_needs_solver:
+            sub1.nonlinear_solver = om.NewtonSolver(
+                solve_subsystems=True,
+                atol=1.0e-10,
+                rtol=1.0e-10,
+            )
+            print_level = 2
 
-        sub1.nonlinear_solver = om.NewtonSolver(
-            solve_subsystems=True,
-            atol=1.0e-10,
-            rtol=1.0e-10,
-        )
-        sub1.nonlinear_solver.linesearch = om.BoundsEnforceLS()
-        sub1.linear_solver = om.DirectSolver(assemble_jac=True)
-        sub1.nonlinear_solver.options['err_on_non_converge'] = True
-        sub1.nonlinear_solver.options['iprint'] = print_level
+            sub1.nonlinear_solver.linesearch = om.BoundsEnforceLS()
+            sub1.linear_solver = om.DirectSolver(assemble_jac=True)
+            sub1.nonlinear_solver.options['err_on_non_converge'] = True
+            sub1.nonlinear_solver.options['iprint'] = print_level
 
-        self.options['auto_order'] = True
+            self.options['auto_order'] = True
