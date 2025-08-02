@@ -734,8 +734,11 @@ def update_gasp_options(vehicle_data):
     unused_values = vehicle_data['unused_values']
     knac = unused_values.get_item('INGASP.KNAC')[0][0]
     if knac != 2:
-        input_values.delete(Aircraft.Nacelle.AVG_DIAMETER)
-        input_values.delete(Aircraft.Nacelle.AVG_LENGTH)
+        try:
+            input_values.delete(Aircraft.Nacelle.AVG_DIAMETER)
+            input_values.delete(Aircraft.Nacelle.AVG_LENGTH)
+        except:
+            pass
 
     vehicle_data['input_values'] = input_values
     return vehicle_data
