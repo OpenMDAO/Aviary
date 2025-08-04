@@ -42,12 +42,6 @@ class GeometryBuilder(SubsystemBuilderBase):
 
         super().__init__(name=name, meta_data=meta_data)
 
-    def mission_inputs(self, **kwargs):
-        return ['*']
-
-    def mission_outputs(self, **kwargs):
-        return ['*']
-
 
 class CoreGeometryBuilder(GeometryBuilder):
     """

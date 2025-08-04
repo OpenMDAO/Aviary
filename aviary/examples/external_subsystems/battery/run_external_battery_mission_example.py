@@ -9,10 +9,10 @@ from aviary.utils.functions import get_aviary_resource_path
 battery_builder = BatteryBuilder(include_constraints=False)
 
 # add the battery model to each mission phase, as well as pre-mission for sizing
-phase_info['pre_mission']['external_subsystems'] = [battery_builder]
-phase_info['climb']['external_subsystems'] = [battery_builder]
-phase_info['cruise']['external_subsystems'] = [battery_builder]
-phase_info['descent']['external_subsystems'] = [battery_builder]
+# phase_info['pre_mission']['external_subsystems'] = [battery_builder]
+# phase_info['climb']['external_subsystems'] = [battery_builder]
+# phase_info['cruise']['external_subsystems'] = [battery_builder]
+# phase_info['descent']['external_subsystems'] = [battery_builder]
 
 if __name__ == '__main__':
     prob = AviaryProblem()
@@ -23,6 +23,8 @@ if __name__ == '__main__':
         'models/aircraft/test_aircraft/aircraft_for_bench_FwFm.csv'
     )
     prob.load_inputs(input_file, phase_info, meta_data=ExtendedMetaData)
+
+    prob.load_external_subsystems([battery_builder])
 
     # Preprocess inputs
     prob.check_and_preprocess_inputs()

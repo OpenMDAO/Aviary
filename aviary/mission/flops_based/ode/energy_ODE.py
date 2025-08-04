@@ -20,8 +20,7 @@ class EnergyODE(_BaseODE):
             default=False,
             desc='flag to use actual takeoff mass in the climb phase, otherwise assume 100 kg fuel burn',
         )
-        # TODO throttle enforcement & allocation should be moved to BaseODE for
-        # use in 2DOF
+        # TODO throttle enforcement & allocation should be moved to BaseODE for use in 2DOF
         self.options.declare(
             'throttle_enforcement',
             default='path_constraint',
@@ -62,9 +61,11 @@ class EnergyODE(_BaseODE):
 
         sub1 = self.add_subsystem('solver_sub', om.Group(), promotes=['*'])
 
-        self.add_core_subsystems(solver_group=sub1)
+        self.add_subsystems(solver_group=sub1)
 
-        self.add_external_subsystems(solver_group=sub1)
+        # self.add_core_subsystems(solver_group=sub1)
+
+        # self.add_external_subsystems(solver_group=sub1)
 
         sub1.add_subsystem(
             name='mission_EOM',

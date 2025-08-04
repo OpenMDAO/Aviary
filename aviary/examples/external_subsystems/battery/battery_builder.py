@@ -265,7 +265,7 @@ class BatteryBuilder(SubsystemBuilderBase):
 
         return aviary_inputs
 
-    def get_outputs(self):
+    def get_timeseries(self):
         """
         Return a list of output names for the battery subsystem.
 

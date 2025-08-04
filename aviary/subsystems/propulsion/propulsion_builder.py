@@ -49,12 +49,6 @@ class PropulsionBuilder(SubsystemBuilderBase):
 
         super().__init__(name=name, meta_data=meta_data)
 
-    def mission_inputs(self, **kwargs):
-        return ['*']
-
-    def mission_outputs(self, **kwargs):
-        return ['*']
-
 
 class CorePropulsionBuilder(PropulsionBuilder):
     """
@@ -86,8 +80,8 @@ class CorePropulsionBuilder(PropulsionBuilder):
         Call get_mass_names() on all engine models and return combined result.
     preprocess_inputs(self) -> aviary_inputs:
         Call get_mass_names() on all engine models and return combined result.
-    get_outputs(self) -> list:
-        Call get_outputs() on all engine models and return combined result.
+    get_timeseries(self) -> list:
+        Call get_timeseries() on all engine models and return combined result.
     report(self):
         Generate the report for Aviary core propulsion analysis.
     """
@@ -265,11 +259,11 @@ class CorePropulsionBuilder(PropulsionBuilder):
         return mass_names
 
     # NOTE no unittests!
-    def get_outputs(self):
-        """Call get_outputs() on all engine models and return combined result."""
+    def get_timeseries(self):
+        """Call get_timeseries() on all engine models and return combined result."""
         outputs = []
         for engine in self.engine_models:
-            engine_outputs = engine.get_outputs()
+            engine_outputs = engine.get_timeseries()
             outputs.append(engine_outputs)
 
         return outputs

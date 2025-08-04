@@ -504,6 +504,12 @@ class AviaryGroup(om.Group):
             promotes_outputs=['*'],
         )
 
+        for subsystem in self.external_subsystems:
+            subsystem_premission = subsystem.build_pre_mission(self.aviary_inputs)
+
+            if subsystem_premission is not None:
+                self.pre_mission.add_subsystem(subsystem.name, subsystem_premission)
+
         self._add_premission_external_subsystem_masses()
 
         if 'linear_solver' in self.pre_mission_info:
@@ -641,7 +647,7 @@ class AviaryGroup(om.Group):
             phase_options = self.phase_info[phase_name]
             all_subsystems = self.subsystems
             for subsystem in all_subsystems:
-                timeseries_to_add = subsystem.get_outputs()
+                timeseries_to_add = subsystem.get_timeseries()
                 for timeseries in timeseries_to_add:
                     phase.add_timeseries_output(timeseries)
                 mbvars = subsystem.get_post_mission_bus_variables(
@@ -844,9 +850,8 @@ class AviaryGroup(om.Group):
             promotes_outputs=[('overall_fuel', Mission.Summary.TOTAL_FUEL_MASS)],
         )
 
-        # If a target distance (or time) has been specified for this phase
-        # distance (or time) is measured from the start of this phase to the end
-        # of this phase
+        # If a target distance (or time) has been specified for this phase distance (or time) is
+        # measured from the start of this phase to the end of this phase
         for phase_name in self.phase_info:
             user_options = self.phase_info[phase_name]['user_options']
 
@@ -938,12 +943,12 @@ class AviaryGroup(om.Group):
         """
         Link phases together after they've been added.
 
-        Based on which phases the user has selected, we might need
-        special logic to do the Dymos linkages correctly. Some of those
-        connections for the simple GASP and FLOPS mission are shown here.
+        Based on which phases the user has selected, we might need special logic to do the Dymos
+        linkages correctly. Some of those connections for the simple GASP and FLOPS mission are
+        shown here.
         """
-        # `self.verbosity` is "true" verbosity for entire run. `verbosity` is verbosity
-        # override for just this method
+        # `self.verbosity` is "true" verbosity for entire run. `verbosity` is verbosity override for
+        # just this method
         if verbosity is not None:
             # compatibility with being passed int for verbosity
             verbosity = Verbosity(verbosity)
@@ -957,12 +962,11 @@ class AviaryGroup(om.Group):
         if len(phases) <= 1:
             return
 
-        # In summary, the following code loops over all phases in self.phase_info, gets
-        # the linked variables from each external subsystem in each phase, and stores
-        # the lists of linked variables in lists_to_link. It then gets a list of
-        # unique variable names from lists_to_link and loops over them, creating
-        # a list of phase names for each variable and linking the phases
-        # using self.traj.link_phases().
+        # In summary, the following code loops over all phases in self.phase_info, gets the linked
+        # variables from each external subsystem in each phase, and stores the lists of linked
+        # variables in lists_to_link. It then gets a list of unique variable names from
+        # lists_to_link and loops over them, creating a list of phase names for each variable and
+        # linking the phases using self.traj.link_phases().
 
         lists_to_link = []
         for idx, phase_name in enumerate(self.phase_info):
@@ -974,10 +978,9 @@ class AviaryGroup(om.Group):
         unique_vars = list(set([var for sublist in lists_to_link for var in sublist]))
 
         # Phase linking.
-        # If we are under mpi, and traj.phases is running in parallel, then let the
-        # optimizer handle the linkage constraints.  Note that we can technically
-        # parallelize connected phases, but it requires a solver that we would like
-        # to avoid.
+        # If we are under mpi, and traj.phases is running in parallel, then let the optimizer handle
+        # the linkage constraints.  Note that we can technically parallelize connected phases, but
+        # it requires a solver that we would like to avoid.
         true_unless_mpi = True
         if comm.size > 1 and self.traj.options['parallel_phases']:
             true_unless_mpi = False
@@ -1098,14 +1101,14 @@ class AviaryGroup(om.Group):
         """
         Adds design variables to the Aviary problem.
 
-        Depending on the mission model and problem type, different design variables and
-        constraints are added.
+        Depending on the mission model and problem type, different design variables and constraints
+        are added.
 
-        If using the FLOPS model, a design variable is added for the gross mass of the
-        aircraft, with a lower bound of 10 lbm and an upper bound of 900,000 lbm.
+        If using the FLOPS model, a design variable is added for the gross mass of the aircraft,
+        with a lower bound of 10 lbm and an upper bound of 900,000 lbm.
 
-        If using the GASP model, the following design variables are added depending on
-        the mission type:
+        If using the GASP model, the following design variables are added depending on the mission
+        type:
         - the initial thrust-to-weight ratio of the aircraft during ascent
         - the duration of the ascent phase
         - the time constant for the landing gear actuation
@@ -1115,18 +1118,16 @@ class AviaryGroup(om.Group):
         - the initial altitude of the aircraft with gear extended is constrained to be 50 ft
         - the initial altitude of the aircraft with flaps extended is constrained to be 400 ft
 
-        If solving a sizing problem, a design variable is added for the gross mass of
-        the aircraft, and another for the gross mass of the aircraft computed during the
-        mission. A constraint is also added to ensure that the residual range is zero.
+        If solving a sizing problem, a design variable is added for the gross mass of the aircraft,
+        and another for the gross mass of the aircraft computed during the mission. A constraint is
+        also added to ensure that the residual range is zero.
 
-        If solving an alternate problem, only a design variable for the gross mass of
-        the aircraft computed during the mission is added. A constraint is also added to
-        ensure that the residual range is zero.
+        If solving an alternate problem, only a design variable for the gross mass of the aircraft
+        computed during the mission is added. A constraint is also added to ensure that the residual
+        range is zero.
 
-        In all cases, a design variable is added for the final cruise mass of the
-        aircraft, with no upper bound, and a residual mass constraint is added to ensure
-        that the mass balances.
-
+        In all cases, a design variable is added for the final cruise mass of the aircraft, with no
+        upper bound, and a residual mass constraint is added to ensure that the mass balances.
         """
         # `self.verbosity` is "true" verbosity for entire run. `verbosity` is verbosity
         # override for just this method
@@ -1157,8 +1158,7 @@ class AviaryGroup(om.Group):
 
         elif self.mission_method in (HEIGHT_ENERGY, TWO_DEGREES_OF_FREEDOM):
             # vehicle sizing problem
-            # size the vehicle (via design GTOW) to meet a target range using all fuel
-            # capacity
+            # size the vehicle (via design GTOW) to meet a target range using all fuel capacity
             if self.problem_type is ProblemType.SIZING:
                 self.add_design_var(
                     Mission.Design.GROSS_MASS,
@@ -1193,8 +1193,7 @@ class AviaryGroup(om.Group):
                     self.add_constraint(Mission.Constraints.RANGE_RESIDUAL, equals=0, ref=10)
 
             # target range problem
-            # fixed vehicle (design GTOW) but variable actual GTOW for off-design
-            # mission range
+            # fixed vehicle (design GTOW) but variable actual GTOW for off-design mission range
             elif self.problem_type is ProblemType.ALTERNATE:
                 self.add_design_var(
                     Mission.Summary.GROSS_MASS,
@@ -1220,11 +1219,10 @@ class AviaryGroup(om.Group):
 
                 self.add_constraint(Mission.Constraints.RANGE_RESIDUAL, equals=0, ref=10)
 
-                # We must ensure that design.gross_mass is greater than
-                # mission.summary.gross_mass and this must hold true for each of the
-                # different missions that is flown the result will be the
-                # design.gross_mass should be equal to the mission.summary.gross_mass
-                # of the heaviest mission
+                # We must ensure that design.gross_mass is greater than  mission.summary.gross_mass
+                # and this must hold true for each of the different missions that is flown the
+                # result will be the design.gross_mass should be equal to the
+                # mission.summary.gross_mass of the heaviest mission
                 self.add_subsystem(
                     'GROSS_MASS_constraint',
                     om.ExecComp(
@@ -1313,12 +1311,11 @@ class AviaryGroup(om.Group):
 
     def _add_subsystem_guesses(self, phase_name, phase, target_prob, parent_prefix):
         """
-        Adds the initial guesses for each subsystem of a given phase to the problem.
-        This method first fetches all subsystems associated with the given phase.
-        It then loops over each subsystem and fetches its initial guesses. For each
-        guess, it identifies whether the guess corresponds to a state or a control
-        variable and then processes the guess variable. After this, the initial
-        guess is set in the problem using the `set_val` method.
+        Adds the initial guesses for each subsystem of a given phase to the problem. This method
+        first fetches all subsystems associated with the given phase. It then loops over each
+        subsystem and fetches its initial guesses. For each guess, it identifies whether the guess
+        corresponds to a state or a control variable and then processes the guess variable. After
+        this, the initial guess is set in the problem using the `set_val` method.
 
         Parameters
         ----------

@@ -154,7 +154,6 @@ class CustomEngineTest(unittest.TestCase):
         phase_info = {
             'pre_mission': {
                 'include_takeoff': False,
-                'external_subsystems': [],
                 'optimize_mass': True,
             },
             'cruise': {
@@ -180,7 +179,6 @@ class CustomEngineTest(unittest.TestCase):
             },
             'post_mission': {
                 'include_landing': False,
-                'external_subsystems': [],
             },
         }
 

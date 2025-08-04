@@ -412,14 +412,14 @@ class AviaryProblem(om.Problem):
         """
         Adds design variables to the Aviary problem.
 
-        Depending on the mission model and problem type, different design variables and
-        constraints are added.
+        Depending on the mission model and problem type, different design variables and constraints
+        are added.
 
-        If using the FLOPS model, a design variable is added for the gross mass of the
-        aircraft, with a lower bound of 10 lbm and an upper bound of 900,000 lbm.
+        If using the FLOPS model, a design variable is added for the gross mass of the aircraft,
+        with a lower bound of 10 lbm and an upper bound of 900,000 lbm.
 
-        If using the GASP model, the following design variables are added depending on
-        the mission type:
+        If using the GASP model, the following design variables are added depending on the mission
+        type:
         - the initial thrust-to-weight ratio of the aircraft during ascent
         - the duration of the ascent phase
         - the time constant for the landing gear actuation
@@ -429,18 +429,16 @@ class AviaryProblem(om.Problem):
         - the initial altitude of the aircraft with gear extended is constrained to be 50 ft
         - the initial altitude of the aircraft with flaps extended is constrained to be 400 ft
 
-        If solving a sizing problem, a design variable is added for the gross mass of
-        the aircraft, and another for the gross mass of the aircraft computed during the
-        mission. A constraint is also added to ensure that the residual range is zero.
+        If solving a sizing problem, a design variable is added for the gross mass of the aircraft,
+        and another for the gross mass of the aircraft computed during the mission. A constraint is
+        also added to ensure that the residual range is zero.
 
-        If solving an alternate problem, only a design variable for the gross mass of
-        the aircraft computed during the mission is added. A constraint is also added to
-        ensure that the residual range is zero.
+        If solving an alternate problem, only a design variable for the gross mass of the aircraft
+        computed during the mission is added. A constraint is also added to ensure that the residual
+        range is zero.
 
-        In all cases, a design variable is added for the final cruise mass of the
-        aircraft, with no upper bound, and a residual mass constraint is added to ensure
-        that the mass balances.
-
+        In all cases, a design variable is added for the final cruise mass of the aircraft, with no
+        upper bound, and a residual mass constraint is added to ensure that the mass balances.
         """
         # `self.verbosity` is "true" verbosity for entire run. `verbosity` is verbosity
         # override for just this method
@@ -456,20 +454,18 @@ class AviaryProblem(om.Problem):
         """
         Add the objective function based on the given objective_type and ref.
 
-        NOTE: the ref value should be positive for values you're trying
-        to minimize and negative for values you're trying to maximize.
-        Please check and double-check that your ref value makes sense
-        for the objective you're using.
+        NOTE: the ref value should be positive for values you're trying to minimize and negative for
+        values you're trying to maximize. Please check and double-check that your ref value makes
+        sense for the objective you're using.
 
         Parameters
         ----------
         objective_type : str
-            The type of objective to add. Options are 'mass', 'hybrid_objective',
-            'fuel_burned', and 'fuel'.
+            The type of objective to add. Options are 'mass', 'hybrid_objective', 'fuel_burned', and
+            'fuel'.
         ref : float
-            The reference value for the objective. If None, a default value will be used
-            based on the objective type. Please see the `default_ref_values` dict for
-            these default values.
+            The reference value for the objective. If None, a default value will be used based on
+            the objective type. Please see the `default_ref_values` dict for these default values.
         verbosity : Verbosity or int, optional
             Controls the level of printouts for this method. If None, uses the value of
             Settings.VERBOSITY in provided aircraft data.
@@ -477,7 +473,6 @@ class AviaryProblem(om.Problem):
         Raises
         ------
             ValueError: If an invalid problem type is provided.
-
         """
         # `self.verbosity` is "true" verbosity for entire run. `verbosity` is verbosity
         # override for just this method

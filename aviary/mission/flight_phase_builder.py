@@ -161,7 +161,7 @@ class FlightPhaseBase(PhaseBuilderBase):
     This houses parts of the build_phase process that are commmon to EnergyPhase and TwoDOFPhase.
     """
 
-    __slots__ = ('external_subsystems', 'meta_data')
+    __slots__ = ('subsystems', 'meta_data')
 
     _initial_guesses_meta_data_ = {}
     default_name = 'cruise'
@@ -218,7 +218,7 @@ class FlightPhaseBase(PhaseBuilderBase):
         if phase_type is EquationsOfMotion.HEIGHT_ENERGY:
             self.add_state('distance', Dynamic.Mission.DISTANCE, Dynamic.Mission.DISTANCE_RATE)
 
-        phase = add_subsystem_variables_to_phase(phase, self.name, self.external_subsystems)
+        phase = add_subsystem_variables_to_phase(phase, self.name, self.subsystems)
 
         ################
         # Add Controls #
@@ -409,9 +409,9 @@ class FlightPhaseBase(PhaseBuilderBase):
 
     def _extra_ode_init_kwargs(self):
         """Return extra kwargs required for initializing the ODE."""
-        # TODO: support external_subsystems and meta_data in the base class
+        # TODO: support subsystems and meta_data in the base class
         return {
-            'external_subsystems': self.external_subsystems,
+            'subsystems': self.subsystems,
             'meta_data': self.meta_data,
             'subsystem_options': self.subsystem_options,
             'throttle_enforcement': self.user_options['throttle_enforcement'],

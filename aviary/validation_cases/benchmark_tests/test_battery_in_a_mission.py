@@ -15,12 +15,10 @@ class TestSubsystemsMission(unittest.TestCase):
         self.phase_info = {
             'pre_mission': {
                 'include_takeoff': False,
-                'external_subsystems': [BatteryBuilder()],
                 'optimize_mass': True,
             },
             'cruise1': {
                 'subsystem_options': {'aerodynamics': {'method': 'computed'}},
-                'external_subsystems': [BatteryBuilder()],
                 'user_options': {
                     'num_segments': 5,
                     'order': 3,
@@ -40,7 +38,6 @@ class TestSubsystemsMission(unittest.TestCase):
             },
             'cruise2': {
                 'subsystem_options': {'aerodynamics': {'method': 'computed'}},
-                'external_subsystems': [BatteryBuilder()],
                 'user_options': {
                     'num_segments': 5,
                     'order': 3,
@@ -61,7 +58,6 @@ class TestSubsystemsMission(unittest.TestCase):
             },
             'post_mission': {
                 'include_landing': False,
-                'external_subsystems': [],
             },
         }
 

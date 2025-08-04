@@ -22,18 +22,10 @@ class TestSubsystemsMission(unittest.TestCase):
         self.phase_info = {
             'pre_mission': {
                 'include_takeoff': False,
-                'external_subsystems': [
-                    ArrayGuessSubsystemBuilder(),
-                    AdditionalArrayGuessSubsystemBuilder(),
-                ],
                 'optimize_mass': True,
             },
             'cruise': {
                 'subsystem_options': {'aerodynamics': {'method': 'cruise', 'solve_alpha': True}},
-                'external_subsystems': [
-                    ArrayGuessSubsystemBuilder(),
-                    AdditionalArrayGuessSubsystemBuilder(),
-                ],
                 'user_options': {
                     'num_segments': 2,
                     'order': 3,
@@ -55,7 +47,6 @@ class TestSubsystemsMission(unittest.TestCase):
             },
             'post_mission': {
                 'include_landing': False,
-                'external_subsystems': [PostOnlyBuilder()],
             },
         }
 
@@ -65,6 +56,14 @@ class TestSubsystemsMission(unittest.TestCase):
         prob = AviaryProblem(verbosity=0)
 
         prob.load_inputs('models/aircraft/test_aircraft/aircraft_for_bench_GwFm.csv', phase_info)
+
+        prob.load_external_subsystems(
+            [
+                ArrayGuessSubsystemBuilder(),
+                AdditionalArrayGuessSubsystemBuilder(),
+                PostOnlyBuilder(),
+            ]
+        )
 
         # Preprocess inputs
         prob.check_and_preprocess_inputs()

@@ -35,8 +35,8 @@ class BaseODE(om.Group):
             desc='collection of Aircraft/Mission specific options',
         )
         self.options.declare(
-            'core_subsystems',
-            desc='list of core subsystem builder instances to be added to the ODE',
+            'subsystems',
+            desc='list of subsystem builder instances to be added to the ODE',
         )
         self.options.declare(
             'external_subsystems',
@@ -58,9 +58,51 @@ class BaseODE(om.Group):
             promotes=['*'],
         )
 
+    def add_subsystems(self, solver_group=None):
+        """
+        Adds all specified subsystems to ODE in their own group.
+
+        Parameters
+        ----------
+        solver_group : om.Group
+            If not None, subsystems that require a solver (subsystem.needs_mission_solver() == True)
+            are placed inside solver_group.
+
+            If None, all core subsystems are added to BaseODE regardless of if they request a
+            solver. TODO add solver compatibility to all ODEs
+        """
+        nn = self.options['num_nodes']
+        aviary_options = self.options['aviary_options']
+        all_subsystems = self.options['subsystems']
+        subsystem_options = self.options['subsystem_options']
+
+        for subsystem in all_subsystems:
+            # check if subsystem_options has entry for a subsystem of this name
+            if subsystem.name in subsystem_options:
+                kwargs = subsystem_options[subsystem.name]
+            else:
+                kwargs = {}
+
+            subsystem_mission = subsystem.build_mission(
+                num_nodes=nn, aviary_inputs=aviary_options, **kwargs
+            )
+
+            if subsystem_mission is not None:
+                if solver_group is not None:
+                    target = solver_group
+                else:
+                    target = self
+
+                target.add_subsystem(
+                    subsystem.name,
+                    subsystem_mission,
+                    promotes_inputs=subsystem.mission_inputs(**kwargs),
+                    promotes_outputs=subsystem.mission_outputs(**kwargs),
+                )
+
     def add_core_subsystems(self, solver_group=None):
         """
-        Adds all specified external subsystems to ODE in their own group.
+        Adds all specified subsystems to ODE in their own group.
 
         Parameters
         ----------

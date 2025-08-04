@@ -11,10 +11,6 @@ phase_info = deepcopy(av.default_height_energy_phase_info)
 phase_info.pop('climb')
 phase_info.pop('descent')
 
-# Add custom aero.
-# TODO: This API for replacing aero will be changed an upcoming release.
-phase_info['cruise']['external_subsystems'] = [CustomAeroBuilder()]
-
 # Disable internal aero
 # TODO: This API for replacing aero will be changed an upcoming release.
 phase_info['cruise']['subsystem_options']['aerodynamics'] = {

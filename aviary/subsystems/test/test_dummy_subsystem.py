@@ -346,6 +346,9 @@ class AdditionalArrayGuessSubsystemBuilder(SubsystemBuilderBase):
         group.add_subsystem('comp', DummyFlightDurationComp(num_nodes=num_nodes), promotes=['*'])
         return group
 
+    # def mission_outputs(self, **kwargs):
+    #     return [MoreMission.Dummy.DUMMY_FLIGHT_DURATION + '_rate']
+
     def get_initial_guesses(self):
         return {
             MoreMission.Dummy.DUMMY_FLIGHT_DURATION: {
@@ -377,7 +380,7 @@ class AdditionalArrayGuessSubsystemBuilder(SubsystemBuilderBase):
             controls_dict = {}
         return controls_dict
 
-    def get_outputs(self):
+    def get_timeseries(self):
         return [MoreMission.Dummy.DUMMY_CONTROL, MoreMission.Dummy.TIMESERIES_VAR]
 
 
