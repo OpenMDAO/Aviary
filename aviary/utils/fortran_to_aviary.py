@@ -663,6 +663,14 @@ def update_gasp_options(vehicle_data):
         input_values.set_val(Aircraft.Design.RESERVE_FUEL_FRACTION, [0], units='unitless')
     else:
         ValueError('"FRESF" is not valid between 0 and 10.')
+    try:
+        if input_values.get_val(Mission.Landing.MAXIMUM_FLARE_LOAD_FACTOR)[0] > 4:
+            print(
+                'When XLFMX > 4, it is landing flare initiation height (ft), not landing flare load factor.'
+            )
+            input_values.delete(Mission.Landing.MAXIMUM_FLARE_LOAD_FACTOR)
+    except:
+        pass
 
     # if the value is negative, we are asking the code to calculate it
     # if it is positive, then we are going to use it as an override
@@ -718,6 +726,12 @@ def update_gasp_options(vehicle_data):
             )
             # BWB engine sizing algorithm does not use reference diameter
             input_values.delete(Aircraft.Engine.REFERENCE_DIAMETER)
+    except:
+        pass
+    try:
+        engine_type = input_values.get_val(Aircraft.Engine.TYPE, 'unitless')[0]
+        if not (engine_type == 6 or engine_type == 7):
+            print('Only TURBOPROP(6) and TURBOJET(7) are allowed for now')
     except:
         pass
 

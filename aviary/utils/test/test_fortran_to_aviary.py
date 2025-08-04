@@ -8,7 +8,7 @@ from aviary.utils.functions import get_path
 from aviary.variable_info.enums import LegacyCode
 
 
-# @use_tempdirs
+@use_tempdirs
 class TestFortranToAviary(unittest.TestCase):
     """Test fortran_to_aviary legacy code input file conversion utility by comparing against already converted input files."""
 
