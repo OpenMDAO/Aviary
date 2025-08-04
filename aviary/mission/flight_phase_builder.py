@@ -334,10 +334,11 @@ class FlightPhaseBase(PhaseBuilderBase):
             units='ft/s',
         )
 
-        phase.add_timeseries_output(
-            Dynamic.Vehicle.Propulsion.THROTTLE,
-            output_name=Dynamic.Vehicle.Propulsion.THROTTLE,
-            units='unitless',
+        if throttle_enforcement != 'control':
+            phase.add_timeseries_output(
+                Dynamic.Vehicle.Propulsion.THROTTLE,
+                output_name=Dynamic.Vehicle.Propulsion.THROTTLE,
+                units='unitless',
         )
 
         phase.add_timeseries_output(
@@ -443,6 +444,10 @@ FlightPhaseBase._add_initial_guess_meta_data(
 
 FlightPhaseBase._add_initial_guess_meta_data(
     InitialGuessControl('mach'), desc='initial guess for speed'
+)
+
+FlightPhaseBase._add_initial_guess_meta_data(
+    InitialGuessControl('throttle'), desc='initial guess for throttle'
 )
 
 FlightPhaseBase._add_initial_guess_meta_data(

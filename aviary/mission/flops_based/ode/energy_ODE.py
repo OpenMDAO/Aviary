@@ -25,8 +25,10 @@ class EnergyODE(_BaseODE):
         self.options.declare(
             'throttle_enforcement',
             default='path_constraint',
-            values=['path_constraint', 'boundary_constraint', 'bounded', None],
-            desc='flag to enforce throttle constraints on the path or at the segment boundaries or using solver bounds',
+            values=['path_constraint', 'boundary_constraint', 'bounded', 'control', None],
+            desc='Flag to enforce engine throttle bounds as path constraints, boundary '
+            'constraints, solver bounds. You can also select "control" to turn throttle into a '
+            'control, which allows you to assign a value or let the optimizer choose it.'
         )
         self.options.declare(
             'throttle_allocation',
@@ -139,7 +141,7 @@ class EnergyODE(_BaseODE):
                     promotes_inputs=[('thrust', Dynamic.Vehicle.Propulsion.THRUST_TOTAL), 'thrust_required'],
                     promotes_outputs=['*']
                 )
-                self.add_constraint('thrust_residual', ref=10000.0)
+                self.add_constraint('thrust_residual', ref=10000.0, equals=0.0)
             else:
 
                 # Add a balance comp to compute throttle based on the required thrust.

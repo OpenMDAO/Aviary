@@ -555,6 +555,9 @@ class HeightEnergyProblemConfigurator(ProblemConfiguratorBase):
 
         options = aviary_group.phase_info[phase_name]['user_options']
 
+        if options['throttle_enforcement'] == 'control':
+            control_keys.append('throttle')
+
         # Let's preserve the original user-specified initial conditions.
         guess_dict = deepcopy(guesses)
 
