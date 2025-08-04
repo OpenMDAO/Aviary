@@ -210,4 +210,4 @@ class EnergyODE(_BaseODE):
             sub1.nonlinear_solver.options['err_on_non_converge'] = True
             sub1.nonlinear_solver.options['iprint'] = print_level
 
-            self.options['auto_order'] = True
+        self.options['auto_order'] = True
