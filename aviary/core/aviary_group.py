@@ -287,8 +287,6 @@ class AviaryGroup(om.Group):
         else:
             self.post_mission_info = {}
 
-        self.problem_type = aviary_inputs.get_val(Settings.PROBLEM_TYPE)
-
         self.configurator.initial_guesses(self)
         # This function sets all the following defaults if they were not already set
         # self.engine_builders, self.pre_mission_info, self_post_mission_info
@@ -1182,7 +1180,7 @@ class AviaryGroup(om.Group):
                         src_name = f'traj.{phase_name}.mission_bus_variables.{mvn_basename}'
                         self.connect(src_name, post_mission_var_name)
 
-    def add_design_variables(self, verbosity=None):
+    def add_design_variables(self, problem_type:ProblemType = None, verbosity=None):
         """
         Adds design variables to the Aviary problem.
 
@@ -1252,7 +1250,7 @@ class AviaryGroup(om.Group):
             # vehicle sizing problem
             # size the vehicle (via design GTOW) to meet a target range using all fuel
             # capacity
-            if self.problem_type is ProblemType.SIZING:
+            if problem_type is ProblemType.SIZING:
                 self.add_design_var(
                     Mission.Design.GROSS_MASS,
                     lower=10.0,
@@ -1288,7 +1286,7 @@ class AviaryGroup(om.Group):
             # target range problem
             # fixed vehicle (design GTOW) but variable actual GTOW for off-design
             # mission range
-            elif self.problem_type is ProblemType.ALTERNATE:
+            elif problem_type is ProblemType.ALTERNATE:
                 self.add_design_var(
                     Mission.Summary.GROSS_MASS,
                     lower=10.0,
@@ -1299,10 +1297,10 @@ class AviaryGroup(om.Group):
 
                 self.add_constraint(Mission.Constraints.RANGE_RESIDUAL, equals=0, ref=10)
 
-            elif self.problem_type is ProblemType.FALLOUT:
+            elif problem_type is ProblemType.FALLOUT:
                 print('No design variables for Fallout missions')
 
-            elif self.problem_type is ProblemType.MULTI_MISSION:
+            elif problem_type is ProblemType.MULTI_MISSION:
                 self.add_design_var(
                     Mission.Summary.GROSS_MASS,
                     lower=10.0,

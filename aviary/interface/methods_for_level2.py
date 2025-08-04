@@ -51,7 +51,7 @@ class AviaryProblem(om.Problem):
     additional methods to help users create and solve Aviary problems.
     """
 
-    def __init__(self, problem_type:ProblemType, verbosity=None, **kwargs):
+    def __init__(self, problem_type:ProblemType = None, verbosity=None, **kwargs):
         # Modify OpenMDAO's default_reports for this session.
         new_reports = [
             'subsystems',
@@ -74,8 +74,8 @@ class AviaryProblem(om.Problem):
         self.verbosity = verbosity
         set_warning_format(verbosity)
 
+        self.problem_type = problem_type
         if problem_type == ProblemType.MULTI_MISSION:
-            self.problem_type = ProblemType.MULTI_MISSION
             self.model = om.Group()
         else:
             self.model = AviaryGroup()
@@ -126,7 +126,10 @@ class AviaryProblem(om.Problem):
         self.phase_info = self.model.phase_info
         self.aviary_inputs = aviary_inputs
         self.verbosity = verbosity
-
+        if self.problem_type is None:
+            # if there are multiple load_inputs() calls, only the problem type from the first aviary_values is used 
+            self.problem_type = aviary_inputs.get_val(Settings.PROBLEM_TYPE)
+            
         return self.aviary_inputs
 
     def check_and_preprocess_inputs(self, verbosity=None):
@@ -479,9 +482,9 @@ class AviaryProblem(om.Problem):
 
         if self.problem_type == ProblemType.MULTI_MISSION:
             for name, group in self.aviary_groups_dict.items():
-                group.add_design_variables(verbosity=verbosity)
+                group.add_design_variables(problem_type = self.problem_type, verbosity=verbosity)
         else:
-            self.model.add_design_variables(verbosity=verbosity)
+            self.model.add_design_variables(problem_type = self.problem_type, verbosity=verbosity)
 
     def add_objective(self, objective_type=None, ref=None, verbosity=None):
         """
@@ -595,17 +598,17 @@ class AviaryProblem(om.Problem):
             # If 'ref' is not specified, assign a default value
             ref = ref if ref is not None else 1
 
-            if self.model.problem_type is ProblemType.SIZING:
+            if self.problem_type is ProblemType.SIZING:
                 self.model.add_objective(Mission.Objectives.FUEL, ref=ref)
 
-            elif self.model.problem_type is ProblemType.ALTERNATE:
+            elif self.problem_type is ProblemType.ALTERNATE:
                 self.model.add_objective(Mission.Objectives.FUEL, ref=ref)
 
-            elif self.model.problem_type is ProblemType.FALLOUT:
+            elif self.problem_type is ProblemType.FALLOUT:
                 self.model.add_objective(Mission.Objectives.RANGE, ref=ref)
 
             else:
-                raise ValueError(f'{self.model.problem_type} is not a valid problem type.')
+                raise ValueError(f'{self.problem_type} is not a valid problem type.')
 
     def add_design_var_default(self, name:str, lower:float = None, upper:float = None, units:str = None, src_shape=None, default_val:float = None): #TODO: Add Ref
         """

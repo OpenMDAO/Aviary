@@ -750,13 +750,13 @@ class Mission:
         # based on the user-selection.
         CRUISE_MACH = 'mission:summary:cruise_mach'
         CRUISE_MASS_FINAL = 'mission:summary:cruise_mass_final'
+        FINAL_MASS = 'mission:summary:final_mass'
+        FINAL_TIME = 'mission:summary:final_time'
         FUEL_BURNED = 'mission:summary:fuel_burned'
         FUEL_FLOW_SCALER = 'mission:summary:fuel_flow_scaler'
         GROSS_MASS = 'mission:summary:gross_mass'
-        FINAL_MASS = 'mission:summary:final_mass'
         RANGE = 'mission:summary:range'
         RESERVE_FUEL_BURNED = 'mission:summary:reserve_fuel_burned'
-        FINAL_TIME = 'mission:summary:final_time'
         TOTAL_FUEL_MASS = 'mission:summary:total_fuel_mass'
 
     class Takeoff:
