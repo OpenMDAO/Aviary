@@ -257,7 +257,7 @@ class FlightPhaseBase(PhaseBuilderBase):
             add_constraints=Dynamic.Mission.ALTITUDE not in constraints,
         )
 
-        if throttle_enforcement == 'design_var':
+        if throttle_enforcement == 'control':
             self.add_control(
                 'throttle',
                 Dynamic.Vehicle.Propulsion.THROTTLE,
@@ -431,7 +431,6 @@ class FlightPhaseBase(PhaseBuilderBase):
             'subsystem_options': self.subsystem_options,
             'throttle_enforcement': self.user_options['throttle_enforcement'],
             'throttle_allocation': self.user_options['throttle_allocation'],
-            'throttle_optimize': self.user_options['throttle_optimize'],
         }
 
 

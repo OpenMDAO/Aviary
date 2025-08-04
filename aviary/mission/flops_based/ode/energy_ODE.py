@@ -127,10 +127,10 @@ class EnergyODE(_BaseODE):
         else:
             # Single Engine
 
-            if throttle_optimize:
+            if throttle_enforcement == 'control':
                 self.add_subsystem(
                     'throttle_balance',
-                    om.ExecComp(
+                    om.ExecComp(3849
                         'thrust_residual=thrust_required-thrust',
                         thrust={'val': np.ones((nn, ))},
                         thrust_required={'val': np.ones((nn, ))},
