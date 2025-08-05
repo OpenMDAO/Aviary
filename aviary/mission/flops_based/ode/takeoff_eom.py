@@ -156,7 +156,7 @@ class TakeoffEOM(om.Group):
             'sum_forces',
             SumForces(**kwargs),
             promotes_inputs=['*'],
-            promotes_outputs=['forces_horizontal', 'forces_vertical'],
+            promotes_outputs=['forces_horizontal', 'forces_vertical', 'ground_normal_force'],
         )
 
         self.add_subsystem(
@@ -562,6 +562,13 @@ class SumForces(om.ExplicitComponent):
             desc='current sum of forces in the vertical direction',
         )
 
+        self.add_output(
+            'ground_normal_force',
+            val=np.zeros(nn),
+            units='N',
+            desc='runway force pushing up on the landing gear while on the ground and lift < weight.'
+        )
+
     def setup_partials(self):
         options = self.options
 
@@ -589,7 +596,8 @@ class SumForces(om.ExplicitComponent):
                 Dynamic.Mission.FLIGHT_PATH_ANGLE,
             ]
 
-            self.declare_partials('*', wrt, rows=rows_cols, cols=rows_cols)
+            self.declare_partials(['forces_vertical',
+                                   'forces_horizontal'], wrt, rows=rows_cols, cols=rows_cols)
 
         else:
             aviary_options: AviaryValues = options['aviary_options']
@@ -640,6 +648,24 @@ class SumForces(om.ExplicitComponent):
 
             self.declare_partials('forces_vertical', ['*'], dependent=False)
 
+            self.declare_partials('ground_normal_force',
+                                  Dynamic.Vehicle.MASS,
+                                  rows=rows_cols,
+                                  cols=rows_cols,
+                                  val=grav_metric)
+
+            self.declare_partials('ground_normal_force',
+                                  Dynamic.Vehicle.LIFT,
+                                  rows=rows_cols,
+                                  cols=rows_cols,
+                                  val=-1.0)
+
+            self.declare_partials('ground_normal_force',
+                                  Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
+                                  rows=rows_cols,
+                                  cols=rows_cols,
+                                  val=np.sin(t_inc))
+
     def compute(self, inputs, outputs, discrete_inputs=None, discrete_outputs=None):
         options = self.options
 
@@ -677,7 +703,9 @@ class SumForces(om.ExplicitComponent):
 
             f_v = t_v - drag * s_gamma + lift * c_gamma - weight
 
+
             outputs['forces_vertical'] = f_v
+            outputs['ground_normal_force'][...] = 0.0
 
         else:
             # NOTE using FLOPS GRRUN, which neglects angle of attack
@@ -690,6 +718,7 @@ class SumForces(om.ExplicitComponent):
             t_v = thrust * np.sin(t_inc)
 
             f_h = t_h - drag - (weight - (lift + t_v)) * mu
+            outputs['ground_normal_force'][...] = -t_v - lift + weight
 
         outputs['forces_horizontal'] = f_h
 

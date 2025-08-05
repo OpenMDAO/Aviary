@@ -41,6 +41,7 @@ application to full stop
 TakeoffTrajectory : a trajectory builder for detailed takeoff
 """
 
+from cmath import phase
 from collections import namedtuple
 from platform import node
 
@@ -112,11 +113,18 @@ class DetailedTakeoffPhaseOptions(AviaryOptionsDictionary):
         )
 
         self.declare(
-            name='terminal_speed',
-            types=(float, int, str),
+            name='terminal_condition',
+            values=['VEF', 'V1', 'VR', 'LIFTOFF', 'CLIMB_GRADIENT'],
             allow_none=True,
             default=None,
-            desc='true airspeed at which this phase terminates. One of "VEF", "VR", "V1", or a literal value in knots.',
+            desc='The condition which governs the end of the phase.',
+        )
+
+        self.declare(
+            name='climbing',
+            types=bool,
+            default=False,
+            desc='If False, assume aircraft is operating on the runway.',
         )
 
         self.declare(
@@ -224,10 +232,11 @@ class DetailedTakeoffPhaseBuilder(PhaseBuilderBase):
 
         max_duration, units = user_options['max_duration']
         duration_ref = user_options.get_val('time_duration_ref', units)
+        climbing = user_options['climbing']
 
         phase.set_time_options(
             fix_initial=True,
-            duration_bounds=(0.1, max_duration),
+            duration_bounds=(0.001, max_duration),
             duration_ref=duration_ref,
             units=units,
         )
@@ -270,6 +279,18 @@ class DetailedTakeoffPhaseBuilder(PhaseBuilderBase):
             targets=Dynamic.Vehicle.MASS,
         )
 
+        if climbing:
+            phase.add_state(
+                Dynamic.Mission.FLIGHT_PATH_ANGLE,
+                fix_initial=True,
+                lower=0,
+                ref=1.0,
+                upper=1.5,
+                defect_ref=1.0,
+                units='rad',
+                rate_source=Dynamic.Mission.FLIGHT_PATH_ANGLE_RATE,
+            )
+
         # TODO: Energy phase places this under an if num_engines > 0.
         phase.add_control(
             Dynamic.Vehicle.Propulsion.THROTTLE,
@@ -281,12 +302,12 @@ class DetailedTakeoffPhaseBuilder(PhaseBuilderBase):
         if user_options['pitch_control'] == 'alpha_fixed':
             phase.add_parameter(Dynamic.Vehicle.ANGLE_OF_ATTACK, val=0.0, opt=False, units='deg')
         elif user_options['pitch_control'] == 'alpha_rate':
+            phase.add_parameter(Dynamic.Vehicle.ANGLE_OF_ATTACK_RATE, val=2.0, opt=False, units='deg/s')
             phase.add_state(
                 Dynamic.Vehicle.ANGLE_OF_ATTACK,
                 fix_initial=True,
                 fix_final=False,
-                lower=-14,
-                upper=14,
+
                 ref=1.0,
                 units='deg',
                 rate_source=Dynamic.Vehicle.ANGLE_OF_ATTACK_RATE,
@@ -304,8 +325,8 @@ class DetailedTakeoffPhaseBuilder(PhaseBuilderBase):
         )
 
         # Define velocity to go based on definition of terminal speed, if applicable.
-        terminal_speed = user_options['terminal_speed']
-        if terminal_speed == 'V1':
+        terminal_condition = user_options['terminal_condition']
+        if terminal_condition == 'V1':
             # Propagate until speed is the decision speed.
             # In balanced field applications, dV1 will be
             # set such that a rejected takeoff and a
@@ -317,18 +338,19 @@ class DetailedTakeoffPhaseBuilder(PhaseBuilderBase):
                 dv1={'units': 'kn'},
                 v_to_go={'units': 'kn'},
             )
-            v_to_go_calc = True
-        elif terminal_speed == 'VR':
+            phase.add_boundary_balance(param='t_duration', name='v_to_go', tgt_val=0.0, loc='final')
+        elif terminal_condition == 'VR':
             # Propagate until speed is the rotation speed.
-            phase.add_calc_expr(
-                'v_to_go = velocity - (dVR + dV1 + v_stall)',
-                velocity={'units': 'kn'},
-                dv1={'units': 'kn'},
-                dVR={'units': 'kn'},
-                v_to_go={'units': 'kn'},
-            )
-            v_to_go_calc = True
-        elif terminal_speed == 'VEF':
+            # phase.add_calc_expr(
+            #     'v_to_go = velocity - (dVR + dV1 + v_stall)',
+            #     velocity={'units': 'kn'},
+            #     dv1={'units': 'kn'},
+            #     dVR={'units': 'kn'},
+            #     v_to_go={'units': 'kn'},
+            # )
+            pass
+            phase.add_boundary_balance(param='t_duration', name='v_over_v_stall', tgt_val=1.05, loc='final')
+        elif terminal_condition == 'VEF':
             # Propagate until engine failure.
             # Note we expect dVEF to be negative here.
             # In balanced field applications, dVEF will be set
@@ -341,24 +363,32 @@ class DetailedTakeoffPhaseBuilder(PhaseBuilderBase):
                 dVEF={'units': 'kn'},
                 v_to_go={'units': 'kn'},
             )
-            v_to_go_calc = True
-        elif isinstance(terminal_speed, (float, int)):
+            phase.add_boundary_balance(param='t_duration', name='v_to_go', tgt_val=0.0, loc='final')
+        elif terminal_condition == 'LIFTOFF':
             # Propagate until velocity is the desired literal value.
             phase.add_boundary_balance(
-                param='t_duration', name='velocity', tgt_val=terminal_speed, loc='final'
+                param='t_duration', name='takeoff_eom.ground_normal_force', tgt_val=0.0, lower=0.0001, upper=20, eq_units='MN', loc='final')
+        elif terminal_condition == 'CLIMB_GRADIENT':
+            phase.add_calc_expr(
+                'climb_gradient = tan(flight_path_angle)',
+                climb_gradient={'units': 'unitless'},
+                flight_path_angle={'units': 'rad'},
             )
-            phase.options['auto_order'] = True
-        elif terminal_speed is None:
+            phase.add_boundary_balance(
+                param='t_duration', name='climb_gradient', tgt_val=0.024, lower=0.0001, upper=20, eq_units='unitless', loc='final')
+        elif terminal_condition is None:
             # Propagate for t_duration
             pass
         else:
             raise ValueError(
-                f'Unrecognized value for terminal_speed ({terminal_speed}).'
+                f'Unrecognized value for terminal_speed ({terminal_condition}).'
                 'Must be one of "VEF", "VR", "V1" or a literal numerical value.'
             )
 
-        if v_to_go_calc:
-            phase.add_boundary_balance(param='t_duration', name='v_to_go', tgt_val=0.0, loc='final')
+        phase.add_parameter('dV1', opt=False, val=10.0, units='kn', desc='Decision speed delta above stall speed.')
+        # phase.add_parameter('dVEF', opt=False, val=10.0, desc='Decision speed delta below decision speed.')
+
+        if phase.boundary_balance_options:
             phase.options['auto_order'] = True
 
         if user_options['nonlinear_solver'] is not None:
@@ -378,11 +408,19 @@ class DetailedTakeoffPhaseBuilder(PhaseBuilderBase):
 
     def _extra_ode_init_kwargs(self):
         """Return extra kwargs required for initializing the ODE."""
-        return {'climbing': False, 'friction_key': Mission.Takeoff.ROLLING_FRICTION_COEFFICIENT}
+        return {'climbing': self.user_options['climbing'], 'friction_key': Mission.Takeoff.ROLLING_FRICTION_COEFFICIENT}
 
 
 DetailedTakeoffPhaseBuilder._add_initial_guess_meta_data(
     InitialGuessParameter(Dynamic.Vehicle.ANGLE_OF_ATTACK)
+)
+
+DetailedTakeoffPhaseBuilder._add_initial_guess_meta_data(
+    InitialGuessParameter(Dynamic.Vehicle.ANGLE_OF_ATTACK_RATE)
+)
+
+DetailedTakeoffPhaseBuilder._add_initial_guess_meta_data(
+    InitialGuessParameter(Dynamic.Mission.FLIGHT_PATH_ANGLE)
 )
 
 
@@ -3335,6 +3373,7 @@ class TakeoffTrajectory:
         # self._brake_release_to_decision_speed = None
         self._decision_speed_to_rotate = None
         self._rotate_to_liftoff = None
+        self._liftoff_to_climb_gradient = None
         self._liftoff_to_obstacle = None
         self._obstacle_to_mic_p2 = None
         self._mic_p2_to_engine_cutback = None
@@ -3386,6 +3425,15 @@ class TakeoffTrajectory:
         to achieve liftoff.
         """
         self._rotate_to_liftoff = phase_builder
+
+    def set_liftoff_to_climb_gradient(self, phase_builder: PhaseBuilderBase):
+        """
+        Assign the phase builder for the phase from liftoff until the required climb gradient is reached.
+
+        Args:
+            phase_builder (PhaseBuilderBase): _description_
+        """
+        self._liftoff_to_climb_gradient = phase_builder
 
     def set_liftoff_to_obstacle(self, phase_builder: PhaseBuilderBase):
         """
@@ -3565,9 +3613,9 @@ class TakeoffTrajectory:
 
         self._add_phase(self._decision_speed_to_rotate, aviary_options)
 
-        # self._add_phase(self._rotate_to_liftoff, aviary_options)
+        self._add_phase(self._rotate_to_liftoff, aviary_options)
 
-        # self._add_phase(self._liftoff_to_obstacle, aviary_options)
+        self._add_phase(self._liftoff_to_climb_gradient, aviary_options)
 
         # obstacle_to_mic_p2 = self._obstacle_to_mic_p2
 
@@ -3594,11 +3642,16 @@ class TakeoffTrajectory:
 
         brake_release_name = self._brake_release_to_decision_speed.name
         decision_speed_name = self._decision_speed_to_rotate.name
-        # rotate_name = self._rotate_to_liftoff.name
+        rotate_name = self._rotate_to_liftoff.name
+        liftoff_name = self._liftoff_to_climb_gradient.name
 
-        basic_vars = ['time', 'distance', 'velocity', 'mass']
+        traj.link_phases([brake_release_name, decision_speed_name, rotate_name, liftoff_name],
+                         vars=['time', 'distance', 'velocity', 'mass'],
+                         connected=True)
 
-        traj.link_phases([brake_release_name, decision_speed_name], vars=basic_vars, connected=True)
+        traj.link_phases([rotate_name, liftoff_name],
+                         vars=['angle_of_attack'],
+                         connected=True)
 
         # ext_vars = basic_vars + ['angle_of_attack']
 
