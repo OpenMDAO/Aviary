@@ -787,6 +787,23 @@ class AviaryGroup(om.Group):
             promotes_outputs=['*'],
         )
 
+        # Make dymos state outputs easy to access later
+        self.add_subsystem('state_output',
+                                   om.ExecComp(['mass_final = mass_in',
+                                               'time_final = time_in',
+                                               'range_final = range_in'],
+                                               mass_in={'units': 'lbm'},
+                                               mass_final={'units': 'lbm'},
+                                               time_in={'units': 'min'},
+                                               time_final={'units': 'min'},
+                                               range_in={'units': 'nmi'},
+                                               range_final={'units': 'nmi'},
+                                               ),
+                                               promotes_outputs={
+                                                   ('mass_final', Mission.Summary.FINAL_MASS),
+                                                   ('time_final', Mission.Summary.FINAL_TIME),
+                                                   ('range_final', Mission.Summary.RANGE)})
+
         self.configurator.add_post_mission_systems(self)
 
         # Add all post-mission external subsystems.
@@ -1051,22 +1068,6 @@ class AviaryGroup(om.Group):
 
         self.configurator.check_trajectory(self)
 
-        # Make dymos state outputs easy to access later
-        self.add_subsystem('state_output',
-                                   om.ExecComp(['mass_final = mass_in', 
-                                               'time_final = time_in',
-                                               'range_final = range_in'],
-                                               mass_in={'units': 'lbm'}, 
-                                               mass_final={'units': 'lbm'},
-                                               time_in={'units': 'min'}, 
-                                               time_final={'units': 'min'},
-                                               range_in={'units': 'nmi'},
-                                               range_final={'units': 'nmi'},
-                                               ), 
-                                               promotes_outputs={
-                                                   ('mass_final', Mission.Summary.FINAL_MASS),
-                                                   ('time_final', Mission.Summary.FINAL_TIME),
-                                                   ('range_final', Mission.Summary.RANGE)})
         final_phase = self.regular_phases[-1]
         self.connect(
             f'traj.{final_phase}.states:mass',
