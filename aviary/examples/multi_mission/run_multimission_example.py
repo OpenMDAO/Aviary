@@ -55,7 +55,7 @@ Optimizer = 'SLSQP'  # SLSQP or SNOPT
 
 prob = av.AviaryProblem(problem_type = ProblemType.MULTI_MISSION)
 
-# set constraints in the background to allow Mission.Summary.GROSS_MASS to be acceptible as long as it's 
+# set constraints in the background to allow Mission.Summary.GROSS_MASS to be acceptible as long as it's
 # less than Mission.Design.GROSS_MASS. Also turns on Mission.Constraints.RANGE_RESIDUAL =0, forcong
 # the mission to fly the target_range specified in the phase_info
 
@@ -88,6 +88,7 @@ prob.add_driver(Optimizer, max_iter=50)
 prob.setup()
 
 # set_val goes here if needed
+prob.set_initial_guesses()
 
 # Ensure that design_range is the same for similar aircraft to ensure that navigation gear is designed similarly
 prob.set_design_range(('mission1', 'mission2'), range='Aircraft1:RANGE')
