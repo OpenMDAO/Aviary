@@ -180,7 +180,7 @@ prob.set_initial_guesses()
 prob.run_aviary_problem(record_filename='detailed_landing.db')
 
 try:
-    loc = prob.get_timeseries_dir()
+    loc = prob.get_outputs_dir()
     cr = om.CaseReader(f'{loc}/detailed_landing.db')
 except:
     cr = om.CaseReader('detailed_landing.db')
