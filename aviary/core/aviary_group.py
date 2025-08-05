@@ -487,7 +487,7 @@ class AviaryGroup(om.Group):
         # Propulsion isn't included in core pre-mission group to avoid override step in
         # configure() - instead add it now
         pre_mission.add_subsystem(
-            'core_propulsion',
+            'propulsion',
             core_subsystems[0].build_pre_mission(self.aviary_inputs),
         )
 
