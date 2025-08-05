@@ -71,7 +71,7 @@ class AviaryGroup(om.Group):
         self.reserve_phases = []
 
         self.aviary_inputs = None
-        self.meta_data = None
+        self.meta_data = [] # Will crash some test in test_override.py if set to None
         self.phase_info = None
 
     def configure(self):

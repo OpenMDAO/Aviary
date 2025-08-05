@@ -94,6 +94,8 @@ prob.set_design_range(('mission1', 'mission2'), range='Aircraft1:RANGE')
 
 # TODO: how to handle "aircraft that the user says are the same but are not the same i.e. wing design is different"
 
+prob.set_initial_guesses()
+
 prob.run_aviary_problem()
 
 

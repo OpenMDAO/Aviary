@@ -924,17 +924,17 @@ class AviaryProblem(om.Problem):
             for name, group in self.aviary_groups_dict.items():
                 setup_model_options(self, group.aviary_inputs, group.meta_data)
                 with warnings.catch_warnings():
-                    group.options['aviary_options'] = group.aviary_inputs
-                    group.options['aviary_metadata'] = self.meta_data 
-                    group.options['phase_info'] = group.phase_info
+                    # group.aviary_inputs is already set
+                    group.meta_data = self.meta_data # <- meta_data is the same for all groups
+                    # group.phase_info is already set
         else:
             setup_model_options(self, self.aviary_inputs, self.meta_data)
             # suppress warnings:
             # "input variable '...' promoted using '*' was already promoted using 'aircraft:*'
             with warnings.catch_warnings():
-                self.model.options['aviary_options'] = self.aviary_inputs
-                self.model.options['aviary_metadata'] = self.meta_data
-                self.model.options['phase_info'] = self.model.phase_info
+                self.model.aviary_inputs = self.aviary_inputs #<- there is only one aviary_inputs in this case
+                self.model.meta_data = self.meta_data
+                # self.model.phase_info is already set
 
         with warnings.catch_warnings():
             warnings.simplefilter('ignore', om.OpenMDAOWarning)

@@ -31,16 +31,15 @@ class GASPOverrideTestCase(unittest.TestCase):
 
         prob = om.Problem()
 
-        aviary_options = aviary_inputs
         subsystems = core_subsystems
 
         prob.model = AviaryGroup()
-        prob.model.aviary_inputs = aviary_options
+        prob.model.aviary_inputs = aviary_inputs
         prob.model.aviary_meta_data = BaseMetaData
 
         prob.model.add_subsystem(
             'pre_mission',
-            CorePreMission(aviary_options=aviary_options, subsystems=subsystems),
+            CorePreMission(aviary_options=aviary_inputs, subsystems=subsystems),
             promotes_inputs=['aircraft:*', 'mission:*'],
             promotes_outputs=['aircraft:*', 'mission:*'],
         )
