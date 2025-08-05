@@ -70,8 +70,8 @@ class TestSolvedAero(unittest.TestCase):
 
         prob.run_model()
 
-        CL_base = prob.get_val('traj.cruise.rhs_all.core_aerodynamics.CL')
-        CD_base = prob.get_val('traj.cruise.rhs_all.core_aerodynamics.CD')
+        CL_base = prob.get_val('traj.cruise.rhs_all.aerodynamics.CL')
+        CD_base = prob.get_val('traj.cruise.rhs_all.aerodynamics.CD')
 
         return CL_base, CD_base
 
@@ -124,8 +124,8 @@ class TestSolvedAero(unittest.TestCase):
 
         prob.run_model()
 
-        CL_pass = prob.get_val('traj.cruise.rhs_all.core_aerodynamics.CL')
-        CD_pass = prob.get_val('traj.cruise.rhs_all.core_aerodynamics.CD')
+        CL_pass = prob.get_val('traj.cruise.rhs_all.aerodynamics.CL')
+        CD_pass = prob.get_val('traj.cruise.rhs_all.aerodynamics.CD')
 
         assert_near_equal(CL_pass, CL_base, 1e-6)
         assert_near_equal(CD_pass, CD_base, 1e-6)
@@ -136,8 +136,8 @@ class TestSolvedAero(unittest.TestCase):
 
         prob.run_model()
 
-        CL_pass = prob.get_val('traj.cruise.rhs_all.core_aerodynamics.CL')
-        CD_pass = prob.get_val('traj.cruise.rhs_all.core_aerodynamics.CD')
+        CL_pass = prob.get_val('traj.cruise.rhs_all.aerodynamics.CL')
+        CD_pass = prob.get_val('traj.cruise.rhs_all.aerodynamics.CD')
 
         assert_near_equal(CL_pass, CL_base, 1e-6)
         assert_near_equal(CD_pass, 2.0 * CD_base, 1e-6)
@@ -204,8 +204,8 @@ class TestSolvedAero(unittest.TestCase):
 
         prob.run_model()
 
-        CL_base = prob.get_val('traj.cruise.rhs_all.core_aerodynamics.CL')
-        CD_base = prob.get_val('traj.cruise.rhs_all.core_aerodynamics.CD')
+        CL_base = prob.get_val('traj.cruise.rhs_all.aerodynamics.CL')
+        CD_base = prob.get_val('traj.cruise.rhs_all.aerodynamics.CD')
 
         # Lift and Drag polars passed from external component in pre-mission.
 
@@ -272,8 +272,8 @@ class TestSolvedAero(unittest.TestCase):
 
         prob.run_model()
 
-        CL_pass = prob.get_val('traj.cruise.rhs_all.core_aerodynamics.CL')
-        CD_pass = prob.get_val('traj.cruise.rhs_all.core_aerodynamics.CD')
+        CL_pass = prob.get_val('traj.cruise.rhs_all.aerodynamics.CL')
+        CD_pass = prob.get_val('traj.cruise.rhs_all.aerodynamics.CD')
 
         assert_near_equal(CL_pass, CL_base, 1e-6)
         assert_near_equal(CD_pass, CD_base, 1e-6)
