@@ -924,15 +924,9 @@ class AviaryProblem(om.Problem):
             for name, group in self.aviary_groups_dict.items():
                 setup_model_options(self, group.aviary_inputs, group.meta_data)
                 with warnings.catch_warnings():
-<<<<<<< HEAD
                     # group.aviary_inputs is already set
                     group.meta_data = self.meta_data # <- meta_data is the same for all groups
                     # group.phase_info is already set
-=======
-                    group.options['aviary_options'] = group.aviary_inputs
-                    group.options['aviary_metadata'] = self.meta_data
-                    group.options['phase_info'] = group.phase_info
->>>>>>> 713ac9c7f9a3d65ddae4d9bb3e50d70b6860fa4b
         else:
             setup_model_options(self, self.aviary_inputs, self.meta_data)
             # suppress warnings:
