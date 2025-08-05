@@ -252,7 +252,7 @@ def mission_report(prob, **kwargs):
             totals = all_totals[name]
 
             if multi_mission:
-                f.write('\n\n\n# MULTIMISSION: {name}\n\n')
+                f.write(f'\n\n\n# MULTIMISSION: {name}\n\n')
 
             f.write('# MISSION SUMMARY')
             write_markdown_variable_table(
