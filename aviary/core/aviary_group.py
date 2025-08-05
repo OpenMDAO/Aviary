@@ -71,20 +71,8 @@ class AviaryGroup(om.Group):
         self.reserve_phases = []
 
         self.aviary_inputs = None
+        self.meta_data = None
         self.phase_info = None
-
-    def initialize(self):
-        """Declare options."""
-        self.options.declare(
-            'aviary_options',
-            types=AviaryValues,
-            desc='collection of Aircraft/Mission specific options',
-        )
-        self.options.declare(
-            'aviary_metadata', types=dict, desc='metadata dictionary of the full aviary problem.'
-        )
-        self.options.declare('phase_info', types=dict, desc='phase-specific settings.')
-        self.builder = []
 
     def configure(self):
         """Configure the Aviary group."""
@@ -141,7 +129,6 @@ class AviaryGroup(om.Group):
 
         # Temporarily add extra stuff here, probably patched soon
         if mission_method is HEIGHT_ENERGY:
-            phase_info = self.options['phase_info']
 
             # Set a more appropriate solver for dymos when the phases are linked.
             if MPI and isinstance(self.traj.phases.linear_solver, om.PETScKrylov):
@@ -165,7 +152,7 @@ class AviaryGroup(om.Group):
             # TODO: Future updates to dymos may make this unnecessary.
             for phase in self.traj.phases.system_iter(recurse=False):
                 # Don't move the solvers if we are using solve segments.
-                if phase_info[phase.name]['user_options'].get('distance_solve_segments'):
+                if self.phase_info[phase.name]['user_options'].get('distance_solve_segments'):
                     continue
 
                 phase.nonlinear_solver = om.NonlinearRunOnce()
