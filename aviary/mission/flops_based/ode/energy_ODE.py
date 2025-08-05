@@ -63,10 +63,6 @@ class EnergyODE(_BaseODE):
 
         self.add_subsystems(solver_group=sub1)
 
-        # self.add_core_subsystems(solver_group=sub1)
-
-        # self.add_external_subsystems(solver_group=sub1)
-
         sub1.add_subsystem(
             name='mission_EOM',
             subsys=MissionEOM(num_nodes=nn),

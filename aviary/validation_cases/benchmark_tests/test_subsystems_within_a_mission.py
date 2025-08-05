@@ -1,12 +1,13 @@
 import unittest
 
 import numpy as np
-from numpy.testing import assert_almost_equal
+from numpy.testing import assert_almost_equal, assert_equal
 from openmdao.utils.testing_utils import use_tempdirs
 
 from aviary.interface.methods_for_level2 import AviaryProblem
 from aviary.subsystems.test.test_dummy_subsystem import (
     AdditionalArrayGuessSubsystemBuilder,
+    Aircraft,
     ArrayGuessSubsystemBuilder,
     Mission,
     MoreMission,
@@ -14,7 +15,7 @@ from aviary.subsystems.test.test_dummy_subsystem import (
 )
 
 
-@use_tempdirs
+# @use_tempdirs
 class TestSubsystemsMission(unittest.TestCase):
     """Test the setup and run of a model with external subsystem."""
 
@@ -84,7 +85,6 @@ class TestSubsystemsMission(unittest.TestCase):
         prob.add_objective('fuel_burned')
 
         prob.setup()
-
         prob.phase_info['cruise']['initial_guesses'][f'states:{Mission.Dummy.VARIABLE}'] = (
             [10.0, 100.0],
             'm',
@@ -104,6 +104,9 @@ class TestSubsystemsMission(unittest.TestCase):
             prob[f'traj.phases.cruise.timeseries.{MoreMission.Dummy.TIMESERIES_VAR}'],
             np.array([[0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]]).T,
         )
+
+        # add an assert to see that the post-mission component correctly computed
+        assert_equal(prob.get_val('default_subsystem_name.y_postmission'), 0.25)
 
     def test_bad_initial_guess_key(self):
         phase_info = self.phase_info.copy()
@@ -128,4 +131,7 @@ class TestSubsystemsMission(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    unittest.main()
+    # unittest.main()
+    test = TestSubsystemsMission()
+    test.setUp()
+    test.test_subsystems_in_a_mission()

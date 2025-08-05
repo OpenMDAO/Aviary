@@ -88,7 +88,7 @@ class UnsteadySolvedODE(TwoDOFODE):
         input_speed_type = self.options['input_speed_type']
         aviary_options = self.options['aviary_options']
         subsystem_options = self.options['subsystem_options']
-        core_subsystems = self.options['core_subsystems']
+        subsystems = self.options['subsystems']
         throttle_enforcement = self.options['throttle_enforcement']
 
         if self.options['include_param_comp']:
@@ -173,7 +173,7 @@ class UnsteadySolvedODE(TwoDOFODE):
         }
         if self.options['clean']:
             kwargs['method'] = 'cruise'
-        for subsystem in core_subsystems:
+        for subsystem in subsystems:
             # check if subsystem_options has entry for a subsystem of this name
             if subsystem.name in subsystem_options:
                 kwargs.update(subsystem_options[subsystem.name])

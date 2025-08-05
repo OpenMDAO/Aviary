@@ -64,7 +64,7 @@ class FlightPathODE(TwoDOFODE):
         if not self.options['ground_roll']:
             EOM_inputs.append(Dynamic.Vehicle.ANGLE_OF_ATTACK)
 
-        core_subsystems = self.options['core_subsystems']
+        subsystems = self.options['subsystems']
 
         # TODO: paramport
         flight_path_params = ParamPort()
@@ -113,7 +113,7 @@ class FlightPathODE(TwoDOFODE):
                 print_level=print_level,
             )
 
-        for subsystem in core_subsystems:
+        for subsystem in subsystems:
             system = subsystem.build_mission(**kwargs)
             if system is not None:
                 if isinstance(subsystem, PropulsionBuilder):

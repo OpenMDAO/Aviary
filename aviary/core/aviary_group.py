@@ -703,24 +703,21 @@ class AviaryGroup(om.Group):
 
     def add_post_mission_systems(self, verbosity=None):
         """
-        Add post-mission systems to the aircraft model. This is akin to the pre-mission
-        group or the "premission_systems", but occurs after the mission in the execution
-        order.
+        Add post-mission systems to the aircraft model. This is akin to the pre-mission group or the
+        "premission_systems", but occurs after the mission in the execution order.
 
-        Depending on the mission model specified (`FLOPS` or `GASP`), this method adds
-        various subsystems to the aircraft model. For the `FLOPS` mission model, a
-        landing phase is added using the Landing class with the wing area and lift
-        coefficient specified, and a takeoff constraints ExecComp is added to enforce
-        mass, range, velocity, and altitude continuity between the takeoff and climb
-        phases. The landing subsystem is promoted with aircraft and mission inputs and
-        outputs as appropriate, while the takeoff constraints ExecComp is only promoted
-        with mission inputs and outputs.
+        Depending on the mission model specified (`FLOPS` or `GASP`), this method adds various
+        subsystems to the aircraft model. For the `FLOPS` mission model, a landing phase is added
+        using the Landing class with the wing area and lift coefficient specified, and a takeoff
+        constraints ExecComp is added to enforce mass, range, velocity, and altitude continuity
+        between the takeoff and climb phases. The landing subsystem is promoted with aircraft and
+        mission inputs and outputs as appropriate, while the takeoff constraints ExecComp is only
+        promoted with mission inputs and outputs.
 
-        For the `GASP` mission model, four subsystems are added: a LandingSegment
-        subsystem, an ExecComp to calculate the reserve fuel required, an ExecComp to
-        calculate the overall fuel burn, and three ExecComps to calculate various
-        mission objectives and constraints. All subsystems are promoted with aircraft
-        and mission inputs and outputs as appropriate.
+        For the `GASP` mission model, four subsystems are added: a LandingSegment subsystem, an
+        ExecComp to calculate the reserve fuel required, an ExecComp to calculate the overall fuel
+        burn, and three ExecComps to calculate various mission objectives and constraints. All
+        subsystems are promoted with aircraft and mission inputs and outputs as appropriate.
 
         A user can override this with their own postmission systems.
         """
@@ -742,17 +739,17 @@ class AviaryGroup(om.Group):
 
         self.configurator.add_post_mission_systems(self)
 
-        # Add all post-mission external subsystems.
+        # Add all post-mission subsystems.
         phase_mission_bus_lengths = get_phase_mission_bus_lengths(self.traj)
-        for external_subsystem in self.external_subsystems:
-            subsystem_postmission = external_subsystem.build_post_mission(
+        for subsystem in self.subsystems:
+            subsystem_postmission = subsystem.build_post_mission(
                 aviary_inputs=self.aviary_inputs,
                 phase_info=self.phase_info,
                 phase_mission_bus_lengths=phase_mission_bus_lengths,
             )
 
             if subsystem_postmission is not None:
-                post_mission.add_subsystem(external_subsystem.name, subsystem_postmission)
+                post_mission.add_subsystem(subsystem.name, subsystem_postmission)
 
         # Check if regular_phases[] is accessible
         try:

@@ -228,7 +228,7 @@ def run_trajectory(sim=True):
                 'use_polynomial_control': (False, 'unitless'),
             }
         ),
-        core_subsystems=default_mission_subsystems,
+        subsystems=default_mission_subsystems,
         subsystem_options={'aerodynamics': {'method': 'computed'}},
         transcription=transcription_climb,
     )
@@ -245,7 +245,7 @@ def run_trajectory(sim=True):
                 'fix_initial': (False, 'unitless'),
             }
         ),
-        core_subsystems=default_mission_subsystems,
+        subsystems=default_mission_subsystems,
         subsystem_options={'aerodynamics': {'method': 'computed'}},
         transcription=transcription_cruise,
     )
@@ -262,7 +262,7 @@ def run_trajectory(sim=True):
                 'use_polynomial_control': (False, 'unitless'),
             }
         ),
-        core_subsystems=default_mission_subsystems,
+        subsystems=default_mission_subsystems,
         subsystem_options={'aerodynamics': {'method': 'computed'}},
         transcription=transcription_descent,
     )
@@ -284,13 +284,13 @@ def run_trajectory(sim=True):
     aero = CoreAerodynamicsBuilder('aerodynamics', BaseMetaData, FLOPS)
     geom = CoreGeometryBuilder('geometry', BaseMetaData, code_origin=FLOPS)
 
-    core_subsystems = [prop, geom, mass, aero]
+    subsystems = [prop, geom, mass, aero]
 
     # Level 2 Equivalent: add_pre_mission_systems function
     # Upstream static analysis for aero
     prob.model.add_subsystem(
         'pre_mission',
-        CorePreMission(aviary_options=aviary_inputs, subsystems=core_subsystems),
+        CorePreMission(aviary_options=aviary_inputs, subsystems=subsystems),
         promotes_inputs=['aircraft:*', 'mission:*'],
         promotes_outputs=['aircraft:*', 'mission:*'],
     )

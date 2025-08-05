@@ -81,11 +81,11 @@ class PreMissionTestCase(unittest.TestCase):
             code_origin_to_prioritize=GASP,
         )
 
-        core_subsystems = [prop, geom, mass, aero]
+        subsystems = [prop, geom, mass, aero]
 
         self.prob.model.add_subsystem(
             'pre_mission',
-            CorePreMission(aviary_options=input_options, subsystems=core_subsystems),
+            CorePreMission(aviary_options=input_options, subsystems=subsystems),
             promotes_inputs=['*'],
             promotes_outputs=['*'],
         )
@@ -285,11 +285,11 @@ class PreMissionTestCase(unittest.TestCase):
             code_origin_to_prioritize=FLOPS,
         )
 
-        core_subsystems = [prop, geom, mass, aero]
+        subsystems = [prop, geom, mass, aero]
 
         model.add_subsystem(
             'pre_mission',
-            CorePreMission(aviary_options=aviary_inputs, subsystems=core_subsystems),
+            CorePreMission(aviary_options=aviary_inputs, subsystems=subsystems),
             promotes_inputs=['*'],
             promotes_outputs=['*'],
         )

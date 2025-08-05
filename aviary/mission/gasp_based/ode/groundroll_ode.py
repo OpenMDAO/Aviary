@@ -25,7 +25,7 @@ class GroundrollODE(TwoDOFODE):
     def setup(self):
         nn = self.options['num_nodes']
         aviary_options = self.options['aviary_options']
-        core_subsystems = self.options['core_subsystems']
+        subsystems = self.options['subsystems']
         subsystem_options = self.options['subsystem_options']
 
         # TODO: paramport
@@ -52,7 +52,7 @@ class GroundrollODE(TwoDOFODE):
             'aviary_inputs': aviary_options,
             'method': 'low_speed',
         }
-        for subsystem in core_subsystems:
+        for subsystem in subsystems:
             # check if subsystem_options has entry for a subsystem of this name
             if subsystem.name in subsystem_options:
                 kwargs.update(subsystem_options[subsystem.name])

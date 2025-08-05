@@ -36,9 +36,7 @@ class AscentODE(TwoDOFODE):
         }
         self.options['subsystem_options'].setdefault('aerodynamics', {}).update(kwargs)
 
-        self.add_core_subsystems()
-
-        self.add_external_subsystems()
+        self.add_subsystems()
 
         if alpha_mode is AlphaModes.DEFAULT:
             # alpha as input

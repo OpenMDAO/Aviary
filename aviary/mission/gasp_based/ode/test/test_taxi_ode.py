@@ -27,9 +27,7 @@ class TaxiTestCase(unittest.TestCase):
             'GASP', [build_engine_deck(options)]
         )
 
-        self.prob.model = TaxiSegment(
-            aviary_options=options, core_subsystems=default_mission_subsystems
-        )
+        self.prob.model = TaxiSegment(aviary_options=options, subsystems=default_mission_subsystems)
 
         setup_model_options(self.prob, options)
 

@@ -19,7 +19,7 @@ class LandingSegment(TwoDOFODE):
 
     def setup(self):
         aviary_options = self.options['aviary_options']
-        core_subsystems = self.options['core_subsystems']
+        subsystems = self.options['subsystems']
 
         # TODO: paramport
         self.add_subsystem('params', ParamPort(), promotes=['*'])
@@ -52,7 +52,7 @@ class LandingSegment(TwoDOFODE):
         )
 
         # collect the propulsion group names for later use with
-        for subsystem in core_subsystems:
+        for subsystem in subsystems:
             if isinstance(subsystem, AerodyanmicsBuilder):
                 kwargs = {'method': 'low_speed'}
                 aero_builder = subsystem

@@ -45,7 +45,7 @@ AdditionalMetaData = deepcopy(av.CoreMetaData)
 av.add_meta_data(
     Aircraft.Dummy.VARIABLE,
     desc='Dummy aircraft variable',
-    default_value=0.5,
+    default_value=0.25,
     option=False,
     units='kn',
     meta_data=ExtendedMetaData,
@@ -228,9 +228,7 @@ class DummyMissionComp(om.ExplicitComponent):
 
 class PreOnlyBuilder(SubsystemBuilderBase):
     def build_pre_mission(self, aviary_inputs):
-        group = om.Group()
-        group.add_subsystem('comp', DummyComp(), promotes=['*'])
-        return group
+        return DummyComp()
 
     def get_mass_names(self):
         return [Aircraft.Dummy.VARIABLE_OUT]
@@ -239,7 +237,12 @@ class PreOnlyBuilder(SubsystemBuilderBase):
 class PostOnlyBuilder(SubsystemBuilderBase):
     def build_post_mission(self, aviary_inputs, phase_info, phase_mission_bus_lengths):
         group = om.Group()
-        group.add_subsystem('comp', om.ExecComp('y = x**2'), promotes=['*'])
+        group.add_subsystem(
+            'comp',
+            om.ExecComp('y_postmission = x**2'),
+            promotes_inputs=[('x', Aircraft.Dummy.VARIABLE_OUT)],
+            promotes_outputs=['*'],
+        )
         return group
 
 
@@ -252,9 +255,7 @@ class FailingSubsystemBuilder(SubsystemBuilderBase):
         }
 
     def build_mission(self, num_nodes, aviary_inputs):
-        group = om.Group()
-        group.add_subsystem('comp', om.ExecComp('y = x**2'))
-        return group
+        return om.ExecComp('y = x**2')
 
 
 class ArrayGuessSubsystemBuilder(SubsystemBuilderBase):
@@ -262,14 +263,10 @@ class ArrayGuessSubsystemBuilder(SubsystemBuilderBase):
         super().__init__(name, meta_data=ExtendedMetaData)
 
     def build_pre_mission(self, aviary_inputs):
-        group = om.Group()
-        group.add_subsystem('comp', DummyComp(), promotes=['*'])
-        return group
+        return DummyComp()
 
     def build_mission(self, num_nodes, aviary_inputs):
-        group = om.Group()
-        group.add_subsystem('comp', DummyMissionComp(num_nodes=num_nodes), promotes=['*'])
-        return group
+        return DummyMissionComp(num_nodes=num_nodes)
 
     def get_initial_guesses(self):
         return {
@@ -337,14 +334,10 @@ class AdditionalArrayGuessSubsystemBuilder(SubsystemBuilderBase):
         super().__init__(name, meta_data=AdditionalMetaData)
 
     def build_pre_mission(self, aviary_inputs):
-        group = om.Group()
-        group.add_subsystem('comp', DummyWingspanComp(), promotes=['*'])
-        return group
+        return DummyWingspanComp()
 
     def build_mission(self, num_nodes, aviary_inputs):
-        group = om.Group()
-        group.add_subsystem('comp', DummyFlightDurationComp(num_nodes=num_nodes), promotes=['*'])
-        return group
+        return DummyFlightDurationComp(num_nodes=num_nodes)
 
     # def mission_outputs(self, **kwargs):
     #     return [MoreMission.Dummy.DUMMY_FLIGHT_DURATION + '_rate']
