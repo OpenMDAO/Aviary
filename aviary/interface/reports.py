@@ -125,8 +125,17 @@ def subsystem_report(prob, **kwargs):
     reports_folder = Path(prob.get_reports_dir() / 'subsystems')
     reports_folder.mkdir(exist_ok=True)
 
+    multi_mission = prob.problem_type == ProblemType.MULTI_MISSION
+    if multi_mission:
+        for _, model in prob.aviary_groups_dict.items():
+            # TODO: We need to rewrite the reports to support multimission.
+            # For now, we are just running the reports on the first mission.
+            break
+    else:
+        model = prob.model
+
     # TODO external subsystems??
-    core_subsystems = prob.model.core_subsystems  # TODO: redo for multimissions
+    core_subsystems = model.core_subsystems  # TODO: redo for multimissions
 
     for subsystem in core_subsystems.values():
         subsystem.report(prob, reports_folder, **kwargs)
@@ -302,7 +311,7 @@ def input_check_report(prob, **kwargs):
             v for v in bare_inputs if v.startswith('mission:') or v.startswith('aircraft:')
         }
         bare_local_inputs = bare_inputs - bare_hierarchy_inputs
-        
+
         bare_hierarchy_inputs_dict[name] = bare_hierarchy_inputs
         bare_local_inputs_dict[name] = bare_local_inputs
 
