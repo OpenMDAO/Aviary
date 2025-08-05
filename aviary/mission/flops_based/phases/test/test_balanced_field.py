@@ -9,15 +9,17 @@ from aviary.variable_info.variable_meta_data import _MetaData as BaseMetaData
 from aviary.models.aircraft.advanced_single_aisle.advanced_single_aisle_data import inputs
 from aviary.utils.preprocessors import preprocess_options
 
+
 class TestTakeoffToEngineFailureTest(unittest.TestCase):
     """Test takeoff phase builder."""
 
     def test_case1(self):
-
         aviary_options = inputs.deepcopy()
 
         # This builder can be used for both takeoff and landing phases
-        aero_builder = av.CoreAerodynamicsBuilder(name='low_speed_aero', code_origin=av.LegacyCode.FLOPS)
+        aero_builder = av.CoreAerodynamicsBuilder(
+            name='low_speed_aero', code_origin=av.LegacyCode.FLOPS
+        )
 
         # fmt: off
         takeoff_subsystem_options = {
@@ -57,53 +59,98 @@ class TestTakeoffToEngineFailureTest(unittest.TestCase):
         preprocess_options(aviary_options, engine_models=engines)
         prop_builder = av.CorePropulsionBuilder(engine_models=engines)
 
+        # BRAKE RELEASE TO DECISION SPEED
         takeoff_brake_release_user_options = av.AviaryValues()
 
         takeoff_brake_release_user_options.set_val('max_duration', val=60.0, units='s')
         takeoff_brake_release_user_options.set_val('time_duration_ref', val=60.0, units='s')
         takeoff_brake_release_user_options.set_val('distance_max', val=7500.0, units='ft')
         takeoff_brake_release_user_options.set_val('max_velocity', val=167.85, units='kn')
+        takeoff_brake_release_user_options.set_val('terminal_speed', val='V1')
 
-        takeoff_brake_release_initial_guesses = av.AviaryValues()
+        tobl_nl_solver = om.NewtonSolver(solve_subsystems=True, maxiter=100, iprint=2, atol=1.0e-6, rtol=1.0e-6, debug_print=True)
+        tobl_nl_solver.linesearch = om.BoundsEnforceLS()
 
-        takeoff_brake_release_initial_guesses.set_val('time', [0.0, 30.0], 's')
-        takeoff_brake_release_initial_guesses.set_val('distance', [0.0, 4100.0], 'ft')
-        takeoff_brake_release_initial_guesses.set_val('velocity', [0.01, 150.0], 'kn')
+        takeoff_brake_release_user_options.set_val('nonlinear_solver', val=tobl_nl_solver)
+        takeoff_brake_release_user_options.set_val('linear_solver', val=om.DirectSolver())
+
+        takeoff_v1_to_vr_initial_guesses = av.AviaryValues()
+
+        takeoff_v1_to_vr_initial_guesses.set_val('time', [0.0, 30.0], 's')
+        takeoff_v1_to_vr_initial_guesses.set_val('distance', [0.0, 4100.0], 'ft')
+        takeoff_v1_to_vr_initial_guesses.set_val('velocity', [0.01, 150.0], 'kn')
 
         gross_mass_units = 'lbm'
         gross_mass = inputs.get_val(Mission.Design.GROSS_MASS, gross_mass_units)
-        takeoff_brake_release_initial_guesses.set_val('mass', gross_mass, gross_mass_units)
+        takeoff_v1_to_vr_initial_guesses.set_val('mass', gross_mass, gross_mass_units)
 
-        takeoff_brake_release_initial_guesses.set_val('throttle', 1.0)
-        takeoff_brake_release_initial_guesses.set_val('angle_of_attack', 0.0, 'deg')
+        takeoff_v1_to_vr_initial_guesses.set_val('throttle', 1.0)
+        takeoff_v1_to_vr_initial_guesses.set_val('angle_of_attack', 0.0, 'deg')
 
-        takeoff_brake_release_builder = av.DetailedTakeoffBrakeReleaseToDecisionSpeedPhaseBuilder(
-            'takeoff_brake_release',
+        takeoff_brake_release_to_decision_speed_builder = av.DetailedTakeoffPhaseBuilder(
+            'takeoff_brake_release_to_decision_speed',
             core_subsystems=[aero_builder, prop_builder],
             subsystem_options=takeoff_subsystem_options,
             user_options=takeoff_brake_release_user_options,
-            initial_guesses=takeoff_brake_release_initial_guesses,
+            initial_guesses=takeoff_v1_to_vr_initial_guesses,
         )
 
-        from aviary.models.aircraft.advanced_single_aisle.advanced_single_aisle_data import (
-            takeoff_decision_speed_builder,
-            takeoff_engine_cutback_builder,
-            takeoff_engine_cutback_to_mic_p1_builder,
-            takeoff_liftoff_builder,
-            takeoff_liftoff_user_options,
-            takeoff_mic_p1_to_climb_builder,
-            takeoff_mic_p2_builder,
-            takeoff_mic_p2_to_engine_cutback_builder,
-            takeoff_rotate_builder,
+        # DECISION SPEED TO ROTATION
+
+        takeoff_v1_to_vr_user_options = av.AviaryValues()
+
+        takeoff_v1_to_vr_user_options.set_val('max_duration', val=90.0, units='s')
+        takeoff_v1_to_vr_user_options.set_val('time_duration_ref', val=60.0, units='s')
+        takeoff_v1_to_vr_user_options.set_val('distance_max', val=15000.0, units='ft')
+        takeoff_v1_to_vr_user_options.set_val('max_velocity', val=167.85, units='kn')
+        takeoff_v1_to_vr_user_options.set_val('terminal_speed', val='VR')
+
+        nl_solver = om.NewtonSolver(solve_subsystems=True, maxiter=100, iprint=2, atol=1.0e-6, rtol=1.0e-6, debug_print=True)
+        nl_solver.linesearch = om.BoundsEnforceLS()
+
+        takeoff_v1_to_vr_user_options.set_val('nonlinear_solver', val=nl_solver)
+        takeoff_v1_to_vr_user_options.set_val('linear_solver', val=om.DirectSolver())
+
+        takeoff_v1_to_vr_initial_guesses = av.AviaryValues()
+
+        takeoff_v1_to_vr_initial_guesses.set_val('time', [30.0, 1.0], 's')
+        takeoff_v1_to_vr_initial_guesses.set_val('distance', [4100.0, 4800.0], 'ft')
+        takeoff_v1_to_vr_initial_guesses.set_val('velocity', [70., 150.0], 'kn')
+
+        gross_mass_units = 'lbm'
+        gross_mass = inputs.get_val(Mission.Design.GROSS_MASS, gross_mass_units)
+        takeoff_v1_to_vr_initial_guesses.set_val('mass', gross_mass, gross_mass_units)
+
+        takeoff_v1_to_vr_initial_guesses.set_val('throttle', 1.0)
+        takeoff_v1_to_vr_initial_guesses.set_val('angle_of_attack', 0.0, 'deg')
+
+        takeoff_decision_speed_to_rotate_builder = av.DetailedTakeoffPhaseBuilder(
+            'takeoff_decision_speed_to_rotate',
+            core_subsystems=[aero_builder, prop_builder],
+            subsystem_options=takeoff_subsystem_options,
+            user_options=takeoff_v1_to_vr_user_options,
+            initial_guesses=takeoff_v1_to_vr_initial_guesses,
         )
+
+        # from aviary.models.aircraft.advanced_single_aisle.advanced_single_aisle_data import (
+        #     takeoff_decision_speed_builder,
+        #     takeoff_engine_cutback_builder,
+        #     takeoff_engine_cutback_to_mic_p1_builder,
+        #     takeoff_liftoff_builder,
+        #     takeoff_liftoff_user_options,
+        #     takeoff_mic_p1_to_climb_builder,
+        #     takeoff_mic_p2_builder,
+        #     takeoff_mic_p2_to_engine_cutback_builder,
+        #     takeoff_rotate_builder,
+        # )
         from aviary.utils.test_utils.default_subsystems import get_default_premission_subsystems
         from aviary.variable_info.functions import setup_model_options
 
         takeoff_trajectory_builder = av.DetailedTakeoffTrajectoryBuilder('detailed_takeoff')
 
-        takeoff_trajectory_builder.set_brake_release_to_decision_speed(takeoff_brake_release_builder)
+        takeoff_trajectory_builder.set_brake_release_to_decision_speed(takeoff_brake_release_to_decision_speed_builder)
 
-        # takeoff_trajectory_builder.set_decision_speed_to_rotate(takeoff_decision_speed_builder)
+        takeoff_trajectory_builder.set_decision_speed_to_rotate(takeoff_decision_speed_to_rotate_builder)
 
         # takeoff_trajectory_builder.set_rotate_to_liftoff(takeoff_rotate_builder)
 
@@ -143,15 +190,15 @@ class TestTakeoffToEngineFailureTest(unittest.TestCase):
             aviary_options=aviary_options, model=takeoff.model, traj=traj
         )
 
-        distance_max, units = takeoff_liftoff_user_options.get_item('distance_max')
+        # distance_max, units = takeoff_liftoff_user_options.get_item('distance_max')
         # liftoff = takeoff_trajectory_builder.get_phase('takeoff_liftoff')
 
         # liftoff.add_objective(Dynamic.Mission.DISTANCE, loc='final', ref=distance_max, units=units)
 
         # Insert a constraint for a fake decision speed, until abort is added.
-        takeoff.model.add_constraint(
-            'traj.takeoff_brake_release.states:velocity', equals=149.47, units='kn', ref=150.0, indices=[-1]
-        )
+        # takeoff.model.add_constraint(
+        #     'traj.takeoff_brake_release.states:velocity', equals=149.47, units='kn', ref=150.0, indices=[-1]
+        # )
 
         # takeoff.model.add_constraint(
         #     'traj.takeoff_decision_speed.states:velocity',
@@ -184,10 +231,11 @@ class TestTakeoffToEngineFailureTest(unittest.TestCase):
 
         takeoff.run_model()
 
+        takeoff.model.list_vars(print_arrays=True)
+
         # takeoff.model.run_apply_nonlinear()
         # takeoff.model.list_vars(print_arrays=True)
-        # om.n2(takeoff.model)
-
+        om.n2(takeoff.model)
 
 
 if __name__ == '__main__':

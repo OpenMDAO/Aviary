@@ -148,6 +148,7 @@ from aviary.mission.flops_based.phases.detailed_landing_phases import (
     LandingNoseDownToStop as DetailedLandingNoseDownToStopPhaseBuilder,
 )
 from aviary.mission.flops_based.phases.detailed_takeoff_phases import (
+    DetailedTakeoffPhaseBuilder,
     TakeoffBrakeReleaseToDecisionSpeed as DetailedTakeoffBrakeReleaseToDecisionSpeedPhaseBuilder,
     TakeoffDecisionSpeedToRotate as DetailedTakeoffDecisionSpeedToRotatePhaseBuilder,
     TakeoffDecisionSpeedBrakeDelay as DetailedTakeoffDecisionSpeedBrakeDelayPhaseBuilder,

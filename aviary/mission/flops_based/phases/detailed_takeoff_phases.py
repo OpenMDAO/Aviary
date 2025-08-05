@@ -46,6 +46,7 @@ from platform import node
 
 import dymos as dm
 import openmdao.api as om
+from openmdao.solvers.solver import NonlinearSolver, LinearSolver
 
 from aviary.mission.flops_based.ode.takeoff_ode import TakeoffODE
 from aviary.mission.initial_guess_builders import (
@@ -89,7 +90,7 @@ def _init_initial_guess_meta_data(cls: PhaseBuilderBase):
     return cls
 
 
-class TakeoffBrakeReleaseToDecisionSpeedOptions(AviaryOptionsDictionary):
+class DetailedTakeoffPhaseOptions(AviaryOptionsDictionary):
     def declare_options(self):
         self.declare(
             name='max_duration',
@@ -109,6 +110,280 @@ class TakeoffBrakeReleaseToDecisionSpeedOptions(AviaryOptionsDictionary):
         self.declare(
             name='max_velocity', default=100.0, units='ft/s', desc='Upper bound for velocity.'
         )
+
+        self.declare(
+            name='terminal_speed',
+            types=(float, int, str),
+            allow_none=True,
+            default=None,
+            desc='true airspeed at which this phase terminates. One of "VEF", "VR", "V1", or a literal value in knots.',
+        )
+
+        self.declare(
+            name='pitch_control',
+            values=['alpha_fixed', 'alpha_rate'],
+            default='alpha_fixed',
+            desc='Specifies whether alpha is controled as a fixed value or as a state with a fixed rate.',
+        )
+
+        self.declare(
+            name='nonlinear_solver',
+            types=(NonlinearSolver,),
+            allow_none=True,
+            default=None,
+            desc='Nonlinear solver applied to the phase if it needs to solve for the terminal speed condition.',
+        )
+
+        self.declare(
+            name='linear_solver',
+            types=(LinearSolver,),
+            allow_none=True,
+            default=None,
+            desc='Linear solver applied to the phase if it needs to solve for the terminal speed condition.',
+        )
+
+
+@_init_initial_guess_meta_data
+class DetailedTakeoffPhaseBuilder(PhaseBuilderBase):
+    """
+    Define a phase builder for detailed takeoff phases.
+
+    Attributes
+    ----------
+    name : str ('takeoff_brake_release')
+        object label
+
+    user_options : AviaryValues (<empty>)
+        state/path constraint values and flags
+
+        supported options:
+            - max_duration (1000.0, 's')
+            - time_duration_ref (10.0, 's')
+            - distance_max (1000.0, 'ft')
+            - max_velocity (100.0, 'ft/s')
+
+    initial_guesses : AviaryValues (<empty>)
+        state/path beginning values to be set on the problem
+
+        supported options:
+            - time
+            - range
+            - velocity
+            - mass
+            - throttle
+            - angle_of_attack
+
+    ode_class : type (None)
+        advanced: the type of system defining the ODE
+
+    transcription : "Dymos transcription object" (None)
+        advanced: an object providing the transcription technique of the
+        optimal control problem
+
+    default_name : str
+        class attribute: derived type customization point; the default value
+        for name
+
+    default_ode_class : type
+        class attribute: derived type customization point; the default value
+        for ode_class used by build_phase
+
+    Methods
+    -------
+    build_phase
+    make_default_transcription
+    """
+
+    __slots__ = ()
+
+    default_name = 'detailed_takeoff'
+    default_ode_class = TakeoffODE
+    default_options_class = DetailedTakeoffPhaseOptions
+
+    def build_phase(self, aviary_options=None):
+        """
+        Return a new phase object for analysis using these constraints.
+
+        If ode_class is None, default_ode_class is used.
+
+        If transcription is None, the return value from calling
+        make_default_transcription is used.
+
+        Parameters
+        ----------
+        aviary_options : AviaryValues (empty)
+            collection of Aircraft/Mission specific options
+
+        Returns
+        -------
+        dymos.Phase
+        """
+        phase: dm.Phase = super().build_phase(aviary_options)
+
+        user_options: AviaryValues = self.user_options
+
+        max_duration, units = user_options['max_duration']
+        duration_ref = user_options.get_val('time_duration_ref', units)
+
+        phase.set_time_options(
+            fix_initial=True,
+            duration_bounds=(0.1, max_duration),
+            duration_ref=duration_ref,
+            units=units,
+        )
+
+        distance_max, units = user_options['distance_max']
+
+        phase.add_state(
+            Dynamic.Mission.DISTANCE,
+            fix_initial=True,
+            lower=0,
+            ref=distance_max,
+            defect_ref=distance_max,
+            units=units,
+            upper=distance_max,
+            rate_source=Dynamic.Mission.DISTANCE_RATE,
+        )
+
+        max_velocity, units = user_options['max_velocity']
+
+        phase.add_state(
+            Dynamic.Mission.VELOCITY,
+            fix_initial=True,
+            lower=0,
+            ref=max_velocity,
+            defect_ref=max_velocity,
+            units=units,
+            upper=max_velocity,
+            rate_source=Dynamic.Mission.VELOCITY_RATE,
+        )
+
+        phase.add_state(
+            Dynamic.Vehicle.MASS,
+            fix_initial=True,
+            fix_final=False,
+            lower=0.0,
+            upper=1e9,
+            ref=5e4,
+            units='kg',
+            rate_source=Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
+            targets=Dynamic.Vehicle.MASS,
+        )
+
+        # TODO: Energy phase places this under an if num_engines > 0.
+        phase.add_control(
+            Dynamic.Vehicle.Propulsion.THROTTLE,
+            targets=Dynamic.Vehicle.Propulsion.THROTTLE,
+            units='unitless',
+            opt=False,
+        )
+
+        if user_options['pitch_control'] == 'alpha_fixed':
+            phase.add_parameter(Dynamic.Vehicle.ANGLE_OF_ATTACK, val=0.0, opt=False, units='deg')
+        elif user_options['pitch_control'] == 'alpha_rate':
+            phase.add_state(
+                Dynamic.Vehicle.ANGLE_OF_ATTACK,
+                fix_initial=True,
+                fix_final=False,
+                lower=-14,
+                upper=14,
+                ref=1.0,
+                units='deg',
+                rate_source=Dynamic.Vehicle.ANGLE_OF_ATTACK_RATE,
+                targets=Dynamic.Vehicle.ANGLE_OF_ATTACK,
+            )
+
+        phase.add_timeseries_output(
+            Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
+            output_name=Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
+            units='lbf',
+        )
+
+        phase.add_timeseries_output(
+            Dynamic.Vehicle.DRAG, output_name=Dynamic.Vehicle.DRAG, units='lbf'
+        )
+
+        # Define velocity to go based on definition of terminal speed, if applicable.
+        terminal_speed = user_options['terminal_speed']
+        if terminal_speed == 'V1':
+            # Propagate until speed is the decision speed.
+            # In balanced field applications, dV1 will be
+            # set such that a rejected takeoff and a
+            # takeoff to a 35 ft altitude for obstacle clearance
+            # require the same range.
+            phase.add_calc_expr(
+                'v_to_go = velocity - (dV1 + v_stall)',
+                velocity={'units': 'kn'},
+                dv1={'units': 'kn'},
+                v_to_go={'units': 'kn'},
+            )
+            v_to_go_calc = True
+        elif terminal_speed == 'VR':
+            # Propagate until speed is the rotation speed.
+            phase.add_calc_expr(
+                'v_to_go = velocity - (dVR + dV1 + v_stall)',
+                velocity={'units': 'kn'},
+                dv1={'units': 'kn'},
+                dVR={'units': 'kn'},
+                v_to_go={'units': 'kn'},
+            )
+            v_to_go_calc = True
+        elif terminal_speed == 'VEF':
+            # Propagate until engine failure.
+            # Note we expect dVEF to be negative here.
+            # In balanced field applications, dVEF will be set
+            # such that it occurs {pilot_reaction_time} seconds
+            # before V1.
+            phase.add_calc_expr(
+                'v_to_go = velocity - (dVEF + dV1 + v_stall)',
+                velocity={'units': 'kn'},
+                dv1={'units': 'kn'},
+                dVEF={'units': 'kn'},
+                v_to_go={'units': 'kn'},
+            )
+            v_to_go_calc = True
+        elif isinstance(terminal_speed, (float, int)):
+            # Propagate until velocity is the desired literal value.
+            phase.add_boundary_balance(
+                param='t_duration', name='velocity', tgt_val=terminal_speed, loc='final'
+            )
+            phase.options['auto_order'] = True
+        elif terminal_speed is None:
+            # Propagate for t_duration
+            pass
+        else:
+            raise ValueError(
+                f'Unrecognized value for terminal_speed ({terminal_speed}).'
+                'Must be one of "VEF", "VR", "V1" or a literal numerical value.'
+            )
+
+        if v_to_go_calc:
+            phase.add_boundary_balance(param='t_duration', name='v_to_go', tgt_val=0.0, loc='final')
+            phase.options['auto_order'] = True
+
+        if user_options['nonlinear_solver'] is not None:
+            phase.nonlinear_solver = user_options['nonlinear_solver']
+
+        if user_options['linear_solver'] is not None:
+            phase.linear_solver = user_options['linear_solver']
+
+        return phase
+
+    def make_default_transcription(self):
+        """Return a transcription object to be used by default in build_phase."""
+        transcription = dm.Radau(num_segments=3, order=3, compressed=True)
+        transcription = dm.PicardShooting(num_segments=1, nodes_per_seg=10)
+
+        return transcription
+
+    def _extra_ode_init_kwargs(self):
+        """Return extra kwargs required for initializing the ODE."""
+        return {'climbing': False, 'friction_key': Mission.Takeoff.ROLLING_FRICTION_COEFFICIENT}
+
+
+DetailedTakeoffPhaseBuilder._add_initial_guess_meta_data(
+    InitialGuessParameter(Dynamic.Vehicle.ANGLE_OF_ATTACK)
+)
 
 
 @_init_initial_guess_meta_data
@@ -168,7 +443,7 @@ class TakeoffBrakeReleaseToDecisionSpeed(PhaseBuilderBase):
 
     default_name = 'takeoff_brake_release'
     default_ode_class = TakeoffODE
-    default_options_class = TakeoffBrakeReleaseToDecisionSpeedOptions
+    default_options_class = DetailedTakeoffPhaseOptions
 
     def build_phase(self, aviary_options=None):
         """
@@ -197,7 +472,7 @@ class TakeoffBrakeReleaseToDecisionSpeed(PhaseBuilderBase):
 
         phase.set_time_options(
             fix_initial=True,
-            duration_bounds=(1, max_duration),
+            duration_bounds=(0.1, max_duration),
             duration_ref=duration_ref,
             units=units,
         )
@@ -260,16 +535,69 @@ class TakeoffBrakeReleaseToDecisionSpeed(PhaseBuilderBase):
             Dynamic.Vehicle.DRAG, output_name=Dynamic.Vehicle.DRAG, units='lbf'
         )
 
-        phase.add_calc_expr('v_to_go = velocity - (dV1 + v_stall)',
-                            v={'units': 'kn'},
-                            dv1={'units': 'kn'},
-                            v_to_go={'units': 'kn'})
-        phase.add_boundary_balance(param='t_duration', name='v_to_go', tgt_val=0.0, loc='final')
+        # Define velocity to go based on definition of terminal speed, if applicable.
+        terminal_speed = user_options['terminal_speed']
+        if terminal_speed == 'V1':
+            # Propagate until speed is the decision speed.
+            # In balanced field applications, dV1 will be
+            # set such that a rejected takeoff and a
+            # takeoff to a 35 ft altitude for obstacle clearance
+            # require the same range.
+            phase.add_calc_expr(
+                'v_to_go = velocity - (dV1 + v_stall)',
+                velocity={'units': 'kn'},
+                dv1={'units': 'kn'},
+                v_to_go={'units': 'kn'},
+            )
+            v_to_go_calc = True
+        elif terminal_speed == 'VR':
+            # Propagate until speed is the rotation speed.
+            phase.add_calc_expr(
+                'v_to_go = velocity - (dVR + dV1 + v_stall)',
+                velocity={'units': 'kn'},
+                dv1={'units': 'kn'},
+                dVR={'units': 'kn'},
+                v_to_go={'units': 'kn'},
+            )
+            v_to_go_calc = True
+        elif terminal_speed == 'VEF':
+            # Propagate until engine failure.
+            # Note we expect dVEF to be negative here.
+            # In balanced field applications, dVEF will be set
+            # such that it occurs {pilot_reaction_time} seconds
+            # before V1.
+            phase.add_calc_expr(
+                'v_to_go = velocity - (dVEF + dV1 + v_stall)',
+                velocity={'units': 'kn'},
+                dv1={'units': 'kn'},
+                dVEF={'units': 'kn'},
+                v_to_go={'units': 'kn'},
+            )
+            v_to_go_calc = True
+        elif isinstance(terminal_speed, (float, int)):
+            # Propagate until velocity is the desired literal value.
+            phase.add_boundary_balance(
+                param='t_duration', name='velocity', tgt_val=terminal_speed, loc='final'
+            )
+            phase.options['auto_order'] = True
+        elif terminal_speed is None:
+            # Propagate for t_duration
+            pass
+        else:
+            raise ValueError(
+                f'Unrecognized value for terminal_speed ({terminal_speed}).'
+                'Must be one of "VEF", "VR", "V1" or a literal numerical value.'
+            )
 
-        phase.options['auto_order'] = True
-        phase.nonlinear_solver = om.NewtonSolver(solve_subsystems=True, maxiter=100, iprint=2, atol=1.0E-6, rtol=1.0E-6, debug_print=True)
-        phase.nonlinear_solver.linesearch = om.BoundsEnforceLS()
-        phase.linear_solver = om.DirectSolver()
+        if v_to_go_calc:
+            phase.add_boundary_balance(param='t_duration', name='v_to_go', tgt_val=0.0, loc='final')
+            phase.options['auto_order'] = True
+
+        if user_options['nonlinear_solver'] is not None:
+            phase.nonlinear_solver = user_options['nonlinear_solver']
+
+        if user_options['linear_solver'] is not None:
+            phase.linear_solver = user_options['linear_solver']
 
         return phase
 
@@ -288,6 +616,7 @@ class TakeoffBrakeReleaseToDecisionSpeed(PhaseBuilderBase):
 TakeoffBrakeReleaseToDecisionSpeed._add_initial_guess_meta_data(
     InitialGuessParameter(Dynamic.Vehicle.ANGLE_OF_ATTACK)
 )
+
 
 @_init_initial_guess_meta_data
 class TakeoffBrakeReleaseToEngineFailure(PhaseBuilderBase):
@@ -346,7 +675,7 @@ class TakeoffBrakeReleaseToEngineFailure(PhaseBuilderBase):
 
     default_name = 'takeoff_to_engine_failure'
     default_ode_class = TakeoffODE
-    default_options_class = TakeoffBrakeReleaseToDecisionSpeedOptions
+    default_options_class = DetailedTakeoffPhaseOptions
 
     def build_phase(self, aviary_options=None):
         """
@@ -375,7 +704,7 @@ class TakeoffBrakeReleaseToEngineFailure(PhaseBuilderBase):
 
         phase.set_time_options(
             fix_initial=True,
-            duration_bounds=(1, max_duration),
+            duration_bounds=(0.1, max_duration),
             duration_ref=duration_ref,
             units=units,
         )
@@ -432,10 +761,9 @@ class TakeoffBrakeReleaseToEngineFailure(PhaseBuilderBase):
         phase.add_parameter(Dynamic.Vehicle.ANGLE_OF_ATTACK, val=0.0, opt=False, units='deg')
 
         phase.add_parameter('v_ef', val=100.0, opt=False, units='kn')
-        phase.add_calc_expr('v_to_go = v - v_ef',
-                                v={'units': 'kn'},
-                                v_ef={'units': 'kn'},
-                                v_to_go={'units': 'kn'})
+        phase.add_calc_expr(
+            'v_to_go = v - v_ef', v={'units': 'kn'}, v_ef={'units': 'kn'}, v_to_go={'units': 'kn'}
+        )
         phase.add_boundary_balance(param='t_duration', name='v_to_go', tgt_val=0.0, loc='final')
 
         phase.add_timeseries_output(
@@ -583,8 +911,8 @@ class TakeoffDecisionSpeedToRotate(PhaseBuilderBase):
 
         phase.set_time_options(
             fix_initial=False,
-            duration_bounds=(1, max_duration),
-            initial_bounds=(1, initial_ref),
+            duration_bounds=(0.1, max_duration),
+            initial_bounds=(0.1, initial_ref),
             duration_ref=duration_ref,
             initial_ref=initial_ref,
             units=units,
@@ -914,8 +1242,8 @@ class TakeoffRotateToLiftoff(PhaseBuilderBase):
 
         phase.set_time_options(
             fix_initial=False,
-            duration_bounds=(1, max_duration),
-            initial_bounds=(1, initial_ref),
+            duration_bounds=(0.1, max_duration),
+            initial_bounds=(0.1, initial_ref),
             duration_ref=duration_ref,
             initial_ref=initial_ref,
             units=units,
@@ -1169,8 +1497,8 @@ class TakeoffLiftoffToObstacle(PhaseBuilderBase):
 
         phase.set_time_options(
             fix_initial=False,
-            duration_bounds=(1, max_duration),
-            initial_bounds=(1, initial_ref),
+            duration_bounds=(0.1, max_duration),
+            initial_bounds=(0.1, initial_ref),
             duration_ref=duration_ref,
             initial_ref=initial_ref,
             units=units,
@@ -1481,8 +1809,8 @@ class TakeoffObstacleToMicP2(PhaseBuilderBase):
 
         phase.set_time_options(
             fix_initial=False,
-            duration_bounds=(1, max_duration),
-            initial_bounds=(1, initial_ref),
+            duration_bounds=(0.1, max_duration),
+            initial_bounds=(0.1, initial_ref),
             duration_ref=duration_ref,
             initial_ref=initial_ref,
             units=units,
@@ -1785,8 +2113,8 @@ class TakeoffMicP2ToEngineCutback(PhaseBuilderBase):
 
         phase.set_time_options(
             fix_initial=False,
-            duration_bounds=(1, max_duration),
-            initial_bounds=(1, initial_ref),
+            duration_bounds=(0.1, max_duration),
+            initial_bounds=(0.1, initial_ref),
             duration_ref=duration_ref,
             initial_ref=initial_ref,
             units=units,
@@ -2357,8 +2685,8 @@ class TakeoffEngineCutbackToMicP1(PhaseBuilderBase):
 
         phase.set_time_options(
             fix_initial=False,
-            duration_bounds=(1, max_duration),
-            initial_bounds=(1, initial_ref),
+            duration_bounds=(0.1, max_duration),
+            initial_bounds=(0.1, initial_ref),
             duration_ref=duration_ref,
             initial_ref=initial_ref,
             units=units,
@@ -2657,8 +2985,8 @@ class TakeoffMicP1ToClimb(PhaseBuilderBase):
 
         phase.set_time_options(
             fix_initial=False,
-            duration_bounds=(1, max_duration),
-            initial_bounds=(1, initial_ref),
+            duration_bounds=(0.1, max_duration),
+            initial_bounds=(0.1, initial_ref),
             duration_ref=duration_ref,
             initial_ref=initial_ref,
             units=units,
@@ -2912,8 +3240,8 @@ class TakeoffBrakeToAbort(PhaseBuilderBase):
 
         phase.set_time_options(
             fix_initial=False,
-            duration_bounds=(1, max_duration),
-            initial_bounds=(1, initial_ref),
+            duration_bounds=(0.1, max_duration),
+            initial_bounds=(0.1, initial_ref),
             duration_ref=duration_ref,
             initial_ref=initial_ref,
             units=units,
@@ -3004,7 +3332,7 @@ class TakeoffTrajectory:
 
         self.name = name
 
-        self._brake_release_to_decision_speed = None
+        # self._brake_release_to_decision_speed = None
         self._decision_speed_to_rotate = None
         self._rotate_to_liftoff = None
         self._liftoff_to_obstacle = None
@@ -3235,7 +3563,7 @@ class TakeoffTrajectory:
 
         self._add_phase(self._brake_release_to_decision_speed, aviary_options)
 
-        # self._add_phase(self._decision_speed_to_rotate, aviary_options)
+        self._add_phase(self._decision_speed_to_rotate, aviary_options)
 
         # self._add_phase(self._rotate_to_liftoff, aviary_options)
 
@@ -3264,14 +3592,13 @@ class TakeoffTrajectory:
     def _link_phases(self):
         traj: dm.Trajectory = self._traj
 
-        # brake_release_name = self._brake_release_to_decision_speed.name
-        # decision_speed_name = self._decision_speed_to_rotate.name
-
-        # basic_vars = ['time', 'distance', 'velocity', 'mass']
-
-        # traj.link_phases([brake_release_name, decision_speed_name], vars=basic_vars)
-
+        brake_release_name = self._brake_release_to_decision_speed.name
+        decision_speed_name = self._decision_speed_to_rotate.name
         # rotate_name = self._rotate_to_liftoff.name
+
+        basic_vars = ['time', 'distance', 'velocity', 'mass']
+
+        traj.link_phases([brake_release_name, decision_speed_name], vars=basic_vars, connected=True)
 
         # ext_vars = basic_vars + ['angle_of_attack']
 
