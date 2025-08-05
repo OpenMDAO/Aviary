@@ -88,7 +88,7 @@ prob.add_driver(Optimizer, max_iter=50)
 prob.setup()
 
 # set_val goes here if needed
-prob.check_and_preprocess_inputs()
+prob.set_initial_guesses()
 
 # Ensure that design_range is the same for similar aircraft to ensure that navigation gear is designed similarly
 prob.set_design_range(('mission1', 'mission2'), range='Aircraft1:RANGE')
