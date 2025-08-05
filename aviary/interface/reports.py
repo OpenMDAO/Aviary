@@ -252,8 +252,7 @@ def mission_report(prob, **kwargs):
             totals = all_totals[name]
 
             if multi_mission:
-                f.write('\n\n\n# MULTIMISSION')
-                f.write(f'# {name}\n\n')
+                f.write('\n\n\n# MULTIMISSION: {name}\n\n')
 
             f.write('# MISSION SUMMARY')
             write_markdown_variable_table(
@@ -302,43 +301,46 @@ def input_check_report(prob, **kwargs):
     else:
         models = {prob._name: prob.model}
 
-    bare_hierarchy_inputs_dict = {}
-    bare_local_inputs_dict = {}
+    # a change in OpenMDAO 3.38.1-dev adds a resolver in place of the prom2abs/abs2prom attributes
+    try:
+        resolver = prob.model._resolver
 
+        def prom2abs(prom_name):
+            return resolver.absnames(prom_name, 'input')
+
+        def abs2prom(abs_name):
+            return resolver.abs2prom(abs_name, 'input')
+
+    except AttributeError:
+
+        def prom2abs(prom_name):
+            return prob.model._var_allprocs_prom2abs_list['input'][prom_name]
+
+        def abs2prom(abs_name):
+            return prob.model._var_allprocs_abs2prom['input'][abs_name]
+
+    # Find all unconnected inputs.
+    all_ivc_abs = [k for k, v in prob.model._conn_abs_in2out.items() if 'ivc' in v]
+    all_ivc_prom = [abs2prom(v) for v in all_ivc_abs]
+    aviary_metadata = prob.meta_data
+
+    bare_inputs = all_ivc_prom
     for name, model in models.items():
 
-        # a change in OpenMDAO 3.38.1-dev adds a resolver in place of the prom2abs/abs2prom attributes
-        try:
-            resolver = model._resolver
+        if multi_mission:
+            aviary_inputs = model.aviary_inputs
+        else:
+            aviary_inputs = prob.aviary_inputs
 
-            def prom2abs(prom_name):
-                return resolver.absnames(prom_name, 'input')
+        bare_inputs = {v for v in bare_inputs if v not in aviary_inputs}
+        if multi_mission:
+            bare_inputs = {v for v in bare_inputs if v.lstrip(f'{name}.') not in aviary_inputs}
 
-            def abs2prom(abs_name):
-                return resolver.abs2prom(abs_name, 'input')
-
-        except AttributeError:
-
-            def prom2abs(prom_name):
-                return model._var_allprocs_prom2abs_list['input'][prom_name]
-
-            def abs2prom(abs_name):
-                return model._var_allprocs_abs2prom['input'][abs_name]
-
-        # Find all unconnected inputs.
-        all_ivc_abs = [k for k, v in model._conn_abs_in2out.items() if 'ivc' in v]
-        all_ivc_prom = [abs2prom(v) for v in all_ivc_abs]
-
-        aviary_metadata = prob.meta_data
-        aviary_inputs = prob.aviary_inputs
-        bare_inputs = {v for v in all_ivc_prom if v not in aviary_inputs}
-        bare_hierarchy_inputs = {
-            v for v in bare_inputs if v.startswith('mission:') or v.startswith('aircraft:')
-        }
-        bare_local_inputs = bare_inputs - bare_hierarchy_inputs
-
-        bare_hierarchy_inputs_dict[name] = bare_hierarchy_inputs
-        bare_local_inputs_dict[name] = bare_local_inputs
+    bare_hierarchy_inputs = {
+        v for v in bare_inputs if v.startswith('mission:') or v.startswith('aircraft:') or
+        '.mission:' in v or '.aircraft:' in v
+    }
+    bare_local_inputs = bare_inputs - bare_hierarchy_inputs
 
     # There are no more collective calls, so we can exit.
     if MPI and prob.comm.rank != 0:
@@ -346,65 +348,61 @@ def input_check_report(prob, **kwargs):
 
     with open(report_file, mode='w') as f:
 
-        for name, model in models.items():
+        f.write('# Unspecified Hierarchy Variables\n')
+        f.write(
+            'These aviary inputs are unspecified in aviary_inputs, and may be using default values '
+            'defined in the Aviary metadata.\n\n'
+        )
 
-            if multi_mission:
-                f.write('\n\n\n# Multimission')
-                f.write(f'# {name}\n\n')
+        if bare_hierarchy_inputs:
+            f.write('| Name | Value | Units | Description | Absolute Paths\n')
+            f.write('| :- |  :- |  :- | :- | :- |\n')
 
-            f.write('# Unspecified Hierarchy Variables\n')
-            f.write(
-                'These aviary inputs are unspecified in aviary_inputs, and may be using default values '
-                'defined in the Aviary metadata.\n\n'
-            )
-
-            bare_hierarchy_inputs = bare_hierarchy_inputs_dict[name]
-            bare_local_inputs = bare_local_inputs_dict[name]
-
-            if bare_hierarchy_inputs:
-                f.write('| Name | Value | Units | Description | Absolute Paths\n')
-                f.write('| :- |  :- |  :- | :- | :- |\n')
-
-                for var in sorted(bare_hierarchy_inputs):
-                    metadata = aviary_metadata.get(var)
+            for var in sorted(bare_hierarchy_inputs):
+                metadata = aviary_metadata.get(var)
+                try:
                     units = metadata['units']
-                    val = model.get_val(var, units=units)
-                    desc = metadata['desc']
-                    abs_paths = prom2abs(var)
+                except:
+                    metadata = aviary_metadata.get(var.split('.')[-1])
+                    units = metadata['units']
 
-                    f.write(f'| **{var}** | {val} | {units} | {desc} | {abs_paths}|\n')
+                val = prob.model.get_val(var, units=units)
+                desc = metadata['desc']
+                abs_paths = prom2abs(var)
 
-                f.write('\n')
+                f.write(f'| **{var}** | {val} | {units} | {desc} | {abs_paths}|\n')
 
-            else:
-                f.write('None\n')
+            f.write('\n')
 
-            f.write('# Unspecified Local Variables\n')
-            f.write(
-                'These local subsystem inputs are unconnected, and may be using default '
-                'values specified in the component.\n\n'
-            )
+        else:
+            f.write('None\n')
 
-            if bare_local_inputs:
-                f.write('| Name | Value | Units | Absolute Paths\n')
-                f.write('| :- |  :- |  :- | :- |\n')
+        f.write('# Unspecified Local Variables\n')
+        f.write(
+            'These local subsystem inputs are unconnected, and may be using default '
+            'values specified in the component.\n\n'
+        )
 
-                for var in sorted(bare_local_inputs):
-                    # Filter out dymos internals.
-                    if var.startswith('traj') and '.rhs_all.' not in var:
-                        continue
+        if bare_local_inputs:
+            f.write('| Name | Value | Units | Absolute Paths\n')
+            f.write('| :- |  :- |  :- | :- |\n')
 
-                    abs_paths = prom2abs(var)
-                    val = model.get_val(var)
-                    meta = model._var_allprocs_abs2meta['input'][abs_paths[0]]
-                    units = meta['units']
+            for var in sorted(bare_local_inputs):
+                # Filter out dymos internals.
+                if var.startswith('traj') and '.rhs_all.' not in var:
+                    continue
 
-                    f.write(f'| **{var}** | {val} | {units} | {abs_paths}|\n')
+                abs_paths = prom2abs(var)
+                val = prob.model.get_val(var)
+                meta = prob.model._var_allprocs_abs2meta['input'][abs_paths[0]]
+                units = meta['units']
 
-                f.write('\n\n')
+                f.write(f'| **{var}** | {val} | {units} | {abs_paths}|\n')
 
-            else:
-                f.write('None')
+            f.write('\n\n')
+
+        else:
+            f.write('None')
 
 
 def timeseries_csv(prob, **kwargs):
