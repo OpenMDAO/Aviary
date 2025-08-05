@@ -3,7 +3,7 @@ from math import floor, log10
 import numpy as np
 import warnings
 
-from aviary.variable_info.enums import ProblemType, Verbosity
+from aviary.variable_info.enums import Verbosity
 
 # TODO openMDAO has generate_table() that might be able to replace this
 
@@ -49,7 +49,7 @@ def round_it(x, sig=None):
         return 0
 
 
-def write_markdown_variable_table(open_file, prob, outputs, metadata):
+def write_markdown_variable_table(open_file, problem, outputs, metadata):
     """
     Writes a table of the provided variable names in outputs. Converts units to defaults
     from metadata if available.
@@ -58,21 +58,13 @@ def write_markdown_variable_table(open_file, prob, outputs, metadata):
     ----------
     open_file : Path
         The output file to be written to. This file should have been opened for writing.
-    prob : AviaryProblem
-        The AviaryProblem used to generate this report.
+    problem : dict
+        The dictionary that contains the data.
     outputs : List
         The list of keywords that will go to outputs file.
     metadata : dict
         The dictionary that contains the metadata of the data with desired units.
     """
-
-    multi_mission = prob.problem_type == ProblemType.MULTI_MISSION
-    if multi_mission:
-        models = prob.aviary_groups_dict
-    else:
-        models = {prob._name: prob.model}
-
-
     open_file.write('\n| Variable Name | Value | Units |\n')
     open_file.write('| :- | :- | :- |\n')
     for var_name in outputs:

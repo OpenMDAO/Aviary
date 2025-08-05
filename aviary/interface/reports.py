@@ -80,7 +80,7 @@ def run_status(prob):
     prob : AviaryProblem
         The AviaryProblem used to generate this report
     """
-    if MPI and MPI.COMM_WORLD.rank != 0:
+    if MPI and prob.comm.rank != 0:
         return
 
     reports_folder = Path(prob.get_reports_dir())
@@ -131,6 +131,7 @@ def subsystem_report(prob, **kwargs):
             # TODO: We need to rewrite the reports to support multimission.
             # For now, we are just running the reports on the first mission.
             break
+        prob = model
     else:
         model = prob.model
 
@@ -151,9 +152,9 @@ def mission_report(prob, **kwargs):
         The AviaryProblem used to generate this report
     """
 
-    def _get_phase_value(traj, phase, var_name, units, indices=None):
+    def _get_phase_value(model, traj, phase, var_name, units, indices=None):
         try:
-            vals = prob.get_val(
+            vals = model.get_val(
                 f'{traj}.{phase}.timeseries.{var_name}',
                 units=units,
                 indices=indices,
@@ -161,7 +162,7 @@ def mission_report(prob, **kwargs):
             )
         except KeyError:
             try:
-                vals = prob.get_val(
+                vals = model.get_val(
                     f'{traj}.{phase}.{var_name}',
                     units=units,
                     indices=indices,
@@ -169,7 +170,7 @@ def mission_report(prob, **kwargs):
                 )
             # 2DOF breguet range cruise uses time integration to track mass
             except TypeError:
-                vals = prob.get_val(
+                vals = model.get_val(
                     f'{traj}.{phase}.timeseries.time',
                     units=units,
                     indices=indices,
@@ -180,8 +181,8 @@ def mission_report(prob, **kwargs):
 
         return vals
 
-    def _get_phase_diff(traj, phase, var_name, units, indices=[0, -1]):
-        vals = _get_phase_value(traj, phase, var_name, units, indices)
+    def _get_phase_diff(model, traj, phase, var_name, units, indices=[0, -1]):
+        vals = _get_phase_value(model, traj, phase, var_name, units, indices)
 
         if vals is not None:
             diff = vals[-1] - vals[0]
@@ -194,67 +195,91 @@ def mission_report(prob, **kwargs):
     reports_folder = Path(prob.get_reports_dir())
     report_file = reports_folder / 'mission_summary.md'
 
-    # read per-phase data from trajectory
-    data = {}
-    for idx, phase in enumerate(prob.model.phase_info):  # TODO: redo for multimissions
-        # TODO for traj in trajectories, currently assuming single one named "traj"
-        # TODO delta mass and fuel consumption need to be tracked separately
-        fuel_burn = _get_phase_diff('traj', phase, 'mass', 'lbm', [-1, 0])
-        time = _get_phase_diff('traj', phase, 't', 'min')
-        range = _get_phase_diff('traj', phase, 'distance', 'nmi')
+    multi_mission = prob.problem_type == ProblemType.MULTI_MISSION
+    if multi_mission:
+        models = prob.aviary_groups_dict
+    else:
+        models = {prob._name: prob.model}
 
-        # get initial values, first in traj
-        if idx == 0:
-            initial_mass = _get_phase_value('traj', phase, 'mass', 'lbm', 0)[0]
-            initial_time = _get_phase_value('traj', phase, 't', 'min', 0)
-            initial_range = _get_phase_value('traj', phase, 'distance', 'nmi', 0)[0]
+    all_data = {}
+    all_totals = {}
+    for name, model in models.items():
 
-        outputs = NamedValues()
-        # Fuel burn is negative of delta mass
-        outputs.set_val('Fuel Burn', fuel_burn, 'lbm')
-        outputs.set_val('Elapsed Time', time, 'min')
-        outputs.set_val('Ground Distance', range, 'nmi')
-        data[phase] = outputs
+        # read per-phase data from trajectory
+        data = {}
+        for idx, phase in enumerate(model.phase_info):  # TODO: redo for multimissions
+            # TODO for traj in trajectories, currently assuming single one named "traj"
+            # TODO delta mass and fuel consumption need to be tracked separately
+            fuel_burn = _get_phase_diff(model, 'traj', phase, 'mass', 'lbm', [-1, 0])
+            time = _get_phase_diff(model, 'traj', phase, 't', 'min')
+            range = _get_phase_diff(model, 'traj', phase, 'distance', 'nmi')
 
-        # get final values, last in traj
-        final_mass = _get_phase_value('traj', phase, 'mass', 'lbm', -1)[0]
-        final_time = _get_phase_value('traj', phase, 't', 'min', -1)
-        final_range = _get_phase_value('traj', phase, 'distance', 'nmi', -1)[0]
+            # get initial values, first in traj
+            if idx == 0:
+                initial_mass = _get_phase_value(model, 'traj', phase, 'mass', 'lbm', 0)[0]
+                initial_time = _get_phase_value(model, 'traj', phase, 't', 'min', 0)
+                initial_range = _get_phase_value(model, 'traj', phase, 'distance', 'nmi', 0)[0]
 
-    totals = NamedValues()
-    totals.set_val('Total Fuel Burn', initial_mass - final_mass, 'lbm')
-    totals.set_val('Total Time', final_time - initial_time, 'min')
-    totals.set_val('Total Ground Distance', final_range - initial_range, 'nmi')
+            outputs = NamedValues()
+            # Fuel burn is negative of delta mass
+            outputs.set_val('Fuel Burn', fuel_burn, 'lbm')
+            outputs.set_val('Elapsed Time', time, 'min')
+            outputs.set_val('Ground Distance', range, 'nmi')
+            data[phase] = outputs
 
-    if MPI and MPI.COMM_WORLD.rank != 0:
+            # get final values, last in traj
+            final_mass = _get_phase_value(model, 'traj', phase, 'mass', 'lbm', -1)[0]
+            final_time = _get_phase_value(model, 'traj', phase, 't', 'min', -1)
+            final_range = _get_phase_value(model, 'traj', phase, 'distance', 'nmi', -1)[0]
+
+        totals = NamedValues()
+        totals.set_val('Total Fuel Burn', initial_mass - final_mass, 'lbm')
+        totals.set_val('Total Time', final_time - initial_time, 'min')
+        totals.set_val('Total Ground Distance', final_range - initial_range, 'nmi')
+
+        all_data[name] = data
+        all_totals[name] = totals
+
+    if MPI and prob.comm.rank != 0:
+        # All collective calls are completed. We only output on rank 0.
         return
 
     with open(report_file, mode='w') as f:
-        f.write('# MISSION SUMMARY')
-        write_markdown_variable_table(
-            f,
-            totals,
-            ['Total Fuel Burn', 'Total Time', 'Total Ground Distance'],
-            {
-                'Total Fuel Burn': {'units': 'lbm'},
-                'Total Time': {'units': 'min'},
-                'Total Ground Distance': {'units': 'nmi'},
-            },
-        )
 
-        f.write('\n# MISSION SEGMENTS')
-        for phase in data:
-            f.write(f'\n## {phase}')
+        for name, model in models.items():
+
+            data = all_data[name]
+            totals = all_totals[name]
+
+            if multi_mission:
+                f.write('\n\n\n# MULTIMISSION')
+                f.write(f'# {name}\n\n')
+
+            f.write('# MISSION SUMMARY')
             write_markdown_variable_table(
                 f,
-                data[phase],
-                ['Fuel Burn', 'Elapsed Time', 'Ground Distance'],
+                totals,
+                ['Total Fuel Burn', 'Total Time', 'Total Ground Distance'],
                 {
-                    'Fuel Burn': {'units': 'lbm'},
-                    'Elapsed Time': {'units': 'min'},
-                    'Ground Distance': {'units': 'nmi'},
+                    'Total Fuel Burn': {'units': 'lbm'},
+                    'Total Time': {'units': 'min'},
+                    'Total Ground Distance': {'units': 'nmi'},
                 },
             )
+
+            f.write('\n# MISSION SEGMENTS')
+            for phase in data:
+                f.write(f'\n## {phase}')
+                write_markdown_variable_table(
+                    f,
+                    data[phase],
+                    ['Fuel Burn', 'Elapsed Time', 'Ground Distance'],
+                    {
+                        'Fuel Burn': {'units': 'lbm'},
+                        'Elapsed Time': {'units': 'min'},
+                        'Ground Distance': {'units': 'nmi'},
+                    },
+                )
 
 
 def input_check_report(prob, **kwargs):
@@ -316,7 +341,7 @@ def input_check_report(prob, **kwargs):
         bare_local_inputs_dict[name] = bare_local_inputs
 
     # There are no more collective calls, so we can exit.
-    if MPI and MPI.COMM_WORLD.rank != 0:
+    if MPI and prob.comm.rank != 0:
         return
 
     with open(report_file, mode='w') as f:
@@ -402,13 +427,22 @@ def timeseries_csv(prob, **kwargs):
     The first row of the CSV file contains headers with variable names and units.
     Each subsequent row represents the mission outputs at a different time step.
     """
-    timeseries_outputs = prob.model.list_outputs(
+    multi_mission = prob.problem_type == ProblemType.MULTI_MISSION
+    if multi_mission:
+        for _, model in prob.aviary_groups_dict.items():
+            # TODO: We need to rewrite this report to support multimission
+            # For now, just write the first mission's csv file.
+            break
+    else:
+        model = prob.model
+
+    timeseries_outputs = model.list_outputs(
         includes='*timeseries*', out_stream=None, return_format='dict', units=True
     )
-    phase_names = prob.model.traj._phases.keys()
+    phase_names = model.traj._phases.keys()
 
     # There are no more collective calls, so we can exit.
-    if MPI and MPI.COMM_WORLD.rank != 0:
+    if MPI and prob.comm.rank != 0:
         return
 
     timeseries_outputs = {value['prom_name']: value for key, value in timeseries_outputs.items()}
