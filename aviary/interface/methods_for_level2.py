@@ -7,6 +7,7 @@ from datetime import datetime
 from enum import Enum
 from pathlib import Path
 import enum
+from openmdao.utils.om_warnings import warn_deprecation
 
 import dymos as dm
 import numpy as np
@@ -84,6 +85,8 @@ class AviaryProblem(om.Problem):
 
         self.aviary_groups_dict = {}
 
+        self.meta_data = BaseMetaData.copy()
+
     def load_inputs(
         self,
         aircraft_data,
@@ -130,6 +133,8 @@ class AviaryProblem(om.Problem):
             # if there are multiple load_inputs() calls, only the problem type from the first aviary_values is used
             self.problem_type = aviary_inputs.get_val(Settings.PROBLEM_TYPE)
 
+        self._update_metadata_from_subsystems(self.model) # update meta data with new entries 
+
         return self.aviary_inputs
 
     def check_and_preprocess_inputs(self, verbosity=None):
@@ -137,27 +142,9 @@ class AviaryProblem(om.Problem):
         This method checks the user-supplied input values for any potential problems
         and preprocesses the inputs to prepare them for use in the Aviary problem.
         """
-
-        # `self.verbosity` is "true" verbosity for entire run. `verbosity` is verbosity
-        # override for just this method
-        if verbosity is not None:
-            # compatibility with being passed int for verbosity
-            verbosity = Verbosity(verbosity)
-        else:
-            verbosity = self.verbosity  # defaults to BRIEF
-
-        # Seed Meta Data for later modification
-        self.meta_data = BaseMetaData.copy()
-
-        if self.problem_type == ProblemType.MULTI_MISSION:
-            for name, group in self.aviary_groups_dict.items():
-                group.check_and_preprocess_inputs(verbosity=verbosity)
-
-                self._update_metadata_from_subsystems(group)
-        else:
-            self.model.check_and_preprocess_inputs(verbosity=verbosity)
-
-            self._update_metadata_from_subsystems(self.model)
+        warn_deprecation("The method check_and_preprocess_inputs is not longer needed. "
+                         "The method has been included as part of load_inputs.")
+        pass
 
     def _update_metadata_from_subsystems(self, group):
         """Merge metadata from user-defined subsystems into problem metadata."""
@@ -178,14 +165,20 @@ class AviaryProblem(om.Problem):
 
     def add_aviary_group(self, name:str, aircraft, mission:dict, verbosity=None):
         """
+        Used when creating a multi-mission problem.
         Create a dictionary of all aviary_groups() in this problem so we can iterate over them later.
         """
+        if self.problem_type is not ProblemType.MULTI_MISSION:
+            ValueError("add_aviary_group() should only be called when ProblemType is MULTI_MISSION.")
+
         sub = self.model.add_subsystem(name, AviaryGroup())
         sub.load_inputs(aircraft, mission, verbosity=verbosity)
 
         self.aviary_groups_dict[name] = sub
 
         self.verbosity = sub.verbosity # TODO: Needs fixed because old verbosity is over-written
+
+        self._update_metadata_from_subsystems(sub) # update meta data with new entries
 
         return sub
 
