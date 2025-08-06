@@ -76,7 +76,7 @@ class EnergyODE(_BaseODE):
         self.add_core_subsystems(solver_group=solver_group)
 
         ext_needs_solver = self.add_external_subsystems(solver_group=sub1)
-        
+
         sub1.add_subsystem(
             name='mission_EOM',
             subsys=MissionEOM(num_nodes=nn),
@@ -134,14 +134,15 @@ class EnergyODE(_BaseODE):
                     'throttle_balance',
                     om.ExecComp(
                         'thrust_residual=thrust_required-thrust',
-                        thrust={'val': np.ones((nn, ))},
-                        thrust_required={'val': np.ones((nn, ))},
-                        thrust_residual={'val': np.ones((nn, ))},
+                        thrust={'val': np.ones((nn, )), 'units': 'lbf'},
+                        thrust_required={'val': np.ones((nn, )), 'units': 'lbf'},
+                        thrust_residual={'val': np.ones((nn, )), 'units': 'lbf'},
+                        has_diag_partials=True,
                     ),
                     promotes_inputs=[('thrust', Dynamic.Vehicle.Propulsion.THRUST_TOTAL), 'thrust_required'],
                     promotes_outputs=['*']
                 )
-                self.add_constraint('thrust_residual', ref=10000.0, equals=0.0)
+                self.add_constraint('thrust_residual', ref=1.0e6, equals=0.0)
             else:
 
                 # Add a balance comp to compute throttle based on the required thrust.
