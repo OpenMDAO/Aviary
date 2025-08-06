@@ -24,7 +24,6 @@ class PreMissionGroupTest(unittest.TestCase):
 
         csv_path = 'models/test_aircraft/aircraft_for_bench_GwGm.csv'
         self.gasp_inputs = prob.load_inputs(csv_path)
-        prob.check_and_preprocess_inputs()
 
     def test_case1(self):
         """premission: geometry + mass"""

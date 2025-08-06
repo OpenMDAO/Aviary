@@ -74,9 +74,6 @@ class TestSubsystemsMission(unittest.TestCase):
             'models/aircraft/test_aircraft/aircraft_for_bench_FwFm_with_electric.csv', phase_info
         )
 
-        # Preprocess inputs
-        prob.check_and_preprocess_inputs()
-
         prob.add_pre_mission_systems()
 
         prob.add_phases()

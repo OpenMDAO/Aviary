@@ -2,12 +2,11 @@
 authors: Jatin Soni, Eliot Aretskin
 Multi Mission Optimization Example using Aviary.
 
-In this example, a monolithic optimization is created by instantiating two aviary problems
-using typical AviaryProblem calls like load_inputs(), check_and_preprocess_payload(),
-etc. Once those problems are setup and all of their phases are linked together, we copy
-those problems as group into a super_problem. We then promote GROSS_MASS, RANGE, and
-wing SWEEP from each of those sub-groups (group1 and group2) up to the super_probem so
-the optimizer can control them. The fuel_burn results from each of the group1 and group2
+In this example, a monolithic optimization is created by instantiating two aviary groups
+using using multipl add_aviary_group() calls. Once those groups are setup and all of their 
+phases are linked together, we then promote GROSS_MASS, RANGE, and wing SWEEP from each of 
+those sub-groups (prob.model.mission1 and prob.model.mission2) up to prob.model so
+the optimizer can control them. The fuel_burn results from each of the mission1 and mission2
 dymos missions are summed and weighted to create the objective function the optimizer sees.
 
 """

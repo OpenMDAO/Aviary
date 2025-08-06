@@ -25,7 +25,6 @@ class ReserveTest(unittest.TestCase):
         csv_path = 'models/aircraft/test_aircraft/aircraft_for_bench_GwFm.csv'
 
         prob.load_inputs(csv_path, phase_info)
-        prob.check_and_preprocess_inputs()
 
         prob.aviary_inputs.set_val(Aircraft.Design.RESERVE_FUEL_ADDITIONAL, 10000.0, units='lbm')
 
@@ -56,7 +55,6 @@ class ReserveTest(unittest.TestCase):
         csv_path = 'models/aircraft/small_single_aisle/small_single_aisle_GASP.csv'
 
         prob.load_inputs(csv_path, phase_info)
-        prob.check_and_preprocess_inputs()
 
         prob.aviary_inputs.set_val(Mission.Summary.GROSS_MASS, 140000.0, units='lbm')
 

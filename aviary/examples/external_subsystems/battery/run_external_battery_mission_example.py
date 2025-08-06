@@ -25,8 +25,6 @@ if __name__ == '__main__':
     prob.load_inputs(input_file, phase_info, meta_data=ExtendedMetaData)
 
     # Preprocess inputs
-    prob.check_and_preprocess_inputs()
-
     prob.add_pre_mission_systems()
 
     prob.add_phases()

@@ -194,9 +194,6 @@ class CustomEngineTest(unittest.TestCase):
             engine_builders=[SimpleTestEngine()],
         )
 
-        # Preprocess inputs
-        prob.check_and_preprocess_inputs()
-
         prob.add_pre_mission_systems()
 
         prob.add_phases()

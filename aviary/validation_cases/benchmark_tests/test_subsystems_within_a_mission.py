@@ -68,9 +68,6 @@ class TestSubsystemsMission(unittest.TestCase):
 
         prob.load_inputs('models/aircraft/test_aircraft/aircraft_for_bench_GwFm.csv', phase_info)
 
-        # Preprocess inputs
-        prob.check_and_preprocess_inputs()
-
         prob.add_pre_mission_systems()
 
         prob.add_phases()
@@ -115,9 +112,6 @@ class TestSubsystemsMission(unittest.TestCase):
         prob = AviaryProblem(reports=False, verbosity=0)
 
         prob.load_inputs('models/aircraft/test_aircraft/aircraft_for_bench_GwFm.csv', phase_info)
-
-        # Preprocess inputs
-        prob.check_and_preprocess_inputs()
 
         prob.add_pre_mission_systems()
 

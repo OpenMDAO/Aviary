@@ -30,8 +30,6 @@ if __name__ == '__main__':
     prob.load_inputs('models/aircraft/test_aircraft/aircraft_for_bench_FwFm.csv', phase_info)
 
     # Preprocess inputs
-    prob.check_and_preprocess_inputs()
-
     prob.add_pre_mission_systems()
 
     prob.add_phases()

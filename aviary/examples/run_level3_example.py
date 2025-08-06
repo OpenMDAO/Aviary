@@ -156,7 +156,6 @@ def run_trajectory(sim=True):
 
     # Before design variables are added in level 2 formats, the program runs through
     # the following commands
-    # prob.check_and_preprocess_inputs()
     # prob.add_pre_mission_systems()
     # prob.add_phases()
     # prob.add_post_mission_systems()

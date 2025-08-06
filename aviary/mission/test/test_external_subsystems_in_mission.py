@@ -45,9 +45,6 @@ class TestExternalSubsystems(unittest.TestCase):
             local_phase_info,
         )
 
-        # Preprocess inputs
-        prob.check_and_preprocess_inputs()
-
         prob.add_pre_mission_systems()
         prob.add_phases()
         prob.add_post_mission_systems()
@@ -80,9 +77,6 @@ class TestExternalSubsystems(unittest.TestCase):
             local_phase_info,
         )
 
-        # Preprocess inputs
-        prob.check_and_preprocess_inputs()
-
         prob.add_pre_mission_systems()
         prob.add_phases()
         prob.add_post_mission_systems()
@@ -112,9 +106,6 @@ class TestExternalSubsystems(unittest.TestCase):
             'models/aircraft/large_single_aisle_1/large_single_aisle_1_GASP.csv',
             local_phase_info,
         )
-
-        # Preprocess inputs
-        prob.check_and_preprocess_inputs()
 
         prob.add_pre_mission_systems()
         prob.add_phases()
@@ -148,9 +139,6 @@ class TestExternalSubsystems(unittest.TestCase):
             'models/aircraft/large_single_aisle_1/large_single_aisle_1_GASP.csv',
             local_phase_info,
         )
-
-        # Preprocess inputs
-        prob.check_and_preprocess_inputs()
 
         prob.add_pre_mission_systems()
         prob.add_phases()

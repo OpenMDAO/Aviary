@@ -66,7 +66,6 @@ class LargeElectrifiedTurbopropFreighterBenchmark(unittest.TestCase):
         prob.aviary_inputs.set_val(Aircraft.Fuselage.MAX_HEIGHT, 3.95, 'm')
         prob.aviary_inputs.set_val(Aircraft.Fuselage.AVG_DIAMETER, 4.125, 'm')
 
-        prob.check_and_preprocess_inputs()
         prob.add_pre_mission_systems()
         prob.add_phases()
         prob.add_post_mission_systems()

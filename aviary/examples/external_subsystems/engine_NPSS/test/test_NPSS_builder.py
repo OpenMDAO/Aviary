@@ -35,9 +35,7 @@ class AviaryNPSSTestCase(unittest.TestCase):
             engine_builders=[NPSSTabularEngineBuilder()],
             meta_data=ExtendedMetaData,
         )
-
-        prob.check_and_preprocess_inputs()
-
+        
         prob.add_pre_mission_systems()
 
         prob.add_phases()

@@ -23,7 +23,6 @@ class TestLevel2Preprocessing(unittest.TestCase):
             'models/aircraft/advanced_single_aisle/advanced_single_aisle_FLOPS.csv',
             local_phase_info,
         )
-        prob.check_and_preprocess_inputs()
         aviary_inputs = prob.aviary_inputs
 
         num_flight_crew = aviary_inputs.get_val(Aircraft.CrewPayload.NUM_FLIGHT_CREW)

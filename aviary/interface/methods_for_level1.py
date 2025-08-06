@@ -85,9 +85,7 @@ def run_aviary(
     # Allow for user overrides here
     prob.load_inputs(aircraft_data, phase_info, verbosity=verbosity)
 
-    # Preprocess inputs
-    prob.check_and_preprocess_inputs(verbosity=verbosity)
-
+    # Add Systems
     prob.add_pre_mission_systems(verbosity=verbosity)
 
     prob.add_phases(phase_info_parameterization=phase_info_parameterization, verbosity=verbosity)

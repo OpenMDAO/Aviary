@@ -72,9 +72,6 @@ class PreMissionGroupTest(unittest.TestCase):
         )
         prob.load_inputs(csv_path, phase_info)
 
-        # Preprocess inputs
-        prob.check_and_preprocess_inputs()
-
         prob.add_pre_mission_systems()
 
         prob.add_phases()
@@ -106,9 +103,6 @@ class PreMissionGroupTest(unittest.TestCase):
             'models/aircraft/test_aircraft/aircraft_for_bench_GwFm.csv'
         )
         prob.load_inputs(csv_path, phase_info)
-
-        # Preprocess inputs
-        prob.check_and_preprocess_inputs()
 
         prob.add_pre_mission_systems()
 

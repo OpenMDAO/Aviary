@@ -118,7 +118,6 @@ class TestReports(unittest.TestCase):
             'models/aircraft/test_aircraft/aircraft_for_bench_FwFm.csv',
             local_phase_info,
         )
-        prob.check_and_preprocess_inputs()
         prob.meta_data = metadata
 
         prob.add_pre_mission_systems()

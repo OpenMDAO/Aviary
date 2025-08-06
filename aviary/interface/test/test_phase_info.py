@@ -35,7 +35,6 @@ class TestParameterizePhaseInfo(unittest.TestCase):
         csv_path = 'models/aircraft/small_single_aisle/small_single_aisle_GASP.csv'
 
         prob.load_inputs(csv_path, phase_info)
-        prob.check_and_preprocess_inputs()
 
         # We can set some crazy vals, since we aren't going to optimize.
         prob.aviary_inputs.set_val(Mission.Design.RANGE, 5000, 'km')
@@ -73,7 +72,6 @@ class TestParameterizePhaseInfo(unittest.TestCase):
         csv_path = 'models/aircraft/test_aircraft/aircraft_for_bench_FwFm.csv'
 
         prob.load_inputs(csv_path, phase_info)
-        prob.check_and_preprocess_inputs()
 
         # We can set some crazy vals, since we aren't going to optimize.
         prob.aviary_inputs.set_val(Mission.Design.RANGE, 5000.0, 'km')
@@ -120,7 +118,6 @@ class TestPhaseInfoAPI(unittest.TestCase):
         csv_path = 'models/test_aircraft/aircraft_for_bench_FwFm.csv'
 
         prob.load_inputs(csv_path, phase_info)
-        prob.check_and_preprocess_inputs()
 
         prob.add_pre_mission_systems()
         prob.add_phases()

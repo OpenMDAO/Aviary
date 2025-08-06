@@ -46,7 +46,6 @@ def run_trajectory(sim=True):
         Mission.Design.THRUST_TAKEOFF_PER_ENG, takeoff_thrust_per_eng, units='lbf'
     )
 
-    prob.check_and_preprocess_inputs()
     prob.add_pre_mission_systems()
     prob.add_phases()
     prob.add_post_mission_systems()

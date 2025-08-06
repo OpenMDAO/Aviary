@@ -70,7 +70,6 @@ class MultiengineTestcase(unittest.TestCase):
 
         prob.load_inputs(inputs, test_phase_info, engine_builders=[engine1, engine2])
 
-        prob.check_and_preprocess_inputs()
         prob.add_pre_mission_systems()
         prob.add_phases()
         prob.add_post_mission_systems()
@@ -110,7 +109,6 @@ class MultiengineTestcase(unittest.TestCase):
 
         prob.load_inputs(inputs, test_phase_info, engine_builders=[engine1, engine2])
 
-        prob.check_and_preprocess_inputs()
         prob.add_pre_mission_systems()
         prob.add_phases()
         prob.add_post_mission_systems()
@@ -150,7 +148,6 @@ class MultiengineTestcase(unittest.TestCase):
 
         prob.load_inputs(inputs, test_phase_info, engine_builders=[engine1, engine2])
 
-        prob.check_and_preprocess_inputs()
         prob.add_pre_mission_systems()
         prob.add_phases()
         prob.add_post_mission_systems()

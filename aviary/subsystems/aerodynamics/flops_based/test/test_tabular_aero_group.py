@@ -99,9 +99,6 @@ class TabularAeroGroupFileTest(unittest.TestCase):
             local_phase_info,
         )
 
-        # Preprocess inputs
-        prob.check_and_preprocess_inputs()
-
         prob.add_pre_mission_systems()
         prob.add_phases()
         prob.add_post_mission_systems()
@@ -229,9 +226,6 @@ class TabularAeroGroupDataTest(unittest.TestCase):
             'subsystems/aerodynamics/flops_based/test/data/high_wing_single_aisle.csv',
             local_phase_info,
         )
-
-        # Preprocess inputs
-        prob.check_and_preprocess_inputs()
 
         prob.add_pre_mission_systems()
         prob.add_phases()

@@ -112,9 +112,6 @@ class AircraftMissionTestSuite(unittest.TestCase):
         # Allow for user overrides here
         prob.load_inputs(self.aircraft_definition_file, self.phase_info)
 
-        # Preprocess inputs
-        prob.check_and_preprocess_inputs()
-
         prob.add_pre_mission_systems()
 
         prob.add_phases()
