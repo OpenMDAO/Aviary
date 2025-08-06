@@ -134,6 +134,9 @@ class WingTailRatios(om.ExplicitComponent):
     # intended for this component??
     """Pre-mission calculation of ratios between tail and wing parameters."""
 
+    def initialize(self):
+        add_aviary_option(self, Settings.VERBOSITY)
+
     def setup(self):
         add_aviary_input(self, Aircraft.Wing.AREA, units='ft**2')
 
@@ -217,6 +220,17 @@ class WingTailRatios(om.ExplicitComponent):
             htail_chord,
             cabin_width,
         ) = inputs.values()
+        verbosity = self.options[Settings.VERBOSITY]
+
+        if wing_area == 0.0:
+            if verbosity > Verbosity.BRIEF:
+                print('Aircraft.Wing.AREA is 0.0 in WingTailRatios.')
+        if wingspan == 0.0:
+            if verbosity > Verbosity.BRIEF:
+                print('Aircraft.Wing.SPAN is 0.0 in WingTailRatios.')
+        if avg_chord == 0.0:
+            if verbosity > Verbosity.BRIEF:
+                print('Aircraft.Wing.AVERAGE_CHORD is 0.0 in WingTailRatios.')
 
         trtw = tc_ratio_root * 2 * wing_area / wingspan / (1 + taper_ratio)
         hgap = cs.abs(htail_loc * span_vtail - 0.5 * (cabin_width - trtw) * (2 * wing_loc - 1))
@@ -271,7 +285,9 @@ class BWBBodyLiftCurveSlope(om.ExplicitComponent):
             raise om.AnalysisError('Mach number must be within the range (0, 1).')
         elif any(x > 0.8 for x in mach.real):
             if verbosity > Verbosity.BRIEF:
-                print("Mach range should be less or equal to 0.8. You've provided a Mach {mach}.")
+                print(
+                    f"Mach range should be less or equal to 0.8. You've provided a Mach number {mach}."
+                )
         CLALPH_B0 = inputs[Aircraft.Fuselage.LIFT_CURVE_SLOPE_MACH0]
         CLALPH_B = CLALPH_B0 / np.sqrt(1.0 - mach**2)
         outputs['body_lift_curve_slope'] = CLALPH_B
@@ -292,6 +308,7 @@ class Xlifts(om.ExplicitComponent):
 
     def initialize(self):
         self.options.declare('num_nodes', default=1, types=int)
+        add_aviary_option(self, Settings.VERBOSITY)
 
     def setup(self):
         nn = self.options['num_nodes']
@@ -368,6 +385,20 @@ class Xlifts(om.ExplicitComponent):
             hbar,
             bbar,
         ) = inputs.values()
+        verbosity = self.options[Settings.VERBOSITY]
+
+        if h_tail_moment == 0.0:
+            if verbosity > Verbosity.BRIEF:
+                print('Aircraft.HorizontalTail.MOMENT_RATIO should not be 0.0 in Xlifts.')
+        if sbar == 0.0:
+            if verbosity > Verbosity.BRIEF:
+                print('sbar should not be 0.0 in Xlifts.')
+        if bbar == 0.0:
+            if verbosity > Verbosity.BRIEF:
+                print('bbar should not be 0.0 in Xlifts.')
+        if AR == 0.0:
+            if verbosity > Verbosity.BRIEF:
+                print('Aircraft.Wing.ASPECT_RATIO should not be 0.0 in Xlifts.')
 
         delta = (static_margin + delta_cg) * h_tail_moment
 
@@ -388,14 +419,17 @@ class Xlifts(om.ExplicitComponent):
         eps4 = 1 / np.pi / art
         eps5 = cs.abs(xt) / (np.pi * art * np.sqrt(xt**2 + h**2 + art**2 * cbar**2 / 4))
 
-        claw = (
-            claw0
-            * (1 - clat0 * (eps4 - eps5 - cbar * eps1))
-            / (1 - clat0 * claw0 * (eps1 + eps2 + eps3) * (eps4 - eps5 - cbar * eps1))
-        )
+        denom = 1 - clat0 * claw0 * (eps1 + eps2 + eps3) * (eps4 - eps5 - cbar * eps1)
+        if np.any(denom) == 0.0:
+            if verbosity > Verbosity.BRIEF:
+                print('lift_curve_slope is undefined because the denominator is 0.0 in Xlift.')
+        claw = claw0 * (1 - clat0 * (eps4 - eps5 - cbar * eps1)) / denom
 
         clat = clat0 * (1 - claw * (eps1 + eps2 + eps3))
 
+        if np.any(claw) == 0.0:
+            if verbosity > Verbosity.BRIEF:
+                print('lift_ratio is undefined because the denominator is 0.0 in Xlift.')
         abar = clat / claw
         c = 1 / (1 + 1 / abar / sbar)
         lift_ratio = (c - delta) / (1 + delta - c)  # for AFT Tails
@@ -409,6 +443,9 @@ class FormFactorAndSIWB(om.ExplicitComponent):
     Compute body form factor and SIWB for tube+wing aircraft
     Incompressible form factor for streamlined bodies. From Hoerner's "Fluid Dynamic Drag", p. 6-17.
     """
+
+    def initialize(self):
+        add_aviary_option(self, Settings.VERBOSITY)
 
     def setup(self):
         add_aviary_input(self, Aircraft.Fuselage.AVG_DIAMETER, units='ft', desc='SWF')
@@ -444,9 +481,18 @@ class FormFactorAndSIWB(om.ExplicitComponent):
         )
 
     def compute(self, inputs, outputs):
+        verbosity = self.options[Settings.VERBOSITY]
+
         fus_len = inputs[Aircraft.Fuselage.LENGTH]
         cabin_width = inputs[Aircraft.Fuselage.AVG_DIAMETER]
         wingspan = inputs[Aircraft.Wing.SPAN]
+
+        if fus_len == 0.0:
+            if verbosity > Verbosity.BRIEF:
+                print('Aircraft.Fuselage.LENGTH should not be 0.0 in FormFactorAndSIWB.')
+        if wingspan == 0.0:
+            if verbosity > Verbosity.BRIEF:
+                print('Aircraft.Wing.SPAN should not be 0.0 in FormFactorAndSIWB.')
 
         # fuselage form drag factor
         fffus = 1 + 1.5 * (cabin_width / fus_len) ** 1.5 + 7 * (cabin_width / fus_len) ** 3
@@ -500,6 +546,9 @@ class BWBFormFactorAndSIWB(om.ExplicitComponent):
     Incompressible form factor for streamlined bodies. From Hoerner's "Fluid Dynamic Drag", p. 6-17.
     """
 
+    def initialize(self):
+        add_aviary_option(self, Settings.VERBOSITY)
+
     def setup(self):
         add_aviary_input(self, Aircraft.Fuselage.HYDRAULIC_DIAMETER, units='ft', desc='DHYDRAL')
         add_aviary_input(self, Aircraft.Fuselage.LENGTH, units='ft', desc='ELF')
@@ -533,9 +582,18 @@ class BWBFormFactorAndSIWB(om.ExplicitComponent):
         )
 
     def compute(self, inputs, outputs):
+        verbosity = self.options[Settings.VERBOSITY]
+
         fus_len = inputs[Aircraft.Fuselage.LENGTH]
         diam = inputs[Aircraft.Fuselage.HYDRAULIC_DIAMETER]
         wingspan = inputs[Aircraft.Wing.SPAN]
+
+        if fus_len == 0.0:
+            if verbosity > Verbosity.BRIEF:
+                print('Aircraft.Fuselage.LENGTH should not be 0.0 in FormFactorAndSIWB.')
+        if wingspan == 0.0:
+            if verbosity > Verbosity.BRIEF:
+                print('Aircraft.Wing.SPAN should not be 0.0 in FormFactorAndSIWB.')
 
         # fuselage form drag factor
         fffus = 1 + 1.5 * (diam / fus_len) ** 1.5 + 7 * (diam / fus_len) ** 3
