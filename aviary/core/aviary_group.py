@@ -448,6 +448,7 @@ class AviaryGroup(om.Group):
         # Check to ensure no non-reserve phases are specified after reserve phases
         start_reserve = False
         raise_error = False
+        self.regular_phases = []
         for idx, phase_name in enumerate(self.phase_info):
             if 'user_options' in self.phase_info[phase_name]:
                 if 'reserve' in self.phase_info[phase_name]['user_options']:
