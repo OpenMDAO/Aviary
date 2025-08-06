@@ -199,8 +199,6 @@ class DescentODE(TwoDOFODE):
                         promotes_outputs=subsystem.mission_outputs(**kwargs),
                     )
 
-        self.add_external_subsystems()
-
         self.add_alpha_control(
             alpha_group=lift_balance_group,
             alpha_mode=AlphaModes.REQUIRED_LIFT,

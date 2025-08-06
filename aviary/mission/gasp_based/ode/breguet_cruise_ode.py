@@ -63,8 +63,6 @@ class BreguetCruiseODESolution(TwoDOFODE):
                         promotes_outputs=subsystem.mission_outputs(**kwargs),
                     )
 
-        self.add_external_subsystems()
-
         bal = om.BalanceComp(
             name=Dynamic.Vehicle.Propulsion.THROTTLE,
             val=np.ones(nn),

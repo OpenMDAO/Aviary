@@ -69,7 +69,7 @@ class TestSubsystemsMission(unittest.TestCase):
         prob.load_inputs(
             'models/aircraft/test_aircraft/aircraft_for_bench_FwFm_with_electric.csv', phase_info
         )
-
+        prob.load_external_subsystems([BatteryBuilder()])
         # Preprocess inputs
         prob.check_and_preprocess_inputs()
 

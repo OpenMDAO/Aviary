@@ -94,8 +94,6 @@ class TestSolvedAero(unittest.TestCase):
             'aero_data': aero_data,
             'connect_training_data': True,
         }
-        ph_in['pre_mission']['external_subsystems'] = [polar_builder]
-
         ph_in['cruise']['subsystem_options'] = {'aerodynamics': subsystem_options}
 
         prob = AviaryProblem()
@@ -106,6 +104,7 @@ class TestSolvedAero(unittest.TestCase):
         )
         prob.model.aero_method = LegacyCode.GASP
 
+        prob.load_external_subsystems([polar_builder])
         # Preprocess inputs
         prob.check_and_preprocess_inputs()
 
@@ -245,7 +244,6 @@ class TestSolvedAero(unittest.TestCase):
             'aero_data': aero_data,
             'connect_training_data': True,
         }
-        ph_in['pre_mission']['external_subsystems'] = [polar_builder]
 
         ph_in['cruise']['subsystem_options'] = {'aerodynamics': subsystem_options}
 
@@ -253,7 +251,7 @@ class TestSolvedAero(unittest.TestCase):
 
         prob.load_inputs(csv_path, ph_in)
         prob.model.aero_method = LegacyCode.GASP
-
+        prob.load_external_subsystems([polar_builder])
         # Preprocess inputs
         prob.check_and_preprocess_inputs()
 

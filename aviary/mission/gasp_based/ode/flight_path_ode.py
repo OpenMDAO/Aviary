@@ -131,8 +131,6 @@ class FlightPathODE(TwoDOFODE):
                         promotes_outputs=subsystem.mission_outputs(**kwargs),
                     )
 
-        self.add_external_subsystems()
-
         self.add_subsystem(
             'flight_path_eom',
             FlightPathEOM(

@@ -105,8 +105,6 @@ class LandingSegment(TwoDOFODE):
                 )
                 propulsion_mission.set_input_defaults(Dynamic.Vehicle.Propulsion.THROTTLE, 0.0)
 
-        self.add_external_subsystems()
-
         self.add_subsystem(
             'glide',
             GlideConditionComponent(),

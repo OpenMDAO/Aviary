@@ -68,8 +68,6 @@ class TaxiSegment(TwoDOFODE):
                     promotes_outputs=['*'],
                 )
 
-        self.add_external_subsystems()
-
         self.add_subsystem('taxifuel', TaxiFuelComponent(), promotes=['*'])
 
         ParamPort.set_default_vals(self)

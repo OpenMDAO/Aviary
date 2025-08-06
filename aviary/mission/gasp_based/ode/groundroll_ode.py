@@ -71,8 +71,6 @@ class GroundrollODE(TwoDOFODE):
                     src_indices=np.zeros(nn, dtype=int),
                 )
 
-        self.add_external_subsystems()
-
         self.add_subsystem('groundroll_eom', GroundrollEOM(num_nodes=nn), promotes=['*'])
 
         self.add_subsystem(
