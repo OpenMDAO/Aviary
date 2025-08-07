@@ -45,37 +45,25 @@ class InitialGuess:
     def apply_initial_guess(
         self, prob: om.Problem, traj_name, phase: dm.Phase, phase_name, val, units
     ):
-        """Set the initial guess on the problem."""
-        complete_key = self._get_complete_key(traj_name, phase_name)
 
-        # TODO: this is a short term hack in need of an appropriate long term solution
-        #    - to interpolate, or not to interpolate: that is the question
-        #    - the solution should probably be a value decoration (a wrapper) that is
-        #      both lightweight and easy to check and unpack
         if self.key in phase.state_options:
             phase.set_state_val(self.key, val, units=units)
         elif self.key in phase.control_options:
             phase.set_control_val(self.key, val, units=units)
         elif self.key in phase.parameter_options:
             phase.set_parameter_val(self.key, val, units=units)
+        elif self.key == phase.time_options['name']:
+            prob.set_integ_var_val(initial=val[0], duration=val[1], units=units)
         else:
-            prob.set_val(complete_key, val, units=units)
+            raise ValueError(f'{phase.msginfo} Attempting to apply initial guess for {self.key}.\n'
+                             'Not find in the states, control, parameters, or integration variable of the phase.')
 
-        # if isinstance(val, np.ndarray) or (isinstance(val, Sequence) and not isinstance(val, str)):
-        #     val = phase.interp(self.key, val)
+    # def _get_complete_key(self, traj_name, phase_name):
+    #     """Compose the complete key for setting the initial guess."""
+    #     _ = traj_name
+    #     _ = phase_name
 
-        # try:
-        #     prob.set_val(complete_key, val, units)
-        # except KeyError:
-        #     complete_key = complete_key.replace('polynomial_controls', 'controls')
-        #     prob.set_val(complete_key, val, units)
-
-    def _get_complete_key(self, traj_name, phase_name):
-        """Compose the complete key for setting the initial guess."""
-        _ = traj_name
-        _ = phase_name
-
-        return self.key
+    #     return self.key
 
 
 class InitialGuessControl(InitialGuess):

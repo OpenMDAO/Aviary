@@ -68,7 +68,7 @@ class TestTakeoffToEngineFailureTest(unittest.TestCase):
         takeoff_brake_release_user_options.set_val('max_velocity', val=167.85, units='kn')
         takeoff_brake_release_user_options.set_val('terminal_condition', val='V1')
 
-        tobl_nl_solver = om.NewtonSolver(solve_subsystems=True, maxiter=100, iprint=2, atol=1.0e-6, rtol=1.0e-6, debug_print=True)
+        tobl_nl_solver = om.NewtonSolver(solve_subsystems=True, maxiter=100, iprint=2, atol=1.0e-6, rtol=1.0e-6)
         tobl_nl_solver.linesearch = om.BoundsEnforceLS()
 
         takeoff_brake_release_user_options.set_val('nonlinear_solver', val=tobl_nl_solver)
@@ -105,7 +105,7 @@ class TestTakeoffToEngineFailureTest(unittest.TestCase):
         takeoff_v1_to_vr_user_options.set_val('max_velocity', val=167.85, units='kn')
         takeoff_v1_to_vr_user_options.set_val('terminal_condition', val='VR')
 
-        nl_solver = om.NewtonSolver(solve_subsystems=True, maxiter=100, iprint=2, atol=1.0e-6, rtol=1.0e-6, debug_print=True)
+        nl_solver = om.NewtonSolver(solve_subsystems=True, maxiter=100, iprint=2, atol=1.0e-6, rtol=1.0e-6)
         nl_solver.linesearch = om.BoundsEnforceLS()
 
         takeoff_v1_to_vr_user_options.set_val('nonlinear_solver', val=nl_solver)
@@ -140,10 +140,10 @@ class TestTakeoffToEngineFailureTest(unittest.TestCase):
         vr_to_liftoff_user_options.set_val('time_duration_ref', val=60.0, units='s')
         vr_to_liftoff_user_options.set_val('distance_max', val=15000.0, units='ft')
         vr_to_liftoff_user_options.set_val('max_velocity', val=167.85, units='kn')
-        vr_to_liftoff_user_options.set_val('pitch_control', val='alpha_rate', units='unitless')
+        vr_to_liftoff_user_options.set_val('pitch_control', val='alpha_rate_fixed', units='unitless')
         vr_to_liftoff_user_options.set_val('terminal_condition', val='LIFTOFF')
 
-        nl_solver = om.NewtonSolver(solve_subsystems=True, maxiter=100, iprint=2, atol=1.0e-6, rtol=1.0e-6, debug_print=True)
+        nl_solver = om.NewtonSolver(solve_subsystems=True, maxiter=100, iprint=2, atol=1.0e-6, rtol=1.0e-6)
         nl_solver.linesearch = om.BoundsEnforceLS()
 
         vr_to_liftoff_user_options.set_val('nonlinear_solver', val=nl_solver)
@@ -171,7 +171,7 @@ class TestTakeoffToEngineFailureTest(unittest.TestCase):
             initial_guesses=vr_to_liftoff_initial_guesses,
         )
 
-    # LIFTOFF TO CLIMB GRADIENT
+        # LIFTOFF TO CLIMB GRADIENT
 
         liftoff_to_climb_gradient_user_options = av.AviaryValues()
 
@@ -179,11 +179,11 @@ class TestTakeoffToEngineFailureTest(unittest.TestCase):
         liftoff_to_climb_gradient_user_options.set_val('time_duration_ref', val=60.0, units='s')
         liftoff_to_climb_gradient_user_options.set_val('distance_max', val=15000.0, units='ft')
         liftoff_to_climb_gradient_user_options.set_val('max_velocity', val=167.85, units='kn')
-        liftoff_to_climb_gradient_user_options.set_val('pitch_control', val='alpha_rate', units='unitless')
+        liftoff_to_climb_gradient_user_options.set_val('pitch_control', val='alpha_rate_fixed', units='unitless')
         liftoff_to_climb_gradient_user_options.set_val('climbing', val=True, units='unitless')
         liftoff_to_climb_gradient_user_options.set_val('terminal_condition', val='CLIMB_GRADIENT')
 
-        nl_solver = om.NewtonSolver(solve_subsystems=True, maxiter=100, iprint=2, atol=1.0e-6, rtol=1.0e-6, debug_print=True)
+        nl_solver = om.NewtonSolver(solve_subsystems=True, maxiter=100, iprint=2, atol=1.0e-6, rtol=1.0e-6)
         nl_solver.linesearch = om.BoundsEnforceLS()
 
         liftoff_to_climb_gradient_user_options.set_val('nonlinear_solver', val=nl_solver)
@@ -191,11 +191,11 @@ class TestTakeoffToEngineFailureTest(unittest.TestCase):
 
         liftoff_to_climb_gradient_initial_guesses = av.AviaryValues()
 
-        liftoff_to_climb_gradient_initial_guesses.set_val('time', [35.0, 5.0], 's')
+        liftoff_to_climb_gradient_initial_guesses.set_val('time', [35.0, 1.0], 's')
         liftoff_to_climb_gradient_initial_guesses.set_val('distance', [5000.0, 6000.0], 'ft')
         liftoff_to_climb_gradient_initial_guesses.set_val('velocity', [120., 100.0], 'kn')
         liftoff_to_climb_gradient_initial_guesses.set_val('angle_of_attack', [5.0, 10.0], 'deg')
-        liftoff_to_climb_gradient_initial_guesses.set_val('flight_path_angle', [0.0, 5.0], 'deg')
+        liftoff_to_climb_gradient_initial_guesses.set_val('flight_path_angle', [0.0, 2.0], 'deg')
 
         gross_mass_units = 'lbm'
         gross_mass = inputs.get_val(Mission.Design.GROSS_MASS, gross_mass_units)
@@ -210,6 +210,45 @@ class TestTakeoffToEngineFailureTest(unittest.TestCase):
             subsystem_options=takeoff_subsystem_options,
             user_options=liftoff_to_climb_gradient_user_options,
             initial_guesses=liftoff_to_climb_gradient_initial_guesses,
+        )
+
+        # CLIMB GRADIENT TO OBSTACLE
+
+        climb_gradient_to_obstacle_user_options = av.AviaryValues()
+
+        climb_gradient_to_obstacle_user_options.set_val('max_duration', val=90.0, units='s')
+        climb_gradient_to_obstacle_user_options.set_val('time_duration_ref', val=60.0, units='s')
+        climb_gradient_to_obstacle_user_options.set_val('distance_max', val=15000.0, units='ft')
+        climb_gradient_to_obstacle_user_options.set_val('max_velocity', val=200., units='kn')
+        climb_gradient_to_obstacle_user_options.set_val('pitch_control', val='gamma_fixed', units='unitless')
+        climb_gradient_to_obstacle_user_options.set_val('climbing', val=True, units='unitless')
+        climb_gradient_to_obstacle_user_options.set_val('terminal_condition', val='OBSTACLE')
+
+        nl_solver = om.NewtonSolver(solve_subsystems=True, maxiter=100, iprint=2, atol=1.0e-6, rtol=1.0e-6, debug_print=False)
+        nl_solver.linesearch = om.BoundsEnforceLS()
+
+        climb_gradient_to_obstacle_user_options.set_val('nonlinear_solver', val=nl_solver)
+        climb_gradient_to_obstacle_user_options.set_val('linear_solver', val=om.DirectSolver())
+
+        climb_gradient_to_obstacle_initial_guesses = av.AviaryValues()
+
+        climb_gradient_to_obstacle_initial_guesses.set_val('time', [35.0, 3.0], 's')
+        climb_gradient_to_obstacle_initial_guesses.set_val('distance', [5500.0, 5800.0], 'ft')
+        climb_gradient_to_obstacle_initial_guesses.set_val('velocity', [120., 120.0], 'kn')
+        climb_gradient_to_obstacle_initial_guesses.set_val('flight_path_angle', [2.0, 2.0], 'deg')
+
+        gross_mass_units = 'lbm'
+        gross_mass = inputs.get_val(Mission.Design.GROSS_MASS, gross_mass_units)
+        climb_gradient_to_obstacle_initial_guesses.set_val('mass', gross_mass, gross_mass_units)
+
+        climb_gradient_to_obstacle_initial_guesses.set_val('throttle', 1.0)
+
+        climb_gradient_to_obstacle_builder = av.DetailedTakeoffPhaseBuilder(
+            'takeoff_climb_gradient_to_obstacle',
+            core_subsystems=[aero_builder, prop_builder],
+            subsystem_options=takeoff_subsystem_options,
+            user_options=climb_gradient_to_obstacle_user_options,
+            initial_guesses=climb_gradient_to_obstacle_initial_guesses,
         )
 
         # from aviary.models.aircraft.advanced_single_aisle.advanced_single_aisle_data import (
@@ -235,6 +274,8 @@ class TestTakeoffToEngineFailureTest(unittest.TestCase):
         takeoff_trajectory_builder.set_rotate_to_liftoff(vr_to_liftoff_builder)
 
         takeoff_trajectory_builder.set_liftoff_to_climb_gradient(liftoff_to_climb_gradient_builder)
+
+        takeoff_trajectory_builder.set_climb_gradient_to_obstacle(climb_gradient_to_obstacle_builder)
 
         # takeoff_trajectory_builder.set_liftoff_to_obstacle(takeoff_liftoff_builder)
 
@@ -303,7 +344,7 @@ class TestTakeoffToEngineFailureTest(unittest.TestCase):
         # "input variable '...' promoted using '*' was already promoted using 'aircraft:*'
         with warnings.catch_warnings():
             warnings.simplefilter('ignore', om.PromotionWarning)
-            takeoff.setup(check=True)
+            takeoff.setup(check=False)
 
         av.set_aviary_initial_values(takeoff, aviary_options)
 
@@ -311,10 +352,54 @@ class TestTakeoffToEngineFailureTest(unittest.TestCase):
 
         takeoff.final_setup()
 
+        # takeoff.model.run_apply_nonlinear()
+
+        # takeoff.model.list_vars(print_arrays=True)
+
         takeoff.run_model()
 
-        takeoff.model.list_vars(print_arrays=True, units=True)
+        takeoff.model.traj.phases.takeoff_climb_gradient_to_obstacle.ode_iter_group.segment_prop_group.ode_all.takeoff_eom.list_vars(print_arrays=True)
 
+        # vars = takeoff.model.list_vars(print_arrays=True, units=True, prom_name=True, return_format='dict', out_stream=None)
+
+        # vars = {meta['prom_name']: meta for meta in vars.values()}
+
+        # systems = set([path.rsplit('.', 1)[0] for path in vars.keys()])
+
+        # print('\n'.join(vars.keys()))
+
+        # for sys in takeoff.model.system_iter(include_self=True, recurse=True):
+        #     sys.list_vars(prom_name=True, units=True)
+
+
+        # from textual.app import App, ComposeResult
+        # from textual.widgets import DataTable, Collapsible
+
+
+        # class TableApp(App):
+
+        #     def __init__(self, systems):
+        #         self._systems = systems
+
+        #     def compose(self) -> ComposeResult:
+        #         for sys, vars in self._systems.items():
+        #             with Collapsible(title=sys.pathname):
+        #                 yield DataTable()
+
+        #     def on_mount(self) -> None:
+        #         table = self.query_one(DataTable)
+        #         table.add_columns('promoted name', 'units')
+        #         print(table)
+        #         # table.add_rows(ROWS[1:])
+
+        # systems = {}
+
+        # for sys in takeoff.model.system_iter(include_self=True, recurse=True):
+        #     vars = sys.list_vars(prom_name=True, units=True, out_stream=None)
+        #     systems[sys] = vars
+
+        # app = TableApp(systems)
+        # app.run()
 
         # takeoff.check_partials(compact_print=True)
         # takeoff.model.run_apply_nonlinear()
