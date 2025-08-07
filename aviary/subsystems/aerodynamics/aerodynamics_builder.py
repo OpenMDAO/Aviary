@@ -798,7 +798,7 @@ AERO_LS_2DOF_INPUTS = [
 ]
 
 AERO_CLEAN_2DOF_INPUTS = [
-    Aircraft.Design.SUPERCRITICAL_DIVERGENCE_SHIFT,  # super drag shift?
+    Aircraft.Design.DRAG_DIVERGENCE_SHIFT,  # super drag shift?
     Mission.Design.LIFT_COEFFICIENT_MAX_FLAPS_UP,
     Aircraft.Design.LIFT_DEPENDENT_DRAG_COEFF_FACTOR,
     Aircraft.Design.SUBSONIC_DRAG_COEFF_FACTOR,
