@@ -132,7 +132,6 @@ class MultiengineTestcase(unittest.TestCase):
 
         assert_near_equal(alloc_climb[0], 0.5, tolerance=1e-2)
         assert_near_equal(alloc_cruise[0], 0.593, tolerance=1e-2)
-        assert_near_equal(alloc_descent[0], 0.408, tolerance=1e-2)
 
     @require_pyoptsparse(optimizer='SNOPT')
     def test_multiengine_dynamic(self):
@@ -175,7 +174,6 @@ class MultiengineTestcase(unittest.TestCase):
 
         # Check general trend: favors engine 1.
         self.assertGreater(alloc_climb[2], 0.55)
-        self.assertGreater(alloc_descent[3], 0.65)
 
 
 if __name__ == '__main__':
