@@ -127,7 +127,7 @@ class MotorBuilder(SubsystemBuilderBase):
         """
         return [Aircraft.Engine.Motor.MASS, Aircraft.Engine.Gearbox.MASS]
 
-    def get_outputs(self):
+    def get_timeseries(self):
         """
         Return a list of output names for the motor subsystem.
 

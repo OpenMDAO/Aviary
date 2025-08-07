@@ -154,11 +154,10 @@ class CustomEngineTest(unittest.TestCase):
         phase_info = {
             'pre_mission': {
                 'include_takeoff': False,
-                'external_subsystems': [],
                 'optimize_mass': True,
             },
             'cruise': {
-                'subsystem_options': {'core_aerodynamics': {'method': 'computed'}},
+                'subsystem_options': {'aerodynamics': {'method': 'computed'}},
                 'user_options': {
                     'num_segments': 2,
                     'order': 3,
@@ -180,7 +179,6 @@ class CustomEngineTest(unittest.TestCase):
             },
             'post_mission': {
                 'include_landing': False,
-                'external_subsystems': [],
             },
         }
 

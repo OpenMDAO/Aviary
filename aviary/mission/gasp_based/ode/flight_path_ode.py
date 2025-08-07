@@ -5,7 +5,7 @@ from aviary.mission.gasp_based.ode.flight_path_eom import FlightPathEOM
 from aviary.mission.gasp_based.ode.params import ParamPort
 from aviary.mission.gasp_based.ode.two_dof_ode import TwoDOFODE
 from aviary.subsystems.mass.mass_to_weight import MassToWeight
-from aviary.subsystems.propulsion.propulsion_builder import PropulsionBuilderBase
+from aviary.subsystems.propulsion.propulsion_builder import PropulsionBuilder
 from aviary.variable_info.enums import AlphaModes, SpeedType
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 
@@ -64,7 +64,7 @@ class FlightPathODE(TwoDOFODE):
         if not self.options['ground_roll']:
             EOM_inputs.append(Dynamic.Vehicle.ANGLE_OF_ATTACK)
 
-        core_subsystems = self.options['core_subsystems']
+        subsystems = self.options['subsystems']
 
         # TODO: paramport
         flight_path_params = ParamPort()
@@ -113,10 +113,10 @@ class FlightPathODE(TwoDOFODE):
                 print_level=print_level,
             )
 
-        for subsystem in core_subsystems:
+        for subsystem in subsystems:
             system = subsystem.build_mission(**kwargs)
             if system is not None:
-                if isinstance(subsystem, PropulsionBuilderBase):
+                if isinstance(subsystem, PropulsionBuilder):
                     self.add_subsystem(
                         subsystem.name,
                         system,
@@ -130,8 +130,6 @@ class FlightPathODE(TwoDOFODE):
                         promotes_inputs=subsystem.mission_inputs(**kwargs),
                         promotes_outputs=subsystem.mission_outputs(**kwargs),
                     )
-
-        self.add_external_subsystems()
 
         self.add_subsystem(
             'flight_path_eom',

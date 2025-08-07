@@ -25,7 +25,7 @@ class AscentODETestCase(unittest.TestCase):
         )
 
         self.prob.model = AscentODE(
-            num_nodes=2, aviary_options=aviary_options, core_subsystems=default_mission_subsystems
+            num_nodes=2, aviary_options=aviary_options, subsystems=default_mission_subsystems
         )
 
         setup_model_options(

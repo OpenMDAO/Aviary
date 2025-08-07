@@ -3,7 +3,7 @@ Define subsystem builder for Aviary core aerodynamics.
 
 Classes
 -------
-AerodynamicsBuilderBase : the interface for an aerodynamics subsystem builder.
+AerodyanmicsBuilder : the interface for an aerodynamics subsystem builder.
 
 CoreAerodynamicsBuilder : the interface for Aviary's core aerodynamics subsystem builder
 """
@@ -37,14 +37,14 @@ FLOPS = LegacyCode.FLOPS
 _default_name = 'aerodynamics'
 
 
-class AerodynamicsBuilderBase(SubsystemBuilderBase):
+class AerodyanmicsBuilder(SubsystemBuilderBase):
     """
     Base class of aerodynamics builder.
 
     Methods
     -------
     __init__(self, name=None, meta_data=None):
-        Initializes the AerodynamicsBuilderBase object with a given name.
+        Initializes the AerodyanmicsBuilder object with a given name.
     mission_inputs(self, **kwargs) -> list:
         Return mission inputs.
     mission_outputs(self, **kwargs) -> list:
@@ -64,7 +64,7 @@ class AerodynamicsBuilderBase(SubsystemBuilderBase):
         return ['*']
 
 
-class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
+class CoreAerodynamicsBuilder(AerodyanmicsBuilder):
     """
     Core aerodynamics builder.
 
@@ -86,7 +86,7 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
 
     def __init__(self, name=None, meta_data=None, code_origin=None, tabular=False):
         if name is None:
-            name = 'core_aerodynamics'
+            name = 'aerodynamics'
 
         if code_origin not in (FLOPS, GASP):
             raise ValueError('Code origin is not one of the following: (FLOPS, GASP)')

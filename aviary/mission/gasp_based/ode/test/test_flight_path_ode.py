@@ -29,7 +29,7 @@ class FlightPathODETestCase(unittest.TestCase):
         self.fp = self.prob.model = FlightPathODE(
             num_nodes=2,
             aviary_options=get_option_defaults(),
-            core_subsystems=default_mission_subsystems,
+            subsystems=default_mission_subsystems,
         )
 
         setup_model_options(self.prob, aviary_options)

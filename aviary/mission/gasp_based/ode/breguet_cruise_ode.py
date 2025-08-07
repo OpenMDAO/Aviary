@@ -8,7 +8,7 @@ from aviary.mission.ode.altitude_rate import AltitudeRate
 from aviary.mission.ode.specific_energy_rate import SpecificEnergyRate
 from aviary.subsystems.atmosphere.atmosphere import Atmosphere
 from aviary.subsystems.mass.mass_to_weight import MassToWeight
-from aviary.subsystems.propulsion.propulsion_builder import PropulsionBuilderBase
+from aviary.subsystems.propulsion.propulsion_builder import PropulsionBuilder
 from aviary.variable_info.enums import SpeedType
 from aviary.variable_info.variables import Dynamic
 
@@ -19,7 +19,7 @@ class BreguetCruiseODESolution(TwoDOFODE):
     def setup(self):
         nn = self.options['num_nodes']
         aviary_options = self.options['aviary_options']
-        core_subsystems = self.options['core_subsystems']
+        subsystems = self.options['subsystems']
         subsystem_options = self.options['subsystem_options']
 
         # TODO: paramport
@@ -42,13 +42,13 @@ class BreguetCruiseODESolution(TwoDOFODE):
             'method': 'cruise',
             'output_alpha': True,
         }
-        for subsystem in core_subsystems:
+        for subsystem in subsystems:
             # check if subsystem_options has entry for a subsystem of this name
             if subsystem.name in subsystem_options:
                 kwargs.update(subsystem_options[subsystem.name])
             system = subsystem.build_mission(**kwargs)
             if system is not None:
-                if isinstance(subsystem, PropulsionBuilderBase):
+                if isinstance(subsystem, PropulsionBuilder):
                     prop_group.add_subsystem(
                         subsystem.name,
                         system,
@@ -62,8 +62,6 @@ class BreguetCruiseODESolution(TwoDOFODE):
                         promotes_inputs=subsystem.mission_inputs(**kwargs),
                         promotes_outputs=subsystem.mission_outputs(**kwargs),
                     )
-
-        self.add_external_subsystems()
 
         bal = om.BalanceComp(
             name=Dynamic.Vehicle.Propulsion.THROTTLE,
@@ -162,7 +160,7 @@ class E_BreguetCruiseODESolution(TwoDOFODE):
     def setup(self):
         nn = self.options['num_nodes']
         aviary_options = self.options['aviary_options']
-        core_subsystems = self.options['core_subsystems']
+        subsystems = self.options['subsystems']
 
         # TODO: paramport
         self.add_subsystem('params', ParamPort(), promotes=['*'])
@@ -188,10 +186,10 @@ class E_BreguetCruiseODESolution(TwoDOFODE):
             'method': 'cruise',
             'output_alpha': True,
         }
-        for subsystem in core_subsystems:
+        for subsystem in subsystems:
             system = subsystem.build_mission(**kwargs)
             if system is not None:
-                if isinstance(subsystem, PropulsionBuilderBase):
+                if isinstance(subsystem, PropulsionBuilder):
                     prop_group.add_subsystem(
                         subsystem.name,
                         system,

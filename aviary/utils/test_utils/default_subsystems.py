@@ -19,10 +19,10 @@ def get_default_premission_subsystems(legacy_code, engines=None):
         List of EngineDecks
     """
     legacy_code = LegacyCode(legacy_code)
-    prop = CorePropulsionBuilder('core_propulsion', BaseMetaData, engine_models=engines)
-    mass = CoreMassBuilder('core_mass', BaseMetaData, legacy_code)
-    aero = CoreAerodynamicsBuilder('core_aerodynamics', BaseMetaData, legacy_code)
-    geom = CoreGeometryBuilder('core_geometry', BaseMetaData, legacy_code)
+    prop = CorePropulsionBuilder('propulsion', BaseMetaData, engine_models=engines)
+    mass = CoreMassBuilder('mass', BaseMetaData, legacy_code)
+    aero = CoreAerodynamicsBuilder('aerodynamics', BaseMetaData, legacy_code)
+    geom = CoreGeometryBuilder('geometry', BaseMetaData, legacy_code)
 
     return [prop, geom, aero, mass]
 
@@ -39,8 +39,8 @@ def get_default_mission_subsystems(legacy_code, engines=None):
         List of EngineDecks
     """
     legacy_code = LegacyCode(legacy_code)
-    prop = CorePropulsionBuilder('core_propulsion', BaseMetaData, engine_models=engines)
-    aero = CoreAerodynamicsBuilder('core_aerodynamics', BaseMetaData, legacy_code)
+    prop = CorePropulsionBuilder('propulsion', BaseMetaData, engine_models=engines)
+    aero = CoreAerodynamicsBuilder('aerodynamics', BaseMetaData, legacy_code)
 
     return [aero, prop]
 
@@ -55,7 +55,7 @@ def get_geom_and_mass_subsystems(legacy_code):
         either FLOPS or GASP LegacyCode Enums, or their strings equivalents ('FLOPS', 'GASP')
     """
     legacy_code = LegacyCode(legacy_code)
-    mass = CoreMassBuilder('core_mass', BaseMetaData, legacy_code)
-    geom = CoreGeometryBuilder('core_geometry', BaseMetaData, legacy_code)
+    mass = CoreMassBuilder('mass', BaseMetaData, legacy_code)
+    geom = CoreGeometryBuilder('geometry', BaseMetaData, legacy_code)
 
     return [geom, mass]

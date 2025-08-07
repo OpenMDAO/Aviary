@@ -6,8 +6,6 @@ import aviary.api as av
 from aviary.examples.external_subsystems.custom_mass.custom_mass_builder import WingMassBuilder
 
 phase_info = deepcopy(av.default_height_energy_phase_info)
-# Here we just add the simple weight system to only the pre-mission
-phase_info['pre_mission']['external_subsystems'] = [WingMassBuilder()]
 
 if __name__ == '__main__':
     prob = av.AviaryProblem()
@@ -16,6 +14,7 @@ if __name__ == '__main__':
     # Allow for user overrides here
     prob.load_inputs('models/aircraft/test_aircraft/aircraft_for_bench_FwFm.csv', phase_info)
 
+    prob.load_external_subsystems([WingMassBuilder()])
     # Preprocess inputs
     prob.check_and_preprocess_inputs()
 

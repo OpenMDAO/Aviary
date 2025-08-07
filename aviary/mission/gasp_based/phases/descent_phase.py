@@ -166,8 +166,8 @@ class DescentPhase(PhaseBuilderBase):
             units='lbf',
         )
         # TODO: These should be promoted in the 2dof mission outputs.
-        phase.add_timeseries_output('core_aerodynamics.CL', output_name='CL', units='unitless')
-        phase.add_timeseries_output('core_aerodynamics.CD', output_name='CD', units='unitless')
+        phase.add_timeseries_output('aerodynamics.CL', output_name='CL', units='unitless')
+        phase.add_timeseries_output('aerodynamics.CD', output_name='CD', units='unitless')
 
         return phase
 

@@ -119,7 +119,7 @@ class PropellerBuilder(SubsystemBuilderBase):
     def get_mass_names(self):
         return [Aircraft.Engine.Gearbox.MASS]
 
-    def get_outputs(self):
+    def get_timeseries(self):
         return [
             Dynamic.Vehicle.Propulsion.SHAFT_POWER + '_out',
             Dynamic.Vehicle.Propulsion.SHAFT_POWER_MAX + '_out',

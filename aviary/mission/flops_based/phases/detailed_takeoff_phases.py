@@ -2994,7 +2994,7 @@ class TakeoffTrajectory:
             # We need to create parameters for just the inputs we have.
             # They mostly come from the low-speed aero subsystem.
 
-            aero = CoreAerodynamicsBuilder('core_aerodynamics', BaseMetaData, LegacyCode('FLOPS'))
+            aero = CoreAerodynamicsBuilder('aerodynamics', BaseMetaData, LegacyCode('FLOPS'))
 
             kwargs = {'method': 'low_speed'}
 

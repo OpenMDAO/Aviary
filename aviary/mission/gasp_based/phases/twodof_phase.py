@@ -277,9 +277,8 @@ class TwoDOFPhase(FlightPhaseBase):
 
     def _extra_ode_init_kwargs(self):
         """Return extra kwargs required for initializing the ODE."""
-        # TODO: support external_subsystems and meta_data in the base class
         return {
-            'external_subsystems': self.external_subsystems,
+            'subsystems': self.subsystems,
             'meta_data': self.meta_data,
             'subsystem_options': self.subsystem_options,
             'input_speed_type': SpeedType.MACH,

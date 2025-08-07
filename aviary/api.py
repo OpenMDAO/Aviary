@@ -185,7 +185,7 @@ from aviary.mission.flops_based.phases.detailed_takeoff_phases import (
 
 # Aerodynamics
 from aviary.subsystems.aerodynamics.aerodynamics_builder import (
-    AerodynamicsBuilderBase,
+    AerodyanmicsBuilder,
     CoreAerodynamicsBuilder,
 )
 from aviary.subsystems.aerodynamics.flops_based.tabular_aero_group import TabularAeroGroup
@@ -194,17 +194,17 @@ from aviary.subsystems.aerodynamics.flops_based.tabular_aero_group import Tabula
 from aviary.subsystems.atmosphere.atmosphere import Atmosphere
 
 # Geometry
-from aviary.subsystems.geometry.geometry_builder import GeometryBuilderBase, CoreGeometryBuilder
+from aviary.subsystems.geometry.geometry_builder import GeometryBuilder, CoreGeometryBuilder
 
 # Mass
-from aviary.subsystems.mass.mass_builder import MassBuilderBase, CoreMassBuilder
+from aviary.subsystems.mass.mass_builder import MassBuilder, CoreMassBuilder
 
 # Propulsion
 from aviary.subsystems.propulsion.engine_deck import EngineDeck
 from aviary.subsystems.propulsion.engine_model import EngineModel
 from aviary.subsystems.propulsion.motor.motor_builder import MotorBuilder
 from aviary.subsystems.propulsion.propulsion_builder import (
-    PropulsionBuilderBase,
+    PropulsionBuilder,
     CorePropulsionBuilder,
 )
 from aviary.subsystems.propulsion.turboprop_model import TurbopropModel
