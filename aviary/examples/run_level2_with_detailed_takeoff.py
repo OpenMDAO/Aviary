@@ -313,14 +313,7 @@ if __name__ == '__main__':
     # Allow for user overrides here
     prob.load_inputs('models/aircraft/test_aircraft/aircraft_for_bench_solved2dof.csv', phase_info)
 
-    prob.add_pre_mission_systems()
-
-    prob.add_phases()
-
-    prob.add_post_mission_systems()
-
-    # Link phases and variables
-    prob.link_phases()
+    prob.build_model()
 
     prob.add_driver(optimizer, max_iter=25)
 

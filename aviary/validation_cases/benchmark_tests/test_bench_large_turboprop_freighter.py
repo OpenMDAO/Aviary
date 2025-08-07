@@ -33,10 +33,7 @@ class LargeTurbopropFreighterBenchmark(unittest.TestCase):
         prob.aviary_inputs.set_val(Mission.Constraints.MAX_MACH, 0.5)
         prob.aviary_inputs.set_val(Aircraft.Fuselage.AVG_DIAMETER, 4.125, 'm')
 
-        prob.add_pre_mission_systems()
-        prob.add_phases()
-        prob.add_post_mission_systems()
-        prob.link_phases()
+        prob.build_model()
         prob.add_driver('IPOPT', max_iter=0, verbosity=0)
         prob.add_design_variables()
         prob.add_objective()

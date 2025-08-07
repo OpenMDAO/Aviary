@@ -123,10 +123,7 @@ make_plots = False
 prob = av.AviaryProblem()
 
 prob.load_inputs(aircraft_definition_file, phase_info)
-prob.add_pre_mission_systems()
-prob.add_phases()
-prob.add_post_mission_systems()
-prob.link_phases()
+prob.build_model()
 prob.add_driver(optimizer=optimizer)
 prob.add_design_variables()
 prob.add_objective()

@@ -119,11 +119,7 @@ class TestPhaseInfoAPI(unittest.TestCase):
 
         prob.load_inputs(csv_path, phase_info)
 
-        prob.add_pre_mission_systems()
-        prob.add_phases()
-        prob.add_post_mission_systems()
-
-        prob.link_phases()
+        prob.build_model()
 
         prob.setup()
         prob.set_initial_guesses()

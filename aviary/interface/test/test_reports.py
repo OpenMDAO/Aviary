@@ -120,11 +120,7 @@ class TestReports(unittest.TestCase):
         )
         prob.meta_data = metadata
 
-        prob.add_pre_mission_systems()
-        prob.add_phases()
-        prob.add_post_mission_systems()
-
-        prob.link_phases()
+        prob.build_model()
 
         prob.setup()
 

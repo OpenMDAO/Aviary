@@ -123,15 +123,7 @@ prob = av.AviaryProblem()
 # Allow for user overrides here
 prob.load_inputs('models/aircraft/test_aircraft/aircraft_for_bench_FwFm.csv', phase_info)
 
-# Preprocess inputs
-prob.add_pre_mission_systems()
-
-prob.add_phases()
-
-prob.add_post_mission_systems()
-
-# Link phases and variables
-prob.link_phases()
+prob.build_model()
 
 prob.add_driver('SLSQP')
 

@@ -70,10 +70,7 @@ class MultiengineTestcase(unittest.TestCase):
 
         prob.load_inputs(inputs, test_phase_info, engine_builders=[engine1, engine2])
 
-        prob.add_pre_mission_systems()
-        prob.add_phases()
-        prob.add_post_mission_systems()
-        prob.link_phases()
+        prob.build_model()
 
         prob.add_driver('SNOPT', max_iter=50, use_coloring=True)
 
@@ -109,10 +106,7 @@ class MultiengineTestcase(unittest.TestCase):
 
         prob.load_inputs(inputs, test_phase_info, engine_builders=[engine1, engine2])
 
-        prob.add_pre_mission_systems()
-        prob.add_phases()
-        prob.add_post_mission_systems()
-        prob.link_phases()
+        prob.build_model()
 
         prob.add_driver('SNOPT', max_iter=50, use_coloring=True)
 
@@ -148,10 +142,7 @@ class MultiengineTestcase(unittest.TestCase):
 
         prob.load_inputs(inputs, test_phase_info, engine_builders=[engine1, engine2])
 
-        prob.add_pre_mission_systems()
-        prob.add_phases()
-        prob.add_post_mission_systems()
-        prob.link_phases()
+        prob.build_model()
 
         prob.add_driver('SNOPT', max_iter=50, use_coloring=True)
 

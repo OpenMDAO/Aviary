@@ -40,11 +40,7 @@ class TestExternalAero(av.TestSubsystemBuilderBase):
         # Load aircraft and options data from user
         prob.load_inputs('models/aircraft/test_aircraft/aircraft_for_bench_FwFm.csv', phase_info)
 
-        prob.add_pre_mission_systems()
-        prob.add_phases()
-        prob.add_post_mission_systems()
-
-        prob.link_phases()
+        prob.build_model()
 
         # SLSQP didn't work so well here.
         prob.add_driver('IPOPT')

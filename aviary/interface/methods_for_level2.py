@@ -1188,7 +1188,6 @@ class AviaryProblem(om.Problem):
         )
 
         # TODO: All these methods will need to be updated
-        prob_alternate.check_and_preprocess_inputs()
         prob_alternate.add_pre_mission_systems()
         prob_alternate.add_phases()
         prob_alternate.add_post_mission_systems()
@@ -1306,7 +1305,6 @@ class AviaryProblem(om.Problem):
             verbosity=verbosity,
         )
 
-        prob_fallout.check_and_preprocess_inputs()
         prob_fallout.add_pre_mission_systems()
         prob_fallout.add_phases()
         prob_fallout.add_post_mission_systems()

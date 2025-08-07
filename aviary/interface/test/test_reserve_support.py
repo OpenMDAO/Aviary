@@ -28,11 +28,7 @@ class ReserveTest(unittest.TestCase):
 
         prob.aviary_inputs.set_val(Aircraft.Design.RESERVE_FUEL_ADDITIONAL, 10000.0, units='lbm')
 
-        prob.add_pre_mission_systems()
-        prob.add_phases()
-        prob.add_post_mission_systems()
-
-        prob.link_phases()
+        prob.build_model()
 
         prob.add_design_variables()
         prob.add_objective(objective_type='mass', ref=-1e5)
@@ -58,11 +54,7 @@ class ReserveTest(unittest.TestCase):
 
         prob.aviary_inputs.set_val(Mission.Summary.GROSS_MASS, 140000.0, units='lbm')
 
-        prob.add_pre_mission_systems()
-        prob.add_phases()
-        prob.add_post_mission_systems()
-
-        prob.link_phases()
+        prob.build_model()
 
         prob.add_design_variables()
         prob.add_objective(objective_type='mass', ref=-1e5)

@@ -55,11 +55,7 @@ class TestSolvedAero(unittest.TestCase):
         )
         prob.model.aero_method = LegacyCode.GASP
 
-        prob.add_pre_mission_systems()
-        prob.add_phases()
-        prob.add_post_mission_systems()
-
-        prob.link_phases()
+        prob.build_model()
 
         prob.setup()
 
@@ -106,11 +102,7 @@ class TestSolvedAero(unittest.TestCase):
         prob.aviary_inputs.set_val(Aircraft.Design.LIFT_POLAR, np.zeros_like(CL), units='unitless')
         prob.aviary_inputs.set_val(Aircraft.Design.DRAG_POLAR, np.zeros_like(CD), units='unitless')
 
-        prob.add_pre_mission_systems()
-        prob.add_phases()
-        prob.add_post_mission_systems()
-
-        prob.link_phases()
+        prob.build_model()
 
         prob.setup()
 
@@ -153,11 +145,7 @@ class TestSolvedAero(unittest.TestCase):
         # Change value just to be certain.
         prob.aviary_inputs.set_val(Aircraft.Wing.AREA, 7777, units='ft**2')
 
-        prob.add_pre_mission_systems()
-        prob.add_phases()
-        prob.add_post_mission_systems()
-
-        prob.link_phases()
+        prob.build_model()
 
         prob.setup()
 
@@ -180,11 +168,7 @@ class TestSolvedAero(unittest.TestCase):
         prob.load_inputs(csv_path, local_phase_info)
         prob.model.aero_method = LegacyCode.GASP
 
-        prob.add_pre_mission_systems()
-        prob.add_phases()
-        prob.add_post_mission_systems()
-
-        prob.link_phases()
+        prob.build_model()
 
         prob.setup()
 
@@ -245,11 +229,7 @@ class TestSolvedAero(unittest.TestCase):
         prob.aviary_inputs.set_val(Aircraft.Design.LIFT_POLAR, np.zeros_like(CL), units='unitless')
         prob.aviary_inputs.set_val(Aircraft.Design.DRAG_POLAR, np.zeros_like(CD), units='unitless')
 
-        prob.add_pre_mission_systems()
-        prob.add_phases()
-        prob.add_post_mission_systems()
-
-        prob.link_phases()
+        prob.build_model()
 
         prob.setup()
 

@@ -21,13 +21,7 @@ prob = av.AviaryProblem()
 # Load aircraft and options data from provided sources
 prob.load_inputs('models/aircraft/test_aircraft/aircraft_for_bench_FwFm.csv', phase_info)
 
-prob.add_pre_mission_systems()
-
-prob.add_phases()
-
-prob.add_post_mission_systems()
-
-prob.link_phases()
+prob.build_model()
 
 # optimizer and iteration limit are optional provided here
 prob.add_driver('SLSQP', max_iter=50)

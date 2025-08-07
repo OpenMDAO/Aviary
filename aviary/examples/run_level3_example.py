@@ -156,6 +156,8 @@ def run_trajectory(sim=True):
 
     # Before design variables are added in level 2 formats, the program runs through
     # the following commands
+    # prob.build_model()
+    # which leverages the following commands:
     # prob.add_pre_mission_systems()
     # prob.add_phases()
     # prob.add_post_mission_systems()
@@ -275,7 +277,7 @@ def run_trajectory(sim=True):
     )
 
     # Level 2 Equivalent: The builders and preprocessing is handled in the
-    # check_and_preprocess_inputs level 2 function
+    # load_inputs level 2 function
     preprocess_crewpayload(aviary_inputs)
 
     prop = CorePropulsionBuilder('core_propulsion', BaseMetaData, engines)

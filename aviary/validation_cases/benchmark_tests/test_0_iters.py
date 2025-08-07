@@ -20,10 +20,7 @@ class BaseProblemPhaseTestCase(unittest.TestCase):
 
         prob.load_inputs(input_filename, phase_info)
 
-        prob.add_pre_mission_systems()
-        prob.add_phases()
-        prob.add_post_mission_systems()
-        prob.link_phases()
+        prob.build_model()
         prob.add_driver('SLSQP', max_iter=0, verbosity=0)
         prob.add_design_variables()
         prob.add_objective(objective_type if objective_type else None)

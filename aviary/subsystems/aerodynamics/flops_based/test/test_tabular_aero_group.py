@@ -99,11 +99,7 @@ class TabularAeroGroupFileTest(unittest.TestCase):
             local_phase_info,
         )
 
-        prob.add_pre_mission_systems()
-        prob.add_phases()
-        prob.add_post_mission_systems()
-
-        prob.link_phases()
+        prob.build_model()
 
         prob.setup()
 
@@ -227,11 +223,7 @@ class TabularAeroGroupDataTest(unittest.TestCase):
             local_phase_info,
         )
 
-        prob.add_pre_mission_systems()
-        prob.add_phases()
-        prob.add_post_mission_systems()
-
-        prob.link_phases()
+        prob.build_model()
 
         # Connect or set.
         prob.aviary_inputs.set_val(Aircraft.Design.LIFT_INDEPENDENT_DRAG_POLAR, self.CD0_values)
