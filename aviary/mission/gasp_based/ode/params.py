@@ -134,7 +134,7 @@ params_for_unit_tests = {
     Aircraft.Wing.MAX_THICKNESS_LOCATION: dict(units='unitless', val=0.4),
     Aircraft.Strut.AREA_RATIO: dict(units='unitless', val=0),
     Aircraft.Wing.ZERO_LIFT_ANGLE: dict(units='deg', val=-1.2),
-    Aircraft.Design.SUPERCRITICAL_DIVERGENCE_SHIFT: dict(units='unitless', val=0.033),
+    Aircraft.Design.DRAG_DIVERGENCE_SHIFT: dict(units='unitless', val=0.033),
     Aircraft.Wing.FLAP_CHORD_RATIO: dict(units='unitless', val=0.3),
     Mission.Design.LIFT_COEFFICIENT_MAX_FLAPS_UP: dict(units='unitless', val=1.2596),
     Mission.Takeoff.LIFT_COEFFICIENT_MAX: dict(units='unitless', val=2.1886),
