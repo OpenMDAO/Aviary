@@ -91,72 +91,70 @@ def convert_aero_table(input_file=None, output_file=None, data_format=None):
 
     stamp = f'# {data_format.value}-derived aerodynamics data converted from {data_file.name}'
 
-    if data_format in (CodeOrigin.GASP, CodeOrigin.GASP_ALT):
-        is_alternative = True if data_format == CodeOrigin.GASP_ALT else False
-        if not is_alternative:
-            data, comments = _load_gasp_aero_table(data_file)
-            comments = [stamp] + comments
-            write_data_file(output_file, data, outputs, comments, include_timestamp=True)
-        else:
-            data = {key: [] for key in _gasp_keys}
-            scalars, tables, fields = _load_gasp_alt_aero_table(data_file)
-            # save scalars as comments
-            comments = []
-            comments.extend(['# ' + key + ': ' + str(scalars[key]) for key in scalars.keys()])
-            structured_data = _make_structured_grid(tables, method='lagrange3', fields=fields)
-            data['Altitude'] = structured_data['CL']['alts']
-            data['Mach'] = structured_data['CL']['machs']
-            data['Angle of Attack'] = structured_data['CL']['aoas']
-            data['CL'] = structured_data['CL']['vals']
-            data['CD'] = structured_data['CD']['vals']
+    if data_format is CodeOrigin.GASP:
+        data, comments = _load_gasp_aero_table(data_file)
+        comments = [stamp] + comments
+        write_data_file(output_file, data, outputs, comments, include_timestamp=True)
+    elif data_format is CodeOrigin.GASP_ALT:
+        data = {key: [] for key in _gasp_keys}
+        scalars, tables, fields = _load_gasp_alt_aero_table(data_file)
+        # save scalars as comments
+        comments = []
+        comments.extend(['# ' + key + ': ' + str(scalars[key]) for key in scalars.keys()])
+        structured_data = _make_structured_grid(tables, method='lagrange3', fields=fields)
+        data['Altitude'] = structured_data['CL']['alts']
+        data['Mach'] = structured_data['CL']['machs']
+        data['Angle of Attack'] = structured_data['CL']['aoas']
+        data['CL'] = structured_data['CL']['vals']
+        data['CD'] = structured_data['CD']['vals']
 
-            # round data if requested, using sig_figs as guide
-            round_data = True
-            if round_data:
-                for key in data:
-                    data[key] = np.array([round_it(val, sig_figs[key]) for val in data[key]])
-
-            # data needs to be string so column length can be easily found later
-            for var in data:
-                data[var] = np.array([str(item) for item in data[var]])
-
-            # sort data
-            # create parallel dict to data that stores floats
-            formatted_data = {}
+        # round data if requested, using sig_figs as guide
+        round_data = True
+        if round_data:
             for key in data:
-                formatted_data[key] = data[key].astype(float)
+                data[key] = np.array([round_it(val, sig_figs[key]) for val in data[key]])
 
-            # convert engine_data from dict to list so it can be sorted
-            sorted_values = np.array(list(formatted_data.values())).transpose()
+        # data needs to be string so column length can be easily found later
+        for var in data:
+            data[var] = np.array([str(item) for item in data[var]])
 
-            # Sort by altitude, then mach, then angle of attack
-            sorted_values = sorted_values[
-                np.lexsort(
-                    [
-                        formatted_data['Angle of Attack'],
-                        formatted_data['Mach'],
-                        formatted_data['Altitude'],
-                    ]
-                )
-            ]
-            for idx, key in enumerate(formatted_data):
-                formatted_data[key] = sorted_values[:, idx]
+        # sort data
+        # create parallel dict to data that stores floats
+        formatted_data = {}
+        for key in data:
+            formatted_data[key] = data[key].astype(float)
 
-            # store formatted data into NamedValues object
-            write_data = NamedValues()
+        # convert engine_data from dict to list so it can be sorted
+        sorted_values = np.array(list(formatted_data.values())).transpose()
 
-            header_names = {
-                'Altitude': 'Altitude',
-                'Mach': 'Mach',
-                'Angle of Attack': 'Angle of Attack',
-                'CL': 'CL',
-                'CD': 'CD',
-            }
-            for key in data:
-                write_data.set_val(header_names[key], formatted_data[key], default_units[key])
+        # Sort by altitude, then mach, then angle of attack
+        sorted_values = sorted_values[
+            np.lexsort(
+                [
+                    formatted_data['Angle of Attack'],
+                    formatted_data['Mach'],
+                    formatted_data['Altitude'],
+                ]
+            )
+        ]
+        for idx, key in enumerate(formatted_data):
+            formatted_data[key] = sorted_values[:, idx]
 
-            comments = [stamp] + comments
-            write_data_file(output_file, write_data, outputs, comments, include_timestamp=True)
+        # store formatted data into NamedValues object
+        write_data = NamedValues()
+
+        header_names = {
+            'Altitude': 'Altitude',
+            'Mach': 'Mach',
+            'Angle of Attack': 'Angle of Attack',
+            'CL': 'CL',
+            'CD': 'CD',
+        }
+        for key in data:
+            write_data.set_val(header_names[key], formatted_data[key], default_units[key])
+
+        comments = [stamp] + comments
+        write_data_file(output_file, write_data, outputs, comments, include_timestamp=True)
     elif data_format is CodeOrigin.FLOPS:
         if type(output_file) is not list:
             # if only one filename is given, split into two
