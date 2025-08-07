@@ -19,7 +19,7 @@ from aviary.utils.functions import get_path
 class CodeOrigin(Enum):
     FLOPS = 'FLOPS'
     GASP = 'GASP'
-    GASP_ALT = 'GASP_ALT'  # alternative format (the actual format that GASP assumes)
+    GASP_ALT = 'GASP_ALT'
 
 
 _gasp_keys = ['Altitude', 'Mach', 'Angle of Attack']
@@ -63,7 +63,7 @@ def convert_aero_table(input_file=None, output_file=None, data_format=None):
     There are two options for the legacy aero data file format: FLOPS and GASP.
     As an Aviary command, the usage is:
     aviary convert_aero_table -F {FLOPS|GASP|GASP_ALT} input_file output_file.
-    Note: In case of GASP_ALT, reading of a possible cd0 table is not implemented yet.
+    Note: In case of GASP, reading of a possible cd0 table is not implemented yet.
     """
     data_format = CodeOrigin(data_format)
     data_file = get_path(input_file)
@@ -91,11 +91,11 @@ def convert_aero_table(input_file=None, output_file=None, data_format=None):
 
     stamp = f'# {data_format.value}-derived aerodynamics data converted from {data_file.name}'
 
-    if data_format is CodeOrigin.GASP:
+    if data_format is CodeOrigin.GASP_ALT:
         data, comments = _load_gasp_aero_table(data_file)
         comments = [stamp] + comments
         write_data_file(output_file, data, outputs, comments, include_timestamp=True)
-    elif data_format is CodeOrigin.GASP_ALT:
+    elif data_format is CodeOrigin.GASP:
         data = {key: [] for key in _gasp_keys}
         scalars, tables, fields = _load_gasp_alt_aero_table(data_file)
         # save scalars as comments

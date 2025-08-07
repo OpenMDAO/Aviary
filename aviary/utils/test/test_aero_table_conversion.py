@@ -61,7 +61,7 @@ class TestAeroTableConversion(unittest.TestCase):
         filename = 'aero_flaps_GASP.txt'
         validation_file = 'models/large_single_aisle_1/large_single_aisle_1_aero_flaps.csv'
 
-        self.prepare_and_run(filename, data_format='GASP')
+        self.prepare_and_run(filename, data_format='GASP_ALT')
 
         self.compare_files(filename, validation_file)
 
@@ -69,7 +69,7 @@ class TestAeroTableConversion(unittest.TestCase):
         filename = 'aero_free_GASP.txt'
         validation_file = 'models/large_single_aisle_1/large_single_aisle_1_aero_free.csv'
 
-        self.prepare_and_run(filename, data_format='GASP')
+        self.prepare_and_run(filename, data_format='GASP_ALT')
 
         self.compare_files(filename, validation_file)
 
@@ -79,7 +79,7 @@ class TestAeroTableConversion(unittest.TestCase):
             'models/large_single_aisle_1/large_single_aisle_1_aero_free_reduced_alpha.csv'
         )
 
-        self.prepare_and_run(filename, data_format='GASP')
+        self.prepare_and_run(filename, data_format='GASP_ALT')
 
         self.compare_files(filename, validation_file)
 
@@ -87,7 +87,7 @@ class TestAeroTableConversion(unittest.TestCase):
         filename = 'aero_ground_GASP.txt'
         validation_file = 'models/large_single_aisle_1/large_single_aisle_1_aero_ground.csv'
 
-        self.prepare_and_run(filename, data_format='GASP')
+        self.prepare_and_run(filename, data_format='GASP_ALT')
 
         self.compare_files(filename, validation_file)
 
@@ -96,7 +96,7 @@ class TestAeroTableConversion(unittest.TestCase):
         filename = 'aero_BWB_modified_GASP.txt'
         validation_file = 'models/aircraft/blended_wing_body/generic_BWB_GASP_aero.csv'
 
-        self.prepare_and_run(filename, data_format='GASP_ALT')
+        self.prepare_and_run(filename, data_format='GASP')
 
         self.compare_files(filename, validation_file)
 
