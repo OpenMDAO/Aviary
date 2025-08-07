@@ -518,10 +518,10 @@ class AviaryProblem(om.Problem):
 
         # Dictionary for default reference values
         default_ref_values = {
-            'mass': -5e4,
-            'hybrid_objective': -5e4,
-            'fuel_burned': 1e4,
-            'fuel': 1e4,
+            'mass': -1,
+            'hybrid_objective': -1,
+            'fuel_burned': 1,
+            'fuel': 1,
         }
 
         # Check if an objective type is specified

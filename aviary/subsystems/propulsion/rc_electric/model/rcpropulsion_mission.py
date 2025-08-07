@@ -52,6 +52,7 @@ class RCPropMission(om.Group):
                 ],
             promotes_outputs=[
                 Dynamic.Vehicle.Propulsion.RPM,
+                Dynamic.Vehicle.Propulsion.CURRENT_CON,
                 ]
         )
 
@@ -104,6 +105,9 @@ class RCPropMission(om.Group):
         self.connect('esc.voltage_out', 'motor.voltage_in')
         # self.connect('esc.current_out', 'motor.current')
 
+        self.add_constraint(Dynamic.Vehicle.Propulsion.CURRENT, lower=0)
+        self.add_constraint(Dynamic.Vehicle.Propulsion.CURRENT_CON, upper=0)
+        self.add_constraint(Dynamic.Vehicle.Propulsion.RPM, lower=1, upper=7500, units='rpm')
 
         self.connect('battery.power', 'power_net.power_batt')
         self.connect('esc.power', 'power_net.power_esc')

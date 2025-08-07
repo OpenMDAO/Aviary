@@ -270,7 +270,7 @@ class HeightEnergyProblemConfigurator(ProblemConfiguratorBase):
             aviary_group.regular_phases,
             'altitude_optimize',
             Dynamic.Mission.ALTITUDE,
-            ref=1.0e4,
+            ref=1e2,
         )
         self.link_phases_helper_with_options(
             aviary_group, aviary_group.regular_phases, 'mach_optimize', Dynamic.Atmosphere.MACH
@@ -282,7 +282,7 @@ class HeightEnergyProblemConfigurator(ProblemConfiguratorBase):
             aviary_group.reserve_phases,
             'altitude_optimize',
             Dynamic.Mission.ALTITUDE,
-            ref=1.0e4,
+            ref=1e2,
         )
         self.link_phases_helper_with_options(
             aviary_group, aviary_group.reserve_phases, 'mach_optimize', Dynamic.Atmosphere.MACH
@@ -296,13 +296,13 @@ class HeightEnergyProblemConfigurator(ProblemConfiguratorBase):
         aviary_group.traj.link_phases(
             phases,
             [Dynamic.Vehicle.MASS],
-            ref=None if connect_directly else 1e6,
+            ref=None if connect_directly else 1e1,
             connected=connect_directly,
         )
         aviary_group.traj.link_phases(
             phases,
             [Dynamic.Mission.DISTANCE],
-            ref=None if connect_directly else 1e3,
+            ref=None if connect_directly else 1e1,
             connected=connect_directly,
         )
 
@@ -397,7 +397,7 @@ class HeightEnergyProblemConfigurator(ProblemConfiguratorBase):
 
             # TODO: replace hard_coded ref for this constraint.
             eq.add_eq_output(
-                'mass', eq_units='lbm', normalize=False, ref=100000.0, add_constraint=True
+                'mass', eq_units='lbm', normalize=False, ref=1.0, add_constraint=True
             )
 
             aviary_group.connect(
@@ -427,7 +427,7 @@ class HeightEnergyProblemConfigurator(ProblemConfiguratorBase):
 
         # TODO: replace hard_coded ref for this constraint.
         aviary_group.post_mission.add_constraint(
-            Mission.Constraints.MASS_RESIDUAL, equals=0.0, ref=1.0e5
+            Mission.Constraints.MASS_RESIDUAL, equals=0.0, ref=1.0
         )
 
     def _add_post_mission_takeoff_systems(self, aviary_group):

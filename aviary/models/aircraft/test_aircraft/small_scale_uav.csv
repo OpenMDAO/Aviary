@@ -41,8 +41,6 @@ aircraft:engine:generate_flight_idle,False,unitless
 aircraft:engine:geopotential_alt,False,unitless
 aircraft:engine:ignore_negative_thrust,True,unitless
 aircraft:engine:interpolation_method,slinear,unitless
-aircraft:engine:mass_scaler,0.0,unitless
-aircraft:engine:mass, 0.0, kg
 aircraft:battery:mass, 0.707, kg
 aircraft:battery:resistance, 0.05, ohm
 aircraft:battery:voltage, 22.2, V
@@ -51,7 +49,7 @@ aircraft:engine:motor:peak_current, 120, A
 aircraft:engine:motor:mass, 0.288, kg
 aircraft:engine:propeller:diameter, 20, inch
 aircraft:engine:propeller:pitch, 10, inch
-aircraft:engine:num_engines,2,unitless
+aircraft:engine:num_engines,1,unitless
 aircraft:engine:num_fuselage_engines,0,unitless
 aircraft:engine:num_wing_engines,2,unitless
 aircraft:engine:reference_mass,1 ,lbm
@@ -151,7 +149,7 @@ aircraft:wing:wetted_area_scaler,1.0,unitless
 aircraft:wing:wetted_area,0.65039,m**2
 mission:constraints:max_mach,0.04,unitless
 mission:design:cruise_altitude,200,ft
-mission:design:gross_mass,5,kg
+mission:design:gross_mass,7,kg
 mission:design:range,1000,ft
 mission:design:thrust_takeoff_per_eng,0, 
 mission:landing:lift_coefficient_max,1.4,unitless
@@ -253,3 +251,4 @@ aircraft:electrical:mass, 0, lbm
 aircraft:design:touchdown_mass, 4,kg
 aircraft:engine:pod_mass, 0, lbm
 aircraft:wing:bending_material_mass, 0, lbm
+mission:design:fuel_mass, 0, lbm

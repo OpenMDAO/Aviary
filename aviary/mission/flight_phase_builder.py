@@ -46,16 +46,16 @@ class FlightPhaseOptions(AviaryOptionsDictionary):
 
         # TODO: These defaults aren't great, but need to keep things the same for now.
         defaults = {
-            'mass_ref': 1e4,
-            'mass_defect_ref': 1e6,
+            'mass_ref': 1,
+            'mass_defect_ref': 1,
             'mass_bounds': (0.0, None),
         }
         self.add_state_options('mass', units='kg', defaults=defaults)
 
         # TODO: These defaults aren't great, but need to keep things the same for now.
         defaults = {
-            'distance_ref': 1e6,
-            'distance_defect_ref': 1e8,
+            'distance_ref': 1,
+            'distance_defect_ref': 1,
             'distance_bounds': (0.0, None),
             'mass_bounds': (0.0, None),
         }
@@ -65,7 +65,7 @@ class FlightPhaseOptions(AviaryOptionsDictionary):
 
         # TODO: These defaults aren't great, but need to keep things the same for now.
         defaults = {
-            'mach_ref': 0.5,
+            'mach_ref': 0.01,
         }
         self.add_control_options('mach', units='unitless', defaults=defaults)
 

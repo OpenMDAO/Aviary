@@ -755,6 +755,7 @@ class Dynamic:
         class Propulsion:
             # variables specific to the propulsion subsystem
             CURRENT = 'current_flow'
+            CURRENT_CON = 'current_constraint'
             ELECTRIC_POWER_IN = 'electric_power_in'
             ELECTRIC_POWER_IN_TOTAL = 'electric_power_in_total'
             # EXIT_AREA = 'exit_area'

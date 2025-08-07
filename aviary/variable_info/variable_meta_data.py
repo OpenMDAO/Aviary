@@ -7677,6 +7677,16 @@ add_meta_data(
     desc='Electrical current flow through an engine',
     multivalue=True,
 )
+
+add_meta_data(
+    Dynamic.Vehicle.Propulsion.CURRENT_CON, 
+    meta_data=_MetaData,
+    historical_name={'GASP': None, 'FLOPS': None, 'LEAPS1': None},
+    units='A',
+    desc='Constraint linking peak current and electrical current flow',
+    multivalue=True,
+)
+
 add_meta_data(
     Dynamic.Vehicle.Propulsion.ELECTRIC_POWER_IN,
     meta_data=_MetaData,

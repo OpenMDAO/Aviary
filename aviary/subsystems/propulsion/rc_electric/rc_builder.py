@@ -19,15 +19,19 @@ class RCBuilder(EngineModel):
     def build_mission(self, num_nodes, aviary_inputs, **kwargs):
         """Builds an OpenMDAO system for the mission computations of the subsystem."""
         return RCPropMission(num_nodes=num_nodes, aviary_options=self.options)
-    def get_constraints(self):
-        constraints = {
-            Dynamic.Vehicle.Propulsion.CURRENT: {
-                'lower': 0,
-                'type': 'path',
-            },
-        }
+    # def get_constraints(self):
+    #     constraints = {
+    #         Dynamic.Vehicle.Propulsion.CURRENT: {
+    #             'lower': 0,
+    #             'type': 'path',
+    #         },
+    #         Dynamic.Vehicle.Propulsion.CURRENT_CON: {
+    #             'upper': 0, 
+    #             'type': 'path',
+    #         }
+    #     }
 
-        return constraints
+    #     return constraints
 
     def get_design_vars(self):
         """
@@ -42,32 +46,25 @@ class RCBuilder(EngineModel):
         parameters : dict
         A dict of names for the propeller subsystem.
         """
-        # TODO bounds are rough placeholders
-        # TODO potentially work on optimizing the voltage
+        # TODO Alex bounds are rough placeholders
+        # TODO Alex potentially work on optimizing the voltage
         DVs = {
             Aircraft.Battery.MASS: {
                 'units': 'kg',
-                'lower': 0.0,
-                'upper': None,
+                'lower': 0.1,
+                'upper': 1.0,
                 # 'val': 100,  
             },
-            #TODO: Alex see why this is an issue 
-            # Dynamic.Vehicle.Propulsion.THROTTLE: {
-            #     'units': 'unitless',
-            #     'lower': 0.01,
-            #     'upper': 1.0,
-            #     # 'val': 0.5,  
-            # },
             Aircraft.Engine.Motor.IDLE_CURRENT: {
                 'units': 'A',
-                'lower': 0.5,
+                'lower': 0.91,
                 'upper': 3.6, #TODO: this placeholder can be varied
                 # 'val': 2.2,  
             },
             Aircraft.Engine.Motor.PEAK_CURRENT: {
                 'units': 'A',
                 'lower': 1,
-                'upper': 225,
+                'upper': 225, #limit is baced on available motor
                 # 'val': 100,  
             },
             Aircraft.Engine.Motor.MASS: {
@@ -76,20 +73,18 @@ class RCBuilder(EngineModel):
                 'upper': 1.701,
                 # 'val': 1.0,  
             },
-            Aircraft.Engine.Propeller.PITCH: {
-                'units': 'inch',
-                'lower': 0.0,
-                'upper': None,
-                # 'val': 100,  # initial value
-            },
-            Aircraft.Engine.Propeller.DIAMETER: {
-                'units': 'm',
-                'lower': 0.0,
-                'upper': None,
-                # 'val': 8,  # initial value
-            },
-
-            #TODO: check if velocity is to be added here? 
+            # Aircraft.Engine.Propeller.PITCH: {
+            #     'units': 'inch',
+            #     'lower': 3.0,
+            #     'upper': 15.0,
+            #     # 'val': 100,  # initial value
+            # },
+            # Aircraft.Engine.Propeller.DIAMETER: {
+            #     'units': 'inch',
+            #     'lower': 10.0,
+            #     'upper': 20.0,
+            #     # 'val': 8,  # initial value
+            # },
 
         }
         return DVs

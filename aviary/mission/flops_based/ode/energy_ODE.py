@@ -17,7 +17,7 @@ class EnergyODE(_BaseODE):
 
         self.options.declare(
             'use_actual_takeoff_mass',
-            default=False,
+            default=True, #TODO alex find why this doesnt work
             desc='flag to use actual takeoff mass in the climb phase, otherwise assume 100 kg fuel burn',
         )
         # TODO throttle enforcement & allocation should be moved to BaseODE for
@@ -84,7 +84,21 @@ class EnergyODE(_BaseODE):
                 'thrust_required',
             ],
         )
+        self.add_subsystem(
+            'thrust_balance',
+            om.ExecComp(
+                'thrust_con = thrust - thrust_required',
+                thrust={'val':np.zeros(nn), 'units': 'N'},
+                thrust_required={'val':np.zeros(nn), 'units': 'N'},
+                thrust_con={'val':np.zeros(nn), 'units': 'N'}
+            ),
+            promotes_inputs=[
+                ('thrust', Dynamic.Vehicle.Propulsion.THRUST_TOTAL),
+                'thrust_required'], 
+            promotes_outputs=['thrust_con']
+        )
 
+        self.add_constraint('thrust_con', equals=0)
         # THROTTLE Section
         # TODO: Split this out into a function that can be used by the other ODEs.
         if num_engine_type > 1:
@@ -100,7 +114,7 @@ class EnergyODE(_BaseODE):
                     rhs_name=Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
                     eq_units='lbf',
                     normalize=False,
-                    res_ref=1.0e6,
+                    res_ref=1.0,
                 ),
                 promotes_inputs=['*'],
                 promotes_outputs=['*'],
@@ -131,7 +145,7 @@ class EnergyODE(_BaseODE):
                     normalize=False,
                     lower=0.0 if options['throttle_enforcement'] == 'bounded' else None,
                     upper=1.0 if options['throttle_enforcement'] == 'bounded' else None,
-                    res_ref=1.0e6,
+                    res_ref=1.0,
                 ),
                 promotes_inputs=['*'],
                 promotes_outputs=['*'],
@@ -156,22 +170,22 @@ class EnergyODE(_BaseODE):
 
         # Experimental: Add a component to constrain the initial mass to be equal
         # to design gross weight.
-        initial_mass_residual_constraint = om.ExecComp(
-            exec_comp_string,
-            initial_mass={'units': 'kg'},
-            mass={'units': 'kg', 'shape': (nn,)},
-            initial_mass_residual={'units': 'kg', 'res_ref': 1.0e5},
-        )
+        # initial_mass_residual_constraint = om.ExecComp(
+        #     exec_comp_string,
+        #     initial_mass={'units': 'kg'},
+        #     mass={'units': 'kg', 'shape': (nn,)},
+        #     initial_mass_residual={'units': 'kg', 'res_ref': 1.0},
+        # )
 
-        self.add_subsystem(
-            'initial_mass_residual_constraint',
-            initial_mass_residual_constraint,
-            promotes_inputs=[
-                ('initial_mass', initial_mass_string),
-                ('mass', Dynamic.Vehicle.MASS),
-            ],
-            promotes_outputs=['initial_mass_residual'],
-        )
+        # self.add_subsystem(
+        #     'initial_mass_residual_constraint',
+        #     initial_mass_residual_constraint,
+        #     promotes_inputs=[
+        #         ('initial_mass', initial_mass_string),
+        #         ('mass', Dynamic.Vehicle.MASS),
+        #     ],
+        #     promotes_outputs=['initial_mass_residual'],
+        # )
 
         print_level = 2
 

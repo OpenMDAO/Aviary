@@ -7,19 +7,19 @@ phase_info = {
             'order': 3,
             'mach_optimize': True,
             'mach_polynomial_order': 3,
-            'mach_initial': (0.04, 'unitless'),
+            'mach_initial': (0.03, 'unitless'),
             # 'mach_final': (0., 'unitless'),
-            'altitude_optimize': False,
+            'altitude_optimize': True,
             'altitude_polynomial_order': 3,
             'altitude_initial': (0.0, 'ft'),
             'altitude_final': (200.0, 'ft'),
             'throttle_enforcement': 'path_constraint',
             'time_initial': (0.0, 'min'),
-            'time_duration_bounds': ((1, 40), 's'),
+            'time_duration_bounds': ((1, 13), 's'),
         },
         'initial_guesses': {
-            'time': ([0, 15], 's'),
-            'mach': ([0.04, 0.04], 'unitless')
+            'time': ([0, 6], 's'),
+            'mach': ([0.05, 0.05], 'unitless')
         },
     },
     'cruise': {
@@ -27,20 +27,22 @@ phase_info = {
         'user_options': {
             'num_segments': 1,
             'order': 3,
-            'mach_optimize': False,
+            'mach_optimize': True,
             'mach_polynomial_order': 1,
-            'mach_initial': (0.031, 'unitless'),
-            'mach_final': (0.031, 'unitless'),
+            'mach_initial': (0.1, 'unitless'),
+            # 'mach_final': (0.05, 'unitless'),
             'altitude_optimize': False,
             'altitude_polynomial_order': 1,
             'altitude_initial': (200, 'ft'),
             'altitude_final': (200, 'ft'),
-            'throttle_enforcement': 'boundary_constraint',
+            'throttle_enforcement': 'path_constraint',
             'time_initial_bounds': ((0, 20), 's'),
-            'time_duration_bounds': ((1, 100), 's'),
+            'time_duration_bounds': ((0.5,40), 's'),
+            'target_distance': (200, 'ft'),
         },
         'initial_guesses': {
-            'time': ([1, 100], 's'),
+            'distance': ([0, 200], 'ft'),
+            'time': ([0, 3], 's'),
         },
     },
     'descent': {
@@ -65,6 +67,6 @@ phase_info = {
     'post_mission': {
         'include_landing': False,
         # 'target_range': (200, 'ft'),
-        'constraint_range':True, 
+        # 'constraint_range':True, 
     },
 }

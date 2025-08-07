@@ -6,9 +6,9 @@ file_print_level 5
 print_info_string yes
 
 # Termination Criteria
-max_iter 100
+max_iter 300
 tol 1e-5
-constr_viol_tol 1e-7
+constr_viol_tol 1e-6
 
 #Stop and consider acceptable if the objective has barely changed 
 #and the constraints are satisfied for a number of iterations

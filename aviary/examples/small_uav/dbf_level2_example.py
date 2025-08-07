@@ -15,20 +15,25 @@ rc_prop = RCBuilder()
 
 phase_info = deepcopy(phase_info)
 
-# phase_info.pop('climb')
-phase_info.pop('cruise')
+phase_info.pop('climb')
+# phase_info.pop('cruise')
 phase_info.pop('descent')
 
 phase_info['pre_mission']['external_subsystems'] = [DBFMassBuilder()]
-phase_info['climb']['external_subsystems'] = [CustomAeroBuilder()]
+# phase_info['climb']['external_subsystems'] = [CustomAeroBuilder()]
 
-phase_info['climb']['subsystem_options']['core_aerodynamics'] = {
+# phase_info['climb']['subsystem_options']['core_aerodynamics'] = {
+#     'method': 'external',
+# }
+phase_info['cruise']['external_subsystems'] = [CustomAeroBuilder()]
+
+phase_info['cruise']['subsystem_options']['core_aerodynamics'] = {
     'method': 'external',
 }
 # phase_info['cruise']['subsystem_options']['core_mass'] = {
 #     'method': 'external',
 # }
-prob = av.AviaryProblem(verbosity=1)
+prob = av.AviaryProblem(verbosity=0)
 
 prob.options['group_by_pre_opt_post'] = True
 
@@ -54,22 +59,24 @@ prob.link_phases()
 prob.add_driver('IPOPT')
 prob.driver.options["debug_print"] = ["desvars", "nl_cons", "objs"]
 
-# prob.add_design_variables()
-prob.model.add_design_var(av.Mission.Design.GROSS_MASS, lower=0.5, upper=40, units='kg', scaler=1)
+prob.add_design_variables()
+
+# prob.model.add_design_var(av.Mission.Design.GROSS_MASS, lower=0.5, upper=40, units='kg', scaler=1)
+# prob.model.add_design_var(av.Mission.Summary.GROSS_MASS, lower=0.5, upper=40, units='kg', scaler=1)
+# prob.model.add_design_var('traj.cruise.timeseries.input_values:throttle', lower=0, upper=1)
 prob.add_objective('time')
+
 prob.setup()
 
 prob.set_solver_print(level=0)
 
-prob.model.set_val(av.Mission.Design.GROSS_MASS, 6, units='kg')
-prob.model.set_val('traj.climb.timeseries.input_values:throttle', 1.0, units='unitless')
+# prob.model.set_val(av.Mission.Design.GROSS_MASS, 6, units='kg')
+# prob.model.set_val('traj.cruise.timeseries.input_values:throttle', 1.0, units='unitless')
 prob.set_initial_guesses()
 
 prob.run_aviary_problem(suppress_solver_print= False)
-with open("aviary\examples\small_uav\level2_vars.txt", "w") as f:
+with open("aviary\examples\small_uav\level2_newvars.txt", "w") as f:
         prob.model.list_vars(print_arrays=True,out_stream=f, units=True)
-# prob.run_model()
-
 # try:
 #     prob.run_aviary_problem(suppress_solver_print= False)
 # except: 

@@ -1217,17 +1217,17 @@ class AviaryGroup(om.Group):
             if self.problem_type is ProblemType.SIZING:
                 self.add_design_var(
                     Mission.Design.GROSS_MASS,
-                    lower=10.0,
+                    lower=1.0,
                     upper=None,
                     units='lbm',
-                    ref=175e3,
+                    ref=1,
                 )
                 self.add_design_var(
                     Mission.Summary.GROSS_MASS,
-                    lower=10.0,
+                    lower=1.0,
                     upper=None,
                     units='lbm',
-                    ref=175e3,
+                    ref=1,
                 )
 
                 self.add_subsystem(
