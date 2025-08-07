@@ -16,10 +16,6 @@ from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 
 
 class TestCruiseAero(unittest.TestCase):
-    @unittest.skipIf(
-        version.parse(openmdao.__version__) < version.parse('3.26'),
-        'Older version of OpenMDAO does not properly skip Metamodel.',
-    )
     def test_climb(self):
         prob = om.Problem()
 
@@ -47,10 +43,6 @@ class TestCruiseAero(unittest.TestCase):
         partial_data = prob.check_partials(method='cs', out_stream=None)
         assert_check_partials(partial_data, atol=4e-7, rtol=2e-7)
 
-    @unittest.skipIf(
-        version.parse(openmdao.__version__) < version.parse('3.26'),
-        'Older version of OpenMDAO does not properly skip Metamodel.',
-    )
     def test_cruise(self):
         prob = om.Problem()
         ref = 'models/large_single_aisle_1/large_single_aisle_1_aero_free.csv'
@@ -91,10 +83,6 @@ class TestLowSpeedAero(unittest.TestCase):
         'models/large_single_aisle_1/large_single_aisle_1_aero_ground.csv'
     )
 
-    @unittest.skipIf(
-        version.parse(openmdao.__version__) < version.parse('3.26'),
-        'Older version of OpenMDAO does not properly skip Metamodel.',
-    )
     def test_groundroll(self):
         # takeoff with flaps applied, gear down, zero alt
         prob = om.Problem()
@@ -132,10 +120,6 @@ class TestLowSpeedAero(unittest.TestCase):
         )  # fd because there is a cs in the time ramp
         assert_check_partials(partial_data, atol=3e-7, rtol=6e-5)
 
-    @unittest.skipIf(
-        version.parse(openmdao.__version__) < version.parse('3.26'),
-        'Older version of OpenMDAO does not properly skip Metamodel.',
-    )
     def test_takeoff(self):
         # takeoff crossing flap retraction and gear retraction points
         prob = om.Problem()
@@ -247,10 +231,6 @@ class BWBCruiseAeroTest(unittest.TestCase):
     The table is modified for demonstration purposes only. It does not represent any actual result.
     """
 
-    @unittest.skipIf(
-        version.parse(openmdao.__version__) < version.parse('3.26'),
-        'Older version of OpenMDAO does not properly skip Metamodel.',
-    )
     def test_climb(self):
         prob = om.Problem()
 
@@ -276,10 +256,6 @@ class BWBCruiseAeroTest(unittest.TestCase):
         partial_data = prob.check_partials(method='cs', out_stream=None)
         assert_check_partials(partial_data, atol=4e-7, rtol=2e-7)
 
-    @unittest.skipIf(
-        version.parse(openmdao.__version__) < version.parse('3.26'),
-        'Older version of OpenMDAO does not properly skip Metamodel.',
-    )
     def test_cruise(self):
         prob = om.Problem()
         ref = 'models/aircraft/blended_wing_body/generic_BWB_GASP_aero.csv'
