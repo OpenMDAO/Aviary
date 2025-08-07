@@ -118,22 +118,6 @@ class CoreGeometryBuilder(GeometryBuilder):
 
         return geom_group
 
-    # def get_parameters(self, aviary_inputs=None, phase_info=None):
-    #     num_engine_type = len(aviary_inputs.get_val(Aircraft.Engine.NUM_ENGINES))
-    #     params = {}
-
-    #     for entry in Aircraft.Nacelle.__dict__:
-    #         if entry != '__dict__':  # cannot get attribute from mappingproxy
-    #             var = getattr(Aircraft.Nacelle, entry)
-    #             if var in aviary_inputs:
-    #                 if 'total' not in var:
-    #                     params[var] = {
-    #                         'shape': (num_engine_type),
-    #                         'static_target': True,
-    #                     }
-
-    #     return params
-
     def report(self, prob, reports_folder, **kwargs):
         """
         Generate the report for Aviary core geometry analysis.
