@@ -137,10 +137,7 @@ class TestOffDesign(TwoDOFTestCase):
         )
 
         prob_alternate.check_and_preprocess_inputs()
-        prob_alternate.add_pre_mission_systems()
-        prob_alternate.add_phases()
-        prob_alternate.add_post_mission_systems()
-        prob_alternate.link_phases()
+        prob_alternate.build_model()
         prob_alternate.add_driver('SNOPT', max_iter=100)
         prob_alternate.add_design_variables()
         prob_alternate.add_objective()
