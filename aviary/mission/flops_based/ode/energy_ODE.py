@@ -98,6 +98,8 @@ class EnergyODE(_BaseODE):
 
         # THROTTLE Section
         # TODO: Split this out into a function that can be used by the other ODEs.
+        # TODO: Need a thrust residual ref in the phase_info.
+        thrust_res_ref = 1.0e6
         if num_engine_type > 1:
             # Multi Engine
 
@@ -111,7 +113,7 @@ class EnergyODE(_BaseODE):
                     rhs_name=Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
                     eq_units='lbf',
                     normalize=False,
-                    res_ref=1.0e6,
+                    res_ref=thrust_res_ref,
                 ),
                 promotes_inputs=['*'],
                 promotes_outputs=['*'],
@@ -142,7 +144,7 @@ class EnergyODE(_BaseODE):
                     promotes_inputs=[('thrust', Dynamic.Vehicle.Propulsion.THRUST_TOTAL), 'thrust_required'],
                     promotes_outputs=['*']
                 )
-                self.add_constraint('thrust_residual', ref=1.0e6, equals=0.0)
+                self.add_constraint('thrust_residual', ref=thrust_res_ref, equals=0.0)
             else:
 
                 # Add a balance comp to compute throttle based on the required thrust.
@@ -158,7 +160,7 @@ class EnergyODE(_BaseODE):
                         normalize=False,
                         lower=0.0 if throttle_enforcement == 'bounded' else None,
                         upper=1.0 if throttle_enforcement == 'bounded' else None,
-                        res_ref=1.0e6,
+                        res_ref=thrust_res_ref,
                     ),
                     promotes_inputs=['*'],
                     promotes_outputs=['*'],
