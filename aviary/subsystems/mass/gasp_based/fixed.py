@@ -2835,63 +2835,42 @@ class FixedMassGroup(om.Group):
         self.add_subsystem(
             'params',
             MassParameters(),
-            promotes_inputs=[
-                'max_mach',
-            ]
-            + ['aircraft:*'],
-            promotes_outputs=[
-                'c_strut_braced',
-                'c_gear_loc',
-                'half_sweep',
-            ]
-            + ['aircraft:*'],
+            promotes_inputs=['*'],
+            promotes_outputs=['*'],
         )
 
         self.add_subsystem(
             'payload',
             PayloadMass(),
-            promotes_inputs=['aircraft:*'],
-            promotes_outputs=[
-                'payload_mass_des',
-                'payload_mass_max',
-            ]
-            + ['aircraft:*'],
+            promotes_inputs=['*'],
+            promotes_outputs=['*'],
         )
 
         self.add_subsystem(
             'tail',
             TailMass(),
-            promotes_inputs=[
-                'min_dive_vel',
-            ]
-            + ['aircraft:*', 'mission:*'],
-            promotes_outputs=['aircraft:*'],
+            promotes_inputs=['*'],
+            promotes_outputs=['*'],
         )
         self.add_subsystem(
             'HL',
             HighLiftMass(),
-            promotes_inputs=['density'] + ['aircraft:*', 'mission:*'],
-            promotes_outputs=['aircraft:*'],
+            promotes_inputs=['*'],
+            promotes_outputs=['*'],
         )
 
         self.add_subsystem(
             'controls',
             ControlMass(),
-            promotes_inputs=[
-                'min_dive_vel',
-            ]
-            + ['aircraft:*', 'mission:*'],
-            promotes_outputs=['aircraft:*'],
+            promotes_inputs=['*'],
+            promotes_outputs=['*'],
         )
 
         self.add_subsystem(
             'gear',
             GearMass(),
-            promotes_inputs=['mission:*', 'aircraft:*'],
-            promotes_outputs=[
-                Aircraft.LandingGear.MAIN_GEAR_MASS,
-            ]
-            + ['aircraft:*'],
+            promotes_inputs=['*'],
+            promotes_outputs=['*'],
         )
 
         has_hybrid_system = self.options[Aircraft.Electrical.HAS_HYBRID_SYSTEM]
@@ -2900,28 +2879,21 @@ class FixedMassGroup(om.Group):
             self.add_subsystem(
                 'augmentation',
                 ElectricAugmentationMass(),
-                promotes_inputs=['aircraft:*'],
-                promotes_outputs=[
-                    'aug_mass',
-                ],
+                promotes_inputs=['*'],
+                promotes_outputs=['aug_mass'],
             )
 
         self.add_subsystem(
             'engine',
             EngineMass(),
-            promotes_inputs=['aircraft:*']
-            + [
-                Aircraft.LandingGear.MAIN_GEAR_MASS,
-            ],
-            promotes_outputs=['pylon_mass', 'wing_mounted_mass', 'eng_comb_mass'] + ['aircraft:*'],
+            promotes_inputs=['*'],
+            promotes_outputs=['*'],
         )
 
         if has_hybrid_system:
             self.promotes(
                 'engine',
-                inputs=[
-                    'aug_mass',
-                ],
+                inputs=['aug_mass'],
             )
 
         self.set_input_defaults('min_dive_vel', val=420, units='kn')

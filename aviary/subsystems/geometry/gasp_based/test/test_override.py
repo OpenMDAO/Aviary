@@ -3,6 +3,7 @@ import warnings
 
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_near_equal
+from openmdao.utils.testing_utils import use_tempdirs
 
 from aviary.interface.methods_for_level2 import AviaryGroup
 from aviary.subsystems.aerodynamics.gasp_based.gaspaero import AeroGeom
@@ -16,6 +17,7 @@ from aviary.variable_info.variable_meta_data import _MetaData as BaseMetaData
 from aviary.variable_info.variables import Aircraft
 
 
+@use_tempdirs
 class GASPOverrideTestCase(unittest.TestCase):
     def setUp(self):
         aviary_inputs, initial_guesses = create_vehicle(
