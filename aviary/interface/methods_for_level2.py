@@ -1199,10 +1199,7 @@ class AviaryProblem(om.Problem):
         )
 
         # TODO: All these methods will need to be updated
-        prob_alternate.add_pre_mission_systems()
-        prob_alternate.add_phases()
-        prob_alternate.add_post_mission_systems()
-        prob_alternate.link_phases()
+        prob_alternate.build_model()
         prob_alternate.add_driver(optimizer, verbosity=verbosity)
         prob_alternate.add_design_variables()
         prob_alternate.add_objective()
@@ -1316,10 +1313,7 @@ class AviaryProblem(om.Problem):
             verbosity=verbosity,
         )
 
-        prob_fallout.add_pre_mission_systems()
-        prob_fallout.add_phases()
-        prob_fallout.add_post_mission_systems()
-        prob_fallout.link_phases()
+        prob_fallout.build_model()
         prob_fallout.add_driver(optimizer, verbosity=verbosity)
         prob_fallout.add_design_variables()
         prob_fallout.add_objective()
@@ -1628,5 +1622,5 @@ def _load_off_design(
             prob.aviary_inputs.set_val(Mission.Summary.GROSS_MASS, mission_gross_mass, units='lbm')
 
     # Load inputs
-    prob.load_inputs(prob.aviary_inputs, phase_info, check=False)
+    prob.load_inputs(prob.aviary_inputs, phase_info, check=True)
     return prob
