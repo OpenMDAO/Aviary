@@ -31,6 +31,7 @@ class TestOffDesign(TwoDOFTestCase):
             'models/aircraft/test_aircraft/aircraft_for_bench_GwGm.csv',
             self.phase_info,
             verbosity=Verbosity.QUIET,
+            check=False,
         )
 
         prob_fallout.problem_type = ProblemType.FALLOUT
@@ -41,6 +42,8 @@ class TestOffDesign(TwoDOFTestCase):
         prob_fallout.aviary_inputs.set_val(
             'mission:summary:gross_mass', self.sized_mass, units='lbm'
         )
+
+        prob_fallout.check_and_preprocess_inputs()
 
         prob_fallout.build_model()
         prob_fallout.add_driver('IPOPT', max_iter=100)
@@ -56,6 +59,7 @@ class TestOffDesign(TwoDOFTestCase):
             'models/aircraft/test_aircraft/aircraft_for_bench_GwGm.csv',
             self.phase_info,
             verbosity=Verbosity.QUIET,
+            check=False,
         )
         prob_alternate.problem_type = ProblemType.ALTERNATE
         prob_alternate.aviary_inputs.set_val(
@@ -69,10 +73,8 @@ class TestOffDesign(TwoDOFTestCase):
             'mission:summary:gross_mass', self.sized_mass, units='lbm'
         )
 
-        prob_alternate.add_pre_mission_systems()
-        prob_alternate.add_phases()
-        prob_alternate.add_post_mission_systems()
-        prob_alternate.link_phases()
+        prob_alternate.check_and_preprocess_inputs()
+        prob_alternate.build_model()
         prob_alternate.add_driver('IPOPT', max_iter=100)
         prob_alternate.add_design_variables()
         prob_alternate.add_objective()
@@ -93,6 +95,7 @@ class TestOffDesign(TwoDOFTestCase):
             'models/aircraft/test_aircraft/aircraft_for_bench_GwGm.csv',
             self.phase_info,
             verbosity=Verbosity.QUIET,
+            check=False,
         )
 
         prob_fallout.problem_type = ProblemType.FALLOUT
@@ -104,10 +107,8 @@ class TestOffDesign(TwoDOFTestCase):
             'mission:summary:gross_mass', self.sized_mass, units='lbm'
         )
 
-        prob_fallout.add_pre_mission_systems()
-        prob_fallout.add_phases()
-        prob_fallout.add_post_mission_systems()
-        prob_fallout.link_phases()
+        prob_fallout.check_and_preprocess_inputs()
+        prob_fallout.build_model()
         prob_fallout.add_driver('SNOPT', max_iter=100)
         prob_fallout.add_design_variables()
         prob_fallout.add_objective()
@@ -121,6 +122,7 @@ class TestOffDesign(TwoDOFTestCase):
             'models/aircraft/test_aircraft/aircraft_for_bench_GwGm.csv',
             self.phase_info,
             verbosity=Verbosity.QUIET,
+            check=False,
         )
         prob_alternate.problem_type = ProblemType.ALTERNATE
         prob_alternate.aviary_inputs.set_val(
@@ -134,6 +136,7 @@ class TestOffDesign(TwoDOFTestCase):
             'mission:summary:gross_mass', self.sized_mass, units='lbm'
         )
 
+        prob_alternate.check_and_preprocess_inputs()
         prob_alternate.add_pre_mission_systems()
         prob_alternate.add_phases()
         prob_alternate.add_post_mission_systems()

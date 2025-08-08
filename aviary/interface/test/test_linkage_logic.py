@@ -110,7 +110,7 @@ class AircraftMissionTestSuite(unittest.TestCase):
 
         # Load aircraft and options data from user
         # Allow for user overrides here
-        prob.load_inputs(self.aircraft_definition_file, self.phase_info)
+        prob.load_inputs(self.aircraft_definition_file, self.phase_info, check=True)
 
         prob.build_model()
 

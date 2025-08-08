@@ -34,13 +34,15 @@ class TestParameterizePhaseInfo(unittest.TestCase):
 
         csv_path = 'models/aircraft/small_single_aisle/small_single_aisle_GASP.csv'
 
-        prob.load_inputs(csv_path, phase_info)
+        prob.load_inputs(csv_path, phase_info, check=False)
 
         # We can set some crazy vals, since we aren't going to optimize.
         prob.aviary_inputs.set_val(Mission.Design.RANGE, 5000, 'km')
         prob.aviary_inputs.set_val(Mission.Design.CRUISE_ALTITUDE, 31000, units='ft')
         prob.aviary_inputs.set_val(Mission.Design.GROSS_MASS, 120000, 'lbm')
         prob.aviary_inputs.set_val(Mission.Design.MACH, 0.6, 'unitless')
+
+        prob.check_and_preprocess_inputs()
 
         prob.add_pre_mission_systems()
         prob.add_phases(phase_info_parameterization=phase_info_parameterization_two_dof)
@@ -71,13 +73,15 @@ class TestParameterizePhaseInfo(unittest.TestCase):
 
         csv_path = 'models/aircraft/test_aircraft/aircraft_for_bench_FwFm.csv'
 
-        prob.load_inputs(csv_path, phase_info)
+        prob.load_inputs(csv_path, phase_info, check=False)
 
         # We can set some crazy vals, since we aren't going to optimize.
         prob.aviary_inputs.set_val(Mission.Design.RANGE, 5000.0, 'km')
         prob.aviary_inputs.set_val(Mission.Design.CRUISE_ALTITUDE, 31000.0, units='ft')
         prob.aviary_inputs.set_val(Mission.Design.GROSS_MASS, 195000.0, 'lbm')
         prob.aviary_inputs.set_val(Mission.Summary.CRUISE_MACH, 0.6, 'unitless')
+
+        prob.check_and_preprocess_inputs()
 
         prob.add_pre_mission_systems()
         prob.add_phases(phase_info_parameterization=phase_info_parameterization_height_energy)
@@ -117,7 +121,7 @@ class TestPhaseInfoAPI(unittest.TestCase):
 
         csv_path = 'models/test_aircraft/aircraft_for_bench_FwFm.csv'
 
-        prob.load_inputs(csv_path, phase_info)
+        prob.load_inputs(csv_path, phase_info, check=True)
 
         prob.build_model()
 

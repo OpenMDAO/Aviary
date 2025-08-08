@@ -77,7 +77,7 @@ prob.add_design_var_default('Aircraft1:SWEEP', lower=23.0, upper=27.0, units='de
 
 # Add objective
 # Mission 1 is flown 2x more times than mission2
-prob.add_composite_objective(('mission1', 'Mission.Summary.FUEL_BURNED', 2), ('mission2', Mission.Summary.FUEL_BURNED, 1))
+prob.add_composite_objective(('mission1', Mission.Summary.FUEL_BURNED, 2), ('mission2', Mission.Summary.FUEL_BURNED, 1))
 # prob.add_composite_objective_adv(missions=['mission1', 'mission2'], mission_weights=[2,1], outputs=[Mission.Summary.FUEL_BURNED],  ref=1)
 
 # optimizer and iteration limit are optional provided here

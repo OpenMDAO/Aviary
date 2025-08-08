@@ -151,7 +151,7 @@ prob = av.AviaryProblem()
 
 # Load aircraft and options data from user
 # Allow for user overrides here
-prob.load_inputs('models/aircraft/test_aircraft/aircraft_for_bench_solved2dof.csv', phase_info)
+prob.load_inputs('models/aircraft/test_aircraft/aircraft_for_bench_solved2dof.csv', phase_info, check=True)
 
 prob.build_model()
 

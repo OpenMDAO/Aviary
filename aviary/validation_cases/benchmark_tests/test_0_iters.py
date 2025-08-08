@@ -18,7 +18,7 @@ class BaseProblemPhaseTestCase(unittest.TestCase):
         # Build problem
         prob = AviaryProblem(verbosity=0)
 
-        prob.load_inputs(input_filename, phase_info)
+        prob.load_inputs(input_filename, phase_info, check=True)
 
         prob.build_model()
         prob.add_driver('SLSQP', max_iter=0, verbosity=0)

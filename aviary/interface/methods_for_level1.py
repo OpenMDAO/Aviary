@@ -83,7 +83,7 @@ def run_aviary(
 
     # Load aircraft and options data from user
     # Allow for user overrides here
-    prob.load_inputs(aircraft_data, phase_info, verbosity=verbosity)
+    prob.load_inputs(aircraft_data, phase_info, verbosity=verbosity, check=True)
 
     # Add Systems
     prob.add_pre_mission_systems(verbosity=verbosity)

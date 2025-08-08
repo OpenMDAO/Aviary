@@ -284,7 +284,7 @@ class AircraftMissionTestSuite(unittest.TestCase):
 
         csv_path = 'models/aircraft/test_aircraft/aircraft_for_bench_FwFm.csv'
 
-        prob.load_inputs(csv_path, modified_phase_info)
+        prob.load_inputs(csv_path, modified_phase_info, check=True)
         prob.build_model()
 
         prob.setup()
@@ -319,7 +319,7 @@ class AircraftMissionTestSuite(unittest.TestCase):
 
         csv_path = 'models/test_aircraft/aircraft_for_bench_FwFm.csv'
 
-        prob.load_inputs(csv_path, modified_phase_info)
+        prob.load_inputs(csv_path, modified_phase_info, check=True)
         prob.add_pre_mission_systems()
         prob.add_phases()
         prob.add_post_mission_systems()

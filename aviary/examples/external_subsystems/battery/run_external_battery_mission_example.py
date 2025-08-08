@@ -22,7 +22,7 @@ if __name__ == '__main__':
     input_file = get_aviary_resource_path(
         'models/aircraft/test_aircraft/aircraft_for_bench_FwFm.csv'
     )
-    prob.load_inputs(input_file, phase_info, meta_data=ExtendedMetaData)
+    prob.load_inputs(input_file, phase_info, meta_data=ExtendedMetaData, check=True)
 
     prob.build_model()
 

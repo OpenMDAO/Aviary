@@ -22,10 +22,13 @@ class TestAeroBuilderGasp(unittest.TestCase):
         prob.load_inputs(
             'models/aircraft/test_aircraft/aircraft_for_bench_GwGm.csv',
             local_phase_info,
+            check=False
         )
 
         # Change value just to be certain.
         prob.aviary_inputs.set_val(Aircraft.Wing.HEIGHT, 7.7777, units='ft')
+
+        prob.check_and_preprocess_inputs()
 
         prob.build_model()
 

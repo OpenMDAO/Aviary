@@ -95,7 +95,7 @@ class AviaryProblem(om.Problem):
         problem_configurator=None,
         meta_data=BaseMetaData,
         verbosity=None,
-        check_and_preprocess=False,
+        check=False,
     ):
         """
         This method loads the aviary_values inputs and options that the user specifies. They could
@@ -124,7 +124,7 @@ class AviaryProblem(om.Problem):
             problem_configurator=problem_configurator,
             meta_data=meta_data,
             verbosity=verbosity,
-            check_and_preprocess=check_and_preprocess,
+            check_and_preprocess=check,
         )
 
         # When there is only 1 aircraft model/mission, preserve old behavior.
@@ -1628,5 +1628,5 @@ def _load_off_design(
             prob.aviary_inputs.set_val(Mission.Summary.GROSS_MASS, mission_gross_mass, units='lbm')
 
     # Load inputs
-    prob.load_inputs(prob.aviary_inputs, phase_info)
+    prob.load_inputs(prob.aviary_inputs, phase_info, check=False)
     return prob

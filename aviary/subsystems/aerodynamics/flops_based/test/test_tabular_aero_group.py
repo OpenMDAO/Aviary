@@ -97,6 +97,7 @@ class TabularAeroGroupFileTest(unittest.TestCase):
         prob.load_inputs(
             'subsystems/aerodynamics/flops_based/test/data/high_wing_single_aisle.csv',
             local_phase_info,
+            check=True,
         )
 
         prob.build_model()
@@ -221,6 +222,7 @@ class TabularAeroGroupDataTest(unittest.TestCase):
         prob.load_inputs(
             'subsystems/aerodynamics/flops_based/test/data/high_wing_single_aisle.csv',
             local_phase_info,
+            check=True,
         )
 
         prob.build_model()

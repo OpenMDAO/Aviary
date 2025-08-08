@@ -106,6 +106,7 @@ class TestOffDesign(HeightEnergyTestCase):
             'models/aircraft/test_aircraft/aircraft_for_bench_FwFm.csv',
             self.phase_info,
             verbosity=Verbosity.QUIET,
+            check=False,
         )
 
         prob_fallout.problem_type = ProblemType.FALLOUT
@@ -136,6 +137,7 @@ class TestOffDesign(HeightEnergyTestCase):
             'models/aircraft/test_aircraft/aircraft_for_bench_FwFm.csv',
             self.phase_info,
             verbosity=Verbosity.QUIET,
+            check=False,
         )
         prob_alternate.problem_type = ProblemType.ALTERNATE
         prob_alternate.aviary_inputs.set_val(
@@ -148,6 +150,8 @@ class TestOffDesign(HeightEnergyTestCase):
         prob_alternate.aviary_inputs.set_val(
             'mission:summary:gross_mass', self.sized_mass, units='lbm'
         )
+
+        prob_alternate.check_and_preprocess_inputs()
 
         prob_alternate.add_pre_mission_systems()
         prob_alternate.add_phases(phase_info_parameterization=phase_info_parameterization)
@@ -173,6 +177,7 @@ class TestOffDesign(HeightEnergyTestCase):
             'models/aircraft/test_aircraft/aircraft_for_bench_FwFm.csv',
             self.phase_info,
             verbosity=Verbosity.QUIET,
+            check=False,
         )
 
         prob_fallout.problem_type = ProblemType.FALLOUT
@@ -183,6 +188,8 @@ class TestOffDesign(HeightEnergyTestCase):
         prob_fallout.aviary_inputs.set_val(
             'mission:summary:gross_mass', self.sized_mass, units='lbm'
         )
+
+        prob_fallout.check_and_preprocess_inputs()
 
         prob_fallout.add_pre_mission_systems()
         prob_fallout.add_phases(phase_info_parameterization=phase_info_parameterization)
@@ -201,6 +208,7 @@ class TestOffDesign(HeightEnergyTestCase):
             'models/aircraft/test_aircraft/aircraft_for_bench_FwFm.csv',
             self.phase_info,
             verbosity=Verbosity.QUIET,
+            check=False,
         )
         prob_alternate.problem_type = ProblemType.ALTERNATE
         prob_alternate.aviary_inputs.set_val(
@@ -214,6 +222,7 @@ class TestOffDesign(HeightEnergyTestCase):
             'mission:summary:gross_mass', self.sized_mass, units='lbm'
         )
 
+        prob_alternate.check_and_preprocess_inputs()
         prob_alternate.add_pre_mission_systems()
         prob_alternate.add_phases(phase_info_parameterization=phase_info_parameterization)
         prob_alternate.add_post_mission_systems()

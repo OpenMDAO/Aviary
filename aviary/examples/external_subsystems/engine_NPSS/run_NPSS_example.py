@@ -25,6 +25,7 @@ prob.load_inputs(
     phase_info,
     engine_builders=[NPSSTabularEngineBuilder()],
     meta_data=ExtendedMetaData,
+    check=True,
 )
 
 prob.build_model()

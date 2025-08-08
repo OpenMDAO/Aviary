@@ -122,7 +122,7 @@ make_plots = False
 # create and begin setting up Aviary problem
 prob = av.AviaryProblem()
 
-prob.load_inputs(aircraft_definition_file, phase_info)
+prob.load_inputs(aircraft_definition_file, phase_info, check=True)
 prob.build_model()
 prob.add_driver(optimizer=optimizer)
 prob.add_design_variables()

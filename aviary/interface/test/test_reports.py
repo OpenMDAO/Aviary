@@ -117,6 +117,7 @@ class TestReports(unittest.TestCase):
         prob.load_inputs(
             'models/aircraft/test_aircraft/aircraft_for_bench_FwFm.csv',
             local_phase_info,
+            check=True,
         )
         prob.meta_data = metadata
 

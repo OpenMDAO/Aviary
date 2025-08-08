@@ -192,6 +192,7 @@ class CustomEngineTest(unittest.TestCase):
             'models/aircraft/test_aircraft/aircraft_for_bench_FwFm.csv',
             phase_info,
             engine_builders=[SimpleTestEngine()],
+            check=True,
         )
 
         prob.build_model()
