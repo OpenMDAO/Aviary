@@ -8058,6 +8058,17 @@ add_meta_data(
 )
 
 add_meta_data(
+    Settings.PAYLOAD_RANGE,
+    meta_data=_MetaData,
+    historical_name={'GASP': None, 'FLOPS': None, 'LEAPS1': None},
+    units='unitless',
+    option=True,
+    default_value=False,
+    types=bool,
+    desc='if true, aviary runs 2 off design missions and creates a payload range diagram.',
+)
+
+add_meta_data(
     Settings.PROBLEM_TYPE,
     meta_data=_MetaData,
     historical_name={'GASP': None, 'FLOPS': None, 'LEAPS1': None},
