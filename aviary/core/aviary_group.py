@@ -73,6 +73,7 @@ class AviaryGroup(om.Group):
         self.aviary_inputs = None
         self.meta_data = [] # Will crash some test in test_override.py if set to None
         self.phase_info = None
+        # self.core_subsystems = {}
 
     def configure(self):
         """Configure the Aviary group."""
@@ -169,6 +170,7 @@ class AviaryGroup(om.Group):
         problem_configurator=None,
         meta_data=BaseMetaData,
         verbosity=None,
+        check_and_preprocess=True,
     ):
         """
         This method loads the aviary_values inputs and options that the
@@ -280,8 +282,8 @@ class AviaryGroup(om.Group):
         # self.require_range_residual, self.target_range
         # Other specific self.*** are defined in here as well that are specific to
         # each builder
-
-        self.check_and_preprocess_inputs(verbosity=verbosity)
+        if check_and_preprocess:
+            self.check_and_preprocess_inputs(verbosity=verbosity)
 
         return self.aviary_inputs, self.verbosity
 

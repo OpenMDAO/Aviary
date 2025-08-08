@@ -93,6 +93,7 @@ prob = av.AviaryProblem()
 # Allow for user overrides here
 prob.load_inputs('models/aircraft/test_aircraft/aircraft_for_bench_FwFm.csv', phase_info)
 
+# prob.build_model() is not used here to enable finer control on add_phases()
 prob.add_pre_mission_systems()
 prob.add_phases(phase_info_parameterization=phase_info_parameterization)
 prob.add_post_mission_systems()

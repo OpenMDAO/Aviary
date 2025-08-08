@@ -59,6 +59,8 @@ prob = av.AviaryProblem(problem_type = ProblemType.MULTI_MISSION)
 # the mission to fly the target_range specified in the phase_info
 
 prob.add_aviary_group('mission1', aircraft=aviary_inputs_primary, mission=phase_info)
+# by default this will load_inputs(), check_and_preprocess(), and combine meta data
+# This can only accept an AviaryValues, no .csv accepted
 
 # Load aircraft in second configuration for same mission
 prob.add_aviary_group('mission2', aircraft=aviary_inputs_deadhead, mission=phase_info)
@@ -71,20 +73,23 @@ prob.promote_inputs(['mission1', 'mission2'], [(Mission.Design.GROSS_MASS, 'Airc
 prob.add_design_var_default('Aircraft1:GROSS_MASS', lower=10.0, upper=900e3, units='lbm', default_val=100000)
 prob.add_design_var_default('Aircraft1:SWEEP', lower=23.0, upper=27.0, units='deg', default_val=25)
 
-prob.add_design_variables()
+# prob.add_design_var_default('prob.model.mission1.RANGE')
 
 # Add objective
 # Mission 1 is flown 2x more times than mission2
-prob.add_composite_objective(('mission1', Mission.Summary.FUEL_BURNED, 2), ('mission2', Mission.Summary.FUEL_BURNED, 1))
+prob.add_composite_objective(('mission1', 'Mission.Summary.FUEL_BURNED', 2), ('mission2', Mission.Summary.FUEL_BURNED, 1))
 # prob.add_composite_objective_adv(missions=['mission1', 'mission2'], mission_weights=[2,1], outputs=[Mission.Summary.FUEL_BURNED],  ref=1)
 
 # optimizer and iteration limit are optional provided here
 prob.add_driver(Optimizer, max_iter=50)
 
+prob.add_design_variables()
+
 prob.setup()
 
-# set_val goes here if needed
 prob.set_initial_guesses()
+
+# set_val on OpenMDAO desvars etc here
 
 # Ensure that design_range is the same for similar aircraft to ensure that navigation gear is designed similarly
 prob.set_design_range(('mission1', 'mission2'), range='Aircraft1:RANGE')

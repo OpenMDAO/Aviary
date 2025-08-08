@@ -42,10 +42,7 @@ class TestOffDesign(TwoDOFTestCase):
             'mission:summary:gross_mass', self.sized_mass, units='lbm'
         )
 
-        prob_fallout.add_pre_mission_systems()
-        prob_fallout.add_phases()
-        prob_fallout.add_post_mission_systems()
-        prob_fallout.link_phases()
+        prob_fallout.build_model()
         prob_fallout.add_driver('IPOPT', max_iter=100)
         prob_fallout.add_design_variables()
         prob_fallout.add_objective()

@@ -117,6 +117,8 @@ class TestOffDesign(HeightEnergyTestCase):
             'mission:summary:gross_mass', self.sized_mass, units='lbm'
         )
 
+        prob_fallout.check_and_preprocess_inputs()
+
         prob_fallout.add_pre_mission_systems()
         prob_fallout.add_phases(phase_info_parameterization=phase_info_parameterization)
         prob_fallout.add_post_mission_systems()

@@ -95,6 +95,7 @@ class AviaryProblem(om.Problem):
         problem_configurator=None,
         meta_data=BaseMetaData,
         verbosity=None,
+        check_and_preprocess=False,
     ):
         """
         This method loads the aviary_values inputs and options that the user specifies. They could
@@ -123,6 +124,7 @@ class AviaryProblem(om.Problem):
             problem_configurator=problem_configurator,
             meta_data=meta_data,
             verbosity=verbosity,
+            check_and_preprocess=check_and_preprocess,
         )
 
         # When there is only 1 aircraft model/mission, preserve old behavior.
@@ -133,8 +135,6 @@ class AviaryProblem(om.Problem):
             # if there are multiple load_inputs() calls, only the problem type from the first aviary_values is used
             self.problem_type = aviary_inputs.get_val(Settings.PROBLEM_TYPE)
 
-        self._update_metadata_from_subsystems(self.model) # update meta data with new entries 
-
         return self.aviary_inputs
 
     def check_and_preprocess_inputs(self, verbosity=None):
@@ -142,9 +142,20 @@ class AviaryProblem(om.Problem):
         This method checks the user-supplied input values for any potential problems
         and preprocesses the inputs to prepare them for use in the Aviary problem.
         """
-        warn_deprecation("The method check_and_preprocess_inputs is not longer needed. "
-                         "The method has been included as part of load_inputs.")
-        pass
+        # `self.verbosity` is "true" verbosity for entire run. `verbosity` is verbosity
+        # override for just this method
+        if verbosity is not None:
+            # compatibility with being passed int for verbosity
+            verbosity = Verbosity(verbosity)
+        else:
+            verbosity = self.verbosity  # defaults to BRIEF
+
+        self.model.check_and_preprocess_inputs(verbosity=verbosity)
+
+        # we have to update meta data after check_and_preprocess because metadata update
+        # requires get_all_subsystems, which reqiures core_subsystems, which doesn't exist until
+        # after check_and_preprocess is assembled
+        self._update_metadata_from_subsystems(self.model) # update meta data with new entries 
 
     def _update_metadata_from_subsystems(self, group):
         """Merge metadata from user-defined subsystems into problem metadata."""
@@ -163,7 +174,7 @@ class AviaryProblem(om.Problem):
         # Create a meta data reference to use inside of AviaryGroup
         group.meta_data = self.meta_data
 
-    def add_aviary_group(self, name:str, aircraft, mission:dict, verbosity=None):
+    def add_aviary_group(self, name:str, aircraft:AviaryValues, mission:dict, verbosity=None):
         """
         Used when creating a multi-mission problem.
         Create a dictionary of all aviary_groups() in this problem so we can iterate over them later.

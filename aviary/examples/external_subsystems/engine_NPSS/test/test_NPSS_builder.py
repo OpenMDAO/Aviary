@@ -36,14 +36,7 @@ class AviaryNPSSTestCase(unittest.TestCase):
             meta_data=ExtendedMetaData,
         )
         
-        prob.add_pre_mission_systems()
-
-        prob.add_phases()
-
-        prob.add_post_mission_systems()
-
-        # Link phases and variables
-        prob.link_phases()
+        prob.build_model()
 
         prob.add_driver('SLSQP')
 
