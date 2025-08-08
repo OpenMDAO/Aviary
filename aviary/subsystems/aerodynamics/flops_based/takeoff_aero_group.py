@@ -10,6 +10,7 @@ from aviary.subsystems.aerodynamics.flops_based.ground_effect import GroundEffec
 from aviary.subsystems.aerodynamics.gasp_based.common import AeroForces
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
+from aviary.variable_info.functions import add_aviary_option
 
 
 class TakeoffAeroGroup(om.Group):
@@ -71,16 +72,10 @@ class TakeoffAeroGroup(om.Group):
             'landing_gear_up', default=False, types=bool, desc='true for retracted landing gear'
         )
 
-        options.declare(
-            'aviary_options',
-            types=AviaryValues,
-            desc='collection of Aircraft/Mission specific options',
-        )
+        add_aviary_option(self, Aircraft.LandingGear.DRAG_COEFFICIENT)
 
     def setup(self):
         options = self.options
-
-        aviary_options = options['aviary_options']
 
         nn = options['num_nodes']
         angles_of_attack = np.array(options['angles_of_attack']) * _units.degree
@@ -92,6 +87,8 @@ class TakeoffAeroGroup(om.Group):
         drag_coefficient_factor = options['drag_coefficient_factor']
 
         drag_coefficients = np.array(options['drag_coefficients']) * drag_coefficient_factor
+
+        gear_drag = options[Aircraft.LandingGear.DRAG_COEFFICIENT]
 
         inputs = [Dynamic.Vehicle.ANGLE_OF_ATTACK]
 
@@ -132,7 +129,7 @@ class TakeoffAeroGroup(om.Group):
         f = 'climb_drag_coefficient = ground_effect_drag'
 
         if not options['landing_gear_up']:
-            gear_drag = aviary_options.get_val(Aircraft.LandingGear.DRAG_COEFFICIENT)
+            gear_drag = self.options[Aircraft.LandingGear.DRAG_COEFFICIENT]
             f = f + f' + {gear_drag}'
 
         if options['use_spoilers']:

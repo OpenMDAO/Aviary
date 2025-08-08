@@ -4,7 +4,6 @@ from openmdao.utils.assert_utils import assert_near_equal
 from openmdao.utils.testing_utils import use_tempdirs
 
 from aviary.interface.methods_for_level2 import AviaryProblem
-
 from aviary.subsystems.premission import CorePreMission
 from aviary.subsystems.propulsion.utils import build_engine_deck
 from aviary.utils.functions import set_aviary_initial_values
@@ -24,11 +23,13 @@ class PreMissionGroupTest(unittest.TestCase):
 
         csv_path = 'models/aircraft/test_aircraft/aircraft_for_bench_GwGm.csv'
         self.gasp_inputs = prob.load_inputs(csv_path)
+        self.gasp_inputs.set_val(
+            Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES, val=False, units='unitless'
+        )
         prob.check_and_preprocess_inputs()
 
     def test_case1(self):
-        """premission: geometry + mass"""
-
+        """premission: geometry + mass."""
         prob = self.prob
         preprocess_options(self.gasp_inputs)
         geom_and_mass_subsystems = get_geom_and_mass_subsystems('GASP')

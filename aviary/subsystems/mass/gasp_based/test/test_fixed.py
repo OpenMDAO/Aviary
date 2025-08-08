@@ -454,6 +454,7 @@ class EngineTestCase2(unittest.TestCase):
         options = get_option_defaults()
         options.set_val(Aircraft.Engine.HAS_PROPELLERS, val=[True], units='unitless')
         options.set_val(Aircraft.Engine.ADDITIONAL_MASS_FRACTION, 0.14)
+        options.set_val(Aircraft.Electrical.HAS_HYBRID_SYSTEM, val=True, units='unitless')
 
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
@@ -1196,6 +1197,7 @@ class FixedMassGroupTestCase2(unittest.TestCase):
             Aircraft.CrewPayload.PASSENGER_MASS_WITH_BAGS, val=200, units='lbm'
         )  # bug fixed value and original value
         options.set_val(Aircraft.Engine.ADDITIONAL_MASS_FRACTION, 0.14)
+        options.set_val(Aircraft.Electrical.HAS_HYBRID_SYSTEM, val=True, units='unitless')
 
         self.prob = om.Problem()
         self.prob.model.add_subsystem(

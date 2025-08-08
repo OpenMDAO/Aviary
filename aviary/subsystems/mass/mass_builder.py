@@ -79,7 +79,7 @@ class CoreMassBuilder(MassBuilderBase):
         if method != 'external':
             mass_group = super().build_mission(num_nodes, aviary_inputs)
 
-        mass_group
+        return mass_group
 
     def report(self, prob, reports_folder, **kwargs):
         """

@@ -1072,7 +1072,7 @@
         "<class 'int'>"
     ],
     [
-        "aircraft:wing:use_detailed_mass",
+        "aircraft:wing:detailed_wing",
         true,
         "unitless",
         "<class 'bool'>"
