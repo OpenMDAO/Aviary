@@ -12,12 +12,9 @@ gasp_default_values = NamedValues(
         'INGASP.ARNGE(3)': (0, 'NM'),
         'INGASP.ARVT': (1.67, 'unitless'),
         'INGASP.AS': (1, 'unitless'),
-        'INGASP.B': (117.8, 'ft'),  # needs verification
-        'INGASP.BLEOB': (0.9, 'unitless'),
         'INGASP.BOELTV': (0, 'unitless'),
         'INGASP.BTEOB': (0.75, 'unitless'),
         'INGASP.CATD': (3, 'unitless'),
-        'INGASP.CBARW': (12.615, 'ft'),  # needs verification
         'INGASP.CFOC': (0.3, 'unitless'),
         'INGASP.CK5': (1, 'unitless'),
         # 'INGASP.CK7': (1, 'unitless'),
@@ -36,10 +33,9 @@ gasp_default_values = NamedValues(
         'INGASP.CKHT': (1, 'unitless'),
         'INGASP.CKI': (0, 'unitless'),
         'INGASP.CKN': (1, 'unitless'),
-        'INGASP.CKSTRT': (0, 'unitless'),
+        'INGASP.CKSTRT': (0.0, 'unitless'),
         'INGASP.CKVT': (1, 'unitless'),
         'INGASP.CKW': (1, 'unitless'),
-        'INGASP.CLALPH': (7.1765, '1/rad'),  # needs verification
         'INGASP.CLEARqDN': (0.2, 'unitless'),
         'INGASP.CLEOC': (0, 'unitless'),
         'INGASP.COELTH': (0, 'unitless'),
@@ -67,7 +63,7 @@ gasp_default_values = NamedValues(
         'INGASP.DELLED': (0, 'deg'),
         'INGASP.DELLEO': (45, 'deg'),
         'INGASP.DELP': (7.5, 'psi'),
-        'INGASP.DELTEO': (55, 'deg'),
+        'INGASP.DELTEO': (0.0, 'deg'),
         'INGASP.DELTT': (0.1677, 'h'),
         'INGASP.DELWFC': (0, 'lbm'),
         'INGASP.DELWST': (0, 'lbm'),
@@ -80,7 +76,6 @@ gasp_default_values = NamedValues(
         'INGASP.DVR': (5, 'kn'),
         'INGASP.DWPQCH': (25, 'deg'),
         'INGASP.DWPQCV': (35, 'deg'),
-        'INGASP.ELF': (0, 'ft'),  # needs verification
         'INGASP.ELODN': (2, 'unitless'),
         'INGASP.ELODT': (3.2, 'unitless'),
         'INGASP.ELPC': (4.44, 'ft'),
