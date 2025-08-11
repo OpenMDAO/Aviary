@@ -220,7 +220,11 @@ class AviaryProblem(om.Problem):
         else:
             verbosity = self.verbosity  # defaults to BRIEF
 
-        self.model.add_pre_mission_systems(verbosity=verbosity)
+        if self.problem_type == ProblemType.MULTI_MISSION:
+            for name, group in self.aviary_groups_dict.items():
+                group.add_pre_mission_systems(verbosity=verbosity)
+        else:
+            self.model.add_pre_mission_systems(verbosity=verbosity)
 
     def add_phases(
         self,
@@ -255,12 +259,23 @@ class AviaryProblem(om.Problem):
         else:
             verbosity = self.verbosity  # defaults to BRIEF
 
-        return self.model.add_phases(
-            phase_info_parameterization=phase_info_parameterization,
-            parallel_phases=parallel_phases,
-            verbosity=verbosity,
-            comm=self.comm,
-        )
+        if self.problem_type == ProblemType.MULTI_MISSION:
+            for name, group in self.aviary_groups_dict.items():
+                Traj = group.add_phases(
+                    phase_info_parameterization=phase_info_parameterization,
+                    parallel_phases=parallel_phases,
+                    verbosity=verbosity,
+                    comm=self.comm,
+                )
+        else:
+            Traj = self.model.add_phases(
+                    phase_info_parameterization=phase_info_parameterization,
+                    parallel_phases=parallel_phases,
+                    verbosity=verbosity,
+                    comm=self.comm,
+                )
+
+        return Traj
 
     def add_post_mission_systems(self, verbosity=None):
         """
@@ -293,7 +308,11 @@ class AviaryProblem(om.Problem):
         else:
             verbosity = self.verbosity  # defaults to BRIEF
 
-        self.model.add_post_mission_systems(verbosity=verbosity)
+        if self.problem_type == ProblemType.MULTI_MISSION:
+            for name, group in self.aviary_groups_dict.items():
+                group.add_post_mission_systems(verbosity=verbosity)
+        else:
+            self.model.add_post_mission_systems(verbosity=verbosity)
 
     def link_phases(self, verbosity=None):
         """
@@ -311,7 +330,11 @@ class AviaryProblem(om.Problem):
         else:
             verbosity = self.verbosity  # defaults to BRIEF
 
-        self.model.link_phases(verbosity=verbosity, comm=self.comm)
+        if self.problem_type == ProblemType.MULTI_MISSION:
+            for name, group in self.aviary_groups_dict.items():
+                group.link_phases(verbosity=verbosity, comm=self.comm)
+        else:
+            self.model.link_phases(verbosity=verbosity, comm=self.comm)
 
     def add_driver(self, optimizer=None, use_coloring=None, max_iter=50, verbosity=None):
         """
@@ -934,7 +957,7 @@ class AviaryProblem(om.Problem):
 
         if self.problem_type == ProblemType.MULTI_MISSION:
             for name, group in self.aviary_groups_dict.items():
-                setup_model_options(self, group.aviary_inputs, group.meta_data)
+                setup_model_options(self, group.aviary_inputs, group.meta_data, prefix=name, group=group)
                 with warnings.catch_warnings():
                     # group.aviary_inputs is already set
                     group.meta_data = self.meta_data # <- meta_data is the same for all groups

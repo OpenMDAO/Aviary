@@ -41,9 +41,6 @@ def multi_mission_example():
     aviary_inputs_deadhead.set_val(Aircraft.CrewPayload.NUM_BUSINESS_CLASS, 0, 'unitless')
     aviary_inputs_deadhead.set_val(Aircraft.CrewPayload.NUM_FIRST_CLASS, 0, 'unitless')
 
-    # aviary_inputs_primary.set_val(Aircraft.CrewPayload.TOTAL_PAYLOAD_MASS, 28677, 'lbm')
-    # aviary_inputs_deadhead.set_val(Aircraft.CrewPayload.TOTAL_PAYLOAD_MASS, 4242, 'lbm')
-
     Optimizer = 'SNOPT'  # SLSQP or SNOPT
 
     prob = av.AviaryProblem(problem_type = ProblemType.MULTI_MISSION)
@@ -88,13 +85,7 @@ def multi_mission_example():
     # prob.setup()
     # prob.set_initial_guesses()
 
-    # print('mission1 total payload mass', prob.get_val('mission1.aircraft:crew_and_payload:cargo_mass', units='lbm'))
-    # print('mission2 total payload mass', prob.get_val('mission2.aircraft:crew_and_payload:cargo_mass', units='lbm'))
-
-
-
     # set_val on OpenMDAO design variables can be placed here and will over-write all other defaults
-    Aircraft.CrewPayload.TOTAL_PAYLOAD_MASS
 
     prob.set_design_range(('mission1', 'mission2'), range='Aircraft1:RANGE')
     # Determines the maximum design_range from both missions and sets that as the design range for both missions

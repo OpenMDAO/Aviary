@@ -189,9 +189,6 @@ class AviaryGroup(om.Group):
             aircraft_data, meta_data=meta_data, verbosity=verbosity
         )
 
-        print('MISC_CARGO',aviary_inputs.get_val(Aircraft.CrewPayload.MISC_CARGO, units='lbm'))
-        print('NUM_TOURIST_CLASS',aviary_inputs.get_val(Aircraft.CrewPayload.NUM_TOURIST_CLASS))
-
         # Update default verbosity now that we have read the input data, if a global verbosity
         # override was not requested
         if self.verbosity is None:
