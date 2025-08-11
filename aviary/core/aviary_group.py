@@ -1299,6 +1299,9 @@ class AviaryGroup(om.Group):
                     ref=175e3,
                 )
 
+                # TODO: RANGE_RESIDUAL constraint should be added based on what the 
+                # user sets as the objective. if Objective is not range or Mission.Summary.Range,
+                # the range constriant should be added to make target rage = summary range
                 self.add_constraint(Mission.Constraints.RANGE_RESIDUAL, equals=0, ref=10)
 
                 # We must ensure that design.gross_mass is greater than
