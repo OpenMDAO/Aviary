@@ -85,11 +85,12 @@ prob.add_composite_objective(('mission1', Mission.Summary.FUEL_BURNED, 2), ('mis
 # prob.add_composite_objective_adv(missions=['mission1', 'mission2'], mission_weights=[2,1], outputs=[Mission.Summary.FUEL_BURNED],  ref=1)
 # TODO: MULTI_MISSION cannot handle RANGE objectives correctly at the moment.
 
-prob.setup_model(Optimizer, max_iter=50)
 # optimizer and iteration limit are optional provided here
-# combines four basic commands:
-# prob.add_driver(Optimizer, max_iter=50)
-# prob.add_design_variables()
+prob.add_driver(Optimizer, max_iter=50)
+prob.add_design_variables()
+
+prob.setup_model()
+# combines 2 basic commands:
 # prob.setup()
 # prob.set_initial_guesses()
 

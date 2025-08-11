@@ -82,7 +82,7 @@ class AviaryProblem(om.Problem):
         else:
             self.model = AviaryGroup()
 
-        self.aviary_inputs = []
+        self.aviary_inputs = None
 
         self.aviary_groups_dict = {}
 
@@ -916,11 +916,9 @@ class AviaryProblem(om.Problem):
                         #print("var_pairs",var_pairs)
                         self.model.promotes(mission_name, inputs=var_pairs)
 
-    def setup_model(self, optimizer=None, use_coloring=None, max_iter=50, verbosity=None):
-        # Combines 4 basic methods for level 2 functions providing a less verbose 
+    def setup_model(self, verbosity=None):
+        # Combines 2 basic methods for level 2 functions providing a less verbose 
         # but less functional interface for the user
-        self.add_driver(optimizer, use_coloring=use_coloring, max_iter=max_iter, verbosity=verbosity)
-        self.add_design_variables(verbosity=verbosity)
         self.setup(verbosity=verbosity)
         self.set_initial_guesses(verbosity=verbosity)
 
@@ -1046,8 +1044,9 @@ class AviaryProblem(om.Problem):
 
         # Creates a flag to determine if the user would or would not like a payload/range diagram
         payload_range_bool = False
-        if Settings.PAYLOAD_RANGE in self.aviary_inputs:
-            payload_range_bool = self.aviary_inputs.get_val(Settings.PAYLOAD_RANGE)
+        if self.problem_type is not ProblemType.MULTI_MISSION:
+            if Settings.PAYLOAD_RANGE in self.aviary_inputs:
+                payload_range_bool = self.aviary_inputs.get_val(Settings.PAYLOAD_RANGE)
 
         if suppress_solver_print:
             self.set_solver_print(level=0)
