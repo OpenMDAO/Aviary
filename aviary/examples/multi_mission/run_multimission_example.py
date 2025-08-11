@@ -1,107 +1,117 @@
 """
-authors: Jatin Soni, Eliot Aretskin
+authors: Eliot Aretskin-Hariton, Kenneth Moore
 Multi Mission Optimization Example using Aviary.
 
 In this example, a monolithic optimization is created by instantiating two aviary groups
 using using multipl add_aviary_group() calls. Once those groups are setup and all of their 
 phases are linked together, we then promote GROSS_MASS, RANGE, and wing SWEEP from each of 
 those sub-groups (prob.model.mission1 and prob.model.mission2) up to prob.model so
-the optimizer can control them. The fuel_burn results from each of the mission1 and mission2
-dymos missions are summed and weighted to create the objective function the optimizer sees.
-
+the optimizer can control them both with a single value. The fuel_burn results from each 
+of the mission1 and mission2 are summed and weighted to create the objective function.
 """
 
-import copy as copy
-import sys
-import warnings
+def multi_mission_example():
+    import copy as copy
 
-import dymos as dm
-import matplotlib.pyplot as plt
-import numpy as np
-import openmdao.api as om
+    import aviary.api as av
+    from aviary.examples.example_phase_info import phase_info
+    from aviary.validation_cases.validation_tests import get_flops_inputs
+    from aviary.variable_info.enums import ProblemType
+    from aviary.variable_info.variables import Aircraft, Mission, Settings
 
-import aviary.api as av
-from aviary.examples.example_phase_info import phase_info
-from aviary.validation_cases.validation_tests import get_flops_inputs
-from aviary.variable_info.enums import ProblemType
-from aviary.variable_info.functions import setup_model_options
-from aviary.variable_info.variables import Aircraft, Mission, Settings
-from aviary.core.aviary_group import AviaryGroup
+    # fly the same mission twice with two different passenger loads
+    phase_info_primary = copy.deepcopy(phase_info)
+    phase_info_deadhead = copy.deepcopy(phase_info)
+    # get large single aisle values
+    aviary_inputs_primary = get_flops_inputs('LargeSingleAisle2FLOPS')
+    aviary_inputs_primary.set_val(Mission.Design.GROSS_MASS, val=100000, units='lbm')
+    aviary_inputs_primary.set_val(Settings.VERBOSITY, val=1)
 
-# fly the same mission twice with two different passenger loads
-phase_info_primary = copy.deepcopy(phase_info)
-phase_info_deadhead = copy.deepcopy(phase_info)
-# get large single aisle values
-aviary_inputs_primary = get_flops_inputs('LargeSingleAisle2FLOPS')
-aviary_inputs_primary.set_val(Mission.Design.GROSS_MASS, val=100000, units='lbm')
-aviary_inputs_primary.set_val(Settings.VERBOSITY, val=1)
+    aviary_inputs_deadhead = copy.deepcopy(aviary_inputs_primary)
 
-aviary_inputs_deadhead = copy.deepcopy(aviary_inputs_primary)
+    # Due to current limitations in Aviary's ability to detect user input vs. default values,
+    # the only way to set an aircraft to zero passengers is by setting
+    # TOTAL_PAYLOAD_MASS = X CARGO_MASS + 0 PASSENGER_PAYLOAD_MASS.
+    # This zeros out passenger and baggage mass.
+    # Due to issue #610, setting PASSENGER_PAYLOAD_MASS = 0 will not work yet.
+    # aviary_inputs_deadhead.set_val(Aircraft.CrewPayload.TOTAL_PAYLOAD_MASS, 4077, 'lbm')
 
-# Due to current limitations in Aviary's ability to detect user input vs. default values,
-# the only way to set an aircraft to zero passengers is by setting
-# TOTAL_PAYLOAD_MASS = X CARGO_MASS + 0 PASSENGER_PAYLOAD_MASS.
-# This zeros out passenger and baggage mass.
-# Due to issue #610, setting PASSENGER_PAYLOAD_MASS = 0 will not work yet.
-# aviary_inputs_deadhead.set_val(Aircraft.CrewPayload.TOTAL_PAYLOAD_MASS, 4077, 'lbm')
+    aviary_inputs_deadhead.set_val(Aircraft.CrewPayload.NUM_PASSENGERS, 1, 'unitless')
+    aviary_inputs_deadhead.set_val(Aircraft.CrewPayload.NUM_TOURIST_CLASS, 1, 'unitless')
+    aviary_inputs_deadhead.set_val(Aircraft.CrewPayload.NUM_BUSINESS_CLASS, 0, 'unitless')
+    aviary_inputs_deadhead.set_val(Aircraft.CrewPayload.NUM_FIRST_CLASS, 0, 'unitless')
 
-aviary_inputs_deadhead.set_val(Aircraft.CrewPayload.NUM_PASSENGERS, 1, 'unitless')
-aviary_inputs_deadhead.set_val(Aircraft.CrewPayload.NUM_TOURIST_CLASS, 1, 'unitless')
-aviary_inputs_deadhead.set_val(Aircraft.CrewPayload.NUM_BUSINESS_CLASS, 0, 'unitless')
-aviary_inputs_deadhead.set_val(Aircraft.CrewPayload.NUM_FIRST_CLASS, 0, 'unitless')
+    # aviary_inputs_primary.set_val(Aircraft.CrewPayload.TOTAL_PAYLOAD_MASS, 28677, 'lbm')
+    # aviary_inputs_deadhead.set_val(Aircraft.CrewPayload.TOTAL_PAYLOAD_MASS, 4242, 'lbm')
 
-Optimizer = 'SNOPT'  # SLSQP or SNOPT
+    Optimizer = 'SNOPT'  # SLSQP or SNOPT
 
-prob = av.AviaryProblem(problem_type = ProblemType.MULTI_MISSION)
-# set constraints in the background. Currently works with every objective type except Range.
+    prob = av.AviaryProblem(problem_type = ProblemType.MULTI_MISSION)
+    # set constraints in the background. Currently works with every objective type except Range.
 
-prob.add_aviary_group('mission1', aircraft=aviary_inputs_primary, mission=phase_info)
-# by default this will load_inputs(), check_and_preprocess(), and combine meta data
-# This can only accept an AviaryValues, no .csv accepted
+    prob.add_aviary_group('mission1', aircraft=aviary_inputs_primary, mission=phase_info)
+    # by default this will load_inputs(), check_and_preprocess(), and combine meta data
+    # This can only accept an AviaryValues, no .csv accepted
 
-prob.add_aviary_group('mission2', aircraft=aviary_inputs_deadhead, mission=phase_info)
-# Load aircraft in second configuration for same mission
+    prob.add_aviary_group('mission2', aircraft=aviary_inputs_deadhead, mission=phase_info)
+    # Load aircraft in second configuration for same mission
 
-prob.build_model()
-# combines four basic commands
-# prob.add_pre_mission_systems()
-# prob.add_phases()
-# prob.add_post_mission_systems()
-# prob.link_phases()
+    prob.build_model()
+    # combines four basic commands
+    # prob.add_pre_mission_systems()
+    # prob.add_phases()
+    # prob.add_post_mission_systems()
+    # prob.link_phases()
 
-prob.promote_inputs(['mission1', 'mission2'], [(Mission.Design.GROSS_MASS, 'Aircraft1:GROSS_MASS'), (Mission.Design.RANGE, 'Aircraft1:RANGE'), (Aircraft.Wing.SWEEP, 'Aircraft1:SWEEP')])
-# Links key design variables to ensure both aircraft are modelled the same:
-# Design gross mass sizes things like the landing gear
-# Design range sizing things like the avionics system
+    prob.promote_inputs(['mission1', 'mission2'], [(Mission.Design.GROSS_MASS, 'Aircraft1:GROSS_MASS'), (Mission.Design.RANGE, 'Aircraft1:RANGE'), (Aircraft.Wing.SWEEP, 'Aircraft1:SWEEP')])
+    # Links key design variables to ensure both aircraft are modelled the same:
+    # Design gross mass sizes things like the landing gear
+    # Design range sizing things like the avionics system
 
-prob.add_design_var_default('Aircraft1:GROSS_MASS', lower=10.0, upper=900e3, units='lbm', default_val=100000)
-prob.add_design_var_default('Aircraft1:SWEEP', lower=23.0, upper=27.0, units='deg', default_val=25)
-# This both adds the design variable AND sets the default value. This value can be over-written after-setup using set_val.
+    prob.add_design_var_default('Aircraft1:GROSS_MASS', lower=10.0, upper=900e3, units='lbm', default_val=100000)
+    prob.add_design_var_default('Aircraft1:SWEEP', lower=23.0, upper=27.0, units='deg', default_val=25)
+    # This both adds the design variable AND sets the default value. This value can be over-written after-setup using set_val.
 
 
-prob.add_composite_objective(('mission1', Mission.Summary.FUEL_BURNED, 2), ('mission2', Mission.Summary.FUEL_BURNED, 1))
-# Adds an objective where mission 1 is flown 2x more times than mission2
-# Alternative way that users could specify the same objective:
-# prob.add_composite_objective_adv(missions=['mission1', 'mission2'], mission_weights=[2,1], outputs=[Mission.Summary.FUEL_BURNED],  ref=1)
-# TODO: MULTI_MISSION cannot handle RANGE objectives correctly at the moment.
+    prob.add_composite_objective(('mission1', Mission.Summary.FUEL_BURNED, 2), ('mission2', Mission.Summary.FUEL_BURNED, 1))
+    # Adds an objective where mission 1 is flown 2x more times than mission2
+    # Alternative way that users could specify the same objective:
+    # prob.add_composite_objective_adv(missions=['mission1', 'mission2'], mission_weights=[2,1], outputs=[Mission.Summary.FUEL_BURNED],  ref=1)
+    # TODO: MULTI_MISSION cannot handle RANGE objectives correctly at the moment.
 
-# optimizer and iteration limit are optional provided here
-prob.add_driver(Optimizer, max_iter=50)
-prob.add_design_variables()
+    # optimizer and iteration limit are optional provided here
+    prob.add_driver(Optimizer, max_iter=50)
+    prob.add_design_variables()
 
-prob.setup_model()
-# combines 2 basic commands:
-# prob.setup()
-# prob.set_initial_guesses()
+    prob.setup_model()
+    # combines 2 basic commands:
+    # prob.setup()
+    # prob.set_initial_guesses()
 
-# set_val on OpenMDAO design variables can be placed here and will over-write all other defaults
+    # print('mission1 total payload mass', prob.get_val('mission1.aircraft:crew_and_payload:cargo_mass', units='lbm'))
+    # print('mission2 total payload mass', prob.get_val('mission2.aircraft:crew_and_payload:cargo_mass', units='lbm'))
 
-prob.set_design_range(('mission1', 'mission2'), range='Aircraft1:RANGE')
-# Determines the maximum design_range from both missions and sets that as the design range for both missions
-# to ensure that the avionics system is designed similarly for both aircraft
 
-# TODO: how to handle "aircraft that the user says are the same but are not the same i.e. wing design is different"
 
-prob.run_aviary_problem()
+    # set_val on OpenMDAO design variables can be placed here and will over-write all other defaults
+    Aircraft.CrewPayload.TOTAL_PAYLOAD_MASS
 
-# Add Asserts here
+    prob.set_design_range(('mission1', 'mission2'), range='Aircraft1:RANGE')
+    # Determines the maximum design_range from both missions and sets that as the design range for both missions
+    # to ensure that the avionics system is designed similarly for both aircraft
+
+    # TODO: how to handle "aircraft that the user says are the same but are not the same i.e. wing design is different"
+
+    prob.run_aviary_problem()
+
+    return prob
+
+if __name__ == '__main__':
+    prob = multi_mission_example()
+    objective = prob.get_val('composite_objective', units=None)
+    print('Objective (None): ', objective)
+    
+    print('Mission1 Fuel Burned (lbm): ', prob.get_val('mission1.mission:summary:fuel_burned', units='lbm'))
+    print('Mission2 Fuel Burned (lbm): ', prob.get_val('mission2.mission:summary:fuel_burned', units='lbm'))
+    print('mission1 total payload mass', prob.get_val('mission1.aircraft:crew_and_payload:total_payload_mass', units='lbm'))
+    print('mission2 total payload mass', prob.get_val('mission2.aircraft:crew_and_payload:total_payload_mass', units='lbm'))

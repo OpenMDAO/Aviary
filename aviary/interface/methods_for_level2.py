@@ -81,8 +81,9 @@ class AviaryProblem(om.Problem):
             self.model = om.Group()
         else:
             self.model = AviaryGroup()
+            self.aviary_inputs = None
 
-        self.aviary_inputs = None
+        
 
         self.aviary_groups_dict = {}
 
@@ -179,6 +180,7 @@ class AviaryProblem(om.Problem):
         """
         Used when creating a multi-mission problem.
         Create a dictionary of all aviary_groups() in this problem so we can iterate over them later.
+        Takes as inputs both an aircraft and a mission definition.
         """
         if self.problem_type is not ProblemType.MULTI_MISSION:
             ValueError("add_aviary_group() should only be called when ProblemType is MULTI_MISSION.")
@@ -669,7 +671,7 @@ class AviaryProblem(om.Problem):
         --------
         - Connects each specified mission output into a newly created `ExecComp` block.
         - Computes a weighted sum: each output is weighted by both the total weights
-        - Adds the result as the final objective named `'composite'`, accessible at the top level model.
+        - Adds the result as the final objective named `'composite_objective'`, accessible at the top level model.
         """
 
         # There are LOTS of different ways for the users to input str, 2-tuple, or 3-tuple into *args
@@ -772,26 +774,26 @@ class AviaryProblem(om.Problem):
         for model, output, weight in objectives_cleaned:
             output_safe = output.replace(":", "_")
             weighted_exprs.append(f'{model}_{output_safe}*{weight}/{total_weight}') # we use "_" here because ExecComp() cannot intake "."
-            connection_names.append([f'{model}.{output}',f'composite_objective.{model}_{output_safe}'])
+            connection_names.append([f'{model}.{output}',f'composite_function.{model}_{output_safe}'])
         final_expr = ' + '.join(weighted_exprs)
 
         # weighted_str looks like:  'model1_fuelburn*0.67*0.5 + model1_gross_mass*0.33*0.5 + model2_fuelburn*0.67*0.5 + model2_gross_mass*0.33*0.5'
 
         # adding composite execComp to super problem
         self.model.add_subsystem(
-            'composite_objective',
-            om.ExecComp('composite = ' + final_expr, has_diag_partials=True),
-            promotes_outputs=['composite'],
+            'composite_function',
+            om.ExecComp('composite_objective = ' + final_expr, has_diag_partials=True),
+            promotes_outputs=['composite_objective'],
         )
 
         # connect from inside of the models to the composite objective
         for source, target in connection_names:
             self.model.connect(source, target)
         # finally add the objective
-        self.model.add_objective('composite', ref=ref)
+        self.model.add_objective('composite_objective', ref=ref)
 
 
-    def add_composite_objetive_adv(self, missions:list[str], outputs:list[str], mission_weights:list[float] = None, output_weights:list[float] = None, ref:float = 1.0):
+    def add_composite_objective_adv(self, missions:list[str], outputs:list[str], mission_weights:list[float] = None, output_weights:list[float] = None, ref:float = 1.0):
         """
         Adds a composite objective function to the OpenMDAO problem by aggregating
         output values across multiple mission models, with independent weighting
@@ -822,7 +824,7 @@ class AviaryProblem(om.Problem):
         - Connects each specified mission output into a newly created `ExecComp` block.
         - Computes a weighted sum: each output is weighted by both its output weight
         and the weight of the mission it came from.
-        - Adds the result as the final objective named `'composite'`, accessible at the top level model.
+        - Adds the result as the final objective named `'composite_objective'`, accessible at the top level model.
         """
 
         # Setup mission and output lengths if they are not already given
@@ -849,22 +851,22 @@ class AviaryProblem(om.Problem):
         mission_weights = [float(weight / sum(mission_weights)) for weight in mission_weights]
         for mission, mission_weight in zip(missions, mission_weights):
             for output, output_weight in zip(outputs, output_weights):
-                connection_names.append([f'composite_objective.{mission}_{output}', f'{mission}.{output}'])
+                connection_names.append([f'composite_function.{mission}_{output}', f'{mission}.{output}'])
                 weighted_exprs.append(f'{mission}_{output}*{output_weight}*{mission_weight}')
         final_expr = ' + '.join(weighted_exprs)
         # weighted_str looks like:  'model1.fuelburn*0.67*0.5 + model1.gross_mass*0.33*0.5 + model2.fuelburn*0.67*0.5 + model2.gross_mass*0.33*0.5'
 
         # adding composite execComp to super problem
         self.model.add_subsystem(
-            'composite_objective',
-            om.ExecComp('composite = ' + final_expr, has_diag_partials=True),
-            promotes_outputs=['composite'],
+            'composite_function',
+            om.ExecComp('composite_objective = ' + final_expr, has_diag_partials=True),
+            promotes_outputs=['composite_objective'],
         )
         # connect from inside of the models to the composite objective
         for target, source in connection_names:
             self.model.connect(target, source)
         # finally add the objective
-        self.model.add_objective('composite', ref=ref)
+        self.model.add_objective('composite_objective', ref=ref)
 
     def build_model(self, verbosity=None):
         """
