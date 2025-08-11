@@ -388,11 +388,11 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
         # TODO: This seems like a hack. We might want to find a better way.
         #       The issue is that aero methods are hardcoded for GASP mission phases
         #       instead of being defaulted somewhere, so they don't use phase_info
-        # aviary_group.phase_info[phase_name]['phase_type'] = phase_name
+        # aviary_group.mission_info[phase_name]['phase_type'] = phase_name
         if phase_name in ['ascent', 'groundroll', 'rotation']:
             # safely add in default method in way that doesn't overwrite existing method
             # and create nested structure if it doesn't already exist
-            aviary_group.phase_info[phase_name].setdefault('subsystem_options', {}).setdefault(
+            aviary_group.mission_info[phase_name].setdefault('subsystem_options', {}).setdefault(
                 'core_aerodynamics', {}
             ).setdefault('method', 'low_speed')
 
@@ -417,8 +417,8 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
         """
         for ii in range(len(phases) - 1):
             phase1, phase2 = phases[ii : ii + 2]
-            analytic1 = aviary_group.phase_info[phase1]['user_options']['analytic']
-            analytic2 = aviary_group.phase_info[phase2]['user_options']['analytic']
+            analytic1 = aviary_group.mission_info[phase1]['user_options']['analytic']
+            analytic2 = aviary_group.mission_info[phase2]['user_options']['analytic']
 
             if not (analytic1 or analytic2):
                 # we always want time, distance, and mass to be continuous
@@ -453,8 +453,8 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
                 for state, connected in states_to_link.items():
                     # in initial guesses, all of the states, other than time use
                     # the same name
-                    initial_guesses1 = aviary_group.phase_info[phase1]['initial_guesses']
-                    initial_guesses2 = aviary_group.phase_info[phase2]['initial_guesses']
+                    initial_guesses1 = aviary_group.mission_info[phase1]['initial_guesses']
+                    initial_guesses2 = aviary_group.mission_info[phase2]['initial_guesses']
 
                     # if a state is in the initial guesses, get the units of the
                     # initial guess
@@ -543,7 +543,7 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
                 flat_src_indices=True,
             )
 
-        if 'ascent' in aviary_group.phase_info:
+        if 'ascent' in aviary_group.mission_info:
             self._add_groundroll_eq_constraint(aviary_group)
 
     def check_trajectory(self, aviary_group):
@@ -672,7 +672,7 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
             Location of this trajectory in the hierarchy.
         """
         # Handle Analytic Phase
-        if aviary_group.phase_info[phase_name]['user_options'].get('analytic', False):
+        if aviary_group.mission_info[phase_name]['user_options'].get('analytic', False):
             for guess_key, guess_data in guesses.items():
                 val, units = guess_data
 

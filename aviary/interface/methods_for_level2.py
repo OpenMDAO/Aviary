@@ -1336,7 +1336,7 @@ class AviaryProblem(om.Problem):
             reports directory. If False, the file is saved to the current working directory.
         """
         if save_to_reports:
-            reports_folder = Path(self.get_reports_dir())
+            reports_folder = Path(self.get_reports_dir(force=True))
             json_filename = reports_folder / json_filename
         aviary_input_list = []
         with open(json_filename, 'w') as jsonfile:
