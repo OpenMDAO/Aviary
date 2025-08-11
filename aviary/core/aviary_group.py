@@ -1011,6 +1011,24 @@ class AviaryGroup(om.Group):
             verbosity = self.verbosity  # defaults to BRIEF
 
         self._add_bus_variables_and_connect()
+        self._connect_mission_bus_variables()
+
+        final_phase = self.regular_phases[-1]
+        self.connect(
+            f'traj.{final_phase}.states:mass',
+            'state_output.mass_in',
+            src_indices=[-1],
+        )
+        self.connect(
+            f'traj.{final_phase}.timeseries.distance',
+            'state_output.range_in',
+            src_indices=[-1],
+        )
+        self.connect(
+            f'traj.{final_phase}.timeseries.time',
+            'state_output.time_in',
+            src_indices=[-1]
+        )
 
         phases = list(self.phase_info.keys())
 
@@ -1054,26 +1072,7 @@ class AviaryGroup(om.Group):
 
         self.configurator.link_phases(self, phases, connect_directly=true_unless_mpi)
 
-        self._connect_mission_bus_variables()
-
         self.configurator.check_trajectory(self)
-
-        final_phase = self.regular_phases[-1]
-        self.connect(
-            f'traj.{final_phase}.states:mass',
-            'state_output.mass_in',
-            src_indices=[-1],
-        )
-        self.connect(
-            f'traj.{final_phase}.timeseries.distance',
-            'state_output.range_in',
-            src_indices=[-1],
-        )
-        self.connect(
-            f'traj.{final_phase}.timeseries.time',
-            'state_output.time_in',
-            src_indices=[-1]
-        )
 
     def _add_bus_variables_and_connect(self):
         all_subsystems = self.get_all_subsystems()
