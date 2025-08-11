@@ -53,46 +53,51 @@ aviary_inputs_deadhead.set_val(Aircraft.CrewPayload.NUM_FIRST_CLASS, 0, 'unitles
 Optimizer = 'SNOPT'  # SLSQP or SNOPT
 
 prob = av.AviaryProblem(problem_type = ProblemType.MULTI_MISSION)
-
-# set constraints in the background to allow Mission.Summary.GROSS_MASS to be acceptible as long as it's
-# less than Mission.Design.GROSS_MASS. Also turns on Mission.Constraints.RANGE_RESIDUAL =0, forcong
-# the mission to fly the target_range specified in the phase_info
+# set constraints in the background. Currently works with every objective type except Range.
 
 prob.add_aviary_group('mission1', aircraft=aviary_inputs_primary, mission=phase_info)
 # by default this will load_inputs(), check_and_preprocess(), and combine meta data
 # This can only accept an AviaryValues, no .csv accepted
 
-# Load aircraft in second configuration for same mission
 prob.add_aviary_group('mission2', aircraft=aviary_inputs_deadhead, mission=phase_info)
+# Load aircraft in second configuration for same mission
 
 prob.build_model()
+# combines four basic commands
+# prob.add_pre_mission_systems()
+# prob.add_phases()
+# prob.add_post_mission_systems()
+# prob.link_phases()
 
-# Link Key design variables to ensure both aircraft are modelled the same:
 prob.promote_inputs(['mission1', 'mission2'], [(Mission.Design.GROSS_MASS, 'Aircraft1:GROSS_MASS'), (Mission.Design.RANGE, 'Aircraft1:RANGE'), (Aircraft.Wing.SWEEP, 'Aircraft1:SWEEP')])
+# Links key design variables to ensure both aircraft are modelled the same:
+# Design gross mass sizes things like the landing gear
+# Design range sizing things like the avionics system
 
 prob.add_design_var_default('Aircraft1:GROSS_MASS', lower=10.0, upper=900e3, units='lbm', default_val=100000)
 prob.add_design_var_default('Aircraft1:SWEEP', lower=23.0, upper=27.0, units='deg', default_val=25)
+# This both adds the design variable AND sets the default value. This value can be over-written after-setup using set_val.
 
-# prob.add_design_var_default('prob.model.mission1.RANGE')
 
-# Add objective
-# Mission 1 is flown 2x more times than mission2
 prob.add_composite_objective(('mission1', Mission.Summary.FUEL_BURNED, 2), ('mission2', Mission.Summary.FUEL_BURNED, 1))
+# Adds an objective where mission 1 is flown 2x more times than mission2
+# Alternative way that users could specify the same objective:
 # prob.add_composite_objective_adv(missions=['mission1', 'mission2'], mission_weights=[2,1], outputs=[Mission.Summary.FUEL_BURNED],  ref=1)
+# TODO: MULTI_MISSION cannot handle RANGE objectives correctly at the moment.
 
+prob.setup_model(Optimizer, max_iter=50)
 # optimizer and iteration limit are optional provided here
-prob.add_driver(Optimizer, max_iter=50)
+# combines four basic commands:
+# prob.add_driver(Optimizer, max_iter=50)
+# prob.add_design_variables()
+# prob.setup()
+# prob.set_initial_guesses()
 
-prob.add_design_variables()
+# set_val on OpenMDAO design variables can be placed here and will over-write all other defaults
 
-prob.setup()
-
-prob.set_initial_guesses()
-
-# set_val on OpenMDAO desvars etc here
-
-# Ensure that design_range is the same for similar aircraft to ensure that navigation gear is designed similarly
 prob.set_design_range(('mission1', 'mission2'), range='Aircraft1:RANGE')
+# Determines the maximum design_range from both missions and sets that as the design range for both missions
+# to ensure that the avionics system is designed similarly for both aircraft
 
 # TODO: how to handle "aircraft that the user says are the same but are not the same i.e. wing design is different"
 
