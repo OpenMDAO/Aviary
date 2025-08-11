@@ -1,43 +1,33 @@
 import inspect
-from pathlib import Path
 from importlib.machinery import SourceFileLoader
+from pathlib import Path
 
 import dymos as dm
-from dymos.utils.misc import _unspecified
 import openmdao.api as om
+from dymos.utils.misc import _unspecified
 from openmdao.utils.mpi import MPI
 
-from aviary.utils.aviary_values import AviaryValues
-from aviary.variable_info.enums import EquationsOfMotion
-from aviary.variable_info.variables import Settings
-from aviary.variable_info.enums import Verbosity
-from aviary.core.pre_mission_group import PreMissionGroup
 from aviary.core.post_mission_group import PostMissionGroup
-from aviary.utils.preprocessors import preprocess_options
-from aviary.variable_info.enums import (
-    EquationsOfMotion,
-    LegacyCode,
-    ProblemType,
-    Verbosity,
-)
+from aviary.core.pre_mission_group import PreMissionGroup
+from aviary.interface.utils import set_warning_format
 from aviary.mission.height_energy_problem_configurator import HeightEnergyProblemConfigurator
 from aviary.mission.solved_two_dof_problem_configurator import SolvedTwoDOFProblemConfigurator
 from aviary.mission.two_dof_problem_configurator import TwoDOFProblemConfigurator
+from aviary.mission.utils import get_phase_mission_bus_lengths, process_guess_var
 from aviary.subsystems.aerodynamics.aerodynamics_builder import CoreAerodynamicsBuilder
 from aviary.subsystems.geometry.geometry_builder import CoreGeometryBuilder
 from aviary.subsystems.mass.mass_builder import CoreMassBuilder
 from aviary.subsystems.premission import CorePreMission
 from aviary.subsystems.propulsion.propulsion_builder import CorePropulsionBuilder
-from aviary.interface.utils import set_warning_format
-from aviary.mission.utils import get_phase_mission_bus_lengths, process_guess_var
-from aviary.variable_info.variables import Aircraft, Dynamic, Mission, Settings
-from aviary.variable_info.variable_meta_data import _MetaData as BaseMetaData
-
+from aviary.utils.aviary_values import AviaryValues
 from aviary.utils.functions import get_path
 from aviary.utils.preprocessors import preprocess_options
 from aviary.utils.process_input_decks import create_vehicle, update_GASP_options
 from aviary.utils.utils import wrapped_convert_units
+from aviary.variable_info.enums import EquationsOfMotion, LegacyCode, ProblemType, Verbosity
 from aviary.variable_info.functions import setup_trajectory_params
+from aviary.variable_info.variable_meta_data import _MetaData as BaseMetaData
+from aviary.variable_info.variables import Aircraft, Mission, Settings
 
 TWO_DEGREES_OF_FREEDOM = EquationsOfMotion.TWO_DEGREES_OF_FREEDOM
 HEIGHT_ENERGY = EquationsOfMotion.HEIGHT_ENERGY
@@ -264,14 +254,14 @@ class AviaryGroup(om.Group):
                 )
 
         # create a new dictionary that only contains the phases from phase_info
-        self.phase_info = {}
+        self.mission_info = {}
 
         for phase_name in phase_info:
             if 'external_subsystems' not in phase_info[phase_name]:
                 phase_info[phase_name]['external_subsystems'] = []
 
             if phase_name not in ['pre_mission', 'post_mission']:
-                self.phase_info[phase_name] = phase_info[phase_name]
+                self.mission_info[phase_name] = phase_info[phase_name]
 
         # pre_mission and post_mission are stored in their own dictionaries.
         if 'pre_mission' in phase_info:
@@ -311,7 +301,7 @@ class AviaryGroup(om.Group):
         aviary_inputs = self.aviary_inputs
         # Target_distance verification for all phases
         # Checks to make sure target_distance is positive,
-        for phase_name, phase in self.phase_info.items():
+        for phase_name, phase in self.mission_info.items():
             if 'user_options' in phase:
                 target_distance = phase['user_options'].get('target_distance', (None, 'm'))
                 if target_distance[0] is not None and target_distance[0] <= 0:
@@ -323,7 +313,7 @@ class AviaryGroup(om.Group):
 
         # Checks to make sure time_duration is positive,
         # Sets duration_bounds, initial_guesses, and fixed_duration
-        for phase_name, phase in self.phase_info.items():
+        for phase_name, phase in self.mission_info.items():
             if 'user_options' in phase:
                 analytic = False
                 if self.mission_method is EquationsOfMotion.TWO_DEGREES_OF_FREEDOM:
@@ -372,8 +362,8 @@ class AviaryGroup(om.Group):
                     else:
                         guesses['time'] = ((None, time_duration), units)
 
-        for phase_name in self.phase_info:
-            for external_subsystem in self.phase_info[phase_name]['external_subsystems']:
+        for phase_name in self.mission_info:
+            for external_subsystem in self.mission_info[phase_name]['external_subsystems']:
                 aviary_inputs = external_subsystem.preprocess_inputs(aviary_inputs)
 
         # PREPROCESSORS #
@@ -392,12 +382,12 @@ class AviaryGroup(om.Group):
 
         # If all phases ask for tabular aero, we can skip pre-mission. Check phase_info
         tabular = False
-        for phase in self.phase_info:
+        for phase in self.mission_info:
             if phase not in ('pre_mission', 'post_mission'):
                 try:
                     if (
                         'tabular'
-                        in self.phase_info[phase]['subsystem_options']['core_aerodynamics'][
+                        in self.mission_info[phase]['subsystem_options']['core_aerodynamics'][
                             'method'
                         ]
                     ):
@@ -458,10 +448,10 @@ class AviaryGroup(om.Group):
         # Check to ensure no non-reserve phases are specified after reserve phases
         start_reserve = False
         raise_error = False
-        for idx, phase_name in enumerate(self.phase_info):
-            if 'user_options' in self.phase_info[phase_name]:
-                if 'reserve' in self.phase_info[phase_name]['user_options']:
-                    if self.phase_info[phase_name]['user_options']['reserve'] is False:
+        for idx, phase_name in enumerate(self.mission_info):
+            if 'user_options' in self.mission_info[phase_name]:
+                if 'reserve' in self.mission_info[phase_name]['user_options']:
+                    if self.mission_info[phase_name]['user_options']['reserve'] is False:
                         # This is a regular phase
                         self.regular_phases.append(phase_name)
                         if start_reserve is True:
@@ -598,7 +588,7 @@ class AviaryGroup(om.Group):
             )
 
     def _get_phase(self, phase_name, phase_idx, comm):
-        phase_options = self.phase_info[phase_name]
+        phase_options = self.mission_info[phase_name]
 
         # TODO optionally accept which subsystems to load from phase_info
         subsystems = self.core_subsystems
@@ -639,7 +629,7 @@ class AviaryGroup(om.Group):
 
         # This fills in all defaults from the phase_builders user_options.
         full_options = phase_object.user_options.to_phase_info()
-        self.phase_info[phase_name]['user_options'] = full_options
+        self.mission_info[phase_name]['user_options'] = full_options
 
         # TODO: Should some of this stuff be moved into the phase builder?
         self.configurator.set_phase_options(self, phase_name, phase_idx, phase, full_options, comm)
@@ -676,24 +666,24 @@ class AviaryGroup(om.Group):
             verbosity = self.verbosity  # defaults to BRIEF
 
         if phase_info_parameterization is not None:
-            self.phase_info, self.post_mission_info = phase_info_parameterization(
-                self.phase_info, self.post_mission_info, self.aviary_inputs
+            self.mission_info, self.post_mission_info = phase_info_parameterization(
+                self.mission_info, self.post_mission_info, self.aviary_inputs
             )
 
-        phase_info = self.phase_info
+        phase_info = self.mission_info
 
         phases = list(phase_info.keys())
         traj = self.add_subsystem('traj', dm.Trajectory(parallel_phases=parallel_phases))
 
         def add_subsystem_timeseries_outputs(phase, phase_name):
-            phase_options = self.phase_info[phase_name]
+            phase_options = self.mission_info[phase_name]
             all_subsystems = self.get_all_subsystems(phase_options['external_subsystems'])
             for subsystem in all_subsystems:
                 timeseries_to_add = subsystem.get_outputs()
                 for timeseries in timeseries_to_add:
                     phase.add_timeseries_output(timeseries)
                 mbvars = subsystem.get_post_mission_bus_variables(
-                    self.aviary_inputs, self.phase_info
+                    self.aviary_inputs, self.mission_info
                 )
                 if mbvars:
                     mbvars_this_phase = mbvars.get(phase_name, None)
@@ -711,10 +701,10 @@ class AviaryGroup(om.Group):
 
         # loop through phase_info and external subsystems
         external_parameters = {}
-        for phase_name in self.phase_info:
+        for phase_name in self.mission_info:
             external_parameters[phase_name] = {}
             all_subsystems = self.get_all_subsystems(
-                self.phase_info[phase_name]['external_subsystems']
+                self.mission_info[phase_name]['external_subsystems']
             )
 
             subsystem_options = phase_info[phase_name].get('subsystem_options', {})
@@ -725,7 +715,7 @@ class AviaryGroup(om.Group):
                 else:
                     kwargs = {}
                 parameter_dict = subsystem.get_parameters(
-                    phase_info=self.phase_info[phase_name],
+                    phase_info=self.mission_info[phase_name],
                     aviary_inputs=self.aviary_inputs,
                     **kwargs,
                 )
@@ -791,7 +781,7 @@ class AviaryGroup(om.Group):
         for external_subsystem in self.post_mission_info['external_subsystems']:
             subsystem_postmission = external_subsystem.build_post_mission(
                 aviary_inputs=self.aviary_inputs,
-                phase_info=self.phase_info,
+                phase_info=self.mission_info,
                 phase_mission_bus_lengths=phase_mission_bus_lengths,
             )
 
@@ -897,8 +887,8 @@ class AviaryGroup(om.Group):
         # If a target distance (or time) has been specified for this phase
         # distance (or time) is measured from the start of this phase to the end
         # of this phase
-        for phase_name in self.phase_info:
-            user_options = self.phase_info[phase_name]['user_options']
+        for phase_name in self.mission_info:
+            user_options = self.mission_info[phase_name]['user_options']
 
             target_distance = user_options.get('target_distance', (None, 'nmi'))
             target_distance = wrapped_convert_units(target_distance, 'nmi')
@@ -1002,12 +992,12 @@ class AviaryGroup(om.Group):
 
         self._add_bus_variables_and_connect()
 
-        phases = list(self.phase_info.keys())
+        phases = list(self.mission_info.keys())
 
         if len(phases) <= 1:
             return
 
-        # In summary, the following code loops over all phases in self.phase_info, gets
+        # In summary, the following code loops over all phases in self.mission_info, gets
         # the linked variables from each external subsystem in each phase, and stores
         # the lists of linked variables in lists_to_link. It then gets a list of
         # unique variable names from lists_to_link and loops over them, creating
@@ -1015,9 +1005,9 @@ class AviaryGroup(om.Group):
         # using self.traj.link_phases().
 
         lists_to_link = []
-        for idx, phase_name in enumerate(self.phase_info):
+        for idx, phase_name in enumerate(self.mission_info):
             lists_to_link.append([])
-            for external_subsystem in self.phase_info[phase_name]['external_subsystems']:
+            for external_subsystem in self.mission_info[phase_name]['external_subsystems']:
                 lists_to_link[idx].extend(external_subsystem.get_linked_variables())
 
         # get unique variable names from lists_to_link
@@ -1035,7 +1025,7 @@ class AviaryGroup(om.Group):
         # loop over unique variable names
         for var in unique_vars:
             phases_to_link = []
-            for idx, phase_name in enumerate(self.phase_info):
+            for idx, phase_name in enumerate(self.mission_info):
                 if var in lists_to_link[idx]:
                     phases_to_link.append(phase_name)
 
@@ -1051,7 +1041,7 @@ class AviaryGroup(om.Group):
     def _add_bus_variables_and_connect(self):
         all_subsystems = self.get_all_subsystems()
 
-        base_phases = list(self.phase_info.keys())
+        base_phases = list(self.mission_info.keys())
 
         for external_subsystem in all_subsystems:
             bus_variables = external_subsystem.get_pre_mission_bus_variables(self.aviary_inputs)
@@ -1132,7 +1122,7 @@ class AviaryGroup(om.Group):
         # Loop through all external subsystems.
         for external_subsystem in all_subsystems:
             for phase_name, var_mapping in external_subsystem.get_post_mission_bus_variables(
-                aviary_inputs=self.aviary_inputs, phase_info=self.phase_info
+                aviary_inputs=self.aviary_inputs, phase_info=self.mission_info
             ).items():
                 for mission_variable_name, post_mission_variable_names in var_mapping.items():
                     if not isinstance(post_mission_variable_names, list):
@@ -1348,13 +1338,13 @@ class AviaryGroup(om.Group):
             if self.mission_method is SOLVED_2DOF:
                 self.phase_objects[idx].apply_initial_guesses(self, 'traj', phase)
 
-                if self.phase_info[phase_name]['user_options'].get('ground_roll') and idx == 0:
+                if self.mission_info[phase_name]['user_options'].get('ground_roll') and idx == 0:
                     continue
 
             # If not, fetch the initial guesses specific to the phase
             # check if guesses exist for this phase
-            if 'initial_guesses' in self.phase_info[phase_name]:
-                guesses = self.phase_info[phase_name]['initial_guesses']
+            if 'initial_guesses' in self.mission_info[phase_name]:
+                guesses = self.mission_info[phase_name]['initial_guesses']
             else:
                 guesses = {}
 
@@ -1395,7 +1385,9 @@ class AviaryGroup(om.Group):
             The phase object for which the subsystem guesses are being added.
         """
         # Get all subsystems associated with the phase
-        all_subsystems = self.get_all_subsystems(self.phase_info[phase_name]['external_subsystems'])
+        all_subsystems = self.get_all_subsystems(
+            self.mission_info[phase_name]['external_subsystems']
+        )
 
         # Loop over each subsystem
         for subsystem in all_subsystems:

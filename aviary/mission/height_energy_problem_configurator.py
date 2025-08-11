@@ -338,7 +338,7 @@ class HeightEnergyProblemConfigurator(ProblemConfiguratorBase):
         aviary_group : AviaryGroup
             Aviary model that owns this configurator.
         """
-        phase_info = aviary_group.phase_info
+        phase_info = aviary_group.mission_info
         all_phases = [name for name in phase_info]
 
         stems = [
@@ -387,7 +387,7 @@ class HeightEnergyProblemConfigurator(ProblemConfiguratorBase):
         if aviary_group.pre_mission_info['include_takeoff']:
             self._add_post_mission_takeoff_systems(aviary_group)
         else:
-            first_flight_phase_name = list(aviary_group.phase_info.keys())[0]
+            first_flight_phase_name = list(aviary_group.mission_info.keys())[0]
 
             # Since we don't have the takeoff subsystem, we need to use the gross mass as the
             # source for the mass at the beginning of the first flight phase. It turns out to be
@@ -444,8 +444,8 @@ class HeightEnergyProblemConfigurator(ProblemConfiguratorBase):
         Adds residual and constraint components for the mach and alpha connections from takeoff
         to the first flight phase.
         """
-        first_flight_phase_name = list(aviary_group.phase_info.keys())[0]
-        phase_options = aviary_group.phase_info[first_flight_phase_name]['user_options']
+        first_flight_phase_name = list(aviary_group.mission_info.keys())[0]
+        phase_options = aviary_group.mission_info[first_flight_phase_name]['user_options']
 
         aviary_group.connect(
             Mission.Takeoff.FINAL_MASS, f'traj.{first_flight_phase_name}.initial_states:mass'
@@ -553,7 +553,7 @@ class HeightEnergyProblemConfigurator(ProblemConfiguratorBase):
         state_keys = ['mass', Dynamic.Mission.DISTANCE]
         prob_keys = ['tau_gear', 'tau_flaps']
 
-        options = aviary_group.phase_info[phase_name]['user_options']
+        options = aviary_group.mission_info[phase_name]['user_options']
 
         # Let's preserve the original user-specified initial conditions.
         guess_dict = deepcopy(guesses)

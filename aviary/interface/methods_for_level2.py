@@ -1,8 +1,6 @@
 import csv
-import inspect
 import json
 import os
-import sys
 import warnings
 from datetime import datetime
 from enum import Enum
@@ -14,18 +12,11 @@ import openmdao.api as om
 from openmdao.utils.reports_system import _default_reports
 
 from aviary.core.aviary_group import AviaryGroup
-
+from aviary.interface.utils import set_warning_format
 from aviary.utils.aviary_values import AviaryValues
 from aviary.utils.functions import convert_strings_to_data
-from aviary.interface.utils import set_warning_format
 from aviary.utils.merge_variable_metadata import merge_meta_data
-
-from aviary.variable_info.enums import (
-    EquationsOfMotion,
-    LegacyCode,
-    ProblemType,
-    Verbosity,
-)
+from aviary.variable_info.enums import EquationsOfMotion, LegacyCode, ProblemType, Verbosity
 from aviary.variable_info.functions import setup_model_options
 from aviary.variable_info.variable_meta_data import _MetaData as BaseMetaData
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission, Settings
@@ -83,7 +74,7 @@ class AviaryProblem(om.Problem):
         phase_info=None,
         engine_builders=None,
         problem_configurator=None,
-        meta_data=BaseMetaData,
+        meta_data=BaseMetaData.copy(),
         verbosity=None,
     ):
         """
@@ -115,9 +106,11 @@ class AviaryProblem(om.Problem):
             verbosity=verbosity,
         )
 
-        # When there is only 1 aircraft model/mission, preserve old behavior.
-        self.phase_info = self.model.phase_info
+        self.meta_data = meta_data
+        self.phase_info = phase_info
         self.aviary_inputs = aviary_inputs
+        self.engine_builders = engine_builders
+        self.problem_configurator = problem_configurator
         self.verbosity = verbosity
 
         return self.aviary_inputs
@@ -127,7 +120,6 @@ class AviaryProblem(om.Problem):
         This method checks the user-supplied input values for any potential problems
         and preprocesses the inputs to prepare them for use in the Aviary problem.
         """
-
         # `self.verbosity` is "true" verbosity for entire run. `verbosity` is verbosity
         # override for just this method
         if verbosity is not None:
@@ -142,14 +134,13 @@ class AviaryProblem(om.Problem):
 
     def _update_metadata_from_subsystems(self):
         """Merge metadata from user-defined subsystems into problem metadata."""
-        self.meta_data = BaseMetaData.copy()
 
         # loop through phase_info and external subsystems
-        for phase_name in self.model.phase_info:
-            # TODO: phase_info now resides in AviaryGroup. Accessing it as self.model.phase_info is just a temporary stop-gap
+        for phase_name in self.model.mission_info:
+            # TODO: phase_info now resides in AviaryGroup. Accessing it as self.model.mission_info is just a temporary stop-gap
             # it will be necessary to combine multiple self.models
             external_subsystems = self.model.get_all_subsystems(
-                self.model.phase_info[phase_name]['external_subsystems']
+                self.model.mission_info[phase_name]['external_subsystems']
             )
 
             for subsystem in external_subsystems:
@@ -543,7 +534,7 @@ class AviaryProblem(om.Problem):
                 )
 
             elif objective_type == 'hybrid_objective':
-                self._add_hybrid_objective(self.model.phase_info)
+                self._add_hybrid_objective(self.model.mission_info)
                 self.model.add_objective('obj_comp.obj')
 
             elif objective_type == 'fuel_burned':
@@ -590,7 +581,7 @@ class AviaryProblem(om.Problem):
         with warnings.catch_warnings():
             self.model.options['aviary_options'] = self.aviary_inputs
             self.model.options['aviary_metadata'] = self.meta_data
-            self.model.options['phase_info'] = self.model.phase_info
+            self.model.options['phase_info'] = self.model.mission_info
 
             warnings.simplefilter('ignore', om.OpenMDAOWarning)
             warnings.simplefilter('ignore', om.PromotionWarning)
@@ -723,6 +714,9 @@ class AviaryProblem(om.Problem):
             failed = self.run_model()
             warnings.filterwarnings('default', category=UserWarning)
 
+        # save sized aircraft model to json output file
+        self.save_sizing_results()
+
         # update n2 diagram after run.
         outdir = Path(self.get_reports_dir(force=True))
         outfile = os.path.join(outdir, 'n2.html')
@@ -769,11 +763,8 @@ class AviaryProblem(om.Problem):
                 mass_method == LegacyCode.FLOPS
                 and equations_of_motion is EquationsOfMotion.HEIGHT_ENERGY
             ):
-                # Ensure proper transfer of json files.
-                self.save_sizing_to_json(json_filename='payload_range_sizing.json')
-
                 # make a copy of the phase_info to avoid modifying the original.
-                phase_info = self.model.phase_info
+                phase_info = self.model.mission_info
                 phase_info['pre_mission'] = self.model.pre_mission_info
                 phase_info['post_mission'] = self.model.post_mission_info
                 # This checks if the 'cruise' phase exists, then automatically adjusts duration bounds of the cruise stage
@@ -952,6 +943,123 @@ class AviaryProblem(om.Problem):
             else:
                 warnings.warn('Payload/range analysis is only available for sizing problem types')
 
+    def run_off_design_mission(
+        self,
+        problem_type: ProblemType,
+        phase_info=None,
+        equations_of_motion: EquationsOfMotion = None,
+        problem_configurator=None,
+        num_first_class=None,
+        num_business=None,
+        num_tourist=None,
+        num_pax=None,
+        wing_cargo=None,
+        misc_cargo=None,
+        cargo_mass=None,
+        mission_gross_mass=None,
+        mission_range=None,
+        verbosity=None,
+    ):
+        """
+        Runs the aircraft model in a off-design mission of the specified type. It is assumed that
+        the AviaryProblem is loaded with an already sized aircraft.
+
+        Parameters
+        ----------
+        problem_type : str, ProblemType
+            The type of off-design mission to be flown. Accepted
+        """
+        # For off-design missions, provided verbosity will be used for all L2 method calls
+        if verbosity is not None:
+            # compatibility with being passed int for verbosity
+            verbosity = Verbosity(verbosity)
+        else:
+            verbosity = self.verbosity  # defaults to BRIEF
+
+        # accept str for problem type
+        problem_type = ProblemType(problem_type)
+        if problem_type is ProblemType.SIZING:
+            raise UserWarning('Off-design missions cannot be SIZING missions.')
+
+        off_design_prob = AviaryProblem()
+
+        # Set up problem for mission, such as equations of motion, configurators, etc.
+        inputs = off_design_prob.aviary_inputs = self.aviary_inputs
+
+        if problem_type is not None:
+            inputs.set_val(Settings.PROBLEM_TYPE, problem_type)
+        if equations_of_motion is not None:
+            inputs.set_val(Settings.EQUATIONS_OF_MOTION, equations_of_motion)
+
+        if problem_configurator is not None:
+            off_design_prob.problem_configurator = problem_configurator
+        else:
+            off_design_prob.problem_configurator = self.problem_configurator
+
+        if phase_info is None:
+            # model phase_info only contains mission information
+            phase_info = self.model.mission_info
+            phase_info['pre_mission'] = self.model.pre_mission_info
+            phase_info['post_mission'] = self.model.post_mission_info
+
+        # update passenger count and cargo masses
+        mass_method = inputs.get_val(Settings.MASS_METHOD)
+
+        # only FLOPS cares about seat class or specific cargo categories
+        if mass_method == LegacyCode.FLOPS:
+            if num_first_class is not None:
+                inputs.set_val(Aircraft.CrewPayload.NUM_FIRST_CLASS, num_first_class)
+            if num_business is not None:
+                inputs.set_val(Aircraft.CrewPayload.NUM_BUSINESS_CLASS, num_business)
+            if num_tourist is not None:
+                inputs.set_val(Aircraft.CrewPayload.NUM_TOURIST_CLASS, num_tourist)
+
+            if wing_cargo is not None:
+                inputs.set_val(Aircraft.CrewPayload.WING_CARGO, wing_cargo)
+            if misc_cargo is not None:
+                inputs.set_val(Aircraft.CrewPayload.MISC_CARGO, misc_cargo)
+
+        if num_pax is not None:
+            inputs.set_val(Aircraft.CrewPayload.NUM_PASSENGERS, num_pax)
+        if cargo_mass is not None:
+            inputs.set_val(Aircraft.CrewPayload.CARGO_MASS, cargo_mass)
+
+        # reset the AviaryProblem to run the new mission
+        off_design_prob.load_inputs(inputs, phase_info, verbosity=verbosity)
+
+        # configure inputs that are specific to problem type
+        if problem_type is ProblemType.ALTERNATE:
+            # Set mission range, aviary will calculate required fuel
+            # if mission_range is None:
+            #     raise UserWarning('Alternate problem type requested with no specified range')
+            # else:
+            if mission_range is not None:
+                inputs.set_val(Mission.Summary.RANGE, mission_range, units='NM')
+                phase_info['post_mission']['target_range'] = (mission_range, 'nmi')
+
+        elif problem_type is ProblemType.FALLOUT:
+            # Set mission fuel and calculate gross weight, aviary will calculate range
+            # if mission_gross_mass is None:
+            #     raise UserWarning('Fallout problem type requested with no specified gross mass')
+            # else:
+            if mission_gross_mass is not None:
+                inputs.set_val(Mission.Summary.GROSS_MASS, mission_gross_mass, units='lbm')
+
+        off_design_prob.check_and_preprocess_inputs(verbosity=verbosity)
+        off_design_prob.add_pre_mission_systems(verbosity=verbosity)
+        off_design_prob.add_phases(verbosity=verbosity)
+        off_design_prob.add_post_mission_systems(verbosity=verbosity)
+        off_design_prob.link_phases(verbosity=verbosity)
+        optimizer = self.driver.options['optimizer']
+        off_design_prob.add_driver(optimizer, verbosity=verbosity)
+        off_design_prob.add_design_variables(verbosity=verbosity)
+        off_design_prob.add_objective(verbosity=verbosity)
+        off_design_prob.setup(verbosity=verbosity)
+        off_design_prob.set_initial_guesses(verbosity=verbosity)
+        off_design_prob.run_aviary_problem(verbosity=verbosity)
+
+        return off_design_prob
+
     def alternate_mission(
         self,
         run_mission=True,
@@ -1031,8 +1139,8 @@ class AviaryProblem(om.Problem):
             num_first = num_business = num_tourist = wing_cargo = misc_cargo = 0
 
         if phase_info is None:
-            # model.phase_info only contains mission information
-            phase_info = self.model.phase_info
+            # model.mission_info only contains mission information
+            phase_info = self.model.mission_info
             phase_info['pre_mission'] = self.model.pre_mission_info
             phase_info['post_mission'] = self.model.post_mission_info
         if mission_range is None:
@@ -1167,7 +1275,7 @@ class AviaryProblem(om.Problem):
 
         if phase_info is None:
             # Somewhere between the sizing and off-design self.pre_mission_info gets deleted
-            phase_info = self.model.phase_info
+            phase_info = self.model.mission_info
             phase_info['pre_mission'] = self.model.pre_mission_info
             phase_info['post_mission'] = self.model.post_mission_info
         if mission_mass is None:
@@ -1212,7 +1320,7 @@ class AviaryProblem(om.Problem):
             prob_fallout.run_aviary_problem()
         return prob_fallout
 
-    def save_sizing_to_json(self, json_filename='sizing_problem.json'):
+    def save_sizing_results(self, json_filename='sizing_problem.json', save_to_reports=True):
         """
         This function saves an aviary problem object into a json file.
 
@@ -1223,13 +1331,18 @@ class AviaryProblem(om.Problem):
             Assumed to contain aviary_inputs and Mission.Summary.GROSS_MASS
         json_filename : string
             User specified name and relative path of json file to save the data into.
+        save_to_reports : bool
+            Flag that sets where the results are saved - if True, the file is saved in the OpenMDAO
+            reports directory. If False, the file is saved to the current working directory.
         """
+        if save_to_reports:
+            reports_folder = Path(self.get_reports_dir())
+            json_filename = reports_folder / json_filename
         aviary_input_list = []
         with open(json_filename, 'w') as jsonfile:
             # Loop through aviary input datastructure and create a list
             for data in self.aviary_inputs:
                 (name, (value, units)) = data
-                type_value = type(value)
 
                 # Get the gross mass value from the sizing problem and add it to input
                 # list
@@ -1241,17 +1354,15 @@ class AviaryProblem(om.Problem):
                     value = Mission_Summary_GROSS_MASS_val_list[0]
 
                 else:
-                    # there are different data types we need to handle for conversion to
-                    # json format
+                    # there are different data types we need to handle for conversion to json format
                     # int, bool, float doesn't need anything special
 
                     # Convert numpy arrays to lists
-                    if type_value == np.ndarray:
+                    if isinstance(value, np.ndarray):
                         value = value.tolist()
-                        type_value = list
 
                     # Lists are fine except if they contain enums or Paths
-                    if type_value == list:
+                    if isinstance(value, list):
                         if isinstance(value[0], Enum):
                             for i in range(len(value)):
                                 value[i] = value[i].name
@@ -1266,7 +1377,7 @@ class AviaryProblem(om.Problem):
                         value = str(value)
 
                 # Append the data to the list
-                aviary_input_list.append([name, value, units, str(type_value)])
+                aviary_input_list.append([name, value, units, str(type(value))])
 
             # Write the list to a json file
             json.dump(
@@ -1312,23 +1423,22 @@ class AviaryProblem(om.Problem):
                 writer.writerow({'name': name, 'value': value, 'units': units})
 
 
-def _read_sizing_json(aviary_problem, json_filename):
+def _read_sizing_json(json_filename):
     """
-    This function reads in an aviary problem object from a json file.
+    This function reads in saved results from a json file.
 
     Parameters
     ----------
-    aviary_problem: OpenMDAO Aviary Problem
-        Aviary problem object optimized for the aircraft design/sizing mission.
-        Assumed to contain aviary_inputs and Mission.Summary.GROSS_MASS
-    json_filename:   string
-        User specified name and relative path of json file to save the data into
+    json_filename: str, Path
+        json file to save the data into
 
     Returns
     -------
-    Aviary Problem object with updated input values from json file
+    AviaryValues object with updated input values from json file
 
     """
+    aviary_inputs = AviaryValues()
+
     # load saved input list from json file
     with open(json_filename) as json_data_file:
         loaded_aviary_input_list = json.load(json_data_file)
@@ -1378,9 +1488,7 @@ def _read_sizing_json(aviary_problem, json_filename):
         # Check if the variable is in meta data
         if var_name in BaseMetaData.keys():
             try:
-                aviary_problem.aviary_inputs.set_val(
-                    var_name, var_values, units=var_units, meta_data=BaseMetaData
-                )
+                aviary_inputs.set_val(var_name, var_values, units=var_units, meta_data=BaseMetaData)
 
             except BaseException:
                 # Print helpful warning
@@ -1398,7 +1506,28 @@ def _read_sizing_json(aviary_problem, json_filename):
             )
 
         counter = counter + 1  # increment index tracker
-    return aviary_problem
+    return aviary_inputs
+
+
+def reload_aviary_problem(filename):
+    """
+    Loads a previously sized Aviary model and returns an AviaryProblem for that model.
+
+    Parameters
+    ----------
+    filename : str, Path
+        User specified name and relative path of json file containing the sized aircraft data
+
+    Returns
+    -------
+    Aviary Problem object with filled aviary_inputs
+    """
+    # Initialize a new aviary problem and aviary_input data structure
+    prob = AviaryProblem()
+
+    prob.aviary_inputs = _read_sizing_json(filename)
+
+    return prob
 
 
 def _load_off_design(

@@ -186,7 +186,7 @@ def mission_report(prob, **kwargs):
 
     # read per-phase data from trajectory
     data = {}
-    for idx, phase in enumerate(prob.model.phase_info):  # TODO: redo for multimissions
+    for idx, phase in enumerate(prob.model.mission_info):  # TODO: redo for multimissions
         # TODO for traj in trajectories, currently assuming single one named "traj"
         # TODO delta mass and fuel consumption need to be tracked separately
         fuel_burn = _get_phase_diff('traj', phase, 'mass', 'lbm', [-1, 0])
