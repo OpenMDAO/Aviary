@@ -121,8 +121,7 @@ def subsystem_report(prob, **kwargs):
     prob : AviaryProblem
         The AviaryProblem used to generate this report
     """
-    reports_folder = Path(prob.get_reports_dir() / 'subsystems')
-    reports_folder.mkdir(exist_ok=True)
+    reports_folder = Path(prob.get_reports_dir(force=True) / 'subsystems')
 
     # TODO external subsystems??
     core_subsystems = prob.model.core_subsystems  # TODO: redo for multimissions

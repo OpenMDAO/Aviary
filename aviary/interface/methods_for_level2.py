@@ -899,7 +899,7 @@ class AviaryProblem(om.Problem):
                     and prob_fallout_max_fuel_plus_payload.problem_ran_successfully
                 ):
                     # TODO Temporary csv writing for payload/range data, should be replaced with a more robust solution
-                    csv_filepath = Path(self.get_reports_dir()) / 'payload_range_data.csv'
+                    csv_filepath = Path(self.get_reports_dir(force=True)) / 'payload_range_data.csv'
                     with open(csv_filepath, 'w', newline='') as csvfile:
                         writer = csv.writer(csvfile)
 
