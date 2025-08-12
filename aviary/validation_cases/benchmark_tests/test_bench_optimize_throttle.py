@@ -27,7 +27,7 @@ phase_info = {
             'altitude_initial': (0.0, 'ft'),
             'altitude_final': (32000.0, 'ft'),
             'altitude_bounds': ((0.0, 32000.0), 'ft'),
-            "altitude_polynomial_order": 3,
+            'altitude_polynomial_order': 3,
             'throttle_enforcement': 'control',
             'throttle_optimize': True,
             'time_initial': (0.0, 's'),
@@ -47,12 +47,12 @@ phase_info = {
             'mach_initial': (0.72, 'unitless'),
             'mach_final': (0.72, 'unitless'),
             'mach_bounds': ((0.72, 0.72), 'unitless'),
-            "mach_polynomial_order": 3,
+            'mach_polynomial_order': 3,
             'altitude_optimize': False,
             'altitude_initial': (32000.0, 'ft'),
             'altitude_final': (34000.0, 'ft'),
             'altitude_bounds': ((32000.0, 34000.0), 'ft'),
-            "altitude_polynomial_order": 1,
+            'altitude_polynomial_order': 1,
             'throttle_enforcement': 'control',
             'throttle_optimize': True,
             'throttle_polynomial_order': 1,
@@ -76,7 +76,7 @@ phase_info = {
             'altitude_initial': (34000.0, 'ft'),
             'altitude_final': (500.0, 'ft'),
             'altitude_bounds': ((500.0, 34000.0), 'ft'),
-            "altitude_polynomial_order": 3,
+            'altitude_polynomial_order': 3,
             'throttle_enforcement': 'control',
             'throttle_optimize': True,
             'time_initial_bounds': ((90.0, 361.5), 'min'),
@@ -106,7 +106,7 @@ class OptimizeThrottleTestCase(unittest.TestCase):
     def test_throttle_optimize_SNOPT(self):
         prob = AviaryProblem()
 
-        prob.load_inputs("models/aircraft/test_aircraft/aircraft_for_bench_FwFm.csv", phase_info, verbosity=1)
+        prob.load_inputs('models/aircraft/test_aircraft/aircraft_for_bench_FwFm.csv', phase_info, verbosity=1)
 
         prob.aviary_inputs.set_val(Settings.VERBOSITY, 0)
 
@@ -116,9 +116,9 @@ class OptimizeThrottleTestCase(unittest.TestCase):
         prob.add_post_mission_systems()
         prob.link_phases()
 
-        prob.add_driver("SNOPT", max_iter=50)
-        prob.driver.opt_settings["Major optimality tolerance"] = 1e-4
-        prob.driver.opt_settings["Major feasibility tolerance"] = 1e-4
+        prob.add_driver('SNOPT', max_iter=50)
+        prob.driver.opt_settings['Major optimality tolerance'] = 1e-4
+        prob.driver.opt_settings['Major feasibility tolerance'] = 1e-4
 
         prob.add_design_variables()
         prob.add_objective(objective_type='fuel_burned')
@@ -132,7 +132,7 @@ class OptimizeThrottleTestCase(unittest.TestCase):
         gross_mass = prob.get_val(Mission.Summary.GROSS_MASS, units='lbm')
         assert_near_equal(gross_mass, 160689.0, tolerance=1e-3)
 
-        cruise_throttle = prob.get_val("traj.cruise.timeseries.throttle")
+        cruise_throttle = prob.get_val('traj.cruise.timeseries.throttle')
         assert_near_equal(cruise_throttle[-1], 0.6925, tolerance=1e-2)
 
 

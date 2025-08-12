@@ -76,7 +76,7 @@ class FlightPhaseOptions(AviaryOptionsDictionary):
             values=['path_constraint', 'boundary_constraint', 'bounded', 'control', None],
             desc='Flag to enforce engine throttle bounds as path constraints, boundary '
             'constraints, solver bounds. You can also select "control" to turn throttle into a '
-            'control, which allows you to assign a value or let the optimizer choose it.'
+            'control, which allows you to assign a value or let the optimizer choose it.',
         )
 
         # Throttle is a solver variable, unless you set throttle_enforcement to control.
@@ -339,7 +339,7 @@ class FlightPhaseBase(PhaseBuilderBase):
                 Dynamic.Vehicle.Propulsion.THROTTLE,
                 output_name=Dynamic.Vehicle.Propulsion.THROTTLE,
                 units='unitless',
-        )
+            )
 
         phase.add_timeseries_output(
             Dynamic.Mission.VELOCITY,
