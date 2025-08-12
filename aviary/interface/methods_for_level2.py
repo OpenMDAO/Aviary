@@ -2,6 +2,7 @@ import csv
 import json
 import os
 import warnings
+from copy import deepcopy
 from datetime import datetime
 from enum import Enum
 from pathlib import Path
@@ -14,7 +15,7 @@ from openmdao.utils.reports_system import _default_reports
 from aviary.core.aviary_group import AviaryGroup
 from aviary.interface.utils import set_warning_format
 from aviary.utils.aviary_values import AviaryValues
-from aviary.utils.functions import convert_strings_to_data
+from aviary.utils.functions import convert_strings_to_data, get_path
 from aviary.utils.merge_variable_metadata import merge_meta_data
 from aviary.variable_info.enums import EquationsOfMotion, LegacyCode, ProblemType, Verbosity
 from aviary.variable_info.functions import setup_model_options
@@ -967,7 +968,7 @@ class AviaryProblem(om.Problem):
         Parameters
         ----------
         problem_type : str, ProblemType
-            The type of off-design mission to be flown. Accepted
+            The type of off-design mission to be flown.
         """
         # For off-design missions, provided verbosity will be used for all L2 method calls
         if verbosity is not None:
@@ -984,7 +985,7 @@ class AviaryProblem(om.Problem):
         off_design_prob = AviaryProblem()
 
         # Set up problem for mission, such as equations of motion, configurators, etc.
-        inputs = off_design_prob.aviary_inputs = self.aviary_inputs
+        inputs = deepcopy(self.aviary_inputs)
 
         if problem_type is not None:
             inputs.set_val(Settings.PROBLEM_TYPE, problem_type)
@@ -993,8 +994,8 @@ class AviaryProblem(om.Problem):
 
         if problem_configurator is not None:
             off_design_prob.problem_configurator = problem_configurator
-        else:
-            off_design_prob.problem_configurator = self.problem_configurator
+        # else:
+        #     off_design_prob.problem_configurator = self.problem_configurator
 
         if phase_info is None:
             # model phase_info only contains mission information
@@ -1034,7 +1035,9 @@ class AviaryProblem(om.Problem):
             #     raise UserWarning('Alternate problem type requested with no specified range')
             # else:
             if mission_range is not None:
-                inputs.set_val(Mission.Summary.RANGE, mission_range, units='NM')
+                off_design_prob.aviary_inputs.set_val(
+                    Mission.Summary.RANGE, mission_range, units='NM'
+                )
                 phase_info['post_mission']['target_range'] = (mission_range, 'nmi')
 
         elif problem_type is ProblemType.FALLOUT:
@@ -1043,14 +1046,19 @@ class AviaryProblem(om.Problem):
             #     raise UserWarning('Fallout problem type requested with no specified gross mass')
             # else:
             if mission_gross_mass is not None:
-                inputs.set_val(Mission.Summary.GROSS_MASS, mission_gross_mass, units='lbm')
+                off_design_prob.aviary_inputs.set_val(
+                    Mission.Summary.GROSS_MASS, mission_gross_mass, units='lbm'
+                )
 
         off_design_prob.check_and_preprocess_inputs(verbosity=verbosity)
         off_design_prob.add_pre_mission_systems(verbosity=verbosity)
         off_design_prob.add_phases(verbosity=verbosity)
         off_design_prob.add_post_mission_systems(verbosity=verbosity)
         off_design_prob.link_phases(verbosity=verbosity)
-        optimizer = self.driver.options['optimizer']
+        try:
+            optimizer = self.driver.options['optimizer']
+        except KeyError:
+            optimizer = None
         off_design_prob.add_driver(optimizer, verbosity=verbosity)
         off_design_prob.add_design_variables(verbosity=verbosity)
         off_design_prob.add_objective(verbosity=verbosity)
@@ -1343,6 +1351,7 @@ class AviaryProblem(om.Problem):
             # Loop through aviary input datastructure and create a list
             for data in self.aviary_inputs:
                 (name, (value, units)) = data
+                type_value = type(value)
 
                 # Get the gross mass value from the sizing problem and add it to input
                 # list
@@ -1358,11 +1367,11 @@ class AviaryProblem(om.Problem):
                     # int, bool, float doesn't need anything special
 
                     # Convert numpy arrays to lists
-                    if isinstance(value, np.ndarray):
+                    if type_value is np.ndarray:
                         value = value.tolist()
 
                     # Lists are fine except if they contain enums or Paths
-                    if isinstance(value, list):
+                    if type_value is list:
                         if isinstance(value[0], Enum):
                             for i in range(len(value)):
                                 value[i] = value[i].name
@@ -1377,7 +1386,7 @@ class AviaryProblem(om.Problem):
                         value = str(value)
 
                 # Append the data to the list
-                aviary_input_list.append([name, value, units, str(type(value))])
+                aviary_input_list.append([name, value, units, str(type_value)])
 
             # Write the list to a json file
             json.dump(
@@ -1423,7 +1432,7 @@ class AviaryProblem(om.Problem):
                 writer.writerow({'name': name, 'value': value, 'units': units})
 
 
-def _read_sizing_json(json_filename):
+def _read_sizing_json(json_filename, meta_data=BaseMetaData, verbosity=Verbosity.BRIEF):
     """
     This function reads in saved results from a json file.
 
@@ -1431,11 +1440,12 @@ def _read_sizing_json(json_filename):
     ----------
     json_filename: str, Path
         json file to save the data into
+    meta_data: dict
+        Variable metadata that will be used to load file data
 
     Returns
     -------
     AviaryValues object with updated input values from json file
-
     """
     aviary_inputs = AviaryValues()
 
@@ -1486,30 +1496,32 @@ def _read_sizing_json(json_filename):
             var_values = convert_strings_to_data([var_values])
 
         # Check if the variable is in meta data
-        if var_name in BaseMetaData.keys():
+        if var_name in meta_data.keys():
             try:
-                aviary_inputs.set_val(var_name, var_values, units=var_units, meta_data=BaseMetaData)
+                aviary_inputs.set_val(var_name, var_values, units=var_units, meta_data=meta_data)
 
             except BaseException:
                 # Print helpful warning
                 # TODO "FAILURE" implies something more serious, should this be a raised
                 # exception?
-                warnings.warn(
-                    f'FAILURE: list_num = {counter}, Input String = {inputs}, Attempted '
-                    f'to set_value({var_name}, {var_values}, {var_units})',
-                )
+                if verbosity >= Verbosity.BRIEF:
+                    warnings.warn(
+                        f'list_num = {counter}, Input String = {inputs}. Attempted to set_value('
+                        f'{var_name}, {var_values}, {var_units}).',
+                    )
         else:
             # Not in the MetaData
-            warnings.warn(
-                f'Name not found in MetaData: list_num = {counter}, Input String = '
-                f'{inputs}, Attempted set_value({var_name}, {var_values}, {var_units})'
-            )
+            if verbosity >= Verbosity.BRIEF:
+                warnings.warn(
+                    f'Name not found in MetaData: list_num = {counter}, Input String = {inputs}. '
+                    f'Attempted set_value({var_name}, {var_values}, {var_units}).'
+                )
 
         counter = counter + 1  # increment index tracker
     return aviary_inputs
 
 
-def reload_aviary_problem(filename):
+def reload_aviary_problem(filename, metadata=BaseMetaData.copy(), verbosity=Verbosity.BRIEF):
     """
     Loads a previously sized Aviary model and returns an AviaryProblem for that model.
 
@@ -1518,6 +1530,9 @@ def reload_aviary_problem(filename):
     filename : str, Path
         User specified name and relative path of json file containing the sized aircraft data
 
+    verbosity : Verbosity, int
+        Controls level of terminal output for function call
+
     Returns
     -------
     Aviary Problem object with filled aviary_inputs
@@ -1525,7 +1540,9 @@ def reload_aviary_problem(filename):
     # Initialize a new aviary problem and aviary_input data structure
     prob = AviaryProblem()
 
-    prob.aviary_inputs = _read_sizing_json(filename)
+    filename = get_path(filename)
+
+    prob.aviary_inputs = _read_sizing_json(filename, metadata, verbosity)
 
     return prob
 

@@ -5,11 +5,9 @@ from pathlib import Path
 from openmdao.utils.testing_utils import use_tempdirs
 
 import aviary.api as av
-from aviary.models.missions.height_energy_default import (
-    phase_info,
-    phase_info_parameterization,
-)
-from aviary.utils.functions import get_aviary_resource_path
+from aviary.interface.methods_for_level2 import reload_aviary_problem
+from aviary.models.missions.height_energy_default import phase_info, phase_info_parameterization
+from aviary.utils.functions import get_aviary_resource_path, get_path
 
 local_phase_info = deepcopy(phase_info)
 
@@ -17,17 +15,9 @@ local_phase_info = deepcopy(phase_info)
 @use_tempdirs
 class TestJson(unittest.TestCase):
     """
-    These tests just check that the json files can be saved or loaded
-    They don't check that the files were properly created or that the
-    off-design mission ran correctly.
-    off_design_example.py in aviary/examples tests the full functionality.
+    These tests just check that the json files can be saved or loaded and used to run an off-design
+    problem without error. They don't check that the off-design mission ran correctly.
     """
-
-    def get_file(self, filename):
-        filepath = get_aviary_resource_path(filename)
-        if not Path(filepath).exists():
-            self.skipTest(f"couldn't find {filepath}")
-        return filepath
 
     def setUp(self):
         self.prob = prob = av.AviaryProblem()
@@ -56,23 +46,53 @@ class TestJson(unittest.TestCase):
 
     def test_save_json(self):
         self.prob.run_aviary_problem()
-        self.prob.save_sizing_to_json()
+        self.prob.save_sizing_results(save_to_reports=False)
+        self.compare_files(
+            Path.cwd() / 'sizing_problem.json', 'interface/test/sizing_problem_for_test.json'
+        )
 
     def test_alternate(self):
-        filepath = self.get_file('interface/test/sizing_problem_for_test.json')
-        self.prob.alternate_mission(
-            run_mission=False, json_filename=filepath, phase_info=local_phase_info
-        )
+        prob = reload_aviary_problem('interface/test/sizing_problem_for_test.json')
+        prob.run_off_design_mission(problem_type='alternate', phase_info=local_phase_info)
 
     def test_fallout(self):
-        filepath = self.get_file('interface/test/sizing_problem_for_test.json')
-        self.prob.fallout_mission(
-            run_mission=False, json_filename=filepath, phase_info=local_phase_info
-        )
+        prob = reload_aviary_problem('interface/test/sizing_problem_for_test.json')
+        prob.run_off_design_mission(problem_type='fallout', phase_info=local_phase_info)
+
+    def compare_files(self, test_file, validation_file, skip_list=[]):
+        """
+        Compares the specified file with a validation file.
+
+        Use the `skip_list` input to specify strings that are in lines you want to skip. This is
+        useful for skipping lines that are expected to differ (such as timestamps)
+        """
+        test_file = get_path(test_file)
+
+        validation_file = get_path(validation_file)
+
+        # Open the converted and validation files
+        with open(test_file, 'r') as f_in, open(validation_file, 'r') as expected:
+            for line in f_in:
+                if any(s in line for s in skip_list):
+                    # expected.readline()
+                    continue
+
+                # Remove whitespace and compare
+                expected_line = ''.join(expected.readline().split())
+                line_no_whitespace = ''.join(line.split())
+
+                # Assert that the lines are equal
+                try:
+                    self.assertEqual(line_no_whitespace.count(expected_line), 1)
+
+                except Exception:
+                    exc_string = f'Error: {test_file}\nFound: {line_no_whitespace}\nExpected: {expected_line}'
+                    raise Exception(exc_string)
 
 
 if __name__ == '__main__':
     unittest.main()
     # test = TestJson()
     # test.setUp()
+    # test.test_save_json()
     # test.test_fallout()
