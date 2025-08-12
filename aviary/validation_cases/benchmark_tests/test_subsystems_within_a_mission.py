@@ -70,19 +70,18 @@ class TestSubsystemsMission(unittest.TestCase):
 
         prob.build_model()
 
+        prob.phase_info['cruise']['initial_guesses'][f'states:{Mission.Dummy.VARIABLE}'] = (
+            [10.0, 100.0],
+            'm',
+        )
+
         prob.add_driver('SLSQP', max_iter=0, verbosity=0)
 
         prob.add_design_variables()
 
         prob.add_objective('fuel_burned')
 
-        prob.setup()
-
-        prob.phase_info['cruise']['initial_guesses'][f'states:{Mission.Dummy.VARIABLE}'] = (
-            [10.0, 100.0],
-            'm',
-        )
-        prob.set_initial_guesses()
+        prob.setup_model()
 
         # add an assert to see if the initial guesses are correct for Mission.Dummy.VARIABLE
         assert_almost_equal(

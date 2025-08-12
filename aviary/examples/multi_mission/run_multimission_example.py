@@ -41,16 +41,14 @@ def multi_mission_example():
     aviary_inputs_deadhead.set_val(Aircraft.CrewPayload.NUM_BUSINESS_CLASS, 0, 'unitless')
     aviary_inputs_deadhead.set_val(Aircraft.CrewPayload.NUM_FIRST_CLASS, 0, 'unitless')
 
-    Optimizer = 'SNOPT'  # SLSQP or SNOPT
-
     prob = av.AviaryProblem(problem_type = ProblemType.MULTI_MISSION)
     # set constraints in the background. Currently works with every objective type except Range.
 
-    prob.add_aviary_group('mission1', aircraft=aviary_inputs_primary, mission=phase_info)
+    prob.add_aviary_group('mission1', aircraft=aviary_inputs_primary, mission=phase_info_primary)
     # by default this will load_inputs(), check_and_preprocess(), and combine meta data
-    # This can only accept an AviaryValues, no .csv accepted
+    # This can only accept an AviaryValues, .csv acceptance will be removed in future releases
 
-    prob.add_aviary_group('mission2', aircraft=aviary_inputs_deadhead, mission=phase_info)
+    prob.add_aviary_group('mission2', aircraft=aviary_inputs_deadhead, mission=phase_info_deadhead)
     # Load aircraft in second configuration for same mission
 
     prob.build_model()
@@ -70,14 +68,14 @@ def multi_mission_example():
     # This both adds the design variable AND sets the default value. This value can be over-written after-setup using set_val.
 
 
-    prob.add_composite_objective(('mission1', Mission.Summary.FUEL_BURNED, 2), ('mission2', Mission.Summary.FUEL_BURNED, 1))
+    prob.add_composite_objective(('mission1', Mission.Summary.FUEL_BURNED, 2), ('mission2', Mission.Summary.FUEL_BURNED, 1), ref=1)
     # Adds an objective where mission 1 is flown 2x more times than mission2
     # Alternative way that users could specify the same objective:
     # prob.add_composite_objective_adv(missions=['mission1', 'mission2'], mission_weights=[2,1], outputs=[Mission.Summary.FUEL_BURNED],  ref=1)
     # TODO: MULTI_MISSION cannot handle RANGE objectives correctly at the moment.
 
     # optimizer and iteration limit are optional provided here
-    prob.add_driver(Optimizer, max_iter=50)
+    prob.add_driver('SNOPT', max_iter=50)
     prob.add_design_variables()
 
     prob.setup_model()
