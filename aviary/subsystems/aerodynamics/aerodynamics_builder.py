@@ -751,7 +751,6 @@ AERO_2DOF_INPUTS = [
     Aircraft.Design.STATIC_MARGIN,
     Aircraft.Fuselage.AVG_DIAMETER,
     Aircraft.Fuselage.FLAT_PLATE_AREA_INCREMENT,
-    Aircraft.Fuselage.FORM_FACTOR,
     Aircraft.Fuselage.LENGTH,
     Aircraft.Fuselage.WETTED_AREA,
     Aircraft.HorizontalTail.AREA,
@@ -799,7 +798,7 @@ AERO_LS_2DOF_INPUTS = [
 ]
 
 AERO_CLEAN_2DOF_INPUTS = [
-    Aircraft.Design.SUPERCRITICAL_DIVERGENCE_SHIFT,  # super drag shift?
+    Aircraft.Design.DRAG_DIVERGENCE_SHIFT,  # super drag shift?
     Mission.Design.LIFT_COEFFICIENT_MAX_FLAPS_UP,
     Aircraft.Design.LIFT_DEPENDENT_DRAG_COEFF_FACTOR,
     Aircraft.Design.SUBSONIC_DRAG_COEFF_FACTOR,
