@@ -83,8 +83,6 @@ class AviaryProblem(om.Problem):
             self.model = AviaryGroup()
             self.aviary_inputs = None
 
-        
-
         self.aviary_groups_dict = {}
 
         self.meta_data = BaseMetaData.copy()
@@ -95,7 +93,7 @@ class AviaryProblem(om.Problem):
         phase_info=None,
         engine_builders=None,
         problem_configurator=None,
-        meta_data=BaseMetaData,
+        meta_data=None,
         verbosity=None,
         check=False,
     ):
@@ -118,16 +116,22 @@ class AviaryProblem(om.Problem):
         else:
             verbosity = self.verbosity  # usually None
 
+        if meta_data is not None:
+            # Support for custom meta_data set.
+            self.meta_data = meta_data
+
         # TODO: We cannot pass self.verbosity back up from load inputs for multi-mission because there could be multiple .csv files
+        self.model.meta_data = self.meta_data
         aviary_inputs, verbosity = self.model.load_inputs(
             aircraft_data=aircraft_data,
             phase_info=phase_info,
             engine_builders=engine_builders,
             problem_configurator=problem_configurator,
-            meta_data=meta_data,
             verbosity=verbosity,
-            check_and_preprocess=check,
+            check_and_preprocess=False,
         )
+        if check is True:
+            self.check_and_preprocess_inputs()
 
         # When there is only 1 aircraft model/mission, preserve old behavior.
         self.phase_info = self.model.phase_info
@@ -157,11 +161,10 @@ class AviaryProblem(om.Problem):
         # we have to update meta data after check_and_preprocess because metadata update
         # requires get_all_subsystems, which reqiures core_subsystems, which doesn't exist until
         # after check_and_preprocess is assembled
-        self._update_metadata_from_subsystems(self.model) # update meta data with new entries 
+        self._update_metadata_from_subsystems(self.model) # update meta data with new entries
 
     def _update_metadata_from_subsystems(self, group):
         """Merge metadata from user-defined subsystems into problem metadata."""
-
 
         # loop through phase_info and external subsystems
         for phase_name in group.phase_info:
@@ -173,7 +176,7 @@ class AviaryProblem(om.Problem):
                 meta_data = subsystem.meta_data.copy()
                 self.meta_data = merge_meta_data([self.meta_data, meta_data])
 
-        # Create a meta data reference to use inside of AviaryGroup
+        # Update the reference to the newly merged meta_data.
         group.meta_data = self.meta_data
 
     def add_aviary_group(self, name:str, aircraft:AviaryValues, mission:dict, verbosity=None):
@@ -186,6 +189,7 @@ class AviaryProblem(om.Problem):
             ValueError("add_aviary_group() should only be called when ProblemType is MULTI_MISSION.")
 
         sub = self.model.add_subsystem(name, AviaryGroup())
+        sub.meta_data = self.meta_data
         sub.load_inputs(aircraft, mission, verbosity=verbosity)
 
         self.aviary_groups_dict[name] = sub
@@ -942,7 +946,7 @@ class AviaryProblem(om.Problem):
                         self.model.promotes(mission_name, inputs=var_pairs)
 
     def setup_model(self, **kwargs):
-        # Combines 2 basic methods for level 2 functions providing a less verbose 
+        # Combines 2 basic methods for level 2 functions providing a less verbose
         # interface for the user
         self.setup(**kwargs)
         if "verbosity" in kwargs:

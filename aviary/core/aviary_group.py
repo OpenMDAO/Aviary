@@ -30,8 +30,8 @@ from aviary.subsystems.premission import CorePreMission
 from aviary.subsystems.propulsion.propulsion_builder import CorePropulsionBuilder
 from aviary.interface.utils import set_warning_format
 from aviary.mission.utils import get_phase_mission_bus_lengths, process_guess_var
-from aviary.variable_info.variables import Aircraft, Dynamic, Mission, Settings
 from aviary.variable_info.variable_meta_data import _MetaData as BaseMetaData
+from aviary.variable_info.variables import Aircraft, Dynamic, Mission, Settings
 
 from aviary.utils.functions import get_path
 from aviary.utils.preprocessors import preprocess_options
@@ -71,7 +71,7 @@ class AviaryGroup(om.Group):
         self.reserve_phases = []
 
         self.aviary_inputs = None
-        self.meta_data = [] # Will crash some test in test_override.py if set to None
+        self.meta_data = None
         self.phase_info = None
         # self.core_subsystems = {}
 
@@ -168,7 +168,6 @@ class AviaryGroup(om.Group):
         phase_info=None,
         engine_builders=None,
         problem_configurator=None,
-        meta_data=BaseMetaData,
         verbosity=None,
         check_and_preprocess=True,
     ):
@@ -186,7 +185,7 @@ class AviaryGroup(om.Group):
         # Create AviaryValues object from file (or process existing AviaryValues object
         # with default values from metadata) and generate initial guesses
         aviary_inputs, self.initialization_guesses = create_vehicle(
-            aircraft_data, meta_data=meta_data, verbosity=verbosity
+            aircraft_data, meta_data=self.meta_data, verbosity=verbosity
         )
 
         # Update default verbosity now that we have read the input data, if a global verbosity
@@ -1299,7 +1298,7 @@ class AviaryGroup(om.Group):
                     ref=175e3,
                 )
 
-                # TODO: RANGE_RESIDUAL constraint should be added based on what the 
+                # TODO: RANGE_RESIDUAL constraint should be added based on what the
                 # user sets as the objective. if Objective is not range or Mission.Summary.Range,
                 # the range constriant should be added to make target rage = summary range
                 self.add_constraint(Mission.Constraints.RANGE_RESIDUAL, equals=0, ref=10)
