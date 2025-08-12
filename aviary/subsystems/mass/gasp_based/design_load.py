@@ -1147,7 +1147,7 @@ class DesignLoadGroup(om.Group):
         self.add_subsystem(
             'speeds',
             LoadSpeeds(),
-            promotes_inputs=['aircraft:*'],
+            promotes_inputs=['*'],
             promotes_outputs=[
                 'max_airspeed',
                 'vel_c',
@@ -1169,8 +1169,8 @@ class DesignLoadGroup(om.Group):
         self.add_subsystem(
             'Cl_Alpha_calc',
             LiftCurveSlopeAtCruise(),
-            promotes_inputs=['aircraft:*', 'mission:*'],
-            promotes_outputs=['aircraft:*'],
+            promotes_inputs=['*'],
+            promotes_outputs=['*'],
         )
 
         self.add_subsystem(
@@ -1183,7 +1183,7 @@ class DesignLoadGroup(om.Group):
                 'V9',
             ]
             + ['aircraft:*'],
-            promotes_outputs=['aircraft:*'],
+            promotes_outputs=['*'],
         )
 
 
@@ -2208,7 +2208,7 @@ class BWBDesignLoadGroup(om.Group):
         self.add_subsystem(
             'speeds',
             BWBLoadSpeeds(),
-            promotes_inputs=['aircraft:*'],
+            promotes_inputs=['*'],
             promotes_outputs=['max_airspeed', 'vel_c', 'max_maneuver_factor', 'min_dive_vel'],
         )
 
@@ -2222,14 +2222,13 @@ class BWBDesignLoadGroup(om.Group):
         self.add_subsystem(
             'CL_Alpha',
             LiftCurveSlopeAtCruise(),
-            promotes_inputs=['aircraft:*', 'mission:*'],
-            promotes_outputs=['aircraft:*'],
+            promotes_inputs=['*'],
+            promotes_outputs=['*'],
         )
 
         self.add_subsystem(
             'factors',
             BWBLoadFactors(),
-            promotes_inputs=['max_maneuver_factor', 'min_dive_vel', 'density_ratio', 'V9']
-            + ['aircraft:*', 'mission:*'],
-            promotes_outputs=['aircraft:*'],
+            promotes_inputs=['*'],
+            promotes_outputs=['*'],
         )

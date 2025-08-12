@@ -269,29 +269,8 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
         comm : MPI.Comm or <FakeComm>
             MPI Communicator from OpenMDAO problem.
         """
-        time_units = 's'
-
-        try:
-            fix_initial = user_options['fix_initial']
-        except KeyError:
-            fix_initial = False
-
-        try:
-            fix_duration = user_options['fix_duration']
-        except KeyError:
-            fix_duration = False
-
-        if 'ascent' in phase_name:
-            phase.set_time_options(
-                units='s',
-                targets='t_curr',
-                input_initial=True,
-                input_duration=True,
-            )
-
-        elif 'cruise' in phase_name:
-            # Time here is really the independent variable through which we are integrating.
-            # In the case of the Breguet Range ODE, it's mass.
+        if 'cruise' in phase_name:
+            # Cruise phase integrates over mass instead of time.
             # We rely on mass being monotonically non-increasing across the phase.
             phase.set_time_options(
                 name='mass',
@@ -304,9 +283,28 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
                 duration_bounds=(-1.0e7, -1),
                 duration_ref=50000,
             )
+            return
+
+        time_units = 's'
+        initial = wrapped_convert_units(user_options['time_initial'], time_units)
+        duration = wrapped_convert_units(user_options['time_duration'], time_units)
+        initial_bounds = wrapped_convert_units(user_options['time_initial_bounds'], time_units)
+        duration_bounds = wrapped_convert_units(user_options['time_duration_bounds'], time_units)
+        initial_ref = wrapped_convert_units(user_options['time_initial_ref'], time_units)
+        duration_ref = wrapped_convert_units(user_options['time_duration_ref'], time_units)
+
+        fix_duration = duration is not None
+        fix_initial = initial is not None
+
+        if 'ascent' in phase_name:
+            phase.set_time_options(
+                units='s',
+                targets='t_curr',
+                input_initial=True,
+                input_duration=True,
+            )
 
         elif 'descent' in phase_name:
-            duration_ref = wrapped_convert_units(user_options['time_duration_ref'], 's')
             phase.set_time_options(
                 duration_bounds=duration_bounds,
                 fix_initial=fix_initial,
@@ -316,20 +314,15 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
             )
 
         else:
-            # Make a good guess for a reasonable initial time scaler.
-            try:
-                initial_bounds = wrapped_convert_units(user_options['time_initial_bounds'], 's')
-            except KeyError:
-                initial_bounds = (None, None)
-
             if initial_bounds[0] is not None and initial_bounds[1]:
                 # Upper bound is good for a ref.
                 time_initial_ref = initial_bounds[1]
             else:
                 time_initial_ref = 600.0
 
-            duration_bounds = wrapped_convert_units(user_options['time_duration_bounds'], 's')
-            duration_ref = 0.5 * (duration_bounds[0] + duration_bounds[1])
+            if duration_ref is None:
+                # Why are we overriding this?
+                duration_ref = 0.5 * (duration_bounds[0] + duration_bounds[1])
 
             input_initial = phase_idx > 0
 
@@ -359,16 +352,15 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
                     duration_bounds=duration_bounds,
                     duration_ref=duration_ref,
                     initial_bounds=initial_bounds,
-                    initial_ref=wrapped_convert_units(user_options['time_initial_ref'], 's'),
+                    initial_ref=initial_ref,
                 )
 
-        if 'cruise' not in phase_name:
-            phase.add_control(
-                Dynamic.Vehicle.Propulsion.THROTTLE,
-                targets=Dynamic.Vehicle.Propulsion.THROTTLE,
-                units='unitless',
-                opt=False,
-            )
+        phase.add_control(
+            Dynamic.Vehicle.Propulsion.THROTTLE,
+            targets=Dynamic.Vehicle.Propulsion.THROTTLE,
+            units='unitless',
+            opt=False,
+        )
 
         # TODO: This seems like a hack. We might want to find a better way.
         #       The issue is that aero methods are hardcoded for GASP mission phases
