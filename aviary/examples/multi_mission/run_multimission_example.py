@@ -9,16 +9,15 @@ those sub-groups (prob.model.mission1 and prob.model.mission2) up to prob.model 
 the optimizer can control them both with a single value. The fuel_burn results from each 
 of the mission1 and mission2 are summed and weighted to create the objective function.
 """
+import copy as copy
+
+import aviary.api as av
+from aviary.examples.example_phase_info import phase_info
+from aviary.validation_cases.validation_tests import get_flops_inputs
+from aviary.variable_info.enums import ProblemType
+from aviary.variable_info.variables import Aircraft, Mission, Settings
 
 def multi_mission_example():
-    import copy as copy
-
-    import aviary.api as av
-    from aviary.examples.example_phase_info import phase_info
-    from aviary.validation_cases.validation_tests import get_flops_inputs
-    from aviary.variable_info.enums import ProblemType
-    from aviary.variable_info.variables import Aircraft, Mission, Settings
-
     # fly the same mission twice with two different passenger loads
     phase_info_primary = copy.deepcopy(phase_info)
     phase_info_deadhead = copy.deepcopy(phase_info)
@@ -95,12 +94,39 @@ def multi_mission_example():
 
     return prob
 
+def print_mission_outputs(prob, outputs, mission_names):
+    for var, units in outputs:
+        for mission in mission_names:
+            try:
+                value = prob.get_val(name=f'{mission}.{var}', units=units)
+                print(f"{mission}.{var} ({units}), {value}")
+            except:
+                print(f"{var} was unavailable. Perhapse it has been promoted to the problem level?")
+        print(' ')
+
 if __name__ == '__main__':
     prob = multi_mission_example()
     objective = prob.get_val('composite_objective', units=None)
-    print('Objective (None): ', objective)
+
+    printoutputs = [
+        (Mission.Design.GROSS_MASS, 'lbm'),
+        (Aircraft.Design.EMPTY_MASS, 'lbm'),
+        (Aircraft.LandingGear.MAIN_GEAR_MASS, 'lbm'),
+        (Aircraft.LandingGear.NOSE_GEAR_MASS, 'lbm'),
+        (Aircraft.Design.LANDING_TO_TAKEOFF_MASS_RATIO, 'unitless'),
+        (Aircraft.Furnishings.MASS, 'lbm'),
+        (Aircraft.CrewPayload.PASSENGER_SERVICE_MASS, 'lbm'),
+        (Mission.Summary.GROSS_MASS, 'lbm'),
+        (Mission.Summary.FUEL_BURNED, 'lbm'),
+        (Aircraft.CrewPayload.PASSENGER_MASS, 'lbm'),
+        (Aircraft.CrewPayload.PASSENGER_PAYLOAD_MASS, 'lbm'),
+        (Aircraft.CrewPayload.CARGO_MASS, 'lbm'),
+        (Aircraft.CrewPayload.TOTAL_PAYLOAD_MASS, 'lbm'),
+        ]
     
-    print('Mission1 Fuel Burned (lbm): ', prob.get_val('mission1.mission:summary:fuel_burned', units='lbm'))
-    print('Mission2 Fuel Burned (lbm): ', prob.get_val('mission2.mission:summary:fuel_burned', units='lbm'))
-    print('mission1 total payload mass', prob.get_val('mission1.aircraft:crew_and_payload:total_payload_mass', units='lbm'))
-    print('mission2 total payload mass', prob.get_val('mission2.aircraft:crew_and_payload:total_payload_mass', units='lbm'))
+    print_mission_outputs(prob, printoutputs,("mission1", "mission2"))
+
+    print('Objective Value (unitless): ', objective)
+    print('Aircraft1:GROSS_MASS (lbm)', prob.get_val('Aircraft1:GROSS_MASS', units='lbm'))
+    print('Aircraft1:SWEEP (deg)', prob.get_val('Aircraft1:SWEEP', units='deg'))
+    
