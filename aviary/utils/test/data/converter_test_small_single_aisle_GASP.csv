@@ -31,7 +31,6 @@ aircraft:design:static_margin,0.05,unitless
 aircraft:design:structural_mass_increment,0.0,lbm
 aircraft:design:type,transport,unitless
 aircraft:engine:additional_mass_fraction,0.14,unitless
-aircraft:engine:data_file,engine_data_file,unitless
 aircraft:engine:global_throttle,True,unitless
 aircraft:engine:mass_scaler,1,unitless
 aircraft:engine:mass_specific,0.2153,lbm/lbf

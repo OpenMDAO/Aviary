@@ -34,7 +34,6 @@ aircraft:design:structural_mass_increment,0.0,lbm
 aircraft:design:type,BWB,unitless
 aircraft:electrical:system_mass_per_passenger,11.45,lbm
 aircraft:engine:additional_mass_fraction,0.04373,unitless
-aircraft:engine:data_file,engine_data_file,unitless
 aircraft:engine:global_throttle,True,unitless
 aircraft:engine:mass_scaler,1,unitless
 aircraft:engine:mass_specific,0.178884,lbm/lbf

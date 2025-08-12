@@ -121,7 +121,7 @@ def fortran_to_aviary(
     # Postprocessing step to handle special cases for conversion (not 1-to-1 match),
     # per legacy code.
     if legacy_code is GASP:
-        vehicle_data = update_gasp_options(vehicle_data)
+        vehicle_data = update_gasp_options(vehicle_data, verbosity)
     elif legacy_code is FLOPS:
         vehicle_data = update_flops_options(vehicle_data)
     vehicle_data = update_aviary_options(vehicle_data)
@@ -136,7 +136,6 @@ def fortran_to_aviary(
     vehicle_data['input_values'].set_val(Settings.EQUATIONS_OF_MOTION, eom)
     vehicle_data['input_values'].set_val(Settings.MASS_METHOD, mass)
     vehicle_data['input_values'].set_val(Settings.AERODYNAMICS_METHOD, aero)
-    vehicle_data['input_values'].set_val(Aircraft.Engine.DATA_FILE, ['engine_data_file'])
 
     if not out_file.is_file():
         # default outputted file to be in same directory as input
@@ -476,7 +475,7 @@ def update_name(alternate_names, var_name, verbosity=Verbosity.BRIEF):
     return all_equivalent_names, var_ind
 
 
-def update_gasp_options(vehicle_data):
+def update_gasp_options(vehicle_data, verbosity=Verbosity.BRIEF):
     """Handles variables that are affected by the values of others."""
     input_values: NamedValues = vehicle_data['input_values']
 
@@ -534,7 +533,12 @@ def update_gasp_options(vehicle_data):
         input_values.set_val(
             Aircraft.CrewPayload.Design.NUM_PASSENGERS, [num_passengers], 'unitless'
         )
-        # In GASP, percentage of total number of passengers is given. Convert it to the actual first class passengers.
+    except:
+        pass  # INGASP.PAX is not in the GASP model
+
+    try:
+        # In GASP, percentage of total number of passengers is given.
+        # Convert it to the actual first class passengers.
         pct_first_class = input_values.get_val(
             Aircraft.CrewPayload.Design.NUM_FIRST_CLASS, 'unitless'
         )[0]
@@ -546,9 +550,8 @@ def update_gasp_options(vehicle_data):
         input_values.set_val(
             Aircraft.CrewPayload.Design.NUM_TOURIST_CLASS, [num_tourist_class], 'unitless'
         )
-
     except:
-        pass
+        pass  # INGASP.PCT_FC is not in the GASP model
 
     ## Seats ##
     try:
@@ -665,9 +668,11 @@ def update_gasp_options(vehicle_data):
         ValueError('"FRESF" is not valid between 0 and 10.')
     try:
         if input_values.get_val(Mission.Landing.MAXIMUM_FLARE_LOAD_FACTOR)[0] > 4:
-            print(
-                'When XLFMX > 4, it is landing flare initiation height (ft), not landing flare load factor.'
-            )
+            if verbosity > Verbosity.BRIEF:
+                print(
+                    'When XLFMX > 4, it is landing flare initiation height (ft), '
+                    'not landing flare load factor.'
+                )
             input_values.delete(Mission.Landing.MAXIMUM_FLARE_LOAD_FACTOR)
     except:
         pass
@@ -730,8 +735,11 @@ def update_gasp_options(vehicle_data):
         pass
     try:
         engine_type = input_values.get_val(Aircraft.Engine.TYPE, 'unitless')[0]
-        if not (engine_type == 6 or engine_type == 7):
-            print('Only TURBOPROP(6) and TURBOJET(7) are allowed for now')
+        if verbosity > Verbosity.BRIEF:
+            print(
+                f'Engine type {engine_type} was provided; currently only TURBOPROP(6) and '
+                'TURBOJET(7) are supported by Aviary'
+            )
     except:
         pass
 

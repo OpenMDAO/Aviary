@@ -33,7 +33,6 @@ aircraft:design:zero_lift_drag_coeff_factor,0.96,unitless
 aircraft:electrical:mass_scaler,1.1976,unitless
 aircraft:engine:additional_mass_fraction,0.0,unitless
 aircraft:engine:constant_fuel_consumption,0.0,lbm/h
-aircraft:engine:data_file,engine_data_file,unitless
 aircraft:engine:flight_idle_max_fraction,1.0,unitless
 aircraft:engine:flight_idle_min_fraction,0.08,unitless
 aircraft:engine:fuel_flow_scaler_constant_term,0.0,unitless
