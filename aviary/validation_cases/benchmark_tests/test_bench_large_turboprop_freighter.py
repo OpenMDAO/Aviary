@@ -40,10 +40,7 @@ class LargeTurbopropFreighterBenchmark(unittest.TestCase):
         prob.add_driver('IPOPT', max_iter=0, verbosity=0)
         prob.add_design_variables()
         prob.add_objective()
-        prob.setup()
-        # om.n2(prob)
-
-        prob.set_initial_guesses()
+        prob.setup_model()
         prob.run_aviary_problem('dymos_solution.db')
         # om.n2(prob)
 

@@ -34,8 +34,6 @@ if __name__ == '__main__':
     # prob.model.add_objective(
     #     f'traj.climb.states:{Dynamic.Battery.STATE_OF_CHARGE}', index=-1, ref=-1)
 
-    prob.setup()
-
-    prob.set_initial_guesses()
+    prob.setup_model()
 
     prob.run_aviary_problem()

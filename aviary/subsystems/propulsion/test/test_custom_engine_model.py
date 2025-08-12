@@ -203,9 +203,7 @@ class CustomEngineTest(unittest.TestCase):
 
         prob.add_objective('fuel_burned')
 
-        prob.setup()
-
-        prob.set_initial_guesses()
+        prob.setup_model()
 
         prob.final_setup()
 

@@ -48,9 +48,7 @@ class TestExternalSubsystems(unittest.TestCase):
 
         prob.build_model()
 
-        prob.setup()
-
-        prob.set_initial_guesses()
+        prob.setup_model()
 
         prob.run_model()
 
@@ -77,9 +75,7 @@ class TestExternalSubsystems(unittest.TestCase):
 
         prob.build_model()
 
-        prob.setup()
-
-        prob.set_initial_guesses()
+        prob.setup_model()
 
         prob.run_model()
 
@@ -104,9 +100,7 @@ class TestExternalSubsystems(unittest.TestCase):
 
         prob.build_model()
 
-        prob.setup()
-
-        prob.set_initial_guesses()
+        prob.setup_model()
 
         prob.run_model()
 
@@ -134,9 +128,7 @@ class TestExternalSubsystems(unittest.TestCase):
 
         prob.build_model()
 
-        prob.setup()
-
-        prob.set_initial_guesses()
+        prob.setup_model()
 
         prob.run_model()
 

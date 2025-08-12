@@ -103,9 +103,7 @@ def run_aviary(
     # Detail which variables the optimizer can control
     prob.add_objective(objective_type=objective_type, verbosity=verbosity)
 
-    prob.setup()
-
-    prob.set_initial_guesses(verbosity=verbosity)
+    prob.setup_model(verbosity=verbosity)
 
     prob.run_aviary_problem(
         record_filename,

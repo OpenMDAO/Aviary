@@ -77,8 +77,7 @@ class MultiengineTestcase(unittest.TestCase):
         prob.add_design_variables()
         prob.add_objective()
 
-        prob.setup()
-        prob.set_initial_guesses()
+        prob.setup_model()
 
         prob.run_aviary_problem('dymos_solution.db', suppress_solver_print=True)
 
@@ -113,8 +112,7 @@ class MultiengineTestcase(unittest.TestCase):
         prob.add_design_variables()
         prob.add_objective()
 
-        prob.setup()
-        prob.set_initial_guesses()
+        prob.setup_model()
 
         prob.run_aviary_problem('dymos_solution.db', suppress_solver_print=True)
 
@@ -148,8 +146,7 @@ class MultiengineTestcase(unittest.TestCase):
         prob.add_design_variables()
         prob.add_objective()
 
-        prob.setup()
-        prob.set_initial_guesses()
+        prob.setup_model()
 
         prob.run_aviary_problem('dymos_solution.db', suppress_solver_print=True)
 

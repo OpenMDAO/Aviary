@@ -24,9 +24,7 @@ if __name__ == '__main__':
 
     prob.add_objective()
 
-    prob.setup()
-
-    prob.set_initial_guesses()
+    prob.setup_model()
 
     prob.run_aviary_problem(suppress_solver_print=True)
 

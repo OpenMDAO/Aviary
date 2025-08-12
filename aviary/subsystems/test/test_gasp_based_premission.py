@@ -192,8 +192,7 @@ class BWBPreMissionGroupTest(unittest.TestCase):
         prob = self.prob = AviaryProblem()
 
         csv_path = 'models/aircraft/blended_wing_body/generic_BWB_GASP.csv'
-        self.gasp_inputs = prob.load_inputs(csv_path)
-        prob.check_and_preprocess_inputs()
+        self.gasp_inputs = prob.load_inputs(csv_path, check=True)
 
     def test_case1(self):
         """

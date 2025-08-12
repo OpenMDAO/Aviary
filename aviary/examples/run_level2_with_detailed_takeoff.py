@@ -323,9 +323,7 @@ if __name__ == '__main__':
     # Detail which variables the optimizer can control
     prob.add_objective('mass')
 
-    prob.setup()
-
-    prob.set_initial_guesses()
+    prob.setup_model()
 
     prob.run_aviary_problem(record_filename='detailed_takeoff.db', suppress_solver_print=True)
 

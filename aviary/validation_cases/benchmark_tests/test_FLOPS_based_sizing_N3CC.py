@@ -68,8 +68,7 @@ def run_trajectory(sim=True):
     ############################################
     # Initial Settings for States and Controls #
     ############################################
-    prob.setup()
-    prob.set_initial_guesses()
+    prob.setup_model()
     prob.run_aviary_problem('dymos_solution.db')
 
     return prob

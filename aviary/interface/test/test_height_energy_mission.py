@@ -287,8 +287,7 @@ class AircraftMissionTestSuite(unittest.TestCase):
         prob.load_inputs(csv_path, modified_phase_info, check=True)
         prob.build_model()
 
-        prob.setup()
-        prob.set_initial_guesses()
+        prob.setup_model()
 
         prob.run_model()
 

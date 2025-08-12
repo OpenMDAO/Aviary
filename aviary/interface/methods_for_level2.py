@@ -941,11 +941,14 @@ class AviaryProblem(om.Problem):
                         #print("var_pairs",var_pairs)
                         self.model.promotes(mission_name, inputs=var_pairs)
 
-    def setup_model(self, verbosity=None):
+    def setup_model(self, **kwargs):
         # Combines 2 basic methods for level 2 functions providing a less verbose 
-        # but less functional interface for the user
-        self.setup(verbosity=verbosity)
-        self.set_initial_guesses(verbosity=verbosity)
+        # interface for the user
+        self.setup(**kwargs)
+        if "verbosity" in kwargs:
+            self.set_initial_guesses(verbosity=kwargs["verbosity"])
+        else:
+            self.set_initial_guesses()
 
     def setup(self, **kwargs):
         """Lightly wrapped setup() method for the problem."""

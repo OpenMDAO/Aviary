@@ -48,9 +48,7 @@ class TestExternalAero(av.TestSubsystemBuilderBase):
         prob.add_design_variables()
         prob.add_objective()
 
-        prob.setup()
-
-        prob.set_initial_guesses()
+        prob.setup_model()
 
         prob.run_aviary_problem(suppress_solver_print=True)
 

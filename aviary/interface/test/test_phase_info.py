@@ -50,8 +50,7 @@ class TestParameterizePhaseInfo(unittest.TestCase):
 
         prob.link_phases()
 
-        prob.setup()
-        prob.set_initial_guesses()
+        prob.setup_model()
 
         prob.run_model()
 
@@ -89,8 +88,7 @@ class TestParameterizePhaseInfo(unittest.TestCase):
 
         prob.link_phases()
 
-        prob.setup()
-        prob.set_initial_guesses()
+        prob.setup_model()
 
         prob.run_model()
 
@@ -125,8 +123,7 @@ class TestPhaseInfoAPI(unittest.TestCase):
 
         prob.build_model()
 
-        prob.setup()
-        prob.set_initial_guesses()
+        prob.setup_model()
 
         prob.run_aviary_problem()
 

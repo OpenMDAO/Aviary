@@ -102,9 +102,7 @@ class TabularAeroGroupFileTest(unittest.TestCase):
 
         prob.build_model()
 
-        prob.setup()
-
-        prob.set_initial_guesses()
+        prob.setup_model()
 
         print('about to run')
         prob.run_model()
@@ -231,9 +229,7 @@ class TabularAeroGroupDataTest(unittest.TestCase):
         prob.aviary_inputs.set_val(Aircraft.Design.LIFT_INDEPENDENT_DRAG_POLAR, self.CD0_values)
         prob.aviary_inputs.set_val(Aircraft.Design.LIFT_DEPENDENT_DRAG_POLAR, self.CDI_values)
 
-        prob.setup()
-
-        prob.set_initial_guesses()
+        prob.setup_model()
 
         prob.run_model()
 

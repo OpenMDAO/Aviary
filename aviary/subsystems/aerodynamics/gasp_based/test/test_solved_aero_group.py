@@ -60,9 +60,7 @@ class TestSolvedAero(unittest.TestCase):
 
         prob.build_model()
 
-        prob.setup()
-
-        prob.set_initial_guesses()
+        prob.setup_model()
 
         prob.run_model()
 
@@ -101,6 +99,7 @@ class TestSolvedAero(unittest.TestCase):
             ph_in,
             check=False,
         )
+
         prob.model.aero_method = LegacyCode.GASP
 
         prob.aviary_inputs.set_val(Aircraft.Design.LIFT_POLAR, np.zeros_like(CL), units='unitless')
@@ -110,9 +109,7 @@ class TestSolvedAero(unittest.TestCase):
 
         prob.build_model()
 
-        prob.setup()
-
-        prob.set_initial_guesses()
+        prob.setup_model()
 
         prob.run_model()
 
@@ -156,9 +153,7 @@ class TestSolvedAero(unittest.TestCase):
 
         prob.build_model()
 
-        prob.setup()
-
-        prob.set_initial_guesses()
+        prob.setup_model()
 
         prob.run_model()
 
@@ -181,9 +176,7 @@ class TestSolvedAero(unittest.TestCase):
 
         prob.build_model()
 
-        prob.setup()
-
-        prob.set_initial_guesses()
+        prob.setup_model()
 
         prob.run_model()
 
@@ -244,9 +237,7 @@ class TestSolvedAero(unittest.TestCase):
 
         prob.build_model()
 
-        prob.setup()
-
-        prob.set_initial_guesses()
+        prob.setup_model()
 
         prob.run_model()
 

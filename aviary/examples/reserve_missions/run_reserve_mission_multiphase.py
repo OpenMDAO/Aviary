@@ -133,8 +133,6 @@ prob.add_design_variables()
 # Detail which variables the optimizer can control
 prob.add_objective()
 
-prob.setup()
-
-prob.set_initial_guesses()
+prob.setup_model()
 
 prob.run_aviary_problem()

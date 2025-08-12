@@ -24,8 +24,7 @@ class BaseProblemPhaseTestCase(unittest.TestCase):
         prob.add_driver('SLSQP', max_iter=0, verbosity=0)
         prob.add_design_variables()
         prob.add_objective(objective_type if objective_type else None)
-        prob.setup()
-        prob.set_initial_guesses()
+        prob.setup_model()
         prob.run_aviary_problem('dymos_solution.db', make_plots=False)
 
 

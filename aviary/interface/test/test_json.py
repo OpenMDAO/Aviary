@@ -49,8 +49,7 @@ class TestJson(unittest.TestCase):
         # Load optimization problem formulation
         # Detail which variables the optimizer can control
         prob.add_objective()
-        prob.setup()
-        prob.set_initial_guesses()
+        prob.setup_model()
 
     def test_save_json(self):
         self.prob.run_aviary_problem()
