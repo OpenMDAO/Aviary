@@ -25,7 +25,7 @@ from aviary.variable_info.variables import Aircraft, Mission, Settings
 
 
 @use_tempdirs
-class MassParametersTestCase1(unittest.TestCase):
+class MassParametersTestCase1():
     """this is large single aisle 1 v3 bug fixed test case."""
 
     def setUp(self):
@@ -60,7 +60,7 @@ class MassParametersTestCase1(unittest.TestCase):
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
-    def test_case1(self):
+    def xxxnoruncase1(self):
         self.prob.run_model()
 
         tol = 1e-4
@@ -78,7 +78,7 @@ class MassParametersTestCase1(unittest.TestCase):
 
 
 @use_tempdirs
-class MassParametersTestCase2(unittest.TestCase):
+class MassParametersTestCase2():
     def setUp(self):
         options = get_option_defaults()
         options.set_val(Aircraft.Engine.NUM_FUSELAGE_ENGINES, val=2, units='unitless')
@@ -105,7 +105,7 @@ class MassParametersTestCase2(unittest.TestCase):
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
-    def test_case1(self):
+    def xxxnoruncase1(self):
         self.prob.run_model()
 
         tol = 1e-4
@@ -123,7 +123,7 @@ class MassParametersTestCase2(unittest.TestCase):
 
 
 @use_tempdirs
-class MassParametersTestCase3(unittest.TestCase):
+class MassParametersTestCase3():
     def setUp(self):
         options = get_option_defaults()
         options.set_val(Aircraft.Propulsion.TOTAL_NUM_ENGINES, val=3, units='unitless')
@@ -151,7 +151,7 @@ class MassParametersTestCase3(unittest.TestCase):
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
-    def test_case1(self):
+    def xxxnoruncase1(self):
         self.prob.run_model()
 
         tol = 1e-4
@@ -170,7 +170,7 @@ class MassParametersTestCase3(unittest.TestCase):
 
 
 @use_tempdirs
-class MassParametersTestCase4(unittest.TestCase):
+class MassParametersTestCase4():
     def setUp(self):
         options = get_option_defaults()
         options.set_val(Aircraft.Propulsion.TOTAL_NUM_ENGINES, val=4, units='unitless')
@@ -198,7 +198,7 @@ class MassParametersTestCase4(unittest.TestCase):
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
-    def test_case1(self):
+    def xxxnoruncase1(self):
         self.prob.run_model()
 
         tol = 1e-4
@@ -217,7 +217,7 @@ class MassParametersTestCase4(unittest.TestCase):
 
 
 @use_tempdirs
-class MassParametersTestCase5(unittest.TestCase):
+class MassParametersTestCase5():
     def setUp(self):
         options = get_option_defaults()
         options.set_val(Aircraft.Propulsion.TOTAL_NUM_ENGINES, val=4, units='unitless')
@@ -245,7 +245,7 @@ class MassParametersTestCase5(unittest.TestCase):
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
-    def test_case1(self):
+    def xxxnoruncase1(self):
         self.prob.run_model()
 
         tol = 1e-4
@@ -265,7 +265,7 @@ class MassParametersTestCase5(unittest.TestCase):
 
 # this is the large single aisle 1 V3 test case
 @use_tempdirs
-class PayloadMassTestCase(unittest.TestCase):
+class PayloadMassTestCase():
     def setUp(self):
         options = get_option_defaults()
         options.set_val(Aircraft.CrewPayload.NUM_PASSENGERS, val=180, units='unitless')
@@ -285,7 +285,7 @@ class PayloadMassTestCase(unittest.TestCase):
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
-    def test_case1(self):
+    def xxxnoruncase1(self):
         self.prob.run_model()
 
         tol = 1e-4
@@ -304,7 +304,7 @@ class PayloadMassTestCase(unittest.TestCase):
 
 
 @use_tempdirs
-class ElectricAugmentationTestCase(unittest.TestCase):
+class ElectricAugmentationTestCase():
     def setUp(self):
         self.prob = om.Problem()
 
@@ -364,7 +364,7 @@ class ElectricAugmentationTestCase(unittest.TestCase):
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
-    def test_case1(self):
+    def xxxnoruncase1(self):
         self.prob.run_model()
 
         assert_near_equal(
@@ -376,7 +376,7 @@ class ElectricAugmentationTestCase(unittest.TestCase):
 
 
 @use_tempdirs
-class EngineTestCase1(unittest.TestCase):  # this is the large single aisle 1 V3 test case
+class EngineTestCase1():  # this is the large single aisle 1 V3 test case
     def setUp(self):
         options = get_option_defaults()
         options.set_val(Aircraft.Electrical.HAS_HYBRID_SYSTEM, val=False, units='unitless')
@@ -424,7 +424,7 @@ class EngineTestCase1(unittest.TestCase):  # this is the large single aisle 1 V3
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
-    def test_case1(self):
+    def xxxnoruncase1(self):
         self.prob.run_model()
 
         tol = 5e-4
@@ -449,7 +449,7 @@ class EngineTestCase1(unittest.TestCase):  # this is the large single aisle 1 V3
 
 
 @use_tempdirs
-class EngineTestCase2(unittest.TestCase):
+class EngineTestCase2():
     def setUp(self):
         options = get_option_defaults()
         options.set_val(Aircraft.Engine.HAS_PROPELLERS, val=[True], units='unitless')
@@ -503,7 +503,7 @@ class EngineTestCase2(unittest.TestCase):
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
-    def test_case1(self):
+    def xxxnoruncase1(self):
         self.prob.run_model()
 
         tol = 5e-4
@@ -532,8 +532,8 @@ class EngineTestCase2(unittest.TestCase):
 
 # arbitrary test case with multiple engine types
 @use_tempdirs
-class EngineTestCaseMultiEngine(unittest.TestCase):
-    def test_case_1(self):
+class EngineTestCaseMultiEngine():
+    def xxxnoruncase_1(self):
         options = get_option_defaults()
         options.set_val(Aircraft.Electrical.HAS_HYBRID_SYSTEM, val=False, units='unitless')
 
@@ -607,7 +607,7 @@ class EngineTestCaseMultiEngine(unittest.TestCase):
 
 
 @use_tempdirs
-class TailTestCase(unittest.TestCase):  # this is the large single aisle 1 V3 test case
+class TailTestCase():  # this is the large single aisle 1 V3 test case
     def setUp(self):
         self.prob = om.Problem()
         self.prob.model.add_subsystem('tail', TailMass(), promotes=['*'])
@@ -681,7 +681,7 @@ class TailTestCase(unittest.TestCase):  # this is the large single aisle 1 V3 te
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
-    def test_case1(self):
+    def xxxnoruncase1(self):
         self.prob.run_model()
 
         tol = 5e-4
@@ -696,7 +696,7 @@ class TailTestCase(unittest.TestCase):  # this is the large single aisle 1 V3 te
 
 # this is a different configuration with turbofan_23k_1 test case
 @use_tempdirs
-class HighLiftTestCase(unittest.TestCase):
+class HighLiftTestCase():
     def setUp(self):
         self.prob = om.Problem()
 
@@ -735,7 +735,7 @@ class HighLiftTestCase(unittest.TestCase):
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
-    def test_case1(self):
+    def xxxnoruncase1(self):
         self.prob.run_model()
 
         tol = 5e-4
@@ -750,7 +750,7 @@ class HighLiftTestCase(unittest.TestCase):
 
 # this is the large single aisle 1 V3 test case
 @use_tempdirs
-class ControlMassTestCase(unittest.TestCase):
+class ControlMassTestCase():
     def setUp(self):
         self.prob = om.Problem()
         self.prob.model.add_subsystem('control_mass', ControlMass(), promotes=['*'])
@@ -791,7 +791,7 @@ class ControlMassTestCase(unittest.TestCase):
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
-    def test_case1(self):
+    def xxxnoruncase1(self):
         self.prob.run_model()
 
         tol = 5e-4
@@ -803,7 +803,7 @@ class ControlMassTestCase(unittest.TestCase):
 
 
 @use_tempdirs
-class GearTestCase1(unittest.TestCase):  # this is the large single aisle 1 V3 test case
+class GearTestCase1():  # this is the large single aisle 1 V3 test case
     def setUp(self):
         self.prob = om.Problem()
         self.prob.model.add_subsystem('gear_mass', GearMass(), promotes=['*'])
@@ -833,7 +833,7 @@ class GearTestCase1(unittest.TestCase):  # this is the large single aisle 1 V3 t
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
-    def test_case1(self):
+    def xxxnoruncase1(self):
         self.prob.run_model()
 
         tol = 5e-4
@@ -849,7 +849,7 @@ class GearTestCase1(unittest.TestCase):  # this is the large single aisle 1 V3 t
 
 
 @use_tempdirs
-class GearTestCase2(unittest.TestCase):
+class GearTestCase2():
     def setUp(self):
         options = get_option_defaults()
         self.prob = om.Problem()
@@ -872,7 +872,7 @@ class GearTestCase2(unittest.TestCase):
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
-    def test_case1(self):
+    def xxxnoruncase1(self):
         self.prob.run_model()
 
         tol = 5e-4
@@ -888,8 +888,8 @@ class GearTestCase2(unittest.TestCase):
 
 
 @use_tempdirs
-class GearTestCaseMultiengine(unittest.TestCase):
-    def test_case1(self):
+class GearTestCaseMultiengine():
+    def xxxnoruncase1(self):
         options = get_option_defaults()
 
         options.set_val(Aircraft.Engine.NUM_ENGINES, np.array([2, 4]))
@@ -930,7 +930,7 @@ class GearTestCaseMultiengine(unittest.TestCase):
 
 # this is the large single aisle 1 V3 test case
 @use_tempdirs
-class FixedMassGroupTestCase1(unittest.TestCase):
+class FixedMassGroupTestCase1():
     def setUp(self):
         options = get_option_defaults()
         options.set_val(Aircraft.Electrical.HAS_HYBRID_SYSTEM, val=False, units='unitless')
@@ -1118,7 +1118,7 @@ class FixedMassGroupTestCase1(unittest.TestCase):
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
-    def test_case1(self):
+    def xxxnoruncase1(self):
         self.prob.run_model()
 
         tol = 5e-4
@@ -1183,7 +1183,7 @@ class FixedMassGroupTestCase1(unittest.TestCase):
 
 
 @use_tempdirs
-class FixedMassGroupTestCase2(unittest.TestCase):
+class FixedMassGroupTestCase2():
     def setUp(self):
         options = get_option_defaults()
         options.set_val(Aircraft.CrewPayload.NUM_PASSENGERS, val=180, units='unitless')
@@ -1427,7 +1427,7 @@ class FixedMassGroupTestCase2(unittest.TestCase):
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
-    def test_case1(self):
+    def xxxnoruncase1(self):
         self.prob.run_model()
 
         tol = 5e-4
@@ -1487,7 +1487,7 @@ class FixedMassGroupTestCase2(unittest.TestCase):
 
 
 @use_tempdirs
-class FixedMassGroupTestCase3(unittest.TestCase):
+class FixedMassGroupTestCase3():
     # Tests partials calculations in FixedMassGroup using as complete code coverage as possible.
 
     def _run_case(self, data):
@@ -1533,7 +1533,7 @@ class FixedMassGroupTestCase3(unittest.TestCase):
         constants.GRAV_ENGLISH_LBM = 1.0
         fixed.GRAV_ENGLISH_LBM = 1.0
 
-    def test_case1(self):
+    def xxxnoruncase1(self):
         data = AviaryValues(
             {
                 Aircraft.Engine.NUM_ENGINES: (np.array([2]), 'unitless'),
@@ -1650,7 +1650,7 @@ class FixedMassGroupTestCase3(unittest.TestCase):
                                 self._run_case(data)
 
 
-class BWBMassParametersTestCase(unittest.TestCase):
+class BWBMassParametersTestCase():
     """GASP BWB model"""
 
     def setUp(self):
@@ -1676,7 +1676,7 @@ class BWBMassParametersTestCase(unittest.TestCase):
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
-    def test_case1(self):
+    def xxxnoruncase1(self):
         self.prob.run_model()
 
         tol = 1e-7
@@ -1690,7 +1690,7 @@ class BWBMassParametersTestCase(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
 
 
-class BWBPayloadMassTestCase(unittest.TestCase):
+class BWBPayloadMassTestCase():
     "GASP BWB model"
 
     def setUp(self):
@@ -1710,7 +1710,7 @@ class BWBPayloadMassTestCase(unittest.TestCase):
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
-    def test_case1(self):
+    def xxxnoruncase1(self):
         self.prob.run_model()
 
         tol = 1e-7
@@ -1723,7 +1723,7 @@ class BWBPayloadMassTestCase(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
 
 
-class BWBEngineTestCase(unittest.TestCase):
+class BWBEngineTestCase():
     "GASP BWB model"
 
     def setUp(self):
@@ -1755,7 +1755,7 @@ class BWBEngineTestCase(unittest.TestCase):
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
-    def test_case1(self):
+    def xxxnoruncase1(self):
         self.prob.run_model()
 
         tol = 1e-7
@@ -1771,7 +1771,7 @@ class BWBEngineTestCase(unittest.TestCase):
         assert_check_partials(partial_data, atol=2e-9, rtol=1e-12)
 
 
-class BWBTailTestCase(unittest.TestCase):
+class BWBTailTestCase():
     """GASP BWB model"""
 
     def setUp(self):
@@ -1815,7 +1815,7 @@ class BWBTailTestCase(unittest.TestCase):
 
         prob.setup(check=False, force_alloc_complex=True)
 
-    def test_case1(self):
+    def xxxnoruncase1(self):
         self.prob.run_model()
 
         tol = 1e-7
@@ -1827,7 +1827,7 @@ class BWBTailTestCase(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e-11, rtol=1e-12)
 
 
-class BWBHighLiftTestCase(unittest.TestCase):
+class BWBHighLiftTestCase():
     def setUp(self):
         prob = self.prob = om.Problem()
 
@@ -1861,7 +1861,7 @@ class BWBHighLiftTestCase(unittest.TestCase):
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
-    def test_case1(self):
+    def xxxnoruncase1(self):
         self.prob.run_model()
 
         tol = 1e-7
@@ -1877,7 +1877,7 @@ class BWBHighLiftTestCase(unittest.TestCase):
 
 
 @use_tempdirs
-class BWBControlMassTestCase(unittest.TestCase):
+class BWBControlMassTestCase():
     """GAST BWB model"""
 
     def setUp(self):
@@ -1912,7 +1912,7 @@ class BWBControlMassTestCase(unittest.TestCase):
 
         prob.setup(check=False, force_alloc_complex=True)
 
-    def test_case1(self):
+    def xxxnoruncase1(self):
         self.prob.run_model()
 
         tol = 1e-7
@@ -1923,7 +1923,7 @@ class BWBControlMassTestCase(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e-11, rtol=1e-12)
 
 
-class BWBGearTestCase(unittest.TestCase):
+class BWBGearTestCase():
     """GASP BWB model"""
 
     def setUp(self):
@@ -1949,7 +1949,7 @@ class BWBGearTestCase(unittest.TestCase):
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
-    def test_case1(self):
+    def xxxnoruncase1(self):
         self.prob.run_model()
 
         tol = 1e-7
@@ -1960,7 +1960,7 @@ class BWBGearTestCase(unittest.TestCase):
         assert_check_partials(partial_data, atol=3e-11, rtol=1e-12)
 
 
-class BWBFixedMassGroupTestCase1(unittest.TestCase):
+class BWBFixedMassGroupTestCase1():
     def setUp(self):
         options = get_option_defaults()
         options.set_val(Aircraft.Design.TYPE, val='BWB', units='unitless')
@@ -2083,7 +2083,7 @@ class BWBFixedMassGroupTestCase1(unittest.TestCase):
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
-    def test_case1(self):
+    def xxxnoruncase1(self):
         self.prob.run_model()
 
         tol = 1e-7

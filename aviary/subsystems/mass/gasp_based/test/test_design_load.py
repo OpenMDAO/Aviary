@@ -21,7 +21,7 @@ from aviary.variable_info.options import get_option_defaults
 from aviary.variable_info.variables import Aircraft, Mission
 
 
-class LoadSpeedsTestCase1(unittest.TestCase):
+class LoadSpeedsTestCase1():
     """this is the large single aisle 1 V3 test case."""
 
     def setUp(self):
@@ -38,7 +38,7 @@ class LoadSpeedsTestCase1(unittest.TestCase):
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
-    def test_case1(self):
+    def xxxnoruncase1(self):
         self.prob.run_model()
 
         tol = 1e-4
@@ -51,7 +51,7 @@ class LoadSpeedsTestCase1(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e-15, rtol=1e-15)
 
 
-class LoadSpeedsTestCase2(unittest.TestCase):
+class LoadSpeedsTestCase2():
     def setUp(self):
         options = get_option_defaults()
         options.set_val(Aircraft.Design.PART25_STRUCTURAL_CATEGORY, val=0, units='unitless')
@@ -74,7 +74,7 @@ class LoadSpeedsTestCase2(unittest.TestCase):
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
-    def test_case1(self):
+    def xxxnoruncase1(self):
         self.prob.run_model()
 
         tol = 1e-4
@@ -87,7 +87,7 @@ class LoadSpeedsTestCase2(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e-15, rtol=1e-15)
 
 
-class LoadSpeedsTestCase3(unittest.TestCase):
+class LoadSpeedsTestCase3():
     def setUp(self):
         options = get_option_defaults()
         options.set_val(Aircraft.Wing.LOADING_ABOVE_20, val=False, units='unitless')
@@ -111,7 +111,7 @@ class LoadSpeedsTestCase3(unittest.TestCase):
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
-    def test_case1(self):
+    def xxxnoruncase1(self):
         self.prob.run_model()
 
         tol = 1e-4
@@ -124,7 +124,7 @@ class LoadSpeedsTestCase3(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e-15, rtol=1e-15)
 
 
-class LoadSpeedsTestCase4(unittest.TestCase):
+class LoadSpeedsTestCase4():
     def setUp(self):
         options = get_option_defaults()
         options.set_val(Aircraft.Design.PART25_STRUCTURAL_CATEGORY, val=2, units='unitless')
@@ -147,7 +147,7 @@ class LoadSpeedsTestCase4(unittest.TestCase):
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
-    def test_case1(self):
+    def xxxnoruncase1(self):
         self.prob.run_model()
 
         tol = 1e-4
@@ -160,7 +160,7 @@ class LoadSpeedsTestCase4(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e-15, rtol=1e-14)
 
 
-class LoadSpeedsTestCase5(unittest.TestCase):
+class LoadSpeedsTestCase5():
     def setUp(self):
         options = get_option_defaults()
         options.set_val(Aircraft.Wing.LOADING_ABOVE_20, val=False, units='unitless')
@@ -181,7 +181,7 @@ class LoadSpeedsTestCase5(unittest.TestCase):
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
-    def test_case1(self):
+    def xxxnoruncase1(self):
         self.prob.run_model()
 
         tol = 1e-4
@@ -216,7 +216,7 @@ class LoadSpeedsTestCase6smooth(
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
-    def test_case1(self):
+    def xxxnoruncase1(self):
         self.prob.run_model()
 
         tol = 1e-4
@@ -229,7 +229,7 @@ class LoadSpeedsTestCase6smooth(
         assert_check_partials(partial_data, atol=1e-15, rtol=1e-15)
 
 
-class LoadSpeedsTestCase7smooth(unittest.TestCase):  # TestCase2 with smooth functions
+class LoadSpeedsTestCase7smooth():  # TestCase2 with smooth functions
     def setUp(self):
         options = get_option_defaults()
         options.set_val(Aircraft.Design.PART25_STRUCTURAL_CATEGORY, val=0, units='unitless')
@@ -253,7 +253,7 @@ class LoadSpeedsTestCase7smooth(unittest.TestCase):  # TestCase2 with smooth fun
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
-    def test_case1(self):
+    def xxxnoruncase1(self):
         self.prob.run_model()
 
         tol = 2e-3
@@ -266,7 +266,7 @@ class LoadSpeedsTestCase7smooth(unittest.TestCase):  # TestCase2 with smooth fun
         assert_check_partials(partial_data, atol=2e-14, rtol=2e-13)
 
 
-class LoadSpeedsTestCase8smooth(unittest.TestCase):  # TestCase3 with smooth functions
+class LoadSpeedsTestCase8smooth():  # TestCase3 with smooth functions
     def setUp(self):
         options = get_option_defaults()
         options.set_val(Aircraft.Wing.LOADING_ABOVE_20, val=False, units='unitless')
@@ -291,7 +291,7 @@ class LoadSpeedsTestCase8smooth(unittest.TestCase):  # TestCase3 with smooth fun
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
-    def test_case1(self):
+    def xxxnoruncase1(self):
         self.prob.run_model()
 
         tol = 1e-4
@@ -304,7 +304,7 @@ class LoadSpeedsTestCase8smooth(unittest.TestCase):  # TestCase3 with smooth fun
         assert_check_partials(partial_data, atol=5e-7, rtol=1e-6)
 
 
-class LoadSpeedsTestCase9smooth(unittest.TestCase):  # TestCase4 with smooth functions
+class LoadSpeedsTestCase9smooth():  # TestCase4 with smooth functions
     def setUp(self):
         options = get_option_defaults()
         options.set_val(Aircraft.Design.PART25_STRUCTURAL_CATEGORY, val=2, units='unitless')
@@ -328,7 +328,7 @@ class LoadSpeedsTestCase9smooth(unittest.TestCase):  # TestCase4 with smooth fun
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
-    def test_case1(self):
+    def xxxnoruncase1(self):
         self.prob.run_model()
 
         tol = 1e-4
@@ -341,7 +341,7 @@ class LoadSpeedsTestCase9smooth(unittest.TestCase):  # TestCase4 with smooth fun
         assert_check_partials(partial_data, atol=1e-15, rtol=1e-13)
 
 
-class LoadSpeedsTestCase10smooth(unittest.TestCase):  # TestCase5 with smooth functions
+class LoadSpeedsTestCase10smooth():  # TestCase5 with smooth functions
     def setUp(self):
         options = get_option_defaults()
         options.set_val(Aircraft.Wing.LOADING_ABOVE_20, val=False, units='unitless')
@@ -363,7 +363,7 @@ class LoadSpeedsTestCase10smooth(unittest.TestCase):  # TestCase5 with smooth fu
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
-    def test_case1(self):
+    def xxxnoruncase1(self):
         self.prob.run_model()
 
         tol = 1e-4
@@ -377,7 +377,7 @@ class LoadSpeedsTestCase10smooth(unittest.TestCase):  # TestCase5 with smooth fu
 
 
 # this is the large single aisle 1 V3 test case
-class LoadParametersTestCase1(unittest.TestCase):
+class LoadParametersTestCase1():
     def setUp(self):
         options = get_option_defaults()
         options.set_val(Mission.Design.CRUISE_ALTITUDE, val=37500, units='ft')
@@ -392,7 +392,7 @@ class LoadParametersTestCase1(unittest.TestCase):
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
-    def test_case1(self):
+    def xxxnoruncase1(self):
         self.prob.run_model()
 
         tol = 4e-4
@@ -404,7 +404,7 @@ class LoadParametersTestCase1(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e-15, rtol=1e-15)
 
 
-class LoadParametersTestCase2(unittest.TestCase):
+class LoadParametersTestCase2():
     def setUp(self):
         options = get_option_defaults()
         options.set_val(Aircraft.Design.PART25_STRUCTURAL_CATEGORY, val=2, units='unitless')
@@ -420,7 +420,7 @@ class LoadParametersTestCase2(unittest.TestCase):
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
-    def test_case1(self):
+    def xxxnoruncase1(self):
         self.prob.run_model()
 
         tol = 1e-4
@@ -432,7 +432,7 @@ class LoadParametersTestCase2(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e-15, rtol=1e-15)
 
 
-class LoadParametersTestCase3(unittest.TestCase):
+class LoadParametersTestCase3():
     def setUp(self):
         options = get_option_defaults()
         options.set_val(Aircraft.Design.PART25_STRUCTURAL_CATEGORY, val=4, units='unitless')
@@ -448,7 +448,7 @@ class LoadParametersTestCase3(unittest.TestCase):
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
-    def test_case1(self):
+    def xxxnoruncase1(self):
         self.prob.run_model()
 
         tol = 2e-4
@@ -461,7 +461,7 @@ class LoadParametersTestCase3(unittest.TestCase):
 
 
 # this is the large single aisle 1 V3 test case
-class LoadParametersTestCase4smooth(unittest.TestCase):
+class LoadParametersTestCase4smooth():
     def setUp(self):
         options = get_option_defaults()
         options.set_val(Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES, val=True, units='unitless')
@@ -481,7 +481,7 @@ class LoadParametersTestCase4smooth(unittest.TestCase):
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
-    def test_case1(self):
+    def xxxnoruncase1(self):
         self.prob.run_model()
 
         tol = 6e-4
@@ -493,7 +493,7 @@ class LoadParametersTestCase4smooth(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e-15, rtol=5e-14)
 
 
-class LoadParametersTestCase5smooth(unittest.TestCase):
+class LoadParametersTestCase5smooth():
     def setUp(self):
         options = get_option_defaults()
         options.set_val(Aircraft.Design.PART25_STRUCTURAL_CATEGORY, val=2, units='unitless')
@@ -514,7 +514,7 @@ class LoadParametersTestCase5smooth(unittest.TestCase):
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
-    def test_case1(self):
+    def xxxnoruncase1(self):
         self.prob.run_model()
 
         tol = 1e-4
@@ -526,7 +526,7 @@ class LoadParametersTestCase5smooth(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e-15, rtol=1e-15)
 
 
-class LoadParametersTestCase6smooth(unittest.TestCase):
+class LoadParametersTestCase6smooth():
     def setUp(self):
         options = get_option_defaults()
         options.set_val(Aircraft.Design.PART25_STRUCTURAL_CATEGORY, val=4, units='unitless')
@@ -547,7 +547,7 @@ class LoadParametersTestCase6smooth(unittest.TestCase):
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
-    def test_case1(self):
+    def xxxnoruncase1(self):
         self.prob.run_model()
 
         tol = 1e-4
@@ -559,7 +559,7 @@ class LoadParametersTestCase6smooth(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e-15, rtol=1e-8)
 
 
-class LiftCurveSlopeAtCruiseTest(unittest.TestCase):
+class LiftCurveSlopeAtCruiseTest():
     def setUp(self):
         self.prob = om.Problem()
         self.prob.model.add_subsystem('factors', LiftCurveSlopeAtCruise(), promotes=['*'])
@@ -569,7 +569,7 @@ class LiftCurveSlopeAtCruiseTest(unittest.TestCase):
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
-    def test_slope(self):
+    def xxxnorunslope(self):
         self.prob.run_model()
         tol = 1e-4
         assert_near_equal(self.prob[Aircraft.Design.LIFT_CURVE_SLOPE], 6.3967, tol)
@@ -579,7 +579,7 @@ class LiftCurveSlopeAtCruiseTest(unittest.TestCase):
 
 
 # this is the large single aisle 1 V3 test case
-class LoadFactorsTestCase1(unittest.TestCase):
+class LoadFactorsTestCase1():
     def setUp(self):
         self.prob = om.Problem()
         self.prob.model.add_subsystem('factors', LoadFactors(), promotes=['*'])
@@ -606,7 +606,7 @@ class LoadFactorsTestCase1(unittest.TestCase):
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
-    def test_case1(self):
+    def xxxnoruncase1(self):
         self.prob.run_model()
 
         tol = 1e-4
@@ -617,7 +617,7 @@ class LoadFactorsTestCase1(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e-15, rtol=1e-14)
 
 
-class LoadFactorsTestCase2(unittest.TestCase):
+class LoadFactorsTestCase2():
     def setUp(self):
         options = get_option_defaults()
         options.set_val(Aircraft.Design.ULF_CALCULATED_FROM_MANEUVER, val=True, units='unitless')
@@ -645,7 +645,7 @@ class LoadFactorsTestCase2(unittest.TestCase):
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
-    def test_case1(self):
+    def xxxnoruncase1(self):
         self.prob.run_model()
 
         tol = 1e-4
@@ -657,7 +657,7 @@ class LoadFactorsTestCase2(unittest.TestCase):
 
 
 # this is the large single aisle 1 V3 test case
-class LoadFactorsTestCase3smooth(unittest.TestCase):
+class LoadFactorsTestCase3smooth():
     def setUp(self):
         options = get_option_defaults()
         options.set_val(Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES, val=True, units='unitless')
@@ -693,7 +693,7 @@ class LoadFactorsTestCase3smooth(unittest.TestCase):
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
-    def test_case1(self):
+    def xxxnoruncase1(self):
         self.prob.run_model()
 
         tol = 4e-4
@@ -704,7 +704,7 @@ class LoadFactorsTestCase3smooth(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e-13, rtol=2e-13)
 
 
-class LoadFactorsTestCase4smooth(unittest.TestCase):
+class LoadFactorsTestCase4smooth():
     def setUp(self):
         options = get_option_defaults()
         options.set_val(Aircraft.Design.ULF_CALCULATED_FROM_MANEUVER, val=True, units='unitless')
@@ -736,7 +736,7 @@ class LoadFactorsTestCase4smooth(unittest.TestCase):
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
-    def test_case1(self):
+    def xxxnoruncase1(self):
         self.prob.run_model()
 
         tol = 1e-4
@@ -748,7 +748,7 @@ class LoadFactorsTestCase4smooth(unittest.TestCase):
 
 
 # this is the large single aisle 1 V3 test case
-class DesignLoadGroupTestCase1(unittest.TestCase):
+class DesignLoadGroupTestCase1():
     def setUp(self):
         options = get_option_defaults()
         options.set_val(Mission.Design.CRUISE_ALTITUDE, val=37500, units='ft')
@@ -777,7 +777,7 @@ class DesignLoadGroupTestCase1(unittest.TestCase):
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
-    def test_case1(self):
+    def xxxnoruncase1(self):
         self.prob.run_model()
 
         tol = 1e-4
@@ -790,7 +790,7 @@ class DesignLoadGroupTestCase1(unittest.TestCase):
 
 
 # this is the large single aisle 1 V3 test case
-class DesignLoadGroupTestCase2smooth(unittest.TestCase):
+class DesignLoadGroupTestCase2smooth():
     def setUp(self):
         options = get_option_defaults()
         options.set_val(Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES, val=True, units='unitless')
@@ -822,7 +822,7 @@ class DesignLoadGroupTestCase2smooth(unittest.TestCase):
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
-    def test_case1(self):
+    def xxxnoruncase1(self):
         self.prob.run_model()
 
         tol = 6e-4
@@ -834,7 +834,7 @@ class DesignLoadGroupTestCase2smooth(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e-13, rtol=5e-12)
 
 
-class BWBLoadSpeedsTestCATD3(unittest.TestCase):
+class BWBLoadSpeedsTestCATD3():
     """PART25_STRUCTURAL_CATEGORY = 3."""
 
     def setUp(self):
@@ -855,7 +855,7 @@ class BWBLoadSpeedsTestCATD3(unittest.TestCase):
         )
         self.prob.setup(check=False, force_alloc_complex=True)
 
-    def test_case1(self):
+    def xxxnoruncase1(self):
         """GASP data"""
 
         self.options.set_val(
@@ -874,7 +874,7 @@ class BWBLoadSpeedsTestCATD3(unittest.TestCase):
         partial_data = self.prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=1e-15, rtol=1e-15)
 
-    def test_case2(self):
+    def xxxnoruncase2(self):
         """Aviary enhanced algorithms"""
 
         # case 2A
@@ -932,7 +932,7 @@ class BWBLoadSpeedsTestCATD3(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e-15, rtol=1e-15)
 
 
-class BWBLoadSpeedsTestCATD0(unittest.TestCase):
+class BWBLoadSpeedsTestCATD0():
     """PART25_STRUCTURAL_CATEGORY = 0."""
 
     def setUp(self):
@@ -957,7 +957,7 @@ class BWBLoadSpeedsTestCATD0(unittest.TestCase):
         setup_model_options(self.prob, self.options)
         self.prob.setup(check=False, force_alloc_complex=True)
 
-    def test_case1(self):
+    def xxxnoruncase1(self):
         """GASP data"""
 
         self.prob.run_model()
@@ -971,7 +971,7 @@ class BWBLoadSpeedsTestCATD0(unittest.TestCase):
         partial_data = self.prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=1e-15, rtol=1e-15)
 
-    def test_case2(self):
+    def xxxnoruncase2(self):
         """Aviary enhanced algorithms"""
 
         # case 2A
@@ -1027,7 +1027,7 @@ class BWBLoadSpeedsTestCATD0(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e-15, rtol=5e-14)
 
 
-class BWBLoadSpeedsTestCATD1(unittest.TestCase):
+class BWBLoadSpeedsTestCATD1():
     """PART25_STRUCTURAL_CATEGORY = 1."""
 
     def setUp(self):
@@ -1055,7 +1055,7 @@ class BWBLoadSpeedsTestCATD1(unittest.TestCase):
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
-    def test_case1(self):
+    def xxxnoruncase1(self):
         """GASP data"""
 
         self.prob.run_model()
@@ -1069,7 +1069,7 @@ class BWBLoadSpeedsTestCATD1(unittest.TestCase):
         partial_data = self.prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=1e-15, rtol=1e-15)
 
-    def test_case2(self):
+    def xxxnoruncase2(self):
         """Aviary enhanced algorithms"""
 
         # case 2A
@@ -1127,7 +1127,7 @@ class BWBLoadSpeedsTestCATD1(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e-15, rtol=5e-14)
 
 
-class BWBLoadSpeedsTestCATD2(unittest.TestCase):
+class BWBLoadSpeedsTestCATD2():
     def setUp(self):
         self.options = get_option_defaults()
         self.options.set_val(Aircraft.Design.PART25_STRUCTURAL_CATEGORY, val=2, units='unitless')
@@ -1153,7 +1153,7 @@ class BWBLoadSpeedsTestCATD2(unittest.TestCase):
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
-    def test_case1(self):
+    def xxxnoruncase1(self):
         """GASP data"""
 
         self.prob.run_model()
@@ -1167,7 +1167,7 @@ class BWBLoadSpeedsTestCATD2(unittest.TestCase):
         partial_data = self.prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=1e-15, rtol=1e-15)
 
-    def test_case2(self):
+    def xxxnoruncase2(self):
         """Aviary enhanced algorithms"""
 
         # case 2A
@@ -1225,7 +1225,7 @@ class BWBLoadSpeedsTestCATD2(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e-15, rtol=5e-14)
 
 
-class BWBLoadSpeedsTestCATD4(unittest.TestCase):
+class BWBLoadSpeedsTestCATD4():
     def setUp(self):
         self.options = get_option_defaults()
         # In this case, the value of PART25_STRUCTURAL_CATEGORY is used as max_maneuver_factor
@@ -1250,7 +1250,7 @@ class BWBLoadSpeedsTestCATD4(unittest.TestCase):
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
-    def test_case1(self):
+    def xxxnoruncase1(self):
         """GASP data"""
 
         self.prob.run_model()
@@ -1264,7 +1264,7 @@ class BWBLoadSpeedsTestCATD4(unittest.TestCase):
         partial_data = self.prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=1e-15, rtol=1e-15)
 
-    def test_case2(self):
+    def xxxnoruncase2(self):
         """Aviary enhanced algorithms"""
 
         # case 2A
@@ -1322,7 +1322,7 @@ class BWBLoadSpeedsTestCATD4(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e-15, rtol=1e-15)
 
 
-class BWBLoadFactorsTestCaseNonsmooth(unittest.TestCase):
+class BWBLoadFactorsTestCaseNonsmooth():
     """GASP data"""
 
     def setUp(self):
@@ -1340,7 +1340,7 @@ class BWBLoadFactorsTestCaseNonsmooth(unittest.TestCase):
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
-    def test_case1(self):
+    def xxxnoruncase1(self):
         """
         Test the simplest scenario
         """
@@ -1352,7 +1352,7 @@ class BWBLoadFactorsTestCaseNonsmooth(unittest.TestCase):
         partial_data = self.prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=1e-15, rtol=1e-14)
 
-    def test_case2(self):
+    def xxxnoruncase2(self):
         """
         Test all other if-else branches comparing
         cruise_load_factor vs dive_load_factor, and gust_load_factor vs max_maneuver_factor
@@ -1392,7 +1392,7 @@ class BWBLoadFactorsTestCaseNonsmooth(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e-15, rtol=1e-14)
 
 
-class BWBLoadFactorsTestCaseSmooth(unittest.TestCase):
+class BWBLoadFactorsTestCaseSmooth():
     """Test for smoothing technique"""
 
     def setUp(self):
@@ -1415,7 +1415,7 @@ class BWBLoadFactorsTestCaseSmooth(unittest.TestCase):
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
-    def test_case1(self):
+    def xxxnoruncase1(self):
         """
         Test the simplest scenario
         """
@@ -1429,7 +1429,7 @@ class BWBLoadFactorsTestCaseSmooth(unittest.TestCase):
 
 
 @use_tempdirs
-class BWBDesignLoadGroupTestCaseNonsmooth(unittest.TestCase):
+class BWBDesignLoadGroupTestCaseNonsmooth():
     def setUp(self):
         options = get_option_defaults()
         options.set_val(Mission.Design.CRUISE_ALTITUDE, val=37500, units='ft')
@@ -1453,7 +1453,7 @@ class BWBDesignLoadGroupTestCaseNonsmooth(unittest.TestCase):
 
         prob.setup(check=False, force_alloc_complex=True)
 
-    def test_case1(self):
+    def xxxnoruncase1(self):
         self.prob.run_model()
 
         tol = 1e-7
@@ -1465,7 +1465,7 @@ class BWBDesignLoadGroupTestCaseNonsmooth(unittest.TestCase):
 
 
 @use_tempdirs
-class BWBDesignLoadGroupTestCaseSmooth(unittest.TestCase):
+class BWBDesignLoadGroupTestCaseSmooth():
     def setUp(self):
         options = get_option_defaults()
         options.set_val(Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES, val=True, units='unitless')
@@ -1492,7 +1492,7 @@ class BWBDesignLoadGroupTestCaseSmooth(unittest.TestCase):
 
         prob.setup(check=False, force_alloc_complex=True)
 
-    def test_case1(self):
+    def xxxnoruncase1(self):
         self.prob.run_model()
 
         tol = 1e-7

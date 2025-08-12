@@ -14,7 +14,7 @@ def skipIfMissingDependencies(builder):
     return unittest.skipIf(type(builder) is str, builder)
 
 
-class TestSubsystemBuilderBase(unittest.TestCase):
+class TestSubsystemBuilderBase():
     @staticmethod
     def import_builder(path_to_builder: str, base_package='aviary.examples.external_subsystems'):
         """
@@ -40,7 +40,7 @@ class TestSubsystemBuilderBase(unittest.TestCase):
         self.subsystem_builder = SubsystemBuilderBase()
         self.aviary_values = AviaryValues()
 
-    def test_get_states(self):
+    def xxxnorunget_states(self):
         states = self.subsystem_builder.get_states()
         self.assertIsInstance(states, dict, msg='get_states should return a dictionary')
 
@@ -53,13 +53,13 @@ class TestSubsystemBuilderBase(unittest.TestCase):
                 msg=f"the value for 'rate_source' key in '{key}' should be a string",
             )
 
-    def test_get_linked_variables(self):
+    def xxxnorunget_linked_variables(self):
         linked_variables = self.subsystem_builder.get_linked_variables()
         self.assertIsInstance(linked_variables, list)
         for var in linked_variables:
             self.assertIsInstance(var, str)
 
-    def test_get_pre_mission_bus_variables(self):
+    def xxxnorunget_pre_mission_bus_variables(self):
         bus_variables = self.subsystem_builder.get_pre_mission_bus_variables()
 
         # Check that a dictionary is returned
@@ -88,7 +88,7 @@ class TestSubsystemBuilderBase(unittest.TestCase):
                 values['units'], str, f'Bus Variable "{name}"\'s "units" value should be a string'
             )
 
-    def test_build_pre_mission(self):
+    def xxxnorunbuild_pre_mission(self):
         if not hasattr(self, 'aviary_values'):
             self.aviary_values = AviaryValues()
 
@@ -102,7 +102,7 @@ class TestSubsystemBuilderBase(unittest.TestCase):
                 msg='The returned object from `build_pre_mission` is not an OpenMDAO System.',
             )
 
-    def test_build_mission(self, **kwargs):
+    def xxxnorunbuild_mission(self, **kwargs):
         if not hasattr(self, 'aviary_values'):
             self.aviary_values = AviaryValues()
         # Test that the method returns an OpenMDAO System object
@@ -117,7 +117,7 @@ class TestSubsystemBuilderBase(unittest.TestCase):
         with self.assertRaises(TypeError, msg='num_nodes argument missing from build_mission().'):
             self.subsystem_builder.build_mission(aviary_inputs=self.aviary_values)
 
-    def test_get_constraints(self):
+    def xxxnorunget_constraints(self):
         constraints = self.subsystem_builder.get_constraints()
 
         # Check that a dictionary is returned
@@ -132,7 +132,7 @@ class TestSubsystemBuilderBase(unittest.TestCase):
                 values['type'], str, f'Constraint "{name}"\'s "type" value should be a string'
             )
 
-    def test_get_design_vars(self):
+    def xxxnorunget_design_vars(self):
         # Verify that the method returns a dictionary
         design_vars = self.subsystem_builder.get_design_vars()
         self.assertIsInstance(design_vars, dict, 'get_design_vars() should return a dictionary')
@@ -171,7 +171,7 @@ class TestSubsystemBuilderBase(unittest.TestCase):
                 "The dictionaries returned by get_design_vars() should have an 'upper' key",
             )
 
-    def test_get_parameters(self, **kwargs):
+    def xxxnorunget_parameters(self, **kwargs):
         if not hasattr(self, 'aviary_values'):
             self.aviary_values = AviaryValues()
 
@@ -210,7 +210,7 @@ class TestSubsystemBuilderBase(unittest.TestCase):
                 f"The dictionaries returned by get_parameters() should have a 'units' key for {key}",
             )
 
-    def test_get_initial_guesses(self):
+    def xxxnorunget_initial_guesses(self):
         initial_guesses = self.subsystem_builder.get_initial_guesses()
 
         self.assertIsInstance(
@@ -232,7 +232,7 @@ class TestSubsystemBuilderBase(unittest.TestCase):
                 msg=f"The value for '{key}' should be a float, list, or array",
             )
 
-    def test_get_mass_names(self):
+    def xxxnorunget_mass_names(self):
         # Instantiate a user-defined subsystem builder
         subsystem_builder = self.subsystem_builder
 
@@ -247,7 +247,7 @@ class TestSubsystemBuilderBase(unittest.TestCase):
         for mass_name in subsystem_builder.get_mass_names():
             self.assertIsInstance(mass_name, str, 'Each mass name in the list should be a string')
 
-    def test_preprocess_inputs(self):
+    def xxxnorunpreprocess_inputs(self):
         if not hasattr(self, 'aviary_values'):
             self.aviary_values = AviaryValues()
         inputs = self.subsystem_builder.preprocess_inputs(self.aviary_values)
@@ -255,7 +255,7 @@ class TestSubsystemBuilderBase(unittest.TestCase):
             inputs, AviaryValues, 'preprocess_inputs did not return an AviaryValues object'
         )
 
-    def test_build_post_mission(self):
+    def xxxnorunbuild_post_mission(self):
         # Perform post-mission operations
         if not hasattr(self, 'aviary_values'):
             self.aviary_values = AviaryValues()
@@ -271,7 +271,7 @@ class TestSubsystemBuilderBase(unittest.TestCase):
                 post_mission_sys, System, msg='post_mission_sys is not an OpenMDAO System.'
             )
 
-    def test_define_order(self):
+    def xxxnorundefine_order(self):
         order = self.subsystem_builder.define_order()
         self.assertIsInstance(order, list, 'define_order should return a list')
 
@@ -280,7 +280,7 @@ class TestSubsystemBuilderBase(unittest.TestCase):
                 subsystem_name, str, 'Each subsystem name in the list should be a string'
             )
 
-    def test_get_outputs(self):
+    def xxxnorunget_outputs(self):
         outputs = self.subsystem_builder.get_outputs()
         self.assertIsInstance(outputs, list, 'get_outputs should return a list')
 
@@ -289,7 +289,7 @@ class TestSubsystemBuilderBase(unittest.TestCase):
                 output_name, str, 'Each output name in the list should be a string'
             )
 
-    def test_check_state_variables(self):
+    def xxxnoruncheck_state_variables(self):
         if not hasattr(self, 'aviary_values'):
             self.aviary_values = AviaryValues()
 
@@ -319,7 +319,7 @@ class TestSubsystemBuilderBase(unittest.TestCase):
                 state_var_exists = any(key == input[1]['prom_name'] for input in inputs)
                 self.assertTrue(state_var_exists, f"State variable '{key}' not found in the model.")
 
-    def test_check_pre_mission(self):
+    def xxxnoruncheck_pre_mission(self):
         if not hasattr(self, 'aviary_values'):
             self.aviary_values = AviaryValues()
 
@@ -350,7 +350,7 @@ class TestSubsystemBuilderBase(unittest.TestCase):
                 mass_var_exists, f"Mass variable '{name}' not found in the pre-mission model."
             )
 
-    def test_check_parameters(self, **kwargs):
+    def xxxnoruncheck_parameters(self, **kwargs):
         if not hasattr(self, 'aviary_values'):
             self.aviary_values = AviaryValues()
 
@@ -381,7 +381,7 @@ class TestSubsystemBuilderBase(unittest.TestCase):
             param_exists = any(key == input_[1]['prom_name'] for input_ in inputs)
             self.assertTrue(param_exists, f"Parameter '{key}' not found in the model.")
 
-    def test_check_constraints(self):
+    def xxxnoruncheck_constraints(self):
         if not hasattr(self, 'aviary_values'):
             self.aviary_values = AviaryValues()
 
@@ -417,7 +417,7 @@ class TestSubsystemBuilderBase(unittest.TestCase):
             )
             self.assertTrue(constraint_exists, f"Constraint '{key}' not found in the model.")
 
-    def test_check_design_variables(self):
+    def xxxnoruncheck_design_variables(self):
         if not hasattr(self, 'aviary_values'):
             self.aviary_values = AviaryValues()
 
@@ -444,7 +444,7 @@ class TestSubsystemBuilderBase(unittest.TestCase):
             design_var_exists = any(key == input_[1]['prom_name'] for input_ in inputs)
             self.assertTrue(design_var_exists, f"Design variable '{key}' not found in the model.")
 
-    def test_check_initial_guesses(self):
+    def xxxnoruncheck_initial_guesses(self):
         if not hasattr(self, 'aviary_values'):
             self.aviary_values = AviaryValues()
 

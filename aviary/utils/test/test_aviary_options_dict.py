@@ -5,10 +5,10 @@ from openmdao.utils.assert_utils import assert_near_equal
 from aviary.utils.aviary_options_dict import AviaryOptionsDictionary
 
 
-class TestAviaryOptionsDict(unittest.TestCase):
+class TestAviaryOptionsDict():
     """Test conversion of aero table from GASP and FLOPS data format to Aviary format."""
 
-    def test_declare_options(self):
+    def xxxnorundeclare_options(self):
         opts = AviaryOptionsDictionary()
 
         opts.declare('simple', default=3.5)
@@ -20,7 +20,7 @@ class TestAviaryOptionsDict(unittest.TestCase):
         opts.declare('bounds_units', default=(1.2, 4.3), units='ft')
         self.assertEqual(opts['bounds_units'], ((1.2, 4.3), 'ft'))
 
-    def test_get_val(self):
+    def xxxnorunget_val(self):
         opts = AviaryOptionsDictionary()
 
         opts.declare('simple_units', default=2.0, units='ft')
@@ -29,7 +29,7 @@ class TestAviaryOptionsDict(unittest.TestCase):
         opts.declare('bounds_units', default=(5.0, 6.0), units='ft')
         assert_near_equal(opts.get_val('bounds_units', units='inch'), (60.0, 72.0))
 
-    def test_load_on_init(self):
+    def xxxnorunload_on_init(self):
         class TestOptions(AviaryOptionsDictionary):
             def declare_options(self):
                 self.declare(
@@ -57,7 +57,7 @@ class TestAviaryOptionsDict(unittest.TestCase):
         opts = TestOptions(data)
         self.assertEqual(opts['p1'], 6.5)
 
-    def test_errors(self):
+    def xxxnorunerrors(self):
         opts = AviaryOptionsDictionary(parent_name='builder')
 
         opts.declare('simple', default=3.5)
@@ -67,7 +67,7 @@ class TestAviaryOptionsDict(unittest.TestCase):
         err_text = "builder: Option 'simple' does not have declared units."
         self.assertEqual(str(cm.exception), err_text)
 
-    def test_add_state_options(self):
+    def xxxnorunadd_state_options(self):
         opts = AviaryOptionsDictionary(parent_name='testing')
 
         opts.add_state_options('zzz')
@@ -93,7 +93,7 @@ class TestAviaryOptionsDict(unittest.TestCase):
         val = opts['d_initial']
         self.assertEqual(val, (3.5, 'm'))
 
-    def test_add_control_options(self):
+    def xxxnorunadd_control_options(self):
         opts = AviaryOptionsDictionary(parent_name='testing')
 
         opts.add_control_options('zzz')

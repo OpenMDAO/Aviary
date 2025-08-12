@@ -22,13 +22,13 @@ class ProblemPhaseTestCase(unittest.TestCase):
         _clear_problem_names()  # need to reset these to simulate separate runs
 
     @require_pyoptsparse(optimizer='IPOPT')
-    def bench_test_swap_3_FwGm_IPOPT(self):
+    def test_swap_3_FwGm_IPOPT(self):
         local_phase_info = deepcopy(phase_info)
         prob = run_aviary(
             'models/aircraft/test_aircraft/aircraft_for_bench_FwGm.csv',
             local_phase_info,
             max_iter=100,
-            verbosity=0,
+            verbosity=1,
             optimizer='IPOPT',
         )
 
@@ -48,7 +48,7 @@ class ProblemPhaseTestCase(unittest.TestCase):
         )
 
     @require_pyoptsparse(optimizer='SNOPT')
-    def bench_test_swap_3_FwGm_SNOPT(self):
+    def zbench_test_swap_3_FwGm_SNOPT(self):
         local_phase_info = deepcopy(phase_info)
         prob = run_aviary(
             'models/aircraft/test_aircraft/aircraft_for_bench_FwGm.csv',

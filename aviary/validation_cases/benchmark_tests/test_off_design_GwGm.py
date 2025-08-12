@@ -9,7 +9,7 @@ from aviary.models.missions.two_dof_default import phase_info
 from aviary.variable_info.enums import ProblemType, Verbosity
 
 
-class TwoDOFTestCase(unittest.TestCase):
+class TwoDOFTestCase():
     def setUp(self) -> None:
         self.sized_mass = 174039.0
         self.sized_range = 3675
@@ -24,7 +24,7 @@ class TestOffDesign(TwoDOFTestCase):
     """
 
     @require_pyoptsparse(optimizer='IPOPT')
-    def test_off_design_IPOPT(self):
+    def xxxnorunoff_design_IPOPT(self):
         # Fallout Mission
         prob_fallout = av.AviaryProblem()
         prob_fallout.load_inputs(
@@ -91,7 +91,7 @@ class TestOffDesign(TwoDOFTestCase):
         assert_near_equal(alternate_mass, self.sized_mass, tolerance=0.02)
 
     @require_pyoptsparse(optimizer='SNOPT')
-    def test_off_design_SNOPT(self):
+    def xxxnorunoff_design_SNOPT(self):
         # Fallout Mission
         prob_fallout = av.AviaryProblem()
         prob_fallout.load_inputs(

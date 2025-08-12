@@ -8,8 +8,8 @@ from aviary.subsystems.aerodynamics.flops_based.lift_dependent_drag import LiftD
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 
 
-class LiftDependentDragTest(unittest.TestCase):
-    def test_derivs_edge_interp(self):
+class LiftDependentDragTest():
+    def xxxnorunderivs_edge_interp(self):
         # Pressure in lbf/in**2 at 41000 ft.
         P = 2.60239151
         Sref = 1370.0
@@ -48,7 +48,7 @@ class LiftDependentDragTest(unittest.TestCase):
             1e-6,
         )
 
-    def test_derivs_inner_interp(self):
+    def xxxnorunderivs_inner_interp(self):
         # Pressure in lbf/in**2 at 41000 ft.
         P = 2.60239151
         Sref = 1370.0

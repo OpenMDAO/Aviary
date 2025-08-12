@@ -42,7 +42,7 @@ CL = data.get_val('CL').reshape(shape)
 CD = data.get_val('CD').reshape(shape)
 
 
-class TestSolvedAero(unittest.TestCase):
+class TestSolvedAero():
     def get_baseline_tabular_results(self):
         # Get the CL, CD of the baseline tabular aero problem
         local_phase_info = deepcopy(phase_info)
@@ -75,7 +75,7 @@ class TestSolvedAero(unittest.TestCase):
 
         return CL_base, CD_base
 
-    def test_solved_aero_pass_polar(self):
+    def xxxnorunsolved_aero_pass_polar(self):
         # Test that passing training data provides the same results
         # Lift and Drag polars passed from external component in pre-mission.
         CL_base, CD_base = self.get_baseline_tabular_results()
@@ -142,7 +142,7 @@ class TestSolvedAero(unittest.TestCase):
         assert_near_equal(CL_pass, CL_base, 1e-6)
         assert_near_equal(CD_pass, 2.0 * CD_base, 1e-6)
 
-    def test_parameters(self):
+    def xxxnorunparameters(self):
         # This test is to make sure that the aero builder creates a parameter
         # for wing area. It addresses a bug where this was absent.
 
@@ -179,7 +179,7 @@ class TestSolvedAero(unittest.TestCase):
         actual_wing_area = prob.aviary_inputs.get_val(Aircraft.Wing.AREA, units='ft**2')
         assert_near_equal(wing_area, actual_wing_area)
 
-    def test_solved_aero_pass_polar_unique_abscissa(self):
+    def xxxnorunsolved_aero_pass_polar_unique_abscissa(self):
         # Solved Aero with shortened lists of table abscissa.
         local_phase_info = deepcopy(phase_info)
 

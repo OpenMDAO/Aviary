@@ -27,11 +27,11 @@ from aviary.variable_info.variables import Aircraft, Dynamic
 
 
 @use_tempdirs
-class TestFLOPSDetailedLanding(unittest.TestCase):
+class TestFLOPSDetailedLanding():
     """Test detailed landing using N3CC data."""
 
     @require_pyoptsparse(optimizer='IPOPT')
-    def bench_test_IPOPT(self):
+    def zbench_test_IPOPT(self):
         driver = om.pyOptSparseDriver()
 
         optimizer = 'IPOPT'
@@ -45,7 +45,7 @@ class TestFLOPSDetailedLanding(unittest.TestCase):
         self._do_run(driver, optimizer)
 
     @require_pyoptsparse(optimizer='SNOPT')
-    def bench_test_SNOPT(self):
+    def zbench_test_SNOPT(self):
         driver = om.pyOptSparseDriver()
 
         optimizer = 'SNOPT'

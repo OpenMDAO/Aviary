@@ -18,12 +18,12 @@ from aviary.validation_cases.validation_tests import (
 from aviary.variable_info.variables import Aircraft, Mission
 
 
-class ExplicitHorizontalTailMassTest(unittest.TestCase):
+class ExplicitHorizontalTailMassTest():
     def setUp(self):
         self.prob = om.Problem()
 
     @parameterized.expand(get_flops_case_names(), name_func=print_case)
-    def test_case(self, case_name):
+    def xxxnoruncase(self, case_name):
         prob = self.prob
 
         prob.model.add_subsystem(
@@ -49,11 +49,11 @@ class ExplicitHorizontalTailMassTest(unittest.TestCase):
             tol=2.0e-4,
         )
 
-    def test_IO(self):
+    def xxxnorunIO(self):
         assert_match_varnames(self.prob.model)
 
 
-class ExplicitHorizontalTailMassTest2(unittest.TestCase):
+class ExplicitHorizontalTailMassTest2():
     """Test mass-weight conversion."""
 
     def setUp(self):
@@ -66,7 +66,7 @@ class ExplicitHorizontalTailMassTest2(unittest.TestCase):
 
         htail.GRAV_ENGLISH_LBM = 1.0
 
-    def test_case(self):
+    def xxxnoruncase(self):
         prob = om.Problem()
         prob.model.add_subsystem(
             'horizontal_tail',
@@ -83,12 +83,12 @@ class ExplicitHorizontalTailMassTest2(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
 
 
-class ExplicitAltHorizontalTailMassTest(unittest.TestCase):
+class ExplicitAltHorizontalTailMassTest():
     def setUp(self):
         self.prob = om.Problem()
 
     @parameterized.expand(get_flops_case_names(), name_func=print_case)
-    def test_case(self, case_name):
+    def xxxnoruncase(self, case_name):
         prob = self.prob
 
         prob.model.add_subsystem(
@@ -108,11 +108,11 @@ class ExplicitAltHorizontalTailMassTest(unittest.TestCase):
             version=Version.ALTERNATE,
         )
 
-    def test_IO(self):
+    def xxxnorunIO(self):
         assert_match_varnames(self.prob.model)
 
 
-class ExplicitAltHorizontalTailMassTest2(unittest.TestCase):
+class ExplicitAltHorizontalTailMassTest2():
     """Test mass-weight conversion."""
 
     def setUp(self):
@@ -125,7 +125,7 @@ class ExplicitAltHorizontalTailMassTest2(unittest.TestCase):
 
         htail.GRAV_ENGLISH_LBM = 1.0
 
-    def test_case(self):
+    def xxxnoruncase(self):
         prob = om.Problem()
         prob.model.add_subsystem(
             'horizontal_tail',

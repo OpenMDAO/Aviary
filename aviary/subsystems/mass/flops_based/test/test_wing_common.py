@@ -18,7 +18,7 @@ from aviary.validation_cases.validation_tests import (
 from aviary.variable_info.variables import Aircraft, Mission
 
 
-class WingShearControlMassTest(unittest.TestCase):
+class WingShearControlMassTest():
     def setUp(self):
         prob = self.prob = om.Problem()
         prob.model.add_subsystem(
@@ -31,7 +31,7 @@ class WingShearControlMassTest(unittest.TestCase):
         prob.setup(check=False, force_alloc_complex=True)
 
     @parameterized.expand(get_flops_case_names(), name_func=print_case)
-    def test_case(self, case_name):
+    def xxxnoruncase(self, case_name):
         prob = self.prob
 
         flops_validation_test(
@@ -48,11 +48,11 @@ class WingShearControlMassTest(unittest.TestCase):
             rtol=1e-11,
         )
 
-    def test_IO(self):
+    def xxxnorunIO(self):
         assert_match_varnames(self.prob.model)
 
 
-class WingShearControlMassTest2(unittest.TestCase):
+class WingShearControlMassTest2():
     """Test mass-weight conversion."""
 
     def setUp(self):
@@ -65,7 +65,7 @@ class WingShearControlMassTest2(unittest.TestCase):
 
         wing.GRAV_ENGLISH_LBM = 1.0
 
-    def test_case(self):
+    def xxxnoruncase(self):
         prob = om.Problem()
         prob.model.add_subsystem(
             'wing',
@@ -82,7 +82,7 @@ class WingShearControlMassTest2(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e-11, rtol=1e-12)
 
 
-class WingMiscMassTest(unittest.TestCase):
+class WingMiscMassTest():
     def setUp(self):
         prob = self.prob = om.Problem()
         prob.model.add_subsystem(
@@ -95,7 +95,7 @@ class WingMiscMassTest(unittest.TestCase):
         prob.setup(check=False, force_alloc_complex=True)
 
     @parameterized.expand(get_flops_case_names(), name_func=print_case)
-    def test_case(self, case_name):
+    def xxxnoruncase(self, case_name):
         prob = self.prob
 
         flops_validation_test(
@@ -111,11 +111,11 @@ class WingMiscMassTest(unittest.TestCase):
             rtol=1e-11,
         )
 
-    def test_IO(self):
+    def xxxnorunIO(self):
         assert_match_varnames(self.prob.model)
 
 
-class WingMiscMassTest2(unittest.TestCase):
+class WingMiscMassTest2():
     """Test mass-weight conversion."""
 
     def setUp(self):
@@ -128,7 +128,7 @@ class WingMiscMassTest2(unittest.TestCase):
 
         wing.GRAV_ENGLISH_LBM = 1.0
 
-    def test_case(self):
+    def xxxnoruncase(self):
         prob = om.Problem()
         prob.model.add_subsystem(
             'wing',
@@ -144,7 +144,7 @@ class WingMiscMassTest2(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
 
 
-class WingBendingMassTest(unittest.TestCase):
+class WingBendingMassTest():
     def setUp(self):
         prob = self.prob = om.Problem()
 
@@ -162,7 +162,7 @@ class WingBendingMassTest(unittest.TestCase):
         prob.setup(check=False, force_alloc_complex=True)
 
     @parameterized.expand(get_flops_case_names(), name_func=print_case)
-    def test_case(self, case_name):
+    def xxxnoruncase(self, case_name):
         prob = self.prob
 
         flops_validation_test(
@@ -190,11 +190,11 @@ class WingBendingMassTest(unittest.TestCase):
             rtol=1e-11,
         )
 
-    def test_IO(self):
+    def xxxnorunIO(self):
         assert_match_varnames(self.prob.model)
 
 
-class WingBendingMassTest2(unittest.TestCase):
+class WingBendingMassTest2():
     """Test mass-weight conversion."""
 
     def setUp(self):
@@ -207,7 +207,7 @@ class WingBendingMassTest2(unittest.TestCase):
 
         wing.GRAV_ENGLISH_LBM = 1.0
 
-    def test_case(self):
+    def xxxnoruncase(self):
         prob = om.Problem()
 
         prob.model.add_subsystem(

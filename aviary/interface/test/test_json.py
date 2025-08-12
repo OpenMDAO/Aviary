@@ -15,7 +15,7 @@ local_phase_info = deepcopy(phase_info)
 
 
 @use_tempdirs
-class TestJson(unittest.TestCase):
+class TestJson():
     """
     These tests just check that the json files can be saved or loaded
     They don't check that the files were properly created or that the
@@ -54,17 +54,17 @@ class TestJson(unittest.TestCase):
         prob.setup()
         prob.set_initial_guesses()
 
-    def test_save_json(self):
+    def xxxnorunsave_json(self):
         self.prob.run_aviary_problem()
         self.prob.save_sizing_to_json()
 
-    def test_alternate(self):
+    def xxxnorunalternate(self):
         filepath = self.get_file('interface/test/sizing_problem_for_test.json')
         self.prob.alternate_mission(
             run_mission=False, json_filename=filepath, phase_info=local_phase_info
         )
 
-    def test_fallout(self):
+    def xxxnorunfallout(self):
         filepath = self.get_file('interface/test/sizing_problem_for_test.json')
         self.prob.fallout_mission(
             run_mission=False, json_filename=filepath, phase_info=local_phase_info

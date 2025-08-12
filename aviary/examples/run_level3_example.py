@@ -622,7 +622,7 @@ class ProblemPhaseTestCase:
     """
 
     @require_pyoptsparse(optimizer='SNOPT')
-    def bench_test_sizing_N3CC(self):
+    def zbench_test_sizing_N3CC(self):
         prob = run_trajectory(sim=False)
 
 

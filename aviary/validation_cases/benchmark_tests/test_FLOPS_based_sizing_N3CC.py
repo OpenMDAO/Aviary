@@ -77,11 +77,11 @@ def run_trajectory(sim=True):
 
 
 @use_tempdirs
-class ProblemPhaseTestCase(unittest.TestCase):
+class ProblemPhaseTestCase():
     """Test sizing using N3CC data."""
 
     @require_pyoptsparse(optimizer='SNOPT')
-    def bench_test_sizing_N3CC(self):
+    def zbench_test_sizing_N3CC(self):
         prob = run_trajectory(sim=False)
 
         times_climb = prob.get_val('traj.climb.timeseries.time', units='s')

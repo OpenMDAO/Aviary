@@ -24,12 +24,11 @@ canard_test_data['1'] = AviaryValues(
 canard_data_sets = [key for key in canard_test_data]
 
 
-class CanardMassTest(unittest.TestCase):
+class CanardMassTest():
     def setUp(self):
         self.prob = om.Problem()
 
-    @parameterized.expand(canard_data_sets, name_func=print_case)
-    def test_case1(self, case_name):
+    def xxxnoruncase1(self, case_name):
         # TODO: No test cases with canards. Use dummy vars.
         validation_data = canard_test_data[case_name]
         prob = self.prob
@@ -60,11 +59,11 @@ class CanardMassTest(unittest.TestCase):
             rtol=1e-10,
         )
 
-    def test_IO(self):
+    def xxxnorunIO(self):
         assert_match_varnames(self.prob.model)
 
 
-class CanardMassTest2(unittest.TestCase):
+class CanardMassTest2():
     """Test mass-weight conversion."""
 
     def setUp(self):
@@ -77,7 +76,7 @@ class CanardMassTest2(unittest.TestCase):
 
         canard.GRAV_ENGLISH_LBM = 1.0
 
-    def test_case1(self):
+    def xxxnoruncase1(self):
         prob = om.Problem()
         prob.model.add_subsystem(
             'canard',

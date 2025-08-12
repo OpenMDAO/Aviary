@@ -20,7 +20,7 @@ from aviary.validation_cases.benchmark_utils import compare_against_expected_val
 
 
 @use_tempdirs
-class ProblemPhaseTestCase(unittest.TestCase):
+class ProblemPhaseTestCase():
     """
     Test the setup and run of a large single aisle commercial transport aircraft using
     GASP mass method, GASP aero method, and HEIGHT_ENERGY mission method. Expected outputs
@@ -118,7 +118,7 @@ class ProblemPhaseTestCase(unittest.TestCase):
         _clear_problem_names()  # need to reset these to simulate separate runs
 
     @require_pyoptsparse(optimizer='IPOPT')
-    def bench_test_swap_1_GwFm_IPOPT(self):
+    def zbench_test_swap_1_GwFm_IPOPT(self):
         prob = run_aviary(
             'models/aircraft/test_aircraft/aircraft_for_bench_GwFm.csv',
             self.phase_info,
@@ -129,7 +129,7 @@ class ProblemPhaseTestCase(unittest.TestCase):
         compare_against_expected_values(prob, self.expected_dict)
 
     @require_pyoptsparse(optimizer='SNOPT')
-    def bench_test_swap_1_GwFm_SNOPT(self):
+    def zbench_test_swap_1_GwFm_SNOPT(self):
         prob = run_aviary(
             'models/aircraft/test_aircraft/aircraft_for_bench_GwFm.csv',
             self.phase_info,

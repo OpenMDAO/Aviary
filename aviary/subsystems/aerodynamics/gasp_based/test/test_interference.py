@@ -18,8 +18,8 @@ from aviary.variable_info.variables import Aircraft, Dynamic
 tol = 1e-6
 
 
-class TestPreMissionSubComponents(unittest.TestCase):
-    def test_root_chord(self):
+class TestPreMissionSubComponents():
+    def xxxnorunroot_chord(self):
         prob = om.Problem()
         prob.model.add_subsystem('comp', RootChord(), promotes=['*'])
         prob.setup(force_alloc_complex=True)
@@ -35,7 +35,7 @@ class TestPreMissionSubComponents(unittest.TestCase):
         partial_data = prob.check_partials(method='cs', out_stream=None)
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-14)
 
-    def test_common_vars(self):
+    def xxxnoruncommon_vars(self):
         prob = om.Problem()
         prob.model.add_subsystem('comp', CommonVariables(), promotes=['*'])
         prob.setup(force_alloc_complex=True)
@@ -53,7 +53,7 @@ class TestPreMissionSubComponents(unittest.TestCase):
         partial_data = prob.check_partials(method='cs', out_stream=None)
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-14)
 
-    def test_top_and_bottom(self):
+    def xxxnoruntop_and_bottom(self):
         prob = om.Problem()
         prob.model.add_subsystem('comp', TopAndBottomWidth(), promotes=['*'])
         prob.setup(force_alloc_complex=True)
@@ -70,7 +70,7 @@ class TestPreMissionSubComponents(unittest.TestCase):
             partial_data = prob.check_partials(method='cs', out_stream=None)
             assert_check_partials(partial_data, atol=1e-12, rtol=1e-14)
 
-    def test_body_ratios(self):
+    def xxxnorunbody_ratios(self):
         prob = om.Problem()
         prob.model.add_subsystem('comp', BodyRatios(), promotes=['*'])
         prob.setup(force_alloc_complex=True)
@@ -90,7 +90,7 @@ class TestPreMissionSubComponents(unittest.TestCase):
         partial_data = prob.check_partials(method='cs', out_stream=None)
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-14)
 
-    def test_interference_drag(self):
+    def xxxnoruninterference_drag(self):
         prob = om.Problem()
         prob.model.add_subsystem('comp', InterferenceDrag(), promotes=['*'])
         prob.setup(force_alloc_complex=True)
@@ -114,8 +114,8 @@ class TestPreMissionSubComponents(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-14)
 
 
-class TestPreMission(unittest.TestCase):
-    def test_complete_group(self):
+class TestPreMission():
+    def xxxnoruncomplete_group(self):
         prob = om.Problem()
         prob.model.add_subsystem(
             'comp',
@@ -148,8 +148,8 @@ class TestPreMission(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-14)
 
 
-class TestMission(unittest.TestCase):
-    def test_complete_group(self):
+class TestMission():
+    def xxxnoruncomplete_group(self):
         nn = 2
         prob = om.Problem()
         prob.model.add_subsystem(

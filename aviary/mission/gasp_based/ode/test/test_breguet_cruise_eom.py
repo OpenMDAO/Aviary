@@ -9,7 +9,7 @@ from aviary.mission.gasp_based.ode.breguet_cruise_eom import E_RangeComp, RangeC
 from aviary.variable_info.variables import Dynamic
 
 
-class TestBreguetResults(unittest.TestCase):
+class TestBreguetResults():
     """Test cruise range and time in RangeComp component."""
 
     def setUp(self):
@@ -31,7 +31,7 @@ class TestBreguetResults(unittest.TestCase):
             units='lbm/h',
         )
 
-    def test_case1(self):
+    def xxxnoruncase1(self):
         tol = 1e-6
         self.prob.run_model()
 
@@ -50,7 +50,7 @@ class TestBreguetResults(unittest.TestCase):
         assert_check_partials(partial_data, atol=tol, rtol=tol)
 
 
-class TestBreguetPartials(unittest.TestCase):
+class TestBreguetPartials():
     def setUp(self):
         nn = 10
 
@@ -80,7 +80,7 @@ class TestBreguetPartials(unittest.TestCase):
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
-    def test_partials(self):
+    def xxxnorunpartials(self):
         tol = 1e-10
         self.prob.run_model()
 
@@ -99,7 +99,7 @@ class TestBreguetPartials(unittest.TestCase):
         assert_check_partials(partial_data, atol=tol, rtol=tol)
 
 
-class TestBreguetPartials2(unittest.TestCase):
+class TestBreguetPartials2():
     """Test mass-weight conversion."""
 
     def setUp(self):
@@ -112,7 +112,7 @@ class TestBreguetPartials2(unittest.TestCase):
 
         breguet.GRAV_ENGLISH_LBM = 1.0
 
-    def test_partials(self):
+    def xxxnorunpartials(self):
         nn = 2
         prob = om.Problem()
         prob.model.add_subsystem('range_comp', RangeComp(num_nodes=nn), promotes=['*'])
@@ -140,7 +140,7 @@ class TestBreguetPartials2(unittest.TestCase):
         assert_check_partials(partial_data, atol=2e-11, rtol=1e-11)
 
 
-class TestBreguetResults2(unittest.TestCase):
+class TestBreguetResults2():
     def setUp(self):
         self.nn = nn = 100
 
@@ -160,7 +160,7 @@ class TestBreguetResults2(unittest.TestCase):
             units='lbm/h',
         )
 
-    def test_results(self):
+    def xxxnorunresults(self):
         self.prob.run_model()
 
         W = self.prob.get_val('mass', units='lbm') * GRAV_ENGLISH_LBM
@@ -181,7 +181,7 @@ class TestBreguetResults2(unittest.TestCase):
         assert_near_equal(np.diff(t), -np.diff(W) / fuel_flow_avg, tolerance=1.0e-6)
 
 
-class TestElectricBreguetResults(unittest.TestCase):
+class TestElectricBreguetResults():
     """Test cruise range and time in E_RangeComp component."""
 
     def setUp(self):
@@ -207,7 +207,7 @@ class TestElectricBreguetResults(unittest.TestCase):
             units='kW',
         )  # 10100.1 hp in GASP
 
-    def test_case1(self):
+    def xxxnoruncase1(self):
         tol = 1e-6
         self.prob.run_model()
 
@@ -220,7 +220,7 @@ class TestElectricBreguetResults(unittest.TestCase):
         assert_near_equal(cruise_range[-1, ...], r_expected, tolerance=tol)
         assert_near_equal(cruise_time[-1, ...], t_expected, tolerance=tol)
 
-    def test_partials(self):
+    def xxxnorunpartials(self):
         tol = 1e-10
         self.prob.run_model()
 

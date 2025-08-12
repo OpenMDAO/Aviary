@@ -355,17 +355,7 @@ class AviaryProblem(om.Problem):
 
         elif driver.options['optimizer'] == 'IPOPT':
             # Print Options #
-            if verbosity == Verbosity.QUIET:
-                print_level = 0
-                driver.opt_settings['print_user_options'] = 'no'
-            elif verbosity == Verbosity.BRIEF:
-                print_level = 3  # minimum to get exit status
-                driver.opt_settings['print_user_options'] = 'no'
-                driver.opt_settings['print_frequency_iter'] = 10
-            elif verbosity == Verbosity.VERBOSE:
-                print_level = 5
-            else:  # DEBUG
-                print_level = 7
+            print_level = 7
             driver.opt_settings['print_level'] = print_level
             # Optimizer Settings #
             driver.opt_settings['tol'] = 1.0e-6

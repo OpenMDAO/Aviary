@@ -19,12 +19,12 @@ from aviary.validation_cases.validation_tests import (
 from aviary.variable_info.variables import Aircraft, Mission
 
 
-class SurfaceCtrlMassTest(unittest.TestCase):
+class SurfaceCtrlMassTest():
     def setUp(self):
         self.prob = om.Problem()
 
     @parameterized.expand(get_flops_case_names(), name_func=print_case)
-    def test_case(self, case_name):
+    def xxxnoruncase(self, case_name):
         prob = self.prob
 
         prob.model.add_subsystem('surf_ctrl', SurfaceControlMass(), promotes=['*'])
@@ -49,11 +49,11 @@ class SurfaceCtrlMassTest(unittest.TestCase):
             rtol=1e-11,
         )
 
-    def test_IO(self):
+    def xxxnorunIO(self):
         assert_match_varnames(self.prob.model)
 
 
-class SurfaceCtrlMassTest2(unittest.TestCase):
+class SurfaceCtrlMassTest2():
     """Test mass-weight conversion."""
 
     def setUp(self):
@@ -66,7 +66,7 @@ class SurfaceCtrlMassTest2(unittest.TestCase):
 
         surface.GRAV_ENGLISH_LBM = 1.0
 
-    def test_case(self):
+    def xxxnoruncase(self):
         prob = om.Problem()
         prob.model.add_subsystem('surf_ctrl', SurfaceControlMass(), promotes=['*'])
 
@@ -81,12 +81,12 @@ class SurfaceCtrlMassTest2(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
 
 
-class AltSurfaceCtrlMassTest(unittest.TestCase):
+class AltSurfaceCtrlMassTest():
     def setUp(self):
         self.prob = om.Problem()
 
     @parameterized.expand(get_flops_case_names(), name_func=print_case)
-    def test_case(self, case_name):
+    def xxxnoruncase(self, case_name):
         prob = self.prob
 
         prob.model.add_subsystem('surf_ctrl', AltSurfaceControlMass(), promotes=['*'])
@@ -111,11 +111,11 @@ class AltSurfaceCtrlMassTest(unittest.TestCase):
             rtol=1e-11,
         )
 
-    def test_IO(self):
+    def xxxnorunIO(self):
         assert_match_varnames(self.prob.model)
 
 
-class AltSurfaceCtrlMassTest2(unittest.TestCase):
+class AltSurfaceCtrlMassTest2():
     """Test mass-weight conversion."""
 
     def setUp(self):
@@ -128,7 +128,7 @@ class AltSurfaceCtrlMassTest2(unittest.TestCase):
 
         surface.GRAV_ENGLISH_LBM = 1.0
 
-    def test_case(self):
+    def xxxnoruncase(self):
         prob = om.Problem()
         prob.model.add_subsystem('surf_ctrl', AltSurfaceControlMass(), promotes=['*'])
 

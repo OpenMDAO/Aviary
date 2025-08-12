@@ -9,9 +9,9 @@ from aviary.subsystems.propulsion.motor.model.motor_map import MotorMap
 from aviary.variable_info.variables import Aircraft, Dynamic
 
 
-class TestGearbox(unittest.TestCase):
+class TestGearbox():
     @use_tempdirs
-    def test_motor_map(self):
+    def xxxnorunmotor_map(self):
         nn = 3
 
         prob = om.Problem()

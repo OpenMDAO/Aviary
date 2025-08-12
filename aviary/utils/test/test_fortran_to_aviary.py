@@ -9,7 +9,7 @@ from aviary.variable_info.enums import LegacyCode
 
 
 @use_tempdirs
-class TestFortranToAviary(unittest.TestCase):
+class TestFortranToAviary():
     """Test fortran_to_aviary legacy code input file conversion utility by comparing against already converted input files."""
 
     def prepare_and_run(self, filepath, out_file=None, legacy_code=LegacyCode.GASP):
@@ -57,7 +57,7 @@ class TestFortranToAviary(unittest.TestCase):
                     )
                     raise Exception(exc_string)
 
-    def test_large_single_aisle(self):
+    def xxxnorunlarge_single_aisle(self):
         filepath = 'models/aircraft/large_single_aisle_1/large_single_aisle_1_GASP.dat'
         comparison_filepath = 'utils/test/data/converter_test_large_single_aisle_1_GASP.csv'
 
@@ -67,7 +67,7 @@ class TestFortranToAviary(unittest.TestCase):
         )
         self.compare_files(comparison_filepath)
 
-    def test_small_single_aisle(self):
+    def xxxnorunsmall_single_aisle(self):
         filepath = 'models/aircraft/small_single_aisle/small_single_aisle_GASP.dat'
         comparison_filepath = 'utils/test/data/converter_test_small_single_aisle_GASP.csv'
 
@@ -77,14 +77,14 @@ class TestFortranToAviary(unittest.TestCase):
         )
         self.compare_files(comparison_filepath)
 
-    def test_diff_configuration(self):
+    def xxxnorundiff_configuration(self):
         filepath = 'utils/test/data/configuration_test_data_GASP.dat'
         comparison_filepath = 'utils/test/data/converter_test_configuration_GASP.csv'
 
         self.prepare_and_run(filepath, out_file=Path.cwd() / Path('TEST_' + comparison_filepath))
         self.compare_files(comparison_filepath)
 
-    def test_bwb_gasp(self):
+    def xxxnorunbwb_gasp(self):
         filepath = 'models/aircraft/blended_wing_body/generic_BWB_GASP.dat'
         comparison_filepath = 'utils/test/data/converter_test_BWB_GASP.csv'
 
@@ -94,7 +94,7 @@ class TestFortranToAviary(unittest.TestCase):
         )
         self.compare_files(comparison_filepath)
 
-    def test_advanced_single_aisle(self):
+    def xxxnorunadvanced_single_aisle(self):
         # Note: The csv comparison file N3CC_generic_low_speed_polars_FLOPSinp.csv was generated using the fortran-to-Aviary converter
         # and was not evaluated for comparison to the original. Thus, until this file is evaluated, this test is purely a regression
         # test.

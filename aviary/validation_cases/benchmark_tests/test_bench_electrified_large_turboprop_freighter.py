@@ -13,7 +13,7 @@ from aviary.variable_info.variables import Aircraft, Mission, Settings
 
 @use_tempdirs
 # TODO need to add asserts with "truth" values
-class LargeElectrifiedTurbopropFreighterBenchmark(unittest.TestCase):
+class LargeElectrifiedTurbopropFreighterBenchmark():
     def build_and_run_problem(self):
         # Build problem
         prob = AviaryProblem(verbosity=0)

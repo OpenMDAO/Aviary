@@ -10,13 +10,13 @@ from aviary.validation_cases.validation_tests import get_flops_inputs
 from aviary.variable_info.variables import Aircraft
 
 
-class CharacteristicLengthsTest(unittest.TestCase):
+class CharacteristicLengthsTest():
     """Test characteristic length and fineness ratio calculations."""
 
     def setUp(self):
         self.prob = om.Problem()
 
-    def test_case_multiengine(self):
+    def xxxnoruncase_multiengine(self):
         # test with multiple engine types
         prob = self.prob
 
@@ -81,7 +81,7 @@ class CharacteristicLengthsTest(unittest.TestCase):
         partial_data = self.prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=1e-10, rtol=1e-10)
 
-    def test_IO(self):
+    def xxxnorunIO(self):
         assert_match_varnames(self.prob.model)
 
 

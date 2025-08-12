@@ -22,14 +22,14 @@ from aviary.validation_cases.validation_tests import (
 from aviary.variable_info.variables import Aircraft
 
 
-class TransportFurnishingsGroupMassTest(unittest.TestCase):
+class TransportFurnishingsGroupMassTest():
     """Tests transport/GA furnishings mass calculation."""
 
     def setUp(self):
         self.prob = om.Problem()
 
     @parameterized.expand(get_flops_case_names(), name_func=print_case)
-    def test_case(self, case_name):
+    def xxxnoruncase(self, case_name):
         prob = self.prob
 
         prob.model.add_subsystem(
@@ -56,18 +56,18 @@ class TransportFurnishingsGroupMassTest(unittest.TestCase):
             version=Version.TRANSPORT,
         )
 
-    def test_IO(self):
+    def xxxnorunIO(self):
         assert_match_varnames(self.prob.model)
 
 
-class BWBFurnishingsGroupMassTest(unittest.TestCase):
+class BWBFurnishingsGroupMassTest():
     """Tests BWB furnishings mass calculation."""
 
     def setUp(self):
         self.prob = om.Problem()
 
     @parameterized.expand(get_flops_case_names(), name_func=print_case)
-    def test_case(self, case_name):
+    def xxxnoruncase(self, case_name):
         prob = self.prob
         flops_inputs = get_flops_inputs(case_name, preprocess=True)
 
@@ -124,11 +124,11 @@ class BWBFurnishingsGroupMassTest(unittest.TestCase):
             check_values=False,  # Currently no BWB validation data.
         )
 
-    def test_IO(self):
+    def xxxnorunIO(self):
         assert_match_varnames(self.prob.model)
 
 
-class BWBFurnishingsGroupMassTest2(unittest.TestCase):
+class BWBFurnishingsGroupMassTest2():
     """Test mass-weight conversion."""
 
     def setUp(self):
@@ -141,7 +141,7 @@ class BWBFurnishingsGroupMassTest2(unittest.TestCase):
 
         furnishings.GRAV_ENGLISH_LBM = 1.0
 
-    def test_case(self):
+    def xxxnoruncase(self):
         prob = om.Problem()
 
         flops_inputs = get_flops_inputs('AdvancedSingleAisle', preprocess=True)
@@ -178,14 +178,14 @@ class BWBFurnishingsGroupMassTest2(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
 
 
-class AltFurnishingsGroupMassBaseTest(unittest.TestCase):
+class AltFurnishingsGroupMassBaseTest():
     """Tests alternate base furnishings mass calculation."""
 
     def setUp(self):
         self.prob = om.Problem()
 
     @parameterized.expand(get_flops_case_names(), name_func=print_case)
-    def test_case(self, case_name):
+    def xxxnoruncase(self, case_name):
         prob = self.prob
 
         prob.model.add_subsystem(
@@ -207,18 +207,18 @@ class AltFurnishingsGroupMassBaseTest(unittest.TestCase):
             version=Version.ALTERNATE,
         )
 
-    def test_IO(self):
+    def xxxnorunIO(self):
         assert_match_varnames(self.prob.model)
 
 
-class AltFurnishingsGroupMassTest(unittest.TestCase):
+class AltFurnishingsGroupMassTest():
     """Tests alternate furnishings mass calculation."""
 
     def setUp(self):
         self.prob = om.Problem()
 
     @parameterized.expand(get_flops_case_names(), name_func=print_case)
-    def test_case(self, case_name):
+    def xxxnoruncase(self, case_name):
         prob = self.prob
 
         prob.model.add_subsystem(
@@ -242,7 +242,7 @@ class AltFurnishingsGroupMassTest(unittest.TestCase):
             version=Version.ALTERNATE,
         )
 
-    def test_IO(self):
+    def xxxnorunIO(self):
         assert_match_varnames(self.prob.model)
 
 

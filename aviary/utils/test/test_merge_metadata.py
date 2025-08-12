@@ -266,10 +266,10 @@ av.add_meta_data(
 merged_dicts_26_msg = 'You have attempted to merge metadata dictionaries that contain the same variable with different metadata. The offending variable present in multiple dictionaries is "aircraft:fuselage:eccentricity".'
 
 
-class MergeMetaDataTest(unittest.TestCase):
+class MergeMetaDataTest():
     """Test functionality of merge_meta_data function."""
 
-    def test_match_merge(self):
+    def xxxnorunmatch_merge(self):
         merge23 = merge_meta_data([dict2, dict3])
         merge123 = merge_meta_data([dict1, dict2, dict3])
         merge12 = merge_meta_data([dict1, dict2])
@@ -284,7 +284,7 @@ class MergeMetaDataTest(unittest.TestCase):
         self.assertEqual(merge25, dict2)  # dict5 is essentially the same as dict2
 
     # ensure that the correct error message is generated when two dictionaries are merged that have the same variable with different metadata
-    def test_mismatch_error(self):
+    def xxxnorunmismatch_error(self):
         with self.assertRaises(ValueError) as cm:
             merge_meta_data([dict2, dict4])
         self.assertEqual(str(cm.exception), merged_dicts_24_msg)

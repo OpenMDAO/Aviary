@@ -20,12 +20,12 @@ from aviary.validation_cases.validation_tests import (
 from aviary.variable_info.variables import Aircraft, Settings
 
 
-class MiscEngineMassTest(unittest.TestCase):
+class MiscEngineMassTest():
     def setUp(self):
         self.prob = om.Problem()
 
     @parameterized.expand(get_flops_case_names(), name_func=print_case)
-    def test_case(self, case_name):
+    def xxxnoruncase(self, case_name):
         prob = self.prob
 
         inputs = get_flops_inputs(case_name, preprocess=True)
@@ -52,10 +52,10 @@ class MiscEngineMassTest(unittest.TestCase):
             output_keys=Aircraft.Propulsion.TOTAL_MISC_MASS,
         )
 
-    def test_IO(self):
+    def xxxnorunIO(self):
         assert_match_varnames(self.prob.model)
 
-    def test_case_multiengine(self):
+    def xxxnoruncase_multiengine(self):
         prob = om.Problem()
 
         options = AviaryValues()

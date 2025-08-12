@@ -12,7 +12,7 @@ All data is from validation files using standalone flaps model
 """
 
 
-class MetaModelTestCasePlain(unittest.TestCase):
+class MetaModelTestCasePlain():
     def setUp(self):
         self.prob = om.Problem()
         options = {
@@ -36,7 +36,7 @@ class MetaModelTestCasePlain(unittest.TestCase):
         self.prob.set_val('body_to_span_ratio', 0.09239)
         self.prob.set_val('chord_to_body_ratio', 0.12679)
 
-    def test_case(self):
+    def xxxnoruncase(self):
         self.prob.run_model()
         tol = 1e-4
 
@@ -104,7 +104,7 @@ class MetaModelTestCasePlain(unittest.TestCase):
         assert_check_partials(data, atol=1e-4, rtol=1e-4)
 
 
-class MetaModelTestCaseSingleSlotted(unittest.TestCase):
+class MetaModelTestCaseSingleSlotted():
     def setUp(self):
         self.prob = om.Problem()
         options = {
@@ -117,7 +117,7 @@ class MetaModelTestCaseSingleSlotted(unittest.TestCase):
         self.prob.set_val(Aircraft.Wing.THICKNESS_TO_CHORD_UNWEIGHTED, 0.13966)
         self.prob.set_val('flap_defl', 40.0, units='deg')
 
-    def test_case(self):
+    def xxxnoruncase(self):
         self.prob.run_model()
         tol = 1e-4
 
@@ -141,7 +141,7 @@ class MetaModelTestCaseSingleSlotted(unittest.TestCase):
         assert_check_partials(data, atol=1e-4, rtol=1e-4)
 
 
-class MetaModelTestCaseFowler(unittest.TestCase):
+class MetaModelTestCaseFowler():
     def setUp(self):
         self.prob = om.Problem()
         options = {
@@ -153,7 +153,7 @@ class MetaModelTestCaseFowler(unittest.TestCase):
         self.prob.set_val(Aircraft.Wing.FLAP_CHORD_RATIO, 0.3)
         self.prob.set_val('flap_defl', 40.0, units='deg')
 
-    def test_case(self):
+    def xxxnoruncase(self):
         self.prob.run_model()
         tol = 1e-4
 

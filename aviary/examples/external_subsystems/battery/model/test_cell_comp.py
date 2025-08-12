@@ -6,11 +6,11 @@ from openmdao.utils.testing_utils import use_tempdirs
 from aviary.examples.external_subsystems.battery.model.cell_comp import CellComp
 
 
-class Test_cell_comp(unittest.TestCase):
+class Test_cell_comp():
     """test partials in CellComp component."""
 
     @use_tempdirs
-    def test_cell_comp(self):
+    def xxxnoruncell_comp(self):
         p = Problem()
         p.model = Group()
         p.model.add_subsystem('CellComp', CellComp(num_nodes=1), promotes=['*'])

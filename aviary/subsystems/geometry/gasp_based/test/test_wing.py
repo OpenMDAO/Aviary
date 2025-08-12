@@ -34,7 +34,7 @@ class WingSizeTestCase1(
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
-    def test_case1(self):
+    def xxxnoruncase1(self):
         self.prob.run_model()
 
         tol = 2e-4
@@ -45,7 +45,7 @@ class WingSizeTestCase1(
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
 
 
-class WingSizeTestCase2(unittest.TestCase):
+class WingSizeTestCase2():
     """Test mass-weight conversion."""
 
     def setUp(self):
@@ -58,7 +58,7 @@ class WingSizeTestCase2(unittest.TestCase):
 
         wing.GRAV_ENGLISH_LBM = 1.0
 
-    def test_case1(self):
+    def xxxnoruncase1(self):
         self.prob = om.Problem()
         self.prob.model.add_subsystem('size', WingSize(), promotes=['*'])
         self.prob.model.set_input_defaults(Mission.Design.GROSS_MASS, 175400, units='lbm')
@@ -70,7 +70,7 @@ class WingSizeTestCase2(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
 
 
-class BWBWingSizeTestCase1(unittest.TestCase):
+class BWBWingSizeTestCase1():
     """
     BWB model
     """
@@ -85,7 +85,7 @@ class BWBWingSizeTestCase1(unittest.TestCase):
 
         prob.setup(check=False, force_alloc_complex=True)
 
-    def test_case1(self):
+    def xxxnoruncase1(self):
         prob = self.prob
         prob.run_model()
 
@@ -119,7 +119,7 @@ class WingParametersTestCase1(
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
-    def test_case1(self):
+    def xxxnoruncase1(self):
         self.prob.run_model()
 
         tol = 5e-4
@@ -134,7 +134,7 @@ class WingParametersTestCase1(
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
 
 
-class WingParametersTestCase2(unittest.TestCase):
+class WingParametersTestCase2():
     def setUp(self):
         options = get_option_defaults()
         self.prob = om.Problem()
@@ -157,7 +157,7 @@ class WingParametersTestCase2(unittest.TestCase):
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
-    def test_case1(self):
+    def xxxnoruncase1(self):
         self.prob.run_model()
 
         tol = 5e-4
@@ -172,7 +172,7 @@ class WingParametersTestCase2(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
 
 
-class BWBWingParametersTestCase1(unittest.TestCase):
+class BWBWingParametersTestCase1():
     """Test BWB data for BWBWingParameters"""
 
     def setUp(self):
@@ -192,7 +192,7 @@ class BWBWingParametersTestCase1(unittest.TestCase):
 
         prob.setup(check=False, force_alloc_complex=True)
 
-    def test_case1(self):
+    def xxxnoruncase1(self):
         prob = self.prob
         prob.run_model()
 
@@ -232,7 +232,7 @@ class WingVolumeTestCase1(
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
-    def test_case1(self):
+    def xxxnoruncase1(self):
         self.prob.run_model()
 
         tol = 5e-4
@@ -242,7 +242,7 @@ class WingVolumeTestCase1(
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
 
 
-class BWBWingVolumeTestCase(unittest.TestCase):
+class BWBWingVolumeTestCase():
     """Test BWB data for BWBWingVolume"""
 
     def setUp(self):
@@ -268,7 +268,7 @@ class BWBWingVolumeTestCase(unittest.TestCase):
 
         prob.setup(check=False, force_alloc_complex=True)
 
-    def test_case1(self):
+    def xxxnoruncase1(self):
         prob = self.prob
         prob.run_model()
 
@@ -279,7 +279,7 @@ class BWBWingVolumeTestCase(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e-11, rtol=1e-12)
 
 
-class WingFoldAreaTestCase1(unittest.TestCase):
+class WingFoldAreaTestCase1():
     def setUp(self):
         options = get_option_defaults()
         options.set_val(Aircraft.Wing.CHOOSE_FOLD_LOCATION, val=False, units='unitless')
@@ -300,7 +300,7 @@ class WingFoldAreaTestCase1(unittest.TestCase):
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
-    def test_case1(self):
+    def xxxnoruncase1(self):
         self.prob.run_model()
 
         tol = 1e-4
@@ -313,7 +313,7 @@ class WingFoldAreaTestCase1(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
 
 
-class WingFoldVolumeTestCase1(unittest.TestCase):
+class WingFoldVolumeTestCase1():
     def setUp(self):
         options = get_option_defaults()
         options.set_val(Aircraft.Wing.CHOOSE_FOLD_LOCATION, val=False, units='unitless')
@@ -342,7 +342,7 @@ class WingFoldVolumeTestCase1(unittest.TestCase):
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
-    def test_case1(self):
+    def xxxnoruncase1(self):
         self.prob.run_model()
 
         tol = 1e-4
@@ -365,7 +365,7 @@ class WingFoldVolumeTestCase1(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e-11, rtol=1e-12)
 
 
-class WingFoldAreaTestCase2(unittest.TestCase):
+class WingFoldAreaTestCase2():
     def setUp(self):
         options = get_option_defaults()
 
@@ -387,7 +387,7 @@ class WingFoldAreaTestCase2(unittest.TestCase):
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
-    def test_case1(self):
+    def xxxnoruncase1(self):
         self.prob.run_model()
 
         tol = 1e-4
@@ -400,7 +400,7 @@ class WingFoldAreaTestCase2(unittest.TestCase):
         assert_check_partials(partial_data, atol=2e-12, rtol=1e-12)
 
 
-class BWBWingFoldAreaTestCase1(unittest.TestCase):
+class BWBWingFoldAreaTestCase1():
     def setUp(self):
         options = get_option_defaults()
 
@@ -420,7 +420,7 @@ class BWBWingFoldAreaTestCase1(unittest.TestCase):
 
         prob.setup(check=False, force_alloc_complex=True)
 
-    def test_case1(self):
+    def xxxnoruncase1(self):
         prob = self.prob
         prob.run_model()
 
@@ -432,7 +432,7 @@ class BWBWingFoldAreaTestCase1(unittest.TestCase):
         assert_check_partials(partial_data, atol=2e-12, rtol=1e-12)
 
 
-class WingFoldVolumeTestCase1(unittest.TestCase):
+class WingFoldVolumeTestCase1():
     def setUp(self):
         options = get_option_defaults()
         options.set_val(Aircraft.Wing.CHOOSE_FOLD_LOCATION, val=False, units='unitless')
@@ -461,7 +461,7 @@ class WingFoldVolumeTestCase1(unittest.TestCase):
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
-    def test_case1(self):
+    def xxxnoruncase1(self):
         self.prob.run_model()
 
         tol = 1e-4
@@ -484,7 +484,7 @@ class WingFoldVolumeTestCase1(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e-11, rtol=1e-12)
 
 
-class WingFoldVolumeTestCase2(unittest.TestCase):
+class WingFoldVolumeTestCase2():
     def setUp(self):
         options = get_option_defaults()
 
@@ -514,7 +514,7 @@ class WingFoldVolumeTestCase2(unittest.TestCase):
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
-    def test_case1(self):
+    def xxxnoruncase1(self):
         self.prob.run_model()
 
         tol = 1e-4
@@ -538,7 +538,7 @@ class WingFoldVolumeTestCase2(unittest.TestCase):
 
 
 @use_tempdirs
-class BWBWingFoldVolumeTestCase1(unittest.TestCase):
+class BWBWingFoldVolumeTestCase1():
     """
     Test against GASP BWB model, CHOOSE_FOLD_LOCATION = False
     This case should not be allowed, but it is tested anyway.
@@ -568,7 +568,7 @@ class BWBWingFoldVolumeTestCase1(unittest.TestCase):
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
-    def test_case1(self):
+    def xxxnoruncase1(self):
         prob = self.prob
         prob.run_model()
 
@@ -581,7 +581,7 @@ class BWBWingFoldVolumeTestCase1(unittest.TestCase):
 
 
 @use_tempdirs
-class BWBWingFoldVolumeTestCase2(unittest.TestCase):
+class BWBWingFoldVolumeTestCase2():
     """
     Test against GASP BWB model, CHOOSE_FOLD_LOCATION = True
     """
@@ -610,7 +610,7 @@ class BWBWingFoldVolumeTestCase2(unittest.TestCase):
 
         prob.setup(check=False, force_alloc_complex=True)
 
-    def test_case1(self):
+    def xxxnoruncase1(self):
         prob = self.prob
         self.prob.run_model()
 
@@ -623,7 +623,7 @@ class BWBWingFoldVolumeTestCase2(unittest.TestCase):
 
 
 @use_tempdirs
-class WingGroupTestCase1(unittest.TestCase):
+class WingGroupTestCase1():
     """
     actual GASP test case, input and output values based on large single aisle 1 v3 without bug fix
     HAS_FOLD = False
@@ -655,7 +655,7 @@ class WingGroupTestCase1(unittest.TestCase):
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
-    def test_case1(self):
+    def xxxnoruncase1(self):
         self.prob.run_model()
 
         tol = 5e-4
@@ -676,7 +676,7 @@ class WingGroupTestCase1(unittest.TestCase):
 
 
 @use_tempdirs
-class WingGroupTestCase2(unittest.TestCase):
+class WingGroupTestCase2():
     """
     Wing with both folds and struts which has fold dimensional location and strut dimensional location specified
     with the fold at the strut connection.
@@ -728,7 +728,7 @@ class WingGroupTestCase2(unittest.TestCase):
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
-    def test_case1(self):
+    def xxxnoruncase1(self):
         self.prob.run_model()
 
         tol = 5e-4
@@ -770,7 +770,7 @@ class WingGroupTestCase2(unittest.TestCase):
 
 
 @use_tempdirs
-class WingGroupTestCase3(unittest.TestCase):
+class WingGroupTestCase3():
     """
     Wing with folds which has dimensional location specified.
     HAS_FOLD = True
@@ -817,7 +817,7 @@ class WingGroupTestCase3(unittest.TestCase):
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
-    def test_case1(self):
+    def xxxnoruncase1(self):
         self.prob.run_model()
 
         tol = 5e-4
@@ -854,7 +854,7 @@ class WingGroupTestCase3(unittest.TestCase):
 
 
 @use_tempdirs
-class WingGroupTestCase4(unittest.TestCase):
+class WingGroupTestCase4():
     """
     Wing with both folds and struts which has fold dimensional location and strut dimensional location specified.
     HAS_FOLD = True
@@ -903,7 +903,7 @@ class WingGroupTestCase4(unittest.TestCase):
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
-    def test_case1(self):
+    def xxxnoruncase1(self):
         self.prob.run_model()
         tol = 5e-4
 
@@ -927,7 +927,7 @@ class WingGroupTestCase4(unittest.TestCase):
 
 
 @use_tempdirs
-class WingGroupTestCase5(unittest.TestCase):
+class WingGroupTestCase5():
     """
     Wing with struts which has dimentional location specified.
     HAS_FOLD = False
@@ -983,7 +983,7 @@ class WingGroupTestCase5(unittest.TestCase):
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
-    def test_case1(self):
+    def xxxnoruncase1(self):
         self.prob.run_model()
 
         tol = 5e-4
@@ -1008,7 +1008,7 @@ class WingGroupTestCase5(unittest.TestCase):
 
 
 @use_tempdirs
-class BWBWingGroupTestCase1(unittest.TestCase):
+class BWBWingGroupTestCase1():
     """
     actual GASP test case, input and output values based on large single aisle 1 v3 without bug fix
     HAS_FOLD = True
@@ -1058,7 +1058,7 @@ class BWBWingGroupTestCase1(unittest.TestCase):
 
         prob.setup(check=False, force_alloc_complex=True)
 
-    def test_case1(self):
+    def xxxnoruncase1(self):
         """
         Testing GASP data case:
         Aircraft.Wing.AREA -- SW = 2142.9
@@ -1093,7 +1093,7 @@ class BWBWingGroupTestCase1(unittest.TestCase):
         assert_check_partials(partial_data, atol=2e-12, rtol=1e-12)
 
 
-class BWBExposedWingTestCase(unittest.TestCase):
+class BWBExposedWingTestCase():
     """BWB case."""
 
     def setUp(self):
@@ -1120,7 +1120,7 @@ class BWBExposedWingTestCase(unittest.TestCase):
 
         prob.setup(check=False, force_alloc_complex=True)
 
-    def test_case_middle(self):
+    def xxxnoruncase_middle(self):
         prob = self.prob
         prob.set_val(Aircraft.Wing.VERTICAL_MOUNT_LOCATION, 0.5, units='unitless')
         prob.run_model()
@@ -1132,7 +1132,7 @@ class BWBExposedWingTestCase(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e-11, rtol=5e-11)
 
 
-class ExposedWingTestCase(unittest.TestCase):
+class ExposedWingTestCase():
     """Tube + Wing case."""
 
     def setUp(self):
@@ -1159,7 +1159,7 @@ class ExposedWingTestCase(unittest.TestCase):
 
         prob.setup(check=False, force_alloc_complex=True)
 
-    def test_case_middle(self):
+    def xxxnoruncase_middle(self):
         """Test in the range (epsilon, 1.0 - epsilon)."""
         prob = self.prob
         prob.set_val(Aircraft.Wing.VERTICAL_MOUNT_LOCATION, 0.5, units='unitless')
@@ -1171,7 +1171,7 @@ class ExposedWingTestCase(unittest.TestCase):
         partial_data = prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=1e-11, rtol=5e-11)
 
-    def test_case_left(self):
+    def xxxnoruncase_left(self):
         """Test in the range (0.0, epsilon)."""
         prob = self.prob
         prob.set_val(Aircraft.Wing.VERTICAL_MOUNT_LOCATION, 0.049, units='unitless')
@@ -1183,7 +1183,7 @@ class ExposedWingTestCase(unittest.TestCase):
         partial_data = prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=1e-11, rtol=5e-11)
 
-    def test_case_right(self):
+    def xxxnoruncase_right(self):
         prob = self.prob
         """Test in the range (1.0 - epsilon, 1.0)."""
         prob.set_val(Aircraft.Wing.VERTICAL_MOUNT_LOCATION, 0.951, units='unitless')

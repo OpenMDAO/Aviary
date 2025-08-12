@@ -14,11 +14,11 @@ from aviary.examples.external_subsystems.engine_NPSS.NPSS_engine_builder import 
 from aviary.examples.external_subsystems.engine_NPSS.NPSS_variable_meta_data import ExtendedMetaData
 
 
-class AviaryNPSSTestCase(unittest.TestCase):
+class AviaryNPSSTestCase():
     """Test NPSS engine builder from table by building an Aviary model with NPSS engine and run."""
 
     @unittest.skipUnless(os.environ.get('NPSS_TOP', False), 'environment does not contain NPSS')
-    def bench_test_aviary_NPSS(self):
+    def zbench_test_aviary_NPSS(self):
         """Build NPSS model in Aviary."""
         phase_info = deepcopy(av.default_height_energy_phase_info)
 

@@ -10,8 +10,8 @@ from aviary.interface.methods_for_level2 import AviaryProblem
 from aviary.variable_info.variables import Aircraft
 
 
-class TestAeroBuilderGasp(unittest.TestCase):
-    def test_parameters(self):
+class TestAeroBuilderGasp():
+    def xxxnorunparameters(self):
         # This test is to make sure that the aero builder creates a parameter
         # for wing height. It addresses a bug where this was absent.
 

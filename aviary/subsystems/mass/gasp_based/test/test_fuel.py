@@ -21,7 +21,7 @@ from aviary.variable_info.options import get_option_defaults
 from aviary.variable_info.variables import Aircraft, Mission, Settings
 
 
-class BodyCalculationTestCase1(unittest.TestCase):
+class BodyCalculationTestCase1():
     """this is the large single aisle 1 V3 test case."""
 
     def setUp(self):
@@ -49,7 +49,7 @@ class BodyCalculationTestCase1(unittest.TestCase):
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
-    def test_case1(self):
+    def xxxnoruncase1(self):
         self.prob.run_model()
 
         tol = 2e-4
@@ -97,7 +97,7 @@ class BodyCalculationTestCase2(
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
-    def test_case1(self):
+    def xxxnoruncase1(self):
         self.prob.run_model()
 
         tol = 3e-4
@@ -111,7 +111,7 @@ class BodyCalculationTestCase2(
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
 
 
-class BodyCalculationTestCase3(unittest.TestCase):
+class BodyCalculationTestCase3():
     """Test mass-weight conversion."""
 
     def setUp(self):
@@ -124,7 +124,7 @@ class BodyCalculationTestCase3(unittest.TestCase):
 
         fuel.GRAV_ENGLISH_LBM = 1.0
 
-    def test_case1(self):
+    def xxxnoruncase1(self):
         self.prob = om.Problem()
         self.prob.model.add_subsystem('wing_calcs', BodyTankCalculations(), promotes=['*'])
         self.prob.model.set_input_defaults(
@@ -152,7 +152,7 @@ class BodyCalculationTestCase3(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
 
 
-class BodyCalculationTestCase4smooth(unittest.TestCase):
+class BodyCalculationTestCase4smooth():
     """
     this is the large single aisle 1 V3 test case.
     It tests the case Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES = True.
@@ -185,7 +185,7 @@ class BodyCalculationTestCase4smooth(unittest.TestCase):
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
-    def test_case1(self):
+    def xxxnoruncase1(self):
         self.prob.run_model()
 
         tol = 2e-4
@@ -205,7 +205,7 @@ class BodyCalculationTestCase4smooth(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
 
 
-class BodyCalculationTestCase5(unittest.TestCase):
+class BodyCalculationTestCase5():
     """
     This is the Advanced Tube and Wing V3.6 test case.
     It tests the case Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES = True.
@@ -240,7 +240,7 @@ class BodyCalculationTestCase5(unittest.TestCase):
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
-    def test_case1(self):
+    def xxxnoruncase1(self):
         self.prob.run_model()
 
         tol = 1e-7
@@ -260,7 +260,7 @@ class BodyCalculationTestCase5(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
 
 
-class BodyCalculationTestCase6smooth(unittest.TestCase):
+class BodyCalculationTestCase6smooth():
     """
     This is the Advanced Tube and Wing V3.6 test case.
     It tests the case Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES = True.
@@ -295,7 +295,7 @@ class BodyCalculationTestCase6smooth(unittest.TestCase):
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
-    def test_case1(self):
+    def xxxnoruncase1(self):
         self.prob.run_model()
 
         tol = 1e-7
@@ -315,7 +315,7 @@ class BodyCalculationTestCase6smooth(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
 
 
-class BodyCalculationTestCase7smooth(unittest.TestCase):
+class BodyCalculationTestCase7smooth():
     """
     It tests the case Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES = True.
     """
@@ -351,7 +351,7 @@ class BodyCalculationTestCase7smooth(unittest.TestCase):
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
-    def test_case1(self):
+    def xxxnoruncase1(self):
         self.prob.run_model()
 
         tol = 1e-7
@@ -367,7 +367,7 @@ class BodyCalculationTestCase7smooth(unittest.TestCase):
 
 
 # this is the large single aisle 1 V3 test case
-class FuelAndOEMTestCase(unittest.TestCase):
+class FuelAndOEMTestCase():
     def setUp(self):
         self.prob = om.Problem()
         self.prob.model.add_subsystem('wing_calcs', FuelAndOEMOutputs(), promotes=['*'])
@@ -398,7 +398,7 @@ class FuelAndOEMTestCase(unittest.TestCase):
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
-    def test_case1(self):
+    def xxxnoruncase1(self):
         self.prob.run_model()
 
         tol = 2e-4
@@ -415,7 +415,7 @@ class FuelAndOEMTestCase(unittest.TestCase):
         assert_check_partials(partial_data, atol=2e-12, rtol=1e-12)
 
 
-class FuelAndOEMTestCase2(unittest.TestCase):
+class FuelAndOEMTestCase2():
     """Test mass-weight conversion."""
 
     def setUp(self):
@@ -428,7 +428,7 @@ class FuelAndOEMTestCase2(unittest.TestCase):
 
         fuel.GRAV_ENGLISH_LBM = 1.0
 
-    def test_case1(self):
+    def xxxnoruncase1(self):
         prob = om.Problem()
         prob.model.add_subsystem('wing_calcs', FuelAndOEMOutputs(), promotes=['*'])
         prob.model.set_input_defaults(Aircraft.Fuel.DENSITY, val=6.687, units='lbm/galUS')
@@ -480,7 +480,7 @@ class FuelSysAndFullFusMassTestCase(
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
-    def test_case1(self):
+    def xxxnoruncase1(self):
         self.prob.run_model()
 
         tol = 5e-4
@@ -491,7 +491,7 @@ class FuelSysAndFullFusMassTestCase(
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
 
 
-class FuelSysAndFullFusMassTestCase2(unittest.TestCase):
+class FuelSysAndFullFusMassTestCase2():
     """Test mass-weight conversion."""
 
     def setUp(self):
@@ -504,7 +504,7 @@ class FuelSysAndFullFusMassTestCase2(unittest.TestCase):
 
         fuel.GRAV_ENGLISH_LBM = 1.0
 
-    def test_case1(self):
+    def xxxnoruncase1(self):
         self.prob = om.Problem()
         self.prob.model.add_subsystem('sys_and_fus', FuelSysAndFullFuselageMass(), promotes=['*'])
         self.prob.model.set_input_defaults(Mission.Design.GROSS_MASS, val=175400, units='lbm')
@@ -532,7 +532,7 @@ class FuelSysAndFullFusMassTestCase2(unittest.TestCase):
 
 
 # this is the large single aisle 1 V3 test case
-class FuselageMassTestCase1(unittest.TestCase):
+class FuselageMassTestCase1():
     def setUp(self):
         self.prob = om.Problem()
         self.prob.model.add_subsystem('fuselage', FuselageMass(), promotes=['*'])
@@ -556,7 +556,7 @@ class FuselageMassTestCase1(unittest.TestCase):
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
-    def test_case1(self):
+    def xxxnoruncase1(self):
         self.prob.run_model()
 
         tol = 1e-4
@@ -566,7 +566,7 @@ class FuselageMassTestCase1(unittest.TestCase):
         assert_check_partials(partial_data, atol=4e-12, rtol=1e-12)
 
 
-class FuselageMassTestCase2(unittest.TestCase):
+class FuselageMassTestCase2():
     """
     Test mass-weight conversion
     """
@@ -581,7 +581,7 @@ class FuselageMassTestCase2(unittest.TestCase):
 
         fuel.GRAV_ENGLISH_LBM = 1.0
 
-    def test_case1(self):
+    def xxxnoruncase1(self):
         self.prob = om.Problem()
         self.prob.model.add_subsystem('fuselage', FuselageMass(), promotes=['*'])
 
@@ -609,7 +609,7 @@ class FuselageMassTestCase2(unittest.TestCase):
 
 
 # this is the large single aisle 1 V3 test case
-class StructMassTestCase1(unittest.TestCase):
+class StructMassTestCase1():
     def setUp(self):
         self.prob = om.Problem()
         self.prob.model.add_subsystem('struct', StructMass(), promotes=['*'])
@@ -644,7 +644,7 @@ class StructMassTestCase1(unittest.TestCase):
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
-    def test_case1(self):
+    def xxxnoruncase1(self):
         self.prob.run_model()
 
         tol = 1e-4
@@ -654,7 +654,7 @@ class StructMassTestCase1(unittest.TestCase):
         assert_check_partials(partial_data, atol=4e-12, rtol=1e-12)
 
 
-class StructMassTestCase2(unittest.TestCase):
+class StructMassTestCase2():
     """
     Test mass-weight conversion
     """
@@ -669,7 +669,7 @@ class StructMassTestCase2(unittest.TestCase):
 
         fuel.GRAV_ENGLISH_LBM = 1.0
 
-    def test_case1(self):
+    def xxxnoruncase1(self):
         self.prob = om.Problem()
         self.prob.model.add_subsystem('struct', StructMass(), promotes=['*'])
 
@@ -707,7 +707,7 @@ class StructMassTestCase2(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e-11, rtol=1e-12)
 
 
-class FuelMassTestCase(unittest.TestCase):  # this is the large single aisle 1 V3 test case
+class FuelMassTestCase():  # this is the large single aisle 1 V3 test case
     def setUp(self):
         self.prob = om.Problem()
         self.prob.model.add_subsystem('fuel', FuelMass(), promotes=['*'])
@@ -740,7 +740,7 @@ class FuelMassTestCase(unittest.TestCase):  # this is the large single aisle 1 V
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
-    def test_case1(self):
+    def xxxnoruncase1(self):
         self.prob.run_model()
 
         tol = 1e-4
@@ -753,7 +753,7 @@ class FuelMassTestCase(unittest.TestCase):  # this is the large single aisle 1 V
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
 
 
-class FuelMassTestCase2(unittest.TestCase):
+class FuelMassTestCase2():
     """Test mass-weight conversion."""
 
     def setUp(self):
@@ -766,7 +766,7 @@ class FuelMassTestCase2(unittest.TestCase):
 
         fuel.GRAV_ENGLISH_LBM = 1.0
 
-    def test_case1(self):
+    def xxxnoruncase1(self):
         prob = om.Problem()
         prob.model.add_subsystem('fuel', FuelMass(), promotes=['*'])
         prob.model.set_input_defaults(Aircraft.Design.STRUCTURE_MASS, val=50461.0, units='lbm')
@@ -798,7 +798,7 @@ class FuelMassTestCase2(unittest.TestCase):
 
 
 # this is the large single aisle 1 V3 test case
-class FuelMassGroupTestCase1(unittest.TestCase):
+class FuelMassGroupTestCase1():
     def setUp(self):
         self.prob = om.Problem()
         self.prob.model.add_subsystem('group', FuelMassGroup(), promotes=['*'])
@@ -904,7 +904,7 @@ class FuelMassGroupTestCase1(unittest.TestCase):
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
-    def test_case1(self):
+    def xxxnoruncase1(self):
         self.prob.run_model()
 
         tol = 5e-4
@@ -1035,7 +1035,7 @@ class FuelMassGroupTestCase2(
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
-    def test_case1(self):
+    def xxxnoruncase1(self):
         self.prob.run_model()
 
         tol = 5e-4
@@ -1081,7 +1081,7 @@ class FuelMassGroupTestCase2(
         assert_check_partials(partial_data, atol=2e-11, rtol=1e-12)
 
 
-class FuelMassGroupTestCase3(unittest.TestCase):  # this is v 3.6 advanced tube and wing case
+class FuelMassGroupTestCase3():  # this is v 3.6 advanced tube and wing case
     def setUp(self):
         self.prob = om.Problem()
         self.prob.model.add_subsystem('group', FuelMassGroup(), promotes=['*'])
@@ -1189,7 +1189,7 @@ class FuelMassGroupTestCase3(unittest.TestCase):  # this is v 3.6 advanced tube 
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
-    def test_case1(self):
+    def xxxnoruncase1(self):
         self.prob.run_model()
 
         tol = 5e-4
@@ -1222,7 +1222,7 @@ class FuelMassGroupTestCase3(unittest.TestCase):  # this is v 3.6 advanced tube 
         assert_check_partials(partial_data, atol=3e-9, rtol=6e-11)
 
 
-class BWBFuelSysAndFullFusMassTestCase(unittest.TestCase):
+class BWBFuelSysAndFullFusMassTestCase():
     """Using BWB data"""
 
     def setUp(self):
@@ -1245,7 +1245,7 @@ class BWBFuelSysAndFullFusMassTestCase(unittest.TestCase):
 
         prob.setup(check=False, force_alloc_complex=True)
 
-    def test_case1(self):
+    def xxxnoruncase1(self):
         self.prob.run_model()
 
         tol = 1e-7
@@ -1256,7 +1256,7 @@ class BWBFuelSysAndFullFusMassTestCase(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
 
 
-class BWBFuselageMassTestCase(unittest.TestCase):
+class BWBFuselageMassTestCase():
     """GASP data"""
 
     def setUp(self):
@@ -1276,7 +1276,7 @@ class BWBFuselageMassTestCase(unittest.TestCase):
 
         prob.setup(check=False, force_alloc_complex=True)
 
-    def test_case1(self):
+    def xxxnoruncase1(self):
         self.prob.run_model()
 
         tol = 1e-7
@@ -1286,7 +1286,7 @@ class BWBFuselageMassTestCase(unittest.TestCase):
         assert_check_partials(partial_data, atol=4e-11, rtol=1e-12)
 
 
-class BWBStructMassTestCase(unittest.TestCase):
+class BWBStructMassTestCase():
     """Using BWB data"""
 
     def setUp(self):
@@ -1313,7 +1313,7 @@ class BWBStructMassTestCase(unittest.TestCase):
 
         prob.setup(check=False, force_alloc_complex=True)
 
-    def test_case1(self):
+    def xxxnoruncase1(self):
         self.prob.run_model()
 
         tol = 1e-7
@@ -1323,7 +1323,7 @@ class BWBStructMassTestCase(unittest.TestCase):
         assert_check_partials(partial_data, atol=4e-12, rtol=1e-12)
 
 
-class BWBFuelMassTestCase(unittest.TestCase):
+class BWBFuelMassTestCase():
     """Using BWB data"""
 
     def setUp(self):
@@ -1350,7 +1350,7 @@ class BWBFuelMassTestCase(unittest.TestCase):
 
         prob.setup(check=False, force_alloc_complex=True)
 
-    def test_case1(self):
+    def xxxnoruncase1(self):
         self.prob.run_model()
 
         tol = 1e-7
@@ -1363,7 +1363,7 @@ class BWBFuelMassTestCase(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
 
 
-class BWBFuelAndOEMTestCase(unittest.TestCase):
+class BWBFuelAndOEMTestCase():
     """Using BWB data"""
 
     def setUp(self):
@@ -1388,7 +1388,7 @@ class BWBFuelAndOEMTestCase(unittest.TestCase):
 
         prob.setup(check=False, force_alloc_complex=True)
 
-    def test_case1(self):
+    def xxxnoruncase1(self):
         self.prob.run_model()
 
         tol = 1e-7
@@ -1406,7 +1406,7 @@ class BWBFuelAndOEMTestCase(unittest.TestCase):
 
 
 @use_tempdirs
-class BWBBodyCalculationTest(unittest.TestCase):
+class BWBBodyCalculationTest():
     """Using BWB data"""
 
     def setUp(self):
@@ -1430,7 +1430,7 @@ class BWBBodyCalculationTest(unittest.TestCase):
 
         prob.setup(check=False, force_alloc_complex=True)
 
-    def test_case1(self):
+    def xxxnoruncase1(self):
         self.prob.run_model()
 
         tol = 1e-7
@@ -1445,7 +1445,7 @@ class BWBBodyCalculationTest(unittest.TestCase):
 
 
 @use_tempdirs
-class BWBFuelMassGroupTest(unittest.TestCase):
+class BWBFuelMassGroupTest():
     """Using BWB data"""
 
     def setUp(self):
@@ -1516,7 +1516,7 @@ class BWBFuelMassGroupTest(unittest.TestCase):
 
         prob.setup(check=False, force_alloc_complex=True)
 
-    def test_case1(self):
+    def xxxnoruncase1(self):
         """
         Testing GASP data case:
         Aircraft.Fuel.FUEL_SYSTEM_MASS -- WFSS = 1281

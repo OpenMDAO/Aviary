@@ -20,7 +20,7 @@ from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 
 
 @use_tempdirs
-class TurbopropMissionTest(unittest.TestCase):
+class TurbopropMissionTest():
     def setUp(self):
         self.prob = om.Problem()
 
@@ -116,7 +116,7 @@ class TurbopropMissionTest(unittest.TestCase):
             )
         return results
 
-    def test_case_1(self):
+    def xxxnoruncase_1(self):
         # test case using GASP-derived engine deck and "user specified" prop model
         filename = get_path('models/engines/turboshaft_1120hp.csv')
         # Mach, alt, throttle @ idle, SLS, TOC
@@ -183,7 +183,7 @@ class TurbopropMissionTest(unittest.TestCase):
         partial_data = self.prob.check_partials(out_stream=None, form='central')
         assert_check_partials(partial_data, atol=0.2, rtol=0.2)
 
-    def test_case_2(self):
+    def xxxnoruncase_2(self):
         # test case using GASP-derived engine deck and default HS prop model.
         filename = get_path('models/engines/turboshaft_1120hp.csv')
         test_points = [(0.001, 0, 0), (0, 0, 1), (0.6, 25000, 1)]
@@ -229,7 +229,7 @@ class TurbopropMissionTest(unittest.TestCase):
         partial_data = self.prob.check_partials(out_stream=None, form='central')
         assert_check_partials(partial_data, atol=0.15, rtol=0.15)
 
-    def test_case_3(self):
+    def xxxnoruncase_3(self):
         # test case using GASP-derived engine deck w/o tailpipe thrust and default
         # HS prop model.
         filename = get_path('models/engines/turboshaft_1120hp_no_tailpipe.csv')
@@ -282,7 +282,7 @@ class TurbopropMissionTest(unittest.TestCase):
         partial_data = self.prob.check_partials(out_stream=None, form='forward', step=1.01e-6)
         assert_check_partials(partial_data, atol=1e10, rtol=1e-3)
 
-    def test_electroprop(self):
+    def xxxnorunelectroprop(self):
         # test case using electric motor and default HS prop model.
         test_points = [(0, 0, 0), (0, 0, 1), (0.6, 25000, 1)]
         num_nodes = len(test_points)

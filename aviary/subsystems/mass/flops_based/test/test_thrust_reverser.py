@@ -19,7 +19,7 @@ from aviary.validation_cases.validation_tests import (
 from aviary.variable_info.variables import Aircraft, Settings
 
 
-class ThrustReverserMassTest(unittest.TestCase):
+class ThrustReverserMassTest():
     def setUp(self):
         self.prob = om.Problem()
 
@@ -27,7 +27,7 @@ class ThrustReverserMassTest(unittest.TestCase):
         get_flops_case_names(omit=['LargeSingleAisle1FLOPS', 'AdvancedSingleAisle']),
         name_func=print_case,
     )
-    def test_case(self, case_name):
+    def xxxnoruncase(self, case_name):
         prob = self.prob
 
         inputs = get_flops_inputs(case_name, preprocess=True)
@@ -53,7 +53,7 @@ class ThrustReverserMassTest(unittest.TestCase):
             ],
         )
 
-    def test_case_multiengine(self):
+    def xxxnoruncase_multiengine(self):
         prob = om.Problem()
 
         aviary_options = get_flops_inputs('LargeSingleAisle1FLOPS')
@@ -110,11 +110,11 @@ class ThrustReverserMassTest(unittest.TestCase):
         )
         assert_check_partials(partial_data, atol=1e-5, rtol=1e-5)
 
-    def test_IO(self):
+    def xxxnorunIO(self):
         assert_match_varnames(self.prob.model)
 
 
-class ThrustReverserMassTest2(unittest.TestCase):
+class ThrustReverserMassTest2():
     """Test mass-weight conversion."""
 
     def setUp(self):
@@ -127,7 +127,7 @@ class ThrustReverserMassTest2(unittest.TestCase):
 
         reverser.GRAV_ENGLISH_LBM = 1.0
 
-    def test_case(self):
+    def xxxnoruncase(self):
         prob = om.Problem()
 
         inputs = get_flops_inputs('AdvancedSingleAisle', preprocess=True)

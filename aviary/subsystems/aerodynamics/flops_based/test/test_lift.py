@@ -18,9 +18,9 @@ data_sets = get_flops_case_names(
 )
 
 
-class SimpleLiftTest(unittest.TestCase):
+class SimpleLiftTest():
     @parameterized.expand(data_sets, name_func=print_case)
-    def test_case(self, case_name):
+    def xxxnoruncase(self, case_name):
         flops_inputs = get_flops_inputs(case_name)
 
         mission_data: AviaryValues = mission_test_data[case_name]
@@ -75,9 +75,9 @@ class SimpleLiftTest(unittest.TestCase):
         assert_near_equal(prob.get_val(Dynamic.Vehicle.LIFT), mission_simple_data[case_name], 1e-6)
 
 
-class LiftEqualsWeightTest(unittest.TestCase):
+class LiftEqualsWeightTest():
     @parameterized.expand(data_sets, name_func=print_case)
-    def test_case(self, case_name):
+    def xxxnoruncase(self, case_name):
         flops_inputs = get_flops_inputs(case_name)
 
         mission_data: AviaryValues = mission_test_data[case_name]

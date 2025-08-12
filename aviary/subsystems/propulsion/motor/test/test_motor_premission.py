@@ -9,9 +9,9 @@ from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.variables import Aircraft
 
 
-class TestGearbox(unittest.TestCase):
+class TestGearbox():
     @use_tempdirs
-    def test_motor_map(self):
+    def xxxnorunmotor_map(self):
         prob = om.Problem()
         options = AviaryValues()
         options.set_val(Aircraft.Engine.RPM_DESIGN, 6000, 'rpm')

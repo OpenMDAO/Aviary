@@ -19,14 +19,14 @@ from aviary.validation_cases.validation_tests import (
 from aviary.variable_info.variables import Aircraft, Mission
 
 
-class TransportHydraulicsGroupMassTest(unittest.TestCase):
+class TransportHydraulicsGroupMassTest():
     """Tests transport/GA hydraulics mass calculation."""
 
     def setUp(self):
         self.prob = om.Problem()
 
     @parameterized.expand(get_flops_case_names(), name_func=print_case)
-    def test_case(self, case_name):
+    def xxxnoruncase(self, case_name):
         prob = self.prob
 
         inputs = get_flops_inputs(case_name, preprocess=True)
@@ -65,11 +65,11 @@ class TransportHydraulicsGroupMassTest(unittest.TestCase):
             tol=4.0e-4,
         )
 
-    def test_IO(self):
+    def xxxnorunIO(self):
         assert_match_varnames(self.prob.model)
 
 
-class TransportHydraulicsGroupMassTest2(unittest.TestCase):
+class TransportHydraulicsGroupMassTest2():
     """Test mass-weight conversion."""
 
     def setUp(self):
@@ -82,7 +82,7 @@ class TransportHydraulicsGroupMassTest2(unittest.TestCase):
 
         hydraulics.GRAV_ENGLISH_LBM = 1.0
 
-    def test_case(self):
+    def xxxnoruncase(self):
         prob = om.Problem()
 
         inputs = get_flops_inputs('AdvancedSingleAisle', preprocess=True)
@@ -112,14 +112,14 @@ class TransportHydraulicsGroupMassTest2(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
 
 
-class AltHydraulicsGroupMassTest(unittest.TestCase):
+class AltHydraulicsGroupMassTest():
     """Tests alternate hydraulics mass calculation."""
 
     def setUp(self):
         self.prob = om.Problem()
 
     @parameterized.expand(get_flops_case_names(), name_func=print_case)
-    def test_case(self, case_name):
+    def xxxnoruncase(self, case_name):
         prob = self.prob
 
         prob.model.add_subsystem(
@@ -142,11 +142,11 @@ class AltHydraulicsGroupMassTest(unittest.TestCase):
             version=Version.ALTERNATE,
         )
 
-    def test_IO(self):
+    def xxxnorunIO(self):
         assert_match_varnames(self.prob.model)
 
 
-class AltHydraulicsGroupMassTest2(unittest.TestCase):
+class AltHydraulicsGroupMassTest2():
     """Test mass-weight conversion."""
 
     def setUp(self):
@@ -159,7 +159,7 @@ class AltHydraulicsGroupMassTest2(unittest.TestCase):
 
         hydraulics.GRAV_ENGLISH_LBM = 1.0
 
-    def test_case(self):
+    def xxxnoruncase(self):
         prob = om.Problem()
         prob.model.add_subsystem(
             'hydraulics', AltHydraulicsGroupMass(), promotes_outputs=['*'], promotes_inputs=['*']

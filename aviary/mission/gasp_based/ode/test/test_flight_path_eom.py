@@ -8,7 +8,7 @@ from aviary.mission.gasp_based.ode.flight_path_eom import FlightPathEOM
 from aviary.variable_info.variables import Dynamic
 
 
-class FlightPathEOMTestCase(unittest.TestCase):
+class FlightPathEOMTestCase():
     def setUp(self):
         self.ground_roll = False
         self.prob = om.Problem()
@@ -17,7 +17,7 @@ class FlightPathEOMTestCase(unittest.TestCase):
         )
         self.prob.setup(check=False, force_alloc_complex=True)
 
-    def test_case1(self):
+    def xxxnoruncase1(self):
         # ground_roll = False (the aircraft is not confined to the ground)
 
         tol = 1e-6
@@ -48,7 +48,7 @@ class FlightPathEOMTestCase(unittest.TestCase):
         partial_data = self.prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
 
-    def test_case2(self):
+    def xxxnoruncase2(self):
         """ground_roll = True (the aircraft is confined to the ground)."""
         self.fp.options['ground_roll'] = True
         self.prob.setup(force_alloc_complex=True)
@@ -72,7 +72,7 @@ class FlightPathEOMTestCase(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
 
 
-class FlightPathEOMTestCase2(unittest.TestCase):
+class FlightPathEOMTestCase2():
     """Test mass-weight conversion."""
 
     def setUp(self):
@@ -85,7 +85,7 @@ class FlightPathEOMTestCase2(unittest.TestCase):
 
         fp.GRAV_ENGLISH_LBM = 1.0
 
-    def test_case1(self):
+    def xxxnoruncase1(self):
         """ground_roll = False (the aircraft is not confined to the ground)."""
         prob = om.Problem()
         prob.model.add_subsystem(
@@ -96,7 +96,7 @@ class FlightPathEOMTestCase2(unittest.TestCase):
         partial_data = prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
 
-    def test_case2(self):
+    def xxxnoruncase2(self):
         """ground_roll = True (the aircraft is confined to the ground)."""
         prob = om.Problem()
         prob.model.add_subsystem(

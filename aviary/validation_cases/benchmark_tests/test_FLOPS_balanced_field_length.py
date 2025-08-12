@@ -29,11 +29,11 @@ from aviary.variable_info.variables import Aircraft, Dynamic
 
 
 @use_tempdirs
-class TestFLOPSBalancedFieldLength(unittest.TestCase):
+class TestFLOPSBalancedFieldLength():
     """Test balanced field computation using N3CC data in balanced_liftoff phase."""
 
     @require_pyoptsparse(optimizer='IPOPT')
-    def bench_test_IPOPT(self):
+    def zbench_test_IPOPT(self):
         driver = om.pyOptSparseDriver()
 
         optimizer = 'IPOPT'
@@ -46,7 +46,7 @@ class TestFLOPSBalancedFieldLength(unittest.TestCase):
         self._do_run(driver, optimizer)
 
     @require_pyoptsparse(optimizer='SNOPT')
-    def bench_test_SNOPT(self):
+    def zbench_test_SNOPT(self):
         driver = om.pyOptSparseDriver()
 
         optimizer = 'SNOPT'

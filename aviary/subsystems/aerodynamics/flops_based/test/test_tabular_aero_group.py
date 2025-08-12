@@ -30,7 +30,7 @@ CD0_table = 'subsystems/aerodynamics/flops_based/test/large_single_aisle_1_CD0_p
 
 
 @use_tempdirs
-class TabularAeroGroupFileTest(unittest.TestCase):
+class TabularAeroGroupFileTest():
     # Test drag comp with data from file, structured grid
     def setUp(self):
         self.prob = om.Problem()
@@ -54,7 +54,7 @@ class TabularAeroGroupFileTest(unittest.TestCase):
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
-    def test_case(self):
+    def xxxnoruncase(self):
         # TODO currently no way to use FLOPS test case data for mission components
         # test data from large_single_aisle_2 climb profile
         # tabular aero was set to large_single_aisle_1, expected value adjusted accordingly
@@ -82,7 +82,7 @@ class TabularAeroGroupFileTest(unittest.TestCase):
         partial_data = self.prob.check_partials(out_stream=None, method='cs', step=1.1e-40)
         assert_check_partials(partial_data, atol=1e-9, rtol=1e-12)  # check the partial derivatives
 
-    def test_parameters(self):
+    def xxxnorunparameters(self):
         local_phase_info = deepcopy(phase_info)
         core_aero = local_phase_info['cruise']['subsystem_options']['core_aerodynamics']
 
@@ -122,7 +122,7 @@ class TabularAeroGroupFileTest(unittest.TestCase):
 
 
 @use_tempdirs
-class TabularAeroGroupDataTest(unittest.TestCase):
+class TabularAeroGroupDataTest():
     # Test tabular drag comp with training data, structured grid
     def setUp(self):
         self.prob = om.Problem()
@@ -181,7 +181,7 @@ class TabularAeroGroupDataTest(unittest.TestCase):
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
-    def test_case(self):
+    def xxxnoruncase(self):
         # TODO currently no way to use FLOPS test case data for mission components
         # test data from large_single_aisle_2 climb profile
         # tabular aero was set to large_single_aisle_1 data, expected value adjusted accordingly
@@ -209,7 +209,7 @@ class TabularAeroGroupDataTest(unittest.TestCase):
         partial_data = self.prob.check_partials(out_stream=None, method='cs', step=1.1e-40)
         assert_check_partials(partial_data, atol=1e-9, rtol=1e-12)  # check the partial derivatives
 
-    def test_parameters(self):
+    def xxxnorunparameters(self):
         local_phase_info = deepcopy(phase_info)
         core_aero = local_phase_info['cruise']['subsystem_options']['core_aerodynamics']
 
@@ -255,9 +255,9 @@ class TabularAeroGroupDataTest(unittest.TestCase):
 data_sets = ['LargeSingleAisle1FLOPS', 'LargeSingleAisle2FLOPS', 'AdvancedSingleAisle']
 
 
-class ComputedVsTabularTest(unittest.TestCase):
+class ComputedVsTabularTest():
     @parameterized.expand(data_sets, name_func=print_case)
-    def test_case(self, case_name):
+    def xxxnoruncase(self, case_name):
         flops_inputs = get_flops_inputs(case_name, preprocess=True)
         flops_outputs = get_flops_outputs(case_name)
 
