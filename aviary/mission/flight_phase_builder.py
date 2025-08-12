@@ -79,7 +79,7 @@ class FlightPhaseOptions(AviaryOptionsDictionary):
             'control, which allows you to assign a value or let the optimizer choose it.'
         )
 
-        # Throttle is a solver variable, unless you set throttle_enforcement to design_var.
+        # Throttle is a solver variable, unless you set throttle_enforcement to control.
         defaults = {
             'throttle_bounds': (0.0, 1.0),
         }
