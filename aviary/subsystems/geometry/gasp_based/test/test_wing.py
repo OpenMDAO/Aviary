@@ -2,6 +2,7 @@ import unittest
 
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
+from openmdao.utils.testing_utils import use_tempdirs
 
 from aviary.subsystems.geometry.gasp_based.wing import (
     BWBWingVolume,
@@ -483,41 +484,6 @@ class WingFoldVolumeTestCase1(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e-11, rtol=1e-12)
 
 
-class WingFoldAreaTestCase2(unittest.TestCase):
-    def setUp(self):
-        options = get_option_defaults()
-        options.set_val(
-            Aircraft.Wing.FOLD_DIMENSIONAL_LOCATION_SPECIFIED, val=True, units='unitless'
-        )
-
-        self.prob = om.Problem()
-        self.prob.model.add_subsystem(
-            'group',
-            WingFoldArea(),
-            promotes=['*'],
-        )
-
-        self.prob.model.set_input_defaults(Aircraft.Wing.TAPER_RATIO, 0.33, units='unitless')
-        self.prob.model.set_input_defaults(
-            Aircraft.Wing.FOLDED_SPAN, val=25, units='ft'
-        )  # not actual GASP value
-        self.prob.model.set_input_defaults(Aircraft.Wing.AREA, val=1370.3, units='ft**2')
-        self.prob.model.set_input_defaults(Aircraft.Wing.SPAN, val=117.8, units='ft')
-
-        setup_model_options(self.prob, options)
-
-        self.prob.setup(check=False, force_alloc_complex=True)
-
-    def test_case1(self):
-        self.prob.run_model()
-
-        tol = 1e-4
-
-        assert_near_equal(
-            self.prob[Aircraft.Wing.FOLDING_AREA], 964.0812219, tol
-        )  # not actual GASP value
-
-
 class WingFoldVolumeTestCase2(unittest.TestCase):
     def setUp(self):
         options = get_option_defaults()
@@ -571,6 +537,7 @@ class WingFoldVolumeTestCase2(unittest.TestCase):
         assert_check_partials(partial_data, atol=2e-12, rtol=1e-12)
 
 
+@use_tempdirs
 class BWBWingFoldVolumeTestCase1(unittest.TestCase):
     """
     Test against GASP BWB model, CHOOSE_FOLD_LOCATION = False
@@ -613,6 +580,7 @@ class BWBWingFoldVolumeTestCase1(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e-11, rtol=1e-12)
 
 
+@use_tempdirs
 class BWBWingFoldVolumeTestCase2(unittest.TestCase):
     """
     Test against GASP BWB model, CHOOSE_FOLD_LOCATION = True
@@ -654,6 +622,7 @@ class BWBWingFoldVolumeTestCase2(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e-11, rtol=1e-12)
 
 
+@use_tempdirs
 class WingGroupTestCase1(unittest.TestCase):
     """
     actual GASP test case, input and output values based on large single aisle 1 v3 without bug fix
@@ -706,6 +675,7 @@ class WingGroupTestCase1(unittest.TestCase):
         assert_check_partials(partial_data, atol=2e-12, rtol=1e-12)
 
 
+@use_tempdirs
 class WingGroupTestCase2(unittest.TestCase):
     """
     Wing with both folds and struts which has fold dimensional location and strut dimensional location specified
@@ -774,20 +744,18 @@ class WingGroupTestCase2(unittest.TestCase):
         )  # this is slightly different from the GASP output value, likely due to rounding error
 
         assert_near_equal(
-            self.prob['fold_vol.nonfolded_taper_ratio'], 0.9943133, tol
+            self.prob['nonfolded_taper_ratio'], 0.9943133, tol
         )  # not actual GASP value
         assert_near_equal(
             self.prob[Aircraft.Wing.FOLDING_AREA], 1352.8724859, tol
         )  # not actual GASP value
         assert_near_equal(
-            self.prob['fold_vol.nonfolded_wing_area'], 17.4400141, tol
+            self.prob['nonfolded_wing_area'], 17.4400141, tol
         )  # not actual GASP value
         assert_near_equal(
-            self.prob['fold_vol.tc_ratio_mean_folded'], 0.14987269, tol
+            self.prob['tc_ratio_mean_folded'], 0.14987269, tol
         )  # not actual GASP value
-        assert_near_equal(
-            self.prob['fold_vol.nonfolded_AR'], 0.0573394, tol
-        )  # not actual GASP value
+        assert_near_equal(self.prob['nonfolded_AR'], 0.0573394, tol)  # not actual GASP value
         assert_near_equal(
             self.prob[Aircraft.Fuel.WING_VOLUME_GEOMETRIC_MAX], 18.26837098, tol
         )  # not actual GASP value
@@ -801,6 +769,7 @@ class WingGroupTestCase2(unittest.TestCase):
         assert_check_partials(partial_data, atol=7e-12, rtol=1e-12)
 
 
+@use_tempdirs
 class WingGroupTestCase3(unittest.TestCase):
     """
     Wing with folds which has dimensional location specified.
@@ -864,20 +833,18 @@ class WingGroupTestCase3(unittest.TestCase):
         )  # this is slightly different from the GASP output value, likely due to rounding error
 
         assert_near_equal(
-            self.prob['fold_vol.nonfolded_taper_ratio'], 0.85780985, tol
+            self.prob['nonfolded_taper_ratio'], 0.85780985, tol
         )  # not actual GASP value
         assert_near_equal(
             self.prob[Aircraft.Wing.FOLDING_AREA], 964.14982163, tol
         )  # not actual GASP value
         assert_near_equal(
-            self.prob['fold_vol.nonfolded_wing_area'], 406.16267837, tol
+            self.prob['nonfolded_wing_area'], 406.16267837, tol
         )  # not actual GASP value
         assert_near_equal(
-            self.prob['fold_vol.tc_ratio_mean_folded'], 0.14681715, tol
+            self.prob['tc_ratio_mean_folded'], 0.14681715, tol
         )  # not actual GASP value
-        assert_near_equal(
-            self.prob['fold_vol.nonfolded_AR'], 1.5387923, tol
-        )  # not actual GASP value
+        assert_near_equal(self.prob['nonfolded_AR'], 1.5387923, tol)  # not actual GASP value
         assert_near_equal(
             self.prob[Aircraft.Fuel.WING_VOLUME_GEOMETRIC_MAX], 406.64971668264957, tol
         )  # not actual GASP value
@@ -886,6 +853,7 @@ class WingGroupTestCase3(unittest.TestCase):
         assert_check_partials(partial_data, atol=2e-12, rtol=1e-12)
 
 
+@use_tempdirs
 class WingGroupTestCase4(unittest.TestCase):
     """
     Wing with both folds and struts which has fold dimensional location and strut dimensional location specified.
@@ -945,11 +913,11 @@ class WingGroupTestCase4(unittest.TestCase):
         assert_near_equal(self.prob[Aircraft.Wing.AVERAGE_CHORD], 11.7430, tol)
         assert_near_equal(self.prob[Aircraft.Wing.ROOT_CHORD], 15.4789, tol)
         assert_near_equal(self.prob[Aircraft.Wing.THICKNESS_TO_CHORD_UNWEIGHTED], 0.1067, tol)
-        assert_near_equal(self.prob['fold_vol.nonfolded_taper_ratio'], 0.9939, tol)
+        assert_near_equal(self.prob['nonfolded_taper_ratio'], 0.9939, tol)
         assert_near_equal(self.prob[Aircraft.Wing.FOLDING_AREA], 1171.2684, tol)
-        assert_near_equal(self.prob['fold_vol.nonfolded_wing_area'], 16.2316, tol)
-        assert_near_equal(self.prob['fold_vol.tc_ratio_mean_folded'], 0.10995, tol)
-        assert_near_equal(self.prob['fold_vol.nonfolded_AR'], 0.06161, tol)
+        assert_near_equal(self.prob['nonfolded_wing_area'], 16.2316, tol)
+        assert_near_equal(self.prob['tc_ratio_mean_folded'], 0.10995, tol)
+        assert_near_equal(self.prob['nonfolded_AR'], 0.06161, tol)
         assert_near_equal(self.prob[Aircraft.Fuel.WING_VOLUME_GEOMETRIC_MAX], 11.61131, tol)
         assert_near_equal(self.prob[Aircraft.Strut.LENGTH], 11.18034, tol)
         assert_near_equal(self.prob[Aircraft.Strut.CHORD], 10.62132, tol)
@@ -958,6 +926,7 @@ class WingGroupTestCase4(unittest.TestCase):
         assert_check_partials(partial_data, atol=3e-12, rtol=1e-13)
 
 
+@use_tempdirs
 class WingGroupTestCase5(unittest.TestCase):
     """
     Wing with struts which has dimentional location specified.
@@ -1038,6 +1007,7 @@ class WingGroupTestCase5(unittest.TestCase):
         assert_check_partials(partial_data, atol=2e-12, rtol=1e-12)
 
 
+@use_tempdirs
 class BWBWingGroupTestCase1(unittest.TestCase):
     """
     actual GASP test case, input and output values based on large single aisle 1 v3 without bug fix

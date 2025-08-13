@@ -137,7 +137,8 @@ class Aircraft:
         COCKPIT_CONTROL_MASS_COEFFICIENT = 'aircraft:design:cockpit_control_mass_coefficient'
         COMPUTE_HTAIL_VOLUME_COEFF = 'aircraft:design:compute_htail_volume_coeff'
         COMPUTE_VTAIL_VOLUME_COEFF = 'aircraft:design:compute_vtail_volume_coeff'
-        DRAG_COEFFICIENT_INCREMENT = 'aircraft:design:drag_increment'
+        DRAG_COEFFICIENT_INCREMENT = 'aircraft:design:drag_coeff_increment'
+        DRAG_DIVERGENCE_SHIFT = 'aircraft:design:drag_divergence_shift'
         DRAG_POLAR = 'aircraft:design:drag_polar'
 
         EMERGENCY_EQUIPMENT_MASS = 'aircraft:design:emergency_equipment_mass'
@@ -176,8 +177,6 @@ class Aircraft:
         STRUCTURE_MASS = 'aircraft:design:structure_mass'
 
         SUBSONIC_DRAG_COEFF_FACTOR = 'aircraft:design:subsonic_drag_coeff_factor'
-
-        SUPERCRITICAL_DIVERGENCE_SHIFT = 'aircraft:design:supercritical_drag_shift'
 
         SUPERSONIC_DRAG_COEFF_FACTOR = 'aircraft:design:supersonic_drag_coeff_factor'
 
@@ -327,7 +326,9 @@ class Aircraft:
         LAMINAR_FLOW_UPPER = 'aircraft:fuselage:laminar_flow_upper'
         LENGTH = 'aircraft:fuselage:length'
         LENGTH_TO_DIAMETER = 'aircraft:fuselage:length_to_diameter'
-        LIFT_COEFFICENT_RATIO_BODY_TO_WING = 'aircraft:fuselage:lift_coefficient_ratio_body_to_wing'
+        LIFT_COEFFICIENT_RATIO_BODY_TO_WING = (
+            'aircraft:fuselage:lift_coefficient_ratio_body_to_wing'
+        )
         LIFT_CURVE_SLOPE_MACH0 = 'aircraft:fuselage:lift_curve_slope_mach0'
         MASS = 'aircraft:fuselage:mass'
         MASS_COEFFICIENT = 'aircraft:fuselage:mass_coefficient'
@@ -800,5 +801,6 @@ class Settings:
     AERODYNAMICS_METHOD = 'settings:aerodynamics_method'
     EQUATIONS_OF_MOTION = 'settings:equations_of_motion'
     MASS_METHOD = 'settings:mass_method'
+    PAYLOAD_RANGE = 'settings:payload_range'
     PROBLEM_TYPE = 'settings:problem_type'
     VERBOSITY = 'settings:verbosity'

@@ -415,8 +415,9 @@ class FormFactorAndSIWB(om.ExplicitComponent):
         add_aviary_input(self, Aircraft.Fuselage.LENGTH, units='ft', desc='ELF')
         add_aviary_input(self, Aircraft.Wing.SPAN, units='ft', desc='B')
 
-        self.add_output(
-            'body_form_factor',
+        add_aviary_output(
+            self,
+            Aircraft.Fuselage.FORM_FACTOR,
             units='unitless',
             desc='FFFUS: fuselage form factor',
         )
@@ -428,7 +429,7 @@ class FormFactorAndSIWB(om.ExplicitComponent):
 
     def setup_partials(self):
         self.declare_partials(
-            'body_form_factor',
+            Aircraft.Fuselage.FORM_FACTOR,
             [
                 Aircraft.Fuselage.AVG_DIAMETER,
                 Aircraft.Fuselage.LENGTH,
@@ -449,7 +450,7 @@ class FormFactorAndSIWB(om.ExplicitComponent):
 
         # fuselage form drag factor
         fffus = 1 + 1.5 * (cabin_width / fus_len) ** 1.5 + 7 * (cabin_width / fus_len) ** 3
-        outputs['body_form_factor'] = fffus
+        outputs[Aircraft.Fuselage.FORM_FACTOR] = fffus
 
         # fuselage width over wing span
         wfob = cabin_width / wingspan
@@ -487,8 +488,8 @@ class FormFactorAndSIWB(om.ExplicitComponent):
             - 4 * 6.0606 * wfob**3 * cabin_width / wingspan**2
         )
 
-        J['body_form_factor', Aircraft.Fuselage.AVG_DIAMETER] = dfffus_dcabin_width
-        J['body_form_factor', Aircraft.Fuselage.LENGTH] = dfffus_dfus_len
+        J[Aircraft.Fuselage.FORM_FACTOR, Aircraft.Fuselage.AVG_DIAMETER] = dfffus_dcabin_width
+        J[Aircraft.Fuselage.FORM_FACTOR, Aircraft.Fuselage.LENGTH] = dfffus_dfus_len
         J['siwb', Aircraft.Fuselage.AVG_DIAMETER] = dsiwb_dcabin_width
         J['siwb', Aircraft.Wing.SPAN] = dsiwb_dwingspan
 
@@ -505,7 +506,7 @@ class BWBFormFactorAndSIWB(om.ExplicitComponent):
         add_aviary_input(self, Aircraft.Wing.SPAN, units='ft', desc='B')
 
         self.add_output(
-            'body_form_factor',
+            Aircraft.Fuselage.FORM_FACTOR,
             units='unitless',
             desc='FFFUS: fuselage form factor',
         )
@@ -517,7 +518,7 @@ class BWBFormFactorAndSIWB(om.ExplicitComponent):
 
     def setup_partials(self):
         self.declare_partials(
-            'body_form_factor',
+            Aircraft.Fuselage.FORM_FACTOR,
             [
                 Aircraft.Fuselage.HYDRAULIC_DIAMETER,
                 Aircraft.Fuselage.LENGTH,
@@ -538,7 +539,7 @@ class BWBFormFactorAndSIWB(om.ExplicitComponent):
 
         # fuselage form drag factor
         fffus = 1 + 1.5 * (diam / fus_len) ** 1.5 + 7 * (diam / fus_len) ** 3
-        outputs['body_form_factor'] = fffus
+        outputs[Aircraft.Fuselage.FORM_FACTOR] = fffus
 
         # hydraulic diameter over wing span
         wfob = diam / wingspan
@@ -575,8 +576,8 @@ class BWBFormFactorAndSIWB(om.ExplicitComponent):
             - 4 * 6.0606 * wfob**3 * diam / wingspan**2
         )
 
-        J['body_form_factor', Aircraft.Fuselage.HYDRAULIC_DIAMETER] = dfffus_ddiam
-        J['body_form_factor', Aircraft.Fuselage.LENGTH] = dfffus_dfus_len
+        J[Aircraft.Fuselage.FORM_FACTOR, Aircraft.Fuselage.HYDRAULIC_DIAMETER] = dfffus_ddiam
+        J[Aircraft.Fuselage.FORM_FACTOR, Aircraft.Fuselage.LENGTH] = dfffus_dfus_len
         J['siwb', Aircraft.Fuselage.HYDRAULIC_DIAMETER] = dsiwb_ddiam
         J['siwb', Aircraft.Wing.SPAN] = dsiwb_dwingspan
 
@@ -727,7 +728,12 @@ class AeroGeom(om.ExplicitComponent):
 
         add_aviary_input(self, Aircraft.Wing.FORM_FACTOR, units='unitless')
 
-        add_aviary_input(self, Aircraft.Fuselage.FORM_FACTOR, units='unitless')
+        add_aviary_input(
+            self,
+            Aircraft.Fuselage.FORM_FACTOR,
+            units='unitless',
+            desc='FFFUS: fuselage form drag factor',
+        )
 
         add_aviary_input(
             self, Aircraft.Nacelle.FORM_FACTOR, shape=num_engine_type, units='unitless'
@@ -791,9 +797,6 @@ class AeroGeom(om.ExplicitComponent):
             'interference_independent_of_shielded_area', units='unitless'
         )  # Is this used?
         (self.add_input('drag_loss_due_to_shielded_wing_area', units='unitless'),)  # Is this used?
-        self.add_input(
-            'body_form_factor', units='unitless', desc='FFFUS: fuselage form drag factor'
-        )
         self.add_input(
             'siwb',
             units='unitless',
@@ -960,7 +963,6 @@ class AeroGeom(om.ExplicitComponent):
             strut_chord,
             feintwf,
             areashieldwf,
-            fffus,
             siwb,
         ) = inputs.values()
         # skin friction coeff at Re = 10**7
@@ -1010,7 +1012,7 @@ class AeroGeom(om.ExplicitComponent):
 
         # flat plate equivalent areas
         # GASP uses different values of cf for wing, nacelle, fuselage, etc.
-        fef = ff_fus * fus_SA * cf * ffre * fffus + fe_fus_inc
+        fef = fus_SA * cf * ffre * ff_fus + fe_fus_inc
         few = ff_wing * wing_area * cf * fwre
         # TODO replace 2 with num_engines
         fen = 2 * ff_nac * nacelle_area * cf * fnre
@@ -1369,7 +1371,7 @@ class DragCoefClean(om.ExplicitComponent):
         self.add_input('CL', val=1.0, units='unitless', shape=nn, desc='Lift coefficient')
 
         # user inputs
-        add_aviary_input(self, Aircraft.Design.SUPERCRITICAL_DIVERGENCE_SHIFT, units='unitless')
+        add_aviary_input(self, Aircraft.Design.DRAG_DIVERGENCE_SHIFT, units='unitless')
         add_aviary_input(self, Aircraft.Design.SUBSONIC_DRAG_COEFF_FACTOR, units='unitless')
         add_aviary_input(self, Aircraft.Design.SUPERSONIC_DRAG_COEFF_FACTOR, units='unitless')
         add_aviary_input(self, Aircraft.Design.LIFT_DEPENDENT_DRAG_COEFF_FACTOR, units='unitless')
@@ -1400,7 +1402,7 @@ class DragCoefClean(om.ExplicitComponent):
             cols=ar,
             method='cs',
         )
-        self.declare_partials('CD', [Aircraft.Design.SUPERCRITICAL_DIVERGENCE_SHIFT], method='cs')
+        self.declare_partials('CD', [Aircraft.Design.DRAG_DIVERGENCE_SHIFT], method='cs')
 
     def compute(self, inputs, outputs):
         (

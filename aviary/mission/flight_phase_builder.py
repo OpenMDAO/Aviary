@@ -57,7 +57,6 @@ class FlightPhaseOptions(AviaryOptionsDictionary):
             'distance_ref': 1e6,
             'distance_defect_ref': 1e8,
             'distance_bounds': (0.0, None),
-            'mass_bounds': (0.0, None),
         }
         self.add_state_options('distance', units='m', defaults=defaults)
 
@@ -242,17 +241,6 @@ class FlightPhaseBase(PhaseBuilderBase):
         else:
             rate_targets = ['dh_dr']
             rate2_targets = ['d2h_dr2']
-
-        # TODO: How do we handle hard-coding all of this stuff? Should be in phase-info.
-        # ground_roll uses some hardcoded settings that overwrite user-provided ones
-        # if ground_roll:
-        #    control_dict['control_type'] = 'polynomial'
-        #    control_dict['order'] = 1
-        #    control_dict['val'] = 0
-        #    control_dict['opt'] = False
-        #    control_dict['fix_initial'] = fix_initial
-        #    control_dict['rate_targets'] = ['dh_dr']
-        #    control_dict['rate2_targets'] = ['d2h_dr2']
 
         self.add_control(
             'altitude',
