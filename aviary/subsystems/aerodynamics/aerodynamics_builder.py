@@ -142,9 +142,7 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
                 aero_group = ComputedAeroGroup(num_nodes=num_nodes, **kwargs)
 
             elif method == 'low_speed':
-                aero_group = TakeoffAeroGroup(
-                    num_nodes=num_nodes, aviary_options=aviary_inputs, **kwargs
-                )
+                aero_group = TakeoffAeroGroup(num_nodes=num_nodes, **kwargs)
 
             elif method == 'tabular':
                 aero_group = TabularAeroGroup(
@@ -622,15 +620,6 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
                     'GASP-based aero method is not one of the following: (cruise, '
                     'tabular_cruise, low_speed, tabular_low_speed)'
                 )
-
-            design_type = aviary_inputs.get_val(Aircraft.Design.TYPE)
-            from aviary.variable_info.enums import AircraftTypes
-            if design_type is AircraftTypes.BLENDED_WING_BODY:
-                all_vars.add(Aircraft.Fuselage.LIFT_CURVE_SLOPE_MACH0)
-                all_vars.add(Aircraft.Fuselage.HYDRAULIC_DIAMETER)
-                all_vars.add(Aircraft.Fuselage.PLANFORM_AREA)
-                all_vars.add(Aircraft.Wing.EXPOSED_AREA)
-                all_vars.add(Aircraft.Wing.ZERO_LIFT_ANGLE)
 
             for var in all_vars:
                 # TODO only checking core metadata here!!
