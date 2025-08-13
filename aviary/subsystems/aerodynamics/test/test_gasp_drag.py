@@ -22,7 +22,7 @@ class TestAeroBuilderGasp(unittest.TestCase):
         prob.load_inputs(
             'models/aircraft/test_aircraft/aircraft_for_bench_GwGm.csv',
             local_phase_info,
-            check=False
+            check=False,
         )
 
         # Change value just to be certain.

@@ -83,7 +83,9 @@ class GASPOverrideTestCase(unittest.TestCase):
         prob = self.prob
 
         # self.aviary_inputs.set_val(Aircraft.Fuselage.WETTED_AREA, val=4000, units="ft**2")
-        prob.model.aviary_inputs.set_val(Aircraft.Fuselage.WETTED_AREA_SCALER, val=0.5, units='unitless')
+        prob.model.aviary_inputs.set_val(
+            Aircraft.Fuselage.WETTED_AREA_SCALER, val=0.5, units='unitless'
+        )
 
         setup_model_options(prob, prob.model.aviary_inputs, prob.model.meta_data)
 
@@ -100,7 +102,9 @@ class GASPOverrideTestCase(unittest.TestCase):
         prob = self.prob
 
         prob.model.aviary_inputs.set_val(Aircraft.Fuselage.WETTED_AREA, val=4000, units='ft**2')
-        prob.model.aviary_inputs.set_val(Aircraft.Fuselage.WETTED_AREA_SCALER, val=0.5, units='unitless')
+        prob.model.aviary_inputs.set_val(
+            Aircraft.Fuselage.WETTED_AREA_SCALER, val=0.5, units='unitless'
+        )
 
         setup_model_options(prob, prob.model.aviary_inputs, prob.model.meta_data)
 

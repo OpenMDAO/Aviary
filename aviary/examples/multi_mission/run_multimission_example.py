@@ -3,12 +3,13 @@ Authors: Eliot Aretskin-Hariton, Kenneth Moore, Jutin Soni
 Multi Mission Optimization Example using Aviary.
 
 In this example, a monolithic optimization is created by instantiating two aviary groups
-using using multiple add_aviary_group() calls. Once those groups are setup and all of their 
-phases are linked together, we then promote GROSS_MASS, RANGE, and wing SWEEP from each of 
+using using multiple add_aviary_group() calls. Once those groups are setup and all of their
+phases are linked together, we then promote GROSS_MASS, RANGE, and wing SWEEP from each of
 those sub-groups (prob.model.mission1 and prob.model.mission2) up to prob.model so
-the optimizer can control them both with a single value. The fuel_burn results from each 
+the optimizer can control them both with a single value. The fuel_burn results from each
 of the mission1 and mission2 are summed and weighted to create the objective function.
 """
+
 import copy as copy
 
 import aviary.api as av
@@ -17,11 +18,12 @@ from aviary.validation_cases.validation_tests import get_flops_inputs
 from aviary.variable_info.enums import ProblemType
 from aviary.variable_info.variables import Aircraft, Mission, Settings
 
+
 def multi_mission_example():
     # fly the same mission twice with two different passenger loads
     phase_info_mission1 = copy.deepcopy(phase_info)
     phase_info_mission2 = copy.deepcopy(phase_info)
-    
+
     # get large single aisle values
     aviary_inputs_mission1 = get_flops_inputs('LargeSingleAisle2FLOPS')
 
@@ -58,7 +60,7 @@ def multi_mission_example():
 
     prob.promote_inputs(
         ['mission1', 'mission2'],
-        [   
+        [
             (Mission.Design.GROSS_MASS, 'Aircraft1:GROSS_MASS'),
             (Mission.Design.RANGE, 'Aircraft1:RANGE'),
             (Aircraft.Wing.SWEEP, 'Aircraft1:SWEEP'),
@@ -69,25 +71,24 @@ def multi_mission_example():
     # Design range sizing things like the avionics system
 
     prob.add_design_var_default(
-        'Aircraft1:GROSS_MASS', 
-        lower=10.0, 
-        upper=900e3, 
-        units='lbm', 
+        'Aircraft1:GROSS_MASS',
+        lower=10.0,
+        upper=900e3,
+        units='lbm',
         default_val=100000,
     )
     prob.add_design_var_default(
-        'Aircraft1:SWEEP', 
-        lower=23.0, 
-        upper=27.0, 
-        units='deg', 
+        'Aircraft1:SWEEP',
+        lower=23.0,
+        upper=27.0,
+        units='deg',
         default_val=25,
     )
     # This both adds the design variable AND sets the default value. This value can be over-written after-setup using set_val.
 
-
     prob.add_composite_objective(
-        ('mission1', Mission.Summary.FUEL_BURNED, 2), 
-        ('mission2', Mission.Summary.FUEL_BURNED, 1), 
+        ('mission1', Mission.Summary.FUEL_BURNED, 2),
+        ('mission2', Mission.Summary.FUEL_BURNED, 1),
         ref=1,
     )
     # Adds an objective where mission 1 is flown 2x more times than mission2
@@ -116,15 +117,17 @@ def multi_mission_example():
 
     return prob
 
+
 def print_mission_outputs(prob, outputs, mission_names):
     for var, units in outputs:
         for mission in mission_names:
             try:
                 value = prob.get_val(name=f'{mission}.{var}', units=units)
-                print(f"{mission}.{var} ({units}), {value}")
+                print(f'{mission}.{var} ({units}), {value}')
             except:
-                print(f"{var} was unavailable. Perhapse it has been promoted to the problem level?")
+                print(f'{var} was unavailable. Perhapse it has been promoted to the problem level?')
         print(' ')
+
 
 if __name__ == '__main__':
     prob = multi_mission_example()
@@ -145,9 +148,9 @@ if __name__ == '__main__':
         (Aircraft.CrewPayload.PASSENGER_PAYLOAD_MASS, 'lbm'),
         (Aircraft.CrewPayload.CARGO_MASS, 'lbm'),
         (Aircraft.CrewPayload.TOTAL_PAYLOAD_MASS, 'lbm'),
-        ]
-    
-    print_mission_outputs(prob, printoutputs,("mission1", "mission2"))
+    ]
+
+    print_mission_outputs(prob, printoutputs, ('mission1', 'mission2'))
 
     print('Objective Value (unitless): ', objective)
     print('Aircraft1:GROSS_MASS (lbm)', prob.get_val('Aircraft1:GROSS_MASS', units='lbm'))
@@ -155,9 +158,8 @@ if __name__ == '__main__':
 
     # If you notice differences in Aircraft.Design.EMPTY_MASS, your aircraft are not
     # mirroring eachother and there is some difference in configuration between the two aircraft.
-    # Aircraft.Design.EMPTY_MASS is the final dry mass summation from pre-mission. 
-    # You can use the following OpenMDAO commends below to list out and compare 
+    # Aircraft.Design.EMPTY_MASS is the final dry mass summation from pre-mission.
+    # You can use the following OpenMDAO commends below to list out and compare
     # the each individual mass from every subsystem on the aircraft
     # prob.model.mission1.list_vars(val=True, units=True, print_arrays=False)
     # prob.model.mission2.list_vars(val=True, units=True, print_arrays=False)
-    

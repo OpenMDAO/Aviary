@@ -204,7 +204,6 @@ def mission_report(prob, **kwargs):
     all_data = {}
     all_totals = {}
     for name, model in models.items():
-
         # read per-phase data from trajectory
         data = {}
         for idx, phase in enumerate(model.phase_info):  # TODO: redo for multimissions
@@ -245,9 +244,7 @@ def mission_report(prob, **kwargs):
         return
 
     with open(report_file, mode='w') as f:
-
         for name, model in models.items():
-
             data = all_data[name]
             totals = all_totals[name]
 
@@ -326,7 +323,6 @@ def input_check_report(prob, **kwargs):
 
     bare_inputs = all_ivc_prom
     for name, model in models.items():
-
         if multi_mission:
             aviary_inputs = model.aviary_inputs
         else:
@@ -337,8 +333,12 @@ def input_check_report(prob, **kwargs):
             bare_inputs = {v for v in bare_inputs if v.lstrip(f'{name}.') not in aviary_inputs}
 
     bare_hierarchy_inputs = {
-        v for v in bare_inputs if v.startswith('mission:') or v.startswith('aircraft:') or
-        '.mission:' in v or '.aircraft:' in v
+        v
+        for v in bare_inputs
+        if v.startswith('mission:')
+        or v.startswith('aircraft:')
+        or '.mission:' in v
+        or '.aircraft:' in v
     }
     bare_local_inputs = bare_inputs - bare_hierarchy_inputs
 
@@ -347,7 +347,6 @@ def input_check_report(prob, **kwargs):
         return
 
     with open(report_file, mode='w') as f:
-
         f.write('# Unspecified Hierarchy Variables\n')
         f.write(
             'These aviary inputs are unspecified in aviary_inputs, and may be using default values '

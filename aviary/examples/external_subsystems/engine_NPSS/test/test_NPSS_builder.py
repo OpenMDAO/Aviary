@@ -36,7 +36,7 @@ class AviaryNPSSTestCase(unittest.TestCase):
             meta_data=ExtendedMetaData,
             check=True,
         )
-        
+
         prob.build_model()
 
         prob.add_driver('SLSQP')

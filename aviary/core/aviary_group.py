@@ -118,7 +118,6 @@ class AviaryGroup(om.Group):
 
         # Temporarily add extra stuff here, probably patched soon
         if mission_method is HEIGHT_ENERGY:
-
             # Set a more appropriate solver for dymos when the phases are linked.
             if MPI and isinstance(self.traj.phases.linear_solver, om.PETScKrylov):
                 # When any phase is connected with input_initial = True, dymos puts
@@ -770,7 +769,8 @@ class AviaryGroup(om.Group):
         # Make dymos state outputs easy to access later
         self.add_subsystem(
             'state_output',
-            om.ExecComp(['mass_final = mass_in','time_final = time_in','range_final = range_in'],
+            om.ExecComp(
+                ['mass_final = mass_in', 'time_final = time_in', 'range_final = range_in'],
                 mass_in={'units': 'lbm'},
                 mass_final={'units': 'lbm'},
                 time_in={'units': 'min'},
@@ -781,7 +781,7 @@ class AviaryGroup(om.Group):
             promotes_outputs={
                 ('mass_final', Mission.Summary.FINAL_MASS),
                 ('time_final', Mission.Summary.FINAL_TIME),
-                ('range_final', Mission.Summary.RANGE)
+                ('range_final', Mission.Summary.RANGE),
             },
         )
 
@@ -1226,9 +1226,9 @@ class AviaryGroup(om.Group):
                 )
 
         elif self.mission_method in (
-            HEIGHT_ENERGY, 
-            TWO_DEGREES_OF_FREEDOM
-            ):  # TODO: This becomes generic as soon as SOLVED_2DOF is removed
+            HEIGHT_ENERGY,
+            TWO_DEGREES_OF_FREEDOM,
+        ):  # TODO: This becomes generic as soon as SOLVED_2DOF is removed
             # vehicle sizing problem
             # size the vehicle (via design GTOW) to meet a target range using all fuel
             # capacity
@@ -1318,7 +1318,7 @@ class AviaryGroup(om.Group):
 
                 self.add_constraint('gross_mass_resid', lower=0)
 
-            if self.mission_method is TWO_DEGREES_OF_FREEDOM:  
+            if self.mission_method is TWO_DEGREES_OF_FREEDOM:
                 # TODO: This should be moved into the problem configurator b/c it's 2DOF specific
                 # problem formulation to make the trajectory work
                 self.add_design_var(Mission.Takeoff.ASCENT_T_INITIAL, lower=0, upper=100, ref=30.0)

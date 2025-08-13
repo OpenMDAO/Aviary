@@ -552,7 +552,7 @@ def setup_model_options(
     if prefix is not None:
         prefix = f'{prefix}.'
     else:
-        prefix = '' # the original default value
+        prefix = ''  # the original default value
     prob.model_options[f'{prefix}*'] = extract_options(aviary_inputs, meta_data)
 
     # Multi-engines need to index into their options.
