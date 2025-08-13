@@ -768,21 +768,22 @@ class AviaryGroup(om.Group):
         )
 
         # Make dymos state outputs easy to access later
-        self.add_subsystem('state_output',
-                                   om.ExecComp(['mass_final = mass_in',
-                                               'time_final = time_in',
-                                               'range_final = range_in'],
-                                               mass_in={'units': 'lbm'},
-                                               mass_final={'units': 'lbm'},
-                                               time_in={'units': 'min'},
-                                               time_final={'units': 'min'},
-                                               range_in={'units': 'nmi'},
-                                               range_final={'units': 'nmi'},
-                                               ),
-                                               promotes_outputs={
-                                                   ('mass_final', Mission.Summary.FINAL_MASS),
-                                                   ('time_final', Mission.Summary.FINAL_TIME),
-                                                   ('range_final', Mission.Summary.RANGE)})
+        self.add_subsystem(
+            'state_output',
+            om.ExecComp(['mass_final = mass_in','time_final = time_in','range_final = range_in'],
+                mass_in={'units': 'lbm'},
+                mass_final={'units': 'lbm'},
+                time_in={'units': 'min'},
+                time_final={'units': 'min'},
+                range_in={'units': 'nmi'},
+                range_final={'units': 'nmi'},
+            ),
+            promotes_outputs={
+                ('mass_final', Mission.Summary.FINAL_MASS),
+                ('time_final', Mission.Summary.FINAL_TIME),
+                ('range_final', Mission.Summary.RANGE)
+            },
+        )
 
         self.configurator.add_post_mission_systems(self)
 
@@ -810,7 +811,7 @@ class AviaryGroup(om.Group):
 
         # Fuel burn in regular phases
         ecomp = om.ExecComp(
-            'fuel_burned = initial_mass - mass_final', # TODO: Fix to be difference in cumulative fuel burn
+            'fuel_burned = initial_mass - mass_final',  # TODO: Fix to be difference in cumulative fuel burn
             initial_mass={'units': 'lbm'},
             mass_final={'units': 'lbm'},
             fuel_burned={'units': 'lbm'},
@@ -845,7 +846,7 @@ class AviaryGroup(om.Group):
         # Fuel burn in reserve phases
         if self.reserve_phases:
             ecomp = om.ExecComp(
-                'reserve_fuel_burned = initial_mass - mass_final', # TODO: Fix to be different in cumulative fuel burn
+                'reserve_fuel_burned = initial_mass - mass_final',  # TODO: Fix to be different in cumulative fuel burn
                 initial_mass={'units': 'lbm'},
                 mass_final={'units': 'lbm'},
                 reserve_fuel_burned={'units': 'lbm'},
@@ -1015,9 +1016,7 @@ class AviaryGroup(om.Group):
             src_indices=[-1],
         )
         self.connect(
-            f'traj.{final_phase}.timeseries.time',
-            'state_output.time_in',
-            src_indices=[-1]
+            f'traj.{final_phase}.timeseries.time', 'state_output.time_in', src_indices=[-1]
         )
 
         phases = list(self.phase_info.keys())
@@ -1160,7 +1159,7 @@ class AviaryGroup(om.Group):
                         src_name = f'traj.{phase_name}.mission_bus_variables.{mvn_basename}'
                         self.connect(src_name, post_mission_var_name)
 
-    def add_design_variables(self, problem_type:ProblemType = None, verbosity=None):
+    def add_design_variables(self, problem_type: ProblemType = None, verbosity=None):
         """
         Adds design variables to the Aviary problem.
 
@@ -1215,7 +1214,7 @@ class AviaryGroup(om.Group):
             for dv_name, dv_dict in dv_dict.items():
                 self.add_design_var(dv_name, **dv_dict)
 
-        if self.mission_method is SOLVED_2DOF: # This is getting nuked
+        if self.mission_method is SOLVED_2DOF:  # TODO: to be removed soon
             optimize_mass = self.pre_mission_info.get('optimize_mass')
             if optimize_mass:
                 self.add_design_var(
@@ -1226,7 +1225,10 @@ class AviaryGroup(om.Group):
                     ref=175.0e3,
                 )
 
-        elif self.mission_method in (HEIGHT_ENERGY, TWO_DEGREES_OF_FREEDOM): # This becomes generic as soon as SOLVED_2DOF is nuked
+        elif self.mission_method in (
+            HEIGHT_ENERGY, 
+            TWO_DEGREES_OF_FREEDOM
+            ):  # TODO: This becomes generic as soon as SOLVED_2DOF is removed
             # vehicle sizing problem
             # size the vehicle (via design GTOW) to meet a target range using all fuel
             # capacity
@@ -1316,7 +1318,8 @@ class AviaryGroup(om.Group):
 
                 self.add_constraint('gross_mass_resid', lower=0)
 
-            if self.mission_method is TWO_DEGREES_OF_FREEDOM: # TODO: This should be moved into the problem configurator b/c it's 2DOF specific
+            if self.mission_method is TWO_DEGREES_OF_FREEDOM:  
+                # TODO: This should be moved into the problem configurator b/c it's 2DOF specific
                 # problem formulation to make the trajectory work
                 self.add_design_var(Mission.Takeoff.ASCENT_T_INITIAL, lower=0, upper=100, ref=30.0)
                 self.add_design_var(Mission.Takeoff.ASCENT_DURATION, lower=1, upper=1000, ref=10.0)

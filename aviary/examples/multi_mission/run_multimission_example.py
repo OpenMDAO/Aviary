@@ -39,7 +39,7 @@ def multi_mission_example():
     aviary_inputs_mission2.set_val(Aircraft.CrewPayload.NUM_BUSINESS_CLASS, 0, 'unitless')
     aviary_inputs_mission2.set_val(Aircraft.CrewPayload.NUM_FIRST_CLASS, 0, 'unitless')
 
-    prob = av.AviaryProblem(problem_type = ProblemType.MULTI_MISSION)
+    prob = av.AviaryProblem(problem_type=ProblemType.MULTI_MISSION)
     # set constraints in the background. Currently works with every objective type except Range.
 
     prob.add_aviary_group('mission1', aircraft=aviary_inputs_mission1, mission=phase_info_mission1)
@@ -56,17 +56,40 @@ def multi_mission_example():
     # prob.add_post_mission_systems()
     # prob.link_phases()
 
-    prob.promote_inputs(['mission1', 'mission2'], [(Mission.Design.GROSS_MASS, 'Aircraft1:GROSS_MASS'), (Mission.Design.RANGE, 'Aircraft1:RANGE'), (Aircraft.Wing.SWEEP, 'Aircraft1:SWEEP')])
+    prob.promote_inputs(
+        ['mission1', 'mission2'],
+        [   
+            (Mission.Design.GROSS_MASS, 'Aircraft1:GROSS_MASS'),
+            (Mission.Design.RANGE, 'Aircraft1:RANGE'),
+            (Aircraft.Wing.SWEEP, 'Aircraft1:SWEEP'),
+        ],
+    )
     # Links key design variables to ensure both aircraft are modelled the same:
     # Design gross mass sizes things like the landing gear
     # Design range sizing things like the avionics system
 
-    prob.add_design_var_default('Aircraft1:GROSS_MASS', lower=10.0, upper=900e3, units='lbm', default_val=100000)
-    prob.add_design_var_default('Aircraft1:SWEEP', lower=23.0, upper=27.0, units='deg', default_val=25)
+    prob.add_design_var_default(
+        'Aircraft1:GROSS_MASS', 
+        lower=10.0, 
+        upper=900e3, 
+        units='lbm', 
+        default_val=100000,
+    )
+    prob.add_design_var_default(
+        'Aircraft1:SWEEP', 
+        lower=23.0, 
+        upper=27.0, 
+        units='deg', 
+        default_val=25,
+    )
     # This both adds the design variable AND sets the default value. This value can be over-written after-setup using set_val.
 
 
-    prob.add_composite_objective(('mission1', Mission.Summary.FUEL_BURNED, 2), ('mission2', Mission.Summary.FUEL_BURNED, 1), ref=1)
+    prob.add_composite_objective(
+        ('mission1', Mission.Summary.FUEL_BURNED, 2), 
+        ('mission2', Mission.Summary.FUEL_BURNED, 1), 
+        ref=1,
+    )
     # Adds an objective where mission 1 is flown 2x more times than mission2
     # Alternative way that users could specify the same objective:
     # prob.add_composite_objective_adv(missions=['mission1', 'mission2'], mission_weights=[2,1], outputs=[Mission.Summary.FUEL_BURNED],  ref=1)
