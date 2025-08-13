@@ -233,10 +233,10 @@ Tools:
     run_mission         Runs Aviary using a provided input deck
 ```
 
-Next try running the installation test command:
+Next try running the check command:
 
 ```
-aviary test_installation
+aviary check
 ```
 
 The command should finish without raising any errors - warnings and other printouts are ok. If you don't get any errors, you are ready to use Aviary!

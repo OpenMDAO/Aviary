@@ -5,13 +5,13 @@ aircraft:controls:stability_augmentation_system_mass_scaler,1,unitless
 aircraft:crew_and_payload:passenger_mass_with_bags,200,lbm
 aircraft:design:cg_delta,0.25,unitless
 aircraft:design:cockpit_control_mass_coefficient,16.5,unitless
-aircraft:design:drag_increment,0.00175,unitless
+aircraft:design:drag_coeff_increment,0.00175,unitless
 aircraft:design:max_structural_speed,402.5,mi/h
 aircraft:design:part25_structural_category,3,unitless
 aircraft:design:reserve_fuel_additional,3000.,lbm
 aircraft:design:static_margin,0.03,unitless
 aircraft:design:structural_mass_increment,0,lbm
-aircraft:design:supercritical_drag_shift,0.033,unitless
+aircraft:design:drag_divergence_shift,0.033,unitless
 aircraft:engine:constant_fuel_consumption,0.,lbm/h
 aircraft:engine:data_file,models/engines/turbofan_23k_1.csv,unitless
 aircraft:engine:global_throttle, True, unitless
@@ -117,7 +117,7 @@ aircraft:wing:has_strut,False,unitless
 aircraft:wing:height,8,ft
 aircraft:wing:high_lift_mass_coefficient,1.9,unitless
 aircraft:wing:incidence,1.5,deg
-aircraft:wing:loading,128,lbf/ft**2
+aircraft:design:wing_loading,128,lbf/ft**2
 aircraft:wing:mass_coefficient,102.5,unitless
 aircraft:wing:max_lift_ref,1.15,unitless
 aircraft:wing:max_slat_deflection_landing,10,deg
@@ -222,7 +222,7 @@ aircraft:wing:chord_per_semispan,0.31,0.23,0.084,unitless
 aircraft:wing:composite_fraction,0.2,unitless
 aircraft:wing:control_surface_area,137,ft**2
 aircraft:wing:control_surface_area_ratio,0.1,unitless
-aircraft:wing:use_detailed_mass,True,unitless
+aircraft:wing:detailed_wing,True,unitless
 aircraft:wing:glove_and_bat,134.0,ft**2
 aircraft:wing:input_station_dist,0.,0.2759,0.9367,unitless
 aircraft:wing:load_distribution_control,2.0,unitless

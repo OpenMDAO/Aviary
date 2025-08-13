@@ -142,9 +142,7 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
                 aero_group = ComputedAeroGroup(num_nodes=num_nodes, **kwargs)
 
             elif method == 'low_speed':
-                aero_group = TakeoffAeroGroup(
-                    num_nodes=num_nodes, aviary_options=aviary_inputs, **kwargs
-                )
+                aero_group = TakeoffAeroGroup(num_nodes=num_nodes, **kwargs)
 
             elif method == 'tabular':
                 aero_group = TabularAeroGroup(
@@ -616,7 +614,7 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
             elif method == 'tabular_low_speed':
                 all_vars = AERO_2DOF_TABULAR_LS_INPUTS
             elif method == 'tabular_cruise':
-                all_vars = AERO_2DOF_TABULAR_CLEAN_INPUTS
+                all_vars = TABULAR_CORE_INPUTS
             else:
                 raise ValueError(
                     'GASP-based aero method is not one of the following: (cruise, '
@@ -723,6 +721,8 @@ COMPUTED_CORE_INPUTS = [
 
 TABULAR_CORE_INPUTS = [
     Aircraft.Wing.AREA,
+    Aircraft.Design.SUBSONIC_DRAG_COEFF_FACTOR,
+    Aircraft.Design.SUPERSONIC_DRAG_COEFF_FACTOR,
 ]
 
 # Parameters for low speed aero.
@@ -749,7 +749,6 @@ AERO_2DOF_INPUTS = [
     Aircraft.Design.STATIC_MARGIN,
     Aircraft.Fuselage.AVG_DIAMETER,
     Aircraft.Fuselage.FLAT_PLATE_AREA_INCREMENT,
-    Aircraft.Fuselage.FORM_FACTOR,
     Aircraft.Fuselage.LENGTH,
     Aircraft.Fuselage.WETTED_AREA,
     Aircraft.HorizontalTail.AREA,
@@ -785,8 +784,6 @@ AERO_2DOF_INPUTS = [
     Aircraft.Wing.ZERO_LIFT_ANGLE,
 ]
 
-AERO_2DOF_TABULAR_CLEAN_INPUTS = [Aircraft.Wing.AREA]
-
 AERO_2DOF_TABULAR_LS_INPUTS = [Aircraft.Wing.SPAN, Aircraft.Wing.HEIGHT]
 
 AERO_LS_2DOF_INPUTS = [
@@ -799,7 +796,7 @@ AERO_LS_2DOF_INPUTS = [
 ]
 
 AERO_CLEAN_2DOF_INPUTS = [
-    Aircraft.Design.SUPERCRITICAL_DIVERGENCE_SHIFT,  # super drag shift?
+    Aircraft.Design.DRAG_DIVERGENCE_SHIFT,  # super drag shift?
     Mission.Design.LIFT_COEFFICIENT_MAX_FLAPS_UP,
     Aircraft.Design.LIFT_DEPENDENT_DRAG_COEFF_FACTOR,
     Aircraft.Design.SUBSONIC_DRAG_COEFF_FACTOR,

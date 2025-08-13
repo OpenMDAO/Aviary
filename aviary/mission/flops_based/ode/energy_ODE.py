@@ -25,8 +25,10 @@ class EnergyODE(_BaseODE):
         self.options.declare(
             'throttle_enforcement',
             default='path_constraint',
-            values=['path_constraint', 'boundary_constraint', 'bounded', None],
-            desc='flag to enforce throttle constraints on the path or at the segment boundaries or using solver bounds',
+            values=['path_constraint', 'boundary_constraint', 'bounded', 'control', None],
+            desc='Flag to enforce engine throttle bounds as path constraints, boundary '
+            'constraints, solver bounds. You can also select "control" to turn throttle into a '
+            'control, which allows you to assign a value or let the optimizer choose it.',
         )
         self.options.declare(
             'throttle_allocation',
@@ -60,11 +62,20 @@ class EnergyODE(_BaseODE):
             promotes_outputs=[('velocity_rate', Dynamic.Mission.VELOCITY_RATE)],
         )
 
+        throttle_enforcement = options['throttle_enforcement']
+
         sub1 = self.add_subsystem('solver_sub', om.Group(), promotes=['*'])
 
-        self.add_core_subsystems(solver_group=sub1)
+        if throttle_enforcement == 'control':
+            solver_group = None
+            core_needs_solver = False
+        else:
+            solver_group = sub1
+            core_needs_solver = True
 
-        self.add_external_subsystems(solver_group=sub1)
+        self.add_core_subsystems(solver_group=solver_group)
+
+        ext_needs_solver = self.add_external_subsystems(solver_group=sub1)
 
         sub1.add_subsystem(
             name='mission_EOM',
@@ -98,11 +109,13 @@ class EnergyODE(_BaseODE):
             promotes_outputs=['thrust_con']
         )
 
-        self.add_constraint('thrust_con', equals=0)
-        #TODO Alex remove throttle and figure out this issue! 
-        self.add_design_var(Dynamic.Vehicle.Propulsion.THROTTLE, lower=0, upper=1)
+        # self.add_constraint('thrust_con', equals=0)
+        # #TODO Alex remove throttle and figure out this issue! 
+        # self.add_design_var(Dynamic.Vehicle.Propulsion.THROTTLE, lower=0, upper=1)
         # THROTTLE Section
         # TODO: Split this out into a function that can be used by the other ODEs.
+        # TODO: Need a thrust residual ref in the phase_info.
+        thrust_res_ref = 1.0 #TODO Alex change from 1.0e6
         if num_engine_type > 1:
             # Multi Engine
 
@@ -116,7 +129,7 @@ class EnergyODE(_BaseODE):
                     rhs_name=Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
                     eq_units='lbf',
                     normalize=False,
-                    res_ref=1.0,
+                    res_ref=thrust_res_ref,
                 ),
                 promotes_inputs=['*'],
                 promotes_outputs=['*'],
@@ -134,24 +147,42 @@ class EnergyODE(_BaseODE):
         else:
             # Single Engine
 
-            # Add a balance comp to compute throttle based on the required thrust.
-            sub1.add_subsystem(
-                name='throttle_balance',
-                subsys=om.BalanceComp(
-                    name=Dynamic.Vehicle.Propulsion.THROTTLE,
-                    units='unitless',
-                    val=np.ones((nn,)),
-                    lhs_name='thrust_required',
-                    rhs_name=Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
-                    eq_units='lbf',
-                    normalize=False,
-                    lower=0.0 if options['throttle_enforcement'] == 'bounded' else None,
-                    upper=1.0 if options['throttle_enforcement'] == 'bounded' else None,
-                    res_ref=1.0,
-                ),
-                promotes_inputs=['*'],
-                promotes_outputs=['*'],
-            )
+            if throttle_enforcement == 'control':
+                self.add_subsystem(
+                    'throttle_balance',
+                    om.ExecComp(
+                        'thrust_residual=thrust_required-thrust',
+                        thrust={'val': np.ones((nn,)), 'units': 'lbf'},
+                        thrust_required={'val': np.ones((nn,)), 'units': 'lbf'},
+                        thrust_residual={'val': np.ones((nn,)), 'units': 'lbf'},
+                        has_diag_partials=True,
+                    ),
+                    promotes_inputs=[
+                        ('thrust', Dynamic.Vehicle.Propulsion.THRUST_TOTAL),
+                        'thrust_required',
+                    ],
+                    promotes_outputs=['*'],
+                )
+                self.add_constraint('thrust_residual', ref=thrust_res_ref, equals=0.0)
+            else:
+                # Add a balance comp to compute throttle based on the required thrust.
+                sub1.add_subsystem(
+                    name='throttle_balance',
+                    subsys=om.BalanceComp(
+                        name=Dynamic.Vehicle.Propulsion.THROTTLE,
+                        units='unitless',
+                        val=np.ones((nn,)),
+                        lhs_name='thrust_required',
+                        rhs_name=Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
+                        eq_units='lbf',
+                        normalize=False,
+                        lower=0.0 if throttle_enforcement == 'bounded' else None,
+                        upper=1.0 if throttle_enforcement == 'bounded' else None,
+                        res_ref=thrust_res_ref,
+                    ),
+                    promotes_inputs=['*'],
+                    promotes_outputs=['*'],
+                )
 
         self.set_input_defaults(Dynamic.Vehicle.Propulsion.THROTTLE, val=0.7, units='unitless')
         ############## ALEX LOPEZ ADDITION ###############
@@ -189,19 +220,17 @@ class EnergyODE(_BaseODE):
         #     promotes_outputs=['initial_mass_residual'],
         # )
 
-        print_level = 2
+        if core_needs_solver or ext_needs_solver:
+            sub1.nonlinear_solver = om.NewtonSolver(
+                solve_subsystems=True,
+                atol=1.0e-10,
+                rtol=1.0e-10,
+            )
+            print_level = 2
 
-        # sub1.nonlinear_solver = om.NewtonSolver(
-        #     solve_subsystems=True,
-        #     atol=1.0e-10,
-        #     rtol=1.0e-10,
-        # )
-        # sub1.nonlinear_solver.linesearch = om.BoundsEnforceLS()
-        # ############## ALEX LOPEZ ADDITION ###############
-        # sub1.nonlinear_solver.options["maxiter"] = 20 #changed from 10 to 20
-        # ############## ALEX LOPEZ ADDITION ###############
-        # sub1.linear_solver = om.DirectSolver(assemble_jac=True)
-        # sub1.nonlinear_solver.options['err_on_non_converge'] = True
-        # sub1.nonlinear_solver.options['iprint'] = print_level
+            sub1.nonlinear_solver.linesearch = om.BoundsEnforceLS()
+            sub1.linear_solver = om.DirectSolver(assemble_jac=True)
+            sub1.nonlinear_solver.options['err_on_non_converge'] = True
+            sub1.nonlinear_solver.options['iprint'] = print_level
 
         self.options['auto_order'] = True

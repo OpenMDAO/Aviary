@@ -1,5 +1,5 @@
 # created 06/11/25
-# GASP-derived aerodynamics data converted from aero_free_reduced_alpha_GASP.txt
+# GASP_ALT-derived aerodynamics data converted from aero_free_reduced_alpha_GASP.txt
 # Clean / Free Air Aerodynamics
 # Copy of GASP_aero_free.txt with alpha above 10 removed
 # Reference Area = 1370. sqft

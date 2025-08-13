@@ -3,15 +3,17 @@ import unittest
 import numpy as np
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
+from openmdao.utils.testing_utils import use_tempdirs
 
 from aviary.subsystems.geometry.gasp_based.engine import (
+    BWBEngineSize,
     BWBEngineSizeGroup,
     EngineSize,
     PercentNotInFuselage,
 )
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.functions import extract_options, setup_model_options
-from aviary.variable_info.variables import Aircraft
+from aviary.variable_info.variables import Aircraft, Mission
 
 
 class TestPercentNotInFuselage(unittest.TestCase):
@@ -110,6 +112,72 @@ class TestEngine(
         assert_check_partials(partial_data, atol=1e-8, rtol=1e-8)
 
 
+class TestEngineBWB(unittest.TestCase):
+    """Test engine size using EngineSize class and BWB data"""
+
+    def setUp(self):
+        self.prob = om.Problem()
+
+        aviary_options = AviaryValues()
+        aviary_options.set_val(Aircraft.Engine.NUM_ENGINES, np.array([2]))
+
+        self.prob.model.add_subsystem('engsz', EngineSize(), promotes=['*'])
+
+        self.prob.model.set_input_defaults(Aircraft.Engine.REFERENCE_DIAMETER, 5.8, units='ft')
+        self.prob.model.set_input_defaults(Aircraft.Engine.SCALE_FACTOR, val=1.3053677239456256)
+        self.prob.model.set_input_defaults(
+            Aircraft.Nacelle.CORE_DIAMETER_RATIO, 1.2205, units='unitless'
+        )
+        self.prob.model.set_input_defaults(Aircraft.Nacelle.FINENESS, 1.3588, units='unitless')
+
+        setup_model_options(self.prob, aviary_options)
+
+        self.prob.setup(check=False, force_alloc_complex=True)
+
+    def test_case1(self):
+        self.prob.run_model()
+        tol = 1e-4
+        assert_near_equal(self.prob[Aircraft.Nacelle.AVG_DIAMETER], 8.08783369, tol)
+        assert_near_equal(self.prob[Aircraft.Nacelle.AVG_LENGTH], 10.98974842, tol)
+        assert_near_equal(self.prob[Aircraft.Nacelle.SURFACE_AREA], 279.23498901, tol)
+
+        partial_data = self.prob.check_partials(out_stream=None, method='cs')
+        assert_check_partials(partial_data, atol=1e-8, rtol=1e-8)
+
+
+class BWBTestEngine(unittest.TestCase):
+    """Test engine size using BWBEngineSize class and BWB data"""
+
+    def setUp(self):
+        self.prob = om.Problem()
+
+        aviary_options = AviaryValues()
+        aviary_options.set_val(Aircraft.Engine.NUM_ENGINES, np.array([2]))
+
+        self.prob.model.add_subsystem('engsz', BWBEngineSize(), promotes=['*'])
+
+        self.prob.model.set_input_defaults(Mission.Design.GROSS_MASS, 150000.0, units='lbm')
+        self.prob.model.set_input_defaults('percent_exposed', 1.0)
+        self.prob.model.set_input_defaults(
+            Aircraft.Nacelle.CORE_DIAMETER_RATIO, 1.2205, units='unitless'
+        )
+        self.prob.model.set_input_defaults(Aircraft.Nacelle.FINENESS, 1.3588, units='unitless')
+
+        setup_model_options(self.prob, aviary_options)
+
+        self.prob.setup(check=False, force_alloc_complex=True)
+
+    def test_case1(self):
+        self.prob.run_model()
+        tol = 1e-6
+        assert_near_equal(self.prob[Aircraft.Nacelle.AVG_DIAMETER], 5.33382144, tol)
+        assert_near_equal(self.prob[Aircraft.Nacelle.AVG_LENGTH], 7.24759657, tol)
+        assert_near_equal(self.prob[Aircraft.Nacelle.SURFACE_AREA], 121.44575974, tol)
+
+        partial_data = self.prob.check_partials(out_stream=None, method='cs')
+        assert_check_partials(partial_data, atol=1e-8, rtol=1e-8)
+
+
 class ElectricTestCaseMultiEngine(unittest.TestCase):
     def test_case_multiengine(self):
         prob = om.Problem()
@@ -146,8 +214,9 @@ class ElectricTestCaseMultiEngine(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e-8, rtol=1e-8)
 
 
+@use_tempdirs
 class BWBEngineSizeGroupTestCase(unittest.TestCase):
-    """this is the GASP test case, input and output values based on large single aisle 1 v3 without bug fix."""
+    """this is the GASP BWB test case"""
 
     def setUp(self):
         aviary_options = AviaryValues()
@@ -163,9 +232,7 @@ class BWBEngineSizeGroupTestCase(unittest.TestCase):
         self.prob.model.set_input_defaults(
             Aircraft.Nacelle.PERCENT_DIAM_BURIED_IN_FUSELAGE, 0.0, units='unitless'
         )
-
-        self.prob.model.set_input_defaults(Aircraft.Engine.REFERENCE_DIAMETER, 5.8, units='ft')
-        self.prob.model.set_input_defaults(Aircraft.Engine.SCALE_FACTOR, 1.02823, units='unitless')
+        self.prob.model.set_input_defaults(Mission.Design.GROSS_MASS, 150000.0, units='lbm')
         self.prob.model.set_input_defaults(
             Aircraft.Nacelle.CORE_DIAMETER_RATIO, 1.2205, units='unitless'
         )
@@ -178,18 +245,16 @@ class BWBEngineSizeGroupTestCase(unittest.TestCase):
     def test_case1(self):
         """
         Testing GASP data case:
-        Aircraft.Nacelle.AVG_DIAMETER -- DBARN = 6.95
-        Aircraft.Nacelle.AVG_LENGTH -- ELN = 9.44
-        Aircraft.Nacelle.SURFACE_AREA -- SN/2 = 205.965 (for one engine)
-        Note: Aviary uses reference diameter which is different from GASP. So, the outpus are
-        not the same.
+        Aircraft.Nacelle.AVG_DIAMETER -- DBARN = 5.3338151
+        Aircraft.Nacelle.AVG_LENGTH -- ELN = 7.24758816
+        Aircraft.Nacelle.SURFACE_AREA -- SN/2 = 121.445763 (for one engine)
         """
         self.prob.run_model()
 
-        tol = 1e-4
-        assert_near_equal(self.prob[Aircraft.Nacelle.AVG_DIAMETER], 7.17813375, tol)
-        assert_near_equal(self.prob[Aircraft.Nacelle.AVG_LENGTH], 9.75364814, tol)
-        assert_near_equal(self.prob[Aircraft.Nacelle.SURFACE_AREA], 219.95229788, tol)
+        tol = 1e-6
+        assert_near_equal(self.prob[Aircraft.Nacelle.AVG_DIAMETER], 5.33382144, tol)
+        assert_near_equal(self.prob[Aircraft.Nacelle.AVG_LENGTH], 7.24759657, tol)
+        assert_near_equal(self.prob[Aircraft.Nacelle.SURFACE_AREA], 121.44575974, tol)
 
         partial_data = self.prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=1e-8, rtol=1e-8)

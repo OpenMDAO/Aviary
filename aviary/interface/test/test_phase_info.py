@@ -102,6 +102,7 @@ class TestParameterizePhaseInfo(unittest.TestCase):
 class TestPhaseInfoAPI(unittest.TestCase):
     def test_time_duration(self):
         phase_info = {
+            'pre_mission': {'include_takeoff': False, 'optimize_mass': False},
             'only_cruise': {
                 'user_options': {
                     'num_segments': 5,

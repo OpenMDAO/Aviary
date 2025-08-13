@@ -130,6 +130,18 @@ class TestSolvedAero(unittest.TestCase):
         assert_near_equal(CL_pass, CL_base, 1e-6)
         assert_near_equal(CD_pass, CD_base, 1e-6)
 
+        # Test the drag scaler
+
+        prob.set_val(Aircraft.Design.SUBSONIC_DRAG_COEFF_FACTOR, 2.0, units='unitless')
+
+        prob.run_model()
+
+        CL_pass = prob.get_val('traj.cruise.rhs_all.core_aerodynamics.CL')
+        CD_pass = prob.get_val('traj.cruise.rhs_all.core_aerodynamics.CD')
+
+        assert_near_equal(CL_pass, CL_base, 1e-6)
+        assert_near_equal(CD_pass, 2.0 * CD_base, 1e-6)
+
     def test_parameters(self):
         # This test is to make sure that the aero builder creates a parameter
         # for wing area. It addresses a bug where this was absent.

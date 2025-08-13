@@ -208,7 +208,7 @@ class AviaryMissionEditor(tk.Tk):
             'distance_solve_segments': tk.BooleanVar(),
             'include_takeoff': tk.BooleanVar(),
             'include_landing': tk.BooleanVar(),
-            'polynomial_control_order': tk.IntVar(value=1),
+            'polynomial_order': tk.IntVar(value=1),
         }
 
         self.check_data_info()  # sanity checking of data_info dict
@@ -1401,8 +1401,8 @@ class AviaryMissionEditor(tk.Tk):
                         self.advanced_options['distance_solve_segments'].set(
                             value=phase_dict['user_options']['distance_solve_segments']
                         )
-                        self.advanced_options['polynomial_control_order'].set(
-                            value=phase_dict['user_options']['polynomial_control_order']
+                        self.advanced_options['polynomial_order'].set(
+                            value=phase_dict['user_options']['polynomial_order']
                         )
                         self.phase_order_list.append(phase_dict['user_options']['order'])
 
@@ -1498,7 +1498,7 @@ class AviaryMissionEditor(tk.Tk):
             'include_takeoff': self.advanced_options['include_takeoff'].get(),
             'include_landing': self.advanced_options['include_landing'].get(),
         }
-        polyord = self.advanced_options['polynomial_control_order'].get()
+        polyord = self.advanced_options['polynomial_order'].get()
         if len(self.table_boolvars[0]) != len(self.data[0]) - 1:
             for i in range(self.num_dep_vars):
                 self.table_boolvars[i] = [tk.BooleanVar()] * (len(self.data[0]) - 1)
@@ -1630,7 +1630,7 @@ def create_phase_info(
                 'num_segments': num_segments,
                 'order': orders[i],
                 'mach_optimize': mach_optimize_phase_vars[i].get(),
-                'mach_polynomial_control_order': polynomial_order,
+                'mach_polynomial_order': polynomial_order,
                 'mach_initial': (mach_values[i], units[2]),
                 'mach_final': (mach_values[i + 1], units[2]),
                 'mach_bounds': (
@@ -1638,7 +1638,7 @@ def create_phase_info(
                     units[2],
                 ),
                 'altitude_optimize': altitude_optimize_phase_vars[i].get(),
-                'altitude_polynomial_control_order': polynomial_order,
+                'altitude_polynomial_order': polynomial_order,
                 'altitude_initial': (altitudes[i], units[1]),
                 'altitude_final': (altitudes[i + 1], units[1]),
                 'altitude_bounds': (

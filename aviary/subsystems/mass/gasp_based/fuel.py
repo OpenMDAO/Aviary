@@ -2,7 +2,7 @@ import numpy as np
 import openmdao.api as om
 
 from aviary.constants import GRAV_ENGLISH_LBM
-from aviary.utils.functions import sigmoidX, dSigmoidXdx, smooth_max, d_smooth_max
+from aviary.utils.functions import d_smooth_max, dSigmoidXdx, sigmoidX, smooth_max
 from aviary.variable_info.enums import AircraftTypes, Verbosity
 from aviary.variable_info.functions import add_aviary_input, add_aviary_option, add_aviary_output
 from aviary.variable_info.variables import Aircraft, Mission, Settings
@@ -15,7 +15,7 @@ class BodyTankCalculations(om.ExplicitComponent):
     """
 
     def initialize(self):
-        add_aviary_option(self, Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES)
+        add_aviary_option(self, Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES, True)
         add_aviary_option(self, Settings.VERBOSITY)
         self.options.declare('mu', default=1.0, types=float)
 
@@ -55,7 +55,7 @@ class BodyTankCalculations(om.ExplicitComponent):
         self.add_output(
             'wingfuel_mass_min', val=0, units='lbm', desc='WFWMIN: minimum wing fuel mass'
         )
-        add_aviary_output(self, Aircraft.Fuel.TOTAL_CAPACITY, units='lbm')
+        add_aviary_output(self, Aircraft.Fuel.TOTAL_CAPACITY, units='lbm', desc='WFAMAX')
 
     def setup_partials(self):
         self.declare_partials(
@@ -173,7 +173,9 @@ class BodyTankCalculations(om.ExplicitComponent):
         outputs['extra_fuel_volume'] = extra_fuel_volume
         outputs['max_extra_fuel_mass'] = max_extra_fuel_wt / GRAV_ENGLISH_LBM
 
+        # pass back to FuelSysAndFullFuselageMass
         outputs['wingfuel_mass_min'] = wingfuel_wt_min / GRAV_ENGLISH_LBM
+        # pass back to FuelAndOEMOutputs
         outputs[Aircraft.Fuel.TOTAL_CAPACITY] = max_fuel_avail / GRAV_ENGLISH_LBM
 
     def compute_partials(self, inputs, J):
@@ -619,11 +621,12 @@ class FuelAndOEMOutputs(om.ExplicitComponent):
         OEW = propulsion_wt + control_wt + struct_wt + fixed_equip_wt + useful_wt
 
         volume_wingfuel_wt = geometric_fuel_vol * rho_fuel
+        # always smoothing
         max_wingfuel_wt = OEM_wingfuel_wt * sigmoidX(
             volume_wingfuel_wt - OEM_wingfuel_wt, 0, 1 / 95.0
         ) + volume_wingfuel_wt * sigmoidX(OEM_wingfuel_wt - volume_wingfuel_wt, 0, 1 / 95.0)
         payload_wt_max_fuel = gross_wt_initial - OEW - max_fuel_avail
-        max_wingfuel_vol = max_wingfuel_wt / (rho_fuel)
+        max_wingfuel_vol = max_wingfuel_wt / rho_fuel
 
         outputs['OEM_wingfuel_mass'] = OEM_wingfuel_wt / GRAV_ENGLISH_LBM
         outputs['OEM_fuel_vol'] = OEM_fuel_vol
@@ -1574,69 +1577,54 @@ class FuelMassGroup(om.Group):
     def setup(self):
         design_type = self.options[Aircraft.Design.TYPE]
 
-        # variables that are calculated at a higher level
-        higher_level_inputs1 = ['wing_mounted_mass']
-        higher_level_inputs2 = ['min_dive_vel']
-        higher_level_inputs3 = ['payload_mass_des', 'payload_mass_max', 'eng_comb_mass']
-
-        # variables that are passed within the group but not used at a higher level
-        connected_inputs1 = ['wingfuel_mass_min']
-        connected_inputs2 = ['fus_mass_full']
-        connected_inputs5 = ['fuel_mass_min', 'max_wingfuel_mass']
-
-        connected_outputs1 = ['fus_mass_full']
-        connected_outputs3 = ['fuel_mass_min']
-        connected_outputs4 = ['max_wingfuel_mass']
-        connected_outputs5 = ['wingfuel_mass_min']
-
         self.add_subsystem(
             'sys_and_full_fus',
             FuelSysAndFullFuselageMass(),
-            promotes_inputs=connected_inputs1 + higher_level_inputs1 + ['aircraft:*', 'mission:*'],
-            promotes_outputs=connected_outputs1 + ['aircraft:*'],
+            promotes_inputs=['*'],
+            promotes_outputs=['*'],
         )
 
         if design_type is AircraftTypes.BLENDED_WING_BODY:
             self.add_subsystem(
                 'fuselage',
                 BWBFuselageMass(),
-                promotes_inputs=['aircraft:*', 'mission:*'],
-                promotes_outputs=['aircraft:*'],
+                promotes_inputs=['*'],
+                promotes_outputs=['*'],
             )
         else:
             self.add_subsystem(
                 'fuselage',
                 FuselageMass(),
-                promotes_inputs=connected_inputs2 + higher_level_inputs2 + ['aircraft:*'],
-                promotes_outputs=['aircraft:*'],
+                promotes_inputs=['*'],
+                promotes_outputs=['*'],
             )
 
         self.add_subsystem(
             'struct',
             StructMass(),
-            promotes_inputs=['aircraft:*'],
-            promotes_outputs=['aircraft:*'],
+            promotes_inputs=['*'],
+            promotes_outputs=['*'],
         )
 
         self.add_subsystem(
             'fuel',
             FuelMass(),
-            promotes_inputs=higher_level_inputs3 + ['aircraft:*', 'mission:*'],
-            promotes_outputs=connected_outputs3 + ['aircraft:*', 'mission:*'],
+            promotes_inputs=['*'],
+            promotes_outputs=['*'],
         )
 
         self.add_subsystem(
             'fuel_and_oem',
             FuelAndOEMOutputs(),
-            promotes_inputs=['aircraft:*', 'mission:*'],
-            promotes_outputs=connected_outputs4 + ['aircraft:*'],
+            promotes_inputs=['*'],
+            promotes_outputs=['*'],
         )
 
         self.add_subsystem(
             'body_tank',
             BodyTankCalculations(),
-            promotes_inputs=connected_inputs5 + ['aircraft:*', 'mission:*'],
-            promotes_outputs=connected_outputs5 + ['aircraft:*'],
+            promotes_inputs=['*'],
+            promotes_outputs=['*'],
         )
 
         self.set_input_defaults(Aircraft.Fuel.DENSITY, units='lbm/galUS')

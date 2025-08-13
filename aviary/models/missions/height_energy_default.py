@@ -41,7 +41,7 @@ phase_info = {
             'altitude_polynomial_order': 3,
             'throttle_enforcement': 'boundary_constraint',
             'time_initial_bounds': ((64.0, 192.0), 'min'),
-            'time_duration_bounds': ((56.5, 169.5), 'min'),
+            'time_duration_bounds': ((56.5, 300.0), 'min'),
         },
     },
     'descent': {

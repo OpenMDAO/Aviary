@@ -2,6 +2,7 @@ import unittest
 
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
+from openmdao.utils.testing_utils import use_tempdirs
 
 from aviary.subsystems.geometry.gasp_based.empennage import EmpennageSize, TailSize, TailVolCoef
 from aviary.variable_info.functions import setup_model_options
@@ -113,6 +114,7 @@ class TestTailComp(
         assert_check_partials(partial_data, **partial_tols)
 
 
+@use_tempdirs
 class TestEmpennageGroup(
     unittest.TestCase
 ):  # this is the GASP test case, input and output values based on large single aisle 1 v3 without bug fix
@@ -199,6 +201,7 @@ class TestEmpennageGroup(
         assert_check_partials(partial_data, **partial_tols)
 
 
+@use_tempdirs
 class BWBTestEmpennageGroup(unittest.TestCase):
     """BWB model"""
 

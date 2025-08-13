@@ -35,11 +35,11 @@ class ProblemPhaseTestCase(unittest.TestCase):
         rtol = 1e-2
 
         # There are no truth values for these.
-        assert_near_equal(prob.get_val(Mission.Design.GROSS_MASS), 179391.0, tolerance=rtol)
+        assert_near_equal(prob.get_val(Mission.Design.GROSS_MASS), 176990.2, tolerance=rtol)
 
         assert_near_equal(prob.get_val(Aircraft.Design.OPERATING_MASS), 101556.0, tolerance=rtol)
 
-        assert_near_equal(prob.get_val(Mission.Summary.TOTAL_FUEL_MASS), 39979.0, tolerance=rtol)
+        assert_near_equal(prob.get_val(Mission.Summary.TOTAL_FUEL_MASS), 37956.0, tolerance=rtol)
 
         assert_near_equal(prob.get_val(Mission.Landing.GROUND_DISTANCE), 2595.0, tolerance=rtol)
 
@@ -60,11 +60,11 @@ class ProblemPhaseTestCase(unittest.TestCase):
         rtol = 1e-2
 
         # There are no truth values for these.
-        assert_near_equal(prob.get_val(Mission.Design.GROSS_MASS), 179390.0, tolerance=rtol)
+        assert_near_equal(prob.get_val(Mission.Design.GROSS_MASS), 176965.48, tolerance=rtol)
 
         assert_near_equal(prob.get_val(Aircraft.Design.OPERATING_MASS), 101556.0, tolerance=rtol)
 
-        assert_near_equal(prob.get_val(Mission.Summary.TOTAL_FUEL_MASS), 39979.0, tolerance=rtol)
+        assert_near_equal(prob.get_val(Mission.Summary.TOTAL_FUEL_MASS), 37918.8, tolerance=rtol)
 
         assert_near_equal(prob.get_val(Mission.Landing.GROUND_DISTANCE), 2595.0, tolerance=rtol)
 
@@ -76,5 +76,5 @@ class ProblemPhaseTestCase(unittest.TestCase):
 if __name__ == '__main__':
     test = ProblemPhaseTestCase()
     test.setUp()
-    # test.bench_test_swap_3_FwGm_SNOPT()
-    test.bench_test_swap_3_FwGm_IPOPT()
+    test.bench_test_swap_3_FwGm_SNOPT()
+    # test.bench_test_swap_3_FwGm_IPOPT()

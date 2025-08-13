@@ -110,6 +110,9 @@ runs:
         pip install git+https://github.com/OpenMDAO/build_pyoptsparse
         build_pyoptsparse -v $BRANCH $SNOPT
 
+        echo "The build script has been grabbing an older version of IPOPT with some problems."
+        conda install ipopt=3.14
+
     - name: Install OpenMDAO
       if: inputs.OPENMDAO
       shell: bash -l {0}

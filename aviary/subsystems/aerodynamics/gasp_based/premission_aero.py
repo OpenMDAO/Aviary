@@ -26,7 +26,7 @@ class PreMissionAero(om.Group):
         self.add_subsystem(
             'wing_fus_interference_premission',
             WingFuselageInterferencePremission(),
-            promotes_inputs=['aircraft:*'],
+            promotes_inputs=['*'],
             promotes_outputs=[
                 'interference_independent_of_shielded_area',
                 'drag_loss_due_to_shielded_wing_area',

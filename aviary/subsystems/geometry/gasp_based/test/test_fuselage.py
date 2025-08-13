@@ -2,6 +2,7 @@ import unittest
 
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
+from openmdao.utils.testing_utils import use_tempdirs
 
 from aviary.subsystems.geometry.gasp_based.fuselage import (
     BWBCabinLayout,
@@ -586,6 +587,7 @@ class BWBFuselageSizeTestCase(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e-5, rtol=1e-5)
 
 
+@use_tempdirs
 class BWBFuselageGroupTestCase(unittest.TestCase):
     """this is the GASP test case."""
 
@@ -658,7 +660,4 @@ class BWBFuselageGroupTestCase(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    # unittest.main()
-    test = FuselageSizeTestCase2()
-    test.setUp()
-    test.test_case1()
+    unittest.main()

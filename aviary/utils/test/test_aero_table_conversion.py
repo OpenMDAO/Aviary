@@ -61,7 +61,7 @@ class TestAeroTableConversion(unittest.TestCase):
         filename = 'aero_flaps_GASP.txt'
         validation_file = 'models/large_single_aisle_1/large_single_aisle_1_aero_flaps.csv'
 
-        self.prepare_and_run(filename, data_format='GASP')
+        self.prepare_and_run(filename, data_format='GASP_ALT')
 
         self.compare_files(filename, validation_file)
 
@@ -69,7 +69,7 @@ class TestAeroTableConversion(unittest.TestCase):
         filename = 'aero_free_GASP.txt'
         validation_file = 'models/large_single_aisle_1/large_single_aisle_1_aero_free.csv'
 
-        self.prepare_and_run(filename, data_format='GASP')
+        self.prepare_and_run(filename, data_format='GASP_ALT')
 
         self.compare_files(filename, validation_file)
 
@@ -79,13 +79,22 @@ class TestAeroTableConversion(unittest.TestCase):
             'models/large_single_aisle_1/large_single_aisle_1_aero_free_reduced_alpha.csv'
         )
 
-        self.prepare_and_run(filename, data_format='GASP')
+        self.prepare_and_run(filename, data_format='GASP_ALT')
 
         self.compare_files(filename, validation_file)
 
     def test_GASP_table_4(self):
         filename = 'aero_ground_GASP.txt'
         validation_file = 'models/large_single_aisle_1/large_single_aisle_1_aero_ground.csv'
+
+        self.prepare_and_run(filename, data_format='GASP_ALT')
+
+        self.compare_files(filename, validation_file)
+
+    def test_GASP_table_5(self):
+        """Test GASP aero table in alternative format (which is actually the default format)"""
+        filename = 'aero_BWB_modified_GASP.txt'
+        validation_file = 'models/aircraft/blended_wing_body/generic_BWB_GASP_aero.csv'
 
         self.prepare_and_run(filename, data_format='GASP')
 
@@ -199,5 +208,3 @@ class TestAeroTableConversion(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
-    # test = TestAeroTableConversion()
-    # test.test_GASP_table_1()

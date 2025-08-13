@@ -253,27 +253,27 @@ class EmpennageSize(om.Group):
             self.add_subsystem(
                 'htail_vc',
                 TailVolCoef(orientation='horizontal'),
-                promotes_inputs=['aircraft:*'],
-                promotes_outputs=['aircraft:*'],
+                promotes_inputs=['*'],
+                promotes_outputs=['*'],
             )
         if self.options[Aircraft.Design.COMPUTE_VTAIL_VOLUME_COEFF]:
             self.add_subsystem(
                 'vtail_vc',
                 TailVolCoef(orientation='vertical'),
-                promotes_inputs=['aircraft:*'],
-                promotes_outputs=['aircraft:*'],
+                promotes_inputs=['*'],
+                promotes_outputs=['*'],
             )
 
         self.add_subsystem(
             'htail',
             TailSize(orientation='horizontal'),
-            promotes_inputs=['aircraft:*'],
-            promotes_outputs=['aircraft:*'],
+            promotes_inputs=['*'],
+            promotes_outputs=['*'],
         )
 
         self.add_subsystem(
             'vtail',
             TailSize(orientation='vertical'),
-            promotes_inputs=['aircraft:*'],
-            promotes_outputs=['aircraft:*'],
+            promotes_inputs=['*'],
+            promotes_outputs=['*'],
         )

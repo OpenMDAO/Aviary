@@ -37,12 +37,10 @@ phase_info = {
         'user_options': {
             'num_segments': 5,
             'order': 3,
-            'fix_initial': True,
             'ground_roll': False,
             'clean': False,
-            'time_initial_ref': (1.0e3, 'ft'),
-            'time_initial_bounds': ((0.0, 16.0e3), 'ft'),
-            'time_duration_ref': (1.0e3, 'ft'),
+            'time_initial': (0.0, 'ft'),
+            'time_duration_ref': (2750.0, 'ft'),
             'time_duration_bounds': ((500.0, 5.0e3), 'ft'),
             'mach_optimize': mach_optimize,
             'mach_polynomial_order': 1,
@@ -54,6 +52,7 @@ phase_info = {
             'altitude_initial': (500.0, 'ft'),
             'altitude_final': (394.0, 'ft'),
             'altitude_bounds': ((0.0, 1000.0), 'ft'),
+            'mass_initial': (120.0e3, 'lbm'),
             'throttle_enforcement': 'bounded',
             'rotation': False,
             'constraints': {
@@ -76,7 +75,6 @@ phase_info = {
         'user_options': {
             'num_segments': 5,
             'order': 3,
-            'fix_initial': False,
             'ground_roll': False,
             'clean': False,
             'time_initial_ref': (1.0e3, 'ft'),
@@ -115,7 +113,6 @@ phase_info = {
         'user_options': {
             'num_segments': 5,
             'order': 3,
-            'fix_initial': False,
             'ground_roll': False,
             'clean': False,
             'time_initial_ref': (1.0e3, 'ft'),
@@ -149,7 +146,6 @@ phase_info = {
         'constrain_range': False,
     },
 }
-
 
 prob = av.AviaryProblem()
 
