@@ -618,22 +618,32 @@ def glue_class_options(obj, curr_glued=None, md_code=False):
             curr_glued.append(opt)
 
 
-def get_all_non_aviary_names(cls, method_name='setup'):
+def get_all_non_aviary_names(cls, include_in_out='in_out'):
     """
     Retrieve the names of all the non-Aviary variables of a component class
     created by self.add_input() or self.add_output() methods.
     """
+    method_name = 'setup'
     func = getattr(cls, method_name)
     source = inspect.getsource(func)
     source = textwrap.dedent(source)  # remove indentation
     tree = ast.parse(source)
+
+    if include_in_out == 'in_out':
+        including_flags = ['add_input', 'add_output']
+    elif include_in_out == 'in':
+        including_flags = ['add_input']
+    elif include_in_out == 'out':
+        including_flags = ['add_output']
+    else:
+        including_flags = []
 
     names = []
     for node in ast.walk(tree):
         if isinstance(node, ast.Call):
             if (
                 isinstance(node.func, ast.Attribute)
-                and (node.func.attr == 'add_input' or node.func.attr == 'add_output')
+                and node.func.attr in including_flags
                 and isinstance(node.func.value, ast.Name)
                 and node.func.value.id == 'self'
             ):
