@@ -1,9 +1,9 @@
 """
-authors: Eliot Aretskin-Hariton, Kenneth Moore
+Authors: Eliot Aretskin-Hariton, Kenneth Moore, Jutin Soni
 Multi Mission Optimization Example using Aviary.
 
 In this example, a monolithic optimization is created by instantiating two aviary groups
-using using multipl add_aviary_group() calls. Once those groups are setup and all of their 
+using using multiple add_aviary_group() calls. Once those groups are setup and all of their 
 phases are linked together, we then promote GROSS_MASS, RANGE, and wing SWEEP from each of 
 those sub-groups (prob.model.mission1 and prob.model.mission2) up to prob.model so
 the optimizer can control them both with a single value. The fuel_burn results from each 
@@ -19,14 +19,13 @@ from aviary.variable_info.variables import Aircraft, Mission, Settings
 
 def multi_mission_example():
     # fly the same mission twice with two different passenger loads
-    phase_info_primary = copy.deepcopy(phase_info)
-    phase_info_deadhead = copy.deepcopy(phase_info)
+    phase_info_mission1 = copy.deepcopy(phase_info)
+    phase_info_mission2 = copy.deepcopy(phase_info)
+    
     # get large single aisle values
-    aviary_inputs_primary = get_flops_inputs('LargeSingleAisle2FLOPS')
-    aviary_inputs_primary.set_val(Mission.Design.GROSS_MASS, val=100000, units='lbm')
-    aviary_inputs_primary.set_val(Settings.VERBOSITY, val=1)
+    aviary_inputs_mission1 = get_flops_inputs('LargeSingleAisle2FLOPS')
 
-    aviary_inputs_deadhead = copy.deepcopy(aviary_inputs_primary)
+    aviary_inputs_mission2 = copy.deepcopy(aviary_inputs_mission1)
 
     # Due to current limitations in Aviary's ability to detect user input vs. default values,
     # the only way to set an aircraft to zero passengers is by setting
@@ -35,19 +34,19 @@ def multi_mission_example():
     # Due to issue #610, setting PASSENGER_PAYLOAD_MASS = 0 will not work yet.
     # aviary_inputs_deadhead.set_val(Aircraft.CrewPayload.TOTAL_PAYLOAD_MASS, 4077, 'lbm')
 
-    aviary_inputs_deadhead.set_val(Aircraft.CrewPayload.NUM_PASSENGERS, 1, 'unitless')
-    aviary_inputs_deadhead.set_val(Aircraft.CrewPayload.NUM_TOURIST_CLASS, 1, 'unitless')
-    aviary_inputs_deadhead.set_val(Aircraft.CrewPayload.NUM_BUSINESS_CLASS, 0, 'unitless')
-    aviary_inputs_deadhead.set_val(Aircraft.CrewPayload.NUM_FIRST_CLASS, 0, 'unitless')
+    aviary_inputs_mission2.set_val(Aircraft.CrewPayload.NUM_PASSENGERS, 1, 'unitless')
+    aviary_inputs_mission2.set_val(Aircraft.CrewPayload.NUM_TOURIST_CLASS, 1, 'unitless')
+    aviary_inputs_mission2.set_val(Aircraft.CrewPayload.NUM_BUSINESS_CLASS, 0, 'unitless')
+    aviary_inputs_mission2.set_val(Aircraft.CrewPayload.NUM_FIRST_CLASS, 0, 'unitless')
 
     prob = av.AviaryProblem(problem_type = ProblemType.MULTI_MISSION)
     # set constraints in the background. Currently works with every objective type except Range.
 
-    prob.add_aviary_group('mission1', aircraft=aviary_inputs_primary, mission=phase_info_primary)
+    prob.add_aviary_group('mission1', aircraft=aviary_inputs_mission1, mission=phase_info_mission1)
     # by default this will load_inputs(), check_and_preprocess(), and combine meta data
     # This can only accept an AviaryValues, .csv acceptance will be removed in future releases
 
-    prob.add_aviary_group('mission2', aircraft=aviary_inputs_deadhead, mission=phase_info_deadhead)
+    prob.add_aviary_group('mission2', aircraft=aviary_inputs_mission2, mission=phase_info_mission2)
     # Load aircraft in second configuration for same mission
 
     prob.build_model()
@@ -114,6 +113,7 @@ if __name__ == '__main__':
         (Aircraft.LandingGear.MAIN_GEAR_MASS, 'lbm'),
         (Aircraft.LandingGear.NOSE_GEAR_MASS, 'lbm'),
         (Aircraft.Design.LANDING_TO_TAKEOFF_MASS_RATIO, 'unitless'),
+        (Aircraft.Avionics.MASS, 'lbm'),
         (Aircraft.Furnishings.MASS, 'lbm'),
         (Aircraft.CrewPayload.PASSENGER_SERVICE_MASS, 'lbm'),
         (Mission.Summary.GROSS_MASS, 'lbm'),
@@ -129,4 +129,12 @@ if __name__ == '__main__':
     print('Objective Value (unitless): ', objective)
     print('Aircraft1:GROSS_MASS (lbm)', prob.get_val('Aircraft1:GROSS_MASS', units='lbm'))
     print('Aircraft1:SWEEP (deg)', prob.get_val('Aircraft1:SWEEP', units='deg'))
+
+    # If you notice differences in Aircraft.Design.EMPTY_MASS, your aircraft are not
+    # mirroring eachother and there is some difference in configuration between the two aircraft.
+    # Aircraft.Design.EMPTY_MASS is the final dry mass summation from pre-mission. 
+    # You can use the following OpenMDAO commends below to list out and compare 
+    # the each individual mass from every subsystem on the aircraft
+    # prob.model.mission1.list_vars(val=True, units=True, print_arrays=False)
+    # prob.model.mission2.list_vars(val=True, units=True, print_arrays=False)
     
