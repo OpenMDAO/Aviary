@@ -1005,6 +1005,10 @@ class AviaryGroup(om.Group):
         self._connect_mission_bus_variables()
 
         final_phase = self.regular_phases[-1]
+
+        # We connect the last points in the trajectory to the state_output component to make it
+        # easier for users to access Mission.Summary.FINAL_MASS, Mission.Summary.FINAL_TIME,
+        # and Mission.Summary.RANGE.
         self.connect(
             f'traj.{final_phase}.states:mass',
             'state_output.mass_in',
