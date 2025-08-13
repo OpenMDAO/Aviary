@@ -198,9 +198,11 @@ def create_opts2vals(all_options: list, output_units: dict = {}):
             aviary_options: AviaryValues = self.options['aviary_options']
             for option_name in all_options:
                 output_data = configure_output(option_name, aviary_options)
-                outputs[option_name] = aviary_options.get_val(
-                    option_name, units=output_data['units']
-                )
+                # uses default value if not present
+                if option_name in aviary_options:
+                    outputs[option_name] = aviary_options.get_val(
+                        option_name, units=output_data['units']
+                    )
 
     return OptionsToValues
 

@@ -32,7 +32,7 @@ V3_bug_fixed_options.set_val(Aircraft.Wing.TAPER_RATIO, val=0.33, units='unitles
 V3_bug_fixed_options.set_val(Aircraft.Wing.SWEEP, val=25, units='deg')
 V3_bug_fixed_options.set_val(Aircraft.Wing.THICKNESS_TO_CHORD_ROOT, val=0.15, units='unitless')
 V3_bug_fixed_options.set_val(Mission.Design.GROSS_MASS, val=175400, units='lbm')
-V3_bug_fixed_options.set_val(Aircraft.Wing.LOADING, val=126, units='lbf/ft**2')
+V3_bug_fixed_options.set_val(Aircraft.Design.WING_LOADING, val=126, units='lbf/ft**2')
 V3_bug_fixed_options.set_val(
     Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION, val=0, units='unitless'
 )
