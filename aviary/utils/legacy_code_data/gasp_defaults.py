@@ -4,7 +4,6 @@ from aviary.utils.named_values import NamedValues
 # commented out values were not in metadata at the time
 gasp_default_values = NamedValues(
     {
-        'INGASP.ALPHL0': (-1.2, 'deg'),
         'INGASP.ALTLND': (0, 'ft'),
         'INGASP.AR': (10, 'unitless'),
         'INGASP.ARHT': (4.75, 'unitless'),
