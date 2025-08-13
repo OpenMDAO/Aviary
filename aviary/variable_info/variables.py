@@ -189,6 +189,7 @@ class Aircraft:
         ULF_CALCULATED_FROM_MANEUVER = 'aircraft:design:ulf_calculated_from_maneuver'
         USE_ALT_MASS = 'aircraft:design:use_alt_mass'
         WETTED_AREAS = 'aircraft:design:wetted_areas'
+        WING_LOADING = 'aircraft:design:wing_loading'
         ZERO_FUEL_MASS = 'aircraft:design:zero_fuel_mass'
         ZERO_LIFT_DRAG_COEFF_FACTOR = 'aircraft:design:zero_lift_drag_coeff_factor'
 
@@ -552,7 +553,6 @@ class Aircraft:
         LOAD_DISTRIBUTION_CONTROL = 'aircraft:wing:load_distribution_control'
         LOAD_FRACTION = 'aircraft:wing:load_fraction'
         LOAD_PATH_SWEEP_DIST = 'aircraft:wing:load_path_sweep_dist'
-        LOADING = 'aircraft:wing:loading'
         LOADING_ABOVE_20 = 'aircraft:wing:loading_above_20'
         MASS = 'aircraft:wing:mass'
         MASS_COEFFICIENT = 'aircraft:wing:mass_coefficient'

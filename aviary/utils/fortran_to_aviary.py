@@ -773,10 +773,12 @@ def update_flops_options(vehicle_data):
     for var_name in flops_scaler_variables:
         update_flops_scaler_variables(var_name, input_values)
 
+    # TODO TWR should be checked for and a comment added that T/W ratio should be constrained to the
+    # value found in the input file - TWR != Aircraft.Design.THRUST_RATIO!!!!
     # TWR <= 0 is not valid in Aviary (parametric variation)
-    if Aircraft.Design.THRUST_TO_WEIGHT_RATIO in input_values:
-        if input_values.get_val(Aircraft.Design.THRUST_TO_WEIGHT_RATIO)[0] <= 0:
-            input_values.delete(Aircraft.Design.THRUST_TO_WEIGHT_RATIO)
+    # if Aircraft.Design.THRUST_TO_WEIGHT_RATIO in input_values:
+    #     if input_values.get_val(Aircraft.Design.THRUST_TO_WEIGHT_RATIO)[0] <= 0:
+    #         input_values.delete(Aircraft.Design.THRUST_TO_WEIGHT_RATIO)
 
     # WSR
     # Additional mass fraction scaler set to zero to not add mass twice
