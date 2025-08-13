@@ -259,7 +259,7 @@ class Aircraft:
             MASS = 'aircraft:engine:motor:mass'
             TORQUE_MAX = 'aircraft:engine:motor:torque_max'
             IDLE_CURRENT = 'aircraft:engine:motor:idle_current'
-            PEAK_CURRENT = 'aircraft:engine:motor:peak_current'
+            MAX_CONT_CURRENT = 'aircraft:engine:motor:max_cont_current'
             RESISTANCE = 'aircraft:engine:motor:resistance'
             KV = 'aircraft:engine:motor:kv'
             KV_EQ_SLOPE = 'aircraft:engine:motor:kv_eq_slope'

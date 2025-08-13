@@ -61,7 +61,7 @@ class RCBuilder(EngineModel):
                 'upper': 3.6, #TODO: this placeholder can be varied
                 # 'val': 2.2,  
             },
-            Aircraft.Engine.Motor.PEAK_CURRENT: {
+            Aircraft.Engine.Motor.MAX_CONT_CURRENT: {
                 'units': 'A',
                 'lower': 1,
                 'upper': 225, #limit is baced on available motor
@@ -73,18 +73,18 @@ class RCBuilder(EngineModel):
                 'upper': 1.701,
                 # 'val': 1.0,  
             },
-            # Aircraft.Engine.Propeller.PITCH: {
-            #     'units': 'inch',
-            #     'lower': 3.0,
-            #     'upper': 15.0,
-            #     # 'val': 100,  # initial value
-            # },
-            # Aircraft.Engine.Propeller.DIAMETER: {
-            #     'units': 'inch',
-            #     'lower': 10.0,
-            #     'upper': 20.0,
-            #     # 'val': 8,  # initial value
-            # },
+            Aircraft.Engine.Propeller.PITCH: {
+                'units': 'inch',
+                'lower': 3.0,
+                'upper': 15.0,
+                # 'val': 100,  # initial value
+            },
+            Aircraft.Engine.Propeller.DIAMETER: {
+                'units': 'inch',
+                'lower': 10.0,
+                'upper': 20.0,
+                # 'val': 8,  # initial value
+            },
 
         }
         return DVs
@@ -126,7 +126,7 @@ class RCBuilder(EngineModel):
                 'val': 2.2,  
                 'units': 'A',
             },
-            Aircraft.Engine.Motor.PEAK_CURRENT: {
+            Aircraft.Engine.Motor.MAX_CONT_CURRENT: {
                 'val': 100,  
                 'units': 'A',
             },

@@ -99,6 +99,8 @@ class EnergyODE(_BaseODE):
         )
 
         self.add_constraint('thrust_con', equals=0)
+        #TODO Alex remove throttle and figure out this issue! 
+        self.add_design_var(Dynamic.Vehicle.Propulsion.THROTTLE, lower=0, upper=1)
         # THROTTLE Section
         # TODO: Split this out into a function that can be used by the other ODEs.
         if num_engine_type > 1:
@@ -151,7 +153,7 @@ class EnergyODE(_BaseODE):
                 promotes_outputs=['*'],
             )
 
-            self.set_input_defaults(Dynamic.Vehicle.Propulsion.THROTTLE, val=1.0, units='unitless')
+        self.set_input_defaults(Dynamic.Vehicle.Propulsion.THROTTLE, val=0.7, units='unitless')
         ############## ALEX LOPEZ ADDITION ###############
         self.set_input_defaults(Dynamic.Atmosphere.MACH_RATE, val=np.zeros(nn))
         ############## ALEX LOPEZ ADDITION ###############
@@ -202,4 +204,4 @@ class EnergyODE(_BaseODE):
         # sub1.nonlinear_solver.options['err_on_non_converge'] = True
         # sub1.nonlinear_solver.options['iprint'] = print_level
 
-        # self.options['auto_order'] = True
+        self.options['auto_order'] = True

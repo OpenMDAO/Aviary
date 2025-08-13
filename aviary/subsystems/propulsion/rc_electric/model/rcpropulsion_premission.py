@@ -9,8 +9,8 @@ class RCPropPreMission(om.Group):
     """Calculate electric motor mass for a single motor."""
 
     def initialize(self):
-        # self.options.declare('m', default = 1.3132, desc='m coefficient for kv(mass, peak_current): kv = m * peak_current/mass + b')
-        # self.options.declare('b', default = 0.01, desc='b coefficient for kv(mass, peak_current): kv = m * peak_current/mass + b')
+        # self.options.declare('m', default = 1.3132, desc='m coefficient for kv(mass, max_current): kv = m * max_current/mass + b')
+        # self.options.declare('b', default = 0.01, desc='b coefficient for kv(mass, max_current): kv = m * max_current/mass + b')
         
         add_aviary_option(self, Aircraft.Engine.Motor.KV_EQ_SLOPE)
         add_aviary_option(self, Aircraft.Engine.Motor.KV_EQ_INT)
@@ -61,15 +61,15 @@ class RCPropPreMission(om.Group):
         self.add_subsystem(
             'motor_kv_calc',
             om.ExecComp(
-                'kv = m * peak_current / motor_mass + b',
+                'kv = m * max_current / motor_mass + b',
                 kv={'val': 0.0, 'units': 'rpm/V'},
-                peak_current={'val': 0.0, 'units': 'A'},
+                max_current={'val': 0.0, 'units': 'A'},
                 motor_mass={'val': 0.0, 'units': 'kg'},
                 m=self.options[Aircraft.Engine.Motor.KV_EQ_SLOPE],
                 b=self.options[Aircraft.Engine.Motor.KV_EQ_INT],
             ),
             promotes_inputs=[
-                ('peak_current', Aircraft.Engine.Motor.PEAK_CURRENT),
+                ('max_current', Aircraft.Engine.Motor.MAX_CONT_CURRENT),
                 ('motor_mass', Aircraft.Engine.Motor.MASS),
             ],
             promotes_outputs=[('kv', Aircraft.Engine.Motor.KV)]

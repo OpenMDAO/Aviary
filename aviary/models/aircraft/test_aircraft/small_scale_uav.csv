@@ -45,7 +45,7 @@ aircraft:battery:mass, 0.707, kg
 aircraft:battery:resistance, 0.05, ohm
 aircraft:battery:voltage, 22.2, V
 aircraft:engine:motor:idle_current, 0.91, A
-aircraft:engine:motor:peak_current, 120, A
+aircraft:engine:motor:max_cont_current, 120, A
 aircraft:engine:motor:mass, 0.288, kg
 aircraft:engine:propeller:diameter, 20, inch
 aircraft:engine:propeller:pitch, 10, inch

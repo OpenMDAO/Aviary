@@ -2602,11 +2602,11 @@ add_meta_data(
 )
 
 add_meta_data(
-    Aircraft.Engine.Motor.PEAK_CURRENT,
+    Aircraft.Engine.Motor.MAX_CONT_CURRENT,
     meta_data=_MetaData,
     historical_name={'GASP': None, 'FLOPS': None, 'LEAPS1': None},
     units='A',
-    desc='Maximum instantaneous current that flows through a single motor.',
+    desc='Maximum continuous current that flows through a single motor.',
     multivalue=True,
 )
 
@@ -2624,7 +2624,7 @@ add_meta_data(
     meta_data=_MetaData,
     units='unitless',
     default_value = 1.3132,
-    desc='__', #TODO
+    desc='__', #TODO Alex
     option=True,
     multivalue=True,
 )

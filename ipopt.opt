@@ -6,7 +6,7 @@ file_print_level 5
 print_info_string yes
 
 # Termination Criteria
-max_iter 300
+max_iter 1000
 tol 1e-5
 constr_viol_tol 1e-6
 
