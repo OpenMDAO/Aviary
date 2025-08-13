@@ -12,7 +12,7 @@ from aviary.interface.methods_for_level1 import run_aviary
 from aviary.variable_info.variables import Aircraft, Mission
 
 
-# @use_tempdirs
+@use_tempdirs
 class ProblemPhaseTestCase(unittest.TestCase):
     """
     Test the setup and run of a BWB aircraft using GASP mass and aero method
@@ -70,7 +70,4 @@ class ProblemPhaseTestCase(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    # unittest.main()
-    test = ProblemPhaseTestCase()
-    test.setUp()
-    test.test_bench_GwGm()
+    unittest.main()
