@@ -73,7 +73,6 @@ class AviaryGroup(om.Group):
         self.aviary_inputs = None
         self.meta_data = None
         self.phase_info = None
-        # self.core_subsystems = {}
 
     def configure(self):
         """Configure the Aviary group."""
