@@ -1622,11 +1622,17 @@ add_meta_data(
     meta_data=_MetaData,
     historical_name={
         'GASP': None,
-        'FLOPS': 'CONFIN.TWR',
-        'LEAPS1': 'ipropulsion.req_thrust_weight_ratio',
+        'FLOPS': None,
+        'LEAPS1': None,
+        # NOTE TWR != THRUST_TO_WEIGHT_RATIO because Aviary's value is the actual T/W, while TWR is
+        #      the desired T/W ratio
+        # 'FLOPS': 'CONFIN.TWR',
+        # 'LEAPS1': 'ipropulsion.req_thrust_weight_ratio',
     },
     units='unitless',
-    desc='required thrust-to-weight ratio of aircraft',
+    default_value=0.0,
+    types=float,
+    desc='ratio of total sea-level-static thrust to aircraft takeoff gross weight',
 )
 
 add_meta_data(
@@ -1716,6 +1722,20 @@ add_meta_data(
     },
     units='ft**2',
     desc='table of component wetted areas',
+)
+
+add_meta_data(
+    Aircraft.Design.WING_LOADING,
+    meta_data=_MetaData,
+    historical_name={
+        'GASP': ['INGASP.WGS', 'INGASP.WOS'],
+        'FLOPS': None,  # 'MISSA.SWET',
+        'LEAPS1': None,
+    },
+    default_value=0,
+    types=float,
+    units='lbf/ft**2',
+    desc='ratio of aircraft gross takeoff weight to projected wing area',
 )
 
 add_meta_data(
@@ -5881,19 +5901,7 @@ add_meta_data(
     multivalue=True,
 )
 
-add_meta_data(
-    Aircraft.Wing.LOADING,
-    meta_data=_MetaData,
-    historical_name={
-        'GASP': ['INGASP.WGS', 'INGASP.WOS'],
-        'FLOPS': None,
-        'LEAPS1': None,
-    },
-    units='lbf/ft**2',
-    desc='wing loading',
-    default_value=0.0,
-)
-
+# TODO this variable may be uneccessary since we can just check wing loading's value where needed
 add_meta_data(
     Aircraft.Wing.LOADING_ABOVE_20,
     meta_data=_MetaData,

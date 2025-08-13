@@ -515,7 +515,7 @@ dependent_options = [
     # [Aircraft.Engine.WING_LOCATIONS, {
     #     'val': 0, 'relation': '==', 'target': Aircraft.Engine.FUSELAGE_MOUNTED, 'result': True, 'alternate': False}],
     [
-        Aircraft.Wing.LOADING,
+        Aircraft.Design.WING_LOADING,
         {
             'val': 20,
             'relation': '>',
