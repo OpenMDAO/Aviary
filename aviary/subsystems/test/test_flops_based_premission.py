@@ -1,6 +1,7 @@
 import unittest
 
 import openmdao.api as om
+from openmdao.utils.testing_utils import use_tempdirs
 from parameterized import parameterized
 
 from aviary.subsystems.premission import CorePreMission
@@ -19,6 +20,7 @@ from aviary.variable_info.functions import setup_model_options
 from aviary.variable_info.variables import Aircraft, Mission, Settings
 
 
+@use_tempdirs
 class PreMissionGroupTest(unittest.TestCase):
     def setUp(self):
         self.prob = om.Problem()

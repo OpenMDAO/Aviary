@@ -1149,9 +1149,7 @@ class FixedMassGroupTestCase1(unittest.TestCase):
             self.prob['payload_mass_max'], 46040, tol
         )  # bug fixed value and original value
 
-        assert_near_equal(
-            self.prob['tail.loc_MAC_vtail'], 0.44959578484694906, tol
-        )  # bug fixed value
+        assert_near_equal(self.prob['loc_MAC_vtail'], 0.44959578484694906, tol)  # bug fixed value
         # bug fixed value
         assert_near_equal(self.prob[Aircraft.HorizontalTail.MASS], 2285, tol)
         assert_near_equal(self.prob[Aircraft.VerticalTail.MASS], 2312, tol)  # bug fixed value
@@ -1341,52 +1339,52 @@ class FixedMassGroupTestCase2(unittest.TestCase):
         )  # bug fixed value and original value
 
         self.prob.model.set_input_defaults(
-            'augmentation.motor_power', val=200, units='kW'
+            'motor_power', val=200, units='kW'
         )  # not actual GASP value
         self.prob.model.set_input_defaults(
-            'augmentation.motor_voltage', val=50, units='V'
+            'motor_voltage', val=50, units='V'
         )  # not actual GASP value
         self.prob.model.set_input_defaults(
-            'augmentation.max_amp_per_wire', val=50, units='A'
+            'max_amp_per_wire', val=50, units='A'
         )  # not actual GASP value
         self.prob.model.set_input_defaults(
-            'augmentation.safety_factor', val=1.33, units='unitless'
+            'safety_factor', val=1.33, units='unitless'
         )  # not actual GASP value
         self.prob.model.set_input_defaults(
             Aircraft.Electrical.HYBRID_CABLE_LENGTH, val=200, units='ft'
         )  # not actual GASP value
         self.prob.model.set_input_defaults(
-            'augmentation.wire_area', val=0.0015, units='ft**2'
+            'wire_area', val=0.0015, units='ft**2'
         )  # not actual GASP value
         self.prob.model.set_input_defaults(
-            'augmentation.rho_wire', val=1, units='lbm/ft**3'
+            'rho_wire', val=1, units='lbm/ft**3'
         )  # not actual GASP value
         self.prob.model.set_input_defaults(
-            'augmentation.battery_energy', val=1, units='MJ'
+            'battery_energy', val=1, units='MJ'
         )  # not actual GASP value
         self.prob.model.set_input_defaults(
-            'augmentation.motor_eff', val=1, units='unitless'
+            'motor_eff', val=1, units='unitless'
         )  # not actual GASP value
         self.prob.model.set_input_defaults(
-            'augmentation.inverter_eff', val=1, units='unitless'
+            'inverter_eff', val=1, units='unitless'
         )  # not actual GASP value
         self.prob.model.set_input_defaults(
-            'augmentation.transmission_eff', val=1, units='unitless'
+            'transmission_eff', val=1, units='unitless'
         )  # not actual GASP value
         self.prob.model.set_input_defaults(
-            'augmentation.battery_eff', val=1, units='unitless'
+            'battery_eff', val=1, units='unitless'
         )  # not actual GASP value
         self.prob.model.set_input_defaults(
-            'augmentation.rho_battery', val=200, units='kW*h/kg'
+            'rho_battery', val=200, units='kW*h/kg'
         )  # not actual GASP value
         self.prob.model.set_input_defaults(
-            'augmentation.motor_spec_mass', val=10, units='hp/lbm'
+            'motor_spec_mass', val=10, units='hp/lbm'
         )  # not actual GASP value
         self.prob.model.set_input_defaults(
-            'augmentation.inverter_spec_mass', val=10, units='kW/kg'
+            'inverter_spec_mass', val=10, units='kW/kg'
         )  # not actual GASP value
         self.prob.model.set_input_defaults(
-            'augmentation.TMS_spec_mass', val=0.125, units='lbm/kW'
+            'TMS_spec_mass', val=0.125, units='lbm/kW'
         )  # electrified diff configuration value v3.6
 
         self.prob.model.set_input_defaults(
@@ -1417,7 +1415,7 @@ class FixedMassGroupTestCase2(unittest.TestCase):
             Aircraft.LandingGear.MAIN_GEAR_LOCATION, val=0.15, units='unitless'
         )  # bug fixed value and original value
         self.prob.model.set_input_defaults(
-            'engine.prop_mass', val=0, units='lbm'
+            'prop_mass', val=0, units='lbm'
         )  # bug fixed value and original value
         self.prob.model.set_input_defaults(Aircraft.Fuselage.AVG_DIAMETER, val=13.1)
         self.prob.model.set_input_defaults(Aircraft.Wing.SLAT_CHORD_RATIO, val=0.15)
@@ -1455,7 +1453,7 @@ class FixedMassGroupTestCase2(unittest.TestCase):
         assert_near_equal(self.prob['payload_mass_des'], 36000, tol)  # bug fixed and original value
         assert_near_equal(self.prob['payload_mass_max'], 46040, tol)  # bug fixed and original value
 
-        assert_near_equal(self.prob['tail.loc_MAC_vtail'], 1.799, tol)  # not actual GASP value
+        assert_near_equal(self.prob['loc_MAC_vtail'], 1.799, tol)  # not actual GASP value
         # original GASP value
         assert_near_equal(self.prob[Aircraft.HorizontalTail.MASS], 2275, tol)
         assert_near_equal(self.prob[Aircraft.VerticalTail.MASS], 2297, tol)  # original GASP value
@@ -1480,7 +1478,7 @@ class FixedMassGroupTestCase2(unittest.TestCase):
         )  # bug fixed and original value
         assert_near_equal(self.prob['eng_comb_mass'], 14599.28196478, tol)  # not actual GASP value
         assert_near_equal(self.prob['wing_mounted_mass'], 24027.6, tol)  # not actual GASP value
-        assert_near_equal(self.prob['engine.prop_mass_all'], 0, tol)  # bug fixed and original value
+        assert_near_equal(self.prob['prop_mass_all'], 0, tol)  # bug fixed and original value
 
         partial_data = self.prob.check_partials(
             out_stream=None,
@@ -2101,7 +2099,7 @@ class BWBFixedMassGroupTestCase1(unittest.TestCase):
         assert_near_equal(self.prob[Aircraft.CrewPayload.PASSENGER_PAYLOAD_MASS], 33750.0, tol)
         assert_near_equal(self.prob['payload_mass_des'], 33750, tol)
         assert_near_equal(self.prob['payload_mass_max'], 48750, tol)
-        assert_near_equal(self.prob['tail.loc_MAC_vtail'], 0.97683077, tol)
+        assert_near_equal(self.prob['loc_MAC_vtail'], 0.97683077, tol)
         assert_near_equal(self.prob[Aircraft.HorizontalTail.MASS], 1.02401953, tol)
         assert_near_equal(self.prob[Aircraft.VerticalTail.MASS], 864.17404177, tol)
         assert_near_equal(self.prob[Aircraft.Wing.HIGH_LIFT_MASS], 1068.88854499, tol)

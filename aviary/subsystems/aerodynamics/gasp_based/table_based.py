@@ -282,7 +282,7 @@ class TabularLowSpeedAero(om.Group):
         self.add_subsystem(
             'gear_drag',
             GearDragIncrement(num_nodes=nn),
-            promotes_inputs=['aircraft:*', 'flap_defl', 'mission:*'],
+            promotes_inputs=['*'],
             promotes_outputs=[('dCD', 'dCD_gear_full')],
         )
 
@@ -347,12 +347,7 @@ class TabularLowSpeedAero(om.Group):
         self.add_subsystem(
             'forces',
             AeroForces(num_nodes=nn),
-            promotes_inputs=[
-                'CL',
-                'CD',
-                Dynamic.Atmosphere.DYNAMIC_PRESSURE,
-            ]
-            + ['aircraft:*'],
+            promotes_inputs=['*'],
             promotes_outputs=[Dynamic.Vehicle.LIFT, Dynamic.Vehicle.DRAG],
         )
 

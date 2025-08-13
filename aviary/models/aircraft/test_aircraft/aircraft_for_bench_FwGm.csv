@@ -5,13 +5,13 @@ aircraft:controls:stability_augmentation_system_mass_scaler,1,unitless
 aircraft:crew_and_payload:passenger_mass_with_bags,200,lbm
 aircraft:design:cg_delta,0.25,unitless
 aircraft:design:cockpit_control_mass_coefficient,16.5,unitless
-aircraft:design:drag_increment,0.00175,unitless
+aircraft:design:drag_coeff_increment,0.00175,unitless
 aircraft:design:max_structural_speed,402.5,mi/h
 aircraft:design:part25_structural_category,3,unitless
 aircraft:design:reserve_fuel_additional,3000.,lbm
 aircraft:design:static_margin,0.03,unitless
 aircraft:design:structural_mass_increment,0,lbm
-aircraft:design:supercritical_drag_shift,0.033,unitless
+aircraft:design:drag_divergence_shift,0.033,unitless
 aircraft:engine:constant_fuel_consumption,0.,lbm/h
 aircraft:engine:data_file,models/engines/turbofan_23k_1.csv,unitless
 aircraft:engine:global_throttle, True, unitless

@@ -157,3 +157,4 @@ mission:takeoff:lift_over_drag,17.354,unitless
 settings:equations_of_motion,height_energy
 settings:aerodynamics_method,FLOPS
 settings:mass_method,FLOPS
+settings:payload_range,false
