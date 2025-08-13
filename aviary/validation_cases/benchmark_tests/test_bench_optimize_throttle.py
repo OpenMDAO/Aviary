@@ -96,7 +96,7 @@ phase_info = {
 
 @use_tempdirs
 class OptimizeThrottleTestCase(unittest.TestCase):
-    """Basic test of feature.."""
+    """Basic test of feature."""
 
     def setUp(self):
         om.clear_reports()
@@ -106,7 +106,11 @@ class OptimizeThrottleTestCase(unittest.TestCase):
     def test_throttle_optimize_SNOPT(self):
         prob = AviaryProblem()
 
-        prob.load_inputs('models/aircraft/test_aircraft/aircraft_for_bench_FwFm.csv', phase_info, verbosity=1)
+        prob.load_inputs(
+            'models/aircraft/test_aircraft/aircraft_for_bench_FwFm.csv',
+            phase_info,
+            verbosity=1,
+        )
 
         prob.aviary_inputs.set_val(Settings.VERBOSITY, 0)
 

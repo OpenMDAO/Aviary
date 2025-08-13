@@ -145,7 +145,7 @@ class EnergyODE(_BaseODE):
                         ('thrust', Dynamic.Vehicle.Propulsion.THRUST_TOTAL),
                         'thrust_required',
                     ],
-                    promotes_outputs=['*']
+                    promotes_outputs=['*'],
                 )
                 self.add_constraint('thrust_residual', ref=thrust_res_ref, equals=0.0)
             else:
