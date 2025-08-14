@@ -22,7 +22,7 @@ aircraft:design:reserve_fuel_additional, 0.667, lbm
 aircraft:design:static_margin, 0.05, unitless
 aircraft:design:structural_mass_increment, 0, lbm
 aircraft:design:drag_divergence_shift, 0, unitless
-aircraft:design:transport,unitless
+aircraft:design:type,transport,unitless
 
 # Misc Systems
 aircraft:air_conditioning:mass_coefficient, 2.65, unitless
