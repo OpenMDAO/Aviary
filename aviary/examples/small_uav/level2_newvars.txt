@@ -26,26 +26,26 @@ pre_mission
       aircraft:fuselage:average_width                            [0.3048]                  input   m            aircraft:fuselage:average_width                                             
       aircraft:fuselage:mass                                     [0.74951461]              output  kg           aircraft:fuselage:mass                                                      
     total_mass
-      batt_mass                                                  [0.73568429]              input   kg           aircraft:battery:mass                                                       
-      motor_mass                                                 [0.80862757]              input   kg           aircraft:engine:motor:mass                                                  
+      batt_mass                                                  [0.10099758]              input   kg           aircraft:battery:mass                                                       
+      motor_mass                                                 [0.45205308]              input   kg           aircraft:engine:motor:mass                                                  
       n_batt                                                     [1.]                      input   None         pre_mission.dbf_mass.total_mass.n_batt                                      
       n_mot                                                      [1.]                      input   None         aircraft:engine:num_engines                                                 
-      engine_mass                                                [1.54431187]              output  kg           aircraft:propulsion:mass                                                    
+      engine_mass                                                [0.55305066]              output  kg           aircraft:propulsion:mass                                                    
   core_propulsion
     rc_electric
       energy_calc
-        battery_mass                                             [0.73568429]              input   kg           aircraft:battery:mass                                                       
+        battery_mass                                             [0.10099758]              input   kg           aircraft:battery:mass                                                       
         voltage_in                                               [22.2]                    input   V            aircraft:battery:voltage                                                    
-        energy                                                   [113.76379669]            output  W*h          aircraft:battery:energy_capacity                                            
+        energy                                                   [10.90646819]             output  W*h          aircraft:battery:energy_capacity                                            
       motor_resistance_calc
-        idle_current                                             [3.22153246]              input   A            aircraft:engine:motor:idle_current                                          
-        resistance                                               [0.00510579]              output  ohm          aircraft:engine:motor:resistance                                            
+        idle_current                                             [3.59982301]              input   A            aircraft:engine:motor:idle_current                                          
+        resistance                                               [0.0041384]               output  ohm          aircraft:engine:motor:resistance                                            
       motor_kv_calc
         b                                                        [0.01]                    input   None         pre_mission.core_propulsion.rc_electric.motor_kv_calc.b                     
         m                                                        [1.3132]                  input   None         pre_mission.core_propulsion.rc_electric.motor_kv_calc.m                     
-        max_current                                              [176.27654279]            input   A            aircraft:engine:motor:max_cont_current                                      
-        motor_mass                                               [0.80862757]              input   kg           aircraft:engine:motor:mass                                                  
-        kv                                                       [286.28066921]            output  rpm/V        aircraft:engine:motor:kv                                                    
+        max_current                                              [116.87550863]            input   A            aircraft:engine:motor:max_cont_current                                      
+        motor_mass                                               [0.45205308]              input   kg           aircraft:engine:motor:mass                                                  
+        kv                                                       [339.52968355]            output  rpm/V        aircraft:engine:motor:kv                                                    
     propulsion_sum
       aircraft:engine:scaled_sls_thrust                          [0.]                      input   lbf          aircraft:engine:scaled_sls_thrust                                           
       aircraft:propulsion:total_scaled_sls_thrust                [0.]                      output  lbf          aircraft:propulsion:total_scaled_sls_thrust                                 
@@ -344,9 +344,9 @@ pre_mission
           aircraft:landing_gear:main_gear_oleo_length            [0.]                      input   inch         aircraft:landing_gear:main_gear_oleo_length                                 
           aircraft:landing_gear:nose_gear_oleo_length            [0.]                      output  inch         pre_mission.AUTO_OVERRIDE:aircraft:landing_gear:nose_gear_oleo_length       
         landing_mass
-          mission:design:gross_mass                              [12.63603987]             input   lbm          mission:design:gross_mass                                                   
+          mission:design:gross_mass                              [10.45068304]             input   lbm          mission:design:gross_mass                                                   
           aircraft:design:landing_to_takeoff_mass_ratio          [0.99999342]              input   unitless     aircraft:design:landing_to_takeoff_mass_ratio                               
-          aircraft:design:touchdown_mass                         [12.63595669]             output  lbm          pre_mission.AUTO_OVERRIDE:aircraft:design:touchdown_mass                    
+          aircraft:design:touchdown_mass                         [10.45061424]             output  lbm          pre_mission.AUTO_OVERRIDE:aircraft:design:touchdown_mass                    
         landing_gear
           aircraft:landing_gear:main_gear_oleo_length            [0.]                      input   inch         aircraft:landing_gear:main_gear_oleo_length                                 
           aircraft:landing_gear:main_gear_mass_scaler            [0.]                      input   unitless     aircraft:landing_gear:main_gear_mass_scaler                                 
@@ -357,7 +357,7 @@ pre_mission
           aircraft:landing_gear:nose_gear_mass                   [0.]                      output  lbm          aircraft:landing_gear:nose_gear_mass                                        
       surf_ctrl
         aircraft:wing:surface_ctrl_mass_scaler                   [0.]                      input   unitless     aircraft:wing:surface_ctrl_mass_scaler                                      
-        mission:design:gross_mass                                [12.63603987]             input   lbm          mission:design:gross_mass                                                   
+        mission:design:gross_mass                                [10.45068304]             input   lbm          mission:design:gross_mass                                                   
         aircraft:wing:control_surface_area_ratio                 [0.1]                     input   unitless     aircraft:wing:control_surface_area_ratio                                    
         aircraft:wing:area                                       [7.0007397]               input   ft**2        aircraft:wing:area                                                          
         aircraft:wing:surface_ctrl_mass                          [0.]                      output  lbm          aircraft:wing:surface_ctrl_mass                                             
@@ -370,23 +370,23 @@ pre_mission
       htail
         aircraft:horizontal_tail:area                            [1.52847528]              input   ft**2        aircraft:horizontal_tail:area                                               
         aircraft:horizontal_tail:taper_ratio                     [1.]                      input   unitless     aircraft:horizontal_tail:taper_ratio                                        
-        mission:design:gross_mass                                [12.63603987]             input   lbm          mission:design:gross_mass                                                   
+        mission:design:gross_mass                                [10.45068304]             input   lbm          mission:design:gross_mass                                                   
         aircraft:horizontal_tail:mass_scaler                     [0.]                      input   unitless     aircraft:horizontal_tail:mass_scaler                                        
         aircraft:horizontal_tail:mass                            [0.]                      output  lbm          pre_mission.EXTERNAL_OVERRIDE:aircraft:horizontal_tail:mass                 
       vert_tail
         aircraft:vertical_tail:area                              [0.67812636]              input   ft**2        aircraft:vertical_tail:area                                                 
         aircraft:vertical_tail:taper_ratio                       [0.33]                    input   unitless     aircraft:vertical_tail:taper_ratio                                          
         aircraft:vertical_tail:mass_scaler                       [0.]                      input   unitless     aircraft:vertical_tail:mass_scaler                                          
-        mission:design:gross_mass                                [12.63603987]             input   lbm          mission:design:gross_mass                                                   
+        mission:design:gross_mass                                [10.45068304]             input   lbm          mission:design:gross_mass                                                   
         aircraft:vertical_tail:mass                              [0.]                      output  lbm          pre_mission.EXTERNAL_OVERRIDE:aircraft:vertical_tail:mass                   
       canard
-        mission:design:gross_mass                                [12.63603987]             input   lbm          mission:design:gross_mass                                                   
+        mission:design:gross_mass                                [10.45068304]             input   lbm          mission:design:gross_mass                                                   
         aircraft:canard:area                                     [0.]                      input   ft**2        aircraft:canard:area                                                        
         aircraft:canard:taper_ratio                              [0.]                      input   unitless     aircraft:canard:taper_ratio                                                 
         aircraft:canard:mass_scaler                              [1.]                      input   unitless     aircraft:canard:mass_scaler                                                 
         aircraft:canard:mass                                     [0.]                      output  lbm          aircraft:canard:mass                                                        
       fin
-        mission:design:gross_mass                                [12.63603987]             input   lbm          mission:design:gross_mass                                                   
+        mission:design:gross_mass                                [10.45068304]             input   lbm          mission:design:gross_mass                                                   
         aircraft:fins:area                                       [0.]                      input   ft**2        aircraft:fins:area                                                          
         aircraft:fins:taper_ratio                                [10.]                     input   unitless     aircraft:fins:taper_ratio                                                   
         aircraft:fins:mass_scaler                                [0.]                      input   unitless     aircraft:fins:mass_scaler                                                   
@@ -424,11 +424,11 @@ pre_mission
         wing_shear_control
           aircraft:wing:composite_fraction                       [0.2]                     input   unitless     aircraft:wing:composite_fraction                                            
           aircraft:wing:control_surface_area                     [0.]                      input   ft**2        aircraft:wing:control_surface_area                                          
-          mission:design:gross_mass                              [12.63603987]             input   lbm          mission:design:gross_mass                                                   
+          mission:design:gross_mass                              [10.45068304]             input   lbm          mission:design:gross_mass                                                   
           aircraft:wing:shear_control_mass_scaler                [0.]                      input   unitless     aircraft:wing:shear_control_mass_scaler                                     
           aircraft:wing:shear_control_mass                       [0.]                      output  lbm          aircraft:wing:shear_control_mass                                            
         wing_bending
-          mission:design:gross_mass                              [12.63603987]             input   lbm          mission:design:gross_mass                                                   
+          mission:design:gross_mass                              [10.45068304]             input   lbm          mission:design:gross_mass                                                   
           aircraft:wing:aeroelastic_tailoring_factor             [0.]                      input   unitless     aircraft:wing:aeroelastic_tailoring_factor                                  
           aircraft:wing:bending_material_factor                  [9.09991752]              input   unitless     aircraft:wing:bending_material_factor                                       
           aircraft:wing:bending_material_mass_scaler             [0.]                      input   unitless     aircraft:wing:bending_material_mass_scaler                                  
@@ -483,7 +483,7 @@ pre_mission
           aircraft:design:external_subsystems_mass               [0.]                      input   lbm          aircraft:design:external_subsystems_mass                                    
           aircraft:design:systems_equip_mass                     [0.]                      output  lbm          aircraft:design:systems_equip_mass                                          
         empty_mass_margin
-          aircraft:propulsion:mass                               [3.40462487]              input   lbm          aircraft:propulsion:mass                                                    
+          aircraft:propulsion:mass                               [1.219268]                input   lbm          aircraft:propulsion:mass                                                    
           aircraft:design:structure_mass                         [9.231415]                input   lbm          aircraft:design:structure_mass                                              
           aircraft:design:systems_equip_mass                     [0.]                      input   lbm          aircraft:design:systems_equip_mass                                          
           aircraft:design:empty_mass_margin_scaler               [0.]                      input   unitless     aircraft:design:empty_mass_margin_scaler                                    
@@ -491,124 +491,124 @@ pre_mission
         empty_mass
           aircraft:design:empty_mass_margin                      [0.]                      input   lbm          aircraft:design:empty_mass_margin                                           
           aircraft:design:structure_mass                         [9.231415]                input   lbm          aircraft:design:structure_mass                                              
-          aircraft:propulsion:mass                               [3.40462487]              input   lbm          aircraft:propulsion:mass                                                    
+          aircraft:propulsion:mass                               [1.219268]                input   lbm          aircraft:propulsion:mass                                                    
           aircraft:design:systems_equip_mass                     [0.]                      input   lbm          aircraft:design:systems_equip_mass                                          
-          aircraft:design:empty_mass                             [12.63603987]             output  lbm          aircraft:design:empty_mass                                                  
+          aircraft:design:empty_mass                             [10.45068299]             output  lbm          aircraft:design:empty_mass                                                  
         operating_mass
           aircraft:crew_and_payload:cargo_container_mass         [0.]                      input   lbm          aircraft:crew_and_payload:cargo_container_mass                              
           aircraft:crew_and_payload:non_flight_crew_mass         [0.]                      input   lbm          aircraft:crew_and_payload:non_flight_crew_mass                              
           aircraft:crew_and_payload:flight_crew_mass             [0.]                      input   lbm          aircraft:crew_and_payload:flight_crew_mass                                  
           aircraft:crew_and_payload:passenger_service_mass       [0.]                      input   lbm          aircraft:crew_and_payload:passenger_service_mass                            
-          aircraft:design:empty_mass                             [12.63603987]             input   lbm          aircraft:design:empty_mass                                                  
+          aircraft:design:empty_mass                             [10.45068299]             input   lbm          aircraft:design:empty_mass                                                  
           aircraft:fuel:unusable_fuel_mass                       [0.]                      input   lbm          aircraft:fuel:unusable_fuel_mass                                            
           aircraft:propulsion:total_engine_oil_mass              [0.]                      input   lbm          aircraft:propulsion:total_engine_oil_mass                                   
-          aircraft:design:operating_mass                         [12.63603987]             output  lbm          aircraft:design:operating_mass                                              
+          aircraft:design:operating_mass                         [10.45068299]             output  lbm          aircraft:design:operating_mass                                              
         zero_fuel_mass
           aircraft:crew_and_payload:passenger_mass               [0.]                      input   lbm          aircraft:crew_and_payload:passenger_mass                                    
           aircraft:crew_and_payload:baggage_mass                 [0.]                      input   lbm          aircraft:crew_and_payload:baggage_mass                                      
           aircraft:crew_and_payload:cargo_mass                   [0.]                      input   lbm          aircraft:crew_and_payload:cargo_mass                                        
-          aircraft:design:operating_mass                         [12.63603987]             input   lbm          aircraft:design:operating_mass                                              
-          aircraft:design:zero_fuel_mass                         [12.63603987]             output  lbm          aircraft:design:zero_fuel_mass                                              
+          aircraft:design:operating_mass                         [10.45068299]             input   lbm          aircraft:design:operating_mass                                              
+          aircraft:design:zero_fuel_mass                         [10.45068299]             output  lbm          aircraft:design:zero_fuel_mass                                              
         fuel_mass
-          mission:design:gross_mass                              [12.63603987]             input   lbm          mission:design:gross_mass                                                   
-          aircraft:design:zero_fuel_mass                         [12.63603987]             input   lbm          aircraft:design:zero_fuel_mass                                              
-          mission:design:fuel_mass                               [-1.687539e-13]           output  lbm          pre_mission.AUTO_OVERRIDE:mission:design:fuel_mass                          
+          mission:design:gross_mass                              [10.45068304]             input   lbm          mission:design:gross_mass                                                   
+          aircraft:design:zero_fuel_mass                         [10.45068299]             input   lbm          aircraft:design:zero_fuel_mass                                              
+          mission:design:fuel_mass                               [4.27122284e-08]          output  lbm          pre_mission.AUTO_OVERRIDE:mission:design:fuel_mass                          
 traj
   param_comp
     parameters:aircraft:wing:area                                [7.0007397]               input   ft**2        aircraft:wing:area                                                          
     parameters:aircraft:battery:voltage                          [22.2]                    input   V            aircraft:battery:voltage                                                    
     parameters:aircraft:battery:resistance                       [0.05]                    input   ohm          aircraft:battery:resistance                                                 
-    parameters:aircraft:engine:motor:resistance                  [0.00510579]              input   ohm          aircraft:engine:motor:resistance                                            
-    parameters:aircraft:engine:motor:kv                          [286.28066921]            input   rpm/V        aircraft:engine:motor:kv                                                    
-    parameters:aircraft:engine:motor:idle_current                [3.22153246]              input   A            aircraft:engine:motor:idle_current                                          
-    parameters:aircraft:engine:motor:max_cont_current            [176.27654279]            input   A            aircraft:engine:motor:max_cont_current                                      
-    parameters:aircraft:engine:propeller:diameter                [0.43305928]              input   m            aircraft:engine:propeller:diameter                                          
-    parameters:aircraft:engine:propeller:pitch                   [12.85021888]             input   inch         aircraft:engine:propeller:pitch                                             
+    parameters:aircraft:engine:motor:resistance                  [0.0041384]               input   ohm          aircraft:engine:motor:resistance                                            
+    parameters:aircraft:engine:motor:kv                          [339.52968355]            input   rpm/V        aircraft:engine:motor:kv                                                    
+    parameters:aircraft:engine:motor:idle_current                [3.59982301]              input   A            aircraft:engine:motor:idle_current                                          
+    parameters:aircraft:engine:motor:max_cont_current            [116.87550863]            input   A            aircraft:engine:motor:max_cont_current                                      
+    parameters:aircraft:engine:propeller:diameter                [0.46885559]              input   m            aircraft:engine:propeller:diameter                                          
+    parameters:aircraft:engine:propeller:pitch                   [9.77964803]              input   inch         aircraft:engine:propeller:pitch                                             
     parameter_vals:aircraft:wing:area                            [[7.0007397]]             output  ft**2        traj.parameter_vals:aircraft:wing:area                                      
     parameter_vals:aircraft:battery:voltage                      [[22.2]]                  output  V            traj.parameter_vals:aircraft:battery:voltage                                
     parameter_vals:aircraft:battery:resistance                   [[0.05]]                  output  ohm          traj.parameter_vals:aircraft:battery:resistance                             
-    parameter_vals:aircraft:engine:motor:resistance              [[0.00510579]]            output  ohm          traj.parameter_vals:aircraft:engine:motor:resistance                        
-    parameter_vals:aircraft:engine:motor:kv                      [[286.28066921]]          output  rpm/V        traj.parameter_vals:aircraft:engine:motor:kv                                
-    parameter_vals:aircraft:engine:motor:idle_current            [[3.22153246]]            output  A            traj.parameter_vals:aircraft:engine:motor:idle_current                      
-    parameter_vals:aircraft:engine:motor:max_cont_current        [[176.27654279]]          output  A            traj.parameter_vals:aircraft:engine:motor:max_cont_current                  
-    parameter_vals:aircraft:engine:propeller:diameter            [[0.43305928]]            output  m            traj.parameter_vals:aircraft:engine:propeller:diameter                      
-    parameter_vals:aircraft:engine:propeller:pitch               [[12.85021888]]           output  inch         traj.parameter_vals:aircraft:engine:propeller:pitch                         
+    parameter_vals:aircraft:engine:motor:resistance              [[0.0041384]]             output  ohm          traj.parameter_vals:aircraft:engine:motor:resistance                        
+    parameter_vals:aircraft:engine:motor:kv                      [[339.52968355]]          output  rpm/V        traj.parameter_vals:aircraft:engine:motor:kv                                
+    parameter_vals:aircraft:engine:motor:idle_current            [[3.59982301]]            output  A            traj.parameter_vals:aircraft:engine:motor:idle_current                      
+    parameter_vals:aircraft:engine:motor:max_cont_current        [[116.87550863]]          output  A            traj.parameter_vals:aircraft:engine:motor:max_cont_current                  
+    parameter_vals:aircraft:engine:propeller:diameter            [[0.46885559]]            output  m            traj.parameter_vals:aircraft:engine:propeller:diameter                      
+    parameter_vals:aircraft:engine:propeller:pitch               [[9.77964803]]            output  inch         traj.parameter_vals:aircraft:engine:propeller:pitch                         
   phases
     cruise
       param_comp
         t_initial                                                [0.]                      input   s            traj.cruise.t_initial                                                       
-        t_duration                                               [1.79266264]              input   s            traj.cruise.t_duration                                                      
+        t_duration                                               [4.99930173]              input   s            traj.cruise.t_duration                                                      
         parameters:aircraft:wing:area                            [7.0007397]               input   ft**2        traj.cruise.parameters:aircraft:wing:area                                   
         parameters:aircraft:battery:voltage                      [22.2]                    input   V            traj.cruise.parameters:aircraft:battery:voltage                             
         parameters:aircraft:battery:resistance                   [0.05]                    input   ohm          traj.cruise.parameters:aircraft:battery:resistance                          
-        parameters:aircraft:engine:motor:resistance              [0.00510579]              input   ohm          traj.cruise.parameters:aircraft:engine:motor:resistance                     
-        parameters:aircraft:engine:motor:kv                      [286.28066921]            input   rpm/V        traj.cruise.parameters:aircraft:engine:motor:kv                             
-        parameters:aircraft:engine:motor:idle_current            [3.22153246]              input   A            traj.cruise.parameters:aircraft:engine:motor:idle_current                   
-        parameters:aircraft:engine:motor:max_cont_current        [176.27654279]            input   A            traj.cruise.parameters:aircraft:engine:motor:max_cont_current               
-        parameters:aircraft:engine:propeller:diameter            [0.43305928]              input   m            traj.cruise.parameters:aircraft:engine:propeller:diameter                   
-        parameters:aircraft:engine:propeller:pitch               [12.85021888]             input   inch         traj.cruise.parameters:aircraft:engine:propeller:pitch                      
+        parameters:aircraft:engine:motor:resistance              [0.0041384]               input   ohm          traj.cruise.parameters:aircraft:engine:motor:resistance                     
+        parameters:aircraft:engine:motor:kv                      [339.52968355]            input   rpm/V        traj.cruise.parameters:aircraft:engine:motor:kv                             
+        parameters:aircraft:engine:motor:idle_current            [3.59982301]              input   A            traj.cruise.parameters:aircraft:engine:motor:idle_current                   
+        parameters:aircraft:engine:motor:max_cont_current        [116.87550863]            input   A            traj.cruise.parameters:aircraft:engine:motor:max_cont_current               
+        parameters:aircraft:engine:propeller:diameter            [0.46885559]              input   m            traj.cruise.parameters:aircraft:engine:propeller:diameter                   
+        parameters:aircraft:engine:propeller:pitch               [9.77964803]              input   inch         traj.cruise.parameters:aircraft:engine:propeller:pitch                      
         t_initial_val                                            [0.]                      output  s            traj.cruise.t_initial_val                                                   
-        t_duration_val                                           [1.79266264]              output  s            traj.cruise.t_duration_val                                                  
+        t_duration_val                                           [4.99930173]              output  s            traj.cruise.t_duration_val                                                  
         parameter_vals:aircraft:wing:area                        [[7.0007397]]             output  ft**2        traj.cruise.parameter_vals:aircraft:wing:area                               
         parameter_vals:aircraft:battery:voltage                  [[22.2]]                  output  V            traj.cruise.parameter_vals:aircraft:battery:voltage                         
         parameter_vals:aircraft:battery:resistance               [[0.05]]                  output  ohm          traj.cruise.parameter_vals:aircraft:battery:resistance                      
-        parameter_vals:aircraft:engine:motor:resistance          [[0.00510579]]            output  ohm          traj.cruise.parameter_vals:aircraft:engine:motor:resistance                 
-        parameter_vals:aircraft:engine:motor:kv                  [[286.28066921]]          output  rpm/V        traj.cruise.parameter_vals:aircraft:engine:motor:kv                         
-        parameter_vals:aircraft:engine:motor:idle_current        [[3.22153246]]            output  A            traj.cruise.parameter_vals:aircraft:engine:motor:idle_current               
-        parameter_vals:aircraft:engine:motor:max_cont_current    [[176.27654279]]          output  A            traj.cruise.parameter_vals:aircraft:engine:motor:max_cont_current           
-        parameter_vals:aircraft:engine:propeller:diameter        [[0.43305928]]            output  m            traj.cruise.parameter_vals:aircraft:engine:propeller:diameter               
-        parameter_vals:aircraft:engine:propeller:pitch           [[12.85021888]]           output  inch         traj.cruise.parameter_vals:aircraft:engine:propeller:pitch                  
+        parameter_vals:aircraft:engine:motor:resistance          [[0.0041384]]             output  ohm          traj.cruise.parameter_vals:aircraft:engine:motor:resistance                 
+        parameter_vals:aircraft:engine:motor:kv                  [[339.52968355]]          output  rpm/V        traj.cruise.parameter_vals:aircraft:engine:motor:kv                         
+        parameter_vals:aircraft:engine:motor:idle_current        [[3.59982301]]            output  A            traj.cruise.parameter_vals:aircraft:engine:motor:idle_current               
+        parameter_vals:aircraft:engine:motor:max_cont_current    [[116.87550863]]          output  A            traj.cruise.parameter_vals:aircraft:engine:motor:max_cont_current           
+        parameter_vals:aircraft:engine:propeller:diameter        [[0.46885559]]            output  m            traj.cruise.parameter_vals:aircraft:engine:propeller:diameter               
+        parameter_vals:aircraft:engine:propeller:pitch           [[9.77964803]]            output  inch         traj.cruise.parameter_vals:aircraft:engine:propeller:pitch                  
       time
         t_initial                                                [0.]                      input   s            traj.cruise.t_initial                                                       
-        t_duration                                               [1.79266264]              input   s            traj.cruise.t_duration                                                      
-        t                                                        |2.43168591|              output  s            traj.cruise.t                                                               
+        t_duration                                               [4.99930173]              input   s            traj.cruise.t_duration                                                      
+        t                                                        |6.78138281|              output  s            traj.cruise.t                                                               
                                                                  val:
-                                                                 array([0.        , 0.63648671, 1.51470846, 1.79266264])
-        t_phase                                                  |2.43168591|              output  s            traj.cruise.t_phase                                                         
+                                                                 array([0.        , 1.77500721, 4.22415487, 4.99930173])
+        t_phase                                                  |6.78138281|              output  s            traj.cruise.t_phase                                                         
                                                                  val:
-                                                                 array([0.        , 0.63648671, 1.51470846, 1.79266264])
-        dt_dstau                                                 |1.79266264|              output  s            traj.cruise.dt_dstau                                                        
+                                                                 array([0.        , 1.77500721, 4.22415487, 4.99930173])
+        dt_dstau                                                 |4.99930173|              output  s            traj.cruise.dt_dstau                                                        
                                                                  val:
-                                                                 array([0.89633132, 0.89633132, 0.89633132, 0.89633132])
+                                                                 array([2.49965087, 2.49965087, 2.49965087, 2.49965087])
       control_comp
-        dt_dstau                                                 |1.79266264|              input   s            traj.cruise.control_comp.dt_dstau                                           
+        dt_dstau                                                 |4.99930173|              input   s            traj.cruise.control_comp.dt_dstau                                           
                                                                  val:
-                                                                 array([0.89633132, 0.89633132, 0.89633132, 0.89633132])
-        t_duration                                               [1.79266264]              input   s            traj.cruise.control_comp.t_duration                                         
-        controls:mach                                            |0.14142136|              input   unitless     traj.cruise.controls:mach                                                   
+                                                                 array([2.49965087, 2.49965087, 2.49965087, 2.49965087])
+        t_duration                                               [4.99930173]              input   s            traj.cruise.control_comp.t_duration                                         
+        controls:mach                                            |0.13608146|              input   unitless     traj.cruise.controls:mach                                                   
                                                                  val:
-                                                                 array([[0.1],
-                                                                        [0.1]])
+                                                                 array([[0.1       ],
+                                                                        [0.09229389]])
         controls:altitude                                        |282.84271247|            input   ft           traj.cruise.controls:altitude                                               
                                                                  val:
                                                                  array([[200.],
                                                                         [200.]])
-        control_values:mach                                      |0.2|                     output  unitless     traj.cruise.control_values:mach                                             
+        control_values:mach                                      |0.19162093|              output  unitless     traj.cruise.control_values:mach                                             
                                                                  val:
-                                                                 array([[0.1],
-                                                                        [0.1],
-                                                                        [0.1],
-                                                                        [0.1]])
-        control_rates:mach_rate                                  |0.0|                     output  1/s          traj.cruise.control_rates:mach_rate                                         
+                                                                 array([[0.1       ],
+                                                                        [0.09726394],
+                                                                        [0.09348873],
+                                                                        [0.09229389]])
+        control_rates:mach_rate                                  |0.00308288|              output  1/s          traj.cruise.control_rates:mach_rate                                         
                                                                  val:
-                                                                 array([[-2.1389595e-12],
-                                                                        [-2.1389595e-12],
-                                                                        [-2.1389595e-12],
-                                                                        [-2.1389595e-12]])
+                                                                 array([[-0.00154144],
+                                                                        [-0.00154144],
+                                                                        [-0.00154144],
+                                                                        [-0.00154144]])
         control_rates:mach_rate2                                 |0.0|                     output  1/s**2       traj.cruise.control_rates:mach_rate2                                        
                                                                  val:
                                                                  array([[0.],
                                                                         [0.],
                                                                         [0.],
                                                                         [0.]])
-        control_boundary_values:mach                             |0.14142136|              output  unitless     traj.cruise.control_comp.control_boundary_values:mach                       
+        control_boundary_values:mach                             |0.13608146|              output  unitless     traj.cruise.control_comp.control_boundary_values:mach                       
                                                                  val:
-                                                                 array([[0.1],
-                                                                        [0.1]])
-        control_boundary_rates:mach_rate                         |0.0|                     output  1/s          traj.cruise.control_comp.control_boundary_rates:mach_rate                   
+                                                                 array([[0.1       ],
+                                                                        [0.09229389]])
+        control_boundary_rates:mach_rate                         |0.00217992|              output  1/s          traj.cruise.control_comp.control_boundary_rates:mach_rate                   
                                                                  val:
-                                                                 array([[-2.1389595e-12],
-                                                                        [-2.1389595e-12]])
+                                                                 array([[-0.00154144],
+                                                                        [-0.00154144]])
         control_boundary_rates:mach_rate2                        |0.0|                     output  1/s**2       traj.cruise.control_comp.control_boundary_rates:mach_rate2                  
                                                                  val:
                                                                  array([[0.],
@@ -645,44 +645,44 @@ traj
                                                                         [0.]])
       indep_states
         initial_states:distance                                  [[1.]]                    input   m            traj.cruise.initial_states:distance                                         
-        states:mass                                              |11.46322255|             output  kg           traj.cruise.states:mass                                                     
+        states:mass                                              |9.48069993|              output  kg           traj.cruise.states:mass                                                     
                                                                  val:
-                                                                 array([[5.73161127],
-                                                                        [5.73161127],
-                                                                        [5.73161127],
-                                                                        [5.73161127]])
-        states:distance                                          |84.32015028|             output  m            traj.cruise.states:distance                                                 
+                                                                 array([[4.74034991],
+                                                                        [4.74034993],
+                                                                        [4.74035   ],
+                                                                        [4.74035002]])
+        states:distance                                          |224.28144602|            output  m            traj.cruise.states:distance                                                 
                                                                  val:
-                                                                 array([[ 1.        ],
-                                                                        [22.64391053],
-                                                                        [52.50808947],
-                                                                        [61.96      ]])
+                                                                 array([[  1.        ],
+                                                                        [ 60.53422105],
+                                                                        [139.96897641],
+                                                                        [164.45504174]])
       state_interp
-        dt_dstau                                                 |1.55249138|              input   s            traj.cruise.state_interp.dt_dstau                                           
+        dt_dstau                                                 |4.3295223|               input   s            traj.cruise.state_interp.dt_dstau                                           
                                                                  val:
-                                                                 array([0.89633132, 0.89633132, 0.89633132])
-        state_disc:mass                                          |11.46322255|             input   kg           traj.cruise.state_interp.state_disc:mass                                    
+                                                                 array([2.49965087, 2.49965087, 2.49965087])
+        state_disc:mass                                          |9.48069993|              input   kg           traj.cruise.state_interp.state_disc:mass                                    
                                                                  val:
-                                                                 array([[5.73161127],
-                                                                        [5.73161127],
-                                                                        [5.73161127],
-                                                                        [5.73161127]])
-        state_disc:distance                                      |84.32015028|             input   m            traj.cruise.state_interp.state_disc:distance                                
+                                                                 array([[4.74034991],
+                                                                        [4.74034993],
+                                                                        [4.74035   ],
+                                                                        [4.74035002]])
+        state_disc:distance                                      |224.28144602|            input   m            traj.cruise.state_interp.state_disc:distance                                
                                                                  val:
-                                                                 array([[ 1.        ],
-                                                                        [22.64391053],
-                                                                        [52.50808947],
-                                                                        [61.96      ]])
-        staterate_col:mass                                       |0.0|                     output  kg/s         traj.cruise.state_interp.staterate_col:mass                                 
+                                                                 array([[  1.        ],
+                                                                        [ 60.53422105],
+                                                                        [139.96897641],
+                                                                        [164.45504174]])
+        staterate_col:mass                                       |4e-08|                   output  kg/s         traj.cruise.state_interp.staterate_col:mass                                 
                                                                  val:
-                                                                 array([[-1.50617430e-13],
-                                                                        [ 3.07180285e-14],
-                                                                        [ 1.16926689e-13]])
-        staterate_col:distance                                   |58.89887764|             output  m/s          traj.cruise.state_interp.staterate_col:distance                             
+                                                                 array([[-2.88353643e-10],
+                                                                        [ 1.96905038e-08],
+                                                                        [ 3.26729660e-08]])
+        staterate_col:distance                                   |57.10572401|             output  m/s          traj.cruise.state_interp.staterate_col:distance                             
                                                                  val:
-                                                                 array([[34.00528286],
-                                                                        [34.00528286],
-                                                                        [34.00528286]])
+                                                                 array([[34.00528361],
+                                                                        [33.0752564 ],
+                                                                        [31.79200868]])
       rhs_all
         atmosphere
           standard_atmosphere
@@ -714,154 +714,154 @@ traj
             speed_of_sound                                       |2231.31777308|           input   ft/s         traj.cruise.rhs_all.speed_of_sound                                          
                                                                  val:
                                                                  array([1115.65888654, 1115.65888654, 1115.65888654, 1115.65888654])
-            mach                                                 |0.2|                     input   unitless     traj.cruise.rhs_all.mach                                                    
+            mach                                                 |0.19162093|              input   unitless     traj.cruise.rhs_all.mach                                                    
                                                                  val:
-                                                                 array([0.1, 0.1, 0.1, 0.1])
-            dynamic_pressure                                     |29.41574548|             output  lbf/ft**2    traj.cruise.rhs_all.dynamic_pressure                                        
+                                                                 array([0.1       , 0.09726394, 0.09348873, 0.09229389])
+            dynamic_pressure                                     |27.05792817|             output  lbf/ft**2    traj.cruise.rhs_all.dynamic_pressure                                        
                                                                  val:
-                                                                 array([14.70787274, 14.70787274, 14.70787274, 14.70787274])
-            EAS                                                  |222.49203583|            output  ft/s         traj.cruise.rhs_all.EAS                                                     
+                                                                 array([14.7078734 , 13.91405044, 12.85489079, 12.52840453])
+            EAS                                                  |213.17064974|            output  ft/s         traj.cruise.rhs_all.EAS                                                     
                                                                  val:
-                                                                 array([111.24601792, 111.24601791, 111.24601791, 111.24601791])
-            velocity                                             |223.1317773|             output  ft/s         traj.cruise.rhs_all.velocity                                                
+                                                                 array([111.24602043, 108.20225932, 104.00249024, 102.67327768])
+            velocity                                             |213.78358901|            output  ft/s         traj.cruise.rhs_all.velocity                                                
                                                                  val:
-                                                                 array([111.56588865, 111.56588865, 111.56588865, 111.56588865])
+                                                                 array([111.56589118, 108.5133782 , 104.30153333, 102.96849883])
         velocity_rate_comp
-          mach_rate                                              |0.0|                     input   1/s          traj.cruise.rhs_all.mach_rate                                               
+          mach_rate                                              |0.00308288|              input   1/s          traj.cruise.rhs_all.mach_rate                                               
                                                                  val:
-                                                                 array([-2.1389595e-12, -2.1389595e-12, -2.1389595e-12, -2.1389595e-12])
+                                                                 array([-0.00154144, -0.00154144, -0.00154144, -0.00154144])
           sos                                                    |680.10565724|            input   m/s          traj.cruise.rhs_all.speed_of_sound                                          
                                                                  val:
                                                                  array([340.05282862, 340.05282862, 340.05282862, 340.05282862])
-          velocity_rate                                          |0.0|                     output  m/s**2       traj.cruise.rhs_all.velocity_rate                                           
+          velocity_rate                                          |1.04834048|              output  m/s**2       traj.cruise.rhs_all.velocity_rate                                           
                                                                  val:
-                                                                 array([-7.27359228e-10, -7.27359228e-10, -7.27359228e-10, -7.27359228e-10])
+                                                                 array([-0.52417024, -0.52417024, -0.52417024, -0.52417024])
         external_subsystems
           simple_aero
             DynamicPressure
               static_pressure                                    |4201.92611054|           input   lbf/ft**2    traj.cruise.rhs_all.static_pressure                                         
                                                                  val:
                                                                  array([2100.96305527, 2100.96305527, 2100.96305527, 2100.96305527])
-              mach                                               |0.2|                     input   unitless     traj.cruise.rhs_all.mach                                                    
+              mach                                               |0.19162093|              input   unitless     traj.cruise.rhs_all.mach                                                    
                                                                  val:
-                                                                 array([0.1, 0.1, 0.1, 0.1])
-              dynamic_pressure                                   |29.41348277|             output  lbf/ft**2    traj.cruise.rhs_all.simple_aero.dynamic_pressure                            
+                                                                 array([0.1       , 0.09726394, 0.09348873, 0.09229389])
+              dynamic_pressure                                   |27.05584683|             output  lbf/ft**2    traj.cruise.rhs_all.simple_aero.dynamic_pressure                            
                                                                  val:
-                                                                 array([14.70674139, 14.70674139, 14.70674139, 14.70674139])
+                                                                 array([14.70674205, 13.91298015, 12.85390197, 12.52744082])
             Lift
               aircraft:wing:area                                 [0.65039]                 input   m**2         traj.cruise.rhs_all.aircraft:wing:area                                      
-              mass                                               |11.46322255|             input   kg           traj.cruise.rhs_all.mass                                                    
+              mass                                               |9.48069993|              input   kg           traj.cruise.rhs_all.mass                                                    
                                                                  val:
-                                                                 array([5.73161127, 5.73161127, 5.73161127, 5.73161127])
-              dynamic_pressure                                   |1408.32517416|           input   N/m**2       traj.cruise.rhs_all.simple_aero.dynamic_pressure                            
+                                                                 array([4.74034991, 4.74034993, 4.74035   , 4.74035002])
+              dynamic_pressure                                   |1295.44095465|           input   N/m**2       traj.cruise.rhs_all.simple_aero.dynamic_pressure                            
                                                                  val:
-                                                                 array([704.16258711, 704.16258709, 704.16258707, 704.16258706])
-              cl                                                 |0.24545993|              output  unitless     traj.cruise.rhs_all.simple_aero.cl                                          
+                                                                 array([704.16261894, 666.1570934 , 615.4481559 , 599.81711162])
+              cl                                                 |0.2224916|               output  unitless     traj.cruise.rhs_all.simple_aero.cl                                          
                                                                  val:
-                                                                 array([0.12272996, 0.12272996, 0.12272996, 0.12272996])
-              lift                                               |112.41581138|            output  N            traj.cruise.rhs_all.lift                                                    
+                                                                 array([0.10150426, 0.10729527, 0.1161357 , 0.11916216])
+              lift                                               |92.97390594|             output  N            traj.cruise.rhs_all.lift                                                    
                                                                  val:
-                                                                 array([56.20790569, 56.20790569, 56.20790569, 56.20790569])
+                                                                 array([46.48695244, 46.48695262, 46.48695329, 46.48695354])
             SimpleDragCoeff
-              cl                                                 |0.24545993|              input   unitless     traj.cruise.rhs_all.simple_aero.cl                                          
+              cl                                                 |0.2224916|               input   unitless     traj.cruise.rhs_all.simple_aero.cl                                          
                                                                  val:
-                                                                 array([0.12272996, 0.12272996, 0.12272996, 0.12272996])
-              CD                                                 |0.08120501|              output  unitless     traj.cruise.rhs_all.simple_aero.CD                                          
+                                                                 array([0.10150426, 0.10729527, 0.1161357 , 0.11916216])
+              CD                                                 |0.08099015|              output  unitless     traj.cruise.rhs_all.simple_aero.CD                                          
                                                                  val:
-                                                                 array([0.04060251, 0.04060251, 0.04060251, 0.04060251])
+                                                                 array([0.04041212, 0.04046049, 0.0405395 , 0.04056798])
             SimpleDrag
               aircraft:wing:area                                 [0.65039]                 input   m**2         traj.cruise.rhs_all.aircraft:wing:area                                      
-              dynamic_pressure                                   |1408.32517416|           input   N/m**2       traj.cruise.rhs_all.simple_aero.dynamic_pressure                            
+              dynamic_pressure                                   |1295.44095465|           input   N/m**2       traj.cruise.rhs_all.simple_aero.dynamic_pressure                            
                                                                  val:
-                                                                 array([704.16258711, 704.16258709, 704.16258707, 704.16258706])
-              CD                                                 |0.08120501|              input   unitless     traj.cruise.rhs_all.simple_aero.CD                                          
+                                                                 array([704.16261894, 666.1570934 , 615.4481559 , 599.81711162])
+              CD                                                 |0.08099015|              input   unitless     traj.cruise.rhs_all.simple_aero.CD                                          
                                                                  val:
-                                                                 array([0.04060251, 0.04060251, 0.04060251, 0.04060251])
-              drag                                               |37.19029593|             output  N            traj.cruise.rhs_all.drag                                                    
+                                                                 array([0.04041212, 0.04046049, 0.0405395 , 0.04056798])
+              drag                                               |34.11209821|             output  N            traj.cruise.rhs_all.drag                                                    
                                                                  val:
-                                                                 array([18.59514797, 18.59514797, 18.59514797, 18.59514797])
+                                                                 array([18.50795797, 17.52998968, 16.22720485, 15.82618149])
         solver_sub
           core_propulsion
             rc_electric
               battery
                 aircraft:battery:voltage                         [22.2]                    input   V            traj.cruise.rhs_all.aircraft:battery:voltage                                
                 aircraft:battery:resistance                      [0.05]                    input   ohm          traj.cruise.rhs_all.aircraft:battery:resistance                             
-                current_flow                                     |47.24024012|             input   A            traj.cruise.rhs_all.current_flow                                            
+                current_flow                                     |48.03269104|             input   A            traj.cruise.rhs_all.current_flow                                            
                                                                  val:
-                                                                 array([23.62012007, 23.62012005, 23.62012007, 23.62012006])
-                voltage_out                                      |42.03798799|             output  V            traj.cruise.rhs_all.rc_electric.battery.voltage_out                         
+                                                                 array([25.93115475, 26.72892514, 22.80962835, 20.00000092])
+                voltage_out                                      |42.0141059|              output  V            traj.cruise.rhs_all.rc_electric.battery.voltage_out                         
                                                                  val:
-                                                                 array([21.018994, 21.018994, 21.018994, 21.018994])
-                power                                            |992.9423235|             output  W            traj.cruise.rhs_all.rc_electric.battery.power                               
+                                                                 array([20.90344226, 20.86355374, 21.05951858, 21.19999995])
+                power                                            |1007.6334957|            output  W            traj.cruise.rhs_all.rc_electric.battery.power                               
                                                                  val:
-                                                                 array([496.47116189, 496.47116146, 496.47116188, 496.47116177])
+                                                                 array([542.05039611, 557.66036618, 480.35979218, 424.00001861])
               esc
-                voltage_in                                       |42.03798799|             input   V            traj.cruise.rhs_all.esc.voltage_in                                          
+                voltage_in                                       |42.0141059|              input   V            traj.cruise.rhs_all.esc.voltage_in                                          
                                                                  val:
-                                                                 array([21.018994, 21.018994, 21.018994, 21.018994])
-                current_flow                                     |47.24024012|             input   A            traj.cruise.rhs_all.current_flow                                            
+                                                                 array([20.90344226, 20.86355374, 21.05951858, 21.19999995])
+                current_flow                                     |48.03269104|             input   A            traj.cruise.rhs_all.current_flow                                            
                                                                  val:
-                                                                 array([23.62012007, 23.62012005, 23.62012007, 23.62012006])
-                throttle                                         |2.00000002|              input   unitless     traj.cruise.rhs_all.throttle                                                
+                                                                 array([25.93115475, 26.72892514, 22.80962835, 20.00000092])
+                throttle                                         |1.91196094|              input   unitless     traj.cruise.rhs_all.throttle                                                
                                                                  val:
-                                                                 array([1.00000001, 1.00000001, 1.00000001, 1.00000001])
-                efficiency                                       |2.00004545|              output  unitless     traj.cruise.rhs_all.rc_electric.esc.efficiency                              
+                                                                 array([0.99751937, 0.99991287, 0.94856281, 0.87232596])
+                efficiency                                       |1.97667076|              output  unitless     traj.cruise.rhs_all.rc_electric.esc.efficiency                              
                                                                  val:
-                                                                 array([1.00002273, 1.00002273, 1.00002273, 1.00002273])
-                voltage_out                                      |42.03894376|             output  V            traj.cruise.rhs_all.rc_electric.esc.voltage_out                             
+                                                                 array([0.99941803, 1.00000151, 0.98711577, 0.96643176])
+                voltage_out                                      |39.72100367|             output  V            traj.cruise.rhs_all.rc_electric.esc.voltage_out                             
                                                                  val:
-                                                                 array([21.01947188, 21.01947188, 21.01947188, 21.01947188])
-                power                                            |0.02256537|              output  W            traj.cruise.rhs_all.rc_electric.esc.power                                   
+                                                                 array([20.83945364, 20.86176748, 19.71889716, 17.8725224 ])
+                power                                            |15.52354793|             output  W            traj.cruise.rhs_all.rc_electric.esc.power                                   
                                                                  val:
-                                                                 array([0.01128269, 0.01128269, 0.01128269, 0.01128269])
-                current_out                                      |47.24024059|             output  A            traj.cruise.rhs_all.rc_electric.esc.current_out                             
+                                                                 array([-3.15456953e-01,  8.43989537e-04, -6.18906758e+00, -1.42329361e+01])
+                current_out                                      |46.43185505|             output  A            traj.cruise.rhs_all.rc_electric.esc.current_out                             
                                                                  val:
-                                                                 array([23.6201203 , 23.62012028, 23.6201203 , 23.6201203 ])
+                                                                 array([25.86682925, 26.72659625, 21.63636521, 17.44652004])
               motor
-                aircraft:engine:motor:idle_current               [3.22153246]              input   A            traj.cruise.rhs_all.aircraft:engine:motor:idle_current                      
-                aircraft:engine:motor:max_cont_current           [176.27654279]            input   A            traj.cruise.rhs_all.aircraft:engine:motor:max_cont_current                  
-                aircraft:engine:motor:resistance                 [0.00510579]              input   ohm          traj.cruise.rhs_all.aircraft:engine:motor:resistance                        
-                aircraft:engine:motor:kv                         [286.28066921]            input   rpm/V        traj.cruise.rhs_all.aircraft:engine:motor:kv                                
-                voltage_in                                       |42.03894376|             input   V            traj.cruise.rhs_all.motor.voltage_in                                        
+                aircraft:engine:motor:idle_current               [3.59982301]              input   A            traj.cruise.rhs_all.aircraft:engine:motor:idle_current                      
+                aircraft:engine:motor:max_cont_current           [116.87550863]            input   A            traj.cruise.rhs_all.aircraft:engine:motor:max_cont_current                  
+                aircraft:engine:motor:resistance                 [0.0041384]               input   ohm          traj.cruise.rhs_all.aircraft:engine:motor:resistance                        
+                aircraft:engine:motor:kv                         [339.52968355]            input   rpm/V        traj.cruise.rhs_all.aircraft:engine:motor:kv                                
+                voltage_in                                       |39.72100367|             input   V            traj.cruise.rhs_all.motor.voltage_in                                        
                                                                  val:
-                                                                 array([21.01947188, 21.01947188, 21.01947188, 21.01947188])
-                current_flow                                     |47.24024012|             input   A            traj.cruise.rhs_all.current_flow                                            
+                                                                 array([20.83945364, 20.86176748, 19.71889716, 17.8725224 ])
+                current_flow                                     |48.03269104|             input   A            traj.cruise.rhs_all.current_flow                                            
                                                                  val:
-                                                                 array([23.62012007, 23.62012005, 23.62012007, 23.62012006])
-                current                                          |47.24024059|             input   A            traj.cruise.rhs_all.motor.current                                           
+                                                                 array([25.93115475, 26.72892514, 22.80962835, 20.00000092])
+                current                                          |46.43185505|             input   A            traj.cruise.rhs_all.motor.current                                           
                                                                  val:
-                                                                 array([23.6201203 , 23.62012028, 23.6201203 , 23.6201203 ])
-                rotations_per_minute                             |11965.88646743|          output  rpm          traj.cruise.rhs_all.rc_electric.rotations_per_minute                        
+                                                                 array([25.86682925, 26.72659625, 21.63636521, 17.44652004])
+                rotations_per_minute                             |13421.54656889|          output  rpm          traj.cruise.rhs_all.rc_electric.rotations_per_minute                        
                                                                  val:
-                                                                 array([5982.94323361, 5982.94323394, 5982.94323361, 5982.94323371])
-                power                                            |140.34993191|            output  W            traj.cruise.rhs_all.rc_electric.motor.power                                 
+                                                                 array([7039.26732805, 7045.63546948, 6664.74941481, 6043.73757325])
+                power                                            |146.83772367|            output  W            traj.cruise.rhs_all.rc_electric.motor.power                                 
                                                                  val:
-                                                                 array([-70.17496596, -70.17496596, -70.17496596, -70.17496596])
-                current_constraint                               |305.31284545|            output  A            traj.cruise.rhs_all.rc_electric.current_constraint                          
+                                                                 array([-77.40196989, -77.65661811, -72.59953226, -65.33765934])
+                current_constraint                               |186.09281513|            output  A            traj.cruise.rhs_all.rc_electric.current_constraint                          
                                                                  val:
-                                                                 array([-152.65642272, -152.65642274, -152.65642272, -152.65642272])
+                                                                 array([-90.94435388, -90.14658349, -94.06588028, -96.87550771])
               vectorize_geo
-                aircraft:engine:propeller:diameter               [0.43305928]              input   m            traj.cruise.rhs_all.aircraft:engine:propeller:diameter                      
-                aircraft:engine:propeller:pitch                  [12.85021888]             input   inch         traj.cruise.rhs_all.aircraft:engine:propeller:pitch                         
-                temp_diameter                                    |0.86611857|              output  m            traj.cruise.rhs_all.rc_electric.temp_diameter                               
+                aircraft:engine:propeller:diameter               [0.46885559]              input   m            traj.cruise.rhs_all.aircraft:engine:propeller:diameter                      
+                aircraft:engine:propeller:pitch                  [9.77964803]              input   inch         traj.cruise.rhs_all.aircraft:engine:propeller:pitch                         
+                temp_diameter                                    |0.93771119|              output  m            traj.cruise.rhs_all.rc_electric.temp_diameter                               
                                                                  val:
-                                                                 array([0.43305928, 0.43305928, 0.43305928, 0.43305928])
-                temp_pitch                                       |25.70043776|             output  inch         traj.cruise.rhs_all.rc_electric.temp_pitch                                  
+                                                                 array([0.46885559, 0.46885559, 0.46885559, 0.46885559])
+                temp_pitch                                       |19.55929605|             output  inch         traj.cruise.rhs_all.rc_electric.temp_pitch                                  
                                                                  val:
-                                                                 array([12.85021888, 12.85021888, 12.85021888, 12.85021888])
+                                                                 array([9.77964803, 9.77964803, 9.77964803, 9.77964803])
               propco
-                temp_diameter                                    |0.86611857|              input   m            traj.cruise.rhs_all.temp_diameter                                           
+                temp_diameter                                    |0.93771119|              input   m            traj.cruise.rhs_all.temp_diameter                                           
                                                                  val:
-                                                                 array([0.43305928, 0.43305928, 0.43305928, 0.43305928])
-                temp_pitch                                       |25.70043776|             input   inch         traj.cruise.rhs_all.temp_pitch                                              
+                                                                 array([0.46885559, 0.46885559, 0.46885559, 0.46885559])
+                temp_pitch                                       |19.55929605|             input   inch         traj.cruise.rhs_all.temp_pitch                                              
                                                                  val:
-                                                                 array([12.85021888, 12.85021888, 12.85021888, 12.85021888])
-                rotations_per_minute                             |199.43144112|            input   rev/s        traj.cruise.rhs_all.rotations_per_minute                                    
+                                                                 array([9.77964803, 9.77964803, 9.77964803, 9.77964803])
+                rotations_per_minute                             |223.69244281|            input   rev/s        traj.cruise.rhs_all.rotations_per_minute                                    
                                                                  val:
-                                                                 array([99.71572056, 99.71572057, 99.71572056, 99.71572056])
-                velocity                                         |68.01056572|             input   m/s          traj.cruise.rhs_all.velocity                                                
+                                                                 array([117.32112213, 117.42725782, 111.07915691, 100.72895955])
+                velocity                                         |65.16123793|             input   m/s          traj.cruise.rhs_all.velocity                                                
                                                                  val:
-                                                                 array([34.00528286, 34.00528286, 34.00528286, 34.00528286])
+                                                                 array([34.00528363, 33.07487768, 31.79110736, 31.38479844])
                 ct_train                                         |5.59292963|              input   unitless     traj.cruise.rhs_all.propco.ct_train                                         
                                                                  val:
                                                                  array([[ 0.0616],
@@ -880,52 +880,52 @@ traj
                                                                         [0.011 ],
                                                                         [0.0079],
                                                                         [0.0047]])
-                ct                                               |0.04365554|              output  unitless     traj.cruise.rhs_all.rc_electric.ct                                          
+                ct                                               |0.01991864|              output  unitless     traj.cruise.rhs_all.rc_electric.ct                                          
                                                                  val:
-                                                                 array([0.02182777, 0.02182777, 0.02182777, 0.02182777])
-                cp                                               |0.04635341|              output  unitless     traj.cruise.rhs_all.rc_electric.cp                                          
+                                                                 array([0.00989681, 0.0129748 , 0.0112682 , 0.00186757])
+                cp                                               |0.02039015|              output  unitless     traj.cruise.rhs_all.rc_electric.cp                                          
                                                                  val:
-                                                                 array([0.02317671, 0.02317671, 0.02317671, 0.02317671])
+                                                                 array([0.01039821, 0.01203397, 0.01117331, 0.00616247])
               prop
                 density                                          |2.43597912|              input   kg/m**3      traj.cruise.rhs_all.density                                                 
                                                                  val:
                                                                  array([1.21798956, 1.21798956, 1.21798956, 1.21798956])
-                aircraft:engine:propeller:diameter               [0.43305928]              input   m            traj.cruise.rhs_all.aircraft:engine:propeller:diameter                      
-                rotations_per_minute                             |199.43144112|            input   rev/s        traj.cruise.rhs_all.rotations_per_minute                                    
+                aircraft:engine:propeller:diameter               [0.46885559]              input   m            traj.cruise.rhs_all.aircraft:engine:propeller:diameter                      
+                rotations_per_minute                             |223.69244281|            input   rev/s        traj.cruise.rhs_all.rotations_per_minute                                    
                                                                  val:
-                                                                 array([99.71572056, 99.71572057, 99.71572056, 99.71572056])
-                ct                                               |0.04365554|              input   unitless     traj.cruise.rhs_all.ct                                                      
+                                                                 array([117.32112213, 117.42725782, 111.07915691, 100.72895955])
+                ct                                               |0.01991864|              input   unitless     traj.cruise.rhs_all.ct                                                      
                                                                  val:
-                                                                 array([0.02182777, 0.02182777, 0.02182777, 0.02182777])
-                cp                                               |0.04635341|              input   unitless     traj.cruise.rhs_all.cp                                                      
+                                                                 array([0.00989681, 0.0129748 , 0.0112682 , 0.00186757])
+                cp                                               |0.02039015|              input   unitless     traj.cruise.rhs_all.cp                                                      
                                                                  val:
-                                                                 array([0.02317671, 0.02317671, 0.02317671, 0.02317671])
-                thrust_net                                       |18.59514798|             output  N            traj.cruise.rhs_all.rc_electric.thrust_net                                  
+                                                                 array([0.01039821, 0.01203397, 0.01117331, 0.00616247])
+                thrust_net                                       |15.60052498|             output  N            traj.cruise.rhs_all.rc_electric.thrust_net                                  
                                                                  val:
-                                                                 array([9.29757399, 9.29757399, 9.29757399, 9.29757399])
-                prop_power                                       |852.61495696|            output  W            traj.cruise.rhs_all.rc_electric.prop_power                                  
+                                                                 array([ 8.01765605, 10.53024543,  8.18313147,  1.11528538])
+                prop_power                                       |844.18022413|            output  W            traj.cruise.rhs_all.rc_electric.prop_power                                  
                                                                  val:
-                                                                 array([426.30747839, 426.30747858, 426.30747844, 426.3074785 ])
+                                                                 array([463.36842477, 537.71804154, 422.58946356, 173.80278144])
               power_summation
-                power_batt                                       |992.9423235|             input   W            traj.cruise.rhs_all.power_summation.power_batt                              
+                power_batt                                       |1007.6334957|            input   W            traj.cruise.rhs_all.power_summation.power_batt                              
                                                                  val:
-                                                                 array([496.47116189, 496.47116146, 496.47116188, 496.47116177])
-                power_esc                                        |0.02256537|              input   W            traj.cruise.rhs_all.power_summation.power_esc                               
+                                                                 array([542.05039611, 557.66036618, 480.35979218, 424.00001861])
+                power_esc                                        |15.52354793|             input   W            traj.cruise.rhs_all.power_summation.power_esc                               
                                                                  val:
-                                                                 array([0.01128269, 0.01128269, 0.01128269, 0.01128269])
-                power_motor                                      |140.34993191|            input   W            traj.cruise.rhs_all.power_summation.power_motor                             
+                                                                 array([-3.15456953e-01,  8.43989537e-04, -6.18906758e+00, -1.42329361e+01])
+                power_motor                                      |146.83772367|            input   W            traj.cruise.rhs_all.power_summation.power_motor                             
                                                                  val:
-                                                                 array([-70.17496596, -70.17496596, -70.17496596, -70.17496596])
-                prop_power                                       |852.61495696|            input   W            traj.cruise.rhs_all.prop_power                                              
+                                                                 array([-77.40196989, -77.65661811, -72.59953226, -65.33765934])
+                prop_power                                       |844.18022413|            input   W            traj.cruise.rhs_all.prop_power                                              
                                                                  val:
-                                                                 array([426.30747839, 426.30747858, 426.30747844, 426.3074785 ])
-                power_net                                        |4.8e-07|                 output  W            traj.cruise.rhs_all.rc_electric.power_net                                   
+                                                                 array([463.36842477, 537.71804154, 422.58946356, 173.80278144])
+                power_net                                        |181.347708|              output  W            traj.cruise.rhs_all.rc_electric.power_net                                   
                                                                  val:
-                                                                 array([ 2.27134194e-07, -3.91855224e-07,  1.64969492e-07, -2.59603894e-10])
+                                                                 array([  0.9645445 , -57.71344947, -21.01827121, 170.62664176])
             vectorize_performance
-              thrust_net_0                                       |4.18035556|              input   lbf          traj.cruise.rhs_all.vectorize_performance.thrust_net_0                      
+              thrust_net_0                                       |3.50713753|              input   lbf          traj.cruise.rhs_all.vectorize_performance.thrust_net_0                      
                                                                  val:
-                                                                 array([2.09017778, 2.09017778, 2.09017778, 2.09017778])
+                                                                 array([1.80244078, 2.36729334, 1.83964114, 0.25072613])
               thrust_net_max_0                                   |0.0|                     input   lbf          traj.cruise.rhs_all.vectorize_performance.thrust_net_max_0                  
                                                                  val:
                                                                  array([0., 0., 0., 0.])
@@ -947,12 +947,12 @@ traj
               shaft_power_max_0                                  |0.0|                     input   hp           traj.cruise.rhs_all.vectorize_performance.shaft_power_max_0                 
                                                                  val:
                                                                  array([0., 0., 0., 0.])
-              thrust_net                                         |4.18035556|              output  lbf          traj.cruise.rhs_all.thrust_net                                              
+              thrust_net                                         |3.50713753|              output  lbf          traj.cruise.rhs_all.thrust_net                                              
                                                                  val:
-                                                                 array([[2.09017778],
-                                                                        [2.09017778],
-                                                                        [2.09017778],
-                                                                        [2.09017778]])
+                                                                 array([[1.80244078],
+                                                                        [2.36729334],
+                                                                        [1.83964114],
+                                                                        [0.25072613]])
               thrust_net_max                                     |0.0|                     output  lbf          traj.cruise.rhs_all.thrust_net_max                                          
                                                                  val:
                                                                  array([[0.],
@@ -996,12 +996,12 @@ traj
                                                                         [0.],
                                                                         [0.]])
             propulsion_sum
-              thrust_net                                         |4.18035556|              input   lbf          traj.cruise.rhs_all.thrust_net                                              
+              thrust_net                                         |3.50713753|              input   lbf          traj.cruise.rhs_all.thrust_net                                              
                                                                  val:
-                                                                 array([[2.09017778],
-                                                                        [2.09017778],
-                                                                        [2.09017778],
-                                                                        [2.09017778]])
+                                                                 array([[1.80244078],
+                                                                        [2.36729334],
+                                                                        [1.83964114],
+                                                                        [0.25072613]])
               thrust_net_max                                     |0.0|                     input   lbf          traj.cruise.rhs_all.thrust_net_max                                          
                                                                  val:
                                                                  array([[0.],
@@ -1026,9 +1026,9 @@ traj
                                                                         [0.],
                                                                         [0.],
                                                                         [0.]])
-              thrust_net_total                                   |8.36071112|              output  lbf          traj.cruise.rhs_all.thrust_net_total                                        
+              thrust_net_total                                   |7.01427506|              output  lbf          traj.cruise.rhs_all.thrust_net_total                                        
                                                                  val:
-                                                                 array([4.18035556, 4.18035556, 4.18035556, 4.18035556])
+                                                                 array([3.60488156, 4.73458669, 3.67928227, 0.50145225])
               thrust_net_max_total                               |0.0|                     output  lbf          traj.cruise.rhs_all.thrust_net_max_total                                    
                                                                  val:
                                                                  array([0., 0., 0., 0.])
@@ -1043,117 +1043,117 @@ traj
                                                                  array([0., 0., 0., 0.])
           mission_EOM
             required_thrust
-              drag                                               |37.19029593|             input   N            traj.cruise.rhs_all.drag                                                    
+              drag                                               |34.11209821|             input   N            traj.cruise.rhs_all.drag                                                    
                                                                  val:
-                                                                 array([18.59514797, 18.59514797, 18.59514797, 18.59514797])
+                                                                 array([18.50795797, 17.52998968, 16.22720485, 15.82618149])
               altitude_rate                                      |0.0|                     input   m/s          traj.cruise.rhs_all.altitude_rate                                           
                                                                  val:
                                                                  array([0., 0., 0., 0.])
-              velocity                                           |68.01056572|             input   m/s          traj.cruise.rhs_all.velocity                                                
+              velocity                                           |65.16123793|             input   m/s          traj.cruise.rhs_all.velocity                                                
                                                                  val:
-                                                                 array([34.00528286, 34.00528286, 34.00528286, 34.00528286])
-              velocity_rate                                      |0.0|                     input   m/s**2       traj.cruise.rhs_all.velocity_rate                                           
+                                                                 array([34.00528363, 33.07487768, 31.79110736, 31.38479844])
+              velocity_rate                                      |1.04834048|              input   m/s**2       traj.cruise.rhs_all.velocity_rate                                           
                                                                  val:
-                                                                 array([-7.27359228e-10, -7.27359228e-10, -7.27359228e-10, -7.27359228e-10])
-              mass                                               |11.46322255|             input   kg           traj.cruise.rhs_all.mass                                                    
+                                                                 array([-0.52417024, -0.52417024, -0.52417024, -0.52417024])
+              mass                                               |9.48069993|              input   kg           traj.cruise.rhs_all.mass                                                    
                                                                  val:
-                                                                 array([5.73161127, 5.73161127, 5.73161127, 5.73161127])
-              thrust_required                                    |37.19029593|             output  N            traj.cruise.rhs_all.thrust_required                                         
+                                                                 array([4.74034991, 4.74034993, 4.74035   , 4.74035002])
+              thrust_required                                    |29.15392335|             output  N            traj.cruise.rhs_all.thrust_required                                         
                                                                  val:
-                                                                 array([18.59514796, 18.59514796, 18.59514796, 18.59514796])
+                                                                 array([16.02320762, 15.04523932, 13.74245445, 13.34143108])
             groundspeed
               altitude_rate                                      |0.0|                     input   m/s          traj.cruise.rhs_all.altitude_rate                                           
                                                                  val:
                                                                  array([0., 0., 0., 0.])
-              velocity                                           |68.01056572|             input   m/s          traj.cruise.rhs_all.velocity                                                
+              velocity                                           |65.16123793|             input   m/s          traj.cruise.rhs_all.velocity                                                
                                                                  val:
-                                                                 array([34.00528286, 34.00528286, 34.00528286, 34.00528286])
-              distance_rate                                      |68.01056572|             output  m/s          traj.cruise.rhs_all.distance_rate                                           
+                                                                 array([34.00528363, 33.07487768, 31.79110736, 31.38479844])
+              distance_rate                                      |65.16123793|             output  m/s          traj.cruise.rhs_all.distance_rate                                           
                                                                  val:
-                                                                 array([34.00528286, 34.00528286, 34.00528286, 34.00528286])
+                                                                 array([34.00528363, 33.07487768, 31.79110736, 31.38479844])
             excess_specific_power
-              velocity                                           |68.01056572|             input   m/s          traj.cruise.rhs_all.velocity                                                
+              velocity                                           |65.16123793|             input   m/s          traj.cruise.rhs_all.velocity                                                
                                                                  val:
-                                                                 array([34.00528286, 34.00528286, 34.00528286, 34.00528286])
-              mass                                               |11.46322255|             input   kg           traj.cruise.rhs_all.mass                                                    
+                                                                 array([34.00528363, 33.07487768, 31.79110736, 31.38479844])
+              mass                                               |9.48069993|              input   kg           traj.cruise.rhs_all.mass                                                    
                                                                  val:
-                                                                 array([5.73161127, 5.73161127, 5.73161127, 5.73161127])
+                                                                 array([4.74034991, 4.74034993, 4.74035   , 4.74035002])
               thrust_net_total                                   |0.0|                     input   N            traj.cruise.rhs_all.thrust_net_max_total                                    
                                                                  val:
                                                                  array([0., 0., 0., 0.])
-              drag                                               |37.19029593|             input   N            traj.cruise.rhs_all.drag                                                    
+              drag                                               |34.11209821|             input   N            traj.cruise.rhs_all.drag                                                    
                                                                  val:
-                                                                 array([18.59514797, 18.59514797, 18.59514797, 18.59514797])
-              specific_energy_rate                               |22.49979816|             output  m/s          traj.cruise.rhs_all.specific_energy_rate_excess                             
+                                                                 array([18.50795797, 17.52998968, 16.22720485, 15.82618149])
+              specific_energy_rate                               |24.00350323|             output  m/s          traj.cruise.rhs_all.specific_energy_rate_excess                             
                                                                  val:
-                                                                 array([-11.24989908, -11.24989908, -11.24989908, -11.24989908])
+                                                                 array([-13.53860228, -12.4723655 , -11.09732462, -10.68475085])
             altitude_rate_max
-              specific_energy_rate                               |22.49979816|             input   m/s          traj.cruise.rhs_all.mission_EOM.specific_energy_rate_excess                 
+              specific_energy_rate                               |24.00350323|             input   m/s          traj.cruise.rhs_all.mission_EOM.specific_energy_rate_excess                 
                                                                  val:
-                                                                 array([-11.24989908, -11.24989908, -11.24989908, -11.24989908])
-              velocity_rate                                      |0.0|                     input   m/s**2       traj.cruise.rhs_all.velocity_rate                                           
+                                                                 array([-13.53860228, -12.4723655 , -11.09732462, -10.68475085])
+              velocity_rate                                      |1.04834048|              input   m/s**2       traj.cruise.rhs_all.velocity_rate                                           
                                                                  val:
-                                                                 array([-7.27359228e-10, -7.27359228e-10, -7.27359228e-10, -7.27359228e-10])
-              velocity                                           |68.01056572|             input   m/s          traj.cruise.rhs_all.velocity                                                
+                                                                 array([-0.52417024, -0.52417024, -0.52417024, -0.52417024])
+              velocity                                           |65.16123793|             input   m/s          traj.cruise.rhs_all.velocity                                                
                                                                  val:
-                                                                 array([34.00528286, 34.00528286, 34.00528286, 34.00528286])
-              altitude_rate                                      |22.49979815|             output  m/s          traj.cruise.rhs_all.altitude_rate_max                                       
+                                                                 array([34.00528363, 33.07487768, 31.79110736, 31.38479844])
+              altitude_rate                                      |20.52856434|             output  m/s          traj.cruise.rhs_all.altitude_rate_max                                       
                                                                  val:
-                                                                 array([-11.24989908, -11.24989908, -11.24989908, -11.24989908])
+                                                                 array([-11.72100323, -10.70449711,  -9.39807438,  -9.00721802])
           throttle_balance
-            thrust_required                                      |8.36071111|              input   lbf          traj.cruise.rhs_all.thrust_required                                         
+            thrust_required                                      |6.55406269|              input   lbf          traj.cruise.rhs_all.thrust_required                                         
                                                                  val:
-                                                                 array([4.18035556, 4.18035556, 4.18035556, 4.18035556])
-            thrust_net_total                                     |8.36071112|              input   lbf          traj.cruise.rhs_all.thrust_net_total                                        
+                                                                 array([3.60216037, 3.38230435, 3.08942666, 2.99927302])
+            thrust_net_total                                     |7.01427506|              input   lbf          traj.cruise.rhs_all.thrust_net_total                                        
                                                                  val:
-                                                                 array([4.18035556, 4.18035556, 4.18035556, 4.18035556])
-            throttle                                             |2.00000002|              output  unitless     traj.cruise.rhs_all.throttle                                                
+                                                                 array([3.60488156, 4.73458669, 3.67928227, 0.50145225])
+            throttle                                             |1.91196094|              output  unitless     traj.cruise.rhs_all.throttle                                                
                                                                  val:
-                                                                 array([1.00000001, 1.00000001, 1.00000001, 1.00000001])
+                                                                 array([0.99751937, 0.99991287, 0.94856281, 0.87232596])
         thrust_balance
-          thrust                                                 |37.19029597|             input   N            traj.cruise.rhs_all.thrust_net_total                                        
+          thrust                                                 |31.20104996|             input   N            traj.cruise.rhs_all.thrust_net_total                                        
                                                                  val:
-                                                                 array([18.59514798, 18.59514799, 18.59514798, 18.59514799])
-          thrust_required                                        |37.19029593|             input   N            traj.cruise.rhs_all.thrust_required                                         
+                                                                 array([16.03531211, 21.06049087, 16.36626294,  2.23057075])
+          thrust_required                                        |29.15392335|             input   N            traj.cruise.rhs_all.thrust_required                                         
                                                                  val:
-                                                                 array([18.59514796, 18.59514796, 18.59514796, 18.59514796])
-          thrust_con                                             |4e-08|                   output  N            traj.cruise.rhs_all.thrust_con                                              
+                                                                 array([16.02320762, 15.04523932, 13.74245445, 13.34143108])
+          thrust_con                                             |12.90422357|             output  N            traj.cruise.rhs_all.thrust_con                                              
                                                                  val:
-                                                                 array([1.52163793e-08, 2.47772434e-08, 2.00604049e-08, 2.31856028e-08])
+                                                                 array([  0.01210448,   6.01525154,   2.62380849, -11.11086033])
       timeseries
-        dt_dstau                                                 |1.79266264|              input   s            traj.cruise.timeseries.dt_dstau                                             
+        dt_dstau                                                 |4.99930173|              input   s            traj.cruise.timeseries.dt_dstau                                             
                                                                  val:
-                                                                 array([0.89633132, 0.89633132, 0.89633132, 0.89633132])
-        input_values:mach                                        |0.2|                     input   unitless     traj.cruise.timeseries.input_values:mach                                    
+                                                                 array([2.49965087, 2.49965087, 2.49965087, 2.49965087])
+        input_values:mach                                        |0.19162093|              input   unitless     traj.cruise.timeseries.input_values:mach                                    
                                                                  val:
-                                                                 array([[0.1],
-                                                                        [0.1],
-                                                                        [0.1],
-                                                                        [0.1]])
+                                                                 array([[0.1       ],
+                                                                        [0.09726394],
+                                                                        [0.09348873],
+                                                                        [0.09229389]])
         input_values:altitude                                    |400.0|                   input   ft           traj.cruise.timeseries.input_values:altitude                                
                                                                  val:
                                                                  array([[200.],
                                                                         [200.],
                                                                         [200.],
                                                                         [200.]])
-        input_values:thrust_net_total                            |8.36071112|              input   lbf          traj.cruise.timeseries.input_values:thrust_net_total                        
+        input_values:thrust_net_total                            |7.01427506|              input   lbf          traj.cruise.timeseries.input_values:thrust_net_total                        
                                                                  val:
-                                                                 array([[4.18035556],
-                                                                        [4.18035556],
-                                                                        [4.18035556],
-                                                                        [4.18035556]])
-        input_values:drag                                        |8.36071111|              input   lbf          traj.cruise.timeseries.input_values:drag                                    
+                                                                 array([[3.60488156],
+                                                                        [4.73458669],
+                                                                        [3.67928227],
+                                                                        [0.50145225]])
+        input_values:drag                                        |7.66870474|              input   lbf          traj.cruise.timeseries.input_values:drag                                    
                                                                  val:
-                                                                 array([[4.18035556],
-                                                                        [4.18035556],
-                                                                        [4.18035556],
-                                                                        [4.18035556]])
-        input_values:specific_energy_rate_excess                 |22.49979816|             input   m/s          traj.cruise.timeseries.input_values:specific_energy_rate_excess             
+                                                                 array([[4.16075447],
+                                                                        [3.94089845],
+                                                                        [3.64802077],
+                                                                        [3.55786713]])
+        input_values:specific_energy_rate_excess                 |24.00350323|             input   m/s          traj.cruise.timeseries.input_values:specific_energy_rate_excess             
                                                                  val:
-                                                                 array([[-11.24989908],
-                                                                        [-11.24989908],
-                                                                        [-11.24989908],
-                                                                        [-11.24989908]])
+                                                                 array([[-13.53860228],
+                                                                        [-12.4723655 ],
+                                                                        [-11.09732462],
+                                                                        [-10.68475085]])
         input_values:fuel_flow_rate_negative_total               |0.0|                     input   lbm/h        traj.cruise.timeseries.input_values:fuel_flow_rate_negative_total           
                                                                  val:
                                                                  array([[0.],
@@ -1172,78 +1172,78 @@ traj
                                                                         [0.],
                                                                         [0.],
                                                                         [0.]])
-        input_values:throttle                                    |2.00000002|              input   unitless     traj.cruise.timeseries.input_values:throttle                                
+        input_values:throttle                                    |1.91196094|              input   unitless     traj.cruise.timeseries.input_values:throttle                                
                                                                  val:
-                                                                 array([[1.00000001],
-                                                                        [1.00000001],
-                                                                        [1.00000001],
-                                                                        [1.00000001]])
-        input_values:velocity                                    |68.01056572|             input   m/s          traj.cruise.timeseries.input_values:velocity                                
+                                                                 array([[0.99751937],
+                                                                        [0.99991287],
+                                                                        [0.94856281],
+                                                                        [0.87232596]])
+        input_values:velocity                                    |65.16123793|             input   m/s          traj.cruise.timeseries.input_values:velocity                                
                                                                  val:
-                                                                 array([[34.00528286],
-                                                                        [34.00528286],
-                                                                        [34.00528286],
-                                                                        [34.00528286]])
-        input_values:time                                        |2.43168591|              input   s            traj.cruise.timeseries.input_values:time                                    
-                                                                 val:
-                                                                 array([[0.        ],
-                                                                        [0.63648671],
-                                                                        [1.51470846],
-                                                                        [1.79266264]])
-        input_values:time_phase                                  |2.43168591|              input   s            traj.cruise.timeseries.input_values:time_phase                              
+                                                                 array([[34.00528363],
+                                                                        [33.07487768],
+                                                                        [31.79110736],
+                                                                        [31.38479844]])
+        input_values:time                                        |6.78138281|              input   s            traj.cruise.timeseries.input_values:time                                    
                                                                  val:
                                                                  array([[0.        ],
-                                                                        [0.63648671],
-                                                                        [1.51470846],
-                                                                        [1.79266264]])
-        input_values:mach_rate                                   |0.0|                     input   1/s          traj.cruise.timeseries.input_values:mach_rate                               
+                                                                        [1.77500721],
+                                                                        [4.22415487],
+                                                                        [4.99930173]])
+        input_values:time_phase                                  |6.78138281|              input   s            traj.cruise.timeseries.input_values:time_phase                              
                                                                  val:
-                                                                 array([[-2.1389595e-12],
-                                                                        [-2.1389595e-12],
-                                                                        [-2.1389595e-12],
-                                                                        [-2.1389595e-12]])
-        input_values:mass                                        |11.46322255|             input   kg           traj.cruise.timeseries.input_values:mass                                    
+                                                                 array([[0.        ],
+                                                                        [1.77500721],
+                                                                        [4.22415487],
+                                                                        [4.99930173]])
+        input_values:mach_rate                                   |0.00308288|              input   1/s          traj.cruise.timeseries.input_values:mach_rate                               
                                                                  val:
-                                                                 array([[5.73161127],
-                                                                        [5.73161127],
-                                                                        [5.73161127],
-                                                                        [5.73161127]])
-        input_values:distance                                    |84.32015028|             input   m            traj.cruise.timeseries.input_values:distance                                
+                                                                 array([[-0.00154144],
+                                                                        [-0.00154144],
+                                                                        [-0.00154144],
+                                                                        [-0.00154144]])
+        input_values:mass                                        |9.48069993|              input   kg           traj.cruise.timeseries.input_values:mass                                    
                                                                  val:
-                                                                 array([[ 1.        ],
-                                                                        [22.64391053],
-                                                                        [52.50808947],
-                                                                        [61.96      ]])
-        mach                                                     |0.2|                     output  unitless     traj.cruise.timeseries.mach                                                 
+                                                                 array([[4.74034991],
+                                                                        [4.74034993],
+                                                                        [4.74035   ],
+                                                                        [4.74035002]])
+        input_values:distance                                    |224.28144602|            input   m            traj.cruise.timeseries.input_values:distance                                
                                                                  val:
-                                                                 array([[0.1],
-                                                                        [0.1],
-                                                                        [0.1],
-                                                                        [0.1]])
+                                                                 array([[  1.        ],
+                                                                        [ 60.53422105],
+                                                                        [139.96897641],
+                                                                        [164.45504174]])
+        mach                                                     |0.19162093|              output  unitless     traj.cruise.timeseries.mach                                                 
+                                                                 val:
+                                                                 array([[0.1       ],
+                                                                        [0.09726394],
+                                                                        [0.09348873],
+                                                                        [0.09229389]])
         altitude                                                 |400.0|                   output  ft           traj.cruise.timeseries.altitude                                             
                                                                  val:
                                                                  array([[200.],
                                                                         [200.],
                                                                         [200.],
                                                                         [200.]])
-        thrust_net_total                                         |8.36071112|              output  lbf          traj.cruise.timeseries.thrust_net_total                                     
+        thrust_net_total                                         |7.01427506|              output  lbf          traj.cruise.timeseries.thrust_net_total                                     
                                                                  val:
-                                                                 array([[4.18035556],
-                                                                        [4.18035556],
-                                                                        [4.18035556],
-                                                                        [4.18035556]])
-        drag                                                     |8.36071111|              output  lbf          traj.cruise.timeseries.drag                                                 
+                                                                 array([[3.60488156],
+                                                                        [4.73458669],
+                                                                        [3.67928227],
+                                                                        [0.50145225]])
+        drag                                                     |7.66870474|              output  lbf          traj.cruise.timeseries.drag                                                 
                                                                  val:
-                                                                 array([[4.18035556],
-                                                                        [4.18035556],
-                                                                        [4.18035556],
-                                                                        [4.18035556]])
-        specific_energy_rate_excess                              |22.49979816|             output  m/s          traj.cruise.timeseries.specific_energy_rate_excess                          
+                                                                 array([[4.16075447],
+                                                                        [3.94089845],
+                                                                        [3.64802077],
+                                                                        [3.55786713]])
+        specific_energy_rate_excess                              |24.00350323|             output  m/s          traj.cruise.timeseries.specific_energy_rate_excess                          
                                                                  val:
-                                                                 array([[-11.24989908],
-                                                                        [-11.24989908],
-                                                                        [-11.24989908],
-                                                                        [-11.24989908]])
+                                                                 array([[-13.53860228],
+                                                                        [-12.4723655 ],
+                                                                        [-11.09732462],
+                                                                        [-10.68475085]])
         fuel_flow_rate_negative_total                            |0.0|                     output  lbm/h        traj.cruise.timeseries.fuel_flow_rate_negative_total                        
                                                                  val:
                                                                  array([[0.],
@@ -1262,82 +1262,82 @@ traj
                                                                         [0.],
                                                                         [0.],
                                                                         [0.]])
-        throttle                                                 |2.00000002|              output  unitless     traj.cruise.timeseries.throttle                                             
+        throttle                                                 |1.91196094|              output  unitless     traj.cruise.timeseries.throttle                                             
                                                                  val:
-                                                                 array([[1.00000001],
-                                                                        [1.00000001],
-                                                                        [1.00000001],
-                                                                        [1.00000001]])
-        velocity                                                 |68.01056572|             output  m/s          traj.cruise.timeseries.velocity                                             
+                                                                 array([[0.99751937],
+                                                                        [0.99991287],
+                                                                        [0.94856281],
+                                                                        [0.87232596]])
+        velocity                                                 |65.16123793|             output  m/s          traj.cruise.timeseries.velocity                                             
                                                                  val:
-                                                                 array([[34.00528286],
-                                                                        [34.00528286],
-                                                                        [34.00528286],
-                                                                        [34.00528286]])
-        time                                                     |2.43168591|              output  s            traj.cruise.timeseries.time                                                 
-                                                                 val:
-                                                                 array([[0.        ],
-                                                                        [0.63648671],
-                                                                        [1.51470846],
-                                                                        [1.79266264]])
-        time_phase                                               |2.43168591|              output  s            traj.cruise.timeseries.time_phase                                           
+                                                                 array([[34.00528363],
+                                                                        [33.07487768],
+                                                                        [31.79110736],
+                                                                        [31.38479844]])
+        time                                                     |6.78138281|              output  s            traj.cruise.timeseries.time                                                 
                                                                  val:
                                                                  array([[0.        ],
-                                                                        [0.63648671],
-                                                                        [1.51470846],
-                                                                        [1.79266264]])
-        mach_rate                                                |0.0|                     output  1/s          traj.cruise.timeseries.mach_rate                                            
+                                                                        [1.77500721],
+                                                                        [4.22415487],
+                                                                        [4.99930173]])
+        time_phase                                               |6.78138281|              output  s            traj.cruise.timeseries.time_phase                                           
                                                                  val:
-                                                                 array([[-2.1389595e-12],
-                                                                        [-2.1389595e-12],
-                                                                        [-2.1389595e-12],
-                                                                        [-2.1389595e-12]])
-        mass                                                     |11.46322255|             output  kg           traj.cruise.timeseries.mass                                                 
+                                                                 array([[0.        ],
+                                                                        [1.77500721],
+                                                                        [4.22415487],
+                                                                        [4.99930173]])
+        mach_rate                                                |0.00308288|              output  1/s          traj.cruise.timeseries.mach_rate                                            
                                                                  val:
-                                                                 array([[5.73161127],
-                                                                        [5.73161127],
-                                                                        [5.73161127],
-                                                                        [5.73161127]])
-        distance                                                 |84.32015028|             output  m            traj.cruise.timeseries.distance                                             
+                                                                 array([[-0.00154144],
+                                                                        [-0.00154144],
+                                                                        [-0.00154144],
+                                                                        [-0.00154144]])
+        mass                                                     |9.48069993|              output  kg           traj.cruise.timeseries.mass                                                 
                                                                  val:
-                                                                 array([[ 1.        ],
-                                                                        [22.64391053],
-                                                                        [52.50808947],
-                                                                        [61.96      ]])
+                                                                 array([[4.74034991],
+                                                                        [4.74034993],
+                                                                        [4.74035   ],
+                                                                        [4.74035002]])
+        distance                                                 |224.28144602|            output  m            traj.cruise.timeseries.distance                                             
+                                                                 val:
+                                                                 array([[  1.        ],
+                                                                        [ 60.53422105],
+                                                                        [139.96897641],
+                                                                        [164.45504174]])
       mission_bus_variables
-        dt_dstau                                                 |1.79266264|              input   s            traj.cruise.mission_bus_variables.dt_dstau                                  
+        dt_dstau                                                 |4.99930173|              input   s            traj.cruise.mission_bus_variables.dt_dstau                                  
                                                                  val:
-                                                                 array([0.89633132, 0.89633132, 0.89633132, 0.89633132])
-        input_values:mach                                        |0.2|                     input   unitless     traj.cruise.mission_bus_variables.input_values:mach                         
+                                                                 array([2.49965087, 2.49965087, 2.49965087, 2.49965087])
+        input_values:mach                                        |0.19162093|              input   unitless     traj.cruise.mission_bus_variables.input_values:mach                         
                                                                  val:
-                                                                 array([[0.1],
-                                                                        [0.1],
-                                                                        [0.1],
-                                                                        [0.1]])
+                                                                 array([[0.1       ],
+                                                                        [0.09726394],
+                                                                        [0.09348873],
+                                                                        [0.09229389]])
         input_values:altitude                                    |400.0|                   input   ft           traj.cruise.mission_bus_variables.input_values:altitude                     
                                                                  val:
                                                                  array([[200.],
                                                                         [200.],
                                                                         [200.],
                                                                         [200.]])
-        input_values:thrust_net_total                            |8.36071112|              input   lbf          traj.cruise.mission_bus_variables.input_values:thrust_net_total             
+        input_values:thrust_net_total                            |7.01427506|              input   lbf          traj.cruise.mission_bus_variables.input_values:thrust_net_total             
                                                                  val:
-                                                                 array([[4.18035556],
-                                                                        [4.18035556],
-                                                                        [4.18035556],
-                                                                        [4.18035556]])
-        input_values:drag                                        |8.36071111|              input   lbf          traj.cruise.mission_bus_variables.input_values:drag                         
+                                                                 array([[3.60488156],
+                                                                        [4.73458669],
+                                                                        [3.67928227],
+                                                                        [0.50145225]])
+        input_values:drag                                        |7.66870474|              input   lbf          traj.cruise.mission_bus_variables.input_values:drag                         
                                                                  val:
-                                                                 array([[4.18035556],
-                                                                        [4.18035556],
-                                                                        [4.18035556],
-                                                                        [4.18035556]])
-        input_values:specific_energy_rate_excess                 |22.49979816|             input   m/s          traj.cruise.mission_bus_variables.input_values:specific_energy_rate_excess  
+                                                                 array([[4.16075447],
+                                                                        [3.94089845],
+                                                                        [3.64802077],
+                                                                        [3.55786713]])
+        input_values:specific_energy_rate_excess                 |24.00350323|             input   m/s          traj.cruise.mission_bus_variables.input_values:specific_energy_rate_excess  
                                                                  val:
-                                                                 array([[-11.24989908],
-                                                                        [-11.24989908],
-                                                                        [-11.24989908],
-                                                                        [-11.24989908]])
+                                                                 array([[-13.53860228],
+                                                                        [-12.4723655 ],
+                                                                        [-11.09732462],
+                                                                        [-10.68475085]])
         input_values:fuel_flow_rate_negative_total               |0.0|                     input   lbm/h        traj.cruise.mission_bus_variables.input_values:fuel_flow_rate_negative_total
                                                                  val:
                                                                  array([[0.],
@@ -1356,73 +1356,73 @@ traj
                                                                         [0.],
                                                                         [0.],
                                                                         [0.]])
-        input_values:throttle                                    |2.00000002|              input   unitless     traj.cruise.mission_bus_variables.input_values:throttle                     
+        input_values:throttle                                    |1.91196094|              input   unitless     traj.cruise.mission_bus_variables.input_values:throttle                     
                                                                  val:
-                                                                 array([[1.00000001],
-                                                                        [1.00000001],
-                                                                        [1.00000001],
-                                                                        [1.00000001]])
-        input_values:velocity                                    |68.01056572|             input   m/s          traj.cruise.mission_bus_variables.input_values:velocity                     
+                                                                 array([[0.99751937],
+                                                                        [0.99991287],
+                                                                        [0.94856281],
+                                                                        [0.87232596]])
+        input_values:velocity                                    |65.16123793|             input   m/s          traj.cruise.mission_bus_variables.input_values:velocity                     
                                                                  val:
-                                                                 array([[34.00528286],
-                                                                        [34.00528286],
-                                                                        [34.00528286],
-                                                                        [34.00528286]])
-        input_values:time                                        |2.43168591|              input   s            traj.cruise.mission_bus_variables.input_values:time                         
-                                                                 val:
-                                                                 array([[0.        ],
-                                                                        [0.63648671],
-                                                                        [1.51470846],
-                                                                        [1.79266264]])
-        input_values:time_phase                                  |2.43168591|              input   s            traj.cruise.mission_bus_variables.input_values:time_phase                   
+                                                                 array([[34.00528363],
+                                                                        [33.07487768],
+                                                                        [31.79110736],
+                                                                        [31.38479844]])
+        input_values:time                                        |6.78138281|              input   s            traj.cruise.mission_bus_variables.input_values:time                         
                                                                  val:
                                                                  array([[0.        ],
-                                                                        [0.63648671],
-                                                                        [1.51470846],
-                                                                        [1.79266264]])
-        input_values:mach_rate                                   |0.0|                     input   1/s          traj.cruise.mission_bus_variables.input_values:mach_rate                    
+                                                                        [1.77500721],
+                                                                        [4.22415487],
+                                                                        [4.99930173]])
+        input_values:time_phase                                  |6.78138281|              input   s            traj.cruise.mission_bus_variables.input_values:time_phase                   
                                                                  val:
-                                                                 array([[-2.1389595e-12],
-                                                                        [-2.1389595e-12],
-                                                                        [-2.1389595e-12],
-                                                                        [-2.1389595e-12]])
-        input_values:mass                                        |11.46322255|             input   kg           traj.cruise.mission_bus_variables.input_values:mass                         
+                                                                 array([[0.        ],
+                                                                        [1.77500721],
+                                                                        [4.22415487],
+                                                                        [4.99930173]])
+        input_values:mach_rate                                   |0.00308288|              input   1/s          traj.cruise.mission_bus_variables.input_values:mach_rate                    
                                                                  val:
-                                                                 array([[5.73161127],
-                                                                        [5.73161127],
-                                                                        [5.73161127],
-                                                                        [5.73161127]])
-        input_values:distance                                    |84.32015028|             input   m            traj.cruise.mission_bus_variables.input_values:distance                     
+                                                                 array([[-0.00154144],
+                                                                        [-0.00154144],
+                                                                        [-0.00154144],
+                                                                        [-0.00154144]])
+        input_values:mass                                        |9.48069993|              input   kg           traj.cruise.mission_bus_variables.input_values:mass                         
                                                                  val:
-                                                                 array([[ 1.        ],
-                                                                        [22.64391053],
-                                                                        [52.50808947],
-                                                                        [61.96      ]])
-        mach                                                     |0.17320508|              output  unitless     traj.cruise.mission_bus_variables.mach                                      
+                                                                 array([[4.74034991],
+                                                                        [4.74034993],
+                                                                        [4.74035   ],
+                                                                        [4.74035002]])
+        input_values:distance                                    |224.28144602|            input   m            traj.cruise.mission_bus_variables.input_values:distance                     
                                                                  val:
-                                                                 array([[0.1],
-                                                                        [0.1],
-                                                                        [0.1]])
+                                                                 array([[  1.        ],
+                                                                        [ 60.53422105],
+                                                                        [139.96897641],
+                                                                        [164.45504174]])
+        mach                                                     |0.16662052|              output  unitless     traj.cruise.mission_bus_variables.mach                                      
+                                                                 val:
+                                                                 array([[0.1       ],
+                                                                        [0.09614695],
+                                                                        [0.09229389]])
         altitude                                                 |346.41016151|            output  ft           traj.cruise.mission_bus_variables.altitude                                  
                                                                  val:
                                                                  array([[200.],
                                                                         [200.],
                                                                         [200.]])
-        thrust_net_total                                         |7.24058822|              output  lbf          traj.cruise.mission_bus_variables.thrust_net_total                          
+        thrust_net_total                                         |6.42208996|              output  lbf          traj.cruise.mission_bus_variables.thrust_net_total                          
                                                                  val:
-                                                                 array([[4.18035556],
-                                                                        [4.18035556],
-                                                                        [4.18035556]])
-        drag                                                     |7.24058822|              output  lbf          traj.cruise.mission_bus_variables.drag                                      
+                                                                 array([[3.60488156],
+                                                                        [5.29118267],
+                                                                        [0.50145225]])
+        drag                                                     |6.69445379|              output  lbf          traj.cruise.mission_bus_variables.drag                                      
                                                                  val:
-                                                                 array([[4.18035556],
-                                                                        [4.18035556],
-                                                                        [4.18035556]])
-        specific_energy_rate_excess                              |19.48539679|             output  m/s          traj.cruise.mission_bus_variables.specific_energy_rate_excess               
+                                                                 array([[4.16075447],
+                                                                        [3.85297486],
+                                                                        [3.55786713]])
+        specific_energy_rate_excess                              |21.04181684|             output  m/s          traj.cruise.mission_bus_variables.specific_energy_rate_excess               
                                                                  val:
-                                                                 array([[-11.24989908],
-                                                                        [-11.24989908],
-                                                                        [-11.24989908]])
+                                                                 array([[-13.53860228],
+                                                                        [-12.05406171],
+                                                                        [-10.68475085]])
         fuel_flow_rate_negative_total                            |0.0|                     output  lbm/h        traj.cruise.mission_bus_variables.fuel_flow_rate_negative_total             
                                                                  val:
                                                                  array([[0.],
@@ -1438,117 +1438,117 @@ traj
                                                                  array([[0.],
                                                                         [0.],
                                                                         [0.]])
-        throttle                                                 |1.73205082|              output  unitless     traj.cruise.mission_bus_variables.throttle                                  
+        throttle                                                 |1.66193855|              output  unitless     traj.cruise.mission_bus_variables.throttle                                  
                                                                  val:
-                                                                 array([[1.00000001],
-                                                                        [1.00000001],
-                                                                        [1.00000001]])
-        velocity                                                 |58.89887764|             output  m/s          traj.cruise.mission_bus_variables.velocity                                  
+                                                                 array([[0.99751937],
+                                                                        [1.00301658],
+                                                                        [0.87232596]])
+        velocity                                                 |56.65977935|             output  m/s          traj.cruise.mission_bus_variables.velocity                                  
                                                                  val:
-                                                                 array([[34.00528286],
-                                                                        [34.00528286],
-                                                                        [34.00528286]])
-        time                                                     |2.00425776|              output  s            traj.cruise.mission_bus_variables.time                                      
-                                                                 val:
-                                                                 array([[0.        ],
-                                                                        [0.89633132],
-                                                                        [1.79266264]])
-        time_phase                                               |2.00425776|              output  s            traj.cruise.mission_bus_variables.time_phase                                
+                                                                 array([[34.00528363],
+                                                                        [32.69504104],
+                                                                        [31.38479844]])
+        time                                                     |5.58938926|              output  s            traj.cruise.mission_bus_variables.time                                      
                                                                  val:
                                                                  array([[0.        ],
-                                                                        [0.89633132],
-                                                                        [1.79266264]])
-        mach_rate                                                |0.0|                     output  1/s          traj.cruise.mission_bus_variables.mach_rate                                 
+                                                                        [2.49965087],
+                                                                        [4.99930173]])
+        time_phase                                               |5.58938926|              output  s            traj.cruise.mission_bus_variables.time_phase                                
                                                                  val:
-                                                                 array([[-2.1389595e-12],
-                                                                        [-2.1389595e-12],
-                                                                        [-2.1389595e-12]])
-        mass                                                     |9.92744193|              output  kg           traj.cruise.mission_bus_variables.mass                                      
+                                                                 array([[0.        ],
+                                                                        [2.49965087],
+                                                                        [4.99930173]])
+        mach_rate                                                |0.00266985|              output  1/s          traj.cruise.mission_bus_variables.mach_rate                                 
                                                                  val:
-                                                                 array([[5.73161127],
-                                                                        [5.73161127],
-                                                                        [5.73161127]])
-        distance                                                 |69.50562567|             output  m            traj.cruise.mission_bus_variables.distance                                  
+                                                                 array([[-0.00154144],
+                                                                        [-0.00154144],
+                                                                        [-0.00154144]])
+        mass                                                     |8.21052697|              output  kg           traj.cruise.mission_bus_variables.mass                                      
                                                                  val:
-                                                                 array([[ 1.  ],
-                                                                        [31.48],
-                                                                        [61.96]])
+                                                                 array([[4.74034991],
+                                                                        [4.74034994],
+                                                                        [4.74035002]])
+        distance                                                 |184.83456818|            output  m            traj.cruise.mission_bus_variables.distance                                  
+                                                                 val:
+                                                                 array([[  1.        ],
+                                                                        [ 84.36442877],
+                                                                        [164.45504174]])
       collocation_constraint
-        dt_dstau                                                 |1.55249138|              input   s            traj.cruise.collocation_constraint.dt_dstau                                 
+        dt_dstau                                                 |4.3295223|               input   s            traj.cruise.collocation_constraint.dt_dstau                                 
                                                                  val:
-                                                                 array([0.89633132, 0.89633132, 0.89633132])
-        f_approx:mass                                            |0.0|                     input   kg/s         traj.cruise.collocation_constraint.f_approx:mass                            
+                                                                 array([2.49965087, 2.49965087, 2.49965087])
+        f_approx:mass                                            |4e-08|                   input   kg/s         traj.cruise.collocation_constraint.f_approx:mass                            
                                                                  val:
-                                                                 array([[-1.50617430e-13],
-                                                                        [ 3.07180285e-14],
-                                                                        [ 1.16926689e-13]])
+                                                                 array([[-2.88353643e-10],
+                                                                        [ 1.96905038e-08],
+                                                                        [ 3.26729660e-08]])
         f_computed:mass                                          |0.0|                     input   kg/s         traj.cruise.collocation_constraint.f_computed:mass                          
                                                                  val:
                                                                  array([[0.],
                                                                         [0.],
                                                                         [0.]])
-        f_approx:distance                                        |58.89887764|             input   m/s          traj.cruise.collocation_constraint.f_approx:distance                        
+        f_approx:distance                                        |57.10572401|             input   m/s          traj.cruise.collocation_constraint.f_approx:distance                        
                                                                  val:
-                                                                 array([[34.00528286],
-                                                                        [34.00528286],
-                                                                        [34.00528286]])
-        f_computed:distance                                      |58.89887764|             input   m/s          traj.cruise.collocation_constraint.f_computed:distance                      
+                                                                 array([[34.00528361],
+                                                                        [33.0752564 ],
+                                                                        [31.79200868]])
+        f_computed:distance                                      |57.10500289|             input   m/s          traj.cruise.collocation_constraint.f_computed:distance                      
                                                                  val:
-                                                                 array([[34.00528286],
-                                                                        [34.00528286],
-                                                                        [34.00528286]])
-        defects:mass                                             |0.0|                     output  kg           traj.cruise.collocation_constraint.defects:mass                             
+                                                                 array([[34.00528363],
+                                                                        [33.07487768],
+                                                                        [31.79110736]])
+        defects:mass                                             |1e-07|                   output  kg           traj.cruise.collocation_constraint.defects:mass                             
                                                                  val:
-                                                                 array([[-1.35003120e-13],
-                                                                        [ 2.75335310e-14],
-                                                                        [ 1.04805054e-13]])
-        defects:distance                                         |0.0|                     output  m            traj.cruise.collocation_constraint.defects:distance                         
+                                                                 array([[-7.20783433e-10],
+                                                                        [ 4.92193850e-08],
+                                                                        [ 8.16710077e-08]])
+        defects:distance                                         |0.00244379|              output  m            traj.cruise.collocation_constraint.defects:distance                         
                                                                  val:
-                                                                 array([[-6.36881707e-15],
-                                                                        [ 0.00000000e+00],
-                                                                        [ 4.45817195e-14]])
+                                                                 array([[-5.09687446e-08],
+                                                                        [ 9.46681240e-04],
+                                                                        [ 2.25297888e-03]])
 post_mission
   fuel_burned
-    initial_mass                                                 [12.63603987]             input   lbm          fuel_burned.initial_mass                                                    
-    mass_final                                                   [12.63603987]             input   lbm          fuel_burned.mass_final                                                      
-    fuel_burned                                                  [-1.687539e-13]           output  lbm          mission:summary:fuel_burned                                                 
+    initial_mass                                                 [10.45068265]             input   lbm          fuel_burned.initial_mass                                                    
+    mass_final                                                   [10.45068289]             input   lbm          fuel_burned.mass_final                                                      
+    fuel_burned                                                  [-2.46412293e-07]         output  lbm          mission:summary:fuel_burned                                                 
   reserve_fuel
     reserve_fuel_additional                                      [0.]                      input   lbm          aircraft:design:reserve_fuel_additional                                     
     reserve_fuel_burned                                          [0.]                      input   lbm          mission:summary:reserve_fuel_burned                                         
     reserve_fuel_frac_mass                                       [0.]                      input   lbm          reserve_fuel_frac_mass                                                      
     reserve_fuel                                                 [0.]                      output  lbm          mission:design:reserve_fuel                                                 
   fuel_calc
-    fuel_burned                                                  [-1.687539e-13]           input   lbm          mission:summary:fuel_burned                                                 
+    fuel_burned                                                  [-2.46412293e-07]         input   lbm          mission:summary:fuel_burned                                                 
     fuel_margin                                                  [0.]                      input   unitless     aircraft:fuel:fuel_margin                                                   
     reserve_fuel                                                 [0.]                      input   lbm          mission:design:reserve_fuel                                                 
-    overall_fuel                                                 [-1.687539e-13]           output  lbm          mission:summary:total_fuel_mass                                             
+    overall_fuel                                                 [-2.46412293e-07]         output  lbm          mission:summary:total_fuel_mass                                             
   cruise_distance_constraint
-    final_distance                                               [0.03345572]              input   nmi          cruise_distance_constraint.final_distance                                   
+    final_distance                                               [0.08879862]              input   nmi          cruise_distance_constraint.final_distance                                   
     initial_distance                                             [0.00053996]              input   nmi          cruise_distance_constraint.initial_distance                                 
     target_distance                                              [0.03291577]              input   nmi          cruise_distance_constraint.target_distance                                  
-    distance_resid                                               [-2.17881269e-15]         output  nmi          cruise_distance_constraint.distance_resid                                   
+    distance_resid                                               [-0.0553429]              output  nmi          cruise_distance_constraint.distance_resid                                   
   mass_constraint
-    initial_mass                                                 [12.63603987]             input   lbm          mission:summary:gross_mass                                                  
-    operating_empty_mass                                         [12.63603987]             input   lbm          aircraft:design:operating_mass                                              
-    overall_fuel                                                 [-1.687539e-13]           input   lbm          mission:summary:total_fuel_mass                                             
+    initial_mass                                                 [10.4506827]              input   lbm          mission:summary:gross_mass                                                  
+    operating_empty_mass                                         [10.45068299]             input   lbm          aircraft:design:operating_mass                                              
+    overall_fuel                                                 [-2.46412293e-07]         input   lbm          mission:summary:total_fuel_mass                                             
     payload_mass                                                 [0.]                      input   lbm          aircraft:crew_and_payload:total_payload_mass                                
-    mass_resid                                                   [1.77635684e-15]          output  lbm          mission:constraints:mass_residual                                           
+    mass_resid                                                   [4.79240398e-08]          output  lbm          mission:constraints:mass_residual                                           
 link_cruise_mass
-  lhs:mass                                                       [12.63603987]             input   lbm          link_cruise_mass.lhs:mass                                                   
-  rhs:mass                                                       [12.63603987]             input   lbm          mission:summary:gross_mass                                                  
-  mass                                                           [1.77635684e-15]          output  None         link_cruise_mass.mass                                                       
+  lhs:mass                                                       [10.45068265]             input   lbm          link_cruise_mass.lhs:mass                                                   
+  rhs:mass                                                       [10.4506827]              input   lbm          mission:summary:gross_mass                                                  
+  mass                                                           [-5.40054099e-08]         output  None         link_cruise_mass.mass                                                       
 range_constraint
   actual_range                                                   [0.]                      input   nmi          mission:summary:range                                                       
   target_range                                                   [0.16457883]              input   nmi          target_range                                                                
   range_resid                                                    [0.16457883]              output  nmi          mission:constraints:range_residual                                          
 gtow_constraint
-  lhs:GTOW                                                       [12.63603987]             input   lbm          mission:design:gross_mass                                                   
-  rhs:GTOW                                                       [12.63603987]             input   lbm          mission:summary:gross_mass                                                  
-  GTOW                                                           [1.40578604e-16]          output  None         gtow_constraint.GTOW                                                        
+  lhs:GTOW                                                       [10.45068304]             input   lbm          mission:design:gross_mass                                                   
+  rhs:GTOW                                                       [10.4506827]              input   lbm          mission:summary:gross_mass                                                  
+  GTOW                                                           [3.22513439e-08]          output  None         gtow_constraint.GTOW                                                        
 fuel_obj
   ascent_duration                                                [0.]                      input   s            mission:takeoff:ascent_duration                                             
-  overall_fuel                                                   [-1.687539e-13]           input   lbm          mission:summary:total_fuel_mass                                             
-  reg_objective                                                  [-1.687539e-17]           output  unitless     mission:objectives:fuel                                                     
+  overall_fuel                                                   [-2.46412293e-07]         input   lbm          mission:summary:total_fuel_mass                                             
+  reg_objective                                                  [-2.46412293e-11]         output  unitless     mission:objectives:fuel                                                     
 range_obj
   actual_range                                                   [0.]                      input   nmi          mission:summary:range                                                       
   ascent_duration                                                [0.]                      input   s            mission:takeoff:ascent_duration                                             
