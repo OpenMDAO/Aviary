@@ -130,7 +130,11 @@ class Motor(om.ExplicitComponent):
         add_aviary_input(self, Dynamic.Vehicle.Propulsion.CURRENT, val=np.zeros(nn), units='A')
         self.add_input('current', val=np.zeros(nn), units = 'A')
 
+        ################ TODO Alex #####################
         add_aviary_output(self, Dynamic.Vehicle.Propulsion.RPM, val=np.zeros(nn), units='rpm')
+
+        # self.add_output(Dynamic.Vehicle.Propulsion.RPM, val=np.zeros(nn), ref=1e3, units='rpm')
+        ################ TODO Alex #####################
         self.add_output('power', val=np.zeros(nn), units='W')
         add_aviary_output(self, Dynamic.Vehicle.Propulsion.CURRENT_CON, val=np.zeros(nn), units='A')
 
@@ -328,16 +332,12 @@ class PowerResiduals(om.ExplicitComponent): #ImplicitComponent
         ################################################
 
 
-        self.add_output('power_net', val=np.ones(nn), units='W')   # self.add_residual('power_net', shape=(nn, ), units='W')
+        self.add_output('power_net', val=np.ones(nn), ref=1e3, units='W')   # self.add_residual('power_net', shape=(nn, ), units='W')
 
         self.declare_partials('*', '*', method='cs') #TODO try to change
     def compute(self, inputs, outputs):
         outputs['power_net'] = inputs['power_batt'] + inputs['power_esc'] + inputs['power_motor'] - inputs[Dynamic.Vehicle.Propulsion.PROP_POWER]
 
-    # def apply_nonlinear(self, inputs, outputs, residuals):
-    #     # print(inputs['power_batt'][1], inputs['power_esc'][1], inputs['power_motor'][1],  inputs[Dynamic.Vehicle.Propulsion.PROP_POWER][1])
-    #     residuals[Dynamic.Vehicle.Propulsion.CURRENT] = inputs['power_batt'] + inputs['power_esc'] + inputs['power_motor'] - inputs[Dynamic.Vehicle.Propulsion.PROP_POWER]
-    #     residuals[Dynamic.Vehicle.Propulsion.CURRENT] = inputs[Dynamic.Vehicle.Propulsion.THRUST_TOTAL]
 
 class Vectorization(om.ExplicitComponent):
     def initialize(self):

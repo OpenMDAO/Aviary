@@ -107,11 +107,17 @@ class RCPropMission(om.Group):
         self.connect('esc.current_out', 'motor.current')
         #TODO Alex from phase builder base import add_control
         # self.add_control()
-        self.add_design_var(Dynamic.Vehicle.Propulsion.CURRENT, lower=20, scaler=10, units='A')
-        self.add_constraint('power_net', equals=0)
+
+        self.add_design_var(Dynamic.Vehicle.Propulsion.CURRENT, lower=0, scaler=1e-2, units='A')
+
+        self.add_constraint('power_net', equals=0, ref=1e3)
         # self.add_constraint(Dynamic.Vehicle.Propulsion.CURRENT, lower=0)
-        self.add_constraint(Dynamic.Vehicle.Propulsion.CURRENT_CON, upper=0)
-        self.add_constraint(Dynamic.Vehicle.Propulsion.RPM, lower=3000, upper=7500, units='rpm')
+        self.add_constraint(Dynamic.Vehicle.Propulsion.CURRENT_CON, upper=0, ref=1e2)
+        self.add_constraint(Dynamic.Vehicle.Propulsion.RPM, lower=1, upper=7500, ref=1e3, units='rpm')
+
+        #Constraints to prevent ill-fated surrogate model predictions
+        self.add_constraint('ct', lower=0, ref=1e-2, units='unitless')
+        self.add_constraint('cp', lower=0.0034, ref=1e-2, units='unitless')
 
         self.connect('battery.power', 'power_summation.power_batt')
         self.connect('esc.power', 'power_summation.power_esc')

@@ -64,7 +64,8 @@ class RCBuilder(EngineModel):
             Aircraft.Engine.Motor.MAX_CONT_CURRENT: {
                 'units': 'A',
                 'lower': 1,
-                'upper': 225, #limit is baced on available motor
+                'upper': 225, #limit is based on available motor
+                'ref': 1e2,
                 # 'val': 100,  
             },
             Aircraft.Engine.Motor.MASS: {

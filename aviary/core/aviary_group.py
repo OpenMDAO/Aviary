@@ -920,7 +920,7 @@ class AviaryGroup(om.Group):
                 self.add_constraint(
                     f'{phase_name}_distance_constraint.distance_resid',
                     equals=0.0,
-                    ref=1e2,
+                    ref=1, #TODO Alex
                 )
 
             # this is only used for analytic phases with a target duration

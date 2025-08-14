@@ -41,6 +41,7 @@ aircraft:engine:generate_flight_idle,False,unitless
 aircraft:engine:geopotential_alt,False,unitless
 aircraft:engine:ignore_negative_thrust,True,unitless
 aircraft:engine:interpolation_method,slinear,unitless
+#aircraft:battery:control_current, True, unitless TODO Alex add
 aircraft:battery:mass, 0.707, kg
 aircraft:battery:resistance, 0.05, ohm
 aircraft:battery:voltage, 22.2, V

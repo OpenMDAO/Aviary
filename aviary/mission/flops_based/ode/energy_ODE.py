@@ -109,13 +109,10 @@ class EnergyODE(_BaseODE):
             promotes_outputs=['thrust_con']
         )
 
-        # self.add_constraint('thrust_con', equals=0)
-        # #TODO Alex remove throttle and figure out this issue! 
-        # self.add_design_var(Dynamic.Vehicle.Propulsion.THROTTLE, lower=0, upper=1)
         # THROTTLE Section
         # TODO: Split this out into a function that can be used by the other ODEs.
         # TODO: Need a thrust residual ref in the phase_info.
-        thrust_res_ref = 1.0 #TODO Alex change from 1.0e6
+        thrust_res_ref = 1.0 #TODO Alex mod from 1.0e6 ADD AS OPTION
         if num_engine_type > 1:
             # Multi Engine
 
@@ -184,10 +181,10 @@ class EnergyODE(_BaseODE):
                     promotes_outputs=['*'],
                 )
 
-        self.set_input_defaults(Dynamic.Vehicle.Propulsion.THROTTLE, val=0.7, units='unitless')
-        ############## ALEX LOPEZ ADDITION ###############
+        self.set_input_defaults(Dynamic.Vehicle.Propulsion.THROTTLE, val=np.ones(nn) * 0.7, units='unitless')
+        ############## ALEX ADDITION ###############
         self.set_input_defaults(Dynamic.Atmosphere.MACH_RATE, val=np.zeros(nn))
-        ############## ALEX LOPEZ ADDITION ###############
+        ############## ALEX ADDITION ###############
         self.set_input_defaults(Dynamic.Atmosphere.MACH, val=np.ones(nn), units='unitless')
         self.set_input_defaults(Dynamic.Vehicle.MASS, val=np.ones(nn), units='kg')
         self.set_input_defaults(Dynamic.Mission.VELOCITY, val=np.ones(nn), units='m/s')
