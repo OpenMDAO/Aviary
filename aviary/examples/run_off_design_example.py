@@ -20,7 +20,9 @@ prob = av.AviaryProblem()
 
 # Load aircraft and options data from user
 # Allow for user overrides here
-prob.load_inputs('models/aircraft/test_aircraft/aircraft_for_bench_FwFm.csv', phase_info)
+prob.load_inputs(
+    'models/aircraft/advanced_single_aisle/advanced_single_aisle_FLOPS.csv', phase_info
+)
 
 # Preprocess inputs
 prob.check_and_preprocess_inputs()
@@ -39,13 +41,15 @@ prob.add_objective()
 prob.setup()
 prob.set_initial_guesses()
 prob.run_aviary_problem()
-prob.save_sizing_to_json()
+prob.save_sizing_results()
 
 # Fallout Mission
-prob_fallout = prob.fallout_mission()
+# prob_fallout = prob.fallout_mission()
+prob_fallout = prob.run_off_design_mission(problem_type='fallout')
 
 # Alternate Mission
-prob_alternate = prob.alternate_mission()
+# prob_alternate = prob.alternate_mission()
+prob_alternate = prob.run_off_design_mission(problem_type='alternate')
 
 print('--------------')
 print('Sizing Results')
