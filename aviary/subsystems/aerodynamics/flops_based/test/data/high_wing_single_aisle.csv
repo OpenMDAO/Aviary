@@ -21,6 +21,7 @@ aircraft:crew_and_payload:wing_cargo,0.01,lbm   #check
 aircraft:design:empty_mass_margin_scaler,0.01,unitless   #check
 aircraft:design:landing_to_takeoff_mass_ratio,0.95,unitless
 aircraft:design:use_alt_mass,False,unitless
+aircraft:design:type,transport,unitless
 aircraft:electrical:mass_scaler,1.01,unitless   #check
 aircraft:engine:additional_mass_fraction,0.001,unitless
 aircraft:engine:constant_fuel_consumption,0.,lb/h

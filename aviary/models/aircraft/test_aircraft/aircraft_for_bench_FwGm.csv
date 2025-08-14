@@ -181,6 +181,7 @@ aircraft:design:touchdown_mass,152800.0,lbm
 aircraft:design:subsonic_drag_coeff_factor,1.0,unitless
 aircraft:design:supersonic_drag_coeff_factor,1.0,unitless
 aircraft:design:use_alt_mass,False,unitless
+aircraft:design:type,transport,unitless
 aircraft:electrical:mass_scaler,1.25,unitless
 aircraft:fins:area,0.0,ft**2
 aircraft:fins:mass_scaler,1.0,unitless
