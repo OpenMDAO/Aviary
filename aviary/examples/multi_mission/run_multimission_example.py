@@ -26,6 +26,7 @@ def multi_mission_example():
 
     # get large single aisle values
     aviary_inputs_mission1 = get_flops_inputs('LargeSingleAisle2FLOPS')
+    # loading a CSV - a new ' create vehicle function'
 
     aviary_inputs_mission2 = copy.deepcopy(aviary_inputs_mission1)
 
