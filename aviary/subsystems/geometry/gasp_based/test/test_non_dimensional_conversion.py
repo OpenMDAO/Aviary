@@ -2,6 +2,7 @@ import unittest
 
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
+from openmdao.utils.testing_utils import use_tempdirs
 
 from aviary.subsystems.geometry.gasp_based.non_dimensional_conversion import (
     DimensionalNonDimensionalInterchange,
@@ -157,6 +158,7 @@ class StrutOnlyTestCase2(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e-8, rtol=1e-8)
 
 
+@use_tempdirs
 class FoldAndStrutTestCase1(unittest.TestCase):
     def setUp(self):
         options = get_option_defaults()
@@ -203,6 +205,7 @@ class FoldAndStrutTestCase1(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e-8, rtol=1e-8)
 
 
+@use_tempdirs
 class FoldAndStrutTestCase2(unittest.TestCase):
     def setUp(self):
         options = get_option_defaults()
@@ -247,6 +250,7 @@ class FoldAndStrutTestCase2(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e-8, rtol=1e-8)
 
 
+@use_tempdirs
 class FoldAndStrutTestCase3(unittest.TestCase):
     def setUp(self):
         options = get_option_defaults()

@@ -63,13 +63,20 @@ class BaseODE(om.Group):
             If not None, subsystems that require a solver (subsystem.needs_mission_solver() == True)
             are placed inside solver_group.
 
-            If None, all core subsystems are added to BaseODE regardless of if they request a
-            solver. TODO add solver compatibility to all ODEs
+            If None, all subsystems are added to BaseODE regardless of if they request a solver.
+            TODO add solver compatibility to all ODEs
+
+        Returns
+        -------
+        use_mission_solver : bool
+            Flag that communicates that one or more subsystem requests to be placed inside a solver
+            (independent of the needs of an individual ODE's setup)
         """
         nn = self.options['num_nodes']
         aviary_options = self.options['aviary_options']
         all_subsystems = self.options['subsystems']
         subsystem_options = self.options['subsystem_options']
+        use_mission_solver = False
 
         for subsystem in all_subsystems:
             # check if subsystem_options has entry for a subsystem of this name
@@ -86,6 +93,7 @@ class BaseODE(om.Group):
                 target = self
                 if subsystem.needs_mission_solver(aviary_options) and solver_group is not None:
                     target = solver_group
+                    use_mission_solver = True
 
                 target.add_subsystem(
                     subsystem.name,
@@ -93,3 +101,5 @@ class BaseODE(om.Group):
                     promotes_inputs=subsystem.mission_inputs(**kwargs),
                     promotes_outputs=subsystem.mission_outputs(**kwargs),
                 )
+
+        return use_mission_solver

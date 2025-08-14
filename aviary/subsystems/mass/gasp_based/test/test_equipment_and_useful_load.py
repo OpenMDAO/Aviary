@@ -1555,7 +1555,7 @@ class BWBFixedEquipMassGroupTest(unittest.TestCase):
         prob.model.set_input_defaults(Aircraft.CrewPayload.WATER_MASS_PER_OCCUPANT, 3, units='lbm')
         prob.model.set_input_defaults(Aircraft.Design.EMERGENCY_EQUIPMENT_MASS, 100.0, units='lbm')
         prob.model.set_input_defaults(
-            Aircraft.CrewPayload.CATERING_ITEMS_MASS_PER_PASSENGER, 7.6, units='lbm'
+            Aircraft.CrewPayload.CATERING_ITEMS_MASS_PER_PASSENGER, 5.0, units='lbm'
         )
         prob.model.set_input_defaults(
             Aircraft.Fuel.UNUSABLE_FUEL_MASS_COEFFICIENT, 12.0, units='unitless'
@@ -1677,7 +1677,7 @@ class BWBFixedEquipAndUsefulMassGroupTest(unittest.TestCase):
         )
         prob.model.set_input_defaults(Aircraft.Design.EMERGENCY_EQUIPMENT_MASS, 100.0, units='lbm')
         prob.model.set_input_defaults(
-            Aircraft.CrewPayload.CATERING_ITEMS_MASS_PER_PASSENGER, 7.6, units='lbm'
+            Aircraft.CrewPayload.CATERING_ITEMS_MASS_PER_PASSENGER, 5.0, units='lbm'
         )
         prob.model.set_input_defaults(
             Aircraft.Fuel.UNUSABLE_FUEL_MASS_COEFFICIENT, 12.0, units='unitless'
@@ -1727,6 +1727,8 @@ class BWBFixedEquipAndUsefulMassGroupTest(unittest.TestCase):
         self.prob.run_model()
 
         tol = 1e-7
+        assert_near_equal(self.prob[Aircraft.AirConditioning.MASS], 1301.573, tol)
+        assert_near_equal(self.prob[Aircraft.Furnishings.MASS], 11269.877, tol)
         assert_near_equal(self.prob[Aircraft.Design.FIXED_EQUIPMENT_MASS], 20876.477, tol)
         assert_near_equal(self.prob[Aircraft.Design.FIXED_USEFUL_LOAD], 4321.79463506, tol)
 

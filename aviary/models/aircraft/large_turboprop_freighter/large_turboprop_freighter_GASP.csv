@@ -14,14 +14,14 @@ aircraft:design:subsonic_drag_coeff_factor, 1.447, unitless
 # Design
 aircraft:design:cg_delta, 0.25, unitless
 aircraft:design:cockpit_control_mass_coefficient, 20, unitless
-aircraft:design:drag_increment, 0.0015, unitless
+aircraft:design:drag_coeff_increment, 0.0015, unitless
 aircraft:design:emergency_equipment_mass, 25, lbm
 aircraft:design:max_structural_speed, 320, mi/h
 aircraft:design:part25_structural_category, 3, unitless
 aircraft:design:reserve_fuel_additional, 0.667, lbm
 aircraft:design:static_margin, 0.05, unitless
 aircraft:design:structural_mass_increment, 0, lbm
-aircraft:design:supercritical_drag_shift, 0, unitless
+aircraft:design:drag_divergence_shift, 0, unitless
 
 # Misc Systems
 aircraft:air_conditioning:mass_coefficient, 2.65, unitless
@@ -152,7 +152,7 @@ aircraft:wing:has_strut, False, unitless
 aircraft:wing:height, 14.5, ft
 aircraft:wing:high_lift_mass_coefficient, 1.2, unitless
 aircraft:wing:incidence, 2, deg
-aircraft:wing:loading, 88.846, lbf/ft**2
+aircraft:design:wing_loading, 88.846, lbf/ft**2
 aircraft:wing:mass_coefficient, 131.32, unitless
 aircraft:wing:max_lift_ref, 1.5, unitless
 aircraft:wing:max_slat_deflection_landing, 0, deg

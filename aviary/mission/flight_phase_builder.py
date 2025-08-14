@@ -73,10 +73,17 @@ class FlightPhaseOptions(AviaryOptionsDictionary):
         self.declare(
             name='throttle_enforcement',
             default='path_constraint',
-            values=['path_constraint', 'boundary_constraint', 'bounded', None],
-            desc='Flag to enforce engine throttle constraints on the path or at the segment '
-            'boundaries or using solver bounds.',
+            values=['path_constraint', 'boundary_constraint', 'bounded', 'control', None],
+            desc='Flag to enforce engine throttle bounds as path constraints, boundary '
+            'constraints, solver bounds. You can also select "control" to turn throttle into a '
+            'control, which allows you to assign a value or let the optimizer choose it.',
         )
+
+        # Throttle is a solver variable, unless you set throttle_enforcement to control.
+        defaults = {
+            'throttle_bounds': (0.0, 1.0),
+        }
+        self.add_control_options('throttle', units='unitless', defaults=defaults)
 
         self.declare(
             name='throttle_allocation',
@@ -250,6 +257,14 @@ class FlightPhaseBase(PhaseBuilderBase):
             add_constraints=Dynamic.Mission.ALTITUDE not in constraints,
         )
 
+        if throttle_enforcement == 'control':
+            self.add_control(
+                'throttle',
+                Dynamic.Vehicle.Propulsion.THROTTLE,
+                rate_targets=None,
+                add_constraints=True,
+            )
+
         # For heterogeneous-engine cases, we may have throttle allocation control.
         if phase_type is EquationsOfMotion.HEIGHT_ENERGY and num_engine_type > 1:
             allocation = user_options['throttle_allocation']
@@ -319,11 +334,12 @@ class FlightPhaseBase(PhaseBuilderBase):
             units='ft/s',
         )
 
-        phase.add_timeseries_output(
-            Dynamic.Vehicle.Propulsion.THROTTLE,
-            output_name=Dynamic.Vehicle.Propulsion.THROTTLE,
-            units='unitless',
-        )
+        if throttle_enforcement != 'control':
+            phase.add_timeseries_output(
+                Dynamic.Vehicle.Propulsion.THROTTLE,
+                output_name=Dynamic.Vehicle.Propulsion.THROTTLE,
+                units='unitless',
+            )
 
         phase.add_timeseries_output(
             Dynamic.Mission.VELOCITY,
@@ -428,6 +444,10 @@ FlightPhaseBase._add_initial_guess_meta_data(
 
 FlightPhaseBase._add_initial_guess_meta_data(
     InitialGuessControl('mach'), desc='initial guess for speed'
+)
+
+FlightPhaseBase._add_initial_guess_meta_data(
+    InitialGuessControl('throttle'), desc='initial guess for throttle'
 )
 
 FlightPhaseBase._add_initial_guess_meta_data(

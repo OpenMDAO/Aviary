@@ -193,9 +193,6 @@ def convert_engine_deck(input_file, output_file, data_format: EngineDeckType, ro
             structured_data = _make_structured_grid(
                 tables, method='lagrange3', fields=fields, throttle_step=throttle_step
             )
-            structured_data = _make_structured_grid(
-                tables, method='lagrange3', fields=fields, throttle_step=throttle_step
-            )
 
             data[MACH] = structured_data['fuelflow']['machs']
             data[ALTITUDE] = structured_data['fuelflow']['alts']
@@ -427,7 +424,7 @@ def _read_tp_header(f):
     iread, iprint, t4max, t4mcl, t4mc, t4idle, xsfc, cexp = _parse(
         f, [*_rep(2, (int, 5)), (None, 10), *_rep(6, (float, 10))]
     )
-    # file header: FORMAT(7F10.4)
+    # file header: FORMAT(6F10.4)
     sls_hp, xncref, prop_rpm, gbx_rat, torque_lim, waslrf = _parse(f, [*_rep(6, (float, 10))])
 
     return {

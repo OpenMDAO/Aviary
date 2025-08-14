@@ -16,14 +16,14 @@ aircraft:crew_and_payload:passenger_service_mass_per_passenger,5,lbm
 aircraft:crew_and_payload:water_mass_per_occupant,3,lbm
 aircraft:design:cg_delta,0.25,unitless
 aircraft:design:cockpit_control_mass_coefficient,16.5,unitless
-aircraft:design:drag_increment,0.00175,unitless
+aircraft:design:drag_coeff_increment,0.00175,unitless
 aircraft:design:emergency_equipment_mass,50,lbm
 aircraft:design:max_structural_speed,402.5,mi/h
 aircraft:design:part25_structural_category,3,unitless
 aircraft:design:reserve_fuel_additional,4998,lbm
 aircraft:design:static_margin,0.03,unitless
 aircraft:design:structural_mass_increment,0,lbm
-aircraft:design:supercritical_drag_shift,0.033,unitless
+aircraft:design:drag_divergence_shift,0.033,unitless
 aircraft:electrical:system_mass_per_passenger,16.0,lbm
 aircraft:engine:additional_mass_fraction,0.135,unitless
 aircraft:engine:data_file,models/engines/turbofan_28k.csv,unitless
@@ -120,7 +120,7 @@ aircraft:wing:has_strut,False,unitless
 aircraft:wing:height,8,ft
 aircraft:wing:high_lift_mass_coefficient,1.9,unitless
 aircraft:wing:incidence,1.5,deg
-aircraft:wing:loading,128,lbf/ft**2
+aircraft:design:wing_loading,128,lbf/ft**2
 aircraft:wing:mass_coefficient,102.5,unitless
 aircraft:wing:max_lift_ref,1.15,unitless
 aircraft:wing:max_slat_deflection_landing,10,deg
