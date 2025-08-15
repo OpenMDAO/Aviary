@@ -52,6 +52,7 @@ class LargeElectrifiedTurbopropFreighterBenchmark(unittest.TestCase):
             options,  # "models/aircraft/large_turboprop_freighter/large_turboprop_freighter_GASP.csv",
             energy_phase_info,
             engine_builders=[electroprop],
+            check=False,
         )
         prob.aviary_inputs.set_val(Settings.VERBOSITY, 2)
 
@@ -67,10 +68,8 @@ class LargeElectrifiedTurbopropFreighterBenchmark(unittest.TestCase):
         prob.aviary_inputs.set_val(Aircraft.Fuselage.AVG_DIAMETER, 4.125, 'm')
 
         prob.check_and_preprocess_inputs()
-        prob.add_pre_mission_systems()
-        prob.add_phases()
-        prob.add_post_mission_systems()
-        prob.link_phases()
+
+        prob.build_model()
         prob.add_driver('IPOPT', max_iter=0, verbosity=0)
         prob.add_design_variables()
         prob.add_objective()

@@ -68,21 +68,16 @@ class MultiengineTestcase(unittest.TestCase):
 
         prob = AviaryProblem(verbosity=0)
 
-        prob.load_inputs(inputs, test_phase_info, engine_builders=[engine1, engine2])
+        prob.load_inputs(inputs, test_phase_info, engine_builders=[engine1, engine2], check=True)
 
-        prob.check_and_preprocess_inputs()
-        prob.add_pre_mission_systems()
-        prob.add_phases()
-        prob.add_post_mission_systems()
-        prob.link_phases()
+        prob.build_model()
 
         prob.add_driver('SNOPT', max_iter=50, use_coloring=True)
 
         prob.add_design_variables()
         prob.add_objective()
 
-        prob.setup()
-        prob.set_initial_guesses()
+        prob.setup_model()
 
         prob.run_aviary_problem('dymos_solution.db', suppress_solver_print=True)
 
@@ -108,21 +103,16 @@ class MultiengineTestcase(unittest.TestCase):
 
         prob = AviaryProblem(verbosity=0)
 
-        prob.load_inputs(inputs, test_phase_info, engine_builders=[engine1, engine2])
+        prob.load_inputs(inputs, test_phase_info, engine_builders=[engine1, engine2], check=True)
 
-        prob.check_and_preprocess_inputs()
-        prob.add_pre_mission_systems()
-        prob.add_phases()
-        prob.add_post_mission_systems()
-        prob.link_phases()
+        prob.build_model()
 
         prob.add_driver('SNOPT', max_iter=50, use_coloring=True)
 
         prob.add_design_variables()
         prob.add_objective()
 
-        prob.setup()
-        prob.set_initial_guesses()
+        prob.setup_model()
 
         prob.run_aviary_problem('dymos_solution.db', suppress_solver_print=True)
 
@@ -147,21 +137,16 @@ class MultiengineTestcase(unittest.TestCase):
         engine1 = build_engine_deck(engine_1_inputs)
         engine2 = build_engine_deck(engine_2_inputs)
 
-        prob.load_inputs(inputs, test_phase_info, engine_builders=[engine1, engine2])
+        prob.load_inputs(inputs, test_phase_info, engine_builders=[engine1, engine2], check=True)
 
-        prob.check_and_preprocess_inputs()
-        prob.add_pre_mission_systems()
-        prob.add_phases()
-        prob.add_post_mission_systems()
-        prob.link_phases()
+        prob.build_model()
 
         prob.add_driver('SNOPT', max_iter=50, use_coloring=True)
 
         prob.add_design_variables()
         prob.add_objective()
 
-        prob.setup()
-        prob.set_initial_guesses()
+        prob.setup_model()
 
         prob.run_aviary_problem('dymos_solution.db', suppress_solver_print=True)
 

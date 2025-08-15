@@ -43,20 +43,12 @@ class TestExternalSubsystems(unittest.TestCase):
         prob.load_inputs(
             'subsystems/aerodynamics/flops_based/test/data/high_wing_single_aisle.csv',
             local_phase_info,
+            check=True,
         )
 
-        # Preprocess inputs
-        prob.check_and_preprocess_inputs()
+        prob.build_model()
 
-        prob.add_pre_mission_systems()
-        prob.add_phases()
-        prob.add_post_mission_systems()
-
-        prob.link_phases()
-
-        prob.setup()
-
-        prob.set_initial_guesses()
+        prob.setup_model()
 
         prob.run_model()
 
@@ -78,20 +70,12 @@ class TestExternalSubsystems(unittest.TestCase):
         prob.load_inputs(
             'subsystems/aerodynamics/flops_based/test/data/high_wing_single_aisle.csv',
             local_phase_info,
+            check=True,
         )
 
-        # Preprocess inputs
-        prob.check_and_preprocess_inputs()
+        prob.build_model()
 
-        prob.add_pre_mission_systems()
-        prob.add_phases()
-        prob.add_post_mission_systems()
-
-        prob.link_phases()
-
-        prob.setup()
-
-        prob.set_initial_guesses()
+        prob.setup_model()
 
         prob.run_model()
 
@@ -111,20 +95,12 @@ class TestExternalSubsystems(unittest.TestCase):
         prob.load_inputs(
             'models/aircraft/large_single_aisle_1/large_single_aisle_1_GASP.csv',
             local_phase_info,
+            check=True,
         )
 
-        # Preprocess inputs
-        prob.check_and_preprocess_inputs()
+        prob.build_model()
 
-        prob.add_pre_mission_systems()
-        prob.add_phases()
-        prob.add_post_mission_systems()
-
-        prob.link_phases()
-
-        prob.setup()
-
-        prob.set_initial_guesses()
+        prob.setup_model()
 
         prob.run_model()
 
@@ -147,20 +123,12 @@ class TestExternalSubsystems(unittest.TestCase):
         prob.load_inputs(
             'models/aircraft/large_single_aisle_1/large_single_aisle_1_GASP.csv',
             local_phase_info,
+            check=True,
         )
 
-        # Preprocess inputs
-        prob.check_and_preprocess_inputs()
+        prob.build_model()
 
-        prob.add_pre_mission_systems()
-        prob.add_phases()
-        prob.add_post_mission_systems()
-
-        prob.link_phases()
-
-        prob.setup()
-
-        prob.set_initial_guesses()
+        prob.setup_model()
 
         prob.run_model()
 

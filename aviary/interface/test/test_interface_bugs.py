@@ -70,19 +70,9 @@ class PreMissionGroupTest(unittest.TestCase):
         csv_path = get_aviary_resource_path(
             'models/aircraft/test_aircraft/aircraft_for_bench_GwFm.csv'
         )
-        prob.load_inputs(csv_path, phase_info)
+        prob.load_inputs(csv_path, phase_info, check=True)
 
-        # Preprocess inputs
-        prob.check_and_preprocess_inputs()
-
-        prob.add_pre_mission_systems()
-
-        prob.add_phases()
-
-        prob.add_post_mission_systems()
-
-        # Link phases and variables
-        prob.link_phases()
+        prob.build_model()
 
         prob.add_driver('SLSQP', verbosity=0)
 
@@ -105,18 +95,11 @@ class PreMissionGroupTest(unittest.TestCase):
         csv_path = get_aviary_resource_path(
             'models/aircraft/test_aircraft/aircraft_for_bench_GwFm.csv'
         )
-        prob.load_inputs(csv_path, phase_info)
-
-        # Preprocess inputs
-        prob.check_and_preprocess_inputs()
+        prob.load_inputs(csv_path, phase_info, check=True)
 
         prob.add_pre_mission_systems()
-
         prob.add_phases(parallel_phases=False)
-
         prob.add_post_mission_systems()
-
-        # Link phases and variables
         prob.link_phases()
 
         prob.add_driver('SLSQP', verbosity=0)

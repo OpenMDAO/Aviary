@@ -14,19 +14,11 @@ if __name__ == '__main__':
 
     # Load aircraft and options data from user
     # Allow for user overrides here
-    prob.load_inputs('models/aircraft/test_aircraft/aircraft_for_bench_FwFm.csv', phase_info)
+    prob.load_inputs(
+        'models/aircraft/test_aircraft/aircraft_for_bench_FwFm.csv', phase_info, check=True
+    )
 
-    # Preprocess inputs
-    prob.check_and_preprocess_inputs()
-
-    prob.add_pre_mission_systems()
-
-    prob.add_phases()
-
-    prob.add_post_mission_systems()
-
-    # Link phases and variables
-    prob.link_phases()
+    prob.build_model()
 
     prob.add_driver('SLSQP')
 
@@ -34,9 +26,7 @@ if __name__ == '__main__':
 
     prob.add_objective()
 
-    prob.setup()
-
-    prob.set_initial_guesses()
+    prob.setup_model()
 
     prob.run_aviary_problem(suppress_solver_print=True)
 

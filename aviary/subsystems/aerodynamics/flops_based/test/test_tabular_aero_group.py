@@ -97,20 +97,12 @@ class TabularAeroGroupFileTest(unittest.TestCase):
         prob.load_inputs(
             'subsystems/aerodynamics/flops_based/test/data/high_wing_single_aisle.csv',
             local_phase_info,
+            check=True,
         )
 
-        # Preprocess inputs
-        prob.check_and_preprocess_inputs()
+        prob.build_model()
 
-        prob.add_pre_mission_systems()
-        prob.add_phases()
-        prob.add_post_mission_systems()
-
-        prob.link_phases()
-
-        prob.setup()
-
-        prob.set_initial_guesses()
+        prob.setup_model()
 
         print('about to run')
         prob.run_model()
@@ -228,24 +220,16 @@ class TabularAeroGroupDataTest(unittest.TestCase):
         prob.load_inputs(
             'subsystems/aerodynamics/flops_based/test/data/high_wing_single_aisle.csv',
             local_phase_info,
+            check=True,
         )
 
-        # Preprocess inputs
-        prob.check_and_preprocess_inputs()
-
-        prob.add_pre_mission_systems()
-        prob.add_phases()
-        prob.add_post_mission_systems()
-
-        prob.link_phases()
+        prob.build_model()
 
         # Connect or set.
         prob.aviary_inputs.set_val(Aircraft.Design.LIFT_INDEPENDENT_DRAG_POLAR, self.CD0_values)
         prob.aviary_inputs.set_val(Aircraft.Design.LIFT_DEPENDENT_DRAG_POLAR, self.CDI_values)
 
-        prob.setup()
-
-        prob.set_initial_guesses()
+        prob.setup_model()
 
         prob.run_model()
 

@@ -11,7 +11,7 @@ from aviary.variable_info.enums import ProblemType, Verbosity
 
 class TwoDOFTestCase(unittest.TestCase):
     def setUp(self) -> None:
-        self.sized_mass = 174039.0
+        self.sized_mass = 171044.0
         self.sized_range = 3675
         self.phase_info = deepcopy(phase_info)
 
@@ -31,6 +31,7 @@ class TestOffDesign(TwoDOFTestCase):
             'models/aircraft/test_aircraft/aircraft_for_bench_GwGm.csv',
             self.phase_info,
             verbosity=Verbosity.QUIET,
+            check=False,
         )
 
         prob_fallout.problem_type = ProblemType.FALLOUT
@@ -43,10 +44,8 @@ class TestOffDesign(TwoDOFTestCase):
         )
 
         prob_fallout.check_and_preprocess_inputs()
-        prob_fallout.add_pre_mission_systems()
-        prob_fallout.add_phases()
-        prob_fallout.add_post_mission_systems()
-        prob_fallout.link_phases()
+
+        prob_fallout.build_model()
         prob_fallout.add_driver('IPOPT', max_iter=100)
         prob_fallout.add_design_variables()
         prob_fallout.add_objective()
@@ -60,6 +59,7 @@ class TestOffDesign(TwoDOFTestCase):
             'models/aircraft/test_aircraft/aircraft_for_bench_GwGm.csv',
             self.phase_info,
             verbosity=Verbosity.QUIET,
+            check=False,
         )
         prob_alternate.problem_type = ProblemType.ALTERNATE
         prob_alternate.aviary_inputs.set_val(
@@ -74,10 +74,7 @@ class TestOffDesign(TwoDOFTestCase):
         )
 
         prob_alternate.check_and_preprocess_inputs()
-        prob_alternate.add_pre_mission_systems()
-        prob_alternate.add_phases()
-        prob_alternate.add_post_mission_systems()
-        prob_alternate.link_phases()
+        prob_alternate.build_model()
         prob_alternate.add_driver('IPOPT', max_iter=100)
         prob_alternate.add_design_variables()
         prob_alternate.add_objective()
@@ -98,6 +95,7 @@ class TestOffDesign(TwoDOFTestCase):
             'models/aircraft/test_aircraft/aircraft_for_bench_GwGm.csv',
             self.phase_info,
             verbosity=Verbosity.QUIET,
+            check=False,
         )
 
         prob_fallout.problem_type = ProblemType.FALLOUT
@@ -110,10 +108,7 @@ class TestOffDesign(TwoDOFTestCase):
         )
 
         prob_fallout.check_and_preprocess_inputs()
-        prob_fallout.add_pre_mission_systems()
-        prob_fallout.add_phases()
-        prob_fallout.add_post_mission_systems()
-        prob_fallout.link_phases()
+        prob_fallout.build_model()
         prob_fallout.add_driver('SNOPT', max_iter=100)
         prob_fallout.add_design_variables()
         prob_fallout.add_objective()
@@ -127,6 +122,7 @@ class TestOffDesign(TwoDOFTestCase):
             'models/aircraft/test_aircraft/aircraft_for_bench_GwGm.csv',
             self.phase_info,
             verbosity=Verbosity.QUIET,
+            check=False,
         )
         prob_alternate.problem_type = ProblemType.ALTERNATE
         prob_alternate.aviary_inputs.set_val(
@@ -141,10 +137,7 @@ class TestOffDesign(TwoDOFTestCase):
         )
 
         prob_alternate.check_and_preprocess_inputs()
-        prob_alternate.add_pre_mission_systems()
-        prob_alternate.add_phases()
-        prob_alternate.add_post_mission_systems()
-        prob_alternate.link_phases()
+        prob_alternate.build_model()
         prob_alternate.add_driver('SNOPT', max_iter=100)
         prob_alternate.add_design_variables()
         prob_alternate.add_objective()

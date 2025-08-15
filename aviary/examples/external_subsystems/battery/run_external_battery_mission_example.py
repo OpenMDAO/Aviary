@@ -22,19 +22,9 @@ if __name__ == '__main__':
     input_file = get_aviary_resource_path(
         'models/aircraft/test_aircraft/aircraft_for_bench_FwFm.csv'
     )
-    prob.load_inputs(input_file, phase_info, meta_data=ExtendedMetaData)
+    prob.load_inputs(input_file, phase_info, meta_data=ExtendedMetaData, check=True)
 
-    # Preprocess inputs
-    prob.check_and_preprocess_inputs()
-
-    prob.add_pre_mission_systems()
-
-    prob.add_phases()
-
-    prob.add_post_mission_systems()
-
-    # Link phases and variables
-    prob.link_phases()
+    prob.build_model()
 
     prob.add_driver('SLSQP')
 
@@ -44,8 +34,6 @@ if __name__ == '__main__':
     # prob.model.add_objective(
     #     f'traj.climb.states:{Dynamic.Battery.STATE_OF_CHARGE}', index=-1, ref=-1)
 
-    prob.setup()
-
-    prob.set_initial_guesses()
+    prob.setup_model()
 
     prob.run_aviary_problem()
