@@ -85,6 +85,12 @@ class FlightPhaseOptions(AviaryOptionsDictionary):
         }
         self.add_control_options('throttle', units='unitless', defaults=defaults)
 
+        defaults = {
+            'electric_current_bounds': (10.0, None),
+            'electric_current_ref': 1.0e2,
+        }
+        self.add_control_options('electric_current', units='A', defaults=defaults)
+
         self.declare(
             name='throttle_allocation',
             default=ThrottleAllocation.FIXED,
@@ -264,7 +270,15 @@ class FlightPhaseBase(PhaseBuilderBase):
                 rate_targets=None,
                 add_constraints=True,
             )
-
+        
+        #TODO Alex modify
+        self.add_control(
+            'electric_current',
+            Dynamic.Vehicle.Propulsion.CURRENT,
+            rate_targets=None,
+            add_constraints=True,
+        )
+        
         # For heterogeneous-engine cases, we may have throttle allocation control.
         if phase_type is EquationsOfMotion.HEIGHT_ENERGY and num_engine_type > 1:
             allocation = user_options['throttle_allocation']

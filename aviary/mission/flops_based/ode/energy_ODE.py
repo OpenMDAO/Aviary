@@ -95,19 +95,6 @@ class EnergyODE(_BaseODE):
                 'thrust_required',
             ],
         )
-        self.add_subsystem(
-            'thrust_balance',
-            om.ExecComp(
-                'thrust_con = thrust - thrust_required',
-                thrust={'val':np.zeros(nn), 'units': 'N'},
-                thrust_required={'val':np.zeros(nn), 'units': 'N'},
-                thrust_con={'val':np.zeros(nn), 'units': 'N'}
-            ),
-            promotes_inputs=[
-                ('thrust', Dynamic.Vehicle.Propulsion.THRUST_TOTAL),
-                'thrust_required'], 
-            promotes_outputs=['thrust_con']
-        )
 
         # THROTTLE Section
         # TODO: Split this out into a function that can be used by the other ODEs.

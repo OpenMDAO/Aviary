@@ -89,7 +89,7 @@ class ElectronicSpeedController(om.ExplicitComponent):
         transition = 0.05
         m = a*b*c*transition**(c - 1) / (b*transition**c + 1)**2
 
-        outputs['current_out'] = inputs[Dynamic.Vehicle.Propulsion.CURRENT] * thr
+        outputs['current_out'] = inputs[Dynamic.Vehicle.Propulsion.CURRENT] #* thr
         outputs['efficiency'] = np.where(thr >= transition, a * (1 - 1 / (1 + b*thr**c)), m* thr + ((a * (1 - 1 / (1 + b*transition**c)))-m*transition))
         outputs['voltage_out'] = inputs['voltage_in'] * inputs[Dynamic.Vehicle.Propulsion.THROTTLE] * outputs['efficiency']
         outputs['power'] = (outputs['efficiency'] - 1) * inputs[Dynamic.Vehicle.Propulsion.CURRENT] * inputs['voltage_in']
@@ -106,7 +106,8 @@ class ElectronicSpeedController(om.ExplicitComponent):
         efficiency = np.where(t >= transition, a * (1 - 1 / (1 + b*t**c)), m*t + ((a * (1 - 1 / (1 + b*transition**c)))-m*transition))
 
         partials['efficiency', Dynamic.Vehicle.Propulsion.THROTTLE] = np.where(t>=transition, a*b*c*t**(c - 1) / (b*t**c + 1)**2, m)
-
+        
+        # partials['']
         partials['voltage_out', 'voltage_in'] = inputs[Dynamic.Vehicle.Propulsion.THROTTLE] * efficiency
         partials['voltage_out', Dynamic.Vehicle.Propulsion.THROTTLE] = inputs['voltage_in'] * (efficiency + inputs[Dynamic.Vehicle.Propulsion.THROTTLE] * partials['efficiency', Dynamic.Vehicle.Propulsion.THROTTLE])
         

@@ -1,4 +1,6 @@
 # Options for IPOPT
+#
+#print_level 5
 
 # Output file
 output_file IPOPT_print.out
@@ -14,8 +16,8 @@ constr_viol_tol 1e-6
 #and the constraints are satisfied for a number of iterations
 acceptable_iter 20
 acceptable_obj_change_tol 1e-5
-acceptable_tol 1e-1
-acceptable_constr_viol_tol 1e-5
+acceptable_tol 1e-5
+acceptable_constr_viol_tol 1e-6
 
 #Algorithm options
 limited_memory_max_history 9999

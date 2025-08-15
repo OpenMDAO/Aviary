@@ -143,6 +143,17 @@ class RCBuilder(EngineModel):
 
         return parameters
 
+    # def get_controls(self, **kwargs):
+    #     controls_dict = {
+    #         Dynamic.Vehicle.Propulsion.CURRENT: {
+    #             'units': 'A',
+    #             'lower': 0.0,
+    #             'control_type': 'polynomial',
+    #             'order': 3,
+    #         },
+    #     }
+    #     return controls_dict
+    
     def get_mass_names(self):
         return [Aircraft.Battery.MASS, Aircraft.Engine.Motor.MASS]#, Aircraft.Engine.MASS]
     

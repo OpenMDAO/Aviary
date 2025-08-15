@@ -34,7 +34,6 @@ phase_info['cruise']['subsystem_options']['core_aerodynamics'] = {
 #     'method': 'external',
 # }
 prob = av.AviaryProblem(verbosity=0)
-
 prob.options['group_by_pre_opt_post'] = True
 
 # Load aircraft and options data from user
@@ -57,14 +56,12 @@ prob.add_post_mission_systems()
 prob.link_phases()
 
 prob.add_driver('IPOPT')
-# prob.add_driver('SLSQP')
-prob.driver.options["debug_print"] = ["desvars", "nl_cons", "objs"]
+
+prob.driver.options["debug_print"] = ["desvars", "objs"] # "nl_cons",
+
 
 prob.add_design_variables()
 
-# prob.model.add_design_var(av.Mission.Design.GROSS_MASS, lower=0.5, upper=40, units='kg', scaler=1)
-# prob.model.add_design_var(av.Mission.Summary.GROSS_MASS, lower=0.5, upper=40, units='kg', scaler=1)
-# prob.model.add_design_var('traj.cruise.timeseries.input_values:throttle', lower=0, upper=1)
 prob.add_objective('time')
 
 prob.setup()
