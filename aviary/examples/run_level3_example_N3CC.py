@@ -50,14 +50,13 @@ FLOPS = LegacyCode.FLOPS
 
 def run_trajectory(sim=True):
     # Level 2 Equivalent: Defining an AviaryProblem() from the interface methods
-    prob = om.Problem(model=om.Group())
+    prob = om.Problem()
 
     # Interface methods for level 2 processes drivers through the prob.add_driver
     # function (specifying driver type, iterations, and verbosity)
     if pyoptsparse:
         driver = prob.driver = om.pyOptSparseDriver()
         driver.options['optimizer'] = 'SNOPT'
-        # driver.declare_coloring()  # currently disabled pending resolve of issue 2507
         if driver.options['optimizer'] == 'SNOPT':
             driver.opt_settings['Major iterations limit'] = 45
             driver.opt_settings['Major optimality tolerance'] = 1e-4
@@ -94,9 +93,9 @@ def run_trajectory(sim=True):
 
     # Fuel is not included in the level 2 functionality, and these values must remain
 
-    takeoff_fuel_burned = 577  # lbm TODO: where should this get connected from?
-    takeoff_thrust_per_eng = 24555.5  # lbf TODO: where should this get connected from?
-    takeoff_L_over_D = 17.35  # TODO: should this come from aero?
+    takeoff_fuel_burned = 577
+    takeoff_thrust_per_eng = 24555.5
+    takeoff_L_over_D = 17.35
 
     aviary_inputs.set_val(Mission.Takeoff.FUEL_SIMPLE, takeoff_fuel_burned, units='lbm')
     aviary_inputs.set_val(Mission.Takeoff.LIFT_OVER_DRAG, takeoff_L_over_D, units='unitless')
@@ -606,9 +605,7 @@ def run_trajectory(sim=True):
         simulate_kwargs={'times_per_seg': 100, 'atol': 1e-9, 'rtol': 1e-9},
         solution_record_file='N3CC_sizing.db',
     )
-    # prob.run_model()
-    # z=prob.check_totals(method='cs', step=2e-40, compact_print=False)
-    # exit()
+
     prob.record('final')
     prob.cleanup()
 
