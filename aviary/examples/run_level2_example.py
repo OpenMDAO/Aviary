@@ -19,7 +19,9 @@ import aviary.api as av
 prob = av.AviaryProblem()
 
 # Load aircraft and options data from provided sources
-prob.load_inputs('models/aircraft/test_aircraft/aircraft_for_bench_FwFm.csv', phase_info)
+prob.load_inputs(
+    'models/aircraft/advanced_single_aisle/advanced_single_aisle_FLOPS.csv', phase_info
+)
 
 prob.check_and_preprocess_inputs()
 
