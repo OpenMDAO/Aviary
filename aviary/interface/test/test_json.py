@@ -7,7 +7,7 @@ from openmdao.utils.testing_utils import use_tempdirs
 import aviary.api as av
 from aviary.interface.methods_for_level2 import reload_aviary_problem
 from aviary.models.missions.height_energy_default import phase_info, phase_info_parameterization
-from aviary.utils.functions import get_aviary_resource_path, get_path
+from aviary.utils.functions import get_path
 
 local_phase_info = deepcopy(phase_info)
 

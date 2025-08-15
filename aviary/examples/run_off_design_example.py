@@ -41,7 +41,6 @@ prob.add_objective()
 prob.setup()
 prob.set_initial_guesses()
 prob.run_aviary_problem()
-prob.save_sizing_results()
 
 # Fallout Mission
 # prob_fallout = prob.fallout_mission()

@@ -715,9 +715,6 @@ class AviaryProblem(om.Problem):
             failed = self.run_model()
             warnings.filterwarnings('default', category=UserWarning)
 
-        # save sized aircraft model to json output file
-        self.save_sizing_results()
-
         # update n2 diagram after run.
         outdir = Path(self.get_reports_dir(force=True))
         outfile = os.path.join(outdir, 'n2.html')
@@ -741,9 +738,22 @@ class AviaryProblem(om.Problem):
         """
         This function runs Payload/Range analysis for the aircraft model.
 
-        Assuming that the aircraft model has been sized and the mission has been run and has successfully converged,
-        This function will adjust the given phase information by assumming firstly that there is a phase named 'cruise'
-        and elongates the duration bounds to allow the optimizer to arrive at a local maximum for the max_fuel_plus_payload and ferry ranges.
+        For an aircraft model that has been sized with a mission has has  successfully converged,
+        this function will adjust the given phase information, assuming that there is a phase named
+        'cruise' and elongates the duration bounds to allow the optimizer to arrive at a local
+        maximum for the economic and ferry missions.
+
+        Parameters
+        ----------
+        verbosity : Verbosity or int (optional)
+            Sets overriding verbosity to be used while running all payload-range points
+
+        Returns
+        -------
+        payload_range_data : tuple
+            Tuple containing the data points for the economic and ferry ranges
+
+        TODO currently does not account for reserve fuel
         """
         # `self.verbosity` is "true" verbosity for entire run. `verbosity` is verbosity
         # override for just this method
@@ -753,13 +763,11 @@ class AviaryProblem(om.Problem):
         else:
             verbosity = self.verbosity  # defaults to BRIEF
 
-        # Checks if the sizing mission has run successfully.
-        # If the problem is both a sizing problem has run successfully, if not, we do not run the payload/range function.
+        # If the design problem did not run successfully, do not run the payload/range function.
         if self.problem_ran_successfully and self.model.problem_type is ProblemType.SIZING:
             # Off-design missions do not currently work for GASP masses or missions.
             mass_method = self.aviary_inputs.get_val(Settings.MASS_METHOD)
             equations_of_motion = self.aviary_inputs.get_val(Settings.EQUATIONS_OF_MOTION)
-            # Checks to determine that both the mass and mission methods are set to FLOPS and Height Energy.
             if (
                 mass_method == LegacyCode.FLOPS
                 and equations_of_motion is EquationsOfMotion.HEIGHT_ENERGY
@@ -768,8 +776,8 @@ class AviaryProblem(om.Problem):
                 phase_info = self.model.mission_info
                 phase_info['pre_mission'] = self.model.pre_mission_info
                 phase_info['post_mission'] = self.model.post_mission_info
-                # This checks if the 'cruise' phase exists, then automatically adjusts duration bounds of the cruise stage
-                # to allow the optimizer to arrive at a local maxim for the max_fuel_plus_payload and the ferry ranges.
+                # This checks if the 'cruise' phase exists, then automatically extends duration
+                # bounds of the cruise stage to allow for the economic and ferry missions.
                 if phase_info['cruise']:
                     min_duration = phase_info['cruise']['user_options']['time_duration_bounds'][0][
                         0
@@ -784,92 +792,81 @@ class AviaryProblem(om.Problem):
                         {'time_duration_bounds': ((min_duration, 2 * max_duration), cruise_units)}
                     )
 
-                # point 1 along the y axis (range=0)
+                # Point 1 is along the y axis (range=0)
                 payload_1 = float(self.get_val(Aircraft.CrewPayload.TOTAL_PAYLOAD_MASS)[0])
                 range_1 = 0
 
-                # point 2, sizing mission which is assumed to be the point of max payload + fuel on the payload and range diagram
+                # Point 2 (Design Range): sizing mission which is assumed to be the point of max
+                # payload + fuel on the payload and range diagram
                 payload_2 = payload_1
-                range_2 = float(self.get_val(Mission.Summary.RANGE)[0])
 
-                # check if fuel capacity does not exceed sizing mission design gross mass
+                range_2 = float(self.get_val(Mission.Summary.RANGE)[0])
                 gross_mass = float(self.get_val(Mission.Summary.GROSS_MASS)[0])
                 operating_mass = float(self.get_val(Aircraft.Design.OPERATING_MASS)[0])
                 fuel_capacity = float(self.get_val(Aircraft.Fuel.TOTAL_CAPACITY)[0])
                 max_payload = float(self.get_val(Aircraft.CrewPayload.TOTAL_PAYLOAD_MASS)[0])
 
-                # When a mission is run with a target range significantly shorter than the aircraft's design range,
-                # the "design" mission may not accurately represent the aircraft's sizing requirements. In this scenario,
-                # the aircraft would be sized based on gross mass and operating mass values where adding the full fuel
-                # capacity to the operating mass would exceed the originally designed gross mass limit.
-                #
-                # Under these conditions, we will still generate a payload/range diagram, but the max_fuel_plus_payload
-                # and max_payload_plus_fuel missions will be identical since the aircraft cannot utilize its full
-                # fuel capacity without exceeding design constraints.
+                # An aircraft may be designed with fuel tank capacity that, if filled, would exceed
+                # TOGW. In this scenario, Economic Range and Ferry Range are the same, and the point
+                # only needs to be run once.
 
                 if operating_mass + fuel_capacity < gross_mass:
-                    # point 3, fallout mission with max fuel and payload
-                    # The payload allowed is the payload that fits on the aircraft at maximum fuel capacity
-                    max_fuel_plus_payload_total_payload = (
-                        gross_mass - operating_mass - fuel_capacity
-                    )
+                    # Point 3 (Economic Mission): max fuel and remaining payload capacity
 
-                    payload_frac = max_fuel_plus_payload_total_payload / max_payload
+                    economic_mission_total_payload = gross_mass - operating_mass - fuel_capacity
+
+                    payload_frac = economic_mission_total_payload / max_payload
 
                     # Calculates Different payload quantities
-                    max_fuel_plus_payload_wing_cargo = (
+                    economic_mission_wing_cargo = (
                         int(self.aviary_inputs.get_val(Aircraft.CrewPayload.WING_CARGO, 'lbm'))
                         * payload_frac
                     )
-                    max_fuel_plus_payload_misc_cargo = (
+                    economic_mission_misc_cargo = (
                         int(self.aviary_inputs.get_val(Aircraft.CrewPayload.MISC_CARGO, 'lbm'))
                         * payload_frac
                     )
-                    max_fuel_plus_payload_num_first = int(
+                    economic_mission_num_first = int(
                         (self.aviary_inputs.get_val(Aircraft.CrewPayload.Design.NUM_FIRST_CLASS))
                         * payload_frac
                     )
-                    max_fuel_plus_payload_num_bus = int(
+                    economic_mission_num_bus = int(
                         (self.aviary_inputs.get_val(Aircraft.CrewPayload.Design.NUM_BUSINESS_CLASS))
                         * payload_frac
                     )
-                    max_fuel_plus_payload_num_tourist = int(
+                    economic_mission_num_tourist = int(
                         (self.aviary_inputs.get_val(Aircraft.CrewPayload.Design.NUM_TOURIST_CLASS))
                         * payload_frac
                     )
 
-                    prob_fallout_max_fuel_plus_payload = self.fallout_mission(
-                        json_filename='payload_range_sizing.json',
-                        num_first=max_fuel_plus_payload_num_first,
-                        num_business=max_fuel_plus_payload_num_bus,
-                        num_tourist=max_fuel_plus_payload_num_tourist,
-                        wing_cargo=max_fuel_plus_payload_wing_cargo,
-                        misc_cargo=max_fuel_plus_payload_misc_cargo,
+                    economic_range_prob = self.run_off_design_mission(
+                        problem_type=ProblemType.FALLOUT,
                         phase_info=phase_info,
+                        num_first_class=economic_mission_num_first,
+                        num_business=economic_mission_num_bus,
+                        num_tourist=economic_mission_num_tourist,
+                        wing_cargo=economic_mission_wing_cargo,
+                        misc_cargo=economic_mission_misc_cargo,
+                        verbosity=verbosity,
                     )
 
                     # Pull the payload and range values from the fallout mission
                     payload_3 = float(
-                        prob_fallout_max_fuel_plus_payload.get_val(
-                            Aircraft.CrewPayload.TOTAL_PAYLOAD_MASS
-                        )
+                        economic_range_prob.get_val(Aircraft.CrewPayload.TOTAL_PAYLOAD_MASS)
                     )
 
-                    range_3 = float(
-                        prob_fallout_max_fuel_plus_payload.get_val(Mission.Summary.RANGE)
-                    )
+                    range_3 = float(economic_range_prob.get_val(Mission.Summary.RANGE))
 
                     prob_3_skip = False
                 else:
-                    # If the fuel capacity from the aviary_inputs csv file plus the sized operating mass exceeds the gross mass
-                    # the fuel_capacity will be adjusted to equal the difference between the gross mass and the operating mass
+                    # only fill fuel until TOGW reached
                     prob_3_skip = True
                     fuel_capacity = gross_mass - operating_mass
 
-                # Point 4, ferry mission with maximum fuel and 0 payload
+                # Point 4 (Ferry Range): maximum fuel and 0 payload
                 max_fuel_zero_payload_payload = operating_mass + fuel_capacity
                 # Aviary does not currently allow for off-design missions of 0 passengers, therefore 1 will be used
-                prob_fallout_ferry = self.fallout_mission(
+                ferry_range_prob = self.fallout_mission(
                     json_filename='payload_range_sizing.json',
                     num_first=0,
                     num_business=0,
@@ -882,22 +879,20 @@ class AviaryProblem(om.Problem):
                     phase_info=phase_info,
                 )
 
-                payload_4 = float(
-                    prob_fallout_ferry.get_val(Aircraft.CrewPayload.TOTAL_PAYLOAD_MASS)
-                )
-                range_4 = float(prob_fallout_ferry.get_val(Mission.Summary.RANGE))
+                payload_4 = float(ferry_range_prob.get_val(Aircraft.CrewPayload.TOTAL_PAYLOAD_MASS))
+                range_4 = float(ferry_range_prob.get_val(Mission.Summary.RANGE))
 
-                # if problem 3 was skipped, prob_falloout_fuel_plus_payload is redefined so it still exists despite being the same as prob_fallout_ferry
+                # if problem 3 was skipped, prob_falloout_fuel_plus_payload is redefined so it still exists despite being the same as ferry_range_prob
                 if prob_3_skip:
-                    prob_fallout_max_fuel_plus_payload = prob_fallout_ferry
+                    economic_range_prob = ferry_range_prob
                     payload_3 = payload_4
                     range_3 = range_4
 
                 # Check if fallout missions ran successfully before writing to csv file
                 # If both missions ran successfully, writes the payload/range data to a csv file
                 if (
-                    prob_fallout_ferry.problem_ran_successfully
-                    and prob_fallout_max_fuel_plus_payload.problem_ran_successfully
+                    ferry_range_prob.problem_ran_successfully
+                    and economic_range_prob.problem_ran_successfully
                 ):
                     # TODO Temporary csv writing for payload/range data, should be replaced with a more robust solution
                     csv_filepath = Path(self.get_reports_dir(force=True)) / 'payload_range_data.csv'
@@ -927,7 +922,7 @@ class AviaryProblem(om.Problem):
                         print(range_points)
                         print(payload_points)
 
-                    return (prob_fallout_max_fuel_plus_payload, prob_fallout_ferry)
+                    return (economic_range_prob, ferry_range_prob)
                 else:
                     warnings.warn(
                         'One or both of the fallout missions did not run successfully; payload/range diagram was not generated.'
@@ -939,10 +934,13 @@ class AviaryProblem(om.Problem):
         else:
             if self.model.problem_type is ProblemType.SIZING:
                 warnings.warn(
-                    'The sizing problem has not run successfully; therefore, the payload/range analysis will not be run.'
+                    'The sizing problem did not run successfully; payload/range analysis will not '
+                    'be run.'
                 )
             else:
-                warnings.warn('Payload/range analysis is only available for sizing problem types')
+                warnings.warn(
+                    'Payload/range analysis is only available after running a sizing problem'
+                )
 
     def run_off_design_mission(
         self,
@@ -986,6 +984,8 @@ class AviaryProblem(om.Problem):
 
         # Set up problem for mission, such as equations of motion, configurators, etc.
         inputs = deepcopy(self.aviary_inputs)
+        design_gross_mass = self.get_val(Mission.Design.GROSS_MASS, units='lbm')[0]
+        inputs.set_val(Mission.Design.GROSS_MASS, design_gross_mass, units='lbm')
 
         if problem_type is not None:
             inputs.set_val(Settings.PROBLEM_TYPE, problem_type)
@@ -1031,10 +1031,18 @@ class AviaryProblem(om.Problem):
         # configure inputs that are specific to problem type
         if problem_type is ProblemType.ALTERNATE:
             # Set mission range, aviary will calculate required fuel
-            # if mission_range is None:
-            #     raise UserWarning('Alternate problem type requested with no specified range')
-            # else:
-            if mission_range is not None:
+            if mission_range is None:
+                warnings.warn(
+                    'Alternate problem type requested with no specified range. Using design mission '
+                    'range for the off-design mission.'
+                )
+                design_range = self.get_val(Mission.Summary.RANGE, units='NM')[0]
+                off_design_prob.aviary_inputs.set_val(
+                    Mission.Summary.RANGE, design_range, units='NM'
+                )
+                phase_info['post_mission']['target_range'] = (design_range, 'nmi')
+
+            else:
                 off_design_prob.aviary_inputs.set_val(
                     Mission.Summary.RANGE, mission_range, units='NM'
                 )
@@ -1042,10 +1050,17 @@ class AviaryProblem(om.Problem):
 
         elif problem_type is ProblemType.FALLOUT:
             # Set mission fuel and calculate gross weight, aviary will calculate range
-            # if mission_gross_mass is None:
-            #     raise UserWarning('Fallout problem type requested with no specified gross mass')
-            # else:
-            if mission_gross_mass is not None:
+            if mission_gross_mass is None:
+                warnings.warn(
+                    'Fallout problem type requested with no specified gross mass. Using design '
+                    'takeoff gross mass for the off-design mission.'
+                )
+                off_design_prob.aviary_inputs.set_val(
+                    Mission.Summary.GROSS_MASS,
+                    self.get_val(Mission.Design.GROSS_MASS, units='lbm')[0],
+                    units='lbm',
+                )
+            else:
                 off_design_prob.aviary_inputs.set_val(
                     Mission.Summary.GROSS_MASS, mission_gross_mass, units='lbm'
                 )
@@ -1328,7 +1343,7 @@ class AviaryProblem(om.Problem):
             prob_fallout.run_aviary_problem()
         return prob_fallout
 
-    def save_sizing_results(self, json_filename='sizing_problem.json', save_to_reports=True):
+    def save_sizing_results(self, json_filename='sizing_results.json'):
         """
         This function saves an aviary problem object into a json file.
 
@@ -1343,9 +1358,6 @@ class AviaryProblem(om.Problem):
             Flag that sets where the results are saved - if True, the file is saved in the OpenMDAO
             reports directory. If False, the file is saved to the current working directory.
         """
-        if save_to_reports:
-            reports_folder = Path(self.get_reports_dir(force=True))
-            json_filename = reports_folder / json_filename
         aviary_input_list = []
         with open(json_filename, 'w') as jsonfile:
             # Loop through aviary input datastructure and create a list

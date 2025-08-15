@@ -1,601 +1,5 @@
 [
     [
-        "aircraft:blended_wing_body_design:num_bays",
-        0,
-        "unitless",
-        "<class 'int'>"
-    ],
-    [
-        "aircraft:crew_and_payload:design:num_business_class",
-        0,
-        "unitless",
-        "<class 'int'>"
-    ],
-    [
-        "aircraft:crew_and_payload:design:num_first_class",
-        11,
-        "unitless",
-        "<class 'int'>"
-    ],
-    [
-        "aircraft:crew_and_payload:design:num_passengers",
-        169,
-        "unitless",
-        "<class 'int'>"
-    ],
-    [
-        "aircraft:crew_and_payload:design:num_tourist_class",
-        158,
-        "unitless",
-        "<class 'int'>"
-    ],
-    [
-        "aircraft:crew_and_payload:mass_per_passenger",
-        180.0,
-        "lbm",
-        "<class 'float'>"
-    ],
-    [
-        "aircraft:crew_and_payload:num_business_class",
-        0,
-        "unitless",
-        "<class 'int'>"
-    ],
-    [
-        "aircraft:crew_and_payload:num_first_class",
-        11,
-        "unitless",
-        "<class 'int'>"
-    ],
-    [
-        "aircraft:crew_and_payload:num_passengers",
-        169,
-        "unitless",
-        "<class 'int'>"
-    ],
-    [
-        "aircraft:crew_and_payload:num_tourist_class",
-        158,
-        "unitless",
-        "<class 'int'>"
-    ],
-    [
-        "aircraft:crew_and_payload:passenger_mass_with_bags",
-        200.0,
-        "lbm",
-        "<class 'float'>"
-    ],
-    [
-        "aircraft:crew_and_payload:uld_mass_per_passenger",
-        0.0,
-        "lbm",
-        "<class 'float'>"
-    ],
-    [
-        "aircraft:design:compute_htail_volume_coeff",
-        false,
-        "unitless",
-        "<class 'bool'>"
-    ],
-    [
-        "aircraft:design:compute_vtail_volume_coeff",
-        false,
-        "unitless",
-        "<class 'bool'>"
-    ],
-    [
-        "aircraft:design:part25_structural_category",
-        3,
-        "unitless",
-        "<class 'int'>"
-    ],
-    [
-        "aircraft:design:reserve_fuel_additional",
-        3000.0,
-        "lbm",
-        "<class 'float'>"
-    ],
-    [
-        "aircraft:design:reserve_fuel_fraction",
-        0.0,
-        "unitless",
-        "<class 'float'>"
-    ],
-    [
-        "aircraft:design:smooth_mass_discontinuities",
-        false,
-        "unitless",
-        "<class 'bool'>"
-    ],
-    [
-        "aircraft:design:type",
-        "TRANSPORT",
-        "unitless",
-        "<enum 'AircraftTypes'>"
-    ],
-    [
-        "aircraft:design:ulf_calculated_from_maneuver",
-        false,
-        "unitless",
-        "<class 'bool'>"
-    ],
-    [
-        "aircraft:design:use_alt_mass",
-        false,
-        "unitless",
-        "<class 'bool'>"
-    ],
-    [
-        "aircraft:electrical:has_hybrid_system",
-        false,
-        "unitless",
-        "<class 'bool'>"
-    ],
-    [
-        "aircraft:engine:additional_mass_fraction",
-        [
-            0.0
-        ],
-        "unitless",
-        "<class 'numpy.ndarray'>"
-    ],
-    [
-        "aircraft:engine:constant_fuel_consumption",
-        [
-            0.0
-        ],
-        "lbm/h",
-        "<class 'numpy.ndarray'>"
-    ],
-    [
-        "aircraft:engine:flight_idle_max_fraction",
-        [
-            1.0
-        ],
-        "unitless",
-        "<class 'numpy.ndarray'>"
-    ],
-    [
-        "aircraft:engine:flight_idle_min_fraction",
-        [
-            0.08
-        ],
-        "unitless",
-        "<class 'numpy.ndarray'>"
-    ],
-    [
-        "aircraft:engine:flight_idle_thrust_fraction",
-        [
-            0.0
-        ],
-        "unitless",
-        "<class 'numpy.ndarray'>"
-    ],
-    [
-        "aircraft:engine:fuel_flow_scaler_constant_term",
-        [
-            0.0
-        ],
-        "unitless",
-        "<class 'numpy.ndarray'>"
-    ],
-    [
-        "aircraft:engine:fuel_flow_scaler_linear_term",
-        [
-            0.0
-        ],
-        "unitless",
-        "<class 'numpy.ndarray'>"
-    ],
-    [
-        "aircraft:engine:generate_flight_idle",
-        [
-            true
-        ],
-        "unitless",
-        "<class 'list'>"
-    ],
-    [
-        "aircraft:engine:geopotential_alt",
-        [
-            false
-        ],
-        "unitless",
-        "<class 'list'>"
-    ],
-    [
-        "aircraft:engine:global_hybrid_throttle",
-        [
-            false
-        ],
-        "unitless",
-        "<class 'list'>"
-    ],
-    [
-        "aircraft:engine:global_throttle",
-        [
-            false
-        ],
-        "unitless",
-        "<class 'list'>"
-    ],
-    [
-        "aircraft:engine:has_propellers",
-        [
-            false
-        ],
-        "unitless",
-        "<class 'list'>"
-    ],
-    [
-        "aircraft:engine:ignore_negative_thrust",
-        [
-            false
-        ],
-        "unitless",
-        "<class 'list'>"
-    ],
-    [
-        "aircraft:engine:interpolation_method",
-        [
-            "slinear"
-        ],
-        "unitless",
-        "<class 'list'>"
-    ],
-    [
-        "aircraft:engine:num_engines",
-        [
-            2
-        ],
-        "unitless",
-        "<class 'numpy.ndarray'>"
-    ],
-    [
-        "aircraft:engine:num_fuselage_engines",
-        [
-            0
-        ],
-        "unitless",
-        "<class 'numpy.ndarray'>"
-    ],
-    [
-        "aircraft:engine:num_wing_engines",
-        [
-            2
-        ],
-        "unitless",
-        "<class 'numpy.ndarray'>"
-    ],
-    [
-        "aircraft:engine:reference_mass",
-        [
-            7400.0
-        ],
-        "lbm",
-        "<class 'numpy.ndarray'>"
-    ],
-    [
-        "aircraft:engine:reference_sls_thrust",
-        [
-            28928.1
-        ],
-        "lbf",
-        "<class 'numpy.ndarray'>"
-    ],
-    [
-        "aircraft:engine:scale_mass",
-        [
-            true
-        ],
-        "unitless",
-        "<class 'list'>"
-    ],
-    [
-        "aircraft:engine:scale_performance",
-        [
-            true
-        ],
-        "unitless",
-        "<class 'list'>"
-    ],
-    [
-        "aircraft:engine:subsonic_fuel_flow_scaler",
-        [
-            1.0
-        ],
-        "unitless",
-        "<class 'numpy.ndarray'>"
-    ],
-    [
-        "aircraft:engine:supersonic_fuel_flow_scaler",
-        [
-            1.0
-        ],
-        "unitless",
-        "<class 'numpy.ndarray'>"
-    ],
-    [
-        "aircraft:engine:type",
-        [
-            "TURBOJET"
-        ],
-        "unitless",
-        "<class 'list'>"
-    ],
-    [
-        "aircraft:engine:propeller:compute_installation_loss",
-        [
-            true
-        ],
-        "unitless",
-        "<class 'list'>"
-    ],
-    [
-        "aircraft:engine:propeller:num_blades",
-        [
-            0
-        ],
-        "unitless",
-        "<class 'numpy.ndarray'>"
-    ],
-    [
-        "aircraft:fins:num_fins",
-        0,
-        "unitless",
-        "<class 'int'>"
-    ],
-    [
-        "aircraft:fuel:num_tanks",
-        7,
-        "unitless",
-        "<class 'int'>"
-    ],
-    [
-        "aircraft:furnishings:use_empirical_equation",
-        true,
-        "unitless",
-        "<class 'bool'>"
-    ],
-    [
-        "aircraft:fuselage:aisle_width",
-        24.0,
-        "inch",
-        "<class 'float'>"
-    ],
-    [
-        "aircraft:fuselage:military_cargo_floor",
-        false,
-        "unitless",
-        "<class 'bool'>"
-    ],
-    [
-        "aircraft:fuselage:num_aisles",
-        1,
-        "unitless",
-        "<class 'int'>"
-    ],
-    [
-        "aircraft:fuselage:num_fuselages",
-        1,
-        "unitless",
-        "<class 'int'>"
-    ],
-    [
-        "aircraft:fuselage:num_seats_abreast",
-        6,
-        "unitless",
-        "<class 'int'>"
-    ],
-    [
-        "aircraft:fuselage:seat_pitch",
-        0.0,
-        "inch",
-        "<class 'float'>"
-    ],
-    [
-        "aircraft:fuselage:seat_width",
-        0.0,
-        "inch",
-        "<class 'float'>"
-    ],
-    [
-        "aircraft:landing_gear:drag_coefficient",
-        0.0,
-        "unitless",
-        "<class 'float'>"
-    ],
-    [
-        "aircraft:landing_gear:fixed_gear",
-        true,
-        "unitless",
-        "<class 'bool'>"
-    ],
-    [
-        "aircraft:propulsion:total_num_engines",
-        2,
-        "unitless",
-        "<class 'int'>"
-    ],
-    [
-        "aircraft:propulsion:total_num_fuselage_engines",
-        0,
-        "unitless",
-        "<class 'int'>"
-    ],
-    [
-        "aircraft:propulsion:total_num_wing_engines",
-        2,
-        "unitless",
-        "<class 'int'>"
-    ],
-    [
-        "aircraft:propulsion:total_reference_sls_thrust",
-        0.0,
-        "lbf",
-        "<class 'float'>"
-    ],
-    [
-        "aircraft:strut:dimensional_location_specified",
-        true,
-        "unitless",
-        "<class 'bool'>"
-    ],
-    [
-        "aircraft:vertical_tail:num_tails",
-        1,
-        "unitless",
-        "<class 'int'>"
-    ],
-    [
-        "aircraft:wing:airfoil_technology",
-        1.92669766647637,
-        "unitless",
-        "<class 'float'>"
-    ],
-    [
-        "aircraft:wing:choose_fold_location",
-        true,
-        "unitless",
-        "<class 'bool'>"
-    ],
-    [
-        "aircraft:wing:flap_type",
-        "DOUBLE_SLOTTED",
-        "unitless",
-        "<enum 'FlapType'>"
-    ],
-    [
-        "aircraft:wing:fold_dimensional_location_specified",
-        false,
-        "unitless",
-        "<class 'bool'>"
-    ],
-    [
-        "aircraft:wing:has_fold",
-        false,
-        "unitless",
-        "<class 'bool'>"
-    ],
-    [
-        "aircraft:wing:has_strut",
-        false,
-        "unitless",
-        "<class 'bool'>"
-    ],
-    [
-        "aircraft:wing:input_station_dist",
-        [
-            0.0,
-            0.2759,
-            0.9367
-        ],
-        "unitless",
-        "<class 'list'>"
-    ],
-    [
-        "aircraft:wing:load_distribution_control",
-        2.0,
-        "unitless",
-        "<class 'float'>"
-    ],
-    [
-        "aircraft:wing:loading_above_20",
-        true,
-        "unitless",
-        "<class 'bool'>"
-    ],
-    [
-        "aircraft:wing:num_flap_segments",
-        2,
-        "unitless",
-        "<class 'int'>"
-    ],
-    [
-        "aircraft:wing:num_integration_stations",
-        50,
-        "unitless",
-        "<class 'int'>"
-    ],
-    [
-        "aircraft:wing:span_efficiency_reduction",
-        false,
-        "unitless",
-        "<class 'bool'>"
-    ],
-    [
-        "aircraft:wing:use_detailed_mass",
-        true,
-        "unitless",
-        "<class 'bool'>"
-    ],
-    [
-        "mission:constraints:max_mach",
-        0.785,
-        "unitless",
-        "<class 'float'>"
-    ],
-    [
-        "mission:design:cruise_altitude",
-        35000.0,
-        "ft",
-        "<class 'float'>"
-    ],
-    [
-        "mission:design:rate_of_climb_at_top_of_climb",
-        0.0,
-        "ft/min",
-        "<class 'float'>"
-    ],
-    [
-        "mission:summary:fuel_flow_scaler",
-        1.0,
-        "unitless",
-        "<class 'float'>"
-    ],
-    [
-        "mission:takeoff:angle_of_attack_runway",
-        0.0,
-        "deg",
-        "<class 'float'>"
-    ],
-    [
-        "mission:takeoff:obstacle_height",
-        35.0,
-        "ft",
-        "<class 'float'>"
-    ],
-    [
-        "mission:takeoff:thrust_incidence",
-        0.0,
-        "deg",
-        "<class 'float'>"
-    ],
-    [
-        "mission:taxi:duration",
-        0.167,
-        "h",
-        "<class 'float'>"
-    ],
-    [
-        "mission:taxi:mach",
-        0.0001,
-        "unitless",
-        "<class 'float'>"
-    ],
-    [
-        "settings:payload_range",
-        false,
-        "unitless",
-        "<class 'bool'>"
-    ],
-    [
-        "settings:verbosity",
-        "BRIEF",
-        "unitless",
-        "<enum 'Verbosity'>"
-    ],
-    [
         "INGASP.JENGSZ",
         4,
         "unitless",
@@ -624,6 +28,36 @@
         "SIZING",
         "unitless",
         "<enum 'ProblemType'>"
+    ],
+    [
+        "aircraft:crew_and_payload:design:num_passengers",
+        169,
+        "unitless",
+        "<class 'int'>"
+    ],
+    [
+        "aircraft:design:reserve_fuel_additional",
+        3000.0,
+        "lbm",
+        "<class 'float'>"
+    ],
+    [
+        "aircraft:design:reserve_fuel_fraction",
+        0.0,
+        "unitless",
+        "<class 'float'>"
+    ],
+    [
+        "mission:design:cruise_altitude",
+        35000.0,
+        "ft",
+        "<class 'float'>"
+    ],
+    [
+        "aircraft:crew_and_payload:passenger_mass_with_bags",
+        0.0,
+        "lbm",
+        "<class 'float'>"
     ],
     [
         "aircraft:air_conditioning:mass_scaler",
@@ -680,9 +114,33 @@
         "<class 'float'>"
     ],
     [
+        "aircraft:crew_and_payload:design:num_business_class",
+        0,
+        "unitless",
+        "<class 'int'>"
+    ],
+    [
+        "aircraft:crew_and_payload:design:num_first_class",
+        11,
+        "unitless",
+        "<class 'int'>"
+    ],
+    [
+        "aircraft:crew_and_payload:design:num_tourist_class",
+        158,
+        "unitless",
+        "<class 'int'>"
+    ],
+    [
         "aircraft:crew_and_payload:flight_crew_mass_scaler",
         1.0,
         "unitless",
+        "<class 'float'>"
+    ],
+    [
+        "aircraft:crew_and_payload:mass_per_passenger",
+        180.0,
+        "lbm",
         "<class 'float'>"
     ],
     [
@@ -764,6 +222,12 @@
         "<class 'float'>"
     ],
     [
+        "aircraft:design:use_alt_mass",
+        false,
+        "unitless",
+        "<class 'bool'>"
+    ],
+    [
         "aircraft:design:zero_lift_drag_coeff_factor",
         0.930890028006548,
         "unitless",
@@ -776,9 +240,97 @@
         "<class 'float'>"
     ],
     [
+        "aircraft:engine:additional_mass_fraction",
+        [
+            0.0
+        ],
+        "unitless",
+        "<class 'numpy.ndarray'>"
+    ],
+    [
+        "aircraft:engine:constant_fuel_consumption",
+        [
+            0.0
+        ],
+        "lbm/h",
+        "<class 'numpy.ndarray'>"
+    ],
+    [
         "aircraft:engine:data_file",
         [
             "models/engines/turbofan_28k.csv"
+        ],
+        "unitless",
+        "<class 'list'>"
+    ],
+    [
+        "aircraft:engine:flight_idle_thrust_fraction",
+        [
+            0.0
+        ],
+        "unitless",
+        "<class 'numpy.ndarray'>"
+    ],
+    [
+        "aircraft:engine:flight_idle_max_fraction",
+        [
+            1.0
+        ],
+        "unitless",
+        "<class 'numpy.ndarray'>"
+    ],
+    [
+        "aircraft:engine:flight_idle_min_fraction",
+        [
+            0.08
+        ],
+        "unitless",
+        "<class 'numpy.ndarray'>"
+    ],
+    [
+        "aircraft:engine:fuel_flow_scaler_constant_term",
+        [
+            0.0
+        ],
+        "unitless",
+        "<class 'numpy.ndarray'>"
+    ],
+    [
+        "aircraft:engine:fuel_flow_scaler_linear_term",
+        [
+            0.0
+        ],
+        "unitless",
+        "<class 'numpy.ndarray'>"
+    ],
+    [
+        "aircraft:engine:generate_flight_idle",
+        [
+            true
+        ],
+        "unitless",
+        "<class 'list'>"
+    ],
+    [
+        "aircraft:engine:geopotential_alt",
+        [
+            false
+        ],
+        "unitless",
+        "<class 'list'>"
+    ],
+    [
+        "aircraft:engine:ignore_negative_thrust",
+        [
+            false
+        ],
+        "unitless",
+        "<class 'list'>"
+    ],
+    [
+        "aircraft:engine:interpolation_method",
+        [
+            "slinear"
         ],
         "unitless",
         "<class 'list'>"
@@ -800,6 +352,46 @@
         "<class 'numpy.ndarray'>"
     ],
     [
+        "aircraft:engine:num_engines",
+        [
+            2
+        ],
+        "unitless",
+        "<class 'numpy.ndarray'>"
+    ],
+    [
+        "aircraft:engine:num_fuselage_engines",
+        [
+            0
+        ],
+        "unitless",
+        "<class 'numpy.ndarray'>"
+    ],
+    [
+        "aircraft:engine:num_wing_engines",
+        [
+            2
+        ],
+        "unitless",
+        "<class 'numpy.ndarray'>"
+    ],
+    [
+        "aircraft:engine:reference_mass",
+        [
+            7400.0
+        ],
+        "lbm",
+        "<class 'numpy.ndarray'>"
+    ],
+    [
+        "aircraft:engine:reference_sls_thrust",
+        [
+            28928.1
+        ],
+        "lbf",
+        "<class 'numpy.ndarray'>"
+    ],
+    [
         "aircraft:engine:scale_factor",
         [
             1.0
@@ -808,11 +400,43 @@
         "<class 'numpy.ndarray'>"
     ],
     [
+        "aircraft:engine:scale_mass",
+        [
+            true
+        ],
+        "unitless",
+        "<class 'list'>"
+    ],
+    [
+        "aircraft:engine:scale_performance",
+        [
+            true
+        ],
+        "unitless",
+        "<class 'list'>"
+    ],
+    [
         "aircraft:engine:scaled_sls_thrust",
         [
             28928.1
         ],
         "lbf",
+        "<class 'numpy.ndarray'>"
+    ],
+    [
+        "aircraft:engine:subsonic_fuel_flow_scaler",
+        [
+            1.0
+        ],
+        "unitless",
+        "<class 'numpy.ndarray'>"
+    ],
+    [
+        "aircraft:engine:supersonic_fuel_flow_scaler",
+        [
+            1.0
+        ],
+        "unitless",
         "<class 'numpy.ndarray'>"
     ],
     [
@@ -850,6 +474,12 @@
         "<class 'float'>"
     ],
     [
+        "aircraft:fins:num_fins",
+        0,
+        "unitless",
+        "<class 'int'>"
+    ],
+    [
         "aircraft:fins:taper_ratio",
         10.0,
         "unitless",
@@ -878,6 +508,12 @@
         0.0,
         "lbm",
         "<class 'float'>"
+    ],
+    [
+        "aircraft:fuel:num_tanks",
+        7,
+        "unitless",
+        "<class 'int'>"
     ],
     [
         "aircraft:fuel:total_capacity",
@@ -920,6 +556,18 @@
         12.33,
         "ft",
         "<class 'float'>"
+    ],
+    [
+        "aircraft:fuselage:military_cargo_floor",
+        false,
+        "unitless",
+        "<class 'bool'>"
+    ],
+    [
+        "aircraft:fuselage:num_fuselages",
+        1,
+        "unitless",
+        "<class 'int'>"
     ],
     [
         "aircraft:fuselage:passenger_compartment_length",
@@ -1104,6 +752,12 @@
         "<class 'float'>"
     ],
     [
+        "aircraft:vertical_tail:num_tails",
+        1,
+        "unitless",
+        "<class 'int'>"
+    ],
+    [
         "aircraft:vertical_tail:taper_ratio",
         0.33,
         "unitless",
@@ -1130,6 +784,12 @@
     [
         "aircraft:wing:aeroelastic_tailoring_factor",
         0.0,
+        "unitless",
+        "<class 'float'>"
+    ],
+    [
+        "aircraft:wing:airfoil_technology",
+        1.92669766647637,
         "unitless",
         "<class 'float'>"
     ],
@@ -1180,9 +840,31 @@
         "<class 'float'>"
     ],
     [
+        "aircraft:wing:detailed_wing",
+        true,
+        "unitless",
+        "<class 'bool'>"
+    ],
+    [
         "aircraft:wing:glove_and_bat",
         134.0,
         "ft**2",
+        "<class 'float'>"
+    ],
+    [
+        "aircraft:wing:input_station_dist",
+        [
+            0.0,
+            0.2759,
+            0.9367
+        ],
+        "unitless",
+        "<class 'list'>"
+    ],
+    [
+        "aircraft:wing:load_distribution_control",
+        2.0,
+        "unitless",
         "<class 'float'>"
     ],
     [
@@ -1219,10 +901,22 @@
         "<class 'float'>"
     ],
     [
+        "aircraft:wing:num_integration_stations",
+        50,
+        "unitless",
+        "<class 'int'>"
+    ],
+    [
         "aircraft:wing:shear_control_mass_scaler",
         1.0,
         "unitless",
         "<class 'float'>"
+    ],
+    [
+        "aircraft:wing:span_efficiency_reduction",
+        false,
+        "unitless",
+        "<class 'bool'>"
     ],
     [
         "aircraft:wing:span",
@@ -1295,6 +989,12 @@
         "<class 'float'>"
     ],
     [
+        "mission:constraints:max_mach",
+        0.785,
+        "unitless",
+        "<class 'float'>"
+    ],
+    [
         "mission:design:gross_mass",
         175400.0,
         "lbm",
@@ -1321,6 +1021,12 @@
     [
         "mission:summary:cruise_mach",
         0.785,
+        "unitless",
+        "<class 'float'>"
+    ],
+    [
+        "mission:summary:fuel_flow_scaler",
+        1.0,
         "unitless",
         "<class 'float'>"
     ],
@@ -1361,6 +1067,18 @@
         "<enum 'LegacyCode'>"
     ],
     [
+        "settings:payload_range",
+        false,
+        "unitless",
+        "<class 'bool'>"
+    ],
+    [
+        "settings:verbosity",
+        "BRIEF",
+        "unitless",
+        "<enum 'Verbosity'>"
+    ],
+    [
         "mission:summary:gross_mass",
         175400.0,
         "lbm",
@@ -1371,5 +1089,63 @@
         3500.0,
         "NM",
         "<class 'float'>"
+    ],
+    [
+        "aircraft:crew_and_payload:num_passengers",
+        169,
+        "unitless",
+        "<class 'int'>"
+    ],
+    [
+        "aircraft:crew_and_payload:num_first_class",
+        11,
+        "unitless",
+        "<class 'int'>"
+    ],
+    [
+        "aircraft:crew_and_payload:num_business_class",
+        0,
+        "unitless",
+        "<class 'int'>"
+    ],
+    [
+        "aircraft:crew_and_payload:num_tourist_class",
+        158,
+        "unitless",
+        "<class 'int'>"
+    ],
+    [
+        "aircraft:engine:global_hybrid_throttle",
+        [
+            false
+        ],
+        "unitless",
+        "<class 'list'>"
+    ],
+    [
+        "aircraft:engine:global_throttle",
+        [
+            false
+        ],
+        "unitless",
+        "<class 'list'>"
+    ],
+    [
+        "aircraft:propulsion:total_num_engines",
+        2,
+        "unitless",
+        "<class 'int'>"
+    ],
+    [
+        "aircraft:propulsion:total_num_fuselage_engines",
+        0,
+        "unitless",
+        "<class 'int'>"
+    ],
+    [
+        "aircraft:propulsion:total_num_wing_engines",
+        2,
+        "unitless",
+        "<class 'int'>"
     ]
 ]

@@ -12,6 +12,7 @@ from openmdao.utils.reports_system import register_report
 from aviary.interface.utils import write_markdown_variable_table
 from aviary.utils.named_values import NamedValues
 from aviary.utils.utils import wrapped_convert_units
+from aviary.variable_info.enums import ProblemType
 
 
 def register_custom_reports():
@@ -55,6 +56,15 @@ def register_custom_reports():
         name='run_status',
         func=run_status,
         desc='Generates a report on the status of the run',
+        class_name='AviaryProblem',
+        method='run_driver',
+        pre_or_post='post',
+    )
+
+    register_report(
+        name='sizing_results',
+        func=sizing_results,
+        desc='Generates an output file of sized aircraft results',
         class_name='AviaryProblem',
         method='run_driver',
         pre_or_post='post',
@@ -109,6 +119,23 @@ def run_status(prob):
     with open(report_file, 'w') as f:
         json.dump(status, f, indent=1, ensure_ascii=False)
         print(file=f)  # avoid 'no newline at end of file' message
+
+
+def sizing_results(prob):
+    """
+    Creates a JSON file that contains the outputs from a sizing problem. If the ProblemType run was
+    not sizing, no file is generated.
+
+    Parameters
+    ----------
+    prob : AviaryProblem
+        The AviaryProblem used to generate this report
+    """
+    reports_folder = Path(prob.get_reports_dir())
+    report_file = reports_folder / 'sizing_results.json'
+
+    if prob.problem_type is ProblemType.SIZING:
+        prob.save_sizing_results(report_file)
 
 
 def subsystem_report(prob, **kwargs):
