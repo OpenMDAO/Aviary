@@ -525,7 +525,7 @@ def update_gasp_options(vehicle_data, verbosity=Verbosity.BRIEF):
     input_values.set_val(Mission.Design.RANGE, [design_range], distance_units)
 
     ## Passengers ##
-    try:
+    if Aircraft.CrewPayload.Design.NUM_PASSENGERS in input_values:
         num_passengers = input_values.get_val(
             Aircraft.CrewPayload.Design.NUM_PASSENGERS, 'unitless'
         )[0]
@@ -533,10 +533,8 @@ def update_gasp_options(vehicle_data, verbosity=Verbosity.BRIEF):
         input_values.set_val(
             Aircraft.CrewPayload.Design.NUM_PASSENGERS, [num_passengers], 'unitless'
         )
-    except:
-        pass  # INGASP.PAX is not in the GASP model
 
-    try:
+    if Aircraft.CrewPayload.Design.NUM_FIRST_CLASS in input_values:
         # In GASP, percentage of total number of passengers is given.
         # Convert it to the actual first class passengers.
         pct_first_class = input_values.get_val(
@@ -550,19 +548,15 @@ def update_gasp_options(vehicle_data, verbosity=Verbosity.BRIEF):
         input_values.set_val(
             Aircraft.CrewPayload.Design.NUM_TOURIST_CLASS, [num_tourist_class], 'unitless'
         )
-    except:
-        pass  # INGASP.PCT_FC is not in the GASP model
 
     ## Seats ##
-    try:
+    if Aircraft.Fuselage.NUM_AISLES in input_values:
         num_aisles = input_values.get_val(Aircraft.Fuselage.NUM_AISLES, 'unitless')[0]
         num_aisles = int(num_aisles)
         num_seat_abreast = input_values.get_val(Aircraft.Fuselage.NUM_SEATS_ABREAST, 'unitless')[0]
         input_values.set_val(Aircraft.Fuselage.NUM_AISLES, [num_aisles], 'unitless')
         num_seat_abreast = int(num_seat_abreast)
         input_values.set_val(Aircraft.Fuselage.NUM_SEATS_ABREAST, [num_seat_abreast], 'unitless')
-    except:
-        pass
 
     ## STRUT AND FOLD ##
     strut_loc = input_values.get_val(Aircraft.Strut.ATTACHMENT_LOCATION, 'ft')[0]
@@ -644,12 +638,10 @@ def update_gasp_options(vehicle_data, verbosity=Verbosity.BRIEF):
             Aircraft.Wing.FLAP_DRAG_INCREMENT_OPTIMUM,
             [[0.12, 0.23, 0.13, 0.23, 0.23, 0.1, 0.15][flap_ind]],
         )
-    try:
+    if Aircraft.Wing.NUM_FLAP_SEGMENTS in input_values:
         num_flap_segments = input_values.get_val(Aircraft.Wing.NUM_FLAP_SEGMENTS, 'unitless')[0]
         num_flap_segments = int(num_flap_segments)
         input_values.set_val(Aircraft.Wing.NUM_FLAP_SEGMENTS, [num_flap_segments], 'unitless')
-    except:
-        pass
 
     ## Fuel ##
     reserve_fuel_additional = input_values.get_val(
@@ -666,7 +658,8 @@ def update_gasp_options(vehicle_data, verbosity=Verbosity.BRIEF):
         input_values.set_val(Aircraft.Design.RESERVE_FUEL_FRACTION, [0], units='unitless')
     else:
         ValueError('"FRESF" is not valid between 0 and 10.')
-    try:
+
+    if Mission.Landing.MAXIMUM_FLARE_LOAD_FACTOR in input_values:
         if input_values.get_val(Mission.Landing.MAXIMUM_FLARE_LOAD_FACTOR)[0] > 4:
             if verbosity > Verbosity.BRIEF:
                 print(
@@ -674,8 +667,6 @@ def update_gasp_options(vehicle_data, verbosity=Verbosity.BRIEF):
                     'not landing flare load factor.'
                 )
             input_values.delete(Mission.Landing.MAXIMUM_FLARE_LOAD_FACTOR)
-    except:
-        pass
 
     # if the value is negative, we are asking the code to calculate it
     # if it is positive, then we are going to use it as an override
@@ -689,11 +680,9 @@ def update_gasp_options(vehicle_data, verbosity=Verbosity.BRIEF):
         input_values.delete(Aircraft.Fuselage.FORM_FACTOR)
     if input_values.get_val(Aircraft.Nacelle.FORM_FACTOR)[0] < 0:
         input_values.delete(Aircraft.Nacelle.FORM_FACTOR)
-    try:
+    if Aircraft.Strut.FUSELAGE_INTERFERENCE_FACTOR in input_values:
         if input_values.get_val(Aircraft.Strut.FUSELAGE_INTERFERENCE_FACTOR)[0] < 0:
             input_values.delete(Aircraft.Strut.FUSELAGE_INTERFERENCE_FACTOR)
-    except:
-        pass
 
     # GASP-converted engine decks have uneven throttle ranges, which require the enabling
     # of global throttle range. This will result in extrapolation of the engine deck,
@@ -710,18 +699,19 @@ def update_gasp_options(vehicle_data, verbosity=Verbosity.BRIEF):
         input_values.set_val(Aircraft.Engine.Gearbox.GEAR_RATIO, ratios, units='unitless')
 
     # CARGO
-    try:
+    if Aircraft.CrewPayload.Design.MAX_CARGO_MASS in input_values:
         if input_values.get_val(Aircraft.CrewPayload.Design.MAX_CARGO_MASS, 'lbm')[0] >= 0:
             input_values.set_val(Aircraft.CrewPayload.Design.CARGO_MASS, [0.0], 'lbm')
             input_values.set_val(Aircraft.CrewPayload.CARGO_MASS, [0.0], 'lbm')
-    except:
-        pass
 
     # ENGINE
-    try:
+    if Aircraft.Engine.NUM_ENGINES in input_values:
         num_engines = input_values.get_val(Aircraft.Engine.NUM_ENGINES, 'unitless')[0]
         num_engines = int(num_engines)
-        input_values.set_val(Aircraft.Engine.NUM_ENGINES, [num_engines], 'unitless')
+    else:
+        num_engines = 1
+    input_values.set_val(Aircraft.Engine.NUM_ENGINES, [num_engines], 'unitless')
+    if Aircraft.Design.TYPE in input_values:
         design_type = input_values.get_val(Aircraft.Design.TYPE, 'unitless')[0]
         if design_type == 'BWB':
             num_fuselage_engines = num_engines
@@ -731,27 +721,23 @@ def update_gasp_options(vehicle_data, verbosity=Verbosity.BRIEF):
             )
             # BWB engine sizing algorithm does not use reference diameter
             input_values.delete(Aircraft.Engine.REFERENCE_DIAMETER)
-    except:
-        pass
-    try:
+    else:
+        input_values.set_val(Aircraft.Design.TYPE, 'transport')
+    if Aircraft.Engine.TYPE in input_values:
         engine_type = input_values.get_val(Aircraft.Engine.TYPE, 'unitless')[0]
         if verbosity > Verbosity.BRIEF:
             print(
                 f'Engine type {engine_type} was provided; currently only TURBOPROP(6) and '
                 'TURBOJET(7) are supported by Aviary'
             )
-    except:
-        pass
 
     # FURNISHING
-    try:
+    if Aircraft.Furnishings.MASS in input_values:
         furnishing_mass_scaler = input_values.get_val(Aircraft.Furnishings.MASS, 'lbm')[0]
         if furnishing_mass_scaler < 0:
             furnishing_mass_scaler = abs(furnishing_mass_scaler)
             input_values.set_val(Aircraft.Furnishings.MASS_SCALER, [furnishing_mass_scaler], 'lbm')
             input_values.delete(Aircraft.Furnishings.MASS)
-    except:
-        pass
 
     unused_values = vehicle_data['unused_values']
     knac = unused_values.get_item('INGASP.KNAC')[0][0]
@@ -761,6 +747,68 @@ def update_gasp_options(vehicle_data, verbosity=Verbosity.BRIEF):
             input_values.delete(Aircraft.Nacelle.AVG_LENGTH)
         except:
             pass
+
+    # Variables required by GASP, but no default values are provided in GASP
+    if not Aircraft.Wing.ZERO_LIFT_ANGLE in input_values:
+        raise RuntimeError('"ALPHL0" is required but is not provided.')
+    if not Aircraft.Wing.ASPECT_RATIO in input_values:
+        raise RuntimeError('"AR" is required but is not provided.')
+    if not Aircraft.HorizontalTail.ASPECT_RATIO in input_values:
+        raise RuntimeError('"ARHT" is required but is not provided.')
+    if not Aircraft.VerticalTail.ASPECT_RATIO in input_values:
+        raise RuntimeError('"ARVT" is required but is not provided.')
+    if not Aircraft.Design.PART25_STRUCTURAL_CATEGORY in input_values:
+        raise RuntimeError('"CATD" is required but is not provided.')
+    if not Aircraft.Fuselage.PRESSURE_DIFFERENTIAL in input_values:
+        raise RuntimeError('"DELP" is required but is not provided.')
+    if not Mission.Taxi.DURATION in input_values:
+        raise RuntimeError('"DELTT" is required but is not provided.')
+    if not Aircraft.Wing.FLAP_DEFLECTION_LANDING in input_values:
+        raise RuntimeError('"DFLPLD" is required but is not provided.')
+    if not Aircraft.Wing.FLAP_DEFLECTION_TAKEOFF in input_values:
+        raise RuntimeError('"DFLPTO" is required but is not provided.')
+    if not Aircraft.Wing.SWEEP in input_values:
+        raise RuntimeError('"DLMC4" is required but is not provided.')
+    if not Aircraft.Wing.INCIDENCE in input_values:
+        raise RuntimeError('"EYEW" is required but is not provided.')
+    if not Aircraft.CrewPayload.Design.NUM_PASSENGERS in input_values:
+        raise RuntimeError('"PAX" is required but is not provided.')
+    if not Aircraft.Fuselage.SEAT_PITCH in input_values:
+        raise RuntimeError('"PS" is required but is not provided.')
+    if not Aircraft.Fuselage.NUM_SEATS_ABREAST in input_values:
+        raise RuntimeError('"SAB" is required but is not provided.')
+    if not Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION in input_values:
+        raise RuntimeError('"SAH" is required but is not provided.')
+    if not Aircraft.Wing.TAPER_RATIO in input_values:
+        raise RuntimeError('"SLM" is required but is not provided.')
+    if not Aircraft.HorizontalTail.TAPER_RATIO in input_values:
+        raise RuntimeError('"SLMH" is required but is not provided.')
+    if not Aircraft.VerticalTail.TAPER_RATIO in input_values:
+        raise RuntimeError('"SLMV" is required but is not provided.')
+    if not Aircraft.HorizontalTail.THICKNESS_TO_CHORD in input_values:
+        raise RuntimeError('"TCHT" is required but is not provided.')
+    if not Aircraft.Wing.THICKNESS_TO_CHORD_ROOT in input_values:
+        raise RuntimeError('"TCR" is required but is not provided.')
+    if not Aircraft.Wing.THICKNESS_TO_CHORD_TIP in input_values:
+        raise RuntimeError('"TCT" is required but is not provided.')
+    if not Aircraft.VerticalTail.THICKNESS_TO_CHORD in input_values:
+        raise RuntimeError('"TCVT" is required but is not provided.')
+    if not Aircraft.Nacelle.MASS_SPECIFIC in input_values:
+        raise RuntimeError('"UWNAC" is required but is not provided.')
+    if not Aircraft.CrewPayload.PASSENGER_MASS_WITH_BAGS in input_values:
+        raise RuntimeError('"UWPAX" is required but is not provided.')
+    if not Aircraft.Design.MAX_STRUCTURAL_SPEED in input_values:
+        raise RuntimeError('"VMLFSL" is required but is not provided.')
+    if not Aircraft.Fuselage.AISLE_WIDTH in input_values:
+        raise RuntimeError('"WAS" is required but is not provided.')
+    if not Aircraft.Fuselage.SEAT_WIDTH in input_values:
+        raise RuntimeError('"WS" is required but is not provided.')
+    if not Aircraft.LandingGear.MAIN_GEAR_LOCATION in input_values:
+        raise RuntimeError('"YMG" is required but is not provided.')
+    if not Aircraft.Engine.WING_LOCATIONS in input_values:
+        raise RuntimeError('"YP" is required but is not provided.')
+    if not Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION in input_values:
+        raise RuntimeError('"SAH" is required but is not provided.')
 
     vehicle_data['input_values'] = input_values
     return vehicle_data
