@@ -70,7 +70,7 @@ class GroundrollPhaseOptions(AviaryOptionsDictionary):
 class GroundrollPhase(PhaseBuilderBase):
     """A phase builder for a two degree of freedom (2DOF) phase."""
 
-    __slots__ = ('external_subsystems', 'meta_data')
+    __slots__ = ('subsystems', 'meta_data')
 
     _initial_guesses_meta_data_ = {}
 
@@ -185,9 +185,8 @@ class GroundrollPhase(PhaseBuilderBase):
 
     def _extra_ode_init_kwargs(self):
         """Return extra kwargs required for initializing the ODE."""
-        # TODO: support external_subsystems and meta_data in the base class
         return {
-            'external_subsystems': self.external_subsystems,
+            'subsystems': self.subsystems,
             'meta_data': self.meta_data,
             'subsystem_options': self.subsystem_options,
             'set_input_defaults': False,

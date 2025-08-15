@@ -22,7 +22,7 @@ from aviary.examples.example_phase_info import phase_info
 phase_info.update(
     {
         'reserve_climb': {
-            'subsystem_options': {'core_aerodynamics': {'method': 'computed'}},
+            'subsystem_options': {'aerodynamics': {'method': 'computed'}},
             'user_options': {
                 'reserve': True,
                 'num_segments': 5,
@@ -44,7 +44,7 @@ phase_info.update(
             },
         },
         'reserve_cruise_fixed_range': {
-            'subsystem_options': {'core_aerodynamics': {'method': 'computed'}},
+            'subsystem_options': {'aerodynamics': {'method': 'computed'}},
             'user_options': {
                 'reserve': True,
                 # Distance traveled in this phase
@@ -68,7 +68,7 @@ phase_info.update(
             },
         },
         'reserve_cruise_fixed_time': {
-            'subsystem_options': {'core_aerodynamics': {'method': 'computed'}},
+            'subsystem_options': {'aerodynamics': {'method': 'computed'}},
             'user_options': {
                 'reserve': True,
                 # Time length of this phase
@@ -89,7 +89,7 @@ phase_info.update(
             },
         },
         'reserve_descent': {
-            'subsystem_options': {'core_aerodynamics': {'method': 'computed'}},
+            'subsystem_options': {'aerodynamics': {'method': 'computed'}},
             'user_options': {
                 'reserve': True,
                 'num_segments': 5,

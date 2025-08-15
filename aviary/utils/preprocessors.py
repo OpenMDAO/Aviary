@@ -43,7 +43,7 @@ def preprocess_options(aviary_options: AviaryValues, meta_data=_MetaData, verbos
             aviary_options.set_val(Settings.VERBOSITY, verbosity)
 
     preprocess_crewpayload(aviary_options, meta_data, verbosity)
-    if not engine_models is None:
+    if engine_models is not None:
         preprocess_propulsion(aviary_options, engine_models, meta_data, verbosity)
 
 

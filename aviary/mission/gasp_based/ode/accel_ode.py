@@ -35,11 +35,9 @@ class AccelODE(TwoDOFODE):
             'method': 'cruise',
             'output_alpha': True,
         }
-        self.options['subsystem_options'].setdefault('core_aerodynamics', {}).update(kwargs)
+        self.options['subsystem_options'].setdefault('aerodynamics', {}).update(kwargs)
 
-        self.add_core_subsystems()
-
-        self.add_external_subsystems()
+        self.add_subsystems()
 
         self.add_subsystem(
             'accel_eom',
