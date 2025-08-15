@@ -67,7 +67,7 @@ class LoadSpeedsTestCase2(unittest.TestCase):
             Aircraft.Design.MAX_STRUCTURAL_SPEED, val=402.5, units='mi/h'
         )  # bug fixed value
         self.prob.model.set_input_defaults(
-            Aircraft.Wing.LOADING, val=128, units='lbf/ft**2'
+            Aircraft.Design.WING_LOADING, val=128, units='lbf/ft**2'
         )  # not actual bug fixed value
 
         setup_model_options(self.prob, options)
@@ -104,7 +104,7 @@ class LoadSpeedsTestCase3(unittest.TestCase):
             Aircraft.Design.MAX_STRUCTURAL_SPEED, val=402.5, units='mi/h'
         )  # bug fixed value
         self.prob.model.set_input_defaults(
-            Aircraft.Wing.LOADING, val=128, units='lbf/ft**2'
+            Aircraft.Design.WING_LOADING, val=128, units='lbf/ft**2'
         )  # not actual bug fixed value
 
         setup_model_options(self.prob, options)
@@ -140,7 +140,7 @@ class LoadSpeedsTestCase4(unittest.TestCase):
             Aircraft.Design.MAX_STRUCTURAL_SPEED, val=402.5, units='mi/h'
         )  # bug fixed value
         self.prob.model.set_input_defaults(
-            Aircraft.Wing.LOADING, val=128, units='lbf/ft**2'
+            Aircraft.Design.WING_LOADING, val=128, units='lbf/ft**2'
         )  # not actual bug fixed value
 
         setup_model_options(self.prob, options)
@@ -246,7 +246,7 @@ class LoadSpeedsTestCase7smooth(unittest.TestCase):  # TestCase2 with smooth fun
             Aircraft.Design.MAX_STRUCTURAL_SPEED, val=402.5, units='mi/h'
         )  # bug fixed value
         self.prob.model.set_input_defaults(
-            Aircraft.Wing.LOADING, val=128, units='lbf/ft**2'
+            Aircraft.Design.WING_LOADING, val=128, units='lbf/ft**2'
         )  # not actual bug fixed value
 
         setup_model_options(self.prob, options)
@@ -284,7 +284,7 @@ class LoadSpeedsTestCase8smooth(unittest.TestCase):  # TestCase3 with smooth fun
             Aircraft.Design.MAX_STRUCTURAL_SPEED, val=402.5, units='mi/h'
         )  # bug fixed value
         self.prob.model.set_input_defaults(
-            Aircraft.Wing.LOADING, val=128, units='lbf/ft**2'
+            Aircraft.Design.WING_LOADING, val=128, units='lbf/ft**2'
         )  # not actual bug fixed value
 
         setup_model_options(self.prob, options)
@@ -321,7 +321,7 @@ class LoadSpeedsTestCase9smooth(unittest.TestCase):  # TestCase4 with smooth fun
             Aircraft.Design.MAX_STRUCTURAL_SPEED, val=402.5, units='mi/h'
         )  # bug fixed value
         self.prob.model.set_input_defaults(
-            Aircraft.Wing.LOADING, val=128, units='lbf/ft**2'
+            Aircraft.Design.WING_LOADING, val=128, units='lbf/ft**2'
         )  # not actual bug fixed value
 
         setup_model_options(self.prob, options)
@@ -585,7 +585,7 @@ class LoadFactorsTestCase1(unittest.TestCase):
         self.prob.model.add_subsystem('factors', LoadFactors(), promotes=['*'])
 
         self.prob.model.set_input_defaults(
-            Aircraft.Wing.LOADING, val=126, units='lbf/ft**2'
+            Aircraft.Design.WING_LOADING, val=126, units='lbf/ft**2'
         )  # bug fixed value
         self.prob.model.set_input_defaults(
             'density_ratio', val=0.533, units='unitless'
@@ -626,7 +626,7 @@ class LoadFactorsTestCase2(unittest.TestCase):
         self.prob.model.add_subsystem('factors', LoadFactors(), promotes=['*'])
 
         self.prob.model.set_input_defaults(
-            Aircraft.Wing.LOADING, val=128, units='lbf/ft**2'
+            Aircraft.Design.WING_LOADING, val=128, units='lbf/ft**2'
         )  # not actual bug fixed value
         self.prob.model.set_input_defaults(
             'density_ratio', val=0.5328, units='unitless'
@@ -670,7 +670,7 @@ class LoadFactorsTestCase3smooth(unittest.TestCase):
         )
 
         self.prob.model.set_input_defaults(
-            Aircraft.Wing.LOADING, val=126, units='lbf/ft**2'
+            Aircraft.Design.WING_LOADING, val=126, units='lbf/ft**2'
         )  # bug fixed value
         self.prob.model.set_input_defaults(
             'density_ratio', val=0.533, units='unitless'
@@ -717,7 +717,7 @@ class LoadFactorsTestCase4smooth(unittest.TestCase):
         )
 
         self.prob.model.set_input_defaults(
-            Aircraft.Wing.LOADING, val=128, units='lbf/ft**2'
+            Aircraft.Design.WING_LOADING, val=128, units='lbf/ft**2'
         )  # not actual bug fixed value
         self.prob.model.set_input_defaults(
             'density_ratio', val=0.5328, units='unitless'
@@ -766,7 +766,7 @@ class DesignLoadGroupTestCase1(unittest.TestCase):
         )  # bug fixed and original value
 
         self.prob.model.set_input_defaults(
-            Aircraft.Wing.LOADING, val=126, units='lbf/ft**2'
+            Aircraft.Design.WING_LOADING, val=126, units='lbf/ft**2'
         )  # bug fixed value
         self.prob.model.set_input_defaults(
             Aircraft.Wing.AVERAGE_CHORD, val=12.71, units='ft'
@@ -809,7 +809,7 @@ class DesignLoadGroupTestCase2smooth(unittest.TestCase):
         )  # bug fixed and original value
 
         self.prob.model.set_input_defaults(
-            Aircraft.Wing.LOADING, val=126, units='lbf/ft**2'
+            Aircraft.Design.WING_LOADING, val=126, units='lbf/ft**2'
         )  # bug fixed value
         self.prob.model.set_input_defaults(
             Aircraft.Wing.AVERAGE_CHORD, val=12.71, units='ft'

@@ -65,7 +65,7 @@ class FlapsGroupTestCaseTripleSlotted(unittest.TestCase):
         self.prob.set_val('VDEL5', 0.90761)
 
         self.prob.set_val(Dynamic.Atmosphere.SPEED_OF_SOUND, 1118.21948771, units='ft/s')
-        self.prob.set_val(Aircraft.Wing.LOADING, 128.0, units='lbf/ft**2')
+        self.prob.set_val(Aircraft.Design.WING_LOADING, 128.0, units='lbf/ft**2')
         self.prob.set_val(Dynamic.Atmosphere.STATIC_PRESSURE, (14.696 * 144), units='lbf/ft**2')
         self.prob.set_val(Aircraft.Wing.AVERAGE_CHORD, 12.61, units='ft')
         self.prob.set_val(Dynamic.Atmosphere.KINEMATIC_VISCOSITY, 0.15723e-3, units='ft**2/s')
@@ -166,7 +166,7 @@ class FlapsGroupTestCaseSplit(unittest.TestCase):
         self.prob.set_val('VDEL5', 0.90761)
 
         self.prob.set_val(Dynamic.Atmosphere.SPEED_OF_SOUND, 1118.21948771, units='ft/s')
-        self.prob.set_val(Aircraft.Wing.LOADING, 128.0, units='lbf/ft**2')
+        self.prob.set_val(Aircraft.Design.WING_LOADING, 128.0, units='lbf/ft**2')
         self.prob.set_val(Dynamic.Atmosphere.STATIC_PRESSURE, (14.696 * 144), units='lbf/ft**2')
         self.prob.set_val(Aircraft.Wing.AVERAGE_CHORD, 12.61, units='ft')
         self.prob.set_val(Dynamic.Atmosphere.KINEMATIC_VISCOSITY, 0.15723e-3, units='ft**2/s')
@@ -268,7 +268,7 @@ class FlapsGroupTestCaseSingleSlotted(unittest.TestCase):
         self.prob.set_val('VDEL5', 0.90761)
 
         self.prob.set_val(Dynamic.Atmosphere.SPEED_OF_SOUND, 1118.21948771, units='ft/s')
-        self.prob.set_val(Aircraft.Wing.LOADING, 128.0, units='lbf/ft**2')
+        self.prob.set_val(Aircraft.Design.WING_LOADING, 128.0, units='lbf/ft**2')
         self.prob.set_val(Dynamic.Atmosphere.STATIC_PRESSURE, (14.696 * 144), units='lbf/ft**2')
         self.prob.set_val(Aircraft.Wing.AVERAGE_CHORD, 12.61, units='ft')
         self.prob.set_val(Dynamic.Atmosphere.KINEMATIC_VISCOSITY, 0.15723e-3, units='ft**2/s')
@@ -369,7 +369,7 @@ class FlapsGroupTestCasePlain(unittest.TestCase):
         self.prob.set_val('VDEL5', 0.90761)
 
         self.prob.set_val(Dynamic.Atmosphere.SPEED_OF_SOUND, 1118.21948771, units='ft/s')
-        self.prob.set_val(Aircraft.Wing.LOADING, 128.0, units='lbf/ft**2')
+        self.prob.set_val(Aircraft.Design.WING_LOADING, 128.0, units='lbf/ft**2')
         self.prob.set_val(Dynamic.Atmosphere.STATIC_PRESSURE, (14.696 * 144), units='lbf/ft**2')
         self.prob.set_val(Aircraft.Wing.AVERAGE_CHORD, 12.61, units='ft')
         self.prob.set_val(Dynamic.Atmosphere.KINEMATIC_VISCOSITY, 0.15723e-3, units='ft**2/s')
@@ -470,7 +470,7 @@ class FlapsGroupTestCaseFowler(unittest.TestCase):
         self.prob.set_val('VDEL5', 0.90761)
 
         self.prob.set_val(Dynamic.Atmosphere.SPEED_OF_SOUND, 1118.21948771, units='ft/s')
-        self.prob.set_val(Aircraft.Wing.LOADING, 128.0, units='lbf/ft**2')
+        self.prob.set_val(Aircraft.Design.WING_LOADING, 128.0, units='lbf/ft**2')
         self.prob.set_val(Dynamic.Atmosphere.STATIC_PRESSURE, (14.696 * 144), units='lbf/ft**2')
         self.prob.set_val(Aircraft.Wing.AVERAGE_CHORD, 12.61, units='ft')
         self.prob.set_val(Dynamic.Atmosphere.KINEMATIC_VISCOSITY, 0.15723e-3, units='ft**2/s')
@@ -573,7 +573,7 @@ class FlapsGroupTestCaseDoubleFowler(unittest.TestCase):
         self.prob.set_val('VDEL5', 0.90761)
 
         self.prob.set_val(Dynamic.Atmosphere.SPEED_OF_SOUND, 1118.21948771, units='ft/s')
-        self.prob.set_val(Aircraft.Wing.LOADING, 128.0, units='lbf/ft**2')
+        self.prob.set_val(Aircraft.Design.WING_LOADING, 128.0, units='lbf/ft**2')
         self.prob.set_val(Dynamic.Atmosphere.STATIC_PRESSURE, (14.696 * 144), units='lbf/ft**2')
         self.prob.set_val(Aircraft.Wing.AVERAGE_CHORD, 12.61, units='ft')
         self.prob.set_val(Dynamic.Atmosphere.KINEMATIC_VISCOSITY, 0.15723e-3, units='ft**2/s')
