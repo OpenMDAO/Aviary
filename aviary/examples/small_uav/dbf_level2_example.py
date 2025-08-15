@@ -33,7 +33,7 @@ phase_info['cruise']['subsystem_options']['core_aerodynamics'] = {
 # phase_info['cruise']['subsystem_options']['core_mass'] = {
 #     'method': 'external',
 # }
-prob = av.AviaryProblem(verbosity=1)
+prob = av.AviaryProblem(verbosity=0)
 
 prob.options['group_by_pre_opt_post'] = True
 
@@ -58,7 +58,7 @@ prob.link_phases()
 
 prob.add_driver('IPOPT')
 # prob.add_driver('SLSQP')
-# prob.driver.options["debug_print"] = ["desvars", "nl_cons", "objs"]
+prob.driver.options["debug_print"] = ["desvars", "nl_cons", "objs"]
 
 prob.add_design_variables()
 
