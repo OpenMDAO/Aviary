@@ -2,7 +2,6 @@ import argparse
 import os
 import sys
 
-import aviary
 from aviary.interface.download_models import _exec_hangar, _setup_hangar_parser
 from aviary.interface.graphical_input import _exec_flight_profile, _setup_flight_profile_parser
 from aviary.interface.methods_for_level1 import _exec_level1, _setup_level1_parser
@@ -119,6 +118,9 @@ def aviary_cmd():
     # '--version', '--dependency_versions')]
     cmdargs = [a for a in sys.argv[1:] if a not in ('-h',)]
 
+    if len(args) == 0 and len(cmdargs) == 0:
+        args = ['-h']
+
     if len(args) == 1 and len(user_args) == 0:
         # if command requires arguments but is run without any, return help for that command
         if args[0] not in ('check', 'draw_mission', 'run_mission', 'plot_drag_polar'):
@@ -147,8 +149,6 @@ def aviary_cmd():
 
         if hasattr(options, 'executor'):
             options.executor(options, user_args)
-        else:
-            os.system('aviary -h')
 
 
 if __name__ == '__main__':
