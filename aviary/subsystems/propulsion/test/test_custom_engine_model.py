@@ -192,8 +192,9 @@ class CustomEngineTest(unittest.TestCase):
             'models/aircraft/test_aircraft/aircraft_for_bench_FwFm.csv',
             phase_info,
             engine_builders=[SimpleTestEngine()],
-            check=True,
         )
+
+        prob.check_and_preprocess_inputs()
 
         prob.build_model()
 
@@ -203,7 +204,7 @@ class CustomEngineTest(unittest.TestCase):
 
         prob.add_objective('fuel_burned')
 
-        prob.setup_model()
+        prob.setup()
 
         prob.final_setup()
 

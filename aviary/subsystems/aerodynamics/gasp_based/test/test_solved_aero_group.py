@@ -52,7 +52,6 @@ class TestSolvedAero(unittest.TestCase):
         prob.load_inputs(
             'subsystems/aerodynamics/flops_based/test/data/high_wing_single_aisle.csv',
             local_phase_info,
-            check=False,
         )
         prob.model.aero_method = LegacyCode.GASP
 
@@ -60,7 +59,7 @@ class TestSolvedAero(unittest.TestCase):
 
         prob.build_model()
 
-        prob.setup_model()
+        prob.setup()
 
         prob.run_model()
 
@@ -97,7 +96,6 @@ class TestSolvedAero(unittest.TestCase):
         prob.load_inputs(
             'subsystems/aerodynamics/flops_based/test/data/high_wing_single_aisle.csv',
             ph_in,
-            check=False,
         )
 
         prob.model.aero_method = LegacyCode.GASP
@@ -109,7 +107,7 @@ class TestSolvedAero(unittest.TestCase):
 
         prob.build_model()
 
-        prob.setup_model()
+        prob.setup()
 
         prob.run_model()
 
@@ -142,7 +140,6 @@ class TestSolvedAero(unittest.TestCase):
         prob.load_inputs(
             'subsystems/aerodynamics/flops_based/test/data/high_wing_single_aisle.csv',
             local_phase_info,
-            check=False,
         )
         prob.model.aero_method = LegacyCode.GASP
 
@@ -153,7 +150,7 @@ class TestSolvedAero(unittest.TestCase):
 
         prob.build_model()
 
-        prob.setup_model()
+        prob.setup()
 
         prob.run_model()
 
@@ -169,14 +166,14 @@ class TestSolvedAero(unittest.TestCase):
         prob = AviaryProblem()
 
         csv_path = 'subsystems/aerodynamics/flops_based/test/data/high_wing_single_aisle.csv'
-        prob.load_inputs(csv_path, local_phase_info, check=False)
+        prob.load_inputs(csv_path, local_phase_info)
         prob.model.aero_method = LegacyCode.GASP
 
         prob.check_and_preprocess_inputs()
 
         prob.build_model()
 
-        prob.setup_model()
+        prob.setup()
 
         prob.run_model()
 
@@ -227,7 +224,7 @@ class TestSolvedAero(unittest.TestCase):
 
         prob = AviaryProblem()
 
-        prob.load_inputs(csv_path, ph_in, check=False)
+        prob.load_inputs(csv_path, ph_in)
         prob.model.aero_method = LegacyCode.GASP
 
         prob.aviary_inputs.set_val(Aircraft.Design.LIFT_POLAR, np.zeros_like(CL), units='unitless')
@@ -237,7 +234,7 @@ class TestSolvedAero(unittest.TestCase):
 
         prob.build_model()
 
-        prob.setup_model()
+        prob.setup()
 
         prob.run_model()
 

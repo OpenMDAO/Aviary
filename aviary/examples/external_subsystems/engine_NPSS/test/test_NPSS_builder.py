@@ -34,8 +34,9 @@ class AviaryNPSSTestCase(unittest.TestCase):
             phase_info,
             engine_builders=[NPSSTabularEngineBuilder()],
             meta_data=ExtendedMetaData,
-            check=True,
         )
+
+        prob.check_and_preprocess_inputs()
 
         prob.build_model()
 
@@ -45,7 +46,7 @@ class AviaryNPSSTestCase(unittest.TestCase):
 
         prob.add_objective()
 
-        prob.setup_model()
+        prob.setup()
 
         prob.run_aviary_problem(suppress_solver_print=True)
 

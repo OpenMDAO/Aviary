@@ -42,12 +42,17 @@ def multi_mission_example():
     aviary_inputs_mission2.set_val(Aircraft.CrewPayload.NUM_BUSINESS_CLASS, 0, 'unitless')
     aviary_inputs_mission2.set_val(Aircraft.CrewPayload.NUM_FIRST_CLASS, 0, 'unitless')
 
+    # merged_meta_data = av.merge_hierarchies(meta_data1, meta_data2)
+    # merge all metata data hierarchies here
+
     prob = av.AviaryProblem(problem_type=ProblemType.MULTI_MISSION)
     # set constraints in the background. Currently works with every objective type except Range.
+    # can accept meta_data = merged_meta_data
 
     prob.add_aviary_group('mission1', aircraft=aviary_inputs_mission1, mission=phase_info_mission1)
     # by default this will load_inputs(), check_and_preprocess(), and combine meta data
     # This can only accept an AviaryValues, .csv acceptance will be removed in future releases
+    # can accept engine_builders, and problem_configurator as an input
 
     prob.add_aviary_group('mission2', aircraft=aviary_inputs_mission2, mission=phase_info_mission2)
     # Load aircraft in second configuration for same mission
@@ -101,7 +106,7 @@ def multi_mission_example():
     prob.add_driver('SNOPT', max_iter=50)
     prob.add_design_variables()
 
-    prob.setup_model()
+    prob.setup()
     # combines 2 basic commands:
     # prob.setup()
     # prob.set_initial_guesses()

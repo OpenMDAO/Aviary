@@ -122,8 +122,10 @@ prob = av.AviaryProblem()
 # Load aircraft and options data from user
 # Allow for user overrides here
 prob.load_inputs(
-    'models/aircraft/test_aircraft/aircraft_for_bench_FwFm.csv', phase_info, check=True
+    'models/aircraft/test_aircraft/aircraft_for_bench_FwFm.csv', phase_info
 )
+
+prob.check_and_preprocess_inputs()
 
 prob.build_model()
 
@@ -135,6 +137,6 @@ prob.add_design_variables()
 # Detail which variables the optimizer can control
 prob.add_objective()
 
-prob.setup_model()
+prob.setup()
 
 prob.run_aviary_problem()

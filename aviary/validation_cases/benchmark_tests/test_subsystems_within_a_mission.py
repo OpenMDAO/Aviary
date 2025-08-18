@@ -66,9 +66,9 @@ class TestSubsystemsMission(unittest.TestCase):
 
         prob = AviaryProblem(verbosity=0)
 
-        prob.load_inputs(
-            'models/aircraft/test_aircraft/aircraft_for_bench_GwFm.csv', phase_info, check=True
-        )
+        prob.load_inputs('models/aircraft/test_aircraft/aircraft_for_bench_GwFm.csv', phase_info)
+
+        prob.check_and_preprocess_inputs()
 
         prob.build_model()
 
@@ -83,7 +83,7 @@ class TestSubsystemsMission(unittest.TestCase):
 
         prob.add_objective('fuel_burned')
 
-        prob.setup_model()
+        prob.setup()
 
         # add an assert to see if the initial guesses are correct for Mission.Dummy.VARIABLE
         assert_almost_equal(
@@ -105,9 +105,9 @@ class TestSubsystemsMission(unittest.TestCase):
 
         prob = AviaryProblem(reports=False, verbosity=0)
 
-        prob.load_inputs(
-            'models/aircraft/test_aircraft/aircraft_for_bench_GwFm.csv', phase_info, check=True
-        )
+        prob.load_inputs('models/aircraft/test_aircraft/aircraft_for_bench_GwFm.csv', phase_info)
+
+        prob.check_and_preprocess_inputs()
 
         prob.add_pre_mission_systems()
 

@@ -22,7 +22,7 @@ class PreMissionGroupTest(unittest.TestCase):
         prob = self.prob = AviaryProblem()
 
         csv_path = 'models/aircraft/test_aircraft/aircraft_for_bench_GwGm.csv'
-        self.gasp_inputs = prob.load_inputs(csv_path, check=False)
+        self.gasp_inputs = prob.load_inputs(csv_path)
         self.gasp_inputs.set_val(
             Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES, val=False, units='unitless'
         )
@@ -194,7 +194,8 @@ class BWBPreMissionGroupTest(unittest.TestCase):
         prob = self.prob = AviaryProblem()
 
         csv_path = 'models/aircraft/blended_wing_body/generic_BWB_GASP.csv'
-        self.gasp_inputs = prob.load_inputs(csv_path, check=True)
+        self.gasp_inputs = prob.load_inputs(csv_path)
+        prob.check_and_preprocess_inputs()
 
     def test_case1(self):
         """

@@ -110,7 +110,9 @@ class AircraftMissionTestSuite(unittest.TestCase):
 
         # Load aircraft and options data from user
         # Allow for user overrides here
-        prob.load_inputs(self.aircraft_definition_file, self.phase_info, check=True)
+        prob.load_inputs(self.aircraft_definition_file, self.phase_info)
+
+        prob.check_and_preprocess_inputs()
 
         prob.build_model()
 
@@ -122,7 +124,7 @@ class AircraftMissionTestSuite(unittest.TestCase):
         # Detail which variables the optimizer can control
         prob.add_objective()
 
-        prob.setup_model()
+        prob.setup()
 
         prob.run_aviary_problem(run_driver=False, make_plots=False)
 

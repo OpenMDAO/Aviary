@@ -31,7 +31,6 @@ def run_trajectory(sim=True):
     prob.load_inputs(
         'models/aircraft/advanced_single_aisle/advanced_single_aisle_FLOPS.csv',
         local_phase_info,
-        check=False,
     )
 
     ##########################################
@@ -69,7 +68,7 @@ def run_trajectory(sim=True):
     ############################################
     # Initial Settings for States and Controls #
     ############################################
-    prob.setup_model()
+    prob.setup()
     prob.run_aviary_problem('dymos_solution.db')
 
     return prob

@@ -36,8 +36,9 @@ class TestJson(unittest.TestCase):
         prob.load_inputs(
             'models/aircraft/test_aircraft/aircraft_for_bench_FwFm.csv',
             local_phase_info,
-            check=True,
         )
+
+        prob.check_and_preprocess_inputs()
 
         prob.add_pre_mission_systems()
         prob.add_phases(phase_info_parameterization=phase_info_parameterization)
@@ -51,7 +52,7 @@ class TestJson(unittest.TestCase):
         # Load optimization problem formulation
         # Detail which variables the optimizer can control
         prob.add_objective()
-        prob.setup_model()
+        prob.setup()
 
     def test_save_json(self):
         self.prob.run_aviary_problem()

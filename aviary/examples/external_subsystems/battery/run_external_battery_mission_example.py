@@ -22,7 +22,9 @@ if __name__ == '__main__':
     input_file = get_aviary_resource_path(
         'models/aircraft/test_aircraft/aircraft_for_bench_FwFm.csv'
     )
-    prob.load_inputs(input_file, phase_info, meta_data=ExtendedMetaData, check=True)
+    prob.load_inputs(input_file, phase_info, meta_data=ExtendedMetaData)
+
+    prob.check_and_preprocess_inputs()
 
     prob.build_model()
 
@@ -34,6 +36,6 @@ if __name__ == '__main__':
     # prob.model.add_objective(
     #     f'traj.climb.states:{Dynamic.Battery.STATE_OF_CHARGE}', index=-1, ref=-1)
 
-    prob.setup_model()
+    prob.setup()
 
     prob.run_aviary_problem()

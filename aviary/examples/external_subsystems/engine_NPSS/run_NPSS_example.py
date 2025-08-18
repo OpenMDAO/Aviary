@@ -25,8 +25,9 @@ prob.load_inputs(
     phase_info,
     engine_builders=[NPSSTabularEngineBuilder()],
     meta_data=ExtendedMetaData,
-    check=True,
 )
+
+prob.check_and_preprocess_inputs()
 
 prob.build_model()
 
@@ -37,7 +38,5 @@ prob.add_design_variables()
 prob.add_objective()
 
 prob.setup()
-
-prob.set_initial_guesses()
 
 prob.run_aviary_problem(suppress_solver_print=True)

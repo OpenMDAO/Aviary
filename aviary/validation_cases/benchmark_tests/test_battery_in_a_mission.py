@@ -73,8 +73,9 @@ class TestSubsystemsMission(unittest.TestCase):
         prob.load_inputs(
             'models/aircraft/test_aircraft/aircraft_for_bench_FwFm_with_electric.csv',
             phase_info,
-            check=True,
         )
+
+        prob.check_and_preprocess_inputs()
 
         prob.build_model()
 
@@ -84,7 +85,7 @@ class TestSubsystemsMission(unittest.TestCase):
 
         prob.add_objective('fuel_burned')
 
-        prob.setup_model()
+        prob.setup()
 
         prob.set_val(av.Aircraft.Battery.PACK_ENERGY_DENSITY, 550, units='kJ/kg')
         prob.set_val(av.Aircraft.Battery.PACK_MASS, 1000, units='lbm')

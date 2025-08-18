@@ -43,12 +43,13 @@ class TestExternalSubsystems(unittest.TestCase):
         prob.load_inputs(
             'subsystems/aerodynamics/flops_based/test/data/high_wing_single_aisle.csv',
             local_phase_info,
-            check=True,
         )
+
+        prob.check_and_preprocess_inputs()
 
         prob.build_model()
 
-        prob.setup_model()
+        prob.setup()
 
         prob.run_model()
 
@@ -70,12 +71,13 @@ class TestExternalSubsystems(unittest.TestCase):
         prob.load_inputs(
             'subsystems/aerodynamics/flops_based/test/data/high_wing_single_aisle.csv',
             local_phase_info,
-            check=True,
         )
+
+        prob.check_and_preprocess_inputs()
 
         prob.build_model()
 
-        prob.setup_model()
+        prob.setup()
 
         prob.run_model()
 
@@ -95,12 +97,13 @@ class TestExternalSubsystems(unittest.TestCase):
         prob.load_inputs(
             'models/aircraft/large_single_aisle_1/large_single_aisle_1_GASP.csv',
             local_phase_info,
-            check=True,
         )
+
+        prob.check_and_preprocess_inputs()
 
         prob.build_model()
 
-        prob.setup_model()
+        prob.setup()
 
         prob.run_model()
 
@@ -123,12 +126,13 @@ class TestExternalSubsystems(unittest.TestCase):
         prob.load_inputs(
             'models/aircraft/large_single_aisle_1/large_single_aisle_1_GASP.csv',
             local_phase_info,
-            check=True,
         )
+
+        prob.check_and_preprocess_inputs()
 
         prob.build_model()
 
-        prob.setup_model()
+        prob.setup()
 
         prob.run_model()
 

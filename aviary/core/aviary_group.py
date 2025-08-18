@@ -1342,6 +1342,9 @@ class AviaryGroup(om.Group):
         controls according to the information available in the 'initial_guesses' attribute of the
         phase.
         """
+        # any mission that does not have any dymos phases, there is nothing to set.
+        if not hasattr(self, "traj"):
+            return
         # `self.verbosity` is "true" verbosity for entire run. `verbosity` is verbosity
         # override for just this method
         if verbosity is not None:

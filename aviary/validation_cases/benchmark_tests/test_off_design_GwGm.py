@@ -31,7 +31,6 @@ class TestOffDesign(TwoDOFTestCase):
             'models/aircraft/test_aircraft/aircraft_for_bench_GwGm.csv',
             self.phase_info,
             verbosity=Verbosity.QUIET,
-            check=False,
         )
 
         prob_fallout.problem_type = ProblemType.FALLOUT
@@ -50,7 +49,6 @@ class TestOffDesign(TwoDOFTestCase):
         prob_fallout.add_design_variables()
         prob_fallout.add_objective()
         prob_fallout.setup()
-        prob_fallout.set_initial_guesses()
         prob_fallout.run_aviary_problem()
 
         # Alternate Mission
@@ -59,7 +57,6 @@ class TestOffDesign(TwoDOFTestCase):
             'models/aircraft/test_aircraft/aircraft_for_bench_GwGm.csv',
             self.phase_info,
             verbosity=Verbosity.QUIET,
-            check=False,
         )
         prob_alternate.problem_type = ProblemType.ALTERNATE
         prob_alternate.aviary_inputs.set_val(
@@ -79,7 +76,6 @@ class TestOffDesign(TwoDOFTestCase):
         prob_alternate.add_design_variables()
         prob_alternate.add_objective()
         prob_alternate.setup()
-        prob_alternate.set_initial_guesses()
         prob_alternate.run_aviary_problem()
 
         fallout_range = prob_fallout.get_val(av.Mission.Summary.RANGE)
@@ -95,7 +91,6 @@ class TestOffDesign(TwoDOFTestCase):
             'models/aircraft/test_aircraft/aircraft_for_bench_GwGm.csv',
             self.phase_info,
             verbosity=Verbosity.QUIET,
-            check=False,
         )
 
         prob_fallout.problem_type = ProblemType.FALLOUT
@@ -113,7 +108,6 @@ class TestOffDesign(TwoDOFTestCase):
         prob_fallout.add_design_variables()
         prob_fallout.add_objective()
         prob_fallout.setup()
-        prob_fallout.set_initial_guesses()
         prob_fallout.run_aviary_problem()
 
         # Alternate Mission
@@ -122,7 +116,6 @@ class TestOffDesign(TwoDOFTestCase):
             'models/aircraft/test_aircraft/aircraft_for_bench_GwGm.csv',
             self.phase_info,
             verbosity=Verbosity.QUIET,
-            check=False,
         )
         prob_alternate.problem_type = ProblemType.ALTERNATE
         prob_alternate.aviary_inputs.set_val(
@@ -142,7 +135,6 @@ class TestOffDesign(TwoDOFTestCase):
         prob_alternate.add_design_variables()
         prob_alternate.add_objective()
         prob_alternate.setup()
-        prob_alternate.set_initial_guesses()
         prob_alternate.run_aviary_problem()
 
         fallout_range = prob_fallout.get_val(av.Mission.Summary.RANGE)

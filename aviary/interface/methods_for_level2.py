@@ -53,7 +53,7 @@ class AviaryProblem(om.Problem):
     additional methods to help users create and solve Aviary problems.
     """
 
-    def __init__(self, problem_type: ProblemType = None, verbosity=None, **kwargs):
+    def __init__(self, problem_type: ProblemType = None, verbosity=None, meta_data = BaseMetaData.copy(), **kwargs):
         # Modify OpenMDAO's default_reports for this session.
         new_reports = [
             'subsystems',
@@ -85,7 +85,7 @@ class AviaryProblem(om.Problem):
 
         self.aviary_groups_dict = {}
 
-        self.meta_data = BaseMetaData.copy()
+        self.meta_data = meta_data
 
     def load_inputs(
         self,
@@ -127,7 +127,6 @@ class AviaryProblem(om.Problem):
             engine_builders=engine_builders,
             problem_configurator=problem_configurator,
             verbosity=verbosity,
-            check_and_preprocess=False,
         )
 
         # When there is only 1 aircraft model/mission, preserve old behavior.
@@ -176,7 +175,15 @@ class AviaryProblem(om.Problem):
         # Update the reference to the newly merged meta_data.
         group.meta_data = self.meta_data
 
-    def add_aviary_group(self, name: str, aircraft: AviaryValues, mission: dict, verbosity=None):
+    def add_aviary_group(
+            self, 
+            name: str, 
+            aircraft: AviaryValues, 
+            mission: dict, 
+            engine_builders=None, 
+            problem_configurator=None, 
+            verbosity=None
+        ):
         """
         Used when creating a multi-mission problem.
         Create a dictionary of all aviary_groups() in this problem so we can iterate over them later.
@@ -189,7 +196,13 @@ class AviaryProblem(om.Problem):
 
         sub = self.model.add_subsystem(name, AviaryGroup())
         sub.meta_data = self.meta_data
-        sub.load_inputs(aircraft, mission, verbosity=verbosity)
+        sub.load_inputs(
+            aircraft_data=aircraft, 
+            phase_info=mission, 
+            engine_builders=engine_builders, 
+            problem_configurator=problem_configurator, 
+            verbosity=verbosity
+        )
 
         sub.check_and_preprocess_inputs()
 
@@ -972,15 +985,6 @@ class AviaryProblem(om.Problem):
                     # print("var_pairs",var_pairs)
                     self.model.promotes(mission_name, inputs=var_pairs)
 
-    def setup_model(self, **kwargs):
-        # Combines 2 basic methods for level 2 functions providing a less verbose
-        # interface for the user
-        self.setup(**kwargs)
-        if 'verbosity' in kwargs:
-            self.set_initial_guesses(verbosity=kwargs['verbosity'])
-        else:
-            self.set_initial_guesses()
-
     def setup(self, **kwargs):
         """Lightly wrapped setup() method for the problem."""
         # verbosity is not used in this method, but it is understandable that a user
@@ -1014,6 +1018,8 @@ class AviaryProblem(om.Problem):
             warnings.simplefilter('ignore', om.PromotionWarning)
 
             super().setup(**kwargs)
+
+        self.set_initial_guesses(verbosity=None)
 
     def set_initial_guesses(self, parent_prob=None, parent_prefix='', verbosity=None):
         """
@@ -1499,6 +1505,7 @@ class AviaryProblem(om.Problem):
         )
 
         # TODO: All these methods will need to be updated
+        prob_alternate.check_and_preprocess_inputs()
         prob_alternate.build_model()
         prob_alternate.add_driver(optimizer, verbosity=verbosity)
         prob_alternate.options = self.options
@@ -1507,7 +1514,6 @@ class AviaryProblem(om.Problem):
         prob_alternate.add_design_variables()
         prob_alternate.add_objective()
         prob_alternate.setup()
-        prob_alternate.set_initial_guesses()
         if run_mission:
             prob_alternate.run_aviary_problem()
         return prob_alternate
@@ -1619,6 +1625,7 @@ class AviaryProblem(om.Problem):
             verbosity=verbosity,
         )
 
+        prob_fallout.check_and_preprocess_inputs()
         prob_fallout.build_model()
         prob_fallout.add_driver(optimizer, verbosity=verbosity)
         prob_fallout.options = self.options
@@ -1627,7 +1634,6 @@ class AviaryProblem(om.Problem):
         prob_fallout.add_design_variables()
         prob_fallout.add_objective()
         prob_fallout.setup()
-        prob_fallout.set_initial_guesses()
         if run_mission:
             prob_fallout.run_aviary_problem()
         return prob_fallout

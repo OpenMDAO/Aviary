@@ -52,7 +52,6 @@ class LargeElectrifiedTurbopropFreighterBenchmark(unittest.TestCase):
             options,  # "models/aircraft/large_turboprop_freighter/large_turboprop_freighter_GASP.csv",
             energy_phase_info,
             engine_builders=[electroprop],
-            check=False,
         )
         prob.aviary_inputs.set_val(Settings.VERBOSITY, 2)
 
@@ -78,7 +77,6 @@ class LargeElectrifiedTurbopropFreighterBenchmark(unittest.TestCase):
         # prob.model.list_vars(units=True, print_arrays=True)
         om.n2(prob)
 
-        prob.set_initial_guesses()
         prob.run_aviary_problem('dymos_solution.db')
 
         om.n2(prob)

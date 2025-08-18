@@ -68,7 +68,9 @@ class MultiengineTestcase(unittest.TestCase):
 
         prob = AviaryProblem(verbosity=0)
 
-        prob.load_inputs(inputs, test_phase_info, engine_builders=[engine1, engine2], check=True)
+        prob.load_inputs(inputs, test_phase_info, engine_builders=[engine1, engine2])
+
+        prob.check_and_preprocess_inputs()
 
         prob.build_model()
 
@@ -77,7 +79,7 @@ class MultiengineTestcase(unittest.TestCase):
         prob.add_design_variables()
         prob.add_objective()
 
-        prob.setup_model()
+        prob.setup()
 
         prob.run_aviary_problem('dymos_solution.db', suppress_solver_print=True)
 
@@ -103,7 +105,9 @@ class MultiengineTestcase(unittest.TestCase):
 
         prob = AviaryProblem(verbosity=0)
 
-        prob.load_inputs(inputs, test_phase_info, engine_builders=[engine1, engine2], check=True)
+        prob.load_inputs(inputs, test_phase_info, engine_builders=[engine1, engine2])
+
+        prob.check_and_preprocess_inputs()
 
         prob.build_model()
 
@@ -112,7 +116,7 @@ class MultiengineTestcase(unittest.TestCase):
         prob.add_design_variables()
         prob.add_objective()
 
-        prob.setup_model()
+        prob.setup()
 
         prob.run_aviary_problem('dymos_solution.db', suppress_solver_print=True)
 
@@ -137,7 +141,9 @@ class MultiengineTestcase(unittest.TestCase):
         engine1 = build_engine_deck(engine_1_inputs)
         engine2 = build_engine_deck(engine_2_inputs)
 
-        prob.load_inputs(inputs, test_phase_info, engine_builders=[engine1, engine2], check=True)
+        prob.load_inputs(inputs, test_phase_info, engine_builders=[engine1, engine2])
+
+        prob.check_and_preprocess_inputs()
 
         prob.build_model()
 
@@ -146,7 +152,7 @@ class MultiengineTestcase(unittest.TestCase):
         prob.add_design_variables()
         prob.add_objective()
 
-        prob.setup_model()
+        prob.setup()
 
         prob.run_aviary_problem('dymos_solution.db', suppress_solver_print=True)
 

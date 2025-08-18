@@ -70,7 +70,9 @@ class PreMissionGroupTest(unittest.TestCase):
         csv_path = get_aviary_resource_path(
             'models/aircraft/test_aircraft/aircraft_for_bench_GwFm.csv'
         )
-        prob.load_inputs(csv_path, phase_info, check=True)
+        prob.load_inputs(csv_path, phase_info)
+
+        prob.check_and_preprocess_inputs()
 
         prob.build_model()
 
@@ -95,7 +97,9 @@ class PreMissionGroupTest(unittest.TestCase):
         csv_path = get_aviary_resource_path(
             'models/aircraft/test_aircraft/aircraft_for_bench_GwFm.csv'
         )
-        prob.load_inputs(csv_path, phase_info, check=True)
+        prob.load_inputs(csv_path, phase_info)
+
+        prob.check_and_preprocess_inputs()
 
         prob.add_pre_mission_systems()
         prob.add_phases(parallel_phases=False)

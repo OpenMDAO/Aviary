@@ -122,12 +122,13 @@ make_plots = False
 # create and begin setting up Aviary problem
 prob = av.AviaryProblem()
 
-prob.load_inputs(aircraft_definition_file, phase_info, check=True)
+prob.load_inputs(aircraft_definition_file, phase_info)
+prob.check_and_preprocess_inputs()
 prob.build_model()
 prob.add_driver(optimizer=optimizer)
 prob.add_design_variables()
 prob.add_objective()
-prob.setup_model()
+prob.setup()
 
 # define OAS inputs
 OAS_sys = 'pre_mission.wing_mass.aerostructures.'

@@ -28,7 +28,6 @@ class LargeTurbopropFreighterBenchmark(unittest.TestCase):
             'models/aircraft/large_turboprop_freighter/large_turboprop_freighter_GASP.csv',
             two_dof_phase_info,
             engine_builders=[turboprop],
-            check=False,
         )
         # FLOPS aero specific stuff? Best guesses for values here
         prob.aviary_inputs.set_val(Mission.Constraints.MAX_MACH, 0.5)
@@ -40,7 +39,7 @@ class LargeTurbopropFreighterBenchmark(unittest.TestCase):
         prob.add_driver('IPOPT', max_iter=0, verbosity=0)
         prob.add_design_variables()
         prob.add_objective()
-        prob.setup_model()
+        prob.setup()
         prob.run_aviary_problem('dymos_solution.db')
         # om.n2(prob)
 

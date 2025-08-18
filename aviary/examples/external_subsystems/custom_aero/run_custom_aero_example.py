@@ -28,8 +28,10 @@ if __name__ == '__main__':
     # Load aircraft and options data from user
     # Allow for user overrides here
     prob.load_inputs(
-        'models/aircraft/test_aircraft/aircraft_for_bench_FwFm.csv', phase_info, check=True
+        'models/aircraft/test_aircraft/aircraft_for_bench_FwFm.csv', phase_info
     )
+
+    prob.check_and_preprocess_inputs()
 
     prob.build_model()
 
@@ -41,8 +43,6 @@ if __name__ == '__main__':
     prob.add_objective()
 
     prob.setup()
-
-    prob.set_initial_guesses()
 
     prob.run_aviary_problem(suppress_solver_print=True)
 
