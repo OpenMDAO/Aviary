@@ -53,7 +53,13 @@ class AviaryProblem(om.Problem):
     additional methods to help users create and solve Aviary problems.
     """
 
-    def __init__(self, problem_type: ProblemType = None, verbosity=None, meta_data = BaseMetaData.copy(), **kwargs):
+    def __init__(
+        self,
+        problem_type: ProblemType = None,
+        verbosity=None,
+        meta_data=BaseMetaData.copy(),
+        **kwargs,
+    ):
         # Modify OpenMDAO's default_reports for this session.
         new_reports = [
             'subsystems',
@@ -176,14 +182,14 @@ class AviaryProblem(om.Problem):
         group.meta_data = self.meta_data
 
     def add_aviary_group(
-            self, 
-            name: str, 
-            aircraft: AviaryValues, 
-            mission: dict, 
-            engine_builders=None, 
-            problem_configurator=None, 
-            verbosity=None
-        ):
+        self,
+        name: str,
+        aircraft: AviaryValues,
+        mission: dict,
+        engine_builders=None,
+        problem_configurator=None,
+        verbosity=None,
+    ):
         """
         Used when creating a multi-mission problem.
         Create a dictionary of all aviary_groups() in this problem so we can iterate over them later.
@@ -197,11 +203,11 @@ class AviaryProblem(om.Problem):
         sub = self.model.add_subsystem(name, AviaryGroup())
         sub.meta_data = self.meta_data
         sub.load_inputs(
-            aircraft_data=aircraft, 
-            phase_info=mission, 
-            engine_builders=engine_builders, 
-            problem_configurator=problem_configurator, 
-            verbosity=verbosity
+            aircraft_data=aircraft,
+            phase_info=mission,
+            engine_builders=engine_builders,
+            problem_configurator=problem_configurator,
+            verbosity=verbosity,
         )
 
         sub.check_and_preprocess_inputs()

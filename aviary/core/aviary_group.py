@@ -1343,7 +1343,7 @@ class AviaryGroup(om.Group):
         phase.
         """
         # any mission that does not have any dymos phases, there is nothing to set.
-        if not hasattr(self, "traj"):
+        if not hasattr(self, 'traj'):
             return
         # `self.verbosity` is "true" verbosity for entire run. `verbosity` is verbosity
         # override for just this method

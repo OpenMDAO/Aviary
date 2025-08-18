@@ -120,7 +120,7 @@ class TestReports(unittest.TestCase):
         )
 
         prob.check_and_preprocess_inputs()
-        
+
         prob.meta_data = metadata
 
         prob.build_model()

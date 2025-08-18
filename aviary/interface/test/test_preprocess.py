@@ -25,7 +25,7 @@ class TestLevel2Preprocessing(unittest.TestCase):
         )
 
         prob.check_and_preprocess_inputs()
-        
+
         aviary_inputs = prob.aviary_inputs
 
         num_flight_crew = aviary_inputs.get_val(Aircraft.CrewPayload.NUM_FLIGHT_CREW)
