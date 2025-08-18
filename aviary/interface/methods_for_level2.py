@@ -95,7 +95,6 @@ class AviaryProblem(om.Problem):
         problem_configurator=None,
         meta_data=None,
         verbosity=None,
-        check=False,
     ):
         """
         This method loads the aviary_values inputs and options that the user specifies. They could
@@ -130,8 +129,6 @@ class AviaryProblem(om.Problem):
             verbosity=verbosity,
             check_and_preprocess=False,
         )
-        if check is True:
-            self.check_and_preprocess_inputs()
 
         # When there is only 1 aircraft model/mission, preserve old behavior.
         self.phase_info = self.model.phase_info
@@ -193,6 +190,8 @@ class AviaryProblem(om.Problem):
         sub = self.model.add_subsystem(name, AviaryGroup())
         sub.meta_data = self.meta_data
         sub.load_inputs(aircraft, mission, verbosity=verbosity)
+
+        sub.check_and_preprocess_inputs()
 
         self.aviary_groups_dict[name] = sub
 
@@ -1938,5 +1937,5 @@ def _load_off_design(
             prob.aviary_inputs.set_val(Mission.Summary.GROSS_MASS, mission_gross_mass, units='lbm')
 
     # Load inputs
-    prob.load_inputs(prob.aviary_inputs, phase_info, check=True)
+    prob.load_inputs(prob.aviary_inputs, phase_info)
     return prob

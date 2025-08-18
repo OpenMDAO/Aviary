@@ -156,7 +156,6 @@ class AviaryGroup(om.Group):
         engine_builders=None,
         problem_configurator=None,
         verbosity=None,
-        check_and_preprocess=True,
     ):
         """
         This method loads the aviary_values inputs and options that the
@@ -268,8 +267,6 @@ class AviaryGroup(om.Group):
         # self.require_range_residual, self.target_range
         # Other specific self.*** are defined in here as well that are specific to
         # each builder
-        if check_and_preprocess:
-            self.check_and_preprocess_inputs(verbosity=verbosity)
 
         return self.aviary_inputs, self.verbosity
 
