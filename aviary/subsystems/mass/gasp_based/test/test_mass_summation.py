@@ -195,7 +195,7 @@ class MassSummationTestCase2(unittest.TestCase):
             Aircraft.Wing.THICKNESS_TO_CHORD_ROOT, val=0.15, units='unitless'
         )
         self.prob.model.set_input_defaults(Mission.Design.GROSS_MASS, val=175400, units='lbm')
-        self.prob.model.set_input_defaults(Aircraft.Wing.LOADING, val=128, units='lbf/ft**2')
+        self.prob.model.set_input_defaults(Aircraft.Design.WING_LOADING, val=128, units='lbf/ft**2')
         self.prob.model.set_input_defaults(
             Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION, val=0, units='unitless'
         )
@@ -546,7 +546,7 @@ class MassSummationTestCase3(unittest.TestCase):
             Aircraft.Wing.THICKNESS_TO_CHORD_ROOT, val=0.15, units='unitless'
         )
         self.prob.model.set_input_defaults(Mission.Design.GROSS_MASS, val=175400, units='lbm')
-        self.prob.model.set_input_defaults(Aircraft.Wing.LOADING, val=128, units='lbf/ft**2')
+        self.prob.model.set_input_defaults(Aircraft.Design.WING_LOADING, val=128, units='lbf/ft**2')
         self.prob.model.set_input_defaults(
             Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION, val=0, units='unitless'
         )
@@ -895,7 +895,7 @@ class MassSummationTestCase4(unittest.TestCase):
             Aircraft.Wing.THICKNESS_TO_CHORD_ROOT, val=0.15, units='unitless'
         )
         self.prob.model.set_input_defaults(Mission.Design.GROSS_MASS, val=175400, units='lbm')
-        self.prob.model.set_input_defaults(Aircraft.Wing.LOADING, val=128, units='lbf/ft**2')
+        self.prob.model.set_input_defaults(Aircraft.Design.WING_LOADING, val=128, units='lbf/ft**2')
         self.prob.model.set_input_defaults(
             Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION, val=0, units='unitless'
         )
@@ -1252,7 +1252,7 @@ class MassSummationTestCase5(unittest.TestCase):
             Aircraft.Wing.THICKNESS_TO_CHORD_ROOT, val=0.15, units='unitless'
         )
         self.prob.model.set_input_defaults(Mission.Design.GROSS_MASS, val=175400, units='lbm')
-        self.prob.model.set_input_defaults(Aircraft.Wing.LOADING, val=150, units='lbf/ft**2')
+        self.prob.model.set_input_defaults(Aircraft.Design.WING_LOADING, val=150, units='lbf/ft**2')
         self.prob.model.set_input_defaults(
             Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION, val=0, units='unitless'
         )
@@ -1604,7 +1604,7 @@ class MassSummationTestCase6(unittest.TestCase):
             Aircraft.Wing.THICKNESS_TO_CHORD_ROOT, val=0.15, units='unitless'
         )
         self.prob.model.set_input_defaults(Mission.Design.GROSS_MASS, val=175400, units='lbm')
-        self.prob.model.set_input_defaults(Aircraft.Wing.LOADING, val=150, units='lbf/ft**2')
+        self.prob.model.set_input_defaults(Aircraft.Design.WING_LOADING, val=150, units='lbf/ft**2')
         self.prob.model.set_input_defaults(
             Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION, val=0, units='unitless'
         )
@@ -1957,7 +1957,9 @@ class MassSummationTestCase7(unittest.TestCase):
             Aircraft.Wing.THICKNESS_TO_CHORD_ROOT, val=0.12, units='unitless'
         )
         self.prob.model.set_input_defaults(Mission.Design.GROSS_MASS, val=145388.0, units='lbm')
-        self.prob.model.set_input_defaults(Aircraft.Wing.LOADING, val=104.50, units='lbf/ft**2')
+        self.prob.model.set_input_defaults(
+            Aircraft.Design.WING_LOADING, val=104.50, units='lbf/ft**2'
+        )
         self.prob.model.set_input_defaults(
             Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION, val=0, units='unitless'
         )
@@ -2359,7 +2361,9 @@ class MassSummationTestCase8(unittest.TestCase):
         self.prob.model.set_input_defaults(
             Aircraft.Fuselage.WETTED_AREA_SCALER, 1.0, units='unitless'
         )
-        self.prob.model.set_input_defaults(Aircraft.Wing.LOADING, val=87.5, units='lbf/ft**2')
+        self.prob.model.set_input_defaults(
+            Aircraft.Design.WING_LOADING, val=87.5, units='lbf/ft**2'
+        )
         self.prob.model.set_input_defaults(
             Aircraft.Wing.THICKNESS_TO_CHORD_TIP, 0.1, units='unitless'
         )
@@ -2685,6 +2689,7 @@ class MassSummationTestCase9(unittest.TestCase):
         options.set_val(Aircraft.Fuselage.SEAT_PITCH, 44.2, units='inch')
         options.set_val(Aircraft.Fuselage.SEAT_WIDTH, 20.2, units='inch')
         options.set_val(Aircraft.Engine.ADDITIONAL_MASS_FRACTION, 0.163, units='unitless')
+        options.set_val(Aircraft.Electrical.HAS_HYBRID_SYSTEM, val=True, units='unitless')
 
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
@@ -2734,7 +2739,9 @@ class MassSummationTestCase9(unittest.TestCase):
         self.prob.model.set_input_defaults(
             Aircraft.Fuselage.WETTED_AREA_SCALER, 1, units='unitless'
         )
-        self.prob.model.set_input_defaults(Aircraft.Wing.LOADING, val=96.10, units='lbf/ft**2')
+        self.prob.model.set_input_defaults(
+            Aircraft.Design.WING_LOADING, val=96.10, units='lbf/ft**2'
+        )
         self.prob.model.set_input_defaults(
             Aircraft.Wing.THICKNESS_TO_CHORD_TIP, 0.1, units='unitless'
         )
@@ -3109,7 +3116,7 @@ class BWBMassSummationTestCase(unittest.TestCase):
             Aircraft.Wing.THICKNESS_TO_CHORD_ROOT, 0.165, units='unitless'
         )
         prob.model.set_input_defaults(Mission.Design.GROSS_MASS, 150000, units='lbm')
-        prob.model.set_input_defaults(Aircraft.Wing.LOADING, 70.0, units='lbf/ft**2')
+        prob.model.set_input_defaults(Aircraft.Design.WING_LOADING, 70.0, units='lbf/ft**2')
         # prob.model.set_input_defaults(Aircraft.VerticalTail.ASPECT_RATIO, 1.705, units='unitless')
         prob.model.set_input_defaults(Aircraft.HorizontalTail.TAPER_RATIO, 0.366, units='unitless')
         prob.model.set_input_defaults(Aircraft.VerticalTail.TAPER_RATIO, 0.366, units='unitless')
