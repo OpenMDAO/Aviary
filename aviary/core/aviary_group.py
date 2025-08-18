@@ -976,7 +976,7 @@ class AviaryGroup(om.Group):
             'mass_constraint',
             ecomp,
             promotes_inputs=[
-                ('operating_empty_mass', Aircraft.Design.OPERATING_MASS),
+                ('operating_empty_mass', Mission.Summary.OPERATING_MASS),
                 ('overall_fuel', Mission.Summary.TOTAL_FUEL_MASS),
                 ('payload_mass', payload_mass_src),
                 ('initial_mass', Mission.Summary.GROSS_MASS),
@@ -1261,8 +1261,7 @@ class AviaryGroup(om.Group):
 
                 self.add_constraint(Mission.Constraints.RANGE_RESIDUAL, equals=0, ref=10)
 
-            elif self.problem_type is ProblemType.FALLOUT:
-                print('No design variables for Fallout missions')
+            # No design variables for Fallout missions
 
             elif self.problem_type is ProblemType.MULTI_MISSION:
                 self.add_design_var(

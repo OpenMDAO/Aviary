@@ -1459,27 +1459,6 @@ add_meta_data(
 )
 
 add_meta_data(
-    Aircraft.Design.OPERATING_MASS,
-    meta_data=_MetaData,
-    # TODO: check with Aviary and GASPy engineers to ensure these are indeed
-    # defined the same way
-    historical_name={
-        'GASP': 'INGASP.OWE',
-        # ['WTS.WSP(33, 2)', '~WEIGHT.WOWE', '~WTSTAT.WSP(33, 2)'],
-        'FLOPS': 'MISSIN.DOWE',
-        'LEAPS1': [
-            '(WeightABC)self._operating_weight_empty',
-            'aircraft.outputs.L0_weights_summary.operating_weight_empty',
-        ],
-    },
-    units='lbm',
-    desc='operating mass of the aircraft, or aircraft mass without mission fuel, or '
-    'passengers. Includes crew, unusable fuel, oil, and operational items like '
-    'cargo containers and passenger service mass.',
-    default_value=0.0,
-)
-
-add_meta_data(
     Aircraft.Design.PART25_STRUCTURAL_CATEGORY,
     meta_data=_MetaData,
     historical_name={'GASP': 'INGASP.CATD', 'FLOPS': None, 'LEAPS1': None},
@@ -7651,6 +7630,27 @@ add_meta_data(
     units='lbm',
     desc='gross takeoff mass of aircraft for that specific mission, not '
     'necessarily the value for the aircraft`s design mission',
+)
+
+add_meta_data(
+    Mission.Summary.OPERATING_MASS,
+    meta_data=_MetaData,
+    # TODO: check with Aviary and GASPy engineers to ensure these are indeed
+    # defined the same way
+    historical_name={
+        'GASP': 'INGASP.OWE',
+        # ['WTS.WSP(33, 2)', '~WEIGHT.WOWE', '~WTSTAT.WSP(33, 2)'],
+        'FLOPS': 'MISSIN.DOWE',
+        'LEAPS1': [
+            '(WeightABC)self._operating_weight_empty',
+            'aircraft.outputs.L0_weights_summary.operating_weight_empty',
+        ],
+    },
+    units='lbm',
+    desc='operating mass of the aircraft, or aircraft mass without mission fuel, or passengers.'
+    'Includes crew, unusable fuel, oil, and operational items like cargo containers and passenger '
+    'service mass.',
+    default_value=0.0,
 )
 
 add_meta_data(

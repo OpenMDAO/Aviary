@@ -12,7 +12,7 @@ class MassSummation(om.Group):
     Aircraft.Design.STRUCTURE_MASS, Aircraft.Propulsion.MASS,
     Aircraft.Design.SYSTEMS_EQUIP_MASS, Aircraft.Design.SYSTEMS_EQUIP_MASS_BASE,
     Aircraft.Design.SYSTEMS_EQUIP_MASS, Aircraft.Design.EMPTY_MASS,
-    Aircraft.Design.OPERATING_MASS, Aircraft.Design.ZERO_FUEL_MASS,
+    Mission.Summary.OPERATING_MASS, Aircraft.Design.ZERO_FUEL_MASS,
     Mission.Design.FUEL_MASS.
     """
 
@@ -346,10 +346,10 @@ class OperatingMass(om.ExplicitComponent):
         add_aviary_input(self, Aircraft.Fuel.UNUSABLE_FUEL_MASS, units='lbm')
         add_aviary_input(self, Aircraft.Propulsion.TOTAL_ENGINE_OIL_MASS, units='lbm')
 
-        add_aviary_output(self, Aircraft.Design.OPERATING_MASS, units='lbm')
+        add_aviary_output(self, Mission.Summary.OPERATING_MASS, units='lbm')
 
     def setup_partials(self):
-        self.declare_partials(Aircraft.Design.OPERATING_MASS, '*', val=1)
+        self.declare_partials(Mission.Summary.OPERATING_MASS, '*', val=1)
 
     def compute(self, inputs, outputs):
         cargo_container_mass = inputs[Aircraft.CrewPayload.CARGO_CONTAINER_MASS]
@@ -360,7 +360,7 @@ class OperatingMass(om.ExplicitComponent):
         pass_service_mass = inputs[Aircraft.CrewPayload.PASSENGER_SERVICE_MASS]
         unusable_fuel_mass = inputs[Aircraft.Fuel.UNUSABLE_FUEL_MASS]
 
-        outputs[Aircraft.Design.OPERATING_MASS] = (
+        outputs[Mission.Summary.OPERATING_MASS] = (
             empty_mass
             + non_flight_crew_mass
             + flight_crew_mass
@@ -376,7 +376,7 @@ class ZeroFuelMass(om.ExplicitComponent):
         add_aviary_input(self, Aircraft.CrewPayload.PASSENGER_MASS, units='lbm')
         add_aviary_input(self, Aircraft.CrewPayload.BAGGAGE_MASS, units='lbm')
         add_aviary_input(self, Aircraft.CrewPayload.CARGO_MASS, units='lbm')
-        add_aviary_input(self, Aircraft.Design.OPERATING_MASS, units='lbm')
+        add_aviary_input(self, Mission.Summary.OPERATING_MASS, units='lbm')
 
         add_aviary_output(self, Aircraft.Design.ZERO_FUEL_MASS, units='lbm')
 
@@ -387,7 +387,7 @@ class ZeroFuelMass(om.ExplicitComponent):
         pass_mass = inputs[Aircraft.CrewPayload.PASSENGER_MASS]
         bag_mass = inputs[Aircraft.CrewPayload.BAGGAGE_MASS]
         cargo_mass = inputs[Aircraft.CrewPayload.CARGO_MASS]
-        operating_mass = inputs[Aircraft.Design.OPERATING_MASS]
+        operating_mass = inputs[Mission.Summary.OPERATING_MASS]
 
         outputs[Aircraft.Design.ZERO_FUEL_MASS] = operating_mass + pass_mass + bag_mass + cargo_mass
 

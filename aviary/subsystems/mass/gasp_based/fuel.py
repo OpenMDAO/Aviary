@@ -36,7 +36,7 @@ class BodyTankCalculations(om.ExplicitComponent):
         add_aviary_input(self, Aircraft.Fuel.DENSITY, units='lbm/ft**3')
         add_aviary_input(self, Mission.Design.GROSS_MASS, units='lbm')
         add_aviary_input(self, Mission.Design.FUEL_MASS, units='lbm')
-        add_aviary_input(self, Aircraft.Design.OPERATING_MASS, units='lbm')
+        add_aviary_input(self, Mission.Summary.OPERATING_MASS, units='lbm')
 
         # WFXTRA: extra amount of fuel that is required but does not fit in wings
         add_aviary_output(self, Aircraft.Fuel.AUXILIARY_FUEL_CAPACITY, units='lbm')
@@ -96,7 +96,7 @@ class BodyTankCalculations(om.ExplicitComponent):
                 Mission.Design.FUEL_MASS_REQUIRED,
                 'max_wingfuel_mass',
                 Mission.Design.GROSS_MASS,
-                Aircraft.Design.OPERATING_MASS,
+                Mission.Summary.OPERATING_MASS,
             ],
         )
 
@@ -110,7 +110,7 @@ class BodyTankCalculations(om.ExplicitComponent):
         rho_fuel = inputs[Aircraft.Fuel.DENSITY] * GRAV_ENGLISH_LBM
         gross_wt_initial = inputs[Mission.Design.GROSS_MASS] * GRAV_ENGLISH_LBM
         fuel_wt_des = inputs[Mission.Design.FUEL_MASS] * GRAV_ENGLISH_LBM
-        OEW = inputs[Aircraft.Design.OPERATING_MASS] * GRAV_ENGLISH_LBM
+        OEW = inputs[Mission.Summary.OPERATING_MASS] * GRAV_ENGLISH_LBM
 
         smooth = self.options[Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES]
         mu = self.options['mu']
@@ -188,7 +188,7 @@ class BodyTankCalculations(om.ExplicitComponent):
         rho_fuel = inputs[Aircraft.Fuel.DENSITY] * GRAV_ENGLISH_LBM
         gross_wt_initial = inputs[Mission.Design.GROSS_MASS] * GRAV_ENGLISH_LBM
         fuel_wt_des = inputs[Mission.Design.FUEL_MASS] * GRAV_ENGLISH_LBM
-        OEW = inputs[Aircraft.Design.OPERATING_MASS] * GRAV_ENGLISH_LBM
+        OEW = inputs[Mission.Summary.OPERATING_MASS] * GRAV_ENGLISH_LBM
 
         smooth = self.options[Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES]
         mu = self.options['mu']
@@ -458,7 +458,7 @@ class BodyTankCalculations(om.ExplicitComponent):
         J[Aircraft.Fuel.TOTAL_CAPACITY, Mission.Design.GROSS_MASS] = (
             dmax_fuel_avail_dgross_wt_initial
         )
-        J[Aircraft.Fuel.TOTAL_CAPACITY, Aircraft.Design.OPERATING_MASS] = dmax_fuel_avail_dOEW
+        J[Aircraft.Fuel.TOTAL_CAPACITY, Mission.Summary.OPERATING_MASS] = dmax_fuel_avail_dOEW
 
 
 class FuelAndOEMOutputs(om.ExplicitComponent):
@@ -497,7 +497,7 @@ class FuelAndOEMOutputs(om.ExplicitComponent):
             desc='FVOLW: wing tank fuel volume when carrying maximum fuel',
         )
         add_aviary_output(self, Aircraft.Fuel.WING_VOLUME_DESIGN, units='ft**3')
-        add_aviary_output(self, Aircraft.Design.OPERATING_MASS, units='lbm')
+        add_aviary_output(self, Mission.Summary.OPERATING_MASS, units='lbm')
 
         self.add_output(
             'payload_mass_max_fuel',
@@ -545,7 +545,7 @@ class FuelAndOEMOutputs(om.ExplicitComponent):
             [Mission.Design.FUEL_MASS_REQUIRED, Aircraft.Fuel.DENSITY, Aircraft.Fuel.FUEL_MARGIN],
         )
         self.declare_partials(
-            Aircraft.Design.OPERATING_MASS,
+            Mission.Summary.OPERATING_MASS,
             [
                 Aircraft.Propulsion.MASS,
                 Aircraft.Controls.TOTAL_MASS,
@@ -631,7 +631,7 @@ class FuelAndOEMOutputs(om.ExplicitComponent):
         outputs['OEM_wingfuel_mass'] = OEM_wingfuel_wt / GRAV_ENGLISH_LBM
         outputs['OEM_fuel_vol'] = OEM_fuel_vol
         outputs[Aircraft.Fuel.WING_VOLUME_DESIGN] = design_fuel_vol
-        outputs[Aircraft.Design.OPERATING_MASS] = OEW / GRAV_ENGLISH_LBM
+        outputs[Mission.Summary.OPERATING_MASS] = OEW / GRAV_ENGLISH_LBM
         outputs['payload_mass_max_fuel'] = payload_wt_max_fuel / GRAV_ENGLISH_LBM
         outputs['volume_wingfuel_mass'] = volume_wingfuel_wt / GRAV_ENGLISH_LBM
         outputs['max_wingfuel_mass'] = max_wingfuel_wt / GRAV_ENGLISH_LBM

@@ -450,7 +450,7 @@ def run_trajectory(sim=True):
         'mass_constraint',
         ecomp,
         promotes_inputs=[
-            ('operating_empty_mass', Aircraft.Design.OPERATING_MASS),
+            ('operating_empty_mass', Mission.Summary.OPERATING_MASS),
             'overall_fuel',
             ('payload_mass', Aircraft.CrewPayload.TOTAL_PAYLOAD_MASS),
             ('initial_mass', Mission.Design.GROSS_MASS),

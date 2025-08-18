@@ -41,7 +41,7 @@ class ProblemPhaseTestCase(unittest.TestCase):
         )
 
         assert_near_equal(
-            prob.get_val(Aircraft.Design.OPERATING_MASS, units='lbm'),
+            prob.get_val(Mission.Summary.OPERATING_MASS, units='lbm'),
             94952.152,
             tolerance=rtol,
         )
@@ -86,7 +86,7 @@ class ProblemPhaseTestCase(unittest.TestCase):
         )
 
         assert_near_equal(
-            prob.get_val(Aircraft.Design.OPERATING_MASS, units='lbm'),
+            prob.get_val(Mission.Summary.OPERATING_MASS, units='lbm'),
             94952.1511,
             tolerance=rtol,
         )
