@@ -749,66 +749,71 @@ def update_gasp_options(vehicle_data, verbosity=Verbosity.BRIEF):
             pass
 
     # Variables required by GASP, but no default values are provided in GASP
+    missing_vars = []
     if not Aircraft.Wing.ZERO_LIFT_ANGLE in input_values:
-        raise RuntimeError('"ALPHL0" is required but is not provided.')
+        missing_vars.append('ALPHL0')
     if not Aircraft.Wing.ASPECT_RATIO in input_values:
-        raise RuntimeError('"AR" is required but is not provided.')
+        missing_vars.append('AR')
     if not Aircraft.HorizontalTail.ASPECT_RATIO in input_values:
-        raise RuntimeError('"ARHT" is required but is not provided.')
+        missing_vars.append('ARHT')
     if not Aircraft.VerticalTail.ASPECT_RATIO in input_values:
-        raise RuntimeError('"ARVT" is required but is not provided.')
+        missing_vars.append('ARVT')
     if not Aircraft.Design.PART25_STRUCTURAL_CATEGORY in input_values:
-        raise RuntimeError('"CATD" is required but is not provided.')
+        missing_vars.append('CATD')
     if not Aircraft.Fuselage.PRESSURE_DIFFERENTIAL in input_values:
-        raise RuntimeError('"DELP" is required but is not provided.')
+        missing_vars.append('DELP')
     if not Mission.Taxi.DURATION in input_values:
-        raise RuntimeError('"DELTT" is required but is not provided.')
+        missing_vars.append('DELTT')
     if not Aircraft.Wing.FLAP_DEFLECTION_LANDING in input_values:
-        raise RuntimeError('"DFLPLD" is required but is not provided.')
+        missing_vars.append('DFLPLD')
     if not Aircraft.Wing.FLAP_DEFLECTION_TAKEOFF in input_values:
-        raise RuntimeError('"DFLPTO" is required but is not provided.')
+        missing_vars.append('DFLPTO')
     if not Aircraft.Wing.SWEEP in input_values:
-        raise RuntimeError('"DLMC4" is required but is not provided.')
+        missing_vars.append('DLMC4')
     if not Aircraft.Wing.INCIDENCE in input_values:
-        raise RuntimeError('"EYEW" is required but is not provided.')
+        missing_vars.append('EYEW')
     if not Aircraft.CrewPayload.Design.NUM_PASSENGERS in input_values:
-        raise RuntimeError('"PAX" is required but is not provided.')
+        missing_vars.append('PAX')
     if not Aircraft.Fuselage.SEAT_PITCH in input_values:
-        raise RuntimeError('"PS" is required but is not provided.')
+        missing_vars.append('PS')
     if not Aircraft.Fuselage.NUM_SEATS_ABREAST in input_values:
-        raise RuntimeError('"SAB" is required but is not provided.')
+        missing_vars.append('SAB')
     if not Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION in input_values:
-        raise RuntimeError('"SAH" is required but is not provided.')
+        missing_vars.append('SAH')
     if not Aircraft.Wing.TAPER_RATIO in input_values:
-        raise RuntimeError('"SLM" is required but is not provided.')
+        missing_vars.append('SLM')
     if not Aircraft.HorizontalTail.TAPER_RATIO in input_values:
-        raise RuntimeError('"SLMH" is required but is not provided.')
+        missing_vars.append('SLMH')
     if not Aircraft.VerticalTail.TAPER_RATIO in input_values:
-        raise RuntimeError('"SLMV" is required but is not provided.')
+        missing_vars.append('SLMV')
     if not Aircraft.HorizontalTail.THICKNESS_TO_CHORD in input_values:
-        raise RuntimeError('"TCHT" is required but is not provided.')
+        missing_vars.append('TCHT')
     if not Aircraft.Wing.THICKNESS_TO_CHORD_ROOT in input_values:
-        raise RuntimeError('"TCR" is required but is not provided.')
+        missing_vars.append('TCR')
     if not Aircraft.Wing.THICKNESS_TO_CHORD_TIP in input_values:
-        raise RuntimeError('"TCT" is required but is not provided.')
+        missing_vars.append('TCT')
     if not Aircraft.VerticalTail.THICKNESS_TO_CHORD in input_values:
-        raise RuntimeError('"TCVT" is required but is not provided.')
+        missing_vars.append('TCVT')
     if not Aircraft.Nacelle.MASS_SPECIFIC in input_values:
-        raise RuntimeError('"UWNAC" is required but is not provided.')
+        missing_vars.append('UWNAC')
     if not Aircraft.CrewPayload.PASSENGER_MASS_WITH_BAGS in input_values:
-        raise RuntimeError('"UWPAX" is required but is not provided.')
+        missing_vars.append('UWPAX')
     if not Aircraft.Design.MAX_STRUCTURAL_SPEED in input_values:
-        raise RuntimeError('"VMLFSL" is required but is not provided.')
+        missing_vars.append('VMLFSL')
     if not Aircraft.Fuselage.AISLE_WIDTH in input_values:
-        raise RuntimeError('"WAS" is required but is not provided.')
+        missing_vars.append('WAS')
     if not Aircraft.Fuselage.SEAT_WIDTH in input_values:
-        raise RuntimeError('"WS" is required but is not provided.')
+        missing_vars.append('WS')
     if not Aircraft.LandingGear.MAIN_GEAR_LOCATION in input_values:
-        raise RuntimeError('"YMG" is required but is not provided.')
+        missing_vars.append('YMG')
     if not Aircraft.Engine.WING_LOCATIONS in input_values:
-        raise RuntimeError('"YP" is required but is not provided.')
+        missing_vars.append('YP')
     if not Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION in input_values:
-        raise RuntimeError('"SAH" is required but is not provided.')
+        missing_vars.append('SAH')
+    if len(missing_vars) > 0:
+        raise RuntimeError(
+            f'The following variables are required but are not provided:\n {missing_vars}'
+        )
 
     vehicle_data['input_values'] = input_values
     return vehicle_data
