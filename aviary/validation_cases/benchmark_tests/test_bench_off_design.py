@@ -42,7 +42,7 @@ class OffDesignTestCase(unittest.TestCase):
         var_list = [
             Mission.Design.RANGE,
             Mission.Summary.RANGE,
-            Mission.Design.FUEL_MASS,
+            Mission.Summary.FUEL_MASS,
             Mission.Summary.TOTAL_FUEL_MASS,
             Mission.Summary.OPERATING_MASS,
             Aircraft.CrewPayload.CARGO_MASS,
@@ -74,8 +74,8 @@ class OffDesignTestCase(unittest.TestCase):
         )
         assert_near_equal(prob_fallout.get_val(Mission.Summary.RANGE), 870.07, tolerance=1e-3)
         assert_near_equal(
-            prob_fallout.get_val(Mission.Design.FUEL_MASS, 'lbm'),
-            self.prob.get_val(Mission.Design.FUEL_MASS, 'lbm'),
+            prob_fallout.get_val(Mission.Summary.FUEL_MASS, 'lbm'),
+            self.prob.get_val(Mission.Summary.FUEL_MASS, 'lbm'),
             tolerance=1e-7,
         )
         assert_near_equal(
@@ -129,8 +129,8 @@ class OffDesignTestCase(unittest.TestCase):
         )
         assert_near_equal(prob_alternate.get_val(Mission.Summary.RANGE), 1800, tolerance=1e-7)
         assert_near_equal(
-            prob_alternate.get_val(Mission.Design.FUEL_MASS, 'lbm'),
-            prob_alternate.get_val(Mission.Design.FUEL_MASS, 'lbm'),
+            prob_alternate.get_val(Mission.Summary.FUEL_MASS, 'lbm'),
+            prob_alternate.get_val(Mission.Summary.FUEL_MASS, 'lbm'),
             tolerance=1e-7,
         )
         assert_near_equal(

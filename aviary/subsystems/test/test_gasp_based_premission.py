@@ -101,7 +101,7 @@ class PreMissionGroupTest(unittest.TestCase):
         assert_near_equal(prob[Aircraft.Fuselage.MASS], 18673.0352, tol)
         assert_near_equal(prob[Mission.Design.FUEL_MASS_REQUIRED], 42445.3806, tol)
         assert_near_equal(prob[Aircraft.Propulsion.MASS], 16048.0025, tol)
-        assert_near_equal(prob[Mission.Design.FUEL_MASS], 42445.3806, tol)
+        assert_near_equal(prob[Mission.Summary.FUEL_MASS], 42445.3806, tol)
         assert_near_equal(prob[Aircraft.Fuel.WING_VOLUME_DESIGN], 848.5301, tol)
         assert_near_equal(prob[Mission.Summary.OPERATING_MASS], 96954.6194, tol)
         assert_near_equal(prob[Aircraft.Fuel.AUXILIARY_FUEL_CAPACITY], 0, tol)
@@ -182,7 +182,7 @@ class PreMissionGroupTest(unittest.TestCase):
         assert_near_equal(prob[Aircraft.Fuselage.MASS], 18675.0408, tol)
         assert_near_equal(prob[Mission.Design.FUEL_MASS_REQUIRED], 43394.2976, tol)
         assert_near_equal(prob[Aircraft.Propulsion.MASS], 15694.0515, tol)
-        assert_near_equal(prob[Mission.Design.FUEL_MASS], 43394.2976, tol)
+        assert_near_equal(prob[Mission.Summary.FUEL_MASS], 43394.2976, tol)
         assert_near_equal(prob[Aircraft.Fuel.WING_VOLUME_DESIGN], 867.5, tol)
         assert_near_equal(prob[Mission.Summary.OPERATING_MASS], 96005.7024, tol)
         assert_near_equal(prob[Aircraft.Fuel.AUXILIARY_FUEL_CAPACITY], 0, tol)
@@ -234,7 +234,7 @@ class BWBPreMissionGroupTest(unittest.TestCase):
         Aircraft.Fuselage.MASS -- WB = 27160
         Mission.Design.FUEL_MASS_REQUIRED tol -- WFAREQ = 36595.0
         Aircraft.Propulsion.MASS tol -- WP = 8592.
-        Mission.Design.FUEL_MASS -- WFADES = 33268.2
+        Mission.Summary.FUEL_MASS -- WFADES = 33268.2
         Aircraft.Fuel.WING_VOLUME_DESIGN -- FVOLREQ = 731.6
         Mission.Summary.OPERATING_MASS tol -- OWE = 82982.
         Aircraft.Fuel.AUXILIARY_FUEL_CAPACITY -- not in GASP
@@ -314,7 +314,7 @@ class BWBPreMissionGroupTest(unittest.TestCase):
         assert_near_equal(prob[Aircraft.Fuselage.MASS], 27159.693, tol)
         assert_near_equal(prob[Mission.Design.FUEL_MASS_REQUIRED], 34186.5881, tol)
         assert_near_equal(prob[Aircraft.Propulsion.MASS], 8627.6738, tol)
-        assert_near_equal(prob[Mission.Design.FUEL_MASS], 34186.588, tol)
+        assert_near_equal(prob[Mission.Summary.FUEL_MASS], 34186.588, tol)
         assert_near_equal(prob[Aircraft.Fuel.WING_VOLUME_DESIGN], 751.7705, tol)
         assert_near_equal(prob[Mission.Summary.OPERATING_MASS], 82063.412, tol)
         assert_near_equal(prob[Aircraft.Fuel.AUXILIARY_FUEL_CAPACITY], 3877.719, tol)
@@ -405,7 +405,7 @@ class BWBPreMissionGroupTest(unittest.TestCase):
         assert_near_equal(prob[Aircraft.Fuselage.MASS], 27159.693, tol)
         assert_near_equal(prob[Mission.Design.FUEL_MASS_REQUIRED], 34187.8, tol)
         assert_near_equal(prob[Aircraft.Propulsion.MASS], 8627.72, tol)
-        assert_near_equal(prob[Mission.Design.FUEL_MASS], 34187.807, tol)
+        assert_near_equal(prob[Mission.Summary.FUEL_MASS], 34187.807, tol)
         assert_near_equal(prob[Aircraft.Fuel.WING_VOLUME_DESIGN], 751.7973, tol)
         assert_near_equal(prob[Mission.Summary.OPERATING_MASS], 82062.193, tol)
         assert_near_equal(prob[Aircraft.Fuel.AUXILIARY_FUEL_CAPACITY], 3878.938, tol)

@@ -274,7 +274,7 @@ sys_equip_mass_units = 'lbm'
 outputs.set_val(Aircraft.Design.SYSTEMS_EQUIP_MASS, sys_equip_mass, sys_equip_mass_units)
 outputs.set_val(Aircraft.Design.TOTAL_WETTED_AREA, 8319.07, 'ft**2')
 outputs.set_val(Mission.Summary.ZERO_FUEL_MASS, 142837.0, 'lbm')
-outputs.set_val(Mission.Design.FUEL_MASS, 31363.0, 'lbm')
+outputs.set_val(Mission.Summary.FUEL_MASS, 31363.0, 'lbm')
 
 outputs.set_val(Aircraft.AirConditioning.MASS, 4212.0, 'lbm')
 

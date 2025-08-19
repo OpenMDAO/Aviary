@@ -694,7 +694,6 @@ class Mission:
         # and do not change.
         CRUISE_ALTITUDE = 'mission:design:cruise_altitude'
         CRUISE_RANGE = 'mission:design:cruise_range'
-        FUEL_MASS = 'mission:design:fuel_mass'
         FUEL_MASS_REQUIRED = 'mission:design:fuel_mass_required'
         GROSS_MASS = 'mission:design:gross_mass'
         LIFT_COEFFICIENT = 'mission:design:lift_coefficient'
@@ -751,6 +750,7 @@ class Mission:
         CRUISE_MASS_FINAL = 'mission:summary:cruise_mass_final'
         FUEL_BURNED = 'mission:summary:fuel_burned'
         FUEL_FLOW_SCALER = 'mission:summary:fuel_flow_scaler'
+        FUEL_MASS = 'mission:summary:fuel_mass'
         GROSS_MASS = 'mission:summary:gross_mass'
         OPERATING_MASS = 'mission:summary:operating_mass'
         RANGE = 'mission:summary:range'
