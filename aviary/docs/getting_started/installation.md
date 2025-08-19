@@ -18,7 +18,7 @@ The following guides are available:
 - [Developer's Guide](#developers-guide)
 - Docker Installation Guide (coming soon)
 
-The different installation guides are intended to get users of various levels of experience and analysis need started. Here is a brief explanation of what can differ between Aviary installs.
+The different installation guides are intended to get users of various levels of experience and analysis started. Here is a brief explanation of what can differ between Aviary installs.
 
 ### Optimizers
 Aviary uses the `pyOptSparse` package to get access to a variety of different optimizers. Many of the more powerful and robust optimizers do not come with pyOptSparse by default, and may require additional steps to install. The Quick Start guide does not include pyOptSparse, however you can always "upgrade" your install with pyOptSparse later to get access to more optimizers. Using a conda environment simplifies that installation process.
