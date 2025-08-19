@@ -970,15 +970,13 @@ class AviaryGroup(om.Group):
             mass_resid={'units': 'lbm'},
         )
 
-        payload_mass_src = Aircraft.CrewPayload.TOTAL_PAYLOAD_MASS
-
         post_mission.add_subsystem(
             'mass_constraint',
             ecomp,
             promotes_inputs=[
                 ('operating_empty_mass', Mission.Summary.OPERATING_MASS),
                 ('overall_fuel', Mission.Summary.TOTAL_FUEL_MASS),
-                ('payload_mass', payload_mass_src),
+                ('payload_mass', Aircraft.CrewPayload.TOTAL_PAYLOAD_MASS),
                 ('initial_mass', Mission.Summary.GROSS_MASS),
             ],
             promotes_outputs=[('mass_resid', Mission.Constraints.MASS_RESIDUAL)],

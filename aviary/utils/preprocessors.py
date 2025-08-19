@@ -18,6 +18,7 @@ from aviary.variable_info.variables import Aircraft, Mission, Settings
 
 
 # TODO document what kwargs are used, and by which preprocessors in docstring?
+# TODO preprocess needed for design range vs phase_info range in sizing missions? (should be the same)
 def preprocess_options(aviary_options: AviaryValues, meta_data=_MetaData, verbosity=None, **kwargs):
     """
     Run all preprocessors on provided AviaryValues object.
@@ -43,7 +44,7 @@ def preprocess_options(aviary_options: AviaryValues, meta_data=_MetaData, verbos
             aviary_options.set_val(Settings.VERBOSITY, verbosity)
 
     preprocess_crewpayload(aviary_options, meta_data, verbosity)
-    if not engine_models is None:
+    if engine_models is not None:
         preprocess_propulsion(aviary_options, engine_models, meta_data, verbosity)
 
 

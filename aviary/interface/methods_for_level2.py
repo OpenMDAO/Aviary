@@ -665,11 +665,6 @@ class AviaryProblem(om.Problem):
             with open('input_list.txt', 'w') as outfile:
                 self.model.list_inputs(out_stream=outfile)
 
-        # Creates a flag to determine if the user would or would not like a payload/range diagram
-        payload_range_bool = False
-        if Settings.PAYLOAD_RANGE in self.aviary_inputs:
-            payload_range_bool = self.aviary_inputs.get_val(Settings.PAYLOAD_RANGE)
-
         if suppress_solver_print:
             self.set_solver_print(level=0)
 
@@ -725,8 +720,12 @@ class AviaryProblem(om.Problem):
 
         self.problem_ran_successfully = not failed
 
-        # Checks of the payload/range toggle in the aviary inputs csv file has been set and that the current problem is a sizing mission.
-        if payload_range_bool:
+        # Checks of the payload/range toggle in the aviary inputs csv file has been set
+        run_payload_range = False
+        if Settings.PAYLOAD_RANGE in self.aviary_inputs:
+            run_payload_range = self.aviary_inputs.get_val(Settings.PAYLOAD_RANGE)
+
+        if run_payload_range:
             self.run_payload_range()
 
     def run_off_design_mission(

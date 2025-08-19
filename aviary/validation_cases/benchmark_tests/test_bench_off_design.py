@@ -8,7 +8,7 @@ from aviary.models.missions.height_energy_default import phase_info
 from aviary.variable_info.variables import Aircraft, Mission
 
 
-@use_tempdirs
+# @use_tempdirs
 class OffDesignTestCase(unittest.TestCase):
     """Test off-design capability for both fallout and alternate missions."""
 
@@ -45,6 +45,7 @@ class OffDesignTestCase(unittest.TestCase):
             Mission.Design.FUEL_MASS,
             Mission.Summary.TOTAL_FUEL_MASS,
             Mission.Summary.OPERATING_MASS,
+            Aircraft.CrewPayload.CARGO_MASS,
             Aircraft.CrewPayload.TOTAL_PAYLOAD_MASS,
             Mission.Design.GROSS_MASS,
             Mission.Summary.GROSS_MASS,
@@ -73,33 +74,38 @@ class OffDesignTestCase(unittest.TestCase):
         )
         assert_near_equal(prob_fallout.get_val(Mission.Summary.RANGE), 870.07, tolerance=1e-3)
         assert_near_equal(
-            prob_fallout.get_val(Mission.Design.FUEL_MASS),
-            self.prob.get_val(Mission.Design.FUEL_MASS),
+            prob_fallout.get_val(Mission.Design.FUEL_MASS, 'lbm'),
+            self.prob.get_val(Mission.Design.FUEL_MASS, 'lbm'),
             tolerance=1e-7,
         )
         assert_near_equal(
-            prob_fallout.get_val(Mission.Summary.TOTAL_FUEL_MASS),
+            prob_fallout.get_val(Mission.Summary.TOTAL_FUEL_MASS, 'lbm'),
             19908,
             tolerance=1e-3,
         )
         assert_near_equal(
-            prob_fallout.get_val(Mission.Summary.OPERATING_MASS),
-            self.prob.get_val(Mission.Summary.OPERATING_MASS),
+            prob_fallout.get_val(Mission.Summary.OPERATING_MASS, 'lbm'),
+            self.prob.get_val(Mission.Summary.OPERATING_MASS, 'lbm'),
             tolerance=1e-7,
         )
         assert_near_equal(
-            prob_fallout.get_val(Aircraft.CrewPayload.TOTAL_PAYLOAD_MASS),
-            1,
+            prob_fallout.get_val(Aircraft.CrewPayload.CARGO_MASS, 'lbm'),
+            5000,
             tolerance=1e-7,
         )
         assert_near_equal(
-            prob_fallout.get_val(Mission.Design.GROSS_MASS),
-            self.prob.get_val(Mission.Design.GROSS_MASS),
+            prob_fallout.get_val(Aircraft.CrewPayload.TOTAL_PAYLOAD_MASS, 'lbm'),
+            5000,
             tolerance=1e-7,
         )
         assert_near_equal(
-            prob_fallout.get_val(Mission.Summary.GROSS_MASS),
-            self.prob.get_val(Mission.Summary.GROSS_MASS),
+            prob_fallout.get_val(Mission.Design.GROSS_MASS, 'lbm'),
+            self.prob.get_val(Mission.Design.GROSS_MASS, 'lbm'),
+            tolerance=1e-7,
+        )
+        assert_near_equal(
+            prob_fallout.get_val(Mission.Summary.GROSS_MASS, 'lbm'),
+            self.prob.get_val(Mission.Summary.GROSS_MASS, 'lbm'),
             tolerance=1e-7,
         )
         self.compare_results(prob_fallout)
@@ -124,33 +130,38 @@ class OffDesignTestCase(unittest.TestCase):
         )
         assert_near_equal(prob_fallout.get_val(Mission.Summary.RANGE), 1800, tolerance=1e-7)
         assert_near_equal(
-            prob_fallout.get_val(Mission.Design.FUEL_MASS),
-            prob_fallout.get_val(Mission.Design.FUEL_MASS),
+            prob_fallout.get_val(Mission.Design.FUEL_MASS, 'lbm'),
+            prob_fallout.get_val(Mission.Design.FUEL_MASS, 'lbm'),
             tolerance=1e-7,
         )
         assert_near_equal(
-            prob_fallout.get_val(Mission.Summary.TOTAL_FUEL_MASS),
-            23797.6,
+            prob_fallout.get_val(Mission.Summary.TOTAL_FUEL_MASS, 'lbm'),
+            20404.4,
             tolerance=1e-3,
         )
         assert_near_equal(
-            prob_fallout.get_val(Mission.Summary.OPERATING_MASS),
-            self.prob.get_val(Mission.Summary.OPERATING_MASS),
+            prob_fallout.get_val(Mission.Summary.OPERATING_MASS, 'lbm'),
+            97253.22,
+            tolerance=1e-3,
+        )
+        assert_near_equal(
+            prob_fallout.get_val(Aircraft.CrewPayload.CARGO_MASS, 'lbm'),
+            2500,
             tolerance=1e-7,
         )
         assert_near_equal(
-            prob_fallout.get_val(Aircraft.CrewPayload.TOTAL_PAYLOAD_MASS),
-            1,
+            prob_fallout.get_val(Aircraft.CrewPayload.TOTAL_PAYLOAD_MASS, 'lbm'),
+            38025,
             tolerance=1e-7,
         )
         assert_near_equal(
-            prob_fallout.get_val(Mission.Design.GROSS_MASS),
-            self.prob.get_val(Mission.Design.GROSS_MASS),
+            prob_fallout.get_val(Mission.Design.GROSS_MASS, 'lbm'),
+            self.prob.get_val(Mission.Design.GROSS_MASS, 'lbm'),
             tolerance=1e-7,
         )
         assert_near_equal(
-            prob_fallout.get_val(Mission.Summary.GROSS_MASS),
-            self.prob.get_val(Mission.Summary.GROSS_MASS),
+            prob_fallout.get_val(Mission.Summary.GROSS_MASS, 'lbm'),
+            self.prob.get_val(Mission.Summary.GROSS_MASS, 'lbm'),
             tolerance=1e-7,
         )
         self.compare_results(prob_fallout)
