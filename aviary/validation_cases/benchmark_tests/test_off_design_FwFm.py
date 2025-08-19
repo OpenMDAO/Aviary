@@ -118,7 +118,6 @@ class TestOffDesign(HeightEnergyTestCase):
         )
 
         prob_fallout.check_and_preprocess_inputs()
-
         prob_fallout.add_pre_mission_systems()
         prob_fallout.add_phases(phase_info_parameterization=phase_info_parameterization)
         prob_fallout.add_post_mission_systems()
@@ -149,7 +148,6 @@ class TestOffDesign(HeightEnergyTestCase):
         )
 
         prob_alternate.check_and_preprocess_inputs()
-
         prob_alternate.add_pre_mission_systems()
         prob_alternate.add_phases(phase_info_parameterization=phase_info_parameterization)
         prob_alternate.add_post_mission_systems()
@@ -185,7 +183,6 @@ class TestOffDesign(HeightEnergyTestCase):
         )
 
         prob_fallout.check_and_preprocess_inputs()
-
         prob_fallout.add_pre_mission_systems()
         prob_fallout.add_phases(phase_info_parameterization=phase_info_parameterization)
         prob_fallout.add_post_mission_systems()

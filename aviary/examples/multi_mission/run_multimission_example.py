@@ -103,7 +103,7 @@ def multi_mission_example():
     # TODO: MULTI_MISSION cannot handle RANGE objectives correctly at the moment.
 
     # optimizer and iteration limit are optional provided here
-    prob.add_driver('SNOPT', max_iter=50)
+    prob.add_driver('IPOPT', max_iter=50)
     prob.add_design_variables()
 
     prob.setup()

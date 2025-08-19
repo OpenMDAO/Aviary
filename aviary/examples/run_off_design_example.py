@@ -23,13 +23,8 @@ prob = av.AviaryProblem()
 prob.load_inputs('models/aircraft/test_aircraft/aircraft_for_bench_FwFm.csv', phase_info)
 prob.check_and_preprocess_inputs()
 
-# prob.build_model() is not used here to enable finer control on add_phases()
-prob.add_pre_mission_systems()
-prob.add_phases()
-prob.add_post_mission_systems()
+prob.build_model()
 
-# Link phases and variables
-prob.link_phases()
 prob.add_driver('SLSQP', max_iter=50)
 prob.add_design_variables()
 
