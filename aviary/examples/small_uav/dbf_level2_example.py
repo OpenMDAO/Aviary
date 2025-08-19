@@ -15,21 +15,21 @@ rc_prop = RCBuilder()
 
 phase_info = deepcopy(phase_info)
 
-phase_info.pop('climb')
-# phase_info.pop('cruise')
+# phase_info.pop('climb')
+phase_info.pop('cruise')
 phase_info.pop('descent')
 
 phase_info['pre_mission']['external_subsystems'] = [DBFMassBuilder()]
-# phase_info['climb']['external_subsystems'] = [CustomAeroBuilder()]
+phase_info['climb']['external_subsystems'] = [CustomAeroBuilder()]
 
-# phase_info['climb']['subsystem_options']['core_aerodynamics'] = {
-#     'method': 'external',
-# }
-phase_info['cruise']['external_subsystems'] = [CustomAeroBuilder()]
-
-phase_info['cruise']['subsystem_options']['core_aerodynamics'] = {
+phase_info['climb']['subsystem_options']['core_aerodynamics'] = {
     'method': 'external',
 }
+# phase_info['cruise']['external_subsystems'] = [CustomAeroBuilder()]
+
+# phase_info['cruise']['subsystem_options']['core_aerodynamics'] = {
+#     'method': 'external',
+# }
 # phase_info['cruise']['subsystem_options']['core_mass'] = {
 #     'method': 'external',
 # }

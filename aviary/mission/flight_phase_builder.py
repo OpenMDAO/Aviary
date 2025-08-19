@@ -90,6 +90,12 @@ class FlightPhaseOptions(AviaryOptionsDictionary):
             'electric_current_ref': 1.0e2,
         }
         self.add_control_options('electric_current', units='A', defaults=defaults)
+        
+        defaults = {
+            'electric_current_max_bounds': (10.0, None),
+            'electric_current_max_ref': 1.0e2,
+        }
+        self.add_control_options('electric_current_max', units='A', defaults=defaults)
 
         self.declare(
             name='throttle_allocation',
@@ -263,18 +269,25 @@ class FlightPhaseBase(PhaseBuilderBase):
             add_constraints=Dynamic.Mission.ALTITUDE not in constraints,
         )
 
-        if throttle_enforcement == 'control':
-            self.add_control(
-                'throttle',
-                Dynamic.Vehicle.Propulsion.THROTTLE,
-                rate_targets=None,
-                add_constraints=True,
-            )
+        # if throttle_enforcement == 'control':
+        #     self.add_control(
+        #         'throttle',
+        #         Dynamic.Vehicle.Propulsion.THROTTLE,
+        #         rate_targets=None,
+        #         add_constraints=True,
+        #     )
         
         #TODO Alex modify
         self.add_control(
             'electric_current',
             Dynamic.Vehicle.Propulsion.CURRENT,
+            rate_targets=None,
+            add_constraints=True,
+        )
+
+        self.add_control(
+            'electric_current_max',
+            Dynamic.Vehicle.Propulsion.CURRENT_MAX,
             rate_targets=None,
             add_constraints=True,
         )

@@ -3,9 +3,9 @@ phase_info = {
     'climb': {
         'subsystem_options': {'core_aerodynamics': {'method': 'computed'}},
         'user_options': {
-            'num_segments': 1,
+            'num_segments': 2,
             'order': 3,
-            'mach_optimize': True,
+            'mach_optimize': False,
             'mach_polynomial_order': 3,
             'mach_initial': (0.05, 'unitless'),
             'mach_final': (0.1, 'unitless'),
@@ -17,6 +17,7 @@ phase_info = {
             'altitude_initial': (0.0, 'ft'),
             'altitude_final': (200.0, 'ft'),
             'throttle_enforcement': 'control',
+            'throttle_polynomial_order': 1, 
             'time_initial': (0.0, 'min'),
             'time_duration_bounds': ((0.1, 25), 's'),
             'constraints': {
@@ -51,6 +52,7 @@ phase_info = {
             'altitude_initial': (200, 'ft'),
             'altitude_final': (200, 'ft'),
             'throttle_enforcement': 'control',
+            # 'throttle_polynomial_order': 1, 
             'time_initial': (0.0, 'min'),
             # 'time_initial_bounds': ((0.2, 20), 's'),
             'time_duration_bounds': ((0.5,5), 's'),

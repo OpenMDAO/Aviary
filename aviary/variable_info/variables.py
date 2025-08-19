@@ -756,7 +756,8 @@ class Dynamic:
         class Propulsion:
             # variables specific to the propulsion subsystem
             CURRENT = 'current_flow'
-            CURRENT_CON = 'current_constraint'
+            CURRENT_MAX = 'current_flow_max'
+            # CURRENT_CON = 'current_constraint'
             ELECTRIC_POWER_IN = 'electric_power_in'
             ELECTRIC_POWER_IN_TOTAL = 'electric_power_in_total'
             # EXIT_AREA = 'exit_area'
@@ -769,6 +770,7 @@ class Dynamic:
             NOX_RATE_TOTAL = 'nox_rate_total'
             PROPELLER_TIP_SPEED = 'propeller_tip_speed'
             RPM = 'rotations_per_minute'
+            RPM_MAX = 'rotations_per_minute_max'
             SHAFT_POWER = 'shaft_power'
             SHAFT_POWER_MAX = 'shaft_power_max'
             TEMPERATURE_T4 = 't4'
@@ -780,6 +782,7 @@ class Dynamic:
             TORQUE = 'torque'
             TORQUE_MAX = 'torque_max'
             PROP_POWER = 'prop_power'
+            PROP_POWER_MAX = 'prop_power_max'
 
 
 class Mission:

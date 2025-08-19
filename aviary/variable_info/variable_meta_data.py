@@ -7690,12 +7690,21 @@ add_meta_data(
     multivalue=True,
 )
 
+# add_meta_data(
+#     Dynamic.Vehicle.Propulsion.CURRENT_CON, 
+#     meta_data=_MetaData,
+#     historical_name={'GASP': None, 'FLOPS': None, 'LEAPS1': None},
+#     units='A',
+#     desc='Constraint linking peak current and electrical current flow',
+#     multivalue=True,
+# )
+
 add_meta_data(
-    Dynamic.Vehicle.Propulsion.CURRENT_CON, 
+    Dynamic.Vehicle.Propulsion.CURRENT_MAX, 
     meta_data=_MetaData,
     historical_name={'GASP': None, 'FLOPS': None, 'LEAPS1': None},
     units='A',
-    desc='Constraint linking peak current and electrical current flow',
+    desc='Electrical current flow through an engine at full throttle',
     multivalue=True,
 )
 
@@ -7810,6 +7819,16 @@ add_meta_data(
 )
 
 add_meta_data(
+    Dynamic.Vehicle.Propulsion.PROP_POWER_MAX,
+    meta_data=_MetaData,
+    historical_name={'GASP': None, 'FLOPS': None, 'LEAPS1': None},
+    units='W',
+    desc='Power output from a propeller at full throttle',
+    default_value=0.0,
+    multivalue=True,
+)
+
+add_meta_data(
     Dynamic.Vehicle.Propulsion.PROPELLER_TIP_SPEED,
     meta_data=_MetaData,
     historical_name={'GASP': None, 'FLOPS': None, 'LEAPS1': None},
@@ -7825,6 +7844,15 @@ add_meta_data(
     historical_name={'GASP': ['RPM', 'RPMe'], 'FLOPS': None, 'LEAPS1': None},
     units='rpm',
     desc='Rotational rate of shaft, per engine.',
+    multivalue=True,
+)
+
+add_meta_data(
+    Dynamic.Vehicle.Propulsion.RPM_MAX,
+    meta_data=_MetaData,
+    historical_name={'GASP': ['RPM', 'RPMe'], 'FLOPS': None, 'LEAPS1': None},
+    units='rpm',
+    desc='Rotational rate of shaft, per engine, at max throttle condition.',
     multivalue=True,
 )
 

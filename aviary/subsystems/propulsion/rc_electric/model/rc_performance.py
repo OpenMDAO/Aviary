@@ -137,7 +137,7 @@ class Motor(om.ExplicitComponent):
         # self.add_output(Dynamic.Vehicle.Propulsion.RPM, val=np.zeros(nn), ref=1e3, units='rpm')
         ################ TODO Alex #####################
         self.add_output('power', val=np.zeros(nn), units='W')
-        add_aviary_output(self, Dynamic.Vehicle.Propulsion.CURRENT_CON, val=np.zeros(nn), units='A')
+        self.add_output('current_constraint', val=np.zeros(nn), units='A')
 
         ar=np.arange(nn)
 
@@ -165,14 +165,14 @@ class Motor(om.ExplicitComponent):
         )
 
         self.declare_partials(
-            Dynamic.Vehicle.Propulsion.CURRENT_CON,
+            'current_constraint',
             # 'current',
             Dynamic.Vehicle.Propulsion.CURRENT,
             rows=ar, cols=ar
         )
 
         self.declare_partials(
-            Dynamic.Vehicle.Propulsion.CURRENT_CON, 
+            'current_constraint', 
             Aircraft.Engine.Motor.MAX_CONT_CURRENT,
         )
 
@@ -182,7 +182,7 @@ class Motor(om.ExplicitComponent):
         voltage_prop = inputs['voltage_in'] - inputs['current'] * R
         outputs[Dynamic.Vehicle.Propulsion.RPM] = kv * voltage_prop
         outputs['power'] = -inputs['current']**2 * R - inputs[Aircraft.Engine.Motor.IDLE_CURRENT] * voltage_prop
-        outputs[Dynamic.Vehicle.Propulsion.CURRENT_CON] = inputs[Dynamic.Vehicle.Propulsion.CURRENT] - inputs[Aircraft.Engine.Motor.MAX_CONT_CURRENT] 
+        outputs['current_constraint'] = inputs[Dynamic.Vehicle.Propulsion.CURRENT] - inputs[Aircraft.Engine.Motor.MAX_CONT_CURRENT] 
 
     def compute_partials(self, inputs, partials):
         R = inputs[Aircraft.Engine.Motor.RESISTANCE]
@@ -202,8 +202,8 @@ class Motor(om.ExplicitComponent):
         partials['power', Aircraft.Engine.Motor.RESISTANCE] = -inputs['current']**2 - inputs[Aircraft.Engine.Motor.IDLE_CURRENT] * dvoltage_prop_dresistance
         partials['power', Aircraft.Engine.Motor.IDLE_CURRENT] = -voltage_prop
         
-        partials[Dynamic.Vehicle.Propulsion.CURRENT_CON, Aircraft.Engine.Motor.MAX_CONT_CURRENT] = -1
-        partials[Dynamic.Vehicle.Propulsion.CURRENT_CON, Dynamic.Vehicle.Propulsion.CURRENT] = 1
+        partials['current_constraint', Aircraft.Engine.Motor.MAX_CONT_CURRENT] = -1
+        partials['current_constraint', Dynamic.Vehicle.Propulsion.CURRENT] = 1
 
 
 #TODO: reading in of data should be changed later:
