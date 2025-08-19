@@ -11,13 +11,11 @@ the aircraft model, the phase info, and some other optional settings. This perfo
 design-mission optimization.
 """
 
-from aviary.models.missions.height_energy_default import phase_info
-
 import aviary.api as av
 
 prob = av.run_aviary(
     aircraft_data='models/aircraft/advanced_single_aisle/advanced_single_aisle_FLOPS.csv',
-    phase_info=phase_info,
+    phase_info='models/missions/height_energy_default.py',
     optimizer='SLSQP',
     make_plots=True,
 )
