@@ -823,7 +823,7 @@ class AviaryProblem(om.Problem):
                         'mission range for the off-design mission.'
                     )
                 design_range = self.get_val(Mission.Summary.RANGE, units='NM')[0]
-                phase_info[post_mission]['target_range'] = (
+                phase_info['post_mission']['target_range'] = (
                     design_range,
                     'nmi',
                 )

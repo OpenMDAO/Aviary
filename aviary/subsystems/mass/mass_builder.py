@@ -135,7 +135,7 @@ class CoreMassBuilder(MassBuilderBase):
             Aircraft.CrewPayload.PASSENGER_MASS,
             Aircraft.CrewPayload.PASSENGER_PAYLOAD_MASS,
             Aircraft.CrewPayload.CARGO_MASS,
-            Aircraft.Design.ZERO_FUEL_MASS,
+            Mission.Summary.ZERO_FUEL_MASS,
             Mission.Design.FUEL_MASS,
             Mission.Summary.TOTAL_FUEL_MASS,
             Mission.Summary.GROSS_MASS,

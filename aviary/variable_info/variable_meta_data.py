@@ -1718,24 +1718,6 @@ add_meta_data(
 )
 
 add_meta_data(
-    Aircraft.Design.ZERO_FUEL_MASS,
-    meta_data=_MetaData,
-    historical_name={
-        'GASP': None,
-        # ['WTS.WSP(37,2)', '~WEIGHT.WZF', '~WTSTAT.WSP(37,2)'],
-        'FLOPS': None,
-        'LEAPS1': [
-            '(WeightABC)self._zero_fuel_weight',
-            'aircraft.outputs.L0_weights.zero_fuel_weight',
-            'aircraft.outputs.L0_weights_summary.zero_fuel_weight',
-        ],
-    },
-    units='lbm',
-    desc='zero fuel mass',
-    default_value=0.0,
-)
-
-add_meta_data(
     Aircraft.Design.ZERO_LIFT_DRAG_COEFF_FACTOR,
     meta_data=_MetaData,
     historical_name={
@@ -7678,9 +7660,27 @@ add_meta_data(
     historical_name={'GASP': 'INGASP.WFA', 'FLOPS': None, 'LEAPS1': None},
     units='lbm',
     # Note: In GASP, WFA does not include fuel margin.
-    desc='total fuel carried at the beginnning of a mission '
-    'includes fuel burned in the mission, reserve fuel '
-    'and fuel margin',
+    desc='total fuel carried at the beginnning of a mission includes fuel burned in the mission, '
+    'reserve fuel and fuel margin',
+)
+
+add_meta_data(
+    Mission.Summary.ZERO_FUEL_MASS,
+    meta_data=_MetaData,
+    historical_name={
+        'GASP': None,
+        # ['WTS.WSP(37,2)', '~WEIGHT.WZF', '~WTSTAT.WSP(37,2)'],
+        'FLOPS': None,
+        'LEAPS1': [
+            '(WeightABC)self._zero_fuel_weight',
+            'aircraft.outputs.L0_weights.zero_fuel_weight',
+            'aircraft.outputs.L0_weights_summary.zero_fuel_weight',
+        ],
+    },
+    units='lbm',
+    desc='Aircraft zero fuel mass, which includes structural mass (empty weight) and payload mass '
+    '(passengers, baggage, and cargo)',
+    default_value=0.0,
 )
 
 

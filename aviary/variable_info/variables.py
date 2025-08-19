@@ -189,7 +189,6 @@ class Aircraft:
         USE_ALT_MASS = 'aircraft:design:use_alt_mass'
         WETTED_AREAS = 'aircraft:design:wetted_areas'
         WING_LOADING = 'aircraft:design:wing_loading'
-        ZERO_FUEL_MASS = 'aircraft:design:zero_fuel_mass'
         ZERO_LIFT_DRAG_COEFF_FACTOR = 'aircraft:design:zero_lift_drag_coeff_factor'
 
     class Electrical:
@@ -757,6 +756,7 @@ class Mission:
         RANGE = 'mission:summary:range'
         RESERVE_FUEL_BURNED = 'mission:summary:reserve_fuel_burned'
         TOTAL_FUEL_MASS = 'mission:summary:total_fuel_mass'
+        ZERO_FUEL_MASS = 'mission:summary:zero_fuel_mass'
 
     class Takeoff:
         # These are values which have to do with takeoff

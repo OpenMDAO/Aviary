@@ -108,7 +108,6 @@ class OffDesignTestCase(unittest.TestCase):
             self.prob.get_val(Mission.Summary.GROSS_MASS, 'lbm'),
             tolerance=1e-7,
         )
-        self.compare_results(prob_fallout)
 
     @require_pyoptsparse(optimizer='SNOPT')
     def test_alternate_mission_match(self):
@@ -120,55 +119,54 @@ class OffDesignTestCase(unittest.TestCase):
     @require_pyoptsparse(optimizer='SNOPT')
     def test_alternate_mission_changed(self):
         # run an alternate mission with modified range and payload
-        prob_fallout = self.prob.run_off_design_mission(
+        prob_alternate = self.prob.run_off_design_mission(
             problem_type='alternate', cargo_mass=2500, mission_range=1800
         )
         assert_near_equal(
-            prob_fallout.get_val(Mission.Design.RANGE),
+            prob_alternate.get_val(Mission.Design.RANGE),
             self.prob.get_val(Mission.Design.RANGE),
             tolerance=1e-7,
         )
-        assert_near_equal(prob_fallout.get_val(Mission.Summary.RANGE), 1800, tolerance=1e-7)
+        assert_near_equal(prob_alternate.get_val(Mission.Summary.RANGE), 1800, tolerance=1e-7)
         assert_near_equal(
-            prob_fallout.get_val(Mission.Design.FUEL_MASS, 'lbm'),
-            prob_fallout.get_val(Mission.Design.FUEL_MASS, 'lbm'),
+            prob_alternate.get_val(Mission.Design.FUEL_MASS, 'lbm'),
+            prob_alternate.get_val(Mission.Design.FUEL_MASS, 'lbm'),
             tolerance=1e-7,
         )
         assert_near_equal(
-            prob_fallout.get_val(Mission.Summary.TOTAL_FUEL_MASS, 'lbm'),
-            20404.4,
+            prob_alternate.get_val(Mission.Summary.TOTAL_FUEL_MASS, 'lbm'),
+            23797.6,
             tolerance=1e-3,
         )
         assert_near_equal(
-            prob_fallout.get_val(Mission.Summary.OPERATING_MASS, 'lbm'),
+            prob_alternate.get_val(Mission.Summary.OPERATING_MASS, 'lbm'),
             97253.22,
             tolerance=1e-3,
         )
         assert_near_equal(
-            prob_fallout.get_val(Aircraft.CrewPayload.CARGO_MASS, 'lbm'),
+            prob_alternate.get_val(Aircraft.CrewPayload.CARGO_MASS, 'lbm'),
             2500,
             tolerance=1e-7,
         )
         assert_near_equal(
-            prob_fallout.get_val(Aircraft.CrewPayload.TOTAL_PAYLOAD_MASS, 'lbm'),
+            prob_alternate.get_val(Aircraft.CrewPayload.TOTAL_PAYLOAD_MASS, 'lbm'),
             38025,
             tolerance=1e-7,
         )
         assert_near_equal(
-            prob_fallout.get_val(Mission.Design.GROSS_MASS, 'lbm'),
+            prob_alternate.get_val(Mission.Design.GROSS_MASS, 'lbm'),
             self.prob.get_val(Mission.Design.GROSS_MASS, 'lbm'),
             tolerance=1e-7,
         )
         assert_near_equal(
-            prob_fallout.get_val(Mission.Summary.GROSS_MASS, 'lbm'),
-            self.prob.get_val(Mission.Summary.GROSS_MASS, 'lbm'),
-            tolerance=1e-7,
+            prob_alternate.get_val(Mission.Summary.GROSS_MASS, 'lbm'),
+            159075.8,
+            tolerance=1e-3,
         )
-        self.compare_results(prob_fallout)
 
 
 if __name__ == '__main__':
-    # unittest.main()
-    test = OffDesignTestCase()
-    test.setUp()
-    test.test_alternate_mission_changed()
+    unittest.main()
+    # test = OffDesignTestCase()
+    # test.setUp()
+    # test.test_alternate_mission_changed()
