@@ -65,28 +65,28 @@ class OffDesignTestCase(unittest.TestCase):
     def test_fallout_mission_changed(self):
         # run a fallout mission with modified payload and gross mass (and therefore different fuel)
         prob_fallout = self.prob.run_off_design_mission(
-            problem_type='fallout', cargo_mass=5000, mission_gross_mass=115000
+            problem_type='fallout', cargo_mass=5000, mission_gross_mass=150_000
         )
         assert_near_equal(
             prob_fallout.get_val(Mission.Design.RANGE),
             self.prob.get_val(Mission.Design.RANGE),
             tolerance=1e-7,
         )
-        assert_near_equal(prob_fallout.get_val(Mission.Summary.RANGE), 870.07, tolerance=1e-3)
+        assert_near_equal(prob_fallout.get_val(Mission.Summary.RANGE), 896.07, tolerance=1e-3)
         assert_near_equal(
             prob_fallout.get_val(Mission.Summary.FUEL_MASS, 'lbm'),
-            self.prob.get_val(Mission.Summary.FUEL_MASS, 'lbm'),
-            tolerance=1e-7,
+            25562.6,
+            tolerance=1e-3,
         )
         assert_near_equal(
             prob_fallout.get_val(Mission.Summary.TOTAL_FUEL_MASS, 'lbm'),
-            19908,
+            14196.8,
             tolerance=1e-3,
         )
         assert_near_equal(
             prob_fallout.get_val(Mission.Summary.OPERATING_MASS, 'lbm'),
-            self.prob.get_val(Mission.Summary.OPERATING_MASS, 'lbm'),
-            tolerance=1e-7,
+            97778.2,
+            tolerance=1e-3,
         )
         assert_near_equal(
             prob_fallout.get_val(Aircraft.CrewPayload.CARGO_MASS, 'lbm'),
@@ -95,8 +95,8 @@ class OffDesignTestCase(unittest.TestCase):
         )
         assert_near_equal(
             prob_fallout.get_val(Aircraft.CrewPayload.TOTAL_PAYLOAD_MASS, 'lbm'),
-            5000,
-            tolerance=1e-7,
+            38025,
+            tolerance=1e-3,
         )
         assert_near_equal(
             prob_fallout.get_val(Mission.Design.GROSS_MASS, 'lbm'),
@@ -105,7 +105,7 @@ class OffDesignTestCase(unittest.TestCase):
         )
         assert_near_equal(
             prob_fallout.get_val(Mission.Summary.GROSS_MASS, 'lbm'),
-            self.prob.get_val(Mission.Summary.GROSS_MASS, 'lbm'),
+            150000,
             tolerance=1e-7,
         )
 
@@ -130,7 +130,7 @@ class OffDesignTestCase(unittest.TestCase):
         assert_near_equal(prob_alternate.get_val(Mission.Summary.RANGE), 1800, tolerance=1e-7)
         assert_near_equal(
             prob_alternate.get_val(Mission.Summary.FUEL_MASS, 'lbm'),
-            prob_alternate.get_val(Mission.Summary.FUEL_MASS, 'lbm'),
+            28587.6,
             tolerance=1e-7,
         )
         assert_near_equal(
@@ -169,4 +169,4 @@ if __name__ == '__main__':
     unittest.main()
     # test = OffDesignTestCase()
     # test.setUp()
-    # test.test_alternate_mission_changed()
+    # test.test_fallout_mission_changed()

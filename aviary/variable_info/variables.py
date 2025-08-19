@@ -688,10 +688,9 @@ class Mission:
         RANGE_RESIDUAL_RESERVE = 'mission:constraints:range_residual_reserve'
 
     class Design:
-        # These values MAY change in design mission, but in off-design
-        # they cannot change. In a design mission these are either user inputs
-        # or calculated outputs, in off-design they are strictly inputs
-        # and do not change.
+        # These values may change in a design mission, but not during off-design. In a design
+        # mission these are either user inputs or calculated outputs, in off-design they are
+        # strictly inputs and therefore do not change.
         CRUISE_ALTITUDE = 'mission:design:cruise_altitude'
         CRUISE_RANGE = 'mission:design:cruise_range'
         FUEL_MASS_REQUIRED = 'mission:design:fuel_mass_required'
@@ -741,11 +740,10 @@ class Mission:
         RANGE = 'mission:objectives:range'
 
     class Summary:
-        # These values are inputs and outputs to/from mission analysis
-        # for the given mission (whether it is design or off-design).
-        # In on-design these may be constrained to design values, but
-        # in off-design they independently represent the final analysis
-        # based on the user-selection.
+        # These values are inputs and outputs to/from mission analysis for the given mission
+        # (whether it is design or off-design). In design these may be constrained to design values,
+        # but in off-design they independently represent the final analysis based on the
+        # user selection.
         CRUISE_MACH = 'mission:summary:cruise_mach'
         CRUISE_MASS_FINAL = 'mission:summary:cruise_mass_final'
         FUEL_BURNED = 'mission:summary:fuel_burned'
