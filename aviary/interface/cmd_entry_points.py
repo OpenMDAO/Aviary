@@ -13,6 +13,7 @@ from aviary.utils.engine_deck_conversion import EDC_description, _exec_EDC, _set
 from aviary.utils.fortran_to_aviary import _exec_F2A, _setup_F2A_parser
 from aviary.utils.propeller_map_conversion import _exec_PMC, _setup_PMC_parser
 from aviary.visualization.dashboard import _dashboard_cmd, _dashboard_setup_parser
+from aviary.visualization.realtime_plot import _rtplot_cmd, _rtplot_setup_parser
 
 
 def _load_and_exec(script_name, user_args):
@@ -81,6 +82,11 @@ _command_map = {
         _setup_plot_drag_polar_parser,
         _exec_plot_drag_polar,
         'Plot a Drag Polar Graph using a provided polar data csv input',
+    ),
+    'rtplot': (
+        _rtplot_setup_parser,
+        _rtplot_cmd,
+        'Run a script and automatically show a real-time plot of the optimization progress',
     ),
 }
 
