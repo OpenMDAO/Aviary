@@ -9,7 +9,8 @@ from aviary.utils.aviary_values import AviaryValues
 import dymos as dm
 from aviary.variable_info.enums import Verbosity
 from aviary.variable_info.functions import setup_trajectory_params
-
+import warnings
+from aviary.variable_info.functions import setup_model_options
 
 class L3SubsystemsGroup(om.Group):
     """Group that contains all pre-mission groups of core Aviary subsystems (geometry, mass, propulsion, aerodynamics)."""
@@ -418,10 +419,20 @@ prob.model.add_subsystem(
 )
 
 #####
-prob.setup()
+# prob.setup()
+setup_model_options(prob, prob.aviary_inputs, prob.meta_data)
 
-#####
-# prob.set_initial_guesses()
+with warnings.catch_warnings():
+    prob.model.aviary_inputs = prob.aviary_inputs
+    prob.model.meta_data = prob.meta_data
+
+with warnings.catch_warnings():
+    warnings.simplefilter('ignore', om.OpenMDAOWarning)
+    warnings.simplefilter('ignore', om.PromotionWarning)
+
+    om.Problem.setup(prob, check=False)
+
+# set initial guesses manually 
 control_keys = ['mach', 'altitude']
 state_keys = ['mass', Dynamic.Mission.DISTANCE]
 guesses = {}
