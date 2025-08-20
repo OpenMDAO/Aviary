@@ -54,7 +54,7 @@ class TransportUnusableFuelMass(om.ExplicitComponent):
     def compute(self, inputs, outputs, discrete_inputs=None, discrete_outputs=None):
         tank_count = self.options[Aircraft.Fuel.NUM_TANKS]
         scaler = inputs[Aircraft.Fuel.UNUSABLE_FUEL_MASS_SCALER]
-        density_ratio = inputs[Aircraft.Fuel.DENSITY] / 6.7
+        density_ratio = inputs[Aircraft.Fuel.DENSITY] / 50.1194909
         total_capacity = inputs[Aircraft.Fuel.TOTAL_CAPACITY]
         num_eng = self.options[Aircraft.Propulsion.TOTAL_NUM_ENGINES]
         num_eng_fact = distributed_engine_count_factor(num_eng)
@@ -81,7 +81,7 @@ class TransportUnusableFuelMass(om.ExplicitComponent):
     def compute_partials(self, inputs, J):
         tank_count = self.options[Aircraft.Fuel.NUM_TANKS]
         scaler = inputs[Aircraft.Fuel.UNUSABLE_FUEL_MASS_SCALER]
-        density_ratio = inputs[Aircraft.Fuel.DENSITY] / 6.7
+        density_ratio = inputs[Aircraft.Fuel.DENSITY] / 50.1194909
         total_capacity = inputs[Aircraft.Fuel.TOTAL_CAPACITY]
         num_eng = self.options[Aircraft.Propulsion.TOTAL_NUM_ENGINES]
         num_eng_fact = distributed_engine_count_factor(num_eng)
@@ -117,7 +117,10 @@ class TransportUnusableFuelMass(om.ExplicitComponent):
         )
 
         J[Aircraft.Fuel.UNUSABLE_FUEL_MASS, Aircraft.Fuel.DENSITY] = (
-            ((11.5 * num_eng_fact * term1 + 0.07 * wing_area + 1.6 * tank_count * term2) / 6.7)
+            (
+                (11.5 * num_eng_fact * term1 + 0.07 * wing_area + 1.6 * tank_count * term2)
+                / 50.1194909
+            )
             * scaler
             / GRAV_ENGLISH_LBM
         )
