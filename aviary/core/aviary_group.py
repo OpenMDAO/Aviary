@@ -995,6 +995,8 @@ class AviaryGroup(om.Group):
             promotes_outputs=[('excess_fuel_capacity')],
         )
 
+        self.add_constraint('excess_fuel_capacity', lower=0, units='lbm')
+
     def link_phases(self, verbosity=None, comm=None):
         """
         Link phases together after they've been added.
