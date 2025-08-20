@@ -703,12 +703,25 @@ def update_flops_options(vehicle_data):
             input_values.set_val(Aircraft.Propulsion.MISC_MASS_SCALER, [0.0])
 
     if Aircraft.Fuel.DENSITY in input_values:
-        # convert FULDEN (FLOPS fuel density ratio relative to jet fuel 6.7 lbm/galUS) into an absolute fuel density)
+        # Interpret value equivalently to FULDEN (FLOPS fuel density ratio relative to jet fuel 6.7 lbm/galUS) into an absolute fuel density)
         input_values.set_val(
             Aircraft.Fuel.DENSITY,
             [6.7 * input_values.get_val(Aircraft.Fuel.DENSITY, 'lbm/galUS')[0]],
             'lbm/galUS',
         )
+    else:
+        # assume jet fuel
+        input_values.set_val(Aircraft.Fuel.DENSITY, [6.7], 'lbm/galUS')
+
+    if Aircraft.Fuel.WING_FUEL_CAPACITY in input_values:
+        if input_values.get_val(Aircraft.Fuel.WING_FUEL_CAPACITY, 'lbm')[0] < 50:
+            # Interpret value equivalently to FWMAX = wing_fuel_fraction * fuel_density * 2/3
+            FWMAX = input_values.get_val(Aircraft.Fuel.WING_FUEL_CAPACITY, 'lbm')[0]
+            FULDEN = input_values.get_val(Aircraft.Fuel.DENSITY, 'lbm/ft**3')[0]
+            input_values.set_val(
+                Aircraft.Fuel.WING_FUEL_FRACTION, [FWMAX / (FULDEN * (2 / 3))], 'unitless'
+            )
+            input_values.delete(Aircraft.Fuel.WING_FUEL_CAPACITY)
 
     # Set detailed wing flag if model supports it
     if Aircraft.Wing.INPUT_STATION_DIST in input_values:
