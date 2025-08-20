@@ -61,7 +61,7 @@ aircraft:fuel:fuselage_fuel_capacity,0.0,lbm
 aircraft:fuel:num_tanks,7,unitless
 aircraft:fuel:total_capacity,0.0,lbm
 aircraft:fuel:unusable_fuel_mass_scaler,1.0,unitless
-aircraft:fuel:wing_fuel_capacity,25.903,lbm
+aircraft:fuel:wing_fuel_fraction,0.7752373238926116,unitless
 aircraft:furnishings:mass_scaler,0.81859,unitless
 aircraft:fuselage:laminar_flow_lower,0.0,unitless
 aircraft:fuselage:laminar_flow_upper,0.0,unitless
