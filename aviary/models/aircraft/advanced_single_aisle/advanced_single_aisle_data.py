@@ -107,7 +107,7 @@ inputs.set_val(Aircraft.Fins.NUM_FINS, 0)
 # Fuel
 # ---------------------------
 inputs.set_val(Aircraft.Fuel.AUXILIARY_FUEL_CAPACITY, 0.0, 'lbm')
-inputs.set_val(Aircraft.Fuel.WING_FUEL_FRACTION, 0.777)
+inputs.set_val(Aircraft.Fuel.WING_FUEL_FRACTION, 0.7752)
 inputs.set_val(Aircraft.Fuel.DENSITY, 6.7, 'lbm/galUS')
 inputs.set_val(Aircraft.Fuel.FUSELAGE_FUEL_CAPACITY, 0.0, 'lbm')
 inputs.set_val(Aircraft.Fuel.FUEL_SYSTEM_MASS_SCALER, 0.93202)

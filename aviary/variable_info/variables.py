@@ -276,7 +276,6 @@ class Aircraft:
     class Fuel:
         AUXILIARY_FUEL_CAPACITY = 'aircraft:fuel:auxiliary_fuel_capacity'
         BURN_PER_PASSENGER_MILE = 'aircraft:fuel:burn_per_passenger_mile'
-        CAPACITY_FACTOR = 'aircraft:fuel:capacity_factor'
         DENSITY = 'aircraft:fuel:density'
         FUEL_MARGIN = 'aircraft:fuel:fuel_margin'
         FUEL_SYSTEM_MASS = 'aircraft:fuel:fuel_system_mass'
