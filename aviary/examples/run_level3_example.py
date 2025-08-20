@@ -12,6 +12,7 @@ from aviary.variable_info.functions import setup_trajectory_params
 import warnings
 from aviary.variable_info.functions import setup_model_options
 
+
 class L3SubsystemsGroup(om.Group):
     """Group that contains all pre-mission groups of core Aviary subsystems (geometry, mass, propulsion, aerodynamics)."""
 
@@ -432,7 +433,7 @@ with warnings.catch_warnings():
 
     om.Problem.setup(prob, check=False)
 
-# set initial guesses manually 
+# set initial guesses manually
 control_keys = ['mach', 'altitude']
 state_keys = ['mass', Dynamic.Mission.DISTANCE]
 guesses = {}

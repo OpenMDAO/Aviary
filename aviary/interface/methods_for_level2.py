@@ -185,12 +185,12 @@ class AviaryProblem(om.Problem):
         mission: dict,
         engine_builders=None,
         problem_configurator=None,
-        verbosity: Verbosity=Verbosity.BRIEF,
+        verbosity: Verbosity = Verbosity.BRIEF,
     ):
         """
         Used for creating a multi-mission problem. This method creates an AviaryGroup() for each
         airraft and mission combination. It can also accept a specific engine_builder for each
-        group. The method loads and checks_and_preprocesses inputs, and then combines metadata. 
+        group. The method loads and checks_and_preprocesses inputs, and then combines metadata.
 
         Parameters
         ----------
@@ -690,7 +690,7 @@ class AviaryProblem(om.Problem):
         units: str = None,
         src_shape=None,
         default_val: float = None,
-        ref: float = None
+        ref: float = None,
     ):
         """
         Add a design variable to the problem as well as initialized a default value for that design variable.
@@ -719,9 +719,9 @@ class AviaryProblem(om.Problem):
     def set_design_range(self, missions: list[str], range: str):
         # TODO: What happens if design range is specified in CSV??? should be able to access from group.aviary_values
         """
-        Used for multi-mission problems. This method finds the longest mission and sets its range 
-        as the design range for all AviaryGroups. design_range is used within Aviary for sizing 
-        subsystems (avionics and AC). This could be simpllified in the future if there was a 
+        Used for multi-mission problems. This method finds the longest mission and sets its range
+        as the design range for all AviaryGroups. design_range is used within Aviary for sizing
+        subsystems (avionics and AC). This could be simpllified in the future if there was a
         single pre-mission for similar aircraft.
 
         Parameters
@@ -746,11 +746,11 @@ class AviaryProblem(om.Problem):
 
     def add_composite_objective(self, *args, ref: float = None):
         """
-        Creates composite_objective output by assemblin an ExecComp based on a variety of AviaryGroup 
+        Creates composite_objective output by assemblin an ExecComp based on a variety of AviaryGroup
         outputs selected by the user. A number of different outputs from the same or different
         aricraft can be combined in this way such as creating an objective function based on fuel
-        plus noise emissions. Each objective output should include a weight otherwise the weight will be 
-        assumed to be equal (i.e. fuel is equally important as reducing noise emissions). 
+        plus noise emissions. Each objective output should include a weight otherwise the weight will be
+        assumed to be equal (i.e. fuel is equally important as reducing noise emissions).
 
         Parameters
         ----------
@@ -919,8 +919,8 @@ class AviaryProblem(om.Problem):
         ref: float = 1.0,
     ):
         """
-        Adds a composite objective function to the OpenMDAO problem by aggregating output values across 
-        multiple mission models, with independent weighting for both missions and outputs. This is most 
+        Adds a composite objective function to the OpenMDAO problem by aggregating output values across
+        multiple mission models, with independent weighting for both missions and outputs. This is most
         useful when you have historical information on how often a given mission was flown (mission_weights)
         and then you have a duel set of objectives you wish to include i.e. for each flight minimize
         both fuel_burned and gross_mass. How important fuel_burned is vs. gross_mass is determined via
@@ -1001,7 +1001,7 @@ class AviaryProblem(om.Problem):
         """
         A lightly wrapped add_pre_mission_systems(), add_phases(), add_post_mission_systems(), and link_phases()
         method to decrease code length for the avarage user. If the user needs finer control, they should
-        not use build_model but instead call the four individual methods separately. 
+        not use build_model but instead call the four individual methods separately.
 
         Parameters
         ----------
@@ -1056,7 +1056,7 @@ class AviaryProblem(om.Problem):
     def setup(self, **kwargs):
         """
         A lightly wrapped setup() and set_initial_defaults() method for the problem.
-        
+
         Parameters
         ----------
         verbosity : Verbosity or int, optional
