@@ -116,7 +116,7 @@ class WingFuelCapacity(om.ExplicitComponent):
     """Compute the maximum fuel that can be carried in the wing's enclosed space."""
 
     def setup(self):
-        add_aviary_input(self, Aircraft.Fuel.DENSITY_RATIO, units='unitless')
+        add_aviary_input(self, Aircraft.Fuel.DENSITY, units='lbm/galUS')
         add_aviary_input(self, Aircraft.Fuel.WING_REF_CAPACITY, units='lbm')
         add_aviary_input(self, Aircraft.Fuel.WING_REF_CAPACITY_AREA, units='unitless')
         add_aviary_input(self, Aircraft.Fuel.WING_REF_CAPACITY_TERM_A, units='unitless')
@@ -148,7 +148,7 @@ class WingFuelCapacity(om.ExplicitComponent):
             )
 
         else:
-            density_ratio = inputs[Aircraft.Fuel.DENSITY_RATIO]
+            density_ratio = inputs[Aircraft.Fuel.DENSITY] / 6.7
             cap_factor = inputs[Aircraft.Fuel.CAPACITY_FACTOR]
             span = inputs[Aircraft.Wing.SPAN]
             taper_ratio = inputs[Aircraft.Wing.TAPER_RATIO]
@@ -192,7 +192,7 @@ class WingFuelCapacity(om.ExplicitComponent):
             )
 
         else:
-            density_ratio = inputs[Aircraft.Fuel.DENSITY_RATIO]
+            density_ratio = inputs[Aircraft.Fuel.DENSITY] / 6.7
             cap_factor = inputs[Aircraft.Fuel.CAPACITY_FACTOR]
             span = inputs[Aircraft.Wing.SPAN]
             taper_ratio = inputs[Aircraft.Wing.TAPER_RATIO]
@@ -202,7 +202,7 @@ class WingFuelCapacity(om.ExplicitComponent):
             tr_fact = 1.0 - taper_ratio / den**2
             dfact = -1.0 / den**2 + 2.0 * taper_ratio / den**3
 
-            partials[Aircraft.Fuel.WING_FUEL_CAPACITY, Aircraft.Fuel.DENSITY_RATIO] = (
+            partials[Aircraft.Fuel.WING_FUEL_CAPACITY, Aircraft.Fuel.DENSITY] = (
                 cap_factor * wing_area**2 * thickness_to_chord * tr_fact / span
             )
 

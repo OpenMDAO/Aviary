@@ -62,7 +62,7 @@ class FuelCapacityGroupTest(unittest.TestCase):
             input_keys=[
                 Aircraft.Fuel.AUXILIARY_FUEL_CAPACITY,
                 Aircraft.Fuel.CAPACITY_FACTOR,
-                Aircraft.Fuel.DENSITY_RATIO,
+                Aircraft.Fuel.DENSITY,
                 Aircraft.Fuel.FUSELAGE_FUEL_CAPACITY,
                 Aircraft.Wing.AREA,
                 Aircraft.Wing.SPAN,
@@ -78,7 +78,7 @@ class FuelCapacityGroupTest(unittest.TestCase):
 wing_capacity_data = {}
 wing_capacity_data['1'] = AviaryValues(
     {
-        Aircraft.Fuel.DENSITY_RATIO: (1.2, 'unitless'),
+        Aircraft.Fuel.DENSITY: (8.04, 'unitless'),
         Aircraft.Fuel.WING_REF_CAPACITY: (30.0, 'lbm'),
         Aircraft.Fuel.WING_REF_CAPACITY_AREA: (200.0, 'unitless'),
         Aircraft.Fuel.WING_REF_CAPACITY_TERM_B: (1.3, 'unitless'),
@@ -92,7 +92,7 @@ wing_capacity_data['1'] = AviaryValues(
 )
 wing_capacity_data['2'] = AviaryValues(
     {
-        Aircraft.Fuel.DENSITY_RATIO: (1.2, 'unitless'),
+        Aircraft.Fuel.DENSITY: (8.04, 'unitless'),
         Aircraft.Fuel.WING_REF_CAPACITY: (30.0, 'lbm'),
         Aircraft.Fuel.WING_REF_CAPACITY_AREA: (200.0, 'unitless'),
         Aircraft.Fuel.WING_REF_CAPACITY_TERM_B: (1.3, 'unitless'),
@@ -124,7 +124,7 @@ class WingFuelCapacityTest(unittest.TestCase):
             input_validation_data=validation_data,
             output_validation_data=validation_data,
             input_keys=[
-                Aircraft.Fuel.DENSITY_RATIO,
+                Aircraft.Fuel.DENSITY,
                 Aircraft.Fuel.WING_REF_CAPACITY,
                 Aircraft.Fuel.WING_REF_CAPACITY_AREA,
                 Aircraft.Fuel.WING_REF_CAPACITY_TERM_B,

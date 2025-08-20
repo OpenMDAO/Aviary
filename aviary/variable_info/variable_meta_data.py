@@ -2817,27 +2817,11 @@ add_meta_data(
 add_meta_data(
     Aircraft.Fuel.DENSITY,
     meta_data=_MetaData,
-    historical_name={'GASP': 'INGASP.FUELD', 'FLOPS': None, 'LEAPS1': None},
+    historical_name={'GASP': 'INGASP.FUELD', 'FLOPS': 'WTIN.FULDEN', 'LEAPS1': None},
     units='lbm/galUS',
-    desc='fuel density',
-    default_value=0.0,
-)
-
-# TODO replace with actual fuel density
-add_meta_data(
-    Aircraft.Fuel.DENSITY_RATIO,
-    meta_data=_MetaData,
-    historical_name={
-        'GASP': None,
-        'FLOPS': 'WTIN.FULDEN',  # ['&DEFINE.WTIN.FULDEN', 'UPFUEL.FULDEN'],
-        'LEAPS1': 'aircraft.inputs.L0_fuel.density_ratio',
-    },
-    units='unitless',
-    desc='Fuel density ratio for alternate fuels compared to jet fuel (typical '
-    'density of 6.7 lbm/gal), used in the calculation of wing_capacity (if '
-    'wing_capacity is not input) and in the calculation of fuel system '
-    'weight.',
-    default_value=1.0,
+    desc='fuel density (jet fuel typical density of 6.7 lbm/galUS used in the calculation of wing_capacity (if '
+    'wing_capacity is not input) and in the calculation of fuel system weight.',
+    default_value=6.7,
 )
 
 add_meta_data(

@@ -51,7 +51,7 @@ aircraft:engine:thrust_reversers_mass_scaler,0.01,unitless   #check
 aircraft:engine:wing_locations,0.22,unitless
 aircraft:fins:num_fins,0,unitless
 aircraft:fuel:auxiliary_fuel_capacity,0.01,lbm   #check
-aircraft:fuel:density_ratio,1.01,unitless   #check
+aircraft:fuel:density,6.71,lbm/galUS   #check
 aircraft:fuel:fuel_system_mass_scaler,1.01,unitless   #check
 aircraft:fuel:fuselage_fuel_capacity,7000.0,lbm
 aircraft:fuel:num_tanks,6,unitless
