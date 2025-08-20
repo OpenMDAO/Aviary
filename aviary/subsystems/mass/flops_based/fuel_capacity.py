@@ -203,7 +203,7 @@ class WingFuelCapacity(om.ExplicitComponent):
             dfact = -1.0 / den**2 + 2.0 * taper_ratio / den**3
 
             partials[Aircraft.Fuel.WING_FUEL_CAPACITY, Aircraft.Fuel.DENSITY] = (
-                cap_factor * wing_area**2 * thickness_to_chord * tr_fact / span
+                (1 / 6.7) * cap_factor * wing_area**2 * thickness_to_chord * tr_fact / span
             )
 
             partials[Aircraft.Fuel.WING_FUEL_CAPACITY, Aircraft.Fuel.CAPACITY_FACTOR] = (

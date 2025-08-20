@@ -705,7 +705,9 @@ def update_flops_options(vehicle_data):
     if Aircraft.Fuel.DENSITY in input_values:
         # convert FULDEN (FLOPS fuel density ratio relative to jet fuel 6.7 lbm/galUS) into an absolute fuel density)
         input_values.set_val(
-            Aircraft.Fuel.DENSITY, [6.7 * input_values.get_val(Aircraft.Fuel.DENSITY)[0]]
+            Aircraft.Fuel.DENSITY,
+            [6.7 * input_values.get_val(Aircraft.Fuel.DENSITY, 'lbm/galUS')[0]],
+            'lbm/galUS',
         )
 
     # Set detailed wing flag if model supports it

@@ -117,7 +117,7 @@ class TransportUnusableFuelMass(om.ExplicitComponent):
         )
 
         J[Aircraft.Fuel.UNUSABLE_FUEL_MASS, Aircraft.Fuel.DENSITY] = (
-            (11.5 * num_eng_fact * term1 + 0.07 * wing_area + 1.6 * tank_count * term2)
+            ((11.5 * num_eng_fact * term1 + 0.07 * wing_area + 1.6 * tank_count * term2) / 6.7)
             * scaler
             / GRAV_ENGLISH_LBM
         )
