@@ -978,6 +978,23 @@ class AviaryGroup(om.Group):
             promotes_outputs=[('mass_resid', Mission.Constraints.MASS_RESIDUAL)],
         )
 
+        ecomp = om.ExecComp(
+            'excess_fuel_capacity = total_fuel_capacity - overall_fuel',
+            overall_fuel={'units': 'lbm'},
+            total_fuel_capacity={'units': 'lbm'},
+            excess_fuel_capacity={'units': 'lbm'},
+        )
+
+        post_mission.add_subsystem(
+            'fuel_constraint',
+            ecomp,
+            promotes_inputs=[
+                ('overall_fuel', Mission.Summary.TOTAL_FUEL_MASS),
+                ('total_fuel_capacity', Aircraft.Fuel.TOTAL_CAPACITY),
+            ],
+            promotes_outputs=[('excess_fuel_capacity')],
+        )
+
     def link_phases(self, verbosity=None, comm=None):
         """
         Link phases together after they've been added.
