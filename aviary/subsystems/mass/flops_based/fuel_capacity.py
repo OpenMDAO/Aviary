@@ -116,12 +116,12 @@ class WingFuelCapacity(om.ExplicitComponent):
     """Compute the maximum fuel that can be carried in the wing's enclosed space."""
 
     def setup(self):
-        add_aviary_input(self, Aircraft.Fuel.DENSITY, units='lbm/galUS')
+        add_aviary_input(self, Aircraft.Fuel.DENSITY, units='lbm/ft**3')
         add_aviary_input(self, Aircraft.Fuel.WING_REF_CAPACITY, units='lbm')
         add_aviary_input(self, Aircraft.Fuel.WING_REF_CAPACITY_AREA, units='unitless')
         add_aviary_input(self, Aircraft.Fuel.WING_REF_CAPACITY_TERM_A, units='unitless')
         add_aviary_input(self, Aircraft.Fuel.WING_REF_CAPACITY_TERM_B, units='unitless')
-        add_aviary_input(self, Aircraft.Fuel.CAPACITY_FACTOR, units='unitless')
+        add_aviary_input(self, Aircraft.Fuel.WING_FUEL_FRACTION, units='unitless')
         add_aviary_input(self, Aircraft.Wing.AREA, units='ft**2')
         add_aviary_input(self, Aircraft.Wing.SPAN, units='ft')
         add_aviary_input(self, Aircraft.Wing.TAPER_RATIO, units='unitless')
@@ -149,14 +149,15 @@ class WingFuelCapacity(om.ExplicitComponent):
 
         else:
             density_ratio = inputs[Aircraft.Fuel.DENSITY] / 6.7
-            cap_factor = inputs[Aircraft.Fuel.CAPACITY_FACTOR]
+            volume_fraction = inputs[Aircraft.Fuel.WING_FUEL_FRACTION]
             span = inputs[Aircraft.Wing.SPAN]
             taper_ratio = inputs[Aircraft.Wing.TAPER_RATIO]
             thickness_to_chord = inputs[Aircraft.Wing.THICKNESS_TO_CHORD]
 
             fuel_cap_wing = (
                 density_ratio
-                * cap_factor
+                * (2 / 3)
+                * volume_fraction
                 * wing_area**2
                 * thickness_to_chord
                 * (1.0 - taper_ratio / (1.0 + taper_ratio) ** 2)
@@ -193,7 +194,7 @@ class WingFuelCapacity(om.ExplicitComponent):
 
         else:
             density_ratio = inputs[Aircraft.Fuel.DENSITY] / 6.7
-            cap_factor = inputs[Aircraft.Fuel.CAPACITY_FACTOR]
+            volume_fraction = inputs[Aircraft.Fuel.WING_FUEL_FRACTION]
             span = inputs[Aircraft.Wing.SPAN]
             taper_ratio = inputs[Aircraft.Wing.TAPER_RATIO]
             thickness_to_chord = inputs[Aircraft.Wing.THICKNESS_TO_CHORD]
@@ -203,25 +204,50 @@ class WingFuelCapacity(om.ExplicitComponent):
             dfact = -1.0 / den**2 + 2.0 * taper_ratio / den**3
 
             partials[Aircraft.Fuel.WING_FUEL_CAPACITY, Aircraft.Fuel.DENSITY] = (
-                (1 / 6.7) * cap_factor * wing_area**2 * thickness_to_chord * tr_fact / span
+                (1 / 6.7)
+                * volume_fraction
+                * (2 / 3)
+                * wing_area**2
+                * thickness_to_chord
+                * tr_fact
+                / span
             )
 
-            partials[Aircraft.Fuel.WING_FUEL_CAPACITY, Aircraft.Fuel.CAPACITY_FACTOR] = (
-                density_ratio * wing_area**2 * thickness_to_chord * tr_fact / span
+            partials[Aircraft.Fuel.WING_FUEL_CAPACITY, Aircraft.Fuel.WING_FUEL_FRACTION] = (
+                density_ratio * (2 / 3) * wing_area**2 * thickness_to_chord * tr_fact / span
             )
 
             partials[Aircraft.Fuel.WING_FUEL_CAPACITY, Aircraft.Wing.SPAN] = (
-                -density_ratio * cap_factor * wing_area**2 * thickness_to_chord * tr_fact / span**2
+                -density_ratio
+                * volume_fraction
+                * (2 / 3)
+                * wing_area**2
+                * thickness_to_chord
+                * tr_fact
+                / span**2
             )
 
             partials[Aircraft.Fuel.WING_FUEL_CAPACITY, Aircraft.Wing.TAPER_RATIO] = (
-                density_ratio * cap_factor * wing_area**2 * thickness_to_chord * dfact / span
+                density_ratio
+                * volume_fraction
+                * (2 / 3)
+                * wing_area**2
+                * thickness_to_chord
+                * dfact
+                / span
             )
 
             partials[Aircraft.Fuel.WING_FUEL_CAPACITY, Aircraft.Wing.THICKNESS_TO_CHORD] = (
-                density_ratio * cap_factor * wing_area**2 * tr_fact / span
+                density_ratio * volume_fraction * (2 / 3) * wing_area**2 * tr_fact / span
             )
 
             partials[Aircraft.Fuel.WING_FUEL_CAPACITY, Aircraft.Wing.AREA] = (
-                2.0 * density_ratio * cap_factor * wing_area * thickness_to_chord * tr_fact / span
+                2.0
+                * density_ratio
+                * volume_fraction
+                * (2 / 3)
+                * wing_area
+                * thickness_to_chord
+                * tr_fact
+                / span
             )

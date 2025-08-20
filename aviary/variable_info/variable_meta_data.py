@@ -2802,19 +2802,6 @@ add_meta_data(
 )
 
 add_meta_data(
-    Aircraft.Fuel.CAPACITY_FACTOR,
-    meta_data=_MetaData,
-    historical_name={
-        'GASP': None,
-        'FLOPS': None,  # 'MISWT.FWMAX',
-        'LEAPS1': '(WeightABC)self._wing_fuel_capacity_factor',
-    },
-    units='unitless',
-    desc='fuel capacity factor',
-    default_value=1.0,
-)
-
-add_meta_data(
     Aircraft.Fuel.DENSITY,
     meta_data=_MetaData,
     historical_name={'GASP': 'INGASP.FUELD', 'FLOPS': 'WTIN.FULDEN', 'LEAPS1': None},
