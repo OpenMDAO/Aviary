@@ -1,13 +1,10 @@
 import csv
-import inspect
 import json
 import os
-import sys
 import warnings
 from datetime import datetime
 from enum import Enum
 from pathlib import Path
-import enum
 from openmdao.utils.om_warnings import warn_deprecation
 
 import dymos as dm
@@ -188,12 +185,33 @@ class AviaryProblem(om.Problem):
         mission: dict,
         engine_builders=None,
         problem_configurator=None,
-        verbosity=None,
+        verbosity: Verbosity=Verbosity.BRIEF,
     ):
         """
-        Used when creating a multi-mission problem.
-        Create a dictionary of all aviary_groups() in this problem so we can iterate over them later.
-        Takes as inputs both an aircraft and a mission definition.
+        Used for creating a multi-mission problem. This method creates an AviaryGroup() for each
+        airraft and mission combination. It can also accept a specific engine_builder for each
+        group. The method loads and checks_and_preprocesses inputs, and then combines metadata. 
+
+        Parameters
+        ----------
+        name : string
+            A unique name that identifies this group which can be referenced later.
+        aircraft : AviaryValues object
+            Defines the aircraft configuration
+        mission : phase_info, dict
+            Defines the mission the aircraft will fly
+        engine_builders : EngineBuilder object, optional
+            Defines a custom engine model
+        problem_configurator ; ProblemConfigurator, optional
+            Required when setting custom equations of motion. See two_dof_problem_configurator.py for an example.
+        verbosity : Verbosity or int, optional
+            Controls the level of printouts for this method.
+
+        Returns
+        -------
+        subsystem
+            The AviaryGroup object containing the specified aircraft, mission, and engine model.
+
         """
         if self.problem_type is not ProblemType.MULTI_MISSION:
             ValueError(
@@ -672,12 +690,27 @@ class AviaryProblem(om.Problem):
         units: str = None,
         src_shape=None,
         default_val: float = None,
-    ):  # TODO: Add Ref
+        ref: float = None
+    ):
         """
         Add a design variable to the problem as well as initialized a default value for that design variable.
         The default value can be over-written after setup with prob.set_val()
+        Parameters
+        ----------
+        name : string
+            A unique name that identifies this design variable.
+        lower : float, optional
+            The lowest value that the optimizer can choose for this design variable.
+        upper : float, optional
+            The largest value that the optimizer can choose for this design variable.
+        src_shape : int or tuple, optional
+            Assumed shape of any connected source or higher level promoted input.
+        default_val : float or ndarray, optional
+            The default value to be assigned to this design variable.
+        ref : float or ndarray, optional
+            Value of design var that scales to 1.0 in the driver.
         """
-        self.model.add_design_var(name=name, lower=lower, upper=upper, units=units)
+        self.model.add_design_var(name=name, lower=lower, upper=upper, units=units, ref=ref)
         if default_val is not None:
             self.model.set_input_defaults(
                 name=name, val=default_val, units=units, src_shape=src_shape
@@ -686,10 +719,18 @@ class AviaryProblem(om.Problem):
     def set_design_range(self, missions: list[str], range: str):
         # TODO: What happens if design range is specified in CSV??? should be able to access from group.aviary_values
         """
-        Finds the longest mission and sets its range as the design range for all
-        Aviary problems. Used within Aviary for sizing subsystems (avionics and AC).
-        this could be simpllified in the future if there was a single pre-mission
-        for similar aircraft
+        Used for multi-mission problems. This method finds the longest mission and sets its range 
+        as the design range for all AviaryGroups. design_range is used within Aviary for sizing 
+        subsystems (avionics and AC). This could be simpllified in the future if there was a 
+        single pre-mission for similar aircraft.
+
+        Parameters
+        ----------
+        missions : list[str]
+            The names of all the missions instantiated via add_aviary_group()
+        range : str
+            The promoted name of the range variable. i.e. "Aircraft1.Range"
+
         """
         matching_names = [
             (name, group) for name, group in self.aviary_groups_dict.items() if name in missions
@@ -705,10 +746,22 @@ class AviaryProblem(om.Problem):
 
     def add_composite_objective(self, *args, ref: float = None):
         """
+        Creates composite_objective output by assemblin an ExecComp based on a variety of AviaryGroup 
+        outputs selected by the user. A number of different outputs from the same or different
+        aricraft can be combined in this way such as creating an objective function based on fuel
+        plus noise emissions. Each objective output should include a weight otherwise the weight will be 
+        assumed to be equal (i.e. fuel is equally important as reducing noise emissions). 
+
         Parameters
         ----------
         *args : a list of 3-tuple, 2-tuple, str. Or it can be left empty
-            if left empty, information will be populated based on problem_type
+            If 3-tuple: (model, output, weight)
+            If 2-tuple: (model, output) or (output, weight)
+            If 1-tuple: (output) or 'fuel', 'fuel_burned', 'mass', 'range', 'time'
+            If empty, information will be populated based on problem_type
+                If ProblemType = FALLOUT, objective = Mission.Objectives.RANGE
+                If ProblemType = Sizing or Alternate, objective = Mission.Objectives.FUEL
+
             Example inputs can be any of the following:
             ('fuel')
             (Mission.Summary.FUEL_BURNED)
@@ -720,7 +773,7 @@ class AviaryProblem(om.Problem):
             ('model1',Mission.Summary.FUEL_BURNED, 1.0), ('model2', Mission.Summary.CO2, 2.0)
 
         ref : float, optional
-            Reference value for the final objective. Passed to `add_objective()` for scaling.
+            Reference value for the final objective for scaling.
 
         Behavior
         --------
@@ -866,9 +919,12 @@ class AviaryProblem(om.Problem):
         ref: float = 1.0,
     ):
         """
-        Adds a composite objective function to the OpenMDAO problem by aggregating
-        output values across multiple mission models, with independent weighting
-        for both missions and outputs.
+        Adds a composite objective function to the OpenMDAO problem by aggregating output values across 
+        multiple mission models, with independent weighting for both missions and outputs. This is most 
+        useful when you have historical information on how often a given mission was flown (mission_weights)
+        and then you have a duel set of objectives you wish to include i.e. for each flight minimize
+        both fuel_burned and gross_mass. How important fuel_burned is vs. gross_mass is determined via
+        specifying output_weights.
 
         Parameters
         ----------
@@ -943,8 +999,14 @@ class AviaryProblem(om.Problem):
 
     def build_model(self, verbosity=None):
         """
-        This method combines multiple other methods defined in this script to decrease verbosity
-        by the user if they don't need the extra functionality.
+        A lightly wrapped add_pre_mission_systems(), add_phases(), add_post_mission_systems(), and link_phases()
+        method to decrease code length for the avarage user. If the user needs finer control, they should
+        not use build_model but instead call the four individual methods separately. 
+
+        Parameters:
+        ----------
+        verbosity : Verbosity or int, optional
+            Controls the level of printouts for this method.
         """
         # `self.verbosity` is "true" verbosity for entire run. `verbosity` is verbosity
         # override for just this method
@@ -992,7 +1054,16 @@ class AviaryProblem(om.Problem):
                     self.model.promotes(mission_name, inputs=var_pairs)
 
     def setup(self, **kwargs):
-        """Lightly wrapped setup() method for the problem."""
+        """
+        A lightly wrapped setup() and set_initial_defaults() method for the problem.
+        
+        Parameters
+        ----------
+        verbosity : Verbosity or int, optional
+            Controls the level of printouts for this method.
+        **kwargs : optional
+            All arguments to be passed to the OpenMDAO prob.setup() method.
+        """
         # verbosity is not used in this method, but it is understandable that a user
         # might try and include it (only method that doesn't accept it). Capture it
         if 'verbosity' in kwargs:
