@@ -12,7 +12,7 @@ interface.
 """
 
 import aviary.api as av
-from aviary.examples.example_phase_info import phase_info
+from aviary.models.missions.height_energy_default import phase_info
 
 #####################
 # Define Phase Info #

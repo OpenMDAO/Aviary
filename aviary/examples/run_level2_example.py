@@ -12,7 +12,7 @@ methods have optional arguments, but none are necessary here. The selection of t
 limited to 50 iterations are included to demonstrate of how those common settings are set.
 """
 
-from example_phase_info import phase_info
+from aviary.models.missions.height_energy_default import phase_info
 
 import aviary.api as av
 
