@@ -7004,6 +7004,14 @@ add_meta_data(
 # ===========================================================================
 
 add_meta_data(
+    Mission.Constraints.EXCESS_FUEL_CAPACITY,
+    meta_data=_MetaData,
+    historical_name={'GASP': None, 'FLOPS': None, 'LEAPS1': None},
+    units='lbm',
+    desc='Must be zero or positive to ensure that the aircraft has enough fuel to complete the required mission',
+)
+
+add_meta_data(
     Mission.Constraints.GEARBOX_SHAFT_POWER_RESIDUAL,
     meta_data=_MetaData,
     historical_name={'GASP': None, 'FLOPS': None, 'LEAPS1': None},

@@ -681,6 +681,7 @@ class Mission:
     class Constraints:
         # these can be residuals (for equality constraints),
         # upper bounds, or lower bounds
+        EXCESS_FUEL_CAPACITY = 'mission:constraints:excess_fuel_capacity'
         GEARBOX_SHAFT_POWER_RESIDUAL = 'mission:constraints:gearbox_shaft_power_residual'
         MASS_RESIDUAL = 'mission:constraints:mass_residual'
         MAX_MACH = 'mission:constraints:max_mach'
