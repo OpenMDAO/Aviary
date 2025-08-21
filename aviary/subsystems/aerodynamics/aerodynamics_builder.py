@@ -27,9 +27,10 @@ from aviary.subsystems.aerodynamics.gasp_based.table_based import (
 from aviary.subsystems.aerodynamics.solve_alpha_group import SolveAlphaGroup
 from aviary.subsystems.subsystem_builder_base import SubsystemBuilderBase
 from aviary.utils.named_values import NamedValues
-from aviary.variable_info.enums import LegacyCode, Verbosity
+from aviary.variable_info.enums import AircraftTypes, LegacyCode, Verbosity
 from aviary.variable_info.variable_meta_data import _MetaData
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission, Settings
+
 
 GASP = LegacyCode.GASP
 FLOPS = LegacyCode.FLOPS
@@ -620,6 +621,15 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
                     'GASP-based aero method is not one of the following: (cruise, '
                     'tabular_cruise, low_speed, tabular_low_speed)'
                 )
+
+            design_type = aviary_inputs.get_val(Aircraft.Design.TYPE)
+
+            if design_type is AircraftTypes.BLENDED_WING_BODY:
+                all_vars.add(Aircraft.Fuselage.LIFT_CURVE_SLOPE_MACH0)
+                all_vars.add(Aircraft.Fuselage.HYDRAULIC_DIAMETER)
+                all_vars.add(Aircraft.Fuselage.PLANFORM_AREA)
+                all_vars.add(Aircraft.Wing.EXPOSED_AREA)
+                all_vars.add(Aircraft.Wing.ZERO_LIFT_ANGLE)
 
             for var in all_vars:
                 # TODO only checking core metadata here!!
