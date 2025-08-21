@@ -865,9 +865,13 @@ class AeroGeom(om.ExplicitComponent):
         )
 
         # outputs
-        for i in range(7):
-            name = f'SA{i + 1}'
-            self.add_output(name, units='unitless', shape=nn, desc=f'{name}: Drag param')
+        self.add_output('SA1', units='unitless', shape=nn, desc='SA1: drag param')
+        self.add_output('SA2', units='unitless', shape=nn, desc='SA2: drag param')
+        self.add_output('SA3', units='unitless', shape=nn, desc='SA3: drag param, not used')
+        self.add_output('SA4', units='unitless', shape=nn, desc='SA4: drag param, not used')
+        self.add_output('SA5', units='unitless', shape=nn, desc='SA5: drag param')
+        self.add_output('SA6', units='unitless', shape=nn, desc='SA6: drag param')
+        self.add_output('SA7', units='unitless', shape=nn, desc='SA7: induced drag param')
 
         self.add_output(
             'cf',
