@@ -813,7 +813,7 @@ flops_scaler_variables = [
     Aircraft.Nacelle.MASS,
     Aircraft.Nacelle.WETTED_AREA,
     Aircraft.Propulsion.TOTAL_ENGINE_OIL_MASS,
-    Aircraft.VerticalTail.MASS_SCALER,
+    Aircraft.VerticalTail.MASS,
     Aircraft.VerticalTail.WETTED_AREA,
     Aircraft.Wing.MASS,
     Aircraft.Wing.SHEAR_CONTROL_MASS,
