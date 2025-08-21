@@ -703,7 +703,7 @@ def update_flops_options(vehicle_data):
             input_values.set_val(Aircraft.Propulsion.MISC_MASS_SCALER, [0.0])
 
     if Aircraft.Fuel.DENSITY in input_values:
-        # Interpret value equivalently to FULDEN (FLOPS fuel density ratio relative to jet fuel 6.7 lbm/galUS) into an absolute fuel density)
+        # Interpret value equivalently to FULDEN (FLOPS fuel density ratio relative to jet fuel 6.7 lbm/galUS) and convert to an absolute fuel density)
         input_values.set_val(
             Aircraft.Fuel.DENSITY,
             [6.7 * input_values.get_val(Aircraft.Fuel.DENSITY, 'lbm/galUS')[0]],

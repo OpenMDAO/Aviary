@@ -153,16 +153,15 @@ class WingFuelCapacity(om.ExplicitComponent):
             span = inputs[Aircraft.Wing.SPAN]
             taper_ratio = inputs[Aircraft.Wing.TAPER_RATIO]
             thickness_to_chord = inputs[Aircraft.Wing.THICKNESS_TO_CHORD]
-
-            fuel_cap_wing = (
-                fuel_density
-                * (2 / 3)
-                * volume_fraction
+            # calculate volume of wing assuming truncated rectangular based pyramid:
+            volume_of_wing = (
+                (2 / 3)
                 * wing_area**2
                 * thickness_to_chord
                 * (1.0 - taper_ratio / (1.0 + taper_ratio) ** 2)
                 / span
             )
+            fuel_cap_wing = fuel_density * volume_fraction * volume_of_wing
 
         outputs[Aircraft.Fuel.WING_FUEL_CAPACITY] = fuel_cap_wing
 
