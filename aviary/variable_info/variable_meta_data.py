@@ -2814,7 +2814,7 @@ add_meta_data(
 add_meta_data(
     Aircraft.Fuel.IGNORE_FUEL_CAPACITY_CONSTRAINT,
     meta_data=_MetaData,
-    historical_name={'GASP': None, 'FLOPS': 'IFUFU', 'LEAPS1': None},
+    historical_name={'GASP': None, 'FLOPS': 'WTIN.IFUFU', 'LEAPS1': None},
     units='unitless',
     desc='Flag to control enforcement of fuel_capacity constraint. If False (default) Aviary will add the excess fuel constraint and only converge if there is enough fuel capacity to complete the mission. If set True Aviary will ignore this constraint, and allow mission fuel > total_fuel_capacity. Use Carefully!',
     default_value=False,
