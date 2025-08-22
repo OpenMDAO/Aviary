@@ -15,8 +15,10 @@ from openmdao.utils.reports_system import _default_reports
 from aviary.core.aviary_group import AviaryGroup
 from aviary.interface.utils import set_warning_format
 from aviary.utils.aviary_values import AviaryValues
+from aviary.utils.csv_data_file import write_data_file
 from aviary.utils.functions import convert_strings_to_data, get_path
 from aviary.utils.merge_variable_metadata import merge_meta_data
+from aviary.utils.named_values import NamedValues
 from aviary.variable_info.enums import EquationsOfMotion, LegacyCode, ProblemType, Verbosity
 from aviary.variable_info.functions import setup_model_options
 from aviary.variable_info.variable_meta_data import _MetaData as BaseMetaData
@@ -802,9 +804,9 @@ class AviaryProblem(om.Problem):
                 inputs.set_val(Aircraft.CrewPayload.NUM_TOURIST_CLASS, num_tourist)
 
             if wing_cargo is not None:
-                inputs.set_val(Aircraft.CrewPayload.WING_CARGO, wing_cargo)
+                inputs.set_val(Aircraft.CrewPayload.WING_CARGO, wing_cargo, 'lbm')
             if misc_cargo is not None:
-                inputs.set_val(Aircraft.CrewPayload.MISC_CARGO, misc_cargo)
+                inputs.set_val(Aircraft.CrewPayload.MISC_CARGO, misc_cargo, 'lbm')
 
         if num_pax is not None:
             inputs.set_val(Aircraft.CrewPayload.NUM_PASSENGERS, num_pax)
@@ -948,6 +950,7 @@ class AviaryProblem(om.Problem):
             # Point 1 is along the y axis (range=0)
             payload_1 = float(self.get_val(Aircraft.CrewPayload.TOTAL_PAYLOAD_MASS)[0])
             range_1 = 0
+            fuel_1 = 0
 
             # Point 2 (Design Range): sizing mission which is assumed to be the point of max
             # payload + fuel on the payload and range diagram
@@ -959,10 +962,11 @@ class AviaryProblem(om.Problem):
             fuel_capacity = float(self.get_val(Aircraft.Fuel.TOTAL_CAPACITY)[0])
             max_payload = float(self.get_val(Aircraft.CrewPayload.TOTAL_PAYLOAD_MASS)[0])
 
-            # An aircraft may be designed with fuel tank capacity that, if filled, would exceed
-            # TOGW. In this scenario, Economic Range and Ferry Range are the same, and the point
-            # only needs to be run once.
+            fuel_2 = self.get_val(Mission.Summary.FUEL_BURNED)[0]
 
+            # An aircraft may be designed with fuel tank capacity that, if filled, would exceed
+            # MTOW. In this scenario, Economic Range and Ferry Range are the same, and the point
+            # only needs to be run once.
             if operating_mass + fuel_capacity < gross_mass:
                 # Point 3 (Economic Mission): max fuel and remaining payload capacity
 
@@ -1009,6 +1013,7 @@ class AviaryProblem(om.Problem):
                 )
 
                 range_3 = float(economic_range_prob.get_val(Mission.Summary.RANGE))
+                fuel_3 = self.get_val(Mission.Summary.FUEL_BURNED)[0]
 
                 prob_3_skip = False
             else:
@@ -1017,23 +1022,24 @@ class AviaryProblem(om.Problem):
                 fuel_capacity = gross_mass - operating_mass
 
             # Point 4 (Ferry Range): maximum fuel and 0 payload
-            max_fuel_zero_payload_payload = operating_mass + fuel_capacity
+            ferry_range_payload = operating_mass + fuel_capacity
             # BUG 0 passengers breaks the problem, so 1 must be used
-            ferry_range_prob = self.fallout_mission(
-                json_filename='payload_range_sizing.json',
-                num_first=0,
+            ferry_range_prob = self.run_off_design_mission(
+                problem_type=ProblemType.FALLOUT,
+                phase_info=phase_info,
+                num_first_class=0,
                 num_business=0,
                 num_tourist=1,
-                num_pax=1,
                 wing_cargo=0,
                 misc_cargo=0,
                 cargo_mass=0,
-                mission_mass=max_fuel_zero_payload_payload,
-                phase_info=phase_info,
+                mission_gross_mass=ferry_range_payload,
+                verbosity=verbosity,
             )
 
             payload_4 = float(ferry_range_prob.get_val(Aircraft.CrewPayload.TOTAL_PAYLOAD_MASS))
             range_4 = float(ferry_range_prob.get_val(Mission.Summary.RANGE))
+            fuel_4 = self.get_val(Mission.Summary.FUEL_BURNED)[0]
 
             # if economic mission was skipped, economic_range_prob is the same as ferry_range_prob
             if prob_3_skip:
@@ -1047,33 +1053,26 @@ class AviaryProblem(om.Problem):
                 ferry_range_prob.problem_ran_successfully
                 and economic_range_prob.problem_ran_successfully
             ):
-                # TODO Temporary csv writing for payload/range data, should be replaced with a more robust solution
-                csv_filepath = Path(self.get_reports_dir(force=True)) / 'payload_range_data.csv'
-                with open(csv_filepath, 'w', newline='') as csvfile:
-                    writer = csv.writer(csvfile)
+                self.payload_range_data = payload_range_data = NamedValues()
+                payload_range_data.set_val(
+                    'Mission Name',
+                    ['Zero Fuel', 'Design Mission', 'Economic Mission', 'Ferry Mission'],
+                )
+                payload_range_data.set_val(
+                    'Payload', [payload_1, payload_2, payload_3, payload_4], 'lbm'
+                )
+                payload_range_data.set_val('Fuel', [fuel_1, fuel_2, fuel_3, fuel_4], 'lbm')
+                payload_range_data.set_val('Range', [range_1, range_2, range_3, range_4], 'NM')
 
-                    # Write header row
-                    writer.writerow(['Point', 'Payload (lbs)', 'Range (NM)'])
-
-                    # Write the four points directly
-                    writer.writerow(['Max Payload Zero Fuel', payload_1, range_1])
-                    writer.writerow(['Max Payload Plus Fuel', payload_2, range_2])
-                    writer.writerow(['Max Fuel Plus Payload', payload_3, range_3])
-                    writer.writerow(['Ferry Mission', payload_4, range_4])
+                write_data_file(
+                    Path(self.get_reports_dir(force=True)) / 'payload_range_data.csv',
+                    payload_range_data,
+                )
 
                 # Prints the payload/range data to the console if verbosity is set to VERBOSE or DEBUG
                 if verbosity >= Verbosity.VERBOSE:
-                    payload_points = [
-                        'Payload (lbs)',
-                        payload_1,
-                        payload_2,
-                        payload_3,
-                        payload_4,
-                    ]
-                    range_points = ['Range (NM)', range_1, range_2, range_3, range_4]
-
-                    print(range_points)
-                    print(payload_points)
+                    for item in payload_range_data:
+                        print(f'{item[0]} ({item[1][1]}): {item[1][0]}')
 
                 return (economic_range_prob, ferry_range_prob)
             else:
@@ -1144,6 +1143,15 @@ class AviaryProblem(om.Problem):
                 # Append the data to the list
                 aviary_input_list.append([name, value, units, str(type_value)])
 
+            aviary_input_list.append(
+                [
+                    Mission.Design.GROSS_MASS,
+                    self.get_val(Mission.Design.GROSS_MASS, 'lbm'),
+                    'lbm',
+                    str(float),
+                ]
+            )
+
             # Write the list to a json file
             json.dump(
                 aviary_input_list,
@@ -1188,14 +1196,14 @@ class AviaryProblem(om.Problem):
                 writer.writerow({'name': name, 'value': value, 'units': units})
 
 
-def _read_sizing_json(json_filename, meta_data=BaseMetaData, verbosity=Verbosity.BRIEF):
+def _read_sizing_json(json_filename, meta_data, verbosity=Verbosity.BRIEF):
     """
     This function reads in saved results from a json file.
 
     Parameters
     ----------
     json_filename: str, Path
-        json file to save the data into
+        json file to load the data from
     meta_data: dict
         Variable metadata that will be used to load file data
 
@@ -1257,9 +1265,6 @@ def _read_sizing_json(json_filename, meta_data=BaseMetaData, verbosity=Verbosity
                 aviary_inputs.set_val(var_name, var_values, units=var_units, meta_data=meta_data)
 
             except BaseException:
-                # Print helpful warning
-                # TODO "FAILURE" implies something more serious, should this be a raised
-                # exception?
                 if verbosity >= Verbosity.BRIEF:
                     warnings.warn(
                         f'list_num = {counter}, Input String = {inputs}. Attempted to set_value('

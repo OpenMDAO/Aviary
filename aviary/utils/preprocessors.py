@@ -136,25 +136,31 @@ def preprocess_crewpayload(aviary_options: AviaryValues, meta_data=_MetaData, ve
     num_pax = aviary_options.get_val(Aircraft.CrewPayload.NUM_PASSENGERS)
     design_num_pax = aviary_options.get_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS)
 
+    # Check summary data against individual data if individual data was entered
+    if passenger_count != 0 and num_pax != passenger_count:
+        if verbosity > verbosity.BRIEF:
+            warnings.warn(
+                'Total passenger count ('
+                f'{aviary_options.get_val(Aircraft.CrewPayload.NUM_PASSENGERS)}) does not '
+                'equal the sum of first class + business class + tourist class passengers '
+                f'(total of {passenger_count}). Setting total number of passengers to '
+                f'{passenger_count}.'
+            )
+        aviary_options.set_val(Aircraft.CrewPayload.NUM_PASSENGERS, passenger_count)
+    if design_passenger_count != 0 and design_num_pax != design_passenger_count:
+        if verbosity > verbosity.BRIEF:
+            warnings.warn(
+                'Design total passenger count ('
+                f'{aviary_options.get_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS)}) '
+                'does not equal the sum of design first class + business class + tourist '
+                f'class passengers (total of {design_passenger_count}). Setting total number of '
+                f'design passengers to {design_passenger_count}.'
+            )
+        aviary_options.set_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS, design_passenger_count)
+
     # TODO these don't have to be errors, we can recover in some cases, for example
     # defaulting to all economy class if passenger seat info is not provided. See the
     # engine count checks for an example of this.
-    # Check summary data against individual data if individual data was entered
-    if passenger_count != 0 and num_pax != passenger_count:
-        raise UserWarning(
-            'NUM_PASSENGERS ('
-            f'{aviary_options.get_val(Aircraft.CrewPayload.NUM_PASSENGERS)}) does not '
-            'equal the sum of first class + business class + tourist class passengers '
-            f'(total of {passenger_count}).'
-        )
-    if design_passenger_count != 0 and design_num_pax != design_passenger_count:
-        raise UserWarning(
-            'Design.NUM_PASSENGERS ('
-            f'{aviary_options.get_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS)}) '
-            'does not equal the sum of design first class + business class + tourist '
-            f'class passengers (total of {design_passenger_count}).'
-        )
-
     # Fail if incorrect data sets were provided:
     # have you give us enough info to determine where people were sitting vs. designed seats
     if num_pax != 0 and design_passenger_count != 0 and passenger_count == 0:
@@ -177,12 +183,12 @@ def preprocess_crewpayload(aviary_options: AviaryValues, meta_data=_MetaData, ve
         # we don't know which classes this aircraft has been design for. How many 1st class seats are there?
 
     # Copy data over if only one set of data exists
-    # User has given detailed values for 1TB as flow and NO design values at all
+    # User has given detailed values for as-flown and NO design values at all
     if passenger_count != 0 and design_num_pax == 0 and design_passenger_count == 0:
         if verbosity >= Verbosity.VERBOSE:
             warnings.warn(
                 'User has not input design passengers data. Assuming design is equal to '
-                'as-flow passenger data.'
+                'as-flown passenger data.'
             )
         aviary_options.set_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS, passenger_count)
         aviary_options.set_val(

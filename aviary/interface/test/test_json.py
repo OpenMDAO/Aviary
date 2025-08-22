@@ -43,20 +43,20 @@ class TestJson(unittest.TestCase):
         prob.add_objective()
         prob.setup()
         prob.set_initial_guesses()
+        self.prob.run_aviary_problem()
+        self.prob.save_sizing_results()
 
     def test_save_json(self):
-        self.prob.run_aviary_problem()
-        self.prob.save_sizing_results(save_to_reports=False)
         self.compare_files(
-            Path.cwd() / 'sizing_problem.json', 'interface/test/sizing_problem_for_test.json'
+            Path.cwd() / 'sizing_results.json', 'interface/test/sizing_results_for_test.json'
         )
 
     def test_alternate(self):
-        prob = reload_aviary_problem('interface/test/sizing_problem_for_test.json')
+        prob = reload_aviary_problem('interface/test/sizing_results_for_test.json')
         prob.run_off_design_mission(problem_type='alternate', phase_info=local_phase_info)
 
     def test_fallout(self):
-        prob = reload_aviary_problem('interface/test/sizing_problem_for_test.json')
+        prob = reload_aviary_problem('interface/test/sizing_results_for_test.json')
         prob.run_off_design_mission(problem_type='fallout', phase_info=local_phase_info)
 
     def compare_files(self, test_file, validation_file, skip_list=[]):
@@ -91,8 +91,8 @@ class TestJson(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    unittest.main()
-    # test = TestJson()
-    # test.setUp()
+    # unittest.main()
+    test = TestJson()
+    test.setUp()
     # test.test_save_json()
-    # test.test_fallout()
+    test.test_fallout()
