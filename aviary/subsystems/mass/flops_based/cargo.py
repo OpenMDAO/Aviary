@@ -57,8 +57,7 @@ class CargoMass(om.ExplicitComponent):
         outputs[Aircraft.CrewPayload.BAGGAGE_MASS] = baggage_mass_per_passenger * passenger_count
 
         outputs[Aircraft.CrewPayload.PASSENGER_PAYLOAD_MASS] = (
-            outputs[Aircraft.CrewPayload.PASSENGER_MASS]
-            + outputs[Aircraft.CrewPayload.BAGGAGE_MASS]
+            mass_per_passenger * passenger_count + baggage_mass_per_passenger * passenger_count
         )
 
         wing_cargo = inputs[Aircraft.CrewPayload.WING_CARGO]
@@ -67,7 +66,8 @@ class CargoMass(om.ExplicitComponent):
         outputs[Aircraft.CrewPayload.CARGO_MASS] = wing_cargo + misc_cargo
 
         outputs[Aircraft.CrewPayload.TOTAL_PAYLOAD_MASS] = (
-            outputs[Aircraft.CrewPayload.PASSENGER_MASS]
-            + outputs[Aircraft.CrewPayload.BAGGAGE_MASS]
-            + outputs[Aircraft.CrewPayload.CARGO_MASS]
+            mass_per_passenger * passenger_count
+            + baggage_mass_per_passenger * passenger_count
+            + wing_cargo
+            + misc_cargo
         )
