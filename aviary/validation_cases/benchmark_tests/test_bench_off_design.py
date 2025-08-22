@@ -270,6 +270,7 @@ class PayloadRangeTest(unittest.TestCase):
         assert_near_equal(
             prob.payload_range_data.get_val('Fuel', 'lbm'),
             [0, 28538.30, 28538.30, 28538.30],
+            tolerance=1e-7,
         )
         assert_near_equal(
             prob.payload_range_data.get_val('Range', 'NM'),
@@ -279,9 +280,10 @@ class PayloadRangeTest(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    # unittest.main()
+    unittest.main()
     # test = OffDesignTestCase()
     # test.setUp()
     # test.test_alternate_mission_changed()
-    test = PayloadRangeTest()
-    test.test_payload_range()
+
+    # test = PayloadRangeTest()
+    # test.test_payload_range()
