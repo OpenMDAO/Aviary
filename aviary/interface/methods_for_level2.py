@@ -1173,7 +1173,11 @@ class AviaryProblem(om.Problem):
         if mission_mass is None:
             # mission mass is sliced from a column vector numpy array, i.e. it is a len 1
             # numpy array
-            mission_mass = self.get_val(Mission.Design.GROSS_MASS)[0]
+            mission_mass = self.get_val(Mission.Design.GROSS_MASS, units='lbm')[0]
+        elif mission_mass > self.get_val(Mission.Design.GROSS_MASS, units='lbm')[0]:
+            raise ValueError(
+                f'Fallout Mission aircraft gross mass {mission_mass} lbm cannot be greater than Mission.Design.GROSS_MASS {self.get_val(Mission.Design.GROSS_MASS, units="lbm")[0]}'
+            )
 
         optimizer = self.driver.options['optimizer']
 
