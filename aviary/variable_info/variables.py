@@ -282,6 +282,7 @@ class Aircraft:
         FUEL_SYSTEM_MASS_COEFFICIENT = 'aircraft:fuel:fuel_system_mass_coefficient'
         FUEL_SYSTEM_MASS_SCALER = 'aircraft:fuel:fuel_system_mass_scaler'
         FUSELAGE_FUEL_CAPACITY = 'aircraft:fuel:fuselage_fuel_capacity'
+        IGNORE_FUEL_CAPACITY_CONSTRAINT = 'aircraft:fuel:ignore_fuel_capacity_constraint'
         NUM_TANKS = 'aircraft:fuel:num_tanks'
         TOTAL_CAPACITY = 'aircraft:fuel:total_capacity'
         TOTAL_VOLUME = 'aircraft:fuel:total_volume'

@@ -995,7 +995,25 @@ class AviaryGroup(om.Group):
             promotes_outputs=[('excess_fuel_capacity', Mission.Constraints.EXCESS_FUEL_CAPACITY)],
         )
 
-        self.add_constraint(Mission.Constraints.EXCESS_FUEL_CAPACITY, lower=0, units='lbm')
+        # determine if the user wants the excess_fuel_capacity constraint active and if so add it to the problem
+        try:
+            # for backwards compatability check to see if variable exists, if not assume default value = False
+            ignore_capacity_constraint = self.aviary_inputs.get_val(
+                Aircraft.Fuel.IGNORE_FUEL_CAPACITY_CONSTRAINT, units='unitless'
+            )
+        except:
+            print(
+                'no value for Aircraft.Fuel.IGNORE_FUEL_CAPACITY_CONSTRAINT specified, assume default False'
+            )
+            ignore_capacity_constraint = False
+            self.aviary_inputs.set_val(
+                Aircraft.Fuel.IGNORE_FUEL_CAPACITY_CONSTRAINT,
+                val=ignore_capacity_constraint,
+                units='unitless',
+            )
+
+        if not ignore_capacity_constraint:
+            self.add_constraint(Mission.Constraints.EXCESS_FUEL_CAPACITY, lower=0, units='lbm')
 
     def link_phases(self, verbosity=None, comm=None):
         """
