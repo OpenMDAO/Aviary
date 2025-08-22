@@ -1256,7 +1256,6 @@ class AviaryGroup(om.Group):
                 )
 
                 self.add_constraint(Mission.Constraints.RANGE_RESIDUAL, equals=0, ref=10)
-                # self.add_constraint(Mission.Summary.GROSS_MASS, upper=MTOW)
 
             elif self.problem_type is ProblemType.FALLOUT:
                 print('No design variables for Fallout missions')
