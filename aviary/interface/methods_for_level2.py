@@ -850,9 +850,9 @@ class AviaryProblem(om.Problem):
                         'Alternate problem type requested with no specified range. Using design '
                         'mission range for the off-design mission.'
                     )
-                design_range = self.get_val(Mission.Summary.RANGE, units='NM')[0]
+                mission_range = self.get_val(Mission.Summary.RANGE, units='NM')[0]
                 off_design_prob.aviary_inputs.set_val(
-                    Mission.Summary.RANGE, design_range, units='NM'
+                    Mission.Summary.RANGE, mission_range, units='NM'
                 )
 
             else:
@@ -1143,14 +1143,15 @@ class AviaryProblem(om.Problem):
                 # Append the data to the list
                 aviary_input_list.append([name, value, units, str(type_value)])
 
-            aviary_input_list.append(
-                [
-                    Mission.Design.GROSS_MASS,
-                    self.get_val(Mission.Design.GROSS_MASS, 'lbm')[0],
-                    'lbm',
-                    str(float),
-                ]
-            )
+            if Mission.Design.GROSS_MASS not in self.aviary_inputs:
+                aviary_input_list.append(
+                    [
+                        Mission.Design.GROSS_MASS,
+                        self.get_val(Mission.Design.GROSS_MASS, 'lbm')[0],
+                        'lbm',
+                        str(float),
+                    ]
+                )
 
             # Write the list to a json file
             json.dump(

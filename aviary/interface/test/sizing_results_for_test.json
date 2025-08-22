@@ -1147,11 +1147,5 @@
         2,
         "unitless",
         "<class 'int'>"
-    ],
-    [
-        "mission:design:gross_mass",
-        175400.0,
-        "lbm",
-        "<class 'float'>"
     ]
 ]
