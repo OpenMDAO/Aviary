@@ -1,4 +1,5 @@
 import inspect
+import warnings
 from importlib.machinery import SourceFileLoader
 from pathlib import Path
 
@@ -977,6 +978,47 @@ class AviaryGroup(om.Group):
             ],
             promotes_outputs=[('mass_resid', Mission.Constraints.MASS_RESIDUAL)],
         )
+
+        ecomp = om.ExecComp(
+            'excess_fuel_capacity = total_fuel_capacity - mission_fuel',
+            total_fuel_capacity={'units': 'lbm'},
+            mission_fuel={'units': 'lbm'},
+            excess_fuel_capacity={'units': 'lbm'},
+        )
+
+        post_mission.add_subsystem(
+            'excess_fuel_constraint',
+            ecomp,
+            promotes_inputs=[
+                ('mission_fuel', Mission.Summary.TOTAL_FUEL_MASS),
+                ('total_fuel_capacity', Aircraft.Fuel.TOTAL_CAPACITY),
+            ],
+            promotes_outputs=[('excess_fuel_capacity', Mission.Constraints.EXCESS_FUEL_CAPACITY)],
+        )
+
+        # determine if the user wants the excess_fuel_capacity constraint active and if so add it to the problem
+        try:
+            # for backwards compatability check to see if variable exists, if not assume default value = False
+            ignore_capacity_constraint = self.aviary_inputs.get_val(
+                Aircraft.Fuel.IGNORE_FUEL_CAPACITY_CONSTRAINT, units='unitless'
+            )
+        except:
+            warnings.warn(
+                'No value for Aircraft.Fuel.IGNORE_FUEL_CAPACITY_CONSTRAINT specified, assume False'
+            )
+            ignore_capacity_constraint = False
+            self.aviary_inputs.set_val(
+                Aircraft.Fuel.IGNORE_FUEL_CAPACITY_CONSTRAINT,
+                val=ignore_capacity_constraint,
+                units='unitless',
+            )
+
+        if not ignore_capacity_constraint:
+            self.add_constraint(Mission.Constraints.EXCESS_FUEL_CAPACITY, lower=0, units='lbm')
+        else:
+            warnings.warn(
+                'Aircraft.Fuel.IGNORE_FUEL_CAPACITY_CONSTRAINT = True therefore EXCESS_FUEL_CAPACITY constraint was not added to the Aviary problem. The aircraft may not have enough space for fuel, check value of Mission.Constraints.EXCESS_FUEL_CAPACITY for details.'
+            )
 
     def link_phases(self, verbosity=None, comm=None):
         """

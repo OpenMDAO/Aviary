@@ -213,6 +213,14 @@ def mission_report(prob, **kwargs):
 
     totals = NamedValues()
     totals.set_val('Total Fuel Burn', initial_mass - final_mass, 'lbm')
+    totals.set_val(
+        'Total Fuel Capacity', prob.get_val('aircraft:fuel:total_capacity', units='lbm')[0], 'lbm'
+    )
+    totals.set_val(
+        'Excess Fuel Capacity',
+        prob.get_val('mission:constraints:excess_fuel_capacity', units='lbm')[0],
+        'lbm',
+    )
     totals.set_val('Total Time', final_time - initial_time, 'min')
     totals.set_val('Total Ground Distance', final_range - initial_range, 'nmi')
 
@@ -224,9 +232,17 @@ def mission_report(prob, **kwargs):
         write_markdown_variable_table(
             f,
             totals,
-            ['Total Fuel Burn', 'Total Time', 'Total Ground Distance'],
+            [
+                'Total Fuel Burn',
+                'Total Fuel Capacity',
+                'Excess Fuel Capacity',
+                'Total Time',
+                'Total Ground Distance',
+            ],
             {
                 'Total Fuel Burn': {'units': 'lbm'},
+                'Total Fuel Capacity': {'units': 'lbm'},
+                'Excess Fuel Capacity': {'units': 'lbm'},
                 'Total Time': {'units': 'min'},
                 'Total Ground Distance': {'units': 'nmi'},
             },
