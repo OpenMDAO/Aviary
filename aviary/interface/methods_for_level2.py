@@ -1086,7 +1086,7 @@ class AviaryProblem(om.Problem):
                 'motion.'
             )
 
-    def save_sizing_results(self, json_filename='sizing_results.json'):
+    def save_results(self, json_filename='sizing_results.json'):
         """
         This function saves an aviary problem object into a json file.
 
@@ -1146,7 +1146,7 @@ class AviaryProblem(om.Problem):
             aviary_input_list.append(
                 [
                     Mission.Design.GROSS_MASS,
-                    self.get_val(Mission.Design.GROSS_MASS, 'lbm'),
+                    self.get_val(Mission.Design.GROSS_MASS, 'lbm')[0],
                     'lbm',
                     str(float),
                 ]

@@ -13,10 +13,11 @@ local_phase_info = deepcopy(phase_info)
 
 
 @use_tempdirs
-class TestJson(unittest.TestCase):
+class TestSizingResults(unittest.TestCase):
     """
-    These tests just check that the json files can be saved or loaded and used to run an off-design
-    problem without error. They don't check that the off-design mission ran correctly.
+    These tests just check that the json files for the sizing mission results can be saved or loaded
+    and used to run an off-design problem without error. These tests don't check that the off-design
+    mission ran correctly.
     """
 
     def setUp(self):
@@ -44,7 +45,7 @@ class TestJson(unittest.TestCase):
         prob.setup()
         prob.set_initial_guesses()
         self.prob.run_aviary_problem()
-        self.prob.save_sizing_results()
+        self.prob.save_results()
 
     def test_save_json(self):
         self.compare_files(
@@ -92,7 +93,7 @@ class TestJson(unittest.TestCase):
 
 if __name__ == '__main__':
     # unittest.main()
-    test = TestJson()
+    test = TestSizingResults()
     test.setUp()
-    # test.test_save_json()
-    test.test_fallout()
+    test.test_save_json()
+    # test.test_fallout()

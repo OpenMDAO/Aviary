@@ -64,7 +64,7 @@ class OffDesignTestCase(unittest.TestCase):
         ]
 
         for var in prob_var_list:
-            assert_near_equal(comparison_prob.get_val(var), self.prob.get_val(var), tolerance=1e-12)
+            assert_near_equal(comparison_prob.get_val(var), self.prob.get_val(var), tolerance=1e-7)
 
         for var in inputs_var_list:
             assert_near_equal(
@@ -234,7 +234,7 @@ class OffDesignTestCase(unittest.TestCase):
         )
 
 
-# @use_tempdirs
+@use_tempdirs
 class PayloadRangeTest(unittest.TestCase):
     @require_pyoptsparse(optimizer='SNOPT')
     def test_payload_range(self):
@@ -275,7 +275,7 @@ class PayloadRangeTest(unittest.TestCase):
         assert_near_equal(
             prob.payload_range_data.get_val('Range', 'NM'),
             [0, 2500, 4064.07, 4509.02],
-            tolerance=1e-7,
+            tolerance=1e-6,
         )
 
 

@@ -1086,7 +1086,7 @@
     ],
     [
         "mission:summary:range",
-        3500.0,
+        1906.0,
         "NM",
         "<class 'float'>"
     ],
@@ -1147,5 +1147,11 @@
         2,
         "unitless",
         "<class 'int'>"
+    ],
+    [
+        "mission:design:gross_mass",
+        175400.0,
+        "lbm",
+        "<class 'float'>"
     ]
 ]

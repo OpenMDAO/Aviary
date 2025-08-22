@@ -135,7 +135,7 @@ def sizing_results(prob):
     report_file = reports_folder / 'sizing_results.json'
 
     if prob.problem_type is ProblemType.SIZING:
-        prob.save_sizing_results(report_file)
+        prob.save_results(report_file)
 
 
 def subsystem_report(prob, **kwargs):
