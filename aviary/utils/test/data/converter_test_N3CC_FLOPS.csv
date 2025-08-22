@@ -58,6 +58,7 @@ aircraft:fuel:auxiliary_fuel_capacity,0.0,lbm
 aircraft:fuel:density,6.7,lbm/galUS
 aircraft:fuel:fuel_system_mass_scaler,0.93202,unitless
 aircraft:fuel:fuselage_fuel_capacity,0.0,lbm
+aircraft:fuel:ignore_fuel_capacity_constraint,False,unitless
 aircraft:fuel:num_tanks,7,unitless
 aircraft:fuel:total_capacity,0.0,lbm
 aircraft:fuel:unusable_fuel_mass_scaler,1.0,unitless
