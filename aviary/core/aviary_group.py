@@ -1245,15 +1245,18 @@ class AviaryGroup(om.Group):
             # fixed vehicle (design GTOW) but variable actual GTOW for off-design
             # mission range
             elif self.problem_type is ProblemType.ALTERNATE:
+                # get the design gross mass and set as the upper bound for the gross mass design variable
+                MTOW = self.aviary_inputs.get_val(Mission.Design.GROSS_MASS, 'lbm')
                 self.add_design_var(
                     Mission.Summary.GROSS_MASS,
                     lower=10.0,
-                    upper=900e3,
+                    upper=MTOW,
                     units='lbm',
                     ref=175e3,
                 )
 
                 self.add_constraint(Mission.Constraints.RANGE_RESIDUAL, equals=0, ref=10)
+                # self.add_constraint(Mission.Summary.GROSS_MASS, upper=MTOW)
 
             elif self.problem_type is ProblemType.FALLOUT:
                 print('No design variables for Fallout missions')
