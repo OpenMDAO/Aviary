@@ -7018,7 +7018,7 @@ add_meta_data(
     meta_data=_MetaData,
     historical_name={'GASP': None, 'FLOPS': None, 'LEAPS1': None},
     units='lbm',
-    desc='Must be zero or positive to ensure that the aircraft has enough fuel to complete the required mission',
+    desc='Difference between the usable fuel capacity on the aircraft and the total fuel (including reserve) required for the mission. Must be >= 0 to ensure that the aircraft has enough fuel to complete the mission',
 )
 
 add_meta_data(
