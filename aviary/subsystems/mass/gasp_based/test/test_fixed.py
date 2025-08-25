@@ -15,7 +15,7 @@ from aviary.subsystems.mass.gasp_based.fixed import (
     GearMass,
     HighLiftMass,
     MassParameters,
-    PayloadMass,
+    PayloadGroup,
     TailMass,
 )
 from aviary.utils.aviary_values import AviaryValues, get_keys
@@ -265,7 +265,7 @@ class MassParametersTestCase5(unittest.TestCase):
 
 # this is the large single aisle 1 V3 test case
 @use_tempdirs
-class PayloadMassTestCase(unittest.TestCase):
+class PayloadGroupTestCase(unittest.TestCase):
     def setUp(self):
         options = get_option_defaults()
         options.set_val(Aircraft.CrewPayload.NUM_PASSENGERS, val=180, units='unitless')
@@ -275,7 +275,7 @@ class PayloadMassTestCase(unittest.TestCase):
         )  # bug fixed value and original value
 
         self.prob = om.Problem()
-        self.prob.model.add_subsystem('payload', PayloadMass(), promotes=['*'])
+        self.prob.model.add_subsystem('payload', PayloadGroup(), promotes=['*'])
         self.prob.model.set_input_defaults(Aircraft.CrewPayload.CARGO_MASS, val=0, units='lbm')
         self.prob.model.set_input_defaults(
             Aircraft.CrewPayload.Design.MAX_CARGO_MASS, val=10040, units='lbm'
@@ -1694,7 +1694,7 @@ class BWBMassParametersTestCase(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
 
 
-class BWBPayloadMassTestCase(unittest.TestCase):
+class BWBPayloadGroupTestCase(unittest.TestCase):
     "GASP BWB model"
 
     def setUp(self):
@@ -1704,7 +1704,7 @@ class BWBPayloadMassTestCase(unittest.TestCase):
         options.set_val(Aircraft.CrewPayload.PASSENGER_MASS_WITH_BAGS, val=225, units='lbm')
 
         self.prob = om.Problem()
-        self.prob.model.add_subsystem('payload', PayloadMass(), promotes=['*'])
+        self.prob.model.add_subsystem('payload', PayloadGroup(), promotes=['*'])
         self.prob.model.set_input_defaults(Aircraft.CrewPayload.CARGO_MASS, 0.0, units='lbm')
         self.prob.model.set_input_defaults(
             Aircraft.CrewPayload.Design.MAX_CARGO_MASS, 15000.0, units='lbm'

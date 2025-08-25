@@ -21,7 +21,7 @@ prob.options['group_by_pre_opt_post'] = True
 # Allow for user overrides here
 # add engine builder
 prob.load_inputs(
-    'models/aircraft/test_aircraft/aircraft_for_bench_FwFm.csv',
+    'models/aircraft/advanced_single_aisle/advanced_single_aisle_FLOPS.csv',
     phase_info,
     engine_builders=[NPSSTabularEngineBuilder()],
     meta_data=ExtendedMetaData,

@@ -37,7 +37,7 @@
 | Aircraft.Wing.HIGH_LIFT_MASS | 972 | WHLDEV | 974 | In GASP, wing loading is a variable, but in Aviary, it is a constant |
 | Aircraft.Fuel.FUEL_SYSTEM_MASS | 1316 | WFSS | 1281 | the mass in GASP is computed after engine sizing. |
 | Aircraft.Design.STRUCTURE_MASS | 44471 | WST | 45623 | the mass in GASP is computed after engine sizing. |
-| Mission.Design.FUEL_MASS | 34188 | WFADES | 33268 | The mass in GASP is computed after engine sizing. |
+| Mission.Summary.FUEL_MASS | 34188 | WFADES | 33268 | The mass in GASP is computed after engine sizing. |
 | Aircraft.Propulsion.MASS | 8628 | WP | 8592 | the mass in GASP is computed after engine sizing. |
 | Aircraft.Fuel.TOTAL_CAPACITY | 38068 | WFAMAX | 33268 | The mass in GASP is computed after engine sizing. |
 | Aircraft.Propulsion.TOTAL_ENGINE_POD_MASS | 1687 | WPES | the mass in GASP is computed after engine sizing. |
@@ -50,7 +50,7 @@ The fuel computation is a nonlinear system of equations. A simplied XDSM diagram
 
 ![GASP based fuel mass computation](images/gasp_bwb_fuel_mass.png)
 
-A Newton solver is applied until `Mission.Design.FUEL_MASS`, `wingfuel_mass_min` and `Aircraft.Fuel.TOTAL_CAPACITY` are converged.
+A Newton solver is applied until `Mission.Summary.FUEL_MASS`, `wingfuel_mass_min` and `Aircraft.Fuel.TOTAL_CAPACITY` are converged.
 
 For conventional aircraft, `BWBFuselageMass` is replaced by `FuselageMass`.
 

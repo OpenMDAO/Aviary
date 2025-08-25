@@ -116,7 +116,7 @@ phase_info = {
 phase_info['pre_mission'] = {'include_takeoff': False, 'optimize_mass': True}
 phase_info['pre_mission']['external_subsystems'] = [wing_mass_builder]
 
-aircraft_definition_file = 'models/aircraft/test_aircraft/aircraft_for_bench_FwFm.csv'
+aircraft_definition_file = 'models/aircraft/advanced_single_aisle/advanced_single_aisle_FLOPS.csv'
 make_plots = False
 
 # create and begin setting up Aviary problem
