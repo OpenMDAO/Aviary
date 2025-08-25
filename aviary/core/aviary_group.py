@@ -980,9 +980,10 @@ class AviaryGroup(om.Group):
         )
 
         ecomp = om.ExecComp(
-            'excess_fuel_capacity = total_fuel_capacity - mission_fuel',
+            'excess_fuel_capacity = total_fuel_capacity - unusable_fuel - overall_fuel',
             total_fuel_capacity={'units': 'lbm'},
-            mission_fuel={'units': 'lbm'},
+            unusable_fuel={'units': 'lbm'},
+            overall_fuel={'units': 'lbm'},
             excess_fuel_capacity={'units': 'lbm'},
         )
 
@@ -990,8 +991,10 @@ class AviaryGroup(om.Group):
             'excess_fuel_constraint',
             ecomp,
             promotes_inputs=[
-                ('mission_fuel', Mission.Summary.TOTAL_FUEL_MASS),
                 ('total_fuel_capacity', Aircraft.Fuel.TOTAL_CAPACITY),
+                ('unusable_fuel', Aircraft.Fuel.UNUSABLE_FUEL_MASS)(
+                    'overall_fuel', Mission.Summary.TOTAL_FUEL_MASS
+                ),
             ],
             promotes_outputs=[('excess_fuel_capacity', Mission.Constraints.EXCESS_FUEL_CAPACITY)],
         )
