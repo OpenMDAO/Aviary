@@ -992,9 +992,8 @@ class AviaryGroup(om.Group):
             ecomp,
             promotes_inputs=[
                 ('total_fuel_capacity', Aircraft.Fuel.TOTAL_CAPACITY),
-                ('unusable_fuel', Aircraft.Fuel.UNUSABLE_FUEL_MASS)(
-                    'overall_fuel', Mission.Summary.TOTAL_FUEL_MASS
-                ),
+                ('unusable_fuel', Aircraft.Fuel.UNUSABLE_FUEL_MASS),
+                ('overall_fuel', Mission.Summary.TOTAL_FUEL_MASS),
             ],
             promotes_outputs=[('excess_fuel_capacity', Mission.Constraints.EXCESS_FUEL_CAPACITY)],
         )
