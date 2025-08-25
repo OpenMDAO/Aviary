@@ -1,5 +1,5 @@
 """
-Authors: Eliot Aretskin-Hariton, Kenneth Moore, Jutin Soni
+Authors: Eliot Aretskin-Hariton, Kenneth Moore, Jatin Soni
 Multi Mission Optimization Example using Aviary.
 
 In this example, a monolithic optimization is created by instantiating two aviary groups
