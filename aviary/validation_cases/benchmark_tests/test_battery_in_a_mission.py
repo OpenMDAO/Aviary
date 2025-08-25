@@ -71,20 +71,13 @@ class TestSubsystemsMission(unittest.TestCase):
         prob = av.AviaryProblem(verbosity=0)
 
         prob.load_inputs(
-            'models/aircraft/test_aircraft/aircraft_for_bench_FwFm_with_electric.csv', phase_info
+            'models/aircraft/test_aircraft/aircraft_for_bench_FwFm_with_electric.csv',
+            phase_info,
         )
 
-        # Preprocess inputs
         prob.check_and_preprocess_inputs()
 
-        prob.add_pre_mission_systems()
-
-        prob.add_phases()
-
-        prob.add_post_mission_systems()
-
-        # Link phases and variables
-        prob.link_phases()
+        prob.build_model()
 
         prob.add_driver('SLSQP')
 
@@ -93,8 +86,6 @@ class TestSubsystemsMission(unittest.TestCase):
         prob.add_objective('fuel_burned')
 
         prob.setup()
-
-        prob.set_initial_guesses()
 
         prob.set_val(av.Aircraft.Battery.PACK_ENERGY_DENSITY, 550, units='kJ/kg')
         prob.set_val(av.Aircraft.Battery.PACK_MASS, 1000, units='lbm')

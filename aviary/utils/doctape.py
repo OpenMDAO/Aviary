@@ -547,9 +547,12 @@ def glue_actions(cmd, curr_glued=None, glue_default=False, glue_choices=False, m
                         curr_glued.append(str(choice))
 
 
-def glue_class_functions(obj, curr_glued=None, pre_fix=None, md_code=True):
+def glue_class_functions(obj, curr_glued=None, prefix=None, md_code=True):
     """
     Glue all class functions.
+
+    For a function 'foo', glue 'foo' and 'foo()'
+    If a prefix is defined, also glue 'prefix.foo' and 'prefix.foo()'
 
     Parameters
     ----------
@@ -557,18 +560,21 @@ def glue_class_functions(obj, curr_glued=None, pre_fix=None, md_code=True):
         class object
     curr_glued: list
         the parameters that have been glued
+    prefix: str
+        Preix to be prepended.
     """
     if curr_glued is None:
         curr_glued = []
     methods = inspect.getmembers(obj, predicate=inspect.isfunction)
     for func_name, func in methods:
-        if pre_fix is not None:
-            if pre_fix + '.' + func_name + '()' not in curr_glued:
-                glue_variable(pre_fix + '.' + func_name + '()', md_code=md_code)
-                curr_glued.append(pre_fix + '.' + func_name + '()')
-        if func_name + '()' not in curr_glued:
-            glue_variable(func_name + '()', md_code=md_code)
-            curr_glued.append(func_name + '()')
+        forms = [func_name, f'{func_name}()']
+        if prefix is not None:
+            pre_forms = [f'{prefix}.{name}' for name in forms]
+            forms.extend(pre_forms)
+        for form in forms:
+            if form not in curr_glued:
+                glue_variable(form, md_code=md_code)
+                curr_glued.append(form)
 
 
 def glue_function_arguments(func, curr_glued=None, glue_default=False, md_code=False):
@@ -596,9 +602,12 @@ def glue_function_arguments(func, curr_glued=None, glue_default=False, md_code=F
                     curr_glued.append(param_default)
 
 
-def glue_class_options(obj, curr_glued=None, md_code=False):
+def glue_class_options(obj, curr_glued=None, md_code=False, add_attributes=True):
     """
     Glue all class options for a given class.
+
+    This includes all options that have been declared in the base options dict. It also optionally
+    includes class attributes that are declared in the init method.
 
     Parameters
     ----------
@@ -606,6 +615,8 @@ def glue_class_options(obj, curr_glued=None, md_code=False):
         class
     curr_glued: list
         the parameters that have been glued
+    add_attributes: bool
+        When True, also add any class and instance attributes. Default is True.
     """
     if curr_glued is None:
         curr_glued = []
@@ -615,3 +626,8 @@ def glue_class_options(obj, curr_glued=None, md_code=False):
         if opt not in curr_glued:
             glue_variable(opt, md_code=md_code)
             curr_glued.append(opt)
+
+    for item in obj.__dict__:
+        if item not in curr_glued:
+            glue_variable(item, md_code=md_code)
+            curr_glued.append(item)

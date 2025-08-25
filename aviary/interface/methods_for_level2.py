@@ -1,17 +1,17 @@
 import csv
-import inspect
 import json
 import os
-import sys
 import warnings
 from datetime import datetime
 from enum import Enum
 from pathlib import Path
+from openmdao.utils.om_warnings import warn_deprecation
 
 import dymos as dm
 import numpy as np
 import openmdao.api as om
 from openmdao.utils.reports_system import _default_reports
+from openmdao.utils.units import convert_units
 
 from aviary.core.aviary_group import AviaryGroup
 
@@ -50,7 +50,13 @@ class AviaryProblem(om.Problem):
     additional methods to help users create and solve Aviary problems.
     """
 
-    def __init__(self, verbosity=None, **kwargs):
+    def __init__(
+        self,
+        problem_type: ProblemType = None,
+        verbosity=None,
+        meta_data=BaseMetaData.copy(),
+        **kwargs,
+    ):
         # Modify OpenMDAO's default_reports for this session.
         new_reports = [
             'subsystems',
@@ -73,9 +79,16 @@ class AviaryProblem(om.Problem):
         self.verbosity = verbosity
         set_warning_format(verbosity)
 
-        self.model = AviaryGroup()
+        self.problem_type = problem_type
+        if problem_type == ProblemType.MULTI_MISSION:
+            self.model = om.Group()
+        else:
+            self.model = AviaryGroup()
+            self.aviary_inputs = None
 
-        self.aviary_inputs = None
+        self.aviary_groups_dict = {}
+
+        self.meta_data = meta_data
 
     def load_inputs(
         self,
@@ -83,7 +96,7 @@ class AviaryProblem(om.Problem):
         phase_info=None,
         engine_builders=None,
         problem_configurator=None,
-        meta_data=BaseMetaData,
+        meta_data=None,
         verbosity=None,
     ):
         """
@@ -105,13 +118,17 @@ class AviaryProblem(om.Problem):
         else:
             verbosity = self.verbosity  # usually None
 
+        if meta_data is not None:
+            # Support for custom meta_data set.
+            self.meta_data = meta_data
+
         # TODO: We cannot pass self.verbosity back up from load inputs for multi-mission because there could be multiple .csv files
+        self.model.meta_data = self.meta_data
         aviary_inputs, verbosity = self.model.load_inputs(
             aircraft_data=aircraft_data,
             phase_info=phase_info,
             engine_builders=engine_builders,
             problem_configurator=problem_configurator,
-            meta_data=meta_data,
             verbosity=verbosity,
         )
 
@@ -119,6 +136,9 @@ class AviaryProblem(om.Problem):
         self.phase_info = self.model.phase_info
         self.aviary_inputs = aviary_inputs
         self.verbosity = verbosity
+        if self.problem_type is None:
+            # if there are multiple load_inputs() calls, only the problem type from the first aviary_values is used
+            self.problem_type = aviary_inputs.get_val(Settings.PROBLEM_TYPE)
 
         return self.aviary_inputs
 
@@ -127,7 +147,6 @@ class AviaryProblem(om.Problem):
         This method checks the user-supplied input values for any potential problems
         and preprocesses the inputs to prepare them for use in the Aviary problem.
         """
-
         # `self.verbosity` is "true" verbosity for entire run. `verbosity` is verbosity
         # override for just this method
         if verbosity is not None:
@@ -138,25 +157,86 @@ class AviaryProblem(om.Problem):
 
         self.model.check_and_preprocess_inputs(verbosity=verbosity)
 
-        self._update_metadata_from_subsystems()
+        # we have to update meta data after check_and_preprocess because metadata update
+        # requires get_all_subsystems, which reqiures core_subsystems, which doesn't exist until
+        # after check_and_preprocess is assembled
+        self._update_metadata_from_subsystems(self.model)  # update meta data with new entries
 
-    def _update_metadata_from_subsystems(self):
+    def _update_metadata_from_subsystems(self, group):
         """Merge metadata from user-defined subsystems into problem metadata."""
-        self.meta_data = BaseMetaData.copy()
 
         # loop through phase_info and external subsystems
-        for phase_name in self.model.phase_info:
-            # TODO: phase_info now resides in AviaryGroup. Accessing it as self.model.phase_info is just a temporary stop-gap
-            # it will be necessary to combine multiple self.models
-            external_subsystems = self.model.get_all_subsystems(
-                self.model.phase_info[phase_name]['external_subsystems']
+        for phase_name in group.phase_info:
+            external_subsystems = group.get_all_subsystems(
+                group.phase_info[phase_name]['external_subsystems']
             )
 
             for subsystem in external_subsystems:
                 meta_data = subsystem.meta_data.copy()
                 self.meta_data = merge_meta_data([self.meta_data, meta_data])
 
-        self.model.meta_data = self.meta_data  # TODO: temporary fix
+        # Update the reference to the newly merged meta_data.
+        group.meta_data = self.meta_data
+
+    def add_aviary_group(
+        self,
+        name: str,
+        aircraft: AviaryValues,
+        mission: dict,
+        engine_builders=None,
+        problem_configurator=None,
+        verbosity: Verbosity = Verbosity.BRIEF,
+    ):
+        """
+        Used for creating a multi-mission problem. This method creates an AviaryGroup() for each
+        airraft and mission combination. It can also accept a specific engine_builder for each
+        group. The method loads and checks_and_preprocesses inputs, and then combines metadata.
+
+        Parameters
+        ----------
+        name : string
+            A unique name that identifies this group which can be referenced later.
+        aircraft : AviaryValues object
+            Defines the aircraft configuration
+        mission : phase_info, dict
+            Defines the mission the aircraft will fly
+        engine_builders : EngineBuilder object, optional
+            Defines a custom engine model
+        problem_configurator ; ProblemConfigurator, optional
+            Required when setting custom equations of motion. See two_dof_problem_configurator.py for an example.
+        verbosity : Verbosity or int, optional
+            Controls the level of printouts for this method.
+
+        Returns
+        -------
+        subsystem
+            The AviaryGroup object containing the specified aircraft, mission, and engine model.
+
+        """
+        if self.problem_type is not ProblemType.MULTI_MISSION:
+            ValueError(
+                'add_aviary_group() should only be called when ProblemType is MULTI_MISSION.'
+            )
+
+        sub = self.model.add_subsystem(name, AviaryGroup())
+        sub.meta_data = self.meta_data
+        sub.load_inputs(
+            aircraft_data=aircraft,
+            phase_info=mission,
+            engine_builders=engine_builders,
+            problem_configurator=problem_configurator,
+            verbosity=verbosity,
+        )
+
+        sub.check_and_preprocess_inputs()
+
+        self.aviary_groups_dict[name] = sub
+
+        self.verbosity = sub.verbosity  # TODO: Needs fixed because old verbosity is over-written
+
+        self._update_metadata_from_subsystems(sub)  # update meta data with new entries
+
+        return sub
 
     def add_pre_mission_systems(self, verbosity=None):
         """
@@ -182,7 +262,11 @@ class AviaryProblem(om.Problem):
         else:
             verbosity = self.verbosity  # defaults to BRIEF
 
-        self.model.add_pre_mission_systems(verbosity=verbosity)
+        if self.problem_type == ProblemType.MULTI_MISSION:
+            for name, group in self.aviary_groups_dict.items():
+                group.add_pre_mission_systems(verbosity=verbosity)
+        else:
+            self.model.add_pre_mission_systems(verbosity=verbosity)
 
     def add_phases(
         self,
@@ -217,12 +301,23 @@ class AviaryProblem(om.Problem):
         else:
             verbosity = self.verbosity  # defaults to BRIEF
 
-        return self.model.add_phases(
-            phase_info_parameterization=phase_info_parameterization,
-            parallel_phases=parallel_phases,
-            verbosity=verbosity,
-            comm=self.comm,
-        )
+        if self.problem_type == ProblemType.MULTI_MISSION:
+            for name, group in self.aviary_groups_dict.items():
+                Traj = group.add_phases(
+                    phase_info_parameterization=phase_info_parameterization,
+                    parallel_phases=parallel_phases,
+                    verbosity=verbosity,
+                    comm=self.comm,
+                )
+        else:
+            Traj = self.model.add_phases(
+                phase_info_parameterization=phase_info_parameterization,
+                parallel_phases=parallel_phases,
+                verbosity=verbosity,
+                comm=self.comm,
+            )
+
+        return Traj
 
     def add_post_mission_systems(self, verbosity=None):
         """
@@ -255,7 +350,11 @@ class AviaryProblem(om.Problem):
         else:
             verbosity = self.verbosity  # defaults to BRIEF
 
-        self.model.add_post_mission_systems(verbosity=verbosity)
+        if self.problem_type == ProblemType.MULTI_MISSION:
+            for name, group in self.aviary_groups_dict.items():
+                group.add_post_mission_systems(verbosity=verbosity)
+        else:
+            self.model.add_post_mission_systems(verbosity=verbosity)
 
     def link_phases(self, verbosity=None):
         """
@@ -273,7 +372,11 @@ class AviaryProblem(om.Problem):
         else:
             verbosity = self.verbosity  # defaults to BRIEF
 
-        self.model.link_phases(verbosity=verbosity, comm=self.comm)
+        if self.problem_type == ProblemType.MULTI_MISSION:
+            for name, group in self.aviary_groups_dict.items():
+                group.link_phases(verbosity=verbosity, comm=self.comm)
+        else:
+            self.model.link_phases(verbosity=verbosity, comm=self.comm)
 
     def add_driver(self, optimizer=None, use_coloring=None, max_iter=50, verbosity=None):
         """
@@ -449,7 +552,11 @@ class AviaryProblem(om.Problem):
         else:
             verbosity = self.verbosity  # defaults to BRIEF
 
-        self.model.add_design_variables(verbosity=verbosity)
+        if self.problem_type == ProblemType.MULTI_MISSION:
+            for name, group in self.aviary_groups_dict.items():
+                group.add_design_variables(problem_type=self.problem_type, verbosity=verbosity)
+        else:
+            self.model.add_design_variables(problem_type=self.problem_type, verbosity=verbosity)
 
     def add_objective(self, objective_type=None, ref=None, verbosity=None):
         """
@@ -563,39 +670,433 @@ class AviaryProblem(om.Problem):
             # If 'ref' is not specified, assign a default value
             ref = ref if ref is not None else 1
 
-            if self.model.problem_type is ProblemType.SIZING:
+            if self.problem_type is ProblemType.SIZING:
                 self.model.add_objective(Mission.Objectives.FUEL, ref=ref)
 
-            elif self.model.problem_type is ProblemType.ALTERNATE:
+            elif self.problem_type is ProblemType.ALTERNATE:
                 self.model.add_objective(Mission.Objectives.FUEL, ref=ref)
 
-            elif self.model.problem_type is ProblemType.FALLOUT:
+            elif self.problem_type is ProblemType.FALLOUT:
                 self.model.add_objective(Mission.Objectives.RANGE, ref=ref)
 
             else:
-                raise ValueError(f'{self.model.problem_type} is not a valid problem type.')
+                raise ValueError(f'{self.problem_type} is not a valid problem type.')
+
+    def add_design_var_default(
+        self,
+        name: str,
+        lower: float = None,
+        upper: float = None,
+        units: str = None,
+        src_shape=None,
+        default_val: float = None,
+        ref: float = None,
+    ):
+        """
+        Add a design variable to the problem as well as initialized a default value for that design variable.
+        The default value can be over-written after setup with prob.set_val()
+        Parameters
+        ----------
+        name : string
+            A unique name that identifies this design variable.
+        lower : float, optional
+            The lowest value that the optimizer can choose for this design variable.
+        upper : float, optional
+            The largest value that the optimizer can choose for this design variable.
+        src_shape : int or tuple, optional
+            Assumed shape of any connected source or higher level promoted input.
+        default_val : float or ndarray, optional
+            The default value to be assigned to this design variable.
+        ref : float or ndarray, optional
+            Value of design var that scales to 1.0 in the driver.
+        """
+        self.model.add_design_var(name=name, lower=lower, upper=upper, units=units, ref=ref)
+        if default_val is not None:
+            self.model.set_input_defaults(
+                name=name, val=default_val, units=units, src_shape=src_shape
+            )
+
+    def set_design_range(self, missions: list[str], range: str):
+        # TODO: What happens if design range is specified in CSV??? should be able to access from group.aviary_values
+        """
+        Used for multi-mission problems. This method finds the longest mission and sets its range
+        as the design range for all AviaryGroups. design_range is used within Aviary for sizing
+        subsystems (avionics and AC). This could be simpllified in the future if there was a
+        single pre-mission for similar aircraft.
+
+        Parameters
+        ----------
+        missions : list[str]
+            The names of all the missions instantiated via add_aviary_group()
+        range : str
+            The promoted name of the range variable. i.e. "Aircraft1.Range"
+
+        """
+        matching_names = [
+            (name, group) for name, group in self.aviary_groups_dict.items() if name in missions
+        ]
+        design_range = []
+        # loop through all the phase_info and extract target ranges
+        for name, group in matching_names:
+            target_range, units = group.post_mission_info['target_range']
+            design_range.append(convert_units(target_range, units, 'nmi'))
+        # TODO: loop through all the .csv files and extract Mission.Design.RANGE
+        design_range_max = np.max(design_range)
+        self.set_val(range, val=design_range_max, units='nmi')
+
+    def add_composite_objective(self, *args, ref: float = None):
+        """
+        Creates composite_objective output by assemblin an ExecComp based on a variety of AviaryGroup
+        outputs selected by the user. A number of different outputs from the same or different
+        aricraft can be combined in this way such as creating an objective function based on fuel
+        plus noise emissions. Each objective output should include a weight otherwise the weight will be
+        assumed to be equal (i.e. fuel is equally important as reducing noise emissions).
+
+        Parameters
+        ----------
+        *args : a list of 3-tuple, 2-tuple, str. Or it can be left empty
+            If 3-tuple: (model, output, weight)
+            If 2-tuple: (model, output) or (output, weight)
+            If 1-tuple: (output) or 'fuel', 'fuel_burned', 'mass', 'range', 'time'
+            If empty, information will be populated based on problem_type:
+            - If ProblemType = FALLOUT, objective = Mission.Objectives.RANGE
+            - If ProblemType = Sizing or Alternate, objective = Mission.Objectives.FUEL
+
+            Example inputs can be any of the following:
+            ('fuel')
+            (Mission.Summary.FUEL_BURNED)
+            (Mission.Summary.FUEL_BURNED, Mission.Summary.CO2)
+            ('model1', Mission.Summary.FUEL_BURNED)
+            (Mission.Summary.FUEL_BURNED, 1.0)
+            (Mission.Summary.FUEL_BURNED, 1.0), (Mission.Summary.CO2, 2.0)
+            ('model1', Mission.Summary.FUEL_BURNED), ('model2', Mission.Summary.CO2)
+            ('model1', Mission.Summary.FUEL_BURNED, 1.0), ('model2', Mission.Summary.CO2, 2.0)
+
+        ref : float, optional
+            Reference value for the final objective for scaling.
+
+        Behavior
+        --------
+        - Connects each specified mission output into a newly created `ExecComp` block.
+        - Computes a weighted sum: each output is weighted by both the total weights
+        - Adds the result as the final objective named `'composite_objective'`, accessible at the top level model.
+        """
+
+        # There are LOTS of different ways for the users to input str, 2-tuple, or 3-tuple into *args
+        # Correct combinations are (output), (output, weight), (model, output), or (model, output, weight).
+        # We have to catch every case and advise the user on how to corect their errors and add defaults as needed.
+        default_model = 'model'
+        default_weight = 1.0
+        objectives = []
+        for arg in args:
+            if isinstance(arg, tuple) and len(arg) == 3:
+                model, output, weight = arg
+                if model not in self.aviary_groups_dict:
+                    raise ValueError(
+                        f'The first element specified in {arg} must be the model name.'
+                    )
+            elif isinstance(arg, tuple) and len(arg) == 2:
+                first, second = arg
+                if isinstance(first, str) and isinstance(second, str):
+                    if first in self.aviary_groups_dict:
+                        # we have the model and output but no weight
+                        model, output, weight = first, second, default_weight
+                    else:
+                        raise ValueError(
+                            f'The first element specified in {arg} must be the model name.'
+                        )
+                elif isinstance(first, str) and isinstance(second, (float, int)):
+                    if first in self.aviary_groups_dict:
+                        raise ValueError(
+                            f'When specifying {arg}, the user specified a model name and a weight '
+                            f'but did not specify what output from that model the weight should be applied to.'
+                        )
+                    else:
+                        # we have the output and the weight but not model
+                        model, output, weight = default_model, first, second
+                else:
+                    raise ValueError(
+                        f'The user specified {arg} which is not a 2-tuple of (model, output) or (output, weight).'
+                    )
+            elif isinstance(arg, str):
+                if arg in self.aviary_groups_dict:
+                    raise ValueError(
+                        f"When specifying '{arg}', the user provided only a model name "
+                        f'but did not specify what output from that model should be used as the objective.'
+                    )
+                else:
+                    # we have an output and we use the default model and weights
+                    model, output, weight = default_model, arg, default_weight
+
+            # in some cases the users provides no input and we can derive the objectie from the problem type:
+            elif self.model.problem_type is ProblemType.SIZING:
+                model, output, weight = default_model, Mission.Objectives.FUEL, default_weight
+            elif self.model.problem_type is ProblemType.ALTERNATE:
+                model, output, weight = default_model, Mission.Objectives.FUEL, default_weight
+            elif self.model.problem_type is ProblemType.FALLOUT:
+                model, output, weight = default_model, Mission.Objectives.RANGE, default_weight
+            else:
+                raise ValueError(
+                    f'Unrecognized objective format: {arg}. '
+                    f'Each argument must be one of the following: '
+                    f'(output), (output, weight), (model, output), or (model, output, weight).'
+                    f'Outputs can be from the variable meta data, or can be: fuel_burned, fuel'
+                    f'Or problem type must be set to SIZING, ALTERNATE, or FALLOUT'
+                )
+            objectives.append((model, output, weight))
+            # objectives = [
+            # ('model1', Mission.Summary.FUEL_BURNED, 1),
+            # ('model2', Mission.Summary.CO2, 1),
+            #  ...
+            # ]
+
+        # Dictionary for default reference values
+        default_ref_values = {
+            'mass': -5e4,
+            'hybrid_objective': -5e4,
+            'fuel_burned': 1e4,
+            'fuel': 1e4,
+        }
+
+        # Now checkout the output and see if we have recognizable strings and replace them with the variable meta data name
+        objectives_cleaned = []
+        for model, output, weight in objectives:
+            if output == 'fuel_burned':
+                output = Mission.Summary.FUEL_BURNED
+                # default scaling is valid only if this is the only argument and the ref has not yet been set
+                if len(args) == 1 and ref == None:
+                    # set a default ref
+                    ref = default_ref_values['fuel_burned']
+            elif output == 'fuel':
+                output = Mission.Objectives.FUEL
+                if len(args) == 1 and ref == None:
+                    ref = default_ref_values['fuel']
+            elif output == 'mass':
+                output = Mission.Summary.FINAL_MASS
+                if len(args) == 1 and ref == None:
+                    ref = default_ref_values['mass']
+            elif output == 'time':
+                output = Mission.Summary.FINAL_TIME
+            elif output == 'range':
+                output = Mission.Summary.RANGE  # Unsure if this will work
+            objectives_cleaned.append((model, output, weight))
+
+        # Create the calculation string for the ExecComp() and the promotion reference values
+        weighted_exprs = []
+        connection_names = []
+        total_weight = sum(weight for _, _, weight in objectives_cleaned)
+        for model, output, weight in objectives_cleaned:
+            output_safe = output.replace(':', '_')
+            weighted_exprs.append(
+                f'{model}_{output_safe}*{weight}/{total_weight}'
+            )  # we use "_" here because ExecComp() cannot intake "."
+            connection_names.append(
+                [f'{model}.{output}', f'composite_function.{model}_{output_safe}']
+            )
+        final_expr = ' + '.join(weighted_exprs)
+
+        # weighted_str looks like:  'model1_fuelburn*0.67*0.5 + model1_gross_mass*0.33*0.5 + model2_fuelburn*0.67*0.5 + model2_gross_mass*0.33*0.5'
+
+        # adding composite execComp to super problem
+        self.model.add_subsystem(
+            'composite_function',
+            om.ExecComp('composite_objective = ' + final_expr, has_diag_partials=True),
+            promotes_outputs=['composite_objective'],
+        )
+
+        # connect from inside of the models to the composite objective
+        for source, target in connection_names:
+            self.model.connect(source, target)
+        # finally add the objective
+        self.model.add_objective('composite_objective', ref=ref)
+
+    def add_composite_objective_adv(
+        self,
+        missions: list[str],
+        outputs: list[str],
+        mission_weights: list[float] = None,
+        output_weights: list[float] = None,
+        ref: float = 1.0,
+    ):
+        """
+        Adds a composite objective function to the OpenMDAO problem by aggregating output values across
+        multiple mission models, with independent weighting for both missions and outputs. This is most
+        useful when you have historical information on how often a given mission was flown (mission_weights)
+        and then you have a duel set of objectives you wish to include i.e. for each flight minimize
+        both fuel_burned and gross_mass. How important fuel_burned is vs. gross_mass is determined via
+        specifying output_weights.
+
+        Parameters
+        ----------
+        missions : list of str
+            List of subsystem names (e.g., 'model1', 'model2') corresponding to different missions.
+
+        outputs : list of str
+            List of output variable names (e.g., Mission.Summary.FUEL_BURNED, Mission.Summary.GROSS_MASS) to be included
+            in the objective from each mission.
+
+        mission_weights : list of float, optional
+            Weights assigned to each mission. If None, equal weighting is assumed.
+            These weights will be normalized internally to sum to 1.0.
+
+        output_weights : list of float, optional
+            Weights assigned to each output variable. If None, equal weighting is assumed.
+            These weights will also be normalized internally to sum to 1.0.
+
+        ref : float, optional
+            Reference value for the final objective. Passed to `add_objective()` for scaling.
+
+        Behavior
+        --------
+        - Connects each specified mission output into a newly created `ExecComp` block.
+        - Computes a weighted sum: each output is weighted by both its output weight
+        and the weight of the mission it came from.
+        - Adds the result as the final objective named `'composite_objective'`, accessible at the top level model.
+        """
+
+        # Setup mission and output lengths if they are not already given
+        if mission_weights is None:
+            mission_weights = np.ones(len(missions))
+
+        if output_weights is None:
+            output_weights = np.ones(len(outputs))
+
+        # # Make an ExecComp
+        # for mission in missions:
+        #     for output in outputs:
+
+        # weights are normalized - e.g. for given weights 3:1, the normalized
+        # weights are 0.75:0.25
+        # TODO: Remove before push
+        # output_weights = [2,1]
+        # mission_weights = [1,1]
+        # missions = ['model1','model2']
+        # outputs = ['fuelburn','gross_mass']
+        weighted_exprs = []
+        connection_names = []
+        output_weights = [float(weight / sum(output_weights)) for weight in output_weights]
+        mission_weights = [float(weight / sum(mission_weights)) for weight in mission_weights]
+        for mission, mission_weight in zip(missions, mission_weights):
+            for output, output_weight in zip(outputs, output_weights):
+                connection_names.append(
+                    [f'composite_function.{mission}_{output}', f'{mission}.{output}']
+                )
+                weighted_exprs.append(f'{mission}_{output}*{output_weight}*{mission_weight}')
+        final_expr = ' + '.join(weighted_exprs)
+        # weighted_str looks like:  'model1.fuelburn*0.67*0.5 + model1.gross_mass*0.33*0.5 + model2.fuelburn*0.67*0.5 + model2.gross_mass*0.33*0.5'
+
+        # adding composite execComp to super problem
+        self.model.add_subsystem(
+            'composite_function',
+            om.ExecComp('composite_objective = ' + final_expr, has_diag_partials=True),
+            promotes_outputs=['composite_objective'],
+        )
+        # connect from inside of the models to the composite objective
+        for target, source in connection_names:
+            self.model.connect(target, source)
+        # finally add the objective
+        self.model.add_objective('composite_objective', ref=ref)
+
+    def build_model(self, verbosity=None):
+        """
+        A lightly wrapped add_pre_mission_systems(), add_phases(), add_post_mission_systems(), and link_phases()
+        method to decrease code length for the avarage user. If the user needs finer control, they should
+        not use build_model but instead call the four individual methods separately.
+
+        Parameters
+        ----------
+        verbosity : Verbosity or int, optional
+            Controls the level of printouts for this method.
+        """
+        # `self.verbosity` is "true" verbosity for entire run. `verbosity` is verbosity
+        # override for just this method
+        if verbosity is not None:
+            # compatibility with being passed int for verbosity
+            verbosity = Verbosity(verbosity)
+        else:
+            verbosity = self.verbosity  # defaults to BRIEF
+
+        if self.problem_type == ProblemType.MULTI_MISSION:
+            for name, group in self.aviary_groups_dict.items():
+                group.add_pre_mission_systems(verbosity=verbosity)
+                group.add_phases(verbosity=verbosity, comm=self.comm)
+                group.add_post_mission_systems(verbosity=verbosity)
+                group.link_phases(verbosity=verbosity, comm=self.comm)
+        else:
+            self.model.add_pre_mission_systems(verbosity=verbosity)
+            self.model.add_phases(verbosity=verbosity, comm=self.comm)
+            self.model.add_post_mission_systems(verbosity=verbosity)
+            self.model.link_phases(verbosity=verbosity, comm=self.comm)
+
+    def promote_inputs(self, mission_names: list[str], var_pairs: list[tuple[str, str]]):
+        """
+        Link a promoted input to multiple groups' unpromoted inputs using an internal IVC.
+
+        Parameters
+        ----------
+        self : om.Problem
+            The Problem instance this is being called from.
+
+        missions : list of str
+            The subsystem names receiving the connection.
+
+        var_pairs : list of (str, str)
+            Each pair is (input_name_in_group, top_level_name_to_use)
+        """
+
+        #
+        for name, group in self.aviary_groups_dict.items():
+            for mission_name in mission_names:
+                if name == mission_name:
+                    # the group name matches the mission name,
+                    # group.promotes(var_pairs)
+                    # print("var_pairs",var_pairs)
+                    self.model.promotes(mission_name, inputs=var_pairs)
 
     def setup(self, **kwargs):
-        """Lightly wrapped setup() method for the problem."""
+        """
+        A lightly wrapped setup() and set_initial_defaults() method for the problem.
+
+        Parameters
+        ----------
+        verbosity : Verbosity or int, optional
+            Controls the level of printouts for this method.
+        **kwargs : optional
+            All arguments to be passed to the OpenMDAO prob.setup() method.
+        """
         # verbosity is not used in this method, but it is understandable that a user
         # might try and include it (only method that doesn't accept it). Capture it
         if 'verbosity' in kwargs:
             kwargs.pop('verbosity')
         # Use OpenMDAO's model options to pass all options through the system hierarchy.
-        setup_model_options(self, self.aviary_inputs, self.meta_data)
 
-        # suppress warnings:
-        # "input variable '...' promoted using '*' was already promoted using 'aircraft:*'
-        # TODO: will need to setup warnings on each AviaryGroup()
+        if self.problem_type == ProblemType.MULTI_MISSION:
+            for name, group in self.aviary_groups_dict.items():
+                setup_model_options(
+                    self, group.aviary_inputs, group.meta_data, prefix=name, group=group
+                )
+                with warnings.catch_warnings():
+                    # group.aviary_inputs is already set
+                    group.meta_data = self.meta_data  # <- meta_data is the same for all groups
+                    # group.phase_info is already set
+        else:
+            setup_model_options(self, self.aviary_inputs, self.meta_data)
+            # suppress warnings:
+            # "input variable '...' promoted using '*' was already promoted using 'aircraft:*'
+            with warnings.catch_warnings():
+                self.model.aviary_inputs = (
+                    self.aviary_inputs
+                )  # <- there is only one aviary_inputs in this case
+                self.model.meta_data = self.meta_data
+                # self.model.phase_info is already set
+
         with warnings.catch_warnings():
-            self.model.options['aviary_options'] = self.aviary_inputs
-            self.model.options['aviary_metadata'] = self.meta_data
-            self.model.options['phase_info'] = self.model.phase_info
-
             warnings.simplefilter('ignore', om.OpenMDAOWarning)
             warnings.simplefilter('ignore', om.PromotionWarning)
 
             super().setup(**kwargs)
+
+        self.set_initial_guesses(verbosity=None)
 
     def set_initial_guesses(self, parent_prob=None, parent_prefix='', verbosity=None):
         """
@@ -618,11 +1119,20 @@ class AviaryProblem(om.Problem):
         else:
             verbosity = self.verbosity  # defaults to BRIEF
 
-        self.model.set_initial_guesses(
-            parent_prob=parent_prob,
-            parent_prefix=parent_prefix,
-            verbosity=verbosity,
-        )
+        if self.problem_type == ProblemType.MULTI_MISSION:
+            for name, group in self.aviary_groups_dict.items():
+                group.set_initial_guesses(
+                    parent_prob=parent_prob,
+                    parent_prefix=parent_prefix,
+                    verbosity=verbosity,
+                )
+
+        else:
+            self.model.set_initial_guesses(
+                parent_prob=parent_prob,
+                parent_prefix=parent_prefix,
+                verbosity=verbosity,
+            )
 
     def run_aviary_problem(
         self,
@@ -680,8 +1190,9 @@ class AviaryProblem(om.Problem):
 
         # Creates a flag to determine if the user would or would not like a payload/range diagram
         payload_range_bool = False
-        if Settings.PAYLOAD_RANGE in self.aviary_inputs:
-            payload_range_bool = self.aviary_inputs.get_val(Settings.PAYLOAD_RANGE)
+        if self.problem_type is not ProblemType.MULTI_MISSION:
+            if Settings.PAYLOAD_RANGE in self.aviary_inputs:
+                payload_range_bool = self.aviary_inputs.get_val(Settings.PAYLOAD_RANGE)
 
         if suppress_solver_print:
             self.set_solver_print(level=0)
@@ -1072,10 +1583,7 @@ class AviaryProblem(om.Problem):
 
         # TODO: All these methods will need to be updated
         prob_alternate.check_and_preprocess_inputs()
-        prob_alternate.add_pre_mission_systems()
-        prob_alternate.add_phases()
-        prob_alternate.add_post_mission_systems()
-        prob_alternate.link_phases()
+        prob_alternate.build_model()
         prob_alternate.add_driver(optimizer, verbosity=verbosity)
         prob_alternate.options = self.options
         prob_alternate.driver.options = self.driver.options
@@ -1083,7 +1591,6 @@ class AviaryProblem(om.Problem):
         prob_alternate.add_design_variables()
         prob_alternate.add_objective()
         prob_alternate.setup()
-        prob_alternate.set_initial_guesses()
         if run_mission:
             prob_alternate.run_aviary_problem()
         return prob_alternate
@@ -1196,10 +1703,7 @@ class AviaryProblem(om.Problem):
         )
 
         prob_fallout.check_and_preprocess_inputs()
-        prob_fallout.add_pre_mission_systems()
-        prob_fallout.add_phases()
-        prob_fallout.add_post_mission_systems()
-        prob_fallout.link_phases()
+        prob_fallout.build_model()
         prob_fallout.add_driver(optimizer, verbosity=verbosity)
         prob_fallout.options = self.options
         prob_fallout.driver.options = self.driver.options
@@ -1207,7 +1711,6 @@ class AviaryProblem(om.Problem):
         prob_fallout.add_design_variables()
         prob_fallout.add_objective()
         prob_fallout.setup()
-        prob_fallout.set_initial_guesses()
         if run_mission:
             prob_fallout.run_aviary_problem()
         return prob_fallout

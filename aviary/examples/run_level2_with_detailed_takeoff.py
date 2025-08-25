@@ -313,17 +313,9 @@ if __name__ == '__main__':
     # Allow for user overrides here
     prob.load_inputs('models/aircraft/test_aircraft/aircraft_for_bench_solved2dof.csv', phase_info)
 
-    # Preprocess inputs
     prob.check_and_preprocess_inputs()
 
-    prob.add_pre_mission_systems()
-
-    prob.add_phases()
-
-    prob.add_post_mission_systems()
-
-    # Link phases and variables
-    prob.link_phases()
+    prob.build_model()
 
     prob.add_driver(optimizer, max_iter=25)
 
@@ -334,8 +326,6 @@ if __name__ == '__main__':
     prob.add_objective('mass')
 
     prob.setup()
-
-    prob.set_initial_guesses()
 
     prob.run_aviary_problem(record_filename='detailed_takeoff.db', suppress_solver_print=True)
 

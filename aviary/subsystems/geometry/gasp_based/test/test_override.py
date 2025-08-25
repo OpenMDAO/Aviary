@@ -29,18 +29,17 @@ class GASPOverrideTestCase(unittest.TestCase):
         core_subsystems = get_default_premission_subsystems('GASP', engines)
         preprocess_propulsion(aviary_inputs, engines)
 
-        self.aviary_inputs = aviary_inputs
-
         prob = om.Problem()
 
-        aviary_options = aviary_inputs
         subsystems = core_subsystems
 
-        prob.model = AviaryGroup(aviary_options=aviary_options, aviary_metadata=BaseMetaData)
+        prob.model = AviaryGroup()
+        prob.model.aviary_inputs = aviary_inputs
+        prob.model.meta_data = BaseMetaData
 
         prob.model.add_subsystem(
             'pre_mission',
-            CorePreMission(aviary_options=aviary_options, subsystems=subsystems),
+            CorePreMission(aviary_options=aviary_inputs, subsystems=subsystems),
             promotes_inputs=['aircraft:*', 'mission:*'],
             promotes_outputs=['aircraft:*', 'mission:*'],
         )
@@ -51,9 +50,9 @@ class GASPOverrideTestCase(unittest.TestCase):
         # Test override: expect the given value
         prob = self.prob
 
-        self.aviary_inputs.set_val(Aircraft.Fuselage.WETTED_AREA, val=4000.0, units='ft**2')
+        prob.model.aviary_inputs.set_val(Aircraft.Fuselage.WETTED_AREA, val=4000.0, units='ft**2')
 
-        setup_model_options(prob, self.aviary_inputs)
+        setup_model_options(prob, prob.model.aviary_inputs, prob.model.meta_data)
 
         with warnings.catch_warnings():
             warnings.simplefilter('ignore', om.PromotionWarning)
@@ -69,7 +68,7 @@ class GASPOverrideTestCase(unittest.TestCase):
 
         # self.aviary_inputs.set_val(Aircraft.Fuselage.WETTED_AREA, val=4000, units="ft**2")
 
-        setup_model_options(prob, self.aviary_inputs)
+        setup_model_options(prob, prob.model.aviary_inputs, prob.model.meta_data)
 
         with warnings.catch_warnings():
             warnings.simplefilter('ignore', om.PromotionWarning)
@@ -84,9 +83,11 @@ class GASPOverrideTestCase(unittest.TestCase):
         prob = self.prob
 
         # self.aviary_inputs.set_val(Aircraft.Fuselage.WETTED_AREA, val=4000, units="ft**2")
-        self.aviary_inputs.set_val(Aircraft.Fuselage.WETTED_AREA_SCALER, val=0.5, units='unitless')
+        prob.model.aviary_inputs.set_val(
+            Aircraft.Fuselage.WETTED_AREA_SCALER, val=0.5, units='unitless'
+        )
 
-        setup_model_options(prob, self.aviary_inputs)
+        setup_model_options(prob, prob.model.aviary_inputs, prob.model.meta_data)
 
         with warnings.catch_warnings():
             warnings.simplefilter('ignore', om.PromotionWarning)
@@ -100,10 +101,12 @@ class GASPOverrideTestCase(unittest.TestCase):
         # Test WETTED_AREA_SCALER: expect no effect
         prob = self.prob
 
-        self.aviary_inputs.set_val(Aircraft.Fuselage.WETTED_AREA, val=4000, units='ft**2')
-        self.aviary_inputs.set_val(Aircraft.Fuselage.WETTED_AREA_SCALER, val=0.5, units='unitless')
+        prob.model.aviary_inputs.set_val(Aircraft.Fuselage.WETTED_AREA, val=4000, units='ft**2')
+        prob.model.aviary_inputs.set_val(
+            Aircraft.Fuselage.WETTED_AREA_SCALER, val=0.5, units='unitless'
+        )
 
-        setup_model_options(prob, self.aviary_inputs)
+        setup_model_options(prob, prob.model.aviary_inputs, prob.model.meta_data)
 
         with warnings.catch_warnings():
             warnings.simplefilter('ignore', om.PromotionWarning)
@@ -120,9 +123,9 @@ class GASPOverrideTestCase(unittest.TestCase):
         """
         prob = self.prob
         prob.model.add_subsystem('geom', AeroGeom(), promotes=['*'])
-        self.aviary_inputs.set_val(Aircraft.HorizontalTail.FORM_FACTOR, val=1.5)
+        prob.model.aviary_inputs.set_val(Aircraft.HorizontalTail.FORM_FACTOR, val=1.5)
 
-        setup_model_options(prob, self.aviary_inputs)
+        setup_model_options(prob, prob.model.aviary_inputs, prob.model.meta_data)
 
         with warnings.catch_warnings():
             warnings.simplefilter('ignore', om.PromotionWarning)
@@ -139,10 +142,10 @@ class GASPOverrideTestCase(unittest.TestCase):
         # Make sure we can override horizontal and veritcal tail geo vars.
         prob = self.prob
 
-        self.aviary_inputs.set_val(Aircraft.HorizontalTail.AREA, val=7777.0, units='ft**2')
-        self.aviary_inputs.set_val(Aircraft.VerticalTail.SPAN, val=8888.0, units='ft')
+        prob.model.aviary_inputs.set_val(Aircraft.HorizontalTail.AREA, val=7777.0, units='ft**2')
+        prob.model.aviary_inputs.set_val(Aircraft.VerticalTail.SPAN, val=8888.0, units='ft')
 
-        setup_model_options(prob, self.aviary_inputs)
+        setup_model_options(prob, prob.model.aviary_inputs, prob.model.meta_data)
 
         with warnings.catch_warnings():
             warnings.simplefilter('ignore', om.PromotionWarning)

@@ -29,7 +29,8 @@ def run_trajectory(sim=True):
     local_phase_info = deepcopy(phase_info)
 
     prob.load_inputs(
-        'models/aircraft/advanced_single_aisle/advanced_single_aisle_FLOPS.csv', local_phase_info
+        'models/aircraft/advanced_single_aisle/advanced_single_aisle_FLOPS.csv',
+        local_phase_info,
     )
 
     ##########################################
@@ -47,10 +48,8 @@ def run_trajectory(sim=True):
     )
 
     prob.check_and_preprocess_inputs()
-    prob.add_pre_mission_systems()
-    prob.add_phases()
-    prob.add_post_mission_systems()
-    prob.link_phases()
+
+    prob.build_model()
     prob.add_driver('SNOPT', max_iter=50, verbosity=1)
 
     ##########################
@@ -70,7 +69,6 @@ def run_trajectory(sim=True):
     # Initial Settings for States and Controls #
     ############################################
     prob.setup()
-    prob.set_initial_guesses()
     prob.run_aviary_problem('dymos_solution.db')
 
     return prob

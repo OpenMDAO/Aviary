@@ -194,17 +194,9 @@ class CustomEngineTest(unittest.TestCase):
             engine_builders=[SimpleTestEngine()],
         )
 
-        # Preprocess inputs
         prob.check_and_preprocess_inputs()
 
-        prob.add_pre_mission_systems()
-
-        prob.add_phases()
-
-        prob.add_post_mission_systems()
-
-        # Link phases and variables
-        prob.link_phases()
+        prob.build_model()
 
         prob.add_driver('SLSQP', verbosity=0)
 
@@ -213,8 +205,6 @@ class CustomEngineTest(unittest.TestCase):
         prob.add_objective('fuel_burned')
 
         prob.setup()
-
-        prob.set_initial_guesses()
 
         prob.final_setup()
 

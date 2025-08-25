@@ -129,8 +129,6 @@ class OptimizeThrottleTestCase(unittest.TestCase):
 
         prob.setup()
 
-        prob.set_initial_guesses()
-
         prob.run_aviary_problem(simulate=False, optimization_history_filename='z.sql')
 
         gross_mass = prob.get_val(Mission.Summary.GROSS_MASS, units='lbm')

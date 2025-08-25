@@ -126,7 +126,6 @@ class TestOffDesign(HeightEnergyTestCase):
         prob_fallout.add_design_variables()
         prob_fallout.add_objective()
         prob_fallout.setup()
-        prob_fallout.set_initial_guesses()
         prob_fallout.run_aviary_problem()
 
         # Alternate Mission
@@ -157,7 +156,6 @@ class TestOffDesign(HeightEnergyTestCase):
         prob_alternate.add_design_variables()
         prob_alternate.add_objective()
         prob_alternate.setup()
-        prob_alternate.set_initial_guesses()
         prob_alternate.run_aviary_problem()
 
         fallout_range = prob_fallout.get_val(av.Mission.Summary.RANGE)
@@ -193,7 +191,6 @@ class TestOffDesign(HeightEnergyTestCase):
         prob_fallout.add_design_variables()
         prob_fallout.add_objective()
         prob_fallout.setup()
-        prob_fallout.set_initial_guesses()
         prob_fallout.run_aviary_problem()
 
         # Alternate Mission
@@ -224,7 +221,6 @@ class TestOffDesign(HeightEnergyTestCase):
         prob_alternate.add_design_variables()
         prob_alternate.add_objective()
         prob_alternate.setup()
-        prob_alternate.set_initial_guesses()
         prob_alternate.run_aviary_problem()
 
         fallout_range = prob_fallout.get_val(av.Mission.Summary.RANGE)
