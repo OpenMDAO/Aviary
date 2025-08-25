@@ -2806,8 +2806,8 @@ add_meta_data(
     meta_data=_MetaData,
     historical_name={'GASP': 'INGASP.FUELD', 'FLOPS': 'WTIN.FULDEN', 'LEAPS1': None},
     units='lbm/galUS',
-    desc='fuel density (jet fuel typical density of 6.7 lbm/galUS used in the calculation of wing_capacity (if '
-    'wing_capacity is not input) and in the calculation of fuel system weight.',
+    desc='fuel density (jet fuel typical density of 6.7 lbm/galUS used in the calculation of wing_capacity'
+    '(if wing_capacity is not input) and in the calculation of fuel system weight.',
     default_value=0.0,
 )
 
@@ -2885,7 +2885,9 @@ add_meta_data(
     meta_data=_MetaData,
     historical_name={'GASP': None, 'FLOPS': 'WTIN.IFUFU', 'LEAPS1': None},
     units='unitless',
-    desc='Flag to control enforcement of fuel_capacity constraint. If False (default) Aviary will add the excess fuel constraint and only converge if there is enough fuel capacity to complete the mission. If set True Aviary will ignore this constraint, and allow mission fuel > total_fuel_capacity. Use Carefully!',
+    desc='Flag to control enforcement of fuel_capacity constraint. '
+    'If False (default) Aviary will add the excess fuel constraint and only converge if there is enough fuel capacity to complete the mission.'
+    'If set True Aviary will ignore this constraint, and allow mission fuel > total_fuel_capacity. Use Carefully!',
     default_value=False,
     types=bool,
 )
@@ -7018,7 +7020,8 @@ add_meta_data(
     meta_data=_MetaData,
     historical_name={'GASP': None, 'FLOPS': None, 'LEAPS1': None},
     units='lbm',
-    desc='Difference between the usable fuel capacity on the aircraft and the total fuel (including reserve) required for the mission. Must be >= 0 to ensure that the aircraft has enough fuel to complete the mission',
+    desc='Difference between the usable fuel capacity on the aircraft and the total fuel (including reserve) required for the mission. '
+    'Must be >= 0 to ensure that the aircraft has enough fuel to complete the mission',
 )
 
 add_meta_data(
