@@ -1508,6 +1508,10 @@ def _load_off_design(
             """prob.aviary_inputs.set_val(Mission.Design.RANGE, mission_range, units='NM')"""
             prob.aviary_inputs.set_val(Mission.Summary.RANGE, mission_range, units='NM')
             phase_info['post_mission']['target_range'] = (mission_range, 'nmi')
+        # set initial guess for Mission.Summary.GROSS_MASS to help optimizer with new design variable bounds.
+        prob.aviary_inputs.set_val(
+            Mission.Summary.GROSS_MASS, mission_gross_mass * 0.9, units='lbm'
+        )
 
     elif problem_type == ProblemType.FALLOUT:
         # Set mission fuel and calculate gross weight, aviary will calculate range

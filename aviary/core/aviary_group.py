@@ -1252,7 +1252,7 @@ class AviaryGroup(om.Group):
                     lower=10.0,
                     upper=MTOW,
                     units='lbm',
-                    ref=175e3,
+                    ref=MTOW,
                 )
 
                 self.add_constraint(Mission.Constraints.RANGE_RESIDUAL, equals=0, ref=10)
