@@ -824,41 +824,22 @@ class AviaryProblem(om.Problem):
                         'Alternate problem type requested with no specified range. Using design '
                         'mission range for the off-design mission.'
                     )
-                design_range = self.get_val(Mission.Summary.RANGE, units='NM')[0]
-                phase_info['post_mission']['target_range'] = (
-                    design_range,
-                    'nmi',
-                )
+                mission_range = self.get_val(Mission.Summary.RANGE, units='NM')[0]
 
-            else:
-                phase_info['post_mission']['target_range'] = (
-                    mission_range,
-                    'nmi',
-                )
+            phase_info['post_mission']['target_range'] = (
+                mission_range,
+                'nmi',
+            )
 
         # reset the AviaryProblem to run the new mission
         off_design_prob.load_inputs(inputs, phase_info, verbosity=verbosity)
 
-        # Configure inputs that are specific to problem type
-        # Some Alternate problem configurations had to be moved to before load_inputs, fallout
-        # problem configuration must come after load_inputs
+        # Update inputs that are specific to problem type
+        # Some Alternate problem changes had to happen before load_inputs, all fallout problem
+        # changes must come after load_inputs
         if problem_type is ProblemType.ALTERNATE:
-            # Set mission range, aviary will calculate required fuel
-            if mission_range is None:
-                if verbosity >= Verbosity.VERBOSE:
-                    warnings.warn(
-                        'Alternate problem type requested with no specified range. Using design '
-                        'mission range for the off-design mission.'
-                    )
-                mission_range = self.get_val(Mission.Summary.RANGE, units='NM')[0]
-                off_design_prob.aviary_inputs.set_val(
-                    Mission.Summary.RANGE, mission_range, units='NM'
-                )
+            off_design_prob.aviary_inputs.set_val(Mission.Summary.RANGE, mission_range, units='NM')
 
-            else:
-                off_design_prob.aviary_inputs.set_val(
-                    Mission.Summary.RANGE, mission_range, units='NM'
-                )
         elif problem_type is ProblemType.FALLOUT:
             # Set mission fuel and calculate gross weight, aviary will calculate range
             if mission_gross_mass is None:
@@ -867,15 +848,11 @@ class AviaryProblem(om.Problem):
                         'Fallout problem type requested with no specified gross mass. Using design '
                         'takeoff gross mass for the off-design mission.'
                     )
-                off_design_prob.aviary_inputs.set_val(
-                    Mission.Summary.GROSS_MASS,
-                    self.get_val(Mission.Design.GROSS_MASS, units='lbm')[0],
-                    units='lbm',
-                )
-            else:
-                off_design_prob.aviary_inputs.set_val(
-                    Mission.Summary.GROSS_MASS, mission_gross_mass, units='lbm'
-                )
+                mission_gross_mass = self.get_val(Mission.Design.GROSS_MASS, units='lbm')[0]
+
+            off_design_prob.aviary_inputs.set_val(
+                Mission.Summary.GROSS_MASS, mission_gross_mass, units='lbm'
+            )
 
         off_design_prob.check_and_preprocess_inputs(verbosity=verbosity)
         off_design_prob.add_pre_mission_systems(verbosity=verbosity)
@@ -1013,7 +990,7 @@ class AviaryProblem(om.Problem):
                 )
 
                 range_3 = float(economic_range_prob.get_val(Mission.Summary.RANGE))
-                fuel_3 = self.get_val(Mission.Summary.FUEL_BURNED)[0]
+                fuel_3 = economic_range_prob.get_val(Mission.Summary.FUEL_BURNED)[0]
 
                 prob_3_skip = False
             else:
@@ -1022,7 +999,7 @@ class AviaryProblem(om.Problem):
                 fuel_capacity = gross_mass - operating_mass
 
             # Point 4 (Ferry Range): maximum fuel and 0 payload
-            ferry_range_payload = operating_mass + fuel_capacity
+            ferry_range_gross_mass = operating_mass + fuel_capacity
             # BUG 0 passengers breaks the problem, so 1 must be used
             ferry_range_prob = self.run_off_design_mission(
                 problem_type=ProblemType.FALLOUT,
@@ -1033,13 +1010,13 @@ class AviaryProblem(om.Problem):
                 wing_cargo=0,
                 misc_cargo=0,
                 cargo_mass=0,
-                mission_gross_mass=ferry_range_payload,
+                mission_gross_mass=ferry_range_gross_mass,
                 verbosity=verbosity,
             )
 
             payload_4 = float(ferry_range_prob.get_val(Aircraft.CrewPayload.TOTAL_PAYLOAD_MASS))
             range_4 = float(ferry_range_prob.get_val(Mission.Summary.RANGE))
-            fuel_4 = self.get_val(Mission.Summary.FUEL_BURNED)[0]
+            fuel_4 = ferry_range_prob.get_val(Mission.Summary.FUEL_BURNED)[0]
 
             # if economic mission was skipped, economic_range_prob is the same as ferry_range_prob
             if prob_3_skip:
