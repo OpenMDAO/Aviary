@@ -430,7 +430,7 @@ class BWBCabinLayout(om.ExplicitComponent):
         FC_aisle_width = 24.0  # WAS_FC: First class aisle width, inch
         length_FC_to_TC = 5.0  # Length of first class/tourist class aisle, ft
         TC_num_pax_per_lav = 78  # NLAVTC: tourist class passengers per lav
-        TC_lav_width = 42.0  # WIDLAV: Lav width, inches
+        TC_lav_width = 42.0  # WIDLAV: Lav width, inches, in FLOPS, WIDTHL
         TC_galley_area_per_pax = 0.15  # AGAL_TC: tourist class galley area per passenger, ft**2
         # If there is no first class cabin, please set NUM_FIRST_CLASS = 0.
 
