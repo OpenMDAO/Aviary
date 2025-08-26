@@ -231,23 +231,23 @@ def mission_report(prob, **kwargs):
             final_time = _get_phase_value(model, 'traj', phase, 't', 'min', -1)
             final_range = _get_phase_value(model, 'traj', phase, 'distance', 'nmi', -1)[0]
 
-    totals = NamedValues()
-    totals.set_val('Total Fuel Burn', initial_mass - final_mass, 'lbm')
-    totals.set_val(
-        'Total Fuel Capacity',
-        prob.get_val('aircraft:fuel:total_capacity', units='lbm')[0],
-        units='lbm',
-    )
-    totals.set_val(
-        'Excess Fuel Capacity',
-        prob.get_val('mission:constraints:excess_fuel_capacity', units='lbm')[0],
-        units='lbm',
-    )
-    totals.set_val('Total Time', final_time - initial_time, 'min')
-    totals.set_val('Total Ground Distance', final_range - initial_range, 'nmi')
+            totals = NamedValues()
+            totals.set_val('Total Fuel Burn', initial_mass - final_mass, 'lbm')
+            totals.set_val(
+                'Total Fuel Capacity',
+                prob.get_val(f'{name}.aircraft:fuel:total_capacity', units='lbm')[0],
+                units='lbm',
+            )
+            totals.set_val(
+                'Excess Fuel Capacity',
+                prob.get_val(f'{name}.mission:constraints:excess_fuel_capacity', units='lbm')[0],
+                units='lbm',
+            )
+            totals.set_val('Total Time', final_time - initial_time, 'min')
+            totals.set_val('Total Ground Distance', final_range - initial_range, 'nmi')
 
-    all_data[name] = data
-    all_totals[name] = totals
+        all_data[name] = data
+        all_totals[name] = totals
 
     if MPI and prob.comm.rank != 0:
         # All collective calls are completed. We only output on rank 0.
