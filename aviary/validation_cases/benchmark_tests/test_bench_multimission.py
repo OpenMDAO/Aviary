@@ -15,7 +15,7 @@ class MultiMissionTestcase(unittest.TestCase):
         om.clear_reports()
         _clear_problem_names()  # need to reset these to simulate separate runs
 
-    @require_pyoptsparse(optimizer='SNOPT')
+    @require_pyoptsparse(optimizer='IPOPT')
     def test_multimission(self):
         prob = multi_mission_example()
 
