@@ -12,6 +12,8 @@ aircraft:controls:stability_augmentation_system_mass_scaler,1,unitless
 aircraft:crew_and_payload:catering_items_mass_per_passenger,10.0,lbm
 aircraft:crew_and_payload:design:max_cargo_mass,15970.0,lbm
 aircraft:crew_and_payload:design:num_passengers,154.0,unitless
+aircraft:crew_and_payload:design:num_seats_abreast_tourist,6.0,unitless
+aircraft:crew_and_payload:design:seat_pitch_tourist,44.2,inch
 aircraft:crew_and_payload:passenger_mass_with_bags,200.0,lbm
 aircraft:crew_and_payload:passenger_service_mass_per_passenger,5.0,lbm
 aircraft:crew_and_payload:water_mass_per_occupant,3.0,lbm
@@ -57,10 +59,8 @@ aircraft:fuselage:length,0,ft
 aircraft:fuselage:mass_coefficient,102.82,unitless
 aircraft:fuselage:nose_fineness,1.0,unitless
 aircraft:fuselage:num_aisles,1.0,unitless
-aircraft:fuselage:num_seats_abreast_tourist,6.0,unitless
 aircraft:fuselage:pilot_compartment_length,6.85,ft
 aircraft:fuselage:pressure_differential,7.5,psi
-aircraft:fuselage:seat_pitch_tourist,44.2,inch
 aircraft:fuselage:seat_width,20.2,inch
 aircraft:fuselage:tail_fineness,1.18,unitless
 aircraft:fuselage:wetted_area_scaler,1.0,unitless

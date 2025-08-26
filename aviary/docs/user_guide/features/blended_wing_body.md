@@ -43,7 +43,7 @@ Aviary will try to fit the seats in both first class and tourist class based on 
 | Aircraft.Fuselage.SEAT_WIDTH | inch |
 | Aircraft.Fuselage.NUM_AISLES | unitless |
 | Aircraft.Fuselage.AISLE_WIDTH | inch |
-| Aircraft.Fuselage.SEAT_PITCH_TOURIST | inch |
+| Aircraft.CrewPayload.Design.SEAT_PITCH_TOURIST | inch |
 | Aircraft.CrewPayload.Design.NUM_PASSENGERS | unitless |
 | Aircraft.CrewPayload.Design.NUM_FIRST_CLASS | unitless |
 | Aircraft.BWB.FOREBODY_SWEEP | deg |

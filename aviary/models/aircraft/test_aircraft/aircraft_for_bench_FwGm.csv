@@ -2,6 +2,8 @@ aircraft:controls:cockpit_control_mass_scaler,1,unitless
 aircraft:controls:control_mass_increment,0,lbm
 aircraft:controls:stability_augmentation_system_mass,0,lbm
 aircraft:controls:stability_augmentation_system_mass_scaler,1,unitless
+aircraft:crew_and_payload:design:num_seats_abreast_tourist,6,unitless
+aircraft:crew_and_payload:design:seat_pitch_tourist,29,inch
 aircraft:crew_and_payload:passenger_mass_with_bags,200,lbm
 aircraft:design:cg_delta,0.25,unitless
 aircraft:design:cockpit_control_mass_coefficient,16.5,unitless
@@ -55,10 +57,8 @@ aircraft:fuselage:form_factor,1.25,unitless
 aircraft:fuselage:mass_coefficient,128,unitless
 aircraft:fuselage:nose_fineness,1,unitless
 aircraft:fuselage:num_aisles,1,unitless
-aircraft:fuselage:num_seats_abreast_tourist,6,unitless
 aircraft:fuselage:pilot_compartment_length,9.5,ft
 aircraft:fuselage:pressure_differential,7.5,psi
-aircraft:fuselage:seat_pitch_tourist,29,inch
 aircraft:fuselage:seat_width,20.2,inch
 aircraft:fuselage:tail_fineness,3,unitless
 aircraft:fuselage:wetted_area,4000,ft**2

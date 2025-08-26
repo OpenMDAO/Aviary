@@ -58,11 +58,13 @@ V3_bug_fixed_options.set_val(
     Aircraft.HorizontalTail.VOLUME_COEFFICIENT, val=1.189, units='unitless'
 )
 V3_bug_fixed_options.set_val(Aircraft.VerticalTail.VOLUME_COEFFICIENT, 0.145, units='unitless')
-V3_bug_fixed_options.set_val(Aircraft.Fuselage.NUM_SEATS_ABREAST_TOURIST, 6, units='unitless')
 V3_bug_fixed_options.set_val(Aircraft.Fuselage.SEAT_WIDTH, 20.2, units='inch')
 V3_bug_fixed_options.set_val(Aircraft.Fuselage.NUM_AISLES, 1, units='unitless')
 V3_bug_fixed_options.set_val(Aircraft.Fuselage.AISLE_WIDTH, 24, units='inch')
-V3_bug_fixed_options.set_val(Aircraft.Fuselage.SEAT_PITCH_TOURIST, 29, units='inch')
+V3_bug_fixed_options.set_val(
+    Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_TOURIST, 6, units='unitless'
+)
+V3_bug_fixed_options.set_val(Aircraft.CrewPayload.Design.SEAT_PITCH_TOURIST, 29, units='inch')
 V3_bug_fixed_options.set_val(Aircraft.Fuselage.DELTA_DIAMETER, 4.5, units='ft')
 V3_bug_fixed_options.set_val(Aircraft.Fuselage.PILOT_COMPARTMENT_LENGTH, 9.5, units='ft')
 V3_bug_fixed_options.set_val(Aircraft.Fuselage.NOSE_FINENESS, 1, units='unitless')
