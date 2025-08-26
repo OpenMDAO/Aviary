@@ -20,14 +20,12 @@ from aviary.subsystems.mass.mass_builder import CoreMassBuilder
 from aviary.subsystems.premission import CorePreMission
 from aviary.subsystems.propulsion.propulsion_builder import CorePropulsionBuilder
 from aviary.subsystems.performance.performance_builder import CorePerformanceBuilder
-from aviary.utils.aviary_values import AviaryValues
 from aviary.utils.functions import get_path
 from aviary.utils.preprocessors import preprocess_options
 from aviary.utils.process_input_decks import create_vehicle, update_GASP_options
 from aviary.utils.utils import wrapped_convert_units
 from aviary.variable_info.enums import EquationsOfMotion, LegacyCode, ProblemType, Verbosity
 from aviary.variable_info.functions import setup_trajectory_params
-from aviary.variable_info.variable_meta_data import _MetaData as BaseMetaData
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission, Settings
 
 TWO_DEGREES_OF_FREEDOM = EquationsOfMotion.TWO_DEGREES_OF_FREEDOM
@@ -61,23 +59,14 @@ class AviaryGroup(om.Group):
         self.regular_phases = []
         self.reserve_phases = []
 
-    def initialize(self):
-        """Declare options."""
-        self.options.declare(
-            'aviary_options',
-            types=AviaryValues,
-            desc='collection of Aircraft/Mission specific options',
-        )
-        self.options.declare(
-            'aviary_metadata', types=dict, desc='metadata dictionary of the full aviary problem.'
-        )
-        self.options.declare('phase_info', types=dict, desc='phase-specific settings.')
-        self.builder = []
+        self.aviary_inputs = None
+        self.meta_data = None
+        self.phase_info = None
 
     def configure(self):
         """Configure the Aviary group."""
-        aviary_options = self.options['aviary_options']
-        aviary_metadata = self.options['aviary_metadata']
+        aviary_options = self.aviary_inputs
+        aviary_metadata = self.meta_data
 
         # Find promoted name of every input in the model.
         all_prom_inputs = []
@@ -129,8 +118,6 @@ class AviaryGroup(om.Group):
 
         # Temporarily add extra stuff here, probably patched soon
         if mission_method is HEIGHT_ENERGY:
-            phase_info = self.options['phase_info']
-
             # Set a more appropriate solver for dymos when the phases are linked.
             if MPI and isinstance(self.traj.phases.linear_solver, om.PETScKrylov):
                 # When any phase is connected with input_initial = True, dymos puts
@@ -153,7 +140,7 @@ class AviaryGroup(om.Group):
             # TODO: Future updates to dymos may make this unnecessary.
             for phase in self.traj.phases.system_iter(recurse=False):
                 # Don't move the solvers if we are using solve segments.
-                if phase_info[phase.name]['user_options'].get('distance_solve_segments'):
+                if self.phase_info[phase.name]['user_options'].get('distance_solve_segments'):
                     continue
 
                 phase.nonlinear_solver = om.NonlinearRunOnce()
@@ -168,7 +155,6 @@ class AviaryGroup(om.Group):
         phase_info=None,
         engine_builders=None,
         problem_configurator=None,
-        meta_data=BaseMetaData,
         verbosity=None,
     ):
         """
@@ -185,7 +171,7 @@ class AviaryGroup(om.Group):
         # Create AviaryValues object from file (or process existing AviaryValues object
         # with default values from metadata) and generate initial guesses
         aviary_inputs, self.initialization_guesses = create_vehicle(
-            aircraft_data, meta_data=meta_data, verbosity=verbosity
+            aircraft_data, meta_data=self.meta_data, verbosity=verbosity
         )
 
         # Update default verbosity now that we have read the input data, if a global verbosity
@@ -274,8 +260,6 @@ class AviaryGroup(om.Group):
             self.post_mission_info = phase_info['post_mission']
         else:
             self.post_mission_info = {}
-
-        self.problem_type = aviary_inputs.get_val(Settings.PROBLEM_TYPE)
 
         self.configurator.initial_guesses(self)
         # This function sets all the following defaults if they were not already set
@@ -451,6 +435,7 @@ class AviaryGroup(om.Group):
         # Check to ensure no non-reserve phases are specified after reserve phases
         start_reserve = False
         raise_error = False
+        self.regular_phases = []
         for idx, phase_name in enumerate(self.phase_info):
             if 'user_options' in self.phase_info[phase_name]:
                 if 'reserve' in self.phase_info[phase_name]['user_options']:
@@ -778,6 +763,25 @@ class AviaryGroup(om.Group):
             promotes_outputs=['*'],
         )
 
+        # Make dymos state outputs easy to access later
+        self.add_subsystem(
+            'state_output',
+            om.ExecComp(
+                ['mass_final = mass_in', 'time_final = time_in', 'range_final = range_in'],
+                mass_in={'units': 'lbm'},
+                mass_final={'units': 'lbm'},
+                time_in={'units': 'min'},
+                time_final={'units': 'min'},
+                range_in={'units': 'nmi'},
+                range_final={'units': 'nmi'},
+            ),
+            promotes_outputs={
+                ('mass_final', Mission.Summary.FINAL_MASS),
+                ('time_final', Mission.Summary.FINAL_TIME),
+                ('range_final', Mission.Summary.RANGE),
+            },
+        )
+
         self.configurator.add_post_mission_systems(self)
 
         # Add all post-mission external subsystems.
@@ -804,7 +808,7 @@ class AviaryGroup(om.Group):
 
         # Fuel burn in regular phases
         ecomp = om.ExecComp(
-            'fuel_burned = initial_mass - mass_final',
+            'fuel_burned = initial_mass - mass_final',  # TODO: Fix to be difference in cumulative fuel burn
             initial_mass={'units': 'lbm'},
             mass_final={'units': 'lbm'},
             fuel_burned={'units': 'lbm'},
@@ -839,7 +843,7 @@ class AviaryGroup(om.Group):
         # Fuel burn in reserve phases
         if self.reserve_phases:
             ecomp = om.ExecComp(
-                'reserve_fuel_burned = initial_mass - mass_final',
+                'reserve_fuel_burned = initial_mass - mass_final',  # TODO: Fix to be different in cumulative fuel burn
                 initial_mass={'units': 'lbm'},
                 mass_final={'units': 'lbm'},
                 reserve_fuel_burned={'units': 'lbm'},
@@ -995,6 +999,26 @@ class AviaryGroup(om.Group):
             verbosity = self.verbosity  # defaults to BRIEF
 
         self._add_bus_variables_and_connect()
+        self._connect_mission_bus_variables()
+
+        final_phase = self.regular_phases[-1]
+
+        # We connect the last points in the trajectory to the state_output component to make it
+        # easier for users to access Mission.Summary.FINAL_MASS, Mission.Summary.FINAL_TIME,
+        # and Mission.Summary.RANGE.
+        self.connect(
+            f'traj.{final_phase}.states:mass',
+            'state_output.mass_in',
+            src_indices=[-1],
+        )
+        self.connect(
+            f'traj.{final_phase}.timeseries.distance',
+            'state_output.range_in',
+            src_indices=[-1],
+        )
+        self.connect(
+            f'traj.{final_phase}.timeseries.time', 'state_output.time_in', src_indices=[-1]
+        )
 
         phases = list(self.phase_info.keys())
 
@@ -1037,8 +1061,6 @@ class AviaryGroup(om.Group):
                 self.traj.link_phases(phases=phases_to_link, vars=[var], connected=True)
 
         self.configurator.link_phases(self, phases, connect_directly=true_unless_mpi)
-
-        self._connect_mission_bus_variables()
 
         self.configurator.check_trajectory(self)
 
@@ -1138,7 +1160,7 @@ class AviaryGroup(om.Group):
                         src_name = f'traj.{phase_name}.mission_bus_variables.{mvn_basename}'
                         self.connect(src_name, post_mission_var_name)
 
-    def add_design_variables(self, verbosity=None):
+    def add_design_variables(self, problem_type: ProblemType = None, verbosity=None):
         """
         Adds design variables to the Aviary problem.
 
@@ -1193,7 +1215,7 @@ class AviaryGroup(om.Group):
             for dv_name, dv_dict in dv_dict.items():
                 self.add_design_var(dv_name, **dv_dict)
 
-        if self.mission_method is SOLVED_2DOF:
+        if self.mission_method is SOLVED_2DOF:  # TODO: to be removed soon
             optimize_mass = self.pre_mission_info.get('optimize_mass')
             if optimize_mass:
                 self.add_design_var(
@@ -1204,11 +1226,14 @@ class AviaryGroup(om.Group):
                     ref=175.0e3,
                 )
 
-        elif self.mission_method in (HEIGHT_ENERGY, TWO_DEGREES_OF_FREEDOM):
+        elif self.mission_method in (
+            HEIGHT_ENERGY,
+            TWO_DEGREES_OF_FREEDOM,
+        ):  # TODO: This becomes generic as soon as SOLVED_2DOF is removed
             # vehicle sizing problem
             # size the vehicle (via design GTOW) to meet a target range using all fuel
             # capacity
-            if self.problem_type is ProblemType.SIZING:
+            if problem_type is ProblemType.SIZING:
                 self.add_design_var(
                     Mission.Design.GROSS_MASS,
                     lower=10.0,
@@ -1244,7 +1269,7 @@ class AviaryGroup(om.Group):
             # target range problem
             # fixed vehicle (design GTOW) but variable actual GTOW for off-design
             # mission range
-            elif self.problem_type is ProblemType.ALTERNATE:
+            elif problem_type is ProblemType.ALTERNATE:
                 self.add_design_var(
                     Mission.Summary.GROSS_MASS,
                     lower=10.0,
@@ -1255,10 +1280,10 @@ class AviaryGroup(om.Group):
 
                 self.add_constraint(Mission.Constraints.RANGE_RESIDUAL, equals=0, ref=10)
 
-            elif self.problem_type is ProblemType.FALLOUT:
+            elif problem_type is ProblemType.FALLOUT:
                 print('No design variables for Fallout missions')
 
-            elif self.problem_type is ProblemType.MULTI_MISSION:
+            elif problem_type is ProblemType.MULTI_MISSION:
                 self.add_design_var(
                     Mission.Summary.GROSS_MASS,
                     lower=10.0,
@@ -1267,6 +1292,9 @@ class AviaryGroup(om.Group):
                     ref=175e3,
                 )
 
+                # TODO: RANGE_RESIDUAL constraint should be added based on what the
+                # user sets as the objective. if Objective is not range or Mission.Summary.Range,
+                # the range constriant should be added to make target rage = summary range
                 self.add_constraint(Mission.Constraints.RANGE_RESIDUAL, equals=0, ref=10)
 
                 # We must ensure that design.gross_mass is greater than
@@ -1292,6 +1320,7 @@ class AviaryGroup(om.Group):
                 self.add_constraint('gross_mass_resid', lower=0)
 
             if self.mission_method is TWO_DEGREES_OF_FREEDOM:
+                # TODO: This should be moved into the problem configurator b/c it's 2DOF specific
                 # problem formulation to make the trajectory work
                 self.add_design_var(Mission.Takeoff.ASCENT_T_INITIAL, lower=0, upper=100, ref=30.0)
                 self.add_design_var(Mission.Takeoff.ASCENT_DURATION, lower=1, upper=1000, ref=10.0)
@@ -1313,6 +1342,9 @@ class AviaryGroup(om.Group):
         controls according to the information available in the 'initial_guesses' attribute of the
         phase.
         """
+        # any mission that does not have any dymos phases, there is nothing to set.
+        if not hasattr(self, 'traj'):
+            return
         # `self.verbosity` is "true" verbosity for entire run. `verbosity` is verbosity
         # override for just this method
         if verbosity is not None:

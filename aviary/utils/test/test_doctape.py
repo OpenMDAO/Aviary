@@ -16,6 +16,8 @@ from aviary.utils.doctape import (
     get_previous_line,
     get_value,
     get_variable_name,
+    glue_class_functions,
+    glue_class_options,
     glue_keys,
     glue_variable,
     gramatical_list,
@@ -83,6 +85,26 @@ class DocTAPETests(unittest.TestCase):
     # requires IPython shell
     def test_glue_keys(self):
         glue_keys({'d1': {'d2': 2}}, display=False)
+
+    def test_glue_class_functions(self):
+        from aviary.interface.methods_for_level2 import AviaryProblem
+
+        curr_glued = []
+        glue_class_functions(AviaryProblem, curr_glued, prefix='zz')
+
+        self.assertTrue('load_inputs' in curr_glued)
+        self.assertTrue('load_inputs()' in curr_glued)
+        self.assertTrue('zz.load_inputs' in curr_glued)
+        self.assertTrue('zz.load_inputs()' in curr_glued)
+
+    def test_glue_class_options_attributes(self):
+        from aviary.core.aviary_group import AviaryGroup
+
+        curr_glued = []
+        glue_class_options(AviaryGroup, curr_glued)
+
+        self.assertTrue('auto_order' in curr_glued)
+        self.assertTrue('phase_info' in curr_glued)
 
     def test_get_all_non_aviary_names(self):
         from aviary.subsystems.aerodynamics.gasp_based.gaspaero import UFac
