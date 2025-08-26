@@ -3599,17 +3599,6 @@ add_meta_data(
 )
 
 add_meta_data(
-    Aircraft.Fuselage.NUM_SEATS_ABREAST,
-    meta_data=_MetaData,
-    historical_name={'GASP': 'INGASP.SAB', 'FLOPS': None, 'LEAPS1': None},
-    units='unitless',
-    desc='seats abreast in fuselage',
-    types=int,
-    option=True,
-    default_value=5,
-)
-
-add_meta_data(
     Aircraft.Fuselage.NUM_SEATS_ABREAST_BUSINESS,
     meta_data=_MetaData,
     historical_name={'GASP': None, 'FLOPS': 'FUSEIN.NBABR', 'LEAPS1': None},
@@ -3634,7 +3623,7 @@ add_meta_data(
 add_meta_data(
     Aircraft.Fuselage.NUM_SEATS_ABREAST_TOURIST,
     meta_data=_MetaData,
-    historical_name={'GASP': None, 'FLOPS': 'FUSEIN.NTABR', 'LEAPS1': None},
+    historical_name={'GASP': 'INGASP.SAB', 'FLOPS': 'FUSEIN.NTABR', 'LEAPS1': None},
     units='unitless',
     desc='Number of tourist class passengers abreast',
     types=int,
@@ -3699,16 +3688,6 @@ add_meta_data(
 )
 
 add_meta_data(
-    Aircraft.Fuselage.SEAT_PITCH,
-    meta_data=_MetaData,
-    historical_name={'GASP': 'INGASP.PS', 'FLOPS': None, 'LEAPS1': None},
-    units='inch',
-    desc='pitch of the economy class seats',
-    option=True,
-    default_value=0.0,
-)
-
-add_meta_data(
     Aircraft.Fuselage.SEAT_PITCH_BUSINESS,
     meta_data=_MetaData,
     historical_name={'GASP': None, 'FLOPS': 'FUSEIN.BPITCH', 'LEAPS1': None},
@@ -3731,7 +3710,7 @@ add_meta_data(
 add_meta_data(
     Aircraft.Fuselage.SEAT_PITCH_TOURIST,
     meta_data=_MetaData,
-    historical_name={'GASP': None, 'FLOPS': 'FUSEIN.TPITCH', 'LEAPS1': None},
+    historical_name={'GASP': 'INGASP.PS', 'FLOPS': 'FUSEIN.TPITCH', 'LEAPS1': None},
     units='inch',
     desc='pitch of the tourist class seats',
     option=True,

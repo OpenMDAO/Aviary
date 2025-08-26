@@ -88,10 +88,10 @@ aircraft:fuselage:form_factor, 1.25, unitless
 aircraft:fuselage:mass_coefficient, 145.87, unitless
 aircraft:fuselage:nose_fineness, 1, unitless
 aircraft:fuselage:num_aisles, 1, unitless
-aircraft:fuselage:num_seats_abreast, 6, unitless
+aircraft:fuselage:num_seats_abreast_tourist, 6, unitless
 aircraft:fuselage:pilot_compartment_length, 10.6, ft
 aircraft:fuselage:pressure_differential, 6.55, psi
-aircraft:fuselage:seat_pitch, 41.24, inch
+aircraft:fuselage:seat_pitch_tourist, 41.24, inch
 aircraft:fuselage:seat_width, 18, inch
 aircraft:fuselage:tail_fineness, 2.9, unitless
 aircraft:fuselage:wetted_area_scaler, 1, unitless
