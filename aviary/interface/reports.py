@@ -12,6 +12,7 @@ from openmdao.utils.reports_system import register_report
 from aviary.interface.utils import write_markdown_variable_table
 from aviary.utils.named_values import NamedValues
 from aviary.utils.utils import wrapped_convert_units
+from aviary.variable_info.enums import ProblemType
 
 
 def register_custom_reports():
@@ -79,7 +80,7 @@ def run_status(prob):
     prob : AviaryProblem
         The AviaryProblem used to generate this report
     """
-    if MPI and MPI.COMM_WORLD.rank != 0:
+    if MPI and prob.comm.rank != 0:
         return
 
     reports_folder = Path(prob.get_reports_dir())
@@ -124,8 +125,18 @@ def subsystem_report(prob, **kwargs):
     reports_folder = Path(prob.get_reports_dir() / 'subsystems')
     reports_folder.mkdir(exist_ok=True)
 
+    multi_mission = prob.problem_type == ProblemType.MULTI_MISSION
+    if multi_mission:
+        for _, model in prob.aviary_groups_dict.items():
+            # TODO: We need to rewrite the reports to support multimission.
+            # For now, we are just running the reports on the first mission.
+            break
+        prob = model
+    else:
+        model = prob.model
+
     # TODO external subsystems??
-    core_subsystems = prob.model.core_subsystems  # TODO: redo for multimissions
+    core_subsystems = model.core_subsystems  # TODO: redo for multimissions
 
     for subsystem in core_subsystems.values():
         subsystem.report(prob, reports_folder, **kwargs)
@@ -141,9 +152,9 @@ def mission_report(prob, **kwargs):
         The AviaryProblem used to generate this report
     """
 
-    def _get_phase_value(traj, phase, var_name, units, indices=None):
+    def _get_phase_value(model, traj, phase, var_name, units, indices=None):
         try:
-            vals = prob.get_val(
+            vals = model.get_val(
                 f'{traj}.{phase}.timeseries.{var_name}',
                 units=units,
                 indices=indices,
@@ -151,7 +162,7 @@ def mission_report(prob, **kwargs):
             )
         except KeyError:
             try:
-                vals = prob.get_val(
+                vals = model.get_val(
                     f'{traj}.{phase}.{var_name}',
                     units=units,
                     indices=indices,
@@ -159,7 +170,7 @@ def mission_report(prob, **kwargs):
                 )
             # 2DOF breguet range cruise uses time integration to track mass
             except TypeError:
-                vals = prob.get_val(
+                vals = model.get_val(
                     f'{traj}.{phase}.timeseries.time',
                     units=units,
                     indices=indices,
@@ -170,8 +181,8 @@ def mission_report(prob, **kwargs):
 
         return vals
 
-    def _get_phase_diff(traj, phase, var_name, units, indices=[0, -1]):
-        vals = _get_phase_value(traj, phase, var_name, units, indices)
+    def _get_phase_diff(model, traj, phase, var_name, units, indices=[0, -1]):
+        vals = _get_phase_value(model, traj, phase, var_name, units, indices)
 
         if vals is not None:
             diff = vals[-1] - vals[0]
@@ -184,32 +195,41 @@ def mission_report(prob, **kwargs):
     reports_folder = Path(prob.get_reports_dir())
     report_file = reports_folder / 'mission_summary.md'
 
-    # read per-phase data from trajectory
-    data = {}
-    for idx, phase in enumerate(prob.model.phase_info):  # TODO: redo for multimissions
-        # TODO for traj in trajectories, currently assuming single one named "traj"
-        # TODO delta mass and fuel consumption need to be tracked separately
-        fuel_burn = _get_phase_diff('traj', phase, 'mass', 'lbm', [-1, 0])
-        time = _get_phase_diff('traj', phase, 't', 'min')
-        range = _get_phase_diff('traj', phase, 'distance', 'nmi')
+    multi_mission = prob.problem_type == ProblemType.MULTI_MISSION
+    if multi_mission:
+        models = prob.aviary_groups_dict
+    else:
+        models = {prob._name: prob.model}
 
-        # get initial values, first in traj
-        if idx == 0:
-            initial_mass = _get_phase_value('traj', phase, 'mass', 'lbm', 0)[0]
-            initial_time = _get_phase_value('traj', phase, 't', 'min', 0)
-            initial_range = _get_phase_value('traj', phase, 'distance', 'nmi', 0)[0]
+    all_data = {}
+    all_totals = {}
+    for name, model in models.items():
+        # read per-phase data from trajectory
+        data = {}
+        for idx, phase in enumerate(model.phase_info):  # TODO: redo for multimissions
+            # TODO for traj in trajectories, currently assuming single one named "traj"
+            # TODO delta mass and fuel consumption need to be tracked separately
+            fuel_burn = _get_phase_diff(model, 'traj', phase, 'mass', 'lbm', [-1, 0])
+            time = _get_phase_diff(model, 'traj', phase, 't', 'min')
+            range = _get_phase_diff(model, 'traj', phase, 'distance', 'nmi')
 
-        outputs = NamedValues()
-        # Fuel burn is negative of delta mass
-        outputs.set_val('Fuel Burn', fuel_burn, 'lbm')
-        outputs.set_val('Elapsed Time', time, 'min')
-        outputs.set_val('Ground Distance', range, 'nmi')
-        data[phase] = outputs
+            # get initial values, first in traj
+            if idx == 0:
+                initial_mass = _get_phase_value(model, 'traj', phase, 'mass', 'lbm', 0)[0]
+                initial_time = _get_phase_value(model, 'traj', phase, 't', 'min', 0)
+                initial_range = _get_phase_value(model, 'traj', phase, 'distance', 'nmi', 0)[0]
 
-        # get final values, last in traj
-        final_mass = _get_phase_value('traj', phase, 'mass', 'lbm', -1)[0]
-        final_time = _get_phase_value('traj', phase, 't', 'min', -1)
-        final_range = _get_phase_value('traj', phase, 'distance', 'nmi', -1)[0]
+            outputs = NamedValues()
+            # Fuel burn is negative of delta mass
+            outputs.set_val('Fuel Burn', fuel_burn, 'lbm')
+            outputs.set_val('Elapsed Time', time, 'min')
+            outputs.set_val('Ground Distance', range, 'nmi')
+            data[phase] = outputs
+
+            # get final values, last in traj
+            final_mass = _get_phase_value(model, 'traj', phase, 'mass', 'lbm', -1)[0]
+            final_time = _get_phase_value(model, 'traj', phase, 't', 'min', -1)
+            final_range = _get_phase_value(model, 'traj', phase, 'distance', 'nmi', -1)[0]
 
     totals = NamedValues()
     totals.set_val('Total Fuel Burn', initial_mass - final_mass, 'lbm')
@@ -226,43 +246,54 @@ def mission_report(prob, **kwargs):
     totals.set_val('Total Time', final_time - initial_time, 'min')
     totals.set_val('Total Ground Distance', final_range - initial_range, 'nmi')
 
-    if MPI and MPI.COMM_WORLD.rank != 0:
+    all_data[name] = data
+    all_totals[name] = totals
+
+    if MPI and prob.comm.rank != 0:
+        # All collective calls are completed. We only output on rank 0.
         return
 
     with open(report_file, mode='w') as f:
-        f.write('# MISSION SUMMARY')
-        write_markdown_variable_table(
-            f,
-            totals,
-            [
-                'Total Fuel Burn',
-                'Total Fuel Capacity',
-                'Excess Fuel Capacity',
-                'Total Time',
-                'Total Ground Distance',
-            ],
-            {
-                'Total Fuel Burn': {'units': 'lbm'},
-                'Total Fuel Capacity': {'units': 'lbm'},
-                'Excess Fuel Capacity': {'units': 'lbm'},
-                'Total Time': {'units': 'min'},
-                'Total Ground Distance': {'units': 'nmi'},
-            },
-        )
+        for name, model in models.items():
+            data = all_data[name]
+            totals = all_totals[name]
 
-        f.write('\n# MISSION SEGMENTS')
-        for phase in data:
-            f.write(f'\n## {phase}')
+            if multi_mission:
+                f.write(f'\n\n\n# MULTIMISSION: {name}\n\n')
+
+            f.write('# MISSION SUMMARY')
             write_markdown_variable_table(
                 f,
-                data[phase],
-                ['Fuel Burn', 'Elapsed Time', 'Ground Distance'],
+                totals,
+                [
+                    'Total Fuel Burn',
+                    'Total Fuel Capacity',
+                    'Excess Fuel Capacity',
+                    'Total Time',
+                    'Total Ground Distance',
+                ],
                 {
-                    'Fuel Burn': {'units': 'lbm'},
-                    'Elapsed Time': {'units': 'min'},
-                    'Ground Distance': {'units': 'nmi'},
+                    'Total Fuel Burn': {'units': 'lbm'},
+                    'Total Fuel Capacity': {'units': 'lbm'},
+                    'Excess Fuel Capacity': {'units': 'lbm'},
+                    'Total Time': {'units': 'min'},
+                    'Total Ground Distance': {'units': 'nmi'},
                 },
             )
+
+            f.write('\n# MISSION SEGMENTS')
+            for phase in data:
+                f.write(f'\n## {phase}')
+                write_markdown_variable_table(
+                    f,
+                    data[phase],
+                    ['Fuel Burn', 'Elapsed Time', 'Ground Distance'],
+                    {
+                        'Fuel Burn': {'units': 'lbm'},
+                        'Elapsed Time': {'units': 'min'},
+                        'Ground Distance': {'units': 'nmi'},
+                    },
+                )
 
 
 def input_check_report(prob, **kwargs):
@@ -279,11 +310,15 @@ def input_check_report(prob, **kwargs):
     reports_folder = Path(prob.get_reports_dir())
     report_file = reports_folder / 'input_checks.md'
 
-    model = prob.model
+    multi_mission = prob.problem_type == ProblemType.MULTI_MISSION
+    if multi_mission:
+        models = prob.aviary_groups_dict
+    else:
+        models = {prob._name: prob.model}
 
     # a change in OpenMDAO 3.38.1-dev adds a resolver in place of the prom2abs/abs2prom attributes
     try:
-        resolver = model._resolver
+        resolver = prob.model._resolver
 
         def prom2abs(prom_name):
             return resolver.absnames(prom_name, 'input')
@@ -294,25 +329,39 @@ def input_check_report(prob, **kwargs):
     except AttributeError:
 
         def prom2abs(prom_name):
-            return model._var_allprocs_prom2abs_list['input'][prom_name]
+            return prob.model._var_allprocs_prom2abs_list['input'][prom_name]
 
         def abs2prom(abs_name):
-            return model._var_allprocs_abs2prom['input'][abs_name]
+            return prob.model._var_allprocs_abs2prom['input'][abs_name]
 
     # Find all unconnected inputs.
-    all_ivc_abs = [k for k, v in model._conn_abs_in2out.items() if 'ivc' in v]
+    all_ivc_abs = [k for k, v in prob.model._conn_abs_in2out.items() if 'ivc' in v]
     all_ivc_prom = [abs2prom(v) for v in all_ivc_abs]
-
     aviary_metadata = prob.meta_data
-    aviary_inputs = prob.aviary_inputs
-    bare_inputs = {v for v in all_ivc_prom if v not in aviary_inputs}
+
+    bare_inputs = all_ivc_prom
+    for name, model in models.items():
+        if multi_mission:
+            aviary_inputs = model.aviary_inputs
+        else:
+            aviary_inputs = prob.aviary_inputs
+
+        bare_inputs = {v for v in bare_inputs if v not in aviary_inputs}
+        if multi_mission:
+            bare_inputs = {v for v in bare_inputs if v.lstrip(f'{name}.') not in aviary_inputs}
+
     bare_hierarchy_inputs = {
-        v for v in bare_inputs if v.startswith('mission:') or v.startswith('aircraft:')
+        v
+        for v in bare_inputs
+        if v.startswith('mission:')
+        or v.startswith('aircraft:')
+        or '.mission:' in v
+        or '.aircraft:' in v
     }
     bare_local_inputs = bare_inputs - bare_hierarchy_inputs
 
     # There are no more collective calls, so we can exit.
-    if MPI and MPI.COMM_WORLD.rank != 0:
+    if MPI and prob.comm.rank != 0:
         return
 
     with open(report_file, mode='w') as f:
@@ -328,8 +377,13 @@ def input_check_report(prob, **kwargs):
 
             for var in sorted(bare_hierarchy_inputs):
                 metadata = aviary_metadata.get(var)
-                units = metadata['units']
-                val = model.get_val(var, units=units)
+                try:
+                    units = metadata['units']
+                except:
+                    metadata = aviary_metadata.get(var.split('.')[-1])
+                    units = metadata['units']
+
+                val = prob.model.get_val(var, units=units)
                 desc = metadata['desc']
                 abs_paths = prom2abs(var)
 
@@ -356,8 +410,8 @@ def input_check_report(prob, **kwargs):
                     continue
 
                 abs_paths = prom2abs(var)
-                val = model.get_val(var)
-                meta = model._var_allprocs_abs2meta['input'][abs_paths[0]]
+                val = prob.model.get_val(var)
+                meta = prob.model._var_allprocs_abs2meta['input'][abs_paths[0]]
                 units = meta['units']
 
                 f.write(f'| **{var}** | {val} | {units} | {abs_paths}|\n')
@@ -388,13 +442,22 @@ def timeseries_csv(prob, **kwargs):
     The first row of the CSV file contains headers with variable names and units.
     Each subsequent row represents the mission outputs at a different time step.
     """
-    timeseries_outputs = prob.model.list_outputs(
+    multi_mission = prob.problem_type == ProblemType.MULTI_MISSION
+    if multi_mission:
+        for _, model in prob.aviary_groups_dict.items():
+            # TODO: We need to rewrite this report to support multimission
+            # For now, just write the first mission's csv file.
+            break
+    else:
+        model = prob.model
+
+    timeseries_outputs = model.list_outputs(
         includes='*timeseries*', out_stream=None, return_format='dict', units=True
     )
-    phase_names = prob.model.traj._phases.keys()
+    phase_names = model.traj._phases.keys()
 
     # There are no more collective calls, so we can exit.
-    if MPI and MPI.COMM_WORLD.rank != 0:
+    if MPI and prob.comm.rank != 0:
         return
 
     timeseries_outputs = {value['prom_name']: value for key, value in timeseries_outputs.items()}

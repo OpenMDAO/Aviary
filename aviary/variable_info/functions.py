@@ -525,7 +525,8 @@ def setup_model_options(
     aviary_inputs: AviaryValues,
     meta_data=_MetaData,
     engine_models=None,
-    prefix='',
+    prefix=None,
+    group=None,
 ):
     """
     Setup the correct model options for an aviary problem.
@@ -543,8 +544,15 @@ def setup_model_options(
         (Optional) Engine models
     prefix : str
         Prefix for model options. Used for multi-mission.
+    group : AviaryGroup
+        The AviaryGroup object that we are setting models on
     """
+
     # Use OpenMDAO's model options to pass all options through the system hierarchy.
+    if prefix is not None:
+        prefix = f'{prefix}.'
+    else:
+        prefix = ''  # the original default value
     prob.model_options[f'{prefix}*'] = extract_options(aviary_inputs, meta_data)
 
     # Multi-engines need to index into their options.
@@ -555,11 +563,14 @@ def setup_model_options(
         return
 
     # TODO: Modify this method for multi mission/model.
-    aviary_group = prob.model
 
     if num_engine_models > 1:
         if engine_models is None:
-            engine_models = aviary_group.engine_builders
+            # Required in multi-mission cases
+            if group is None:
+                engine_models = prob.model.engine_builders
+            else:
+                engine_models = group.engine_builders
 
         for idx in range(num_engine_models):
             eng_name = engine_models[idx].name
