@@ -25,21 +25,17 @@ class ReserveTest(unittest.TestCase):
         csv_path = 'models/aircraft/test_aircraft/aircraft_for_bench_GwFm.csv'
 
         prob.load_inputs(csv_path, phase_info)
-        prob.check_and_preprocess_inputs()
 
         prob.aviary_inputs.set_val(Aircraft.Design.RESERVE_FUEL_ADDITIONAL, 10000.0, units='lbm')
 
-        prob.add_pre_mission_systems()
-        prob.add_phases()
-        prob.add_post_mission_systems()
+        prob.check_and_preprocess_inputs()
 
-        prob.link_phases()
+        prob.build_model()
 
         prob.add_design_variables()
         prob.add_objective(objective_type='mass', ref=-1e5)
 
         prob.setup()
-        prob.set_initial_guesses()
 
         prob.run_model()
 
@@ -56,21 +52,17 @@ class ReserveTest(unittest.TestCase):
         csv_path = 'models/aircraft/small_single_aisle/small_single_aisle_GASP.csv'
 
         prob.load_inputs(csv_path, phase_info)
-        prob.check_and_preprocess_inputs()
 
         prob.aviary_inputs.set_val(Mission.Summary.GROSS_MASS, 140000.0, units='lbm')
 
-        prob.add_pre_mission_systems()
-        prob.add_phases()
-        prob.add_post_mission_systems()
+        prob.check_and_preprocess_inputs()
 
-        prob.link_phases()
+        prob.build_model()
 
         prob.add_design_variables()
         prob.add_objective(objective_type='mass', ref=-1e5)
 
         prob.setup()
-        prob.set_initial_guesses()
 
         prob.run_model()
 
