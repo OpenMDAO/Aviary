@@ -327,6 +327,7 @@ class Aircraft:
         LAMINAR_FLOW_UPPER = 'aircraft:fuselage:laminar_flow_upper'
         LENGTH = 'aircraft:fuselage:length'
         LENGTH_TO_DIAMETER = 'aircraft:fuselage:length_to_diameter'
+        LENGTH_WING_ROOT = 'aircraft:fuselage:length_wing_root'
         LIFT_COEFFICIENT_RATIO_BODY_TO_WING = (
             'aircraft:fuselage:lift_coefficient_ratio_body_to_wing'
         )
@@ -341,6 +342,9 @@ class Aircraft:
         NUM_AISLES = 'aircraft:fuselage:num_aisles'
         NUM_FUSELAGES = 'aircraft:fuselage:num_fuselages'
         NUM_SEATS_ABREAST = 'aircraft:fuselage:num_seats_abreast'
+        NUM_SEATS_ABREAST_BUSINESS = 'aircraft:fuselage:num_seats_abreast_business'
+        NUM_SEATS_ABREAST_FIRST = 'aircraft:fuselage:num_seats_abreast_first'
+        NUM_SEATS_ABREAST_TOURIST = 'aircraft:fuselage:num_seats_abreast_tourist'
 
         PASSENGER_COMPARTMENT_LENGTH = 'aircraft:fuselage:passenger_compartment_length'
 
@@ -349,6 +353,9 @@ class Aircraft:
         PRESSURE_DIFFERENTIAL = 'aircraft:fuselage:pressure_differential'
         PRESSURIZED_WIDTH_ADDITIONAL = 'aircraft:fuselage:pressurized_width_additional'
         SEAT_PITCH = 'aircraft:fuselage:seat_pitch'
+        SEAT_PITCH_BUSINESS = 'aircraft:fuselage:seat_pitch_business'
+        SEAT_PITCH_FIRST = 'aircraft:fuselage:seat_pitch_first'
+        SEAT_PITCH_TOURIST = 'aircraft:fuselage:seat_pitch_tourist'
         SEAT_WIDTH = 'aircraft:fuselage:seat_width'
         TAIL_FINENESS = 'aircraft:fuselage:tail_fineness'
         WETTED_AREA = 'aircraft:fuselage:wetted_area'
