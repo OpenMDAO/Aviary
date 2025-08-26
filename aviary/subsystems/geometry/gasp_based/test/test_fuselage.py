@@ -440,6 +440,7 @@ class BWBLayoutTestCase(unittest.TestCase):
         self.aviary_options.set_val(Aircraft.Fuselage.NUM_AISLES, 3)
         self.aviary_options.set_val(Aircraft.Fuselage.AISLE_WIDTH, 22, units='inch')
         self.aviary_options.set_val(Aircraft.Fuselage.SEAT_PITCH_TOURIST, 32, units='inch')
+        self.aviary_options.set_val(Aircraft.Fuselage.SEAT_PITCH_FIRST, 36, units='inch')
         self.aviary_options.set_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS, 150)
         self.aviary_options.set_val(Aircraft.CrewPayload.Design.NUM_FIRST_CLASS, 11)
         self.aviary_options.set_val(Settings.VERBOSITY, 1, units='unitless')
@@ -604,6 +605,7 @@ class BWBFuselageGroupTestCase(unittest.TestCase):
         options.set_val(Aircraft.Fuselage.NUM_AISLES, 3)
         options.set_val(Aircraft.Fuselage.AISLE_WIDTH, 22, units='inch')
         options.set_val(Aircraft.Fuselage.SEAT_PITCH_TOURIST, 32, units='inch')
+        options.set_val(Aircraft.Fuselage.SEAT_PITCH_FIRST, 36, units='inch')
         options.set_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS, 150)
         options.set_val(Aircraft.CrewPayload.Design.NUM_FIRST_CLASS, 11)
 

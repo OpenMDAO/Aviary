@@ -387,8 +387,10 @@ class BWBCabinLayout(om.ExplicitComponent):
         add_aviary_option(self, Aircraft.Fuselage.SEAT_WIDTH, units='inch', desc='INGASP.WS')
         add_aviary_option(self, Aircraft.Fuselage.NUM_AISLES, units='unitless', desc='INGASP.AS')
         add_aviary_option(self, Aircraft.Fuselage.AISLE_WIDTH, units='inch', desc='INGASP.WAS')
-        add_aviary_option(self, Aircraft.Fuselage.SEAT_PITCH_FIRST, units='inch', desc='INGASP.PS')
-        add_aviary_option(self, Aircraft.Fuselage.SEAT_PITCH_TOURIST, units='inch', desc='PS_FC')
+        add_aviary_option(self, Aircraft.Fuselage.SEAT_PITCH_FIRST, units='inch', desc='PS_FC')
+        add_aviary_option(
+            self, Aircraft.Fuselage.SEAT_PITCH_TOURIST, units='inch', desc='INGASP.PS'
+        )
         add_aviary_option(
             self, Aircraft.CrewPayload.Design.NUM_PASSENGERS, units='unitless', desc='INGASP.PAX'
         )
