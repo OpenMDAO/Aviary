@@ -450,7 +450,7 @@ class BWBLayoutTestCase(unittest.TestCase):
         self.aviary_options.set_val(
             Aircraft.CrewPayload.Design.SEAT_PITCH_TOURIST, 32, units='inch'
         )
-        self.aviary_options.set_val(Aircraft.CrewPayload.DesignSEAT_PITCH_FIRST, 36, units='inch')
+        self.aviary_options.set_val(Aircraft.CrewPayload.Design.SEAT_PITCH_FIRST, 36, units='inch')
         self.aviary_options.set_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS, 150)
         self.aviary_options.set_val(Aircraft.CrewPayload.Design.NUM_FIRST_CLASS, 11)
         self.aviary_options.set_val(Settings.VERBOSITY, 1, units='unitless')
