@@ -3081,6 +3081,7 @@ class BWBMassSummationTestCase(unittest.TestCase):
         options.set_val(Aircraft.Fuselage.AISLE_WIDTH, 22, units='inch')
         options.set_val(Aircraft.Fuselage.NUM_AISLES, 3)
         options.set_val(Aircraft.Fuselage.NUM_SEATS_ABREAST_TOURIST, 18)
+        options.set_val(Aircraft.Fuselage.SEAT_PITCH_FIRST, 36, units='inch')
         options.set_val(Aircraft.Fuselage.SEAT_PITCH_TOURIST, 32, units='inch')
         options.set_val(Aircraft.Fuselage.SEAT_WIDTH, 21, units='inch')
         options.set_val(Aircraft.CrewPayload.Design.NUM_FIRST_CLASS, 11)
