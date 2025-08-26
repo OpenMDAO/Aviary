@@ -27,9 +27,10 @@ from aviary.subsystems.aerodynamics.gasp_based.table_based import (
 from aviary.subsystems.aerodynamics.solve_alpha_group import SolveAlphaGroup
 from aviary.subsystems.subsystem_builder_base import SubsystemBuilderBase
 from aviary.utils.named_values import NamedValues
-from aviary.variable_info.enums import LegacyCode, Verbosity
+from aviary.variable_info.enums import AircraftTypes, LegacyCode, Verbosity
 from aviary.variable_info.variable_meta_data import _MetaData
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission, Settings
+
 
 GASP = LegacyCode.GASP
 FLOPS = LegacyCode.FLOPS
@@ -142,9 +143,7 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
                 aero_group = ComputedAeroGroup(num_nodes=num_nodes, **kwargs)
 
             elif method == 'low_speed':
-                aero_group = TakeoffAeroGroup(
-                    num_nodes=num_nodes, aviary_options=aviary_inputs, **kwargs
-                )
+                aero_group = TakeoffAeroGroup(num_nodes=num_nodes, **kwargs)
 
             elif method == 'tabular':
                 aero_group = TabularAeroGroup(
@@ -623,6 +622,15 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
                     'tabular_cruise, low_speed, tabular_low_speed)'
                 )
 
+            design_type = aviary_inputs.get_val(Aircraft.Design.TYPE)
+
+            if design_type is AircraftTypes.BLENDED_WING_BODY:
+                all_vars.add(Aircraft.Fuselage.LIFT_CURVE_SLOPE_MACH0)
+                all_vars.add(Aircraft.Fuselage.HYDRAULIC_DIAMETER)
+                all_vars.add(Aircraft.Fuselage.PLANFORM_AREA)
+                all_vars.add(Aircraft.Wing.EXPOSED_AREA)
+                all_vars.add(Aircraft.Wing.ZERO_LIFT_ANGLE)
+
             for var in all_vars:
                 # TODO only checking core metadata here!!
                 meta = _MetaData[var]
@@ -751,7 +759,6 @@ AERO_2DOF_INPUTS = [
     Aircraft.Design.STATIC_MARGIN,
     Aircraft.Fuselage.AVG_DIAMETER,
     Aircraft.Fuselage.FLAT_PLATE_AREA_INCREMENT,
-    Aircraft.Fuselage.FORM_FACTOR,
     Aircraft.Fuselage.LENGTH,
     Aircraft.Fuselage.WETTED_AREA,
     Aircraft.HorizontalTail.AREA,
@@ -799,7 +806,7 @@ AERO_LS_2DOF_INPUTS = [
 ]
 
 AERO_CLEAN_2DOF_INPUTS = [
-    Aircraft.Design.SUPERCRITICAL_DIVERGENCE_SHIFT,  # super drag shift?
+    Aircraft.Design.DRAG_DIVERGENCE_SHIFT,  # super drag shift?
     Mission.Design.LIFT_COEFFICIENT_MAX_FLAPS_UP,
     Aircraft.Design.LIFT_DEPENDENT_DRAG_COEFF_FACTOR,
     Aircraft.Design.SUBSONIC_DRAG_COEFF_FACTOR,
