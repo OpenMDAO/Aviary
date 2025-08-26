@@ -52,6 +52,7 @@ parts:
       - file: user_guide/reserve_missions
       - file: user_guide/multi_mission
       - file: user_guide/off_design_missions
+      - file: user_guide/payload_range_functionality
       - file: user_guide/features/blended_wing_body
     - file: user_guide/troubleshooting
 

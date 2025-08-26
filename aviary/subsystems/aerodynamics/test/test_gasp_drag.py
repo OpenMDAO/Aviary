@@ -27,18 +27,11 @@ class TestAeroBuilderGasp(unittest.TestCase):
         # Change value just to be certain.
         prob.aviary_inputs.set_val(Aircraft.Wing.HEIGHT, 7.7777, units='ft')
 
-        # Preprocess inputs
         prob.check_and_preprocess_inputs()
 
-        prob.add_pre_mission_systems()
-        prob.add_phases()
-        prob.add_post_mission_systems()
-
-        prob.link_phases()
+        prob.build_model()
 
         prob.setup()
-
-        prob.set_initial_guesses()
 
         prob.run_model()
 
