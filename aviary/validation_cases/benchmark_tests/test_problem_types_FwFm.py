@@ -92,7 +92,7 @@ class HeightEnergyTestCase(unittest.TestCase):
 
 
 @use_tempdirs
-class TestOffDesign(HeightEnergyTestCase):
+class TestProblemTypes(HeightEnergyTestCase):
     """
     Build the model using a large single aisle commercial transport aircraft data using
     FLOPS mass method and HEIGHT_ENERGY mission method. Run a fallout mission to test off design.

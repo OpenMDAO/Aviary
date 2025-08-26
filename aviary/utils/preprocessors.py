@@ -319,10 +319,9 @@ def preprocess_crewpayload(aviary_options: AviaryValues, meta_data=_MetaData, ve
                         cargo = des_cargo
                         if verbosity >= Verbosity.BRIEF:  # BRIEF, VERBOSE, DEBUG
                             warnings.warn(
-                                f'Aircraft.CrewPayload.CARGO_MASS ({cargo}) does '
-                                'not equal Aircraft.CrewPayload.Design.CARGO_MASS '
-                                f'({des_cargo}) for SIZING mission. Setting as-flown '
-                                'CARGO_MASS equal to Design.CARGO_MASS '
+                                f'Aircraft.CrewPayload.CARGO_MASS ({cargo}) does not equal '
+                                f'Aircraft.CrewPayload.Design.CARGO_MASS ({des_cargo}) for SIZING '
+                                'mission. Setting as-flown CARGO_MASS equal to Design.CARGO_MASS '
                                 f'({des_cargo})'
                             )
                 else:
@@ -330,18 +329,16 @@ def preprocess_crewpayload(aviary_options: AviaryValues, meta_data=_MetaData, ve
                     des_cargo = max_cargo
                     if verbosity >= Verbosity.BRIEF:  # BRIEF, VERBOSE, DEBUG
                         warnings.warn(
-                            'Aircraft.CrewPayload.Design.CARGO_MASS missing, '
-                            'assume Design.CARGO_MASS = Design.MAX_CARGO_MASS '
-                            f'({max_cargo})'
+                            'Aircraft.CrewPayload.Design.CARGO_MASS missing, assume '
+                            f'Design.CARGO_MASS = Design.MAX_CARGO_MASS ({max_cargo})'
                         )
             elif des_cargo is not None:
                 # user has set cargo & des: assume max = des
                 max_cargo = des_cargo
                 if verbosity >= Verbosity.BRIEF:  # BRIEF, VERBOSE, DEBUG
                     warnings.warn(
-                        'Aircraft.CrewPayload.Design.MAX_CARGO_MASS is missing, '
-                        'assuming Design.MAX_CARGO_MASS equals Design.CARGO_MASS '
-                        f'({des_cargo})'
+                        'Aircraft.CrewPayload.Design.MAX_CARGO_MASS is missing, assuming '
+                        f'Design.MAX_CARGO_MASS equals Design.CARGO_MASS ({des_cargo})'
                     )
             else:
                 # user has set cargo only: assume intention to set max only for backwards compatibility.
@@ -351,10 +348,10 @@ def preprocess_crewpayload(aviary_options: AviaryValues, meta_data=_MetaData, ve
                 cargo = des_cargo = 0
                 if verbosity >= Verbosity.BRIEF:  # BRIEF, VERBOSE, DEBUG
                     warnings.warn(
-                        'As-flown cargo mass was specified but design cargo mass and '
-                        'max cargo mass were not. To maintain backwards-compatibility '
-                        f'with converted GASP files, setting max cargo mass to {cargo} '
-                        'and maximum and design cargo masses to zero.'
+                        'As-flown cargo mass was specified but design cargo mass and max cargo mass '
+                        'were not. To maintain backwards-compatibility with converted GASP files, '
+                        f'setting max cargo mass to {cargo} and maximum and design cargo masses to '
+                        'zero.'
                     )
 
         elif max_cargo is not None:
@@ -370,10 +367,9 @@ def preprocess_crewpayload(aviary_options: AviaryValues, meta_data=_MetaData, ve
                 cargo = des_cargo = 0
                 if verbosity >= Verbosity.BRIEF:  # BRIEF, VERBOSE, DEBUG:
                     warnings.warn(
-                        'Aircraft.CrewPayload.CARGO_MASS and '
-                        'Aircraft.CrewPayload.Design.CARGO_MASS missing, assume '
-                        'CARGO_MASS and Design.CARGO_MASS = 0. No Cargo is flown '
-                        'on any mission.'
+                        'Aircraft.CrewPayload.CARGO_MASS and Aircraft.CrewPayload.Design.CARGO_MASS '
+                        'missing, assume CARGO_MASS and Design.CARGO_MASS = 0. No Cargo is flown on'
+                        'any mission.'
                     )
 
         elif des_cargo is not None:
@@ -382,9 +378,8 @@ def preprocess_crewpayload(aviary_options: AviaryValues, meta_data=_MetaData, ve
             cargo = 0
             if verbosity >= Verbosity.BRIEF:  # BRIEF, VERBOSE, DEBUG:
                 warnings.warn(
-                    'Aircraft.CrewPayload.CARGO_MASS and '
-                    'Aircraft.CrewPayload.Design.MAX_CARGO_MASS missing, assume '
-                    'CARGO_MASS = 0 and Design.MAX_CARGO_MASS = Design.CARGO_MASS '
+                    'Aircraft.CrewPayload.CARGO_MASS and Aircraft.CrewPayload.Design.MAX_CARGO_MASS '
+                    'missing, assume CARGO_MASS = 0 and Design.MAX_CARGO_MASS = Design.CARGO_MASS '
                     f'({des_cargo}).'
                 )
 
@@ -393,12 +388,12 @@ def preprocess_crewpayload(aviary_options: AviaryValues, meta_data=_MetaData, ve
             cargo = max_cargo = des_cargo = 0
             if verbosity >= Verbosity.BRIEF:  # BRIEF, VERBOSE, DEBUG:
                 warnings.warn(
-                    'No CARGO variables detected, assume CARGO_MASS, '
-                    'Design.MAX_CARGO_MASS, and Design.CARGO_MASS equal to 0.'
+                    'No CARGO variables detected, assume CARGO_MASS, Design.MAX_CARGO_MASS, and '
+                    'Design.CARGO_MASS equal to 0.'
                 )
 
         # check for potential cargo errors:
-        if cargo > des_cargo:
+        if cargo > max_cargo:
             if verbosity >= Verbosity.BRIEF:  # BRIEF, VERBOSE, DEBUG:
                 warnings.warn(
                     f'As-flown cargo ({cargo}) is greater than design cargo ({des_cargo})'
@@ -407,8 +402,8 @@ def preprocess_crewpayload(aviary_options: AviaryValues, meta_data=_MetaData, ve
         if cargo > max_cargo or des_cargo > max_cargo:
             raise UserWarning(
                 f'Aircraft.CrewPayload.CARGO_MASS ({cargo}) and/or '
-                f'Aircraft.CrewPayload.Design.CARGO_MASS ({des_cargo}) is greater '
-                f'than Aircraft.CrewPayload.Design.MAX_CARGO_MASS ({max_cargo})'
+                f'Aircraft.CrewPayload.Design.CARGO_MASS ({des_cargo}) is greater than'
+                f'Aircraft.CrewPayload.Design.MAX_CARGO_MASS ({max_cargo})'
             )
 
         # calculate passenger mass with bags based on user inputs.
@@ -429,14 +424,14 @@ def preprocess_crewpayload(aviary_options: AviaryValues, meta_data=_MetaData, ve
         # calculate and check total payload
         # NOTE this is only used for error messaging the calculations for analysis are subsystems/mass/gasp_based
         design_passenger_payload_mass = design_num_pax * pax_mass_with_bag
-        des_payload = design_passenger_payload_mass + des_cargo
+        max_payload = design_passenger_payload_mass + max_cargo
         num_pax = aviary_options.get_val(Aircraft.CrewPayload.NUM_PASSENGERS)
         as_flown_passenger_payload_mass = num_pax * pax_mass_with_bag
         as_flown_payload = as_flown_passenger_payload_mass + cargo
-        if as_flown_payload > des_payload and verbosity >= Verbosity.BRIEF:  # BRIEF, VERBOSE, DEBUG
+        if as_flown_payload > max_payload and verbosity >= Verbosity.BRIEF:  # BRIEF, VERBOSE, DEBUG
             warnings.warn(
-                f'As-flown payload ({as_flown_payload}) is greater than design payload '
-                f'({des_payload}). The aircraft will be undersized for this payload!'
+                f'As-flown payload ({as_flown_payload}) is greater than maximum payload '
+                f'({max_payload}). The aircraft will be undersized for this payload!'
             )
 
         # set assumed cargo mass variables:

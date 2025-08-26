@@ -110,10 +110,7 @@ class AviaryProblem(om.Problem):
         )
 
         self.meta_data = meta_data
-        self.phase_info = phase_info
         self.aviary_inputs = aviary_inputs
-        self.engine_builders = engine_builders
-        self.problem_configurator = problem_configurator
         self.verbosity = verbosity
 
         return self.aviary_inputs
@@ -781,9 +778,7 @@ class AviaryProblem(om.Problem):
             inputs.set_val(Settings.EQUATIONS_OF_MOTION, equations_of_motion)
 
         if problem_configurator is not None:
-            off_design_prob.problem_configurator = problem_configurator
-        # else:
-        #     off_design_prob.problem_configurator = self.problem_configurator
+            off_design_prob.model.configurator = problem_configurator
 
         if phase_info is None:
             # model phase_info only contains mission information
