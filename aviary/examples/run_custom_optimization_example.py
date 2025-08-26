@@ -47,8 +47,6 @@ prob.model.add_constraint(av.Aircraft.Design.THRUST_TO_WEIGHT_RATIO, lower=0.35)
 
 prob.setup()
 
-prob.set_initial_guesses()
-
 prob.run_aviary_problem()
 
 print(f'\nTakeoff Gross Weight = {prob.get_val(av.Mission.Summary.GROSS_MASS, units="lbm")} lbm')
