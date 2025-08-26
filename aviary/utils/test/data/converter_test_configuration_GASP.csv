@@ -60,7 +60,7 @@ aircraft:fuselage:num_aisles,1.0,unitless
 aircraft:fuselage:num_seats_abreast_tourist,6.0,unitless
 aircraft:fuselage:pilot_compartment_length,6.85,ft
 aircraft:fuselage:pressure_differential,7.5,psi
-aircraft:fuselage:configuratio,44.2,inch
+aircraft:fuselage:seat_pitch_tourist,44.2,inch
 aircraft:fuselage:seat_width,20.2,inch
 aircraft:fuselage:tail_fineness,1.18,unitless
 aircraft:fuselage:wetted_area_scaler,1.0,unitless

@@ -423,7 +423,7 @@ class BWBCabinLayout(om.ExplicitComponent):
         # Hard code variables in GASP:
         FC_lav_galley_length = 8.0  # EL_FLGC: length of first class lav, galley & closet, ft
         FC_seat_width = 28.0  # WS_FC: first class seat width, inch
-        FC_seat_pitch = options[Aircraft.Fuselage.SEAT_PITCH_FIRST]
+        FC_seat_pitch, _ = options[Aircraft.Fuselage.SEAT_PITCH_FIRST]
         FC_num_aisles = 2  # AS_FC: num of aisles in first class
         FC_aisle_width = 24.0  # WAS_FC: First class aisle width, inch
         length_FC_to_TC = 5.0  # Length of first class/tourist class aisle, ft
