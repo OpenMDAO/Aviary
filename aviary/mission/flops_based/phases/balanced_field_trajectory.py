@@ -86,17 +86,11 @@ def _init_initial_guess_meta_data(cls: PhaseBuilderBase):
         InitialGuessControl('throttle'), desc='initial guess for throttle'
     )
 
-    cls._add_initial_guess_meta_data(
-        InitialGuessParameter(Dynamic.Vehicle.ANGLE_OF_ATTACK)
-    )
+    cls._add_initial_guess_meta_data(InitialGuessParameter(Dynamic.Vehicle.ANGLE_OF_ATTACK))
 
-    cls._add_initial_guess_meta_data(
-        InitialGuessParameter(Dynamic.Vehicle.ANGLE_OF_ATTACK_RATE)
-    )
+    cls._add_initial_guess_meta_data(InitialGuessParameter(Dynamic.Vehicle.ANGLE_OF_ATTACK_RATE))
 
-    cls._add_initial_guess_meta_data(
-        InitialGuessParameter(Dynamic.Mission.FLIGHT_PATH_ANGLE)
-    )
+    cls._add_initial_guess_meta_data(InitialGuessParameter(Dynamic.Mission.FLIGHT_PATH_ANGLE))
 
     return cls
 
@@ -141,7 +135,7 @@ class BalancedFieldPhaseOptions(AviaryOptionsDictionary):
             name='pitch_control',
             values=['alpha_fixed', 'alpha_rate_fixed', 'gamma_fixed'],
             default='alpha_fixed',
-            desc='Specifies how alpha is controlled - Alpha can be a fixed parameter, specified via a fixed rate parameter, ' \
+            desc='Specifies how alpha is controlled - Alpha can be a fixed parameter, specified via a fixed rate parameter, '
             'or whether the climb gradient is constant',
         )
 
@@ -472,6 +466,7 @@ class BalancedFieldTrajectoryBuilder:
     Identify, collect, and call the necessary phase builders to create a typical takeoff
     trajectory.
     """
+
     MappedPhase = namedtuple('MappedPhase', ('phase', 'phase_builder'))
 
     default_name = 'detailed_takeoff'
