@@ -343,6 +343,15 @@ add_meta_data(
 # ========================================================================================================================
 
 add_meta_data(
+    Aircraft.BWB.LENGTH_CABIN_SIDEWALL,
+    meta_data=_MetaData,
+    historical_name={'GASP': None, 'FLOPS': 'FUSEIN.XLW', 'LEAPS1': None},
+    units='ft',
+    desc='length of passenger cabin sidewall at outboard station or wing root',
+    default_value=0.0,
+)
+
+add_meta_data(
     Aircraft.BWB.NUM_BAYS,
     meta_data=_MetaData,
     historical_name={
@@ -3493,15 +3502,6 @@ add_meta_data(
     },
     units='unitless',
     desc='fuselage length to diameter ratio',
-    default_value=0.0,
-)
-
-add_meta_data(
-    Aircraft.Fuselage.LENGTH_WING_ROOT,
-    meta_data=_MetaData,
-    historical_name={'GASP': None, 'FLOPS': 'FUSEIN.XLW', 'LEAPS1': None},
-    units='ft',
-    desc='length of passenger cabin sidewall at outboard station or wing root',
     default_value=0.0,
 )
 

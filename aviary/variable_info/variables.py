@@ -36,6 +36,7 @@ class Aircraft:
         VOLUME = 'aircraft:battery:volume'
 
     class BWB:
+        LENGTH_CABIN_SIDEWALL = 'aircraft:bwb:length_cabin_sidewall'
         NUM_BAYS = 'aircraft:blended_wing_body_design:num_bays'
         PASSENGER_LEADING_EDGE_SWEEP = (
             'aircraft:blended_wing_body_design:passenger_leading_edge_sweep'
@@ -335,7 +336,6 @@ class Aircraft:
         LAMINAR_FLOW_UPPER = 'aircraft:fuselage:laminar_flow_upper'
         LENGTH = 'aircraft:fuselage:length'
         LENGTH_TO_DIAMETER = 'aircraft:fuselage:length_to_diameter'
-        LENGTH_WING_ROOT = 'aircraft:fuselage:length_wing_root'
         LIFT_COEFFICIENT_RATIO_BODY_TO_WING = (
             'aircraft:fuselage:lift_coefficient_ratio_body_to_wing'
         )
