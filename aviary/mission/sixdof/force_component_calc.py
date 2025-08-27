@@ -81,12 +81,27 @@ class ForceComponentResolver(om.ExplicitComponent):
             'heading_angle',
             val=np.zeros(nn),
             units='rad',
-            desc='Heading angle'
+            desc='Heading angle in body'
         )
 
         add_aviary_input(self,
                          Dynamic.Mission.FLIGHT_PATH_ANGLE,
-                         units='rad')
+                         units='rad',
+                         desc="Flight path angle in body")
+        
+        self.add_input(
+            'heading_angle_NED',
+            val=np.zeros(nn),
+            units='rad',
+            desc="Thrust heading angle in NED"
+        )
+
+        self.add_input(
+            'fpa_NED',
+            val=np.zeros(nn),
+            units='rad',
+            desc="Thrust flight path angle in NED"
+        )
 
         # self.add_input(
         #     'true_air_speed',
@@ -129,6 +144,8 @@ class ForceComponentResolver(om.ExplicitComponent):
         self.declare_partials(of='Fx', wrt='thrust', rows=ar, cols=ar)
         self.declare_partials(of='Fx', wrt='heading_angle', rows=ar, cols=ar)
         self.declare_partials(of='Fx', wrt=Dynamic.Mission.FLIGHT_PATH_ANGLE, rows=ar, cols=ar)
+        self.declare_partials(of='Fx', wrt='heading_angle_NED', rows=ar, cols=ar)
+        self.declare_partials(of='Fx', wrt='fpa_NED', rows=ar, cols=ar)
 
         self.declare_partials(of='Fy', wrt='u', rows=ar, cols=ar)
         self.declare_partials(of='Fy', wrt='v', rows=ar, cols=ar)
@@ -139,6 +156,8 @@ class ForceComponentResolver(om.ExplicitComponent):
         self.declare_partials(of='Fy', wrt='thrust', rows=ar, cols=ar)
         self.declare_partials(of='Fy', wrt='heading_angle', rows=ar, cols=ar)
         self.declare_partials(of='Fy', wrt=Dynamic.Mission.FLIGHT_PATH_ANGLE, rows=ar, cols=ar)
+        self.declare_partials(of='Fy', wrt='heading_angle_NED', rows=ar, cols=ar)
+        self.declare_partials(of='Fy', wrt='fpa_NED', rows=ar, cols=ar)
 
         self.declare_partials(of='Fz', wrt='u', rows=ar, cols=ar)
         self.declare_partials(of='Fz', wrt='v', rows=ar, cols=ar)
@@ -149,6 +168,8 @@ class ForceComponentResolver(om.ExplicitComponent):
         self.declare_partials(of='Fz', wrt='thrust', rows=ar, cols=ar)
         self.declare_partials(of='Fz', wrt='heading_angle', rows=ar, cols=ar)
         self.declare_partials(of='Fz', wrt=Dynamic.Mission.FLIGHT_PATH_ANGLE, rows=ar, cols=ar)
+        self.declare_partials(of='Fz', wrt='heading_angle_NED', rows=ar, cols=ar)
+        self.declare_partials(of='Fz', wrt='fpa_NED', rows=ar, cols=ar)
 
     def compute(self, inputs, outputs):
 
@@ -161,6 +182,8 @@ class ForceComponentResolver(om.ExplicitComponent):
         S = inputs['side'] # side force -- assume 0 for now
         chi = inputs['heading_angle']
         gamma = inputs[Dynamic.Mission.FLIGHT_PATH_ANGLE]
+        chi_T = inputs['heading_angle_NED']
+        gamma_T = inputs['fpa_NED']
 
         nn = self.options['num_nodes']
 
@@ -195,13 +218,49 @@ class ForceComponentResolver(om.ExplicitComponent):
         cos_b = np.cos(beta)
         sin_a = np.sin(alpha)
         sin_b = np.sin(beta)
+        cos_g = np.cos(gamma)
+        sin_g = np.sin(gamma)
+        cos_c = np.cos(chi)
+        sin_c = np.sin(chi)
 
-        outputs['Fx'] = -(cos_a * cos_b * D - cos_a * sin_b * S - sin_a * L) - T * cos_b * np.sin(alpha - gamma)
-        outputs['Fy'] = -(sin_b * D + cos_b * S) - T * sin_b * np.sin(alpha - gamma)
-        outputs['Fz'] = -(sin_a * cos_b * D + sin_a * sin_b * S + cos_a * L) - T * np.cos(alpha - gamma)
-    
+        # Thrust direction in NED -- as \hat{t}_n
+
+        t_hat_n = np.array([
+            np.cos(gamma_T) * np.cos(chi_T),
+            np.cos(gamma_T) * np.sin(chi_T),
+            -np.sin(gamma_T)
+        ])
+
+        # C_{b-<n}
+
+        Cbn = np.array([
+            [-sin_b * sin_c - cos_b * cos_c * np.cos(alpha - gamma),
+             sin_b * cos_c - cos_b * sin_c * np.cos(alpha - gamma),
+             cos_b * np.sin(alpha - gamma)],
+            [cos_b * sin_c - sin_b * cos_c * np.cos(alpha - gamma),
+             -cos_b * cos_c - sin_b * sin_c * np.cos(alpha - gamma),
+             sin_b * np.sin(alpha - gamma)],
+            [cos_c * np.sin(alpha - gamma),
+             sin_c * np.sin(alpha - gamma),
+             np.cos(alpha - gamma)]
+        ])
+
+        # Thrust direction in body
+        t_hat_b = Cbn @ t_hat_n
+
+        # Thrust force in body
+        Fb_thrust = T * t_hat_b
+
+        # Thrust in (x,y,z)
+        F_T_x = Fb_thrust[0]
+        F_T_y = Fb_thrust[1]
+        F_T_z = Fb_thrust[2]
+
+        outputs['Fx'] = -(cos_a * cos_b * D - cos_a * sin_b * S - sin_a * L) + F_T_x
+        outputs['Fy'] = -(sin_b * D + cos_b * S) + F_T_y
+        outputs['Fz'] = -(sin_a * cos_b * D + sin_a * sin_b * S + cos_a * L) + F_T_z
+
     def compute_partials(self, inputs, J):
-
         u = inputs['u']
         v = inputs['v']
         w = inputs['w']
@@ -211,6 +270,8 @@ class ForceComponentResolver(om.ExplicitComponent):
         S = inputs['side'] # side force -- assume 0 for now
         gamma = inputs[Dynamic.Mission.FLIGHT_PATH_ANGLE]
         chi = inputs['heading_angle']
+        chi_T = inputs['heading_angle_NED']
+        gamma_T = inputs['fpa_NED']
 
         V = np.sqrt(u**2 + v**2 + w**2)
 
@@ -229,6 +290,49 @@ class ForceComponentResolver(om.ExplicitComponent):
         else:
             u = 1.0e-4
             beta = np.arctan(v / np.sqrt(u**2 + w**2))
+        
+        t_hat_n = np.array([
+            np.cos(gamma_T) * np.cos(chi_T),
+            np.cos(gamma_T) * np.sin(chi_T),
+            -np.sin(gamma_T)
+        ])
+
+        cos_a, sin_a = np.cos(alpha), np.sin(alpha)
+        cos_b, sin_b = np.cos(beta),  np.sin(beta)
+        cos_g, sin_g = np.cos(gamma), np.sin(gamma)
+        cos_c, sin_c = np.cos(chi),   np.sin(chi)
+
+        # C_{b-<n}
+
+        Cbn = np.array([
+            [-sin_b * sin_c - cos_b * cos_c * np.cos(alpha - gamma),
+             sin_b * cos_c - cos_b * sin_c * np.cos(alpha - gamma),
+             cos_b * np.sin(alpha - gamma)],
+            [cos_b * sin_c - sin_b * cos_c * np.cos(alpha - gamma),
+             -cos_b * cos_c - sin_b * sin_c * np.cos(alpha - gamma),
+             sin_b * np.sin(alpha - gamma)],
+            [cos_c * np.sin(alpha - gamma),
+             sin_c * np.sin(alpha - gamma),
+             np.cos(alpha - gamma)]
+        ])
+
+        # Derivatives of t_n
+        dt_n_dchi = np.array([
+            -np.cos(gamma_T) * np.sin(chi_T),
+            np.cos(gamma_T) * np.cos(chi_T),
+            0.0
+        ])
+
+        dt_n_dgamma = np.array([
+            -np.sin(gamma_T) * np.cos(chi_T),
+            -np.sin(gamma_T) * np.sin(chi_T),
+            -np.cos(gamma_T)
+        ])
+
+        # Rotation to body + derivatives
+        t_b = Cbn @ t_hat_n
+        dt_b_dchi = Cbn @ dt_n_dchi
+        dt_b_dgamma = Cbn @ dt_n_dgamma
 
         # note: d/dx arctan(a/x) = -a / (x^2 + a^2)
         # note: d/dx arctan(a / sqrt(b^2 + x^2)) = - ax / ((b^2 + x^2 + a^2) * sqrt(b^2 + x^2))
@@ -238,20 +342,19 @@ class ForceComponentResolver(om.ExplicitComponent):
         J['Fx', 'u'] = np.cos(alpha) * np.sin(beta) * ((-v * u) / ((V**2 * np.sqrt(w**2 + u**2)))) * D + \
                          np.cos(beta) * np.sin(alpha) * (-w / (w**2 + u**2)) * D + \
                          (np.cos(alpha) * np.cos(beta) * ((-v * u) / ((V**2 * np.sqrt(w**2 + u**2)))) * S - np.sin(beta) * np.sin(alpha) * (-w / (w**2 + u**2)) * S) + \
-                         (np.cos(alpha) * (-w / (w**2 + u**2)) * L) + np.sin(beta) * ((-v * u) / ((V**2 * np.sqrt(w**2 + u**2)))) * T * np.sin(alpha - gamma) - \
-                         np.cos(alpha - gamma) * (-w / (w**2 + u**2)) * np.cos(beta) * T
-        J['Fx', 'v'] = np.cos(alpha) * np.sin(beta) * (np.sqrt(w**2 + u**2) / V**2) * D + np.cos(alpha) * np.cos(beta) * (np.sqrt(w**2 + u**2) / V**2) * S + \
-                       np.sin(beta) * (np.sqrt(w**2 + u**2) / V**2) * T * np.sin(alpha - gamma)
+                         (np.cos(alpha) * (-w / (w**2 + u**2)) * L)
+        J['Fx', 'v'] = np.cos(alpha) * np.sin(beta) * (np.sqrt(w**2 + u**2) / V**2) * D + np.cos(alpha) * np.cos(beta) * (np.sqrt(w**2 + u**2) / V**2) * S 
         J['Fx', 'w'] = np.cos(alpha) * np.sin(beta) * ((-w * v) / ((V**2 * np.sqrt(w**2 + u**2)))) * D + np.sin(alpha) * np.cos(beta) * (u / (w**2 + u**2)) * D + \
                        np.cos(alpha) * np.cos(beta) * ((-w * v) / ((V**2 * np.sqrt(w**2 + u**2)))) * S - np.sin(alpha) * np.sin(beta) * (u / (w**2 + u**2)) * S + \
-                       np.cos(alpha) * (u / (w**2 + u**2)) * L + np.sin(beta) * ((-w * v) / ((V**2 * np.sqrt(w**2 + u**2)))) * T * np.sin(alpha - gamma) - \
-                       np.cos(alpha - gamma) * (u / (w**2 + u**2)) * T * np.cos(beta)
+                       np.cos(alpha) * (u / (w**2 + u**2)) * L 
         J['Fx', 'drag'] = -np.cos(alpha) * np.cos(beta)
         J['Fx', 'lift'] = np.sin(alpha)
         J['Fx', 'side'] = np.cos(alpha) * np.sin(beta)
-        J['Fx', 'thrust'] = -np.cos(beta) * np.sin(alpha - gamma)
+        J['Fx', 'thrust'] = t_b[0]
         J['Fx', Dynamic.Mission.FLIGHT_PATH_ANGLE] = T * np.cos(beta) * np.cos(alpha - gamma)
         J['Fx', 'heading_angle'] = 0
+        J['Fx', 'heading_angle_NED'] = T * dt_b_dchi[0]
+        J['Fx', 'fpa_NED'] = T * dt_b_dgamma[0]
 
         J['Fy', 'u'] = -np.cos(beta) * ((-v * u) / ((V**2 * np.sqrt(w**2 + u**2)))) * D + np.sin(beta) * ((-v * u) / ((V**2 * np.sqrt(w**2 + u**2)))) * S - \
                         np.cos(beta) * ((-v * u) / ((V**2 * np.sqrt(w**2 + u**2)))) * T * np.sin(alpha - gamma) - \
@@ -263,9 +366,11 @@ class ForceComponentResolver(om.ExplicitComponent):
                         np.cos(alpha - gamma) * (u / (w**2 + u**2)) * T * np.sin(beta)
         J['Fy', 'drag'] = -np.sin(beta)
         J['Fy', 'side'] = -np.cos(beta)
-        J['Fy', 'thrust'] = -np.sin(beta) * np.sin(alpha - gamma)
+        J['Fy', 'thrust'] = t_b[1]
         J['Fy', Dynamic.Mission.FLIGHT_PATH_ANGLE] = T * np.sin(beta) * np.cos(alpha - gamma)
         J['Fy', 'heading_angle'] = 0
+        J['Fy', 'heading_angle_NED'] = T * dt_b_dchi[1]
+        J['Fy', 'fpa_NED'] = T * dt_b_dgamma[1]
 
         J['Fz', 'u'] = np.sin(alpha) * np.sin(beta) * ((-v * u) / ((V**2 * np.sqrt(w**2 + u**2)))) * D - np.cos(alpha) * np.cos(beta) * (-w / (w**2 + u**2)) * D - \
                        np.sin(alpha) * np.cos(beta) * ((-v * u) / ((V**2 * np.sqrt(w**2 + u**2)))) * S - np.cos(alpha) * np.sin(beta) * (-w / (w**2 + u**2)) * S + \
@@ -277,9 +382,11 @@ class ForceComponentResolver(om.ExplicitComponent):
         J['Fz', 'drag'] = -np.sin(alpha) * np.cos(beta) 
         J['Fz', 'lift'] = -np.cos(alpha)
         J['Fz', 'side'] = -np.sin(alpha) * np.sin(beta)
-        J['Fz', 'thrust'] = -np.cos(alpha - gamma)
+        J['Fz', 'thrust'] = t_b[2]
         J['Fz', Dynamic.Mission.FLIGHT_PATH_ANGLE] = -T * np.sin(alpha - gamma)
         J['Fz', 'heading_angle'] = 0
+        J['Fz', 'heading_angle_NED'] = T * dt_b_dchi[2]
+        J['Fz', 'fpa_NED'] = T * dt_b_dgamma[2]
 
 if __name__ == "__main__":
     p = om.Problem()
