@@ -360,6 +360,8 @@ class TestTakeoffToEngineFailureTest(unittest.TestCase):
 
         takeoff.model.traj.phases.takeoff_climb_gradient_to_obstacle.ode_iter_group.segment_prop_group.ode_all.takeoff_eom.list_vars(print_arrays=True)
 
+        om.n2(takeoff)
+
         # vars = takeoff.model.list_vars(print_arrays=True, units=True, prom_name=True, return_format='dict', out_stream=None)
 
         # vars = {meta['prom_name']: meta for meta in vars.values()}

@@ -180,6 +180,9 @@ from aviary.mission.flops_based.phases.detailed_takeoff_phases import (
     TakeoffTrajectory as DetailedTakeoffTrajectoryBuilder,
 )
 
+from aviary.mission.flops_based.phases.balanced_field_trajectory import BalancedFieldPhaseBuilder
+from aviary.mission.balanced_field_traj_builder import BalancedFieldTrajectoryBuilder
+
 ##############
 # Subsystems #
 ##############
