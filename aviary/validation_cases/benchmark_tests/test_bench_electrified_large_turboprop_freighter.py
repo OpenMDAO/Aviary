@@ -67,10 +67,8 @@ class LargeElectrifiedTurbopropFreighterBenchmark(unittest.TestCase):
         prob.aviary_inputs.set_val(Aircraft.Fuselage.AVG_DIAMETER, 4.125, 'm')
 
         prob.check_and_preprocess_inputs()
-        prob.add_pre_mission_systems()
-        prob.add_phases()
-        prob.add_post_mission_systems()
-        prob.link_phases()
+
+        prob.build_model()
         prob.add_driver('IPOPT', max_iter=0, verbosity=0)
         prob.add_design_variables()
         prob.add_objective()
@@ -79,7 +77,6 @@ class LargeElectrifiedTurbopropFreighterBenchmark(unittest.TestCase):
         # prob.model.list_vars(units=True, print_arrays=True)
         om.n2(prob)
 
-        prob.set_initial_guesses()
         prob.run_aviary_problem('dymos_solution.db')
 
         om.n2(prob)

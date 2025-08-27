@@ -18,7 +18,6 @@ SKIP_EXAMPLES = {
     'run_multimission_example.py': 'Broken due to OpenMDAO changes',
     'run_OAS_wing_mass_example.py': 'Timeout when running via this script',
     'run_NPSS_example.py': 'Cannot be run without NPSS install',
-    'run_level3_example.py': 'Currently broken, awaiting refresh',
 }
 
 # TODO: temporary fix, waiting on https://github.com/OpenMDAO/OpenMDAO/issues/3510
