@@ -79,7 +79,7 @@ class CoreMassBuilder(MassBuilderBase):
         if method != 'external':
             mass_group = super().build_mission(num_nodes, aviary_inputs)
 
-        mass_group
+        return mass_group
 
     def report(self, prob, reports_folder, **kwargs):
         """
@@ -103,7 +103,9 @@ class CoreMassBuilder(MassBuilderBase):
             Aircraft.Fins.MASS,
             Aircraft.Canard.MASS,
             Aircraft.Fuselage.MASS,
-            Aircraft.LandingGear.TOTAL_MASS,
+            Aircraft.LandingGear.NOSE_GEAR_MASS,
+            Aircraft.LandingGear.MAIN_GEAR_MASS,
+            Aircraft.Paint.MASS,
             Aircraft.Nacelle.MASS,
             Aircraft.Design.STRUCTURE_MASS,
             Aircraft.Propulsion.TOTAL_ENGINE_MASS,
@@ -111,7 +113,7 @@ class CoreMassBuilder(MassBuilderBase):
             Aircraft.Propulsion.TOTAL_MISC_MASS,
             Aircraft.Fuel.FUEL_SYSTEM_MASS,
             Aircraft.Propulsion.MASS,
-            Aircraft.Controls.TOTAL_MASS,
+            Aircraft.Wing.SURFACE_CONTROL_MASS,
             Aircraft.APU.MASS,
             Aircraft.Instruments.MASS,
             Aircraft.Hydraulics.MASS,

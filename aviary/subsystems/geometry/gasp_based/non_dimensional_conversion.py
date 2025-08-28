@@ -133,14 +133,14 @@ class DimensionalNonDimensionalInterchange(om.Group):
             self.add_subsystem(
                 'strut_calcs',
                 StrutCalcs(),
-                promotes_inputs=['aircraft:*'],
-                promotes_outputs=['aircraft:*'],
+                promotes_inputs=['*'],
+                promotes_outputs=['*'],
             )
 
         if self.options[Aircraft.Wing.HAS_FOLD]:
             self.add_subsystem(
                 'fold_calcs',
                 FoldCalcs(),
-                promotes_inputs=['aircraft:*'],
-                promotes_outputs=['aircraft:*'],
+                promotes_inputs=['*'],
+                promotes_outputs=['*'],
             )

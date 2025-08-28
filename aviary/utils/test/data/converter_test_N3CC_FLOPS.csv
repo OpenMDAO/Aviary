@@ -119,6 +119,7 @@ aircraft:wing:bwb_aft_body_mass_scaler,1.0,unitless
 aircraft:wing:chord_per_semispan,0.273522534166506,0.204274849507037,0.0888152947868224,0.0725353313595661,unitless
 aircraft:wing:composite_fraction,0.33333,unitless
 aircraft:wing:control_surface_area_ratio,0.333,unitless
+aircraft:wing:detailed_wing,True,unitless
 aircraft:wing:dihedral,6.0,deg
 aircraft:wing:glove_and_bat,0.0,ft**2
 aircraft:wing:input_station_dist,0.0,0.34453777998,0.919,1.0,unitless
@@ -143,7 +144,6 @@ aircraft:wing:thickness_to_chord,0.12233,0.0,0.0,0.0,0.0,0.0,unitless
 aircraft:wing:thickness_to_chord_dist,0.14233,0.12233,0.1108,0.1058,unitless
 aircraft:wing:thickness_to_chord_reference,0.116565,unitless
 aircraft:wing:ultimate_load_factor,3.75,unitless
-aircraft:wing:use_detailed_mass,True,unitless
 aircraft:wing:var_sweep_mass_penalty,0.0,unitless
 aircraft:wing:wetted_area,2210.280228,ft**2
 mission:constraints:max_mach,0.785,unitless
@@ -188,6 +188,7 @@ CONFIN.htvc,1
 CONFIN.pglov,0
 CONFIN.plr,0.0,0.0,0.0,0.0,0.0,0.0
 CONFIN.rotvel,0.0,0.0,0.0,0.0,0.0,0.0
+CONFIN.twr,0.0
 CONFIN.varth,0.0,0.0,0.0,0.0,0.0,0.0
 CONFIN.vtvc,1
 CONFIN.wsr,0

@@ -110,6 +110,9 @@ runs:
         pip install git+https://github.com/OpenMDAO/build_pyoptsparse
         build_pyoptsparse -v $BRANCH $SNOPT
 
+        echo "The build script has been grabbing an older version of IPOPT with some problems."
+        conda install ipopt=3.14
+
     - name: Install OpenMDAO
       if: inputs.OPENMDAO
       shell: bash -l {0}
@@ -156,7 +159,8 @@ runs:
       run: |
         conda info
         conda list
-        conda env export --file ${{ inputs.NAME }}_environment.yml
+        conda env export --file environment.yml
+        mv environment.yml ${{ inputs.NAME }}_environment.yml
 
     - name: 'Upload environment artifact'
       uses: actions/upload-artifact@v4

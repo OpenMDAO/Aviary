@@ -41,11 +41,8 @@ class TestExternalAero(av.TestSubsystemBuilderBase):
         prob.load_inputs('models/aircraft/test_aircraft/aircraft_for_bench_FwFm.csv', phase_info)
 
         prob.check_and_preprocess_inputs()
-        prob.add_pre_mission_systems()
-        prob.add_phases()
-        prob.add_post_mission_systems()
 
-        prob.link_phases()
+        prob.build_model()
 
         # SLSQP didn't work so well here.
         prob.add_driver('IPOPT')
@@ -54,8 +51,6 @@ class TestExternalAero(av.TestSubsystemBuilderBase):
         prob.add_objective()
 
         prob.setup()
-
-        prob.set_initial_guesses()
 
         prob.run_aviary_problem(suppress_solver_print=True)
 
