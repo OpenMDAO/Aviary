@@ -15,7 +15,7 @@ import aviary.api as av
 
 prob = av.run_aviary(
     aircraft_data='models/aircraft/advanced_single_aisle/advanced_single_aisle_FLOPS.csv',
-    phase_info='examples/example_phase_info.py',
+    phase_info='models/missions/height_energy_default.py',
     optimizer='SLSQP',
     make_plots=True,
 )
