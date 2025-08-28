@@ -176,32 +176,6 @@ class EnergyODE(_BaseODE):
         self.set_input_defaults(Dynamic.Mission.ALTITUDE, val=np.ones(nn), units='m')
         self.set_input_defaults(Dynamic.Mission.ALTITUDE_RATE, val=np.ones(nn), units='m/s')
 
-        if options['use_actual_takeoff_mass']:
-            exec_comp_string = 'initial_mass_residual = initial_mass - mass[0]'
-            initial_mass_string = Mission.Takeoff.FINAL_MASS
-        else:
-            exec_comp_string = 'initial_mass_residual = initial_mass - mass[0] - 100.'
-            initial_mass_string = Mission.Summary.GROSS_MASS
-
-        # Experimental: Add a component to constrain the initial mass to be equal
-        # to design gross weight.
-        initial_mass_residual_constraint = om.ExecComp(
-            exec_comp_string,
-            initial_mass={'units': 'kg'},
-            mass={'units': 'kg', 'shape': (nn,)},
-            initial_mass_residual={'units': 'kg', 'res_ref': 1.0e5},
-        )
-
-        self.add_subsystem(
-            'initial_mass_residual_constraint',
-            initial_mass_residual_constraint,
-            promotes_inputs=[
-                ('initial_mass', initial_mass_string),
-                ('mass', Dynamic.Vehicle.MASS),
-            ],
-            promotes_outputs=['initial_mass_residual'],
-        )
-
         if core_needs_solver or ext_needs_solver:
             sub1.nonlinear_solver = om.NewtonSolver(
                 solve_subsystems=True,
