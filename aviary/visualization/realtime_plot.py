@@ -5,6 +5,7 @@ import subprocess
 from openmdao.utils.file_utils import _load_and_exec
 import openmdao.utils.hooks as hooks
 
+
 def is_python_file(file_path):
     """
     Check if file is a Python source file using multiple methods.
@@ -20,13 +21,13 @@ def is_python_file(file_path):
         True if file is a python file. False, if not.
     """
     # Method 1: Check file extension
-    if pathlib.Path(file_path).suffix.lower() in [".py", ".pyw", ".pyi"]:
+    if pathlib.Path(file_path).suffix.lower() in ['.py', '.pyw', '.pyi']:
         return True
 
     # Method 2: Check MIME type
     try:
         mime_type, _ = mimetypes.guess_type(str(file_path))
-        if mime_type in ["text/x-python", "application/x-python-code"]:
+        if mime_type in ['text/x-python', 'application/x-python-code']:
             return True
     except (TypeError, ValueError, OSError):
         pass
