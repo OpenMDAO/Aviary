@@ -36,7 +36,7 @@ phase_info.update(
                 'altitude_initial': (0.0, 'ft'),
                 'altitude_final': (32000.0, 'ft'),
                 'throttle_enforcement': 'path_constraint',
-                'time_initial_bounds': ((0.0, 0.0), 'min'),
+                'time_initial': (0.0, 'min'),
                 'time_duration_bounds': ((30.0, 192.0), 'min'),
             },
             'initial_guesses': {

@@ -1203,7 +1203,7 @@ class AviaryProblem(om.Problem):
 
         # and run mission, and dynamics
         if run_driver:
-            failed = dm.run_problem(
+            self.result = dm.run_problem(
                 self,
                 run_driver=run_driver,
                 simulate=simulate,
@@ -1212,27 +1212,16 @@ class AviaryProblem(om.Problem):
                 restart=restart_filename,
             )
 
-            # TODO this is only used in a single test. Either self.problem_ran_successfully
-            #      should be removed, or rework this option to be more helpful (store
-            # entire "failed" object?) and implement more rigorously in benchmark
-            # tests
-            if failed.exit_status == 'FAIL':
-                self.problem_ran_successfully = False
-            else:
-                self.problem_ran_successfully = True
             # Manually print out a failure message for low verbosity modes that suppress
             # optimizer printouts, which may include the results message. Assumes success,
             # alerts user on a failure
             if (
-                not self.problem_ran_successfully and verbosity <= Verbosity.BRIEF  # QUIET, BRIEF
+                not self.result.success and verbosity <= Verbosity.BRIEF  # QUIET, BRIEF
             ):
                 warnings.warn('\nAviary run failed. See the dashboard for more details.\n')
         else:
-            # prevent UserWarning that is displayed when an event is triggered
-            warnings.filterwarnings('ignore', category=UserWarning)
-            # TODO failed doesn't exist for run_model(), no return from method
-            failed = self.run_model()
-            warnings.filterwarnings('default', category=UserWarning)
+            self.run_model()
+            self.result = self.driver.result
 
         # update n2 diagram after run.
         outdir = Path(self.get_reports_dir(force=True))
@@ -1246,8 +1235,6 @@ class AviaryProblem(om.Problem):
         if verbosity >= Verbosity.VERBOSE:  # VERBOSE, DEBUG
             with open('output_list.txt', 'w') as outfile:
                 self.model.list_outputs(out_stream=outfile)
-
-        self.problem_ran_successfully = not failed
 
         # Checks of the payload/range toggle in the aviary inputs csv file has been set and that the current problem is a sizing mission.
         if payload_range_bool:
@@ -1271,7 +1258,7 @@ class AviaryProblem(om.Problem):
 
         # Checks if the sizing mission has run successfully.
         # If the problem is both a sizing problem has run successfully, if not, we do not run the payload/range function.
-        if self.problem_ran_successfully and self.model.problem_type is ProblemType.SIZING:
+        if self.result.success and self.model.problem_type is ProblemType.SIZING:
             # Off-design missions do not currently work for GASP masses or missions.
             mass_method = self.aviary_inputs.get_val(Settings.MASS_METHOD)
             equations_of_motion = self.aviary_inputs.get_val(Settings.EQUATIONS_OF_MOTION)
@@ -1415,8 +1402,8 @@ class AviaryProblem(om.Problem):
                 # Check if fallout missions ran successfully before writing to csv file
                 # If both missions ran successfully, writes the payload/range data to a csv file
                 if (
-                    prob_fallout_ferry.problem_ran_successfully
-                    and prob_fallout_max_fuel_plus_payload.problem_ran_successfully
+                    prob_fallout_ferry.result.success
+                    and prob_fallout_max_fuel_plus_payload.result.success
                 ):
                     # TODO Temporary csv writing for payload/range data, should be replaced with a more robust solution
                     csv_filepath = Path(self.get_reports_dir()) / 'payload_range_data.csv'
