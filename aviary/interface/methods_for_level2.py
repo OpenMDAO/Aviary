@@ -5,6 +5,7 @@ import warnings
 from datetime import datetime
 from enum import Enum
 from pathlib import Path
+from packaging import version
 from openmdao.utils.om_warnings import warn_deprecation
 
 import dymos as dm
@@ -884,12 +885,16 @@ class AviaryProblem(om.Problem):
         # Create the calculation string for the ExecComp() and the promotion reference values
         weighted_exprs = []
         connection_names = []
+        obj_inputs = []
         total_weight = sum(weight for _, _, weight in objectives_cleaned)
         for model, output, weight in objectives_cleaned:
             output_safe = output.replace(':', '_')
-            weighted_exprs.append(
-                f'{model}_{output_safe}*{weight}/{total_weight}'
-            )  # we use "_" here because ExecComp() cannot intake "."
+
+            # we use "_" here because ExecComp() cannot intake "."
+            obj_input = f'{model}_{output_safe}'
+            obj_inputs.append(obj_input)
+            weighted_exprs.append(f'{obj_input}*{weight}/{total_weight}'
+                                  )
             connection_names.append(
                 [f'{model}.{output}', f'composite_function.{model}_{output_safe}']
             )
@@ -897,10 +902,16 @@ class AviaryProblem(om.Problem):
 
         # weighted_str looks like:  'model1_fuelburn*0.67*0.5 + model1_gross_mass*0.33*0.5 + model2_fuelburn*0.67*0.5 + model2_gross_mass*0.33*0.5'
 
+        kwargs = {}
+        import openmdao
+        if version.parse(openmdao.__version__) >= version.parse('3.40'):
+            # We can get the correct unit from the source. This prevents a warning.
+            kwargs = {k: {'units_by_conn' : True} for k in obj_inputs}
+
         # adding composite execComp to super problem
         self.model.add_subsystem(
             'composite_function',
-            om.ExecComp('composite_objective = ' + final_expr, has_diag_partials=True),
+            om.ExecComp('composite_objective = ' + final_expr, **kwargs),
             promotes_outputs=['composite_objective'],
         )
 
