@@ -13,7 +13,7 @@ of the mission1 and mission2 are summed and weighted to create the objective fun
 import copy as copy
 
 import aviary.api as av
-from aviary.examples.example_phase_info import phase_info
+from aviary.models.missions.height_energy_default import phase_info
 from aviary.validation_cases.validation_tests import get_flops_inputs
 from aviary.variable_info.enums import ProblemType
 from aviary.variable_info.variables import Aircraft, Mission, Settings
