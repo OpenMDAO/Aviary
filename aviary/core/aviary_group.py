@@ -1026,7 +1026,7 @@ class AviaryGroup(om.Group):
             if verbosity >= Verbosity.BRIEF:
                 warnings.warn(
                     'Aircraft.Fuel.IGNORE_FUEL_CAPACITY_CONSTRAINT = True, therefore EXCESS_FUEL_CAPACITY constraint was not added to the Aviary problem.'
-                    'The aircraft may not have enough space for fuel, so check value of Mission.Constraints.EXCESS_FUEL_CAPACITY for details.'
+                    'The aircraft may not have enough space for fuel, so check the value of Mission.Constraints.EXCESS_FUEL_CAPACITY for details.'
                 )
 
     def link_phases(self, verbosity=None, comm=None):
