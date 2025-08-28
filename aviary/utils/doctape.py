@@ -637,7 +637,7 @@ def glue_class_options(obj, curr_glued=None, md_code=False, add_attributes=True)
 def get_all_non_aviary_names(cls, include_in_out='in_out'):
     """
     Retrieve the names of all the non-Aviary variables of a component class
-    created by self.add_input() or self.add_output() methods.
+    created by self.add_input() or self.add_output() methods in setup().
     """
     method_name = 'setup'
     func = getattr(cls, method_name)
@@ -671,4 +671,3 @@ def get_all_non_aviary_names(cls, include_in_out='in_out'):
                     if kw.arg == 'name' and isinstance(kw.value, ast.Constant):
                         names.append(kw.value.value)
     return names
-
