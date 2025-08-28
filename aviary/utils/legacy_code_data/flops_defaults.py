@@ -6,6 +6,7 @@ flops_default_values = NamedValues(
         'WTIN.EEXP': (1.15, 'unitless'),
         'WTIN.IALTWT': (False, 'unitless'),
         'WTIN.CARGF': (False, 'unitless'),
+        'WTIN.IFUFU': (False, 'unitless'),
         'ENGDIN.IDLE': (False, 'unitless'),
         'ENGDIN.IGEO': (False, 'unitless'),
         'ENGDIN.NONEG': (False, 'unitless'),
