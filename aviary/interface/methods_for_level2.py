@@ -893,8 +893,7 @@ class AviaryProblem(om.Problem):
             # we use "_" here because ExecComp() cannot intake "."
             obj_input = f'{model}_{output_safe}'
             obj_inputs.append(obj_input)
-            weighted_exprs.append(f'{obj_input}*{weight}/{total_weight}'
-                                  )
+            weighted_exprs.append(f'{obj_input}*{weight}/{total_weight}')
             connection_names.append(
                 [f'{model}.{output}', f'composite_function.{model}_{output_safe}']
             )
@@ -906,7 +905,7 @@ class AviaryProblem(om.Problem):
         import openmdao
         if version.parse(openmdao.__version__) >= version.parse('3.40'):
             # We can get the correct unit from the source. This prevents a warning.
-            kwargs = {k: {'units_by_conn' : True} for k in obj_inputs}
+            kwargs = {k: {'units_by_conn': True} for k in obj_inputs}
 
         # adding composite execComp to super problem
         self.model.add_subsystem(
