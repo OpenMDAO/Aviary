@@ -33,7 +33,7 @@ phase_info.update(
                 'mach_final': (0.72, 'unitless'),
                 'altitude_optimize': False,
                 'altitude_polynomial_order': 1,
-                'altitude_initial': (0.0, 'ft'),
+                'altitude_initial': (500.0, 'ft'),
                 'altitude_final': (32000.0, 'ft'),
                 'throttle_enforcement': 'path_constraint',
                 'time_initial': (0.0, 'min'),
@@ -103,11 +103,8 @@ phase_info.update(
                 'altitude_initial': (32000.0, 'ft'),
                 'altitude_final': (500.0, 'ft'),
                 'throttle_enforcement': 'path_constraint',
-                'time_initial_bounds': ((120.5, 361.5), 'min'),
+                'time_initial_bounds': ((120.5, 550.0), 'min'),
                 'time_duration_bounds': ((29.0, 87.0), 'min'),
-            },
-            'initial_guesses': {
-                'time': ([60, 500], 'min'),
             },
         },
     }
