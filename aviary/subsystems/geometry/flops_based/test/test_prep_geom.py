@@ -7,7 +7,10 @@ from openmdao.utils.testing_utils import use_tempdirs
 from parameterized import parameterized
 
 from aviary.subsystems.geometry.flops_based.canard import Canard
-from aviary.subsystems.geometry.flops_based.characteristic_lengths import CharacteristicLengths
+from aviary.subsystems.geometry.flops_based.characteristic_lengths import (
+    WingCharacteristicLength,
+    OtherCharacteristicLengths,
+)
 from aviary.subsystems.geometry.flops_based.fuselage import FuselagePrelim
 from aviary.subsystems.geometry.flops_based.nacelle import Nacelles
 from aviary.subsystems.geometry.flops_based.prep_geom import (
@@ -511,7 +514,6 @@ class CharacteristicLengthsTest(unittest.TestCase):
         prob = self.prob
 
         keys = [
-            Aircraft.Engine.NUM_ENGINES,
             Aircraft.Wing.SPAN_EFFICIENCY_REDUCTION,
         ]
         flops_inputs = get_flops_inputs(case_name, keys=keys)
@@ -520,7 +522,19 @@ class CharacteristicLengthsTest(unittest.TestCase):
             options[key] = flops_inputs.get_item(key)[0]
 
         prob.model.add_subsystem(
-            'characteristic_lengths', CharacteristicLengths(**options), promotes=['*']
+            'wing_characteristic_lengths', WingCharacteristicLength(**options), promotes=['*']
+        )
+
+        keys = [
+            Aircraft.Engine.NUM_ENGINES,
+        ]
+        flops_inputs = get_flops_inputs(case_name, keys=keys)
+        options = {}
+        for key in keys:
+            options[key] = flops_inputs.get_item(key)[0]
+
+        prob.model.add_subsystem(
+            'other_characteristic_lengths', OtherCharacteristicLengths(**options), promotes=['*']
         )
 
         setup_model_options(
