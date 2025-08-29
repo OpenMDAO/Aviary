@@ -6,11 +6,12 @@ from datetime import datetime
 from enum import Enum
 from pathlib import Path
 from packaging import version
-from openmdao.utils.om_warnings import warn_deprecation
 
 import dymos as dm
 import numpy as np
+import openmdao
 import openmdao.api as om
+from openmdao.utils.om_warnings import warn_deprecation
 from openmdao.utils.reports_system import _default_reports
 from openmdao.utils.units import convert_units
 
@@ -902,7 +903,6 @@ class AviaryProblem(om.Problem):
         # weighted_str looks like:  'model1_fuelburn*0.67*0.5 + model1_gross_mass*0.33*0.5 + model2_fuelburn*0.67*0.5 + model2_gross_mass*0.33*0.5'
 
         kwargs = {}
-        import openmdao
         if version.parse(openmdao.__version__) >= version.parse('3.40'):
             # We can get the correct unit from the source. This prevents a warning.
             kwargs = {k: {'units_by_conn': True} for k in obj_inputs}
