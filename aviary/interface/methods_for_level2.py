@@ -1269,7 +1269,7 @@ class AviaryProblem(om.Problem):
 
         # Checks if the sizing mission has run successfully.
         # If the problem is both a sizing problem has run successfully, if not, we do not run the payload/range function.
-        if self.result.success and self.model.problem_type is ProblemType.SIZING:
+        if self.result.success and self.problem_type is ProblemType.SIZING:
             # Off-design missions do not currently work for GASP masses or missions.
             mass_method = self.aviary_inputs.get_val(Settings.MASS_METHOD)
             equations_of_motion = self.aviary_inputs.get_val(Settings.EQUATIONS_OF_MOTION)
@@ -1454,7 +1454,7 @@ class AviaryProblem(om.Problem):
                     'The payload/range analysis is only supported for FLOPS missions with Height Energy equations of motion; the payload/range analysis will not be run.'
                 )
         else:
-            if self.model.problem_type is ProblemType.SIZING:
+            if self.problem_type is ProblemType.SIZING:
                 warnings.warn(
                     'The sizing problem has not run successfully; therefore, the payload/range analysis will not be run.'
                 )

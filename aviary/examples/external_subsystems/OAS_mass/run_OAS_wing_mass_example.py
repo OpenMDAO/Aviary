@@ -10,6 +10,7 @@ compared.
 """
 
 import numpy as np
+np.seterr(all='raise')
 
 import aviary.api as av
 from aviary.examples.external_subsystems.OAS_mass.OAS_wing_mass_builder import OASWingMassBuilder
