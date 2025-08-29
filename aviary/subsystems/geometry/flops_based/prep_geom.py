@@ -656,7 +656,6 @@ class _Fuselage(om.ExplicitComponent):
     """
 
     def initialize(self):
-        add_aviary_option(self, Aircraft.Wing.SPAN_EFFICIENCY_REDUCTION)
         add_aviary_option(self, Aircraft.Fuselage.NUM_FUSELAGES)
         add_aviary_option(self, Settings.VERBOSITY)
 
@@ -828,9 +827,6 @@ class _FuselageRatios(om.ExplicitComponent):
     Calculate fuselage diameter to wing span ratio and fuselage length to diameter ratio
     of aircraft geometry for FLOPS-based aerodynamics analysis.
     """
-
-    def initialize(self):
-        add_aviary_option(self, Aircraft.Wing.SPAN_EFFICIENCY_REDUCTION)
 
     def setup(self):
         add_aviary_input(self, Aircraft.Fuselage.AVG_DIAMETER, units='ft')

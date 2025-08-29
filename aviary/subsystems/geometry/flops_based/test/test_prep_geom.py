@@ -13,6 +13,7 @@ from aviary.subsystems.geometry.flops_based.nacelle import Nacelles
 from aviary.subsystems.geometry.flops_based.prep_geom import (
     PrepGeom,
     _Fuselage,
+    _FuselageRatios,
     _Prelim,
     _Tail,
     _Wing,
@@ -380,6 +381,7 @@ class _FuselageTest(unittest.TestCase):
             options[key] = flops_inputs.get_item(key)[0]
 
         prob.model.add_subsystem('fuse', _Fuselage(**options), promotes=['*'])
+        prob.model.add_subsystem('fuseratio', _FuselageRatios(), promotes=['*'])
 
         prob.setup(check=False, force_alloc_complex=True)
 
