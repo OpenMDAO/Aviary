@@ -61,7 +61,7 @@ Please see the [external subsystems doc pages](../user_guide/subsystems) for mor
 
 Aviary is designed to be flexible enough to design a variety of aircraft.
 Although many of the core subsystems were written with transport aircraft in mind, these subsystems can be replaced or augmented to support other types of aircraft.
-We have used Aviary to design single- and double-aisle commercial aircraft, regional jets, advanced concepts like truss-braced wings with hybrid-electric propulsion, and more.
+We have used Aviary to design single- and double-aisle commercial aircraft, regional jets, advanced concepts like truss-braced wings with hybrid-electric propulsion and blended wing body aircraft, and more.
 
 Aviary is also able to optimize a variety of mission types and definitions.
 Users are able to freely define the mission definition, including the number of phases, which quantities are controlled by the optimizer, and more.

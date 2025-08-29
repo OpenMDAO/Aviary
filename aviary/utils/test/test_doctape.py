@@ -22,6 +22,7 @@ from aviary.utils.doctape import (
     glue_variable,
     gramatical_list,
     run_command_no_file_error,
+    get_all_non_aviary_names,
 )
 
 
@@ -105,6 +106,15 @@ class DocTAPETests(unittest.TestCase):
         self.assertTrue('auto_order' in curr_glued)
         self.assertTrue('phase_info' in curr_glued)
 
+    def test_get_all_non_aviary_names(self):
+        from aviary.subsystems.aerodynamics.gasp_based.gaspaero import UFac
+
+        names = get_all_non_aviary_names(UFac)
+        expected_names = ['lift_ratio', 'bbar_alt', 'sigma', 'sigstr', 'ufac']
+        assert_equal_arrays(np.array(names), np.array(expected_names))
+
 
 if __name__ == '__main__':
-    unittest.main()
+    # unittest.main()
+    test = DocTAPETests()
+    test.test_get_all_non_aviary_names()
