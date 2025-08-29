@@ -14,6 +14,13 @@ class BodyTankCalculations(om.ExplicitComponent):
     along with mass of fuel in it, and minimum wing fuel mass.
     """
 
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+
+        # Flag so warning doesn't print constantly.
+        self.warned_vol = False
+        self.warned_mass = False
+
     def initialize(self):
         add_aviary_option(self, Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES, True)
         add_aviary_option(self, Settings.VERBOSITY)
@@ -135,10 +142,19 @@ class BodyTankCalculations(om.ExplicitComponent):
         verbosity = self.options[Settings.VERBOSITY]
         if verbosity >= Verbosity.BRIEF:
             if (req_fuel_wt > max_wingfuel_wt) and (design_fuel_vol > max_wingfuel_vol):
-                print('Warning: req_fuel_mass > max_wingfuel_mass, adding a body tank')
+                if not self.warned_mass:
+                    print('Warning: req_fuel_mass > max_wingfuel_mass, adding a body tank')
+                self.warned_mass = True
+            else:
+                self.warned_mass = False
+
             if (req_fuel_wt < max_wingfuel_wt) and (design_fuel_vol > max_wingfuel_vol):
-                print('Warning: design_fuel_vol > max_wingfuel_vol, adding a body tank')
-            # where is the code that adds a body tank?
+                if not self.warned_vol:
+                    print('Warning: design_fuel_vol > max_wingfuel_vol, adding a body tank')
+                self.warned_vol = True
+            else:
+                self.warned_vol = False
+            # TODO: where is the code that adds a body tank?
 
         extra_fuel_wt = req_fuel_wt - max_wingfuel_wt
         if smooth:
