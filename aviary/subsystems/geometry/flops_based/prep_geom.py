@@ -10,7 +10,10 @@ import openmdao.api as om
 from numpy import pi
 
 from aviary.subsystems.geometry.flops_based.canard import Canard
-from aviary.subsystems.geometry.flops_based.characteristic_lengths import CharacteristicLengths
+from aviary.subsystems.geometry.flops_based.characteristic_lengths import (
+    WingCharacteristicLength,
+    OtherCharacteristicLengths,
+)
 from aviary.subsystems.geometry.flops_based.fuselage import FuselagePrelim
 from aviary.subsystems.geometry.flops_based.nacelle import Nacelles
 from aviary.subsystems.geometry.flops_based.utils import (
@@ -77,13 +80,19 @@ class PrepGeom(om.Group):
         )
 
         self.add_subsystem(
-            'characteristic_lengths',
-            CharacteristicLengths(),
+            'wing_characteristic_lengths',
+            WingCharacteristicLength(),
+            promotes_inputs=['aircraft*'],
+            promotes_outputs=['*'],
+        )
+        self.add_subsystem(
+            'other_characteristic_lengths',
+            OtherCharacteristicLengths(),
             promotes_inputs=['aircraft*'],
             promotes_outputs=['*'],
         )
 
-        self.connect(f'prelim.{Names.CROOT}', f'characteristic_lengths.{Names.CROOT}')
+        self.connect(f'prelim.{Names.CROOT}', f'wing_characteristic_lengths.{Names.CROOT}')
 
         self.add_subsystem(
             'total_wetted_area', TotalWettedArea(), promotes_inputs=['*'], promotes_outputs=['*']
