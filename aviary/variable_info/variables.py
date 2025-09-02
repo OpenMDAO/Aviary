@@ -773,6 +773,7 @@ class Mission:
         DRAG_COEFFICIENT_FLAP_INCREMENT = 'mission:takeoff:drag_coefficient_flap_increment'
 
         DRAG_COEFFICIENT_MIN = 'mission:takeoff:drag_coefficient_min'
+        ENGINE_FAILURE_SPEED_INCREMENT = 'mission:takeoff:engine_failure_speed_increment'
         FIELD_LENGTH = 'mission:takeoff:field_length'
         FINAL_ALTITUDE = 'mission:takeoff:final_altitude'
         FINAL_MACH = 'mission:takeoff:final_mach'

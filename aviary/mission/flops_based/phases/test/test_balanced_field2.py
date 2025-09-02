@@ -14,6 +14,7 @@ class TestBalancedField(unittest.TestCase):
     """Test takeoff phase builder."""
 
     def test_balanced_field_2(self):
+        # TODO: Why doesn't aviary options respect keys() and values() if its dict-like?
         aviary_options = inputs.deepcopy()
 
         # This builder can be used for both takeoff and landing phases
@@ -307,6 +308,8 @@ class TestBalancedField(unittest.TestCase):
         av.set_aviary_initial_values(test_problem, aviary_options)
 
         takeoff_trajectory_builder.apply_initial_guesses(test_problem, 'traj')
+
+        # test_problem.set_val(Mission.Takeoff.DECISION_SPEED_INCREMENT, 20, units='kn')
 
         test_problem.final_setup()
 
