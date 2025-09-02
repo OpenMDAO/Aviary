@@ -47,4 +47,4 @@ The Fuel Capacity Group contains 4 subsystems:
 
     Total Fuel Capacity = Wing Fuel Capacity + Fuselage Fuel Capacity + Auxiliary Fuel Capacity
 
-The user must specify at minimum either Total Fuel Capacity OR Fuselage Fuel Capacity AND Auxiliary Fuel Capacity in the input file in order for this subsystem to make sense and allow a converged Aviary problem. It is possible for Aviary to calculate -ve fuel capacities and these will not be flagged to the user.
+It is possible for Aviary to calculate -ve fuel capacities depending on user overrides and the input wing geometry. These situations are not currently flagged to the user.
