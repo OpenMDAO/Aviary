@@ -43,6 +43,7 @@ def preprocess_options(aviary_options: AviaryValues, meta_data=_MetaData, verbos
             aviary_options.set_val(Settings.VERBOSITY, verbosity)
 
     preprocess_crewpayload(aviary_options, meta_data, verbosity)
+    preprocess_fuel_capacities(aviary_options, meta_data, verbosity)
     if not engine_models is None:
         preprocess_propulsion(aviary_options, engine_models, meta_data, verbosity)
 
@@ -483,6 +484,86 @@ def preprocess_crewpayload(aviary_options: AviaryValues, meta_data=_MetaData, ve
             val=baggage_mass_per_pax,
             units='lbm',
         )
+
+    return aviary_options
+
+
+def preprocess_fuel_capacities(aviary_options: AviaryValues, meta_data=_MetaData, verbosity=None):
+    """Preprocesses the AviaryValues object to ensure the user has provided a consistent set of fuel capacity overrides."""
+    if verbosity is not None:
+        # compatibility with being passed int for verbosity
+        verbosity = Verbosity(verbosity)
+    else:
+        verbosity = aviary_options.get_val(Settings.VERBOSITY)
+
+    if Settings.MASS_METHOD in aviary_options:
+        mass_method = aviary_options.get_val(Settings.MASS_METHOD)
+    else:
+        raise UserWarning('MASS_METHOD not specified. Cannot preprocess fuel capacity inputs.')
+
+    if mass_method == LegacyCode.FLOPS:
+        # find which fuel capacity variables the user has set:
+        try:
+            total_capacity = aviary_options.get_val(Aircraft.Fuel.TOTAL_CAPACITY, 'lbm')
+        except KeyError:
+            total_capacity = None
+        try:
+            wing_capacity = aviary_options.get_val(Aircraft.Fuel.WING_FUEL_CAPACITY, 'lbm')
+        except KeyError:
+            wing_capacity = None
+        try:
+            fuselage_capacity = aviary_options.get_val(Aircraft.Fuel.FUSELAGE_FUEL_CAPACITY, 'lbm')
+        except KeyError:
+            fuselage_capacity = None
+        try:
+            auxiliary_capacity = aviary_options.get_val(
+                Aircraft.Fuel.AUXILIARY_FUEL_CAPACITY, 'lbm'
+            )
+        except KeyError:
+            auxiliary_capacity = None
+
+        capacity_count = sum(
+            1
+            for capacity in [wing_capacity, fuselage_capacity, auxiliary_capacity]
+            if capacity is not None
+        )
+        capacity_check = sum(
+            capacity
+            for capacity in [wing_capacity, fuselage_capacity, auxiliary_capacity]
+            if capacity is not None
+        )
+
+        if total_capacity is None:
+            # Aviary will need to calculate the total capacity and can only do so if we assume any missing subsystem capacities are zero
+            if fuselage_capacity is None:
+                fuselage_capacity = 0
+                aviary_options.set_val(
+                    Aircraft.Fuel.FUSELAGE_FUEL_CAPACITY, fuselage_capacity, 'lbm'
+                )
+                if verbosity >= Verbosity.BRIEF:
+                    warnings.warn(f'Aircraft.Fuel.FUSELAGE_FUEL_CAPACITY is missing assume = 0')
+
+            if auxiliary_capacity is None:
+                auxiliary_capacity = 0
+                aviary_options.set_val(
+                    Aircraft.Fuel.AUXILIARY_FUEL_CAPACITY, auxiliary_capacity, 'lbm'
+                )
+                if verbosity >= Verbosity.BRIEF:
+                    warnings.warn(f'Aircraft.Fuel.AUXILIARY_FUEL_CAPACITY is missing assume = 0')
+        else:
+            # check if the user inputs are self consistent (as far as possible at this stage!) Aviary can still calculate -ve outputs at runtime.
+            if capacity_count == 3 and capacity_check != total_capacity:
+                raise UserWarning(
+                    f'Aircraft.Fuel.TOTAL_CAPACITY ({total_capacity}) != Aircraft.Fuel.WING_FUEL_CAPACITY ({wing_capacity})'
+                    f'+ Aircraft.Fuel.FUSELAGE_FUEL_CAPACITY ({fuselage_capacity}) + Aircraft.Fuel.AUXILIARY_FUEL_CAPACITY ({auxiliary_capacity})'
+                    f' = {capacity_check}'
+                )
+            elif capacity_count < 3 and capacity_check > total_capacity:
+                raise UserWarning(
+                    f'Aircraft.Fuel.TOTAL_CAPACITY ({total_capacity}) < Aircraft.Fuel.WING_FUEL_CAPACITY ({wing_capacity})'
+                    f' + Aircraft.Fuel.FUSELAGE_FUEL_CAPACITY ({fuselage_capacity}) + Aircraft.Fuel.AUXILIARY_FUEL_CAPACITY ({auxiliary_capacity})'
+                    f' = {capacity_check}'
+                )
 
     return aviary_options
 
