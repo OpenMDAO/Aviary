@@ -63,7 +63,7 @@ energy_phase_info = {
             'no_climb': True,
             'throttle_enforcement': 'control',
             'time_initial_bounds': ((80, 1056.5), 'min'),
-            'time_duration_bounds': ((29.0, 87.0), 'min'),
+            'time_duration_bounds': ((29.0, 128.0), 'min'),
         },
     },
     'post_mission': {
