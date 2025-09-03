@@ -636,7 +636,7 @@ class HamiltonStandard(om.ExplicitComponent):
         # propeller tip compressibility loss factor
         self.add_output('comp_tip_loss_factor', val=np.zeros(nn), units='unitless')
 
-        self.declare_partials('*', '*', method='fd', form='forward')
+        self.declare_partials('*', '*', method='cs')
 
     def compute(self, inputs, outputs):
         verbosity = self.options[Settings.VERBOSITY]
