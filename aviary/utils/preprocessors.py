@@ -73,6 +73,17 @@ def preprocess_crewpayload(aviary_options: AviaryValues, meta_data=_MetaData, ve
     Calculates option values that are derived from other options, and are not direct inputs.
     This function modifies the entries in the supplied collection, and for convenience also
     returns the modified collection.
+
+    Parameters
+    ----------
+    aviary_options : AviaryValues
+        Options to be updated
+
+    meta_data : dict
+        Variable metadata being used with this set of aviary_options
+
+    Verbosity, optional
+        Sets level of printouts for this function.
     """
     if verbosity is not None:
         # compatibility with being passed int for verbosity
@@ -488,8 +499,16 @@ def preprocess_crewpayload(aviary_options: AviaryValues, meta_data=_MetaData, ve
     return aviary_options
 
 
-def preprocess_fuel_capacities(aviary_options: AviaryValues, meta_data=_MetaData, verbosity=None):
-    """Preprocesses the AviaryValues object to ensure the user has provided a consistent set of fuel capacity overrides."""
+def preprocess_fuel_capacities(aviary_options: AviaryValues, verbosity=None):
+    """
+    Preprocesses the AviaryValues object to ensure the user has provided a consistent set of fuel capacity overrides.
+
+    Parameters
+    ----------
+    aviary_options : AviaryValues
+        Options to be updated
+
+    """
     if verbosity is not None:
         # compatibility with being passed int for verbosity
         verbosity = Verbosity(verbosity)
