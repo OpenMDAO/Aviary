@@ -5,7 +5,7 @@ import os
 import re
 import subprocess
 import tempfile
-
+import textwrap
 import numpy as np
 
 from aviary.interface.cmd_entry_points import _command_map
@@ -39,6 +39,7 @@ glue_class_options glue all class options for a given class
 get_previous_line returns the previous n line(s) of code as a string
 get_class_names return the class names in a file as a set
 get_function_names returns the function names in a file as a set
+get_all_non_aviary_names returns the non-Aviary variable names of a component
 """
 
 
@@ -631,3 +632,42 @@ def glue_class_options(obj, curr_glued=None, md_code=False, add_attributes=True)
         if item not in curr_glued:
             glue_variable(item, md_code=md_code)
             curr_glued.append(item)
+
+
+def get_all_non_aviary_names(cls, include_in_out='in_out'):
+    """
+    Retrieve the names of all the non-Aviary variables of a component class
+    created by self.add_input() or self.add_output() methods in setup().
+    """
+    method_name = 'setup'
+    func = getattr(cls, method_name)
+    source = inspect.getsource(func)
+    source = textwrap.dedent(source)  # remove indentation
+    tree = ast.parse(source)
+
+    if include_in_out == 'in_out':
+        including_flags = ['add_input', 'add_output']
+    elif include_in_out == 'in':
+        including_flags = ['add_input']
+    elif include_in_out == 'out':
+        including_flags = ['add_output']
+    else:
+        including_flags = []
+
+    names = []
+    for node in ast.walk(tree):
+        if isinstance(node, ast.Call):
+            if (
+                isinstance(node.func, ast.Attribute)
+                and node.func.attr in including_flags
+                and isinstance(node.func.value, ast.Name)
+                and node.func.value.id == 'self'
+            ):
+                # Case 1: name is the first positional argument
+                if node.args and isinstance(node.args[0], ast.Constant):
+                    names.append(node.args[0].value)
+                # Case 2: name is given as a keyword
+                for kw in node.keywords:
+                    if kw.arg == 'name' and isinstance(kw.value, ast.Constant):
+                        names.append(kw.value.value)
+    return names
