@@ -5,7 +5,7 @@ import openmdao.api as om
 
 from aviary.variable_info.enums import Verbosity
 from aviary.variable_info.functions import add_aviary_input, add_aviary_option, add_aviary_output
-from aviary.variable_info.variables import Aircraft, Settings
+from aviary.variable_info.variables import Aircraft, Mission, Settings
 
 
 class FuselagePrelim(om.ExplicitComponent):
@@ -110,3 +110,85 @@ class SimpleCabinLayout(om.ExplicitComponent):
             (atan) ** 1.1 + 1.1 * length * atan**0.1 / (1 + (length / 59.0) ** 2) / 59.0
         )
         partials[Aircraft.Fuselage.PASSENGER_COMPARTMENT_LENGTH, Aircraft.Fuselage.LENGTH] = deriv
+
+
+class DetailedCabinLayout(om.ExplicitComponent):
+    """Compute fuselage length and passenger compartment length."""
+
+    def initialize(self):
+        add_aviary_option(self, Settings.VERBOSITY)
+
+    def setup(self):
+        add_aviary_input(self, Aircraft.Fuselage.LENGTH, units='ft')
+        add_aviary_output(self, Aircraft.Fuselage.PASSENGER_COMPARTMENT_LENGTH, units='ft')
+
+    def compute(self, inputs, outputs):
+        verbosity = self.options[Settings.VERBOSITY]
+        num_first_class_pax = self.options[Aircraft.CrewPayload.Design.NUM_FIRST_CLASS]
+        num_tourist_class_pax = self.options[Aircraft.CrewPayload.Design.NUM_TOURIST_CLASS]
+        fuselage_multiplier = 1.0
+
+        if num_tourist_class_pax > 200:
+            num_seat_abreast_tourist = self.options[Aircraft.Fuselage.NUM_SEATS_ABREAST_TOURIST]
+            if num_seat_abreast_tourist <= 0:
+                num_seat_abreast_tourist = 8
+            num_seat_abreast_first = self.options[Aircraft.Fuselage.NUM_SEATS_ABREAST_FIRST]
+            if num_seat_abreast_first <= 0:
+                num_seat_abreast_first = num_seat_abreast_tourist - 2
+
+        if num_seat_abreast_first <= 0 and num_first_class_pax > 0:
+            num_seat_abreast_first = 4
+        if num_seat_abreast_tourist <= 0 and num_tourist_class_pax > 0:
+            num_seat_abreast_tourist = 6
+
+        aisle_width_first_class = 20.0  # inch
+        aisle_width_tourist_class = 18.0  # inch
+
+        if num_tourist_class_pax < 60:
+            if num_seat_abreast_tourist <= 0:
+                num_seat_abreast_tourist = 5
+            aisle_width_tourist_class = 15.0
+
+        num_aisles = 1
+        if num_seat_abreast_tourist > 6:
+            num_aisles = 2
+
+        if num_seat_abreast_first > 4:
+            aisle_width_first_class = 18.0
+        if num_seat_abreast_tourist > 6:
+            aisle_width_tourist_class = 15.0
+
+        seat_pitch_first = self.options[Aircraft.Fuselage.SEAT_PITCH_FIRST]
+        seat_pitch_tourist = self.options[Aircraft.Fuselage.SEAT_PITCH_TOURIST]
+
+        if seat_pitch_first <= 0 and num_first_class_pax > 0:
+            seat_pitch_first = 38.0  # inch
+        if seat_pitch_tourist <= 0 and num_tourist_class_pax > 0:
+            seat_pitch_tourist = 34.0  # inch
+
+        if num_first_class_pax == 0:
+            max_lav = 3
+            design_range = inputs[Mission.Design.RANGE]
+            if design_range < 1250:
+                max_lav = 2
+            if num_tourist_class_pax < 180:
+                fuselage_multiplier = 0.910
+            max_Galleys = 2
+            max_closets = 2
+
+        if num_first_class_pax == 0 and num_tourist_class_pax < 110:
+            max_lav = 1
+            max_Galleys = 1
+            max_closets = 1
+
+        if num_tourist_class_pax > 320:
+            max_lav = 4
+            max_Galleys = 4
+            max_closets = 4
+        elif num_tourist_class_pax > 600:
+            max_lav = 8
+            max_Galleys = 8
+            max_closets = 8
+
+        if num_first_class_pax > 0 and num_seat_abreast_tourist < 8:
+            fuselage_multiplier = 0.950

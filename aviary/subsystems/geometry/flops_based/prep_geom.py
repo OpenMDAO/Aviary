@@ -33,10 +33,16 @@ from aviary.variable_info.variables import Aircraft, Settings
 class PrepGeom(om.Group):
     """Prepare derived values of aircraft geometry for aerodynamics analysis."""
 
+    def initialize(self):
+        add_aviary_option(self, Aircraft.Fuselage.SIMPLE_LAYOUT)
+
     def setup(self):
-        self.add_subsystem(
-            'simple_layout', SimpleCabinLayout(), promotes_inputs=['*'], promotes_outputs=['*']
-        )
+        is_simple_layout = self.options[Aircraft.Fuselage.SIMPLE_LAYOUT]
+
+        if is_simple_layout:
+            self.add_subsystem(
+                'simple_layout', SimpleCabinLayout(), promotes_inputs=['*'], promotes_outputs=['*']
+            )
 
         self.add_subsystem(
             'fuselage_prelim', FuselagePrelim(), promotes_inputs=['*'], promotes_outputs=['*']
