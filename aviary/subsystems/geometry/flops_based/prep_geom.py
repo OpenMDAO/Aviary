@@ -14,7 +14,7 @@ from aviary.subsystems.geometry.flops_based.characteristic_lengths import (
     WingCharacteristicLength,
     OtherCharacteristicLengths,
 )
-from aviary.subsystems.geometry.flops_based.fuselage import FuselagePrelim
+from aviary.subsystems.geometry.flops_based.fuselage import FuselagePrelim, SimpleCabinLayout
 from aviary.subsystems.geometry.flops_based.nacelle import Nacelles
 from aviary.subsystems.geometry.flops_based.utils import (
     Names,
@@ -34,6 +34,10 @@ class PrepGeom(om.Group):
     """Prepare derived values of aircraft geometry for aerodynamics analysis."""
 
     def setup(self):
+        self.add_subsystem(
+            'simple_layout', SimpleCabinLayout(), promotes_inputs=['*'], promotes_outputs=['*']
+        )
+
         self.add_subsystem(
             'fuselage_prelim', FuselagePrelim(), promotes_inputs=['*'], promotes_outputs=['*']
         )
