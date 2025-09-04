@@ -193,12 +193,9 @@ class PostHamiltonStandardTest(unittest.TestCase):
             compact_print=True,
             show_only_incorrect=True,
             form='central',
-            method='fd',
-            minimum_step=1e-12,
-            abs_err_tol=5.0e-4,
-            rel_err_tol=5.0e-5,
+            method='cs',
         )
-        assert_check_partials(partial_data, atol=5e-4, rtol=1e-4)
+        assert_check_partials(partial_data, atol=1e-7, rtol=1e-7)
 
 
 if __name__ == '__main__':
