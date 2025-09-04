@@ -775,6 +775,38 @@ add_meta_data(
     types=int,
 )
 
+add_meta_data(
+    Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_BUSINESS,
+    meta_data=_MetaData,
+    historical_name={'GASP': None, 'FLOPS': 'FUSEIN.NBABR', 'LEAPS1': None},
+    units='unitless',
+    desc='Number of business class passengers abreast',
+    types=int,
+    option=True,
+    default_value=5,
+)
+
+add_meta_data(
+    Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_FIRST,
+    meta_data=_MetaData,
+    historical_name={'GASP': None, 'FLOPS': 'FUSEIN.NFABR', 'LEAPS1': None},
+    units='unitless',
+    desc='Number of first class passengers abreast',
+    types=int,
+    option=True,
+    default_value=4,
+)
+
+add_meta_data(
+    Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_TOURIST,
+    meta_data=_MetaData,
+    historical_name={'GASP': 'INGASP.SAB', 'FLOPS': 'FUSEIN.NTABR', 'LEAPS1': None},
+    units='unitless',
+    desc='Number of tourist class passengers abreast',
+    types=int,
+    option=True,
+    default_value=6,
+)
 
 # TODO rename to economy?
 add_meta_data(
@@ -790,6 +822,36 @@ add_meta_data(
     types=int,
     option=True,
     default_value=0,
+)
+
+add_meta_data(
+    Aircraft.CrewPayload.Design.SEAT_PITCH_BUSINESS,
+    meta_data=_MetaData,
+    historical_name={'GASP': None, 'FLOPS': 'FUSEIN.BPITCH', 'LEAPS1': None},
+    units='inch',
+    desc='pitch of the business class seats',
+    option=True,
+    default_value=0.0,
+)
+
+add_meta_data(
+    Aircraft.CrewPayload.Design.SEAT_PITCH_FIRST,
+    meta_data=_MetaData,
+    historical_name={'GASP': None, 'FLOPS': 'FUSEIN.FPITCH', 'LEAPS1': None},
+    units='inch',
+    desc='pitch of the first class seats',
+    option=True,
+    default_value=0.0,
+)
+
+add_meta_data(
+    Aircraft.CrewPayload.Design.SEAT_PITCH_TOURIST,
+    meta_data=_MetaData,
+    historical_name={'GASP': 'INGASP.PS', 'FLOPS': 'FUSEIN.TPITCH', 'LEAPS1': None},
+    units='inch',
+    desc='pitch of the tourist class seats',
+    option=True,
+    default_value=0.0,
 )
 
 add_meta_data(
