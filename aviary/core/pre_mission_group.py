@@ -20,5 +20,5 @@ class PreMissionGroup(om.Group):
             pre_mission,
             pre_mission.options['aviary_options'],
             external_overrides=external_outputs,
-            manual_overrides=pre_mission.manual_overrides,
+            code_origin_overrides=pre_mission.code_origin_overrides,
         )
