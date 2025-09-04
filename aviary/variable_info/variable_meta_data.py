@@ -3652,17 +3652,6 @@ add_meta_data(
 )
 
 add_meta_data(
-    Aircraft.Fuselage.NUM_SEATS_ABREAST,
-    meta_data=_MetaData,
-    historical_name={'GASP': 'INGASP.SAB', 'FLOPS': None, 'LEAPS1': None},
-    units='unitless',
-    desc='seats abreast in fuselage',
-    types=int,
-    option=True,
-    default_value=6,
-)
-
-add_meta_data(
     Aircraft.Fuselage.PASSENGER_COMPARTMENT_LENGTH,
     meta_data=_MetaData,
     historical_name={
@@ -3716,16 +3705,6 @@ add_meta_data(
     units='ft',
     default_value=0.0,
     desc='additional pressurized fuselage width for cargo bay',
-)
-
-add_meta_data(
-    Aircraft.Fuselage.SEAT_PITCH,
-    meta_data=_MetaData,
-    historical_name={'GASP': 'INGASP.PS', 'FLOPS': None, 'LEAPS1': None},
-    units='inch',
-    desc='pitch of the economy class seats',
-    option=True,
-    default_value=0.0,
 )
 
 add_meta_data(
@@ -6178,7 +6157,7 @@ add_meta_data(
     meta_data=_MetaData,
     historical_name={
         'GASP': 'INGASP.CROOTW',
-        'FLOPS': None,
+        'FLOPS': 'WTIN.XLW',
         'LEAPS1': None,
     },
     units='ft',
