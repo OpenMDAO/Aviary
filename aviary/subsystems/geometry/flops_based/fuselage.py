@@ -118,12 +118,23 @@ class DetailedCabinLayout(om.ExplicitComponent):
     def initialize(self):
         add_aviary_option(self, Settings.VERBOSITY)
         add_aviary_option(self, Aircraft.Fuselage.NUM_FUSELAGES)
+        add_aviary_option(self, Aircraft.CrewPayload.Design.NUM_FIRST_CLASS)
+        add_aviary_option(self, Aircraft.CrewPayload.Design.NUM_TOURIST_CLASS)
+        add_aviary_option(self, Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_FIRST)
+        add_aviary_option(self, Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_TOURIST)
+        add_aviary_option(self, Aircraft.CrewPayload.Design.SEAT_PITCH_FIRST)
+        add_aviary_option(self, Aircraft.CrewPayload.Design.SEAT_PITCH_TOURIST)
+        add_aviary_option(self, Aircraft.Engine.NUM_ENGINES)
 
     def setup(self):
+        add_aviary_input(self, Mission.Design.RANGE, units='NM')
+
         add_aviary_output(self, Aircraft.Fuselage.LENGTH, units='ft')
         add_aviary_output(self, Aircraft.Fuselage.PASSENGER_COMPARTMENT_LENGTH, units='ft')
         add_aviary_output(self, Aircraft.Fuselage.MAX_WIDTH, units='ft')
         add_aviary_output(self, Aircraft.Fuselage.MAX_HEIGHT, units='ft')
+
+        self.declare_partials('*', '*', method='fd', form='forward')
 
     def compute(self, inputs, outputs):
         verbosity = self.options[Settings.VERBOSITY]
@@ -135,12 +146,14 @@ class DetailedCabinLayout(om.ExplicitComponent):
             if verbosity > Verbosity.BRIEF:
                 print('Multiple fuselage configuration is not implemented yet.')
 
-        # The 200 was derived from 757, the largest single aisle western desig.
+        num_seat_abreast_first = self.options[Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_FIRST]
+        num_seat_abreast_tourist = self.options[
+            Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_TOURIST
+        ]
+        # The 200 was derived from B757 - the largest single aisle western desig.
         if num_tourist_class_pax > 200:
-            num_seat_abreast_tourist = self.options[Aircraft.Fuselage.NUM_SEATS_ABREAST_TOURIST]
             if num_seat_abreast_tourist <= 0:
                 num_seat_abreast_tourist = 8
-            num_seat_abreast_first = self.options[Aircraft.Fuselage.NUM_SEATS_ABREAST_FIRST]
             if num_seat_abreast_first > 0 and num_seat_abreast_first <= 0:
                 num_seat_abreast_first = num_seat_abreast_tourist - 2
 
@@ -174,24 +187,73 @@ class DetailedCabinLayout(om.ExplicitComponent):
         if num_seat_abreast_tourist > 6:
             aisle_width_tourist_class = 15.0
 
-        seat_pitch_first = self.options[Aircraft.Fuselage.SEAT_PITCH_FIRST]
+        seat_pitch_first = self.options[Aircraft.CrewPayload.Design.SEAT_PITCH_FIRST][0]
         if seat_pitch_first <= 0 and num_first_class_pax > 0:
             seat_pitch_first = 38.0  # inch
-        seat_pitch_tourist = self.options[Aircraft.Fuselage.SEAT_PITCH_TOURIST]
+        seat_pitch_tourist = self.options[Aircraft.CrewPayload.Design.SEAT_PITCH_TOURIST][0]
         if seat_pitch_tourist <= 0 and num_tourist_class_pax > 0:
             seat_pitch_tourist = 34.0  # inch
 
-        # Set constraints on the maximum number of galleys and other items so that we don't have a
-        # flying kitchen or closet or whatever.
+        # set maximum number of galleys based on statistics (this block is not from FLOPS)
+        num_pax = num_first_class_pax + num_tourist_class_pax
+        if num_pax < 80:
+            max_galleys = 1
+            max_lav = 1
+            max_closets = 1
+        elif num_pax < 150:
+            max_galleys = 2
+            max_lav = 2
+            max_closets = 2
+        elif num_pax < 250:
+            max_galleys = 3
+            max_lav = 4
+            max_closets = 3
+        elif num_pax < 320:
+            max_galleys = 4
+            max_lav = 6
+            max_closets = 4
+        elif num_pax < 350:
+            max_galleys = 5
+            max_lav = 8
+            max_closets = 5
+        elif num_pax < 410:
+            max_galleys = 6
+            max_lav = 12
+            max_closets = 6
+        elif num_pax < 450:
+            max_galleys = 7
+            max_lav = 13
+            max_closets = 7
+        elif num_pax < 500:
+            max_galleys = 8
+            max_lav = 14
+            max_closets = 8
+        elif num_pax < 550:
+            max_galleys = 9
+            max_lav = 15
+            max_closets = 9
+        elif num_pax < 600:
+            max_galleys = 10
+            max_lav = 16
+            max_closets = 10
+        else:
+            max_galleys = 10
+            max_lav = 16
+            max_closets = 10
+        # The above settings are necessary because FLOPS didn't cover all the scenarios.
+        # They will be over written if FLOPS covered a particular scenario as we see below.
+
+        # Set constraints on the maximum number of galleys and other items so that we don't have
+        # a flying kitchen or closet or whatever.
         # Note: Some of these may need relaxing for larger aircraft.
         if num_first_class_pax == 0:
             design_range = inputs[Mission.Design.RANGE]
-            if design_range < 1250:
+            if design_range < 1250.0:
                 max_lav = 2
             else:
                 max_lav = 3
             if num_tourist_class_pax < 180:
-                fuselage_multiplier = 0.910
+                fuselage_multiplier = 0.91
             max_galleys = 2
             max_closets = 2
 
@@ -210,7 +272,7 @@ class DetailedCabinLayout(om.ExplicitComponent):
             max_closets = 8
 
         if num_first_class_pax > 0 and num_seat_abreast_tourist < 8:
-            fuselage_multiplier = 0.950
+            fuselage_multiplier = 0.95
 
         # Calculate the number of galleys, lavatories and closets
         num_galleys = int(1 + ((num_first_class_pax + num_tourist_class_pax) / 100))
@@ -219,13 +281,13 @@ class DetailedCabinLayout(om.ExplicitComponent):
         num_lavas = int(1 + (num_tourist_class_pax / 60)) + int(1 + (num_first_class_pax / 100))
         if num_lavas > max_lav:
             num_lavas = max_lav
-        num_closets = int(1 + (num_tourist_class_pax / 30)) + int(1 + (num_first_class_pax / 60))
+        num_closets = int(1 + (num_first_class_pax / 30)) + int(1 + (num_tourist_class_pax / 60))
         if num_closets > max_closets:
             num_closets = max_closets
 
         # Calculate the passenger compartment length
 
-        num_engines = self.options[Aircraft.Engine.NUM_ENGINES]
+        num_engines = self.options[Aircraft.Engine.NUM_ENGINES][0]
         eng_flag = num_engines - 2 * int(num_engines / 2)  # a center mounted engine if 1.
         first_class_len = num_first_class_pax * seat_pitch_first / num_seat_abreast_first
         tourist_class_len = num_tourist_class_pax * seat_pitch_tourist / num_seat_abreast_tourist
@@ -247,9 +309,9 @@ class DetailedCabinLayout(om.ExplicitComponent):
 
         # Calculate the number of rows of each class of passenger (not needed)
         if num_first_class_pax > 0:
-            num_rows_first = int(num_first_class_pax / num_seat_abreast_first)
+            num_rows_first = int(np.ceil(num_first_class_pax / num_seat_abreast_first))
         if num_tourist_class_pax > 0:
-            num_rows_tourist = int(num_tourist_class_pax / num_seat_abreast_tourist)
+            num_rows_tourist = int(np.ceil(num_tourist_class_pax / num_seat_abreast_tourist))
 
         # Calculate the fuselage width of the passenger seats
         width_first_class = (
@@ -258,6 +320,6 @@ class DetailedCabinLayout(om.ExplicitComponent):
         width_tourist_class = (
             num_aisles * aisle_width_tourist_class + num_seat_abreast_tourist * 25.0
         ) / 12.0
-        width_fuselage = np.max(width_first_class, width_tourist_class) * 1.06
+        width_fuselage = np.maximum(width_first_class, width_tourist_class) * 1.06
         outputs[Aircraft.Fuselage.MAX_WIDTH] = width_fuselage
         outputs[Aircraft.Fuselage.MAX_HEIGHT] = width_fuselage + 0.9
