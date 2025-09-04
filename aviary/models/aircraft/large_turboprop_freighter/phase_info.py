@@ -13,7 +13,7 @@ energy_phase_info = {
             'altitude_optimize': False,
             'altitude_bounds': ((0.0, 22_000.0), 'ft'),
             'throttle_enforcement': 'path_constraint',
-            'time_initial_bounds': ((0.0, 0.0), 'min'),
+            'time_initial': (0.0, 'min'),
             'time_duration_bounds': ((24.0, 192.0), 'min'),
         },
         'initial_guesses': {

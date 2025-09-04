@@ -589,12 +589,18 @@ class HeightEnergyProblemConfigurator(ProblemConfiguratorBase):
 
             guess_dict['mach'] = ([mach_initial, mach_final], 'unitless')
 
-        if 'time' not in guess_dict and options['time_duration'][0] is None:
-            # if time not in initial guesses, set it to the average of the
-            # initial_bounds and the duration_bounds
-            initial_bounds = wrapped_convert_units(options['time_initial_bounds'], 's')
-            duration_bounds = wrapped_convert_units(options['time_duration_bounds'], 's')
-            guess_dict['time'] = ([np.mean(initial_bounds[0]), np.mean(duration_bounds[0])], 's')
+        if 'time' not in guess_dict:
+            # if time not in initial guesses, use the midpoints of any declared bounds.
+            initial = wrapped_convert_units(options['time_initial'], 's')
+            if initial is None:
+                initial_bounds = wrapped_convert_units(options['time_initial_bounds'], 's')
+                initial = np.mean(initial_bounds[0])
+            duration = wrapped_convert_units(options['time_duration'], 's')
+            if duration is None:
+                duration_bounds = wrapped_convert_units(options['time_duration_bounds'], 's')
+                duration = np.mean(duration_bounds[0])
+
+            guess_dict['time'] = ([initial, duration], 's')
 
         for guess_key, guess_data in guess_dict.items():
             val, units = guess_data

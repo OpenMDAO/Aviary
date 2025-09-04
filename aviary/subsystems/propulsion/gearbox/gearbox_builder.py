@@ -85,8 +85,7 @@ class GearboxBuilder(SubsystemBuilderBase):
             Aircraft.Engine.Gearbox.SHAFT_POWER_DESIGN: {
                 'val': 1.0,
                 'units': 'kW',
-                'lower': 1.0,
-                'upper': None,
+                'static_target': True,
             },
         }
 

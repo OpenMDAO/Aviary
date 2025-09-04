@@ -26,7 +26,7 @@ class HeightEnergyTestCase(unittest.TestCase):
                     'altitude_optimize': True,
                     'altitude_bounds': ((0.0, 35000.0), 'ft'),
                     'throttle_enforcement': 'path_constraint',
-                    'time_initial_bounds': ((0.0, 2.0), 'min'),
+                    'time_initial': (0.0, 'min'),
                     'time_duration_bounds': ((5.0, 50.0), 'min'),
                     'no_descent': False,
                 },

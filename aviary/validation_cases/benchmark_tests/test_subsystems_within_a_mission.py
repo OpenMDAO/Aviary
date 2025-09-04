@@ -50,7 +50,7 @@ class TestSubsystemsMission(unittest.TestCase):
                     'altitude_final': (35000.0, 'ft'),
                     'altitude_bounds': ((23000.0, 38000.0), 'ft'),
                     'throttle_enforcement': 'boundary_constraint',
-                    'time_initial_bounds': ((0.0, 0.0), 'min'),
+                    'time_initial': (0.0, 'min'),
                     'time_duration_bounds': ((10.0, 30.0), 'min'),
                 },
                 'initial_guesses': {'time': ([0, 30], 'min')},

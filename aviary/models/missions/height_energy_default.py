@@ -20,7 +20,7 @@ phase_info = {
             'altitude_bounds': ((0.0, 34000.0), 'ft'),
             'altitude_polynomial_order': 3,
             'throttle_enforcement': 'path_constraint',
-            'time_initial_bounds': ((0.0, 0.0), 'min'),
+            'time_initial': (0.0, 'min'),
             'time_duration_bounds': ((64.0, 192.0), 'min'),
         },
     },
