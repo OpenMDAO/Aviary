@@ -289,7 +289,7 @@ def override_aviary_vars(
     aircraft represented in aviary_inputs. 
     
     This may also be called manually in a Level-3 model for the same purpose. Note that additional
-    variables can be overriden by passing them in a list to ode_origin_overrides.
+    variables can be overriden by passing them in a list to code_origin_overrides.
 
     Parameters
     ----------
