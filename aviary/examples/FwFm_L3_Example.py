@@ -106,13 +106,22 @@ prob.model.pre_mission.core_subsystems.add_subsystem(
 
 #####
 # prob.add_phases()
-phases = ['climb', 'cruise', 'descent']
+phase_list = ['climb', 'cruise', 'descent']
 prob.traj = prob.model.add_subsystem('traj', dm.Trajectory())
 default_mission_subsystems = [
     prob.model.core_subsystems['aerodynamics'],
     prob.model.core_subsystems['propulsion'],
 ]
-for phase_idx, phase_name in enumerate(phases):
+phases = {}
+
+seg_ends, _ = dm.utils.lgl.lgl(5 + 1)
+transcription = dm.Radau(
+    num_segments=5,
+    order=3,
+    segment_ends=seg_ends,
+)
+
+for phase_idx, phase_name in enumerate(phase_list):
     base_phase_options = prob.model.phase_info[phase_name]
     phase_options = {}
     for key, val in base_phase_options.items():
@@ -126,6 +135,11 @@ for phase_idx, phase_name in enumerate(phases):
     )
     phase = phase_object.build_phase(aviary_options=aviary_inputs)
     prob.traj.add_phase(phase_name, phase)
+    phases[phase_name] = phase
+
+climb = phases['climb']
+cruise = phases['cruise']
+descent = phases['descent']
 
 externs = {'climb': {}, 'cruise': {}, 'descent': {}}
 for default_subsys in default_mission_subsystems:
@@ -151,15 +165,11 @@ prob.model.add_subsystem(
     promotes_outputs=['*'],
 )
 
-prob.traj._phases['climb'].set_state_options(
-    Dynamic.Vehicle.MASS, fix_initial=False, input_initial=False
-)
+climb.set_state_options(Dynamic.Vehicle.MASS, fix_initial=False, input_initial=False)
 
-prob.traj._phases['climb'].set_state_options(
-    Dynamic.Mission.DISTANCE, fix_initial=True, input_initial=False
-)
+climb.set_state_options(Dynamic.Mission.DISTANCE, fix_initial=True, input_initial=False)
 
-prob.traj._phases['climb'].set_time_options(
+climb.set_time_options(
     fix_initial=False,
     initial_bounds=(0, 0),
     initial_ref=600,
@@ -167,12 +177,12 @@ prob.traj._phases['climb'].set_time_options(
     duration_ref=7680.0,
 )
 
-prob.traj._phases['cruise'].set_time_options(
+cruise.set_time_options(
     duration_bounds=(3390, 10170),
     duration_ref=6780.0,
 )
 
-prob.traj._phases['descent'].set_time_options(
+descent.set_time_options(
     duration_bounds=(1740, 5220),
     duration_ref=3480.0,
 )
@@ -186,7 +196,7 @@ eq = prob.model.add_subsystem(
 eq.add_eq_output('mass', eq_units='lbm', normalize=False, ref=100000.0, add_constraint=True)
 
 prob.model.connect(
-    f'traj.climb.states:mass',
+    f'traj.climb.timeseries.mass',
     f'link_climb_mass.lhs:mass',
     src_indices=[0],
     flat_src_indices=True,
@@ -308,10 +318,9 @@ prob.model.post_mission.add_subsystem(
 all_subsystems = []
 all_subsystems.append(prob.model.core_subsystems['propulsion'])
 
-phases = list(prob.model.phase_info.keys())
-prob.traj.link_phases(phases, ['time'], ref=None, connected=True)
-prob.traj.link_phases(phases, [Dynamic.Vehicle.MASS], ref=None, connected=True)
-prob.traj.link_phases(phases, [Dynamic.Mission.DISTANCE], ref=None, connected=True)
+prob.traj.link_phases(phase_list, ['time'], ref=None, connected=False)
+prob.traj.link_phases(phase_list, [Dynamic.Vehicle.MASS], ref=None, connected=False)
+prob.traj.link_phases(phase_list, [Dynamic.Mission.DISTANCE], ref=None, connected=False)
 
 prob.model.connect(
     f'traj.descent.timeseries.distance',
@@ -331,7 +340,7 @@ prob.driver.options['disp'] = True
 prob.driver.options['tol'] = 1e-9
 prob.driver.options['maxiter'] = 50
 
-# IPOPT Optimizer Settings
+# # IPOPT Optimizer Settings
 # prob.driver.opt_settings['print_user_options'] = 'no'
 # prob.driver.opt_settings['print_frequency_iter'] = 10
 # prob.driver.opt_settings['print_level'] = 3
@@ -345,7 +354,9 @@ prob.driver.options['maxiter'] = 50
 # prob.driver.opt_settings['iSumm'] = 6
 # prob.driver.opt_settings['iPrint'] = 0
 
-# SNOPT Optimizer Settings #
+# # SNOPT Optimizer Settings #
+# prob.driver = om.pyOptSparseDriver()
+# prob.driver.options['optimizer'] = 'SNOPT'
 # prob.driver.opt_settings['Major iterations limit'] = 50
 # prob.driver.opt_settings['Major optimality tolerance'] = 1e-4
 # prob.driver.opt_settings['Major feasibility tolerance'] = 1e-7
@@ -435,47 +446,59 @@ guesses['mach_descent'] = ([0.72, 0.36], 'unitless')
 guesses['altitude_descent'] = ([34000.0, 500.0], 'ft')
 guesses['time_descent'] = ([7230.0, 1740.0], 's')
 
-prob.set_val('traj.climb.t_initial', guesses['time_climb'][0][0], units='s')
-prob.set_val('traj.climb.t_duration', guesses['time_climb'][0][1], units='s')
-prob.set_val(
-    'traj.climb.controls:mach',
-    prob.model.traj.phases.climb.interp('mach', xs=[-1, 1], ys=guesses['mach_climb'][0]),
+climb.set_time_val(
+    initial=guesses['time_climb'][0][0], duration=guesses['time_climb'][0][1], units='s'
+)
+climb.set_control_val(
+    'mach',
+    vals=guesses['mach_climb'][0],
+    time_vals=[-1, 1],
     units='unitless',
 )
-prob.set_val(
-    'traj.climb.controls:altitude',
-    prob.model.traj.phases.climb.interp('altitude', xs=[-1, 1], ys=guesses['altitude_climb'][0]),
+climb.set_control_val(
+    'altitude',
+    vals=guesses['altitude_climb'][0],
+    time_vals=[-1, 1],
     units='ft',
 )
 
-prob.set_val('traj.cruise.t_initial', guesses['time_cruise'][0][0], units='s')
-prob.set_val('traj.cruise.t_duration', guesses['time_cruise'][0][1], units='s')
-prob.set_val(
-    'traj.cruise.controls:mach',
-    prob.model.traj.phases.cruise.interp('mach', xs=[-1, 1], ys=guesses['mach_cruise'][0]),
+climb.set_state_val('mass', 125000, units='lbm')
+
+cruise.set_time_val(
+    initial=guesses['time_cruise'][0][0], duration=guesses['time_cruise'][0][1], units='s'
+)
+cruise.set_control_val(
+    'mach',
+    vals=guesses['mach_cruise'][0],
+    time_vals=[-1, 1],
     units='unitless',
 )
-prob.set_val(
-    'traj.cruise.controls:altitude',
-    prob.model.traj.phases.cruise.interp('altitude', xs=[-1, 1], ys=guesses['altitude_cruise'][0]),
+cruise.set_control_val(
+    'altitude',
+    vals=guesses['altitude_cruise'][0],
+    time_vals=[-1, 1],
     units='ft',
 )
 
-prob.set_val('traj.descent.t_initial', guesses['time_descent'][0][0], units='s')
-prob.set_val('traj.descent.t_duration', guesses['time_descent'][0][1], units='s')
-prob.set_val(
-    'traj.descent.controls:mach',
-    prob.model.traj.phases.climb.interp('mach', xs=[-1, 1], ys=guesses['mach_descent'][0]),
+cruise.set_state_val('mass', 125000, units='lbm')
+
+descent.set_time_val(
+    initial=guesses['time_descent'][0][0], duration=guesses['time_descent'][0][1], units='s'
+)
+descent.set_control_val(
+    'mach',
+    vals=guesses['mach_descent'][0],
+    time_vals=[-1, 1],
     units='unitless',
 )
-prob.set_val(
-    'traj.descent.controls:altitude',
-    prob.model.traj.phases.climb.interp('altitude', xs=[-1, 1], ys=guesses['altitude_descent'][0]),
+descent.set_control_val(
+    'altitude',
+    vals=guesses['altitude_descent'][0],
+    time_vals=[-1, 1],
     units='ft',
 )
-prob.set_val('traj.climb.states:mass', 125000, units='lbm')
-prob.set_val('traj.cruise.states:mass', 125000, units='lbm')
-prob.set_val('traj.descent.states:mass', 125000, units='lbm')
+
+descent.set_state_val('mass', 125000, units='lbm')
 
 prob.set_val(Mission.Design.GROSS_MASS, 175400, units='lbm')
 prob.set_val(Mission.Summary.GROSS_MASS, 175400, units='lbm')
