@@ -59,6 +59,7 @@ class CorePreMission(om.Group):
 
         if self.options['process_overrides']:
             override_aviary_vars(
-                self, self.options['aviary_options'], 
+                self,
+                self.options['aviary_options'],
                 code_origin_overrides=self.code_origin_overrides,
             )

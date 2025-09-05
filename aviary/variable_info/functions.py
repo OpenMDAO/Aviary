@@ -286,10 +286,9 @@ def override_aviary_vars(
 ):
     """
     This function gives Aviary the capability to override output variables with variables from the
-    aircraft represented in aviary_inputs. 
-    
-    This may also be called manually in a Level-3 model for the same purpose. Note that additional
-    variables can be overriden by passing them in a list to code_origin_overrides.
+    aircraft represented in aviary_inputs.
+
+    This may also be called manually in a Level-3 model for the same purpose.
 
     Parameters
     ----------
@@ -344,7 +343,7 @@ def override_aviary_vars(
                 # These variables are ones that are computed in both GASP and FLOPS when both
                 # geometries are present. Aviary determines which one to favor, and which to
                 # remove by overriding it.
-                # TODO: What is user wants to override one of these? 
+                # TODO: What if user wants to override one of these?
                 continue
 
             elif name in external_overrides:
