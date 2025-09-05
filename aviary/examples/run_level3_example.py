@@ -22,7 +22,7 @@ class L3SubsystemsGroup(om.Group):
             types=AviaryValues,
             desc='collection of Aircraft/Mission specific options',
         )
-        self.manual_overrides = []
+        self.code_origin_overrides = []
 
 
 prob = av.AviaryProblem()

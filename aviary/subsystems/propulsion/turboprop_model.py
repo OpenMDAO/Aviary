@@ -518,7 +518,7 @@ class TurbopropMission(om.Group):
                 shp_outputs.append(
                     (
                         Dynamic.Vehicle.Propulsion.RPM,
-                        'AUTO_OVERRIDE:' + Dynamic.Vehicle.Propulsion.RPM,
+                        'AIRCRAFT_DATA_OVERRIDE:' + Dynamic.Vehicle.Propulsion.RPM,
                     )
                 )
                 shp_output_list.remove(Dynamic.Vehicle.Propulsion.RPM)
@@ -536,7 +536,9 @@ class TurbopropMission(om.Group):
             if Dynamic.Vehicle.Propulsion.RPM in shp_input_list:
                 shp_inputs.append((Dynamic.Vehicle.Propulsion.RPM, 'fixed_rpm'))
         else:
-            rpm_ivc.add_output('AUTO_OVERRIDE:' + Dynamic.Vehicle.Propulsion.RPM, 1.0, units='rpm')
+            rpm_ivc.add_output(
+                'AIRCRAFT_DATA_OVERRIDE:' + Dynamic.Vehicle.Propulsion.RPM, 1.0, units='rpm'
+            )
             if has_gearbox:
                 if Dynamic.Vehicle.Propulsion.RPM in shp_output_list:
                     shp_outputs.append(
