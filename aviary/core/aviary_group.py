@@ -20,14 +20,12 @@ from aviary.subsystems.mass.mass_builder import CoreMassBuilder
 from aviary.subsystems.performance.performance_builder import CorePerformanceBuilder
 from aviary.subsystems.premission import CorePreMission
 from aviary.subsystems.propulsion.propulsion_builder import CorePropulsionBuilder
-from aviary.utils.aviary_values import AviaryValues
 from aviary.utils.functions import get_path
 from aviary.utils.preprocessors import preprocess_options
 from aviary.utils.process_input_decks import create_vehicle, update_GASP_options
 from aviary.utils.utils import wrapped_convert_units
 from aviary.variable_info.enums import EquationsOfMotion, LegacyCode, ProblemType, Verbosity
 from aviary.variable_info.functions import setup_trajectory_params
-from aviary.variable_info.variable_meta_data import _MetaData as BaseMetaData
 from aviary.variable_info.variables import Aircraft, Mission, Settings
 
 TWO_DEGREES_OF_FREEDOM = EquationsOfMotion.TWO_DEGREES_OF_FREEDOM
@@ -63,7 +61,7 @@ class AviaryGroup(om.Group):
 
         self.aviary_inputs = None
         self.meta_data = None
-        self.phase_info = None
+        self.mission_info = None
 
     def configure(self):
         """Configure the Aviary group."""
@@ -142,7 +140,7 @@ class AviaryGroup(om.Group):
             # TODO: Future updates to dymos may make this unnecessary.
             for phase in self.traj.phases.system_iter(recurse=False):
                 # Don't move the solvers if we are using solve segments.
-                if self.phase_info[phase.name]['user_options'].get('distance_solve_segments'):
+                if self.mission_info[phase.name]['user_options'].get('distance_solve_segments'):
                     continue
 
                 phase.nonlinear_solver = om.NonlinearRunOnce()

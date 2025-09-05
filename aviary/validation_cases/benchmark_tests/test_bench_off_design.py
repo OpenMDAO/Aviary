@@ -300,6 +300,7 @@ class Test2DOFOffDesign(unittest.TestCase):
             Aircraft.CrewPayload.TOTAL_PAYLOAD_MASS,
             Mission.Design.GROSS_MASS,
             Mission.Summary.GROSS_MASS,
+            # currently not a GASP variable
             # Aircraft.Design.EMPTY_MASS,
             Aircraft.CrewPayload.PASSENGER_PAYLOAD_MASS,
         ]
@@ -333,14 +334,14 @@ class Test2DOFOffDesign(unittest.TestCase):
             problem_type='fallout',
             cargo_mass=5000,
             mission_gross_mass=160_000,
-            num_tourist=75,
+            num_pax=75,
         )
         assert_near_equal(
             prob_fallout.aviary_inputs.get_val(Mission.Design.RANGE, 'nmi'),
             self.prob.aviary_inputs.get_val(Mission.Design.RANGE, 'nmi'),
             tolerance=1e-12,
         )
-        assert_near_equal(prob_fallout.get_val(Mission.Summary.RANGE), 3067.82, tolerance=1e-3)
+        assert_near_equal(prob_fallout.get_val(Mission.Summary.RANGE), 4538.54, tolerance=1e-6)
         assert_near_equal(
             prob_fallout.get_val(Mission.Summary.FUEL_MASS, 'lbm'),
             40092.42,
@@ -348,7 +349,7 @@ class Test2DOFOffDesign(unittest.TestCase):
         )
         assert_near_equal(
             prob_fallout.get_val(Mission.Summary.TOTAL_FUEL_MASS, 'lbm'),
-            24044.634,
+            45044.63,
             tolerance=1e-7,
         )
         assert_near_equal(
@@ -363,14 +364,15 @@ class Test2DOFOffDesign(unittest.TestCase):
         )
         assert_near_equal(
             prob_fallout.get_val(Aircraft.CrewPayload.TOTAL_PAYLOAD_MASS, 'lbm'),
-            41000,
+            20000,
             tolerance=1e-7,
         )
         assert_near_equal(
             prob_fallout.get_val(Aircraft.CrewPayload.PASSENGER_PAYLOAD_MASS, 'lbm'),
-            36000,
+            15000,
             tolerance=1e-7,
         )
+        # currently not a GASP variable
         # assert_near_equal(
         #     prob_fallout.get_val(Aircraft.Design.EMPTY_MASS, 'lbm'),
         #     self.prob.get_val(Aircraft.Design.EMPTY_MASS, 'lbm'),
@@ -409,7 +411,7 @@ class Test2DOFOffDesign(unittest.TestCase):
             problem_type='alternate',
             cargo_mass=2100,
             mission_range=1800,
-            num_tourist=150,
+            num_pax=150,
         )
         assert_near_equal(
             prob_alternate.aviary_inputs.get_val(Mission.Design.RANGE, 'nmi'),
@@ -447,6 +449,7 @@ class Test2DOFOffDesign(unittest.TestCase):
             36000,
             tolerance=1e-7,
         )
+        # currently not a GASP variable
         # assert_near_equal(
         #     prob_alternate.get_val(Aircraft.Design.EMPTY_MASS, 'lbm'),
         #     self.prob.get_val(Aircraft.Design.EMPTY_MASS, 'lbm'),
@@ -516,9 +519,9 @@ class PayloadRangeTest(unittest.TestCase):
 
 if __name__ == '__main__':
     # unittest.main()
-    test = Test2DOFOffDesign()
-    test.setUp()
-    test.test_fallout_mission_changed()
+    # test = Test2DOFOffDesign()
+    # test.setUp()
+    # test.test_fallout_mission_changed()
 
-    # test = PayloadRangeTest()
-    # test.test_payload_range()
+    test = PayloadRangeTest()
+    test.test_payload_range()
