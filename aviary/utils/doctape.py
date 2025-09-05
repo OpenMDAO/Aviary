@@ -5,7 +5,7 @@ import os
 import re
 import subprocess
 import tempfile
-
+import textwrap
 import numpy as np
 
 from aviary.interface.cmd_entry_points import _command_map
@@ -39,6 +39,7 @@ glue_class_options glue all class options for a given class
 get_previous_line returns the previous n line(s) of code as a string
 get_class_names return the class names in a file as a set
 get_function_names returns the function names in a file as a set
+get_all_non_aviary_names returns the non-Aviary variable names of a component
 """
 
 
@@ -547,9 +548,12 @@ def glue_actions(cmd, curr_glued=None, glue_default=False, glue_choices=False, m
                         curr_glued.append(str(choice))
 
 
-def glue_class_functions(obj, curr_glued=None, pre_fix=None, md_code=True):
+def glue_class_functions(obj, curr_glued=None, prefix=None, md_code=True):
     """
     Glue all class functions.
+
+    For a function 'foo', glue 'foo' and 'foo()'
+    If a prefix is defined, also glue 'prefix.foo' and 'prefix.foo()'
 
     Parameters
     ----------
@@ -557,18 +561,21 @@ def glue_class_functions(obj, curr_glued=None, pre_fix=None, md_code=True):
         class object
     curr_glued: list
         the parameters that have been glued
+    prefix: str
+        Preix to be prepended.
     """
     if curr_glued is None:
         curr_glued = []
     methods = inspect.getmembers(obj, predicate=inspect.isfunction)
     for func_name, func in methods:
-        if pre_fix is not None:
-            if pre_fix + '.' + func_name + '()' not in curr_glued:
-                glue_variable(pre_fix + '.' + func_name + '()', md_code=md_code)
-                curr_glued.append(pre_fix + '.' + func_name + '()')
-        if func_name + '()' not in curr_glued:
-            glue_variable(func_name + '()', md_code=md_code)
-            curr_glued.append(func_name + '()')
+        forms = [func_name, f'{func_name}()']
+        if prefix is not None:
+            pre_forms = [f'{prefix}.{name}' for name in forms]
+            forms.extend(pre_forms)
+        for form in forms:
+            if form not in curr_glued:
+                glue_variable(form, md_code=md_code)
+                curr_glued.append(form)
 
 
 def glue_function_arguments(func, curr_glued=None, glue_default=False, md_code=False):
@@ -596,9 +603,12 @@ def glue_function_arguments(func, curr_glued=None, glue_default=False, md_code=F
                     curr_glued.append(param_default)
 
 
-def glue_class_options(obj, curr_glued=None, md_code=False):
+def glue_class_options(obj, curr_glued=None, md_code=False, add_attributes=True):
     """
     Glue all class options for a given class.
+
+    This includes all options that have been declared in the base options dict. It also optionally
+    includes class attributes that are declared in the init method.
 
     Parameters
     ----------
@@ -606,6 +616,8 @@ def glue_class_options(obj, curr_glued=None, md_code=False):
         class
     curr_glued: list
         the parameters that have been glued
+    add_attributes: bool
+        When True, also add any class and instance attributes. Default is True.
     """
     if curr_glued is None:
         curr_glued = []
@@ -615,3 +627,47 @@ def glue_class_options(obj, curr_glued=None, md_code=False):
         if opt not in curr_glued:
             glue_variable(opt, md_code=md_code)
             curr_glued.append(opt)
+
+    for item in obj.__dict__:
+        if item not in curr_glued:
+            glue_variable(item, md_code=md_code)
+            curr_glued.append(item)
+
+
+def get_all_non_aviary_names(cls, include_in_out='in_out'):
+    """
+    Retrieve the names of all the non-Aviary variables of a component class
+    created by self.add_input() or self.add_output() methods in setup().
+    """
+    method_name = 'setup'
+    func = getattr(cls, method_name)
+    source = inspect.getsource(func)
+    source = textwrap.dedent(source)  # remove indentation
+    tree = ast.parse(source)
+
+    if include_in_out == 'in_out':
+        including_flags = ['add_input', 'add_output']
+    elif include_in_out == 'in':
+        including_flags = ['add_input']
+    elif include_in_out == 'out':
+        including_flags = ['add_output']
+    else:
+        including_flags = []
+
+    names = []
+    for node in ast.walk(tree):
+        if isinstance(node, ast.Call):
+            if (
+                isinstance(node.func, ast.Attribute)
+                and node.func.attr in including_flags
+                and isinstance(node.func.value, ast.Name)
+                and node.func.value.id == 'self'
+            ):
+                # Case 1: name is the first positional argument
+                if node.args and isinstance(node.args[0], ast.Constant):
+                    names.append(node.args[0].value)
+                # Case 2: name is given as a keyword
+                for kw in node.keywords:
+                    if kw.arg == 'name' and isinstance(kw.value, ast.Constant):
+                        names.append(kw.value.value)
+    return names

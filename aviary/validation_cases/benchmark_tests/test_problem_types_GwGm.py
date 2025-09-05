@@ -11,7 +11,7 @@ from aviary.variable_info.enums import ProblemType, Verbosity
 
 class TwoDOFTestCase(unittest.TestCase):
     def setUp(self) -> None:
-        self.sized_mass = 174039.0
+        self.sized_mass = 171044.0
         self.sized_range = 3675
         self.phase_info = deepcopy(phase_info)
 
@@ -43,15 +43,12 @@ class TestOffDesign(TwoDOFTestCase):
         )
 
         prob_fallout.check_and_preprocess_inputs()
-        prob_fallout.add_pre_mission_systems()
-        prob_fallout.add_phases()
-        prob_fallout.add_post_mission_systems()
-        prob_fallout.link_phases()
+
+        prob_fallout.build_model()
         prob_fallout.add_driver('IPOPT', max_iter=100)
         prob_fallout.add_design_variables()
         prob_fallout.add_objective()
         prob_fallout.setup()
-        prob_fallout.set_initial_guesses()
         prob_fallout.run_aviary_problem()
 
         # Alternate Mission
@@ -74,15 +71,11 @@ class TestOffDesign(TwoDOFTestCase):
         )
 
         prob_alternate.check_and_preprocess_inputs()
-        prob_alternate.add_pre_mission_systems()
-        prob_alternate.add_phases()
-        prob_alternate.add_post_mission_systems()
-        prob_alternate.link_phases()
+        prob_alternate.build_model()
         prob_alternate.add_driver('IPOPT', max_iter=100)
         prob_alternate.add_design_variables()
         prob_alternate.add_objective()
         prob_alternate.setup()
-        prob_alternate.set_initial_guesses()
         prob_alternate.run_aviary_problem()
 
         fallout_range = prob_fallout.get_val(av.Mission.Summary.RANGE)
@@ -110,15 +103,11 @@ class TestOffDesign(TwoDOFTestCase):
         )
 
         prob_fallout.check_and_preprocess_inputs()
-        prob_fallout.add_pre_mission_systems()
-        prob_fallout.add_phases()
-        prob_fallout.add_post_mission_systems()
-        prob_fallout.link_phases()
+        prob_fallout.build_model()
         prob_fallout.add_driver('SNOPT', max_iter=100)
         prob_fallout.add_design_variables()
         prob_fallout.add_objective()
         prob_fallout.setup()
-        prob_fallout.set_initial_guesses()
         prob_fallout.run_aviary_problem()
 
         # Alternate Mission
@@ -141,15 +130,11 @@ class TestOffDesign(TwoDOFTestCase):
         )
 
         prob_alternate.check_and_preprocess_inputs()
-        prob_alternate.add_pre_mission_systems()
-        prob_alternate.add_phases()
-        prob_alternate.add_post_mission_systems()
-        prob_alternate.link_phases()
+        prob_alternate.build_model()
         prob_alternate.add_driver('SNOPT', max_iter=100)
         prob_alternate.add_design_variables()
         prob_alternate.add_objective()
         prob_alternate.setup()
-        prob_alternate.set_initial_guesses()
         prob_alternate.run_aviary_problem()
 
         fallout_range = prob_fallout.get_val(av.Mission.Summary.RANGE)

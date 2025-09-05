@@ -313,13 +313,6 @@ class HeightEnergyProblemConfigurator(ProblemConfiguratorBase):
                 phase.set_state_options(Dynamic.Vehicle.MASS, input_initial=False)
                 phase.set_state_options(Dynamic.Mission.DISTANCE, input_initial=False)
 
-        aviary_group.connect(
-            f'traj.{aviary_group.regular_phases[-1]}.timeseries.distance',
-            Mission.Summary.RANGE,
-            src_indices=[-1],
-            flat_src_indices=True,
-        )
-
         phase = aviary_group.traj._phases[phases[0]]
 
         # Currently expects Distance to be an input.

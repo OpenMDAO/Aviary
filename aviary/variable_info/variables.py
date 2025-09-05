@@ -746,6 +746,8 @@ class Mission:
         # user selection.
         CRUISE_MACH = 'mission:summary:cruise_mach'
         CRUISE_MASS_FINAL = 'mission:summary:cruise_mass_final'
+        FINAL_MASS = 'mission:summary:final_mass'
+        FINAL_TIME = 'mission:summary:final_time'
         FUEL_BURNED = 'mission:summary:fuel_burned'
         FUEL_FLOW_SCALER = 'mission:summary:fuel_flow_scaler'
         FUEL_MASS = 'mission:summary:fuel_mass'
