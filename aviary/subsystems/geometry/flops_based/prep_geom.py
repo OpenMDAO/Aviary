@@ -682,6 +682,21 @@ class _Tail(om.ExplicitComponent):
         )
 
 
+class _BWBFuselage(om.ExplicitComponent):
+    """
+    Set BWB fuselage cross sectional area, and fuselage wetted area to zero
+    for FLOPS-based aerodynamics analysis when BWB has detailed wings.
+    """
+
+    def setup(self):
+        add_aviary_output(self, Aircraft.Fuselage.CROSS_SECTION, units='ft**2')
+        add_aviary_output(self, Aircraft.Fuselage.WETTED_AREA, units='ft**2')
+
+    def compute(self, inputs, outputs):
+        outputs[Aircraft.Fuselage.CROSS_SECTION] = 0.0
+        outputs[Aircraft.Fuselage.WETTED_AREA] = 0.0
+
+
 class _Fuselage(om.ExplicitComponent):
     """
     Calculate fuselage cross sectional area, and fuselage wetted area of aircraft geometry
