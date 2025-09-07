@@ -74,38 +74,52 @@ class BWBUpdateDetailedWingDistTest(unittest.TestCase):
             val=[0.0, 0, 0, 0, 0, 0, 0, 0, 42.9, 42.9, 42.9, 42.9, 42.9, 42.9, 42.9],
         )
         prob.set_val(Aircraft.Fuselage.MAX_WIDTH, val=64.58)
-        prob.set_val(Aircraft.Wing.SPAN, val=238.08)
+        prob.set_val(Aircraft.Wing.SPAN, val=68.58)
         prob.set_val(Aircraft.Fuselage.LENGTH, val=137.5)
         prob.set_val(Aircraft.Wing.THICKNESS_TO_CHORD, val=0.11)
         prob.set_val(Aircraft.Wing.ROOT_CHORD, 7.710195)
         prob.run_model()
 
-        import pdb
-
-        pdb.set_trace()
         out0 = self.aviary_options.get_val(Aircraft.Wing.INPUT_STATION_DIST)
-        exp0 = []
+        exp0 = [
+            0.0,
+            32.29,
+            0.9650043744531933,
+            0.9679206765820939,
+            0.9708369787109944,
+            0.973753280839895,
+            0.9766695829687956,
+            0.9795800524934383,
+            0.9825021872265967,
+            0.9854184893554973,
+            0.9883347914843977,
+            0.9912510936132983,
+            0.994161563137941,
+            0.9970836978710994,
+            1.0,
+        ]
         assert_near_equal(out0, exp0, tolerance=1e-10)
 
         out1 = prob.get_val('BWB_CHORD_PER_SEMISPAN_DIST')
         exp1 = [
             137.5,
             11.014564285714286,
-            0.32728011592742,
-            0.28304519489247,
-            0.24172526041667,
-            0.2103162802419,
-            0.18488302251344,
-            0.1653526125672,
-            0.1545671622984,
-            0.14451045866935,
-            0.1343080057124,
-            0.12417842741935,
-            0.11404884912634,
-            0.10391927083333,
-            0.09378969254032,
+            0.02619422572178478,
+            0.022653834937299507,
+            0.019346748323126276,
+            0.016832895888014,
+            0.014797317002041411,
+            0.013234179060950715,
+            0.012370953630796152,
+            0.011566054243219598,
+            0.010749489647127443,
+            0.009938757655293088,
+            0.009128025663458736,
+            0.008317293671624381,
+            0.007506561679790027,
         ]
         assert_near_equal(out1, exp1, tolerance=1e-10)
+
         out2 = prob.get_val('BWB_THICKNESS_TO_CHORD_DIST')
         exp2 = [
             0.11,
@@ -131,12 +145,51 @@ class BWBUpdateDetailedWingDistTest(unittest.TestCase):
         assert_near_equal(out3, exp3, tolerance=1e-10)
 
 
-# From FLOPS
-# ETAW = (0, 32.29, 0.96500437445319331, 0.96792067658209391, 0.97083697871099439, 0.97375328083989499, 0.97666958296879558, 0.97958005249343827, 0.98250218722659666, 0.98541848935549725, 0.98833479148439773, 0.99125109361329833, 0.99416156313794102, 0.99708369787109941, 1)
-# CHD = (137.5, 11.014564549160855, 0.026194225721784779, 0.022653834937299507, 0.019346748323126276, 0.016832895888014, 0.014797317002041411, 0.013234179060950715, 0.012370953630796152, 0.011566054243219598, 0.010749489647127443, 0.0099387576552930883, 0.0091280256634587355, 0.008317293671624381, 0.0075065616797900274)
-# TOC = (0.11, 0.11, 0.1132, 0.0928, 0.0822 0.0764, 0.0742, 0.0746, 0.0758, 0.0758, 0.0756, 0.0756, 0.0758, 0.076, 0.076)
-# SWL = (0, 0, 0, 0, 0, 0, 0, 0, 42.9, 42.9, 42.9, 42.9, 42.9, 42.9, 42.9)
+class BWBComputeDetailedWingDistTest(unittest.TestCase):
+    def setUp(self):
+        self.prob = om.Problem()
+
+    def test_case1(self):
+        prob = self.prob
+        self.aviary_options = AviaryValues()
+        self.aviary_options.set_val(Settings.VERBOSITY, 1, units='unitless')
+        self.aviary_options.set_val(
+            Aircraft.Wing.INPUT_STATION_DIST,
+            [0.0, 0.5, 1.0],
+            units='unitless',
+        )
+        prob.model.add_subsystem(
+            'dist', BWBComputeDetailedWingDist(), promotes_outputs=['*'], promotes_inputs=['*']
+        )
+        setup_model_options(self.prob, self.aviary_options)
+        prob.setup(check=False, force_alloc_complex=True)
+        prob.set_val(Aircraft.Fuselage.MAX_WIDTH, val=64.58)
+        prob.set_val(Aircraft.Wing.SPAN, val=238.08)
+        prob.set_val(Aircraft.Fuselage.LENGTH, val=137.5)
+        prob.set_val(Aircraft.Wing.THICKNESS_TO_CHORD, val=0.11)
+        prob.set_val(Aircraft.Wing.ROOT_CHORD, 7.710195)
+        prob.set_val(Aircraft.Wing.SWEEP, 35.7, units='deg')
+        prob.run_model()
+
+        out0 = self.aviary_options.get_val(Aircraft.Wing.INPUT_STATION_DIST)
+        exp0 = [0.0, 32.29, 1.0]
+        assert_near_equal(out0, exp0, tolerance=1e-10)
+
+        out1 = prob.get_val('BWB_CHORD_PER_SEMISPAN_DIST')
+        exp1 = [137.5, 11.01456429, 14.2848]
+        assert_near_equal(out1, exp1, tolerance=1e-10)
+
+        out2 = prob.get_val('BWB_THICKNESS_TO_CHORD_DIST')
+        exp2 = [0.11, 0.11, 0.11]
+        assert_near_equal(out2, exp2, tolerance=1e-10)
+
+        out3 = prob.get_val('BWB_LOAD_PATH_SWEEP_DIST')
+        exp3 = [0.0, 36.40586234, 36.40586234]
+        assert_near_equal(out3, exp3, tolerance=1e-10)
 
 
 if __name__ == '__main__':
-    unittest.main()
+    # unittest.main()
+    test = BWBComputeDetailedWingDistTest()
+    test.setUp()
+    test.test_case1()
