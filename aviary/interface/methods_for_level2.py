@@ -85,6 +85,10 @@ class AviaryProblem(om.Problem):
 
         self.meta_data = meta_data
 
+        # TODO try and find a better solution than a new custom flag - the issue is multimission
+        #      problems don't have a consistent variable path to check the inputs later on
+        self.generate_payload_range = False
+
     def load_inputs(
         self,
         aircraft_data,
@@ -132,6 +136,11 @@ class AviaryProblem(om.Problem):
         if self.problem_type is None:
             # if there are multiple load_inputs() calls, only the problem type from the first aviary_values is used
             self.problem_type = aviary_inputs.get_val(Settings.PROBLEM_TYPE)
+
+        # TODO try and find a better solution than a new custom flag - the issue is multimission
+        #      problems don't have a consistent variable path to check the inputs later on
+        if Settings.PAYLOAD_RANGE in aviary_inputs:
+            self.generate_payload_range = aviary_inputs.get_val(Settings.PAYLOAD_RANGE)
 
         return self.aviary_inputs
 
@@ -224,7 +233,15 @@ class AviaryProblem(om.Problem):
 
         self.aviary_groups_dict[name] = sub
 
-        self.verbosity = sub.verbosity  # TODO: Needs fixed because old verbosity is over-written
+        if self.verbosity is None:
+            # If problem-level verbosity was not defined, use the verbosity specified in the first
+            # added AviaryGroup
+            self.verbosity = sub.verbosity
+
+        # TODO try and find a better solution than a new custom flag - the issue is multimission
+        #      problems don't have a consistent variable path to check the inputs later on
+        if Settings.PAYLOAD_RANGE in sub.aviary_inputs:
+            self.generate_payload_range = sub.aviary_inputs.get_val(Settings.PAYLOAD_RANGE)
 
         self._update_metadata_from_subsystems(sub)  # update meta data with new entries
 
@@ -1176,12 +1193,6 @@ class AviaryProblem(om.Problem):
             with open('input_list.txt', 'w') as outfile:
                 self.model.list_inputs(out_stream=outfile)
 
-        # Creates a flag to determine if the user would or would not like a payload/range diagram
-        payload_range_bool = False
-        if self.problem_type is not ProblemType.MULTI_MISSION:
-            if Settings.PAYLOAD_RANGE in self.aviary_inputs:
-                payload_range_bool = self.aviary_inputs.get_val(Settings.PAYLOAD_RANGE)
-
         if suppress_solver_print:
             self.set_solver_print(level=0)
 
@@ -1237,13 +1248,19 @@ class AviaryProblem(om.Problem):
 
         self.problem_ran_successfully = not failed
 
-        # Checks of the payload/range toggle in the aviary inputs csv file has been set
-        run_payload_range = False
-        if Settings.PAYLOAD_RANGE in self.model.aviary_inputs:
-            run_payload_range = self.model.aviary_inputs.get_val(Settings.PAYLOAD_RANGE)
+        if self.generate_payload_range:
+            if not self.problem_ran_successfully and verbosity > Verbosity.QUIET:
+                warnings.warn(
+                    'Payload Range Diagrams cannot be generated for unconverged Aviary problems.'
+                )
+            elif self.problem_type is ProblemType.MULTI_MISSION and verbosity > Verbosity.QUIET:
+                warnings.warn(
+                    'Payload Range Diagrams currently cannot be generated for aircraft designed '
+                    'using multimission capability.'
+                )
 
-        if run_payload_range:
-            self.run_payload_range()
+            else:
+                self.run_payload_range()
 
     def run_off_design_mission(
         self,
@@ -1260,6 +1277,7 @@ class AviaryProblem(om.Problem):
         cargo_mass=None,
         mission_gross_mass=None,
         mission_range=None,
+        optimizer=None,
         verbosity=None,
     ):
         """
@@ -1305,6 +1323,11 @@ class AviaryProblem(om.Problem):
         mission_range : float, optional
             [FALLOUT missions only] Sets fixed range of flown off-design mission, in nautical miles.
             Unused for other mission types.
+        optimizer : string, optional
+            Set which optimizer to use for the off-design mission. If not provided, the optimizer
+            used for the previously ran sizing mission is used. If that cannot be found, such as
+            when a problem is loaded from a .json output file, then the default optimizer (SLSQP)
+            is chosen.
         verbosity : int, Verbosity
             Sets the printout level for the entire off-design problem that is ran.
         """
@@ -1323,7 +1346,7 @@ class AviaryProblem(om.Problem):
         off_design_prob = AviaryProblem()
 
         # Set up problem for mission, such as equations of motion, configurators, etc.
-        inputs = deepcopy(self.model.aviary_inputs)
+        inputs = deepcopy(self.aviary_inputs)
         design_gross_mass = self.get_val(Mission.Design.GROSS_MASS, units='lbm')[0]
         inputs.set_val(Mission.Design.GROSS_MASS, design_gross_mass, units='lbm')
 
@@ -1357,6 +1380,11 @@ class AviaryProblem(om.Problem):
                 inputs.set_val(Aircraft.CrewPayload.WING_CARGO, wing_cargo, 'lbm')
             if misc_cargo is not None:
                 inputs.set_val(Aircraft.CrewPayload.MISC_CARGO, misc_cargo, 'lbm')
+        else:
+            warnings.warn(
+                'Off-design functionality is in beta for GASP-mass based aircraft. Please manually '
+                'verify your results.'
+            )
 
         if num_pax is not None:
             inputs.set_val(Aircraft.CrewPayload.NUM_PASSENGERS, num_pax)
@@ -1418,10 +1446,11 @@ class AviaryProblem(om.Problem):
         off_design_prob.add_phases(verbosity=verbosity)
         off_design_prob.add_post_mission_systems(verbosity=verbosity)
         off_design_prob.link_phases(verbosity=verbosity)
-        try:
-            optimizer = self.driver.options['optimizer']
-        except KeyError:
-            optimizer = None
+        if optimizer is None:
+            try:
+                optimizer = self.driver.options['optimizer']
+            except KeyError:
+                optimizer = None
         off_design_prob.add_driver(optimizer, verbosity=verbosity)
         off_design_prob.add_design_variables(verbosity=verbosity)
         off_design_prob.add_objective(verbosity=verbosity)
@@ -1512,11 +1541,11 @@ class AviaryProblem(om.Problem):
 
                 # Calculates Different payload quantities
                 economic_mission_wing_cargo = (
-                    int(self.model.aviary_inputs.get_val(Aircraft.CrewPayload.WING_CARGO, 'lbm'))
+                    self.model.aviary_inputs.get_val(Aircraft.CrewPayload.WING_CARGO, 'lbm')
                     * payload_frac
                 )
                 economic_mission_misc_cargo = (
-                    int(self.model.aviary_inputs.get_val(Aircraft.CrewPayload.MISC_CARGO, 'lbm'))
+                    self.model.aviary_inputs.get_val(Aircraft.CrewPayload.MISC_CARGO, 'lbm')
                     * payload_frac
                 )
                 economic_mission_num_first = int(
@@ -1766,7 +1795,6 @@ def _read_sizing_json(json_filename, meta_data, verbosity=Verbosity.BRIEF):
         json_data_file.close()
 
     # Loop over input list and assign aviary problem input values
-    counter = 0  # list index tracker
     for inputs in loaded_aviary_input_list:
         [var_name, var_values, var_units, var_type] = inputs
 
@@ -1812,20 +1840,20 @@ def _read_sizing_json(json_filename, meta_data, verbosity=Verbosity.BRIEF):
                 aviary_inputs.set_val(var_name, var_values, units=var_units, meta_data=meta_data)
 
             except BaseException:
-                if verbosity >= Verbosity.BRIEF:
+                if verbosity >= Verbosity.VERBOSE:
                     warnings.warn(
-                        f'list_num = {counter}, Input String = {inputs}. Attempted to set_value('
-                        f'{var_name}, {var_values}, {var_units}).',
+                        f'Could not add item in .json output to AviaryValues: input string = '
+                        f'{inputs}, attempted to set_value({var_name}, {var_values}, {var_units}). '
+                        'This variable was not added to the AviaryProblem.'
                     )
         else:
             # Not in the MetaData
-            if verbosity >= Verbosity.BRIEF:
+            if verbosity >= Verbosity.VERBOSE:
                 warnings.warn(
-                    f'Name not found in MetaData: list_num = {counter}, Input String = {inputs}. '
-                    f'Attempted set_value({var_name}, {var_values}, {var_units}).'
+                    f'While reading .json output, item was not found in MetaData: {inputs}. This '
+                    'variable was not added to the AviaryProblem.'
                 )
 
-        counter = counter + 1  # increment index tracker
     return aviary_inputs
 
 
@@ -1843,7 +1871,9 @@ def reload_aviary_problem(filename, metadata=BaseMetaData.copy(), verbosity=Verb
 
     Returns
     -------
-    Aviary Problem object with filled aviary_inputs
+    Aviary Problem object with filled aviary_inputs. To use this problem for anything other than
+    running off-design missions, then the full level 2 interface should be used. "load_inputs()"
+    can be skipped as the "aviary_inputs" attribute is prefilled here.
     """
     # Initialize a new aviary problem and aviary_input data structure
     prob = AviaryProblem()
@@ -1851,5 +1881,19 @@ def reload_aviary_problem(filename, metadata=BaseMetaData.copy(), verbosity=Verb
     filename = get_path(filename)
 
     prob.aviary_inputs = _read_sizing_json(filename, metadata, verbosity)
+
+    # prob.check_and_preprocess_inputs(verbosity=0)
+    # prob.add_pre_mission_systems(verbosity=0)
+    # prob.add_phases(verbosity=0)
+    # prob.add_post_mission_systems(verbosity=0)
+    # prob.link_phases(verbosity=0)
+    # prob.add_driver(verbosity=0)
+    # prob.add_design_variables(verbosity=0)
+    # prob.add_objective(verbosity=0)
+    super(AviaryProblem, prob).setup()
+
+    # some variables are normally in the problem instead, so add them there too
+    for input in prob.aviary_inputs:
+        prob.set_val(input[0], input[1][0], input[1][1])
 
     return prob

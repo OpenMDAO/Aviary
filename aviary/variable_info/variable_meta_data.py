@@ -8089,7 +8089,7 @@ add_meta_data(
     option=True,
     default_value=False,
     types=bool,
-    desc='if true, aviary runs 2 off design missions and creates a payload range diagram.',
+    desc='if True, run a set of off-design missions to create a payload range diagram.',
 )
 
 add_meta_data(

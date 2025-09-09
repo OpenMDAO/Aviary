@@ -92,8 +92,8 @@ class TestSizingResults(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    unittest.main()
-    # test = TestSizingResults()
-    # test.setUp()
+    # unittest.main()
+    test = TestSizingResults()
+    test.setUp()
     # test.test_save_json()
-    # test.test_fallout()
+    test.test_fallout()
