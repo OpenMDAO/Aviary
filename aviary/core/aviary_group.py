@@ -361,6 +361,8 @@ class AviaryGroup(om.Group):
             # metadata=self.meta_data
         )
 
+        # TODO this seems like the wrong place to define the core subsystems. Maybe move to
+        # load_inputs?
         ## Set Up Core Subsystems ##
         perf = CorePerformanceBuilder('core_performance')
         prop = CorePropulsionBuilder('core_propulsion', engine_models=self.engine_builders)

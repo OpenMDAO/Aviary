@@ -160,7 +160,7 @@ class AviaryProblem(om.Problem):
         self.model.check_and_preprocess_inputs(verbosity=verbosity)
 
         # we have to update meta data after check_and_preprocess because metadata update
-        # requires get_all_subsystems, which reqiures core_subsystems, which doesn't exist until
+        # requires get_all_subsystems, which requires core_subsystems, which doesn't exist until
         # after check_and_preprocess is assembled
         self._update_metadata_from_subsystems(self.model)  # update meta data with new entries
 
@@ -1326,7 +1326,7 @@ class AviaryProblem(om.Problem):
         optimizer : string, optional
             Set which optimizer to use for the off-design mission. If not provided, the optimizer
             used for the previously ran sizing mission is used. If that cannot be found, such as
-            when a problem is loaded from a .json output file, then the default optimizer (SLSQP)
+            when a problem is loaded from a json output file, then the default optimizer (SLSQP)
             is chosen.
         verbosity : int, Verbosity
             Sets the printout level for the entire off-design problem that is ran.
@@ -1842,7 +1842,7 @@ def _read_sizing_json(json_filename, meta_data, verbosity=Verbosity.BRIEF):
             except BaseException:
                 if verbosity >= Verbosity.VERBOSE:
                     warnings.warn(
-                        f'Could not add item in .json output to AviaryValues: input string = '
+                        f'Could not add item in json output to AviaryValues: input string = '
                         f'{inputs}, attempted to set_value({var_name}, {var_values}, {var_units}). '
                         'This variable was not added to the AviaryProblem.'
                     )
@@ -1850,7 +1850,7 @@ def _read_sizing_json(json_filename, meta_data, verbosity=Verbosity.BRIEF):
             # Not in the MetaData
             if verbosity >= Verbosity.VERBOSE:
                 warnings.warn(
-                    f'While reading .json output, item was not found in MetaData: {inputs}. This '
+                    f'While reading json output, item was not found in MetaData: {inputs}. This '
                     'variable was not added to the AviaryProblem.'
                 )
 
@@ -1866,7 +1866,10 @@ def reload_aviary_problem(filename, metadata=BaseMetaData.copy(), verbosity=Verb
     filename : str, Path
         User specified name and relative path of json file containing the sized aircraft data
 
-    verbosity : Verbosity, int
+    metadata : dict (optional)
+        Custom metadata if needed to read all variables present in the json output file
+
+    verbosity : Verbosity, int (optional)
         Controls level of terminal output for function call
 
     Returns
@@ -1880,20 +1883,31 @@ def reload_aviary_problem(filename, metadata=BaseMetaData.copy(), verbosity=Verb
 
     filename = get_path(filename)
 
-    prob.aviary_inputs = _read_sizing_json(filename, metadata, verbosity)
+    aviary_inputs = _read_sizing_json(filename, metadata, verbosity)
 
-    # prob.check_and_preprocess_inputs(verbosity=0)
-    # prob.add_pre_mission_systems(verbosity=0)
-    # prob.add_phases(verbosity=0)
-    # prob.add_post_mission_systems(verbosity=0)
     # prob.link_phases(verbosity=0)
     # prob.add_driver(verbosity=0)
+
     # prob.add_design_variables(verbosity=0)
     # prob.add_objective(verbosity=0)
-    super(AviaryProblem, prob).setup()
+
+    # bare minimum level of setup needed to allow for prob.set_val()
+    prob.load_inputs(aviary_inputs, meta_data=metadata, verbosity=verbosity)
+    prob.check_and_preprocess_inputs(
+        verbosity=0
+    )  # only here to setup self.core_subsystems. If that gets moved then we don't need this step anymore
+    prob.add_pre_mission_systems(verbosity=0)
+    prob.add_phases(verbosity=0)
+    prob.add_post_mission_systems(verbosity=0)
+    prob.setup()
 
     # some variables are normally in the problem instead, so add them there too
-    for input in prob.aviary_inputs:
-        prob.set_val(input[0], input[1][0], input[1][1])
+    for input in prob.model.aviary_inputs:
+        try:
+            prob.set_val(input[0], input[1][0], input[1][1])
+        except KeyError:
+            # Some variables in the aviary inputs are not present in the OM problem (such as options
+            # and some flags) - skip these
+            pass
 
     return prob

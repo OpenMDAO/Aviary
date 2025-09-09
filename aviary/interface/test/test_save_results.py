@@ -12,7 +12,7 @@ from aviary.utils.functions import get_path
 local_phase_info = deepcopy(phase_info)
 
 
-# @use_tempdirs
+@use_tempdirs
 class TestSizingResults(unittest.TestCase):
     """
     These tests just check that the json files for the sizing mission results can be saved or loaded
