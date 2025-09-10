@@ -58,6 +58,7 @@ class AviaryProblem(om.Problem):
             'mission',
             'timeseries_csv',
             'run_status',
+            'sizing_results',
             'input_checks',
         ]
         for report in new_reports:
@@ -1409,7 +1410,7 @@ class AviaryProblem(om.Problem):
                 mission_range,
                 'nmi',
             )
-
+        om.Problem()
         # reset the AviaryProblem to run the new mission
         off_design_prob.load_inputs(inputs, phase_info, verbosity=verbosity)
 

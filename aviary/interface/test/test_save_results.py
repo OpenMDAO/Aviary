@@ -12,7 +12,7 @@ from aviary.utils.functions import get_path
 local_phase_info = deepcopy(phase_info)
 
 
-@use_tempdirs
+# @use_tempdirs
 class TestSizingResults(unittest.TestCase):
     """
     These tests just check that the json files for the sizing mission results can be saved or loaded
@@ -21,29 +21,29 @@ class TestSizingResults(unittest.TestCase):
     """
 
     def setUp(self):
-        self.prob = prob = av.AviaryProblem()
+        self.prob = av.AviaryProblem()
         # Load aircraft and options data from user
         # Allow for user overrides here
-        prob.load_inputs(
+        self.prob.load_inputs(
             'models/aircraft/test_aircraft/aircraft_for_bench_FwFm.csv', local_phase_info
         )
 
         # Preprocess inputs
-        prob.check_and_preprocess_inputs()
-        prob.add_pre_mission_systems()
-        prob.add_phases(phase_info_parameterization=phase_info_parameterization)
-        prob.add_post_mission_systems()
+        self.prob.check_and_preprocess_inputs()
+        self.prob.add_pre_mission_systems()
+        self.prob.add_phases(phase_info_parameterization=phase_info_parameterization)
+        self.prob.add_post_mission_systems()
 
         # Link phases and variables
-        prob.link_phases()
-        prob.add_driver('SLSQP', max_iter=0)
-        prob.add_design_variables()
+        self.prob.link_phases()
+        self.prob.add_driver('SLSQP', max_iter=0)
+        self.prob.add_design_variables()
 
         # Load optimization problem formulation
         # Detail which variables the optimizer can control
-        prob.add_objective()
-        prob.setup()
-        prob.set_initial_guesses()
+        self.prob.add_objective()
+        self.prob.setup()
+        self.prob.set_initial_guesses()
         self.prob.run_aviary_problem()
         # self.prob.save_results()
 
@@ -95,7 +95,7 @@ class TestSizingResults(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
-    # test = TestSizingResults()
-    # test.setUp()
-    # test.test_save_json()
+    test = TestSizingResults()
+    test.setUp()
+    test.test_save_json()
     # test.test_fallout()
