@@ -343,6 +343,21 @@ add_meta_data(
 # ========================================================================================================================
 
 add_meta_data(
+    Aircraft.BWB.MAX_NUM_BAYS,
+    meta_data=_MetaData,
+    historical_name={
+        'GASP': None,
+        'FLOPS': 'FUSEIN.NBAYMX',  # ['&DEFINE.FUSEIN.NBAYMX', 'FUSDTA.NBAYMX'],
+        'LEAPS1': None,
+    },
+    units='unitless',
+    desc='fixed number of bays',
+    types=int,
+    option=True,
+    default_value=0,
+)
+
+add_meta_data(
     Aircraft.BWB.NUM_BAYS,
     meta_data=_MetaData,
     historical_name={
