@@ -13,7 +13,6 @@ from aviary.interface.utils import write_markdown_variable_table
 from aviary.utils.named_values import NamedValues
 from aviary.utils.utils import wrapped_convert_units
 from aviary.variable_info.enums import ProblemType
-from aviary.variable_info.enums import ProblemType
 
 
 def register_custom_reports():

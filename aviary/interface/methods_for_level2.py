@@ -1346,7 +1346,8 @@ class AviaryProblem(om.Problem):
         off_design_prob = AviaryProblem()
 
         # Set up problem for mission, such as equations of motion, configurators, etc.
-        inputs = deepcopy(self.aviary_inputs)
+        inputs = self.aviary_inputs.copy()
+
         design_gross_mass = self.get_val(Mission.Design.GROSS_MASS, units='lbm')[0]
         inputs.set_val(Mission.Design.GROSS_MASS, design_gross_mass, units='lbm')
 
@@ -1857,7 +1858,9 @@ def _read_sizing_json(json_filename, meta_data, verbosity=Verbosity.BRIEF):
     return aviary_inputs
 
 
-def reload_aviary_problem(filename, metadata=BaseMetaData.copy(), verbosity=Verbosity.BRIEF):
+def reload_aviary_problem(
+    filename, phase_info=None, metadata=BaseMetaData.copy(), verbosity=Verbosity.QUIET
+):
     """
     Loads a previously sized Aviary model and returns an AviaryProblem for that model.
 
@@ -1878,6 +1881,7 @@ def reload_aviary_problem(filename, metadata=BaseMetaData.copy(), verbosity=Verb
     running off-design missions, then the full level 2 interface should be used. "load_inputs()"
     can be skipped as the "aviary_inputs" attribute is prefilled here.
     """
+    # warning if default is used
     # Initialize a new aviary problem and aviary_input data structure
     prob = AviaryProblem()
 
@@ -1885,29 +1889,35 @@ def reload_aviary_problem(filename, metadata=BaseMetaData.copy(), verbosity=Verb
 
     aviary_inputs = _read_sizing_json(filename, metadata, verbosity)
 
-    # prob.link_phases(verbosity=0)
-    # prob.add_driver(verbosity=0)
+    prob.load_inputs(aviary_inputs, phase_info, verbosity=verbosity)
 
-    # prob.add_design_variables(verbosity=0)
-    # prob.add_objective(verbosity=0)
+    prob.check_and_preprocess_inputs(verbosity=verbosity)
 
-    # bare minimum level of setup needed to allow for prob.set_val()
-    prob.load_inputs(aviary_inputs, meta_data=metadata, verbosity=verbosity)
-    prob.check_and_preprocess_inputs(
-        verbosity=0
-    )  # only here to setup self.core_subsystems. If that gets moved then we don't need this step anymore
-    prob.add_pre_mission_systems(verbosity=0)
-    prob.add_phases(verbosity=0)
-    prob.add_post_mission_systems(verbosity=0)
-    prob.setup()
+    # Add Systems
+    prob.add_pre_mission_systems(verbosity=verbosity)
+
+    prob.add_phases(verbosity=verbosity)
+
+    prob.add_post_mission_systems(verbosity=verbosity)
+
+    # Link phases and variables
+    prob.link_phases(verbosity=verbosity)
+
+    prob.add_driver(verbosity=verbosity)
+
+    prob.add_design_variables(verbosity=verbosity)
+
+    # Load optimization problem formulation
+    # Detail which variables the optimizer can control
+    prob.add_objective(verbosity=verbosity)
+
+    prob.setup(verbosity=verbosity)
+
+    prob.final_setup()
 
     # some variables are normally in the problem instead, so add them there too
-    for input in prob.model.aviary_inputs:
-        try:
-            prob.set_val(input[0], input[1][0], input[1][1])
-        except KeyError:
-            # Some variables in the aviary inputs are not present in the OM problem (such as options
-            # and some flags) - skip these
-            pass
+    prob.set_val(
+        Mission.Summary.GROSS_MASS, aviary_inputs.get_val(Mission.Summary.GROSS_MASS, 'lbm'), 'lbm'
+    )
 
     return prob

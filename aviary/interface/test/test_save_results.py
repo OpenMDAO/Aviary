@@ -45,11 +45,13 @@ class TestSizingResults(unittest.TestCase):
         prob.setup()
         prob.set_initial_guesses()
         self.prob.run_aviary_problem()
-        self.prob.save_results()
+        # self.prob.save_results()
 
     def test_save_json(self):
+        reports_folder = Path(self.prob.get_reports_dir())
         self.compare_files(
-            Path.cwd() / 'sizing_results.json', 'interface/test/sizing_results_for_test.json'
+            reports_folder / 'sizing_results.json',
+            'interface/test/sizing_results_for_test.json',
         )
 
     def test_alternate(self):
@@ -92,8 +94,8 @@ class TestSizingResults(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    # unittest.main()
-    test = TestSizingResults()
-    test.setUp()
+    unittest.main()
+    # test = TestSizingResults()
+    # test.setUp()
     # test.test_save_json()
-    test.test_fallout()
+    # test.test_fallout()
