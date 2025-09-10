@@ -1343,7 +1343,7 @@ class AviaryProblem(om.Problem):
         if problem_type is ProblemType.SIZING:
             raise UserWarning('Off-design missions cannot be SIZING missions.')
 
-        off_design_prob = AviaryProblem()
+        off_design_prob = AviaryProblem(name=self._name + '_off_design')
 
         # Set up problem for mission, such as equations of motion, configurators, etc.
         inputs = self.aviary_inputs.copy()
