@@ -53,9 +53,7 @@ def add_subsystem_variables_to_phase(phase, phase_name, external_subsystems):
             elif con_type == 'path':
                 phase.add_path_constraint(constraint_name, **con_args)
             else:
-                raise ValueError(
-                    f'Invalid type "{con_type}" in builder for {subsystem.pathname}.'
-                )
+                raise ValueError(f'Invalid type "{con_type}" in builder for {subsystem.pathname}.')
     return phase
 
 

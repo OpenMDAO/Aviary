@@ -1448,7 +1448,8 @@ class AviaryGroup(om.Group):
 
                 # Set the initial guess in the problem
                 target_prob.set_val(
-                    parent_prefix + f'traj.{phase_name}.{path_string}:{key}', val,
+                    parent_prefix + f'traj.{phase_name}.{path_string}:{key}',
+                    val,
                     units=val_dict.get('units', None),
                 )
 
