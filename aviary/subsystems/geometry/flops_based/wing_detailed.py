@@ -107,7 +107,6 @@ class BWBComputeDetailedWingDist(om.ExplicitComponent):
             desc='RSPSOB: Rear spar percent chord for BWB at side of body',
         )
 
-        self.add_output('BWB_INPUT_STATION_DIST', shape=3, units='unitless')
         self.add_output('BWB_CHORD_PER_SEMISPAN_DIST', shape=3, units='unitless')
         self.add_output('BWB_THICKNESS_TO_CHORD_DIST', shape=3, units='unitless')
         self.add_output('BWB_LOAD_PATH_SWEEP_DIST', shape=3, units='deg')
@@ -148,22 +147,58 @@ class BWBComputeDetailedWingDist(om.ExplicitComponent):
 
 
 class BWBWingPrelim(om.ExplicitComponent):
+    def initialize(self):
+        add_aviary_option(self, Aircraft.Wing.INPUT_STATION_DIST)
+
     def setup(self):
+        num_stations = len(self.options[Aircraft.Wing.INPUT_STATION_DIST])
+
         add_aviary_input(self, Aircraft.Fuselage.MAX_WIDTH, units='ft')
         add_aviary_input(self, Aircraft.Wing.GLOVE_AND_BAT, units='ft**2')
+        add_aviary_input(self, Aircraft.Wing.SPAN, units='ft')
+        self.add_input('BWB_CHORD_PER_SEMISPAN_DIST', shape=num_stations, units='unitless')
 
-        self.add_input('BWB_INPUT_STATION_DIST', shape=3, units='unitless')
-        self.add_input('BWB_CHORD_PER_SEMISPAN_DIST', shape=3, units='unitless')
-
-        add_aviary_output(self, Aircraft.Wing.AREA, SPAN='ft**2')
-        add_aviary_output(self, Aircraft.Wing.ASPECT_RATIO, SPAN='unitless')
-        add_aviary_output(self, Aircraft.Wing.LOAD_FRACTION, SPAN='unitless')
+        add_aviary_output(self, Aircraft.Wing.AREA, units='ft**2')
+        add_aviary_output(self, Aircraft.Wing.ASPECT_RATIO, units='unitless')
+        add_aviary_output(self, Aircraft.Wing.LOAD_FRACTION, units='unitless')
 
     def compute(self, inputs, outputs):
+        input_station_dist = self.options[Aircraft.Wing.INPUT_STATION_DIST]
+        num_stations = len(self.options[Aircraft.Wing.INPUT_STATION_DIST])
+
         glove_and_bat = inputs[Aircraft.Wing.GLOVE_AND_BAT]
         width = inputs[Aircraft.Fuselage.MAX_WIDTH]
+        span = inputs[Aircraft.Wing.SPAN]
 
-        SSM = 0.0
-        bwb_input_station_dist = inputs['BWB_INPUT_STATION_DIST']
+        ssm = 0.0
         bwb_chord_per_semispan_dist = inputs['BWB_CHORD_PER_SEMISPAN_DIST']
-        bwb_thickness_to_chord_dist = inputs['BWB_THICKNESS_TO_CHORD_DIST']
+
+        # Calculate Wing Area and Aspect Ratio for modified planform
+        if bwb_chord_per_semispan_dist[0] <= 5.0:
+            C1 = bwb_chord_per_semispan_dist[0] * span / 2.0
+        else:
+            C1 = bwb_chord_per_semispan_dist[0]
+        if input_station_dist[0] <= 1.1:
+            Y1 = input_station_dist[0] * span / 2.0
+        else:
+            Y1 = input_station_dist[0]
+        for n in range(1, num_stations):
+            if bwb_chord_per_semispan_dist[n] <= 5.0:
+                C2 = bwb_chord_per_semispan_dist[n] * span / 2.0
+            else:
+                C2 = bwb_chord_per_semispan_dist[n]
+            if input_station_dist[n] <= 1.1:
+                Y2 = input_station_dist[n] * span / 2.0
+            else:
+                Y2 = input_station_dist[n]
+            axp = (Y2 - Y1) * (C1 + C2)
+            C1 = C2
+            Y1 = Y2
+            ssm = ssm + axp
+        ar = span**2 / (ssm - glove_and_bat)
+        outputs[Aircraft.Wing.AREA] = ssm
+        outputs[Aircraft.Wing.ASPECT_RATIO] = ar
+
+        # Estimate the percent load carried by the outboard wing
+        pct_load = (1.0 - width / span) ** 2
+        outputs[Aircraft.Wing.LOAD_FRACTION] = pct_load
