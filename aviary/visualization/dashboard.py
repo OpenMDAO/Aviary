@@ -104,21 +104,6 @@ def _dashboard_setup_parser(parser):
         nargs='*',
         help='Name of aviary script that was run (not including .py).',
     )
-
-    parser.add_argument(
-        '--problem_recorder',
-        type=str,
-        help='Problem case recorder file name',
-        dest='problem_recorder',
-        default='problem_history.db',
-    )
-    parser.add_argument(
-        '--driver_recorder',
-        type=_none_or_str,
-        help='Driver case recorder file name. Set to None if file is ignored',
-        dest='driver_recorder',
-        default='driver_history.db',
-    )
     parser.add_argument(
         '--port',
         dest='port',
@@ -189,7 +174,7 @@ def _dashboard_cmd(options, user_args):
         if not options.force and report_dir_path.is_dir():
             raise RuntimeError(
                 f'The reports directory {report_dir_path} already exists. If you wish '
-                'to overrite the existing directory, use the --force option'
+                'to overwrite the existing directory, use the --force option'
             )
         if (
             report_dir_path.is_dir()
@@ -1185,13 +1170,16 @@ def dashboard(script_name, problem_recorder, driver_recorder, port, run_in_backg
         'Debug Input List',
         model_tabs_list,
         """
-        A plain text display of the model inputs. Recommended for beginners. Only created if Settings.VERBOSITY is set to at least 2 in the input deck.
-        The variables are listed in a tree structure. There are three columns. The left column is a list of variable names,
-        the middle column is the value, and the right column is the
-        promoted variable name. The hierarchy is phase, subgroups, components, and variables. An input variable can appear under
-        different phases and within different components. Its values can be different because its value has
-        been updated during the computation. On the top-left corner is the total number of inputs.
-        That number counts the duplicates because one variable can appear in different phases.""",
+        A plain text display of the model inputs. Recommended for beginners. Only created if 
+        Settings.VERBOSITY is set to at least 2 (VERBOSE or higher) in the input deck. The variables 
+        are listed in a tree structure. There are three columns. The left column is a list of 
+        variable names, the middle column is the value, and the right column is the promoted 
+        variable name. The hierarchy is phase, subgroups, components, and variables. An input 
+        variable can appear under different phases and within different components. Its values can 
+        be different because its value has been updated during the computation. On the top-left 
+        corner is the total number of inputs. That number counts the duplicates because one variable 
+        can appear in different phases.
+        """,
         'text',
         Path(reports_dir) / 'input_list.txt',
     )
@@ -1201,13 +1189,16 @@ def dashboard(script_name, problem_recorder, driver_recorder, port, run_in_backg
         'Debug Output List',
         model_tabs_list,
         """
-       A plain text display of the model outputs. Recommended for beginners. Only created if Settings.VERBOSITY is set to at least 2 in the input deck.
-        The variables are listed in a tree structure. There are three columns. The left column is a list of variable names,
-        the middle column is the value, and the right column is the
-        promoted variable name. The hierarchy is phase, subgroups, components, and variables. An output variable can appear under
-        different phases and within different components. Its values can be different because its value has
-        been updated during the computation. On the top-left corner is the total number of outputs.
-        That number counts the duplicates because one variable can appear in different phases.""",
+        A plain text display of the model outputs. Recommended for beginners. Only created if 
+        Settings.VERBOSITY is set to at least 2 (VERBOSE or higher) in the input deck. The variables 
+        are listed in a tree structure. There are three columns. The left column is a list of 
+        variable names, the middle column is the value, and the right column is the promoted 
+        variable name. The hierarchy is phase, subgroups, components, and variables. An output 
+        variable can appear under different phases and within different components. Its values can 
+        be different because its value has been updated during the computation. On the top-left 
+        corner is the total number of outputs. That number counts the duplicates because one 
+        variable can appear in different phases.
+        """,
         'text',
         Path(reports_dir) / 'output_list.txt',
     )

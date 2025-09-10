@@ -1146,7 +1146,6 @@ class AviaryProblem(om.Problem):
 
     def run_aviary_problem(
         self,
-        record_filename='problem_history.db',
         optimization_history_filename=None,
         restart_filename=None,
         suppress_solver_print=True,
@@ -1161,9 +1160,6 @@ class AviaryProblem(om.Problem):
 
         Parameters
         ----------
-        record_filename : str, optional
-            The name of the database file where the solutions are to be recorded. The
-            default is "problem_history.db".
         optimization_history_filename : str, None
             The name of the database file where the driver iterations are to be
             recorded. The default is None.
@@ -1195,7 +1191,7 @@ class AviaryProblem(om.Problem):
 
         if verbosity >= Verbosity.VERBOSE:  # VERBOSE, DEBUG
             self.final_setup()
-            with open('input_list.txt', 'w') as outfile:
+            with open(Path(self.get_reports_dir()) / 'input_list.txt', 'w') as outfile:
                 self.model.list_inputs(out_stream=outfile)
 
         # Creates a flag to determine if the user would or would not like a payload/range diagram
@@ -1218,7 +1214,7 @@ class AviaryProblem(om.Problem):
                 run_driver=run_driver,
                 simulate=simulate,
                 make_plots=make_plots,
-                solution_record_file=record_filename,
+                solution_record_file='problem_history.db',
                 restart=restart_filename,
             )
 
@@ -1243,7 +1239,7 @@ class AviaryProblem(om.Problem):
         )
 
         if verbosity >= Verbosity.VERBOSE:  # VERBOSE, DEBUG
-            with open('output_list.txt', 'w') as outfile:
+            with open(Path(self.get_reports_dir()) / 'output_list.txt', 'w') as outfile:
                 self.model.list_outputs(out_stream=outfile)
 
         # Checks of the payload/range toggle in the aviary inputs csv file has been set and that the current problem is a sizing mission.
