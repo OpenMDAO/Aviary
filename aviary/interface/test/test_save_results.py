@@ -21,7 +21,7 @@ class TestSizingResults(unittest.TestCase):
     """
 
     def setUp(self):
-        self.prob = av.AviaryProblem()
+        self.prob = av.AviaryProblem(name='DesignProblem')
         # Load aircraft and options data from user
         # Allow for user overrides here
         self.prob.load_inputs(

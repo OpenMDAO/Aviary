@@ -2,7 +2,6 @@ import csv
 import json
 import os
 import warnings
-from copy import deepcopy
 from datetime import datetime
 from enum import Enum
 from pathlib import Path
