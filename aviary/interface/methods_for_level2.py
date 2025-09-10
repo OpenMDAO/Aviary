@@ -1684,8 +1684,7 @@ class AviaryProblem(om.Problem):
                 (name, (value, units)) = data
                 type_value = type(value)
 
-                # Get the gross mass value from the sizing problem and add it to input
-                # list
+                # Get the gross mass value from the sizing problem and add it to input list
                 if name == Mission.Summary.GROSS_MASS or name == Mission.Design.GROSS_MASS:
                     Mission_Summary_GROSS_MASS_val = self.get_val(
                         Mission.Summary.GROSS_MASS, units=units
