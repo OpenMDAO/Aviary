@@ -1434,20 +1434,23 @@ class AviaryGroup(om.Group):
             initial_guesses = subsystem.get_initial_guesses()
 
             # Loop over each guess
-            for key, val in initial_guesses.items():
+            for key, val_dict in initial_guesses.items():
                 # Identify the type of the guess (state or control)
-                type = val.pop('type')
-                if 'state' in type:
+                var_type = val_dict['type']
+                if 'state' in var_type:
                     path_string = 'states'
-                elif 'control' in type:
+                elif 'control' in var_type:
                     path_string = 'controls'
 
                 # Process the guess variable (handles array interpolation)
                 # val['val'] = self.process_guess_var(val['val'], key, phase)
-                val['val'] = process_guess_var(val['val'], key, phase)
+                val = process_guess_var(val_dict['val'], key, phase)
 
                 # Set the initial guess in the problem
-                target_prob.set_val(parent_prefix + f'traj.{phase_name}.{path_string}:{key}', **val)
+                target_prob.set_val(
+                    parent_prefix + f'traj.{phase_name}.{path_string}:{key}', val,
+                    units=val_dict.get('units', None),
+                )
 
     def add_fuel_reserve_component(
         self, post_mission=True, reserves_name=Mission.Design.RESERVE_FUEL

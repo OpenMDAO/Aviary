@@ -1246,7 +1246,8 @@ class AviaryProblem(om.Problem):
             with open('output_list.txt', 'w') as outfile:
                 self.model.list_outputs(out_stream=outfile)
 
-        # Checks of the payload/range toggle in the aviary inputs csv file has been set and that the current problem is a sizing mission.
+        # Checks if the payload/range toggle in the aviary inputs csv file has been set and that the
+        # current problem is a sizing mission.
         if payload_range_bool:
             self.run_payload_range()
 
