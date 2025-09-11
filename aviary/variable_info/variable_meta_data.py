@@ -2949,7 +2949,7 @@ add_meta_data(
     units='unitless',
     desc='Flag to control enforcement of fuel_capacity constraint. '
     'If False (default) Aviary will add the excess fuel constraint and only converge if there is enough fuel capacity to complete the mission.'
-    'If set True Aviary will ignore this constraint, and allow mission fuel > total_fuel_capacity. Use Carefully!',
+    'If set True Aviary will ignore this constraint, and allow mission fuel > total_fuel_capacity. Use carefully!',
     default_value=False,
     types=bool,
 )
