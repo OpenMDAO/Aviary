@@ -526,12 +526,12 @@ def preprocess_fuel_capacities(aviary_options: AviaryValues, verbosity=None):
             # Aviary will need to calculate the total capacity and can only do so if we assume any missing subsystem capacities are zero
             if Aircraft.Fuel.FUSELAGE_FUEL_CAPACITY not in aviary_options:
                 aviary_options.set_val(Aircraft.Fuel.FUSELAGE_FUEL_CAPACITY, 0.0, 'lbm')
-                if verbosity >= Verbosity.BRIEF:
+                if verbosity >= Verbosity.VERBOSE:
                     warnings.warn(f'Aircraft.Fuel.FUSELAGE_FUEL_CAPACITY is missing assume = 0')
 
             if Aircraft.Fuel.AUXILIARY_FUEL_CAPACITY not in aviary_options:
                 aviary_options.set_val(Aircraft.Fuel.AUXILIARY_FUEL_CAPACITY, 0.0, 'lbm')
-                if verbosity >= Verbosity.BRIEF:
+                if verbosity >= Verbosity.VERBOSE:
                     warnings.warn(f'Aircraft.Fuel.AUXILIARY_FUEL_CAPACITY is missing assume = 0')
         else:
             total_capacity = aviary_options.get_val(Aircraft.Fuel.TOTAL_CAPACITY, 'lbm')
