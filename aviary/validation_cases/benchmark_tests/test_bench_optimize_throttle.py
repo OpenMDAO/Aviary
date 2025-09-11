@@ -31,7 +31,7 @@ phase_info = {
             'throttle_enforcement': 'control',
             'throttle_optimize': True,
             'time_initial': (0.0, 's'),
-            'time_initial_bounds': ((0.0, 0.0), 'min'),
+            'time_initial': (0.0, 'min'),
             'time_duration_bounds': ((32.0, 128.0), 'min'),
         },
         'initial_guesses': {

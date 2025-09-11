@@ -97,7 +97,7 @@ def _exec_installation_test(args, user_args):
         print(f'The following error occurred while running the Aviary problem: {error}')
         success = False
     else:
-        if prob.problem_ran_successfully:
+        if prob.result.success:
             print('Aviary run successful')
             print(
                 '\nYour Aviary installation is working. Please review the printouts to make sure '

@@ -103,11 +103,11 @@ class CoreGeometryBuilder(GeometryBuilderBase):
 
             elif code_origin is GASP:
                 geom_group = SizeGroup()
-                geom_group.manual_overrides = None
+                geom_group.code_origin_overrides = None
 
             elif code_origin is FLOPS:
                 geom_group = PrepGeom()
-                geom_group.manual_overrides = None
+                geom_group.code_origin_overrides = None
 
         return geom_group
 
