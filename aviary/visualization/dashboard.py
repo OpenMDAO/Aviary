@@ -184,7 +184,7 @@ def _dashboard_cmd(options, user_args):
         shutil.unpack_archive(options.script_name, report_dir_path)
         dashboard(
             report_dir_name,
-            options.problem_recorder,
+            # options.problem_recorder,
             options.driver_recorder,
             options.port,
             options.run_in_background,
@@ -203,7 +203,7 @@ def _dashboard_cmd(options, user_args):
 
     dashboard(
         options.script_name,
-        options.problem_recorder,
+        # options.problem_recorder,
         options.driver_recorder,
         options.port,
         options.run_in_background,
