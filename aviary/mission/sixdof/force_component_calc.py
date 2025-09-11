@@ -379,16 +379,18 @@ class ForceComponentResolver(om.ExplicitComponent):
                                                                            (np.sin(gamma_T) * sin_b * np.sin(alpha - gamma) * ((-v * u) / ((V**2 * np.sqrt(w**2 + u**2)))) - 
                                                                             np.sin(gamma_T) * cos_b * np.cos(alpha - gamma) * (-w / (w**2 + u**2))))
         J['Fx', 'v'] = np.cos(alpha) * np.sin(beta) * (np.sqrt(w**2 + u**2) / V**2) * D + np.cos(alpha) * np.cos(beta) * (np.sqrt(w**2 + u**2) / V**2) * S + T * (
-            (-np.cos(gamma_T) * np.cos(chi_T) * sin_b * sin_c * (np.sqrt(w**2 + u**2) / V**2) - np.cos(gamma_T) * np.cos(chi_T) * cos_b * cos_c * np.cos(alpha - gamma) * (np.sqrt(w**2 + u**2) / V**2)) + 
-             (np.cos(gamma_T) * np.sin(chi_T) * sin_b * cos_c * (np.sqrt(w**2 + u**2) / V**2) - np.cos(gamma_T) * np.sin(chi_T) * cos_b * sin_c * np.cos(alpha - gamma) * (np.sqrt(w**2 + u**2) / V**2)) -
-             (np.sin(gamma_T) * cos_b * np.sin(alpha - gamma) * (np.sqrt(w**2 + u**2) / V**2))
+            (-np.cos(gamma_T) * np.cos(chi_T) * cos_b * sin_c * (np.sqrt(w**2 + u**2) / V**2) + np.cos(gamma_T) * np.cos(chi_T) * sin_b * cos_c * np.cos(alpha - gamma) * (np.sqrt(w**2 + u**2) / V**2)) + 
+             (np.cos(gamma_T) * np.sin(chi_T) * cos_b * cos_c * (np.sqrt(w**2 + u**2) / V**2) + np.cos(gamma_T) * np.sin(chi_T) * sin_b * sin_c * np.cos(alpha - gamma) * (np.sqrt(w**2 + u**2) / V**2)) +
+             (np.sin(gamma_T) * sin_b * np.sin(alpha - gamma) * (np.sqrt(w**2 + u**2) / V**2))
         )
         J['Fx', 'w'] = np.cos(alpha) * np.sin(beta) * ((-w * v) / ((V**2 * np.sqrt(w**2 + u**2)))) * D + np.sin(alpha) * np.cos(beta) * (u / (w**2 + u**2)) * D + \
                        np.cos(alpha) * np.cos(beta) * ((-w * v) / ((V**2 * np.sqrt(w**2 + u**2)))) * S - np.sin(alpha) * np.sin(beta) * (u / (w**2 + u**2)) * S + \
                        np.cos(alpha) * (u / (w**2 + u**2)) * L + T * (
-                           (np.cos(gamma_T) * np.cos(chi_T) * cos_c * np.cos(alpha - gamma) * (u / (w**2 + u**2))) + 
-                           (np.cos(gamma_T) * np.sin(chi_T) * sin_c * np.cos(alpha - gamma) * (u / (w**2 + u**2))) + 
-                           (np.sin(gamma_T) * np.sin(alpha - gamma) * (u / (w**2 + u**2)))
+                           (-np.cos(gamma_T) * np.cos(chi_T) * cos_b * sin_c * ((-w * v) / ((V**2 * np.sqrt(w**2 + u**2)))) + np.cos(gamma_T) * np.cos(chi_T) * cos_b * cos_c * np.sin(alpha - gamma) * (u / (w**2 + u**2)) +
+                            np.cos(gamma_T) * np.cos(chi_T) * sin_b * cos_c * np.cos(alpha - gamma) * ((-w * v) / ((V**2 * np.sqrt(w**2 + u**2))))) + 
+                           (np.cos(gamma_T) * np.sin(chi_T) * cos_b * cos_c * ((-w * v) / ((V**2 * np.sqrt(w**2 + u**2)))) + np.cos(gamma_T) * np.sin(chi_T) * cos_b * sin_c * np.sin(alpha - gamma) * (u / (w**2 + u**2)) + 
+                            np.cos(gamma_T) * np.sin(chi_T) * sin_b * sin_c * np.cos(alpha - gamma) * ((-w * v) / ((V**2 * np.sqrt(w**2 + u**2))))) + 
+                           (-np.sin(gamma_T) * cos_b * np.cos(alpha - gamma) * (u / (w**2 + u**2)) + np.sin(gamma_T) * sin_b * np.sin(alpha - gamma) * ((-w * v) / ((V**2 * np.sqrt(w**2 + u**2)))))
                        )
         J['Fx', 'drag'] = -np.cos(alpha) * np.cos(beta)
         J['Fx', 'lift'] = np.sin(alpha)
@@ -402,13 +404,29 @@ class ForceComponentResolver(om.ExplicitComponent):
         J['Fx', 'fpa_NED'] = T * dt_b_dgamma[0]
 
         J['Fy', 'u'] = -np.cos(beta) * ((-v * u) / ((V**2 * np.sqrt(w**2 + u**2)))) * D + np.sin(beta) * ((-v * u) / ((V**2 * np.sqrt(w**2 + u**2)))) * S - \
-                        np.cos(beta) * ((-v * u) / ((V**2 * np.sqrt(w**2 + u**2)))) * T * np.sin(alpha - gamma) - \
-                        np.cos(alpha - gamma) * (-w / (w**2 + u**2)) * T * np.sin(beta)
+                        T * np.cos(gamma_T) * np.cos(chi_T) * sin_b * sin_c * ((-v * u) / ((V**2 * np.sqrt(w**2 + u**2)))) - \
+                        np.cos(gamma_T) * np.cos(chi_T) * np.cos(beta) * cos_c * ((-v * u) / ((V**2 * np.sqrt(w**2 + u**2)))) * T * np.cos(alpha - gamma) + \
+                        np.sin(alpha - gamma) * cos_c * (-w / (w**2 + u**2)) * T * np.sin(beta) * np.cos(gamma_T) * np.cos(chi_T) + \
+                        sin_b * cos_c * np.cos(gamma_T) * np.sin(chi_T) * ((-v * u) / ((V**2 * np.sqrt(w**2 + u**2)))) * T - \
+                        np.cos(gamma_T) * np.sin(chi_T) * cos_b * sin_c * np.cos(alpha - gamma) * ((-v * u) / ((V**2 * np.sqrt(w**2 + u**2)))) * T + \
+                        np.cos(gamma_T) * np.sin(chi_T) * sin_b * sin_c * np.sin(alpha - gamma) * (-w / (w**2 + u**2)) * T - \
+                        np.sin(gamma_T) * cos_b * np.sin(alpha - gamma) * ((-v * u) / ((V**2 * np.sqrt(w**2 + u**2)))) * T - \
+                        np.sin(gamma_T) * sin_b * np.cos(alpha - gamma) * (-w / (w**2 + u**2)) * T
         J['Fy', 'v'] = -np.cos(beta) * (np.sqrt(w**2 + u**2) / V**2) * D + np.sin(beta) * (np.sqrt(w**2 + u**2) / V**2) * S - \
-                        np.cos(beta) * (np.sqrt(w**2 + u**2) / V**2) * T * np.sin(alpha - gamma)
+                        np.cos(gamma_T) * np.cos(chi_T) * sin_b * sin_c * (np.sqrt(w**2 + u**2) / V**2) * T - \
+                        np.cos(gamma_T) * np.cos(chi_T) * cos_b * cos_c * np.cos(alpha - gamma) * (np.sqrt(w**2 + u**2) / V**2) * T + \
+                        np.cos(gamma_T) * np.sin(chi_T) * sin_b * cos_c * (np.sqrt(w**2 + u**2) / V**2) * T - \
+                        np.cos(gamma_T) * np.sin(chi_T) * np.cos(beta) * sin_c * (np.sqrt(w**2 + u**2) / V**2) * T * np.cos(alpha - gamma) - \
+                        np.sin(gamma_T) * cos_b * np.sin(alpha - gamma) * (np.sqrt(w**2 + u**2) / V**2) * T
         J['Fy', 'w'] = -np.cos(beta) * ((-w * v) / ((V**2 * np.sqrt(w**2 + u**2)))) * D + np.sin(beta) * ((-w * v) / ((V**2 * np.sqrt(w**2 + u**2)))) * S - \
-                        np.cos(beta) * ((-w * v) / ((V**2 * np.sqrt(w**2 + u**2)))) * T * np.sin(alpha - gamma) - \
-                        np.cos(alpha - gamma) * (u / (w**2 + u**2)) * T * np.sin(beta)
+                        np.cos(gamma_T) * np.cos(chi_T) * sin_b * sin_c * ((-w * v) / ((V**2 * np.sqrt(w**2 + u**2)))) * T - \
+                        np.cos(gamma_T) * np.cos(chi_T) * cos_b * cos_c * np.cos(alpha - gamma) * ((-w * v) / ((V**2 * np.sqrt(w**2 + u**2)))) * T + \
+                        np.cos(gamma_T) * np.cos(chi_T) * sin_b * cos_c * np.sin(alpha - gamma) * (u / (w**2 + u**2)) * T  + \
+                        np.cos(gamma_T) * np.sin(chi_T) * sin_b * cos_c * ((-w * v) / ((V**2 * np.sqrt(w**2 + u**2)))) * T - \
+                        np.cos(gamma_T) * np.sin(chi_T) * cos_b * sin_c * np.cos(alpha - gamma) * ((-w * v) / ((V**2 * np.sqrt(w**2 + u**2)))) * T + \
+                        np.cos(gamma_T) * np.sin(chi_T) * sin_b * sin_c * np.sin(alpha - gamma) * (u / (w**2 + u**2)) * T - \
+                        np.sin(gamma_T) * np.cos(beta) * ((-w * v) / ((V**2 * np.sqrt(w**2 + u**2)))) * T * np.sin(alpha - gamma) - \
+                        np.sin(gamma_T) * np.cos(alpha - gamma) * (u / (w**2 + u**2)) * T * np.sin(beta)
         J['Fy', 'drag'] = -np.sin(beta)
         J['Fy', 'side'] = -np.cos(beta)
         J['Fy', 'thrust'] = t_b[1]
@@ -420,11 +438,15 @@ class ForceComponentResolver(om.ExplicitComponent):
 
         J['Fz', 'u'] = np.sin(alpha) * np.sin(beta) * ((-v * u) / ((V**2 * np.sqrt(w**2 + u**2)))) * D - np.cos(alpha) * np.cos(beta) * (-w / (w**2 + u**2)) * D - \
                        np.sin(alpha) * np.cos(beta) * ((-v * u) / ((V**2 * np.sqrt(w**2 + u**2)))) * S - np.cos(alpha) * np.sin(beta) * (-w / (w**2 + u**2)) * S + \
-                       np.sin(alpha) * (-w / (w**2 + u**2)) * L + np.sin(alpha - gamma) * (-w / (w**2 + u**2)) * T
+                       np.sin(alpha) * (-w / (w**2 + u**2)) * L + np.cos(gamma_T) * np.cos(chi_T) * cos_c * np.cos(alpha - gamma) * (-w / (w**2 + u**2)) * T + \
+                       np.cos(gamma_T) * np.sin(chi_T) * sin_c * np.cos(alpha - gamma) * (-w / (w**2 + u**2)) * T + \
+                       np.sin(gamma_T) * np.sin(alpha - gamma) * (-w / (w**2 + u**2)) * T
         J['Fz', 'v'] = np.sin(alpha) * np.sin(beta) * (np.sqrt(w**2 + u**2) / V**2) * D - np.sin(alpha) * np.cos(beta) * (np.sqrt(w**2 + u**2) / V**2) * S 
         J['Fz', 'w'] = np.sin(alpha) * np.sin(beta) * ((-w * v) / ((V**2 * np.sqrt(w**2 + u**2)))) * D - np.cos(alpha) * np.cos(beta) * (u / (w**2 + u**2)) * D - \
                        np.sin(alpha) * np.cos(beta) * ((-w * v) / ((V**2 * np.sqrt(w**2 + u**2)))) * S - np.cos(alpha) * np.sin(beta) * (u / (w**2 + u**2)) * S + \
-                       np.sin(alpha) * (u / (w**2 + u**2)) * L + np.sin(alpha - gamma) * (u / (w**2 + u**2)) * T
+                       np.sin(alpha) * (u / (w**2 + u**2)) * L + np.cos(gamma_T) * np.cos(chi_T) * cos_c * np.cos(alpha - gamma) * (u / (w**2 + u**2)) * T + \
+                       np.cos(gamma_T) * np.sin(chi_T) * sin_c * np.cos(alpha - gamma) * (u / (w**2 + u**2)) * T + \
+                       np.sin(gamma_T) * np.sin(alpha - gamma) * (u / (w**2 + u**2)) * T
         J['Fz', 'drag'] = -np.sin(alpha) * np.cos(beta) 
         J['Fz', 'lift'] = -np.cos(alpha)
         J['Fz', 'side'] = -np.sin(alpha) * np.sin(beta)
