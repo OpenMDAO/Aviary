@@ -575,15 +575,14 @@ def setup_model_options(
         for idx in range(num_engine_models):
             eng_name = engine_models[idx].name
 
-            # TODO: For future flexibility, need to tag the required engine options.
-            # TODO: Revisit this list and verify these variables actually need to be here
+            # TODO: For future flexibility, need get a list of options per engine (these are
+            # EngineDeck required options), so custom multiengine works
             opt_names = [
                 Aircraft.Engine.SCALE_PERFORMANCE,
                 Aircraft.Engine.SUBSONIC_FUEL_FLOW_SCALER,
                 Aircraft.Engine.SUPERSONIC_FUEL_FLOW_SCALER,
                 Aircraft.Engine.FUEL_FLOW_SCALER_CONSTANT_TERM,
                 Aircraft.Engine.FUEL_FLOW_SCALER_LINEAR_TERM,
-                Mission.Summary.FUEL_FLOW_SCALER,
             ]
             opt_names_units = [
                 Aircraft.Engine.REFERENCE_SLS_THRUST,
