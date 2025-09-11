@@ -1498,9 +1498,9 @@ class AviaryProblem(om.Problem):
             and equations_of_motion is EquationsOfMotion.HEIGHT_ENERGY
         ):
             # make a copy of the phase_info to avoid modifying the original.
-            phase_info = self.model.mission_info
-            phase_info['pre_mission'] = self.model.pre_mission_info
-            phase_info['post_mission'] = self.model.post_mission_info
+            phase_info = self.model.mission_info.copy()
+            phase_info['pre_mission'] = self.model.pre_mission_info.copy()
+            phase_info['post_mission'] = self.model.post_mission_info.copy()
             # This checks if the 'cruise' phase exists, then automatically extends duration
             # bounds of the cruise stage to allow for the economic and ferry missions.
             if phase_info['cruise']:
