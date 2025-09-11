@@ -915,7 +915,7 @@ class AviaryProblem(om.Problem):
         # adding composite execComp to super problem
         self.model.add_subsystem(
             'composite_function',
-            om.ExecComp('composite_objective = ' + final_expr, has_diag_partials=True),
+            om.ExecComp('composite_objective = ' + final_expr, **kwargs),
             promotes_outputs=['composite_objective'],
         )
 
