@@ -38,9 +38,9 @@ class FuselageFuelCapacity(om.ExplicitComponent):
     """Compute the maximum fuel that can be carried in the fuselage."""
 
     def setup(self):
-        (add_aviary_input(self, Aircraft.Fuel.TOTAL_CAPACITY, units='lbm'),)
-        (add_aviary_input(self, Aircraft.Fuel.WING_FUEL_CAPACITY, units='lbm'),)
-        (add_aviary_output(self, Aircraft.Fuel.FUSELAGE_FUEL_CAPACITY, units='lbm'),)
+        add_aviary_input(self, Aircraft.Fuel.TOTAL_CAPACITY, units='lbm')
+        add_aviary_input(self, Aircraft.Fuel.WING_FUEL_CAPACITY, units='lbm')
+        add_aviary_output(self, Aircraft.Fuel.FUSELAGE_FUEL_CAPACITY, units='lbm')
 
     def setup_partials(self):
         self.declare_partials(
@@ -60,10 +60,10 @@ class AuxFuelCapacity(om.ExplicitComponent):
     """Compute the maximum fuel that can be carried in the auxiliary tanks."""
 
     def setup(self):
-        (add_aviary_input(self, Aircraft.Fuel.TOTAL_CAPACITY, units='lbm'),)
-        (add_aviary_input(self, Aircraft.Fuel.WING_FUEL_CAPACITY, units='lbm'),)
-        (add_aviary_input(self, Aircraft.Fuel.FUSELAGE_FUEL_CAPACITY, units='lbm'),)
-        (add_aviary_output(self, Aircraft.Fuel.AUXILIARY_FUEL_CAPACITY, units='lbm'),)
+        add_aviary_input(self, Aircraft.Fuel.TOTAL_CAPACITY, units='lbm')
+        add_aviary_input(self, Aircraft.Fuel.WING_FUEL_CAPACITY, units='lbm')
+        add_aviary_input(self, Aircraft.Fuel.FUSELAGE_FUEL_CAPACITY, units='lbm')
+        add_aviary_output(self, Aircraft.Fuel.AUXILIARY_FUEL_CAPACITY, units='lbm')
 
     def setup_partials(self):
         self.declare_partials(
@@ -88,10 +88,10 @@ class TotalFuelCapacity(om.ExplicitComponent):
     """Compute the total fuel that can be carried in all tanks."""
 
     def setup(self):
-        (add_aviary_input(self, Aircraft.Fuel.WING_FUEL_CAPACITY, units='lbm'),)
-        (add_aviary_input(self, Aircraft.Fuel.FUSELAGE_FUEL_CAPACITY, units='lbm'),)
-        (add_aviary_input(self, Aircraft.Fuel.AUXILIARY_FUEL_CAPACITY, units='lbm'),)
-        (add_aviary_output(self, Aircraft.Fuel.TOTAL_CAPACITY, units='lbm'),)
+        add_aviary_input(self, Aircraft.Fuel.WING_FUEL_CAPACITY, units='lbm')
+        add_aviary_input(self, Aircraft.Fuel.FUSELAGE_FUEL_CAPACITY, units='lbm')
+        add_aviary_input(self, Aircraft.Fuel.AUXILIARY_FUEL_CAPACITY, units='lbm')
+        add_aviary_output(self, Aircraft.Fuel.TOTAL_CAPACITY, units='lbm')
 
     def setup_partials(self):
         self.declare_partials(
