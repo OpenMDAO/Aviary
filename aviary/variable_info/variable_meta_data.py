@@ -2870,7 +2870,7 @@ add_meta_data(
     units='lbm/galUS',
     desc='fuel density (jet fuel typical density of 6.7 lbm/galUS used in the calculation of wing_capacity'
     '(if wing_capacity is not input) and in the calculation of fuel system weight.',
-    default_value=0.0,
+    default_value=6.7,
 )
 
 add_meta_data(
