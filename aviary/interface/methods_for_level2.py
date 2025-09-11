@@ -8,9 +8,11 @@ from pathlib import Path
 
 import dymos as dm
 import numpy as np
+import openmdao
 import openmdao.api as om
 from openmdao.utils.reports_system import _default_reports
 from openmdao.utils.units import convert_units
+from packaging import version
 
 from aviary.core.aviary_group import AviaryGroup
 from aviary.interface.utils import set_warning_format
@@ -889,18 +891,26 @@ class AviaryProblem(om.Problem):
         # Create the calculation string for the ExecComp() and the promotion reference values
         weighted_exprs = []
         connection_names = []
+        obj_inputs = []
         total_weight = sum(weight for _, _, weight in objectives_cleaned)
         for model, output, weight in objectives_cleaned:
             output_safe = output.replace(':', '_')
-            weighted_exprs.append(
-                f'{model}_{output_safe}*{weight}/{total_weight}'
-            )  # we use "_" here because ExecComp() cannot intake "."
+
+            # we use "_" here because ExecComp() cannot intake "."
+            obj_input = f'{model}_{output_safe}'
+            obj_inputs.append(obj_input)
+            weighted_exprs.append(f'{obj_input}*{weight}/{total_weight}')
             connection_names.append(
                 [f'{model}.{output}', f'composite_function.{model}_{output_safe}']
             )
         final_expr = ' + '.join(weighted_exprs)
 
         # weighted_str looks like:  'model1_fuelburn*0.67*0.5 + model1_gross_mass*0.33*0.5 + model2_fuelburn*0.67*0.5 + model2_gross_mass*0.33*0.5'
+
+        kwargs = {}
+        if version.parse(openmdao.__version__) >= version.parse('3.40'):
+            # We can get the correct unit from the source. This prevents a warning.
+            kwargs = {k: {'units_by_conn': True} for k in obj_inputs}
 
         # adding composite execComp to super problem
         self.model.add_subsystem(
@@ -1202,7 +1212,7 @@ class AviaryProblem(om.Problem):
 
         # and run mission, and dynamics
         if run_driver:
-            failed = dm.run_problem(
+            self.result = dm.run_problem(
                 self,
                 run_driver=run_driver,
                 simulate=simulate,
@@ -1211,27 +1221,16 @@ class AviaryProblem(om.Problem):
                 restart=restart_filename,
             )
 
-            # TODO this is only used in a single test. Either self.problem_ran_successfully
-            #      should be removed, or rework this option to be more helpful (store
-            # entire "failed" object?) and implement more rigorously in benchmark
-            # tests
-            if failed.exit_status == 'FAIL':
-                self.problem_ran_successfully = False
-            else:
-                self.problem_ran_successfully = True
             # Manually print out a failure message for low verbosity modes that suppress
             # optimizer printouts, which may include the results message. Assumes success,
             # alerts user on a failure
             if (
-                not self.problem_ran_successfully and verbosity <= Verbosity.BRIEF  # QUIET, BRIEF
+                not self.result.success and verbosity <= Verbosity.BRIEF  # QUIET, BRIEF
             ):
                 warnings.warn('\nAviary run failed. See the dashboard for more details.\n')
         else:
-            # prevent UserWarning that is displayed when an event is triggered
-            warnings.filterwarnings('ignore', category=UserWarning)
-            # TODO failed doesn't exist for run_model(), no return from method
-            failed = self.run_model()
-            warnings.filterwarnings('default', category=UserWarning)
+            self.run_model()
+            self.result = self.driver.result
 
         # update n2 diagram after run.
         outdir = Path(self.get_reports_dir(force=True))
@@ -1246,21 +1245,8 @@ class AviaryProblem(om.Problem):
             with open('output_list.txt', 'w') as outfile:
                 self.model.list_outputs(out_stream=outfile)
 
-        self.problem_ran_successfully = not failed
-
         if self.generate_payload_range:
-            if not self.problem_ran_successfully and verbosity > Verbosity.QUIET:
-                warnings.warn(
-                    'Payload Range Diagrams cannot be generated for unconverged Aviary problems.'
-                )
-            elif self.problem_type is ProblemType.MULTI_MISSION and verbosity > Verbosity.QUIET:
-                warnings.warn(
-                    'Payload Range Diagrams currently cannot be generated for aircraft designed '
-                    'using multimission capability.'
-                )
-
-            else:
-                self.run_payload_range()
+            self.run_payload_range()
 
     def run_off_design_mission(
         self,
@@ -1482,6 +1468,18 @@ class AviaryProblem(om.Problem):
 
         TODO currently does not account for reserve fuel
         """
+        if not self.result.success and verbosity > Verbosity.QUIET:
+            warnings.warn(
+                'Payload Range Diagrams cannot be generated for unconverged Aviary problems.'
+            )
+            return ()
+        elif self.problem_type is ProblemType.MULTI_MISSION and verbosity > Verbosity.QUIET:
+            warnings.warn(
+                'Payload Range Diagrams currently cannot be generated for aircraft designed '
+                'using multimission capability.'
+            )
+            return ()
+
         # `self.verbosity` is "true" verbosity for entire run. `verbosity` is verbosity
         # override for just this method
         if verbosity is not None:
@@ -1625,10 +1623,7 @@ class AviaryProblem(om.Problem):
 
             # Check if fallout missions ran successfully before writing to csv file
             # If both missions ran successfully, writes the payload/range data to a csv file
-            if (
-                ferry_range_prob.problem_ran_successfully
-                and economic_range_prob.problem_ran_successfully
-            ):
+            if ferry_range_prob.result.success and economic_range_prob.result.success:
                 self.payload_range_data = payload_range_data = NamedValues()
                 payload_range_data.set_val(
                     'Mission Name',

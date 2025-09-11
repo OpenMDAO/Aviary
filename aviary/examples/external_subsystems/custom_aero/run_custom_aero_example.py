@@ -21,6 +21,10 @@ phase_info['cruise']['subsystem_options']['core_aerodynamics'] = {
     'method': 'external',
 }
 
+# Start cruise at t=0.
+del phase_info['cruise']['user_options']['time_initial_bounds']
+phase_info['cruise']['user_options']['time_initial'] = (0.0, 'min')
+
 
 if __name__ == '__main__':
     prob = av.AviaryProblem()
