@@ -1009,10 +1009,6 @@ class AviaryGroup(om.Group):
                 Aircraft.Fuel.IGNORE_FUEL_CAPACITY_CONSTRAINT, units='unitless'
             )
         except:
-            if verbosity >= Verbosity.BRIEF:
-                warnings.warn(
-                    'No value for Aircraft.Fuel.IGNORE_FUEL_CAPACITY_CONSTRAINT specified, assume False'
-                )
             ignore_capacity_constraint = False
             self.aviary_inputs.set_val(
                 Aircraft.Fuel.IGNORE_FUEL_CAPACITY_CONSTRAINT,
