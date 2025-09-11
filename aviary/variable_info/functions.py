@@ -281,23 +281,32 @@ def add_aviary_option(comp, name, val=_unspecified, units=None, desc=None, meta_
 def override_aviary_vars(
     group: om.Group,
     aviary_inputs: AviaryValues,
-    manual_overrides=None,
+    code_origin_overrides=None,
     external_overrides=None,
 ):
     """
-    This function provides the capability to override output variables
-    with variables from the aviary_inputs input. The user can also
-    optionally provide the names of variables that they would like to
-    override manually. (Manual overriding is simply suppressing the
-    promotion of the variable to make way for another output variable
-    of the same name, or to create an unconnected input elsewhere.).
+    This function gives Aviary the capability to override output variables with variables from the
+    aircraft represented in aviary_inputs.
+
+    This may also be called manually in a Level-3 model for the same purpose.
+
+    Parameters
+    ----------
+    group: om.Group
+        Group to execute the promotes, usually an AviaryGroup.
+    aviary_inputs : AviaryValues
+        Aircraft data container.
+    code_origin_overrides : list or None
+        List of Aviary variables names to prioritize when GASP and FLOPS both compute it.
+    external_overrides : list or None
+        List of Aviary variables names to override that are computed in external subsystems.
     """
 
     def name_filter(name):
         return 'aircraft:' in name or 'mission:' in name
 
-    if not manual_overrides:
-        manual_overrides = []
+    if not code_origin_overrides:
+        code_origin_overrides = []
 
     if not external_overrides:
         external_overrides = []
@@ -330,13 +339,16 @@ def override_aviary_vars(
         for abs_name in out_var_names:
             name = out_var_metadata[abs_name]['prom_name']
 
-            if abs_name in manual_overrides:
-                # These are handled outside of this function.
+            if abs_name in code_origin_overrides:
+                # These variables are ones that are computed in both GASP and FLOPS when both
+                # geometries are present. Aviary determines which one to favor, and which to
+                # remove by overriding it.
+                # TODO: What if user wants to override one of these?
                 continue
 
             elif name in external_overrides:
                 # Overridden variables are given a new name
-                comp_promoted_outputs.append((name, f'EXTERNAL_OVERRIDE:{name}'))
+                comp_promoted_outputs.append((name, f'EXTERNAL_SUBSYSTEM_OVERRIDE:{name}'))
                 external_overridden_outputs.append(name)
 
                 continue  # don't promote it
@@ -347,7 +359,7 @@ def override_aviary_vars(
                     group.set_input_defaults(name, val=val, units=units)
 
                 # Overridden variables are given a new name
-                comp_promoted_outputs.append((name, f'AUTO_OVERRIDE:{name}'))
+                comp_promoted_outputs.append((name, f'AIRCRAFT_DATA_OVERRIDE:{name}'))
                 overridden_outputs.append(name)
 
                 continue  # don't promote it
@@ -369,7 +381,7 @@ def override_aviary_vars(
 
     if overridden_outputs:
         if aviary_inputs.get_val(Settings.VERBOSITY).value >= Verbosity.VERBOSE:  # VERBOSE, DEBUG
-            print('\nThe following variables have been overridden:')
+            print('\nThe following variables have been overridden in the aircraft definition:')
             for prom_name in sorted(overridden_outputs):
                 val, units = aviary_inputs.get_item(prom_name)
                 print(f"  '{prom_name}  {val}  {units}")
