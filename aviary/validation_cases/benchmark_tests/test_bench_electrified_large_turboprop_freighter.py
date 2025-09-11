@@ -103,8 +103,7 @@ class LargeElectrifiedTurbopropFreighterBenchmark(unittest.TestCase):
         prob = self.build_and_run_problem('2DOF')
         # TODO asserts
 
-    # NOTE unknown if this is still the primary issue breaking energy method
-    @unittest.skip('Skipping until all builders are updated with get_parameters()')
+    @unittest.skip('Skipping due to convergence issues (possible drag too low in descent?)')
     def test_bench_energy(self):
         prob = self.build_and_run_problem('energy')
         # TODO asserts

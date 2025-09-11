@@ -31,6 +31,7 @@ class LargeTurbopropFreighterBenchmark(unittest.TestCase):
         options, _ = create_vehicle(
             'models/aircraft/large_turboprop_freighter/large_turboprop_freighter_GASP.csv'
         )
+        options.set_val(Settings.PROBLEM_TYPE, 'SIZING')
 
         turboprop = TurbopropModel('turboprop', options=options)
 
@@ -46,23 +47,13 @@ class LargeTurbopropFreighterBenchmark(unittest.TestCase):
         # if mission_method == 'energy':
         #     # energy method needs flight idle to converge in descent?
         #     prob.aviary_inputs.set_val(Aircraft.Engine.GENERATE_FLIGHT_IDLE, True)
-        #     # FLOPS aero specific stuff? Best guesses for values here
-        #     prob.aviary_inputs.set_val(Mission.Constraints.MAX_MACH, 0.5)
-        #     prob.aviary_inputs.set_val(Aircraft.Wing.AREA, 1744.59, 'ft**2')
-        #     # prob.aviary_inputs.set_val(Aircraft.Wing.ASPECT_RATIO, 10.078)
-        #     prob.aviary_inputs.set_val(
-        #         Aircraft.Wing.THICKNESS_TO_CHORD, 0.1500
-        #     )  # average between root and chord T/C
-        #     prob.aviary_inputs.set_val(Aircraft.Fuselage.MAX_WIDTH, 4.3, 'm')
-        #     prob.aviary_inputs.set_val(Aircraft.Fuselage.MAX_HEIGHT, 3.95, 'm')
-        #     prob.aviary_inputs.set_val(Aircraft.Fuselage.AVG_DIAMETER, 4.125, 'm')
 
         prob.check_and_preprocess_inputs()
         prob.add_pre_mission_systems()
         prob.add_phases()
         prob.add_post_mission_systems()
         prob.link_phases()
-        prob.add_driver('SNOPT', verbosity=0)
+        prob.add_driver('SNOPT')
         prob.add_design_variables()
         prob.add_objective()
         prob.setup()
@@ -70,18 +61,13 @@ class LargeTurbopropFreighterBenchmark(unittest.TestCase):
         prob.set_initial_guesses()
         prob.run_aviary_problem()
 
-        import openmdao.api as om
-
-        om.n2(prob, show_browser=False)
-
         return prob
 
     def test_bench_2DOF(self):
         prob = self.build_and_run_problem('2DOF')
         # TODO asserts
 
-    # NOTE unknown if this is still the primary issue breaking energy method
-    @unittest.skip('Skipping until all builders are updated with get_parameters()')
+    @unittest.skip('Skipping due to convergence issues (possible drag too low in descent?)')
     def test_bench_energy(self):
         prob = self.build_and_run_problem('energy')
         # TODO asserts
