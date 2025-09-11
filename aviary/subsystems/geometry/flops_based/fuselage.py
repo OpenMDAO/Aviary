@@ -461,7 +461,8 @@ class BWBDetailedCabinLayout(om.ExplicitComponent):
         add_aviary_option(self, Aircraft.CrewPayload.Design.SEAT_PITCH_BUSINESS)
         add_aviary_option(self, Aircraft.CrewPayload.Design.SEAT_PITCH_FIRST)
         add_aviary_option(self, Aircraft.CrewPayload.Design.SEAT_PITCH_TOURIST)
-        add_aviary_option(self, 'max_num_bays', 0)
+        add_aviary_option(self, Aircraft.BWB.MAX_NUM_BAYS, 0)
+        # add_aviary_option(self, Aircraft.BWB.NUM_BAYS, 0)
 
     def setup(self):
         add_aviary_input(self, Aircraft.BWB.PASSENGER_LEADING_EDGE_SWEEP, units='deg')
@@ -475,6 +476,9 @@ class BWBDetailedCabinLayout(om.ExplicitComponent):
         add_aviary_output(self, Aircraft.Fuselage.CABIN_AREA, units='ft**2')
         add_aviary_output(self, Aircraft.Fuselage.MAX_WIDTH, units='ft')
         add_aviary_output(self, Aircraft.Fuselage.MAX_HEIGHT, units='ft')
+        add_aviary_output(self, Aircraft.Wing.ROOT_CHORD, units='ft')
+        # Make Aircraft.BWB.NUM_BAYS an output instead of an option
+        add_aviary_output(self, Aircraft.BWB.NUM_BAYS, units='unitless')
 
         self.declare_partials('*', '*', method='fd', form='forward')
 
@@ -487,7 +491,7 @@ class BWBDetailedCabinLayout(om.ExplicitComponent):
         bay_width_max = 12.0  # ft
         num_bays = 0
         num_bays_o = num_bays
-        num_bays_max = self.options['max_num_bays']
+        num_bays_max = self.options[Aircraft.BWB.MAX_NUM_BAYS]
         root_chord_min = 38.5  # ft
         width_lava = 36.0  # inch
         width_galley = 36.0  # inch
@@ -593,9 +597,12 @@ class BWBDetailedCabinLayout(om.ExplicitComponent):
 
         length = pax_compart_length / rear_spar_percent_chord
         max_height = height_to_width * length
+        # self.options[Aircraft.BWB.NUM_BAYS] = num_bays
+        outputs[Aircraft.BWB.NUM_BAYS] = num_bays
 
         outputs[Aircraft.Fuselage.LENGTH] = length
         outputs[Aircraft.Fuselage.PASSENGER_COMPARTMENT_LENGTH] = pax_compart_length
         outputs[Aircraft.Fuselage.CABIN_AREA] = area_cabin
         outputs[Aircraft.Fuselage.MAX_WIDTH] = max_width
         outputs[Aircraft.Fuselage.MAX_HEIGHT] = max_height
+        outputs[Aircraft.Wing.ROOT_CHORD] = root_chord
