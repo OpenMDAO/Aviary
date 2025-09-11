@@ -1017,7 +1017,7 @@ class AviaryGroup(om.Group):
                 warnings.warn(
                     'No value for Aircraft.Fuel.IGNORE_FUEL_CAPACITY_CONSTRAINT specified, assume False'
                 )
-            ignore_capacity_constraint = False
+            ignore_capacity_constraint = self.meta_data[Aircraft.Fuel.IGNORE_CAPACITY_CONSTRAINT]['default_value']
             self.aviary_inputs.set_val(
                 Aircraft.Fuel.IGNORE_FUEL_CAPACITY_CONSTRAINT,
                 val=ignore_capacity_constraint,
