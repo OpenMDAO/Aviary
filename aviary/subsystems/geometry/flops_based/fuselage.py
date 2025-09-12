@@ -676,3 +676,4 @@ class BWBDetailedCabinLayout(om.ExplicitComponent):
         # a real-valued num_bays, then use a smoothed int afterwards. LOPS did something similar
         # with the skin friction calculation, except there were no ints. I rewrote the equations
         # in residual form and used a Newton solver on them.
+

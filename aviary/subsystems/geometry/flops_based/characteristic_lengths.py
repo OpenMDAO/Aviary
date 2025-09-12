@@ -23,8 +23,6 @@ class WingCharacteristicLength(om.ExplicitComponent):
         add_aviary_input(self, Aircraft.Wing.GLOVE_AND_BAT, units='ft**2')
         add_aviary_input(self, Aircraft.Wing.TAPER_RATIO, units='unitless')
         add_aviary_input(self, Aircraft.Wing.THICKNESS_TO_CHORD, units='unitless')
-        # add_aviary_input(self, Aircraft.Wing.LAMINAR_FLOW_LOWER, 0.0)
-        # add_aviary_input(self, Aircraft.Wing.LAMINAR_FLOW_UPPER, 0.0)
 
         add_aviary_output(self, Aircraft.Wing.CHARACTERISTIC_LENGTH, units='ft')
         add_aviary_output(self, Aircraft.Wing.FINENESS, units='unitless')
