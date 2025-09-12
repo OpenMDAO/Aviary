@@ -37,7 +37,7 @@ class ProblemPhaseTestCase(unittest.TestCase):
         # There are no truth values for these.
         assert_near_equal(prob.get_val(Mission.Design.GROSS_MASS), 176990.2, tolerance=rtol)
 
-        assert_near_equal(prob.get_val(Aircraft.Design.OPERATING_MASS), 101556.0, tolerance=rtol)
+        assert_near_equal(prob.get_val(Mission.Summary.OPERATING_MASS), 101556.0, tolerance=rtol)
 
         assert_near_equal(prob.get_val(Mission.Summary.TOTAL_FUEL_MASS), 37956.0, tolerance=rtol)
 
@@ -62,7 +62,7 @@ class ProblemPhaseTestCase(unittest.TestCase):
         # There are no truth values for these.
         assert_near_equal(prob.get_val(Mission.Design.GROSS_MASS), 176965.48, tolerance=rtol)
 
-        assert_near_equal(prob.get_val(Aircraft.Design.OPERATING_MASS), 101556.0, tolerance=rtol)
+        assert_near_equal(prob.get_val(Mission.Summary.OPERATING_MASS), 101556.0, tolerance=rtol)
 
         assert_near_equal(prob.get_val(Mission.Summary.TOTAL_FUEL_MASS), 37918.8, tolerance=rtol)
 

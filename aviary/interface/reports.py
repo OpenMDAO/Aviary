@@ -62,6 +62,15 @@ def register_custom_reports():
     )
 
     register_report(
+        name='sizing_results',
+        func=sizing_results,
+        desc='Generates an output file of sized aircraft results',
+        class_name='AviaryProblem',
+        method='run_driver',
+        pre_or_post='post',
+    )
+
+    register_report(
         name='input_checks',
         func=input_check_report,
         desc='Generates a report on the aviary inputs',
@@ -110,6 +119,23 @@ def run_status(prob):
     with open(report_file, 'w') as f:
         json.dump(status, f, indent=1, ensure_ascii=False)
         print(file=f)  # avoid 'no newline at end of file' message
+
+
+def sizing_results(prob):
+    """
+    Creates a JSON file that contains the outputs from a sizing problem. If the ProblemType run was
+    not sizing, no file is generated.
+
+    Parameters
+    ----------
+    prob : AviaryProblem
+        The AviaryProblem used to generate this report
+    """
+    reports_folder = Path(prob.get_reports_dir())
+    report_file = reports_folder / 'sizing_results.json'
+
+    if prob.problem_type is ProblemType.SIZING:
+        prob.save_results(report_file)
 
 
 def subsystem_report(prob, **kwargs):
@@ -206,7 +232,7 @@ def mission_report(prob, **kwargs):
     for name, model in models.items():
         # read per-phase data from trajectory
         data = {}
-        for idx, phase in enumerate(model.phase_info):  # TODO: redo for multimissions
+        for idx, phase in enumerate(model.mission_info):  # TODO: redo for multimissions
             # TODO for traj in trajectories, currently assuming single one named "traj"
             # TODO delta mass and fuel consumption need to be tracked separately
             fuel_burn = _get_phase_diff(model, 'traj', phase, 'mass', 'lbm', [-1, 0])
