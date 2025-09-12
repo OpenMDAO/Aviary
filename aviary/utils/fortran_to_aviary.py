@@ -553,10 +553,36 @@ def update_gasp_options(vehicle_data, verbosity=Verbosity.BRIEF):
     if Aircraft.Fuselage.NUM_AISLES in input_values:
         num_aisles = input_values.get_val(Aircraft.Fuselage.NUM_AISLES, 'unitless')[0]
         num_aisles = int(num_aisles)
-        num_seat_abreast = input_values.get_val(Aircraft.Fuselage.NUM_SEATS_ABREAST, 'unitless')[0]
         input_values.set_val(Aircraft.Fuselage.NUM_AISLES, [num_aisles], 'unitless')
-        num_seat_abreast = int(num_seat_abreast)
-        input_values.set_val(Aircraft.Fuselage.NUM_SEATS_ABREAST, [num_seat_abreast], 'unitless')
+        num_seat_abreast_tourist = input_values.get_val(
+            Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_TOURIST, 'unitless'
+        )[0]
+        num_seat_abreast_tourist = int(num_seat_abreast_tourist)
+        input_values.set_val(
+            Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_TOURIST, [num_seat_abreast_tourist]
+        )
+        try:
+            num_seat_abreast_first = int(
+                input_values.get_val(
+                    Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_FIRST, 'unitless'
+                )[0]
+            )
+            input_values.set_val(
+                Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_FIRST, [num_seat_abreast_first]
+            )
+        except:
+            pass
+        try:
+            num_seat_abreast_business = int(
+                input_values.get_val(
+                    Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_BUSINESS, 'unitless'
+                )[0]
+            )
+            input_values.set_val(
+                Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_BUSINESS, [num_seat_abreast_business]
+            )
+        except:
+            pass
 
     ## STRUT AND FOLD ##
     strut_loc = input_values.get_val(Aircraft.Strut.ATTACHMENT_LOCATION, 'ft')[0]
@@ -774,9 +800,9 @@ def update_gasp_options(vehicle_data, verbosity=Verbosity.BRIEF):
         missing_vars.append('EYEW')
     if not Aircraft.CrewPayload.Design.NUM_PASSENGERS in input_values:
         missing_vars.append('PAX')
-    if not Aircraft.Fuselage.SEAT_PITCH in input_values:
+    if not Aircraft.CrewPayload.Design.SEAT_PITCH_TOURIST in input_values:
         missing_vars.append('PS')
-    if not Aircraft.Fuselage.NUM_SEATS_ABREAST in input_values:
+    if not Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_TOURIST in input_values:
         missing_vars.append('SAB')
     if not Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION in input_values:
         missing_vars.append('SAH')

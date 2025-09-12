@@ -17,6 +17,7 @@ aircraft:crew_and_payload:design:max_cargo_mass,15000.0,lbm
 aircraft:crew_and_payload:design:num_first_class,11,unitless
 aircraft:crew_and_payload:design:num_passengers,150,unitless
 aircraft:crew_and_payload:design:num_seats_abreast_tourist,18,unitless
+aircraft:crew_and_payload:design:num_tourist_class,139,unitless
 aircraft:crew_and_payload:design:seat_pitch_tourist,32.0,inch
 aircraft:crew_and_payload:passenger_mass_with_bags,225.0,lbm
 aircraft:crew_and_payload:passenger_service_mass_per_passenger,6.0,lbm
@@ -65,7 +66,6 @@ aircraft:fuselage:lift_curve_slope_mach0,1.8265,1/rad
 aircraft:fuselage:mass_coefficient,0.889,unitless
 aircraft:fuselage:nose_fineness,0.6,unitless
 aircraft:fuselage:num_aisles,3,unitless
-aircraft:fuselage:num_seats_abreast,18,unitless
 aircraft:fuselage:pilot_compartment_length,7.5,ft
 aircraft:fuselage:pressure_differential,10.0,psi
 aircraft:fuselage:pressurized_width_additional,0.0,ft
