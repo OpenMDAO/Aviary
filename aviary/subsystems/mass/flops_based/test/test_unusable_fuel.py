@@ -45,7 +45,7 @@ class TransportUnusableFuelMassTest(unittest.TestCase):
             case_name,
             input_keys=[
                 Aircraft.Fuel.UNUSABLE_FUEL_MASS_SCALER,
-                Aircraft.Fuel.DENSITY_RATIO,
+                Aircraft.Fuel.DENSITY,
                 Aircraft.Fuel.TOTAL_CAPACITY,
                 Aircraft.Propulsion.TOTAL_SCALED_SLS_THRUST,
                 Aircraft.Wing.AREA,
