@@ -30,15 +30,6 @@ class WingCharacteristicLength(om.ExplicitComponent):
         add_aviary_output(self, Aircraft.Wing.FINENESS, units='unitless')
 
     def setup_partials(self):
-        self._setup_partials_wing()
-
-    def compute(self, inputs, outputs, discrete_inputs=None, discrete_outputs=None):
-        self._compute_wing(inputs, outputs, discrete_inputs, discrete_outputs)
-
-    def compute_partials(self, inputs, J, discrete_inputs=None):
-        self._compute_partials_wing(inputs, J, discrete_inputs)
-
-    def _setup_partials_wing(self):
         wrt = [
             Aircraft.Wing.AREA,
             Aircraft.Wing.ASPECT_RATIO,
@@ -55,7 +46,7 @@ class WingCharacteristicLength(om.ExplicitComponent):
 
         self.declare_partials(Aircraft.Wing.FINENESS, Aircraft.Wing.THICKNESS_TO_CHORD, val=1.0)
 
-    def _compute_wing(self, inputs, outputs, discrete_inputs=None, discrete_outputs=None):
+    def compute(self, inputs, outputs, discrete_inputs=None, discrete_outputs=None):
         area = inputs[Aircraft.Wing.AREA]
         glove_and_bat = inputs[Aircraft.Wing.GLOVE_AND_BAT]
         aspect_ratio = inputs[Aircraft.Wing.ASPECT_RATIO]
@@ -76,7 +67,7 @@ class WingCharacteristicLength(om.ExplicitComponent):
 
         outputs[Aircraft.Wing.FINENESS] = thickness_to_chord
 
-    def _compute_partials_wing(self, inputs, J, discrete_inputs=None):
+    def compute_partials(self, inputs, J, discrete_inputs=None):
         if self.options[Aircraft.Wing.SPAN_EFFICIENCY_REDUCTION]:
             taper_ratio = inputs[Aircraft.Wing.TAPER_RATIO]
             CROOT = inputs[Names.CROOT]
