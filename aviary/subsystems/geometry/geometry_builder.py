@@ -91,7 +91,7 @@ class CoreGeometryBuilder(GeometryBuilderBase):
         both_geom = self.use_both_geometries
         code_origin_to_prioritize = self.code_origin_to_prioritize
         try:
-            method = kwargs.pop('method')
+            method = kwargs['method']
         except KeyError:
             method = None
 
@@ -103,18 +103,18 @@ class CoreGeometryBuilder(GeometryBuilderBase):
 
             elif code_origin is GASP:
                 geom_group = SizeGroup()
-                geom_group.manual_overrides = None
+                geom_group.code_origin_overrides = None
 
             elif code_origin is FLOPS:
                 geom_group = PrepGeom()
-                geom_group.manual_overrides = None
+                geom_group.code_origin_overrides = None
 
         return geom_group
 
     def build_mission(self, num_nodes, aviary_inputs, **kwargs):
         # by default there is no geom mission, but call super for safety/future-proofing
         try:
-            method = kwargs.pop('method')
+            method = kwargs['method']
         except KeyError:
             method = None
         geom_group = None

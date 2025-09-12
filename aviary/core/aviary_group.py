@@ -1,6 +1,7 @@
 import inspect
-from importlib.machinery import SourceFileLoader
+from importlib.util import spec_from_file_location, module_from_spec
 from pathlib import Path
+import sys
 
 import dymos as dm
 import openmdao.api as om
@@ -227,9 +228,11 @@ class AviaryGroup(om.Group):
         # if phase info is a file, load it
         if isinstance(phase_info, str) or isinstance(phase_info, Path):
             phase_info_path = get_path(phase_info)
-            phase_info_file = SourceFileLoader(
-                'phase_info_file', str(phase_info_path)
-            ).load_module()
+            spec = spec_from_file_location('phase_info_file', str(phase_info_path))
+            phase_info_file = module_from_spec(spec)
+            sys.modules['phase_info_file'] = phase_info_file
+            spec.loader.exec_module(phase_info_file)
+
             phase_info = getattr(phase_info_file, 'phase_info')
 
         if phase_info is None:
@@ -1382,7 +1385,7 @@ class AviaryGroup(om.Group):
             # If not, fetch the initial guesses specific to the phase
             # check if guesses exist for this phase
             if 'initial_guesses' in self.phase_info[phase_name]:
-                guesses = self.phase_info[phase_name]['initial_guesses']
+                guesses = self.phase_info[phase_name]['initial_guesses'].copy()
             else:
                 guesses = {}
 
@@ -1431,20 +1434,24 @@ class AviaryGroup(om.Group):
             initial_guesses = subsystem.get_initial_guesses()
 
             # Loop over each guess
-            for key, val in initial_guesses.items():
+            for key, val_dict in initial_guesses.items():
                 # Identify the type of the guess (state or control)
-                type = val.pop('type')
-                if 'state' in type:
+                var_type = val_dict['type']
+                if 'state' in var_type:
                     path_string = 'states'
-                elif 'control' in type:
+                elif 'control' in var_type:
                     path_string = 'controls'
 
                 # Process the guess variable (handles array interpolation)
                 # val['val'] = self.process_guess_var(val['val'], key, phase)
-                val['val'] = process_guess_var(val['val'], key, phase)
+                val = process_guess_var(val_dict['val'], key, phase)
 
                 # Set the initial guess in the problem
-                target_prob.set_val(parent_prefix + f'traj.{phase_name}.{path_string}:{key}', **val)
+                target_prob.set_val(
+                    parent_prefix + f'traj.{phase_name}.{path_string}:{key}',
+                    val,
+                    units=val_dict.get('units', None),
+                )
 
     def add_fuel_reserve_component(
         self, post_mission=True, reserves_name=Mission.Design.RESERVE_FUEL
