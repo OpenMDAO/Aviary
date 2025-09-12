@@ -11,11 +11,13 @@ from numpy import pi
 
 from aviary.subsystems.geometry.flops_based.canard import Canard
 from aviary.subsystems.geometry.flops_based.characteristic_lengths import (
-    WingCharacteristicLength,
+    BWBWingCharacteristicLength,
     OtherCharacteristicLengths,
+    WingCharacteristicLength,
 )
 from aviary.subsystems.geometry.flops_based.fuselage import (
     BWBDetailedCabinLayout,
+    BWBFuselagePrelim,
     BWBSimpleCabinLayout,
     DetailedCabinLayout,
     FuselagePrelim,
@@ -100,13 +102,23 @@ class PrepGeom(om.Group):
                     promotes_outputs=['*'],
                 )
 
-        self.add_subsystem(
-            'fuselage_prelim', FuselagePrelim(), promotes_inputs=['*'], promotes_outputs=['*']
-        )
+        if design_type is AircraftTypes.BLENDED_WING_BODY:
+            self.add_subsystem(
+                'fuse_prelim', BWBFuselagePrelim(), promotes_inputs=['*'], promotes_outputs=['*']
+            )
+        else:
+            self.add_subsystem(
+                'fuse_prelim', FuselagePrelim(), promotes_inputs=['*'], promotes_outputs=['*']
+            )
 
-        self.add_subsystem(
-            'wing_prelim', WingPrelim(), promotes_inputs=['*'], promotes_outputs=['*']
-        )
+        if design_type is AircraftTypes.BLENDED_WING_BODY:
+            self.add_subsystem(
+                'wing_prelim', BWBWingPrelim(), promotes_inputs=['*'], promotes_outputs=['*']
+            )
+        else:
+            self.add_subsystem(
+                'wing_prelim', WingPrelim(), promotes_inputs=['*'], promotes_outputs=['*']
+            )
 
         self.add_subsystem(
             'prelim',
@@ -114,7 +126,14 @@ class PrepGeom(om.Group):
             promotes_inputs=['*'],
         )
 
-        self.add_subsystem('wing', _Wing(), promotes_inputs=['aircraft*'], promotes_outputs=['*'])
+        if design_type is AircraftTypes.BLENDED_WING_BODY:
+            self.add_subsystem(
+                'wing', _BWBWing(), promotes_inputs=['aircraft*'], promotes_outputs=['*']
+            )
+        else:
+            self.add_subsystem(
+                'wing', _Wing(), promotes_inputs=['aircraft*'], promotes_outputs=['*']
+            )
 
         self.connect(f'prelim.{Names.CROOT}', f'wing.{Names.CROOT}')
         self.connect(f'prelim.{Names.CROOTB}', f'wing.{Names.CROOTB}')
@@ -126,9 +145,14 @@ class PrepGeom(om.Group):
         self.connect(f'prelim.{Names.XMULTH}', f'tail.{Names.XMULTH}')
         self.connect(f'prelim.{Names.XMULTV}', f'tail.{Names.XMULTV}')
 
-        self.add_subsystem(
-            'fuselage', _Fuselage(), promotes_inputs=['aircraft*'], promotes_outputs=['*']
-        )
+        if design_type is AircraftTypes.BLENDED_WING_BODY:
+            self.add_subsystem(
+                'fuselage', _BWBFuselage(), promotes_inputs=['aircraft*'], promotes_outputs=['*']
+            )
+        else:
+            self.add_subsystem(
+                'fuselage', _Fuselage(), promotes_inputs=['aircraft*'], promotes_outputs=['*']
+            )
         self.add_subsystem(
             'fus_ratios', _FuselageRatios(), promotes_inputs=['aircraft*'], promotes_outputs=['*']
         )
@@ -145,12 +169,20 @@ class PrepGeom(om.Group):
             'canard', Canard(), promotes_inputs=['aircraft*'], promotes_outputs=['*']
         )
 
-        self.add_subsystem(
-            'wing_characteristic_lengths',
-            WingCharacteristicLength(),
-            promotes_inputs=['aircraft*'],
-            promotes_outputs=['*'],
-        )
+        if design_type is AircraftTypes.BLENDED_WING_BODY:
+            self.add_subsystem(
+                'wing_characteristic_lengths',
+                BWBWingCharacteristicLength(),
+                promotes_inputs=['aircraft*'],
+                promotes_outputs=['*'],
+            )
+        else:
+            self.add_subsystem(
+                'wing_characteristic_lengths',
+                WingCharacteristicLength(),
+                promotes_inputs=['aircraft*'],
+                promotes_outputs=['*'],
+            )
         self.add_subsystem(
             'other_characteristic_lengths',
             OtherCharacteristicLengths(),
