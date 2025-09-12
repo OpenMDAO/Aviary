@@ -47,7 +47,7 @@ class AlphaModes(Enum):
 
 class DetailedWing(Enum):
     """
-    To flag where users provide detailed wing or want to create detailed wing
+    To flag where users provide detailed wing or want to create detailed wing (if the aircraft is BWB)
     or not to use detailed wing
     """
 
