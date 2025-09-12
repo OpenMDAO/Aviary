@@ -709,9 +709,7 @@ def update_flops_options(vehicle_data):
             [6.7 * input_values.get_val(Aircraft.Fuel.DENSITY, 'lbm/galUS')[0]],
             'lbm/galUS',
         )
-    else:
-        # assume jet fuel
-        input_values.set_val(Aircraft.Fuel.DENSITY, [6.7], 'lbm/galUS')
+    # else: not required as jet fuel is assumed and default value in metadata is 6.7
 
     if Aircraft.Fuel.WING_FUEL_CAPACITY in input_values:
         if input_values.get_val(Aircraft.Fuel.WING_FUEL_CAPACITY, 'lbm')[0] < 50:
