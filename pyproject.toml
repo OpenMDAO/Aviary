@@ -12,6 +12,7 @@ dependencies = [
     "dymos>=1.14.0",
     "hvplot",
     "importlib_resources",
+    "jax",
     "matplotlib",
     "numpy<2",
     "openmdao>=3.37.0",
@@ -19,6 +20,7 @@ dependencies = [
     "panel>=1.0.0",
     "parameterized",
     "simupy",
+    "quadax"
 ]
 
 [project.optional-dependencies]
