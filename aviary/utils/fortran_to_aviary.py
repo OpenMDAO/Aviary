@@ -28,7 +28,7 @@ from aviary.utils.functions import convert_strings_to_data, get_path
 from aviary.utils.legacy_code_data.flops_defaults import flops_default_values, flops_deprecated_vars
 from aviary.utils.legacy_code_data.gasp_defaults import gasp_default_values, gasp_deprecated_vars
 from aviary.utils.named_values import NamedValues
-from aviary.variable_info.enums import LegacyCode, Verbosity
+from aviary.variable_info.enums import DetailedWing, LegacyCode, Verbosity
 from aviary.variable_info.variable_meta_data import _MetaData
 from aviary.variable_info.variables import Aircraft, Mission, Settings
 
@@ -704,7 +704,7 @@ def update_flops_options(vehicle_data):
 
     # Set detailed wing flag if model supports it
     if Aircraft.Wing.INPUT_STATION_DIST in input_values:
-        input_values.set_val(Aircraft.Wing.DETAILED_WING, [True])
+        input_values.set_val(Aircraft.Wing.DETAILED_WING, [DetailedWing.TO_PROVIDE])
 
     vehicle_data['input_values'] = input_values
     return vehicle_data

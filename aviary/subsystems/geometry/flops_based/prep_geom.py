@@ -15,6 +15,8 @@ from aviary.subsystems.geometry.flops_based.characteristic_lengths import (
     OtherCharacteristicLengths,
 )
 from aviary.subsystems.geometry.flops_based.fuselage import (
+    BWBDetailedCabinLayout,
+    BWBSimpleCabinLayout,
     DetailedCabinLayout,
     FuselagePrelim,
     SimpleCabinLayout,
@@ -29,7 +31,12 @@ from aviary.subsystems.geometry.flops_based.utils import (
 )
 from aviary.subsystems.geometry.flops_based.wetted_area_total import TotalWettedArea
 from aviary.subsystems.geometry.flops_based.wing import WingPrelim
-from aviary.variable_info.enums import Verbosity
+from aviary.subsystems.geometry.flops_based.wing_detailed import (
+    BWBUpdateDetailedWingDist,
+    BWBComputeDetailedWingDist,
+    BWBWingPrelim,
+)
+from aviary.variable_info.enums import AircraftTypes, DetailedWing, Verbosity
 from aviary.variable_info.functions import add_aviary_input, add_aviary_option, add_aviary_output
 from aviary.variable_info.variables import Aircraft, Settings
 
@@ -39,24 +46,59 @@ class PrepGeom(om.Group):
 
     def initialize(self):
         add_aviary_option(self, Aircraft.Fuselage.SIMPLE_LAYOUT)
+        add_aviary_option(self, Aircraft.Design.TYPE)
+        add_aviary_option(self, Aircraft.Wing.DETAILED_WING)
 
     def setup(self):
         is_simple_layout = self.options[Aircraft.Fuselage.SIMPLE_LAYOUT]
+        design_type = self.options[Aircraft.Design.TYPE]
 
-        if is_simple_layout:
-            self.add_subsystem(
-                'fuselage_layout',
-                SimpleCabinLayout(),
-                promotes_inputs=['*'],
-                promotes_outputs=['*'],
-            )
+        if design_type is AircraftTypes.BLENDED_WING_BODY:
+            if is_simple_layout:
+                self.add_subsystem(
+                    'fuselage_layout',
+                    BWBSimpleCabinLayout(),
+                    promotes_inputs=['*'],
+                    promotes_outputs=['*'],
+                )
+            else:
+                self.add_subsystem(
+                    'fuselage_layout',
+                    BWBDetailedCabinLayout(),
+                    promotes_inputs=['*'],
+                    promotes_outputs=['*'],
+                )
+            if self.options[Aircraft.Wing.DETAILED_WING] == DetailedWing.TO_PROVIDE:
+                self.add_subsystem(
+                    'detailed_wing',
+                    BWBUpdateDetailedWingDist(),
+                    promotes_inputs=['*'],
+                    promotes_outputs=['*'],
+                )
+            elif self.options[Aircraft.Wing.DETAILED_WING] == DetailedWing.TO_COMPUTE:
+                self.add_subsystem(
+                    'detailed_wing',
+                    BWBComputeDetailedWingDist(),
+                    promotes_inputs=['*'],
+                    promotes_outputs=['*'],
+                )
+            else:
+                raise ('For BWB, we always use detailed wing.')
         else:
-            self.add_subsystem(
-                'fuselage_layout',
-                DetailedCabinLayout(),
-                promotes_inputs=['*'],
-                promotes_outputs=['*'],
-            )
+            if is_simple_layout:
+                self.add_subsystem(
+                    'fuselage_layout',
+                    SimpleCabinLayout(),
+                    promotes_inputs=['*'],
+                    promotes_outputs=['*'],
+                )
+            else:
+                self.add_subsystem(
+                    'fuselage_layout',
+                    DetailedCabinLayout(),
+                    promotes_inputs=['*'],
+                    promotes_outputs=['*'],
+                )
 
         self.add_subsystem(
             'fuselage_prelim', FuselagePrelim(), promotes_inputs=['*'], promotes_outputs=['*']

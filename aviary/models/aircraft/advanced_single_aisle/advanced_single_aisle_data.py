@@ -38,7 +38,7 @@ from aviary.utils.test_utils.default_subsystems import (
     get_default_mission_subsystems,
     get_default_premission_subsystems,
 )
-from aviary.variable_info.enums import EquationsOfMotion, LegacyCode, ProblemType
+from aviary.variable_info.enums import DetailedWing, EquationsOfMotion, LegacyCode, ProblemType
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission, Settings
 
 N3CC = {}
@@ -257,7 +257,7 @@ inputs.set_val(
 inputs.set_val(Aircraft.Wing.COMPOSITE_FRACTION, 0.33333)
 inputs.set_val(Aircraft.Wing.DIHEDRAL, 6.0, 'deg')
 inputs.set_val(Aircraft.Wing.CONTROL_SURFACE_AREA_RATIO, 0.333)
-inputs.set_val(Aircraft.Wing.DETAILED_WING, True)
+inputs.set_val(Aircraft.Wing.DETAILED_WING, DetailedWing.TO_PROVIDE)
 inputs.set_val(Aircraft.Wing.GLOVE_AND_BAT, 0.0, 'ft**2')
 inputs.set_val(Aircraft.Wing.HEIGHT, 8.6, 'ft')
 inputs.set_val(Aircraft.Wing.INPUT_STATION_DIST, np.array([0.0, 0.34453777998, 0.919, 1.0]))
