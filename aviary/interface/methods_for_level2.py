@@ -1347,9 +1347,9 @@ class AviaryProblem(om.Problem):
 
         if phase_info is None:
             # model phase_info only contains mission information, recreate the whole thing here
-            phase_info = self.model.mission_info
-            phase_info['pre_mission'] = self.model.pre_mission_info
-            phase_info['post_mission'] = self.model.post_mission_info
+            phase_info = self.model.mission_info.copy()
+            phase_info['pre_mission'] = self.model.pre_mission_info.copy()
+            phase_info['post_mission'] = self.model.post_mission_info.copy()
 
         # update passenger count and cargo masses
         mass_method = inputs.get_val(Settings.MASS_METHOD)
