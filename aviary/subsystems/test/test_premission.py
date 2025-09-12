@@ -179,7 +179,7 @@ class PreMissionTestCase(unittest.TestCase):
         # modified from GASP value to account for updated crew mass. GASP value is
         # 42843.6
         assert_near_equal(
-            self.prob[Mission.Design.FUEL_MASS_REQUIRED], 41977.7, tol
+            self.prob[Mission.Summary.FUEL_MASS_REQUIRED], 41977.7, tol
         )  # modified from GASP value to account for updated crew mass. GASP value is 42843.6
         assert_near_equal(
             self.prob[Aircraft.Propulsion.MASS], 16098.7, tol

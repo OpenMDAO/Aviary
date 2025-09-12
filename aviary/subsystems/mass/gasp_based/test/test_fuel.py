@@ -36,7 +36,7 @@ class BodyCalculationTestCase1(unittest.TestCase):
         )
         self.prob.model.set_input_defaults('fuel_mass_min', val=32853, units='lbm')
         self.prob.model.set_input_defaults(
-            Mission.Design.FUEL_MASS_REQUIRED, val=42892.0, units='lbm'
+            Mission.Summary.FUEL_MASS_REQUIRED, val=42892.0, units='lbm'
         )
         self.prob.model.set_input_defaults('max_wingfuel_mass', val=55725.1, units='lbm')
         self.prob.model.set_input_defaults(
@@ -84,7 +84,7 @@ class BodyCalculationTestCase2(
         )
         self.prob.model.set_input_defaults('fuel_mass_min', val=34942.7, units='lbm')
         self.prob.model.set_input_defaults(
-            Mission.Design.FUEL_MASS_REQUIRED, val=44982.7, units='lbm'
+            Mission.Summary.FUEL_MASS_REQUIRED, val=44982.7, units='lbm'
         )
         self.prob.model.set_input_defaults('max_wingfuel_mass', val=43852.1, units='lbm')
         self.prob.model.set_input_defaults(
@@ -135,7 +135,7 @@ class BodyCalculationTestCase3(unittest.TestCase):
         )
         self.prob.model.set_input_defaults('fuel_mass_min', val=34942.7, units='lbm')
         self.prob.model.set_input_defaults(
-            Mission.Design.FUEL_MASS_REQUIRED, val=44982.7, units='lbm'
+            Mission.Summary.FUEL_MASS_REQUIRED, val=44982.7, units='lbm'
         )
         self.prob.model.set_input_defaults('max_wingfuel_mass', val=43852.1, units='lbm')
         self.prob.model.set_input_defaults(
@@ -172,7 +172,7 @@ class BodyCalculationTestCase4smooth(unittest.TestCase):
         )
         self.prob.model.set_input_defaults('fuel_mass_min', val=32853, units='lbm')
         self.prob.model.set_input_defaults(
-            Mission.Design.FUEL_MASS_REQUIRED, val=42892.0, units='lbm'
+            Mission.Summary.FUEL_MASS_REQUIRED, val=42892.0, units='lbm'
         )
         self.prob.model.set_input_defaults('max_wingfuel_mass', val=55725.1, units='lbm')
         self.prob.model.set_input_defaults(
@@ -225,7 +225,7 @@ class BodyCalculationTestCase5(unittest.TestCase):
         )
         self.prob.model.set_input_defaults('fuel_mass_min', val=14115.342, units='lbm')
         self.prob.model.set_input_defaults(
-            Mission.Design.FUEL_MASS_REQUIRED, val=30085.342, units='lbm'
+            Mission.Summary.FUEL_MASS_REQUIRED, val=30085.342, units='lbm'
         )
         self.prob.model.set_input_defaults('max_wingfuel_mass', val=33892.8, units='lbm')
         self.prob.model.set_input_defaults(
@@ -280,7 +280,7 @@ class BodyCalculationTestCase6smooth(unittest.TestCase):
         )
         self.prob.model.set_input_defaults('fuel_mass_min', val=14115.342, units='lbm')
         self.prob.model.set_input_defaults(
-            Mission.Design.FUEL_MASS_REQUIRED, val=30085.342, units='lbm'
+            Mission.Summary.FUEL_MASS_REQUIRED, val=30085.342, units='lbm'
         )
         self.prob.model.set_input_defaults('max_wingfuel_mass', val=33892.8, units='lbm')
         self.prob.model.set_input_defaults(
@@ -334,7 +334,7 @@ class BodyCalculationTestCase7smooth(unittest.TestCase):
         )
         self.prob.model.set_input_defaults('fuel_mass_min', val=11998.49344063, units='lbm')
         self.prob.model.set_input_defaults(
-            Mission.Design.FUEL_MASS_REQUIRED, val=27968.49344063, units='lbm'
+            Mission.Summary.FUEL_MASS_REQUIRED, val=27968.49344063, units='lbm'
         )
         self.prob.model.set_input_defaults('max_wingfuel_mass', val=31051.56633854, units='lbm')
         self.prob.model.set_input_defaults(
@@ -384,7 +384,7 @@ class FuelAndOEMTestCase(unittest.TestCase):
             Aircraft.Design.FIXED_USEFUL_LOAD, val=4932.0, units='lbm'
         )
         self.prob.model.set_input_defaults(
-            Mission.Design.FUEL_MASS_REQUIRED, val=42892.0, units='lbm'
+            Mission.Summary.FUEL_MASS_REQUIRED, val=42892.0, units='lbm'
         )
         self.prob.model.set_input_defaults(
             Aircraft.Fuel.WING_VOLUME_GEOMETRIC_MAX, 1114, units='ft**3'
@@ -440,7 +440,7 @@ class FuelAndOEMTestCase2(unittest.TestCase):
             Aircraft.Design.FIXED_EQUIPMENT_MASS, val=21089.0, units='lbm'
         )
         prob.model.set_input_defaults(Aircraft.Design.FIXED_USEFUL_LOAD, val=4932.0, units='lbm')
-        prob.model.set_input_defaults(Mission.Design.FUEL_MASS_REQUIRED, val=42892.0, units='lbm')
+        prob.model.set_input_defaults(Mission.Summary.FUEL_MASS_REQUIRED, val=42892.0, units='lbm')
         prob.model.set_input_defaults(Aircraft.Fuel.WING_VOLUME_GEOMETRIC_MAX, 1114, units='ft**3')
         prob.model.set_input_defaults(Aircraft.Fuel.FUEL_MARGIN, val=0, units='unitless')
         prob.model.set_input_defaults(Aircraft.Fuel.TOTAL_CAPACITY, val=55725.1, units='lbm')
@@ -746,7 +746,7 @@ class FuelMassTestCase(unittest.TestCase):  # this is the large single aisle 1 V
         tol = 1e-4
         assert_near_equal(self.prob[Mission.Summary.FUEL_MASS], 42893, tol)
         assert_near_equal(self.prob[Aircraft.Propulsion.MASS], 16129, tol)
-        assert_near_equal(self.prob[Mission.Design.FUEL_MASS_REQUIRED], 42892.0, tol)
+        assert_near_equal(self.prob[Mission.Summary.FUEL_MASS_REQUIRED], 42892.0, tol)
         assert_near_equal(self.prob['fuel_mass_min'], 32853, tol)
 
         partial_data = self.prob.check_partials(out_stream=None, method='cs')
@@ -930,7 +930,7 @@ class FuelMassGroupTestCase1(unittest.TestCase):
         # fuel
         assert_near_equal(self.prob[Mission.Summary.FUEL_MASS], 42893, tol)
         assert_near_equal(self.prob[Aircraft.Propulsion.MASS], 16129, tol)
-        assert_near_equal(self.prob[Mission.Design.FUEL_MASS_REQUIRED], 42892.0, tol)
+        assert_near_equal(self.prob[Mission.Summary.FUEL_MASS_REQUIRED], 42892.0, tol)
         assert_near_equal(self.prob['fuel_mass_min'], 32853, tol)
 
         # body tank
@@ -1063,7 +1063,7 @@ class FuelMassGroupTestCase2(
         # fuel
         assert_near_equal(self.prob[Mission.Summary.FUEL_MASS], 44982.7, tol)
         assert_near_equal(self.prob[Aircraft.Propulsion.MASS], 16399.0, tol)
-        assert_near_equal(self.prob[Mission.Design.FUEL_MASS_REQUIRED], 44982.7, tol)
+        assert_near_equal(self.prob[Mission.Summary.FUEL_MASS_REQUIRED], 44982.7, tol)
         assert_near_equal(self.prob['fuel_mass_min'], 34942.7, tol)
 
         # body tank
@@ -1211,7 +1211,7 @@ class FuelMassGroupTestCase3(unittest.TestCase):  # this is v 3.6 advanced tube 
         # fuel
         assert_near_equal(self.prob[Mission.Summary.FUEL_MASS], 31627.2, tol)
         assert_near_equal(self.prob[Aircraft.Propulsion.MASS], 10755.0, tol)
-        assert_near_equal(self.prob[Mission.Design.FUEL_MASS_REQUIRED], 31627, tol)
+        assert_near_equal(self.prob[Mission.Summary.FUEL_MASS_REQUIRED], 31627, tol)
         assert_near_equal(self.prob['fuel_mass_min'], 15657.2, tol)
 
         # body tank
@@ -1356,7 +1356,7 @@ class BWBFuelMassTestCase(unittest.TestCase):
         tol = 1e-7
         assert_near_equal(self.prob[Mission.Summary.FUEL_MASS], 35682.13446963, tol)
         assert_near_equal(self.prob[Aircraft.Propulsion.MASS], 7867.52805, tol)
-        assert_near_equal(self.prob[Mission.Design.FUEL_MASS_REQUIRED], 36123.06859671, tol)
+        assert_near_equal(self.prob[Mission.Summary.FUEL_MASS_REQUIRED], 36123.06859671, tol)
         assert_near_equal(self.prob['fuel_mass_min'], 21123.06859671, tol)
 
         partial_data = self.prob.check_partials(out_stream=None, method='cs')
@@ -1377,7 +1377,7 @@ class BWBFuelAndOEMTestCase(unittest.TestCase):
         prob.model.set_input_defaults(Aircraft.Design.STRUCTURE_MASS, 43566.079, units='lbm')
         prob.model.set_input_defaults(Aircraft.Design.FIXED_EQUIPMENT_MASS, 20876.477, units='lbm')
         prob.model.set_input_defaults(Aircraft.Design.FIXED_USEFUL_LOAD, 5736.3, units='lbm')
-        prob.model.set_input_defaults(Mission.Design.FUEL_MASS_REQUIRED, 26652.3, units='lbm')
+        prob.model.set_input_defaults(Mission.Summary.FUEL_MASS_REQUIRED, 26652.3, units='lbm')
         prob.model.set_input_defaults(
             Aircraft.Fuel.WING_VOLUME_GEOMETRIC_MAX, 605.90781747, units='ft**3'
         )
@@ -1418,7 +1418,7 @@ class BWBBodyCalculationTest(unittest.TestCase):
             Aircraft.Fuel.WING_VOLUME_STRUCTURAL_MAX, 1159.1, units='ft**3'
         )
         prob.model.set_input_defaults('fuel_mass_min', 9229.6045, units='lbm')
-        prob.model.set_input_defaults(Mission.Design.FUEL_MASS_REQUIRED, 26652.3, units='lbm')
+        prob.model.set_input_defaults(Mission.Summary.FUEL_MASS_REQUIRED, 26652.3, units='lbm')
         prob.model.set_input_defaults('max_wingfuel_mass', 26646.849, units='lbm')
         prob.model.set_input_defaults(Aircraft.Fuel.WING_VOLUME_GEOMETRIC_MAX, 532.7, units='ft**3')
         prob.model.set_input_defaults(Aircraft.Fuel.DENSITY, 6.687, units='lbm/galUS')
@@ -1530,7 +1530,7 @@ class BWBFuelMassGroupTest(unittest.TestCase):
         Aircraft.Fuselage.MASS -- WB = 27160.
         Mission.Summary.FUEL_MASS -- WFADES = 33268.2
         Aircraft.Propulsion.MASS -- WP = 8592.
-        Mission.Design.FUEL_MASS_REQUIRED -- WFAREQ = 36595.0
+        Mission.Summary.FUEL_MASS_REQUIRED -- WFAREQ = 36595.0
         fuel_mass_min -- WFAMIN = 18268.2
         Aircraft.Fuel.AUXILIARY_FUEL_CAPACITY -- 0.0
         Aircraft.Fuel.TOTAL_CAPACITY -- WFAMAX = 33268.2
@@ -1562,7 +1562,7 @@ class BWBFuelMassGroupTest(unittest.TestCase):
         # fuel
         assert_near_equal(self.prob[Mission.Summary.FUEL_MASS], 33997.40162479, tol)
         assert_near_equal(self.prob[Aircraft.Propulsion.MASS], 8620.39996255, tol)
-        assert_near_equal(self.prob[Mission.Design.FUEL_MASS_REQUIRED], 33997.40162479, tol)
+        assert_near_equal(self.prob[Mission.Summary.FUEL_MASS_REQUIRED], 33997.40162479, tol)
         assert_near_equal(self.prob['fuel_mass_min'], 18997.40162479, tol)
 
         # body tank

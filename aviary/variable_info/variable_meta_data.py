@@ -7125,7 +7125,7 @@ add_meta_data(
 )
 
 add_meta_data(
-    Mission.Design.FUEL_MASS_REQUIRED,
+    Mission.Summary.FUEL_MASS_REQUIRED,
     meta_data=_MetaData,
     historical_name={'GASP': 'INGASP.WFAREQ', 'FLOPS': None, 'LEAPS1': None},
     units='lbm',
