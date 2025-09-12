@@ -11,7 +11,7 @@ from aviary.utils.aviary_values import AviaryValues
 from aviary.utils.utils import cast_type, check_type, enum_setter, wrapped_convert_units
 from aviary.variable_info.enums import Verbosity
 from aviary.variable_info.variable_meta_data import _MetaData
-from aviary.variable_info.variables import Aircraft, Settings
+from aviary.variable_info.variables import Aircraft, Mission, Settings
 
 # ---------------------------
 # Helper functions for setting up inputs/outputs in components
@@ -587,7 +587,8 @@ def setup_model_options(
         for idx in range(num_engine_models):
             eng_name = engine_models[idx].name
 
-            # TODO: For future flexibility, need to tag the required engine options.
+            # TODO: For future flexibility, need get a list of options per engine (these are
+            # EngineDeck required options), so custom multiengine works
             opt_names = [
                 Aircraft.Engine.SCALE_PERFORMANCE,
                 Aircraft.Engine.SUBSONIC_FUEL_FLOW_SCALER,
@@ -601,10 +602,12 @@ def setup_model_options(
             ]
             opts = {}
             for key in opt_names:
-                opts[key] = aviary_inputs.get_item(key)[0][idx]
+                if key in aviary_inputs:
+                    opts[key] = aviary_inputs.get_item(key)[0][idx]
             for key in opt_names_units:
-                val, units = aviary_inputs.get_item(key)
-                opts[key] = (val[idx], units)
+                if key in aviary_inputs:
+                    val, units = aviary_inputs.get_item(key)
+                    opts[key] = (val[idx], units)
 
             path = f'{prefix}*core_propulsion.{eng_name}*'
             prob.model_options[path] = opts

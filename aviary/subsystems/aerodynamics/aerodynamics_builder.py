@@ -118,8 +118,9 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
             return Design()
 
     def build_mission(self, num_nodes, aviary_inputs, **kwargs):
+        aero_opts = kwargs.copy()
         try:
-            method = kwargs.pop('method')
+            method = aero_opts.pop('method')
         except KeyError:
             method = None
 
@@ -129,7 +130,7 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
         aero_group = None
 
         if self.code_origin is FLOPS:
-            if 'solve_alpha' in kwargs:
+            if 'solve_alpha' in aero_opts:
                 if aviary_inputs.get_val(Settings.VERBOSITY) >= Verbosity.BRIEF:
                     warnings.warn(
                         "The 'solve_alpha' flag has been set, but is not used for FLOPS-based "
@@ -140,17 +141,17 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
                 aero_group = ComputedAeroGroup(num_nodes=num_nodes)
 
             elif method == 'computed':
-                aero_group = ComputedAeroGroup(num_nodes=num_nodes, **kwargs)
+                aero_group = ComputedAeroGroup(num_nodes=num_nodes, **aero_opts)
 
             elif method == 'low_speed':
-                aero_group = TakeoffAeroGroup(num_nodes=num_nodes, **kwargs)
+                aero_group = TakeoffAeroGroup(num_nodes=num_nodes, **aero_opts)
 
             elif method == 'tabular':
                 aero_group = TabularAeroGroup(
                     num_nodes=num_nodes,
-                    CD0_data=kwargs.pop('CD0_data'),
-                    CDI_data=kwargs.pop('CDI_data'),
-                    **kwargs,
+                    CD0_data=aero_opts.pop('CD0_data'),
+                    CDI_data=aero_opts.pop('CDI_data'),
+                    **aero_opts,
                 )
 
             else:
@@ -161,7 +162,7 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
 
         elif self.code_origin is GASP:
             try:
-                solve_alpha = kwargs.pop('solve_alpha')
+                solve_alpha = aero_opts.pop('solve_alpha')
             except KeyError:
                 solve_alpha = False
 
@@ -169,27 +170,27 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
                 aero_group = CruiseAero(num_nodes=num_nodes)
 
             elif method == 'cruise':
-                aero_group = CruiseAero(num_nodes=num_nodes, **kwargs)
+                aero_group = CruiseAero(num_nodes=num_nodes, **aero_opts)
 
             elif method == 'tabular_cruise':
-                # if 'aero_data' in kwargs:
+                # if 'aero_data' in aero_opts:
                 aero_group = TabularCruiseAero(
                     num_nodes=num_nodes,
-                    aero_data=kwargs.pop('aero_data'),
-                    **kwargs,
+                    aero_data=aero_opts.pop('aero_data'),
+                    **aero_opts,
                 )
 
             elif method == 'low_speed':
-                aero_group = LowSpeedAero(num_nodes=num_nodes, **kwargs)
+                aero_group = LowSpeedAero(num_nodes=num_nodes, **aero_opts)
 
             elif method == 'tabular_low_speed':
                 data_tables = [
-                    key in kwargs
+                    key in aero_opts
                     for key in ['free_aero_data', 'free_flaps_data', 'free_ground_data']
                 ]
 
                 if all(data_tables):
-                    aero_group = TabularLowSpeedAero(num_nodes=num_nodes, **kwargs)
+                    aero_group = TabularLowSpeedAero(num_nodes=num_nodes, **aero_opts)
                 # raise error if only some data types are provided (at this point we know
                 # not all are present, now need to see if any were provided at all)
                 elif any(data_tables):
@@ -241,7 +242,7 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
 
     def mission_inputs(self, **kwargs):
         try:
-            method = kwargs.pop('method')
+            method = kwargs['method']
         except KeyError:
             method = None
 
@@ -327,7 +328,7 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
 
     def mission_outputs(self, **kwargs):
         try:
-            method = kwargs.pop('method')
+            method = kwargs['method']
         except KeyError:
             method = None
         promotes = ['*']
@@ -411,7 +412,7 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
               variable.
         """
         try:
-            method = kwargs.pop('method')
+            method = kwargs['method']
         except KeyError:
             method = None
 
@@ -420,16 +421,15 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
 
         num_engine_type = len(aviary_inputs.get_val(Aircraft.Engine.NUM_ENGINES))
         params = {}
-        aero_options = kwargs
 
         if self.code_origin is FLOPS:
             # FLOPS default is 'computed'
             if method is None:
                 method = 'computed'
-            if aero_options != {}:
+            if kwargs != {}:
                 # Only some methods have connectable training inputs.
                 if method == 'tabular':
-                    CD0_data = aero_options['CD0_data']
+                    CD0_data = kwargs['CD0_data']
 
                     if isinstance(CD0_data, NamedValues):
                         altitude = CD0_data.get_item('altitude')[0]
@@ -461,7 +461,7 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
 
                         params[Aircraft.Design.LIFT_INDEPENDENT_DRAG_POLAR] = opts
 
-                    CDI_data = aero_options['CDI_data']
+                    CDI_data = kwargs['CDI_data']
 
                     if isinstance(CDI_data, NamedValues):
                         mach = CDI_data.get_item('mach')[0]
@@ -563,7 +563,7 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
                 # GASP default is 'cruise'
                 method = 'cruise'
             try:
-                solve_alpha = kwargs.pop('solve_alpha')
+                solve_alpha = kwargs['solve_alpha']
             except KeyError:
                 solve_alpha = False
 
