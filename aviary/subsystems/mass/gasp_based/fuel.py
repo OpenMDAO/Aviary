@@ -1,6 +1,8 @@
 import numpy as np
 import openmdao.api as om
 
+from openmdao.utils.units import convert_units
+
 from aviary.constants import GRAV_ENGLISH_LBM
 from aviary.utils.functions import d_smooth_max, dSigmoidXdx, sigmoidX, smooth_max
 from aviary.variable_info.enums import AircraftTypes, Verbosity
@@ -40,7 +42,7 @@ class BodyTankCalculations(om.ExplicitComponent):
         )
         self.add_input('max_wingfuel_mass', val=6, units='lbm', desc='WFWMX: maximum wingfuel mass')
         add_aviary_input(self, Aircraft.Fuel.WING_VOLUME_GEOMETRIC_MAX, units='ft**3')
-        add_aviary_input(self, Aircraft.Fuel.DENSITY, units='lbm/ft**3')
+        add_aviary_input(self, Aircraft.Fuel.DENSITY, units='lbm/galUS')
         add_aviary_input(self, Mission.Design.GROSS_MASS, units='lbm')
         add_aviary_input(self, Mission.Design.FUEL_MASS, units='lbm')
         add_aviary_input(self, Aircraft.Design.OPERATING_MASS, units='lbm')
@@ -114,7 +116,10 @@ class BodyTankCalculations(om.ExplicitComponent):
         req_fuel_wt = inputs[Mission.Design.FUEL_MASS_REQUIRED] * GRAV_ENGLISH_LBM
         max_wingfuel_wt = inputs['max_wingfuel_mass'] * GRAV_ENGLISH_LBM
         geom_fuel_vol = inputs[Aircraft.Fuel.WING_VOLUME_GEOMETRIC_MAX]
-        rho_fuel = inputs[Aircraft.Fuel.DENSITY] * GRAV_ENGLISH_LBM
+        rho_fuel = (
+            convert_units(inputs[Aircraft.Fuel.DENSITY], 'lbm/galUS', 'lbm/ft**3')
+            * GRAV_ENGLISH_LBM
+        )
         gross_wt_initial = inputs[Mission.Design.GROSS_MASS] * GRAV_ENGLISH_LBM
         fuel_wt_des = inputs[Mission.Design.FUEL_MASS] * GRAV_ENGLISH_LBM
         OEW = inputs[Aircraft.Design.OPERATING_MASS] * GRAV_ENGLISH_LBM
@@ -201,7 +206,10 @@ class BodyTankCalculations(om.ExplicitComponent):
         req_fuel_wt = inputs[Mission.Design.FUEL_MASS_REQUIRED] * GRAV_ENGLISH_LBM
         max_wingfuel_wt = inputs['max_wingfuel_mass'] * GRAV_ENGLISH_LBM
         geom_fuel_vol = inputs[Aircraft.Fuel.WING_VOLUME_GEOMETRIC_MAX]
-        rho_fuel = inputs[Aircraft.Fuel.DENSITY] * GRAV_ENGLISH_LBM
+        rho_fuel = (
+            convert_units(inputs[Aircraft.Fuel.DENSITY], 'lbm/galUS', 'lbm/ft**3')
+            * GRAV_ENGLISH_LBM
+        )
         gross_wt_initial = inputs[Mission.Design.GROSS_MASS] * GRAV_ENGLISH_LBM
         fuel_wt_des = inputs[Mission.Design.FUEL_MASS] * GRAV_ENGLISH_LBM
         OEW = inputs[Aircraft.Design.OPERATING_MASS] * GRAV_ENGLISH_LBM
@@ -488,7 +496,7 @@ class FuelAndOEMOutputs(om.ExplicitComponent):
     """
 
     def setup(self):
-        add_aviary_input(self, Aircraft.Fuel.DENSITY, units='lbm/ft**3')
+        add_aviary_input(self, Aircraft.Fuel.DENSITY, units='lbm/galUS')
         add_aviary_input(self, Mission.Design.GROSS_MASS, units='lbm')
         add_aviary_input(self, Aircraft.Propulsion.MASS, units='lbm')
         add_aviary_input(self, Aircraft.Controls.TOTAL_MASS, units='lbm')
@@ -615,7 +623,10 @@ class FuelAndOEMOutputs(om.ExplicitComponent):
         )
 
     def compute(self, inputs, outputs):
-        rho_fuel = inputs[Aircraft.Fuel.DENSITY] * GRAV_ENGLISH_LBM
+        rho_fuel = (
+            convert_units(inputs[Aircraft.Fuel.DENSITY], 'lbm/galUS', 'lbm/ft**3')
+            * GRAV_ENGLISH_LBM
+        )
         gross_wt_initial = inputs[Mission.Design.GROSS_MASS] * GRAV_ENGLISH_LBM
         propulsion_wt = inputs[Aircraft.Propulsion.MASS] * GRAV_ENGLISH_LBM
         control_wt = inputs[Aircraft.Controls.TOTAL_MASS] * GRAV_ENGLISH_LBM
@@ -654,7 +665,10 @@ class FuelAndOEMOutputs(om.ExplicitComponent):
         outputs[Aircraft.Fuel.WING_VOLUME_STRUCTURAL_MAX] = max_wingfuel_vol
 
     def compute_partials(self, inputs, J):
-        rho_fuel = inputs[Aircraft.Fuel.DENSITY] * GRAV_ENGLISH_LBM
+        rho_fuel = (
+            convert_units(inputs[Aircraft.Fuel.DENSITY], 'lbm/galUS', 'lbm/ft**3')
+            * GRAV_ENGLISH_LBM
+        )
         gross_wt_initial = inputs[Mission.Design.GROSS_MASS] * GRAV_ENGLISH_LBM
         propulsion_wt = inputs[Aircraft.Propulsion.MASS] * GRAV_ENGLISH_LBM
         control_wt = inputs[Aircraft.Controls.TOTAL_MASS] * GRAV_ENGLISH_LBM
@@ -1642,8 +1656,6 @@ class FuelMassGroup(om.Group):
             promotes_inputs=['*'],
             promotes_outputs=['*'],
         )
-
-        self.set_input_defaults(Aircraft.Fuel.DENSITY, units='lbm/galUS')
 
         newton = self.nonlinear_solver = om.NewtonSolver()
         newton.options['atol'] = 1e-9
