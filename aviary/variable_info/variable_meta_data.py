@@ -775,6 +775,38 @@ add_meta_data(
     types=int,
 )
 
+add_meta_data(
+    Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_BUSINESS,
+    meta_data=_MetaData,
+    historical_name={'GASP': None, 'FLOPS': 'FUSEIN.NBABR', 'LEAPS1': None},
+    units='unitless',
+    desc='Number of business class passengers abreast',
+    types=int,
+    option=True,
+    default_value=5,
+)
+
+add_meta_data(
+    Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_FIRST,
+    meta_data=_MetaData,
+    historical_name={'GASP': None, 'FLOPS': 'FUSEIN.NFABR', 'LEAPS1': None},
+    units='unitless',
+    desc='Number of first class passengers abreast',
+    types=int,
+    option=True,
+    default_value=4,
+)
+
+add_meta_data(
+    Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_TOURIST,
+    meta_data=_MetaData,
+    historical_name={'GASP': 'INGASP.SAB', 'FLOPS': 'FUSEIN.NTABR', 'LEAPS1': None},
+    units='unitless',
+    desc='Number of tourist class passengers abreast',
+    types=int,
+    option=True,
+    default_value=6,
+)
 
 # TODO rename to economy?
 add_meta_data(
@@ -790,6 +822,36 @@ add_meta_data(
     types=int,
     option=True,
     default_value=0,
+)
+
+add_meta_data(
+    Aircraft.CrewPayload.Design.SEAT_PITCH_BUSINESS,
+    meta_data=_MetaData,
+    historical_name={'GASP': None, 'FLOPS': 'FUSEIN.BPITCH', 'LEAPS1': None},
+    units='inch',
+    desc='pitch of the business class seats',
+    option=True,
+    default_value=0.0,
+)
+
+add_meta_data(
+    Aircraft.CrewPayload.Design.SEAT_PITCH_FIRST,
+    meta_data=_MetaData,
+    historical_name={'GASP': None, 'FLOPS': 'FUSEIN.FPITCH', 'LEAPS1': None},
+    units='inch',
+    desc='pitch of the first class seats',
+    option=True,
+    default_value=0.0,
+)
+
+add_meta_data(
+    Aircraft.CrewPayload.Design.SEAT_PITCH_TOURIST,
+    meta_data=_MetaData,
+    historical_name={'GASP': 'INGASP.PS', 'FLOPS': 'FUSEIN.TPITCH', 'LEAPS1': None},
+    units='inch',
+    desc='pitch of the tourist class seats',
+    option=True,
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -3590,17 +3652,6 @@ add_meta_data(
 )
 
 add_meta_data(
-    Aircraft.Fuselage.NUM_SEATS_ABREAST,
-    meta_data=_MetaData,
-    historical_name={'GASP': 'INGASP.SAB', 'FLOPS': None, 'LEAPS1': None},
-    units='unitless',
-    desc='seats abreast in fuselage',
-    types=int,
-    option=True,
-    default_value=6,
-)
-
-add_meta_data(
     Aircraft.Fuselage.PASSENGER_COMPARTMENT_LENGTH,
     meta_data=_MetaData,
     historical_name={
@@ -3657,16 +3708,6 @@ add_meta_data(
 )
 
 add_meta_data(
-    Aircraft.Fuselage.SEAT_PITCH,
-    meta_data=_MetaData,
-    historical_name={'GASP': 'INGASP.PS', 'FLOPS': None, 'LEAPS1': None},
-    units='inch',
-    desc='pitch of the economy class seats',
-    option=True,
-    default_value=0.0,
-)
-
-add_meta_data(
     Aircraft.Fuselage.SEAT_WIDTH,
     meta_data=_MetaData,
     historical_name={'GASP': 'INGASP.WS', 'FLOPS': None, 'LEAPS1': None},
@@ -3674,6 +3715,16 @@ add_meta_data(
     desc='width of the economy class seats',
     option=True,
     default_value=0.0,
+)
+
+add_meta_data(
+    Aircraft.Fuselage.SIMPLE_LAYOUT,
+    meta_data=_MetaData,
+    historical_name={'GASP': None, 'FLOPS': None, 'LEAPS1': None},
+    units='unitless',
+    desc='carry out simple or detailed layout of fuselage.',
+    option=True,
+    default_value=True,
 )
 
 add_meta_data(
@@ -6106,7 +6157,7 @@ add_meta_data(
     meta_data=_MetaData,
     historical_name={
         'GASP': 'INGASP.CROOTW',
-        'FLOPS': None,
+        'FLOPS': 'WTIN.XLW',
         'LEAPS1': None,
     },
     units='ft',
@@ -7616,6 +7667,23 @@ add_meta_data(
     units='lbm',
     desc='mass of the aircraft at the end of cruise',
     default_value=0.0,
+)
+
+add_meta_data(
+    Mission.Summary.FINAL_MASS,
+    meta_data=_MetaData,
+    historical_name={'GASP': 'None', 'FLOPS': None, 'LEAPS1': None},  # TODO: Check on these
+    units='lbm',
+    desc='The final weight of the vehicle at the end of the last regular_phase (does not include reserve phases).',
+)
+
+add_meta_data(
+    Mission.Summary.FINAL_TIME,
+    meta_data=_MetaData,
+    historical_name={'GASP': 'None', 'FLOPS': None, 'LEAPS1': None},  # TODO: Check on these
+    units='min',
+    desc='Total mission time from the start of the first regular_phase'
+    'to the end of the last regular_phase (does not include reserve phases).',
 )
 
 add_meta_data(
