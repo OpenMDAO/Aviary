@@ -3718,6 +3718,16 @@ add_meta_data(
 )
 
 add_meta_data(
+    Aircraft.Fuselage.SIMPLE_LAYOUT,
+    meta_data=_MetaData,
+    historical_name={'GASP': None, 'FLOPS': None, 'LEAPS1': None},
+    units='unitless',
+    desc='carry out simple or detailed layout of fuselage.',
+    option=True,
+    default_value=True,
+)
+
+add_meta_data(
     Aircraft.Fuselage.TAIL_FINENESS,
     meta_data=_MetaData,
     historical_name={'GASP': 'INGASP.ELODT', 'FLOPS': None, 'LEAPS1': None},

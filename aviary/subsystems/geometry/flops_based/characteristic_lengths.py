@@ -7,7 +7,100 @@ from aviary.variable_info.functions import add_aviary_input, add_aviary_option, 
 from aviary.variable_info.variables import Aircraft
 
 
-class CharacteristicLengths(om.ExplicitComponent):
+class WingCharacteristicLength(om.ExplicitComponent):
+    """
+    Calculate the characteristic length and fineness ratio of the wing.
+    """
+
+    def initialize(self):
+        add_aviary_option(self, Aircraft.Wing.SPAN_EFFICIENCY_REDUCTION)
+
+    def setup(self):
+        self.add_input(Names.CROOT, 0.0, units='unitless')
+
+        add_aviary_input(self, Aircraft.Wing.AREA, units='ft**2')
+        add_aviary_input(self, Aircraft.Wing.ASPECT_RATIO, units='unitless')
+        add_aviary_input(self, Aircraft.Wing.GLOVE_AND_BAT, units='ft**2')
+        add_aviary_input(self, Aircraft.Wing.TAPER_RATIO, units='unitless')
+        add_aviary_input(self, Aircraft.Wing.THICKNESS_TO_CHORD, units='unitless')
+
+        add_aviary_output(self, Aircraft.Wing.CHARACTERISTIC_LENGTH, units='ft')
+        add_aviary_output(self, Aircraft.Wing.FINENESS, units='unitless')
+
+    def setup_partials(self):
+        wrt = [
+            Aircraft.Wing.AREA,
+            Aircraft.Wing.ASPECT_RATIO,
+            Aircraft.Wing.GLOVE_AND_BAT,
+        ]
+
+        if self.options[Aircraft.Wing.SPAN_EFFICIENCY_REDUCTION]:
+            wrt = [
+                Names.CROOT,
+                Aircraft.Wing.TAPER_RATIO,
+            ]
+
+        self.declare_partials(Aircraft.Wing.CHARACTERISTIC_LENGTH, wrt)
+
+        self.declare_partials(Aircraft.Wing.FINENESS, Aircraft.Wing.THICKNESS_TO_CHORD, val=1.0)
+
+    def compute(self, inputs, outputs, discrete_inputs=None, discrete_outputs=None):
+        area = inputs[Aircraft.Wing.AREA]
+        glove_and_bat = inputs[Aircraft.Wing.GLOVE_AND_BAT]
+        aspect_ratio = inputs[Aircraft.Wing.ASPECT_RATIO]
+
+        if self.options[Aircraft.Wing.SPAN_EFFICIENCY_REDUCTION]:
+            taper_ratio = inputs[Aircraft.Wing.TAPER_RATIO]
+            CROOT = inputs[Names.CROOT]
+
+            length = (
+                2.0 * CROOT * (1.0 + taper_ratio + taper_ratio**2.0) / (3.0 + 3.0 * taper_ratio)
+            )
+        else:
+            length = ((area - glove_and_bat) / aspect_ratio) ** 0.5
+
+        outputs[Aircraft.Wing.CHARACTERISTIC_LENGTH] = length
+
+        thickness_to_chord = inputs[Aircraft.Wing.THICKNESS_TO_CHORD]
+
+        outputs[Aircraft.Wing.FINENESS] = thickness_to_chord
+
+    def compute_partials(self, inputs, J, discrete_inputs=None):
+        if self.options[Aircraft.Wing.SPAN_EFFICIENCY_REDUCTION]:
+            taper_ratio = inputs[Aircraft.Wing.TAPER_RATIO]
+            CROOT = inputs[Names.CROOT]
+
+            a = 2.0 * (1.0 + taper_ratio + taper_ratio**2.0)
+            f = a * CROOT
+            df = 2.0 * CROOT * (1.0 + 2.0 * taper_ratio)
+            g = 3.0 + 3.0 * taper_ratio
+            dg = 3.0
+
+            J[Aircraft.Wing.CHARACTERISTIC_LENGTH, Names.CROOT] = a / g
+
+            J[Aircraft.Wing.CHARACTERISTIC_LENGTH, Aircraft.Wing.TAPER_RATIO] = (
+                df * g - f * dg
+            ) / g**2
+
+        else:
+            area = inputs[Aircraft.Wing.AREA]
+            glove_and_bat = inputs[Aircraft.Wing.GLOVE_AND_BAT]
+            aspect_ratio = inputs[Aircraft.Wing.ASPECT_RATIO]
+
+            a = area - glove_and_bat
+            f = 0.5 * (a / aspect_ratio) ** -0.5
+            df = f / aspect_ratio
+
+            J[Aircraft.Wing.CHARACTERISTIC_LENGTH, Aircraft.Wing.AREA] = df
+
+            J[Aircraft.Wing.CHARACTERISTIC_LENGTH, Aircraft.Wing.GLOVE_AND_BAT] = -df
+
+            J[Aircraft.Wing.CHARACTERISTIC_LENGTH, Aircraft.Wing.ASPECT_RATIO] = (
+                -f * a / aspect_ratio**2.0
+            )
+
+
+class OtherCharacteristicLengths(om.ExplicitComponent):
     """
     Calculate the characteristic length and fineness ratio of the
     canard, fuselage, horizontal tail, nacelle, and vertical tail.
@@ -15,7 +108,6 @@ class CharacteristicLengths(om.ExplicitComponent):
 
     def initialize(self):
         add_aviary_option(self, Aircraft.Engine.NUM_ENGINES)
-        add_aviary_option(self, Aircraft.Wing.SPAN_EFFICIENCY_REDUCTION)
 
     def setup(self):
         num_engine_type = len(self.options[Aircraft.Engine.NUM_ENGINES])
@@ -50,14 +142,6 @@ class CharacteristicLengths(om.ExplicitComponent):
         # add_aviary_input(self, Aircraft.VerticalTail.LAMINAR_FLOW_UPPER, 0.0)
         add_aviary_input(self, Aircraft.VerticalTail.THICKNESS_TO_CHORD, units='unitless')
 
-        add_aviary_input(self, Aircraft.Wing.AREA, units='ft**2')
-        add_aviary_input(self, Aircraft.Wing.ASPECT_RATIO, units='unitless')
-        add_aviary_input(self, Aircraft.Wing.GLOVE_AND_BAT, units='ft**2')
-        add_aviary_input(self, Aircraft.Wing.TAPER_RATIO, units='unitless')
-        add_aviary_input(self, Aircraft.Wing.THICKNESS_TO_CHORD, units='unitless')
-        # add_aviary_input(self, Aircraft.Wing.LAMINAR_FLOW_LOWER, 0.0)
-        # add_aviary_input(self, Aircraft.Wing.LAMINAR_FLOW_UPPER, 0.0)
-
         add_aviary_output(self, Aircraft.Canard.CHARACTERISTIC_LENGTH, units='ft')
         add_aviary_output(self, Aircraft.Canard.FINENESS, units='unitless')
 
@@ -75,11 +159,7 @@ class CharacteristicLengths(om.ExplicitComponent):
         add_aviary_output(self, Aircraft.VerticalTail.CHARACTERISTIC_LENGTH, units='ft')
         add_aviary_output(self, Aircraft.VerticalTail.FINENESS, units='unitless')
 
-        add_aviary_output(self, Aircraft.Wing.CHARACTERISTIC_LENGTH, units='ft')
-        add_aviary_output(self, Aircraft.Wing.FINENESS, units='unitless')
-
     def setup_partials(self):
-        self._setup_partials_wing()
         self._setup_partials_horizontal_tail()
         self._setup_partials_vertical_tail()
         self._setup_partials_fuselage()
@@ -87,8 +167,6 @@ class CharacteristicLengths(om.ExplicitComponent):
         self._setup_partials_canard()
 
     def compute(self, inputs, outputs, discrete_inputs=None, discrete_outputs=None):
-        self._compute_wing(inputs, outputs, discrete_inputs, discrete_outputs)
-
         self._compute_horizontal_tail(inputs, outputs, discrete_inputs, discrete_outputs)
 
         self._compute_vertical_tail(inputs, outputs, discrete_inputs, discrete_outputs)
@@ -108,29 +186,11 @@ class CharacteristicLengths(om.ExplicitComponent):
         self._compute_canard(inputs, outputs, discrete_inputs, discrete_outputs)
 
     def compute_partials(self, inputs, J, discrete_inputs=None):
-        self._compute_partials_wing(inputs, J, discrete_inputs)
         self._compute_partials_horizontal_tail(inputs, J, discrete_inputs)
         self._compute_partials_vertical_tail(inputs, J, discrete_inputs)
         self._compute_partials_fuselage(inputs, J, discrete_inputs)
         self._compute_partials_nacelles(inputs, J, discrete_inputs)
         self._compute_partials_canard(inputs, J, discrete_inputs)
-
-    def _setup_partials_wing(self):
-        wrt = [
-            Aircraft.Wing.AREA,
-            Aircraft.Wing.ASPECT_RATIO,
-            Aircraft.Wing.GLOVE_AND_BAT,
-        ]
-
-        if self.options[Aircraft.Wing.SPAN_EFFICIENCY_REDUCTION]:
-            wrt = [
-                Names.CROOT,
-                Aircraft.Wing.TAPER_RATIO,
-            ]
-
-        self.declare_partials(Aircraft.Wing.CHARACTERISTIC_LENGTH, wrt)
-
-        self.declare_partials(Aircraft.Wing.FINENESS, Aircraft.Wing.THICKNESS_TO_CHORD, val=1.0)
 
     def _setup_partials_horizontal_tail(self):
         self.declare_partials(
@@ -208,27 +268,6 @@ class CharacteristicLengths(om.ExplicitComponent):
             Aircraft.Canard.FINENESS,
             Aircraft.Canard.THICKNESS_TO_CHORD,
         )
-
-    def _compute_wing(self, inputs, outputs, discrete_inputs=None, discrete_outputs=None):
-        area = inputs[Aircraft.Wing.AREA]
-        glove_and_bat = inputs[Aircraft.Wing.GLOVE_AND_BAT]
-        aspect_ratio = inputs[Aircraft.Wing.ASPECT_RATIO]
-
-        length = ((area - glove_and_bat) / aspect_ratio) ** 0.5
-
-        if self.options[Aircraft.Wing.SPAN_EFFICIENCY_REDUCTION]:
-            taper_ratio = inputs[Aircraft.Wing.TAPER_RATIO]
-            CROOT = inputs[Names.CROOT]
-
-            length = (
-                2.0 * CROOT * (1.0 + taper_ratio + taper_ratio**2.0) / (3.0 + 3.0 * taper_ratio)
-            )
-
-        outputs[Aircraft.Wing.CHARACTERISTIC_LENGTH] = length
-
-        thickness_to_chord = inputs[Aircraft.Wing.THICKNESS_TO_CHORD]
-
-        outputs[Aircraft.Wing.FINENESS] = thickness_to_chord
 
     def _compute_horizontal_tail(
         self, inputs, outputs, discrete_inputs=None, discrete_outputs=None
@@ -377,40 +416,6 @@ class CharacteristicLengths(om.ExplicitComponent):
         outputs[Aircraft.Canard.CHARACTERISTIC_LENGTH] = length
 
         outputs[Aircraft.Canard.FINENESS] = thickness_to_chord
-
-    def _compute_partials_wing(self, inputs, J, discrete_inputs=None):
-        if self.options[Aircraft.Wing.SPAN_EFFICIENCY_REDUCTION]:
-            taper_ratio = inputs[Aircraft.Wing.TAPER_RATIO]
-            CROOT = inputs[Names.CROOT]
-
-            a = 2.0 * (1.0 + taper_ratio + taper_ratio**2.0)
-            f = a * CROOT
-            df = 2.0 * CROOT * (1.0 + 2.0 * taper_ratio)
-            g = 3.0 + 3.0 * taper_ratio
-            dg = 3.0
-
-            J[Aircraft.Wing.CHARACTERISTIC_LENGTH, Names.CROOT] = a / g
-
-            J[Aircraft.Wing.CHARACTERISTIC_LENGTH, Aircraft.Wing.TAPER_RATIO] = (
-                df * g - f * dg
-            ) / g**2
-
-        else:
-            area = inputs[Aircraft.Wing.AREA]
-            glove_and_bat = inputs[Aircraft.Wing.GLOVE_AND_BAT]
-            aspect_ratio = inputs[Aircraft.Wing.ASPECT_RATIO]
-
-            a = area - glove_and_bat
-            f = 0.5 * (a / aspect_ratio) ** -0.5
-            df = f / aspect_ratio
-
-            J[Aircraft.Wing.CHARACTERISTIC_LENGTH, Aircraft.Wing.AREA] = df
-
-            J[Aircraft.Wing.CHARACTERISTIC_LENGTH, Aircraft.Wing.GLOVE_AND_BAT] = -df
-
-            J[Aircraft.Wing.CHARACTERISTIC_LENGTH, Aircraft.Wing.ASPECT_RATIO] = (
-                -f * a / aspect_ratio**2.0
-            )
 
     def _compute_partials_horizontal_tail(self, inputs, J, discrete_inputs=None):
         aspect_ratio = inputs[Aircraft.HorizontalTail.ASPECT_RATIO]
