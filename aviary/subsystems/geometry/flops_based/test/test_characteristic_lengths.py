@@ -4,7 +4,10 @@ import numpy as np
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 
-from aviary.subsystems.geometry.flops_based.characteristic_lengths import CharacteristicLengths
+from aviary.subsystems.geometry.flops_based.characteristic_lengths import (
+    WingCharacteristicLength,
+    OtherCharacteristicLengths,
+)
 from aviary.utils.test_utils.variable_test import assert_match_varnames
 from aviary.validation_cases.validation_tests import get_flops_inputs
 from aviary.variable_info.variables import Aircraft
@@ -22,16 +25,26 @@ class CharacteristicLengthsTest(unittest.TestCase):
 
         aviary_inputs = get_flops_inputs('LargeSingleAisle1FLOPS')
 
-        aviary_options = {
-            Aircraft.Engine.NUM_ENGINES: np.array([2, 2, 3]),
+        aviary_options_wing = {
             Aircraft.Wing.SPAN_EFFICIENCY_REDUCTION: aviary_inputs.get_val(
                 Aircraft.Wing.SPAN_EFFICIENCY_REDUCTION
             ),
         }
 
         prob.model.add_subsystem(
-            'char_lengths',
-            CharacteristicLengths(**aviary_options),
+            'wing_char_length',
+            WingCharacteristicLength(**aviary_options_wing),
+            promotes_outputs=['*'],
+            promotes_inputs=['*'],
+        )
+
+        aviary_options_others = {
+            Aircraft.Engine.NUM_ENGINES: np.array([2, 2, 3]),
+        }
+
+        prob.model.add_subsystem(
+            'other_char_lengths',
+            OtherCharacteristicLengths(**aviary_options_others),
             promotes_outputs=['*'],
             promotes_inputs=['*'],
         )
