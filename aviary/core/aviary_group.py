@@ -1,6 +1,5 @@
 import inspect
 import warnings
-from importlib.machinery import SourceFileLoader
 from importlib.util import spec_from_file_location, module_from_spec
 from pathlib import Path
 import sys
