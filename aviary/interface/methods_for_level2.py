@@ -1246,6 +1246,15 @@ class AviaryProblem(om.Problem):
             with open('output_list.txt', 'w') as outfile:
                 self.model.list_outputs(out_stream=outfile)
 
+        # run aircraft excess fuel warning if -ve (this only occurs if the user has set Aircraft.Fuel.IGNORE_FUEL_CAPACITY_CONSTRAINT = True)
+        if verbosity >= Verbosity.BRIEF:
+            excess_fuel = self.get_val(Mission.Constraints.EXCESS_FUEL_CAPACITY, 'lbm')
+            if excess_fuel <= 0:
+                warnings.warn(
+                    f'The aircraft does not have enough fuel capacity to fly this mission. Mission.Constraints.EXCESS_FUEL_CAPACITY = {excess_fuel}\n'
+                    'The problem was able to converge as Aircraft.Fuel.IGNORE_FUEL_CAPACITY_CONSTRAINT = True, therefore the EXCESS_FUEL_CAPACITY constraint was not added to the Aviary problem.'
+                )
+
         # Checks if the payload/range toggle in the aviary inputs csv file has been set and that the
         # current problem is a sizing mission.
         if payload_range_bool:
