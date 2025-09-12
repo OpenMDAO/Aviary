@@ -370,8 +370,10 @@ add_meta_data(
     },
     units='unitless',
     desc='fixed number of passenger bays',
-    types=float,
-    default_value=0.0,
+    types=int,
+    multivalue=True,
+    option=True,
+    default_value=[0],
 )
 
 add_meta_data(

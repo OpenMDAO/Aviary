@@ -60,6 +60,70 @@ class FuselagePrelim(om.ExplicitComponent):
         partials[Aircraft.Fuselage.PLANFORM_AREA, Aircraft.Fuselage.MAX_WIDTH] = length
 
 
+class BWBFuselagePrelim(om.ExplicitComponent):
+    def initialize(self):
+        add_aviary_option(self, Settings.VERBOSITY)
+
+    def setup(self):
+        add_aviary_input(self, Aircraft.Fuselage.LENGTH, units='ft')
+        add_aviary_input(self, Aircraft.Fuselage.MAX_WIDTH, units='ft')
+        add_aviary_input(self, Aircraft.Fuselage.MAX_HEIGHT, units='ft')
+        add_aviary_input(self, Aircraft.Wing.ROOT_CHORD, units='ft')
+        self.add_input(
+            'Rear_spar_percent_chord',
+            0.7,
+            units='unitless',
+            desc='RSPSOB: Rear spar percent chord for BWB at side of body',
+        )
+
+        add_aviary_output(self, Aircraft.Fuselage.AVG_DIAMETER, units='ft')
+        add_aviary_output(self, Aircraft.Fuselage.PLANFORM_AREA, units='ft**2')
+
+    def setup_partials(self):
+        self.declare_partials(
+            of=[Aircraft.Fuselage.AVG_DIAMETER],
+            wrt=[Aircraft.Fuselage.MAX_HEIGHT, Aircraft.Fuselage.MAX_WIDTH],
+            val=0.5,
+        )
+        self.declare_partials(
+            of=[Aircraft.Fuselage.PLANFORM_AREA],
+            wrt=[
+                Aircraft.Fuselage.LENGTH,
+                Aircraft.Fuselage.MAX_WIDTH,
+                'Rear_spar_percent_chord',
+            ],
+        )
+
+    def compute(self, inputs, outputs):
+        verbosity = self.options[Settings.VERBOSITY]
+        max_width = inputs[Aircraft.Fuselage.MAX_WIDTH]
+        length = inputs[Aircraft.Fuselage.LENGTH]
+        max_height = inputs[Aircraft.Fuselage.MAX_HEIGHT]
+        rear_spar_percent_chord = inputs['Rear_spar_percent_chord']
+
+        if length <= 0.0:
+            if verbosity > Verbosity.BRIEF:
+                print('Aircraft.Fuselage.LENGTH must be positive.')
+
+        # not sure if this is right definition and not sure if it is used for BWB.
+        avg_diameter = 0.5 * (max_height + max_width)
+        planform_area = max_width * (length + max_width / rear_spar_percent_chord) / 2.0
+
+        outputs[Aircraft.Fuselage.AVG_DIAMETER] = avg_diameter
+        outputs[Aircraft.Fuselage.PLANFORM_AREA] = planform_area
+
+    def compute_partials(self, inputs, partials, discrete_inputs=None):
+        max_width = inputs[Aircraft.Fuselage.MAX_WIDTH]
+        length = inputs[Aircraft.Fuselage.LENGTH]
+        rear_spar_percent_chord = inputs['Rear_spar_percent_chord']
+
+        partials[Aircraft.Fuselage.PLANFORM_AREA, Aircraft.Fuselage.LENGTH] = max_width / 2.0
+        partials[Aircraft.Fuselage.PLANFORM_AREA, Aircraft.Fuselage.MAX_WIDTH] = (
+            length / 2.0 + max_width / rear_spar_percent_chord
+        )
+        partials[Aircraft.Fuselage.PLANFORM_AREA, 'Rear_spar_percent_chord'] = max_width**2 / 2.0
+
+
 class SimpleCabinLayout(om.ExplicitComponent):
     """Given fuselage length, compute passenger compartment length."""
 
@@ -461,8 +525,8 @@ class BWBDetailedCabinLayout(om.ExplicitComponent):
         add_aviary_option(self, Aircraft.CrewPayload.Design.SEAT_PITCH_BUSINESS)
         add_aviary_option(self, Aircraft.CrewPayload.Design.SEAT_PITCH_FIRST)
         add_aviary_option(self, Aircraft.CrewPayload.Design.SEAT_PITCH_TOURIST)
-        add_aviary_option(self, Aircraft.BWB.MAX_NUM_BAYS, 0)
-        # add_aviary_option(self, Aircraft.BWB.NUM_BAYS, 0)
+        add_aviary_option(self, Aircraft.BWB.MAX_NUM_BAYS)
+        add_aviary_option(self, Aircraft.BWB.NUM_BAYS)
 
     def setup(self):
         add_aviary_input(self, Aircraft.BWB.PASSENGER_LEADING_EDGE_SWEEP, units='deg')
@@ -477,8 +541,6 @@ class BWBDetailedCabinLayout(om.ExplicitComponent):
         add_aviary_output(self, Aircraft.Fuselage.MAX_WIDTH, units='ft')
         add_aviary_output(self, Aircraft.Fuselage.MAX_HEIGHT, units='ft')
         add_aviary_output(self, Aircraft.Wing.ROOT_CHORD, units='ft')
-        # Make Aircraft.BWB.NUM_BAYS an output instead of an option
-        add_aviary_output(self, Aircraft.BWB.NUM_BAYS, units='unitless')
 
         self.declare_partials('*', '*', method='fd', form='forward')
 
@@ -490,7 +552,7 @@ class BWBDetailedCabinLayout(om.ExplicitComponent):
 
         bay_width_max = 12.0  # ft
         num_bays = 0
-        num_bays_o = num_bays
+        num_bays_loc = num_bays
         num_bays_max = self.options[Aircraft.BWB.MAX_NUM_BAYS]
         root_chord_min = 38.5  # ft
         width_lava = 36.0  # inch
@@ -559,8 +621,8 @@ class BWBDetailedCabinLayout(om.ExplicitComponent):
         if num_bays > num_bays_max and num_bays_max > 0:
             num_bays = num_bays_max
 
-        while num_bays_o != num_bays:
-            num_bays_o = num_bays
+        while num_bays_loc != num_bays:
+            num_bays_loc = num_bays
             # Cabin area wasted due to slanted  != side wall
             area_waste = num_bays * tan_sweep * (bay_width_max / 2.0) ** 2
 
@@ -597,8 +659,7 @@ class BWBDetailedCabinLayout(om.ExplicitComponent):
 
         length = pax_compart_length / rear_spar_percent_chord
         max_height = height_to_width * length
-        # self.options[Aircraft.BWB.NUM_BAYS] = num_bays
-        outputs[Aircraft.BWB.NUM_BAYS] = num_bays
+        self.options[Aircraft.BWB.NUM_BAYS][0] = num_bays
 
         outputs[Aircraft.Fuselage.LENGTH] = length
         outputs[Aircraft.Fuselage.PASSENGER_COMPARTMENT_LENGTH] = pax_compart_length
@@ -606,3 +667,12 @@ class BWBDetailedCabinLayout(om.ExplicitComponent):
         outputs[Aircraft.Fuselage.MAX_WIDTH] = max_width
         outputs[Aircraft.Fuselage.MAX_HEIGHT] = max_height
         outputs[Aircraft.Wing.ROOT_CHORD] = root_chord
+
+        # TODO: Ken: For the int calls, I see that those are part of a while loop that solves
+        # a nonlinear equation by Gauss-Siedel until it converges. The interesting part is
+        # that it solves int(x) = f(int(x)) instead of x=f(x). if we smooth any of the ints,
+        # the algorithm will probably take many more iteratiions. I wonder if it would still
+        # converge. One solution might be to rewrite this using an openmado solver, solve for
+        # a real-valued num_bays, then use a smoothed int afterwards. LOPS did something similar
+        # with the skin friction calculation, except there were no ints. I rewrote the equations
+        # in residual form and used a Newton solver on them.

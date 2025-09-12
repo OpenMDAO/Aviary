@@ -546,6 +546,60 @@ class _Wing(om.ExplicitComponent):
         )
 
 
+class _BWBWing(om.ExplicitComponent):
+    """Calculate wing wetted area of BWB aircraft geometry for FLOPS-based aerodynamics analysis."""
+
+    def initialize(self):
+        add_aviary_option(self, Aircraft.Wing.INPUT_STATION_DIST)
+
+    def setup(self):
+        num_stations = len(self.options[Aircraft.Wing.INPUT_STATION_DIST])
+
+        add_aviary_input(self, Aircraft.Fuselage.MAX_WIDTH, units='ft')
+        add_aviary_input(self, Aircraft.Wing.GLOVE_AND_BAT, units='ft**2')
+        add_aviary_input(self, Aircraft.Wing.SPAN, units='ft')
+        self.add_input('BWB_CHORD_PER_SEMISPAN_DIST', shape=num_stations, units='unitless')
+        self.add_input('BWB_THICKNESS_TO_CHORD_DIST', shape=num_stations, units='unitless')
+
+        add_aviary_output(self, Aircraft.Wing.WETTED_AREA, units='ft**2')
+
+    def compute(self, inputs, outputs):
+        input_station_dist = self.options[Aircraft.Wing.INPUT_STATION_DIST]
+        num_stations = len(self.options[Aircraft.Wing.INPUT_STATION_DIST])
+
+        span = inputs[Aircraft.Wing.SPAN]
+
+        ssmw = 0.0
+        bwb_chord_per_semispan_dist = inputs['BWB_CHORD_PER_SEMISPAN_DIST']
+        bwb_thickness_to_chord_dist = inputs['BWB_THICKNESS_TO_CHORD_DIST']
+
+        if bwb_chord_per_semispan_dist[0] <= 5.0:
+            C1 = bwb_chord_per_semispan_dist[0] * span / 2.0
+        else:
+            C1 = bwb_chord_per_semispan_dist[0]
+        if input_station_dist[0] <= 1.1:
+            Y1 = input_station_dist[0] * span / 2.0
+        else:
+            Y1 = input_station_dist[0]
+        for n in range(1, num_stations):
+            avg_toc = (bwb_thickness_to_chord_dist[n - 1] + bwb_thickness_to_chord_dist[n]) / 2.0
+            ckt = 2.0 + 0.387 * avg_toc
+            if bwb_chord_per_semispan_dist[n] <= 5.0:
+                C2 = bwb_chord_per_semispan_dist[n] * span / 2.0
+            else:
+                C2 = bwb_chord_per_semispan_dist[n]
+            if input_station_dist[n] <= 1.1:
+                Y2 = input_station_dist[n] * span / 2.0
+            else:
+                Y2 = input_station_dist[n]
+            axp = (Y2 - Y1) * (C1 + C2)
+            C1 = C2
+            Y1 = Y2
+            ssmw = ssmw + axp * ckt
+
+        outputs[Aircraft.Wing.WETTED_AREA] = ssmw
+
+
 class _Tail(om.ExplicitComponent):
     """
     Calculate horizontal wing and vertical wing wetted areas of aircraft geometry

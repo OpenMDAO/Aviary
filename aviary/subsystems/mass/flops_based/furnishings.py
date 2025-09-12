@@ -88,7 +88,7 @@ class BWBFurnishingsGroupMass(om.ExplicitComponent):
     """Calculates the mass of the furnishings group for HWB aircraft."""
 
     def initialize(self):
-        # add_aviary_option(self, Aircraft.BWB.NUM_BAYS)
+        add_aviary_option(self, Aircraft.BWB.NUM_BAYS)
         add_aviary_option(self, Aircraft.CrewPayload.Design.NUM_BUSINESS_CLASS)
         add_aviary_option(self, Aircraft.CrewPayload.NUM_FLIGHT_CREW)
         add_aviary_option(self, Aircraft.CrewPayload.Design.NUM_FIRST_CLASS)
@@ -103,7 +103,6 @@ class BWBFurnishingsGroupMass(om.ExplicitComponent):
 
         add_aviary_input(self, Aircraft.Fuselage.MAX_HEIGHT, units='ft')
         add_aviary_input(self, Aircraft.BWB.PASSENGER_LEADING_EDGE_SWEEP, units='deg')
-        add_aviary_input(self, Aircraft.BWB.NUM_BAYS, units='unitless')  # treated as float
 
         add_aviary_output(self, Aircraft.Furnishings.MASS, units='lbm')
 
@@ -130,8 +129,7 @@ class BWBFurnishingsGroupMass(om.ExplicitComponent):
 
         if not self.options[Aircraft.Fuselage.MILITARY_CARGO_FLOOR]:
             acabin = inputs[Aircraft.Fuselage.CABIN_AREA]
-            # nbay = self.options[Aircraft.BWB.NUM_BAYS]
-            nbay = inputs[Aircraft.BWB.NUM_BAYS]
+            nbay = self.options[Aircraft.BWB.NUM_BAYS]
 
             cos = np.cos(np.pi / 180 * (inputs[Aircraft.BWB.PASSENGER_LEADING_EDGE_SWEEP]))
 
@@ -166,16 +164,13 @@ class BWBFurnishingsGroupMass(om.ExplicitComponent):
 
             J[Aircraft.Furnishings.MASS, Aircraft.BWB.PASSENGER_LEADING_EDGE_SWEEP] = 0.0
 
-            J[Aircraft.Furnishings.MASS, Aircraft.BWB.NUM_BAYS] = 0.0
-
         else:
             d2r = np.radians(inputs[Aircraft.BWB.PASSENGER_LEADING_EDGE_SWEEP])
             cos = np.cos(d2r)
             tan = np.tan(d2r)
 
             acabin = inputs[Aircraft.Fuselage.CABIN_AREA]
-            # nbay = self.options[Aircraft.BWB.NUM_BAYS]
-            nbay = inputs[Aircraft.BWB.NUM_BAYS]
+            nbay = self.options[Aircraft.BWB.NUM_BAYS]
             fuse_max_width = inputs[Aircraft.Fuselage.MAX_WIDTH]
             fuse_max_height = inputs[Aircraft.Fuselage.MAX_HEIGHT]
             cabin_area = inputs[Aircraft.Fuselage.CABIN_AREA]
@@ -211,15 +206,6 @@ class BWBFurnishingsGroupMass(om.ExplicitComponent):
             J[Aircraft.Furnishings.MASS, Aircraft.BWB.PASSENGER_LEADING_EDGE_SWEEP] = (
                 2.6 * scaler * fuse_max_width * fuse_max_height * tan / cos / (180 / np.pi)
             ) / GRAV_ENGLISH_LBM
-
-            weight = 2.6 * (
-                (acabin / fuse_max_width) * (fuse_max_width + fuse_max_height * nbay)
-                + (fuse_max_width * (1.0 + 1.0 / cos) * fuse_max_height)
-            )
-
-            J[Aircraft.Furnishings.MASS, Aircraft.BWB.NUM_BAYS] = (
-                2.6 * acabin / fuse_max_width * fuse_max_height / GRAV_ENGLISH_LBM
-            ) * scaler
 
 
 class AltFurnishingsGroupMassBase(om.ExplicitComponent):

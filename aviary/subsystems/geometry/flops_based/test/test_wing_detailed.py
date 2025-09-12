@@ -18,9 +18,9 @@ class BWBUpdateDetailedWingDistTest(unittest.TestCase):
 
     def test_case1(self):
         prob = self.prob
-        self.aviary_options = AviaryValues()
-        self.aviary_options.set_val(Settings.VERBOSITY, 1, units='unitless')
-        self.aviary_options.set_val(
+        options = self.aviary_options = AviaryValues()
+        options.set_val(Settings.VERBOSITY, 1, units='unitless')
+        options.set_val(
             Aircraft.Wing.INPUT_STATION_DIST,
             [0.0, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6, 0.6499, 0.7, 0.75, 0.8, 0.85, 0.8999, 0.95, 1],
             units='unitless',
@@ -28,7 +28,7 @@ class BWBUpdateDetailedWingDistTest(unittest.TestCase):
         prob.model.add_subsystem(
             'dist', BWBUpdateDetailedWingDist(), promotes_outputs=['*'], promotes_inputs=['*']
         )
-        setup_model_options(self.prob, self.aviary_options)
+        setup_model_options(self.prob, options)
         prob.setup(check=False, force_alloc_complex=True)
         prob.set_val(
             Aircraft.Wing.CHORD_PER_SEMISPAN_DIST,
@@ -81,7 +81,7 @@ class BWBUpdateDetailedWingDistTest(unittest.TestCase):
         prob.set_val(Aircraft.Wing.ROOT_CHORD, 7.710195)
         prob.run_model()
 
-        out0 = self.aviary_options.get_val(Aircraft.Wing.INPUT_STATION_DIST)
+        out0 = options.get_val(Aircraft.Wing.INPUT_STATION_DIST)
         exp0 = [
             0.0,
             32.29,
@@ -258,7 +258,7 @@ class BWBWingPrelimTest(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    unittest.main()
-    test = BWBWingPrelimTest()
+    # unittest.main()
+    test = BWBUpdateDetailedWingDistTest()
     test.setUp()
-    # test.test_case1()
+    test.test_case1()

@@ -196,6 +196,7 @@ class BWBWingPrelim(om.ExplicitComponent):
             Y1 = Y2
             ssm = ssm + axp
         ar = span**2 / (ssm - glove_and_bat)
+        # Calculated wing area for aerodynamics
         outputs[Aircraft.Wing.AREA] = ssm
         outputs[Aircraft.Wing.ASPECT_RATIO] = ar
 

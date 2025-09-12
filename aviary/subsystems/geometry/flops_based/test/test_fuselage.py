@@ -109,7 +109,7 @@ class BWBSimpleBWBCabinLayoutTest(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e-10, rtol=1e-10)
 
 
-class BWBDetailedCabinLayoutTest(unittest.TestCase):
+class BWBDetailedCabinLayoutTest_sv(unittest.TestCase):
     """Test simple cabin layout computation."""
 
     def setUp(self):
@@ -133,7 +133,7 @@ class BWBDetailedCabinLayoutTest(unittest.TestCase):
         # options.set_val(Aircraft.BWB.NUM_BAYS, 1, units='unitless')
 
         prob.model.add_subsystem(
-            'layout', BWBDetailedCabinLayout(), promotes_outputs=['*'], promotes_inputs=['*']
+            'layout', BWBDetailedCabinLayout_sv(), promotes_outputs=['*'], promotes_inputs=['*']
         )
         setup_model_options(self.prob, options)
         prob.setup(check=False, force_alloc_complex=True)
@@ -145,6 +145,61 @@ class BWBDetailedCabinLayoutTest(unittest.TestCase):
         # num_bays = prob.model_options['*'][Aircraft.BWB.NUM_BAYS]
         num_bays = prob.get_val(Aircraft.BWB.NUM_BAYS)
         assert_near_equal(num_bays, 7, tolerance=1e-9)  # should be 7
+
+        fuselage_length = prob.get_val(Aircraft.Fuselage.LENGTH)
+        assert_near_equal(fuselage_length, 112.30019369, tolerance=1e-9)
+
+        pax_compart_length = prob.get_val(Aircraft.Fuselage.PASSENGER_COMPARTMENT_LENGTH)
+        assert_near_equal(pax_compart_length, 78.61013558, tolerance=1e-9)
+
+        fuselage_width = prob.get_val(Aircraft.Fuselage.MAX_WIDTH)
+        assert_near_equal(fuselage_width, 80.22075607, tolerance=1e-9)
+
+        fuselage_height = prob.get_val(Aircraft.Fuselage.MAX_HEIGHT)
+        assert_near_equal(fuselage_height, 12.35302131, tolerance=1e-9)
+
+        cabin_area = prob.get_val(Aircraft.Fuselage.CABIN_AREA)
+        assert_near_equal(cabin_area, 4697.33181006, tolerance=1e-9)
+
+        root_chord = prob.get_val(Aircraft.Wing.ROOT_CHORD)
+        assert_near_equal(root_chord, 38.5, tolerance=1e-9)
+
+
+class BWBDetailedCabinLayoutTest(unittest.TestCase):
+    """Test simple cabin layout computation."""
+
+    def setUp(self):
+        self.prob = om.Problem()
+
+    def test_case1(self):
+        prob = self.prob
+        options = self.aviary_options = AviaryValues()
+        options.set_val(Settings.VERBOSITY, 1, units='unitless')
+
+        options.set_val(Aircraft.CrewPayload.Design.NUM_BUSINESS_CLASS, 100, units='unitless')
+        options.set_val(Aircraft.CrewPayload.Design.NUM_FIRST_CLASS, 28, units='unitless')
+        options.set_val(Aircraft.CrewPayload.Design.NUM_TOURIST_CLASS, 340, units='unitless')
+        options.set_val(Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_BUSINESS, 4, units='unitless')
+        options.set_val(Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_FIRST, 4, units='unitless')
+        options.set_val(Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_TOURIST, 6, units='unitless')
+        options.set_val(Aircraft.CrewPayload.Design.SEAT_PITCH_BUSINESS, 39.0, units='inch')
+        options.set_val(Aircraft.CrewPayload.Design.SEAT_PITCH_FIRST, 61.0, units='inch')
+        options.set_val(Aircraft.CrewPayload.Design.SEAT_PITCH_TOURIST, 32.0, units='inch')
+        options.set_val(Aircraft.BWB.MAX_NUM_BAYS, 0, units='unitless')
+        options.set_val(Aircraft.BWB.NUM_BAYS, [2], units='unitless')
+
+        prob.model.add_subsystem(
+            'layout', BWBDetailedCabinLayout(), promotes_outputs=['*'], promotes_inputs=['*']
+        )
+        setup_model_options(self.prob, options)
+        prob.setup(check=False, force_alloc_complex=True)
+        prob.set_val(Aircraft.BWB.PASSENGER_LEADING_EDGE_SWEEP, val=45.0, units='deg')
+        prob.set_val(Aircraft.Fuselage.HEIGHT_TO_WIDTH_RATIO, val=0.11, units='unitless')
+        prob.set_val('Rear_spar_percent_chord', val=0.7, units='unitless')
+        prob.run_model()
+
+        num_bays = options.get_val(Aircraft.BWB.NUM_BAYS)
+        assert_near_equal(num_bays, [7], tolerance=1e-9)
 
         fuselage_length = prob.get_val(Aircraft.Fuselage.LENGTH)
         assert_near_equal(fuselage_length, 112.30019369, tolerance=1e-9)

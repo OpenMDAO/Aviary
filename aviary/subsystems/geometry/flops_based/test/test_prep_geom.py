@@ -2,7 +2,7 @@ import unittest
 
 import numpy as np
 import openmdao.api as om
-from openmdao.utils.assert_utils import assert_check_partials
+from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 from openmdao.utils.testing_utils import use_tempdirs
 from parameterized import parameterized
 
@@ -14,6 +14,7 @@ from aviary.subsystems.geometry.flops_based.characteristic_lengths import (
 from aviary.subsystems.geometry.flops_based.fuselage import FuselagePrelim
 from aviary.subsystems.geometry.flops_based.nacelle import Nacelles
 from aviary.subsystems.geometry.flops_based.prep_geom import (
+    _BWBWing,
     PrepGeom,
     _Fuselage,
     _FuselageRatios,
@@ -655,5 +656,89 @@ Canard_test_data = AviaryValues(
 )
 
 
+class BWBWingTest(unittest.TestCase):
+    def setUp(self):
+        self.prob = om.Problem()
+
+    def test_case1(self):
+        prob = self.prob
+        self.aviary_options = AviaryValues()
+        self.aviary_options.set_val(
+            Aircraft.Wing.INPUT_STATION_DIST,
+            [
+                0.0,
+                32.29,
+                0.56275201612903225,
+                0.59918934811827951,
+                0.63562668010752688,
+                0.67206401209677424,
+                0.7085013440860215,
+                0.74486580141129033,
+                0.78137600806451613,
+                0.81781334005376349,
+                0.85425067204301075,
+                0.89068800403225801,
+                0.92705246135752695,
+                0.96356266801075263,
+                1.0,
+            ],
+            units='unitless',
+        )
+        prob.model.add_subsystem('wing', _BWBWing(), promotes_outputs=['*'], promotes_inputs=['*'])
+        setup_model_options(self.prob, self.aviary_options)
+        prob.setup(check=False, force_alloc_complex=True)
+        prob.set_val(
+            'BWB_CHORD_PER_SEMISPAN_DIST',
+            val=[
+                137.5,
+                11.0145643,
+                0.327280116,
+                0.283045195,
+                0.241725260,
+                0.210316280,
+                0.184883023,
+                0.165352613,
+                0.154567162,
+                0.144510459,
+                0.134308006,
+                0.124178427,
+                0.114048849,
+                0.103919271,
+                0.0937896925,
+            ],
+        )
+        prob.set_val(
+            'BWB_THICKNESS_TO_CHORD_DIST',
+            val=[
+                0.11,
+                0.11,
+                0.1132,
+                0.0928,
+                0.0822,
+                0.0764,
+                0.0742,
+                0.0746,
+                0.0758,
+                0.0758,
+                0.0756,
+                0.0756,
+                0.0758,
+                0.076,
+                0.076,
+            ],
+        )
+        prob.set_val(Aircraft.Fuselage.MAX_WIDTH, val=64.58)
+        prob.set_val(Aircraft.Wing.GLOVE_AND_BAT, val=121.05)
+        prob.set_val(Aircraft.Wing.SPAN, val=238.08)
+        prob.run_model()
+
+        out1 = prob.get_val(Aircraft.Wing.WETTED_AREA)
+        exp1 = 17683.7562096
+        assert_near_equal(out1, exp1, tolerance=1e-9)
+
+
 if __name__ == '__main__':
-    unittest.main()
+    # unittest.main()
+    test = BWBWingTest()
+    test.setUp()
+    test.test_case1()
