@@ -1075,7 +1075,7 @@
         "aircraft:wing:detailed_wing",
         "<DetailedWing.TO_PROVIDE: 1>",
         "unitless",
-        "<class 'list'>"
+        "<enum 'DetailedWing'>"
     ],
     [
         "aircraft:wing:control_surface_area_ratio",
