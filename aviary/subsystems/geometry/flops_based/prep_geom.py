@@ -104,11 +104,14 @@ class PrepGeom(om.Group):
 
         if design_type is AircraftTypes.BLENDED_WING_BODY:
             self.add_subsystem(
-                'fuse_prelim', BWBFuselagePrelim(), promotes_inputs=['*'], promotes_outputs=['*']
+                'fuselage_prelim',
+                BWBFuselagePrelim(),
+                promotes_inputs=['*'],
+                promotes_outputs=['*'],
             )
         else:
             self.add_subsystem(
-                'fuse_prelim', FuselagePrelim(), promotes_inputs=['*'], promotes_outputs=['*']
+                'fuselage_prelim', FuselagePrelim(), promotes_inputs=['*'], promotes_outputs=['*']
             )
 
         if design_type is AircraftTypes.BLENDED_WING_BODY:
