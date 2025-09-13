@@ -10,6 +10,7 @@ import numpy as np
 from aviary.utils.develop_metadata import add_meta_data
 from aviary.variable_info.enums import (
     AircraftTypes,
+    DetailedWing,
     EquationsOfMotion,
     FlapType,
     GASPEngineType,
@@ -343,6 +344,21 @@ add_meta_data(
 # ========================================================================================================================
 
 add_meta_data(
+    Aircraft.BWB.MAX_NUM_BAYS,
+    meta_data=_MetaData,
+    historical_name={
+        'GASP': None,
+        'FLOPS': 'FUSEIN.NBAYMX',  # ['&DEFINE.FUSEIN.NBAYMX', 'FUSDTA.NBAYMX'],
+        'LEAPS1': None,
+    },
+    units='unitless',
+    desc='fixed number of bays',
+    types=int,
+    option=True,
+    default_value=0,
+)
+
+add_meta_data(
     Aircraft.BWB.NUM_BAYS,
     meta_data=_MetaData,
     historical_name={
@@ -354,10 +370,11 @@ add_meta_data(
         ],
     },
     units='unitless',
-    desc='fixed number of bays',
+    desc='fixed number of passenger bays',
     types=int,
+    multivalue=True,
     option=True,
-    default_value=0,
+    default_value=[0],
 )
 
 add_meta_data(
@@ -1686,7 +1703,7 @@ add_meta_data(
         'GASP': None,
         'FLOPS': None,
         'LEAPS1': None,
-        # NOTE TWR != THRUST_TO_WEIGHT_RATIO because Aviary's value is the actual T/W, while TWR is
+        # NOTE TWR != THRUST_TO_WEIGHT_RATIO because Aviary\'s value is the actual T/W, while TWR is
         #      the desired T/W ratio
         # 'FLOPS': 'CONFIN.TWR',
         # 'LEAPS1': 'ipropulsion.req_thrust_weight_ratio',
@@ -3414,7 +3431,7 @@ add_meta_data(
 add_meta_data(
     Aircraft.Fuselage.HEIGHT_TO_WIDTH_RATIO,
     meta_data=_MetaData,
-    historical_name={'GASP': 'INGASP.HGTqWID', 'FLOPS': None, 'LEAPS1': None},
+    historical_name={'GASP': 'INGASP.HGTqWID', 'FLOPS': 'WTIN.TCF', 'LEAPS1': None},
     units='unitless',
     types=float,
     default_value=1.0,
@@ -5576,8 +5593,8 @@ add_meta_data(
     units='unitless',
     desc='Flag that sets if FLOPS mass should use the detailed wing model',
     option=True,
-    types=bool,
-    default_value=False,
+    types=DetailedWing,
+    default_value=DetailedWing.NOT_TO_USE,
 )
 
 add_meta_data(
@@ -6869,9 +6886,9 @@ add_meta_data(
 # add_meta_data(
 #     Dynamic.Vehicle.Propulsion.EXIT_AREA,
 #     meta_data=_MetaData,
-#     historical_name={"GASP": None,
-#                     "FLOPS": None,
-#                     "LEAPS1": None
+#     historical_name={'GASP': None,
+#                     'FLOPS': None,
+#                     'LEAPS1': None
 #                     },
 #     units='kW',
 #     desc='Current nozzle exit area of engines, per single instance of each '
