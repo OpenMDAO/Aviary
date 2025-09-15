@@ -120,8 +120,8 @@ class TakeoffEOM(om.Group):
 
         self.options.declare(
             'pitch_control',
-            values=['alpha_fixed', 'alpha_rate_fixed', 'gamma_fixed'],
-            default='alpha_fixed',
+            values=['ALPHA_FIXED', 'ALPHA_RATE_FIXED', 'GAMMA_FIXED'],
+            default='ALPHA_FIXED',
             desc='How pitch is controlled.',
         )
 
@@ -194,16 +194,17 @@ class TakeoffEOM(om.Group):
             promotes=['*'],
         )
 
-        if self.options['pitch_control'] == 'gamma_fixed':
+        if self.options['pitch_control'] == 'GAMMA_FIXED':
             # If using fixed-flight-path-angle control
             alpha_resid_comp = om.InputResidsComp()
-            self.add_subsystem(
-                'alpha_resid_comp',
-                alpha_resid_comp,
-                promotes=['*']
+            self.add_subsystem('alpha_resid_comp', alpha_resid_comp, promotes=['*'])
+            alpha_resid_comp.add_input(
+                Dynamic.Mission.FLIGHT_PATH_ANGLE_RATE, shape=(nn,), units='rad/s'
             )
-            alpha_resid_comp.add_input(Dynamic.Mission.FLIGHT_PATH_ANGLE_RATE, shape=(nn,), units='rad/s')
-            alpha_resid_comp.add_output(Dynamic.Vehicle.ANGLE_OF_ATTACK, shape=(nn,), val=0.0, units='rad')
+            alpha_resid_comp.add_output(
+                Dynamic.Vehicle.ANGLE_OF_ATTACK, shape=(nn,), val=0.0, units='rad'
+            )
+
 
 class DistanceRates(om.ExplicitComponent):
     """
@@ -258,7 +259,6 @@ class DistanceRates(om.ExplicitComponent):
 
     def compute(self, inputs, outputs, discrete_inputs=None, discrete_outputs=None):
         velocity = inputs[Dynamic.Mission.VELOCITY]
-
 
         if self.options['climbing']:
             flight_path_angle = inputs[Dynamic.Mission.FLIGHT_PATH_ANGLE]

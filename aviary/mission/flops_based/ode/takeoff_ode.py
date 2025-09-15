@@ -31,8 +31,8 @@ class TakeoffODE(_BaseODE):
 
         self.options.declare(
             'pitch_control',
-            values=['alpha_fixed', 'alpha_rate_fixed', 'gamma_fixed'],
-            default='alpha_fixed',
+            values=['ALPHA_FIXED', 'ALPHA_RATE_FIXED', 'GAMMA_FIXED'],
+            default='ALPHA_FIXED',
             desc='How pitch is controlled.',
         )
 
@@ -71,7 +71,7 @@ class TakeoffODE(_BaseODE):
             'climbing': options['climbing'],
             'friction_key': options['friction_key'],
             'aviary_options': options['aviary_options'],
-            'pitch_control': options['pitch_control']
+            'pitch_control': options['pitch_control'],
         }
 
         self.add_subsystem(
@@ -111,6 +111,13 @@ class TakeoffODE(_BaseODE):
         self.set_input_defaults(Aircraft.Wing.AREA, 1.0, 'm**2')
 
         if self.options['pitch_control'] == 'gamma_fixed':
-            self.nonlinear_solver = om.NewtonSolver(solve_subsystems=True, maxiter=100, atol=1.0E-6, rtol=1.0E-6, iprint=0, debug_print=False)
+            self.nonlinear_solver = om.NewtonSolver(
+                solve_subsystems=True,
+                maxiter=100,
+                atol=1.0e-6,
+                rtol=1.0e-6,
+                iprint=0,
+                debug_print=False,
+            )
             self.nonlinear_solver.linesearch = om.ArmijoGoldsteinLS()
             self.linear_solver = om.DirectSolver(assemble_jac=True)

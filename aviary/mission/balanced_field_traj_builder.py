@@ -206,6 +206,10 @@ class BalancedFieldTrajectoryBuilder(ABC):
             self._traj = traj = dm.Trajectory(parallel_phases=False)
             model.add_subsystem('traj', self._traj)
 
+        # We're adding a balance comp, so use auto-ordering to put
+        # systems in best order.
+        self._traj.options['auto_order'] = True
+
         if aviary_options is None:
             aviary_options = AviaryValues()
 
@@ -299,7 +303,7 @@ class BalancedFieldTrajectoryBuilder(ABC):
         user_options.set_val('terminal_condition', 'STOP')
         user_options.set_val('friction_key', Mission.Takeoff.BRAKING_FRICTION_COEFFICIENT)
         initial_guesses = common_initial_guesses.deepcopy()
-        initial_guesses.set_val('time', [31.0, 20.0], 's')
+        initial_guesses.set_val('time', [31.0, 10.0], 's')
         initial_guesses.set_val('distance', [4500.0, 6500.0], 'ft')
         initial_guesses.set_val('velocity', [151.0, 5.0], 'kn')
         initial_guesses.set_val('throttle', 0.0)
@@ -342,14 +346,14 @@ class BalancedFieldTrajectoryBuilder(ABC):
         #
         user_options = common_user_options.deepcopy()
         user_options.set_val('terminal_condition', 'LIFTOFF')
-        user_options.set_val('pitch_control', 'alpha_rate_fixed')
+        user_options.set_val('pitch_control', 'ALPHA_RATE_FIXED')
         initial_guesses = common_initial_guesses.deepcopy()
         initial_guesses.set_val('time', [37.0, 7.0], 's')
         initial_guesses.set_val('distance', [5000.0, 5500.0], 'ft')
         initial_guesses.set_val('velocity', [155.0, 160.0], 'kn')
         initial_guesses.set_val('throttle', 0.5)
         initial_guesses.set_val(Dynamic.Vehicle.ANGLE_OF_ATTACK, [0.0, 14.0], 'deg')
-        initial_guesses.set_val(Dynamic.Vehicle.ANGLE_OF_ATTACK_RATE, 3.0, 'deg/s')
+        initial_guesses.set_val(Dynamic.Vehicle.ANGLE_OF_ATTACK_RATE, 2.5, 'deg/s')
 
         takeoff_vr_to_liftoff = BalancedFieldPhaseBuilder(
             'takeoff_vr_to_liftoff',
@@ -362,31 +366,60 @@ class BalancedFieldTrajectoryBuilder(ABC):
         self._add_phase(takeoff_vr_to_liftoff, aviary_options)
 
         #
-        # Sixth Phase: Liftoff to V2
+        # Sixth Phase: Liftoff to Climb Gradient
         #
         user_options = common_user_options.deepcopy()
-        user_options.set_val('terminal_condition', 'OBSTACLE')
-        user_options.set_val('pitch_control', 'alpha_rate_fixed')
+        user_options.set_val('terminal_condition', 'CLIMB_GRADIENT')
+        user_options.set_val('pitch_control', 'ALPHA_RATE_FIXED')
         user_options.set_val('climbing', True)
         initial_guesses = common_initial_guesses.deepcopy()
-        initial_guesses.set_val('time', [37.0, 15.0], 's')
+        initial_guesses.set_val('time', [37.0, 1.0], 's')
         initial_guesses.set_val('distance', [5000.0, 5500.0], 'ft')
         initial_guesses.set_val('velocity', [155.0, 160.0], 'kn')
         initial_guesses.set_val('throttle', 0.5)
         initial_guesses.set_val(Dynamic.Vehicle.ANGLE_OF_ATTACK, [10.0, 10.0], 'deg')
         initial_guesses.set_val(Dynamic.Mission.FLIGHT_PATH_ANGLE, [0.0, 0.5], 'deg')
         initial_guesses.set_val(Dynamic.Mission.ALTITUDE, [0.0, 0.5], 'ft')
-        initial_guesses.set_val(Dynamic.Vehicle.ANGLE_OF_ATTACK_RATE, 1.0, 'deg/s')
+        initial_guesses.set_val(Dynamic.Vehicle.ANGLE_OF_ATTACK_RATE, 2.0, 'deg/s')
 
-        takeoff_liftoff_to_v2 = BalancedFieldPhaseBuilder(
-            'takeoff_liftoff_to_v2',
+        takeoff_liftoff_to_climb_gradient = BalancedFieldPhaseBuilder(
+            'takeoff_liftoff_to_climb_gradient',
             core_subsystems=self.core_subsystems,
             subsystem_options=self.subsystem_options,
             user_options=user_options,
             initial_guesses=initial_guesses,
         )
 
-        self._add_phase(takeoff_liftoff_to_v2, aviary_options)
+        self._add_phase(takeoff_liftoff_to_climb_gradient, aviary_options)
+
+        #
+        # Seventh Phase: Climb Gradient to Obstacle
+        #
+        user_options = common_user_options.deepcopy()
+        user_options.set_val('terminal_condition', 'OBSTACLE')
+        user_options.set_val('pitch_control', 'GAMMA_FIXED')
+        user_options.set_val('climbing', True)
+        initial_guesses = common_initial_guesses.deepcopy()
+        initial_guesses.set_val('time', [37.0, 5.0], 's')
+        initial_guesses.set_val('distance', [5000.0, 5500.0], 'ft')
+        initial_guesses.set_val('velocity', [155.0, 160.0], 'kn')
+        initial_guesses.set_val('throttle', 0.5)
+        initial_guesses.set_val(Dynamic.Mission.FLIGHT_PATH_ANGLE, [0.1, 0.1], 'deg')
+        initial_guesses.set_val(Dynamic.Mission.ALTITUDE, [0.5, 35.0], 'ft')
+
+        takeoff_climb_gradient_to_obstacle = BalancedFieldPhaseBuilder(
+            'takeoff_climb_gradient_to_obstacle',
+            core_subsystems=self.core_subsystems,
+            subsystem_options=self.subsystem_options,
+            user_options=user_options,
+            initial_guesses=initial_guesses,
+        )
+
+        self._add_phase(takeoff_climb_gradient_to_obstacle, aviary_options)
+
+        #
+        # Add a trajectory-level balance to satisfy inter-phase relationships
+        #
 
         bal_comp = self._traj.add_subsystem('balance_comp', om.BalanceComp())
 
@@ -413,11 +446,40 @@ class BalancedFieldTrajectoryBuilder(ABC):
             ],
         )
         self._traj.connect(
-            'takeoff_liftoff_to_v2.final_states:distance', 'balance_comp.distance_obstacle'
+            'takeoff_climb_gradient_to_obstacle.final_states:distance',
+            'balance_comp.distance_obstacle',
         )
         self._traj.connect(
             'takeoff_v1_to_roll_stop.final_states:distance', 'balance_comp.distance_abort'
         )
+
+        # The third balance sets the trigger ratio of V/V_stall for rotation such that
+        # the climb gradient is achieved with V/V_stall = 1.2 (V2)
+
+        bal_comp.add_balance(
+            'VR_trigger_ratio',
+            lhs_name='v_over_v_stall_at_climb_gradient',
+            rhs_val=1.2,
+            eq_units='unitless',
+            units='unitless',
+        )
+
+        self._traj.connect(
+            'balance_comp.VR_trigger_ratio',
+            [
+                'takeoff_brake_release_to_engine_failure.parameters:VR_ratio',
+                'takeoff_engine_failure_to_v1.parameters:VR_ratio',
+                'takeoff_v1_to_vr.parameters:VR_ratio',
+            ],
+        )
+
+        self._traj.connect(
+            'takeoff_liftoff_to_climb_gradient.timeseries.v_over_v_stall',
+            'balance_comp.v_over_v_stall_at_climb_gradient',
+            src_indices=om.slicer[-1, ...],
+        )
+
+        # Add a newton solver to the balanced field trajectory
 
         self._traj.nonlinear_solver = om.NewtonSolver(
             solve_subsystems=True, maxiter=100, iprint=2, atol=1.0e-6, rtol=1.0e-6
@@ -432,15 +494,22 @@ class BalancedFieldTrajectoryBuilder(ABC):
                 'takeoff_engine_failure_to_v1',
                 'takeoff_v1_to_vr',
                 'takeoff_vr_to_liftoff',
-                'takeoff_liftoff_to_v2',
+                'takeoff_liftoff_to_climb_gradient',
+                'takeoff_climb_gradient_to_obstacle',
             ],
             vars=['time', 'distance', 'velocity', 'mass'],
             connected=True,
         )
 
         self._traj.link_phases(
-            ['takeoff_v1_to_vr', 'takeoff_vr_to_liftoff', 'takeoff_liftoff_to_v2'],
+            ['takeoff_v1_to_vr', 'takeoff_vr_to_liftoff', 'takeoff_liftoff_to_climb_gradient'],
             vars=[Dynamic.Vehicle.ANGLE_OF_ATTACK],
+            connected=True,
+        )
+
+        self._traj.link_phases(
+            ['takeoff_liftoff_to_climb_gradient', 'takeoff_climb_gradient_to_obstacle'],
+            vars=[Dynamic.Mission.ALTITUDE, Dynamic.Mission.FLIGHT_PATH_ANGLE],
             connected=True,
         )
 
